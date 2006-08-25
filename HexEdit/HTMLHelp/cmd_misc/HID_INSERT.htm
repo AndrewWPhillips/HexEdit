@@ -1,0 +1,138 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Insert Mode Toggle</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=copyright value="1999-2001 Expert Commercial Software">
+<meta name=date content="06 24, 2001 12:55:44 PM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=800>
+<meta name=layout-width content=1213>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Insert Mode Toggle</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>This command allows you to change between insert and overtype modes. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The fourth 
+ pane from the right indicates the current status. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ displays INS for insert mode or OVR for overtype mode.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>In insert mode the length of the file may change as you edit the file. 
+ That is, if you type values into the hex or character area in a window 
+ then the bytes following the cursor position are moved to higher addresses 
+ to make room for the new data. If you backspace then bytes behind the 
+ cursor are deleted and everything after the cursor is moved down. Deleting, 
+ cutting and pasting etc also shift bytes and change the length of the 
+ file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>In overtype mode existing bytes are never moved from their current address 
+ and the length of the file does not change. When you enter bytes the existing 
+ values are overwritten. When you backspace the bytes backspaced over are 
+ replaced with spaces if editing in the character area (ASCII or EBCDIC 
+ spaces depending on the display mode) or null bytes (00) if editing in 
+ the hex area.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Another consideration is that when you go to write a very large file, 
+ and bytes have been inserted or deleted, HexEdit must make a copy of the 
+ file rather than changing the bytes in place. If you stay in overtype 
+ mode (and do turn off the option to create backup files in the <a HREF="..\dlg_options\HIDD_OPT_SYSTEM.htm">System 
+ Options page</a>) then you can be sure HexEdit can save the data in place. 
+ Otherwise, HexEdit has to copy the whole file before renaming it and deleting 
+ the original, which can be slow or even impossible if your free disk space 
+ is less than the size of the file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Shortcuts</span></p>
+
+<p style="margin-left: 72.00pt; text-indent: -54.00pt;">Mouse:&nbsp;Double 
+ click the OVR/INS indicator on the <a href="..\bars\AFX_HIDW_STATUS_BAR.htm">status 
+ bar</a></p>
+
+<p style="margin-left: 72.00pt; text-indent: -54.00pt;">Keys:&nbsp;Ins</p>
+
+<p style="margin-left: 72.00pt; text-indent: -54.00pt;">&nbsp;</p>
+
+<p style="margin-left: 72.00pt; text-indent: -54.00pt;">
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name="_Version" value="65536" >
+<param name="_ExtentX" value="2117" >
+<param name="_ExtentY" value="556" >
+<param name="_StockProps" value="13" >
+<param name="ForeColor" value="0" >
+<param name="BackColor" value="13160660" >
+<param name="UseButton" value="-1" >
+<param name="ControlLabel" value="Related Topics" >
+<param name="UseIcon" value="0" >
+<param name="Items" value="Allow Changes Toggle;HID_ALLOW_MODS.htm$$**$$Track Changes command;HID_TRACK_CHANGES.htm$$**$$Window Display Options page;..\dlg_options\HIDD_OPT_WINDOW.htm$$**$$" >
+<param name="Image" value="" >
+<param name="FontInfo" value="MS Sans Serif,8,0,," >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\cmd_misc\HID_INSERT.htm" >
+<param name="_ID" value="RelatedTopics" >
+<param name="UseMenu" value="-1" >
+<param name="Frame" value="" >
+<param name="Window" value="" >
+</object>-->
+<OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM  NAME="Item1"  VALUE="Allow Changes Toggle;HID_ALLOW_MODS.htm">
+  <PARAM  NAME="Item2"  VALUE="Track Changes command;HID_TRACK_CHANGES.htm">
+  <PARAM  NAME="Item3"  VALUE="Window Display Options page;..\dlg_options\HIDD_OPT_WINDOW.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+ </p>
+
+</body>
+
+</html>

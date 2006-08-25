@@ -1,0 +1,614 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Creating the Colour Table</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=3312>
+<meta name=layout-width content=1213>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Step 5: Creating the Colour Table</font></h2>
+
+<p>&nbsp;</p>
+
+<p>The final part of the file that needs to be handled by the template 
+ is the colour table. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ will put the whole thing in a STRUCT which will contain the number of 
+ entries plus a FOR (array) of STRUCTs for the entries themselves.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>1. Double-click the root node of the tree again 
+ to edit it.</p>
+
+<p class=Body-Text-Indent-2>2. Select the bottom (blank) entry in the element 
+ list and Insert a &quot;Struct...&quot; and give it the name &quot;col_table&quot;.</p>
+
+<p class=Body-Text-Indent-2>3. Insert a 16 bit integer DATA element, with 
+ name &quot;num_cols&quot; (ie type=&quot;integer&quot;, length=&quot;2&quot;).</p>
+
+<p class=Body-Text-Indent-2>4. There must be at least one entry in col_table 
+ so put &quot;this &gt; 0&quot; in the domain field and click OK.</p>
+
+<p>&nbsp;</p>
+
+<p>Now we add the array of entries. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ entry has a name and RGB value.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>5. In the col_table STRUCT (below num_cols) 
+ insert a &quot;For...&quot; element, with name &quot;col&quot; and put 
+ &quot;num_cols&quot; in the count field.</p>
+
+<p class=Body-Text-Indent-2>6. In the FOR dialog click the &quot;Insert&quot; 
+ button and select &quot;Struct...&quot; from the list.</p>
+
+<p class=Body-Text-Indent-2>7. Add the following four data elements in 
+ the STRUCT.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 43.222%;
+				margin-left: 40px;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=43.222%>
+<col style="width: 24.848%;">
+<col style="width: 25.662%;">
+<col style="width: 31.162%;">
+<col style="width: 18.329%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 24.848%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=24.848%>
+<p>NAME</td>
+<td style="width: 25.662%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=25.662%>
+<p>TYPE</td>
+<td style="width: 31.162%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=31.162%>
+<p>FORMAT</td>
+<td style="width: 18.329%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=18.329%>
+<p>LENGTH</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 24.848%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=24.848%>
+<p>name</td>
+<td style="width: 25.662%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=25.662%>
+<p>string</td>
+<td style="width: 31.162%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=31.162%>
+<p>ASCII</td>
+<td style="width: 18.329%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=18.329%>
+<p>13</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 24.848%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.848%>
+<p>red</td>
+<td style="width: 25.662%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=25.662%>
+<p>integer</td>
+<td style="width: 31.162%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=31.162%>
+<p>unsigned</td>
+<td style="width: 18.329%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=18.329%>
+<p>1</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 24.848%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.848%>
+<p>green</td>
+<td style="width: 25.662%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=25.662%>
+<p>integer</td>
+<td style="width: 31.162%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=31.162%>
+<p>unsigned</td>
+<td style="width: 18.329%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=18.329%>
+<p>1</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 24.848%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.848%>
+<p>blue</td>
+<td style="width: 25.662%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=25.662%>
+<p>integer</td>
+<td style="width: 31.162%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=31.162%>
+<p>unsigned</td>
+<td style="width: 18.329%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=18.329%>
+<p>1</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>8. To show the colour name in the STRUCT node, 
+ put &quot;this.name&quot; in the &quot;Display&quot; field.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_5_1.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 1. Displaying the colour name in the STRUCT tree node.</span></p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>9. Click the OK button in each dialog until 
+ they are all closed.</p>
+
+<p>&nbsp;</p>
+
+<p>You should now see the &quot;col_table&quot; struct in the tree window. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If you 
+ expand it there should be eight entries in the example file.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_5_2.gif"
+						style="border-style: none;
+								border: none;
+								width: 233px;
+								height: 274px;"
+						width=233
+						height=274
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 2. Colour names in the tree.</span></p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Using JUMP</p>
+
+<p>&nbsp;</p>
+
+<p>It would be useful to be able to use some of the information from col_table 
+ earlier in the processing of the graphical objects. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, we could validate that each objects colid is valid (ie, in the 
+ range of valid indexes into col_table).</p>
+
+<p>&nbsp;</p>
+
+<p>We can quite easily do this using a &quot;JUMP&quot; element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ a JUMP is encountered in the processing of a template the next byte from 
+ the file is taken from the address that was jumped to. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ the JUMP element is exited the control passes back to the address before 
+ the JUMP was encountered. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Jump 
+ addresses can be relative to the start of file, end of file, or current 
+ file address. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->An 
+ error occurs if the new address is outside the range of the files addresses 
+ - for example, a jump address relative to the end of file must always 
+ be a negative value since, by definition, there is nothing past the end.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>You can use a JUMP with an address of zero relative to 
+ the current file position to look-ahead in the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->After 
+ the jump the current address is the same as before it.</p>
+
+<p>&nbsp;</p>
+
+<p>We will now move the &quot;col_table&quot; before the &quot;object&quot; 
+ array and place it in a JUMP.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>10. Double-click the root to edit it.</p>
+
+<p class=Body-Text-Indent-2>11. Select &quot;col_table [STRUCT]&quot; in 
+ the element list and click the up arrow button twice to move it just below 
+ the &quot;header [STRUCT]&quot; element.</p>
+
+<p class=Body-Text-Indent-2>12. Click OK to return to the tree window - 
+ you will get the old &quot;Data past end of file&quot; error message again, 
+ which we will address below. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Click 
+ OK.</p>
+
+<p class=Body-Text-Indent-2>13. Now right-click the &quot;col_table&quot; 
+ node in the tree and select &quot;Enclose In/Jump...&quot;.</p>
+
+<p class=Body-Text-Indent-2>14. For the &quot;Address&quot; field click 
+ the right arrow button and select &quot;header.col_table_address&quot;, 
+ the 4th item in the list.</p>
+
+<p class=Body-Text-Indent-2>15. For the &quot;Relative To&quot; field select 
+ &quot;Start of file&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Click 
+ OK.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_5_3.gif"
+						style="border-style: none;
+								border: none;
+								width: 509px;
+								height: 301px;"
+						width=509
+						height=301
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 3. Selecting the JUMP address.</span></p>
+
+<p>&nbsp;</p>
+
+<p>In the tree view you should now see the same values in the &quot;col_table&quot; 
+ but it is nested under the JUMP node. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ jump node shows the address that is jumped to (9E hex in this case).</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_5_4.gif"
+						style="border-style: none;
+								border: none;
+								width: 237px;
+								height: 352px;"
+						width=237
+						height=352
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 4. Colour table nested in the JUMP.</span></p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Creating a Fill Object</p>
+
+<p>&nbsp;</p>
+
+<p>Now the template runs out again after the object list and we get the 
+ &quot;Data past expected end of file&quot; message again. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ need to use up the extra bytes of the colour table, but we don't want 
+ to add a duplicate colour table so we will just add a &quot;fill&quot; 
+ object.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>16. Double-click the root node again and add 
+ a &quot;Data...&quot; element to the end of the list.</p>
+
+<p class=Body-Text-Indent-2>17. Use a name of &quot;col_table_again&quot;, 
+ a type of &quot;none&quot; and enter &quot;sizeof(col_table)&quot; for 
+ the length.</p>
+
+<p class=Body-Text-Indent-2>18. Click OK to return to the STRUCT dialog.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_5_5.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 5. The &quot;fill&quot; object.</span></p>
+
+<p>&nbsp;</p>
+
+<p>Just as a double-check we will make sure the start of &quot;col_table_again&quot; 
+ is equivalent to the colour table address in the header.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>19. Add an &quot;Expression Evaluation...&quot; 
+ element to the end of the list.</p>
+
+<p class=Body-Text-Indent-2>20. In the &quot;Expression&quot; field enter 
+ &quot;addressof(col_table_again) == header.col_table_address&quot;.</p>
+
+<p class=Body-Text-Indent-2>21. Select the &quot;Display error if expression 
+ evaluates false&quot; check box so that an error is shown if there is 
+ something amiss.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_5_6.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 6. EVAL to check that addresses are consistent.</span></p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>22. Click OK twice to return to the tree window.</p>
+
+<p>&nbsp;</p>
+
+<p>In the last part of the tutorial we will look at doing more validation 
+ using the colour table as well as a few tests that the template handles 
+ badly formed files properly.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><a HREF="TemplateTute2-4.htm"><img src="../back.gif"
+													style="border-style: none;
+															border: none;
+															width: 51px;
+															height: 22px;"
+													width=51
+													height=22
+													border=0></a> <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a 
+ HREF="TemplateTute2-6.htm"><!--kadov_tag{{</spaces>}}--><img src="../next.gif"
+	style="border-style: none;
+			border: none;
+			width: 51px;
+			height: 22px;"
+	width=51
+	height=22
+	border=0></a></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

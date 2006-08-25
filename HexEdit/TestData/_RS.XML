@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="RS file">
+  <for name="record">
+    <struct>
+      <data name="RS" type="string" len="2" domain='this=="RS"'/>
+      <data name="length" type="int" format="u" len="4"/>
+      <data name="flags"  type="int" format="u" len="1"/>
+      <data name="cont"   type="int" format="u" len="1"/>
+      <data name="spare"  type="none" len="6"/>
+      <data name="data"   type="none" len="length"/>
+      <data name="RStail" type="int" format="u" len="4" domain="this==length"/>
+    </struct>
+  </for>
+</binary_file_format>

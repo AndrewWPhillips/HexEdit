@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="dBase 3 .DBF file">
+  <struct name="header" comment="Contains info on the database fields and structure.">
+    <data name="version"    type="int"  format="u" len="1"  comment="dBase III version number"/>
+    <data name="update"     type="none" len="3"   comment="date of last update"/>
+    <data name="num_recs"   type="int"  format="u" len="4" comment="number of records in this file"/>
+    <data name="header_len" type="int"  format="u" len="2" comment="length of header"/>
+    <data name="rec_len"    type="int"  format="u" len="2" comment="length of each record"/>
+    <data name="reserved"   type="none" len="20"  comment="not currently used"/>
+    <for name="field" count="num_fields=(header_len-33)/32" comment="Describes the each field of the record">
+      <struct>
+        <data name="name" type="string" len="11" comment="field name (zero filled)"/>
+        <data name="type" type="char" domain="this=='C'||this=='N'||this=='L'||this=='D'||this=='M'" />
+        <data name="addr" type="int"  format="u" len="4"/>
+        <data name="len"  type="int"  format="u" len="1" />
+        <data name="dec"  type="int"  format="u" len="1" />
+        <data name="reserved" type="none" len="14" comment="not currently used"/>
+      </struct>
+    </for>
+    <data name="terminator" type="int" format="u" len="1" domain="this==13"/>
+  </struct>
+  <for name="record" count="header.num_recs" comment="The database records">
+    <struct>
+      <data name="deleted" type="char" domain="this==' '||this=='*'" comment="If this is an asterisk the record is deleted."/>
+      <for name="field" count="ii=0,num_fields" comment="ii">
+        <struct>
+          <if test="true">
+            <data type="string" format="ascii" len="header.field[ii].len" comment="header.field[ii].type=='C'"/>
+          </if>
+          <if test="false">
+            <data type="none" len="header.field[ii].len" comment="header.field[ii].type!='C'"/>
+          </if>
+          <if test="false" comment="ii=ii+1">
+            <data type="none" len="0"/>
+          </if>
+        </struct>
+      </for>
+    </struct>
+  </for>
+</binary_file_format>

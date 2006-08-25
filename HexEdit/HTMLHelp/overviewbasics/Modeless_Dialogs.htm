@@ -1,0 +1,301 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Modeless Dialogs</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1448>
+<meta name=layout-width content=1239>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Modeless Dialogs</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>Modeless dialogs are dialogs that are always available. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ do not have to close them to continue using other parts of HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are currently four modeless dialogs (calculator, bookmarks, properties 
+ and find dialog). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ modeless dialogs have been completely reimplemented in version 3.0 to 
+ be dockable, rollable etc -- they now behave somewhat like toolbars and 
+ may be referred to as <span style="font-weight: bold;">dialog bars</span>.</p>
+
+<p>&nbsp;</p>
+
+<p>The modeless dialogs are very convenient for many uses. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Here 
+ are some examples:</p>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>check the value of bytes, numbers, dates etc at 
+ the current cursor position as you move it in the file using the <span 
+ style="font-weight: bold;">Properties</span> dialog</p></li>
+	
+	<li class=kadov-p><p>change the value of bytes, integer numbers, floating 
+ point numbers, dates etc in the <span style="font-weight: bold;">Properties</span> 
+ dialog</p></li>
+	
+	<li class=kadov-p><p>calculate an address in the <span style="font-weight: bold;">Calculator</span> 
+ and click the <span style="font-weight: bold;">Go To</span> button to 
+ quickly jump to it</p></li>
+	
+	<li class=kadov-p><p>quickly jump to a bookmarked position in any file 
+ (which does not have to be currently open) by double-clicking it in the 
+ <span style="font-weight: bold;">Bookmarks</span> dialog</p></li>
+	
+	<li class=kadov-p><p>quickly add a bookmark by typing its name and 
+ clicking the <span style="font-weight: bold;">Add</span> button in the 
+ <span style="font-weight: bold;">Bookmarks</span> dialog</p></li>
+	
+	<li class=kadov-p><p>type some byte value to search for and click the 
+ <span style="font-weight: bold;">Find</span> button in the <span style="font-weight: bold;">Find 
+ dialog</span></p></li>
+</ul>
+
+<p>By default, modeless dialogs &quot;float&quot; in front of the HexEdit 
+ window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can drag them by their title bar but you cannot force them behind the 
+ main HexEdit window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ can be annoying sometimes so there are several ways that you can move 
+ them out of the way:</p>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>hide the dialog by clicking its close button (the 
+ <span style="font-weight: bold;">X</span> in the top right corner) - the 
+ dialog is just hidden and any information is still there when you reopen 
+ the window</p></li>
+	
+	<li class=kadov-p><p>drag the floating dialog to another part of the 
+ screen - if you have multiple monitors you can drag them all to another 
+ monitor and HexEdit will remember their positions when reopened</p></li>
+	
+	<li class=kadov-p><p>resize the <span style="font-weight: bold;">Bookmarks</span> 
+ dialog so it takes up less screen space</p></li>
+	
+	<li class=kadov-p><p>drag the dialog to the left or right edge of the 
+ main HexEdit window to &quot;dock&quot; it there</p></li>
+	
+	<li class=kadov-p><p>&quot;roll up&quot; the dialog by clicking the 
+ little arrow button next to the <span style="font-weight: bold;">X</span> 
+ button in the top right corner</p></li>
+	
+	<li class=kadov-p><p>failing all that if you try to move the cursor 
+ under a floating dialog HexEdit will move it out of the way so you can 
+ see what you are doing</p></li>
+</ul>
+
+<p>These facilities are described below.</p>
+
+<p style="font-weight: bold;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Displaying and Hiding</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>You typically use a menu item to open the dialogs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example <span style="font-weight: bold;">Edit/Find...</span> opens the 
+ <span style="font-weight: bold;">Find dialog</span> at the <span style="font-weight: bold;">Basic 
+ Find</span> page, whereas <span style="font-weight: bold;">Edit/Replace..</span> 
+ opens it at the <span style="font-weight: bold;">Replace</span> page, 
+ while <span style="font-weight: bold;">Tools/Find Hex...</span> opens 
+ it at the <span style="font-weight: bold;">Hex Find</span> page.</p>
+
+<p>&nbsp;</p>
+
+<p>You can also toggle a dialog (show or hide it) using the <span style="font-weight: bold;">Dialog 
+ Bars</span> sub-menu at the top of the <span style="font-weight: bold;">Toolbars</span> 
+ menu. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is visible at the top of the View main menu or when you right click on 
+ a toolbar or dialog bar. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if the Calculator is not visible you can display it using the 
+ <span style="font-weight: bold;">View/Tool bars/Dialog bars/Calculator</span> 
+ menu item. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ <span style="font-weight: bold;">View/Tool bars/Dialog bars</span> also 
+ has checkboxes which show you which dialogs are (or should be) visible. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If a dialog 
+ is checked but you cannot find it you can use the <span style="font-weight: bold;">Help/Repair/Restore 
+ Dialogs..</span>. command (see below).</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-weight: bold;">Docking</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The modeless dialog bars are similar to toolbars in that they can float 
+ or be docked. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ by default they are not dockable as some existing users find the docking 
+ behavior confusing or annoying. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ allow them to dock use the <span style="font-weight: bold;">View/Tool 
+ bars/Dialog bars/Allow docking</span> menu item. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that dialogs can only be docked on the left or right side of the main 
+ window.</p>
+
+<p>&nbsp;</p>
+
+<p>To dock a dialog just drag it to the left or right edge where you want 
+ it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ dialogs may be docked on top of or next to each other. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Sometimes 
+ you don't want a dialog to dock when you drag it near a docking position 
+ - in this case hold down the <span style="font-weight: bold;">Ctrl</span> 
+ key while dragging and it will remain floating.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Rolling</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">If you are short of screen 
+ space you may not want to waste it by docking dialogs, but you don't want 
+ to close them. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->An 
+ alternative is to roll them up so that just the title bar is visible. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To roll 
+ and unroll just click the little arrow button next to the close button.</p>
+
+<p>&nbsp;</p>
+
+<p>You can't dock a dialog bar when it is rolled, but you can reposition 
+ it by dragging the title bar as normal. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
+ normally leave the calculator rolled up near the top of the window.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Help</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">All controls in the modless 
+ dialogs have context help, which appears as a small &quot;tip&quot; window. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Help for 
+ a control is available in several ways:</p>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">click 
+ the <span style="font-weight: bold;">?</span> button in the top right 
+ corner of the dialog (the mouse cursor changes to include a question mark) 
+ then click on the control</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">select 
+ the control and press F1</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">right 
+ click the control and select <span style="font-weight: bold;">What's This</span> 
+ menu item from the context menu</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">for controls 
+ that have there own context menu (eg, a text box) the <span style="font-weight: bold;">What's 
+ This</span> menu item is not available - just right click the text description 
+ to the left of the control</p></li>
+</ul>
+
+<p>To get more detailed help and an overview of the dialog, click the <span 
+ style="font-weight: bold;">Help</span> button..</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Repairing</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Sometimes you may not be able to find or use a dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ could be because it is almost entirely off the edge of the screen, or 
+ is rolled up and not noticeable. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Problems 
+ can also occur in the docking system where dialogs are docked while rolled 
+ or docked at the top or bottom of the main window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ this happens use the <span style="font-weight: bold;">Help/Repair/Restore 
+ Dialogs...</span> menu item which:</p>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>undocks all dialogs;</p></li>
+	
+	<li class=kadov-p><p>unrolls all dialogs;</p></li>
+	
+	<li class=kadov-p><p>restore the default sizes of resizeable dialogs; 
+ and</p></li>
+	
+	<li class=kadov-p><p>moves them to the top left corner or the main 
+ window.</p></li>
+</ul>
+
+<p style="font-weight: bold;">For further information see:</p>
+
+<p><a HREF="..\cmd_view\HID_PROPERTIES.htm">Properties Command</a>: to 
+ display the Properties dialog</p>
+
+<p><a HREF="..\cmd_edit\HID_EDIT_GOTO.htm">Go To command</a>: to display 
+ the calculator and load the current addres</p>
+
+<p><a HREF="..\cmd_tools\HID_CALCULATOR.htm">Calculator command</a>: to 
+ display the calculator</p>
+
+<p><a HREF="..\cmd_edit\Edit_Bookmarks.htm">Edit Bookmarks</a>: to display 
+ the Bookmarks dialog</p>
+
+<p><a HREF="..\cmd_edit\HID_EDIT_FIND.htm">Find command</a>: o display 
+ the Find dialog at the Basic Find page</p>
+
+<p><a HREF="..\cmd_edit\HID_EDIT_REPLACE.htm">Replace Command</a>o display 
+ the Find dialog at the Replace page</p>
+
+<p><a HREF="..\cmd_tools\HID_EDIT_FIND2.htm">Find Hex command</a>o display 
+ the Find dialog at the Hex Find page</p>
+
+<p><a HREF="..\cmd_view\HID_DIALOGS_DOCKABLE.htm">Toggle Dialog Dockability 
+ Command</a>: to allow/disallow docking of dialog bars</p>
+
+<p><a HREF="..\cmd_view\HID_VIEW_PROPERTIES.htm">Toggle Properties Dialog</a>: 
+ to show/hide the Properties dialog</p>
+
+<p><a HREF="..\cmd_view\HID_VIEW_CALCULATOR.htm">Toggle Calculator Command</a>: 
+ to show/hide the calculator</p>
+
+<p><a HREF="..\cmd_view\HID_VIEW_BOOKMARKS.htm">Toggle Bookmarks Dialog</a>: 
+ to show/hide the Bookmarks dialog</p>
+
+<p><a HREF="..\cmd_view\HID_VIEW_FIND.htm">Toggle Find Dialog</a>: to show/hide 
+ the Find dialog</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

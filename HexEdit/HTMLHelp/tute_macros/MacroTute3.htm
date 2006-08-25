@@ -1,0 +1,339 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Saving the Macro</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=2111>
+<meta name=layout-width content=1210>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Step 3. Saving the Macro to Disk</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">We will save the macro we have 
+ just created so that we can use it as a nested macro in step 3. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ first we will give it a quick test to make sure it is working OK. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}--></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Testing the macro</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">At the end of the last step 
+ the first file was the active one. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ it is not active click on it's title bar now. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Then 
+ do the following:</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>1. Press the F8 key a few times (or use Tools/Quick 
+ Play command) to make sure the macro is working.</p>
+
+<p class=Body-Text-Indent-2>2. Open the Replay Macro dialog by pressing 
+ F9 (or using the Tools/Play command).</p>
+
+<p class=Body-Text-Indent-2>3. Enter a large value like &quot;999&quot; 
+ into the &quot;Number of Replays:&quot; text box.</p>
+
+<p class=Body-Text-Indent-2>4. Click the &quot;Replay Options&quot; button 
+ and make sure the &quot;Halt Conditions&quot; option is set to &quot;Minor 
+ Errors&quot;.</p>
+
+<p class=Body-Text-Indent-2>5. Click OK to close the Options dialog then 
+ click OK in the Replay Macro dialog to run the macro.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The macro will be run multiple 
+ times until the end of file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ first file should now contain a repetition of &quot;5A A5 5A ...&quot;.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><img src="tute0_3_1.gif"
+						style="border-style: none;
+								border: none;
+								width: 975px;
+								height: 512px;"
+						width=975
+						height=512
+						border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>Figure 3.1 The modified file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that setting the &quot;Halt 
+ Conditions&quot; option ensures that the macro stops when end of file 
+ is encountered. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ &quot;Minor Errors&quot; (or &quot;All warnings/errors&quot;) is selected, 
+ a cursor movement that would take the cursor past the end of file (or 
+ before the start of file) causes the macro to stop automatically. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ instead &quot;Major Errors&quot; had been selected the macro would have 
+ tried to keep running for 999 times, which would have resulted in a confusing 
+ error message being displayed or a pause while the macro attempted to 
+ run several hundred times doing nothing useful.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>You can halt a 
+ runaway macro by pressing any key and clicking &quot;Yes&quot; when asked 
+ if you want to stop running the macro.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Saving the macro</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">You can save the current macro 
+ using the Macro page of the Options dialog.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>6. Open the Options dialog (Tools/Options) 
+ and click the Macro tab.</p>
+
+<p class=Body-Text-Indent-2>7. Click the &quot;Save Current Macro&quot; 
+ button.</p>
+
+<p class=Body-Text-Indent-2>8. In the Save Macro dialog make sure the &quot;Minor 
+ Errors&quot; option has been selected under &quot;Halt Condition:&quot;.</p>
+
+<p class=Body-Text-Indent-2>9. For the default number of replays put a 
+ very large value like &quot;999999999&quot;.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that the halt condition 
+ and number of replays settings can be overridden when a macro is loaded 
+ (using the &quot;Load Macro&quot; button in the Macro Options page). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ since this macro is loaded and run automatically (as a nested macro), 
+ these values must be set at this time.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">We use a very large number 
+ for the replays so that the main macro can handle any file up to a 100 
+ Gigabytes in size (although on a file that big the macro would take a 
+ very long time to run).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>10. In the comments section put a description 
+ of what the macro is for.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">It is a good idea to explain, 
+ who wrote the macro, why, when etc in the comments section. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ probably the most important things is to explain what it does. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ necessary also include setup and running instructions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also add a copyright message to macros you create if you like.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>11. Type &quot;_XOR_nested_macro&quot; in the 
+ file name box and click the &quot;Save&quot; button.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><img src="tute0_3_2.gif"
+						style="border-style: none;
+								border: none;
+								width: 401px;
+								height: 243px;"
+						width=401
+						height=243
+						border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>Figure 3.2 Saving the macro to file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that all macro names in 
+ HexEdit are stored with a .HEM extension. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Do 
+ not enter that as part of the file name as it is added automatically.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">We gave the macro a filename 
+ starting with an underscore so it does not appear in the list of macro 
+ files shown in the Macro Play dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(File 
+ names beginning with an underscore <span style="font-style: italic;">do</span> 
+ appear there when you are recording a macro as we will see in the next 
+ section when we play the nested macro during recording of the main macro.) 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Typically 
+ you don't want users to run macros that are designed to be run as nested 
+ macros.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>Don't give nested 
+ macros a name consisting of an underscore and a common (or likely) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->file 
+ extension. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ macros are automatically run whenever a file of that type is opened. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if you have a macro file called &quot;_EXE.HEM&quot; then it 
+ will be run whenever a .EXE file is opened.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Macro Options</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">After you click the Save button 
+ in the Save Macro dialog you will go back to the Macro Options page. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Before 
+ you close it let's have a quick look at some of the other options there.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The options in the &quot;Refresh 
+ Display&quot; section allow you to vary when and how HexEdit redraws the 
+ display when a macro is running. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ some macros this can dramatically increase the speed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ disadvantage is that you will not see everything that the macro is doing.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">All macros are saved to and 
+ loaded from the same folder. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By 
+ default this is the folder where HexEdit was installed but you can change 
+ the location using the &quot;Change Macro Folder&quot; button in the Macro 
+ Options page.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The &quot;Load Macro&quot; 
+ button simply does the inverse of the &quot;Save Current Macro&quot; button. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->That is 
+ it prompts you for a &quot;.HEM&quot; file and then loads it into memory 
+ (making it the &quot;current&quot; keystroke macro). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is less useful now that HexEdit lets you play macro files directly from 
+ disk by selecting from the list in the Macro Replay dialog.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">See <a HREF="../dlg_options/HIDD_OPT_MACRO.htm">Macro 
+ Options page</a> for more details.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>12. Click OK to close the Options dialog.</p>
+
+<p class=Body-Text-Indent-2>13. Close the work files now since we no longer 
+ need them. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ prompted to save changes click &quot;No&quot;.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">In the next section we finally 
+ get to create the main macro.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><a href="MacroTute2.htm"><img src="../back.gif"
+												style="border-style: none;
+														border: none;
+														width: 51px;
+														height: 22px;"
+												width=51
+												height=22
+												border=0></a> <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a 
+ href="MacroTute4.htm"><!--kadov_tag{{</spaces>}}--><img src="../next.gif"
+														style="border-style: none;
+	border: none;
+	width: 51px;
+	height: 22px;"
+														width=51
+														height=22
+														border=0></a></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

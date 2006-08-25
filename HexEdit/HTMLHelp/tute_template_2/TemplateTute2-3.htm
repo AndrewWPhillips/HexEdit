@@ -1,0 +1,1620 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Creating the Graphical Object Structure</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=4801>
+<meta name=layout-width content=1213>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Step 3: Creating the Graphical Object Structure</font></h2>
+
+<p>&nbsp;</p>
+
+<p>In this step we will create the recursive structure for the graphical 
+ objects.</p>
+
+<p>&nbsp;</p>
+
+<p>There are two ways to create structures in HexEdit templates:</p>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>1. You can create a single instance of a structure 
+ whenever you need it using the STRUCT dialog.</p></li>
+	
+	<li class=kadov-p><p>2. You can define a structure at the start of 
+ the template then use it throughout the template.</p></li>
+</ul>
+
+<p>The first method is most often used. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is useful for just grouping together related fields or for simple structures 
+ that occur in one or a few places.</p>
+
+<p>&nbsp;</p>
+
+<p>The second method is useful where the same structure can occur in many 
+ places. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Defining 
+ the structure in one place can make a template smaller and faster. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ also makes the template easier to maintain as the structure only has to 
+ be changed in one place.</p>
+
+<p>&nbsp;</p>
+
+<p>The second method is also necessary when recursive data structures are 
+ used. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Creating 
+ a recursive data structure is simply a matter of creating a structure 
+ definition that references itself. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ means that we can nest objects inside other objects to any arbitrary depth.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Structure Definition</p>
+
+<p>&nbsp;</p>
+
+<p>We will create a single structure that handles all the variations of 
+ the graphical objects (rect, circle and group).</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>1. Right-click the root-node and select the 
+ &quot;Add Struct Definition...&quot; menu item. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ the dialog enter &quot;object&quot; for the type name.</p>
+
+<p>&nbsp;</p>
+
+<p>All graphical objects start with the same two bytes - a &quot;type&quot; 
+ byte and a &quot;flags&quot; byte.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>2. Click the &quot;Insert&quot; button and 
+ select &quot;Data...&quot; from the list.</p>
+
+<p class=Body-Text-Indent-2>3. Give the DATA Element the name &quot;type&quot; 
+ and make is a single-byte unsigned integer (ie, type=&quot;integer&quot;, 
+ format=&quot;unsigned&quot;, length=&quot;1&quot;).</p>
+
+<p class=Body-Text-Indent-2>4. Click the &quot;Clone &gt;&gt;&quot; button 
+ and make the new element's name &quot;flags&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Leave 
+ the other fields the same but add &quot;this == 0&quot; to the &quot;Domain&quot; 
+ field.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p>The &quot;flags&quot; field is reserved for future use, and the specification 
+ says that it should currently always be zero, so we check this with the 
+ domain test.</p>
+
+<p>&nbsp;</p>
+
+<p>Since the &quot;type&quot; field should only ever have a value of 0, 
+ 1, 2, or 10 we could also validate it with a domain expression. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ a better way is to add an enum string.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>5. Click the &quot;&lt;&lt;&quot; button to 
+ return to the &quot;type&quot; DATA Element.</p>
+
+<p class=Body-Text-Indent-2>6. Enter &quot;{END, RECT, CIRCLE, GROUP=10}&quot; 
+ in the &quot;Domain&quot; field..</p>
+
+<p>&nbsp;</p>
+
+<p>An enum is like a C/C++ enum list and must be enclosed in braces {}. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note that 
+ END, as the first in the list gets the value zero. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->RECT 
+ and CIRCLE take the next sequential values, one and two respectively. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Since there 
+ is a gap to GROUP it is explicitly assigned.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_3_1.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0></p>
+
+&nbsp; 
+
+<p style="text-align: center;"
+	align=center><span style="font-weight: bold;">Figure 1. DATA Element 
+ dialog showing enum.</span></p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>7. Click OK to return to the &quot;object&quot; 
+ STRUCT dialog.</p>
+
+<p>&nbsp;</p>
+
+<p>We handle the different graphical object types with three &quot;IF&quot; 
+ elements. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ order is not important but we will add the rect and circle objects first.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>In HexEdit 3.0 an &quot;IF&quot; element can now have 
+ &quot;ELSE&quot; parts, which can be used to avoid requiring two &quot;IF&quot;s 
+ (with opposite boolean expressions) in succession. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ can make the template faster and is more convenient in many situations. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ in this example we simply use three separate &quot;IF&quot;s without ELSE 
+ parts.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Rect Object</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>8. Select the blank Element at the bottom of 
+ the list in the STRUCT dialog, click &quot;Insert&quot; and select &quot;If...&quot;.</p>
+
+<p class=Body-Text-Indent-2>9. In the IF dialog set &quot;Condition&quot; 
+ to &quot;type == 1&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(A 
+ rect has a type of one.)</p>
+
+<p class=Body-Text-Indent-2>10. In the IF dialog click the &quot;Insert&quot; 
+ button and select &quot;Struct...&quot; and give it the name &quot;rect&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p>Now we will add the fields for a rect which are all DATA elements</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>11. Click the &quot;Insert&quot; button and 
+ select &quot;Data...&quot; from the list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Add 
+ the elements using field values as shown in the table below.</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 55.282%;
+				margin-left: 40px;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=55.282%>
+<col style="width: 19.427%;">
+<col style="width: 20.064%;">
+<col style="width: 24.364%;">
+<col style="width: 16.879%;">
+<col style="width: 19.266%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=19.427%>
+<p>NAME</td>
+<td style="width: 20.064%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=20.064%>
+<p>TYPE</td>
+<td style="width: 24.364%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=24.364%>
+<p>FORMAT</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=16.879%>
+<p>LENGTH</td>
+<td style="width: 19.266%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=19.266%>
+<p>DOMAIN</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=19.427%>
+<p>colid</td>
+<td style="width: 20.064%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=20.064%>
+<p>integer</td>
+<td style="width: 24.364%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=24.364%>
+<p>unsigned</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=16.879%>
+<p>2</td>
+<td style="width: 19.266%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=19.266%>
+<p>&nbsp;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 19.427%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.427%>
+<p>x</td>
+<td colspan=1
+	rowspan=1
+	style="width: 20.064%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=20.064%>
+<p>real</td>
+<td colspan=1
+	rowspan=1
+	style="width: 24.364%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.364%>
+<p>IEEE</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.879%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 19.266%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.266%>
+<p>&nbsp;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.427%>
+<p>y</td>
+<td style="width: 20.064%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=20.064%>
+<p>real</td>
+<td style="width: 24.364%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.364%>
+<p>IEEE</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.879%>
+<p>4</td>
+<td style="width: 19.266%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.266%>
+<p style="margin-left: 0px;">&nbsp;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.427%>
+<p>width</td>
+<td style="width: 20.064%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=20.064%>
+<p>real</td>
+<td style="width: 24.364%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.364%>
+<p>IEEE</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.879%>
+<p>4</td>
+<td style="width: 19.266%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.266%>
+<p>this &gt; 0.0</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.427%>
+<p>height</td>
+<td style="width: 20.064%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=20.064%>
+<p>real</td>
+<td style="width: 24.364%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.364%>
+<p>IEEE</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.879%>
+<p>4</td>
+<td style="width: 19.266%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.266%>
+<p>this &gt; 0.0</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p>&nbsp;</p>
+
+<p>Remember that you can use the &quot;Clone &gt;&gt;&quot; button in the 
+ DATA Element dialog to create a new element in the STRUCT based on the 
+ existing one.</p>
+
+<p>&nbsp;</p>
+
+<p>Our fictitious graphics program always ensures that rectangles do not 
+ have negative or zero dimensions when it writes HEG files (and generates 
+ an error if that is not true when it reads HEG files), so we also validate 
+ that the width and height fields are greater than zero.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>12. Click OK to close the &quot;height&quot; 
+ DATA Element dialog.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_3_2.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0></p>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center; font-weight: bold;"
+	align=center>Figure 2. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Final 
+ &quot;rect&quot; STRUCT dialog.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>13. Now click OK to close the &quot;rect&quot; 
+ STRUCT dialog and finally click OK again to close the IF dialog and return 
+ to the &quot;object&quot; STRUCT dialog.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Circle Object</p>
+
+<p>&nbsp;</p>
+
+<p>Follow the same procedure for the circle graphical object.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>14. Add an IF to the end of the &quot;object&quot; 
+ element list, but this time set the &quot;Condition&quot; in the &quot;IF&quot; 
+ dialog to &quot;type == 2&quot;.</p>
+
+<p class=Body-Text-Indent-2>15. Create a STRUCT named &quot;circle&quot; 
+ in the IF and add the following DATA Elements:</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 55.282%;
+				margin-left: 40px;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=55.282%>
+<col style="width: 19.427%;">
+<col style="width: 20.064%;">
+<col style="width: 24.364%;">
+<col style="width: 16.879%;">
+<col style="width: 19.266%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=19.427%>
+<p>NAME</td>
+<td style="width: 20.064%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=20.064%>
+<p>TYPE</td>
+<td style="width: 24.364%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=24.364%>
+<p>FORMAT</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=16.879%>
+<p>LENGTH</td>
+<td style="width: 19.266%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=19.266%>
+<p>DOMAIN</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=19.427%>
+<p>colid</td>
+<td style="width: 20.064%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=20.064%>
+<p>integer</td>
+<td style="width: 24.364%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=24.364%>
+<p>unsigned</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=16.879%>
+<p>2</td>
+<td style="width: 19.266%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=19.266%>
+<p>&nbsp;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 19.427%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.427%>
+<p>x</td>
+<td colspan=1
+	rowspan=1
+	style="width: 20.064%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=20.064%>
+<p>real</td>
+<td colspan=1
+	rowspan=1
+	style="width: 24.364%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.364%>
+<p>IEEE</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.879%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 19.266%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.266%>
+<p>&nbsp;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.427%>
+<p>y</td>
+<td style="width: 20.064%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=20.064%>
+<p>real</td>
+<td style="width: 24.364%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.364%>
+<p>IEEE</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.879%>
+<p>4</td>
+<td style="width: 19.266%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.266%>
+<p>&nbsp;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.427%>
+<p>radius</td>
+<td style="width: 20.064%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=20.064%>
+<p>real</td>
+<td style="width: 24.364%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.364%>
+<p>IEEE</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.879%>
+<p>4</td>
+<td style="width: 19.266%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.266%>
+<p>this &gt; 0.0</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p>&nbsp;</p>
+
+<p>The fields are the same as for a rect except that a circle has a radius 
+ instead of height and width.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>16. Click OK to close the &quot;radius&quot; 
+ DATA Element dialog.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_3_3.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><span style="font-weight: bold;"><br>
+<br>
+Figure 3. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Final 
+ &quot;circle&quot; STRUCT dialog.</span></p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>17. Now click OK to close the &quot;circle&quot; 
+ STRUCT dialog and finally click OK again to close the IF dialog and return 
+ to the &quot;object&quot; STRUCT dialog.</p>
+
+<p class=body-text-indent-2>&nbsp;</p>
+
+<p style="font-weight: bold;">Group Object</p>
+
+<p>&nbsp;</p>
+
+<p>Finally we need to create the group graphical object.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>18. Add an IF to the end of the &quot;object&quot; 
+ element list, but this time set the &quot;Condition&quot; to &quot;type 
+ == 10&quot;.</p>
+
+<p class=Body-Text-Indent-2>19. Create a STRUCT named &quot;group&quot; 
+ in the IF and add the following three DATA Elements:</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 55.282%;
+				margin-left: 40px;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=55.282%>
+<col style="width: 19.427%;">
+<col style="width: 20.064%;">
+<col style="width: 24.364%;">
+<col style="width: 16.879%;">
+<col style="width: 19.266%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=19.427%>
+<p>NAME</td>
+<td style="width: 20.064%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=20.064%>
+<p>TYPE</td>
+<td style="width: 24.364%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=24.364%>
+<p>FORMAT</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=16.879%>
+<p>LENGTH</td>
+<td style="width: 19.266%;
+			padding-right: 10px;
+			padding-left: 10px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;"
+	bgcolor=#C0C0C0
+	width=19.266%>
+<p>DOMAIN</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=19.427%>
+<p>count</td>
+<td style="width: 20.064%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=20.064%>
+<p>integer</td>
+<td style="width: 24.364%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=24.364%>
+<p>unsigned</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=16.879%>
+<p>2</td>
+<td style="width: 19.266%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=19.266%>
+<p>this &gt; 0</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 19.427%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.427%>
+<p>x</td>
+<td colspan=1
+	rowspan=1
+	style="width: 20.064%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=20.064%>
+<p>real</td>
+<td colspan=1
+	rowspan=1
+	style="width: 24.364%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.364%>
+<p>IEEE</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.879%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 19.266%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.266%>
+<p>&nbsp;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.427%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.427%>
+<p>y</td>
+<td style="width: 20.064%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=20.064%>
+<p>real</td>
+<td style="width: 24.364%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.364%>
+<p>IEEE</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.879%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.879%>
+<p>4</td>
+<td style="width: 19.266%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.266%>
+<p>&nbsp;</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p>&nbsp;</p>
+
+<p>Note that the &quot;x&quot; and &quot;y&quot; fields are the same as 
+ in rect and circle, but the &quot;colid&quot; field is replaced with a 
+ &quot;count&quot; field which stores the number of objects that are in 
+ the group.</p>
+
+<p>&nbsp;</p>
+
+<p>The software ensures that there is always at least one object in a group 
+ so we validate that &quot;count&quot; is greater than zero.</p>
+
+<p>&nbsp;</p>
+
+<p>Now we need to add the array of objects in the group.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>20. In the &quot;group&quot; STRUCT dialog 
+ select the last &quot;blank&quot; element and insert a FOR (Insert/For...).</p>
+
+<p class=Body-Text-Indent-2>21. In the FOR dialog enter a name of &quot;subobject&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p>Now we need to put the number of grouped objects into the FOR dialog 
+ &quot;Count&quot; field. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
+ a brief explanation on expressions is needed.</p>
+
+<p>&nbsp;</p>
+
+<p>You can enter any expression in the &quot;Count&quot; field, but the 
+ result must be an integer (ie, not real etc). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ will also get an error if the value is negative but zero-sized arrays 
+ are permitted and often useful.</p>
+
+<p>&nbsp;</p>
+
+<p>An expression can use the value of any field already encountered in 
+ the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ a variable name is used in an expression we need to find it based on its 
+ name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->First 
+ all sibling elements are checked then all parent siblings, grandparent 
+ siblings etc up to the top level of the tree. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Since 
+ you can use &quot;.&quot; to access STRUCT members and &quot;[expr]&quot; 
+ to access array elements you can get the value of any data element so 
+ far encountered in the file.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>22. In this case we just need to use the &quot;count&quot; 
+ DATA element which is a sibling of the FOR, so just enter &quot;count&quot; 
+ in the &quot;Count&quot; field.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>You can find the name of any DATA element that you can 
+ use by clicking the arrow button to the right of the &quot;Count&quot; 
+ field.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_3_4.gif"
+						style="border-style: none;
+								border: none;
+								width: 482px;
+								height: 301px;"
+						width=482
+						height=301
+						border=0><span style="font-weight: bold;"><br>
+<br>
+Figure 4. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Selecting 
+ the &quot;count&quot; value in the FOR dialog.</span></p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Recursion</p>
+
+<p>&nbsp;</p>
+
+<p>Finally we get to the recursive bit - we make the sub-element of the 
+ array an &quot;object&quot;, ie the structure we are defining.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>23. Click the &quot;Insert&quot; button in 
+ the FOR dialog and select &quot;Use Defined Struct...&quot;.</p>
+
+<p class=Body-Text-Indent-2>24. In the USE STRUCT dialog leave the &quot;Name&quot; 
+ field blank and enter &quot;object&quot; into the &quot;Type name&quot; 
+ field.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>You can create mutually recursive structures too. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(For 
+ example, struct A contains a struct B, and struct B in turn contains a 
+ struct A.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ only need to decide when creating the first struct what the type name 
+ of the second struct will be and use that in the &quot;Type name&quot; 
+ field.</p>
+
+<p>&nbsp;</p>
+
+<p>The sub-element of a FOR does not need a name (since they are accessed 
+ using the FOR name and an integer index) so we can leave the name blank.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>25. Click OK to close the USE STRUCT dialog, 
+ then click OK to close the FOR dialog.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_3_5.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><span style="font-weight: bold;"><br>
+<br>
+Figure 5. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Final 
+ &quot;group&quot; STRUCT dialog.</span></p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>26. Click the OK in the three remaining dialogs 
+ to close: the &quot;group&quot; STRUCT dialog, the IF dialog and the &quot;object&quot; 
+ STRUCT dialog.</p>
+
+<p class=Body-Text-Indent-2>27. Now right-click the root node in the tree 
+ window and select &quot;Expand All&quot; to see the complete structure.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_3_6.gif"
+						style="border-style: none;
+								border: none;
+								width: 698px;
+								height: 584px;"
+						width=698
+						height=584
+						border=0><span style="font-weight: bold;"><br>
+<br>
+Figure 6. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Complete 
+ &quot;object&quot; structure definition in the tree.</span></p>
+
+<p>&nbsp;</p>
+
+<p>The main part of a HEG file is the array of graphical objects. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Now 
+ that we have defined the graphical objects format we well create this 
+ array in the next section of the tutorial.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><a HREF="TemplateTute2-2.htm"><img src="../back.gif"
+													style="border-style: none;
+															border: none;
+															width: 51px;
+															height: 22px;"
+													width=51
+													height=22
+													border=0></a> <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a 
+ HREF="TemplateTute2-4.htm"><!--kadov_tag{{</spaces>}}--><img src="../next.gif"
+	style="border-style: none;
+			border: none;
+			width: 51px;
+			height: 22px;"
+	width=51
+	height=22
+	border=0></a></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

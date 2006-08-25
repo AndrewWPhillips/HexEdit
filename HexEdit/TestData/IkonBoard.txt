@@ -1,0 +1,40 @@
+Modifying IkonBoard
+
+Top Header of all pages:
+
+Go to AdminCP>Skins>Edit Skin Properties 
+Select: Standard Ikonboard Skin (or whatever skin you want to edit)
+Select: HTML
+Select: Global Board Elts
+Select: BoardHeader
+Changed to:
+-------------------------------------------------
+    <!-- Cgi-bot Begin Header -->
+    <a name="head"></a>
+    <table cellpadding='0' cellspacing='0' border='0' width="<%SKIN:TABLE_WIDTH%>" align='center'>
+        <tr>
+            <td width="180" valign="top" background="../images/linksbg.gif" height="100">
+              <a href="../index.html"><img src="../images/bhome.gif" alt="Home" align="middle" border="0" WIDTH="30" HEIGHT="30"> Hex Edit Home Page</a><br>
+              <a href="../hex-edit-features.htm"><img src="../images/bchisel.gif" alt="Hex Edit Features" align="middle" border="0" / WIDTH="30" HEIGHT="30" / /> Hex Edit Features</a><br>
+              <a href="../binary-editor-feedback.htm"><img src="../images/btrowel.gif" alt="Button" align="middle" border="0" / WIDTH="30" HEIGHT="30" / /> Testimonials</a><br>
+            </td>
+            <td width="180" valign="top" background="../images/linksbg.gif" height="100">
+              <a href="../hex-edit-shots.htm"><img src="../images/bsdriver.gif" alt="Button" align="middle" border="0" / WIDTH="30" HEIGHT="30" / /> Screen Shots</a><br>
+              <a href="../download.htm"><img src="../images/bpliers.gif" alt="Button" align="middle" border="0" / WIDTH="30" HEIGHT="30" / /> Downloads</a><br>
+              <a href="http://www.hexedit.com/cgi-bin/ikonboard.cgi"><img src="../images/bspanner.gif" alt="Button" align="middle" border="0" / WIDTH="30" HEIGHT="30" / /> Forums Home</a><br>
+            </td>
+            <td width="180" valign="top" background="../images/linksbg.gif" height="100">
+              <a href="../binary-editor-faq.htm"><img src="../images/bhammer.gif" alt="Button" align="middle" border="0" / WIDTH="30" HEIGHT="30" / /> HexEdit FAQ</a><br>
+              <a href="../bug-list.htm"><img src="../images/bbrush.gif" alt="Button" align="middle" border="0" / WIDTH="30" HEIGHT="30" / /> Known Bugs</a>
+              <br><small> <a href="../about-hex-edit.htm">about</a>  <a href="../help/Hexedit.htm">help</a>  <a href="../hex-edit-privacy.htm">privacy</a>
+              <a href="https://orders.digitalcandle.com/order_php/order.php?productid=000331">register</a>   </small>
+            </td>
+            <td nowrap align='center' valign='top'>
+                 <img src="../images/forums.gif" alt="Forums" align="middle" border="0" WIDTH="198" HEIGHT="64"><br>
+                <a href="<%VAR:BOARD_URL%>/ikonboard.<%VAR:CGI_EXT%>?s=$iB::SESSION;act=Search;CODE=00;$iB::APPEND_SEARCH"><%SKIN:F_SEARCH%></a> 
+                <a href="<%VAR:BOARD_URL%>/ikonboard.<%VAR:CGI_EXT%>?s=$iB::SESSION;act=Members"><%SKIN:F_MEMBERS%></a> 
+                <a href="<%VAR:BOARD_URL%>/ikonboard.<%VAR:CGI_EXT%>?s=$iB::SESSION;act=Help;CODE=00"><%SKIN:F_HELP%></a>
+            </td>
+        </tr>
+    </table>
+    <!-- Cgi-bot End Header -->

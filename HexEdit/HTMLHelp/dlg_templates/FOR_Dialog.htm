@@ -1,0 +1,229 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>FOR Dialog</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1163>
+<meta name=layout-width content=1210>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;"><span style="font-family: Arial;">FOR Dialog</span></h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="FOR_dlg.gif"
+						style="border-style: none;
+								border: none;
+								width: 452px;
+								height: 270px;"
+						width=452
+						height=270
+						border=0></p>
+
+<p>&nbsp;</p>
+
+<p>This dialog allows you to set the options of a template FOR element 
+ (and its contained element, using the Edit button). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is usually invoked by right-clicking the FOR node in the template tree 
+ view and selecting the &quot;Edit...&quot; item.</p>
+
+<p>&nbsp;</p>
+
+<p>The FOR element is used to create a repetition (ie, zero or more occurrences) 
+ of its sub-element.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Name</p>
+
+<p style="margin-left: 40px;">This name identifies this specific field 
+ in the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ name is used in expressions to access array elements (using an index in 
+ square brackets). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ name is required (unless the parent element is also a FOR) so that you 
+ can access this element, and should be different to the names of siblings 
+ (if the parent is a STRUCT).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Count</p>
+
+<p style="margin-left: 40px;">This is the number of elements of the array. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The value 
+ may be a constant integer or an expression that evaluates to an integer. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You can 
+ use any value from the template so far processed in the expression. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Use 
+ the button with the triangle to see a menu (and possibly submenus) of 
+ all available values.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">If the expression evaluates to zero for a 
+ particular data file then the array contains no elements. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ even in this case a sub-element is shown (greyed out) in the template 
+ tree view - this allows you to edit the sub-element of the FOR, even if 
+ the array is empty.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Stop</p>
+
+<p style="margin-left: 40px;">A boolean expression that returns true when 
+ the array should terminate. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ expression will use the special variable &quot;this&quot; to get the current 
+ array value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Use 
+ the button with the triangle to see a menu (and possibly submenus) of 
+ all available values including &quot;this&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">As an example: if the element contained in 
+ the FOR is a DATA element of integer type then an expression like &quot;this 
+ == 0&quot; could be used, whence the last element would be zero. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Another 
+ example: if the contained element is a STRUCT which itself contains a 
+ DATA element with name &quot;flag&quot; then an expression like &quot;this.flag 
+ == -1&quot; could be used.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">Note: If both Count and Stop then the array 
+ stops when one or the other conditions are satisifed. If neither are specified 
+ then the array continues to end of file (in which case there should be 
+ no more elements after the array).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Element</p>
+
+<p style="margin-left: 40px;">This displays the name and/or type of sub-element 
+ contained in the FOR.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Edit</p>
+
+<p style="margin-left: 40px;">Use this button to edit the element that 
+ is contained in the FOR. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ cannot insert or delete elements like in a STRUCT since the FOR must always 
+ have exactly one sub-element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ you can replace it with an element of a different type (see below).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Replace with</p>
+
+<p style="margin-left: 40px;">Use this button to replace the element contained 
+ in the FOR with an element of a different type.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Type name</p>
+
+<p style="margin-left: 40px;">Generic type name for the data element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, this could be the name of a C/C++ typedef. <!--kadov_tag{{<spaces>}}-->&nbsp;<span 
+ style="margin-left: 40px;"><!--kadov_tag{{</spaces>}}-->This is a comment 
+ field only and has no effect on the behaviour of the template.</span></p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Comments</p>
+
+<p style="margin-left: 40px;">Add any other relevant information here.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">&lt;&lt; 
+ and &gt;&gt; buttons</span></p>
+
+<p style="margin-left: 40px;">If the parent element is a STRUCT then these 
+ buttons are displayed in the bottom right of the dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ allow you to move to the previous and next sibling (ie the previous and 
+ next elements in the parent STRUCT). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is very handy when you quickly want to view or change values in all the 
+ children.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">Using the button is equivalent to clicking 
+ OK then editing the previous or next element in the parent STRUCT.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 0px;">
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name="_Version" value="65536" >
+<param name="_ExtentX" value="2117" >
+<param name="_ExtentY" value="556" >
+<param name="_StockProps" value="13" >
+<param name="ForeColor" value="0" >
+<param name="BackColor" value="13160660" >
+<param name="UseButton" value="-1" >
+<param name="ControlLabel" value="Related Topics" >
+<param name="UseIcon" value="0" >
+<param name="Items" value="DATA Dialog;DATA_Dialog.htm$$**$$Editing templates;..\overviewadvanced\Editing_templates.htm$$**$$EVAL Dialog;EVAL_DLG.htm$$**$$Expressions;..\overviewadvanced\Expressions.htm$$**$$STRUCT Dialog;STRUCT_Dialog.htm$$**$$" >
+<param name="Image" value="" >
+<param name="FontInfo" value="MS Sans Serif,8,0,," >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_templates\FOR_Dialog.htm" >
+<param name="_ID" value="RelatedTopics" >
+<param name="UseMenu" value="-1" >
+<param name="Frame" value="" >
+<param name="Window" value="" >
+</object>-->
+<OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM  NAME="Item1"  VALUE="DATA Dialog;DATA_Dialog.htm">
+  <PARAM  NAME="Item2"  VALUE="Editing templates;..\overviewadvanced\Editing_templates.htm">
+  <PARAM  NAME="Item3"  VALUE="EVAL Dialog;EVAL_DLG.htm">
+  <PARAM  NAME="Item4"  VALUE="Expressions;..\overviewadvanced\Expressions.htm">
+  <PARAM  NAME="Item5"  VALUE="STRUCT Dialog;STRUCT_Dialog.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+ </p>
+
+</body>
+
+</html>

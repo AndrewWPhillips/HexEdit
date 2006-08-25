@@ -1,0 +1,451 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="WindowsTypes" comment="Types from Windows/MFC headers. This file is used in parsing C/C++ source code for declarations.">
+	<data type="int" name="HANDLE" format="unsigned" len="4" display="hex" type_name="HANDLE"/>
+	<data type="int" name="HWND" format="unsigned" len="4" display="hex" type_name="HWND"/>
+	<data type="int" name="INT8" format="signed" len="1" type_name="INT8" comment="typedef signed char"/>
+	<data type="int" name="PINT8" format="unsigned" len="4" display="hex" type_name="PINT8"/>
+	<data type="int" name="INT16" format="signed" len="2" type_name="INT16" comment="typedef signed short"/>
+	<data type="int" name="PINT16" format="unsigned" len="4" display="hex" type_name="PINT16"/>
+	<data type="int" name="INT32" format="signed" len="4" type_name="INT32" comment="typedef signed int"/>
+	<data type="int" name="PINT32" format="unsigned" len="4" display="hex" type_name="PINT32"/>
+	<data type="int" name="INT64" format="signed" len="8" type_name="INT64" comment="typedef signed __int64"/>
+	<data type="int" name="PINT64" format="unsigned" len="4" display="hex" type_name="PINT64"/>
+	<data type="int" name="UINT8" format="unsigned" len="1" type_name="UINT8" comment="typedef unsigned char"/>
+	<data type="int" name="PUINT8" format="unsigned" len="4" display="hex" type_name="PUINT8"/>
+	<data type="int" name="UINT16" format="unsigned" len="2" type_name="UINT16" comment="typedef unsigned short"/>
+	<data type="int" name="PUINT16" format="unsigned" len="4" display="hex" type_name="PUINT16"/>
+	<data type="int" name="UINT32" format="unsigned" len="4" type_name="UINT32" comment="typedef unsigned int"/>
+	<data type="int" name="PUINT32" format="unsigned" len="4" display="hex" type_name="PUINT32"/>
+	<data type="int" name="UINT64" format="unsigned" len="8" type_name="UINT64" comment="typedef unsigned __int64"/>
+	<data type="int" name="PUINT64" format="unsigned" len="4" display="hex" type_name="PUINT64"/>
+	<data type="int" name="LONG32" format="signed" len="4" type_name="LONG32" comment="typedef signed int"/>
+	<data type="int" name="PLONG32" format="unsigned" len="4" display="hex" type_name="PLONG32"/>
+	<data type="int" name="ULONG32" format="unsigned" len="4" type_name="ULONG32" comment="typedef unsigned int"/>
+	<data type="int" name="PULONG32" format="unsigned" len="4" display="hex" type_name="PULONG32"/>
+	<data type="int" name="DWORD32" format="unsigned" len="4" type_name="DWORD32" comment="typedef unsigned int"/>
+	<data type="int" name="PDWORD32" format="unsigned" len="4" display="hex" type_name="PDWORD32"/>
+	<data type="int" name="INT_PTR" format="signed" len="4" type_name="INT_PTR" comment="typedef int"/>
+	<data type="int" name="PINT_PTR" format="unsigned" len="4" display="hex" type_name="PINT_PTR"/>
+	<data type="int" name="UINT_PTR" format="unsigned" len="4" type_name="UINT_PTR" comment="typedef unsigned int"/>
+	<data type="int" name="PUINT_PTR" format="unsigned" len="4" display="hex" type_name="PUINT_PTR"/>
+	<data type="int" name="LONG_PTR" format="signed" len="4" type_name="LONG_PTR" comment="typedef long"/>
+	<data type="int" name="PLONG_PTR" format="unsigned" len="4" display="hex" type_name="PLONG_PTR"/>
+	<data type="int" name="ULONG_PTR" format="unsigned" len="4" type_name="ULONG_PTR" comment="typedef unsigned long"/>
+	<data type="int" name="PULONG_PTR" format="unsigned" len="4" display="hex" type_name="PULONG_PTR"/>
+	<data type="int" name="UHALF_PTR" format="unsigned" len="2" type_name="UHALF_PTR" comment="typedef unsigned short"/>
+	<data type="int" name="PUHALF_PTR" format="unsigned" len="4" display="hex" type_name="PUHALF_PTR"/>
+	<data type="int" name="HALF_PTR" format="signed" len="2" type_name="HALF_PTR" comment="typedef short"/>
+	<data type="int" name="PHALF_PTR" format="unsigned" len="4" display="hex" type_name="PHALF_PTR"/>
+	<data type="int" name="SHANDLE_PTR" format="signed" len="4" type_name="SHANDLE_PTR" comment="typedef long"/>
+	<data type="int" name="HANDLE_PTR" format="unsigned" len="4" type_name="HANDLE_PTR" comment="typedef unsigned long"/>
+	<data type="int" name="SIZE_T" format="unsigned" len="4" type_name="SIZE_T" comment="typedef ULONG_PTR"/>
+	<data type="int" name="PSIZE_T" format="unsigned" len="4" display="hex" type_name="PSIZE_T"/>
+	<data type="int" name="SSIZE_T" format="signed" len="4" type_name="SSIZE_T" comment="typedef LONG_PTR"/>
+	<data type="int" name="PSSIZE_T" format="unsigned" len="4" display="hex" type_name="PSSIZE_T"/>
+	<data type="int" name="DWORD_PTR" format="unsigned" len="4" type_name="DWORD_PTR" comment="typedef ULONG_PTR"/>
+	<data type="int" name="PDWORD_PTR" format="unsigned" len="4" display="hex" type_name="PDWORD_PTR"/>
+	<data type="int" name="LONG64" format="signed" len="8" type_name="LONG64" comment="typedef __int64"/>
+	<data type="int" name="PLONG64" format="unsigned" len="4" display="hex" type_name="PLONG64"/>
+	<data type="int" name="ULONG64" format="unsigned" len="8" type_name="ULONG64" comment="typedef unsigned __int64"/>
+	<data type="int" name="PULONG64" format="unsigned" len="4" display="hex" type_name="PULONG64"/>
+	<data type="int" name="DWORD64" format="unsigned" len="8" type_name="DWORD64" comment="typedef unsigned __int64"/>
+	<data type="int" name="PDWORD64" format="unsigned" len="4" display="hex" type_name="PDWORD64"/>
+	<data type="int" name="KAFFINITY" format="unsigned" len="4" type_name="KAFFINITY" comment="typedef ULONG_PTR"/>
+	<data type="int" name="PKAFFINITY" format="unsigned" len="4" display="hex" type_name="PKAFFINITY"/>
+	<data type="int" name="ULONG" format="unsigned" len="4" type_name="ULONG" comment="typedef unsigned long"/>
+	<data type="int" name="PULONG" format="unsigned" len="4" display="hex" type_name="PULONG"/>
+	<data type="int" name="USHORT" format="unsigned" len="2" type_name="USHORT" comment="typedef unsigned short"/>
+	<data type="int" name="PUSHORT" format="unsigned" len="4" display="hex" type_name="PUSHORT"/>
+	<data type="int" name="UCHAR" format="unsigned" len="1" type_name="UCHAR" comment="typedef unsigned char"/>
+	<data type="int" name="PUCHAR" format="unsigned" len="4" display="hex" type_name="PUCHAR"/>
+	<data type="int" name="PSZ" format="unsigned" len="4" display="hex" type_name="PSZ"/>
+	<data type="int" name="DWORD" format="unsigned" len="4" type_name="DWORD" comment="typedef unsigned long"/>
+	<data type="int" name="BOOL" format="signed" len="4" type_name="BOOL" comment="typedef int"/>
+	<data type="int" name="BYTE" format="unsigned" len="1" type_name="BYTE" comment="typedef unsigned char"/>
+	<data type="int" name="WORD" format="unsigned" len="2" type_name="WORD" comment="typedef unsigned short"/>
+	<data type="real" name="FLOAT" len="4" type_name="FLOAT" comment="typedef float"/>
+	<data type="int" name="PFLOAT" format="unsigned" len="4" display="hex" type_name="PFLOAT"/>
+	<data type="int" name="PBOOL" format="unsigned" len="4" display="hex" type_name="PBOOL"/>
+	<data type="int" name="LPBOOL" format="unsigned" len="4" display="hex" type_name="LPBOOL"/>
+	<data type="int" name="PBYTE" format="unsigned" len="4" display="hex" type_name="PBYTE"/>
+	<data type="int" name="LPBYTE" format="unsigned" len="4" display="hex" type_name="LPBYTE"/>
+	<data type="int" name="PINT" format="unsigned" len="4" display="hex" type_name="PINT"/>
+	<data type="int" name="LPINT" format="unsigned" len="4" display="hex" type_name="LPINT"/>
+	<data type="int" name="PWORD" format="unsigned" len="4" display="hex" type_name="PWORD"/>
+	<data type="int" name="LPWORD" format="unsigned" len="4" display="hex" type_name="LPWORD"/>
+	<data type="int" name="LPLONG" format="unsigned" len="4" display="hex" type_name="LPLONG"/>
+	<data type="int" name="PDWORD" format="unsigned" len="4" display="hex" type_name="PDWORD"/>
+	<data type="int" name="LPDWORD" format="unsigned" len="4" display="hex" type_name="LPDWORD"/>
+	<data type="int" name="LPVOID" format="unsigned" len="4" display="hex" type_name="LPVOID"/>
+	<data type="int" name="LPCVOID" format="unsigned" len="4" display="hex" type_name="LPCVOID"/>
+	<data type="int" name="INT" format="signed" len="4" type_name="INT" comment="typedef int"/>
+	<data type="int" name="UINT" format="unsigned" len="4" type_name="UINT" comment="typedef unsigned int"/>
+	<data type="int" name="PUINT" format="unsigned" len="4" display="hex" type_name="PUINT"/>
+	<data type="int" name="PVOID" format="unsigned" len="4" display="hex" type_name="PVOID"/>
+	<data type="char" name="CHAR" format="ascii" type_name="CHAR" comment="typedef char"/>
+	<data type="int" name="SHORT" format="signed" len="2" type_name="SHORT" comment="typedef short"/>
+	<data type="int" name="LONG" format="signed" len="4" type_name="LONG" comment="typedef long"/>
+	<data type="char" name="WCHAR" format="unicode" type_name="WCHAR" comment="typedef wchar_t"/>
+	<data type="int" name="PWCHAR" format="unsigned" len="4" display="hex" type_name="PWCHAR"/>
+	<data type="int" name="LPWCH" format="unsigned" len="4" display="hex" type_name="LPWCH"/>
+	<data type="int" name="PWCH" format="unsigned" len="4" display="hex" type_name="PWCH"/>
+	<data type="int" name="LPCWCH" format="unsigned" len="4" display="hex" type_name="LPCWCH"/>
+	<data type="int" name="PCWCH" format="unsigned" len="4" display="hex" type_name="PCWCH"/>
+	<data type="int" name="NWPSTR" format="unsigned" len="4" display="hex" type_name="NWPSTR"/>
+	<data type="int" name="LPWSTR" format="unsigned" len="4" display="hex" type_name="LPWSTR"/>
+	<data type="int" name="PWSTR" format="unsigned" len="4" display="hex" type_name="PWSTR"/>
+	<data type="int" name="LPUWSTR" format="unsigned" len="4" display="hex" type_name="LPUWSTR"/>
+	<data type="int" name="PUWSTR" format="unsigned" len="4" display="hex" type_name="PUWSTR"/>
+	<data type="int" name="LPCWSTR" format="unsigned" len="4" display="hex" type_name="LPCWSTR"/>
+	<data type="int" name="PCWSTR" format="unsigned" len="4" display="hex" type_name="PCWSTR"/>
+	<data type="int" name="LPCUWSTR" format="unsigned" len="4" display="hex" type_name="LPCUWSTR"/>
+	<data type="int" name="PCUWSTR" format="unsigned" len="4" display="hex" type_name="PCUWSTR"/>
+	<data type="int" name="PCHAR" format="unsigned" len="4" display="hex" type_name="PCHAR"/>
+	<data type="int" name="LPCH" format="unsigned" len="4" display="hex" type_name="LPCH"/>
+	<data type="int" name="PCH" format="unsigned" len="4" display="hex" type_name="PCH"/>
+	<data type="int" name="LPCCH" format="unsigned" len="4" display="hex" type_name="LPCCH"/>
+	<data type="int" name="PCCH" format="unsigned" len="4" display="hex" type_name="PCCH"/>
+	<data type="int" name="NPSTR" format="unsigned" len="4" display="hex" type_name="NPSTR"/>
+	<data type="int" name="LPSTR" format="unsigned" len="4" display="hex" type_name="LPSTR"/>
+	<data type="int" name="PSTR" format="unsigned" len="4" display="hex" type_name="PSTR"/>
+	<data type="int" name="LPCSTR" format="unsigned" len="4" display="hex" type_name="LPCSTR"/>
+	<data type="int" name="PCSTR" format="unsigned" len="4" display="hex" type_name="PCSTR"/>
+	<data type="int" name="PSHORT" format="unsigned" len="4" display="hex" type_name="PSHORT"/>
+	<data type="int" name="PLONG" format="unsigned" len="4" display="hex" type_name="PLONG"/>
+	<data type="int" name="HANDLE" format="unsigned" len="4" display="hex" type_name="HANDLE"/>
+	<data type="int" name="PHANDLE" format="unsigned" len="4" display="hex" type_name="PHANDLE"/>
+	<data type="int" name="FCHAR" format="unsigned" len="1" type_name="FCHAR" comment="typedef BYTE"/>
+	<data type="int" name="FSHORT" format="unsigned" len="2" type_name="FSHORT" comment="typedef WORD"/>
+	<data type="int" name="FLONG" format="unsigned" len="4" type_name="FLONG" comment="typedef DWORD"/>
+	<data type="int" name="HRESULT" format="signed" len="4" type_name="HRESULT" comment="typedef LONG"/>
+	<data type="char" name="CCHAR" format="ascii" type_name="CCHAR" comment="typedef char"/>
+	<data type="int" name="LCID" format="unsigned" len="4" type_name="LCID" comment="typedef DWORD"/>
+	<data type="int" name="PLCID" format="unsigned" len="4" display="hex" type_name="PLCID" comment="typedef PDWORD"/>
+	<data type="int" name="LANGID" format="unsigned" len="2" type_name="LANGID" comment="typedef WORD"/>
+	<struct name="_FLOAT128" pack="4">
+		<data type="int" name="LowPart" format="signed" len="8" type_name="__int64"/>
+		<data type="int" name="HighPart" format="signed" len="8" type_name="__int64"/>
+	</struct>
+	<struct name="FLOAT128" pack="4" type_name="FLOAT128">
+		<data type="int" name="LowPart" format="signed" len="8" type_name="__int64"/>
+		<data type="int" name="HighPart" format="signed" len="8" type_name="__int64"/>
+	</struct>
+	<struct name="_GUID" pack="4">
+		<data type="int" name="Data1" format="unsigned" len="4" type_name="unsigned long"/>
+		<data type="int" name="Data2" format="unsigned" len="2" type_name="unsigned short"/>
+		<data type="int" name="Data3" format="unsigned" len="2" type_name="unsigned short"/>
+		<for count="8" name="Data4">
+			<data type="int" format="unsigned" len="1" type_name="unsigned char"/>
+		</for>
+	</struct>
+	<struct name="GUID" pack="4" type_name="GUID">
+		<data type="int" name="Data1" format="unsigned" len="4" type_name="unsigned long"/>
+		<data type="int" name="Data2" format="unsigned" len="2" type_name="unsigned short"/>
+		<data type="int" name="Data3" format="unsigned" len="2" type_name="unsigned short"/>
+		<for count="8" name="Data4">
+			<data type="int" format="unsigned" len="1" type_name="unsigned char"/>
+		</for>
+	</struct>
+	<struct name="_LEGACY_SAVE_AREA" pack="4">
+		<data type="int" name="ControlWord" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="Reserved0" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="StatusWord" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="Reserved1" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="TagWord" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="Reserved2" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="ErrorOffset" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="ErrorSelector" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="ErrorOpcode" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="DataOffset" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="DataSelector" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="Reserved3" format="unsigned" len="2" type_name="WORD"/>
+		<for count="80" name="FloatRegisters">
+			<data type="int" format="unsigned" len="1" type_name="BYTE"/>
+		</for>
+	</struct>
+	<struct name="LEGACY_SAVE_AREA" pack="4" type_name="LEGACY_SAVE_AREA">
+		<data type="int" name="ControlWord" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="Reserved0" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="StatusWord" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="Reserved1" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="TagWord" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="Reserved2" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="ErrorOffset" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="ErrorSelector" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="ErrorOpcode" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="DataOffset" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="DataSelector" format="unsigned" len="2" type_name="WORD"/>
+		<data type="int" name="Reserved3" format="unsigned" len="2" type_name="WORD"/>
+		<for count="80" name="FloatRegisters">
+			<data type="int" format="unsigned" len="1" type_name="BYTE"/>
+		</for>
+	</struct>
+	<data type="int" name="PLEGACY_SAVE_AREA" format="unsigned" len="4" display="hex" type_name="PLEGACY_SAVE_AREA"/>
+	<data type="int" name="PFLOAT128" format="unsigned" len="4" display="hex" type_name="PFLOAT128"/>
+	<data type="int" name="LONGLONG" format="signed" len="8" type_name="LONGLONG" comment="typedef __int64"/>
+	<data type="int" name="ULONGLONG" format="unsigned" len="8" type_name="ULONGLONG" comment="typedef unsigned __int64"/>
+	<data type="int" name="PLONGLONG" format="unsigned" len="4" display="hex" type_name="PLONGLONG"/>
+	<data type="int" name="PULONGLONG" format="unsigned" len="4" display="hex" type_name="PULONGLONG"/>
+	<data type="int" name="USN" format="signed" len="8" type_name="USN" comment="typedef LONGLONG"/>
+	<struct name="_LARGE_INTEGER" pack="4">
+		<jump offset="0" origin="current">
+			<struct name="u" pack="4">
+				<data type="int" name="LowPart" format="unsigned" len="4" type_name="DWORD"/>
+				<data type="int" name="HighPart" format="signed" len="4" type_name="LONG"/>
+			</struct>
+		</jump>
+		<jump offset="0" origin="current">
+			<data type="int" name="QuadPart" format="signed" len="8" type_name="LONGLONG"/>
+		</jump>
+		<data type="none" len="8" comment="padding for size of largest union member"/>
+	</struct>
+	<struct name="LARGE_INTEGER" pack="4" type_name="LARGE_INTEGER">
+		<jump offset="0" origin="current">
+			<struct name="u" pack="4">
+				<data type="int" name="LowPart" format="unsigned" len="4" type_name="DWORD"/>
+				<data type="int" name="HighPart" format="signed" len="4" type_name="LONG"/>
+			</struct>
+		</jump>
+		<jump offset="0" origin="current">
+			<data type="int" name="QuadPart" format="signed" len="8" type_name="LONGLONG"/>
+		</jump>
+		<data type="none" len="8" comment="padding for size of largest union member"/>
+	</struct>
+	<data type="int" name="PLARGE_INTEGER" format="unsigned" len="4" display="hex" type_name="PLARGE_INTEGER"/>
+	<struct name="_ULARGE_INTEGER" pack="4">
+		<jump offset="0" origin="current">
+			<struct name="u" pack="4">
+				<data type="int" name="LowPart" format="unsigned" len="4" type_name="DWORD"/>
+				<data type="int" name="HighPart" format="signed" len="4" type_name="LONG"/>
+			</struct>
+		</jump>
+		<jump offset="0" origin="current">
+			<data type="int" name="QuadPart" format="unsigned" len="8" type_name="ULONGLONG"/>
+		</jump>
+		<data type="none" len="8" comment="padding for size of largest union member"/>
+	</struct>
+	<struct name="ULARGE_INTEGER" pack="4" type_name="ULARGE_INTEGER">
+		<jump offset="0" origin="current">
+			<struct name="u" pack="4">
+				<data type="int" name="LowPart" format="unsigned" len="4" type_name="DWORD"/>
+				<data type="int" name="HighPart" format="signed" len="4" type_name="LONG"/>
+			</struct>
+		</jump>
+		<jump offset="0" origin="current">
+			<data type="int" name="QuadPart" format="unsigned" len="8" type_name="ULONGLONG"/>
+		</jump>
+		<data type="none" len="8" comment="padding for size of largest union member"/>
+	</struct>
+	<data type="int" name="PULARGE_INTEGER" format="unsigned" len="4" display="hex" type_name="PULARGE_INTEGER"/>
+	<struct name="_LUID" pack="4">
+		<data type="int" name="LowPart" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="HighPart" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<struct name="LUID" pack="4" type_name="LUID">
+		<data type="int" name="LowPart" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="HighPart" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<data type="int" name="PLUID" format="unsigned" len="4" display="hex" type_name="PLUID"/>
+	<data type="int" name="DWORDLONG" format="unsigned" len="8" type_name="DWORDLONG" comment="typedef ULONGLONG"/>
+	<data type="int" name="PDWORDLONG" format="unsigned" len="4" display="hex" type_name="PDWORDLONG"/>
+	<data type="int" name="BOOLEAN" format="unsigned" len="1" type_name="BOOLEAN" comment="typedef BYTE"/>
+	<data type="int" name="PBOOLEAN" format="unsigned" len="4" display="hex" type_name="PBOOLEAN"/>
+	<struct name="_LIST_ENTRY" pack="4">
+		<data type="int" name="Flink" format="unsigned" len="4" display="hex" type_name="pointer"/>
+		<data type="int" name="Blink" format="unsigned" len="4" display="hex" type_name="pointer"/>
+	</struct>
+	<struct name="LIST_ENTRY" pack="4" type_name="LIST_ENTRY">
+		<data type="int" name="Flink" format="unsigned" len="4" display="hex" type_name="pointer"/>
+		<data type="int" name="Blink" format="unsigned" len="4" display="hex" type_name="pointer"/>
+	</struct>
+	<data type="int" name="PLIST_ENTRY" format="unsigned" len="4" display="hex" type_name="PLIST_ENTRY"/>
+	<data type="int" name="PRLIST_ENTRY" format="unsigned" len="4" display="hex" type_name="PRLIST_ENTRY"/>
+	<struct name="_SINGLE_LIST_ENTRY" pack="4">
+		<data type="int" name="Next" format="unsigned" len="4" display="hex" type_name="pointer"/>
+	</struct>
+	<struct name="SINGLE_LIST_ENTRY" pack="4" type_name="SINGLE_LIST_ENTRY">
+		<data type="int" name="Next" format="unsigned" len="4" display="hex" type_name="pointer"/>
+	</struct>
+	<data type="int" name="PSINGLE_LIST_ENTRY" format="unsigned" len="4" display="hex" type_name="PSINGLE_LIST_ENTRY"/>
+	<struct name="LIST_ENTRY32" pack="4">
+		<data type="int" name="Flink" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="Blink" format="unsigned" len="4" type_name="DWORD"/>
+	</struct>
+	<struct name="LIST_ENTRY32" pack="4" type_name="LIST_ENTRY32">
+		<data type="int" name="Flink" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="Blink" format="unsigned" len="4" type_name="DWORD"/>
+	</struct>
+	<data type="int" name="PLIST_ENTRY32" format="unsigned" len="4" display="hex" type_name="PLIST_ENTRY32"/>
+	<struct name="LIST_ENTRY64" pack="4">
+		<data type="int" name="Flink" format="unsigned" len="8" type_name="ULONGLONG"/>
+		<data type="int" name="Blink" format="unsigned" len="8" type_name="ULONGLONG"/>
+	</struct>
+	<struct name="LIST_ENTRY64" pack="4" type_name="LIST_ENTRY64">
+		<data type="int" name="Flink" format="unsigned" len="8" type_name="ULONGLONG"/>
+		<data type="int" name="Blink" format="unsigned" len="8" type_name="ULONGLONG"/>
+	</struct>
+	<data type="int" name="PLIST_ENTRY64" format="unsigned" len="4" display="hex" type_name="PLIST_ENTRY64"/>
+	<struct name="_OBJECTID" pack="4">
+		<struct name="Lineage" pack="4" type_name="GUID">
+			<data type="int" name="Data1" format="unsigned" len="4" type_name="unsigned long"/>
+			<data type="int" name="Data2" format="unsigned" len="2" type_name="unsigned short"/>
+			<data type="int" name="Data3" format="unsigned" len="2" type_name="unsigned short"/>
+			<for count="8" name="Data4">
+				<data type="int" format="unsigned" len="1" type_name="unsigned char"/>
+			</for>
+		</struct>
+		<data type="int" name="Uniquifier" format="unsigned" len="4" type_name="DWORD"/>
+	</struct>
+	<struct name="OBJECTID" pack="4" type_name="OBJECTID">
+		<struct name="Lineage" pack="4" type_name="GUID">
+			<data type="int" name="Data1" format="unsigned" len="4" type_name="unsigned long"/>
+			<data type="int" name="Data2" format="unsigned" len="2" type_name="unsigned short"/>
+			<data type="int" name="Data3" format="unsigned" len="2" type_name="unsigned short"/>
+			<for count="8" name="Data4">
+				<data type="int" format="unsigned" len="1" type_name="unsigned char"/>
+			</for>
+		</struct>
+		<data type="int" name="Uniquifier" format="unsigned" len="4" type_name="DWORD"/>
+	</struct>
+	<data type="int" name="KSPIN_LOCK" format="unsigned" len="4" type_name="KSPIN_LOCK" comment="typedef ULONG_PTR"/>
+	<data type="int" name="PKSPIN_LOCK" format="unsigned" len="4" display="hex" type_name="PKSPIN_LOCK"/>
+	<data type="int" name="WPARAM" format="unsigned" len="4" type_name="WPARAM" comment="typedef UINT_PTR"/>
+	<data type="int" name="LPARAM" format="signed" len="4" type_name="LPARAM" comment="typedef LONG_PTR"/>
+	<data type="int" name="LRESULT" format="signed" len="4" type_name="LRESULT" comment="typedef LONG_PTR"/>
+	<data type="int" name="ATOM" format="unsigned" len="2" type_name="ATOM" comment="typedef WORD"/>
+	<data type="int" name="SPHANDLE" format="unsigned" len="4" display="hex" type_name="SPHANDLE"/>
+	<data type="int" name="LPHANDLE" format="unsigned" len="4" display="hex" type_name="LPHANDLE"/>
+	<data type="int" name="HGLOBAL" format="unsigned" len="4" display="hex" type_name="HGLOBAL" comment="typedef HANDLE"/>
+	<data type="int" name="HLOCAL" format="unsigned" len="4" display="hex" type_name="HLOCAL" comment="typedef HANDLE"/>
+	<data type="int" name="GLOBALHANDLE" format="unsigned" len="4" display="hex" type_name="GLOBALHANDLE" comment="typedef HANDLE"/>
+	<data type="int" name="LOCALHANDLE" format="unsigned" len="4" display="hex" type_name="LOCALHANDLE" comment="typedef HANDLE"/>
+	<data type="int" name="FARPROC" format="unsigned" len="4" display="hex" type_name="FARPROC"/>
+	<data type="int" name="NEARPROC" format="unsigned" len="4" display="hex" type_name="NEARPROC"/>
+	<data type="int" name="PROC" format="unsigned" len="4" display="hex" type_name="PROC"/>
+	<data type="int" name="HGDIOBJ" format="unsigned" len="4" display="hex" type_name="HGDIOBJ"/>
+	<struct name="_EXCEPTION_RECORD" pack="4">
+		<data type="int" name="ExceptionCode" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="ExceptionFlags" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="ExceptionRecord" format="unsigned" len="4" display="hex" type_name="pointer"/>
+		<data type="int" name="ExceptionAddress" format="unsigned" len="4" display="hex" type_name="PVOID"/>
+		<data type="int" name="NumberParameters" format="unsigned" len="4" type_name="DWORD"/>
+		<for count="15" name="ExceptionInformation">
+			<data type="int" format="unsigned" len="4" type_name="ULONG_PTR" comment="typedef unsigned long"/>
+		</for>
+	</struct>
+	<struct name="EXCEPTION_RECORD" pack="4" type_name="EXCEPTION_RECORD">
+		<data type="int" name="ExceptionCode" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="ExceptionFlags" format="unsigned" len="4" type_name="DWORD"/>
+		<data type="int" name="ExceptionRecord" format="unsigned" len="4" display="hex" type_name="pointer"/>
+		<data type="int" name="ExceptionAddress" format="unsigned" len="4" display="hex" type_name="PVOID"/>
+		<data type="int" name="NumberParameters" format="unsigned" len="4" type_name="DWORD"/>
+		<for count="15" name="ExceptionInformation">
+			<data type="int" format="unsigned" len="4" type_name="ULONG_PTR" comment="typedef unsigned long"/>
+		</for>
+	</struct>
+	<data type="int" name="PEXCEPTION_RECORD" format="unsigned" len="4" display="hex" type_name="PEXCEPTION_RECORD"/>
+	<struct name="_M128" pack="16">
+		<data type="int" name="Low" format="unsigned" len="8" type_name="ULONGLONG"/>
+		<data type="int" name="High" format="signed" len="8" type_name="LONGLONG"/>
+	</struct>
+	<struct name="M128" pack="16" type_name="M128">
+		<data type="int" name="Low" format="unsigned" len="8" type_name="ULONGLONG"/>
+		<data type="int" name="High" format="signed" len="8" type_name="LONGLONG"/>
+	</struct>
+	<data type="int" name="PM128" format="unsigned" len="4" display="hex" type_name="PM128"/>
+	<data type="int" name="COLORREF" format="unsigned" len="4" type_name="COLORREF" comment="typedef DWORD"/>
+	<data type="int" name="LPCOLORREF" format="unsigned" len="4" display="hex" type_name="LPCOLORREF"/>
+	<struct name="tagRECT" pack="4">
+		<data type="int" name="left" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="top" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="right" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="bottom" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<struct name="RECT" pack="4" type_name="RECT">
+		<data type="int" name="left" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="top" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="right" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="bottom" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<data type="int" name="PRECT" format="unsigned" len="4" display="hex" type_name="PRECT"/>
+	<data type="int" name="NPRECT" format="unsigned" len="4" display="hex" type_name="NPRECT"/>
+	<data type="int" name="LPRECT" format="unsigned" len="4" display="hex" type_name="LPRECT"/>
+	<data type="int" name="LPCRECT" format="unsigned" len="4" display="hex" type_name="LPCRECT"/>
+	<struct name="_RECTL" pack="4">
+		<data type="int" name="left" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="top" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="right" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="bottom" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<struct name="RECTL" pack="4" type_name="RECTL">
+		<data type="int" name="left" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="top" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="right" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="bottom" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<data type="int" name="PRECTL" format="unsigned" len="4" display="hex" type_name="PRECTL"/>
+	<data type="int" name="LPRECTL" format="unsigned" len="4" display="hex" type_name="LPRECTL"/>
+	<data type="int" name="LPCRECTL" format="unsigned" len="4" display="hex" type_name="LPCRECTL"/>
+	<struct name="tagPOINT" pack="4">
+		<data type="int" name="x" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="y" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<struct name="POINT" pack="4" type_name="POINT">
+		<data type="int" name="x" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="y" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<data type="int" name="PPOINT" format="unsigned" len="4" display="hex" type_name="PPOINT"/>
+	<data type="int" name="NPPOINT" format="unsigned" len="4" display="hex" type_name="NPPOINT"/>
+	<data type="int" name="LPPOINT" format="unsigned" len="4" display="hex" type_name="LPPOINT"/>
+	<struct name="_POINTL" pack="4">
+		<data type="int" name="x" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="y" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<struct name="POINTL" pack="4" type_name="POINTL">
+		<data type="int" name="x" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="y" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<data type="int" name="PPOINTL" format="unsigned" len="4" display="hex" type_name="PPOINTL"/>
+	<struct name="tagSIZE" pack="4">
+		<data type="int" name="cx" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="cy" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<struct name="SIZE" pack="4" type_name="SIZE">
+		<data type="int" name="cx" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="cy" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<data type="int" name="PSIZE" format="unsigned" len="4" display="hex" type_name="PSIZE"/>
+	<data type="int" name="LPSIZE" format="unsigned" len="4" display="hex" type_name="LPSIZE"/>
+	<struct name="SIZEL" pack="4" type_name="SIZEL">
+		<data type="int" name="cx" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="cy" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<data type="int" name="PSIZEL" format="unsigned" len="4" display="hex" type_name="PSIZEL"/>
+	<data type="int" name="LPSIZEL" format="unsigned" len="4" display="hex" type_name="LPSIZEL"/>
+	<struct name="tagPOINTS" pack="2">
+		<data type="int" name="x" format="signed" len="2" type_name="SHORT"/>
+		<data type="int" name="y" format="signed" len="2" type_name="SHORT"/>
+	</struct>
+	<struct name="POINTS" pack="2" type_name="POINTS">
+		<data type="int" name="x" format="signed" len="2" type_name="SHORT"/>
+		<data type="int" name="y" format="signed" len="2" type_name="SHORT"/>
+	</struct>
+	<data type="int" name="PPOINTS" format="unsigned" len="4" display="hex" type_name="PPOINTS"/>
+	<data type="int" name="LPPOINTS" format="unsigned" len="4" display="hex" type_name="LPPOINTS"/>
+	<struct name="CPoint" pack="4" type_name="CPoint">
+		<data type="int" name="x" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="y" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<struct name="CRect" pack="4" type_name="CRect">
+		<data type="int" name="left" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="top" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="right" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="bottom" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<struct name="CSize" pack="4" type_name="CSize">
+		<data type="int" name="cx" format="signed" len="4" type_name="LONG"/>
+		<data type="int" name="cy" format="signed" len="4" type_name="LONG"/>
+	</struct>
+	<data type="int" name="CString" format="unsigned" len="4" display="hex" type_name="CString"/>
+</binary_file_format>

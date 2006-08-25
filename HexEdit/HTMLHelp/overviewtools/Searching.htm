@@ -1,0 +1,199 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Searching</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1077>
+<meta name=layout-width content=849>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial, sans-serif;">Searching</h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Quick searches can be performed with the Find Tool on the Edit Bar. 
+ The Find Dialog provides similar facilities but more options. Searches 
+ are done with the Boyer-Moore algorithm which, apart from being very fast, 
+ has the peculiarity that the longer the string of (unique) characters 
+ you are searching for the faster the search, although the limiting factor 
+ is likely to be the speed of your disk or network.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Find Tool</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The Find Tool on the Edit Bar allows you to search for bytes by either 
+ entering them as hex digits, or as a string. String searches can be case-sensitive 
+ or case-insensitive, and use EBCDIC rather than ASCII characters if you 
+ are currently viewing characters using the EBCDIC character set. You can 
+ also quickly start a case-insensitive, case-sensitive or hex search using 
+ the F4, F5 or F6 key.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The Find Tool also retains a history of the most recent searches performed. 
+ This history list is retained between invocations of HexEdit and is shared 
+ with the pages of the Find dialog (see below).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Find Dialog</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The Find dialog provides a few more options than the Find Tool. For 
+ example, you can use wildcards, and search for whole words, perform a 
+ search and replace operation etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ only disadvantage of the Find Dialog is that it takes up more screen space 
+ than the Find Tool, but it does automatically get out of the way of the 
+ cursor if it can.</p>
+
+<p>&nbsp;</p>
+
+<p>The find dialog is divided into several pages. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Every 
+ page has the same direction (up/down) and scope controls. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ scope is typically &quot;to end of file&quot; (or &quot;to start of file&quot; 
+ if the direction is up) but you can search the whole file and even all 
+ open files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->After 
+ a successful whole file search is done, the scope automatically switches 
+ to &quot;to end of file&quot; mode so that a subsequent search does not 
+ find exactly the same thing. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ &quot;to mark&quot; scope is useful if you just want to search through 
+ part of a large file.</p>
+
+<p>&nbsp;</p>
+
+<p>The <a href="..\dlg_find\Simple.htm">&quot;Basic&quot; page</a> allows 
+ you to quickly specify a search item as a string or in hex. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the characters you enter look like hex bytes (ie contain only an even 
+ number of hex digits, with optional spaces) then a hex search is done, 
+ else the characters are treated as a string to search for. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ string search has the option of being whole word only and case-insensitive. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The string 
+ search is done in EBCDIC if the active file is in EBCDIC display mode 
+ else ASCII is used.</p>
+
+<p>&nbsp;</p>
+
+<p>The <a href="..\dlg_find\HexFind.htm">&quot;Hex&quot; search page</a> 
+ is useful if you want to ensure you perform a hex (not text) search. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ also allows you to specify a bit mask to remove certain bits from the 
+ search. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ is also an option to specify the alignment so you could for example only 
+ search for a number when it occurs on a word boundary. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+ you enter the bytes in hex the corresponding characters are filled in 
+ in the text page (see below) in the selected character set, which allows 
+ you to check ASCII and EBCDIC values and even convert between character 
+ sets.</p>
+
+<p>&nbsp;</p>
+
+<p>The <a href="..\dlg_find\FindText.htm">&quot;Text&quot; search page</a> 
+ is useful if you want to ensure you perform a text (not hex) search. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also specify a wildcard character that matches any character. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+ well as the whole word and case-insensitive search option you can also 
+ explicitly specify an ASCII (actually ANSI), EBCDIC or Unicode character 
+ set search. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+ you enter text the corresponding hex values are entered in the hex page 
+ (using the current character set). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
+ you can flip between page to combine options, eg, if you wanted to perform 
+ a text search but with alignment restrictions.</p>
+
+<p>&nbsp;</p>
+
+<p>The <a href="..\dlg_find\FindNumber.htm">&quot;Number&quot; page</a> 
+ allows you to search for number in a variety of integer and floating points 
+ formats and sizes, and in both big- and little-endian byte order. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Like 
+ the hex page there is also an option to specify the alignment of the number 
+ found.</p>
+
+<p>&nbsp;</p>
+
+<p>The <a href="..\dlg_find\Replace.htm">&quot;Replace&quot; page</a> allows 
+ you to perform a search and replace operation. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Like 
+ the simple page you can use a text or a hex search and replace -- hex 
+ is only used if both the search and replace items appear to be hex. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ &quot;Replace&quot; button allows you to interactively find and replace 
+ items one at a time, whereas the &quot;Replace All&quot; button allows 
+ you to replace all occurrences within the current scope.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Other Find Commands</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Other “find” commands allow you to repeat a search, using the current 
+ search bytes, in either direction. Like many Windows programs (like NotePad) 
+ the find next command is mapped to F3 (in the default keymap) and find 
+ backwards is mapped to Shift+F3.</p>
+
+<p>&nbsp;</p>
+
+<p>The “Find Selection” command allows you to search for the next occurrence 
+ of the currently selected bytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is mapped (as in Visual Studio and other programs) to Ctrl+F3.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">For further information see:</span></p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\tools\HIDC_SEARCH.htm">Find 
+ Tool</a>&nbsp;to find out how to do quick searches</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_edit\HID_EDIT_FIND.htm">Find 
+ command</a>&nbsp;to invoke the Find dialog</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_misc\HID_SEARCH_BACK.htm">Find 
+ backward command</a>&nbsp;to find out how to repeat a search towards the 
+ start of file</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_misc\HID_SEARCH_FORW.htm">Find 
+ forward command</a>&nbsp;to find out how to repeat a search towards the 
+ end of file</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_misc\HID_SEARCH_SEL.htm">Find 
+ selection command</a>&nbsp;to search for the next occurrence of the selected 
+ bytes</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_view\Char_Set_EBCDIC.htm">Char 
+ Set EBCDIC</a> to perform searches using the EBCDIC character set</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;">&nbsp;</p>
+
+<p>.</p>
+
+</body>
+
+</html>

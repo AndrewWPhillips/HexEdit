@@ -1,0 +1,1727 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Using Templates</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=2782>
+<meta name=layout-width content=1210>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Using Templates</font></h2>
+
+<p>&nbsp;</p>
+
+<p>HexEdit incorporates &quot;templates&quot; for describing the format 
+ of many different types of binary data. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ allows you, with the appropriate template, to easily see an overview of 
+ a file, and quickly drill down to specific data fields. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you have ever had to analyse a binary file by counting bytes and decoding 
+ individual fields you will know how invaluable this facility is.</p>
+
+<p>&nbsp;</p>
+
+<p>Unlike the &quot;template&quot; systems of other hex editors, HexEdit 
+ uses an advanced system that can evaluate expressions based on the data 
+ of the file in use and allow for optional and variable-sized elements. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See the 
+ later sections on creating templates for more information on how HexEdit 
+ templates work. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
+ templates are stored in XML files and a later section explains the format 
+ of these files in detail (although you don't need to know this to create 
+ templates).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Using Templates</p>
+
+<p>&nbsp;</p>
+
+<p>When templates are in use a &quot;tree view&quot; of the file is available 
+ that lets you easily get an overview of the file and quickly find what 
+ you are looking for (assuming the template is well-designed). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By 
+ default HexEdit does not display this tree view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ enable use of templates click the &quot;Use templates&quot; check box 
+ in the <a HREF="..\dlg_options\HIDD_OPT_SYSDISPLAY.htm">Display page</a> 
+ of the &quot;Options&quot; dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->After 
+ you turn this on, any file thenceforth opened will use an appropriate 
+ template file if there is one or else the default template file.</p>
+
+<p>&nbsp;</p>
+
+<p>There is also an option to display the tree view either in a split window 
+ or as a tabbed window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ using a split window the tree view is displayed to the left of the normal 
+ view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ has the advantage that you can see both views together, which is particularly 
+ useful in &quot;sync&quot; mode (see below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also click and drag the divider to resize the views as desired. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ instead you use tabbed windows then you cannot see both the tree and the 
+ hex view at the same time, but you can see more of them and can easily 
+ flip between them using the tabs.</p>
+
+<p>&nbsp;</p>
+
+<p>The tree view gives a hierarchical display of the data in the file. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The tree 
+ controls work like the standard Windows tree controls where you click 
+ a plus box (+) to &quot;expand&quot; an item (ie show all items one level 
+ below it) or click a minus box (-) to contract an item. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you right-click an item a context (popup) menu appears with an item &quot;Expand 
+ All&quot; that shows all items down to any level below that item.</p>
+
+<p>&nbsp;</p>
+
+<p>You can easily use this tree to explore and even modify the data of 
+ the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->At 
+ any time you can print (and print preview) the tree as it is currently 
+ displayed using the normal File/Print (and File/Print Preview) menu items.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Tree View</p>
+
+<p>&nbsp;</p>
+
+<p>There are several basic types of items in the tree view:</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 99.566%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=99.566%>
+<col style="width: 12.378%;">
+<col style="width: 51.725%;">
+<col style="width: 35.897%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.378%;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	bgcolor=#C0C0C0
+	width=12.378%>
+<p style="font-weight: bold;">Type</td>
+<td colspan=1
+	rowspan=1
+	style="width: 51.725%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=51.725%>
+<p style="font-weight: bold;">Purpose</td>
+<td colspan=1
+	rowspan=1
+	style="width: 35.897%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=35.897%>
+<p style="font-weight: bold;">Contained Types</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.378%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	bgcolor=#C0C0C0
+	width=12.378%>
+<p>STRUCT</td>
+<td colspan=1
+	rowspan=1
+	style="width: 51.725%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=51.725%>
+<p>contains one or more items of different types</td>
+<td colspan=1
+	rowspan=1
+	style="width: 35.897%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=35.897%>
+<p>STRUCT, FOR, IF, JUMP, DATA or EVAL</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.378%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	bgcolor=#C0C0C0
+	width=12.378%>
+<p>JUMP</td>
+<td colspan=1
+	rowspan=1
+	style="width: 51.725%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=51.725%>
+<p>contains a single item but at a different file location</td>
+<td colspan=1
+	rowspan=1
+	style="width: 35.897%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=35.897%>
+<p>STRUCT, FOR, IF or DATA</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 12.378%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	bgcolor=#C0C0C0
+	width=12.378%>
+<p>FOR</td>
+<td colspan=1
+	rowspan=1
+	style="width: 51.725%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=51.725%>
+<p>contains a repetition of (zero or more) items of the same type</td>
+<td style="width: 35.897%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=35.897%>
+<p>STRUCT, FOR, IF, JUMP or DATA</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 12.378%;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=12.378%>
+<p>IF</td>
+<td colspan=1
+	rowspan=1
+	style="width: 51.725%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=51.725%>
+<p>this item no longer appears in HexEdit 3.0 unless you are in edit mode 
+ (see below)</td>
+<td style="width: 35.897%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=35.897%>
+<p>STRUCT, FOR, IF, JUMP or DATA</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.378%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=12.378%>
+<p>EVAL</td>
+<td colspan=1
+	rowspan=1
+	style="width: 51.725%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=51.725%>
+<p>shows a message or value based on previous fields</td>
+<td colspan=1
+	rowspan=1
+	style="width: 35.897%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=35.897%>
+<p>none</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 12.378%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=12.378%>
+<p>DATA</td>
+<td colspan=1
+	rowspan=1
+	style="width: 51.725%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=51.725%>
+<p>contain the actual data elements</td>
+<td style="width: 35.897%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=35.897%>
+<p>none</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p id=p12>&nbsp;</p>
+
+<p>The first four item types contain other items; whereas data (and eval) 
+ items are the &quot;leaves&quot; of the tree and cannot be expanded. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ is just one special top-level (struct) item that represents the whole 
+ file.</p>
+
+<p>&nbsp;</p>
+
+<p>Each item in the tree view has an icon which shows its purpose. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Related 
+ items have similar icons, for example, all data icons have the same shape 
+ but only differ in their colour. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Here 
+ is a description of the various icons:</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 62.097%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=62.097%>
+<col style="width: 10%;">
+<col style="width: 90%;">
+
+<tr style="x-cell-content-align: top; height: 25px;"
+	valign=top>
+<td style="width: 10%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-color: #008080;
+			border-top-style: Ridge;
+			border-top-color: #008080;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;
+			border-left-width: 4px;
+			border-left-style: ridge;
+			border-top-width: 4px;"
+	width=10%>
+<p><img src="..\dffd\dffd_file.gif"
+		style="border-style: none;
+				border: none;
+				width: 15px;
+				height: 15px;"
+		width=15
+		height=15
+		border=0></td>
+<td style="width: 90%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-style: Ridge;
+			border-top-color: #008080;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-top-width: 4px;
+			border-right-width: 4px;"
+	width=90%>
+<p>represents the whole file (STRUCT)</td></tr>
+
+<tr style="x-cell-content-align: top; height: 25px;"
+	valign=top>
+<td style="width: 10%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-color: #008080;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;
+			border-left-width: 4px;
+			border-left-style: ridge;"
+	width=10%>
+<p><img src="..\dffd\dffd_struct.gif"
+		style="border-style: none;
+				border: none;
+				width: 17px;
+				height: 16px;"
+		width=17
+		height=16
+		border=0></td>
+<td style="width: 90%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;"
+	width=90%>
+<p>represents a STRUCT containing sub-elements of different type</td></tr>
+
+<tr style="x-cell-content-align: top; height: 25px;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-color: #008080;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;
+			border-left-width: 4px;
+			border-left-style: ridge;"
+	width=10%>
+<p><img src="..\dffd\dffd_jump.gif"
+		style="border-style: none;
+				border: none;
+				width: 16px;
+				height: 14px;"
+		width=16
+		height=14
+		border=0></td>
+<td colspan=1
+	rowspan=1
+	style="width: 90%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;"
+	width=90%>
+<p>represents a JUMP to a different part of the file</td></tr>
+
+<tr style="x-cell-content-align: top; height: 25px;"
+	valign=top>
+<td style="width: 10%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-color: #008080;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;
+			border-left-width: 4px;
+			border-left-style: ridge;"
+	width=10%>
+<p><img src="..\dffd\dffd_for.gif"
+		style="border-style: none;
+				border: none;
+				width: 15px;
+				height: 16px;"
+		width=15
+		height=16
+		border=0></td>
+<td style="width: 90%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;"
+	width=90%>
+<p>represents a FOR containing sub-elements all of the same type</td></tr>
+
+<tr style="x-cell-content-align: top; height: 25px;"
+	valign=top>
+<td style="width: 10%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-color: #008080;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;
+			border-left-width: 4px;
+			border-left-style: ridge;"
+	width=10%>
+<p><img src="..\dffd\dffd_if.gif"
+		style="border-style: none;
+				border: none;
+				width: 15px;
+				height: 16px;"
+		width=15
+		height=16
+		border=0></td>
+<td style="width: 90%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;"
+	width=90%>
+<p>represents an IF containing an optional sub-element</td></tr>
+
+<tr style="x-cell-content-align: top; height: 25px;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-color: #008080;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;
+			border-left-width: 4px;
+			border-left-style: ridge;"
+	width=10%>
+<p><img src="..\dffd\dffd_eval.gif"
+		style="border-style: none;
+				border: none;
+				width: 15px;
+				height: 16px;"
+		width=15
+		height=16
+		border=0></td>
+<td colspan=1
+	rowspan=1
+	style="width: 90%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;"
+	width=90%>
+<p>represents an EVAL which shows a value or message</td></tr>
+
+<tr style="x-cell-content-align: top; height: 25px;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-color: #008080;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;
+			border-left-width: 4px;
+			border-left-style: ridge;"
+	width=10%>
+<p><img src="..\dffd\dffd_data.gif"
+		style="border-style: none;
+				border: none;
+				width: 14px;
+				height: 16px;"
+		width=14
+		height=16
+		border=0></td>
+<td colspan=1
+	rowspan=1
+	style="width: 90%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;"
+	width=90%>
+<p>represents a data element of known type</td></tr>
+
+<tr style="x-cell-content-align: top; height: 25px;"
+	valign=top>
+<td style="width: 10%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-color: #008080;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;
+			border-left-width: 4px;
+			border-left-style: ridge;"
+	width=10%>
+<p><img src="..\dffd\dffd_none.gif"
+		style="border-style: none;
+				border: none;
+				width: 12px;
+				height: 12px;"
+		width=12
+		height=12
+		border=0></td>
+<td style="width: 90%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-width: 1px;
+			border-right-width: 4px;"
+	width=90%>
+<p>represents a block of data of unknown type</td></tr>
+
+<tr style="x-cell-content-align: top; height: 25px;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-color: #008080;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-color: #008080;
+			border-bottom-style: Ridge;
+			border-right-width: 4px;
+			border-left-width: 4px;
+			border-left-style: ridge;
+			border-bottom-width: 4px;"
+	width=10%>
+<p><img src="..\dffd\dffd_more.gif"
+		style="border-style: none;
+				border: none;
+				width: 15px;
+				height: 14px;"
+		width=15
+		height=14
+		border=0></td>
+<td colspan=1
+	rowspan=1
+	style="width: 90%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Ridge;
+			border-right-color: #008080;
+			border-bottom-color: #008080;
+			border-bottom-style: Ridge;
+			border-bottom-width: 4px;
+			border-right-width: 4px;"
+	width=90%>
+<p>represents extra bytes past where the end of file was expected</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p>&nbsp;</p>
+
+<p>Note that under certain conditions some icons may be greyed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if the test condition of an IF is not satisified the data for 
+ the sub-elements is not available but the rows for the sub-elements are 
+ still displayed but with greyed icons. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ if an array size evaluates to zero one sub-element is still displayed 
+ but with greyed icons to indicate that the element is not actually present. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note: in 
+ HexEdit 3.0 these elements would not be displayed at all unless in edit 
+ mode.</p>
+
+<p>&nbsp;</p>
+
+<p>Icons for data elements are also greyed under error conditions (see 
+ below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if there is a premature EOF or the template itself detects an 
+ error condition such as a data domain error.</p>
+
+<p>&nbsp;</p>
+
+<p>In HexEdit 3.0 several new items were added. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ JUMP item allows the data of the file to be processed non-sequentially. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The EVAL 
+ item allows expressions to be evaluated and displayed (as well as allowing 
+ initialisation of variables which was sometimes a problem for HexEdit 
+ 2.5 template designers). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are also items to define a STRUCT and re-use it later. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ IF items now support an &quot;else&quot; part. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ are described further in the later section on &quot;Template Files&quot; 
+ and &quot;Editing Templates&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p>Further, unless you are in template editing mode any parts of the template 
+ that are not present in the file are not displayed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ other words zero-length arrays, zero-size data items etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->And 
+ the IF node itself is not displayed only its child part if present - so 
+ if the IF has an else part only the part that is present is shown and 
+ if there is no else part nothing is shown at all unless the IF expression 
+ is true. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is explained further in the section on creating templates.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Synchronising Selections</p>
+
+<p>When you select a row in the tree view you can select the corresponding 
+ bytes in the hex view by using the sync button<img src="../cmd_misc/sync.gif"
+													style="border-style: none;
+															border: none;
+															width: 22px;
+															height: 23px;"
+													width=22
+													height=23
+													border=0> (on the left 
+ end of the <a HREF="..\bars\Navigation_Bar.htm">Navigation bar</a> by 
+ default). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ the item is a container item all bytes contained within the item are selected. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So selecting 
+ the top-level item in the tree view should select the whole file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ sync button also works in reverse -- you can select the data item in the 
+ tree view that corresponds with any byte in the normal view.</p>
+
+<p>&nbsp;</p>
+
+<p>When &quot;Auto Sync&quot; mode is on the tree and hex view are automatically 
+ kept synchronised. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ other words when the selection is changed in one view the selection in 
+ the other view is automatically changed to match. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ Auto Sync button <img src="../cmd_misc/autosync.gif"
+						style="border-style: none;
+								border: none;
+								width: 22px;
+								height: 23px;"
+						width=22
+						height=23
+						border=0> is the 2nd button on the Navigation Bar.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Columns</p>
+
+<p style="font-weight: bold;">&nbsp;</p>
+
+<p>The tree view has multiple columns to display information about the 
+ item on a particular row. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Most 
+ of the columns only display useful information for data items. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Here 
+ is an explanation of all the available columns:</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 99.666%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=99.666%>
+<col style="width: 18.699%;">
+<col style="width: 81.301%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p style="font-weight: bold;">Column</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.301%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=81.301%>
+<p style="font-weight: bold;">Displays</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p>Hex Address</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.301%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.301%>
+<p>the starting address within the file of a data item or the first data 
+ item within a container</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p>Decimal Address</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.301%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.301%>
+<p>the same as the hex address but in decimal</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p>Size</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.301%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.301%>
+<p>the size (decimal) of the data element or all contained data elements 
+ within a container</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p>Type</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.301%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.301%>
+<p>HexEdit's description of the type of data (eg, &quot;big-endian unsigned 
+ 32-bit integer&quot;)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p>Type Name</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.301%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.301%>
+<p>an optional name for the type of data (eg. a C/C++ struct or class name 
+ or typedef name)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p>Data</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.301%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.301%>
+<p>allows you to see (and sometimes modify) the actual data field</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p>Units</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.301%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.301%>
+<p>optional comment field for data elements that have units (eg &quot;milliseconds&quot;)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p>Domain</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.301%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.301%>
+<p>an expression that determines the validity of the data in the file (eg 
+ &quot;this != 0&quot;)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p>Flags</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.301%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.301%>
+<p>various flags for the item (eg &quot;Read Only&quot; etc)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 18.699%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=18.699%>
+<p>Comments</td>
+<td style="width: 81.301%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.301%>
+<p>optional explanatory comments</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p>&nbsp;</p>
+
+<p>All the columns can be resized, and all except for the left-most (tree) 
+ column can be hidden. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ resize a column just click and drag on the column divider in the title 
+ row, or double-click it to automatically resize to the width of the largest 
+ item. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that the column widths may vary as the window is resized, but once you 
+ manually set a column width the column may grow wider but is never made 
+ narrower than the size you set.</p>
+
+<p>&nbsp;</p>
+
+<p>Individual columns can be hidden or unhidden by right clicking on any 
+ column heading and selecting from the context menu that appears. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ you exit from HexEdit the width of all columns and which ones are hidden 
+ is retained.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Data Items</p>
+
+<p>&nbsp;</p>
+
+<p>The data items are displayed with alternating background colours. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(The 
+ exact colours depend on the current colour scheme.)</p>
+
+<p>&nbsp;</p>
+
+<p>How a particular data item is displayed in the &quot;Data&quot; column 
+ may be fixed by a particular template or the template may just say to 
+ use the &quot;default&quot; formatting. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ default formatting can be set in the <a HREF="..\dlg_options\HIDD_OPT_SYSDISPLAY.htm">Display 
+ page</a> of the &quot;Options&quot; dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are six format strings for:</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 99.492%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=99.492%>
+<col style="width: 16.109%;">
+<col style="width: 83.891%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.109%;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	bgcolor=#C0C0C0
+	width=16.109%>
+<p style="font-weight: bold;">Data Type</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.891%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=83.891%>
+<p style="font-weight: bold;">Allowed Format Strings</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.109%>
+<p>character</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.891%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.891%>
+<p>a C language &quot;printf&quot; format string where the character is 
+ passed as an int (typically &quot;%c&quot; to display as a character)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.109%>
+<p>signed integer</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.891%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.891%>
+<p>can be &quot;hex&quot;, &quot;dec&quot;, &quot;oct&quot;, &quot;bin&quot; 
+ or a printf format string for an integer (typically %d to display in decimal)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.109%>
+<p>unsigned integer</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.891%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.891%>
+<p>can be &quot;hex&quot;, &quot;dec&quot;, &quot;oct&quot;, &quot;bin&quot; 
+ or a printf format string for an integer (typically %u to display in decimal)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.109%>
+<p>string</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.891%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.891%>
+<p>a printf format string where the string to be formatted is passed as 
+ a &quot;char *&quot; (typically &quot;%s&quot; to display as characters)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.109%>
+<p>floating point</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.891%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.891%>
+<p>a printf format string where the value is passed as a &quot;double&quot; 
+ (typically &quot;%g&quot; to display in scientific notation when necessary)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.109%>
+<p>date</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.891%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.891%>
+<p>a C language strftime format string (typically %#c to display the date 
+ and time using local conventions)</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p>&nbsp;</p>
+
+<p>The template may indicate that some fields are read-only. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ not read-only you can click on the field to edit it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that the edit format may not be the same as the displayed format -- numbers 
+ are edited using decimal, strings as characters and date using local formating 
+ conventions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Integer 
+ fields that have an associated &quot;enum&quot; declaration in their domain 
+ can only take on certain values -- to change these fields just select 
+ from the drop-down list.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Selecting Templates</p>
+
+<p>&nbsp;</p>
+
+<p>A file that has never been opened before will use the &quot;default&quot; 
+ template, or (if it exists) an associated template file based on the file 
+ extension. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Template 
+ files for general classes of files (based on the file extension) have 
+ a file name starting with an underscore followed by the extension (and 
+ like all template files they then have an extension themselves of &quot;.XML&quot;). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For example, 
+ if you open a .BMP file (eg. DRAWING.BMP) and there is an _BMP.XML template 
+ file in the templates directory then that (_BMP) template is used. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ if you select a different template for a file HexEdit remembers and uses 
+ it again the next time you open the file.</p>
+
+<p>&nbsp;</p>
+
+<p>The title row of the tree view contains a drop-list of all the available 
+ templates. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is a simple matter to select a new template for a file by selecting from 
+ the drop down list.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Error Conditions</span></p>
+
+<p>&nbsp;</p>
+
+<p>There are several error conditions you may encounter if the data file 
+ does not match the template or if the template file itself is invalid.</p>
+
+<p>&nbsp;</p>
+
+<p>Errors in the template file are diagnosed when the template is processed. 
+ An error message is displayed including the offending line number if it 
+ is an XML syntax error. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ will need to modify the XML or inform the creator of the template of the 
+ problem.</p>
+
+<p>&nbsp;</p>
+
+<p>The data file itself may not match the template for several reasons:</p>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>the data file is truncated, incomplete, or corrupted</p></li>
+	
+	<li class=kadov-p><p>the data file is not the type of file you thought 
+ it was</p></li>
+	
+	<li class=kadov-p><p>the data file is for a different version or variation 
+ than that for which the template was created</p></li>
+	
+	<li class=kadov-p><p>the template is incorrect</p></li>
+</ul>
+
+<p>If there is extra data past where the expected end of file was to be 
+ (according to the template) HexEdit simply indicates that with an extra 
+ element at the top level (with the <img src="..\dffd\dffd_more.gif"
+										x-maintain-ratio=TRUE
+										style="border-style: none;
+												border: none;
+												width: 15px;
+												height: 14px;
+												float: none;"
+										width=15
+										height=14
+										border=0> icon) at the top level 
+ underneath the file icon <img src="..\dffd\dffd_file.gif"
+								x-maintain-ratio=TRUE
+								style="border-style: none;
+										border: none;
+										width: 15px;
+										height: 15px;
+										float: none;"
+								width=15
+								height=15
+								border=0>.</p>
+
+<p>&nbsp;</p>
+
+<p>A more serious condition exists if the end of file is encountered before 
+ expected. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ this case HexEdit displays a message box and tries to show all the following 
+ elements of the template but with greyed icons. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ there are expressions used in the template that try to evaluate non-existent 
+ data values then this will also generate more error messages.</p>
+
+<p>&nbsp;</p>
+
+<p>Finally, a template can specify what are valid values for data (leaf) 
+ elements using the &quot;domain&quot; attribute. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->EVAL 
+ items can also be used to check other types of file consistencies that 
+ cannot be done with a simple domain check. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ a data value is invalid according to the template then it is greyed.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Performance Considerations</p>
+
+<p>&nbsp;</p>
+
+<p>When you open a new file or change the template in use there may be 
+ a small to large delay as the file data is processed against the template. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This can 
+ vary greatly depending on the template (ie format of the data file) and 
+ even the specific file being used.</p>
+
+<p>&nbsp;</p>
+
+<p>Some files may contain a very large number of identical (in format and 
+ size) elements which are represented in the template as an array of fixed 
+ sized elements. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ this type of data usually most of the fixed elements do not need to be 
+ processed, since their size is known. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is what the &quot;Number of fixed array elements&quot; option in the <a 
+ HREF="..\dlg_options\HIDD_OPT_SYSDISPLAY.htm">Display page</a> of the 
+ &quot;Options&quot; dialog is for. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Unless 
+ you want to see the specified number of array elements you can reduce 
+ this number to speed processing of the template.</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

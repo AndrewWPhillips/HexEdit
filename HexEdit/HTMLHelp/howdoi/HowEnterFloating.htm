@@ -1,0 +1,95 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>How Do I Enter a Floating Point Number?</title>
+
+<!--(Meta)==========================================================-->
+
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=537>
+<meta name=layout-width content=719>
+<meta name=date content="12 22, 2001 9:32:32 PM">
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;">How Do I Enter a Floating Point Number?</h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>You can easily change IEEE floating point numbers, but you have to know 
+ the byte-order and whether it is 32 bit or 64 bit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the file is for an Intel platform such as Windows and MSDOS it will be 
+ little-endian. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="..\binary_files\Floating_Point_Numbers.htm">Floating Point Numbers</a> 
+ for more information about floating point number formats.</p>
+
+<p>&nbsp;</p>
+
+<p>To enter an IEEE floating point number (in decimal), open the Properties 
+ dialog (using the <a href="..\cmd_view\HID_PROPERTIES.htm">Display Properties 
+ Command</a>) and select the <a HREF="..\dlg_properties\HIDD_PROP_FLOAT.htm">Floating 
+ Point Values Page</a>, then move the cursor to the first byte of the number 
+ in the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Select 
+ the appropriate byte order and format in the dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you know the value that the file should contain (ie, the value to be replaced) 
+ then you can check it now to make sure you have the correct file location 
+ and format.</p>
+
+<p>&nbsp;</p>
+
+<p>Now type the new number into the <span style="font-weight: bold;">Value</span> 
+ field and press <span style="font-weight: bold;">Enter</span> to accept 
+ the number you have entered, or press <span style="font-weight: bold;">Escape</span> 
+ to abort the change. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also type in the special values &quot;Inf&quot;, &quot;-Inf&quot; 
+ and &quot;NaN&quot; (case is ignored) to signify the special IEEE value 
+ for +/- Infinity and an invalid number.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that the <span style="font-weight: bold;">Values</span> fields 
+ may be disabled if the file is read-only or you are at the end of the 
+ file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you want to append a number to the file you will have to add some extra 
+ bytes to the file (in INS mode) before using the above method to change 
+ them.</p>
+
+<p>&nbsp;</p>
+
+<p>You can also enter IBM floating point values in the <a HREF="..\dlg_properties\HIDD_PROP_IBMFP.htm">IBM 
+ Floating Point Values Page</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ format of these numbers is very different to IEEE and is explained in 
+ <a HREF="..\binary_files\Floating_Point_Numbers.htm">Floating Point Numbers</a>, 
+ and does not support infinity or Nans. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Files 
+ containing these types of floating point numbers are from IBM mainframe 
+ and mini computers and are usually big-endian.</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

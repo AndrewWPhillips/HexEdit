@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="Microsoft WAV Sound File (WAV)">
+	<struct name="RiffHeader" type_name="RIFFHEADER">
+		<data name="ChunkID" type="string" len="4" domain="this==&quot;BM&quot;" format="ascii" display=""/>
+		<data name="ChunkSize" type="int" len="4"/>
+		<data name="Format" type="string" len="4" domain="this==&quot;BM&quot;" format="ascii" display=""/>
+	</struct>
+	<struct name="FormatSubChunk" type_name="FORMAT">
+		<data name="FormatChunkID" type="string" len="4" domain="this==&quot;BM&quot;" format="ascii" display=""/>
+		<data name="FormatChunkSize" type="int" len="4"/>
+		<data name="AudioFormat" type="int" len="2"/>
+		<data name="NumChannels" type="int" len="2"/>
+		<data name="SampleRate" type="int" len="4"/>
+		<data name="ByteRate" type="int" len="4"/>
+		<data name="BlockAlign" type="int" len="2"/>
+		<data name="BitsPerSample" type="int" len="2"/>
+		<if test="FormatSubChunk.AudioFormat != 1">
+			<struct name="ExtraParamData" type_name="FORMAT">
+				<data name="ExtraParamSize" type="int" len="2"/>
+				<data name="ExtraParam" type="none" len="ExtraParamSize"/>
+			</struct>
+		</if>
+	</struct>
+	<struct name="DataSubChunk" type_name="Data">
+		<data name="DataChunkID" type="string" len="4" domain="this==&quot;BM&quot;" format="ascii" display=""/>
+		<data name="DataChunkSize" type="int" len="4"/>
+		<for name="Sample" count="DataChunkSize">
+			<struct name="ChData" type_name="Data">
+				<for name="Channel" count="FormatSubChunk.NumChannels">
+					<data name="data" type="int" format="none" len="FormatSubChunk.BlockAlign"/>
+				</for>
+			</struct>
+		</for>
+	</struct>
+</binary_file_format>

@@ -1,0 +1,72 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Macros slow down while running</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=647>
+<meta name=layout-width content=1198>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2>Macros slow down while running</h2>
+
+<p>&nbsp;</p>
+
+<p>Hex Edit macros typically run very fast, but due to the way Hex Edit 
+ stores information about the changes made to a file, as changes are made 
+ each subsequent change takes slightly longer. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is not noticeable when editing manually but is evident to a small number 
+ of users who use a macro that modifies a large file and which is run a 
+ large number of times. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is simply due to the fact that HexEdit was originally optimised for display 
+ speed, not speed of changes.</p>
+
+<p>&nbsp;</p>
+
+<p>The technical reason is that whenever you add, delete or modify some 
+ bytes this is added to the stack of undo info, then a list is built of 
+ all the places that the current file comes from. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+ the undo stack gets bigger this list takes longer and longer to rebuild 
+ after each change. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ when you save the file to disk the undo info can be discarded (as the 
+ file you are editing is now the same as the file on disk) and file modifications 
+ are fast once more.</p>
+
+<p>&nbsp;</p>
+
+<p>To avoid this effect the answer is to simply save the file to disk in 
+ your keystroke macro. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ this means you can then not undo any changes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that macros that do not modify a file always run fast.</p>
+
+</body>
+
+</html>

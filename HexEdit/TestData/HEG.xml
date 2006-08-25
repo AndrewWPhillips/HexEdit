@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="HEG_File" type_name="" comment="" expr="{rect_count} rectangles, {circle_count} circles">
+	<define_struct type_name="object" comment="" expr="{this.type==1?&quot;RECT&quot;:(this.type==2?&quot;CIRCLE&quot;:(this.type==10?&quot;GROUP&quot;:&quot;END&quot;))}">
+		<data type="int" name="type" format="signed" len="1" domain="{END=0, RECT, CIRCLE, GROUP=10}"/>
+		<data type="int" name="flags" format="unsigned" len="1" display="hex" domain="this == 0"/>
+		<if test="type == 1">
+			<struct name="rect" type_name="" comment="" expr="{this.width} X {this.height}">
+				<data type="int" name="colid" format="unsigned" len="2"/>
+				<data type="real" name="x" format="ieee" len="4"/>
+				<data type="real" name="y" format="ieee" len="4"/>
+				<data type="real" name="width" format="ieee" len="4" domain="this &gt; 0.0"/>
+				<data type="real" name="height" format="ieee" len="4" domain="this &gt; 0.0"/>
+				<eval expr="rect_count = rect_count + 1" display_error="false" display_result="false" comment=""/></struct>
+		</if>
+		<if test="type == 2">
+			<struct name="circle" type_name="" comment="">
+				<data type="int" name="colid" format="unsigned" len="2"/>
+				<data type="real" name="x" format="ieee" len="4"/>
+				<data type="real" name="y" format="ieee" len="4"/>
+				<data type="real" name="radius" format="ieee" len="4" domain="this &gt; 0.0"/>
+				<eval expr="circle_count = circle_count + 1" display_error="false" display_result="false" comment=""/></struct>
+		</if>
+		<if test="type == 10">
+			<struct name="group">
+				<data type="int" name="count" format="unsigned" len="2" comment="Number of grouped objects." domain="this &gt; 0"/>
+				<data type="real" name="x" format="ieee" len="4"/>
+				<data type="real" name="y" format="ieee" len="4"/>
+				<for name="sub_object" count="count">
+					<use_struct type_name="object"/>
+				</for>
+			</struct>
+		</if>
+		<eval expr="rect_count" display_error="false" display_result="false" comment=""/>
+	</define_struct>
+	<struct name="header">
+		<data type="int" name="magic" format="unsigned" len="4" domain="this == 0x16071958" display="hex" comment="HEG file magic number - should always be 16071958 hex."/>
+		<data type="date" name="created" format="c" comment="When the image was created." display="%c"/>
+		<data type="date" name="modified" format="c" comment="When the image was last changed." domain="this &gt; created"/>
+		<data type="int" name="colour_table_address" format="unsigned" len="4" display="hex" comment="Address in the file of the colours table."/>
+	</struct>
+	<eval expr="rect_count = circle_count = 0" display_error="false" display_result="false" comment=""/>
+	<for name="object" stop_test="this.type ==0" count="" type_name="" comment="">
+		<use_struct type_name="object"/>
+	</for>
+	<struct name="col_table">
+		<data type="int" name="num_cols" format="unsigned" len="2" domain="this &gt; 0"/>
+		<for name="col" count="num_cols">
+			<struct>
+				<data type="string" name="name" format="ascii" len="13"/>
+				<data type="int" name="red" format="unsigned" len="1"/>
+				<data type="int" name="green" format="unsigned" len="1"/>
+				<data type="int" name="blue" format="unsigned" len="1"/>
+			</struct>
+		</for>
+	</struct>
+	<eval expr="{rect_count} rectangles, {circle_count} circles" display_error="false" display_result="true" comment=""/>
+</binary_file_format>

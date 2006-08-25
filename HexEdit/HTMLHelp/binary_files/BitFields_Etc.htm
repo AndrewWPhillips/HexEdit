@@ -1,0 +1,232 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>BitFields etc</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1093>
+<meta name=layout-width content=1239>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial, sans-serif;">BitFields etc</h2>
+
+<p>&nbsp;</p>
+
+<p>In this section we discuss a few other ways of storing things in one 
+ or more bytes..</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;"><span style="font-weight: bold;">F</span>lags</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Rather than use a byte (or 
+ word etc) as a number you can use each bit independently to store a flag 
+ value (ie a yes/no, on/off, true/false etc) value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Computer 
+ languages that support a Boolean (true/false) type typically use a whole 
+ byte (or more) when a single bit will do. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is for speed, but if storing a large number of flags then storing 8 values 
+ in a byte can save a lot of space (in memory or on disk).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Most processors do not provide 
+ instructions for manipulating individual bits. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ boolean operations AND and OR are used to set or clear a certain bit without 
+ affecting the other bits in a byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can use XOR to toggle a certain bit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ the above <a HREF="Boolean_Operations.htm">Boolean Operations</a> section 
+ for more about using Boolean masks. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ most computer languages do not provide a mechanism for manipulating individual 
+ bits, although bit-fields provided by C/C++ can be used to manipulate 
+ an individual bit if it is part of a struct (or class).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="font-weight: bold;">Bit-fields</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Somewhere in between using 
+ a byte or word for a whole number and using independent bits as flags 
+ is the bit-field. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ term &quot;bit-field&quot; was popularised by the C language where individual 
+ bits or groups of bits within a struct can be used to store a small numeric 
+ value (signed or unsigned). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if you are storing employee records in a structure you might 
+ store sex in a single bit bit-field (unless you want to allow for more 
+ than just male and female). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ marital status would require a 2 or 3 bit bit-field, since there are more 
+ than 2 alternatives.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">A good example of bit-fields 
+ is the way MSDOS stores the date and time of files (actually this is a 
+ characteristic of the FAT filesystem not MSDOS itself). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, the date is stored in a 16 bit number, using 7 bits for the year 
+ (bits 15 to 9), 4 bits for the month (bits 8 to 5), and 5 bits for the 
+ day (bits 5 to 0). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ some ways this is a bit wasteful as there are only 12 months but this 
+ system allows for up to 16. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(An 
+ alternative would be to store a date as the number of days from a certain 
+ day.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ it makes some operations, like extracting the month, very easy.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">To manipulate bit-fields, Boolean 
+ masking and shifts are required. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Of 
+ course, if you are using bit-fields in a C/C++ struct (or HexEdit template 
+ bit-fields, to be available soon) then this is handled for you automatically. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In fact, 
+ for signed bit-fields sign extension is also performed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Using 
+ our MSDOS data example again, to get the month from a date field you would 
+ first shift the value right by 5 bits so that the month is in the bottom 
+ 4 bits then mask off the top bits (AND with 000Fh) to be just left with 
+ the month number. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Sign 
+ extension is not necessary as month numbers are always positive.)</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">If you are working with data 
+ created by a C/C++ program that uses bit-fields, there are several variations 
+ that you should be aware of.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">First the compiler will use 
+ an underlying &quot;storage unit&quot; to store bit-fields. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is typically the same size as an &quot;int&quot; (the &quot;natural&quot; 
+ integer size for the processor) but could be as small as a byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Consecutive 
+ bit-fields are packed into a single storage unit until one is encountered 
+ that is too large to fit which then starts the next storage unit.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">For example, if you have five 
+ 7-bit bit-fields in a row and the storage unit is a 32-bit integer then 
+ the first four will be packed into one storage unit and the fifth one 
+ will start in the next storage unit, giving a total storage of 8 bytes 
+ (two 32 bit storage units). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ this case there are 29 wasted bits (4 in the first storage unit and 25 
+ in the second). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Generally 
+ programmers try to arrange bit-fields so that there are few wasted bits.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Where the bits of a bit-field 
+ are positioned in each storage unit also depends on the compiler. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ byte order of the storage units (see <a HREF="Numbers.htm">Numeric Operations</a> 
+ for an explanation of big- and little-endian byte order) depends on the 
+ target environment of the compiler. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ order of placement of the bit-fields (top to bottom or bottom to top) 
+ is entirely up to the compiler, but most fill starting at the bottom.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Finally, occasionally bit packing 
+ into an indefinite number of consecutive bytes is used to save space. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For example, 
+ you might want to pack a large number of 5-bit numbers consecutively so 
+ that each group of 5 bytes stores 8 values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ can generally not be handled in C/C++ using bit-fields (but will be handled 
+ in HexEdit template bit-fields). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ C/C++ you would need to use shifts and masking operations to handle this 
+ type of data.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="font-weight: bold;">Packed BCD</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>In most computers numeric data is typically converted from text in the 
+ local character set (normally decimal numbers in ASCII) to binary. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Processing 
+ is done using binary arithmetic (see Binary Arithmetic in the <span style="font-weight: bold;">Numbers</span> 
+ section above). Results are then converted back to the decimal characters 
+ for display to the user.</p>
+
+<p>&nbsp;</p>
+
+<p>However, in computers with little processing power (older systems and 
+ very small systems) arithmetic was (and still is) done using decimal arithmetic. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This was 
+ done for simplicity and to save time converting to and from binary. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ most common system was packed binary coded decimal (often called packed 
+ BCD or even just BCD). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ this system each nybble stored one decimal digit, so a byte could store 
+ 100 values (00 to 99 decimal). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ meant that only 10 of the 16 possible values for the nybble were valid, 
+ ie only 100 (10 x 10) of the possible 256 (16 x 16) byte values were used.</p>
+
+<p>&nbsp;</p>
+
+<p>Another way to think of packed BCD is as two 4-bit bitfields stored 
+ in each byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ bitfield stores a decimal digit, so only 10 of the possible 16 values 
+ for each bitfield are used.</p>
+
+<p>&nbsp;</p>
+
+<p>Many early microprocessors had direct support for working directly with 
+ BCD numbers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Some 
+ used special processor instructions while others had a special mode where 
+ arithmetic instructions working in BCD rather than binary.</p>
+
+<p>&nbsp;</p>
+
+<p>Many embedded systems still work this way. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, a memory address or I/O address may be directly connected to 
+ hardware which displays a 2 digit decimal number (for example minutes 
+ or seconds on a microwave oven), with each nybble displaying one digit 
+ in an LCD display. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ add to or subtract from this number it is simply a matter of reading the 
+ current value, then using instructions to do a BCD addition or subtraction, 
+ and storing the number back.</p>
+
+<p>&nbsp;</p>
+
+<p>This is faster and simpler than performing the tedious conversion to 
+ and from binary. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ other words it simplifies I/O of numbers.</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-weight: bold;">Next topic:</span> <a HREF="InputOutput.htm">Character 
+ Sets</a></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

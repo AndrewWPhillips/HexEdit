@@ -1,0 +1,244 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Encryption</title>
+
+<!--(Meta)==========================================================-->
+
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1193>
+<meta name=layout-width content=1187>
+<meta name=date content="08 29, 2002 11:44:12 PM">
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=arial>Encryption</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>HexEdit allows you to encrypt and decrypt all or part of a file by selecting 
+ the bytes and using the encryption or decryption command. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ provides all the stream and block encryption algorithms available under 
+ the Windows &quot;Crypto API&quot; as well as a good internal encryption 
+ algorithm.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">The Crypto API and CSPs</p>
+
+<p>&nbsp;</p>
+
+<p>The Crypto API was introduced with Windows NT 4.0, mainly to address 
+ security issues to do with the growing use of the Internet. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ API does not itself do anything but simply provides a standard way for 
+ Windows programs to talk with Cryptographic Service Providers (CSPs). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->CSPs are 
+ DLLs provided by third party software providers (although Microsoft provides 
+ the &quot;Microsoft Base Cryptographic Provider v1.0&quot; CSP).</p>
+
+<p>&nbsp;</p>
+
+<p>Depending on the software you have installed on your computer, you will 
+ typically have a few CSPs, perhaps many, installed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ CSP provides one or more encryption algorithms or ciphers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Different 
+ CSPs may provide different implementations of the same algorithms, but, 
+ in general, you should always decrypt using the same CSP and algorithm 
+ that you encrypted with. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you are encrypting on one machine and decrypting on another you must ensure 
+ the same CSP/algorithm is available on both machines.</p>
+
+<p>&nbsp;</p>
+
+<p>If you are using Windows 95, and HexEdit only shows one encryption algorithm 
+ (the HexEdit internal algorithm) then the Crypto API is not available 
+ on your computer.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Algorithms</span></p>
+
+<p>&nbsp;</p>
+
+<p>HexEdit only supports use of the single-key or symmetric ciphers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This 
+ is the traditional type of computer encryption where the same password 
+ or key is used to encrypt and decrypt.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
+ does not support public-key ciphers, as these are only provided in the 
+ Crypto API for encryption of session keys. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ Crypto API provides for two types of single-key cipher: block and stream.</p>
+
+<p>&nbsp;</p>
+
+<p>Block encryption works by encrypting all the bits of a fixed size block 
+ at once. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the number of bytes to be encrypted is not a multiple of the block size 
+ then pad bytes will need to be added, hence block ciphers provided by 
+ the Crypto API increase the numbers of bytes when encrypting by up to 
+ 2 blocks. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence, 
+ when encrypting in HexEdit with a Crypto API block cipher the length of 
+ the selected bytes will increase after encryption, and decrease back to 
+ the original size after decryption. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This 
+ is not true for the HexEdit internal algorithm - see below.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ Microsoft Base Cryptographic Provider v1.0 provides the RC2 block encryption 
+ algorithm.</p>
+
+<p>&nbsp;</p>
+
+<p>Stream encryption, as its name suggests can take an unencrypted stream 
+ of data and produce an encrypted stream. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence, 
+ unlike block encryption, you can encrypt any number of bytes with stream 
+ encryption. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ HexEdit, when you encrypt with a stream cipher, the encrypted length is 
+ the same as before encryption. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ disadvantage of stream encryption is that the algorithms are typically 
+ not as secure, and implementations are slower than block encryption. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ Microsoft Base Cryptographic Provider v1.0 provides the RC4 stream cipher.</p>
+
+<p>&nbsp;</p>
+
+<p>The HexEdit internal algorithm is a block cipher with a block size of 
+ 8 bytes (64 bits). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+ it does not provide padding of any incomplete last block it does not need 
+ to increase the length of the encrypted data. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ to encrypt or decrypt using this algorithm the length of the current selection 
+ must be a multiple of 8 bytes.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Passwords</span></p>
+
+<p>&nbsp;</p>
+
+<p>The password is the &quot;key&quot; that is used to encrypt and decrypt. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It does 
+ not matter how good your encryption algorithm is if you choose an easily 
+ guessed password. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
+ a good password is at least 8 characters long, is not a common word or 
+ name in a common language, and should include some non-alphabetic characters.</p>
+
+<p>&nbsp;</p>
+
+<p>HexEdit has a minimum password length which defaults to 8. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ as encryption requirements vary this can be changed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if you are only using HexEdit for testing Crypto API functions 
+ then you might want to reduce the minimum required password length.</p>
+
+<p>&nbsp;</p>
+
+<p>You can also mask your passwords using the &quot;Mask password&quot; 
+ check box. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is useful if anyone could possibly view your screen while you are entering 
+ the password. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ since you have no feedback about what you have typed, you have to enter 
+ a masked password twice to catch typos, otherwise you may not be able 
+ to decrypt your valuable data again.</p>
+
+<p>&nbsp;</p>
+
+<p>Particular care must be taken with passwords and keystroke macros. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ a password is entered while recording a macro, and the macro saved to 
+ file then the password is stored in the file for all to see. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Typically, 
+ you would <span style="font-weight: bold;">not</span> enter a password 
+ while recording a macro, and to ensure that the user is prompted for a 
+ password when encrypting or decrypting you can record the &quot;Clear 
+ Password&quot; command in the macro; if no password has been entered since 
+ last cleared when the Encrypt or Decrypt command is invoked then HexEdit 
+ will prompt for one.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Public Key 
+ Encryption</span></p>
+
+<p>&nbsp;</p>
+
+<p>Another form of encryption that HexEdit does not (yet) support is public 
+ key encryption. This has many excellent uses that I will not go into here. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In this 
+ form of encryption the two keys (encryption/decryption) are not the same. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->One key 
+ (the public key) can be easily deduced from the other key (the private 
+ key) but it is computationally infeasible to deduce the private key from 
+ the public key. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ common public key encryption algorithm is RSA.</p>
+
+<p>&nbsp;</p>
+
+<p>Unfortunately, known public key algorithms are very slow compared to 
+ single-key algorithms. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ it is not necessary to encrypt all the data using public key encryption. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The data 
+ itself can be encrypted using a single-key algorithm using a key that 
+ is itself encrypted using a public-key algorithm. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ system of using two algorithms (a public key one and a single-key one) 
+ effectively gives the advantages of public key encryption at close to 
+ the speed of single-key encryption.</p>
+
+<p>&nbsp;</p>
+
+<p>To do this the single-key encryption is performed using a randomly picked 
+ number for the encryption key. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, to encrypt and send data, a random number is generated and encrypted 
+ using the public key encryption algorithm using the receiver's public 
+ key, and sent. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Then 
+ the data itself is encrypted with the single-key algorithm using this 
+ random key. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+ the random value is generated and only used for only a short time, or 
+ session, it is called a session key.</p>
+
+<p>&nbsp;</p>
+
+<p>The Crypto API uses public key encryption in this manner. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->That 
+ is public key encryption is only used to encrypt session keys for single-key 
+ encryption algorithms.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span>For further information see:</span></p>
+
+<p><a HREF="..\cmd_operations\HID_ENCRYPT_ENCRYPT.htm">Encrypt</a> command 
+ to encrypt data</p>
+
+<p><a HREF="..\cmd_operations\HID_ENCRYPT_DECRYPT.htm">Decrypt</a> command 
+ to decrypt data</p>
+
+<p><a HREF="..\cmd_operations\HID_ENCRYPT_ALG.htm">Encryption Algorithm</a> 
+ to invoke the <a HREF="..\dlg_other\HIDD_ALGORITHM.htm">Encryption Algorithm 
+ Dialog</a></p>
+
+<p><a HREF="..\cmd_operations\HID_ENCRYPT_PASSWORD.htm">Encryption Password</a> 
+ to invoke the <a HREF="..\dlg_other\HIDD_PASSWORD.htm">Encryption Password 
+ Dialog</a></p>
+
+<p><a HREF="..\cmd_operations\HID_ENCRYPT_CLEAR.htm">Clear Password</a> 
+ to force entry of a new password in a macro</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

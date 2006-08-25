@@ -1,0 +1,267 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Insert Block Dialog</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1503>
+<meta name=layout-width content=1213>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;"><span>Insert Block dialog</span></h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="InsertBlock.gif" style="border: none;
+								width: 462px;
+								height: 374px;" width="462" height="374" border="0"></p>
+
+<p>&nbsp;</p>
+
+<p>This dialog appears when you invoke the <a HREF="../cmd_edit/HID_INSERT_BLOCK.htm">Insert 
+ Block command</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ allows you to insert a block into active file of any size filled in various 
+ way.</p>
+
+<p>&nbsp;</p>
+
+<p>You may insert a block of any size, but large block may take some time 
+ to create. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ for very large blocks HexEdit will create a temporary file on disk, which 
+ must be copied when the file is saved.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Size</span></p>
+
+<p style="margin-left: 18.00pt;">Several options are available for specifying 
+ the initial file size. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the size to be used is greater than the length of the data the bytes of 
+ the data are repeated up to the desired length. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Files 
+ up to 1 Terabyte in length can be created.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;">Use Size of Data</p>
+
+<p style="margin-left: 64px;">The size is taken from the length of the 
+ selected data (see <span style="font-weight: bold;">Fill With</span> options 
+ below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, the length of the entered string or the length of the data on 
+ the clipboard.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Take 
+ Size from Calculator</span></p>
+
+<p style="margin-left: 64px;">The size of the new file is the value currently 
+ shown in the calculator. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the value is negative or zero an empty file is created. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ option is useful in keystroke macros.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;">Specified: Decimal Size</p>
+
+<p style="margin-left: 64px;">Enter the size of the new file you want in 
+ decimal.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Specified: 
+ Hex Size</span></p>
+
+<p style="margin-left: 64px;">Enter the size you want in hex.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Fill With</p>
+
+<p style="margin-left: 18.00pt;">Choose how the values used to fill the 
+ new file are created by selecting from the radio buttons described below. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The bytes 
+ are repeated until a file of the size specified is created.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Hex</span></p>
+
+<p style="margin-left: 64px;">Enter one or more byte values in hex. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ make a file just containing null bytes simply use &quot;00&quot;. </p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">String</span></p>
+
+<p style="margin-left: 64px;">Enter one or more characters. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ values are taken from the character set specified below.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 80px;"><span style="font-weight: bold;">Char 
+ Set</span></p>
+
+<p style="margin-left: 104px;">The character set used to generate byte 
+ values from the string. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can create ASCII, EBCDIC or Unicode data.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Clipboard</span></p>
+
+<p style="margin-left: 64px;">The data is taken from the clipboard (binary 
+ data or text if no binary data is available). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ preview of the data on the clipboard is shown (as hex for binary data 
+ or as a string for text). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ no valid formats are on the clipboard this option is disabled.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 80px;"><span style="font-weight: bold;">Length</span></p>
+
+<p style="margin-left: 104px;">Displays the number of bytes currently on 
+ the clipboard.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;
+			margin-left: 40px;
+			font-weight: bold;">Random</p>
+
+<p style="margin-left: 64px;">Generates random byte values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can enter one or more ranges. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, use &quot;65-90, 97-122&quot; to generate random uppercase and 
+ lowercase ASCII letters. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Use 
+ the range &quot;0-255&quot; to generate all possible byte values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ PRNG algorithm is seeded by the <a href="../cmd_operations/PRNG_Seed_Random.htm">Random 
+ Seed command</a> or the <a href="../cmd_operations/PRNG_Seed.htm">Seed 
+ Random Number Generator from Calculator</a> command.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-left: 64px;">Note that you can use this to generate random 
+ integers too (of any size). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ you cannot use it to generate random floating point values - for one, 
+ you will generate some invalid floating point values (NaNs) - see <a href="../binary_files/Floating_Point_Numbers.htm">Floating 
+ Point Numbers</a> for more information. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(A 
+ facility to generate random floating point number may be added in the 
+ future.)</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-left: 64px;">The algorithm used quickly generates adequate 
+ random numbers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ a high quality PRNG use the &quot;Operations/Random Fill/Generate Good&quot; 
+ menu item.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Number</span></p>
+
+<p style="margin-left: 64px;">Enter a number that is used to fill the file 
+ up to the size entered (above). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ use IEEE floating point numbers enter a number with a decimal point (such 
+ as &quot;1.0&quot;) and/or an exponent (such as &quot;-1e30&quot;).</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 80px;"><span style="font-weight: bold;">Type</span></p>
+
+<p style="margin-left: 104px;">The type of integer or floating point number. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You can 
+ use 1, 2, 4 or 8 byte integers, or 4 or 8 byte IEEE floating point numbers.</p>
+
+<p style="margin-left: 104px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 80px;"><span style="font-weight: bold;">Big-endian</span></p>
+
+<p style="margin-left: 104px;">Determines the byte order of the number 
+ entered. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(See 
+ the information on byte order in <a href="../binary_files/Numbers.htm">Numeric 
+ Operatio<span style="margin-left: 18.00pt;">ns</a>.)</span></p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name="_Version" value="65536" >
+<param name="_ExtentX" value="2117" >
+<param name="_ExtentY" value="556" >
+<param name="_StockProps" value="13" >
+<param name="ForeColor" value="0" >
+<param name="BackColor" value="12632256" >
+<param name="UseButton" value="-1" >
+<param name="ControlLabel" value="Related Topics" >
+<param name="UseIcon" value="0" >
+<param name="Items" value="Calculator;..\overviewtools\calc.htm$$**$$New File Dialog;New_File_Dialog.htm$$**$$Random Seed command;..\cmd_operations\PRNG_Seed_Random.htm$$**$$Seed Random Number Generator from Calculator;..\cmd_operations\PRNG_Seed.htm$$**$$" >
+<param name="Image" value="" >
+<param name="FontInfo" value="MS Sans Serif,8,0,," >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_other\Insert_Block_Dialog.htm" >
+<param name="_ID" value="RelatedTopics" >
+<param name="UseMenu" value="-1" >
+<param name="Frame" value="" >
+<param name="Window" value="" >
+</object>-->
+<OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM  NAME="Item1"  VALUE="Calculator;..\overviewtools\calc.htm">
+  <PARAM  NAME="Item2"  VALUE="New File Dialog;New_File_Dialog.htm">
+  <PARAM  NAME="Item3"  VALUE="Random Seed command;..\cmd_operations\PRNG_Seed_Random.htm">
+  <PARAM  NAME="Item4"  VALUE="Seed Random Number Generator from Calculator;..\cmd_operations\PRNG_Seed.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+ </p>
+
+</body>
+
+</html>

@@ -1,0 +1,875 @@
+<html>
+<!-- Sitemap 1.0 -->
+<object type="text/site properties">
+  <param name="SiteType" value="toc">
+  <param name="Font" value=",10,0">
+  <param name="Window Styles" value="0x800027">
+  <param name="ExWindow Styles" value="0x100">
+</object>
+<ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Start Here">
+    <param name="Local" value="Start_Here.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Start Here">
+    <param name="Local" value="Start_Here_Web.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Introduction">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="What Is HexEdit?">
+      <param name="Local" value="intro\intro.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="What's New">
+      <param name="Local" value="intro\whatsnew.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Quick Start">
+      <param name="Local" value="intro\quickstart.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Installing and Removing">
+      <param name="Local" value="intro\install.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Support">
+      <param name="Local" value="intro\support.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Acknowledgements">
+      <param name="Local" value="intro\ack.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Technical Information">
+      <param name="Local" value="intro\technical.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="All About Binary Files">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Introduction">
+      <param name="Local" value="binary_files\BinFilesIntro.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Representations">
+      <param name="Local" value="binary_files\Of_Bits_and_Bytes.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Boolean Operations">
+      <param name="Local" value="binary_files\Boolean_Operations.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Numeric Operations">
+      <param name="Local" value="binary_files\Numbers.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Bit Manipulation">
+      <param name="Local" value="binary_files\Bit_Manipulation.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Floating Point Numbers">
+      <param name="Local" value="binary_files\Floating_Point_Numbers.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Date and Time Formats">
+      <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="BitFields etc">
+      <param name="Local" value="binary_files\BitFields_Etc.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Character Sets">
+      <param name="Local" value="binary_files\InputOutput.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Encoding Binary Data">
+      <param name="Local" value="binary_files\Encoding.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Error Detection">
+      <param name="Local" value="binary_files\Error_Checking.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Binary Files">
+      <param name="Local" value="binary_files\Binary_Files.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Overview">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="The Basics">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="The Display">
+        <param name="Local" value="overviewbasics\display.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Moving Around">
+        <param name="Local" value="overviewbasics\move.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Editing">
+        <param name="Local" value="overviewbasics\edit.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Help">
+        <param name="Local" value="overviewbasics\help.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Selecting and the Clipboard">
+        <param name="Local" value="overviewbasics\clipboard.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Modeless Dialogs">
+        <param name="Local" value="overviewbasics\Modeless_Dialogs.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Tools">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Properties Dialog">
+        <param name="Local" value="overviewtools\prop.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Searching">
+        <param name="Local" value="overviewtools\Searching.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Bookmarks">
+        <param name="Local" value="overviewtools\Bookmarks.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Using Templates">
+        <param name="Local" value="overviewtools\Templates.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Keystroke Macros">
+        <param name="Local" value="overviewtools\macros.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Calculator">
+        <param name="Local" value="overviewtools\calc.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Other Tools">
+        <param name="Local" value="overviewtools\other_tools.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Advanced Features">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Printing">
+        <param name="Local" value="overviewadvanced\print.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Options Dialog">
+        <param name="Local" value="overviewadvanced\opt.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Customization">
+        <param name="Local" value="overviewadvanced\customize.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Encryption">
+        <param name="Local" value="overviewadvanced\Encryption.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Operations">
+        <param name="Local" value="overviewadvanced\Operations.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Expressions">
+        <param name="Local" value="overviewadvanced\Expressions.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Template Files">
+        <param name="Local" value="overviewadvanced\Template_Files.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Editing Templates">
+        <param name="Local" value="overviewadvanced\Editing_templates.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="C/C++ Parser for Templates">
+        <param name="Local" value="overviewadvanced\Parser.htm">
+        <param name="New" value="1">
+      </object>
+      </ul>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Tutorials">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Keystroke Macro Tutorial">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Keystroke Macro Tutorial">
+        <param name="Local" value="tute_macros\MacroTute0.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Getting Started">
+        <param name="Local" value="tute_macros\MacroTute1.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Creating a Macro to XOR Bytes">
+        <param name="Local" value="tute_macros\MacroTute2.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Saving the Macro">
+        <param name="Local" value="tute_macros\MacroTute3.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Creating the Main Macro">
+        <param name="Local" value="tute_macros\MacroTute4.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Saving and Testing">
+        <param name="Local" value="tute_macros\MacroTute5.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Basic Template Creation">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Introduction">
+        <param name="Local" value="tute_template_1\TemplateTute1-0.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Getting Started">
+        <param name="Local" value="tute_template_1\TemplateTute1-1.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Creating the Template">
+        <param name="Local" value="tute_template_1\TemplateTute1-2.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Saving the Template">
+        <param name="Local" value="tute_template_1\TemplateTute1-3.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Testing and Fixing">
+        <param name="Local" value="tute_template_1\TemplateTute1-4.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Finishing Touches">
+        <param name="Local" value="tute_template_1\TemplateTute1-5.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Advanced Template Creation">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Introduction">
+        <param name="Local" value="tute_template_2\TemplateTute2-0.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="The Data File Format">
+        <param name="Local" value="tute_template_2\TemplateTute2-1.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Creating the Header">
+        <param name="Local" value="tute_template_2\TemplateTute2-2.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Creating the Graphical Object Structure">
+        <param name="Local" value="tute_template_2\TemplateTute2-3.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Creating the Object Array">
+        <param name="Local" value="tute_template_2\TemplateTute2-4.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Creating the Colour Table">
+        <param name="Local" value="tute_template_2\TemplateTute2-5.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Validation and Testing">
+        <param name="Local" value="tute_template_2\TemplateTute2-6.htm">
+      </object>
+      </ul>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="How Do I?">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Changing the Display">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Edit Toolbar Buttons?">
+        <param name="Local" value="howdoi\HowEditButtons.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Change the Default Window Display?">
+        <param name="Local" value="howdoi\HowDefaultDisplay.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Searching and Replacing">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Find and Replace Bytes?">
+        <param name="Local" value="howdoi\HowReplace.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Search Through Several Files?">
+        <param name="Local" value="howdoi\HowSearchFiles.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Search for a Number?">
+        <param name="Local" value="howdoi\HowSearchNumber.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Search for a Floating Point Number?">
+        <param name="Local" value="howdoi\HowSearchFloat.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Abort a Search?">
+        <param name="Local" value="howdoi\HowAbortSearch.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="File Handling">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Find a File That I Opened Before?">
+        <param name="Local" value="howdoi\HowFindPrevFile.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Delete a File On Disk?">
+        <param name="Local" value="howdoi\HowDeleteFile.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Change a File's Read-Only Attribute?">
+        <param name="Local" value="howdoi\HowFileAttribute.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Only View Graphics Files in the File Open Dialog?">
+        <param name="Local" value="howdoi\HowFilters.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Operations">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Convert EBCDIC text to ASCII?">
+        <param name="Local" value="howdoi\HowEBCDIC2ASCII.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Enter a Number?">
+        <param name="Local" value="howdoi\HowEnterNumber.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Enter a Floating Point Number?">
+        <param name="Local" value="howdoi\HowEnterFloating.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Printing">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Change the Printer Margins?">
+        <param name="Local" value="howdoi\HowPrinterMargins.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Stop Printing Lots of Null Bytes?">
+        <param name="Local" value="howdoi\HowPrintDuplicateMerge.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Macros">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Save a Macro?">
+        <param name="Local" value="howdoi\HowSaveMacro.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Call a Nested Macro?">
+        <param name="Local" value="howdoi\HowNestedMacro.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Working with Large Files">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Build a Large File?">
+        <param name="Local" value="howdoi\HowBuildLargeFile.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Make a Large Selection?">
+        <param name="Local" value="howdoi\HowLargeSelection.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="How Do I Make a Large Selection in a Huge File?">
+        <param name="Local" value="howdoi\HowSelectionHugeFile.htm">
+      </object>
+      </ul>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Reference">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Menus">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="System Menu">
+        <param name="Local" value="menus\menu_system.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="File menu">
+        <param name="Local" value="menus\menu_file.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Edit menu">
+        <param name="Local" value="menus\menu_edit.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="View menu">
+        <param name="Local" value="menus\menu_view.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Operations menu">
+        <param name="Local" value="menus\menu_operations.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Tools menu">
+        <param name="Local" value="menus\menu_tools.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Window menu">
+        <param name="Local" value="menus\menu_window.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Help menu">
+        <param name="Local" value="menus\menu_help.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Toolbars and Status Bar">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Standard Toolbar">
+        <param name="Local" value="bars\Standard_Toolbar.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Edit Bar">
+        <param name="Local" value="bars\HIDW_EBAR.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Format Bar">
+        <param name="Local" value="bars\Format_Bar.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Navigation Bar">
+        <param name="Local" value="bars\Navigation_Bar.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Toolbar">
+        <param name="Local" value="bars\HIDW_TBAR.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Status Bar">
+        <param name="Local" value="bars\AFX_HIDW_STATUS_BAR.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Print Preview Toolbar">
+        <param name="Local" value="bars\AFX_HIDW_PREVIEW_BAR.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Properties Dialog">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="File">
+        <param name="Local" value="dlg_properties\HIDD_PROP_FILE.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Byte">
+        <param name="Local" value="dlg_properties\HIDD_PROP_CHAR.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Decimal Values">
+        <param name="Local" value="dlg_properties\HIDD_PROP_DECIMAL.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Floating Point Values">
+        <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="IBM Floating Point Values">
+        <param name="Local" value="dlg_properties\HIDD_PROP_IBMFP.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Date/Time Values">
+        <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Options Dialog">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="System Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Display Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Window Display">
+        <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Colour Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_PARTITIONS.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Macro Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_MACRO.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Printer Options">
+        <param name="Local" value="dlg_options\Printer_Options.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Filters">
+        <param name="Local" value="dlg_options\Filters.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Customize Dialog">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Commands">
+        <param name="Local" value="dlg_custom\HIDD_CUST_COMMANDS.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Toolbars">
+        <param name="Local" value="dlg_custom\HIDD_CUST_TOOLBARS.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Tools">
+        <param name="Local" value="dlg_custom\HIDD_CUST_TOOLS.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Keyboard">
+        <param name="Local" value="dlg_custom\HIDD_CUST_KEYBOARD.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Menu">
+        <param name="Local" value="dlg_custom\HIDD_CUST_MENU.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Mouse">
+        <param name="Local" value="dlg_custom\HIDD_CUST_MOUSE.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Options">
+        <param name="Local" value="dlg_custom\HIDD_CUST_OPTIONS.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Find Dialog">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Basic">
+        <param name="Local" value="dlg_find\Simple.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Hex">
+        <param name="Local" value="dlg_find\HexFind.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Text">
+        <param name="Local" value="dlg_find\FindText.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Number">
+        <param name="Local" value="dlg_find\FindNumber.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Replace">
+        <param name="Local" value="dlg_find\Replace.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Template Dialogs">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Global Options">
+        <param name="Local" value="dlg_templates\Global_Options.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Structure Definition Dialog">
+        <param name="Local" value="dlg_templates\STRUCT_DEFN.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="STRUCT Dialog">
+        <param name="Local" value="dlg_templates\STRUCT_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="FOR Dialog">
+        <param name="Local" value="dlg_templates\FOR_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="IF Dialog">
+        <param name="Local" value="dlg_templates\IF_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="CASE Dialog">
+        <param name="Local" value="dlg_templates\CASE_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="JUMP Dialog">
+        <param name="Local" value="dlg_templates\JUMP_DLG.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Use Struct Dialog">
+        <param name="Local" value="dlg_templates\USE_STRUCT.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="EVAL Dialog">
+        <param name="Local" value="dlg_templates\EVAL_DLG.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="DATA Dialog">
+        <param name="Local" value="dlg_templates\DATA_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Parse Types from Source Code Dialog">
+        <param name="Local" value="dlg_templates\Parser_dialog.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Other Dialogs">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="New File Dialog">
+        <param name="Local" value="dlg_other\New_File_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="File Open Dialog">
+        <param name="Local" value="dlg_other\AFX_HIDD_FILEOPEN.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Save As Dialog">
+        <param name="Local" value="dlg_other\AFX_HIDD_FILESAVE.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Recently Opened Files Dialog">
+        <param name="Local" value="dlg_other\Recently_Opened_Files_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Print Dialog">
+        <param name="Local" value="dlg_other\AFX_HIDD_PRINT.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Print Setup Dialog">
+        <param name="Local" value="dlg_other\AFX_HIDD_PRINTSETUP.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Import Motorola S Records dialog">
+        <param name="Local" value="dlg_other\Import_Motorola_dlg.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Import Intel Hex Records dialog">
+        <param name="Local" value="dlg_other\Import_Intel_dlg.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Copy As C Source Dialog">
+        <param name="Local" value="dlg_other\Copy_As_C_Source.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Font Dialog">
+        <param name="Local" value="dlg_other\AFX_HIDD_FONT.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Bookmarks dialog">
+        <param name="Local" value="dlg_other\Bookmarks_dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Clear Histories Dialog">
+        <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="New Scheme Dialog">
+        <param name="Local" value="dlg_other\New_Scheme_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Replay Macro dialog">
+        <param name="Local" value="dlg_other\Replay_Macro_dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Save Macro Dialog">
+        <param name="Local" value="dlg_other\HIDD_MACRO_SAVE_HELP.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Window Manager">
+        <param name="Local" value="dlg_other\HIDD_WINDOW_MANAGER.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Encryption Algorithm Dialog">
+        <param name="Local" value="dlg_other\HIDD_ALGORITHM.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Encryption Password Dialog">
+        <param name="Local" value="dlg_other\HIDD_PASSWORD.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Email Support Dialog">
+        <param name="Local" value="dlg_other\HIDD_EMAIL.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Reminder Dialog">
+        <param name="Local" value="dlg_other\HIDD_REG_HELP.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Miscellaneous">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Keyboard Shortcuts">
+        <param name="Local" value="misc\keys.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Context Menus">
+        <param name="Local" value="misc\context_menus.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Toolbar Tools">
+        <param name="Local" value="misc\ToolbarTools.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Title bar">
+        <param name="Local" value="misc\HID_HT_CAPTION.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Scrollbars">
+        <param name="Local" value="misc\scrollbars.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Command Line Options">
+        <param name="Local" value="misc\command_line.htm">
+      </object>
+      </ul>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Troubleshooting">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Installation">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Error: HexEdit has not been installed">
+        <param name="Local" value="troubleshooting\install_problem_1.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Error: Procedure entry point ... not found">
+        <param name="Local" value="troubleshooting\Install_problem_2.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Error: DLL not found">
+        <param name="Local" value="troubleshooting\Install_problem_3.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Error: Illegal Operation">
+        <param name="Local" value="troubleshooting\install_problem_4.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Display problems">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Modeless dialog(s) cannot be undocked">
+        <param name="Local" value="troubleshooting\DOCKING_PROBLEM.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Toolbar buttons are wrong">
+        <param name="Local" value="troubleshooting\problem_Toolbar_buttons..htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="A toolbar or the status bar is missing">
+        <param name="Local" value="troubleshooting\problem_missing_bar.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Printing problems">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Page header or footer is not printed">
+        <param name="Local" value="troubleshooting\problem_header_missing.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="I can't print page 34567">
+        <param name="Local" value="troubleshooting\problem_print_page.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Searches">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="A search unexpectedly failed">
+        <param name="Local" value="troubleshooting\problem_search_failed.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Performance problems">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Macros slow down while running">
+        <param name="Local" value="troubleshooting\problem_slow_macros.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Speeding up templates">
+        <param name="Local" value="troubleshooting\Speed_templates.htm">
+      </object>
+      </ul>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Support Forum">
+    <param name="Local" value="http://www.expertcomsoft.com/cgi-bin/ikonboard.cgi">
+    <param name="ImageNumber" value="13">
+  </object>
+</ul>
+</html>

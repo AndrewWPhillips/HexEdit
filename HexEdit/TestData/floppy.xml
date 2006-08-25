@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="Floppy" expr="rtrim(this.BootSector.fileSystem)" type_name="" comment="Template for an MSDOS (FAT12) floppy.  Allows viewing of root dir and sub-dirs (to any depth) and clusters of individual files.">
+	<define_struct type_name="dirEntry" comment="One entry in a directory.  Use for root directory.  It also recursively uses itself for sub-directories." expr="this.status != 0 &amp;&amp; this.status != 0xE5 ? rtrim(this.name)+&quot;.&quot;+rtrim(this.ext) : &quot;---&quot;">
+		<jump offset="0" origin="current" comment="Look ahead at first byte of file name so we can check if it is an empty (0) or deleted (-27) entry.">
+			<data type="int" name="status" format="unsigned" comment="Indicates the status of the directory entry. 00 = unassigned, E5 = empty, otherwsie it is the first character of the file name." len="1" display="hex"/>
+		</jump>
+		<data type="string" name="name" format="ansi" len="8" display="" comment="Name of file padded with spaces (ASCII 20h)"/>
+		<data type="string" name="ext" format="ascii" len="3" display="" comment="File extension - 0 to 3 characters (space padded)"/>
+		<data type="int" name="attributes" format="unsigned" len="1" display="hex" comment="Attribute of the file: bit 0 = READ_ONLY, bit 1 = HIDDEN, bit 2 = SYSTEM, bit 3 = VOLUME NAME, bit 4 = DIRECTORY, bit 5 = ARCHIVE, bit 6/7 = ??"/>
+		<data type="none" name="reserved" len="10" comment="Not used in MSDOS"/>
+		<data type="date" name="fileTime" format="msdos" display="" comment="Date and time the file was last modified."/>
+		<data type="int" name="startCluster" format="unsigned" len="2" display="" domain="this &gt;= 2" comment="This is the first cluster in the chain used by the file.  If the file has zero size then this will be FFFFFFh to indicate the end of the chain.  Note that clusters 0 and 1 are used by the root directory."/>
+		<data type="int" name="fileSize" format="unsigned" len="4" display="" domain="this &lt; 0x80000000" comment="Size of the file in bytes.  If not a multiple of the cluster size then there are unused bytes at the end of the last cluster."/>
+		<eval expr="next_cluster=startCluster" display_error="false" display_result="false" comment="Initialise next_cluster which keeps track of the current cluster in the chain of clusters used by this file/directory."/>
+		<if test="status != 0 &amp;&amp; status != 0xE5" comment="Unused directory entries do not have clusters.">
+			<for name="cluster" count="" stop_test="next_cluster &gt;= 0xFF0" type_name="" comment="Display all clusters until we hit the end of chain or bad cluster (cluster numbers above 0xFF0).">
+				<jump offset="addressof(RootDirEntry) + next_cluster * BootSector.BPB.bytesPerSector * BootSector.BPB.sectorsPerCluster" comment="Jump to the location of the cluster." origin="start">
+					<struct name="cluster" type_name="" comment="Handle one cluster - display directory entries in the cluster if a directory, or just display cluster data.  Then calculate next cluster number." expr="">
+						<if test="(attributes &amp;0x10) != 0" comment="Test if this entry is for a sub-directory."><for name="Entry" count="BootSector.BPB.bytesPerSector * BootSector.BPB.sectorsPerCluster / 32" stop_test="" type_name="" comment="Directory entries in a single cluster"><use_struct name="Entry" expr="" type_name="dirEntry" comment=""/></for><else/><data type="none" name="fileCluster" len="BootSector.BPB.bytesPerSector * BootSector.BPB.sectorsPerCluster" comment="One cluster from the file."/></if><eval expr="dentry = (next_cluster/2)*3" display_error="false" display_result="false" comment="Work out address of next cluster number, rounded down to even value."/>
+						<eval expr="dvalue = FAT.byte[dentry] | (FAT.byte[dentry+1]&lt;&lt;8) | (FAT.byte[dentry+2]&lt;&lt;16)" display_error="false" display_result="false" comment="Get the 3 bytes (24 bits) from the FAT table for the 2 entries (even and odd)."/>
+						<eval expr="next_cluster = (next_cluster&amp;0x1) == 0 ? (dvalue&amp;0xFFF) : (dvalue&gt;&gt;12)" display_error="false" display_result="false" comment="Finally work out the next cluster number.  Use the low 12 bits for even clusters and high 12 bits for odd clusters."/>
+					</struct>
+				</jump>
+			</for>
+		</if>
+	</define_struct>
+	<struct name="BootSector" type_name="" comment="First (boot) sector on the diskette" expr="">
+		<data type="none" name="JumpInstruction" len="3" comment="Usually a JMP (2 bytes) followed by NOP (1 byte)"/>
+		<data type="string" name="OEMname" format="ascii" len="8" display=""/>
+		<struct name="BPB" type_name="" comment="BIOS Parameter block - standard info. on layout of disk" expr="">
+			<data type="int" name="bytesPerSector" format="unsigned" len="2" domain="this &gt;= 512" display="" comment="512 for 3.5 inch FAT12 floppy"/>
+			<data type="int" name="sectorsPerCluster" format="unsigned" len="1" domain="this == 1" display="" comment="Should be always be 1 for FAT12 floppy"/>
+			<data type="int" name="reservedSectors" format="unsigned" len="2" display="" domain="this &gt; 0" comment="Must be at least one (for boot sector)"/>
+			<data type="int" name="numFAT" format="unsigned" len="1" display="" comment="There are typically 2 FAT tables, for redundancy." domain="this &gt; 0"/>
+			<data type="int" name="numRootDirEntries" format="unsigned" len="2" display="" domain="this &gt; 3" comment="Number of entries in root directory - normally 224 (7 sectors) for floppy"/>
+			<data type="int" name="numSectors" format="unsigned" len="2" display="" comment="Number of sctors in data area (ie not including boot, reserved and FAT sectors)"/>
+			<data type="int" name="mediaType" format="unsigned" len="1" display="hex" comment="F0 for 1.44Mb 3.5inch floppy"/>
+			<data type="int" name="numFATsectors" format="unsigned" len="2" display="" domain="this == 9" comment="Should always be 9 for FAT12"/>
+			<data type="int" name="sectorsPerTrack" format="unsigned" len="2" display="" domain="this &gt; 0"/>
+			<data type="int" name="numHeads" format="unsigned" len="2" display="" domain="this &gt; 0"/>
+			<data type="int" name="numHiddenSectors" format="unsigned" len="4" display="" comment="Should be 0 for a floppy"/>
+			<data type="int" name="numSectorsHuge" format="unsigned" len="4" display="" comment="Not used on a floppy"/>
+		</struct>
+		<data type="int" name="driveNum" format="unsigned" len="1" display=""/>
+		<data type="int" name="reserved" format="unsigned" len="1" display=""/>
+		<data type="int" name="signature" format="unsigned" len="1" display=""/>
+		<data type="int" name="volumeID" format="unsigned" len="4" display="hex"/>
+		<data type="string" name="volumeLabel" format="ascii" len="11" display=""/>
+		<data type="string" name="fileSystem" format="ascii" len="8" display="" domain="rtrim(this) == &quot;FAT12&quot;"/>
+		<data type="none" name="bootCode" len="512 - addressof(this) - 2" comment="x86 code that boots to the OS if this is a boot floppy"/>
+		<data type="int" name="magic" format="unsigned" len="2" domain="this == 0xAA55" display="hex" comment="A boot sector always has the last 2 bytes of 55h and AAh"/>
+	</struct>
+	<data type="none" name="ReservedSectors" len="(BootSector.BPB.reservedSectors-1)*BootSector.BPB.bytesPerSector" comment="Normally this is empty as the only reserved sector is the boot sector (above)"/>
+	<struct name="FAT" type_name="" comment="Area of disk reserved for one or more FAT tables." expr="">
+		<jump offset="0" comment="Look ahead at the first FAT table" origin="current">
+			<data type="none" name="byte" len="BootSector.BPB.numSectors + BootSector.BPB.numSectors/2" comment="First FAT table"/>
+		</jump>
+		<data type="none" name="allFatBytes" len="BootSector.BPB.numFATsectors * BootSector.BPB.numFAT * BootSector.BPB.bytesPerSector" comment="Sectors reserved for FAT table(s)"/>
+	</struct>
+	<for name="RootDirEntry" count="BootSector.BPB.numRootDirEntries" stop_test="" type_name="" comment="Entries in root directory of floppy">
+		<use_struct name="dirEntry" expr="" type_name="dirEntry" comment=""/>
+	</for>
+	<data type="none" name="data" len="BootSector.BPB.numSectors * BootSector.BPB.bytesPerSector - addressof(this)" comment="Rest of floppy after root directory"/>
+</binary_file_format>

@@ -1,0 +1,345 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Creating the Template</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=2481>
+<meta name=layout-width content=1213>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font><span style="font-family: Arial;">Step 2. Creating the Template</span></font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">We will now create a new template 
+ by modifying the default template.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Adding a DATA Element</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">First we will add a DATA element 
+ that represents a line of text from a text file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>1. Right-click the &quot;none&quot; element 
+ to display the popup menu and select the &quot;Insert&quot; item and then 
+ the &quot;Data...&quot; item from the sub-menu.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">This will insert a new DATA 
+ element before &quot;none&quot; and open the &quot;Data Element&quot; 
+ dialog.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;
+			font-weight: bold;"
+	align=center><img src="tute1_2_1.gif"
+						style="border-style: none;
+								border: none;
+								width: 517px;
+								height: 299px;"
+						width=517
+						height=299
+						border=0><br>
+<br>
+Figure 2.1 Adding a DATA element.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>2. In the dialog give the DATA element a name 
+ of &quot;line&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Select 
+ a &quot;type&quot; of string and a &quot;format&quot; of ASCII (or Unicode 
+ if you opened a Unicode text file).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>The name can later 
+ be used in expressions (although in this case it won't), so it must be 
+ a valid identifier. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ particular, it should not contain spaces.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Next we have to indicate how 
+ long the string is. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ a &quot;length&quot; is given then that many bytes is always used (although 
+ the value of the string may be shorter if a terminator is encountered). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If a length 
+ is not given then the length of the string is all the bytes up to and 
+ including the terminator character. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ no terminator character is specified then it defaults to a zero (null) 
+ byte which is often used to terminate strings (in particular in C/C++).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">However, for our text file 
+ template the string is a line of text which can be any length and is terminated 
+ by a CR-LF pair (carriage-return plus line-feed) or just a line-feed for 
+ UNIX text files.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>3. Leave the &quot;length&quot; field blank 
+ and enter 10 (line-feed) into the &quot;terminator&quot; field.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;
+			font-weight: bold;"
+	align=center><img src="tute1_2_2a.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><br>
+<br>
+Figure 2.2 <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ line is terminated by a line-feed.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The &quot;Comments&quot;, &quot;Type 
+ name&quot; and &quot;Units&quot; (for numeric fields) have no effect on 
+ the template processing. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can put some explanation in the &quot;comments&quot; field now if you 
+ like.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>When a binary 
+ file is created or modified by a C/C++ program the &quot;Type name&quot; 
+ field is useful for storing a type name (such as a typedef, struct or 
+ class name).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The &quot;Domain&quot; field 
+ can contain a boolean expression used to check whether the field is valid. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We will 
+ see an example of this a little later.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The &quot;Read-only&quot; checkbox 
+ can be used to allow or disallow modifications to specific data fields 
+ of the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By 
+ default it is in a 3rd (unspecified) state which indicates that the read-only 
+ status is determined by a global read-only status for the whole file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>Making the whole 
+ file read-only then turning off the read-only status of a few fields allows 
+ you to easily control which bytes the user of the template can change.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The &quot;Big-endian&quot; 
+ checkbox is only enabled for numeric fields.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>4. Click OK to add the new DATA element.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Adding a FOR Element</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">We now have a DATA element 
+ that represents a line of text, but most text files have more than one 
+ line. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ will add a repetition (or array) of the line by adding a &quot;FOR&quot; 
+ element and making the &quot;line&quot; DATA element its sub-element.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>5. Right-click the &quot;line&quot; element 
+ to display the popup menu and select the &quot;Enclose in&quot; item and 
+ then the &quot;For...&quot; item from the sub-menu.</p>
+
+&nbsp; 
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;
+			font-weight: bold;"
+	align=center><img src="tute1_2_3.gif"
+						style="border-style: none;
+								border: none;
+								width: 517px;
+								height: 300px;"
+						width=517
+						height=300
+						border=0><br>
+<br>
+Figure 2.3 Enclosing the &quot;line&quot; DATA element in a FOR element.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">We will give the &quot;FOR&quot; 
+ Element the name &quot;line&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ will allow you to access an element of the &quot;array&quot; in expressions 
+ using an index. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ first element is &quot;line[0]&quot; and so on.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>Use the singular 
+ when giving an array a name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
+ automatically add an &quot;s&quot; to make the plural when displaying 
+ in the tree-view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ also make expressions more readable when you use something like &quot;line[n]&quot;.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>Sub-elements of 
+ a &quot;FOR&quot; element do not require a name since they are accessed 
+ via an index into the array. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can delete the name of the &quot;DATA&quot; element now to avoid confusion 
+ by clicking the &quot;Edit&quot; button.<br>&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The length of the array is 
+ determined by the &quot;count&quot; and/or &quot;stop&quot; fields. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ in this case we are going to leave them empty to indicate that the array 
+ goes all the way to the end of file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>6. Enter &quot;line&quot; for the name and 
+ click OK.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;
+			font-weight: bold;"
+	align=center><img src="tute1_2_4.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><br>
+<br>
+Figure 2.4 FOR dialog.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that the tree has been 
+ updated to include the FOR. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Expanding 
+ the FOR node displays several lines, one for each line of text in the 
+ file you have open.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note also that now the &quot;none&quot; 
+ element icon has changed to show that the element has zero size. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is because the array of lines goes all the way to the end of file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ will delete it in the next step of the tutorial.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><a HREF="TemplateTute1-1.htm"><img src="../back.gif"
+													style="border-style: none;
+															border: none;
+															width: 51px;
+															height: 22px;"
+													width=51
+													height=22
+													border=0></a> <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a 
+ HREF="TemplateTute1-3.htm"><!--kadov_tag{{</spaces>}}--><img src="../next.gif"
+	style="border-style: none;
+			border: none;
+			width: 51px;
+			height: 22px;"
+	width=51
+	height=22
+	border=0></a></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

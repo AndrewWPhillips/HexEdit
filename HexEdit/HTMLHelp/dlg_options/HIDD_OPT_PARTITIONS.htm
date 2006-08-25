@@ -1,0 +1,621 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Colour Options page</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=date content="08 31, 2002 4:04:13 PM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1739>
+<meta name=layout-width content=1213>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;">Colour Options Page</h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="opt_col.gif"
+						style="border-style: none;
+								border: none;
+								width: 410px;
+								height: 320px;"
+						width=410
+						height=320
+						border=0></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>This page allows you to change the colours used in the active window 
+ display and to create and save colour &quot;schemes&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also display different groups of hex values in different colours, 
+ which for many types of files can be useful for easily spotting patterns 
+ and irregularities.</p>
+
+<p>&nbsp;</p>
+
+<p>The left side of the page displays the current schemes with buttons 
+ to create new schemes, and delete or reset the currently selected scheme. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The top 
+ four schemes are standard schemes that cannot be deleted.</p>
+
+<p>&nbsp;</p>
+
+<p>The four standard schemes are used automatically to display different 
+ characters sets. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
+ if the current character set is ASCII (see <a href="..\cmd_view\Char_Set_ASCII.htm">Char 
+ Set ASCII</a>) and the current scheme is &quot;ASCII default&quot; then 
+ changing to the EBCDIC character set (see <a href="..\cmd_view\Char_Set_EBCDIC.htm">Char 
+ Set EBCDIC</a>) automatically changes to the &quot;EBCDIC default&quot; 
+ colour scheme.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>The right side of the page displays the available colours for the currently 
+ selected scheme. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ top six colours are standard ones that cannot be deleted, or reordered. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Below the 
+ standard colours are one or more entries that specify colour groups that 
+ can be created, deleted and reordered.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>To use different colours you need to split the range of byte values 
+ (0-255) into groups. A group can consist of individual values or discontiguous 
+ ranges. For example, to use the values found in normal ASCII text files 
+ use “9,10,13,32-126”, which are the values of tab, line-feed, carriage-return 
+ and the range of normal display characters. As well as the values each 
+ group has an associated name and, of course, a colour.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>When displaying the hex byte HexEdit scans the groups from the top and 
+ uses the colour of the first group the value is found in. If a value appears 
+ in more than one group the colour from the higher group is used. You can 
+ use the arrow buttons to change the order of the groups. Also if a value 
+ is not assigned to any group then that value is not displayed. (Actually 
+ it’s just displayed using the background colour.)</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><img src="new_ico.gif"
+														style="border-style: none;
+	border: none;
+	width: 22px;
+	height: 23px;"
+														width=22
+														height=23
+														border=0></p>
+
+<p style="margin-left: 18.00pt;">The <span style="font-weight: bold;">new 
+ scheme</span> button invokes the <a HREF="..\dlg_other\New_Scheme_Dialog.htm">New 
+ Scheme Dialog</a> which allows you to create a new scheme based on any 
+ existing scheme.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span><img src="del_ico.gif"
+															style="border-style: none;
+	border: none;
+	width: 22px;
+	height: 23px;"
+															width=22
+															height=23
+															border=0></span></p>
+
+<p style="margin-left: 18.00pt;">To delete a scheme select it in the list 
+ below and click this button. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ cannot delete the first 4 standard schemes but you can, of course, change 
+ their colours.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Reset</span></p>
+
+<p style="margin-left: 18.00pt;">This button changes all the colours of 
+ the currently selected scheme back to the default. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ default colours for the first four (standard) schemes are all slightly 
+ different. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Reseting 
+ any other scheme sets it to be the same as the default &quot;ASCII default&quot; 
+ scheme.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">List 
+ of Schemes</span></p>
+
+<p style="margin-left: 18.00pt;">Select a scheme from the list before you 
+ delete, reset or modify it.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Selecting a scheme and clicking OK selects 
+ that scheme for use in the active window, if any.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Name</p>
+
+<p style="margin-left: 18.00pt;">The description of the currently selected 
+ group. You can also type the name of a new group to be added here.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">List of 
+ Names</span></p>
+
+<p style="margin-left: 18.00pt;">The top 10 entries are for standard colours 
+ that every colour scheme must have. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Below 
+ that are the names of all the current groups. To change the colour of 
+ any of the entries first select it in this list before using the colour 
+ selection tool (below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that version 3.0 adds separate colors for the mark and bookmarks background.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				border-spacing: 0px;
+				border-spacing: 0px;
+				left: 180px;
+				top: 1037px;
+				width: 859px;"
+		width=859
+		cellspacing=0>
+<col style="width: 3.552345cm;">
+<col style="width: 17.931824cm;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	bgcolor=#C0C0C0
+	width=134>
+<p>Background</td>
+<td style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=677>
+<p>The background colour of the window, usually white or a very light shade.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=134>
+<p>Mark</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=677>
+<p>Background colour for the byte at the &quot;mark&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="../cmd_edit/HID_MARK.htm">Set Mark Command</a>.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=134>
+<p>Highlighting</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=677>
+<p>Background colour of bytes that have been highlighted. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="../cmd_edit/HID_HIGHLIGHT.htm">Highlighter</a>.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=134>
+<p>Bookmarks</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=677>
+<p>Background colour of bytes that have been bookmarked. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="../cmd_edit/Edit_Bookmarks.htm">Edit Bookmarks</a>.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=134>
+<p>Search occurrences</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=677>
+<p>Background colour of all occurrences of the current search text (when 
+ background searches are enabled). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(See 
+ Background search option in <a HREF="HIDD_OPT_SYSTEM.htm">System Options 
+ page</a>.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ used for search occurrence progress bar in the <a HREF="../bars/AFX_HIDW_STATUS_BAR.htm">status 
+ bar</a>.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=134>
+<p>Change tracking</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=677>
+<p>Used to show replacements, insertions and deletions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="../cmd_misc/HID_TRACK_CHANGES.htm">Track Changes command</a>.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=134>
+<p>Address background</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=677>
+<p>Background colour of the address area.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=134>
+<p>Sector boundary</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=677>
+<p>Used to show the boundary of disk sectors and background for bad sectors 
+ if the &quot;Sector Bounds&quot; option is on in the <a HREF="HIDD_OPT_WINDOW.htm">Window 
+ Display Options page</a>.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=134>
+<p>Hex addresses</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=677>
+<p>Addresses are shown in this colour if the Decimal addresses toggle is 
+ off. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ used for hex addresses in the <a HREF="../bars/AFX_HIDW_STATUS_BAR.htm">status 
+ bar</a> and <a HREF="../tools/HIDC_JUMP_HEX.htm">hex jump tool</a>.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=134>
+<p>Decimal addresses</td>
+<td style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=677>
+<p>Addresses are shown in this colour if the Decimal addresses toggle is 
+ on. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ used for decimal addresses in the <a HREF="../bars/AFX_HIDW_STATUS_BAR.htm">status 
+ bar</a> and <a HREF="../tools/HIDC_JUMP_DEC.htm">decimal jump tool</a>.</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p style="margin-left: 18.00pt; text-align: center;"
+	align=center><span style="font-weight: bold;">Standard Colours and 
+ Uses</span><br>&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Below the Decimal Addresses colour are 
+ one or more colours used to display the bytes of the file (both hex and 
+ characters). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Select 
+ one of these before adjusting its colour or range of values using the 
+ controls below.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Colour</p>
+
+<p style="margin-left: 18.00pt;">Select a colour from the drop down list 
+ to change the colour of the currently selected entry in the list above. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You can 
+ select one of the 20 colours or &quot;Automatic&quot; to choose a colour 
+ consistent with your &quot;Windows Display Appearance Scheme&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Select 
+ &quot;Other&quot; to see a dialog with two pages: the &quot;Standard&quot; 
+ page allows you to easily select from 140 standard colours; while the 
+ &quot;Custom&quot; page allows you to enter any colour based on RGB or 
+ HSV values.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Values</span></p>
+
+<p style="margin-left: 18.00pt;">Enter the values for the current or new 
+ group. Values are in decimal and comma-separated; a range of values may 
+ be entered by typing two values separated by a dash or a colon.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span><img src="new_ico.gif"
+															style="border-style: none;
+	border: none;
+	width: 22px;
+	height: 23px;"
+															width=22
+															height=23
+															border=0></span></p>
+
+<p style="margin-left: 18.00pt;">The <span style="font-weight: bold;">new 
+ colour group</span> button adds a group to the list with the name currently 
+ in the <span style="font-weight: bold;">Name</span> field (see above), 
+ and the currently selected colour and range of values. You cannot Add 
+ a group with the same name as an existing group.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span><img src="del_ico.gif"
+															style="border-style: none;
+	border: none;
+	width: 22px;
+	height: 23px;"
+															width=22
+															height=23
+															border=0></span></p>
+
+<p style="margin-left: 18.00pt;">This removes the current group from the 
+ list. Before removing you must select the group to remove from the list. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You cannot 
+ remove any of the first 10 standard items from the list.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">If you accidentally remove a group, simply 
+ click the <span style="font-weight: bold;">new colour group</span> button 
+ before you do anything else. This reinserts the same group. You may then 
+ need to use the up arrow button to reposition the group where it was before.</p>
+
+<p style="margin-top: 3.00pt;"><img src="UpUp.gif"
+									alt="image\UpUp.gif"
+									style="width: 22px;
+											height: 23px;
+											border-style: none;"
+									width=22
+									height=23
+									border=0></p>
+
+<p style="margin-left: 18.00pt;">The order of the groups is significant. 
+ The up arrow allows you to move the current group up in the list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ cannot move any of the first 10 standard items.</p>
+
+<p style="margin-top: 3.00pt;"><img src="DownUp.gif"
+									alt="image\DownUp.gif"
+									style="width: 22px;
+											height: 23px;
+											border-style: none;"
+									width=22
+									height=23
+									border=0></p>
+
+<p style="margin-left: 18.00pt;">The down arrow allows you to move the 
+ current group down in the list.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+</body>
+
+</html>

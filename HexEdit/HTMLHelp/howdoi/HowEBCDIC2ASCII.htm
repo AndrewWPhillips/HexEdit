@@ -1,0 +1,129 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>How Do I Convert EBCDIC text to ASCII?</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=date content="08 15, 2002 0:36:23 AM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=969>
+<meta name=layout-width content=1208>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;">How Do I Convert EBCDIC text to ASCII?</h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>As there is not an exact match between the EBCDIC and ASCII character 
+ sets converting between them can be done in several ways. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Three 
+ different options are:</p>
+
+<p>&nbsp;</p>
+
+<p>1. The simplest way for simple text is to just turn on EBCDIC mode using 
+ the <a HREF="..\cmd_old\HID_ASC_EBC.htm">EBCDIC Characters</a> command, 
+ select the text and copy it to the clipboard using the <a HREF="..\cmd_edit\HID_EDIT_COPY.htm">Copy 
+ command</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can then paste it into another program (like Word or NotePad) as normal 
+ text. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->With 
+ this method any EBCDIC control characters and characters that cannot be 
+ converted to ASCII are simply thrown away.</p>
+
+<p>&nbsp;</p>
+
+<p>If you then want to paste back in HexEdit you must use <a HREF="..\cmd_edit\HID_PASTE_ASCII.htm">Paste 
+ As ASCII</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you just use the <a HREF="..\cmd_edit\HID_EDIT_PASTE.htm">Paste command</a> 
+ then HexEdit will paste exactly the same bytes back into the file.</p>
+
+<p>&nbsp;</p>
+
+<p>The technical reason for this is that whenever you cut or copy HexEdit 
+ places binary data <span style="font-style: italic;">and</span> text data 
+ on the clipboard. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ binary data is necessary so that copying and pasting of all byte values 
+ works, since not all byte values (such as null bytes) can be placed on 
+ the clipboard as text. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ you paste in HexEdit it looks for this binary data before looking for 
+ text data. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Note 
+ that this binary data format is the same as that used when copying to 
+ the clipboard in the Developer Studio hex editor.)</p>
+
+<p>&nbsp;</p>
+
+<p>2. To convert a block of bytes in place in a file use the <a HREF="..\cmd_operations\HID_EBC2ASC.htm">Convert 
+ EBCDIC to ASCII</a> command on the Operations menu. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ has the advantage that the selection length is not changed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ any bytes that cannot be converted are replaced with a null byte (ie, 
+ a byte with value zero).</p>
+
+<p>&nbsp;</p>
+
+<p>3. A simple way to find the ASCII values corresponding to a small number 
+ of EBCDIC values is to use the <a HREF="..\dlg_find\HexFind.htm">Find 
+ Hex page</a> and the <a HREF="..\dlg_find\FindText.htm">Find Text page</a> 
+ of the Find dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Select 
+ the EBCDIC character set radio button on the Text Find page then on the 
+ Hex page type the hex value of the EBCDIC text, go back to the Text Find 
+ page and select ASCII mode, then select the Hex Find page again. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ find box now shows the hex values of the corresponding ASCII text.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Custom Conversions</p>
+
+<p>&nbsp;</p>
+
+<p>As there is not a simple one-to-one correspondence between ASCII and 
+ EBCDIC the way conversions are done is fairly subjective. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Some 
+ characters may be changed to similar looking characters and some characters 
+ have to be ignored completely.</p>
+
+<p>&nbsp;</p>
+
+<p>If you are not happy with the way HexEdit does this conversion then 
+ you can modify the file called EBCDIC.TAB which is kept in the same directory 
+ as HEXEDIT.EXE. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ file contains 256 bytes that provide a lookup table, that given an EBCDIC 
+ value as the index stores the corresponding ASCII value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ file is also used to generate the inverse table for ASCII to EBCDIC conversion.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that modifying this file affects how all the above conversions 
+ from EBCDIC to ASCII and from ASCII to EBCDIC are done. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ also affects how EBCDIC text is displayed and how text searches in EBCDIC 
+ mode are done.</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

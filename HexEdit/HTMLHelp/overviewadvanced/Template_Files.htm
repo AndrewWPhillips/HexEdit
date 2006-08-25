@@ -1,0 +1,2158 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Template Files</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=4440>
+<meta name=layout-width content=1239>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<!--(Generated Script Links)========================================-->
+<!--(Generated Code)================================================-->
+<!--(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)==================-->
+<!--begin!kadov{{===================================================-->
+<script type="text/javascript"
+		language=JavaScript1.2
+		x-save-method=compute-relative
+		src="../ehlpdhtm.js"></script>
+<script type="text/javascript"
+		language=JavaScript1.2>
+<!-- 
+if( typeof( kadovFilePopupInit ) != 'function' ) kadovFilePopupInit = new Function();if( typeof( kadovTextPopupInit ) != 'function' ) kadovTextPopupInit = new Function();
+ //-->
+</script>
+
+<!--}}end!kadov=====================================================-->
+<!--(==============================================================)-->
+
+
+<!--(Resources)=====================================================-->
+<!--(Generated Code)================================================-->
+<!--(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)==================-->
+
+<div class=x-popup-text id=POPUP60326138  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">may contain 
+ zero or more define_struct elements followed by zero or more of struct, 
+ use_struct, for, if, jump, eval, or data</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">name: 
+ attribute used to identify the type of files this DFFD can handle</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">default_read_only: 
+ are the data fields of the file read-only by default (true or false)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">default_byte_order: 
+ the byte order for all numbers in the file (big or little) unless overridden</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">default_char_set: 
+ how characters are displayed by default (ascii, ansi, oem or ebcdic)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">web_site: 
+ where more information on the format can be found</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">expr: 
+ can be used to display a relevant data field or expression (see struct 
+ and &quot;Displaying Salient Information&quot; below)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">comment: 
+ you can add any description here</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">type-name: 
+ another comment field</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP192681579  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">may contain 
+ one or more of struct, use_struct, for, if, switch, jump, eval, or data 
+ elements</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">name: 
+ attribute used to access member elements (using the dot operator) in expressions</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">type_name: 
+ optional descriptive name (eg C/C++ struct tag)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">expr: 
+ a string containing expressions to display in the tree view next to the 
+ struct name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ expression must be enclosed in braces and can also include a format specification 
+ after a semicolon. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Eg 
+ &quot;X={this.x;%d} Y={this.y;%d}&quot; (see &quot;Displaying Salient 
+ Information&quot; below)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">comment: 
+ you can add a description here</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">pack: 
+ this attribute is used internally by HexEdit</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP192655704  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">may contain 
+ one or more of struct, use_struct, for, if, switch, jump, eval, or data 
+ elements</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">type_name: 
+ this attribute identifies the struct so that it can be later used in a 
+ &quot;use_struct&quot;</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">expr: 
+ can be used to display particular member values in the tree view (see 
+ struct for details)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">comment: 
+ you can add a description here</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">pack: 
+ this attribute is used internally by HexEdit</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP192624921  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">does 
+ not contain sub-elements (however in the tree view the sub-elements of 
+ the used &quot;define_struct&quot; are displayed)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">name: 
+ can be used to access member elements (using the dot operator) in expressions</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">type_name: 
+ identifies which &quot;define_struct&quot; to use</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">expr: 
+ if present and non-empty it overrides any display attribute of the &quot;define_struct&quot; 
+ (see &quot;struct&quot; for details)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">comment: 
+ you can add a description here</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP192934868  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">contains 
+ exactly one element of type struct, use_struct, for, if, switch, or data</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">name: 
+ can be used to access array (using square brackets and an index) in expressions</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">count: 
+ expression that says how big the array is</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">stop_test: 
+ expression that says if at the end of an array</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">type_name: 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->optional 
+ descriptive name (eg C/C++ typedef name)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">comment: 
+ you can add a description here</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP193023662  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">contains 
+ one or three sub-elements</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">the first 
+ and third (if present) sub-elements may be of type struct, use_struct, 
+ for, if, switch, jump or data</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">the second 
+ sub-element if present must be an &quot;else&quot;</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">test: 
+ this attribute contains a boolean expression that says whether the contained 
+ element exists in the file</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">comment: 
+ you can add a description here</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP192671272  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">does 
+ not contain sub-elements or attributes</p></li>
+	
+	<li class=kadov-p><p>simply a placeholder as the 2nd attribute of an 
+ &quot;if&quot; attribute if it contains an &quot;else&quot; part</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP192697606  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">contains 
+ one or more &quot;case&quot; sub-elements</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">test: 
+ this attribute contains a integer expression <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->which 
+ is used to select one of the nested case elements</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">comment: 
+ you can add a description here</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP192383987  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>may only be contained within a switch element</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">contains 
+ one sub-element which may be of type struct, use_struct, for, if, switch, 
+ jump or data</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">range: 
+ this attribute contains one or more integer constants or ranges for example 
+ &quot;1, 2, 3, 5-10&quot;</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP192778451  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">contains 
+ exactly one element of type struct, use_struct, for, if, switch, or data</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">offset: 
+ new file address that is jumped to (must be a negative value if jumping 
+ relative to end of file)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">origin: 
+ how address is used - must be one of &quot;start&quot;, &quot;current&quot; 
+ or &quot;end&quot;</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">comment: 
+ you can add a description here</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP192720122  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">does 
+ not contain sub-elements</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">expr: 
+ expression to evaluate, often used to initialise a variable (see also 
+ &quot;Displaying Salient Information&quot; below)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">display_error: 
+ displays an error message if expr (which must return a boolean result) 
+ is false</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">display_result: 
+ displays the result in the tree view even when not in edit mode (ie, in 
+ view mode)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">comment: 
+ you can add a description here</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<div class=x-popup-text id=POPUP192614364  style='display: none; position: absolute' >
+<!--kadov-resources-begin{{-->
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">does 
+ not contain sub-elements</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">name: 
+ can be used to access the element (as a member of a struct)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">type: 
+ none, char, int, real, date, string</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">format: 
+ provides more information about the data type (see below)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">len: 
+ number of bytes (eg for int = 1, 2, 4, or 8)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">bits: 
+ non-blank if the field is a bitfield whence it specifies the number of 
+ bits used</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">direction: 
+ order in which bitfields fill the underlying integer unit</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">straddle: 
+ whether bitfields can straddle units (not yet implemented)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">byte_order: 
+ default, big, or little - if unspecified = default_byte_order</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">read_only: 
+ default, true or false - if unspecified = default_read_only</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">domain: 
+ a boolean expression that says whether the data is valid</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">hide: 
+ boolean expression that says if the field is not to be displayed (except 
+ in edit mode)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">units: 
+ optional description of the units used for this data</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">display: 
+ a format string used to display the data in the tree view</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">type_name: 
+ optional descriptive name (eg C/C++ typedef name)</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">comment: 
+ you can add a description here</p></li>
+</ul>
+<!--}}kadov-resources-end-->
+</div>
+
+<!--(End Resources)=================================================-->
+
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Template Files</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">This section describes the 
+ format of template files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ do not need to know this to use templates or even to create and edit templates. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If you 
+ just want to create simple templates you can skip this section. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ having an understanding of the underlying format may make it easier to 
+ understand the next section on editing templates.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">A template file is simply an 
+ XML file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ file must conform to the XML DTD for template files (see the file BinaryFileFormat.DTD). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The DTD 
+ specifies that the XML template file can contain only the following elements:</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 99.747%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=99.747%>
+<col style="width: 16.962%;">
+<col style="width: 83.038%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p style="font-weight: bold;">Element</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=83.038%>
+<p style="font-weight: bold;">Used for</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p>struct</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p style="margin-top: 0; margin-bottom: 0;">contains a sequence of one 
+ or more elements (struct, use_struct, for, if, jump, eval, or data)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p style="margin-top: 0; margin-bottom: 0;">binary_file_format</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p style="margin-top: 0; margin-bottom: 0;">the outer container - similar 
+ to a struct but can also contain global default attributes and define_structs</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p>define_struct</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p style="margin-top: 0; margin-bottom: 0;">defines a struct for later 
+ use - contains one or more elements <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(struct, 
+ use_struct, for, if, jump, eval, or data)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p>use_struct</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p style="margin-top: 0; margin-bottom: 0;">use a previously declared define_struct</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p>for</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p style="margin-top: 0; margin-bottom: 0;">contains a (fixed or variable 
+ length) repetition of an element (struct, use_struct, for, if, jump, or 
+ data)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p>if</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p style="margin-top: 0; margin-bottom: 0;">contains an element may or 
+ may not be present (struct, use_struct, for, if, jump, or data) - may 
+ have an optional &quot;else&quot; part</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p>switch</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p style="margin-top: 0; margin-bottom: 0;">selects one case from a list 
+ of case sub-elements based on an integer expression</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p>case</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p>contains an integer (or range of integers) used to match the containing 
+ switch expression plus one sub-element (struct, etc)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p>jump</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p>just sets a different file address - contains a single element (struct, 
+ use_struct, for, if, or data)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p>eval</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p>used to evaluate and optionally display an expression</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 16.962%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=16.962%>
+<p>data</td>
+<td colspan=1
+	rowspan=1
+	style="width: 83.038%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=83.038%>
+<p>specifies the actual data (characters, strings, integer and floating 
+ point numbers, dates) and their size, byte order etc</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The define_struct, use_struct, 
+ jump, eval and else were added in HexEdit 3.0. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ switch/case element was added in 3.1.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">You can, of course, combine 
+ these in different ways. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ common data structure is an array of structs (a &quot;struct&quot; element 
+ within a &quot;for&quot; element). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->And 
+ a &quot;for&quot; element within another &quot;for&quot; element gives 
+ a 2-dimensional array.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Examples are probably the best 
+ way to understand this, so here is a quick one. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ common Windows structure is to have a list of null-terminated strings 
+ stored one after the other followed by an empty string (ie the last string 
+ is followed by two null bytes). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ can be represented in a template file using the following XML:</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;for 
+ stop_test=&quot;this[0] == '\0' &quot;&gt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;for 
+ stop_test=&quot;this == '\0' &quot;&gt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;char&quot;/&gt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/for&gt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/for&gt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The first line says to stop 
+ looping on the data when the string is empty (ie. the first element of 
+ the nested array is a null byte). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ second line says that each string ends when a null byte is encountered. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The third 
+ line says that the type of data in the string is a character (ASCII by 
+ default). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ last 2 lines are required by XML syntax to terminate the &quot;for&quot; 
+ elements.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">For more examples, see the 
+ .XML files that are included. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ have created example template files for .DBF (dBase 3 files), .BMP (Windows 
+ bitmap files) and .HEM (HexEdit keystroke macros files). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Check 
+ on the HexEdit web site (http://www.hexedit.com) for the availability 
+ of new files.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Templates and the Tree View</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">When a template is in use it 
+ is used to generate a &quot;tree view&quot; of the data (see <a HREF="..\overviewtools\Templates.htm">Using 
+ Templates</a>). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ expandable nodes of the tree represent the struct, for, if and jump elements 
+ of the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ tree view is simplified in &quot;view&quot; mode (new in HexEdit 3.0) 
+ so that only the present parts of the file are displayed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, DEFINES_STRUCTs are not displayed or empty arrays (FOR) and the 
+ non-taken parts of IF and all except the taken CASE in a SWITCH (the SWITCH 
+ node is not shown at all if no matching CASE is found). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ <span>in &quot;edit&quot; mode all parts are shown including all CASEs 
+ of a SWITCH and a single sub-element (dimmed) for a FOR if it has zero 
+ size.</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that there is not a one 
+ to one correspondence between nodes of the tree view and the elements 
+ of the template file -- for example, in the template file a &quot;for&quot; 
+ element has only one sub-element, whereas in the tree view the corresponding 
+ &quot;for&quot; node can have many sub-nodes depending on the number of 
+ elements of the array. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ you edit any element of a &quot;for&quot; node you change all other elements. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ when you edit any of the sub-nodes of a &quot;use_struct&quot; you are 
+ editing the actual &quot;define_struct&quot; and will affect all other 
+ uses of it in the file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">A leaf in the tree view (ie 
+ a node that cannot be expanded) represents a &quot;data&quot; element. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(In HexEdit 
+ 3.0 &quot;eval&quot; elements are also leaves.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ value of the element can be displayed in the tree view according to the 
+ type of data using a customizable format string. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ HexEdit 3.0 the ability to edit values (in the DATA column of the tree 
+ view) has been added. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Further, 
+ the actual value can be tested (using a C like expression) and flagged 
+ as invalid. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, to validate that a 32 bit value is between 1 and a million inclusive:</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;int&quot; len=&quot;4&quot; display=&quot;%7d&quot; byte_order=&quot;big&quot; 
+ domain=&quot;this &gt; 0 &amp;&amp; this &lt;= 1000000&quot; /&gt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">XML Elements</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">When a template file is read, 
+ the XML is parsed for syntax errors and also checked against the DTD. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If an error 
+ is encountered then it is reported with a description of where the error 
+ occurred. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you encounter such an error you can fix the XML using a text editor (or 
+ an XML editor).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Here is a description of the 
+ elements of the XML file, their allowed sub-elements and their allowed 
+ attributes.</p>
+
+<ol style="list-style: decimal;"
+	type=1>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP60326138
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a1><span style="font-weight: normal;">binary_file_format</span></a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a1');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP192681579
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a2>struct</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a2');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP192655704
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a6>define_struct</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a6');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP192624921
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a7>use_struct</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a7');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP192934868
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a3>for</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a3');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP193023662
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a4>if</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a4');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP192671272
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a10>else</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a10');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP192697606
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a11>switch</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a11');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP192383987
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a12>case</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a12');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP192778451
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a8>jump</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a8');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP192720122
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a9>eval</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a9');
+//--></script><!--}}end!kadov--></p></li>
+	
+	<li style="/*begin!kadov{{*/ font-weight: normal; /*}}end!kadov*/ "
+		class=kadov-p><p style="margin-top: 0;
+								margin-bottom: 0;
+								font-weight: normal;"><a class=dropspot
+														x-use-popup=#POPUP192614364
+														x-popup-type=pulldown
+														href="javascript:kadovTextPopup(this)"
+														id=a5>data</a><!--begin!kadov{{--><script 
+ type="text/javascript"
+	language=JavaScript1.2><!--
+kadovTextPopupInit('a5');
+//--></script><!--}}end!kadov--></p></li>
+</ol>
+
+<p style="margin-top: 0; margin-bottom: 0;">The above offer a great deal 
+ of flexibility. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, you can mix little-endian and big-endian data formats in the 
+ same file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ could also make the whole file read-only (setting default_read_only to 
+ true) but then allow a few fields to be modified (by setting their read_only 
+ attribute to false).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">This size of an array (for) 
+ can be given in <span style="font-weight: bold;">count, </span>which can 
+ be a constant or an expression evaluated from data fields already encountered. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Or an array 
+ can stop when a particular array element is encountered using an expression 
+ in the <span style="font-weight: bold;">stop_test</span> attribute. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ a <span style="font-weight: bold;">count</span> and a <span style="font-weight: bold;">stop_test</span> 
+ are given the array will end when the first of either condition is met. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If neither 
+ of <span style="font-weight: bold;">count</span> and a <span style="font-weight: bold;">stop_test</span> 
+ are given (or are empty) then the array will continue to the end of file, 
+ in which case no elements should follow it.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that the &quot;if&quot; 
+ element has no name attribute but you can still use it in an expression 
+ by using the name of the contained element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Of 
+ course, you can only use the element in an expression if it is actually 
+ present in the file (ie the if test evaluates to true).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The combination of the above 
+ elements make it possbile to describe a large number of binary file formats, 
+ but in some ways the structure is very primitive. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, there is no way to have an &quot;else&quot; part to the &quot;if&quot; 
+ but you must instead have two &quot;if&quot; elements with opposite expressions. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<span style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{</spaces>}}-->Possible 
+ future additions include a &quot;union&quot; element (which would be similar 
+ to struct but all contained elements would start at the same address) 
+ and an &quot;else&quot; part of the &quot;if&quot; element or even a &quot;switch&quot; 
+ element (which would select from one of many alternatives).</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Data Elements</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The char, int, real, and date 
+ data types have one or more fixed size values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, an int can be 8, 16, 32 or 64 bits. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ if the data type is &quot;none&quot; or &quot;string&quot; the data can 
+ be of any length.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The data type &quot;none&quot; 
+ is used for fill bytes or large chunks of data when the type is unspecified 
+ or unknown. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ length is evaluated as an expression so you can calculate a length based 
+ on values occurring earlier in the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the length (<span style="font-weight: bold;">len</span> attribute) is 
+ not present or empty then the chunk of data extends right up to the end 
+ of file -- this is useful as the last element of a template where the 
+ length of the rest of file is not known.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The &quot;string&quot; data 
+ type is similar to &quot;none&quot;, except that a string can be used 
+ in expressions, for example to compare against a constant string value. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also if 
+ a length is not given (the <span style="font-weight: bold;">len</span> 
+ attribute is not present or empty) then the length of the string is taken 
+ to be all the bytes up to and including the terminating null byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By 
+ default the string terminator is a null byte but you can specify a different 
+ terminator using a <span style="font-weight: bold;">type</span> of &quot;string&quot; 
+ followed by a decimal value -- for example, use &quot;string10&quot; for 
+ a line-feed terminated string or &quot;string13&quot; for a carriage-return 
+ terminated string. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, here is a template for a text file (a file having lines of ASCII 
+ text terminated with line-feeds):</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;for 
+ name=&quot;line&quot;&gt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;string10&quot;/&gt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/for&gt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">If a length is given for a 
+ string element then the string field will be exactly that length. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ in expressions and for display purposes the string finishes when a null 
+ byte is encountered (or another terminator if specified). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
+ the length of the string will be the number of bytes up to the terminator 
+ (if found) or the field length (if no terminator is encountered).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Data Element Attributes</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Valid values for the len, format, 
+ display, and domain attributes depend on the value of the type attribute. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The following 
+ table summarises these dependencies. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that a dash indicates the value is not used.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Generally attributes (except 
+ type) do not have to be specified. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ default to the first value listed in the table below. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, an int is by default assumed to be a signed 32 bit (4 byte) value 
+ and displayed as decimal. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the display attribute is not given or is empty then the value is displayed 
+ using the format string specified by the user in &quot;Default data format 
+ strings&quot; of the <a HREF="..\dlg_options\HIDD_OPT_SYSDISPLAY.htm">Display 
+ page</a> of the Options dialog.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 100.141%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=100.141%>
+<col style="width: 8.311%;">
+<col style="width: 16.139%;">
+<col style="width: 32.406%;">
+<col style="width: 43.144%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 8.311%;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	bgcolor=#C0C0C0
+	width=8.311%>
+<p style="font-weight: bold;">type</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.139%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=16.139%>
+<p style="font-weight: bold;">len</td>
+<td colspan=1
+	rowspan=1
+	style="width: 32.406%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=32.406%>
+<p style="font-weight: bold;">format</td>
+<td colspan=1
+	rowspan=1
+	style="width: 43.144%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=43.144%>
+<p style="font-weight: bold;">display</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 8.311%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=8.311%>
+<p>none</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.139%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.139%>
+<p>expression</td>
+<td colspan=1
+	rowspan=1
+	style="width: 32.406%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.406%>
+<p>-</td>
+<td colspan=1
+	rowspan=1
+	style="width: 43.144%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.144%>
+<p>-</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 8.311%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=8.311%>
+<p>char</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.139%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.139%>
+<p>-</td>
+<td colspan=1
+	rowspan=1
+	style="width: 32.406%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.406%>
+<p>ascii, ansi, oem, ebcdic, unicode</td>
+<td colspan=1
+	rowspan=1
+	style="width: 43.144%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.144%>
+<p style="margin-top: 0; margin-bottom: 0;">printf format string (dv &quot;%c&quot;)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 8.311%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=8.311%>
+<p>int</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.139%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.139%>
+<p>4, 1, 2, or 8</td>
+<td colspan=1
+	rowspan=1
+	style="width: 32.406%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.406%>
+<p>signed, unsigned, magnitude</td>
+<td colspan=1
+	rowspan=1
+	style="width: 43.144%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.144%>
+<p style="margin-top: 0; margin-bottom: 0;">dec, hex, oct, bin, or printf 
+ format string</p>
+<p style="margin-top: 0; margin-bottom: 0;">(dv %u for unsigned or %d for 
+ signed)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 8.311%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=8.311%>
+<p>float</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.139%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.139%>
+<p>8 or 4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 32.406%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.406%>
+<p>ieee, ibm</td>
+<td colspan=1
+	rowspan=1
+	style="width: 43.144%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.144%>
+<p style="margin-top: 0; margin-bottom: 0;">printf format string (dv &quot;%g&quot;)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 8.311%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=8.311%>
+<p>date</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.139%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.139%>
+<p>-</td>
+<td colspan=1
+	rowspan=1
+	style="width: 32.406%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.406%>
+<p>c, c51, c7, cmin, ole, systemtime, filetime, msdos</td>
+<td colspan=1
+	rowspan=1
+	style="width: 43.144%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.144%>
+<p style="margin-top: 0; margin-bottom: 0;">strftime format string (dv 
+ &quot;%#c&quot;)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 8.311%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=8.311%>
+<p>string</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.139%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.139%>
+<p>expression</td>
+<td colspan=1
+	rowspan=1
+	style="width: 32.406%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.406%>
+<p>ascii, ansi, oem, ebcdic, unicode </td>
+<td colspan=1
+	rowspan=1
+	style="width: 43.144%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.144%>
+<p style="margin-top: 0; margin-bottom: 0;">printf format string (dv &quot;%s&quot;)</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The domain attribute allows 
+ validation of an element, and also allows an enum list (list of names 
+ and associated values) for integer types. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ domain attribute is ignored for elements of type &quot;none&quot; and 
+ type &quot;date&quot; as these types cannot be used in an expression. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If the 
+ domain attribute is empty or not present then no validation is done.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">If the domain attribute is 
+ not empty it must contain an expression (or an enum - see below) that 
+ evaluates to a boolean result and uses the special variable called &quot;this&quot; 
+ to access the current field value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Remember 
+ that you must use &quot;this&quot; in the expression according to the 
+ type of the field. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, for a string data type a valid attribute is <span style="font-weight: bold;">domain='this 
+ &gt; &quot;a&quot;'</span>, but this would be invalid <span style="font-weight: bold;">domain='this 
+ &gt; 0.0'</span>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the domain expression returns false the user is notified there is an error 
+ and the icon for the element is greyed.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">For integer fields the domain 
+ can alternatively contain an enum. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ signal this the domain attribute must begin with a brace character ({). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The syntax 
+ is the same as for <span style="font-weight: bold;">enum</span>s in C/C++. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(That is, 
+ a list of names separated by commas and enclosed in braces. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ first enum value defaults to zero and subsequent ones are one more than 
+ the previous, but you can explicitly set a value using an equals sign 
+ and an integer literal). When the field is displayed the matching enumeration 
+ name is used. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the field value does not match any of the enum values then an error is 
+ signalled (the icon is greyed) and the integer value is displayed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if an element had a domain of <span style="font-weight: bold;">{ 
+ NONE, LOW, MEDIUM, HIGH=4 }</span> and an instance of the element had 
+ a value of 2 then the field is displayed as &quot;MEDIUM&quot;; whereas 
+ a value of 3 is displayed as &quot;3&quot; and the icon is greyed indicating 
+ an invalid value.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Expressions</span></p>
+
+<p>&nbsp;</p>
+
+<p>An important part of templates is the naming system and expression evaluation. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This allows 
+ any value already encountered so far in the processing of a file to be 
+ used in an expression, for example, as the size of an array, or to say 
+ whether another part of the file is present or missing. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ evaluating an expression, member elements of structs are accessed using 
+ the normal dot operator, and array elements are accessed with square brackets. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The complete 
+ syntax of expressions is discussed in a previous section on <a HREF="Expressions.htm">Expressions</a>.</p>
+
+<p>&nbsp;</p>
+
+<p>Certain attributes of the template elements can be an expression that 
+ is evaluated each time it is used. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ includes:</p>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>&quot;offset&quot; attribute of &quot;jump&quot; 
+ element: integer value that is the address to jump to (relative to start 
+ of, current position in, or end of file)</p></li>
+	
+	<li class=kadov-p><p>&quot;count&quot; attribute of &quot;for&quot; 
+ element: integer value that gives the size of the array</p></li>
+	
+	<li class=kadov-p><p>&quot;stop_test&quot; attribute of &quot;for&quot; 
+ element: boolean value that indicates when the array stops</p></li>
+	
+	<li class=kadov-p><p>&quot;test&quot; attribute of &quot;if&quot; element: 
+ boolean value that indicates if the contained element is present</p></li>
+	
+	<li class=kadov-p><p>&quot;len&quot; attribute of &quot;data&quot; 
+ element: integer that indicates the number of bytes used for the data 
+ element (types &quot;string&quot; and &quot;none&quot; only)</p></li>
+	
+	<li class=kadov-p><p>&quot;domain&quot; attribute of &quot;data&quot; 
+ element: boolean value that indicates if the value is valid</p></li>
+	
+	<li class=kadov-p><p>&quot;hide&quot; attribute of &quot;data&quot; 
+ element: boolean value that indicates if the field is to be displayed 
+ in the tree view (when not in edit mode)</p></li>
+	
+	<li class=kadov-p><p>&quot;expr&quot; attribute of &quot;eval&quot; 
+ elements: just evaluates an expression (useful to initialise a variable), 
+ can also be used to display a value or check for an error condition</p></li>
+	
+	<li class=kadov-p><p>&quot;expr&quot; attribute of &quot;struct&quot; 
+ elements: can be an expression or a string containing one or more {expression;format} 
+ specifications (see next section)</p></li>
+</ul>
+
+<p>The special variable &quot;this&quot; refers to the value of the current 
+ element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ has three uses.</p>
+
+<p>&nbsp;</p>
+
+<p>First you can use the value &quot;this&quot; in the &quot;stop_test&quot; 
+ attribute of the &quot;for&quot; element to check for the end of a variable 
+ size array. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, a stop_test of &quot;this == 0&quot; means that the last element 
+ of the array is the first one that has a value of zero (assuming that 
+ contained element of the FOR is a numeric data element). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the &quot;for&quot; element contains a &quot;struct&quot;, &quot;if&quot; 
+ or another &quot;for&quot; then sub-elements can be accessed as normal 
+ (eg, &quot;this[0] == 0&quot; or &quot;this.last_flag == 1&quot; etc.</p>
+
+<p>&nbsp;</p>
+
+<p>Second, you can use &quot;this&quot; in the &quot;domain&quot; attribute 
+ of the &quot;data&quot; element to check for valid values, eg. domain=&quot;this 
+ != 0&quot; if the field should never be zero.</p>
+
+<p>&nbsp;</p>
+
+<p>Third, in &quot;expr&quot; attribute of &quot;struct&quot; elements 
+ it can be used to access values of members of the struct</p>
+
+<p>&nbsp;</p>
+
+<p>As the XML file is scanned it is compared against the actual data from 
+ the file being accessed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->At 
+ any point an expression in the XML can evaluate any value earlier in the 
+ file using the dot (.) and array access operators. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ a variable name is encountered, the name is first checked against any 
+ global variables that may have been created, then it is checked against 
+ all data elements at the current level within a struct, then the level 
+ of the containing struct all the way up to elements within the top level 
+ (binary_file_format) element.</p>
+
+<p>&nbsp;</p>
+
+<p>If the variable name refers to a data element then the value of that 
+ element is used in the expression. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the name is the name of a &quot;struct&quot; element then the dot operator 
+ can be used to access nested members of the struct. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the name refers to a &quot;for&quot; element then the array access operation 
+ (square brackets) can be used to access a member of the array.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Displaying 
+ Salient Information</span></p>
+
+<p>&nbsp;</p>
+
+<p>You may find it useful to display important fields of a &quot;struct&quot; 
+ in the tree view to save the user from having to dig down into the sub-nodes. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This can 
+ be easily done by embedding special display specifications within the 
+ &quot;expr&quot; attribute string. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(For 
+ users of Visual C++ this is similar to the format specifications in AUTOEXP.DAT 
+ that are used to display important fields of a class/struct when debugging.)</p>
+
+<p>&nbsp;</p>
+
+<p>For example, if a struct contains the integer &quot;data&quot; elements 
+ &quot;x&quot;, &quot;y&quot; and &quot;flags&quot;, the value of these 
+ can be displayed in the tree view next to the structure name using a &quot;expr&quot; 
+ attribute like this:</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">expr=&quot;x={this.x}, y={this.y}, flags={this.flags;bin}&quot;</p>
+
+<p>&nbsp;</p>
+
+<p>which might display something like: x=100, y=200, flags=00000000 00000000 
+ 00000111 10101010</p>
+
+<p>&nbsp;</p>
+
+<p>Note that you can use any valid expression within the braces ({ and 
+ }), and you may follow the expression with a semicolon and a format specification. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Format 
+ specifications are as described for the &quot;expr&quot; atrribute of 
+ &quot;data&quot; elements described above. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, for an integer expression you can specifiy &quot;dec&quot;, &quot;hex&quot;, 
+ &quot;oct&quot; or &quot;bin&quot; or a printf format specification like 
+ %d.</p>
+
+<p>&nbsp;</p>
+
+<p>You can also specify a &quot;expr&quot; attributes for a &quot;define_struct&quot; 
+ which is displayed wherever the structure is used unless overridden in 
+ a specific instance by a non-empty &quot;expr&quot; attribute of a &quot;use_struct&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p>Although the &quot;expr&quot; attribute of an &quot;eval&quot; is typically 
+ just an expression it may also contain a string of this format so that 
+ more than one expression may be evaluated and the relevant information 
+ displayed to the user.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">XML Notes</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that due to the vagaries 
+ of XML some characters require special codes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you are creating the XML in a text editor you will need to <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->use 
+ the sequences below. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you are editing templates via the dialogs then this will be handled automatically 
+ and you do not need to worry about this section.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Whenever you want to use one 
+ of the following characters in an expression use the associated sequence 
+ instead:</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&lt; <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&amp;lt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&gt; <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&amp;gt;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&amp; <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&amp;amp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Also XML allows attributes 
+ to be enclosed in either single- or double-quotes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you need to use a string constant (uses double-quotes) the attribute should 
+ be enclosed in single-quotes to avoid prematurely ending the attribute. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ if the expression needs a character constant (uses single-quotes) enclose 
+ the expression in double-quotes. </p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Example</p>
+
+<p>&nbsp;</p>
+
+<p>Here is a complete example of a template file for .BMP (Windows bitmap) 
+ files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ line numbers are not part of the file but are use to refer to lines in 
+ the description below.</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->1. &lt;?xml 
+ version=&quot;1.0&quot; ?&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->2. &lt;!DOCTYPE 
+ binary_file_format SYSTEM &quot;BinaryFileFormat.dtd&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->3. &lt;binary_file_format 
+ name=&quot;Windows bitmap file (DIB)&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->4. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;struct 
+ name=&quot;filehdr&quot; type_name=&quot;BITMAPFILEHEADER&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->5. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;type&quot; type=&quot;string&quot; len=&quot;2&quot; domain='this==&quot;BM&quot;'/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->6. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;size&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->7. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;reserved1&quot; type=&quot;int&quot; len=&quot;2&quot; domain=&quot;this==0&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->8. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;reserved2&quot; type=&quot;int&quot; len=&quot;2&quot; domain=&quot;this==0&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->9. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;offbits&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p>10. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/struct&gt;</p>
+
+<p>11. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;struct 
+ name=&quot;infohdr&quot; type_name=&quot;BITMAPINFOHEADER&quot;&gt;</p>
+
+<p>12. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;size&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p>13. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;width&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p>14. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;height&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p>15. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;planes&quot; type=&quot;int&quot; len=&quot;2&quot;/&gt;</p>
+
+<p>16. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;bitcount&quot; type=&quot;int&quot; len=&quot;2&quot; domain=&quot;this==1||this==4||this==8||this==24&quot;/&gt;</p>
+
+<p>17. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;compression&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p>18. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;sizeimage&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p>19. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;xpelspermeter&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p>20. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;ypelspermeter&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p>21. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;clrused&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p>22. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;clrimportant&quot; type=&quot;int&quot; len=&quot;4&quot;/&gt;</p>
+
+<p>23. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/struct&gt;</p>
+
+<p>24. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;if 
+ test=&quot;infohdr.size &amp;gt; sizeof(infohdr)&quot;&gt;</p>
+
+<p>25. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;extra&quot; type=&quot;none&quot; len=&quot;infohdr.size - 
+ sizeof(infohdr)&quot;/&gt;</p>
+
+<p>26. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/if&gt;</p>
+
+<p>27. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;if 
+ test=&quot;infohdr.bitcount &amp;lt; 24&quot; comment=&quot;Not required 
+ for 24 bit colour&quot;&gt;</p>
+
+<p>28. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;for 
+ name=&quot;colour&quot; count=&quot;1 &amp;lt;&amp;lt; infohdr.bitcount&quot;&gt;</p>
+
+<p>29. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;struct 
+ type_name=&quot;RGBQUAD&quot;&gt;</p>
+
+<p>30. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;blue&quot; <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->type=&quot;int&quot; 
+ format=&quot;u&quot; len=&quot;1&quot;/&gt;</p>
+
+<p>31. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;green&quot; type=&quot;int&quot; format=&quot;u&quot; len=&quot;1&quot;/&gt;</p>
+
+<p>32. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;red&quot; <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->type=&quot;int&quot; 
+ format=&quot;u&quot; len=&quot;1&quot;/&gt;</p>
+
+<p>33. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;resvd&quot; type=&quot;int&quot; format=&quot;u&quot; len=&quot;1&quot;/&gt;</p>
+
+<p>34. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/struct&gt;</p>
+
+<p>35. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/for&gt;</p>
+
+<p>36. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/if&gt;</p>
+
+<p>37. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ name=&quot;bitmap&quot; type=&quot;none&quot; len=&quot;infohdr.sizeimage&quot;/&gt;</p>
+
+<p>38. &lt;/binary_file_format&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>Lines 1 to 3 are always the same, except you can put a meaningful description 
+ in the name attribute.</p>
+
+<p>&nbsp;</p>
+
+<p>Lines 4 to 10 define the format of the BITMAPFILEHEADER structure that 
+ appears at the start of a .BMP file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ the domain attribute in line 5 that acts as a check that the file really 
+ is a .BMP file.</p>
+
+<p>&nbsp;</p>
+
+<p>Lines 11 to 23 define the format of the BITMAPINFOHEADER structure.</p>
+
+<p>&nbsp;</p>
+
+<p>Lines 24 to 26 are used to handle future extensions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ extra fields are added to the BITMAPINFOHEADER structure in the future 
+ the &quot;size&quot; field will contain a larger value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ lines allocate these extra bytes if necessary.</p>
+
+<p>&nbsp;</p>
+
+<p>Lines 27 to 36 define a series of RGBQUAD structures. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Since 
+ 24 bit bitmaps do not require these line 27 makes them contingent on that 
+ condition. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Line 
+ 28 reserves the correct number depending on the number of bits per pixel. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note that 
+ &amp;lt;&amp;lt; means two less than signs which is the left-shift operator.</p>
+
+<p>&nbsp;</p>
+
+<p>Line 37 is where the storage for the actual image data is reserved.</p>
+
+<p>&nbsp;</p>
+
+<p>Line 38 terminates the root element and is always the last line of a 
+ template file.</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

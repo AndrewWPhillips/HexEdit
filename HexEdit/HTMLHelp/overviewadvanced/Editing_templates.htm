@@ -1,0 +1,1413 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Editing templates</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=3116>
+<meta name=layout-width content=1125>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial, sans-serif;">Editing Templates</h2>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>HexEdit templates are based on XML files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ may create and edit these files directly (see the <a HREF="Template_Files.htm">Template 
+ Files</a> section). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Alternatively, 
+ you can use the built-in template editing facilities. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ allow access to all template capabilities (plus have many extra convenience 
+ features), so you never have to see the XML file if you don't want to.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Tree View</p>
+
+<p>&nbsp;</p>
+
+<p>To use the built-in template editing you must have the template &quot;tree 
+ view&quot; visible. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ do this select the &quot;Use templates&quot; check box in the <a HREF="../dlg_options/HIDD_OPT_SYSDISPLAY.htm">Display 
+ page</a> of the Options dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(See 
+ the earlier <a HREF="../overviewtools/Templates.htm">Using Templates</a> 
+ section for details.) <!--kadov_tag{{<spaces>}}-->&nbsp;<span style="font-weight: bold;"><!--kadov_tag{{</spaces>}}-->To 
+ allow template editing also select the &quot;Allow edit&quot; check box.</span></p>
+
+<p>&nbsp;</p>
+
+<p>To see the tree view you also need to have a file open, and be using 
+ the template you want to edit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ change the template simply select from the drop down list at the top of 
+ the tree column in the tree view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ create a new template you simply edit an existing template (eg, the &quot;default&quot; 
+ template if nothing better is available) and save it under a different 
+ name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ actual file you have open for hex editing does not matter but it's best 
+ to open a file typical of the type of file used with the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ gives one of the greatest advantages of the built-in template editing: 
+ that you can see the results of your changes instantly using the file 
+ you have open. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+ you modify the template you can see the effects of your changes (by clicking 
+ the refresh button <img src="../cmd_misc/refresh.gif"
+						style="border-style: none;
+								border: none;
+								width: 22px;
+								height: 23px;"
+						width=22
+						height=23
+						border=0>), which helps to spot errors.</p>
+
+<p>&nbsp;</p>
+
+<p>To edit the template you right-click on any item in the left column 
+ to bring up a context (popup) menu. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ items in the menu depend on which tree item was clicked (see the Menus 
+ section below) but will always include an &quot;Edit...&quot; item. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ invoked the &quot;Edit...&quot; item displays a dialog to edit the properties 
+ of the item clicked. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are seven different edit dialogs corresponding to the <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->different 
+ types of template elements (<img src="../dffd/dffd_struct.gif"
+									style="border-style: none;
+											border: none;
+											width: 17px;
+											height: 16px;"
+									width=17
+									height=16
+									border=0> <span style="font-weight: bold;">STRUCT</span>, 
+ <img src="..\dffd\dffd_strdefn.gif"
+		style="border-style: none;
+				border: none;
+				width: 16px;
+				height: 17px;"
+		width=16
+		height=17
+		border=0> <span style="font-weight: bold;">USE_STRUCT</span>, <img 
+ src="../dffd/dffd_jump.gif"
+	style="border-style: none;
+			border: none;
+			width: 16px;
+			height: 14px;"
+	width=16
+	height=14
+	border=0> <span style="font-weight: bold;">JUMP</span>, <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}--><img 
+ src="../dffd/dffd_for.gif"
+	style="border-style: none;
+			border: none;
+			width: 15px;
+			height: 16px;"
+	width=15
+	height=16
+	border=0> <span style="font-weight: bold;">FOR</span>, <img src="../dffd/dffd_if.gif"
+	style="border-style: none;
+			border: none;
+			width: 15px;
+			height: 16px;"
+	width=15
+	height=16
+	border=0> <span style="font-weight: bold;">IF, <img src="../dffd/dffd_eval.gif"
+														style="border-style: none;
+	border: none;
+	width: 15px;
+	height: 16px;"
+														width=15
+														height=16
+														border=0> EVAL</span> 
+ and <img src="../dffd/dffd_data.gif"
+			style="border-style: none;
+					border: none;
+					width: 14px;
+					height: 16px;"
+			width=14
+			height=16
+			border=0> <span style="font-weight: bold;">DATA</span>). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ the Dialogs section below for a description of these dialogs.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that the tree view may not correspond exactly to the underlying 
+ template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if you have a <span style="font-weight: bold;">FOR</span> record 
+ in the template then there will be one or more nodes under the <span style="font-weight: bold;">FOR</span> 
+ node in the tree view, corresponding to the actual size of the array (which 
+ may be calculated from the actual data of the file in use). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ sub-node corresponds to the one and only sub-element of the <span style="font-weight: bold;">FOR</span> 
+ in the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}--></p>
+
+<p>&nbsp;</p>
+
+<p>Hence editing any sub-node of the <span style="font-weight: bold;">FOR</span> 
+ in the tree view edits the sub-element of the <span style="font-weight: bold;">FOR</span> 
+ in the template, and any changes will affect all its sibling nodes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Of 
+ course, it is quite acceptable to have a <span style="font-weight: bold;">FOR</span> 
+ with zero elements. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ this case one sub-node is still displayed in the tree to allow you to 
+ edit the sub-element of the <span style="font-weight: bold;">FOR</span> 
+ in the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This 
+ node is greyed out to indicate it is not actually present.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly, 
+ if an <span style="font-weight: bold;">IF</span> node evaluates to false 
+ a sub-node is still displayed in the tree (greyed out) so that you can 
+ edit the <span style="font-weight: bold;">IF</span> sub-element of the 
+ template.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Context Menus</p>
+
+<p>&nbsp;</p>
+
+<p>Once you have a tree view visible you use the context menus to edit 
+ the template by right-clicking on the tree nodes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are three different context menus that you will see depending on which 
+ tree item you right-click on. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Which 
+ one depends on the type of the parent node. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ reason for this is that a <span style="font-weight: bold;">STRUCT</span> 
+ element can contain one or more sub-elements in the template file, but 
+ <span style="font-weight: bold;">FOR</span> and <span style="font-weight: bold;">IF</span> 
+ elements must always contain just one sub-element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the parent of the node is a <span style="font-weight: bold;">FOR</span> 
+ or <span style="font-weight: bold;">IF</span> then you just see menu items 
+ allowing you to edit and enclose the current item. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Enclosing 
+ is explained later.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ if the parent of the node is a <span style="font-weight: bold;">STRUCT</span> 
+ there are extra menu items for inserting and deleting.</p>
+
+<p>&nbsp;</p>
+
+<p>You can insert elements into the tree by right-clicking an element of 
+ a <span style="font-weight: bold;">STRUCT</span> to add the new element 
+ just before it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ you can delete elements of a <span style="font-weight: bold;">STRUCT</span> 
+ by right-clicking and selecting <span style="font-weight: bold;">Delete</span> 
+ (as long as it is not the last element since a STRUCT must always have 
+ at least one sub-element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also insert and delete elements in the <span style="font-weight: bold;">STRUCT</span> 
+ dialog.</p>
+
+<p>&nbsp;</p>
+
+<p>You cannot insert or delete the element of a <span style="font-weight: bold;">FOR</span> 
+ or <span style="font-weight: bold;">IF</span>, as they must always have 
+ one element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can, however, replace the element with an element of another type using 
+ the &quot;Replace With&quot; button in the <span style="font-weight: bold;">FOR</span> 
+ or <span style="font-weight: bold;">IF</span> dialog.</p>
+
+<p>&nbsp;</p>
+
+<p>The third context menu can only be seen when you right-click the top 
+ level tree node. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Since 
+ this node has no parent there are no insert and delete menu items. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ fact there is only one menu item which can be used to edit the template 
+ base element (as a <span style="font-weight: bold;">STRUCT</span>), plus 
+ menu items that deal with the whole template file (saving and global options).</p>
+
+<p>&nbsp;</p>
+
+<p>TBD defining reuseable structs, including recursive data structures</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Template Dialogs</p>
+
+<p>&nbsp;</p>
+
+<p>Most of the options for changing a template are presented through the 
+ template editing dialogs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are several dialogs, for each of type of element that can be contained 
+ in a template.</p>
+
+<p>&nbsp;</p>
+
+<p>The dialog for a <span style="font-weight: bold;">STRUCT</span> allows 
+ you to edit any of the contained elements by selecting the &quot;Edit...&quot; 
+ button. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly, 
+ the dialog for <span style="font-weight: bold;">FOR</span> and <span style="font-weight: bold;">IF</span> 
+ allow you to edit their contained element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you edit a sub-element (ie, click the &quot;Edit...&quot; button) a new 
+ editing dialog appears for the sub-element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can thus recursively edit down to any level of the branch (the sub-tree 
+ off the node being edited). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ fact, if you begin by editing the root node of the template tree you can 
+ modify the whole template in this way.</p>
+
+<p>&nbsp;</p>
+
+<p>When new dialogs are opened they are positioned to the right or below 
+ the &quot;parent&quot; dialog (depending on the position of the parent). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This allows 
+ you to easily see information in ancestor elements. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ best use this facility move the first dialog to the top left of the screen.</p>
+
+<p>&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">STRUCT</span>, <span style="font-weight: bold;">FOR</span> 
+ and <span style="font-weight: bold;">DATA</span> dialogs all require a 
+ name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ name can be used in expressions later in the template to access the data 
+ of the file (see <span style="font-weight: bold;">Expressions</span> below). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Names of 
+ elements within the same <span style="font-weight: bold;">STRUCT</span> 
+ should be unique. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Members 
+ of <span style="font-weight: bold;">STRUCT</span> are accessed using the 
+ name of the <span style="font-weight: bold;">STRUCT</span> followed by 
+ a dot then the name of the member. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Elements 
+ of an array are accessed using the name of the array followed by an integer 
+ index in square brackets. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ sub-element of an <span style="font-weight: bold;">IF</span> is accessed 
+ simply by using the name of the sub-element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that the dialog requires you to enter a name unless the parent is a <span 
+ style="font-weight: bold;">FOR</span> (in which case sub-elements are 
+ accessed by index not name). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ no check is done of siblings to ensure that the name is unique within 
+ a <span style="font-weight: bold;">STRUCT</span>.</p>
+
+<p>&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">FOR</span> dialog allows you enter 
+ an expression (see below) that determines the size of the array. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Since 
+ the <span style="font-weight: bold;">FOR</span> must always contain exactly 
+ one element you can only edit the exisiting element or replace it with 
+ a new one. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(See 
+ <a HREF="../dlg_templates/FOR_Dialog.htm">FOR Dialog</a>). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ the<span style="font-weight: bold;"> IF</span> dialog allows you to enter 
+ the condition expression or edit/replace the element it contains. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(See 
+ <a HREF="../dlg_templates/IF_Dialog.htm">IF Dialog</a>)</p>
+
+<p>&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">STRUCT</span> dialog allows shows 
+ a list of sub-elements which you can edit, delete or reorder. You can 
+ also add new sub-elements to the list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ more information see the <a href="../dlg_templates/STRUCT_Dialog.htm">STRUCT 
+ Dialog</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Be 
+ careful when deleting or replacing an element as you can erase whole sections 
+ of the tree.</p>
+
+<p>&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">JUMP</span> dialog allows jumping 
+ to another part of the data file that is being processed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->An 
+ expression is evaluated to obtain the new data file address (which can 
+ be relative to the start or end of file or the current position). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is useful in certain situations such as a &quot;header&quot; stored at 
+ the end of file which contains information needed in processing earlier 
+ parts of the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="../dlg_templates/JUMP_DLG.htm">JUMP Dialog</a>.</p>
+
+<p>&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">DATA</span> dialog cannot contain 
+ elements so there is no &quot;Edit...&quot; or &quot;Replace...&quot; 
+ button. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Instead 
+ you can set the type of the data and various options. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the length of the data is not fixed (for types <span style="font-weight: bold;">none</span> 
+ and <span style="font-weight: bold;">string</span>) then you can also 
+ enter an expression for the length. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Specifying 
+ no length means the data extends to the end of file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ for strings you can specify a terminating character, which overrides the 
+ length if given. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="../dlg_templates/DATA_Dialog.htm">DATA Dialog</a> for more information.</p>
+
+<p>&nbsp;</p>
+
+<p>Some of the fields have no use except as information for the user. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ includes the <span style="font-weight: bold;">Type Name</span> field (typically 
+ some sort of data structure name), <span style="font-weight: bold;">Units</span> 
+ (only available for DATA elements of numeric type) and, of course, the 
+ <span style="font-weight: bold;">Comments</span> field.</p>
+
+<p>&nbsp;</p>
+
+<p>New in version 3.0 of HexEdit is the ability to create a <span style="font-weight: bold;">Structure 
+ Definition</span> and use it many times throughout the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ dialog is very similar to the STRUCT dialog, but <span style="font-weight: bold;">Structure 
+ Definitions</span> can only be added at the start of the template (see 
+ <a HREF="../dlg_templates/STRUCT_DEFN.htm">Structure Definition Dialog</a>). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If the 
+ same structure is used throughout a template this can save time dragging 
+ and dropping, and will also make template processing faster, as well as 
+ making the template easier to change later.</p>
+
+<p>&nbsp;</p>
+
+<p>A <span style="font-weight: bold;">Structure Definition</span> by itself 
+ does nothing. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ make use of it you use the <span style="font-weight: bold;">USE STRUCT</span> 
+ dialog, which can be used anywhere a <span style="font-weight: bold;">STRUCT</span> 
+ can (see <a HREF="../dlg_templates/USE_STRUCT.htm">Use Struct Dialog</a>). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}--><img src="../tip.gif"
+	style="border-style: none;
+			border: none;
+			width: 31px;
+			height: 12px;"
+	width=31
+	height=12
+	border=0>A <span style="font-weight: bold;">Structure Definition</span> 
+ may contain a <span style="font-weight: bold;">USE STRUCT</span> that 
+ refers to itself - in this way recursive data structures to any depth 
+ can be represented.</p>
+
+<p>&nbsp;</p>
+
+<p>Another new feature of 3.0 is the <span style="font-weight: bold;">EVAL</span> 
+ dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ does not result in any precessing of the data file but is used to evaluate 
+ an expression, and optionally display the result to the user. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is useful for assigning values to variables (eg, initialising a loop variable) 
+ and displaying info to the user of the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="../dlg_templates/EVAL_DLG.htm">EVAL Dialog</a> for more information.</p>
+
+<p>&nbsp;</p>
+
+<p>Finally, as an extra convenience, there are two buttons in the bottom 
+ right corner of dialogs when the parent is a <span style="font-weight: bold;">STRUCT</span>. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These buttons 
+ allow you to move to the previous and next sibling within the struct. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Clicking 
+ one is equivalent to clicking OK then editing the previous or next element 
+ in the parent <span style="font-weight: bold;">STRUCT</span>.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Expressions</p>
+
+<p>&nbsp;</p>
+
+<p>Certain fields in the dialogs can contain expressions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can tell these by the little button to their right with a small triangular 
+ arrow. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ use of the expressions is explained in the table below.</p>
+
+<p>&nbsp;</p>
+
+<p>An expression can contain most of the operators used in expressions 
+ in the C language. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also create temporary variables (of type integer, float, boolean or 
+ string) including arrays etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(See 
+ <a HREF="Expressions.htm">Expressions</a> for more informaton.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can evaluate any value from the template file so far seen using the dot 
+ operator to access members of <span style="font-weight: bold;">STRUCT</span>s 
+ and square brackets to access <span style="font-weight: bold;">FOR</span> 
+ elements. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(See 
+ the discussion of expressions in the <a HREF="Template_Files.htm">Template 
+ Files</a> section.)</p>
+
+<p>&nbsp;</p>
+
+<p>By clicking the button with the arrow you will see a system of menus 
+ and (possibly) sub-menus that will show you all the possible values you 
+ can access from the data in the file already processed by the template. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When the 
+ value you select is a sub-element of one or more <span style="font-weight: bold;">FOR</span> 
+ elements the inserted text does not contain any values in the square brackets 
+ - it is up to you to specify an array index (which can itself be an expression). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note that 
+ you can use any number of values of any type (ie use the menu system multiple 
+ times) in the one expression but the type of the whole expression must 
+ match the type for the field in the table below.</p>
+
+<p>&nbsp;</p>
+
+<p>For <span style="font-weight: bold;">FOR</span> elements you can use 
+ the special value &quot;this&quot; in an expression to refer to the current 
+ element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(In 
+ fact you must use it for the expression to make any sense). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that if both a Count and a Stop expression are specified then the <span 
+ style="font-weight: bold;">FOR</span> stops whenever either is satisfied. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If neither 
+ are specified then the <span style="font-weight: bold;">FOR</span> continues 
+ to the end of file, hence this should be the last element of the template.</p>
+
+<p>&nbsp;</p>
+
+<p>For the Domain expression of a <span style="font-weight: bold;">DATA</span> 
+ element you must also use the value &quot;this&quot; to refer to the data 
+ value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ domain expression can be used to check that a value is what is expected. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If a domain 
+ expression evaluates to false then an error message is displayed and the 
+ data element is greyed out in the tree view.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 96.599%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=96.599%>
+<col style="width: 10.297%;">
+<col style="width: 9.042%;">
+<col style="width: 9.112%;">
+<col style="width: 40.476%;">
+<col style="width: 31.083%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10.297%;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=10.297%>
+<p style="font-weight: bold;">Dialog</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.042%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-style: Solid;
+			border-top-color: #000000;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-top-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=9.042%>
+<p style="font-weight: bold;">Field</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.112%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-style: Solid;
+			border-top-color: #000000;
+			border-top-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=9.112%>
+<p style="font-weight: bold;">Type</td>
+<td colspan=1
+	rowspan=1
+	style="width: 40.476%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=40.476%>
+<p style="font-weight: bold;"><span style="font-weight: bold;">Description</span></td>
+<td colspan=1
+	rowspan=1
+	style="width: 31.083%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=31.083%>
+<p style="font-weight: bold;">Examples</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10.297%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=10.297%>
+<p>STRUCT</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.042%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=9.042%>
+<p>Display</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.112%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=9.112%>
+<p>Any</td>
+<td colspan=1
+	rowspan=1
+	style="width: 40.476%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=40.476%>
+<p>Used to display values from relevant fields (see below)</td>
+<td colspan=1
+	rowspan=1
+	style="width: 31.083%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=31.083%>
+<p>&quot;x={this.x}, y={this.y}, flags={this.flags;bin}&quot;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10.297%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=10.297%>
+<p>USE_STRUCT</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.042%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=9.042%>
+<p>Display</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.112%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=9.112%>
+<p>Any</td>
+<td colspan=1
+	rowspan=1
+	style="width: 40.476%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=40.476%>
+<p>As for STRUCT (see below)</td>
+<td colspan=1
+	rowspan=1
+	style="width: 31.083%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=31.083%>
+<p>&nbsp;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10.297%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=10.297%>
+<p>JUMP</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.042%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=9.042%>
+<p>Offset</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.112%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=9.112%>
+<p>Integer</td>
+<td colspan=1
+	rowspan=1
+	style="width: 40.476%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=40.476%>
+<p>New file address (use depends on origin field)</td>
+<td colspan=1
+	rowspan=1
+	style="width: 31.083%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=31.083%>
+<p>&quot;header.address&quot;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10.297%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=10.297%>
+<p>FOR</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.042%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=9.042%>
+<p>Count</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.112%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=9.112%>
+<p>Integer</td>
+<td colspan=1
+	rowspan=1
+	style="width: 40.476%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=40.476%>
+<p>Count of the number of elements in the <span style="font-weight: bold;">FOR</span></td>
+<td colspan=1
+	rowspan=1
+	style="width: 31.083%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=31.083%>
+<p>&quot;header.size&quot; or &quot;10&quot;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 10.297%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=10.297%>
+<p>FOR</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.042%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=9.042%>
+<p>Stop</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.112%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=9.112%>
+<p>Boolean</td>
+<td colspan=1
+	rowspan=1
+	style="width: 40.476%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=40.476%>
+<p>Terminating condition for the <span style="font-weight: bold;">FOR</span></td>
+<td style="width: 31.083%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=31.083%>
+<p>&quot;this == 0&quot; or &quot;this.status == -1&quot;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 10.297%;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=10.297%>
+<p>IF</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.042%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=9.042%>
+<p>Condition</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.112%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;"
+	width=9.112%>
+<p>Boolean</td>
+<td colspan=1
+	rowspan=1
+	style="width: 40.476%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=40.476%>
+<p>Says whether the sub-element of the <span style="font-weight: bold;">IF</span> 
+ exists in the file</td>
+<td style="width: 31.083%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=31.083%>
+<p>&quot;header.type &gt; 0&quot;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10.297%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=10.297%>
+<p>EVAL</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.042%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=9.042%>
+<p>Expression</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.112%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=9.112%>
+<p>Boolean/any</td>
+<td colspan=1
+	rowspan=1
+	style="width: 40.476%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=40.476%>
+<p>Tests for errors (boolean) or displays any information (see below)</td>
+<td colspan=1
+	rowspan=1
+	style="width: 31.083%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=31.083%>
+<p>&quot;sizeof(hdr) == 10 || sizeof(hdr) == 12&quot;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 10.297%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=10.297%>
+<p>DATA</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.042%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=9.042%>
+<p>Length</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.112%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=9.112%>
+<p>Integer</td>
+<td colspan=1
+	rowspan=1
+	style="width: 40.476%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=40.476%>
+<p>For data of type <span style="font-weight: bold;">none</span> and <span 
+ style="font-weight: bold;">string</span>, give the length in bytes</td>
+<td colspan=1
+	rowspan=1
+	style="width: 31.083%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=31.083%>
+<p>&quot;hdr.size - sizeof(hdr)&quot; or &quot;256&quot;</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 10.297%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=10.297%>
+<p>DATA</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.042%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=9.042%>
+<p>Domain</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.112%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=9.112%>
+<p>Boolean</td>
+<td colspan=1
+	rowspan=1
+	style="width: 40.476%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=40.476%>
+<p>Tests whether the data is valid.</td>
+<td style="width: 31.083%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=31.083%>
+<p>&quot;this &gt; 0 &amp;&amp; this &lt; 5&quot; or &quot;this == &quot;BMP&quot;&quot;</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p style="text-align: center; font-weight: bold;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center; font-weight: bold;"
+	align=center>Table 1. Dialog Fields that use Expressions</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Displaying 
+ Information in the Tree Column</span></p>
+
+<p>&nbsp;</p>
+
+<p>The Display fields of a STRUCT (also available in structure definitions) 
+ can be used to show important fields or values in the tree column of the 
+ tree view (after the STRUCT name). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if a STRUCT contains the integer &quot;data&quot; elements &quot;x&quot;, 
+ &quot;y&quot; and &quot;flags&quot;, the value of these can be displayed 
+ in the tree view next to the structure name using a &quot;display&quot; 
+ attribute like this:</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">&quot;x={this.x; %.2f}, y={this.y; %.2f}, 
+ flags={this.flags;bin}&quot;</p>
+
+<p>&nbsp;</p>
+
+<p>which might display something like: x=100, y=200, flags=00000000 00000000 
+ 00000111 10101010</p>
+
+<p>&nbsp;</p>
+
+<p>Note that you can use any valid expression within the braces ({ and 
+ }), and you may follow the expression with a semicolon and a format specification. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Format 
+ specifications are described in the section on Template Files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, for an integer expression you can specifiy &quot;dec&quot;, &quot;hex&quot;, 
+ &quot;oct&quot; or &quot;bin&quot; or a printf format specification like 
+ %d.</p>
+
+<p>&nbsp;</p>
+
+<p>When you define a structure you can also enter a Display field, but 
+ this may be overridden in specific uses of the structure if necessary.</p>
+
+<p>&nbsp;</p>
+
+<p>Although the Expression field of an EVAL is typically just an expression 
+ it may also contain a string of this format so that more than one expression 
+ may be evaluated and the relevant information displayed to the user. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example:</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">&quot;Total data length is {sizeof(data_hdr)+sizeof(data);dec} 
+ bytes&quot;</p>
+
+<p>&nbsp;</p>
+
+<p>which might display something like &quot;Total data length is 1,234,567 
+ bytes&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Drag and Drop</p>
+
+<p>&nbsp;</p>
+
+<p>Another useful facility that is provided in the tree view is the ability 
+ to &quot;drag and drop&quot; elements from one part of the tree to another. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Many data 
+ file formats have the same structures spread through different parts of 
+ a file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ would be tedious to have to enter the same information in the template 
+ in multiple places. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can use drag and drop to copy (or move) elements from one part of the 
+ template to another.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that in HexEdit 3.0 you can define a struct that can be used many 
+ times so drag and drop is no longer useful for copying STRUCTs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is still useful for reorganising the template layout.</p>
+
+<p>&nbsp;</p>
+
+<p>To use drag-and-drop first click the tree node you want to move or copy. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This can 
+ be any type of node except the root (top) node.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Then 
+ click the node again and drag it to the new position before releasing 
+ the mouse button. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ you move or copy a node all sub-nodes go along too - this allows you to 
+ easily move large structures around.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that you can only drag into a STRUCT since that is the only element 
+ type that can have sub-elements added. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(The 
+ mouse pointer changes to indicate if the node is a valid drop target.) 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To copy 
+ instead of move hold down the Control key. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ mouse pointer changes (has an extra '+' sign) to indicate that the drop 
+ will perform a copy operation. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Some 
+ operations can only be copy operations (indicated by the '+' sign) since 
+ you cannot move an element out of an IF or FOR, or the last element in 
+ a STRUCT.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Enclosing</p>
+
+<p>&nbsp;</p>
+
+<p>Often when creating a template you realise that you have added an element 
+ in the wrong place. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->That 
+ is you have an element of a STRUCT that needs to be a sub-element of another 
+ element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, you might not have realised that it is an optional element that 
+ should be in an IF. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Or 
+ you want to better organise the template by creating one or more STRUCTs 
+ within a STRUCT. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Once 
+ you've create the nested STRUCT you may also want to move other elements 
+ into it using the &quot;drag and drop&quot; facility discussed above.)</p>
+
+<p>&nbsp;</p>
+
+<p>The Enclose menu items allow you to create a new STRUCT/IF/FOR element 
+ and enclose an existing element within new one. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ is no corresponding &quot;unenclose&quot; facility, but you can do this 
+ by copying the sub-element to the grandparent STRUCT (using drag and drop) 
+ then deleting the element and its enclosing parent.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Global Options</p>
+
+<p>&nbsp;</p>
+
+<p>The context menu for the root (top) node of the tree view has menu items 
+ that apply to the whole template file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are options to save the template file, and to save it under a different 
+ name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that if you try to close the file without saving changes to the template 
+ (if you have made any) then HexEdit will prompt you to save them.</p>
+
+<p>&nbsp;</p>
+
+<p>There is also an option to change global settings for the template file. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This brings 
+ up the <a HREF="../dlg_templates/Global_Options.htm">Global Options dialog</a>, 
+ which allows you to set default values for read-only, big-endian and character 
+ set. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ settings can be overridden in any DATA element, so you could for example 
+ make the whole file read-only then set a few DATA fields to be modifiable, 
+ so that the user can be prevented from changing inappropriate parts of 
+ the file.</p>
+
+<p>&nbsp;</p>
+
+<p>You can also set a web address associated with the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ allows the user of a template to quickly go to a web site to find more 
+ information on the file format, by clicking the &quot;Template Web Site&quot; 
+ button <img src="../cmd_misc/dffdweb.gif"
+			style="border-style: none;
+					border: none;
+					width: 22px;
+					height: 23px;"
+			width=22
+			height=23
+			border=0> on the Navigation toolbar.</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

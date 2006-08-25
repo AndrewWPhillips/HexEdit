@@ -1,0 +1,1179 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Boolean Operations</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=2189>
+<meta name=layout-width content=1210>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Boolean Operations</font></h2>
+
+<p>&nbsp;</p>
+
+<p>A group of bits can be used to store a number as we saw in the previous 
+ section. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Moreover 
+ these numbers can be manipulated by hardware to perform arithmetic operations 
+ as we will see later. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ there are other basic operations that can be performed on bits and groups 
+ of bits which we will explore in this topic and the next topics.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that processors rarely provide operations on individual bits, but 
+ operate on groups of bits of byte size and higher. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ the following discussion we will talk about byte operations, but operations 
+ that work on 16-bit and larger values are common and behave analogously.</p>
+
+<p>&nbsp;</p>
+
+<p>When performing boolean operations on bytes, words etc each bit is operated 
+ on independently. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ other words there is no interaction between the bits as there is in addition 
+ or shifts.</p>
+
+<p>&nbsp;</p>
+
+<p>Boolean arithmetic has some similarities to arithmetic with numbers 
+ but there are some significant differences. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ performing numeric arithmetic the possible operands are infinite; when 
+ performing boolean arithmetic there are just two possible values: &quot;TRUE&quot; 
+ and &quot;FALSE&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Actually 
+ we are just dealing with a special case of a more general Boolean algebra 
+ often called &quot;set theory&quot; where the number of operands <span 
+ style="font-style: italic;">is</span> infinite.)</p>
+
+<p>&nbsp;</p>
+
+<p>The most important boolean operations are called AND, OR and NOT. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ have meanings somewhat like their meaning when used in the English language. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ as English can be imprecise we need to define their meanings exactly.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">The NOT Operation</p>
+
+<p>&nbsp;</p>
+
+<p>The simplest boolean operation is NOT. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ takes one operand (hence it is called a unary operation) and produces 
+ the opposite value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
+ NOT(TRUE) is FALSE and NOT(NOT(TRUE)) is TRUE etc.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 4cm;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=151>
+<col style="width: 50%;">
+<col style="width: 50%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 50%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;
+			border-right-width: 1px;"
+	bgcolor=#C0C0C0
+	width=50%>
+<p style="text-align: center;"
+	align=center>A</td>
+<td style="width: 50%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-style: Solid;
+			border-top-color: #000000;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=50%>
+<p>NOT <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 50%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=50%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td colspan=1
+	rowspan=1
+	style="width: 50%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=50%>
+<p style="text-align: center;"
+	align=center>1</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 50%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=50%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 50%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=50%>
+<p style="text-align: center;"
+	align=center>0</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p style="text-align: center; font-weight: bold;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center; font-weight: bold;"
+	align=center>Table 1. NOT</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">The AND and OR Operations</p>
+
+<p>&nbsp;</p>
+
+<p>The boolean operations AND and OR take two boolean values and produces 
+ a boolean result. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ are called binary operations, for the same reason that addition is called 
+ a binary operation. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->That 
+ is, they are &quot;binary&quot; because they take two operands not because 
+ they operate on binary values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ avoid this confusion they are often called &quot;dyadic&quot; operations 
+ which again simply means they take two operands.</p>
+
+<p>&nbsp;</p>
+
+<p>The AND of two values is TRUE only if both values are TRUE; if either 
+ or both are FALSE then the result is FALSE. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ the OR of two values is FALSE only if both values are FALSE; if either 
+ or both are TRUE then the result is TRUE.</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 7cm;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=265>
+<col style="width: 33.333%;">
+<col style="width: 33.333%;">
+<col style="width: 33.333%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>A</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>B</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>A <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->AND 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->B</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center; font-weight: bold;"
+	align=center>Table 2. AND</p>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 7cm;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=265>
+<col style="width: 33.333%;">
+<col style="width: 33.333%;">
+<col style="width: 33.333%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>A</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>B</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>A <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->OR 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->B</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center; font-weight: bold;"
+	align=center>Table 3. OR</p>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p>As an example consider the statements:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->A. 
+ Daniel is big.</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->B. 
+ Daniel is strong</p>
+
+<p>&nbsp;</p>
+
+<p>Hence the statement &quot;Daniel is big AND strong&quot; (which in English 
+ is a shorthand for &quot;Daniel is big AND Daniel is strong&quot;) is 
+ only true if Daniel is both of these. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ the statement &quot;Daniel is big OR strong&quot; is true if he is either 
+ (and possibly both) of these.</p>
+
+<p>&nbsp;</p>
+
+<p>If you look closely at the table above for AND you will notice that 
+ AND is similar to multiplication if you consider TRUE to be one and FALSE 
+ to be zero. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ OR is like addition (except that 1+1 is 2). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ evaluating numeric expressions traditionally multiplication has a higher 
+ precedence than addition, hence in a boolean expression AND is considered 
+ to have higher precedence than OR in many programming languages such as 
+ C (and hence in HexEdit's expression evaluation). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
+ in the statement:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ AND B OR C AND D</p>
+
+<p>&nbsp;</p>
+
+<p>the AND operations are evaluated first:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->(A 
+ AND B) OR (C AND D)</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">De Morgan's Theorem</p>
+
+<p>&nbsp;</p>
+
+<p>Boolean arithmetic is unlike numeric arithmetic in many ways. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, there is an interesting symmetry between AND and OR -- if you 
+ swap TRUE and FALSE in the above tables then all operations are the same 
+ if you also swap AND with OR.</p>
+
+<p>&nbsp;</p>
+
+<p>De Morgan's Theorem is another with no analogy in numeric arithmetic. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It simply 
+ states that:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->NOT(A 
+ OR B) is equivalent to NOT(A) AND NOT(B)</p>
+
+<p>&nbsp;</p>
+
+<p>And, by symmetry:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->NOT(A 
+ AND B) is equivalent to NOT(A) OR NOT(B)</p>
+
+<p>&nbsp;</p>
+
+<p>You can verify this theorem yourself by considering all possibly values 
+ in the above boolean expressions.</p>
+
+<p>&nbsp;</p>
+
+<p>An example, of De Morgan's theorem is the statement:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->Daniel 
+ is NOT big OR strong</p>
+
+<p>&nbsp;</p>
+
+<p>which is equivalent, by De Morgan's Theorem, to:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->Daniel 
+ is NOT big AND Daniel is NOT strong.</p>
+
+<p>&nbsp;</p>
+
+<p>De Morgan's theorem is very useful in simplifying boolean expressions.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">The Exclusive-OR Operation</p>
+
+<p>&nbsp;</p>
+
+<p>In English the meaning of OR can be ambiguous. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ can mean OR as discussed above but more often means exclusive-OR. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, consider the statements:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->A. 
+ Emma went by bus.</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->B. 
+ Emma went by train.</p>
+
+<p>&nbsp;</p>
+
+<p>The statement &quot;Emma went by bus OR train&quot; would typically 
+ mean that she took either the bus or the train but not both. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is called exclusive-OR since one statement being TRUE automatically excludes 
+ the other. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ other words, Emma can't travel by bus and train at the same time, these 
+ conditions being mutually exclusive.</p>
+
+<p>&nbsp;</p>
+
+<p>To differentiate the normal OR we discussed above from exclusive-OR 
+ it is sometimes predictably called inclusive-OR. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ English, if you want to use inclusive-or to explicitly include both conditions 
+ then this is often written as &quot;and/or&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, &quot;Emma went by train and/or bus&quot;, which means she could 
+ have taken both (presumably changing from one to the other at some point 
+ in the journey).</p>
+
+<p>&nbsp;</p>
+
+<p>Exclusive-OR is often abbreviated to &quot;XOR&quot; or &quot;EOR&quot;. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ inclusive-OR may be abbreviated to IOR. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ plain OR always means inclusive OR.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 7cm;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=265>
+<col style="width: 33.333%;">
+<col style="width: 33.333%;">
+<col style="width: 33.333%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>A</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>B</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>A <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->XOR 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->B</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 33.333%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>1</td>
+<td style="width: 33.333%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=33.333%>
+<p style="text-align: center;"
+	align=center>0</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center; font-weight: bold;"
+	align=center>Table 4. Exclusive-OR</p>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p>An interesting property of the exclusive-OR operation is that there 
+ is no lost information, unlike when AND or OR is used. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if you XOR a byte with a certain value you can get back the original 
+ value by simply XOR'ing again with the same value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ other words:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->(A 
+ XOR B) XOR B <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->is 
+ equivalent to A</p>
+
+<p>&nbsp;</p>
+
+<p>This property has uses in many areas such as encryption and drawing. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For example, 
+ it is common to draw cursors in XOR mode so that to erase them it is simply 
+ a matter to draw them again.</p>
+
+<p>You can also use XOR for flipping selective bits in a byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is done by simply XORing with a byte that has the bit on for all bits 
+ to be flipped and the bit off for all bits to be unchanged.</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-weight: bold;">Next topic:</span> <a HREF="Numbers.htm">Numeric 
+ Operations</a></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

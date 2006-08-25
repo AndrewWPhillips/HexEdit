@@ -1,0 +1,755 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Calculator</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=copyright value="1999-2001 Expert Commercial Software">
+<meta name=date content="05 23, 2001 9:14:49 PM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=2397>
+<meta name=layout-width content=1208>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+<!--(Generated ActiveX Object Tags)=================================-->
+<!--(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)==================-->
+<!--begin!kadov{{===================================================-->
+<object id=hhctrl classid="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11" 
+ width=0 height=0 vspace=0 hspace=0 border=0 type="application/x-oleobject"></object>
+<!--}}end!kadov=====================================================-->
+<!--(==============================================================)-->
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Calculator</font></h2>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="calc.gif" alt="image\calc.gif" style="width: 452px;
+								height: 306px;
+								border-style: none;" width="452" height="306" border="0"></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>HexEdit includes a built-in calculator similar to the Windows calculator 
+ but with some enhancements and integration with the rest of HexEdit that 
+ make it very powerful. However, unlike the Windows calculator it only 
+ supports integer operations (although it does support 64 bit integers), 
+ and it does not use operator precedence or brackets.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The layout of the buttons is reminiscent of the Windows calculator but 
+ a little better organised. All binary operators are to the right of the 
+ numeric buttons, with unary operators to the left, and file access buttons 
+ to the far left.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Binary Operators</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>To perform a <a class=popupspot
+					href="JavaScript:hhctrl.TextPopup('An operation that uses two values (operands).','Arial,8',10,10,00000000,0xc0ffff)">binary 
+ operation</a>, enter the first operand (value) and click the desired operator 
+ button. You can still click a different operator if you accidentally clicked 
+ the wrong one. A small indicator appears to the right of the numeric entry 
+ box that indicates the current operator in use. After you enter the second 
+ operand you can then click the result button (<span style="font-weight: bold;">=</span>) 
+ or another binary operator to generate the result. If the operation generates 
+ an overflow or error then the calculator beeps and an E or O is displayed 
+ next to the numeric entry box.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>As well as the normal arithmetic operators, and logical operators there 
+ are a few more esoteric operators. The <span style="font-weight: bold;">LSL</span> 
+ (logical shift left) and <span style="font-weight: bold;">LSR</span> (logical 
+ shift right) operators simply shift all the bits in the first operand 
+ (left or right) by the number in the second. The new bits added to the 
+ end always have a zero value.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">ASR</span> (arithmetic shift right) 
+ operator, on the other hand, will add new bits with the value one if the 
+ current top bit is one. Whereas <span style="font-weight: bold;">LSR</span> 
+ is equivalent to a division by a power of 2 for an unsigned number, <span 
+ style="font-weight: bold;">ASR</span> is equivalent to a division by a 
+ power of 2 for a signed (2’s complement) number.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">ROL</span> (rotate left) and <span 
+ style="font-weight: bold;">ROR</span> (rotate right) are similar to <span 
+ style="font-weight: bold;">LSL</span> and <span style="font-weight: bold;">LSR</span> 
+ but the new bit shifted in is the bit shifted off the other end.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">GTR</span> and <span style="font-weight: bold;">LESS</span> 
+ buttons find the larger or smaller of their two operands. These are useful 
+ in keystroke macros, particularly as the macro error level (see below) 
+ is set to a warning if the first operand is not greater (for GTR) or not 
+ less (for LESS) than the second.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The division operator (<span style="font-weight: bold;">/</span>) gives 
+ the truncated integer division, whereas the <span style="font-weight: bold;">MOD</span> 
+ operator gives the remainder. These are equivalent to the C/C++ integer 
+ / and % operators.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Unary Operators</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Unary operators take a single operand -- the currently displayed number. 
+ Any current binary operator is not affected by a unary operation. All 
+ unary operator buttons are to the left of the numeric buttons except the 
+ change sign operator (<span style="font-weight: bold;">+/-</span>) that 
+ is between the <span style="font-weight: bold;">0</span> and <span style="font-weight: bold;">=</span> 
+ buttons.</p>
+
+<p class=footnote-text
+	style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>There are arithmetic operators for square, factorial etc. Note that 
+ the square root operator truncates the result to the integer less than 
+ the real result. These operators can generate error and overflow conditions, 
+ which causes an E or O to be displayed next to the numeric entry box.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">ROL1</span>, <span style="font-weight: bold;">ROR1</span>, 
+ <span style="font-weight: bold;">LSL1</span>, <span style="font-weight: bold;">LSR1</span>, 
+ and <span style="font-weight: bold;">ASR1</span> buttons perform the same 
+ operation as their binary counterparts but shift by one bit only.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">INC</span> and <span style="font-weight: bold;">DEC</span> 
+ buttons increment and decrement their operand. If this results in an overflow 
+ for the current operand size (see the discussion of <span style="font-weight: bold;">Bits</span> 
+ below) then a macro error is generated.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">REV</span> button just reverses 
+ the order of all the bits in the current number. So if you are operating 
+ on 32 bit values bit 31 is swapped with bit 0, bit 30 with bit 1 etc. 
+ The <span style="font-weight: bold;">FLIP</span> button flips all the 
+ <span style="font-style: italic;">bytes</span> in the current number. 
+ If you are working with 8 bit values this button is disabled since there 
+ is only one byte.</p>
+
+<p class=footnote-text
+	style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">@n</span> operator takes the current 
+ number and uses it as an address into the currently active file. Using 
+ that address it reads the (8, 16, 32 or 64 bit) value from the file at 
+ that address. It is a unary operator as it takes an address and replaces 
+ it with the value at that address. See the <span style="font-weight: bold;">File 
+ Access</span> section below for more information.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Base and Bits</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>At the top of the calculator (below the numeric entry box) are two sets 
+ of radio buttons that allow you to choose the size of the numbers you 
+ are dealing with and in what base (radix) they are displayed. If you display 
+ 64 bit numbers in binary you will see up to 64 binary digits (0 or 1), 
+ which takes up the whole display.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">Base</span> buttons allow you to 
+ enter numbers and display results in hexadecimal, decimal, octal or binary, 
+ and convert between those bases. Note that in decimal mode the numbers 
+ are considered to be signed, whereas in the other bases they are treated 
+ as unsigned, which may give slightly different results for negative numbers 
+ and different overflow conditions.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">Bits</span> buttons allow you to 
+ specify the size of the numbers you want to work with. Note that if you 
+ change to a smaller number of bits and the current value won’t fit this 
+ will generate an overflow. For example, if the current value is 257 and 
+ you click on the 8 bit button an overflow is indicated and the current 
+ value changes to 1 (the value in the low byte of 257). To restore the 
+ original value change the number of bits back (eg. click on the 32 bit 
+ button).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Also note that many operations are done using the full 64 bits but only 
+ the requested number of bits are displayed. For example, if you add 255 
+ and 2 in 8 bit mode an overflow is generated and the displayed result 
+ is 1. If you now click on the 32 bit button you can see the actual value 
+ of 257.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Furthermore, some operators (such as the logical operators <span style="font-weight: bold;">AND</span>, 
+ <span style="font-weight: bold;">NOT</span> etc) where the values of lower 
+ bits do not affect the value of higher bits always operate in 64 bit mode 
+ but only the requested number of bits in the result are displayed.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">File Access</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The buttons to the far left (except for the memory buttons) are only 
+ enabled when there is a file window active. They allow you to get the 
+ value of and even change the cursor, mark etc in the currently active 
+ file. Further, you can read and write values in the file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The farthest column of buttons (<span style="font-weight: bold;">Memory</span>, 
+ <span style="font-weight: bold;">Mark</span>, <span style="font-weight: bold;">@Mark</span>, 
+ etc) are used to get values, whereas the buttons immediately to their 
+ right are used to change the corresponding value using the currently displayed 
+ number. There is also a unary operator button (<span style="font-weight: bold;">@n</span>) 
+ that can be used to get a value from the file – it is discussed above 
+ under <span style="font-weight: bold;">Unary Operators</span>.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">GO</span> button (in the bottom 
+ right corner) is similar to the Set Cursor button but is also puts you 
+ back into file editing. This is the “default” button, so that if you type 
+ a number and press the Enter key, you will jump straight to the address 
+ you typed and can continue editing.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The file access buttons in the left 2 columns of buttons (ie, apart 
+ from <span style="font-weight: bold;">@n</span> and <span style="font-weight: bold;">GO</span>) 
+ are:</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				width: 83.597%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=83.597%>
+<col style="width: 9.545%;">
+<col style="width: 9.241%;">
+<col style="width: 81.214%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 9.545%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;
+			border-top-width: 1px;"
+	bgcolor=#C0C0C0
+	width=9.545%>
+<p style="font-weight: bold;">Get Button</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.241%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	bgcolor=#C0C0C0
+	width=9.241%>
+<p style="font-weight: bold;">Set Button</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.214%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-top-style: Solid;
+			border-top-color: #000000;
+			border-top-width: 1px;"
+	width=81.214%>
+<p style="font-weight: bold;">Operation</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 9.545%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=9.545%>
+<p>Mark</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.241%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	bgcolor=#C0C0C0
+	width=9.241%>
+<p>MkS</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.214%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.214%>
+<p>Get or set the address of the Mark.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 9.545%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=9.545%>
+<p>@Mark</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.241%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	bgcolor=#C0C0C0
+	width=9.241%>
+<p>Store</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.214%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.214%>
+<p>Get/set the value in the file at the Mark.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 9.545%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=9.545%>
+<p>Cursor</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.241%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	bgcolor=#C0C0C0
+	width=9.241%>
+<p>Set</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.214%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.214%>
+<p>Get/set the current cursor address (or start of selection).</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 9.545%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=9.545%>
+<p>@Cursor</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.241%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	bgcolor=#C0C0C0
+	width=9.241%>
+<p>Store</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.214%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.214%>
+<p>Get/set the value at the cursor (or start of selection).</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 9.545%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=9.545%>
+<p>Sel. Len</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.241%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	bgcolor=#C0C0C0
+	width=9.241%>
+<p>Set</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.214%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.214%>
+<p>Get/set the length of the current selection.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 9.545%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=9.545%>
+<p>EOF</td>
+<td colspan=1
+	rowspan=1
+	style="width: 9.241%;
+			background-color: #c0c0c0;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	bgcolor=#C0C0C0
+	width=9.241%>
+<p>&nbsp;</td>
+<td colspan=1
+	rowspan=1
+	style="width: 81.214%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=81.214%>
+<p>Get the length of the file.</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p>&nbsp;</p>
+
+<p>Note that there is no “Set EOF” button as you can’t change the length 
+ of the file in the calculator. (You can only change the length of the 
+ file if you are in INS (insert) mode and you add or delete bytes at the 
+ end of the file.)</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The size of the integer read by the “@” buttons (<span style="font-weight: bold;">@Mark</span>, 
+ <span style="font-weight: bold;">@Cursor</span>, and <span style="font-weight: bold;">@n</span>) 
+ and written by the <span style="font-weight: bold;">Store</span> buttons 
+ is determined by the current <span style="font-weight: bold;">Bits</span> 
+ setting. The byte order of the numbers read from or written to the file 
+ is set by the <span style="font-weight: bold;">Big-endian</span> check-box 
+ near the top right corner of the calculator. (This is normally not checked 
+ allowing for Intel byte order.)</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>If you are not editing any files, the file access buttons are disabled 
+ (light grey), because there is no file to access. Some of the buttons 
+ may be disabled at various times for various reasons. For example, if 
+ the current displayed value is greater than the length of file then <span 
+ style="font-weight: bold;">MkS</span>, <span style="font-weight: bold;">@n</span> 
+ etc, that use that value as a file address, are disabled.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The file access buttons are particularly useful when used with keystroke 
+ macros (see previous section). For example, you could repeat the same 
+ calculation on every value in a file by storing the following operations 
+ in a keystroke macro: first load the value at the cursor using the <span 
+ style="font-weight: bold;">@Cursor </span>button, perform some operations 
+ on it, then save it back to the file using the <span style="font-weight: bold;">Store</span> 
+ button. To move to the next value in the file: load the current cursor 
+ address using the <span style="font-weight: bold;">Cursor</span> button, 
+ increment the required number of times depending on your operand size 
+ (using the <span style="font-weight: bold;">INC</span> button) and move 
+ the cursor using the <span style="font-weight: bold;">Set</span> button. 
+ Use the Tools/Macro Play menu item to replay the macro the required number 
+ of times (use a very big number to do the whole file).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Memory</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>To store the displayed number in the calculator memory, click the MS 
+ button. After a number has been stored, the Memory button is enabled, 
+ which you can later click to get the number back. The MC button clears 
+ the memory (and disables the Memory button). Note that you can generate 
+ an overflow just by recalling a number from the memory that is bigger 
+ than will fit in the current operand size.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The M+ and M- buttons allow you to add to and subtract from the current 
+ value in the memory.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The buttons below the memory buttons for the “mark” are analogous, but 
+ instead of changing the calculator memory they change the position of 
+ the mark in the active file window. They can be used as a makeshift second 
+ memory.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Shortcut Keys</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The calculator provides many shortcut keys that are the same as those 
+ for the Windows calculator. For example, to recall the value of the calculator 
+ memory: press Ctrl+R. The shortcut keys are displayed in the “tips” that 
+ appear when you leave the mouse over a button for a second. The most common 
+ ones are for arithmetic operators: +, -, * (multiply), / (divide), and 
+ % (modulus); logical operators: &amp;, | (OR), ^ (Exclusive-OR), and ~ 
+ (NOT); and = (Calculate).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Like the Windows calculator you can enter numbers by typing valid digits 
+ for the current base. The number displayed has spaces added for readability, 
+ but you don’t need to type these. Decimal numbers have commas as thousands 
+ separators (or whatever is set in the Control Panel for your culture/region).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Unlike the Windows calculator you can use the Home, End, Del, arrow 
+ keys etc to edit the current number. You can even select parts of the 
+ value using the Shift-arrow keys before deleting, cutting (Ctrl+X), copying 
+ (Ctrl+C) etc, and use Ctrl+V to paste from the clipboard.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Particularly useful are the keys to change the current base and size: 
+ F5 to F8 change betweens the four bases; F9-F12 change between the four 
+ sizes (64, 32, 16 or 8 bit).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">For further information see:</span></p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_edit\HID_EDIT_GOTO.htm">Go 
+ To command</a>&nbsp;to find out how to use the calculator to jump to a 
+ new address</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_tools\HID_CALCULATOR.htm">Calculator 
+ command</a>&nbsp;to find out how to invoke the calculator</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="macros.htm">Macros</a>&nbsp;to 
+ find out how to use keystroke macros</p>
+
+</body>
+
+</html>

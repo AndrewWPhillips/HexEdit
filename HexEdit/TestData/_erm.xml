@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="PCOT Error Map File">
+   <struct name="MapHeader">
+      <data name="nVersion" type="int" len="4" display="%X"/>
+      <data name="nCount" type="int" len="4"/>
+      <data name="nMaxMessLen" type="int" len="2"/>
+      <data name="nNavOffset" type="int" len="4"/>
+      <data name="nNavBufSize" type="int" len="4"/>
+      <data name="nNavChecksum" type="int" len="4"/>
+      <data name="nValOffset" type="int" len="4"/>
+      <data name="nValBufSize" type="int" len="4"/>
+      <data name="nValChecksum" type="int" len="4"/>
+      <data name="nMessageOffset" type="int" len="4"/>
+      <data name="nMessBufSize" type="int" len="4"/>
+      <data name="nFooterOffset" type="int" len="4"/>
+   </struct>
+   <data name="nHeaderChecksum" type="int" len="4"/>
+   <struct name="MapNav">
+      <data name="nMask" type="int" len="4"/>
+      <data name="nLeft" type="int" len="4"/>
+      <data name="nRight" type="int" len="4"/>
+   </struct>
+   <data type="none" name="none"/>
+</binary_file_format>

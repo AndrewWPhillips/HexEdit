@@ -1,0 +1,933 @@
+/*=(===============================================================)*/
+
+/*=(===============================================================)*/
+/*=(Created with RoboEditor.)=======================================*/
+/*=(===============================================================)*/
+
+P {
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P {
+	font-family: Arial;
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+H1 {
+	margin-top: 12.00pt;
+	margin-bottom: 0.00pt;
+	font-family: helv, "times new roman";
+	font-size: 12pt;
+	font-weight: bold;
+	x-text-underline: normal;
+	/*begin!kadov{{*/ text-decoration: underline; /*}}end!kadov*/ 
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-H1 {
+	font-family: helv, "times new roman";
+	font-size: 12pt;
+	font-weight: bold;
+	x-text-underline: normal;
+	text-decoration: underline;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+H2 {
+	font-family: helv, "times new roman";
+	font-weight: bold;
+	font-size: 14pt;
+	border-bottom-style: Solid;
+	margin-top: 0pt;
+	margin-bottom: 0pt;
+	text-indent: 0.1in;
+	margin-left: 0pt;
+	line-height: 200%;
+	color: #000080;
+	border-bottom-width: 1px;
+	background-color: #ffe0ff;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-H2 {
+	font-family: helv, "times new roman";
+	font-weight: bold;
+	font-size: 14pt;
+	text-indent: 0.1in;
+	line-height: 200%;
+	color: #000080;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+H3 {
+	margin-left: 18.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-H3 {
+	font-family: Arial;
+	font-size: 12pt;
+	font-weight: bold;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+H4 {
+	margin-left: 18.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 12pt;
+	x-text-underline: normal;
+	/*begin!kadov{{*/ text-decoration: underline; /*}}end!kadov*/ 
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-H4 {
+	font-family: Arial;
+	font-size: 12pt;
+	x-text-underline: normal;
+	text-decoration: underline;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+H5 {
+	margin-left: 36.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-H5 {
+	font-family: Arial;
+	font-size: 10pt;
+	font-weight: bold;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+H6 {
+	margin-left: 36.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+	x-text-underline: normal;
+	/*begin!kadov{{*/ text-decoration: underline; /*}}end!kadov*/ 
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-H6 {
+	font-family: Arial;
+	font-size: 10pt;
+	x-text-underline: normal;
+	text-decoration: underline;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+H6.Heading7 {
+	margin-left: 36.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+	font-style: italic;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-H6-CHeading7 {
+	font-family: Arial;
+	font-size: 10pt;
+	font-style: italic;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+H6.Heading8 {
+	margin-left: 36.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+	font-style: italic;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-H6-CHeading8 {
+	font-family: Arial;
+	font-size: 10pt;
+	font-style: italic;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+H6.Heading9 {
+	margin-left: 36.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+	font-style: italic;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-H6-CHeading9 {
+	font-family: Arial;
+	font-size: 10pt;
+	font-style: italic;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.footnote-text {
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cfootnote-text {
+	font-family: Arial;
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.Normal-Indent {
+	margin-left: 36.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CNormal-Indent {
+	font-family: Arial;
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.nscba {
+	margin-left: 24.00pt;
+	margin-top: 4.00pt;
+	margin-bottom: 0.00pt;
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cnscba {
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.j {
+	margin-left: 12.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 1.00pt;
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cj {
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.ij {
+	margin-left: 24.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 1.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cij {
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.btb {
+	margin-top: 4.00pt;
+	margin-bottom: 1.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cbtb {
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.ctcb {
+	margin-left: 120.00pt;
+	margin-top: 1.00pt;
+	margin-bottom: 1.00pt;
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cctcb {
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.ns {
+	margin-left: 24.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 2.00pt;
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cns {
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.TT {
+	margin-top: 0.00pt;
+	margin-bottom: 6.00pt;
+	font-family: Helvetica;
+	font-size: 14pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CTT {
+	font-family: Helvetica;
+	font-size: 14pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.crtj {
+	margin-left: 120.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 1.00pt;
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Ccrtj {
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.nsca {
+	margin-left: 24.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cnsca {
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.bt {
+	margin-top: 0.00pt;
+	margin-bottom: 1.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cbt {
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.Hf {
+	margin-left: 12.00pt;
+	margin-top: 6.00pt;
+	margin-bottom: 2.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CHf {
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.Hs {
+	margin-left: 12.00pt;
+	margin-top: 6.00pt;
+	margin-bottom: 2.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CHs {
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.RT {
+	margin-left: 24.00pt;
+	margin-top: 6.00pt;
+	margin-bottom: 2.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CRT {
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.c {
+	margin-left: 108.00pt;
+	margin-top: 12.00pt;
+	margin-bottom: 4.00pt;
+	text-indent: -108.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cc {
+	text-indent: -108.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.ct {
+	margin-left: 108.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 1.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cct {
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.it {
+	margin-left: 12.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 1.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cit {
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.nsct {
+	margin-left: 24.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Helvetica;
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cnsct {
+	font-family: Helvetica;
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.nscb {
+	margin-left: 20.00pt;
+	margin-top: 4.00pt;
+	margin-bottom: 2.00pt;
+	text-indent: -8.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cnscb {
+	text-indent: -8.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.HC2 {
+	margin-left: 144.00pt;
+	margin-top: 6.00pt;
+	margin-bottom: 2.00pt;
+	text-indent: -132.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CHC2 {
+	text-indent: -132.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.C2 {
+	margin-left: 144.00pt;
+	margin-top: 6.00pt;
+	margin-bottom: 1.00pt;
+	text-indent: -132.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CC2 {
+	text-indent: -132.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.ctc {
+	margin-left: 120.00pt;
+	margin-top: 0.00pt;
+	margin-bottom: 1.00pt;
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cctc {
+	text-indent: -12.00pt;
+	font-family: Helvetica;
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.crt {
+	margin-left: 108.00pt;
+	margin-top: 8.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Ccrt {
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.or {
+	margin-left: 24.00pt;
+	margin-top: 1.00pt;
+	margin-bottom: 2.00pt;
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-Cor {
+	font-family: Helvetica;
+	font-size: 12pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.Ln1 {
+	margin-left: 18.00pt;
+	margin-top: 2.00pt;
+	margin-bottom: 2.00pt;
+	text-indent: -12.95pt;
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CLn1 {
+	text-indent: -12.95pt;
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.\002dIntro {
+	margin-left: 5.75pt;
+	margin-top: 4.00pt;
+	margin-bottom: 4.00pt;
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-C-Intro {
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.\002dTitle {
+	margin-left: 5.75pt;
+	margin-top: 4.00pt;
+	margin-bottom: 4.00pt;
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-C-Title {
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 12pt;
+	font-weight: bold;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.\002dJl {
+	margin-left: 18.00pt;
+	margin-top: 4.00pt;
+	margin-bottom: 0.00pt;
+	text-indent: -12.25pt;
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-C-Jl {
+	text-indent: -12.25pt;
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.Lp1 {
+	margin-left: 18.00pt;
+	margin-top: 2.00pt;
+	margin-bottom: 2.00pt;
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CLp1 {
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.Tph {
+	margin-left: 95.75pt;
+	margin-top: 3.00pt;
+	margin-bottom: 0.00pt;
+	text-indent: -90.00pt;
+	line-height: 12.00pt;
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CTph {
+	text-indent: -90.00pt;
+	line-height: 12.00pt;
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.Proch {
+	margin-left: 5.75pt;
+	margin-top: 6.00pt;
+	margin-bottom: 4.00pt;
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CProch {
+	font-family: "ms sans serif", "ms sans serif";
+	font-size: 10pt;
+	font-weight: bold;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.Body-Text-2 {
+	margin-left: 40.30pt;
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	text-indent: -40.30pt;
+	font-family: Arial;
+	font-size: 10pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CBody-Text-2 {
+	text-indent: -40.30pt;
+	font-family: Arial;
+	font-size: 10pt;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.Body-Text-Indent-2 {
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	text-indent: -9.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+	color: #000080;
+	margin-left: 27pt;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CBody-Text-Indent-2 {
+	text-indent: -9.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+	color: #000080;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+P.Body-Text {
+	margin-top: 0.00pt;
+	margin-bottom: 0.00pt;
+	font-family: Arial;
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+/*=(Generated Code)=================================================*/
+/*=(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)===================*/
+/*begin!kadov{{=====================================================*/ 
+LI.kadov-P-CBody-Text {
+	font-family: Arial;
+	font-size: 10pt;
+	font-weight: bold;
+}
+/*}}end!kadov=======================================================*/ 
+
+
+
+
+/*=(===============================================================)*/

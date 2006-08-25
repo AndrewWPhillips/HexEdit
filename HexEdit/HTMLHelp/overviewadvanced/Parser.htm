@@ -1,0 +1,854 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>C/C++ Parser for Templates</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=4837>
+<meta name=layout-width content=1225>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial, sans-serif;">C/C++ Parser for Templates</h2>
+
+<p>&nbsp;</p>
+
+<p>The <a HREF="../dlg_templates/Parser_dialog.htm">Parse Types from Source 
+ Code Dialog</a> is a powerful feature that allows creation of templates 
+ using C or C++ data structures. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ process is generally as simple as copying and pasting some source code 
+ from a .h (header file) and invoking the parser. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ have attempted to handle most valid C or C++ code. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ allows pasting real source code into the Parse Source Code edit box without 
+ having to bother with removing unneeded code such as function declarations.</p>
+
+<p>&nbsp;</p>
+
+<p>The parser is extremely flexible and should be able to handle most code 
+ thrown at it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ please inform us if you encounter a problem. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Currently 
+ C++ templates and namespaces are not fully supported.</p>
+
+<p>&nbsp;</p>
+
+<p>Here we describe how different declarations are handled.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Basic Data Types</p>
+
+<p style="font-weight: bold;">&nbsp;</p>
+
+<p>Basic data types are generally parsed as part of a struct or class but 
+ can be handled alone.</p>
+
+<p>&nbsp;</p>
+
+<p>For example, the following declaration generate a DATA element for an 
+ unsigned 32-bit integer in the template.</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->unsigned 
+ long myVal;</p>
+
+<p>&nbsp;</p>
+
+<p>The actual size and format of basic data types depends on the compiler 
+ used to generate the code. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, the &quot;int&quot; type is commonly 16 or 32 bits. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
+ allows you to configure the template DATA element generated for any standard 
+ data type by scanning the file &quot;_standard_types.xml&quot; looking 
+ for a type of that name.</p>
+
+<p>&nbsp;</p>
+
+<p>For example, the following entry exists in the default &quot;_standard_types.xml&quot; 
+ file:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;int&quot; name=&quot;<span style="font-weight: bold;">unsigned 
+ long</span>&quot; format=&quot;unsigned&quot; len=&quot;4&quot; type_name=&quot;unsigned 
+ long&quot;/&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>which when combined with the above declaration of myVal adds the following 
+ DATA element to the template:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;int&quot; name=&quot;<span style="font-weight: bold;">myVal</span>&quot; 
+ format=&quot;unsigned&quot; len=&quot;4&quot; type_name=&quot;unsigned 
+ long&quot;/&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>Note: three keyword integer types are synonymous with their two keyword 
+ counterpart (ie, with &quot;int&quot; removed). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
+ &quot;unsigned long int&quot; is the same as &quot;unsigned long&quot;, 
+ &quot;signed short int&quot; is the same as &quot;signed short&quot; etc.</p>
+
+<p>&nbsp;</p>
+
+<p>The default &quot;_standard_types.xml&quot; is configured for the Microsoft 
+ 32-bit VC++ compiler, but you can modify it to suit any C or C++ compiler. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The file 
+ can be edited with a text editor or simply by using the normal HexEdit 
+ template editing facilities by opening the file from the drop-down list 
+ at the top of the tree view.</p>
+
+<p>&nbsp;</p>
+
+<p>You can even add new types specific to your compiler. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+ an example, I have added the type &quot;long long&quot; which is used 
+ by some compilers to indicate a 64-bit integer.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that the DATA elements for numeric types in this file does not 
+ set the &quot;byte_order&quot; attribute. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ could be set to &quot;little&quot; for all such elements since the Microsoft 
+ compiler generates code for Intel processors and hence always uses little-endian 
+ byte order. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ it is simpler to not set this attribute, which then uses the &quot;default&quot; 
+ value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ endianness is then taken from the global endian attribute (default_byte_order 
+ ) of the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is simpler, more maintainale and more efficient since typically, all DATA 
+ elements of the same template have the same byte order.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Constants</p>
+
+<p>&nbsp;</p>
+
+<p>One exception for the handling of basic data types occurs for variables 
+ preceded by the keyword &quot;static&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ encountered in a struct (or class, union etc) a static variable is simply 
+ ignored since if an instance of that struct is written to file it would 
+ not include the static variable. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Static 
+ variables declared in a class are class wide variables not related to 
+ a particular instance.)</p>
+
+<p>&nbsp;</p>
+
+<p>However, a static variable outside a struct is parsed as normal unless 
+ it is also const. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ C++ a static const value is typically used to declare a compile-time constant, 
+ rather like an enum element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
+ the following two lines are effectively the same (when outside a struct):</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->static 
+ const int A = 1;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->enum 
+ { A = 1 };</p>
+
+<p>&nbsp;</p>
+
+<p>You can save all such integer constants for later use using the &quot;Save 
+ new values&quot; checkbox. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ are appended to the file &quot;_custom_constants.txt&quot;, and used when 
+ the &quot;Custom values&quot; checkbox is checked. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ saves putting commonly used values in a file and including that file (see 
+ #include below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ delete values from &quot;_custom_constants.txt&quot; you must use a text 
+ editor.</p>
+
+<p>&nbsp;</p>
+
+<p>The parser will also evaluate expressions since many declarations require 
+ a constant expression be evaluated at compile time. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->#define 
+ MAX_STR <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->255</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->char 
+ str[MAX_STR + 1];</p>
+
+<p>&nbsp;</p>
+
+<p>requires evaluation of the constant expression &quot;255 + 1&quot; before 
+ generating an array of 256 characters:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;for 
+ count=&quot;256&quot; name=&quot;str&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;char&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/for&gt;</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Enums</p>
+
+<p>&nbsp;</p>
+
+<p>Enums are very useful in HexEdit templates for two reasons. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ can be used to easily define one or more integer constant values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ can also be used to define a type with a restricted set of integer values. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Consider 
+ this type declaration and use of the dow (day of week) type:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->enum 
+ dow ( SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, 
+ };</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->enum 
+ dow day;</p>
+
+<p>&nbsp;</p>
+
+<p>This results in the following DATA element being added to the template:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;int&quot; name=&quot;<span style="font-weight: bold;">day</span>&quot; 
+ format=&quot;signed&quot; len=&quot;4&quot; type_name=&quot;enum dow&quot;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->domain=&quot;(SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,}&quot;/&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>When the template is used the corresponding enum field(s) display the 
+ correct day of the week in the DATA column of the template tree view. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To change 
+ the value of the enum the user can simply select a new value from the 
+ drop down list (unless the field is read-only in which case it cannot 
+ be modified).</p>
+
+<p>&nbsp;</p>
+
+<p>Further, the value is checked that it is valid according to the set 
+ of enum values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ invalid the DATA element is displayed grayed in the tree view to indicate 
+ an error (and the actual numeric value is displayed in the DATA column).</p>
+
+<p>&nbsp;</p>
+
+<p>Note that most C/C++ compilers treat enum variables as being the same 
+ as int variables (at least at run-time). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, Microsoft VC++ uses a 32-bit int for an enum. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ in theory, compilers can use integers of any size to store an enum so 
+ &quot;_standard_types.xml&quot; uses a special type with name &quot;enum$&quot; 
+ to store the type used for an enum. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Again 
+ you can change this for your compiler.</p>
+
+<p>&nbsp;</p>
+
+<p>You can save declared enum types in &quot;_custom_types.xml&quot; for 
+ later use using the &quot;Save new types&quot; checkbox. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can save the values of integer constants in the enum list in &quot;_custom_constants.txt&quot; 
+ using the &quot;Save new values&quot; checkbox.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Pointers</p>
+
+<p>&nbsp;</p>
+
+<p>Pointers are used to store an address in memory and consequently are 
+ of no use when written to file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ it somtimes happens that a struct containing pointers is written to a 
+ file for the other fields it contains. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ pointers can be ignored but you still need to reserve space for them.</p>
+
+<p>&nbsp;</p>
+
+<p>There are two very different type of pointers in C - data and function 
+ pointers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Often 
+ these pointers are the same size (usually the size of an int) but can 
+ be different from each other and different from the size of an int. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, in MSDOS compilers, pointers and function pointers could be different 
+ combinations of 16 and 32-bit values, depending on the memory model used 
+ to build the software.</p>
+
+<p>&nbsp;</p>
+
+<p>When pointers are added to a HexEdit template the special types &quot;pointer$&quot; 
+ and &quot;function_pointer$&quot; are used from &quot;_standard_types.xml&quot;. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By default 
+ these are 32-bit unsigned integers (for the VC++ 32-bit compiler).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Arrays</p>
+
+<p>&nbsp;</p>
+
+<p>Arrays, on the other hand, are very useful in templates. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ the parser encounters an array it simply wraps its underlying type in 
+ a template FOR element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+ expected you can have arrays of any other type such a structs, arrays, 
+ etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, this 2-dimensional array:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->long 
+ a[2][3];</p>
+
+<p>&nbsp;</p>
+
+<p>generates this template code:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;for 
+ count=&quot;3&quot; name=&quot;a&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;for 
+ count=&quot;2&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;int&quot; format=&quot;signed&quot; len=&quot;4&quot; type_name=&quot;long&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/for&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/for&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>The sub-elements of an array need have no &quot;name&quot; attribute, 
+ since array elements can be accessed in expressions using the array name 
+ and an index in square brackets.</p>
+
+<p>Note that in C/C++ the [] operator evaluates left-to-right so for multi-dimensionsal 
+ arrays the right-most subscript (3 above) represents the outer array.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Structs</p>
+
+<p>&nbsp;</p>
+
+<p>It is very common for a program when it needs to write a binary file 
+ to simply dump one or more structs from memory to file, since this is 
+ simple and efficient. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
+ it is especially important for the parser to handle all aspects of structs.</p>
+
+<p>&nbsp;</p>
+
+<p>When a struct is parsed all the contained elements are simply placed 
+ sequentially inside a STRUCT template element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ elements contained in a struct can (as in C/C++) be any type including 
+ basic types, arrays, other structs, etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ also need to handle the special requirements of structs - member <span 
+ style="font-weight: bold;">alignment</span> (padding) and <span style="font-weight: bold;">bit-fields</span>. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Structs 
+ in C++ can also be derived from <span style="font-weight: bold;">base 
+ classes</span>, which is discussed below in the &quot;Classes&quot; section.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Alignment</span></p>
+
+<p>&nbsp;</p>
+
+<p>Alignment, in essence, is used to ensure data types of a certain size 
+ are aligned on some memory boundary. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is done to satisfy the requirements of a certain processor or for efficiency. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The complete 
+ details of alignment are involved and are not explained here but the effect 
+ is that the parser may add padding between members of a struct and at 
+ the end, to conform to the current alignment restrictions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ added to a template, padding fields have type &quot;none&quot; and look 
+ something like this:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;none&quot; len=&quot;3&quot; comment=&quot;Padding to align 
+ next element to 4-byte boundary&quot;/&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>Padding elements are not given a name attribute so they do not appear 
+ in the template tree view (unless edit mode is on).</p>
+
+<p>&nbsp;</p>
+
+<p>The default alignment can be set using the Alignment radio buttons in 
+ the Parse Source Code dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is equivalent to the VC++<span style="font-weight: bold;"> /Zp</span> 
+ command line option.</p>
+
+<p>&nbsp;</p>
+
+<p>The default alignment can be overridden at any point using #pragma pack(n), 
+ which is a commonly implemented feature in many compilers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ parameter 'n' to #pragma pack can be 1, 2, 4, 8, or 16. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ #pragma pack is used without a parameter alignment is set back to the 
+ default value.</p>
+
+<p>&nbsp;</p>
+
+<p>The &quot;push&quot; and &quot;pop&quot; options for #pragma pack are 
+ also supported which is often used with #include files to allow proper 
+ nested use of #pragma pack without causing unexpected side-effects. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ your compiler documentation for more information.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Bit-fields</p>
+
+<p style="font-weight: bold;">&nbsp;</p>
+
+<p>Bit-fields in C/C++ are only allowed within a struct or class. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ allow more efficient storage by only using the required number of bits 
+ to store a set of values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->How 
+ bit-fields are stored is tricky, and is explained in detail in <a HREF="../binary_files/BitFields_Etc.htm">BitFields 
+ etc</a>, but in essence consecutive bitfields are all stored in an underlying 
+ bit-field storage unit (which in most compilers is the same size as an 
+ int). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ the next bit-field to be added is too big for the storage unit then a 
+ new storage unit is started and the remaining bits (if any) of the old 
+ storage unit remain unused.</p>
+
+<p>&nbsp;</p>
+
+<p>Compilers can also vary in the direction that bit-fields are stored, 
+ though generally they start at the bottom. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ direction that bit-fields are added is not to be confused with the byte-order 
+ (though the storage unit can also be big or little-endian like any integer).</p>
+
+<p>&nbsp;</p>
+
+<p>Since the underlying storage unit for bit-fields can vary between compilers 
+ there is a type in the &quot;_standard_types.xml&quot; file called &quot;bit_field$&quot; 
+ that allows you to configure this.</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;int&quot; name=&quot;bit_field$&quot; direction=&quot;up&quot; 
+ len=&quot;4&quot; type_name=&quot;bit-field&quot;/&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>This must always be an &quot;int&quot; type but you can change the length. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There is 
+ also a direction attribute which allows you to specify in which direction 
+ the bit-fields fill the underlying storage unit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ default settings are for the Microsoft VC++ compiler which uses a 4-byte 
+ (32-bit) integer and fills from the bottom upwards.</p>
+
+<p>&nbsp;</p>
+
+<p>As an example consider the following struct:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->struct</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->{</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->int 
+ b1: 24;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->int 
+ b2: 4;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->int 
+ b3: 5;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->} 
+ a;</p>
+
+<p>&nbsp;</p>
+
+<p>This will generate the following template STRUCT:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;struct 
+ name=&quot;a&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;int&quot; name=&quot;b1&quot; direction=&quot;up&quot; len=&quot;4&quot; 
+ bits=&quot;24&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;int&quot; name=&quot;b2&quot; direction=&quot;up&quot; len=&quot;4&quot; 
+ bits=&quot;4&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;int&quot; name=&quot;b3&quot; direction=&quot;up&quot; len=&quot;4&quot; 
+ bits=&quot;5&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/struct&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>During processing of the template, HexEdit look for consecutive bit-fields 
+ (indicated by use of the &quot;bits&quot; attribute) with the same type. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(To match 
+ they must both be of &quot;int&quot; type and have the same &quot;len&quot; 
+ and &quot;direction&quot; attributes.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Consecutive 
+ bit-fields are merged until the underlying storage unit, 32 bits in this 
+ example, has been filled.</p>
+
+<p>&nbsp;</p>
+
+<p>So the above struct will place the first bit-field (b1) in the bottom 
+ 24 bits of the first storage units and b2 goes in the next 4 bits. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Since 
+ b3 will not fit (28 + 5 &gt; 32) it occupies the bottom 5 bits of the 
+ next storage unit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
+ the total size of &quot;a&quot; will be 8 bytes (2 storage units).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Unions</p>
+
+<p>&nbsp;</p>
+
+<p>Unions in C/C++ are syntactically like structs but simply result in 
+ all members being stored at the same address instead of consecutively 
+ in memory. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ your compiler manual for more info.</p>
+
+<p>&nbsp;</p>
+
+<p>When parsed unions generate a STRUCT template element containing a series 
+ of JUMP elements, one for each union member. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ relies on the fact that in processing a template the current file address 
+ returns to the same place after a JUMP element is processed.</p>
+
+<p>&nbsp;</p>
+
+<p>There is also an extra DATA element of type &quot;none&quot; at the 
+ end of the STRUCT that is the size of the largest union member. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ ensures that the element after the union starts at the correct file address.</p>
+
+<p>&nbsp;</p>
+
+<p>Perhaps an example would make this clearer. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ union:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->union 
+ </p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->{</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->char 
+ a[2];</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->int 
+ b;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->} 
+ c;</p>
+
+<p>&nbsp;</p>
+
+<p>generates this template code:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;struct 
+ name=&quot;c&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;jump 
+ offset=&quot;0&quot; origin=&quot;current&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;for 
+ count=&quot;2&quot; name=&quot;a&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;char&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/for&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/jump&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;jump 
+ offset=&quot;0&quot; origin=&quot;current&quot;&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;int&quot; name=&quot;b&quot; format=&quot;signed&quot; len=&quot;4&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/jump&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
+ type=&quot;none&quot; len=&quot;4&quot; comment=&quot;padding for size 
+ of largest union member - 4&quot;/&gt;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;/struct&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>Note that the struct has the correct size, equal to the size of the 
+ final DATA element (since JUMP elements do not contribute to the size 
+ of a STRUCT). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ the final DATA element is not displayed in the template (unless edit mode 
+ is on) since it does not have a name attribute.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Classes</p>
+
+<p>&nbsp;</p>
+
+<p>Classes are similar to structs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ C++ classes are a little more complex than simple C structs - they can 
+ have a base class and can also be virtual.</p>
+
+<p>&nbsp;</p>
+
+<p>Base classes of structs and classes are simply added as the first element 
+ of a STRUCT with the name &quot;base_class&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ there are multiple base classes (multiple inheritance) then they are inserted 
+ in order. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is typically how a compiler would order them in memory.</p>
+
+<p>&nbsp;</p>
+
+<p>Classes in C++ can also be &quot;virtual&quot;, which is a useful concept 
+ (not explained here) that allows polymorphism of types derived from the 
+ same base class. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Compilers 
+ invariably implement virtual classes by simply adding an extra pointer 
+ to the start of the class, called a vtable pointer (since it points to 
+ a &quot;virtual function&quot; table).</p>
+
+<p>&nbsp;</p>
+
+<p>Like ordinary pointers vtable pointers are useless when written to a 
+ file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Moreover, 
+ it is probably dangerous to write instances of virtual classes to file 
+ and read them back but the HexEdit parser handles this case anyway. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ the parser detects that a class is virtual it adds an extra pointer field 
+ to the start of the STRUCT element and gives it the name &quot;vptr&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Preprocessor</p>
+
+<p>&nbsp;</p>
+
+<p>The HexEdit parser includes full support for all standard preprocessor 
+ directives (#define, #if, #ifdef, #include etc). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ also supports the paste operator (##) and the stringizing operator (#) 
+ often used with #define. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ common (but not standard) #pragma pack() directive is also supported (see 
+ above).</p>
+
+<p>&nbsp;</p>
+
+<p>Include files (#include) can be specified using a full path name or 
+ a relative path. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ a relative path is used then the directories specified in any INCLUDE 
+ environment variable are searched. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the file name in enclosed in quotes (&quot;) instead of angle brackets 
+ (&lt;&gt;) then the current directory is also searched first. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Include 
+ files can be nested to any depth.</p>
+
+<p>&nbsp;</p>
+
+<p>The HexEdit parser supports macros (#define) both with and without parameters 
+ (ie object-like and function-like macros). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Macros 
+ can be redefined (using #define) and removed (using #undef). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ existence of a macro can also be tested (for conditional compilation) 
+ using #ifdef, #ifndef and the defined() operator (see below).</p>
+
+<p>&nbsp;</p>
+
+<p>When a macro is invoked the replacement text is rescanned for more replacements 
+ as specified by the C standard. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ # and ## operators are also supported.</p>
+
+<p>&nbsp;</p>
+
+<p>Conditional compilation is supported (#ifdef, #ifndef, #if, #elif, #else, 
+ #endif). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ value for an #if or #elif can be a constant or constant expression and 
+ can use the defined() operator to test for the existence of a #defined 
+ value.</p>
+
+<p>&nbsp;</p>
+
+<p>The standard predefined macros __FILE__, __LINE__, __DATE__, __TIME__, 
+ and __STDC__, as well as __cplusplus, and __TIMESTAMP__ are also supported.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Saving Types</p>
+
+<p>&nbsp;</p>
+
+<p>New types that the parser encounters can be saved for later use by using 
+ &quot;Save New Types&quot; checkbox. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ use them make sure the &quot;Custom&quot; types checkbox is checked. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ types include structs, classes, enums and typdefs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Consider 
+ this code:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->typedef 
+ int A;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->struct 
+ B { int b1; };</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->struct 
+ C { int c1; } c;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->struct 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->{ 
+ int d1; } d;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->enum 
+ E <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->{ 
+ E1, E2, };</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->enum 
+ F <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->{ 
+ F1, F2, } f;</p>
+
+<p>&nbsp;</p>
+
+<p>The first line defines a new DATA (integer) type A. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ next 2 lines define STRUCT types named B and C eahc containing a single 
+ DATA element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Line 
+ 4 defines and uses an anonymous type. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Lines 
+ 5 and 6 create enum types which are stored as DATA (integer) elements.</p>
+
+<p>&nbsp;</p>
+
+<p>Lines 1, 2, 3, 5, and 6 (but not line 4) create new types which can 
+ be appended to the custom types file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Only 
+ lines 3, 4, and 6 add anything to the current template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ above types could later be used like this:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ a; <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->// 
+ int</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->struct 
+ B b;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->struct 
+ C c2;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->enum 
+ E e;</p>
+
+<p>&nbsp;</p>
+
+<p>In C++ the struct and enum keywords are not required so you could even 
+ do this:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->B 
+ b2;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->E 
+ e2;</p>
+
+<p>&nbsp;</p>
+
+<p>Apart from using the custom types (from file _custom_types.xml) you 
+ can also select the Common Types (_common_types.xml) and Windows Types 
+ (_windows_types.xml) checkboxes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is recommended that the Standard Types checkbox (_standard_types.xml) 
+ be left on.</p>
+
+<p>&nbsp;</p>
+
+<p>The standard types include all types recognised by the compiler as well 
+ as those declared in the standard header files (size_t, FILE, struct tm 
+ etc). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ time_t type generates a time_t date DATA element as you might expect.</p>
+
+<p>&nbsp;</p>
+
+<p>The common types file includes a few extra types that are often defined 
+ but are not part of the C or C++ standard.</p>
+
+<p>&nbsp;</p>
+
+<p>The Windows types file includes a large number of types extracted from 
+ the Microsoft header files provided for calling the Windows API. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ also includes many MFC classes etc.</p>
+
+<p>&nbsp;</p>
+
+<p>All these .XML files are standard HexEdit template files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ can be edited in a text editor or directly using the template editing 
+ facilities in HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ it is recommended that you only make changes to _custom_types.xml (and 
+ _custom_constants.txt) as the other files may be overwritten when you 
+ upgrade to a newer version of HexEdit.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Limitations</p>
+
+<p>&nbsp;</p>
+
+<p>The parser assumes that the source code is well-formed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ errors in parsing are encountered the location of the error is indicated 
+ but the nature of the error may not be obvious. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ some badly formed code may <span style="font-weight: bold;">not</span> 
+ generate a parse error but will generally just be silently ignored. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is recommended that all code be run through your C/C++ compiler before 
+ parsing in HexEdit to ensure it is valid..</p>
+
+<p>&nbsp;</p>
+
+<p>The parser does not yet handle C++ namespaces and templates. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ where possible template syntax is parsed and ignored. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ is some support for nested classes and the scope resolution operator (::).</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

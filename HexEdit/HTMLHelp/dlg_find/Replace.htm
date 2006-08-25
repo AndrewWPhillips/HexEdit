@@ -1,0 +1,236 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Replace page</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=date content="09 4, 2002 11:39:10 PM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1105>
+<meta name=layout-width content=1319>
+
+
+<!--(Links)=========================================================-->
+
+<link rel=StyleSheet href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial><span style="font-family: Arial;">Find and Replace 
+ </span>Page</font></h2>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="find5.gif"
+						style="border-style: none;
+								border: none;
+								width: 518px;
+								height: 241px;"
+						width=518
+						height=241
+						border=0></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>This page allows you to find and replace using hex or text strings. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If both 
+ the search and replace box contain pairs of hex digits then a hex find 
+ and replace is performed, otherwise the search and replace items are treated 
+ as text strings (using the character set of the active file).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Find</span></p>
+
+<p style="margin-left: 18.00pt;">Type what you want to search for here. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As in the 
+ <a HREF="Simple.htm">Basic Find page</a> you can enter hex digits or a 
+ text string.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Replace</span></p>
+
+<p style="margin-left: 18.00pt;">Type the replacement item here.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Note that the search and replacement items 
+ may be of different lengths, but if different in length and the active 
+ file is open in overtype mode you are prompted to change to insert mode 
+ before any replacements are done. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the replacement item is empty then the search item is effectively just 
+ removed.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Note that if both the search and replacement 
+ items consist of only pairs of hex digits (possibly with intervening spaces) 
+ then a hex find and replace is performed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->F<span 
+ style="margin-left: 18.00pt;">or a hex find and replace the &quot;whole 
+ word&quot; and &quot;match case&quot; options are irrelevant and are disabled.</span></p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Find Next</span></p>
+
+<p style="margin-left: 18.00pt;">Searches for (and selects if found) the 
+ next occurrence of the text or hex digits in the Find box.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Replace</span></p>
+
+<p style="margin-left: 18.00pt;">Replaces the current selection (if it 
+ matches the search item) with the replacement item and then searches for 
+ the next match. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ it does not match or there is no selection the next match is just searched 
+ for.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Replace 
+ All</span></p>
+
+<p style="margin-left: 18.00pt;">Replaces all matching search items with 
+ the replacement items for the specified <span style="font-weight: bold;">Scope</span> 
+ (see below).</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Help</span></p>
+
+<p style="margin-left: 18.00pt;">Invokes help for this page.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Whole word</p>
+
+<p style="margin-left: 18.00pt;">For a text search only a whole word is 
+ matched. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ text is not matched if it is part of a larger word.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Match case</span></p>
+
+<p style="margin-left: 18.00pt;">If this option is on then case of the 
+ search text is significant<span style="margin-left: 18.00pt;">.</span></p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Direction Up/Down</p>
+
+<p style="margin-left: 18.00pt;">These radio buttons say whether the search 
+ moves forward or backward in the file.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Scope: 
+ To Mark</span></p>
+
+<p style="margin-left: 18.00pt;">Sometimes it is useful to restrict a search 
+ to just part of a file, particularly if the file is very large. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ option means that the search is only done in those bytes from the current 
+ cursor position to the mark in the active file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can see how many bytes will be searched by viewing the &quot;Distance 
+ to Mark&quot; panes of the <a HREF="..\bars\AFX_HIDW_STATUS_BAR.htm">status 
+ bar</a>.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">This option is disabled if the current 
+ cursor position is on the wrong side of the mark (depending on the search 
+ direction - see above)</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Scope: 
+ Whole file</span></p>
+
+<p style="margin-left: 18.00pt;">Use this option if you want to search 
+ the whole file irrespective of the current cursor position in the file. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Depending 
+ on the direction of the search (see above) the file is searched starting 
+ at the first or last byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->After 
+ the first successful search with this scope is complete the scope then 
+ changes to &quot;To Start of File&quot; or &quot;To End of File&quot; 
+ (depending on the current search direction) so that you can just hit the 
+ &quot;Find Next&quot; button to find the next occurrence.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Scope: 
+ To Start/End of File</span></p>
+
+<p style="margin-left: 18.00pt;">The scope of the search is from the current 
+ cursor position to the end of file (or start of file if the current search 
+ direction is upwards). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ the end (or start) of file is reached you are asked if you want to continue 
+ the search from the other end of <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->the 
+ file back to the start.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Scope: 
+ All Open Files</span></p>
+
+<p style="margin-left: 18.00pt;">When this scope is used the current file 
+ is searched from the current cursor position to the end (or start if direction 
+ is upwards), and if nothing is found then other open files are searched 
+ in turn. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Finally, 
+ if no occurrences are found in all other files then the start (or end) 
+ of the current file is searched back to the initial position.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center>
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name="_Version" value="65536" >
+<param name="_ExtentX" value="2117" >
+<param name="_ExtentY" value="556" >
+<param name="_StockProps" value="13" >
+<param name="ForeColor" value="0" >
+<param name="BackColor" value="13160660" >
+<param name="UseButton" value="-1" >
+<param name="ControlLabel" value="Related Topics" >
+<param name="UseIcon" value="0" >
+<param name="Items" value="Basic;Simple.htm$$**$$Hex;HexFind.htm$$**$$Number;FindNumber.htm$$**$$Replace Command;..\cmd_edit\HID_EDIT_REPLACE.htm$$**$$Text;FindText.htm$$**$$" >
+<param name="Image" value="" >
+<param name="FontInfo" value="MS Sans Serif,8,0,," >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\hexedit\HTMLHelp\DLG_Find\Replace.htm" >
+<param name="_ID" value="RelatedTopics" >
+<param name="UseMenu" value="-1" >
+<param name="Frame" value="" >
+<param name="Window" value="" >
+</object>--><OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM NAME="Item1" VALUE="Basic;Simple.htm">
+  <PARAM NAME="Item2" VALUE="Hex;HexFind.htm">
+  <PARAM NAME="Item3" VALUE="Number;FindNumber.htm">
+  <PARAM NAME="Item4" VALUE="Replace Command;..\cmd_edit\HID_EDIT_REPLACE.htm">
+  <PARAM NAME="Item5" VALUE="Text;FindText.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+ </p>
+
+</body>
+
+</html>

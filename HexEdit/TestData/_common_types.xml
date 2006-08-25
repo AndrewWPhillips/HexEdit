@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="CommonTypes" comment="This file is used in parsing C/C++ source code for declarations">
+	<data type="int"   name="ushort"            format="unsigned" len="2" type_name="ushort"/>
+	<data type="int"   name="uint"              format="unsigned" len="4" type_name="uint"/>
+	<data type="int"   name="ulong"             format="unsigned" len="4" type_name="ulong"/>
+	<data type="int"   name="byte"              format="unsigned" len="1" type_name="byte"/>
+	<data type="int"   name="sbyte"             format="signed"   len="1" type_name="sbyte"/>
+</binary_file_format>

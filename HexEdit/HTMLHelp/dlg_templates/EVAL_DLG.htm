@@ -1,0 +1,195 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>EVAL Dialog</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=970>
+<meta name=layout-width content=1125>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;">EVAL Dialog</h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="template_eval.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0></p>
+
+<p>&nbsp;</p>
+
+<p>This dialog allows you to set the options of a template EVAL element. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It is invoked 
+ by right-clicking the EVAL node in the template tree view and selecting 
+ the &quot;Edit...&quot; item, or by clicking an Edit, Insert, or Replace 
+ With button in the dialog for the containing STRUCT, or Structure definition.</p>
+
+<p>&nbsp;</p>
+
+<p>An EVAL is useful for evaluating expressions (eg initialising variables), 
+ for displaying relevant information to the user of the template, or for 
+ indicating some sort of error condition.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Expression</p>
+
+<p style="margin-left: 40px;">An expression using any template field so 
+ far encountered, variables etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Expressions 
+ can be of boolean, floating point, boolean, date or string type. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ display a simple message just use a string constant - ie characters enclosed 
+ in double-quotes with possible escape characters (as in C/C++).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">A special feature when using a string is 
+ to be able to include any number of expressions, with optional format 
+ specification. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->An 
+ expression is simply enclosed in braces {} with an optional semicolon 
+ (;) followed by a format specification appropriate to the type of the 
+ expression. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, to display fields from a STRUCT you could use an string like 
+ this:</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;"><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&quot;X 
+ = {locn.x; %g}, Y = {locn.y; %g}, flags = {locn.flags; bin}&quot;</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">See the section called <span style="font-weight: bold;">Displaying 
+ Information in the Tree Column </span>in <a href="../overviewadvanced/Editing_templates.htm">Editing 
+ templates</a> for more information.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Display error if expression evaluates false</p>
+
+<p style="margin-left: 40px;">If checked the above expression must return 
+ a boolean result. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(If 
+ the value is not boolean an error is displayed and the user can terminate 
+ template evaluation.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the return value is false the node is shown in the tree view and expanded 
+ so the user will see it.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Always display result in tree view</p>
+
+<p style="margin-left: 40px;">If checked the result of the expression is 
+ always displayed as a node in the tree view, otherwise it is only displayed 
+ in edit mode.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Comment</p>
+
+<p style="margin-left: 40px;">Add any relevant comments here.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span><span><span style="font-weight: bold;">&lt;&lt; 
+ and &gt;&gt; buttons</span></span></span></p>
+
+<p style="margin-left: 40px;">If the parent element is a STRUCT then these 
+ buttons are displayed in the bottom right of the dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ allow you to move to the previous and next sibling (ie the previous and 
+ next elements in the parent STRUCT). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is very handy when you quickly want to view or change values in all the 
+ children.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">Using the button is equivalent to clicking 
+ OK then editing the previous or next element in the parent STRUCT.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 0px;">
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name="_Version" value="65536" >
+<param name="_ExtentX" value="2117" >
+<param name="_ExtentY" value="556" >
+<param name="_StockProps" value="13" >
+<param name="ForeColor" value="0" >
+<param name="BackColor" value="13160660" >
+<param name="UseButton" value="-1" >
+<param name="ControlLabel" value="Related Topics" >
+<param name="UseIcon" value="0" >
+<param name="Items" value="Editing templates;..\overviewadvanced\Editing_templates.htm$$**$$Expressions;..\overviewadvanced\Expressions.htm$$**$$FOR Dialog;FOR_Dialog.htm$$**$$Global Options;Global_Options.htm$$**$$IF Dialog;IF_Dialog.htm$$**$$STRUCT Dialog;STRUCT_Dialog.htm$$**$$" >
+<param name="Image" value="" >
+<param name="FontInfo" value="MS Sans Serif,8,0,," >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_templates\EVAL_DLG.htm" >
+<param name="_ID" value="RelatedTopics" >
+<param name="UseMenu" value="-1" >
+<param name="Frame" value="" >
+<param name="Window" value="" >
+</object>-->
+<OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM  NAME="Item1"  VALUE="Editing templates;..\overviewadvanced\Editing_templates.htm">
+  <PARAM  NAME="Item2"  VALUE="Expressions;..\overviewadvanced\Expressions.htm">
+  <PARAM  NAME="Item3"  VALUE="FOR Dialog;FOR_Dialog.htm">
+  <PARAM  NAME="Item4"  VALUE="Global Options;Global_Options.htm">
+  <PARAM  NAME="Item5"  VALUE="IF Dialog;IF_Dialog.htm">
+  <PARAM  NAME="Item6"  VALUE="STRUCT Dialog;STRUCT_Dialog.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+ </p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

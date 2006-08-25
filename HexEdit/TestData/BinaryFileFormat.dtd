@@ -1,0 +1,71 @@
+<!ELEMENT binary_file_format ((define_struct)*, (struct|use_struct|for|if|switch|jump|eval|data)*) >
+<!ELEMENT define_struct (struct|use_struct|for|if|switch|jump|eval|data)* >
+<!ELEMENT struct (struct|use_struct|for|if|switch|jump|eval|data)* >
+<!ELEMENT use_struct EMPTY>
+<!ELEMENT for (struct|use_struct|for|if|switch|jump|data) >
+<!ELEMENT if ((struct|use_struct|for|if|switch|jump|data), (else, (struct|use_struct|for|if|switch|jump|data))? ) >
+<!ELEMENT else EMPTY>
+<!ELEMENT switch (case)* >
+<!ELEMENT case (struct|use_struct|for|if|switch|jump|data) >
+<!ELEMENT jump (struct|use_struct|for|if|switch|jump|data) >
+<!ELEMENT eval EMPTY>
+<!ELEMENT data EMPTY>
+<!ATTLIST binary_file_format name CDATA #IMPLIED
+              web_site CDATA #IMPLIED
+              default_byte_order (big|little) "little"
+              default_read_only (false|true) "false"
+              default_char_set (ascii|ansi|oem|ebcdic) "ansi"
+              expr CDATA #IMPLIED
+              type_name CDATA #IMPLIED
+              comment CDATA #IMPLIED>
+<!ATTLIST define_struct
+              expr CDATA #IMPLIED
+              type_name CDATA #REQUIRED
+              pack CDATA #IMPLIED
+              comment CDATA #IMPLIED>
+<!ATTLIST struct name CDATA #IMPLIED
+              expr CDATA #IMPLIED
+              type_name CDATA #IMPLIED
+              pack CDATA #IMPLIED
+              comment CDATA #IMPLIED>
+<!ATTLIST use_struct name CDATA #IMPLIED
+              expr CDATA #IMPLIED
+              type_name CDATA #REQUIRED
+              comment CDATA #IMPLIED>
+<!ATTLIST for name CDATA #IMPLIED
+              count CDATA #IMPLIED
+              stop_test CDATA #IMPLIED
+              type_name CDATA #IMPLIED
+              comment CDATA #IMPLIED>
+<!ATTLIST if
+              test CDATA #REQUIRED
+              comment CDATA #IMPLIED>
+<!ATTLIST switch
+              test CDATA #REQUIRED
+              comment CDATA #IMPLIED>
+<!ATTLIST case
+              range CDATA #REQUIRED>
+<!ATTLIST jump
+              offset CDATA #REQUIRED
+              origin (start|current|end) "current"
+              comment CDATA #IMPLIED>
+<!ATTLIST eval
+              expr CDATA #REQUIRED
+              display_error (false|true) "false"
+              display_result (false|true) "false"
+              comment CDATA #IMPLIED>
+<!ATTLIST data name CDATA #IMPLIED
+              type CDATA #REQUIRED
+              format CDATA #IMPLIED
+              len CDATA #IMPLIED
+              bits CDATA #IMPLIED
+              direction (up|down) "up"
+              straddle (false|true) "false"
+              byte_order (default|big|little) "default"
+              read_only (default|false|true) "default"
+              domain CDATA #IMPLIED
+              hide CDATA #IMPLIED
+              display CDATA #IMPLIED
+              units CDATA #IMPLIED
+              type_name CDATA #IMPLIED
+              comment CDATA #IMPLIED>

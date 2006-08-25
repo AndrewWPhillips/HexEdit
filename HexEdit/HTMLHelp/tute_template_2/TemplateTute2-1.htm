@@ -1,0 +1,2554 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Step1. The Data File Format</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=2646>
+<meta name=layout-width content=1213>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Step 1: The Data File Format</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The first requirement for creating a template is that you have some 
+ idea of the data file format, whether you are working from a rough description 
+ or a formal specification (or perhaps you even designed the format yourself).</p>
+
+<p>&nbsp;</p>
+
+<p>The most difficult situation is if you are trying to decipher a format 
+ about which you have no information. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ will need to create lots of different files to try to work out the differences, 
+ but mainly have lots of patience. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ will not cover this in the tutorial as whole books could be written about 
+ it.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">HEG File Specification</p>
+
+<p>&nbsp;</p>
+
+<p>To best demonstrate several template features we have created a simple, 
+ fictitious file format for a simple 2-D graphics program. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ will give files of this format the extension .HEG (for HexEdit Graphics). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There is 
+ an example file of this format (in the folder where HexEdit is installed) 
+ called TUTORIAL.HEG. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Let's 
+ open it now.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>1. First make sure template editing mode is 
+ on by opening the Display page of the Options dialog (use Tools/Options 
+ command).</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="../tute_template_1/tute1_1_1a.gif"
+						style="border-style: none;
+								border: none;
+								width: 460px;
+								height: 320px;"
+						width=460
+						height=320
+						border=0></p>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center; font-weight: bold;"
+	align=center><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->Figure 
+ 1.1 Turning On Template Editing in the Display Options page.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>2. Open the &quot;TUTORIAL.HEG&quot; file (stored 
+ in the directory where you installed HexEdit).</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>If you forget where you installed HexEdit right-click 
+ the HexEdit icon and Select Properties. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Then 
+ find the &quot;Target&quot; field on the Shortcut page of the Properties 
+ dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ there is no Shortcut page then you are looking at the properties for the 
+ actual EXE file, just find the &quot;Location&quot; field on the General 
+ page.</p>
+
+<p>&nbsp;</p>
+
+<p>The HEG format simply consists of a header followed by zero or more 
+ graphical objects, and finally a colour table.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>The description &quot;header&quot; is often the name used 
+ for a set of global values that occur before the bulk of the data.</p>
+
+<p>&nbsp;</p>
+
+<p>The first noteable feature of this format is the colour table at the 
+ end of file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Having 
+ this sort of table last is common where information is gathered while 
+ a file is being written and &quot;header&quot; type information is written 
+ after the data. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is often called a &quot;trailer&quot; rather than header for obvious reasons.</p>
+
+<p>&nbsp;</p>
+
+<p>For our format putting the colour table last is a bit contrived since 
+ the colour information is available to be written at the start of the 
+ file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is used to demonstrate later in this tutorial how to process data out 
+ of order, specifically to look up information from the colour table during 
+ processing of the graphical objects.</p>
+
+<p>&nbsp;</p>
+
+<p>The other noteable feature is that the fictitious graphics program supports 
+ grouping of graphical object into combined objects. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Although 
+ it only supports two primitive graphical objects (rectangle and circle) 
+ grouping allows nested objects to be created by the (fictitious) user 
+ to any depth. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ reflect this type of data we need to use a recursive data structure.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Header</p>
+
+<p>&nbsp;</p>
+
+<p>The header is 16 bytes long consisting of four 4-byte fields: a &quot;magic&quot; 
+ number, the date the file was originally created, the date the file was 
+ last modified, and the address of the colour table.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 83.802%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=83.802%>
+<col style="width: 24.895%;">
+<col style="width: 14.706%;">
+<col style="width: 23.529%;">
+<col style="width: 36.87%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 24.895%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=24.895%>
+<p>Field Name</td>
+<td style="width: 14.706%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=14.706%>
+<p>Field Size (bytes)</td>
+<td style="width: 23.529%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=23.529%>
+<p>Field Type</td>
+<td style="width: 36.87%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=36.87%>
+<p>Value/Description</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 24.895%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=24.895%>
+<p>MAGIC</td>
+<td style="width: 14.706%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=14.706%>
+<p>4</td>
+<td style="width: 23.529%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=23.529%>
+<p>32 bit integer</td>
+<td style="width: 36.87%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=36.87%>
+<p>Always contains 16071958 (hex)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 24.895%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.895%>
+<p>CREATED</td>
+<td style="width: 14.706%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=14.706%>
+<p>4</td>
+<td style="width: 23.529%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=23.529%>
+<p>DATE - normal time_t</td>
+<td style="width: 36.87%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=36.87%>
+<p>Date the file was created.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 24.895%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.895%>
+<p>MODIFIED</td>
+<td style="width: 14.706%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=14.706%>
+<p>4</td>
+<td style="width: 23.529%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=23.529%>
+<p>DATE - normal time_t</td>
+<td style="width: 36.87%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=36.87%>
+<p>Date the file was last modified.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 24.895%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.895%>
+<p>COL_TABLE_ADDRESS</td>
+<td style="width: 14.706%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=14.706%>
+<p>4</td>
+<td style="width: 23.529%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=23.529%>
+<p>32 bit unsigned integer</td>
+<td style="width: 36.87%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=36.87%>
+<p>Address in this file of the colour table</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+&nbsp; 
+
+<p style="font-weight: bold; text-align: center;"
+	align=center>Table 1. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Header</p>
+
+<p>&nbsp;</p>
+
+<p>A magic number is a value that is always the same for a particular type 
+ of file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Magic 
+ numbers are usually 32 bit numbers stored in the first 4 bytes of a file. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They're 
+ simply used as a double check that this is actually the type of file we 
+ expect. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ will validate this field in the template to make sure it contains the 
+ correct value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Sometimes, 
+ the magic number is the birthday of the designer of the format.</p>
+
+<p>&nbsp;</p>
+
+<p>The date fields are not really necessary as this information can usually 
+ be obtained from the filesystem (stored in the directory entry for the 
+ file). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ we will use them to demonstrate a bit of date arithmetic later. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ format is a &quot;normal&quot; time_t - see <a HREF="../binary_files/Date_and_Time_Formats.htm">Date 
+ and Time Formats</a> for more information.</p>
+
+<p>&nbsp;</p>
+
+<p>The colour table address is stored at the start of file so we can access 
+ it without having to scan all the graphical objects in between. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ a file of this type is (fictitiously) written out the address would initially 
+ be unknown and just written as zero then after the graphical objects and 
+ the colour table have been written the software would jump back to byte 
+ 12 of the file and fill in this value.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that the colour table address is only 32 bits so the file length 
+ is effectively limited to 2^32 bytes or 4 Gbytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Most 
+ file formats will store absolute file addresses in 32 bit numbers since, 
+ until fairly recently, filesystems (and operating systems) only supported 
+ 32 bit file sizes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(In 
+ fact, for convenience, file sizes are usually stored in *signed* 32 bit 
+ numbers so many files are actually limited to 2 Gbytes.)</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Graphical Objects</p>
+
+<p>&nbsp;</p>
+
+<p>There are 3 types of graphical objects: a rectangle, a circle, and a 
+ &quot;grouped&quot; object containing one or more other objects. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ primitive objects (rect and circle) have a colour value which is simply 
+ an index into the colour table. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->All 
+ objects have coordinates (X and Y) which stores their position which is 
+ absolute for an &quot;ungrouped&quot; object or relative to the containing 
+ object if they are part of a grouped object.</p>
+
+<p>&nbsp;</p>
+
+<p>Each object begins with a byte which identifies what type of object 
+ it is. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is 1 for a rect, 2 for a circle or 10 for a &quot;grouped&quot; object. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A type 
+ of zero is used to signal the end of the list of objects.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 84.947%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=84.947%>
+<col style="width: 18.342%;">
+<col style="width: 17.305%;">
+<col style="width: 24.974%;">
+<col style="width: 39.378%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 18.342%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=18.342%>
+<p>Field Name</td>
+<td style="width: 17.305%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=17.305%>
+<p>Field Size (bytes)</td>
+<td style="width: 24.974%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=24.974%>
+<p>Field Type</td>
+<td style="width: 39.378%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=39.378%>
+<p>Value/Description</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 18.342%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=18.342%>
+<p>TYPE</td>
+<td style="width: 17.305%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=17.305%>
+<p>1</td>
+<td style="width: 24.974%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=24.974%>
+<p>8 bit integer</td>
+<td style="width: 39.378%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=39.378%>
+<p>Always contains 1 for a RECT object</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 18.342%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=18.342%>
+<p>FLAGS</td>
+<td style="width: 17.305%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.305%>
+<p>1</td>
+<td style="width: 24.974%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.974%>
+<p>8 bit integer</td>
+<td style="width: 39.378%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.378%>
+<p>Currently always contains zero.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 18.342%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=18.342%>
+<p>COLOUR</td>
+<td style="width: 17.305%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.305%>
+<p>2</td>
+<td style="width: 24.974%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.974%>
+<p>16 bit integer</td>
+<td style="width: 39.378%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.378%>
+<p>Colour of the object (index into colour table).</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.342%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=18.342%>
+<p>X</td>
+<td colspan=1
+	rowspan=1
+	style="width: 17.305%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.305%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 24.974%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.974%>
+<p>32 bit IEEE floating point</td>
+<td colspan=1
+	rowspan=1
+	style="width: 39.378%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.378%>
+<p>X coordinate of the left side of the rect</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.342%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=18.342%>
+<p>Y</td>
+<td colspan=1
+	rowspan=1
+	style="width: 17.305%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.305%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 24.974%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.974%>
+<p>32 bit IEEE floating point</td>
+<td colspan=1
+	rowspan=1
+	style="width: 39.378%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.378%>
+<p>Y coordinate of the bottom side of the rect</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 18.342%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=18.342%>
+<p>WIDTH</td>
+<td colspan=1
+	rowspan=1
+	style="width: 17.305%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.305%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 24.974%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.974%>
+<p>32 bit IEEE floating point</td>
+<td colspan=1
+	rowspan=1
+	style="width: 39.378%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.378%>
+<p>Width of the rectangle</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 18.342%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=18.342%>
+<p>HEIGHT</td>
+<td style="width: 17.305%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.305%>
+<p>4</td>
+<td style="width: 24.974%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.974%>
+<p>32 bit IEEE floating point</td>
+<td style="width: 39.378%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.378%>
+<p>Height of the rectangle</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+&nbsp; 
+
+<p style="font-weight: bold; text-align: center;"
+	align=center>Table 2. Rect Object</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 84.946%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=84.946%>
+<col style="width: 17.721%;">
+<col style="width: 17.203%;">
+<col style="width: 25.803%;">
+<col style="width: 39.273%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 17.721%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=17.721%>
+<p>Field Name</td>
+<td style="width: 17.203%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=17.203%>
+<p>Field Size (bytes)</td>
+<td style="width: 25.803%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=25.803%>
+<p>Field Type</td>
+<td style="width: 39.273%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=39.273%>
+<p>Value/Description</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 17.721%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=17.721%>
+<p>TYPE</td>
+<td style="width: 17.203%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=17.203%>
+<p>1</td>
+<td style="width: 25.803%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=25.803%>
+<p>8 bit integer</td>
+<td style="width: 39.273%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=39.273%>
+<p>Always contains 2 for a CIRCLE object</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 17.721%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.721%>
+<p>FLAGS</td>
+<td style="width: 17.203%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.203%>
+<p>1</td>
+<td style="width: 25.803%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=25.803%>
+<p>8 bit integer</td>
+<td style="width: 39.273%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.273%>
+<p>Currently always contains zero.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 17.721%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.721%>
+<p>COLOUR</td>
+<td style="width: 17.203%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.203%>
+<p>2</td>
+<td style="width: 25.803%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=25.803%>
+<p>16 bit integer</td>
+<td style="width: 39.273%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.273%>
+<p>Colour of the object (index into colour table).</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 17.721%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.721%>
+<p>X</td>
+<td colspan=1
+	rowspan=1
+	style="width: 17.203%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.203%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 25.803%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=25.803%>
+<p>32 bit IEEE floating point</td>
+<td colspan=1
+	rowspan=1
+	style="width: 39.273%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.273%>
+<p>X coordinate of the centre of the circle</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 17.721%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.721%>
+<p>Y</td>
+<td colspan=1
+	rowspan=1
+	style="width: 17.203%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.203%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 25.803%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=25.803%>
+<p>32 bit IEEE floating point</td>
+<td colspan=1
+	rowspan=1
+	style="width: 39.273%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.273%>
+<p>Y coordinate of the centre of the circle</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 17.721%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.721%>
+<p>RADIUS</td>
+<td colspan=1
+	rowspan=1
+	style="width: 17.203%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.203%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 25.803%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=25.803%>
+<p>32 bit IEEE floating point</td>
+<td colspan=1
+	rowspan=1
+	style="width: 39.273%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.273%>
+<p>Radius of the circle</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+&nbsp; 
+
+<p style="font-weight: bold; text-align: center;"
+	align=center>Table 3. Circle Object</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 85.476%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=85.476%>
+<col style="width: 17.301%;">
+<col style="width: 16.581%;">
+<col style="width: 22.863%;">
+<col style="width: 43.255%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 17.301%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=17.301%>
+<p>Field Name</td>
+<td style="width: 16.581%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=16.581%>
+<p>Field Size (bytes)</td>
+<td style="width: 22.863%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=22.863%>
+<p>Field Type</td>
+<td style="width: 43.255%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=43.255%>
+<p>Value/Description</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 17.301%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=17.301%>
+<p>TYPE</td>
+<td style="width: 16.581%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=16.581%>
+<p>1</td>
+<td style="width: 22.863%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=22.863%>
+<p>8 bit integer</td>
+<td style="width: 43.255%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=43.255%>
+<p>Always contains 10 for a GROUP object</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 17.301%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.301%>
+<p>FLAGS</td>
+<td style="width: 16.581%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.581%>
+<p>1</td>
+<td style="width: 22.863%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=22.863%>
+<p>8 bit integer</td>
+<td style="width: 43.255%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.255%>
+<p>Currently always contains zero.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 17.301%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.301%>
+<p>COUNT</td>
+<td style="width: 16.581%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.581%>
+<p>2</td>
+<td style="width: 22.863%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=22.863%>
+<p>16 bit integer</td>
+<td style="width: 43.255%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.255%>
+<p>Number of sub-objects in the group</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 17.301%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.301%>
+<p>X</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.581%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.581%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 22.863%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=22.863%>
+<p>32 bit IEEE floating point</td>
+<td colspan=1
+	rowspan=1
+	style="width: 43.255%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.255%>
+<p>X coordinate which sub-objects are measured relative to</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 17.301%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.301%>
+<p>Y</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.581%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.581%>
+<p>4</td>
+<td colspan=1
+	rowspan=1
+	style="width: 22.863%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=22.863%>
+<p>32 bit IEEE floating point</td>
+<td colspan=1
+	rowspan=1
+	style="width: 43.255%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.255%>
+<p>Y coordinate which sub-objects are measured relative to</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 17.301%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=17.301%>
+<p>SUB-OBJECTS</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.581%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.581%>
+<p>N</td>
+<td colspan=1
+	rowspan=1
+	style="width: 22.863%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=22.863%>
+<p>Array of objects</td>
+<td colspan=1
+	rowspan=1
+	style="width: 43.255%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=43.255%>
+<p>&quot;COUNT&quot; sub-objects</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+&nbsp; 
+
+<p style="font-weight: bold; text-align: center;"
+	align=center>Table 4. Group Object</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 85.916%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=85.916%>
+<col style="width: 19.672%;">
+<col style="width: 16.805%;">
+<col style="width: 22.848%;">
+<col style="width: 40.676%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.672%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=19.672%>
+<p>Field Name</td>
+<td style="width: 16.805%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=16.805%>
+<p>Field Size (bytes)</td>
+<td style="width: 22.848%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=22.848%>
+<p>Field Type</td>
+<td style="width: 40.676%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=40.676%>
+<p>Value/Description</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.672%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=19.672%>
+<p>TYPE</td>
+<td style="width: 16.805%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=16.805%>
+<p>1</td>
+<td style="width: 22.848%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=22.848%>
+<p>8 bit integer</td>
+<td style="width: 40.676%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=40.676%>
+<p>Always contains 0 for an END marker</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.672%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.672%>
+<p>FLAGS</td>
+<td style="width: 16.805%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.805%>
+<p>1</td>
+<td style="width: 22.848%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=22.848%>
+<p>8 bit integer</td>
+<td style="width: 40.676%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=40.676%>
+<p>Currently always contains zero.</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+&nbsp; 
+
+<p style="font-weight: bold; text-align: center;"
+	align=center>Table 5. End of Objects Marker Object</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Colour Table</p>
+
+<p>&nbsp;</p>
+
+<p>The colour table consists of the size of the table followed by the corresponding 
+ number of entries. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ entry has a 13 byte name plus a single byte red, green and blue value. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The name 
+ is a null-terminated ASCII string (unless it is 13 characters exactly).</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=center><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: aligncenter;
+				width: 86.003%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=86.003%>
+<col style="width: 19.958%;">
+<col style="width: 16.582%;">
+<col style="width: 24.259%;">
+<col style="width: 39.201%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.958%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=19.958%>
+<p>Field Name</td>
+<td style="width: 16.582%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=16.582%>
+<p>Field Size (bytes)</td>
+<td style="width: 24.259%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=24.259%>
+<p>Field Type</td>
+<td style="width: 39.201%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-color: #000000;
+			border-top-style: Solid;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			border-top-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=39.201%>
+<p>Value/Description</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.958%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=19.958%>
+<p>COUNT</td>
+<td style="width: 16.582%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=16.582%>
+<p>2</td>
+<td style="width: 24.259%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=24.259%>
+<p>16 bit unsigned integer</td>
+<td style="width: 39.201%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;"
+	width=39.201%>
+<p>Number of entries in the table</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.958%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.958%>
+<p>NAME[0]</td>
+<td style="width: 16.582%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.582%>
+<p>13</td>
+<td style="width: 24.259%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.259%>
+<p>Null-terminated string</td>
+<td style="width: 39.201%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.201%>
+<p>Name of the first colour</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 19.958%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.958%>
+<p>RED[0]</td>
+<td style="width: 16.582%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.582%>
+<p>1</td>
+<td style="width: 24.259%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.259%>
+<p>8 bit integer</td>
+<td style="width: 39.201%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.201%>
+<p>Red component of the colour</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 19.958%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.958%>
+<p>GREEN[0]</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.582%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.582%>
+<p>1</td>
+<td colspan=1
+	rowspan=1
+	style="width: 24.259%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.259%>
+<p>8 bit integer</td>
+<td colspan=1
+	rowspan=1
+	style="width: 39.201%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.201%>
+<p>Green component of the colour</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 19.958%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.958%>
+<p>BLUE[0]</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.582%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.582%>
+<p>1</td>
+<td colspan=1
+	rowspan=1
+	style="width: 24.259%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.259%>
+<p>8 bit integer</td>
+<td colspan=1
+	rowspan=1
+	style="width: 39.201%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.201%>
+<p>Blue component of the colour</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 19.958%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.958%>
+<p>NAME[1]</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.582%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.582%>
+<p>13</td>
+<td colspan=1
+	rowspan=1
+	style="width: 24.259%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.259%>
+<p>Null-terminated string</td>
+<td colspan=1
+	rowspan=1
+	style="width: 39.201%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.201%>
+<p>Name of the next colour</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 19.958%;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=19.958%>
+<p>...</td>
+<td colspan=1
+	rowspan=1
+	style="width: 16.582%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=16.582%>
+<p>...</td>
+<td colspan=1
+	rowspan=1
+	style="width: 24.259%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=24.259%>
+<p>...</td>
+<td colspan=1
+	rowspan=1
+	style="width: 39.201%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=39.201%>
+<p>...</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+&nbsp; 
+
+<p style="font-weight: bold; text-align: center;"
+	align=center>Table 6. Colour Table</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>You might like to compare the TUTORIAL.HEG file with the format documented 
+ here, or even try to check that it is a valid file of the format. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->At 
+ the end of the tutorial you will appreciate how much easier it is to inspect, 
+ understand and even validate the file with the aid of the template we 
+ will create, beginning in the next step.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><a HREF="TemplateTute2-0.htm"><img src="../back.gif"
+													style="border-style: none;
+															border: none;
+															width: 51px;
+															height: 22px;"
+													width=51
+													height=22
+													border=0></a> <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a 
+ HREF="TemplateTute2-2.htm"><!--kadov_tag{{</spaces>}}--><img src="../next.gif"
+	style="border-style: none;
+			border: none;
+			width: 51px;
+			height: 22px;"
+	width=51
+	height=22
+	border=0></a></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

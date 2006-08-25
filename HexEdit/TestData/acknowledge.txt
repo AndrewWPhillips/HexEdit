@@ -1,0 +1,13 @@
+BCG Control Bar 5.9 - Stas Levin et al at BCG (http://bcgsoft.com)
+MFC Grid Control - Chris Maunder (http://codeproject.com/miscctrl/gridctrl.asp)
+MFC Grid Tree Extensions - Ken Bertelson (http://codeproject.com/miscctrl/gridtreectrl.asp)
+64-bit file access (CFile64 class) - Samuel R. Blackburn (http://www.samblackburn.com/wfc/)
+Window Splitter class - Robert A. T. Káldy (http://codeproject.com/splitter/kaldysimplesplitter.asp)
+Dialog Resize class - Herbert Menke (http://www.codeproject.com/dialog/resizectrl.asp)
+range_set class - Andrew Phillips (http://www.ddj.com/dept/cpp/184403660)
+folder selection - (http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/)
+NT/W2K/XP internals (for disk editor) - Sven B. Schreiber (http://www.orgon.com/w2k_internals/)
+WIX installer toolkit - Rob Mensching et al (http://wix.sourceforge.net/)
+SVN (Sub-version) source control - Jim Blandy et al (http://subversion.tigris.org/)
+TSVN (TortoiseSVN) SVN client - Stefan Küng et al (http://tortoisesvn.sourceforge.net/)
+

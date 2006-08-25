@@ -1,0 +1,92 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Encryption Algorithm Dialog</title>
+
+<!--(Meta)==========================================================-->
+
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=674>
+<meta name=layout-width content=687>
+<meta name=date content="07 1, 2001 10:24:09 PM">
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;">Encryption Algorithm dialog</h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="shotALG.gif" style="border: none;
+								width: 446px;
+								height: 269px;" width="446" height="269"></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Use this dialog to select the algorithm used with the <a HREF="..\cmd_operations\HID_ENCRYPT_ENCRYPT.htm">Encrypt</a> 
+ and <a HREF="..\cmd_operations\HID_ENCRYPT_DECRYPT.htm">Decrypt</a> commands. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When decrypting 
+ you must use the same algorithm with which you encrypted.</p>
+
+<p>&nbsp;</p>
+
+<p>HexEdit provides an internal algorithm plus access to all Crypto API 
+ algorithms installed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ further details see <a HREF="..\overviewadvanced\Encryption.htm">Encryption</a>.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Algorithm</span></p>
+
+<p style="margin-left: 18.00pt;">Use the drop down list to select an encryption 
+ algorithm. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ HexEdit Internal Algorithm is always available at the top of the list. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If the 
+ Crypto API is installed (which includes the Microsoft Base Cryptographic 
+ Provider v1.0) then at least another two algorithms will be present: RC4, 
+ a stream cipher, and RC2 a block cipher with a block length of 8 bytes.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Block Length</span></p>
+
+<p style="margin-left: 18.00pt;">This indicates whether the currently selected 
+ algorithm is a block or stream cipher. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ block ciphers it shows the block length.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Key Length</span></p>
+
+<p style="margin-left: 18.00pt;">This indicates the key length of the currently 
+ selected algorithm. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ larger the key length the better the encryption. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Traditionally 
+ algorithms used a key length of 40 to 64 bits. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Nowadays, 
+ using special hardware these would be susceptible to brute force attacks, 
+ so new algorithms use a 128 bit or more key length.</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

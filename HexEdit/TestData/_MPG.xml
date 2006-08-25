@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="MPEG" type_name="" comment="" expr="">
+	<define_struct type_name="header" comment="" expr="={this.start_code;%.02X}">
+		<data type="int" name="start_code" format="unsigned" domain="this &gt;= 0x00000100 &amp;&amp; this &lt;= 0x000001FF" display="" byte_order="big" len="4"/>
+		<if test="start_code==0x000001BA" comment="">
+			<struct name="PackLayer" type_name="" comment="" expr="">
+				<data type="none" name="PackLayerData" len="8"/>
+			</struct>
+		</if>
+		<if test="start_code==0x000001BB" comment="">
+			<struct name="SystemHeader" type_name="" comment="" expr="">
+				<data type="int" name="header_length" format="unsigned" len="2" display="" byte_order="big"/>
+				<data type="none" name="SystemHeaderData" len="header_length"/>
+			</struct>
+		</if>
+		<if test="start_code==0x000001BE" comment="">
+			<struct name="Padding Stream" type_name="" comment="" expr="">
+				<data name="padding_length" type="int" len="2" format="unsigned" display="" byte_order="big"/>
+				<data type="none" name="padding" len="padding_length"/>
+			</struct>
+		</if>
+		<if test="start_code==0x000001E0" comment="">
+			<struct name="Video Packet Stream" type_name="" comment="" expr="">
+				<data name="packet_length" type="int" len="2" format="unsigned" display="" byte_order="big"/>
+				<data type="none" name="VideoPacketStreamData" len="packet_length"/>
+			</struct>
+		</if>
+		<if test="start_code==0x000001C0" comment="">
+			<struct name="Audio Packet Stream" type_name="" comment="" expr="">
+				<data name="packet_length" type="int" len="2" format="unsigned" display="" byte_order="big"/>
+				<data type="none" name="AudioPacketStreamData" len="packet_length"/>
+			</struct>
+		</if>
+	</define_struct>
+	<for name="header" count="99" stop_test="" type_name="" comment="">
+		<use_struct name="head" expr="" type_name="header" comment=""/></for>
+	<data type="none" name="unparsed_data"/></binary_file_format>

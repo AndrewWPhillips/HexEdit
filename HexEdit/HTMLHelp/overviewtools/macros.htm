@@ -1,0 +1,250 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>macros</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=copyright value="1999-2001 Expert Commercial Software">
+<meta name=date content="08 29, 2002 11:46:54 PM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1301>
+<meta name=layout-width content=1208>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Macros</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Keystroke macros provides a quick and simple way to repeat a sequence 
+ of actions. (Actually, this name is a bit of a misnomer since more than 
+ just “keystrokes” can be recorded.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Macros 
+ are not limited to one window or file. You can include commands that open 
+ or create files, switch between windows etc.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Almost all operations invoked with menus, the keyboard, toolbars and 
+ even the calculator buttons can be recorded. Changes to settings in the 
+ Options Dialog are <span style="font-weight: bold;">not</span> recorded 
+ except for the Window Display page. Any settings that are changed in this 
+ page are recorded, but unchanged settings are not.</p>
+
+<p>&nbsp;</p>
+
+<p>You can also nest macros. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ other words you can call a saved macro from another macro with no limit 
+ to the amount of nesting.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Integration with Calculator etc</p>
+
+<p>&nbsp;</p>
+
+<p>Much of the simplicity and power of keystroke macros comes with their 
+ integration with other features of HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, all the calculator operations are recorded in macros. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can easily create a macro that reads data from the current file (using 
+ the <span style="font-weight: bold;">@ Cursor</span> button) performs 
+ complex manipulations and writes it back. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Running 
+ the macro repeatedly on the whole file allows operations such as checksum 
+ calculations or even more complicated calculations such as ROT-13.</p>
+
+<p>&nbsp;</p>
+
+<p>As another example, suppose you need a macro to change a byte at a particular 
+ location in a certain record of a data file but the exact location changes. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If you 
+ mark the start of the record with a bookmark (called say &quot;recstart&quot;) 
+ then you can use the Hex Jump Tool (or Decimal Jump Tool) to jump to the 
+ offset from that bookmark (eg, enter &quot;recstart+5&quot; into the jump 
+ tool). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you record the jump in a keystroke macro then the macro always jumps to 
+ the correct location as long as the bookmark points to wherever the record 
+ starts.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="font-weight: bold;">Useful Keys</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Some keys are particularly useful in macros. Of course, the cursor keys 
+ and the keys for cutting and pasting are the chief tools. Keys dealing 
+ with the mark are also often very useful. It is common to set the position 
+ of the mark and later return to it (with Ctrl+F9), or swap the cursor 
+ and the mark (Shift+F9), or select the text between the cursor and the 
+ mark (Shift+Ctrl+F9). You may also find the command to increment the current 
+ byte (the keyboard shortcut is “+” on the numeric keypad) useful in many 
+ ways in macros.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>You will often want to observe the progress of the macro but as the 
+ macro runs it may creep towards the bottom or top of the display. For 
+ a better view of what’s happening you may want to include the scrolling 
+ commands (Ctrl+U or Ctrl+D) in the macro to reposition the display. If 
+ you intend to replay a macro many times you can have the display refreshed 
+ after every replay (see below) and record Ctrl+L as the last key of the 
+ macro to centre the cursor and redraw the window.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>As an example of a keystroke macro, suppose you wanted to create a file 
+ with all 256 byte values. To do this open a new file and insert a null 
+ byte (ie. a byte with value zero) and select it. Next, start macro recording 
+ and copy the byte to the clipboard (Ctrl+C), move the cursor forward and 
+ paste it (Ctrl+V), then invoke the Increment Byte command (“+”), and stop 
+ recording. You now have two bytes with the values zero and one. You need 
+ 254 more bytes so invoke the Multi-Play command from the Tools menu type 
+ 254 and press <span style="font-weight: bold;">Enter</span>. The rest 
+ of the file will be filled with bytes ranging from 2 to 255.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Display Refresh</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>If you need to run a macro hundreds of time on a very large file it 
+ may take a very long time to run. A large part of that time (up to 90% 
+ or more) may be due to redrawing the screen every time the file is changed 
+ or the window is scrolled. To speed things up HexEdit allows you to turn 
+ the screen refresh off when macros are running.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>On the other hand, you may want to see that the macro is behaving as 
+ you expected so HexEdit has several options to regularly refresh the screen 
+ while the macro is running. You can refresh based on the passage of time 
+ (eg. every 5 seconds) the number of keystrokes replayed, or the number 
+ of times the whole macro has been played (for multiple replays). The Macro 
+ page of the Options dialog controls these options.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Error Handling</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>If an error occurs during macro playback the macro will stop playing 
+ immediately. This helps avoid having runaway macros completely destroy 
+ or mangle your file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Of course, you can always use the Undo command to reverse any changes 
+ that are made if the macro goes haywire. But if you are running a macro 
+ hundreds of times it can be tedious to hold down the undo button that 
+ many times (although you could record undo in a macro and play it multiple 
+ times). Also remember that if the macro includes saving the file (using 
+ the Save or Save As commands on the File menu) then any undo information 
+ is lost.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Having macros stop on error is also useful if you don’t know how many 
+ times you want to run the macro. For example, you must use a macro to 
+ do a global search and replace, since HexEdit does not provide such a 
+ command. If you don’t know how many times the bytes you want to replace 
+ occur just play the macro a large number of times, say 1000, and it will 
+ stop the first time the search fails, that is, after all the replacements 
+ have been made.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>There are numerous error conditions that can halt a macro. Some of these 
+ are described in the help for the Macro page of the Options dialog. Also 
+ some calculator operations may set warnings and errors (for example overflows). 
+ Although, user interaction when a macro is playing is minimal sometimes 
+ it is necessary to display a dialog to ask a question. If the user cancels 
+ the dialog or says not to continue the macro will stop.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Whether something is an error or not often depends on what you are doing. 
+ For example, if part of the macro is pressing the down arrow key, it is 
+ normally an error if you are at the end of the file and the macro will 
+ stop. But sometimes this may not be an error and you will want the macro 
+ to continue running. To allow for this you can set the error severity 
+ level that will stop a macro from running, in the Macro page of the Options 
+ dialog.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Displaying Messages</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Another useful command is the &quot;Macro Message&quot; command, which 
+ allows the macro to display instructions or other info to the user of 
+ the macro. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is also useful for warning the user about what will happen if they continue 
+ as it lets them terminate the macro.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span>For further information see:</span></p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_tools\HID_RECORD.htm">Record 
+ command</a>&nbsp;to find out how to record a macro</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_tools\HID_PLAY.htm">Play 
+ Once command</a>&nbsp;to find out how to quickly replay a macro</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_tools\HID_MULTI_PLAY.htm">Play 
+ command</a>&nbsp;to replay many times, or play a disk macro using the 
+ <a HREF="..\dlg_other\Replay_Macro_dialog.htm">Replay Macro dialog</a></p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\cmd_tools\Macro_Message.htm">Macro 
+ Message</a> to display a message during playback</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\dlg_options\HIDD_OPT_MACRO.htm">Macro 
+ Options Page</a>&nbsp;to see macro play options such as how the display 
+ is refreshed</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\dlg_other\HIDD_MACRO_SAVE_HELP.htm">Save 
+ Macro Dialog</a> to save a macro to a disk file</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="calc.htm">The 
+ Calculator</a>&nbsp;to see how the calculator can be used in macros</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\dlg_options\HIDD_OPT_WINDOW.htm">Window 
+ page</a>&nbsp;to see settings that can be recorded in macros</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\misc\keys.htm">Keyboard 
+ Shortcuts</a>&nbsp;to see a list of keys, which might be useful in macros</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;">&nbsp;</p>
+
+</body>
+
+</html>

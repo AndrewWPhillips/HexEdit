@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="ASCII_Text_File" type_name="" comment="">
+	<eval expr="max_length = 0" display_error="false" display_result="false" comment=""/><for name="line" count="" stop_test="" type_name="" comment=""><data type="string10" name="line" format="ascii" comment="One line of a text file."/></for><eval expr="The longest line is 58 bytes.{&quot;&quot;}" display_error="false" display_result="true" comment="Displays the length of the longest line found."/></binary_file_format>

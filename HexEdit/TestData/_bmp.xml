@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="Windows bitmap file (DIB)">
+	<struct name="filehdr" type_name="BITMAPFILEHEADER">
+		<data name="type" type="string" len="2" domain="this==&quot;BM&quot;" format="ascii" display=""/>
+		<data name="size" type="int" len="4"/>
+		<data name="reserved1" type="int" len="2" domain="this==0"/>
+		<data name="reserved2" type="int" len="2" domain="this==0"/>
+		<data name="offbits" type="int" len="4"/>
+	</struct>
+	<struct name="infohdr" type_name="BITMAPINFOHEADER">
+		<data name="size" type="int" len="4"/>
+		<data name="width" type="int" len="4"/>
+		<data name="height" type="int" len="4"/>
+		<data name="planes" type="int" len="2"/>
+		<data name="bitcount" type="int" len="2" domain="this==1||this==4||this==8||this==24"/>
+		<data name="compression" type="int" len="4"/>
+		<data name="sizeimage" type="int" len="4"/>
+		<data name="xpelspermeter" type="int" len="4"/>
+		<data name="ypelspermeter" type="int" len="4"/>
+		<data name="clrused" type="int" len="4"/>
+		<data name="clrimportant" type="int" len="4"/>
+	</struct>
+	<if test="infohdr.size &gt; sizeof(infohdr)">
+		<data name="extra" type="none" len="infohdr.size - sizeof(infohdr)"/>
+	</if>
+	<if test="infohdr.bitcount &lt; 24">
+		<for name="colour" count="1 &lt;&lt; infohdr.bitcount">
+			<struct type_name="RGBQUAD">
+				<data name="blue" type="int" format="u" len="1"/>
+				<data name="green" type="int" format="u" len="1"/>
+				<data name="red" type="int" format="u" len="1"/>
+				<data name="resvd" type="int" format="unsigned" len="1" domain="this == 0" display=""/>
+			</struct>
+		</for>
+	</if>
+	<data name="bitmap" type="none" len="infohdr.sizeimage"/>
+</binary_file_format>

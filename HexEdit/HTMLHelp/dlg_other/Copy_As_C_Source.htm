@@ -1,0 +1,194 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Copy As C Source Dialog</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1181>
+<meta name=layout-width content=1156>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;">Copy As C Source dialog</h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="CopyAsCSource.gif"
+						style="border-style: none;
+								border: none;
+								width: 390px;
+								height: 240px;"
+						width=390
+						height=240
+						border=0></p>
+
+<p>&nbsp;</p>
+
+<p>This dialog is invoked bye the <a HREF="../cmd_edit/HID_COPY_CCHAR.htm">Edit/Copy 
+ As/C Source command</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ allows you to copy the selected bytes to the clipboard in many different 
+ text formats. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ formats are suitable for pasting into a C or C++ program to initialise 
+ an array, but may also be useful in other situations.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that the format of the text copied to the clipboard also depends 
+ on the current hex display settings, such as the case of hex digits. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ length of the text line corresponds to the number of columns (bytes per 
+ line) in the hex/character display.</p>
+
+<p>&nbsp;</p>
+
+<p>If the size of the numeric type and the display line length is such 
+ that numbers overlap lines then the overlapping numbers are output at 
+ the end of the upper line. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
+ not all output text lines may have the same number of values.</p>
+
+<p>&nbsp;</p>
+
+<p>If the selection is not a multiple of the size of the numeric type (ie 
+ there are some bytes left that do not make a complete value) then the 
+ extra bytes are just ignored.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Indent</span></p>
+
+<p style="margin-left: 18.00pt;">Sets the number of spaces that are added 
+ to the start of each line of text.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Include 
+ File Address</span></p>
+
+<p style="margin-left: 18.00pt;">If selected the address within the file 
+ of the start of each line of text is prepended (after the indent) with 
+ the address within C style (/* ... */) comment tokens.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">String</span></p>
+
+<p style="margin-left: 18.00pt;">Each line from the selection is converted 
+ to a string, suitable for initialising a char array. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Special 
+ characters are converted to C escape characters (eg carriage return becomes 
+ the 2 characters &quot;\r&quot;), and non-printing characters are converted 
+ to hex escape sequences (eg a byte with value FF becomes the characters 
+ &quot;\xFF&quot;).</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Note that each line starts (after the 
+ indent spaces) and ends with a double-quote character. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ inserted into a C or C++ program this relies on the C standard requirement 
+ that consecutive strings are concatenated into one string. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you are using a pre C standard (ie pre ~1990) C compiler this will not 
+ work - you will need to remove the double-quotes (except the first and 
+ last) and the indentation and place a backslash at the end of each line 
+ (except the last).</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Characters</span></p>
+
+<p style="margin-left: 18.00pt;">Each line has comma-separated characters 
+ suitable for initialising an array of signed char or unsigned char. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Printing 
+ characters are simply enclosed in single-quotes. <!--kadov_tag{{<spaces>}}-->&nbsp;<span 
+ style="margin-left: 18.00pt;"><!--kadov_tag{{</spaces>}}-->Special characters 
+ are converted to C escape characters (eg carriage return becomes the 2 
+ characters '\r'), and non-printing characters are converted to hex escape 
+ sequences (eg a byte with value FF becomes the characters '\xFF').</span></p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Integers</span></p>
+
+<p style="margin-left: 18.00pt;">Each line consists of comma-separated 
+ integer, suitable for initialising an array of char, short, int, long 
+ or any compiler specific integer (eg __int64 for Microsoft compilers). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When a 
+ value take bytes extending past the end of line it is generated on the 
+ preceding. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence, 
+ unless the bytes per line is a multiple of the integer size the generated 
+ text lines will have varying lengths.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">as:</span></p>
+
+<p style="margin-left: 18.00pt;">Integers can be generated as signed decimal, 
+ unsigned decimal, hex or octal..</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">size:</span></p>
+
+<p style="margin-left: 18.00pt;">Byte (8 bit), Word (16 bit), Double-word 
+ (32 bit) and Quad word (64-bit) integers are supported.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">IEEE floating 
+ point</span></p>
+
+<p style="margin-left: 18.00pt;">Generates a floating point value in %g 
+ format, assuming the file bytes are in IEEE format. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Values 
+ are generated with enough significant digits that no accuracy is lost, 
+ however, depending on your compiler the exact same bits may not be generated 
+ when the number is compiled and stored in another IEEE floating point 
+ variable.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">size</span></p>
+
+<p style="margin-left: 18.00pt;">32-bit and 64-bit IEEE values are supported. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->32-bit 
+ values have 7 significant digits, 64-bit values have 15 significant digits.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Big-endian</span></p>
+
+<p style="margin-left: 18.00pt;">The byte order is siginificant for integer 
+ and floating point numbers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(See 
+ the information on byte order in <a href="../binary_files/Numbers.htm">Numeric 
+ Operations</a>.)</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

@@ -1,0 +1,144 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Binary Files</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=date content="01 6, 2002 0:16:54 AM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=840>
+<meta name=layout-width content=1239>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Binary Files</font></h2>
+
+<p>&nbsp;</p>
+
+<p>As we have seen text files contain only printable character bytes plus 
+ a few special control characters (line feed, tab etc). Binary files on 
+ the other hand may contain any of the 256-byte values. This might be used 
+ to store binary numbers (as was discussed above), true/false flags, native 
+ processor instructions or anything that can be stored as a pattern of 
+ one or more bits.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>A common use of binary files is to store the executable image of a program 
+ in a .EXE, or .DLL file under MSWindows. Even a word processor may store 
+ its documents in binary files, since the document is more than just the 
+ text, it also includes formatting information etc.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Also it is usually necessary that bytes in binary files (unlike in text 
+ files) are not inserted or deleted. For example, a certain structure may 
+ always have a certain length or a number in a file may be a relative offset 
+ to another place in the file. This is why HexEdit defaults to overtype 
+ mode (OVR) rather than insert mode (INS).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>This is certainly the case with executable files. The machine code instructions 
+ contained therein are full of relative jumps, which rely on the address 
+ jumped to always being the same offset in the file. Executable files also 
+ often have data structures that cannot change in size. For example, you 
+ may be able to change the characters in a string in a program, but you 
+ cannot insert bytes in order to increase the length of the string, although 
+ you may be able to shorten a string by adding nul bytes at the end.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Why Do Programmers Use Binary Files?</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>There are <span style="font-weight: bold;">not</span> a lot of good 
+ reasons for using binary files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Ironically, 
+ this author thinks binary files are grossly overused when alternatives 
+ such as XML offer better flexibility, extensibility and portability of 
+ data. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ there are a few good reasons to use them, mainly convenience and efficiency.</p>
+
+<p>&nbsp;</p>
+
+<p>Probably the most common reason to use a binary file is that it is simple 
+ just to output a record or structure from memory directly to a file for 
+ later retrieval. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ in this case you want to make absolutely sure that the file will only 
+ ever be read using the same operating system with software created with 
+ the same compiler. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Even 
+ the same version of compiler may be needed -- for example, the order of 
+ bitfields changed between Microsoft C version 2.X and 3.0 (prior to 3.0 
+ MSC was a re-badged Lattice C). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ also need to be careful to compile with the same options, since things 
+ like structure packing can affect whether you get back the data you expect.</p>
+
+<p>&nbsp;</p>
+
+<p>A better reason, to use binary files, when writing out a large number 
+ of values, is that the time required to convert numbers to and from text 
+ may become very large. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is important for large databases.</p>
+
+<p>&nbsp;</p>
+
+<p>Space efficiency may also be a consideration since storing a large number 
+ of randomly distributed numbers as text would use a lot more room (although 
+ this could probably be regained by using some sort of compression algorithm). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->On the 
+ other hand writing data as text instead of binary may actually save space 
+ (even without compression) -- for example, 64-bit numbers most of which 
+ are very small, can be more efficiently stored as text.</p>
+
+<p>&nbsp;</p>
+
+<p>Finally, storing floating-point numbers as (decimal) text can lead to 
+ rounding errors. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you require repeatable results to many decimal places then you need to 
+ store floating point numbers as binary (or else as text floating point 
+ numbers using hex instead of decimal).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span>Conclusion</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>I trust the above introduction to binary files will be useful in helping 
+ you to get the most out of HexEdit. You should now understand what a binary 
+ file is, why they exist, and have an inkling of why you may want to use 
+ HexEdit to look at and modify them.</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

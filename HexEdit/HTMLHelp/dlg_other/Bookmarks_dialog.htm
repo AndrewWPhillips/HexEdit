@@ -1,0 +1,488 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Bookmarks dialog</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=date content="09 21, 2002 2:35:53 PM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1233>
+<meta name=layout-width content=1235>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+<!--(Generated ActiveX Object Tags)=================================-->
+<!--(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)==================-->
+<!--begin!kadov{{===================================================-->
+<object id=hhctrl classid="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11" 
+ width=0 height=0 vspace=0 hspace=0 border=0 type="application/x-oleobject"></object>
+<!--}}end!kadov=====================================================-->
+<!--(==============================================================)-->
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;"><span>Bookmarks Dialog</span></h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="bookmarks.gif"
+						style="border-style: none;
+								border: none;
+								width: 555px;
+								height: 282px;"
+						width=555
+						height=282
+						border=0></p>
+
+<p>&nbsp;</p>
+
+<p>This dialog allows you to manage your bookmarks. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ bookmark has a name, that you give it, plus a file name and an address 
+ within that file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Note 
+ that a bookmark's position is automatically adjusted if you use HexEdit 
+ to insert or delete bytes before it in the file.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Bookmarks 
+ also have two times: a modification time (when it was created or reassigned) 
+ and an access time (the last time you jumped to it).</p>
+
+<p>&nbsp;</p>
+
+<p>Note that the dialog is <a class=popupspot
+								href="JavaScript:hhctrl.TextPopup('Modeless dialogs remain on screen even when control returns to the main program.','Arial,8',10,10,00000000,0xc0ffff)">modeless</a>, 
+ so you can leave it on screen and it is available when needed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ this way you can quickly add a new bookmark by typing a name and clicking 
+ <span style="font-weight: bold;">Add</span> or quickly jump to an existing 
+ one by double-clicking on it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Like 
+ other modeless dialogs in HexEdit it also gets out of the way when you 
+ move the cursor position in the active file to a position where the dialog 
+ would hide it.</p>
+
+<p>&nbsp;</p>
+
+<p>You can also resize the dialog if you want to see more or less of the 
+ bookmark list.</p>
+
+<p>&nbsp;</p>
+
+<p>This dialog is invoked using the <a HREF="..\cmd_edit\Edit_Bookmarks.htm">Edit 
+ Bookmarks</a> command.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Name</span></p>
+
+<p style="margin-left: 18.00pt;">To add a bookmark you first need to enter 
+ a name in the edit box. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that the edit box is unavailable if the active file <span style="font-weight: bold;">has 
+ not yet been saved to disk</span> (ie you created a new file but have 
+ not yet saved it).</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span>Add</span></p>
+
+<p style="margin-left: 18.00pt;">Click this button to add a new bookmark. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The name 
+ of the new bookmark is whatever you have typed into the <span style="font-weight: bold;">Name</span> 
+ edit box. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ a bookmark with that name already exists you are asked if you want to 
+ replace it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ new bookmark is set to the current cursor position in the active file.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Note: You can't add a bookmark to a new 
+ file (ie one created with File/New) until it has been saved to disk (with 
+ File/Save or File/Save As). <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->Bookmarks 
+ must always be associated with a disk file name so cannot be added to 
+ a file until it has been saved. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ Add button is disabled (since no disk file exists) until you save the 
+ file.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">List of 
+ bookmarks</span></p>
+
+<p style="margin-left: 18.00pt;">Most of the dialog is taken up with the 
+ list which shows all of your bookmarks. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ list is split into (up to) 6 columns (described below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can show and hide any of the columns by right-clicking any column heading 
+ and selecting it in the list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also resize any of the columns by dragging the separator (the vertical 
+ line between the column headings), or double-click the separator to size 
+ the column to the width of the widest item.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">By default the bookmarks appear in the 
+ order they were added, but you can sort on any column by clicking on the 
+ column header. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Click 
+ the same column header again to reverse the order.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">To select a bookmark, to delete or jump 
+ to, just click on its entry. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can select more than one bookmark (to delete) by shift-clicking to select 
+ a contiguous group or by control-clicking to select or deselect individual 
+ bookmarks. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ columns are:</p>
+
+<p class=footnote-text
+	style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				margin-left: 40px;
+				width: 92.63%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=92.63%>
+<col style="width: 13.479%;">
+<col style="width: 86.521%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 13.479%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-top-style: Solid;
+			border-top-color: #000000;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-left-width: 1px;
+			border-top-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=13.479%>
+<p style="font-weight: bold;"><span>Column</span></td>
+<td style="width: 86.521%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-style: Solid;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-right-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;"
+	width=86.521%>
+<p style="font-weight: bold; margin-left: 0px;"><span>Description</span></td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 13.479%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=13.479%>
+<p style="margin-bottom: 0;">Name</td>
+<td style="width: 86.521%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;"
+	width=86.521%>
+<p>The name that was given to the bookmark. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ name should not start with an underscore (_) nor contain a vertical bar 
+ (|).</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 13.479%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=13.479%>
+<p>File</td>
+<td style="width: 86.521%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;"
+	width=86.521%>
+<p>This is the name of the file (excluding the full path, but including 
+ the extension) in which the bookmark is located.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 13.479%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=13.479%>
+<p>Folder</td>
+<td style="width: 86.521%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;"
+	width=86.521%>
+<p>This is the folder or path in which the file containing the bookmark 
+ is located.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 13.479%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=13.479%>
+<p>Byte No</td>
+<td style="width: 86.521%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;"
+	width=86.521%>
+<p>This is the address within the file of the bookmark. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you insert or delete bytes earlier in the file using HexEdit then it is 
+ adjusted accordingly.</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 13.479%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			border-left-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=13.479%>
+<p>Modified</td>
+<td style="width: 86.521%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;"
+	width=86.521%>
+<p>This is the date and time that the bookmark was created or last manually 
+ moved. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Not 
+ changed when automatically moved by inserting/deleting.)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td style="width: 13.479%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-left-width: 1px;
+			border-bottom-width: 1px;
+			border-right-width: 1px;
+			background-color: #c0c0c0;"
+	bgcolor=#C0C0C0
+	width=13.479%>
+<p>Accessed</td>
+<td style="width: 86.521%;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-right-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-bottom-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;"
+	width=86.521%>
+<p>This is the date and time that the bookmark was last jumped to.</td></tr>
+</table>
+
+<p style="margin-left: 72.00pt;
+			margin-bottom: 6.00pt;
+			text-indent: -72.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span>Delete</span></p>
+
+<p style="margin-left: 18.00pt;">Clicking this button immediately deletes 
+ all the selected bookmarks. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ there are no bookmarks selected in the list then this button is disabled.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Go To</span></p>
+
+<p style="margin-left: 18.00pt;">Clicking this button jumps to the selected 
+ bookmark. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ file containing the bookmark is opened if necessary. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ there is no bookmark selected in the list or more than one bookmark is 
+ selected then this button is disabled. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also double-click a bookmark in the list to jump to it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also easily jump to a bookmark in the current file using the <a HREF="..\tools\Bookmark_tool.htm">Bookmark_tool</a>.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Validate 
+ All</span></p>
+
+<p style="margin-left: 18.00pt;">Use this button to check the validity 
+ of all bookmarks. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the file for a bookmark no longer exists then the bookmark is deleted 
+ (with the proviso mentioned below under the <span style="font-weight: bold;">Keep 
+ network and removeable </span>option). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ a bookmark is past the end of a file then it is moved to the end of the 
+ file.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Keep network 
+ and removeable</span></p>
+
+<p style="margin-left: 18.00pt;">When validating bookmarks you may not 
+ want to remove bookmarks for files that are not always available. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, you may have a bookmark for a file that exists on removeable 
+ media (floppies, zip disks, CDs, DVDs etc) or on a network drive that 
+ is not always available. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ this option is on and the <span style="font-weight: bold;">Validate All</span> 
+ option is used only bookmarks on fixed local drives will be deleted.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Help</span></p>
+
+<p style="margin-left: 18.00pt;">Click the Help button to display this 
+ information in the on-line help.</p>
+
+<p style="text-align: center;"
+	align=center><span style="text-align: center;">
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name="_Version" value="65536" >
+<param name="_ExtentX" value="2117" >
+<param name="_ExtentY" value="556" >
+<param name="_StockProps" value="13" >
+<param name="ForeColor" value="0" >
+<param name="BackColor" value="13160660" >
+<param name="UseButton" value="-1" >
+<param name="ControlLabel" value="Related Topics" >
+<param name="UseIcon" value="0" >
+<param name="Items" value="Bookmark_tool;..\tools\Bookmark_tool.htm$$**$$Bookmarks dialog;Bookmarks_dialog.htm$$**$$Clear Bookmarks;..\cmd_misc\HID_BOOKMARKS_CLEAR.htm$$**$$Hide Bookmarks;..\cmd_misc\HID_BOOKMARKS_HIDE.htm$$**$$Next Bookmark;..\cmd_misc\HID_BOOKMARK_NEXT.htm$$**$$Previous Bookmark;..\cmd_misc\HID_BOOKMARK_PREVIOUS.htm$$**$$Toggle Bookmark command;..\cmd_misc\HID_BOOKMARK_TOGGLE.htm$$**$$" >
+<param name="Image" value="" >
+<param name="FontInfo" value="MS Sans Serif,8,0,," >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit2.6\HTMLHelp\dlg_other\Bookmarks_dialog.htm" >
+<param name="_ID" value="RelatedTopics" >
+<param name="UseMenu" value="-1" >
+<param name="Frame" value="" >
+<param name="Window" value="" >
+</object>-->
+<OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM  NAME="Item1"  VALUE="Bookmark_tool;..\tools\Bookmark_tool.htm">
+  <PARAM  NAME="Item2"  VALUE="Bookmarks dialog;Bookmarks_dialog.htm">
+  <PARAM  NAME="Item3"  VALUE="Clear Bookmarks;..\cmd_misc\HID_BOOKMARKS_CLEAR.htm">
+  <PARAM  NAME="Item4"  VALUE="Hide Bookmarks;..\cmd_misc\HID_BOOKMARKS_HIDE.htm">
+  <PARAM  NAME="Item5"  VALUE="Next Bookmark;..\cmd_misc\HID_BOOKMARK_NEXT.htm">
+  <PARAM  NAME="Item6"  VALUE="Previous Bookmark;..\cmd_misc\HID_BOOKMARK_PREVIOUS.htm">
+  <PARAM  NAME="Item7"  VALUE="Toggle Bookmark command;..\cmd_misc\HID_BOOKMARK_TOGGLE.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+ </span></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

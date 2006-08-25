@@ -1,0 +1,275 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>STRUCT Dialog</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1390>
+<meta name=layout-width content=1124>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;"><span style="font-family: Arial;">STRUCT 
+ Dialog</span></h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="template_struct.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0></p>
+
+<p>&nbsp;</p>
+
+<p>This dialog allows you to set the options of a template STRUCT element 
+ (and its contained elements, using the Edit button). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is usually invoked by right-clicking the STRUCT node in the template tree 
+ view and selecting the &quot;Edit...&quot; item.</p>
+
+<p>&nbsp;</p>
+
+<p>The STRUCT item acts as a container for one or more sub-elements of 
+ different types.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Name</p>
+
+<p style="margin-left: 40px;">This name identifies this specific field 
+ in the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ name is used in expressions to access sub-elements of the STRUCT (using 
+ the dot operator). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ name is required <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(unless 
+ the parent is a FOR) so that you can access this element, and should be 
+ different to the names of siblings (if the parent is also a STRUCT).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">If you need to show that different parts 
+ of the template have exactly the same data structure or type, you can 
+ give them both the same &quot;Type name&quot; (see below).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Elements</p>
+
+<p style="margin-left: 40px;">This is the list of elements currently contained 
+ in the STRUCT. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Select 
+ an element in the list before using the buttons next to the list (Edit 
+ etc - see below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Select 
+ the blank entry at the bottom of the list before inserting in order to 
+ append to the list.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Edit...</p>
+
+<p style="margin-left: 40px;">This edits the sub-element of the STRUCT 
+ that is currently selected in the Elements list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ &quot;child&quot; dialog appears near the dialog - you can't do anything 
+ in the STRUCT dialog until the child dialog is closed again.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Insert</p>
+
+<p style="margin-left: 40px;">Inserts a new element in the STRUCT just 
+ before the currently selected element in the Elements list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ add an element to the end, select the blank line in the Elements list 
+ past the last one before clicking the Insert button.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><img src="../dlg_options/del_ico.gif"
+									style="border-style: none;
+											border: none;
+											width: 22px;
+											height: 23px;"
+									width=22
+									height=23
+									border=0></p>
+
+<p style="margin-left: 40px;">Deletes the element currently selected in 
+ the Elements list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that all sub-elements are also deleted, so accidentally deleting an element 
+ could lose a lot of work - for this reason you are prompted that you really 
+ want to delete it.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><img src="../dlg_options/UpUp.gif"
+									style="border-style: none;
+											border: none;
+											width: 22px;
+											height: 23px;"
+									width=22
+									height=23
+									border=0></p>
+
+<p style="margin-left: 40px;">Moves the current element up in the Element 
+ list.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><img src="../dlg_options/DownUp.gif"
+									style="border-style: none;
+											border: none;
+											width: 22px;
+											height: 23px;"
+									width=22
+									height=23
+									border=0></p>
+
+<p style="margin-left: 40px;">Moves the current element up in the Element 
+ list.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Elt size</p>
+
+<p style="margin-left: 40px;">This just displays the size of the currently 
+ selected element in the Elements list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the element (or any of its sub-elements) are variable in size then a question 
+ mark (?) is displayed instead.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Offset</p>
+
+<p style="margin-left: 40px;">Displays the offset within the STRUCT of 
+ the currently selected element in the Elements list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ any elements above it are of variable size a question mark (?) is displayed. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To get 
+ the size of the entire STRUCT select the blank line at the end of the 
+ Elements list.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Type name</p>
+
+<p style="margin-left: 40px;">Generic type name for the data element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ may be the name of a C/C++ struct/class if the file is manipulated by 
+ a C/C++ program. <!--kadov_tag{{<spaces>}}-->&nbsp;<span style="margin-left: 40px;"><!--kadov_tag{{</spaces>}}-->This 
+ is a comment field only and has no effect on the behaviour of the template.</span></p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Display</span></p>
+
+<p style="margin-left: 40px;">This can be used to show the value of important 
+ field(s) in the tree column of the tree view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ can be blank or a simple string but usually contains expressions enclosed 
+ in braces, with optional format specification. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ the section called <span style="font-weight: bold;">Displaying Information 
+ in the Tree Column</span> in <a href="../overviewadvanced/Editing_templates.htm">Editing 
+ templates</a> for more information.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Comments</p>
+
+<p style="margin-left: 40px;">Add any other relevant information here.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">&lt;&lt; and &gt;&gt; buttons</p>
+
+<p style="margin-left: 40px;">If the parent element is a STRUCT then these 
+ buttons are displayed in the bottom right of the dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ allow you to move to the previous and next sibling (ie the previous and 
+ next elements in the parent STRUCT). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is very handy when you quickly want to view or change values in all the 
+ children.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">Using the button is equivalent to clicking 
+ OK then editing the previous or next element in the parent STRUCT.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 0px;">
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name="_Version" value="65536" >
+<param name="_ExtentX" value="2117" >
+<param name="_ExtentY" value="556" >
+<param name="_StockProps" value="13" >
+<param name="ForeColor" value="0" >
+<param name="BackColor" value="13160660" >
+<param name="UseButton" value="-1" >
+<param name="ControlLabel" value="Related Topics" >
+<param name="UseIcon" value="0" >
+<param name="Items" value="DATA Dialog;DATA_Dialog.htm$$**$$Editing templates;..\overviewadvanced\Editing_templates.htm$$**$$EVAL Dialog;EVAL_DLG.htm$$**$$FOR Dialog;FOR_Dialog.htm$$**$$IF Dialog;IF_Dialog.htm$$**$$JUMP Dialog;JUMP_DLG.htm$$**$$Use Struct Dialog;USE_STRUCT.htm$$**$$Using Templates;..\overviewtools\Templates.htm$$**$$" >
+<param name="Image" value="" >
+<param name="FontInfo" value="MS Sans Serif,8,0,," >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_templates\STRUCT_Dialog.htm" >
+<param name="_ID" value="RelatedTopics" >
+<param name="UseMenu" value="-1" >
+<param name="Frame" value="" >
+<param name="Window" value="" >
+</object>-->
+<OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM  NAME="Item1"  VALUE="DATA Dialog;DATA_Dialog.htm">
+  <PARAM  NAME="Item2"  VALUE="Editing templates;..\overviewadvanced\Editing_templates.htm">
+  <PARAM  NAME="Item3"  VALUE="EVAL Dialog;EVAL_DLG.htm">
+  <PARAM  NAME="Item4"  VALUE="FOR Dialog;FOR_Dialog.htm">
+  <PARAM  NAME="Item5"  VALUE="IF Dialog;IF_Dialog.htm">
+  <PARAM  NAME="Item6"  VALUE="JUMP Dialog;JUMP_DLG.htm">
+  <PARAM  NAME="Item7"  VALUE="Use Struct Dialog;USE_STRUCT.htm">
+  <PARAM  NAME="Item8"  VALUE="Using Templates;..\overviewtools\Templates.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+ </p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

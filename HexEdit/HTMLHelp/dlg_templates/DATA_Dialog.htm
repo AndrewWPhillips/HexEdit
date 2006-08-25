@@ -1,0 +1,743 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>DATA Dialog</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=2208>
+<meta name=layout-width content=1125>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;">DATA Dialog</h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="DATA_dlg.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0></p>
+
+<p>&nbsp;</p>
+
+<p>This dialog allows you to set the options of a template DATA element. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It is invoked 
+ by right-clicking the DATA node in the template tree view and selecting 
+ the &quot;Edit...&quot; item, or by clicking an Edit, Insert, or Replace 
+ With button in the dialog for the containing STRUCT, FOR, IF, or JUMP.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Name</p>
+
+<p style="margin-left: 40px;">This name identifies this specific field 
+ in the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ name is used in expressions to access sub-elements of a STRUCT. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ name is required <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(unless 
+ the parent is a FOR) so that you can access this element, and should be 
+ different to the names of siblings (if the parent is a STRUCT).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">If you need to show that different parts 
+ of the template have exactly the same data type, you can give them both 
+ the same &quot;Type name&quot; (see below).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Type</p>
+
+<p style="margin-left: 40px;">Select a basic type from the drop-down list. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The exact 
+ format of the data depends also on the Format field (see below) and sometimes 
+ also the Big-endian and Length fields.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">Note that data elements of type &quot;none&quot; 
+ and &quot;date&quot; cannot be used in expressions. Char and int types 
+ can be used as integers, real types can be used as floating point values, 
+ and a string can be used as a string.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">Use type &quot;none&quot; for fill bytes 
+ or large chunks of data when the type is unspecified or unknown. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ need to specify a length (see below) otherwise the block of data extends 
+ to end of file.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Format</p>
+
+<p style="margin-left: 40px;">Select a format from the drop down list. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The options 
+ available depend on the Type selected above. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example for strings you can select the character set to use.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Read-only</p>
+
+<p style="margin-left: 40px;">Allows you to specify whether the field is 
+ read-only. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ read-only the user of the template cannot change the data in the file 
+ for the template field.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">Note that this is a &quot;three state&quot; 
+ checkbox. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ the 3rd state which has a grey tick on a grey background, the setting 
+ is left to the global setting in the template file (see <a HREF="Global_Options.htm">Global 
+ Options</a>).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Big-endian</p>
+
+<p style="margin-left: 40px;">Allows you to specify the byte order for 
+ some types. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ field is disabled for none, string, some date types and char types (unless 
+ Unicode).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">Note that this is a &quot;three state&quot; 
+ checkbox. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ the 3rd state which has a grey tick on a grey background, the endianness 
+ is left to the global setting in the template file (see <a HREF="Global_Options.htm">Global 
+ Options</a>).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Display</p>
+
+<p style="margin-left: 40px;">This is a format string that specifies how 
+ the data is display in the Data column of the tree view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ allowed strings depend on the type of data as shown in the following table. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If no format 
+ string is given then the appropriate format string specified by the user 
+ in &quot;Default data format strings&quot; of the Display page of the 
+ Options dialog.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				margin-left: 40px;
+				width: 94.556%;
+				border-spacing: 0px;
+				border-spacing: 0px;"
+		cellspacing=0
+		width=94.556%>
+<col style="width: 12.109%;">
+<col style="width: 42.566%;">
+<col style="width: 45.325%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.109%;
+			background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	bgcolor=#C0C0C0
+	width=12.109%>
+<p style="font-weight: bold;">type</td>
+<td colspan=1
+	rowspan=1
+	style="width: 42.566%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=42.566%>
+<p style="font-weight: bold;">allowed values</td>
+<td colspan=1
+	rowspan=1
+	style="width: 45.325%;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=45.325%>
+<p style="font-weight: bold;">default value</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=12.109%>
+<p>none</td>
+<td colspan=1
+	rowspan=1
+	style="width: 42.566%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=42.566%>
+<p>[none]</td>
+<td colspan=1
+	rowspan=1
+	style="width: 45.325%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=45.325%>
+<p>up to the first 10 bytes (in hex)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=12.109%>
+<p>char</td>
+<td colspan=1
+	rowspan=1
+	style="width: 42.566%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=42.566%>
+<p style="margin-top: 0; margin-bottom: 0;">printf format string (value 
+ passed as an integer)</td>
+<td colspan=1
+	rowspan=1
+	style="width: 45.325%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=45.325%>
+<p>'%c' = character (in specified character set)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=12.109%>
+<p>int</td>
+<td colspan=1
+	rowspan=1
+	style="width: 42.566%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=42.566%>
+<p style="margin-top: 0; margin-bottom: 0;">dec, hex, oct, bin, or printf 
+ format string<span style="margin-top: 0; margin-bottom: 0;"> (integer)</span></td>
+<td colspan=1
+	rowspan=1
+	style="width: 45.325%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=45.325%>
+<p>%u for unsigned integers or %d for signed integers</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=12.109%>
+<p>float</td>
+<td colspan=1
+	rowspan=1
+	style="width: 42.566%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=42.566%>
+<p style="margin-top: 0; margin-bottom: 0;">printf format string (double)</td>
+<td colspan=1
+	rowspan=1
+	style="width: 45.325%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=45.325%>
+<p>%g = compact form (uses scientific notation if necessary)</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=12.109%>
+<p>date</td>
+<td colspan=1
+	rowspan=1
+	style="width: 42.566%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=42.566%>
+<p style="margin-top: 0; margin-bottom: 0;">strftime format string</td>
+<td colspan=1
+	rowspan=1
+	style="width: 45.325%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=45.325%>
+<p>%#c = long date + time formatted using local conventions</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.109%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=12.109%>
+<p>string</td>
+<td colspan=1
+	rowspan=1
+	style="width: 42.566%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=42.566%>
+<p style="margin-top: 0; margin-bottom: 0;">printf format string (char 
+ *)</td>
+<td colspan=1
+	rowspan=1
+	style="width: 45.325%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=45.325%>
+<p>&quot;%s&quot; = string</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><span style="font-weight: bold;">Table 1. DATA element 
+ Display format specifications.</span></p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Length</p>
+
+<p style="margin-left: 40px;">The use of length depends on the data type. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For char 
+ and date types you cannot specify a length. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ other types you can specify an expression but for ints the value must 
+ be 1, 2, 4 or 8, for reals 4 or 8.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">For string and none types you can enter an 
+ expression that evaluates to any non-negative value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Use 
+ the button to the right (with the little triangle) to add values to the 
+ expression from data elements earlier in the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the length is left empty then the chunk of data extends right up to the 
+ end of file -- this is useful as the last element of a template where 
+ the length of the rest of file is not known.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Bit-field</p>
+
+<p style="margin-left: 40px;">Select this option if the DATA element is 
+ a bit-field. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ option is only available for integer types. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ <span style="font-weight: bold;">Length</span> field is still required 
+ and represents the size of the underlying bit-field storage unit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Bit-fields 
+ are only merged into the same storage unit if consecutive bit-field elements 
+ are found that have the same <span style="font-weight: bold;">Length</span> 
+ and <span style="font-weight: bold;">Direction</span> fields.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">Bit-fields in HexEdit templates are far more 
+ flexible than bit-fields as seen in C/C++. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, you can vary the direction and size in the same template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can even have <span style="font-style: italic;">arrays of bit-fields</span>.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">Bit-fields are shown as integers in the template 
+ tree view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can format and even edit the values in the DATA column just as for integers. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You can 
+ also use enums on bit-fields (see <span style="font-weight: bold;">Domain</span> 
+ field below) so that meaningful text is shown in the DATA column, and 
+ you can change the value by simply selecting an entry from the enum drop-down 
+ list.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Bits</p>
+
+<p style="margin-left: 40px;">This is the number of bits used by the bit-field. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It should 
+ be at least one and less than the number of bits in the underlying storage 
+ unit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if <span style="font-weight: bold;">Length</span> is 4, the storage 
+ units is 32-bits, so this field must have a value between 1 and 31 inclusive.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Direction</p>
+
+<p style="margin-left: 40px;">Bit-fields can fill the underlying storage 
+ units from the bottom upwards or from the top down. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ value is typically <span style="font-weight: bold;">Up</span>.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Domain</p>
+
+<p style="margin-left: 40px;">The domain attribute allows validation of 
+ an element, and also allows an enum list (list of names and associated 
+ values) for integer types. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ domain is disabled for elements of type &quot;none&quot; and type &quot;date&quot; 
+ as these types cannot be used in an expression. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the domain is empty then no validation is done.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">If the domain attribute is not empty it must 
+ contain an expression (or an enum - see below) that evaluates to a boolean 
+ result and uses the special variable called &quot;this&quot; to access 
+ the current field value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Remember 
+ that you must use &quot;this&quot; in the expression according to the 
+ type of the field. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, for a string data type a valid attribute is domain='this &gt; 
+ &quot;a&quot;', but this would be invalid domain='this &gt; 0.0'. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the domain expression returns false the user is notified there is an error 
+ and the node is greyed in the tree view.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">For integer fields the domain can alternatively 
+ contain an enum. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ signal this the domain attribute must begin with a brace character ({). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The syntax 
+ is the same as for enums in C/C++. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(That 
+ is, a list of names separated by commas and enclosed in braces. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ first enum value defaults to zero and subsequent ones are one more than 
+ the previous, but you can explicitly set a value using an equals sign 
+ and an integer). When the field is displayed the matching enumeration 
+ name is used. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the field value does not match any of the enum values then an error is 
+ signalled (the node is greyed) and the actual integer value is displayed.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Type Name</p>
+
+<p style="margin-left: 40px;">Generic type name for the data element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, this could be the name of a C/C++ typedef.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">This is a comment field only and has no effect 
+ on the behaviour of the template.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Units</p>
+
+<p style="margin-left: 40px;">You can only enter this comment field for 
+ numeric types.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Terminator</p>
+
+<p style="margin-left: 40px;">You can specify a terminator for strings, 
+ which is the null byte if none is specified. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ terminator determines the length of the data element unless a length is 
+ specified (see above). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Even 
+ if the length is specified the terminator is used to locate the end of 
+ the string for when the string is displayed or when it is used in expressions.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Comment</p>
+
+<p style="margin-left: 40px;">Add any other relevant information here.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span>Clone &gt;&gt; button</span></p>
+
+<p style="margin-left: 40px;">This button only appears if the parent is 
+ a STRUCT. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ inserts a clone of the current DATA element immediately after it in the 
+ parent STRUCT then starts editing it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ clone is an identical copy except that the DATA element name has &quot;Copy_of_&quot; 
+ prepended to it.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">&lt;&lt; and &gt;&gt; buttons</p>
+
+<p style="margin-left: 40px;">If the parent element is a STRUCT then these 
+ buttons are displayed in the bottom right of the dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ allow you to move to the previous and next sibling (ie the previous and 
+ next elements in the parent STRUCT). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is very handy when you quickly want to view or change values in all the 
+ struct elements.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">Using the button is equivalent to clicking 
+ OK then editing the previous or next element in the parent STRUCT.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 0px;">
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name="_Version" value="65536" >
+<param name="_ExtentX" value="2117" >
+<param name="_ExtentY" value="556" >
+<param name="_StockProps" value="13" >
+<param name="ForeColor" value="0" >
+<param name="BackColor" value="13160660" >
+<param name="UseButton" value="-1" >
+<param name="ControlLabel" value="Related Topics" >
+<param name="UseIcon" value="0" >
+<param name="Items" value="Editing templates;..\overviewadvanced\Editing_templates.htm$$**$$Expressions;..\overviewadvanced\Expressions.htm$$**$$Global Options;Global_Options.htm$$**$$STRUCT Dialog;STRUCT_Dialog.htm$$**$$" >
+<param name="Image" value="" >
+<param name="FontInfo" value="MS Sans Serif,8,0,," >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_templates\DATA_Dialog.htm" >
+<param name="_ID" value="RelatedTopics" >
+<param name="UseMenu" value="-1" >
+<param name="Frame" value="" >
+<param name="Window" value="" >
+</object>-->
+<OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM  NAME="Item1"  VALUE="Editing templates;..\overviewadvanced\Editing_templates.htm">
+  <PARAM  NAME="Item2"  VALUE="Expressions;..\overviewadvanced\Expressions.htm">
+  <PARAM  NAME="Item3"  VALUE="Global Options;Global_Options.htm">
+  <PARAM  NAME="Item4"  VALUE="STRUCT Dialog;STRUCT_Dialog.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+ </p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="StandardTypes" comment="C/C++ standard types as used in MS compiler (VS6). This file is used in parsing C/C++ source code for declarations.">
+	<data type="none"  name="void" len="0" comment='INTERNAL USE ONLY (used during parsing of "void *")'/>
+	<data type="char"  name="char" format="ascii"/>
+	<data type="char"  name="wchar_t" format="unicode" type_name="wchar_t"/>
+	<data type="int"   name="bool" len="1" type_name="bool"/>
+	<data type="int"   name="pointer$"          format="unsigned" len="4" display="hex" type_name="pointer"/>
+	<data type="int"   name="function_pointer$" format="unsigned" len="4" display="hex" type_name="function pointer"/>
+	<data type="int"   name="bit_field$"        direction="up"    len="4" display="bin" type_name="bit-field"/>
+	<data type="int"   name="enum$"             format="signed"   len="4" type_name="enum"/>
+	<data type="int"   name="short"             format="signed"   len="2" type_name="short"/>
+	<data type="int"   name="int"               format="signed"   len="4" type_name="int"/>
+	<data type="int"   name="long"              format="signed"   len="4" type_name="long"/>
+	<data type="int"   name="signed$char"       format="signed"   len="1" type_name="signed char"/>
+	<data type="int"   name="signed$short"      format="signed"   len="2" type_name="signed short"/>
+	<data type="int"   name="signed$int"        format="signed"   len="4" type_name="signed int"/>
+	<data type="int"   name="signed$long"       format="signed"   len="4" type_name="signed long"/>
+	<data type="int"   name="unsigned$char"     format="unsigned" len="1" type_name="unsigned char"/>
+	<data type="int"   name="unsigned$short"    format="unsigned" len="2" type_name="unsigned short"/>
+	<data type="int"   name="unsigned$int"      format="unsigned" len="4" type_name="unsigned int"/>
+	<data type="int"   name="unsigned$long"     format="unsigned" len="4" type_name="unsigned long"/>
+	<data type="real"  name="float"             len="4" type_name="float"/>
+	<data type="real"  name="double"            len="8" type_name="double"/>
+	<data type="real"  name="long$double"       len="8" type_name="long double"/>
+	<data type="date"  name="time_t"            format="c" type_name="time_t"/>
+	<data type="int"   name="clock_t"           format="signed"   len="4" type_name="clock_t"/>
+	<struct name="tm" type_name="struct tm" expr="date(y/m/d)={this.tm_year;%04d}/{this.tm_mon;%02d}/{this.tm_mday;%02d} time={this.tm_hour;%2d}:{this.tm_min;%02d}">
+		<data type="int"   name="tm_sec"        format="signed"   len="4"/>
+		<data type="int"   name="tm_min"        format="signed"   len="4"/>
+		<data type="int"   name="tm_hour"       format="signed"   len="4"/>
+		<data type="int"   name="tm_mday"       format="signed"   len="4"/>
+		<data type="int"   name="tm_mon"        format="signed"   len="4"/>
+		<data type="int"   name="tm_year"       format="signed"   len="4"/>
+		<data type="int"   name="tm_wday"       format="signed"   len="4"/>
+		<data type="int"   name="tm_yday"       format="signed"   len="4"/>
+		<data type="int"   name="tm_isdst"      format="signed"   len="4"/>
+	</struct>
+	<data type="int"   name="size_t"            format="unsigned" len="4" type_name="size_t"/>
+	<data type="int"   name="ptrdiff_t"         format="signed" len="4" type_name="ptrdiff_t"/>
+	<data type="int"   name="sig_atomic_t"      format="signed" len="4" type_name="sig_atomic_t"/>
+	<struct name="_complex" type_name="_complex" expr="({this.x}, {this.y})">
+		<data type="real" name="x"             len="8"/>
+		<data type="real" name="y"             len="8"/>
+	</struct>
+	<data type="int"   name="intptr_t"          format="unsigned" len="4" display="hex" type_name="intptr_t"/>
+	<struct name="div_t" type_name="div_t" expr="quot={this.quot}, rem={this.rem}">
+		<data type="int"  name="quot"           format="signed"   len="4"/>
+		<data type="int"  name="rem"            format="signed"   len="4"/>
+	</struct>
+	<struct name="ldiv_t" type_name="ldiv_t" expr="quot={this.quot}, rem={this.rem}">
+		<data type="int"  name="quot"           format="signed"   len="4"/>
+		<data type="int"  name="rem"            format="signed"   len="4"/>
+	</struct>
+	<data type="none"  name="FILE" len="32" comment="Size could easily vary - should not be written to file"/>
+	<data type="int"   name="fpos_t"            format="signed"   len="8" type_name="fpos_t"/>
+	<struct name="lconv" type_name="lconv">
+		<data type="int"   name="decimal_point"     format="unsigned" len="4" display="hex" comment="pointer"/>
+		<data type="int"   name="thousands_sep"     format="unsigned" len="4" display="hex" comment="pointer"/>
+		<data type="int"   name="grouping"          format="unsigned" len="4" display="hex" comment="pointer"/>
+		<data type="int"   name="int_curr_symbol"   format="unsigned" len="4" display="hex" comment="pointer"/>
+		<data type="int"   name="currency_symbol"   format="unsigned" len="4" display="hex" comment="pointer"/>
+		<data type="int"   name="mon_decimal_point" format="unsigned" len="4" display="hex" comment="pointer"/>
+		<data type="int"   name="mon_thousands_sep" format="unsigned" len="4" display="hex" comment="pointer"/>
+		<data type="int"   name="mon_grouping"      format="unsigned" len="4" display="hex" comment="pointer"/>
+		<data type="int"   name="positive_sign"     format="unsigned" len="4" display="hex" comment="pointer"/>
+		<data type="int"   name="negative_sign"     format="unsigned" len="4" display="hex" comment="pointer"/>
+		<data type="int"   name="int_frac_digits"   format="signed"   len="1"/>
+		<data type="int"   name="frac_digits"       format="signed"   len="1"/>
+		<data type="int"   name="p_cs_precedes"     format="signed"   len="1"/>
+		<data type="int"   name="p_sep_by_space"    format="signed"   len="1"/>
+		<data type="int"   name="n_cs_precedes"     format="signed"   len="1"/>
+		<data type="int"   name="n_sep_by_space"    format="signed"   len="1"/>
+		<data type="int"   name="p_sign_posn"       format="signed"   len="1"/>
+		<data type="int"   name="n_sign_posn"       format="signed"   len="1"/>
+	</struct>
+	<for name="jmp_buf" count="16" type_name="jmp_buf">
+		<data type="int" len="4"/>
+	</for>
+	<data type="int"   name="va_list"           format="unsigned" len="4" display="hex" comment="pointer" type_name="va_list"/>
+	<data type="int" name="unexpected_function" format="unsigned" len="4" display="hex" comment="func ptr" type_name="unexpected_function"/>
+	<data type="int"   name="mbstate_t"         format="signed"   len="4" type_name="mbstate_t"/>
+	<data type="int"   name="wctype_t"          format="unsigned" len="2" type_name="wctype_t"/>
+	<data type="int"   name="wctrans_t"         format="unsigned" len="2" type_name="wctrans_t"/>
+	<data type="int"   name="wint_t"            format="unsigned" len="2" type_name="wint_t"/>
+
+	<data type="int"   name="__int8"            format="signed"   len="1" type_name="__int8"/>
+	<data type="int"   name="__int16"           format="signed"   len="2" type_name="__int16"/>
+	<data type="int"   name="__int32"           format="signed"   len="4" type_name="__int32"/>
+	<data type="int"   name="__int64"           format="signed"   len="8" type_name="__int64"/>
+	<data type="int"   name="signed$__int8"     format="signed"   len="1" type_name="signed __int8"/>
+	<data type="int"   name="signed$__int16"    format="signed"   len="2" type_name="signed __int16"/>
+	<data type="int"   name="signed$__int32"    format="signed"   len="4" type_name="signed __int32"/>
+	<data type="int"   name="signed$__int64"    format="signed"   len="8" type_name="signed __int64"/>
+	<data type="int"   name="unsigned$__int8"   format="unsigned" len="1" type_name="unsigned __int8"/>
+	<data type="int"   name="unsigned$__int16"  format="unsigned" len="2" type_name="unsigned __int16"/>
+	<data type="int"   name="unsigned$__int32"  format="unsigned" len="4" type_name="unsigned __int32"/>
+	<data type="int"   name="unsigned$__int64"  format="unsigned" len="8" type_name="unsigned __int64"/>
+</binary_file_format>

@@ -1,0 +1,202 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Floating Point Values Page</title>
+
+<!--(Meta)==========================================================-->
+
+<meta name=copyright value="1999-2001 Expert Commercial Software">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1165>
+<meta name=layout-width content=682>
+<meta name=date content="01 6, 2002 11:47:52 PM">
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=arial>Floating-Point Values Page</font></h2>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="prop4.gif" alt="image\prop4.gif" style="width: 350px;
+								height: 183px;
+								border-style: none;" width="350" height="183" border="0"></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>This page is used to view or edit the bytes following the current cursor 
+ position as IEEE floating-point numbers. You can view and change the value 
+ for the standard 32 bit and 64 bit IEEE formats in either big-endian or 
+ little-endian format. If viewing the 32 bit value the fields are blank 
+ unless there are at least 4 bytes before the end of file. Similarly a 
+ 64 bit value requires 8 bytes.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The exact format of a 32 bit value is a sign bit as the highest bit, 
+ followed by 8 exponent bits and 23 mantissa bits. For a 64 bit value there 
+ is a sign bit, 11 exponent bits and 52 mantissa bits. There is an implicit 
+ leading 1 bit on the mantissa so that all mantissa values are between 
+ 0.5 and 1.0. The exponent is binary using the exponent bits as an unsigned 
+ number and subtracting a bias (127 for 32 bit values or 1023 for 64 bit 
+ values). Using these numbers the value of the floating-point number = 
+ mantissa * 2^exponent. (Note that the sign bit is included in the mantissa 
+ and the bias has been subtracted from the exponent.)</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Note that in the range of exponents, two values are not used for “normal” 
+ numbers – those with all bits off and those with all bits on. If the exponent 
+ has all bits off then the number is zero (if the mantissa has all bits 
+ zero) or a denormalised number which is close to zero (if the mantissa 
+ does not have all bits zero). This means there are two values for zero, 
+ with the sign bit on or off, by convention zero is normally positive (giving 
+ a bit pattern with all bits off). Denormalised numbers are values closer 
+ to zero than the smallest “normal” numbers – they are used to avoid sudden 
+ underflow conditions caused by the “gap” between numbers with the smallest 
+ exponent and zero.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>An exponent with all bits on and a mantissa of zero represents infinity; 
+ the sign bit determines whether it’s +/- infinity. (The only other bit-patterns 
+ are: the exponent has all bits on but the mantissa does not have all bits 
+ off – the value is not a number or NaN). For example, the bytes 00 00 
+ 80 FF represent a 32 bit IEE negative infinity (or FF 80 00 00 in big-endian 
+ byte-order).</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Value</span></p>
+
+<p style="margin-left: 18.00pt;">This is the (approximate) value of the 
+ IEEE floating-point number. For numbers with very big or small exponents 
+ the display will contain a (signed) trailing decimal exponent preceded 
+ by the letter “e”.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">To change the value type a new number 
+ and press Enter (or press Escape to abort changes). You can enter a 32 
+ bit or 64 bit format number in big- or little-endian byte order depending 
+ on the Big-endian check box and the active Format radio button. You can 
+ enter any value including scientific (e) notation. Values that are too 
+ big or small to represent are stored as +/-Infinity. Values that are too 
+ small in absolute terms (ie. very close to zero are stored as zero. You 
+ can also enter the special values “Inf” or “+Inf”, “-Inf” and “NaN” (for 
+ Not a Number).</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Note that the number may not be exact 
+ since the display shows a decimal (base 10) number whereas IEEE floating-point 
+ numbers use a binary exponent. Hence many values cannot be represented 
+ exactly as a decimal number.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Mantissa</span></p>
+
+<p style="margin-left: 18.00pt;">For “normalised” numbers the mantissa 
+ is a positive or negative value between 0.5 and 1.0. As the values approach 
+ zero (from both the positive and negative direction) – that is, the value’s 
+ exponent becomes more negative – “denormalised” numbers are allowed which 
+ have a smaller mantissa.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Exponent</span></p>
+
+<p style="margin-left: 18.00pt;">This is the (power 2) exponent. For normal 
+ numbers it is an integer from 127 to 126 for 32 bit values or –1023 to 
+ 1022 for 64 bit values. It is –128 (or –1024) for zero and small denormalised 
+ values and 127 (or 1023) for infinity and NaNs.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Big endian</span></p>
+
+<p style="margin-left: 18.00pt;">Select this option to view the numbers 
+ with big-endian byte order. When selected the sign bit is in the left-most 
+ byte (ie, the byte with the lowest address). This option is off by default 
+ since data created on MSDOS/Windows systems is typically little-endian.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">32 bit</span></p>
+
+<p style="margin-left: 18.00pt;">Select this option to view the value of 
+ the IEEE 32 bit (4 byte) number.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">64 bit</span></p>
+
+<p style="margin-left: 18.00pt;">Select this option to view the value of 
+ the IEEE 64 bit (8 byte) number.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name=_Version value="65536" >
+<param name=_ExtentX value="2117" >
+<param name=_ExtentY value="556" >
+<param name=_StockProps value="13" >
+<param name=ForeColor value="0" >
+<param name=BackColor value="12632256" >
+<param name=UseButton value="-1" >
+<param name=ControlLabel value="Related Topics" >
+<param name=UseIcon value="0" >
+<param name="Items" value="Character Properties Page;HIDD_PROP_CHAR.htm$$**$$Decimal Values Page;HIDD_PROP_DECIMAL.htm$$**$$Display Properties Command;..\cmd_view\HID_PROPERTIES.htm$$**$$File Properties Page;HIDD_PROP_FILE.htm$$**$$Floating Point Numbers;..\binary_files\Floating_Point_Numbers.htm$$**$$IBM Floating Point Values Page;HIDD_PROP_IBMFP.htm$$**$$Properties Dialog;..\overviewtools\prop.htm$$**$$">
+<param name="Image" value>
+<param name=FontInfo value="MS Sans Serif,8,0,," >
+<param name=_CURRENTFILEPATH value="D:\work\andrew\CPP\HexEdit\HTMLHelp\DLG_Properties\HIDD_PROP_FLOAT.htm" >
+<param name=_ID value="RelatedTopics" >
+<param name=UseMenu value="-1" >
+<param name=Frame value="" >
+<param name=Window value="" >
+</object> --><OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM NAME="Item1" VALUE="Character Properties Page;HIDD_PROP_CHAR.htm">
+  <PARAM NAME="Item2" VALUE="Decimal Values Page;HIDD_PROP_DECIMAL.htm">
+  <PARAM NAME="Item3" VALUE="Display Properties Command;..\cmd_view\HID_PROPERTIES.htm">
+  <PARAM NAME="Item4" VALUE="File Properties Page;HIDD_PROP_FILE.htm">
+  <PARAM NAME="Item5" VALUE="Floating Point Numbers;..\binary_files\Floating_Point_Numbers.htm">
+  <PARAM NAME="Item6" VALUE="IBM Floating Point Values Page;HIDD_PROP_IBMFP.htm">
+  <PARAM NAME="Item7" VALUE="Properties Dialog;..\overviewtools\prop.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+</p>
+
+</body>
+
+</html>

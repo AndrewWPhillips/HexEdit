@@ -1,0 +1,384 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Creating the Object Array</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=4079>
+<meta name=layout-width content=1213>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Step 4: Creating the Object Array</font></h2>
+
+<p>&nbsp;</p>
+
+<p>In this step we will create the array of all the objects of the file. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This is 
+ similar to the array of objects in a group object except that in this 
+ case we don't know how many there are beforehand (ie, there is no &quot;count&quot; 
+ field in this case). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Instead 
+ the end of the array is signalled by an &quot;object&quot; with a type 
+ of zero.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">The Object Array</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>1. Double-click the root element in the tree 
+ view to edit it.</p>
+
+<p class=Body-Text-Indent-2>2. Select the blank entry in the Element list 
+ (after the header element) and click the &quot;Insert&quot; button and 
+ select &quot;For...&quot; from the list.</p>
+
+<p class=Body-Text-Indent-2>3. Enter &quot;object&quot; in the name field 
+ and click the &quot;Insert&quot; button and and select &quot;Use Defined 
+ Struct...&quot; from the list.</p>
+
+<p class=Body-Text-Indent-2>4. In the USE STRUCT dialog click the arrow 
+ button next to the &quot;Type name&quot; field and select &quot;object&quot;. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Click the 
+ OK button.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_4_1.gif"
+						style="border-style: none;
+								border: none;
+								width: 1136px;
+								height: 301px;"
+						width=1136
+						height=301
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 1. Selecting the &quot;object&quot; structure definition.</span></p>
+
+<p>&nbsp;</p>
+
+<p>To say when the FOR ends we need to enter a value into the &quot;Stop&quot; 
+ field. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ current element of the FOR can be referenced using the special name &quot;this&quot;. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Within 
+ the object STRUCT we want to check if the type element is zero.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>5. Enter &quot;this.type == 0&quot; into the 
+ &quot;Stop&quot; field and click OK to close the FOR dialog, then OK to 
+ close the STRUCT dialog.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_4_2.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 2. The end of the object list is marked with type of zero.</span></p>
+
+<p>&nbsp;</p>
+
+<p>The tree window is now much more useful since we now handle the header 
+ and the array of graphical objects. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->All 
+ that is left is to handle the colour table, which is covered in the next 
+ step of the tutorial. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ first let's get a better idea of how the template would appear to a user 
+ by turning turn off edit mode.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>6. Right-click the root node and select &quot;Disallow 
+ editing&quot; from the popup menu.</p>
+
+<p class=Body-Text-Indent-2>7. Expand the tree - you should now only see 
+ the &quot;header&quot; STRUCT and the &quot;objects&quot; FOR (array) 
+ at the top level.</p>
+
+<p class=Body-Text-Indent-2>8. Expand the FOR node - you should see 4 objects 
+ in the array. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Expand 
+ object[0] - you will see that it is a rect (as is object[2]).</p>
+
+<p class=Body-Text-Indent-2>9. Expand object[1] - you will see that it 
+ is a group object with sub-objects.</p>
+
+<p>&nbsp;</p>
+
+<p>Object[3] is not interesting, being just a dummy object used to detect 
+ the end of the list.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_4_3.gif"
+						style="border-style: none;
+								border: none;
+								width: 264px;
+								height: 513px;"
+						width=264
+						height=513
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 3. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Objects 
+ of the file.</span></p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Adding Useability</p>
+
+<p>&nbsp;</p>
+
+<p>It would be nice to be able to see some information about a node without 
+ having to expand it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is what the &quot;Display&quot; field in the STRUCT and USE STRUCT dialogs 
+ is for. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Here 
+ is a brief explanation of how it works.</p>
+
+<p>&nbsp;</p>
+
+<p>First you can just place a simple string in the &quot;Display&quot; 
+ field and it will be displayed in the tree next to the name of the STRUCT. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You can 
+ also embed one or more expressions in the string which are evaluated and 
+ the result inserted into the string. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ expression can be of any type and must be surrounded by braces {}.</p>
+
+<p>&nbsp;</p>
+
+<p>Finally, you can also say how the expression is displayed by placing 
+ a semicolon then a format specification after the expression, but inside 
+ the braces. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->What 
+ is a valid format specification depends on the type of the expression, 
+ but in brief you can use printf format specifications (as used in the 
+ C and C++ language) for integer, real, and string expressions, and strftime 
+ format specifications for date values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Boolean 
+ expressions neither need or support format specifications.)</p>
+
+<p>&nbsp;</p>
+
+<p>Here is an example: &quot;X = {this.x;%.2f}, Y = {this.y;%.2f}&quot;. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This would 
+ display something like &quot;X = 10.00, Y = 0.02&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>10. Turn on edit mode again by right-clicking 
+ the root element and selecting &quot;Allow Editing&quot;.</p>
+
+<p class=Body-Text-Indent-2>11. Right-click the &quot;object&quot; structure 
+ definition (immediately below the root node), and select &quot;Edit...&quot;.</p>
+
+<p class=Body-Text-Indent-2>12. In the Display field (above Comments) put 
+ &quot;{this.type==1?&quot;RECT&quot;:(this.type==2?&quot;CIRCLE&quot;:(this.type==10?&quot;GROUP&quot;:&quot;END&quot;))}&quot;. 
+ Click OK.</p>
+
+<p>&nbsp;</p>
+
+<p>It might also be nice to see information about particular objects. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ will display the rectangle dimensions in the tree view next to the &quot;rect&quot; 
+ node.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>13. Make sure the &quot;rect&quot; node is 
+ visible in the first &quot;IF&quot; node of the &quot;object&quot; structure 
+ definition and double-click it to edit it.</p>
+
+<p class=Body-Text-Indent-2>14. In the &quot;rect&quot; STRUCT dialog change 
+ the &quot;Display&quot; field to say &quot;{this.width} X {this.height}&quot; 
+ and click OK.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_4_4.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><span style="font-weight: bold;"><br>
+<br>
+Figure 4. Displaying the rect width and height in the tree.</span></p>
+
+<p>&nbsp;</p>
+
+<p>Now, in the tree view, you will see that, wherever a &quot;rect&quot; 
+ node is displayed, the dimensions of the rectangle are also shown.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_4_5.gif"
+						style="border-style: none;
+								border: none;
+								width: 266px;
+								height: 438px;"
+						width=266
+						height=438
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 5. Display fields used to show object type and rect dimensions.</span></p>
+
+<p>&nbsp;</p>
+
+<p>You could also add the coordinates of the &quot;rect&quot; to the display, 
+ or change the &quot;Display&quot; field of the &quot;circle&quot; STRUCT 
+ to display the radius. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Later 
+ in the tutorial we will also see how to display the colour name of the 
+ object.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Counting Objects</p>
+
+<p>&nbsp;</p>
+
+<p>Another useful facility might be a count of the total number of rectangles 
+ and circles in the whole file, including all nested ones. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ do this we need to initialise two count variables at the start of the 
+ template, update them whenever we encounter one, then display the results.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>15. Double-click the root node to edit it again, 
+ then select the &quot;object [FOR]&quot; element and insert an &quot;Expression 
+ Evaluation...&quot;.</p>
+
+<p class=Body-Text-Indent-2>16. In the &quot;Expression&quot; field enter 
+ &quot;rect_count = circle_count = 0&quot;, leave the check boxes off, 
+ and click OK.</p>
+
+<p class=Body-Text-Indent-2>17. Now select the &quot;object [STRUCT DEFN]&quot; 
+ element and click the &quot;Edit...&quot; button to open the &quot;object&quot; 
+ STRUCT dialog.</p>
+
+<p class=Body-Text-Indent-2>18. Select the &quot;[IF] - rect [STRUCT]&quot; 
+ element and click the &quot;Edit...&quot; button, then click the &quot;Edit...&quot; 
+ button in the IF dialog.</p>
+
+<p class=Body-Text-Indent-2>19. Now in the &quot;rect&quot; STRUCT dialog 
+ select the last (blank) entry and Insert an &quot;Expression Evaluation...&quot;.</p>
+
+<p class=Body-Text-Indent-2>20. In the &quot;Expression&quot; field enter 
+ &quot;rect_count = rect_count + 1&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Click 
+ OK to close the EVAL dialog.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_4_6.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><br>
+<span style="font-weight: bold;"><br>
+Figure 6. STRUCT for &quot;rect&quot; object.</span></p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>21. Click OK to close the &quot;rect&quot; 
+ STRUCT dialog and click OK to close the IF dialog.</p>
+
+<p class=Body-Text-Indent-2>22. Now repeat the process for the &quot;[IF] 
+ - circle [STRUCT]&quot; but enter &quot;circle_count = circle_count + 
+ 1&quot; in the &quot;Expression&quot; field.</p>
+
+<p class=Body-Text-Indent-2>23. Click OK in the top four dialogs to get 
+ back to the root STRUCT dialog.</p>
+
+<p class=Body-Text-Indent-2>24. Finally display the counts by adding &quot;{rect_count} 
+ rectangle(s), {circle_count} circle(s)&quot; to the &quot;Display&quot; 
+ field and click OK to save the changes.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="tute2_4_7.gif"
+						style="border-style: none;
+								border: none;
+								width: 444px;
+								height: 301px;"
+						width=444
+						height=301
+						border=0><br>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><span style="font-weight: bold;">Figure 7. STRUCT for 
+ root node.</span></p>
+
+<p>&nbsp;</p>
+
+<p>In the root node you should now see that the file contains 5 rectangles 
+ and 1 circle.</p>
+
+<p>&nbsp;</p>
+
+<p>In the next part of the tutorial we will finish off the template by 
+ adding the colour table.</p>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><a HREF="TemplateTute2-3.htm"><img src="../back.gif"
+													style="border-style: none;
+															border: none;
+															width: 51px;
+															height: 22px;"
+													width=51
+													height=22
+													border=0></a> <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a 
+ HREF="TemplateTute2-5.htm"><!--kadov_tag{{</spaces>}}--><img src="../next.gif"
+	style="border-style: none;
+			border: none;
+			width: 51px;
+			height: 22px;"
+	width=51
+	height=22
+	border=0></a></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

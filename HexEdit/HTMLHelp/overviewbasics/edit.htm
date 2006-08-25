@@ -1,0 +1,235 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Editing</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=copyright value="1999-2001 Expert Commercial Software">
+<meta name=date content="05 28, 2001 4:43:03 PM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1149>
+<meta name=layout-width content=1210>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Editing</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>When editing a file HexEdit behaves much like a word-processor or editor. 
+ You can move the cursor around using the keyboard or the mouse (see <a 
+ href="move.htm">Moving Around</a>). You can select text with the keyboard 
+ or mouse and cut, paste etc (see <a href="clipboard.htm">Selecting and 
+ the Clipboard</a>).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>One difference is that there are two separate areas for editing – the 
+ hex area and the character area (although either area can be disabled). 
+ You can enter any byte value in the hex area but only by typing two hex 
+ digits – HexEdit beeps if you type any other characters. On the other 
+ hand you can only enter ASCII (or EBCDIC) characters in the character 
+ area. To quickly flip between the areas use the Tab key.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Modes</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>There are two sets of toggled states that affect editing behaviour. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The first 
+ toggles between read-only and read-write modes; the 2nd toggles between 
+ overtype and insert modes.</p>
+
+<p>&nbsp;</p>
+
+<p>If you are in read-only mode then you cannot modify the file at all. 
+ This mode is separately controllable for each window so you can have two 
+ windows on the same file in different modes. But if the <span style="font-style: italic;">file</span> 
+ itself is opened read-only then all windows for the file must remain read-only. 
+ The RO/RW indicator on the status bar indicates the current mode – you 
+ can double-click this indicator to toggle the state.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The Insert/Overtype mode is changed (similarly to the read-only mode) 
+ by double clicking the INS/OVR status bar indicator toggles the state. 
+ Both modes have uses and limitations as explained below..</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>In insert mode the length of the file may change. As you enter bytes 
+ the following ones are shifted forward. Similarly deleting, cutting etc 
+ removes data and shifts the following bytes backward. But in overtype 
+ mode existing bytes are never moved, instead changing bytes destroys their 
+ previous value. Further you cannot delete or cut (but you can copy) to 
+ the clipboard in overtype mode, and pasting overwrites rather than inserting.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>In many types of binary files it is essential that any changes do not 
+ move bytes around and the length of the file does not change – for safety 
+ always edit these types of files in overtype mode. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Another 
+ problem with insert mode is that if you insert or deletes bytes near the 
+ start of a very large file then the whole file needs to be rewritten which 
+ may take a lot of time.</p>
+
+<p>&nbsp;</p>
+
+<p>On the other hand it is often very useful to be able to insert bytes 
+ within a binary file. Also, to add to the end of a file you must be in 
+ insert mode.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Undo</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>When you make changes to a file, HexEdit keeps track of these changes 
+ and allows you to undo them. In fact HexEdit uses this undo information 
+ plus the original file on disk to show you what the file is currently 
+ like. This means that you can quickly edit very large files since, unlike 
+ many editors, the whole file does not have to be read into memory (or 
+ some sort of virtual memory). But this system does have the disadvantage 
+ that you cannot undo changes that were made before you last saved the 
+ file to disk. Also if you insert or delete bytes in the file, then HexEdit 
+ has to make a copy of the file while saving it which can be very slow 
+ for a large file – another good reason to work in Overtype mode.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>As well as a file-level undo, which keeps track of changes to the file, 
+ HexEdit also has a window-level undo that keeps track of cursor movement, 
+ changes made to the display etc. However, since changes made to the file 
+ can affect the display in another window for the same file HexEdit must 
+ take special precautions to keep its internal structures consistent. If 
+ you undo a change to the file in one window, all display changes in other 
+ windows on that file are undone back to the point in time when the original 
+ file change was made. Moreover, if you try to undo back past a change 
+ made in another window HexEdit will ask you if you really want to undo 
+ the change.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Change Tracking</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>New in version 3.0 of HexEdit is the ability to track all the changes 
+ you have made to a file, since you opened (or last saved) it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ shows where bytes have been replaced, inserted and deleted. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that, it does not show how the changes were made - for example, if you 
+ delete 20 bytes then insert 20 bytes this will be shown as 20 bytes having 
+ been replaced, since that is the effective change with what is stored 
+ on disk.</p>
+
+<p>&nbsp;</p>
+
+<p>Replacements are shown with a red underline, insertions with a (lighter 
+ shade of) red background, and deletions are marked with a red block at 
+ the deletion points. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ the hex area the deletion also shows a count of the number of bytes deleted 
+ when it is less than 10. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ change tracking color can be changed from the default of red by changing 
+ it in the current color scheme using the <a HREF="../dlg_options/HIDD_OPT_PARTITIONS.htm">Colour 
+ Options page</a> of the Options dialog.</p>
+
+<p>Display of change tracking can be toggled using the <a HREF="../cmd_misc/HID_TRACK_CHANGES.htm"><img 
+ src="../cmd_misc/change_track.gif"
+	style="border: none;
+			width: 22px;
+			height: 23px;"
+	width=22
+	height=23
+	border=0></a> button on the Edit Bar, or using the Change Tracking 
+ check box in the <a HREF="../dlg_options/HIDD_OPT_WINDOW.htm">Window Display 
+ Options page</a> of the Options dialog.</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-weight: bold;">File Handling</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>HexEdit behaves like many Windows programs, such as word-processors, 
+ when it comes to the opening, closing, saving etc of files. The only difference 
+ is that instead of HexEdit being associated with a particular type of 
+ “document”, you can work with any type of file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ the File Open Dialog you will see (by default) all files, since the default 
+ file type is “All Files (*.*)”. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can, however, select different file filters from the &quot;Files of Type&quot; 
+ drop down list -- you can even control what filters are shown in the filter 
+ list with the Filters page of the Options dialog.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">Read only</span> check box in the 
+ File Open dialog allows you to open a file for read only. You may want 
+ to do this so that you don’t accidentally modify the file or to allow 
+ other software to simultaneously read the file while you have it open. 
+ If the file <span style="font-style: italic;">must</span> be opened read-only 
+ because it is a hidden or system file or because something else is reading 
+ it then HexEdit will warn you. Note that even if a file is not opened 
+ read-only a window on that file may be read-only (see above).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">For further information see:</span></p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\menus\menu_edit.htm">Edit 
+ menu</a>&nbsp;for information on the Undo, Allow Changes and Insert commands</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\bars\AFX_HIDW_STATUS_BAR.htm">Status 
+ Bar</a>&nbsp;for information on RO/RW and INS/OVR indicators</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\menus\menu_file.htm">File 
+ menu</a>&nbsp;to see options for opening, creating and saving files</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\dlg_other\AFX_HIDD_FILEOPEN.htm">File 
+ Open Dialog</a>&nbsp;to see options available when opening an existing 
+ file</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\dlg_other\AFX_HIDD_FILESAVE.htm">File 
+ Save Dialog</a>&nbsp;to see options available when saving a file under 
+ a new name</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\dlg_options\Filters.htm">Filters 
+ page</a> to change the filters list displayed in the File Open and File 
+ Save dialogs</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;">&nbsp;</p>
+
+</body>
+
+</html>

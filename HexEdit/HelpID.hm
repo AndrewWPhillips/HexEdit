@@ -1,0 +1,117 @@
+// HELPID.HM - user defined resource IDs (< 0xFFFF)
+
+// Copyright (c) 1999 by Andrew W. Phillips.
+//
+// No restrictions are placed on the noncommercial use of this code,
+// as long as this text (from the above copyright notice to the
+// disclaimer below) is preserved.
+//
+// This code may be redistributed as long as it remains unmodified
+// and is not sold for profit without the author's written consent.
+//
+// This code, or any part of it, may not be used in any software that
+// is sold for profit, without the author's written consent.
+//
+// DISCLAIMER: This file is provided "as is" with no expressed or
+// implied warranty. The author accepts no liability for any damage
+// or loss of business that this product may cause.
+//
+
+// We need these IDs that are not automatically generated
+#define HIDD_IMPORT_MOTOROLA          0x10060
+#define HIDD_IMPORT_INTEL             0x10061
+#define HIDC_DISCON                   0x1006E
+#define HID_TIPOFTHEDAY               0x1006F
+
+// These help IDs are not generated automatically
+#define HIDD_EMAIL_HELP			      0x01000
+#define HID_EMAIL_SEND			      0x01001
+#define HID_MULTIPLAY_OK		      0x01010
+#define HIDD_MACRO_SAVE_HELP          0x01020
+#define HID_MACRO_SAVE                0x01021
+#define HIDD_REGISTER_HELP            0x01030
+#define HID_REGISTER_INSTALL          0x01031
+#define HIDD_REG_HELP                 0x01040
+#define HID_REG_FORM                  0x01041
+#define HID_REG_FORM_US               0x01042
+#define HIDC_HELP_BUTTON              0x01050
+#define HIDD_ALGORITHM_HELP           0x01060
+#define HIDD_PASSWORD_HELP            0x01070
+#define HIDD_MULTIPLAY_HELP           0x01080
+#define HIDD_CLEAR_HIST_HELP          0x01090
+#define HIDD_BOOKMARKS_HELP           0x010A0
+#define HIDD_RECENT_FILES_HELP        0x010B0
+#define HIDD_NEW_SCHEME_HELP          0x010C0
+#define HIDD_CSRC_HELP                0x010D0
+#define HIDD_NEW_FILE_HELP            0x010E0
+
+#define HIDD_CUST_COMMANDS            0x01100
+#define HIDD_CUST_TOOLBARS            0x01101
+#define HIDD_CUST_TOOLS               0x01102
+#define HIDD_CUST_KEYBOARD            0x01103
+#define HIDD_CUST_MENU                0x01104
+#define HIDD_CUST_MOUSE               0x01105
+#define HIDD_CUST_OPTIONS             0x01106
+#define HIDC_CLEAR_LISTS              0x0110A
+
+#define HIDD_FIND_SIMPLE_HELP         0x01110
+#define HIDD_FIND_HEX_HELP            0x01111
+#define HIDD_FIND_TEXT_HELP           0x01112
+#define HIDD_FIND_NUMBER_HELP         0x01113
+#define HIDD_FIND_REPLACE_HELP        0x01114
+
+#define HIDD_DFFD_DATA                0x20115
+#define HIDD_DFFD_EVAL                0x20124
+#define HIDD_DFFD_FOR                 0x20117
+#define HIDD_DFFD_GLOBAL              0x20119
+#define HIDD_DFFD_IF                  0x20118
+#define HIDD_DFFD_JUMP                0x20125
+#define HIDD_DFFD_STRUCT              0x20116
+#define HIDD_DFFD_STRUCT_DEFN         0x20000
+#define HIDD_DFFD_USE_STRUCT          0x20126
+#define HIDD_TPARSE                   0x20130
+#define HIDD_DFFD_SWITCH              0x20133
+
+// These are for invoking tutorials directly
+#define HID_HELP_TUTE1                0x28174
+#define HID_HELP_TUTE2                0x28175
+#define HID_HELP_TUTE3                0x28176
+#define HID_HELP_TUTE4                0x28177
+#define HID_HELP_TUTE5                0x28178
+#define HID_HELP_TUTE6                0x28179
+#define HID_HELP_TUTE7                0x2817A
+#define HID_HELP_TUTE8                0x2817B
+#define HID_HELP_TUTE9                0x2817C
+
+// Help for AfxMessageBoxes
+#define HID_DFFD_RO                   0x01200
+
+// Since out makehelp.bat file only work for ID_ and IDM_ entries in resource.h we have to add these ourselves
+// Note: I tried changing IDC_FONTNAME to ID_FONTNAME but it causes crashes for some reason.
+#define HIDC_SEARCH                   0x18067
+#define HIDC_JUMP_HEX                 0x18069
+#define HIDC_JUMP_DEC                 0x1806B
+#define HIDC_FONTNAME                 0x18134
+#define HIDC_FONTSIZE                 0x18135
+
+#define HID_BARS_GENERAL              0x5E81B
+
+// BCG customise controls
+#define HID_BCG_DLG                   0x44020
+#define HID_BCG_STATIC                0x50FFF
+#define HID_BCG_STATIC2               0x4507C
+#define HID_BCG_STATIC3               0x45088
+#define HID_BCG_STATIC4               0x4509F
+#define HID_BCG_STATIC5               0x45087
+#define HID_BCG_ICON                  0x4508E
+#define HID_BCG_ICON2                 0x4507B
+#define HID_BCG_DESC                  0x45082
+#define HID_BCG_TOOLS                 0x41001
+#define HID_BCG_TOOL_NEW              0x41002
+#define HID_BCG_TOOL_DEL              0x41003
+#define HID_BCG_TOOL_UP               0x41004
+#define HID_BCG_TOOL_DOWN             0x41005
+#define HID_BCG_TOOL_CMD              0x4521A
+#define HID_BCG_TOOL_SEL              0x4521B
+#define HID_BCG_TOOL_ARGS             0x4521C
+#define HID_BCG_TOOL_DIR              0x4521D

@@ -1,0 +1,378 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Parse Types from Source Code Dialog</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=2292>
+<meta name=layout-width content=1125>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;"><span style="font-family: Arial;">Parse 
+ Types from Source Code Dialog</span></h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="Parse_dlg.gif" style="border-style: none;
+								border: none;
+								width: 371px;
+								height: 471px;" width="371" height="471" border="0"></p>
+
+<p>&nbsp;</p>
+
+<p>This dialog allows you to add data types by parsing them directly from 
+ C and C++ source code. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can simply copy source code from your editor or IDE and paste it into 
+ the text box so HexEdit can parse it and add it directly to the template. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The dialog 
+ can also be used to parse and store values and types for use in later 
+ parsing.</p>
+
+<p>&nbsp;</p>
+
+<p>The parsing of the code is extremely flexible being able to handle all 
+ C and C++ data types (including struct, union, arrays, pointers, enums 
+ etc), base classes, vtable pointers, macros with and without parameters 
+ (#define), include files (#include), conditional compilation (#if etc), 
+ #pragma pack(), some C++ template syntax, typedef, constant (compile-time) 
+ expressions, scope operator (::), etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ will even scan and ignore function declarations and definitions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="../overviewadvanced/Parser.htm">C/C++ Parser for Templates</a> 
+ for more information on how parsing works and the template elements it 
+ produces.</p>
+
+<p>&nbsp;</p>
+
+<p>The primary purpose for this dialog is for parsing structs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is common for C and C++ programs to save information by simply dumping 
+ structs to a binary file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you have the source code that created such a file then it is easy to create 
+ a template for the file simply by copying and parsing these structs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Importantly 
+ the parser handles padding alignment (which is determined by the compiler 
+ used to generate the code that writes the data to file) including #pragma 
+ pack() directives. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
+ 3.1 also now handles bit-fields which are common in structs written to 
+ file.</p>
+
+<p>&nbsp;</p>
+
+<p>If you are familiar with C you might also find it easier to type data 
+ structures and parse them rather than using the template editing dialogs.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Default alignment</p>
+
+<p>&nbsp;</p>
+
+<p>This is the default alignment used by the compiler. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, for the Microsoft VC++ compiler, this is set using the /Zp command 
+ line option (and defaults to 8 if no /Zp is used, for recent versions 
+ of the compiler).</p>
+
+<p>&nbsp;</p>
+
+<p>This value is used by the compiler to align members in memory to the 
+ specified value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is done by adding &quot;pad&quot; bytes between members and/or at the 
+ end of a struct/class. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Using 
+ a value of 1 means that no pad bytes are added.</p>
+
+<p>&nbsp;</p>
+
+<p>During parsing this value can be overridden using &quot;#pragma pack(n)&quot;. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The pack() 
+ parameter 'n' can be 1, 2, 4, 8, or 16. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Alignment 
+ is set back to the default if #pragma pack() with no parameter is used. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The common 
+ and useful, &quot;push&quot; and &quot;pop&quot; operations are also supported.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Windows values</p>
+
+<p>&nbsp;</p>
+
+<p>This checkbox says to use the predefined values taken from the file 
+ &quot;_windows_constants.txt&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ includes typical values for #defined values from standard header files 
+ (MAX_PATH etc) for Windows compilers and in Windows header files (FALSE, 
+ _MAX_FNAME, etc).</p>
+
+<p>&nbsp;</p>
+
+<p>Using this can save time hunting around for the correct file(s) to #include.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Custom values</p>
+
+<p>&nbsp;</p>
+
+<p>This says to use any predefined values saved using the &quot;Save new 
+ values&quot; checkbox explained below. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ saves time remembering values (or including your header files) for often 
+ used values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if you have previously saved the value MAX_STR you can use it 
+ in a declaration like this:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->char 
+ my_string[MAX_STR+1];</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Save new values</p>
+
+<p>&nbsp;</p>
+
+<p>Use this to save all parsed constant integer values into the file &quot;_custom_constants.txt&quot;. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This includes 
+ enum values and any values declared as &quot;static const&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, the following would save the values C1, C2 and MAX_STR which 
+ could be used for later parsing.</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->enum 
+ { C1 = 10, C2 = 20 };</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->static 
+ const int MAX_STR = 255;</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Standard Types</p>
+
+<p>&nbsp;</p>
+
+<p>This enables standard C/C++ types, so there is generally little point 
+ in disabling it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ option uses the file &quot;_standard_types.xml&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p>By default the file is configured for Micorosft VC++, but you can edit 
+ the file to suit any C or C++ compiler. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, you can set the size of an int, which often varies between compilers 
+ (usually 16 or 32 bits). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Moreover, 
+ you can adjust the size of several &quot;internal&quot; compiler types 
+ such as the size of bit-field storage units, enums, pointers, etc.</p>
+
+<p>&nbsp;</p>
+
+<p>This file includes all the types that the compiler knows about as well 
+ as all types defined in standard header files (FILE, struct tm, etc). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It also 
+ defines the special types &quot;enum$&quot; (typically the same as an 
+ int), &quot;bit_field$&quot; (the underlying bit-field storage unit, usually 
+ the same as an int), &quot;pointer$&quot; and &quot;function_pointer$&quot; 
+ (size of data and function pointers).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Common Types</p>
+
+<p>&nbsp;</p>
+
+<p>This enables a few types that are not standard but commonly defined. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They are 
+ stored in &quot;_common_types.xml&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Windows Types</p>
+
+<p>&nbsp;</p>
+
+<p>For your convenience a large number of types taken from Windows header 
+ files have been converted and saved here. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ are stored in &quot;_windows_types.xml&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Custom Types</p>
+
+<p>&nbsp;</p>
+
+<p>This says to use predefined types that you have stored using the &quot;Save 
+ new types&quot; option below. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ allows you to access types you commonly use without having to use #include 
+ files.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Save new types</p>
+
+<p>&nbsp;</p>
+
+<p>When parsing C/C++ source code HexEdit remembers any new types it encounters. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Using this 
+ option allows you to append these types to the file &quot;_custom_types.xml&quot; 
+ for later use. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->New 
+ types are create by enum, union, struct and class declarations, and typedefs. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For example, 
+ the following generates three types BYTE, A and B.</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->typedef 
+ unsigned char BYTE;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->struct 
+ A { short a; };</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->struct 
+ B { int b; <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->} 
+ bb;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->struct 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->{ 
+ long c; <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->} 
+ cc;</p>
+
+<p>&nbsp;</p>
+
+<p>Note that the final struct is generated and used on the fly, so no new 
+ type will be generated. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ above code will only add values for bb and cc to the template - the types 
+ BYTE and A are not used in the template and only define new types.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Configuration Files</p>
+
+<p>&nbsp;</p>
+
+<p>The checkboxes above enable various configuration files which are used 
+ for types and values for use in parsing. The type files are standard HexEdit 
+ template (XML) files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can edit them directly using the HexEdit template editing facilities or 
+ using a text editor. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ value configuration files are simple text files which are easily edited 
+ with a text editor.</p>
+
+<p>&nbsp;</p>
+
+<p>The files are located in the same directory where HexEdit stores its 
+ templates (see the registry entry for HKEY_CURRENT_USER\Software\ECSoftware\HexEdit\DataFormat\Folder). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Because 
+ the file names begin with an underscore (_) they are not seen in the template 
+ selection list unless template editing is turned on.</p>
+
+<p>&nbsp;</p>
+
+<p>The files are:</p>
+
+<p>&nbsp;</p>
+
+<p>_windows_constants.txt</p>
+
+<p>_custom_constants.txt</p>
+
+<p>_standard_types.xml</p>
+
+<p>_common_types.xml</p>
+
+<p>_windows_types.xml</p>
+
+<p>_custom_types_.xml</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Limitations</p>
+
+<p>&nbsp;</p>
+
+<p>The Windows edit box used to enter the source code is limited to 32,768 
+ bytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you need to parse larger amounts of source just put all the source in 
+ a text file and #include the file.</p>
+
+<p>&nbsp;</p>
+
+<p>For efficiency the parser assumes that the source code is well-formed 
+ and does not attempt to diagnose syntactic and semantic errors. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ full diagnosis of such errors it is recommended that you use your C/C++ 
+ compiler.</p>
+
+<p>&nbsp;</p>
+
+<p>
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name="_Version" value="65536" >
+<param name="_ExtentX" value="2117" >
+<param name="_ExtentY" value="556" >
+<param name="_StockProps" value="13" >
+<param name="ForeColor" value="0" >
+<param name="BackColor" value="13160660" >
+<param name="UseButton" value="-1" >
+<param name="ControlLabel" value="Related Topics" >
+<param name="UseIcon" value="0" >
+<param name="Items" value="C/C++ Parser for Templates;..\overviewadvanced\Parser.htm$$**$$DATA Dialog;DATA_Dialog.htm$$**$$Editing templates;..\overviewadvanced\Editing_templates.htm$$**$$STRUCT Dialog;STRUCT_Dialog.htm$$**$$Using Templates;..\overviewtools\Templates.htm$$**$$" >
+<param name="Image" value="" >
+<param name="FontInfo" value="MS Sans Serif,8,0,," >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_templates\Parser_dialog.htm" >
+<param name="_ID" value="RelatedTopics" >
+<param name="UseMenu" value="-1" >
+<param name="Frame" value="" >
+<param name="Window" value="" >
+</object>-->
+<OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM  NAME="Item1"  VALUE="C/C++ Parser for Templates;..\overviewadvanced\Parser.htm">
+  <PARAM  NAME="Item2"  VALUE="DATA Dialog;DATA_Dialog.htm">
+  <PARAM  NAME="Item3"  VALUE="Editing templates;..\overviewadvanced\Editing_templates.htm">
+  <PARAM  NAME="Item4"  VALUE="STRUCT Dialog;STRUCT_Dialog.htm">
+  <PARAM  NAME="Item5"  VALUE="Using Templates;..\overviewtools\Templates.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+ </p>
+
+</body>
+
+</html>

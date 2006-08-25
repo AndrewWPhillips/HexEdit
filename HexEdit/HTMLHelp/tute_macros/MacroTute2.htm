@@ -1,0 +1,571 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Creating a Macro to XOR Bytes</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=4563>
+<meta name=layout-width content=1210>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Step 2. Creating a Macro to XOR Bytes</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">This step of the tutorial will 
+ create a macro that takes a byte from one file, XOR's it with a byte from 
+ a 2nd file then writes the XOR'd value back to the first file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ then advances the cursor position in both files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ macro will be the nested macro that is called repeatedly from the main 
+ macro (created in step 4).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Creating work files</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">First we need to create two 
+ temporary files to work with. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ are needed when creating and testing the nested macro.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>1. With HexEdit running close the files you 
+ already have open, if any.</p>
+
+<p class=Body-Text-Indent-2>2. Open the New File dialog using the File/New 
+ menu item.</p>
+
+<p class=Body-Text-Indent-2>3. In the New File dialog select the &quot;Fill 
+ with: Hex&quot; option and enter &quot;AA&quot; for the hex value.</p>
+
+<p class=Body-Text-Indent-2>4. Specify a file size of 8 and make sure the 
+ &quot;Prompt for disk file name&quot; check box is off.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center><img src="tute0_2_1.gif"
+						style="border-style: none;
+								border: none;
+								width: 462px;
+								height: 374px;"
+						width=462
+						height=374
+						border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>Figure 2.1 Creating a new file filled with &quot;AA&quot;.</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that the exact length 
+ of the file does not matter as long as we have a few bytes to test our 
+ macro with. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ we do not want to use the &quot;Prompt for disk file name&quot; option 
+ as this will create a file on disk -- we do not need to retain the file, 
+ and will later just close it without saving it.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>5. Click OK to create the new file.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center><img src="tute0_2_2.gif"
+						style="border-style: none;
+								border: none;
+								width: 501px;
+								height: 264px;"
+						width=501
+						height=264
+						border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>Figure 2.2 The new file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Depending on your default new 
+ file options (see <a HREF="../dlg_options/HIDD_OPT_WINDOW.htm">Window 
+ Display Options page</a>) the window for this file might be marked read-only. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Check this 
+ using the 5th box from the right in the status bar, which says either 
+ RW (read-write) or RO (read-only). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ read-only make the file writeable by either double-clicking the RO box 
+ or by using the &quot;Read Only/Allow Changes&quot; button on the Standard 
+ Toolbar.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The file also needs to be in 
+ overwrite mode not insert mode. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can check this with the 4th box from the right in the status bar. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ should say &quot;OVR&quot; not &quot;INS&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ it says &quot;INS&quot; double-click the box or press the &quot;Insert&quot; 
+ key.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>6. If necessary double-click the RO status 
+ bar box and the INS box so that RW and OVR are displayed..</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><img src="tute0_2_3.gif"
+						style="border-style: none;
+								border: none;
+								width: 568px;
+								height: 100px;"
+						width=568
+						height=100
+						border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>Figure 2.3 Status bar boxes must show RW and OVR.</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Now we can create the 2nd file. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(The OVR/INS 
+ and RO/RW status of this file does not matter since we do not modify it.)</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>7. Create the second file in exactly the same 
+ way but this time fill it with hex &quot;F0 0F&quot;.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p class=Body-Text-Indent-2
+	style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center><img src="tute0_2_4.gif"
+						style="border-style: none;
+								border: none;
+								width: 462px;
+								height: 374px;"
+						width=462
+						height=374
+						border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>Figure 2.4 Creating another file filled with &quot;F0 
+ 0F&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>8. So we can better view the files select the 
+ Window/Tile Vertically menu option.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">We use the hex values &quot;AA&quot; 
+ and &quot;F0 0F&quot; so that we can verify that the bytes are being XOR'd 
+ correctly. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that AA XOR F0 = 5A and AA XOR 0F = A5. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ the macro has been run on the whole file it should contain repeated 5A 
+ and A5 values.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><img src="tute0_2_5.gif"
+						style="border-style: none;
+								border: none;
+								width: 1006px;
+								height: 385px;"
+						width=1006
+						height=385
+						border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>Figure 2.5 The two new files.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>Sometimes the 
+ Window/Tile Vertically command places the windows differently to the way 
+ you expect. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Check 
+ that the first window (with name HexEd1) is on the left and the 2nd (HexEd2) 
+ on the right. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ not you might like to swap them to avoid confusion.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that it is important that 
+ only two files are open as we are going to use the Window/Next Window 
+ command to cycle through the windows. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ other windows are open the macro will not work as expected.<span style="margin-top: 0; margin-bottom: 0;"> 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(However, 
+ other files may be open as long as their windows are minimised as the 
+ Next Window command only cycles through non-minimised windows.)</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Macro setup</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">There are a few other things 
+ we need to do before we start recording the macro. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ can open the calculator now since we will need to use it in the macro.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>9. Open the calculator using the Tools/Calculator... 
+ command. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Click 
+ the calculator C (Clear) button to clear any current value.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Also make sure the cursor is 
+ positioned at the first byte of each file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(It 
+ should already be since we just created the files.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can do this by pressing the Ctrl+Home keys in both files.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>10. Make sure that the active file is the first 
+ one (HexEd1), by clicking on its title bar.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>You can tell which 
+ is the active window as its title bar is not grey like the other(s).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Macro recording</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>10. Turn on macro recording by pressing the 
+ F7 key.</p>
+
+<p class=Body-Text-Indent-2>11. In the calculator set &quot;Bits:&quot; 
+ to be 8, since we are XOR'ing a byte at a time.</p>
+
+<p class=Body-Text-Indent-2>12. Press the &quot;@ Cursor&quot; button to 
+ load &quot;AA&quot; into the calculator, then press the &quot;XOR&quot; 
+ button.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><img src="tute0_2_6.gif"
+						style="border-style: none;
+								border: none;
+								width: 446px;
+								height: 319px;"
+						width=446
+						height=319
+						border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>Figure 2.6 The XOR button.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>13. On the HexEdit main menu select Window/Next 
+ Window to move to the other window.</p>
+
+<p class=Body-Text-Indent-2>14. Back in the calculator press the &quot;@ 
+ Cursor&quot; button again to load the first &quot;F0&quot; then press 
+ the &quot;=&quot; button.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The calculator should now display 
+ the result of the XOR operation.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><img src="tute0_2_9.gif"
+						style="border-style: none;
+								border: none;
+								width: 975px;
+								height: 512px;"
+						width=975
+						height=512
+						border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>Figure 2.7 <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Result 
+ of calculation (AA XOR F0).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">We will now save the result 
+ back to the first file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>15. On the HexEdit main menu select Window/Next 
+ Window to move back to the first window.</p>
+
+<p class=Body-Text-Indent-2>16. In the calculator click the &quot;Store&quot; 
+ button just to the right of the &quot;@ Cursor&quot; button.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>There are two 
+ calculator buttons labelled &quot;Store&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Make 
+ sure you use the one next to the &quot;@ Cursor&quot; button.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><img src="tute0_2_A.gif"
+						style="border-style: none;
+								border: none;
+								width: 446px;
+								height: 319px;"
+						width=446
+						height=319
+						border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			text-align: center;"
+	align=center>Figure 2.8 <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Store 
+ the result.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Advancing the cursor</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The last step is to advance 
+ the cursor one byte forward in both files.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>17. Click on the main title bar to take focus 
+ away from the calculator.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>Do not click on 
+ the either file's title bar or anywhere in the file windows with the mouse 
+ -- HexEdit will interpret that as an attempt to change to a file with 
+ that particular name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ this macro is run the file names will be different and the macro will 
+ generate an error when it can't find a file of the same name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This 
+ is why we use the Next Window command to swap between the files.)</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>18. Press the right arrow key to move the cursor 
+ one byte forward in the first window.</p>
+
+<p class=Body-Text-Indent-2>19. Select Window/Next Window to move to the 
+ second file.</p>
+
+<p class=Body-Text-Indent-2>20. Press the right arrow key to move the cursor 
+ one byte forward in the second window.</p>
+
+<p class=Body-Text-Indent-2>21. Select Window/Next Window to move back 
+ to the first file ready to repeat the whole operation.</p>
+
+<p class=Body-Text-Indent-2>22. Turn off macro recording by pressing the 
+ F7 key.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">In the next step we will test 
+ and save this macro.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><a href="MacroTute1.htm"><img src="../back.gif"
+												style="border-style: none;
+														border: none;
+														width: 51px;
+														height: 22px;"
+												width=51
+												height=22
+												border=0></a> <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a 
+ href="MacroTute3.htm"><!--kadov_tag{{</spaces>}}--><img src="../next.gif"
+														style="border-style: none;
+	border: none;
+	width: 51px;
+	height: 22px;"
+														width=51
+														height=22
+														border=0></a></p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+</body>
+
+</html>

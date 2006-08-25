@@ -1,0 +1,49 @@
+Creating web help
+-----------------
+
+- generate "WebHelp" from Robo HTML help (to d:\tmp\help\Hexedit.htm)
+  - use lowercase names?
+  - output to d:\tmp\tmp (creates help subdirectory)
+- replace wht_logo1.gif and wht_logo2,gif
+- in whstart.js add "home" to gsTollbarOrder string before "toc"
+- in whskin_tbars.htm add a "Home" button line before addButton("toc"
+	addButton("home",BTN_TEXT,"Home","","","","",0,0,"","","","","","");
+- remove BTN_IMG for other buttons, just use BTN_TEXT
+- in whtbar.js add section for "home" after "toc"
+	else if(sType=="home")
+	{
+		var svTitle="Home";
+		sButton="<a title=\"Home\" onclick=\"window.parent.location.replace('http://www.hexedit.com/');\">";
+		goToc=new button("home",sTitle,nWidth,nHeight,sI1,sI2,sI3,sI4,sI5,sI6);
+		gaObjBtns[nBtn]=goToc;
+		if(nStyle&BTN_TEXT)
+			sText=goToc.sText
+			
+		sButton+=genButton("Home",sI,nStyle);
+		sButton+="</a>";
+		bState=true;
+	}
+
+- import help folder into Frontpage (into root folder)
+- publish new web
+
+
+
+
+OLD PROCEDURE
+- do replacements in all files in d:\tmp\help (in the following order):
+  - replace strNvBrowse="<a with:
+    strNvBrowse="<a href='http://www.hexedit.com/' target='_top'>Home</a> | <a
+  - replace strNvBrowse="&lt; with:
+    strNvBrowse="<a href='http://www.hexedit.com/' target='_top'>Home</a> | &lt;
+  - search and replace "&gt;&gt;" with Next; "&lt;&lt;" with Previous
+- make sure d:\tmp\help\Hexedit.htm has a capital H
+- add prefix of help/ to all filenames in d:\tmp\help.htm
+  - replace SRC=' with SRC='help/
+  - replace href=" with href="help/
+- import all of d:\tmp\help\*.* (including images dir) into HexEdit web under folder help
+- import d:\tmp\help.htm into hexedit web & change title if nec.
+
+
+
+

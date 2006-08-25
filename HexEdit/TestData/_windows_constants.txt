@@ -1,0 +1,19 @@
+; version 1
+MAX_PATH|260
+_MAX_PATH|260
+_MAX_DRIVE|3
+_MAX_DIR|256
+_MAX_FNAME|256
+_MAX_EXT|256
+EXCEPTION_MAXIMUM_PARAMETERS|15
+; These probably wouldn't be used in a declaration, but include just in case
+FALSE|0
+TRUE|1
+; Standard C constants with MS Windows/VC++ values
+MB_LEN_MAX|5
+FILENAME_MAX|260
+FOPEN_MAX|20
+CLOCKS_PER_SEC|1000
+BUFSIZ|512
+EOF|-1
+NULL|0

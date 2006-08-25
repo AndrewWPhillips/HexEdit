@@ -1,0 +1,224 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Other Tools</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=copyright value="1999-2001 Expert Commercial Software">
+<meta name=date content="09 4, 2002 11:31:54 PM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1061>
+<meta name=layout-width content=1235>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Other Tools</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Comparisons</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>You can compare the data in any two (maximised) windows using Alt+C, 
+ even two parts of the same file. If a difference is found the offending 
+ bytes are selected in both windows – pressing Alt+C again will continue 
+ the comparison at the following byte. It’s often useful to tile (vertically) 
+ the two windows being compared and turn on Autofit mode before starting 
+ the comparison to easily see the results. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ if you turn on the highlighter all differences are automatically highlighted 
+ as you find them.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>While a long comparison (or search) is in progress the Address Tools 
+ in the Edit Bar are updated with the current address to show progress. 
+ If no differences are found (ie, the files are the same in both windows 
+ up to the end of file) then a message to that effect is displayed in the 
+ status bar and the cursor is not moved. If a difference is found (ie, 
+ a different byte was encountered or end of file was encountered in but 
+ one of the files) then a message is displayed in the status bar indicating 
+ the number of bytes that were the same before the difference was found.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Conversions</p>
+
+<p>&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">Convert</span> sub-menu on the 
+ <a HREF="..\menus\menu_operations.htm">Operations Menu</a> provides commands 
+ to convert between different character sets. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can convert between ASCII and EBCDIC and between the ASCII extensions 
+ of ANSI and IBM/OEM. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ convert just select the bytes you want to convert and use the conversion 
+ command.</p>
+
+<p>&nbsp;</p>
+
+<p>For all conversions the length of the selection does not change. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Any 
+ characters that cannot be converted are changed to null (ie zero) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->bytes.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Checksums and CRCs</p>
+
+<p>&nbsp;</p>
+
+<p>The <span style="font-weight: bold;">Checksum</span> sub-menu on the 
+ <a href="..\menus\menu_operations.htm">Operations Menu</a> provides commands 
+ to calculate checksums of the current selection. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ commands leave the result of the operation in the calculator.</p>
+
+<p>&nbsp;</p>
+
+<p>The checksum commands provide 1, 2, 4 and 8 byte checksums of the selection. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This is 
+ simply done by adding all bytes, words, double-words or quad-words of 
+ the selection together (throwing away any carry bits). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ commands are faster and more convenient than creating a keystroke macro 
+ to generate the checksum. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ for other types of checksums (eg, XOR checksums) you will need to use 
+ the calculator and a keystroke macro.</p>
+
+<p>&nbsp;</p>
+
+<p>The checksum commands require that the current selection length is a 
+ multiple of the operand size. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, for a 32-bit checksum the selection length must be a multiple 
+ of 4 bytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can easily check this by holding down the shift key, which not only tells 
+ you the selection length but the largest binary divisor of the length 
+ of the selection in square brackets. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ a 32-bit checksum the number in the square brackets must be 4, 8, 16 etc 
+ (ie, not 1 or 2).</p>
+
+<p>&nbsp;</p>
+
+<p>The CRC commands provide better error detection than simple checksums. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->CRC32 provides 
+ a 32 bit checksum which is better than CRC-CCITT which is a 16 bit checksum. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These commands 
+ can handle selections of any length. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that the CRC-CCITT provides the correct standard implementation of this 
+ algorithm -- many other programs calculate the incorrect value (due to 
+ some incorrect source code being published on the Internet).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Export and Import</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The Export and Import sub-menus 
+ on the <a HREF="..\menus\menu_file.htm">File menu</a> provide commands 
+ for writing binary data as a text file and reading such files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ types of files are often used with embedded systems test environments, 
+ EPROM programmers etc, but can also be useful for sending binary data 
+ over links the don't allow all binary values.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The Motorola-S format supports 
+ three types of records (S1, S2, and S3) which support 16, 24 and 32 bit 
+ addresses. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
+ supports the import and export of all three record types (unlike many 
+ other hex editors). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->One 
+ or more of these export options may be disabled if <span style="margin-top: 0; margin-bottom: 0;">the 
+ length of the selection combined with the starting address means that 
+ the address size is too small to be represented in a particular record 
+ type. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ S5 record count is checked to ensure whole lines of data are not lost 
+ (or a warning is shown if the S5 record is not present).</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">HexEdit exports standard Intel-hex 
+ files and imports standard as well as non-standard (but commonly generated) 
+ files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->All 
+ record types are handled and checked for errors but only &quot;00&quot; 
+ and &quot;01&quot; records types are required.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">HexEdit performs full error 
+ checking when importing Motorola-S and Intel-hex files including checksums 
+ (unlike some hex editors which ignore errors). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Further, 
+ all records must be contiguous so that you do not inadvertently move data 
+ to the wrong location.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">When exporting you have the 
+ option of specifying the starting address in the output records using 
+ <span style="font-weight: bold;">Export</span> section of the <a HREF="..\dlg_options\HIDD_OPT_SYSTEM.htm">System 
+ Options page</a>, or you can use the address of the selection within the 
+ file being edited. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(All 
+ exported records are contiguous.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also specify how many bytes of binary data are put into each output 
+ record using the &quot;Bytes per line&quot; option.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The &quot;hex text&quot; options 
+ provide no error checking but simply works with files that consist of 
+ pairs of hex digits each representing a byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ importing hex text HexEdit reads pairs of hex digits and converts them 
+ to the corresponding byte value; a single hex digit followed by whitespace 
+ becomes a single byte with the high nybble set to zero. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ exporting hex text the &quot;Bytes per line&quot; option of the <a HREF="..\dlg_options\HIDD_OPT_SYSTEM.htm">System 
+ Options page</a> is used but the starting address options are ignored.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">For further information see:</span></p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_tools\HID_EDIT_COMPARE.htm">Compare 
+ command</a>&nbsp;to find out how to compare files or parts of the same 
+ file</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\menus\menu_operations.htm">Operations 
+ Menu Commands</a> to find out about HexEdit's conversion and checksum/CRC 
+ commands</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\binary_files\InputOutput.htm">I/O 
+ and Character Sets</a> to find out about character sets and conversions</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\binary_files\Error_Checking.htm">Error 
+ Detection</a> to find out about checksums and CRCs</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\binary_files\Encoding.htm">Encoding 
+ Binary Data</a> for information on Motorola-S and Intel-hex formats</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;">&nbsp;</p>
+
+</body>
+
+</html>

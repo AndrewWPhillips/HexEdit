@@ -1,0 +1,233 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Find Number page</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=date content="09 4, 2002 11:36:04 PM">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1102>
+<meta name=layout-width content=1213>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;">Number Find Page</h2>
+
+<p>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="find4.gif"
+						style="border-style: none;
+								border: none;
+								width: 518px;
+								height: 241px;"
+						width=518
+						height=241
+						border=0></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>This page is used to search for numeric values.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Find</span></p>
+
+<p style="margin-left: 18.00pt;">Enter the number (in decimal) to look 
+ for here. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ format of the number depends on the <span style="font-weight: bold;">Format</span> 
+ selected (see below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ floating point format (IEEE or IBM) can specify a sign, a fractional part 
+ (following a decimal point) and an signed exponent (following an E or 
+ e). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A signed 
+ integer can specify an initial minus sign.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Note that for floating point formats the 
+ number you think you need to search for may not have the exact bit-pattern 
+ that you expect (see <a HREF="..\howdoi\HowSearchFloat.htm">How Do I Search 
+ for a Floating Point Number?</a>).</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Find Next</span></p>
+
+<p style="margin-left: 18.00pt;">Searches for (and selects if found) the 
+ next occurrence of the number.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Help</span></p>
+
+<p style="margin-left: 18.00pt;">Invokes help for this page.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Format</span></p>
+
+<p style="margin-left: 18.00pt;">This is the format of the number that 
+ you are searching for. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that all formats can come in various sizes (see <span style="font-weight: bold;">Size</span> 
+ below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ signed integer is in 2's-complement format. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="..\binary_files\Numbers.htm">Numbers</a> for more information 
+ on number formats.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Size</span></p>
+
+<p style="margin-left: 18.00pt;">The format, size and endianness are used 
+ to exactly specify the format and number of bytes to search for.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Big-endian</span></p>
+
+<p style="margin-left: 18.00pt;">If this option is specified then the number 
+ is in big-endian format. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that IBM floating point numbers are usually in big-endian format, but 
+ integers and IEEE floats on Intel machines are usually in little-endian 
+ format. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ the section on <span style="font-weight: bold;">Byte Order</span> in <a 
+ HREF="..\binary_files\Numbers.htm">Numbers</a> for more information.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Direction 
+ Up/Down</span></p>
+
+<p style="margin-left: 18.00pt;">These radio buttons say whether the search 
+ moves forward or backward in the file.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Scope: 
+ To Mark</span></p>
+
+<p style="margin-left: 18.00pt;">Sometimes it is useful to restrict a search 
+ to just part of a file, particularly if the file is very large. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ option means that the search is only done in those bytes from the current 
+ cursor position to the mark in the active file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can see how many bytes will be searched by viewing the &quot;Distance 
+ to Mark&quot; panes of the <a href="..\bars\AFX_HIDW_STATUS_BAR.htm">status 
+ bar</a>.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">This option is disabled if the current 
+ cursor position is on the wrong side of the mark (depending on the search 
+ direction - see above)</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Scope: 
+ Whole file</span></p>
+
+<p style="margin-left: 18.00pt;">Use this option if you want to search 
+ the whole file irrespective of the current cursor position in the file. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Depending 
+ on the direction of the search (see above) the file is searched starting 
+ at the first or last byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->After 
+ the first successful search with this scope is complete the scope then 
+ changes to &quot;To Start of File&quot; or &quot;To End of FIle&quot; 
+ (depending on the current search direction) so that you can just hit the 
+ &quot;Find Next&quot; button to find the next occurrence.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Scope: 
+ To Start/End of File</span></p>
+
+<p style="margin-left: 18.00pt;">The scope of the search is from the current 
+ cursor position to the end of file (or start of file if the current search 
+ direction is upwards). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ the end (or start) of file is reached you are asked if you want to continue 
+ the search from the other end of <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->the 
+ file back to the start.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Scope: 
+ All Open Files</span></p>
+
+<p style="margin-left: 18.00pt;">When this scope is used the current file 
+ is searched from the current cursor position to the end (or start if direction 
+ is upwards), and if nothing is found then other open files are searched 
+ in turn. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Finally, 
+ if no occurrences are found in all other files then the start (or end) 
+ of the current file is searched back to the initial position.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Alignment</span></p>
+
+<p style="margin-left: 18.00pt;">The alignment radio buttons can further 
+ restrict a match depending on the alignment of the matched number. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ word alignment means that the number must start on a word boundary (ie, 
+ at an even address). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ double word and quad word restrict matches to 4 and 8 byte boundaries. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The default 
+ is byte alignment which uses no alignment restrictions.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><span style="text-align: center;">
+<!--Metadata type="DesignerControl" startspan
+<object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
+		ID=RelatedTopics
+		BORDER=0
+		style="margin-top: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				margin-right: 0px;
+				vertical-align: baseline;"
+		align=bottom>
+<param name="_Version" value="65536" >
+<param name="_ExtentX" value="2117" >
+<param name="_ExtentY" value="556" >
+<param name="_StockProps" value="13" >
+<param name="ForeColor" value="0" >
+<param name="BackColor" value="13160660" >
+<param name="UseButton" value="-1" >
+<param name="ControlLabel" value="Related Topics" >
+<param name="UseIcon" value="0" >
+<param name="Items" value="Basic;Simple.htm$$**$$Hex;HexFind.htm$$**$$Replace;Replace.htm$$**$$Text;FindText.htm$$**$$" >
+<param name="Image" value="" >
+<param name="FontInfo" value="MS Sans Serif,8,0,," >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_find\FindNumber.htm" >
+<param name="_ID" value="RelatedTopics" >
+<param name="UseMenu" value="-1" >
+<param name="Frame" value="" >
+<param name="Window" value="" >
+</object>-->
+<OBJECT
+  CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+  ID="RelatedTopics"  TYPE="application/x-oleobject" >
+  <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
+  <PARAM  NAME="Button"  VALUE="Text:Related Topics">
+  <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
+  <PARAM  NAME="Item1"  VALUE="Basic;Simple.htm">
+  <PARAM  NAME="Item2"  VALUE="Hex;HexFind.htm">
+  <PARAM  NAME="Item3"  VALUE="Replace;Replace.htm">
+  <PARAM  NAME="Item4"  VALUE="Text;FindText.htm">
+</OBJECT>
+
+<!--Metadata type="DesignerControl" endspan-->
+ </span></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>
