@@ -1,0 +1,16 @@
+HexEdit 3.1 Release Notes
+=========================
+
+HexEdit introduces the much anticipated disk editor.  Under NT (NT, 2000, XP, Vista) you can edit volumes (even if not mounted on a drive letter) and raw disks and partitions.
+
+There are also major improvements to templates including case (switch), bit-fields (even arrays of bit-fields!) etc.  Other refinements include ability to hide fields (unless template editing mode is enabled)
+
+HexEdit also has the ability to parse C/C++ code and extract any data declarations it encounters and convert them into template elements.  This is typically used for C structs but can handle almost any C/C++ code thrown at it.  Just a few things that it can handle include: unions, enums, bit-fields, arrays, constant expressions (eg array size), all preprocessor commands (#define, #include, #ifdef, ##, etc), full padding support (including #pragma pack), all standard types and (optionally) all types declared in Windows headers, ability to extarct and save your own types and constants, etc etc.
+
+There were many other enhancements such as 36 new functions that can be used in expressions, for dealing with dates, strings, floating point operations etc.  Other new facilities include customizable sounds on various events, new insert block and email dialog options, etc.
+
+Ywo minor bugs were also fixed.
+
+See the What's New section of the help for more details.
+
+---- End of Release Notes ----
