@@ -100,9 +100,9 @@ HID_BCG_ICON2=HID_BCG_DLG
 ;#include <i:\Microsoft Visual Studio\vc98\mfc\include\afxhelp.hm>
 ;#include <i:\Visual Studio\vc98\mfc\include\afxhelp.hm>
 ;#include <D:\VisualStudio\VC98\MFC\Include\AFXHELP.HM>
-#include <D:\bcg590\BCGControlBar\help\BCGControlBar.hm>
+#include <I:\Devel\BCG6_2\BCGControlBar\Help\BCGControlBar.hm>
+;#include <D:\bcg590\BCGControlBar\help\BCGControlBar.hm>
 ;#include <I:\bcg\BCGControlBar\help\BCGControlBar.hm>
-
 
 [CONFIG]
 BrowseButtons()
