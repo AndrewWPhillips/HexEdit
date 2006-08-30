@@ -657,6 +657,112 @@ BOOL CHexEditApp::InitInstance()
         CBCGToolBar::ResetAll();
 #endif
 
+        switch (GetProfileInt("MainFrame", "ShowCalcDlg", 0))
+		{
+		case -1:
+			// nothing here - it's now up to BCG control bar stuff to hide or show the calc
+			break;
+		case 0:
+			// First run or hidden in pre-3.0 release: hide calc
+            pMainFrame->FloatControlBar(&pMainFrame->m_wndCalc,
+				CPoint(GetProfileInt("Window-Settings", "CalcX", 0), GetProfileInt("Window-Settings", "CalcY", 0)));
+            pMainFrame->ShowControlBar(&pMainFrame->m_wndCalc, FALSE, FALSE);
+			goto fix_reg_calc;
+		case 1:
+			// Shown in pre-3.0 release: show calc
+            pMainFrame->FloatControlBar(&pMainFrame->m_wndCalc,
+				CPoint(GetProfileInt("Window-Settings", "CalcX", 0), GetProfileInt("Window-Settings", "CalcY", 0)));
+            pMainFrame->ShowControlBar(&pMainFrame->m_wndCalc, TRUE, FALSE);
+		fix_reg_calc:
+            WriteProfileInt("MainFrame", "ShowCalcDlg", -1);  // bypass this code next time
+			WriteProfileString("Window-Settings", "CalcX", NULL);
+			WriteProfileString("Window-Settings", "CalcY", NULL);
+			break;
+		}
+
+        switch (GetProfileInt("MainFrame", "ShowBookmarkDlg", 0))
+		{
+		case -1:
+			// nothing here - it's now up to BCG control bar stuff to hide or show the dlg
+			break;
+		case 0:
+			// First run or hidden in pre-3.0 release: hide dlg
+            pMainFrame->FloatControlBar(&pMainFrame->m_wndBookmarks,
+				CPoint(GetProfileInt("Window-Settings", "BookmarksDlgX", 0), GetProfileInt("Window-Settings", "BookmarksDlgY", 0)));
+            pMainFrame->ShowControlBar(&pMainFrame->m_wndBookmarks, FALSE, FALSE);
+			goto fix_reg_bookmarks;
+		case 1:
+			// Shown in pre-3.0 release: show dlg
+            pMainFrame->FloatControlBar(&pMainFrame->m_wndBookmarks,
+				CPoint(GetProfileInt("Window-Settings", "BookmarksDlgX", 0), GetProfileInt("Window-Settings", "BookmarksDlgY", 0)));
+            pMainFrame->ShowControlBar(&pMainFrame->m_wndBookmarks, TRUE, FALSE);
+		fix_reg_bookmarks:
+            WriteProfileInt("MainFrame", "ShowBookmarkDlg", -1);  // signal to bypass this code next time
+			// Remove old reg settings (now handled by control bar reg settings)
+			WriteProfileString("Window-Settings", "BookmarksDlgX", NULL);
+			WriteProfileString("Window-Settings", "BookmarksDlgY", NULL);
+			WriteProfileString("Window-Settings", "BookmarksDlgWidth", NULL);
+			WriteProfileString("Window-Settings", "BookmarksDlgHeight", NULL);
+			break;
+		}
+
+        switch (GetProfileInt("MainFrame", "ShowFindDlg", 0))
+		{
+		case -1:
+			// nothing here - it's now up to BCG control bar stuff to hide or show the find dlg
+			break;
+		case 0:
+			// First run or hidden in pre-3.0 release: hide find dlg
+            pMainFrame->FloatControlBar(&pMainFrame->m_wndFind,
+				CPoint(GetProfileInt("Window-Settings", "FindX", 0), GetProfileInt("Window-Settings", "FindY", 0)));
+            pMainFrame->ShowControlBar(&pMainFrame->m_wndFind, FALSE, FALSE);
+			goto fix_reg_find;
+		case 1:
+			// Shown in pre-3.0 release: show find dlg
+            pMainFrame->FloatControlBar(&pMainFrame->m_wndFind,
+				CPoint(GetProfileInt("Window-Settings", "FindX", 0), GetProfileInt("Window-Settings", "FindY", 0)));
+            pMainFrame->ShowControlBar(&pMainFrame->m_wndFind, TRUE, FALSE);
+		fix_reg_find:
+            WriteProfileInt("MainFrame", "ShowFindDlg", -1);  // bypass this code next time
+			WriteProfileString("Window-Settings", "FindX", NULL);
+			WriteProfileString("Window-Settings", "FindY", NULL);
+			break;
+		}
+
+#ifdef EXPLORER_WND
+        if (GetProfileInt("MainFrame", "ShowExplorerDlg", 0) != -1)
+		{
+			pMainFrame->FloatControlBar(&pMainFrame->m_wndExpl, CPoint(0,0));
+			pMainFrame->ShowControlBar(&pMainFrame->m_wndExpl, FALSE, FALSE);
+            WriteProfileInt("MainFrame", "ShowExplorerDlg", -1);  // only the first time
+		}
+#endif
+
+        switch (GetProfileInt("MainFrame", "ShowPropDlg", 0))
+		{
+		case -1:
+			// nothing here - it's now up to BCG control bar stuff to hide or show the prop dlg
+			break;
+		case 0:
+			// First run or hidden in pre-3.0 release: hide prop dlg
+            pMainFrame->FloatControlBar(&pMainFrame->m_wndProp,
+				CPoint(GetProfileInt("Window-Settings", "PropX", 0), GetProfileInt("Window-Settings", "PropY", 0)));
+            pMainFrame->ShowControlBar(&pMainFrame->m_wndProp, FALSE, FALSE);
+			goto fix_reg_prop;
+		case 1:
+			// Shown in pre-3.0 release: show prop dlg
+            pMainFrame->FloatControlBar(&pMainFrame->m_wndProp,
+				CPoint(GetProfileInt("Window-Settings", "PropX", 0), GetProfileInt("Window-Settings", "PropY", 0)));
+            pMainFrame->ShowControlBar(&pMainFrame->m_wndProp, TRUE, FALSE);
+		fix_reg_prop:
+            WriteProfileInt("MainFrame", "ShowPropDlg", -1);  // bypass this code next time
+			WriteProfileString("Window-Settings", "PropX", NULL);
+			WriteProfileString("Window-Settings", "PropY", NULL);
+			break;
+		}
+
+		pMainFrame->RecalcLayout();
+
 #ifndef NO_SECURITY
         CString ss;
         switch (GetSecurity())
@@ -808,7 +914,7 @@ void CHexEditApp::OnFileOpen()
 
         // Store this here so the document can find out if it has to open read-only
         // Note; this is done for each file as it is cleared after each use in file_open
-	    ASSERT(theApp.open_current_readonly_ == -1);
+	    ASSERT(open_current_readonly_ == -1);
         open_current_readonly_ = (dlgFile.m_ofn.Flags & OFN_READONLY) != 0;
 
         CHexEditDoc *pdoc;
@@ -877,7 +983,7 @@ BOOL CHexEditApp::OnOpenRecentFile(UINT nID)
     // Save file name now since its index will be zero after it's opened
     CString file_name = (*m_pRecentFileList)[nIndex];
 
-    ASSERT(theApp.open_current_readonly_ == -1);
+    ASSERT(open_current_readonly_ == -1);
     if (OpenDocumentFile((*m_pRecentFileList)[nIndex]) == NULL)
     {
         m_pRecentFileList->Remove(nIndex);
@@ -977,6 +1083,8 @@ void CHexEditApp::OnRepairDialogbars()
 #ifdef EXPLORER_WND
 	mm->m_wndExpl.FixAndFloat(TRUE);
 #endif
+
+	mm->RecalcLayout();
 }
 
 void CHexEditApp::OnRepairCust()
@@ -2266,8 +2374,8 @@ void CHexEditApp::SaveOptions()
 void CHexEditApp::ClearHist(BOOL clear_search_hist, BOOL clear_recent_file_list, BOOL clear_bookmarks)
 {
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    CHexFileList *pfl = theApp.GetFileList();
-    CBookmarkList *pbl = theApp.GetBookmarkList();
+    CHexFileList *pfl = GetFileList();
+    CBookmarkList *pbl = GetBookmarkList();
     ASSERT(mm != NULL && pfl != NULL && pbl != NULL);
 
     if (clear_search_hist && mm != NULL)
@@ -2435,7 +2543,7 @@ void CHexEditApp::GetXMLFileList()
 
     xml_file_name_.clear();
 
-    ASSERT(theApp.xml_dir_.Right(1) == "\\");
+    ASSERT(xml_dir_.Right(1) == "\\");
     BOOL bContinue = ff.FindFile(xml_dir_ + _T("*.XML"));
 
     while (bContinue)
@@ -3129,9 +3237,9 @@ CString CHexEditApp::GetCurrentFilters()
     {
         CString s1, s2;
 
-        AfxExtractSubString(s1, theApp.current_filters_, ii*2, '|');
+        AfxExtractSubString(s1, current_filters_, ii*2, '|');
 
-        AfxExtractSubString(s2, theApp.current_filters_, ii*2+1, '|');
+        AfxExtractSubString(s2, current_filters_, ii*2+1, '|');
 
         if (s1.IsEmpty() && s2.IsEmpty())
             break;

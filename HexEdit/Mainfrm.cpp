@@ -351,28 +351,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		tmp_size.cx = tmp_size.cx*2/3;
 		tmp_size.cy = tmp_size.cy/2;
         m_wndCalc.SetMinSize(tmp_size);
-        switch (theApp.GetProfileInt("MainFrame", "ShowCalcDlg", 0))
-		{
-		case -1:
-			// nothing here - it's now up to BCG control bar stuff to hide or show the calc
-			break;
-		case 0:
-			// First run or hidden in pre-3.0 release: hide calc
-            FloatControlBar(&m_wndCalc,
-				CPoint(theApp.GetProfileInt("Window-Settings", "CalcX", 0), theApp.GetProfileInt("Window-Settings", "CalcY", 0)));
-            ShowControlBar(&m_wndCalc, FALSE, FALSE);
-			goto fix_reg_calc;
-		case 1:
-			// Shown in pre-3.0 release: show calc
-            FloatControlBar(&m_wndCalc,
-				CPoint(theApp.GetProfileInt("Window-Settings", "CalcX", 0), theApp.GetProfileInt("Window-Settings", "CalcY", 0)));
-            ShowControlBar(&m_wndCalc, TRUE, FALSE);
-		fix_reg_calc:
-            theApp.WriteProfileInt("MainFrame", "ShowCalcDlg", -1);  // bypass this code next time
-			theApp.WriteProfileString("Window-Settings", "CalcX", NULL);
-			theApp.WriteProfileString("Window-Settings", "CalcY", NULL);
-			break;
-		}
 
         m_wndBookmarks.SetWindowText("Bookmarks");
         m_wndBookmarks.EnableRollUp();
@@ -384,60 +362,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         tmp_size.cx /= 2;
         m_wndBookmarks.SetMinSize(tmp_size);
 
-        switch (theApp.GetProfileInt("MainFrame", "ShowBookmarkDlg", 0))
-		{
-		case -1:
-			// nothing here - it's now up to BCG control bar stuff to hide or show the dlg
-			break;
-		case 0:
-			// First run or hidden in pre-3.0 release: hide dlg
-            FloatControlBar(&m_wndBookmarks,
-				CPoint(theApp.GetProfileInt("Window-Settings", "BookmarksDlgX", 0), theApp.GetProfileInt("Window-Settings", "BookmarksDlgY", 0)));
-            ShowControlBar(&m_wndBookmarks, FALSE, FALSE);
-			goto fix_reg_bookmarks;
-		case 1:
-			// Shown in pre-3.0 release: show dlg
-            FloatControlBar(&m_wndBookmarks,
-				CPoint(theApp.GetProfileInt("Window-Settings", "BookmarksDlgX", 0), theApp.GetProfileInt("Window-Settings", "BookmarksDlgY", 0)));
-            ShowControlBar(&m_wndBookmarks, TRUE, FALSE);
-		fix_reg_bookmarks:
-            theApp.WriteProfileInt("MainFrame", "ShowBookmarkDlg", -1);  // signal to bypass this code next time
-			// Remove old reg settings (now handled by control bar reg settings)
-			theApp.WriteProfileString("Window-Settings", "BookmarksDlgX", NULL);
-			theApp.WriteProfileString("Window-Settings", "BookmarksDlgY", NULL);
-			theApp.WriteProfileString("Window-Settings", "BookmarksDlgWidth", NULL);
-			theApp.WriteProfileString("Window-Settings", "BookmarksDlgHeight", NULL);
-			break;
-		}
-
-#ifdef DIALOG_BAR
         m_wndFind.SetWindowText("Find");
         m_wndFind.EnableRollUp();
         m_wndFind.EnableDocking(dockable_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndFind.SetCaptionStyle(TRUE);
-        switch (theApp.GetProfileInt("MainFrame", "ShowFindDlg", 0))
-		{
-		case -1:
-			// nothing here - it's now up to BCG control bar stuff to hide or show the find dlg
-			break;
-		case 0:
-			// First run or hidden in pre-3.0 release: hide find dlg
-            FloatControlBar(&m_wndFind,
-				CPoint(theApp.GetProfileInt("Window-Settings", "FindX", 0), theApp.GetProfileInt("Window-Settings", "FindY", 0)));
-            ShowControlBar(&m_wndFind, FALSE, FALSE);
-			goto fix_reg_find;
-		case 1:
-			// Shown in pre-3.0 release: show find dlg
-            FloatControlBar(&m_wndFind,
-				CPoint(theApp.GetProfileInt("Window-Settings", "FindX", 0), theApp.GetProfileInt("Window-Settings", "FindY", 0)));
-            ShowControlBar(&m_wndFind, TRUE, FALSE);
-		fix_reg_find:
-            theApp.WriteProfileInt("MainFrame", "ShowFindDlg", -1);  // bypass this code next time
-			theApp.WriteProfileString("Window-Settings", "FindX", NULL);
-			theApp.WriteProfileString("Window-Settings", "FindY", NULL);
-			break;
-		}
-#endif
 
 #ifdef EXPLORER_WND
         // Set up the window
@@ -445,38 +373,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         m_wndExpl.EnableRollUp();
         m_wndExpl.EnableDocking(dockable_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndExpl.SetCaptionStyle(TRUE);
-        FloatControlBar(&m_wndExpl, CPoint(0,0));
-        ShowControlBar(&m_wndExpl, FALSE, FALSE);
 #endif
 
-#ifdef DIALOG_BAR
         m_wndProp.SetWindowText("Properties");
         m_wndProp.EnableRollUp();
         m_wndProp.EnableDocking(dockable_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndProp.SetCaptionStyle(TRUE);
-        switch (theApp.GetProfileInt("MainFrame", "ShowPropDlg", 0))
-		{
-		case -1:
-			// nothing here - it's now up to BCG control bar stuff to hide or show the prop dlg
-			break;
-		case 0:
-			// First run or hidden in pre-3.0 release: hide prop dlg
-            FloatControlBar(&m_wndProp,
-				CPoint(theApp.GetProfileInt("Window-Settings", "PropX", 0), theApp.GetProfileInt("Window-Settings", "PropY", 0)));
-            ShowControlBar(&m_wndProp, FALSE, FALSE);
-			goto fix_reg_prop;
-		case 1:
-			// Shown in pre-3.0 release: show prop dlg
-            FloatControlBar(&m_wndProp,
-				CPoint(theApp.GetProfileInt("Window-Settings", "PropX", 0), theApp.GetProfileInt("Window-Settings", "PropY", 0)));
-            ShowControlBar(&m_wndProp, TRUE, FALSE);
-		fix_reg_prop:
-            theApp.WriteProfileInt("MainFrame", "ShowPropDlg", -1);  // bypass this code next time
-			theApp.WriteProfileString("Window-Settings", "PropX", NULL);
-			theApp.WriteProfileString("Window-Settings", "PropY", NULL);
-			break;
-		}
-#endif
 
         DockControlBar(&m_wndBar1);
         DockControlBar(&m_wndBar2);
@@ -718,6 +620,13 @@ void CMainFrame::OnClose()
 
 	if (aa->delete_all_settings_)
 		remove(m_strImagesFileName);
+
+	if (!aa->is_nt_)
+	{
+        if (!m_wndProp.IsFloating())
+            m_wndProp.ToggleDocking();
+        ShowControlBar(&m_wndProp, FALSE, FALSE); // hide it otherwise BCG/MFC/Windows gets confused on next open
+	}
 
     CBCGMDIFrameWnd::OnClose();
 }
