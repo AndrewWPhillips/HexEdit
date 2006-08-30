@@ -5551,6 +5551,14 @@ void CHexEditView::OnUpdateBookmarksHide(CCmdUI* pCmdUI)
 
 void CHexEditView::OnBookmarkToggle() 
 {
+    if (GetDocument()->pfile1_ == NULL)
+	{
+        ::HMessageBox("Bookmarks can only be added to disk files.\r\n"
+			          "Please save the file to disk and try again.");
+        ((CHexEditApp *)AfxGetApp())->mac_error_ = 5;
+		return;
+	}
+
     int index;
     CBookmarkList *pbl = theApp.GetBookmarkList();
 
@@ -5564,7 +5572,6 @@ void CHexEditView::OnBookmarkToggle()
 
         CString bm_name;
         bm_name.Format("%s%05ld", dv_name, long(last));
-        ASSERT(GetDocument()->pfile1_ != NULL);
         pbl->AddBookmark(bm_name, GetDocument()->pfile1_->GetFilePath(),
                          GetPos(), NULL, GetDocument());
 
