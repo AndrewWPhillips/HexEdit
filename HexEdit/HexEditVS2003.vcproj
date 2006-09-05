@@ -1039,10 +1039,10 @@
 				RelativePath=".\TestData\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\TestData\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\TestData\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">
@@ -1204,6 +1204,152 @@
 			<File
 				RelativePath=".\TreeColumn_src\TreeColumn.h">
 			</File>
+		</Filter>
+		<Filter
+			Name="zlib"
+			Filter="">
+			<File
+				RelativePath=".\zlib\adler32.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\compress.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\crc32.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\deflate.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\gzio.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\infback.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\inffast.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\inflate.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\inftrees.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\trees.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\uncompr.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\zlib\zutil.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<Filter
+				Name="header"
+				Filter="">
+				<File
+					RelativePath=".\zlib\crc32.h">
+				</File>
+				<File
+					RelativePath=".\zlib\deflate.h">
+				</File>
+				<File
+					RelativePath=".\zlib\inffast.h">
+				</File>
+				<File
+					RelativePath=".\zlib\inffixed.h">
+				</File>
+				<File
+					RelativePath=".\zlib\inflate.h">
+				</File>
+				<File
+					RelativePath=".\zlib\inftrees.h">
+				</File>
+				<File
+					RelativePath=".\zlib\trees.h">
+				</File>
+				<File
+					RelativePath=".\zlib\zconf.h">
+				</File>
+				<File
+					RelativePath=".\zlib\zlib.h">
+				</File>
+				<File
+					RelativePath=".\zlib\zutil.h">
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="manifest.xml">

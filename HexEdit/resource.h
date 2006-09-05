@@ -1098,6 +1098,8 @@
 #define ID_EDIT_APPENDFILE              32931
 #define ID_EDIT_APPENDSAMEFILE          32932
 #define ID_UNDO_CHANGES                 32933
+#define ID_ZLIB_COMPRESS                32935
+#define ID_ZLIB_DECOMPRESS              32936
 #define ID_IMPORT_HEX_TEXT              32940
 #define ID_IMPORT_MOTOROLA_S            32941
 #define ID_IMPORT_INTEL                 32942

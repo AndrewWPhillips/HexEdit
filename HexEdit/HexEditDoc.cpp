@@ -1630,11 +1630,11 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
         else
         {
             // Set up the file as a temp data file
-            int idx = AddDataFile(file_name, true);
+            int idx = AddDataFile(file_name, TRUE);
             if (idx == -1)
             {
                 ::HMessageBox("Too many temporary files\n"
-                              "Try saving the file and try again.");
+                              "Try saving the file then try again.");
                 theApp.mac_error_ = 10;
                 return -1;
             }

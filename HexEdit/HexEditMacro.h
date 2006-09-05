@@ -293,7 +293,10 @@ enum km_type
     km_insert_str,              // Always follows km_insert and used to store fill value string
 
     km_seed,                    // Seed random number generators 0 = random, 1 = from calc
-    km_last // = 240?           // Keep at end
+
+	// Added in 3.2
+	km_compress,                // 1 = compress, 2 = decompress (0 = options?)
+    km_last // = 241?           // Keep at end
 };
 
 // If/when we reach 255 we can recycle km_unused, km_invert, km_neg/km_inc/km_flip* etc

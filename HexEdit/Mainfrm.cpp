@@ -3299,11 +3299,11 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
             }
         }
 
-        // Check if Escape has been pressed
+        // Check if key has been pressed
         if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
         {
             VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-            if (msg.wParam == 27 &&
+            if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
                 ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
             {
                 StatusBarText("Search aborted");
@@ -3378,7 +3378,8 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                     while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
                         ;
 
-                    if (::HMessageBox("Abort search?", MB_YESNO) == IDYES)
+                    if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                        ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
                     {
                         delete[] buf;
                         // Start bg search anyway
@@ -3481,7 +3482,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
                 {
                     VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-                    if (msg.wParam == 27 &&
+                    if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
                         ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
                     {
                         delete[] buf;
@@ -3587,7 +3588,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
         if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
         {
             VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-            if (msg.wParam == 27 &&
+            if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
                 ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
             {
                 StatusBarText("Search aborted");
@@ -3653,7 +3654,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
                 {
                     VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-                    if (msg.wParam == 27 &&
+                    if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
                         ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
                     {
                         delete[] buf;
@@ -3806,7 +3807,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
                 {
                     VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-                    if (msg.wParam == 27 &&
+                    if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
                         ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
                     {
                         delete[] buf;

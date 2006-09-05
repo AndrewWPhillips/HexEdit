@@ -449,6 +449,13 @@ public:
     BOOL Undo(CView *pview, int index, BOOL same_view);
 
 	int AddDataFile(LPCTSTR name, BOOL temp = FALSE); // returns index where file is or -1 if no more slots available
+	BOOL DataFileSlotFree()
+	{
+		for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
+			if (data_file_[ii] == NULL)
+				return TRUE;  // found a free slot
+		return FALSE;
+	}
 	void RemoveDataFile(int idx);                     // frees a slot when file no longer used (and deletes temp file)
 
     HICON GetIcon() { return hicon_; }

@@ -112,7 +112,8 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
                     ;
 
-                if (::HMessageBox("Abort macro?", MB_YESNO) == IDYES)
+                if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                    ::HMessageBox("Abort macro?", MB_YESNO) == IDYES)
                 {
                     ((CMainFrame *)AfxGetMainWnd())->StatusBarText("Macro aborted");
                     mac_error_ = 10;
@@ -1430,6 +1431,19 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                     break;
                 case 2:  // decrypt
                     pv_->OnDecrypt();
+                    break;
+                default:
+                    ASSERT(0);
+                }
+                break;
+            case km_compress:
+                switch ((*pk).vv)
+                {
+                case 1:
+                    pv_->OnCompress();
+                    break;
+                case 2:
+                    pv_->OnDecompress();
                     break;
                 default:
                     ASSERT(0);

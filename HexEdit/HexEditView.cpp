@@ -38,6 +38,7 @@
 #include "SRecord.h"      // For import/export of Motorola S record files
 #include "IntelHex.h"     // For import/export of Intel Hex files
 #include "CopyCSrc.h"     // For Copy as C Source dialog
+#include "zlib/zlib.h"    // For compression
 #include "HelpID.hm"
 
 #ifdef _DEBUG
@@ -504,6 +505,11 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
         ON_UPDATE_COMMAND_UI(IDC_FONTSIZE, OnUpdateFontSize)
         ON_CBN_SELENDOK(IDC_FONTNAME, OnFontName)
         ON_CBN_SELENDOK(IDC_FONTSIZE, OnFontSize)
+
+    ON_COMMAND(ID_ZLIB_COMPRESS, OnCompress)
+    ON_UPDATE_COMMAND_UI(ID_ZLIB_COMPRESS, OnUpdateSelNZ)
+    ON_COMMAND(ID_ZLIB_DECOMPRESS, OnDecompress)
+    ON_UPDATE_COMMAND_UI(ID_ZLIB_DECOMPRESS, OnUpdateSelNZ)
 
     //ON_WM_TIMER()
 
@@ -6510,12 +6516,23 @@ void CHexEditView::do_read(CString file_name)
     }
     else
     {
+		if (data_len > UINT_MAX)  // why is there no SIZE_T_MAX?
+		{
+			::HMessageBox("HexEdit is out of temporary files \n"
+                          "and cannot open such a large file. \n"
+                          "Please save the file to free \n"
+						  "temporary file handles and try again.\n",
+						  MB_OK);
+			return;
+		}
+
         if (data_len > 128*1024*1024)  // 128 Mb file may be too big
         {
-            if (AfxMessageBox("HexEdit is out of temporary file handles\n"
-                              "and opening such a large file may cause\n"
-                              "memory exhaustion.  Please save the file\n"
-                              "to free handles, or click YES to continue.\n\n"
+			if (::HMessageBox("WARNING: HexEdit is out of temporary file \n"
+                              "handles and opening such a large file may \n"
+                              "cause memory exhaustion.  Please click NO \n"
+                              "and save the file to free handles. \n"
+							  "Or, click YES to continue.\n\n"
                               "Do you want to continue?", MB_YESNO) != IDYES)
                 return;
         }
@@ -9321,7 +9338,7 @@ void CHexEditView::OnDisplayReset()
 
     end_change();
 
-    theApp.SaveToMacro(km_display_reset, __int64(0));  // Store zero to allow for future additions
+    theApp.SaveToMacro(km_display_reset, unsigned __int64(0));  // Store zero to allow for future additions
 }
 
 void CHexEditView::OnEditUndo() 
@@ -9369,9 +9386,8 @@ void CHexEditView::OnUndoChanges()
             theApp.mac_error_ = 10;
             return;
         }
-    }
-    while (undo_.size() > 0 && (more || !(last_change || is_last_change())));
-//    while ((more || (last_change == is_last_change() && undo_.size() > 0));
+    } while (undo_.size() > 0 && (more || !(last_change || is_last_change())));
+//    } while ((more || (last_change == is_last_change() && undo_.size() > 0));
 
     theApp.SaveToMacro(km_undo_changes);
 }
@@ -10717,7 +10733,7 @@ void CHexEditView::OnCharsetAscii()
     end_change();
 
     CHECK_SECURITY(51);
-    theApp.SaveToMacro(km_charset, int(0));
+    theApp.SaveToMacro(km_charset, unsigned __int64(0));
 }
 
 void CHexEditView::OnUpdateCharsetAscii(CCmdUI *pCmdUI)
@@ -11075,7 +11091,7 @@ void CHexEditView::OnControl()
     make_change();
     end_change();
 
-    aa->SaveToMacro(km_control, int(0));
+    aa->SaveToMacro(km_control, unsigned __int64(0));
 }
 
 void CHexEditView::OnControlToggle() 
@@ -11530,7 +11546,7 @@ void CHexEditView::OnLittleEndian()
     if (!theApp.refresh_off_ && mm->m_wndCalc.IsVisible())
         mm->m_wndCalc.update_controls();
 
-    theApp.SaveToMacro(km_big_endian, (__int64)0);  // 0 = big endian off (ie little-endian)
+    theApp.SaveToMacro(km_big_endian, unsigned __int64(0));  // 0 = big endian off (ie little-endian)
 }
 
 void CHexEditView::OnUpdateLittleEndian(CCmdUI* pCmdUI) 
@@ -11854,11 +11870,18 @@ void CHexEditView::OnEditCompare()
                 }
             }
 
-            // Check if Escape has been pressed
-            if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
+            // Check if a key has been pressed
+            if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
             {
-                VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-                if (msg.wParam == 27 &&
+                // Windows does not like to miss key down events (need to match key up events)
+                ::TranslateMessage(&msg);
+                ::DispatchMessage(&msg);
+
+                // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+                while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                    ;
+
+                if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
                     ::HMessageBox("Abort comparison?", MB_YESNO) == IDYES)
                 {
                     delete[] orig_buf;
@@ -12144,8 +12167,7 @@ CHexEditView * CHexEditView::NextView() const
         // If reached the top of the list go to the end
         if (nextc == NULL)
             nextc = dynamic_cast<CChildFrame *>(currc->GetWindow(GW_HWNDLAST));
-    }
-    while (nextc != NULL && nextc != currc && nextc->IsIconic());
+    } while (nextc != NULL && nextc != currc && nextc->IsIconic());
 
     if (nextc == NULL || nextc == currc)
         return NULL;
@@ -12700,6 +12722,600 @@ void CHexEditView::OnUpdateEncrypt(CCmdUI* pCmdUI)
         pCmdUI->Enable((end_addr-start_addr)%blen == 0);
     }
 #endif
+}
+
+void CHexEditView::OnCompress() 
+{
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+    unsigned char *in_data = NULL;
+    unsigned char *out_data = NULL;
+
+	// Check if file is read-only and ask user if they want to turn this off
+	if (check_ro("compress"))
+		return;
+
+	// Check if in OVR mode and ask the user if they want to turn this off
+    if (display_.overtype)
+    {
+        if (::HMessageBox("Compression will change the selection length\r"
+                            "which is not allowed in overtype mode.\r"
+                            "Do you want to turn off overtype mode?",
+                            MB_OKCANCEL) == IDCANCEL)
+        {
+            theApp.mac_error_ = 10;
+            return;
+        }
+		else if (!do_insert())
+			return;
+    }
+
+    // Get current address or selection
+    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
+    GetSelAddr(start_addr, end_addr);
+
+    // Make sure there is a selection
+    if (start_addr >= end_addr)
+    {
+        // No selection, presumably in macro playback
+        ASSERT(theApp.playing_);
+        ::HMessageBox("There is no selection to compress");
+        theApp.mac_error_ = 10;
+        return;
+    }
+
+	// Initialise structure used to communicate with the zlib routines
+	z_stream zs;
+	zs.zalloc = (alloc_func)0;
+	zs.zfree = (free_func)0;
+	zs.opaque = (voidpf)0;
+	VERIFY(deflateInit(&zs, Z_DEFAULT_COMPRESSION) == Z_OK);
+
+	// Test if selection is too big to do in memory
+	if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
+	{
+        int idx = -1;                       // Index into docs data_file_ array (or -1 if no slots avail.)
+
+		// Create a "temp" file to store the compressed data
+		// (This file stores the compressed data until the document is closed or written to disk.)
+		char temp_dir[_MAX_PATH];
+		char temp_file[_MAX_PATH];
+		::GetTempPath(sizeof(temp_dir), temp_dir);
+		::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
+
+		// Get input and output buffers
+		size_t len, inbuflen = size_t(min(32768, end_addr - start_addr)), outbuflen = max(inbuflen/4, 256);
+#ifdef _DEBUG
+		inbuflen = 256, outbuflen = 8;   // This should ensure output buffer overflow for each input buffer full
+#endif
+		FILE_ADDRESS total_out = 0;
+		int err;
+		try
+		{
+            in_data = new unsigned char[inbuflen];
+            out_data = new unsigned char[outbuflen];
+        }
+        catch(std::bad_alloc)
+        {
+            ::HMessageBox("Insufficient memory to perform compression");
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
+        mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+        MSG msg;                                           // use to check for abort key press
+
+		try
+		{
+		    CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
+
+			for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+			{
+				// Get the next buffer full from the document
+				len = size_t(min(inbuflen, end_addr - curr));
+				VERIFY(GetDocument()->GetData(in_data, len, curr) == len);
+
+				// Compress this buffer
+				zs.next_in = in_data;
+				zs.avail_in = len;
+				do
+				{
+					zs.next_out = out_data;
+					zs.avail_out = outbuflen;
+					err = deflate(&zs, Z_NO_FLUSH);
+					ASSERT(err == Z_OK);
+
+					// Write to "temp" file
+					ff.Write(out_data, outbuflen - zs.avail_out);
+
+					total_out += outbuflen - zs.avail_out;  // we need to keep track of this ourselves since zs.total_out can overflow
+				} while (zs.avail_out == 0);
+				ASSERT(zs.avail_in == 0);
+
+				// Do any redrawing, but nothing else
+				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				{
+					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+					{
+						::TranslateMessage(&msg);
+						::DispatchMessage(&msg);
+					}
+				}
+
+                // Check if a key has been pressed
+                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+                {
+                    // Windows does not like to miss key down events (need to match key up events)
+                    ::TranslateMessage(&msg);
+                    ::DispatchMessage(&msg);
+
+                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                        ;
+
+                    if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                        ::HMessageBox("Abort compression?", MB_YESNO) == IDYES)
+                    {
+						ff.Close();
+						remove(temp_file);
+						theApp.mac_error_ = 10;
+						goto func_return;
+                    }
+                }
+
+				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+			}
+
+			// Process any residual data
+			do
+			{
+				zs.next_out = out_data;
+				zs.avail_out = outbuflen;
+			    err = deflate(&zs, Z_FINISH);
+				ASSERT(err == Z_OK || err == Z_STREAM_END);
+
+				ff.Write(out_data, outbuflen - zs.avail_out);
+				total_out += outbuflen - zs.avail_out;
+			} while (err == Z_OK);
+			ASSERT(err == Z_STREAM_END);
+		}
+		catch (CFileException *pfe)
+		{
+			::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			pfe->Delete();
+
+			remove(temp_file);
+			theApp.mac_error_ = 10;
+			goto func_return;
+		}
+
+		// Delete the uncompressed block that is to be replaced
+		// Note: this must be done before AddDataFile otherwise Change() (via regenerate()) will delete the temp file.
+        GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
+
+		// Add the temp file to the document
+		idx = GetDocument()->AddDataFile(temp_file);
+		ASSERT(idx != -1);
+        GetDocument()->Change(mod_insert_file, start_addr, total_out, NULL, idx, this, TRUE);
+
+        // Select compressed data
+        SetSel(addr2pos(start_addr), addr2pos(start_addr + total_out));
+
+        // Inform the user about the amount of compression
+        CString mess;
+        mess.Format("Compressed %d%%", int((1.0 - double(total_out)/(end_addr - start_addr))*100.0 + 0.5));
+        mm->StatusBarText(mess);
+	}
+	else
+	{
+		// Allocate memory block and compress into it
+
+		// Error if ran out of temp file handles and file is too big
+		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
+		{
+			::HMessageBox("HexEdit is out of temporary files and \n"
+                          "cannot compress such a large selection. \n"
+                          "Please save the file to free \n"
+						  "temporary file handles and try again.\n",
+						  MB_OK);
+            theApp.mac_error_ = 10;
+			return;
+		}
+
+		// Warn if we might cause memory exhaustion
+        if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+        {
+			if (::HMessageBox("WARNING: HexEdit is out of temporary file \n"
+                              "handles and compressing such a large selection \n"
+                              "may cause memory exhaustion.  Please click NO \n"
+                              "and save the file to free handles. \n"
+							  "Or, click YES to continue.\n\n"
+                              "Do you want to continue?", MB_YESNO) != IDYES)
+			{
+                theApp.mac_error_ = 5;
+                return;
+			}
+        }
+
+        CWaitCursor wait;                           // Turn on wait cursor (hourglass)
+
+        try
+        {
+            // Get buffer for data, get the data, and get buffer for compressed data
+            in_data = new unsigned char[size_t(end_addr - start_addr)];
+            size_t got = GetDocument()->GetData(in_data, size_t(end_addr - start_addr), start_addr);
+			ASSERT(got == size_t(end_addr - start_addr));
+
+			// Remove uncompressed data from the document
+            GetDocument()->Change(mod_delforw, start_addr, got, NULL, 0, this);
+
+		    size_t outbuflen = max(got/2, 256);
+            out_data = new unsigned char[outbuflen];
+			FILE_ADDRESS curr = start_addr;
+
+		    int err;    // return value from inflate (normally Z_OK or Z_STREAM_END)
+
+			zs.next_in = in_data;
+			zs.avail_in = got;
+			do
+			{
+				zs.next_out = out_data;
+				zs.avail_out = outbuflen;
+				err = deflate(&zs, Z_FINISH);
+				ASSERT(err == Z_OK || err == Z_STREAM_END);
+
+				// Replace the selection with the compressed data
+				if (outbuflen - zs.avail_out > 0)
+				    GetDocument()->Change(mod_insert, curr, outbuflen - zs.avail_out, out_data, 0, this, TRUE);
+
+				curr += outbuflen - zs.avail_out;
+			} while (err == Z_OK);
+			ASSERT(err == Z_STREAM_END);
+
+            // Select compressed block
+            SetSel(addr2pos(start_addr), addr2pos(start_addr+zs.total_out));
+
+            // Inform the user about the amount of compression
+            CString mess;
+            mess.Format("Compressed %d%%", int((1.0 - double(zs.total_out)/got)*100.0 + 0.5));
+            mm->StatusBarText(mess);
+        }
+        catch(std::bad_alloc)
+        {
+            ::HMessageBox("Insufficient memory to perform compression");
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
+	}
+	VERIFY(deflateEnd(&zs) == Z_OK);
+
+    DisplayCaret();
+    theApp.SaveToMacro(km_compress, 1);  // 1 = compress (2 = decompress)
+
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (in_data != NULL)
+		delete[] in_data;
+	if (out_data != NULL)
+		delete[] out_data;
+}
+
+void CHexEditView::OnDecompress() 
+{
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+    unsigned char *in_data = NULL;
+    unsigned char *out_data = NULL;
+
+	// Check if file is read-only and ask user if they want to turn this off
+	if (check_ro("decompress"))
+		return;
+
+	// Check if in OVR mode and ask the user if they want to turn this off
+    if (display_.overtype)
+    {
+        if (::HMessageBox("Decompression will change the selection length\r"
+                            "which is not allowed in overtype mode.\r"
+                            "Do you want to turn off overtype mode?",
+                            MB_OKCANCEL) == IDCANCEL)
+        {
+            theApp.mac_error_ = 10;
+            return;
+        }
+		else if (!do_insert())
+			return;
+    }
+
+    // Get current address or selection
+    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
+    GetSelAddr(start_addr, end_addr);
+
+    // Make sure there is a selection
+    if (start_addr >= end_addr)
+    {
+        // No selection, presumably in macro playback
+        ASSERT(theApp.playing_);
+        ::HMessageBox("There is no selection to decompress");
+        theApp.mac_error_ = 10;
+        return;
+    }
+
+	// Initialise structure used to communicate with the zlib routines
+	z_stream zs;
+	zs.zalloc = (alloc_func)0;
+	zs.zfree = (free_func)0;
+	zs.opaque = (voidpf)0;
+	zs.next_in = (Bytef*)0;
+	zs.avail_in = 0;
+	VERIFY(inflateInit(&zs) == Z_OK);
+
+	// Test if selection is too big to do in memory
+	if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
+	{
+        int idx = -1;                       // Index into docs data_file_ array (or -1 if no slots avail.)
+
+		// Create a "temp" file to store the compressed data
+		// (This file stores the compressed data until the document is closed or written to disk.)
+		char temp_dir[_MAX_PATH];
+        char temp_file[_MAX_PATH];
+		::GetTempPath(sizeof(temp_dir), temp_dir);
+		::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
+
+		// Get input and output buffers
+		size_t len, outbuflen = size_t(min(8192, end_addr - start_addr)), inbuflen = max(outbuflen*4, 256);
+#ifdef _DEBUG
+		inbuflen = outbuflen = 16;  // Make sure output buffer overflows (to check it is handled correctly)
+#endif
+		FILE_ADDRESS total_out = 0;
+		int err;
+		try
+		{
+            in_data = new unsigned char[inbuflen];
+            out_data = new unsigned char[outbuflen];
+        }
+        catch(std::bad_alloc)
+        {
+            ::HMessageBox("Insufficient memory to perform decompression");
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
+        mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+        MSG msg;                                           // use to check for abort key press
+
+		try
+		{
+		    CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
+
+			for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+			{
+				// Get the next buffer full from the document
+				len = size_t(min(inbuflen, end_addr - curr));
+				VERIFY(GetDocument()->GetData(in_data, len, curr) == len);
+
+				// Compress this buffer
+				zs.next_in = in_data;
+				zs.avail_in = len;
+				do
+				{
+					zs.next_out = out_data;
+					zs.avail_out = outbuflen;
+					err = inflate(&zs, Z_NO_FLUSH);
+					ASSERT(err == Z_OK || err == Z_STREAM_END || err == Z_DATA_ERROR || err == Z_BUF_ERROR);
+					// Note Z_BUF_ERROR can occur when zs.avail_out == 0 (and zs.avail_in after previous call was zero).
+					// This is not a fatal error and according to the docs we should continue looping while zs.avail_in == 0.
+
+					if (err == Z_DATA_ERROR)
+					{
+						if (::HMessageBox("The compression data is corrupted. \n"
+										  "HexEdit can attempt to recover from \n"
+										  "this error but some data will be lost. \n\n"
+										  "Do you want to continue?", MB_YESNO) != IDYES)
+						{
+							ff.Close();
+							remove(temp_file);
+							theApp.mac_error_ = 10;
+							goto func_return;
+						}
+						// xxx do we need to read more in here if avail_in == 0 ????
+						// xxx do we need to write out something if avail_out == 0??
+						if (inflateSync(&zs) == Z_DATA_ERROR)
+						{
+							::HMessageBox("Could not recover from data error. \n"
+								          "Decompression aborted.");
+							ff.Close();
+							remove(temp_file);
+							theApp.mac_error_ = 10;
+							goto func_return;
+						}
+					}
+
+					ff.Write(out_data, outbuflen - zs.avail_out);  // write all that we got
+
+					total_out += outbuflen - zs.avail_out;  // we need to keep track of this ourselves since zs.total_out can overflow
+				} while (zs.avail_out == 0);  // if output buffer is full there may be more
+				ASSERT(zs.avail_in == 0);
+
+				// Do any redrawing, but nothing else
+				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				{
+					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+					{
+						::TranslateMessage(&msg);
+						::DispatchMessage(&msg);
+					}
+				}
+
+                // Check if a key has been pressed
+                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+                {
+                    // Windows does not like to miss key down events (need to match key up events)
+                    ::TranslateMessage(&msg);
+                    ::DispatchMessage(&msg);
+
+                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                        ;
+
+					if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+						::HMessageBox("Abort decompression?", MB_YESNO) == IDYES)
+                    {
+						ff.Close();
+                        remove(temp_file);
+						theApp.mac_error_ = 10;
+						goto func_return;
+                    }
+                }
+
+				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+			}
+
+			ASSERT(err == Z_STREAM_END);
+			ASSERT(ff.GetLength() == total_out);
+		}
+		catch (CFileException *pfe)
+		{
+			::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			pfe->Delete();
+
+            remove(temp_file);
+			theApp.mac_error_ = 10;
+			goto func_return;
+		}
+
+		// Delete the input (compressed) block that is to be replaced
+		// Note: this must be done before AddDataFile otherwise Change() (via regenerate()) will delete the temp file.
+        GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
+
+		// Add the temp file to the document
+		idx = GetDocument()->AddDataFile(temp_file);
+		ASSERT(idx != -1);
+        GetDocument()->Change(mod_insert_file, start_addr, total_out, NULL, idx, this, TRUE);
+
+        // Select uncompressed block
+        SetSel(addr2pos(start_addr), addr2pos(start_addr + total_out));
+
+        // Inform the user about the amount of compression
+        CString mess;
+        mess.Format("Expanded by %d%%", int((double(total_out)/(end_addr - start_addr) - 1.0)*100.0 + 0.5));
+        mm->StatusBarText(mess);
+	}
+	else
+	{
+		// Allocate memory block and decompress into it
+
+		// Error if ran out of temp file handles and file is too big
+		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
+		{
+			::HMessageBox("HexEdit is out of temporary files and \n"
+                          "cannot decompress such a large selection. \n"
+                          "Please save the file to free \n"
+						  "temporary file handles and try again.\n",
+						  MB_OK);
+            theApp.mac_error_ = 10;
+			return;
+		}
+
+		// Warn if we might cause memory exhaustion
+        if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+        {
+			if (::HMessageBox("WARNING: HexEdit is out of temporary file \n"
+                              "handles and decompressing such a large selection \n"
+                              "may cause memory exhaustion.  Please click NO \n"
+                              "and save the file to free handles. \n"
+							  "Or, click YES to continue.\n\n"
+                              "Do you want to continue?", MB_YESNO) != IDYES)
+			{
+                theApp.mac_error_ = 5;
+                return;
+			}
+        }
+
+        CWaitCursor wait;                           // Turn on wait cursor (hourglass)
+
+        try
+        {
+            // Get buffer for input data, get the data, and get buffer for output (decompressed) data
+            in_data = new unsigned char[size_t(end_addr - start_addr)];
+            size_t got = GetDocument()->GetData(in_data, size_t(end_addr - start_addr), start_addr);
+			ASSERT(got == size_t(end_addr - start_addr));
+
+			// Remove input (compressed) block from the document
+            GetDocument()->Change(mod_delforw, start_addr, got, NULL, 0, this);
+
+		    size_t outbuflen = max(4*got, 256);
+            out_data = new unsigned char[outbuflen];
+			FILE_ADDRESS curr = start_addr;
+
+		    int err;    // return value from inflate (normally Z_OK or Z_STREAM_END)
+
+			zs.next_in = in_data;
+			zs.avail_in = got;
+			do
+			{
+				zs.next_out = out_data;
+				zs.avail_out = outbuflen;
+                err = inflate(&zs, Z_NO_FLUSH);
+				ASSERT(err == Z_OK || err == Z_STREAM_END || err == Z_BUF_ERROR || err == Z_DATA_ERROR);
+				if (err == Z_DATA_ERROR)
+				{
+					if (::HMessageBox("The compression data is corrupted. \n"
+										"HexEdit can attempt to recover from \n"
+										"this error but some data will be lost. \n\n"
+										"Do you want to continue?", MB_YESNO) != IDYES)
+					{
+						theApp.mac_error_ = 10;
+						goto func_return;
+					}
+					if (inflateSync(&zs) == Z_DATA_ERROR)
+					{
+						::HMessageBox("Could not recover from data error. \n"
+								        "Decompression aborted.");
+						theApp.mac_error_ = 10;
+						goto func_return;
+					}
+				}
+
+				// Add the decompressed data block to the file
+				if (outbuflen - zs.avail_out > 0)
+				    GetDocument()->Change(mod_insert, curr, outbuflen - zs.avail_out, out_data, 0, this, TRUE);
+
+				curr += outbuflen - zs.avail_out;
+			} while (zs.avail_out == 0);
+            ASSERT(err == Z_STREAM_END && zs.avail_in == 0);
+
+            // Select uncompressed block
+            SetSel(addr2pos(start_addr), addr2pos(start_addr+zs.total_out));
+
+            // Inform the user about the amount of compression
+            CString mess;
+	        mess.Format("Expanded by %d%%", int((double(zs.total_out)/got - 1.0)*100.0 + 0.5));
+            mm->StatusBarText(mess);
+        }
+        catch(std::bad_alloc)
+        {
+            ::HMessageBox("Insufficient memory to perform decompression");
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
+	}
+	VERIFY(inflateEnd(&zs) == Z_OK);
+
+    DisplayCaret();
+    theApp.SaveToMacro(km_compress, 2);  // 2 = decompress (1 = compress)
+
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (in_data != NULL)
+		delete[] in_data;
+	if (out_data != NULL)
+		delete[] out_data;
+}
+
+// Enable commands that depend simply on a non-zero selection
+void CHexEditView::OnUpdateSelNZ(CCmdUI* pCmdUI) 
+{
+    FILE_ADDRESS start_addr, end_addr;              // Current selection
+    GetSelAddr(start_addr, end_addr);
+    pCmdUI->Enable(start_addr < end_addr);
 }
 
 // The following functions are used as update handlers
@@ -13968,7 +14584,8 @@ void CHexEditView::OnRandFast()
 // This is connected to Ctrl+T and is used for testing new dialogs etc
 void CHexEditView::OnViewtest() 
 {
-// move this to a command xxx
+	// move this to a command xxx
+
 }
 
 CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,

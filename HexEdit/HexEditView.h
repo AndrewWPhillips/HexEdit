@@ -510,9 +510,9 @@ public:
     afx_msg void OnTrackChanges();
     afx_msg void OnUpdateTrackChanges(CCmdUI* pCmdUI);
     //}}AFX_MSG
+    afx_msg void OnUpdateSelNZ(CCmdUI* pCmdUI);  // no-zero selection
 
     afx_msg void OnEditReplace();
-
     afx_msg void OnChecksum8();
     afx_msg void OnChecksum16();
     afx_msg void OnChecksum32();
@@ -667,6 +667,10 @@ public:
         afx_msg void OnUpdateFontName(CCmdUI* pCmdUI);
         afx_msg void OnFontSize();
         afx_msg void OnUpdateFontSize(CCmdUI* pCmdUI);
+
+    afx_msg void OnCompress();
+    afx_msg void OnDecompress();
+
         //afx_msg void OnTimer(UINT nIDEvent);
         afx_msg void OnInsertBlock();
         afx_msg void OnUpdateInsertBlock(CCmdUI* pCmdUI);
