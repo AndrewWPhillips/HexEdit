@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=747>
-<meta name=layout-width content=1235>
+<meta name=layout-height content=969>
+<meta name=layout-width content=976>
 
 
 <!--(Links)=========================================================-->
@@ -37,36 +37,24 @@
 <body>
 
 <h2 style="font-family: Arial;"><span style="font-family: Arial;">Seed 
- Random Number Generator (Operations menu)</span></h2>
+ RNG from Calculator (Operations menu)</span></h2>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p>&nbsp;</p>
 
 <p>This command seeds the PRNGs (pseudo random number generators) using 
- a value that should be somewhat random since it is based on milliseconds 
- of the current time. There are two PRNG algorithms available in HexEdit 
- and both are seeded by this command.</p>
+ the current value in the calculator. All random number generators used 
+ in HexEdit are seeded by this command.</p>
 
 <p>&nbsp;</p>
 
-<p>This command is provided as a convenience. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- randomness of the seed value is not guaranteed and maybe somewhat predictable. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For best 
- results place a truly random number in the calculator and use the <a href="PRNG_Seed.htm">Seed 
- Random Number Generator from Calculator</a> command.</p>
+<p>To obtain the same sequence of random numbers use the same seed value. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Using the 
+ same sequence of numbers is useful in situations where results need to 
+ be reproducible (eg during debugging). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ typically you would use a random seed using the <a href="PRNG_Seed_Random.htm">Random 
+ Seed command</a></p>
 
 <p>&nbsp;</p>
-
-<p>Note that this command should only be called once before generating 
- a sequence of random numbers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Reseeding 
- before generating each number will produce numbers that are not very good 
- random numbers, since they will be related to the current time and probably 
- not very good statistically either.</p>
-
-<p>&nbsp;</p>
-
-<p>To obtain the same sequence of random numbers load the same specific 
- value into the calculator and use the <a href="PRNG_Seed.htm">Seed Random 
- Number Generator from Calculator command</a>.</p>
 
 <p>&nbsp;</p>
 
@@ -74,7 +62,7 @@
 <!--Metadata type="DesignerControl" startspan
 <object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
 		BORDER=0
-		id=object1
+		id=object2
 		style="margin-top: 0px;
 				margin-bottom: 0px;
 				margin-left: 0px;
@@ -90,25 +78,27 @@
 <param name="UseButton" value="-1" >
 <param name="ControlLabel" value="Related Topics" >
 <param name="UseIcon" value="0" >
-<param name="Items" value="Generate Fast Random Numbers;PRNG_Fast.htm$$**$$Generate Good Random Numbers;PRNG_Good.htm$$**$$New File Dialog;..\dlg_other\New_File_Dialog.htm$$**$$Seed Random Number Generator;PRNG_Seed.htm$$**$$" >
+<param name="Items" value="Calculator;..\overviewtools\calc.htm$$**$$Generate Fast Random Numbers;PRNG_Fast.htm$$**$$Generate Good Random Numbers;PRNG_Good.htm$$**$$Insert Block command;..\cmd_edit\HID_INSERT_BLOCK.htm$$**$$New File Dialog;..\dlg_other\New_File_Dialog.htm$$**$$Random Seed;PRNG_Seed_Random.htm$$**$$" >
 <param name="Image" value="" >
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
-<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit2.6\HTMLHelp\cmd_operations\PRNG_Seed.htm" >
-<param name="_ID" value="object1" >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\cmd_operations\PRNG_Seed.htm" >
+<param name="_ID" value="object2" >
 <param name="UseMenu" value="-1" >
 <param name="Frame" value="" >
 <param name="Window" value="" >
 </object>-->
 <OBJECT
   CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
-  ID="object1"  TYPE="application/x-oleobject" >
+  ID="object2"  TYPE="application/x-oleobject" >
   <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
   <PARAM  NAME="Button"  VALUE="Text:Related Topics">
   <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
-  <PARAM  NAME="Item1"  VALUE="Generate Fast Random Numbers;PRNG_Fast.htm">
-  <PARAM  NAME="Item2"  VALUE="Generate Good Random Numbers;PRNG_Good.htm">
-  <PARAM  NAME="Item3"  VALUE="New File Dialog;..\dlg_other\New_File_Dialog.htm">
-  <PARAM  NAME="Item4"  VALUE="Seed Random Number Generator;PRNG_Seed.htm">
+  <PARAM  NAME="Item1"  VALUE="Calculator;..\overviewtools\calc.htm">
+  <PARAM  NAME="Item2"  VALUE="Generate Fast Random Numbers;PRNG_Fast.htm">
+  <PARAM  NAME="Item3"  VALUE="Generate Good Random Numbers;PRNG_Good.htm">
+  <PARAM  NAME="Item4"  VALUE="Insert Block command;..\cmd_edit\HID_INSERT_BLOCK.htm">
+  <PARAM  NAME="Item5"  VALUE="New File Dialog;..\dlg_other\New_File_Dialog.htm">
+  <PARAM  NAME="Item6"  VALUE="Random Seed;PRNG_Seed_Random.htm">
 </OBJECT>
 
 <!--Metadata type="DesignerControl" endspan-->
