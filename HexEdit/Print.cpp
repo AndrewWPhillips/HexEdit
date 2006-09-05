@@ -142,9 +142,9 @@ void CHexEditView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
         pDC->LPtoDP(&size);
 
         // Check if font is small enough now or has not changed size
-        if (ii > 200 || fabs(size.cx) < display_width)
+        if (ii > 200 || abs(size.cx) < display_width)
         {
-            print_offset_.cx = LONG((display_width - fabs(size.cx))/2);
+            print_offset_.cx = LONG((display_width - abs(size.cx))/2);
             if (print_offset_.cx < 0) print_offset_.cx = 0;
             break;
         }

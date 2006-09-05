@@ -79,7 +79,7 @@ typedef __int64 FILE_ADDRESS;
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
 //#define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
 //#define REFRESH_OFF     1   // Turn off display refresh when replacing all - doesn't seem to save much time so leave off for now
-#define EXPLORER_WND    1   // Modeless dialog like Windows Explorer - works well but need to fix button images and stop floppy access on startup
+//#define EXPLORER_WND    1   // Modeless dialog like Windows Explorer - works well but need to fix button images and stop floppy access on startup
 
 #define INTERNAL_ALGORITHM  "HexEdit Internal Encryption Algorithm"
 

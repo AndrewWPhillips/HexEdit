@@ -453,9 +453,10 @@ CString CGridCtrl2::UniqueName(LPCTSTR base, const CXmlTree::CElt elt)
     for (int ii = 1; ; ++ii)
     {
         CString retval;
+		CXmlTree::CElt child;
         retval.Format("%s%d", base, ii);
         // Check if this child name exists
-        for (CXmlTree::CElt child = elt.GetFirstChild(); !child.IsEmpty(); ++child)
+        for (child = elt.GetFirstChild(); !child.IsEmpty(); ++child)
         {
             if (child.GetAttr("name") == retval)
                 break;      // a child with the name was found
@@ -3444,7 +3445,7 @@ BOOL CDataFormatView::ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr /*=-1*/)
         elt = find_address(addr);
         if (elt == last_elt)
             continue;
-
+// xxx this needs rethinking eg addr=0, end_addr=1e9, one elt (not read only)
         last_elt = elt;
 
         // Use template default if past end of expected data

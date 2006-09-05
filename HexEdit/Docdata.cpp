@@ -151,6 +151,7 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
     return len - left;
 }
 
+// Create a new temp data file so that we can save to disk rather than using lots of memory
 int CHexEditDoc::AddDataFile(LPCTSTR name, BOOL temp /*=FALSE*/)
 {
 	int ii;
@@ -292,7 +293,10 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
     {
         // Add a new elt to undo array
 		if (utype == mod_insert_file)
+		{
+			ASSERT(data_file_[num_done] != NULL);
             undo_.push_back(doc_undo(utype, address, clen, NULL, num_done));
+		}
         else if (utype == mod_insert || utype == mod_replace || utype == mod_repback)
             undo_.push_back(doc_undo(utype, address, clen, buf));
         else
