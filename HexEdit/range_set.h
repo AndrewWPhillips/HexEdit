@@ -21,17 +21,17 @@ class range_set
 {
 public:
     // Define standard types for STL container
-    typedef Alloc allocator_type;
-    typedef Alloc::size_type size_type;
-    typedef Alloc::difference_type difference_type;
-    typedef Alloc::pointer pointer;
-    typedef Alloc::const_pointer const_pointer;
-    typedef Alloc::reference reference;
-    typedef Alloc::const_reference const_reference;
-    typedef Alloc::value_type value_type;
-    typedef Pred value_compare;
-    typedef value_type key_type;        // Value == key for sets
-    typedef value_compare key_compare;
+    typedef typename Alloc allocator_type;
+    typedef typename Alloc::size_type size_type;
+    typedef typename Alloc::difference_type difference_type;
+    typedef typename Alloc::pointer pointer;
+    typedef typename Alloc::const_pointer const_pointer;
+    typedef typename Alloc::reference reference;
+    typedef typename Alloc::const_reference const_reference;
+    typedef typename Alloc::value_type value_type;
+    typedef typename Pred value_compare;
+    typedef typename value_type key_type;        // Value == key for sets
+    typedef typename value_compare key_compare;
 
     // All iterators are const (mods via iterators not allowed)
     class const_iterator;
@@ -63,7 +63,7 @@ private:
     //     be updated, perhaps and operator==() and operator<().
 
     std::pair<const_iterator, const_iterator>
-    insert_helper(range_t::iterator pp, const T &ss,const T &ee)
+    insert_helper(typename range_t::iterator pp, const T &ss,const T &ee)
     {
         if (!compare_(ss, ee))
             return std::make_pair(end(), end());
@@ -129,7 +129,7 @@ private:
             const_iterator(pp, this,
                            pp==range_.end() ? T() :pp->sfirst));
     }
-    const_iterator erase_helper(range_t::iterator pp, 
+    const_iterator erase_helper(typename range_t::iterator pp, 
                                 const T &ss, const T &ee)
     {
         if (!compare_(ss, ee)) return lower_bound(ss);
@@ -228,12 +228,12 @@ public:
         // valid values are.  Note that pr_ is declared "mutable"
 		// to avoid having a separate iterator & const_iterator.
         T value_;                   // The value "pointed" to
-        mutable range_t::iterator pr_;// Segment with the value
+        mutable typename range_t::iterator pr_;// Segment with the value
 
         // We must also access a few things in the container.
         const range_set *pc_;       // Pointer to container
 
-        const_iterator(const range_t::iterator &p,
+        const_iterator(const typename range_t::iterator &p,
                        const range_set *pc, const T &v)
             : pr_(p), pc_(pc), value_(v)
         {
@@ -436,10 +436,10 @@ public:
 
         if (increasing_)
             for (pp = range_.begin(); pp != range_.end(); ++pp)
-                total +=  pp->slast - pp->sfirst;
+                total +=  size_type(pp->slast - pp->sfirst);
         else
             for (pp = range_.begin(); pp != range_.end(); ++pp)
-                total +=  pp->sfirst - pp->slast;
+                total +=  size_type(pp->sfirst - pp->slast);
         return total;
     }
     bool empty() const
