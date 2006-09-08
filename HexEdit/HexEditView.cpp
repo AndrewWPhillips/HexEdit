@@ -12783,10 +12783,8 @@ void CHexEditView::OnCompress()
 		::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
 
 		// Get input and output buffers
-		size_t len, inbuflen = size_t(min(32768, end_addr - start_addr)), outbuflen = max(inbuflen/4, 256);
-#ifdef _DEBUG
-		inbuflen = 256, outbuflen = 8;   // This should ensure output buffer overflow for each input buffer full
-#endif
+		size_t len, inbuflen = size_t(min(32768, end_addr - start_addr)), outbuflen = max(inbuflen/2, 256);
+		int sync_every = (1024*1024)/inbuflen;    // No of input blocks per sync (currently every 1MB)
 		FILE_ADDRESS total_out = 0;
 		int err;
 		try
@@ -12809,6 +12807,12 @@ void CHexEditView::OnCompress()
 
 			for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
 			{
+				int flush;
+				if ((curr - start_addr)/inbuflen % sync_every == sync_every - 1)  // time to sync?
+					flush = Z_FULL_FLUSH;
+				else
+					flush = Z_NO_FLUSH;
+
 				// Get the next buffer full from the document
 				len = size_t(min(inbuflen, end_addr - curr));
 				VERIFY(GetDocument()->GetData(in_data, len, curr) == len);
@@ -12820,7 +12824,7 @@ void CHexEditView::OnCompress()
 				{
 					zs.next_out = out_data;
 					zs.avail_out = outbuflen;
-					err = deflate(&zs, Z_NO_FLUSH);
+					err = deflate(&zs, flush);
 					ASSERT(err == Z_OK);
 
 					// Write to "temp" file
@@ -12982,6 +12986,12 @@ void CHexEditView::OnCompress()
         {
             ::HMessageBox("Insufficient memory to perform compression");
             theApp.mac_error_ = 10;
+
+			// Undo changes already (but make sure we don't record undo in macros)
+			OnEditUndo();
+            if (theApp.recording_ && theApp.mac_.size() > 0 && (theApp.mac_.back()).ktype == km_undo)
+                theApp.mac_.pop_back();
+
             goto func_return;
         }
 	}
@@ -13060,12 +13070,9 @@ void CHexEditView::OnDecompress()
 		::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
 
 		// Get input and output buffers
-		size_t len, outbuflen = size_t(min(8192, end_addr - start_addr)), inbuflen = max(outbuflen*4, 256);
-#ifdef _DEBUG
-		inbuflen = outbuflen = 16;  // Make sure output buffer overflows (to check it is handled correctly)
-#endif
+		size_t len, outbuflen = size_t(min(32768, end_addr - start_addr)), inbuflen = max(outbuflen/4, 256);
 		FILE_ADDRESS total_out = 0;
-		int err;
+		int err = Z_OK;
 		try
 		{
             in_data = new unsigned char[inbuflen];
@@ -13084,54 +13091,53 @@ void CHexEditView::OnDecompress()
 		{
 		    CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
 
+			// For each chunk of the currently selected block
 			for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
 			{
 				// Get the next buffer full from the document
 				len = size_t(min(inbuflen, end_addr - curr));
 				VERIFY(GetDocument()->GetData(in_data, len, curr) == len);
 
-				// Compress this buffer
 				zs.next_in = in_data;
 				zs.avail_in = len;
 				do
 				{
+					// Prepare output buffer
 					zs.next_out = out_data;
 					zs.avail_out = outbuflen;
-					err = inflate(&zs, Z_NO_FLUSH);
-					ASSERT(err == Z_OK || err == Z_STREAM_END || err == Z_DATA_ERROR || err == Z_BUF_ERROR);
-					// Note Z_BUF_ERROR can occur when zs.avail_out == 0 (and zs.avail_in after previous call was zero).
-					// This is not a fatal error and according to the docs we should continue looping while zs.avail_in == 0.
-
 					if (err == Z_DATA_ERROR)
 					{
-						if (::HMessageBox("The compression data is corrupted. \n"
-										  "HexEdit can attempt to recover from \n"
-										  "this error but some data will be lost. \n\n"
-										  "Do you want to continue?", MB_YESNO) != IDYES)
-						{
-							ff.Close();
-							remove(temp_file);
-							theApp.mac_error_ = 10;
-							goto func_return;
-						}
-						// xxx do we need to read more in here if avail_in == 0 ????
-						// xxx do we need to write out something if avail_out == 0??
-						if (inflateSync(&zs) == Z_DATA_ERROR)
-						{
-							::HMessageBox("Could not recover from data error. \n"
-								          "Decompression aborted.");
-							ff.Close();
-							remove(temp_file);
-							theApp.mac_error_ = 10;
-							goto func_return;
-						}
+						// We must still be trying to sync from previously encountered data error
+						err = inflateSync(&zs);
 					}
+					else
+					{
+						err = inflate(&zs, Z_NO_FLUSH);
+						ASSERT(err == Z_OK || err == Z_STREAM_END || err == Z_DATA_ERROR || err == Z_BUF_ERROR);
+						// Note Z_BUF_ERROR can occur when zs.avail_out == 0 (and zs.avail_in after previous call was zero).
+						// This is not a fatal error and according to the docs we should continue looping while zs.avail_in == 0.
 
-					ff.Write(out_data, outbuflen - zs.avail_out);  // write all that we got
+						if (err == Z_DATA_ERROR)
+						{
+							theApp.mac_error_ = 5;
+							if (::HMessageBox("The compression data is corrupted. \n"
+									    	  "HexEdit save the data decompressed \n"
+										      "so far and attempt to recover from \n"
+									          "this error but some data will be lost. \n\n"
+										      "Do you want to continue?", MB_YESNO) != IDYES)
+							{
+								ff.Close();
+								remove(temp_file);
+								theApp.mac_error_ = 10;
+								goto func_return;
+							}
+							// Continue reading the data checking for sync point (see inflateSync call above)
+						}
 
-					total_out += outbuflen - zs.avail_out;  // we need to keep track of this ourselves since zs.total_out can overflow
-				} while (zs.avail_out == 0);  // if output buffer is full there may be more
-				ASSERT(zs.avail_in == 0);
+						ff.Write(out_data, outbuflen - zs.avail_out);  // write all that we got
+						total_out += outbuflen - zs.avail_out;  // we need to keep track of this ourselves since zs.total_out can overflow
+					}
+				} while (zs.avail_out == 0 || zs.avail_in != 0);  // if output buffer is full there may be more
 
 				// Do any redrawing, but nothing else
 				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
@@ -13167,8 +13173,13 @@ void CHexEditView::OnDecompress()
 				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
 			}
 
-			ASSERT(err == Z_STREAM_END);
+			ASSERT(err == Z_STREAM_END || err == Z_DATA_ERROR);
 			ASSERT(ff.GetLength() == total_out);
+			if (err == Z_DATA_ERROR)
+			{
+				::HMessageBox("HexEdit did not recover from \n"
+								"the compression data error. ");
+			}
 		}
 		catch (CFileException *pfe)
 		{
@@ -13177,6 +13188,14 @@ void CHexEditView::OnDecompress()
 
             remove(temp_file);
 			theApp.mac_error_ = 10;
+			goto func_return;
+		}
+
+		if (total_out == 0)
+		{
+			// This could happen if there were data errors
+            remove(temp_file);
+			theApp.mac_error_ = 5;
 			goto func_return;
 		}
 
@@ -13242,9 +13261,9 @@ void CHexEditView::OnDecompress()
 
 		    size_t outbuflen = max(4*got, 256);
             out_data = new unsigned char[outbuflen];
-			FILE_ADDRESS curr = start_addr;
+			FILE_ADDRESS curr = start_addr;   // Current output address
 
-		    int err;    // return value from inflate (normally Z_OK or Z_STREAM_END)
+		    int err = Z_OK;    // return value from inflate or inflateSync
 
 			zs.next_in = in_data;
 			zs.avail_in = got;
@@ -13252,34 +13271,41 @@ void CHexEditView::OnDecompress()
 			{
 				zs.next_out = out_data;
 				zs.avail_out = outbuflen;
-                err = inflate(&zs, Z_NO_FLUSH);
-				ASSERT(err == Z_OK || err == Z_STREAM_END || err == Z_BUF_ERROR || err == Z_DATA_ERROR);
 				if (err == Z_DATA_ERROR)
 				{
-					if (::HMessageBox("The compression data is corrupted. \n"
-										"HexEdit can attempt to recover from \n"
-										"this error but some data will be lost. \n\n"
-										"Do you want to continue?", MB_YESNO) != IDYES)
-					{
-						theApp.mac_error_ = 10;
-						goto func_return;
-					}
-					if (inflateSync(&zs) == Z_DATA_ERROR)
-					{
-						::HMessageBox("Could not recover from data error. \n"
-								        "Decompression aborted.");
-						theApp.mac_error_ = 10;
-						goto func_return;
-					}
+					// We must still be trying to sync from previously encountered data error
+					err = inflateSync(&zs);
 				}
+				if (err != Z_DATA_ERROR)
+				{
+					err = inflate(&zs, Z_NO_FLUSH);
+					ASSERT(err == Z_OK || err == Z_STREAM_END || err == Z_BUF_ERROR || err == Z_DATA_ERROR);
+					if (err == Z_DATA_ERROR)
+					{
+						if (::HMessageBox("The compression data is corrupted. \n"
+											"HexEdit can attempt to recover from \n"
+											"this error but some data will be lost. \n\n"
+											"Do you want to continue?", MB_YESNO) != IDYES)
+						{
+							theApp.mac_error_ = 10;
 
-				// Add the decompressed data block to the file
-				if (outbuflen - zs.avail_out > 0)
-				    GetDocument()->Change(mod_insert, curr, outbuflen - zs.avail_out, out_data, 0, this, TRUE);
+							// Undo changes already (but make sure we don't record undo in macros)
+							OnEditUndo();
+							if (theApp.recording_ && theApp.mac_.size() > 0 && (theApp.mac_.back()).ktype == km_undo)
+								theApp.mac_.pop_back();
 
-				curr += outbuflen - zs.avail_out;
-			} while (zs.avail_out == 0);
-            ASSERT(err == Z_STREAM_END && zs.avail_in == 0);
+							goto func_return;
+						}
+					}
+
+					// Add the decompressed data block to the file
+					if (outbuflen - zs.avail_out > 0)
+						GetDocument()->Change(mod_insert, curr, outbuflen - zs.avail_out, out_data, 0, this, TRUE);
+
+					curr += outbuflen - zs.avail_out;
+				}
+			} while (zs.avail_out == 0 || zs.avail_in != 0);
+            ASSERT(err == Z_STREAM_END);
 
             // Select uncompressed block
             SetSel(addr2pos(start_addr), addr2pos(start_addr+zs.total_out));
@@ -13293,6 +13319,12 @@ void CHexEditView::OnDecompress()
         {
             ::HMessageBox("Insufficient memory to perform decompression");
             theApp.mac_error_ = 10;
+
+			// Undo changes already (but make sure we don't record undo in macros)
+			OnEditUndo();
+            if (theApp.recording_ && theApp.mac_.size() > 0 && (theApp.mac_.back()).ktype == km_undo)
+                theApp.mac_.pop_back();
+
             goto func_return;
         }
 	}
