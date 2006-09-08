@@ -668,9 +668,6 @@ public:
         afx_msg void OnFontSize();
         afx_msg void OnUpdateFontSize(CCmdUI* pCmdUI);
 
-    afx_msg void OnCompress();
-    afx_msg void OnDecompress();
-
         //afx_msg void OnTimer(UINT nIDEvent);
         afx_msg void OnInsertBlock();
         afx_msg void OnUpdateInsertBlock(CCmdUI* pCmdUI);
@@ -678,6 +675,10 @@ public:
         afx_msg void OnSysColorChange();
         afx_msg LRESULT OnMouseHover(WPARAM wp, LPARAM lp);
         afx_msg LRESULT OnMouseLeave(WPARAM wp, LPARAM lp);
+
+    afx_msg void OnCompress();
+    afx_msg void OnDecompress();
+    afx_msg void OnMd5();
 
         DECLARE_MESSAGE_MAP()
 

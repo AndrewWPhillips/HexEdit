@@ -1340,6 +1340,10 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 case 12:
                     pv_->OnCrc32();
                     break;
+
+				case 20:
+					pv_->OnMd5();
+					break;
                 default:
                     ASSERT(0);
                 }

@@ -395,6 +395,11 @@ public:
         void OnUpdateInsertBlock(CCmdUI *pCmdUI) { psis_->OnUpdateInsertBlock(pCmdUI); }
         void OnInsertBlock() { psis_->OnInsertBlock(); }
 
+        void OnCompress() { psis_->OnCompress(); }
+        void OnDecompress() { psis_->OnDecompress(); }
+        void OnUpdateSelNZ(CCmdUI *pCmdUI) { psis_->OnUpdateSelNZ(pCmdUI); }
+        void OnMd5() { psis_->OnMd5(); }
+
 // Implementation
 protected:
     virtual ~CDataFormatView();

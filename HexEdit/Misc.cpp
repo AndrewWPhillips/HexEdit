@@ -2088,6 +2088,85 @@ unsigned short crc_ccitt(const void *buf, size_t len)
 }
 #endif
 
+static unsigned short crc_ccitt_value;     /* Note: only one CRC calc can be in progress at a time! */
+#define           poly     0x1021          /* crc-ccitt mask */ 
+
+void crc_ccitt_init()
+{
+	crc_ccitt_value = -1;
+}
+
+void crc_ccitt_update(const void *buf, size_t len)
+{
+    const unsigned char *cp = (const unsigned char *)buf;
+    const unsigned char *end = cp + len;
+
+    unsigned short ii, vv, xor_flag; 
+
+    for ( ; cp < end; ++cp)
+    {
+        /* 
+        Align test bit with leftmost bit of the message byte. 
+        */ 
+        vv = 0x80; 
+
+        for (ii = 0; ii < 8; ++ii) 
+        { 
+            if (crc_ccitt_value & 0x8000) 
+                xor_flag= 1; 
+            else 
+                xor_flag= 0; 
+            crc_ccitt_value = crc_ccitt_value << 1; 
+
+            if (*cp & vv) 
+            { 
+                /* 
+                Append next bit of message to end of CRC if it is not zero. 
+                The zero bit placed there by the shift above need not be 
+                changed if the next bit of the message is zero. 
+                */ 
+                crc_ccitt_value = crc_ccitt_value + 1; 
+            } 
+
+            if (xor_flag) 
+                crc_ccitt_value = crc_ccitt_value ^ poly; 
+
+            /* 
+            Align test bit with next bit of the message byte. 
+            */ 
+            vv = vv >> 1; 
+        } 
+    }
+}
+
+unsigned short crc_ccitt_final()
+{
+    unsigned short ii, xor_flag; 
+
+    // Augment message
+    for (ii = 0; ii < 16; ++ii) 
+    { 
+        if (crc_ccitt_value & 0x8000) 
+            xor_flag= 1; 
+        else 
+            xor_flag= 0; 
+        crc_ccitt_value = crc_ccitt_value << 1; 
+
+        if (xor_flag) 
+            crc_ccitt_value = crc_ccitt_value ^ poly; 
+    }
+
+    return crc_ccitt_value;
+}
+
+unsigned short crc_ccitt(const void *buf, size_t len)
+{
+	crc_ccitt_init();
+	crc_ccitt_update(buf, len);
+	return crc_ccitt_final();
+}
+
+#if 0
 #define           poly     0x1021          /* crc-ccitt mask */ 
 
 unsigned short crc_ccitt(const void *buf, size_t len)
@@ -2160,6 +2239,7 @@ unsigned short crc_ccitt(const void *buf, size_t len)
 
     return crc;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // Activation code stuff

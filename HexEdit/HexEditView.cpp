@@ -39,6 +39,7 @@
 #include "IntelHex.h"     // For import/export of Intel Hex files
 #include "CopyCSrc.h"     // For Copy as C Source dialog
 #include "zlib/zlib.h"    // For compression
+#include "md5.h"          // For MD5 hash
 #include "HelpID.hm"
 
 #ifdef _DEBUG
@@ -510,6 +511,8 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
     ON_UPDATE_COMMAND_UI(ID_ZLIB_COMPRESS, OnUpdateSelNZ)
     ON_COMMAND(ID_ZLIB_DECOMPRESS, OnDecompress)
     ON_UPDATE_COMMAND_UI(ID_ZLIB_DECOMPRESS, OnUpdateSelNZ)
+    ON_COMMAND(ID_MD5, OnMd5)
+    ON_UPDATE_COMMAND_UI(ID_MD5, OnUpdateByteNZ)
 
     //ON_WM_TIMER()
 
@@ -7663,7 +7666,7 @@ void CHexEditView::OnExportHexText()
         for (FILE_ADDRESS curr = start; curr < end; curr += len)
         {
             // Get the data bytes
-            len = min(theApp.export_line_len_, int(end - curr));
+            len = size_t(min(FILE_ADDRESS(theApp.export_line_len_), end - curr));
             VERIFY(GetDocument()->GetData(buf, len, curr) == len);
 
             // Convert to hex text
@@ -13607,38 +13610,200 @@ void CHexEditView::OnChecksum64()
     theApp.SaveToMacro(km_checksum, 4);
 }
 
-void CHexEditView::OnCrcCcitt() 
+void CHexEditView::OnMd5()
 {
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+    unsigned char *buf = NULL;
+
     // Get current address or selection
     FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    size_t len;                         // Length of selection
     GetSelAddr(start_addr, end_addr);
-    len = size_t(end_addr - start_addr);
-    
-    if (len == 0)
+
+    if (start_addr >= end_addr)
     {
         // No selection, presumably in macro playback
         ASSERT(theApp.playing_);
-        ::HMessageBox("Can't calculate CRC 16 without a selection");
+        ::HMessageBox("There is no selection to calculate MD5 on");
         theApp.mac_error_ = 10;
         return;
     }
     ASSERT(start_addr < GetDocument()->length());
 
-    // Get memory for selection and read it from the document
-    unsigned char *buf = new unsigned char[len];
-    size_t got = GetDocument()->GetData(buf, len, start_addr);
-    ASSERT(got == len);
+	// Get a buffer - fairly large for efficiency
+	size_t len, buflen = size_t(min(4096, end_addr - start_addr));
+	try
+	{
+        buf = new unsigned char[buflen];
+    }
+    catch(std::bad_alloc)
+    {
+        ::HMessageBox("Insufficient memory to perform MD5");
+        theApp.mac_error_ = 10;
+        return;
+    }
+	ASSERT(buf != NULL);
+    mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+    MSG msg;                                           // use to check for abort key press
 
-    // Calculate CRC and store it in the calculator (make sure at least in 16 bit mode 1st)
+	struct MD5Context ctx;
+	MD5Init(&ctx);
+	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+	{
+		// Get the next buffer full from the document
+		len = size_t(min(buflen, end_addr - curr));
+	    VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+
+		MD5Update(&ctx, buf, len);
+
+		// Do any redrawing, but nothing else
+		while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+		{
+			if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+			{
+				::TranslateMessage(&msg);
+				::DispatchMessage(&msg);
+			}
+		}
+
+        // Check if a key has been pressed
+        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+        {
+            // Windows does not like to miss key down events (need to match key up events)
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
+
+            // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+            while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                ;
+
+            if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                ::HMessageBox("Abort MD5 calculation?", MB_YESNO) == IDYES)
+            {
+				theApp.mac_error_ = 10;
+				goto func_return;
+            }
+        }
+
+		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+	}
+
+	unsigned char digest[16];
+    MD5Final(digest, &ctx);
+
+	{
+		// Display MD5 value (when calculator can handle 128 bits we will put it there instead)
+		CString ss, fmt;
+		if (theApp.hex_ucase_)
+			fmt = "MD5: %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X";
+		else
+			fmt = "MD5: %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x";
+		ss.Format(fmt,
+				digest[0], digest[1], digest[2], digest[3],
+				digest[4], digest[5], digest[6], digest[7],
+				digest[8], digest[9], digest[10], digest[11],
+				digest[12], digest[13], digest[14], digest[15]);
+		::HMessageBox(ss);
+	}
+
+	// Record in macro since we did it successfully
+	theApp.SaveToMacro(km_checksum, 20); // MD5
+
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (buf != NULL)
+		delete[] buf;
+}
+
+void CHexEditView::OnCrcCcitt() 
+{
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+    unsigned char *buf = NULL;
+
+    // Get current address or selection
+    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
+    GetSelAddr(start_addr, end_addr);
+
+    if (start_addr >= end_addr)
+    {
+        // No selection, presumably in macro playback
+        ASSERT(theApp.playing_);
+        ::HMessageBox("There is no selection to calculate CRC CCITT on");
+        theApp.mac_error_ = 10;
+        return;
+    }
+    ASSERT(start_addr < GetDocument()->length());
+
+	// Get a buffer - fairly large for efficiency
+	size_t len, buflen = size_t(min(4096, end_addr - start_addr));
+	try
+	{
+        buf = new unsigned char[buflen];
+    }
+    catch(std::bad_alloc)
+    {
+        ::HMessageBox("Insufficient memory to perform CRC");
+        theApp.mac_error_ = 10;
+        return;
+    }
+	ASSERT(buf != NULL);
+    mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+    MSG msg;                                           // use to check for abort key press
+
+	crc_ccitt_init();
+	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+	{
+		// Get the next buffer full from the document
+		len = size_t(min(buflen, end_addr - curr));
+	    VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+
+		crc_ccitt_update(buf, len);
+
+		// Do any redrawing, but nothing else
+		while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+		{
+			if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+			{
+				::TranslateMessage(&msg);
+				::DispatchMessage(&msg);
+			}
+		}
+
+        // Check if a key has been pressed
+        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+        {
+            // Windows does not like to miss key down events (need to match key up events)
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
+
+            // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+            while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                ;
+
+            if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                ::HMessageBox("Abort CRC CCITT calculation?", MB_YESNO) == IDYES)
+            {
+				theApp.mac_error_ = 10;
+				goto func_return;
+            }
+        }
+
+		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+	}
+
+    // Get final CRC and store it in the calculator
     if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < 2)
-        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(16);
-    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(crc_ccitt(buf, len));
-    delete[] buf;
+        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(16);      // make sure at least in 16 bit mode
+    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(crc_ccitt_final());
+    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
 
-    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();
+	theApp.SaveToMacro(km_checksum, 11); // 11 = CCITT
 
-    theApp.SaveToMacro(km_checksum, 11); // CCITT
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (buf != NULL)
+		delete[] buf;
 }
 
 void CHexEditView::OnCrc32() 
@@ -13736,86 +13901,8 @@ void CHexEditView::OnUpdate64bitNZ(CCmdUI* pCmdUI)
         pCmdUI->Enable(end_addr > start_addr && (end_addr - start_addr)%8 == 0);
 }
 
-// Perform binary operations (where the 2nd operand is taken from the calculator).
-// [This is used to replace numerous other functions (OnAddByte, OnXor64Bit etc).]
-// T = template parameter specifying size of operand (1,2,4 or 8 byte integer)
-// op = operation to perform
-// desc = describes the operations and operand size for use in error messages
-template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR desc, T dummy) 
+template<class T> void ProcBinary(CHexEditView *pv, T val, T *buf, size_t count, binop_type op, int &div0)
 {
-    (void)dummy;  // The dummy param. makes sure we get the right template (VC++ 6 bug)
-
-    ASSERT(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8);
-    if (pv->check_ro(desc))
-        return;
-
-    if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() > sizeof(T))
-    {
-        ASSERT(theApp.playing_);  // This should only happen during playback since commands are disabled otherwise
-        CString mess;
-        mess.Format("Can't %s unless operand (calculator) is %d bytes or less", desc, sizeof(T));
-        ::HMessageBox(mess);
-        theApp.mac_error_ = 10;
-        return;
-    }
-
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    size_t len;                         // Length of selection
-    pv->GetSelAddr(start_addr, end_addr);
-    len = size_t(end_addr - start_addr);
-
-    if (len == 0 && start_addr + sizeof(T) > pv->GetDocument()->length())
-    {
-        // Not enough bytes before EOF, presumably in macro playback
-        ASSERT(theApp.playing_);
-        CString mess;
-        mess.Format("Insufficient bytes before EOF to %s", desc);
-        ::HMessageBox(mess);
-        theApp.mac_error_ = 10;
-        return;
-    }
-    else if (len > 0 && len%sizeof(T) != 0)
-    {
-        // Selection not a multiple of bytes (and not special case of zero)
-        ASSERT(theApp.playing_);
-        CString mess;
-        mess.Format("Selection must be a multiple of %d bytes to %s", sizeof(T), desc);
-        ::HMessageBox(mess);
-        theApp.mac_error_ = 10;
-        return;
-    }
-
-    // If no selection just do one
-    if (len == 0)
-    {
-        end_addr = start_addr + sizeof(T);
-        len = sizeof(T);
-    }
-    ASSERT(end_addr - start_addr == len);
-    ASSERT(start_addr + len <= pv->GetDocument()->length());
-
-    // Get memory for bytes to be operated on and get the bytes
-    size_t count = len/sizeof(T);
-    T *buf = new T[count];
-    size_t got = pv->GetDocument()->GetData((unsigned char *)buf, len, start_addr);
-    ASSERT(got == len);
-
-    // Operate on the values
-    T val = T(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.GetValue());
-
-    // Check for calculator val of zero causing divide by zero
-    if (val == 0 && (op == binop_divide || op == binop_mod))
-    {
-        CString mess;
-        mess.Format("Calculator value is zero (causing divide by 0) while performing %s", desc);
-        ::HMessageBox(mess);
-        theApp.mac_error_ = 5;
-        return;
-    }
-
-    int div0 = 0;   // Count of divisions by zero (for binop_divide_x and binop_mod_x)
-
     for (size_t ii = 0; ii < count; ++ii)
     {
         // Reverse byte order if using big-endian
@@ -13876,6 +13963,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
             if (val < buf[ii])
                 buf[ii] = val;
             break;
+
         case binop_rol:  // T must be unsigned type for zero fill in >>
             {
                 int tmp = int(val) % (sizeof(T)*8);
@@ -13903,8 +13991,229 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
         if (pv->BigEndian())
             ::flip_bytes((unsigned char *)&buf[ii], sizeof(T));
     }
-    pv->GetDocument()->Change(mod_replace, start_addr, len, (unsigned char *)buf, 0, pv);
-    delete[] buf;
+}
+
+// Perform binary operations (where the 2nd operand is taken from the calculator).
+// [This is used to replace numerous other functions (OnAddByte, OnXor64Bit etc).]
+// T = template parameter specifying size of operand (1,2,4 or 8 byte integer)
+// pv = pointer to the view (we had to do this as VC6 does not support member templates)
+// op = operation to perform
+// desc = describes the operations and operand size for use in error messages
+// dummy = determines template operand type (should not be nec. except for VC6 template bugs)
+template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR desc, T dummy) 
+{
+    (void)dummy;  // The dummy param. makes sure we get the right template (VC++ 6 bug)
+
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+    unsigned char *buf = NULL;
+
+    ASSERT(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8);
+    if (pv->check_ro(desc))
+        return;
+
+    if (mm->m_wndCalc.ByteSize() > sizeof(T))
+    {
+        ASSERT(theApp.playing_);  // This should only happen during playback since commands are disabled otherwise
+        CString mess;
+        mess.Format("Can't %s unless operand (calculator) is %d bytes or less", desc, sizeof(T));
+        ::HMessageBox(mess);
+        theApp.mac_error_ = 10;
+        return;
+    }
+
+    // Get current address of selection
+    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
+    pv->GetSelAddr(start_addr, end_addr);
+
+    // If no selection just do one
+    if (start_addr >= end_addr)
+	{
+        end_addr = start_addr + sizeof(T);
+		if (end_addr > pv->GetDocument()->length())
+		{
+			// Not enough bytes before EOF, presumably in macro playback
+			ASSERT(theApp.playing_);
+			CString mess;
+			mess.Format("Insufficient bytes before EOF to %s", desc);
+			::HMessageBox(mess);
+			theApp.mac_error_ = 10;
+			return;
+		}
+    }
+
+	// Make sure selection is a multiple of the data type length
+    if ((end_addr - start_addr) % sizeof(T) != 0)
+    {
+        ASSERT(theApp.playing_);
+        CString mess;
+        mess.Format("Selection must be a multiple of %d bytes to %s", sizeof(T), desc);
+        ::HMessageBox(mess);
+        theApp.mac_error_ = 10;
+        return;
+    }
+    ASSERT(start_addr < end_addr && end_addr <= pv->GetDocument()->length());
+
+	// Get the other operand from the calculator
+    T val = T(mm->m_wndCalc.GetValue());
+
+    // Check for calculator val of zero causing divide by zero
+    if (val == 0 && (op == binop_divide || op == binop_mod))
+    {
+        CString mess;
+        mess.Format("Calculator value is zero (causing divide by 0) while performing %s", desc);
+        ::HMessageBox(mess);
+        theApp.mac_error_ = 5;
+        return;
+    }
+
+    int div0 = 0;   // Count of divide by zero errors (for binop_divide_x and binop_mod_x)
+
+	// Test if selection is too big to do in memory
+	if (end_addr - start_addr > (16*1024*1024) && pv->GetDocument()->DataFileSlotFree())
+	{
+        int idx = -1;                       // Index into docs data_file_ array (or -1 if no slots avail.)
+
+		// Create a file to store the resultant data
+		// (Temp file used by the document until it is closed or written to disk.)
+		char temp_dir[_MAX_PATH];
+		char temp_file[_MAX_PATH];
+		::GetTempPath(sizeof(temp_dir), temp_dir);
+		::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
+
+		// Get data buffer
+		size_t len, buflen = size_t(min(4096, end_addr - start_addr));
+		try
+		{
+            buf = new unsigned char[buflen];
+        }
+        catch(std::bad_alloc)
+        {
+            ::HMessageBox("Insufficient memory to perform operation");
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
+        mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+        MSG msg;                                           // use to check for abort key press
+
+		try
+		{
+		    CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
+
+			for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+			{
+				// Get the next buffer full from the document
+				len = size_t(min(buflen, end_addr - curr));
+				VERIFY(pv->GetDocument()->GetData(buf, len, curr) == len);
+
+				ProcBinary(pv, val, (T *)buf, len/sizeof(T), op, div0);
+
+				ff.Write(buf, len);
+
+				// Do any redrawing, but nothing else
+				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				{
+					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+					{
+						::TranslateMessage(&msg);
+						::DispatchMessage(&msg);
+					}
+				}
+
+                // Check if a key has been pressed
+                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+                {
+                    // Windows does not like to miss key down events (need to match key up events)
+                    ::TranslateMessage(&msg);
+                    ::DispatchMessage(&msg);
+
+                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                        ;
+
+					CString mess;
+					mess.Format("Abort %s operation?", desc);
+                    if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                        ::HMessageBox(mess, MB_YESNO) == IDYES)
+                    {
+						ff.Close();
+						remove(temp_file);
+						theApp.mac_error_ = 10;
+						goto func_return;
+                    }
+                }
+
+				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+			}
+		}
+		catch (CFileException *pfe)
+		{
+			::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			pfe->Delete();
+
+			remove(temp_file);
+			theApp.mac_error_ = 10;
+			goto func_return;
+		}
+
+		// Delete the unprocessed block that is to be replaced
+		// Note: this must be done before AddDataFile otherwise Change() (via regenerate()) will delete the temp file.
+        pv->GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, pv);
+
+		// Add the temp file to the document
+		idx = pv->GetDocument()->AddDataFile(temp_file);
+		ASSERT(idx != -1);
+        pv->GetDocument()->Change(mod_insert_file, start_addr, end_addr - start_addr, NULL, idx, pv, TRUE);
+	}
+	else
+	{
+		// Allocate memory block and process it
+
+		// Error if ran out of temp file handles and file is too big
+		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
+		{
+			::HMessageBox("HexEdit is out of temporary files and \n"
+                          "cannot operate on such a large selection. \n"
+                          "Please save the file to deallocate \n"
+						  "temporary file handles and try again.\n",
+						  MB_OK);
+            theApp.mac_error_ = 10;
+			return;
+		}
+
+		// Warn if we might cause memory exhaustion
+        if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+        {
+			if (::HMessageBox("WARNING: HexEdit is out of temporary file \n"
+                              "handles and operating on such a large selection \n"
+                              "may cause memory exhaustion.  Please click NO \n"
+                              "and save the file to free handles. \n"
+							  "Or, click YES to continue.\n\n"
+                              "Do you want to continue?", MB_YESNO) != IDYES)
+			{
+                theApp.mac_error_ = 5;
+                return;
+			}
+        }
+
+        CWaitCursor wait;                           // Turn on wait cursor (hourglass)
+
+        try
+        {
+            buf = new unsigned char[size_t(end_addr - start_addr)];
+        }
+        catch(std::bad_alloc)
+        {
+            ::HMessageBox("Insufficient memory to perform operation");
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
+        size_t got = pv->GetDocument()->GetData(buf, size_t(end_addr - start_addr), start_addr);
+        ASSERT(got == size_t(end_addr - start_addr));
+
+		ProcBinary(pv, val, (T *)buf, got/sizeof(T), op, div0);
+
+        pv->GetDocument()->Change(mod_replace, start_addr, got, (unsigned char *)buf, 0, pv);
+	}
 
     if (div0 > 0)
     {
@@ -13916,9 +14225,16 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
     }
 
     pv->DisplayCaret();
+
     static int bit_pos[8] = {0, 1, -1, 2, -1, -1, -1, 3};
     ASSERT(sizeof(T)-1 < 8 && bit_pos[sizeof(T)-1] != -1);  // size must be 1,2,4,8 giving bit_pos of 0,1,2,3
     theApp.SaveToMacro(km_op_binary, (op<<8)|bit_pos[sizeof(T)-1]);
+
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (buf != NULL)
+		delete[] buf;
 }
 
 void CHexEditView::OnAddByte() 
@@ -14321,75 +14637,8 @@ void CHexEditView::OnAsr64bit()
     ::OnOperateBinary<__int64>(this, binop_asr, "arithmetic shift right quad words", __int64(0));
 }
 
-// Perform unary operations on the selection
-// [This is used to replace numerous other functions (OnIncByte, OnFlip64Bit etc).]
-// T = template parameter specifying size of operand (1,2,4 or 8 byte integer)
-// op = operation to perform
-// desc = describes the operations and operand size for use in error messages
-template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR desc, T dummy)
+template<class T> void ProcUnary(CHexEditView *pv, T val, T *buf, size_t count, unary_type op)
 {
-    (void)dummy;  // The dummy param. makes sure we get the right template (VC++ 6 bug)
-
-    ASSERT(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8);
-    if (pv->check_ro(desc))
-        return;
-
-    // For assign operation we get the value from calc, so make sure the operand is not too big
-    if (op == unary_at && ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() > sizeof(T))
-    {
-        ASSERT(theApp.playing_);  // This should only happen during playback since commands are disabled otherwise
-        CString mess;
-        mess.Format("Can't %s unless operand (calculator) is %d bytes or less", desc, sizeof(T));
-        ::HMessageBox(mess);
-        theApp.mac_error_ = 10;
-        return;
-    }
-
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    size_t len;                         // Length of selection
-    pv->GetSelAddr(start_addr, end_addr);
-    len = size_t(end_addr - start_addr);
-
-    if (len == 0 && start_addr + sizeof(T) > pv->GetDocument()->length())
-    {
-        // Not enough bytes before EOF, presumably in macro playback
-        ASSERT(theApp.playing_);
-        CString mess;
-        mess.Format("Insufficient bytes before EOF to %s", desc);
-        ::HMessageBox(mess);
-        theApp.mac_error_ = 10;
-        return;
-    }
-    else if (len > 0 && len%sizeof(T) != 0)
-    {
-        // Selection not a multiple of bytes (and not special case of zero)
-        ASSERT(theApp.playing_);
-        CString mess;
-        mess.Format("Selection must be a multiple of %d bytes to %s", sizeof(T), desc);
-        ::HMessageBox(mess);
-        theApp.mac_error_ = 10;
-        return;
-    }
-
-    // If no selection just do one
-    if (len == 0)
-    {
-        end_addr = start_addr + sizeof(T);
-        len = sizeof(T);
-    }
-    ASSERT(end_addr - start_addr == len);
-    ASSERT(start_addr + len <= pv->GetDocument()->length());
-
-    // Get memory for bytes to be operated on and read them from the document
-    size_t count = len/sizeof(T);
-    T *buf = new T[count];
-    if (op != unary_at)      // We don't need to get old value if assigning
-    {
-        size_t got = pv->GetDocument()->GetData((unsigned char *)buf, len, start_addr);
-        ASSERT(got == len);
-    }
-
     // Operate on all the selected values
     for (size_t ii = 0; ii < count; ++ii)
     {
@@ -14399,7 +14648,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
         switch (op)
         {
         case unary_at:
-            buf[ii] = T(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.GetValue());
+            buf[ii] = val;
             break;
         case unary_sign:
             buf[ii] = -buf[ii];
@@ -14456,13 +14705,238 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
         if (pv->BigEndian() || op == unary_flip)
             ::flip_bytes((unsigned char *)&buf[ii], sizeof(T));
     }
-    pv->GetDocument()->Change(mod_replace, start_addr, len, (unsigned char *)buf, 0, pv);
-    delete[] buf;
+}
+
+// Perform unary operations on the selection
+// [This is used to replace numerous other functions (OnIncByte, OnFlip64Bit etc).]
+// T = template parameter specifying size of operand (1,2,4 or 8 byte integer)
+// op = operation to perform
+// desc = describes the operations and operand size for use in error messages
+template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR desc, T dummy)
+{
+    (void)dummy;  // The dummy param. makes sure we get the right template (VC++ 6 bug)
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+    unsigned char *buf = NULL;
+
+    ASSERT(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8);
+    if (pv->check_ro(desc))
+        return;
+
+    T val = 0;
+    // For assign operation we get the value from calc
+    if (op == unary_at)
+    {
+        val = T(mm->m_wndCalc.GetValue());  // prefetch the value
+
+		// Make sure the operand is not too big
+		if (mm->m_wndCalc.ByteSize() > sizeof(T))
+		{
+			ASSERT(theApp.playing_);  // This should only happen during playback since commands are disabled otherwise
+			CString mess;
+			mess.Format("Can't %s unless operand (calculator) is %d bytes or less", desc, sizeof(T));
+			::HMessageBox(mess);
+			theApp.mac_error_ = 10;
+			return;
+		}
+    }
+
+    // Get current address or selection
+    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
+    pv->GetSelAddr(start_addr, end_addr);
+
+    // If no selection just do one
+    if (start_addr >= end_addr)
+	{
+        end_addr = start_addr + sizeof(T);
+		if (end_addr > pv->GetDocument()->length())
+		{
+			// Not enough bytes before EOF, presumably in macro playback
+			ASSERT(theApp.playing_);
+			CString mess;
+			mess.Format("Insufficient bytes before EOF to %s", desc);
+			::HMessageBox(mess);
+			theApp.mac_error_ = 10;
+			return;
+		}
+    }
+
+	// Make sure selection is a multiple of the data type length
+    if ((end_addr - start_addr) % sizeof(T) != 0)
+    {
+        ASSERT(theApp.playing_);
+        CString mess;
+        mess.Format("Selection must be a multiple of %d bytes to %s", sizeof(T), desc);
+        ::HMessageBox(mess);
+        theApp.mac_error_ = 10;
+        return;
+    }
+    ASSERT(start_addr < end_addr && end_addr <= pv->GetDocument()->length());
+
+	// Test if selection is too big to do in memory
+	if (end_addr - start_addr > (16*1024*1024) && pv->GetDocument()->DataFileSlotFree())
+	{
+        int idx = -1;                       // Index into docs data_file_ array (or -1 if no slots avail.)
+
+		// Create a file to store the resultant data
+		// (Temp file used by the document until it is closed or written to disk.)
+		char temp_dir[_MAX_PATH];
+		char temp_file[_MAX_PATH];
+		::GetTempPath(sizeof(temp_dir), temp_dir);
+		::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
+
+		// Get data buffer
+		size_t len, buflen = size_t(min(4096, end_addr - start_addr));
+		try
+		{
+            buf = new unsigned char[buflen];
+        }
+        catch(std::bad_alloc)
+        {
+            ::HMessageBox("Insufficient memory to perform operation");
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
+        mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+        MSG msg;                                           // use to check for abort key press
+
+		try
+		{
+		    CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
+
+			for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+			{
+				// Get the next buffer full from the document
+				len = size_t(min(buflen, end_addr - curr));
+				if (op != unary_at)      // We don't need to get old value if assigning
+				    VERIFY(pv->GetDocument()->GetData(buf, len, curr) == len);
+
+				ProcUnary(pv, val, (T *)buf, len/sizeof(T), op);
+
+				ff.Write(buf, len);
+
+				// Do any redrawing, but nothing else
+				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				{
+					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+					{
+						::TranslateMessage(&msg);
+						::DispatchMessage(&msg);
+					}
+				}
+
+                // Check if a key has been pressed
+                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+                {
+                    // Windows does not like to miss key down events (need to match key up events)
+                    ::TranslateMessage(&msg);
+                    ::DispatchMessage(&msg);
+
+                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                        ;
+
+					CString mess;
+					mess.Format("Abort %s operation?", desc);
+                    if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                        ::HMessageBox(mess, MB_YESNO) == IDYES)
+                    {
+						ff.Close();
+						remove(temp_file);
+						theApp.mac_error_ = 10;
+						goto func_return;
+                    }
+                }
+
+				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+			}
+		}
+		catch (CFileException *pfe)
+		{
+			::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			pfe->Delete();
+
+			remove(temp_file);
+			theApp.mac_error_ = 10;
+			goto func_return;
+		}
+
+		// Delete the unprocessed block that is to be replaced
+		// Note: this must be done before AddDataFile otherwise Change() (via regenerate()) will delete the temp file.
+        pv->GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, pv);
+
+		// Add the temp file to the document
+		idx = pv->GetDocument()->AddDataFile(temp_file);
+		ASSERT(idx != -1);
+        pv->GetDocument()->Change(mod_insert_file, start_addr, end_addr - start_addr, NULL, idx, pv, TRUE);
+	}
+	else
+	{
+		// Allocate memory block and process it
+
+		// Error if ran out of temp file handles and file is too big
+		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
+		{
+			::HMessageBox("HexEdit is out of temporary files and \n"
+                          "cannot operate on such a large selection. \n"
+                          "Please save the file to deallocate \n"
+						  "temporary file handles and try again.\n",
+						  MB_OK);
+            theApp.mac_error_ = 10;
+			return;
+		}
+
+		// Warn if we might cause memory exhaustion
+        if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+        {
+			if (::HMessageBox("WARNING: HexEdit is out of temporary file \n"
+                              "handles and operating on such a large selection \n"
+                              "may cause memory exhaustion.  Please click NO \n"
+                              "and save the file to free handles. \n"
+							  "Or, click YES to continue.\n\n"
+                              "Do you want to continue?", MB_YESNO) != IDYES)
+			{
+                theApp.mac_error_ = 5;
+                return;
+			}
+        }
+
+        CWaitCursor wait;                           // Turn on wait cursor (hourglass)
+
+        try
+        {
+            buf = new unsigned char[size_t(end_addr - start_addr)];
+        }
+        catch(std::bad_alloc)
+        {
+            ::HMessageBox("Insufficient memory to perform operation");
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
+		size_t got;
+		if (op != unary_at)      // We don't need to get old value if assigning
+		{
+			got = pv->GetDocument()->GetData(buf, size_t(end_addr - start_addr), start_addr);
+			ASSERT(got == size_t(end_addr - start_addr));
+		}
+		else
+			got = size_t(end_addr - start_addr);
+
+		ProcUnary(pv, val, (T *)buf, got/sizeof(T), op);
+
+        pv->GetDocument()->Change(mod_replace, start_addr, got, (unsigned char *)buf, 0, pv);
+	}
 
     pv->DisplayCaret();
+
     static int bit_pos[8] = {0, 1, -1, 2, -1, -1, -1, 3};
     ASSERT(sizeof(T)-1 < 8 && bit_pos[sizeof(T)-1] != -1);  // size must be 1,2,4,8 giving bit_pos of 0,1,2,3
     theApp.SaveToMacro(km_op_unary, (op<<8)|bit_pos[sizeof(T)-1]);
+
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (buf != NULL)
+		delete[] buf;
 }
 
 void CHexEditView::OnIncByte() 
