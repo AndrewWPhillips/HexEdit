@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by HexEdit.rc
 //
 #define ID_DFFD_HELP                    3
@@ -263,6 +263,7 @@
 #define IDD_PROP_INFO                   295
 #define IDD_EXPLORER                    296
 #define IDD_BOOKMARKS1                  297
+#define IDD_COMPRESS                    298
 #define ID_NAV_FORW_DUMMY               300
 #define ID_NAV_BACK_DUMMY               301
 #define IDB_BACK                        302
@@ -975,6 +976,24 @@
 #define IDC_DFFD_BITFIELD_BITS_DESC     1500
 #define IDC_DFFD_BITFIELD_DIRN_DESC     1501
 #define IDC_DFFD_TREE_DISPLAY           1502
+#define IDC_COMPRESSION_LEVEL_DEFAULT   1503
+#define IDC_COMPRESSION_WINDOW_SIZE_DEFAULT 1504
+#define IDC_COMPRESSION_LEVEL_SPIN      1505
+#define IDC_COMPRESSION_WINDOW_SIZE_SPIN 1506
+#define IDC_COMPRESSION_HEADER_RAW      1507
+#define IDC_COMPRESSION_HEADER_ZLIB     1508
+#define IDC_COMPRESSION_HEADER_GZIP     1509
+#define IDC_COMPRESSION_MEMORY_USAGE_SPIN 1510
+#define IDC_COMPRESSION_MEMORY_USAGE_DEFAULT 1511
+#define IDC_COMPRESSION_STRATEGY_DEFAULT 1512
+#define IDC_COMPRESSION_STRATEGY_FILTERED 1513
+#define IDC_COMPRESSION_STRATEGY_HUFFMAN 1514
+#define IDC_COMPRESSION_STRATEGY_RLE    1515
+#define IDC_COMPRESSION_STRATEGY_FIXED  1516
+#define IDC_COMPRESSION_WINDOW_SIZE     1517
+#define IDC_COMPRESSION_MEMORY_USAGE    1518
+#define IDC_COMPRESSION_SYNC            1519
+#define IDC_COMPRESSION_LEVEL           1520
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1324,7 +1343,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        353
 #define _APS_NEXT_COMMAND_VALUE         38003
-#define _APS_NEXT_CONTROL_VALUE         1503
+#define _APS_NEXT_CONTROL_VALUE         1521
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

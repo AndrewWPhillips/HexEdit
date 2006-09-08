@@ -1,4 +1,4 @@
-// Microsoft Developer Studio generated Help ID include file.
+// Microsoft Visual C++ generated Help ID include file.
 // Used by HexEdit.rc
 //
 #define HIDC_16BIT                      0x807503ef    // IDD_CALC
@@ -55,6 +55,9 @@
 #define HIDC_CLEAR_SEARCH               0x811204a6    // IDD_CLEAR_HIST
 #define HIDC_COLOUR_PICKER              0x80e604bc    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_COLS                       0x810c0443    // IDD_OPT_WINDISPLAY [English (U.S.)]
+#define HIDC_COMPRESSION_LEVEL          0x812a05f0    // IDD_COMPRESS
+#define HIDC_COMPRESSION_MEMORY_USAGE   0x812a05ee    // IDD_COMPRESS
+#define HIDC_COMPRESSION_WINDOW_SIZE    0x812a05ed    // IDD_COMPRESS
 #define HIDC_CONTROL                    0x810c04b1    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_COSTS                      0x80ec048b    // IDD_REG
 #define HIDC_CSRC_ADDRESS               0x811f0565    // IDD_CSRC

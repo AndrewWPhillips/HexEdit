@@ -736,6 +736,9 @@
 				RelativePath=".\Resource.h">
 			</File>
 			<File
+				RelativePath=".\resource.hm">
+			</File>
+			<File
 				RelativePath=".\SaveDffd.h">
 			</File>
 			<File
@@ -1039,10 +1042,10 @@
 				RelativePath=".\TestData\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\TestData\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\TestData\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

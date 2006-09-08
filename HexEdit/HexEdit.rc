@@ -4695,6 +4695,74 @@ BEGIN
                     BS_VCENTER,0,HIDC_DFFD_DOWN
 END
 
+IDD_COMPRESS DIALOGEX 0, 0, 383, 217
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Compression Options"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "Compression level",IDC_STATIC,8,5,188,52,WS_GROUP
+    CONTROL         "Default",IDC_COMPRESSION_LEVEL_DEFAULT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,18,39,10
+    EDITTEXT        IDC_COMPRESSION_LEVEL,83,16,38,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_COMPRESSION_LEVEL
+    CONTROL         "",IDC_COMPRESSION_LEVEL_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,114,13,11,14
+    LTEXT           "(range: 1 to 9)",IDC_STATIC,126,19,48,8,NOT WS_GROUP
+    LTEXT           "1 gives best speed, 9 gives best compression.\nThe default is a reasonable compromise (currently 6).",
+                    IDC_STATIC,15,33,175,18
+    GROUPBOX        "Window size",IDC_STATIC,8,64,188,52,WS_GROUP
+    CONTROL         "Default",IDC_COMPRESSION_WINDOW_SIZE_DEFAULT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,77,39,10
+    EDITTEXT        IDC_COMPRESSION_WINDOW_SIZE,83,74,38,14,ES_RIGHT | 
+                    ES_NUMBER,0,HIDC_COMPRESSION_WINDOW_SIZE
+    CONTROL         "",IDC_COMPRESSION_WINDOW_SIZE_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,114,71,11,14
+    LTEXT           "(range: 8 to 15)",IDC_STATIC,126,76,52,8,NOT WS_GROUP
+    LTEXT           "You must use the same or a larger window size when decompressing as was used to compress the data.",
+                    IDC_STATIC,16,91,173,19
+    GROUPBOX        "Memory usage",IDC_STATIC,8,122,188,34,WS_GROUP
+    CONTROL         "Default",IDC_COMPRESSION_MEMORY_USAGE_DEFAULT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,138,39,10
+    EDITTEXT        IDC_COMPRESSION_MEMORY_USAGE,83,134,38,14,ES_RIGHT | 
+                    ES_NUMBER,0,HIDC_COMPRESSION_MEMORY_USAGE
+    CONTROL         "",IDC_COMPRESSION_MEMORY_USAGE_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,116,131,11,14
+    LTEXT           "(range: 1 to 9)",IDC_STATIC,128,138,48,8,NOT WS_GROUP
+    GROUPBOX        "Data recovery (full flush) points",IDC_STATIC,8,162,188,
+                    47,WS_GROUP
+    LTEXT           "Synchronize every: ",IDC_STATIC,15,176,62,8
+    EDITTEXT        IDC_COMPRESSION_SYNC,83,174,38,14,ES_AUTOHSCROLL
+    LTEXT           "KBytes",IDC_STATIC,128,176,35,8,NOT WS_GROUP
+    GROUPBOX        "Header",IDC_STATIC,205,5,169,52,WS_GROUP
+    CONTROL         "Raw (no header)",IDC_COMPRESSION_HEADER_RAW,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,214,18,70,10
+    CONTROL         "Zlib header (default)",IDC_COMPRESSION_HEADER_ZLIB,
+                    "Button",BS_AUTORADIOBUTTON,214,30,81,10
+    CONTROL         "Gzip header",IDC_COMPRESSION_HEADER_GZIP,"Button",
+                    BS_AUTORADIOBUTTON,214,42,54,10
+    GROUPBOX        "Strategy",IDC_STATIC,205,64,169,92,WS_GROUP
+    CONTROL         "Default",IDC_COMPRESSION_STRATEGY_DEFAULT,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,214,77,39,10
+    CONTROL         "Filtered",IDC_COMPRESSION_STRATEGY_FILTERED,"Button",
+                    BS_AUTORADIOBUTTON,214,88,40,10
+    CONTROL         "Huffman only",IDC_COMPRESSION_STRATEGY_HUFFMAN,"Button",
+                    BS_AUTORADIOBUTTON,214,99,56,10
+    CONTROL         "RLE",IDC_COMPRESSION_STRATEGY_RLE,"Button",
+                    BS_AUTORADIOBUTTON,214,110,28,10
+    CONTROL         "Fixed",IDC_COMPRESSION_STRATEGY_FIXED,"Button",
+                    BS_AUTORADIOBUTTON,214,121,33,10
+    LTEXT           "Strategy can be used to tune the compression to suit the data.",
+                    IDC_STATIC,214,134,155,18
+    LTEXT           "NOTE: All fields affect compression.  Only window size and raw header options are used for decompression.",
+                    IDC_STATIC,207,164,166,26
+    DEFPUSHBUTTON   "OK",IDOK,266,195,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,324,195,50,14
+    LTEXT           "The value is rounded up to buffer size (currently 16 Kb).",
+                    IDC_STATIC,15,193,176,11
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
