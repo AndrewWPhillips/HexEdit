@@ -303,13 +303,17 @@ enum km_type
 // Be careful to keep the numbers of all retained commands the same so that old
 // keystroke macro files work in new versions of HexEdit.
 
-enum
+enum convert_type
 {
     CONVERT_ERROR,              // Keep zero as error value
     CONVERT_ASC2EBC,
     CONVERT_EBC2ASC,
     CONVERT_ANSI2IBM,
-    CONVERT_IBM2ANSI
+    CONVERT_IBM2ANSI,
+	CONVERT_UPPER,
+	CONVERT_LOWER,
+
+	CONVERT_LAST                // Keep at end
 };
 
 struct mouse_sel

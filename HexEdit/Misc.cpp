@@ -2021,6 +2021,7 @@ static DWORD crc_32_tab[] = { /* CRC polynomial 0xedb88320 */
 
 #define UPDC32(octet,crc) (crc_32_tab[((crc) ^ ((BYTE)octet)) & 0xff] ^ ((crc) >> 8))
 
+#if 0
 DWORD crc_32(const void *buf, size_t len)
 {
     const char *pp = (const char *)buf;
@@ -2033,9 +2034,36 @@ DWORD crc_32(const void *buf, size_t len)
 
     return ~oldcrc32;
 }
+#endif
 
-#if 0 // Apparently this is the common but incorrect implementation
-    /* the CRC polynomial. This is used by CCITT.
+static DWORD oldcrc32;
+
+void crc_32_init()
+{
+    oldcrc32 = 0xffffFFFF;
+}
+
+void crc_32_update(const void *buf, size_t len)
+{
+    const char *pp = (const char *)buf;
+    for ( ; len; --len, ++pp)
+        oldcrc32 = UPDC32(*pp, oldcrc32);
+}
+
+DWORD crc_32_final()
+{
+    return ~oldcrc32;
+}
+
+DWORD crc_32(const void *buf, size_t len)
+{
+	crc_32_init();
+	crc_32_update(buf, len);
+	return crc_32_final();
+}
+
+// Apparently the following is the common but incorrect implementation
+    /* the CRC polynomial. This is [not exactly] used by CCITT.
      * If you change P, you must change crctab[]'s initial value to what is
      * printed by initcrctab()
      */
@@ -2076,17 +2104,32 @@ static WORD crctab[256] = { /* as calculated by initcrctab() */
     0x6e17,  0x7e36,  0x4e55,  0x5e74,  0x2e93,  0x3eb2,  0x0ed1,  0x1ef0
     };
 
-unsigned short crc_ccitt(const void *buf, size_t len)
+static unsigned short crc_ccitt2_value;
+
+void crc_ccitt2_init(int init /* = -1 */)    // Use zero for Xmodem, -1 for CCITT
 {
-    unsigned short crc = -1;  // Use zero for Xmodem, -1 for CCITT
+	crc_ccitt2_value = init;
+}
+
+void crc_ccitt2_update(const void *buf, size_t len)
+{
     const unsigned char *cp = (const unsigned char *)buf;
 
     while (len--)
-        crc = (crc<<8) ^ crctab[(crc>>(16-8)) ^ *cp++];
-
-    return crc;
+        crc_ccitt2_value = (crc_ccitt2_value<<8) ^ crctab[(crc_ccitt2_value>>(16-8)) ^ *cp++];
 }
-#endif
+
+unsigned short crc_ccitt2_final()
+{
+    return crc_ccitt2_value;
+}
+
+unsigned short crc_ccitt2(const void *buf, size_t len)
+{
+	crc_ccitt2_init();
+	crc_ccitt2_update(buf, len);
+	return crc_ccitt2_final();
+}
 
 static unsigned short crc_ccitt_value;     /* Note: only one CRC calc can be in progress at a time! */
 #define           poly     0x1021          /* crc-ccitt mask */ 
@@ -2165,81 +2208,6 @@ unsigned short crc_ccitt(const void *buf, size_t len)
 	crc_ccitt_update(buf, len);
 	return crc_ccitt_final();
 }
-
-#if 0
-#define           poly     0x1021          /* crc-ccitt mask */ 
-
-unsigned short crc_ccitt(const void *buf, size_t len)
-{
-    unsigned short crc = -1;
-    const unsigned char *cp = (const unsigned char *)buf;
-    const unsigned char *end = cp + len;
-
-    unsigned short ii, vv, xor_flag; 
-
-    for ( ; cp < end; ++cp)
-    {
-        /* 
-        Align test bit with leftmost bit of the message byte. 
-        */ 
-        vv = 0x80; 
-
-        for (ii = 0; ii < 8; ++ii) 
-        { 
-            if (crc & 0x8000) 
-            { 
-                xor_flag= 1; 
-            } 
-            else 
-            { 
-                xor_flag= 0; 
-            } 
-            crc = crc << 1; 
-
-            if (*cp & vv) 
-            { 
-                /* 
-                Append next bit of message to end of CRC if it is not zero. 
-                The zero bit placed there by the shift above need not be 
-                changed if the next bit of the message is zero. 
-                */ 
-                crc= crc + 1; 
-            } 
-
-            if (xor_flag) 
-            { 
-                crc = crc ^ poly; 
-            } 
-
-            /* 
-            Align test bit with next bit of the message byte. 
-            */ 
-            vv = vv >> 1; 
-        } 
-    }
-
-    // Augment message
-    for (ii = 0; ii < 16; ++ii) 
-    { 
-        if (crc & 0x8000) 
-        { 
-            xor_flag= 1; 
-        } 
-        else 
-        { 
-            xor_flag= 0; 
-        } 
-        crc = crc << 1; 
-
-        if (xor_flag) 
-        { 
-            crc = crc ^ poly; 
-        } 
-    }
-
-    return crc;
-}
-#endif
 
 //-----------------------------------------------------------------------------
 // Activation code stuff

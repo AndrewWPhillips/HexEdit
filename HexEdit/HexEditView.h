@@ -270,6 +270,9 @@ public:
     void do_replace(FILE_ADDRESS start, FILE_ADDRESS end, unsigned char *pp, size_t len);
     void do_insert_block(_int64 params, const char *data_str);
 
+	void ByteConvert(convert_type op, LPCSTR desc);
+	void ProcConversion(unsigned char *buf, size_t count, convert_type op);
+
 //    BOOL Search(const char *ss, int tt = 1, BOOL forward = TRUE);
     FILE_ADDRESS GoAddress(FILE_ADDRESS start_addr, FILE_ADDRESS end_addr = -1);
 //    void SaveMove();
@@ -679,6 +682,8 @@ public:
     afx_msg void OnCompress();
     afx_msg void OnDecompress();
     afx_msg void OnMd5();
+    afx_msg void OnUppercase();
+    afx_msg void OnLowercase();
 
         DECLARE_MESSAGE_MAP()
 

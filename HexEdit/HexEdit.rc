@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -33,27 +33,27 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_HEXEDTYPE           ICON    DISCARDABLE     "res\\HexEditDoc.ico"
+IDR_HEXEDTYPE           ICON                    "res\\HexEditDoc.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Mainbar.bmp"
-IDR_UNUSED              BITMAP  MOVEABLE PURE   "res\\mainfram.bmp"
-IDR_EDITBAR             BITMAP  MOVEABLE PURE   "res\\editbar.bmp"
-IDR_MISC                BITMAP  MOVEABLE PURE   "res\\misc.bmp"
-IDR_STDBAR              BITMAP  MOVEABLE PURE   "res\\toolbar.bmp"
-IDR_NAVBAR              BITMAP  MOVEABLE PURE   "res\\navbar.bmp"
-IDR_FORMATBAR           BITMAP  MOVEABLE PURE   "res\\formtbar.bmp"
+IDR_MAINFRAME           BITMAP                  "res\\Mainbar.bmp"
+IDR_UNUSED              BITMAP                  "res\\mainfram.bmp"
+IDR_EDITBAR             BITMAP                  "res\\editbar.bmp"
+IDR_MISC                BITMAP                  "res\\misc.bmp"
+IDR_STDBAR              BITMAP                  "res\\toolbar.bmp"
+IDR_NAVBAR              BITMAP                  "res\\navbar.bmp"
+IDR_FORMATBAR           BITMAP                  "res\\formtbar.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR MOVEABLE PURE  16, 15
+IDR_MAINFRAME TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_FILE_OPEN
     BUTTON      ID_FILE_SAVE
@@ -79,7 +79,7 @@ BEGIN
     BUTTON      ID_PLAY
 END
 
-IDR_UNUSED TOOLBAR MOVEABLE PURE  16, 15
+IDR_UNUSED TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_FILE_OPEN
     BUTTON      ID_FILE_PRINT
@@ -99,7 +99,7 @@ BEGIN
     BUTTON      ID_DFFD_AUTO_SYNC
 END
 
-IDR_EDITBAR TOOLBAR MOVEABLE PURE  16, 15
+IDR_EDITBAR TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_SEARCH_BACK
     BUTTON      ID_SEARCH
@@ -115,7 +115,7 @@ BEGIN
     BUTTON      ID_TRACK_CHANGES
 END
 
-IDR_MISC TOOLBAR MOVEABLE PURE  16, 15
+IDR_MISC TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_FILE_CLOSE
     BUTTON      ID_FILE_PRINT_SETUP
@@ -214,7 +214,7 @@ BEGIN
     BUTTON      ID_BIG_ENDIAN
 END
 
-IDR_STDBAR TOOLBAR MOVEABLE PURE  16, 15
+IDR_STDBAR TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_FILE_OPEN
     BUTTON      ID_FILE_SAVE
@@ -244,7 +244,7 @@ BEGIN
     BUTTON      ID_PLAY
 END
 
-IDR_NAVBAR TOOLBAR MOVEABLE PURE  16, 15
+IDR_NAVBAR TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_DFFD_SYNC
     BUTTON      ID_DFFD_AUTO_SYNC
@@ -264,7 +264,7 @@ BEGIN
     BUTTON      ID_NAV_FORW
 END
 
-IDR_FORMATBAR TOOLBAR MOVEABLE PURE  16, 15
+IDR_FORMATBAR TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_AUTOFIT
     BUTTON      ID_COLUMN_DEC
@@ -295,7 +295,7 @@ END
 // Menu
 //
 
-IDR_MAINFRAME MENU DISCARDABLE 
+IDR_MAINFRAME MENU 
 BEGIN
     POPUP "&File"
     BEGIN
@@ -373,7 +373,7 @@ BEGIN
     END
 END
 
-IDR_HEXEDTYPE MENU DISCARDABLE 
+IDR_HEXEDTYPE MENU 
 BEGIN
     POPUP "&File"
     BEGIN
@@ -740,7 +740,7 @@ BEGIN
     END
 END
 
-IDR_NOT_USED MENU DISCARDABLE 
+IDR_NOT_USED MENU 
 BEGIN
     POPUP "Bar Context"
     BEGIN
@@ -798,7 +798,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_ADDRESS MENU DISCARDABLE 
+IDR_CONTEXT_ADDRESS MENU 
 BEGIN
     POPUP "Address Area Context"
     BEGIN
@@ -817,7 +817,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_HEX MENU DISCARDABLE 
+IDR_CONTEXT_HEX MENU 
 BEGIN
     POPUP "Hex Area Context"
     BEGIN
@@ -842,7 +842,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_CHAR MENU DISCARDABLE 
+IDR_CONTEXT_CHAR MENU 
 BEGIN
     POPUP "Char Area Context"
     BEGIN
@@ -878,7 +878,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_BARS MENU DISCARDABLE 
+IDR_CONTEXT_BARS MENU 
 BEGIN
     POPUP "Bar Context"
     BEGIN
@@ -913,7 +913,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_STATBAR MENU DISCARDABLE 
+IDR_CONTEXT_STATBAR MENU 
 BEGIN
     POPUP "Status Bar Context"
     BEGIN
@@ -934,7 +934,7 @@ BEGIN
     END
 END
 
-IDR_MISC MENU DISCARDABLE 
+IDR_MISC MENU 
 BEGIN
     POPUP "Format commands"
     BEGIN
@@ -995,7 +995,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_HIGHLIGHT MENU DISCARDABLE 
+IDR_CONTEXT_HIGHLIGHT MENU 
 BEGIN
     POPUP "Highlight"
     BEGIN
@@ -1012,7 +1012,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_SELECTION MENU DISCARDABLE 
+IDR_CONTEXT_SELECTION MENU 
 BEGIN
     POPUP "Selection"
     BEGIN
@@ -1035,7 +1035,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_BOOKMARKS MENU DISCARDABLE 
+IDR_CONTEXT_BOOKMARKS MENU 
 BEGIN
     POPUP "Bookmarks"
     BEGIN
@@ -1052,7 +1052,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_TABS MENU DISCARDABLE 
+IDR_CONTEXT_TABS MENU 
 BEGIN
     POPUP "MDI Tabs Context"
     BEGIN
@@ -1068,7 +1068,7 @@ BEGIN
     END
 END
 
-IDR_FUNCTION MENU DISCARDABLE 
+IDR_FUNCTION MENU 
 BEGIN
     POPUP "Functions"
     BEGIN
@@ -1146,7 +1146,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS MOVEABLE PURE 
+IDR_MAINFRAME ACCELERATORS 
 BEGIN
     "1",            ID_TOOL1,               VIRTKEY, ALT, NOINVERT
     "2",            ID_TOOL2,               VIRTKEY, ALT, NOINVERT
@@ -1242,7 +1242,7 @@ END
 //
 
 IDD_OPT_SYSTEM DIALOGEX 0, 0, 256, 127
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "System"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1301,7 +1301,7 @@ BEGIN
 END
 
 IDD_PROP_INFO DIALOGEX 0, 0, 223, 79
-STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Summary"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1330,7 +1330,7 @@ BEGIN
 END
 
 IDD_PROP_FILE DIALOGEX 0, 0, 223, 79
-STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "File"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1371,7 +1371,7 @@ BEGIN
 END
 
 IDD_PROP_CHAR DIALOGEX 0, 0, 223, 79
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Byte"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1406,7 +1406,7 @@ BEGIN
 END
 
 IDD_PROP_DECIMAL DIALOGEX 0, 0, 223, 79
-STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Decimal"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1437,7 +1437,7 @@ BEGIN
 END
 
 IDD_PROP_FLOAT DIALOGEX 0, 0, 223, 79
-STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "IEEE FP"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1463,7 +1463,7 @@ BEGIN
 END
 
 IDD_OPT_MACRO DIALOGEX 0, 0, 255, 127
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Macro"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1518,7 +1518,7 @@ BEGIN
 END
 
 IDD_PROP_IBMFP DIALOGEX 0, 0, 223, 79
-STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "IBM FP"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1544,8 +1544,8 @@ BEGIN
                     39,33,10,0,HIDC_IBMFP_64BIT
 END
 
-IDD_ABOUT DIALOG DISCARDABLE  0, 0, 249, 103
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ABOUT DIALOG  0, 0, 249, 103
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About HexEdit"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -1560,7 +1560,7 @@ BEGIN
 END
 
 IDD_OPT_SYSDISPLAY DIALOGEX 0, 0, 255, 127
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Display"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1623,7 +1623,8 @@ BEGIN
 END
 
 IDD_PASSWORD DIALOGEX 0, 0, 255, 118
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Enter Encryption Password"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1650,7 +1651,8 @@ BEGIN
 END
 
 IDD_ALGORITHM DIALOGEX 0, 0, 293, 141
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Select Encryption Algorithm"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1670,7 +1672,7 @@ BEGIN
 END
 
 IDD_PROP_DATE DIALOGEX 0, 0, 223, 79
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Date"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1703,7 +1705,7 @@ BEGIN
 END
 
 IDD_OPT_PRINT DIALOGEX 0, 0, 254, 127
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Printing"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1756,7 +1758,7 @@ BEGIN
 END
 
 IDD_OPT_FILTERS DIALOGEX 0, 0, 255, 127
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Filters"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1775,7 +1777,7 @@ BEGIN
 END
 
 IDD_OPT_WINDISPLAY DIALOGEX 0, 0, 255, 127
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Window"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1840,7 +1842,7 @@ BEGIN
 END
 
 IDD_OPT_COLOURS DIALOGEX 0, 0, 255, 127
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Colours"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1873,7 +1875,7 @@ BEGIN
 END
 
 IDD_FIND_HEX DIALOGEX 0, 0, 300, 111
-STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Hex"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1921,7 +1923,7 @@ BEGIN
 END
 
 IDD_FIND_NUMBER DIALOGEX 0, 0, 300, 111
-STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Number    "
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1972,7 +1974,7 @@ BEGIN
 END
 
 IDD_FIND_REPLACE DIALOGEX 0, 0, 300, 111
-STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Replace    "
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -2015,7 +2017,7 @@ BEGIN
 END
 
 IDD_FIND_SIMPLE DIALOGEX 0, 0, 300, 111
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Basic    "
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -2054,7 +2056,7 @@ BEGIN
 END
 
 IDD_FIND_TEXT DIALOGEX 0, 0, 300, 111
-STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Text"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -2105,7 +2107,8 @@ BEGIN
 END
 
 IDD_PROP_PARENT DIALOGEX 0, 0, 233, 90
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Properties"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -2113,22 +2116,23 @@ BEGIN
 END
 
 IDD_FIND_PARENT DIALOGEX 0, 0, 307, 117
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Find"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
 END
 
-IDD_DIALOGBAR DIALOG DISCARDABLE  0, 0, 330, 69
-STYLE WS_CHILD
+IDD_DIALOGBAR DIALOG  0, 0, 330, 69
+STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
     PUSHBUTTON      "Button1",IDC_BUTTON1,142,26,50,14
 END
 
 IDD_PROP_CHAR1 DIALOGEX 0, 0, 223, 79
-STYLE DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Byte"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -2167,7 +2171,6 @@ BEGIN
 END
 
 
-#ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -2190,18 +2193,14 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "\0"
-            VALUE "CompanyName", "Expert Commercial Software Pty Ltd\0"
-            VALUE "FileDescription", "HexEdit Application\0"
-            VALUE "FileVersion", "3, 10, 0, 37\0"
-            VALUE "InternalName", "HexEdit\0"
-            VALUE "LegalCopyright", "Copyright © 1999-2006 Expert Commercial Software\0"
-            VALUE "LegalTrademarks", "\0"
-            VALUE "OriginalFilename", "HEXEDIT.EXE\0"
-            VALUE "PrivateBuild", "\0"
-            VALUE "ProductName", "HexEdit\0"
-            VALUE "ProductVersion", "3, 10, 0, 37\0"
-            VALUE "SpecialBuild", "\0"
+            VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
+            VALUE "FileDescription", "HexEdit Application"
+            VALUE "FileVersion", "3, 10, 0, 37"
+            VALUE "InternalName", "HexEdit"
+            VALUE "LegalCopyright", "Copyright © 1999-2006 Expert Commercial Software"
+            VALUE "OriginalFilename", "HEXEDIT.EXE"
+            VALUE "ProductName", "HexEdit"
+            VALUE "ProductVersion", "3, 10, 0, 37"
         END
     END
     BLOCK "VarFileInfo"
@@ -2210,8 +2209,6 @@ BEGIN
     END
 END
 
-#endif    // !_MAC
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2219,7 +2216,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO MOVEABLE PURE 
+GUIDELINES DESIGNINFO 
 BEGIN
     IDD_OPT_SYSTEM, DIALOG
     BEGIN
@@ -2526,7 +2523,7 @@ END
 // String Table
 //
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_VIEW_SMALLICON       "Display items by using small icons.\nSmall Icons"
     ID_VIEW_LARGEICON       "Display items by using large icons.\nLarge Icons"
@@ -2534,7 +2531,7 @@ BEGIN
     ID_VIEW_DETAILS         "Displays detailed information about each item in the window.\nDetails"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     IDR_MAINFRAME           "Hex Edit"
     IDR_HEXEDTYPE           "\nHexEd\nHexEd\n\n\nHexEdit.Document\nHexEdit Document"
@@ -2553,14 +2550,14 @@ BEGIN
     IDS_DOWN                "Move down in list"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     AFX_IDS_APP_TITLE       "HexEdit"
     AFX_IDS_IDLEMESSAGE     "Ready"
     AFX_IDS_HELPMODEMESSAGE "Select an object on which to get Help"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_INDICATOR_EXT        "EXT"
     ID_INDICATOR_CAPS       "CAP"
@@ -2570,7 +2567,7 @@ BEGIN
     ID_INDICATOR_REC        "REC"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_FILE_NEW             "Create a new empty file\nNew"
     ID_FILE_OPEN            "Open a file\nOpen"
@@ -2583,7 +2580,7 @@ BEGIN
     ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Display program version and licence information\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save changed files\nExit"
@@ -2593,7 +2590,7 @@ BEGIN
     ID_HELP                 "Display help for current task or command\nHelp"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_FILE_MRU_FILE1       "Open this document"
     ID_FILE_MRU_FILE2       "Open this document"
@@ -2613,13 +2610,13 @@ BEGIN
     ID_FILE_MRU_FILE16      "Open this document"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
     ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
     ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
@@ -2629,7 +2626,7 @@ BEGIN
     ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_EDIT_CLEAR           "Erase the selection\nErase"
     ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
@@ -2644,13 +2641,13 @@ BEGIN
     ID_EDIT_REDO            "Redo the previously undone action\nRedo"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
     ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle Status Bar"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     AFX_IDS_SCSIZE          "Change the window size"
     AFX_IDS_SCMOVE          "Change the window position"
@@ -2661,19 +2658,19 @@ BEGIN
     AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     AFX_IDS_SCRESTORE       "Restore the window to normal size"
     AFX_IDS_SCTASKLIST      "Activate Task List"
     AFX_IDS_MDICHILD        "Activate this window"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_AUTOFIT              "Adjust number of columns to fit display\nAuto Fit"
     ID_FONT                 "Select new display font\nFont"
@@ -2688,7 +2685,7 @@ BEGIN
     IDC_JUMP_DEC            "Go to decimal address\nDecimal Address"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_INDICATOR_BIG_ENDIAN " BE "
     ID_INDICATOR_FILE_LENGTH "9,999+1"
@@ -2701,7 +2698,7 @@ BEGIN
     CG_IDS_TIPOFTHEDAY      "Display a useful ""Tip of the Day""\nTip of the Day"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_SEARCH_HEX           "Jump to find tool for hex search\nHex Find"
     ID_SEARCH_ASCII         "Jump to find tool for case-sensitive text search\nText Find"
@@ -2712,14 +2709,14 @@ BEGIN
     ID_OPTIONS              "Change global options\nOptions"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     IDC_SEARCH              "Search for hex bytes, text, text ignoring case\nFind: case-insensitive/case-sensitive/hex (F4/F5/F6)"
     ID_SEARCH_FORW          "Search Forward for the Current Search Text\nFind Forward"
     ID_SEARCH_BACK          "Search Backward for Current Search Text\nFind Backward"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_INSERT               "Toggle between inserting or replacing existing bytes\nInsert/Overtype"
     ID_RECORD               "Record keystroke macro\nRecord/Stop"
@@ -2735,7 +2732,7 @@ BEGIN
     ID_DEC_64BIT            "Subtract one from quad word(s) (64 bit)\nDec Quad Word"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_INC_32BIT            "Add one to double word(s) (32 bit)\nInc Double Word"
     ID_INC_64BIT            "Add one to quad word(s) (64 bit)\nInc Quad Word"
@@ -2755,17 +2752,17 @@ BEGIN
     ID_OPTIONS3             "Change color scheme options\nColor Options"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_FONT_INC             "Increase the font size in the active window\nIncrease Font"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_FONT_DEC             "Decreases the font size in the active window\nDecrease Font"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_MULTI_PLAY           "Replay a macro one or more times\nMacro Play"
     ID_EXTENDTO_MARK        "Extend selection to mark\nExtend To Mark"
@@ -2782,7 +2779,7 @@ BEGIN
     ID_EDIT_GOTO            "Calculate address to jump to\nGo To"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_CALCULATOR           "Invoke hex/decimal/octal/binary calculator\nCalculator"
     ID_WEB_PAGE             "Show the HexEdit site in your web browser\nHexEdit Home Page"
@@ -2795,7 +2792,7 @@ BEGIN
     ID_HIGHLIGHT_CLEAR      "Clear all highlights in this file\nClear Highlights"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     IDS_COLORS              "Colors"
     CG_IDS_TIPOFTHEDAYMENU2 "Ti&p of the Day..."
@@ -2811,7 +2808,7 @@ BEGIN
     IDS_WEB_FAQ             "http://www.hexedit.com/binary-editor-faq.htm"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_HIGHLIGHT_PREV       "Go to previous highlight\nPrevious Highlight"
     ID_HIGHLIGHT_NEXT       "Go to next highlight\nNext Highlight"
@@ -2824,7 +2821,7 @@ BEGIN
     ID_JUMP_DEC_COMBO       "Jump to decimal address\nJump decimal"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_VIEW_USER_TOOLBAR1   "Show or hide the user toolbar\nToggle User ToolBar"
     ID_VIEW_USER_TOOLBAR2   "Show or hide the user toolbar\nToggle User ToolBar"
@@ -2839,7 +2836,7 @@ BEGIN
     ID_OR_BYTE              "Bitwise OR calculator value with current byte or selected bytes\nOR Byte"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_OR_16BIT             "Bitwise OR calculator value with word(s) (16 bit)\nOR Word"
     ID_OR_32BIT             "Bitwise OR calculator value with double word(s) (32 bit)\nOR Double Word"
@@ -2852,7 +2849,7 @@ BEGIN
     ID_ENCRYPT_PASSWORD     "Allows you to enter the encryption password\nPassword"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_ENCRYPT_CLEAR        "Clears the current encryption password\nClear Password"
     ID_ENCRYPT_ENCRYPT      "Encrypts the selected text using the current algorithm and password\nEncrypt"
@@ -2866,7 +2863,7 @@ BEGIN
     ID_EXPORT_HEX_TEXT      "Export as hex to text file\nExport Hex Text"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_PRINTERARGS_CURRENTTIME "&T"
     ID_PRINTERARGS_LONGFORMATDATETIME "&N"
@@ -2884,7 +2881,7 @@ BEGIN
     ID_DISPLAY_CHAR         "Display char area only (hide hex area)\nChar Area"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_EXPORT_S1            "Export to file as Motorola S1 (16 bit address) records\nExport Motorola S1"
     ID_EXPORT_S2            "Export to file as Motorola S2 (24 bit address) records\nExport Motorola S2"
@@ -2900,7 +2897,7 @@ BEGIN
     ID_PRINTERARGS_CURRENTDATE "&D"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_DISPLAY_BOTH         "Display both hex and char areas\nBoth Areas"
     ID_CHARSET_EBCDIC       "Display characters as EBCDIC\nEBCDIC"
@@ -2917,7 +2914,7 @@ BEGIN
     ID_CHECKSUM8            "Stores the 8 bit checksum in the calculator\n8 Bit Checksum"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_SCHEME_COMBO         "Select colour scheme\nColour Scheme"
     ID_SCHEME_COMBO_US      "Select color scheme\nColor Scheme"
@@ -2929,7 +2926,7 @@ BEGIN
     ID_HELP_REGISTER        "Go to the HexEdit Registration Page\nRegister"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_CHECKSUM16           "Stores the 16 bit checksum in the calculator\n16 Bit Checksum"
     ID_CHECKSUM32           "Stores the 32 bit checksum in the calculator\n32 Bit Checksum"
@@ -2946,7 +2943,7 @@ BEGIN
     ID_ASSIGN_32BIT         "Assign calculator value to double word(s) (32 bit)\nAssign Double Word"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_ASSIGN_64BIT         "Assign calculator value to quad word(s) (64 bit)\nAssign Quad Word"
     ID_ADD_BYTE             "Add calculator value to current byte or all selected bytes\nAdd to Byte"
@@ -2966,7 +2963,7 @@ BEGIN
     ID_GTR_32BIT            "Greater of double word(s) and calculator value are saved\nGreater Double Word"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_RECENT_FILES         "Open the Recent Files Dialog\nRecent File Dialog"
     ID_HIGHLIGHT_HIDE       "Hide highlights in this file\nHide Highlights"
@@ -2974,7 +2971,7 @@ BEGIN
     ID_VIEW_FORMATBAR       "Show or hide the Format bar\nFormat Bar"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     IDC_FONTNAME            "Changes the font of the selection\nFont"
     IDC_FONTSIZE            "Changes the font size of the selection\nFont Size"
@@ -2986,7 +2983,7 @@ BEGIN
     ID_DFFD_INSERT_EVAL     "Insert data element\nInsert Data"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_DFFD_EDIT            "Edit this element\nEdit"
     ID_DFFD_BYTE            "Use length of 1 byte\nLength 1 byte"
@@ -3001,7 +2998,7 @@ BEGIN
     ID_DFFD_SYNC            "Sync location of selection in hex area and tree\nSync"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_DFFD_AUTO_SYNC       "Automatically sync selection in hex area and tree\nAuto Sync"
     ID_DFFD_SAVE            "Save changes to the current template file\nSave"
@@ -3014,7 +3011,7 @@ BEGIN
     ID_RAND_32BIT           "Generate random DWORD (32 bit) value(s)\nRandom Double Word"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_RAND_64BIT           "Generate random QWORD (64 bit) value(s)\nRandom Quad Word"
     ID_RAND_FAST            "Generate fast random bytes\nFast Random"
@@ -3031,7 +3028,7 @@ BEGIN
     ID_REPAIR_CUST          "Reset toolbar/menu/keyboard customizations\nRepair Customizations"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_REPAIR_SETTINGS      "Remove all customizations and other settings\nRepair Settings"
     ID_REPAIR_ALL           "Remove all settings and registration information\nRepair All"
@@ -3043,7 +3040,7 @@ BEGIN
     ID_VIEW_BOOKMARKS       "Show/hide Bookmarks dialog\nToggle Bookmarks"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_GTR_64BIT            "Greater of quad word(s) and calculator value are saved\nGreater Quad Word"
     ID_LESS_BYTE            "Lesser of byte(s) and calculator value are saved\nLesser Byte"
@@ -3063,19 +3060,19 @@ BEGIN
     ID_MOD_32BIT            "Remainder after dividing double word(s) by calculator value\nModulus Double Word"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_VIEW_FIND            "Show/hide Find Dialog\nToggle Find Dialog"
     ID_VIEW_PROPERTIES      "Show/hide Properties Dialog\nToggle Properties"
     ID_VIEW_EXPL            "Show/hide the Explorer dialog\nExplorer Dialog"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_DIALOGS_DOCKABLE     "Toggle dockability of modeless dialogs\nAllow Dockable Dialogs"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_MOD_64BIT            "Remainder after dividing quad word(s) by calculator value\nModulus Quad Word"
     ID_REV_BYTE             "Reverse bits of byte or all selected bytes\nReverse Bits (byte)"
@@ -3088,7 +3085,7 @@ BEGIN
     ID_SUBTRACT_X_64BIT     "Subtract quad word(s) from calculator value and store result(s)\nSubtract From Quad Word"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_LSL_BYTE             "Left shift byte(s) by value in calculator\nLSL Byte(s)"
     ID_LSL_16BIT            "Left shift word(s) by value in calculator\nLSL Word(s)"
@@ -3104,13 +3101,13 @@ BEGIN
     ID_ASR_64BIT            "Arithmetic right shift quad word(s) by value in calculator\nASR Quad Word(s)"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_NAV_BACK             "Go back to previous point"
     ID_NAV_FORW             "Go forward to navigation point"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_FILE_OPEN_SPECIAL    "Open a disk or volume\nOpen Special"
 END
@@ -3135,70 +3132,70 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON    DISCARDABLE     "res\\idr_main.ico"
-IDR_MAINFRAME2          ICON    DISCARDABLE     "res\\ico00001.ico"
-IDI_UP                  ICON    DISCARDABLE     "res\\up.ico"
-IDI_DOWN                ICON    DISCARDABLE     "res\\down.ico"
-IDI_NEW                 ICON    DISCARDABLE     "res\\new.ico"
-IDI_DEL                 ICON    DISCARDABLE     "res\\del.ico"
-IDR_MAINFRAME4          ICON    DISCARDABLE     "res\\ico00002.ico"
-IDI_DISPLAY             ICON    DISCARDABLE     "res\\display.ico"
-IDI_COGS                ICON    DISCARDABLE     "res\\cogs.ico"
-IDI_MACRO               ICON    DISCARDABLE     "res\\macro.ico"
-IDI_PRINTER             ICON    DISCARDABLE     "res\\printer.ico"
-IDI_WINDOW              ICON    DISCARDABLE     "res\\window.ico"
-IDI_COLOUR              ICON    DISCARDABLE     "res\\colour.ico"
-IDI_FILTER              ICON    DISCARDABLE     "res\\filter.ico"
-IDI_STRUCT              ICON    DISCARDABLE     "res\\struct.ico"
-IDI_IF                  ICON    DISCARDABLE     "res\\if.ico"
-IDI_FOR                 ICON    DISCARDABLE     "res\\for.ico"
-IDI_DATA                ICON    DISCARDABLE     "res\\data.ico"
-IDI_EVAL                ICON    DISCARDABLE     "res\\eval.ico"
-IDI_JUMP                ICON    DISCARDABLE     "res\\jump.ico"
-IDI_SWITCH              ICON    DISCARDABLE     "res\\switch.ico"
+IDR_MAINFRAME           ICON                    "res\\idr_main.ico"
+IDR_MAINFRAME2          ICON                    "res\\ico00001.ico"
+IDI_UP                  ICON                    "res\\up.ico"
+IDI_DOWN                ICON                    "res\\down.ico"
+IDI_NEW                 ICON                    "res\\new.ico"
+IDI_DEL                 ICON                    "res\\del.ico"
+IDR_MAINFRAME4          ICON                    "res\\ico00002.ico"
+IDI_DISPLAY             ICON                    "res\\display.ico"
+IDI_COGS                ICON                    "res\\cogs.ico"
+IDI_MACRO               ICON                    "res\\macro.ico"
+IDI_PRINTER             ICON                    "res\\printer.ico"
+IDI_WINDOW              ICON                    "res\\window.ico"
+IDI_COLOUR              ICON                    "res\\colour.ico"
+IDI_FILTER              ICON                    "res\\filter.ico"
+IDI_STRUCT              ICON                    "res\\struct.ico"
+IDI_IF                  ICON                    "res\\if.ico"
+IDI_FOR                 ICON                    "res\\for.ico"
+IDI_DATA                ICON                    "res\\data.ico"
+IDI_EVAL                ICON                    "res\\eval.ico"
+IDI_JUMP                ICON                    "res\\jump.ico"
+IDI_SWITCH              ICON                    "res\\switch.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-IDB_LIGHTBULB           BITMAP  DISCARDABLE     "res\\litebulb.bmp"
-IDB_IMAGELIST           BITMAP  DISCARDABLE     "res\\imagelis.bmp"
-IDB_DEVIMAGES           BITMAP  DISCARDABLE     "res\\devimage.bmp"
-IDB_SEARCH              BITMAP  DISCARDABLE     "res\\search.bmp"
-IDB_BACK                BITMAP  DISCARDABLE     "res\\back.bmp"
-IDB_FORW                BITMAP  DISCARDABLE     "res\\forw.bmp"
-IDB_REFRESH             BITMAP  DISCARDABLE     "res\\refresh.bmp"
-IDB_PARENT              BITMAP  DISCARDABLE     "res\\parent.bmp"
-IDB_VIEW                BITMAP  DISCARDABLE     "res\\view.bmp"
-IDB_BACK1               BITMAP  DISCARDABLE     "res\\back1.bmp"
-IDB_FORW1               BITMAP  DISCARDABLE     "res\\forw1.bmp"
-IDB_PARENT1             BITMAP  DISCARDABLE     "res\\parent1.bmp"
-IDB_BACK_HOT            BITMAP  DISCARDABLE     "res\\back_hot.bmp"
-IDB_FORW_HOT            BITMAP  DISCARDABLE     "res\\forw_hot.bmp"
-IDB_PARENT_HOT          BITMAP  DISCARDABLE     "res\\parent2.bmp"
-IDB_VIEW1               BITMAP  DISCARDABLE     "res\\view1.bmp"
-IDB_VIEW_HOT            BITMAP  DISCARDABLE     "res\\view_hot.bmp"
-IDB_REFRESH1            BITMAP  DISCARDABLE     "res\\refresh1.bmp"
-IDB_REFRESH_HOT         BITMAP  DISCARDABLE     "res\\refresh_.bmp"
-IDB_HORZ                BITMAP  DISCARDABLE     "res\\flip.bmp"
-IDB_HORZ_HOT            BITMAP  DISCARDABLE     "res\\flip_hot.bmp"
-IDB_FLIP1               BITMAP  DISCARDABLE     "res\\flip1.bmp"
-IDB_FLIP1_HOT           BITMAP  DISCARDABLE     "res\\flip1_ho.bmp"
-IDB_SHOW_HOT            BITMAP  DISCARDABLE     "res\\show_hid.bmp"
-IDB_TMP                 BITMAP  DISCARDABLE     "res\\tmp.bmp"
-IDB_VERT                BITMAP  DISCARDABLE     "res\\vert.bmp"
-IDB_VERT_HOT            BITMAP  DISCARDABLE     "res\\vert_hot.bmp"
-IDB_HIDE_HOT            BITMAP  DISCARDABLE     "res\\hide_hot.bmp"
-IDB_SHOW                BITMAP  DISCARDABLE     "res\\show.bmp"
-IDB_HIDE                BITMAP  DISCARDABLE     "res\\hide.bmp"
+IDB_LIGHTBULB           BITMAP                  "res\\litebulb.bmp"
+IDB_IMAGELIST           BITMAP                  "res\\imagelis.bmp"
+IDB_DEVIMAGES           BITMAP                  "res\\devimage.bmp"
+IDB_SEARCH              BITMAP                  "res\\search.bmp"
+IDB_BACK                BITMAP                  "res\\back.bmp"
+IDB_FORW                BITMAP                  "res\\forw.bmp"
+IDB_REFRESH             BITMAP                  "res\\refresh.bmp"
+IDB_PARENT              BITMAP                  "res\\parent.bmp"
+IDB_VIEW                BITMAP                  "res\\view.bmp"
+IDB_BACK1               BITMAP                  "res\\back1.bmp"
+IDB_FORW1               BITMAP                  "res\\forw1.bmp"
+IDB_PARENT1             BITMAP                  "res\\parent1.bmp"
+IDB_BACK_HOT            BITMAP                  "res\\back_hot.bmp"
+IDB_FORW_HOT            BITMAP                  "res\\forw_hot.bmp"
+IDB_PARENT_HOT          BITMAP                  "res\\parent2.bmp"
+IDB_VIEW1               BITMAP                  "res\\view1.bmp"
+IDB_VIEW_HOT            BITMAP                  "res\\view_hot.bmp"
+IDB_REFRESH1            BITMAP                  "res\\refresh1.bmp"
+IDB_REFRESH_HOT         BITMAP                  "res\\refresh_.bmp"
+IDB_HORZ                BITMAP                  "res\\flip.bmp"
+IDB_HORZ_HOT            BITMAP                  "res\\flip_hot.bmp"
+IDB_FLIP1               BITMAP                  "res\\flip1.bmp"
+IDB_FLIP1_HOT           BITMAP                  "res\\flip1_ho.bmp"
+IDB_SHOW_HOT            BITMAP                  "res\\show_hid.bmp"
+IDB_TMP                 BITMAP                  "res\\tmp.bmp"
+IDB_VERT                BITMAP                  "res\\vert.bmp"
+IDB_VERT_HOT            BITMAP                  "res\\vert_hot.bmp"
+IDB_HIDE_HOT            BITMAP                  "res\\hide_hot.bmp"
+IDB_SHOW                BITMAP                  "res\\show.bmp"
+IDB_HIDE                BITMAP                  "res\\hide.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDR_PRINT_ARGS MENU DISCARDABLE 
+IDR_PRINT_ARGS MENU 
 BEGIN
     POPUP "Printer Args"
     BEGIN
@@ -3218,7 +3215,7 @@ BEGIN
     END
 END
 
-IDR_MENUBUTTON MENU DISCARDABLE 
+IDR_MENUBUTTON MENU 
 BEGIN
     POPUP "Display"
     BEGIN
@@ -3271,7 +3268,7 @@ BEGIN
     END
 END
 
-IDR_DFFD MENU DISCARDABLE 
+IDR_DFFD MENU 
 BEGIN
     POPUP "Struct"
     BEGIN
@@ -3397,7 +3394,7 @@ BEGIN
     END
 END
 
-IDR_EXPL MENU DISCARDABLE 
+IDR_EXPL MENU 
 BEGIN
     POPUP "Views button"
     BEGIN
@@ -3414,8 +3411,8 @@ END
 // Dialog
 //
 
-IDD_TIP DIALOG DISCARDABLE  0, 0, 231, 164
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_TIP DIALOG  0, 0, 231, 164
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Tip of the Day"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -3430,10 +3427,11 @@ BEGIN
 END
 
 IDD_MULTIPLAY DIALOGEX 0, 0, 188, 95
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Replay Macro"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Macro name:",IDC_STATIC,7,7,42,8
     COMBOBOX        IDC_PLAY_NAME,7,17,174,124,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -3451,10 +3449,11 @@ BEGIN
 END
 
 IDD_EMAIL DIALOGEX 0, 0, 278, 238
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Send Email to HexEdit Support"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "&To:",IDC_STATIC,9,9,12,8
     COMBOBOX        IDC_TO,41,3,116,67,CBS_DROPDOWN | WS_VSCROLL | 
@@ -3495,14 +3494,15 @@ BEGIN
 END
 
 IDD_CALC DIALOGEX 0, 0, 297, 167
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Calculator"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_EDIT,6,7,278,14,ES_RIGHT | WS_GROUP,WS_EX_RIGHT,
+    EDITTEXT        IDC_EDIT,6,7,277,14,ES_RIGHT | WS_GROUP,WS_EX_RIGHT,
                     HIDC_EDIT
-    LTEXT           "",IDC_OP_DISPLAY,284,9,8,8,0,0,HIDC_OP_DISPLAY
+    LTEXT           "",IDC_OP_DISPLAY,287,9,8,8,0,0,HIDC_OP_DISPLAY
     CONTROL         "&Big-endian (file access)",IDC_BIG_ENDIAN_FILE_ACCESS,
                     "Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_DISABLED | 
                     WS_GROUP | WS_TABSTOP,5,22,54,22,0,
@@ -3661,7 +3661,8 @@ BEGIN
 END
 
 IDD_CALC_NEW DIALOGEX 0, 0, 297, 167
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Calculator"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -3797,7 +3798,8 @@ BEGIN
 END
 
 IDD_REGISTER DIALOGEX 0, 0, 244, 110
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Activation"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -3825,7 +3827,8 @@ BEGIN
 END
 
 IDD_MACROSAVE DIALOGEX 0, 0, 268, 135
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Save Macro"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -3855,7 +3858,8 @@ BEGIN
 END
 
 IDD_REG DIALOGEX 0, 0, 248, 186
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Registration"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -3881,10 +3885,11 @@ BEGIN
 END
 
 IDD_NEW_SCHEME DIALOGEX 0, 0, 186, 66
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "New Colour Scheme"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "&Name for new scheme:",IDC_STATIC,7,7,74,8
     EDITTEXT        IDC_SCHEME_NAME,7,18,114,14,ES_AUTOHSCROLL,0,
@@ -3897,8 +3902,8 @@ BEGIN
     PUSHBUTTON      "Help",IDC_SCHEME_HELP,129,45,50,14,WS_GROUP
 END
 
-IDD_MACRO_MESSAGE DIALOG DISCARDABLE  0, 0, 165, 95
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_MACRO_MESSAGE DIALOG  0, 0, 165, 95
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Message"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -3911,7 +3916,8 @@ BEGIN
 END
 
 IDD_STARTUP DIALOGEX 0, 0, 242, 188
-STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
 CAPTION "Reminder"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -3936,7 +3942,8 @@ BEGIN
 END
 
 IDD_RECENT_FILES DIALOGEX 0, 0, 380, 185
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Recently Opened Files"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -3963,7 +3970,8 @@ BEGIN
 END
 
 IDD_BOOKMARKS DIALOGEX 0, 0, 329, 151
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Bookmarks"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -3989,7 +3997,8 @@ BEGIN
 END
 
 IDD_CLEAR_HIST DIALOGEX 0, 0, 197, 74
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Clear History Lists"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4013,8 +4022,8 @@ BEGIN
 END
 
 IDD_PRINTDLG DIALOGEX 32, 32, 288, 186
-STYLE DS_MODALFRAME | DS_3DLOOK | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | 
-    WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | DS_CONTEXTHELP | WS_POPUP | 
+    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Print"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4064,8 +4073,8 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,232,164,48,14
 END
 
-IDD_BM_FIND DIALOG DISCARDABLE  0, 0, 164, 126
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_BM_FIND DIALOG  0, 0, 164, 126
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Bookmark All"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -4079,7 +4088,8 @@ BEGIN
 END
 
 IDD_DFFD_DATA DIALOGEX 0, 0, 292, 170
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "DATA Element"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4144,7 +4154,8 @@ BEGIN
 END
 
 IDD_DFFD_STRUCT DIALOGEX 0, 0, 292, 170
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "STRUCT"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4184,7 +4195,8 @@ BEGIN
 END
 
 IDD_DFFD_FOR DIALOGEX 0, 0, 292, 170
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "FOR"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4219,7 +4231,8 @@ BEGIN
 END
 
 IDD_DFFD_IF DIALOGEX 0, 0, 292, 170
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "IF"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4256,7 +4269,8 @@ BEGIN
 END
 
 IDD_DFFD_GLOBAL DIALOGEX 0, 0, 292, 114
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Global Options"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4287,8 +4301,8 @@ BEGIN
     PUSHBUTTON      "Check",IDC_WEB_CHECK,235,93,50,14,0,0,HIDC_WEB_CHECK
 END
 
-IDD_SAVE_TEMPLATE DIALOG DISCARDABLE  0, 0, 186, 106
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_SAVE_TEMPLATE DIALOG  0, 0, 186, 106
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Save Template"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -4300,7 +4314,8 @@ BEGIN
 END
 
 IDD_NEW_FILE DIALOGEX 0, 0, 304, 215
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "New File"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4380,7 +4395,8 @@ BEGIN
 END
 
 IDD_CSRC DIALOGEX 0, 0, 256, 132
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Copy as C Source"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4420,7 +4436,8 @@ BEGIN
 END
 
 IDD_OPEN_SPECIAL DIALOGEX 0, 0, 360, 142
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Open Special"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4440,7 +4457,8 @@ BEGIN
 END
 
 IDD_DFFD_EVAL DIALOGEX 0, 0, 292, 170
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "EVAL"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4472,7 +4490,8 @@ BEGIN
 END
 
 IDD_DFFD_JUMP DIALOGEX 0, 0, 292, 170
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "JUMP"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4501,7 +4520,8 @@ BEGIN
 END
 
 IDD_DFFD_USE_STRUCT DIALOGEX 0, 0, 292, 170
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "USE STRUCT"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4533,7 +4553,8 @@ BEGIN
 END
 
 IDD_EXPLORER DIALOGEX 0, 0, 208, 230
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Explorer"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4558,10 +4579,11 @@ BEGIN
 END
 
 IDD_TPARSE DIALOGEX 0, 0, 397, 290
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Parse Types from Source Code"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     EDITTEXT        IDC_SOURCE_CODE,7,7,275,276,ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL | 
@@ -4603,8 +4625,8 @@ BEGIN
     PUSHBUTTON      "Help",ID_DFFD_HELP,315,269,50,14,WS_GROUP
 END
 
-IDD_TPARSE1 DIALOG DISCARDABLE  0, 0, 397, 382
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_TPARSE1 DIALOG  0, 0, 397, 382
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Import Types from Source"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -4660,7 +4682,8 @@ BEGIN
 END
 
 IDD_DFFD_SWITCH DIALOGEX 0, 0, 292, 170
-STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "CASE"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -4764,13 +4787,14 @@ BEGIN
                     IDC_STATIC,15,193,176,11
 END
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO MOVEABLE PURE 
+GUIDELINES DESIGNINFO 
 BEGIN
     IDD_TIP, DIALOG
     BEGIN
@@ -5165,18 +5189,18 @@ END
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE MOVEABLE PURE 
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE MOVEABLE PURE 
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "//#include ""secres.h""\0"
 END
 
-3 TEXTINCLUDE MOVEABLE PURE 
+3 TEXTINCLUDE 
 BEGIN
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"
@@ -5203,14 +5227,14 @@ END
 // Cursor
 //
 
-IDC_HIGHLIGHT           CURSOR  DISCARDABLE     "res\\highligh.cur"
+IDC_HIGHLIGHT           CURSOR                  "res\\highligh.cur"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 24
+// RT_MANIFEST
 //
 
-1                       24      DISCARDABLE     "manifest.xml"
+1                       RT_MANIFEST             "manifest.xml"
 #endif    // English (Australia) resources
 /////////////////////////////////////////////////////////////////////////////
 

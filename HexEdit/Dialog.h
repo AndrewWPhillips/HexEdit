@@ -224,7 +224,7 @@ private:
 	HANDLE hh_;                         // Used to monitor directory changes (returned from FindFirstChangeNotification)
 	bool update_required_;              // Keeps track of consecutive updates to prevent unnecessary refreshes
 };
-#endif
+#endif // EXPLORER_WND
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexFileDialog - just adds the facility to CFileDialog for saving and restoring

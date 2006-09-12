@@ -65,14 +65,22 @@ void rand_good_seed(unsigned long seed);
 unsigned long rand_good();
 
 unsigned short crc16(const void *buffer, size_t len);
+
 unsigned long crc_32(const void *buffer, size_t len);
+// Use the following for CRC 32 which is too big for a single buffer
+void crc_32_init();
+void crc_32_update(const void *buf, size_t len);
+DWORD crc_32_final();
 
 unsigned short crc_ccitt(const void *buf, size_t len);  // all in one CRC CCITT
-// The following allow CRC CCITT on any size selection by passing a buffer at a time
 void crc_ccitt_init();
 void crc_ccitt_update(const void *buf, size_t len);
 unsigned short crc_ccitt_final();
 
+unsigned short crc_ccitt2(const void *buf, size_t len);  // all in one CRC CCITT
+void crc_ccitt2_init(int init = -1);
+void crc_ccitt2_update(const void *buf, size_t len);
+unsigned short crc_ccitt2_final();
 
 char letter_valid(char cc);
 int letter_decode(const char *str, size_t str_len, void *result);

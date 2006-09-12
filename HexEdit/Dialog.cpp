@@ -1158,7 +1158,7 @@ void CExplorerWnd::OnSelchangeFilter()
 
 	Refresh();
 }
-#endif
+#endif // EXPLORER_WND
 
 /////////////////////////////////////////////////////////////////////////////
 // CImportDialog - derived from CFileDialog (via CHexFileDialog) for handling extra controls during import

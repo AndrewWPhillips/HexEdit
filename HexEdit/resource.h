@@ -1109,6 +1109,8 @@
 #define ID_EBC2ASC                      32921
 #define ID_ANSI2IBM                     32922
 #define ID_IBM2ANSI                     32923
+#define ID_UPPERCASE                    32924
+#define ID_LOWERCASE                    32925
 #define ID_ENCRYPT_ALG                  32926
 #define ID_ENCRYPT_PASSWORD             32927
 #define ID_ENCRYPT_CLEAR                32928

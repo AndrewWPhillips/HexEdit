@@ -514,6 +514,11 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
     ON_COMMAND(ID_MD5, OnMd5)
     ON_UPDATE_COMMAND_UI(ID_MD5, OnUpdateByteNZ)
 
+    ON_COMMAND(ID_UPPERCASE, OnUppercase)
+    ON_UPDATE_COMMAND_UI(ID_UPPERCASE, OnUpdateConvert)
+    ON_COMMAND(ID_LOWERCASE, OnLowercase)
+    ON_UPDATE_COMMAND_UI(ID_LOWERCASE, OnUpdateConvert)
+
     //ON_WM_TIMER()
 
     ON_COMMAND(ID_VIEWTEST, OnViewtest)
@@ -5155,7 +5160,7 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 	ASSERT(theApp.tip_expr_  .size() == theApp.tip_name_.size());
 	ASSERT(theApp.tip_format_.size() == theApp.tip_name_.size());
 
-	for (int ii = 0; ii < theApp.tip_name_.size(); ++ii)
+	for (size_t ii = 0; ii < theApp.tip_name_.size(); ++ii)
 		if (theApp.tip_on_[ii])
 		{
 			if (retval)
@@ -7599,13 +7604,14 @@ void CHexEditView::OnUpdateImportHexText(CCmdUI* pCmdUI)
 
 void CHexEditView::OnExportHexText() 
 {
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
     // Get the selection
-    FILE_ADDRESS start, end;
-    GetSelAddr(start, end);
-    ASSERT(start >= 0 && start <= end && end <= GetDocument()->length());
-    if (start == end)
+    FILE_ADDRESS start_addr, end_addr;
+    GetSelAddr(start_addr, end_addr);
+    ASSERT(start_addr >= 0 && start_addr <= end_addr && end_addr <= GetDocument()->length());
+    if (start_addr == end_addr)
     {
         // Nothing selected, presumably in macro playback
         ASSERT(theApp.playing_);
@@ -7634,79 +7640,125 @@ void CHexEditView::OnExportHexText()
     CWaitCursor wait;                           // Turn on wait cursor (hourglass)
     CHECK_SECURITY(48);
 
-    CStdioFile ff;
+    CFile64 ff;
     CFileException fe;                      // Stores file exception info
 
     // Open the file
     if (!ff.Open(theApp.current_export_,
-                 CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeText,
+                 CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary,
                  &fe))
     {
         ::HMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
         theApp.mac_error_ = 10;
         theApp.current_export_.Empty();
+		return;
     }
+
+    // This could be perhaps 2 or 3 times faster by buffering more than a line of text at a time
+
+    // Buffer used to hold bits of the binary file to convert
+    unsigned char *buf = NULL;  // Buffer to hold some input
+    char *out = NULL;           // Buffer for output of one line of text
+    unsigned char *pin;
+    FILE_ADDRESS curr;
+	size_t len;
+
+	try
+	{
+		buf = new unsigned char[theApp.export_line_len_];
+		out = new char[3*theApp.export_line_len_ + 5];
+	}
+	catch (std::bad_alloc)
+	{
+        ::HMessageBox("Insufficient memory");
+        theApp.mac_error_ = 10;
+		goto func_return;
+	}
+
+    const char *hex;
+    if (theApp.hex_ucase_)
+        hex = "0123456789ABCDEF?";
     else
+        hex = "0123456789abcdef?";
+
+    mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+    MSG msg;                                           // use to check for abort key press
+
+    for (curr = start_addr; curr < end_addr; curr += len)
     {
-        // This could be perhaps 2 or 3 times faster by buffering more than a line of text at a time
+        // Get the data bytes
+        len = size_t(min(FILE_ADDRESS(theApp.export_line_len_), end_addr - curr));
+        VERIFY(GetDocument()->GetData(buf, len, curr) == len);
 
-        // Buffer used to hold bits of the binary file to convert
-        unsigned char *buf = new unsigned char[theApp.export_line_len_];
-        unsigned char *pin;
-        size_t len;
+        // Convert to hex text
+        char *pout = out;
 
-        // Buffer for output test file line
-        char *out = new char[3*theApp.export_line_len_ + 4];
-        const char *hex;
-        if (theApp.hex_ucase_)
-            hex = "0123456789ABCDEF?";
-        else
-            hex = "0123456789abcdef?";
-
-        for (FILE_ADDRESS curr = start; curr < end; curr += len)
+        for(pin = buf; pin < buf+len; ++pin)
         {
-            // Get the data bytes
-            len = size_t(min(FILE_ADDRESS(theApp.export_line_len_), end - curr));
-            VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+            *pout++ = hex[(*pin>>4)&0xF];
+            *pout++ = hex[*pin&0xF];
+            *pout++ = ' ';
+        }
+        *pout++ = '\r';
+        *pout++ = '\n';
 
-            // Convert to hex text
-            char *pout = out;
+        // Write the string to the file
+        try
+        {
+            ff.Write(out, pout - out);
+        }
+        catch (CFileException *pfe)
+        {
+            ::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+            pfe->Delete();
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
 
-            for(pin = buf; pin < buf+len; ++pin)
-            {
-                *pout++ = hex[(*pin>>4)&0xF];
-                *pout++ = hex[*pin&0xF];
-                *pout++ = ' ';
-            }
-            *pout++ = '\n';
-            *pout++ = '\0';
+		// Do any redrawing, but nothing else
+		while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+		{
+			if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+			{
+				::TranslateMessage(&msg);
+				::DispatchMessage(&msg);
+			}
+		}
 
-            // Write the string to the file
-            try
+        // Check if a key has been pressed
+        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+        {
+            // Windows does not like to miss key down events (need to match key up events)
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
+
+            // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+            while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                ;
+
+            if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                ::HMessageBox("Abort exporting as hex?", MB_YESNO) == IDYES)
             {
-                ff.WriteString(out);
-            }
-            catch (CFileException *pfe)
-            {
-                ::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
-                pfe->Delete();
-                theApp.mac_error_ = 10;
-                theApp.current_export_.Empty();
-                break;
+				theApp.mac_error_ = 10;
+				goto func_return;
             }
         }
-        delete[] buf;
-        delete[] out;
-        ASSERT(curr == end);
 
-        ff.Close();
-
-        if (theApp.mac_error_ < 10)
-            theApp.SaveToMacro(km_write_file, 10);
+		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
     }
+    ASSERT(curr == end_addr);
 
-    // BG search finished message may be lost if modeless dlg running
-    theApp.CheckBGSearchFinished();
+func_return:
+    ff.Close();
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (buf != NULL)
+		delete[] buf;
+	if (out != NULL)
+        delete[] out;
+
+    if (theApp.mac_error_ < 5)
+        theApp.SaveToMacro(km_write_file, 10);
 }
 
 void CHexEditView::OnUpdateExportHexText(CCmdUI* pCmdUI) 
@@ -12180,6 +12232,281 @@ CHexEditView * CHexEditView::NextView() const
 
 void CHexEditView::OnAscii2Ebcdic() 
 {
+	ByteConvert(CONVERT_ASC2EBC, "convert ASCII to EBCDIC");
+}
+
+void CHexEditView::OnEbcdic2Ascii() 
+{
+    ByteConvert(CONVERT_EBC2ASC, "convert EBCDIC to ASCII");
+}
+
+void CHexEditView::OnAnsi2Ibm() 
+{
+    ByteConvert(CONVERT_ANSI2IBM, "convert ANSI to IBM/OEM");
+}
+
+void CHexEditView::OnIbm2Ansi() 
+{
+    ByteConvert(CONVERT_IBM2ANSI, "convert IBM/OEM to ANSI");
+}
+
+void CHexEditView::OnUppercase() 
+{
+    ByteConvert(CONVERT_UPPER, "convert to upper case");
+}
+
+void CHexEditView::OnLowercase() 
+{
+    ByteConvert(CONVERT_LOWER, "convert to lower case");
+}
+
+// Performs particular conversions on a memory buffer
+void CHexEditView::ProcConversion(unsigned char *buf, size_t count, convert_type op)
+{
+    // Operate on all the selected values
+    for (size_t ii = 0; ii < count; ++ii)
+    {
+        switch (op)
+        {
+        case CONVERT_ASC2EBC:
+			if (buf[ii] < 128)
+				buf[ii] = a2e_tab[buf[ii]];
+			else
+				buf[ii] = '\0';
+            break;
+        case CONVERT_EBC2ASC:
+            buf[ii] = e2a_tab[buf[ii]];
+            break;
+        case CONVERT_ANSI2IBM:
+			if (buf[ii] > 128)
+				buf[ii] = a2i_tab[buf[ii]&0x7F];
+            break;
+        case CONVERT_IBM2ANSI:
+			if (buf[ii] > 128)
+				buf[ii] = i2a_tab[buf[ii]&0x7F];
+            break;
+		case CONVERT_UPPER:
+			if (EbcdicMode())
+			{
+			    if (buf[ii] >= 0x81 && buf[ii] <= 0x89 ||
+				    buf[ii] >= 0x91 && buf[ii] <= 0x99 ||
+				    buf[ii] >= 0xA2 && buf[ii] <= 0xA9 )
+				{
+                    buf[ii] += 0x40;
+				}
+			}
+			else if (ANSIMode() || buf[ii] < 128)
+				buf[ii] = toupper(buf[ii]);
+            break;
+		case CONVERT_LOWER:
+			if (EbcdicMode())
+			{
+			    if (buf[ii] >= 0xC1 && buf[ii] <= 0xC9 ||
+				    buf[ii] >= 0xD1 && buf[ii] <= 0xD9 ||
+				    buf[ii] >= 0xE2 && buf[ii] <= 0xE9 )
+				{
+                buf[ii] -= 0x40;
+				}
+			}
+			else if (ANSIMode() || buf[ii] < 128)
+				buf[ii] = tolower(buf[ii]);
+            break;
+        default:
+            ASSERT(0);
+        }
+    }
+}
+
+// This handles conversion operations (everything except for the actual data
+// convert operation - see ProcConversion) including getting the selection
+// and allocating memory buffers to store the result (or temp file for
+// really big selections) and updating the document.
+// It also updates progress in the status bar and allows user abort.
+void CHexEditView::ByteConvert(convert_type op, LPCSTR desc)
+{
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+    unsigned char *buf = NULL;
+
+    if (check_ro(desc))
+        return;
+
+    // Get current address or selection
+    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
+    GetSelAddr(start_addr, end_addr);
+
+    // Make sure there is a selection
+    if (start_addr >= end_addr)
+    {
+		ASSERT(theApp.playing_);
+		CString mess;
+		mess.Format("There is no selection to %s", desc);
+		::HMessageBox(mess);
+		theApp.mac_error_ = 10;
+		return;
+    }
+    ASSERT(start_addr < end_addr && end_addr <= GetDocument()->length());
+
+	// Test if selection is too big to do in memory
+	if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
+	{
+        int idx = -1;                       // Index into docs data_file_ array (or -1 if no slots avail.)
+
+		// Create a file to store the resultant data
+		// (Temp file used by the document until it is closed or written to disk.)
+		char temp_dir[_MAX_PATH];
+		char temp_file[_MAX_PATH];
+		::GetTempPath(sizeof(temp_dir), temp_dir);
+		::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
+
+		// Get data buffer
+		size_t len, buflen = size_t(min(4096, end_addr - start_addr));
+		try
+		{
+            buf = new unsigned char[buflen];
+        }
+        catch(std::bad_alloc)
+        {
+            ::HMessageBox("Insufficient memory to perform conversion");
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
+        mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+        MSG msg;                                           // use to check for abort key press
+
+		try
+		{
+		    CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
+
+			for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+			{
+				// Get the next buffer full from the document
+				len = size_t(min(buflen, end_addr - curr));
+				if (op != unary_at)      // We don't need to get old value if assigning
+				    VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+
+				ProcConversion(buf, len, op);
+
+				ff.Write(buf, len);
+
+				// Do any redrawing, but nothing else
+				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				{
+					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+					{
+						::TranslateMessage(&msg);
+						::DispatchMessage(&msg);
+					}
+				}
+
+                // Check if a key has been pressed
+                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+                {
+                    // Windows does not like to miss key down events (need to match key up events)
+                    ::TranslateMessage(&msg);
+                    ::DispatchMessage(&msg);
+
+                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                        ;
+
+					CString mess;
+					mess.Format("Abort %s?", desc);
+                    if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                        ::HMessageBox(mess, MB_YESNO) == IDYES)
+                    {
+						ff.Close();
+						remove(temp_file);
+						theApp.mac_error_ = 10;
+						goto func_return;
+                    }
+                }
+
+				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+			}
+		}
+		catch (CFileException *pfe)
+		{
+			::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			pfe->Delete();
+
+			remove(temp_file);
+			theApp.mac_error_ = 10;
+			goto func_return;
+		}
+
+		// Delete the unprocessed block that is to be replaced
+		// Note: this must be done before AddDataFile otherwise Change() (via regenerate()) will delete the temp file.
+        GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
+
+		// Add the temp file to the document
+		idx = GetDocument()->AddDataFile(temp_file);
+		ASSERT(idx != -1);
+        GetDocument()->Change(mod_insert_file, start_addr, end_addr - start_addr, NULL, idx, this, TRUE);
+	}
+	else
+	{
+		// Allocate memory block and process it
+
+		// Error if ran out of temp file handles and file is too big
+		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
+		{
+			::HMessageBox("HexEdit is out of temporary files and \n"
+                          "cannot convert such a large selection. \n"
+                          "Please save the file to deallocate \n"
+						  "temporary file handles and try again.\n",
+						  MB_OK);
+            theApp.mac_error_ = 10;
+			return;
+		}
+
+		// Warn if we might cause memory exhaustion
+        if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+        {
+			if (::HMessageBox("WARNING: HexEdit is out of temporary file \n"
+                              "handles and converting such a large selection \n"
+                              "may cause memory exhaustion.  Please click NO \n"
+                              "and save the file to free handles. \n"
+							  "Or, click YES to continue.\n\n"
+                              "Do you want to continue?", MB_YESNO) != IDYES)
+			{
+                theApp.mac_error_ = 5;
+                return;
+			}
+        }
+
+        CWaitCursor wait;                           // Turn on wait cursor (hourglass)
+
+        try
+        {
+            buf = new unsigned char[size_t(end_addr - start_addr)];
+        }
+        catch(std::bad_alloc)
+        {
+            ::HMessageBox("Insufficient memory to perform conversion");
+            theApp.mac_error_ = 10;
+            goto func_return;
+        }
+		size_t got = GetDocument()->GetData(buf, size_t(end_addr - start_addr), start_addr);
+		ASSERT(got == size_t(end_addr - start_addr));
+
+		ProcConversion(buf, got, op);
+
+        GetDocument()->Change(mod_replace, start_addr, got, (unsigned char *)buf, 0, this);
+	}
+
+    DisplayCaret();
+    theApp.SaveToMacro(km_convert, op);
+
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (buf != NULL)
+		delete[] buf;
+}
+
+#if 0 //OLD
+void CHexEditView::OnAscii2Ebcdic() 
+{
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     if (check_ro("convert ASCII to EBCDIC"))
         return;
@@ -12346,6 +12673,7 @@ void CHexEditView::OnIbm2Ansi()
     DisplayCaret();
     aa->SaveToMacro(km_convert, CONVERT_IBM2ANSI);
 }
+#endif
 
 // Make sure there is a selection before doing conversion
 void CHexEditView::OnUpdateConvert(CCmdUI* pCmdUI) 
@@ -13473,7 +13801,7 @@ void CHexEditView::OnChecksum8()
 
     delete[] buf;
 
-    // Calculate CRC and store it in the calculator (make sure at least in 16 bit mode 1st)
+    // Calculate checksum and store it in the calculator (make sure at least in 16 bit mode 1st)
     ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set((__int64)cc);
 
     dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();
@@ -13514,7 +13842,7 @@ void CHexEditView::OnChecksum16()
 
     delete[] buf;
 
-    // Calculate CRC and store it in the calculator (make sure at least in 16 bit mode 1st)
+    // Calculate checksum and store it in the calculator (make sure at least in 16 bit mode 1st)
     if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < 2)
         ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(16);
     ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set((__int64)cc);
@@ -13557,7 +13885,7 @@ void CHexEditView::OnChecksum32()
 
     delete[] buf;
 
-    // Calculate CRC and store it in the calculator (make sure at least in 16 bit mode 1st)
+    // Calculate checksum and store it in the calculator (make sure at least in 16 bit mode 1st)
     if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < 4)
         ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(32);
     ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set((__int64)cc);
@@ -13600,7 +13928,7 @@ void CHexEditView::OnChecksum64()
 
     delete[] buf;
 
-    // Calculate CRC and store it in the calculator (make sure at least in 16 bit mode 1st)
+    // Calculate checksum and store it in the calculator (make sure at least in 16 bit mode 1st)
     if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < 8)
         ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(64);
     ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set((__int64)cc);
@@ -13808,36 +14136,93 @@ func_return:
 
 void CHexEditView::OnCrc32() 
 {
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+    unsigned char *buf = NULL;
+
     // Get current address or selection
     FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    size_t len;                         // Length of selection
     GetSelAddr(start_addr, end_addr);
-    len = size_t(end_addr - start_addr);
-    
-    if (len == 0)
+
+    if (start_addr >= end_addr)
     {
         // No selection, presumably in macro playback
         ASSERT(theApp.playing_);
-        ::HMessageBox("Can't calculate CRC 32 without a selection");
+        ::HMessageBox("There is no selection to calculate the CRC 32 on");
         theApp.mac_error_ = 10;
         return;
     }
     ASSERT(start_addr < GetDocument()->length());
 
-    // Get memory for selection and read it from the document
-    unsigned char *buf = new unsigned char[len];
-    size_t got = GetDocument()->GetData(buf, len, start_addr);
-    ASSERT(got == len);
+	// Get a buffer - fairly large for efficiency
+	size_t len, buflen = size_t(min(4096, end_addr - start_addr));
+	try
+	{
+        buf = new unsigned char[buflen];
+    }
+    catch(std::bad_alloc)
+    {
+        ::HMessageBox("Insufficient memory to perform CRC");
+        theApp.mac_error_ = 10;
+        return;
+    }
+	ASSERT(buf != NULL);
+    mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+    MSG msg;                                           // use to check for abort key press
 
-    // Calculate CRC and store it in the calculator (make sure at least in 16 bit mode 1st)
+	crc_32_init();
+	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+	{
+		// Get the next buffer full from the document
+		len = size_t(min(buflen, end_addr - curr));
+	    VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+
+		crc_32_update(buf, len);
+
+		// Do any redrawing, but nothing else
+		while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+		{
+			if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+			{
+				::TranslateMessage(&msg);
+				::DispatchMessage(&msg);
+			}
+		}
+
+        // Check if a key has been pressed
+        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+        {
+            // Windows does not like to miss key down events (need to match key up events)
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
+
+            // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+            while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                ;
+
+            if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                ::HMessageBox("Abort CRC 32 calculation?", MB_YESNO) == IDYES)
+            {
+				theApp.mac_error_ = 10;
+				goto func_return;
+            }
+        }
+
+		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+	}
+
+    // Get final CRC and store it in the calculator
     if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < 4)
-        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(32);
-    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(crc_32(buf, len));
-    delete[] buf;
+        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(32);      // make sure at least in 32 bit mode
+    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(crc_32_final());
+    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
 
-    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();
+    theApp.SaveToMacro(km_checksum, 12); // 12 = CRC32
 
-    theApp.SaveToMacro(km_checksum, 12); // CRC32
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (buf != NULL)
+		delete[] buf;
 }
 
 void CHexEditView::OnUpdateByteNZ(CCmdUI* pCmdUI) 

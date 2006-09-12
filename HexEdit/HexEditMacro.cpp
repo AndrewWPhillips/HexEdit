@@ -1415,6 +1415,12 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 case CONVERT_IBM2ANSI:
                     pv_->OnIbm2Ansi();
                     break;
+                case CONVERT_UPPER:
+                    pv_->OnUppercase();
+                    break;
+                case CONVERT_LOWER:
+                    pv_->OnLowercase();
+                    break;
                 default:
                     ASSERT(0);
                 }
