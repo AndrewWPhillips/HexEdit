@@ -2310,22 +2310,22 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 							// In straddle mode we work in bits then convert back to bytes
 							if (num_elts == INT_MAX)
 							{
-								total_units = (length_ - addr)/df_size_[jj];    // How many units to EOF
-								num_elts = (total_units*df_size_[jj]*8)/data_bits;
+								total_units = int((length_ - addr)/df_size_[jj]);    // How many units to EOF
+								num_elts = int((total_units*df_size_[jj]*8)/data_bits);
 							}
 							else
 							{
-								total_units = (num_elts*data_bits - 1)/(df_size_[jj]*8) + 1;
+								total_units = int((num_elts*data_bits - 1)/(df_size_[jj]*8)) + 1;
 							}
-							done_units = (elt_num*data_bits - 1)/(df_size_[jj]*8) + 1;
+							done_units = int((elt_num*data_bits - 1)/(df_size_[jj]*8)) + 1;
 						}
 						else
 						{
 							// If not straddling we work in storage units
-							int elts_per_unit = (df_size_[jj]*8)/data_bits;     // How many bitfields can we store in a unit
+							int elts_per_unit = int((df_size_[jj]*8)/data_bits);     // How many bitfields can we store in a unit
 							if (num_elts == INT_MAX)
 							{
-								total_units = (length_ - addr)/df_size_[jj];    // How many units to EOF
+								total_units = int((length_ - addr)/df_size_[jj]);    // How many units to EOF
 								num_elts = total_units * elts_per_unit;
 							}
 							else

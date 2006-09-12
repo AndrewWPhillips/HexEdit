@@ -22,6 +22,7 @@
 
 #pragma warning(disable: 4786)
 #pragma warning(disable: 4503)
+#pragma warning(disable: 4018)
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 

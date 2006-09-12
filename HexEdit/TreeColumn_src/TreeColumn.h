@@ -64,7 +64,7 @@ public:
     virtual BOOL GetAllowDraw() const { return m_bAllowDraw; }
 
     virtual void SetEditWnd(CWnd* pEditWnd) { m_pEditWnd = pEditWnd; }
-    virtual CWnd* GetEditWnd() const const { return m_pEditWnd; }
+    virtual CWnd* GetEditWnd() const { return m_pEditWnd; }
 
     virtual void SetGrid(CGridCtrl* pGrid) { m_pGrid = pGrid; }
     virtual CGridCtrl* GetGrid() const { return m_pGrid; }

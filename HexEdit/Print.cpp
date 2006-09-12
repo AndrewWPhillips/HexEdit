@@ -107,7 +107,7 @@ void CHexEditView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 
     int u_scale = pDC->GetDeviceCaps(LOGPIXELSX);       // units scaling (pixels/inch)
     if (theApp.print_units_ == CHexEditApp::PRN_CM)
-        u_scale /= 2.54;
+        u_scale = int(u_scale/2.54);
 
     if ((theApp.left_margin_ + theApp.right_margin_)*u_scale > page_width*2/3)
         theApp.left_margin_ = theApp.right_margin_ = page_width/(3*u_scale);
@@ -297,7 +297,7 @@ void CHexEditView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
     pDC->SetMapMode(print_map_mode_);
     int u_scale = pDC->GetDeviceCaps(LOGPIXELSX); // units scaling (pixels/inch)
     if (theApp.print_units_ == CHexEditApp::PRN_CM)
-        u_scale /= 2.54;
+        u_scale = int(u_scale/2.54);
 
     CRect rct, margin_rct;
     CString ss;                             // String to display at top of page

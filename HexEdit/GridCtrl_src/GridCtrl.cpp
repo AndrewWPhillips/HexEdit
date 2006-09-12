@@ -1328,8 +1328,8 @@ void CGridCtrl::OnEndInPlaceEdit(NMHDR* pNMHDR, LRESULT* pResult)
     case VK_PRIOR:
     case VK_HOME:
     case VK_END:
-        OnKeyDown(pgvItem->lParam, 0, 0);
-        OnEditCell(m_idCurrentCell.row, m_idCurrentCell.col, CPoint( -1, -1), pgvItem->lParam);
+        OnKeyDown(UINT(pgvItem->lParam), 0, 0);
+        OnEditCell(m_idCurrentCell.row, m_idCurrentCell.col, CPoint( -1, -1), UINT(pgvItem->lParam));
     }
 
     *pResult = 0;

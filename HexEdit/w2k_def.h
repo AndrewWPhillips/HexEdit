@@ -1266,7 +1266,7 @@ typedef struct _OBJECT_HANDLE_INFORMATION // cf. HANDLE_ENTRY
 typedef struct _OBJECT_NAME_INFORMATION
         {
 /*000*/ UNICODE_STRING Name; // points to Buffer[]
-/*008*/ WORD           Buffer [];
+/*008*/ WORD           Buffer [1];
 /*???*/ }
         OBJECT_NAME_INFORMATION,
      * POBJECT_NAME_INFORMATION,
@@ -1627,7 +1627,7 @@ typedef struct _OBJECT_TYPE_INFO
 /*054*/ BOOL            PagedPool;
 /*058*/ DWORD           DefaultPagedPoolCharge;
 /*05C*/ DWORD           DefaultNonPagedPoolCharge;
-/*060*/ WORD            Buffer [];
+/*060*/ WORD            Buffer [1];
 /*???*/ }
         OBJECT_TYPE_INFO,
      * POBJECT_TYPE_INFO,
@@ -1716,7 +1716,7 @@ typedef struct _OBJECT_HEADER
 typedef struct _OBJECT_TYPE_ARRAY
         {
 /*000*/ DWORD                ObjectCount;
-/*004*/ POBJECT_CREATOR_INFO ObjectList [];
+/*004*/ POBJECT_CREATOR_INFO ObjectList [1];
 /*???*/ }
         OBJECT_TYPE_ARRAY,
      * POBJECT_TYPE_ARRAY,
@@ -1799,7 +1799,7 @@ typedef struct _OBJECT_HANDLE_DB
 typedef struct _OBJECT_HANDLE_DB_LIST
         {
 /*000*/ DWORD            Count;
-/*004*/ OBJECT_HANDLE_DB Entries [];
+/*004*/ OBJECT_HANDLE_DB Entries [1];
 /*???*/ }
         OBJECT_HANDLE_DB_LIST,
      * POBJECT_HANDLE_DB_LIST,
