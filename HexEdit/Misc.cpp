@@ -592,9 +592,9 @@ bool make_ibm_fp32(unsigned char pp[4], double val, bool little_endian /*=false*
 
     long imant = long(val * two_pow24);
     assert(imant < two_pow24);
-    pp[1] = (imant>>16) & 0xFF;
-    pp[2] = (imant>>8) & 0xFF;
-    pp[3] = (imant) & 0xFF;
+    pp[1] = unsigned char((imant>>16) & 0xFF);
+    pp[2] = unsigned char((imant>>8) & 0xFF);
+    pp[3] = unsigned char((imant) & 0xFF);
 
     if (little_endian)
     {
@@ -650,13 +650,13 @@ bool make_ibm_fp64(unsigned char pp[8], double val, bool little_endian /*=false*
 
     __int64 imant = (__int64)(val * two_pow56);
     assert(imant < two_pow56);
-    pp[1] = (imant>>48) & 0xFF;
-    pp[2] = (imant>>40) & 0xFF;
-    pp[3] = (imant>>32) & 0xFF;
-    pp[4] = (imant>>24) & 0xFF;
-    pp[5] = (imant>>16) & 0xFF;
-    pp[6] = (imant>>8) & 0xFF;
-    pp[7] = (imant) & 0xFF;
+    pp[1] = unsigned char((imant>>48) & 0xFF);
+    pp[2] = unsigned char((imant>>40) & 0xFF);
+    pp[3] = unsigned char((imant>>32) & 0xFF);
+    pp[4] = unsigned char((imant>>24) & 0xFF);
+    pp[5] = unsigned char((imant>>16) & 0xFF);
+    pp[6] = unsigned char((imant>>8) & 0xFF);
+    pp[7] = unsigned char((imant) & 0xFF);
 
     if (little_endian)
     {

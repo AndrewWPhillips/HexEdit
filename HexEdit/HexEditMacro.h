@@ -243,7 +243,7 @@ enum km_type
 
     // Commands added in 2.0
     km_sel_line,                // Select current line
-    km_convert,                 // Do various conversions of the current selection
+    km_convert,                 // Do various conversions of the current selection (see enum convert_type)
     km_encrypt,                 // encrypt or decrypt
 
     // Commands added in 2.1
@@ -268,7 +268,7 @@ enum km_type
     km_op_unary,                // Replaces km_invert, km_neg/km_inc/km_dec/km_flip* and
                                 // also used for new unary operations when added.
 
-    km_checksum,                // Checksums 8/16/32/64 (1,2,3,4), CRC16/CCITT/32 (10/11/12) etc
+    km_checksum,                // Checksums, CRCs, MD5 etc (see enum checksum_type)
 
     km_address_hex,             // Hex address tool used
     km_address_dec,             // Decimal address tool used
@@ -303,7 +303,7 @@ enum km_type
 // Be careful to keep the numbers of all retained commands the same so that old
 // keystroke macro files work in new versions of HexEdit.
 
-enum convert_type
+enum convert_type  // used with km_convert
 {
     CONVERT_ERROR,              // Keep zero as error value
     CONVERT_ASC2EBC,
@@ -314,6 +314,24 @@ enum convert_type
 	CONVERT_LOWER,
 
 	CONVERT_LAST                // Keep at end
+};
+
+enum checksum_type  // used with km_checksum
+{
+	CHECKSUM_ERROR,
+
+	// Simple "sum" checksums
+	CHECKSUM_8 = 1,
+	CHECKSUM_16,
+	CHECKSUM_32,
+	CHECKSUM_64,
+
+	// CRCs
+	CHECKSUM_CRC_CCITT = 11,
+	CHECKSUM_CRC32,
+
+	// Cryptographic checksums (hash codes)
+	CHECKSUM_MD5 = 21,
 };
 
 struct mouse_sel

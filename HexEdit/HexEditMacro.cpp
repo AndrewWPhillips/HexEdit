@@ -1318,30 +1318,30 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 }
                 break;
 
-            case km_checksum:
+			case km_checksum:
                 switch ((*pk).v64)
                 {
-                case 1:
+                case CHECKSUM_8:
                     pv_->OnChecksum8();
                     break;
-                case 2:
+                case CHECKSUM_16:
                     pv_->OnChecksum16();
                     break;
-                case 3:
+                case CHECKSUM_32:
                     pv_->OnChecksum32();
                     break;
-                case 4:
+                case CHECKSUM_64:
                     pv_->OnChecksum64();
                     break;
 
-                case 11:
+                case CHECKSUM_CRC_CCITT:
                     pv_->OnCrcCcitt();
                     break;
-                case 12:
+                case CHECKSUM_CRC32:
                     pv_->OnCrc32();
                     break;
 
-				case 20:
+				case CHECKSUM_MD5:
 					pv_->OnMd5();
 					break;
                 default:

@@ -584,7 +584,7 @@ public:
     std::vector<FILE_ADDRESS> SearchAddresses(FILE_ADDRESS start, FILE_ADDRESS end);
     int SearchProgress(int &occurrences);  // How far are we through the background search now (0 to 100)
 
-    FILE_ADDRESS base_addr_;    // Base address for alignment tests. It is not stored in app (with alignment_ et al as it is per doc - set from mark in active view)
+    FILE_ADDRESS base_addr_;    // Base address for alignment tests. It is not stored in app (with alignment_ et al as it is per doc - set from mark or SOF in active view)
 
     enum
     {

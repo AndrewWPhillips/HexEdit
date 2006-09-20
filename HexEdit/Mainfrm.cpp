@@ -2993,7 +2993,7 @@ void CMainFrame::OnReplaceAll()
 #endif
 
     if (theApp.recording_)
-         theApp.SaveToMacro(km_replace_all, m_wndFind.m_pSheet->GetOptions());
+        theApp.SaveToMacro(km_replace_all, m_wndFind.m_pSheet->GetOptions());
 
     // Get a comma-separated version of bytes searched
     char buf[40];
