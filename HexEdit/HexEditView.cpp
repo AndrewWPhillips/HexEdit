@@ -12232,89 +12232,32 @@ CHexEditView * CHexEditView::NextView() const
 
 void CHexEditView::OnAscii2Ebcdic() 
 {
-	ByteConvert(CONVERT_ASC2EBC, "convert ASCII to EBCDIC");
+	DoConversion(CONVERT_ASC2EBC, "convert ASCII to EBCDIC");
 }
 
 void CHexEditView::OnEbcdic2Ascii() 
 {
-    ByteConvert(CONVERT_EBC2ASC, "convert EBCDIC to ASCII");
+    DoConversion(CONVERT_EBC2ASC, "convert EBCDIC to ASCII");
 }
 
 void CHexEditView::OnAnsi2Ibm() 
 {
-    ByteConvert(CONVERT_ANSI2IBM, "convert ANSI to IBM/OEM");
+    DoConversion(CONVERT_ANSI2IBM, "convert ANSI to IBM/OEM");
 }
 
 void CHexEditView::OnIbm2Ansi() 
 {
-    ByteConvert(CONVERT_IBM2ANSI, "convert IBM/OEM to ANSI");
+    DoConversion(CONVERT_IBM2ANSI, "convert IBM/OEM to ANSI");
 }
 
 void CHexEditView::OnUppercase() 
 {
-    ByteConvert(CONVERT_UPPER, "convert to upper case");
+    DoConversion(CONVERT_UPPER, "convert to upper case");
 }
 
 void CHexEditView::OnLowercase() 
 {
-    ByteConvert(CONVERT_LOWER, "convert to lower case");
-}
-
-// Performs particular conversions on a memory buffer
-void CHexEditView::ProcConversion(unsigned char *buf, size_t count, convert_type op)
-{
-    // Operate on all the selected values
-    for (size_t ii = 0; ii < count; ++ii)
-    {
-        switch (op)
-        {
-        case CONVERT_ASC2EBC:
-			if (buf[ii] < 128)
-				buf[ii] = a2e_tab[buf[ii]];
-			else
-				buf[ii] = '\0';
-            break;
-        case CONVERT_EBC2ASC:
-            buf[ii] = e2a_tab[buf[ii]];
-            break;
-        case CONVERT_ANSI2IBM:
-			if (buf[ii] > 128)
-				buf[ii] = a2i_tab[buf[ii]&0x7F];
-            break;
-        case CONVERT_IBM2ANSI:
-			if (buf[ii] > 128)
-				buf[ii] = i2a_tab[buf[ii]&0x7F];
-            break;
-		case CONVERT_UPPER:
-			if (EbcdicMode())
-			{
-			    if (buf[ii] >= 0x81 && buf[ii] <= 0x89 ||
-				    buf[ii] >= 0x91 && buf[ii] <= 0x99 ||
-				    buf[ii] >= 0xA2 && buf[ii] <= 0xA9 )
-				{
-                    buf[ii] += 0x40;
-				}
-			}
-			else if (ANSIMode() || buf[ii] < 128)
-				buf[ii] = toupper(buf[ii]);
-            break;
-		case CONVERT_LOWER:
-			if (EbcdicMode())
-			{
-			    if (buf[ii] >= 0xC1 && buf[ii] <= 0xC9 ||
-				    buf[ii] >= 0xD1 && buf[ii] <= 0xD9 ||
-				    buf[ii] >= 0xE2 && buf[ii] <= 0xE9 )
-				{
-                buf[ii] -= 0x40;
-				}
-			}
-			else if (ANSIMode() || buf[ii] < 128)
-				buf[ii] = tolower(buf[ii]);
-            break;
-        default:
-            ASSERT(0);
-        }
-    }
+    DoConversion(CONVERT_LOWER, "convert to lower case");
 }
 
 // This handles conversion operations (everything except for the actual data
@@ -12322,7 +12265,7 @@ void CHexEditView::ProcConversion(unsigned char *buf, size_t count, convert_type
 // and allocating memory buffers to store the result (or temp file for
 // really big selections) and updating the document.
 // It also updates progress in the status bar and allows user abort.
-void CHexEditView::ByteConvert(convert_type op, LPCSTR desc)
+void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 {
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     unsigned char *buf = NULL;
@@ -12504,176 +12447,62 @@ func_return:
 		delete[] buf;
 }
 
-#if 0 //OLD
-void CHexEditView::OnAscii2Ebcdic() 
+// Performs particular conversions on a memory buffer
+void CHexEditView::ProcConversion(unsigned char *buf, size_t count, convert_type op)
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    if (check_ro("convert ASCII to EBCDIC"))
-        return;
-
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    GetSelAddr(start_addr, end_addr);
-
-    // Make sure there is a selection
-    if (start_addr >= end_addr)
+    // Operate on all the selected values
+    for (size_t ii = 0; ii < count; ++ii)
     {
-        // No selection, presumably in macro playback
-        ASSERT(aa->playing_);
-        ::HMessageBox("There is no selection to convert from ASCII to EBCDIC");
-        aa->mac_error_ = 10;
-        return;
+        switch (op)
+        {
+        case CONVERT_ASC2EBC:
+			if (buf[ii] < 128)
+				buf[ii] = a2e_tab[buf[ii]];
+			else
+				buf[ii] = '\0';
+            break;
+        case CONVERT_EBC2ASC:
+            buf[ii] = e2a_tab[buf[ii]];
+            break;
+        case CONVERT_ANSI2IBM:
+			if (buf[ii] > 128)
+				buf[ii] = a2i_tab[buf[ii]&0x7F];
+            break;
+        case CONVERT_IBM2ANSI:
+			if (buf[ii] > 128)
+				buf[ii] = i2a_tab[buf[ii]&0x7F];
+            break;
+		case CONVERT_UPPER:
+			if (EbcdicMode())
+			{
+			    if (buf[ii] >= 0x81 && buf[ii] <= 0x89 ||
+				    buf[ii] >= 0x91 && buf[ii] <= 0x99 ||
+				    buf[ii] >= 0xA2 && buf[ii] <= 0xA9 )
+				{
+                    buf[ii] += 0x40;
+				}
+			}
+			else if (ANSIMode() || buf[ii] < 128)
+				buf[ii] = toupper(buf[ii]);
+            break;
+		case CONVERT_LOWER:
+			if (EbcdicMode())
+			{
+			    if (buf[ii] >= 0xC1 && buf[ii] <= 0xC9 ||
+				    buf[ii] >= 0xD1 && buf[ii] <= 0xD9 ||
+				    buf[ii] >= 0xE2 && buf[ii] <= 0xE9 )
+				{
+                buf[ii] -= 0x40;
+				}
+			}
+			else if (ANSIMode() || buf[ii] < 128)
+				buf[ii] = tolower(buf[ii]);
+            break;
+        default:
+            ASSERT(0);
+        }
     }
-
-    // xxx make sure selection is not too big
-
-    size_t len = size_t(end_addr - start_addr); // Length of selection
-
-    // Get memory for selection and read it from the document
-    unsigned char *buf = new unsigned char[len];
-    size_t got = GetDocument()->GetData(buf, len, start_addr);
-    ASSERT(got == len);
-
-    // Convert the bytes and put back into the document
-    for (size_t ii = 0; ii < len; ++ii)
-    {
-        if (buf[ii] < 128)
-            buf[ii] = a2e_tab[buf[ii]];
-        else
-            buf[ii] = '\0';
-    }
-    GetDocument()->Change(mod_replace, start_addr, len, buf, 0, this);
-    delete[] buf;
-
-    DisplayCaret();
-    aa->SaveToMacro(km_convert, CONVERT_ASC2EBC);
 }
-
-void CHexEditView::OnEbcdic2Ascii() 
-{
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    if (check_ro("convert EBCDIC to ASCII"))
-        return;
-
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    GetSelAddr(start_addr, end_addr);
-
-    // Make sure there is a selection
-    if (start_addr >= end_addr)
-    {
-        // No selection, presumably in macro playback
-        ASSERT(aa->playing_);
-        ::HMessageBox("There is no selection to convert from EBCDIC to ASCII");
-        aa->mac_error_ = 10;
-        return;
-    }
-
-    // xxx make sure selection is not too big?
-
-    size_t len = size_t(end_addr - start_addr); // Length of selection
-
-    // Get memory for selection and read it from the document
-    unsigned char *buf = new unsigned char[len];
-    size_t got = GetDocument()->GetData(buf, len, start_addr);
-    ASSERT(got == len);
-
-    // Convert the bytes and put back into the document
-    for (size_t ii = 0; ii < len; ++ii)
-    {
-        buf[ii] = e2a_tab[buf[ii]];
-    }
-    GetDocument()->Change(mod_replace, start_addr, len, buf, 0, this);
-    delete[] buf;
-
-    DisplayCaret();
-    aa->SaveToMacro(km_convert, CONVERT_EBC2ASC);
-}
-
-void CHexEditView::OnAnsi2Ibm() 
-{
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    if (check_ro("convert ANSI to IBM/OEM"))
-        return;
-
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    GetSelAddr(start_addr, end_addr);
-
-    // Make sure there is a selection
-    if (start_addr >= end_addr)
-    {
-        // No selection, presumably in macro playback
-        ASSERT(aa->playing_);
-        ::HMessageBox("There is no selection to convert from ANSI to IBM/OEM");
-        aa->mac_error_ = 10;
-        return;
-    }
-
-    // xxx make sure selection is not too big
-
-    size_t len = size_t(end_addr - start_addr); // Length of selection
-
-    // Get memory for selection and read it from the document
-    unsigned char *buf = new unsigned char[len];
-    size_t got = GetDocument()->GetData(buf, len, start_addr);
-    ASSERT(got == len);
-
-    // Convert the bytes and put back into the document
-    for (size_t ii = 0; ii < len; ++ii)
-    {
-        if (buf[ii] > 128)
-            buf[ii] = a2i_tab[buf[ii]&0x7F];
-    }
-    GetDocument()->Change(mod_replace, start_addr, len, buf, 0, this);
-    delete[] buf;
-
-    DisplayCaret();
-    aa->SaveToMacro(km_convert, CONVERT_ANSI2IBM);
-}
-
-void CHexEditView::OnIbm2Ansi() 
-{
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    if (check_ro("convert IBM/OEM to ANSI"))
-        return;
-
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    GetSelAddr(start_addr, end_addr);
-
-    // Make sure there is a selection
-    if (start_addr >= end_addr)
-    {
-        // No selection, presumably in macro playback
-        ASSERT(aa->playing_);
-        ::HMessageBox("There is no selection to convert from IBM/OEM to ANSI");
-        aa->mac_error_ = 10;
-        return;
-    }
-
-    // xxx make sure selection is not too big
-
-    size_t len = size_t(end_addr - start_addr); // Length of selection
-
-    // Get memory for selection and read it from the document
-    unsigned char *buf = new unsigned char[len];
-    size_t got = GetDocument()->GetData(buf, len, start_addr);
-    ASSERT(got == len);
-
-    // Convert the bytes and put back into the document
-    for (size_t ii = 0; ii < len; ++ii)
-    {
-        if (buf[ii] > 128)
-            buf[ii] = i2a_tab[buf[ii]&0x7F];
-    }
-    GetDocument()->Change(mod_replace, start_addr, len, buf, 0, this);
-    delete[] buf;
-
-    DisplayCaret();
-    aa->SaveToMacro(km_convert, CONVERT_IBM2ANSI);
-}
-#endif
 
 // Make sure there is a selection before doing conversion
 void CHexEditView::OnUpdateConvert(CCmdUI* pCmdUI) 
@@ -13771,171 +13600,176 @@ void CHexEditView::OnUpdate64bitBinary(CCmdUI* pCmdUI)
     OnUpdate64bit(pCmdUI);
 }
 
-void CHexEditView::OnChecksum8()
+template<class T> void CHexEditView::DoChecksum(checksum_type op, LPCSTR desc)
 {
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	T val = 0;
+    unsigned char *buf = NULL;
+
     // Get current address or selection
     FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    size_t len;                         // Length of selection
     GetSelAddr(start_addr, end_addr);
-    len = size_t(end_addr - start_addr);
-    
-    if (len == 0)
+
+    if (start_addr >= end_addr)
     {
-        // No selection or wrong length, presumably in macro playback
+        // No selection, presumably in macro playback
         ASSERT(theApp.playing_);
-        ::HMessageBox("Can't do checksum without a selection");
+        CString mess;
+        mess.Format("There is no selection to calculate %s on", desc);
+        ::HMessageBox(mess);
+        theApp.mac_error_ = 10;
+        return;
+    }
+    if (op >= CHECKSUM_8 && op < 10 && (end_addr - start_addr)%sizeof(T) != 0)
+    {
+        // Selection is wrong length, presumably in macro playback
+        ASSERT(theApp.playing_);
+        CString mess;
+        mess.Format("The selection must be a multiple of %d for %s", sizeof(T), desc);
+        ::HMessageBox(mess);
         theApp.mac_error_ = 10;
         return;
     }
     ASSERT(start_addr < GetDocument()->length());
 
-    // Get memory for selection and read it from the document
-    unsigned char *buf = new unsigned char[len];
-    size_t got = GetDocument()->GetData(buf, len, start_addr);
-    ASSERT(got == len);
+	// Get a buffer - fairly large for efficiency
+	size_t len, buflen = size_t(min(4096, end_addr - start_addr));
+	try
+	{
+        buf = new unsigned char[buflen];
+    }
+    catch(std::bad_alloc)
+    {
+        ::HMessageBox("Insufficient memory to perform CRC");
+        theApp.mac_error_ = 10;
+        return;
+    }
+	ASSERT(buf != NULL);
+    mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+    MSG msg;                                           // use to check for abort key press
 
-    // Work out checksum
-    unsigned char cc = 0;
-    for (size_t ii = 0; ii < got; ++ii)
-        cc += buf[ii];
+	switch (op)
+	{
+	case CHECKSUM_CRC_CCITT:
+		crc_ccitt_init();
+		break;
+	case CHECKSUM_CRC32:
+		crc_32_init();
+		break;
+	default:
+		ASSERT(0);
+	}
+	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+	{
+		// Get the next buffer full from the document
+		len = size_t(min(buflen, end_addr - curr));
+	    VERIFY(GetDocument()->GetData(buf, len, curr) == len);
 
-    delete[] buf;
+		switch (op)
+		{
+		case CHECKSUM_8:
+		case CHECKSUM_16:
+		case CHECKSUM_32:
+		case CHECKSUM_64:
+			ASSERT(len % sizeof(T) == 0);
+			{
+				T *pp, *endp = (T *)(buf + len);
+				for (pp = (T *)buf; pp < endp; ++pp)
+					val += *pp;
+			}
+			break;
+		case CHECKSUM_CRC_CCITT:
+			crc_ccitt_update(buf, len);
+			break;
+		case CHECKSUM_CRC32:
+			crc_32_update(buf, len);
+			break;
+		}
 
-    // Calculate checksum and store it in the calculator (make sure at least in 16 bit mode 1st)
-    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set((__int64)cc);
+		// Do any redrawing, but nothing else
+		while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+		{
+			if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+			{
+				::TranslateMessage(&msg);
+				::DispatchMessage(&msg);
+			}
+		}
 
-    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();
+        // Check if a key has been pressed
+        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+        {
+            // Windows does not like to miss key down events (need to match key up events)
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
 
-    theApp.SaveToMacro(km_checksum, 1);
+            // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+            while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                ;
+
+            if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                ::HMessageBox("Abort calculation?", MB_YESNO) == IDYES)
+            {
+				theApp.mac_error_ = 10;
+				goto func_return;
+            }
+        }
+
+		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+	}
+	switch (op)
+	{
+	case CHECKSUM_CRC_CCITT:
+		val = T(crc_ccitt_final());
+		break;
+	case CHECKSUM_CRC32:
+		val = T(crc_32_final());
+		break;
+	}
+
+    // Get final CRC and store it in the calculator
+    if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < sizeof(T))
+        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(sizeof(T)*8);
+    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(val);
+    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
+
+	theApp.SaveToMacro(km_checksum, op);
+
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (buf != NULL)
+		delete[] buf;
+}
+
+void CHexEditView::OnChecksum8()
+{
+	DoChecksum<unsigned char>(CHECKSUM_8, "8 bit Checksum");
 }
 
 void CHexEditView::OnChecksum16()
 {
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    size_t len;                         // Length of selection
-    GetSelAddr(start_addr, end_addr);
-    len = size_t(end_addr - start_addr);
-    
-    if (len == 0 || len%2 != 0)
-    {
-        // No selection or wrong length, presumably in macro playback
-        ASSERT(theApp.playing_);
-        ::HMessageBox("Selection (even number of bytes) needed for 16 bit checksum");
-        theApp.mac_error_ = 10;
-        return;
-    }
-    ASSERT(start_addr < GetDocument()->length());
-
-    // Get memory for selection and read it from the document
-    unsigned char *buf = new unsigned char[len];
-    size_t got = GetDocument()->GetData(buf, len, start_addr);
-    ASSERT(got == len);
-
-    // Work out checksum
-    unsigned short *pp = (unsigned short *)buf;
-    unsigned short *end = (unsigned short *)(buf + len);
-    unsigned short cc = 0;
-
-    while (pp < end)
-        cc += *pp++;
-
-    delete[] buf;
-
-    // Calculate checksum and store it in the calculator (make sure at least in 16 bit mode 1st)
-    if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < 2)
-        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(16);
-    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set((__int64)cc);
-
-    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();
-
-    theApp.SaveToMacro(km_checksum, 2);
+	DoChecksum<unsigned short>(CHECKSUM_16, "16 bit Checksum");
 }
 
 void CHexEditView::OnChecksum32()
 {
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    size_t len;                         // Length of selection
-    GetSelAddr(start_addr, end_addr);
-    len = size_t(end_addr - start_addr);
-    
-    if (len == 0 || len%4 != 0)
-    {
-        // No selection or wrong length, presumably in macro playback
-        ASSERT(theApp.playing_);
-        ::HMessageBox("Selection (divisible by 4) needed for 32 bit checksum");
-        theApp.mac_error_ = 10;
-        return;
-    }
-    ASSERT(start_addr < GetDocument()->length());
-
-    // Get memory for selection and read it from the document
-    unsigned char *buf = new unsigned char[len];
-    size_t got = GetDocument()->GetData(buf, len, start_addr);
-    ASSERT(got == len);
-
-    // Work out checksum
-    unsigned long *pp = (unsigned long *)buf;
-    unsigned long *end = (unsigned long *)(buf + len);
-    unsigned long cc = 0;
-
-    while (pp < end)
-        cc += *pp++;
-
-    delete[] buf;
-
-    // Calculate checksum and store it in the calculator (make sure at least in 16 bit mode 1st)
-    if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < 4)
-        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(32);
-    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set((__int64)cc);
-
-    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();
-
-    theApp.SaveToMacro(km_checksum, 3);
+	DoChecksum<unsigned long>(CHECKSUM_32, "32 bit Checksum");
 }
 
 void CHexEditView::OnChecksum64()
 {
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    size_t len;                         // Length of selection
-    GetSelAddr(start_addr, end_addr);
-    len = size_t(end_addr - start_addr);
-    
-    if (len == 0 || len%8 != 0)
-    {
-        // No selection or wrong length, presumably in macro playback
-        ASSERT(theApp.playing_);
-        ::HMessageBox("Selection (divisible by 8) needed for 64 bit checksum");
-        theApp.mac_error_ = 10;
-        return;
-    }
-    ASSERT(start_addr < GetDocument()->length());
+	DoChecksum<unsigned __int64>(CHECKSUM_64, "64 bit Checksum");
+}
 
-    // Get memory for selection and read it from the document
-    unsigned char *buf = new unsigned char[len];
-    size_t got = GetDocument()->GetData(buf, len, start_addr);
-    ASSERT(got == len);
+void CHexEditView::OnCrcCcitt() 
+{
+	DoChecksum<unsigned short>(CHECKSUM_CRC_CCITT, "CRC CCITT");
+}
 
-    // Work out checksum
-    unsigned __int64 *pp = (unsigned __int64 *)buf;
-    unsigned __int64 *end = (unsigned __int64 *)(buf + len);
-    unsigned __int64 cc = 0;
-
-    while (pp < end)
-        cc += *pp++;
-
-    delete[] buf;
-
-    // Calculate checksum and store it in the calculator (make sure at least in 16 bit mode 1st)
-    if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < 8)
-        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(64);
-    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set((__int64)cc);
-
-    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();
-
-    theApp.SaveToMacro(km_checksum, 4);
+void CHexEditView::OnCrc32()
+{
+	DoChecksum<DWORD>(CHECKSUM_CRC32, "CRC 32");
 }
 
 void CHexEditView::OnMd5()
@@ -14034,189 +13868,7 @@ void CHexEditView::OnMd5()
 	}
 
 	// Record in macro since we did it successfully
-	theApp.SaveToMacro(km_checksum, 20); // MD5
-
-func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
-
-	if (buf != NULL)
-		delete[] buf;
-}
-
-void CHexEditView::OnCrcCcitt() 
-{
-    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    unsigned char *buf = NULL;
-
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    GetSelAddr(start_addr, end_addr);
-
-    if (start_addr >= end_addr)
-    {
-        // No selection, presumably in macro playback
-        ASSERT(theApp.playing_);
-        ::HMessageBox("There is no selection to calculate CRC CCITT on");
-        theApp.mac_error_ = 10;
-        return;
-    }
-    ASSERT(start_addr < GetDocument()->length());
-
-	// Get a buffer - fairly large for efficiency
-	size_t len, buflen = size_t(min(4096, end_addr - start_addr));
-	try
-	{
-        buf = new unsigned char[buflen];
-    }
-    catch(std::bad_alloc)
-    {
-        ::HMessageBox("Insufficient memory to perform CRC");
-        theApp.mac_error_ = 10;
-        return;
-    }
-	ASSERT(buf != NULL);
-    mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
-    MSG msg;                                           // use to check for abort key press
-
-	crc_ccitt_init();
-	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
-	{
-		// Get the next buffer full from the document
-		len = size_t(min(buflen, end_addr - curr));
-	    VERIFY(GetDocument()->GetData(buf, len, curr) == len);
-
-		crc_ccitt_update(buf, len);
-
-		// Do any redrawing, but nothing else
-		while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
-		{
-			if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-			}
-		}
-
-        // Check if a key has been pressed
-        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-        {
-            // Windows does not like to miss key down events (need to match key up events)
-            ::TranslateMessage(&msg);
-            ::DispatchMessage(&msg);
-
-            // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-            while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                ;
-
-            if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
-                ::HMessageBox("Abort CRC CCITT calculation?", MB_YESNO) == IDYES)
-            {
-				theApp.mac_error_ = 10;
-				goto func_return;
-            }
-        }
-
-		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
-	}
-
-    // Get final CRC and store it in the calculator
-    if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < 2)
-        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(16);      // make sure at least in 16 bit mode
-    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(crc_ccitt_final());
-    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
-
-	theApp.SaveToMacro(km_checksum, 11); // 11 = CCITT
-
-func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
-
-	if (buf != NULL)
-		delete[] buf;
-}
-
-void CHexEditView::OnCrc32() 
-{
-    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    unsigned char *buf = NULL;
-
-    // Get current address or selection
-    FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    GetSelAddr(start_addr, end_addr);
-
-    if (start_addr >= end_addr)
-    {
-        // No selection, presumably in macro playback
-        ASSERT(theApp.playing_);
-        ::HMessageBox("There is no selection to calculate the CRC 32 on");
-        theApp.mac_error_ = 10;
-        return;
-    }
-    ASSERT(start_addr < GetDocument()->length());
-
-	// Get a buffer - fairly large for efficiency
-	size_t len, buflen = size_t(min(4096, end_addr - start_addr));
-	try
-	{
-        buf = new unsigned char[buflen];
-    }
-    catch(std::bad_alloc)
-    {
-        ::HMessageBox("Insufficient memory to perform CRC");
-        theApp.mac_error_ = 10;
-        return;
-    }
-	ASSERT(buf != NULL);
-    mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
-    MSG msg;                                           // use to check for abort key press
-
-	crc_32_init();
-	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
-	{
-		// Get the next buffer full from the document
-		len = size_t(min(buflen, end_addr - curr));
-	    VERIFY(GetDocument()->GetData(buf, len, curr) == len);
-
-		crc_32_update(buf, len);
-
-		// Do any redrawing, but nothing else
-		while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
-		{
-			if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-			}
-		}
-
-        // Check if a key has been pressed
-        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-        {
-            // Windows does not like to miss key down events (need to match key up events)
-            ::TranslateMessage(&msg);
-            ::DispatchMessage(&msg);
-
-            // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-            while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                ;
-
-            if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
-                ::HMessageBox("Abort CRC 32 calculation?", MB_YESNO) == IDYES)
-            {
-				theApp.mac_error_ = 10;
-				goto func_return;
-            }
-        }
-
-		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
-	}
-
-    // Get final CRC and store it in the calculator
-    if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < 4)
-        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(32);      // make sure at least in 32 bit mode
-    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(crc_32_final());
-    dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
-
-    theApp.SaveToMacro(km_checksum, 12); // 12 = CRC32
+	theApp.SaveToMacro(km_checksum, CHECKSUM_MD5);
 
 func_return:
 	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
@@ -14611,9 +14263,11 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 
     pv->DisplayCaret();
 
-    static int bit_pos[8] = {0, 1, -1, 2, -1, -1, -1, 3};
-    ASSERT(sizeof(T)-1 < 8 && bit_pos[sizeof(T)-1] != -1);  // size must be 1,2,4,8 giving bit_pos of 0,1,2,3
-    theApp.SaveToMacro(km_op_binary, (op<<8)|bit_pos[sizeof(T)-1]);
+	{
+		static int bit_pos[8] = {0, 1, -1, 2, -1, -1, -1, 3};
+		ASSERT(sizeof(T)-1 < 8 && bit_pos[sizeof(T)-1] != -1);  // size must be 1,2,4,8 giving bit_pos of 0,1,2,3
+		theApp.SaveToMacro(km_op_binary, (op<<8)|bit_pos[sizeof(T)-1]);
+	}
 
 func_return:
 	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
@@ -15313,9 +14967,11 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 
     pv->DisplayCaret();
 
-    static int bit_pos[8] = {0, 1, -1, 2, -1, -1, -1, 3};
-    ASSERT(sizeof(T)-1 < 8 && bit_pos[sizeof(T)-1] != -1);  // size must be 1,2,4,8 giving bit_pos of 0,1,2,3
-    theApp.SaveToMacro(km_op_unary, (op<<8)|bit_pos[sizeof(T)-1]);
+	{
+		static int bit_pos[8] = {0, 1, -1, 2, -1, -1, -1, 3};
+		ASSERT(sizeof(T)-1 < 8 && bit_pos[sizeof(T)-1] != -1);  // size must be 1,2,4,8 giving bit_pos of 0,1,2,3
+		theApp.SaveToMacro(km_op_unary, (op<<8)|bit_pos[sizeof(T)-1]);
+	}
 
 func_return:
 	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar

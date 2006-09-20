@@ -270,8 +270,9 @@ public:
     void do_replace(FILE_ADDRESS start, FILE_ADDRESS end, unsigned char *pp, size_t len);
     void do_insert_block(_int64 params, const char *data_str);
 
-	void ByteConvert(convert_type op, LPCSTR desc);
-	void ProcConversion(unsigned char *buf, size_t count, convert_type op);
+	void DoConversion(convert_type op, LPCSTR desc);  // byte-size conversions 
+	void ProcConversion(unsigned char *buf, size_t count, convert_type op); // convert buffer full
+	template<class T> void DoChecksum(checksum_type op, LPCSTR desc);  // checksum, CRC etc
 
 //    BOOL Search(const char *ss, int tt = 1, BOOL forward = TRUE);
     FILE_ADDRESS GoAddress(FILE_ADDRESS start_addr, FILE_ADDRESS end_addr = -1);
