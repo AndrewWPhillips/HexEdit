@@ -1753,17 +1753,20 @@ BOOL CFileNC::Open( LPCTSTR filename, UINT open_flags )
         m_hFile = (UINT) m_FileHandle; // Set the stupid public member that is never used internally
         m_CloseOnDelete = TRUE;
 
+		_TCHAR vol[4] = _T("?:\\");     // Path of root dir to pass to GetDiskFreeSpace
+		vol[0] = filename[4];
+
 		// We call GetDiskFreeSpace(Ex) to work out the sector size and file length.
 		DWORD SectorsPerCluster;
 		DWORD NumberOfFreeClusters;
 		DWORD TotalNumberOfClusters;
-		VERIFY(::GetDiskFreeSpace(filename,				// This fails if called after device opened under XP
+		VERIFY(::GetDiskFreeSpace(vol,
 								&SectorsPerCluster,
 								&m_SectorSize,
 								&NumberOfFreeClusters,
 								&TotalNumberOfClusters));
 		ULARGE_INTEGER bytes_total;
-		if (::GetDiskFreeSpaceEx(filename, NULL, &bytes_total, NULL))
+		if (::GetDiskFreeSpaceEx(vol, NULL, &bytes_total, NULL))
 			m_Length = bytes_total.QuadPart;
 		else
 			m_Length = (LONGLONG)m_SectorSize * SectorsPerCluster * (LONGLONG)TotalNumberOfClusters;
@@ -1845,8 +1848,8 @@ BOOL CFileNC::Open( LPCTSTR filename, UINT open_flags )
 
 #ifdef _DEBUG
 	LONGLONG saved_length = m_Length;
-	// Always scan in debug (but don't change scan_for_end so the assertion below works)
-	if (true)
+	// Always scan in debug under NT/2K/XP (but don't change scan_for_end so the assertion below works)
+	if (theApp.is_nt_)
 #else
     if (scan_for_end)
 #endif
@@ -2030,6 +2033,14 @@ struct
 	DWORD buffer;
 } diskio;
 
+// On error Carry flag is set (1) and AX contains one of these values:
+// 2   General error
+// 3   Attempted write on protected diskette
+// 4   Sector not found
+// 8   Bad CRC on read
+// 40H SEEK failed
+// 80H Attachment failed to respond
+
 struct
 {
     DWORD reg_EBX;
@@ -2088,7 +2099,7 @@ void CFileNC::get_current()
 
 				if ((dioc_reg.reg_Flags & 0x0001) != 0)
 				{
-					m_bad[sec] = dioc_reg.reg_EAX & 0xFFFF;
+					m_bad[sec] = dioc_reg.reg_EAX & 0xFFFF;  // see error nos above
 				}
 			}
         }
@@ -2159,23 +2170,54 @@ void CFileNC::make_clean()
 {
 	TRACE("xxx WRITE non-cached\r\n");
 	ASSERT(m_dirty && m_start < m_end && (m_end-m_start)%m_SectorSize == 0);
-	DWORD num_written;
 
-	LARGE_INTEGER pos;          // Position to write at
-	pos.QuadPart = m_start;
-    if (m_retries < 0)
+    if (IsDevice(m_FileName) && !theApp.is_nt_)
     {
-		pos.LowPart = ::SetFilePointer(m_FileHandle, pos.LowPart, &pos.HighPart, FILE_BEGIN);
-		ASSERT(pos.QuadPart == m_start);
+		ASSERT(m_end - m_start < USHRT_MAX);
+		ASSERT(m_FileHandle != INVALID_HANDLE_VALUE && m_Buffer != NULL);
 
-	    VERIFY(::WriteFile(m_FileHandle, m_Buffer, (DWORD)(m_end - m_start), &num_written, NULL));
-	    ASSERT(num_written == (DWORD)(m_end - m_start));
-    }
+		diskio.start_sector = DWORD(m_start/m_SectorSize);
+		diskio.sectors = WORD((m_end - m_start)/m_SectorSize);
+		diskio.buffer = DWORD(m_Buffer);
+
+		dioc_reg.reg_EAX = 0x7305;  // Ext_ABSDiskReadWrite
+		dioc_reg.reg_EBX = DWORD(&diskio);
+		dioc_reg.reg_ECX = -1;      // always -1
+		ASSERT(isalpha(m_FileName[4]));
+		dioc_reg.reg_EDX = toupper(m_FileName[4]) - 'A' + 1;
+		dioc_reg.reg_ESI = 1;       // write (unknown/any block types)
+
+		DWORD junk;
+		VERIFY(DeviceIoControl(m_FileHandle,
+							   6,            // VWIN32_DIOC_DOS_DRIVEINFO
+							   &dioc_reg, sizeof(dioc_reg),
+							   &dioc_reg, sizeof(dioc_reg),
+							   &junk,                 // # bytes returned
+							   (LPOVERLAPPED) NULL));
+		ASSERT(sizeof(dioc_reg) == junk);
+
+		// if ((dioc_reg.reg_Flags & 0x0001) != 0) xxx;
+	}
 	else
-    {
-		IO_STATUS_BLOCK iosb;
-        VERIFY((*pfWriteFile)(m_FileHandle, 0, 0, 0, &iosb, (char *)m_Buffer, ULONG(m_end - m_start), &pos, 0) == STATUS_SUCCESS);
-    }
+	{
+		DWORD num_written;
+
+		LARGE_INTEGER pos;          // Position to write at
+		pos.QuadPart = m_start;
+		if (m_retries < 0)
+		{
+			pos.LowPart = ::SetFilePointer(m_FileHandle, pos.LowPart, &pos.HighPart, FILE_BEGIN);
+			ASSERT(pos.QuadPart == m_start);
+
+			VERIFY(::WriteFile(m_FileHandle, m_Buffer, (DWORD)(m_end - m_start), &num_written, NULL));
+			ASSERT(num_written == (DWORD)(m_end - m_start));
+		}
+		else
+		{
+			IO_STATUS_BLOCK iosb;
+			VERIFY((*pfWriteFile)(m_FileHandle, 0, 0, 0, &iosb, (char *)m_Buffer, ULONG(m_end - m_start), &pos, 0) == STATUS_SUCCESS);
+		}
+	}
 	m_dirty = false;                       // mark it clean
 }
 
