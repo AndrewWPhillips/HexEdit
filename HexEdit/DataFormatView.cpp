@@ -3442,18 +3442,19 @@ BOOL CDataFormatView::ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr /*=-1*/)
 
     CString read_only_str;
     CString default_read_only_str = pdoc->df_elt_[0].GetAttr("default_read_only");
-    size_t elt, last_elt = -1;
-
+#ifdef _DEBUG
+    size_t last_elt = -1;
+#endif
     if (end_addr <= addr) end_addr = addr + 1;
 
     // Check all the data elts (leaves) in the address range
-    for ( ; addr < end_addr; ++addr)
+    while (addr < end_addr)
     {
-        elt = find_address(addr);
-        if (elt == last_elt)
-            continue;
-// xxx this needs rethinking eg addr=0, end_addr=1e9, one elt (not read only)
+        size_t elt = find_address(addr);
+#ifdef _DEBUG
+        ASSERT(elt != last_elt);
         last_elt = elt;
+#endif
 
         // Use template default if past end of expected data
         // Should this be fixed for DF_MORE (unexamined FORF elts) somehow???
@@ -3472,6 +3473,8 @@ BOOL CDataFormatView::ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr /*=-1*/)
             return TRUE;
 
         ASSERT(read_only_str.CompareNoCase("false") == 0);
+
+		addr += pdoc->df_size_[elt];
     }
     return FALSE;
 }
