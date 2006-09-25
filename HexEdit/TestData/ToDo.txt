@@ -1,0 +1,661 @@
+MAJOR
+ CDataFormatView::find_address sometimes gets stuck
+
+Version 3.1 release
+ - get Digital Candle to update the code generation
+ > update security_version_ (hexedit.h)
+ > update range and default value for ver_ (RegisterDlg.cpp)
+ > update X.Y version number, and add to email dlg drop list
+ > change version number and copyright year in readme.txt, order.txt
+ - check new cracker codes and find workaround
+ x Add encrypted list of existing users & rebuild
+ - web site: add ver to bug report form drop list, update what's new, gifs etc
+ - update help for new features, what's new, installation, order form etc
+ - add new tips of the day
+ > create new release notes
+ > create new bitmap for install
+ - update licence agreement text (version no, year etc)
+ - update PAD file (hexedit.xml)
+   - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
+ - change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
+ - create installation (add any new files, templates etc)
+ - change times of install files using touch2.bat (*.cab etc)
+ - zip installation files and add readme.txt, hexedit.xml
+ - change time of zip file using touch3.bat
+ - test install on 95, 98, ME, NT4, W2K
+ - submit to Simtel and change web links to new Simtel page
+ - update to shareware download sites
+ - email reg users about new release (staggered)
+ - email others about new release
+ - change normal activation code email template
+ - send out press release
+
+New features
+ - update BCG 6.2 with my code and rebuild
+ - nav forward and backward
+ - fix for big selections: import hex, encrypt, decrypt, clipboard?
+ - general alignment and offset options for find
+ - unicode strings in templates
+ - zlib compression/uncompression + dialog
+ - uppercase/lowercase conversions
+ - show bookmark, user-defined expressions etc in tip window 
+ - C# decimal type support
+ - 64 bit time_t support
+ - system sounds (SYS_SOUNDS)
+ - expressions in calculator
+ - new buttons in calculator
+ - calc to handle 128 bit numbers
+ - template view toggle at any time
+ - draw icon in background
+ - background search for drive info (BG_DEVICE_SEARCH)
+ - code page support
+ - explorer window
+ - extra CRC types
+ - MD5
+ - new options pages
+ - Char Properties code page stuff
+ 
+ 
+INSTALLER
+- what happens (eg AppData) under Windows 95
+
+DISK EDIT
+ - bgsearch.cpp line 395 assertion
+ > context help in open special dlg
+ - save to floppy did nothing
+ - show error in tip
+ ? show sector boundary at consec errors
+ - mpaste to floppy asked to turn off OVR but but then pasted over
+ - rescan for physical devices after device insert
+ - vmware cd reports no media present (IOCTL_DISK_GET_DRIVE_GEOMETRY timeout)
+
+- TEST
+  - display/editing of all types in tree view
+  - display/validation of enums
+  - drag and drop of new elements
+  - clone button
+  - new backup options
+  - in file updates
+  - insert of blocks (new system)
+  - insert of large files (new system)
+  - dclick tree nodes in view mode
+  - Ctrl+<- and Ctrl+-> when collapsed
+  - check disk lengths under various OS's (floppy, hard, CD)
+    - floppy: 1,474,560, 010 is wrong (1,457,664), WinHex is OK
+    - ZIP: 100,663,296, 010/WinHex are wrong (98,703,360)
+    - MSDN VC6 CD2: 571,191,296 010/WinHex are wrong (570,425,344)
+
+   - handle IDS_WEB_UPGRADE where IDS_WEB_REG_USER used
+   - add upgrade page to web site?
+   - add upgrade info to help
+   - 30 day ext. code
+   - upgrade code
+
+ - change web addresses and email addresses
+ - web site: add ver to bug report from drop list, update what's new, gifs etc
+ - update to shareware download sites
+ - email reg users about new release
+ - email others about new release
+ - change normal activation code email template
+ - send out press release
+
+- templates
+  > need ability to access any byte of "none" data type
+  - fix short-circuiting (?:) when non-eval accesses invalid array/string element
+  > implement year... minute,second, sqrt, sin, ... exp, log
+  - allow for current FOR name in expression menus
+  - allow root (FILE) element in expression menus???
+  - bug in entry of 64 sign+mag numbers
+  ? del key in data column edit box causes del in psis_ view
+  - don't allow changes if file read-only
+  - drag and drop with new element types
+  - edit data column, including dates and enums
+  > year, month, day, hour, minute and second functions
+  - convert STRUCT to DEFINE_STRUCT???
+  - allow for extern "C" { ... } in parser
+
+- explorer window
+  - fix hidden files icon
+  - chnage background when filter is not *.*
+  - update list after drag and drop
+  - fix for 64 bit file sizes
+  - drag and drop into tree (BCGShellTree.cpp changes)
+  - send BCGShell* changes to BCG
+  - in place editing for rename
+  > attributes column in details view (OnSetColumns, OnGetItemText)
+  > show hidden/system files/folders option? (SetItemTypes)
+  - new folder button
+  - undo/redo drop downs
+  - wipe file menu option???
+  - email file menu option???
+  - rename file menu option???
+
+
+- dockable modeless dlgs
+  > Unroll after open command (but not after toggle commands)
+  - check context ("what's this") help still works
+
+- disk editor
+  - fix size of device file problems
+    - XP use IOCTRL_DISK_GET_LENGTH_INFO
+    - volumes use GetDiskFreeSpaceEx
+    - disks under NT/2K: use 
+    - may need to go to end then keep reading sectors till real end found
+  > disable keep time button for devices
+  > fix file/path in recent file list
+  - monitor disk insert/remove message in open dialog
+  - fix Validate All for device files
+  - don't add cd's to phys list unless XP
+  - test under 95/98/ME
+  > bad sector is checked (for bg col.) before we have tried to read the sector
+    - see SectorError() in OnDraw (HexEditView.cpp line 1895)
+  > poll for changes if current device is removeable
+  > don't display "open read-only" if read-only device selected
+
+
+- change tracking
+  - invalidation problems: eg delete at 3 then insert at 1,2 moved delete at 1 not drawn
+  - also undo previous and moved delete (back to 3) not drawn (until window refreshed)
+  ? add next/prev change
+  ? add separate control of change display (rep/ins/del/del-count)
+
+after convert to use ptr to CFile, test:
+- background searches (normal and device file)
+- invoke NotePad with filename on command line (device file)
+- printing with %A, %F, %C, %M
+- opening templates based on extension (.fat32 etc)
+- opening colour scheme based on ext.
+- bookmarks on normal and device files
+- save/restore options for device file
+- shown in recent ile list menu and dlg
+- Retain file times not performed (icon disabled) for device files
+- no backup done for device files
+- open, save, save-as, write file etc
+
+
+TODO
+ - make all selection work with blocks > 4GB
+   - conversions (x 4)
+   - checksums (x 4) + check all CRCs
+   - encrypt/decrypt
+   - export hex text
+ - fix CBCGPopupMenuBar::OnChangeHot for WM_MENUSELCT (WM_ENTERIDLE)
+   - CBCGPopupMenu* pParentMenu = DYNAMIC_DOWNCAST (CBCGPopupMenu, pCBCGPopupMenuBar->GetParent ());
+ > turn on templates defaults to tab wnd should be splitter
+ > bookmark all when search of unsaved file problem
+ > search (bookmark all): many redraws and Escape key ignored
+ > binary display mode for integers in templates
+ > check upgrade code
+ > undo changes skips pastes
+ > include browse sequence ocx!!!!
+ > add .hem demo macros to install
+ > comments for data past EOF is wrong (= root comment?)
+ > display sub-elt name for IF
+ - disable old activation keys
+ - check that 2.2 reg for (TEAM DISTINCT, ZJB 7PF A53) no longer works after upgrade to 2.5
+ - bgsearch.cpp assertion on line 417
+ - problem with dlg move routine on 2nd monitor
+ - set up alt web addresses hexedit/index.htm etc
+ - buttons for search options (match-case, whole-word, search across open files etc) - in CBCGDropDownToolBar??
+ - check all search option in keystroke macros
+ - step through whole-word background searches
+ - test: empty replace string
+ - test search when data format view is the active view
+ - test different combinations of search options
+ - check all error messages
+ - backwards replace all bugs?
+ - handle km_find_* macro commands (incl. replace and replace_all)
+ - save/restore options when search added to macro
+ - test search in macros and undo
+ - merge undo info for replace all?
+ - beep when invalid EBCDIC (eg tilde) in simple, replace and text search page
+
+ - fix web site features page - add 2.1/2.2/2.5/2.6 features into main list
+ - upload latest webhelp
+ - fix relnotes
+ - hourglass cursor during long operations?
+ - send out press release (try www.dpdirectory.com?)
+
+ADMIN
+ > create reg page on Digital Candle
+ - add area to submit and retrieve XML DFFD templates to website
+
+Bugs
+ > chnaging charset in Window Options page does not change colour scheme (when default scheme in use)
+ - in window options turning autofit on (Apply) does not update window columns
+ > drag onto main window to open does not set open_current_readonly_
+ > can't send attachment if it's open modeReadWrite
+
+ - bg_search_ for device problem
+ - find dlg char set (Text page) updates after chnaging char set or rest but not other times (eg undo)
+   - could put in end_change() but this would mean it is chnaged irrespective of previous char set
+   - see HexEditView.cpp "RB_CHARSET_EBCDIC" and "RB_CHARSET_ASCII"
+
+ - when displaying strings in calculator escape double-quote (and other special chars)
+ - in tree view size of 1/2 byte ints is shown as 4??
+ - template bug: when reading ntoskrnl.exe and max fix for=20 then sections treated as fixed but are variable
+ - recorded/saved num search alignment=8, restart, load, run found background occurrence where alignment != 8, could not repeat
+ ? caret hides character (block caret) when left click under Windows 98 (not W2K)
+ - if reset display turns off autofit and squeezes offset then save offset for undo?
+ - cancel File/SaveAs dialog loses icon
+ - file open/save dialogs' types [?????(*.*)]
+ - ASSERT(wait_status == WAIT_OBJECT_0); on close if no search done
+ - icon (top left) gets messed up
+ ? somehow caret disappeared in one window when using find/goto tools (F4, F5, F6 etc)
+ ? some how got ¦"~abc" into find dlg edit control rather than "abc" when selecting from hist list and
+   changing between ASCII/EBCDIC
+ - some printer drivers (eg text only) return GetDeviceCaps(VERTRES)=66
+
+Tip of Day
+  - type expression into jump tools
+  - print selection to not see repeated lines
+  - bookmark
+DFFD Editing
+ - disallow problem drag'n'drops
+ - << and >> buttons from 1st level dialog
+ - check that stop_test accesses "this"?
+ - make sure var names do not have spaces
+ - domain var menu to include "this"
+ - drag&drop: expand if over struct, SHIFT for replace (works for if/for sub-element)
+ - allow drag between struct elements - use GetDC to draw arrows
+ - when saving default.xml use save as
+ - after save-as change to saved template name
+ - locn of XML template files
+DFFD
+ - option for one-based array indexes
+ - filename flag for string data + allow open of file
+ > allow jump to web address for template
+ - fix default.xml so that data element has a name
+ > sort templates in the list
+ > if syntax error in FOR expression gets into infinite loop
+ - use df_count_ to hold enum vec index for ints with enum (faster)
+ - test select DFFD file that has been removed from disk
+ - make sure modified_ flag set after all insert, delete, edit conditions
+ ? click on leaf deselects
+ - add string functions: left, right, mid, strlen etc?
+ - catch exceptions thrown by GetDTDName
+ - check if same file before calling OpenDataFormatFile
+ - add area to website to submit and retrieve XML DFFD templates
+ - handle location of XML files and DTD (options dlg/registry)
+ - avoid GetAttr in sym_found by storing names?
+ - avoid GetAttr for array elts (name not used and would all be the same anyway)
+ - reduce GetAttr & GetData calls (cache?)
+ > handle byte order?
+ - handle IBM.OEM and Unicode char/strings
+ - handle s+m and 1's comp ints
+ - test errors in expressions, better explanation of where file/XML is wrong
+ - test array of array, array of if etc
+ - sync tree selection with prop dlg page/format
+ - check that user-entered values (hex area & prop dlg) match the domain
+ - disallow edits (data window) that insert if any read only areas to EOF
+ - show tip in hex view of data at that location
+ - allow column drag??
+ - OnDblClick data elt - open prop dlg
+ - OnRClick, OnDblClick?, OnSetCursor?
+ - redirect other hex view type commands to sister view somehow??
+ - user option to change location of XML files (and copies the DTD files there)
+ - user option to turn on alternate background colours
+ - allow edit of data values in the tree/grid??
+ - allow edit of type name, domain, units, read_only and comments
+ - add expr XML tag just for assigning to a variable?
+ - add switch to expressions and else for if
+ - add inrange operator to expressions?
+ - date constants and operations?
+Help
+  - how do I
+    - toggle a single bit [editing]
+	- change the way EBCDIC chars are displayed (ebcdic.tab) [display]
+    - count occurrences of a sequence of bytes [search]
+    - jump forward X bytes
+  - troubleshooting
+    - why can't I modify a value in the properties dialog: file read-only, area read-only in template, near EOF
+    - why is a menu item in the Operations menu disabled: length of selection
+  - new commands: keywords, browse sequence, menu page
+  - New dialogs:
+  > new toolbar & changed buttons on existing toolbars
+  - new vertically docked commands OnEditGotoHex/OnEditGotoDec
+  - add Help button to File/SaveAs, File/Print Setup
+  - do help for installation, support
+  - handle SF1 then F1
+  - add help for some AfxMessageBoxes (HMessageBox)
+  - bin files help
+    - byte order in file, offset from zero
+    - modulus arithmetic, zero based indexing, asymetric bounds
+  > read/write Intel and Motorola binary file formats [Jim Seton]
+  > add extra colour selection (highlight, background, address, etc) [Roland Glenn McIntosh]
+ V3.2
+  > attachment option in email dialog
+  - incorporate Structured Storage Explorer
+  - merge float properties pages into one and add Decimal (C#) capability
+  - restrict hist drop down list width
+  - instead of ::HMessageBox check view in idle event to see if bg search finished
+  - Convert to use FileErrorMessage() ???
+  > fix display so that hex/chars not drawn to right/left of display area (fast for long lines)
+    > increase max line limit > 1024
+  > Add Date Properties page [L. David Matheny]
+    > handle in macros (km_prop_date)
+    - handle local/UTC time option
+    - fix local time problems where it uses current DST not that in effect at the time
+    - test date page code in different time zones
+    - fix MSDOS date/time problems (eg. last value)
+  - printing
+    - centre middle between ends of sides in hdr/ftr  left---->middle<----right
+  > recent file dlg and bookmark dlg can only handle file sizes/positions up to 2^31 (sorting)
+  ? move XML files to user's app data area
+  ? move .HEM (macro) files to app data
+  - bookmarks option
+    ? save and restore sort column in registry
+    ? drop list of bookmarks in calculator?
+    - each open doc (not view) keeps track of its bookmarks
+      - bookmarks added to a new file (no disk file) have a filename of HexEdit1 etc
+      - when new file saved update with real file name
+      - if new file not saved then bookmark deleted
+      - when adding a bookmark to an already modified file write to master list where
+        it would appear the bookmark would be in on-disk copy (opened or saved)
+  > clear histories (search/jump tools, recent file list, bookmarks?)
+    - bookmarks does not remove from the lists of open files
+  - Implement Base64 import/export
+  - add keep time command to macros
+  > allow enter expressions (incl assign to vars) in hex/dec jump tools
+  - checksums page [Dave Ewen]?
+  - CRC page
+  > ASSIGN/AND/OR/ADD/SUBTRACT operations
+  - fix up find dialog
+  - show selection: move to middle if not currently visible
+  - handle write past 2^32 problems on Win9X better somehow?
+  - encrypt using number not password
+  - physical disk (95: CreateFile("\\.\PHYSICALDRIVE0" or "\\.\D:", NT: see SDK/hardware)
+  - check new cracker codes and find workaround
+  ? option for mouse wheel units like WinHex?
+  ? allow editing read-only files
+  - insert file option should read a file even if it's in use
+  - if file open for write elsewhere warn when it changes
+  - if file opened in shareDenyNone mode monitor it and warn when it changes.
+    (if caret at EOF and file extended keep it at EOF)
+  ? implement arrow keys etc as separate commands
+  ? no need to bring up find dlg when replaying
+  - tools disabled in kill focus and destroy - both not necessary
+  - welcome screen that has a tutorial option?
+  - allow enter key and tabs key to be reassigned
+  - better printing
+    - work out numbers of pages at start (use aa->GetPrinterDeviceDefaults(); then aa->CreatePrinterDC())
+    ? print in black and white for monochrome printers (else light coloured text is invisible)
+    ? print preview in grey for monochrome printers (already fixed in MFC?)
+      - colour to greyscale: red=green=blue=(red*30 + green*59 + blue*11)/100
+  - encryption toolbar
+    - encryption algorithm picker
+  - facility to split and merge files (default to ext .001, .002, size 1.44 Mbytes)
+  - add select current highlight command and make default for dclick on highlight?
+  - macro
+	- look at speeding macro playback
+	- macro toolbar: rec, clear, play, options, message, multiplay, select macro from drop list
+	- get number (using calc?)
+	- help: to store number in macro, enter in calculator and click '='
+  - convert case
+  - use FindFirstFile for file size
+
+V3.1
+  - C/C++ struct/class use [Kevin Stallard, Pau Serra]
+  - Disk edit
+
+V3.2
+  - upgrade to Visual Studio 2003
+    - get MFC merge module (.msm file) to include used MFC in installation (.msi)
+    - is it possible to have install modules (eg MFC) come from web only when needed?
+  - use new BCG DLL
+  - fix options dialog to use BCG prop sheet with tree (see below for layout)
+    - add ability to select which prop pages are displayed (and order?)???\
+  - add new Summary properties page
+    -  merge all floating poiint into one page with format drop list
+      - include spport for Decimal C# type
+  - new look web site
+  - new commands/features
+    - convert case
+  - new look calculator
+  - Goto history(s) in calculator
+  - get/set sec info using bits of background bitmap before hexedit.ind
+  - file repair
+      MsiSetInternalUI(INSTALLUILEVEL_NONE,NULL);
+      MsiReinstallProduct("{A5A0D1C0-DF1A-11D3-99DC-00A0CCFFFAA1}",
+          REINSTALLMODE_FILEVERIFY | REINSTALLMODE_FILEMISSING |
+          REINSTALLMODE_FILEOLDERVERSION | REINSTALLMODE_REPAIR);
+
+V3.5
+  - when doing masked search and file stats available search for most common non-masked char first
+ Unfixable bugs
+  - use file association to open file with spaces gives error (MFC/Windows bug)
+  - MaxPage is only 16 bits - MFC or Win 95 restriction???
+ Unreproducible bugs
+  - after F9 then error message "There is no active window" OK but then hangs (29/7/99)
+  - open MRU fails then it opens the next (sometimes)
+  - selection from eoln backwards bug
+  - if prop dlg half off left edge and caret approaches from below => inf. move loop
+  - DisplayCaret: if end of selection at EOLN then may leave selection just above display
+    - revert to old DisplayCaret that considered all of selection???
+ Web site
+  - new look (Greek or other symbols?)
+  > add: help.htm (there is link in code to this)
+  - benchmarks (search, compare, open, goto) (CF vedit 2 million replaces in 2 mins, on P166)
+  - privacy statement
+  - email those on mailing list re new version
+ User requests
+  - column select [?]
+  - read memory of other tasks
+  - decompile macros + loop and branch commands
+ Later
+  - stress test
+  - call FixFileButtons when
+    - mark changed (affects Mk+ etc)
+    - selection changed (affects store @, sel len store etc)
+    - RO/RW toggled (affects store @ buttons),
+    - length changed (affects @buttons etc)
+  - tools disabled in kill focus and destroy - both not necessary
+  - no need to bring up find dlg when replaying
+  - if file opened in shareDenyNone mode monitor it and warn when it changes.
+    (if caret at EOF and file extended keep it at EOF)
+  - Scroll when shift selecting causes flicker
+CScrView
+  - Option to allow scroll past ends (default off)
+    - fix scroll bar down/right arrows to handle this option
+    - fix key down/right to handle this
+Find
+  - auto completion from history
+Test
+  - Insuff memory seems to be handled but can't be caught with catch(bad_alloc)
+  - when/if long double becomes IEEE 80 bit, test that last 3 bits of IBM 64 bit FP value are OK
+Play Sounds on certain events (see WIN32 PlaySound() doc)
+  - compare failed
+  - find failed
+  - macro failed or finished OK?
+  - invalid hex/ascii/ebcdic char entered
+  - check other MessageBox uses
+Properties
+  - add checksum/CRC page to property sheet (current selection) [Fabien Clement]
+    - for 16 and 32 bit values byte order matters for checksum (and CRC?)
+    - need to display the result as hex or decimal
+  - adds stats page (background processing does stats if enabled)
+    - character frequency counts? (read whole file in background?)
+    - count of current find string?
+  > allow editing of (some) values (DM_GETDEFID)
+  - character frequency counts? (read whole file in background?)
+  - freq of current find string?
+
+Add-In DLLs to handle certain types of files
+  - associate file extension with DLL
+  - some sort of standard DLL calls: next, previous, summarize
+  - next/previous to have mutliple (unlimited?) levels of records
+Arithmetic
+  > convert selection
+    - ASCII<->EBCDIC (2 converts should bring back to same for all 256 values?)
+    - ANSI<->OEM (CharToOemBuff, OemToCharBuff)
+  > binary ops (ad, subtract etc) using current calculator value & size
+Options
+  - bits on/off mask (byte,16-bit,32-bit,64-bit?)
+  - check box for property pages to display
+    - File Properties
+    - Character
+    - Decimal
+    - IEEE f.p.
+    - IBM f.p. (default off)
+    - Checksum/CRC (default off)
+    - Statistics (enables background processing)
+  - general options
+    - ASCII/insensitive escape chars
+    - # of saved search strings, # in recent file list
+  - save last goto addresses etc
+
+New Features
+  - section break option (allows diff rowsize_, offset_, grouping_ etc)
+  - ability to read C struct C++ class ZP1/2/4/8)
+  - aerial view? - one pixel (colour coded) for each byte;
+    - colour coding according to ranges (below)
+    - zoom level buttons (1/9,1/4,1,4,9,16,25 bytes -> 1 pixel)
+    - current search text (all locations) appears as special colour
+    - valid bytes (ASCII or EBCDIC) darker than others
+    - nul bytes blank
+    - click on pixel to move to that location
+    - display in dockable control bar or separate view??
+    - bitmap: highest zoom is 1 stored pixel == 32x32 characters
+      - files above 1 Gbyte only allow 32x32 (needs 1000th of storage)
+      - files 256K to 1 Gb allow 16x16 and 32x32 (1Gb file needs 4Mb)
+      - files 64-256K have 8x8, 16x16, 32x32 (256K needs 4Mb) etc
+      - files less than 4 Mbyte store all pixels (needs up to 4Mbytes) allows: 1x1, 2x2, 4x4, 8x8, 16x16, 32x32
+    - in display width is always 32 bits (+ 2 for other info) so at highest zoom 32x32 1 stored bit maps to a whole row of 32 bits
+
+  - Ruler allowing changes to rowsize_, offset_ and group_by_, char_display_
+    - double click ruler brings up View Options
+  ? column select
+  ? column markers, and column no scroll zone? (handle in ruler?)
+  - sort selection: up/down, byte/word/word4/word8/fp4/fp8
+  ? autosave
+  - Display bit mask (bits on/off OR bits changed + mask)
+    - bits on/off is better (allows some error checking)
+  - special formats processing - TAR, TIF, ............
+
+New Version
+ - get Digital Candle to update the code generation
+ - check new cracker codes and find workaround
+ - update security_version_ (hexedit.h)
+ - update range and default value for ver_ (RegisterDlg.cpp)
+ - update X.Y version number, and add to email dlg drop list
+ - change version number and copyright year in readme.txt, order.txt
+ x Add encrypted list of existing users & rebuild
+ - update help for new features, what's new, installation, order form etc
+ - add new tips of the day
+ - create new release notes
+ - create new bitmap for install
+ - update licence agreement text (version no, year etc)
+ - update PAD file (hexedit.xml)
+   - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
+ - change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
+ - create installation (add any new files, templates etc)
+ - change times of install files using touch2.bat (*.cab etc)
+ - zip installation files and add readme.txt, hexedit.xml
+ - change time of zip file using touch3.bat
+ - test install on 95, 98, ME, NT4, W2K, XP
+ - submit to Simtel and change web links to new Simtel page
+ - web site: add ver to bug report form drop list, update what's new, gifs etc
+ - make announcement in forums
+ - update to shareware download sites
+ - email reg users about new release (staggered)
+ - email others about new release
+ - change normal activation code email template
+ - send out press release
+
+
+New Options Layout (tree)
+-------------------------
+System
+  General
+    - open with hexedit
+    - only one instance
+    - reload open files??
+    - save setting on exit/now
+    - Startup options: nothing, new file, open file, startup window
+    - run autoexec option
+    - tips at startup
+    - recently use list size
+    - search hist size
+
+  Layout
+     - restore main window
+     - tabs
+       - tabs at top
+     - dockable/rollable dlgs
+     - undocked dlgs move out of the way
+     - ruler?
+
+  Macro
+    - all existing options
+
+  Filters
+    - all existing options
+
+  Privacy
+    - dont add to recently used folder
+    - clear lists: search, rfl, bm
+      - always clear on exit
+
+Edit
+  General
+    - bg search
+      - exclude network/removeable
+    - paste replaces selection?
+    - select after paste (dv off) OR highlight?
+    - undo
+      - intelligent undo
+      - warn if undoing change made in other window
+      - merge size (dv 4)
+      - option to undo display settings
+    - export
+      - addr: file/spec
+      - byte per line
+
+  Display
+     - ucase hex
+     - K = 1024/1000 (M=1024*1024/1e6 etc)
+     - large cursor
+     - shadow cursor (Hex+char mode)
+     - nice addresses
+     - mouse wheel units?
+     - scroll past ends
+     - show selection length "tip"
+       - show base-2 divisibility
+
+  Save
+    - autosave recovery info
+    - create backups
+      - space
+      - size
+      - prompt
+      - ext. options: none, replace, append
+      - backup ext + extra ext
+      - backup folder
+    - warn if editing file that will not be backed up??
+
+  Templates
+    - alt bg colours
+    - etc
+
+
+Active Window
+  General
+    - all existing options except Edit ones
+
+  Colours
+    - all existing options
+
+  Editing
+    - RO/RW
+    - mode
+    - hide bm
+    - hide highlight
+    - keep file times
+    - Enter = 0D0A
+    - change Tracking
+
+  Templates
+    - use
+      - split/tab
+
+
