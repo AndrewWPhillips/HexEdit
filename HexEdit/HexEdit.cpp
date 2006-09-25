@@ -3541,7 +3541,7 @@ CHexEditView *GetView()
                 if (pv->IsKindOf(RUNTIME_CLASS(CHexEditView)))
                     return (CHexEditView *)pv;
                 else if (pv->IsKindOf(RUNTIME_CLASS(CDataFormatView)))
-                    return ((CDataFormatView *)pv)->psis_;
+                    return ((CDataFormatView *)pv)->phev_;
                 else if (pv->IsKindOf(RUNTIME_CLASS(CTabView)))
                 {
 					// Find the hex view (left-most tab)

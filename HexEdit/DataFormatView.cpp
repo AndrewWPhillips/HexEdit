@@ -637,7 +637,7 @@ IMPLEMENT_DYNCREATE(CDataFormatView, CView)
 CDataFormatView::CDataFormatView()
 {
     tree_init_ = false;
-    psis_ = NULL;
+    phev_ = NULL;
     edit_row_type_changed_ = -1;
 }
 
@@ -1094,7 +1094,7 @@ void CDataFormatView::InitTree()
 #if _MSC_VER >= 1300
 	GV_ITEMW itemw;
     itemw.nState = 0;
-    itemw.crFgClr = psis_->GetDefaultTextCol();
+    itemw.crFgClr = phev_->GetDefaultTextCol();
 #endif
     // Fill the tree/grid with info about each element
 //    item.nState = GVIS_READONLY;      // Whether or not editing is allowed is now handled by OnGridBeginLabelEdit
@@ -1105,7 +1105,7 @@ void CDataFormatView::InitTree()
     item.col = grid_.GetFixedColumnCount();
     item.mask = GVIF_BKCLR|GVIF_FGCLR;  // Just changing fg and bg colours
     item.crBkClr = bg1;
-    item.crFgClr = psis_->GetDefaultTextCol();
+    item.crFgClr = phev_->GetDefaultTextCol();
     grid_.SetItem(&item);
 
     char disp[128];                     // Holds output of sprintf
@@ -1187,7 +1187,7 @@ void CDataFormatView::InitTree()
 			item.strText.Empty();
             item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
             item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_BKCLR|GVIF_FGCLR;
-            item.crFgClr = psis_->GetDefaultTextCol();
+            item.crFgClr = phev_->GetDefaultTextCol();
 
             switch (col_id)
             {
@@ -1227,7 +1227,7 @@ void CDataFormatView::InitTree()
                 {
                     grid_.FixHeading(item.col);
                     item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-                    item.crFgClr = psis_->GetHexAddrCol();
+                    item.crFgClr = phev_->GetHexAddrCol();
 
                     // Use sprintf as CString::Format does not support 64 bit ints (%I64)
                     if (pdoc->df_address_[ii] == -1)
@@ -1246,7 +1246,7 @@ void CDataFormatView::InitTree()
                 {
                     grid_.FixHeading(item.col);
                     item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-                    item.crFgClr = psis_->GetDecAddrCol();
+                    item.crFgClr = phev_->GetDecAddrCol();
 
                     // Use sprintf as CString::Format does not support 64 bit ints (%I64)
                     if (pdoc->df_address_[ii] == -1)
@@ -2795,7 +2795,7 @@ void CDataFormatView::set_colours()
     item.crBkClr = bg1;
     item.row = grid_.GetFixedRowCount();
     item.col = grid_.GetFixedColumnCount();
-    item.crFgClr = psis_->GetDefaultTextCol();
+    item.crFgClr = phev_->GetDefaultTextCol();
     grid_.SetItem(&item);
 
     int consec_count = 0;               // Counts consecutive data lines so we can paint backgrounds
@@ -2822,11 +2822,11 @@ void CDataFormatView::set_colours()
             int col_id = grid_.GetItemData(0, item.col);
 
             if (col_id == COL_HEX_ADDRESS)
-                item.crFgClr = psis_->GetHexAddrCol();
+                item.crFgClr = phev_->GetHexAddrCol();
             else if (col_id == COL_DEC_ADDRESS)
-                item.crFgClr = psis_->GetDecAddrCol();
+                item.crFgClr = phev_->GetDecAddrCol();
             else if (col_id != COL_TREE)
-                item.crFgClr = psis_->GetDefaultTextCol();
+                item.crFgClr = phev_->GetDefaultTextCol();
 
             if (col_id != COL_TREE)
                 grid_.SetItem(&item);
@@ -2840,7 +2840,7 @@ void CDataFormatView::calc_colours(COLORREF &bg1, COLORREF &bg2, COLORREF &bg3)
     int hue, luminance, saturation;
 
     // Work out background colours
-    bg1 = bg2 = bg3 = psis_->GetBackgroundCol();
+    bg1 = bg2 = bg3 = phev_->GetBackgroundCol();
     get_hls(bg1, hue, luminance, saturation);
     if (theApp.alt_data_bg_cols_ && hue == -1)
     {
@@ -3416,11 +3416,11 @@ void CDataFormatView::SelectAt(FILE_ADDRESS addr)
 
     // Make sure the line is visible and select it
     show_row(elt);
-    BOOL bb = psis_->AutoSync();
-    psis_->SetAutoSync(FALSE);
+    BOOL bb = phev_->AutoSync();
+    phev_->SetAutoSync(FALSE);
     grid_.SetSelectedRange(elt + grid_.GetFixedRowCount(), grid_.GetFixedColumnCount(),
                            elt + grid_.GetFixedRowCount(), grid_.GetColumnCount()-1);
-    psis_->SetAutoSync(bb);
+    phev_->SetAutoSync(bb);
 }
 
 //Says whether an address is read-only according to the template
@@ -3445,12 +3445,14 @@ BOOL CDataFormatView::ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr /*=-1*/)
 #ifdef _DEBUG
     size_t last_elt = -1;
 #endif
+
     if (end_addr <= addr) end_addr = addr + 1;
 
     // Check all the data elts (leaves) in the address range
     while (addr < end_addr)
     {
         size_t elt = find_address(addr);
+
 #ifdef _DEBUG
         ASSERT(elt != last_elt);
         last_elt = elt;
@@ -3474,6 +3476,7 @@ BOOL CDataFormatView::ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr /*=-1*/)
 
         ASSERT(read_only_str.CompareNoCase("false") == 0);
 
+		ASSERT(pdoc->df_size_[elt] > 0);
 		addr += pdoc->df_size_[elt];
     }
     return FALSE;
@@ -4127,13 +4130,13 @@ void CDataFormatView::OnDffdSync()
     }
 
     // Select corresp. bytes in sister view
-    psis_->MoveWithDesc("Template Sync", start, end, -1, -1, FALSE, TRUE);
-    psis_->SetFocus();
+    phev_->MoveWithDesc("Template Sync", start, end, -1, -1, FALSE, TRUE);
+    phev_->SetFocus();
 }
 
 void CDataFormatView::OnUpdateDffdSync(CCmdUI* pCmdUI) 
 {
-    pCmdUI->Enable(!psis_->AutoSync());
+    pCmdUI->Enable(!phev_->AutoSync());
 }
 
 
@@ -4193,8 +4196,8 @@ void CDataFormatView::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 //            end = pdoc->length();
 //            ((CMainFrame *)AfxGetMainWnd())->StatusBarText("End of data is past EOF");
 //        }
-//        if (psis_->AutoSync())
-//            psis_->MoveToAddress(start, end, -1, -1, FALSE, TRUE);
+//        if (phev_->AutoSync())
+//            phev_->MoveToAddress(start, end, -1, -1, FALSE, TRUE);
 //    }
 }
 
@@ -4677,8 +4680,8 @@ void CDataFormatView::OnGridEndSelChange(NMHDR *pNotifyStruct, LRESULT* /*pResul
             end = pdoc->length();
             ((CMainFrame *)AfxGetMainWnd())->StatusBarText("End of data is past EOF");
         }
-        if (psis_->AutoSync())
-            psis_->MoveWithDesc("Template Auto-sync", start, end, -1, -1, FALSE, TRUE);
+        if (phev_->AutoSync())
+            phev_->MoveWithDesc("Template Auto-sync", start, end, -1, -1, FALSE, TRUE);
     }
 }
 
@@ -4723,10 +4726,10 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
 	// This is also necessary for check_ro call (below) which uses the current selection
     FILE_ADDRESS start = pdoc->df_address_[ii];
     FILE_ADDRESS end = start + mac_abs(pdoc->df_size_[ii]);
-    psis_->MoveWithDesc("Field Edit", start, end, -1, -1, FALSE, TRUE);
+    phev_->MoveWithDesc("Field Edit", start, end, -1, -1, FALSE, TRUE);
 
 	// As a last check make sure that view is not read-only (and give user the option to turn off RO)
-    if (psis_->check_ro("change this field"))
+    if (phev_->check_ro("change this field"))
 	{
         *pResult = -1;
         return;
@@ -5164,7 +5167,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
             if (ss.GetLength() + 1 != (int)df_size && pdoc->df_elt_[ii].GetAttr("len").IsEmpty())
             {
 				// Variable sized string field and new string is different length to previous string
-                if (psis_->display_.overtype)
+                if (phev_->display_.overtype)
                 {
                     if (::HMessageBox("You can't change the string length in overtype mode.\r"
                                       "Do you want to turn off overtype mode?",
@@ -5174,7 +5177,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
                         return;
                     }
                     else
-                        psis_->do_insert();
+                        phev_->do_insert();
                 }
 				ss += char(pdoc->df_extra_[ii]);     // Add terminator
                 new_size = ss.GetLength();
@@ -5222,7 +5225,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
             if (2 * (sw.GetLength() + 1) != (int)df_size && pdoc->df_elt_[ii].GetAttr("len").IsEmpty())
             {
 				// Variable sized string field and new string is different length to previous string
-                if (psis_->display_.overtype)
+                if (phev_->display_.overtype)
                 {
                     if (::HMessageBox("You can't change the string length in overtype mode.\r"
                                       "Do you want to turn off overtype mode?",
@@ -5232,7 +5235,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
                         return;
                     }
                     else
-                        psis_->do_insert();
+                        phev_->do_insert();
                 }
 				sw += wchar_t(pdoc->df_extra_[ii]);     // Add terminator
                 new_size = 2 * (sw.GetLength());
@@ -5654,12 +5657,12 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 
         if (new_size != df_size)
         {
-            pdoc->Change(mod_delforw, pdoc->df_address_[ii], df_size, NULL, 0, psis_);
-            pdoc->Change(mod_insert, pdoc->df_address_[ii], new_size, pdata, 0, psis_);
+            pdoc->Change(mod_delforw, pdoc->df_address_[ii], df_size, NULL, 0, phev_);
+            pdoc->Change(mod_insert, pdoc->df_address_[ii], new_size, pdata, 0, phev_);
 			pdoc->df_size_[ii] = new_size;
         }
         else
-            pdoc->Change(mod_replace, pdoc->df_address_[ii], df_size, pdata, 0, psis_);
+            pdoc->Change(mod_replace, pdoc->df_address_[ii], df_size, pdata, 0, phev_);
 
         // We only really need to do this for date (date-time ctrl) and enum (drop list) cells
 //        grid_.SetCellType(pItem->iRow, pItem->iColumn, RUNTIME_CLASS(CGridCell));

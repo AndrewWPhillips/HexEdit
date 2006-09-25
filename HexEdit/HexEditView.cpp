@@ -532,7 +532,7 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 CHexEditView::CHexEditView() : expr_(this)
 {
     text_height_ = 0;     // While text_height_ == 0 none of the display settings have been calculated
-    psis_ = NULL;
+    pdfv_ = NULL;
 
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -653,6 +653,52 @@ void CHexEditView::OnInitialUpdate()
 
     if (recent_file_index != -1)
     {
+		// Create any associated "sub" views
+		int width = atoi(pfl->GetData(recent_file_index, CHexFileList::DFFDVIEW));
+		switch (width)
+		{
+		case 0:        // When last open template view was hidden so do nothing
+			break;
+		case 1:        // Last opened in tab view
+			{
+				CTabView *ptv = GetFrame()->ptv_;
+				ptv->AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
+			    
+				ptv->SetActiveView(1);
+				pdfv_ = (CDataFormatView *)ptv->GetActiveView();
+				ASSERT_KINDOF(CDataFormatView, pdfv_);
+
+				ptv->SetActiveView(0);
+
+				// Make sure dataformat view knows which hex view it is assoc. with
+				pdfv_->phev_ = this;
+			}
+			break;
+		default:       // Last opened in splitter
+			{
+				CCreateContext ctxt;
+				ctxt.m_pNewViewClass = RUNTIME_CLASS(CDataFormatView);
+				ctxt.m_pCurrentDoc = GetDocument();
+				ctxt.m_pLastView = this;
+				ctxt.m_pCurrentFrame = GetFrame();
+
+				CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
+				ASSERT(psplitter->m_hWnd != 0);
+
+				// Add left column for DFFD (template) view
+				VERIFY(psplitter->InsColumn(0, width, RUNTIME_CLASS(CDataFormatView), &ctxt));
+
+				psplitter->SetActivePane(0, 1);   // make hex view active
+
+				pdfv_ = (CDataFormatView *)psplitter->GetPane(0, 0);
+				ASSERT_KINDOF(CDataFormatView, pdfv_);
+
+				// Make sure dataformat view knows which hex view it is assoc. with
+				pdfv_->phev_ = this;
+			}
+			break;
+		}
+
         disp_state_ = atoi(pfl->GetData(recent_file_index, CHexFileList::DISPLAY));
         SetVertBufferZone(atoi(pfl->GetData(recent_file_index, CHexFileList::VERT_BUFFER_ZONE)));
 
@@ -980,6 +1026,21 @@ void CHexEditView::StoreOptions()
         pfl->SetData(ii, CHexFileList::EDIT_TIME, __int64(GetDocument()->edit_time_.elapsed()));
         pfl->SetData(ii, CHexFileList::VIEW_TIME, __int64(GetDocument()->view_time_.elapsed()));
         pfl->SetData(ii, CHexFileList::VERT_BUFFER_ZONE, __int64(GetVertBufferZone()));
+
+		int width = 0;         // default to data format view hidden
+		if (pdfv_ != NULL)
+		{
+			width = 1;         // assume tab view used
+			ASSERT(GetFrame()->splitter_.m_hWnd != 0);
+			int idx = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
+			int dummy;        // ignored since we don't care about the height
+			if (idx > -1)
+			{
+				GetFrame()->splitter_.GetColumnInfo(idx, width, dummy);
+				if (width < 10) width = 10;    // Make sure it is not too narrow and reserve values 0-9 (1 = tab view)
+			}
+		}
+        pfl->SetData(ii, CHexFileList::DFFDVIEW, __int64(width));
     }
 }
 
@@ -1084,10 +1145,10 @@ BOOL CHexEditView::set_colours()
     }
 
     // Keep data format view colours in sync
-    if (psis_ != NULL)
+    if (pdfv_ != NULL)
     {
-        ASSERT_KINDOF(CDataFormatView, psis_);
-        psis_->set_colours();
+        ASSERT_KINDOF(CDataFormatView, pdfv_);
+        pdfv_->set_colours();
     }
 
     return retval;
@@ -1492,7 +1553,7 @@ BOOL CHexEditView::check_ro(const char *desc)
         aa->mac_error_ = 10;
         return TRUE;
     }
-    else if (psis_ != NULL && psis_->ReadOnly(start_addr, end_addr))
+    else if (pdfv_ != NULL && pdfv_->ReadOnly(start_addr, end_addr))
     {
         ss.Format("The selection contains one or\r"
                   "more read-only template fields,\r"
@@ -4175,8 +4236,8 @@ void CHexEditView::show_pos(FILE_ADDRESS address /*=-1*/, BOOL no_dffd /*=FALSE*
     ((CMainFrame *)AfxGetMainWnd())->SetAddress(address);  // for ON_UPDATE_COMMAND_UI to fix displayed addresses
 #endif
     // Move to correspoding element in DFFD view
-    if (psis_ != NULL && !no_dffd && display_.auto_sync)
-        psis_->SelectAt(address);
+    if (pdfv_ != NULL && !no_dffd && display_.auto_sync)
+        pdfv_->SelectAt(address);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -11634,7 +11695,7 @@ void CHexEditView::OnUpdateTrackChanges(CCmdUI* pCmdUI)
 
 void CHexEditView::OnDffdAutoSync() 
 {
-    if (psis_ == NULL)
+    if (pdfv_ == NULL)
     {
         ::HMessageBox("No DFFD tree view is displayed");
         theApp.mac_error_ = 10;
@@ -11650,7 +11711,7 @@ void CHexEditView::OnDffdAutoSync()
     {
         FILE_ADDRESS start_addr, end_addr;
         GetSelAddr(start_addr, end_addr);
-        psis_->SelectAt(start_addr);
+        pdfv_->SelectAt(start_addr);
     }
 
     theApp.SaveToMacro(km_dffd_sync, 2);
@@ -11658,13 +11719,13 @@ void CHexEditView::OnDffdAutoSync()
 
 void CHexEditView::OnUpdateDffdAutoSync(CCmdUI* pCmdUI) 
 {
-    pCmdUI->Enable(psis_ != NULL);
+    pCmdUI->Enable(pdfv_ != NULL);
     pCmdUI->SetCheck(display_.auto_sync);
 }
 
 void CHexEditView::OnDffdSync() 
 {
-    if (psis_ == NULL)
+    if (pdfv_ == NULL)
     {
         ::HMessageBox("No DFFD tree view is displayed");
         theApp.mac_error_ = 10;
@@ -11673,15 +11734,15 @@ void CHexEditView::OnDffdSync()
 
     FILE_ADDRESS start_addr, end_addr;
     GetSelAddr(start_addr, end_addr);
-    psis_->SelectAt(start_addr);
-    psis_->SetFocus();
+    pdfv_->SelectAt(start_addr);
+    pdfv_->SetFocus();
     theApp.SaveToMacro(km_dffd_sync, 255);
 }
 
 void CHexEditView::OnUpdateDffdSync(CCmdUI* pCmdUI) 
 {
     // Don't allow manual sync if auto sync is on
-    pCmdUI->Enable(psis_ != NULL && !display_.auto_sync);
+    pCmdUI->Enable(pdfv_ != NULL && !display_.auto_sync);
 }
 
 void CHexEditView::OnSearchHex()        // Alt-L, F6

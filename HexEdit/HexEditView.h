@@ -197,7 +197,8 @@ protected: // create from serialization only
 
 // Attributes
 public:
-    CDataFormatView *psis_;
+	// Add "sub" view ptrs here, which points to the view in the tab or splitter (or NULL if not visible)
+    CDataFormatView *pdfv_;           // template (tree) view
 
     enum { max_buf = 32767 };
     CHexEditDoc *GetDocument();

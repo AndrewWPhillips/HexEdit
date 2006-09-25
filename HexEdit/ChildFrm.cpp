@@ -23,7 +23,6 @@
 #include "MainFrm.h"
 #include "HexEditView.h"
 #include "DataFormatView.h"
-#include "TabView.h"
 
 #include "ChildFrm.h"
 #include <afxpriv.h>            // for WM_HELPHITTEST
@@ -100,8 +99,10 @@ BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
         AfxMessageBox("Failed to create splitter view.");
         return FALSE;
     }
+	ptv_ = (CTabView *)splitter_.GetPane(0, 0);
+	ASSERT_KINDOF(CTabView, ptv_);
 
-    // This will later be moved to depend on per file saved setting xxx
+#if 0  // This is now done on a per file basis - so we have to do it in CHexEditView::OnInitialUpdate
 	if (theApp.tree_view_ == 1)
 	{
 		// Add left column for DFFD (template) view
@@ -111,16 +112,17 @@ BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 
         CDataFormatView *pdfv = (CDataFormatView *)splitter_.GetPane(0, 0);
         ASSERT_KINDOF(CDataFormatView, pdfv);
-        CTabView *ptv = (CTabView *)splitter_.GetPane(0, 1);
-        ASSERT_KINDOF(CTabView, ptv);
-		ptv->SetActiveView(0);   // view 0 is always hex view
-        CHexEditView *phev = (CHexEditView *)ptv->GetActiveView();
+		ptv_->SetActiveView(0);   // view 0 is always hex view - make it active
+        CHexEditView *phev = (CHexEditView *)ptv_->GetActiveView();
         ASSERT_KINDOF(CHexEditView, phev);
 
+		ASSERT(splitter_.FindViewColumn(ptv_->GetSafeHwnd()) == 1);
+
         // Make sure dataformat view knows which hex view it is assoc. with
-        pdfv->psis_ = phev;
-        phev->psis_ = pdfv;
+        pdfv->phev_ = phev;
+        phev->pdfv_ = pdfv;
 	}
+#endif
 
 	return TRUE;
 }
@@ -134,7 +136,7 @@ CHexEditView *CChildFrame::GetHexEditView() const
         if (pv->IsKindOf(RUNTIME_CLASS(CHexEditView)))
             return (CHexEditView *)pv;
         else if (pv->IsKindOf(RUNTIME_CLASS(CDataFormatView)))
-            return ((CDataFormatView *)pv)->psis_;
+            return ((CDataFormatView *)pv)->phev_;
         else if (pv->IsKindOf(RUNTIME_CLASS(CTabView)))
         {
 			// Find the hex view (left-most tab)

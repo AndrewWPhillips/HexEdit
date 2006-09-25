@@ -19,6 +19,9 @@ public:
     BOOL InsColumn(int col, int width, CRuntimeClass *pViewClass = NULL, CCreateContext *pContext = NULL);
     BOOL DelColumn(int col, BOOL del_views = FALSE);
 
+	// Search all columns (row 0) for a view - returns the column number or -1 if not found
+	int FindViewColumn(HWND) const;
+
 	int GetMaxRows() { return m_nMaxRows; }
 	int GetMaxCols() { return m_nMaxCols; }
 

@@ -20,6 +20,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "HexEditSplitter.h"
+#include "TabView.h"
 
 class CChildFrame : public CBCGMDIChildWnd
 {
@@ -51,7 +52,8 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-        CHexEditSplitter splitter_;
+        CHexEditSplitter splitter_;       // Allows multiple views (sep. by splitters)
+		CTabView *ptv_;                   // Allows multiple views (using tabs)
 
 // Generated message map functions
 protected:

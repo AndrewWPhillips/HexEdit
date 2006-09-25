@@ -99,6 +99,19 @@ BOOL CHexEditSplitter::DelColumn(int del_col, BOOL del_views /*=FALSE*/)
     return TRUE;
 }
 
+int CHexEditSplitter::FindViewColumn(HWND hWndView) const
+{
+	ASSERT_VALID (this);
+
+	for (int ii = 0; ii < m_nCols; ii++)
+	{
+		if (GetPane(0, ii)->GetSafeHwnd() == hWndView)
+			return ii;
+	}
+
+	return -1;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditSplitter message handlers

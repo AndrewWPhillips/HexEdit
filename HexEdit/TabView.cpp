@@ -121,10 +121,10 @@ int CTabView::OnCreate(LPCREATESTRUCT lpCreateStruct)
     //AddView(RUNTIME_CLASS (CHexEditView), _T("Raw Data (Hex) View"));
     AddView(RUNTIME_CLASS(CHexEditView), _T("Raw Data (Hex) View"), -1, (CCreateContext *)lpCreateStruct->lpCreateParams);
 
-    // This will later be moved to depend on per file saved setting xxx
+#if 0  // This is now done on a per file basis - so we have to do it in CHexEditView::OnInitialUpdate
 	if (theApp.tree_view_ == 2)
 	{
-		AddView(RUNTIME_CLASS (CDataFormatView), _T("Data Format (Tree) View"));
+		AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
 	    
 		SetActiveView(1);
 		CDataFormatView *pdfv = (CDataFormatView *)GetActiveView();
@@ -135,9 +135,10 @@ int CTabView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		ASSERT_KINDOF(CHexEditView, phev);
 
 		// Make sure dataformat view knows which hex view it is assoc. with
-		pdfv->psis_ = phev;
-		phev->psis_ = pdfv;
+		pdfv->phev_ = phev;
+		phev->pdfv_ = pdfv;
 	}
+#endif
 
     return 0;
 }

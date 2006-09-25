@@ -83,7 +83,7 @@ protected:
 
 // Attributes
 public:
-    CHexEditView *psis_;                     // Ptr to sister hex view
+    CHexEditView *phev_;                     // Ptr to sister hex view
 
 // Operations
 public:
@@ -129,276 +129,276 @@ public:
         afx_msg void OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
         afx_msg void OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
 
-        void OnAddrToggle() { psis_->OnAddrToggle(); }
-        void OnUpdateAddrToggle(CCmdUI *pCmdUI) { psis_->OnUpdateAddrToggle(pCmdUI); }
-        void OnGraphicToggle() { psis_->OnGraphicToggle(); }
-        void OnUpdateGraphicToggle(CCmdUI *pCmdUI) { psis_->OnUpdateGraphicToggle(pCmdUI); }
-        void OnCharToggle() { psis_->OnCharToggle(); }
-        void OnUpdateCharToggle(CCmdUI *pCmdUI) { psis_->OnUpdateCharToggle(pCmdUI); }
-        void OnFont() { psis_->OnFont(); }
-        void OnAutoFit() { psis_->OnAutoFit(); }
-        void OnUpdateAutofit(CCmdUI *pCmdUI) { psis_->OnUpdateAutofit(pCmdUI); }
-        void OnAscEbc() { psis_->OnAscEbc(); }
-        void OnUpdateAscEbc(CCmdUI *pCmdUI) { psis_->OnUpdateAscEbc(pCmdUI); }
-        void OnControl() { psis_->OnControl(); }
-        void OnUpdateControl(CCmdUI *pCmdUI) { psis_->OnUpdateControl(pCmdUI); }
-        void OnDffdAutoSync() { psis_->OnDffdAutoSync(); }
-        void OnMark() { psis_->OnMark(); }
-        void OnGotoMark() { psis_->OnGotoMark(); }
-        void OnEditUndo() { psis_->OnEditUndo(); }
-        void OnUpdateEditUndo(CCmdUI *pCmdUI) { psis_->OnUpdateEditUndo(pCmdUI); }
-        void OnSearchHex() { psis_->OnSearchHex(); }
-        void OnSearchAscii() { psis_->OnSearchAscii(); }
-//        void OnSearchForw() { psis_->OnSearchForw(); }
-//        void OnSearchBack() { psis_->OnSearchBack(); }
-//        void OnSearchSel() { psis_->OnSearchSel(); }
-        void OnAllowMods() { psis_->OnAllowMods(); }
-        void OnUpdateAllowMods(CCmdUI *pCmdUI) { psis_->OnUpdateAllowMods(pCmdUI); }
-        void OnControlToggle() { psis_->OnControlToggle(); }
-        void OnInsert() { psis_->OnInsert(); }
-        void OnUpdateInsert(CCmdUI *pCmdUI) { psis_->OnUpdateInsert(pCmdUI); }
-        void OnUpdateDffdAutoSync(CCmdUI *pCmdUI) { psis_->OnUpdateDffdAutoSync(pCmdUI); }
-        void OnSearchIcase() { psis_->OnSearchIcase(); }
-//        void OnUpdateSearch(CCmdUI *pCmdUI) { psis_->OnUpdateSearch(pCmdUI); }
-//        void OnEditCompare() { psis_->OnEditCompare(); }
-//        void OnUpdateEditCompare(CCmdUI *pCmdUI) { psis_->OnUpdateEditCompare(pCmdUI); }
-        void OnTrackChanges() { psis_->OnTrackChanges(); }
-        void OnUpdateTrackChanges(CCmdUI *pCmdUI) { psis_->OnUpdateTrackChanges(pCmdUI); }
+        void OnAddrToggle() { phev_->OnAddrToggle(); }
+        void OnUpdateAddrToggle(CCmdUI *pCmdUI) { phev_->OnUpdateAddrToggle(pCmdUI); }
+        void OnGraphicToggle() { phev_->OnGraphicToggle(); }
+        void OnUpdateGraphicToggle(CCmdUI *pCmdUI) { phev_->OnUpdateGraphicToggle(pCmdUI); }
+        void OnCharToggle() { phev_->OnCharToggle(); }
+        void OnUpdateCharToggle(CCmdUI *pCmdUI) { phev_->OnUpdateCharToggle(pCmdUI); }
+        void OnFont() { phev_->OnFont(); }
+        void OnAutoFit() { phev_->OnAutoFit(); }
+        void OnUpdateAutofit(CCmdUI *pCmdUI) { phev_->OnUpdateAutofit(pCmdUI); }
+        void OnAscEbc() { phev_->OnAscEbc(); }
+        void OnUpdateAscEbc(CCmdUI *pCmdUI) { phev_->OnUpdateAscEbc(pCmdUI); }
+        void OnControl() { phev_->OnControl(); }
+        void OnUpdateControl(CCmdUI *pCmdUI) { phev_->OnUpdateControl(pCmdUI); }
+        void OnDffdAutoSync() { phev_->OnDffdAutoSync(); }
+        void OnMark() { phev_->OnMark(); }
+        void OnGotoMark() { phev_->OnGotoMark(); }
+        void OnEditUndo() { phev_->OnEditUndo(); }
+        void OnUpdateEditUndo(CCmdUI *pCmdUI) { phev_->OnUpdateEditUndo(pCmdUI); }
+        void OnSearchHex() { phev_->OnSearchHex(); }
+        void OnSearchAscii() { phev_->OnSearchAscii(); }
+//        void OnSearchForw() { phev_->OnSearchForw(); }
+//        void OnSearchBack() { phev_->OnSearchBack(); }
+//        void OnSearchSel() { phev_->OnSearchSel(); }
+        void OnAllowMods() { phev_->OnAllowMods(); }
+        void OnUpdateAllowMods(CCmdUI *pCmdUI) { phev_->OnUpdateAllowMods(pCmdUI); }
+        void OnControlToggle() { phev_->OnControlToggle(); }
+        void OnInsert() { phev_->OnInsert(); }
+        void OnUpdateInsert(CCmdUI *pCmdUI) { phev_->OnUpdateInsert(pCmdUI); }
+        void OnUpdateDffdAutoSync(CCmdUI *pCmdUI) { phev_->OnUpdateDffdAutoSync(pCmdUI); }
+        void OnSearchIcase() { phev_->OnSearchIcase(); }
+//        void OnUpdateSearch(CCmdUI *pCmdUI) { phev_->OnUpdateSearch(pCmdUI); }
+//        void OnEditCompare() { phev_->OnEditCompare(); }
+//        void OnUpdateEditCompare(CCmdUI *pCmdUI) { phev_->OnUpdateEditCompare(pCmdUI); }
+        void OnTrackChanges() { phev_->OnTrackChanges(); }
+        void OnUpdateTrackChanges(CCmdUI *pCmdUI) { phev_->OnUpdateTrackChanges(pCmdUI); }
 
-        void OnWindowNext() { psis_->OnWindowNext(); }
-        void OnIncByte() { psis_->OnIncByte(); }
-        void OnInc16bit() { psis_->OnInc16bit(); }
-        void OnInc32bit() { psis_->OnInc32bit(); }
-        void OnInc64bit() { psis_->OnInc64bit(); }
-        void OnDecByte() { psis_->OnDecByte(); }
-        void OnDec16bit() { psis_->OnDec16bit(); }
-        void OnDec32bit() { psis_->OnDec32bit(); }
-        void OnDec64bit() { psis_->OnDec64bit(); }
-        void OnFlip16bit() { psis_->OnFlip16bit(); }
-        void OnFlip32bit() { psis_->OnFlip32bit(); }
-        void OnFlip64bit() { psis_->OnFlip64bit(); }
-        void OnUpdateByte(CCmdUI *pCmdUI) { psis_->OnUpdateByte(pCmdUI); }
-        void OnUpdate16bit(CCmdUI *pCmdUI) { psis_->OnUpdate16bit(pCmdUI); }
-        void OnUpdate32bit(CCmdUI *pCmdUI) { psis_->OnUpdate32bit(pCmdUI); }
-        void OnUpdate64bit(CCmdUI *pCmdUI) { psis_->OnUpdate64bit(pCmdUI); }
-        void OnUpdateByteBinary(CCmdUI *pCmdUI) { psis_->OnUpdateByteBinary(pCmdUI); }
-        void OnUpdate16bitBinary(CCmdUI *pCmdUI) { psis_->OnUpdate16bitBinary(pCmdUI); }
-        void OnUpdate32bitBinary(CCmdUI *pCmdUI) { psis_->OnUpdate32bitBinary(pCmdUI); }
-        void OnUpdate64bitBinary(CCmdUI *pCmdUI) { psis_->OnUpdate64bitBinary(pCmdUI); }
-        void OnSelectAll() { psis_->OnSelectAll(); }
-//        void OnEditCopy() { psis_->OnEditCopy(); }
-//        void OnEditCut() { psis_->OnEditCut(); }
-//        void OnEditPaste() { psis_->OnEditPaste(); }
-        void OnUpdateTextPaste(CCmdUI *pCmdUI) { psis_->OnUpdateTextPaste(pCmdUI); }
-        void OnUpdateClipboard(CCmdUI *pCmdUI) { psis_->OnUpdateClipboard(pCmdUI); }
-        void OnUpdateUnicodePaste(CCmdUI *pCmdUI) { psis_->OnUpdateUnicodePaste(pCmdUI); }
-        void OnFontDec() { psis_->OnFontDec(); }
-        void OnFontInc() { psis_->OnFontInc(); }
-        void OnUpdateFontDec(CCmdUI *pCmdUI) { psis_->OnUpdateFontDec(pCmdUI); }
-        void OnUpdateFontInc(CCmdUI *pCmdUI) { psis_->OnUpdateFontInc(pCmdUI); }
-//        void OnUpdateEditCut(CCmdUI *pCmdUI) { psis_->OnUpdateEditCut(pCmdUI); }
-        void OnPasteAscii() { psis_->OnPasteAscii(); }
-        void OnPasteEbcdic() { psis_->OnPasteEbcdic(); }
-        void OnPasteUnicode() { psis_->OnPasteUnicode(); }
-        void OnCopyCchar() { psis_->OnCopyCchar(); }
-        void OnCopyHex() { psis_->OnCopyHex(); }
-        void OnEditWriteFile() { psis_->OnEditWriteFile(); }
-        void OnUpdateReadFile(CCmdUI *pCmdUI) { psis_->OnUpdateReadFile(pCmdUI); }
-        void OnReadFile() { psis_->OnReadFile(); }
-        void OnExtendToMark() { psis_->OnExtendToMark(); }
-        void OnSwapMark() { psis_->OnSwapMark(); }
-        void OnRedraw() { psis_->OnRedraw(); }
-        void OnScrollDown() { psis_->OnScrollDown(); }
-        void OnScrollUp() { psis_->OnScrollUp(); }
-        void OnSwap() { psis_->OnSwap(); }
-        void OnStartLine() { psis_->OnStartLine(); }
-        void OnDel() { psis_->OnDel(); }
-        void OnUpdateSwap(CCmdUI *pCmdUI) { psis_->OnUpdateSwap(pCmdUI); }
-        void OnOemToggle() { psis_->OnOemToggle(); }
-        void OnUpdateOemToggle(CCmdUI *pCmdUI) { psis_->OnUpdateOemToggle(pCmdUI); }
-        void OnInvert() { psis_->OnInvert(); }
-        void OnNegByte() { psis_->OnNegByte(); }
-        void OnNeg16bit() { psis_->OnNeg16bit(); }
-        void OnNeg32bit() { psis_->OnNeg32bit(); }
-        void OnNeg64bit() { psis_->OnNeg64bit(); }
-        void OnHighlight() { psis_->OnHighlight(); }
-        void OnUpdateHighlight(CCmdUI *pCmdUI) { psis_->OnUpdateHighlight(pCmdUI); }
-        void OnHighlightClear() { psis_->OnHighlightClear(); }
-        void OnHighlightPrev() { psis_->OnHighlightPrev(); }
-        void OnHighlightNext() { psis_->OnHighlightNext(); }
-        void OnUpdateHighlightPrev(CCmdUI *pCmdUI) { psis_->OnUpdateHighlightPrev(pCmdUI); }
-        void OnUpdateHighlightNext(CCmdUI *pCmdUI) { psis_->OnUpdateHighlightNext(pCmdUI); }
-        void OnEditGoto() { psis_->OnEditGoto(); }
-        void OnEditFind() { psis_->OnEditFind(); }
-        void OnEditReplace() { psis_->OnEditReplace(); }
-    void OnAscii2Ebcdic() { psis_->OnAscii2Ebcdic(); }
-    void OnUpdateConvert(CCmdUI *pCmdUI) { psis_->OnUpdateConvert(pCmdUI); }
-    void OnEbcdic2Ascii() { psis_->OnEbcdic2Ascii(); }
-    void OnAnsi2Ibm() { psis_->OnAnsi2Ibm(); }
-    void OnIbm2Ansi() { psis_->OnIbm2Ansi(); }
-    void OnEncrypt() { psis_->OnEncrypt(); }
-    void OnDecrypt() { psis_->OnDecrypt(); }
-    void OnEditAppendFile() { psis_->OnEditAppendFile(); }
-    void OnEditAppendSameFile() { psis_->OnEditAppendSameFile(); }
-    void OnUpdateEditAppendSameFile(CCmdUI *pCmdUI) { psis_->OnUpdateEditAppendSameFile(pCmdUI); }
-    void OnUndoChanges() { psis_->OnUndoChanges(); }
-    void OnUpdateUndoChanges(CCmdUI *pCmdUI) { psis_->OnUpdateUndoChanges(pCmdUI); }
-    void OnCalcSel() { psis_->OnCalcSel(); }
-    void OnUpdateCalcSel(CCmdUI *pCmdUI) { psis_->OnUpdateCalcSel(pCmdUI); }
-    void OnDisplayReset() { psis_->OnDisplayReset(); }
-    void OnUpdateEncrypt(CCmdUI *pCmdUI) { psis_->OnUpdateEncrypt(pCmdUI); }
+        void OnWindowNext() { phev_->OnWindowNext(); }
+        void OnIncByte() { phev_->OnIncByte(); }
+        void OnInc16bit() { phev_->OnInc16bit(); }
+        void OnInc32bit() { phev_->OnInc32bit(); }
+        void OnInc64bit() { phev_->OnInc64bit(); }
+        void OnDecByte() { phev_->OnDecByte(); }
+        void OnDec16bit() { phev_->OnDec16bit(); }
+        void OnDec32bit() { phev_->OnDec32bit(); }
+        void OnDec64bit() { phev_->OnDec64bit(); }
+        void OnFlip16bit() { phev_->OnFlip16bit(); }
+        void OnFlip32bit() { phev_->OnFlip32bit(); }
+        void OnFlip64bit() { phev_->OnFlip64bit(); }
+        void OnUpdateByte(CCmdUI *pCmdUI) { phev_->OnUpdateByte(pCmdUI); }
+        void OnUpdate16bit(CCmdUI *pCmdUI) { phev_->OnUpdate16bit(pCmdUI); }
+        void OnUpdate32bit(CCmdUI *pCmdUI) { phev_->OnUpdate32bit(pCmdUI); }
+        void OnUpdate64bit(CCmdUI *pCmdUI) { phev_->OnUpdate64bit(pCmdUI); }
+        void OnUpdateByteBinary(CCmdUI *pCmdUI) { phev_->OnUpdateByteBinary(pCmdUI); }
+        void OnUpdate16bitBinary(CCmdUI *pCmdUI) { phev_->OnUpdate16bitBinary(pCmdUI); }
+        void OnUpdate32bitBinary(CCmdUI *pCmdUI) { phev_->OnUpdate32bitBinary(pCmdUI); }
+        void OnUpdate64bitBinary(CCmdUI *pCmdUI) { phev_->OnUpdate64bitBinary(pCmdUI); }
+        void OnSelectAll() { phev_->OnSelectAll(); }
+//        void OnEditCopy() { phev_->OnEditCopy(); }
+//        void OnEditCut() { phev_->OnEditCut(); }
+//        void OnEditPaste() { phev_->OnEditPaste(); }
+        void OnUpdateTextPaste(CCmdUI *pCmdUI) { phev_->OnUpdateTextPaste(pCmdUI); }
+        void OnUpdateClipboard(CCmdUI *pCmdUI) { phev_->OnUpdateClipboard(pCmdUI); }
+        void OnUpdateUnicodePaste(CCmdUI *pCmdUI) { phev_->OnUpdateUnicodePaste(pCmdUI); }
+        void OnFontDec() { phev_->OnFontDec(); }
+        void OnFontInc() { phev_->OnFontInc(); }
+        void OnUpdateFontDec(CCmdUI *pCmdUI) { phev_->OnUpdateFontDec(pCmdUI); }
+        void OnUpdateFontInc(CCmdUI *pCmdUI) { phev_->OnUpdateFontInc(pCmdUI); }
+//        void OnUpdateEditCut(CCmdUI *pCmdUI) { phev_->OnUpdateEditCut(pCmdUI); }
+        void OnPasteAscii() { phev_->OnPasteAscii(); }
+        void OnPasteEbcdic() { phev_->OnPasteEbcdic(); }
+        void OnPasteUnicode() { phev_->OnPasteUnicode(); }
+        void OnCopyCchar() { phev_->OnCopyCchar(); }
+        void OnCopyHex() { phev_->OnCopyHex(); }
+        void OnEditWriteFile() { phev_->OnEditWriteFile(); }
+        void OnUpdateReadFile(CCmdUI *pCmdUI) { phev_->OnUpdateReadFile(pCmdUI); }
+        void OnReadFile() { phev_->OnReadFile(); }
+        void OnExtendToMark() { phev_->OnExtendToMark(); }
+        void OnSwapMark() { phev_->OnSwapMark(); }
+        void OnRedraw() { phev_->OnRedraw(); }
+        void OnScrollDown() { phev_->OnScrollDown(); }
+        void OnScrollUp() { phev_->OnScrollUp(); }
+        void OnSwap() { phev_->OnSwap(); }
+        void OnStartLine() { phev_->OnStartLine(); }
+        void OnDel() { phev_->OnDel(); }
+        void OnUpdateSwap(CCmdUI *pCmdUI) { phev_->OnUpdateSwap(pCmdUI); }
+        void OnOemToggle() { phev_->OnOemToggle(); }
+        void OnUpdateOemToggle(CCmdUI *pCmdUI) { phev_->OnUpdateOemToggle(pCmdUI); }
+        void OnInvert() { phev_->OnInvert(); }
+        void OnNegByte() { phev_->OnNegByte(); }
+        void OnNeg16bit() { phev_->OnNeg16bit(); }
+        void OnNeg32bit() { phev_->OnNeg32bit(); }
+        void OnNeg64bit() { phev_->OnNeg64bit(); }
+        void OnHighlight() { phev_->OnHighlight(); }
+        void OnUpdateHighlight(CCmdUI *pCmdUI) { phev_->OnUpdateHighlight(pCmdUI); }
+        void OnHighlightClear() { phev_->OnHighlightClear(); }
+        void OnHighlightPrev() { phev_->OnHighlightPrev(); }
+        void OnHighlightNext() { phev_->OnHighlightNext(); }
+        void OnUpdateHighlightPrev(CCmdUI *pCmdUI) { phev_->OnUpdateHighlightPrev(pCmdUI); }
+        void OnUpdateHighlightNext(CCmdUI *pCmdUI) { phev_->OnUpdateHighlightNext(pCmdUI); }
+        void OnEditGoto() { phev_->OnEditGoto(); }
+        void OnEditFind() { phev_->OnEditFind(); }
+        void OnEditReplace() { phev_->OnEditReplace(); }
+    void OnAscii2Ebcdic() { phev_->OnAscii2Ebcdic(); }
+    void OnUpdateConvert(CCmdUI *pCmdUI) { phev_->OnUpdateConvert(pCmdUI); }
+    void OnEbcdic2Ascii() { phev_->OnEbcdic2Ascii(); }
+    void OnAnsi2Ibm() { phev_->OnAnsi2Ibm(); }
+    void OnIbm2Ansi() { phev_->OnIbm2Ansi(); }
+    void OnEncrypt() { phev_->OnEncrypt(); }
+    void OnDecrypt() { phev_->OnDecrypt(); }
+    void OnEditAppendFile() { phev_->OnEditAppendFile(); }
+    void OnEditAppendSameFile() { phev_->OnEditAppendSameFile(); }
+    void OnUpdateEditAppendSameFile(CCmdUI *pCmdUI) { phev_->OnUpdateEditAppendSameFile(pCmdUI); }
+    void OnUndoChanges() { phev_->OnUndoChanges(); }
+    void OnUpdateUndoChanges(CCmdUI *pCmdUI) { phev_->OnUpdateUndoChanges(pCmdUI); }
+    void OnCalcSel() { phev_->OnCalcSel(); }
+    void OnUpdateCalcSel(CCmdUI *pCmdUI) { phev_->OnUpdateCalcSel(pCmdUI); }
+    void OnDisplayReset() { phev_->OnDisplayReset(); }
+    void OnUpdateEncrypt(CCmdUI *pCmdUI) { phev_->OnUpdateEncrypt(pCmdUI); }
 
-        void OnXorByte() { psis_->OnXorByte(); }
-        void OnXor16bit() { psis_->OnXor16bit(); }
-        void OnXor32bit() { psis_->OnXor32bit(); }
-        void OnXor64bit() { psis_->OnXor64bit(); }
-        void OnAssignByte() { psis_->OnAssignByte(); }
-        void OnAssign16bit() { psis_->OnAssign16bit(); }
-        void OnAssign32bit() { psis_->OnAssign32bit(); }
-        void OnAssign64bit() { psis_->OnAssign64bit(); }
-        void OnRandByte() { psis_->OnRandByte(); }
-        void OnRandFast() { psis_->OnRandFast(); }
-//        void OnRand16bit() { psis_->OnRand16bit(); }
-//        void OnRand32bit() { psis_->OnRand32bit(); }
-//        void OnRand64bit() { psis_->OnRand64bit(); }
-        void OnAddByte() { psis_->OnAddByte(); }
-        void OnAdd16bit() { psis_->OnAdd16bit(); }
-        void OnAdd32bit() { psis_->OnAdd32bit(); }
-        void OnAdd64bit() { psis_->OnAdd64bit(); }
-        void OnSubtractByte() { psis_->OnSubtractByte(); }
-        void OnSubtract16bit() { psis_->OnSubtract16bit(); }
-        void OnSubtract32bit() { psis_->OnSubtract32bit(); }
-        void OnSubtract64bit() { psis_->OnSubtract64bit(); }
-        void OnAndByte() { psis_->OnAndByte(); }
-        void OnAnd16bit() { psis_->OnAnd16bit(); }
-        void OnAnd32bit() { psis_->OnAnd32bit(); }
-        void OnAnd64bit() { psis_->OnAnd64bit(); }
-        void OnOrByte() { psis_->OnOrByte(); }
-        void OnOr16bit() { psis_->OnOr16bit(); }
-        void OnOr32bit() { psis_->OnOr32bit(); }
-        void OnOr64bit() { psis_->OnOr64bit(); }
+        void OnXorByte() { phev_->OnXorByte(); }
+        void OnXor16bit() { phev_->OnXor16bit(); }
+        void OnXor32bit() { phev_->OnXor32bit(); }
+        void OnXor64bit() { phev_->OnXor64bit(); }
+        void OnAssignByte() { phev_->OnAssignByte(); }
+        void OnAssign16bit() { phev_->OnAssign16bit(); }
+        void OnAssign32bit() { phev_->OnAssign32bit(); }
+        void OnAssign64bit() { phev_->OnAssign64bit(); }
+        void OnRandByte() { phev_->OnRandByte(); }
+        void OnRandFast() { phev_->OnRandFast(); }
+//        void OnRand16bit() { phev_->OnRand16bit(); }
+//        void OnRand32bit() { phev_->OnRand32bit(); }
+//        void OnRand64bit() { phev_->OnRand64bit(); }
+        void OnAddByte() { phev_->OnAddByte(); }
+        void OnAdd16bit() { phev_->OnAdd16bit(); }
+        void OnAdd32bit() { phev_->OnAdd32bit(); }
+        void OnAdd64bit() { phev_->OnAdd64bit(); }
+        void OnSubtractByte() { phev_->OnSubtractByte(); }
+        void OnSubtract16bit() { phev_->OnSubtract16bit(); }
+        void OnSubtract32bit() { phev_->OnSubtract32bit(); }
+        void OnSubtract64bit() { phev_->OnSubtract64bit(); }
+        void OnAndByte() { phev_->OnAndByte(); }
+        void OnAnd16bit() { phev_->OnAnd16bit(); }
+        void OnAnd32bit() { phev_->OnAnd32bit(); }
+        void OnAnd64bit() { phev_->OnAnd64bit(); }
+        void OnOrByte() { phev_->OnOrByte(); }
+        void OnOr16bit() { phev_->OnOr16bit(); }
+        void OnOr32bit() { phev_->OnOr32bit(); }
+        void OnOr64bit() { phev_->OnOr64bit(); }
 
-        void OnMulByte() { psis_->OnMulByte(); }
-        void OnMul16bit() { psis_->OnMul16bit(); }
-        void OnMul32bit() { psis_->OnMul32bit(); }
-        void OnMul64bit() { psis_->OnMul64bit(); }
-        void OnDivByte() { psis_->OnDivByte(); }
-        void OnDiv16bit() { psis_->OnDiv16bit(); }
-        void OnDiv32bit() { psis_->OnDiv32bit(); }
-        void OnDiv64bit() { psis_->OnDiv64bit(); }
-        void OnModByte() { psis_->OnModByte(); }
-        void OnMod16bit() { psis_->OnMod16bit(); }
-        void OnMod32bit() { psis_->OnMod32bit(); }
-        void OnMod64bit() { psis_->OnMod64bit(); }
-        void OnRevByte() { psis_->OnRevByte(); }
-        void OnRev16bit() { psis_->OnRev16bit(); }
-        void OnRev32bit() { psis_->OnRev32bit(); }
-        void OnRev64bit() { psis_->OnRev64bit(); }
-        void OnSubtractXByte() { psis_->OnSubtractXByte(); }
-        void OnSubtractX16bit() { psis_->OnSubtractX16bit(); }
-        void OnSubtractX32bit() { psis_->OnSubtractX32bit(); }
-        void OnSubtractX64bit() { psis_->OnSubtractX64bit(); }
-        void OnDivXByte() { psis_->OnDivXByte(); }
-        void OnDivX16bit() { psis_->OnDivX16bit(); }
-        void OnDivX32bit() { psis_->OnDivX32bit(); }
-        void OnDivX64bit() { psis_->OnDivX64bit(); }
-        void OnModXByte() { psis_->OnModXByte(); }
-        void OnModX16bit() { psis_->OnModX16bit(); }
-        void OnModX32bit() { psis_->OnModX32bit(); }
-        void OnModX64bit() { psis_->OnModX64bit(); }
-        void OnGtrByte() { psis_->OnGtrByte(); }
-        void OnGtr16bit() { psis_->OnGtr16bit(); }
-        void OnGtr32bit() { psis_->OnGtr32bit(); }
-        void OnGtr64bit() { psis_->OnGtr64bit(); }
-        void OnLessByte() { psis_->OnLessByte(); }
-        void OnLess16bit() { psis_->OnLess16bit(); }
-        void OnLess32bit() { psis_->OnLess32bit(); }
-        void OnLess64bit() { psis_->OnLess64bit(); }
+        void OnMulByte() { phev_->OnMulByte(); }
+        void OnMul16bit() { phev_->OnMul16bit(); }
+        void OnMul32bit() { phev_->OnMul32bit(); }
+        void OnMul64bit() { phev_->OnMul64bit(); }
+        void OnDivByte() { phev_->OnDivByte(); }
+        void OnDiv16bit() { phev_->OnDiv16bit(); }
+        void OnDiv32bit() { phev_->OnDiv32bit(); }
+        void OnDiv64bit() { phev_->OnDiv64bit(); }
+        void OnModByte() { phev_->OnModByte(); }
+        void OnMod16bit() { phev_->OnMod16bit(); }
+        void OnMod32bit() { phev_->OnMod32bit(); }
+        void OnMod64bit() { phev_->OnMod64bit(); }
+        void OnRevByte() { phev_->OnRevByte(); }
+        void OnRev16bit() { phev_->OnRev16bit(); }
+        void OnRev32bit() { phev_->OnRev32bit(); }
+        void OnRev64bit() { phev_->OnRev64bit(); }
+        void OnSubtractXByte() { phev_->OnSubtractXByte(); }
+        void OnSubtractX16bit() { phev_->OnSubtractX16bit(); }
+        void OnSubtractX32bit() { phev_->OnSubtractX32bit(); }
+        void OnSubtractX64bit() { phev_->OnSubtractX64bit(); }
+        void OnDivXByte() { phev_->OnDivXByte(); }
+        void OnDivX16bit() { phev_->OnDivX16bit(); }
+        void OnDivX32bit() { phev_->OnDivX32bit(); }
+        void OnDivX64bit() { phev_->OnDivX64bit(); }
+        void OnModXByte() { phev_->OnModXByte(); }
+        void OnModX16bit() { phev_->OnModX16bit(); }
+        void OnModX32bit() { phev_->OnModX32bit(); }
+        void OnModX64bit() { phev_->OnModX64bit(); }
+        void OnGtrByte() { phev_->OnGtrByte(); }
+        void OnGtr16bit() { phev_->OnGtr16bit(); }
+        void OnGtr32bit() { phev_->OnGtr32bit(); }
+        void OnGtr64bit() { phev_->OnGtr64bit(); }
+        void OnLessByte() { phev_->OnLessByte(); }
+        void OnLess16bit() { phev_->OnLess16bit(); }
+        void OnLess32bit() { phev_->OnLess32bit(); }
+        void OnLess64bit() { phev_->OnLess64bit(); }
 
-        void OnGtrUByte() { psis_->OnGtrUByte(); }
-        void OnGtrU16bit() { psis_->OnGtrU16bit(); }
-        void OnGtrU32bit() { psis_->OnGtrU32bit(); }
-        void OnGtrU64bit() { psis_->OnGtrU64bit(); }
-        void OnLessUByte() { psis_->OnLessUByte(); }
-        void OnLessU16bit() { psis_->OnLessU16bit(); }
-        void OnLessU32bit() { psis_->OnLessU32bit(); }
-        void OnLessU64bit() { psis_->OnLessU64bit(); }
+        void OnGtrUByte() { phev_->OnGtrUByte(); }
+        void OnGtrU16bit() { phev_->OnGtrU16bit(); }
+        void OnGtrU32bit() { phev_->OnGtrU32bit(); }
+        void OnGtrU64bit() { phev_->OnGtrU64bit(); }
+        void OnLessUByte() { phev_->OnLessUByte(); }
+        void OnLessU16bit() { phev_->OnLessU16bit(); }
+        void OnLessU32bit() { phev_->OnLessU32bit(); }
+        void OnLessU64bit() { phev_->OnLessU64bit(); }
 
-        void OnRolByte()  { psis_->OnRolByte(); }
-        void OnRol16bit() { psis_->OnRol16bit(); }
-        void OnRol32bit() { psis_->OnRol32bit(); }
-        void OnRol64bit() { psis_->OnRol64bit(); }
-        void OnRorByte()  { psis_->OnRorByte(); }
-        void OnRor16bit() { psis_->OnRor16bit(); }
-        void OnRor32bit() { psis_->OnRor32bit(); }
-        void OnRor64bit() { psis_->OnRor64bit(); }
-        void OnLslByte()  { psis_->OnLslByte(); }
-        void OnLsl16bit() { psis_->OnLsl16bit(); }
-        void OnLsl32bit() { psis_->OnLsl32bit(); }
-        void OnLsl64bit() { psis_->OnLsl64bit(); }
-        void OnLsrByte()  { psis_->OnLsrByte(); }
-        void OnLsr16bit() { psis_->OnLsr16bit(); }
-        void OnLsr32bit() { psis_->OnLsr32bit(); }
-        void OnLsr64bit() { psis_->OnLsr64bit(); }
-        void OnAsrByte()  { psis_->OnAsrByte(); }
-        void OnAsr16bit() { psis_->OnAsr16bit(); }
-        void OnAsr32bit() { psis_->OnAsr32bit(); }
-        void OnAsr64bit() { psis_->OnAsr64bit(); }
+        void OnRolByte()  { phev_->OnRolByte(); }
+        void OnRol16bit() { phev_->OnRol16bit(); }
+        void OnRol32bit() { phev_->OnRol32bit(); }
+        void OnRol64bit() { phev_->OnRol64bit(); }
+        void OnRorByte()  { phev_->OnRorByte(); }
+        void OnRor16bit() { phev_->OnRor16bit(); }
+        void OnRor32bit() { phev_->OnRor32bit(); }
+        void OnRor64bit() { phev_->OnRor64bit(); }
+        void OnLslByte()  { phev_->OnLslByte(); }
+        void OnLsl16bit() { phev_->OnLsl16bit(); }
+        void OnLsl32bit() { phev_->OnLsl32bit(); }
+        void OnLsl64bit() { phev_->OnLsl64bit(); }
+        void OnLsrByte()  { phev_->OnLsrByte(); }
+        void OnLsr16bit() { phev_->OnLsr16bit(); }
+        void OnLsr32bit() { phev_->OnLsr32bit(); }
+        void OnLsr64bit() { phev_->OnLsr64bit(); }
+        void OnAsrByte()  { phev_->OnAsrByte(); }
+        void OnAsr16bit() { phev_->OnAsr16bit(); }
+        void OnAsr32bit() { phev_->OnAsr32bit(); }
+        void OnAsr64bit() { phev_->OnAsr64bit(); }
 
-        void OnJumpHexAddr() { psis_->OnJumpHexAddr(); }
-//        void OnSearch() { psis_->OnSearch(); }
-        void OnJumpHex() { psis_->OnJumpHex(); }
-        void OnJumpDec() { psis_->OnJumpDec(); }
-        void OnSelectLine() { psis_->OnSelectLine(); }
+        void OnJumpHexAddr() { phev_->OnJumpHexAddr(); }
+//        void OnSearch() { phev_->OnSearch(); }
+        void OnJumpHex() { phev_->OnJumpHex(); }
+        void OnJumpDec() { phev_->OnJumpDec(); }
+        void OnSelectLine() { phev_->OnSelectLine(); }
 
-        void OnDisplayHex() { psis_->OnDisplayHex(); }
-        void OnUpdateDisplayHex(CCmdUI *pCmdUI) { psis_->OnUpdateDisplayHex(pCmdUI); }
-        void OnDisplayChar() { psis_->OnDisplayChar(); }
-        void OnUpdateDisplayChar(CCmdUI *pCmdUI) { psis_->OnUpdateDisplayChar(pCmdUI); }
-        void OnDisplayBoth() { psis_->OnDisplayBoth(); }
-        void OnUpdateDisplayBoth(CCmdUI *pCmdUI) { psis_->OnUpdateDisplayBoth(pCmdUI); }
-        void OnDisplayStacked() { psis_->OnDisplayStacked(); }
-        void OnUpdateDisplayStacked(CCmdUI *pCmdUI) { psis_->OnUpdateDisplayStacked(pCmdUI); }
-        void OnCharsetAscii() { psis_->OnCharsetAscii(); }
-        void OnUpdateCharsetAscii(CCmdUI *pCmdUI) { psis_->OnUpdateCharsetAscii(pCmdUI); }
-        void OnCharsetAnsi() { psis_->OnCharsetAnsi(); }
-        void OnUpdateCharsetAnsi(CCmdUI *pCmdUI) { psis_->OnUpdateCharsetAnsi(pCmdUI); }
-        void OnCharsetOem() { psis_->OnCharsetOem(); }
-        void OnUpdateCharsetOem(CCmdUI *pCmdUI) { psis_->OnUpdateCharsetOem(pCmdUI); }
-        void OnCharsetEbcdic() { psis_->OnCharsetEbcdic(); }
-        void OnUpdateCharsetEbcdic(CCmdUI *pCmdUI) { psis_->OnUpdateCharsetEbcdic(pCmdUI); }
-        void OnControlNone() { psis_->OnControlNone(); }
-        void OnUpdateControlNone(CCmdUI *pCmdUI) { psis_->OnUpdateControlNone(pCmdUI); }
-        void OnControlAlpha() { psis_->OnControlAlpha(); }
-        void OnUpdateControlAlpha(CCmdUI *pCmdUI) { psis_->OnUpdateControlAlpha(pCmdUI); }
-        void OnControlC() { psis_->OnControlC(); }
-        void OnUpdateControlC(CCmdUI *pCmdUI) { psis_->OnUpdateControlC(pCmdUI); }
+        void OnDisplayHex() { phev_->OnDisplayHex(); }
+        void OnUpdateDisplayHex(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayHex(pCmdUI); }
+        void OnDisplayChar() { phev_->OnDisplayChar(); }
+        void OnUpdateDisplayChar(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayChar(pCmdUI); }
+        void OnDisplayBoth() { phev_->OnDisplayBoth(); }
+        void OnUpdateDisplayBoth(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayBoth(pCmdUI); }
+        void OnDisplayStacked() { phev_->OnDisplayStacked(); }
+        void OnUpdateDisplayStacked(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayStacked(pCmdUI); }
+        void OnCharsetAscii() { phev_->OnCharsetAscii(); }
+        void OnUpdateCharsetAscii(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetAscii(pCmdUI); }
+        void OnCharsetAnsi() { phev_->OnCharsetAnsi(); }
+        void OnUpdateCharsetAnsi(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetAnsi(pCmdUI); }
+        void OnCharsetOem() { phev_->OnCharsetOem(); }
+        void OnUpdateCharsetOem(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetOem(pCmdUI); }
+        void OnCharsetEbcdic() { phev_->OnCharsetEbcdic(); }
+        void OnUpdateCharsetEbcdic(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetEbcdic(pCmdUI); }
+        void OnControlNone() { phev_->OnControlNone(); }
+        void OnUpdateControlNone(CCmdUI *pCmdUI) { phev_->OnUpdateControlNone(pCmdUI); }
+        void OnControlAlpha() { phev_->OnControlAlpha(); }
+        void OnUpdateControlAlpha(CCmdUI *pCmdUI) { phev_->OnUpdateControlAlpha(pCmdUI); }
+        void OnControlC() { phev_->OnControlC(); }
+        void OnUpdateControlC(CCmdUI *pCmdUI) { phev_->OnUpdateControlC(pCmdUI); }
 
-        void OnChecksum8() { psis_->OnChecksum8(); }
-        void OnChecksum16() { psis_->OnChecksum16(); }
-        void OnChecksum32() { psis_->OnChecksum32(); }
-        void OnChecksum64() { psis_->OnChecksum64(); }
-        void OnCrcCcitt() { psis_->OnCrcCcitt(); }
-//        void OnCrc16() { psis_->OnCrc16(); }
-        void OnCrc32() { psis_->OnCrc32(); }
-        void OnUpdateByteNZ(CCmdUI *pCmdUI) { psis_->OnUpdateByteNZ(pCmdUI); }
-        void OnUpdate16bitNZ(CCmdUI *pCmdUI) { psis_->OnUpdate16bitNZ(pCmdUI); }
-        void OnUpdate32bitNZ(CCmdUI *pCmdUI) { psis_->OnUpdate32bitNZ(pCmdUI); }
-        void OnUpdate64bitNZ(CCmdUI *pCmdUI) { psis_->OnUpdate64bitNZ(pCmdUI); }
+        void OnChecksum8() { phev_->OnChecksum8(); }
+        void OnChecksum16() { phev_->OnChecksum16(); }
+        void OnChecksum32() { phev_->OnChecksum32(); }
+        void OnChecksum64() { phev_->OnChecksum64(); }
+        void OnCrcCcitt() { phev_->OnCrcCcitt(); }
+//        void OnCrc16() { phev_->OnCrc16(); }
+        void OnCrc32() { phev_->OnCrc32(); }
+        void OnUpdateByteNZ(CCmdUI *pCmdUI) { phev_->OnUpdateByteNZ(pCmdUI); }
+        void OnUpdate16bitNZ(CCmdUI *pCmdUI) { phev_->OnUpdate16bitNZ(pCmdUI); }
+        void OnUpdate32bitNZ(CCmdUI *pCmdUI) { phev_->OnUpdate32bitNZ(pCmdUI); }
+        void OnUpdate64bitNZ(CCmdUI *pCmdUI) { phev_->OnUpdate64bitNZ(pCmdUI); }
 
-        void OnToggleEndian() { psis_->OnToggleEndian(); }
-        void OnBigEndian() { psis_->OnBigEndian(); }
-        void OnLittleEndian() { psis_->OnLittleEndian(); }
-        void OnUpdateToggleEndian(CCmdUI *pCmdUI) { psis_->OnUpdateToggleEndian(pCmdUI); }
-        void OnUpdateBigEndian(CCmdUI *pCmdUI) { psis_->OnUpdateBigEndian(pCmdUI); }
-        void OnUpdateLittleEndian(CCmdUI *pCmdUI) { psis_->OnUpdateLittleEndian(pCmdUI); }
-        void OnUpdateInsertBlock(CCmdUI *pCmdUI) { psis_->OnUpdateInsertBlock(pCmdUI); }
-        void OnInsertBlock() { psis_->OnInsertBlock(); }
+        void OnToggleEndian() { phev_->OnToggleEndian(); }
+        void OnBigEndian() { phev_->OnBigEndian(); }
+        void OnLittleEndian() { phev_->OnLittleEndian(); }
+        void OnUpdateToggleEndian(CCmdUI *pCmdUI) { phev_->OnUpdateToggleEndian(pCmdUI); }
+        void OnUpdateBigEndian(CCmdUI *pCmdUI) { phev_->OnUpdateBigEndian(pCmdUI); }
+        void OnUpdateLittleEndian(CCmdUI *pCmdUI) { phev_->OnUpdateLittleEndian(pCmdUI); }
+        void OnUpdateInsertBlock(CCmdUI *pCmdUI) { phev_->OnUpdateInsertBlock(pCmdUI); }
+        void OnInsertBlock() { phev_->OnInsertBlock(); }
 
-        void OnCompress() { psis_->OnCompress(); }
-        void OnDecompress() { psis_->OnDecompress(); }
-        void OnUpdateSelNZ(CCmdUI *pCmdUI) { psis_->OnUpdateSelNZ(pCmdUI); }
-        void OnMd5() { psis_->OnMd5(); }
+        void OnCompress() { phev_->OnCompress(); }
+        void OnDecompress() { phev_->OnDecompress(); }
+        void OnUpdateSelNZ(CCmdUI *pCmdUI) { phev_->OnUpdateSelNZ(pCmdUI); }
+        void OnMd5() { phev_->OnMd5(); }
 
 // Implementation
 protected:

@@ -42,6 +42,7 @@ public:
                      FONT, HEIGHT, OEMFONT, OEMHEIGHT, FORMAT,
 					 EDIT_TIME, VIEW_TIME, VERT_BUFFER_ZONE,
 					 CATEGORY, KEYWORDS, COMMENTS,
+					 DFFDVIEW,
 	};
 
 // Attributes
