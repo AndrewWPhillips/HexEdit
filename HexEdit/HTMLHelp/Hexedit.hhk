@@ -5,6 +5,29 @@
 </object>
 <ul>
   <li><object type="text/sitemap">
+    <param name="Name" value="dates">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="displaying">
+      <param name="Name" value="Editing templates">
+      <param name="Local" value="overviewadvanced\Editing_templates.htm">
+      <param name="Name" value="DATA Dialog">
+      <param name="Local" value="dlg_templates\DATA_Dialog.htm">
+      <param name="Name" value="Display Options page">
+      <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="supported formats">
+      <param name="Name" value="Date and Time Formats">
+      <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
+      <param name="Name" value="Date/Time Values Page">
+      <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+      <param name="Name" value="DATA Dialog">
+      <param name="Local" value="dlg_templates\DATA_Dialog.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
     <param name="Name" value="Macintosh">
     <param name="Name" value="Character Sets">
     <param name="Local" value="binary_files\InputOutput.htm">
@@ -2983,13 +3006,6 @@
     <param name="Name" value="nibble">
     <param name="Name" value="Of Bits and Bytes">
     <param name="Local" value="binary_files\Of_Bits_and_Bytes.htm">
-  </object>
-  <li><object type="text/sitemap">
-    <param name="Name" value="date formats">
-    <param name="Name" value="Date and Time Formats">
-    <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
-    <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="time formats">
