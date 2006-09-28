@@ -1029,9 +1029,10 @@ int CFindSheet::GetOffset()
 
 bool CFindSheet::AlignMark()
 {
-	// There is no need to worry if hex or number page is visible since in that case
-	// align_ == 1 and offset == 0 (see above) and this seting has no effect.
-	return rel_mark_ ? TRUE : FALSE;
+	if (GetAlignment() == 1)
+		return FALSE;                   // this option is no use if alignment is not in use
+	else
+		return rel_mark_ ? TRUE : FALSE;
 }
 
 void CFindSheet::Redisplay()            // Make sure hex digits case OK etc
@@ -1765,10 +1766,10 @@ BEGIN_MESSAGE_MAP(CHexPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_FIND_DIRN_UP, OnChangeDirn)
 	ON_EN_CHANGE(IDC_FIND_BOOKMARK_PREFIX, OnChangePrefix)
 	//}}AFX_MSG_MAP
+    ON_WM_CONTEXTMENU()
 	ON_EN_CHANGE(IDC_ALIGN, OnChangeAlign)
     ON_BN_CLICKED(IDC_ALIGN_SELECT, OnAlignSelect)
 	ON_EN_CHANGE(IDC_OFFSET, OnChangeOffset)
-    ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 void CHexPage::FixDirn()
@@ -1853,7 +1854,10 @@ BOOL CHexPage::OnInitDialog()
     pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_ALIGN_SPIN);
     ASSERT(pspin != NULL);
     pspin->SetRange32(1, 65535);
-	//FixAlign();
+	ASSERT(pparent_->align_ > 0);
+    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_OFFSET_SPIN);
+    ASSERT(pspin != NULL);
+    pspin->SetRange32(0, pparent_->align_ - 1);
 
     VERIFY(button_menu_.LoadMenu(IDR_DFFD));
     ctl_align_select_.m_hMenu = button_menu_.GetSubMenu(5)->GetSafeHmenu();
@@ -2064,7 +2068,6 @@ void CHexPage::OnChangeAlign()
 void CHexPage::FixAlign()
 {
 	// Make sure offset is less than alignment
-	ASSERT(pparent_->align_ > 0);
 	if (pparent_->align_ < 1)
 		pparent_->align_ = 1;
 	if (pparent_->offset_ >= pparent_->align_)
@@ -2106,12 +2109,18 @@ void CHexPage::OnAlignSelect()
 
 void CHexPage::OnChangeOffset()
 {
+    if (!update_ok_)
+        return;          // this avoids probs due to spin control generating events too early
+    update_ok_ = false;
+
 	if (UpdateData())
 	{
 		if (pparent_->offset_ >= pparent_->align_)
 			pparent_->offset_ = pparent_->align_ - 1;
 		UpdateData(FALSE);
 	}
+
+    update_ok_ = true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2374,10 +2383,6 @@ void CNumberPage::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_FIND_NUMBER_FORMAT, pparent_->number_format_);
 	DDX_CBIndex(pDX, IDC_FIND_NUMBER_SIZE, pparent_->number_size_);
 	DDX_Check(pDX, IDC_FIND_BIG_ENDIAN, pparent_->big_endian_);
-	DDX_Text(pDX, IDC_ALIGN, pparent_->align_);
-	DDX_Text(pDX, IDC_OFFSET, pparent_->offset_);
-	DDX_Check(pDX, IDC_RELMASK, pparent_->rel_mark_);
-    DDX_Control(pDX, IDC_ALIGN_SELECT, ctl_align_select_);
 	DDX_Text(pDX, IDC_FIND_BOOKMARK_PREFIX, pparent_->bookmark_prefix_);
 }
 
@@ -2395,9 +2400,6 @@ BEGIN_MESSAGE_MAP(CNumberPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_FIND_DIRN_UP, OnChangeDirn)
 	ON_EN_CHANGE(IDC_FIND_BOOKMARK_PREFIX, OnChangePrefix)
 	//}}AFX_MSG_MAP
-	ON_EN_CHANGE(IDC_ALIGN, OnChangeAlign)
-    ON_BN_CLICKED(IDC_ALIGN_SELECT, OnAlignSelect)
-	ON_EN_CHANGE(IDC_OFFSET, OnChangeOffset)
     ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 

@@ -3333,6 +3333,11 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
         pdoc->StopSearch();
     }
 
+	// We have to do our own search since either:
+	// background searches are off (bg_next == -4)
+	// or the background search doesn't match (bg_next == -3) - and was stopped above
+	// or the background search is in progress (bg_next == -2) so we forget it and do our own
+
     unsigned char *buf = new unsigned char[buf_len];
     boyer bb(ss, length, mask);       // Boyer-Moore searcher
     FILE_ADDRESS addr_buf = start_addr; // Current location in doc of start of buf

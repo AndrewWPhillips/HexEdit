@@ -288,13 +288,6 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
     CHECK_SECURITY(195);
 
-    if (aa->bg_search_)
-    {
-        CreateThread();
-        if (aa->pboyer_ != NULL)        // If a search has already been done do bg search on newly opened file
-            StartSearch();
-    }
-
     load_icon(lpszPathName);
     show_icon();
 
@@ -308,7 +301,18 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		edit_time_ = timer(atof(pfl->GetData(recent_file_index, CHexFileList::EDIT_TIME)));
     }
 
-	// Kepp track of time viewing/editing the file
+    if (aa->bg_search_)
+    {
+        CreateThread();
+        if (theApp.pboyer_ != NULL)        // If a search has already been done do bg search on newly opened file
+		{
+			if (theApp.align_mark_ && recent_file_index != -1)
+				base_addr_ = _atoi64(pfl->GetData(recent_file_index, CHexFileList::MARK));
+            StartSearch();
+		}
+    }
+
+	// Keep track of time viewing/editing the file
 	if (readonly_)
 		view_time_.restart();
 	else

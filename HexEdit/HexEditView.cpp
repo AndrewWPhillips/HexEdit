@@ -1316,7 +1316,7 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
                 mark_ = phh->address;
         }
 
-            // Fix highlights
+        // Fix highlights
         if (phh->utype == mod_insert || phh->utype == mod_insert_file)
         {
             range_set<FILE_ADDRESS>::range_t::iterator pp =
@@ -1452,6 +1452,14 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
         }
         show_prop();
         show_calc();
+
+		// If mark moved and current search is relative to mark then restart bg search
+		if (theApp.align_mark_ && mark_ != GetDocument()->base_addr_)
+		{
+			GetDocument()->StopSearch();
+			GetDocument()->base_addr_ = mark_;
+			GetDocument()->StartSearch();
+		}
     }
     else if (pHint != NULL && pHint->IsKindOf(RUNTIME_CLASS(CBGSearchHint)))
     {
@@ -9761,6 +9769,12 @@ BOOL CHexEditView::do_undo()
     case undo_setmark:
         invalidate_addr_range(mark_, mark_ + 1);
         mark_ = undo_.back().address;
+		if (theApp.align_mark_ && mark_ != GetDocument()->base_addr_)
+		{
+			GetDocument()->StopSearch();
+			GetDocument()->base_addr_ = mark_;
+			GetDocument()->StartSearch();
+		}
         invalidate_addr_range(mark_, mark_ + 1);
         show_calc();                    // Status of some buttons may have changed when mark_ moves
         break;
@@ -11283,6 +11297,12 @@ void CHexEditView::SetMark(FILE_ADDRESS new_mark)
     undo_.push_back(view_undo(undo_state, TRUE));
     undo_.back().disp_state = disp_state_;
     mark_ = new_mark;
+	if (theApp.align_mark_ && mark_ != GetDocument()->base_addr_)
+	{
+		GetDocument()->StopSearch();
+		GetDocument()->base_addr_ = mark_;
+		GetDocument()->StartSearch();
+	}
 
     // Invalidate where mark now is to change background colour
     invalidate_addr_range(mark_, mark_ + 1);
@@ -11408,6 +11428,12 @@ void CHexEditView::OnSwapMark()
     invalidate_addr_range(mark_, mark_ + 1);            // force undraw of mark
     mark_ = start_addr;
     invalidate_addr_range(mark_, mark_ + 1);            // force draw of new mark
+	if (theApp.align_mark_ && mark_ != GetDocument()->base_addr_)
+	{
+		GetDocument()->StopSearch();
+		GetDocument()->base_addr_ = mark_;
+		GetDocument()->StartSearch();
+	}
     show_calc();
 
     aa->SaveToMacro(km_swap_mark);
@@ -15193,7 +15219,7 @@ void CHexEditView::OnRandFast()
 void CHexEditView::OnViewtest() 
 {
 	// move this to a command xxx
-
+	OnMd5();
 }
 
 CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,
