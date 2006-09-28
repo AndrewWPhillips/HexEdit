@@ -1030,9 +1030,9 @@ int CFindSheet::GetOffset()
 bool CFindSheet::AlignMark()
 {
 	if (GetAlignment() == 1)
-		return FALSE;                   // this option is no use if alignment is not in use
+		return false;                   // this option is no use if alignment is not in use
 	else
-		return rel_mark_ ? TRUE : FALSE;
+		return rel_mark_ ? true : false;
 }
 
 void CFindSheet::Redisplay()            // Make sure hex digits case OK etc

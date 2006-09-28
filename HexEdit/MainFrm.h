@@ -262,10 +262,10 @@ public:
     CString not_found_mess(BOOL forward, BOOL icase, int tt, BOOL ww, int aa);
     FILE_ADDRESS search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
                              const unsigned char *ss, const unsigned char *mask, size_t length,
-                             BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_mark);
+                             BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_mark, FILE_ADDRESS base_addr);
     FILE_ADDRESS search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
                              const unsigned char *ss, const unsigned char *mask, size_t length,
-                             BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_mark);
+                             BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_mark, FILE_ADDRESS base_addr);
 //    CString GetSearchString() const { return current_search_string_; }
     void SetSearchString(CString ss) { current_search_string_ = ss; }
     void SetReplaceString(CString ss) { current_replace_string_ = ss; }

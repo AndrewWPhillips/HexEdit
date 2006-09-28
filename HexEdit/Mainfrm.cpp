@@ -2322,10 +2322,11 @@ BOOL CMainFrame::DoFind()
     int alignment = m_wndFind.m_pSheet->GetAlignment();
 	int offset    = m_wndFind.m_pSheet->GetOffset();
 	bool align_mark = m_wndFind.m_pSheet->AlignMark();
+	FILE_ADDRESS base_addr;
 	if (align_mark)
-		pdoc->base_addr_ = pview->GetMark();
+		base_addr = pview->GetMark();
 	else
-		pdoc->base_addr_ = 0;
+		base_addr = 0;
  
     FILE_ADDRESS start, end;            // Range of bytes in the current file to search
     FILE_ADDRESS found_addr;            // The address where the search text was found (or -1, -2)
@@ -2360,7 +2361,7 @@ BOOL CMainFrame::DoFind()
             ASSERT(0);
         }
         // Do the search
-        if ((found_addr = search_back(pdoc, start, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark)) == -2)
+        if ((found_addr = search_back(pdoc, start, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
         {
             // User abort or some error (message already displayed) - just restore original display pos
             pview->show_pos();
@@ -2380,14 +2381,14 @@ BOOL CMainFrame::DoFind()
                     CHexEditView *pv2 = pdoc2->GetBestView();
 					ASSERT(pv2 != NULL);
 					if (align_mark)
-						pdoc2->base_addr_ = pv2->GetMark();
+						base_addr = pv2->GetMark();
 					else
-						pdoc2->base_addr_ = 0;
+						base_addr = 0;
 
                     // Search this file
                     if ((found_addr = search_back(pdoc2, 0, pdoc2->length(),
                                                   ss, mask, length, icase, 
-                                                  tt, wholeword, alignment, offset, align_mark)) == -2)
+                                                  tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
                     {
                         // Restore original display pos
                         pview->show_pos();
@@ -2415,7 +2416,7 @@ BOOL CMainFrame::DoFind()
                                               end - (length-1) < 0 ? 0 : end - (length-1),
                                               pdoc->length(),
                                               ss, mask, length, icase,
-                                              tt, wholeword, alignment, offset, align_mark)) == -2)
+                                              tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
                 {
                     // Restore original display pos
                     pview->show_pos();
@@ -2453,7 +2454,7 @@ BOOL CMainFrame::DoFind()
                                                   end - (length-1) < 0 ? 0 : end - (length-1),
                                                   pdoc->length(),
                                                   ss, mask, length, icase,
-                                                  tt, wholeword, alignment, offset, align_mark)) == -2)
+                                                  tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
                     {
                         // Restore original display pos
                         pview->show_pos();
@@ -2536,7 +2537,7 @@ BOOL CMainFrame::DoFind()
         }
 
         // Do the search
-        if ((found_addr = search_forw(pdoc, start, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark)) == -2)
+        if ((found_addr = search_forw(pdoc, start, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
         {
             // User abort or some error (message already displayed) - just restore original display pos
             pview->show_pos();
@@ -2570,14 +2571,14 @@ BOOL CMainFrame::DoFind()
                     CHexEditView *pv2 = pdoc2->GetBestView();
 					ASSERT(pv2 != NULL);
 					if (align_mark)
-						pdoc2->base_addr_ = pv2->GetMark();
+						base_addr = pv2->GetMark();
 					else
-						pdoc2->base_addr_ = 0;
+						base_addr = 0;
 
                     // Search this file
                     if ((found_addr = search_forw(pdoc2, 0, pdoc2->length(),
                                                   ss, mask, length, icase, 
-                                                  tt, wholeword, alignment, offset, align_mark)) == -2)
+                                                  tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
                     {
                         // Restore original display pos
                         pview->show_pos();
@@ -2604,7 +2605,7 @@ BOOL CMainFrame::DoFind()
                 if ((found_addr = search_forw(pdoc, 0,
                                               start+length-1 > pdoc->length() ? pdoc->length() : start+length-1,
                                               ss, mask, length, icase,
-                                              tt, wholeword, alignment, offset, align_mark)) == -2)
+                                              tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
                 {
                     // Restore original display pos
                     pview->show_pos();
@@ -2641,7 +2642,7 @@ BOOL CMainFrame::DoFind()
                     if ((found_addr = search_forw(pdoc, 0,
                                                   start+length-1 > pdoc->length() ? pdoc->length() : start+length-1,
                                                   ss, mask, length, icase,
-                                                  tt, wholeword, alignment, offset, align_mark)) == -2)
+                                                  tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
                     {
                         // Restore original display pos
                         pview->show_pos();
@@ -2726,10 +2727,11 @@ void CMainFrame::OnReplace()
     int alignment = m_wndFind.m_pSheet->GetAlignment();
 	int offset    = m_wndFind.m_pSheet->GetOffset();
 	bool align_mark = m_wndFind.m_pSheet->AlignMark();
-	if (align_mark)
-		pdoc->base_addr_ = pview->GetMark();
+	FILE_ADDRESS base_addr;
+    if (align_mark)
+		base_addr = pview->GetMark();
 	else
-		pdoc->base_addr_ = 0;
+		base_addr = 0;
 
     FILE_ADDRESS start, end;            // Range of bytes in the current file to search
     FILE_ADDRESS found_addr;            // The address where the search text was found (or -1, -2)
@@ -2746,14 +2748,14 @@ void CMainFrame::OnReplace()
     {
         found_addr = -2;
         if (dirn == CFindSheet::DIRN_DOWN &&
-            (found_addr = search_forw(pdoc, 0, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark)) == -2)
+            (found_addr = search_forw(pdoc, 0, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
         {
             // User abort or some error (message already displayed) - just restore original display pos
             pview->show_pos();
             return;
         }
         else if (dirn == CFindSheet::DIRN_UP &&
-            (found_addr = search_back(pdoc, start, pdoc->length(), ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark)) == -2)
+            (found_addr = search_back(pdoc, start, pdoc->length(), ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
         {
             // User abort or some error (message already displayed) - just restore original display pos
             pview->show_pos();
@@ -2775,7 +2777,7 @@ void CMainFrame::OnReplace()
     {
         // First test OK (selection length == search length) - now check if there is a match
         // Note: this is direction insensitive (we could have used search_back instead)
-        if ((found_addr = search_forw(pdoc, start, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark)) == -2)
+        if ((found_addr = search_forw(pdoc, start, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
         {
             // User abort or some error (message already displayed) - just restore original display pos
             pview->show_pos();
@@ -2902,15 +2904,16 @@ void CMainFrame::OnReplaceAll()
     FILE_ADDRESS curr = start;          // Current search position in current file
     CHexEditDoc *pdoc2 = pdoc;          // Current file we are searching
     CHexEditView *pv2 = pview;          // View of current file
+	FILE_ADDRESS base_addr;
 	if (align_mark)
-		pdoc2->base_addr_ = pv2->GetMark();
+		base_addr = pv2->GetMark();
 	else
-		pdoc2->base_addr_ = 0;
+		base_addr = 0;
 
     for (;;)
     {
         // Do the search
-        if ((found_addr = search_forw(pdoc2, curr, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark)) == -2)
+        if ((found_addr = search_forw(pdoc2, curr, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
         {
             // User abort or some error
 #ifdef REFRESH_OFF
@@ -2935,9 +2938,9 @@ void CMainFrame::OnReplaceAll()
                 end = pdoc2->length();
                 pv2 = pdoc2->GetBestView();
 				if (align_mark)
-					pdoc2->base_addr_ = pv2->GetMark();
+					base_addr = pv2->GetMark();
 				else
-					pdoc2->base_addr_ = 0;
+					base_addr = 0;
 
                 byte_count += pdoc2->length();
             }
@@ -3146,15 +3149,16 @@ void CMainFrame::OnBookmarkAll()
     FILE_ADDRESS curr = start;          // Current search position in current file
     CHexEditDoc *pdoc2 = pdoc;          // Current file we are searching
     CHexEditView *pv2 = pview;          // View of current file
+	FILE_ADDRESS base_addr;
 	if (align_mark)
-		pdoc2->base_addr_ = pv2->GetMark();
+		base_addr = pv2->GetMark();
 	else
-		pdoc2->base_addr_ = 0;
+		base_addr = 0;
 
     for (;;)
     {
         // Do the search
-        if ((found_addr = search_forw(pdoc2, curr, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark)) == -2)
+        if ((found_addr = search_forw(pdoc2, curr, end, ss, mask, length, icase, tt, wholeword, alignment, offset, align_mark, base_addr)) == -2)
         {
             // User abort or some error (message already displayed) - just restore original display pos
             pview->show_pos();
@@ -3169,9 +3173,9 @@ void CMainFrame::OnBookmarkAll()
                 end = pdoc2->length();
                 pv2 = pdoc2->GetBestView();
 				if (align_mark)
-					pdoc2->base_addr_ = pv2->GetMark();
+					base_addr = pv2->GetMark();
 				else
-					pdoc2->base_addr_ = 0;
+					base_addr = 0;
 
                 byte_count += pdoc2->length();
             }
@@ -3273,12 +3277,12 @@ void CMainFrame::OnBookmarkAll()
 // -1 if it was not found, or -2 on some error (message already shown)
 FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
                                      const unsigned char *ss, const unsigned char *mask, size_t length,
-                                     BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_mark)
+                                     BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_mark, FILE_ADDRESS base_addr)
 {
     ASSERT(start_addr <= end_addr && end_addr <= pdoc->length());
 
     FILE_ADDRESS bg_next = pdoc->GetNextFound(ss, mask, length, icase, tt, ww,
-		                                      aa, offset, align_mark, pdoc->base_addr_, start_addr);
+		                                      aa, offset, align_mark, base_addr, start_addr);
 
     if (bg_next == -1 || bg_next > -1 && bg_next + length > end_addr)
     {
@@ -3336,7 +3340,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
 	// We have to do our own search since either:
 	// background searches are off (bg_next == -4)
 	// or the background search doesn't match (bg_next == -3) - and was stopped above
-	// or the background search is in progress (bg_next == -2) so we forget it and do our own
+	// or the background search is not finished (bg_next == -2) so we forget it and do our own
 
     unsigned char *buf = new unsigned char[buf_len];
     boyer bb(ss, length, mask);       // Boyer-Moore searcher
@@ -3391,6 +3395,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                         theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_mark);
                         if (bg_next == -3)
                         {
+						    pdoc->base_addr_ = base_addr;
                             pdoc->StartSearch(start_addr, addr_buf);
                             theApp.StartSearches(pdoc);
                         }
@@ -3467,7 +3472,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 }
             }
 
-            if ((pp = bb.findforw(buf, length - 1 + got, icase, tt, ww, alpha_before, alpha_after, aa, offset, pdoc->base_addr_, addr_buf)) != NULL)
+            if ((pp = bb.findforw(buf, length - 1 + got, icase, tt, ww, alpha_before, alpha_after, aa, offset, base_addr, addr_buf)) != NULL)
             {
                 // If we find lots of occurrences then the Esc key check in 
                 // above is never done so do it here too.
@@ -3495,6 +3500,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                         theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_mark);
                         if (bg_next == -3)
                         {
+							pdoc->base_addr_ = base_addr;
                             pdoc->StartSearch(start_addr, addr_buf);
                             theApp.StartSearches(pdoc);
                         }
@@ -3514,6 +3520,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                     // We know that there are no occurrences from the start up to where we found
                     // this one but we must not exclude the found address (addr_buf + (pp - buf))
                     // so that background search finds it and it is displayed
+					pdoc->base_addr_ = base_addr;
                     pdoc->StartSearch(start_addr, addr_buf + (pp - buf));
                     theApp.StartSearches(pdoc);
                 }
@@ -3549,6 +3556,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
     theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_mark);
     if (bg_next == -3)
     {
+		pdoc->base_addr_ = base_addr;
         if (end_addr - (length-1) > start_addr)
             pdoc->StartSearch(start_addr, end_addr - (length-1));
         else
@@ -3563,11 +3571,11 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
 // -1 if it was not found, or -2 on some error (message already shown)
 FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
                                      const unsigned char *ss, const unsigned char *mask, size_t length,
-                                     BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_mark)
+                                     BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_mark, FILE_ADDRESS base_addr)
 {
     ASSERT(start_addr <= end_addr && end_addr <= pdoc->length());
 
-    FILE_ADDRESS bg_next = pdoc->GetPrevFound(ss, mask, length, icase, tt, ww, aa, offset, align_mark, pdoc->base_addr_, end_addr - length);
+    FILE_ADDRESS bg_next = pdoc->GetPrevFound(ss, mask, length, icase, tt, ww, aa, offset, align_mark, base_addr, end_addr - length);
 
     if (bg_next == -1 || bg_next > -1 && bg_next < start_addr)
     {
@@ -3667,6 +3675,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                         theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_mark);
                         if (bg_next == -3)
                         {
+							pdoc->base_addr_ = base_addr;
                             pdoc->StartSearch(addr_buf, end_addr - (length-1));
                             theApp.StartSearches(pdoc);
                         }
@@ -3739,7 +3748,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                             alpha_after = isalnum(cc) != 0;      // ASCII and Unicode
                     }
                 }
-                pp = bb.findback(buf, got, icase, tt, ww, alpha_before, alpha_after, aa, offset, pdoc->base_addr_, start_addr);
+                pp = bb.findback(buf, got, icase, tt, ww, alpha_before, alpha_after, aa, offset, base_addr, start_addr);
             }
             else
             {
@@ -3789,7 +3798,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                             alpha_after = isalnum(cc) != 0;      // ASCII and Unicode
                     }
                 }
-                pp = bb.findback(buf, got, icase, tt, ww, alpha_before, alpha_after, aa, offset, pdoc->base_addr_, addr_buf - buf_len);
+                pp = bb.findback(buf, got, icase, tt, ww, alpha_before, alpha_after, aa, offset, base_addr, addr_buf - buf_len);
             }
             if (pp != NULL)
             {
@@ -3820,6 +3829,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                         theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_mark);
                         if (bg_next == -3)
                         {
+							pdoc->base_addr_ = base_addr;
                             pdoc->StartSearch(addr_buf, end_addr - (length-1));
                             theApp.StartSearches(pdoc);
                         }
@@ -3840,6 +3850,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 {
                     // Search all the addresses that have not been searched, but make sure to 
                     // include retval so this occurrence is also found in background search and displayed
+					pdoc->base_addr_ = base_addr;
                     pdoc->StartSearch(retval + 1, end_addr - (length-1));
                     theApp.StartSearches(pdoc);
                 }
@@ -3865,6 +3876,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
     theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_mark);
     if (bg_next == -3)
     {
+		pdoc->base_addr_ = base_addr;
         if (end_addr - (length-1) > start_addr)
             pdoc->StartSearch(start_addr, end_addr - (length-1));  // Start bg search (start_addr->EOF already done)
         else

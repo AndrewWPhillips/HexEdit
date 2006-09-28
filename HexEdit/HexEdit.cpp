@@ -1638,7 +1638,12 @@ void CHexEditApp::StartSearches(CHexEditDoc *pp)
         CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
         ASSERT(pdoc != NULL);
         if (pdoc != pp)
+		{
+			CHexEditView *pview = pdoc->GetBestView();
+			ASSERT(pview != NULL);
+			pdoc->base_addr_ = theApp.align_mark_ ? pview->GetMark() : 0;
             pdoc->StartSearch();
+		}
     }
 }
 

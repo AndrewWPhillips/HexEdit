@@ -480,6 +480,9 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
     update_needed_ = true;
     send_change_hint(address);
 
+	// xxx I *think* this is OK - ie nothing below is protected by the docdata_ xxx
+	sl.Unlock();
+
     // Update views to show changed doc
     CHexHint hh(utype, clen, address, pview, index, FALSE, ptoo);
     if (utype == mod_insert && clen == 0)
