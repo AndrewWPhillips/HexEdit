@@ -53,9 +53,9 @@ CFindSheet::CFindSheet(UINT iSelectPage /*=0*/)
     direction_ = dirn_t(theApp.GetProfileInt("Find-Settings", "Direction", DIRN_DOWN));
 	scope_ = scope_t(theApp.GetProfileInt("Find-Settings", "Scope", SCOPE_EOF));
 
-    alignment_ = ALIGN_BYTE;  // May be confusing to save/restore this - default to byte (all found)
+	align_ = 1;
 	offset_ = 0;
-//    use_mask_ = theApp.GetProfileInt("Find-Settings", "UseMask", FALSE);
+    rel_mark_ = theApp.GetProfileInt("Find-Settings", "RelMark", FALSE);
 
     wildcards_allowed_ = theApp.GetProfileInt("Find-Settings", "UseWildcards", FALSE);;
     charset_ = RB_CHARSET_ASCII;    // Changes to match char set of active window
@@ -85,7 +85,7 @@ CFindSheet::~CFindSheet()
     theApp.WriteProfileInt("Find-Settings", "Direction", direction_);
 	theApp.WriteProfileInt("Find-Settings", "Scope", scope_);
 
-//    theApp.WriteProfileInt("Find-Settings", "UseMask", use_mask_);
+    theApp.WriteProfileInt("Find-Settings", "RelMark", rel_mark_);
 
     theApp.WriteProfileInt("Find-Settings", "UseWildcards", wildcards_allowed_);;
     ASSERT(wildcard_char_.GetLength() == 1);
@@ -832,23 +832,29 @@ static union
     _int64 as_int;
     struct
     {
+		// byte 0
         unsigned int scope :3;          // Only need 4 now, but allow for 8 (2^3) just in case
         unsigned int whole_word :1;
         unsigned int match_case :1;
         unsigned int direction :1;
         unsigned int charset :2;
 
+		// byte 1
         unsigned int wildcards_allowed :1;
         unsigned int big_endian :1;
         unsigned int number_format :3;
         unsigned int number_size :3;
 
-        unsigned int wildcard_char :8;
+		// byte 2
+		unsigned int rel_mark :1;       // Alignment (below) is relative to mark in active view
 
-        unsigned int alignment :7;      // Currently only 1, 2, 4, or 8
-		unsigned int rel_mark :1;       // Alignment is relative to mark in active view
-        unsigned int offset :7;         // Only in range [0, alignment)
-		// one spare bit!
+		// byte 3
+        char wildcard_char;
+
+		// bytes 4-5
+        unsigned short alignment;
+		// bytes 6-7
+        unsigned short offset;
     };
 } all_options;
 
@@ -871,27 +877,10 @@ __int64 CFindSheet::GetOptions()
     all_options.number_format = number_format_;
     all_options.number_size = number_size_;
 
-    // Store alignment as actual value for possible future enhancement
-    switch (alignment_)
-    {
-    default:
-        ASSERT(0);
-        // fall through
-    case ALIGN_BYTE:
-        all_options.alignment = 1;
-        break;
-    case ALIGN_WORD:
-        all_options.alignment = 2;
-        break;
-    case ALIGN_DWORD:
-        all_options.alignment = 4;
-        break;
-    case ALIGN_QWORD:
-        all_options.alignment = 8;
-        break;
-    }
-	ASSERT(offset_ < all_options.alignment);
+	ASSERT(offset_ < align_);
+	all_options.alignment = align_;
 	all_options.offset = offset_;
+	all_options.rel_mark = rel_mark_ ? 1 : 0;
 
     return all_options.as_int;
 }
@@ -916,31 +905,13 @@ void CFindSheet::SetOptions(__int64 val)
     number_format_ = all_options.number_format;
     number_size_ = all_options.number_size;
 
+	ASSERT(all_options.offset < all_options.alignment);
+	align_ = all_options.alignment;
+	if (align_ == 0) align_ = 1;
 	offset_ = all_options.offset;
-	if (offset_ >= all_options.alignment)
-	{
-		ASSERT(0);
+	if (offset_ >= align_)
 		offset_ = 0;
-	}
-    switch (all_options.alignment)
-    {
-    default:
-		offset_ = 0;
-        ASSERT(0);
-        // fall through
-    case 1:
-        alignment_ = ALIGN_BYTE;
-        break;
-    case 2:
-        alignment_ = ALIGN_WORD;
-        break;
-    case 4:
-        alignment_ = ALIGN_DWORD;
-        break;
-    case 8:
-        alignment_ = ALIGN_QWORD;
-        break;
-    }
+	rel_mark_ = BOOL(all_options.rel_mark);
 
     CPropertyPage *pp = GetActivePage();
     ASSERT(pp != NULL);
@@ -1031,18 +1002,9 @@ int CFindSheet::GetAlignment()
         (pp == p_page_hex_ || pp == p_page_number_))
 #endif
     {
-        switch (alignment_)
-        {
-        case ALIGN_BYTE:
-            return 1;
-        case ALIGN_WORD:
-            return 2;
-        case ALIGN_DWORD:
-            return 4;
-        case ALIGN_QWORD:
-            return 8;
-        }
+		return align_;
     }
+
     return 1;
 }
 
@@ -1059,23 +1021,17 @@ int CFindSheet::GetOffset()
         (pp == p_page_hex_ || pp == p_page_number_))
 #endif
     {
-		// xxx
+		return offset_;
     }
-#ifdef _DEBUG  // hard code value till we add dialog control
-	return 1; // xxx
-#else
+
 	return 0;
-#endif
-    return offset_;
 }
 
 bool CFindSheet::AlignMark()
 {
-#ifdef _DEBUG  // hard code value till we add dialog control
-	return true; // xxx
-#else
-	return false;
-#endif
+	// There is no need to worry if hex or number page is visible since in that case
+	// align_ == 1 and offset == 0 (see above) and this seting has no effect.
+	return rel_mark_ ? TRUE : FALSE;
 }
 
 void CFindSheet::Redisplay()            // Make sure hex digits case OK etc
@@ -1113,7 +1069,8 @@ void CFindSheet::Redisplay()            // Make sure hex digits case OK etc
     }
 
     // Update all combo controls that don't have DDX and can contain hex strings
-    p_page_hex_->ctl_hex_string_.SetWindowText(hex_string_);
+	if (p_page_hex_ == pp)
+		p_page_hex_->ctl_hex_string_.SetWindowText(hex_string_);
 #if 0 // we don't worry about case of hex digits in these
     p_page_simple_->ctl_string_.SetWindowText(combined_string_);
     p_page_replace_->ctl_string_.SetWindowText(combined_string_);
@@ -1224,24 +1181,12 @@ void CFindSheet::SetCharSet(charset_t cs)
 
 void CFindSheet::SetAlignment(int aa)
 {
-    switch (aa)
-    {
-    default:
-        ASSERT(0);
-        // fall through
-    case 1:
-        alignment_ = ALIGN_BYTE;
-        break;
-    case 2:
-        alignment_ = ALIGN_WORD;
-        break;
-    case 4:
-        alignment_ = ALIGN_DWORD;
-        break;
-    case 8:
-        alignment_ = ALIGN_QWORD;
-        break;
-    }
+	if (aa <= 0 || aa > 65535)
+		align_ = 1;
+	else
+		align_ = aa;
+	if (offset_ >= align_)
+		offset_ = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1775,6 +1720,7 @@ IMPLEMENT_DYNCREATE(CHexPage, CPropertyPage)
 
 CHexPage::CHexPage() : CPropertyPage(CHexPage::IDD)
 {
+    update_ok_ = false;
 	//{{AFX_DATA_INIT(CHexPage)
 	//}}AFX_DATA_INIT
     phex_ = NULL;
@@ -1796,10 +1742,12 @@ void CHexPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_FIND_MASK, pparent_->mask_string_);
 //	DDX_Check(pDX, IDC_FIND_USE_MASK, pparent_->use_mask_);
 	DDX_Check(pDX, IDC_FIND_USE_MASK, pparent_->wildcards_allowed_);
-    DDX_Radio(pDX, IDC_FIND_ALIGN1, *(int *)(&pparent_->alignment_));
 	DDX_Radio(pDX, IDC_FIND_DIRN_UP, *(int *)(&pparent_->direction_));
-//	DDX_Radio(pDX, IDC_FIND_SCOPE_SELECTION, *(int *)(&pparent_->scope_));
 	DDX_Radio(pDX, IDC_FIND_SCOPE_TOMARK, *(int *)(&pparent_->scope_));
+	DDX_Text(pDX, IDC_ALIGN, pparent_->align_);
+	DDX_Text(pDX, IDC_OFFSET, pparent_->offset_);
+	DDX_Check(pDX, IDC_RELMASK, pparent_->rel_mark_);
+    DDX_Control(pDX, IDC_ALIGN_SELECT, ctl_align_select_);
 	DDX_Text(pDX, IDC_FIND_BOOKMARK_PREFIX, pparent_->bookmark_prefix_);
 }
 
@@ -1817,6 +1765,9 @@ BEGIN_MESSAGE_MAP(CHexPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_FIND_DIRN_UP, OnChangeDirn)
 	ON_EN_CHANGE(IDC_FIND_BOOKMARK_PREFIX, OnChangePrefix)
 	//}}AFX_MSG_MAP
+	ON_EN_CHANGE(IDC_ALIGN, OnChangeAlign)
+    ON_BN_CLICKED(IDC_ALIGN_SELECT, OnAlignSelect)
+	ON_EN_CHANGE(IDC_OFFSET, OnChangeOffset)
     ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
@@ -1896,11 +1847,26 @@ BOOL CHexPage::OnInitDialog()
         pmask_ = NULL;
     }
 
+    ASSERT(GetDlgItem(IDC_ALIGN_SPIN) != NULL);
+    ASSERT(GetDlgItem(IDC_OFFSET_SPIN) != NULL);
+    CSpinButtonCtrl *pspin;
+    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_ALIGN_SPIN);
+    ASSERT(pspin != NULL);
+    pspin->SetRange32(1, 65535);
+	//FixAlign();
+
+    VERIFY(button_menu_.LoadMenu(IDR_DFFD));
+    ctl_align_select_.m_hMenu = button_menu_.GetSubMenu(5)->GetSafeHmenu();
+    ctl_align_select_.m_bOSMenu = TRUE;
+    ctl_align_select_.m_bStayPressed = TRUE;
+    ctl_align_select_.m_bRightArrow = TRUE;
+
 	return TRUE;
 }
 
 void CHexPage::OnCancel() 
 {
+    update_ok_ = false;
     if (phex_ != NULL)
     {
         if (phex_->m_hWnd != 0)
@@ -1944,8 +1910,21 @@ BOOL CHexPage::OnSetActive()
     ctl_hex_string_.SetWindowText(pparent_->hex_string_);
     FixDirn();
     FixMask();
+	FixAlign();
 
-	return CPropertyPage::OnSetActive();
+	BOOL retval = CPropertyPage::OnSetActive();
+    update_ok_ = true;          // Its now OK to allow changes to align field to be processed
+	return retval;
+}
+
+BOOL CHexPage::OnKillActive() 
+{
+    BOOL retval = CPropertyPage::OnKillActive();
+
+    if (retval)
+        update_ok_ = false;
+
+    return retval;
 }
 
 void CHexPage::OnFindNext() 
@@ -1975,10 +1954,12 @@ static DWORD id_pairs2[] = {
     IDC_FIND_SCOPE_TOEND, HIDC_FIND_SCOPE_TOEND,
     IDC_FIND_SCOPE_FILE, HIDC_FIND_SCOPE_FILE,
     IDC_FIND_SCOPE_ALL, HIDC_FIND_SCOPE_ALL,
-    IDC_FIND_ALIGN1, HIDC_FIND_ALIGN1,
-    IDC_FIND_ALIGN2, HIDC_FIND_ALIGN2,
-    IDC_FIND_ALIGN4, HIDC_FIND_ALIGN4,
-    IDC_FIND_ALIGN8, HIDC_FIND_ALIGN8,
+	IDC_ALIGN, HIDC_ALIGN,
+	IDC_ALIGN_SPIN, HIDC_ALIGN_SPIN,
+	IDC_ALIGN_SELECT, HIDC_ALIGN_SELECT,
+	IDC_OFFSET, HIDC_OFFSET,
+	IDC_OFFSET_SPIN, HIDC_OFFSET_SPIN,
+	IDC_RELMASK, HIDC_RELMASK,
     0,0 
 };
 
@@ -2062,6 +2043,75 @@ void CHexPage::OnChangePrefix()
 
     // Remember that prefix has been entered by user (unless cleared)
     pparent_->prefix_entered_ = !pparent_->bookmark_prefix_.IsEmpty();
+}
+
+void CHexPage::OnChangeAlign()
+{
+    if (!update_ok_)
+        return;          // this avoids probs due to spin control generating events too early
+    update_ok_ = false;
+
+    // Get align_ value from dialog controls
+    if (UpdateData())
+	{
+		FixAlign();
+		UpdateData(FALSE);
+	}
+
+    update_ok_ = true;
+}
+
+void CHexPage::FixAlign()
+{
+	// Make sure offset is less than alignment
+	ASSERT(pparent_->align_ > 0);
+	if (pparent_->align_ < 1)
+		pparent_->align_ = 1;
+	if (pparent_->offset_ >= pparent_->align_)
+		pparent_->offset_ = pparent_->align_ - 1;
+
+	GetDlgItem(IDC_OFFSET)->EnableWindow(pparent_->align_ > 1);
+	GetDlgItem(IDC_OFFSET_SPIN)->EnableWindow(pparent_->align_ > 1);
+	GetDlgItem(IDC_RELMASK)->EnableWindow(pparent_->align_ > 1);
+
+    // Change the offset spin control range
+    CSpinButtonCtrl *pspin;
+    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_OFFSET_SPIN);
+    ASSERT(pspin != NULL);
+    pspin->SetRange32(0, pparent_->align_ - 1);
+}
+
+void CHexPage::OnAlignSelect()
+{
+    if (ctl_align_select_.m_nMenuResult != 0)
+    {
+		switch (ctl_align_select_.m_nMenuResult)
+		{
+		case ID_DFFD_BYTE:
+			SetDlgItemText(IDC_ALIGN, "1");
+			break;
+		case ID_DFFD_WORD:
+			SetDlgItemText(IDC_ALIGN, "2");
+			break;
+		case ID_DFFD_DWORD:
+			SetDlgItemText(IDC_ALIGN, "4");
+			break;
+		case ID_DFFD_QWORD:
+			SetDlgItemText(IDC_ALIGN, "8");
+			break;
+		}
+        GetDlgItem(IDC_ALIGN)->SetFocus();
+    }
+}
+
+void CHexPage::OnChangeOffset()
+{
+	if (UpdateData())
+	{
+		if (pparent_->offset_ >= pparent_->align_)
+			pparent_->offset_ = pparent_->align_ - 1;
+		UpdateData(FALSE);
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2324,7 +2374,10 @@ void CNumberPage::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_FIND_NUMBER_FORMAT, pparent_->number_format_);
 	DDX_CBIndex(pDX, IDC_FIND_NUMBER_SIZE, pparent_->number_size_);
 	DDX_Check(pDX, IDC_FIND_BIG_ENDIAN, pparent_->big_endian_);
-	DDX_Radio(pDX, IDC_FIND_ALIGN1, *(int *)(&pparent_->alignment_));
+	DDX_Text(pDX, IDC_ALIGN, pparent_->align_);
+	DDX_Text(pDX, IDC_OFFSET, pparent_->offset_);
+	DDX_Check(pDX, IDC_RELMASK, pparent_->rel_mark_);
+    DDX_Control(pDX, IDC_ALIGN_SELECT, ctl_align_select_);
 	DDX_Text(pDX, IDC_FIND_BOOKMARK_PREFIX, pparent_->bookmark_prefix_);
 }
 
@@ -2342,6 +2395,9 @@ BEGIN_MESSAGE_MAP(CNumberPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_FIND_DIRN_UP, OnChangeDirn)
 	ON_EN_CHANGE(IDC_FIND_BOOKMARK_PREFIX, OnChangePrefix)
 	//}}AFX_MSG_MAP
+	ON_EN_CHANGE(IDC_ALIGN, OnChangeAlign)
+    ON_BN_CLICKED(IDC_ALIGN_SELECT, OnAlignSelect)
+	ON_EN_CHANGE(IDC_OFFSET, OnChangeOffset)
     ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
@@ -2569,10 +2625,12 @@ static DWORD id_pairs4[] = {
     IDC_FIND_SCOPE_TOEND, HIDC_FIND_SCOPE_TOEND,
     IDC_FIND_SCOPE_FILE, HIDC_FIND_SCOPE_FILE,
     IDC_FIND_SCOPE_ALL, HIDC_FIND_SCOPE_ALL,
-    IDC_FIND_ALIGN1, HIDC_FIND_ALIGN1,
-    IDC_FIND_ALIGN2, HIDC_FIND_ALIGN2,
-    IDC_FIND_ALIGN4, HIDC_FIND_ALIGN4,
-    IDC_FIND_ALIGN8, HIDC_FIND_ALIGN8,
+	//IDC_ALIGN, HIDC_ALIGN,
+	//IDC_ALIGN_SPIN, HIDC_ALIGN_SPIN,
+	//IDC_ALIGN_SELECT, HIDC_ALIGN_SELECT,
+	//IDC_OFFSET, HIDC_OFFSET,
+	//IDC_OFFSET_SPIN, HIDC_OFFSET_SPIN,
+	//IDC_RELMASK, HIDC_RELMASK,
     0,0 
 };
 

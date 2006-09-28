@@ -86,9 +86,6 @@ public:
     enum scope_t { SCOPE_TOMARK, SCOPE_FILE, SCOPE_EOF, SCOPE_ALL }; // Matches the order of scope radio buttons
     scope_t scope_;
 
-    enum align_t { ALIGN_BYTE, ALIGN_WORD, ALIGN_DWORD, ALIGN_QWORD }; // Matches order of align radio buttons
-    align_t alignment_;
-	int offset_;                        // From edit control (from zero to less than max align)
 //    BOOL use_mask_;                     // indicates to use mask_string in hex searches
 
     BOOL wildcards_allowed_;            // are wildcards allowed in a text search
@@ -96,9 +93,15 @@ public:
     enum charset_t { RB_CHARSET_UNKNOWN = -1, RB_CHARSET_ASCII = 0, RB_CHARSET_UNICODE, RB_CHARSET_EBCDIC }; // Matches order of char set radios in text search page
     charset_t charset_;
 
+	// Number search options (used in number page only)
     BOOL big_endian_;                   // When searching for numbers indicates the byte order to use
     int number_format_;                 // Format of number to search for: 0 = unsigned int, 1 = signed int, 2 = IEEE float
     int number_size_;                   // (valid values depend on format) 0 = byte, 1 = word, 2 = dword, 3 = qword
+
+	// Alignment options (only hex and number pages currently)
+	UINT	align_;
+	UINT	offset_;
+	BOOL    rel_mark_;
 
 // Operations
 public:
@@ -212,7 +215,8 @@ public:
 	CEdit	ctl_bookmark_prefix_;
 	CComboBox	ctl_hex_string_;
 	//}}AFX_DATA
-
+    CBCGMenuButton ctl_align_select_;
+	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -224,6 +228,7 @@ public:
 	//}}AFX_VIRTUAL
 	virtual void OnCancel();
 	virtual void OnOK();
+	virtual BOOL OnKillActive();
 
 // Implementation
 protected:
@@ -243,14 +248,20 @@ protected:
 	//}}AFX_MSG
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
     afx_msg void OnClose();
+	afx_msg void OnChangeAlign();
+	afx_msg void OnAlignSelect();
+	afx_msg void OnChangeOffset();
 	DECLARE_MESSAGE_MAP()
 
     CFindSheet *pparent_;
     CHexEdit *phex_;
     CHexEdit *pmask_;
+    CMenu button_menu_;         // We need to keep the menu (for the Alignment select menu button) in memory
+
     void FixDirn();
     void FixMask();
     void FixStrings();
+	void FixAlign();
 };
 
 /////////////////////////////////////////////////////////////////////////////

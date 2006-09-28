@@ -1646,10 +1646,11 @@ void CHexEditApp::NewSearch(const unsigned char *pat, const unsigned char *mask,
                             size_t len, BOOL icase, int tt, BOOL ww,
                             int aa, int offset, bool align_mark)
 {
-    CSingleLock s2(&appdata_, TRUE);
-
     CHECK_SECURITY(202);
 
+    CSingleLock s2(&appdata_, TRUE);
+
+	// Save search params for bg search to use
     if (pboyer_ != NULL) delete pboyer_;
     pboyer_ = new boyer(pat, len, mask);
 

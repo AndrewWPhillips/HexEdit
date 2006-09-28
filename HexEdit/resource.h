@@ -994,6 +994,11 @@
 #define IDC_COMPRESSION_MEMORY_USAGE    1518
 #define IDC_COMPRESSION_SYNC            1519
 #define IDC_COMPRESSION_LEVEL           1520
+#define IDC_RELMASK                     1521
+#define IDC_ALIGN                       1522
+#define IDC_ALIGN_SELECT                1523
+#define IDC_ALIGN_SPIN                  1524
+#define IDC_OFFSET_SPIN                 1525
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1346,7 +1351,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        353
 #define _APS_NEXT_COMMAND_VALUE         38003
-#define _APS_NEXT_CONTROL_VALUE         1521
+#define _APS_NEXT_CONTROL_VALUE         1525
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

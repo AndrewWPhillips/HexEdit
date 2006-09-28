@@ -254,7 +254,7 @@ unsigned char *boyer::findforw(unsigned char *pp, size_t len, BOOL icase, int tt
                         passed = FALSE;                         // alpha before match so whole word search fails
                     else if (wholeword && spos + pattern_len_ < len && isalnum(e2a_tab[pp[spos+pattern_len_]]))
                         passed = FALSE;                         // alpha after match so it's not a whole word
-                    else if (alignment > 1 && (address - base_addr + spos) % alignment != offset)
+                    else if (alignment > 1 && ((address - base_addr + spos) < 0 || (address - base_addr + spos) % alignment != offset))
                         passed = FALSE;
                     if (!passed)
                     {
@@ -304,7 +304,7 @@ unsigned char *boyer::findforw(unsigned char *pp, size_t len, BOOL icase, int tt
                         passed = FALSE;
                     else if (wholeword && spos + pattern_len_ < len && isalnum(pp[spos+pattern_len_]))
                         passed = FALSE;
-                    else if (alignment > 1 && (address - base_addr + spos) % alignment != offset)
+                    else if (alignment > 1 && ((address - base_addr + spos) < 0 || (address - base_addr + spos) % alignment != offset))
                         passed = FALSE;
                     if (!passed)
                     {
@@ -355,7 +355,7 @@ unsigned char *boyer::findforw(unsigned char *pp, size_t len, BOOL icase, int tt
                         passed = FALSE;
                     else if (tt!=3 && wholeword && spos + pattern_len_ < len && isalnum(pp[spos+pattern_len_]))
                         passed = FALSE;
-                    else if (alignment > 1 && (address - base_addr + spos) % alignment != offset)
+                    else if (alignment > 1 && ((address - base_addr + spos) < 0 || (address - base_addr + spos) % alignment != offset))
                         passed = FALSE;
                     if (!passed)
                     {
@@ -418,7 +418,7 @@ unsigned char *boyer::findback(unsigned char *pp, size_t len, BOOL icase, int tt
                         passed = FALSE;
                     else if (wholeword && spos + 1 < long(len) && isalnum(e2a_tab[pp[spos+1]]))
                         passed = FALSE;
-                    else if (alignment > 1 && (address - base_addr + spos - pattern_len_ + 1) % alignment != offset)
+                    else if (alignment > 1 && ((address - base_addr + spos - pattern_len_ + 1) < 0 || (address - base_addr + spos - pattern_len_ + 1) % alignment != offset))
                         passed = FALSE;
                     if (!passed)
                     {
@@ -467,7 +467,7 @@ unsigned char *boyer::findback(unsigned char *pp, size_t len, BOOL icase, int tt
                         passed = FALSE;
                     else if (wholeword && spos + 1 < long(len) && isalnum(pp[spos+1]))
                         passed = FALSE;
-                    else if (alignment > 1 && (address - base_addr + spos - pattern_len_ + 1) % alignment != offset)
+                    else if (alignment > 1 && ((address - base_addr + spos - pattern_len_ + 1) < 0 || (address - base_addr + spos - pattern_len_ + 1) % alignment != offset))
                         passed = FALSE;
                     if (!passed)
                     {
@@ -517,7 +517,7 @@ unsigned char *boyer::findback(unsigned char *pp, size_t len, BOOL icase, int tt
                         passed = FALSE;
                     else if (tt!=3 && wholeword && spos + 1 < long(len) && isalnum(pp[spos+1]))
                         passed = FALSE;
-                    else if (alignment > 1 && (address - base_addr + spos - pattern_len_ + 1) % alignment != offset)
+                    else if (alignment > 1 && ((address - base_addr + spos - pattern_len_ + 1) < 0 || (address - base_addr + spos - pattern_len_ + 1) % alignment != offset))
                         passed = FALSE;
                     if (!passed)
                     {
@@ -708,7 +708,7 @@ unsigned char *boyer::mask_find(unsigned char *pp, size_t len, BOOL icase, int t
             passed = FALSE;
         else if (wholeword && tt != 3 && base + pattern_len_ < pp + len && isalnum(base[pattern_len_]))
             passed = FALSE;
-        else if (alignment > 1 && (address - base_addr + base - pp) % alignment != offset)
+        else if (alignment > 1 && ((address - base_addr + base - pp) < 0 || (address - base_addr + base - pp) % alignment != offset))
             passed = FALSE;
 
         if (passed)
@@ -893,7 +893,7 @@ unsigned char *boyer::mask_findback(unsigned char *pp, size_t len, BOOL icase, i
             passed = FALSE;
         else if (wholeword && tt != 3 && base + pattern_len_ < pp + len && isalnum(base[pattern_len_]))
             passed = FALSE;
-        else if (alignment > 1 && (address - base_addr + base - pp) % alignment != offset)
+        else if (alignment > 1 && ((address - base_addr + base - pp) < 0 || (address - base_addr + base - pp) % alignment != offset))
             passed = FALSE;
 
         if (passed)
