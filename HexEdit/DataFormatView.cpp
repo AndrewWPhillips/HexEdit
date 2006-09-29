@@ -4568,14 +4568,14 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 					// Get parameters from dialog and parse the text
 					TParser tp;
 					tp.packing_default_ = "\x01\x02\x04\x08\x10"[tpd.m_pack];
- 					tp.check_values_win_ = tpd.m_values_windows;
-					tp.check_values_custom_ = tpd.m_values_custom;
-					tp.save_values_custom_ = tpd.m_values_save;
-					tp.check_std_ = tpd.m_types_std;
-					tp.check_custom_ = tpd.m_types_custom;
-					tp.check_win_ = tpd.m_types_windows;
-					tp.check_common_ = tpd.m_types_common;
-					tp.save_custom_ = tpd.m_types_save;
+					tp.check_values_win_ = tpd.m_values_windows ? true : false;
+					tp.check_values_custom_ = tpd.m_values_custom ? true : false;
+					tp.save_values_custom_ = tpd.m_values_save ? true : false;
+					tp.check_std_ = tpd.m_types_std ? true : false;
+					tp.check_custom_ = tpd.m_types_custom ? true : false;
+					tp.check_win_ = tpd.m_types_windows ? true : false;
+					tp.check_common_ = tpd.m_types_common ? true : false;
+					tp.save_custom_ = tpd.m_types_save ? true : false;
 
 					CXmlTree::CFrag frag = tp.Parse(pdoc->ptree_, tpd.m_source_code);
 

@@ -873,14 +873,6 @@ void CHexEditDoc::WriteInPlace()
                 }
                 ASSERT(src == plprev->fileaddr);
                 ASSERT(dst == pos - (plprev->dlen&doc_loc::mask));
-
-				total_done += (pl->dlen&doc_loc::mask);
-				if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
-				{
-					mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
-					last_checked = clock();
-					AfxGetApp()->OnIdle(0);
-				}
             }
         }
         for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
