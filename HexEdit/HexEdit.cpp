@@ -62,7 +62,7 @@
 #include "TabView.h"
 #include "UserTool.h"   // For CHexEditUserTool
 #include "Dialog.h"
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 #include "OpenSpecialDlg.h"
 #else
 #include "OpenDiskDlg.h"
@@ -355,7 +355,7 @@ BOOL CHexEditApp::InitInstance()
                  osvi.dwMajorVersion >= 5) && ::GetSystemMetrics(SM_CMONITORS) > 1;
 //        mult_monitor_ = osvi.dwMajorVersion >= 5;
 
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
         // We must do this after getting version info as it relies on is_nt_
         m_pspecial_list = new CSpecialList();
 #endif
@@ -1017,7 +1017,7 @@ void CHexEditApp::OnFilePrintSetup()
 
 void CHexEditApp::OnFileOpenSpecial() 
 {
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 	COpenSpecialDlg dlg;
 #else
     COpenDiskDlg dlg;

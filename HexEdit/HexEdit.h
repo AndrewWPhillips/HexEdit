@@ -67,11 +67,13 @@ typedef __int64 FILE_ADDRESS;
 //STYLE WS_CHILD | DS_CONTEXTHELP
 //STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 
+#define BG_DEVICE_SEARCH 1  // Use class CSpecialList to get device details in bg thread (saves time when Open Special dialog inited)
+// Note: BG_DEVICE_SEARCH muist be left on to avoid problems under 9X/ME
+
 //#define NEW_TIPS        1   // Use new (fading) tip control for view tips (selection length etc) - seems to work well
 
 // Flags for stuff in development
 //#define CALC_EXPR       1   // Allow expressions in calculator - needs testing
-//#define BG_DEVICE_SEARCH 1  // Use class CSpecialList to get device details in bg thread (saves time when Open Special dialog inited)
 // xxx remove use of DeviceSize() when this is added
 //#define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
 //#define PROP_INFO       1   // Display info (Summary) page in properties dialog - still needs extra columns in recent file dialog + keyword search

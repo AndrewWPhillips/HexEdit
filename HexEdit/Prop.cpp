@@ -590,7 +590,7 @@ void CPropFilePage::Update(CHexEditView *pv, FILE_ADDRESS address)
 	{
 		CSpecialList *psl = theApp.GetSpecialList();
 		int idx = psl->find((LPCTSTR)pf->GetFilePath());
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 		CString ss;
 		switch (psl->type(idx))
 		{

@@ -248,7 +248,7 @@ void CRecentFileDlg::FillGrid()
         has_wfad = TRUE;
     }
 
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 	CSpecialList *psl = theApp.GetSpecialList();
 	int device_idx = -1;
 #endif
@@ -269,7 +269,7 @@ void CRecentFileDlg::FillGrid()
 
 		if (is_device)
 		{
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 			device_idx = psl->find(pfl->name_[index]);
 #endif
 		}
@@ -306,7 +306,7 @@ void CRecentFileDlg::FillGrid()
 			    item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
 				if (is_device)
 				{
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 					if (device_idx == -1)
 						item.strText = CString(" Unknown device");
 					else
@@ -360,7 +360,7 @@ void CRecentFileDlg::FillGrid()
 			    item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
 				if (is_device)
 				{
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 					if (device_idx == -1)
 						item.lParam = 0;
 					else

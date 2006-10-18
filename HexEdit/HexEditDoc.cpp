@@ -36,7 +36,7 @@
 #include "misc.h"
 #include "Dialog.h"
 #include "DFFDMisc.h"
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 #include "SpecialList.h"
 #endif
 
@@ -985,7 +985,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 	bool is_device = ::IsDevice(lpszPathName) == TRUE;
     if (is_device)
 	{
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 		// Make sure we don't try to open a read only device incorrectly (eg from recent file list)
 		CSpecialList *psl = theApp.GetSpecialList();
 		int idx = psl->find(lpszPathName);

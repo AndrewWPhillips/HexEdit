@@ -1918,7 +1918,7 @@ CString CFileNC::GetFileName( void ) const
 		return CFile64::GetFileName();
 
 	CString retval;
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 	CSpecialList *psl = theApp.GetSpecialList();
 	int idx = psl->find(m_FileName);
 	if (idx == -1)
@@ -1970,7 +1970,7 @@ CString CFileNC::GetFileTitle( void ) const
 	if (!::IsDevice(m_FileName))
 		return CFile64::GetFileTitle();
 
-#if defined(BG_DEVICE_SEARCH) || defined(_DEBUG)
+#if defined(BG_DEVICE_SEARCH)
 	CSpecialList *psl = theApp.GetSpecialList();
 	int idx = psl->find(m_FileName);
 	if (idx == -1)
