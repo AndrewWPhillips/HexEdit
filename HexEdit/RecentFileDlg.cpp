@@ -375,12 +375,13 @@ void CRecentFileDlg::FillGrid()
 				}
 				else if (got_status)
 				{
+				    item.lParam = fs.m_size;
                     item.strText = NumScale(double(fs.m_size)) + "bytes";
 				}
                 else
 				{
-                    item.strText.Empty();
 				    item.lParam = -1;
+                    item.strText.Empty();
 				}
                 break;
             case COL_TYPE:

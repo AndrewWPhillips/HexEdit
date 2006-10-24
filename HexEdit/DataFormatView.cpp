@@ -504,6 +504,15 @@ void CGridCtrl2::OnLButtonUp(UINT nFlags, CPoint point)
     if (m_MouseMode == MOUSE_SIZING_COL)
         col_resize = m_LeftClickDownCell.col;
 
+	// This is a bit of a kludge that seems to be needed for Windows 9X
+    CCellID cell = GetCellFromPt(point);
+    if (cell.row == 0 && cell.col == GetFixedColumnCount() &&
+        m_MouseMode != MOUSE_OVER_COL_DIVIDE &&
+        m_MouseMode != MOUSE_OVER_ROW_DIVIDE)
+    {
+        m_MouseMode = MOUSE_PREPARE_EDIT;
+	}
+
     CGridCtrl::OnLButtonUp(nFlags, point);
 
     if (col_resize != -1)
@@ -3475,9 +3484,7 @@ BOOL CDataFormatView::ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr /*=-1*/)
             return TRUE;
 
         ASSERT(read_only_str.CompareNoCase("false") == 0);
-
-		ASSERT(pdoc->df_size_[elt] > 0);
-		addr += pdoc->df_size_[elt];
+		addr += mac_abs(pdoc->df_size_[elt]);
     }
     return FALSE;
 }

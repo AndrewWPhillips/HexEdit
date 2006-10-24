@@ -713,6 +713,7 @@ void CMainFrame::show_tip(UINT id /* = -1 */)
 
     if (!mess.IsEmpty())
     {
+        menu_tip_.Hide(0);
         menu_tip_.SetWindowText(mess);
 		CRect rct = item_rect(popup_menu_.back(), id);
         menu_tip_.Move(CPoint(rct.right, rct.top), false);
