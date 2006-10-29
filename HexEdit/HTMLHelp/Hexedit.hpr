@@ -15,13 +15,13 @@ Skin List=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.trk
 OriginalHhk=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.hhk
 Language ID=1033
 Language Name=English
-Language=I:\RoboHELP Office\RoboHTML\Language\English\RoboHHRE.lng
-Stop List=I:\RoboHELP Office\RoboHTML\Language\English\System.stp
+Language=C:\Devel\RoboHelp Office\RoboHTML\Language\English\RoboHHRE.lng
+Stop List=C:\Devel\RoboHelp Office\RoboHTML\Language\English\System.stp
 
 [SS Settings: RoboHtml For OracleHelp]
-WindowType0=17855;FALSE;NewWindow;;;;;;;;;;
-WindowType1=17855;TRUE;main;;;;;;;;;;
-WindowType2=17855;FALSE;form;;;;;;;;;;
+WindowType0=23572;FALSE;NewWindow;;;;;;;;;;
+WindowType1=23572;TRUE;main;;;;;;;;;;
+WindowType2=23572;FALSE;form;;;;;;;;;;
 
 [Target:WebHelp]
 ResultFileName=D:\tmp\help\Hexedit.htm
@@ -318,7 +318,7 @@ ResultFileName=d:\tmp\webhelp\hexedit.htm
 Remove Folder with prompt=1
 ViewFileName=d:\tmp\webhelp\hexedit.htm
 [Target:Microsoft HTML Help]
-ActionID For Generation=1001
+ActionID For Generation=1005
 ResultFileName=Hexedit.chm
 Remove Folder with prompt=1
 m_nNamingRule=0
@@ -377,7 +377,7 @@ m_bTocFloderIcon=0
 DestinationProjectName=Hexedit.chm
 BuildExpression=NORMAL    
 PublishString=
-CreateProjectTime=23:00, April 30, 2006
-CreateProjectUser=andrew
+CreateProjectTime=15:37, October 29, 2006
+CreateProjectUser=Andrew
 ViewFileName=Hexedit.chm
 Enable Result Dialog=1

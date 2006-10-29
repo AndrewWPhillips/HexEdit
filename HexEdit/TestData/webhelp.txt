@@ -2,6 +2,7 @@ Creating web help
 -----------------
 
 - generate "WebHelp" from Robo HTML help (to d:\tmp\help\Hexedit.htm)
+  - use "WEB" build expression
   - use lowercase names?
   - output to d:\tmp\tmp (creates help subdirectory)
 - replace wht_logo1.gif and wht_logo2,gif
