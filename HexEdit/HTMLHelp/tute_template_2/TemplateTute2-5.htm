@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=3312>
-<meta name=layout-width content=1213>
+<meta name=layout-height content=2998>
+<meta name=layout-width content=976>
 
 
 <!--(Links)=========================================================-->
@@ -381,8 +381,8 @@
 								height: 301px;"
 						width=444
 						height=301
-						border=0><br>
-<span style="font-weight: bold;"><br>
+						border=0><span style="font-weight: bold;"><br>
+<br>
 Figure 1. Displaying the colour name in the STRUCT tree node.</span></p>
 
 <p>&nbsp;</p>
@@ -406,8 +406,8 @@ Figure 1. Displaying the colour name in the STRUCT tree node.</span></p>
 								height: 274px;"
 						width=233
 						height=274
-						border=0><br>
-<span style="font-weight: bold;"><br>
+						border=0><span style="font-weight: bold;"><br>
+<br>
 Figure 2. Colour names in the tree.</span></p>
 
 <p>&nbsp;</p>
@@ -437,7 +437,8 @@ Figure 2. Colour names in the tree.</span></p>
 <p>&nbsp;</p>
 
 <p><img src="../tip.gif"
-		style="border: none;
+		style="border-style: none;
+				border: none;
 				width: 31px;
 				height: 12px;"
 		width=31
@@ -449,20 +450,18 @@ Figure 2. Colour names in the tree.</span></p>
 <p>&nbsp;</p>
 
 <p>We will now move the &quot;col_table&quot; before the &quot;object&quot; 
- array and place it in a JUMP.</p>
+ array and place it inside a JUMP.</p>
 
 <p>&nbsp;</p>
 
-<p class=Body-Text-Indent-2>10. Double-click the root to edit it.</p>
+<p class=Body-Text-Indent-2>10. Double-click the root to edit it and select 
+ &quot;col_table [STRUCT]&quot; in the element list.</p>
 
-<p class=Body-Text-Indent-2>11. Select &quot;col_table [STRUCT]&quot; in 
- the element list and click the up arrow button twice to move it just below 
- the &quot;header [STRUCT]&quot; element.</p>
+<p class=Body-Text-Indent-2>11. Click the up arrow button twice to move 
+ it just below the &quot;header [STRUCT]&quot; element but above the &quot;object 
+ [FOR]&quot; element.</p>
 
-<p class=Body-Text-Indent-2>12. Click OK to return to the tree window - 
- you will get the old &quot;Data past end of file&quot; error message again, 
- which we will address below. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Click 
- OK.</p>
+<p class=Body-Text-Indent-2>12. Click OK to return to the tree window.</p>
 
 <p class=Body-Text-Indent-2>13. Now right-click the &quot;col_table&quot; 
  node in the tree and select &quot;Enclose In/Jump...&quot;.</p>
@@ -485,15 +484,15 @@ Figure 2. Colour names in the tree.</span></p>
 								height: 301px;"
 						width=509
 						height=301
-						border=0><br>
-<span style="font-weight: bold;"><br>
+						border=0><span style="font-weight: bold;"><br>
+<br>
 Figure 3. Selecting the JUMP address.</span></p>
 
 <p>&nbsp;</p>
 
 <p>In the tree view you should now see the same values in the &quot;col_table&quot; 
  but it is nested under the JUMP node. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- jump node shows the address that is jumped to (9E hex in this case).</p>
+ jump node shows the address that is jumped to (158 or 9E hex in this case).</p>
 
 <p>&nbsp;</p>
 
@@ -505,32 +504,46 @@ Figure 3. Selecting the JUMP address.</span></p>
 								height: 352px;"
 						width=237
 						height=352
-						border=0><br>
-<span style="font-weight: bold;"><br>
+						border=0><span style="font-weight: bold;"><br>
+<br>
 Figure 4. Colour table nested in the JUMP.</span></p>
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold;">Creating a Fill Object</p>
+<p style="font-weight: bold;">Using a Fill Object</p>
 
 <p>&nbsp;</p>
 
-<p>Now the template runs out again after the object list and we get the 
- &quot;Data past expected end of file&quot; message again. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
- need to use up the extra bytes of the colour table, but we don't want 
- to add a duplicate colour table so we will just add a &quot;fill&quot; 
- object.</p>
+<p>The JUMP element allowed us to process the col_table before the object 
+ list, but now after processing the object list we come to the col_table 
+ data again. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ is no point in having 2 colour tables so we will just add a fill DATA 
+ object to use them up.</p>
 
 <p>&nbsp;</p>
 
-<p class=Body-Text-Indent-2>16. Double-click the root node again and add 
- a &quot;Data...&quot; element to the end of the list.</p>
+<p class=Body-Text-Indent-2>16. Double-click the root node again and edit 
+ the last element in the list with name &quot;none&quot;.</p>
 
-<p class=Body-Text-Indent-2>17. Use a name of &quot;col_table_again&quot;, 
- a type of &quot;none&quot; and enter &quot;sizeof(col_table)&quot; for 
- the length.</p>
+<p class=Body-Text-Indent-2>17. Leave a type of &quot;none&quot; and enter 
+ &quot;sizeof(col_table)&quot; for the length.</p>
 
-<p class=Body-Text-Indent-2>18. Click OK to return to the STRUCT dialog.</p>
+<p class=Body-Text-Indent-2>18. Delete the name &quot;none&quot; so that 
+ the element has no name and won't be displayed (except in edit mode).</p>
+
+<p class=Body-Text-Indent-2>19. Click OK to return to the STRUCT dialog, 
+ and click &quot;Yes&quot; to save the element without a name.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that we give a length for the element to make sure that the file 
+ is the right length. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ we just left the length field empty then there could be any number of 
+ bytes after the colour table and the template would not complain. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Now 
+ if the file is too long we will get a warning message &quot;Data past 
+ expected end of file&quot;.</p>
+
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 
@@ -542,44 +555,13 @@ Figure 4. Colour table nested in the JUMP.</span></p>
 								height: 301px;"
 						width=444
 						height=301
-						border=0><br>
-<span style="font-weight: bold;"><br>
+						border=0><span style="font-weight: bold;"><br>
+<br>
 Figure 5. The &quot;fill&quot; object.</span></p>
 
 <p>&nbsp;</p>
 
-<p>Just as a double-check we will make sure the start of &quot;col_table_again&quot; 
- is equivalent to the colour table address in the header.</p>
-
-<p>&nbsp;</p>
-
-<p class=Body-Text-Indent-2>19. Add an &quot;Expression Evaluation...&quot; 
- element to the end of the list.</p>
-
-<p class=Body-Text-Indent-2>20. In the &quot;Expression&quot; field enter 
- &quot;addressof(col_table_again) == header.col_table_address&quot;.</p>
-
-<p class=Body-Text-Indent-2>21. Select the &quot;Display error if expression 
- evaluates false&quot; check box so that an error is shown if there is 
- something amiss.</p>
-
-<p class=Body-Text-Indent-2>&nbsp;</p>
-
-<p style="text-align: center;"
-	align=center><img src="tute2_5_6.gif"
-						style="border-style: none;
-								border: none;
-								width: 444px;
-								height: 301px;"
-						width=444
-						height=301
-						border=0><br>
-<span style="font-weight: bold;"><br>
-Figure 6. EVAL to check that addresses are consistent.</span></p>
-
-<p>&nbsp;</p>
-
-<p class=Body-Text-Indent-2>22. Click OK twice to return to the tree window.</p>
+<p class=Body-Text-Indent-2>20. Click OK twice to return to the tree window.</p>
 
 <p>&nbsp;</p>
 

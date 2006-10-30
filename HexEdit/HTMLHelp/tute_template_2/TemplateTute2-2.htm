@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=2903>
-<meta name=layout-width content=1213>
+<meta name=layout-height content=3021>
+<meta name=layout-width content=976>
 
 
 <!--(Links)=========================================================-->
@@ -192,7 +192,7 @@ Figure 1. DATA Element dialog.</span></p>
 						height=301
 						border=0><span style="font-weight: bold;"><br>
 <br>
-Figure 2, STRUCT dialog.</span></p>
+Figure 2. STRUCT dialog.</span></p>
 
 <p>&nbsp;</p>
 
@@ -231,21 +231,30 @@ Figure 2, STRUCT dialog.</span></p>
 <p class=Body-Text-Indent-2>15. You can also add a comment like &quot;This 
  is just an example format used in the HexEdit Advanced templates tutorial&quot;.</p>
 
-<p class=Body-Text-Indent-2>16. We no longer need the &quot;none&quot; 
- element so select it and click the delete <img src="../dlg_options/del_ico.gif"
-												style="border-style: none;
-														border: none;
-														width: 22px;
-														height: 23px;"
-												width=22
-												height=23
-												border=0> button and click 
- &quot;Yes&quot; when it asks to confirm.</p>
+<p>&nbsp;</p>
 
-<p class=Body-Text-Indent-2>17. Click OK to keep the changes and close 
+<p><img src="../tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>We will leave the &quot;none&quot; data element where 
+ it is at the end of the file for now. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(We 
+ will later delete since it is not part of our file format.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ element has an empty length field so it uses up all the remaining bytes 
+ in the file until end of file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can delete it now but you will get &quot;Data past expected EOF&quot; 
+ messages all the time, so it is better to leave it there until the rest 
+ of the template is complete.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>16. Click OK to keep the changes and close 
  the STRUCT dialog.</p>
 
-<p class=Body-Text-Indent-2>18. Now, right-click the root node and select 
+<p class=Body-Text-Indent-2>17. Now, right-click the root node and select 
  the &quot;Options...&quot; menu item.</p>
 
 <p class=Body-Text-Indent-2>&nbsp;</p>
@@ -290,13 +299,14 @@ Figure 2, STRUCT dialog.</span></p>
 
 <p>&nbsp;</p>
 
-<p class=Body-Text-Indent-2>19. Enter &quot;http://hexedit.com/tutorial_format.html&quot;.</p>
+<p class=Body-Text-Indent-2>18. Enter &quot;http://hexedit.com/tutorial_format.html&quot; 
+ for the web address.</p>
 
-<p class=Body-Text-Indent-2>20. Click the &quot;Check&quot; button to if 
+<p class=Body-Text-Indent-2>19. Click the &quot;Check&quot; button to if 
  you are connected to the Internet. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
  will open the page in your web browser.</p>
 
-<p class=Body-Text-Indent-2>21. Click OK</p>
+<p class=Body-Text-Indent-2>20. Click OK</p>
 
 <p>&nbsp;</p>
 
@@ -318,7 +328,7 @@ Figure 2, STRUCT dialog.</span></p>
 
 <p>&nbsp;</p>
 
-<p class=Body-Text-Indent-2>22. Save the template by right-clicking the 
+<p class=Body-Text-Indent-2>21. Save the template by right-clicking the 
  root node and selecting the &quot;Save As...&quot; menu item.</p>
 
 <p class=Body-Text-Indent-2>&nbsp;</p>
@@ -337,14 +347,14 @@ Figure 4. Saving the template.</span></p>
 
 <p>&nbsp;</p>
 
-<p class=Body-Text-Indent-2>23. Enter the name &quot;_HEG&quot; in the 
+<p class=Body-Text-Indent-2>22. Enter the name &quot;_HEG&quot; in the 
  File Save dialog and click the Save button.</p>
 
 <p>&nbsp;</p>
 
-<p>By using this name (an underscore followed by &quot;HEG&quot;) any .HEG 
- that is opened in the future will use this template (unless it has already 
- been opened and a different template was used).</p>
+<p>By using this name (an underscore followed by &quot;HEG&quot;) any file 
+ with extension .HEG that is opened in the future will use this template 
+ (unless it has already been used with a different template).</p>
 
 <p>&nbsp;</p>
 

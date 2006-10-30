@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=4801>
-<meta name=layout-width content=1213>
+<meta name=layout-height content=4849>
+<meta name=layout-width content=976>
 
 
 <!--(Links)=========================================================-->
@@ -173,7 +173,8 @@
 <p>&nbsp;</p>
 
 <p><img src="../tip.gif"
-		style="border: none;
+		style="border-style: none;
+				border: none;
 				width: 31px;
 				height: 12px;"
 		width=31
@@ -1426,15 +1427,20 @@ Figure 3. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Final
 <!--begin!kadov{{--></div><!--}}end!kadov-->
 <p>&nbsp;</p>
 
-<p>Note that the &quot;x&quot; and &quot;y&quot; fields are the same as 
- in rect and circle, but the &quot;colid&quot; field is replaced with a 
- &quot;count&quot; field which stores the number of objects that are in 
- the group.</p>
+<p>There should always at least one object in a group so we validate that 
+ &quot;count&quot; is greater than zero using the domain field.</p>
 
 <p>&nbsp;</p>
 
-<p>The software ensures that there is always at least one object in a group 
- so we validate that &quot;count&quot; is greater than zero.</p>
+<p><img src="../tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>Don't forget to clear the domain field for &quot;x&quot; 
+ and &quot;y&quot; after cloning the &quot;count&quot; DATA element.</p>
 
 <p>&nbsp;</p>
 
@@ -1481,7 +1487,8 @@ Figure 3. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Final
 <p>&nbsp;</p>
 
 <p><img src="../tip.gif"
-		style="border: none;
+		style="border-style: none;
+				border: none;
 				width: 31px;
 				height: 12px;"
 		width=31
@@ -1526,7 +1533,8 @@ Figure 4. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Selecti
 <p>&nbsp;</p>
 
 <p><img src="../tip.gif"
-		style="border: none;
+		style="border-style: none;
+				border: none;
 				width: 31px;
 				height: 12px;"
 		width=31
