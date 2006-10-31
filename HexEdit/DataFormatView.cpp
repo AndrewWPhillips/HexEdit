@@ -5112,6 +5112,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 
         if (df_type >= CHexEditDoc::DF_CHAR &&
             df_type < CHexEditDoc::DF_LAST_INT &&
+			!domain_str.IsEmpty() &&
             domain_str[0] == '{')
         {
             //CGridCellCombo *pcell = (CGridCellCombo*) grid_.GetCell(pItem->iRow, pItem->iColumn);

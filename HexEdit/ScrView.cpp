@@ -1440,7 +1440,7 @@ void CScrView::OnSelUpdate(CPoint point)
     // Invalidate everything that's changed
     if (pp.y < last.y || (pp.y == last.y && pp.x < last.x))
         InvalidateRange(pp, last);
-    else
+    else if (pp.y != last.y || pp.x != last.x)
         InvalidateRange(last, pp);
 }
 

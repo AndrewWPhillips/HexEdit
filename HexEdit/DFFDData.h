@@ -139,6 +139,7 @@ protected:
     CMenu *plength_menu_;       // Menu displaying all available vars for "length"
     CMenu *pdomain_menu_;       // Menu displaying all available vars for "domain"
 
+    void            fix_formats();
     void            fix_controls();
     void            fix_big_endian();
     void            load_data();

@@ -349,6 +349,7 @@ void CDFFDData::OnSelchangeType()
     {
         type_ = ctl_type_.GetCurSel();
 		format_ = -1;
+		fix_formats();
         fix_controls();
 
         if (type_ == 0 || type_ == 5)
@@ -391,7 +392,7 @@ void CDFFDData::OnChange()
     modified_ = true;
 }
 
-void CDFFDData::fix_controls()
+void CDFFDData::fix_formats()
 {
     // Set up the valid formats for the type
     ctl_format_.EnableWindow(TRUE);
@@ -432,7 +433,10 @@ void CDFFDData::fix_controls()
         ctl_format_.AddString("MSDOS date/time");
         break;
     }
+}
 
+void CDFFDData::fix_controls()
+{
     ctl_format_.EnableWindow(type_ != 0);
     ctl_format_desc_.EnableWindow(type_ != 0);
     ctl_display_.EnableWindow(type_ != 0);
@@ -644,6 +648,7 @@ void CDFFDData::load_data()
     }
 
 	// Enable and update controls based on current settings
+	fix_formats();
     fix_controls();
 
     CString byte_order_str = pelt_->GetAttr("byte_order");
