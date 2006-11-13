@@ -178,15 +178,60 @@ long get_size(const CXmlTree::CElt &ee, int first /*=0*/, int last /*=999999999*
     long retval = 0;
     CXmlTree::CElt child;
     int ii;
+	int bits_used = 0;   // Bits used by all consec. bitfields so far (0 if previous elt not a bitfield)
+	int last_size;       // Storage unit size of previous element if a bitfield (1,2,4, or 8) or 0
+	bool last_down;      // Direction for previous bitfield (must be same dirn to be put in same stg unit)
 
     for (child = ee.GetChild(first), ii = first; !child.IsEmpty() && ii < last; ++child, ++ii)
     {
         CString elt_type = child.GetName();
+        if (elt_type != "data" && bits_used > 0)
+		{
+			// End of bit-field stg unit
+			ASSERT(last_size == 1 || last_size == 2 || last_size == 4 || last_size == 8);
+			retval += last_size;
+			bits_used = 0;
+		}
+
         if (elt_type == "data")
         {
-            // If the data type is character or date we have to work out its size
             CString ss = child.GetAttr("type");
-            if (ss.CompareNoCase("char") == 0)
+			int data_bits = 0;   // bits used in this element (or zero if not a bit-field)
+			int data_size;
+			bool data_down;
+
+			// Check for bit-field (type is "int")
+			if (ss.CompareNoCase("int") == 0)
+			{
+				data_bits = atoi(child.GetAttr("bits"));
+				if (data_bits > 0)
+				{
+					data_size = atoi(child.GetAttr("len"));
+					data_down = child.GetAttr("direction") == "down";
+				}
+			}
+
+			if (bits_used > 0 &&
+				(data_bits == 0 ||                     // not bit-field
+				 data_size != last_size ||             // diff size
+				 data_down != last_down ||             // diff dirn
+				 bits_used + data_bits > data_size*8)  // overflow stg unit
+			   )
+			{
+				// Previous elt was end of the bit-field stg unit
+				ASSERT(last_size == 1 || last_size == 2 || last_size == 4 || last_size == 8);
+				retval += last_size;
+				bits_used = 0;
+			}
+
+			if (data_bits > 0)
+			{
+				// Save info about current bit-field
+				bits_used += data_bits;
+				last_size = data_size;
+				last_down = data_down;
+			}
+            else if (ss.CompareNoCase("char") == 0)
             {
                 // Work out the size of a character (normally 1 unless Unicode)
                 ss = child.GetAttr("format");
@@ -228,8 +273,8 @@ long get_size(const CXmlTree::CElt &ee, int first /*=0*/, int last /*=999999999*
                 // Get the size of the child by checking
                 ss = child.GetAttr("len");
                 char *endp;
-                ss.TrimLeft();
-                ss.TrimRight();
+                //ss.TrimLeft();
+                //ss.TrimRight();
 
 				// Note: we could use expression parser to handle constant expression (eg, "10+1") but is it necessary?
                 long len = strtoul(ss, &endp, 10);
@@ -282,6 +327,34 @@ long get_size(const CXmlTree::CElt &ee, int first /*=0*/, int last /*=999999999*
         else
             return -1L;  // xxx handle constant size IF/FOR
     }
+
+	// Add last bit-field stg unit if there was one
+	if (bits_used > 0)
+	{
+		ASSERT(last_size == 1 || last_size == 2 || last_size == 4 || last_size == 8);
+
+		// Don't add stg unit if elt after the range (ie last) is part of the same unit as the previous elt
+		bool add_last = true;
+
+		if (last < ee.GetNumChildren())  // make sure we are not off the end
+	    {
+			ASSERT(!child.IsEmpty());
+			int data_bits;
+
+			// Check if last (elt one past the end) is part of the previous bit-field stg unit
+			if (child.GetName() == "data" &&                              // data field
+				child.GetAttr("type").CompareNoCase("int") == 0 &&        // integer type
+				(data_bits = atoi(child.GetAttr("bits"))) > 0 &&          // bitfield
+				atoi(child.GetAttr("len")) == last_size &&                // same size as previous one
+				(child.GetAttr("direction") == "down") == last_down &&    // same dirn as previous one
+				bits_used + data_bits <= last_size*8)
+			{
+				add_last = false;  // part way through a stg unit so don't add it to the size
+			}
+		}
+		if (add_last)
+			retval += last_size;
+	}
 
     return retval;
 }
