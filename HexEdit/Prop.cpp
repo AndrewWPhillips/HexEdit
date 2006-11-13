@@ -388,10 +388,9 @@ CPropSheet::CPropSheet(UINT iSelectPage /*=0*/, CHexEditView *pv /*=NULL*/)
     int hue, luminance, saturation;
     get_hls(::GetSysColor(COLOR_BTNFACE), hue, luminance, saturation);
 	ASSERT(hue != -1 || saturation == 0);  // grey if saturation == 0 (hue == -1)
-	if (luminance > 50)
-		luminance += (100 - luminance)/2;
-	else
-		luminance -= luminance/2;
+	// Make it lighter than normal button/dialog colour
+	luminance += (100 - luminance)/2;
+	if (luminance > 90) luminance = 90; // ... but not white
 	pBrush = new CBrush(get_rgb(hue, luminance, saturation));
 }
 
