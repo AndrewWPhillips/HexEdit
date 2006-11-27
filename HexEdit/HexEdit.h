@@ -63,13 +63,13 @@ typedef __int64 FILE_ADDRESS;
 #define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
 #define CHANGE_TRACKING 1   // Allow change tracking code
 #define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
-#define DRAW_BACKGROUND 1   // Draw image tiled in MDI background - .bmp still needed
+//#define DRAW_BACKGROUND 1   // Draw image tiled in MDI background - .bmp still needed
 #define SHOW_CODE_PAGE  1
 #define NEW_TIPS        1   // Use new (fading) tip control for view tips (selection length etc) - seems to work well
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
 // Note this still need: keyword search (RFL dialog), drop list of categories, no loss of info if return not pressed
 
-#define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
+//#define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
 // xxx Note: check if this is complete xxx
 
 #define DIALOG_BAR  1       // Put modeless dialogs into dockable/rollable dialog bars

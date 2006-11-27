@@ -13688,7 +13688,7 @@ void CHexEditView::OnUpdate64bitBinary(CCmdUI* pCmdUI)
     OnUpdate64bit(pCmdUI);
 }
 
-template<class T> void CHexEditView::DoChecksum(checksum_type op, LPCSTR desc)
+template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR desc)
 {
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 	T val = 0;
@@ -13696,7 +13696,7 @@ template<class T> void CHexEditView::DoChecksum(checksum_type op, LPCSTR desc)
 
     // Get current address or selection
     FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-    GetSelAddr(start_addr, end_addr);
+    pv->GetSelAddr(start_addr, end_addr);
 
     if (start_addr >= end_addr)
     {
@@ -13718,7 +13718,7 @@ template<class T> void CHexEditView::DoChecksum(checksum_type op, LPCSTR desc)
         theApp.mac_error_ = 10;
         return;
     }
-    ASSERT(start_addr < GetDocument()->length());
+    ASSERT(start_addr < pv->GetDocument()->length());
 
 	// Get a buffer - fairly large for efficiency
 	size_t len, buflen = size_t(min(4096, end_addr - start_addr));
@@ -13751,7 +13751,7 @@ template<class T> void CHexEditView::DoChecksum(checksum_type op, LPCSTR desc)
 	{
 		// Get the next buffer full from the document
 		len = size_t(min(buflen, end_addr - curr));
-	    VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+	    VERIFY(pv->GetDocument()->GetData(buf, len, curr) == len);
 
 		switch (op)
 		{
@@ -13832,32 +13832,32 @@ func_return:
 
 void CHexEditView::OnChecksum8()
 {
-	DoChecksum<unsigned char>(CHECKSUM_8, "8 bit Checksum");
+	DoChecksum<unsigned char>(this, CHECKSUM_8, "8 bit Checksum");
 }
 
 void CHexEditView::OnChecksum16()
 {
-	DoChecksum<unsigned short>(CHECKSUM_16, "16 bit Checksum");
+	DoChecksum<unsigned short>(this, CHECKSUM_16, "16 bit Checksum");
 }
 
 void CHexEditView::OnChecksum32()
 {
-	DoChecksum<unsigned long>(CHECKSUM_32, "32 bit Checksum");
+	DoChecksum<unsigned long>(this, CHECKSUM_32, "32 bit Checksum");
 }
 
 void CHexEditView::OnChecksum64()
 {
-	DoChecksum<unsigned __int64>(CHECKSUM_64, "64 bit Checksum");
+	DoChecksum<unsigned __int64>(this, CHECKSUM_64, "64 bit Checksum");
 }
 
 void CHexEditView::OnCrcCcitt() 
 {
-	DoChecksum<unsigned short>(CHECKSUM_CRC_CCITT, "CRC CCITT");
+	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT, "CRC CCITT");
 }
 
 void CHexEditView::OnCrc32()
 {
-	DoChecksum<DWORD>(CHECKSUM_CRC32, "CRC 32");
+	DoChecksum<DWORD>(this, CHECKSUM_CRC32, "CRC 32");
 }
 
 void CHexEditView::OnMd5()
