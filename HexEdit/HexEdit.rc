@@ -3165,6 +3165,8 @@ IDI_DATA                ICON                    "res\\data.ico"
 IDI_EVAL                ICON                    "res\\eval.ico"
 IDI_JUMP                ICON                    "res\\jump.ico"
 IDI_SWITCH              ICON                    "res\\switch.ico"
+IDI_ICON2               ICON                    "res\\icon2.ico"
+IDI_ICON3               ICON                    "res\\icon3.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

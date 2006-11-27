@@ -572,8 +572,8 @@ BOOL CHexEditApp::InitInstance()
         GetXMLFileList();
 
         // If more XML files have been put in the correct directory then turn on tree view
-        // 11 is the number of template (DFFD) files currently distributed
-        if (xml_file_name_.size() > 11 && tree_view_ == -1)
+        // 14 is the number of template (.XML) files currently distributed (ver 3.1)
+        if (xml_file_name_.size() > 14 && tree_view_ == -1)
         {
             tree_view_ = 1;
         }
@@ -3342,14 +3342,14 @@ BOOL CHexEditApp::backup(LPCTSTR filename, FILE_ADDRESS file_len) const
 			}
 
 			__int64 free_space = -1;
-		    ULARGE_INTEGER bytes_avail;
+		    ULARGE_INTEGER bytes_avail, dummy1, dummy2;
 			DWORD SectorsPerCluster;
 			DWORD BytesPerSector;
 			DWORD NumberOfFreeClusters;
 			DWORD TotalNumberOfClusters;
 
 			// Get free space on drive and make sure there is enough
-		    if (::GetDiskFreeSpaceEx(vol, &bytes_avail, NULL, NULL))
+		    if (::GetDiskFreeSpaceEx(vol, &bytes_avail, &dummy1, &dummy2))
 			{
 				free_space = bytes_avail.QuadPart;
 			}

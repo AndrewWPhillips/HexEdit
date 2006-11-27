@@ -301,6 +301,7 @@ DFFD
  - add switch to expressions and else for if
  - add inrange operator to expressions?
  - date constants and operations?
+ 
 Help
   - how do I
     - toggle a single bit [editing]
@@ -323,6 +324,20 @@ Help
     - modulus arithmetic, zero based indexing, asymetric bounds
   > read/write Intel and Motorola binary file formats [Jim Seton]
   > add extra colour selection (highlight, background, address, etc) [Roland Glenn McIntosh]
+  - tutorials
+    - customization
+      - toolbars
+        - new: fit, undo chnages, hex/dec addresses, highlighter, color scheme list, bookmarks, bm list, template sync, refresh
+        - tools on menu bar: hex and hex/char area display, search string
+      - tools: add new one to do something
+      - keyboard: add one, in keymap (help/keyboard) copy to clipboard (cat. all) + paste into notepad
+      - context menu: Add New Window (or Reload) to tabs menu
+      - mouse: double-click address are to swap hex/dec addresses
+      - visualizations
+      - colour scheme for .HEG files
+      - filters for .HEG files
+      - macro that runs when certain types of file are opened
+ 
  V3.2
   > attachment option in email dialog
   - incorporate Structured Storage Explorer

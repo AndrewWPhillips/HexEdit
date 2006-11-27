@@ -433,6 +433,7 @@ void CDFFDData::fix_formats()
         ctl_format_.AddString("MSDOS date/time");
         break;
     }
+    ctl_format_.EnableWindow(type_ != 0);
 }
 
 void CDFFDData::fix_controls()

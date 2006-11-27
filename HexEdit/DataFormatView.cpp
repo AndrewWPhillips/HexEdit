@@ -504,12 +504,14 @@ void CGridCtrl2::OnLButtonUp(UINT nFlags, CPoint point)
     if (m_MouseMode == MOUSE_SIZING_COL)
         col_resize = m_LeftClickDownCell.col;
 
-	// This is a bit of a kludge that seems to be needed for Windows 9X
-    CCellID cell = GetCellFromPt(point);
-    if (cell.row == 0 && cell.col == GetFixedColumnCount() &&
+	// This is a real kludge but seems nec. under 9X
+    CCellID cell = GetCellFromPt(point);    // Work out which cell was clicked
+    if (!theApp.is_nt_ &&
+		cell.row == 0 &&
+		cell.col == GetFixedColumnCount() &&
         m_MouseMode != MOUSE_OVER_COL_DIVIDE &&
         m_MouseMode != MOUSE_OVER_ROW_DIVIDE)
-    {
+	{
         m_MouseMode = MOUSE_PREPARE_EDIT;
 	}
 

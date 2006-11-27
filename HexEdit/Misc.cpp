@@ -1349,8 +1349,8 @@ LONGLONG DeviceSize(LPCTSTR filename) // xxx get rid of this - use SpecialList::
 #endif
 
 		// Get disk size
-		ULARGE_INTEGER total_bytes;
-		if (!::GetDiskFreeSpaceEx(vol, NULL, &total_bytes, NULL))  // xxx need to handle no medium present
+		ULARGE_INTEGER total_bytes, dummy1, dummy2;
+		if (!::GetDiskFreeSpaceEx(vol, &dummy1, &total_bytes, &dummy2))  // xxx need to handle no medium present
 		{
 			DWORD SectorsPerCluster;
 			DWORD SectorSize;
@@ -1383,8 +1383,8 @@ LONGLONG DeviceSize(LPCTSTR filename) // xxx get rid of this - use SpecialList::
 				ASSERT(_strnicmp(buf, "\\device\\cdrom", 13) == 0);
 				if (atoi(buf + 13) == atoi(filename + 9))
 				{
-					ULARGE_INTEGER total_bytes;
-					VERIFY(::GetDiskFreeSpaceEx(vol, NULL, &total_bytes, NULL)); // xxx what if no medium?
+					ULARGE_INTEGER total_bytes, dummy1, dummy2;
+					VERIFY(::GetDiskFreeSpaceEx(vol, &dummy1, &total_bytes, &dummy2)); // xxx what if no medium?
 					retval = total_bytes.QuadPart;
 				}
 			}
