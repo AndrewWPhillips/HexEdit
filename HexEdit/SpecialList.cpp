@@ -484,8 +484,9 @@ void CSpecialList::bg_update(int ii)
             m_size2[ii] = NumberOfFreeClusters;
             m_size3[ii] = TotalNumberOfClusters;
 
-		    ULARGE_INTEGER bytes_free, bytes_total;
-		    if (::GetDiskFreeSpaceEx(vol, NULL, &bytes_total, &bytes_free))
+		    ULARGE_INTEGER bytes_free, bytes_total, dummy;
+			// NOTE: NT 4 crashes if we pass NULL instead of &dummy
+			if (::GetDiskFreeSpaceEx(vol, &dummy, &bytes_total, &bytes_free))
 		    {
                 if (bytes_total.QuadPart > (ULONGLONG)m_total_size[ii])
                     m_total_size[ii] = bytes_total.QuadPart;

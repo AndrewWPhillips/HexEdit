@@ -1717,9 +1717,9 @@ BOOL CFileNC::Open( LPCTSTR filename, UINT open_flags )
 				// Get total bytes of the volume
 				char vol[4] = "?:\\";
 				vol[0] = 'A' + (char)volid;
-				ULARGE_INTEGER total_bytes;
+				ULARGE_INTEGER total_bytes, dummy1, dummy2;
 				total_bytes.QuadPart = 0;
-				if (::GetDiskFreeSpaceEx(vol, NULL, &total_bytes, NULL) &&      // may fail - err 5 (access denied)
+				if (::GetDiskFreeSpaceEx(vol, &dummy1, &total_bytes, &dummy2) &&      // may fail - err 5 (access denied)
 				    total_bytes.QuadPart > (ULONGLONG)m_Length)                 // m_Length is our minimum
 				{
 					m_Length = total_bytes.QuadPart;
@@ -1765,8 +1765,8 @@ BOOL CFileNC::Open( LPCTSTR filename, UINT open_flags )
 								&m_SectorSize,
 								&NumberOfFreeClusters,
 								&TotalNumberOfClusters));
-		ULARGE_INTEGER bytes_total;
-		if (::GetDiskFreeSpaceEx(vol, NULL, &bytes_total, NULL))
+		ULARGE_INTEGER bytes_total, dummy1, dummy2;
+		if (::GetDiskFreeSpaceEx(vol, &dummy1, &bytes_total, &dummy2))
 			m_Length = bytes_total.QuadPart;
 		else
 			m_Length = (LONGLONG)m_SectorSize * SectorsPerCluster * (LONGLONG)TotalNumberOfClusters;
@@ -1809,8 +1809,8 @@ BOOL CFileNC::Open( LPCTSTR filename, UINT open_flags )
 			return FALSE;
 		}
 
-		ULARGE_INTEGER bytes_total;
-		if (!::GetDiskFreeSpaceEx(vol, NULL, &bytes_total, NULL))
+		ULARGE_INTEGER bytes_total, dummy1, dummy2;
+		if (!::GetDiskFreeSpaceEx(vol, &dummy1, &bytes_total, &dummy2))
 			bytes_total.QuadPart = 0;               // Signal that it failed
 
 		// Volume accessed through NT using volume name

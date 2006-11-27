@@ -160,8 +160,8 @@ void COpenDiskDlg::Update(int ii)
 			strInfo += ss;
 
 		    // Disk space total and free
-		    ULARGE_INTEGER bytes_free, bytes_total;
-		    if (::GetDiskFreeSpaceEx(vol, NULL, &bytes_total, &bytes_free))
+		    ULARGE_INTEGER bytes_free, bytes_total, dummy;  // Need to pass dummy (not NULL as per doc) otherwise we crash under NT4
+		    if (::GetDiskFreeSpaceEx(vol, &dummy, &bytes_total, &bytes_free))
 		    {
 			    ss.Format(_T("Used space: %d%%\r\n"),
 				          int(((bytes_total.QuadPart - bytes_free.QuadPart)*100)/bytes_total.QuadPart));
