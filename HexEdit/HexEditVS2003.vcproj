@@ -917,6 +917,12 @@
 				RelativePath=".\Res\ico00002.ico">
 			</File>
 			<File
+				RelativePath=".\RES\icon2.ico">
+			</File>
+			<File
+				RelativePath=".\RES\icon3.ico">
+			</File>
+			<File
 				RelativePath=".\Res\idr_main.ico">
 			</File>
 			<File
@@ -1072,10 +1078,10 @@
 				RelativePath=".\TestData\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\TestData\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\TestData\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

@@ -43,12 +43,11 @@
 #define HIDC_BUG                        0x80e5043e    // IDD_EMAIL
 #define HIDC_CHANGE_TRACKING            0x810c0474    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_CHARSET                    0x810c04b0    // IDD_OPT_WINDISPLAY [English (U.S.)]
-#define HIDC_CHAR_ASCII                 0x80a2042e    // IDD_PROP_CHAR [English (U.S.)]
-#define HIDC_CHAR_BINARY                0x80a2042d    // IDD_PROP_CHAR [English (U.S.)]
-#define HIDC_CHAR_DEC                   0x80a2042b    // IDD_PROP_CHAR [English (U.S.)]
-#define HIDC_CHAR_EBCDIC                0x80a2042f    // IDD_PROP_CHAR [English (U.S.)]
-#define HIDC_CHAR_HEX                   0x80a2042a    // IDD_PROP_CHAR [English (U.S.)]
-#define HIDC_CHAR_OCTAL                 0x80a2042c    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_CHAR_ASCII                 0x8132042e    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_CHAR_BINARY                0x8132042d    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_CHAR_DEC                   0x8132042b    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_CHAR_HEX                   0x8132042a    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_CHAR_OCTAL                 0x8132042c    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_CLEAR                      0x80750411    // IDD_CALC
 #define HIDC_CLEAR_BOOKMARKS            0x811204a8    // IDD_CLEAR_HIST
 #define HIDC_CLEAR_ENTRY                0x80750410    // IDD_CALC
@@ -56,6 +55,7 @@
 #define HIDC_CLEAR_ON_EXIT              0x811204a9    // IDD_CLEAR_HIST
 #define HIDC_CLEAR_RECENT_FILE          0x811204a7    // IDD_CLEAR_HIST
 #define HIDC_CLEAR_SEARCH               0x811204a6    // IDD_CLEAR_HIST
+#define HIDC_CODE_PAGE                  0x813205ce    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_COLOUR_PICKER              0x80e604bc    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_COLS                       0x810c0443    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_COMPRESSION_LEVEL          0x812a05f0    // IDD_COMPRESS
@@ -306,7 +306,7 @@
 #define HIDC_MEM_SUBTRACT               0x80750419    // IDD_CALC
 #define HIDC_MOD                        0x80750425    // IDD_CALC
 #define HIDC_MODIFY                     0x810c04b7    // IDD_OPT_WINDISPLAY [English (U.S.)]
-#define HIDC_MULTIBYTE_HOLDER           0x813205cd    // IDD_PROP_CHAR1 [English (U.S.)]
+#define HIDC_MULTIBYTE_HOLDER           0x813205cd    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_MULTIPLY                   0x80750427    // IDD_CALC
 #define HIDC_NAME                       0x80e50436    // IDD_EMAIL
 #define HIDC_NAMES                      0x80e6044c    // IDD_OPT_COLOURS [English (U.S.)]
@@ -336,7 +336,7 @@
 #define HIDC_PASSWORD_MASK              0x808d03e8    // IDD_PASSWORD [English (U.S.)]
 #define HIDC_PASSWORD_MIN               0x808d03ed    // IDD_PASSWORD [English (U.S.)]
 #define HIDC_PASSWORD_REENTER           0x808d03ea    // IDD_PASSWORD [English (U.S.)]
-#define HIDC_PLACE_HOLDER               0x80a20431    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_PLACE_HOLDER               0x81320431    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_PLAYS                      0x80a60465    // IDD_MULTIPLAY
 #define HIDC_PLAY_NAME                  0x80a604c0    // IDD_MULTIPLAY
 #define HIDC_PLAY_OPTIONS               0x80a60466    // IDD_MULTIPLAY
@@ -384,7 +384,7 @@
 #define HIDC_SCHEMES                    0x80e60450    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_SCHEME_LIST                0x810704be    // IDD_NEW_SCHEME
 #define HIDC_SCHEME_NAME                0x810704bd    // IDD_NEW_SCHEME
-#define HIDC_SELECT_FONT                0x80a2058a    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_SELECT_FONT                0x8132058a    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_SEL_AT                     0x80750408    // IDD_CALC
 #define HIDC_SEL_AT_STORE               0x80750420    // IDD_CALC
 #define HIDC_SEL_GET                    0x80750407    // IDD_CALC
