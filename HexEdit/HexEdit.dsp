@@ -362,6 +362,23 @@ SOURCE=.\MainFrm.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\md5.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\Misc.cpp
 # End Source File
 # Begin Source File
@@ -654,6 +671,10 @@ SOURCE=.\IntelHex.h
 # Begin Source File
 
 SOURCE=.\MainFrm.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\md5.h
 # End Source File
 # Begin Source File
 
@@ -1254,6 +1275,14 @@ SOURCE=.\Res\ico00001.ico
 # Begin Source File
 
 SOURCE=.\Res\ico00002.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\RES\icon2.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\RES\icon3.ico
 # End Source File
 # Begin Source File
 
@@ -1926,6 +1955,254 @@ SOURCE=.\Install\Support.url
 SOURCE=.\Install\wixui\WixUI_HexEdit.wxs
 # End Source File
 # End Group
+# Begin Group "zlib"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\zlib\adler32.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\compress.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\crc32.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\crc32.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\deflate.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\deflate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\gzio.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\infback.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\inffast.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\inffast.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\inffixed.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\inflate.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\inflate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\inftrees.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\inftrees.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\trees.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\trees.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\uncompr.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\zconf.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\zlib.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\zutil.c
+
+!IF  "$(CFG)" == "HexEdit - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 TrueTime"
+
+!ELSEIF  "$(CFG)" == "HexEdit - Win32 FinalCheck"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\zutil.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\manifest.xml
@@ -1936,6 +2213,39 @@ SOURCE=.\TestData\ToDo.txt
 # End Source File
 # End Target
 # End Project
+# Section HexEdit : {B1438181-DE69-11D3-92C0-8D211DACDB6A}
+# 	2:10:CalcEdit.h:CalcEdit.h
+# 	2:12:CalcEdit.cpp:CalcEdit.cpp
+# 	2:19:Application Include:HexEdit.h
+# 	2:16:CLASS: CCalcEdit:CCalcEdit
+# End Section
+# Section HexEdit : {A42C171C-E7FF-4C37-8EE2-A6E729E5EC34}
+# 	2:15:CLASS: CHexPage:CHexPage
+# 	2:11:FindDlg.cpp:FindDlg.cpp
+# 	2:9:FindDlg.h:FindDlg.h
+# 	2:18:CLASS: CNumberPage:CNumberPage
+# 	2:17:CLASS: CFindSheet:CFindSheet
+# 	2:10:ENUM: enum:enum
+# 	2:18:CLASS: CSimplePage:CSimplePage
+# 	2:19:Application Include:hexedit.h
+# 	2:16:CLASS: CTextPage:CTextPage
+# 	2:19:CLASS: CReplacePage:CReplacePage
+# End Section
+# Section HexEdit : {A7E81C4C-FC7F-43DA-8BB4-A315C7FBD7A7}
+# 	1:13:IDD_FIND_TEXT:146
+# 	2:16:Resource Include:resource.h
+# 	2:13:IDD_FIND_TEXT:IDD_FIND_TEXT
+# 	2:15:CLASS: CHexPage:CHexPage
+# 	2:11:FindDlg.cpp:FindDlg3.cpp
+# 	2:9:FindDlg.h:FindDlg3.h
+# 	2:18:CLASS: CNumberPage:CNumberPage
+# 	2:17:CLASS: CFindSheet:CFindSheet
+# 	2:10:ENUM: enum:enum
+# 	2:18:CLASS: CSimplePage:CSimplePage
+# 	2:19:Application Include:hexedit.h
+# 	2:16:CLASS: CTextPage:CTextPage
+# 	2:19:CLASS: CReplacePage:CReplacePage
+# End Section
 # Section HexEdit : {BFCB90BB-84B1-473B-BA6D-006EEBE44953}
 # 	1:13:IDD_FIND_TEXT:251
 # 	2:16:Resource Include:resource.h
@@ -1976,21 +2286,6 @@ SOURCE=.\TestData\ToDo.txt
 # 	2:19:Application Include:HexEdit.h
 # 	2:8:IDD_CALC:IDD_CALC
 # End Section
-# Section HexEdit : {E3996A26-5496-46F6-85F5-3C345557410B}
-# 	1:15:IDD_FIND_NUMBER:148
-# 	2:16:Resource Include:resource.h
-# 	2:15:CLASS: CHexPage:CHexPage
-# 	2:11:FindDlg.cpp:FindDlg5.cpp
-# 	2:9:FindDlg.h:FindDlg5.h
-# 	2:15:IDD_FIND_NUMBER:IDD_FIND_NUMBER
-# 	2:18:CLASS: CNumberPage:CNumberPage
-# 	2:17:CLASS: CFindSheet:CFindSheet
-# 	2:10:ENUM: enum:enum
-# 	2:18:CLASS: CSimplePage:CSimplePage
-# 	2:19:Application Include:hexedit.h
-# 	2:16:CLASS: CTextPage:CTextPage
-# 	2:19:CLASS: CReplacePage:CReplacePage
-# End Section
 # Section HexEdit : {CCECD0F9-A594-476F-98BA-7885AECB0FB2}
 # 	1:15:IDD_FIND_SIMPLE:144
 # 	2:16:Resource Include:resource.h
@@ -2006,12 +2301,12 @@ SOURCE=.\TestData\ToDo.txt
 # 	2:16:CLASS: CTextPage:CTextPage
 # 	2:19:CLASS: CReplacePage:CReplacePage
 # End Section
-# Section HexEdit : {70193149-2B86-4114-ADD5-F9A3737EC982}
-# 	1:15:IDD_FIND_NUMBER:152
+# Section HexEdit : {E3996A26-5496-46F6-85F5-3C345557410B}
+# 	1:15:IDD_FIND_NUMBER:148
 # 	2:16:Resource Include:resource.h
 # 	2:15:CLASS: CHexPage:CHexPage
-# 	2:11:FindDlg.cpp:FindDlg2.cpp
-# 	2:9:FindDlg.h:FindDlg2.h
+# 	2:11:FindDlg.cpp:FindDlg5.cpp
+# 	2:9:FindDlg.h:FindDlg5.h
 # 	2:15:IDD_FIND_NUMBER:IDD_FIND_NUMBER
 # 	2:18:CLASS: CNumberPage:CNumberPage
 # 	2:17:CLASS: CFindSheet:CFindSheet
@@ -2021,15 +2316,15 @@ SOURCE=.\TestData\ToDo.txt
 # 	2:16:CLASS: CTextPage:CTextPage
 # 	2:19:CLASS: CReplacePage:CReplacePage
 # End Section
-# Section HexEdit : {26CA68D5-21C8-41AB-8D51-D07163AB7EFE}
-# 	1:12:IDD_FIND_HEX:150
+# Section HexEdit : {70193149-2B86-4114-ADD5-F9A3737EC982}
+# 	1:15:IDD_FIND_NUMBER:152
 # 	2:16:Resource Include:resource.h
 # 	2:15:CLASS: CHexPage:CHexPage
-# 	2:11:FindDlg.cpp:FindDlg1.cpp
-# 	2:9:FindDlg.h:FindDlg1.h
+# 	2:11:FindDlg.cpp:FindDlg2.cpp
+# 	2:9:FindDlg.h:FindDlg2.h
+# 	2:15:IDD_FIND_NUMBER:IDD_FIND_NUMBER
 # 	2:18:CLASS: CNumberPage:CNumberPage
 # 	2:17:CLASS: CFindSheet:CFindSheet
-# 	2:12:IDD_FIND_HEX:IDD_FIND_HEX
 # 	2:10:ENUM: enum:enum
 # 	2:18:CLASS: CSimplePage:CSimplePage
 # 	2:19:Application Include:hexedit.h
@@ -2051,6 +2346,21 @@ SOURCE=.\TestData\ToDo.txt
 # 	2:19:CLASS: CReplacePage:CReplacePage
 # 	2:16:IDD_FIND_REPLACE:IDD_FIND_REPLACE
 # End Section
+# Section HexEdit : {26CA68D5-21C8-41AB-8D51-D07163AB7EFE}
+# 	1:12:IDD_FIND_HEX:150
+# 	2:16:Resource Include:resource.h
+# 	2:15:CLASS: CHexPage:CHexPage
+# 	2:11:FindDlg.cpp:FindDlg1.cpp
+# 	2:9:FindDlg.h:FindDlg1.h
+# 	2:18:CLASS: CNumberPage:CNumberPage
+# 	2:17:CLASS: CFindSheet:CFindSheet
+# 	2:12:IDD_FIND_HEX:IDD_FIND_HEX
+# 	2:10:ENUM: enum:enum
+# 	2:18:CLASS: CSimplePage:CSimplePage
+# 	2:19:Application Include:hexedit.h
+# 	2:16:CLASS: CTextPage:CTextPage
+# 	2:19:CLASS: CReplacePage:CReplacePage
+# End Section
 # Section HexEdit : {9617F36F-6119-46DE-BCF3-E1AE8B0077A1}
 # 	1:15:IDD_FIND_SIMPLE:250
 # 	2:16:Resource Include:resource.h
@@ -2063,6 +2373,18 @@ SOURCE=.\TestData\ToDo.txt
 # 	2:18:CLASS: CSimplePage:CSimplePage
 # 	2:19:Application Include:hexedit.h
 # 	2:15:IDD_FIND_SIMPLE:IDD_FIND_SIMPLE
+# 	2:16:CLASS: CTextPage:CTextPage
+# 	2:19:CLASS: CReplacePage:CReplacePage
+# End Section
+# Section HexEdit : {A837962D-5482-44EE-8002-B882ACF051B4}
+# 	2:15:CLASS: CHexPage:CHexPage
+# 	2:11:FindDlg.cpp:FindDlg.cpp
+# 	2:9:FindDlg.h:FindDlg.h
+# 	2:18:CLASS: CNumberPage:CNumberPage
+# 	2:17:CLASS: CFindSheet:CFindSheet
+# 	2:10:ENUM: enum:enum
+# 	2:18:CLASS: CSimplePage:CSimplePage
+# 	2:19:Application Include:hexedit.h
 # 	2:16:CLASS: CTextPage:CTextPage
 # 	2:19:CLASS: CReplacePage:CReplacePage
 # End Section
@@ -2080,18 +2402,6 @@ SOURCE=.\TestData\ToDo.txt
 # 	2:16:CLASS: CTextPage:CTextPage
 # 	2:19:CLASS: CReplacePage:CReplacePage
 # 	2:16:IDD_FIND_REPLACE:IDD_FIND_REPLACE
-# End Section
-# Section HexEdit : {A837962D-5482-44EE-8002-B882ACF051B4}
-# 	2:15:CLASS: CHexPage:CHexPage
-# 	2:11:FindDlg.cpp:FindDlg.cpp
-# 	2:9:FindDlg.h:FindDlg.h
-# 	2:18:CLASS: CNumberPage:CNumberPage
-# 	2:17:CLASS: CFindSheet:CFindSheet
-# 	2:10:ENUM: enum:enum
-# 	2:18:CLASS: CSimplePage:CSimplePage
-# 	2:19:Application Include:hexedit.h
-# 	2:16:CLASS: CTextPage:CTextPage
-# 	2:19:CLASS: CReplacePage:CReplacePage
 # End Section
 # Section HexEdit : {20586576-6F43-746E-726F-6C20636F6E74}
 # 	1:17:CG_IDS_DIDYOUKNOW:113
@@ -2115,37 +2425,4 @@ SOURCE=.\TestData\ToDo.txt
 # 	2:13:IDB_LIGHTBULB:IDB_LIGHTBULB
 # 	2:18:CG_IDS_FILE_ABSENT:CG_IDS_FILE_ABSENT
 # 	2:10:TipDlg.cpp:TipDlg.cpp
-# End Section
-# Section HexEdit : {B1438181-DE69-11D3-92C0-8D211DACDB6A}
-# 	2:10:CalcEdit.h:CalcEdit.h
-# 	2:12:CalcEdit.cpp:CalcEdit.cpp
-# 	2:19:Application Include:HexEdit.h
-# 	2:16:CLASS: CCalcEdit:CCalcEdit
-# End Section
-# Section HexEdit : {A7E81C4C-FC7F-43DA-8BB4-A315C7FBD7A7}
-# 	1:13:IDD_FIND_TEXT:146
-# 	2:16:Resource Include:resource.h
-# 	2:13:IDD_FIND_TEXT:IDD_FIND_TEXT
-# 	2:15:CLASS: CHexPage:CHexPage
-# 	2:11:FindDlg.cpp:FindDlg3.cpp
-# 	2:9:FindDlg.h:FindDlg3.h
-# 	2:18:CLASS: CNumberPage:CNumberPage
-# 	2:17:CLASS: CFindSheet:CFindSheet
-# 	2:10:ENUM: enum:enum
-# 	2:18:CLASS: CSimplePage:CSimplePage
-# 	2:19:Application Include:hexedit.h
-# 	2:16:CLASS: CTextPage:CTextPage
-# 	2:19:CLASS: CReplacePage:CReplacePage
-# End Section
-# Section HexEdit : {A42C171C-E7FF-4C37-8EE2-A6E729E5EC34}
-# 	2:15:CLASS: CHexPage:CHexPage
-# 	2:11:FindDlg.cpp:FindDlg.cpp
-# 	2:9:FindDlg.h:FindDlg.h
-# 	2:18:CLASS: CNumberPage:CNumberPage
-# 	2:17:CLASS: CFindSheet:CFindSheet
-# 	2:10:ENUM: enum:enum
-# 	2:18:CLASS: CSimplePage:CSimplePage
-# 	2:19:Application Include:hexedit.h
-# 	2:16:CLASS: CTextPage:CTextPage
-# 	2:19:CLASS: CReplacePage:CReplacePage
 # End Section

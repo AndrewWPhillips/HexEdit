@@ -3,55 +3,7 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "BCGControlBar"=..\..\..\..\BCG590\BCGControlBar\BCGControlBar.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "BCGExplorer"=..\..\..\..\Bcg590\Samples\BCGExplorer\BCGExplorer.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "DCReg"=.\DCReg\DCReg.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
 Project: "HexEdit"=.\HexEdit.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "Register"=.\Register\Register.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
