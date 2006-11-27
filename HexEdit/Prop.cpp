@@ -1149,9 +1149,9 @@ CPropCharPage::CPropCharPage() : CPropUpdatePage(CPropCharPage::IDD)
         char_dec_ = _T("");
         //}}AFX_DATA_INIT
 		active_code_page_ = ::GetACP();
-		CPINFOEX cpie;
-		GetCPInfoEx(active_code_page_, 0, &cpie);
-		is_dbcs_ = cpie.MaxCharSize == 2;
+		CPINFO cpi;
+		GetCPInfo(active_code_page_, &cpi);
+		is_dbcs_ = cpi.MaxCharSize == 2;
 
 #ifdef SHOW_CODE_PAGE
 		code_page_ = 0;
@@ -1207,12 +1207,17 @@ static const int MAX_BYTES = 8;                  // Max bytes to get from files 
 static vector<int> page_number;                  // The code page number for all installed code pages
 static vector<CString> page_name;                // Corresponding name of the code page
 static vector<int> page_max_chars;               // Length of longest character of the code page (in bytes).
+
+// We need to get a ptr to GetCPInfoEx since it is not present on Windows 95 and NT4
+typedef BOOL (__stdcall *PFGetCPInfoEx)(UINT, DWORD, LPCPINFOEXA);
+PFGetCPInfoEx pGetCPInfoEx;
+
 static BOOL CALLBACK CodePageCallback(LPTSTR ss)
 {
 	// Get info about this page
 	UINT cp = atoi(ss);
 	CPINFOEX cpie;
-	GetCPInfoEx(cp, 0, &cpie);
+	(*pGetCPInfoEx)(cp, 0, &cpie);
 
 	// Save what we need
 	page_number.push_back(cpie.CodePage);
@@ -1516,7 +1521,45 @@ BOOL CPropCharPage::OnInitDialog()
 #ifdef SHOW_CODE_PAGE
 	ASSERT(active_code_page_ == ::GetACP());   // Just make sure we got the system active code page OK
 	if (page_name.empty())
-		::EnumSystemCodePages(&CodePageCallback, CP_INSTALLED);
+	{
+	    HINSTANCE hh;
+		if ((hh = ::LoadLibrary("KERNEL32.DLL")) != HINSTANCE(0) &&
+			(pGetCPInfoEx = (PFGetCPInfoEx)::GetProcAddress(hh, "GetCPInfoExA")) != 0)
+		{
+			::EnumSystemCodePages(&CodePageCallback, CP_INSTALLED);
+		}
+		else
+		{
+			// Just use the predefined code pages (this should only happen for Win 95 & NT4)
+			CPINFO cpi;
+
+			if (GetCPInfo(CP_ACP, &cpi))
+			{
+				page_number.push_back(CP_ACP);
+				page_name.push_back(CString("ANSI Code Page"));
+				page_max_chars.push_back(cpi.MaxCharSize);
+				ASSERT(cpi.MaxCharSize <= MAX_BYTES);
+			}
+
+			if (theApp.is_nt_ && GetCPInfo(CP_MACCP, &cpi))  // Mac CP only supported on NT
+			{
+				page_number.push_back(CP_MACCP);
+				page_name.push_back(CString("Macintosh Code Page"));
+				page_max_chars.push_back(cpi.MaxCharSize);
+				ASSERT(cpi.MaxCharSize <= MAX_BYTES);
+			}
+
+			if (GetCPInfo(CP_OEMCP, &cpi))
+			{
+				page_number.push_back(CP_OEMCP);
+				page_name.push_back(CString("OEM Code Page"));
+				page_max_chars.push_back(cpi.MaxCharSize);
+				ASSERT(cpi.MaxCharSize <= MAX_BYTES);
+			}
+		}
+		ASSERT(!page_name.empty());
+		if (hh != HINSTANCE(0)) VERIFY(::FreeLibrary(hh));
+	}
 	int default_page_number = theApp.GetProfileInt("Property-Settings", "CodePage", active_code_page_);
 	for (int ii = 0; ii < page_number.size(); ++ii)
 		if (page_number[ii] == default_page_number)
@@ -1570,7 +1613,7 @@ BOOL CPropCharPage::OnInitDialog()
 		::SendMessageW(hw, WM_SETFONT, WPARAM(ufont_), 0L);
 
 #ifdef SHOW_CODE_PAGE
-		hw = CreateUnicodeControl(IDC_PLACE_HOLDER2, IDC_CHAR_MULTIBYTE);
+		hw = CreateUnicodeControl(IDC_MULTIBYTE_HOLDER, IDC_CHAR_MULTIBYTE);
 		::SendMessageW(hw, WM_SETFONT, WPARAM(ufont_), 0L);
 
 		// Fill in the code page control
@@ -1765,10 +1808,10 @@ static DWORD id_pairs2[] = {
     IDC_PLACE_HOLDER, HIDC_PLACE_HOLDER,
     IDC_SELECT_FONT, HIDC_SELECT_FONT,
 #ifdef SHOW_CODE_PAGE
-//    IDC_MULTIBYTE_DESC, HIDC_PLACE_HOLDER2,
-//    IDC_CHAR_MULTIBYTE, HIDC_PLACE_HOLDER2,
-//    IDC_PLACE_HOLDER2, HIDC_PLACE_HOLDER2,
-//    IDC_CODE_PAGE, HIDC_CODE_PAGE,
+    IDC_MULTIBYTE_DESC, HIDC_MULTIBYTE_HOLDER,
+    IDC_CHAR_MULTIBYTE, HIDC_MULTIBYTE_HOLDER,
+    IDC_MULTIBYTE_HOLDER, HIDC_MULTIBYTE_HOLDER,
+    IDC_CODE_PAGE, HIDC_CODE_PAGE,
 #else
 	IDC_CHAR_EBCDIC, HIDC_CHAR_EBCDIC,
 #endif

@@ -85,7 +85,6 @@
 #define IDB_ADDR_TOGGLEX                161
 #define IDR_NOT_USED                    161
 #define IDB_ADDR_TOGGLED                162
-#define IDD_PROP_CHAR                   162
 #define IDB_CHAR_TOGGLEU                163
 #define IDD_PROP_DECIMAL                163
 #define IDB_CHAR_TOGGLEX                164
@@ -277,6 +276,7 @@
 #define IDB_VIEW                        306
 #define ID_INTEGER_ABS                  306
 #define IDD_PROP_CHAR1                  306
+#define IDD_PROP_CHAR                   306
 #define IDB_BACK1                       307
 #define ID_INTEGER_MIN                  307
 #define IDD_DFFD_SWITCH                 307
@@ -346,6 +346,8 @@
 #define ID_BOOLEAN_TRUE                 349
 #define ID_STRING_LTRIM                 350
 #define ID_STRING_RTRIM                 351
+#define IDI_ICON2                       353
+#define IDI_ICON3                       354
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -965,6 +967,7 @@
 #define IDC_MULTIBYTE_DESC              1484
 #define IDC_MULTIBYTE_HOLDER            1485
 #define IDC_CODE_PAGE                   1486
+#define IDC_CHAR_MULTIBYTE              1487
 #define IDC_DFFD_CASES                  1490
 #define IDC_DFFD_SWITCH_EXPR            1491
 #define IDC_DFFD_CASE_RANGE             1492
@@ -1349,7 +1352,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        353
+#define _APS_NEXT_RESOURCE_VALUE        355
 #define _APS_NEXT_COMMAND_VALUE         38003
 #define _APS_NEXT_CONTROL_VALUE         1526
 #define _APS_NEXT_SYMED_VALUE           252
