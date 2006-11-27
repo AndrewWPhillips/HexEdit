@@ -97,8 +97,7 @@ CString CSystemSound::Get(LPCTSTR name, LPCTSTR app /*=NULL*/, LPCTSTR key_name 
 		retval = buf;
 		::RegCloseKey(key);
 	}
-	else
-		ASSERT(0);
+	// else we just return an empty string if there is no assoc. sound
 
 	return retval;
 }
@@ -134,7 +133,9 @@ void CSystemSound::Set(LPCTSTR name, LPCTSTR value /*=NULL*/, LPCTSTR app /*=NUL
 void CSystemSound::Play(LPCTSTR name, LPCTSTR app /*=NULL*/, LPCTSTR key_name /*=NULL*/)
 {
 	ASSERT(name != NULL);
-	VERIFY(::PlaySound(Get(name, app, key_name), NULL, SND_FILENAME | SND_ASYNC));
+	CString fname = Get(name, app, key_name);
+	if (!fname.IsEmpty())
+		VERIFY(::PlaySound(fname, NULL, SND_FILENAME | SND_ASYNC));
 }
 
 // Make a key name from a an app name, a sound name and a key name (usually ".current")
