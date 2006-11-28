@@ -1,6 +1,7 @@
 // tipwnd.h
 #pragma once
 
+#include <vector>
 
 // CTipWnd
 
@@ -21,12 +22,24 @@ public:
 
     void Move(CPoint pt, bool centre = true);
 
-    void SetTextCol(DWORD col) { m_text_colour = col; }
-    void SetBgCol(DWORD col)   { m_bg_colour = col; }
+    void SetTextCol(COLORREF col) { m_text_colour = col; }
+    void SetBgCol(COLORREF col)   { m_bg_colour = col; }
 	void SetAlpha(int alpha);
+	void SetStockFont(int idx) { m_stock_font = idx; }
 
 	bool FadingIn()  { return m_in; }
 	bool FadingOut() { return m_out; }
+
+	void Clear();
+#if _MSC_VER >= 1300
+	void AddString(LPCTSTR ss, COLORREF col = -1, CPoint * ppt = NULL, UINT fmt = 0)
+	    { AddString(CStringW(ss), col, ppt, fmt); }
+	void AddString(LPCWSTR ss, COLORREF col = -1, CPoint * ppt = NULL, UINT fmt = 0);
+#else
+	void AddString(LPCTSTR ss, COLORREF col = -1, CPoint * ppt = NULL, UINT fmt = 0);
+#endif
+	size_t Count() { return str_.size(); }
+	CRect GetRect(size_t idx) { ASSERT(idx<rct_.size()); return rct_[idx]; }
 
 protected:
 	afx_msg void OnPaint();
@@ -41,9 +54,22 @@ private:
 	UINT  m_fmt;                // Format flag passed to DrawText
 	CSize m_margins;            // Default margins around the text
 
-    DWORD m_bg_colour;          // Colour of background
-	DWORD m_text_colour;        // Colour of text
+    COLORREF m_bg_colour;          // Colour of background
+	COLORREF m_text_colour;        // Colour of text
+	int m_stock_font;
 	bool  m_visible;            // Is window visible or about to be?
+
+#if _MSC_VER >= 1300
+	typedef CStringW StringType;
+#else
+	typedef CString StringType;
+#endif
+	std::vector<StringType> str_;
+	std::vector<COLORREF> col_;
+	std::vector<UINT> fmt_;
+	std::vector<CRect> rct_;
+
+	CRect rct_all_;
 
     void track_mouse(unsigned long); // Turns on receipt of mouse hover/leave messages
 	static int m_2k;            // Are we using 2K or later (XP etc)?

@@ -35,6 +35,7 @@ CTipWnd::CTipWnd(UINT fmt /* = DT_NOCLIP | DT_NOPREFIX | DT_EXPANDTABS */)
 	m_margins = CSize(2, 2);
     m_bg_colour = ::GetSysColor(COLOR_INFOBK);
     m_text_colour = ::GetSysColor(COLOR_INFOTEXT);
+	m_stock_font = ANSI_VAR_FONT;
 	m_alpha = 255;
 
 	m_in = m_out = false;
@@ -185,21 +186,81 @@ void CTipWnd::track_mouse(unsigned long flag)
     VERIFY(::_TrackMouseEvent(&tme));
 }
 
+
+void CTipWnd::Clear()
+{
+	rct_all_ = CRect(0, 0, 0, 0);  // "empty" rect
+	str_.clear();
+	col_.clear();
+	fmt_.clear();
+	rct_.clear();
+}
+
+#if _MSC_VER >= 1300
+void CTipWnd::AddString(LPCWSTR ss, COLORREF col /*= -1*/, CPoint * ppt /*= NULL*/, UINT fmt /*= 0*/)
+#else
+void CTipWnd::AddString(LPCTSTR ss, COLORREF col /*= -1*/, CPoint * ppt /*= NULL*/, UINT fmt /*= 0*/)
+#endif
+{
+	ASSERT(col_.size() == str_.size());
+	ASSERT(fmt_.size() == str_.size());
+	ASSERT(rct_.size() == str_.size());
+
+	str_.push_back(StringType(ss));
+	col_.push_back(col == -1 ? m_text_colour : col);
+	fmt_.push_back(fmt == 0 ? m_fmt : fmt);
+
+	CRect rct(0,0,0,0);
+
+	// Work out how big the text is
+	CClientDC dc(this);
+    CFont *pOldFont = (CFont*)dc.SelectStockObject(m_stock_font);
+    ASSERT(pOldFont != NULL);
+#if _MSC_VER >= 1300
+	::DrawTextW(dc.m_hDC, (LPCWSTR)str_.back(), str_.back().GetLength(), &rct, DT_CALCRECT | fmt_.back());
+#else
+	dc.DrawText(str_.back(), &rct, DT_CALCRECT | fmt_.back());
+#endif
+	dc.SelectObject(pOldFont);
+
+	// Work out where to put the text
+	if (ppt != NULL)
+		rct.MoveToXY(*ppt);               // move to the specified posn
+	else if (!rct_.empty())
+		rct.MoveToY(rct_all_.Height());   // put underneath the last one
+	rct_.push_back(rct);
+
+	::UnionRect(&rct, &rct_all_, &rct_.back());
+	rct_all_ = rct;
+
+	// Resize the window to accommodate the new string
+	rct.InflateRect(m_margins+CSize(1,1));
+	SetWindowPos(NULL, 0, 0, rct.Width(), rct.Height(), SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+	Invalidate();
+
+	ASSERT(col_.size() == str_.size());
+	ASSERT(fmt_.size() == str_.size());
+	ASSERT(rct_.size() == str_.size());
+}
+
 // CTipWnd message handlers
 
 LRESULT CTipWnd::OnSetText(WPARAM, LPARAM lp)
 {
-	CClientDC dc(this);
-	CRect rct;
+	// Just display the current window string in the default colour
+	Clear();
+	AddString(StringType((LPCTSTR)lp), m_text_colour, NULL, m_fmt);
+	//CClientDC dc(this);
+	//CRect rct;
 
-    CFont *pOldFont = (CFont*)dc.SelectStockObject(SYSTEM_FONT);
-    ASSERT(pOldFont != NULL);
-	dc.DrawText((LPCTSTR)lp, &rct, DT_CALCRECT | m_fmt);
-	dc.SelectObject(pOldFont);
+    //CFont *pOldFont = (CFont*)dc.SelectStockObject(m_stock_font);
+    //ASSERT(pOldFont != NULL);
+	//dc.DrawText((LPCTSTR)lp, &rct, DT_CALCRECT | m_fmt);
+	//dc.SelectObject(pOldFont);
 
-	rct.InflateRect(m_margins+CSize(1,1));
-	SetWindowPos(NULL, 0, 0, rct.Width(), rct.Height(), SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
-	Invalidate();
+	//rct.InflateRect(m_margins+CSize(1,1));
+	//SetWindowPos(NULL, 0, 0, rct.Width(), rct.Height(), SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+	//Invalidate();
 
 	return Default();
 }
@@ -213,19 +274,29 @@ void CTipWnd::OnPaint()
 	GetClientRect(&rct);
 
 	// Get the text to draw
-	CString ss;
-	GetWindowText(ss);
+	//CString ss;
+	//GetWindowText(ss);
 
 	// Fill background and set text colour
     dc.FillSolidRect(&rct, m_bg_colour);
 	dc.SetBkMode(TRANSPARENT);
-    dc.SetTextColor(m_text_colour);
+    //dc.SetTextColor(m_text_colour);
 
 	// Set font and draw the text
-    CFont *pOldFont = (CFont*)dc.SelectStockObject(SYSTEM_FONT);
+    CFont *pOldFont = (CFont*)dc.SelectStockObject(m_stock_font);
     ASSERT(pOldFont != NULL);
-	rct.DeflateRect(m_margins);
-	dc.DrawText(ss, &rct, m_fmt);
+	//rct.DeflateRect(m_margins);
+	for (int ii = 0; ii < str_.size(); ++ii)
+	{
+		dc.SetTextColor(col_[ii]);
+		rct = rct_[ii];
+		rct.OffsetRect(m_margins.cx, m_margins.cy);
+#if _MSC_VER >= 1300
+		::DrawTextW(dc.m_hDC, (LPCWSTR)str_[ii], str_[ii].GetLength(), &rct, fmt_[ii]);
+#else
+		dc.DrawText(str_[ii], &rct, fmt_[ii]);
+#endif
+	}
 	dc.SelectObject(pOldFont);
 }
 
