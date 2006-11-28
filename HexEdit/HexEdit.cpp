@@ -2132,33 +2132,43 @@ void CHexEditApp::LoadOptions()
 	//   1. name       - name shown to user - if preceded by '>' then this line is disabled (not shown)
 	//   2. expression - evaluated expression involving special symbols such as "address", "byte", etc
 	//   3. format     - how the result of the expression is display
-	//   4. unused     - for future use (possibly colour an other options)
+	//   4. unused     - for future use (possibly colour and other options)
+	// Symbols: address, sector, offset, byte, sbyte, word, uword, dword, udword, qword, uqword,
+	//          ieee32, ieee64, ibm32, ibm64, time_t, time_t_80, time_t_1899, time_t_mins, time64_t
     CString ss = GetProfileString("Options", "TipInfoUser",
                     _T(
-                        ">Hex Address|address|hex||"
-						">Dec Address|address|dec||"
-                        ">Hex Sector|sector|hex||"
-                        ">Sector|sector|dec||"
-                        ">Hex Offset|offset|hex||"
-                        ">Offset|offset|dec||"
-                        ">ASCII char |byte|%c||"
-                        ">Byte|byte|dec||"
-						">Signed Byte|sbyte|dec||"
-						">Octal Byte|byte|oct||"
-						">Bin Byte|byte|bin||"
-                        ">Word|word|dec||"
-						">Bin Word|uword|bin||"
-                        ">Unsigned Word|uword|dec||"
-						">Double Word|dword|dec||"
-						">Unsigned DWord|udword|dec||"
-                        ">Quad Word|qword|dec||"
-						">32 bit IEEE float|ieee32|%.7g||"
-						">64 bit IEEE float|ieee64|%.15g||"
-						">32 bit IBM float|ibm32|%.7g||"
-						">64 bit IBM float|ibm64|%.16g||"
-// xxx TBD                       "String|string|%s||"
+					">Address|address|||"
+					">Hex Address|address|hex||"
+					">Dec Address|address|dec||"
+					">Hex Sector|sector|hex||"
+					">Sector|sector|dec||"
+					">Hex Offset|offset|hex||"
+					">Offset|offset|dec||"
+					">ASCII char|byte|%c||"
+					">Bits     |byte|bin||"
+					">Inverted|~byte&0xFF|bin||"
+					">Dec Byte|byte|dec||"
+					">Sign Byte|sbyte|dec||"
+					">Octal Byte|byte|oct||"
+					">Word|word|dec||"
+					">Word Bits|uword|bin||"
+					">Unsigned Word|uword|dec||"
+					">Double Word|dword|dec||"
+					">Unsigned DWord|udword|dec||"
+					">Quad Word|qword|dec||"
+					">32 bit IEEE float|ieee32|%.7g||"
+					">64 bit IEEE float|ieee64|%.15g||"
+					">32 bit IBM float|ibm32|%.7g||"
+					">64 bit IBM float|ibm64|%.16g||"
+					">Date/time|time_t|%c||"
+					">time_t MSC 5.1|time_t_80|%c||"
+					">time_t MSC 7|time_t_1899|%c||"
+					">time_t MINS|time_t_mins|%c||"
+// xxx TBD                       ">String|string|%s||"
                     "|"));
-    for (int ii = 0; ; ii += 4)
+
+
+	for (int ii = 0; ; ii += 4)
     {
         CString name, expr, format;
         AfxExtractSubString(name,   ss, ii,   '|');

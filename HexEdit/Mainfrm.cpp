@@ -203,8 +203,13 @@ CMainFrame::CMainFrame()
     preview_page_ = -1;
 //    timer_id_ = 0;
 #ifdef DRAW_BACKGROUND
-	m_background.LoadImage("D:\\tmp\\blur0compress50.jpg");
-	m_background_pos = 1;
+	char fullname[_MAX_PATH];
+    strcpy(fullname, GetExePath());
+    strcat(fullname, "HexEdit.GIF");
+
+	CString bgfile = theApp.GetProfileString("MainFrame", "BackgroundFileName", fullname);
+	m_background.LoadImage(bgfile);
+	m_background_pos = theApp.GetProfileInt("MainFrame", "BackgroundPosition", 4); // dv = bottom-right
 #endif
 	m_search_image.LoadBitmap(IDB_SEARCH);
 	OccurrencesWidth = ValuesWidth = AddrHexWidth = AddrDecWidth = FileLengthWidth = -999;
@@ -677,44 +682,69 @@ void CMainFrame::show_tip(UINT id /* = -1 */)
 
 	CHexEditView *pview = GetView();
 
-    CString mess;
+    menu_tip_.Hide();
+	menu_tip_.Clear();
+	menu_tip_.SetBgCol(::GetSysColor(COLOR_INFOBK));
+	menu_tip_.SetStockFont(ANSI_VAR_FONT);
+
 	if (id >= ID_NAV_BACK_FIRST && id < ID_NAV_BACK_FIRST + NAV_RESERVED)
 	{
-		mess = theApp.navman_.GetInfo(true, id - ID_NAV_BACK_FIRST);
+		menu_tip_.AddString(theApp.navman_.GetInfo(true, id - ID_NAV_BACK_FIRST));
 	}
 	else if (id >= ID_NAV_FORW_FIRST && id < ID_NAV_FORW_FIRST + NAV_RESERVED)
 	{
-		mess = theApp.navman_.GetInfo(false, id - ID_NAV_FORW_FIRST + 1);
+		menu_tip_.AddString(theApp.navman_.GetInfo(false, id - ID_NAV_FORW_FIRST + 1));
 	}
 	else if (pview != NULL)
 	{
+		CRect rct;
+		COLORREF addr_col = pview->DecAddresses() ? pview->GetDecAddrCol() : pview->GetHexAddrCol();
+		COLORREF text_col = pview->GetDefaultTextCol();
+		menu_tip_.SetBgCol(pview->GetBackgroundCol());
+		menu_tip_.SetStockFont(ANSI_FIXED_FONT);
+
 		switch (id)
 		{
 		case ID_DISPLAY_HEX:
-			mess = "200: 30 31 32 33  34 35\n"
-				   "208: 36 37 38 39  3A 3B";
+			menu_tip_.AddString("200: ", addr_col);
+			menu_tip_.AddString("206: ", addr_col);
+			rct = menu_tip_.GetRect(0);
+			menu_tip_.AddString("23 68 71 62  53 2A", text_col, &CPoint(rct.Width(), rct.top));
+			rct = menu_tip_.GetRect(1);
+			menu_tip_.AddString("68 6E 62 78  79 00", text_col, &CPoint(rct.Width(), rct.top));
 			break;
 		case ID_DISPLAY_CHAR:
-			mess = "200: 012345\n"
-				   "208: 6789 : ;";
+			menu_tip_.AddString("200: ", addr_col);
+			menu_tip_.AddString("206: ", addr_col);
+			rct = menu_tip_.GetRect(0);
+			menu_tip_.AddString("#hqbS*", text_col, &CPoint(rct.Width(), rct.top));
+			rct = menu_tip_.GetRect(1);
+			menu_tip_.AddString("hnbxy.", text_col, &CPoint(rct.Width(), rct.top));
 			break;
 		case ID_DISPLAY_BOTH:
-			mess = "200: 30 31 32 33  34 35  012345\n"
-				   "208: 36 37 38 39  3A 3B  6789 : ;";
+			menu_tip_.AddString("200: ", addr_col);
+			menu_tip_.AddString("206: ", addr_col);
+			rct = menu_tip_.GetRect(0);
+			menu_tip_.AddString("23 68 71 62  53 2A  #hqbS*", text_col, &CPoint(rct.Width(), rct.top));
+			rct = menu_tip_.GetRect(1);
+			menu_tip_.AddString("68 6E 62 78  79 00  hnbxy.", text_col, &CPoint(rct.Width(), rct.top));
 			break;
 		case ID_DISPLAY_STACKED:
-			mess = "200: 0123 4567 89 : ;\n"
-				   "        3333 3333 3333\n"
-				   "        0123 4567 89AB";
+			menu_tip_.AddString("200: ", addr_col);
+			rct = menu_tip_.GetRect(0);
+			menu_tip_.AddString("#hqb S*hn bxy .", text_col, &CPoint(rct.Width(), rct.top));
+			rct = menu_tip_.GetRect(1);
+			menu_tip_.AddString("2676 5266 6770", text_col, &CPoint(rct.left, rct.bottom));
+			rct = menu_tip_.GetRect(2);
+			menu_tip_.AddString("3812 3A8E 2890", text_col, &CPoint(rct.left, rct.bottom));
 			break;
 		}
 		//menu_tip_.SetFont(pview->GetFont());  // We need a non-prop. font but this does not do anything
 	}
 
-    if (!mess.IsEmpty())
+    if (menu_tip_.Count() > 0)
     {
         menu_tip_.Hide(0);
-        menu_tip_.SetWindowText(mess);
 		CRect rct = item_rect(popup_menu_.back(), id);
         menu_tip_.Move(CPoint(rct.right, rct.top), false);
 		CRect wnd_rct;
@@ -722,10 +752,6 @@ void CMainFrame::show_tip(UINT id /* = -1 */)
 		if (::OutsideMonitor(wnd_rct))
 			menu_tip_.Move(CPoint(rct.left, rct.bottom), false);
         menu_tip_.Show();
-    }
-    else
-    {
-        menu_tip_.Hide();
     }
 }
 

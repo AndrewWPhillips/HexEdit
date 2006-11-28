@@ -5221,20 +5221,18 @@ LRESULT CHexEditView::OnMouseHover(WPARAM, LPARAM lp)
 bool CHexEditView::update_tip(FILE_ADDRESS addr)
 {
 	bool retval = false;
-	ExprStringType ss;
 	tip_addr_ = addr;
 
-	ASSERT(theApp.tip_name_.size() > 0); // we should at leats have bookmarks
+	ASSERT(theApp.tip_name_.size() > 0); // we should at least have bookmarks
 	ASSERT(theApp.tip_on_    .size() == theApp.tip_name_.size());
 	ASSERT(theApp.tip_expr_  .size() == theApp.tip_name_.size());
 	ASSERT(theApp.tip_format_.size() == theApp.tip_name_.size());
 
+	tip_.Clear();
 	for (size_t ii = 0; ii < theApp.tip_name_.size(); ++ii)
+	{
 		if (theApp.tip_on_[ii])
 		{
-			if (retval)
-				ss += "\r\n";   // start this tip on a new line
-
 			if (ii == 0)
 			{
 				// Special (hard-coded) bookmark tip
@@ -5243,7 +5241,7 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 				int bm;              // Index into doc's bookmark list of bookmark under cursor
 				if ((bm = bookmark_at(addr)) != -1)
 				{
-					ss += "Bookmark: " + theApp.GetBookmarkList()->name_[GetDocument()->bm_index_[bm]];
+					tip_.AddString("Bookmark: " + theApp.GetBookmarkList()->name_[GetDocument()->bm_index_[bm]]);
 					retval = true;
 				}
 			}
@@ -5251,25 +5249,45 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 
 			else
 			{
+				COLORREF col = -1;
+				CString format = theApp.tip_format_[ii];
+
+				if (theApp.tip_expr_[ii].Find("address") != -1 || theApp.tip_expr_[ii].Find("Address") != -1)
+				{
+					// If no format given display as current address format
+					if (format.IsEmpty())
+						format = DecAddresses() ? "dec" : "hex";
+
+					// Display addresses in the appropriate colour
+					if (format.Left(3).CompareNoCase("hex") == 0 ||
+						format.Find('x') != -1 ||
+						format.Find('X') != -1)
+					{
+						col = GetHexAddrCol();  // display in hex address colour
+					}
+					else if (format.Left(3).CompareNoCase("bin") != 0 &&
+						     format.Left(3).CompareNoCase("oct") != 0 &&
+							 format.Find('o') == -1)
+					{
+						// Assume decimal if not hex, binary or octal
+						col = GetDecAddrCol();   // display in decimal address colour
+					}
+				}
 				ASSERT(ii >= FIRST_USER_TIP);
-				ss += theApp.tip_name_[ii] + ": ";
+				//CTipWnd::StringType ss = theApp.tip_name_[ii] + ": ";
 				int dummy;
 				expr_eval::value_t val = expr_.evaluate(theApp.tip_expr_[ii], 0, dummy);
-				ss += GetDocument()->GetDataString(val, theApp.tip_format_[ii], expr_.GetSize(), expr_.GetUnsigned());
+				tip_.AddString(CTipWnd::StringType(theApp.tip_name_[ii] + ": ") + 
+					           CTipWnd::StringType(GetDocument()->GetDataString(val, format, expr_.GetSize(), expr_.GetUnsigned())),
+							   col);
 				retval = true;
 			}
 		}
-		ASSERT(ii > 0); // This is mainly here for easier stepping in the debugger
+	}
+    ASSERT(ii > 0); // This is mainly here for easier stepping in the debugger
 
-#ifdef UNICODE_TYPE_STRING
-	// This is the way to put Unicode text into control with ANSI window procedure
-	// xxx this doesn't work for a CTipWnd for some reason - we need to fix this so we can display Unicode char/string
-	//::CallWindowProcW(*tip_.GetSuperWndProcAddr(), tip_.m_hWnd, WM_SETTEXT, 0, (LPARAM)(LPCWSTR)ss);
-	tip_.SetWindowText(CString(ss));
-#else
-	tip_.SetWindowText(ss);
-#endif
-	return retval;
+	//tip_.SetWindowText(ss);
+    return retval;
 }
 
 LRESULT CHexEditView::OnMouseLeave(WPARAM, LPARAM lp)
@@ -15393,6 +15411,54 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 		{
 			retval.typ = TYPE_REAL;
 			retval.real64 = ibm_fp64(val, NULL, NULL, !pview_->BigEndian());
+			sym_size = sizeof(val);
+		}
+	}
+	else if (sym_str.CompareNoCase("time_t") == 0)
+	{
+        time_t val;
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+		{
+			if (pview_->BigEndian())
+				flip_bytes((unsigned char *)&val, sizeof(val));
+			retval.typ = TYPE_DATE;
+			retval.date = COleDateTime(val);
+			sym_size = sizeof(val);
+		}
+	}
+	else if (sym_str.CompareNoCase("time_t_80") == 0)  // MSC 5.1 time_t
+	{
+        long val;
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+		{
+			if (pview_->BigEndian())
+				flip_bytes((unsigned char *)&val, sizeof(val));
+			retval.typ = TYPE_DATE;
+			retval.date = COleDateTime((time_t)(val + (365*10 + 2)*24L*60L*60L));
+			sym_size = sizeof(val);
+		}
+	}
+	else if (sym_str.CompareNoCase("time_t_1899") == 0)  // MSC 7 time_t
+	{	// xxx this gives wrong result
+        unsigned long val;
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+		{
+			if (pview_->BigEndian())
+				flip_bytes((unsigned char *)&val, sizeof(val));
+			retval.typ = TYPE_DATE;
+			retval.date = COleDateTime((time_t)(val - (365*70 + 17 + 2)*24UL*60UL*60UL));
+			sym_size = sizeof(val);
+		}
+	}
+	else if (sym_str.CompareNoCase("time_t_mins") == 0)  // MSC 7 time_t
+	{
+        long val;
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+		{
+			if (pview_->BigEndian())
+				flip_bytes((unsigned char *)&val, sizeof(val));
+			retval.typ = TYPE_DATE;
+			retval.date = COleDateTime((time_t)(val*60));
 			sym_size = sizeof(val);
 		}
 	}
