@@ -40,6 +40,7 @@ public:
 #endif
 	size_t Count() { return str_.size(); }
 	CRect GetRect(size_t idx) { ASSERT(idx<rct_.size()); return rct_[idx]; }
+	CRect GetTotalRect() { return rct_all_; }
 
 protected:
 	afx_msg void OnPaint();

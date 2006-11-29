@@ -5220,7 +5220,6 @@ LRESULT CHexEditView::OnMouseHover(WPARAM, LPARAM lp)
 // The parameter (addr) if the address about which we show information
 bool CHexEditView::update_tip(FILE_ADDRESS addr)
 {
-	bool retval = false;
 	tip_addr_ = addr;
 
 	ASSERT(theApp.tip_name_.size() > 0); // we should at least have bookmarks
@@ -5229,6 +5228,33 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 	ASSERT(theApp.tip_format_.size() == theApp.tip_name_.size());
 
 	tip_.Clear();
+	// Do desciptions
+	for (size_t ii = 0; ii < theApp.tip_name_.size(); ++ii)
+	{
+		if (theApp.tip_on_[ii])
+		{
+			if (ii == 0)
+			{
+				// Special (hard-coded) bookmark tip
+				ASSERT(theApp.tip_name_[ii] == "Bookmarks");
+				if (bookmark_at(addr) != -1)
+					tip_.AddString("Bookmark: ");
+			}
+			// Add any more "hard-coded" tip types here ...
+
+			else
+			{
+				ASSERT(ii >= FIRST_USER_TIP);
+				tip_.AddString(theApp.tip_name_[ii] + ": ");
+			}
+		}
+	}
+
+	CPoint pt(0,0);
+	CRect rct = tip_.GetTotalRect();
+	pt.x = rct.right;
+
+	int idx = 0;
 	for (size_t ii = 0; ii < theApp.tip_name_.size(); ++ii)
 	{
 		if (theApp.tip_on_[ii])
@@ -5241,8 +5267,10 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 				int bm;              // Index into doc's bookmark list of bookmark under cursor
 				if ((bm = bookmark_at(addr)) != -1)
 				{
-					tip_.AddString("Bookmark: " + theApp.GetBookmarkList()->name_[GetDocument()->bm_index_[bm]]);
-					retval = true;
+					rct = tip_.GetRect(idx);
+					pt.y = rct.top;
+					tip_.AddString(theApp.GetBookmarkList()->name_[GetDocument()->bm_index_[bm]], -1, &pt);
+					++idx;
 				}
 			}
 			// Add any more "hard-coded" tip types here ...
@@ -5252,7 +5280,12 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 				COLORREF col = -1;
 				CString format = theApp.tip_format_[ii];
 
-				if (theApp.tip_expr_[ii].Find("address") != -1 || theApp.tip_expr_[ii].Find("Address") != -1)
+				// Work out the colour of the text
+				if (theApp.tip_expr_[ii].Find("address") != -1 ||
+				    theApp.tip_expr_[ii].Find("cursor") != -1 ||
+				    theApp.tip_expr_[ii].Find("sel_len") != -1 ||
+				    theApp.tip_expr_[ii].Find("mark") != -1 ||
+				    theApp.tip_expr_[ii].Find("eof") != -1)
 				{
 					// If no format given display as current address format
 					if (format.IsEmpty())
@@ -5273,21 +5306,25 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 						col = GetDecAddrCol();   // display in decimal address colour
 					}
 				}
-				ASSERT(ii >= FIRST_USER_TIP);
-				//CTipWnd::StringType ss = theApp.tip_name_[ii] + ": ";
+
+				// Work out where to put it
+				rct = tip_.GetRect(idx);
+				pt.y = rct.top;
+
 				int dummy;
 				expr_eval::value_t val = expr_.evaluate(theApp.tip_expr_[ii], 0, dummy);
-				tip_.AddString(CTipWnd::StringType(theApp.tip_name_[ii] + ": ") + 
-					           CTipWnd::StringType(GetDocument()->GetDataString(val, format, expr_.GetSize(), expr_.GetUnsigned())),
-							   col);
-				retval = true;
+				tip_.AddString(GetDocument()->GetDataString(val, format, expr_.GetSize(), expr_.GetUnsigned()),
+							   col,
+							   &pt);
+				++idx;
 			}
 		}
 	}
     ASSERT(ii > 0); // This is mainly here for easier stepping in the debugger
+	ASSERT(tip_.Count() == idx*2);  // should have added 2 entries for every tip
 
-	//tip_.SetWindowText(ss);
-    return retval;
+	tip_.SetAlpha(theApp.tip_transparency_);
+    return idx > 0;
 }
 
 LRESULT CHexEditView::OnMouseLeave(WPARAM, LPARAM lp)
@@ -15258,6 +15295,38 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 		retval.typ = TYPE_INT;          // Just return the address
 		retval.int64 = sym_address;
 		sym_size = 4;                   // Addresses can be up to 8 but this restricts display to 32-bits (and if bigger then extra bits are shown)
+		unsigned_ = true;
+	}
+	else if (sym_str.CompareNoCase("cursor") == 0)
+	{
+		FILE_ADDRESS start, end;
+		pview_->GetSelAddr(start, end);
+		retval.typ = TYPE_INT;
+		retval.int64 = start;
+		sym_size = 4;
+		unsigned_ = true;
+	}
+	else if (sym_str.CompareNoCase("sel_len") == 0)
+	{
+		FILE_ADDRESS start, end;
+		pview_->GetSelAddr(start, end);
+		retval.typ = TYPE_INT;
+		retval.int64 = end - start;
+		sym_size = 4;
+		unsigned_ = true;
+	}
+	else if (sym_str.CompareNoCase("mark") == 0)
+	{
+		retval.typ = TYPE_INT;
+		retval.int64 = pview_->GetMark();
+		sym_size = 4;
+		unsigned_ = true;
+	}
+	else if (sym_str.CompareNoCase("eof") == 0)
+	{
+		retval.typ = TYPE_INT;
+		retval.int64 = pview_->GetDocument()->length();
+		sym_size = 4;
 		unsigned_ = true;
 	}
 	else if (sym_str.CompareNoCase("sector") == 0)

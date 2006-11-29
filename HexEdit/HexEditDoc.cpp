@@ -3592,6 +3592,10 @@ ExprStringType CHexEditDoc::GetDataString(expr_eval::value_t val, CString strFor
             ss = val.boolean ? "yes" : "no";
         else if (strFormat == "NO")
             ss = val.boolean ? "YES" : "NO";
+        else if (strFormat == "off")
+            ss = val.boolean ? "on" : "off";
+        else if (strFormat == "OFF")
+            ss = val.boolean ? "ON" : "OFF";
         else if (strFormat == "0")
             ss = val.boolean ? "1" : "0";
         else
