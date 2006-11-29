@@ -396,6 +396,7 @@
 #define HIDC_SHOW_OTHER                 0x80eb041a    // IDD_OPT_SYSDISPLAY [English (U.S.)]
 #define HIDC_SIZE_FACTOR                0x811c0560    // IDD_NEW_FILE
 #define HIDC_SIZE_LENGTH                0x811c0562    // IDD_NEW_FILE
+#define HIDC_SLIDER                     0x813405f6    // IDD_OPT_TIPS [English (U.S.)]
 #define HIDC_SOURCE_CODE                0x813005b2    // IDD_TPARSE
 #define HIDC_SUBJECT                    0x80e50435    // IDD_EMAIL
 #define HIDC_SUBTRACT                   0x80750428    // IDD_CALC

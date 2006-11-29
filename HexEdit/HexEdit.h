@@ -69,7 +69,7 @@ typedef __int64 FILE_ADDRESS;
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
 // Note this still need: keyword search (RFL dialog), drop list of categories, no loss of info if return not pressed
 
-//#define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
+#define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
 // xxx Note: check if this is complete xxx
 
 #define DIALOG_BAR  1       // Put modeless dialogs into dockable/rollable dialog bars
@@ -330,6 +330,7 @@ public:
     CMacroPage *p_macro;
     CPrintPage *p_printer;
     CFiltersPage *p_filters;
+	CTipsPage *p_tips;
 
     BOOL is_nt_;                        // Are we running under NT family? (NT/W2K/XP and later)
     BOOL is_xp_;                        // Is it XP or later?
@@ -586,6 +587,7 @@ public:
 	std::vector<bool> tip_on_;          // Is this tip on (checkbox in check-list checked)
 	std::vector<CString> tip_expr_;     // Expression (involving predefined variable names like "address")
 	std::vector<CString> tip_format_;   // How expression is formated for display (eg "hex", "%x" etc)
+	int tip_transparency_;
 	//static const int FIRST_USER_TIP = 1;
 #define FIRST_USER_TIP 1                // = no of hard-coded tip types - 1 at present since only hard-coded type is bookmarks
 

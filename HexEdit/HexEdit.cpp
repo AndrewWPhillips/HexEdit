@@ -268,6 +268,7 @@ CHexEditApp::CHexEditApp() : CBCGWorkspace(TRUE), default_scheme_(""),
     p_macro = NULL;
     p_printer = NULL;
     p_filters = NULL;
+	p_tips = NULL;
 
     m_pbookmark_list = NULL;
     open_file_shared_ = FALSE;
@@ -550,6 +551,7 @@ BOOL CHexEditApp::InitInstance()
         p_macro = new CMacroPage;
         p_printer = new CPrintPage;
         p_filters = new CFiltersPage;
+		p_tips = new CTipsPage;
 
         // Enable help button for all pages (must be done after construction)
         p_general->m_psp.dwFlags |= PSP_HASHELP;
@@ -560,6 +562,7 @@ BOOL CHexEditApp::InitInstance()
         p_macro->m_psp.dwFlags |= PSP_HASHELP;
         p_printer->m_psp.dwFlags |= PSP_HASHELP;
         p_filters->m_psp.dwFlags |= PSP_HASHELP;
+		p_tips->m_psp.dwFlags |= PSP_HASHELP;
 
 #ifdef _AFXDLL
         Enable3dControls();                     // Call this when using MFC in a shared DLL
@@ -1435,6 +1438,7 @@ int CHexEditApp::ExitInstance()
     delete p_macro;
     delete p_printer;
     delete p_filters;
+	delete p_tips;
 
     ::BCGCBCleanUp();
 
@@ -2119,8 +2123,10 @@ void CHexEditApp::LoadOptions()
                         "|"));
 
 	// Get info on what is displayed in tip (info) window
-	// - first get flags which say which hard-coded info is enabled (currently only option is bookmarks)
-    int hard = GetProfileInt("Options", "TipInfoFlags", 0);  // if bit is zero option is in use
+	tip_transparency_ = GetProfileInt("Options", "InfoTipTransparency", 200);
+
+	// get flags which say which hard-coded info is enabled (currently only option is bookmarks)
+    int hard = GetProfileInt("Options", "InfoTipFlags", 0);  // if bit is zero option is in use
     tip_name_.push_back("Bookmarks");
     tip_on_.push_back( (hard&0x1) == 0);
     tip_expr_.push_back("");
@@ -2135,47 +2141,51 @@ void CHexEditApp::LoadOptions()
 	//   4. unused     - for future use (possibly colour and other options)
 	// Symbols: address, sector, offset, byte, sbyte, word, uword, dword, udword, qword, uqword,
 	//          ieee32, ieee64, ibm32, ibm64, time_t, time_t_80, time_t_1899, time_t_mins, time64_t
-    CString ss = GetProfileString("Options", "TipInfoUser",
+    CString ss = GetProfileString("Options", "InfoTipUser",
                     _T(
-					">Address|address|||"
-					">Hex Address|address|hex||"
-					">Dec Address|address|dec||"
-					">Hex Sector|sector|hex||"
-					">Sector|sector|dec||"
-					">Hex Offset|offset|hex||"
-					">Offset|offset|dec||"
-					">ASCII char|byte|%c||"
-					">Bits     |byte|bin||"
-					">Inverted|~byte&0xFF|bin||"
-					">Dec Byte|byte|dec||"
-					">Sign Byte|sbyte|dec||"
-					">Octal Byte|byte|oct||"
-					">Word|word|dec||"
-					">Word Bits|uword|bin||"
-					">Unsigned Word|uword|dec||"
-					">Double Word|dword|dec||"
-					">Unsigned DWord|udword|dec||"
-					">Quad Word|qword|dec||"
-					">32 bit IEEE float|ieee32|%.7g||"
-					">64 bit IEEE float|ieee64|%.15g||"
-					">32 bit IBM float|ibm32|%.7g||"
-					">64 bit IBM float|ibm64|%.16g||"
-					">Date/time|time_t|%c||"
-					">time_t MSC 5.1|time_t_80|%c||"
-					">time_t MSC 7|time_t_1899|%c||"
-					">time_t MINS|time_t_mins|%c||"
-// xxx TBD                       ">String|string|%s||"
-                    "|"));
+					">Address;address;;;"
+					">Hex Address;address;hex;;"
+					">Dec Address;address;dec;;"
+					">From Mark;address - mark;;;"
+					">From Mark;address - mark;hex;;"
+					">From Mark;address - mark;dec;;"
+					">Hex Sector;sector;hex;;"
+					">Sector;sector;dec;;"
+					">Hex Offset;offset;hex;;"
+					">Offset;offset;dec;;"
+					">ASCII char;byte;%c;;"
+					">Bits     ;byte;bin;;"
+					">High Bit ;(byte&0x80)!=0;OFF;;"
+					">Dec Byte;byte;dec;;"
+					">Sign Byte;sbyte;dec;;"
+					">Octal Byte;byte;oct;;"
+					">Word;word;dec;;"
+					">Word Bits;uword;bin;;"
+					">Unsigned Word;uword;dec;;"
+					">Double Word;dword;dec;;"
+					">Unsigned DWord;udword;dec;;"
+					">Quad Word;qword;dec;;"
+					">32 bit IEEE float;ieee32;%.7g;;"
+					">64 bit IEEE float;ieee64;%.15g;;"
+					">32 bit IBM float;ibm32;%.7g;;"
+					">64 bit IBM float;ibm64;%.16g;;"
+					">Date/time;time_t;%c;;"
+//					">time_t MSC 5.1;time_t_80;%c;;"
+//					">time_t MSC 7;time_t_1899;%c;;"
+//					">time_t MINS;time_t_mins;%c;;"
+// xxx TBD                       ">String;string;%s;;"
+					">To EOF;eof - address;dec;;"
+                    ";;"));
 
 
 	for (int ii = 0; ; ii += 4)
     {
         CString name, expr, format;
-        AfxExtractSubString(name,   ss, ii,   '|');
-        if (name.IsEmpty())
+        AfxExtractSubString(name,   ss, ii,   ';');
+        AfxExtractSubString(expr,   ss, ii+1, ';');
+        if (name.IsEmpty() && expr.IsEmpty())
             break;
-        AfxExtractSubString(expr,   ss, ii+1, '|');
-        AfxExtractSubString(format, ss, ii+2, '|');
+        AfxExtractSubString(format, ss, ii+2, ';');
         bool on = true;
         if (name[0] == '>')
         {
@@ -2373,7 +2383,7 @@ void CHexEditApp::SaveOptions()
 		else
 		{
 			CString ss;
-			ss.Format("%s%s|%s|%s||",
+			ss.Format("%s%s;%s;%s;;",
 				      tip_on_[ii] ? "" : ">",
 					  tip_name_[ii],
 					  tip_expr_[ii],
@@ -2381,9 +2391,10 @@ void CHexEditApp::SaveOptions()
 			soft += ss;
 		}
 	}
-	soft += "|";  // mark end of list
-    WriteProfileInt("Options", "TipInfoFlags", hard);
-	WriteProfileString("Options", "TipInfoUser", soft);
+	soft += ";;";  // mark end of list
+    WriteProfileInt("Options", "InfoTipTransparency", tip_transparency_);
+    WriteProfileInt("Options", "InfoTipFlags", hard);
+	WriteProfileString("Options", "InfoTipUser", soft);
 }
 
 // Clears the various histories and lists (see also SaveSearchHistory)
@@ -2643,6 +2654,7 @@ void CHexEditApp::display_options(CPropertyPage *display_page /*=NULL*/, BOOL mu
         options_sheet.AddPage(p_windisplay);
 //        options_sheet.AddPage(p_partitions);  // no longer used when schemes added
     }
+    options_sheet.AddPage(p_tips);
     options_sheet.AddPage(p_colours);
     options_sheet.AddPage(p_macro);
     options_sheet.AddPage(p_printer);

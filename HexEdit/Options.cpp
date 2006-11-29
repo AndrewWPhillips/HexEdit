@@ -25,6 +25,7 @@
 #include "ClearHistDlg.h"
 #include "HexFileList.h"
 #include "NewScheme.h"
+#include "NewCellTypes/GridCellCombo.h"     // For CGridCellCombo
 #include "resource.hm"          // For control help IDs
 
 #include <bcgbarres.h>          // For IDC_BCGBARRES_SKINS
@@ -88,6 +89,8 @@ LRESULT COptSheet::OnKickIdle(WPARAM, LPARAM lCount)
 {
     if (GetActivePage() == theApp.p_filters)
         return theApp.p_filters->OnIdle(lCount);
+    else if (GetActivePage() == theApp.p_tips)
+        return theApp.p_tips->OnIdle(lCount);
     else if (GetActivePage() == theApp.p_colours)
         return theApp.p_colours->OnIdle(lCount);
     else
@@ -1169,7 +1172,6 @@ void CPrintPage::OnContextMenu(CWnd* pWnd, CPoint point)
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CFiltersPage property page
 
@@ -1270,7 +1272,7 @@ BOOL CFiltersPage::OnInitDialog()
 
     // Set up the grid
     grid_.SetEditable(TRUE);
-    grid_.GetDefaultCell(FALSE, FALSE)->SetBackClr(RGB(0xFF, 0xFF, 0xE0));
+    grid_.GetDefaultCell(FALSE, FALSE)->SetBackClr(RGB(0xF8, 0xF8, 0xFF));
 
     grid_.SetFixedColumnSelection(FALSE);
     grid_.SetFixedRowSelection(FALSE);
@@ -1586,6 +1588,558 @@ void CFiltersPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 }
 
 void CFiltersPage::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
+{
+    NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
+    if (pItem->iColumn == 0)
+        SetModified(TRUE);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CTipsPage property page
+
+IMPLEMENT_DYNCREATE(CTipsPage, CPropertyPage)
+
+CTipsPage::CTipsPage() : CPropertyPage(CTipsPage::IDD)
+{
+    HICON hh = AfxGetApp()->LoadIcon(IDI_TIPS);
+    m_psp.hIcon = hh;
+    m_psp.dwFlags &= ~PSP_USEICONID;
+    m_psp.dwFlags |= PSP_USEHICON;
+}
+
+CTipsPage::~CTipsPage()
+{
+}
+
+void CTipsPage::DoDataExchange(CDataExchange* pDX)
+{
+	CPropertyPage::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_SLIDER, ctl_slider_);
+	DDX_Control(pDX, IDC_UP, ctl_up_);
+	DDX_Control(pDX, IDC_NEW, ctl_new_);
+	DDX_Control(pDX, IDC_DOWN, ctl_down_);
+	DDX_Control(pDX, IDC_DEL, ctl_del_);
+    DDX_GridControl(pDX, IDC_GRID, grid_);             // associate the grid window with a C++ object
+}
+
+BEGIN_MESSAGE_MAP(CTipsPage, CPropertyPage)
+	ON_WM_HELPINFO()
+	ON_BN_CLICKED(IDC_DEL, OnDel)
+	ON_BN_CLICKED(IDC_NEW, OnNew)
+	ON_BN_CLICKED(IDC_UP, OnUp)
+	ON_BN_CLICKED(IDC_DOWN, OnDown)
+    ON_WM_CONTEXTMENU()
+    ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
+    ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
+END_MESSAGE_MAP()
+
+void CTipsPage::add_row(int row, BOOL is_checked /*=TRUE*/, CString s1/*=""*/, CString s2 /*=""*/, CString s3 /*=""*/)
+{
+    row = grid_.InsertRow("", row);
+
+    CGridBtnCell *pbtn;
+    grid_.SetCellType(row, column_check, RUNTIME_CLASS(CGridBtnCell));
+    pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
+    if (pbtn != NULL)
+    {
+        pbtn->SetBtnDataBase(&btn_db_);
+        pbtn->SetupBtns(0, DFC_BUTTON, DFCS_BUTTONCHECK, CGridBtnCellBase::CTL_ALIGN_LEFT, 20, FALSE, " ");
+        UINT state = pbtn->GetDrawCtlState(0);
+        if (is_checked)
+            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
+        else
+            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
+    }
+
+    grid_.SetItemText(row, column_name, s1);
+    grid_.SetItemText(row, column_expr, s2);
+    grid_.SetItemText(row, column_format, s3);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CTipsPage message handlers
+
+BOOL CTipsPage::OnInitDialog() 
+{
+	if (var_list.IsEmpty())
+	{
+		var_list.Add("address");
+		var_list.Add("cursor");
+		var_list.Add("sel_len");
+		var_list.Add("mark");
+		var_list.Add("eof");
+		var_list.Add("sector");
+		var_list.Add("offset");
+		var_list.Add("byte");
+		var_list.Add("sbyte");
+		var_list.Add("word");
+		var_list.Add("uword");
+		var_list.Add("dword");
+		var_list.Add("udword");
+		var_list.Add("qword");
+		var_list.Add("uqword");
+		var_list.Add("ieee32");
+		var_list.Add("ieee64");
+		var_list.Add("ibm32");
+		var_list.Add("ibm64");
+		var_list.Add("time_t");
+		//var_list.Add("time_t_80");
+		//var_list.Add("time_t_1899");
+		//var_list.Add("time_t_mins");
+		//var_list.Add("time64_t");
+		//var_list.Add("char_ascii");
+		//var_list.Add("char_ebcdic");
+		//var_list.Add("char_unicode");
+
+		int_list.Add("hex");
+		int_list.Add("dec");
+		int_list.Add("oct");
+		int_list.Add("bin");
+		int_list.Add("%d");
+		int_list.Add("%X");
+		uint_list.Add("hex");
+		uint_list.Add("dec");
+		uint_list.Add("oct");
+		uint_list.Add("bin");
+		uint_list.Add("%u");
+		uint_list.Add("%X");
+		real32_list.Add("%e");
+		real32_list.Add("%f");
+		real32_list.Add("%g");
+		real32_list.Add("%.7g");
+		real64_list.Add("%e");
+		real64_list.Add("%f");
+		real64_list.Add("%g");
+		real64_list.Add("%.15g");
+		date_list.Add("%c");
+		date_list.Add("%x");
+		date_list.Add("%X");
+		date_list.Add("%x %X");
+		date_list.Add("%Y %m %d %H %M %S");
+		char_list.Add("%c");
+		char_list.Add("%d");
+		char_list.Add("%2.2X");
+		string_list.Add("%s");
+	}
+
+    CPropertyPage::OnInitDialog();
+
+	ctl_slider_.SetRange(1, 255);
+	ctl_slider_.SetPos(theApp.tip_transparency_);
+
+    // Set up icons on buttons
+    VERIFY(icon_new_ = AfxGetApp()->LoadIcon(IDI_NEW));
+    ctl_new_.SetIcon(icon_new_);
+    VERIFY(icon_del_ = AfxGetApp()->LoadIcon(IDI_DEL));
+    ctl_del_.SetIcon(icon_del_);
+    VERIFY(icon_up_ = AfxGetApp()->LoadIcon(IDI_UP));
+    ctl_up_.SetIcon(icon_up_);
+    VERIFY(icon_down_ = AfxGetApp()->LoadIcon(IDI_DOWN));
+    ctl_down_.SetIcon(icon_down_);
+
+    // Add tooltips for buttons
+    if (m_cToolTip.Create(this))
+    {
+        m_cToolTip.AddTool(&ctl_new_, IDS_NEW_TIP);
+        m_cToolTip.AddTool(&ctl_del_, IDS_DEL_TIP);
+        m_cToolTip.AddTool(&ctl_up_, IDS_UP);
+        m_cToolTip.AddTool(&ctl_down_, IDS_DOWN);
+        m_cToolTip.Activate(TRUE);
+    }
+
+    // Set up the grid
+    grid_.SetEditable(TRUE);
+    grid_.GetDefaultCell(FALSE, FALSE)->SetBackClr(RGB(0xFF, 0xFF, 0xE0));
+
+    grid_.SetFixedColumnSelection(FALSE);
+    grid_.SetFixedRowSelection(FALSE);
+
+    grid_.AutoSize();
+
+    btn_db_.SetGrid(&grid_);
+
+    // Set up the grid rows and columns
+    grid_.SetColumnCount(column_count);
+    grid_.SetFixedColumnCount(0);
+    grid_.SetRowCount(header_rows);
+    grid_.SetFixedRowCount(header_rows);
+
+    // Set up the grid sizes
+    grid_.SetColumnWidth(column_check, 22);
+    grid_.SetColumnWidth(column_name, 100);
+    grid_.SetColumnWidth(column_expr, 162);
+    grid_.SetColumnWidth(column_format, 70);
+
+    // Set up the grid cells
+    for (int ii = 0; ii < theApp.tip_name_.size(); ++ii)
+	{
+		if (ii < FIRST_USER_TIP)
+		{
+			add_row(-1, theApp.tip_on_[ii], theApp.tip_name_[ii]);
+
+			// Make text fields read-only
+			CGridCellBase * pcell = grid_.GetCell(ii, column_name);
+			pcell->SetState(pcell->GetState() | GVIS_READONLY);
+			pcell = grid_.GetCell(ii, column_expr);
+			pcell->SetState(pcell->GetState() | GVIS_READONLY);
+			pcell = grid_.GetCell(ii, column_format);
+			pcell->SetState(pcell->GetState() | GVIS_READONLY);
+		}
+		else
+			add_row(-1, theApp.tip_on_[ii], theApp.tip_name_[ii], theApp.tip_expr_[ii], theApp.tip_format_[ii]);
+	}
+    grid_.RedrawWindow();
+
+    grid_.SetListMode(TRUE);
+    grid_.SetSingleRowSelection(TRUE);
+
+    return TRUE;
+}
+
+void CTipsPage::OnOK()
+{
+    int max_row = grid_.GetRowCount() - header_rows;
+
+    theApp.tip_on_.resize(FIRST_USER_TIP);
+	theApp.tip_name_.resize(FIRST_USER_TIP);
+	theApp.tip_expr_.resize(FIRST_USER_TIP);
+	theApp.tip_format_.resize(FIRST_USER_TIP);
+
+    for (int ii = 0; ii < max_row; ++ii)
+    {
+		if (ii < FIRST_USER_TIP)
+		{
+			CGridBtnCell *pbtn;
+			pbtn = (CGridBtnCell *)grid_.GetCell(ii+header_rows, column_check);
+			theApp.tip_on_[ii] = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
+			continue;
+		}
+        CString s1 = grid_.GetItemText(ii+header_rows, column_name);
+        CString s2 = grid_.GetItemText(ii+header_rows, column_expr);
+		CString s3 = grid_.GetItemText(ii+header_rows, column_format);
+
+        if (s1.IsEmpty() && s2.IsEmpty())
+            continue;
+
+        CGridBtnCell *pbtn;
+        pbtn = (CGridBtnCell *)grid_.GetCell(ii+header_rows, column_check);
+        theApp.tip_on_.push_back((pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0);
+		theApp.tip_name_.push_back(s1);
+		theApp.tip_expr_.push_back(s2);
+		theApp.tip_format_.push_back(s3);
+    }
+	theApp.tip_transparency_ = ctl_slider_.GetPos();
+
+    CPropertyPage::OnOK();
+}
+
+BOOL CTipsPage::PreTranslateMessage(MSG* pMsg) 
+{
+    m_cToolTip.RelayEvent(pMsg);	
+
+    return CDialog::PreTranslateMessage(pMsg);
+}
+
+static DWORD id_pairs8[] = { 
+    IDC_GRID, HIDC_GRID,
+    IDC_NEW, HIDC_NEW,
+    IDC_DEL, HIDC_DEL,
+    IDC_UP, HIDC_UP,
+    IDC_DOWN, HIDC_DOWN,
+    0,0 
+}; 
+
+BOOL CTipsPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+    CWinApp* pApp = AfxGetApp();
+    ASSERT_VALID(pApp);
+    ASSERT(pApp->m_pszHelpFilePath != NULL);
+
+    CWaitCursor wait;
+
+    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs8))
+        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+    return TRUE;
+}
+
+void CTipsPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+    ASSERT(theApp.m_pszHelpFilePath != NULL);
+
+    CWaitCursor wait;
+
+    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
+                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs8))
+        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+}
+
+void CTipsPage::OnNew() 
+{
+    int row;
+    CCellRange sel = grid_.GetSelectedCellRange();
+
+    if (sel.IsValid())
+        row = sel.GetMinRow();
+    else
+        row = header_rows;       // If no row selected add new row at top
+	if (row < header_rows + FIRST_USER_TIP) row = header_rows + FIRST_USER_TIP;
+
+    add_row(row);
+
+	// Set up drop list so user can select the field type in Expression field
+	VERIFY(grid_.SetCellType(row, column_expr, RUNTIME_CLASS(CGridCellCombo)));
+    CGridCellCombo *pcell = (CGridCellCombo*) grid_.GetCell(row, column_expr);
+	pcell->SetOptions(var_list);
+
+    grid_.RedrawWindow();
+    grid_.SetSelectedRange(row, 0, row, column_count-1);
+    grid_.SetFocusCell(row, column_expr);
+
+    grid_.RedrawWindow();
+    grid_.SetFocus();
+
+    SetModified(TRUE);
+}
+
+void CTipsPage::OnDel() 
+{
+    CCellRange sel = grid_.GetSelectedCellRange();
+    if (sel.IsValid())
+    {
+        int row = sel.GetMinRow();
+		if (row < FIRST_USER_TIP) return;
+        grid_.DeleteRow(row);
+        if (row < grid_.GetRowCount())
+            grid_.SetSelectedRange(row, 0, row, column_count-1);
+
+        grid_.RedrawWindow();
+
+        SetModified(TRUE);
+    }
+}
+
+void CTipsPage::OnUp() 
+{
+    CCellRange sel = grid_.GetSelectedCellRange();
+    int row;
+
+    // If there is a row selected and its not at the top
+    if (sel.IsValid() && (row = sel.GetMinRow()) > header_rows + FIRST_USER_TIP)
+    {
+        // Save info from the current and above row
+        CString s1 = grid_.GetItemText(row, column_name);
+        CString s2 = grid_.GetItemText(row, column_expr);
+        CString s3 = grid_.GetItemText(row, column_format);
+        CString s1_above = grid_.GetItemText(row-1, column_name);
+        CString s2_above = grid_.GetItemText(row-1, column_expr);
+        CString s3_above = grid_.GetItemText(row-1, column_format);
+        BOOL is_checked, is_checked_above;
+
+        CGridBtnCell *pbtn;
+        UINT state;
+
+        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
+        is_checked = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
+        pbtn = (CGridBtnCell *)grid_.GetCell(row-1, column_check);
+        is_checked_above = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
+
+        // Swap the contents of the rows
+        grid_.SetItemText(row-1, column_name, s1);
+        grid_.SetItemText(row-1, column_expr, s2);
+        grid_.SetItemText(row-1, column_format, s3);
+        pbtn = (CGridBtnCell *)grid_.GetCell(row-1, column_check);
+        state = pbtn->GetDrawCtlState(0);
+        if (is_checked)
+            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
+        else
+            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
+
+        grid_.SetItemText(row, column_name, s1_above);
+        grid_.SetItemText(row, column_expr, s2_above);
+        grid_.SetItemText(row, column_format, s3_above);
+        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
+        state = pbtn->GetDrawCtlState(0);
+        if (is_checked_above)
+            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
+        else
+            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
+
+
+        grid_.SetSelectedRange(row-1, 0, row-1, column_count-1);
+
+        grid_.RedrawWindow();
+        SetModified(TRUE);
+    }
+}
+
+void CTipsPage::OnDown() 
+{
+    CCellRange sel = grid_.GetSelectedCellRange();
+    int row;
+    if (sel.IsValid() && (row = sel.GetMinRow()) < grid_.GetRowCount()-1 && row >= header_rows + FIRST_USER_TIP)
+    {
+        // Save info from current row and row below
+        CString s1 = grid_.GetItemText(row, column_name);
+        CString s2 = grid_.GetItemText(row, column_expr);
+        CString s3 = grid_.GetItemText(row, column_format);
+        CString s1_below = grid_.GetItemText(row+1, column_name);
+        CString s2_below = grid_.GetItemText(row+1, column_expr);
+        CString s3_below = grid_.GetItemText(row+1, column_format);
+        BOOL is_checked, is_checked_below;
+
+        CGridBtnCell *pbtn;
+        UINT state;
+
+        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
+        is_checked = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
+        pbtn = (CGridBtnCell *)grid_.GetCell(row+1, column_check);
+        is_checked_below = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
+
+        // Swap the contents of the rows
+        grid_.SetItemText(row+1, column_name, s1);
+        grid_.SetItemText(row+1, column_expr, s2);
+        grid_.SetItemText(row+1, column_format, s3);
+        pbtn = (CGridBtnCell *)grid_.GetCell(row+1, column_check);
+        state = pbtn->GetDrawCtlState(0);
+        if (is_checked)
+            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
+        else
+            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
+
+        grid_.SetItemText(row, column_name, s1_below);
+        grid_.SetItemText(row, column_expr, s2_below);
+        grid_.SetItemText(row, column_format, s3_below);
+        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
+        state = pbtn->GetDrawCtlState(0);
+        if (is_checked_below)
+            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
+        else
+            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
+
+        grid_.SetSelectedRange(row+1, 0, row+1, column_count-1);
+
+        grid_.RedrawWindow();
+        SetModified(TRUE);
+    }
+}
+
+LRESULT CTipsPage::OnIdle(long lCount)
+{
+    if (lCount == 0)
+    {
+		// Disable/enable up/down/del buttons depending on the row selected
+        int num_rows = grid_.GetRowCount() - header_rows;
+        int curr_row = -1;
+
+        CCellRange sel = grid_.GetSelectedCellRange();
+        if (sel.IsValid())
+        {
+            curr_row = sel.GetMinRow() - header_rows;
+        }
+        ASSERT(GetDlgItem(IDC_DEL) != NULL);
+        GetDlgItem(IDC_DEL)->EnableWindow(curr_row != -1 && curr_row >= FIRST_USER_TIP);
+        ASSERT(GetDlgItem(IDC_UP) != NULL);
+        GetDlgItem(IDC_UP)->EnableWindow(curr_row != -1 && curr_row > FIRST_USER_TIP);
+        ASSERT(GetDlgItem(IDC_DOWN) != NULL);
+        GetDlgItem(IDC_DOWN)->EnableWindow(curr_row != -1 && curr_row < num_rows - 1 && curr_row >= FIRST_USER_TIP);
+    }
+
+    return FALSE;
+}
+
+void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
+{
+    NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
+    CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+	// Make sure any text does not have a semi-colon as that is used as a separator in the registry string
+    if (ss.FindOneOf(";") != -1)
+    {
+        AfxMessageBox("Please do not use a semi-colon (;)");
+        *pResult = -1;
+        return;
+    }
+	// If expression edited using drop down list then fill corresponding format list
+    if (pItem->iColumn == column_expr && grid_.GetCell(pItem->iRow, column_expr)->IsKindOf(RUNTIME_CLASS(CGridCellCombo)))
+	{
+		enum { tnone, tint, tuint, treal32, treal64, tdate, tchar, tstring } tt = tnone;
+
+		if (ss.Find("byte") != -1)
+			tt = tuint;
+		else if (ss.Find("sbyte") != -1 ||
+		         ss.Find("word") != -1 ||
+			     ss.Find("dword") != -1 ||
+			     ss.Find("qword") != -1
+		        )
+		    tt = tint;
+		else if (ss.Find("uword") != -1 ||
+			     ss.Find("udword") != -1 ||
+			     ss.Find("uqword") != -1 ||
+			     ss.Find("address") != -1 ||
+			     ss.Find("cursor") != -1 ||
+			     ss.Find("sel_len") != -1 ||
+			     ss.Find("mark") != -1 ||
+			     ss.Find("eof") != -1 ||
+			     ss.Find("sector") != -1 ||
+			     ss.Find("offset") != -1
+		        )
+			tt = tuint;
+		else if (ss.Find("ieee32") != -1 ||
+			     ss.Find("ibm32") != -1
+		        )
+			tt = treal32;
+		else if (ss.Find("ieee64") != -1 ||
+			     ss.Find("ibm64") != -1
+		        )
+			tt = treal64;
+		else if (ss.Find("time_t") != -1 ||
+			     ss.Find("time64_t") != -1 ||
+			     ss.Find("date") != -1 ||
+				 ss.Find("time") != -1
+		        )
+			tt = tdate;
+		else if (ss.Find("char") != -1)
+			tt = tchar;
+		else if (ss.Find("string") != -1)
+			tt = tchar;
+
+		if (tt > tnone)
+		{
+			// Make sure the format field has a drop list
+			if (!grid_.GetCell(pItem->iRow, column_format)->IsKindOf(RUNTIME_CLASS(CGridCellCombo)))
+				VERIFY(grid_.SetCellType(pItem->iRow, column_format, RUNTIME_CLASS(CGridCellCombo)));
+
+		    CGridCellCombo * pcell = (CGridCellCombo*) grid_.GetCell(pItem->iRow, column_format);
+			switch (tt)
+			{
+			case tint:
+				pcell->SetOptions(int_list);
+				break;
+			case tuint:
+				pcell->SetOptions(uint_list);
+				break;
+			case treal32:
+				pcell->SetOptions(real32_list);
+				break;
+			case treal64:
+				pcell->SetOptions(real64_list);
+				break;
+			case tdate:
+				pcell->SetOptions(date_list);
+				break;
+			case tchar:
+				pcell->SetOptions(char_list);
+				break;
+			case tstring:
+				pcell->SetOptions(string_list);
+				break;
+			}
+		}
+	}
+    SetModified(TRUE);
+    *pResult = 0;
+}
+
+void CTipsPage::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
     NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
     if (pItem->iColumn == 0)

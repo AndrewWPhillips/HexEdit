@@ -68,6 +68,9 @@
 #define IDS_UP                          141
 #define IDS_DOWN                        142
 #define IDB_EDIT_UNDOU                  143
+#define IDS_NEW_TIP                     143
+#define IDS_DEL2                        144
+#define IDS_DEL_TIP                     144
 #define IDB_BITMAP1                     149
 #define IDD_FIND_HEX                    150
 #define IDD_PROP_FILE                   151
@@ -282,6 +285,7 @@
 #define IDD_DFFD_SWITCH                 307
 #define IDB_FORW1                       308
 #define ID_INTEGER_MAX                  308
+#define IDD_OPT_TIPS                    308
 #define IDB_PARENT1                     309
 #define ID_INTEGER_SIZEOF               309
 #define IDB_BACK_HOT                    310
@@ -348,6 +352,7 @@
 #define ID_STRING_RTRIM                 351
 #define IDI_ICON2                       353
 #define IDI_ICON3                       354
+#define IDI_TIPS                        355
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -1002,6 +1007,7 @@
 #define IDC_ALIGN_SELECT                1523
 #define IDC_ALIGN_SPIN                  1524
 #define IDC_OFFSET_SPIN                 1525
+#define IDC_SLIDER                      1526
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1354,7 +1360,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        355
 #define _APS_NEXT_COMMAND_VALUE         38003
-#define _APS_NEXT_CONTROL_VALUE         1526
+#define _APS_NEXT_CONTROL_VALUE         1527
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

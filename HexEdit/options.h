@@ -362,6 +362,63 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 };
+
+/////////////////////////////////////////////////////////////////////////////
+// CTipsPage dialog
+
+class CTipsPage : public CPropertyPage
+{
+	DECLARE_DYNCREATE(CTipsPage)
+
+// Construction
+public:
+	CTipsPage();
+	~CTipsPage();
+
+// Dialog Data
+	enum { IDD = IDD_OPT_TIPS };
+	CSliderCtrl ctl_slider_;
+	CButton	ctl_up_;
+	CButton	ctl_new_;
+	CButton	ctl_down_;
+	CButton	ctl_del_;
+
+    LRESULT OnIdle(long);
+
+// Overrides
+public:
+	virtual void OnOK();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+    enum { column_check, column_name, column_expr, column_format,
+           /* leave this one at end*/ column_count };
+    enum { header_rows = 0 };
+
+    CGridCtrl grid_;                       // MFC grid control
+    CBtnDataBase btn_db_;                  // Needed for button cells (check box)
+
+    CStringArray var_list;                 // Stores all "variable" names that can be used in an expression used for column_expr drop list
+	CStringArray int_list,uint_list,real32_list,real64_list,date_list,char_list,string_list;
+
+    CToolTipCtrl m_cToolTip;
+    void add_row(int row, BOOL is_checked = TRUE, CString s1 = "", CString s2 = "", CString s3 = "");
+    HICON icon_new_, icon_del_, icon_up_, icon_down_;
+
+	virtual BOOL OnInitDialog();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnDel();
+	afx_msg void OnNew();
+	afx_msg void OnUp();
+	afx_msg void OnDown();
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+    afx_msg void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
+    afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	DECLARE_MESSAGE_MAP()
+};
 /////////////////////////////////////////////////////////////////////////////
 // CWindowPage dialog
 
