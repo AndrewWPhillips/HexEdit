@@ -143,8 +143,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory=".\DebugVS2003"
+			IntermediateDirectory=".\DebugVS2003"
 			ConfigurationType="1"
 			UseOfMFC="2"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -156,9 +156,9 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="stdafx.h"
-				PrecompiledHeaderFile=".\Debug/HexEdit.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
+				PrecompiledHeaderFile=".\DebugVS2003\HexEdit.pch"
+				AssemblerListingLocation=".\Debug\VS2003\"
+				ObjectFile=".\Debug\VS2003\"
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				BrowseInformation="1"
 				WarningLevel="3"
@@ -170,11 +170,11 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="version.lib setargv.obj imagehlp.lib htmlhelp.lib Winmm.lib"
-				OutputFile=".\Debug/HexEdit.exe"
+				OutputFile=".\DebugVS2003\HexEdit.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/HexEdit.pdb"
+				ProgramDatabaseFile=".\DebugVS2003\HexEdit.pdb"
 				SubSystem="2"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -992,6 +992,9 @@
 				RelativePath="RES\switch.ico">
 			</File>
 			<File
+				RelativePath=".\RES\tips.ico">
+			</File>
+			<File
 				RelativePath="RES\tmp.bmp">
 			</File>
 			<File
@@ -1614,5 +1617,8 @@
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="HexEdit.rc"/>
 	</Globals>
 </VisualStudioProject>
