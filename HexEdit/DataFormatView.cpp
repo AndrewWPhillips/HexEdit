@@ -1393,6 +1393,9 @@ void CDataFormatView::InitTree()
                     case CHexEditDoc::DF_DATEC:
                         item.strText = "Common time_t";
                         break;
+                    case CHexEditDoc::DF_DATEC64:
+                        item.strText = "64bit C/C++ time (time64_t)";
+                        break;
                     case CHexEditDoc::DF_DATECMIN:
                         item.strText = "time_t (mins since 1/1/1970)";
                         break;
@@ -1413,9 +1416,6 @@ void CDataFormatView::InitTree()
                         break;
                     case CHexEditDoc::DF_DATEMSDOS:
                         item.strText = "MSDOS file system date/time";
-                        break;
-                    case CHexEditDoc::DF_DATEC64:
-                        item.strText = "64bit C/C++ time (time64_t)";
                         break;
                     }
 
@@ -1447,13 +1447,13 @@ void CDataFormatView::InitTree()
                             item.strText += " little-endian";  // Only show the unusual case (little-endian)
                         break;
                     case CHexEditDoc::DF_DATEC:
+                    case CHexEditDoc::DF_DATEC64:
                     case CHexEditDoc::DF_DATECMIN:
                     case CHexEditDoc::DF_DATEC51:
                     case CHexEditDoc::DF_DATEC7:
                     case CHexEditDoc::DF_DATEOLE:
                     case CHexEditDoc::DF_DATESYSTEMTIME:
                     case CHexEditDoc::DF_DATEFILETIME:
-                    case CHexEditDoc::DF_DATEC64:
                         if (pdoc->df_type_[ii] < 0)
                             item.strText += " big-endian";
                         break;
@@ -1607,6 +1607,12 @@ COleDateTime CDataFormatView::GetDate(int ii)
         case CHexEditDoc::DF_DATEC:
             retval = COleDateTime(*((time_t *)buf));
             break;
+#ifdef TIME64_T // __time64_t is not implemented in VC6, but is in VC7
+        case CHexEditDoc::DF_DATEC64:
+			ASSERT(df_size == 8);
+            retval = COleDateTime(*((__time64_t *)buf));
+            break;
+#endif
         case CHexEditDoc::DF_DATECMIN:
             tt = *((long *)buf)*60;
             retval = COleDateTime(tt);
@@ -1633,7 +1639,7 @@ COleDateTime CDataFormatView::GetDate(int ii)
                 retval = ft;
             break;
         default:
-            ASSERT(0);
+			ASSERT(0);
         }
     }
     return retval;
@@ -1840,6 +1846,7 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
             strFormat = theApp.default_real_format_;
             break;
         case CHexEditDoc::DF_DATEC:
+        case CHexEditDoc::DF_DATEC64:
         case CHexEditDoc::DF_DATECMIN:
         case CHexEditDoc::DF_DATEC51:
         case CHexEditDoc::DF_DATEC7:
@@ -1847,7 +1854,6 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
         case CHexEditDoc::DF_DATESYSTEMTIME:
         case CHexEditDoc::DF_DATEFILETIME:
         case CHexEditDoc::DF_DATEMSDOS:
-        case CHexEditDoc::DF_DATEC64:
             strFormat = theApp.default_date_format_;
             break;
         case CHexEditDoc::DF_NO_TYPE:
@@ -2655,6 +2661,18 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
             else
                 ss = "Invalid";
             break;
+#ifdef TIME64_T
+        case CHexEditDoc::DF_DATEC64:
+            timeptr = _localtime64(((__time64_t *)buf));
+            if (timeptr != NULL)
+            {
+                strftime(disp, sizeof(disp), strFormat, timeptr);
+                ss = disp;
+            }
+            else
+                ss = "Invalid";
+            break;
+#endif
 
         case CHexEditDoc::DF_DATEC51:
             tt = *((long *)buf) + (365*10 + 2)*24L*60L*60L;
@@ -4981,6 +4999,11 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
     case CHexEditDoc::DF_DATEC:
         odt = COleDateTime(*((time_t *)buf));
         break;
+#ifdef TIME64_T
+    case CHexEditDoc::DF_DATEC64:
+        odt = COleDateTime(*((__time64_t *)buf));
+        break;
+#endif
     case CHexEditDoc::DF_DATEC51:
         tt = *((long *)buf) + (365*10 + 2)*24L*60L*60L;
         odt = COleDateTime(tt);
@@ -5557,6 +5580,16 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
             pdata = (unsigned char *)&val32;
 			ASSERT(df_size == 4);
 			break;
+#ifdef TIME64_T
+        case CHexEditDoc::DF_DATEC64:
+			if (odt.GetStatus() == COleDateTime::valid)
+                val64 = __time64_t((odt.m_dt - (365.0*70.0 + 17 + 2) - tz_diff)*(24.0*60.0*60.0) + 0.5);
+			else
+				val64 = (time_t)-1;
+            pdata = (unsigned char *)&val64;
+			ASSERT(df_size == 8);
+			break;
+#endif
         case CHexEditDoc::DF_DATECMIN:
 			if (odt.GetStatus() == COleDateTime::valid)
                 val32 = long((odt.m_dt - (365.0*70.0 + 17 + 2) - tz_diff)*(24.0*60.0) + 0.5);
@@ -5642,8 +5675,6 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
             }
 			else
 				memset(pdata, 0, 4);
-			break;
-        case CHexEditDoc::DF_DATEC64:
 			break;
         }
 

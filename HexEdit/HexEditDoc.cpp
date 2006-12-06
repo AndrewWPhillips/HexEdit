@@ -4176,6 +4176,15 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
                 retval.date = (odt.m_status == 0 ? odt.m_dt : -1e30);
             }
             break;
+#ifdef TIME64_T      // __time64_t is not supported in VC6
+        case CHexEditDoc::DF_DATEC64:
+            {
+                retval.typ = TYPE_DATE;
+                COleDateTime odt(*((__time64_t *)buf));
+                retval.date = (odt.m_status == 0 ? odt.m_dt : -1e30);
+            }
+            break;
+#endif
         case CHexEditDoc::DF_DATEC51:
             {
                 retval.typ = TYPE_DATE;
@@ -4228,15 +4237,6 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
                     retval.date = -1e30;
             }
             break;
-#ifdef TIME64_T // Not implemented in VC6, but is in VC7
-        case CHexEditDoc::DF_DATEC64:
-            {
-                retval.typ = TYPE_DATE;
-                COleDateTime odt(*((__time64_t *)buf));
-                retval.date = (odt.m_status == 0 ? odt.m_dt : -1e30);
-            }
-            break;
-#endif
         default:
             ASSERT(0);
             break;
