@@ -295,7 +295,7 @@ enum km_type
     km_seed,                    // Seed random number generators 0 = random, 1 = from calc
 
 	// Added in 3.2
-	km_compress,                // 1 = compress, 2 = decompress (0 = options?)
+	km_compress,                // 1 = compress, 2 = decompress, 0 = settings dlg
     km_last // = 241?           // Keep at end
 };
 

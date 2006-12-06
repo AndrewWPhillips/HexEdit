@@ -4861,10 +4861,11 @@ void CHexEditView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     update_sel_tip();
 
 	// Also make sure info tip is hidden
+    if (nChar != VK_SHIFT)
 #ifdef NEW_TIPS
-	tip_.Hide();
+        tip_.Hide();
 #else
-	tip_.Hide(0);
+        tip_.Hide(0);
 #endif
 }
 
@@ -13068,10 +13069,50 @@ void CHexEditView::OnCompress()
 
 	// Initialise structure used to communicate with the zlib routines
 	z_stream zs;
+    int level      = Z_DEFAULT_COMPRESSION;
+	if (theApp.GetProfileInt("Options", "ZlibCompressionDVLevel", 1) == 0)
+		level = theApp.GetProfileInt("Options", "ZlibCompressionLevel", level);
+	ASSERT(level == Z_DEFAULT_COMPRESSION || (level >= 1 && level <= 9));
+	int windowBits = 15;
+	if (theApp.GetProfileInt("Options", "ZlibCompressionDVWindow", 1) == 0)
+		windowBits = theApp.GetProfileInt("Options", "ZlibCompressionWindow", windowBits);
+	ASSERT(windowBits >= 8 && windowBits <= 15);
+	switch (theApp.GetProfileInt("Options", "ZlibCompressionHeaderType", 1))
+	{
+	case 0: // raw (no header)
+		windowBits = - windowBits;
+		break;
+	case 2: // gzip header
+		windowBits += 16;
+		break;
+	default:
+		ASSERT(0);
+	case 1:
+		break;
+	}
+	int memLevel   = 8;
+	if (theApp.GetProfileInt("Options", "ZlibCompressionDVMemory", 1) == 0)
+		memLevel = theApp.GetProfileInt("Options", "ZlibCompressionMemory", memLevel);
+	ASSERT(memLevel >= 1 && memLevel <= 9);
+	int strategy   = theApp.GetProfileInt("Options", "ZlibCompressionStrategy", Z_DEFAULT_STRATEGY);
+	ASSERT( strategy == Z_DEFAULT_STRATEGY ||
+			strategy == Z_FILTERED ||
+			strategy == Z_HUFFMAN_ONLY ||
+			strategy == Z_RLE ||
+			strategy == Z_FIXED
+		  );
+
 	zs.zalloc = (alloc_func)0;
 	zs.zfree = (free_func)0;
 	zs.opaque = (voidpf)0;
-	VERIFY(deflateInit(&zs, Z_DEFAULT_COMPRESSION) == Z_OK);
+//	VERIFY(deflateInit(&zs, Z_DEFAULT_COMPRESSION) == Z_OK);
+    VERIFY(deflateInit2(&zs,
+                        level,
+                        Z_DEFLATED,  // only method currently supported by zlib
+                        windowBits,
+                        memLevel,
+                        strategy
+					   ) == Z_OK);
 
 	// Test if selection is too big to do in memory
 	if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
@@ -13087,7 +13128,9 @@ void CHexEditView::OnCompress()
 
 		// Get input and output buffers
 		size_t len, inbuflen = size_t(min(32768, end_addr - start_addr)), outbuflen = max(inbuflen/2, 256);
-		int sync_every = (1024*1024)/inbuflen;    // No of input blocks per sync (currently every 1MB)
+
+		// Work out no of input blocks per sync
+		int sync_every = (theApp.GetProfileInt("Options", "ZlibCompressionSync", 0)*1024)/inbuflen;    
 		FILE_ADDRESS total_out = 0;
 		int err;
 		try
@@ -13111,7 +13154,7 @@ void CHexEditView::OnCompress()
 			for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
 			{
 				int flush;
-				if ((curr - start_addr)/inbuflen % sync_every == sync_every - 1)  // time to sync?
+				if (sync_every > 0 && (curr - start_addr)/inbuflen % sync_every == sync_every - 1)  // time to sync?
 					flush = Z_FULL_FLUSH;
 				else
 					flush = Z_NO_FLUSH;
@@ -13358,7 +13401,26 @@ void CHexEditView::OnDecompress()
 	zs.opaque = (voidpf)0;
 	zs.next_in = (Bytef*)0;
 	zs.avail_in = 0;
-	VERIFY(inflateInit(&zs) == Z_OK);
+//	VERIFY(inflateInit(&zs) == Z_OK);
+	int windowBits = 15;
+	if (theApp.GetProfileInt("Options", "ZlibCompressionDVWindow", 1) == 0)
+		windowBits = theApp.GetProfileInt("Options", "ZlibCompressionWindow", windowBits);
+	ASSERT(windowBits >= 8 && windowBits <= 15);
+	switch (theApp.GetProfileInt("Options", "ZlibCompressionHeaderType", 1))
+	{
+	case 0: // raw (no header)
+		windowBits = - windowBits;  // assume no header
+		break;
+	default:
+		ASSERT(0);
+	case 1:
+	case 2:
+		windowBits += 32;  // auto detect header type
+		break;
+	}
+	VERIFY(inflateInit2(&zs,
+						windowBits
+		               ) == Z_OK);
 
 	// Test if selection is too big to do in memory
 	if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
@@ -13424,7 +13486,7 @@ void CHexEditView::OnDecompress()
 						{
 							theApp.mac_error_ = 5;
 							if (::HMessageBox("The compression data is corrupted. \n"
-									    	  "HexEdit save the data decompressed \n"
+									    	  "HexEdit can save the data decompressed \n"
 										      "so far and attempt to recover from \n"
 									          "this error but some data will be lost. \n\n"
 										      "Do you want to continue?", MB_YESNO) != IDYES)

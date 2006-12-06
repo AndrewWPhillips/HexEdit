@@ -1449,6 +1449,9 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
             case km_compress:
                 switch ((*pk).vv)
                 {
+				case 0:
+					((CHexEditApp *)AfxGetApp())->OnCompressionSettings();
+					break;
                 case 1:
                     pv_->OnCompress();
                     break;

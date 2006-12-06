@@ -1007,7 +1007,8 @@
 #define IDC_ALIGN_SELECT                1523
 #define IDC_ALIGN_SPIN                  1524
 #define IDC_OFFSET_SPIN                 1525
-#define IDC_SLIDER                      1526
+#define IDC_COMPRESS_HELP               1526
+#define IDC_SLIDER                      1527
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1133,6 +1134,7 @@
 #define ID_EDIT_APPENDFILE              32931
 #define ID_EDIT_APPENDSAMEFILE          32932
 #define ID_UNDO_CHANGES                 32933
+#define ID_ZLIB_SETTINGS                32934
 #define ID_ZLIB_COMPRESS                32935
 #define ID_ZLIB_DECOMPRESS              32936
 #define ID_IMPORT_HEX_TEXT              32940
@@ -1358,9 +1360,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        355
+#define _APS_NEXT_RESOURCE_VALUE        356
 #define _APS_NEXT_COMMAND_VALUE         38003
-#define _APS_NEXT_CONTROL_VALUE         1527
+#define _APS_NEXT_CONTROL_VALUE         1528
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

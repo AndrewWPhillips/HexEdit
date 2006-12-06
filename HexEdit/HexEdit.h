@@ -63,7 +63,7 @@ typedef __int64 FILE_ADDRESS;
 #define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
 #define CHANGE_TRACKING 1   // Allow change tracking code
 #define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
-//#define DRAW_BACKGROUND 1   // Draw image tiled in MDI background - .bmp still needed
+#define DRAW_BACKGROUND 1   // Draw image tiled in MDI background - .bmp still needed
 #define SHOW_CODE_PAGE  1
 #define NEW_TIPS        1   // Use new (fading) tip control for view tips (selection length etc) - seems to work well
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
@@ -310,6 +310,7 @@ public:
     afx_msg void OnHelpWebFaq();
     afx_msg void OnHelpWebHome();
     afx_msg void OnHelpWebReg();
+    afx_msg void OnCompressionSettings();
     DECLARE_MESSAGE_MAP()
 
 public:

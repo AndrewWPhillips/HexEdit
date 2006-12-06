@@ -69,6 +69,7 @@
 #endif
 #include "Register.h"   // For About dialog
 #include "Algorithm.h"  // For encruption algorithm selection
+#include "CompressDlg.h" // For compression settings dialog
 #include "Password.h"   // For encryption password dialog
 #include "Misc.h"
 #include "SpecialList.h"    // For volume/device list (Open Special etc)
@@ -140,6 +141,7 @@ BEGIN_MESSAGE_MAP(CHexEditApp, CWinApp)
 	ON_COMMAND(ID_FILE_OPEN_SPECIAL, OnFileOpenSpecial)
 	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN_SPECIAL, OnUpdateFileOpenSpecial)
 	//}}AFX_MSG_MAP
+        ON_COMMAND(ID_ZLIB_SETTINGS, OnCompressionSettings)
         ON_COMMAND(ID_HELP_FORUM, OnHelpWebForum)
         ON_COMMAND(ID_HELP_FAQ, OnHelpWebFaq)
         ON_COMMAND(ID_HELP_HOMEPAGE, OnHelpWebHome)
@@ -1784,6 +1786,36 @@ void CHexEditApp::OnUpdateEncryptClear(CCmdUI* pCmdUI)
     pCmdUI->SetCheck(password_.IsEmpty());   // Set check if password is clear
 }
 
+void CHexEditApp::OnCompressionSettings()
+{
+	CCompressDlg dlg;
+
+	dlg.m_defaultLevel   = GetProfileInt("Options", "ZlibCompressionDVLevel", 1) ? TRUE : FALSE;
+	dlg.m_defaultWindow  = GetProfileInt("Options", "ZlibCompressionDVWindow", 1) ? TRUE : FALSE;
+	dlg.m_defaultMemory  = GetProfileInt("Options", "ZlibCompressionDVMemory", 1) ? TRUE : FALSE;
+	dlg.m_level          = GetProfileInt("Options", "ZlibCompressionLevel", 7);
+	dlg.m_window         = GetProfileInt("Options", "ZlibCompressionWindow", 15);
+	dlg.m_memory         = GetProfileInt("Options", "ZlibCompressionMemory", 9);
+	dlg.m_sync           = GetProfileInt("Options", "ZlibCompressionSync", 0);
+	dlg.m_headerType     = GetProfileInt("Options", "ZlibCompressionHeaderType", 1);
+	dlg.m_strategy       = GetProfileInt("Options", "ZlibCompressionStrategy", 0);
+
+	if (dlg.DoModal() == IDOK)
+	{
+		WriteProfileInt("Options", "ZlibCompressionDVLevel", dlg.m_defaultLevel);
+		WriteProfileInt("Options", "ZlibCompressionDVWindow", dlg.m_defaultWindow);
+		WriteProfileInt("Options", "ZlibCompressionDVMemory", dlg.m_defaultMemory);
+		WriteProfileInt("Options", "ZlibCompressionLevel", dlg.m_level);
+		WriteProfileInt("Options", "ZlibCompressionWindow", dlg.m_window);
+		WriteProfileInt("Options", "ZlibCompressionMemory", dlg.m_memory);
+		WriteProfileInt("Options", "ZlibCompressionSync", dlg.m_sync);
+		WriteProfileInt("Options", "ZlibCompressionHeaderType", dlg.m_headerType);
+		WriteProfileInt("Options", "ZlibCompressionStrategy", dlg.m_strategy);
+
+        SaveToMacro(km_compress);
+	}
+}
+
 // Retrieve options from .INI file/registry
 void CHexEditApp::LoadOptions()
 {
@@ -2122,11 +2154,11 @@ void CHexEditApp::LoadOptions()
                            "XML files (.xml)|>*.xml|"
                         "|"));
 
-	// Get info on what is displayed in tip (info) window
+	// Get settings for info tip window
 	tip_transparency_ = GetProfileInt("Options", "InfoTipTransparency", 200);
 
 	// get flags which say which hard-coded info is enabled (currently only option is bookmarks)
-    int hard = GetProfileInt("Options", "InfoTipFlags", 0);  // if bit is zero option is in use
+	int hard = GetProfileInt("Options", "InfoTipFlags", 0);  // if bit is zero option is in use
     tip_name_.push_back("Bookmarks");
     tip_on_.push_back( (hard&0x1) == 0);
     tip_expr_.push_back("");
