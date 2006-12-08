@@ -193,16 +193,8 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 {
                     OnProperties();
                     CPropSheet *pp = ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet;
-                    if (pp->SetActivePage(&pp->prop_float))
-                        pp->prop_float.UpdateWindow();
-                }
-                break;
-            case km_prop_ibmfp:
-                {
-                    OnProperties();
-                    CPropSheet *pp = ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet;
-                    if (pp->SetActivePage(&pp->prop_ibmfp))
-                        pp->prop_ibmfp.UpdateWindow();
+                    if (pp->SetActivePage(&pp->prop_real))
+                        pp->prop_real.UpdateWindow();
                 }
                 break;
             case km_prop_date:

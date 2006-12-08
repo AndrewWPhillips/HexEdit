@@ -379,8 +379,7 @@ CPropSheet::CPropSheet(UINT iSelectPage /*=0*/, CHexEditView *pv /*=NULL*/)
     AddPage(&prop_file);
     AddPage(&prop_char);
     AddPage(&prop_dec);
-    AddPage(&prop_float);
-    AddPage(&prop_ibmfp);
+    AddPage(&prop_real);
     AddPage(&prop_date);
 
 	// Create the brush used for background of read-only edit control
@@ -2436,49 +2435,47 @@ BOOL CPropDecPage::OnHelpInfo(HELPINFO *pHelpInfo)
 //===========================================================================
 
 /////////////////////////////////////////////////////////////////////////////
-// CPropFloatPage property page
+// CPropRealPage property page
 
-IMPLEMENT_DYNCREATE(CPropFloatPage, CPropUpdatePage)
+IMPLEMENT_DYNCREATE(CPropRealPage, CPropUpdatePage)
 
-CPropFloatPage::CPropFloatPage() : CPropUpdatePage(CPropFloatPage::IDD)
+CPropRealPage::CPropRealPage() : CPropUpdatePage(CPropRealPage::IDD)
 {
-        //{{AFX_DATA_INIT(CPropFloatPage)
-        exp_ = _T("");
-        mant_ = _T("");
         val_ = _T("");
-        format_ = -1;
-        big_endian_ = FALSE;
-        //}}AFX_DATA_INIT
-        CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-        big_endian_ = aa->prop_fp_endian_;
-        format_ = aa->prop_fp_format_;
-    // Use _fpclass CString::Format to get value, frexp to get mantissa/exp
+        mant_ = _T("");
+        exp_ = _T("");
+		desc_ = _T("");
+		exp_desc_ = _T("");
+
+        big_endian_ = theApp.prop_fp_endian_;
+        format_ = theApp.prop_fp_format_;
 }
 
-CPropFloatPage::~CPropFloatPage()
+CPropRealPage::~CPropRealPage()
 {
     // Save current state for next invocation of property dialog or save settings
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    aa->prop_fp_format_ = format_;
-    aa->prop_fp_endian_ = big_endian_;
+    theApp.prop_fp_format_ = format_;
+    theApp.prop_fp_endian_ = big_endian_;
 }
 
-void CPropFloatPage::DoDataExchange(CDataExchange* pDX)
+void CPropRealPage::DoDataExchange(CDataExchange* pDX)
 {
-        CPropUpdatePage::DoDataExchange(pDX);
-        //{{AFX_DATA_MAP(CPropFloatPage)
-        DDX_Text(pDX, IDC_FP_EXP, exp_);
-        DDV_MaxChars(pDX, exp_, 5);
-        DDX_Text(pDX, IDC_FP_MANT, mant_);
-        DDV_MaxChars(pDX, mant_, 20);
-        DDX_Text(pDX, IDC_FP_VAL, val_);
-        DDV_MaxChars(pDX, val_, 25);
-        DDX_Radio(pDX, IDC_FP_32BIT, format_);
-        DDX_Check(pDX, IDC_BIG_ENDIAN, big_endian_);
-        //}}AFX_DATA_MAP
+    CPropUpdatePage::DoDataExchange(pDX);
+
+    DDX_Text(pDX, IDC_FP_VAL, val_);
+    DDV_MaxChars(pDX, val_, 25);
+    DDX_Text(pDX, IDC_FP_MANT, mant_);
+    //DDV_MaxChars(pDX, mant_, 20);
+    DDX_Text(pDX, IDC_FP_EXP, exp_);
+    //DDV_MaxChars(pDX, exp_, 5);
+    DDX_Check(pDX, IDC_BIG_ENDIAN, big_endian_);
+	DDX_CBIndex(pDX, IDC_FP_FORMAT, format_);
+    DDX_Text(pDX, IDC_FP_EXP_DESC, exp_desc_);
+    DDX_Text(pDX, IDC_FP_DESC, desc_);
+	DDX_Control(pDX, IDC_FP_GROUP, ctl_group_);
 }
 
-void CPropFloatPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
+void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 {
     // Set fields to empty in case no view, not enough bytes to EOF etc
     val_ = _T("");
@@ -2492,15 +2489,28 @@ void CPropFloatPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
         UpdateData(FALSE);
         return;
     }
+
+	size_t needed = 8;
+	switch (format_)
+	{
+	case FMT_IEEE32:
+	case FMT_IBM32:
+		needed = 4;
+		break;
+	case FMT_DECIMAL:
+		needed = 16;
+		break;
+	}
+
     if (address == -1)
         address = pv->GetPos();
 
-    unsigned char buf[8];
+    unsigned char buf[16];
     size_t got = dynamic_cast<CHexEditDoc *>(pv->GetDocument())->GetData(buf, sizeof(buf), address);
 
     // If not enough byte to display FP value just display empty fields
     ASSERT(GetDlgItem(IDC_FP_VAL) != NULL);
-    if (format_ == 0 && got < 4 || format_ == 1 && got < 8)
+    if (got < needed)
     {
         GetDlgItem(IDC_FP_VAL)->SendMessage(EM_SETREADONLY, TRUE);
         UpdateData(FALSE);
@@ -2509,40 +2519,41 @@ void CPropFloatPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
     else
         GetDlgItem(IDC_FP_VAL)->SendMessage(EM_SETREADONLY, pv->ReadOnly());
 
-    double dd;                          // The value to be displayed
+    if (big_endian_)
+		flip_bytes(buf, needed);
 
-    // Convert the appropriate bytes to a double
-    if (format_ == 0)
-    {
-        float ff;
-        if (big_endian_)
-        {
-            unsigned char cc = buf[0]; buf[0] = buf[3]; buf[3] = cc;
-            cc = buf[1]; buf[1] = buf[2]; buf[2] = cc;
-        }
-        memcpy(&ff, buf, 4);
-        dd = ff;
-    }
-    else if (format_ == 1)
-    {
-        if (big_endian_)
-        {
-            unsigned char cc = buf[0]; buf[0] = buf[7]; buf[7] = cc;
-            cc = buf[1]; buf[1] = buf[6]; buf[6] = cc;
-            cc = buf[2]; buf[2] = buf[5]; buf[5] = cc;
-            cc = buf[3]; buf[3] = buf[4]; buf[4] = cc;
-        }
-        memcpy(&dd, buf, 8);
-    }
-    else
-        ASSERT(0);                      // IEEE 80 bit format no yet handled
+	// Value to be displayed
+    double value;
+	long double mantissa;
+    int exponent;
+
+	switch (format_)
+	{
+	case FMT_IEEE32:
+        value = *(float *)buf;
+		mantissa = frexp(value, &exponent);
+		break;
+	case FMT_IEEE64:
+        value = *(double *)buf;
+		mantissa = frexp(value, &exponent);
+		break;
+	case FMT_IBM32:
+        value = ::ibm_fp32(buf, &exponent, &mantissa, true);
+		break;
+	case FMT_IBM64:
+        value = ::ibm_fp64(buf, &exponent, &mantissa, true);
+		break;
+	case FMT_DECIMAL:
+		// TBD xxx
+		break;
+	default:
+		ASSERT(0);
+	}
 
     // Work out what to display
-    int exp;
-    double mant = frexp(dd, &exp);
-    exp_.Format("%d", exp);
-    mant_.Format(format_ ? "%.16f" : "%.7f", mant);
-    switch (_fpclass(dd))
+    exp_.Format("%d", (int)exponent);
+	mant_.Format(format_ == FMT_IEEE32 || format_ == FMT_IBM32 ? "%.7f" : "%.16f" , (double)mantissa);
+    switch (_fpclass(value))
     {
     case _FPCLASS_SNAN:
     case _FPCLASS_QNAN:
@@ -2555,7 +2566,7 @@ void CPropFloatPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
         val_ = "+Inf";
         break;
     default:
-        val_.Format(format_ ? "%.16g" : "%.7g", dd);
+		val_.Format(format_ == FMT_IEEE32 || format_ == FMT_IBM32 ? "%.7g" : "%.16g", (double)value);
         break;
     }
 
@@ -2566,128 +2577,179 @@ void CPropFloatPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
     UpdateWindow();
 }
 
-BEGIN_MESSAGE_MAP(CPropFloatPage, CPropUpdatePage)
-        //{{AFX_MSG_MAP(CPropFloatPage)
-        ON_WM_HELPINFO()
-        ON_BN_CLICKED(IDC_FP_32BIT, OnChangeFormat)
-        ON_BN_CLICKED(IDC_FP_64BIT, OnChangeFormat)
-        ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChangeFormat)
-	//}}AFX_MSG_MAP
+void CPropRealPage::FixDesc() 
+{
+	switch (format_)
+	{
+	case FMT_IEEE32:
+	case FMT_IEEE64:
+		exp_desc_ = "Exponent:\n(Power 2) ";
+		break;
+	case FMT_IBM32:
+	case FMT_IBM64:
+		exp_desc_ = "Exponent:\n(Power 16) ";
+		break;
+	case FMT_DECIMAL:
+		exp_desc_ = "Exponent:\n(Power 10) ";
+		break;
+	default:
+		ASSERT(0);
+	}
+}
+
+BEGIN_MESSAGE_MAP(CPropRealPage, CPropUpdatePage)
+	ON_CBN_SELCHANGE(IDC_FP_FORMAT, OnChangeFormat)
+    ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChangeFormat)
+    ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CPropFloatPage message handlers
+// CPropRealPage message handlers
 
-BOOL CPropFloatPage::OnInitDialog() 
+BOOL CPropRealPage::OnInitDialog() 
 {
 	CPropUpdatePage::OnInitDialog();
 	
-    VERIFY(edit_val_.SubclassDlgItem(IDC_FP_VAL, this));
+    VERIFY(ctl_val_.SubclassDlgItem(IDC_FP_VAL, this));
+	FixDesc();
 	
 	return TRUE;
 }
 
-BOOL CPropFloatPage::PreTranslateMessage(MSG* pMsg) 
+BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg) 
 {
 	if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
     {
         VERIFY(UpdateData());
         CHexEditView *pview = GetView();
         ASSERT(pview != NULL);
-        ASSERT(GetDlgItem(IDC_FP_VAL) != NULL);
-        if (pMsg->hwnd == GetDlgItem(IDC_FP_VAL)->m_hWnd && pview != NULL)
+        if (pMsg->hwnd == ctl_val_.m_hWnd && pview != NULL)
         {
-            char *endptr;
-            int special = 0; // 1 = Inf, 2 = -Inf, 3 = NaN
-            double dbl_val = strtod(val_, &endptr);
-
             val_.TrimLeft();
             val_.TrimRight();
-            val_.MakeLower();
 
-            // Detect special values to be stored
-            if (strncmp(val_, "inf", 3) == 0 || strncmp(val_, "+inf", 4) == 0 || dbl_val == HUGE_VAL)
-                special = 1;
-            else if (strncmp(val_, "-inf", 4) == 0 || dbl_val == -HUGE_VAL)
-                special = 2;
-            else if (strncmp(val_, "nan", 3) == 0)
-                special = 3;
+            char *endptr;
+			enum {NORMAL, INF, NINF, NAN} special = NORMAL;
+            double dbl_val = strtod(val_, &endptr);
+
+			if (format_ == FMT_IEEE32 || format_ == FMT_IEEE64)
+			{
+				// Special values (only supported for IEEE floats)
+	            val_.MakeLower();
+				if (strncmp(val_, "inf", 3) == 0 || strncmp(val_, "+inf", 4) == 0 || dbl_val == HUGE_VAL)
+					special = INF;
+				else if (strncmp(val_, "-inf", 4) == 0 || dbl_val == -HUGE_VAL)
+					special = NINF;
+				else if (strncmp(val_, "nan", 3) == 0)
+					special = NAN;
+			}
+
+			size_t len = 8;
+			switch (format_)
+			{
+			case FMT_IEEE32:
+			case FMT_IBM32:
+				len = 4;
+				break;
+			case FMT_DECIMAL:
+				len = 16;
+				break;
+			}
 
             FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
             pview->GetSelAddr(start_addr, end_addr);
-            if (special == 0 && endptr - (const char *)val_ < val_.GetLength())
+            if (special == NORMAL && endptr - (const char *)val_ < val_.GetLength())
             {
+				// Scan of numeric value failed
                 CString ss;
                 ss.Format("%s is an invalid floating point number", val_);
                 AfxMessageBox(ss);
                 Update(pview);
-                GetDlgItem(IDC_FP_VAL)->SetFocus();
+                ctl_val_.SetFocus();
             }
             else if (pview->ReadOnly())
             {
                 AfxMessageBox("Cannot modify a read only file");
             }
-            else if (format_ == 0 && start_addr + sizeof(float) > pview->GetDocument()->length() ||
-                     format_ == 1 && start_addr + sizeof(double) > pview->GetDocument()->length() )
+            else if (start_addr + len > pview->GetDocument()->length())
             {
-                ASSERT(0);
+                ASSERT(0);  // this should not happen since the field should be read-only
                 AfxMessageBox("Not enough space before end of file");
             }
-            else if (format_ == 0)
-            {
-                // Write the 4 byte IEEE number to file
-                float flt_val = (float)dbl_val;
-
-                // Write special IEEE bit patterns for +/-Inf & NaN
-                if (special == 1)
-                    memcpy((char *)&flt_val, "\x00\x00\x80\x7F", 4);
-                else if (special == 2)
-                    memcpy((char *)&flt_val, "\x00\x00\x80\xFF", 4);
-                else if (special == 3)
-                    memcpy((char *)&flt_val, "\xFF\xFF\xFF\xFF", 4);
-
-                if (big_endian_)
-                {
-                    // Reverse byte order
-                    unsigned char *pp = (unsigned char *)&flt_val;
-                    unsigned char cc = pp[0]; pp[0] = pp[3]; pp[3] = cc;
-                    cc = pp[1]; pp[1] = pp[2]; pp[2] = cc;
-                }
-                pview->GetDocument()->Change(mod_replace, start_addr, sizeof(float),
-                                             (unsigned char *)&flt_val, 0, pview);
-                if (end_addr - start_addr != 4)
-                    pview->MoveToAddress(start_addr, start_addr + 4, -1, -1, TRUE);
-            }
-            else if (format_ == 1)
-            {
-                // Write the 8 byte IEEE number to file
-
-                // Write special IEEE bit patterns for +/-Inf & NaN
-                if (special == 1)
-                    memcpy((char *)&dbl_val, "\x00\x00\x00\x00\x00\x00\xf0\x7F", 8);
-                else if (special == 2)
-                    memcpy((char *)&dbl_val, "\x00\x00\x00\x00\x00\x00\xf0\xFF", 8);
-                else if (special == 3)
-                    memcpy((char *)&dbl_val, "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF", 8);
-
-                if (big_endian_)
-                {
-                    // Reverse byte order
-                    unsigned char *pp = (unsigned char *)&dbl_val;
-                    unsigned char cc = pp[0]; pp[0] = pp[7]; pp[7] = cc;
-                    cc = pp[1]; pp[1] = pp[6]; pp[6] = cc;
-                    cc = pp[2]; pp[2] = pp[5]; pp[5] = cc;
-                    cc = pp[3]; pp[3] = pp[4]; pp[4] = cc;
-                }
-                pview->GetDocument()->Change(mod_replace, start_addr, sizeof(double), 
-                                             (unsigned char *)&dbl_val, 0, pview);
-                if (end_addr - start_addr != 8)
-                    pview->MoveToAddress(start_addr, start_addr + 8, -1, -1, TRUE);
-            }
             else
-                ASSERT(0);
-            ((CEdit*)GetDlgItem(IDC_FP_VAL))->SetSel(0, -1);
+            {
+				unsigned char *pp = NULL;
+				float flt_val;
+		        unsigned char buf[8];
+
+				switch (format_)
+				{
+				case FMT_IEEE32:
+					// Write the 4 byte IEEE number to file
+					flt_val = (float)dbl_val;
+
+					// Write special IEEE bit patterns for +/-Inf & NaN
+					if (special == INF)
+						memcpy((char *)&flt_val, "\x00\x00\x80\x7F", 4);
+					else if (special == NINF)
+						memcpy((char *)&flt_val, "\x00\x00\x80\xFF", 4);
+					else if (special == NAN)
+						memcpy((char *)&flt_val, "\xFF\xFF\xFF\xFF", 4);
+
+					pp = (unsigned char *)&flt_val;
+					break;
+				case FMT_IEEE64:
+					// Write special IEEE bit patterns for +/-Inf & NaN
+					if (special == INF)
+						memcpy((char *)&dbl_val, "\x00\x00\x00\x00\x00\x00\xf0\x7F", 8);
+					else if (special == NINF)
+						memcpy((char *)&dbl_val, "\x00\x00\x00\x00\x00\x00\xf0\xFF", 8);
+					else if (special == NAN)
+						memcpy((char *)&dbl_val, "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF", 8);
+
+						pp = (unsigned char *)&dbl_val;
+					break;
+				case FMT_IBM32:
+					if (!::make_ibm_fp32(buf, dbl_val, true))
+					{
+						AfxMessageBox("Value too big");
+						Update(pview);
+		                ctl_val_.SetFocus();
+					}
+					else
+						pp = buf;
+					break;
+				case FMT_IBM64:
+					if (!::make_ibm_fp64(buf, dbl_val, true))
+					{
+						AfxMessageBox("Value too big");
+						Update(pview);
+		                ctl_val_.SetFocus();
+					}
+					else
+						pp = buf;
+					break;
+				case FMT_DECIMAL:
+					// TBD xxx
+					break;
+				default:
+					ASSERT(0);
+				}
+
+				// If we have a value replace it in the file and select it
+				if (pp != NULL)
+				{
+					if (big_endian_)
+						flip_bytes(pp, len);
+
+					pview->GetDocument()->Change(mod_replace, start_addr, len,
+												pp, 0, pview);
+					if (end_addr - start_addr != len)
+						pview->MoveToAddress(start_addr, start_addr + len, -1, -1, TRUE);
+				}
+            }
+            ctl_val_.SetSel(0, -1);
 
             return 1;
         }
@@ -2705,9 +2767,8 @@ BOOL CPropFloatPage::PreTranslateMessage(MSG* pMsg)
     {
         // Escape pressed - restore previous value from val_
         UpdateData(FALSE);
-        ASSERT(GetDlgItem(IDC_FP_VAL) != NULL);
-        if (pMsg->hwnd == GetDlgItem(IDC_FP_VAL)->m_hWnd)
-            ((CEdit*)GetDlgItem(IDC_FP_VAL))->SetSel(0, -1);
+        if (pMsg->hwnd == ctl_val_.m_hWnd)
+            ctl_val_.SetSel(0, -1);
 
         return 1;
     }
@@ -2715,13 +2776,16 @@ BOOL CPropFloatPage::PreTranslateMessage(MSG* pMsg)
 	return CPropUpdatePage::PreTranslateMessage(pMsg);
 }
 
-void CPropFloatPage::OnChangeFormat() 
+void CPropRealPage::OnChangeFormat() 
 {
     if (UpdateData(TRUE))       // Update big_endian_, (32/64 bit) format_ from buttons
+	{
+		FixDesc();
         Update(GetView());      // Recalc values based on new format
+	}
 }
 
-BOOL CPropFloatPage::OnSetActive()
+BOOL CPropRealPage::OnSetActive()
 {
     Update(GetView());
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_float);
@@ -2733,19 +2797,18 @@ static DWORD id_pairs4[] = {
     IDC_FP_MANT, HIDC_FP_MANT,
     IDC_FP_EXP, HIDC_FP_EXP,
     IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-    IDC_FP_32BIT, HIDC_FP_32BIT,
-    IDC_FP_64BIT, HIDC_FP_64BIT,
+    IDC_FP_FORMAT, HIDC_FP_FORMAT,
     0,0 
 };
 
-void CPropFloatPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPropRealPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
     if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
                    HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs4))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-BOOL CPropFloatPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CPropRealPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
     CWinApp* pApp = AfxGetApp();
     ASSERT_VALID(pApp);
@@ -2754,260 +2817,6 @@ BOOL CPropFloatPage::OnHelpInfo(HELPINFO* pHelpInfo)
     CWaitCursor wait;
 
     if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs4))
-            ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-    return TRUE;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// CPropIBMFloatPage property page
-
-IMPLEMENT_DYNCREATE(CPropIBMFloatPage, CPropUpdatePage)
-
-CPropIBMFloatPage::CPropIBMFloatPage() : CPropUpdatePage(CPropIBMFloatPage::IDD)
-{
-        //{{AFX_DATA_INIT(CPropIBMFloatPage)
-        big_endian_ = FALSE;
-        exp_ = _T("");
-        mant_ = _T("");
-        val_ = _T("");
-        format_ = -1;
-        //}}AFX_DATA_INIT
-        CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-        big_endian_ = aa->prop_ibmfp_endian_;
-        format_ = aa->prop_ibmfp_format_;
-}
-
-CPropIBMFloatPage::~CPropIBMFloatPage()
-{
-    // Save current state for next invocation of property dialog or save settings
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    aa->prop_ibmfp_format_ = format_;
-    aa->prop_ibmfp_endian_ = big_endian_;
-}
-
-void CPropIBMFloatPage::DoDataExchange(CDataExchange* pDX)
-{
-        CPropUpdatePage::DoDataExchange(pDX);
-        //{{AFX_DATA_MAP(CPropIBMFloatPage)
-        DDX_Check(pDX, IDC_BIG_ENDIAN, big_endian_);
-        DDX_Text(pDX, IDC_IBMFP_EXP, exp_);
-        DDV_MaxChars(pDX, exp_, 4);
-        DDX_Text(pDX, IDC_IBMFP_MANT, mant_);
-        DDV_MaxChars(pDX, mant_, 20);
-        DDX_Text(pDX, IDC_IBMFP_VAL, val_);
-        DDV_MaxChars(pDX, val_, 25);
-        DDX_Radio(pDX, IDC_IBMFP_32BIT, format_);
-        //}}AFX_DATA_MAP
-}
-
-void CPropIBMFloatPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
-{
-    // Set fields to empty in case no view, not enough bytes to EOF etc
-    val_ = _T("");
-    mant_ = _T("");
-    exp_ = _T("");
-
-    // If no view return else get view's current address (if not given)
-    if (pv == NULL)
-    {
-        GetDlgItem(IDC_IBMFP_VAL)->SendMessage(EM_SETREADONLY, TRUE);
-        UpdateData(FALSE);
-        return;
-    }
-    if (address == -1)
-        address = pv->GetPos();
-
-    unsigned char buf[8];
-    size_t got = dynamic_cast<CHexEditDoc *>(pv->GetDocument())->GetData(buf, sizeof(buf), address);
-
-    // If not enough byte to display FP value just display empty fields
-    if (format_ == 0 && got < 4 || format_ == 1 && got < 8)
-    {
-        GetDlgItem(IDC_IBMFP_VAL)->SendMessage(EM_SETREADONLY, TRUE);
-        UpdateData(FALSE);
-        return;
-    }
-    else
-        GetDlgItem(IDC_IBMFP_VAL)->SendMessage(EM_SETREADONLY, pv->ReadOnly());
-
-    long double value, mantissa;                        // The value to be displayed
-    int exponent;
-
-    // Convert the bytes from IBM format to a long double (and get mantissa/exponent)
-    if (format_ == 0)
-        value = ::ibm_fp32(buf, &exponent, &mantissa, !big_endian_);
-    else if (format_ == 1)
-        value = ::ibm_fp64(buf, &exponent, &mantissa, !big_endian_);
-    else
-        ASSERT(0);                      // IEEE 80 bit format no yet handled
-
-    exp_.Format("%d", exponent);
-    mant_.Format(format_ ? "%.16f" : "%.7f", mantissa);
-    val_.Format(format_ ? "%.17g" : "%.7g", value);
-
-    UpdateData(FALSE);
-
-    // The call to UpdateWindow() is necessary during macro replay since (even
-    // if property refresh is on) no changes are seen until the macro stops.
-    UpdateWindow();
-}
-
-BEGIN_MESSAGE_MAP(CPropIBMFloatPage, CPropUpdatePage)
-        //{{AFX_MSG_MAP(CPropIBMFloatPage)
-        ON_WM_HELPINFO()
-        ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChangeFormat)
-        ON_BN_CLICKED(IDC_IBMFP_32BIT, OnChangeFormat)
-        ON_BN_CLICKED(IDC_IBMFP_64BIT, OnChangeFormat)
-	//}}AFX_MSG_MAP
-    ON_WM_CONTEXTMENU()
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CPropIBMFloatPage message handlers
-
-BOOL CPropIBMFloatPage::OnInitDialog() 
-{
-	CPropUpdatePage::OnInitDialog();
-
-    VERIFY(edit_val_.SubclassDlgItem(IDC_IBMFP_VAL, this));
-	
-    return TRUE;
-}
-
-BOOL CPropIBMFloatPage::PreTranslateMessage(MSG* pMsg) 
-{
-    if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
-    {
-        unsigned char buf[8];
-
-        VERIFY(UpdateData());
-        CHexEditView *pview = GetView();
-        ASSERT(pview != NULL);
-        ASSERT(GetDlgItem(IDC_IBMFP_VAL) != NULL);
-        if (pMsg->hwnd == GetDlgItem(IDC_IBMFP_VAL)->m_hWnd && pview != NULL)
-        {
-            char *endptr;
-            double dbl_val = strtod(val_, &endptr);
-
-            val_.TrimLeft();
-            val_.TrimRight();
-
-            FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
-            pview->GetSelAddr(start_addr, end_addr);
-            if (endptr - (const char *)val_ < val_.GetLength())
-            {
-                CString ss;
-                ss.Format("%s is an invalid floating point number", val_);
-                AfxMessageBox(ss);
-                Update(pview);
-                GetDlgItem(IDC_IBMFP_VAL)->SetFocus();
-            }
-            else if (pview->ReadOnly())
-            {
-                AfxMessageBox("Cannot modify a read only file");
-            }
-            else if (format_ == 0 && start_addr + sizeof(float) > pview->GetDocument()->length() ||
-                     format_ == 1 && start_addr + sizeof(double) > pview->GetDocument()->length() )
-            {
-                ASSERT(0);
-                AfxMessageBox("Not enough space before end of file");
-            }
-            else if (format_ == 0 && !::make_ibm_fp32(buf, dbl_val, !big_endian_))
-            {
-                AfxMessageBox("Value too big");
-                Update(pview);
-                GetDlgItem(IDC_IBMFP_VAL)->SetFocus();
-            }
-            else if (format_ == 0)
-            {
-                pview->GetDocument()->Change(mod_replace, start_addr, 4,
-                                             buf, 0, pview);
-                if (end_addr - start_addr != 4)
-                    pview->MoveToAddress(start_addr, start_addr + 4, -1, -1, TRUE);
-            }
-            else if (format_ == 1 && !::make_ibm_fp64(buf, dbl_val, !big_endian_))
-            {
-                AfxMessageBox("Value too big");
-                Update(pview);
-                GetDlgItem(IDC_IBMFP_VAL)->SetFocus();
-            }
-            else if (format_ == 1)
-            {
-                pview->GetDocument()->Change(mod_replace, start_addr, 8, 
-                                             buf, 0, pview);
-                if (end_addr - start_addr != 8)
-                    pview->MoveToAddress(start_addr, start_addr + 8, -1, -1, TRUE);
-            }
-            else
-                ASSERT(0);
-            ((CEdit*)GetDlgItem(IDC_IBMFP_VAL))->SetSel(0, -1);
-
-            return 1;
-        }
-    }
-    else if (pMsg->message == WM_CHAR && pMsg->wParam == '\t')
-    {
-        if (::GetKeyState(VK_SHIFT) < 0)
-            SendMessage(WM_NEXTDLGCTL, 1);
-        else
-            SendMessage(WM_NEXTDLGCTL);
-
-        return 1;
-    }
-    else if (pMsg->message == WM_CHAR && pMsg->wParam == '\033')
-    {
-        // Escape pressed - restore previous value from val_
-        UpdateData(FALSE);
-        ASSERT(GetDlgItem(IDC_IBMFP_VAL) != NULL);
-        if (pMsg->hwnd == GetDlgItem(IDC_IBMFP_VAL)->m_hWnd)
-            ((CEdit*)GetDlgItem(IDC_IBMFP_VAL))->SetSel(0, -1);
-
-        return 1;
-    }
-
-    return CPropUpdatePage::PreTranslateMessage(pMsg);
-}
-
-void CPropIBMFloatPage::OnChangeFormat() 
-{
-    if (UpdateData(TRUE))       // Update big_endian_, (32/64 bit) format_ from buttons
-        Update(GetView());      // Recalc values based on new format
-}
-
-BOOL CPropIBMFloatPage::OnSetActive() 
-{
-    Update(GetView());
-    ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_ibmfp);
-    return CPropUpdatePage::OnSetActive();
-}
-
-static DWORD id_pairs5[] = { 
-    IDC_IBMFP_VAL, HIDC_IBMFP_VAL,
-    IDC_IBMFP_MANT, HIDC_IBMFP_MANT,
-    IDC_IBMFP_EXP, HIDC_IBMFP_EXP,
-    IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-    IDC_IBMFP_32BIT, HIDC_IBMFP_32BIT,
-    IDC_IBMFP_64BIT, HIDC_IBMFP_64BIT,
-    0,0 
-};
-
-void CPropIBMFloatPage::OnContextMenu(CWnd* pWnd, CPoint point) 
-{
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs5))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-}
-
-BOOL CPropIBMFloatPage::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath,
-                   HELP_WM_HELP, (DWORD) (LPSTR) id_pairs5))
             ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
     return TRUE;
 }

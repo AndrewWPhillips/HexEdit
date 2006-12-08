@@ -374,99 +374,50 @@ protected:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-// CPropFloatPage dialog
+// CPropRealPage dialog
 
-class CPropFloatPage : public CPropUpdatePage
+class CPropRealPage : public CPropUpdatePage
 {
-	DECLARE_DYNCREATE(CPropFloatPage)
+	DECLARE_DYNCREATE(CPropRealPage)
 
 // Construction
 public:
-	CPropFloatPage();
-	~CPropFloatPage();
+	CPropRealPage();
+	~CPropRealPage();
 
 // Dialog Data
-	//{{AFX_DATA(CPropFloatPage)
-	enum { IDD = IDD_PROP_FLOAT };
-	CString	exp_;
-	CString	mant_;
+	enum { IDD = IDD_PROP_REAL };
 	CString	val_;
-	int		format_;
+	CString	mant_;
+	CString	exp_;
+	CString desc_, exp_desc_;    // static text
 	BOOL	big_endian_;
-	//}}AFX_DATA
+	int		format_;
 
-    CPropEditControl edit_val_;
+	// Controls
+    CPropEditControl ctl_val_;   // edit box
+	CWnd ctl_group_;             // group box
 
 // Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CPropFloatPage)
-	public:
+public:
 	virtual BOOL OnSetActive();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
 
 // Implementation
 	virtual void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1);
 
 protected:
-	// Generated message map functions
-	//{{AFX_MSG(CPropFloatPage)
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnChangeFormat();
 	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
-};
 
-/////////////////////////////////////////////////////////////////////////////
-// CPropIBMFloatPage dialog
-
-class CPropIBMFloatPage : public CPropUpdatePage
-{
-	DECLARE_DYNCREATE(CPropIBMFloatPage)
-
-// Construction
-public:
-	CPropIBMFloatPage();
-	~CPropIBMFloatPage();
-
-// Dialog Data
-	//{{AFX_DATA(CPropIBMFloatPage)
-	enum { IDD = IDD_PROP_IBMFP };
-	BOOL	big_endian_;
-	CString	exp_;
-	CString	mant_;
-	CString	val_;
-	int		format_;
-	//}}AFX_DATA
-
-    CPropEditControl edit_val_;
-
-// Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CPropIBMFloatPage)
-	public:
-	virtual BOOL OnSetActive();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-	virtual void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1);
-
-protected:
-	// Generated message map functions
-	//{{AFX_MSG(CPropIBMFloatPage)
-	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	afx_msg void OnChangeFormat();
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	DECLARE_MESSAGE_MAP()
+	// This relates format types to Combo Box elements
+	enum { FMT_IEEE32, FMT_IEEE64, FMT_IBM32, FMT_IBM64, FMT_DECIMAL };
+	void FixDesc() ;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -590,8 +541,7 @@ public:
     CPropFilePage     prop_file;
     CPropCharPage     prop_char;
     CPropDecPage      prop_dec;
-    CPropFloatPage    prop_float;
-    CPropIBMFloatPage prop_ibmfp;
+    CPropRealPage     prop_real;
     CPropDatePage     prop_date;
 };
 
