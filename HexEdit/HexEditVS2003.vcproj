@@ -310,6 +310,9 @@
 				RelativePath=".\ClearHistDlg.cpp">
 			</File>
 			<File
+				RelativePath=".\CompressDlg.cpp">
+			</File>
+			<File
 				RelativePath=".\Control.cpp">
 			</File>
 			<File
@@ -623,6 +626,9 @@
 			</File>
 			<File
 				RelativePath=".\ClearHistDlg.h">
+			</File>
+			<File
+				RelativePath=".\CompressDlg.h">
 			</File>
 			<File
 				RelativePath=".\Control.h">
@@ -1081,10 +1087,10 @@
 				RelativePath=".\TestData\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\TestData\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\TestData\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">
