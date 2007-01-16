@@ -55,7 +55,7 @@ CFindSheet::CFindSheet(UINT iSelectPage /*=0*/)
 
 	align_ = 1;
 	offset_ = 0;
-    rel_mark_ = theApp.GetProfileInt("Find-Settings", "RelMark", FALSE);
+    relative_ = theApp.GetProfileInt("Find-Settings", "Relative", FALSE);
 
     wildcards_allowed_ = theApp.GetProfileInt("Find-Settings", "UseWildcards", FALSE);;
     charset_ = RB_CHARSET_ASCII;    // Changes to match char set of active window
@@ -85,7 +85,7 @@ CFindSheet::~CFindSheet()
     theApp.WriteProfileInt("Find-Settings", "Direction", direction_);
 	theApp.WriteProfileInt("Find-Settings", "Scope", scope_);
 
-    theApp.WriteProfileInt("Find-Settings", "RelMark", rel_mark_);
+    theApp.WriteProfileInt("Find-Settings", "Relative", relative_);
 
     theApp.WriteProfileInt("Find-Settings", "UseWildcards", wildcards_allowed_);;
     ASSERT(wildcard_char_.GetLength() == 1);
@@ -846,7 +846,7 @@ static union
         unsigned int number_size :3;
 
 		// byte 2
-		unsigned int rel_mark :1;       // Alignment (below) is relative to mark in active view
+		unsigned int relative :1;       // Alignment (below) is relative to current mark in active view
 
 		// byte 3
         char wildcard_char;
@@ -880,7 +880,7 @@ __int64 CFindSheet::GetOptions()
 	ASSERT(offset_ < align_);
 	all_options.alignment = align_;
 	all_options.offset = offset_;
-	all_options.rel_mark = rel_mark_ ? 1 : 0;
+	all_options.relative = relative_ ? 1 : 0;
 
     return all_options.as_int;
 }
@@ -911,7 +911,7 @@ void CFindSheet::SetOptions(__int64 val)
 	offset_ = all_options.offset;
 	if (offset_ >= align_)
 		offset_ = 0;
-	rel_mark_ = BOOL(all_options.rel_mark);
+	relative_ = BOOL(all_options.relative);
 
     CPropertyPage *pp = GetActivePage();
     ASSERT(pp != NULL);
@@ -1027,12 +1027,13 @@ int CFindSheet::GetOffset()
 	return 0;
 }
 
-bool CFindSheet::AlignMark()
+// Is alignment search relative to mark (or start of file)
+bool CFindSheet::AlignRel()
 {
 	if (GetAlignment() == 1)
 		return false;                   // this option is no use if alignment is not in use
 	else
-		return rel_mark_ ? true : false;
+		return relative_ ? true : false;
 }
 
 void CFindSheet::Redisplay()            // Make sure hex digits case OK etc
@@ -1747,7 +1748,7 @@ void CHexPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Radio(pDX, IDC_FIND_SCOPE_TOMARK, *(int *)(&pparent_->scope_));
 	DDX_Text(pDX, IDC_ALIGN, pparent_->align_);
 	DDX_Text(pDX, IDC_OFFSET, pparent_->offset_);
-	DDX_Check(pDX, IDC_RELMASK, pparent_->rel_mark_);
+	DDX_Check(pDX, IDC_RELATIVE, pparent_->relative_);
     DDX_Control(pDX, IDC_ALIGN_SELECT, ctl_align_select_);
 	DDX_Text(pDX, IDC_FIND_BOOKMARK_PREFIX, pparent_->bookmark_prefix_);
 }
@@ -1870,7 +1871,6 @@ BOOL CHexPage::OnInitDialog()
 
 void CHexPage::OnCancel() 
 {
-    update_ok_ = false;
     if (phex_ != NULL)
     {
         if (phex_->m_hWnd != 0)
@@ -1889,7 +1889,7 @@ void CHexPage::OnCancel()
 	CPropertyPage::OnCancel();
 }
 
-void CHexPage::OnOK() 
+void CHexPage::OnOK()
 {
     if (phex_ != NULL)
     {
@@ -1963,7 +1963,7 @@ static DWORD id_pairs2[] = {
 	IDC_ALIGN_SELECT, HIDC_ALIGN_SELECT,
 	IDC_OFFSET, HIDC_OFFSET,
 	IDC_OFFSET_SPIN, HIDC_OFFSET_SPIN,
-	IDC_RELMASK, HIDC_RELMASK,
+	IDC_RELATIVE, HIDC_RELATIVE,
     0,0 
 };
 
@@ -2075,7 +2075,7 @@ void CHexPage::FixAlign()
 
 	GetDlgItem(IDC_OFFSET)->EnableWindow(pparent_->align_ > 1);
 	GetDlgItem(IDC_OFFSET_SPIN)->EnableWindow(pparent_->align_ > 1);
-	GetDlgItem(IDC_RELMASK)->EnableWindow(pparent_->align_ > 1);
+	GetDlgItem(IDC_RELATIVE)->EnableWindow(pparent_->align_ > 1);
 
     // Change the offset spin control range
     CSpinButtonCtrl *pspin;
@@ -2359,6 +2359,7 @@ IMPLEMENT_DYNCREATE(CNumberPage, CPropertyPage)
 
 CNumberPage::CNumberPage() : CPropertyPage(CNumberPage::IDD)
 {
+    update_ok_ = false;
 	//{{AFX_DATA_INIT(CNumberPage)
 	//}}AFX_DATA_INIT
 }
@@ -2383,6 +2384,9 @@ void CNumberPage::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_FIND_NUMBER_FORMAT, pparent_->number_format_);
 	DDX_CBIndex(pDX, IDC_FIND_NUMBER_SIZE, pparent_->number_size_);
 	DDX_Check(pDX, IDC_FIND_BIG_ENDIAN, pparent_->big_endian_);
+	DDX_Text(pDX, IDC_ALIGN, pparent_->align_);
+	DDX_Text(pDX, IDC_OFFSET, pparent_->offset_);
+	DDX_Check(pDX, IDC_RELATIVE, pparent_->relative_);
 	DDX_Text(pDX, IDC_FIND_BOOKMARK_PREFIX, pparent_->bookmark_prefix_);
 }
 
@@ -2401,6 +2405,8 @@ BEGIN_MESSAGE_MAP(CNumberPage, CPropertyPage)
 	ON_EN_CHANGE(IDC_FIND_BOOKMARK_PREFIX, OnChangePrefix)
 	//}}AFX_MSG_MAP
     ON_WM_CONTEXTMENU()
+	ON_EN_CHANGE(IDC_ALIGN, OnChangeAlign)
+	ON_EN_CHANGE(IDC_OFFSET, OnChangeOffset)
 END_MESSAGE_MAP()
 
 void CNumberPage::FixDirn()
@@ -2577,6 +2583,17 @@ BOOL CNumberPage::OnInitDialog()
     pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
 
+    ASSERT(GetDlgItem(IDC_ALIGN_SPIN) != NULL);
+    ASSERT(GetDlgItem(IDC_OFFSET_SPIN) != NULL);
+    CSpinButtonCtrl *pspin;
+    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_ALIGN_SPIN);
+    ASSERT(pspin != NULL);
+    pspin->SetRange32(1, 65535);
+	ASSERT(pparent_->align_ > 0);
+    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_OFFSET_SPIN);
+    ASSERT(pspin != NULL);
+    pspin->SetRange32(0, pparent_->align_ - 1);
+
 	return TRUE;
 }
 
@@ -2584,8 +2601,21 @@ BOOL CNumberPage::OnSetActive()
 {
     FixDirn();
     FixSizes();
-	
-	return CPropertyPage::OnSetActive();
+	FixAlign();
+
+	BOOL retval = CPropertyPage::OnSetActive();
+    update_ok_ = true;          // Its now OK to allow changes to align field to be processed
+	return retval;
+}
+
+BOOL CNumberPage::OnKillActive() 
+{
+    BOOL retval = CPropertyPage::OnKillActive();
+
+    if (retval)
+        update_ok_ = false;
+
+    return retval;
 }
 
 void CNumberPage::OnFindNext() 
@@ -2627,12 +2657,11 @@ static DWORD id_pairs4[] = {
     IDC_FIND_SCOPE_TOEND, HIDC_FIND_SCOPE_TOEND,
     IDC_FIND_SCOPE_FILE, HIDC_FIND_SCOPE_FILE,
     IDC_FIND_SCOPE_ALL, HIDC_FIND_SCOPE_ALL,
-	//IDC_ALIGN, HIDC_ALIGN,
-	//IDC_ALIGN_SPIN, HIDC_ALIGN_SPIN,
-	//IDC_ALIGN_SELECT, HIDC_ALIGN_SELECT,
-	//IDC_OFFSET, HIDC_OFFSET,
-	//IDC_OFFSET_SPIN, HIDC_OFFSET_SPIN,
-	//IDC_RELMASK, HIDC_RELMASK,
+	IDC_ALIGN, HIDC_ALIGN,
+	IDC_ALIGN_SPIN, HIDC_ALIGN_SPIN,
+	IDC_OFFSET, HIDC_OFFSET,
+	IDC_OFFSET_SPIN, HIDC_OFFSET_SPIN,
+	IDC_RELATIVE, HIDC_RELATIVE,
     0,0 
 };
 
@@ -2710,6 +2739,57 @@ void CNumberPage::OnChangePrefix()
     UpdateData();
     // Remember that prefix has been entered by user (unless cleared)
     pparent_->prefix_entered_ = !pparent_->bookmark_prefix_.IsEmpty();
+}
+
+void CNumberPage::OnChangeAlign()
+{
+    if (!update_ok_)
+        return;          // this avoids probs due to spin control generating events too early
+    update_ok_ = false;
+
+    // Get align_ value from dialog controls
+    if (UpdateData())
+	{
+		FixAlign();
+		UpdateData(FALSE);
+	}
+
+    update_ok_ = true;
+}
+
+void CNumberPage::FixAlign()
+{
+	// Make sure offset is less than alignment
+	if (pparent_->align_ < 1)
+		pparent_->align_ = 1;
+	if (pparent_->offset_ >= pparent_->align_)
+		pparent_->offset_ = pparent_->align_ - 1;
+
+	GetDlgItem(IDC_OFFSET)->EnableWindow(pparent_->align_ > 1);
+	GetDlgItem(IDC_OFFSET_SPIN)->EnableWindow(pparent_->align_ > 1);
+	GetDlgItem(IDC_RELATIVE)->EnableWindow(pparent_->align_ > 1);
+
+    // Change the offset spin control range to be [0, align)
+    CSpinButtonCtrl *pspin;
+    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_OFFSET_SPIN);
+    ASSERT(pspin != NULL);
+    pspin->SetRange32(0, pparent_->align_ - 1);
+}
+
+void CNumberPage::OnChangeOffset()
+{
+    if (!update_ok_)
+        return;          // this avoids probs due to spin control generating events too early
+    update_ok_ = false;
+
+	if (UpdateData())
+	{
+		if (pparent_->offset_ >= pparent_->align_)
+			pparent_->offset_ = pparent_->align_ - 1;
+		UpdateData(FALSE);
+	}
+
+    update_ok_ = true;
 }
 
 /////////////////////////////////////////////////////////////////////////////

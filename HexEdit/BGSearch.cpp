@@ -466,7 +466,7 @@ int CHexEditDoc::SearchProgress(int &occurrences)
 // otherwise the address of the next occurrence is returned.
 FILE_ADDRESS CHexEditDoc::GetNextFound(const unsigned char *pat, const unsigned char *mask, size_t len,
                                        BOOL icase, int tt, BOOL wholeword,
-									   int alignment, int offset, bool align_mark, FILE_ADDRESS base_addr,
+									   int alignment, int offset, bool align_rel, FILE_ADDRESS base_addr,
                                        FILE_ADDRESS from)
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
@@ -486,8 +486,8 @@ FILE_ADDRESS CHexEditDoc::GetNextFound(const unsigned char *pat, const unsigned 
             wholeword != aa->wholeword_ ||
             alignment != aa->alignment_ ||
 			offset != aa->offset_ ||
-			align_mark != aa->align_mark_ ||
-			(aa->align_mark_ && base_addr != base_addr_))
+			align_rel != aa->align_rel_ ||
+			(aa->align_rel_ && base_addr != base_addr_))
         {
             // Search params are different to last bg search (or no bg search done yet)
             return -3;
@@ -524,7 +524,7 @@ FILE_ADDRESS CHexEditDoc::GetNextFound(const unsigned char *pat, const unsigned 
 // Same as GetNextFound but finds the previous occurrence if any
 FILE_ADDRESS CHexEditDoc::GetPrevFound(const unsigned char *pat, const unsigned char *mask, size_t len,
                                        BOOL icase, int tt, BOOL wholeword,
-									   int alignment, int offset, bool align_mark, FILE_ADDRESS base_addr,
+									   int alignment, int offset, bool align_rel, FILE_ADDRESS base_addr,
                                        FILE_ADDRESS from)
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
@@ -544,8 +544,8 @@ FILE_ADDRESS CHexEditDoc::GetPrevFound(const unsigned char *pat, const unsigned 
             wholeword != aa->wholeword_ ||
             alignment != aa->alignment_ ||
 			offset != aa->offset_ ||
-			align_mark != aa->align_mark_ ||
-			(aa->align_mark_ && base_addr != base_addr_))
+			align_rel != aa->align_rel_ ||
+			(aa->align_rel_ && base_addr != base_addr_))
         {
             // Search params are different to last bg search (or no bg search done yet)
             return -3;

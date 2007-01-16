@@ -1010,10 +1010,11 @@
 #define IDC_OFFSET_SPIN                 1525
 #define IDC_COMPRESS_HELP               1526
 #define IDC_SLIDER                      1527
-#define IDC_FP_DESC                     1528
+#define IDC_RELATIVE                    1528
 #define IDC_FP_FORMAT                   1529
 #define IDC_FP_GROUP                    1530
 #define IDC_FP_EXP_DESC                 1531
+#define IDC_FP_DESC                     1532
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1367,7 +1368,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        357
 #define _APS_NEXT_COMMAND_VALUE         38003
-#define _APS_NEXT_CONTROL_VALUE         1532
+#define _APS_NEXT_CONTROL_VALUE         1533
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

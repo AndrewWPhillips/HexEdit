@@ -1,6 +1,6 @@
 // HexEditDoc.cpp : implementation of the CHexEditDoc class
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2003 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -306,8 +306,12 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
         CreateThread();
         if (theApp.pboyer_ != NULL)        // If a search has already been done do bg search on newly opened file
 		{
-			if (theApp.align_mark_ && recent_file_index != -1)
+			if (theApp.align_rel_ && recent_file_index != -1)
+			{
+				// we can't use GetSearchBase until the view has been opened
+				//base_addr_ = _atoi64(pfl->GetData(recent_file_index, CHexFileList::SELSTART));
 				base_addr_ = _atoi64(pfl->GetData(recent_file_index, CHexFileList::MARK));
+			}
             StartSearch();
 		}
     }

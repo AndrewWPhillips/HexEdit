@@ -1,6 +1,6 @@
 // HexEditView.cpp : implementation of the CHexEditView class
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2003 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -1454,10 +1454,10 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
         show_calc();
 
 		// If mark moved and current search is relative to mark then restart bg search
-		if (theApp.align_mark_ && mark_ != GetDocument()->base_addr_)
+		if (theApp.align_rel_ && mark_ != GetDocument()->base_addr_)
 		{
 			GetDocument()->StopSearch();
-			GetDocument()->base_addr_ = mark_;
+			GetDocument()->base_addr_ = GetSearchBase();
 			GetDocument()->StartSearch();
 		}
     }
@@ -9826,10 +9826,10 @@ BOOL CHexEditView::do_undo()
     case undo_setmark:
         invalidate_addr_range(mark_, mark_ + 1);
         mark_ = undo_.back().address;
-		if (theApp.align_mark_ && mark_ != GetDocument()->base_addr_)
+		if (theApp.align_rel_ && mark_ != GetDocument()->base_addr_)
 		{
 			GetDocument()->StopSearch();
-			GetDocument()->base_addr_ = mark_;
+			GetDocument()->base_addr_ = GetSearchBase();
 			GetDocument()->StartSearch();
 		}
         invalidate_addr_range(mark_, mark_ + 1);
@@ -11354,10 +11354,10 @@ void CHexEditView::SetMark(FILE_ADDRESS new_mark)
     undo_.push_back(view_undo(undo_state, TRUE));
     undo_.back().disp_state = disp_state_;
     mark_ = new_mark;
-	if (theApp.align_mark_ && mark_ != GetDocument()->base_addr_)
+	if (theApp.align_rel_ && mark_ != GetDocument()->base_addr_)
 	{
 		GetDocument()->StopSearch();
-		GetDocument()->base_addr_ = mark_;
+		GetDocument()->base_addr_ = GetSearchBase();
 		GetDocument()->StartSearch();
 	}
 
@@ -11485,10 +11485,10 @@ void CHexEditView::OnSwapMark()
     invalidate_addr_range(mark_, mark_ + 1);            // force undraw of mark
     mark_ = start_addr;
     invalidate_addr_range(mark_, mark_ + 1);            // force draw of new mark
-	if (theApp.align_mark_ && mark_ != GetDocument()->base_addr_)
+	if (theApp.align_rel_ && mark_ != GetDocument()->base_addr_)
 	{
 		GetDocument()->StopSearch();
-		GetDocument()->base_addr_ = mark_;
+		GetDocument()->base_addr_ = GetSearchBase();
 		GetDocument()->StartSearch();
 	}
     show_calc();
@@ -12667,6 +12667,7 @@ void CHexEditView::OnUpdateConvert(CCmdUI* pCmdUI)
 void CHexEditView::OnEncrypt() 
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     if (check_ro("encrypt"))
         return;
 
@@ -12708,96 +12709,230 @@ void CHexEditView::OnEncrypt()
         aa->crypto_.SetPassword(aa->algorithm_-1, aa->password_);
     }
 
+    unsigned char *buf = NULL;
+
     if (aa->algorithm_ > 0)
     {
-#ifdef ENCRYPT_MULT_BLOCK  // We don't need to restrict CSP block encryption to multiple of block size
-        int blen = aa->crypto_.GetBlockLength(aa->algorithm_-1);
-        if (blen == -1)
-        {
-            ::HMessageBox("Encryption block length error");
-            aa->mac_error_ = 10;
-            return;
-        }
+		// Test if selection is too big to do in memory
+		if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
+		{
+			int idx = -1;                       // Index into docs data_file_ array (or -1 if no slots avail.)
 
-        ASSERT(blen%8 == 0); // Should be multiple of number of bits/byte
-        if (blen == 0)
-            blen = 1;       // Stream cipher - don't restrict selection length
-        else
-            blen = blen/8;  // Convert bits to bytes
+			// Create a "temp" file to store the encrypted data
+			// (This file stores the data until the document is closed or written to disk.)
+			char temp_dir[_MAX_PATH];
+			char temp_file[_MAX_PATH];
+			::GetTempPath(sizeof(temp_dir), temp_dir);
+			::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
 
-        // Make sure selection is right size
-        if ((end_addr-start_addr)%blen != 0)
-        {
-            // Presumably in macro playback
-            ASSERT(aa->playing_);
-            ::HMessageBox("The selection is not a multiple of the encryption block length");
-            aa->mac_error_ = 10;
-            return;
-        }
-#endif
+			// Get input and output buffers
+			size_t len;
+			size_t inbuflen = 32768;
+			size_t outbuflen = aa->crypto_.needed(aa->algorithm_-1, inbuflen);
 
-        size_t len = size_t(end_addr - start_addr); // Length of selection
-        size_t buflen = aa->crypto_.needed(aa->algorithm_-1, len);
+			if (display_.overtype && inbuflen < outbuflen)
+			{
+				if (::HMessageBox("Encrypting with this algorithm will increase the\r"
+								"the length of the current (unencrypted) selection.\r"
+								"Do you want to turn off overtype mode?",
+								MB_OKCANCEL) == IDCANCEL)
+				{
+					aa->mac_error_ = 10;
+					return;
+				}
+				else if (!do_insert())
+					return;
+			}
 
-        if (display_.overtype && len < buflen)
-        {
-            if (::HMessageBox("Encrypting with this algorithm will increase the\r"
-                              "the length of the current (unencrypted) selection.\r"
-                              "Do you want to turn off overtype mode?",
-                              MB_OKCANCEL) == IDCANCEL)
-            {
-                aa->mac_error_ = 10;
-                return;
-            }
-			else if (!do_insert())
+			FILE_ADDRESS total_out = 0;
+			try
+			{
+				buf = new unsigned char[outbuflen];
+			}
+			catch(std::bad_alloc)
+			{
+				::HMessageBox("Insufficient memory to perform encryption");
+				theApp.mac_error_ = 10;
 				return;
-        }
+			}
 
-        // Get memory for selection and read it from the document
-        unsigned char *buf = new unsigned char[buflen];
-        size_t got = GetDocument()->GetData(buf, len, start_addr);
-        ASSERT(got == len);
+			mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+			MSG msg;                                           // use to check for abort key press
 
-        if (aa->crypto_.encrypt(aa->algorithm_-1, buf, len, buflen) != buflen)
-        {
-            ASSERT(0);
-            ::HMessageBox("Encryption error");
-            aa->mac_error_ = 10;
-            delete[] buf;
-            return;
-        }
+			try
+			{
+				CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
 
-        if (len != buflen)
-        {
-            ASSERT(buflen > len);
-#ifdef ENCRYPT_MULT_BLOCK
-            ASSERT((buflen - len)%blen == 0);
-#endif
+				for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+				{
+					// Get the next buffer full from the document
+					len = size_t(min(inbuflen, end_addr - curr));
+					VERIFY(GetDocument()->GetData(buf, len, curr) == len);
 
-            // Since the encrypted text is bigger we must delete then insert
-            GetDocument()->Change(mod_delforw, start_addr, len, NULL, 0, this);
-            GetDocument()->Change(mod_insert, start_addr, buflen, buf, 0, this, TRUE);
-            ASSERT(undo_.back().utype == undo_change);
-            undo_.back().previous_too = true;    // Merge changes (at least in this view)
+					// Encrypt and write it
+					size_t outlen = aa->crypto_.encrypt(aa->algorithm_-1, buf, len, outbuflen, curr + len == end_addr);
+					ff.Write(buf, outlen);
+					total_out += outlen;
 
-            // Select encrypted data and save undo of selection
-            SetSel(addr2pos(start_addr), addr2pos(start_addr+buflen));
-            undo_.push_back(view_undo(undo_move, TRUE));  // Save selection start in undo array
-            undo_.back().address = start_addr;
-            undo_.push_back(view_undo(undo_sel, TRUE));   // Save selection end in undo array
-            undo_.back().address = end_addr;
+					// Do any redrawing, but nothing else
+					while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+					{
+						if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+						{
+							::TranslateMessage(&msg);
+							::DispatchMessage(&msg);
+						}
+					}
 
-            // Inform the user in case they don't notice the selection has been increased
-            CString mess;
-            mess.Format("Encryption increased the selection length by %ld bytes", long(buflen-len));
-            ((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
-        }
-        else
-            GetDocument()->Change(mod_replace, start_addr, len, buf, 0, this);
-        delete[] buf;
+					// Check if a key has been pressed
+					if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+					{
+						// Windows does not like to miss key down events (need to match key up events)
+						::TranslateMessage(&msg);
+						::DispatchMessage(&msg);
+
+						// Remove any characters resulting from keypresses (so they are not inserted into the active file)
+						while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+							;
+
+						if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+							::HMessageBox("Abort encryption?", MB_YESNO) == IDYES)
+						{
+							ff.Close();
+							remove(temp_file);
+							theApp.mac_error_ = 10;
+							goto func_return;
+						}
+					}
+
+					mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+				}
+			}
+			catch (CFileException *pfe)
+			{
+				::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+				pfe->Delete();
+
+				remove(temp_file);
+				theApp.mac_error_ = 10;
+				goto func_return;
+			}
+
+			// Delete the unencrypted block that is to be replaced
+			// Note: this must be done before AddDataFile otherwise Change() (via regenerate()) will delete the temp file.
+			GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
+
+			// Add the temp file to the document
+			idx = GetDocument()->AddDataFile(temp_file);
+			ASSERT(idx != -1);
+			GetDocument()->Change(mod_insert_file, start_addr, total_out, NULL, idx, this, TRUE);
+
+			// Select encrypted data
+			SetSel(addr2pos(start_addr), addr2pos(start_addr + total_out));
+
+			//xxx message about what was done (sel len inc?)
+		}
+		else
+		{
+			// Error if ran out of temp file handles and file is too big
+			if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
+			{
+				::HMessageBox("HexEdit is out of temporary files and \n"
+							"cannot encrypt such a large selection. \n"
+							"Please save the file to free \n"
+							"temporary file handles and try again.\n",
+							MB_OK);
+				theApp.mac_error_ = 10;
+				return;
+			}
+
+			// Warn if we might cause memory exhaustion
+			if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+			{
+				if (::HMessageBox("WARNING: HexEdit is out of temporary file \n"
+								"handles and encrypting such a large selection \n"
+								"may cause memory exhaustion.  Please click NO \n"
+								"and save the file to free handles. \n"
+								"Or, click YES to continue.\n\n"
+								"Do you want to continue?", MB_YESNO) != IDYES)
+				{
+					theApp.mac_error_ = 5;
+					return;
+				}
+			}
+
+			size_t len = size_t(end_addr - start_addr); // Length of selection
+			size_t buflen = aa->crypto_.needed(aa->algorithm_-1, len);
+
+			if (display_.overtype && len < buflen)
+			{
+				if (::HMessageBox("Encrypting with this algorithm will increase the\r"
+								"the length of the current (unencrypted) selection.\r"
+								"Do you want to turn off overtype mode?",
+								MB_OKCANCEL) == IDCANCEL)
+				{
+					aa->mac_error_ = 10;
+					return;
+				}
+				else if (!do_insert())
+					return;
+			}
+
+			CWaitCursor wait;                           // Turn on wait cursor (hourglass)
+
+			// Get memory for selection and read it from the document
+			try
+			{
+				buf = new unsigned char[buflen];
+				size_t got = GetDocument()->GetData(buf, len, start_addr);
+				ASSERT(got == len);
+			}
+			catch(std::bad_alloc)
+			{
+				::HMessageBox("Insufficient memory to perform encryption");
+				aa->mac_error_ = 10;
+				return;
+
+			}
+
+			if (aa->crypto_.encrypt(aa->algorithm_-1, buf, len, buflen) != buflen)
+			{
+				ASSERT(0);
+				::HMessageBox("Encryption error");
+				aa->mac_error_ = 10;
+				goto func_return;
+			}
+
+			if (len != buflen)
+			{
+				ASSERT(buflen > len);
+
+				// Since the encrypted text is bigger we must delete then insert
+				GetDocument()->Change(mod_delforw, start_addr, len, NULL, 0, this);
+				GetDocument()->Change(mod_insert, start_addr, buflen, buf, 0, this, TRUE);
+				ASSERT(undo_.back().utype == undo_change);
+				undo_.back().previous_too = true;    // Merge changes (at least in this view)
+
+				// Select encrypted data and save undo of selection
+				SetSel(addr2pos(start_addr), addr2pos(start_addr+buflen));
+				undo_.push_back(view_undo(undo_move, TRUE));  // Save selection start in undo array
+				undo_.back().address = start_addr;
+				undo_.push_back(view_undo(undo_sel, TRUE));   // Save selection end in undo array
+				undo_.back().address = end_addr;
+
+				// Inform the user in case they don't notice the selection has been increased
+				CString mess;
+				mess.Format("Encryption increased the selection length by %ld bytes", long(buflen-len));
+				((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
+			}
+			else
+				GetDocument()->Change(mod_replace, start_addr, len, buf, 0, this);
+		}
     }
     else
     {
+		///xxx handle selection > 4GB here too
+
         // Note that CryptoAPI algs (above) the key is set when password
         // or alg is changed (more efficient) but for internal we set it here
         // in case other internal use (security) has changed the current key
@@ -12816,17 +12951,22 @@ void CHexEditView::OnEncrypt()
         size_t len = size_t(end_addr - start_addr); // Length of selection
 
         // Get memory for selection and read it from the document
-        unsigned char *buf = new unsigned char[len];
+        buf = new unsigned char[len];
         size_t got = GetDocument()->GetData(buf, len, start_addr);
         ASSERT(got == len);
 
         ::encrypt(buf, len);
 
         GetDocument()->Change(mod_replace, start_addr, len, buf, 0, this);
-        delete[] buf;
     }
     DisplayCaret();
     aa->SaveToMacro(km_encrypt, 1);  // 1 == encrypt (2 == decrypt)
+
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (buf != NULL)
+		delete[] buf;
 }
 
 void CHexEditView::OnDecrypt() 
@@ -12873,6 +13013,8 @@ void CHexEditView::OnDecrypt()
         aa->crypto_.SetPassword(aa->algorithm_-1, aa->password_);
     }
 
+    unsigned char *buf = NULL;
+
     if (aa->algorithm_ > 0)
     {
         int blen = aa->crypto_.GetBlockLength(aa->algorithm_-1);
@@ -12899,66 +13041,230 @@ void CHexEditView::OnDecrypt()
             return;
         }
 
-        size_t len = size_t(end_addr - start_addr); // Length of selection
-        size_t newlen;          // Size of decrypted text (may be less than encrypted)
+		// Test if selection is too big to do in memory
+		if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
+		{
+			int idx = -1;                       // Index into docs data_file_ array (or -1 if no slots avail.)
 
-        // Get memory for selection and read it from the document
-        unsigned char *buf = new unsigned char[len];
-        size_t got = GetDocument()->GetData(buf, len, start_addr);
-        ASSERT(got == len);
+			// Create a "temp" file to store the decrypted data
+			// (This file stores the data until the document is closed or written to disk.)
+			char temp_dir[_MAX_PATH];
+			char temp_file[_MAX_PATH];
+			::GetTempPath(sizeof(temp_dir), temp_dir);
+			::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
 
-        newlen = aa->crypto_.decrypt(aa->algorithm_-1, buf, len);
-        if (newlen == size_t(-1))
-        {
-            ::HMessageBox(CString("Could not decrypt using:\n") + aa->crypto_.GetName(aa->algorithm_-1));
-            aa->mac_error_ = 10;
-            delete[] buf;
-            return;
-        }
+			size_t len, buflen = 32768;
+			ASSERT(buflen % blen == 0);    // buffer length must be multiple of cipher block length
 
-        if (len != newlen)
-        {
-            ASSERT(newlen < len);
-#ifdef ENCRYPT_MULT_BLOCK
-            ASSERT((len - newlen)%blen == 0);
-#endif
+			FILE_ADDRESS total_out = 0;
+			try
+			{
+				buf = new unsigned char[buflen];
+			}
+			catch(std::bad_alloc)
+			{
+				::HMessageBox("Insufficient memory to perform decryption");
+				theApp.mac_error_ = 10;
+				return;
+			}
 
-            if (display_.overtype)
-            {
-                if (::HMessageBox("Decrypting with this algorithm will decrease the\r"
-                                  "the length of the current (encrypted) selection.\r"
-                                  "Do you want to turn off overtype mode?",
-                                  MB_OKCANCEL) == IDCANCEL)
-                {
-                    aa->mac_error_ = 10;
-                    delete[] buf;
-                    return;
-                }
-				else if (!do_insert())
+			mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+			MSG msg;                                           // use to check for abort key press
+
+			try
+			{
+				CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
+
+				for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+				{
+					// Get the next buffer full from the document
+					len = size_t(min(buflen, end_addr - curr));
+					VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+
+					size_t outlen = aa->crypto_.decrypt(aa->algorithm_-1, buf, len);
+
+					if (outlen == size_t(-1))
+					{
+						::HMessageBox(CString("Could not decrypt using:\n") + aa->crypto_.GetName(aa->algorithm_-1));
+						aa->mac_error_ = 10;
+						delete[] buf; // xxx
+						return;
+					}
+
+					// Check if this is the first block and decryption changed the length
+					if (curr == start_addr && len != newlen)
+					{
+						ASSERT(newlen < len);
+
+						if (display_.overtype)
+						{
+							if (::HMessageBox("Decrypting with this algorithm will decrease \r"
+											"the length of the current (encrypted) selection.\r"
+											"Do you want to turn off overtype mode?",
+											MB_OKCANCEL) == IDCANCEL)
+							{
+								aa->mac_error_ = 10;
+								delete[] buf; // xxx
+								return;
+							}
+							else if (!do_insert())
+								return; // xxx
+						}
+					}
+
+					ff.Write(buf, outlen);
+					total_out += outlen;
+
+					// Do any redrawing, but nothing else
+					while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+					{
+						if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+						{
+							::TranslateMessage(&msg);
+							::DispatchMessage(&msg);
+						}
+					}
+
+					// Check if a key has been pressed
+					if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+					{
+						// Windows does not like to miss key down events (need to match key up events)
+						::TranslateMessage(&msg);
+						::DispatchMessage(&msg);
+
+						// Remove any characters resulting from keypresses (so they are not inserted into the active file)
+						while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+							;
+
+						if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+							::HMessageBox("Abort decryption?", MB_YESNO) == IDYES)
+						{
+							ff.Close();
+							remove(temp_file);
+							theApp.mac_error_ = 10;
+							goto func_return;
+						}
+					}
+
+					mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+				}
+			}
+			catch (CFileException *pfe)
+			{
+				::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+				pfe->Delete();
+
+				remove(temp_file);
+				theApp.mac_error_ = 10;
+				goto func_return;
+			}
+
+			// Delete the original encrypted block that is to be replaced
+			// Note: this must be done before AddDataFile otherwise Change() (via regenerate()) will delete the temp file.
+			GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
+
+			// Add the temp file to the document
+			idx = GetDocument()->AddDataFile(temp_file);
+			ASSERT(idx != -1);
+			GetDocument()->Change(mod_insert_file, start_addr, total_out, NULL, idx, this, TRUE);
+
+			// Select the decrypted data
+			SetSel(addr2pos(start_addr), addr2pos(start_addr + total_out));
+
+			//xxx message about what was done (sel len inc?);
+		}
+		else
+		{
+			// Error if ran out of temp file handles and file is too big
+			if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
+			{
+				::HMessageBox("HexEdit is out of temporary files and \n"
+							"cannot decrypt such a large selection. \n"
+							"Please save the file to free \n"
+							"temporary file handles and try again.\n",
+							MB_OK);
+				theApp.mac_error_ = 10;
+				return;
+			}
+
+			// Warn if we might cause memory exhaustion
+			if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+			{
+				if (::HMessageBox("WARNING: HexEdit is out of temporary file \n"
+								"handles and decrypting such a large selection \n"
+								"may cause memory exhaustion.  Please click NO \n"
+								"and save the file to free handles. \n"
+								"Or, click YES to continue.\n\n"
+								"Do you want to continue?", MB_YESNO) != IDYES)
+				{
+					theApp.mac_error_ = 5;
 					return;
-            }
+				}
+			}
 
-            // Since the decrypted text is smaller we must delete then insert
-            GetDocument()->Change(mod_delforw, start_addr, len, NULL, 0, this);
-            GetDocument()->Change(mod_insert, start_addr, newlen, buf, 0, this, TRUE);
-            ASSERT(undo_.back().utype == undo_change);
-            undo_.back().previous_too = true;    // Merge changes (at least in this view)
+			size_t len = size_t(end_addr - start_addr); // Length of selection
+			size_t newlen;          // Size of decrypted text (may be less than encrypted)
 
-            // Select encrypted data and save undo of selection
-            SetSel(addr2pos(start_addr), addr2pos(start_addr+newlen));
-            undo_.push_back(view_undo(undo_move, TRUE));  // Save selection start in undo array
-            undo_.back().address = start_addr;
-            undo_.push_back(view_undo(undo_sel, TRUE));   // Save selection end in undo array
-            undo_.back().address = end_addr;
+			// Get memory for selection and read it from the document
+			buf = new unsigned char[len];
+			size_t got = GetDocument()->GetData(buf, len, start_addr);
+			ASSERT(got == len);
 
-            // Inform the user in case they don't notice the selection has been decreased
-            CString mess;
-            mess.Format("Decryption decreased the selection length by %ld bytes", long(len-newlen));
-            ((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
-        }
-        else
-            GetDocument()->Change(mod_replace, start_addr, len, buf, 0, this);
-        delete[] buf;
+			newlen = aa->crypto_.decrypt(aa->algorithm_-1, buf, len);
+			if (newlen == size_t(-1))
+			{
+				::HMessageBox(CString("Could not decrypt using:\n") + aa->crypto_.GetName(aa->algorithm_-1));
+				aa->mac_error_ = 10;
+				delete[] buf;
+				return;
+			}
+
+			if (len != newlen)
+			{
+				ASSERT(newlen < len);
+
+				if (display_.overtype)
+				{
+					if (::HMessageBox("Decrypting with this algorithm will decrease the\r"
+									"the length of the current (encrypted) selection.\r"
+									"Do you want to turn off overtype mode?",
+									MB_OKCANCEL) == IDCANCEL)
+					{
+						aa->mac_error_ = 10;
+						delete[] buf;
+						return;
+					}
+					else if (!do_insert())
+						return;
+		        }
+
+				// Since the decrypted text is smaller we must delete then insert
+				GetDocument()->Change(mod_delforw, start_addr, len, NULL, 0, this);
+				GetDocument()->Change(mod_insert, start_addr, newlen, buf, 0, this, TRUE);
+				ASSERT(undo_.back().utype == undo_change);
+				undo_.back().previous_too = true;    // Merge changes (at least in this view)
+
+				// Select encrypted data and save undo of selection
+				SetSel(addr2pos(start_addr), addr2pos(start_addr+newlen));
+				undo_.push_back(view_undo(undo_move, TRUE));  // Save selection start in undo array
+				undo_.back().address = start_addr;
+				undo_.push_back(view_undo(undo_sel, TRUE));   // Save selection end in undo array
+				undo_.back().address = end_addr;
+
+				// Inform the user in case they don't notice the selection has been decreased
+				CString mess;
+				mess.Format("Decryption decreased the selection length by %ld bytes", long(len-newlen));
+				((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
+			}
+			else
+				GetDocument()->Change(mod_replace, start_addr, len, buf, 0, this);
+
+		xxx NOT FINISHED OR CHECKED
+			- mem alloc in diff paths
+			- error handling
+			- stuff with undo above - necessary?
+			- internal alg (below)
+			- test
     }
     else
     {
@@ -13330,10 +13636,11 @@ void CHexEditView::OnCompress()
         }
         catch(std::bad_alloc)
         {
+			// Note: this exception may come from ZLIB
             ::HMessageBox("Insufficient memory to perform compression");
             theApp.mac_error_ = 10;
 
-			// Undo changes already (but make sure we don't record undo in macros)
+			// Undo changes already made (but make sure we don't record undo in macros)
 			OnEditUndo();
             if (theApp.recording_ && theApp.mac_.size() > 0 && (theApp.mac_.back()).ktype == km_undo)
                 theApp.mac_.pop_back();
@@ -13682,10 +13989,11 @@ void CHexEditView::OnDecompress()
         }
         catch(std::bad_alloc)
         {
+			// Note this exception may come from ZLIB
             ::HMessageBox("Insufficient memory to perform decompression");
             theApp.mac_error_ = 10;
 
-			// Undo changes already (but make sure we don't record undo in macros)
+			// Undo changes already made (but make sure we don't record undo in macros)
 			OnEditUndo();
             if (theApp.recording_ && theApp.mac_.size() > 0 && (theApp.mac_.back()).ktype == km_undo)
                 theApp.mac_.pop_back();
@@ -13808,7 +14116,6 @@ void CHexEditView::OnUpdate64bitBinary(CCmdUI* pCmdUI)
 template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR desc)
 {
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	T val = 0;
     unsigned char *buf = NULL;
 
     // Get current address or selection
@@ -13853,6 +14160,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
     mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
     MSG msg;                                           // use to check for abort key press
 
+	T val;
 	switch (op)
 	{
 	case CHECKSUM_CRC_CCITT:
@@ -13860,6 +14168,12 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		break;
 	case CHECKSUM_CRC32:
 		crc_32_init();
+		break;
+	case CHECKSUM_8:
+	case CHECKSUM_16:
+	case CHECKSUM_32:
+	case CHECKSUM_64:
+		val = 0;
 		break;
 	default:
 		ASSERT(0);

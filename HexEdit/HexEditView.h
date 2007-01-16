@@ -223,6 +223,11 @@ public:
         return retval;
     }
 
+    FILE_ADDRESS GetSearchBase()
+	{
+		// return GetPos();
+		return GetMark();
+	}
 
     // SetSelAddr not necessary (Use GoAddress or MoveToAddress)
 //    void SetSelAddr(FILE_ADDRESS start, FILE_ADDRESS end) { SetSel(addr2pos(start), addr2pos(end)); }
@@ -514,6 +519,7 @@ public:
     afx_msg void OnTrackChanges();
     afx_msg void OnUpdateTrackChanges(CCmdUI* pCmdUI);
     //}}AFX_MSG
+
     afx_msg void OnUpdateSelNZ(CCmdUI* pCmdUI);  // no-zero selection
 
     afx_msg void OnEditReplace();

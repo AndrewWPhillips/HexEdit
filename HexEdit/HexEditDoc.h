@@ -575,11 +575,11 @@ public:
     int SearchOccurrences();    // No of search occurrences (-ve if disabled/not finished)
     FILE_ADDRESS GetNextFound(const unsigned char *pat, const unsigned char *mask, size_t len, 
                               BOOL icase, int tt, BOOL wholeword,
-							  int alignment, int offset, bool align_mark, FILE_ADDRESS base_addr,
+							  int alignment, int offset, bool align_rel, FILE_ADDRESS base_addr,
 							  FILE_ADDRESS from);
     FILE_ADDRESS GetPrevFound(const unsigned char *pat, const unsigned char *mask, size_t len,
                               BOOL icase, int tt, BOOL wholeword,
-							  int alignment, int offset, bool align_mark, FILE_ADDRESS base_addr,
+							  int alignment, int offset, bool align_rel, FILE_ADDRESS base_addr,
 							  FILE_ADDRESS from);
     std::vector<FILE_ADDRESS> SearchAddresses(FILE_ADDRESS start, FILE_ADDRESS end);
     int SearchProgress(int &occurrences);  // How far are we through the background search now (0 to 100)

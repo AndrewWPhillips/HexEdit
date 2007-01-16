@@ -1,6 +1,6 @@
 // HexEdit.h : main header file for the HEXEDIT application
 //
-// Copyright (c) 1999 by Andrew W. Phillips.
+// Copyright (c) 1999 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -268,12 +268,12 @@ public:
     BOOL icase_;                // Indicates a case-insensitive search (only for text_type_ > 0)
     BOOL wholeword_;            // Match whole word only (only for text_type_ > 0)
     int alignment_;             // 1 means no alignment restrictions
-	int offset_;                // 0 <= offset_ < alignment_
-	bool align_mark_;           // Force alignment relative to mark rather than zero
+    int offset_;                // 0 <= offset_ < alignment_
+    bool align_rel_;            // Force alignment relative to current mark posn
 
     void StartSearches(CHexEditDoc *pp);
     void NewSearch(const unsigned char *pat, const unsigned char *mask, size_t len,
-                   BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_mark);
+                   BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_rel);
 
     //{{AFX_MSG(CHexEditApp)
     afx_msg void OnAppAbout();

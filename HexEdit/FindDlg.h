@@ -101,7 +101,7 @@ public:
 	// Alignment options (only hex and number pages currently)
 	UINT	align_;
 	UINT	offset_;
-	BOOL    rel_mark_;
+	BOOL    relative_;                  // relative to current cursor position
 
 // Operations
 public:
@@ -139,7 +139,7 @@ public:
     int GetAlignment();
     void SetAlignment(int aa);
 	int GetOffset();                // Offset from alignment
-	bool AlignMark();               // Align relative to mark not 0
+	bool AlignRel();                // Align relative to current cursor position
 
     void GetSearch(const unsigned char **pps, const unsigned char **mask, size_t *plen);
     void GetReplace(unsigned char **pps, size_t *plen);
@@ -338,7 +338,7 @@ public:
 	CComboBox	ctl_number_size_;
 	CEdit	ctl_number_string_;
 	//}}AFX_DATA
-
+	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -348,6 +348,7 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+	virtual BOOL OnKillActive();
 
 // Implementation
 protected:
@@ -366,12 +367,15 @@ protected:
 	afx_msg void OnChangePrefix();
 	//}}AFX_MSG
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnChangeAlign();
+	afx_msg void OnChangeOffset();
 	DECLARE_MESSAGE_MAP()
 
     CFindSheet *pparent_;
     void FixDirn();
     void FixSizes();
     BOOL FixStrings();
+	void FixAlign();
 };
 
 /////////////////////////////////////////////////////////////////////////////

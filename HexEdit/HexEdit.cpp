@@ -1,6 +1,6 @@
 // HexEdit.cpp : Defines the class behaviors for the application.
 //
-// Copyright (c) 2004 by Andrew W. Phillips.
+// Copyright (c) 2004 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -1647,7 +1647,7 @@ void CHexEditApp::StartSearches(CHexEditDoc *pp)
 		{
 			CHexEditView *pview = pdoc->GetBestView();
 			ASSERT(pview != NULL);
-			pdoc->base_addr_ = theApp.align_mark_ ? pview->GetMark() : 0;
+			pdoc->base_addr_ = theApp.align_rel_ ? pview->GetSearchBase() : 0;
             pdoc->StartSearch();
 		}
     }
@@ -1655,7 +1655,7 @@ void CHexEditApp::StartSearches(CHexEditDoc *pp)
 
 void CHexEditApp::NewSearch(const unsigned char *pat, const unsigned char *mask,
                             size_t len, BOOL icase, int tt, BOOL ww,
-                            int aa, int offset, bool align_mark)
+                            int aa, int offset, bool align_rel)
 {
     CHECK_SECURITY(202);
 
@@ -1670,7 +1670,7 @@ void CHexEditApp::NewSearch(const unsigned char *pat, const unsigned char *mask,
     wholeword_ = ww;
     alignment_ = aa;
 	offset_ = offset;
-	align_mark_ = align_mark;
+	align_rel_ = align_rel;
 }
 
 // Get new encryption algorithm
