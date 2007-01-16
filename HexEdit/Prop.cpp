@@ -2463,7 +2463,7 @@ void CPropRealPage::DoDataExchange(CDataExchange* pDX)
     CPropUpdatePage::DoDataExchange(pDX);
 
     DDX_Text(pDX, IDC_FP_VAL, val_);
-    DDV_MaxChars(pDX, val_, 25);
+    DDV_MaxChars(pDX, val_, 31);        // C# Decimal can have 29 digits + sign + decimal point
     DDX_Text(pDX, IDC_FP_MANT, mant_);
     //DDV_MaxChars(pDX, mant_, 20);
     DDX_Text(pDX, IDC_FP_EXP, exp_);
@@ -2522,53 +2522,58 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
     if (big_endian_)
 		flip_bytes(buf, needed);
 
-	// Value to be displayed
-    double value;
-	long double mantissa;
-    int exponent;
-
-	switch (format_)
+	if (format_ == FMT_DECIMAL)
 	{
-	case FMT_IEEE32:
-        value = *(float *)buf;
-		mantissa = frexp(value, &exponent);
-		break;
-	case FMT_IEEE64:
-        value = *(double *)buf;
-		mantissa = frexp(value, &exponent);
-		break;
-	case FMT_IBM32:
-        value = ::ibm_fp32(buf, &exponent, &mantissa, true);
-		break;
-	case FMT_IBM64:
-        value = ::ibm_fp64(buf, &exponent, &mantissa, true);
-		break;
-	case FMT_DECIMAL:
-		// TBD xxx
-		break;
-	default:
-		ASSERT(0);
+		// Work out info. about the C# Decimal type (which a poor relative of other floating point types)
+		val_ = DecimalToString(buf, mant_, exp_);
 	}
+	else
+	{
+		// Work out value etc of a "real" floating point number
+		double value;
+		long double mantissa;
+		int exponent;
 
-    // Work out what to display
-    exp_.Format("%d", (int)exponent);
-	mant_.Format(format_ == FMT_IEEE32 || format_ == FMT_IBM32 ? "%.7f" : "%.16f" , (double)mantissa);
-    switch (_fpclass(value))
-    {
-    case _FPCLASS_SNAN:
-    case _FPCLASS_QNAN:
-        val_ = "NaN";
-        break;
-    case _FPCLASS_NINF:
-        val_ = "-Inf";
-        break;
-    case _FPCLASS_PINF:
-        val_ = "+Inf";
-        break;
-    default:
-		val_.Format(format_ == FMT_IEEE32 || format_ == FMT_IBM32 ? "%.7g" : "%.16g", (double)value);
-        break;
-    }
+		switch (format_)
+		{
+		case FMT_IEEE32:
+			value = *(float *)buf;
+			mantissa = frexp(value, &exponent);
+			break;
+		case FMT_IEEE64:
+			value = *(double *)buf;
+			mantissa = frexp(value, &exponent);
+			break;
+		case FMT_IBM32:
+			value = ::ibm_fp32(buf, &exponent, &mantissa, true);
+			break;
+		case FMT_IBM64:
+			value = ::ibm_fp64(buf, &exponent, &mantissa, true);
+			break;
+		default:
+			ASSERT(0);
+		}
+
+		// Work out what to display
+		exp_.Format("%d", (int)exponent);
+		mant_.Format(format_ == FMT_IEEE32 || format_ == FMT_IBM32 ? "%.7f" : "%.16f" , (double)mantissa);
+		switch (_fpclass(value))
+		{
+		case _FPCLASS_SNAN:
+		case _FPCLASS_QNAN:
+			val_ = "NaN";
+			break;
+		case _FPCLASS_NINF:
+			val_ = "-Inf";
+			break;
+		case _FPCLASS_PINF:
+			val_ = "+Inf";
+			break;
+		default:
+			val_.Format(format_ == FMT_IEEE32 || format_ == FMT_IBM32 ? "%.7g" : "%.16g", (double)value);
+			break;
+		}
+	}
 
     UpdateData(FALSE);
 
@@ -2583,14 +2588,14 @@ void CPropRealPage::FixDesc()
 	{
 	case FMT_IEEE32:
 	case FMT_IEEE64:
-		exp_desc_ = "Exponent:\n(Power 2) ";
+		exp_desc_ = "Exponent (Power 2):";
 		break;
 	case FMT_IBM32:
 	case FMT_IBM64:
-		exp_desc_ = "Exponent:\n(Power 16) ";
+		exp_desc_ = "Exponent (Power 16):";
 		break;
 	case FMT_DECIMAL:
-		exp_desc_ = "Exponent:\n(Power 10) ";
+		exp_desc_ = "Exponent (Power 10):";
 		break;
 	default:
 		ASSERT(0);
@@ -2681,7 +2686,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
             {
 				unsigned char *pp = NULL;
 				float flt_val;
-		        unsigned char buf[8];
+		        unsigned char buf[16];
 
 				switch (format_)
 				{
@@ -2731,7 +2736,14 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 						pp = buf;
 					break;
 				case FMT_DECIMAL:
-					// TBD xxx
+					if (!StringToDecimal(val_, buf))
+					{
+						AfxMessageBox("Invalid Decimal value");
+						Update(pview);
+		                ctl_val_.SetFocus();
+					}
+					else
+						pp = buf;
 					break;
 				default:
 					ASSERT(0);

@@ -40,6 +40,9 @@ void AddCommas(CString &str);
 void AddSpaces(CString &str);
 CString get_menu_text(CMenu *pmenu,int id);
 
+CString DecimalToString(const void * pdecimal, CString & sMantissa, CString & sExponent);
+bool StringToDecimal(const char * ss, void * presult);
+
 bool make_ibm_fp32(unsigned char pp[4], double val, bool little_endian = false);
 bool make_ibm_fp64(unsigned char pp[8], double val, bool little_endian = false);
 long double ibm_fp32(const unsigned char *pp, int *pexp = NULL,

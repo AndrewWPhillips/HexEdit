@@ -252,6 +252,7 @@
 #define HIDC_FP_32BIT                   0x80a40457    // IDD_PROP_FLOAT [English (U.S.)]
 #define HIDC_FP_64BIT                   0x80a40456    // IDD_PROP_FLOAT [English (U.S.)]
 #define HIDC_FP_EXP                     0x80a40434    // IDD_PROP_FLOAT [English (U.S.)]
+#define HIDC_FP_FORMAT                  0x813505f9    // IDD_PROP_REAL [English (U.S.)]
 #define HIDC_FP_MANT                    0x80a40433    // IDD_PROP_FLOAT [English (U.S.)]
 #define HIDC_FP_VAL                     0x80a40432    // IDD_PROP_FLOAT [English (U.S.)]
 #define HIDC_GO                         0x80750413    // IDD_CALC
@@ -369,7 +370,7 @@
 #define HIDC_REG_FORM                   0x80ec048c    // IDD_REG
 #define HIDC_REG_HELP                   0x810b0489    // IDD_STARTUP
 #define HIDC_REG_WEB                    0x80ec048a    // IDD_REG
-#define HIDC_RELMASK                    0x809605f1    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_RELATIVE                   0x809605f8    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_REMOVE                     0x80e6044e    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_REMOVE_FILES               0x810e04c8    // IDD_RECENT_FILES
 #define HIDC_REMOVE_SCHEME              0x80e60454    // IDD_OPT_COLOURS [English (U.S.)]

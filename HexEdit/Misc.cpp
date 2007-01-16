@@ -148,6 +148,7 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include "misc.h"
 #include "Security.h"
 #include "ntapi.h"
+#include "BigInteger.h"        // Used in C# Decimal conversions
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -156,6 +157,135 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 //-----------------------------------------------------------------------------
+// Routines for handling C# Decimal type
+
+// Notes on behaviour of C# Deciaml type:
+// If mantissa is zero, exponent is ignored
+// If any bit of bottom byte is one then it is -ve
+// If exponent is > 28 then is printed as stored but when used in calcs is treated as if exponent is zero
+// If exponent byte is 127 then calcs crash with null reference exception
+
+// Example decimals and how they display:
+// 12345678901234567890123456789  28   -> 1.2345678901234567890123456789
+// 10000000000000000000000000000  28   -> 1.0000000000000000000000000000
+// 10000000000000000000000000000  27   -> 10.000000000000000000000000000
+// 12345678901234567890123456789  0    -> 12345678901234567890123456789
+// 1                              -27  -> 0.000000000000000000000000001
+
+bool StringToDecimal(const char *ss, void *presult)
+{
+	// View the decimal (result) as four 32 bit integers
+	BigInteger::Unit *dd = (BigInteger::Unit *)presult;
+
+	BigInteger mant;            // Mantisssa - initially zero
+	BigInteger ten(10L);        // Just used to multiply values by 10
+	int exp = 0;                // Exponent
+	bool dpseen = false;        // decimal point seen yet?
+	bool neg = false;           // minus sign seen?
+
+	// Scan the characters of the value
+	for (const char *pp = ss; *pp != '\0'; ++pp)
+	{
+		if (*pp == '-')
+		{
+			if (pp != ss)
+				return false;      // minus sign not at start
+			neg = true;
+		}
+		else if (isdigit(*pp))
+		{
+			BigInteger::Mul(mant, ten, mant);
+			BigInteger::Add(mant, BigInteger(long(*pp - '0')), mant);
+			if (dpseen) ++exp;  // Keep track of digits after decimal pt
+		}
+		else if (*pp == '.')
+		{
+			if (dpseen)
+				return false;    // more than one decimal point
+			dpseen = true;
+		}
+		else if (*pp == 'e' || *pp == 'E')
+		{
+			char *end;
+			exp -= strtol(pp+1, &end, 10);
+			pp = end;
+			break;
+		}
+		else
+			return false;       // unexpected character
+	}
+	if (*pp != '\0')
+		return false;           // extra characters after end
+
+	if (exp < -28 || exp > 28)
+		return false;          // exponent outside valid range
+
+	// Adjust mantissa for -ve exponent
+	if (exp < 0)
+	{
+		BigInteger tmp;
+		BigInteger::Exp(ten, BigInteger(long(-exp)), tmp);
+		BigInteger::Mul(mant, tmp, mant);
+		exp = 0;
+	}
+
+	// Check for mantissa too big.
+	if (mant.GetUnitLength() > 4)
+		return false;
+
+	// Set integer part
+	dd[2] = mant.GetUnit(2);
+	dd[1] = mant.GetUnit(1);
+	dd[0] = mant.GetUnit(0);
+
+	// Set exponent and sign
+	dd[3] = exp << 16;
+	if (neg && !mant.IsZero())
+		dd[3] |= 0x80000000;
+
+	return true;
+}
+
+CString DecimalToString(const void *pdecimal, CString &sMantissa, CString &sExponent)
+{
+	// View the decimal as four 32 bit integers
+	const BigInteger::Unit *dd = (const BigInteger::Unit *)pdecimal;
+
+	// Get the 96 bit integer part (mantissa)
+	BigInteger big(dd, 3);
+	big.ToString(sMantissa.GetBuffer(64), 10);
+	sMantissa.ReleaseBuffer();
+
+	// Get the exponent
+	int exp = (dd[3] >> 16) & 0xFF;
+	sExponent.Format("%d", - exp);
+
+	// Check that unused bits are zero and that exponent is within range
+	if ((dd[3] & 0x0000FFFF) != 0 || exp > 28)
+		return CString("Invalid Decimal");
+
+	// Create a string in which we insert a decimal point
+	CString ss = sMantissa;
+	int len = ss.GetLength();
+
+	if (exp >= len)
+	{
+		// Add leading zeroes
+		ss = CString('0', exp - len + 1) + ss;
+		len = exp + 1;
+	}
+
+	// if any bit of last byte is on then assume the value is -ve
+	if ((dd[3] & 0xFF000000) != 0)
+	{
+		sMantissa.Insert(0, '-');
+		return "-" + ss.Left(len - exp) + CString(".") + ss.Right(exp);
+	}
+	else
+		return ss.Left(len - exp) + CString(".") + ss.Right(exp);
+}
+
+// -------------------------------------------------------------------------
 // Colour routines
 
 static int hlsmax = 100;            // This determines the ranges of values returned
