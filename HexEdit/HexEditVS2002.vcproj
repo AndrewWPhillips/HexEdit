@@ -257,6 +257,9 @@
 				RelativePath=".\BGSearch.cpp">
 			</File>
 			<File
+				RelativePath="BigInteger.cpp">
+			</File>
+			<File
 				RelativePath=".\Bookmark.cpp">
 			</File>
 			<File
@@ -282,6 +285,9 @@
 			</File>
 			<File
 				RelativePath=".\ClearHistDlg.cpp">
+			</File>
+			<File
+				RelativePath="CompressDlg.cpp">
 			</File>
 			<File
 				RelativePath=".\Control.cpp">
@@ -336,6 +342,9 @@
 			</File>
 			<File
 				RelativePath=".\EmailDlg.cpp">
+			</File>
+			<File
+				RelativePath="EnBitmap.cpp">
 			</File>
 			<File
 				RelativePath=".\Expr.cpp">
@@ -537,7 +546,25 @@
 			<File
 				RelativePath="md5.c">
 				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="TrueTime|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FinalCheck|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"/>
@@ -552,6 +579,9 @@
 			</File>
 			<File
 				RelativePath=".\BCGMisc.h">
+			</File>
+			<File
+				RelativePath="BigInteger.h">
 			</File>
 			<File
 				RelativePath=".\Bookmark.h">
@@ -576,6 +606,9 @@
 			</File>
 			<File
 				RelativePath=".\ClearHistDlg.h">
+			</File>
+			<File
+				RelativePath="CompressDlg.h">
 			</File>
 			<File
 				RelativePath=".\Control.h">
@@ -627,6 +660,9 @@
 			</File>
 			<File
 				RelativePath=".\EmailDlg.h">
+			</File>
+			<File
+				RelativePath="EnBitmap.h">
 			</File>
 			<File
 				RelativePath=".\Expr.h">
@@ -1013,10 +1049,10 @@
 				RelativePath=".\TestData\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\TestData\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\TestData\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

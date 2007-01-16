@@ -149,11 +149,6 @@ after convert to use ptr to CFile, test:
 
 
 TODO
- - make all selection work with blocks > 4GB
-   - conversions (x 4)
-   - checksums (x 4) + check all CRCs
-   - encrypt/decrypt
-   - export hex text
  - fix CBCGPopupMenuBar::OnChangeHot for WM_MENUSELCT (WM_ENTERIDLE)
    - CBCGPopupMenu* pParentMenu = DYNAMIC_DOWNCAST (CBCGPopupMenu, pCBCGPopupMenuBar->GetParent ());
  > turn on templates defaults to tab wnd should be splitter
@@ -314,6 +309,15 @@ Help
       - macro that runs when certain types of file are opened
  
 V3.2
+ - template view toggle on the fly + template menu
+ - make sure no files are modified in .EXE directory
+ - new installer
+   - get MFC merge module (.msm file) to include used MFC in installation (.msi)
+   - is it possible to have install modules (eg MFC) come from web only when needed?
+ - fix editing of properties fields
+   - summary page = auto save (no Return required) but allow Esc before lose focus
+   - others = prompt if Esc/Return not pressed
+ 
  - acknowledgements
 	BCG Control Bar 5.9 - Stas Levin et al at BCG (http://bcgsoft.com)
 	MFC Grid Control - Chris Maunder (http://codeproject.com/miscctrl/gridctrl.asp)
@@ -341,52 +345,77 @@ V3.2
 	IkonBoard
 	FireFox
 	
+ - make all selection work with blocks > 4GB
+   - conversions (x 4)
+   - encrypt/decrypt
+   - import/export hex text
+   - clipboard?
  > upgrade to Visual Studio 2003
  > draw image in background
  - MD5 + uppercase/lowercase conversions
- - template view toggle on the fly + template menu
- - general alignment and offset options for find
- - nav forward and backward
- - fix for big selections: import hex, encrypt, decrypt, clipboard?
+ > general alignment and offset options for find
  - unicode strings in templates
  - update BCG 6.2 with my code and rebuild
- - make sure no files are modified in .EXE directory
- - new installer
-   - get MFC merge module (.msm file) to include used MFC in installation (.msi)
-   - is it possible to have install modules (eg MFC) come from web only when needed?
  > zlib compression/uncompression + dialog
  > info tip - bookmark, user-defined expressions etc\
    - global option to turn on/off
    - handle all time formats, character sets for chars and strings
- - merge float properties pages into one and add Decimal (C#) capability
- - time64_t support
- - calculator
-   - new look calculator
-   - Goto history(s) in calculator
-   - bookmarks list
-   - expressions in calculator
- - calc to handle 128 (and greater?) bit numbers
+ > merge float properties pages into one and add Decimal (C#) capability
  > background search for drive info (BG_DEVICE_SEARCH)
- - explorer window
- - extra CRC types
- - fix options dialog to use BCG prop sheet with tree (see below for layout)
-   - add ability to select which prop pages are displayed (and order?)???\
  > Char Properties code page stuff
  - allow enter expressions (incl assign to vars) in hex/dec jump tools
  - add select current highlight command and make default for dclick on highlight?
+ > recent file dlg and bookmark dlg can only handle file sizes/positions up to 2^31 (sorting)
+ - check new cracker codes and find workaround
+ - cust tutorial
+ - update template tutorial
 
 V3.3 
   - new look web site
-  - incorporate Structured Storage Explorer???
+  - new icons
+  - time64_t support
+  - nav forward and backward
+  - calculator
+    - new look calculator
+    - Goto history(s) in calculator
+    - bookmarks list
+    - expressions in calculator
+  - repair
+      MsiSetInternalUI(INSTALLUILEVEL_NONE,NULL);
+      MsiReinstallProduct("{A5A0D1C0-DF1A-11D3-99DC-00A0CCFFFAA1}",
+          REINSTALLMODE_FILEVERIFY | REINSTALLMODE_FILEMISSING |
+          REINSTALLMODE_FILEOLDERVERSION | REINSTALLMODE_REPAIR);
+  - extra CRC types
+  - explorer window
+  - fix options dialog to use BCG prop sheet with tree (see below for layout)
+   - add ability to select which prop pages are displayed (and order?)???\
   - restrict hist drop down list width
   - instead of ::HMessageBox check view in idle event to see if bg search finished
   - Convert to use FileErrorMessage() ???
-  > Add Date Properties page [L. David Matheny]
+  > clear histories (search/jump tools, recent file list, bookmarks?)
+    - bookmarks does not remove from the lists of open files
+  ? handle write past 2^32 problems on Win9X better somehow?
+  - check new cracker codes and find workaround
+  ? option for mouse wheel units like WinHex?
+  ? allow editing read-only files
+  - insert file option should read a file even if it's in use
+  - use FindFirstFile for file size
+
+V3.4
+  - welcome screen that has a tutorial option?
+  - if file open for write elsewhere warn when it changes
+  - if file opened in shareDenyNone mode monitor it and warn when it changes.
+    (if caret at EOF and file extended keep it at EOF)
+  ? no need to bring up find dlg when replaying
+  - tools disabled in kill focus and destroy - both not necessary
+  - allow enter key and tabs key to be reassigned
+  - encryption toolbar
+    - encryption algorithm picker
+  - Fix Date Properties page [L. David Matheny]
     - handle local/UTC time option
     - fix local time problems where it uses current DST not that in effect at the time
     - test date page code in different time zones
     - fix MSDOS date/time problems (eg. last value)
-  > recent file dlg and bookmark dlg can only handle file sizes/positions up to 2^31 (sorting)
   - bookmarks option
     - each open doc (not view) keeps track of its bookmarks
       - bookmarks added to a new file (no disk file) have a filename of HexEdit1 etc
@@ -394,37 +423,8 @@ V3.3
       - if new file not saved then bookmark deleted
       - when adding a bookmark to an already modified file write to master list where
         it would appear the bookmark would be in on-disk copy (opened or saved)
-  > clear histories (search/jump tools, recent file list, bookmarks?)
-    - bookmarks does not remove from the lists of open files
-  - Implement Base64 import/export
-  - add keep time command to macros
-  - checksums page [Dave Ewen]?
-  - CRC page
-  > ASSIGN/AND/OR/ADD/SUBTRACT operations
-  - show selection: move to middle if not currently visible
-  - handle write past 2^32 problems on Win9X better somehow?
-  - check new cracker codes and find workaround
-  ? option for mouse wheel units like WinHex?
-  ? allow editing read-only files
-  - insert file option should read a file even if it's in use
-  - if file open for write elsewhere warn when it changes
-  - if file opened in shareDenyNone mode monitor it and warn when it changes.
-    (if caret at EOF and file extended keep it at EOF)
-  ? implement arrow keys etc as separate commands
-  ? no need to bring up find dlg when replaying
-  - tools disabled in kill focus and destroy - both not necessary
-  - welcome screen that has a tutorial option?
-  - allow enter key and tabs key to be reassigned
-  - encryption toolbar
-    - encryption algorithm picker
-  - macro
-	- look at speeding macro playback
-	- macro toolbar: rec, clear, play, options, message, multiplay, select macro from drop list
-	- get number (using calc?)
-	- help: to store number in macro, enter in calculator and click '='
-  - use FindFirstFile for file size
-
-V3.4
+  - incorporate Structured Storage Explorer???
+  - calc to handle 128 (and greater?) bit numbers
   - encrypt using number not password
   - better printing
     - work out numbers of pages at start (use aa->GetPrinterDeviceDefaults(); then aa->CreatePrinterDC())
@@ -433,22 +433,23 @@ V3.4
       - colour to greyscale: red=green=blue=(red*30 + green*59 + blue*11)/100
   - facility to split and merge files (default to ext .001, .002, size 1.44 Mbytes)
   - get/set sec info using bits of background bitmap before hexedit.ind
-  - file repair
-      MsiSetInternalUI(INSTALLUILEVEL_NONE,NULL);
-      MsiReinstallProduct("{A5A0D1C0-DF1A-11D3-99DC-00A0CCFFFAA1}",
-          REINSTALLMODE_FILEVERIFY | REINSTALLMODE_FILEMISSING |
-          REINSTALLMODE_FILEOLDERVERSION | REINSTALLMODE_REPAIR);
+  - macro
+	- look at speeding macro playback
+	- macro toolbar: rec, clear, play, options, message, multiplay, select macro from drop list
+	- get number (using calc?)
+	- help: to store number in macro, enter in calculator and click '='
 
 V3.5
+  - new BCG?
   - when doing masked search and file stats available search for most common non-masked char first
+  - Implement Base64 import/export
+  - add keep time command to macros
+  - checksums page [Dave Ewen]?
+  - CRC page
+  - show selection: move to middle if not currently visible
 
 
-Never
-  - physical disk (95: CreateFile("\\.\PHYSICALDRIVE0" or "\\.\D:", NT: see SDK/hardware)
-  - printing
-    - centre middle between ends of sides in hdr/ftr  left---->middle<----right
-
-  
+Bugs
  Unfixable bugs
   - use file association to open file with spaces gives error (MFC/Windows bug)
   - MaxPage is only 16 bits - MFC or Win 95 restriction???
@@ -459,13 +460,6 @@ Never
   - if prop dlg half off left edge and caret approaches from below => inf. move loop
   - DisplayCaret: if end of selection at EOLN then may leave selection just above display
     - revert to old DisplayCaret that considered all of selection???
- Web site
-  - new look (Greek or other symbols?)
-  - benchmarks (search, compare, open, goto) (CF vedit 2 million replaces in 2 mins, on P166)
- User requests
-  - column select [?]
-  - read memory of other tasks
-  - decompile macros + loop and branch commands
  Later
   - stress test
   - call FixFileButtons when
@@ -475,59 +469,49 @@ Never
     - length changed (affects @buttons etc)
   - tools disabled in kill focus and destroy - both not necessary
   - Scroll when shift selecting causes flicker
-
-
-CScrView
-  - Option to allow scroll past ends (default off)
-    - fix scroll bar down/right arrows to handle this option
-    - fix key down/right to handle this
-Find
-  - auto completion from history
-Test
+ Test
   - Insuff memory seems to be handled but can't be caught with catch(bad_alloc)
   - when/if long double becomes IEEE 80 bit, test that last 3 bits of IBM 64 bit FP value are OK
-Play Sounds on certain events (see WIN32 PlaySound() doc)
-  - compare failed
-  - find failed
-  - macro failed or finished OK?
-  - invalid hex/ascii/ebcdic char entered
-  - check other MessageBox uses
-Properties
-  - add checksum/CRC page to property sheet (current selection) [Fabien Clement]
-    - for 16 and 32 bit values byte order matters for checksum (and CRC?)
-    - need to display the result as hex or decimal
-  - adds stats page (background processing does stats if enabled)
-    - character frequency counts? (read whole file in background?)
-    - count of current find string?
-  > allow editing of (some) values (DM_GETDEFID)
-  - character frequency counts? (read whole file in background?)
-  - freq of current find string?
 
-Add-In DLLs to handle certain types of files
-  - associate file extension with DLL
-  - some sort of standard DLL calls: next, previous, summarize
-  - next/previous to have mutliple (unlimited?) levels of records
-Arithmetic
-  > convert selection
-    - ASCII<->EBCDIC (2 converts should bring back to same for all 256 values?)
-    - ANSI<->OEM (CharToOemBuff, OemToCharBuff)
-  > binary ops (ad, subtract etc) using current calculator value & size
-Options
-  - bits on/off mask (byte,16-bit,32-bit,64-bit?)
-  - check box for property pages to display
-    - File Properties
-    - Character
-    - Decimal
-    - IEEE f.p.
-    - IBM f.p. (default off)
-    - Checksum/CRC (default off)
-    - Statistics (enables background processing)
-  - general options
-    - ASCII/insensitive escape chars
-    - # of saved search strings, # in recent file list
-  - save last goto addresses etc
+User requests
+  - column select [?]
+  - read memory of other tasks
+  - decompile macros + loop and branch commands
 
-New Features
+Possible Features
+ - web site
+   - new look (Greek or other symbols?)
+   - benchmarks (search, compare, open, goto) (CF vedit 2 million replaces in 2 mins, on P166)
+ - Option to allow scroll past ends (default off) in CScrView
+    - fix scroll bar down/right arrows to handle this option
+    - fix key down/right to handle this
+ - auto completion in Find dialog/tool from history
+ - new properties
+	- add checksum/CRC page to property sheet (current selection) [Fabien Clement]
+		- for 16 and 32 bit values byte order matters for checksum (and CRC?)
+		- need to display the result as hex or decimal
+	- adds stats page (background processing does stats if enabled)
+		- character frequency counts? (read whole file in background?)
+		- count of current find string?
+	- character frequency counts? (read whole file in background?)
+ - new options
+	- bits on/off mask (byte,16-bit,32-bit,64-bit?)
+	- check box for property pages to display
+		- File Properties
+		- Character
+		- Decimal
+		- IEEE f.p.
+		- IBM f.p. (default off)
+		- Checksum/CRC (default off)
+		- Statistics (enables background processing)
+	- general options
+		- ASCII/insensitive escape chars
+		- # of saved search strings, # in recent file list
+	- save last goto addresses etc
+  - add-In DLLs to handle certain types of files
+	- associate file extension with DLL
+	- some sort of standard DLL calls: next, previous, summarize
+	- next/previous to have mutliple (unlimited?) levels of records
   - section break option (allows diff rowsize_, offset_, grouping_ etc)
   - aerial view? - one pixel (colour coded) for each byte;
     - colour coding according to ranges (below)
@@ -606,13 +590,14 @@ System
      - dockable/rollable dlgs
      - undocked dlgs move out of the way
      - ruler?
+     - background image
 
   Macro
     - all existing options
 
   Filters
     - all existing options
-
+    
   Privacy
     - dont add to recently used folder
     - clear lists: search, rfl, bm
