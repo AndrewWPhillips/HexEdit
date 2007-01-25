@@ -219,6 +219,7 @@ public:
 	CCommentEditControl category_ctl_;
 	CCommentEditControl keywords_ctl_;
 	CCommentEditControl comments_ctl_;
+	CBCGMenuButton cat_sel_ctl_;
 
 	bool category_changed_;
 	bool keywords_changed_;
@@ -244,6 +245,10 @@ protected:
     afx_msg void OnChangeComments();
     afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnKillFocusCategory();
+	afx_msg void OnKillFocusKeywords();
+	afx_msg void OnKillFocusComments();
+    afx_msg void OnSelCategory();
     DECLARE_MESSAGE_MAP()
 };
 
@@ -416,7 +421,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	// This relates format types to Combo Box elements
-	enum { FMT_IEEE32, FMT_IEEE64, FMT_IBM32, FMT_IBM64, FMT_DECIMAL };
+	enum { FMT_IEEE32, FMT_IEEE64, FMT_IBM32, FMT_IBM64, FMT_DECIMAL,
+		   FMT_LAST };
 	void FixDesc() ;
 };
 
@@ -506,7 +512,7 @@ class CPropSheet : public CPropertySheet
 
 // Construction
 public:
-	CPropSheet(UINT iSelectPage = 0, CHexEditView *pv = NULL);
+	CPropSheet();
 
 // Attributes
 public:

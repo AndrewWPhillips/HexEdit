@@ -156,11 +156,11 @@ void CHexFileList::Add(LPCTSTR lpszPathName)
 //        if (_stricmp(name_[ii], szTemp) == 0)
         if (AfxComparePath(name_[ii], szTemp))     // Handle DBCS case-insensitive comparisons etc
         {
-			// Remove the existing entry for the file but save data_ for when file readded (below)
+			// Remove the existing entry for the file
             name_.erase(name_.begin() + ii);
 			crc_.erase(crc_.begin() + ii);
             opened_.erase(opened_.begin() + ii);
-            saved_data = data_[ii];
+            saved_data = data_[ii];                //  save data_ for when file read (below)
             data_.erase(data_.begin() + ii);
         }
     }

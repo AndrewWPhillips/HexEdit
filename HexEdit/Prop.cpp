@@ -370,10 +370,16 @@ UINT CPropDecEditControl::OnGetDlgCode()
 
 IMPLEMENT_DYNAMIC(CPropSheet, CPropertySheet)
 
-CPropSheet::CPropSheet(UINT iSelectPage /*=0*/, CHexEditView *pv /*=NULL*/)
-        :CPropertySheet(_T("Properties"), AfxGetMainWnd(), iSelectPage)
+CPropSheet::CPropSheet()
+#ifdef PROP_INFO
+        :CPropertySheet(_T("Properties"), AfxGetMainWnd(), 1)  // make file window first active one (see below)
+#else
+        :CPropertySheet(_T("Properties"), AfxGetMainWnd(), 0)
+#endif
 {
 #ifdef PROP_INFO
+	// Info page is the first but not active page - we need to get category list in
+	// CPropInfoPage::OnSetActive but the recent file list has not been read yet.
 	AddPage(&prop_info);
 #endif
     AddPage(&prop_file);
@@ -802,6 +808,7 @@ void CPropInfoPage::DoDataExchange(CDataExchange* pDX)
     DDX_Text(pDX, IDC_INFO_DISK_SIZE, disk_size_);
     DDX_Text(pDX, IDC_INFO_VIEW_TIME, view_time_);
     DDX_Text(pDX, IDC_INFO_EDIT_TIME, edit_time_);
+	DDX_Control(pDX, IDC_INFO_CATEGORY_SELECT, cat_sel_ctl_);
 }
 
 void CPropInfoPage::Update(CHexEditView *pv, FILE_ADDRESS /*not used*/)
@@ -872,7 +879,7 @@ void CPropInfoPage::Update(CHexEditView *pv, FILE_ADDRESS /*not used*/)
     {
         CString ss;
         char buf[24];                    // temp buf where we sprintf
-        sprintf(buf, "%I64d", __int64(pDoc->length()));
+        sprintf(buf, "%I64d", __int64(file_len));
         ss = buf;
         AddCommas(ss);
         current_size_ += " (" + ss + ")";
@@ -894,7 +901,7 @@ void CPropInfoPage::Update(CHexEditView *pv, FILE_ADDRESS /*not used*/)
     {
         CString ss;
         char buf[24];                    // temp buf where we sprintf
-        sprintf(buf, "%I64d", __int64(pDoc->length()));
+        sprintf(buf, "%I64d", __int64(file_len));
         ss = buf;
         AddCommas(ss);
         disk_size_ += " (" + ss + ")";
@@ -909,8 +916,12 @@ void CPropInfoPage::Update(CHexEditView *pv, FILE_ADDRESS /*not used*/)
 
 BEGIN_MESSAGE_MAP(CPropInfoPage, CPropUpdatePage)
     ON_EN_CHANGE(IDC_INFO_CATEGORY, OnChangeCategory)
+	ON_EN_KILLFOCUS(IDC_INFO_CATEGORY, OnKillFocusCategory)
     ON_EN_CHANGE(IDC_INFO_KEYWORDS, OnChangeKeywords)
+	ON_EN_KILLFOCUS(IDC_INFO_KEYWORDS, OnKillFocusKeywords)
     ON_EN_CHANGE(IDC_INFO_COMMENTS, OnChangeComments)
+	ON_EN_KILLFOCUS(IDC_INFO_COMMENTS, OnKillFocusComments)
+	ON_BN_CLICKED(IDC_INFO_CATEGORY_SELECT, OnSelCategory)
     ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
@@ -1005,6 +1016,43 @@ BOOL CPropInfoPage::PreTranslateMessage(MSG* pMsg)
 BOOL CPropInfoPage::OnSetActive() 
 {
     Update(GetView());
+
+	// Now setup menu of existing categories
+
+	// Destroy previous menu if any
+	if (cat_sel_ctl_.m_hMenu != (HMENU)0)
+	{
+		::DestroyMenu(cat_sel_ctl_.m_hMenu);
+		cat_sel_ctl_.m_hMenu = (HMENU)0;
+	}
+
+	// Add menu items
+    CHexFileList *pfl = theApp.GetFileList();
+	std::set<CString> categories;
+	for (int ii = 0; ii < pfl->GetCount(); ++ii)
+	{
+		CString ss = pfl->GetData(ii, CHexFileList::CATEGORY);
+		if (!ss.IsEmpty())
+			categories.insert(ss);
+	}
+	if (categories.empty())
+	{
+		cat_sel_ctl_.EnableWindow(FALSE);
+	}
+	else
+	{
+		CMenu mm;
+		mm.CreatePopupMenu();
+		int count = 0;
+		for (std::set<CString>::iterator pp = categories.begin(); pp != categories.end(); ++pp)
+			mm.AppendMenu(MF_STRING, ++count, *pp);
+		ASSERT(count > 0);
+
+		cat_sel_ctl_.m_hMenu = mm.GetSafeHmenu();
+		mm.Detach();
+		cat_sel_ctl_.EnableWindow(TRUE);
+	}
+
 // xxx    ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_file);
     return CPropUpdatePage::OnSetActive();
 }
@@ -1012,6 +1060,9 @@ BOOL CPropInfoPage::OnSetActive()
 BOOL CPropInfoPage::OnKillActive()
 {
     BOOL retval = CPropertyPage::OnKillActive();
+
+#if 0  // This works well when changing pages but does not work if the user
+	   // closes the dialog or moves focus outside the dialog.
 	int changes = (category_changed_?1:0) + (keywords_changed_?1:0) + (comments_changed_?1:0);
 
 	if (retval && changes > 0)
@@ -1081,6 +1132,7 @@ BOOL CPropInfoPage::OnKillActive()
 			ASSERT(0);
 		}
 	}
+#endif
 	return retval;
 }
 
@@ -1099,8 +1151,73 @@ void CPropInfoPage::OnChangeComments()
 	comments_changed_ = true;
 }
 
+void CPropInfoPage::OnKillFocusCategory()
+{
+    CHexEditView *pview = GetView();
+	if (category_changed_ && pview != NULL && pview->GetDocument()->pfile1_ != NULL)
+	{
+		CHexFileList *pfl = theApp.GetFileList();
+		int ii = pfl->GetIndex(pview->GetDocument()->pfile1_->GetFilePath());
+		ASSERT(ii != -1);
+
+		UpdateData();
+		pfl->SetData(ii, CHexFileList::CATEGORY, category_);
+		//((CEdit*)GetDlgItem(IDC_INFO_CATEGORY))->SetSel(0, -1);
+		category_changed_ = false;
+	}
+}
+
+void CPropInfoPage::OnKillFocusKeywords()
+{
+    CHexEditView *pview = GetView();
+	if (keywords_changed_ && pview != NULL && pview->GetDocument()->pfile1_ != NULL)
+	{
+		CHexFileList *pfl = theApp.GetFileList();
+		int ii = pfl->GetIndex(pview->GetDocument()->pfile1_->GetFilePath());
+		ASSERT(ii != -1);
+
+		UpdateData();
+		pfl->SetData(ii, CHexFileList::KEYWORDS, keywords_);
+		keywords_changed_ = false;
+	}
+}
+
+void CPropInfoPage::OnKillFocusComments()
+{
+    CHexEditView *pview = GetView();
+	if (comments_changed_ && pview != NULL && pview->GetDocument()->pfile1_ != NULL)
+	{
+		CHexFileList *pfl = theApp.GetFileList();
+		int ii = pfl->GetIndex(pview->GetDocument()->pfile1_->GetFilePath());
+		ASSERT(ii != -1);
+
+		UpdateData();
+		pfl->SetData(ii, CHexFileList::COMMENTS, comments_);
+		comments_changed_ = false;
+	}
+}
+
+void CPropInfoPage::OnSelCategory()
+{
+    if (cat_sel_ctl_.m_nMenuResult != 0)
+	{
+		CMenu menu;
+		menu.Attach(cat_sel_ctl_.m_hMenu);
+        CString ss = get_menu_text(&menu, cat_sel_ctl_.m_nMenuResult);
+		menu.Detach();
+
+		// Add the text to the category text box
+		category_ctl_.SetWindowText("");
+
+        for (int ii = 0; ii < ss.GetLength (); ii++)
+            category_ctl_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
+        category_ctl_.SetFocus();
+	}
+}
+
 static DWORD id_pairs1[] = {
 	IDC_INFO_CATEGORY, HIDC_INFO_CATEGORY,
+	IDC_INFO_CATEGORY_SELECT, HIDC_INFO_CATEGORY_SELECT,
 	IDC_INFO_KEYWORDS, HIDC_INFO_KEYWORDS,
 	IDC_INFO_COMMENTS, HIDC_INFO_COMMENTS,
 	IDC_INFO_SIZE, HIDC_INFO_SIZE,
@@ -1904,6 +2021,7 @@ CPropDecPage::CPropDecPage() : CPropUpdatePage(CPropDecPage::IDD)
         CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
         big_endian_ = aa->prop_dec_endian_;
         signed_ = aa->prop_dec_signed_;
+		if (signed_ > 3) signed_ = 0;   // Only 4 formats supported currently
 }
 
 CPropDecPage::~CPropDecPage()
@@ -1911,7 +2029,7 @@ CPropDecPage::~CPropDecPage()
     // Save current state for next invocation of property dialog or save settings
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     aa->prop_dec_signed_ = signed_;
-    aa->prop_dec_endian_ = big_endian_;
+    aa->prop_dec_endian_ = big_endian_ != 0;
 }
 
 void CPropDecPage::DoDataExchange(CDataExchange* pDX)
@@ -2449,13 +2567,14 @@ CPropRealPage::CPropRealPage() : CPropUpdatePage(CPropRealPage::IDD)
 
         big_endian_ = theApp.prop_fp_endian_;
         format_ = theApp.prop_fp_format_;
+		if (format_ > FMT_LAST) format_ = 0;
 }
 
 CPropRealPage::~CPropRealPage()
 {
     // Save current state for next invocation of property dialog or save settings
     theApp.prop_fp_format_ = format_;
-    theApp.prop_fp_endian_ = big_endian_;
+    theApp.prop_fp_endian_ = big_endian_ != 0;
 }
 
 void CPropRealPage::DoDataExchange(CDataExchange* pDX)
@@ -2857,6 +2976,7 @@ CPropDatePage::CPropDatePage() : CPropUpdatePage(CPropDatePage::IDD)
     local_time_ = TRUE;  // default to local time for now
 
     format_ = aa->prop_date_format_;
+	if (format_ >= FORMAT_LAST) format_ = FORMAT_TIME_T;
     stop_update_ = false;
     time_t dummy = time_t(1000000L);
     tz_diff_ = (1000000L - mktime(gmtime(&dummy)))/86400.0;
@@ -2947,7 +3067,7 @@ CPropDatePage::~CPropDatePage()
     // Save current state for next invocation of property dialog or save settings
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     aa->prop_date_format_ = format_;
-    aa->prop_date_endian_ = big_endian_;
+    aa->prop_date_endian_ = big_endian_ != 0;
 }
 
 void CPropDatePage::DoDataExchange(CDataExchange* pDX)
