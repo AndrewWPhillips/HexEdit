@@ -500,8 +500,8 @@ BEGIN
             MENUITEM "ANSI -> IBM/OEM",             ID_ANSI2IBM
             MENUITEM "IBM/OEM -> ANSI",             ID_IBM2ANSI
             MENUITEM SEPARATOR
-            MENUITEM "&Uppercase",                  ID_UPPERCASE
-            MENUITEM "&Lowercase",                  ID_LOWERCASE
+            MENUITEM "&Uppercase",                  32924
+            MENUITEM "&Lowercase",                  32925
         END
         POPUP "Checksum"
         BEGIN
@@ -513,7 +513,7 @@ BEGIN
             MENUITEM "CRC CCIT&T",                  ID_CRC_CCITT
             MENUITEM "&CRC 32",                     ID_CRC32
             MENUITEM SEPARATOR
-            MENUITEM "&MD5",                        ID_MD5
+            MENUITEM "&MD5",                        32998
         END
         POPUP "Encryption"
         BEGIN
@@ -690,6 +690,21 @@ BEGIN
     END
     POPUP "Te&mplate"
     BEGIN
+        MENUITEM "&New",                        ID_DFFD_NEW
+        POPUP "&Open File Type"
+        BEGIN
+            MENUITEM "None",                        ID_DFFD_OPEN_TYPE_DUMMY
+            , INACTIVE
+        END
+        POPUP "&Open Other"
+        BEGIN
+            MENUITEM "None",                        ID_DFFD_OPEN_OTHER_DUMMY
+            , INACTIVE
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Save",                       ID_DFFD_SAVE
+        MENUITEM "Save &As",                    ID_DFFD_SAVEAS
+        MENUITEM SEPARATOR
         MENUITEM "&Hide Tree View",             ID_DFFD_HIDE, CHECKED
         MENUITEM "&Split Window",               ID_DFFD_SPLIT
         MENUITEM "&Tabbed Window",              ID_DFFD_TAB
@@ -698,7 +713,8 @@ BEGIN
         MENUITEM "&Auto Sync",                  ID_DFFD_AUTO_SYNC
         MENUITEM "&Refresh",                    ID_DFFD_REFRESH
         MENUITEM SEPARATOR
-        MENUITEM "Allow &Editing",              ID_DFFD_EDIT_MODE
+        MENUITEM "Allow &Editing",              ID_DFFD_TOGGLE_EDIT
+        MENUITEM "Settings...",                 ID_DFFD_OPTIONS
     END
     POPUP "&Tools"
     BEGIN
@@ -1332,7 +1348,7 @@ CAPTION "Summary"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     RTEXT           "Category:",IDC_STATIC,0,8,43,8
-    EDITTEXT        IDC_INFO_CATEGORY,45,6,100,12,ES_AUTOHSCROLL,0,
+    EDITTEXT        IDC_INFO_CATEGORY,45,6,84,12,ES_AUTOHSCROLL,0,
                     HIDC_INFO_CATEGORY
     RTEXT           "Keywords:",IDC_STATIC,0,22,43,8
     EDITTEXT        IDC_INFO_KEYWORDS,45,20,100,12,ES_AUTOHSCROLL,0,
@@ -1352,6 +1368,8 @@ BEGIN
     RTEXT           "Size on disk:",IDC_STATIC,0,64,43,8
     EDITTEXT        IDC_INFO_DISK_SIZE,45,62,140,12,ES_AUTOHSCROLL | 
                     ES_READONLY,0,HIDC_INFO_DISK_SIZE
+    PUSHBUTTON      "",IDC_INFO_CATEGORY_SELECT,132,6,13,12,0,0,
+                    HIDC_INFO_CATEGORY_SELECT
 END
 
 IDD_PROP_FILE DIALOGEX 0, 0, 223, 79
@@ -1360,39 +1378,39 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "File"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    RTEXT           "Name:",IDC_STATIC,0,3,31,8
-    EDITTEXT        IDC_FILE_NAME,33,1,140,12,ES_AUTOHSCROLL | ES_READONLY,0,
+    RTEXT           "Name:",IDC_STATIC,0,8,31,8
+    EDITTEXT        IDC_FILE_NAME,33,6,140,12,ES_AUTOHSCROLL | ES_READONLY,0,
                     HIDC_FILE_NAME
-    LTEXT           "File type",IDC_FILE_TYPE,176,1,46,34,NOT WS_GROUP,0,
-                    HIDC_FILE_TYPE
-    RTEXT           "Location:",IDC_STATIC,0,16,31,8
-    EDITTEXT        IDC_FILE_PATH,33,14,140,12,ES_AUTOHSCROLL | ES_READONLY,
+    LTEXT           "File type description from Windows",IDC_FILE_TYPE,176,5,
+                    46,31,NOT WS_GROUP,0,HIDC_FILE_TYPE
+    RTEXT           "Location:",IDC_STATIC,0,22,31,8
+    EDITTEXT        IDC_FILE_PATH,33,20,140,12,ES_AUTOHSCROLL | ES_READONLY,
                     0,HIDC_FILE_PATH
-    RTEXT           "Size:",IDC_STATIC,0,29,31,8
-    EDITTEXT        IDC_FILE_SIZE,33,27,140,12,ES_AUTOHSCROLL | ES_READONLY,
-                    0,HIDC_FILE_SIZE
-    RTEXT           "Created:",IDC_FILE_CREATED_DESC,0,42,31,8
-    EDITTEXT        IDC_FILE_CREATED,33,40,140,12,ES_AUTOHSCROLL | 
+    RTEXT           "Size:",IDC_STATIC,0,69,31,8,NOT WS_VISIBLE
+    EDITTEXT        IDC_FILE_SIZE,33,67,140,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_VISIBLE,0,HIDC_FILE_SIZE
+    RTEXT           "Created:",IDC_FILE_CREATED_DESC,0,36,31,8
+    EDITTEXT        IDC_FILE_CREATED,33,34,140,12,ES_AUTOHSCROLL | 
                     ES_READONLY,0,HIDC_FILE_CREATED
-    RTEXT           "Modified:",IDC_FILE_MODIFIED_DESC,0,55,31,8
-    EDITTEXT        IDC_FILE_MODIFIED,33,53,140,12,ES_AUTOHSCROLL | 
+    RTEXT           "Modified:",IDC_FILE_MODIFIED_DESC,0,50,31,8
+    EDITTEXT        IDC_FILE_MODIFIED,33,48,140,12,ES_AUTOHSCROLL | 
                     ES_READONLY,0,HIDC_FILE_MODIFIED
-    RTEXT           "Access:",IDC_FILE_ACCESSED_DESC,0,68,31,8
-    EDITTEXT        IDC_FILE_ACCESSED,33,66,140,12,ES_AUTOHSCROLL | 
+    RTEXT           "Access:",IDC_FILE_ACCESSED_DESC,0,64,31,8
+    EDITTEXT        IDC_FILE_ACCESSED,33,62,140,12,ES_AUTOHSCROLL | 
                     ES_READONLY,0,HIDC_FILE_ACCESSED
-    LTEXT           "Read Only",IDC_FILE_READONLY_DESC,187,38,34,8
+    LTEXT           "Read Only",IDC_FILE_READONLY_DESC,187,37,34,8
     CONTROL         "Read Only",IDC_FILE_READONLY,"Button",BS_3STATE | 
-                    WS_DISABLED | WS_TABSTOP,176,38,10,8,0,
+                    WS_DISABLED | WS_TABSTOP,176,37,10,8,0,
                     HIDC_FILE_READONLY
-    LTEXT           "Hidden",IDC_FILE_HIDDEN_DESC,187,48,24,8
+    LTEXT           "Hidden",IDC_FILE_HIDDEN_DESC,187,47,24,8
     CONTROL         "",IDC_FILE_HIDDEN,"Button",BS_3STATE | WS_DISABLED | 
-                    WS_TABSTOP,176,48,10,8,0,HIDC_FILE_HIDDEN
-    LTEXT           "System",IDC_FILE_SYSTEM_DESC,187,58,24,8
+                    WS_TABSTOP,176,47,10,8,0,HIDC_FILE_HIDDEN
+    LTEXT           "System",IDC_FILE_SYSTEM_DESC,187,57,24,8
     CONTROL         "",IDC_FILE_SYSTEM,"Button",BS_3STATE | WS_DISABLED | 
-                    WS_TABSTOP,176,58,10,8,0,HIDC_FILE_SYSTEM
-    LTEXT           "Archived",IDC_FILE_ARCHIVED_DESC,187,68,29,8
+                    WS_TABSTOP,176,57,10,8,0,HIDC_FILE_SYSTEM
+    LTEXT           "Archived",IDC_FILE_ARCHIVED_DESC,187,67,29,8
     CONTROL         "",IDC_FILE_ARCHIVED,"Button",BS_3STATE | WS_DISABLED | 
-                    WS_TABSTOP,176,68,10,8,0,HIDC_FILE_ARCHIVED
+                    WS_TABSTOP,176,67,10,8,0,HIDC_FILE_ARCHIVED
 END
 
 IDD_PROP_DECIMAL DIALOGEX 0, 0, 223, 79
@@ -3069,16 +3087,22 @@ BEGIN
     ID_DFFD_ENCLOSE_IF      "Enclose this element in a IF\nEnclose in IF"
     ID_DFFD_DELETE          "Delete this element\nDelete"
     ID_DFFD_GLOBAL          "Change global options for this format\nOptions"
-    ID_DFFD_SYNC            "Sync location of selection in hex area and tree\nSync"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_DFFD_AUTO_SYNC       "Automatically sync selection in hex area and tree\nAuto Sync"
     ID_DFFD_SAVE            "Save changes to the current template file\nSave"
     ID_DFFD_SAVEAS          "Save the current template to a new file\nSave As"
-    ID_HIGHLIGHT_MENU       "Highlighter commands"
+    ID_DFFD_SYNC            "Sync location of selection in hex area and tree\nSync"
+    ID_DFFD_AUTO_SYNC       "Automatically sync selection in hex area and tree\nAuto Sync"
     ID_DFFD_REFRESH         "Refresh tree to match data\nRefresh Tree"
+    ID_DFFD_TOGGLE_EDIT     "Toggle edit mode for this template\nToggle Template Editing"
+    ID_DFFD_OPTIONS         "Change global settings for this template\nTemplate Global Settings"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_HIGHLIGHT_MENU       "Highlighter commands"
     ID_DFFD_WEB             "Go to template web site for more info\nTemplate Web Site"
     ID_RAND_BYTE            "Generate good (but slow) random bytes\nGood Random"
     ID_RAND_16BIT           "Generate random word (16 bit) value(s)\nRandom Word"
@@ -3179,10 +3203,6 @@ STRINGTABLE
 BEGIN
     ID_NAV_BACK             "Go back to previous point"
     ID_NAV_FORW             "Go forward to navigation point"
-END
-
-STRINGTABLE 
-BEGIN
     ID_FILE_OPEN_SPECIAL    "Open a disk or volume\nOpen Special"
 END
 
@@ -3196,6 +3216,7 @@ BEGIN
     ID_DFFD_HIDE            "Turn off use of templates\nTemplate Off"
     ID_DFFD_SPLIT           "Show template in a split window\nTemplate Split"
     ID_DFFD_TAB             "Show templates in a tabbed window\nTemplate Tab"
+    ID_DFFD_NEW             "Create a new ""default"" template\nNew Template"
 END
 
 #endif    // English (U.S.) resources
@@ -3413,7 +3434,7 @@ BEGIN
         MENUITEM "Save &As...",                 ID_DFFD_SAVEAS
         MENUITEM SEPARATOR
         MENUITEM "Add Struct Definition",       ID_DFFD_INSERT_DEFINE_STRUCT
-        MENUITEM "&Options...",                 ID_DFFD_GLOBAL
+        MENUITEM "Settings...",                 ID_DFFD_GLOBAL
         MENUITEM "&Edit...",                    ID_DFFD_EDIT
     END
     POPUP "ButtonInsert"
@@ -4235,7 +4256,7 @@ BEGIN
                     HIDC_DFFD_COMMENTS
     DEFPUSHBUTTON   "OK",IDOK,235,7,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,235,24,50,14
-    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14,0,0,HID_DFFD_HELP
+    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14
     PUSHBUTTON      "Clone >>",ID_DFFD_CLONE,235,117,49,14,WS_GROUP,0,
                     HID_DFFD_CLONE
     PUSHBUTTON      "<<",ID_DFFD_PREV,235,136,23,14,WS_GROUP,0,HID_DFFD_PREV
@@ -4278,7 +4299,7 @@ BEGIN
                     ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
     DEFPUSHBUTTON   "OK",IDOK,235,7,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,235,24,50,14
-    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14,0,0,HID_DFFD_HELP
+    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14
     PUSHBUTTON      "<<",ID_DFFD_PREV,235,136,23,14,WS_GROUP
     PUSHBUTTON      ">>",ID_DFFD_NEXT,261,136,23,14
 END
@@ -4314,7 +4335,7 @@ BEGIN
                     ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
     DEFPUSHBUTTON   "OK",IDOK,235,7,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,235,24,50,14
-    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14,0,0,HID_DFFD_HELP
+    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14
     PUSHBUTTON      "<<",ID_DFFD_PREV,235,136,23,14,WS_GROUP
     PUSHBUTTON      ">>",ID_DFFD_NEXT,261,136,23,14
 END
@@ -4352,7 +4373,7 @@ BEGIN
                     ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
     DEFPUSHBUTTON   "OK",IDOK,235,7,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,235,24,50,14
-    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14,0,0,HID_DFFD_HELP
+    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14
     PUSHBUTTON      "<<",ID_DFFD_PREV,235,136,23,14,WS_GROUP
     PUSHBUTTON      ">>",ID_DFFD_NEXT,261,136,23,14
 END
@@ -4361,7 +4382,7 @@ IDD_DFFD_GLOBAL DIALOGEX 0, 0, 292, 114
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "Global Options"
+CAPTION "Global Settings"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     GROUPBOX        "Default data settings",IDC_STATIC,7,6,104,64,WS_GROUP
@@ -4573,7 +4594,7 @@ BEGIN
                     ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
     DEFPUSHBUTTON   "OK",IDOK,235,7,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,235,24,50,14
-    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14,0,0,HID_DFFD_HELP
+    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14
     PUSHBUTTON      "<<",ID_DFFD_PREV,235,136,23,14,WS_GROUP
     PUSHBUTTON      ">>",ID_DFFD_NEXT,261,136,23,14
 END
@@ -4603,7 +4624,7 @@ BEGIN
                     ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
     DEFPUSHBUTTON   "OK",IDOK,235,7,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,235,24,50,14
-    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14,0,0,HID_DFFD_HELP
+    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14
     PUSHBUTTON      "<<",ID_DFFD_PREV,235,136,23,14,WS_GROUP
     PUSHBUTTON      ">>",ID_DFFD_NEXT,261,136,23,14
 END
@@ -4636,7 +4657,7 @@ BEGIN
                     ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
     DEFPUSHBUTTON   "OK",IDOK,235,7,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,235,24,50,14
-    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14,0,0,HID_DFFD_HELP
+    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14
     PUSHBUTTON      "<<",ID_DFFD_PREV,235,136,23,14,WS_GROUP
     PUSHBUTTON      ">>",ID_DFFD_NEXT,261,136,23,14
 END
@@ -4796,7 +4817,7 @@ BEGIN
                     ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
     DEFPUSHBUTTON   "OK",IDOK,235,7,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,235,24,50,14
-    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14,0,0,HID_DFFD_HELP
+    PUSHBUTTON      "Help",ID_DFFD_HELP,235,50,50,14
     PUSHBUTTON      "<<",ID_DFFD_PREV,235,136,23,14,WS_GROUP
     PUSHBUTTON      ">>",ID_DFFD_NEXT,261,136,23,14
     PUSHBUTTON      "Del",IDC_DFFD_DELETE,173,106,14,13,BS_ICON | BS_CENTER | 
@@ -5177,6 +5198,8 @@ BEGIN
     IDC_SYSTYPE, 0x403, 11, 0
 0x6957, 0x646e, 0x776f, 0x2073, 0x5058, "\000" 
     IDC_SYSTYPE, 0x403, 6, 0
+0x6956, 0x7473, 0x0061, 
+    IDC_SYSTYPE, 0x403, 6, 0
 0x744f, 0x6568, 0x0072, 
     IDC_VERSION, 0x403, 12, 0
 0x6556, 0x7372, 0x6f69, 0x206e, 0x2e31, 0x0030, 
@@ -5198,6 +5221,8 @@ BEGIN
 0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0030, 
     IDC_VERSION, 0x403, 12, 0
 0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0031, 
+    IDC_VERSION, 0x403, 12, 0
+0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0032, 
     0
 END
 

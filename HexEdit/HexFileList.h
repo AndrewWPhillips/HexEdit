@@ -70,6 +70,8 @@ public:
     CString GetData(int index, param_num param) const;
     void ChangeSize(int nSize);
 
+	size_t GetCount() { return name_.size(); }
+
 // Implementation
 public:
     virtual ~CHexFileList() {}

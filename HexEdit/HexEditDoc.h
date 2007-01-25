@@ -504,12 +504,24 @@ protected:
     afx_msg void OnDffdRefresh();
     afx_msg void OnUpdateDffdRefresh(CCmdUI* pCmdUI);
     //}}AFX_MSG
+    afx_msg void OnDffdNew();            // Template/New - open default template
+    afx_msg void OnDffdOpen(UINT nID);
+    afx_msg void OnDffdSave();
+    afx_msg void OnDffdSaveAs();
+    afx_msg void OnEditMode();
+    afx_msg void OnUpdateEditMode(CCmdUI* pCmdUI);
+    afx_msg void OnDffdOptions();
+    afx_msg void OnUpdateDffdOptions(CCmdUI* pCmdUI);
+
     afx_msg void OnTest();
         DECLARE_MESSAGE_MAP()
 
 public:  // These really should be private but are called from SendEmail
     BOOL open_file(LPCTSTR lpszPathName); // Open or reopen file_
     void close_file();
+
+	BOOL DffdEditMode();
+	void SetDffdEditMode(BOOL b) { dffd_edit_mode_ = b; }
 
 private:
 // Private member functions
@@ -552,6 +564,7 @@ private:
 
     BOOL keep_times_;           // Do we keep same times & attributes of orig file?
     CFileStatus saved_status_;  // Times and attributes of file when opened
+	int dffd_edit_mode_;        // 0 = false, 1 = true, -1 = unknown
 
     FILE_ADDRESS length_;
 
@@ -667,6 +680,7 @@ public:
     };
 
     void OpenDataFormatFile(LPCTSTR data_file_name = NULL);
+	void CheckSaveTemplate();
     CString GetXMLFileDesc() { return xml_file_num_ == -1 ? CString("") : theApp.xml_file_name_[xml_file_num_]; }
     CString GetFormatFileName() { return xml_file_num_ == -1 ? CString("") : theApp.xml_file_name_[xml_file_num_]; }
 //    std::vector<CString> const &XMLFileList() const { return theApp.xml_file_name_; }

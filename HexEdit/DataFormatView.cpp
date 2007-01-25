@@ -1065,6 +1065,17 @@ BEGIN_MESSAGE_MAP(CDataFormatView, CView)
     ON_COMMAND(ID_MD5, OnMd5)
     ON_UPDATE_COMMAND_UI(ID_MD5, OnUpdateByteNZ)
 
+    ON_COMMAND(ID_UPPERCASE, OnUppercase)
+    ON_UPDATE_COMMAND_UI(ID_UPPERCASE, OnUpdateConvert)
+    ON_COMMAND(ID_LOWERCASE, OnLowercase)
+    ON_UPDATE_COMMAND_UI(ID_LOWERCASE, OnUpdateConvert)
+
+    ON_COMMAND(ID_DFFD_HIDE, OnDffdHide)
+    ON_UPDATE_COMMAND_UI(ID_DFFD_HIDE, OnUpdateDffdHide)
+    ON_COMMAND(ID_DFFD_SPLIT, OnDffdSplit)
+    ON_UPDATE_COMMAND_UI(ID_DFFD_SPLIT, OnUpdateDffdSplit)
+    ON_COMMAND(ID_DFFD_TAB, OnDffdTab)
+    ON_UPDATE_COMMAND_UI(ID_DFFD_TAB, OnUpdateDffdTab)
 END_MESSAGE_MAP()
 
 void CDataFormatView::InitTree()
@@ -3471,9 +3482,7 @@ BOOL CDataFormatView::ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr /*=-1*/)
 
     CString read_only_str;
     CString default_read_only_str = pdoc->df_elt_[0].GetAttr("default_read_only");
-#ifdef _DEBUG
     size_t last_elt = -1;
-#endif
 
     if (end_addr <= addr) end_addr = addr + 1;
 
@@ -3482,10 +3491,10 @@ BOOL CDataFormatView::ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr /*=-1*/)
     {
         size_t elt = find_address(addr);
 
-#ifdef _DEBUG
         ASSERT(elt != last_elt);
+		if (elt == last_elt)
+			return FALSE;    // xxx check this out - happens for new empty file when appending (default template active)
         last_elt = elt;
-#endif
 
         // Use template default if past end of expected data
         // Should this be fixed for DF_MORE (unexamined FORF elts) somehow???
@@ -4017,7 +4026,7 @@ void CDataFormatView::OnInitialUpdate()
     pdoc->ScanInit();
     InitTree();
 
-    // Set up drop down list so the user can select a different DFFD
+    // Set up drop down list so the user can open a different DFFD (open template)
     if (!grid_.SetCellType(0, grid_.GetFixedColumnCount(), RUNTIME_CLASS(CGridCellCombo)))
         return;
 
@@ -4244,12 +4253,12 @@ void CDataFormatView::OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* /*pResult
         ASSERT(index >= 0 && index < (int)pdoc->df_type_.size());
         ASSERT(pdoc->df_type_.size() == pdoc->df_indent_.size());
 
-        if (!theApp.tree_edit_ && pdoc->df_type_[index] < CHexEditDoc::DF_MORE)
+        if (!pdoc->DffdEditMode() && pdoc->df_type_[index] < CHexEditDoc::DF_MORE)
         {
             // Double-click (when not in edit mode) expands all sub-nodes
             expand_all(index);
         }
-        else if (!theApp.tree_edit_)
+        else if (!pdoc->DffdEditMode())
         {
             // Do nothing here (yet?)
         }
@@ -4353,7 +4362,7 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
         if (!ok) return;
 
         signed char parent_type;        // The type of parent affects the behaviour of the dialog
-        if (!theApp.tree_edit_ && pdoc->df_type_[index] == CHexEditDoc::DF_FILE)
+        if (!pdoc->DffdEditMode() && pdoc->df_type_[index] == CHexEditDoc::DF_FILE)
         {
             // In view mode (ie not edit mode) we only allow expand of a node
             CString strTemp;
@@ -4365,7 +4374,7 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
                 item = ppop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD,
                                             mouse_pt.x, mouse_pt.y, this);
         }
-        else if (!theApp.tree_edit_ && pdoc->df_type_[index] < CHexEditDoc::DF_LEAF1)
+        else if (!pdoc->DffdEditMode() && pdoc->df_type_[index] < CHexEditDoc::DF_LEAF1)
         {
             // In view mode (ie not edit mode) we only allow expand of a node
             CString strTemp;
@@ -4377,7 +4386,7 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
                 item = ppop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD,
                                             mouse_pt.x, mouse_pt.y, this);
         }
-        else if (!theApp.tree_edit_)
+        else if (!pdoc->DffdEditMode())
         {
             // Leaf nodes when not in edit mode have no options
         }
@@ -4494,7 +4503,7 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
             break;
         case ID_DFFD_EDIT_MODE:
             {
-                theApp.tree_edit_ = TRUE;
+                pdoc->SetDffdEditMode(TRUE);
                 GetDocument()->ScanFile();
                 CDFFDHint dffdh;
                 GetDocument()->UpdateAllViews(NULL, 0, &dffdh);
@@ -4502,7 +4511,7 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
             break;
         case ID_DFFD_VIEW_MODE:
             {
-                theApp.tree_edit_ = FALSE;
+                pdoc->SetDffdEditMode(FALSE);
                 GetDocument()->ScanFile();
                 CDFFDHint dffdh;
                 GetDocument()->UpdateAllViews(NULL, 0, &dffdh);
@@ -4550,7 +4559,8 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
             break;
         case ID_DFFD_GLOBAL:
             {
-                CDFFDGlobal dlg(&pdoc->df_elt_[index], this);
+				ASSERT(index == 0);
+                CDFFDGlobal dlg(&pdoc->df_elt_[0], this);
                 if (dlg.DoModal() == IDOK && dlg.IsModified())
                 {
 					CSaveStateHint ssh;

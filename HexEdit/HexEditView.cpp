@@ -651,6 +651,7 @@ void CHexEditView::OnInitialUpdate()
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
     print_map_mode_ = MM_HIENGLISH;
+	split_width_ = -1;
 
     // Get options for the window from file settings in CHexFileList
     CHexFileList *pfl = aa->GetFileList();
@@ -692,8 +693,21 @@ void CHexEditView::OnInitialUpdate()
 				CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
 				ASSERT(psplitter->m_hWnd != 0);
 
+#if 0  // client rect is not yet valid
+				// Make sure width of splitter window is OK
+				CRect rr;
+				GetClientRect(&rr);
+				if (width < 10 || width > rr.Width())
+				{
+					width = rr.Width()/3;
+					if (width < 10)
+						width = 10;
+				}
+#endif
+
 				// Add left column for DFFD (template) view
 				VERIFY(psplitter->InsColumn(0, width, RUNTIME_CLASS(CDataFormatView), &ctxt));
+				split_width_ = width;
 
 				psplitter->SetActivePane(0, 1);   // make hex view active
 
@@ -702,6 +716,7 @@ void CHexEditView::OnInitialUpdate()
 
 				// Make sure dataformat view knows which hex view it is assoc. with
 				pdfv_->phev_ = this;
+				psplitter->RecalcLayout();
 			}
 			break;
 		}
@@ -4930,9 +4945,11 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
     if (text_height_ < 1)
         return;
 
+#if 0 // Handled in CChildFrame::OnSetFocus now
     show_prop();
     show_calc();
     show_pos();
+#endif
     move_dlgs();
 
     FILE_ADDRESS start_addr, end_addr;
@@ -12590,7 +12607,7 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
         GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
 
 		// Add the temp file to the document
-		idx = GetDocument()->AddDataFile(temp_file);
+		idx = GetDocument()->AddDataFile(temp_file, TRUE);
 		ASSERT(idx != -1);
         GetDocument()->Change(mod_insert_file, start_addr, end_addr - start_addr, NULL, idx, this, TRUE);
 	}
@@ -12830,7 +12847,7 @@ void CHexEditView::OnEncrypt()
 			GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
 
 			// Add the temp file to the document
-			int idx = GetDocument()->AddDataFile(temp_file);
+			int idx = GetDocument()->AddDataFile(temp_file, TRUE);
 			ASSERT(idx != -1);
 			GetDocument()->Change(mod_insert_file, start_addr, total_out, NULL, idx, this, TRUE);
 
@@ -13168,7 +13185,7 @@ void CHexEditView::OnDecrypt()
 			GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
 
 			// Add the temp file to the document
-			int idx = GetDocument()->AddDataFile(temp_file);
+			int idx = GetDocument()->AddDataFile(temp_file, TRUE);
 			ASSERT(idx != -1);
 			GetDocument()->Change(mod_insert_file, start_addr, total_out, NULL, idx, this, TRUE);
 
@@ -13544,7 +13561,7 @@ void CHexEditView::OnCompress()
         GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
 
 		// Add the temp file to the document
-		idx = GetDocument()->AddDataFile(temp_file);
+		idx = GetDocument()->AddDataFile(temp_file, TRUE);
 		ASSERT(idx != -1);
         GetDocument()->Change(mod_insert_file, start_addr, total_out, NULL, idx, this, TRUE);
 
@@ -13725,8 +13742,8 @@ void CHexEditView::OnDecompress()
 						windowBits
 		               ) == Z_OK);
 
-	// Test if selection is too big to do in memory
-	if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
+	// Test if selection is too big to do in memory (Note that even a small selection can expand greatly)
+	if (end_addr - start_addr > (2*1024*1024) && GetDocument()->DataFileSlotFree())
 	{
 		CWaitCursor wait;                           // Turn on wait cursor (hourglass)
         mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
@@ -13875,7 +13892,7 @@ void CHexEditView::OnDecompress()
         GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
 
 		// Add the temp file to the document
-		idx = GetDocument()->AddDataFile(temp_file);
+		idx = GetDocument()->AddDataFile(temp_file, TRUE);
 		ASSERT(idx != -1);
         GetDocument()->Change(mod_insert_file, start_addr, total_out, NULL, idx, this, TRUE);
 
@@ -14715,7 +14732,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
         pv->GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, pv);
 
 		// Add the temp file to the document
-		idx = pv->GetDocument()->AddDataFile(temp_file);
+		idx = pv->GetDocument()->AddDataFile(temp_file, TRUE);
 		ASSERT(idx != -1);
         pv->GetDocument()->Change(mod_insert_file, start_addr, end_addr - start_addr, NULL, idx, pv, TRUE);
 	}
@@ -15422,7 +15439,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
         pv->GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, pv);
 
 		// Add the temp file to the document
-		idx = pv->GetDocument()->AddDataFile(temp_file);
+		idx = pv->GetDocument()->AddDataFile(temp_file, TRUE);
 		ASSERT(idx != -1);
         pv->GetDocument()->Change(mod_insert_file, start_addr, end_addr - start_addr, NULL, idx, pv, TRUE);
 	}
@@ -15646,6 +15663,12 @@ void CHexEditView::OnRandFast()
     ::OnOperateUnary<char>(this, unary_rand_fast, "fast randomize bytes", char(0));
 }
 
+void CHexEditView::ShowDffd()
+{
+    if (pdfv_ == NULL)
+		OnDffdSplit();
+}
+
 void CHexEditView::OnDffdHide()
 {
     if (pdfv_ == NULL)
@@ -15658,6 +15681,8 @@ void CHexEditView::OnDffdHide()
 
 	if (idx1 > -1)  // splitter?
 	{
+		int dummy;
+		GetFrame()->splitter_.GetColumnInfo(idx1, split_width_, dummy);
 		VERIFY(GetFrame()->splitter_.DelColumn(idx1, TRUE));
 		GetFrame()->splitter_.RecalcLayout();
 	}
@@ -15683,6 +15708,7 @@ void CHexEditView::OnDffdSplit()
 	{
 		int idx2 = GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd());
 		ASSERT(idx2 > -1);
+		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing tree view
 		if (idx2 > -1)
 			VERIFY(GetFrame()->ptv_->RemoveView(idx2));
 		pdfv_ = NULL;
@@ -15698,8 +15724,18 @@ void CHexEditView::OnDffdSplit()
 	CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
 	ASSERT(psplitter->m_hWnd != 0);
 
-	// Add left column for DFFD (template) view
-	VERIFY(psplitter->InsColumn(0, theApp.tree_width_, RUNTIME_CLASS(CDataFormatView), &ctxt));
+    // Make sure width of splitter window is OK
+	CRect rr;
+	GetClientRect(&rr);
+	if (split_width_ < 10 || split_width_ > rr.Width())
+	{
+		split_width_ = rr.Width()/3;
+		if (split_width_ < 10)
+			split_width_ = 10;
+	}
+
+	// Add tree view in left splitter column
+	VERIFY(psplitter->InsColumn(0, split_width_, RUNTIME_CLASS(CDataFormatView), &ctxt));
 
 	psplitter->SetActivePane(0, 1);   // make hex view active
 
@@ -15729,6 +15765,8 @@ void CHexEditView::OnDffdTab()
 		ASSERT(idx1 > -1);
 		if (idx1 > -1)
 		{
+			int dummy;
+			GetFrame()->splitter_.GetColumnInfo(idx1, split_width_, dummy);
 		    VERIFY(GetFrame()->splitter_.DelColumn(idx1, TRUE));
 			GetFrame()->splitter_.RecalcLayout();
 		}

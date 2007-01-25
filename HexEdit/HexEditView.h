@@ -199,6 +199,7 @@ protected: // create from serialization only
 public:
 	// Add "sub" view ptrs here, which points to the view in the tab or splitter (or NULL if not visible)
     CDataFormatView *pdfv_;           // template (tree) view
+	int split_width_;                 // width of tree view when last in split window
 
     enum { max_buf = 32767 };
     CHexEditDoc *GetDocument();
@@ -310,7 +311,11 @@ public:
     CString GetSchemeName() { return scheme_name_; }
     void SetScheme(const char *name);
     int ClosestBookmark(FILE_ADDRESS &diff);
+	void ShowDffd();          // Show template in split window if not visible already
+
     void show_pos(FILE_ADDRESS address = -1, BOOL no_dffd = FALSE); // Show position (toolbar/DFFD)
+    void show_prop(FILE_ADDRESS address = -1); // Show current properties (modeless dlg)
+    void show_calc();           // Show view info in state of calculator buttons
 
 public:
 
@@ -740,8 +745,6 @@ private:
     int pos_char(int, BOOL inside = FALSE) const; // Closest char area col given X
     FILE_ADDRESS pos2addr(CPointAp pos, BOOL inside = TRUE) const; // Convert a display position to closest address
     int pos2row(CPointAp pos);                    // Find vert_display row (0, 1, or 2) of display position
-    void show_prop(FILE_ADDRESS address = -1); // Show current properties (modeless dlg)
-    void show_calc();           // Show view info in state of calculator buttons
 
 	// Functions for selection tip (sel_tip_)
 //    void show_selection_tip();

@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "hexedit.h"
+#include "hexeditDoc.h"
 #include "DFFDGlobal.h"
 #include "resource.hm"      // Help IDs
 #include "HelpID.hm"            // User defined help IDs
@@ -87,6 +88,17 @@ END_MESSAGE_MAP()
 BOOL CDFFDGlobal::OnInitDialog() 
 {
     CDialog::OnInitDialog();
+
+	// Show the template name in the dialog title
+	CView *pv = dynamic_cast<CView *>(m_pParentWnd);
+	ASSERT(pv != NULL);
+	if (pv != NULL)
+	{
+		CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(pv->GetDocument());
+		ASSERT(pdoc != NULL);
+		if (pdoc != NULL)
+			SetWindowText("Global Settings for \"" + pdoc->GetXMLFileDesc() +".XML\"");
+	}
 
     ASSERT(pelt_ != NULL && pelt_->GetName() == "binary_file_format");
 

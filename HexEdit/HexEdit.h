@@ -354,8 +354,8 @@ public:
 
     // The following are options for the binary file format tree view display
     unsigned int tree_view_;            // 0=none, 1=splitter views, 2=tabbed views
-    BOOL tree_edit_;                    // Editing of templates allowed in the tree view?
-    int tree_width_;                    // If tree_view_ == 1 (splitter) this is the width of left (tree) column
+    //BOOL tree_edit_;                    // Editing of templates allowed in the tree view?
+    //int tree_width_;                    // If tree_view_ == 1 (splitter) this is the width of left (tree) column
     CString xml_dir_;                   // Where XML files (and DTD) are stored
     int max_fix_for_elts_;              // Max no of fixed sized elts in array to display
     bool alt_data_bg_cols_;             // Use alternate background colours for data lines of tree/grid
@@ -653,13 +653,13 @@ public:
     int prop_x_, prop_y_;               // Last screen posn of the prop sheet
 #endif
     int prop_page_;                     // Last active properties page
-    int prop_dec_signed_;               // Display signed decimal values
+    UINT prop_dec_signed_;              // Display signed decimal values
     BOOL prop_dec_endian_;              // Display big-endian decimal values
-    int prop_fp_format_;                // Which IEEE fp format to display
+    UINT prop_fp_format_;               // Which floating point format to display
     BOOL prop_fp_endian_;               // Display big-endian floating pt values
-    int prop_ibmfp_format_;             // Which IBM floting point format to display
-    BOOL prop_ibmfp_endian_;            // Display big-endian IBM fp values
-    int prop_date_format_;              // Which date format to display
+    //int prop_ibmfp_format_;             // Which IBM floting point format to display
+    //BOOL prop_ibmfp_endian_;            // Display big-endian IBM fp values
+    UINT prop_date_format_;             // Which date format to display
     BOOL prop_date_endian_;             // Display big-endian date values
     int calc_radix_;                    // Radix used in calculator
     int calc_bits_;                     // Number of bits used in calculator

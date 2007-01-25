@@ -129,276 +129,284 @@ public:
         afx_msg void OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
         afx_msg void OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
 
-        void OnAddrToggle() { phev_->OnAddrToggle(); }
-        void OnUpdateAddrToggle(CCmdUI *pCmdUI) { phev_->OnUpdateAddrToggle(pCmdUI); }
-        void OnGraphicToggle() { phev_->OnGraphicToggle(); }
-        void OnUpdateGraphicToggle(CCmdUI *pCmdUI) { phev_->OnUpdateGraphicToggle(pCmdUI); }
-        void OnCharToggle() { phev_->OnCharToggle(); }
-        void OnUpdateCharToggle(CCmdUI *pCmdUI) { phev_->OnUpdateCharToggle(pCmdUI); }
-        void OnFont() { phev_->OnFont(); }
-        void OnAutoFit() { phev_->OnAutoFit(); }
-        void OnUpdateAutofit(CCmdUI *pCmdUI) { phev_->OnUpdateAutofit(pCmdUI); }
-        void OnAscEbc() { phev_->OnAscEbc(); }
-        void OnUpdateAscEbc(CCmdUI *pCmdUI) { phev_->OnUpdateAscEbc(pCmdUI); }
-        void OnControl() { phev_->OnControl(); }
-        void OnUpdateControl(CCmdUI *pCmdUI) { phev_->OnUpdateControl(pCmdUI); }
-        void OnDffdAutoSync() { phev_->OnDffdAutoSync(); }
-        void OnMark() { phev_->OnMark(); }
-        void OnGotoMark() { phev_->OnGotoMark(); }
-        void OnEditUndo() { phev_->OnEditUndo(); }
-        void OnUpdateEditUndo(CCmdUI *pCmdUI) { phev_->OnUpdateEditUndo(pCmdUI); }
-        void OnSearchHex() { phev_->OnSearchHex(); }
-        void OnSearchAscii() { phev_->OnSearchAscii(); }
-//        void OnSearchForw() { phev_->OnSearchForw(); }
-//        void OnSearchBack() { phev_->OnSearchBack(); }
-//        void OnSearchSel() { phev_->OnSearchSel(); }
-        void OnAllowMods() { phev_->OnAllowMods(); }
-        void OnUpdateAllowMods(CCmdUI *pCmdUI) { phev_->OnUpdateAllowMods(pCmdUI); }
-        void OnControlToggle() { phev_->OnControlToggle(); }
-        void OnInsert() { phev_->OnInsert(); }
-        void OnUpdateInsert(CCmdUI *pCmdUI) { phev_->OnUpdateInsert(pCmdUI); }
-        void OnUpdateDffdAutoSync(CCmdUI *pCmdUI) { phev_->OnUpdateDffdAutoSync(pCmdUI); }
-        void OnSearchIcase() { phev_->OnSearchIcase(); }
-//        void OnUpdateSearch(CCmdUI *pCmdUI) { phev_->OnUpdateSearch(pCmdUI); }
-//        void OnEditCompare() { phev_->OnEditCompare(); }
-//        void OnUpdateEditCompare(CCmdUI *pCmdUI) { phev_->OnUpdateEditCompare(pCmdUI); }
-        void OnTrackChanges() { phev_->OnTrackChanges(); }
-        void OnUpdateTrackChanges(CCmdUI *pCmdUI) { phev_->OnUpdateTrackChanges(pCmdUI); }
+        afx_msg void OnAddrToggle() { phev_->OnAddrToggle(); }
+        afx_msg void OnUpdateAddrToggle(CCmdUI *pCmdUI) { phev_->OnUpdateAddrToggle(pCmdUI); }
+        afx_msg void OnGraphicToggle() { phev_->OnGraphicToggle(); }
+        afx_msg void OnUpdateGraphicToggle(CCmdUI *pCmdUI) { phev_->OnUpdateGraphicToggle(pCmdUI); }
+        afx_msg void OnCharToggle() { phev_->OnCharToggle(); }
+        afx_msg void OnUpdateCharToggle(CCmdUI *pCmdUI) { phev_->OnUpdateCharToggle(pCmdUI); }
+        afx_msg void OnFont() { phev_->OnFont(); }
+        afx_msg void OnAutoFit() { phev_->OnAutoFit(); }
+        afx_msg void OnUpdateAutofit(CCmdUI *pCmdUI) { phev_->OnUpdateAutofit(pCmdUI); }
+        afx_msg void OnAscEbc() { phev_->OnAscEbc(); }
+        afx_msg void OnUpdateAscEbc(CCmdUI *pCmdUI) { phev_->OnUpdateAscEbc(pCmdUI); }
+        afx_msg void OnControl() { phev_->OnControl(); }
+        afx_msg void OnUpdateControl(CCmdUI *pCmdUI) { phev_->OnUpdateControl(pCmdUI); }
+        afx_msg void OnDffdAutoSync() { phev_->OnDffdAutoSync(); }
+        afx_msg void OnMark() { phev_->OnMark(); }
+        afx_msg void OnGotoMark() { phev_->OnGotoMark(); }
+        afx_msg void OnEditUndo() { phev_->OnEditUndo(); }
+        afx_msg void OnUpdateEditUndo(CCmdUI *pCmdUI) { phev_->OnUpdateEditUndo(pCmdUI); }
+        afx_msg void OnSearchHex() { phev_->OnSearchHex(); }
+        afx_msg void OnSearchAscii() { phev_->OnSearchAscii(); }
+//        afx_msg void OnSearchForw() { phev_->OnSearchForw(); }
+//        afx_msg void OnSearchBack() { phev_->OnSearchBack(); }
+//        afx_msg void OnSearchSel() { phev_->OnSearchSel(); }
+        afx_msg void OnAllowMods() { phev_->OnAllowMods(); }
+        afx_msg void OnUpdateAllowMods(CCmdUI *pCmdUI) { phev_->OnUpdateAllowMods(pCmdUI); }
+        afx_msg void OnControlToggle() { phev_->OnControlToggle(); }
+        afx_msg void OnInsert() { phev_->OnInsert(); }
+        afx_msg void OnUpdateInsert(CCmdUI *pCmdUI) { phev_->OnUpdateInsert(pCmdUI); }
+        afx_msg void OnUpdateDffdAutoSync(CCmdUI *pCmdUI) { phev_->OnUpdateDffdAutoSync(pCmdUI); }
+        afx_msg void OnSearchIcase() { phev_->OnSearchIcase(); }
+//        afx_msg void OnUpdateSearch(CCmdUI *pCmdUI) { phev_->OnUpdateSearch(pCmdUI); }
+//        afx_msg void OnEditCompare() { phev_->OnEditCompare(); }
+//        afx_msg void OnUpdateEditCompare(CCmdUI *pCmdUI) { phev_->OnUpdateEditCompare(pCmdUI); }
+        afx_msg void OnTrackChanges() { phev_->OnTrackChanges(); }
+        afx_msg void OnUpdateTrackChanges(CCmdUI *pCmdUI) { phev_->OnUpdateTrackChanges(pCmdUI); }
 
-        void OnWindowNext() { phev_->OnWindowNext(); }
-        void OnIncByte() { phev_->OnIncByte(); }
-        void OnInc16bit() { phev_->OnInc16bit(); }
-        void OnInc32bit() { phev_->OnInc32bit(); }
-        void OnInc64bit() { phev_->OnInc64bit(); }
-        void OnDecByte() { phev_->OnDecByte(); }
-        void OnDec16bit() { phev_->OnDec16bit(); }
-        void OnDec32bit() { phev_->OnDec32bit(); }
-        void OnDec64bit() { phev_->OnDec64bit(); }
-        void OnFlip16bit() { phev_->OnFlip16bit(); }
-        void OnFlip32bit() { phev_->OnFlip32bit(); }
-        void OnFlip64bit() { phev_->OnFlip64bit(); }
-        void OnUpdateByte(CCmdUI *pCmdUI) { phev_->OnUpdateByte(pCmdUI); }
-        void OnUpdate16bit(CCmdUI *pCmdUI) { phev_->OnUpdate16bit(pCmdUI); }
-        void OnUpdate32bit(CCmdUI *pCmdUI) { phev_->OnUpdate32bit(pCmdUI); }
-        void OnUpdate64bit(CCmdUI *pCmdUI) { phev_->OnUpdate64bit(pCmdUI); }
-        void OnUpdateByteBinary(CCmdUI *pCmdUI) { phev_->OnUpdateByteBinary(pCmdUI); }
-        void OnUpdate16bitBinary(CCmdUI *pCmdUI) { phev_->OnUpdate16bitBinary(pCmdUI); }
-        void OnUpdate32bitBinary(CCmdUI *pCmdUI) { phev_->OnUpdate32bitBinary(pCmdUI); }
-        void OnUpdate64bitBinary(CCmdUI *pCmdUI) { phev_->OnUpdate64bitBinary(pCmdUI); }
-        void OnSelectAll() { phev_->OnSelectAll(); }
-//        void OnEditCopy() { phev_->OnEditCopy(); }
-//        void OnEditCut() { phev_->OnEditCut(); }
-//        void OnEditPaste() { phev_->OnEditPaste(); }
-        void OnUpdateTextPaste(CCmdUI *pCmdUI) { phev_->OnUpdateTextPaste(pCmdUI); }
-        void OnUpdateClipboard(CCmdUI *pCmdUI) { phev_->OnUpdateClipboard(pCmdUI); }
-        void OnUpdateUnicodePaste(CCmdUI *pCmdUI) { phev_->OnUpdateUnicodePaste(pCmdUI); }
-        void OnFontDec() { phev_->OnFontDec(); }
-        void OnFontInc() { phev_->OnFontInc(); }
-        void OnUpdateFontDec(CCmdUI *pCmdUI) { phev_->OnUpdateFontDec(pCmdUI); }
-        void OnUpdateFontInc(CCmdUI *pCmdUI) { phev_->OnUpdateFontInc(pCmdUI); }
-//        void OnUpdateEditCut(CCmdUI *pCmdUI) { phev_->OnUpdateEditCut(pCmdUI); }
-        void OnPasteAscii() { phev_->OnPasteAscii(); }
-        void OnPasteEbcdic() { phev_->OnPasteEbcdic(); }
-        void OnPasteUnicode() { phev_->OnPasteUnicode(); }
-        void OnCopyCchar() { phev_->OnCopyCchar(); }
-        void OnCopyHex() { phev_->OnCopyHex(); }
-        void OnEditWriteFile() { phev_->OnEditWriteFile(); }
-        void OnUpdateReadFile(CCmdUI *pCmdUI) { phev_->OnUpdateReadFile(pCmdUI); }
-        void OnReadFile() { phev_->OnReadFile(); }
-        void OnExtendToMark() { phev_->OnExtendToMark(); }
-        void OnSwapMark() { phev_->OnSwapMark(); }
-        void OnRedraw() { phev_->OnRedraw(); }
-        void OnScrollDown() { phev_->OnScrollDown(); }
-        void OnScrollUp() { phev_->OnScrollUp(); }
-        void OnSwap() { phev_->OnSwap(); }
-        void OnStartLine() { phev_->OnStartLine(); }
-        void OnDel() { phev_->OnDel(); }
-        void OnUpdateSwap(CCmdUI *pCmdUI) { phev_->OnUpdateSwap(pCmdUI); }
-        void OnOemToggle() { phev_->OnOemToggle(); }
-        void OnUpdateOemToggle(CCmdUI *pCmdUI) { phev_->OnUpdateOemToggle(pCmdUI); }
-        void OnInvert() { phev_->OnInvert(); }
-        void OnNegByte() { phev_->OnNegByte(); }
-        void OnNeg16bit() { phev_->OnNeg16bit(); }
-        void OnNeg32bit() { phev_->OnNeg32bit(); }
-        void OnNeg64bit() { phev_->OnNeg64bit(); }
-        void OnHighlight() { phev_->OnHighlight(); }
-        void OnUpdateHighlight(CCmdUI *pCmdUI) { phev_->OnUpdateHighlight(pCmdUI); }
-        void OnHighlightClear() { phev_->OnHighlightClear(); }
-        void OnHighlightPrev() { phev_->OnHighlightPrev(); }
-        void OnHighlightNext() { phev_->OnHighlightNext(); }
-        void OnUpdateHighlightPrev(CCmdUI *pCmdUI) { phev_->OnUpdateHighlightPrev(pCmdUI); }
-        void OnUpdateHighlightNext(CCmdUI *pCmdUI) { phev_->OnUpdateHighlightNext(pCmdUI); }
-        void OnEditGoto() { phev_->OnEditGoto(); }
-        void OnEditFind() { phev_->OnEditFind(); }
-        void OnEditReplace() { phev_->OnEditReplace(); }
-    void OnAscii2Ebcdic() { phev_->OnAscii2Ebcdic(); }
-    void OnUpdateConvert(CCmdUI *pCmdUI) { phev_->OnUpdateConvert(pCmdUI); }
-    void OnEbcdic2Ascii() { phev_->OnEbcdic2Ascii(); }
-    void OnAnsi2Ibm() { phev_->OnAnsi2Ibm(); }
-    void OnIbm2Ansi() { phev_->OnIbm2Ansi(); }
-    void OnEncrypt() { phev_->OnEncrypt(); }
-    void OnDecrypt() { phev_->OnDecrypt(); }
-    void OnEditAppendFile() { phev_->OnEditAppendFile(); }
-    void OnEditAppendSameFile() { phev_->OnEditAppendSameFile(); }
-    void OnUpdateEditAppendSameFile(CCmdUI *pCmdUI) { phev_->OnUpdateEditAppendSameFile(pCmdUI); }
-    void OnUndoChanges() { phev_->OnUndoChanges(); }
-    void OnUpdateUndoChanges(CCmdUI *pCmdUI) { phev_->OnUpdateUndoChanges(pCmdUI); }
-    void OnCalcSel() { phev_->OnCalcSel(); }
-    void OnUpdateCalcSel(CCmdUI *pCmdUI) { phev_->OnUpdateCalcSel(pCmdUI); }
-    void OnDisplayReset() { phev_->OnDisplayReset(); }
-    void OnUpdateEncrypt(CCmdUI *pCmdUI) { phev_->OnUpdateEncrypt(pCmdUI); }
+        afx_msg void OnWindowNext() { phev_->OnWindowNext(); }
+        afx_msg void OnIncByte() { phev_->OnIncByte(); }
+        afx_msg void OnInc16bit() { phev_->OnInc16bit(); }
+        afx_msg void OnInc32bit() { phev_->OnInc32bit(); }
+        afx_msg void OnInc64bit() { phev_->OnInc64bit(); }
+        afx_msg void OnDecByte() { phev_->OnDecByte(); }
+        afx_msg void OnDec16bit() { phev_->OnDec16bit(); }
+        afx_msg void OnDec32bit() { phev_->OnDec32bit(); }
+        afx_msg void OnDec64bit() { phev_->OnDec64bit(); }
+        afx_msg void OnFlip16bit() { phev_->OnFlip16bit(); }
+        afx_msg void OnFlip32bit() { phev_->OnFlip32bit(); }
+        afx_msg void OnFlip64bit() { phev_->OnFlip64bit(); }
+        afx_msg void OnUpdateByte(CCmdUI *pCmdUI) { phev_->OnUpdateByte(pCmdUI); }
+        afx_msg void OnUpdate16bit(CCmdUI *pCmdUI) { phev_->OnUpdate16bit(pCmdUI); }
+        afx_msg void OnUpdate32bit(CCmdUI *pCmdUI) { phev_->OnUpdate32bit(pCmdUI); }
+        afx_msg void OnUpdate64bit(CCmdUI *pCmdUI) { phev_->OnUpdate64bit(pCmdUI); }
+        afx_msg void OnUpdateByteBinary(CCmdUI *pCmdUI) { phev_->OnUpdateByteBinary(pCmdUI); }
+        afx_msg void OnUpdate16bitBinary(CCmdUI *pCmdUI) { phev_->OnUpdate16bitBinary(pCmdUI); }
+        afx_msg void OnUpdate32bitBinary(CCmdUI *pCmdUI) { phev_->OnUpdate32bitBinary(pCmdUI); }
+        afx_msg void OnUpdate64bitBinary(CCmdUI *pCmdUI) { phev_->OnUpdate64bitBinary(pCmdUI); }
+        afx_msg void OnSelectAll() { phev_->OnSelectAll(); }
+//        afx_msg void OnEditCopy() { phev_->OnEditCopy(); }
+//        afx_msg void OnEditCut() { phev_->OnEditCut(); }
+//        afx_msg void OnEditPaste() { phev_->OnEditPaste(); }
+        afx_msg void OnUpdateTextPaste(CCmdUI *pCmdUI) { phev_->OnUpdateTextPaste(pCmdUI); }
+        afx_msg void OnUpdateClipboard(CCmdUI *pCmdUI) { phev_->OnUpdateClipboard(pCmdUI); }
+        afx_msg void OnUpdateUnicodePaste(CCmdUI *pCmdUI) { phev_->OnUpdateUnicodePaste(pCmdUI); }
+        afx_msg void OnFontDec() { phev_->OnFontDec(); }
+        afx_msg void OnFontInc() { phev_->OnFontInc(); }
+        afx_msg void OnUpdateFontDec(CCmdUI *pCmdUI) { phev_->OnUpdateFontDec(pCmdUI); }
+        afx_msg void OnUpdateFontInc(CCmdUI *pCmdUI) { phev_->OnUpdateFontInc(pCmdUI); }
+//        afx_msg void OnUpdateEditCut(CCmdUI *pCmdUI) { phev_->OnUpdateEditCut(pCmdUI); }
+        afx_msg void OnPasteAscii() { phev_->OnPasteAscii(); }
+        afx_msg void OnPasteEbcdic() { phev_->OnPasteEbcdic(); }
+        afx_msg void OnPasteUnicode() { phev_->OnPasteUnicode(); }
+        afx_msg void OnCopyCchar() { phev_->OnCopyCchar(); }
+        afx_msg void OnCopyHex() { phev_->OnCopyHex(); }
+        afx_msg void OnEditWriteFile() { phev_->OnEditWriteFile(); }
+        afx_msg void OnUpdateReadFile(CCmdUI *pCmdUI) { phev_->OnUpdateReadFile(pCmdUI); }
+        afx_msg void OnReadFile() { phev_->OnReadFile(); }
+        afx_msg void OnExtendToMark() { phev_->OnExtendToMark(); }
+        afx_msg void OnSwapMark() { phev_->OnSwapMark(); }
+        afx_msg void OnRedraw() { phev_->OnRedraw(); }
+        afx_msg void OnScrollDown() { phev_->OnScrollDown(); }
+        afx_msg void OnScrollUp() { phev_->OnScrollUp(); }
+        afx_msg void OnSwap() { phev_->OnSwap(); }
+        afx_msg void OnStartLine() { phev_->OnStartLine(); }
+        afx_msg void OnDel() { phev_->OnDel(); }
+        afx_msg void OnUpdateSwap(CCmdUI *pCmdUI) { phev_->OnUpdateSwap(pCmdUI); }
+        afx_msg void OnOemToggle() { phev_->OnOemToggle(); }
+        afx_msg void OnUpdateOemToggle(CCmdUI *pCmdUI) { phev_->OnUpdateOemToggle(pCmdUI); }
+        afx_msg void OnInvert() { phev_->OnInvert(); }
+        afx_msg void OnNegByte() { phev_->OnNegByte(); }
+        afx_msg void OnNeg16bit() { phev_->OnNeg16bit(); }
+        afx_msg void OnNeg32bit() { phev_->OnNeg32bit(); }
+        afx_msg void OnNeg64bit() { phev_->OnNeg64bit(); }
+        afx_msg void OnHighlight() { phev_->OnHighlight(); }
+        afx_msg void OnUpdateHighlight(CCmdUI *pCmdUI) { phev_->OnUpdateHighlight(pCmdUI); }
+        afx_msg void OnHighlightClear() { phev_->OnHighlightClear(); }
+        afx_msg void OnHighlightPrev() { phev_->OnHighlightPrev(); }
+        afx_msg void OnHighlightNext() { phev_->OnHighlightNext(); }
+        afx_msg void OnUpdateHighlightPrev(CCmdUI *pCmdUI) { phev_->OnUpdateHighlightPrev(pCmdUI); }
+        afx_msg void OnUpdateHighlightNext(CCmdUI *pCmdUI) { phev_->OnUpdateHighlightNext(pCmdUI); }
+        afx_msg void OnEditGoto() { phev_->OnEditGoto(); }
+        afx_msg void OnEditFind() { phev_->OnEditFind(); }
+        afx_msg void OnEditReplace() { phev_->OnEditReplace(); }
+    afx_msg void OnAscii2Ebcdic() { phev_->OnAscii2Ebcdic(); }
+    afx_msg void OnUpdateConvert(CCmdUI *pCmdUI) { phev_->OnUpdateConvert(pCmdUI); }
+    afx_msg void OnEbcdic2Ascii() { phev_->OnEbcdic2Ascii(); }
+    afx_msg void OnAnsi2Ibm() { phev_->OnAnsi2Ibm(); }
+    afx_msg void OnIbm2Ansi() { phev_->OnIbm2Ansi(); }
+    afx_msg void OnEncrypt() { phev_->OnEncrypt(); }
+    afx_msg void OnDecrypt() { phev_->OnDecrypt(); }
+    afx_msg void OnEditAppendFile() { phev_->OnEditAppendFile(); }
+    afx_msg void OnEditAppendSameFile() { phev_->OnEditAppendSameFile(); }
+    afx_msg void OnUpdateEditAppendSameFile(CCmdUI *pCmdUI) { phev_->OnUpdateEditAppendSameFile(pCmdUI); }
+    afx_msg void OnUndoChanges() { phev_->OnUndoChanges(); }
+    afx_msg void OnUpdateUndoChanges(CCmdUI *pCmdUI) { phev_->OnUpdateUndoChanges(pCmdUI); }
+    afx_msg void OnCalcSel() { phev_->OnCalcSel(); }
+    afx_msg void OnUpdateCalcSel(CCmdUI *pCmdUI) { phev_->OnUpdateCalcSel(pCmdUI); }
+    afx_msg void OnDisplayReset() { phev_->OnDisplayReset(); }
+    afx_msg void OnUpdateEncrypt(CCmdUI *pCmdUI) { phev_->OnUpdateEncrypt(pCmdUI); }
 
-        void OnXorByte() { phev_->OnXorByte(); }
-        void OnXor16bit() { phev_->OnXor16bit(); }
-        void OnXor32bit() { phev_->OnXor32bit(); }
-        void OnXor64bit() { phev_->OnXor64bit(); }
-        void OnAssignByte() { phev_->OnAssignByte(); }
-        void OnAssign16bit() { phev_->OnAssign16bit(); }
-        void OnAssign32bit() { phev_->OnAssign32bit(); }
-        void OnAssign64bit() { phev_->OnAssign64bit(); }
-        void OnRandByte() { phev_->OnRandByte(); }
-        void OnRandFast() { phev_->OnRandFast(); }
-//        void OnRand16bit() { phev_->OnRand16bit(); }
-//        void OnRand32bit() { phev_->OnRand32bit(); }
-//        void OnRand64bit() { phev_->OnRand64bit(); }
-        void OnAddByte() { phev_->OnAddByte(); }
-        void OnAdd16bit() { phev_->OnAdd16bit(); }
-        void OnAdd32bit() { phev_->OnAdd32bit(); }
-        void OnAdd64bit() { phev_->OnAdd64bit(); }
-        void OnSubtractByte() { phev_->OnSubtractByte(); }
-        void OnSubtract16bit() { phev_->OnSubtract16bit(); }
-        void OnSubtract32bit() { phev_->OnSubtract32bit(); }
-        void OnSubtract64bit() { phev_->OnSubtract64bit(); }
-        void OnAndByte() { phev_->OnAndByte(); }
-        void OnAnd16bit() { phev_->OnAnd16bit(); }
-        void OnAnd32bit() { phev_->OnAnd32bit(); }
-        void OnAnd64bit() { phev_->OnAnd64bit(); }
-        void OnOrByte() { phev_->OnOrByte(); }
-        void OnOr16bit() { phev_->OnOr16bit(); }
-        void OnOr32bit() { phev_->OnOr32bit(); }
-        void OnOr64bit() { phev_->OnOr64bit(); }
+        afx_msg void OnXorByte() { phev_->OnXorByte(); }
+        afx_msg void OnXor16bit() { phev_->OnXor16bit(); }
+        afx_msg void OnXor32bit() { phev_->OnXor32bit(); }
+        afx_msg void OnXor64bit() { phev_->OnXor64bit(); }
+        afx_msg void OnAssignByte() { phev_->OnAssignByte(); }
+        afx_msg void OnAssign16bit() { phev_->OnAssign16bit(); }
+        afx_msg void OnAssign32bit() { phev_->OnAssign32bit(); }
+        afx_msg void OnAssign64bit() { phev_->OnAssign64bit(); }
+        afx_msg void OnRandByte() { phev_->OnRandByte(); }
+        afx_msg void OnRandFast() { phev_->OnRandFast(); }
+//        afx_msg void OnRand16bit() { phev_->OnRand16bit(); }
+//        afx_msg void OnRand32bit() { phev_->OnRand32bit(); }
+//        afx_msg void OnRand64bit() { phev_->OnRand64bit(); }
+        afx_msg void OnAddByte() { phev_->OnAddByte(); }
+        afx_msg void OnAdd16bit() { phev_->OnAdd16bit(); }
+        afx_msg void OnAdd32bit() { phev_->OnAdd32bit(); }
+        afx_msg void OnAdd64bit() { phev_->OnAdd64bit(); }
+        afx_msg void OnSubtractByte() { phev_->OnSubtractByte(); }
+        afx_msg void OnSubtract16bit() { phev_->OnSubtract16bit(); }
+        afx_msg void OnSubtract32bit() { phev_->OnSubtract32bit(); }
+        afx_msg void OnSubtract64bit() { phev_->OnSubtract64bit(); }
+        afx_msg void OnAndByte() { phev_->OnAndByte(); }
+        afx_msg void OnAnd16bit() { phev_->OnAnd16bit(); }
+        afx_msg void OnAnd32bit() { phev_->OnAnd32bit(); }
+        afx_msg void OnAnd64bit() { phev_->OnAnd64bit(); }
+        afx_msg void OnOrByte() { phev_->OnOrByte(); }
+        afx_msg void OnOr16bit() { phev_->OnOr16bit(); }
+        afx_msg void OnOr32bit() { phev_->OnOr32bit(); }
+        afx_msg void OnOr64bit() { phev_->OnOr64bit(); }
 
-        void OnMulByte() { phev_->OnMulByte(); }
-        void OnMul16bit() { phev_->OnMul16bit(); }
-        void OnMul32bit() { phev_->OnMul32bit(); }
-        void OnMul64bit() { phev_->OnMul64bit(); }
-        void OnDivByte() { phev_->OnDivByte(); }
-        void OnDiv16bit() { phev_->OnDiv16bit(); }
-        void OnDiv32bit() { phev_->OnDiv32bit(); }
-        void OnDiv64bit() { phev_->OnDiv64bit(); }
-        void OnModByte() { phev_->OnModByte(); }
-        void OnMod16bit() { phev_->OnMod16bit(); }
-        void OnMod32bit() { phev_->OnMod32bit(); }
-        void OnMod64bit() { phev_->OnMod64bit(); }
-        void OnRevByte() { phev_->OnRevByte(); }
-        void OnRev16bit() { phev_->OnRev16bit(); }
-        void OnRev32bit() { phev_->OnRev32bit(); }
-        void OnRev64bit() { phev_->OnRev64bit(); }
-        void OnSubtractXByte() { phev_->OnSubtractXByte(); }
-        void OnSubtractX16bit() { phev_->OnSubtractX16bit(); }
-        void OnSubtractX32bit() { phev_->OnSubtractX32bit(); }
-        void OnSubtractX64bit() { phev_->OnSubtractX64bit(); }
-        void OnDivXByte() { phev_->OnDivXByte(); }
-        void OnDivX16bit() { phev_->OnDivX16bit(); }
-        void OnDivX32bit() { phev_->OnDivX32bit(); }
-        void OnDivX64bit() { phev_->OnDivX64bit(); }
-        void OnModXByte() { phev_->OnModXByte(); }
-        void OnModX16bit() { phev_->OnModX16bit(); }
-        void OnModX32bit() { phev_->OnModX32bit(); }
-        void OnModX64bit() { phev_->OnModX64bit(); }
-        void OnGtrByte() { phev_->OnGtrByte(); }
-        void OnGtr16bit() { phev_->OnGtr16bit(); }
-        void OnGtr32bit() { phev_->OnGtr32bit(); }
-        void OnGtr64bit() { phev_->OnGtr64bit(); }
-        void OnLessByte() { phev_->OnLessByte(); }
-        void OnLess16bit() { phev_->OnLess16bit(); }
-        void OnLess32bit() { phev_->OnLess32bit(); }
-        void OnLess64bit() { phev_->OnLess64bit(); }
+        afx_msg void OnMulByte() { phev_->OnMulByte(); }
+        afx_msg void OnMul16bit() { phev_->OnMul16bit(); }
+        afx_msg void OnMul32bit() { phev_->OnMul32bit(); }
+        afx_msg void OnMul64bit() { phev_->OnMul64bit(); }
+        afx_msg void OnDivByte() { phev_->OnDivByte(); }
+        afx_msg void OnDiv16bit() { phev_->OnDiv16bit(); }
+        afx_msg void OnDiv32bit() { phev_->OnDiv32bit(); }
+        afx_msg void OnDiv64bit() { phev_->OnDiv64bit(); }
+        afx_msg void OnModByte() { phev_->OnModByte(); }
+        afx_msg void OnMod16bit() { phev_->OnMod16bit(); }
+        afx_msg void OnMod32bit() { phev_->OnMod32bit(); }
+        afx_msg void OnMod64bit() { phev_->OnMod64bit(); }
+        afx_msg void OnRevByte() { phev_->OnRevByte(); }
+        afx_msg void OnRev16bit() { phev_->OnRev16bit(); }
+        afx_msg void OnRev32bit() { phev_->OnRev32bit(); }
+        afx_msg void OnRev64bit() { phev_->OnRev64bit(); }
+        afx_msg void OnSubtractXByte() { phev_->OnSubtractXByte(); }
+        afx_msg void OnSubtractX16bit() { phev_->OnSubtractX16bit(); }
+        afx_msg void OnSubtractX32bit() { phev_->OnSubtractX32bit(); }
+        afx_msg void OnSubtractX64bit() { phev_->OnSubtractX64bit(); }
+        afx_msg void OnDivXByte() { phev_->OnDivXByte(); }
+        afx_msg void OnDivX16bit() { phev_->OnDivX16bit(); }
+        afx_msg void OnDivX32bit() { phev_->OnDivX32bit(); }
+        afx_msg void OnDivX64bit() { phev_->OnDivX64bit(); }
+        afx_msg void OnModXByte() { phev_->OnModXByte(); }
+        afx_msg void OnModX16bit() { phev_->OnModX16bit(); }
+        afx_msg void OnModX32bit() { phev_->OnModX32bit(); }
+        afx_msg void OnModX64bit() { phev_->OnModX64bit(); }
+        afx_msg void OnGtrByte() { phev_->OnGtrByte(); }
+        afx_msg void OnGtr16bit() { phev_->OnGtr16bit(); }
+        afx_msg void OnGtr32bit() { phev_->OnGtr32bit(); }
+        afx_msg void OnGtr64bit() { phev_->OnGtr64bit(); }
+        afx_msg void OnLessByte() { phev_->OnLessByte(); }
+        afx_msg void OnLess16bit() { phev_->OnLess16bit(); }
+        afx_msg void OnLess32bit() { phev_->OnLess32bit(); }
+        afx_msg void OnLess64bit() { phev_->OnLess64bit(); }
 
-        void OnGtrUByte() { phev_->OnGtrUByte(); }
-        void OnGtrU16bit() { phev_->OnGtrU16bit(); }
-        void OnGtrU32bit() { phev_->OnGtrU32bit(); }
-        void OnGtrU64bit() { phev_->OnGtrU64bit(); }
-        void OnLessUByte() { phev_->OnLessUByte(); }
-        void OnLessU16bit() { phev_->OnLessU16bit(); }
-        void OnLessU32bit() { phev_->OnLessU32bit(); }
-        void OnLessU64bit() { phev_->OnLessU64bit(); }
+        afx_msg void OnGtrUByte() { phev_->OnGtrUByte(); }
+        afx_msg void OnGtrU16bit() { phev_->OnGtrU16bit(); }
+        afx_msg void OnGtrU32bit() { phev_->OnGtrU32bit(); }
+        afx_msg void OnGtrU64bit() { phev_->OnGtrU64bit(); }
+        afx_msg void OnLessUByte() { phev_->OnLessUByte(); }
+        afx_msg void OnLessU16bit() { phev_->OnLessU16bit(); }
+        afx_msg void OnLessU32bit() { phev_->OnLessU32bit(); }
+        afx_msg void OnLessU64bit() { phev_->OnLessU64bit(); }
 
-        void OnRolByte()  { phev_->OnRolByte(); }
-        void OnRol16bit() { phev_->OnRol16bit(); }
-        void OnRol32bit() { phev_->OnRol32bit(); }
-        void OnRol64bit() { phev_->OnRol64bit(); }
-        void OnRorByte()  { phev_->OnRorByte(); }
-        void OnRor16bit() { phev_->OnRor16bit(); }
-        void OnRor32bit() { phev_->OnRor32bit(); }
-        void OnRor64bit() { phev_->OnRor64bit(); }
-        void OnLslByte()  { phev_->OnLslByte(); }
-        void OnLsl16bit() { phev_->OnLsl16bit(); }
-        void OnLsl32bit() { phev_->OnLsl32bit(); }
-        void OnLsl64bit() { phev_->OnLsl64bit(); }
-        void OnLsrByte()  { phev_->OnLsrByte(); }
-        void OnLsr16bit() { phev_->OnLsr16bit(); }
-        void OnLsr32bit() { phev_->OnLsr32bit(); }
-        void OnLsr64bit() { phev_->OnLsr64bit(); }
-        void OnAsrByte()  { phev_->OnAsrByte(); }
-        void OnAsr16bit() { phev_->OnAsr16bit(); }
-        void OnAsr32bit() { phev_->OnAsr32bit(); }
-        void OnAsr64bit() { phev_->OnAsr64bit(); }
+        afx_msg void OnRolByte()  { phev_->OnRolByte(); }
+        afx_msg void OnRol16bit() { phev_->OnRol16bit(); }
+        afx_msg void OnRol32bit() { phev_->OnRol32bit(); }
+        afx_msg void OnRol64bit() { phev_->OnRol64bit(); }
+        afx_msg void OnRorByte()  { phev_->OnRorByte(); }
+        afx_msg void OnRor16bit() { phev_->OnRor16bit(); }
+        afx_msg void OnRor32bit() { phev_->OnRor32bit(); }
+        afx_msg void OnRor64bit() { phev_->OnRor64bit(); }
+        afx_msg void OnLslByte()  { phev_->OnLslByte(); }
+        afx_msg void OnLsl16bit() { phev_->OnLsl16bit(); }
+        afx_msg void OnLsl32bit() { phev_->OnLsl32bit(); }
+        afx_msg void OnLsl64bit() { phev_->OnLsl64bit(); }
+        afx_msg void OnLsrByte()  { phev_->OnLsrByte(); }
+        afx_msg void OnLsr16bit() { phev_->OnLsr16bit(); }
+        afx_msg void OnLsr32bit() { phev_->OnLsr32bit(); }
+        afx_msg void OnLsr64bit() { phev_->OnLsr64bit(); }
+        afx_msg void OnAsrByte()  { phev_->OnAsrByte(); }
+        afx_msg void OnAsr16bit() { phev_->OnAsr16bit(); }
+        afx_msg void OnAsr32bit() { phev_->OnAsr32bit(); }
+        afx_msg void OnAsr64bit() { phev_->OnAsr64bit(); }
 
-        void OnJumpHexAddr() { phev_->OnJumpHexAddr(); }
-//        void OnSearch() { phev_->OnSearch(); }
-        void OnJumpHex() { phev_->OnJumpHex(); }
-        void OnJumpDec() { phev_->OnJumpDec(); }
-        void OnSelectLine() { phev_->OnSelectLine(); }
+        afx_msg void OnJumpHexAddr() { phev_->OnJumpHexAddr(); }
+//        afx_msg void OnSearch() { phev_->OnSearch(); }
+        afx_msg void OnJumpHex() { phev_->OnJumpHex(); }
+        afx_msg void OnJumpDec() { phev_->OnJumpDec(); }
+        afx_msg void OnSelectLine() { phev_->OnSelectLine(); }
 
-        void OnDisplayHex() { phev_->OnDisplayHex(); }
-        void OnUpdateDisplayHex(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayHex(pCmdUI); }
-        void OnDisplayChar() { phev_->OnDisplayChar(); }
-        void OnUpdateDisplayChar(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayChar(pCmdUI); }
-        void OnDisplayBoth() { phev_->OnDisplayBoth(); }
-        void OnUpdateDisplayBoth(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayBoth(pCmdUI); }
-        void OnDisplayStacked() { phev_->OnDisplayStacked(); }
-        void OnUpdateDisplayStacked(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayStacked(pCmdUI); }
-        void OnCharsetAscii() { phev_->OnCharsetAscii(); }
-        void OnUpdateCharsetAscii(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetAscii(pCmdUI); }
-        void OnCharsetAnsi() { phev_->OnCharsetAnsi(); }
-        void OnUpdateCharsetAnsi(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetAnsi(pCmdUI); }
-        void OnCharsetOem() { phev_->OnCharsetOem(); }
-        void OnUpdateCharsetOem(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetOem(pCmdUI); }
-        void OnCharsetEbcdic() { phev_->OnCharsetEbcdic(); }
-        void OnUpdateCharsetEbcdic(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetEbcdic(pCmdUI); }
-        void OnControlNone() { phev_->OnControlNone(); }
-        void OnUpdateControlNone(CCmdUI *pCmdUI) { phev_->OnUpdateControlNone(pCmdUI); }
-        void OnControlAlpha() { phev_->OnControlAlpha(); }
-        void OnUpdateControlAlpha(CCmdUI *pCmdUI) { phev_->OnUpdateControlAlpha(pCmdUI); }
-        void OnControlC() { phev_->OnControlC(); }
-        void OnUpdateControlC(CCmdUI *pCmdUI) { phev_->OnUpdateControlC(pCmdUI); }
+        afx_msg void OnDisplayHex() { phev_->OnDisplayHex(); }
+        afx_msg void OnUpdateDisplayHex(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayHex(pCmdUI); }
+        afx_msg void OnDisplayChar() { phev_->OnDisplayChar(); }
+        afx_msg void OnUpdateDisplayChar(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayChar(pCmdUI); }
+        afx_msg void OnDisplayBoth() { phev_->OnDisplayBoth(); }
+        afx_msg void OnUpdateDisplayBoth(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayBoth(pCmdUI); }
+        afx_msg void OnDisplayStacked() { phev_->OnDisplayStacked(); }
+        afx_msg void OnUpdateDisplayStacked(CCmdUI *pCmdUI) { phev_->OnUpdateDisplayStacked(pCmdUI); }
+        afx_msg void OnCharsetAscii() { phev_->OnCharsetAscii(); }
+        afx_msg void OnUpdateCharsetAscii(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetAscii(pCmdUI); }
+        afx_msg void OnCharsetAnsi() { phev_->OnCharsetAnsi(); }
+        afx_msg void OnUpdateCharsetAnsi(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetAnsi(pCmdUI); }
+        afx_msg void OnCharsetOem() { phev_->OnCharsetOem(); }
+        afx_msg void OnUpdateCharsetOem(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetOem(pCmdUI); }
+        afx_msg void OnCharsetEbcdic() { phev_->OnCharsetEbcdic(); }
+        afx_msg void OnUpdateCharsetEbcdic(CCmdUI *pCmdUI) { phev_->OnUpdateCharsetEbcdic(pCmdUI); }
+        afx_msg void OnControlNone() { phev_->OnControlNone(); }
+        afx_msg void OnUpdateControlNone(CCmdUI *pCmdUI) { phev_->OnUpdateControlNone(pCmdUI); }
+        afx_msg void OnControlAlpha() { phev_->OnControlAlpha(); }
+        afx_msg void OnUpdateControlAlpha(CCmdUI *pCmdUI) { phev_->OnUpdateControlAlpha(pCmdUI); }
+        afx_msg void OnControlC() { phev_->OnControlC(); }
+        afx_msg void OnUpdateControlC(CCmdUI *pCmdUI) { phev_->OnUpdateControlC(pCmdUI); }
 
-        void OnChecksum8() { phev_->OnChecksum8(); }
-        void OnChecksum16() { phev_->OnChecksum16(); }
-        void OnChecksum32() { phev_->OnChecksum32(); }
-        void OnChecksum64() { phev_->OnChecksum64(); }
-        void OnCrcCcitt() { phev_->OnCrcCcitt(); }
-//        void OnCrc16() { phev_->OnCrc16(); }
-        void OnCrc32() { phev_->OnCrc32(); }
-        void OnUpdateByteNZ(CCmdUI *pCmdUI) { phev_->OnUpdateByteNZ(pCmdUI); }
-        void OnUpdate16bitNZ(CCmdUI *pCmdUI) { phev_->OnUpdate16bitNZ(pCmdUI); }
-        void OnUpdate32bitNZ(CCmdUI *pCmdUI) { phev_->OnUpdate32bitNZ(pCmdUI); }
-        void OnUpdate64bitNZ(CCmdUI *pCmdUI) { phev_->OnUpdate64bitNZ(pCmdUI); }
+        afx_msg void OnChecksum8() { phev_->OnChecksum8(); }
+        afx_msg void OnChecksum16() { phev_->OnChecksum16(); }
+        afx_msg void OnChecksum32() { phev_->OnChecksum32(); }
+        afx_msg void OnChecksum64() { phev_->OnChecksum64(); }
+        afx_msg void OnCrcCcitt() { phev_->OnCrcCcitt(); }
+//        afx_msg void OnCrc16() { phev_->OnCrc16(); }
+        afx_msg void OnCrc32() { phev_->OnCrc32(); }
+        afx_msg void OnUpdateByteNZ(CCmdUI *pCmdUI) { phev_->OnUpdateByteNZ(pCmdUI); }
+        afx_msg void OnUpdate16bitNZ(CCmdUI *pCmdUI) { phev_->OnUpdate16bitNZ(pCmdUI); }
+        afx_msg void OnUpdate32bitNZ(CCmdUI *pCmdUI) { phev_->OnUpdate32bitNZ(pCmdUI); }
+        afx_msg void OnUpdate64bitNZ(CCmdUI *pCmdUI) { phev_->OnUpdate64bitNZ(pCmdUI); }
 
-        void OnToggleEndian() { phev_->OnToggleEndian(); }
-        void OnBigEndian() { phev_->OnBigEndian(); }
-        void OnLittleEndian() { phev_->OnLittleEndian(); }
-        void OnUpdateToggleEndian(CCmdUI *pCmdUI) { phev_->OnUpdateToggleEndian(pCmdUI); }
-        void OnUpdateBigEndian(CCmdUI *pCmdUI) { phev_->OnUpdateBigEndian(pCmdUI); }
-        void OnUpdateLittleEndian(CCmdUI *pCmdUI) { phev_->OnUpdateLittleEndian(pCmdUI); }
-        void OnUpdateInsertBlock(CCmdUI *pCmdUI) { phev_->OnUpdateInsertBlock(pCmdUI); }
-        void OnInsertBlock() { phev_->OnInsertBlock(); }
+        afx_msg void OnToggleEndian() { phev_->OnToggleEndian(); }
+        afx_msg void OnBigEndian() { phev_->OnBigEndian(); }
+        afx_msg void OnLittleEndian() { phev_->OnLittleEndian(); }
+        afx_msg void OnUpdateToggleEndian(CCmdUI *pCmdUI) { phev_->OnUpdateToggleEndian(pCmdUI); }
+        afx_msg void OnUpdateBigEndian(CCmdUI *pCmdUI) { phev_->OnUpdateBigEndian(pCmdUI); }
+        afx_msg void OnUpdateLittleEndian(CCmdUI *pCmdUI) { phev_->OnUpdateLittleEndian(pCmdUI); }
+        afx_msg void OnUpdateInsertBlock(CCmdUI *pCmdUI) { phev_->OnUpdateInsertBlock(pCmdUI); }
+        afx_msg void OnInsertBlock() { phev_->OnInsertBlock(); }
 
-        void OnCompress() { phev_->OnCompress(); }
-        void OnDecompress() { phev_->OnDecompress(); }
-        void OnUpdateSelNZ(CCmdUI *pCmdUI) { phev_->OnUpdateSelNZ(pCmdUI); }
-        void OnMd5() { phev_->OnMd5(); }
+        afx_msg void OnCompress() { phev_->OnCompress(); }
+        afx_msg void OnDecompress() { phev_->OnDecompress(); }
+        afx_msg void OnUpdateSelNZ(CCmdUI *pCmdUI) { phev_->OnUpdateSelNZ(pCmdUI); }
+        afx_msg void OnMd5() { phev_->OnMd5(); }
+		afx_msg void OnUppercase() { phev_->OnUppercase(); }
+		afx_msg void OnLowercase() { phev_->OnLowercase(); }
+		afx_msg void OnDffdHide() { phev_->OnDffdHide(); }
+		afx_msg void OnDffdSplit() { phev_->OnDffdSplit(); }
+		afx_msg void OnDffdTab() { phev_->OnDffdTab(); }
+		afx_msg void OnUpdateDffdHide(CCmdUI* pCmdUI) { phev_->OnUpdateDffdHide(pCmdUI); }
+		afx_msg void OnUpdateDffdSplit(CCmdUI* pCmdUI) { phev_->OnUpdateDffdSplit(pCmdUI); }
+		afx_msg void OnUpdateDffdTab(CCmdUI* pCmdUI) { phev_->OnUpdateDffdTab(pCmdUI); }
 
 // Implementation
 protected:

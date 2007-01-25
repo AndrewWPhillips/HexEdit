@@ -33,6 +33,7 @@
 #include "Bookmark.h"
 #include "boyer.h"
 #include "SaveDffd.h"
+#include "DFFDGlobal.h"
 #include "misc.h"
 #include "Dialog.h"
 #include "DFFDMisc.h"
@@ -69,7 +70,18 @@ BEGIN_MESSAGE_MAP(CHexEditDoc, CDocument)
         ON_COMMAND(ID_FILE_CLOSE, OnFileClose)
         ON_COMMAND(ID_FILE_SAVE, OnFileSave)
         ON_COMMAND(ID_FILE_SAVE_AS, OnFileSaveAs)
-        ON_COMMAND(ID_TEST2, OnTest)
+
+    ON_COMMAND(ID_DFFD_NEW, OnDffdNew)
+    ON_COMMAND_RANGE(ID_DFFD_OPEN_FIRST, ID_DFFD_OPEN_FIRST+DFFD_RESERVED-1, OnDffdOpen)
+    ON_COMMAND(ID_DFFD_SAVE, OnDffdSave)
+    ON_COMMAND(ID_DFFD_SAVEAS, OnDffdSaveAs)
+
+    ON_COMMAND(ID_DFFD_TOGGLE_EDIT, OnEditMode)
+    ON_UPDATE_COMMAND_UI(ID_DFFD_TOGGLE_EDIT, OnUpdateEditMode)
+    ON_COMMAND(ID_DFFD_OPTIONS, OnDffdOptions)
+    ON_UPDATE_COMMAND_UI(ID_DFFD_OPTIONS, OnUpdateDffdOptions)
+
+    ON_COMMAND(ID_TEST2, OnTest)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -89,6 +101,8 @@ CHexEditDoc::CHexEditDoc()
 
     keep_times_ = theApp.open_keep_times_;
     length_ = 0L;
+
+	dffd_edit_mode_ = -1;
 
     pthread_ = NULL;
 
@@ -238,8 +252,6 @@ BOOL CHexEditDoc::OnNewDocument()
         CreateThread();
 
     // Load XML DFFD file (should use "default")
-    //if (theApp.tree_view_ > 0 && xml_file_num_ == -1)
-    ASSERT(xml_file_num_ == -1);
     OpenDataFormatFile();
 
 //    CHexEditView *pv = GetBestView();
@@ -351,14 +363,17 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
                               "and were moved to the end of file:\r") + mess);
 
     // Load XML file that is used to display the format of the data
-//    GetXMLFileList();
+	// Note we load the template when the file is opened rather than if/when the template is needed:
+	// + delay between opening and using XML file is good for performance
+	// + we can check for "allow_editing" attribute so that menu item state can be set
+	// - may slow down file opening for no purpose if template is not used
+	// - user might get XML parse error messages even if not using templates
     OpenDataFormatFile();
 
     return TRUE;
 }
 
-// Called when document closed probably as part of file closing command
-void CHexEditDoc::OnCloseDocument() 
+void CHexEditDoc::CheckSaveTemplate()
 {
     // If the template for this file has been modified ask the user if they want to save it
     if (ptree_ != NULL && ptree_->IsModified())
@@ -421,6 +436,12 @@ void CHexEditDoc::OnCloseDocument()
             }
         }
     }
+}
+
+// Called when document closed probably as part of file closing command
+void CHexEditDoc::OnCloseDocument() 
+{
+	CheckSaveTemplate();
 
     // Store options for this file associated with the 1st CHexEditView for this doc
     // Note that this is done after saving the template file above so that the correct template
@@ -1708,6 +1729,105 @@ void CHexEditDoc::OnUpdateDffdRefresh(CCmdUI* pCmdUI)
     pCmdUI->Enable(update_needed_);
 }
 
+void CHexEditDoc::OnDffdNew()
+{
+    OpenDataFormatFile("default");
+    ScanFile();
+    CDFFDHint dffdh;
+    UpdateAllViews(NULL, 0, &dffdh);
+
+	CHexEditView *pv = GetBestView();
+	if (pv != NULL)
+		pv->ShowDffd();
+}
+
+void CHexEditDoc::OnDffdOpen(UINT nID)
+{
+	ASSERT(nID - ID_DFFD_OPEN_FIRST < DFFD_RESERVED);
+    OpenDataFormatFile(theApp.xml_file_name_[nID - ID_DFFD_OPEN_FIRST]);
+    ScanFile();
+    CDFFDHint dffdh;
+    UpdateAllViews(NULL, 0, &dffdh);
+
+	CHexEditView *pv = GetBestView();
+	if (pv != NULL)
+		pv->ShowDffd();
+}
+
+void CHexEditDoc::OnDffdSave()
+{
+    if (ptree_->GetFileName().Right(11).CompareNoCase("default.xml") != 0)
+        ptree_->Save();
+	else
+		OnDffdSaveAs();
+}
+
+void CHexEditDoc::OnDffdSaveAs()
+{
+    CHexFileDialog dlgFile("TemplateFileDlg", FALSE, "xml", ptree_->GetFileName(),
+                            OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
+                            "Template (XML) files - *.xml)|*.xml|All Files (*.*)|*.*||");
+
+    // Set up the title of the dialog
+    dlgFile.m_ofn.lpstrTitle = "Save Template File";
+
+    if (dlgFile.DoModal() == IDOK)
+    {
+		// Save to the new template file
+        ptree_->SetFileName(dlgFile.GetPathName());
+        ptree_->Save();
+
+        theApp.GetXMLFileList();        // rebuild the list with the new file name in it
+
+        // Remember this file as the current template
+        xml_file_num_ = theApp.FindXMLFile(dlgFile.GetFileTitle());
+    }
+}
+
+// Is editing of the active template allowed?
+BOOL CHexEditDoc::DffdEditMode() 
+{
+	if (dffd_edit_mode_ == -1)
+	{
+		CString ss;
+		ss = ptree_->GetRoot().GetAttr("default_read_only");
+        dffd_edit_mode_ = (ss.CompareNoCase("true") == 0);
+	}
+
+	return dffd_edit_mode_;
+}
+
+void CHexEditDoc::OnEditMode() 
+{
+	dffd_edit_mode_ = !DffdEditMode();
+}
+
+void CHexEditDoc::OnUpdateEditMode(CCmdUI* pCmdUI) 
+{
+    pCmdUI->SetCheck(DffdEditMode());
+}
+
+void CHexEditDoc::OnDffdOptions()
+{
+    CDFFDGlobal dlg(&df_elt_[0], GetBestView());
+    if (dlg.DoModal() == IDOK && dlg.IsModified())
+    {
+		CSaveStateHint ssh;
+		UpdateAllViews(NULL, 0, &ssh);
+        ScanFile();
+        // Update the display as how some things are shown has changed
+        CDFFDHint dffdh;
+        UpdateAllViews(NULL, 0, &dffdh);
+		CRestoreStateHint rsh;
+		UpdateAllViews(NULL, 0, &rsh);
+    }
+}
+
+void CHexEditDoc::OnUpdateDffdOptions(CCmdUI* pCmdUI) 
+{
+	pCmdUI->Enable(DffdEditMode());
+}
+
 void CHexEditDoc::OnTest() 
 {
 #if 0
@@ -1765,6 +1885,8 @@ void CHexEditDoc::CheckUpdate()
 // file, if any, then looks for a file based on the file extension.
 void CHexEditDoc::OpenDataFormatFile(LPCTSTR data_file_name /*=NULL*/)
 {
+	CheckSaveTemplate();   // allow user to save changes to current template (if any)
+
     int saved_file_num = xml_file_num_;
     xml_file_num_ = -1;  // Default to no file found
 
@@ -1878,7 +2000,6 @@ void CHexEditDoc::OpenDataFormatFile(LPCTSTR data_file_name /*=NULL*/)
 		xml_file_num_ = saved_file_num;
 }
 
-// Called when views opened to make sure file has been scanned
 BOOL CHexEditDoc::ScanInit()
 {
     if (!df_init_)          // only scan once
@@ -2080,7 +2201,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
         if (elt_type == "define_struct")
         {
             // If in edit mode show it in the tree so it can be edited
-            if (theApp.tree_edit_)
+            if (DffdEditMode())
             {
                 // Add sub node but use address of -1 so that file is not accessed
                 df_type_.push_back(DF_DEFINE_STRUCT);
@@ -2403,7 +2524,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 returned_size += df_size_[ii];
                 addr += df_size_[ii];
             }
-            else if (theApp.tree_edit_)
+            else if (DffdEditMode())
             {
                 df_extra_[ii] = 0;
 
@@ -2432,7 +2553,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
         } // end array "for" processing
         else if (elt_type == "switch")
 		{
-            BOOL show_parent_row = theApp.tree_edit_;      // Only show IF row in edit mode
+            BOOL show_parent_row = DffdEditMode();      // Only show IF row in edit mode
             unsigned char new_ind = ind+1;
 
             if (!show_parent_row)
@@ -2495,7 +2616,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 						is_valid = true;
 				}
 
-				if (is_valid || theApp.tree_edit_)  // only show the taken case unless we are in edit mode
+				if (is_valid || DffdEditMode())  // only show the taken case unless we are in edit mode
 				{
 					unsigned jj = df_address_.size();  // remember where we are up to
 					last_ac = _MAX(last_ac, add_branch(case_elt, is_valid ? addr : -1, new_ind, ee, size_tmp));
@@ -2530,7 +2651,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
         else if (elt_type == "if")
         {
             ASSERT(elt.GetNumChildren() == 1 || elt.GetNumChildren() == 3);
-            BOOL show_parent_row = theApp.tree_edit_;      // Only show IF row in edit mode
+            BOOL show_parent_row = DffdEditMode();      // Only show IF row in edit mode
             unsigned char new_ind = ind+1;
 
             if (!show_parent_row)
@@ -2590,7 +2711,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 returned_size += size_tmp;
                 addr += size_tmp;
             }
-            else if (theApp.tree_edit_)
+            else if (DffdEditMode())
             {
 				// Grey out sub-nodes that are not present
                 unsigned curr_ii = ii;
@@ -2620,7 +2741,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 returned_size += size_tmp;
                 addr += size_tmp;
             }
-            else if (theApp.tree_edit_ && elt.GetNumChildren() >= 3)
+            else if (DffdEditMode() && elt.GetNumChildren() >= 3)
             {
                 unsigned curr_ii = df_address_.size();  // remember where we were up to
 
@@ -2637,7 +2758,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
         } // "if"
         else if (elt_type == "jump")
         {
-            BOOL show_parent_row = theApp.tree_edit_;      // Only show row in edit mode
+            BOOL show_parent_row = DffdEditMode();      // Only show row in edit mode
             unsigned char new_ind = ind+1;
             if (!show_parent_row)
             {
@@ -2703,7 +2824,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 }
             }
 
-            if (jump_addr != -1 || theApp.tree_edit_)
+            if (jump_addr != -1 || DffdEditMode())
             {
                 ++in_jump_;                     // Turn off progress in JUMP since it's based on file address
                 // Add sub-element
@@ -2785,7 +2906,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             }
 
             // Display result if requested (always display in edit mode to allow editing of EVAL)
-            if (display_result || theApp.tree_edit_)
+            if (display_result || DffdEditMode())
             {
                 // Save the result of the evaluation for later display
                 switch (tmp.typ)
@@ -3338,7 +3459,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             ASSERT(df_type_[ii] != DF_DATA);  // Ensure a specific type has been assigned
 
             CString strName = df_elt_[ii].GetAttr("name");
-            if (!theApp.tree_edit_ && strName.IsEmpty())
+            if (!DffdEditMode() && strName.IsEmpty())
             {
                 // Hide nameless data elements in view mode (but show in edit mode)
                 df_type_.pop_back();

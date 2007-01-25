@@ -2,8 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by HexEdit.rc
 //
-#define ID_DFFD_HELP                    3
-#define IDC_FILL_HELP                   3
 #define IDD_ABOUTBOX                    100
 #define IDB_LIGHTBULB                   102
 #define IDD_DIALOGBAR                   103
@@ -354,11 +352,25 @@
 #define IDI_ICON2                       353
 #define IDI_ICON3                       354
 #define IDI_TIPS                        355
+#define ID_CHECKSUM_MD5                 357
+#define ID_CONVERT_UPPERCASE            358
+#define ID_CONVERT_LOWERCASE            359
 #define ID_DFFD_HIDE                    360
 #define ID_DFFD_SPLIT                   361
 #define ID_DFFD_TAB                     362
 #define ID_TEMPLATE_REFRESH             363
 #define ID_TEMPLATE_ALLOWEDITING        364
+#define ID_DFFD_NEW                     365
+#define ID_DFFD_OPEN_OTHER_DUMMY        366
+#define ID_DFFD_HELP                    367
+#define ID_DFFD_SAVE                    368
+#define ID_DFFD_SAVEAS                  369
+#define ID_DFFD_SYNC                    370
+#define ID_DFFD_AUTO_SYNC               371
+#define ID_DFFD_REFRESH                 372
+#define ID_DFFD_TOGGLE_EDIT             373
+#define ID_DFFD_OPEN_TYPE_DUMMY         374
+#define ID_DFFD_OPTIONS                 375
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -818,9 +830,7 @@
 #define IDC_DFFD_UNITS_DESC             1327
 #define IDC_DFFD_DISPLAY_DESC           1328
 #define ID_DFFD_PREV                    1329
-#define ID_PREV                         1329
 #define ID_DFFD_NEXT                    1330
-#define ID_NEXT                         1330
 #define IDC_DFFD_ELEMENTS               1331
 #define IDC_DFFD_COUNT_VAR              1331
 #define ID_DFFD_CLONE                   1331
@@ -908,6 +918,7 @@
 #define IDC_DFFD_TYPE_NAME_DESC         1407
 #define IDC_FILL_DISK                   1408
 #define IDC_DESC_FILL_CLIPBOARD_LENGTH  1409
+#define IDC_FILL_HELP                   1410
 #define IDC_BUTTON1                     1411
 #define IDC_BASE_GROUP                  1414
 #define IDC_BITS_GROUP                  1415
@@ -1020,6 +1031,8 @@
 #define IDC_FP_GROUP                    1530
 #define IDC_FP_EXP_DESC                 1531
 #define IDC_FP_DESC                     1532
+#define IDC_CATEGORY_SELECT             1533
+#define IDC_INFO_CATEGORY_SELECT        1533
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1292,14 +1305,9 @@
 #define ID_DFFD_INSERT_SWITCH           33100
 #define ID_DFFD_DELETE                  33101
 #define ID_DFFD_GLOBAL                  33102
-#define ID_DFFD_SYNC                    33103
-#define ID_DFFD_AUTO_SYNC               33104
-#define ID_DFFD_SAVE                    33106
-#define ID_DFFD_SAVEAS                  33107
 #define ID_HIGHLIGHT_MENU               33108
 #define ID_MARK_MENU                    33109
 #define ID_BOOKMARKS_MENU               33110
-#define ID_DFFD_REFRESH                 33111
 #define ID_DFFD_WEB                     33112
 #define ID_DFFD_PARSE_DECLARATIONS      33115
 #define ID_RAND_BYTE                    33117
@@ -1362,18 +1370,19 @@
 #define ID_EXPLORER_OPEN_RO             33202
 #define ID_NAV_BACK                     33990
 #define ID_NAV_FORW                     33991
+#define ID_FILE_OPEN_SPECIAL            33992
 #define ID_NAV_BACK_FIRST               34000
 #define ID_NAV_FORW_FIRST               36000
-#define ID_FILE_OPEN_SPECIAL            38002
+#define ID_DFFD_OPEN_FIRST              38000
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        365
-#define _APS_NEXT_COMMAND_VALUE         38003
-#define _APS_NEXT_CONTROL_VALUE         1533
+#define _APS_NEXT_RESOURCE_VALUE        376
+#define _APS_NEXT_COMMAND_VALUE         39001
+#define _APS_NEXT_CONTROL_VALUE         1534
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

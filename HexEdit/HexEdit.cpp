@@ -1892,8 +1892,8 @@ void CHexEditApp::LoadOptions()
 
     tree_view_ = GetProfileInt("DataFormat", "TreeView", 0);
 	if (tree_view_ > 2) tree_view_ = 0;
-    tree_edit_ = GetProfileInt("DataFormat", "Edit", 0);
-    tree_width_ = GetProfileInt("DataFormat", "TreeWidth", 247);
+    //tree_edit_ = GetProfileInt("DataFormat", "Edit", 0);
+    //tree_width_ = GetProfileInt("DataFormat", "TreeWidth", 247);
     max_fix_for_elts_ = GetProfileInt("DataFormat", "MaxFixForElts", 20);
     alt_data_bg_cols_ = GetProfileInt("DataFormat", "AltDataBgCols", 1) != 0 ? true : false;
 
@@ -2087,7 +2087,7 @@ void CHexEditApp::LoadOptions()
     // Always default back to little-endian for decimal & fp pages
     prop_dec_endian_ = FALSE;
     prop_fp_endian_ = FALSE;
-    prop_ibmfp_endian_ = TRUE;
+    //prop_ibmfp_endian_ = TRUE;
     prop_date_endian_ = FALSE;
 
     password_mask_ = GetProfileInt("Options", "PasswordMask", 1) ? TRUE : FALSE;
@@ -2105,7 +2105,7 @@ void CHexEditApp::LoadOptions()
     prop_page_ = GetProfileInt("Property-Settings", "PropPage", 0);
     prop_dec_signed_ = GetProfileInt("Property-Settings", "DecFormat", 1);
     prop_fp_format_  = GetProfileInt("Property-Settings", "FPFormat", 1);
-    prop_ibmfp_format_  = GetProfileInt("Property-Settings", "IBMFPFormat", 1);
+    //prop_ibmfp_format_  = GetProfileInt("Property-Settings", "IBMFPFormat", 1);
     prop_date_format_  = GetProfileInt("Property-Settings", "DateFormat", 0);
 
     // Restore default file dialog directories
@@ -2280,8 +2280,8 @@ void CHexEditApp::SaveOptions()
 
     // Save data format view options
     WriteProfileInt("DataFormat", "TreeView", tree_view_);
-    WriteProfileInt("DataFormat", "Edit", tree_edit_);
-    WriteProfileInt("DataFormat", "TreeWidth", tree_width_);
+    //WriteProfileInt("DataFormat", "Edit", tree_edit_);
+    //WriteProfileInt("DataFormat", "TreeWidth", tree_width_);
     WriteProfileInt("DataFormat", "MaxFixForElts", max_fix_for_elts_);
     WriteProfileInt("DataFormat", "AltDataBgCols", alt_data_bg_cols_ ? 1 : 0);
     ASSERT(xml_dir_.Right(1) == "\\");
@@ -2373,7 +2373,7 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Property-Settings", "PropPage", prop_page_);
     WriteProfileInt("Property-Settings", "DecFormat", prop_dec_signed_);
     WriteProfileInt("Property-Settings", "FPFormat", prop_fp_format_);
-    WriteProfileInt("Property-Settings", "IBMFPFormat", prop_ibmfp_format_);
+    //WriteProfileInt("Property-Settings", "IBMFPFormat", prop_ibmfp_format_);
     WriteProfileInt("Property-Settings", "DateFormat", prop_date_format_);
 
     // Save directories for file dialogs
@@ -2762,7 +2762,7 @@ void CHexEditApp::get_options()
         break;
     }
 
-    p_sysdisplay->tree_edit_ = tree_edit_;
+    //p_sysdisplay->tree_edit_ = tree_edit_;
     p_sysdisplay->max_fix_for_elts_ = max_fix_for_elts_;
     p_sysdisplay->default_char_format_ = default_char_format_;
     p_sysdisplay->default_int_format_ = default_int_format_;
@@ -3054,7 +3054,7 @@ void CHexEditApp::set_sysdisplay()
     else
         tree_view_ = 1;  // splitter
 
-    tree_edit_ = p_sysdisplay->tree_edit_;
+    //tree_edit_ = p_sysdisplay->tree_edit_;
     max_fix_for_elts_ = p_sysdisplay->max_fix_for_elts_;
     default_char_format_ = p_sysdisplay->default_char_format_;
     default_int_format_ = p_sysdisplay->default_int_format_;

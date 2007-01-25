@@ -192,7 +192,7 @@
 #define HIDC_FILL_CLIPBOARD_LENGTH      0x811c055f    // IDD_NEW_FILE
 #define HIDC_FILL_CLIPBOARD_SAMPLE      0x811c0556    // IDD_NEW_FILE
 #define HIDC_FILL_DISK                  0x811c0580    // IDD_NEW_FILE
-#define HIDC_FILL_HELP                  0x811c0003    // IDD_NEW_FILE
+#define HIDC_FILL_HELP                  0x811c0582    // IDD_NEW_FILE
 #define HIDC_FILL_HEX                   0x811c054d    // IDD_NEW_FILE
 #define HIDC_FILL_HEX_VALUE             0x811c0551    // IDD_NEW_FILE
 #define HIDC_FILL_NUMBER                0x811c0550    // IDD_NEW_FILE
@@ -274,6 +274,7 @@
 #define HIDC_IBMFP_MANT                 0x80aa046b    // IDD_PROP_IBMFP [English (U.S.)]
 #define HIDC_IBMFP_VAL                  0x80aa046a    // IDD_PROP_IBMFP [English (U.S.)]
 #define HIDC_INFO_CATEGORY              0x81270588    // IDD_PROP_INFO [English (U.S.)]
+#define HIDC_INFO_CATEGORY_SELECT       0x812705fd    // IDD_PROP_INFO [English (U.S.)]
 #define HIDC_INFO_COMMENTS              0x8127041b    // IDD_PROP_INFO [English (U.S.)]
 #define HIDC_INFO_DISK_SIZE             0x81270434    // IDD_PROP_INFO [English (U.S.)]
 #define HIDC_INFO_EDIT_TIME             0x81270433    // IDD_PROP_INFO [English (U.S.)]
@@ -397,7 +398,7 @@
 #define HIDC_SHOW_OTHER                 0x80eb041a    // IDD_OPT_SYSDISPLAY [English (U.S.)]
 #define HIDC_SIZE_FACTOR                0x811c0560    // IDD_NEW_FILE
 #define HIDC_SIZE_LENGTH                0x811c0562    // IDD_NEW_FILE
-#define HIDC_SLIDER                     0x813405f6    // IDD_OPT_TIPS [English (U.S.)]
+#define HIDC_SLIDER                     0x813405f7    // IDD_OPT_TIPS [English (U.S.)]
 #define HIDC_SOURCE_CODE                0x813005b2    // IDD_TPARSE
 #define HIDC_SUBJECT                    0x80e50435    // IDD_EMAIL
 #define HIDC_SUBTRACT                   0x80750428    // IDD_CALC
@@ -439,6 +440,6 @@
 #define HIDC_WEB_CHECK                  0x8119053e    // IDD_DFFD_GLOBAL
 #define HIDC_XOR                        0x8075042c    // IDD_CALC
 #define HID_DFFD_CLONE                  0x81150533    // IDD_DFFD_DATA
-#define HID_DFFD_HELP                   0x81150003    // IDD_DFFD_DATA
+#define HID_DFFD_HELP                   0x8119016f    // IDD_DFFD_GLOBAL
 #define HID_DFFD_NEXT                   0x81150532    // IDD_DFFD_DATA
 #define HID_DFFD_PREV                   0x81150531    // IDD_DFFD_DATA
