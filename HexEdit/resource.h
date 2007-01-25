@@ -354,6 +354,11 @@
 #define IDI_ICON2                       353
 #define IDI_ICON3                       354
 #define IDI_TIPS                        355
+#define ID_DFFD_HIDE                    360
+#define ID_DFFD_SPLIT                   361
+#define ID_DFFD_TAB                     362
+#define ID_TEMPLATE_REFRESH             363
+#define ID_TEMPLATE_ALLOWEDITING        364
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -1366,7 +1371,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        357
+#define _APS_NEXT_RESOURCE_VALUE        365
 #define _APS_NEXT_COMMAND_VALUE         38003
 #define _APS_NEXT_CONTROL_VALUE         1533
 #define _APS_NEXT_SYMED_VALUE           252

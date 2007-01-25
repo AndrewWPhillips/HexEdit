@@ -44,6 +44,7 @@ public:
 	protected:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 	//}}AFX_VIRTUAL
+    afx_msg void OnSetFocus(CWnd* pOldWnd);
 
 // Implementation
 public:

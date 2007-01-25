@@ -686,13 +686,20 @@ public:
         afx_msg LRESULT OnMouseHover(WPARAM wp, LPARAM lp);
         afx_msg LRESULT OnMouseLeave(WPARAM wp, LPARAM lp);
 
+	// Added in 3.2
     afx_msg void OnCompress();
     afx_msg void OnDecompress();
     afx_msg void OnMd5();
     afx_msg void OnUppercase();
     afx_msg void OnLowercase();
+    afx_msg void OnDffdHide();
+    afx_msg void OnDffdSplit();
+    afx_msg void OnDffdTab();
+    afx_msg void OnUpdateDffdHide(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateDffdSplit(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateDffdTab(CCmdUI* pCmdUI);
 
-        DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 
 public:
     // Had to make this public to be accessed from template functions (OnOperateBinary and

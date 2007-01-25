@@ -238,8 +238,9 @@ BOOL CHexEditDoc::OnNewDocument()
         CreateThread();
 
     // Load XML DFFD file (should use "default")
-    if (theApp.tree_view_ > 0 && xml_file_num_ == -1)
-        OpenDataFormatFile();
+    //if (theApp.tree_view_ > 0 && xml_file_num_ == -1)
+    ASSERT(xml_file_num_ == -1);
+    OpenDataFormatFile();
 
 //    CHexEditView *pv = GetBestView();
 //    if (start_ebcdic)
@@ -1592,7 +1593,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 
         // Init progress bar
         CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-        mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);
+        mm->m_wndStatusBar.EnablePaneProgressBar(0);
         clock_t last_checked = clock();
 
         // Write out the file
@@ -1767,12 +1768,12 @@ void CHexEditDoc::OpenDataFormatFile(LPCTSTR data_file_name /*=NULL*/)
     int saved_file_num = xml_file_num_;
     xml_file_num_ = -1;  // Default to no file found
 
-    // Make sure we are displaying a tree view
-    if (theApp.tree_view_ == 0 || theApp.tree_view_ == -1)
-    {
-        ASSERT(data_file_name == NULL);
-        return;
-    }
+    //// Make sure we are displaying a tree view
+    //if (theApp.tree_view_ == 0)
+    //{
+    //    ASSERT(data_file_name == NULL);
+    //    return;
+    //}
 
     CString filename;
 
@@ -1834,6 +1835,8 @@ void CHexEditDoc::OpenDataFormatFile(LPCTSTR data_file_name /*=NULL*/)
     }
 
     // If we got a file name to use then use it
+	// Note xml_file_num_ should not be -1 now but this cann occur if the "default"
+	// template was not found or a template file has suddenly disappeared.
     if (xml_file_num_ != -1)
     {
         ASSERT(!filename.IsEmpty());
@@ -1871,6 +1874,8 @@ void CHexEditDoc::OpenDataFormatFile(LPCTSTR data_file_name /*=NULL*/)
             delete saved_ptree;
         }
     }
+	else
+		xml_file_num_ = saved_file_num;
 }
 
 // Called when views opened to make sure file has been scanned

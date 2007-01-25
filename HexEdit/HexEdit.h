@@ -353,7 +353,7 @@ public:
 //    CRuntimeClass *last_opt_class_ptr_; // Runtime class of last active page
 
     // The following are options for the binary file format tree view display
-    BOOL tree_view_;                    // 0=none, 1=splitter views, 2=tabbed views
+    unsigned int tree_view_;            // 0=none, 1=splitter views, 2=tabbed views
     BOOL tree_edit_;                    // Editing of templates allowed in the tree view?
     int tree_width_;                    // If tree_view_ == 1 (splitter) this is the width of left (tree) column
     CString xml_dir_;                   // Where XML files (and DTD) are stored

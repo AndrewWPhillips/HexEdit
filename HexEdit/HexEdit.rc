@@ -499,6 +499,9 @@ BEGIN
             MENUITEM SEPARATOR
             MENUITEM "ANSI -> IBM/OEM",             ID_ANSI2IBM
             MENUITEM "IBM/OEM -> ANSI",             ID_IBM2ANSI
+            MENUITEM SEPARATOR
+            MENUITEM "&Uppercase",                  ID_UPPERCASE
+            MENUITEM "&Lowercase",                  ID_LOWERCASE
         END
         POPUP "Checksum"
         BEGIN
@@ -509,6 +512,8 @@ BEGIN
             MENUITEM SEPARATOR
             MENUITEM "CRC CCIT&T",                  ID_CRC_CCITT
             MENUITEM "&CRC 32",                     ID_CRC32
+            MENUITEM SEPARATOR
+            MENUITEM "&MD5",                        ID_MD5
         END
         POPUP "Encryption"
         BEGIN
@@ -682,6 +687,18 @@ BEGIN
             MENUITEM "&Double Word (32 bit)",       ID_ASR_32BIT
             MENUITEM "&Quad Word (64 bit)",         ID_ASR_64BIT
         END
+    END
+    POPUP "Te&mplate"
+    BEGIN
+        MENUITEM "&Hide Tree View",             ID_DFFD_HIDE, CHECKED
+        MENUITEM "&Split Window",               ID_DFFD_SPLIT
+        MENUITEM "&Tabbed Window",              ID_DFFD_TAB
+        MENUITEM SEPARATOR
+        MENUITEM "&Sync Now",                   ID_DFFD_SYNC
+        MENUITEM "&Auto Sync",                  ID_DFFD_AUTO_SYNC
+        MENUITEM "&Refresh",                    ID_DFFD_REFRESH
+        MENUITEM SEPARATOR
+        MENUITEM "Allow &Editing",              ID_DFFD_EDIT_MODE
     END
     POPUP "&Tools"
     BEGIN
@@ -3033,6 +3050,7 @@ BEGIN
     IDC_FONTSIZE            "Changes the font size of the selection\nFont Size"
     ID_COLUMN_DEC           "Decrease the number of columns\nLess columns"
     ID_COLUMN_INC           "Increase the number of columns\nMore columns"
+    ID_DFFD_EDIT_MODE       "Allow the template to be modified in the tree view\nAllow Editing"
     ID_DFFD_INSERT_STRUCT   "Insert a STRUCT (sequence of different elements)\nInsert Struct"
     ID_DFFD_INSERT_FOR      "Insert a FOR (repetition or array of elements)\n Insert For"
     ID_DFFD_INSERT_IF       "Insert an IF (optional element)\nInsert If"
@@ -3171,6 +3189,13 @@ END
 STRINGTABLE 
 BEGIN
     IDS_DEL_TIP             "Delete this tip"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_DFFD_HIDE            "Turn off use of templates\nTemplate Off"
+    ID_DFFD_SPLIT           "Show template in a split window\nTemplate Split"
+    ID_DFFD_TAB             "Show templates in a tabbed window\nTemplate Tab"
 END
 
 #endif    // English (U.S.) resources

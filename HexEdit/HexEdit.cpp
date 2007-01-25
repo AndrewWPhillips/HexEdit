@@ -576,13 +576,6 @@ BOOL CHexEditApp::InitInstance()
 
         GetXMLFileList();
 
-        // If more XML files have been put in the correct directory then turn on tree view
-        // 14 is the number of template (.XML) files currently distributed (ver 3.1)
-        if (xml_file_name_.size() > 14 && tree_view_ == -1)
-        {
-            tree_view_ = 1;
-        }
-
         // Register the application's document templates.  Document templates
         //  serve as the connection between documents, frame windows and views.
 
@@ -1897,7 +1890,8 @@ void CHexEditApp::LoadOptions()
     else
         tabicons_ = FALSE;
 
-    tree_view_ = GetProfileInt("DataFormat", "TreeView", -1);
+    tree_view_ = GetProfileInt("DataFormat", "TreeView", 0);
+	if (tree_view_ > 2) tree_view_ = 0;
     tree_edit_ = GetProfileInt("DataFormat", "Edit", 0);
     tree_width_ = GetProfileInt("DataFormat", "TreeWidth", 247);
     max_fix_for_elts_ = GetProfileInt("DataFormat", "MaxFixForElts", 20);
@@ -2755,7 +2749,6 @@ void CHexEditApp::get_options()
     {
     default:
         ASSERT(0);
-    case -1:
     case 0:
         p_sysdisplay->dffd_on_ = FALSE;
         break;
@@ -3055,11 +3048,7 @@ void CHexEditApp::set_sysdisplay()
     }
 
     if (!p_sysdisplay->dffd_on_)
-    {
-        // If tree view has been set before then allow to be turned off
-        if (tree_view_ != -1)
-            tree_view_ = 0;
-    }
+        tree_view_ = 0;  // tree view off
     else if (p_sysdisplay->dffd_view_ == 1)
         tree_view_ = 2;  // tabs
     else

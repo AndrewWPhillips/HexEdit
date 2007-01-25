@@ -309,7 +309,12 @@ Help
       - macro that runs when certain types of file are opened
  
 V3.2
- - template view toggle on the fly + template menu
+ - template template menu
+   - new, open, open type, parser setup
+   - save, save as
+   > split/tab/none
+   > sync, auto sync, refresh
+   - allow editing
  - make sure no files are modified in .EXE directory
  - new installer
    - get MFC merge module (.msm file) to include used MFC in installation (.msi)
@@ -327,6 +332,10 @@ V3.2
 	Dialog Resize class - Herbert Menke (http://www.codeproject.com/dialog/resizectrl.asp)
 	ZLIB
 	MD5
+	EnBitmap
+	BigInteger
+	CRC code
+	PRNG code
 	MS XML
 	range_set class - Andrew Phillips (http://www.ddj.com/dept/cpp/184403660)
 	folder selection - (http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/)
@@ -344,15 +353,17 @@ V3.2
 	FrontPage
 	IkonBoard
 	FireFox
-	
+
  - make all selection work with blocks > 4GB
-   - conversions (x 4)
-   - encrypt/decrypt
+   > conversions (x 4)
+   > encrypt/decrypt
    - import/export hex text
    - clipboard?
  > upgrade to Visual Studio 2003
  > draw image in background
  - MD5 + uppercase/lowercase conversions
+   > code
+   - help
  > general alignment and offset options for find
  - unicode strings in templates
  - update BCG 6.2 with my code and rebuild

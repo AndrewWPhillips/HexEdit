@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP(CChildFrame, CBCGMDIChildWnd)
 	//}}AFX_MSG_MAP
         ON_WM_SYSCOMMAND()
         ON_MESSAGE(WM_HELPHITTEST, OnHelpHitTest)
+        ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -101,28 +102,6 @@ BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
     }
 	ptv_ = (CTabView *)splitter_.GetPane(0, 0);
 	ASSERT_KINDOF(CTabView, ptv_);
-
-#if 0  // This is now done on a per file basis - so we have to do it in CHexEditView::OnInitialUpdate
-	if (theApp.tree_view_ == 1)
-	{
-		// Add left column for DFFD (template) view
-		VERIFY(splitter_.InsColumn(0, theApp.tree_width_, RUNTIME_CLASS(CDataFormatView), pContext));
-
-        splitter_.SetActivePane(0, 1);   // make hex view active
-
-        CDataFormatView *pdfv = (CDataFormatView *)splitter_.GetPane(0, 0);
-        ASSERT_KINDOF(CDataFormatView, pdfv);
-		ptv_->SetActiveView(0);   // view 0 is always hex view - make it active
-        CHexEditView *phev = (CHexEditView *)ptv_->GetActiveView();
-        ASSERT_KINDOF(CHexEditView, phev);
-
-		ASSERT(splitter_.FindViewColumn(ptv_->GetSafeHwnd()) == 1);
-
-        // Make sure dataformat view knows which hex view it is assoc. with
-        pdfv->phev_ = phev;
-        phev->pdfv_ = pdfv;
-	}
-#endif
 
 	return TRUE;
 }
@@ -196,15 +175,18 @@ LRESULT CChildFrame::OnHelpHitTest(WPARAM wParam, LPARAM lParam)
 
 void CChildFrame::OnClose() 
 {
-    // xxx not called if whole app shutdown!!!
-	if (splitter_.m_hWnd != 0 && 
-		splitter_.GetColumnCount() > 1 &&
-		splitter_.GetPane(0, 0)->IsKindOf(RUNTIME_CLASS(CDataFormatView)))
-    {
-        // Save width of splitter column 1 (tree view)
-        int dummy;                      // min width which we don't need
-        splitter_.GetColumnInfo(0, theApp.tree_width_, dummy);
-    }
-	
     CBCGMDIChildWnd::OnClose();
+}
+
+void CChildFrame::OnSetFocus(CWnd* pOldWnd) 
+{
+    CBCGMDIChildWnd::OnSetFocus(pOldWnd);
+
+	CHexEditView *pv = GetHexEditView();
+	if (pv != NULL)
+	{
+		pv->show_prop();
+		pv->show_calc();
+		pv->show_pos();
+	}
 }

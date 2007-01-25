@@ -519,6 +519,13 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
     ON_COMMAND(ID_LOWERCASE, OnLowercase)
     ON_UPDATE_COMMAND_UI(ID_LOWERCASE, OnUpdateConvert)
 
+    ON_COMMAND(ID_DFFD_HIDE, OnDffdHide)
+    ON_UPDATE_COMMAND_UI(ID_DFFD_HIDE, OnUpdateDffdHide)
+    ON_COMMAND(ID_DFFD_SPLIT, OnDffdSplit)
+    ON_UPDATE_COMMAND_UI(ID_DFFD_SPLIT, OnUpdateDffdSplit)
+    ON_COMMAND(ID_DFFD_TAB, OnDffdTab)
+    ON_UPDATE_COMMAND_UI(ID_DFFD_TAB, OnUpdateDffdTab)
+
     //ON_WM_TIMER()
 
     ON_COMMAND(ID_VIEWTEST, OnViewtest)
@@ -15639,11 +15646,119 @@ void CHexEditView::OnRandFast()
     ::OnOperateUnary<char>(this, unary_rand_fast, "fast randomize bytes", char(0));
 }
 
+void CHexEditView::OnDffdHide()
+{
+    if (pdfv_ == NULL)
+		return;   // already hidden
+
+	int idx1 = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
+	int idx2 = GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd());
+
+	ASSERT(idx1 > -1 || idx2 > -1);  // It must be open in tab or splitter
+
+	if (idx1 > -1)  // splitter?
+	{
+		VERIFY(GetFrame()->splitter_.DelColumn(idx1, TRUE));
+		GetFrame()->splitter_.RecalcLayout();
+	}
+	else if (idx2 > -1)  // tab?
+		VERIFY(GetFrame()->ptv_->RemoveView(idx2));
+
+	pdfv_ = NULL;
+}
+void CHexEditView::OnUpdateDffdHide(CCmdUI* pCmdUI) 
+{
+    pCmdUI->Enable(TRUE);
+    pCmdUI->SetCheck(pdfv_ == NULL);
+}
+
+void CHexEditView::OnDffdSplit()
+{
+	//if (pdfv_ == GetFrame()->splitter_.GetPane(0, 0))
+	if (pdfv_ != NULL && GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd()) > -1)
+		return;   // already open in splitter
+
+	// If open then it is open in a tab - close it
+	if (pdfv_ != NULL)
+	{
+		int idx2 = GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd());
+		ASSERT(idx2 > -1);
+		if (idx2 > -1)
+			VERIFY(GetFrame()->ptv_->RemoveView(idx2));
+		pdfv_ = NULL;
+	}
+
+	// Reopen in the splitter
+	CCreateContext ctxt;
+	ctxt.m_pNewViewClass = RUNTIME_CLASS(CDataFormatView);
+	ctxt.m_pCurrentDoc = GetDocument();
+	ctxt.m_pLastView = this;
+	ctxt.m_pCurrentFrame = GetFrame();
+
+	CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
+	ASSERT(psplitter->m_hWnd != 0);
+
+	// Add left column for DFFD (template) view
+	VERIFY(psplitter->InsColumn(0, theApp.tree_width_, RUNTIME_CLASS(CDataFormatView), &ctxt));
+
+	psplitter->SetActivePane(0, 1);   // make hex view active
+
+	pdfv_ = (CDataFormatView *)psplitter->GetPane(0, 0);
+	ASSERT_KINDOF(CDataFormatView, pdfv_);
+
+	// Make sure dataformat view knows which hex view it is assoc. with
+	pdfv_->phev_ = this;
+	pdfv_->SendMessage(WM_INITIALUPDATE);
+	psplitter->RecalcLayout();
+}
+void CHexEditView::OnUpdateDffdSplit(CCmdUI* pCmdUI) 
+{
+    pCmdUI->SetCheck(pdfv_ != NULL && GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd()) > -1);
+    pCmdUI->Enable(GetDocument()->ptree_ != NULL);
+}
+
+void CHexEditView::OnDffdTab()
+{
+	if (pdfv_ != NULL && GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd()) > -1)
+		return;
+
+	// Close DFFD view in split window if there is one
+	if (pdfv_ != NULL)
+	{
+		int idx1 = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
+		ASSERT(idx1 > -1);
+		if (idx1 > -1)
+		{
+		    VERIFY(GetFrame()->splitter_.DelColumn(idx1, TRUE));
+			GetFrame()->splitter_.RecalcLayout();
+		}
+		pdfv_ = NULL;
+	}
+
+	// Reopen in the tab
+	CTabView *ptv = GetFrame()->ptv_;
+	ptv->AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
+	
+	ptv->SetActiveView(1);
+	pdfv_ = (CDataFormatView *)ptv->GetActiveView();
+	ASSERT_KINDOF(CDataFormatView, pdfv_);
+
+	ptv->SetActiveView(0);
+
+	// Make sure dataformat view knows which hex view it is assoc. with
+	pdfv_->phev_ = this;
+	pdfv_->SendMessage(WM_INITIALUPDATE);
+}
+void CHexEditView::OnUpdateDffdTab(CCmdUI* pCmdUI) 
+{
+    pCmdUI->SetCheck(pdfv_ != NULL && GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd()) > -1);
+    pCmdUI->Enable(GetDocument()->ptree_ != NULL);
+}
+
 // This is connected to Ctrl+T and is used for testing new dialogs etc
 void CHexEditView::OnViewtest() 
 {
-	// move this to a command xxx
-	OnMd5();
+	// for testing new commands
 }
 
 CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,
