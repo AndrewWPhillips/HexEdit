@@ -54,8 +54,6 @@ extern CHexEditApp theApp;
 IMPLEMENT_SERIAL(CHexEditFontCombo, CBCGToolbarFontCombo, 1)  // see BCGMisc.h
 IMPLEMENT_SERIAL(CHexEditFontSizeCombo, CBCGToolbarFontSizeCombo, 1)  // see BCGMisc.h
 
-#define NAV_RESERVED  2000
-
 static const int max_search_hist = 48;
 static const int max_replace_hist = 16;
 static const int max_jump_hist = 16;
@@ -4546,6 +4544,70 @@ BOOL CMainFrame::OnShowPopupMenu (CBCGPopupMenu *pMenuPopup)
 
 		pMenuPopup->RemoveAllItems ();
 		theApp.navman_.AddItems(pMenuPopup, true, ID_NAV_FORW_FIRST, NAV_RESERVED);
+	}
+
+    if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_DFFD_OPEN_TYPE_DUMMY) >= 0)
+    {
+		if (CBCGToolBar::IsCustomizeMode ())
+		{
+			return FALSE;
+		}
+
+		pMenuPopup->RemoveAllItems ();
+
+		int count = 0;
+		for (int ii = 0; ii < theApp.xml_file_name_.size() && ii < DFFD_RESERVED; ++ii)
+		{
+			if (theApp.xml_file_name_[ii].CompareNoCase("default") != 0 &&
+				theApp.xml_file_name_[ii].CompareNoCase("_windows_types") != 0 &&
+				theApp.xml_file_name_[ii].CompareNoCase("_common_types") != 0 &&
+				theApp.xml_file_name_[ii].CompareNoCase("_custom_types") != 0 &&
+				theApp.xml_file_name_[ii].CompareNoCase("_standard_types") != 0 &&
+				theApp.xml_file_name_[ii][0] == '_')
+			{
+				// Get type name based on the file extension
+				CString ss = "." + theApp.xml_file_name_[ii].Mid(1);
+			    SHFILEINFO sfi;
+				VERIFY(SHGetFileInfo(ss, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(sfi),
+									SHGFI_USEFILEATTRIBUTES | SHGFI_TYPENAME ));
+				ss = sfi.szTypeName;          // Store file type for display in file page
+
+                pMenuPopup->InsertItem(CBCGToolbarMenuButton(ID_DFFD_OPEN_FIRST + ii, NULL, -1, ss));
+				++count;
+			}
+		}
+		if (count == 0)
+		{
+			CBCGToolbarMenuButton mb(ID_DFFD_OPEN_TYPE_DUMMY, NULL, -1, "No File Type Templates Found");
+			mb.SetStyle(mb.m_nStyle | TBBS_DISABLED);
+            pMenuPopup->InsertItem(mb);
+		}
+	}
+    if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_DFFD_OPEN_OTHER_DUMMY) >= 0)
+    {
+		if (CBCGToolBar::IsCustomizeMode ())
+		{
+			return FALSE;
+		}
+
+		pMenuPopup->RemoveAllItems ();
+
+		int count = 0;
+		for (int ii = 0; ii < theApp.xml_file_name_.size() && ii < DFFD_RESERVED; ++ii)
+		{
+			if (theApp.xml_file_name_[ii].CompareNoCase("default") != 0 &&
+				theApp.xml_file_name_[ii][0] != '_')
+			{
+                pMenuPopup->InsertItem(CBCGToolbarMenuButton(ID_DFFD_OPEN_FIRST + ii, NULL, -1, theApp.xml_file_name_[ii]));
+				++count;
+			}
+		}
+		if (count == 0)
+		{
+			CBCGToolbarMenuButton mb(ID_DFFD_OPEN_TYPE_DUMMY, NULL, -1, "No Other Templates Found");
+			mb.SetStyle(mb.m_nStyle | TBBS_DISABLED);
+            pMenuPopup->InsertItem(mb);
+		}
 	}
 
     return TRUE;
