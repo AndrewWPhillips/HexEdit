@@ -261,6 +261,7 @@ void COpenSpecialDlg::Update()
 		}
 		else
 		{
+			char buf[32];
 			m_ctl_ok.EnableWindow();
 
 			switch (psl->type(idx))
@@ -279,7 +280,7 @@ void COpenSpecialDlg::Update()
 				ss.Format("Sector size: %d bytes\r\n", psl->sector_size(idx));
 			    strInfo += ss;
 
-				ss.Format("Used space: %d%%\r\n", ((psl->TotalClusters(idx) - psl->FreeClusters(idx))*100)/psl->TotalClusters(idx));
+				ss.Format("Used space: %d%%\r\n", int(((psl->TotalClusters(idx) - __int64(psl->FreeClusters(idx)))*100)/psl->TotalClusters(idx)));
 			    strInfo += ss;
 				if (psl->FreeClusters(idx) > 0)
                 {
@@ -287,12 +288,26 @@ void COpenSpecialDlg::Update()
 						                                      (double)psl->SectorsPerCluster(idx) *
 															  (double)psl->sector_size(idx))); 
 			        strInfo += ss;
+					sprintf(buf, "%I64d", psl->FreeClusters(idx) * __int64(psl->SectorsPerCluster(idx)) * psl->sector_size(idx));
+					ss = buf;
+					AddCommas(ss);
+					strInfo += "  = " + ss + " bytes\r\n";
+					ss.Format("%d", psl->FreeClusters(idx));
+					AddCommas(ss);
+					strInfo += "  = " + ss + " clusters\r\n";
                 }
                 //ss.Format("Capacity: %sb\r\n", NumScale((double)psl->TotalClusters(idx) *
                 //                                        (double)psl->SectorsPerCluster(idx) *
                 //                                        (double)psl->sector_size(idx))); 
 				ss.Format("Capacity: %sb\r\n", NumScale((double)psl->total_size(idx)));
 			    strInfo += ss;
+				sprintf(buf, "%I64d", __int64(psl->total_size(idx)));
+				ss = buf;
+				AddCommas(ss);
+				strInfo += "  = " + ss + " bytes\r\n";
+				ss.Format("%d", psl->TotalClusters(idx));
+				AddCommas(ss);
+				strInfo += "  = " + ss + " clusters\r\n";
 
 				break;
 
@@ -308,6 +323,10 @@ void COpenSpecialDlg::Update()
 
 				ss.Format("Capacity: %sb\r\n", NumScale((double)psl->total_size(idx))); 
 				strInfo += ss;
+				sprintf(buf, "%I64d", __int64(psl->total_size(idx)));
+				ss = buf;
+				AddCommas(ss);
+				strInfo += "  = " + ss + " bytes\r\n";
 				break;
 
 			default:
