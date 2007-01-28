@@ -1617,6 +1617,10 @@ void CHexEditApp::PreLoadState()
     GetMouseManager()->SetCommandForDblClick(IDR_CONTEXT_HEX, ID_MARK);
     GetMouseManager()->AddView(IDR_CONTEXT_CHAR, "Character Area");
     GetMouseManager()->SetCommandForDblClick(IDR_CONTEXT_CHAR, ID_MARK);
+    GetMouseManager()->AddView(IDR_CONTEXT_HIGHLIGHT, "Highlight");
+    GetMouseManager()->SetCommandForDblClick(IDR_CONTEXT_HIGHLIGHT, ID_HIGHLIGHT_SELECT);
+    GetMouseManager()->AddView(IDR_CONTEXT_BOOKMARKS, "Bookmark");
+    GetMouseManager()->SetCommandForDblClick(IDR_CONTEXT_BOOKMARKS, ID_BOOKMARKS_EDIT);
 
     GetContextMenuManager()->AddMenu(_T("Address Area"), IDR_CONTEXT_ADDRESS);
     GetContextMenuManager()->AddMenu(_T("Hex Area"), IDR_CONTEXT_HEX);

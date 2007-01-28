@@ -526,6 +526,7 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
     ON_COMMAND(ID_DFFD_TAB, OnDffdTab)
     ON_UPDATE_COMMAND_UI(ID_DFFD_TAB, OnUpdateDffdTab)
 
+    ON_COMMAND(ID_HIGHLIGHT_SELECT, OnHighlightSelect)
     //ON_WM_TIMER()
 
     ON_COMMAND(ID_VIEWTEST, OnViewtest)
@@ -5008,14 +5009,11 @@ void CHexEditView::OnDestroy()
     }
 }
 
+// Point is in window coordinates
 void CHexEditView::OnLButtonDblClk(UINT nFlags, CPoint point) 
 {
-#if 0 // Allow BCG customisation of double-click
-    // Mark position of double click (should be caret position)
-    OnMark();
-    CScrView::OnLButtonDblClk(nFlags, point);
-#else
-    if (point.x < hex_pos(0))
+#if 0
+	if (point.x < hex_pos(0))
         theApp.OnViewDoubleClick(this, IDR_CONTEXT_ADDRESS);
     else if (display_.vert_display)
     {
@@ -5030,6 +5028,82 @@ void CHexEditView::OnLButtonDblClk(UINT nFlags, CPoint point)
     else
         theApp.OnViewDoubleClick(this, IDR_CONTEXT_CHAR);
 #endif
+	CPointAp doc_pt = ConvertFromDP(point);
+
+    if (( (display_.vert_display || display_.char_area) && doc_pt.x >= char_pos(rowsize_)+text_width_ ||
+         !(display_.vert_display || display_.char_area) && doc_pt.x >= hex_pos(rowsize_) )  )
+    {
+        // Don't do anything if off to right
+        return;
+    }
+
+    if (doc_pt.x < hex_pos(0))
+        theApp.OnViewDoubleClick(this, IDR_CONTEXT_ADDRESS);
+    else if (display_.vert_display)
+    {
+        // Get selection address
+        FILE_ADDRESS start_addr, end_addr;
+        GetSelAddr(start_addr, end_addr);
+
+        // Get address clicked on in char area
+        FILE_ADDRESS addr = (doc_pt.y/line_height_)*rowsize_ - offset_ +
+                            pos_char(doc_pt.x);
+
+        //if (addr >= start_addr && addr < end_addr)
+        //    theApp.OnViewDoubleClick(this, IDR_CONTEXT_SELECTION);
+        //else
+		if (!display_.hide_bookmarks &&
+                 std::find(GetDocument()->bm_posn_.begin(), GetDocument()->bm_posn_.end(), addr) != GetDocument()->bm_posn_.end())
+            theApp.OnViewDoubleClick(this, IDR_CONTEXT_BOOKMARKS);  // click on bookmark
+        else if (!display_.hide_highlight && hl_set_.find(addr) != hl_set_.end())
+            theApp.OnViewDoubleClick(this, IDR_CONTEXT_HIGHLIGHT);  // click on highlight
+        else if (pos2row(doc_pt) == 0)
+            theApp.OnViewDoubleClick(this, IDR_CONTEXT_CHAR); // click on top (char) row
+        else
+            theApp.OnViewDoubleClick(this, IDR_CONTEXT_HEX);  // click on one of bottom 2 rows
+    }
+    else if (!display_.char_area || doc_pt.x < char_pos(0))
+    {
+        // Get selection address
+        FILE_ADDRESS start_addr, end_addr;
+        GetSelAddr(start_addr, end_addr);
+
+        // Get address clicked on in hex area
+        FILE_ADDRESS addr = (doc_pt.y/text_height_)*rowsize_ - offset_ +
+                            pos_hex(doc_pt.x);
+
+        //if (addr >= start_addr && addr < end_addr)
+        //    theApp.OnViewDoubleClick(this, IDR_CONTEXT_SELECTION);
+        //else
+		if (!display_.hide_bookmarks &&
+                 std::find(GetDocument()->bm_posn_.begin(), GetDocument()->bm_posn_.end(), addr) != GetDocument()->bm_posn_.end())
+            theApp.OnViewDoubleClick(this, IDR_CONTEXT_BOOKMARKS);
+        else if (!display_.hide_highlight && hl_set_.find(addr) != hl_set_.end())
+            theApp.OnViewDoubleClick(this, IDR_CONTEXT_HIGHLIGHT);  // click on highlight
+        else
+            theApp.OnViewDoubleClick(this, IDR_CONTEXT_HEX);
+    }
+    else
+    {
+        // Get selection address
+        FILE_ADDRESS start_addr, end_addr;
+        GetSelAddr(start_addr, end_addr);
+
+        // Get address clicked on in char area
+        FILE_ADDRESS addr = (doc_pt.y/text_height_)*rowsize_ - offset_ +
+                            pos_char(doc_pt.x);
+
+        //if (addr >= start_addr && addr < end_addr)
+        //    theApp.OnViewDoubleClick(this, IDR_CONTEXT_SELECTION);
+        //else
+		if (!display_.hide_bookmarks &&
+                 std::find(GetDocument()->bm_posn_.begin(), GetDocument()->bm_posn_.end(), addr) != GetDocument()->bm_posn_.end())
+            theApp.OnViewDoubleClick(this, IDR_CONTEXT_BOOKMARKS);
+        else if (!display_.hide_highlight && hl_set_.find(addr) != hl_set_.end())
+            theApp.OnViewDoubleClick(this, IDR_CONTEXT_HIGHLIGHT);  // click on highlight
+        else
+            theApp.OnViewDoubleClick(this, IDR_CONTEXT_CHAR);
+    }
 }
 
 void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point) 
@@ -5442,6 +5516,33 @@ void CHexEditView::OnHighlightClear()
         DoInvalidate();
     }
     aa->SaveToMacro(km_highlight);
+}
+
+// Select the current highlight.
+// This is designed for associating with double-click on a highlight event.
+void CHexEditView::OnHighlightSelect() 
+{
+    FILE_ADDRESS start_addr, end_addr;
+
+    GetSelAddr(start_addr, end_addr);
+    if (hl_set_.range_.empty())
+    {
+        ::HMessageBox("Nothing highlighted");
+        theApp.mac_error_ = 10;
+        return;
+    }
+    else
+    {
+        range_set<FILE_ADDRESS>::range_t::const_iterator pp =
+            lower_bound(hl_set_.range_.begin(),
+                        hl_set_.range_.end(),
+                        range_set<FILE_ADDRESS>::segment(start_addr+1, start_addr+1),
+                        segment_compare());
+        if (pp != hl_set_.range_.begin())
+            pp--;
+        MoveWithDesc("Select Highlight", pp->sfirst, pp->slast);
+        theApp. SaveToMacro(km_highlight, (unsigned __int64)5);
+    }
 }
 
 void CHexEditView::OnHighlightPrev() 
@@ -6183,6 +6284,7 @@ BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 }
 
 // Display views context menu
+// point is in screen coords
 void CHexEditView::view_context(CPoint point) 
 {
 #if 0 // Changes for BCG context menus
@@ -15682,7 +15784,7 @@ void CHexEditView::OnDffdHide()
 	if (idx1 > -1)  // splitter?
 	{
 		int dummy;
-		GetFrame()->splitter_.GetColumnInfo(idx1, split_width_, dummy);
+		GetFrame()->splitter_.GetColumnInfo(idx1, split_width_, dummy);  // save split window width in case it is reopened
 		VERIFY(GetFrame()->splitter_.DelColumn(idx1, TRUE));
 		GetFrame()->splitter_.RecalcLayout();
 	}
@@ -15766,7 +15868,7 @@ void CHexEditView::OnDffdTab()
 		if (idx1 > -1)
 		{
 			int dummy;
-			GetFrame()->splitter_.GetColumnInfo(idx1, split_width_, dummy);
+			GetFrame()->splitter_.GetColumnInfo(idx1, split_width_, dummy);  // save split window width in case it is reopened
 		    VERIFY(GetFrame()->splitter_.DelColumn(idx1, TRUE));
 			GetFrame()->splitter_.RecalcLayout();
 		}
@@ -15796,6 +15898,7 @@ void CHexEditView::OnUpdateDffdTab(CCmdUI* pCmdUI)
 // This is connected to Ctrl+T and is used for testing new dialogs etc
 void CHexEditView::OnViewtest() 
 {
+	OnHighlightSelect();
 	// for testing new commands
 }
 

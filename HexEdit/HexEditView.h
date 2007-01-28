@@ -703,6 +703,7 @@ public:
     afx_msg void OnUpdateDffdHide(CCmdUI* pCmdUI);
     afx_msg void OnUpdateDffdSplit(CCmdUI* pCmdUI);
     afx_msg void OnUpdateDffdTab(CCmdUI* pCmdUI);
+    afx_msg void OnHighlightSelect();
 
     DECLARE_MESSAGE_MAP()
 

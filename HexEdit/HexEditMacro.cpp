@@ -574,6 +574,9 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 case 4:
                     pv_->OnHighlightHide();
                     break;
+                case 5:
+                    pv_->OnHighlightSelect();
+                    break;
                 }
                 break;
             case km_bookmarks:

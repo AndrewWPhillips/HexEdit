@@ -309,20 +309,16 @@ Help
       - macro that runs when certain types of file are opened
  
 V3.2
- - template template menu
-   - new, open, open type, parser setup
-   - save, save as
-   > split/tab/none
-   > sync, auto sync, refresh
-   - allow editing
+ > fix info in open special dialog
+   > bug in total space calcs
+   > show tota/free space in bytes and clusters
+ > info tip - bookmark, user-defined expressions etc\
+   - global option to turn on/off
+   - handle all time formats, character sets for chars and strings
  - make sure no files are modified in .EXE directory
  - new installer
    - get MFC merge module (.msm file) to include used MFC in installation (.msi)
    - is it possible to have install modules (eg MFC) come from web only when needed?
- - fix editing of properties fields
-   - summary page = auto save (no Return required) but allow Esc before lose focus
-   - others = prompt if Esc/Return not pressed
- 
  - acknowledgements
 	BCG Control Bar 5.9 - Stas Levin et al at BCG (http://bcgsoft.com)
 	MFC Grid Control - Chris Maunder (http://codeproject.com/miscctrl/gridctrl.asp)
@@ -354,32 +350,43 @@ V3.2
 	IkonBoard
 	FireFox
 
+ - allow enter expressions (incl assign to vars) in hex/dec jump tools
+ > add select current highlight command and make default for dclick on highlight?
+ - template template menu
+   > new, open, open type
+   - parser setup
+   > save, save as
+   > split/tab/none
+   > sync, auto sync, refresh
+   > allow editing, options
+ - unicode strings in templates
+ - update BCG 6.2 with my code and rebuild
  - make all selection work with blocks > 4GB
    > conversions (x 4)
    > encrypt/decrypt
    - import/export hex text
    - clipboard?
+ > properties fields
+   > summary page
+     > auto save (no Return required) but allow Esc before lose focus
+   > merge fp pages
+   > add C# decimal
+   > code page support in char page
  > upgrade to Visual Studio 2003
  > draw image in background
- - MD5 + uppercase/lowercase conversions
-   > code
-   - help
+ > MD5 + uppercase/lowercase conversions
  > general alignment and offset options for find
- - unicode strings in templates
- - update BCG 6.2 with my code and rebuild
- > zlib compression/uncompression + dialog
- > info tip - bookmark, user-defined expressions etc\
-   - global option to turn on/off
-   - handle all time formats, character sets for chars and strings
+ > zlib compression/decompression + dialog
  > merge float properties pages into one and add Decimal (C#) capability
  > background search for drive info (BG_DEVICE_SEARCH)
- > Char Properties code page stuff
- - allow enter expressions (incl assign to vars) in hex/dec jump tools
- - add select current highlight command and make default for dclick on highlight?
  > recent file dlg and bookmark dlg can only handle file sizes/positions up to 2^31 (sorting)
  - check new cracker codes and find workaround
- - cust tutorial
- - update template tutorial
+ - update help
+   - move "what's this" help from .HLP to .CHM
+   - new commands
+   - new dialog controls - what's this
+   - cust tutorial
+   - update template tutorial
 
 V3.3 
   - new look web site

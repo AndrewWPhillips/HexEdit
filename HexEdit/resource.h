@@ -289,6 +289,7 @@
 #define IDD_PROP_REAL                   309
 #define IDB_BACK_HOT                    310
 #define ID_INTEGER_INT                  310
+#define IDD_ABOUT1                      310
 #define IDB_FORW_HOT                    311
 #define ID_INTEGER_INT311               311
 #define IDB_PARENT_HOT                  312
@@ -943,6 +944,7 @@
 #define IDC_ATTACHMENT_BROWSE           1435
 #define IDC_EDIT1                       1436
 #define IDC_PTR_SIZE2                   1437
+#define IDC_EDIT2                       1437
 #define IDC_PTR_SIZE4                   1438
 #define IDC_PTR_SIZE8                   1439
 #define IDC_FUNC_PTR2                   1440
@@ -1105,6 +1107,7 @@
 #define ID_NEG_16BIT                    32858
 #define ID_NEG_32BIT                    32859
 #define ID_NEG_64BIT                    32860
+#define ID_HIGHLIGHT_SELECT             32861
 #define ID_HIGHLIGHT                    32862
 #define ID_HIGHLIGHT_CLEAR              32863
 #define ID_HIGHLIGHT_PREV               32864

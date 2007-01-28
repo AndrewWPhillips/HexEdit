@@ -996,6 +996,7 @@ BEGIN
         MENUITEM "Next Highlight",              ID_HIGHLIGHT_NEXT
         MENUITEM "Hide Highlights",             ID_HIGHLIGHT_HIDE
         MENUITEM "Clear Highlights",            ID_HIGHLIGHT_CLEAR
+        MENUITEM "Select Highlight",            32861
     END
     POPUP "Navigation commands"
     BEGIN
@@ -1552,10 +1553,10 @@ BEGIN
                     39,33,10,0,HIDC_IBMFP_64BIT
 END
 
-IDD_ABOUT DIALOG  0, 0, 249, 103
+IDD_ABOUT DIALOGEX 0, 0, 249, 103
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About HexEdit"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,12,25,20,20
     DEFPUSHBUTTON   "OK",IDOK,192,7,50,14,WS_GROUP
@@ -2234,6 +2235,26 @@ BEGIN
     LTEXT           "Extra info\nhere",IDC_FP_DESC,166,45,51,25,SS_NOTIFY
 END
 
+IDD_ABOUT1 DIALOGEX 0, 0, 411, 226
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About HexEdit"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,12,25,21,20
+    DEFPUSHBUTTON   "OK",IDOK,311,169,93,14,WS_GROUP
+    PUSHBUTTON      "URL",IDC_BUTTON_URL,311,31,93,14,WS_GROUP
+    PUSHBUTTON      "Enter &Activation Code...",IDC_ACTIVATE,311,94,93,14
+    LTEXT           "HexEdit 3.2",IDC_STATIC,149,24,38,8
+    LTEXT           "Copyright 1999-2007 Expert Commercial Software Pty Ltd",
+                    IDC_STATIC,150,38,101,20
+    LTEXT           "Licensed to:",IDC_STATIC,152,70,40,8
+    EDITTEXT        IDC_EDIT1,151,85,129,36,ES_AUTOHSCROLL | ES_READONLY,
+                    WS_EX_TRANSPARENT
+    EDITTEXT        IDC_EDIT2,150,148,129,54,ES_MULTILINE | ES_AUTOHSCROLL | 
+                    WS_VSCROLL,WS_EX_TRANSPARENT
+    LTEXT           "Acknowledgements",IDC_STATIC,151,135,63,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2241,8 +2262,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,10,0,37
- PRODUCTVERSION 3,10,0,37
+ FILEVERSION 3,10,0,38
+ PRODUCTVERSION 3,10,0,38
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2259,12 +2280,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "3, 10, 0, 37"
+            VALUE "FileVersion", "3, 10, 0, 38"
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2006 Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "3, 10, 0, 37"
+            VALUE "ProductVersion", "3, 10, 0, 38"
         END
     END
     BLOCK "VarFileInfo"
@@ -2488,6 +2509,14 @@ BEGIN
         RIGHTMARGIN, 216
         TOPMARGIN, 7
         BOTTOMMARGIN, 72
+    END
+
+    IDD_ABOUT1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 404
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 219
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -2876,6 +2905,7 @@ BEGIN
     ID_NEG_16BIT            "Change sign of the word(s) (16 bit)\nNegate Word"
     ID_NEG_32BIT            "Change sign of the double word(s) (32 bit)\nNegate Double Word"
     ID_NEG_64BIT            "Change sign of the quad word(s) (64 bit)\nNegate Quad Word"
+    ID_HIGHLIGHT_SELECT     "Select the current highlight\nSelect Highlight"
     ID_HIGHLIGHT            "Highlight selected text or toggle highlight mode\nHighlighter"
     ID_HIGHLIGHT_CLEAR      "Clear all highlights in this file\nClear Highlights"
 END
@@ -4545,7 +4575,7 @@ BEGIN
     PUSHBUTTON      "&Help",IDC_CSRC_HELP,191,55,50,14,WS_GROUP
 END
 
-IDD_OPEN_SPECIAL DIALOGEX 0, 0, 360, 142
+IDD_OPEN_SPECIAL DIALOGEX 0, 0, 360, 146
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
@@ -4554,16 +4584,17 @@ FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Disk:",IDC_STATIC,7,4,17,8
     CONTROL         "Tree1",IDC_OPEN_TREE,"SysTreeView32",TVS_SHOWSELALWAYS | 
-                    WS_BORDER | WS_GROUP | WS_TABSTOP,7,16,190,118,0,
+                    WS_BORDER | WS_GROUP | WS_TABSTOP,7,16,190,123,0,
                     HIDC_OPEN_TREE
     LTEXT           "Properties:",IDC_PROP_DESC,208,4,145,8
-    EDITTEXT        IDC_OPEN_INFO,208,16,145,78,ES_MULTILINE | ES_READONLY | 
-                    NOT WS_TABSTOP,0,HIDC_OPEN_INFO
+    EDITTEXT        IDC_OPEN_INFO,208,16,145,85,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_READONLY | NOT WS_TABSTOP,0,
+                    HIDC_OPEN_INFO
     CONTROL         "Open as read only",IDC_OPEN_READONLY,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,208,104,73,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,208,110,73,10,0,
                     HIDC_OPEN_READONLY
-    DEFPUSHBUTTON   "OK",IDOK,303,101,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,303,119,50,14
+    DEFPUSHBUTTON   "OK",IDOK,303,107,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,303,125,50,14
 END
 
 IDD_DFFD_EVAL DIALOGEX 0, 0, 292, 170
@@ -5098,7 +5129,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 353
         TOPMARGIN, 7
-        BOTTOMMARGIN, 135
+        BOTTOMMARGIN, 139
     END
 
     IDD_DFFD_EVAL, DIALOG
