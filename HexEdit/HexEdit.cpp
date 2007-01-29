@@ -328,12 +328,16 @@ BOOL CHexEditApp::InitInstance()
                 version_ += short(strtol(endptr, &endptr, 10));
 
                 // Check if a beta version
-                if (*endptr != '\0')
-                {
-                    ++endptr;
-                    beta_ = (short)strtol(endptr, &endptr, 10);
-                    if (beta_ > 0)
-                        version_ += 10;  // go to next minor version for beta
+				if (*endptr != '\0')
+				{
+					++endptr;
+					beta_ = (short)strtol(endptr, &endptr, 10);
+
+					if (*endptr != '\0')
+					{
+						++endptr;
+						revision_ = (short)strtol(endptr, &endptr, 10);
+					}
                 }
             }
         }

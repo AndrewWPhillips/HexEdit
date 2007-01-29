@@ -8,6 +8,7 @@
 #include "HexEdit.h"
 #include "Register.h"
 #include "SystemSound.h"
+#include "EnBitmap.h"
 #include "misc.h"
 #include "resource.hm"
 #include "HelpID.hm"            // User defined help IDs
@@ -32,13 +33,11 @@ CAbout::CAbout(CWnd* pParent /*=NULL*/)
     : CDialog(CAbout::IDD, pParent)
 {
     //{{AFX_DATA_INIT(CAbout)
-    line1_ = _T("");
-    line2_ = _T("");
-    line3_ = _T("");
-    line4_ = _T("");
     //}}AFX_DATA_INIT
-    line2_ = "Copyright © 2006 Expert Commercial Software Pty Ltd";
-    line3_ = "Written by Andrew W. Phillips";
+    text1_ = _T("");
+    //line2_ = "Copyright © 2006 Expert Commercial Software Pty Ltd";
+    //line3_ = "Written by Andrew W. Phillips";
+    //line4_ = _T("");
 }
 
 void CAbout::DoDataExchange(CDataExchange* pDX)
@@ -47,18 +46,75 @@ void CAbout::DoDataExchange(CDataExchange* pDX)
     //{{AFX_DATA_MAP(CAbout)
 	DDX_Control(pDX, IDC_ACTIVATE, activate_ctrl_);
     DDX_Control(pDX, IDC_BUTTON_URL, url_ctl_);
-    DDX_Text(pDX, IDC_LINE1, line1_);
-    DDX_Text(pDX, IDC_LINE2, line2_);
-    DDX_Text(pDX, IDC_LINE3, line3_);
-    DDX_Text(pDX, IDC_LINE4, line4_);
 	//}}AFX_DATA_MAP
+    DDX_Control(pDX, IDC_LINE1, ctl_line1_);
+    DDX_Control(pDX, IDC_LINE2, ctl_line2_);
+    DDX_Control(pDX, IDC_LINE3, ctl_line3_);
+    DDX_Control(pDX, IDC_LINE4, ctl_line4_);
+    DDX_Control(pDX, IDC_LINE5, ctl_line5_);
+    DDX_Control(pDX, IDC_BUTTON_REG_URL, reg_url_ctl_);
+    DDX_Control(pDX, IDC_LICENCE, ctl_licence_);
+    DDX_Control(pDX, IDC_ACK, ctl_ack_);
+    DDX_Text(pDX, IDC_LINE1, text1_);
+    //DDX_Text(pDX, IDC_LICENCE, text2_);
+    //DDX_Text(pDX, IDC_LINE2, line2_);
+    //DDX_Text(pDX, IDC_LINE3, line3_);
+    //DDX_Text(pDX, IDC_LINE4, line4_);
 }
 
 BEGIN_MESSAGE_MAP(CAbout, CDialog)
     //{{AFX_MSG_MAP(CAbout)
 	ON_BN_CLICKED(IDC_ACTIVATE, OnActivate)
 	//}}AFX_MSG_MAP
+    ON_WM_ERASEBKGND()
+	ON_BN_CLICKED(IDC_EMAIL, OnEmail)
+	ON_BN_CLICKED(IDC_ACK_MORE, OnAckMore)
+	ON_LBN_DBLCLK(IDC_ACK, OnDblclkAck)
 END_MESSAGE_MAP()
+
+
+// Acknowledged software used in HexEdit and associated web addresses
+static const char *ack_name[] =
+{
+	"BCG Control Bar - BCGSoft Ltd",				// BCG Control Bar 5.9 - Stas Levin et al at BCG (http://bcgsoft.com)
+	"MFC Grid Control - Chris Maunder",				// MFC Grid Control - Chris Maunder (http://codeproject.com/miscctrl/gridctrl.asp)
+	"Tree control for MFC Grid - Ken Bertelson",	// MFC Grid Tree Extensions - Ken Bertelson (http://codeproject.com/miscctrl/gridtreectrl.asp)
+	"Window Splitter class (MFC) - Robert A. T. Káldy",	// Window Splitter class - Robert A. T. Káldy (http://codeproject.com/splitter/kaldysimplesplitter.asp)
+	"Dialog Resize class (MFC) - Herbert Menke",	// Dialog Resize class - Herbert Menke (http://www.codeproject.com/dialog/resizectrl.asp)
+	"ZLIB compression - J. Gailly and M. Adler",	// ZLIB
+	"MD5 Message-Digest Alg - RSA Data Security",	// MD5
+	"CFile64 (MFC) class by Samuel R. Blackburn",	// 64-bit file access (CFile64 class) - Samuel R. Blackburn (http://www.samblackburn.com/wfc/)
+	"CEnBitmap class (MFC) - Daniel Godson",
+	"Transparent controls (MFC) - Ali Rafiee",
+	"BigInteger used for C# Decimal - Cap'n Code",
+	"range_set class - Andrew W. Phillips",			// range_set class - Andrew Phillips (http://www.ddj.com/dept/cpp/184403660)
+	"Folder Selection Dialog - Andrew Phillips",	// folder selection - (http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/)
+	"SVN source control - Jim Blandy et al",		// SVN (Sub-version) source control - Jim Blandy et al (http://subversion.tigris.org/)
+	"TortoiseSVN SVN client - Stefan Küng et al",	// TSVN (TortoiseSVN) SVN client - Stefan Küng et al (http://tortoisesvn.sourceforge.net/)
+	"WIX installer toolkit - Rob Mensching et al",	// WIX installer toolkit - Rob Mensching et al (http://wix.sourceforge.net/)
+	NULL
+};
+
+static const char *ack_url[] =
+{
+	"http://bcgsoft.com/",
+	"http://codeproject.com/miscctrl/gridctrl.asp",
+	"http://codeproject.com/miscctrl/gridtreectrl.asp",
+	"http://codeproject.com/splitter/kaldysimplesplitter.asp",
+	"http://www.codeproject.com/dialog/resizectrl.asp",
+	"http://www.zlib.net/",
+	"http://theory.lcs.mit.edu/~rivest/md5.c",
+	"http://www.samblackburn.com/wfc/",
+	"http://www.codeproject.com/bitmap/extendedbitmap2.asp",
+	"http://www.codeproject.com/staticctrl/TransparentStaticCtrl.asp",
+	"http://www.codeproject.com/cpp/CppIntegerClass.asp",
+	"http://www.ddj.com/dept/cpp/184403660",
+	"http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/",
+	"http://subversion.tigris.org/",
+	"http://tortoisesvn.sourceforge.net/",
+	"http://wix.sourceforge.net/",
+	NULL
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CAbout message handlers
@@ -69,103 +125,169 @@ BOOL CAbout::OnInitDialog()
 
 	fix_controls();
 
+	// Set up achknowledgements
+    ctl_ack_.ResetContent();
+    for (const char** ppp = ack_name; *ppp != NULL; ++ppp)
+        ctl_ack_.AddString(*ppp);
+
+	return TRUE;
+}
+
+
+BOOL CAbout::OnEraseBkgnd(CDC* pDC)
+{
+    //return CDialog::OnEraseBkgnd(pDC);
+
+	CEnBitmap bg;
+	//bg.LoadImage("D:\\tmp\\Daily\\dlgbmp.bmp");
+	//bg.LoadImage("D:\\tmp\\icons\\kristi\\DesktopIcon\\mira desktop PNG files\\mira_desktop_48.png");
+	bg.LoadImage("D:\\tmp\\Daily\\HexEdit.bmp");
+	//bg.LoadImage("D:\\tmp\\icons\\calculator.bmp");
+	if (HBITMAP(bg) == 0)
+	    return FALSE;  // No bitmap so let Windows draw the background
+
+    CRect rct;
+    this->GetClientRect(rct);
+
+	CSize siz;
+	BITMAP bi;
+	bg.GetBitmap(&bi);
+	siz.cx = bi.bmWidth;
+	siz.cy = bi.bmHeight;
+
+	CDC dcTmp;
+	dcTmp.CreateCompatibleDC(pDC);
+	dcTmp.SelectObject(&bg);
+	pDC->StretchBlt(0, 0, rct.Width(), rct.Height(), 
+			&dcTmp, 0, 0, siz.cx, siz.cy, SRCCOPY);
+	dcTmp.DeleteDC();
 	return TRUE;
 }
 
 void CAbout::fix_controls()
 {
+	char rel_char = ' ';
+    CString ss;
+
     // Set up first line (version info)
-    if (theApp.beta_ == 0)
-        line1_.Format("HexEdit version %d.%02d", theApp.version_/100, theApp.version_%100);
-    else
-        line1_.Format("HexEdit %d.%02d Beta %d", theApp.version_/100, theApp.version_%100, theApp.beta_);
+	if (theApp.version_%10 > 0)
+		rel_char = 'A' - 1 + theApp.version_%10;
+    text1_.Format("HexEdit version %d.%d%c", theApp.version_/100, (theApp.version_%100)/10, rel_char);
+    if (theApp.beta_ > 0)
+	{
+        ss.Format(" Beta %d", theApp.beta_);
+		text1_ += ss;
+
+		// for beta versions also display the revision
+		ss.Format(" Revision %d", theApp.revision_);
+		text1_ += ss;
+	}
+
+    // Licence info
+    ctl_licence_.ResetContent();
+    switch (theApp.security_type_)
+	{
+	case 1:
+        ctl_licence_.AddString("Your trial period has expired.");
+		ctl_licence_.AddString("Click the link below to register.");
+		break;
+	case 2:
+        ss.Format("Your trial expires in %ld days.", long(theApp.days_left_));
+		ctl_licence_.AddString(ss);
+		ctl_licence_.AddString("Click the link below to register.");
+		break;
+	case 3:
+		ctl_licence_.AddString("Temporary licence. Click the link below to register.");
+		break;
+	case 4:
+        ctl_licence_.AddString("Your licence is for an earlier version.");
+		ctl_licence_.AddString("Click the link below to register.");
+		break;
+	case 5:
+        ctl_licence_.AddString("Your licence is for an earlier version.");
+        ctl_licence_.AddString("Click the link below to upgrade.");
+		break;
+	case 6:
+        ss.Format("Registered for use by: %s.", theApp.security_name_);
+		ctl_licence_.AddString(ss);
+		break;
+	default:
+		ctl_licence_.AddString("Unregistered copy.   Click the link below to register.");
+		break;
+	}
 
 	// Let the user know what licence they have if the licence is for previous version
     if (theApp.security_type_ > 3 && theApp.security_licensed_version_ > 2)
 	{
-		line3_ = "Your licence is for version ";
+		ss = "Your licence is for version ";
 
 		// See INTERNAL_VERSION for current value
 		switch (theApp.security_licensed_version_)
 		{
 		case 3:
-			line3_ += "2.2";
+			ss += "2.2";
 			break;
 		case 4:
-			line3_ += "2.5";
+			ss += "2.5";
 			break;
 		case 5:
-			line3_ += "2.6";
+			ss += "2.6";
 			break;
 		case 6:
-			line3_ += "3.0";
+			ss += "3.0";
 			break;
 		case 7:
-			line3_ += "3.1";
+			ss += "3.1";
 			break;
 		case 8:
-			line3_ += "3.2";
+			ss += "3.2";
+			break;
+		case 9:
+			ss += "3.3";
 			break;
 		default:
-			line3_ += "3.3 or later";
+			ss += "3.4 or later";
 			break;
 		}
+		ctl_licence_.AddString(ss);
 	}
 
-    // Set up last line (licence info)
-    switch (theApp.security_type_)
-	{
-	case 1:
-        line4_ =      "Your trial period has expired. Click the link below to register.";
-		break;
-	case 2:
-        line4_.Format("Your trial expires in %ld days. Click the link below to register.", long(theApp.days_left_));
-		break;
-	case 3:
-        line4_ =      "Temporary licence. Click the link below to register.";
-		break;
-	case 4:
-        line4_.Format("Your licence is for an earlier version. Click the link to register.");
-		break;
-	case 5:
-        line4_.Format("Your licence is for an earlier version. Click the link to upgrade.");
-		break;
-	case 6:
-        line4_.Format("Registered for use by: %s.", theApp.security_name_);
-		break;
-	default:
-        line4_ =      "Unregistered copy.   Click the link below to register.";
-		break;
-	}
+	// Web site link
+    VERIFY(ss.LoadString(IDS_WEB_ADDRESS));
+    url_ctl_.SetTooltip(_T("HexEdit web site"));
+    url_ctl_.SetWindowText(ss);
+    url_ctl_.SetURL(ss);
+    url_ctl_.SizeToContent(TRUE, TRUE);
 
-	// Web link = reg if not registered, upgrade if upgrade needed else just use web site
-    CString ss;
-    if (theApp.security_type_ < 5)
+	// Set up registration link and activea button
+    if (theApp.security_type_ == 6)
     {
+		// fully licensed
         VERIFY(ss.LoadString(IDS_WEB_REG_USER));
-        url_ctl_.SetTooltip(_T("Register now"));
+        reg_url_ctl_.SetTooltip(NULL);
 
-        activate_ctrl_.SetWindowText("Enter &Activation Code...");
-        activate_ctrl_.EnableWindow(TRUE);
+        activate_ctrl_.EnableWindow(FALSE);        // Already registered - no need to register or upgrade
     }
     else if (theApp.security_type_ == 5)
     {
-        VERIFY(ss.LoadString(IDS_WEB_UPGRADE));   // make this the upgrade web page when available xxx
-        url_ctl_.SetTooltip(_T("Upgrade now"));
+		// licensed for an earlier version - upgradeable
+        VERIFY(ss.LoadString(IDS_WEB_UPGRADE));
+        reg_url_ctl_.SetTooltip(_T("Upgrade now"));
 
-        activate_ctrl_.SetWindowText("Enter &Upgrade Code...");
+        activate_ctrl_.SetWindowText("&Upgrade...");
         activate_ctrl_.EnableWindow(TRUE);
     }
     else
     {
-        VERIFY(ss.LoadString(IDS_WEB_ADDRESS));
-        url_ctl_.SetTooltip(_T("HexEdit web site"));
+        VERIFY(ss.LoadString(IDS_WEB_REG_USER));
+        reg_url_ctl_.SetTooltip(_T("Register now"));
 
-        activate_ctrl_.EnableWindow(FALSE);        // Already registered - no need to register or upgrade
+        activate_ctrl_.SetWindowText("&Activate...");
+        activate_ctrl_.EnableWindow(TRUE);
     }
-    url_ctl_.SetWindowText(ss);
-    url_ctl_.SetURL(ss);
-    url_ctl_.SizeToContent(TRUE, TRUE);
+    reg_url_ctl_.SetWindowText(ss);
+    reg_url_ctl_.SetURL(ss);
+    reg_url_ctl_.SizeToContent(TRUE, TRUE);
 
     UpdateData(FALSE);
 }
@@ -191,6 +313,22 @@ void CAbout::OnActivate()
     {
 		fix_controls();
     }
+}
+
+void CAbout::OnEmail() 
+{
+	::SendEmail();
+}
+
+void CAbout::OnAckMore() 
+{
+	// xxx invoke help page for acknowledgements
+}
+
+void CAbout::OnDblclkAck()
+{
+	int idx = ctl_ack_.GetCurSel();
+	::ShellExecute(AfxGetMainWnd()->m_hWnd, _T("open"), ack_url[idx], NULL, NULL, SW_SHOWNORMAL);
 }
 
 /////////////////////////////////////////////////////////////////////////////

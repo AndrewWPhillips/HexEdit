@@ -372,6 +372,7 @@
 #define ID_DFFD_TOGGLE_EDIT             373
 #define ID_DFFD_OPEN_TYPE_DUMMY         374
 #define ID_DFFD_OPTIONS                 375
+#define IDD_ABOUT2                      376
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -400,6 +401,7 @@
 #define IDC_DIGIT_6                     1016
 #define IDC_BUTTON_URL                  1016
 #define IDC_DIGIT_7                     1017
+#define IDC_BUTTON_REG_URL              1017
 #define IDC_DIGIT_8                     1018
 #define IDC_DIGIT_9                     1019
 #define IDC_DIGIT_A                     1020
@@ -899,6 +901,7 @@
 #define IDC_ACTIVATE                    1384
 #define IDC_OPEN_TREE                   1385
 #define IDC_DFFD_ALLOW_EDIT             1386
+#define IDC_ACK_MORE                    1386
 #define IDC_OPEN_INFO                   1387
 #define IDC_PRINT_UNITS                 1388
 #define IDC_CSRC_HELP                   1389
@@ -945,7 +948,9 @@
 #define IDC_EDIT1                       1436
 #define IDC_PTR_SIZE2                   1437
 #define IDC_EDIT2                       1437
+#define IDC_ACK                         1437
 #define IDC_PTR_SIZE4                   1438
+#define IDC_ACK2                        1438
 #define IDC_PTR_SIZE8                   1439
 #define IDC_FUNC_PTR2                   1440
 #define IDC_FUNC_PTR4                   1441
@@ -1035,6 +1040,8 @@
 #define IDC_FP_DESC                     1532
 #define IDC_CATEGORY_SELECT             1533
 #define IDC_INFO_CATEGORY_SELECT        1533
+#define IDC_LICENCE                     1534
+#define IDC_LINE5                       1535
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1383,9 +1390,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        376
+#define _APS_NEXT_RESOURCE_VALUE        377
 #define _APS_NEXT_COMMAND_VALUE         39001
-#define _APS_NEXT_CONTROL_VALUE         1534
+#define _APS_NEXT_CONTROL_VALUE         1536
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

@@ -7,6 +7,9 @@
 // Register.h : header file
 //
 
+#include "TransparentListBox.h"
+#include "TransparentStatic2.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // CAbout dialog
 
@@ -21,12 +24,19 @@ public:
 	enum { IDD = IDD_ABOUT };
 	CButton	activate_ctrl_;
 	CBCGURLLinkButton	url_ctl_;
-	CString	line1_;
-	CString	line2_;
-	CString	line3_;
-	CString	line4_;
 	//}}AFX_DATA
-
+	CBCGURLLinkButton	reg_url_ctl_;
+    CTransparentStatic2 ctl_line1_;
+    CTransparentStatic2 ctl_line2_;
+    CTransparentStatic2 ctl_line3_;
+    CTransparentStatic2 ctl_line4_;
+    CTransparentStatic2 ctl_line5_;
+	CTransparentListBox ctl_licence_;
+	CTransparentListBox ctl_ack_;
+	CString	text1_;
+	//CString	line2_;
+	//CString	line3_;
+	//CString	line4_;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -45,6 +55,10 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnActivate();
 	//}}AFX_MSG
+    afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnEmail();
+	afx_msg void OnAckMore();
+	afx_msg void OnDblclkAck();
 	DECLARE_MESSAGE_MAP()
 	void fix_controls();
 };

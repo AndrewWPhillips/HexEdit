@@ -314,8 +314,9 @@ public:
     DECLARE_MESSAGE_MAP()
 
 public:
-    short version_;             // Eg. 101 means HexEdit version 1.01
+    short version_;             // Use 3 decimal digits as Maj.MinRel eg 320 means 3.2, 321 means 3.2A
     short beta_;                // Beta version (0 if not a beta)
+	short revision_;            // This should be a unique build no (one day we will use SVN revision number)
 
 #ifdef USE_HTML_HELP
     CString htmlhelp_file_;

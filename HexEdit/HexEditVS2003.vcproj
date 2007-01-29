@@ -567,6 +567,12 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\TransparentListBox.cpp">
+			</File>
+			<File
+				RelativePath=".\TransparentStatic2.cpp">
+			</File>
+			<File
 				RelativePath=".\UserTool.cpp">
 			</File>
 			<File
@@ -830,6 +836,12 @@
 			</File>
 			<File
 				RelativePath="TParser.h">
+			</File>
+			<File
+				RelativePath=".\TransparentListBox.h">
+			</File>
+			<File
+				RelativePath=".\TransparentStatic2.h">
 			</File>
 			<File
 				RelativePath=".\UserTool.h">
@@ -1099,10 +1111,10 @@
 				RelativePath=".\TestData\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\TestData\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\TestData\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

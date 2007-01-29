@@ -1553,7 +1553,7 @@ BEGIN
                     39,33,10,0,HIDC_IBMFP_64BIT
 END
 
-IDD_ABOUT DIALOGEX 0, 0, 249, 103
+IDD_ABOUT2 DIALOGEX 0, 0, 249, 103
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About HexEdit"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -2235,24 +2235,31 @@ BEGIN
     LTEXT           "Extra info\nhere",IDC_FP_DESC,166,45,51,25,SS_NOTIFY
 END
 
-IDD_ABOUT1 DIALOGEX 0, 0, 411, 226
+IDD_ABOUT DIALOGEX 0, 0, 390, 266
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About HexEdit"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,12,25,21,20
-    DEFPUSHBUTTON   "OK",IDOK,311,169,93,14,WS_GROUP
-    PUSHBUTTON      "URL",IDC_BUTTON_URL,311,31,93,14,WS_GROUP
-    PUSHBUTTON      "Enter &Activation Code...",IDC_ACTIVATE,311,94,93,14
-    LTEXT           "HexEdit 3.2",IDC_STATIC,149,24,38,8
+    LTEXT           "HexEdit 3.2",IDC_LINE1,150,24,166,8
     LTEXT           "Copyright 1999-2007 Expert Commercial Software Pty Ltd",
-                    IDC_STATIC,150,38,101,20
-    LTEXT           "Licensed to:",IDC_STATIC,152,70,40,8
-    EDITTEXT        IDC_EDIT1,151,85,129,36,ES_AUTOHSCROLL | ES_READONLY,
-                    WS_EX_TRANSPARENT
-    EDITTEXT        IDC_EDIT2,150,148,129,54,ES_MULTILINE | ES_AUTOHSCROLL | 
-                    WS_VSCROLL,WS_EX_TRANSPARENT
-    LTEXT           "Acknowledgements",IDC_STATIC,151,135,63,8
+                    IDC_LINE2,150,38,96,18
+    PUSHBUTTON      "&Email...",IDC_EMAIL,322,38,61,14
+    PUSHBUTTON      "URL",IDC_BUTTON_URL,150,59,166,14,WS_GROUP
+    LTEXT           "Licensed to:",IDC_LINE3,150,86,166,8
+    PUSHBUTTON      "&Activate...",IDC_ACTIVATE,322,100,61,14
+    PUSHBUTTON      "URL",IDC_BUTTON_REG_URL,150,138,166,14,WS_GROUP
+    LTEXT           "Third party software used in HexEdit:",IDC_LINE4,150,
+                    165,166,8
+    LISTBOX         IDC_ACK,150,179,166,51,LBS_OWNERDRAWFIXED | 
+                    LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_NODATA | 
+                    WS_VSCROLL
+    PUSHBUTTON      "&More Info...",IDC_ACK_MORE,322,179,61,14
+    DEFPUSHBUTTON   "OK",IDOK,322,244,61,14,WS_GROUP
+    LTEXT           "Double-click an entry above to open the associated web site.",
+                    IDC_LINE5,150,233,166,24
+    LISTBOX         IDC_LICENCE,150,100,166,32,LBS_OWNERDRAWFIXED | 
+                    LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_NODATA | 
+                    WS_VSCROLL
 END
 
 
@@ -2262,8 +2269,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,10,0,38
- PRODUCTVERSION 3,10,0,38
+ FILEVERSION 3,20,1,39
+ PRODUCTVERSION 3,20,1,39
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2280,12 +2287,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "3, 10, 0, 38"
+            VALUE "FileVersion", "3, 20, 1, 39"
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2006 Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "3, 10, 0, 38"
+            VALUE "ProductVersion", "3, 20, 1, 39"
         END
     END
     BLOCK "VarFileInfo"
@@ -2351,7 +2358,7 @@ BEGIN
         BOTTOMMARGIN, 72
     END
 
-    IDD_ABOUT, DIALOG
+    IDD_ABOUT2, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 242
@@ -2511,12 +2518,12 @@ BEGIN
         BOTTOMMARGIN, 72
     END
 
-    IDD_ABOUT1, DIALOG
+    IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 404
+        RIGHTMARGIN, 383
         TOPMARGIN, 7
-        BOTTOMMARGIN, 219
+        BOTTOMMARGIN, 259
     END
 END
 #endif    // APSTUDIO_INVOKED
