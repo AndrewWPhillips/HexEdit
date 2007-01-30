@@ -2245,7 +2245,7 @@ BEGIN
                     IDC_LINE2,150,38,96,18
     PUSHBUTTON      "&Email...",IDC_EMAIL,322,38,61,14
     PUSHBUTTON      "URL",IDC_BUTTON_URL,150,59,166,14,WS_GROUP
-    LTEXT           "Licensed to:",IDC_LINE3,150,86,166,8
+    LTEXT           "Licensing information:",IDC_LINE3,150,86,166,8
     PUSHBUTTON      "&Activate...",IDC_ACTIVATE,322,100,61,14
     PUSHBUTTON      "URL",IDC_BUTTON_REG_URL,150,138,166,14,WS_GROUP
     LTEXT           "Third party software used in HexEdit:",IDC_LINE4,150,

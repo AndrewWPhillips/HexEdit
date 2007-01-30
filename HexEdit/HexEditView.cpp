@@ -15789,7 +15789,10 @@ void CHexEditView::OnDffdHide()
 		GetFrame()->splitter_.RecalcLayout();
 	}
 	else if (idx2 > -1)  // tab?
+	{
+		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing tree view
 		VERIFY(GetFrame()->ptv_->RemoveView(idx2));
+	}
 
 	pdfv_ = NULL;
 }
