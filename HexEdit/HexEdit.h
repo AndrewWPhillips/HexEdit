@@ -703,6 +703,7 @@ private:
 #ifndef NO_SECURITY
     // Security stuff
     void GetMystery();
+	int GetMysteryFile(const char * filename);
     int GetSecurity();
     int QuickCheck();
     void CheckSecurityActivated();

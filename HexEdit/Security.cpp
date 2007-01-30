@@ -34,8 +34,9 @@ static char THIS_FILE[] = __FILE__;
 
 // Other things we don't want anyone to see
 #define BAD_USER      "DSBDLFE"         // User name "CRACKED"
-#define SEC_FILENAME2 "Ifyfeju/joe"     // File name "Hexedit.ind"
 #define SEC_FILENAME  "Ifyfeju/dge"     // File name "Hexedit.cfd"
+#define SEC_FILENAME2 "Ifyfeju/joe"     // File name "Hexedit.ind"
+#define SEC_FILENAME3 "%Oug.|@~/MPH"    // File name "$Ntf-{?}.LOG"
 
 #define EXPIRY_DAYS   30
 
@@ -246,7 +247,19 @@ void CHexEditApp::DeleteSecurityFiles()
         strcat(fullname, "\\");
     }
     strcpy(fullname + len, SEC_FILENAME2); sub1(fullname + len);
-	remove(fullname);
+	if (GetMysteryFile(fullname) == 1)  // 0 = not found, 1 = found & valid, -1 = found but NOT valid
+		remove(fullname);
+
+	// Check ver 3.2 myst file name(s)
+    ::GetTempPath(sizeof(fullname), fullname);
+    len = strlen(fullname);
+    strcpy(fullname + len, SEC_FILENAME3); sub1(fullname + len);
+	len += 6;
+	ASSERT(fullname[len] == '?');
+	for (fullname[len] = 'X'; fullname[len] > '@'; fullname[len]--)
+		if (GetMysteryFile(fullname) == 1)
+			remove(fullname);
+	memset(fullname, '\0', sizeof(fullname));
 }
 
 // Encrypts (using own key) the info in security_info which is clear text on entry/exit
@@ -656,14 +669,15 @@ bool CHexEditApp::CheckNewVersion()
     char fullname[_MAX_PATH];       // Full name of security file
     size_t len;
 
-    VERIFY(::GetWindowsDirectory(fullname, sizeof(fullname)) > 0);
+	// Get name for mystery file
+    ::GetTempPath(sizeof(fullname), fullname);
     len = strlen(fullname);
-    if (len == 0 || fullname[len-1] != '\\')
-    {
-        ++len;
-        strcat(fullname, "\\");
-    }
-    strcpy(fullname + len, SEC_FILENAME2); sub1(fullname + len);
+    strcpy(fullname + len, SEC_FILENAME3); sub1(fullname + len);
+	len += 6;
+	ASSERT(fullname[len] == '?');
+	for (fullname[len] = 'X'; fullname[len] > '@'; fullname[len]--)
+		if (GetMysteryFile(fullname) != -1)  // stop when we find the valid existing file or no file
+			break;
 
     // Write the new mystery info back out
     set_key(STANDARD_KEY, 8);
@@ -676,11 +690,15 @@ bool CHexEditApp::CheckNewVersion()
         fclose(ff);
         set_key(DUMMY_KEY, 8);
 
-        struct _utimbuf times;          // Structure used to change file times
-        times.actime = 946000000L;
-        times.modtime = 946000000L;
-        _utime(fullname, &times);
+		struct _stat status;
+		if (_stat(fullname, &status) == 0)
+		{
+			struct _utimbuf times;          // Structure used to change file times
+			times.actime = times.modtime = status.st_mtime - (24*60*60);
+			_utime(fullname, &times);
+		}
     }
+	memset(fullname, '\0', sizeof(fullname));
 
     // Write to registry
     HKEY hkey;
@@ -757,6 +775,39 @@ int CHexEditApp::QuickCheck()
     return 1;
 }
 
+// Read mystery file and return:
+// 1 if it was read and was the right length
+// 0 if it was not found
+// -1 if it was found but is apparently invalid
+int CHexEditApp::GetMysteryFile(const char * filename)
+{
+    FILE *ff = NULL;
+    if ((ff = fopen(filename, "rb")) != NULL &&
+        fread((void *)&myst_info, 1, sizeof(myst_info)+1, ff) == sizeof(myst_info))
+    {
+        fclose(ff);
+
+		int retval = 1;
+
+        set_key(STANDARD_KEY, 8);
+        decrypt(&myst_info, sizeof(myst_info));
+
+        security_rand_ = myst_info.rand;
+        init_date_ = myst_info.date;
+		// Version 1.0 and earlier and after ver 10.0 are invalid (at least for a long time)
+		if (myst_info.version <= 100 || myst_info.version > 1000)
+			retval = -1;
+
+        // Rescramble the data so it can't be searched for in memory
+        encrypt(&myst_info, sizeof(myst_info));
+        set_key(DUMMY_KEY, 8);
+
+		return retval;
+	}
+	if (ff != NULL) fclose(ff);
+	return (_access(filename, 0) == -1) ? 0 : -1;   // return -1 if exists (apparently invalid) or 0 if no file exists
+}
+
 // Get special value and date HexEdit was first run, from registry.
 // If this is the first time HexEdit is run then create these values.
 // Sets member variables: security_rand_ and init_date_.
@@ -804,30 +855,42 @@ void CHexEditApp::GetMystery()
 
         // Create backup data file name
         FILE *ff;                       // Security file
-        char fullname[_MAX_PATH];       // Full name of security file
+        char oldname[_MAX_PATH];       // Full name of security file
         size_t len;
 
-        VERIFY(::GetWindowsDirectory(fullname, sizeof(fullname)) > 0);
-        len = strlen(fullname);
-        if (len == 0 || fullname[len-1] != '\\')
+        VERIFY(::GetWindowsDirectory(oldname, sizeof(oldname)) > 0);
+        len = strlen(oldname);
+        if (len == 0 || oldname[len-1] != '\\')
         {
             ++len;
-            strcat(fullname, "\\");
+            strcat(oldname, "\\");
         }
-        strcpy(fullname + len, SEC_FILENAME2); sub1(fullname + len);
+        strcpy(oldname + len, SEC_FILENAME2); sub1(oldname + len);
 
-        // Check if .bmp has a "Data" entry - if not add it
+        char fullname[_MAX_PATH];       // Full name of security file
+		int file_found = -1;            // fullname is invalid (-1), not present (0), present & valid (1)
+
+		::GetTempPath(sizeof(fullname), fullname);
+		len = strlen(fullname);
+		strcpy(fullname + len, SEC_FILENAME3); sub1(fullname + len);
+		len += 6;
+		ASSERT(fullname[len] == '?');
+		for (fullname[len] = 'X'; fullname[len] > '@'; fullname[len]--)
+			if ((file_found = GetMysteryFile(fullname)) != -1)
+				break;
+
+        // Check if .bmp has a "Data" entry
         ASSERT(sizeof(buf) > sizeof(REG_DATA));
         strcpy(buf, REG_DATA); sub1(buf);
         if (::RegQueryValueEx(hkey, buf, NULL, &reg_type, (BYTE *)reg_data, &reg_size) == ERROR_SUCCESS)
         {
-            // Read it and get the info
+            // Read reg entry and get the info
             set_key(STANDARD_KEY, 8);
             memcpy(&myst_info, reg_data, sizeof(myst_info));
             decrypt(&myst_info, sizeof(myst_info));
 
             // Make sure the file with duplicate info is there
-            if (_access(fullname, 0) != 0)
+            if (file_found == 0)
             {
                 // Write the same info to file
                 set_key(STANDARD_KEY, 8);
@@ -839,10 +902,13 @@ void CHexEditApp::GetMystery()
                     fwrite((void *)&myst_info, sizeof(myst_info), 1, ff);
                     fclose(ff);
 
-                    struct _utimbuf times;          // Structure used to change file times
-                    times.actime = 946000000L;
-                    times.modtime = 946000000L;
-                    _utime(fullname, &times);
+					struct _stat status;                // used to get file times
+					if (_stat(fullname, &status) == 0)
+					{
+						struct _utimbuf times;          // Structure used to change file times
+						times.actime = times.modtime = status.st_mtime - (24*60*60); // a day ago
+						_utime(fullname, &times);
+					}
                 }
                 decrypt(&myst_info, sizeof(myst_info));
             }
@@ -854,10 +920,29 @@ void CHexEditApp::GetMystery()
             encrypt(&myst_info, sizeof(myst_info));
             set_key(DUMMY_KEY, 8);
         }
-        else if ((ff = fopen(fullname, "rb")) != NULL &&
-                 fread((void *)&myst_info, sizeof(myst_info), 1, ff) == 1)
+        else if (file_found == 1)  // Use the info already read from the file
+        {
+			// Save it to reg entry (which we know is not present)
+            ::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info));
+
+#if 0 // this is already done in GetMysteryFile
+            set_key(STANDARD_KEY, 8);
+            decrypt(&myst_info, sizeof(myst_info));
+
+            security_rand_ = myst_info.rand;
+            init_date_ = myst_info.date;
+
+            // Rescramble the data so it can't be searched for in memory
+            encrypt(&myst_info, sizeof(myst_info));
+            set_key(DUMMY_KEY, 8);
+#endif
+        }
+        else if ((ff = fopen(oldname, "rb")) != NULL &&
+                 fread((void *)&myst_info, sizeof(myst_info), 1, ff) == 1)  // use old file
         {
             fclose(ff);
+
+			// Save info to registry
             ::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info));
 
             set_key(STANDARD_KEY, 8);
@@ -887,16 +972,20 @@ void CHexEditApp::GetMystery()
             encrypt(&myst_info, sizeof(myst_info));
 
             // Write to backup file
+			ASSERT(file_found == 0);  // fullname should refer to a non-existent file name
             if ((ff = fopen(fullname, "wb")) != NULL)
             {
                 fwrite((void *)&myst_info, sizeof(myst_info), 1, ff);
                 fclose(ff);
                 set_key(DUMMY_KEY, 8);
 
-                struct _utimbuf times;          // Structure used to change file times
-                times.actime = 946000000L;
-                times.modtime = 946000000L;
-                _utime(fullname, &times);
+				struct _stat status;                // used to get file times
+				if (_stat(fullname, &status) == 0)
+				{
+					struct _utimbuf times;          // Structure used to change file times
+					times.actime = times.modtime = status.st_mtime - (24*60*60); // a day ago
+					_utime(fullname, &times);
+				}
             }
 
             ::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info));
@@ -905,6 +994,8 @@ void CHexEditApp::GetMystery()
         // At this point myst_info should be correct but encypted with STANDARD_KEY
 
         ::RegCloseKey(hkey);
+		memset(fullname, '\0', sizeof(fullname));
+		memset(oldname, '\0', sizeof(oldname));
     }
 
     // Make sure any reg entry name is obliterated in memory
