@@ -1800,6 +1800,14 @@ BOOL CHexEditDoc::DffdEditMode()
 void CHexEditDoc::OnEditMode() 
 {
 	dffd_edit_mode_ = !DffdEditMode();
+	// We need to rebuild the tree to include/exclude edit mode stuff
+    ScanFile();
+    CDFFDHint dffdh;
+    UpdateAllViews(NULL, 0, &dffdh);
+
+	CHexEditView *pv = GetBestView();
+	if (pv != NULL)
+		pv->ShowDffd();
 }
 
 void CHexEditDoc::OnUpdateEditMode(CCmdUI* pCmdUI) 
