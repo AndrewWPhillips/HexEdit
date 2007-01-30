@@ -833,10 +833,11 @@ void CPropInfoPage::Update(CHexEditView *pv, FILE_ADDRESS /*not used*/)
     ASSERT(GetDlgItem(IDC_INFO_KEYWORDS) != NULL);
     ASSERT(GetDlgItem(IDC_INFO_COMMENTS) != NULL);
 
-	// Make controls RO (disallow entry) if there is nor recent file entry (since we can't store comments back anyway)
+	// Make controls RO (disallow entry) if there is no recent file entry (since we can't store comments back anyway)
     GetDlgItem(IDC_INFO_CATEGORY)->SendMessage(EM_SETREADONLY, ii == -1);
     GetDlgItem(IDC_INFO_KEYWORDS)->SendMessage(EM_SETREADONLY, ii == -1);
     GetDlgItem(IDC_INFO_COMMENTS)->SendMessage(EM_SETREADONLY, ii == -1);
+	cat_sel_ctl_.EnableWindow(ii != -1);
 	if (pv == NULL)
 	{
 		// There is no file open so just return with fields blank
@@ -1015,7 +1016,8 @@ BOOL CPropInfoPage::PreTranslateMessage(MSG* pMsg)
 
 BOOL CPropInfoPage::OnSetActive() 
 {
-    Update(GetView());
+	CHexEditView *pv = GetView();
+    Update(pv);
 
 	// Now setup menu of existing categories
 
@@ -1029,6 +1031,7 @@ BOOL CPropInfoPage::OnSetActive()
 	// Add menu items
     CHexFileList *pfl = theApp.GetFileList();
 	std::set<CString> categories;
+
 	for (int ii = 0; ii < pfl->GetCount(); ++ii)
 	{
 		CString ss = pfl->GetData(ii, CHexFileList::CATEGORY);
@@ -1050,7 +1053,11 @@ BOOL CPropInfoPage::OnSetActive()
 
 		cat_sel_ctl_.m_hMenu = mm.GetSafeHmenu();
 		mm.Detach();
-		cat_sel_ctl_.EnableWindow(TRUE);
+
+		int curr = -1;
+		if (pv != NULL && pv->GetDocument()->pfile1_ != NULL) // make sure there is a disk file to interrogate (pfl required disk file name)
+			curr = pfl->GetIndex(pv->GetDocument()->pfile1_->GetFilePath());
+		cat_sel_ctl_.EnableWindow(curr != -1);
 	}
 
 // xxx    ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_file);
