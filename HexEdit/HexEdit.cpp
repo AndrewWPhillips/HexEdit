@@ -292,14 +292,6 @@ UINT CHexEditApp::wm_hexedit = ::RegisterWindowMessage("HexEditOpenMessage");
 
 BOOL CHexEditApp::InitInstance()
 {
-        // Seed the random number generators
-        unsigned int seed = ::GetTickCount();
-        srand(seed);                    // Seed compiler PRNG (simple one)
-        rand_good_seed(seed);           // Seed our own PRNG
-
-#ifndef NO_SECURITY
-        GetMystery();                   // Get mystery info for later security checks
-#endif
         if (!AfxOleInit())              // For BCG and COM (calls CoInitialize())
         {
             AfxMessageBox("OLE initialization failed.  Make sure that the OLE libraries are the correct version.");
@@ -341,8 +333,17 @@ BOOL CHexEditApp::InitInstance()
                 }
             }
         }
+        // Seed the random number generators
+        unsigned int seed = ::GetTickCount();
+        srand(seed);                    // Seed compiler PRNG (simple one)
 
-        // Test is we are running under NT
+#ifndef NO_SECURITY
+		// This must be done after getting version info since theApp.version_ is written to file
+        GetMystery();                   // Get mystery info for later security checks
+#endif
+        rand_good_seed(seed);           // Seed our own PRNG
+
+        // Getting OS version info
         OSVERSIONINFO osvi;
         osvi.dwOSVersionInfoSize = sizeof(osvi);
         GetVersionEx(&osvi);
