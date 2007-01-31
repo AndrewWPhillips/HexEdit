@@ -220,20 +220,8 @@ void CHexEditApp::DeleteSecurityFiles()
     char fullname[_MAX_PATH];       // Full name of security file
     char *end;                      // End of path of help file
 
-#if 0
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    ASSERT(aa->m_pszHelpFilePath != NULL);
-    strncpy(fullname, aa->m_pszHelpFilePath, sizeof(fullname)-12);
-    fullname[sizeof(fullname)-12] = '\0';
-    if ((end = strrchr(fullname, '\\')) == NULL && (end = strrchr(fullname, ':')) == NULL)
-        end = fullname;
-    else
-        ++end;
-#else
 	strcpy(fullname, GetExePath());
 	end = fullname + strlen(fullname);
-#endif
-
     strcpy(end, SEC_FILENAME); sub1(end);
 	remove(fullname);
 
@@ -271,20 +259,8 @@ void CHexEditApp::SaveSecurityFile()
     struct _stat exe_stat;          // Info about exe (modification time etc)
     struct _utimbuf times;          // Structure used to change file times
 
-#if 0
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    ASSERT(aa->m_pszHelpFilePath != NULL);
-    strncpy(fullname, aa->m_pszHelpFilePath, sizeof(fullname)-12);
-    fullname[sizeof(fullname)-12] = '\0';
-    if ((end = strrchr(fullname, '\\')) == NULL && (end = strrchr(fullname, ':')) == NULL)
-        end = fullname;
-    else
-        ++end;
-#else
 	strcpy(fullname, GetExePath());
 	end = fullname + strlen(fullname);
-#endif
-
     strcpy(end, "HexEdit.exe");
     if (_stat(fullname, &exe_stat) == -1) return;
 
@@ -321,20 +297,8 @@ BOOL CHexEditApp::GetSecurityFile()
     char fullname[_MAX_PATH];       // Full name of security file
     char *end;                      // End of path of help file
 
-#if 0
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    ASSERT(aa->m_pszHelpFilePath != NULL);
-    strncpy(fullname, aa->m_pszHelpFilePath, sizeof(fullname)-12);
-    fullname[sizeof(fullname)-12] = '\0';
-    if ((end = strrchr(fullname, '\\')) == NULL && (end = strrchr(fullname, ':')) == NULL)
-        end = fullname;
-    else
-        ++end;
-#else
 	strcpy(fullname, GetExePath());
 	end = fullname + strlen(fullname);
-#endif
-
     strcpy(end, SEC_FILENAME); sub1(end);
     FILE *ff = fopen(fullname, "rb");
 

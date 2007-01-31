@@ -62,20 +62,8 @@ CTipDlg::CTipDlg(CWnd* pParent /*=NULL*/)
     if (m_pStream == NULL) 
     {
 // AP: This bit added by me -----------------------------------------------------------
-        // Not found so try to open from the same dir as the help file
-        char tip_fullname[_MAX_PATH];   // Full name of tips file
-//        char *end;                      // End of path of exe file
-
-//        strncpy(tip_fullname, __argv[0], sizeof(tip_fullname)-12);
-//        tip_fullname[sizeof(tip_fullname)-12] = '\0';
-//        if ((end = strrchr(tip_fullname, '\\')) == NULL && (end = strrchr(tip_fullname, ':')) == NULL)
-//            end = tip_fullname;
-//        else
-//            ++end;
-//        *end = '\0';
-        strcpy(tip_fullname, GetExePath());
-        strcat(tip_fullname, tip_name);
-        if ((m_pStream = fopen(tip_fullname, "r")) == NULL)
+        // Not found so try to open from the .exe dir
+        if ((m_pStream = fopen(GetExePath() + tip_name, "r")) == NULL)
 // ------------------------------------------------------------------------------------
         {
             m_strTip.LoadString(CG_IDS_FILE_ABSENT);

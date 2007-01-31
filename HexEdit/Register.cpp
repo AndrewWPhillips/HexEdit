@@ -78,12 +78,12 @@ static const char *ack_name[] =
 {
 	"BCG Control Bar - BCGSoft Ltd",				// BCG Control Bar 5.9 - Stas Levin et al at BCG (http://bcgsoft.com)
 	"MFC Grid Control - Chris Maunder",				// MFC Grid Control - Chris Maunder (http://codeproject.com/miscctrl/gridctrl.asp)
-	"Tree control for MFC Grid - Ken Bertelson",	// MFC Grid Tree Extensions - Ken Bertelson (http://codeproject.com/miscctrl/gridtreectrl.asp)
 	"Window Splitter class (MFC) - Robert A. T. Káldy",	// Window Splitter class - Robert A. T. Káldy (http://codeproject.com/splitter/kaldysimplesplitter.asp)
 	"Dialog Resize class (MFC) - Herbert Menke",	// Dialog Resize class - Herbert Menke (http://www.codeproject.com/dialog/resizectrl.asp)
 	"ZLIB compression - J. Gailly and M. Adler",	// ZLIB
 	"MD5 Message-Digest Alg - RSA Data Security",	// MD5
 	"CFile64 (MFC) class by Samuel R. Blackburn",	// 64-bit file access (CFile64 class) - Samuel R. Blackburn (http://www.samblackburn.com/wfc/)
+	"Tree and buttons for MFC Grid - Ken Bertelson",	// MFC Grid Tree Extensions - Ken Bertelson (http://codeproject.com/miscctrl/gridtreectrl.asp)
 	"CEnBitmap class (MFC) - Daniel Godson",
 	"Transparent controls (MFC) - Ali Rafiee",
 	"BigInteger used for C# Decimal - Cap'n Code",
@@ -99,16 +99,16 @@ static const char *ack_url[] =
 {
 	"http://bcgsoft.com/",
 	"http://codeproject.com/miscctrl/gridctrl.asp",
-	"http://codeproject.com/miscctrl/gridtreectrl.asp",
 	"http://codeproject.com/splitter/kaldysimplesplitter.asp",
-	"http://www.codeproject.com/dialog/resizectrl.asp",
-	"http://www.zlib.net/",
+	"http://codeproject.com/dialog/resizectrl.asp",
+	"http://zlib.net/",
 	"http://theory.lcs.mit.edu/~rivest/md5.c",
-	"http://www.samblackburn.com/wfc/",
-	"http://www.codeproject.com/bitmap/extendedbitmap2.asp",
-	"http://www.codeproject.com/staticctrl/TransparentStaticCtrl.asp",
-	"http://www.codeproject.com/cpp/CppIntegerClass.asp",
-	"http://www.ddj.com/dept/cpp/184403660",
+	"http://samblackburn.com/wfc/",
+	"http://codeproject.com/miscctrl/gridtreectrl.asp",
+	"http://codeproject.com/bitmap/extendedbitmap2.asp",
+	"http://codeproject.com/staticctrl/TransparentStaticCtrl.asp",
+	"http://codeproject.com/cpp/CppIntegerClass.asp",
+	"http://ddj.com/dept/cpp/184403660",
 	"http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/",
 	"http://subversion.tigris.org/",
 	"http://tortoisesvn.sourceforge.net/",
@@ -140,9 +140,7 @@ BOOL CAbout::OnEraseBkgnd(CDC* pDC)
 
 	CEnBitmap bg;
 	//bg.LoadImage("D:\\tmp\\Daily\\dlgbmp.bmp");
-	//bg.LoadImage("D:\\tmp\\icons\\kristi\\DesktopIcon\\mira desktop PNG files\\mira_desktop_48.png");
-	bg.LoadImage("D:\\tmp\\Daily\\HexEdit.bmp");
-	//bg.LoadImage("D:\\tmp\\icons\\calculator.bmp");
+	bg.LoadImage(GetExePath() + "About.BMP");
 	if (HBITMAP(bg) == 0)
 	    return FALSE;  // No bitmap so let Windows draw the background
 

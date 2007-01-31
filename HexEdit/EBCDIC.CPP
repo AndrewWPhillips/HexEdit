@@ -122,21 +122,9 @@ void CHexEditApp::InitConversions()
 {
     int ii;                             // Loop var
     FILE *ftab;                         // File containing the new EBCDIC table
-    char table_fullname[_MAX_PATH];     // Full name of EBCDIC table file
     CString err_mess;                   // Any problems with table read from file
 
-//    // Try to find the EBCDIC table file in the same dir as the help file
-//    strncpy(table_fullname, __argv[0], sizeof(table_fullname)-12);
-//    char *end;                          // End of path of exe file
-//    table_fullname[sizeof(table_fullname)-12] = '\0';
-//    if ((end = strrchr(table_fullname, '\\')) == NULL && (end = strrchr(table_fullname, ':')) == NULL)
-//        end = table_fullname;
-//    else
-//        ++end;
-//    *end = '\0';
-    strcpy(table_fullname, GetExePath());
-    strcat(table_fullname, "EBCDIC.TAB");
-    if ((ftab = fopen(table_fullname, "rb")) != NULL)
+    if ((ftab = fopen(GetExePath() + "EBCDIC.TAB", "rb")) != NULL)
     {
         // File found - read it into e2a_tab
         if (fread(e2a_tab, sizeof(e2a_tab), 1, ftab) == 1)

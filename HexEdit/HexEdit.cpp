@@ -2847,25 +2847,10 @@ void CHexEditApp::set_general()
         if (p_general->shell_open_)
         {
             // Create the registry entries that allow "Open with HexEdit" on shortcut menus
-            const char *s1 = "Open with HexEdit";
-//            const char *s2 = "HexEdit.exe %1";
-            char s2[_MAX_PATH + 3];         // Full name of exe file
-//            char *end;                      // End of path of exe file
-
-//            CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-//            ASSERT(aa->m_pszHelpFilePath != NULL);
-//            strncpy(s2, __argv[0], sizeof(s2)-15);
-//            s2[sizeof(s2)-15] = '\0';
-//            if ((end = strrchr(s2, '\\')) == NULL && (end = strrchr(s2, ':')) == NULL)
-//                end = s2;
-//            else
-//                ++end;
-//            strcpy(end, "HexEdit.exe %1");
-            strcpy(s2, GetExePath());
-            strcat(s2, "HexEdit.exe %1");
-
-            RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY, REG_SZ, s1, strlen(s1));
-            RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, REG_SZ, s2, strlen(s2));
+			CString s1("Open with HexEdit");
+			CString s2 = GetExePath() + "HexEdit.exe %1";
+            RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY, REG_SZ, s1, s1.GetLength());
+            RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, REG_SZ, s2, s2.GetLength());
         }
         else
         {
