@@ -705,6 +705,8 @@ private:
     void GetMystery();
 	int GetMysteryFile(const char * filename);
     int GetSecurity();
+	void SaveTo(const char *filename);
+	bool ReadFrom(const char *filename);
     int QuickCheck();
     void CheckSecurityActivated();
 #endif

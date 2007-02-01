@@ -1467,6 +1467,7 @@ int CHexEditApp::ExitInstance()
 			// NOTE: This needs to be updated when new data files added
 			remove(data_path + _T("RecentFiles"));
 			remove(data_path + _T("Bookmarks"));
+			remove(data_path + _T("Backgrnd.BMP"));
 		}
 
 		::SHDeleteKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit");  // machine settings

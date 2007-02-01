@@ -8,6 +8,7 @@
 #include <sys/stat.h>                   // For _stat()
 #include <sys/utime.h>                  // For _utime()
 #include <io.h>                         // For _access()
+#include <imagehlp.h>       // For ::MakeSureDirectoryPathExists()
 
 #include "HexEdit.h"
 #include "HexEditView.h"
@@ -220,6 +221,7 @@ void CHexEditApp::DeleteSecurityFiles()
     char fullname[_MAX_PATH];       // Full name of security file
     char *end;                      // End of path of help file
 
+	// This is the old one but remove it anyway
 	strcpy(fullname, GetExePath());
 	end = fullname + strlen(fullname);
     strcpy(end, SEC_FILENAME); sub1(end);
@@ -235,7 +237,7 @@ void CHexEditApp::DeleteSecurityFiles()
         strcat(fullname, "\\");
     }
     strcpy(fullname + len, SEC_FILENAME2); sub1(fullname + len);
-	if (GetMysteryFile(fullname) == 1)  // 0 = not found, 1 = found & valid, -1 = found but NOT valid
+	if (GetMysteryFile(fullname) == 1)  // 1 = found & valid
 		remove(fullname);
 
 	// Check ver 3.2 myst file name(s)
@@ -253,6 +255,12 @@ void CHexEditApp::DeleteSecurityFiles()
 // Encrypts (using own key) the info in security_info which is clear text on entry/exit
 void CHexEditApp::SaveSecurityFile()
 {
+    // Encrypt the security info
+    set_key(FILE_KEY, 8);
+    encrypt(&security_info, sizeof(security_info));
+    set_key(DUMMY_KEY, 8);
+
+#if 0
     // Work out the name of the exe file and get its modification time
     char fullname[_MAX_PATH];       // Full name of security file
     char *end;                      // End of path of help file
@@ -268,11 +276,6 @@ void CHexEditApp::SaveSecurityFile()
     strcpy(end, SEC_FILENAME); sub1(end);
     FILE *ff = fopen(fullname, "wb");
 
-    // Encrypt the security info
-    set_key(FILE_KEY, 8);
-    encrypt(&security_info, sizeof(security_info));
-    set_key(DUMMY_KEY, 8);
-
     // Write the file
     if (ff != NULL)
     {
@@ -284,6 +287,26 @@ void CHexEditApp::SaveSecurityFile()
         times.modtime = exe_stat.st_mtime;
         _utime(fullname, &times);
     }
+#endif
+	CString filename;
+	if (::GetDataPath(filename))
+	{
+		filename += "backgrnd.bmp";
+
+		CFileFind ff;
+		if (!ff.FindFile(filename))
+		{
+			CString origname = ::GetExePath() + "backgrnd.bmp";
+
+			// If not found copy from install directory
+			::MakeSureDirectoryPathExists(filename);
+
+			if (!::CopyFile(origname, filename, TRUE))
+				filename = origname;  // if can't copy use the file in install directory
+		}
+
+		SaveTo(filename);
+	}
 
     // Decrypt the data again so it is left as it was found
     set_key(FILE_KEY, 8);
@@ -291,8 +314,72 @@ void CHexEditApp::SaveSecurityFile()
     set_key(DUMMY_KEY, 8);
 }
 
+void CHexEditApp::SaveTo(const char *filename)
+{
+	// Get file times to restore later
+	struct _stat status;
+	bool times_ok = _stat(filename, &status) == 0;
+	ASSERT(times_ok);
+
+	unsigned long filesize, hdrsize, width, height;
+	unsigned short bitcount = -1;
+
+    FILE *ff = fopen(filename, "r+b");
+	ASSERT(ff != NULL);
+	VERIFY(fseek(ff, 2L, SEEK_SET) == 0);
+	VERIFY(fread(&filesize, sizeof(filesize), 1, ff) == 1);
+	VERIFY(fseek(ff, 14L, SEEK_SET) == 0);
+	VERIFY(fread(&hdrsize, sizeof(hdrsize), 1, ff) == 1);
+	VERIFY(fseek(ff, 18L, SEEK_SET) == 0);
+	VERIFY(fread(&width, sizeof(width), 1, ff) == 1);
+	VERIFY(fseek(ff, 22L, SEEK_SET) == 0);
+	VERIFY(fread(&height, sizeof(height), 1, ff) == 1);
+	VERIFY(fseek(ff, 28L, SEEK_SET) == 0);
+	VERIFY(fread(&bitcount, sizeof(bitcount), 1, ff) == 1);
+
+	// Make sure we have
+	// - 3 bytes per pixel (24-bit) = no palette so we can imperceptibly change a bit of colour info
+	// - we have at least 512 pixels
+	// - the file is long enough
+	if (bitcount != 24 || width * height <= 512 || filesize <= 14 + hdrsize + 3*512)
+	{
+		fclose(ff);
+		return;
+	}
+
+	unsigned char *pp = (unsigned char *)&security_info;
+	unsigned long offset = 14 + hdrsize;
+	ASSERT(sizeof(security_info) == 64);
+	for (int ii = 0; ii < sizeof(security_info); ++ii, ++pp)       // for each byte of the structure
+		for (int jj = 0; jj < 8; ++jj, offset += 3)                // each bit
+		{
+			unsigned char cc;
+			fseek(ff, offset, SEEK_SET);
+			fread(&cc, 1, 1, ff);
+			fseek(ff, offset, SEEK_SET);
+			// Change the bottom bit depending to reflect current bit from security_info
+			if ((*pp&(1<<jj)) == 0)
+				cc = cc & ~1;        // turn off bottom bit
+			else
+				cc = cc | 1;         // turn on bottom bit
+			fwrite(&cc, 1, 1, ff);
+		}
+
+	fclose(ff);
+
+	if (times_ok)
+	{
+		// Restore file times
+		struct _utimbuf times;
+		times.actime = status.st_atime;
+		times.modtime = status.st_mtime;
+		_utime(filename, &times);
+	}
+}
+
 BOOL CHexEditApp::GetSecurityFile()
 {
+#if 0
     // Work out the name of the security file and open it
     char fullname[_MAX_PATH];       // Full name of security file
     char *end;                      // End of path of help file
@@ -300,23 +387,77 @@ BOOL CHexEditApp::GetSecurityFile()
 	strcpy(fullname, GetExePath());
 	end = fullname + strlen(fullname);
     strcpy(end, SEC_FILENAME); sub1(end);
+
     FILE *ff = fopen(fullname, "rb");
 
     // Read the security file
     if (ff == NULL || fread(&security_info, sizeof(security_info), 1, ff) != 1)
         return FALSE;
     fclose(ff);
+#endif
+	CString filename;
+	if (!::GetDataPath(filename) || !ReadFrom(filename + "backgrnd.bmp"))
+		return FALSE;
 
     // Decrypt the data & check CRC
     set_key(FILE_KEY, 8);
     decrypt(&security_info, sizeof(security_info));
+
+	BOOL retval = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2) == security_info.crc;
 
     // Encrypt with STANDARD_KEY
     set_key(STANDARD_KEY, 8);
     encrypt(&security_info, sizeof(security_info));
     set_key(DUMMY_KEY, 8);
 
-    return TRUE;
+    return retval;
+}
+
+bool CHexEditApp::ReadFrom(const char *filename)
+{
+	unsigned long filesize, hdrsize, width, height;
+	unsigned short bitcount = -1;
+
+    FILE *ff = fopen(filename, "rb");
+	if (ff == NULL)
+		return false;
+	VERIFY(fseek(ff, 2L, SEEK_SET) == 0);
+	VERIFY(fread(&filesize, sizeof(filesize), 1, ff) == 1);
+	VERIFY(fseek(ff, 14L, SEEK_SET) == 0);
+	VERIFY(fread(&hdrsize, sizeof(hdrsize), 1, ff) == 1);
+	VERIFY(fseek(ff, 18L, SEEK_SET) == 0);
+	VERIFY(fread(&width, sizeof(width), 1, ff) == 1);
+	VERIFY(fseek(ff, 22L, SEEK_SET) == 0);
+	VERIFY(fread(&height, sizeof(height), 1, ff) == 1);
+	VERIFY(fseek(ff, 28L, SEEK_SET) == 0);
+	VERIFY(fread(&bitcount, sizeof(bitcount), 1, ff) == 1);
+
+	// Make sure we have a valid file
+	if (bitcount != 24 || width * height <= 512 || filesize <= 14 + hdrsize + 3*512)
+	{
+		fclose(ff);
+		return false;
+	}
+
+	unsigned char *pp = (unsigned char *)&security_info;
+	unsigned long offset = 14 + hdrsize;
+	ASSERT(sizeof(security_info) == 64);
+	for (int ii = 0; ii < sizeof(security_info); ++ii, ++pp)       // for each byte of the structure
+		for (int jj = 0; jj < 8; ++jj, offset += 3)                // each bit
+		{
+			unsigned char cc;
+			fseek(ff, offset, SEEK_SET);
+			fread(&cc, 1, 1, ff);
+			fseek(ff, offset, SEEK_SET);
+			// Change the bottom bit depending to reflect current bit from security_info
+			if (cc & 1)
+				*pp |= (1<<jj);
+			else
+				*pp &= ~(1<<jj);
+		}
+
+	fclose(ff);
+    return true; 
 }
 
 // Returns: 0 = error, 1 = expired, 2 = unregistered but not expired, 3 = temp licence
@@ -363,6 +504,7 @@ int CHexEditApp::GetSecurity()
             SaveSecurityFile();
             set_key(STANDARD_KEY, 8);
             encrypt(&security_info, sizeof(security_info));
+		    // set_key(DUMMY_KEY, 8);
         }
         ::RegSetValueEx(hkey2, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
 
@@ -377,8 +519,7 @@ int CHexEditApp::GetSecurity()
 
     ++get_security_called;              // Remember how many times it has been called
 
-    if (crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2) != security_info.crc ||
-        security_info.rand != security_rand_ ||
+    if (security_info.rand != security_rand_ ||
         (security_info.serial != disk_serial() && security_info.os_install_date != os_date()))
     {
         // Erase the data so it can't be searched for in memory
@@ -540,6 +681,9 @@ int CHexEditApp::GetSecurity()
     else
         encrypt(&myst_info, sizeof(myst_info));
 
+	CString filename;
+	CFileFind ff;
+
     if (bWriteBack)
     {
         // Encrypt and write back to HKLM\Software\ECSoftware\Data
@@ -550,6 +694,8 @@ int CHexEditApp::GetSecurity()
         ::RegSetValueEx(hkey2, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
         set_key(DUMMY_KEY, 8);
     }
+	else if (::GetDataPath(filename) && !ff.FindFile(filename + "backgrnd.bmp"))
+        SaveSecurityFile();     // backup file not found (just write out info read from registry to the file)
 
     // Erase the data so it can't be searched for in memory
     memset(&security_info, '\0', sizeof(security_info));
