@@ -59,19 +59,6 @@ static char THIS_FILE[] = __FILE__;
 CCalcEdit::CCalcEdit()
 {
     pp_ = NULL;
-
-    // Work out how to display decimal numbers in this culture
-    struct lconv *plconv = localeconv();
-    if (strlen(plconv->thousands_sep) == 1)
-    {
-        dec_sep_char_ = *plconv->thousands_sep;
-        dec_group_ = *plconv->grouping;
-    }
-    else
-    {
-        dec_sep_char_ = ',';
-        dec_group_ = 3;
-    }
 }
 
 CCalcEdit::~CCalcEdit()
@@ -139,7 +126,7 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 {
     char sep_char = ' ';
     if (pp_->radix_ == 10)
-		sep_char = dec_sep_char_;
+		sep_char = theApp.dec_sep_char_;
 
 	bool digit_seen = false;
 	bool last_sep = false;
@@ -405,14 +392,14 @@ void CCalcEdit::add_sep()
     // Work out how to group the digits
     int group;
     if (pp_->radix_ == 10)
-        group = dec_group_;             // Use decimal grouping from locale
+        group = theApp.dec_group_;             // Use decimal grouping from locale
     else if (pp_->radix_ == 16)
         group = 4;                      // For hex make groups of 4 nybbles (2 bytes)
     else
         group = 8;                      // Group = whole number of bytes (1 byte for binary, 3 for octal)
 
     char sep_char = ' ';
-    if (pp_->radix_ == 10) sep_char = dec_sep_char_;
+    if (pp_->radix_ == 10) sep_char = theApp.dec_sep_char_;
 
     CString ss;                         // Current string
     GetWindowText(ss);
@@ -519,7 +506,7 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 #ifndef CALC_EXPR
     char sep_char = ' ';
-    if (pp_->radix_ == 10) sep_char = dec_sep_char_;
+    if (pp_->radix_ == 10) sep_char = theApp.dec_sep_char_;
 
     if (nChar == sep_char)
     {
@@ -587,7 +574,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         GetSel(start, end);
 
         char sep_char = ' ';
-        if (pp_->radix_ == 10) sep_char = dec_sep_char_;
+        if (pp_->radix_ == 10) sep_char = theApp.dec_sep_char_;
 
         // If no selection and character to delete is separator ...
         if (nChar == VK_DELETE && start == end && ss.GetLength() > start+1 && ss[start+1] == sep_char)

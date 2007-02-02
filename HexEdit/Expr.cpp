@@ -57,6 +57,7 @@
 #include <sstream>
 #include <time.h>
 
+#include "HexEdit.h"
 #include "expr.h"
 #include "misc.h"
 
@@ -69,17 +70,9 @@ expr_eval::expr_eval(int mr /*=10*/, bool csa /*=false*/)
     max_radix_ = mr;                // Max radix used in integer literals
     const_sep_allowed_ = csa;       // Are separators allowed in int constants
 
-    struct lconv *plconv = localeconv();
-    if (strlen(plconv->thousands_sep) == 1)
-    {
-        dec_sep_char_ = *plconv->thousands_sep;
-        dec_point_ = *plconv->decimal_point;
-    }
-    else
-    {
-        dec_sep_char_ = ',';
-        dec_point_    = '.';
-    }
+    dec_sep_char_ = theApp.dec_sep_char_;
+    dec_point_    = theApp.dec_point_;
+
 	changes_on_ = true;
 }
 

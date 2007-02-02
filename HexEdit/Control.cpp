@@ -188,6 +188,8 @@ void CHexEdit::add_spaces()
 /////////////////////////////////////////////////////////////////////////////
 // CDecEdit - subclassed edit control that allows entry of a decimal number
 
+// xxx this is similar but does less than CDecEditControl (below) - perhaps it should just be an option in CDecEditControl
+
 IMPLEMENT_DYNAMIC(CDecEdit, CEdit)
 
 BEGIN_MESSAGE_MAP(CDecEdit, CEdit)
@@ -197,17 +199,8 @@ END_MESSAGE_MAP()
 
 CDecEdit::CDecEdit() : allow_neg_(false)
 {
-    struct lconv *plconv = localeconv();
-    if (strlen(plconv->thousands_sep) == 1)
-    {
-        sep_char_ = *plconv->thousands_sep;
-        group_by_ = *plconv->grouping;
-    }
-    else
-    {
-        sep_char_ = ',';
-        group_by_ = 3;
-    }
+    sep_char_ = theApp.dec_sep_char_;
+    group_by_ = theApp.dec_group_;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1432,23 +1425,15 @@ BOOL CHexComboButton::NotifyCommand(int iNotifyCode)
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
-// CDecEditControl
+// CDecEditControl - similar to CDecEdit but if the string is not a number it does nothing
 
 IMPLEMENT_DYNAMIC(CDecEditControl, CEdit)
 
 CDecEditControl::CDecEditControl()
 {
-    struct lconv *plconv = localeconv();
-    if (strlen(plconv->thousands_sep) == 1)
-    {
-        sep_char_ = *plconv->thousands_sep;
-        group_ = *plconv->grouping;
-    }
-    else
-    {
-        sep_char_ = ',';
-        group_ = 3;
-    }
+    sep_char_ = theApp.dec_sep_char_;
+    group_ = theApp.dec_group_;
+
     allow_neg_ = false;
 
     m_brush.CreateSolidBrush(RGB(255,255,255)); // xxx use sys colour?
@@ -1529,7 +1514,7 @@ void CDecEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     bool is_num(false);             // Is this a simple number or an expression?
     CString test_str = CString(" 0123456789") + sep_char_;
 
-    // Check if text (current text and char just entered) is just an hex int
+    // Check if text (current text and char just entered) is entirely a decimal int
     if (strspn(ss, test_str) == ss.GetLength())
     {
         is_num = true;

@@ -448,7 +448,7 @@ CString NumScale(double val)
 
     // Note we're always grouping digits into thousands (groups of 3) but if
     // native locale also used groups of 3 then use its thousands separator.
-    if (strlen(plconv->thousands_sep) == 1 && *plconv->grouping == '\3')
+    if (strlen(plconv->thousands_sep) == 1 && *plconv->grouping == 3)
         sep_char = *plconv->thousands_sep;
 
     // Allow for negative values (may give "-0")
@@ -506,12 +506,6 @@ CString NumScale(double val, double one_k /* = 1000.0 */)
 	bool negative = false;
 	static const char *unit_str = " KMGTPE";  // kilo, mega, giga, tera, peta, exa
 
-	// Work out what to use for decimal point
-    struct lconv *plconv = localeconv(); // Pointer to locale info
-    char dec_char = '.';                 // Used for decimal point
-    if (strlen(plconv->decimal_point) == 1)
-        dec_char = *plconv->decimal_point;
-
     // Allow for negative values (may give "-0")
     if (dd < 0.0)
     {
@@ -563,20 +557,12 @@ CString bin_str(__int64 val, int bits)
 // Add commas every 3 digits (or as appropriate to the locale) to a decimal string
 void AddCommas(CString &str)
 {
-    const char *pp, *end;               // Ptrs into orig. string
-    int ndigits = 0;                    // Number of digits in string
-    char sep_char = ',';                // Used to separate groups of digits
-    int group = 3;                          // How many is in a group
-    struct lconv *plconv = localeconv(); // Pointer to locale info
-
-    if (strlen(plconv->thousands_sep) == 1) // Small concession to users who
-    {
-        sep_char = *plconv->thousands_sep; // Use native number representation
-        group = *plconv->grouping;
-    }
+    const char *pp, *end;                   // Ptrs into orig. string
+    int ndigits = 0;                        // Number of digits in string
+//	struct lconv *plconv = localeconv(); // Locale settings (grouping etc) are now just read once in InitInstance
 
     // Allocate enough space (allowing for space padding)
-    char *out = new char[(str.GetLength()*(group+1))/group + 2]; // Result created here
+    char *out = new char[(str.GetLength()*(theApp.dec_group_+1))/theApp.dec_group_ + 2]; // Result created here
     char *dd = out;                     // Ptr to current output char
 
     // Skip leading whitespace
@@ -598,8 +584,8 @@ void AddCommas(CString &str)
         if (isdigit(*pp))
         {
             *dd++ = *pp;
-            if (--ndigits > 0 && ndigits%group == 0)
-                *dd++ = sep_char;
+            if (--ndigits > 0 && ndigits%theApp.dec_group_ == 0)
+                *dd++ = theApp.dec_sep_char_;
         }
     ASSERT(pp <= end);
     strcpy(dd, pp);

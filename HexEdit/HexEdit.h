@@ -340,6 +340,11 @@ public:
     BOOL is_us_;                        // Are we in US?  (for spelling fixes)
     BOOL win95_;                        // Is it Windows 95? (not 98 ot later and not NT or later)
 
+	// Locale settings
+    char dec_sep_char_;		            // Char to use as "thousands" separator for decimals
+    int dec_group_;			            // Number of digits in "thousands" group
+	char dec_point_;                    // Decimal point for floating point numbers
+
     // Stuff for keystroke macros
     void macro_play(long play_times=1, const std::vector<key_macro> *pmac=NULL, int halt_lev=-1);
     BOOL macro_save(const char *filename, const std::vector<key_macro> *pmac = NULL,

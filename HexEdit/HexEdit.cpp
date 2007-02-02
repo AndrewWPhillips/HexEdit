@@ -385,13 +385,6 @@ BOOL CHexEditApp::InitInstance()
 
         InitConversions();                   // Read EBCDIC conversion table etc and validate conversions
 
-        // Set the locale to the native environment -- hopefully the MSC run-time
-        // code does something suitable.  (This is currently just for thousands sep.)
-        setlocale(LC_ALL, "");      // Set to native locale
-
-        // Work out if we appear to be in US for spelling changes
-        is_us_ = strnicmp("English_United States", ::setlocale(LC_COLLATE, NULL), 20) == 0;
-
         // Work out if there is a HEXEDIT.INI file in the windows directory
         char ininame[MAX_PATH + 13];
         if (GetWindowsDirectory(ininame, MAX_PATH) != 0)
@@ -418,6 +411,63 @@ BOOL CHexEditApp::InitInstance()
 		// Note: if this is changed you also need to change the registry string
 		// at the end of ExitInstance (see delete_reg_settings_).
         SetRegistryKey("ECSoftware");      // Always use registry
+
+        // Set the locale to the native environment -- hopefully the MSC run-time
+        // code does something suitable.  (This is currently just for thousands sep.)
+        setlocale(LC_ALL, "");      // Set to native locale
+
+		// Get decimal point characters, thousands separator and grouping
+		struct lconv *plconv = localeconv();
+
+		// Set defaults
+		dec_sep_char_ = ','; dec_group_ = 3; dec_point_ = '.';
+
+		// Work out thousands separator
+		if (strlen(plconv->thousands_sep) == 1)
+			dec_sep_char_ = *plconv->thousands_sep;
+
+		// Work out thousands grouping
+		if (strlen(plconv->grouping) != 1)
+		{
+			// Rarely used option of no grouping
+			switch (GetProfileInt("Options", "AllowNoDigitGrouping", -1))
+			{
+			case -1:
+				if (AfxMessageBox("You have digit grouping for large numbers turned\n"
+					              "off or are using an unsupported grouping/format.\n"
+					              "(See Regional Settings in the Control Panel.)\n\n"
+								  "Numbers will be displayed without grouping, eg:\n"
+								  "\n2489754937\n\n"
+								  "Do you want the default digit grouping instead? eg:\n"
+								  "\n2,489,754,937\n\n", MB_YESNO) == IDNO)
+				{
+					WriteProfileInt("Options", "AllowNoDigitGrouping", 1);
+					dec_group_ = 9999;  // a big number so that grouping is not done
+				}
+				else
+				{
+					// Remember for next time so we don't ask every time HexEdit is run
+					WriteProfileInt("Options", "AllowNoDigitGrouping", 0);
+				}
+				break;
+			case 1:
+				dec_group_ = 9999;  // a big number so that grouping is not done
+				break;
+			case 0:
+				break; // Nothing required - just use default settings above
+			default:
+				ASSERT(0);
+			}
+		}
+		else
+			dec_group_ = *plconv->grouping;
+
+		// Work out decimal point
+		if (strlen(plconv->decimal_point) == 1)
+			dec_point_ = *plconv->decimal_point;
+
+        // Work out if we appear to be in US for spelling changes
+        is_us_ = strnicmp("English_United States", ::setlocale(LC_COLLATE, NULL), 20) == 0;
 
         // The following are for BCG init
         SetRegistryBase(_T("Settings"));
@@ -2847,7 +2897,7 @@ void CHexEditApp::set_general()
         // Option has been changed (turned on or off)
         if (p_general->shell_open_)
         {
-            // Create the registry entries that allow "Open with HexEdit" on shortcut menus
+			// Create the registry entries that allow "Open with HexEdit" on shortcut menus
 			CString s1("Open with HexEdit");
 			CString s2 = GetExePath() + "HexEdit.exe %1";
             RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY, REG_SZ, s1, s1.GetLength());

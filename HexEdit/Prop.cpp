@@ -211,21 +211,15 @@ BOOL CBinEditControl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CPropDecEditControl - used for edito control where decimal are entered
+// CPropDecEditControl - used for edit control where decimal are entered
+
+// xxx merge this with CDecEdit
 
 CPropDecEditControl::CPropDecEditControl()
 {
-    struct lconv *plconv = localeconv();
-    if (strlen(plconv->thousands_sep) == 1)
-    {
-        sep_char_ = *plconv->thousands_sep;
-        group_ = *plconv->grouping;
-    }
-    else
-    {
-        sep_char_ = ',';
-        group_ = 3;
-    }
+    //struct lconv *plconv = localeconv(); - now read in theApp.InitInstance
+	sep_char_ = theApp.dec_sep_char_;
+	group_ = theApp.dec_group_;
     allow_neg_ = true;
 }
 

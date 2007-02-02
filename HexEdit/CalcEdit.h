@@ -23,8 +23,6 @@ public:
 // Attributes
 public:
     CCalcDlg *pp_;
-    char dec_sep_char_;		// Char to use as "thousands" separator for decimals
-    int dec_group_;			// Number of digits in "thousands" group
 
 // Operations
 public:

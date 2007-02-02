@@ -110,11 +110,7 @@ TParser::TParser()
 	ptree_ = NULL;
 	pexpr_ = NULL;
 
-    struct lconv *plconv = localeconv();
-    if (strlen(plconv->decimal_point) == 1)
-        dec_point_ = *plconv->decimal_point;
-    else
-        dec_point_ = '.';
+	dec_point_ = theApp.dec_point_;
 	packing_default_ = 4;
 
 	check_values_win_ = check_values_custom_ = save_values_custom_ = false;
