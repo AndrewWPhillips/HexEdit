@@ -237,7 +237,7 @@ void CHexEditApp::DeleteSecurityFiles()
         strcat(fullname, "\\");
     }
     strcpy(fullname + len, SEC_FILENAME2); sub1(fullname + len);
-	if (GetMysteryFile(fullname) == 1)  // 1 = found & valid
+	if (GetMysteryFile(fullname) == 1)  // Note: this may load old myst info but this will be overwritten by latest myst info below
 		remove(fullname);
 
 	// Check ver 3.2 myst file name(s)
@@ -247,7 +247,7 @@ void CHexEditApp::DeleteSecurityFiles()
 	len += 6;
 	ASSERT(fullname[len] == '?');
 	for (fullname[len] = 'X'; fullname[len] > '@'; fullname[len]--)
-		if (GetMysteryFile(fullname) == 1)
+		if (GetMysteryFile(fullname) == 1)  // 1 = found & valid
 			remove(fullname);
 	memset(fullname, '\0', sizeof(fullname));
 }
@@ -771,9 +771,6 @@ bool CHexEditApp::CheckNewVersion()
     }
 #endif
 
-    // Update to current version of the software so that this check is not done again
-    myst_info.version = version_;
-
     // Create backup data file name
     FILE *ff;                       // Security file
     char fullname[_MAX_PATH];       // Full name of security file
@@ -789,11 +786,13 @@ bool CHexEditApp::CheckNewVersion()
 		if (GetMysteryFile(fullname) != -1)  // stop when we find the valid existing file or no file
 			break;
 
-    // Write the new mystery info back out
+    // Update to current version of the software so that this check is not done again
     set_key(STANDARD_KEY, 8);
+    decrypt(&myst_info, sizeof(myst_info));
+    myst_info.version = version_;
     encrypt(&myst_info, sizeof(myst_info));
 
-    // Write to backup file
+    // Write changed info to backup file
     if ((ff = fopen(fullname, "wb")) != NULL)
     {
         fwrite((void *)&myst_info, sizeof(myst_info), 1, ff);
@@ -810,7 +809,7 @@ bool CHexEditApp::CheckNewVersion()
     }
 	memset(fullname, '\0', sizeof(fullname));
 
-    // Write to registry
+    // Write chnaged info to registry
     HKEY hkey;
     char buf[32];
 
@@ -938,6 +937,7 @@ void CHexEditApp::GetMystery()
     if (::RegOpenKey(HKEY_CLASSES_ROOT, buf, &hkey) == ERROR_SUCCESS ||
         ::RegCreateKey(HKEY_CLASSES_ROOT, buf, &hkey) == ERROR_SUCCESS)
     {
+		// The parent exists (opened or created and opened)
         DWORD reg_type;                     // The returned registry entry type
         DWORD reg_size = sizeof(reg_data);
 
@@ -1016,7 +1016,7 @@ void CHexEditApp::GetMystery()
 					if (_stat(fullname, &status) == 0)
 					{
 						struct _utimbuf times;          // Structure used to change file times
-						times.actime = times.modtime = status.st_mtime - (24*60*60); // a day ago
+						times.actime = times.modtime = status.st_mtime - (23*60*60); // 23 hrs ago
 						_utime(fullname, &times);
 					}
                 }
@@ -1035,7 +1035,7 @@ void CHexEditApp::GetMystery()
 			// Save it to reg entry (which we know is not present)
             ::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info));
 
-#if 0 // this is already done in GetMysteryFile
+#if 0 // this is already done in GetMysteryFile above
             set_key(STANDARD_KEY, 8);
             decrypt(&myst_info, sizeof(myst_info));
 
