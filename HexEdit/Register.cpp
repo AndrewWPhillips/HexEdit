@@ -76,22 +76,22 @@ END_MESSAGE_MAP()
 // Acknowledged software used in HexEdit and associated web addresses
 static const char *ack_name[] =
 {
-	"BCG Control Bar - BCGSoft Ltd",				// BCG Control Bar 5.9 - Stas Levin et al at BCG (http://bcgsoft.com)
-	"MFC Grid Control - Chris Maunder",				// MFC Grid Control - Chris Maunder (http://codeproject.com/miscctrl/gridctrl.asp)
-	"Window Splitter class (MFC) - Robert A. T. Káldy",	// Window Splitter class - Robert A. T. Káldy (http://codeproject.com/splitter/kaldysimplesplitter.asp)
-	"Dialog Resize class (MFC) - Herbert Menke",	// Dialog Resize class - Herbert Menke (http://www.codeproject.com/dialog/resizectrl.asp)
-	"ZLIB compression - J. Gailly and M. Adler",	// ZLIB
-	"MD5 Message-Digest Alg - RSA Data Security",	// MD5
-	"CFile64 (MFC) class by Samuel R. Blackburn",	// 64-bit file access (CFile64 class) - Samuel R. Blackburn (http://www.samblackburn.com/wfc/)
-	"Tree and buttons for MFC Grid - Ken Bertelson",	// MFC Grid Tree Extensions - Ken Bertelson (http://codeproject.com/miscctrl/gridtreectrl.asp)
+	"BCG Control Bar - BCGSoft Ltd",
+	"MFC Grid Control - Chris Maunder",
+	"Tree control for MFC Grid - Ken Bertelson",
+	"Window Splitter class (MFC) - Robert A. T. Káldy",
+	"Dialog Resize class (MFC) - Herbert Menke",
+	"ZLIB compression - J. Gailly and M. Adler",
+	"MD5 Message-Digest Alg - RSA Data Security",
+	"CFile64 (MFC) class by Samuel R. Blackburn",
 	"CEnBitmap class (MFC) - Daniel Godson",
 	"Transparent controls (MFC) - Ali Rafiee",
 	"BigInteger used for C# Decimal - Cap'n Code",
-	"range_set class - Andrew W. Phillips",			// range_set class - Andrew Phillips (http://www.ddj.com/dept/cpp/184403660)
-	"Folder Selection Dialog - Andrew Phillips",	// folder selection - (http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/)
-	"SVN source control - Jim Blandy et al",		// SVN (Sub-version) source control - Jim Blandy et al (http://subversion.tigris.org/)
-	"TortoiseSVN SVN client - Stefan Küng et al",	// TSVN (TortoiseSVN) SVN client - Stefan Küng et al (http://tortoisesvn.sourceforge.net/)
-	"WIX installer toolkit - Rob Mensching et al",	// WIX installer toolkit - Rob Mensching et al (http://wix.sourceforge.net/)
+	"range_set class - Andrew W. Phillips",
+	"Folder Selection Dialog - Andrew Phillips",
+	"SVN source control - Jim Blandy et al",
+	"TortoiseSVN SVN client - Stefan Küng et al",
+	"WIX installer toolkit - Rob Mensching et al",
 	NULL
 };
 
@@ -99,16 +99,16 @@ static const char *ack_url[] =
 {
 	"http://bcgsoft.com/",
 	"http://codeproject.com/miscctrl/gridctrl.asp",
-	"http://codeproject.com/splitter/kaldysimplesplitter.asp",
-	"http://codeproject.com/dialog/resizectrl.asp",
-	"http://zlib.net/",
-	"http://theory.lcs.mit.edu/~rivest/md5.c",
-	"http://samblackburn.com/wfc/",
 	"http://codeproject.com/miscctrl/gridtreectrl.asp",
-	"http://codeproject.com/bitmap/extendedbitmap2.asp",
-	"http://codeproject.com/staticctrl/TransparentStaticCtrl.asp",
-	"http://codeproject.com/cpp/CppIntegerClass.asp",
-	"http://ddj.com/dept/cpp/184403660",
+	"http://codeproject.com/splitter/kaldysimplesplitter.asp",
+	"http://www.codeproject.com/dialog/resizectrl.asp",
+	"http://www.zlib.net/",
+	"http://theory.lcs.mit.edu/~rivest/md5.c",
+	"http://www.samblackburn.com/wfc/",
+	"http://www.codeproject.com/bitmap/extendedbitmap2.asp",
+	"http://www.codeproject.com/staticctrl/TransparentStaticCtrl.asp",
+	"http://www.codeproject.com/cpp/CppIntegerClass.asp",
+	"http://www.ddj.com/dept/cpp/184403660",
 	"http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/",
 	"http://subversion.tigris.org/",
 	"http://tortoisesvn.sourceforge.net/",
@@ -136,13 +136,10 @@ BOOL CAbout::OnInitDialog()
 
 BOOL CAbout::OnEraseBkgnd(CDC* pDC)
 {
-    //return CDialog::OnEraseBkgnd(pDC);
-
 	CEnBitmap bg;
-	//bg.LoadImage("D:\\tmp\\Daily\\dlgbmp.bmp");
-	bg.LoadImage(GetExePath() + "About.BMP");
+	bg.LoadImage(::GetExePath() + "About.bmp");
 	if (HBITMAP(bg) == 0)
-	    return FALSE;  // No bitmap so let Windows draw the background
+	    return CDialog::OnEraseBkgnd(pDC);
 
     CRect rct;
     this->GetClientRect(rct);
