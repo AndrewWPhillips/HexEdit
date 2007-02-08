@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="IFF" type_name="" comment="The venerable interchange file format invented by EA and Commodore for Amiga.  Can be used to contain any sort of data chunks and there are standard definitions for many types such as pictures (ILBM), sound (8SVX), video (ANIM) etc. Usually has the file extension .IFF but sometimes .LBM when it contains a picture (ILBM chunk)." default_byte_order="big" default_read_only="false" default_char_set="ascii" web_site="http://www.szonye.com/bradd/iff.html" expr="">
+	<define_struct type_name="CHUNK" comment="Everything in IFF is a chunk and/or part of a chunk." expr="this.CKID">
+		<data type="string" name="CKID" format="default" len="4" display="" type_name="ckID" comment="Identifies the type ot the following chunk.  This is 4 ASCII characters (or 32-bit number)."/>
+		<data type="int" name="LENGTH" format="unsigned" len="4" display="" units="bytes" comment="Length of the chunk excluding the CKID and LENGTH fields." type_name="ckSize"/>
+		<switch test="CKID" comment="The rest of the chunk is interpreted differently based on the chunk ID (CKID).  We handle the IFF admin chunks here (FORM, CAT , LIST, PROP) and some standard ones we understand.  We can add to this list as info is obtained on other standard chunk types.  The last (UNKNOWN) entry in the list just skips any chunks we know nothing about. ">
+			<case range="FORM">
+				<struct name="FORM" type_name="" comment="The only thing in a FORM chunk apart from the nested chunks is this ID.  It provides a name space for the nested chunks to eliminate chunk ID conflicts." expr="this.FORMTYPE">
+					<data type="string" name="FORMTYPE" format="default" len="4" display=""/>
+					<for name="LOCALCHUNK" count="" stop_test="addressof(this)+sizeof(this) &gt;= addressof(FORMTYPE) + LENGTH" type_name="" comment="Zero or more nested chunks.">
+						<use_struct name="" expr="" type_name="CHUNK" comment=""/>
+					</for>
+				</struct>
+			</case>
+			<case range="CAT ">
+				<struct name="CAT" type_name="" comment="Typically used to store a concatenation of FORM chunks of the same type.  Note the trailing space in the chunk ID &quot;CAT &quot;." expr="">
+					<data type="string" name="CONTENTSTYPE" format="default" len="4" display="" comment="Type of FORMs stored in the CAT or blank if there are different types."/>
+					<for name="NESTEDCHUNK" count="" stop_test="addressof(this)+sizeof(this) &gt;= addressof(CONTENTSTYPE) + LENGTH" type_name="" comment="">
+						<use_struct name="" expr="" type_name="CHUNK" comment=""/>
+					</for>
+				</struct>
+			</case>
+			<case range="LIST">
+				<struct name="LIST" type_name="" comment="Allows grouping of chunk with shared properties.  NOTE: The template does not verify that the nested PROP chunks all occur before the other nested chunks" expr="">
+					<data type="string" name="CONTENTSTYPE" format="default" len="4" display=""/>
+					<for name="NESTEDCHUNK" count="" stop_test="addressof(this)+sizeof(this) &gt;= addressof(CONTENTSTYPE) + LENGTH" type_name="" comment="">
+						<use_struct name="" expr="" type_name="CHUNK" comment=""/>
+					</for>
+				</struct>
+			</case>
+			<case range="PROP">
+				<struct name="PROP" type_name="" comment="" expr="">
+					<data type="string" name="FORMTYPE" format="default" len="4" display=""/>
+					<for name="PROP" count="" stop_test="addressof(this)+sizeof(this) &gt;= addressof(FORMTYPE) + LENGTH" type_name="" comment="">
+						<use_struct name="" expr="" type_name="CHUNK" comment=""/>
+					</for>
+				</struct>
+			</case>
+			<case range="BMHD">
+				<struct name="BMHD" type_name="" comment="" expr="">
+					<data type="int" name="width" format="unsigned" len="2" display="" units="pixels" type_name="UWORD" comment="raster width"/>
+					<data type="int" name="height" format="unsigned" len="2" display="" units="pixels" type_name="UWORD" comment="raster height"/>
+					<data type="int" name="x" format="signed" len="2" display="" units="pixel" type_name="WORD" comment="x position"/>
+					<data type="int" name="y" format="signed" len="2" display="" units="pixels" type_name="WORD" comment="y position"/><data type="int" name="nPlanes" format="unsigned" len="1" display="" type_name="UBYTE" comment="Number of bitplanes.  Should be no more than 8?"/>
+					<data type="int" name="masking" format="unsigned" len="1" display="" type_name="Masking" domain="{None, HasMask, HasTransparentColor, Lasso}"/>
+					<data type="int" name="compression" format="unsigned" len="1" display="" type_name="Compression" domain="{None, ByteRun1}"/>
+					<data type="int" name="pad1" format="unsigned" len="1" display="" type_name="UBYTE" domain="this == 0"/>
+					<data type="int" name="transparentColor" format="unsigned" len="2" display="" type_name="UWORD"/>
+					<data type="int" name="xAspect" format="unsigned" len="1" display="" type_name="UBYTE"/>
+					<data type="int" name="yAspect" format="unsigned" len="1" display="" type_name="UBYTE"/>
+					<data type="int" name="pageWidth" format="signed" len="2" display="" units="pixels" type_name="WORD"/>
+					<data type="int" name="pageHeight" format="signed" len="2" display="" units="pixels" type_name="WORD"/>
+				</struct>
+			</case>
+			<case range="CMAP">
+				<struct name="CMAP" type_name="ColorRegister" comment="" expr="">
+					<for name="Color" count="LENGTH/3" stop_test="" type_name="" comment="">
+						<struct name="RGB" type_name="ColorRegister" comment="" expr="">
+							<data type="int" name="red" format="unsigned" len="1" display="" type_name="UBYTE"/>
+							<data type="int" name="green" format="unsigned" len="1" display="" type_name="UBYTE"/>
+							<data type="int" name="blue" format="unsigned" len="1" display="" type_name="UBYTE"/>
+						</struct>
+					</for>
+					<data type="none" name="" len="addressof(this)%2" comment="Padding to make sure CMAP is even"/></struct>
+			</case>
+			<case range="">
+				<data type="none" name="UNKNOWN" len="LENGTH" comment="Unrecognised CHUNK ID"/>
+			</case>
+		</switch>
+	</define_struct>
+	<use_struct name="MAIN" expr="this.CKID" type_name="CHUNK" comment=""/>
+</binary_file_format>
