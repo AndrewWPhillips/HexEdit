@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "HexEdit.h"
 #include "MainFrm.h"
+#include "HexFileList.h"
 #include "DataFormatView.h"
 #include "Misc.h"
 #include "Dialog.h"
@@ -2781,7 +2782,15 @@ void CDataFormatView::InitColumnHeadings()
 {
     ASSERT(sizeof(heading)/sizeof(*heading) == COL_LAST + 1);
 
-    CString strWidths = theApp.GetProfileString("DataFormat", "ColumnWidths", "240,,,,,,0,,,,");
+    CString strWidths;
+    CHexEditDoc *pdoc = GetDocument();
+    CHexFileList *pfl = ((CHexEditApp *)AfxGetApp())->GetFileList();
+    int recent_file_index;
+    if (pdoc->pfile1_ != NULL && (recent_file_index = pfl->GetIndex(pdoc->pfile1_->GetFilePath())) != -1)
+		strWidths = pfl->GetData(recent_file_index, CHexFileList::DFFDWIDTHS);
+	if (strWidths.IsEmpty())
+	    strWidths = theApp.GetProfileString("DataFormat", "ColumnWidths", "240,,,,,,0,,,,");
+
     int curr_col = grid_.GetFixedColumnCount();
 
     for (int ii = 0; ii < COL_LAST; ++ii)
@@ -4089,34 +4098,41 @@ void CDataFormatView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
     }
 }
 
+// Creates comma separated list of column widths, columns that are invisble are empty
+CString CDataFormatView::GetColWidths()
+{
+    // Save column widths
+    CString strWidths;
+    if (grid_.m_hWnd != 0)
+	{
+		int curr_col = grid_.GetFixedColumnCount();
+		int col_id = 0; // COL_TREE
+
+		for (int ii = 0; ii < COL_LAST; ++ii)
+		{
+			if (ii == col_id)
+			{
+				CString ss;
+				ss.Format("%ld,", long(grid_.GetUserColumnWidth(curr_col)));
+				strWidths += ss;
+
+				++curr_col;
+				if (curr_col < grid_.GetColumnCount())
+					col_id = grid_.GetItemData(0, curr_col);
+				else
+					col_id = -1;   // No more columns so prevent any more matches
+			}
+			else
+				strWidths += ",";
+		}
+	}
+	return strWidths;
+}
+
 void CDataFormatView::OnDestroy() 
 {
     if (grid_.m_hWnd != 0)
-    {
-        // Save column widths
-        CString strWidths;
-        int curr_col = grid_.GetFixedColumnCount();
-        int col_id = 0; // COL_TREE
-
-        for (int ii = 0; ii < COL_LAST; ++ii)
-        {
-            if (ii == col_id)
-            {
-                CString ss;
-                ss.Format("%ld,", long(grid_.GetUserColumnWidth(curr_col)));
-                strWidths += ss;
-
-                ++curr_col;
-                if (curr_col < grid_.GetColumnCount())
-                    col_id = grid_.GetItemData(0, curr_col);
-                else
-                    col_id = -1;   // No more columns so prevent any more matches
-            }
-            else
-                strWidths += ",";
-        }
-        theApp.WriteProfileString("DataFormat", "ColumnWidths", strWidths);
-    }
+        theApp.WriteProfileString("DataFormat", "ColumnWidths", GetColWidths());
 
     CView::OnDestroy();
 }

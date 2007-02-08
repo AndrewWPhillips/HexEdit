@@ -88,6 +88,7 @@ public:
 // Operations
 public:
     void InitColumnHeadings();
+	CString GetColWidths();
     void InitTree();
     void save_tree_state();
     void restore_tree_state();

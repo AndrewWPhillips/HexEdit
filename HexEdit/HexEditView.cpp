@@ -659,68 +659,11 @@ void CHexEditView::OnInitialUpdate()
     int recent_file_index = -1;
     if (pDoc->pfile1_ != NULL)
         recent_file_index = pfl->GetIndex(pDoc->pfile1_->GetFilePath());
+	int swidth;      // = width of split tree view or 0 (no tree view) or 2 (tree in tab view)
 
     if (recent_file_index != -1)
     {
-		// Create any associated "sub" views
-		int width = atoi(pfl->GetData(recent_file_index, CHexFileList::DFFDVIEW));
-		switch (width)
-		{
-		case 0:        // When last open template view was hidden so do nothing
-			break;
-		case 1:        // Last opened in tab view
-			{
-				CTabView *ptv = GetFrame()->ptv_;
-				ptv->AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
-			    
-				ptv->SetActiveView(1);
-				pdfv_ = (CDataFormatView *)ptv->GetActiveView();
-				ASSERT_KINDOF(CDataFormatView, pdfv_);
-
-				ptv->SetActiveView(0);
-
-				// Make sure dataformat view knows which hex view it is assoc. with
-				pdfv_->phev_ = this;
-			}
-			break;
-		default:       // Last opened in splitter
-			{
-				CCreateContext ctxt;
-				ctxt.m_pNewViewClass = RUNTIME_CLASS(CDataFormatView);
-				ctxt.m_pCurrentDoc = GetDocument();
-				ctxt.m_pLastView = this;
-				ctxt.m_pCurrentFrame = GetFrame();
-
-				CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
-				ASSERT(psplitter->m_hWnd != 0);
-
-#if 0  // client rect is not yet valid
-				// Make sure width of splitter window is OK
-				CRect rr;
-				GetClientRect(&rr);
-				if (width < 10 || width > rr.Width())
-				{
-					width = rr.Width()/3;
-					if (width < 10)
-						width = 10;
-				}
-#endif
-
-				// Add left column for DFFD (template) view
-				VERIFY(psplitter->InsColumn(0, width, RUNTIME_CLASS(CDataFormatView), &ctxt));
-				split_width_ = width;
-
-				psplitter->SetActivePane(0, 1);   // make hex view active
-
-				pdfv_ = (CDataFormatView *)psplitter->GetPane(0, 0);
-				ASSERT_KINDOF(CDataFormatView, pdfv_);
-
-				// Make sure dataformat view knows which hex view it is assoc. with
-				pdfv_->phev_ = this;
-				psplitter->RecalcLayout();
-			}
-			break;
-		}
+		swidth = atoi(pfl->GetData(recent_file_index, CHexFileList::DFFDVIEW));
 
         disp_state_ = atoi(pfl->GetData(recent_file_index, CHexFileList::DISPLAY));
         SetVertBufferZone(atoi(pfl->GetData(recent_file_index, CHexFileList::VERT_BUFFER_ZONE)));
@@ -873,6 +816,7 @@ void CHexEditView::OnInitialUpdate()
     }
     else
     {
+		swidth = theApp.tree_view_;
         scheme_name_ = "";          // Force scheme reset
         set_colours();
 
@@ -896,6 +840,66 @@ void CHexEditView::OnInitialUpdate()
             oem_lf_ = *aa->open_oem_plf_;
         }
     }
+
+	switch (swidth)
+	{
+	case 0:        // When last open template view was hidden so do nothing
+		break;
+	case 2:        // Last opened in tab view
+		{
+			CTabView *ptv = GetFrame()->ptv_;
+			ptv->AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
+			
+			ptv->SetActiveView(1);
+			pdfv_ = (CDataFormatView *)ptv->GetActiveView();
+			ASSERT_KINDOF(CDataFormatView, pdfv_);
+
+			ptv->SetActiveView(0);
+
+			// Make sure dataformat view knows which hex view it is assoc. with
+			pdfv_->phev_ = this;
+		}
+		break;
+	default:       // Last opened in splitter
+		{
+			CCreateContext ctxt;
+			ctxt.m_pNewViewClass = RUNTIME_CLASS(CDataFormatView);
+			ctxt.m_pCurrentDoc = GetDocument();
+			ctxt.m_pLastView = this;
+			ctxt.m_pCurrentFrame = GetFrame();
+
+			CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
+			ASSERT(psplitter->m_hWnd != 0);
+
+#if 0  // client rect is not yet valid
+			// Make sure width of splitter window is OK
+			CRect rr;
+			GetClientRect(&rr);
+			if (width < 10 || width > rr.Width())
+			{
+				width = rr.Width()/3;
+				if (width < 10)
+					width = 10;
+			}
+#else
+			if (swidth < 10) swidth = 10;
+#endif
+
+			// Add left column for DFFD (template) view
+			VERIFY(psplitter->InsColumn(0, swidth, RUNTIME_CLASS(CDataFormatView), &ctxt));
+			split_width_ = swidth;
+
+			psplitter->SetActivePane(0, 1);   // make hex view active
+
+			pdfv_ = (CDataFormatView *)psplitter->GetPane(0, 0);
+			ASSERT_KINDOF(CDataFormatView, pdfv_);
+
+			// Make sure dataformat view knows which hex view it is assoc. with
+			pdfv_->phev_ = this;
+			psplitter->RecalcLayout();
+		}
+		break;
+	}
 
 	// if (pfl->GetVersion() < 3)  // xxx this is not really sufficient if the file is not actually opened since the recent file list gets written back with same DISPLAY value (but new version number)
 	{
@@ -1050,20 +1054,25 @@ void CHexEditView::StoreOptions()
         pfl->SetData(ii, CHexFileList::VIEW_TIME, __int64(GetDocument()->view_time_.elapsed()));
         pfl->SetData(ii, CHexFileList::VERT_BUFFER_ZONE, __int64(GetVertBufferZone()));
 
-		int width = 0;         // default to data format view hidden
-		if (pdfv_ != NULL)
+		if (pdfv_ == NULL)
 		{
-			width = 1;         // assume tab view used
+			pfl->SetData(ii, CHexFileList::DFFDVIEW, "");
+			pfl->SetData(ii, CHexFileList::DFFDWIDTHS, "");
+		}
+		else
+		{
+			int width = 2;         // assume tab view used
 			ASSERT(GetFrame()->splitter_.m_hWnd != 0);
 			int idx = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
 			int dummy;        // ignored since we don't care about the height
 			if (idx > -1)
 			{
 				GetFrame()->splitter_.GetColumnInfo(idx, width, dummy);
-				if (width < 10) width = 10;    // Make sure it is not too narrow and reserve values 0-9 (1 = tab view)
+				if (width < 10) width = 10;    // Make sure it is not too narrow and reserve values 0-9 (2 = tab view)
 			}
+	        pfl->SetData(ii, CHexFileList::DFFDVIEW, __int64(width));
+			pfl->SetData(ii, CHexFileList::DFFDWIDTHS, pdfv_->GetColWidths());
 		}
-        pfl->SetData(ii, CHexFileList::DFFDVIEW, __int64(width));
     }
 }
 
@@ -7677,6 +7686,7 @@ void CHexEditView::OnImportHexText()
 
 void CHexEditView::do_hex_text(CString file_name)
 {
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     if (check_ro("import hex text file"))
         return;
 
@@ -7701,13 +7711,51 @@ void CHexEditView::do_hex_text(CString file_name)
     CStdioFile ff;                      // Text file we are reading from
     CFileException fe;                  // Stores file exception info
 
-    // Open the file
+    // Open the text (input) file
     if (!ff.Open(file_name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeText, &fe))
     {
         ::HMessageBox(::FileErrorMessage(&fe, CFile::modeRead));
         theApp.mac_error_ = 10;
         return;
     }
+	__int64 file_len = CFile64::GetSize(file_name);
+	__int64 file_done = 0;              // amt of file read so far
+
+	// Set up handling of a large input hex file by writing result to one of our temp files
+	CFile64 fout;                      // output file (only used if input file is big)
+	char temp_file[_MAX_PATH]; temp_file[0] = '\0';
+    MSG msg;                           // use to update screen and check for abort key press
+
+	// Test if the file is very big
+	if (file_len > (3*16*1024*1024) && GetDocument()->DataFileSlotFree())  // assuming 3 chars/byte ~= 16 Mb
+	{
+		// Create a file to store the bytes
+		char temp_dir[_MAX_PATH];
+		::GetTempPath(sizeof(temp_dir), temp_dir);
+		::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
+	    mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+
+	    if (!fout.Open(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary, &fe))
+		{
+			::HMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
+			theApp.mac_error_ = 10;
+			return;
+		}
+	}
+	else if (file_len > 3*128*1024*1024)
+	{
+		// Warn of possible memory shortage
+		if (::HMessageBox("WARNING: HexEdit is out of temporary file \n"
+                            "handles and reading such a large file \n"
+                            "may cause memory exhaustion.  Please click NO \n"
+                            "and save the active file to free handles. \n"
+							"Or, click YES to continue.\n\n"
+                            "Do you want to continue?", MB_YESNO) != IDYES)
+		{
+            theApp.mac_error_ = 5;
+            return;
+		}
+	}
 
     // Input buffer (read from hex text file)
     char buffer[520];                   // Where read string is stored
@@ -7717,24 +7765,35 @@ void CHexEditView::do_hex_text(CString file_name)
     // We need to store the data in fairly large chunks otherwise the doc undo
     // stack becomes very full and slows things down
     size_t data_len = 32768;
-    unsigned char *file_data = new unsigned char[data_len];  // work buffer
+    unsigned char *file_data = NULL;    // work buffer
+	try
+	{
+		file_data = new unsigned char[data_len];
+	}
+	catch (std::bad_alloc)
+	{
+        ::HMessageBox("Insufficient memory");
+        theApp.mac_error_ = 10;
+		return;
+	}
     unsigned char *pout = file_data;   // Ptr into file_data where we are currently storing
 
-    bool first(true);               // is this the first S record read from the file
+    bool first(true);               // is this the first line read from the file
     FILE_ADDRESS start_addr, end_addr, curr_addr = -1;
 
     GetSelAddr(start_addr, end_addr);  // Get the current selection
 
     buffer[0] = '\0'; pp = buffer;
-    for (;;)
+    for (;;)  // loop on output bytes (one or two input hecx digits)
     {
         // Skip whitespace/unused characters etc
         while (*pp != '\0' && !isalpha(*pp) && !isdigit(*pp))
             ++pp;
 
         // If at end of string get the next line from the file
-        while (*pp == '\0')
+        while (*pp == '\0')  // skip strings till we get a non-empty one
         {
+			file_done += pp - buffer + 2;
             try
             {
                 pp = ff.ReadString(buffer, sizeof(buffer)-1);
@@ -7744,8 +7803,7 @@ void CHexEditView::do_hex_text(CString file_name)
             {
                 ::HMessageBox(::FileErrorMessage(pfe, CFile::modeRead));
                 pfe->Delete();
-                delete[] file_data;
-                return;
+				goto error_return;
             }
 
             if (pp == NULL)
@@ -7761,9 +7819,7 @@ void CHexEditView::do_hex_text(CString file_name)
             CString ss;
             ss.Format("Unexpected alpha characters in hex text file at line %ld", long(line_no));
             ::HMessageBox(ss);
-            theApp.mac_error_ = 5;
-            delete[] file_data;
-            return;
+			goto error_return;
         }
 
         if (isdigit(*pp))
@@ -7792,8 +7848,57 @@ void CHexEditView::do_hex_text(CString file_name)
             ASSERT(pout == file_data + data_len);
 
             // The buffer is almost full or we're finished reading the file - so save buffer
-            if (first)
+			if (fout.GetHandle() != INVALID_HANDLE_VALUE)
+			{
+				// Writing to temp file
+				try
+				{
+					fout.Write(file_data, data_len);
+				}
+				catch (CFileException *pfe)
+				{
+					::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+					pfe->Delete();
+					fout.Close();
+					remove(temp_file);
+					goto error_return;
+				}
+
+				// Do any redrawing, but nothing else
+				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				{
+					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+					{
+						::TranslateMessage(&msg);
+						::DispatchMessage(&msg);
+					}
+				}
+
+                // Check if a key has been pressed
+                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+                {
+                    // Windows does not like to miss key down events (need to match key up events)
+                    ::TranslateMessage(&msg);
+                    ::DispatchMessage(&msg);
+
+                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+                        ;
+
+                    if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                        ::HMessageBox("Abort hex import?", MB_YESNO) == IDYES)
+                    {
+						fout.Close();
+						remove(temp_file);
+						goto error_return;
+                    }
+                }
+
+				mm->m_wndStatusBar.SetPaneProgress(0, long((file_done*100)/file_len));
+			}
+            else if (first)
             {
+				// First in memory block to be stored - may replace the current selection
                 ASSERT(curr_addr == -1);
                 curr_addr = start_addr;
                 if (start_addr < end_addr)
@@ -7808,6 +7913,7 @@ void CHexEditView::do_hex_text(CString file_name)
             }
             else
             {
+				// Next in memory block - just insert it
                 ASSERT(curr_addr != -1);
                 GetDocument()->Change(mod_insert, curr_addr, pout - file_data, file_data, 0, this, TRUE);
             }
@@ -7821,7 +7927,23 @@ end_file:
     // Write out any partial buffer at end
     if (pout > file_data)
     {
-        if (first)
+		if (fout.GetHandle() != INVALID_HANDLE_VALUE)
+		{
+			// Writing to temp file
+			try
+			{
+				fout.Write(file_data, pout - file_data);
+			}
+			catch (CFileException *pfe)
+			{
+				::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+				pfe->Delete();
+				fout.Close();
+				remove(temp_file);
+				goto error_return;
+			}
+		}
+		else if (first)
         {
             ASSERT(curr_addr == -1);
             curr_addr = start_addr;
@@ -7842,11 +7964,42 @@ end_file:
         }
         curr_addr += pout - file_data;
     }
-    delete[] file_data;
-    theApp.SaveToMacro(km_import_text, file_name);
 
+	if (fout.GetHandle() != INVALID_HANDLE_VALUE)
+	{
+		FILE_ADDRESS fout_len = fout.GetLength();
+		fout.Close();      // close the file so we can use it
+
+		// Add the temp file to the document
+		int idx = GetDocument()->AddDataFile(temp_file, TRUE);
+		ASSERT(idx != -1);
+
+        if (start_addr < end_addr)
+        {
+            // Delete current selection and insert new data
+            GetDocument()->Change(mod_delforw, start_addr, end_addr-start_addr, NULL, 0, this);
+			GetDocument()->Change(mod_insert_file, start_addr, fout_len, NULL, idx, this, TRUE);
+        }
+        else
+			GetDocument()->Change(mod_insert_file, start_addr, fout_len, NULL, idx, this);
+
+		// NOTE: curr_data is not used when writing to temp file except below (in selecting
+		// the inserted data) - so we have to set it here.
+		curr_addr = start_addr + fout_len;
+	}
+
+    delete[] file_data;
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
     SetSel(addr2pos(start_addr), addr2pos(curr_addr));
     DisplayCaret();
+
+    theApp.SaveToMacro(km_import_text, file_name);
+	return;
+
+error_return:
+    delete[] file_data;
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	theApp.mac_error_ = 10;
 }
 
 void CHexEditView::OnUpdateImportHexText(CCmdUI* pCmdUI) 
