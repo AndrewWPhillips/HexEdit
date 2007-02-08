@@ -7863,7 +7863,7 @@ void CHexEditView::OnExportHexText()
     FILE_ADDRESS start_addr, end_addr;
     GetSelAddr(start_addr, end_addr);
     ASSERT(start_addr >= 0 && start_addr <= end_addr && end_addr <= GetDocument()->length());
-    if (start_addr == end_addr)
+    if (start_addr >= end_addr)
     {
         // Nothing selected, presumably in macro playback
         ASSERT(theApp.playing_);
@@ -7895,7 +7895,7 @@ void CHexEditView::OnExportHexText()
     CFile64 ff;
     CFileException fe;                      // Stores file exception info
 
-    // Open the file
+    // Open the file to export to
     if (!ff.Open(theApp.current_export_,
                  CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary,
                  &fe))
@@ -7933,6 +7933,7 @@ void CHexEditView::OnExportHexText()
     else
         hex = "0123456789abcdef?";
 
+    clock_t last_checked = clock();
     mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
     MSG msg;                                           // use to check for abort key press
 
@@ -7996,7 +7997,11 @@ void CHexEditView::OnExportHexText()
             }
         }
 
-		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+        if (double(clock() - last_checked)/CLOCKS_PER_SEC > 3) // update every 3 secs
+        {
+			mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+            last_checked = clock();
+        }
     }
     ASSERT(curr == end_addr);
 
