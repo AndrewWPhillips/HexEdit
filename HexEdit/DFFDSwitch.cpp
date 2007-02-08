@@ -804,7 +804,8 @@ bool CDFFDSwitch::check_data()
 	if (ss.IsEmpty())
 	{
         // The switch expression is empty
-        AfxMessageBox("Please enter an expression for case selection.\n");
+        AfxMessageBox("Please enter an integer or string\n"
+			          "expression for case selection.\n");
         ctl_expr_.SetFocus();
         return false;
 	}
@@ -817,15 +818,17 @@ bool CDFFDSwitch::check_data()
         return false;
     }
 
+#if 0  // We can now switch on a string expression whence this is no longer valid, although
+	   // we could reintroduce it if we coulde determine the type of the expression in ctl_expr_
 	// Check each case range
 	for (int item = 0; item < ctl_cases_.GetCount() - 1; ++item)
 	{
 	    CXmlTree::CElt ee = pelt_->GetChild(long(item));
         ASSERT(!ee.IsEmpty() && ee.GetName() == "case");
-		CString ss = ee.GetAttr("range");
+		ss = ee.GetAttr("range");
 
-		range_set<__int64> rs;
 		std::istringstream strstr((const char *)ss);
+		range_set<__int64> rs;
 		if (!(strstr >> rs) || rs.empty())
 		{
 			ctl_cases_.SetCurSel(item);
@@ -836,6 +839,29 @@ bool CDFFDSwitch::check_data()
 			return false;
 		}
 	}
+#else
+	for (int item = 0; item < ctl_cases_.GetCount() - 1; ++item)
+	{
+	    CXmlTree::CElt ee = pelt_->GetChild(long(item));
+        ASSERT(!ee.IsEmpty() && ee.GetName() == "case");
+		ss = ee.GetAttr("range");
+
+		std::istringstream strstr((const char *)ss);
+		// Make sure there are no empty cases (except the last)
+		if (strstr.str().size() == 0 && item < ctl_cases_.GetCount() - 2)
+		{
+			ctl_cases_.SetCurSel(item);
+			ctl_range_.SetWindowText(ss);
+			AfxMessageBox("For an integer switch expression\n"
+				          "you should enter a range string\n"
+				          "of the form \"1, 2, 6-10\".\n\n"
+						  "For a string switch expression\n"
+						  "just enter a string to match against.");
+			ctl_range_.SetFocus();
+			return false;
+		}
+	}
+#endif
 
     return true;
 }

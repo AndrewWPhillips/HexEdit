@@ -1736,6 +1736,8 @@ void CHexEditDoc::OnDffdNew()
     CDFFDHint dffdh;
     UpdateAllViews(NULL, 0, &dffdh);
 
+	dffd_edit_mode_ = 1;
+
 	CHexEditView *pv = GetBestView();
 	if (pv != NULL)
 		pv->ShowDffd();
@@ -1790,13 +1792,14 @@ BOOL CHexEditDoc::DffdEditMode()
 	if (dffd_edit_mode_ == -1)
 	{
 		CString ss;
-		ss = ptree_->GetRoot().GetAttr("default_read_only");
-        dffd_edit_mode_ = (ss.CompareNoCase("true") == 0);
+		ss = ptree_->GetRoot().GetAttr("allow_editing");
+        dffd_edit_mode_ = (ss.CompareNoCase("false") != 0);
 	}
 
 	return dffd_edit_mode_;
 }
 
+// Toggle editing
 void CHexEditDoc::OnEditMode() 
 {
 	dffd_edit_mode_ = !DffdEditMode();
@@ -2581,26 +2584,26 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 df_type_.push_back(DF_SWITCH);
 
             // Check test expression
-            CHexExpr::value_t tmp;
+            CHexExpr::value_t switch_val;
             bool expr_ok = true;                    // Valid integer expression?
 
             if (addr != -1)
             {
                 int expr_ac;                            // Last node accessed by test expression
 
-                tmp = ee.evaluate(elt.GetAttr("test"), ii, expr_ac);
+                switch_val = ee.evaluate(elt.GetAttr("test"), ii, expr_ac);
                 if (expr_ac > last_ac) last_ac = expr_ac;
 
                 // Handle errors in test expression
-				if (tmp.typ != CHexExpr::TYPE_INT)
+				if (switch_val.typ != CHexExpr::TYPE_INT && switch_val.typ != CHexExpr::TYPE_STRING)
                 {
                     if (show_parent_row)
                         df_size_[ii] = 0;       // Signal error here in case exception thrown in HandleError and code below not reached
 
                     // Display error message unless error is due to past EOF
-                    if (tmp.typ != CHexExpr::TYPE_NONE)
+                    if (switch_val.typ != CHexExpr::TYPE_NONE)
                         HandleError("The \"test\" attribute expression of the\n"
-                                    "\"switch\" tag must yield an integer result.\n");
+                                    "\"switch\" tag must yield an integer or string result.\n");
                     else
                         HandleError(CString(ee.get_error_message()) + "\nin \"test\" of \"switch\".");
 
@@ -2618,10 +2621,24 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 				if (addr != -1 && expr_ok && !found_it)
 				{
 					// check if switch expression matches this case's range
-					range_set<__int64> rs;
 			        std::istringstream strstr((const char *)case_elt.GetAttr("range"));
-					if (strstr >> rs && rs.find(tmp.int64) != rs.end())
+					if (strstr.str().empty())
+					{
+						// Empty string matches everything
 						is_valid = true;
+					}
+					else if (switch_val.typ == CHexExpr::TYPE_INT)
+					{
+						range_set<__int64> rs;
+						if (strstr >> rs && rs.find(switch_val.int64) != rs.end())
+							is_valid = true;
+					}
+					else
+					{
+						ASSERT(switch_val.typ == CHexExpr::TYPE_STRING);
+						if (*switch_val.pstr == (const char *)strstr.str().c_str())
+							is_valid = true;
+					}
 				}
 
 				if (is_valid || DffdEditMode())  // only show the taken case unless we are in edit mode
@@ -2679,24 +2696,24 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 df_type_.push_back(DF_IF);
 
             // Check test expression
-            CHexExpr::value_t tmp;
+            CHexExpr::value_t if_val;
             bool expr_ok = true;                    // Expression was boolean?
 
             if (addr != -1)
             {
                 int expr_ac;                            // Last node accessed by test expression
 
-                tmp = ee.evaluate(elt.GetAttr("test"), ii, expr_ac);
+                if_val = ee.evaluate(elt.GetAttr("test"), ii, expr_ac);
                 if (expr_ac > last_ac) last_ac = expr_ac;
 
                 // Handle errors in test expression
-                if (tmp.typ != CHexExpr::TYPE_BOOLEAN)
+                if (if_val.typ != CHexExpr::TYPE_BOOLEAN)
                 {
                     if (show_parent_row)
                         df_size_[ii] = 0;       // Signal error here in case exception thrown in HandleError and code below not reached
 
                     // Display error message unless error is due to past EOF
-                    if (tmp.typ != CHexExpr::TYPE_NONE)
+                    if (if_val.typ != CHexExpr::TYPE_NONE)
                         HandleError("The \"test\" attribute expression of the\n"
                                     "\"if\" tag must yield a boolean result.\n");
                     else
@@ -2709,7 +2726,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             FILE_ADDRESS size_tmp;
 
             // Do IF part
-            if (addr != -1 && expr_ok && tmp.boolean)
+            if (addr != -1 && expr_ok && if_val.boolean)
             {
                 // Now get the branch for true part
                 last_ac = _MAX(last_ac, add_branch(elt, addr, new_ind, ee, size_tmp, 0));
@@ -2723,7 +2740,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             {
 				// Grey out sub-nodes that are not present
                 unsigned curr_ii = ii;
-                if (show_parent_row && addr != -1 && expr_ok && !tmp.boolean && elt.GetNumChildren() >= 3)
+                if (show_parent_row && addr != -1 && expr_ok && !if_val.boolean && elt.GetNumChildren() >= 3)
                     ++curr_ii;                  // Don't grey parent node if ELSE part is valid
 
                 // Get the branch for if so that it can be displayed and edited
@@ -2737,7 +2754,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             }
 
             // Do ELSE part if it is present
-            if (addr != -1 && expr_ok && !tmp.boolean && elt.GetNumChildren() >= 3)
+            if (addr != -1 && expr_ok && !if_val.boolean && elt.GetNumChildren() >= 3)
             {
 				ASSERT(elt.GetNumChildren() == 3);
 
@@ -2790,17 +2807,17 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 // Get offset for new address
                 int expr_ac;                            // Last node accessed by offset expression
 
-                CHexExpr::value_t tmp = ee.evaluate(elt.GetAttr("offset"), ii, expr_ac);
+                CHexExpr::value_t jump_val = ee.evaluate(elt.GetAttr("offset"), ii, expr_ac);
                 if (expr_ac > last_ac) last_ac = expr_ac;
 
                 // Expression must be an integer
-                if (tmp.typ != CHexExpr::TYPE_INT)
+                if (jump_val.typ != CHexExpr::TYPE_INT)
                 {
                     if (show_parent_row)
                         df_size_[ii] = 0;       // Signal error here in case exception thrown in HandleError and code below not reached
 
                     // Display error message unless error is due to past EOF
-                    if (tmp.typ != CHexExpr::TYPE_NONE)
+                    if (jump_val.typ != CHexExpr::TYPE_NONE)
                         HandleError("The \"expr\" address expression of the\n"
                                     "\"jump\" tag must yield an integer result.\n");
                     else
@@ -2811,11 +2828,11 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                     // Work out address jumped to
                     CString origin = elt.GetAttr("origin");
                     if (origin == "start")
-                        jump_addr = tmp.int64;
+                        jump_addr = jump_val.int64;
                     else if (origin == "current")
-                        jump_addr = addr + tmp.int64;
+                        jump_addr = addr + jump_val.int64;
                     else if (origin == "end")
-                        jump_addr = length_ + tmp.int64;
+                        jump_addr = length_ + jump_val.int64;
                     else
                         ASSERT(0);
 
@@ -2868,7 +2885,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
         {
             df_type_.push_back(DF_EVAL);
 
-            CHexExpr::value_t tmp;
+            CHexExpr::value_t eval_val;
             bool display_result = false;
 
             if (addr != -1)
@@ -2877,7 +2894,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 int expr_ac;                            // Last node accessed by expression
 
                 // Evaluate a simple expression or a srting containing one or more {expr;format} specs
-                tmp = Evaluate(elt.GetAttr("expr"), ee, ii, expr_ac);
+                eval_val = Evaluate(elt.GetAttr("expr"), ee, ii, expr_ac);
                 //if (expr_ac > last_ac) last_ac = expr_ac;  // Don't update last_ac as the value is only for display
 
                 // Get options
@@ -2891,12 +2908,12 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                     display_result = true;
 
                 // Display an error message if the expression evaluated false
-                if (tmp.typ == CHexExpr::TYPE_NONE)
+                if (eval_val.typ == CHexExpr::TYPE_NONE)
                 {
                     HandleError(CString(ee.get_error_message()) + "\nin EVAL \"expr\" attribute.");
                     display_result = true;
                 }
-                else if (display_error && tmp.typ != CHexExpr::TYPE_BOOLEAN && addr != -1)
+                else if (display_error && eval_val.typ != CHexExpr::TYPE_BOOLEAN && addr != -1)
                 {
                     HandleError("The \"expr\" attribute expression of the \"EVAL\"\n"
                                 "tag must be boolean if display_error is true.\n");
@@ -2905,7 +2922,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                     // Always display the result if there is an error
                     display_result = true;
                 }
-                else if (display_error && !tmp.boolean)
+                else if (display_error && !eval_val.boolean)
                 {
                     df_address_[ii] = -1;
                     // Always display the result if there is an error
@@ -2917,26 +2934,26 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             if (display_result || DffdEditMode())
             {
                 // Save the result of the evaluation for later display
-                switch (tmp.typ)
+                switch (eval_val.typ)
                 {
                 case CHexExpr::TYPE_BOOLEAN:
-                    df_info_[ii] = tmp.boolean ? "TRUE" : "FALSE";
+                    df_info_[ii] = eval_val.boolean ? "TRUE" : "FALSE";
                     break;
                 case CHexExpr::TYPE_INT:
-                    //df_info_[ii].Format("%I64d", tmp.int64);    // CString::Format does not support %I64 yet
+                    //df_info_[ii].Format("%I64d", eval_val.int64);    // CString::Format does not support %I64 yet
                     {
                         char buf[32];
-                        sprintf(buf, "%I64d", tmp.int64);
+                        sprintf(buf, "%I64d", eval_val.int64);
 						CString strAddr(buf);
                         AddCommas(strAddr);
                         df_info_[ii] = strAddr;
                     }
                     break;
                 case CHexExpr::TYPE_DATE:
-                    if (tmp.date > -1e30)
+                    if (eval_val.date > -1e30)
                     {
                         COleDateTime odt;
-                        odt.m_dt = tmp.date;
+                        odt.m_dt = eval_val.date;
                         odt.m_status = COleDateTime::valid;
                         df_info_[ii] = odt.Format("%#c");
                     }
@@ -2945,16 +2962,16 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                     break;
                 case CHexExpr::TYPE_REAL:
 #ifdef UNICODE_TYPE_STRING
-                    df_info_[ii].Format(L"%g", tmp.real64);
+                    df_info_[ii].Format(L"%g", eval_val.real64);
 #else
-                    df_info_[ii].Format("%g", tmp.real64);
+                    df_info_[ii].Format("%g", eval_val.real64);
 #endif
                     break;
                 case CHexExpr::TYPE_STRING:
-                    df_info_[ii] = *tmp.pstr;
+                    df_info_[ii] = *eval_val.pstr;
                     break;
                 default:
-                    ASSERT(tmp.typ == CHexExpr::TYPE_NONE);
+                    ASSERT(eval_val.typ == CHexExpr::TYPE_NONE);
                     if (addr != -1)
                     {
                         HandleError(CString(ee.get_error_message()) + "\nin \"expr\" of \"eval\".");
