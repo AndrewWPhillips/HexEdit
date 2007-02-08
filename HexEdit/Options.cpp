@@ -29,6 +29,7 @@
 #include "resource.hm"          // For control help IDs
 
 #include <bcgbarres.h>          // For IDC_BCGBARRES_SKINS
+#include "options.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -375,10 +376,8 @@ CSysDisplayPage::CSysDisplayPage() : CPropertyPage(CSysDisplayPage::IDD)
 	default_real_format_ = _T("");
 	default_string_format_ = _T("");
 	default_unsigned_format_ = _T("");
-	dffd_view_ = -1;
-	dffd_on_ = FALSE;
-	tree_edit_ = FALSE;
 	//}}AFX_DATA_INIT
+	dffd_view_ = -1;
 
     HICON hh = AfxGetApp()->LoadIcon(IDI_DISPLAY);
     m_psp.hIcon = hh;
@@ -408,10 +407,8 @@ void CSysDisplayPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_DFFD_FORMAT_REAL, default_real_format_);
 	DDX_Text(pDX, IDC_DFFD_FORMAT_STRING, default_string_format_);
 	DDX_Text(pDX, IDC_DFFD_FORMAT_UINT, default_unsigned_format_);
-	DDX_Radio(pDX, IDC_DFFD_SPLIT, dffd_view_);
-	DDX_Check(pDX, IDC_DFFD_ON, dffd_on_);
-	DDX_Check(pDX, IDC_DFFD_ALLOW_EDIT, tree_edit_);
 	//}}AFX_DATA_MAP
+	DDX_Radio(pDX, IDC_DFFD_NONE, dffd_view_);
 //	DDX_Check(pDX, IDC_NICE_ADDR, nice_addr_);
 }
 
@@ -422,7 +419,6 @@ BEGIN_MESSAGE_MAP(CSysDisplayPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_HEX_UCASE, OnChange)
 	ON_BN_CLICKED(IDC_MDITABS, OnChangeMditabs)
 	ON_BN_CLICKED(IDC_VISUALIZATIONS, OnVisualizations)
-	ON_BN_CLICKED(IDC_DFFD_ON, OnDffdOn)
 	ON_BN_CLICKED(IDC_RESTORE, OnChange)
 	ON_BN_CLICKED(IDC_LARGE_CURSOR, OnChange)
 	ON_BN_CLICKED(IDC_TABSBOTTOM, OnChange)
@@ -440,59 +436,7 @@ BEGIN_MESSAGE_MAP(CSysDisplayPage, CPropertyPage)
 	//}}AFX_MSG_MAP
     ON_WM_CONTEXTMENU()
 //	ON_BN_CLICKED(IDC_NICE_ADDR, OnChange)
-	ON_BN_CLICKED(IDC_DFFD_ALLOW_EDIT, OnChange)
 END_MESSAGE_MAP()
-
-void CSysDisplayPage::FixDffd()
-{
-    ASSERT(GetDlgItem(IDC_DFFD_GROUP1) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_SPLIT) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_TAB) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_DFFD_ARRAY_MAX) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_ARRAY_MAX) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_ALLOW_EDIT) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_DFFD_ARRAY_MAX) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_GROUP2) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_FORMAT_STRING) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_DFFD_FORMAT_STRING) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_FORMAT_REAL) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_DFFD_FORMAT_REAL) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_FORMAT_DATE) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_DFFD_FORMAT_DATE) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_FORMAT_CHAR) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_DFFD_FORMAT_CHAR) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_FORMAT_INT) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_DFFD_FORMAT_INT) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_FORMAT_UINT) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_DFFD_FORMAT_UINT) != NULL);
-    ASSERT(GetDlgItem(IDC_DFFD_ON) != NULL);
-
-    // This seems to be necessary so the check box does no get behind the group box
-    GetDlgItem(IDC_DFFD_ON)->EnableWindow(FALSE);
-    GetDlgItem(IDC_DFFD_ON)->EnableWindow(TRUE);
-
-    // Enable/disable all the controls
-    GetDlgItem(IDC_DFFD_GROUP1)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_SPLIT)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_TAB)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DESC_DFFD_ARRAY_MAX)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_ARRAY_MAX)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_ALLOW_EDIT)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_SPIN_DFFD_ARRAY_MAX)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_GROUP2)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_FORMAT_STRING)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DESC_DFFD_FORMAT_STRING)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_FORMAT_REAL)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DESC_DFFD_FORMAT_REAL)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_FORMAT_DATE)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DESC_DFFD_FORMAT_DATE)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_FORMAT_CHAR)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DESC_DFFD_FORMAT_CHAR)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_FORMAT_INT)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DESC_DFFD_FORMAT_INT)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DFFD_FORMAT_UINT)->EnableWindow(dffd_on_);
-    GetDlgItem(IDC_DESC_DFFD_FORMAT_UINT)->EnableWindow(dffd_on_);
-}
 
 /////////////////////////////////////////////////////////////////////////////
 // CSysDisplayPage message handlers
@@ -503,7 +447,6 @@ BOOL CSysDisplayPage::OnInitDialog()
 	
     ASSERT(GetDlgItem(IDC_SPIN_DFFD_ARRAY_MAX) != NULL);
     ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_DFFD_ARRAY_MAX))->SetRange(2, UD_MAXVAL);
-    FixDffd();           // Disable/enable DFFD controls based on current setting
 	
 	return TRUE;
 }
@@ -513,17 +456,8 @@ void CSysDisplayPage::OnChange()
     SetModified(TRUE);
 }
 
-void CSysDisplayPage::OnDffdOn() 
-{
-    UpdateData();
-    FixDffd();           // Disable/enable DFFD controls based on new setting
-    SetModified(TRUE);
-}
-
 void CSysDisplayPage::OnRButtonDblClk(UINT nFlags, CPoint point) 
 {
-    tree_edit_ = TRUE;
-	
 	CPropertyPage::OnRButtonDblClk(nFlags, point);
 }
 
@@ -556,15 +490,12 @@ static DWORD id_pairs1[] = {
 //        IDC_NICE_ADDR, HIDC_NICE_ADDR,
     IDC_LARGE_CURSOR, HIDC_LARGE_CURSOR,
     IDC_SHOW_OTHER, HIDC_SHOW_OTHER,
-    IDC_DFFD_ON, HIDC_DFFD_ON,
-    IDC_DFFD_GROUP1, HIDC_DFFD_ON,
-    IDC_DFFD_GROUP2, HIDC_DFFD_ON,
+    IDC_DFFD_NONE, HIDC_DFFD_SPLIT,  // xxx need HIDC_DFFD_NONE
     IDC_DFFD_SPLIT, HIDC_DFFD_SPLIT,
     IDC_DFFD_TAB, HIDC_DFFD_TAB,
     IDC_DFFD_ARRAY_MAX, HIDC_DFFD_ARRAY_MAX,
     IDC_DESC_DFFD_ARRAY_MAX, HIDC_DFFD_ARRAY_MAX,
     IDC_SPIN_DFFD_ARRAY_MAX, HIDC_DFFD_ARRAY_MAX,
-    IDC_DFFD_ALLOW_EDIT, HIDC_DFFD_ALLOW_EDIT,
 
     IDC_DFFD_FORMAT_CHAR, HIDC_DFFD_FORMAT_CHAR,
     IDC_DESC_DFFD_FORMAT_CHAR, HIDC_DFFD_FORMAT_CHAR,
@@ -3428,5 +3359,4 @@ void CColourSchemes::OnChangeRange()
         SetModified(TRUE);
     }
 }
-
 

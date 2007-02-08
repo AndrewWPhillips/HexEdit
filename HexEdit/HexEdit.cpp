@@ -2798,29 +2798,13 @@ void CHexEditApp::get_options()
 
     p_sysdisplay->open_restore_ = open_restore_;
     p_sysdisplay->hex_ucase_ = hex_ucase_;
-//    p_sysdisplay->nice_addr_ = nice_addr_;
+	//p_sysdisplay->nice_addr_ = nice_addr_;
     p_sysdisplay->large_cursor_ = large_cursor_;
     p_sysdisplay->show_other_ = show_other_;
     p_sysdisplay->mditabs_ = mditabs_;
     p_sysdisplay->tabsbottom_ = tabsbottom_;
 
-    switch (tree_view_)
-    {
-    default:
-        ASSERT(0);
-    case 0:
-        p_sysdisplay->dffd_on_ = FALSE;
-        break;
-    case 1:
-        p_sysdisplay->dffd_on_ = TRUE;
-        p_sysdisplay->dffd_view_ = 0;
-        break;
-    case 2:
-        p_sysdisplay->dffd_on_ = TRUE;
-        p_sysdisplay->dffd_view_ = 1;
-        break;
-    }
-
+	p_sysdisplay->dffd_view_ = tree_view_;
     //p_sysdisplay->tree_edit_ = tree_edit_;
     p_sysdisplay->max_fix_for_elts_ = max_fix_for_elts_;
     p_sysdisplay->default_char_format_ = default_char_format_;
@@ -3091,13 +3075,7 @@ void CHexEditApp::set_sysdisplay()
                 tabsbottom_ ? CBCGTabWnd::LOCATION_BOTTOM : CBCGTabWnd::LOCATION_TOP);
     }
 
-    if (!p_sysdisplay->dffd_on_)
-        tree_view_ = 0;  // tree view off
-    else if (p_sysdisplay->dffd_view_ == 1)
-        tree_view_ = 2;  // tabs
-    else
-        tree_view_ = 1;  // splitter
-
+	tree_view_ = p_sysdisplay->dffd_view_;
     //tree_edit_ = p_sysdisplay->tree_edit_;
     max_fix_for_elts_ = p_sysdisplay->max_fix_for_elts_;
     default_char_format_ = p_sysdisplay->default_char_format_;

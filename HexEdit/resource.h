@@ -559,6 +559,8 @@
 #define IDC_UNARY_LSL                   1088
 #define IDC_SITE                        1088
 #define IDC_PRINT_SPACE2                1088
+#define IDC_DFFD_SPLIT2                 1088
+#define IDC_DFFD_NONE                   1088
 #define IDC_CHAR                        1089
 #define IDC_UNARY_LSR                   1089
 #define IDC_AUTOFIT                     1090
@@ -950,7 +952,6 @@
 #define IDC_EDIT2                       1437
 #define IDC_ACK                         1437
 #define IDC_PTR_SIZE4                   1438
-#define IDC_ACK2                        1438
 #define IDC_PTR_SIZE8                   1439
 #define IDC_FUNC_PTR2                   1440
 #define IDC_FUNC_PTR4                   1441

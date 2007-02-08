@@ -1,3 +1,6 @@
+#ifndef _OPTIONS_H
+#define _OPTIONS_H
+
 // options.h : header file for Options tabbed dialog box
 //
 
@@ -209,10 +212,8 @@ public:
 	CString	default_real_format_;
 	CString	default_string_format_;
 	CString	default_unsigned_format_;
-	int		dffd_view_;
-	BOOL	dffd_on_;
 	//}}AFX_DATA
-    BOOL tree_edit_;
+	int		dffd_view_;
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -231,14 +232,11 @@ protected:
 	afx_msg void OnChange();
 	afx_msg void OnChangeMditabs();
 	afx_msg void OnVisualizations();
-	afx_msg void OnDffdOn();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnRButtonDblClk(UINT nFlags, CPoint point);
 	//}}AFX_MSG
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
-
-    void FixDffd();
 };
 /////////////////////////////////////////////////////////////////////////////
 // CPrintPage dialog
@@ -575,3 +573,4 @@ protected:
     bool change_name_;              // Is the change to the current name not done by user?
     bool change_range_;             // Is change to range not done by user?
 };
+#endif

@@ -95,7 +95,6 @@
 #define HIDC_DEC_SIGN_MAG               0x80a30445    // IDD_PROP_DECIMAL [English (U.S.)]
 #define HIDC_DEC_UNSIGNED               0x80a30442    // IDD_PROP_DECIMAL [English (U.S.)]
 #define HIDC_DEL                        0x80f10478    // IDD_OPT_FILTERS [English (U.S.)]
-#define HIDC_DFFD_ALLOW_EDIT            0x80eb056a    // IDD_OPT_SYSDISPLAY [English (U.S.)]
 #define HIDC_DFFD_ANSI                  0x81190540    // IDD_DFFD_GLOBAL
 #define HIDC_DFFD_ARRAY_MAX             0x80eb04d8    // IDD_OPT_SYSDISPLAY [English (U.S.)]
 #define HIDC_DFFD_ASCII                 0x8119053f    // IDD_DFFD_GLOBAL
@@ -143,10 +142,10 @@
 #define HIDC_DFFD_LENGTH                0x81150522    // IDD_DFFD_DATA
 #define HIDC_DFFD_LENGTH_VAR            0x8115053c    // IDD_DFFD_DATA
 #define HIDC_DFFD_NAME                  0x8115052b    // IDD_DFFD_DATA
+#define HIDC_DFFD_NONE                  0x80eb0440    // IDD_OPT_SYSDISPLAY [English (U.S.)]
 #define HIDC_DFFD_OEM                   0x81190541    // IDD_DFFD_GLOBAL
 #define HIDC_DFFD_OFFSET                0x81250572    // IDD_DFFD_JUMP
 #define HIDC_DFFD_OFFSET_VAR            0x81250573    // IDD_DFFD_JUMP
-#define HIDC_DFFD_ON                    0x80eb04a6    // IDD_OPT_SYSDISPLAY [English (U.S.)]
 #define HIDC_DFFD_ORIGIN                0x81250574    // IDD_DFFD_JUMP
 #define HIDC_DFFD_READ_ONLY             0x81150526    // IDD_DFFD_DATA
 #define HIDC_DFFD_REPLACE               0x81170537    // IDD_DFFD_FOR
