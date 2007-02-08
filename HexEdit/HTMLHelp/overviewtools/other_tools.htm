@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1061>
-<meta name=layout-width content=1235>
+<meta name=layout-height content=1459>
+<meta name=layout-width content=976>
 
 
 <!--(Links)=========================================================-->
@@ -43,29 +43,11 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p><span style="font-weight: bold;">Comparisons</span></p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p>You can compare the data in any two (maximised) windows using Alt+C, 
- even two parts of the same file. If a difference is found the offending 
- bytes are selected in both windows – pressing Alt+C again will continue 
- the comparison at the following byte. It’s often useful to tile (vertically) 
- the two windows being compared and turn on Autofit mode before starting 
- the comparison to easily see the results. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
- if you turn on the highlighter all differences are automatically highlighted 
- as you find them.</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p>While a long comparison (or search) is in progress the Address Tools 
- in the Edit Bar are updated with the current address to show progress. 
- If no differences are found (ie, the files are the same in both windows 
- up to the end of file) then a message to that effect is displayed in the 
- status bar and the cursor is not moved. If a difference is found (ie, 
- a different byte was encountered or end of file was encountered in but 
- one of the files) then a message is displayed in the status bar indicating 
- the number of bytes that were the same before the difference was found.</p>
+<p>The following tools perform operations on the current selection. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->All 
+ these tools can handle selections of any size (ie 4GBytes or more). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the operation is to take a long time then progress is displayed in the 
+ status bar. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also abort these commands at any time by pressing Esc (or any) key.</p>
 
 <p>&nbsp;</p>
 
@@ -84,11 +66,20 @@
 <p>&nbsp;</p>
 
 <p>For all conversions the length of the selection does not change. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Any 
- characters that cannot be converted are changed to null (ie zero) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->bytes.</p>
+ characters that cannot be converted are changed to null (ie zero) bytes.</p>
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold;">Checksums and CRCs</p>
+<p>If the current selection is very large (ie in the hundreds of MByte 
+ or GByte range) then HexEdit may need to save the result in a temporary 
+ file to avoid memory exhaustion. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ must ensure you have enough space in the area that Windows creates temporary 
+ files (usually C:\Documents and Settings\&lt;login name&gt;\Local Settings\Temp) 
+ if you convert very large files.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Checksums, CRCs and MD5</p>
 
 <p>&nbsp;</p>
 
@@ -130,6 +121,30 @@
  that the CRC-CCITT provides the correct standard implementation of this 
  algorithm -- many other programs calculate the incorrect value (due to 
  some incorrect source code being published on the Internet).</p>
+
+<p>&nbsp;</p>
+
+<p>Finally, the new MD5 message digest command (also called a cryptographic 
+ checksum or one-way hash function) provides a value that ensures a file 
+ has not been changed in any way. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->While 
+ a CRC is excellent for detecting random errors and noise it will <span 
+ style="font-weight: bold;">not</span> protect against deliberate tampering 
+ - that is it is fairly easy to generate data that has a known CRC. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
+ (at the present time and in the foreseeable future) it is computationally 
+ infeasible to do the same for an MD5 value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that the MD5 algorithm generates a 128-bit result - anything less and 
+ it would be susceptible to brute force attacks.</p>
+
+<p>&nbsp;</p>
+
+<p>MD5 values are quite commonly used now to verify that publicly distributed 
+ files have not been modified for nefarious purposes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, you can obtain the MD5 value for the HexEdit installation files 
+ from the HexEdit download page (http://hexedit.com/download.htm), but 
+ obviously you shouldn't use the downloaded version of HexEdit to check 
+ its own installation package, but using the previous version of HexEdit 
+ (eg using HexEdit 3.1 to verify the MD5 value for HexEdit 3.2) should 
+ be OK as long as you don't suspect your currently installed copy.</p>
 
 <p>&nbsp;</p>
 
@@ -198,7 +213,38 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p><span style="font-weight: bold;">For further information see:</span></p>
+<p><span style="font-weight: bold;"><span style="font-weight: bold;">C</span>omparisons</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>You can compare the data in any two (non-minimised) windows using Alt+C, 
+ even two parts of the same file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ comparison starts at the first byte of the selection in both windows.</p>
+
+<p>&nbsp;</p>
+
+<p>If a difference is found the offending bytes are selected in both windows 
+ – pressing Alt+C again will continue the comparison at the following byte. 
+ It’s often useful to tile (vertically) the two windows being compared 
+ and turn on Autofit mode before starting the comparison to easily see 
+ the results. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ if you turn on the highlighter all differences are automatically highlighted 
+ as you find them.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>While a long comparison (or search) is in progress the Address Tools 
+ in the Edit Bar are updated with the current address to show progress. 
+ If no differences are found (ie, the files are the same in both windows 
+ up to the end of file) then a message to that effect is displayed in the 
+ status bar and the cursor is not moved. If a difference is found (ie, 
+ a different byte was encountered or end of file was encountered in but 
+ one of the files) then a message is displayed in the status bar indicating 
+ the number of bytes that were the same before the difference was found.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">For further information see:</p>
 
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_tools\HID_EDIT_COMPARE.htm">Compare 
  command</a>&nbsp;to find out how to compare files or parts of the same 

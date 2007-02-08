@@ -2938,6 +2938,13 @@
     <param name="Name" value="Boolean Operations">
     <param name="Local" value="binary_files\Boolean_Operations.htm">
   </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="checksum">
+      <param name="Name" value="Other Tools">
+      <param name="Local" value="overviewtools\other_tools.htm">
+    </object>
+    </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="exclusive OR">
     <param name="Name" value="Boolean Operations">
