@@ -15,6 +15,7 @@
               default_byte_order (big|little) "little"
               default_read_only (false|true) "false"
               default_char_set (ascii|ansi|oem|ebcdic) "ansi"
+              allow_editing (false|true) "true"
               expr CDATA #IMPLIED
               type_name CDATA #IMPLIED
               comment CDATA #IMPLIED>

@@ -311,15 +311,16 @@ Help
 V3.2
  > fix info in open special dialog
    > bug in total space calcs
-   > show tota/free space in bytes and clusters
+   > show total/free space in bytes and clusters
  > info tip - bookmark, user-defined expressions etc\
    - global option to turn on/off
    - handle all time formats, character sets for chars and strings
- - make sure no files are modified in .EXE directory
+ > make sure no files are modified in .EXE directory
  - new installer
    - get MFC merge module (.msm file) to include used MFC in installation (.msi)
    - is it possible to have install modules (eg MFC) come from web only when needed?
- - acknowledgements
+   - add backgrnd.BMP and About.BMP to exe directory
+ > acknowledgements
 	BCG Control Bar 5.9 - Stas Levin et al at BCG (http://bcgsoft.com)
 	MFC Grid Control - Chris Maunder (http://codeproject.com/miscctrl/gridctrl.asp)
 	MFC Grid Tree Extensions - Ken Bertelson (http://codeproject.com/miscctrl/gridtreectrl.asp)
@@ -352,7 +353,7 @@ V3.2
 
  - allow enter expressions (incl assign to vars) in hex/dec jump tools
  > add select current highlight command and make default for dclick on highlight?
- - template template menu
+ > template menu
    > new, open, open type
    - parser setup
    > save, save as
@@ -360,11 +361,13 @@ V3.2
    > sync, auto sync, refresh
    > allow editing, options
  - unicode strings in templates
+ > updated BMP and IFF templates
+ > switch can use a string, not just int
  - update BCG 6.2 with my code and rebuild
  - make all selection work with blocks > 4GB
    > conversions (x 4)
    > encrypt/decrypt
-   - import/export hex text
+   > import/export hex text
    - clipboard?
  > properties fields
    > summary page
