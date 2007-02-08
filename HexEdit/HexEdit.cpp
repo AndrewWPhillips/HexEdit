@@ -645,8 +645,7 @@ BOOL CHexEditApp::InitInstance()
         AddDocTemplate(m_pDocTemplate);
 
         // We must do this before we create the mainframe so that we have bookmarks for the bookmarks dlg
-		// NOTE: the name "Bookmarks" is also used at end of ExitInstance
-        m_pbookmark_list = new CBookmarkList(_T("Bookmarks"));
+        m_pbookmark_list = new CBookmarkList(FILENAME_BOOKMARKS);
         m_pbookmark_list->ReadList();
 
         // create main MDI Frame window
@@ -661,7 +660,7 @@ BOOL CHexEditApp::InitInstance()
 //        CHexEditFontCombo::SaveCharSet();
 
 		// NOTE: the name "RecentFiles" is also used at end of ExitInstance
-        m_pRecentFileList = new CHexFileList(0, _T("RecentFiles"), recent_files_);
+        m_pRecentFileList = new CHexFileList(0, FILENAME_RECENTFILES, recent_files_);
         m_pRecentFileList->ReadList();
 
         // Make sure previous instance is not minimised before opening files in it
@@ -1515,9 +1514,9 @@ int CHexEditApp::ExitInstance()
 		if (!data_path.IsEmpty())
 		{
 			// NOTE: This needs to be updated when new data files added
-			remove(data_path + _T("RecentFiles"));
-			remove(data_path + _T("Bookmarks"));
-			remove(data_path + _T("Backgrnd.BMP"));
+			remove(data_path + FILENAME_RECENTFILES);
+			remove(data_path + FILENAME_BOOKMARKS);
+			remove(data_path + FILENAME_BACKGROUND);
 		}
 
 		::SHDeleteKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit");  // machine settings

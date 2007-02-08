@@ -137,7 +137,7 @@ BOOL CAbout::OnInitDialog()
 BOOL CAbout::OnEraseBkgnd(CDC* pDC)
 {
 	CEnBitmap bg;
-	bg.LoadImage(::GetExePath() + "About.bmp");
+	bg.LoadImage(::GetExePath() + FILENAME_ABOUTBG);
 	if (HBITMAP(bg) == 0)
 	    return CDialog::OnEraseBkgnd(pDC);
 

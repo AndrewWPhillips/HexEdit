@@ -291,12 +291,12 @@ void CHexEditApp::SaveSecurityFile()
 	CString filename;
 	if (::GetDataPath(filename))
 	{
-		filename += "backgrnd.bmp";
+		filename += FILENAME_BACKGROUND;
 
 		CFileFind ff;
 		if (!ff.FindFile(filename))
 		{
-			CString origname = ::GetExePath() + "backgrnd.bmp";
+			CString origname = ::GetExePath() + FILENAME_BACKGROUND;
 
 			// If not found copy from install directory
 			::MakeSureDirectoryPathExists(filename);
@@ -396,7 +396,7 @@ BOOL CHexEditApp::GetSecurityFile()
     fclose(ff);
 #endif
 	CString filename;
-	if (!::GetDataPath(filename) || !ReadFrom(filename + "backgrnd.bmp"))
+	if (!::GetDataPath(filename) || !ReadFrom(filename + FILENAME_BACKGROUND))
 		return FALSE;
 
     // Decrypt the data & check CRC
@@ -694,14 +694,14 @@ int CHexEditApp::GetSecurity()
         ::RegSetValueEx(hkey2, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
         set_key(DUMMY_KEY, 8);
     }
-	else if (::GetDataPath(filename) && !ff.FindFile(filename + "backgrnd.bmp"))
+	else if (::GetDataPath(filename) && !ff.FindFile(filename + FILENAME_BACKGROUND))
         SaveSecurityFile();     // backup file not found (just write out info read from registry to the file)
 
     // Erase the data so it can't be searched for in memory
     memset(&security_info, '\0', sizeof(security_info));
     ::RegCloseKey(hkey2);
     return sec_type;
-}
+} // GetSecurity
 
 #if 0
 #pragma warning(push)

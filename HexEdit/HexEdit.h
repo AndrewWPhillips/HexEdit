@@ -91,6 +91,11 @@ typedef __int64 FILE_ADDRESS;
 
 #define DEFAULT_MACRO_NAME " - Current Macro - "
 
+#define FILENAME_BOOKMARKS   _T("Bookmarks")
+#define FILENAME_RECENTFILES _T("RecentFiles")
+#define FILENAME_BACKGROUND  _T("Backgrnd.BMP")
+#define FILENAME_ABOUTBG     _T("About.bmp")
+
 #include <vector>           // For vector of keys that stores keystroke macro
 #include <afxmt.h>          // For MFC IPC (CCriticalSection)
 

@@ -201,12 +201,15 @@ CMainFrame::CMainFrame()
     preview_page_ = -1;
 //    timer_id_ = 0;
 #ifdef DRAW_BACKGROUND
-	char fullname[_MAX_PATH];
-    strcpy(fullname, GetExePath());
-    strcat(fullname, "HexEdit.GIF");
+	CString filename;
+	if (::GetDataPath(filename))
+		filename += FILENAME_BACKGROUND;
+	else
+		filename = GetExePath() + FILENAME_BACKGROUND;
 
-	CString bgfile = theApp.GetProfileString("MainFrame", "BackgroundFileName", fullname);
-	m_background.LoadImage(bgfile);
+	CString bgfile = theApp.GetProfileString("MainFrame", "BackgroundFileName", filename);
+	if (!m_background.LoadImage(bgfile))
+		m_background.LoadImage(GetExePath() + FILENAME_BACKGROUND);
 	m_background_pos = theApp.GetProfileInt("MainFrame", "BackgroundPosition", 4); // dv = bottom-right
 #endif
 	m_search_image.LoadBitmap(IDB_SEARCH);
