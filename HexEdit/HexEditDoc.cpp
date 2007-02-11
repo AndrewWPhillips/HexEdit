@@ -3042,9 +3042,9 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             if (byte_order == "default")
                 byte_order = default_byte_order_;
 
-
 			// Work out if this is bitfield and get number of bits
 			int data_bits = atoi(elt.GetAttr("bits"));
+			ASSERT(data_bits == 0 || data_type == "int");   // only ints can have bit-fields
 
             if (data_type == "none")
             {
@@ -3180,9 +3180,8 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                     df_type_[ii] = DF_CHARN;
 				}
             }
-            else if (data_bits > 0)
+            else if (data_type == "int" && data_bits > 0)
 			{
-				ASSERT(data_type == "int");
 				// Bitfield
                 if (data_len.int64 == 1)
                 {
@@ -3243,6 +3242,8 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 					if (addr != -1)
 						addr += last_size_ * (bits_used_ / int(df_size_[ii]*8));
 					bits_used_ %= int(df_size_[ii])*8;
+					if (bits_used_ == 0)
+						last_size_ = 0;
 				}
 			}
             else if (data_type == "int" && data_format.Left(1) == "u")
