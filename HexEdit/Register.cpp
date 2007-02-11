@@ -10,6 +10,7 @@
 #include "SystemSound.h"
 #include "EnBitmap.h"
 #include "misc.h"
+#include "SVNRevision.h"
 #include "resource.hm"
 #include "HelpID.hm"            // User defined help IDs
 
@@ -79,11 +80,11 @@ static const char *ack_name[] =
 	"BCG Control Bar - BCGSoft Ltd",
 	"MFC Grid Control - Chris Maunder",
 	"Tree control for MFC Grid - Ken Bertelson",
-	"Window Splitter class (MFC) - Robert A. T. Káldy",
 	"Dialog Resize class (MFC) - Herbert Menke",
 	"ZLIB compression - J. Gailly and M. Adler",
 	"MD5 Message-Digest Alg - RSA Data Security",
 	"CFile64 (MFC) class by Samuel R. Blackburn",
+	"Window Splitter class (MFC) - Robert A. T. Káldy",
 	"CEnBitmap class (MFC) - Daniel Godson",
 	"Transparent controls (MFC) - Ali Rafiee",
 	"BigInteger used for C# Decimal - Cap'n Code",
@@ -100,11 +101,11 @@ static const char *ack_url[] =
 	"http://bcgsoft.com/",
 	"http://codeproject.com/miscctrl/gridctrl.asp",
 	"http://codeproject.com/miscctrl/gridtreectrl.asp",
-	"http://codeproject.com/splitter/kaldysimplesplitter.asp",
 	"http://www.codeproject.com/dialog/resizectrl.asp",
 	"http://www.zlib.net/",
 	"http://theory.lcs.mit.edu/~rivest/md5.c",
 	"http://www.samblackburn.com/wfc/",
+	"http://codeproject.com/splitter/kaldysimplesplitter.asp",
 	"http://www.codeproject.com/bitmap/extendedbitmap2.asp",
 	"http://www.codeproject.com/staticctrl/TransparentStaticCtrl.asp",
 	"http://www.codeproject.com/cpp/CppIntegerClass.asp",
@@ -172,11 +173,12 @@ void CAbout::fix_controls()
 	{
         ss.Format(" Beta %d", theApp.beta_);
 		text1_ += ss;
-
-		// for beta versions also display the revision
-		ss.Format(" Revision %d", theApp.revision_);
-		text1_ += ss;
 	}
+
+	// for beta versions also display the revision
+//	ss.Format(" Revision %d", theApp.revision_);
+//	text1_ += ss;
+	text1_ += CString(" Revision ") + SVNRevision;
 
     // Licence info
     ctl_licence_.ResetContent();
@@ -192,14 +194,14 @@ void CAbout::fix_controls()
 		ctl_licence_.AddString("Click the link below to register.");
 		break;
 	case 3:
-		ctl_licence_.AddString("Temporary licence. Click the link below to register.");
+		ctl_licence_.AddString("Temporary license. Click the link below to register.");
 		break;
 	case 4:
-        ctl_licence_.AddString("Your licence is for an earlier version.");
+        ctl_licence_.AddString("Licensed is for an earlier version.");
 		ctl_licence_.AddString("Click the link below to register.");
 		break;
 	case 5:
-        ctl_licence_.AddString("Your licence is for an earlier version.");
+        ctl_licence_.AddString("Licensed is for an earlier version.");
         ctl_licence_.AddString("Click the link below to upgrade.");
 		break;
 	case 6:
@@ -214,7 +216,7 @@ void CAbout::fix_controls()
 	// Let the user know what licence they have if the licence is for previous version
     if (theApp.security_type_ > 3 && theApp.security_licensed_version_ > 2)
 	{
-		ss = "Your licence is for version ";
+		ss = "Licence is for version ";
 
 		// See INTERNAL_VERSION for current value
 		switch (theApp.security_licensed_version_)
@@ -602,14 +604,14 @@ void CRegister::OnOK()
         else if (code_type == 14 && (flags >> 1) < theApp.security_version_ - 1)
         {
             ::HMessageBox("This is an upgrade activation code for an earlier version.\n"
-                          "You need to further upgrade your licence or install\n"
+                          "You need to further upgrade your license or install\n"
                           "the correct (earlier) licensed version of the software.");
             // Allow the licence to be updated but we are still note licensed.
         }
         else if ((flags >> 1) < theApp.security_version_ - 1)
         {
             ::HMessageBox("The activation code is for an older version.\n"
-                          "You need to upgrade your licence or install the\n"
+                          "You need to upgrade your license or install the\n"
                           "correct (earlier) licensed version of the software.");
         }
         else if ((flags & 1) != 0)
