@@ -1,38 +1,38 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
-<binary_file_format name="Windows bitmap file (DIB)">
-	<struct name="filehdr" type_name="BITMAPFILEHEADER">
-		<data name="type" type="string" len="2" domain="this==&quot;BM&quot;" format="ascii" display=""/>
-		<data name="size" type="int" len="4"/>
-		<data name="reserved1" type="int" len="2" domain="this==0"/>
-		<data name="reserved2" type="int" len="2" domain="this==0"/>
-		<data name="offbits" type="int" len="4"/>
+<binary_file_format name="Windows_bitmap" type_name="" comment="File format for storing Windows device independent bitmap." expr="{this.infohdr.width} X {this.infohdr.height} @ {this.infohdr.bitcount} bpp">
+	<struct name="filehdr" type_name="BITMAPFILEHEADER" comment="Info related to the file" expr="">
+		<data name="type" type="string" len="2" domain="this==&quot;BM&quot;" format="ascii" display="" comment="Magic number"/>
+		<data name="size" type="int" len="4" format="signed" display="" comment="Size of the whole file." units="bytes"/>
+		<data name="reserved1" type="int" len="2" domain="this==0" format="signed" display=""/>
+		<data name="reserved2" type="int" len="2" domain="this==0" format="signed" display=""/>
+		<data name="offbits" type="int" len="4" format="signed" display="" comment="Offset from start of file to the bitmap data." units="bytes"/>
 	</struct>
-	<struct name="infohdr" type_name="BITMAPINFOHEADER">
-		<data name="size" type="int" len="4"/>
-		<data name="width" type="int" len="4"/>
-		<data name="height" type="int" len="4"/>
-		<data name="planes" type="int" len="2"/>
-		<data name="bitcount" type="int" len="2" domain="this==1||this==4||this==8||this==24"/>
-		<data name="compression" type="int" len="4"/>
-		<data name="sizeimage" type="int" len="4"/>
-		<data name="xpelspermeter" type="int" len="4"/>
-		<data name="ypelspermeter" type="int" len="4"/>
-		<data name="clrused" type="int" len="4"/>
-		<data name="clrimportant" type="int" len="4"/>
+	<struct name="infohdr" type_name="BITMAPINFOHEADER" comment="Info related to the bitmap" expr="">
+		<data name="size" type="int" len="4" format="signed" display="" units="bytes" comment="Size of this (BITMAPINFOHEADER) structure"/>
+		<data name="width" type="int" len="4" format="signed" display="" units="pixels"/>
+		<data name="height" type="int" len="4" format="signed" display="" units="pixels"/>
+		<data name="planes" type="int" len="2" format="signed" display="" domain="this == 1" comment="These files always seem to contain just one plane."/>
+		<data name="bitcount" type="int" len="2" domain="this==1||this==4||this==8||this==16||this==24||this==32" format="signed" display="" comment="Bits per pixel.  If 8 or less each pixel is an index into the palette.  If 16 or more the pixel itself contains the colour info." units="bits / pixel"/>
+		<data name="compression" type="int" len="4" format="signed" display="" comment="Usually zero (no compression)." domain="{NONE, RLE8BIT, RLE4BIT, RGB_MASK}"/>
+		<data name="sizeimage" type="int" len="4" format="signed" display="" comment="Size of the bitmap itslef  - may be zero if compression is zero (off)." units="bytes"/>
+		<data name="xpelspermeter" type="int" len="4" format="signed" display="" units="pixels / meter" comment="Horizontal size in the real world - often zero."/>
+		<data name="ypelspermeter" type="int" len="4" format="signed" display="" units="pixels / meter" comment="Vertical size in the real world - often zero."/>
+		<data name="clrused" type="int" len="4" format="signed" display="" comment="Number of colour in the palette that are used - can be zero if not specified."/>
+		<data name="clrimportant" type="int" len="4" format="signed" display="" comment="Number of *important* colours in the palette - can be zero if not specified."/>
 	</struct>
-	<if test="infohdr.size &gt; sizeof(infohdr)">
+	<if test="infohdr.size &gt; sizeof(infohdr)" comment="Optional info - not sure what this is for but never appears to be used">
 		<data name="extra" type="none" len="infohdr.size - sizeof(infohdr)"/>
 	</if>
-	<if test="infohdr.bitcount &lt; 24">
-		<for name="colour" count="1 &lt;&lt; infohdr.bitcount">
-			<struct type_name="RGBQUAD">
-				<data name="blue" type="int" format="u" len="1"/>
-				<data name="green" type="int" format="u" len="1"/>
-				<data name="red" type="int" format="u" len="1"/>
-				<data name="resvd" type="int" format="unsigned" len="1" domain="this == 0" display=""/>
+	<if test="infohdr.bitcount &lt; 16" comment="Colour lookup table.  This is not needed if the pixel values are actual colours and not indices into the palette.">
+		<for name="colour" count="1 &lt;&lt; infohdr.bitcount" stop_test="" type_name="" comment="Array of colours">
+			<struct type_name="RGBQUAD" name="" comment="One colour - entry in the palette" expr="">
+				<data name="blue" type="int" format="unsigned" len="1" display=""/>
+				<data name="green" type="int" format="unsigned" len="1" display=""/>
+				<data name="red" type="int" format="unsigned" len="1" display=""/>
+				<data name="resvd" type="int" format="unsigned" len="1" domain="this == 0" display="" comment="Not currently used"/>
 			</struct>
 		</for>
 	</if>
-	<data name="bitmap" type="none" len="infohdr.sizeimage"/>
+	<data name="bitmap" type="none" len="filehdr.size - addressof(this)" comment="This is the actual pixel data."/>
 </binary_file_format>
