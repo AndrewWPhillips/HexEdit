@@ -318,6 +318,7 @@ V3.2
  > make sure no files are modified in .EXE directory
  - new installer
    - get MFC merge module (.msm file) to include used MFC in installation (.msi)
+     - use MFC 7.1 (same as UBCD4Win - Ultimate boot CD for Windows) - MFC71.DLL, MSVCRT71.DLL
    - is it possible to have install modules (eg MFC) come from web only when needed?
    - add backgrnd.BMP and About.BMP to exe directory
  > acknowledgements
@@ -390,6 +391,12 @@ V3.2
    - new dialog controls - what's this
    - cust tutorial
    - update template tutorial
+
+Free version
+  - remove security
+  - change version
+    - get revision from .rc not SVN
+    - update email dialog revision nos
 
 V3.3 
   - new look web site
