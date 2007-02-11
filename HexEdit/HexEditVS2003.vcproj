@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="HexEdit"
 	ProjectGUID="{C4CC0564-D6ED-4341-8C04-3AA9F8D571F3}"
+	RootNamespace="HexEdit"
 	SccProjectName=""
 	SccAuxPath=""
 	SccLocalPath=""
@@ -60,7 +61,8 @@
 				Name="VCPostBuildEventTool"
 				CommandLine="MakeHelpMap"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="&quot;C:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot;  &quot;$(ProjectDir).&quot;  SVNRevisionTemplate.h  SVNRevision.h"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -817,6 +819,9 @@
 				RelativePath=".\StdAfx.h">
 			</File>
 			<File
+				RelativePath=".\SVNRevisionTemplate.h">
+			</File>
+			<File
 				RelativePath="SystemSound.h">
 			</File>
 			<File
@@ -1111,10 +1116,10 @@
 				RelativePath=".\TestData\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\TestData\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\TestData\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

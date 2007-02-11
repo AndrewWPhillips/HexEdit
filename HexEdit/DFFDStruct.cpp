@@ -798,6 +798,7 @@ void CDFFDStruct::OnInsert()
     // Work out where to insert the new item
     if (elt_id == ID_DFFD_INSERT_DEFINE_STRUCT)
     {
+		// xxx error if list is empty
         before = pelt_->GetFirstChild();    // Structure definitions must be before other elements
         pbefore = &before;
         item = 0;
