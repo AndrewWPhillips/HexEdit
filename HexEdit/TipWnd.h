@@ -81,4 +81,5 @@ private:
 	int   m_fade_inc;           // How much to fade every timer event
 
 	bool  m_in, m_out;          // Remember if we are fading in or out
+	bool  m_hovering;           // Is the mouse hovering on our window?
 };

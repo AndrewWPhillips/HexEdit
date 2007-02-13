@@ -223,6 +223,7 @@ public:
         end_addr   = pos2addr(end);
         return retval;
     }
+	BOOL HasHighlights() { return !hl_set_.empty(); }
 
     FILE_ADDRESS GetSearchBase()
 	{

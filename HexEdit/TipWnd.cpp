@@ -30,7 +30,7 @@ CTipWnd::CTipWnd(UINT fmt /* = DT_NOCLIP | DT_NOPREFIX | DT_EXPANDTABS */)
         ASSERT(!strClass.IsEmpty());
     }
 
-	m_visible = false;
+	m_hovering = m_visible = false;
 	m_fmt = fmt;
 	m_margins = CSize(2, 2);
     m_bg_colour = ::GetSysColor(COLOR_INFOBK);
@@ -335,7 +335,12 @@ void CTipWnd::OnTimer(UINT nIDEvent)
 		break;
 	case 3:
 		m_fade -= m_fade_inc;
-		if (m_fade <= 0)
+		if (m_hovering)
+		{
+		    (*m_pSLWAfunc)(m_hWnd, -1, (BYTE)255, LWA_ALPHA);
+			m_fade = m_alpha;               // Don't fade away while hovering
+		}
+		else if (m_fade <= 0)
 		{
 			ShowWindow(SW_HIDE);            // Hide the window
 			if (m_pSLWAfunc != 0)
@@ -356,21 +361,21 @@ void CTipWnd::OnTimer(UINT nIDEvent)
 void CTipWnd::OnMouseMove(UINT nFlags, CPoint point) 
 {
     if (m_pSLWAfunc != 0)
-        track_mouse(TME_HOVER);
+	{
+		m_hovering = true;
+        track_mouse(TME_LEAVE);
+	}
 }
 
 LRESULT CTipWnd::OnMouseHover(WPARAM, LPARAM lp)
 {
-    ASSERT(m_pSLWAfunc != 0 && m_hWnd != 0);
-	m_fade = m_alpha;           // Override any fade in
-    (*m_pSLWAfunc)(m_hWnd, -1, (BYTE)255, LWA_ALPHA);
-    track_mouse(TME_LEAVE);
     return 0;
 }
 
 LRESULT CTipWnd::OnMouseLeave(WPARAM, LPARAM lp)
 {
     ASSERT(m_pSLWAfunc != 0 && m_hWnd != 0);
+	m_hovering = false;
     (*m_pSLWAfunc)(m_hWnd, -1, (BYTE)m_alpha, LWA_ALPHA);
     return 0;
 }

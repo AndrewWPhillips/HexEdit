@@ -415,7 +415,7 @@ public:
     CString GetType() { return strTypeName_; }
 
 	BOOL IsDevice() const { return dynamic_cast<CFileNC *>(pfile1_) != NULL; }
-	DWORD GetSectorSize() const { if (pfile1_ == NULL) return 0; else return pfile1_->SectorSize(); }
+	DWORD GetSectorSize() const { if (pfile1_ == NULL) return 1; else return pfile1_->SectorSize(); }
 	BOOL HasSectorErrors() const;
 	DWORD SectorError(FILE_ADDRESS sec) const;
 
