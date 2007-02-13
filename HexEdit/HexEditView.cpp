@@ -4895,7 +4895,7 @@ void CHexEditView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	// Also make sure info tip is hidden
     if (nChar != VK_SHIFT)
 #ifdef NEW_TIPS
-        tip_.Hide();
+        tip_.Hide(0);  // hide immediately
 #else
         tip_.Hide(0);
 #endif
@@ -5241,7 +5241,7 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
     if (mouse_down_)
     {
 #ifdef NEW_TIPS
-		tip_.Hide();                    // Make sure there is no mouse tip while dragging
+		tip_.Hide(0);                    // Make sure there is no mouse tip while dragging
 #else
 		tip_.Hide(0);
 #endif
@@ -5258,7 +5258,7 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
         // Hide the tip window since the mouse has moved away
 #ifdef NEW_TIPS
 		if (!tip_.FadingOut())   // Don't keep it alive if we have already told it to fade away
-			tip_.Hide();
+			tip_.Hide(300);
 #else
 		tip_.Hide(0);
 #endif
@@ -5438,7 +5438,7 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 LRESULT CHexEditView::OnMouseLeave(WPARAM, LPARAM lp)
 {
 #ifdef NEW_TIPS
-	tip_.Hide();
+	tip_.Hide(300);
 #else
 	tip_.Hide(0);
 #endif
@@ -7037,68 +7037,23 @@ void CHexEditView::OnExportSRecord(UINT nID)
 {
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
-    // Get the selection
-    FILE_ADDRESS start, end;
-    GetSelAddr(start, end);
-    ASSERT(start >= 0 && start <= end && end <= GetDocument()->length());
-    if (start == end)
-    {
-        // Nothing selected, presumably in macro playback
-        ASSERT(theApp.playing_);
-        ::HMessageBox("Nothing selected to export!");
-        theApp.mac_error_ = 10;
-        return;
-    }
+	// Get the selection
+	FILE_ADDRESS start, end;
+	GetSelAddr(start, end);
+	ASSERT(start >= 0 && start <= end && end <= GetDocument()->length());
 
-    FILE_ADDRESS last_S_address;        // Byte past the last address to be written out
-    int stype = 3;                          // Type of S records to write (1, 2, or 3)
-    if (theApp.export_base_addr_ < 0)
-        last_S_address = end;
-    else
-        last_S_address = end - start + theApp.export_base_addr_;
+	// If no selection and no highlight there is nothing to do
+	if (start == end && hl_set_.empty())
+	{
+		::HMessageBox("Nothing to export!");
+		theApp.mac_error_ = 10;
+		return;
+	}
 
-    // Check that end address is not too big for S Record
-    if (nID == ID_EXPORT_S1)
-    {
-        // Addresses must be within 16 bit range
-        if (last_S_address > 0x10000)
-        {
-            ASSERT(theApp.playing_);
-            ::HMessageBox("End address too big for S1 export!");
-            theApp.mac_error_ = 10;
-            return;
-        }
-        stype = 1;
-    }
-    else if (nID == ID_EXPORT_S2)
-    {
-        // Addresses must be within 24 bit range
-        if (last_S_address > 0x1000000)
-        {
-            ASSERT(theApp.playing_);
-            ::HMessageBox("End address too big for S2 export!");
-            theApp.mac_error_ = 10;
-            return;
-        }
-        stype = 2;
-    }
-    else if (nID == ID_EXPORT_S3)
-    {
-        // Addresses must be within 32 bit range
-        if (last_S_address > 0x100000000)
-        {
-            ASSERT(theApp.playing_);
-            ::HMessageBox("End address too big for S3 export!");
-            theApp.mac_error_ = 10;
-            return;
-        }
-        ASSERT(stype == 3);
-    }
-
-    // Get the file name to write the selection to
-    CHexFileDialog dlgFile("ExportFileDlg", FALSE, NULL, theApp.current_export_,
+    // Get the file name to write to (plus discontinuous setting)
+    CExportDialog dlgFile(theApp.current_export_,
                         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
-                        theApp.GetCurrentFilters(), this);
+                        "Motorola S Files (*.s)|*.s|"+theApp.GetCurrentFilters(), this);
 
     // Set up the title of the dialog
     dlgFile.m_ofn.lpstrTitle = "Export S Records";
@@ -7108,47 +7063,139 @@ void CHexEditView::OnExportSRecord(UINT nID)
         theApp.mac_error_ = 2;
         return;
     }
+    theApp.current_export_ = dlgFile.GetPathName();
 
     CHECK_SECURITY(25);
 
-    theApp.current_export_ = dlgFile.GetPathName();
+    if (theApp.import_discon_)
+	{
+		if (hl_set_.empty())
+		{
+			::HMessageBox("Nothing highlighted to export!");
+			theApp.mac_error_ = 10;
+			return;
+		}
 
-    // Write to the file
-    CWaitCursor wait;                           // Turn on wait cursor (hourglass)
-    CWriteSRecord wsr(theApp.current_export_,
-                      theApp.export_base_addr_ >= 0 ? theApp.export_base_addr_ : long(start),
-                      stype,
-                      theApp.export_line_len_);
-    if (!wsr.Error().IsEmpty())
-    {
-        ::HMessageBox(wsr.Error());
-        theApp.mac_error_ = 10;
-        theApp.current_export_.Empty();
-    }
-    else
-    {
-        unsigned char *buf = new unsigned char[4096];
-        size_t len;
-        for (FILE_ADDRESS curr = start; curr < end; curr += len)
-        {
-            len = min(4096, int(end - curr));
-            VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+		// Set start and end to the range of highlighted bytes
+		start = *hl_set_.begin();           // First highlighted byte
+		end = *hl_set_.rbegin();            // Last highlighted byte
+	}
+	else
+	{
+		if (start == end)
+		{
+			// Nothing selected
+			::HMessageBox("Nothing selected to export!");
+			theApp.mac_error_ = 10;
+			return;
+		}
+	}
+	// Check the range of exported addresses to check that they are valid
+	FILE_ADDRESS last_S_address;        // Byte past the last address to be written out
+	int stype = 3;                          // Type of data records to write (S1, S2, or S3)
+	if (theApp.export_base_addr_ < 0)
+		last_S_address = end;
+	else
+		last_S_address = end - start + theApp.export_base_addr_;
 
-            wsr.Put(buf, len);
-            if (!wsr.Error().IsEmpty())
-            {
-                ::HMessageBox(wsr.Error());
-                theApp.mac_error_ = 10;
-                theApp.current_export_.Empty();
-                break;
-            }
-        }
-        delete[] buf;
-        ASSERT(curr == end);
+	// Check that end address is not too big for S Record
+	if (nID == ID_EXPORT_S1)
+	{
+		// Addresses must be within 16 bit range
+		if (last_S_address > 0x10000)
+		{
+			::HMessageBox("Addresses too big for S1 export!");
+			theApp.mac_error_ = 10;
+			return;
+		}
+		stype = 1;
+	}
+	else if (nID == ID_EXPORT_S2)
+	{
+		// Addresses must be within 24 bit range
+		if (last_S_address > 0x1000000)
+		{
+			::HMessageBox("Addresses too big for S2 export!");
+			theApp.mac_error_ = 10;
+			return;
+		}
+		stype = 2;
+	}
+	else if (nID == ID_EXPORT_S3)
+	{
+		// Addresses must be within 32 bit range
+		if (last_S_address > 0x100000000)
+		{
+			::HMessageBox("Addresses too big for S3 export!");
+			theApp.mac_error_ = 10;
+			return;
+		}
+		ASSERT(stype == 3);
+	}
 
-        if (theApp.mac_error_ < 10)
-            theApp.SaveToMacro(km_write_file, stype);  // stype == 1,2, or 3
-    }
+	// Get ready to write to the file
+	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
+	CWriteSRecord wsr(theApp.current_export_,
+					theApp.export_base_addr_ >= 0 ? theApp.export_base_addr_ : long(start),
+					stype,
+					theApp.export_line_len_);
+	if (!wsr.Error().IsEmpty())
+	{
+		::HMessageBox(wsr.Error());
+		theApp.mac_error_ = 10;
+		theApp.current_export_.Empty();
+		return;
+	}
+
+	unsigned char *buf = new unsigned char[4096];
+	size_t len;
+    if (theApp.import_discon_)
+	{
+		unsigned long base_address = 0;
+		if (theApp.export_base_addr_ >= 0)
+			base_address = unsigned long(theApp.export_base_addr_ - start);  // This puts 1st rec at export address of zero
+
+		range_set<FILE_ADDRESS>::range_t::iterator pp;
+        for (pp = hl_set_.range_.begin(); pp != hl_set_.range_.end(); ++pp)
+			for (FILE_ADDRESS curr = pp->sfirst; curr < pp->slast; curr += len)
+			{
+				len = int(min(4096, pp->slast - curr));
+				VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+
+				wsr.Put(buf, len, unsigned long(base_address + curr));
+				if (!wsr.Error().IsEmpty())
+				{
+					::HMessageBox(wsr.Error());
+					theApp.mac_error_ = 10;
+					theApp.current_export_.Empty();
+					goto export_end;
+				}
+			}
+	}
+	else
+	{
+		FILE_ADDRESS curr;
+		for (curr = start; curr < end; curr += len)
+		{
+			len = min(4096, int(end - curr));
+			VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+
+			wsr.Put(buf, len);
+			if (!wsr.Error().IsEmpty())
+			{
+				::HMessageBox(wsr.Error());
+				theApp.mac_error_ = 10;
+				theApp.current_export_.Empty();
+				goto export_end;
+			}
+		}
+		ASSERT(curr == end);
+	}
+export_end:
+	delete[] buf;
+
+	if (theApp.mac_error_ < 10)
+		theApp.SaveToMacro(km_write_file, stype);  // stype == 1,2, or 3
 
     // BG search finished message may be lost if modeless dlg running
     theApp.CheckBGSearchFinished();
@@ -7160,11 +7207,21 @@ void CHexEditView::OnUpdateExportSRecord(CCmdUI* pCmdUI)
     GetSelAddr(start, end);
     ASSERT(start >= 0 && start <= end && end <= GetDocument()->length());
 
-    if (start >= end)
+    if (start == end)
     {
-        // We can't export if there is no selection at all
-        pCmdUI->Enable(FALSE);
-        return;
+        // We can still export based on highlights
+		if (hl_set_.empty())
+		{
+			pCmdUI->Enable(FALSE);
+			return;
+		}
+		FILE_ADDRESS hl_start, hl_end;
+		hl_start = *hl_set_.begin();           // First highlighted byte
+		hl_end = *hl_set_.rbegin();            // Last highlighted byte
+
+		// Not quite right but should prevent valid export cmds from being disabled
+		if (hl_start > start) start = hl_start;
+		if (hl_end < end) end = hl_end;
     }
 
     // Work out the last address that needs to be exported
