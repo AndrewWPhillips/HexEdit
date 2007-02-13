@@ -99,6 +99,20 @@ int new_check_called = 0;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
+// CHexEditDocManager
+
+class CHexEditDocManager : public CDocManager
+{
+public:
+	// We have to do it this way as CWinApp::DoPromptFileName is not virtual for some reason
+	virtual BOOL DoPromptFileName(CString& fileName, UINT nIDSTitle,
+			DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate* pTemplate)
+	{
+		return CDocManager::DoPromptFileName(fileName, nIDSTitle, lFlags | OFN_ENABLESIZING, bOpenFileDialog, pTemplate);
+	}
+};
+
+/////////////////////////////////////////////////////////////////////////////
 // CHexEditApp
 const char *CHexEditApp::szHexEditClassName = "HexEditMDIFrame";
 
@@ -298,6 +312,10 @@ BOOL CHexEditApp::InitInstance()
             return FALSE;
         }
         InitCommonControls();
+
+		// Override the document manager so we can make save dialog resizeable
+		if (m_pDocManager != NULL) delete m_pDocManager;
+		m_pDocManager = new CHexEditDocManager;
 
         // Get HexEdit version info
         DWORD dummy;                                        // Version functions take parameters that do nothing?!
