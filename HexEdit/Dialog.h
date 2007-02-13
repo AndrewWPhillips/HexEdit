@@ -19,6 +19,7 @@
 #define AFX_DIALOG_H__55A0CEE1_3245_11D2_B012_0020AFDC3196__INCLUDED_
 
 #include "HexEdit.h"
+#include "HexEditView.h"
 #include <vector>
 
 #include "SimpleSplitter.h"
@@ -285,7 +286,7 @@ private:
     bool first_time;                    // Only restore window on first call of OnFileNameChange
 };
 
-// CImportDialog - derived from CFileDialog to support extra controls (see theApp.open_file_shared_)
+// CImportDialog - derived from CFileDialog to support extra controls
 class CImportDialog : public CHexFileDialog
 {
 public:
@@ -306,7 +307,32 @@ private:
     CButton m_highlight;                // Check box for highlight of imported records
 };
 
-// CFileOpenDialog - derived from CFileDialog to support open shared control
+// CExportDialog - derived from CFileDialog to support extra checkbox (export of highlights)
+class CExportDialog : public CHexFileDialog
+{
+public:
+    CExportDialog(LPCTSTR lpszFileName = NULL,
+                  DWORD dwFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
+                  LPCTSTR lpszFilter = NULL,
+                  CHexEditView* pView = NULL,
+				  BOOL enable_discon_hl = TRUE) : 
+      	CHexFileDialog("ExportFileDlg", FALSE, NULL, lpszFileName, dwFlags, lpszFilter, pView)
+    {
+		m_pview = pView;
+		m_enable_discon_hl = enable_discon_hl;
+    }
+
+    // Overriden members of CFileDialog
+    virtual void OnInitDone();
+	virtual BOOL OnFileNameOK();
+
+private:
+	CHexEditView *m_pview;
+    CButton m_discon_hl;                // Only export highlights (as discontinuous records)
+	BOOL    m_enable_discon_hl;         // Enable checkbox?
+};
+
+// CFileOpenDialog - derived from CFileDialog to support open shared control (see theApp.open_file_shared_)
 class CFileOpenDialog : public CHexFileDialog
 {
 public:

@@ -66,23 +66,26 @@ CWriteSRecord::~CWriteSRecord()
     }
 }
 
-void CWriteSRecord::Put(const void *data, size_t len)
+void CWriteSRecord::Put(const void *data, size_t len, unsigned long address /* = UINT_MAX */)
 {
+	if (address == UINT_MAX)
+		address = addr_;
+	addr_ = address + len;   // Save next address after these record(s)
+
     char *pp = (char *)data;
 
     while (len > 0)
     {
         if (len > reclen_)
         {
-            put_rec(stype_, addr_, pp, reclen_);
-            addr_ += reclen_;
+            put_rec(stype_, address, pp, reclen_);
+            address += reclen_;
             pp += reclen_;
             len -= reclen_;
         }
         else
         {
-            put_rec(stype_, addr_, pp, size_t(len));
-            addr_ += len;
+            put_rec(stype_, address, pp, size_t(len));
             len = 0;
         }
     }

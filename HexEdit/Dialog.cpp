@@ -1203,6 +1203,49 @@ BOOL CImportDialog::OnFileNameOK()
 }
 
 /////////////////////////////////////////////////////////////////////////////
+// CExportDialog - derived from CFileDialog (via CHexFileDialog) for handling extra control during export
+
+void CExportDialog::OnInitDone()
+{
+    CRect rct;                          // Used to move/resize controls
+    CWnd *pp;                           // Parent = the dialog window itself
+    VERIFY(pp = GetParent());
+
+    ASSERT(pp->GetDlgItem(cmb1) != NULL && pp->GetDlgItem(IDOK) != NULL);
+
+    // Create a new button below the "Type" drop down list
+    pp->GetDlgItem(cmb1)->GetWindowRect(rct); // Get button rectangle
+    pp->ScreenToClient(rct);
+    rct.InflateRect(0, 4, -(rct.Width()/2), 4);   // make higher for 2 lines of text and half the width
+    rct.OffsetRect(0, 26);
+
+    m_discon_hl.Create(_T("Export (discontiguous)\r\nhighlighted areas only"),
+                    WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, rct, pp, IDC_DISCON);
+    m_discon_hl.SetFont(pp->GetDlgItem(IDOK)->GetFont());
+    m_discon_hl.SetCheck(theApp.import_discon_);
+
+	FILE_ADDRESS start, end;
+	m_pview->GetSelAddr(start, end);
+	if (start >= end)
+		m_discon_hl.SetCheck(1);
+	if (!m_pview->HasHighlights())
+	{
+		// If no highlights disable the checkbox
+		m_discon_hl.SetCheck(0);
+		m_discon_hl.EnableWindow(FALSE);
+	}
+
+    CHexFileDialog::OnInitDone();
+}
+
+BOOL CExportDialog::OnFileNameOK()
+{
+    theApp.import_discon_ = m_discon_hl.GetCheck() == 1    ? TRUE : FALSE;
+
+    return CHexFileDialog::OnFileNameOK();
+}
+
+/////////////////////////////////////////////////////////////////////////////
 // CFileOpenDialog - derived from CFileDialog (via CHexFileDialog) for handling extra control
 void CFileOpenDialog::OnInitDone()
 {

@@ -10,7 +10,7 @@ class CWriteSRecord
 public:
     CWriteSRecord(const char *filename, unsigned long base_addr = 0L, int stype = 3, size_t reclen = 32);
     ~CWriteSRecord();
-    void Put(const void *data, size_t len);
+    void Put(const void *data, size_t len, unsigned long address = UINT_MAX);
     CString Error() const { return error_; }
 
 private:

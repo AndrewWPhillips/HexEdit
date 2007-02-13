@@ -655,7 +655,7 @@ public:
     CString current_import_, current_export_; // Current dits for import/export
     long export_base_addr_;             // Base address when exporting (-1 for file address)
     int export_line_len_;               // Bytes per line when exporting
-    BOOL import_discon_;                // Allow discontiguous addresses when importing
+    BOOL import_discon_;                // Allow discontiguous addresses when importing (and exporting too now)
     BOOL import_highlight_;             // Highlight changed bytes for import
     int recent_files_;                  // Number of recent files to put on menus
 

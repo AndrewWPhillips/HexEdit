@@ -389,7 +389,7 @@ BEGIN
         MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
         MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
         MENUITEM SEPARATOR
-        POPUP "&Export Selection"
+        POPUP "&Export"
         BEGIN
             MENUITEM "Motorola S&1 Records...",     ID_EXPORT_S1
             MENUITEM "Motorola S&2 Records...",     ID_EXPORT_S2
