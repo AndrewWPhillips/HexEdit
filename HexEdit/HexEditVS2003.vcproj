@@ -823,7 +823,8 @@
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;C:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot;  &quot;$(ProjectDir).&quot;  $(InputFileName)  SVNRevision.h"
+						CommandLine="&quot;C:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot;  &quot;$(ProjectDir).&quot;  $(InputFileName)  SVNRevision.h
+"
 						Outputs="SVNRevision.h"/>
 				</FileConfiguration>
 			</File>
@@ -1119,13 +1120,13 @@
 				RelativePath=".\TestData\NOTES.TXT">
 			</File>
 			<File
-				RelativePath=".\TestData\Order.Txt">
-			</File>
-			<File
-				RelativePath=".\TestData\ReadMe.txt">
+				RelativePath=".\Install\Order.Txt">
 			</File>
 			<File
 				RelativePath=".\ReadMe.txt">
+			</File>
+			<File
+				RelativePath=".\Install\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">
@@ -1134,7 +1135,7 @@
 				RelativePath=".\TestData\reguser.txt">
 			</File>
 			<File
-				RelativePath=".\RelNotes.txt">
+				RelativePath=".\Install\RelNotes.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\T1">

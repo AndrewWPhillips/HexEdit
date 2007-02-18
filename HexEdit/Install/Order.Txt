@@ -23,7 +23,7 @@ HexEdit Order Form
 
 Please supply:
 
-(  ) HexEdit 3.1 single-user license at $40 US     = ________
+(  ) HexEdit 3.2 single-user license at $40 US     = ________
 
 Australian residents only add 10% GST              = ________
 

@@ -18,7 +18,6 @@ Version 3.1 release
    - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
  > change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
  > create installation (add any new files, templates etc)
- > adjust count of .XML files after which templates are auto shown
  > change times of install files using touch2.bat (*.cab etc)
  > zip installation files and add readme.txt, hexedit.xml
  > change time of zip file using touch3.bat
@@ -73,21 +72,6 @@ DISK EDIT
  - email others about new release
  - change normal activation code email template
  - send out press release
-
-- templates
-  > need ability to access any byte of "none" data type
-  - fix short-circuiting (?:) when non-eval accesses invalid array/string element
-  > implement year... minute,second, sqrt, sin, ... exp, log
-  - allow for current FOR name in expression menus
-  - allow root (FILE) element in expression menus???
-  - bug in entry of 64 sign+mag numbers
-  ? del key in data column edit box causes del in psis_ view
-  - don't allow changes if file read-only
-  - drag and drop with new element types
-  - edit data column, including dates and enums
-  > year, month, day, hour, minute and second functions
-  - convert STRUCT to DEFINE_STRUCT???
-  - allow for extern "C" { ... } in parser
 
 - explorer window
   - fix hidden files icon
@@ -230,8 +214,16 @@ DFFD Editing
  - allow drag between struct elements - use GetDC to draw arrows
  - when saving default.xml use save as
  - after save-as change to saved template name
- - locn of XML template files
+ > locn of XML template files
+ - allow for current FOR name in expression menus
+ - allow root (FILE) element in expression menus???
 DFFD
+ - bug in entry of 64 sign+mag numbers
+ ? del key in data column edit box causes del in psis_ view
+ - don't allow changes if file read-only
+ - drag and drop with new element types
+ - convert STRUCT to DEFINE_STRUCT???
+ - allow for extern "C" { ... } in parser
  - option for one-based array indexes
  - filename flag for string data + allow open of file
  > allow jump to web address for template
@@ -260,15 +252,9 @@ DFFD
  - disallow edits (data window) that insert if any read only areas to EOF
  - show tip in hex view of data at that location
  - allow column drag??
- - OnDblClick data elt - open prop dlg
- - OnRClick, OnDblClick?, OnSetCursor?
- - redirect other hex view type commands to sister view somehow??
  - user option to change location of XML files (and copies the DTD files there)
  - user option to turn on alternate background colours
- - allow edit of data values in the tree/grid??
- - allow edit of type name, domain, units, read_only and comments
- - add expr XML tag just for assigning to a variable?
- - add switch to expressions and else for if
+ - allow edit of type name, domain, units, read_only and comments in the grid?
  - add inrange operator to expressions?
  - date constants and operations?
  
@@ -309,19 +295,34 @@ Help
       - macro that runs when certain types of file are opened
  
 V3.2
+ > new Motorolas S option to export highlighted areas only
+   - move S1/S2/S3 items to drop-list in the File Save dialog
  > fix info in open special dialog
    > bug in total space calcs
    > show total/free space in bytes and clusters
- > info tip - bookmark, user-defined expressions etc\
-   - global option to turn on/off
+ > info tip
+  - tip window appears when mouse hovers over a byte in hex or char area
+  - display any number of tips about the current hover point
+  - tips can evaluate any expression including many predefined values (address, byte word etc)
+    - eg check whether a bit is on in a byte
+    - check if a word is within a certain range
+    - display distance to EOF, to mark etc
+    - check alignment
+    - endless possibilities
+  - turn off any tip without deleting it
+  - tip window can be transparent - move mouse over it to make it fully opaque
+   > bookmark, user-defined expressions etc
+   ? global option to turn on/off
    - handle all time formats, character sets for chars and strings
+   - show tip of template data at that location
  > make sure no files are modified in .EXE directory
  - new installer
    - get MFC merge module (.msm file) to include used MFC in installation (.msi)
      - use MFC 7.1 (same as UBCD4Win - Ultimate boot CD for Windows) - MFC71.DLL, MSVCRT71.DLL
    - is it possible to have install modules (eg MFC) come from web only when needed?
    - add backgrnd.BMP and About.BMP to exe directory
- > acknowledgements
+ - acknowledgements page in help
+   - link from about box
 	BCG Control Bar 5.9 - Stas Levin et al at BCG (http://bcgsoft.com)
 	MFC Grid Control - Chris Maunder (http://codeproject.com/miscctrl/gridctrl.asp)
 	MFC Grid Tree Extensions - Ken Bertelson (http://codeproject.com/miscctrl/gridtreectrl.asp)
@@ -354,7 +355,10 @@ V3.2
 
  - allow enter expressions (incl assign to vars) in hex/dec jump tools
  > add select current highlight command and make default for dclick on highlight?
- > template menu
+ - templates
+  > string in switch
+  - function to parse hex number (see forum)
+  > template menu
    > new, open, open type
    - parser setup
    > save, save as
@@ -384,6 +388,8 @@ V3.2
  > merge float properties pages into one and add Decimal (C#) capability
  > background search for drive info (BG_DEVICE_SEARCH)
  > recent file dlg and bookmark dlg can only handle file sizes/positions up to 2^31 (sorting)
+ > show category, keywords, comments in recent file dialog
+   - allow search for keyword in RFD
  - check new cracker codes and find workaround
  - update help
    - move "what's this" help from .HLP to .CHM

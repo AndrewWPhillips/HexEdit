@@ -577,6 +577,9 @@ BOOL CHexEditApp::InitInstance()
             CBCGToolBar::AddBasicCommand(dv_id[ii]);
 
         // If there is no current skin setting and we have skins then default to the first
+		// NOTE: the following seems to cause HexEdit to crash when built with VS 2003. There
+		// seems to be some incompatibilty with the skin DLLs and BCG 6.2 DLL when built
+		// with VS 2003. The workaround is to delete all skins DLLs.
         CBCGRegistry reg(FALSE, TRUE);
         if (!reg.Open(GetRegSectionPath() + _T("Skin")))
         {
@@ -724,6 +727,8 @@ BOOL CHexEditApp::InitInstance()
 
 #ifdef _DEBUG
         // This avoids all sorts of confusion when testing/debugging
+		// NOTE: we get a very odd crash in here when the skins DLLs are
+		// incompatible - seesm to happen when we build with VS 2003.
         CBCGToolBar::ResetAll();
 #endif
 
