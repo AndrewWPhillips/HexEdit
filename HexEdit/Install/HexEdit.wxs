@@ -1,0 +1,334 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'>
+  <Product Id='084e92c9-56e5-4eba-b5a3-4269739d3b01'
+           Name='HexEdit' Version='3.2.1'
+           Language='1033' Codepage='1252'
+           Manufacturer='Expert Commercial Software Pty Ltd'>
+
+    <Package Id='????????-????-????-????-????????????'
+             Description="HexEdit Installer"
+             Comments='Copyright Expert Commercial Software Pty Ltd'
+             Manufacturer='Expert Commercial Software Pty Ltd'
+             InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+
+    <Media Id='1' Cabinet='product.cab' EmbedCab='yes' />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder'>
+        <Directory Id='INSTALLDIR' Name='HexEdit'>
+          <Component Id='MainProgram' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7339'>
+            <File Id='HexEditId' Name='HexEdit.exe' DiskId='1' src='..\Release\HexEdit.exe' Vital='yes'/>
+          </Component>
+          <Component Id='StartMenuUtilShortcut' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7001'>
+            <Shortcut Id="startmenuUtilitiesHexEdit" Directory="ProgramMenuUtilDir" Name="HexEdit" 
+                      WorkingDirectory='INSTALLDIR' Target="[!HexEditId]"
+                      Icon="HexEdit.ico" IconIndex="0" />
+            <Condition>ADDTOUTIL = "1"</Condition>
+          </Component>
+          <Component Id='StartMenuHexEditShortcuts' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7002'>
+            <Shortcut Id="startmenuHexEdit" Directory="ProgramMenuHexEditDir" Name="HexEdit" 
+                      WorkingDirectory='INSTALLDIR' Target="[!HexEditId]"
+                      Icon="HexEdit.ico" IconIndex="0" />
+            <Shortcut Id="startmenuHelp" Directory="ProgramMenuHexEditDir"
+                      Name="Help" LongName="Help Manual" 
+                      WorkingDirectory='INSTALLDIR' Target="[!HelpFile]" />
+            <Shortcut Id="startmenuHomePageUrl" Directory="ProgramMenuHexEditDir"
+                      Name="HomePage" LongName="HexEdit Home Page" 
+                      WorkingDirectory='INSTALLDIR' Target="[!HomePageUrl]" />
+            <Shortcut Id="startmenuSupportUrl" Directory="ProgramMenuHexEditDir"
+                      Name="Support" LongName="Support Forums" 
+                      WorkingDirectory='INSTALLDIR' Target="[!SupportUrl]" />
+            <Shortcut Id="startmenuRegisterUrl" Directory="ProgramMenuHexEditDir"
+                      Name="Register" LongName="Register Now"
+                      WorkingDirectory='INSTALLDIR' Target="[!RegisterUrl]" />
+            <Shortcut Id="startmenuRelNotes" Directory="ProgramMenuHexEditDir"
+                      Name="RelNotes" LongName="Release Notes"
+                      WorkingDirectory='INSTALLDIR' Target="[!ReleaseNotesFile]" />
+            <Shortcut Id="startmenuOrderForm" Directory="ProgramMenuHexEditDir"
+                      Name="OrderFrm" LongName="Order Form"
+                      WorkingDirectory='INSTALLDIR' Target="[!OrderingInfoFile]" />
+            <Condition>ADDTOHEXEDIT = "1"</Condition>
+          </Component>
+          <Component Id='DesktopShortcut' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7003'>
+            <Shortcut Id="desktopHexEdit" Directory="DesktopFolder" Name="HexEdit"
+                      WorkingDirectory='INSTALLDIR' Target="[!HexEditId]"
+                      Icon="HexEdit.ico" IconIndex="0" />
+            <Condition>ADDTODESKTOP = "1"</Condition>
+          </Component>
+          <Component Id='QuickLaunchShortcut' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7004'>
+            <Shortcut Id="quicklaunchHexEdit" Directory="QuickLaunchDir" Name="HexEdit"
+                      WorkingDirectory='INSTALLDIR' Target="[!HexEditId]"
+                      Icon="HexEdit.ico" IconIndex="0" />
+            <Condition>ADDTOQUICKLAUNCH = "1"</Condition>
+          </Component>
+          <Component Id='StartMenuStartupShortcut' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7005'>
+            <Shortcut Id="startmenuStartupHexEdit" Directory="ProgramMenuStartupDir" Name="HexEdit" 
+                      WorkingDirectory='INSTALLDIR' Target="[!HexEditId]"
+                      Icon="HexEdit.ico" IconIndex="0" />
+            <Condition>ADDTOSTARTUP = "1"</Condition>
+          </Component>
+
+          <Component Id='BCGDLL' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7170'>
+            <File Id='BCGControlBar62' Name='BCGCB62.DLL' DiskId='1' src='I:\Devel\BCG6_2\BIN7\BCGCB62.DLL' Vital='yes' />
+          </Component>
+          <Component Id='BCGSkinsDLL' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7171'>
+            <File Id='BCGSkinDownloader' Name='BCGSkinD.DLL' LongName='BCGSkinDownloader.DLL' DiskId='1' src='I:\Devel\BCG6_2\BCGSkinDownloader.DLL' />
+          </Component>
+
+          <Component Id='EBCDICTable' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7010'>
+            <File Id='EBCDICTableFile' Name='EBCDIC.tab' DiskId='1' src='..\EBCDIC.tab' />
+          </Component>
+          <Component Id='TemplateSupport' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7011'>
+            <File Id='DTDFile' Name='BinFileF.DTD' LongName='BinaryFileFormat.DTD' DiskId='1' src='..\TestData\BinaryFileFormat.DTD' />
+            <File Id='DefaultTemplate' Name='default.XML' DiskId='1' src='..\TestData\default.XML' />
+            <File Id='ParserStdTypes' Name='stdtypes.xml' LongName='_standard_types.XML' DiskId='1' src='..\TestData\_standard_types.XML' />
+            <File Id='ParserComTypes' Name='comtypes.xml' LongName='_common_types.XML' DiskId='1' src='..\TestData\_common_types.XML' />
+            <File Id='ParserWinTypes' Name='wintypes.xml' LongName='_windows_types.XML' DiskId='1' src='..\TestData\_windows_types.XML' />
+            <File Id='ParserWinConst' Name='winconst.txt' LongName='_windows_constants.txt' DiskId='1' src='..\TestData\_windows_constants.txt' />
+          </Component>
+          <Component Id='CFD' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7012'>
+            <File Id='CFDFile' Name='HexEdit.cfd' DiskId='1' src='..\HexEdit.cfd' />
+          </Component>
+          <Component Id='ToolbarImages' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7013'>
+            <File Id='DefaultToolbarImagesFile' Name='DefTbIm.BMP' LongName='DefaultToolbarImages.BMP' DiskId='1' src='..\DefaultToolbarImages.BMP' />
+          </Component>
+
+          <Component Id='ControlHelp' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7015'>
+            <File Id='ControlHelpFile' Name='HexEdit.hlp' DiskId='1' src='..\Release\HexEdit.hlp' />
+          </Component>
+          <Component Id='TipHelp' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7016'>
+            <File Id='TipHelpFile' Name='HexEdit.tip' DiskId='1' src='..\HexEdit.tip' />
+          </Component>
+
+          <!-- DON'T FORGET TemplatesUser TOO! -->
+
+          <Component Id='Templates' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7017'>
+            <File Id='BmpTemplate' Name='_bmp.XML' DiskId='1' src='..\TestData\_bmp.XML' />
+            <File Id='DbfTemplate' Name='_dbf.XML' DiskId='1' src='..\TestData\_dbf.XML' />
+            <File Id='GifTemplate' Name='_gif.XML' DiskId='1' src='..\TestData\_gif.XML' />
+            <File Id='HemTemplate' Name='_hem.XML' DiskId='1' src='..\TestData\_hem.XML' />
+            <File Id='JpgTemplate' Name='_jpg.XML' DiskId='1' src='..\TestData\_jpg.XML' />
+            <File Id='MpgTemplate' Name='_mpg.XML' DiskId='1' src='..\TestData\_mpg.XML' />
+            <File Id='SgyTemplate' Name='_sgy.XML' DiskId='1' src='..\TestData\_sgy.XML' />
+            <File Id='SwfTemplate' Name='_swf.XML' DiskId='1' src='..\TestData\_swf.XML' />
+            <File Id='WavTemplate' Name='_wav.XML' DiskId='1' src='..\TestData\_wav.XML' />
+            <File Id='FAT12Template' Name='Floppy.XML' DiskId='1' src='..\TestData\Floppy.XML' />
+          </Component>
+          <Component Id='DemoMacro' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7018'>
+            <File Id='AllChars' Name='AllChars.HEM' DiskId='1' src='..\TestData\AllChars.HEM' />
+            <File Id='charinc' Name='_charinc.HEM' DiskId='1' src='..\TestData\_charinc.HEM' />
+          </Component>
+
+          <Component Id='ReleaseNotes' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7020'>
+            <File Id='ReleaseNotesFile' Name='RelNotes.txt' DiskId='1' src='RelNotes.txt' />
+          </Component>
+          <Component Id='OrderingInfo' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7021'>
+            <File Id='OrderingInfoFile' Name='Order.txt' DiskId='1' src='Order.txt' />
+          </Component>
+
+          <Component Id='WebUrls' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7025'>
+            <File Id='HomePageUrl' Name='HexEdit.url' DiskId='1' src='HexEdit.url' />
+            <File Id='SupportUrl' Name='Support.url' DiskId='1' src='Support.url' />
+            <File Id='RegisterUrl' Name='Register.url' DiskId='1' src='Register.url' />
+          </Component>
+
+          <Component Id='Help' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7030'>
+            <File Id='HelpFile' Name='HexEdit.CHM' DiskId='1' src='..\HTMLHelp\HexEdit.CHM' />
+          </Component>
+          <Component Id='Tutorial3Demo' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7031'>
+            <File Id='Tutorial3Demo' Name='tutorial.HEG' DiskId='1' src='..\TestData\tutorial.HEG' />
+          </Component>
+
+          <Component Id='BackgroundImage' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7035'>
+            <File Id='BackgroundImageFile' Name='Backgrnd.BMP' DiskId='1' src='..\backgrnd.BMP' />
+          </Component>
+          <Component Id='AboutBoxImage' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7036'>
+            <File Id='AboutBoxImageFile' Name='About.BMP' DiskId='1' src='..\About.BMP' />
+          </Component>
+
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" />
+
+      <Directory Id="SystemFolder">
+        <Component Id='HHACTIVEXDLL' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7041'>
+          <File Id='HHACTIVEXDLLFile' Name='HHActive.dll' LongName='HHActiveX.dll' DiskId='1' src='C:\Devel\RoboHelp Office\RoboHTML\HHActiveX.dll' />
+        </Component>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ProgramMenuUtilDir"    Name='Util' LongName="Utilities" />
+        <Directory Id="ProgramMenuHexEditDir" Name="HexEdit" />
+        <Directory Id="ProgramMenuStartupDir" Name="Startup" />
+      </Directory>
+
+      <Directory Id='AppDataFolder'>
+        <Directory Id="AppDataMicrosoftDir" Name="MICROSFT" LongName="Microsoft">
+          <Directory Id="AppDataMicrosoftIEDir" Name="INTERNEX" LongName="Internet Explorer">
+            <Directory Id="QuickLaunchDir" Name="QUICKLCH" LongName="Quick Launch" />
+          </Directory>
+        </Directory>
+        <Directory Id='ECSoftwareFolder' Name='ECSoftwr' LongName='ECSoftware'>
+          <Directory Id='HexEditFolder' Name='HexEdit'>
+            <Component Id='ToolbarImagesUser' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7050'>
+              <File Id='ToolbarImagesFileUser' Name='ToolBarI.BMP' LongName='ToolbarImages.BMP' DiskId='1' src='..\DefaultToolbarImages.BMP' />
+              <RemoveFile Id='RemoveOtherFiles' Name='*' On='uninstall' />
+            </Component>
+            <Component Id='TemplateSupportUser' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7051'>
+              <File Id='DTDFileUser' Name='BinFileF.DTD' LongName='BinaryFileFormat.DTD' DiskId='1' src='..\TestData\BinaryFileFormat.DTD' />
+              <File Id='DefaultTemplateUser' Name='default.XML' DiskId='1' src='..\TestData\default.XML' />
+              <File Id='ParserStdTypesUser' Name='stdtypes.xml' LongName='_standard_types.XML' DiskId='1' src='..\TestData\_standard_types.XML' />
+              <File Id='ParserComTypesUser' Name='comtypes.xml' LongName='_common_types.XML' DiskId='1' src='..\TestData\_common_types.XML' />
+              <File Id='ParserWinTypesUser' Name='wintypes.xml' LongName='_windows_types.XML' DiskId='1' src='..\TestData\_windows_types.XML' />
+              <File Id='ParserWinConstUser' Name='winconst.txt' LongName='_windows_constants.txt' DiskId='1' src='..\TestData\_windows_constants.txt' />
+              <Condition>PERSONALFILES = "1"</Condition>
+            </Component>
+
+            <!-- DON'T FORGET Templates TOO! -->
+
+            <Component Id='TemplatesUser' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7057'>
+              <File Id='BmpTemplateUser' Name='_bmp.XML' DiskId='1' src='..\TestData\_bmp.XML' />
+              <File Id='DbfTemplateUser' Name='_dbf.XML' DiskId='1' src='..\TestData\_dbf.XML' />
+              <File Id='GifTemplateUser' Name='_gif.XML' DiskId='1' src='..\TestData\_gif.XML' />
+              <File Id='HemTemplateUser' Name='_hem.XML' DiskId='1' src='..\TestData\_hem.XML' />
+              <File Id='JpgTemplateUser' Name='_jpg.XML' DiskId='1' src='..\TestData\_jpg.XML' />
+              <File Id='MpgTemplateUser' Name='_mpg.XML' DiskId='1' src='..\TestData\_mpg.XML' />
+              <File Id='SgyTemplateUser' Name='_sgy.XML' DiskId='1' src='..\TestData\_sgy.XML' />
+              <File Id='SwfTemplateUser' Name='_swf.XML' DiskId='1' src='..\TestData\_swf.XML' />
+              <File Id='WavTemplateUser' Name='_wav.XML' DiskId='1' src='..\TestData\_wav.XML' />
+              <File Id='FAT12TemplateUser' Name='Floppy.XML' DiskId='1' src='..\TestData\Floppy.XML' />
+              <Condition>PERSONALFILES = "1"</Condition>
+            </Component>
+            <Component Id='DemoMacroUser' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7058'>
+              <File Id='AllCharsUser' Name='AllChars.HEM' DiskId='1' src='..\TestData\AllChars.HEM' />
+              <File Id='charincUser' Name='_charinc.HEM' DiskId='1' src='..\TestData\_charinc.HEM' />
+              <Condition>PERSONALFILES = "1"</Condition>
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id='CommonFilesFolder'>
+        <Directory Id='BCGSoftFolder' Name='BCGSoft'>
+          <Directory Id='SkinsFolder' Name='Skins'>
+            <Component Id='GradientBarSkin' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7160' SharedDllRefCount='yes'>
+              <File Id='GradientBarSkinFile' Name='BarSkn62.DLL' LongName='GradientBarSKIN620.dll' DiskId='1'
+                    src='C:\Program Files\Common Files\BCGSoft\Skins\GradientBarSKIN620.dll' />
+            </Component>
+            <Component Id='GradientButtonSkin' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7161' SharedDllRefCount='yes'>
+              <File Id='GradientButtonSkinFile' Name='ButSkn62.DLL' LongName='GradientButtonSKIN620.dll' DiskId='1'
+                    src='C:\Program Files\Common Files\BCGSoft\Skins\GradientButtonSKIN620.dll' />
+            </Component>
+<!--
+            <Component Id='SilverRingSkin' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7162' SharedDllRefCount='yes'>
+              <File Id='SilverRingSkinFile' Name='RngSkn62.DLL' LongName='SilverRingSKIN620.dll' DiskId='1'
+                    src='I:\Devel\BCG6_2\Bin\SilverRingSKIN620.dll' />
+            </Component>
+ -->            
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Component Id='HKLMRegistrySettings' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7090'>
+        <Registry Id='HexEditInstallDir' Root='HKLM' Key='Software\ECSoftware\HexEdit' Name='InstallDir'
+                  Action='write' Type='multiString'>
+          <RegistryValue>[INSTALLDIR]</RegistryValue>
+        </Registry>
+        <Registry Id='RemoveHKLMRegistrySettings' Root='HKLM' Key='Software\ECSoftware\HexEdit'
+                  Action='removeKeyOnUninstall' />
+      </Component>
+
+      <Component Id='HKCURegistrySettings' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7091'>
+        <!-- This is set by HexEdit when first run either to [INSTALLDIR] or [ECSoftwareFolder]
+        <Registry Id='HexEditTemplateDir' Root='HKCU' Key='Software\ECSoftware\HexEdit\DataFormat' Name='Folder'
+                  Action='write' Type='multiString'>
+          <RegistryValue>[TemplateFolder]</RegistryValue>
+        </Registry>
+        -->
+        <!-- This removes registry settings added by HexEdit at run time -->
+        <Registry Id='RemoveHKCURegistrySettings' Root='HKCU' Key='Software\ECSoftware\HexEdit'
+                  Action='removeKeyOnUninstall' />
+      </Component>
+
+      <Component Id='OpenWithHexEditRegistrySettings' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7092'>
+        <Registry Id='HexEditOpenDescription' Root='HKCR' Key='*\Shell\HexEdit'
+                  Action='write' Type='string'>
+          <RegistryValue>Open with HexEdit</RegistryValue>
+        </Registry>
+        <Registry Id='HexEditOpenCommand' Root='HKCR' Key='*\Shell\HexEdit\command'
+                  Action='write' Type='string'>
+          <RegistryValue>[INSTALLDIR]HexEdit.exe %1</RegistryValue>
+        </Registry>
+        <Condition>ADDTOEXPLORER = "1"</Condition>
+      </Component>
+    </Directory>
+
+    <Icon Id="HexEdit.ico" SourceFile="..\res\idr_main.ico" />
+
+    <Feature Id='Complete' Title='Complete Package'
+             Description='This includes HexEdit and all related features.'
+             Display='expand' Level='1' ConfigurableDirectory='INSTALLDIR'>
+      <Feature Id='MainProgramFeature' Title='Program Files'
+               Description='This includes HexEdit program and support files.  You should always install it.'
+               Level='1'>
+        <ComponentRef Id='MainProgram' />
+        <ComponentRef Id='StartMenuUtilShortcut' />
+        <ComponentRef Id='StartMenuHexEditShortcuts' />
+        <ComponentRef Id='DesktopShortcut' />
+        <ComponentRef Id='QuickLaunchShortcut' />
+        <ComponentRef Id='OpenWithHexEditRegistrySettings' />
+        <ComponentRef Id='StartMenuStartupShortcut' />
+        <ComponentRef Id='BCGDLL' />
+        <ComponentRef Id='EBCDICTable' />
+        <ComponentRef Id='ToolbarImages' />
+        <ComponentRef Id='BackgroundImage' />
+        <ComponentRef Id='AboutBoxImage' />
+        <ComponentRef Id='TemplateSupport' />
+        <ComponentRef Id='DemoMacro' />
+        <ComponentRef Id='ControlHelp' />
+        <ComponentRef Id='CFD' />
+        <ComponentRef Id='TipHelp' />
+        <ComponentRef Id='ReleaseNotes' />
+        <ComponentRef Id='OrderingInfo' />
+        <ComponentRef Id='WebUrls' />
+
+        <ComponentRef Id='ToolbarImagesUser' />
+        <ComponentRef Id='TemplateSupportUser' />
+        <ComponentRef Id='DemoMacroUser' />
+
+        <ComponentRef Id='HKCURegistrySettings' />
+        <ComponentRef Id='HKLMRegistrySettings' />
+      </Feature>
+
+      <Feature Id='HelpFeature' Title='Help Files'
+               Description='This is the on-line help.  It is recommended that you install it.'
+               Level='1'>
+        <ComponentRef Id='Help' />
+        <ComponentRef Id='Tutorial3Demo' />
+        <ComponentRef Id='HHACTIVEXDLL' />
+      </Feature>
+
+      <Feature Id='ExampleTemplates' Title='Example Templates'
+               Description='Example templates for several common file formats (BMP, GIF, SWF, DBF, WAV, EXE etc).'
+               Level='1'>
+        <ComponentRef Id='Templates' />
+        <ComponentRef Id='TemplatesUser' />
+      </Feature>
+
+      <Feature Id='BCGSkinsFeature' Title='Skins'
+               Description='Some sample skins to allow you to change the look of HexEdit.'
+               Level='30'>
+        <ComponentRef Id='BCGSkinsDLL' />
+        <ComponentRef Id='GradientBarSkin' />
+        <ComponentRef Id='GradientButtonSkin' />
+<!--
+        <ComponentRef Id='SilverRingSkin' />
+ -->
+      </Feature>
+
+    </Feature>
+
+    <UIRef Id="WixUI" />
+  </Product>
+</Wix>
