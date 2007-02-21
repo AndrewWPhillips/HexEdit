@@ -92,6 +92,7 @@ expr_eval::value_t expr_eval::evaluate(const char *expr, int reference, int &ref
     p_ = expr;
     ref_ = reference;
     pac_ = &ref_ac;
+	changes_on_ = true;
 
     ASSERT(radix > 1 && radix <= max_radix_);  // Ensure we don't erroneously allow hex consts
 
