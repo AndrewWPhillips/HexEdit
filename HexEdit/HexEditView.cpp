@@ -2052,10 +2052,9 @@ void CHexEditView::OnDraw(CDC* pDC)
         }
     }
 
-    if (pDoc->pfile1_ != NULL && display_.borders)
+    int seclen = pDoc->GetSectorSize();
+    if (pDoc->pfile1_ != NULL && display_.borders && seclen > 0)
     {
-        int seclen = pDoc->GetSectorSize();
-        ASSERT(seclen > 0);
         bool prev_bad = first_addr == 0;                  // don't display sector separator above top of file
 
         for (FILE_ADDRESS sector = (first_addr/seclen)*seclen; sector < last_addr; sector += seclen)
@@ -4866,7 +4865,7 @@ void CHexEditView::do_char(UINT nChar)
     }
 #endif
     aa->SaveToMacro(km_char, nChar);
-}
+} // do_char
 
 void CHexEditView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
@@ -16116,13 +16115,13 @@ void CHexEditView::OnUpdateDffdTab(CCmdUI* pCmdUI)
 // This is connected to Ctrl+T and is used for testing new dialogs etc
 void CHexEditView::OnViewtest() 
 {
-	OnHighlightSelect();
 	// for testing new commands
 }
 
 CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,
         __int64 &sym_size, __int64 &sym_address)
 {
+	ASSERT(pview_ != NULL);
     ASSERT(parent.typ == TYPE_NONE);    // Parent is not used here
     value_t retval;
     retval.typ = TYPE_NONE;             // Default to symbol not found
@@ -16174,14 +16173,22 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("sector") == 0)
 	{
 		retval.typ = TYPE_INT;          // current sector
-		retval.int64 = sym_address / pview_->GetDocument()->GetSectorSize();
+		int seclen = pview_->GetDocument()->GetSectorSize();
+		if (seclen > 0)
+			retval.int64 = sym_address / seclen;
+		else
+			retval.int64 = 0;
 		sym_size = 4;
 		unsigned_ = true;
 	}
 	else if (sym_str.CompareNoCase("offset") == 0)
 	{
 		retval.typ = TYPE_INT;          // offset within current sector
-		retval.int64 = sym_address % pview_->GetDocument()->GetSectorSize();
+		int seclen = pview_->GetDocument()->GetSectorSize();
+		if (seclen > 0)
+			retval.int64 = sym_address % seclen;
+		else
+			retval.int64 = 0;
 		sym_size = 4;
 		unsigned_ = true;
 	}

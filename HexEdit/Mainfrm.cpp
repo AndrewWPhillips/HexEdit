@@ -1664,20 +1664,21 @@ void CMainFrame::OnUpdateFileLength(CCmdUI *pCmdUI)
 		CString ss;                     // text to put in the pane
 		char buf[32];                   // used with sprintf (CString::Format can't handle __int64)
 
-		if (pview->GetDocument()->IsDevice())
+		int seclen = pview->GetDocument()->GetSectorSize();
+		ASSERT(seclen > 0 || !pview->GetDocument()->IsDevice());  // no sectors (sec len is zero) if its an unsaved file (but not device)
+		if (pview->GetDocument()->IsDevice() && seclen > 0)
 		{
 			// Show sector + total sectors
 			__int64 end = pview->GetDocument()->length();
 			__int64 now = pview->GetPos();
-			long ssize = pview->GetDocument()->GetSectorSize();
 			CString tmp;
 
 			if (pview->DecAddresses())
 			{
-				sprintf(buf, "%I64d", __int64(now/ssize));
+				sprintf(buf, "%I64d", __int64(now/seclen));
 				ss = buf;
 				AddCommas(ss);
-				sprintf(buf, "%I64d", __int64(end/ssize));
+				sprintf(buf, "%I64d", __int64(end/seclen));
 				tmp = buf;
 				AddCommas(tmp);
 
@@ -1687,16 +1688,16 @@ void CMainFrame::OnUpdateFileLength(CCmdUI *pCmdUI)
 			else
 			{
 				if (theApp.hex_ucase_)
-					sprintf(buf, "%I64X", __int64(now/ssize));
+					sprintf(buf, "%I64X", __int64(now/seclen));
 				else
-					sprintf(buf, "%I64x", __int64(now/ssize));
+					sprintf(buf, "%I64x", __int64(now/seclen));
 				ss = buf;
 				AddSpaces(ss);
 
 				if (theApp.hex_ucase_)
-					sprintf(buf, "%I64X", __int64(end/ssize));
+					sprintf(buf, "%I64X", __int64(end/seclen));
 				else
-					sprintf(buf, "%I64x", __int64(end/ssize));
+					sprintf(buf, "%I64x", __int64(end/seclen));
 				tmp = buf;
 				AddSpaces(tmp);
 
