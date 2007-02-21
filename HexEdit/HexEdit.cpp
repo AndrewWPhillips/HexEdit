@@ -172,6 +172,9 @@ BEGIN_MESSAGE_MAP(CHexEditApp, CWinApp)
         ON_COMMAND(ID_REPAIR_ALL, OnRepairAll)
 //        ON_COMMAND(ID_REPAIR_CHECK, OnRepairCheck)
 
+		ON_COMMAND(ID_FILE_SAVE_ALL, OnFileSaveAll)
+		ON_COMMAND(ID_FILE_CLOSE_ALL, OnFileCloseAll)
+
         // Standard file based document commands
         ON_COMMAND(ID_FILE_NEW, OnFileNew)
         ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
@@ -498,6 +501,8 @@ BOOL CHexEditApp::InitInstance()
         VERIFY(InitSkinManager());
         GetSkinManager ()->EnableSkinsDownload (_T("http://www.bcgsoft.com/Skins"));
 		//CBCGPopupMenu::EnableMenuSound(FALSE);
+
+		// These are commands that do not appear on a toolbar but have an icon
         static int dv_id[] =
         {
             ID_FILE_NEW,
@@ -567,7 +572,6 @@ BOOL CHexEditApp::InitInstance()
             ID_REPAIR_DIALOGBARS,
             ID_HELP_HOMEPAGE,
             ID_APP_ABOUT,
-            ID_BOOKMARKS_EDIT,
             ID_HIGHLIGHT,
             ID_DIALOGS_DOCKABLE,
         };
@@ -1089,6 +1093,15 @@ void CHexEditApp::OnFilePrintSetup()
     CheckBGSearchFinished();
 }
 
+void CHexEditApp::OnFileSaveAll() 
+{
+	m_pDocManager->SaveAllModified();
+}
+
+void CHexEditApp::OnFileCloseAll() 
+{
+	m_pDocManager->CloseAllDocuments(FALSE);
+}
 
 void CHexEditApp::OnFileOpenSpecial() 
 {

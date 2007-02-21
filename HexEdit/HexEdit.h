@@ -316,6 +316,8 @@ public:
     afx_msg void OnHelpWebHome();
     afx_msg void OnHelpWebReg();
     afx_msg void OnCompressionSettings();
+	afx_msg void OnFileSaveAll();
+	afx_msg void OnFileCloseAll();
     DECLARE_MESSAGE_MAP()
 
 public:

@@ -1382,10 +1382,11 @@
 #define ID_NAV_BACK                     33990
 #define ID_NAV_FORW                     33991
 #define ID_FILE_OPEN_SPECIAL            33992
+#define ID_FILE_SAVE_ALL                33993
+#define ID_FILE_CLOSE_ALL               33994
 #define ID_NAV_BACK_FIRST               34000
 #define ID_NAV_FORW_FIRST               36000
 #define ID_DFFD_OPEN_FIRST              38000
-
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
