@@ -325,7 +325,7 @@ void CHexEditApp::SaveTo(const char *filename)
 	unsigned short bitcount = -1;
 
     FILE *ff = fopen(filename, "r+b");
-	ASSERT(ff != NULL);
+	if (ff == NULL) return;
 	VERIFY(fseek(ff, 2L, SEEK_SET) == 0);
 	VERIFY(fread(&filesize, sizeof(filesize), 1, ff) == 1);
 	VERIFY(fseek(ff, 14L, SEEK_SET) == 0);
