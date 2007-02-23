@@ -2564,12 +2564,12 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
         } // end array "for" processing
         else if (elt_type == "switch")
 		{
-            BOOL show_parent_row = DffdEditMode();      // Only show IF row in edit mode
+            BOOL show_parent_row = DffdEditMode();      // Only show SWITCH row in edit mode
             unsigned char new_ind = ind+1;
 
             if (!show_parent_row)
             {
-                // Don't show IF nodes at all (only contained branch if condition is TRUE
+                // Don't show SWITCH nodes at all, only the taken branch (case)
                 df_address_.pop_back();
                 df_size_.pop_back();
                 df_extra_.pop_back();
@@ -2577,8 +2577,8 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 df_elt_.pop_back();
                 df_info_.pop_back();
 
-                new_ind = ind;                      // Same indent as IF would have if shown
-                ii--;                               // go back since we removed the IF
+                new_ind = ind;                      // Same indent as SWITCH would have if shown
+                ii--;                               // go back since we removed the SWITCH
             }
             else
                 df_type_.push_back(DF_SWITCH);
@@ -2648,7 +2648,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 					if (is_valid)
 					{
 						if (show_parent_row)
-							df_size_[ii] = size_tmp;   // update size for IF (if present)
+							df_size_[ii] = size_tmp;   // update size for SWITCH (if present)
 
 						returned_size += size_tmp;
 						addr += size_tmp;
@@ -3819,7 +3819,7 @@ ExprStringType CHexEditDoc::GetDataString(expr_eval::value_t val, CString strFor
         {
             if (strchr("diouxX", *(const char *)strFormat.Right(1)) != NULL)
                 strFormat.Insert(strFormat.GetLength()-1, "I64");
-            sprintf(disp, strFormat, val.int64);
+            sprintf(disp, strFormat, val.int64, val.int64, val.int64, val.int64);  // Add 4 times in case strFormat contains multiple format strings
             ss = disp;
         }
         break;
@@ -3850,7 +3850,7 @@ ExprStringType CHexEditDoc::GetDataString(expr_eval::value_t val, CString strFor
             break;
         default:
             if (strFormat.Find('%') != -1)
-                ss.Format(strFormat, val.real64);
+                ss.Format(strFormat, val.real64, val.real64, val.real64);
 			else if (size == 8)
                 ss.Format("%.15g", val.real64);
             else
@@ -3864,12 +3864,12 @@ ExprStringType CHexEditDoc::GetDataString(expr_eval::value_t val, CString strFor
         if (strFormat.Find('%') == -1)
             sw.Format(L"%s", *val.pstr);
         else
-            sw.Format(CStringW(strFormat), *val.pstr);
+            sw.Format(CStringW(strFormat), *val.pstr, *val.pstr);
 #else
         if (strFormat.Find('%') == -1)
             ss.Format("%s", *val.pstr);
         else
-            ss.Format(strFormat, *val.pstr);
+            ss.Format(strFormat, *val.pstr, *val.pstr);
 #endif
         break;
     }
