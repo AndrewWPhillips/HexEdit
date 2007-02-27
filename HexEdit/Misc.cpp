@@ -435,6 +435,37 @@ COLORREF tone_down(COLORREF col, COLORREF bg_col)
 }
 */
 
+double TZDiff()
+{
+	static double tz_diff = -1e30;
+
+	if (tz_diff != -1e30)
+		return tz_diff;
+    time_t dummy = time_t(1000000L);
+    tz_diff = (1000000L - mktime(gmtime(&dummy)))/86400.0;
+	return tz_diff;
+}
+
+DATE FromTime_t(long v)
+{
+	return (365.0*70.0 + 17 + 2) + v/(24.0*60.0*60.0) + TZDiff();
+}
+
+DATE FromTime_t_80(long v)
+{
+	return (365.0*80.0 + 19 + 2) + v/(24.0*60.0*60.0) + TZDiff();
+}
+
+DATE FromTime_t_mins(long v)
+{
+	return (365.0*70.0 + 17 + 2) + v/(24.0*60.0) + TZDiff();
+}
+
+DATE FromTime_t_1899(long v)
+{
+    return v/(24.0*60.0*60.0) + TZDiff();
+}
+
 //-----------------------------------------------------------------------------
 // Make nice looking numbers etc
 

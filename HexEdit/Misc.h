@@ -34,6 +34,12 @@ void get_hls(COLORREF rgb, int &hue, int &lightness, int &saturation);
 COLORREF get_rgb(int hue, int luminance, int saturation);
 COLORREF tone_down(COLORREF col, COLORREF bg_col, double amt = 0.75);
 
+double TZDiff();
+DATE FromTime_t(long v);
+DATE FromTime_t_80(long v);
+DATE FromTime_t_mins(long v);
+DATE FromTime_t_1899(long v);
+
 CString NumScale(double val, double one_k = 1000.0);
 CString	bin_str(__int64 val,int bits);
 void AddCommas(CString &str);

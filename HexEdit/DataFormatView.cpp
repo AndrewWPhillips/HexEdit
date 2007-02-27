@@ -1592,7 +1592,6 @@ COleDateTime CDataFormatView::GetDate(int ii)
     ASSERT(abs(pdoc->df_type_[ii]) >= CHexEditDoc::DF_DATEC && 
            abs(pdoc->df_type_[ii]) < CHexEditDoc::DF_LAST_DATE);
 
-    time_t tt;                          // Current time field in compiler format
     FILETIME ft;                        // Used in conversion of MSDOS date/time
 
     unsigned char buf[16];                  // Holds actual binary data for field from file
@@ -1626,16 +1625,13 @@ COleDateTime CDataFormatView::GetDate(int ii)
             break;
 #endif
         case CHexEditDoc::DF_DATECMIN:
-            tt = *((long *)buf)*60;
-            retval = COleDateTime(tt);
+            retval = COleDateTime(FromTime_t_mins(*((long *)buf)));
             break;
         case CHexEditDoc::DF_DATEC51:
-            tt = *((long *)buf) + (365*10 + 2)*24L*60L*60L;
-            retval = COleDateTime(tt);
+            retval = COleDateTime(FromTime_t_80(*((long *)buf)));
             break;
         case CHexEditDoc::DF_DATEC7:
-            tt = *((unsigned long *)buf) - (365*70 + 17 + 2)*24UL*60UL*60UL;
-            retval = COleDateTime(tt);
+            retval = COleDateTime(FromTime_t_1899(*((long *)buf)));
             break;
         case CHexEditDoc::DF_DATEOLE:
             retval = COleDateTime(*((DATE *)buf));

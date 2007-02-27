@@ -2055,6 +2055,7 @@ void CHexEditView::OnDraw(CDC* pDC)
     int seclen = pDoc->GetSectorSize();
     if (pDoc->pfile1_ != NULL && display_.borders && seclen > 0)
     {
+        ASSERT(seclen > 0);
         bool prev_bad = first_addr == 0;                  // don't display sector separator above top of file
 
         for (FILE_ADDRESS sector = (first_addr/seclen)*seclen; sector < last_addr; sector += seclen)
@@ -4865,7 +4866,7 @@ void CHexEditView::do_char(UINT nChar)
     }
 #endif
     aa->SaveToMacro(km_char, nChar);
-} // do_char
+}
 
 void CHexEditView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
@@ -5305,14 +5306,15 @@ void CHexEditView::OnTimer(UINT nIDEvent)
 LRESULT CHexEditView::OnMouseHover(WPARAM, LPARAM lp)
 {
     // Time to show a tip window if we are in the right place
-	CPoint pt(LOWORD(lp), HIWORD(lp));
+	CPoint pt(LOWORD(lp), HIWORD(lp));  // client window coords
 	FILE_ADDRESS addr = address_at(pt);
 	if (addr != -1 && addr < GetDocument()->length() && update_tip(addr))
 	{
+		CPoint tip_pt;
+		tip_pt = pt + CSize(text_width_w_, text_height_);
 		last_tip_addr_ = addr;
-		pt += CSize(text_width_w_, text_height_);
-		ClientToScreen(&pt);
-        tip_.Move(pt, false);
+		ClientToScreen(&tip_pt);
+        tip_.Move(tip_pt, false);
 #ifdef NEW_TIPS
         tip_.Show();
 #else
@@ -16340,7 +16342,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
 			retval.typ = TYPE_DATE;
-			retval.date = COleDateTime(val);
+			retval.date = FromTime_t(val);
 			sym_size = sizeof(val);
 		}
 	}
@@ -16352,19 +16354,19 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
 			retval.typ = TYPE_DATE;
-			retval.date = COleDateTime((time_t)(val + (365*10 + 2)*24L*60L*60L));
+			retval.date = FromTime_t_80(val);
 			sym_size = sizeof(val);
 		}
 	}
 	else if (sym_str.CompareNoCase("time_t_1899") == 0)  // MSC 7 time_t
-	{	// xxx this gives wrong result
+	{
         unsigned long val;
         if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
 			retval.typ = TYPE_DATE;
-			retval.date = COleDateTime((time_t)(val - (365*70 + 17 + 2)*24UL*60UL*60UL));
+			retval.date = FromTime_t_1899(val);
 			sym_size = sizeof(val);
 		}
 	}
@@ -16376,7 +16378,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
 			retval.typ = TYPE_DATE;
-			retval.date = COleDateTime((time_t)(val*60));
+			retval.date = FromTime_t_mins(val);
 			sym_size = sizeof(val);
 		}
 	}

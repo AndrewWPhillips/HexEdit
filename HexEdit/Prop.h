@@ -496,7 +496,6 @@ protected:
 
 private:
     void save_date();
-    double tz_diff_;
     size_t date_size_[FORMAT_LAST];
     COleDateTime date_first_[FORMAT_LAST];
     COleDateTime date_last_[FORMAT_LAST];

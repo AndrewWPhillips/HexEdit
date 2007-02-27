@@ -2979,8 +2979,6 @@ CPropDatePage::CPropDatePage() : CPropUpdatePage(CPropDatePage::IDD)
     format_ = aa->prop_date_format_;
 	if (format_ >= FORMAT_LAST) format_ = FORMAT_TIME_T;
     stop_update_ = false;
-    time_t dummy = time_t(1000000L);
-    tz_diff_ = (1000000L - mktime(gmtime(&dummy)))/86400.0;
 
 #ifdef _DEBUG
     // Make sure time_t is as we expect with this compiler
@@ -3000,30 +2998,30 @@ CPropDatePage::CPropDatePage() : CPropUpdatePage(CPropDatePage::IDD)
         {
         case FORMAT_TIME_T:
             date_size_[ii] = 4;
-            date_first_[ii].m_dt = 365.0*70.0 + 17 + 2 + tz_diff_;  // days from 30/12/1899 to 1/1/1970
+            date_first_[ii].m_dt = 365.0*70.0 + 17 + 2 + TZDiff();  // days from 30/12/1899 to 1/1/1970
             date_first_[ii].SetStatus(COleDateTime::valid);
             date_last_[ii].m_dt = date_first_[ii].m_dt + (0x7fffFFFFUL+0.2)/(24.0*60.0*60.0);
             date_last_[ii].SetStatus(COleDateTime::valid);
             break;
         case FORMAT_TIME_T_80:
             date_size_[ii] = 4;
-            date_first_[ii].m_dt = 365.0*80.0 + 19 + 2 + tz_diff_;  // days from 30/12/1899 to 1/1/1980
+            date_first_[ii].m_dt = 365.0*80.0 + 19 + 2 + TZDiff();  // days from 30/12/1899 to 1/1/1980
             date_first_[ii].SetStatus(COleDateTime::valid);
             date_last_[ii].m_dt = date_first_[ii].m_dt + (0x7fffFFFFUL+0.2)/(24.0*60.0*60.0);
             date_last_[ii].SetStatus(COleDateTime::valid);
             break;
         case FORMAT_TIME_T_MINS:
             date_size_[ii] = 4;
-            date_first_[ii].m_dt = 365.0*70.0 + 17 + 2 + tz_diff_;   // days from 30/12/1899 to 1/1/1970
+            date_first_[ii].m_dt = 365.0*70.0 + 17 + 2 + TZDiff();   // days from 30/12/1899 to 1/1/1970
             date_first_[ii].SetStatus(COleDateTime::valid);
             date_last_[ii].m_dt = date_first_[ii].m_dt + (0x7fffFFFFUL+0.2)/(24.0*60.0);
             date_last_[ii].SetStatus(COleDateTime::valid);
             break;
         case FORMAT_TIME_T_1899:
             date_size_[ii] = 4;
-            date_first_[ii].m_dt = tz_diff_;
+            date_first_[ii].m_dt = TZDiff();
             date_first_[ii].SetStatus(COleDateTime::valid);
-            date_last_[ii].m_dt = tz_diff_ + (0xffffFFFEUL+0.2)/(24.0*60.0*60.0);
+            date_last_[ii].m_dt = TZDiff() + (0xffffFFFEUL+0.2)/(24.0*60.0*60.0);
             date_last_[ii].SetStatus(COleDateTime::valid);
             break;
         case FORMAT_OLE:
@@ -3051,9 +3049,9 @@ CPropDatePage::CPropDatePage() : CPropUpdatePage(CPropDatePage::IDD)
             break;
         case FORMAT_MSDOS:
             date_size_[ii] = 4;
-            date_first_[ii].m_dt = 365.0*80.0 + 19 + 2 + tz_diff_;  // days from 30/12/1899 to 1/1/1980
+            date_first_[ii].m_dt = 365.0*80.0 + 19 + 2 + TZDiff();  // days from 30/12/1899 to 1/1/1980
             date_first_[ii].SetStatus(COleDateTime::valid);
-            date_last_[ii].m_dt = 365.0*207.0 + 50 + 2 + tz_diff_;   // days from 30/12/1899 to 1/1/2107
+            date_last_[ii].m_dt = 365.0*207.0 + 50 + 2 + TZDiff();   // days from 30/12/1899 to 1/1/2107
             date_last_[ii].SetStatus(COleDateTime::valid);
             break;
         default:
@@ -3117,35 +3115,22 @@ void CPropDatePage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
             case FORMAT_TIME_T:
                 if (big_endian_) flip_bytes(buf, got);
                 if (*((time_t *)buf) > (time_t)-1)
-                {
-//                    odt = *((time_t *)buf);
-                    odt.m_dt = (365.0*70.0 + 17 + 2) + *((long *)buf)/(24.0*60.0*60.0) + tz_diff_;
-                    odt.SetStatus(COleDateTime::valid);
-                }
+                    odt = COleDateTime(FromTime_t(*((long *)buf)));
                 break;
             case FORMAT_TIME_T_80:
                 if (big_endian_) flip_bytes(buf, got);
                 if (*((long *)buf) > (time_t)-1)
-                {
-                    odt.m_dt = (365.0*80.0 + 19 + 2) + *((long *)buf)/(24.0*60.0*60.0) + tz_diff_;
-                    odt.SetStatus(COleDateTime::valid);
-                }
+                    odt = COleDateTime(FromTime_t_80(*((long *)buf)));
                 break;
             case FORMAT_TIME_T_MINS:
                 if (big_endian_) flip_bytes(buf, got);
                 if (*((long *)buf) > (time_t)-1)
-                {
-                    odt.m_dt = (365.0*70.0 + 17 + 2) + *((long *)buf)/(24.0*60.0) + tz_diff_;
-                    odt.SetStatus(COleDateTime::valid);
-                }
+                    odt = COleDateTime(FromTime_t_mins(*((long *)buf)));
                 break;
             case FORMAT_TIME_T_1899:
                 if (big_endian_) flip_bytes(buf, got);
                 if (*(unsigned long *)buf != 0xffffFFFFUL)
-                {
-                    odt.m_dt = *((unsigned long *)buf)/(24.0*60.0*60.0) + tz_diff_;
-                    odt.SetStatus(COleDateTime::valid);
-                }
+                    odt = COleDateTime(FromTime_t_1899(*((long *)buf)));
                 break;
             case FORMAT_OLE:
                 if (big_endian_) flip_bytes(buf, got);
@@ -3298,28 +3283,28 @@ void CPropDatePage::save_date()
                 if (is_invalid)
                     *((time_t *)buf) = (time_t)-1;
                 else
-                    *((time_t *)buf) = time_t((odt_date.m_dt - (365.0*70.0 + 17 + 2) - tz_diff_)*(24.0*60.0*60.0) + 0.5);
+                    *((time_t *)buf) = time_t((odt_date.m_dt - (365.0*70.0 + 17 + 2) - TZDiff())*(24.0*60.0*60.0) + 0.5);
                 if (big_endian_) flip_bytes(buf, date_size_[format_]);
                 break;
             case FORMAT_TIME_T_80:
                 if (is_invalid)
                     *((long *)buf) = -1L;
                 else
-                    *((long *)buf) = long((odt_date.m_dt - (365.0*80.0 + 19 + 2) - tz_diff_)*(24.0*60.0*60.0) + 0.5);
+                    *((long *)buf) = long((odt_date.m_dt - (365.0*80.0 + 19 + 2) - TZDiff())*(24.0*60.0*60.0) + 0.5);
                 if (big_endian_) flip_bytes(buf, date_size_[format_]);
                 break;
             case FORMAT_TIME_T_MINS:
                 if (is_invalid)
                     *((long *)buf) = -1L;
                 else
-                    *((long *)buf) = long((odt_date.m_dt - (365.0*70.0 + 17 + 2) - tz_diff_)*(24.0*60.0) + 0.5);
+                    *((long *)buf) = long((odt_date.m_dt - (365.0*70.0 + 17 + 2) - TZDiff())*(24.0*60.0) + 0.5);
                 if (big_endian_) flip_bytes(buf, date_size_[format_]);
                 break;
             case FORMAT_TIME_T_1899:
                 if (is_invalid)
                     *((unsigned long *)buf) = 0xffffFFFFUL;
                 else
-                    *((unsigned long *)buf) = (unsigned long)((odt_date.m_dt-tz_diff_)*(24.0*60.0*60.0) + 0.5);
+                    *((unsigned long *)buf) = (unsigned long)((odt_date.m_dt-TZDiff())*(24.0*60.0*60.0) + 0.5);
                 if (big_endian_) flip_bytes(buf, date_size_[format_]);
                 break;
             case FORMAT_OLE:
@@ -3585,7 +3570,7 @@ void CPropDatePage::OnChangeFormat()
 {
     if (UpdateData(TRUE))       // Update format_, big_endian_, local_time_ from buttons
     {
-        // xxx if UTC subtract tz_diff_ ???
+        // xxx if UTC subtract TZDiff() ???
         date_ctrl_.SetRange(&date_first_[format_], &date_last_[format_]);
         Update(GetView());      // Recalc values based on new format
     }
