@@ -1614,20 +1614,16 @@ BOOL CTipsPage::OnInitDialog()
 		var_list.Add("ibm32");
 		var_list.Add("ibm64");
 		var_list.Add("time_t");
-		//var_list.Add("time_t_80");
-		//var_list.Add("time_t_1899");
-		//var_list.Add("time_t_mins");
+		var_list.Add("time_t_80");
+		var_list.Add("time_t_1899");
+		var_list.Add("time_t_mins");
 		//var_list.Add("time64_t");
 		//var_list.Add("char_ascii");
 		//var_list.Add("char_ebcdic");
 		//var_list.Add("char_unicode");
 
-		int_list.Add("hex");
 		int_list.Add("dec");
-		int_list.Add("oct");
-		int_list.Add("bin");
 		int_list.Add("%d");
-		int_list.Add("%X");
 		uint_list.Add("hex");
 		uint_list.Add("dec");
 		uint_list.Add("oct");
@@ -1994,17 +1990,12 @@ void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 	{
 		enum { tnone, tint, tuint, treal32, treal64, tdate, tchar, tstring } tt = tnone;
 
-		if (ss.Find("byte") != -1)
-			tt = tuint;
-		else if (ss.Find("sbyte") != -1 ||
-		         ss.Find("word") != -1 ||
-			     ss.Find("dword") != -1 ||
-			     ss.Find("qword") != -1
-		        )
+		if (ss.Find("sbyte") != -1)
 		    tt = tint;
-		else if (ss.Find("uword") != -1 ||
-			     ss.Find("udword") != -1 ||
-			     ss.Find("uqword") != -1 ||
+		else if (ss.Find("byte") != -1 ||      // make sure this is done after "sbyte"
+				 ss.Find("uword") != -1 ||
+				 ss.Find("udword") != -1 ||
+				 ss.Find("uqword") != -1 ||
 			     ss.Find("address") != -1 ||
 			     ss.Find("cursor") != -1 ||
 			     ss.Find("sel_len") != -1 ||
@@ -2014,6 +2005,8 @@ void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 			     ss.Find("offset") != -1
 		        )
 			tt = tuint;
+		else if (ss.Find("word") != -1)      // includes dword/qword - must be done after uword etc
+		    tt = tint;
 		else if (ss.Find("ieee32") != -1 ||
 			     ss.Find("ibm32") != -1
 		        )
@@ -2022,10 +2015,8 @@ void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 			     ss.Find("ibm64") != -1
 		        )
 			tt = treal64;
-		else if (ss.Find("time_t") != -1 ||
-			     ss.Find("time64_t") != -1 ||
-			     ss.Find("date") != -1 ||
-				 ss.Find("time") != -1
+		else if (ss.Find("date") != -1 ||
+				 ss.Find("time") != -1       // includes time_t, time64_t etc
 		        )
 			tt = tdate;
 		else if (ss.Find("char") != -1)

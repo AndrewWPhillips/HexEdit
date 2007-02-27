@@ -295,6 +295,10 @@ Help
       - macro that runs when certain types of file are opened
  
 V3.2
+ - New commands
+   - save all
+   - close all
+   - reload?
  > new Motorolas S option to export highlighted areas only
    - move S1/S2/S3 items to drop-list in the File Save dialog
  > fix info in open special dialog
