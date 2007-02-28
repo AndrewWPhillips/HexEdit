@@ -105,6 +105,8 @@
     <param name="Local" value="cmd_view\Char_Set_EBCDIC.htm">
     <param name="Name" value="Char Set IBM/OEM">
     <param name="Local" value="cmd_view\Char_Set_IBM_OEM.htm">
+    <param name="Name" value="Character Properties Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_CHAR.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="repair">
@@ -1008,6 +1010,8 @@
     <param name="Name" value="file properties">
     <param name="Name" value="File Properties Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_FILE.htm">
+    <param name="Name" value="HIDD_PROP_SUMMARY">
+    <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="files">
@@ -1731,6 +1735,8 @@
       <param name="Local" value="menus\menu_window.htm">
       <param name="Name" value="Help Menu Commands">
       <param name="Local" value="menus\menu_help.htm">
+      <param name="Name" value="menu_template">
+      <param name="Local" value="menus\menu_template.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -2938,13 +2944,6 @@
     <param name="Name" value="Boolean Operations">
     <param name="Local" value="binary_files\Boolean_Operations.htm">
   </object>
-  <ul>
-    <li><object type="text/sitemap">
-      <param name="Name" value="checksum">
-      <param name="Name" value="Other Tools">
-      <param name="Local" value="overviewtools\other_tools.htm">
-    </object>
-    </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="exclusive OR">
     <param name="Name" value="Boolean Operations">
@@ -3558,6 +3557,8 @@
     <param name="Local" value="tute_template_1\TemplateTute1-0.htm">
     <param name="Name" value="Advanced Template Creation Tutorial">
     <param name="Local" value="tute_template_2\TemplateTute2-0.htm">
+    <param name="Name" value="menu_template">
+    <param name="Local" value="menus\menu_template.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="operations">
@@ -3854,6 +3855,76 @@
     <param name="Name" value="branch">
     <param name="Name" value="CASE Dialog">
     <param name="Local" value="dlg_templates\CASE_Dialog.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="C# Decimal">
+    <param name="Name" value="Floating Point Values Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="real values property page">
+    <param name="Name" value="Floating Point Values Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="IBM floating point">
+    <param name="Name" value="Floating Point Values Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="64-bit time_t format">
+    <param name="Name" value="Date/Time Values Page">
+    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="categories">
+    <param name="Name" value="HIDD_PROP_SUMMARY">
+    <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
+    <param name="Name" value="Recently Opened Files Dialog">
+    <param name="Local" value="dlg_other\Recently_Opened_Files_Dialog.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="keywords">
+    <param name="Name" value="HIDD_PROP_SUMMARY">
+    <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
+    <param name="Name" value="Recently Opened Files Dialog">
+    <param name="Local" value="dlg_other\Recently_Opened_Files_Dialog.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="comments">
+    <param name="Name" value="HIDD_PROP_SUMMARY">
+    <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
+    <param name="Name" value="Recently Opened Files Dialog">
+    <param name="Local" value="dlg_other\Recently_Opened_Files_Dialog.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="size of file">
+    <param name="Name" value="HIDD_PROP_SUMMARY">
+    <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="editing time">
+    <param name="Name" value="HIDD_PROP_SUMMARY">
+    <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="viewing time">
+    <param name="Name" value="HIDD_PROP_SUMMARY">
+    <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="offset for alignment searches">
+    <param name="Name" value="Find Hex page">
+    <param name="Local" value="dlg_find\HexFind.htm">
+    <param name="Name" value="Find Number page">
+    <param name="Local" value="dlg_find\FindNumber.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="stride for alignment searches">
+    <param name="Name" value="Find Hex page">
+    <param name="Local" value="dlg_find\HexFind.htm">
+    <param name="Name" value="Find Number page">
+    <param name="Local" value="dlg_find\FindNumber.htm">
   </object>
 </ul>
 </html>

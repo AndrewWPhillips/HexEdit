@@ -8,7 +8,7 @@
 
 <head>
 
-<title>Character Properties Page</title>
+<title>Byte Properties Page</title>
 
 <!--(Meta)==========================================================-->
 
@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=857>
-<meta name=layout-width content=1220>
+<meta name=layout-height content=1013>
+<meta name=layout-width content=727>
 
 
 <!--(Links)=========================================================-->
@@ -39,7 +39,8 @@
 <body>
 
 <h2><font style="font-family: Arial;"
-			face=Arial>Character Properties Page</font></h2>
+			face=Arial><span style="font-family: Arial;">Byte</span> Properties 
+ Page</font></h2>
 
 <p style="text-align: center;"
 	align=center>&nbsp;</p>
@@ -91,31 +92,56 @@
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Double-click 
  any bit to flip it.</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">ASCII</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">ASCII/ANSI</span></p>
 
 <p style="margin-left: 18.00pt;">The ASCII character at the current cursor 
  position. If the high bit is set (ie, the decimal value is greater than 
  127) then this is actually the ANSI character. For values less than 32, 
  this field displays the name of the ASCII control character.</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Unicode</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">X-Byte 
+ Char Set</span></p>
+
+<p style="margin-left: 18.00pt;">This is the character from the character 
+ set determined by the currently selected code page. The character set 
+ can be single-byte or multi-byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, many Asian languages have double byte character sets (DBCS) which 
+ are an extension of ASCII. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ a byte is one of several special lead-in byte values then a 2nd byte is 
+ used to determine the exact character. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ allows more than the 256 values that can be stored in one byte to be used 
+ while allowing backward compatibility with ASCII.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">If the code page is for a multibyte character 
+ set (MBCS) then the displayed character is taken just from the current 
+ cursor position if <span style="font-weight: bold;">only it is not a lead-in 
+ byte</span>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Otherwise 
+ the character displayed may also depend on the byte(s) following byte 
+ at the current cursor position.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Code Page</span></p>
+
+<p style="margin-left: 18.00pt;">Shows a list of all available code pages. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The current 
+ selection determines how the character to the left is displayed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Windows 
+ may include code pages for many European (single byte) character sets 
+ and Asian (often double byte) character sets, which are extensions of 
+ ASCII. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ may also be EBCDIC code pages available.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Unicode</p>
 
 <p style="margin-left: 18.00pt;">This is the Unicode character representing 
- the two bytes following the cursor. This field is available under NT but 
- disabled under Windows 95 (which does not support the display of Unicode 
- characters).</p>
+ the two bytes following the cursor. This field is available under Windows 
+ NT/2K/XP/Vista but disabled under Windows 9X/ME.</p>
 
 <p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Font</span></p>
 
 <p style="margin-left: 18.00pt;">Use this button to select the font used 
- for Unicode characters. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ for Unicode and multibyte characters set characters. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  font selected is remembered for the next time you run HexEdit..</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">EBCDIC</p>
-
-<p style="margin-left: 18.00pt;">The EBCDIC character at the current cursor 
- position. The EBCDIC control character name is displayed for values less 
- than 64, and “none” is displayed for invalid EBCDIC characters.</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
@@ -142,7 +168,7 @@
 <param name="Items" value="Decimal Values Page;HIDD_PROP_DECIMAL.htm$$**$$Display Properties Command;..\cmd_view\HID_PROPERTIES.htm$$**$$File Properties Page;HIDD_PROP_FILE.htm$$**$$Floating Point Values Page;HIDD_PROP_FLOAT.htm$$**$$IBM Floating Point Values Page;HIDD_PROP_IBMFP.htm$$**$$Properties Dialog;..\overviewtools\prop.htm$$**$$" >
 <param name="Image" value="" >
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
-<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_properties\HIDD_PROP_CHAR.htm" >
+<param name="_CURRENTFILEPATH" value="D:\Visual Studio Projects\HexEdit\HTMLHelp\dlg_properties\HIDD_PROP_CHAR.htm" >
 <param name="_ID" value="RelatedTopics" >
 <param name="UseMenu" value="-1" >
 <param name="Frame" value="" >

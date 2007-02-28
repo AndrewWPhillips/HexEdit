@@ -131,6 +131,7 @@ File menu commands | menus\menu_file.htm
 Edit Menu Commands | menus\menu_edit.htm
 View Menu Commands | menus\menu_view.htm
 Operations Menu Commands | menus\menu_operations.htm
+Template Menu Commands | menus\menu_template.htm
 Tools Menu Commands | menus\menu_tools.htm
 Window Menu Commands | menus\menu_window.htm
 Help Menu Commands | menus\menu_help.htm
@@ -344,11 +345,11 @@ Calculator | overviewtools\calc.htm
 Other Tools | overviewtools\other_tools.htm
 
 [Properties Dialog]
+Summary Page | dlg_properties\HIDD_PROP_SUMMARY.htm
 File Properties Page | dlg_properties\HIDD_PROP_FILE.htm
-Character Properties Page | dlg_properties\HIDD_PROP_CHAR.htm
-Decimal Values Page | dlg_properties\HIDD_PROP_DECIMAL.htm
-Floating Point Values Page | dlg_properties\HIDD_PROP_FLOAT.htm
-IBM Floating Point Values Page | dlg_properties\HIDD_PROP_IBMFP.htm
+Byte Properties Page | dlg_properties\HIDD_PROP_CHAR.htm
+Integer Values Page | dlg_properties\HIDD_PROP_DECIMAL.htm
+Real Values Page | dlg_properties\HIDD_PROP_FLOAT.htm
 Date/Time Values Page | dlg_properties\Date_Time_Values.htm
 
 [System commands]

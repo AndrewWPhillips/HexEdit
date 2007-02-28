@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=4837>
-<meta name=layout-width content=1225>
+<meta name=layout-height content=5781>
+<meta name=layout-width content=757>
 
 
 <!--(Links)=========================================================-->
@@ -58,7 +58,10 @@
 
 <p>&nbsp;</p>
 
-<p>Here we describe how different declarations are handled.</p>
+<p>Here we describe how different declarations are parsed and added to 
+ a template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->How 
+ the generated template code is displayed is not discussed here but in 
+ the previous sections.</p>
 
 <p>&nbsp;</p>
 
@@ -71,8 +74,8 @@
 
 <p>&nbsp;</p>
 
-<p>For example, the following declaration generate a DATA element for an 
- unsigned 32-bit integer in the template.</p>
+<p>For example, the following declaration generates a DATA element for 
+ an unsigned 32-bit integer in the template.</p>
 
 <p>&nbsp;</p>
 
@@ -96,8 +99,8 @@
 <p>&nbsp;</p>
 
 <p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->&lt;data 
- type=&quot;int&quot; name=&quot;<span style="font-weight: bold;">unsigned 
- long</span>&quot; format=&quot;unsigned&quot; len=&quot;4&quot; type_name=&quot;unsigned 
+ type=&quot;int&quot; name=&quot;<span style="font-weight: bold;">unsigned$long</span>&quot; 
+ format=&quot;unsigned&quot; len=&quot;4&quot; type_name=&quot;unsigned 
  long&quot;/&gt;</p>
 
 <p>&nbsp;</p>
@@ -114,10 +117,11 @@
 
 <p>&nbsp;</p>
 
-<p>Note: three keyword integer types are synonymous with their two keyword 
- counterpart (ie, with &quot;int&quot; removed). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
- &quot;unsigned long int&quot; is the same as &quot;unsigned long&quot;, 
- &quot;signed short int&quot; is the same as &quot;signed short&quot; etc.</p>
+<p>Note: C/C++ allow three keyword integer types which are synonymous with 
+ their two keyword counterpart when parsed (ie, with &quot;int&quot; removed). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So &quot;unsigned 
+ long int&quot; is the same as &quot;unsigned long&quot;, &quot;signed 
+ short int&quot; is the same as &quot;signed short&quot; etc.</p>
 
 <p>&nbsp;</p>
 
@@ -136,8 +140,8 @@
 
 <p>&nbsp;</p>
 
-<p>Note that the DATA elements for numeric types in this file does not 
- set the &quot;byte_order&quot; attribute. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+<p>Note that the DATA elements for numeric types in this file intentionally 
+ does not set the &quot;byte_order&quot; attribute for each type. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
  could be set to &quot;little&quot; for all such elements since the Microsoft 
  compiler generates code for Intel processors and hence always uses little-endian 
  byte order. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
@@ -145,8 +149,8 @@
  value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  endianness is then taken from the global endian attribute (default_byte_order 
  ) of the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- is simpler, more maintainale and more efficient since typically, all DATA 
- elements of the same template have the same byte order.</p>
+ is simpler, more maintainable and more efficient since typically, all 
+ DATA elements in the same template have the same byte order.</p>
 
 <p>&nbsp;</p>
 
@@ -191,8 +195,15 @@
 
 <p>&nbsp;</p>
 
-<p>The parser will also evaluate expressions since many declarations require 
- a constant expression be evaluated at compile time. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+<p>Note that #defined &quot;constants&quot; are not saved. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ are not really constants from the point of view of the parser but just 
+ used as subsitution text. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ the <span style="font-weight: bold;">Preprocessor</span> section below.</p>
+
+<p>&nbsp;</p>
+
+<p>The parser will also evaluate constant expressions since many declarations 
+ require a constant expression be evaluated at compile time. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
  example:</p>
 
 <p>&nbsp;</p>
@@ -206,7 +217,7 @@
 <p>&nbsp;</p>
 
 <p>requires evaluation of the constant expression &quot;255 + 1&quot; before 
- generating an array of 256 characters:</p>
+ generating an array of 256 characters like this:</p>
 
 <p>&nbsp;</p>
 
@@ -275,7 +286,8 @@
  in theory, compilers can use integers of any size to store an enum so 
  &quot;_standard_types.xml&quot; uses a special type with name &quot;enum$&quot; 
  to store the type used for an enum. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Again 
- you can change this for your compiler.</p>
+ you can change this for your compiler (eg to set the length to 1, 2, 4, 
+ or 8).</p>
 
 <p>&nbsp;</p>
 
@@ -292,7 +304,7 @@
 
 <p>Pointers are used to store an address in memory and consequently are 
  of no use when written to file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
- it somtimes happens that a struct containing pointers is written to a 
+ it sometimes happens that a struct containing pointers is written to a 
  file for the other fields it contains. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  pointers can be ignored but you still need to reserve space for them.</p>
 
@@ -319,7 +331,7 @@
 
 <p>&nbsp;</p>
 
-<p>Arrays, on the other hand, are very useful in templates. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+<p>Arrays, unlike pointers, are very useful in templates. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
  the parser encounters an array it simply wraps its underlying type in 
  a template FOR element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
  expected you can have arrays of any other type such a structs, arrays, 
@@ -356,6 +368,8 @@
  since array elements can be accessed in expressions using the array name 
  and an index in square brackets.</p>
 
+<p>&nbsp;</p>
+
 <p>Note that in C/C++ the [] operator evaluates left-to-right so for multi-dimensionsal 
  arrays the right-most subscript (3 above) represents the outer array.</p>
 
@@ -376,9 +390,9 @@
  sequentially inside a STRUCT template element. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  elements contained in a struct can (as in C/C++) be any type including 
  basic types, arrays, other structs, etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
- also need to handle the special requirements of structs - member <span 
- style="font-weight: bold;">alignment</span> (padding) and <span style="font-weight: bold;">bit-fields</span>. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Structs 
+ also need to handle the special requirements of structs - in particular, 
+ member <span style="font-weight: bold;">alignment</span> (padding) and 
+ <span style="font-weight: bold;">bit-fields</span>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Structs 
  in C++ can also be derived from <span style="font-weight: bold;">base 
  classes</span>, which is discussed below in the &quot;Classes&quot; section.</p>
 
@@ -453,7 +467,7 @@
 <p>Compilers can also vary in the direction that bit-fields are stored, 
  though generally they start at the bottom. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  direction that bit-fields are added is not to be confused with the byte-order 
- (though the storage unit can also be big or little-endian like any integer).</p>
+ (the actual storage unit can also be big or little-endian like any integer).</p>
 
 <p>&nbsp;</p>
 
@@ -469,9 +483,9 @@
 
 <p>&nbsp;</p>
 
-<p>This must always be an &quot;int&quot; type but you can change the length. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There is 
- also a direction attribute which allows you to specify in which direction 
+<p>This must always be an &quot;int&quot; type but you can change the length 
+ (1,2,4,8). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ is also a direction attribute which allows you to specify in which direction 
  the bit-fields fill the underlying storage unit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  default settings are for the Microsoft VC++ compiler which uses a 4-byte 
  (32-bit) integer and fills from the bottom upwards.</p>
@@ -523,11 +537,11 @@
 
 <p>&nbsp;</p>
 
-<p>During processing of the template, HexEdit look for consecutive bit-fields 
+<p>During processing of the template, HexEdit looks for consecutive bit-fields 
  (indicated by use of the &quot;bits&quot; attribute) with the same type. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(To match 
- they must both be of &quot;int&quot; type and have the same &quot;len&quot; 
- and &quot;direction&quot; attributes.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Consecutive 
+ they must both be of &quot;int&quot; type and have <span style="font-weight: bold;">the 
+ same &quot;len&quot; and &quot;direction&quot; attributes</span>.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Consecutive 
  bit-fields are merged until the underlying storage unit, 32 bits in this 
  example, has been filled.</p>
 
@@ -537,7 +551,10 @@
  24 bits of the first storage units and b2 goes in the next 4 bits. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Since 
  b3 will not fit (28 + 5 &gt; 32) it occupies the bottom 5 bits of the 
  next storage unit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
- the total size of &quot;a&quot; will be 8 bytes (2 storage units).</p>
+ the total size of &quot;a&quot; will be 8 bytes (2 storage units). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that the top 4 bit of the first storage unit and the top 27 bits of the 
+ 2nd storage unit are not allocated to a bit-field and hence not visible 
+ in the template.</p>
 
 <p>&nbsp;</p>
 

@@ -458,6 +458,10 @@
         <param name="Local" value="menus\menu_operations.htm">
       </object>
       <li><object type="text/sitemap">
+        <param name="Name" value="Template Menu Commands">
+        <param name="Local" value="menus\menu_template.htm">
+      </object>
+      <li><object type="text/sitemap">
         <param name="Name" value="Tools menu">
         <param name="Local" value="menus\menu_tools.htm">
       </object>
@@ -508,6 +512,10 @@
     </object>
     <ul>
       <li><object type="text/sitemap">
+        <param name="Name" value="Summary Page">
+        <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
+      </object>
+      <li><object type="text/sitemap">
         <param name="Name" value="File">
         <param name="Local" value="dlg_properties\HIDD_PROP_FILE.htm">
       </object>
@@ -516,19 +524,19 @@
         <param name="Local" value="dlg_properties\HIDD_PROP_CHAR.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Decimal Values">
+        <param name="Name" value="Integer">
         <param name="Local" value="dlg_properties\HIDD_PROP_DECIMAL.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Floating Point Values">
+        <param name="Name" value="Real">
         <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="IBM Floating Point Values">
+        <param name="Name" value="XXX Remove">
         <param name="Local" value="dlg_properties\HIDD_PROP_IBMFP.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Date/Time Values">
+        <param name="Name" value="Date/Time">
         <param name="Local" value="dlg_properties\Date_Time_Values.htm">
       </object>
       </ul>

@@ -20,8 +20,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1223>
-<meta name=layout-width content=1213>
+<meta name=layout-height content=1648>
+<meta name=layout-width content=727>
 
 
 <!--(Links)=========================================================-->
@@ -179,25 +179,57 @@
  if no occurrences are found in all other files then the start (or end) 
  of the current file is searched back to the initial position.</p>
 
-<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Alignment</span></p>
+<p style="margin-left: 18.00pt;">&nbsp;</p>
 
-<p style="margin-left: 18.00pt;">The alignment radio buttons can further 
- restrict a match depending on the alignment of the first matched byte. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A word 
- alignment means that the match must start on a word boundary (ie, an even 
- address). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
- double word and quad word restrict matches to 4 and 8 byte boundaries. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The default 
- is byte alignment which has no alignment restrictions.</p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Alignment: 
+ Stride</span></p>
+
+<p style="margin-left: 18.00pt;">Alignment allows further restriction of 
+ matches depending on where in the file the match occurs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ stride determines how often a match can occur. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, a stride of 3 means that a match can only occur at every 3rd 
+ byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ stride of 1 means that no alignment restrictions are in force.</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
-<p style="margin-left: 18.00pt;">If an alignment and an offset is desired 
- then a mask can be used. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- example, say you wanted to match 2 bytes with &quot;AB CD&quot; but only 
- if they are the middle bytes of a group of 4. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
- do this you need to specify an alignment of 4 bytes (double word) a search 
- item of &quot;00 AB CD&quot; and a mask of &quot;00 FF FF&quot;.</p>
+<p style="margin-left: 18.00pt;">Use the arrow next to the stride field 
+ to select from a list of common strides of 1, 2, 4, or 8. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(These 
+ were the only allowed alignments in HexEdit before HexEdit 3.2, but now 
+ you can use any value up to 65535.)</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Alignment: 
+ Offset</span></p>
+
+<p style="margin-left: 18.00pt;">Offset is combined with stride to determine 
+ where the search starts within each stride. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Offsets 
+ can be any value from zero up to one less than the stride. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that offsets are zero-based, so the &quot;first&quot; byte in a stride 
+ has an offset of zero.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">For example, to search starting at the 
+ 2nd byte of every double-word use a stride of 4 (the size of a double 
+ word) and an offset of 1 (the offset of the 2nd byte).</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Alignment: 
+ Relative to mark</span></p>
+
+<p style="margin-left: 18.00pt;">Alignment is normally relative to the 
+ start of file but this is not always flexible enough. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Say 
+ you want to use alignment to search within a record but the actual start 
+ of the record varies within the file (or from file to file). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ order to use the same search in different places you can use the &quot;relative 
+ to mark&quot; option and just adjust the search by moving the position 
+ of the mark.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Note that when the &quot;relative to mark&quot; 
+ option is used any search occurrences found will all be <span style="font-weight: bold;">at 
+ or after the mark</span>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ includes background search occurrences.</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
@@ -225,22 +257,23 @@
 <param name="Items" value="Basic Find page;Simple.htm$$**$$Find Hex command;..\cmd_tools\HID_EDIT_FIND2.htm$$**$$Number;FindNumber.htm$$**$$Replace;Replace.htm$$**$$Text;FindText.htm$$**$$" >
 <param name="Image" value="" >
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
-<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\hexedit\HTMLHelp\DLG_Find\HexFind.htm" >
+<param name="_CURRENTFILEPATH" value="D:\Visual Studio Projects\HexEdit\HTMLHelp\dlg_find\HexFind.htm" >
 <param name="_ID" value="RelatedTopics" >
 <param name="UseMenu" value="-1" >
 <param name="Frame" value="" >
 <param name="Window" value="" >
-</object>--><OBJECT
+</object>-->
+<OBJECT
   CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
   ID="RelatedTopics"  TYPE="application/x-oleobject" >
   <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
   <PARAM  NAME="Button"  VALUE="Text:Related Topics">
   <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
-  <PARAM NAME="Item1" VALUE="Basic Find page;Simple.htm">
-  <PARAM NAME="Item2" VALUE="Find Hex command;..\cmd_tools\HID_EDIT_FIND2.htm">
-  <PARAM NAME="Item3" VALUE="Number;FindNumber.htm">
-  <PARAM NAME="Item4" VALUE="Replace;Replace.htm">
-  <PARAM NAME="Item5" VALUE="Text;FindText.htm">
+  <PARAM  NAME="Item1"  VALUE="Basic Find page;Simple.htm">
+  <PARAM  NAME="Item2"  VALUE="Find Hex command;..\cmd_tools\HID_EDIT_FIND2.htm">
+  <PARAM  NAME="Item3"  VALUE="Number;FindNumber.htm">
+  <PARAM  NAME="Item4"  VALUE="Replace;Replace.htm">
+  <PARAM  NAME="Item5"  VALUE="Text;FindText.htm">
 </OBJECT>
 
 <!--Metadata type="DesignerControl" endspan-->

@@ -20,8 +20,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1054>
-<meta name=layout-width content=1156>
+<meta name=layout-height content=1246>
+<meta name=layout-width content=905>
 
 
 <!--(Links)=========================================================-->
@@ -43,7 +43,8 @@
 
 <p style="text-align: center;"
 	align=center><img src="prp_date.gif"
-						style="border: none;
+						style="border-style: none;
+								border: none;
 								width: 361px;
 								height: 189px;"
 						width=361
@@ -81,7 +82,7 @@
  value you see may not be exactly what you expect. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
  example, times are usually stored as UTC, but sometimes are stored as 
  local time due to software bugs or system administration problems. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Some 
- formats can be used to store a date-only or time-only values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ formats can be used to store date-only or time-only values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
  the exact values of 1st, last and invalid date values are vague or unspecified 
  for some formats.</p>
 
@@ -98,14 +99,29 @@
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
+<p style="margin-left: 18.00pt;">HexEdit 3.2 also now supports a 64 bit 
+ version of time_t, which is now implemented in several compilers (but 
+ not yet standardised). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ problem with a &quot;normal&quot; time_t is that it only handles dates 
+ up sometime in 2038. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ 64 bit time format uses the same value as time_t (seconds from 1/1/1970) 
+ but uses a 64-bit integer. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ means dates far into the future can be stored. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ time64_t date format provide here is as implemented in Visual C++ 7 (VS.net 
+ 2002) and later, and is only defined to be valid in the range of times 
+ from the 1st second of 1/1/1970 to the last second of 31/12/2999.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
 <p style="margin-left: 18.00pt;">The formats following the time_t formats 
  are specific to Microsoft operating systems. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  OLE DATE format was created for use by OLE and VB -- it is the number 
  of days since 31/12/1899 expressed as an IEEE 64-bit floating point number. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The SYSTEMTIME 
  structure was invented for NT's use of times. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- FILETIME (essentially a 64 bit integer representing nSecs since 1/1/1601) 
- was invented for storing file times under NT's filesystem (NTFS). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ FILETIME (essentially a 64 bit integer representing nano secondss since 
+ 1/1/1601) was invented for storing file times under NT's filesystem (NTFS). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
  the MSDOS format was invented for MSDOS file times.</p>
 
 <p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Big endian</span></p>
@@ -198,7 +214,7 @@
 <param name="Items" value="Date and Time Formats;..\binary_files\Date_and_Time_Formats.htm$$**$$Decimal Values Page;HIDD_PROP_DECIMAL.htm$$**$$Display Properties Command;..\cmd_view\HID_PROPERTIES.htm$$**$$File Properties Page;HIDD_PROP_FILE.htm$$**$$Floating Point Values Page;HIDD_PROP_FLOAT.htm$$**$$Properties Dialog;..\overviewtools\prop.htm$$**$$" >
 <param name="Image" value="" >
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
-<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_properties\Date_Time_Values.htm" >
+<param name="_CURRENTFILEPATH" value="D:\Visual Studio Projects\HexEdit\HTMLHelp\dlg_properties\Date_Time_Values.htm" >
 <param name="_ID" value="RelatedTopics" >
 <param name="UseMenu" value="-1" >
 <param name="Frame" value="" >
