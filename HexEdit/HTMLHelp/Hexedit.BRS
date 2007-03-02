@@ -79,6 +79,9 @@ Replace page | dlg_find\Replace.htm
 [Help Commands]
 Help Topics command | cmd_help\HID_HELP_FINDER.htm
 Context Help Command | cmd_help\HID_CONTEXT_HELP.htm
+Macro Tutorial | cmd_help\HID_HELP_TUTE1.htm
+Basic Template Tutorial | cmd_help\HID_HELP_TUTE2.htm
+Advanced Template Tutorial | cmd_help\HID_HELP_TUTE3.htm
 Support Forums command | cmd_help\HID_HELP_FORUM.htm
 Help via the Web command | cmd_help\HID_HELP_WEB.htm
 FAQ Web Page command | cmd_help\HID_HELP_FAQ.htm
@@ -176,27 +179,33 @@ Toggle Bookmark command | cmd_misc\HID_BOOKMARK_TOGGLE.htm
 Next Bookmark | cmd_misc\HID_BOOKMARK_NEXT.htm
 Previous Bookmark | cmd_misc\HID_BOOKMARK_PREVIOUS.htm
 Hide Bookmarks | cmd_misc\HID_BOOKMARKS_HIDE.htm
-Synchronise Tree and Data | cmd_misc\HID_DFFD_SYNC.htm
-Auto Sync Tree/Data Toggle | cmd_misc\HID_DFFD_AUTO_SYNC.htm
-Refresh Tree View | cmd_misc\HID_DFFD_REFRESH.htm
-Template Web Site | cmd_misc\HID_DFFD_WEB.htm
+Synchronise Tree and Data | cmd_template\HID_DFFD_SYNC.htm
+Auto Sync Tree/Data Toggle | cmd_template\HID_DFFD_AUTO_SYNC.htm
+Refresh Tree View | cmd_template\HID_DFFD_REFRESH.htm
+Template Web Site | cmd_template\HID_DFFD_WEB.htm
 
 [Operations Commands]
 Convert ASCII to EBCDIC | cmd_operations\HID_ASC2EBC.htm
 Convert EBCDIC to ASCII | cmd_operations\HID_EBC2ASC.htm
 Convert ANSI to IBM/OEM | cmd_operations\HID_ANSI2IBM.htm
 Convert IBM/OEM to ANSI | cmd_operations\HID_IBM2ANSI.htm
+Convert to Lowercase | cmd_operations\HID_CONVERT_LOWERCASE.htm
+Convert to Uppercase | cmd_operations\HID_CONVERT_UPPERCASE.htm
 8 Bit Checksum | cmd_operations\8_Bit_Checksum.htm
 16 Bit Checksum | cmd_operations\16_Bit_Checksum.htm
 32 Bit Checksum | cmd_operations\32_Bit_Checksum.htm
 64 Bit Checksum | cmd_operations\64_Bit_Checksum.htm
 CRC CCITT | cmd_operations\CRC_CCITT.htm
 CRC 32 | cmd_operations\CRC_32.htm
+MD5 Cryptographic Checksum | cmd_operations\HID_MD5.htm
 Encryption Algorithm | cmd_operations\HID_ENCRYPT_ALG.htm
 Encryption Password | cmd_operations\HID_ENCRYPT_PASSWORD.htm
 Clear Password | cmd_operations\HID_ENCRYPT_CLEAR.htm
 Encrypt | cmd_operations\HID_ENCRYPT_ENCRYPT.htm
 Decrypt | cmd_operations\HID_ENCRYPT_DECRYPT.htm
+Compression Settings | cmd_operations\HID_ZLIB_SETTINGS.htm
+Compress | cmd_operations\HID_ZLIB_COMPRESS.htm
+Decompress | cmd_operations\HID_ZLIB_DECOMPRESS.htm
 Generate Fast Random Numbers | cmd_operations\PRNG_Fast.htm
 Generate Good Random Numbers | cmd_operations\PRNG_Good.htm
 Seed Random Number Generator from Calculator | cmd_operations\PRNG_Seed.htm
@@ -361,6 +370,21 @@ Maximize command | cmd_control\HID_SC_MAXIMIZE.htm
 Close command | cmd_control\HID_SC_CLOSE.htm
 Next Window | cmd_control\HID_SC_NEXTWINDOW.htm
 Previous Window | cmd_control\HID_SC_PREVWINDOW.htm
+
+[Template Commands]
+New Template | cmd_template\HID_DFFD_NEW.htm
+Open Template | cmd_template\HID_DFFD_OPEN.htm
+Save Template | cmd_template\HID_DFFD_SAVE.htm
+Save Template As | cmd_template\HID_DFFD_SAVEAS.htm
+Hide Tree View | cmd_template\HID_DFFD_HIDE.htm
+Split Window | cmd_template\HID_DFFD_SPLIT.htm
+Tabbed Window | cmd_template\HID_DFFD_TAB.htm
+Synchronise Tree and Data | cmd_template\HID_DFFD_SYNC.htm
+Auto Sync Tree/Data Toggle | cmd_template\HID_DFFD_AUTO_SYNC.htm
+Refresh Tree View | cmd_template\HID_DFFD_REFRESH.htm
+Allow Editing | cmd_template\HID_DFFD_TOGGLE_EDIT.htm
+Settings... | cmd_template\HID_DFFD_SETTINGS.htm
+Template Web Site | cmd_template\HID_DFFD_WEB.htm
 
 [Template Dialogs]
 Global Options | dlg_templates\Global_Options.htm

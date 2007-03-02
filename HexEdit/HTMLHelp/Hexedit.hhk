@@ -721,27 +721,39 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="convert">
-    <param name="Name" value="Convert ANSI to IBM/OEM">
-    <param name="Local" value="cmd_operations\HID_ANSI2IBM.htm">
-    <param name="Name" value="Convert ASCII to EBCDIC">
-    <param name="Local" value="cmd_operations\HID_ASC2EBC.htm">
-    <param name="Name" value="Convert EBCDIC to ASCII">
-    <param name="Local" value="cmd_operations\HID_EBC2ASC.htm">
-    <param name="Name" value="Convert IBM/OEM to ANSI">
-    <param name="Local" value="cmd_operations\HID_IBM2ANSI.htm">
-    <param name="Name" value="Paste As ASCII">
-    <param name="Local" value="cmd_edit\HID_PASTE_ASCII.htm">
-    <param name="Name" value="Paste As EBCDIC Text">
-    <param name="Local" value="cmd_edit\HID_PASTE_EBCDIC.htm">
-    <param name="Name" value="Paste As Unicode Text">
-    <param name="Local" value="cmd_edit\HID_PASTE_UNICODE.htm">
-    <param name="Name" value="How Do I Convert EBCDIC text to ASCII?">
-    <param name="Local" value="howdoi\HowEBCDIC2ASCII.htm">
     <param name="Name" value="Operations Menu Commands">
     <param name="Local" value="menus\menu_operations.htm">
     <param name="Name" value="tools">
     <param name="Local" value="overviewtools\other_tools.htm">
   </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="character set">
+      <param name="Name" value="Convert ANSI to IBM/OEM">
+      <param name="Local" value="cmd_operations\HID_ANSI2IBM.htm">
+      <param name="Name" value="Convert ASCII to EBCDIC">
+      <param name="Local" value="cmd_operations\HID_ASC2EBC.htm">
+      <param name="Name" value="Convert EBCDIC to ASCII">
+      <param name="Local" value="cmd_operations\HID_EBC2ASC.htm">
+      <param name="Name" value="Convert IBM/OEM to ANSI">
+      <param name="Local" value="cmd_operations\HID_IBM2ANSI.htm">
+      <param name="Name" value="How Do I Convert EBCDIC text to ASCII?">
+      <param name="Local" value="howdoi\HowEBCDIC2ASCII.htm">
+      <param name="Name" value="Paste As ASCII">
+      <param name="Local" value="cmd_edit\HID_PASTE_ASCII.htm">
+      <param name="Name" value="Paste As EBCDIC Text">
+      <param name="Local" value="cmd_edit\HID_PASTE_EBCDIC.htm">
+      <param name="Name" value="Paste As Unicode Text">
+      <param name="Local" value="cmd_edit\HID_PASTE_UNICODE.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="case">
+      <param name="Name" value="Convert to Lowercase">
+      <param name="Local" value="cmd_operations\HID_CONVERT_LOWERCASE.htm">
+      <param name="Name" value="Convert to Uppercase">
+      <param name="Local" value="cmd_operations\HID_CONVERT_UPPERCASE.htm">
+    </object>
+    </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="copy to clipboard">
     <param name="Name" value="Copy command">
@@ -1657,6 +1669,8 @@
       <param name="Local" value="dlg_other\HIDD_MACRO_SAVE_HELP.htm">
       <param name="Name" value="How Do I Save a Macro?">
       <param name="Local" value="howdoi\HowSaveMacro.htm">
+      <param name="Name" value="Macro Tutorial">
+      <param name="Local" value="cmd_help\HID_HELP_TUTE1.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="stop recording">
@@ -1676,6 +1690,8 @@
       <param name="Local" value="cmd_tools\Macro_Message.htm">
       <param name="Name" value="Record Macro command">
       <param name="Local" value="cmd_tools\HID_RECORD.htm">
+      <param name="Name" value="Macro Tutorial">
+      <param name="Local" value="cmd_help\HID_HELP_TUTE1.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -2909,9 +2925,33 @@
     <param name="Local" value="menus\menu_edit.htm">
     <param name="Name" value="Editing">
     <param name="Local" value="overviewbasics\edit.htm">
-    <param name="Name" value="Operations Menu Commands">
-    <param name="Local" value="menus\menu_operations.htm">
   </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="data">
+      <param name="Name" value="Edit Menu Commands">
+      <param name="Local" value="menus\menu_edit.htm">
+      <param name="Name" value="Editing">
+      <param name="Local" value="overviewbasics\edit.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="templates">
+      <param name="Name" value="Editing templates">
+      <param name="Local" value="overviewadvanced\Editing_templates.htm">
+      <param name="Name" value="Allow Editing">
+      <param name="Local" value="cmd_template\HID_DFFD_TOGGLE_EDIT.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="time">
+      <param name="Name" value="Summary Page">
+      <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="bookmarks">
+      <param name="Name" value="Edit Bookmarks">
+      <param name="Local" value="cmd_edit\Edit_Bookmarks.htm">
+    </object>
+    </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="order form">
     <param name="Name" value="Registration Form">
@@ -3338,6 +3378,13 @@
     <param name="Name" value="tools">
     <param name="Local" value="overviewtools\other_tools.htm">
   </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="cryptographic">
+      <param name="Name" value="MD5 Cryptographic Checksum">
+      <param name="Local" value="cmd_operations\HID_MD5.htm">
+    </object>
+    </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="Zip file">
     <param name="Name" value="CRC 32">
@@ -3351,14 +3398,11 @@
     <param name="Local" value="binary_files\Error_Checking.htm">
   </object>
   <li><object type="text/sitemap">
-    <param name="Name" value="message digests">
-    <param name="Name" value="Error Checking">
-    <param name="Local" value="binary_files\Error_Checking.htm">
-  </object>
-  <li><object type="text/sitemap">
     <param name="Name" value="one-way hash function">
     <param name="Name" value="Error Checking">
     <param name="Local" value="binary_files\Error_Checking.htm">
+    <param name="Name" value="MD5 Cryptographic Checksum">
+    <param name="Local" value="cmd_operations\HID_MD5.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="hash function">
@@ -3469,6 +3513,8 @@
       <param name="Local" value="tute_template_1\TemplateTute1-2.htm">
       <param name="Name" value="Editing templates">
       <param name="Local" value="overviewadvanced\Editing_templates.htm">
+      <param name="Name" value="HID_DDFD_NEW">
+      <param name="Local" value="cmd_template\HID_DFFD_NEW.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3542,23 +3588,6 @@
     <param name="Local" value="troubleshooting\Install_problem_2.htm">
     <param name="Name" value="Error: DLL not found">
     <param name="Local" value="troubleshooting\Install_problem_3.htm">
-  </object>
-  <li><object type="text/sitemap">
-    <param name="Name" value="templates">
-    <param name="Name" value="Using Templates">
-    <param name="Local" value="overviewtools\Templates.htm">
-    <param name="Name" value="Expressions">
-    <param name="Local" value="overviewadvanced\Expressions.htm">
-    <param name="Name" value="Template Files">
-    <param name="Local" value="overviewadvanced\Template_Files.htm">
-    <param name="Name" value="Creating and Editing">
-    <param name="Local" value="overviewadvanced\Editing_templates.htm">
-    <param name="Name" value="Basic Template Creation Tutorial">
-    <param name="Local" value="tute_template_1\TemplateTute1-0.htm">
-    <param name="Name" value="Advanced Template Creation Tutorial">
-    <param name="Local" value="tute_template_2\TemplateTute2-0.htm">
-    <param name="Name" value="menu_template">
-    <param name="Local" value="menus\menu_template.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="operations">
@@ -3903,12 +3932,7 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
   </object>
   <li><object type="text/sitemap">
-    <param name="Name" value="editing time">
-    <param name="Name" value="HIDD_PROP_SUMMARY">
-    <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
-  </object>
-  <li><object type="text/sitemap">
-    <param name="Name" value="viewing time">
+    <param name="Name" value="view time">
     <param name="Name" value="HIDD_PROP_SUMMARY">
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
   </object>
@@ -3926,5 +3950,140 @@
     <param name="Name" value="Find Number page">
     <param name="Local" value="dlg_find\FindNumber.htm">
   </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="uppercase">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="conversion to">
+      <param name="Name" value="Convert to Uppercase">
+      <param name="Local" value="cmd_operations\HID_CONVERT_UPPERCASE.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="lowercase">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="conversion to">
+      <param name="Name" value="Convert to Lowercase">
+      <param name="Local" value="cmd_operations\HID_CONVERT_LOWERCASE.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="MD5">
+    <param name="Name" value="MD5 Cryptographic Checksum">
+    <param name="Local" value="cmd_operations\HID_MD5.htm">
+    <param name="Name" value="Error Detection">
+    <param name="Local" value="binary_files\Error_Checking.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="cryptographic checksum">
+    <param name="Name" value="MD5 Cryptographic Checksum">
+    <param name="Local" value="cmd_operations\HID_MD5.htm">
+    <param name="Name" value="Error Detection">
+    <param name="Local" value="binary_files\Error_Checking.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="message digest">
+    <param name="Name" value="MD5 Cryptographic Checksum">
+    <param name="Local" value="cmd_operations\HID_MD5.htm">
+    <param name="Name" value="Error Detection">
+    <param name="Local" value="binary_files\Error_Checking.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="template">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="files">
+      <param name="Name" value="Open Template">
+      <param name="Local" value="cmd_template\HID_DFFD_OPEN.htm">
+      <param name="Name" value="Save Template">
+      <param name="Local" value="cmd_template\HID_DFFD_SAVE.htm">
+      <param name="Name" value="Save Template As">
+      <param name="Local" value="cmd_template\HID_DFFD_SAVEAS.htm">
+      <param name="Name" value="Template Files">
+      <param name="Local" value="overviewadvanced\Template_Files.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="viewing">
+      <param name="Name" value="Using Templates">
+      <param name="Local" value="overviewtools\Templates.htm">
+      <param name="Name" value="Hide Tree View">
+      <param name="Local" value="cmd_template\HID_DFFD_HIDE.htm">
+      <param name="Name" value="Tabbed Window">
+      <param name="Local" value="cmd_template\HID_DFFD_TAB.htm">
+      <param name="Name" value="Split Window">
+      <param name="Local" value="cmd_template\HID_DFFD_SPLIT.htm">
+      <param name="Name" value="Refresh Tree View">
+      <param name="Local" value="cmd_template\HID_DFFD_REFRESH.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="tutorials">
+      <param name="Name" value="Advanced Tutorial">
+      <param name="Local" value="tute_template_1\TemplateTute1-0.htm">
+      <param name="Name" value="Basic Tutorial">
+      <param name="Local" value="tute_template_2\TemplateTute2-0.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="creation">
+      <param name="Name" value="New Template">
+      <param name="Local" value="cmd_template\HID_DFFD_NEW.htm">
+      <param name="Name" value="Editing templates">
+      <param name="Local" value="overviewadvanced\Editing_templates.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="editing">
+      <param name="Name" value="Allow Editing">
+      <param name="Local" value="cmd_template\HID_DFFD_TOGGLE_EDIT.htm">
+      <param name="Name" value="Open Template">
+      <param name="Local" value="cmd_template\HID_DFFD_OPEN.htm">
+      <param name="Name" value="Editing templates">
+      <param name="Local" value="overviewadvanced\Editing_templates.htm">
+      <param name="Name" value="Expressions">
+      <param name="Local" value="overviewadvanced\Expressions.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="using">
+      <param name="Name" value="Template Menu Commands">
+      <param name="Local" value="menus\menu_template.htm">
+      <param name="Name" value="Settings...">
+      <param name="Local" value="cmd_template\HID_DFFD_SETTINGS.htm">
+      <param name="Name" value="Auto Sync Tree/Data Toggle">
+      <param name="Local" value="cmd_template\HID_DFFD_AUTO_SYNC.htm">
+      <param name="Name" value="Synchronise Tree and Data">
+      <param name="Local" value="cmd_template\HID_DFFD_SYNC.htm">
+      <param name="Name" value="Refresh Tree View">
+      <param name="Local" value="cmd_template\HID_DFFD_REFRESH.htm">
+      <param name="Name" value="Template Web Site">
+      <param name="Local" value="cmd_template\HID_DFFD_WEB.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="dialogs">
+      <param name="Name" value="Use Struct Dialog">
+      <param name="Local" value="dlg_templates\USE_STRUCT.htm">
+      <param name="Name" value="STRUCT Dialog">
+      <param name="Local" value="dlg_templates\STRUCT_Dialog.htm">
+      <param name="Name" value="Structure Definition Dialog">
+      <param name="Local" value="dlg_templates\STRUCT_DEFN.htm">
+      <param name="Name" value="Parse Types from Source Code Dialog">
+      <param name="Local" value="dlg_templates\Parser_dialog.htm">
+      <param name="Name" value="JUMP Dialog">
+      <param name="Local" value="dlg_templates\JUMP_DLG.htm">
+      <param name="Name" value="IF Dialog">
+      <param name="Local" value="dlg_templates\IF_Dialog.htm">
+      <param name="Name" value="Global Options">
+      <param name="Local" value="dlg_templates\Global_Options.htm">
+      <param name="Name" value="FOR Dialog">
+      <param name="Local" value="dlg_templates\FOR_Dialog.htm">
+      <param name="Name" value="EVAL Dialog">
+      <param name="Local" value="dlg_templates\EVAL_DLG.htm">
+      <param name="Name" value="DATA Dialog">
+      <param name="Local" value="dlg_templates\DATA_Dialog.htm">
+      <param name="Name" value="CASE Dialog">
+      <param name="Local" value="dlg_templates\CASE_Dialog.htm">
+    </object>
+    </ul>
 </ul>
 </html>

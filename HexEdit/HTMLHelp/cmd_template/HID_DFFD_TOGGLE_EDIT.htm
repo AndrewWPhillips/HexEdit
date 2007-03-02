@@ -8,7 +8,7 @@
 
 <head>
 
-<title>Synchronise Tree and Data</title>
+<title>Allow Editing</title>
 
 <!--(Meta)==========================================================-->
 
@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=789>
-<meta name=layout-width content=1213>
+<meta name=layout-height content=865>
+<meta name=layout-width content=976>
 
 
 <!--(Links)=========================================================-->
@@ -37,46 +37,34 @@
 <body>
 
 <h2><font style="font-family: Arial;"
-			face=Arial>Synchronise Tree and Data</font></h2>
+			face=Arial>Allow Editing (Template menu)</font></h2>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>When a template is active this synchronises the current selection in 
- the tree (template) and data (hex) windows. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- you are in the data window then the data field in the template window, 
- which corresponds to the current cursor location in the file, is selected. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If the 
- template window is active then the bytes that correspond to the currently 
- selected row in the tree view are selected in the data window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
- that for expandable rows (ie non-data rows) the bytes for all the data 
- elements contained within the element are selected -- for example if the 
- top (file-level) row of the template is selected then the whole file will 
- be selected in the data view.</p>
-
-<p>&nbsp;</p>
-
-<p>This command is disabled if you turn on automatic synchronisation (using 
- the <a HREF="HID_DFFD_AUTO_SYNC.htm">Auto Sync Tree/Data Toggle</a>), 
- since the tree and data window selection are automatically kept in sync 
- as you move the cursor or selection.</p>
+<p style="margin-top: 0; margin-bottom: 0;">This toggles between edit and 
+ view modes for the current template.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p><span style="font-weight: bold;">Shortcuts</span></p>
+<p style="margin-top: 0; margin-bottom: 0;">As well as the obvious difference 
+ (that you can edit the template when this option is toggled on) there 
+ is another important difference. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ edit mode many more template nodes in the tree view are visible which 
+ are hidden to a viewer of the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Seeing 
+ all the nodes allows full control of how the template works. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="../overviewadvanced/Editing_templates.htm">Editing templates</a> 
+ for details.</p>
 
-<p style="margin-left: 72.00pt; text-indent: -54.00pt;">Toolbar:&nbsp;<img 
- src="sync.gif"
-	style="border-style: none;
-			border: none;
-			width: 22px;
-			height: 23px;"
-	width=22
-	height=23
-	border=0></p>
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0;">Note that some templates may 
+ be marked as <span style="font-weight: bold;">not editable</span>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ this case you cannot change the template from within HexEdit - you need 
+ to modify the XML of the template directly.</p>
 
-<p style="text-indent: -54.00pt; margin-left: 136px;">
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="text-indent: -54.00pt; margin-left: 96px;">
 <!--Metadata type="DesignerControl" startspan
 <object classid="clsid:FF80F713-5DC6-11D0-A7B4-00AADC53E937">
 <param name="_Version" value="65536" >
@@ -88,10 +76,10 @@
 <param name="UseButton" value="-1" >
 <param name="ControlLabel" value="Related Topics" >
 <param name="UseIcon" value="0" >
-<param name="Items" value="Auto Sync Tree/Data Toggle;HID_DFFD_AUTO_SYNC.htm$$**$$Using Templates;..\overviewtools\Templates.htm$$**$$" >
+<param name="Items" value="Editing templates;..\overviewadvanced\Editing_templates.htm$$**$$Open Template;HID_DFFD_OPEN.htm$$**$$Using Templates;..\overviewtools\Templates.htm$$**$$" >
 <param name="Image" value="" >
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
-<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\cmd_misc\HID_DFFD_SYNC.htm" >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\cmd_template\HID_DFFD_TOGGLE_EDIT.htm" >
 <param name="_ID" value="" >
 <param name="UseMenu" value="0" >
 <param name="Frame" value="" >
@@ -103,12 +91,15 @@
   <PARAM  NAME="Command"  VALUE="Related Topics">
   <PARAM  NAME="Button"  VALUE="Text:Related Topics">
   <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
-  <PARAM  NAME="Item1"  VALUE="Auto Sync Tree/Data Toggle;HID_DFFD_AUTO_SYNC.htm">
-  <PARAM  NAME="Item2"  VALUE="Using Templates;..\overviewtools\Templates.htm">
+  <PARAM  NAME="Item1"  VALUE="Editing templates;..\overviewadvanced\Editing_templates.htm">
+  <PARAM  NAME="Item2"  VALUE="Open Template;HID_DFFD_OPEN.htm">
+  <PARAM  NAME="Item3"  VALUE="Using Templates;..\overviewtools\Templates.htm">
 </OBJECT>
 
 <!--Metadata type="DesignerControl" endspan-->
  </p>
+
+<p>&nbsp;</p>
 
 </body>
 

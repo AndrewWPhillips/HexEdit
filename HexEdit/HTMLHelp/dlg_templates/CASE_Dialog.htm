@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1375>
-<meta name=layout-width content=1125>
+<meta name=layout-height content=1647>
+<meta name=layout-width content=757>
 
 
 <!--(Links)=========================================================-->
@@ -42,10 +42,14 @@
 <p>&nbsp;</p>
 
 <p style="text-align: center;"
-	align=center><img src="CASE_dlg.gif" style="border-style: none;
+	align=center><img src="CASE_dlg.gif"
+						style="border-style: none;
 								border: none;
 								width: 444px;
-								height: 301px;" width="444" height="301" border="0"></p>
+								height: 301px;"
+						width=444
+						height=301
+						border=0></p>
 
 <p>&nbsp;</p>
 
@@ -86,11 +90,19 @@
 
 <p style="font-weight: bold;"><span style="font-weight: bold;">Expression</span></p>
 
-<p style="margin-left: 40px;">An integer expression that is used to select 
- which of the CASE sub-elements is present in the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- can use any value from the template so far processed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Use 
+<p style="margin-left: 40px;">The expression can return an integer or string 
+ result (new in 3.2). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ expression can use any value from the template so far processed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Use 
  the button with the triangle to see a menu (and possibly submenus) of 
  all available values.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">The expression is used to scan the cases 
+ from top to bottom until a match is found. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ a string expression an exact (case-sensitive) match is required; for an 
+ integer expression the result can be matched against a single value or 
+ a list of values or ranges as explained below.</p>
 
 <p>&nbsp;</p>
 
@@ -110,13 +122,35 @@
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold;"><span style="font-weight: bold;">Range(s)</span></p>
+<p style="font-weight: bold;"><span style="font-weight: bold;">Integer/range(s) 
+ or Match String</span></p>
 
-<p style="margin-left: 40px;">The value or range of values that are matched 
- for the currently selected element in the Cases list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- can include one or more integer values or ranges of values - for example, 
- &quot;1, 4, 9, 100-200&quot; will match 1, 4, 9 or any number between 
- 100 and 200 inclusive.</p>
+<p style="margin-left: 40px;">Each case has a string against which it is 
+ matched. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Select 
+ the case in the list to change how it is matched.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">If the expression returns a <span style="font-weight: bold;">string</span> 
+ result then a case-sensitive string comparison is perfomed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Please 
+ make sure that the match string does not contain trailing spaces to avoid 
+ confusion.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">If the expression returns an <span style="font-weight: bold;">integer</span> 
+ result then the match string can be a single integer or a comma-separated 
+ list of integers or ranges. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, &quot;1, 4, 9, 100-200&quot; will match 1, 4, 9 or any number 
+ between 100 and 200 inclusive.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">The last case can have an empty match string 
+ in which case it matches everything (ie anything not matched by a case 
+ earlier in the list). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is like the <span style="font-weight: bold;">default</span> case in a 
+ C switch statement.</p>
 
 <p style="margin-left: 40px;">&nbsp;</p>
 
@@ -229,7 +263,7 @@
 <param name="Items" value="Editing templates;..\overviewadvanced\Editing_templates.htm$$**$$IF Dialog;IF_Dialog.htm$$**$$Using Templates;..\overviewtools\Templates.htm$$**$$" >
 <param name="Image" value="" >
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
-<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_templates\CASE_Dialog.htm" >
+<param name="_CURRENTFILEPATH" value="D:\Visual Studio Projects\HexEdit\HTMLHelp\dlg_templates\CASE_Dialog.htm" >
 <param name="_ID" value="RelatedTopics" >
 <param name="UseMenu" value="-1" >
 <param name="Frame" value="" >

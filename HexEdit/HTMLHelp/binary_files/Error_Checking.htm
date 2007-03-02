@@ -20,8 +20,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1299>
-<meta name=layout-width content=1239>
+<meta name=layout-height content=1571>
+<meta name=layout-width content=867>
 
 
 <!--(Links)=========================================================-->
@@ -214,9 +214,10 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>CRCs are good for detecting errors that are spurious or random, however, 
- they cannot protect against deliberate changes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- this you need to use a message digest, also called a one-way hash function.</p>
+<p>CRCs are good for detecting random errors and even many types of structured 
+ errors, however, they cannot protect against deliberate changes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ this you need to use a message digest, also called a cryptographic checksum 
+ or one-way hash function.</p>
 
 <p>&nbsp;</p>
 
@@ -241,12 +242,14 @@
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Using a 
  smaller value would be susceptible to brute-force attacks where random 
  data is used to search through the domain of all possible values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Of 
- course, just because a message digest is 128 bits does not mean the algorithm 
- is necessarily good.)</p>
+ course, just because a message digest result is 128 bits does not mean 
+ the algorithm is necessarily good.)</p>
 
 <p>&nbsp;</p>
 
-<p>HexEdit does not (yet) support any message digest algorithms.</p>
+<p>HexEdit now supports the MD5 message digest algorithm. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is often used on the Internet to verify that downloaded files have not 
+ been tampered with.</p>
 
 <p>&nbsp;</p>
 
