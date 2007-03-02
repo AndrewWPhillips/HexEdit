@@ -446,7 +446,7 @@ double TZDiff()
 	return tz_diff;
 }
 
-DATE FromTime_t(long v)
+DATE FromTime_t(__int64 v)  // Normal time_t and time64_t (secs since 1/1/1970)
 {
 	return (365.0*70.0 + 17 + 2) + v/(24.0*60.0*60.0) + TZDiff();
 }

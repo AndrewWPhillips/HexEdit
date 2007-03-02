@@ -16197,7 +16197,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("sbyte") == 0)
 	{
         signed char val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			retval.typ = TYPE_INT;          // Just return the current byte
 			retval.int64 = val;
@@ -16207,7 +16207,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("byte") == 0)
 	{
         unsigned char val;
-        if (pview_->GetDocument()->GetData(&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData(&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			retval.typ = TYPE_INT;          // Just return the current byte
 			retval.int64 = val;
@@ -16218,7 +16218,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("word") == 0)
 	{
         short val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16230,7 +16230,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("uword") == 0)
 	{
         unsigned short val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16243,7 +16243,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("dword") == 0)
 	{
         long val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16255,7 +16255,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("udword") == 0)
 	{
         unsigned long val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16268,7 +16268,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("qword") == 0)
 	{
         __int64 val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16280,7 +16280,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("uqword") == 0)
 	{
         unsigned __int64 val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16293,7 +16293,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("ieee32") == 0)
 	{
         float val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16305,7 +16305,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("ieee64") == 0)
 	{
         double val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16317,7 +16317,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("ibm32") == 0)
 	{
         unsigned char val[4];
-        if (pview_->GetDocument()->GetData(val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData(val, sizeof(val), sym_address) == sizeof(val))
 		{
 			retval.typ = TYPE_REAL;
 			retval.real64 = ibm_fp32(val, NULL, NULL, !pview_->BigEndian());
@@ -16327,7 +16327,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("ibm64") == 0)
 	{
         unsigned char val[8];
-        if (pview_->GetDocument()->GetData(val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData(val, sizeof(val), sym_address) == sizeof(val))
 		{
 			retval.typ = TYPE_REAL;
 			retval.real64 = ibm_fp64(val, NULL, NULL, !pview_->BigEndian());
@@ -16337,7 +16337,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("time_t") == 0)
 	{
         time_t val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16346,10 +16346,24 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 			sym_size = sizeof(val);
 		}
 	}
+#ifdef TIME64_T
+	else if (sym_str.CompareNoCase("time64_t") == 0)
+	{
+        __int64 val;
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
+		{
+			if (pview_->BigEndian())
+				flip_bytes((unsigned char *)&val, sizeof(val));
+			retval.typ = TYPE_DATE;
+			retval.date = FromTime_t(val);
+			sym_size = sizeof(val);
+		}
+	}
+#endif
 	else if (sym_str.CompareNoCase("time_t_80") == 0)  // MSC 5.1 time_t
 	{
         long val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16361,7 +16375,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("time_t_1899") == 0)  // MSC 7 time_t
 	{
         unsigned long val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));
@@ -16373,7 +16387,7 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	else if (sym_str.CompareNoCase("time_t_mins") == 0)  // MSC 7 time_t
 	{
         long val;
-        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address))
+        if (pview_->GetDocument()->GetData((unsigned char *)&val, sizeof(val), sym_address) == sizeof(val))
 		{
 			if (pview_->BigEndian())
 				flip_bytes((unsigned char *)&val, sizeof(val));

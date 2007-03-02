@@ -454,6 +454,7 @@ public:
     // IDC_DATE_FORMAT drop list combo and the date_size array.
     enum {
         FORMAT_TIME_T,          // Most common time_t (secs since 1/1/70)
+        FORMAT_TIME64_T,        // Common (64-bit) time64_t (secs since 1/1/70)
         FORMAT_TIME_T_80,       // Seconds since 1/1/80 as 32 bit int
         FORMAT_TIME_T_1899,     // Seconds since 31/12/1899 as unsigned 32 bit int
         FORMAT_TIME_T_MINS,     // Minutes since 1/1/70

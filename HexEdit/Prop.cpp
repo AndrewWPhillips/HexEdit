@@ -3003,6 +3003,14 @@ CPropDatePage::CPropDatePage() : CPropUpdatePage(CPropDatePage::IDD)
             date_last_[ii].m_dt = date_first_[ii].m_dt + (0x7fffFFFFUL+0.2)/(24.0*60.0*60.0);
             date_last_[ii].SetStatus(COleDateTime::valid);
             break;
+#ifdef TIME64_T
+        case FORMAT_TIME64_T:
+            date_size_[ii] = 8;
+            date_first_[ii].m_dt = 365.0*70.0 + 17 + 2 + TZDiff();  // days from 30/12/1899 to 1/1/1970
+            date_first_[ii].SetStatus(COleDateTime::valid);
+            date_last_[ii].m_dt = COleDateTime(2999, 12, 31, 23, 59, 59);  // last valid __time64_t (acc to VS help) is the last second of this millenium
+            break;
+#endif
         case FORMAT_TIME_T_80:
             date_size_[ii] = 4;
             date_first_[ii].m_dt = 365.0*80.0 + 19 + 2 + TZDiff();  // days from 30/12/1899 to 1/1/1980
@@ -3115,8 +3123,15 @@ void CPropDatePage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
             case FORMAT_TIME_T:
                 if (big_endian_) flip_bytes(buf, got);
                 if (*((time_t *)buf) > (time_t)-1)
-                    odt = COleDateTime(FromTime_t(*((long *)buf)));
+                    odt = COleDateTime(*((time_t *)buf));
                 break;
+#ifdef TIME64_T
+            case FORMAT_TIME64_T:
+                if (big_endian_) flip_bytes(buf, got);
+                if (*((__time64_t *)buf) > (__time64_t)-1)
+                    odt = COleDateTime(*((__time64_t *)buf));
+                break;
+#endif
             case FORMAT_TIME_T_80:
                 if (big_endian_) flip_bytes(buf, got);
                 if (*((long *)buf) > (time_t)-1)
@@ -3286,6 +3301,15 @@ void CPropDatePage::save_date()
                     *((time_t *)buf) = time_t((odt_date.m_dt - (365.0*70.0 + 17 + 2) - TZDiff())*(24.0*60.0*60.0) + 0.5);
                 if (big_endian_) flip_bytes(buf, date_size_[format_]);
                 break;
+#ifdef TIME64_T
+            case FORMAT_TIME64_T:
+                if (is_invalid)
+                    *((__time64_t *)buf) = (__time64_t)-1;
+                else
+                    *((__time64_t *)buf) = __time64_t((odt_date.m_dt - (365.0*70.0 + 17 + 2) - TZDiff())*(24.0*60.0*60.0) + 0.5);
+                if (big_endian_) flip_bytes(buf, date_size_[format_]);
+                break;
+#endif
             case FORMAT_TIME_T_80:
                 if (is_invalid)
                     *((long *)buf) = -1L;

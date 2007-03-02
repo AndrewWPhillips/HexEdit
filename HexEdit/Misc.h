@@ -35,7 +35,7 @@ COLORREF get_rgb(int hue, int luminance, int saturation);
 COLORREF tone_down(COLORREF col, COLORREF bg_col, double amt = 0.75);
 
 double TZDiff();
-DATE FromTime_t(long v);
+DATE FromTime_t(__int64 v);
 DATE FromTime_t_80(long v);
 DATE FromTime_t_mins(long v);
 DATE FromTime_t_1899(long v);

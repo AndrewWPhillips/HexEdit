@@ -1405,9 +1405,11 @@ void CDataFormatView::InitTree()
                     case CHexEditDoc::DF_DATEC:
                         item.strText = "Common time_t";
                         break;
+#ifdef TIME64_T
                     case CHexEditDoc::DF_DATEC64:
                         item.strText = "64bit C/C++ time (time64_t)";
                         break;
+#endif
                     case CHexEditDoc::DF_DATECMIN:
                         item.strText = "time_t (mins since 1/1/1970)";
                         break;
@@ -1459,8 +1461,10 @@ void CDataFormatView::InitTree()
                             item.strText += " little-endian";  // Only show the unusual case (little-endian)
                         break;
                     case CHexEditDoc::DF_DATEC:
+#ifdef TIME64_T
                     case CHexEditDoc::DF_DATEC64:
-                    case CHexEditDoc::DF_DATECMIN:
+#endif
+					case CHexEditDoc::DF_DATECMIN:
                     case CHexEditDoc::DF_DATEC51:
                     case CHexEditDoc::DF_DATEC7:
                     case CHexEditDoc::DF_DATEOLE:
@@ -1854,7 +1858,9 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
             strFormat = theApp.default_real_format_;
             break;
         case CHexEditDoc::DF_DATEC:
+#ifdef TIME64_T
         case CHexEditDoc::DF_DATEC64:
+#endif
         case CHexEditDoc::DF_DATECMIN:
         case CHexEditDoc::DF_DATEC51:
         case CHexEditDoc::DF_DATEC7:

@@ -1617,7 +1617,9 @@ BOOL CTipsPage::OnInitDialog()
 		var_list.Add("time_t_80");
 		var_list.Add("time_t_1899");
 		var_list.Add("time_t_mins");
-		//var_list.Add("time64_t");
+#ifdef TIME64_T
+		var_list.Add("time64_t");
+#endif
 		//var_list.Add("char_ascii");
 		//var_list.Add("char_ebcdic");
 		//var_list.Add("char_unicode");

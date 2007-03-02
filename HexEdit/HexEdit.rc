@@ -646,6 +646,28 @@ BEGIN
             MENUITEM "&Quad Word (64 bit)",         ID_MOD_64BIT
         END
         MENUITEM SEPARATOR
+        POPUP "Shift Left"
+        BEGIN
+            MENUITEM "&Byte",                       ID_LSL_BYTE
+            MENUITEM "&Word (16 bit)",              ID_LSL_16BIT
+            MENUITEM "&Double Word (32 bit)",       ID_LSL_32BIT
+            MENUITEM "&Quad Word (64 bit)",         ID_LSL_64BIT
+        END
+        POPUP "Shift Right"
+        BEGIN
+            MENUITEM "&Byte",                       ID_LSR_BYTE
+            MENUITEM "&Word (16 bit)",              ID_LSR_16BIT
+            MENUITEM "&Double Word (32 bit)",       ID_LSR_32BIT
+            MENUITEM "&Quad Word (64 bit)",         ID_LSR_64BIT
+        END
+        POPUP "Arith Shift Right"
+        BEGIN
+            MENUITEM "&Byte",                       ID_ASR_BYTE
+            MENUITEM "&Word (16 bit)",              ID_ASR_16BIT
+            MENUITEM "&Double Word (32 bit)",       ID_ASR_32BIT
+            MENUITEM "&Quad Word (64 bit)",         ID_ASR_64BIT
+        END
+        MENUITEM SEPARATOR
         POPUP "&AND"
         BEGIN
             MENUITEM "&Byte",                       ID_AND_BYTE
@@ -667,28 +689,6 @@ BEGIN
             MENUITEM "&Word (16 bit)",              ID_XOR_16BIT
             MENUITEM "&Double Word (32 bit)",       ID_XOR_32BIT
             MENUITEM "&Quad Word (64 bit)",         ID_XOR_64BIT
-        END
-        MENUITEM SEPARATOR
-        POPUP "Shift Left"
-        BEGIN
-            MENUITEM "&Byte",                       ID_LSL_BYTE
-            MENUITEM "&Word (16 bit)",              ID_LSL_16BIT
-            MENUITEM "&Double Word (32 bit)",       ID_LSL_32BIT
-            MENUITEM "&Quad Word (64 bit)",         ID_LSL_64BIT
-        END
-        POPUP "Shift Right"
-        BEGIN
-            MENUITEM "&Byte",                       ID_LSR_BYTE
-            MENUITEM "&Word (16 bit)",              ID_LSR_16BIT
-            MENUITEM "&Double Word (32 bit)",       ID_LSR_32BIT
-            MENUITEM "&Quad Word (64 bit)",         ID_LSR_64BIT
-        END
-        POPUP "Arith Shift Right"
-        BEGIN
-            MENUITEM "&Byte",                       ID_ASR_BYTE
-            MENUITEM "&Word (16 bit)",              ID_ASR_16BIT
-            MENUITEM "&Double Word (32 bit)",       ID_ASR_32BIT
-            MENUITEM "&Quad Word (64 bit)",         ID_ASR_64BIT
         END
     END
     POPUP "Te&mplate"
@@ -1691,7 +1691,7 @@ BEGIN
     LTEXT           "&Format:",IDC_STATIC,9,11,24,8
     CTEXT           "12 bytes",IDC_DATE_FORMAT_DESC,5,20,29,8,NOT WS_GROUP,0,
                     HIDC_DATE_FORMAT_DESC
-    COMBOBOX        IDC_DATE_FORMAT,35,10,127,80,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_DATE_FORMAT,35,10,127,96,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_DATE_FORMAT
     CONTROL         "&Big-endian",IDC_DATE_BIG_ENDIAN,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,166,8,49,10,0,
@@ -2541,6 +2541,10 @@ BEGIN
     IDC_DATE_FORMAT, 0x403, 29, 0
 0x6974, 0x656d, 0x745f, 0x2820, 0x6573, 0x7363, 0x7320, 0x6e69, 0x6563, 
 0x3120, 0x312f, 0x312f, 0x3739, 0x2930, "\000" 
+    IDC_DATE_FORMAT, 0x403, 39, 0
+0x6974, 0x656d, 0x3436, 0x745f, 0x2820, 0x3436, 0x6220, 0x7469, 0x7620, 
+0x6c61, 0x6575, 0x7320, 0x6e69, 0x6563, 0x3120, 0x312f, 0x312f, 0x3739, 
+0x2930, "\000" 
     IDC_DATE_FORMAT, 0x403, 34, 0
 0x6974, 0x656d, 0x745f, 0x2820, 0x6973, 0x636e, 0x2065, 0x2f31, 0x2f31, 
 0x3931, 0x3038, 0x2029, 0x4d5b, 0x4353, 0x3520, 0x312e, 0x005d, 
