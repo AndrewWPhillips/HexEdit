@@ -1,44 +1,34 @@
 @echo off
-REM -- First make map file from Microsoft Visual C++ generated resource.h
-echo // MAKEHELP.BAT generated Help Map file.  Used by HexEdit.HPJ. >"hlp\HexEdit.hm"
-echo. >>"hlp\HexEdit.hm"
-echo // Commands (ID_* and IDM_*) >>"hlp\HexEdit.hm"
-makehm ID_,HID_,0x10000 IDM_,HIDM_,0x10000 resource.h >>"hlp\HexEdit.hm"
-echo. >>"hlp\HexEdit.hm"
-echo // Prompts (IDP_*) >>"hlp\HexEdit.hm"
-makehm IDP_,HIDP_,0x30000 resource.h >>"hlp\HexEdit.hm"
-echo. >>"hlp\HexEdit.hm"
-echo // Resources (IDR_*) >>"hlp\HexEdit.hm"
-makehm IDR_,HIDR_,0x20000 resource.h >>"hlp\HexEdit.hm"
-echo. >>"hlp\HexEdit.hm"
-echo // Dialogs (IDD_*) >>"hlp\HexEdit.hm"
-makehm IDD_,HIDD_,0x20000 resource.h >>"hlp\HexEdit.hm"
-echo. >>"hlp\HexEdit.hm"
-echo // Frame Controls (IDW_*) >>"hlp\HexEdit.hm"
-makehm IDW_,HIDW_,0x50000 resource.h >>"hlp\HexEdit.hm"
-REM -- Make help for Project HexEdit
+REM This no longer builds WinHlp32 help file (HexEdit.hlp) as this has
+REM been succeeded by the HTML help file (HexEdit.chm).
+REM This just creates the help map files used by RoboHelp to do context
+REM help and What's this help using HexEdit.chm.
 
+REM Command IDs
+echo // MAKEHELP.BAT generated Help Map file. >"HTMLHELP\CmdIdMap.h"
+echo // Commands (ID_* and IDM_*) >>"HTMLHELP\CmdIdMap.h"
+makehm ID_,HID_,0x10000 IDM_,HIDM_,0x10000 resource.h >"CmdIdMap.tmp"
+sed "s/^HID/#define HID/"  <"CmdIdMap.tmp" >>"HTMLHELP\CmdIdMap.h"
+del "CmdIdMap.tmp"
 
-echo Building Win32 Help files
-rem start /wait c:\msdev\bin\hcrtf -x "hlp\HexEdit.hpj"
-start /wait hcw /C /E /M "hlp\HexEdit.hpj"
-if errorlevel 1 goto :Error
-if not exist "hlp\HexEdit.hlp" goto :Error
-if not exist "hlp\HexEdit.cnt" goto :Error
-echo.
-if exist Debug\nul copy "hlp\HexEdit.hlp" Debug
-if exist Debug\nul copy "hlp\HexEdit.cnt" Debug
-if exist Release\nul copy "hlp\HexEdit.hlp" Release
-if exist Release\nul copy "hlp\HexEdit.cnt" Release
-if exist Profile\nul copy "hlp\HexEdit.hlp" Profile
-if exist Profile\nul copy "hlp\HexEdit.cnt" Profile
-echo.
-goto :done
+REM MFC Command IDs
+rem copy /y I:\Micros~1\vc98\mfc\include\afxhelp.hm  AfxIdMap.tmp
+copy /y "C:\Program Files\Microsoft Visual Studio .NET\Vc7\atlmfc\include\afxhelp.hm"  AfxIdMap.tmp
+sed "s/^HID/#define HID/"  <AfxIdMap.tmp >"HTMLHELP\AfxIdMap.h"
+del AfxIdMap.tmp
 
-:Error
-echo hlp\HexEdit.hpj(1) : error: Problem encountered creating help file
+REM Dialog IDs
+echo // MAKEHELP.BAT generated Help Map file. >"HTMLHELP\DlgIdMap.h"
+echo // Dialogs (IDD_*) >>"HTMLHELP\DlgIdMap.h"
+makehm IDD_,HIDD_,0x20000 resource.h >"DlgIdMap.tmp"
+sed "s/^HID/#define HID/"  <"DlgIdMap.tmp" >>"HTMLHELP\DlgIdMap.h"
+del "DlgIdMap.tmp"
 
-:done
-echo.
+REM Control IDs (for What's This help)
+copy /y helpid.hm+resource.hm  HTMLHelp\CtlIdMap.h
 
-
+REM BCG Control IDs
+rem copy /y D:\bcg590\BCGControlBar\help\BCGControlBar.hm  BcgIdMap.tmp
+copy /y "I:\Devel\BCG6_2\BCGControlBar\Help\BCGControlBar.hm" BcgIdMap.tmp
+sed "s/^HID/#define HID/"  <BcgIdMap.tmp >"HTMLHELP\BcgIdMap.h"
+rem del BcgIdMap.tmp

@@ -295,6 +295,9 @@ CHexEditApp::CHexEditApp() : CBCGWorkspace(TRUE), default_scheme_(""),
 
 	delete_reg_settings_ = FALSE;
 	delete_all_settings_ = FALSE;
+
+	// MFC 7.1 has special HTML help mode (but this stuffed our use of HTML help)
+	SetHelpMode(afxHTMLHelp);
 }
 
 /////////////////////////////////////////////////////////////////////////////
