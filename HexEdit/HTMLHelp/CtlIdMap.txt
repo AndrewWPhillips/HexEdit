@@ -1,0 +1,129 @@
+.topic HIDC_CLEAR_HIST
+Opens the Clear Histories dialog which allows you to clear search and replace histories, delete all bookmarks, and delete the recently opened file list.  You can also set an option to always clear these things.
+
+.topic HIDC_FILES_SELECTED
+Shows the number of files currently selected in the list.
+
+.topic HIDC_CLEAR_ON_EXIT
+When checked the above lists are cleared whenever you exit HexEdit normally.
+
+.topic HIDC_BOOKMARK_REMOVE
+Deletes the selected bookmark(s).
+
+.topic HIDC_HELP_BUTTON
+Click the Help button to get context sensitive help for the dialog.  It explains the purpose of the dialog and details the use of all controls.
+
+.topic HIDC_RESTORE
+Restore the main HexEdit window to its position when HexEdit was last run.
+
+.topic HIDC_REMOVE_FILES
+The Remove button deletes the selected file(s) from the list.  The file(s) themselves are not changed.
+
+.topic HIDC_GRID_RFL
+Select one or more files from the list then used the buttons on the right to operate on them.
+
+.topic HIDC_HEX_UCASE
+Hex numbers are displayed using uppercase (digits A to F) rather than lowercase (a to f).
+
+.topic HIDC_EXPORT_LINELEN
+Number of bytes per record (line of text) when exporting to a Motorola S, Intel hex or hex text file.
+
+.topic HIDC_SHOW_OTHER
+A 2nd cursor is displayed in the other (hex/character) area that shadows the normal cursor.  This allows you to quickly see the corresponding hex value or character.
+
+.topic HIDC_BACKUP
+When a file is saved the previous version on disk is kept (using file extension ".BAK").  When this option is used all of the selected options below must also be satisified.
+
+.topic HIDC_VALIDATE
+Checks for the presence of all the files on disk and removes from the list any that cannot be found.
+
+.topic HIDC_BOOKMARK_GOTO
+Use the Go To button to jump to the selected bookmark.  The file containing the bookmark is opened if necessary.
+
+.topic HIDC_SAVE_EXIT
+The current settings for all global options, including those under the System, and Display tabs, are saved when you exit from HexEdit.
+
+.topic HIDC_MDITABS
+Display tabs for all open files/windows at the top or bottom of the main Hex Edit window.
+
+.topic HIDC_BACKUP_PROMPT
+HexEdit prompts to save a backup copy of the file (assuming all above options have been satisfied) and only creates a backup file if Yes is chosen.
+
+.topic HIDC_SHELLOPEN
+When selected an item is placed on shell shortcut menus (eg. seen when you right-click on a file in Windows Explorer) to "Open with HexEdit".
+
+.topic HIDC_BACKUP_SIZE
+The file size (in KB) used with the Only if size is less than option.
+
+.topic HIDC_OPEN_RO
+Click the "Open read-only" button to open the selected files in read-only mode.
+
+.topic HIDC_BG_SEARCH
+This turns on background searching for all occurrences of the current search text.  Occurrences found are shown with a light-green background (in default color scheme).
+
+.topic HIDC_GRID_BL
+Select one or more bookmarks in the list then use the buttons on the right to perform operations on them.
+
+.topic HIDC_LARGE_CURSOR
+Uses a more visible cursor to show the current edit position in the active window.
+
+.topic HIDC_DFFD_ARRAY_MAX
+Sets the number of elements of an array that are evaluated and displayed in the tree view.  This only applies to arrays with elements of a fixed size.
+
+.topic HIDC_ADDRESS_SPECIFIED
+Use the following specified address as the first output address, ignoring file addresses.
+
+.topic HIDC_CLEAR_RECENT_FILE
+Causes the recent file list to be cleared.  Note that highlights and other settings (but not bookmarks) for all files will be lost.
+
+.topic HIDC_CLEAR_LISTS
+Click the "Clear" button to clear the selected lists now.
+
+.topic HIDC_CLEAR_SEARCH
+Search (and replace) history lists in the Find Tool and Find dialog are cleared.
+
+.topic HIDC_BOOKMARK_ADD
+Enter a name and click the add button to add or update a bookmark for the current cursor position of the active file.  Note that you can't add a bookmark if the active file has not yet been saved to disk.
+
+.topic HIDC_TABSBOTTOM
+Display file/window tabs at the bottom of the Hex Edit window rather than the top.
+
+.topic HIDC_ONE_ONLY
+This prevents multiple copies of HexEdit from running.  Any files you are opening are opened in the already running instance.
+
+.topic HIDC_EXPORT_ADDRESS
+The output address of the first record exported to a Motorola S or Intel hex file.  Addresses of following records are relative to this.
+
+.topic HIDC_CLEAR_BOOKMARKS
+Bookmarks for all files are cleared.
+
+.topic HIDC_BOOKMARKS_VALIDATE
+The Validate All button removes any invalid bookmarks - that is, any bookmark for a file that is not present.  Any bookmark past the end of the file is moved to the end of file.
+
+.topic HIDC_BACKUP_SPACE
+A backup file is only created if there is sufficient room on the current drive where the file is stored.
+
+.topic HIDC_ADDRESS_FILE
+Use file addresses as the output addresses when exporting to a Motorola S or Intel hex file.
+
+.topic HIDC_NET_RETAIN
+This checkbox preserves files on network and removeable drives when the Validate All button is clicked.  This is useful for files you want to keep that are not always available.
+
+.topic HIDC_BOOKMARK_NAME
+Enter the name of a bookmark to add or update.
+
+.topic HIDC_SAVE_NOW
+The current settings for all global options are saved immediately, even if Save Settings on Exit is not checked.
+
+.topic HIDC_RECENT_FILES
+Sets the number of recently opened files that appear in the File menu.  You can use any value from 1 to 16.
+
+.topic HIDC_BACKUP_IF_SIZE
+A backup file is only created if there is sufficient room on the current drive where the file is stored.
+
+.topic HIDC_OPEN_FILES
+Click the Open button to open all the selected files.
+
+.topic HIDC_DFFD_FORMAT_CHAR
+This format string determines how characters are displayed in the Data column of the template tree view.
+
