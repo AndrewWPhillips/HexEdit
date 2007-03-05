@@ -256,7 +256,7 @@
     <param name="Name" value="Encryption">
     <param name="Local" value="overviewadvanced\Encryption.htm">
     <param name="Name" value="Encryption Algorithm Dialog">
-    <param name="Local" value="dlg_other\HIDD_ALGORITHM.htm">
+    <param name="Local" value="dlg_tools\HIDD_ALGORITHM.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="algorithm (encryption)">
@@ -265,7 +265,7 @@
     <param name="Name" value="Encryption Algorithm">
     <param name="Local" value="cmd_operations\HID_ENCRYPT_ALG.htm">
     <param name="Name" value="Encryption Algorithm Dialog">
-    <param name="Local" value="dlg_other\HIDD_ALGORITHM.htm">
+    <param name="Local" value="dlg_tools\HIDD_ALGORITHM.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="vertical scrollbar">
@@ -1028,9 +1028,9 @@
   <li><object type="text/sitemap">
     <param name="Name" value="files">
     <param name="Name" value="File Open dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_FILEOPEN.htm">
+    <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
     <param name="Name" value="File Save As dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_FILESAVE.htm">
+    <param name="Local" value="dlg_file\AFX_HIDD_FILESAVE.htm">
     <param name="Name" value="Properties Dialog">
     <param name="Local" value="overviewtools\prop.htm">
   </object>
@@ -1071,7 +1071,7 @@
       <param name="Name" value="File menu commands">
       <param name="Local" value="menus\menu_file.htm">
       <param name="Name" value="File Open dialog">
-      <param name="Local" value="dlg_other\AFX_HIDD_FILEOPEN.htm">
+      <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
       <param name="Name" value="Editing">
       <param name="Local" value="overviewbasics\edit.htm">
       <param name="Name" value="How Do I Delete a File On Disk?">
@@ -1084,7 +1084,7 @@
       <param name="Name" value="Recently Opened Files">
       <param name="Local" value="cmd_file\HID_FILE_MRU_FILE1.htm">
       <param name="Name" value="File Open dialog">
-      <param name="Local" value="dlg_other\AFX_HIDD_FILEOPEN.htm">
+      <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
       <param name="Name" value="Filters">
       <param name="Local" value="dlg_options\Filters.htm">
     </object>
@@ -1106,7 +1106,7 @@
       <param name="Name" value="File Save command">
       <param name="Local" value="cmd_file\HID_FILE_SAVE.htm">
       <param name="Name" value="File Save As dialog">
-      <param name="Local" value="dlg_other\AFX_HIDD_FILESAVE.htm">
+      <param name="Local" value="dlg_file\AFX_HIDD_FILESAVE.htm">
       <param name="Name" value="Filters">
       <param name="Local" value="dlg_options\Filters.htm">
     </object>
@@ -1156,7 +1156,7 @@
       <param name="Name" value="New Scheme Dialog">
       <param name="Local" value="dlg_other\New_Scheme_Dialog.htm">
       <param name="Name" value="Save Macro Dialog">
-      <param name="Local" value="dlg_other\HIDD_MACRO_SAVE_HELP.htm">
+      <param name="Local" value="dlg_tools\HIDD_MACRO_SAVE_HELP.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -1659,14 +1659,14 @@
       <param name="Name" value="Play Macro command">
       <param name="Local" value="cmd_tools\HID_MULTI_PLAY.htm">
       <param name="Name" value="Replay Macro dialog">
-      <param name="Local" value="dlg_other\Replay_Macro_dialog.htm">
+      <param name="Local" value="dlg_tools\Replay_Macro_dialog.htm">
       <param name="Name" value="Macros slow down while running">
       <param name="Local" value="troubleshooting\problem_slow_macros.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="saving">
       <param name="Name" value="Save Macro Dialog">
-      <param name="Local" value="dlg_other\HIDD_MACRO_SAVE_HELP.htm">
+      <param name="Local" value="dlg_tools\HIDD_MACRO_SAVE_HELP.htm">
       <param name="Name" value="How Do I Save a Macro?">
       <param name="Local" value="howdoi\HowSaveMacro.htm">
       <param name="Name" value="Macro Tutorial">
@@ -1788,7 +1788,7 @@
     <param name="Name" value="Macros">
     <param name="Local" value="overviewtools\macros.htm">
     <param name="Name" value="Replay Macro dialog">
-    <param name="Local" value="dlg_other\Replay_Macro_dialog.htm">
+    <param name="Local" value="dlg_tools\Replay_Macro_dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="negation">
@@ -1876,7 +1876,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="opening files">
     <param name="Name" value="File Open dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_FILEOPEN.htm">
+    <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
     <param name="Name" value="File Open command">
     <param name="Local" value="cmd_file\HID_FILE_OPEN.htm">
   </object>
@@ -1939,7 +1939,7 @@
     <param name="Name" value="Play Macro command">
     <param name="Local" value="cmd_tools\HID_PLAY.htm">
     <param name="Name" value="Replay Macro dialog">
-    <param name="Local" value="dlg_other\Replay_Macro_dialog.htm">
+    <param name="Local" value="dlg_tools\Replay_Macro_dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="PostScript">
@@ -1967,13 +1967,13 @@
     <param name="Name" value="File Print Setup command">
     <param name="Local" value="cmd_file\HID_FILE_PRINT_SETUP.htm">
     <param name="Name" value="Print Dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_PRINT.htm">
+    <param name="Local" value="dlg_printing\AFX_HIDD_PRINT.htm">
     <param name="Name" value="print preview toolbar">
     <param name="Local" value="bars\AFX_HIDW_PREVIEW_BAR.htm">
     <param name="Name" value="Print Progress Dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_PRINTDLG.htm">
+    <param name="Local" value="dlg_printing\AFX_HIDD_PRINTDLG.htm">
     <param name="Name" value="Print Setup Dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_PRINTSETUP.htm">
+    <param name="Local" value="dlg_printing\AFX_HIDD_PRINTSETUP.htm">
     <param name="Name" value="File Page Setup Command">
     <param name="Local" value="cmd_file\HID_FILE_PAGE_SETUP.htm">
     <param name="Name" value="Printer Options">
@@ -2025,9 +2025,9 @@
     <param name="Name" value="Allow Changes Toggle">
     <param name="Local" value="cmd_misc\HID_ALLOW_MODS.htm">
     <param name="Name" value="File Open dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_FILEOPEN.htm">
+    <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
     <param name="Name" value="Recently Opened Files Dialog">
-    <param name="Local" value="dlg_other\Recently_Opened_Files_Dialog.htm">
+    <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="read-write mode">
@@ -2039,7 +2039,7 @@
     <param name="Name" value="Read File Command">
     <param name="Local" value="cmd_edit\HID_EDIT_READFILE.htm">
     <param name="Name" value="File Open dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_FILEOPEN.htm">
+    <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="recently opened files">
@@ -2048,7 +2048,7 @@
     <param name="Name" value="Clear Histories Dialog">
     <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
     <param name="Name" value="Recently Opened Files Dialog">
-    <param name="Local" value="dlg_other\Recently_Opened_Files_Dialog.htm">
+    <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
     <param name="Name" value="All Recent Files">
     <param name="Local" value="cmd_file\HID_RECENT_FILES.htm">
   </object>
@@ -2128,14 +2128,14 @@
   <li><object type="text/sitemap">
     <param name="Name" value="Save As dialog">
     <param name="Name" value="File Save As dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_FILESAVE.htm">
+    <param name="Local" value="dlg_file\AFX_HIDD_FILESAVE.htm">
     <param name="Name" value="File Save As command">
     <param name="Local" value="cmd_file\HID_FILE_SAVE_AS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="save macro">
     <param name="Name" value="Save Macro Dialog">
-    <param name="Local" value="dlg_other\HIDD_MACRO_SAVE_HELP.htm">
+    <param name="Local" value="dlg_tools\HIDD_MACRO_SAVE_HELP.htm">
     <param name="Name" value="Macro Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_MACRO.htm">
     <param name="Name" value="How Do I Save a Macro?">
@@ -2805,7 +2805,7 @@
     <param name="Name" value="Filters page">
     <param name="Local" value="dlg_options\Filters.htm">
     <param name="Name" value="File Open dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_FILEOPEN.htm">
+    <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="filtering displayed list of files">
@@ -2847,7 +2847,7 @@
     <param name="Name" value="Clear Password">
     <param name="Local" value="cmd_operations\HID_ENCRYPT_CLEAR.htm">
     <param name="Name" value="Encryption Password Dialog">
-    <param name="Local" value="dlg_other\HIDD_PASSWORD.htm">
+    <param name="Local" value="dlg_tools\HIDD_PASSWORD.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="cipher">
@@ -2856,7 +2856,7 @@
     <param name="Name" value="Encryption">
     <param name="Local" value="overviewadvanced\Encryption.htm">
     <param name="Name" value="Encryption Algorithm Dialog">
-    <param name="Local" value="dlg_other\HIDD_ALGORITHM.htm">
+    <param name="Local" value="dlg_tools\HIDD_ALGORITHM.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="default display">
@@ -2967,7 +2967,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="selecting multiple files">
     <param name="Name" value="File Open dialog">
-    <param name="Local" value="dlg_other\AFX_HIDD_FILEOPEN.htm">
+    <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
     <param name="Name" value="How Do I Search Through Several Files?">
     <param name="Local" value="howdoi\HowSearchFiles.htm">
   </object>
@@ -3437,7 +3437,7 @@
     <param name="Name" value="Edit Bookmarks">
     <param name="Local" value="cmd_edit\Edit_Bookmarks.htm">
     <param name="Name" value="Bookmarks dialog">
-    <param name="Local" value="dlg_other\Bookmarks_dialog.htm">
+    <param name="Local" value="dlg_tools\Bookmarks_dialog.htm">
     <param name="Name" value="Clear Histories Dialog">
     <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
     <param name="Name" value="Toggle Bookmark command">
@@ -3452,7 +3452,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="marking file locations">
     <param name="Name" value="Bookmarks dialog">
-    <param name="Local" value="dlg_other\Bookmarks_dialog.htm">
+    <param name="Local" value="dlg_tools\Bookmarks_dialog.htm">
     <param name="Name" value="Set Mark Command">
     <param name="Local" value="cmd_edit\HID_MARK.htm">
   </object>
@@ -3503,7 +3503,7 @@
     <li><object type="text/sitemap">
       <param name="Name" value="bookmark">
       <param name="Name" value="Bookmarks dialog">
-      <param name="Local" value="dlg_other\Bookmarks_dialog.htm">
+      <param name="Local" value="dlg_tools\Bookmarks_dialog.htm">
       <param name="Name" value="Toggle Bookmark command">
       <param name="Local" value="cmd_misc\HID_BOOKMARK_TOGGLE.htm">
     </object>
@@ -3665,7 +3665,7 @@
     <param name="Name" value="Random Seed command">
     <param name="Local" value="cmd_operations\PRNG_Seed_Random.htm">
     <param name="Name" value="New File Dialog">
-    <param name="Local" value="dlg_other\New_File_Dialog.htm">
+    <param name="Local" value="dlg_file\New_File_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="PRNG">
@@ -3768,12 +3768,12 @@
     <param name="Name" value="Generate Fast Random Numbers">
     <param name="Local" value="cmd_operations\PRNG_Fast.htm">
     <param name="Name" value="New File Dialog">
-    <param name="Local" value="dlg_other\New_File_Dialog.htm">
+    <param name="Local" value="dlg_file\New_File_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="fill operations">
     <param name="Name" value="New File Dialog">
-    <param name="Local" value="dlg_other\New_File_Dialog.htm">
+    <param name="Local" value="dlg_file\New_File_Dialog.htm">
     <param name="Name" value="Assign Word command">
     <param name="Local" value="cmd_operations\HID_ASSIGN_16BIT.htm">
     <param name="Name" value="Assign Double Word command">
@@ -3910,21 +3910,21 @@
     <param name="Name" value="HIDD_PROP_SUMMARY">
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
     <param name="Name" value="Recently Opened Files Dialog">
-    <param name="Local" value="dlg_other\Recently_Opened_Files_Dialog.htm">
+    <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="keywords">
     <param name="Name" value="HIDD_PROP_SUMMARY">
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
     <param name="Name" value="Recently Opened Files Dialog">
-    <param name="Local" value="dlg_other\Recently_Opened_Files_Dialog.htm">
+    <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="comments">
     <param name="Name" value="HIDD_PROP_SUMMARY">
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
     <param name="Name" value="Recently Opened Files Dialog">
-    <param name="Local" value="dlg_other\Recently_Opened_Files_Dialog.htm">
+    <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="size of file">

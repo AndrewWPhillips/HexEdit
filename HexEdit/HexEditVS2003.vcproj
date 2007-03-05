@@ -713,9 +713,6 @@
 				RelativePath=".\HexEdit.h">
 			</File>
 			<File
-				RelativePath=".\HLP\HEXEDIT.HM">
-			</File>
-			<File
 				RelativePath=".\HexEditDoc.h">
 			</File>
 			<File
@@ -1123,10 +1120,10 @@
 				RelativePath=".\Install\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\Install\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

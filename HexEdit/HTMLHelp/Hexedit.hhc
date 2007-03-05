@@ -508,7 +508,7 @@
       </object>
       </ul>
     <li><object type="text/sitemap">
-      <param name="Name" value="Properties Dialog">
+      <param name="Name" value="Properties Dialog Pages">
     </object>
     <ul>
       <li><object type="text/sitemap">
@@ -532,16 +532,12 @@
         <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="XXX Remove">
-        <param name="Local" value="dlg_properties\HIDD_PROP_IBMFP.htm">
-      </object>
-      <li><object type="text/sitemap">
         <param name="Name" value="Date/Time">
         <param name="Local" value="dlg_properties\Date_Time_Values.htm">
       </object>
       </ul>
     <li><object type="text/sitemap">
-      <param name="Name" value="Options Dialog">
+      <param name="Name" value="Options Dialog Pages">
     </object>
     <ul>
       <li><object type="text/sitemap">
@@ -574,7 +570,7 @@
       </object>
       </ul>
     <li><object type="text/sitemap">
-      <param name="Name" value="Customize Dialog">
+      <param name="Name" value="Customize Dialog Pages">
     </object>
     <ul>
       <li><object type="text/sitemap">
@@ -607,7 +603,7 @@
       </object>
       </ul>
     <li><object type="text/sitemap">
-      <param name="Name" value="Find Dialog">
+      <param name="Name" value="Find Dialog Pages">
     </object>
     <ul>
       <li><object type="text/sitemap">
@@ -629,6 +625,90 @@
       <li><object type="text/sitemap">
         <param name="Name" value="Replace">
         <param name="Local" value="dlg_find\Replace.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="File Dialogs">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="New File Dialog">
+        <param name="Local" value="dlg_file\New_File_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="File Open Dialog">
+        <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Save As Dialog">
+        <param name="Local" value="dlg_file\AFX_HIDD_FILESAVE.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Recently Opened Files Dialog">
+        <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Import Motorola S Records dialog">
+        <param name="Local" value="dlg_file\Import_Motorola_dlg.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Import Intel Hex Records dialog">
+        <param name="Local" value="dlg_file\Import_Intel_dlg.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Printing Dialogs">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Print Setup Dialog">
+        <param name="Local" value="dlg_printing\AFX_HIDD_PRINTSETUP.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Print Dialog">
+        <param name="Local" value="dlg_printing\AFX_HIDD_PRINT.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Print Progress Dialog">
+        <param name="Local" value="dlg_printing\AFX_HIDD_PRINTDLG.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Tools Dialogs">
+      <param name="New" value="1">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Bookmarks dialog">
+        <param name="Local" value="dlg_tools\Bookmarks_dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Copy As C Source Dialog">
+        <param name="Local" value="dlg_tools\Copy_As_C_Source.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Insert Block Dialog">
+        <param name="Local" value="dlg_tools\Insert_Block_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Compression Settings Dialog">
+        <param name="Local" value="dlg_tools\CompressionSettings.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Encryption Algorithm Dialog">
+        <param name="Local" value="dlg_tools\HIDD_ALGORITHM.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Encryption Password Dialog">
+        <param name="Local" value="dlg_tools\HIDD_PASSWORD.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Replay Macro dialog">
+        <param name="Local" value="dlg_tools\Replay_Macro_dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Save Macro Dialog">
+        <param name="Local" value="dlg_tools\HIDD_MACRO_SAVE_HELP.htm">
       </object>
       </ul>
     <li><object type="text/sitemap">
@@ -685,48 +765,8 @@
     </object>
     <ul>
       <li><object type="text/sitemap">
-        <param name="Name" value="New File Dialog">
-        <param name="Local" value="dlg_other\New_File_Dialog.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="File Open Dialog">
-        <param name="Local" value="dlg_other\AFX_HIDD_FILEOPEN.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Save As Dialog">
-        <param name="Local" value="dlg_other\AFX_HIDD_FILESAVE.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Recently Opened Files Dialog">
-        <param name="Local" value="dlg_other\Recently_Opened_Files_Dialog.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Print Dialog">
-        <param name="Local" value="dlg_other\AFX_HIDD_PRINT.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Print Setup Dialog">
-        <param name="Local" value="dlg_other\AFX_HIDD_PRINTSETUP.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Import Motorola S Records dialog">
-        <param name="Local" value="dlg_other\Import_Motorola_dlg.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Import Intel Hex Records dialog">
-        <param name="Local" value="dlg_other\Import_Intel_dlg.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Copy As C Source Dialog">
-        <param name="Local" value="dlg_other\Copy_As_C_Source.htm">
-      </object>
-      <li><object type="text/sitemap">
         <param name="Name" value="Font Dialog">
         <param name="Local" value="dlg_other\AFX_HIDD_FONT.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Bookmarks dialog">
-        <param name="Local" value="dlg_other\Bookmarks_dialog.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Clear Histories Dialog">
@@ -737,24 +777,8 @@
         <param name="Local" value="dlg_other\New_Scheme_Dialog.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Replay Macro dialog">
-        <param name="Local" value="dlg_other\Replay_Macro_dialog.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Save Macro Dialog">
-        <param name="Local" value="dlg_other\HIDD_MACRO_SAVE_HELP.htm">
-      </object>
-      <li><object type="text/sitemap">
         <param name="Name" value="Window Manager">
         <param name="Local" value="dlg_other\HIDD_WINDOW_MANAGER.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Encryption Algorithm Dialog">
-        <param name="Local" value="dlg_other\HIDD_ALGORITHM.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Encryption Password Dialog">
-        <param name="Local" value="dlg_other\HIDD_PASSWORD.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Email Support Dialog">

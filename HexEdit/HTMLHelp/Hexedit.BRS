@@ -69,6 +69,14 @@ Recently Opened Files | cmd_file\HID_FILE_MRU_FILE1.htm
 All Recent Files | cmd_file\HID_RECENT_FILES.htm
 File Exit command | cmd_file\HID_APP_EXIT.htm
 
+[File Dialogs]
+New File Dialog | dlg_file\New_File_Dialog.htm
+File Open dialog | dlg_file\AFX_HIDD_FILEOPEN.htm
+File Save As dialog | dlg_file\AFX_HIDD_FILESAVE.htm
+Recently Opened Files Dialog | dlg_file\Recently_Opened_Files_Dialog.htm
+Import Motorola S Records dialog | dlg_file\Import_Motorola_dlg.htm
+Import Intel Hex Records dialog | dlg_file\Import_Intel_dlg.htm
+
 [Find Dialog]
 Basic Find page | dlg_find\Simple.htm
 Find Hex page | dlg_find\HexFind.htm
@@ -303,25 +311,10 @@ Printer Options | dlg_options\Printer_Options.htm
 Filters page | dlg_options\Filters.htm
 
 [Other Dialogs]
-New File Dialog | dlg_other\New_File_Dialog.htm
-File Open dialog | dlg_other\AFX_HIDD_FILEOPEN.htm
-File Save As dialog | dlg_other\AFX_HIDD_FILESAVE.htm
-Recently Opened Files Dialog | dlg_other\Recently_Opened_Files_Dialog.htm
-Print Dialog | dlg_other\AFX_HIDD_PRINT.htm
-Print Setup Dialog | dlg_other\AFX_HIDD_PRINTSETUP.htm
-Import Motorola S Records dialog | dlg_other\Import_Motorola_dlg.htm
-Import Intel Hex Records dialog | dlg_other\Import_Intel_dlg.htm
-Insert Block Dialog | dlg_other\Insert_Block_Dialog.htm
-Copy As C Source Dialog | dlg_other\Copy_As_C_Source.htm
 Choose Font Dialog | dlg_other\AFX_HIDD_FONT.htm
-Bookmarks dialog | dlg_other\Bookmarks_dialog.htm
 Clear Histories Dialog | dlg_other\Clear_Histories_Dialog.htm
 New Scheme Dialog | dlg_other\New_Scheme_Dialog.htm
-Replay Macro dialog | dlg_other\Replay_Macro_dialog.htm
-Save Macro Dialog | dlg_other\HIDD_MACRO_SAVE_HELP.htm
 Window Manager Dialog | dlg_other\HIDD_WINDOW_MANAGER.htm
-Encryption Algorithm Dialog | dlg_other\HIDD_ALGORITHM.htm
-Encryption Password Dialog | dlg_other\HIDD_PASSWORD.htm
 Email HexEdit Support Dialog | dlg_other\HIDD_EMAIL.htm
 Reminder Dialog | dlg_other\HIDD_REG_HELP.htm
 
@@ -352,6 +345,11 @@ Using Templates | overviewtools\Templates.htm
 macros | overviewtools\macros.htm
 Calculator | overviewtools\calc.htm
 Other Tools | overviewtools\other_tools.htm
+
+[Printing Dialogs]
+Print Setup Dialog | dlg_printing\AFX_HIDD_PRINTSETUP.htm
+Print Dialog | dlg_printing\AFX_HIDD_PRINT.htm
+Print Progress Dialog | dlg_printing\AFX_HIDD_PRINTDLG.htm
 
 [Properties Dialog]
 Summary Page | dlg_properties\HIDD_PROP_SUMMARY.htm
@@ -418,6 +416,16 @@ Record Macro command | cmd_tools\HID_RECORD.htm
 Play Macro command | cmd_tools\HID_PLAY.htm
 Macro Message | cmd_tools\Macro_Message.htm
 Play command | cmd_tools\HID_MULTI_PLAY.htm
+
+[Tools Dialogs]
+Bookmarks dialog | dlg_tools\Bookmarks_dialog.htm
+Copy As C Source Dialog | dlg_tools\Copy_As_C_Source.htm
+Insert Block Dialog | dlg_tools\Insert_Block_Dialog.htm
+Compression Settings Dialog | dlg_tools\CompressionSettings.htm
+Encryption Algorithm Dialog | dlg_tools\HIDD_ALGORITHM.htm
+Encryption Password Dialog | dlg_tools\HIDD_PASSWORD.htm
+Replay Macro dialog | dlg_tools\Replay_Macro_dialog.htm
+Save Macro Dialog | dlg_tools\HIDD_MACRO_SAVE_HELP.htm
 
 [Troubleshooting]
 Error: HexEdit has not been installed | troubleshooting\install_problem_1.htm

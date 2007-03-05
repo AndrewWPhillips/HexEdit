@@ -1,0 +1,6 @@
+.topic HIDC_ALG
+algorithm xxx test
+
+.topic HIDC_BOOKMARK_NAME
+Enter the name of a bookmark to add or update.
+
