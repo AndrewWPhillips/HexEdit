@@ -8,7 +8,7 @@
 
 <head>
 
-<title>Import Intel Hex Records dialog</title>
+<title>Import Motorola S Records dialog</title>
 
 <!--(Meta)==========================================================-->
 
@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=747>
-<meta name=layout-width content=1235>
+<meta name=layout-height content=831>
+<meta name=layout-width content=867>
 
 
 <!--(Links)=========================================================-->
@@ -37,25 +37,22 @@
 <body>
 
 <h2 style="font-family: Arial;"><span style="font-family: Arial;">Import 
- Intel Hex Records dialog</span></h2>
+ Motorola S Records dialog</span></h2>
 
 <p style="text-align: center;"
 	align=center>&nbsp;</p>
 
 <p style="text-align: center;"
-	align=center><img src="import_intel.gif"
-						style="border: none;
+	align=center><img src="..\dlg_other\import_motorola.gif" style="border-style: none;
+								border: none;
 								width: 428px;
-								height: 294px;"
-						width=428
-						height=294
-						border=0></p>
+								height: 294px;" width="428" height="294" border="0"></p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>This dialog is invoked with the <a HREF="../cmd_file/Import_Intel_Hex.htm">Import 
- Intel Hex</a> command. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
- is based on the standard <a href="AFX_HIDD_FILEOPEN.htm">File Open dialog</a>. 
+<p>This dialog is invoked with the <a href="Import_Motorola_dlg.htm">Import 
+ Motorola S Records</a> command. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is based on the standard <a HREF="AFX_HIDD_FILEOPEN.htm">File Open dialog</a>. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Double-clicking 
  a file (or selecting and clicking the Open button) imports the file.</p>
 
@@ -80,34 +77,41 @@
 
 <p style="margin-left: 18.00pt;">Select the type of file(s) you want to 
  open. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By 
- default Intel Hex<span> files (*.ihx)&nbsp;are displayed, but you can 
- elect to use a different filter by selecting from the drop down list. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You can 
- change the default filter (*.*) and change, add or delete from the filter 
- list by using the <a href="../dlg_options/Filters.htm">Filters page</a> 
- of the Options dialog.</span></p>
+ default Motorola S<span> files (*.s)&nbsp;are displayed, but you can elect 
+ to use a different filter by selecting from the drop down list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can change the default filter (*.*) and change, add or delete from the 
+ filter list by using the <a href="..\dlg_options\Filters.htm">Filters 
+ page</a> of the Options dialog.</span></p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Overwrite 
- at actual import record address</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Use Import 
+ Addresses (for discontiguous records)</span></p>
 
 <p style="margin-left: 18.00pt;">If this option is off then HexEdit will 
  import from the file at the current position in the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->But 
- in this case the Intel Hex records in the file must be contiguous otherwise 
- the import stops with an error. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
- the imported bytes are always inserted into the file (you must be in INS 
- mode).</p>
+ in this case the Motorola S records in the file must be contiguous otherwise 
+ the <span style="font-weight: bold;">import stops with an error</span>. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also the 
+ imported bytes are always inserted into the file (you must be in INS mode) 
+ at the current cursor location.</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
 <p style="margin-left: 18.00pt;">If this option is on then the records 
- do not need to be contiguous (in fact, there are no restrictions at all 
- on the expected addresses). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
- record's data is added to the file at the specified record address. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ do <span style="font-weight: bold;">not need to be contiguous</span> (in 
+ fact, there are no restrictions at all on the expected addresses). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ record's data is added to the file at the specified record address. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ other words the existing data of the file is <span style="font-weight: bold;">overwritten</span> 
+ (even in INS mode). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
  an address is past the end of the file then it is ignored. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- data replaces the data of the file, hence the file length never changes 
- as a result of the operation.</p>
+ data replaces the data of the file, hence the <span style="font-weight: bold;">file 
+ length never changes</span> as a result of the operation.</p>
 
-<p style="margin-left: 0px;">&nbsp;</p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Highlight</span></p>
+
+<p style="margin-left: 18.00pt;">If discontiguous records are imported 
+ it is often difficult to see which bytes were changed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ option highlights all imported bytes (if the above option is used). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that all <span style="font-weight: bold;">existing highlights are lost</span>.</p>
 
 <p>&nbsp;</p>
 
