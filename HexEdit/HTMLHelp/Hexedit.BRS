@@ -303,17 +303,18 @@ XOR Quad Word command | cmd_operations\XOR_Quad_Word_command.htm
 
 [Options Dialog]
 System Options page | dlg_options\HIDD_OPT_SYSTEM.htm
+Clear Histories Dialog | dlg_options\Clear_Histories_Dialog.htm
 Display Options page | dlg_options\HIDD_OPT_SYSDISPLAY.htm
 Window Display Options page | dlg_options\HIDD_OPT_WINDOW.htm
+Info Tips Page | dlg_options\HIDD_OPT_TIPS.htm
 Colour Options page | dlg_options\HIDD_OPT_PARTITIONS.htm
+New Scheme Dialog | dlg_options\New_Scheme_Dialog.htm
 Macro Options page | dlg_options\HIDD_OPT_MACRO.htm
 Printer Options | dlg_options\Printer_Options.htm
 Filters page | dlg_options\Filters.htm
 
 [Other Dialogs]
 Choose Font Dialog | dlg_other\AFX_HIDD_FONT.htm
-Clear Histories Dialog | dlg_other\Clear_Histories_Dialog.htm
-New Scheme Dialog | dlg_other\New_Scheme_Dialog.htm
 Window Manager Dialog | dlg_other\HIDD_WINDOW_MANAGER.htm
 Email HexEdit Support Dialog | dlg_other\HIDD_EMAIL.htm
 Reminder Dialog | dlg_other\HIDD_REG_HELP.htm

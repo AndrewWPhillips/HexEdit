@@ -646,7 +646,7 @@
     <param name="Name" value="Colour Scheme Tool">
     <param name="Local" value="tools\Colour_Scheme_Tool.htm">
     <param name="Name" value="New Scheme Dialog">
-    <param name="Local" value="dlg_other\New_Scheme_Dialog.htm">
+    <param name="Local" value="dlg_options\New_Scheme_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="columns (display)">
@@ -991,7 +991,7 @@
     <param name="Name" value="File Exit command">
     <param name="Local" value="cmd_file\HID_APP_EXIT.htm">
     <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="exponent">
@@ -1154,7 +1154,7 @@
     <li><object type="text/sitemap">
       <param name="Name" value="extension">
       <param name="Name" value="New Scheme Dialog">
-      <param name="Local" value="dlg_other\New_Scheme_Dialog.htm">
+      <param name="Local" value="dlg_options\New_Scheme_Dialog.htm">
       <param name="Name" value="Save Macro Dialog">
       <param name="Local" value="dlg_tools\HIDD_MACRO_SAVE_HELP.htm">
     </object>
@@ -2046,7 +2046,7 @@
     <param name="Name" value="Recently Opened Files">
     <param name="Local" value="cmd_file\HID_FILE_MRU_FILE1.htm">
     <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
     <param name="Name" value="Recently Opened Files Dialog">
     <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
     <param name="Name" value="All Recent Files">
@@ -2101,7 +2101,7 @@
     <li><object type="text/sitemap">
       <param name="Name" value="histories etc">
       <param name="Name" value="Clear Histories Dialog">
-      <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
+      <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -2228,7 +2228,7 @@
     <li><object type="text/sitemap">
       <param name="Name" value="history">
       <param name="Name" value="Clear Histories Dialog">
-      <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
+      <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
       <param name="Name" value="Find Tool">
       <param name="Local" value="tools\HIDC_SEARCH.htm">
       <param name="Name" value="Simple Find page">
@@ -3260,7 +3260,7 @@
     <param name="Name" value="Colour Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_PARTITIONS.htm">
     <param name="Name" value="New Scheme Dialog">
-    <param name="Local" value="dlg_other\New_Scheme_Dialog.htm">
+    <param name="Local" value="dlg_options\New_Scheme_Dialog.htm">
     <param name="Name" value="Colour Scheme Tool">
     <param name="Local" value="tools\Colour_Scheme_Tool.htm">
   </object>
@@ -3422,7 +3422,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="paranoia">
     <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="bookmarks">
@@ -3439,7 +3439,7 @@
     <param name="Name" value="Bookmarks dialog">
     <param name="Local" value="dlg_tools\Bookmarks_dialog.htm">
     <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
     <param name="Name" value="Toggle Bookmark command">
     <param name="Local" value="cmd_misc\HID_BOOKMARK_TOGGLE.htm">
     <param name="Name" value="Bookmark_tool">
@@ -3448,6 +3448,8 @@
     <param name="Local" value="bars\Navigation_Bar.htm">
     <param name="Name" value="Bookmarks">
     <param name="Local" value="overviewtools\Bookmarks.htm">
+    <param name="Name" value="HIDD_OPT_TIPS">
+    <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="marking file locations">
@@ -3468,7 +3470,7 @@
     <li><object type="text/sitemap">
       <param name="Name" value="colour scheme">
       <param name="Name" value="New Scheme Dialog">
-      <param name="Local" value="dlg_other\New_Scheme_Dialog.htm">
+      <param name="Local" value="dlg_options\New_Scheme_Dialog.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="new file">
@@ -3568,7 +3570,7 @@
     <li><object type="text/sitemap">
       <param name="Name" value="histories">
       <param name="Name" value="Clear Histories Dialog">
-      <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
+      <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3636,6 +3638,8 @@
     <param name="Local" value="overviewadvanced\Expressions.htm">
     <param name="Name" value="Template Files">
     <param name="Local" value="overviewadvanced\Template_Files.htm">
+    <param name="Name" value="HIDD_OPT_TIPS">
+    <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="variables">
@@ -4085,5 +4089,15 @@
       <param name="Local" value="dlg_templates\CASE_Dialog.htm">
     </object>
     </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="popup tip window">
+    <param name="Name" value="HIDD_OPT_TIPS">
+    <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Info Tips">
+    <param name="Name" value="HIDD_OPT_TIPS">
+    <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
+  </object>
 </ul>
 </html>

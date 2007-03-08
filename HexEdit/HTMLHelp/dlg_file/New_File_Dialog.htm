@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1571>
-<meta name=layout-width content=1213>
+<meta name=layout-height content=1714>
+<meta name=layout-width content=1161>
 
 
 <!--(Links)=========================================================-->
@@ -42,12 +42,13 @@
 <p>&nbsp;</p>
 
 <p style="text-align: center;"
-	align=center>&nbsp;</p>
+	align=center><img src="DlgNewFile.gif" style="border-style: none;
+								border: none;
+								width: 462px;
+								height: 381px;" width="462" height="381" border="0"></p>
 
 <p style="text-align: center;"
-	align=center><img src="..\dlg_other\FileNew.gif" style="border: none;
-								width: 462px;
-								height: 374px;" width="462" height="374" border="0"></p>
+	align=center>&nbsp;</p>
 
 <p>&nbsp;</p>
 
@@ -61,9 +62,9 @@
 <p>You can create very large files, but they may take some time to generate. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The filesystem 
  may limit file sizes (eg FAT has a limit of 2 GBytes). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
- for large files HexEdit will create a temporary disk file (rather than 
- store everything in memory), unless the &quot;Prompt for disk name now&quot; 
- option is used.</p>
+ for large files HexEdit may need to create a temporary disk file, but 
+ if the &quot;Prompt for disk name now&quot; option is used the data is 
+ written to directly to the final destination file to save copying later.</p>
 
 <p>&nbsp;</p>
 
@@ -79,39 +80,58 @@
 
 <p style="margin-top: 3.00pt;
 			font-weight: bold;
-			margin-left: 40px;">Use Size of Data</p>
+			margin-left: 40px;"><span style="font-weight: bold;">Data</span></p>
 
-<p style="margin-left: 64px;">The size is taken from the length of the 
- selected data (see <span style="font-weight: bold;">Fill With</span> options 
- below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- example, the length of the entered string or the length of the data on 
- the clipboard.</p>
-
-<p style="margin-left: 64px;">&nbsp;</p>
-
-<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Take 
- Size from Calculator</span></p>
-
-<p style="margin-left: 64px;">The size of the new file is the value currently 
- shown in the calculator. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- the value is negative or zero an empty file is created. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- option is useful in keystroke macros.</p>
+<p style="margin-left: 64px;">The file size is taken from the length of 
+ the selected data (see <span style="font-weight: bold;">Fill With</span> 
+ options below) -- for example, the length of the entered string or the 
+ length of the data on the clipboard -- and multiplied by the &quot;<span 
+ style="font-weight: bold;">by:</span>&quot; factor to the right.</p>
 
 <p style="margin-left: 64px;">&nbsp;</p>
 
 <p style="margin-top: 3.00pt;
 			font-weight: bold;
-			margin-left: 40px;">Specified: Decimal Size</p>
+			margin-left: 80px;"><span>by:</span></p>
 
-<p style="margin-left: 64px;">Enter the size of the new file you want in 
- decimal.</p>
+<p style="margin-left: 104px;">The file length is the length of the data 
+ multiplied by this factor. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ actual size is displayed to the right, after the equals sign (=).</p>
 
 <p style="margin-left: 64px;">&nbsp;</p>
 
-<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Specified: 
- Hex Size</span></p>
+<p style="margin-top: 3.00pt;
+			margin-left: 40px;
+			font-weight: bold;">Take Size from Calculator</p>
 
-<p style="margin-left: 64px;">Enter the size you want in hex.</p>
+<p style="margin-left: 64px;">The size of the new file is the value currently 
+ shown in the calculator. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the value is negative or zero an empty file is created. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ option can be useful in keystroke macros.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;"><span style="font-weight: bold;">Specified</span></p>
+
+<p style="margin-left: 64px;">The size is specified explicitly as either 
+ hex or decimal.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 80px;">Decimal:</p>
+
+<p style="margin-left: 104px;">Enter the size of the new file you want 
+ in decimal.</p>
+
+<p style="margin-left: 104px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 80px;"><span style="font-weight: bold;">Hex:</span></p>
+
+<p style="margin-left: 104px;">Enter the size you want in hex.</p>
 
 <p style="margin-left: 64px;">&nbsp;</p>
 
@@ -253,24 +273,25 @@
 <param name="UseButton" value="-1" >
 <param name="ControlLabel" value="Related Topics" >
 <param name="UseIcon" value="0" >
-<param name="Items" value="Calculator;..\overviewtools\calc.htm$$**$$Insert Block Dialog;..\dlg_tools\Insert_Block_Dialog.htm$$**$$Random Seed command;..\cmd_operations\PRNG_Seed_Random.htm$$**$$Seed Random Number Generator from Calculator;..\cmd_operations\PRNG_Seed.htm$$**$$">
-<param name="Image" value>
+<param name="Items" value="Calculator;..\overviewtools\calc.htm$$**$$Insert Block Dialog;..\dlg_tools\Insert_Block_Dialog.htm$$**$$Random Seed command;..\cmd_operations\PRNG_Seed_Random.htm$$**$$Seed Random Number Generator from Calculator;..\cmd_operations\PRNG_Seed.htm$$**$$" >
+<param name="Image" value="" >
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
-<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_other\New_File_Dialog.htm" >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_file\New_File_Dialog.htm" >
 <param name="_ID" value="RelatedTopics" >
 <param name="UseMenu" value="-1" >
 <param name="Frame" value="" >
 <param name="Window" value="" >
-</object> --><OBJECT
+</object>-->
+<OBJECT
   CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
   ID="RelatedTopics"  TYPE="application/x-oleobject" >
   <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
   <PARAM  NAME="Button"  VALUE="Text:Related Topics">
   <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
-  <PARAM NAME="Item1" VALUE="Calculator;..\overviewtools\calc.htm">
-  <PARAM NAME="Item2" VALUE="Insert Block Dialog;..\dlg_tools\Insert_Block_Dialog.htm">
-  <PARAM NAME="Item3" VALUE="Random Seed command;..\cmd_operations\PRNG_Seed_Random.htm">
-  <PARAM NAME="Item4" VALUE="Seed Random Number Generator from Calculator;..\cmd_operations\PRNG_Seed.htm">
+  <PARAM  NAME="Item1"  VALUE="Calculator;..\overviewtools\calc.htm">
+  <PARAM  NAME="Item2"  VALUE="Insert Block Dialog;..\dlg_tools\Insert_Block_Dialog.htm">
+  <PARAM  NAME="Item3"  VALUE="Random Seed command;..\cmd_operations\PRNG_Seed_Random.htm">
+  <PARAM  NAME="Item4"  VALUE="Seed Random Number Generator from Calculator;..\cmd_operations\PRNG_Seed.htm">
 </OBJECT>
 
 <!--Metadata type="DesignerControl" endspan-->

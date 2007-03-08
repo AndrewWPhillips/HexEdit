@@ -545,6 +545,10 @@
         <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
       </object>
       <li><object type="text/sitemap">
+        <param name="Name" value="Clear Histories Dialog">
+        <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
         <param name="Name" value="Display Options">
         <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
       </object>
@@ -553,8 +557,16 @@
         <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
       </object>
       <li><object type="text/sitemap">
+        <param name="Name" value="Info Tips Page">
+        <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
+      </object>
+      <li><object type="text/sitemap">
         <param name="Name" value="Colour Options">
         <param name="Local" value="dlg_options\HIDD_OPT_PARTITIONS.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="New Scheme Dialog">
+        <param name="Local" value="dlg_options\New_Scheme_Dialog.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Macro Options">
@@ -767,14 +779,6 @@
       <li><object type="text/sitemap">
         <param name="Name" value="Font Dialog">
         <param name="Local" value="dlg_other\AFX_HIDD_FONT.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Clear Histories Dialog">
-        <param name="Local" value="dlg_other\Clear_Histories_Dialog.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="New Scheme Dialog">
-        <param name="Local" value="dlg_other\New_Scheme_Dialog.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Window Manager">
