@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=919>
-<meta name=layout-width content=727>
+<meta name=layout-height content=865>
+<meta name=layout-width content=1161>
 
 
 <!--(Links)=========================================================-->
@@ -45,13 +45,12 @@
 <p>&nbsp;</p>
 
 <p style="text-align: center;"
-	align=center><img src="prp_file.gif"
-						style="border-style: none;
-								border: none;
-								width: 361px;
-								height: 189px;"
-						width=361
-						height=189
+	align=center><img src="../DlgPropFile.gif"
+						style="border: none;
+								width: 370px;
+								height: 210px;"
+						width=370
+						height=210
 						border=0></p>
 
 <p>&nbsp;</p>
@@ -59,8 +58,10 @@
 <p>This page shows information from the disk file associated with the active 
  window. If the file has not yet been saved most of these fields will be 
  blank. Note that the <span style="font-weight: bold;">Size</span> field 
- has been moved to the <span style="font-weight: bold;">Summary</span> 
- page.</p>
+ has been moved to the <a HREF="HIDD_PROP_SUMMARY.htm">Summary Page</a>. 
+ </p>
+
+<p>&nbsp;</p>
 
 <p><span style="font-weight: bold;">Name</span></p>
 
@@ -84,20 +85,25 @@
 <p style="font-weight: bold;">Created</p>
 
 <p style="margin-left: 40px;">This is the date and time that the file was 
- created according to the operating system (actually the filesystem part 
- of the operating system). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ created according to the operating system (actually the filesystem). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
  that some files under the FAT filesystem may not have a stored <span style="font-weight: bold;">Created 
  </span>and <span style="font-weight: bold;">Accessed </span>time, in which 
  case the Modified time is reported for these times too.</p>
 
 <p style="margin-left: 40px;">&nbsp;</p>
 
-<p style="margin-left: 40px;">Also note that when you copy a file its modified 
- time is preserved but its creation time is the time it was copied -- this 
+<p style="margin-left: 40px;"><img src="../tip.gif"
+									style="border: none;
+											width: 31px;
+											height: 12px;"
+									width=31
+									height=12
+									border=0>When you copy a file its modified 
+ time is copied but its creation time is the time it was copied -- this 
  results in the anomaly that the file appears to have been last modified 
  before it was created.</p>
 
-<p style="margin-left: 40px;">Modified</p>
+<p style="font-weight: bold; margin-left: 0px;">Modified</p>
 
 <p style="margin-left: 40px;"><font style="font-family: Arial;"
 									face=Arial>This is the modified time 
@@ -143,7 +149,7 @@
 
 <p>&nbsp;</p>
 
-<p>
+<p style="margin-left: 40px;">
 <!--Metadata type="DesignerControl" startspan
 <object CLASSID="clsid:FF80F713-5DC6-11d0-A7B4-00AADC53E937"
 		ID=RelatedTopics
@@ -163,16 +169,15 @@
 <param name="UseButton" value="-1" >
 <param name="ControlLabel" value="Related Topics" >
 <param name="UseIcon" value="0" >
-<param name="Items" value="Character Properties Page;HIDD_PROP_CHAR.htm$$**$$Decimal Values Page;HIDD_PROP_DECIMAL.htm$$**$$Display Properties Command;..\cmd_view\HID_PROPERTIES.htm$$**$$Floating Point Values Page;HIDD_PROP_FLOAT.htm$$**$$IBM Floating Point Values Page;HIDD_PROP_IBMFP.htm$$**$$Properties Dialog;..\overviewtools\prop.htm$$**$$" >
-<param name="Image" value="" >
+<param name="Items" value="Character Properties Page;HIDD_PROP_CHAR.htm$$**$$Decimal Values Page;HIDD_PROP_DECIMAL.htm$$**$$Display Properties Command;..\cmd_view\HID_PROPERTIES.htm$$**$$Floating Point Values Page;HIDD_PROP_FLOAT.htm$$**$$Properties Dialog;..\overviewtools\prop.htm$$**$$">
+<param name="Image" value>
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
-<param name="_CURRENTFILEPATH" value="D:\Visual Studio Projects\HexEdit\HTMLHelp\dlg_properties\HIDD_PROP_FILE.htm" >
+<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\dlg_properties\HIDD_PROP_FILE.htm" >
 <param name="_ID" value="RelatedTopics" >
 <param name="UseMenu" value="-1" >
 <param name="Frame" value="" >
 <param name="Window" value="" >
-</object>-->
-<OBJECT
+</object> --><OBJECT
   CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
   ID="RelatedTopics"  TYPE="application/x-oleobject" >
   <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
@@ -182,8 +187,7 @@
   <PARAM  NAME="Item2"  VALUE="Decimal Values Page;HIDD_PROP_DECIMAL.htm">
   <PARAM  NAME="Item3"  VALUE="Display Properties Command;..\cmd_view\HID_PROPERTIES.htm">
   <PARAM  NAME="Item4"  VALUE="Floating Point Values Page;HIDD_PROP_FLOAT.htm">
-  <PARAM  NAME="Item5"  VALUE="IBM Floating Point Values Page;HIDD_PROP_IBMFP.htm">
-  <PARAM  NAME="Item6"  VALUE="Properties Dialog;..\overviewtools\prop.htm">
+  <PARAM NAME="item5" VALUE="Properties Dialog;..\overviewtools\prop.htm">
 </OBJECT>
 
 <!--Metadata type="DesignerControl" endspan-->
