@@ -503,8 +503,8 @@ BEGIN
             MENUITEM "ANSI -> IBM/OEM",             ID_ANSI2IBM
             MENUITEM "IBM/OEM -> ANSI",             ID_IBM2ANSI
             MENUITEM SEPARATOR
-            MENUITEM "&Uppercase",                  32924
-            MENUITEM "&Lowercase",                  32925
+            MENUITEM "&Uppercase",                  ID_UPPERCASE
+            MENUITEM "&Lowercase",                  ID_LOWERCASE
         END
         POPUP "Checksum"
         BEGIN
@@ -516,7 +516,7 @@ BEGIN
             MENUITEM "CRC CCIT&T",                  ID_CRC_CCITT
             MENUITEM "&CRC 32",                     ID_CRC32
             MENUITEM SEPARATOR
-            MENUITEM "&MD5",                        32998
+            MENUITEM "&MD5",                        ID_MD5
         END
         POPUP "Encryption"
         BEGIN
@@ -530,8 +530,8 @@ BEGIN
         POPUP "Compression"
         BEGIN
             MENUITEM "Settings",                    ID_ZLIB_SETTINGS
-            MENUITEM "Compress",                    32935
-            MENUITEM "Decompress",                  32936
+            MENUITEM "Compress",                    ID_ZLIB_COMPRESS
+            MENUITEM "Decompress",                  ID_ZLIB_DECOMPRESS
         END
         POPUP "&Random Fill"
         BEGIN
@@ -1923,7 +1923,8 @@ BEGIN
                     UDS_NOTHOUSANDS,212,47,9,14,0,HIDC_ALIGN_SPIN
     PUSHBUTTON      "",IDC_ALIGN_SELECT,224,54,9,11,0,0,HIDC_ALIGN_SELECT
     LTEXT           "Offset:",IDC_STATIC,168,74,22,8
-    EDITTEXT        IDC_OFFSET,189,71,34,14,ES_AUTOHSCROLL,0,HIDC_OFFSET
+    EDITTEXT        IDC_FIND_OFFSET,189,71,34,14,ES_AUTOHSCROLL,0,
+                    HIDC_FIND_OFFSET
     CONTROL         "",IDC_OFFSET_SPIN,"msctls_updown32",UDS_SETBUDDYINT | 
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
                     UDS_NOTHOUSANDS,220,70,9,14,0,HIDC_OFFSET_SPIN
@@ -1973,15 +1974,15 @@ BEGIN
                     BS_AUTORADIOBUTTON,97,88,55,10
     GROUPBOX        "Alignment",IDC_STATIC,163,42,73,60,WS_GROUP
     LTEXT           "Stride:",IDC_STATIC,169,56,21,8
-    EDITTEXT        IDC_ALIGN,193,53,34,14,ES_AUTOHSCROLL,0,HIDC_ALIGN
+    EDITTEXT        IDC_ALIGN,193,53,34,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_ALIGN_SPIN,"msctls_updown32",UDS_SETBUDDYINT | 
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
-                    UDS_NOTHOUSANDS,225,53,9,14,0,HIDC_ALIGN_SPIN
+                    UDS_NOTHOUSANDS,225,53,9,14
     LTEXT           "Offset:",IDC_STATIC,169,74,22,8
-    EDITTEXT        IDC_OFFSET,193,71,34,14,ES_AUTOHSCROLL,0,HIDC_OFFSET
+    EDITTEXT        IDC_FIND_OFFSET,193,71,34,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_OFFSET_SPIN,"msctls_updown32",UDS_SETBUDDYINT | 
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
-                    UDS_NOTHOUSANDS,223,70,9,14,0,HIDC_OFFSET_SPIN
+                    UDS_NOTHOUSANDS,223,70,9,14
     CONTROL         "Relative to mark",IDC_RELATIVE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,169,88,64,10
     DEFPUSHBUTTON   "Find Next",IDC_FIND_NEXT,242,6,54,14,WS_GROUP
@@ -2209,8 +2210,8 @@ BEGIN
     LTEXT           "Name",IDC_STATIC,22,21,20,8
     LTEXT           "Expression",IDC_STATIC,88,21,35,8
     LTEXT           "Format",IDC_STATIC,196,21,22,8
-    CONTROL         "Custom1",IDC_GRID,"MFCGridCtrl",WS_TABSTOP,3,30,249,96,
-                    0,HIDC_GRID
+    CONTROL         "Custom1",IDC_GRID_TIP,"MFCGridCtrl",WS_TABSTOP,3,30,249,
+                    96,0,HIDC_GRID_TIP
 END
 
 IDD_PROP_REAL DIALOGEX 0, 0, 223, 79
