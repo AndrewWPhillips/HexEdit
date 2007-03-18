@@ -93,6 +93,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	CResizeCtrl resizer_;               // Used to move controls around when the window is resized
+	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 
 	void InitColumnHeadings();
     void FillGrid();

@@ -36,10 +36,7 @@
 #include "BCGMisc.h"
 #include "HelpID.hm"            // User defined help IDs
 #include "GRIDCTRL_SRC\InPlaceEdit.h"
-
-#ifdef USE_HTML_HELP
 #include <HtmlHelp.h>
-#endif
 
 extern CHexEditApp theApp;
 
@@ -1030,8 +1027,6 @@ void CMainFrame::OnContextMenu(CWnd* pWnd, CPoint point)
 
 BOOL CMainFrame::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    // TODO: Add your message handler code here and/or call default
-    
     return CBCGMDIFrameWnd::OnHelpInfo(pHelpInfo);
 }
 
@@ -1055,14 +1050,8 @@ void CMainFrame::OnHelpKeyboardMap()
 void CMainFrame::OnHelpTute(UINT nID)
 {
     // Display help for this page
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        ::HtmlHelp(m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, 0x20000+nID);
-    }
-#else
-    ASSERT(0);   // No tutes in old help file
-#endif
+    if (!::HtmlHelp(m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, 0x20000+nID))
+        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CMainFrame::OnHelp()
@@ -4473,16 +4462,8 @@ LRESULT CMainFrame::OnHelpCustomizeToolbars(WPARAM wp, LPARAM lp)
         HIDD_CUST_OPTIONS
     };
 
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, help_id[(int)wp]))
-            return 0;
-    }
-#endif
-    if (!::WinHelp(m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-        HELP_CONTEXT, help_id[(int)wp]))
-            ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+    if (!::HtmlHelp(m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, help_id[(int)wp]))
+        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 
     return 0;
 }

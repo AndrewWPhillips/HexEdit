@@ -31,9 +31,7 @@
 #include "resource.hm"          // For control help IDs
 #include <afxpriv.h>            // for WM_COMMANDHELP and WM_HELPHITTEST
 
-#ifdef USE_HTML_HELP
 #include <HtmlHelp.h>
-#endif
 
 extern CHexEditApp theApp;
 
@@ -873,18 +871,9 @@ HBRUSH CHexEditControl::CtlColor(CDC* pDC, UINT nCtlColor)
 
 LRESULT CSearchEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
 {
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_,
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_,
                      HH_HELP_CONTEXT, 0x10000 + ID_SEARCH_COMBO))
-            return 1;
-    }
-#endif
-    // Since there is only one control of this type just call help with its help ID
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-        HELP_CONTEXT, 0x10000 + ID_SEARCH_COMBO))
-            ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
     return 1;                           // Indicate help launched
 }
 
@@ -1279,17 +1268,9 @@ UINT CHexEditControl::OnGetDlgCode()
 LRESULT CHexEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
 {
     // Since there is only one control of this type just call help with its help ID
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_,
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_,
                      HH_HELP_CONTEXT, 0x10000 + ID_JUMP_HEX_COMBO))
-            return 1;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-        HELP_CONTEXT, 0x10000 + ID_JUMP_HEX_COMBO))
-            ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
     return 1;                           // Indicate help launched
 }
 
@@ -1612,17 +1593,9 @@ HBRUSH CDecEditControl::CtlColor(CDC* pDC, UINT nCtlColor)
 LRESULT CDecEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
 {
     // Since there is only one control of this type just call help with its help ID
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT,
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT,
                      0x10000 + ID_JUMP_DEC_COMBO))
-            return 1;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-        HELP_CONTEXT, 0x10000 + ID_JUMP_DEC_COMBO))
-            ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
     return 1;                           // Indicate help launched
 }
 

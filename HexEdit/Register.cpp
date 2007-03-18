@@ -14,9 +14,7 @@
 #include "resource.hm"
 #include "HelpID.hm"            // User defined help IDs
 
-#ifdef USE_HTML_HELP
 #include <HtmlHelp.h>
-#endif
 
 extern CHexEditApp theApp;
 
@@ -683,41 +681,19 @@ static DWORD id_pairs2[] = {
 
 BOOL CRegister::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, 
-                   HELP_WM_HELP, (DWORD) (LPSTR) id_pairs2))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
     return TRUE;
 }
 
 void CRegister::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs2))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs2);
 }
 
 void CRegister::OnRegHelp() 
 {
     // Display help for the dialog
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-		if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REGISTER_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_REGISTER_HELP))
+	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REGISTER_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
@@ -935,41 +911,19 @@ static DWORD id_pairs1[] = {
 
 BOOL CReg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, 
-                   HELP_WM_HELP, (DWORD) (LPSTR) id_pairs1))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs1);
     return TRUE;
 }
 
 void CReg::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs1))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs1);
 }
 
 void CReg::OnRegHelp() 
 {
     // Display help for the dialog
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REG_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_REG_HELP))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REG_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
@@ -1067,16 +1021,7 @@ void CReg::OnRegForm()
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_+CString(">form"), 
-                     HH_HELP_CONTEXT, aa->is_us_ ? HID_REG_FORM_US : HID_REG_FORM))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, aa->is_us_ ? HID_REG_FORM_US : HID_REG_FORM))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_+CString(">form"), 
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
@@ -1157,30 +1102,14 @@ void CStartup::OnRegForm()
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_+CString(">form"), 
-                     HH_HELP_CONTEXT, aa->is_us_ ? HID_REG_FORM_US : HID_REG_FORM))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, aa->is_us_ ? HID_REG_FORM_US : HID_REG_FORM))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_+CString(">form"), 
+                    HH_HELP_CONTEXT, aa->is_us_ ? HID_REG_FORM_US : HID_REG_FORM))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CStartup::OnRegHelp() 
 {
     // Display help for the dialog
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REG_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_REG_HELP))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REG_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }

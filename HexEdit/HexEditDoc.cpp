@@ -75,6 +75,7 @@ BEGIN_MESSAGE_MAP(CHexEditDoc, CDocument)
     ON_COMMAND_RANGE(ID_DFFD_OPEN_FIRST, ID_DFFD_OPEN_FIRST+DFFD_RESERVED-1, OnDffdOpen)
     ON_COMMAND(ID_DFFD_SAVE, OnDffdSave)
     ON_COMMAND(ID_DFFD_SAVEAS, OnDffdSaveAs)
+	/// xxx disable the above cmds if ptree_ == NULL || ptree_->Error()
 
     ON_COMMAND(ID_DFFD_TOGGLE_EDIT, OnEditMode)
     ON_UPDATE_COMMAND_UI(ID_DFFD_TOGGLE_EDIT, OnUpdateEditMode)
@@ -1789,6 +1790,8 @@ void CHexEditDoc::OnDffdSaveAs()
 // Is editing of the active template allowed?
 BOOL CHexEditDoc::DffdEditMode() 
 {
+    if (ptree_ == NULL || ptree_->Error())
+		return FALSE;    // should not happen - only if there is no template at all
 	if (dffd_edit_mode_ == -1)
 	{
 		CString ss;
@@ -1815,6 +1818,7 @@ void CHexEditDoc::OnEditMode()
 
 void CHexEditDoc::OnUpdateEditMode(CCmdUI* pCmdUI) 
 {
+    pCmdUI->Enable(ptree_ != NULL && !ptree_->Error());
     pCmdUI->SetCheck(DffdEditMode());
 }
 

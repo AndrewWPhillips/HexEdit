@@ -5,9 +5,7 @@
 #include "HexEdit.h"
 #include "ClearHistDlg.h"
 
-#ifdef USE_HTML_HELP
 #include <HtmlHelp.h>
-#endif
 
 #include "resource.hm"
 #include "HelpID.hm"            // For help IDs for the pages
@@ -88,15 +86,7 @@ void CClearHistDlg::OnOK()
 void CClearHistDlg::OnHelp() 
 {
     // Display help for this page
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_CLEAR_HIST_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_CLEAR_HIST_HELP))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_CLEAR_HIST_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
@@ -112,25 +102,13 @@ static DWORD id_pairs[] = {
 
 BOOL CClearHistDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, theApp.m_pszHelpFilePath, 
-                   HELP_WM_HELP, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
     return TRUE;
 //	return CDialog::OnHelpInfo(pHelpInfo);
 }
 
 void CClearHistDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 

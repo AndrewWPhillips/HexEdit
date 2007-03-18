@@ -58,7 +58,6 @@ typedef __int64 FILE_ADDRESS;
 #endif
 
 // Conditional compilation flags - always to be used
-#define USE_HTML_HELP  1    // Main help is is .CHM file (.hlp file still used for control help - see OnHelpInfo/OnContextMenu)
 #define USE_OWN_PRINTDLG 1  // Replace the standard print dialog with our own derived dialog
 #define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
 #define CHANGE_TRACKING 1   // Allow change tracking code
@@ -325,9 +324,29 @@ public:
     short beta_;                // Beta version (0 if not a beta)
 	short revision_;            // This should be a unique build no (one day we will use SVN revision number)
 
-#ifdef USE_HTML_HELP
+    // USE_HTML_HELP
     CString htmlhelp_file_;
-#endif
+	BOOL HtmlHelpWmHelp(HWND hw, DWORD *id_pairs)
+	{
+	    CWaitCursor wait;
+		if (::HtmlHelp(hw, htmlhelp_file_+"::/CtlIdMap.txt", HH_TP_HELP_WM_HELP, (DWORD) (LPSTR) id_pairs) == HWND(0))
+		{
+			AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	BOOL HtmlHelpContextMenu(HWND hw, DWORD *id_pairs)
+	{
+	    CWaitCursor wait;
+		if(::HtmlHelp(hw, htmlhelp_file_+"::/CtlIdMap.txt", HH_TP_HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs) == HWND(0))
+		{
+			AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+			return FALSE;
+		}
+		return TRUE;
+	}
 
     // Pages of the options tabbed dialog
     // (These are here so they can be easily accessed)

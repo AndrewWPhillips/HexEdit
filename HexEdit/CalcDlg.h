@@ -285,6 +285,7 @@ protected:
 	CResizeCtrl resizer_;                   // Used to move controls around when the window is resized
 
     CToolTipCtrl ttc_;                      // For button tooltips
+	HWND help_hwnd_;                        // HWND of window for which context help is pending (usually 0)
 
 	bool invalid_expression();              // Check if current expression is valid and show error message if not
 #ifdef CALCULATOR_IMPROVEMENTS

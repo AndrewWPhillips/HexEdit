@@ -407,16 +407,6 @@ CPropSheet::~CPropSheet()
 	pBrush = NULL;
 }
 
-BOOL CPropSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct) 
-{
-        if (!CPropertySheet::OnNcCreate(lpCreateStruct))
-                return FALSE;
-        
-        ModifyStyleEx(0, WS_EX_CONTEXTHELP);
-        
-        return TRUE;
-}
-
 void CPropSheet::Update(CHexEditView *pv /*=NULL*/, FILE_ADDRESS address /*=-1*/)
 {
     // Get currently active property page
@@ -435,10 +425,92 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPropSheet message handlers
 
+BOOL CPropSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct) 
+{
+        if (!CPropertySheet::OnNcCreate(lpCreateStruct))
+                return FALSE;
+        
+        ModifyStyleEx(0, WS_EX_CONTEXTHELP);
+        
+        return TRUE;
+}
+
 void CPropSheet::PostNcDestroy() 
 {
     CPropertySheet::PostNcDestroy();
 }
+
+static DWORD id_pairs[] = { 
+	IDC_INFO_CATEGORY, HIDC_INFO_CATEGORY,
+	IDC_INFO_CATEGORY_SELECT, HIDC_INFO_CATEGORY_SELECT,
+	IDC_INFO_KEYWORDS, HIDC_INFO_KEYWORDS,
+	IDC_INFO_COMMENTS, HIDC_INFO_COMMENTS,
+	IDC_INFO_SIZE, HIDC_INFO_SIZE,
+	IDC_INFO_DISK_SIZE, HIDC_INFO_DISK_SIZE,
+	IDC_INFO_VIEW_TIME, HIDC_INFO_VIEW_TIME,
+	IDC_INFO_EDIT_TIME, HIDC_INFO_EDIT_TIME,
+    IDC_FILE_NAME, HIDC_FILE_NAME,
+    IDC_FILE_TYPE, HIDC_FILE_TYPE,
+    IDC_FILE_PATH, HIDC_FILE_PATH,
+    IDC_FILE_CREATED, HIDC_FILE_CREATED,
+    IDC_FILE_MODIFIED, HIDC_FILE_MODIFIED,
+    IDC_FILE_ACCESSED, HIDC_FILE_ACCESSED,
+    IDC_FILE_SIZE, HIDC_FILE_SIZE,
+    IDC_FILE_READONLY, HIDC_FILE_READONLY,
+    IDC_FILE_READONLY_DESC, HIDC_FILE_READONLY,
+    IDC_FILE_HIDDEN, HIDC_FILE_HIDDEN,
+    IDC_FILE_HIDDEN_DESC, HIDC_FILE_HIDDEN,
+    IDC_FILE_SYSTEM, HIDC_FILE_SYSTEM,
+    IDC_FILE_SYSTEM_DESC, HIDC_FILE_SYSTEM,
+    IDC_FILE_ARCHIVED, HIDC_FILE_ARCHIVED,
+    IDC_FILE_ARCHIVED_DESC, HIDC_FILE_ARCHIVED,
+    IDC_CHAR_HEX, HIDC_CHAR_HEX,
+    IDC_CHAR_DEC, HIDC_CHAR_DEC,
+    IDC_CHAR_OCTAL, HIDC_CHAR_OCTAL,
+    IDC_CHAR_BINARY, HIDC_CHAR_BINARY,
+    IDC_CHAR_ASCII, HIDC_CHAR_ASCII,
+    IDC_UNICODE_DESC, HIDC_PLACE_HOLDER,
+    IDC_CHAR_UNICODE, HIDC_PLACE_HOLDER,
+    IDC_PLACE_HOLDER, HIDC_PLACE_HOLDER,
+    IDC_SELECT_FONT, HIDC_SELECT_FONT,
+#ifdef SHOW_CODE_PAGE
+    IDC_MULTIBYTE_DESC, HIDC_MULTIBYTE_HOLDER,
+    IDC_CHAR_MULTIBYTE, HIDC_MULTIBYTE_HOLDER,
+    IDC_MULTIBYTE_HOLDER, HIDC_MULTIBYTE_HOLDER,
+    IDC_CODE_PAGE, HIDC_CODE_PAGE,
+#else
+	IDC_CHAR_EBCDIC, HIDC_CHAR_EBCDIC,
+#endif
+    IDC_DEC_8BIT, HIDC_DEC_8BIT,
+    IDC_DEC_16BIT, HIDC_DEC_16BIT,
+    IDC_DEC_32BIT, HIDC_DEC_32BIT,
+    IDC_DEC_64BIT, HIDC_DEC_64BIT,
+//    IDC_DEC_LITTLE_ENDIAN, HIDC_DEC_LITTLE_ENDIAN,
+//    IDC_DEC_BIG_ENDIAN, HIDC_DEC_BIG_ENDIAN,
+    IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
+    IDC_DEC_UNSIGNED, HIDC_DEC_UNSIGNED,
+//    IDC_DEC_SIGNED, HIDC_DEC_SIGNED,
+    IDC_DEC_2COMP, HIDC_DEC_2COMP,
+    IDC_DEC_1COMP, HIDC_DEC_1COMP,
+    IDC_DEC_SIGN_MAG, HIDC_DEC_SIGN_MAG,
+    IDC_FP_VAL, HIDC_FP_VAL,
+    IDC_FP_MANT, HIDC_FP_MANT,
+    IDC_FP_EXP, HIDC_FP_EXP,
+    IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
+    IDC_FP_FORMAT, HIDC_FP_FORMAT,
+    IDC_DATE_FORMAT, HIDC_DATE_FORMAT,
+    IDC_DATE_FORMAT_DESC, HIDC_DATE_FORMAT_DESC,
+    IDC_DATE_BIG_ENDIAN, HIDC_DATE_BIG_ENDIAN,
+    IDC_DATE_LOCAL_TIME, HIDC_DATE_LOCAL_TIME,
+    IDC_DATE_DISPLAY, HIDC_DATE_DISPLAY,
+    IDC_DATE_DATE, HIDC_DATE_DATE,
+    IDC_DATE_TIME, HIDC_DATE_TIME,
+    IDC_DATE_FIRST, HIDC_DATE_FIRST,
+    IDC_DATE_LAST, HIDC_DATE_LAST,
+    IDC_DATE_NOW, HIDC_DATE_NOW,
+    IDC_DATE_NULL, HIDC_DATE_NULL,
+    0,0 
+};
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
@@ -732,51 +804,24 @@ BOOL CPropFilePage::OnSetActive()
     return CPropUpdatePage::OnSetActive();
 }
 
-static DWORD id_pairs7[] = { 
-    IDC_FILE_NAME, HIDC_FILE_NAME,
-    IDC_FILE_TYPE, HIDC_FILE_TYPE,
-    IDC_FILE_PATH, HIDC_FILE_PATH,
-    IDC_FILE_CREATED, HIDC_FILE_CREATED,
-    IDC_FILE_MODIFIED, HIDC_FILE_MODIFIED,
-    IDC_FILE_ACCESSED, HIDC_FILE_ACCESSED,
-    IDC_FILE_SIZE, HIDC_FILE_SIZE,
-    IDC_FILE_READONLY, HIDC_FILE_READONLY,
-    IDC_FILE_READONLY_DESC, HIDC_FILE_READONLY,
-    IDC_FILE_HIDDEN, HIDC_FILE_HIDDEN,
-    IDC_FILE_HIDDEN_DESC, HIDC_FILE_HIDDEN,
-    IDC_FILE_SYSTEM, HIDC_FILE_SYSTEM,
-    IDC_FILE_SYSTEM_DESC, HIDC_FILE_SYSTEM,
-    IDC_FILE_ARCHIVED, HIDC_FILE_ARCHIVED,
-    IDC_FILE_ARCHIVED_DESC, HIDC_FILE_ARCHIVED,
-    0,0 
-};
+BOOL CPropFilePage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs7);
+	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+    return TRUE;
+}
 
 void CPropFilePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    while (pWnd->GetDlgCtrlID() == IDC_STATIC)
+    while (pWnd->GetDlgCtrlID() == IDC_STATIC) // xxx use this everywhere?? (ie in HtmlHelpContextMenu)
     {
         pWnd = pWnd->GetNextWindow();
         if (pWnd == NULL)
             return;
     }
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs7))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 
-BOOL CPropFilePage::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-//      return CPropUpdatePage::OnHelpInfo(pHelpInfo);
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs7))
-            ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-    return TRUE;
-}
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
@@ -1216,37 +1261,16 @@ void CPropInfoPage::OnSelCategory()
 	}
 }
 
-static DWORD id_pairs1[] = {
-	IDC_INFO_CATEGORY, HIDC_INFO_CATEGORY,
-	IDC_INFO_CATEGORY_SELECT, HIDC_INFO_CATEGORY_SELECT,
-	IDC_INFO_KEYWORDS, HIDC_INFO_KEYWORDS,
-	IDC_INFO_COMMENTS, HIDC_INFO_COMMENTS,
-	IDC_INFO_SIZE, HIDC_INFO_SIZE,
-	IDC_INFO_DISK_SIZE, HIDC_INFO_DISK_SIZE,
-	IDC_INFO_VIEW_TIME, HIDC_INFO_VIEW_TIME,
-	IDC_INFO_EDIT_TIME, HIDC_INFO_EDIT_TIME,
-    0,0 
-};
+BOOL CPropInfoPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs1);
+	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+    return TRUE;
+}
 
 void CPropInfoPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs1))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-}
-
-BOOL CPropInfoPage::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-//      return CPropUpdatePage::OnHelpInfo(pHelpInfo);
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs1))
-            ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-    return TRUE;
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 
 //===========================================================================
@@ -1914,48 +1938,20 @@ BOOL CPropCharPage::OnSetActive()
     return CPropUpdatePage::OnSetActive();
 }
 
-static DWORD id_pairs2[] = { 
-    IDC_CHAR_HEX, HIDC_CHAR_HEX,
-    IDC_CHAR_DEC, HIDC_CHAR_DEC,
-    IDC_CHAR_OCTAL, HIDC_CHAR_OCTAL,
-    IDC_CHAR_BINARY, HIDC_CHAR_BINARY,
-    IDC_CHAR_ASCII, HIDC_CHAR_ASCII,
-    IDC_UNICODE_DESC, HIDC_PLACE_HOLDER,
-    IDC_CHAR_UNICODE, HIDC_PLACE_HOLDER,
-    IDC_PLACE_HOLDER, HIDC_PLACE_HOLDER,
-    IDC_SELECT_FONT, HIDC_SELECT_FONT,
-#ifdef SHOW_CODE_PAGE
-    IDC_MULTIBYTE_DESC, HIDC_MULTIBYTE_HOLDER,
-    IDC_CHAR_MULTIBYTE, HIDC_MULTIBYTE_HOLDER,
-    IDC_MULTIBYTE_HOLDER, HIDC_MULTIBYTE_HOLDER,
-    IDC_CODE_PAGE, HIDC_CODE_PAGE,
-#else
-	IDC_CHAR_EBCDIC, HIDC_CHAR_EBCDIC,
-#endif
-    0,0 
-};
+BOOL CPropCharPage::OnHelpInfo(HELPINFO *pHelpInfo)
+{
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
+	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+    return TRUE;
+}
 
 void CPropCharPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
     // NOTE: For the static text control (ID = -1) to give the same help
     // the text box it is associated with must be next in the tab order + the
     // text box MUST HAVE THE TABSTOP OPTION TURNED ON (ie no NOT WS_TABSTOP).
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs2))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-}
 
-BOOL CPropCharPage::OnHelpInfo(HELPINFO *pHelpInfo)
-{
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs2))
-            ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-    return TRUE;
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 
 #ifdef SHOW_CODE_PAGE
@@ -2515,40 +2511,16 @@ BOOL CPropDecPage::OnSetActive()
     return CPropUpdatePage::OnSetActive();
 }
 
-static DWORD id_pairs3[] = { 
-    IDC_DEC_8BIT, HIDC_DEC_8BIT,
-    IDC_DEC_16BIT, HIDC_DEC_16BIT,
-    IDC_DEC_32BIT, HIDC_DEC_32BIT,
-    IDC_DEC_64BIT, HIDC_DEC_64BIT,
-//    IDC_DEC_LITTLE_ENDIAN, HIDC_DEC_LITTLE_ENDIAN,
-//    IDC_DEC_BIG_ENDIAN, HIDC_DEC_BIG_ENDIAN,
-    IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-    IDC_DEC_UNSIGNED, HIDC_DEC_UNSIGNED,
-//    IDC_DEC_SIGNED, HIDC_DEC_SIGNED,
-    IDC_DEC_2COMP, HIDC_DEC_2COMP,
-    IDC_DEC_1COMP, HIDC_DEC_1COMP,
-    IDC_DEC_SIGN_MAG, HIDC_DEC_SIGN_MAG,
-    0,0 
-};
+BOOL CPropDecPage::OnHelpInfo(HELPINFO *pHelpInfo) 
+{
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
+	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+    return TRUE;
+}
 
 void CPropDecPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs3))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-}
-
-BOOL CPropDecPage::OnHelpInfo(HELPINFO *pHelpInfo) 
-{
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs3))
-            ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-    return TRUE;
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 
 //===========================================================================
@@ -2924,33 +2896,16 @@ BOOL CPropRealPage::OnSetActive()
     return CPropUpdatePage::OnSetActive();
 }
 
-static DWORD id_pairs4[] = { 
-    IDC_FP_VAL, HIDC_FP_VAL,
-    IDC_FP_MANT, HIDC_FP_MANT,
-    IDC_FP_EXP, HIDC_FP_EXP,
-    IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-    IDC_FP_FORMAT, HIDC_FP_FORMAT,
-    0,0 
-};
+BOOL CPropRealPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs4);
+	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+    return TRUE;
+}
 
 void CPropRealPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs4))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-}
-
-BOOL CPropRealPage::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs4))
-            ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-    return TRUE;
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3462,39 +3417,16 @@ BOOL CPropDatePage::OnSetActive()
     return CPropUpdatePage::OnSetActive();
 }
 
-static DWORD id_pairs6[] = { 
-    IDC_DATE_FORMAT, HIDC_DATE_FORMAT,
-    IDC_DATE_FORMAT_DESC, HIDC_DATE_FORMAT_DESC,
-    IDC_DATE_BIG_ENDIAN, HIDC_DATE_BIG_ENDIAN,
-    IDC_DATE_LOCAL_TIME, HIDC_DATE_LOCAL_TIME,
-    IDC_DATE_DISPLAY, HIDC_DATE_DISPLAY,
-    IDC_DATE_DATE, HIDC_DATE_DATE,
-    IDC_DATE_TIME, HIDC_DATE_TIME,
-    IDC_DATE_FIRST, HIDC_DATE_FIRST,
-    IDC_DATE_LAST, HIDC_DATE_LAST,
-    IDC_DATE_NOW, HIDC_DATE_NOW,
-    IDC_DATE_NULL, HIDC_DATE_NULL,
-    0,0 
-};
+BOOL CPropDatePage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs6);
+	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+    return TRUE;
+}
 
 void CPropDatePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs6))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-}
-
-BOOL CPropDatePage::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs6))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-    return TRUE;
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 
 void CPropDatePage::OnDateFirst() 
@@ -3609,6 +3541,7 @@ CPropWnd::CPropWnd(CWnd* pParent /*=NULL*/)
 #endif
 {
 	m_pSheet = NULL;
+	help_hwnd_ = (HWND)0;
 }
 
 CPropWnd::~CPropWnd()
@@ -3626,6 +3559,7 @@ void CPropWnd::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CPropWnd, ModelessDialogBaseClass)
         ON_WM_CLOSE()
         ON_WM_DESTROY()
+		ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 END_MESSAGE_MAP()
 
 BOOL CPropWnd::Create(CWnd* pParentWnd /*=NULL*/) 
@@ -3733,3 +3667,15 @@ void CPropWnd::OnDestroy()
     theApp.prop_y_ = rr.top;
 #endif
 }
+
+LRESULT CPropWnd::OnKickIdle(WPARAM, LPARAM lCount)
+{
+	// Display context help for ctrl set up in call to a page's OnHelpInfo
+	if (help_hwnd_ != (HWND)0)
+	{
+		theApp.HtmlHelpWmHelp(help_hwnd_, id_pairs);
+		help_hwnd_ = (HWND)0;
+	}
+    return FALSE;
+}
+

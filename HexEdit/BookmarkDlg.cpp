@@ -27,10 +27,7 @@
 #include "HexEditView.h"
 #include "Bookmark.h"
 #include "BookmarkDlg.h"
-
-#ifdef USE_HTML_HELP
 #include <HtmlHelp.h>
-#endif
 
 #include "resource.hm"
 #include "HelpID.hm"            // For dlg help ID
@@ -113,11 +110,24 @@ static int CALLBACK bl_compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort
 	return 0;
 }
 
+static DWORD id_pairs[] = { 
+    IDC_BOOKMARK_NAME_DESC, HIDC_BOOKMARK_NAME,
+    IDC_BOOKMARK_NAME, HIDC_BOOKMARK_NAME,
+    IDC_BOOKMARK_ADD, HIDC_BOOKMARK_ADD,
+    IDC_GRID_BL, HIDC_GRID_BL,
+    IDC_BOOKMARK_REMOVE, HIDC_BOOKMARK_REMOVE,
+    IDC_BOOKMARK_GOTO, HIDC_BOOKMARK_GOTO,
+    IDC_BOOKMARKS_VALIDATE, HIDC_BOOKMARKS_VALIDATE,
+    IDC_NET_RETAIN, HIDC_NET_RETAIN,
+    0,0 
+}; 
+
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarkDlg dialog
 
 CBookmarkDlg::CBookmarkDlg(CWnd* pParent /*=NULL*/)
 {
+	help_hwnd_ = (HWND)0;
 	p_grid = &grid_;
     pdoc_ = NULL;
 
@@ -530,6 +540,13 @@ LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
     CCellRange sel = grid_.GetSelectedCellRange();
 	GetDlgItem(IDC_BOOKMARK_GOTO)->EnableWindow(sel.IsValid() && sel.GetMinRow() == sel.GetMaxRow());
 	GetDlgItem(IDC_BOOKMARK_REMOVE)->EnableWindow(sel.IsValid());
+
+	// Display context help for ctrl set up in OnHelpInfo
+	if (help_hwnd_ != (HWND)0)
+	{
+		theApp.HtmlHelpWmHelp(help_hwnd_, id_pairs);
+		help_hwnd_ = (HWND)0;
+	}
     return FALSE;
 }
 
@@ -842,51 +859,22 @@ void CBookmarkDlg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 
 void CBookmarkDlg::OnHelp() 
 {
-    // Display help for this page
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_BOOKMARKS_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_BOOKMARKS_HELP))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_BOOKMARKS_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
-
-static DWORD id_pairs[] = { 
-    IDC_BOOKMARK_NAME_DESC, HIDC_BOOKMARK_NAME,
-    IDC_BOOKMARK_NAME, HIDC_BOOKMARK_NAME,
-    IDC_BOOKMARK_ADD, HIDC_BOOKMARK_ADD,
-    IDC_GRID_BL, HIDC_GRID_BL,
-    IDC_BOOKMARK_REMOVE, HIDC_BOOKMARK_REMOVE,
-    IDC_BOOKMARK_GOTO, HIDC_BOOKMARK_GOTO,
-    IDC_BOOKMARKS_VALIDATE, HIDC_BOOKMARKS_VALIDATE,
-    IDC_NET_RETAIN, HIDC_NET_RETAIN,
-    0,0 
-}; 
 
 // This is no longer used sicen we made the dialog dockable but leave just in case
 BOOL CBookmarkDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, theApp.m_pszHelpFilePath, 
-                   HELP_WM_HELP, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
+	// and then disappear when mouse up evenet is seen.  The only soln I could
+	// find after a lot of experimenetation is to do it later (in OnKickIdle).
+	help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
     return TRUE;
-//	return CHexDialogBar::OnHelpInfo(pHelpInfo);
 }
 
 void CBookmarkDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
     // Don't show context menu if right-click on grid top row (used to display column menu)
     if (pWnd->IsKindOf(RUNTIME_CLASS(CGridCtrl)))
     {
@@ -904,8 +892,5 @@ void CBookmarkDlg::OnContextMenu(CWnd* pWnd, CPoint point)
     // It took me days to work out how right click of the "Name:" static
     // text should show the "What's This" context menu.
 
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
-

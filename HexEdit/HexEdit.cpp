@@ -40,9 +40,7 @@
 
 #include "HexEdit.h"
 
-#ifdef USE_HTML_HELP
 #include <HtmlHelp.h>
-#endif
 
 #include "EmailDlg.h"
 #include "HexFileList.h"
@@ -392,8 +390,7 @@ BOOL CHexEditApp::InitInstance()
         m_pspecial_list = new CSpecialList();
 #endif
 
-#ifdef USE_HTML_HELP
-        // Check for hexedit.chm file
+        // Check for hexedit.chm file  (USE_HTML_HELP)
         htmlhelp_file_ = m_pszHelpFilePath;
         htmlhelp_file_.MakeUpper();
         if (htmlhelp_file_.Right(4) == ".HLP")
@@ -402,7 +399,6 @@ BOOL CHexEditApp::InitInstance()
             if (_access(htmlhelp_file_, 0) == -1)
                 htmlhelp_file_.Empty();
         }
-#endif
 
         // Work out if there is a previous instance running
         hwnd_1st_ = ::FindWindow(szHexEditClassName, NULL);
@@ -1649,25 +1645,19 @@ int CHexEditApp::NewCheck()
 
 void CHexEditApp::WinHelp(DWORD dwData, UINT nCmd) 
 {
-#ifdef USE_HTML_HELP
-    if (!htmlhelp_file_.IsEmpty())
+    switch(nCmd)
     {
-        switch(nCmd)
-        {
-        case HELP_CONTEXT:
-            if (::HtmlHelp(m_pMainWnd->GetSafeHwnd(), htmlhelp_file_, HH_HELP_CONTEXT, dwData))
-                return;
-            break;
-        case HELP_FINDER:
-            if (::HtmlHelp(m_pMainWnd->GetSafeHwnd(), htmlhelp_file_, HH_DISPLAY_TOPIC, dwData))
-                return;
-            break;
-        }
+    case HELP_CONTEXT:
+        if (::HtmlHelp(m_pMainWnd->GetSafeHwnd(), htmlhelp_file_, HH_HELP_CONTEXT, dwData))
+            return;
+        break;
+    case HELP_FINDER:
+        if (::HtmlHelp(m_pMainWnd->GetSafeHwnd(), htmlhelp_file_, HH_DISPLAY_TOPIC, dwData))
+            return;
+        break;
     }
-    // Call old winhelp if htmlhelp didn't work
-#endif
-
-    CWinApp::WinHelp(dwData, nCmd);
+	ASSERT(0);
+    ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CHexEditApp::OnAppContextHelp (CWnd* pWndControl, const DWORD dwHelpIDArray [])
@@ -1683,6 +1673,7 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
     //mm->m_wndFind.m_pSheet->SendMessage(WM_KICKIDLE);    // causes problem that we need to track down
     mm->m_wndBookmarks.SendMessage(WM_KICKIDLE);
 	mm->m_wndCalc.SendMessage(WM_KICKIDLE);
+	mm->m_wndProp.SendMessage(WM_KICKIDLE);
 #ifdef EXPLORER_WND
 	mm->m_wndExpl.SendMessage(WM_KICKIDLE);
 #endif

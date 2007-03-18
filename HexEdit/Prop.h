@@ -568,7 +568,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-
+    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	DECLARE_MESSAGE_MAP()
 public:
 	BOOL Create(CWnd* pParentWnd = NULL);
@@ -577,6 +577,8 @@ public:
 #ifndef DIALOG_BAR
     BOOL visible_;
 #endif
+
+	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 };
 
 /////////////////////////////////////////////////////////////////////////////

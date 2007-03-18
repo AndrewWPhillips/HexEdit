@@ -257,26 +257,13 @@ static DWORD id_pairs7[] = {
 
 BOOL CGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs7))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs7);
     return TRUE;
 }
 
 void CGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs7))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs7);
 }
 
 void CGeneralPage::OnChange() 
@@ -515,26 +502,13 @@ static DWORD id_pairs1[] = {
 
 BOOL CSysDisplayPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs1))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs1);
     return TRUE;
 }
 
 void CSysDisplayPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs1))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs1);
 }
 
 //===========================================================================
@@ -686,27 +660,13 @@ static DWORD id_pairs2[] = {
 
 BOOL CMacroPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
- 
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs2))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
     return TRUE;
 }
 
 void CMacroPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs2))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs2);
 }
 
 void CMacroPage::OnRefreshNever() 
@@ -1081,26 +1041,13 @@ static DWORD id_pairs3[] = {
 
 BOOL CPrintPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs3))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
     return TRUE;
 }
 
 void CPrintPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs3))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs3);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1132,7 +1079,7 @@ void CFiltersPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_DOWN, ctl_down_);
 	DDX_Control(pDX, IDC_DEL, ctl_del_);
 	//}}AFX_DATA_MAP
-    DDX_GridControl(pDX, IDC_GRID, grid_);             // associate the grid window with a C++ object
+    DDX_GridControl(pDX, IDC_GRID_FILTERS, grid_);             // associate the grid window with a C++ object
 }
 
 BEGIN_MESSAGE_MAP(CFiltersPage, CPropertyPage)
@@ -1144,8 +1091,8 @@ BEGIN_MESSAGE_MAP(CFiltersPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_DOWN, OnDown)
 	//}}AFX_MSG_MAP
     ON_WM_CONTEXTMENU()
-    ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
-    ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
+    ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID_FILTERS, OnGridEndEdit)
+    ON_NOTIFY(NM_CLICK, IDC_GRID_FILTERS, OnGridClick)
 END_MESSAGE_MAP()
 
 void CFiltersPage::add_row(int row, BOOL is_checked /*=TRUE*/, CString s1/*=""*/, CString s2 /*=""*/)
@@ -1297,7 +1244,7 @@ BOOL CFiltersPage::PreTranslateMessage(MSG* pMsg)
 }
 
 static DWORD id_pairs4[] = { 
-    IDC_GRID, HIDC_GRID,
+    IDC_GRID_FILTERS, HIDC_GRID_FILTERS,
     IDC_NEW, HIDC_NEW,
     IDC_DEL, HIDC_DEL,
     IDC_UP, HIDC_UP,
@@ -1307,26 +1254,13 @@ static DWORD id_pairs4[] = {
 
 BOOL CFiltersPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs4))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs4);
     return TRUE;
 }
 
 void CFiltersPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs4))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs4);
 }
 
 void CFiltersPage::OnNew() 
@@ -1550,7 +1484,7 @@ void CTipsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_NEW, ctl_new_);
 	DDX_Control(pDX, IDC_DOWN, ctl_down_);
 	DDX_Control(pDX, IDC_DEL, ctl_del_);
-    DDX_GridControl(pDX, IDC_GRID, grid_);             // associate the grid window with a C++ object
+    DDX_GridControl(pDX, IDC_GRID_TIP, grid_);             // associate the grid window with a C++ object
 }
 
 BEGIN_MESSAGE_MAP(CTipsPage, CPropertyPage)
@@ -1560,8 +1494,8 @@ BEGIN_MESSAGE_MAP(CTipsPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_UP, OnUp)
 	ON_BN_CLICKED(IDC_DOWN, OnDown)
     ON_WM_CONTEXTMENU()
-    ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
-    ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
+    ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID_TIP, OnGridEndEdit)
+    ON_NOTIFY(NM_CLICK, IDC_GRID_TIP, OnGridClick)
 END_MESSAGE_MAP()
 
 void CTipsPage::add_row(int row, BOOL is_checked /*=TRUE*/, CString s1/*=""*/, CString s2 /*=""*/, CString s3 /*=""*/)
@@ -1770,7 +1704,7 @@ BOOL CTipsPage::PreTranslateMessage(MSG* pMsg)
 }
 
 static DWORD id_pairs8[] = { 
-    IDC_GRID, HIDC_GRID,
+    IDC_GRID_TIP, HIDC_GRID_TIP,
     IDC_NEW, HIDC_NEW,
     IDC_DEL, HIDC_DEL,
     IDC_UP, HIDC_UP,
@@ -1780,26 +1714,13 @@ static DWORD id_pairs8[] = {
 
 BOOL CTipsPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs8))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs8);
     return TRUE;
 }
 
 void CTipsPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs8))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs8);
 }
 
 void CTipsPage::OnNew() 
@@ -2409,26 +2330,13 @@ static DWORD id_pairs5[] = {
 
 BOOL CWindowPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs5))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs5);
     return TRUE;
 }
 
 void CWindowPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs5))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs5);
 }
 
 BOOL CWindowPage::OnSetActive() 
@@ -2865,26 +2773,13 @@ static DWORD id_pairs6[] = {
 
 BOOL CColourSchemes::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs6))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs6);
     return TRUE;
 }
 
 void CColourSchemes::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs6))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs6);
 }
 
 // Add Scheme button

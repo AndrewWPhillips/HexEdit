@@ -9,9 +9,7 @@
 #include "Control.h"
 #include "HexEditView.h"
 
-#ifdef USE_HTML_HELP
 #include <HtmlHelp.h>
-#endif
 
 #include "resource.hm"
 #include "HelpID.hm"            // For help IDs for the pages
@@ -1647,38 +1645,20 @@ static DWORD id_pairs1[] = {
 
 void CSimplePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs1))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs1);
 }
 
 BOOL CSimplePage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 //	return CPropertyPage::OnHelpInfo(pHelpInfo);
- 
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs1))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs1);
     return TRUE;
 }
 
 void CSimplePage::OnHelp() 
 {
     // Display help for this page
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_SIMPLE_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_FIND_SIMPLE_HELP))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_SIMPLE_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
@@ -1959,48 +1939,29 @@ static DWORD id_pairs2[] = {
     IDC_FIND_SCOPE_FILE, HIDC_FIND_SCOPE_FILE,
     IDC_FIND_SCOPE_ALL, HIDC_FIND_SCOPE_ALL,
 	IDC_ALIGN, HIDC_ALIGN,
-	IDC_ALIGN_SPIN, HIDC_ALIGN_SPIN,
+	IDC_ALIGN_SPIN, HIDC_ALIGN,
 	IDC_ALIGN_SELECT, HIDC_ALIGN_SELECT,
 	IDC_OFFSET, HIDC_OFFSET,
-	IDC_OFFSET_SPIN, HIDC_OFFSET_SPIN,
+	IDC_OFFSET_SPIN, HIDC_OFFSET,
 	IDC_RELATIVE, HIDC_RELATIVE,
     0,0 
 };
 
 void CHexPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs2))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs2);
 }
 
 BOOL CHexPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-//	return CPropertyPage::OnHelpInfo(pHelpInfo);
- 
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs2))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
     return TRUE;
 }
 
 void CHexPage::OnHelp()
 {
     // Display help for this page
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_HEX_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_FIND_HEX_HELP))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_HEX_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
@@ -2260,38 +2221,19 @@ static DWORD id_pairs3[] = {
 
 void CTextPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs3))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs3);
 }
 
 BOOL CTextPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-//	return CPropertyPage::OnHelpInfo(pHelpInfo);
- 
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs3))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
     return TRUE;
 }
 
 void CTextPage::OnHelp() 
 {
     // Display help for this page
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_TEXT_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_FIND_TEXT_HELP))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_TEXT_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
@@ -2658,46 +2600,28 @@ static DWORD id_pairs4[] = {
     IDC_FIND_SCOPE_FILE, HIDC_FIND_SCOPE_FILE,
     IDC_FIND_SCOPE_ALL, HIDC_FIND_SCOPE_ALL,
 	IDC_ALIGN, HIDC_ALIGN,
-	IDC_ALIGN_SPIN, HIDC_ALIGN_SPIN,
+	IDC_ALIGN_SPIN, HIDC_ALIGN,
 	IDC_OFFSET, HIDC_OFFSET,
-	IDC_OFFSET_SPIN, HIDC_OFFSET_SPIN,
+	IDC_OFFSET_SPIN, HIDC_OFFSET,
 	IDC_RELATIVE, HIDC_RELATIVE,
     0,0 
 };
 
 void CNumberPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs4))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs4);
 }
 
 BOOL CNumberPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-//	return CPropertyPage::OnHelpInfo(pHelpInfo);
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs4))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs4);
     return TRUE;
 }
 
 void CNumberPage::OnHelp() 
 {
     // Display help for this page
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_NUMBER_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_FIND_NUMBER_HELP))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_NUMBER_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
@@ -2955,37 +2879,19 @@ static DWORD id_pairs5[] = {
 
 void CReplacePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs5))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs5);
 }
 
 BOOL CReplacePage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-//	return CPropertyPage::OnHelpInfo(pHelpInfo);
-    CWinApp* pApp = AfxGetApp();
-    ASSERT_VALID(pApp);
-    ASSERT(pApp->m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, pApp->m_pszHelpFilePath, HELP_WM_HELP, (DWORD) (LPSTR) id_pairs5))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs5);
     return TRUE;
 }
 
 void CReplacePage::OnHelp() 
 {
     // Display help for this page
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_REPLACE_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_FIND_REPLACE_HELP))
+   if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_REPLACE_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 

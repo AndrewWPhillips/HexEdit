@@ -160,7 +160,7 @@ private:
 class CExplorerWnd : public CHexDialogBar
 {
 public:
-    CExplorerWnd() : splitter_(2), hh_(0), update_required_(false) { }
+    CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0) { }
 	enum { IDD = IDD_EXPLORER };
 	virtual BOOL Create(CWnd* pParentWnd);
 	virtual BOOL OnInitDialog();
@@ -216,6 +216,7 @@ protected:
 	CHistoryShellList list_;            // Our class derived from CBCGShellFolder
 
 	CResizeCtrl resizer_;               // Used to move controls around when the window is resized
+	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 
 private:
     void build_filter_menu();

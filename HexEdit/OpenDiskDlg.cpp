@@ -665,25 +665,13 @@ static DWORD id_pairs[] = {
 
 BOOL COpenDiskDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, theApp.m_pszHelpFilePath, 
-                   HELP_WM_HELP, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
     return TRUE;
 }
 
 void COpenDiskDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 
 LRESULT COpenDiskDlg::OnKickIdle(WPARAM, LPARAM lCount)

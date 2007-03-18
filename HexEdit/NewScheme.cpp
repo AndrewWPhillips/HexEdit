@@ -20,9 +20,7 @@
 #include "HexEdit.h"
 #include "NewScheme.h"
 
-#ifdef USE_HTML_HELP
 #include <HtmlHelp.h>
-#endif
 
 #include "resource.hm"
 #include "HelpID.hm"            // For help IDs for the pages
@@ -95,15 +93,7 @@ BOOL CNewScheme::OnInitDialog()
 void CNewScheme::OnHelp() 
 {
     // Display help for this page
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_NEW_SCHEME_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_NEW_SCHEME_HELP))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_NEW_SCHEME_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
@@ -116,25 +106,13 @@ static DWORD id_pairs[] = {
 
 BOOL CNewScheme::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, theApp.m_pszHelpFilePath, 
-                   HELP_WM_HELP, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
     return TRUE;
 }
 
 void CNewScheme::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 
 void CNewScheme::OnOK() 

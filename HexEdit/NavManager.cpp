@@ -68,7 +68,7 @@ CString CNavManager::GetInfo(bool back, int ii)
 
 	// Get the address
 	char buf[32];                   // used with sprintf (CString::Format can't handle __int64)
-	if (v_[ii].pview_->DecAddresses())
+	if (is_open_view(v_[ii].pdoc_, v_[ii].pview_) && v_[ii].pview_->DecAddresses())
 	{
 		sprintf(buf, "%I64d", __int64(v_[ii].start_addr_));
 		retval = buf;

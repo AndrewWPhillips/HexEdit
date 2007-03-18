@@ -40,7 +40,11 @@ public:
 	afx_msg void OnBnClickedCompressionLevelDefault();
 	afx_msg void OnBnClickedCompressionWindowSizeDefault();
 	afx_msg void OnBnClickedCompressionMemoryUsageDefault();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
 private:
 	void FixControls();
+public:
+	afx_msg void OnBnClickedCompressHelp();
 };

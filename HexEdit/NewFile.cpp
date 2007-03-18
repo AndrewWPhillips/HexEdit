@@ -6,9 +6,7 @@
 #include "MainFrm.h"   // to write to status bar
 #include "NewFile.h"
 
-#ifdef USE_HTML_HELP
 #include <HtmlHelp.h>
-#endif
 
 #include "resource.hm"
 #include "HelpID.hm"            // For dlg help ID
@@ -488,16 +486,35 @@ void CNewFile::OnOK()
 void CNewFile::OnHelp() 
 {
     // Display help for this page
-#ifdef USE_HTML_HELP
-    if (!theApp.htmlhelp_file_.IsEmpty())
-    {
-        if (::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_NEW_FILE_HELP))
-            return;
-    }
-#endif
-    if (!::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath,
-                   HELP_CONTEXT, HIDD_NEW_FILE_HELP))
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_NEW_FILE_HELP))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+}
+
+void CNewFile::OnDestroy() 
+{
+	// Remove ouselves from clipboard chain (see SetClipboardViewer() above)
+	ChangeClipboardChain(next_cb_hwnd_);
+
+    CDialog::OnDestroy();
+}
+
+// Called when the contents of the clipboard changes
+void CNewFile::OnDrawClipboard()
+{
+	if (next_cb_hwnd_ != 0)
+		::SendMessage(next_cb_hwnd_, WM_DRAWCLIPBOARD, (WPARAM)0, (LPARAM)0);  // signal next HWND in chain
+
+	check_clipboard();
+    fix_controls();
+}
+
+// Called when another window is being removed from clipboard chain
+void CNewFile::OnChangeCbChain(HWND hWndRemove, HWND hWndAfter)
+{
+	if (hWndRemove == next_cb_hwnd_)                                          // our successor is going - bye-bye
+		next_cb_hwnd_ = hWndAfter;
+	else if (next_cb_hwnd_ != 0)
+		::SendMessage(next_cb_hwnd_, WM_CHANGECBCHAIN, (WPARAM)hWndRemove, (LPARAM)hWndAfter);  // pass the message on
 }
 
 static DWORD id_pairs[] = { 
@@ -530,54 +547,15 @@ static DWORD id_pairs[] = {
     0,0 
 }; 
 
-void CNewFile::OnDestroy() 
-{
-	// Remove ouselves from clipboard chain (see SetClipboardViewer() above)
-	ChangeClipboardChain(next_cb_hwnd_);
-
-    CDialog::OnDestroy();
-}
-
-// Called when the contents of the clipboard changes
-void CNewFile::OnDrawClipboard()
-{
-	if (next_cb_hwnd_ != 0)
-		::SendMessage(next_cb_hwnd_, WM_DRAWCLIPBOARD, (WPARAM)0, (LPARAM)0);  // signal next HWND in chain
-
-	check_clipboard();
-    fix_controls();
-}
-
-// Called when another window is being removed from clipboard chain
-void CNewFile::OnChangeCbChain(HWND hWndRemove, HWND hWndAfter)
-{
-	if (hWndRemove == next_cb_hwnd_)                                          // our successor is going - bye-bye
-		next_cb_hwnd_ = hWndAfter;
-	else if (next_cb_hwnd_ != 0)
-		::SendMessage(next_cb_hwnd_, WM_CHANGECBCHAIN, (WPARAM)hWndRemove, (LPARAM)hWndAfter);  // pass the message on
-}
-
 BOOL CNewFile::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, theApp.m_pszHelpFilePath, 
-                   HELP_WM_HELP, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
     return TRUE;
 }
 
 void CNewFile::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 
 void CNewFile::OnChangeDecimalSize() 
