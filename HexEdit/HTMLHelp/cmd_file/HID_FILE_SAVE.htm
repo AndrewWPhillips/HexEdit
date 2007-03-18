@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=789>
-<meta name=layout-width content=1213>
+<meta name=layout-height content=805>
+<meta name=layout-width content=1207>
 
 
 <!--(Links)=========================================================-->
@@ -63,16 +63,24 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>If you have inserted or deleted bytes in a very large file HexEdit must 
- copy the file to a new file when you save the file and then delete the 
- old file (unless it is to become a backup file) and rename the new one. 
- This means that the save operation may take a long time and that you may 
- run out of disk space if you do not have more free space on the disk than 
- the size of the file. To avoid this problem do not insert or delete bytes 
- in very large files (and don't create a backup copy) – this is most simply 
- achieved by always operating in overtype (not insert) mode.</p>
+<p style="margin-top: 0; margin-bottom: 0;">The save operation may take 
+ a long time due to the following reasons:</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">you have 
+ inserted or deleted bytes near the start of a large file - HexEdit must 
+ move a large part of the file internally</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">you have 
+ chosen to create a backup of a large file - HexEdit must make a copy of 
+ the file's data</p></li>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">you have 
+ performed operations on very large selections - HexEdit may have created 
+ large temporary files that need to be copied into the saved file</p></li>
+</ul>
 
 <p><span style="font-weight: bold;">Shortcuts</span></p>
 
@@ -110,7 +118,7 @@
 <param name="UseButton" value="-1" >
 <param name="ControlLabel" value="Related Topics" >
 <param name="UseIcon" value="0" >
-<param name="Items" value="File Close command;HID_FILE_CLOSE.htm$$**$$File Open command;HID_FILE_OPEN.htm$$**$$File Save As command;HID_FILE_SAVE_AS.htm$$**$$New File command;HID_FILE_NEW.htm$$**$$" >
+<param name="Items" value="File Close command;HID_FILE_CLOSE.htm$$**$$File Open command;HID_FILE_OPEN.htm$$**$$File Save As command;HID_FILE_SAVE_AS.htm$$**$$New File command;HID_FILE_NEW.htm$$**$$Save All command;HID_FILE_SAVE_ALL.htm$$**$$" >
 <param name="Image" value="" >
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
 <param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit\HTMLHelp\cmd_file\HID_FILE_SAVE.htm" >
@@ -129,6 +137,7 @@
   <PARAM  NAME="Item2"  VALUE="File Open command;HID_FILE_OPEN.htm">
   <PARAM  NAME="Item3"  VALUE="File Save As command;HID_FILE_SAVE_AS.htm">
   <PARAM  NAME="Item4"  VALUE="New File command;HID_FILE_NEW.htm">
+  <PARAM  NAME="Item5"  VALUE="Save All command;HID_FILE_SAVE_ALL.htm">
 </OBJECT>
 
 <!--Metadata type="DesignerControl" endspan-->
