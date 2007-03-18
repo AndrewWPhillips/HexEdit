@@ -599,7 +599,6 @@
 #define IDC_REMOVE                      1102
 #define IDC_RESET                       1103
 #define IDC_VALIDATE                    1103
-#define IDC_DEFAULT                     1104
 #define IDC_SCHEMES                     1104
 #define IDC_RANGES                      1105
 #define IDC_COLOUR                      1106
@@ -1039,10 +1038,12 @@
 #define IDC_FP_GROUP                    1530
 #define IDC_FP_EXP_DESC                 1531
 #define IDC_FP_DESC                     1532
-#define IDC_CATEGORY_SELECT             1533
 #define IDC_INFO_CATEGORY_SELECT        1533
 #define IDC_LICENCE                     1534
 #define IDC_LINE5                       1535
+#define IDC_FIND_OFFSET                 1536
+#define IDC_GRID_FILTERS                1537
+#define IDC_GRID_TIP                    1538
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1387,6 +1388,7 @@
 #define ID_NAV_BACK_FIRST               34000
 #define ID_NAV_FORW_FIRST               36000
 #define ID_DFFD_OPEN_FIRST              38000
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
@@ -1394,7 +1396,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        377
 #define _APS_NEXT_COMMAND_VALUE         39001
-#define _APS_NEXT_CONTROL_VALUE         1536
+#define _APS_NEXT_CONTROL_VALUE         1539
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
