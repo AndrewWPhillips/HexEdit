@@ -1,1422 +1,1365 @@
-.topic HIDC_MACRO_COMMENT
-Used to describe what the macro is for and how to run it.  This comment is displayed when you load the macro.
-
-.topic HIDC_PASSWORD_MASK
-Turn on masking if anyone could possibly see your screen while you enter the password.
-
-.topic HIDC_TO
-Select where you want to send the email.  The default is by far the best choice unless mail to it bounces.
-
-.topic HIDC_EQUALS
-Calculates the result of the pending binary operation.  Depending on the operator and the operands this may generate an error or overflow condition.
-
-.topic HIDC_UNARY_DEC
-Subtracts one from the displayed number.  If the number is zero an overflow occurs, except in decimal mode where and overflow occurs if the number is the smallest representable negative number.
-
-.topic HIDC_UNARY_NOT
-Inverts all the bits.  That is, a one bit becomes zero and vice versa.  Keyboard shortcut = ~.
-
-.topic HIDC_MARK_ADD
-Moves the Mark forward in the file by the current value.
-
-.topic HIDC_OCTAL
-Changes display and entry of numbers to octal (base 8).  The currently displayed number is converted to octal.  The only valid digits in octal are 0 to 7.  Keyboard shortcut = F7.
-
-.topic HIDC_OP_DISPLAY
-This displays any pending binary operator.  It may also display an O (for overflow) or an E (for error) depending on the result of the last operation.
-
-.topic HIDC_FIND_TYPE_EBCDIC
-The search uses characters from the EBCDIC character set..
-
-.topic HIDC_DEC_8BIT
-The decimal value of the byte at the current cursor position in the active window.
-
-.topic HIDC_FILE_CREATED
-The date and time the file was created.
-
-.topic HIDC_PRINT_HEADER_EDGE
-This is the distance that the header is printed from the top edge of each page.  If this is larger than the top margin the header will not be printed.
-
-.topic HIDC_FOOTER_OPTS
-Select from the list to add a parameter to the footer.
-
-.topic HIDC_DOWN
-Moves the current entry down in the list.  The groups are scanned from top to bottom so the order of group entries can be significant if more than one range can match a value.
-
-.topic HIDC_UP
-Moves the current entry up in the list.  The groups are scanned from top to bottom so the order of group entries can be significant if more than one range can match a value.
-
-.topic HIDC_REFRESH_KEYS
-The display is updated while the macro is playing based on the number of "keystrokes" replayed so far.
-
-.topic HIDC_COLS
-The number of columns in the hex area (and the character area if it is displayed).  Note that this value cannot be changed when autofit is on since the number of columns is automatically adjusted to fit the display (see "Autofit" to the right).
-
-.topic HIDC_PACK1
-An alignment of 1 means there are no alignment restrictions.
-
-.topic HIDC_DFFD_OFFSET_VAR
-Presents a menu tree that allows selection of any allowed identifiers, which can be used in the Expression (to the left).
-
-.topic HIDC_DFFD_UP
-Moves the current element up the order in the list of elements.
-
-.topic HIDC_DFFD_INSERT
-Inserts a new element after the selected element.  To add to the end of the list select the last (blank) entry in the list before using the Insert button.
-
-.topic HIDC_DFFD_ELSE_EDIT
-Allows editing the attributes of the ELSE element.  This button is unavailable if the "Else" checkbox (above) is not checked.
-
-.topic HIDC_DFFD_ELT
-Describes the nested element type, including its name (if any).  All items in the array are of this type.
-
-.topic HIDC_CLEAR_HIST
-Opens the Clear Histories dialog which allows you to clear search and replace histories, and delete all bookmarks and the recently opened file list.  You can also set an option to always clear these things.
-
-.topic HIDC_HELP_BUTTON
-Click the Help button to get context sensitive help for the dialog.  It explains the purpose of the dialog and details the use of all controls.
-
-.topic HIDC_BOOKMARK_REMOVE
-Deletes the selected bookmark(s).
+.topic HIDC_FILES_SELECTED
+Shows the number of files currently selected in the list.
 
 .topic HIDC_CLEAR_ON_EXIT
 When checked the above lists are cleared whenever you exit HexEdit normally.
 
-.topic HIDC_FILES_SELECTED
-Shows the number of files currently selected in the list.
+.topic HIDC_BOOKMARK_REMOVE
+Deletes the selected bookmark(s).
 
-.topic HIDC_REGISTER
-Select this option to email your registration information  Select info@hexedit.com from the To: list.
+.topic HIDC_HELP_BUTTON
+Click the Help button to get context sensitive help for the dialog.  It explains the purpose of the dialog and details the use of all controls.
 
-.topic HIDC_ROR
-Rotates the first value by the number of bits given in the second value.  The bits are moved to the right and any bits falling off the right end are added to the left end.  Rotating by the current number of bits in use gives the same value, since the bits are moved back to their original position.
+.topic HIDC_CLEAR_HIST
+Opens the Clear Histories dialog which allows you to clear search and replace histories, and delete all bookmarks and the recently opened file list.  You can also set an option to always clear these things.
 
-.topic HIDC_UNARY_AT
-Uses the current value as an address into the active file and replaces it with the value at that address.  The size of the value obtained depends on the current number of bits in effect.  The byte-order of the value depends on the Big-endian check-box.
+.topic HIDC_DFFD_ELT
+Describes the nested element type, including its name (if any).  All items in the array are of this type.
 
-.topic HIDC_MEM_GET
-Gets the current value from the calculator memory.  The number remains in memory.  If the value is too big for the current number of bits an overflow is signalled.  Keyboard shortcut = Ctrl+R.
+.topic HIDC_DFFD_ELSE_EDIT
+Allows editing the attributes of the ELSE element.  This button is unavailable if the "Else" checkbox (above) is not checked.
 
-.topic HID_BCG_TOOL_NEW
-Adds a new entry to the Tools menu.  Use an ampersand (&) in the name to define a menu accelerator for the letter following the ampersand.
+.topic HIDC_DFFD_INSERT
+Inserts a new element after the selected element.  To add to the end of the list select the last (blank) entry in the list before using the Insert button.
 
-.topic HIDC_BCGBARRES_MENU_ANIMATION
-This list determines how the menus are drawn onto the screen.
+.topic HIDC_DFFD_UP
+Moves the current element up the order in the list of elements.
 
-.topic HIDC_BCGBARRES_RENAME_TOOLBAR
-Renames a custom toolbar.
+.topic HIDC_DFFD_OFFSET_VAR
+Presents a menu tree that allows selection of any allowed identifiers, which can be used in the Expression (to the left).
 
-.topic HIDC_BCGBARRES_NEW_TOOLBAR
-Creates a custom toolbar.
+.topic HIDC_PACK1
+An alignment of 1 means there are no alignment restrictions.
 
-.topic HIDC_BCGBARRES_RESET
-Resets a standard toolbar (the Tool Bar or Edit Bar) or the Menu Bar to its initial (default) state.
+.topic HIDC_COLS
+The number of columns in the hex area (and the character area if it is displayed).  Note that this value cannot be changed when autofit is on since the number of columns is automatically adjusted to fit the display (see "Autofit" to the right).
 
-.topic HIDC_FIND_ALIGN4
-The search bytes are matched only if they occur on a 4 byte (double word) boundary.
+.topic HIDC_REFRESH_KEYS
+The display is updated while the macro is playing based on the number of "keystrokes" replayed so far.
 
-.topic HIDC_FIND_ALLOW_WILDCARD
-Allows use of a wildcard character that matches any character.
+.topic HIDC_UP
+Moves the current entry up in the list.
 
-.topic HIDC_FILE_ARCHIVED
-Checked if the file's archive flag has been set.  This flag is often set by backup software and is cleared when a file is modified.
+.topic HIDC_DOWN
+Moves the current entry down in the list.
 
-.topic HIDC_INFO_SIZE
-This shows the current size of the file as edited.  This may be different to the current size of the file on disk if bytes have been inserted or delted.
+.topic HIDC_FOOTER_OPTS
+Select from the list to add a parameter to the footer.
 
-.topic HIDC_TYPES_WINDOWS
-Includes a large number of types extracted from Windows header files (see _windows_types.xml).
+.topic HIDC_PRINT_HEADER_EDGE
+This is the distance that the header is printed from the top edge of each page.  If this is larger than the top margin the header will not be printed.
 
-.topic HIDC_VALUES_CUSTOM
-Use constant values extracted by previous use of the "Save new values" checkbox (below).
+.topic HIDC_FILE_CREATED
+The date and time the file was created.
 
-.topic HIDC_PACK2
-Default to word alignment.
+.topic HIDC_DEC_8BIT
+The decimal value of the byte at the current cursor position in the active window.
 
-.topic HIDC_DFFD_DEFAULT_BIG_ENDIAN
-Default endianness for all appropriate data fields of the file.  If an individual data field has "default" endianness then it uses this value.
+.topic HIDC_FIND_TYPE_EBCDIC
+The search uses characters from the EBCDIC character set..
 
-.topic HIDC_DFFD_BITFIELD_DIRN
-This determines whether bit-fields fill storage units from top to bottom or from bottom to top.  This is not to be confused with the Big-Endian field (above) which determines the order of bytes in the underlying storage unit.
+.topic HIDC_OP_DISPLAY
+This displays any pending binary operator.  It may also display an O (for overflow) or an E (for error) depending on the result of the last operation.
 
-.topic HIDC_DFFD_FORMAT_STRING
-Determines how strings are displayed in the Data column of the tree view, for any character fields that do not have explicit formatting. You can use C-language printf format specs such as "%s", "%10s" etc.
+.topic HIDC_OCTAL
+Changes display and entry of numbers to octal (base 8).  The currently displayed number is converted to octal.  The only valid digits in octal are 0 to 7.  Keyboard shortcut = F7.
 
-.topic HIDC_RESTORE
-Restore the main HexEdit window to its position when HexEdit was last run.
+.topic HIDC_MARK_ADD
+Moves the Mark forward in the file by the current value.
 
-.topic HIDC_GRID_RFL
-Select one or more files from the list then used the buttons on the right to operate on them.
+.topic HIDC_UNARY_NOT
+Inverts all the bits.  That is, a one bit becomes zero and vice versa.  Keyboard shortcut = ~.
+
+.topic HIDC_UNARY_DEC
+Subtracts one from the displayed number.  If the number is zero an overflow occurs, except in decimal mode where and overflow occurs if the number is the smallest representable negative number.
+
+.topic HIDC_EQUALS
+Calculates the result of the pending binary operation.  Depending on the operator and the operands this may generate an error or overflow condition.
+
+.topic HIDC_TO
+Select where you want to send the email.  The default is by far the best choice unless mail to it bounces.
+
+.topic HIDC_PASSWORD_MASK
+Turn on masking if anyone could possibly see your screen while you enter the password.
+
+.topic HIDC_MACRO_COMMENT
+Used to describe what the macro is for and how to run it.  This comment is displayed when you load the macro.
+
+.topic HIDC_FOLDER_PARENT
+Go to the parent folder.
 
 .topic HIDC_REMOVE_FILES
 The Remove button deletes the selected file(s) from the list.  The file(s) themselves are not changed.
 
-.topic HIDC_BUG
-Select this option to report a bug or defect of the software.
+.topic HIDC_GRID_RFL
+Select one or more files from the list then used the buttons on the right to operate on them.
 
-.topic HIDC_HEX_SIZE
-Specified initial size of new file in hex.
+.topic HIDC_RESTORE
+Restore the main HexEdit window to its position when HexEdit was last run.
 
-.topic HIDC_LSL
-The first value is shifted left, by the number of bits in the second.  New rightmost bits are zero.  This is equivalent to multiplying by a power of two.
+.topic HIDC_DFFD_FORMAT_STRING
+Determines how strings are displayed in the Data column of the tree view, for any character fields that do not have explicit formatting. You can use C-language printf format specs such as "%s", "%10s" etc.
 
-.topic HIDC_GTR
-Retains the larger of the two values.  If the second value is larger then a macro warning is generated.
+.topic HIDC_DFFD_BITFIELD_DIRN
+This determines whether bit-fields fill storage units from top to bottom or from bottom to top.  This is not to be confused with the Big-Endian field (above) which determines the order of bytes in the underlying storage unit.
 
-.topic HIDC_UNARY_ROR
-Rotates right by one bit.  That is all bits are shifted one position to the right and the rightmost bit is moved into the leftmost position.
+.topic HIDC_DFFD_DEFAULT_BIG_ENDIAN
+Default endianness for all appropriate data fields of the file.  If an individual data field has "default" endianness then it uses this value.
 
-.topic HIDC_MEM_CLEAR
-Clears the calculator memory (sets it to zero) and disables the Memory button.  Keyboard shortcut = Ctrl+L.
+.topic HIDC_PACK2
+Default to word alignment.
 
-.topic HIDC_8BIT
-Changes the current number size for entry and calculations to 8 bits (one byte).  If the current value does not fit into 8 bits an overflow is signalled.  Keyboard shortcut = F12.
+.topic HIDC_VALUES_CUSTOM
+Use constant values extracted by previous use of the "Save new values" checkbox (below).
 
-.topic HIDC_BINARY
-Changes display and entry of numbers to binary (base 2).  The currently displayed number is converted to binary.  The only valid digits in binary are 0 and 1.  Keyboard shortcut = F8.
+.topic HIDC_TYPES_WINDOWS
+Includes a large number of types extracted from Windows header files (see _windows_types.xml).
 
-.topic HIDC_BCGBARRES_SHOW_RECENTLY_USED_MENUS
-This option changes menus so that they (initially) only show recently used items.  Holding the mouse down over the menu forces it to display all items for the menu after a short time.
+.topic HIDC_INFO_SIZE
+This shows the current size of the file as edited.  This may be different to the current size of the file on disk if bytes have been inserted or delted.
 
-.topic HIDC_DEC_UNSIGNED
-Select this option to view the decimal values as unsigned numbers.
+.topic HIDC_FILE_ARCHIVED
+Checked if the file's archive flag has been set.  This flag is often set by backup software and is cleared when a file is modified.
 
-.topic HIDC_COLOUR_PICKER
-The color of the current selected entry or a new group to be added.  Click an entry in the drop down color picker to choose a color.
+.topic HIDC_FIND_ALLOW_WILDCARD
+Allows use of a wildcard character that matches any character.
 
-.topic HIDC_CURRENT
-Enter the name of a new group to be added to the scheme before clicking the Add button.  (This also displays the name of the currently selected existing group.)
+.topic HID_BCG_TOOL_NEW
+Adds a new entry to the Tools menu.  Use an ampersand (&) in the name to define a menu accelerator for the letter following the ampersand.
 
-.topic HIDC_REFRESH_PROPS
-Check this box if you want display refreshes to update the Properties Dialog (if displayed).
+.topic HIDC_MEM_GET
+Gets the current value from the calculator memory.  The number remains in memory.  If the value is too big for the current number of bits an overflow is signalled.  Keyboard shortcut = Ctrl+R.
 
-.topic HIDC_REFRESH_PLAYS
-The display is updated while the macro is playing based on the number of replays of the macro performed so far during multiple plays.
+.topic HIDC_UNARY_AT
+Uses the current value as an address into the active file and replaces it with the value at that address.  The size of the value obtained depends on the current number of bits in effect.  The byte-order of the value depends on the Big-endian check-box.
 
-.topic HIDC_ADDR_DEC
-Determines whether addresses are displayed in hex or decimal.
+.topic HIDC_ROR
+Rotates the first value by the number of bits given in the second value.  The bits are moved to the right and any bits falling off the right end are added to the left end.  Rotating by the current number of bits in use gives the same value, since the bits are moved back to their original position.
 
-.topic HIDC_DFFD_CASE_RANGE
-This contains an integer constant or a comma-separated list of integers or ranges of integers, corresponding to the currently selected item in the list (to the left).  The values is matched to the integer Expression (above) which determines which sub-element (if any) is present in the file.  For example, to match 5, 10 and any number between 100 and 200 (inclusive) enter this string in the Range(s) control: "5, 10, 100-200"
+.topic HIDC_REGISTER
+Select this option to email your registration information  Select info@hexedit.com from the To: list.
 
-.topic HIDC_DFFD_SWITCH_EXPR
-An integer expression that is evaluated to determine which of the cases below is satisfied.  The value of the expression is compared against each case value (or range) and the first matching one is taken.
+.topic HIDC_INFO_CATEGORY_SELECT
+Enter any relevant comments here such as where the file came from, what it contains, who has changed it and why, etc.
 
-.topic HIDC_DFFD_COUNT
-An integer constant or expression that determines the number of elements in the array (FOR).  If empty then the "Stop condition" (below) terminates the array.  If both Count and Stop are empty then the array continues to the end of file.
-
-.topic HIDC_DFFD_DOMAIN_VAR
-If the data type can be evaluated this presents a menu tree of valid identifiers, which can be used in the domain (validation) expression.  The expression should always include "this" since this is the value of the current field.
-
-.topic HIDC_DFFD_LENGTH_VAR
-For appropriate data types this presents a menu tree that allows selection of previous identifiers, which can be used in the length calculation expression.  For integer and floating point types it just presents a list allowed values (though you can use an expression even for those types).
-
-.topic HIDC_DFFD_UNITS
-For integer fields this is a comment field that contains the name of the units of data, if any.  For string fields this contains the string terminator (defaults to zero if not specified).
-
-.topic HIDC_EXPORT_LINELEN
-Number of bytes per record (line of text) when exporting to a Motorola S, Intel hex or hex text file.
+.topic HIDC_SLIDER
+Move the slider to adjust the transparency of the tip window.  Hold the mouse over the window to make it fully visible.
 
 .topic HIDC_HEX_UCASE
 Hex numbers are displayed using uppercase (digits A to F) rather than lowercase (a to f).
 
-.topic HID_REGISTER_INSTALL
-Click the Activate button once you have entered your activation code to complete the registration.
+.topic HIDC_EXPORT_LINELEN
+Number of bytes per record (line of text) when exporting to a Motorola S, Intel hex or hex text file.
 
-.topic HIDC_SCHEME_NAME
-Enter the name for the new scheme.  You cannot use the name of an existing scheme.
+.topic HIDC_DFFD_UNITS
+For integer fields this is a comment field that contains the name of the units of data, if any.  For string fields this contains the string terminator (defaults to zero if not specified).
 
-.topic HIDC_FILL_HELP
-Gives an overview of the fill options plus more detailed information on all the fields.
+.topic HIDC_DFFD_LENGTH_VAR
+For appropriate data types this presents a menu tree that allows selection of previous identifiers, which can be used in the length calculation expression.  For integer and floating point types it just presents a list allowed values (though you can use an expression even for those types).
 
-.topic HIDC_UNARY_LSL
-Shift left by one bit.  The new rightmost bit has value zero.  This is equivalent to multiplying by two.
+.topic HIDC_DFFD_DOMAIN_VAR
+If the data type can be evaluated this presents a menu tree of valid identifiers, which can be used in the domain (validation) expression.  The expression should always include "this" since this is the value of the current field.
 
-.topic HIDC_SEL_LEN
-Gets the length of the selection in the active file.  This number is always positive or zero.  If there is no selection the value is zero.
+.topic HIDC_DFFD_COUNT
+An integer constant or expression that determines the number of elements in the array (FOR).  If empty then the "Stop condition" (below) terminates the array.  If both Count and Stop are empty then the array continues to the end of file.
 
-.topic HIDC_SEL_STORE
-Sets the address of the cursor in the active file.
+.topic HIDC_DFFD_SWITCH_EXPR
+An integer expression that is evaluated to determine which of the cases below is satisfied.  The value of the expression is compared against each case value (or range) and the first matching one is taken.
 
-.topic HID_BCG_TOOL_ARGS
-Specifies the command line arguments (if any).
+.topic HIDC_DFFD_CASE_RANGE
+This contains an integer constant or a comma-separated list of integers or ranges of integers, corresponding to the currently selected item in the list (to the left).  The values is matched to the integer Expression (above) which determines which sub-element (if any) is present in the file.  For example, to match 5, 10 and any number between 100 and 200 (inclusive) enter this string in the Range(s) control: "5, 10, 100-200"
 
-.topic HID_BCG_DESC
-Describes the currently selected command.
+.topic HIDC_ADDR_DEC
+Determines whether addresses are displayed in hex or decimal.
 
-.topic HIDC_BCGBARRES_NEW_SHORTCUT_KEY
-To assign a new keyboard shortcut (or reassign an old one) select this box and type a keystroke.  When you click the Assign button the shortcut is assigned to the currently selected command.
+.topic HIDC_REFRESH_PLAYS
+The display is updated while the macro is playing based on the number of replays of the macro performed so far during multiple plays.
 
-.topic HIDC_FIND_OFFSET
-The search bytes must occur at this offset from the Alignment address.
+.topic HIDC_REFRESH_PROPS
+Check this box if you want display refreshes to update the Properties Dialog (if displayed).
 
-.topic HIDC_DEC_SIGN_MAG
-Select this option to view the decimal values as signed (Sign and Magnitude format) numbers.
+.topic HIDC_CURRENT
+Enter the name of a new group to be added to the scheme before clicking the Add button.  (This also displays the name of the currently selected existing group.)
 
-.topic HIDC_CHAR_DEC
-The decimal value (0 to 255) of the byte at the current cursor position in the active window.
+.topic HIDC_COLOUR_PICKER
+The color of the current selected entry or a new group to be added.  Click an entry in the drop down color picker to choose a color.
 
-.topic HIDC_FILE_TYPE
-The type of the file according to the system registry.  Nothing is shown if the file has no extension.
+.topic HIDC_DEC_UNSIGNED
+Select this option to view the decimal values as unsigned numbers.
 
-.topic HIDC_OFFSET
-The column in which the first byte of the file is displayed.  Must be between zero and one less than the number of columns.
+.topic HIDC_BINARY
+Changes display and entry of numbers to binary (base 2).  The currently displayed number is converted to binary.  The only valid digits in binary are 0 and 1.  Keyboard shortcut = F8.
 
-.topic HIDC_TYPES_SAVE
-Save any types encountered for later use.  This includes struct, class, union and enum declarations, and typedefs.
+.topic HIDC_8BIT
+Changes the current number size for entry and calculations to 8 bits (one byte).  If the current value does not fit into 8 bits an overflow is signalled.  Keyboard shortcut = F12.
 
-.topic HIDC_TYPES_COMMON
-Includes a few non-standard but commonly used types (see _common_types.xml).
+.topic HIDC_MEM_CLEAR
+Clears the calculator memory (sets it to zero) and disables the Memory button.  Keyboard shortcut = Ctrl+L.
 
-.topic HIDC_PACK4
-Default to double-word alignment.
+.topic HIDC_UNARY_ROR
+Rotates right by one bit.  That is all bits are shifted one position to the right and the rightmost bit is moved into the leftmost position.
 
-.topic HIDC_DFFD_SWITCH_EXPR_VAR
-Presents a menu tree that allows selection of any allowed identifiers, which can be used in the Expression (to the left).
+.topic HIDC_GTR
+Retains the larger of the two values.  If the second value is larger then a macro warning is generated.
 
-.topic HIDC_DFFD_DELETE
-Deletes the currently selected element and all of its sub-elements (if any).  You are asked to confirm deletion.
+.topic HIDC_LSL
+The first value is shifted left, by the number of bits in the second.  New rightmost bits are zero.  This is equivalent to multiplying by a power of two.
 
-.topic HIDC_DFFD_IF_ELT
-Describes the element that is used if the IF expression evaluates true.  Use the "Edit..." button (to the right) to modify the element.
+.topic HIDC_HEX_SIZE
+Specified initial size of new file in hex.
 
-.topic HIDC_BOOKMARK_GOTO
-Use the Go To button to jump to the selected bookmark.  The file containing the bookmark is opened if necessary.
+.topic HIDC_BUG
+Select this option to report a bug or defect of the software.
 
-.topic HIDC_VALIDATE
-Checks for the presence of all the files on disk and removes from the list any that cannot be found.
-
-.topic HIDC_BACKUP
-When a file is saved the previous version on disk is kept (using file extension ".BAK").  When this option is used all of the selected options below must also be satisified.
+.topic HIDC_FOLDER_VIEW
+Select how to diaplys the files withint the folder (icons, detailed list etc).
 
 .topic HIDC_SHOW_OTHER
 A 2nd cursor is displayed in the other (hex/character) area that shadows the normal cursor.  This allows you to quickly see the corresponding hex value or character.
 
-.topic HIDC_CSRC_FLOAT
-Generate comma-separated list of floating point numbers.
+.topic HIDC_BACKUP
+When a file is saved the previous version on disk is kept (using file extension ".BAK").  When this option is used all of the selected options below must also be satisified.
 
-.topic HIDC_OPEN_INFO
-Displays detailed information about the selected device.
+.topic HIDC_VALIDATE
+Checks for the presence of all the files on disk and removes from the list any that cannot be found.
 
-.topic HIDC_SIZE_LENGTH
-Read only field that displays the size of the file to be created if the Size: Data option is selected.  This is the size of the data specified in the "Fill With" section below, multiplied by the factor to the left.
+.topic HIDC_BOOKMARK_GOTO
+Use the Go To button to jump to the selected bookmark.  The file containing the bookmark is opened if necessary.
 
-.topic HIDC_SUBTRACT
-Binary operator that subtracts the second value from the first.  Keyboard shortcut = -.
+.topic HIDC_DFFD_IF_ELT
+Describes the element that is used if the IF expression evaluates true.  Use the "Edit..." button (to the right) to modify the element.
 
-.topic HIDC_POW
-Binary operator that raises the first value to the power of the second.
+.topic HIDC_DFFD_DELETE
+Deletes the currently selected element and all of its sub-elements (if any).  You are asked to confirm deletion.
 
-.topic HIDC_SEL_LEN_STORE
-Sets the length of the selection in the active file to the current value.  If the current value is zero any selection is removed.  If the current value is negative then the current cursor position becomes the end of the selection, and the start of selection (cursor position) is moved backwards in the file.
+.topic HIDC_DFFD_SWITCH_EXPR_VAR
+Presents a menu tree that allows selection of any allowed identifiers, which can be used in the Expression (to the left).
 
-.topic HIDC_SEL_GET
-Gets the address of the cursor in the active file, or the address of the start of the selection if there is a selection.
+.topic HIDC_PACK4
+Default to double-word alignment.
 
-.topic HIDC_MARK_AT_STORE
-Stores the current value into the active file at the address of the Mark.  The size of the value stored depends on the current number of bits in effect.  The byte-order of the value stored depends on the Big-endian check-box.  This button may be disabled if the file is read-only or there are not enough bytes before end of file.
+.topic HIDC_TYPES_COMMON
+Includes a few non-standard but commonly used types (see _common_types.xml).
 
-.topic HIDC_MARK_CLEAR
-Sets the Mark in the active file to zero.
+.topic HIDC_TYPES_SAVE
+Save any types encountered for later use.  This includes struct, class, union and enum declarations, and typedefs.
 
-.topic HIDC_MARK_GET
-Gets the current address of the Mark from the active file.
+.topic HIDC_OFFSET
+The column in which the first byte of the file is displayed.  Must be between zero and one less than the number of columns.
 
-.topic HIDC_CLEAR
-Clears any pending binary operator and sets the current value to zero.
+.topic HIDC_FILE_TYPE
+The type of the file according to the system registry.  Nothing is shown if the file has no extension.
 
-.topic HID_BCG_DLG
-No help is available for this part of the customize dialog.
+.topic HIDC_CHAR_DEC
+The decimal value (0 to 255) of the byte at the current cursor position in the active window.
 
-.topic HIDC_BCGBARRES_VIEW_TYPE
-Lists the keyboard tables available.  Currently there is only one (Default).
+.topic HIDC_DEC_SIGN_MAG
+Select this option to view the decimal values as signed (Sign and Magnitude format) numbers.
 
-.topic HIDC_BCGBARRES_RESET_ALL
-Resets all standard toolbars and the Menu Bar to their default state.
+.topic HIDC_FIND_OFFSET
+The search bytes must occur at this offset from the Alignment address.
 
-.topic HIDC_FIND_NUM_STRING
-Enter an integer or floating-point number here (depending on the Format selected below).
+.topic HID_BCG_DESC
+Describes the currently selected command.
 
-.topic HIDC_FIND_REPLACE
-Replace the current instance of the search item with the replacement item and searches for the next occurrence.
+.topic HID_BCG_TOOL_ARGS
+Specifies the command line arguments (if any).
 
-.topic HIDC_DATE_FIRST
-Sets the date and time to the first valid value for the currently selected date format.
+.topic HIDC_SEL_STORE
+Sets the address of the cursor in the active file.
 
-.topic HIDC_DEC_16BIT
-The decimal value of the word at the current cursor position (the 2 bytes following the cursor).
+.topic HIDC_SEL_LEN
+Gets the length of the selection in the active file.  This number is always positive or zero.  If there is no selection the value is zero.
 
-.topic HIDC_GRID
-Use the columns of the filter list to enter the text description of the filter and the file "wildcard" pattern that is used to filter the files.  The check box on the left can be used to disable a filter without deleting it.
+.topic HIDC_UNARY_LSL
+Shift left by one bit.  The new rightmost bit has value zero.  This is equivalent to multiplying by two.
 
-.topic HIDC_RESET
-Resets the colors for the current scheme to the default settings.
+.topic HIDC_FILL_HELP
+Gives an overview of the fill options plus more detailed information on all the fields.
 
-.topic HIDC_CHARSET
-Selects which character set is used to display characters in the character area.  This option is only available if characters are being displayed.
+.topic HIDC_SCHEME_NAME
+Enter the name for the new scheme.  You cannot use the name of an existing scheme.
 
-.topic HIDC_TYPES_STD
-Includes standard types as used by your compiler.  By default this file is tuned for the Microsoft VC++ compiler, but can be adjusted for any compiler by modifying _standard_types.xml.
+.topic HID_REGISTER_INSTALL
+Click the Activate button once you have entered your activation code to complete the registration.
 
-.topic HIDC_DFFD_STOP_VAR
-Presents a menu tree that allows selection of any allowed identifiers, which can be used in the Stop (termination) condition, including "this" which is the value of the current array item.
+.topic HIDC_GRID_TIP
+Use the columns of the tips list to enter a description, an expression  (using predefined identifiers) to be evaluated and a format specification.  The check box on the left can be used to disable a tip without deleting it.
 
-.topic HIDC_DFFD_COMMENTS
-Any other information you want to add to describe the element.
+.topic HIDC_DFFD_NONE
+Templates are hidden by default.  This option is only used when you open a file you have not opened in HexEdit before or create a new file.
 
 .topic HIDC_SAVE_EXIT
 The current settings for all global options, including those under the System, and Display tabs, are saved when you exit from HexEdit.
 
-.topic HIDC_REG_CODE
-You need to supply this registration code when you pay for HexEdit. Note that I and 1 and 0 and O are considered equivalent.
+.topic HIDC_DFFD_COMMENTS
+Any other information you want to add to describe the element.
 
-.topic HIDC_PASSWORD_ENTER
-Type the password used for encryption and decryption here.
+.topic HIDC_DFFD_STOP_VAR
+Presents a menu tree that allows selection of any allowed identifiers, which can be used in the Stop (termination) condition, including "this" which is the value of the current array item.
 
-.topic HIDC_ENHANCE
-Select this option to request an enhancement.
+.topic HIDC_TYPES_STD
+Includes standard types as used by your compiler.  By default this file is tuned for the Microsoft VC++ compiler, but can be adjusted for any compiler by modifying _standard_types.xml.
 
-.topic HIDC_SCHEME_LIST
-Select an existing scheme to use its settings as the defaults.  This includes all standard color settings and any ranges.
+.topic HIDC_CHARSET
+Selects which character set is used to display characters in the character area.  This option is only available if characters are being displayed.
 
-.topic HIDC_PRINT_OPTIONS
-Display printing options (the Print page of the Options dialog).
+.topic HIDC_RESET
+Resets the colors for the current scheme to the default settings.
 
-.topic HIDC_CSRC_INT_TYPE
-Format of generated integers.
+.topic HIDC_DEC_16BIT
+The decimal value of the word at the current cursor position (the 2 bytes following the cursor).
 
-.topic HIDC_OPEN_TREE
-Displays all the devices that can be opened.  Select a device and click OK to open it.
+.topic HIDC_DATE_FIRST
+Sets the date and time to the first valid value for the currently selected date format.
 
-.topic HIDC_AND
-Performs a logical AND of the two values.  Keyboard shortcut = &.
+.topic HIDC_FIND_REPLACE
+Replace the current instance of the search item with the replacement item and searches for the next occurrence.
 
-.topic HIDC_BACKSPACE
-Deletes the last digit typed or the digit to the left of the flashing cursor in the numeric entry box.  Keyboard shortcut = BackSpace key.
+.topic HIDC_FIND_NUM_STRING
+Enter an integer or floating-point number here (depending on the Format selected below).
 
-.topic HIDC_32BIT
-Changes the current number size for entry and calculations to 32 bits (4 bytes).  If the previous size was 64 bits and the current value does not fit into 32 bits an overflow is signalled.  Keyboard shortcut = F10.
+.topic HID_BCG_DLG
+No help is available for this part of the customize dialog.
 
-.topic HIDC_BCGBARRES_RESET_USAGE_DATA
-This option resets all menus so that they do not remember which items have been recently used.
+.topic HIDC_CLEAR
+Clears any pending binary operator and sets the current value to zero.
 
-.topic HIDC_BCGBARRES_LOOK2000
-This option turns on the toolbar and menu look associated with Windows 2000.
+.topic HIDC_MARK_GET
+Gets the current address of the Mark from the active file.
 
-.topic HIDC_BCGBARRES_RESET_SHORTCUTS
-Resets all keyboard shortcuts to their default (initial) state.
+.topic HIDC_MARK_CLEAR
+Sets the Mark in the active file to zero.
 
-.topic HIDC_BCGBARRES_REMOVE
-Removes the selected keyboard shortcut (shown in the "Current Keys" list) from the selected command (shown in the "Commands" list).
+.topic HIDC_MARK_AT_STORE
+Stores the current value into the active file at the address of the Mark.  The size of the value stored depends on the current number of bits in effect.  The byte-order of the value stored depends on the Big-endian check-box.  This button may be disabled if the file is read-only or there are not enough bytes before end of file.
 
-.topic HIDC_BCGBARRES_LIST_VIEWS
-Lists the double-click areas that can be customised.  The 3 areas are the main hex area of the file display, the character area to the right (if present), and the address area to the left.
+.topic HIDC_SEL_GET
+Gets the address of the cursor in the active file, or the address of the start of the selection if there is a selection.
 
-.topic HIDC_FIND_ALIGN8
-The search bytes are matched only if they occur on an 8 byte (quad word) boundary.
+.topic HIDC_SEL_LEN_STORE
+Sets the length of the selection in the active file to the current value.  If the current value is zero any selection is removed.  If the current value is negative then the current cursor position becomes the end of the selection, and the start of selection (cursor position) is moved backwards in the file.
 
-.topic HIDC_DATE_TIME
-Use the time control to view and change the time.
+.topic HIDC_POW
+Binary operator that raises the first value to the power of the second.
 
-.topic HIDC_DATE_FORMAT_DESC
-The number of bytes used by the currently selected date format.
+.topic HIDC_SUBTRACT
+Binary operator that subtracts the second value from the first.  Keyboard shortcut = -.
 
-.topic HIDC_IBMFP_32BIT
-Select this option to view the 32 bit (4 byte) IBM floating-point number.
+.topic HIDC_SIZE_LENGTH
+Read only field that displays the size of the file to be created if the Size: Data option is selected.  This is the size of the data specified in the "Fill With" section below, multiplied by the factor to the left.
 
-.topic HIDC_FP_32BIT
-Select this option to view the 32 bit (4 byte) IEEE floating-point number.  This is usually a "float" in the C/C++ language.
+.topic HIDC_OPEN_INFO
+Displays detailed information about the selected device.
 
-.topic HIDC_PLACE_HOLDER
-The Unicode character of the 2 bytes following the cursor.  Note that this is only displayed under Windows 2000/XP.
+.topic HIDC_CSRC_FLOAT
+Generate comma-separated list of floating point numbers.
 
-.topic HIDC_FILE_NAME
-The disk file name of the file in the active window.  This field may be blank if the file has not yet been saved.
-
-.topic HIDC_INFO_KEYWORDS
-This comment field is for one or more keywords separated by spaces or commas.  It is to be used for searching for matching files.
-
-.topic HID_DFFD_PREV
-Saves information about the current data element and moves to the previous element in the parent STRUCT, if any.
-
-.topic HIDC_GROUPING
-The number of columns per group in the hex display area.  Note that this also sets the number of columns by which the Ctrl+Left Arrow and Ctrl+Right Arrow keys move.
-
-.topic HIDC_SOURCE_CODE
-Enter or paste C or C++ source code here.  This is typically a struct extracted from a header file but can include almost any source code, including all standard preprocessor directives (macros, #include, #ifdef etc), classes, arrays, unions, enums, #pragma pack, etc, etc.
-
-.topic HIDC_DFFD_DEFAULT_READ_ONLY
-Default read only status for all data fields of the file.  If an individual data field has "default" read-only status then it uses this status.
-
-.topic HIDC_DFFD_CASES
-The list of sub-elements one of which is chosen depending on the value of the Expression (above).  Select an item in the list and edit it using the buttons to the right.
-
-.topic HIDC_DFFD_ELEMENTS
-The list of elements contained in the STRUCT.  Select an element then use the "Edit", "Delete" etc buttons.
-
-.topic HIDC_DFFD_ELSE_REPLACE
-Allows replacing the current ELSE element with a different type of element.  This button is unavailable if the "Else" checkbox (above) is not checked.
-
-.topic HIDC_DFFD_ELSE
-Use this checkbox to indicate if the IF element has an alternative (ELSE) sub-element for the case where the IF expression returns false.
-
-.topic HIDC_DFFD_REPLACE
-Use the "Replace with" menu to select a different type of nested element.
-
-.topic HIDC_DFFD_EDIT
-Use this to change attributes of the nested element.
-
-.topic HIDC_DFFD_COUNT_VAR
-Presents a menu tree that allows selection of any allowed identifiers, which can be used in the count (array size) expression.
-
-.topic HIDC_DFFD_READ_ONLY
-Determines whether the data bytes associated with the field can be modified.  If the checkbox is not on or off (ie grey) then whether the field is read-only depends on the global template default (see Global Options).
-
-.topic HIDC_DFFD_FORMAT_UINT
-Determines how unsigned integers are displayed in the Data column of the tree view, for fields that do not have explicit formatting.  You can use any C-language printf format spec, or special formats "hex", "dec", "oct", "bin" etc.  The "hex" format displays hex values with spacing for readability.
-
-.topic HIDC_MDITABS
-Display tabs for all open files/windows at the top or bottom of the main Hex Edit window.
-
-.topic HIDC_SHELLOPEN
-When selected an item is placed on shell shortcut menus (eg. seen when you right-click on a file in Windows Explorer) to "Open with HexEdit".
+.topic HIDC_FOLDER_BACK
+Go back to the previous folder.
 
 .topic HIDC_BACKUP_PROMPT
 HexEdit prompts to save a backup copy of the file (assuming all above options have been satisfied) and only creates a backup file if Yes is chosen.
 
-.topic HIDC_PASSWORD_MIN
-Set the minimum password length that is required for your purposes.
+.topic HIDC_SHELLOPEN
+When selected an item is placed on shell shortcut menus (eg. seen when you right-click on a file in Windows Explorer) to "Open with HexEdit".
 
-.topic HIDC_ATTACH
-Select this to attach a file to send with the email.
+.topic HIDC_MDITABS
+Display tabs for all open files/windows at the top or bottom of the main Hex Edit window.
 
-.topic HIDC_CSRC_CHAR
-Generate comma-separated list of characters.  Each character is enclosed in single-quotes.  All control characters are handled.
+.topic HIDC_DFFD_FORMAT_UINT
+Determines how unsigned integers are displayed in the Data column of the tree view, for fields that do not have explicit formatting.  You can use any C-language printf format spec, or special formats "hex", "dec", "oct", "bin" etc.  The "hex" format displays hex values with spacing for readability.
 
-.topic HIDC_OPEN_READONLY
-Prevents changes being made to a device.  It is recommended a device is opened read-only (for safety) unless you are going to make changes.  This checkbox will be disabled for devices that do no support/allow writing such as write-protected media.
+.topic HIDC_DFFD_READ_ONLY
+Determines whether the data bytes associated with the field can be modified.  If the checkbox is not on or off (ie grey) then whether the field is read-only depends on the global template default (see Global Options).
 
-.topic HIDC_FILL_HEX_VALUE
-One or more hex digits for fill.
+.topic HIDC_DFFD_COUNT_VAR
+Presents a menu tree that allows selection of any allowed identifiers, which can be used in the count (array size) expression.
 
-.topic HIDC_FILL_SIZE_CALC
-The size of the new file is the current value in the calculator.  (This is sometimes useful in macros.)
+.topic HIDC_DFFD_EDIT
+Use this to change attributes of the nested element.
 
-.topic HIDC_UNARY_FLIP
-Flips the order of the bytes of the number.  This converts between big- and little-endian formats.  If currently in 8 bit mode this button is disabled.
+.topic HIDC_DFFD_REPLACE
+Use the "Replace with" menu to select a different type of nested element.
 
-.topic HIDC_CLEAR_ENTRY
-Clears the current entry to zero.
+.topic HIDC_DFFD_ELSE
+Use this checkbox to indicate if the IF element has an alternative (ELSE) sub-element for the case where the IF expression returns false.
 
-.topic HIDC_64BIT
-Changes the current number size for entry and calculations to 64 bits (8 bytes).  Keyboard shortcut = F9.
+.topic HIDC_DFFD_ELSE_REPLACE
+Allows replacing the current ELSE element with a different type of element.  This button is unavailable if the "Else" checkbox (above) is not checked.
 
-.topic HID_BCG_TOOL_UP
-Moves the currently selected tool up in the list.
+.topic HIDC_DFFD_ELEMENTS
+The list of elements contained in the STRUCT.  Select an element then use the "Edit", "Delete" etc buttons.
 
-.topic HIDC_BCGBARRES_NO_DBLCLIICK
-This options means that no action is taken when a mouse double-click is performed.
+.topic HIDC_DFFD_CASES
+The list of sub-elements one of which is chosen depending on the value of the Expression (above).  Select an item in the list and edit it using the buttons to the right.
 
-.topic HIDC_BCGBARRES_CONTEXT_MENU_LIST
-Lists the context menus for HexEdit.  There are 6 different menus.  They are for the main hex area of the file display, the character area to the right of the hex area (if present), the address area to the left of the hex area, the status bar, the current selection menu and the highlighted bytes menu.  You can customise the currently selected context menu using the Commands page.
+.topic HIDC_DFFD_DEFAULT_READ_ONLY
+Default read only status for all data fields of the file.  If an individual data field has "default" read-only status then it uses this status.
 
-.topic HIDC_BCGBARRES_MENU_LIST
-Lists the frame menus for HexEdit.  The Default menu is displayed when no files are open.  You can modify the selected menu using the Commands page.
+.topic HIDC_SOURCE_CODE
+Enter or paste C or C++ source code here.  This is typically a struct extracted from a header file but can include almost any source code, including all standard preprocessor directives (macros, #include, #ifdef etc), classes, arrays, unions, enums, #pragma pack, etc, etc.
 
-.topic HIDC_FIND_TYPE_ASCII
-The search uses characters from the ASCII character set.
+.topic HIDC_GROUPING
+The number of columns per group in the hex display area.  Note that this also sets the number of columns by which the Ctrl+Left Arrow and Ctrl+Right Arrow keys move.
 
-.topic HIDC_FIND_COMBINED_STRING
-Type the hex bytes or text you want to search for, or select a previous search from the list.  If the search fails then double-check all the options used and the type of search (hex or text) performed.
+.topic HID_DFFD_PREV
+Saves information about the current data element and moves to the previous element in the parent STRUCT, if any.
 
-.topic HIDC_DATE_DATE
-Use the date control to view and change the date.
+.topic HIDC_INFO_KEYWORDS
+This comment field is for one or more keywords separated by spaces or commas.  It is to be used for searching for matching files.
 
-.topic HIDC_IBMFP_64BIT
-Select this option to view the 64 bit (8 byte) IBM floating-point number.
+.topic HIDC_FILE_NAME
+The disk file name of the file in the active window.  This field may be blank if the file has not yet been saved.
 
-.topic HIDC_FP_64BIT
-Select this option to view the 64 bit (8 byte) IEEE floating-point number.  This is usually a "double" in the C/C++ language.
+.topic HIDC_PLACE_HOLDER
+The Unicode character of the 2 bytes following the cursor.  Note that this is only displayed under Windows 2000/XP.
 
-.topic HIDC_FP_MANT
-The mantissa of the IEEE floating-point number.
+.topic HIDC_FP_32BIT
+Select this option to view the 32 bit (4 byte) IEEE floating-point number.  This is usually a "float" in the C/C++ language.
 
-.topic HIDC_INFO_CATEGORY
-You can enter anything here.  This field may be useful for grouping like files so they can be seen together in the Recent Files dialog.
+.topic HIDC_IBMFP_32BIT
+Select this option to view the 32 bit (4 byte) IBM floating-point number.
 
-.topic HIDC_PRINT_SPACE1HALF
-Select this option to one and a half line spacing on the printer.
+.topic HIDC_DATE_FORMAT_DESC
+The number of bytes used by the currently selected date format.
 
-.topic HIDC_SAVEMACRO
-Save the current macro to a macro file.
+.topic HIDC_DATE_TIME
+Use the time control to view and change the time.
 
-.topic HIDC_CONTROL
-Select whether control characters are shown as dots, as their corresponding ASCII character or as their C/C++ escape sequence character.  This option is only available for the ASCII and ANSI character sets.
+.topic HIDC_32BIT
+Changes the current number size for entry and calculations to 32 bits (4 bytes).  If the previous size was 64 bits and the current value does not fit into 32 bits an overflow is signalled.  Keyboard shortcut = F10.
 
-.topic HIDC_SHOW_AREA
-Select whether the hex area, the character area or both areas are displayed.  HexEdit 3.0 allows the 4th option of using Stacked mode.
+.topic HIDC_BACKSPACE
+Deletes the last digit typed or the digit to the left of the flashing cursor in the numeric entry box.  Keyboard shortcut = BackSpace key.
 
-.topic HIDC_WEB_CHECK
-Click this button to jump to the web site to ensure that it is correct.
+.topic HIDC_AND
+Performs a logical AND of the two values.  Keyboard shortcut = &.
 
-.topic HIDC_DFFD_ASCII
-Says that strings and characters are ASCII unless otherwise specified.
+.topic HIDC_OPEN_TREE
+Displays all the devices that can be opened.  Select a device and click OK to open it.
 
-.topic HIDC_DFFD_DISPLAY
-Describes how the field is displayed in the "Data" column of the tree view.  The acceptable values depend on the type of the data.
+.topic HIDC_CSRC_INT_TYPE
+Format of generated integers.
 
-.topic HIDC_DFFD_BITFIELD_BITS
-The number of bits of the storage unit used by this bit-field.  Whether bit-fields fill from the top or bottom is determined by the Direction control (to the right).  If the number of bits used by this and previous bit-fields would overflow the current storage unit then a new storage unit is started.  The number of bits must be less than Length x 8 (the maximum number of bits that can be placed in one storage unit).
+.topic HIDC_PRINT_OPTIONS
+Display printing options (the Print page of the Options dialog).
 
-.topic HIDC_DFFD_TYPE
-The kind of data without regard to specific formatting.
+.topic HIDC_SCHEME_LIST
+Select an existing scheme to use its settings as the defaults.  This includes all standard color settings and any ranges.
 
-.topic HIDC_DFFD_ALLOW_EDIT
-When template editing is on you can edit the template in the tree view using commands and the template editing dialogs (available from the context menus) and drag-and-drop.
+.topic HIDC_ENHANCE
+Select this option to request an enhancement.
 
-.topic HIDC_BG_SEARCH
-This turns on background searching for all occurrences of the current search text.  Occurrences found are shown with a light-green background (in default color scheme).
+.topic HIDC_PASSWORD_ENTER
+Type the password used for encryption and decryption here.
 
-.topic HIDC_OPEN_RO
-Click the "Open read-only" button to open the selected files in read-only mode.
+.topic HIDC_REG_CODE
+You need to supply this registration code when you pay for HexEdit. Note that I and 1 and 0 and O are considered equivalent.
 
 .topic HIDC_BACKUP_SIZE
 The file size (in KB) used with the Only if size is less than option.
 
-.topic HIDC_PLAYS
-Enter the number of times you want the macro to play and press Enter.
+.topic HIDC_OPEN_RO
+Click the "Open read-only" button to open the selected files in read-only mode.
 
-.topic HIDC_ATTACHMENT
-Name of the file to be attached.  The file name defaults to the active file.
+.topic HIDC_BG_SEARCH
+This turns on background searching for all occurrences of the current search text.  Occurrences found are shown with a light-green background (in default color scheme).
 
-.topic HIDC_OTHER
-Select this option for any other type of feedback.
+.topic HIDC_DFFD_TYPE
+The kind of data without regard to specific formatting.
 
-.topic HIDC_FILL_RANDOM_RANGE
-One or more values or ranges of random bytes (0 to 255).
+.topic HIDC_DFFD_BITFIELD_BITS
+The number of bits of the storage unit used by this bit-field.  Whether bit-fields fill from the top or bottom is determined by the Direction control (to the right).  If the number of bits used by this and previous bit-fields would overflow the current storage unit then a new storage unit is started.  The number of bits must be less than Length x 8 (the maximum number of bits that can be placed in one storage unit).
 
-.topic HIDC_FILL_STRING_VALUE
-One or more characters for fill.
+.topic HIDC_DFFD_DISPLAY
+Describes how the field is displayed in the "Data" column of the tree view.  The acceptable values depend on the type of the data.
 
-.topic HIDC_FILL_STRING
-Fill new file with one or more characters.
+.topic HIDC_DFFD_ASCII
+Says that strings and characters are ASCII unless otherwise specified.
 
-.topic HIDC_XOR
-Performs an Exclusive OR of the two values.  Keyboard shortcut = ^.
+.topic HIDC_WEB_CHECK
+Click this button to jump to the web site to ensure that the address is correct.
 
-.topic HIDC_UNARY_SIGN
-Changes the sign of the (2's complement) number.  This is equivalent to inverting the bits (NOT) and adding one (INC).
+.topic HIDC_SHOW_AREA
+Select whether the hex area, the character area or both areas are displayed.  HexEdit 3.0 allows the 4th option of using Stacked mode.
 
-.topic HIDC_UNARY_SQUARE
-Squares the displayed number.  If the result is too big to display in the current number of bits then an overflow occurs.
+.topic HIDC_CONTROL
+Select whether control characters are shown as dots, as their corresponding ASCII character or as their C/C++ escape sequence character.  This option is only available for the ASCII and ANSI character sets.
 
-.topic HIDC_MARK_AT
-Gets a value from the active file at the address of the Mark.  The size of the value obtained depends on the current numbers of bits in effect.  The byte-order of the value obtained depends on the Big-endian check-box.
+.topic HIDC_SAVEMACRO
+Save the current macro to a macro file.
 
-.topic HIDC_MEM_STORE
-Store the current value to memory.  Keyboard shortcut = Ctrl+M.
+.topic HIDC_PRINT_SPACE1HALF
+Select this option to one and a half line spacing on the printer.
 
-.topic HIDC_HEX
-Changes display and entry of numbers to hexadecimal or hex (base 16).  The currently displayed number is converted to hex.  The largest hex number that can be displayed in 64 bit mode is FFFFFFFFFFFFFFFF, in 32 bit mode FFFFFFFF, in 16 bit mode FFFF and 8 bit mode FF.  Keyboard shortcut = F5.
+.topic HIDC_INFO_CATEGORY
+You can enter anything here.  This field may be useful for grouping like files so they can be seen together in the Recent Files dialog.
 
-.topic HIDC_BCGBARRES_BUTTON_DESCR
-Provides a description of the selected command.
+.topic HIDC_FP_MANT
+The mantissa of the IEEE floating-point number.
 
-.topic HIDC_FIND_ALIGN
-The search bytes are matched when they occur at an address that is divisible by the alignment value (plus the Offset).  An alignment of one means they are always matched.
+.topic HIDC_FP_64BIT
+Select this option to view the 64 bit (8 byte) IEEE floating-point number.  This is usually a "double" in the C/C++ language.
 
-.topic HIDC_FIND_SCOPE_TOMARK
-Used to restrict the search to the area from the current position to the mark within the active file.
+.topic HIDC_IBMFP_64BIT
+Select this option to view the 64 bit (8 byte) IBM floating-point number.
 
-.topic HIDC_DATE_BIG_ENDIAN
-Select this option to view the date using big-endian numeric format.  Typically this option is off as Windows/Intel systems use little-endian byte order.\highlight7
+.topic HIDC_DATE_DATE
+Use the date control to view and change the date.
 
-.topic HIDC_CHAR_BINARY
-The binary value (00000000 to 11111111) of the byte at the current cursor position in the active window.  Double-click a bit to flip it.
+.topic HIDC_FIND_COMBINED_STRING
+Type the hex bytes or text you want to search for, or select a previous search from the list.  If the search fails then double-check all the options used and the type of search (hex or text) performed.
 
-.topic HIDC_FILE_HIDDEN
-Checked if the file is a hidden file.
+.topic HIDC_FIND_TYPE_ASCII
+The search uses characters from the ASCII character set.
 
-.topic HIDC_INFO_COMMENTS
-Enter any relevant comments here such as where the file came from, what it contains, who has changed it and why, etc.
+.topic HID_BCG_TOOL_UP
+Moves the currently selected tool up in the list.
 
-.topic HIDC_PRINT_RIGHT
-The amount of space to leave blank on the right side of every page.
+.topic HIDC_64BIT
+Changes the current number size for entry and calculations to 64 bits (8 bytes).  Keyboard shortcut = F9.
 
-.topic HID_DFFD_NEXT
-Saves information about the current data element and moves to the next element in the parent STRUCT, if any.
+.topic HIDC_CLEAR_ENTRY
+Clears the current entry to zero.
 
-.topic HIDC_DEFAULT
-Saves the current settings as the default.  The settings are used for files create in HexEdit and files that have not been opened in HexEdit before.
+.topic HIDC_UNARY_FLIP
+Flips the order of the bytes of the number.  This converts between big- and little-endian formats.  If currently in 8 bit mode this button is disabled.
 
-.topic HIDC_REMOVE
-Removes the currently selected group from the list.  You cannot remove any of the first 10 standard color items.
+.topic HIDC_FILL_SIZE_CALC
+The size of the new file is the current value in the calculator.  (This is sometimes useful in macros.)
 
-.topic HIDC_ADD_SCHEME
-Adds a new color scheme based on an existing scheme.
+.topic HIDC_FILL_HEX_VALUE
+One or more hex digits for fill.
 
-.topic HIDC_VERTBUFFER
-The number of rows from the top or bottom edge of the window within which cursor movement causes scrolling.
+.topic HIDC_OPEN_READONLY
+Prevents changes being made to a device.  It is recommended a device is opened read-only (for safety) unless you are going to make changes.  This checkbox will be disabled for devices that do no support/allow writing such as write-protected media.
 
-.topic HIDC_VALUES_WINDOWS
-Use standard constants appropriate for MSWindows operating system (MAX_PATH etc) as well as constants defined in Windows header files (MAX_FNAME etc).
+.topic HIDC_CSRC_CHAR
+Generate comma-separated list of characters.  Each character is enclosed in single-quotes.  All control characters are handled.
 
-.topic HIDC_PACK8
-Default to quad-word alignment.
+.topic HIDC_ATTACH
+Select this to attach a file to send with the email.
 
-.topic HIDC_ELT_OFFSET
-Shows offset of the selected element (ie the size of all elements above).  If any above elements are of indeterminate size then the offset is shown as a question mark (?).  The "offset" of the blank item at the end of the list is the size of the STRUCT.
+.topic HIDC_PASSWORD_MIN
+Set the minimum password length that is required for your purposes.
 
 .topic HIDC_DFFD_FORMAT_INT
 Determines how integers are displayed in the Data column of the tree view, for fields that do not have explicit formatting.  You can use any C-language printf format spec, or special formats "hex", "dec", "bin" etc.  The "dec" format displays nice decimal values formatted according to regional conventions.
 
-.topic HIDC_INSTALL_CODE
-Type in your activation code here (or paste from the clipboard).  The activation code is given to you once you have supplied your name or registration code and paid for HexEdit.
+.topic HIDC_ELT_OFFSET
+Shows offset of the selected element (ie the size of all elements above).  If any above elements are of indeterminate size then the offset is shown as a question mark (?).  The "offset" of the blank item at the end of the list is the size of the STRUCT.
 
-.topic HIDC_ALG_BLOCKLEN
-This is the block length for block ciphers, otherwise it indicates the algorithm is a stream cipher.
+.topic HIDC_PACK8
+Default to quad-word alignment.
 
-.topic HIDC_CSRC_INDENT
-Number of spaces to indent each line of text.
+.topic HIDC_VALUES_WINDOWS
+Use standard constants appropriate for MSWindows operating system (MAX_PATH etc) as well as constants defined in Windows header files (MAX_FNAME etc).
 
-.topic HIDC_DIGIT_0
-Click the digit buttons to enter a number.  Depending on the current base some buttons may be disabled.  For example in octal mode the digits A to F plus 8 and 9 are not valid octal digits.
+.topic HIDC_VERTBUFFER
+The number of rows from the top or bottom edge of the window within which cursor movement causes scrolling.
 
-.topic HIDC_LSR
-The first value is shifted right by the number of bits in the second.  New leftmost bits are zero.  This is equivalent to dividing an unsigned number by a power of two.
+.topic HIDC_ADD_SCHEME
+Adds a new color scheme based on an existing scheme.
 
-.topic HIDC_OR
-Performs a logical OR of the two values.  Keyboard shortcut = |.
+.topic HIDC_REMOVE
+Removes the currently selected group from the list.  You cannot remove any of the first 10 standard color items.
 
-.topic HIDC_LESS
-Retains the smaller of the two values.  If the second value is smaller then a macro warning is generated.
+.topic HID_DFFD_NEXT
+Saves information about the current data element and moves to the next element in the parent STRUCT, if any.
 
-.topic HIDC_SEL_AT
-Gets a value from the active file at the current cursor address (or the address of the start of the selection, if there is a selection).  The size of the value obtained depends on the current numbers of bits in effect.  The byte-order of the value obtained depends on the Big-endian check-box.
+.topic HIDC_PRINT_RIGHT
+The amount of space to leave blank on the right side of every page.
 
-.topic HIDC_MEM_SUBTRACT
-Subtracts the current value from the calculator memory.
+.topic HIDC_INFO_COMMENTS
+Enter any relevant comments here such as where the file came from, what it contains, who has changed it and why, etc.
 
-.topic HIDC_DECIMAL
-Changes display and entry of numbers to decimal (base 10).  The currently displayed number is converted to decimal.  In decimal mode (unlike the other modes) numbers are signed (2's complement) - this affects some arithmetic operations and changes some overflow conditions.  Keyboard shortcut = F6.
+.topic HIDC_FILE_HIDDEN
+Checked if the file is a hidden file.
 
-.topic HIDC_EDIT
-This is where you enter numbers and view the results of calculations.  The base (radix) in which the numbers are displayed and the size of the numbers depend on the selection in the Base and Bits boxes below.  You can edit, select, cut (Ctrl+X), paste (Ctrl+V) etc as in any edit box.
+.topic HIDC_CHAR_BINARY
+The binary value (00000000 to 11111111) of the byte at the current cursor position in the active window.  Double-click a bit to flip it.
 
-.topic HIDC_FIND_BIG_ENDIAN
-Determines the byte order of the number to search.
+.topic HIDC_DATE_BIG_ENDIAN
+Select this option to view the date using big-endian numeric format.  Typically this option is off as Windows/Intel systems use little-endian byte order.\highlight7
 
-.topic HIDC_FIND_MASK
-Enter the hex search mask as a sequence of hex digits which correspond to the digits of the hex search item above.  If any bit is 1 (on) then that bit is significant in the search, or if it is 0 (off) then that bit is always matched in a search.
+.topic HIDC_FIND_SCOPE_TOMARK
+Used to restrict the search to the area from the current position to the mark within the active file.
 
-.topic HIDC_FIND_TEXT_STRING
-Type the text you want to search for or select a previous search from the list.  You can search for an ASCII, Unicode or EBCDIC string depending on the radio button currently selected in the Type section.  You are warned of invalid characters, such as a tilde (~), for an EBCDIC search..
+.topic HIDC_HEX
+Changes display and entry of numbers to hexadecimal or hex (base 16).  The currently displayed number is converted to hex.  The largest hex number that can be displayed in 64 bit mode is FFFFFFFFFFFFFFFF, in 32 bit mode FFFFFFFF, in 16 bit mode FFFF and 8 bit mode FF.  Keyboard shortcut = F5.
 
-.topic HIDC_IBMFP_MANT
-The mantissa of the IBM floating-point number.
+.topic HIDC_MEM_STORE
+Store the current value to memory.  Keyboard shortcut = Ctrl+M.
 
-.topic HIDC_CHAR_ASCII
-The ASCII character at the current cursor position.  If the high bit is set (the value is greater than 127) then this is the ANSI character.  For values less than 32 this is the name of the ASCII control character.
+.topic HIDC_MARK_AT
+Gets a value from the active file at the address of the Mark.  The size of the value obtained depends on the current numbers of bits in effect.  The byte-order of the value obtained depends on the Big-endian check-box.
 
-.topic HIDC_FILE_READONLY
-Checked if the file is a read only file.
+.topic HIDC_UNARY_SQUARE
+Squares the displayed number.  If the result is too big to display in the current number of bits then an overflow occurs.
 
-.topic HIDC_FILE_ACCESSED
-The date and time the file was last used.
+.topic HIDC_UNARY_SIGN
+Changes the sign of the (2's complement) number.  This is equivalent to inverting the bits (NOT) and adding one (INC).
 
-.topic HIDC_INFO_EDIT_TIME
-The total amount of time that the file has been open in HexEdit for editing (ie while not in read-only mode).
+.topic HIDC_XOR
+Performs an Exclusive OR of the two values.  Keyboard shortcut = ^.
 
-.topic HIDC_INFO_VIEW_TIME
-The total amount of time that the file has been open in HexEdit in read-only mode.
+.topic HIDC_FILL_STRING
+Fill new file with one or more characters.
 
-.topic HIDC_DEL
-Deletes the currently selected entry in the list of filters.
+.topic HIDC_FILL_STRING_VALUE
+One or more characters for fill.
 
-.topic HIDC_PRINT_FOOTER_EDGE
-This is the distance that the footer is printed from the bottom edge of each page.  If this value is larger than the bottom margin then the footer will not be printed.
+.topic HIDC_FILL_RANDOM_RANGE
+One or more values or ranges of random bytes (0 to 255).
 
-.topic HIDC_RANGES
-You can view and change the byte values of a group or enter the values for a new group to be added.  Values are comma-separated, with a colon or dash for ranges.
+.topic HIDC_OTHER
+Select this option for any other type of feedback.
 
-.topic HIDC_HALT0
-Select this if you want the macro replay to stop if there is any sort of problem - ie. all warning and error conditions.
+.topic HIDC_ATTACHMENT
+Name of the file to be attached.  The file name defaults to the active file.
 
-.topic HIDC_TYPES_CUSTOM
-Use types extracted by previous use of the "Save new types" checkbox (below).
+.topic HIDC_PLAYS
+Enter the number of times you want the macro to play and press Enter.
 
-.topic HIDC_WEB_ADDRESS
-A web site that provides further information on the file format handled by the template.
+.topic HIDC_COMPRESSION_MEMORY_USAGE
+Trades speed for memory usage.  Memory is cheap so use a high value.
 
-.topic HIDC_DFFD_DISPLAY_ERROR
-This indicates that the expression tests for some sort of error condition.  If the result is false then the node is shown; if true the node is not shown (unless the checkbox below is checked).
-
-.topic HIDC_DFFD_EXPR_VAR
-Presents a menu tree that allows selection of any allowed identifiers.  The selected identifier is added to the Expression control (to the left).
-
-.topic HIDC_DFFD_ELSE_ELT
-Describes the element that is used if the IF expression evaluates false.  Use the "Edit..." button (to the right) to modify the element.
-
-.topic HIDC_DFFD_CONDITION_VAR
-Presents a menu tree that allows selection of any allowed identifiers (which can be used in the boolean test expression of the IF) which determines whether the sub-elements are present.
-
-.topic HIDC_DFFD_NAME
-A name used for display purposes and for access to values for use in expressions.  Leaving the name empty means the field will not be displayed unless in edit mode.
+.topic HIDC_DFFD_TAB
+When a file is first opened or created the template is shown in a tab at the bottom of the window.  This will be the template for the file extension or the "default" template.
 
 .topic HIDC_GRID_BL
 Select one or more bookmarks in the list then use the buttons on the right to perform operations on them.
 
-.topic HIDC_USER
-Apply to register HexEdit to be run by one person only, on any number of machines.  The name of the person is supplied in the Name field below.
+.topic HIDC_DFFD_NAME
+A name used for display purposes and for access to values for use in expressions.  Leaving the name empty means the field will not be displayed unless in edit mode.
 
-.topic HIDC_ATTACHMENT_BROWSE
-Use the Browse button to select a different file to attach.
+.topic HIDC_DFFD_CONDITION_VAR
+Presents a menu tree that allows selection of any allowed identifiers (which can be used in the boolean test expression of the IF) which determines whether the sub-elements are present.
 
-.topic HIDC_CSRC_INT
-Generate comma-separated list of integers.
+.topic HIDC_DFFD_ELSE_ELT
+Describes the element that is used if the IF expression evaluates false.  Use the "Edit..." button (to the right) to modify the element.
 
-.topic HIDC_FILL_STRING_CHARSET
-Character set used to generate fill bytes from string.
+.topic HIDC_DFFD_EXPR_VAR
+Presents a menu tree that allows selection of any allowed identifiers.  The selected identifier is added to the Expression control (to the left).
 
-.topic HIDC_UNARY_LSR
-Shift right by one bit.  The new leftmost bit has the value zero.  This is equivalent to dividing an unsigned number by two.
+.topic HIDC_DFFD_DISPLAY_ERROR
+This indicates that the expression tests for some sort of error condition.  If the result is false then the node is shown; if true the node is not shown (unless the checkbox below is checked).
 
-.topic HIDC_MARK_SUBTRACT
-Moves the Mark backward in the file by the current value.
+.topic HIDC_WEB_ADDRESS
+A web site that provides further information on the file format handled by the template.
 
-.topic HIDC_MARK_STORE
-Sets the Mark in the active file to the current value.
+.topic HIDC_TYPES_CUSTOM
+Use types extracted by previous use of the "Save new types" checkbox (below).
 
-.topic HIDC_BCGBARRES_MENU_SHADOWS
-Draw menus with a drop-shadow.
+.topic HIDC_HALT0
+Select this if you want the macro replay to stop if there is any sort of problem - ie. all warning and error conditions.
 
-.topic HIDC_FIND_MESSAGE
-Displays instructions and indicates whether a text or hex search is to be perfomed.
+.topic HIDC_RANGES
+You can view and change the byte values of a group or enter the values for a new group to be added.  Values are comma-separated, with a colon or dash for ranges.
 
-.topic HIDC_DATE_NOW
-Sets the bytes to the representation of the current date and time in the currently selected date format.
+.topic HIDC_PRINT_FOOTER_EDGE
+This is the distance that the footer is printed from the bottom edge of each page.  If this value is larger than the bottom margin then the footer will not be printed.
 
-.topic HIDC_IBMFP_EXP
-The exponent of the IBM floating-point number.  Note that this is a power of 16 not 2 or 10.
+.topic HIDC_DEL
+Deletes the currently selected entry in the list.
 
-.topic HIDC_HEADER_OPTS
-Select from the list to add a parameter to the header.
+.topic HIDC_INFO_VIEW_TIME
+The total amount of time that the file has been open in HexEdit in read-only mode.
 
-.topic HIDC_HALT1
-Select this if you want the macro replay to stop if there are minor (or major) errors, but continue on any warnings.  Minor errors include trying to move the cursor past the end of file or before the beginning of file.
+.topic HIDC_INFO_EDIT_TIME
+The total amount of time that the file has been open in HexEdit for editing (ie while not in read-only mode).
 
-.topic HIDC_NUM_SECS
-The number of seconds between each (temporal) display refresh.
+.topic HIDC_FILE_ACCESSED
+The date and time the file was last used.
 
-.topic HIDC_DISP_RESET
-Resets all the display settings to the current default settings.
+.topic HIDC_FILE_READONLY
+Checked if the file is a read only file.
 
-.topic HIDC_VALUES_SAVE
-Save constant values for later use.  This includes enum and static const values.
+.topic HIDC_CHAR_ASCII
+The ASCII character at the current cursor position.  If the high bit is set (the value is greater than 127) then this is the ANSI character.  For values less than 32 this is the name of the ASCII control character.
 
-.topic HIDC_DFFD_OFFSET
-An integer expression that determines where in the file the sub-element starts at.  Note that when the JUMP element "returns" the current address before the jump is restored.
+.topic HIDC_IBMFP_MANT
+The mantissa of the IBM floating-point number.
 
-.topic HIDC_DFFD_TREE_DISPLAY
-A string with embedded expressions enclosed in braces {} with optional format specifications which is displayed in the tree (left most) column in the template view.  This is typically used to show the values of important fields.  Eg "X = {this.x}, Y = {this.y}".
+.topic HIDC_FIND_TEXT_STRING
+Type the text you want to search for or select a previous search from the list.  You can search for an ASCII, Unicode or EBCDIC string depending on the radio button currently selected in the Type section.  You are warned of invalid characters, such as a tilde (~), for an EBCDIC search..
 
-.topic HIDC_DFFD_FORMAT_REAL
-Determines how floating point numbers (IEEE and IBM) are displayed in the Data column of the tree view.  You can use C-language printf format specs for exact control of the number of significant digits etc, eg "%.5f" for fixed point with 5 decimal places, "%e" for exponent (scientific nottaion) "%.15g" for general numbers with 15 significant digits.
+.topic HIDC_FIND_MASK
+Enter the hex search mask as a sequence of hex digits which correspond to the digits of the hex search item above.  If any bit is 1 (on) then that bit is significant in the search, or if it is 0 (off) then that bit is always matched in a search.
 
-.topic HIDC_LARGE_CURSOR
-Uses a more visible cursor to show the current edit position in the active window.
+.topic HIDC_FIND_BIG_ENDIAN
+Determines the byte order of the number to search.
 
-.topic HIDC_NICE_ADDR
-Displays "nice" addresses.  That is, hex addresses are displayed in groups of 4 digits and decimal addresses are displayed with thousands-separators.
+.topic HIDC_EDIT
+This is where you enter numbers and view the results of calculations.  The base (radix) in which the numbers are displayed and the size of the numbers depend on the selection in the Base and Bits boxes below.  You can edit, select, cut (Ctrl+X), paste (Ctrl+V) etc as in any edit box.
 
-.topic HIDC_CLEAR_LISTS
-Click the "Clear" button to clear the selected lists now.
+.topic HIDC_DECIMAL
+Changes display and entry of numbers to decimal (base 10).  The currently displayed number is converted to decimal.  In decimal mode (unlike the other modes) numbers are signed (2's complement) - this affects some arithmetic operations and changes some overflow conditions.  Keyboard shortcut = F6.
 
-.topic HIDC_CLEAR_RECENT_FILE
-Causes the recent file list to be cleared.  Note that highlights and other settings (but not bookmarks) for all files will be lost.
+.topic HIDC_MEM_SUBTRACT
+Subtracts the current value from the calculator memory.
 
-.topic HIDC_ADDRESS_SPECIFIED
-Use the following specified address as the first output address, ignoring file addresses.
+.topic HIDC_SEL_AT
+Gets a value from the active file at the current cursor address (or the address of the start of the selection, if there is a selection).  The size of the value obtained depends on the current numbers of bits in effect.  The byte-order of the value obtained depends on the Big-endian check-box.
+
+.topic HIDC_LESS
+Retains the smaller of the two values.  If the second value is smaller then a macro warning is generated.
+
+.topic HIDC_OR
+Performs a logical OR of the two values.  Keyboard shortcut = |.
+
+.topic HIDC_LSR
+The first value is shifted right by the number of bits in the second.  New leftmost bits are zero.  This is equivalent to dividing an unsigned number by a power of two.
+
+.topic HIDC_DIGIT_0
+Click the digit buttons to enter a number.  Depending on the current base some buttons may be disabled.  For example in octal mode the digits A to F plus 8 and 9 are not valid octal digits.
+
+.topic HIDC_CSRC_INDENT
+Number of spaces to indent each line of text.
+
+.topic HIDC_ALG_BLOCKLEN
+This is the block length for block ciphers, otherwise it indicates the algorithm is a stream cipher.
+
+.topic HIDC_INSTALL_CODE
+Type in your activation code here (or paste from the clipboard).  The activation code is given to you once you have supplied your name or registration code and paid for HexEdit.
 
 .topic HIDC_DFFD_ARRAY_MAX
 Sets the number of elements of an array that are evaluated and displayed in the tree view.  This only applies to arrays with elements of a fixed size.
 
-.topic HIDC_ALG
-Select the encryption algorithm from this list.
+.topic HIDC_ADDRESS_SPECIFIED
+Use the following specified address as the first output address, ignoring file addresses.
 
-.topic HID_EMAIL_SEND
-Click the "Send" button to send the email.  If you have no currently active mail session you may be prompted to select a Profile (choose the default profile unless you have a good reason not to).  If the profile you chose requires a password you will be prompted for that too.
+.topic HIDC_CLEAR_RECENT_FILE
+Causes the recent file list to be cleared.  Note that highlights and other settings (but not bookmarks) for all files will be lost.
 
-.topic HIDC_VERSION
-The version of HexEdit in use.  You would not normally change this from the default value, which is the version you are running.
+.topic HIDC_CLEAR_LISTS
+Click the "Clear" button to clear the selected lists now.
 
-.topic HIDC_FILL_RANDOM
-Fill new file with random byte values.
+.topic HIDC_NICE_ADDR
+Displays "nice" addresses.  That is, hex addresses are displayed in groups of 4 digits and decimal addresses are displayed with thousands-separators.
 
-.topic HIDC_FILL_CLIPBOARD
-Fill with the hex or character data currently stored in the clipboard.
+.topic HIDC_LARGE_CURSOR
+Uses a more visible cursor to show the current edit position in the active window.
 
-.topic HIDC_FILL_SIZE_SPECIFIED
-Allows the size of the new file to be specified (in the Decimal or Hex field).  The data is repeated until the specified size is filled.
+.topic HIDC_DFFD_FORMAT_REAL
+Determines how floating point numbers (IEEE and IBM) are displayed in the Data column of the tree view.  You can use C-language printf format specs for exact control of the number of significant digits etc, eg "%.5f" for fixed point with 5 decimal places, "%e" for exponent (scientific nottaion) "%.15g" for general numbers with 15 significant digits.
 
-.topic HIDC_ADDOP
-Binary operator that adds the first value to the second.  Keyboard shortcut = +.
+.topic HIDC_DFFD_TREE_DISPLAY
+A string with embedded expressions enclosed in braces {} with optional format specifications which is displayed in the tree (left most) column in the template view.  This is typically used to show the values of important fields.  Eg "X = {this.x}, Y = {this.y}".
 
-.topic HIDC_SEL_AT_STORE
-Stores the current value to the active file at the current cursor address (or the address of the start of the selection, if there is a selection).  The size of the value stored depends on the current numbers of bits in effect.  The byte-order of the value stored depends on the Big-endian check-box.  This button may be disabled if the file is read-only or there are not enough bytes before end of file.
+.topic HIDC_DFFD_OFFSET
+An integer expression that determines where in the file the sub-element starts at.  Note that when the JUMP element "returns" the current address before the jump is restored.
 
-.topic HID_BCG_TOOL_DOWN
-Moves the currently selected tool down in the list.
+.topic HIDC_VALUES_SAVE
+Save constant values for later use.  This includes enum and static const values.
 
-.topic HIDC_BCGBARRES_SKINS
-Select from a list of "skins" that change the look of toolbars, menus etc.
+.topic HIDC_DISP_RESET
+Resets all the display settings to the current default settings.
 
-.topic HIDC_BCGBARRES_RESET_FRAME_MENU
-Resets the frame menu to its initial (default) state.
+.topic HIDC_NUM_SECS
+The number of seconds between each (temporal) display refresh.
 
-.topic HIDC_BCGBARRES_DELETE_TOOLBAR
-Deletes a custom toolbar.
+.topic HIDC_HALT1
+Select this if you want the macro replay to stop if there are minor (or major) errors, but continue on any warnings.  Minor errors include trying to move the cursor past the end of file or before the beginning of file.
 
-.topic HIDC_BCGBARRES_USER_TOOLS
-Shows the items for the current category.  Drag the item you want from the box to a toolbar or the Menu Bar.
+.topic HIDC_HEADER_OPTS
+Select from the list to add a parameter to the header.
 
-.topic HIDC_FIND_WILDCARD_CHAR
-The wildcard character that matches any character.  This defaults to a question mark (?) but you can change it to any character that you do not need to search for.
+.topic HIDC_IBMFP_EXP
+The exponent of the IBM floating-point number.  Note that this is a power of 16 not 2 or 10.
 
-.topic HIDC_FIND_WHOLE_WORD
-When selected the text is only found if it is an entire word, not if it is only part of another word.
+.topic HIDC_DATE_NOW
+Sets the bytes to the representation of the current date and time in the currently selected date format.
 
-.topic HIDC_FIND_SCOPE_ALL
-Searches all open files starting from the current position in the active file.
+.topic HIDC_FIND_MESSAGE
+Displays instructions and indicates whether a text or hex search is to be perfomed.
 
-.topic HIDC_FIND_SCOPE_TOEND
-Used to search the active file from the current position to the start or end of file (depending on the direction chosen).
+.topic HIDC_MARK_STORE
+Sets the Mark in the active file to the current value.
 
-.topic HIDC_FIND_BOOKMARK_ALL
-Find all occurrences within the scope and create bookmarks based on the prefix below.
+.topic HIDC_MARK_SUBTRACT
+Moves the Mark backward in the file by the current value.
 
-.topic HIDC_DEC_32BIT
-The decimal value of the double-word at the current cursor position (the 4 bytes following the cursor).
+.topic HIDC_UNARY_LSR
+Shift right by one bit.  The new leftmost bit has the value zero.  This is equivalent to dividing an unsigned number by two.
 
-.topic HID_DFFD_CLONE
-Creates a copy of the current data element (saving changes first), placing it after the current element in the parent STRUCT.  Control then moves to the cloned element.
+.topic HIDC_FILL_STRING_CHARSET
+Character set used to generate fill bytes from string.
 
-.topic HIDC_HALT2
-Select this if you want the macro replay to continue unless there are serious errors.  This option is not recommended since warnings and errors (that might result in your macro doing the wrong thing) are ignored.
+.topic HIDC_CSRC_INT
+Generate comma-separated list of integers.
 
-.topic HIDC_MODIFY
-Sets the modifiability status of the active window.  A window cannot be made read/write if the underlying file was opened read-only.
+.topic HIDC_ATTACHMENT_BROWSE
+Use the Browse button to select a different file to attach.
 
-.topic HIDC_DFFD_OEM
-Says that strings and characters use IBM/OEM graphics characters unless otherwise specified.
+.topic HIDC_USER
+Apply to register HexEdit to be run by one person only, on any number of machines.  The name of the person is supplied in the Name field below.
 
-.topic HIDC_ELT_SIZE
-Shows the size of the selected element.  If the element is of indeterminate size (eg IF, variable length FOR, STRUCT containing such, etc) then the size is shown as a question mark (?).
-
-.topic HIDC_DFFD_FORMAT_DATE
-Determines how dates are displayed in the Data column of the tree view, for date fields that have no explicit formatting.  You can use C-language strftime format specs such as "%c" for data and time formatted according to regional conventions, "%y/%m/%d" year/month/day, etc.
-
-.topic HIDC_BOOKMARK_ADD
-Enter a name and click the add button to add or update a bookmark for the current cursor position of the active file.  Note that you can't add a bookmark if the active file has not yet been saved to disk.
+.topic HIDC_COMPRESSION_LEVEL
+Trades-off speed and amount of compression.  Use 6 or 7 for best results.
 
 .topic HIDC_CLEAR_SEARCH
 Search (and replace) history lists in the Find Tool and Find dialog are cleared.
 
-.topic HIDC_PLAY_OPTIONS
-Click the "Replay Options" button to change the options for macro playback before running the macro.
+.topic HIDC_BOOKMARK_ADD
+Enter a name and click the add button to add or update a bookmark for the current cursor position of the active file.  Note that you can't add a bookmark if the active file has not yet been saved to disk.
 
-.topic HID_MACRO_SAVE
-Saves the macro to the HexEdit macro folder with the supplied name.
+.topic HIDC_DFFD_FORMAT_DATE
+Determines how dates are displayed in the Data column of the tree view, for date fields that have no explicit formatting.  You can use C-language strftime format specs such as "%c" for data and time formatted according to regional conventions, "%y/%m/%d" year/month/day, etc.
 
-.topic HIDC_NAME
-Please enter your name in case we have to get in contact with you for more information.
+.topic HIDC_ELT_SIZE
+Shows the size of the selected element.  If the element is of indeterminate size (eg IF, variable length FOR, STRUCT containing such, etc) then the size is shown as a question mark (?).
 
-.topic HIDC_SYSTYPE
-Normally you use the default value, "This system", for this field which lets HexEdit interrogate the system on which it's running.  If you are reporting a defect found on another system please enter the name and version of the operating system.
+.topic HIDC_DFFD_OEM
+Says that strings and characters use IBM/OEM graphics characters unless otherwise specified.
 
-.topic HIDC_SIZE_FACTOR
-This is the number of copies of the data specified in the "Fill With" section below, that are added to the file if the Size: Data option is selected.
+.topic HIDC_MODIFY
+Sets the modifiability status of the active window.  A window cannot be made read/write if the underlying file was opened read-only.
 
-.topic HIDC_MULTIPLY
-Binary operator that multiplies the first value by the second.  Keyboard shortcut = *.
+.topic HIDC_HALT2
+Select this if you want the macro replay to continue unless there are serious errors.  This option is not recommended since warnings and errors (that might result in your macro doing the wrong thing) are ignored.
 
-.topic HIDC_DIVIDE
-Binary operator that calculates the integer value when the first value is divided by the second.  Keyboard shortcut = /.
+.topic HID_DFFD_CLONE
+Creates a copy of the current data element (saving changes first), placing it after the current element in the parent STRUCT.  Control then moves to the cloned element.
 
-.topic HIDC_BIG_ENDIAN_FILE_ACCESS
-Affects how numbers are read from the active file (using the @ buttons) or written to it (using the Store buttons).  If this option is on, the first byte of any number read from the file is the most significant byte.  Normally you would leave this option off, as Intel numbers are stored in little-endian format.  In 8 bit mode this option has no effect as all reads and writes of the file are just one byte.
+.topic HIDC_DEC_32BIT
+The decimal value of the double-word at the current cursor position (the 4 bytes following the cursor).
 
-.topic HIDC_BCGBARRES_LARGE_ICONS
-Displays larger buttons on all toolbars.
+.topic HIDC_FIND_BOOKMARK_ALL
+Find all occurrences within the scope and create bookmarks based on the prefix below.
 
-.topic HIDC_FIND_NUMBER_SIZE
-The number of bytes used for the specific Format of number searched for.
+.topic HIDC_FIND_SCOPE_TOEND
+Used to search the active file from the current position to the start or end of file (depending on the direction chosen).
 
-.topic HIDC_FIND_USE_MASK
-When selected the Mask bytes are used, otherwise all bits are significant in searches.
+.topic HIDC_FIND_SCOPE_ALL
+Searches all open files starting from the current position in the active file.
 
-.topic HIDC_FIND_MATCH_CASE
-When selected the case of alphabetic characters is significant in text searches.
+.topic HIDC_FIND_WHOLE_WORD
+When selected the text is only found if it is an entire word, not if it is only part of another word.
 
-.topic HIDC_FIND_SCOPE_FILE
-Used to search the whole file from the start or end (depending on the direction chosen).
+.topic HIDC_FIND_WILDCARD_CHAR
+The wildcard character that matches any character.  This defaults to a question mark (?) but you can change it to any character that you do not need to search for.
 
-.topic HIDC_FIND_HEX_STRING
-Type the hex bytes you want to search for or select a previous search from the list.  You are warned if you type an invalid hex digit.  A question mark (?) will match any hex digit (nybble).
+.topic HID_BCG_TOOL_DOWN
+Moves the currently selected tool down in the list.
 
-.topic HIDC_IBMFP_VAL
-The value of the IBM floating-point number.
+.topic HIDC_SEL_AT_STORE
+Stores the current value to the active file at the current cursor address (or the address of the start of the selection, if there is a selection).  The size of the value stored depends on the current numbers of bits in effect.  The byte-order of the value stored depends on the Big-endian check-box.  This button may be disabled if the file is read-only or there are not enough bytes before end of file.
 
-.topic HIDC_FP_EXP
-The exponent of the IEEE floating-point number.  Note that this is a power of 2 not 10.
+.topic HIDC_ADDOP
+Binary operator that adds the first value to the second.  Keyboard shortcut = +.
 
-.topic HIDC_DEC_64BIT
-The decimal value of the quad-word at the current cursor position (the 8 bytes following the cursor).
+.topic HIDC_FILL_SIZE_SPECIFIED
+Allows the size of the new file to be specified (in the Decimal or Hex field).  The data is repeated until the specified size is filled.
 
-.topic HIDC_CHAR_HEX
-The hexadecimal value (00 to FF) of the byte at the current cursor position in the active window.
+.topic HIDC_FILL_CLIPBOARD
+Fill with the hex or character data currently stored in the clipboard.
 
-.topic HIDC_FILE_MODIFIED
-The date and time the file was last changed.
+.topic HIDC_FILL_RANDOM
+Fill new file with random byte values.
 
-.topic HIDC_PRINT_UNITS
-Units for measurement for controls below (margins etc).
+.topic HIDC_VERSION
+The version of HexEdit in use.  You would not normally change this from the default value, which is the version you are running.
 
-.topic HIDC_SAVE_DEFAULT
-Save the current settings as the default settings used when a new file is created or a previously unseen file is opened.
+.topic HID_EMAIL_SEND
+Click the "Send" button to send the email.  If you have no currently active mail session you may be prompted to select a Profile (choose the default profile unless you have a good reason not to).  If the profile you chose requires a password you will be prompted for that too.
 
-.topic HIDC_INSERT
-Sets whether the window is in insert or overtype mode.  In insert mode bytes can be inserted or deleted from the file, so unless you know that you can change the length of the file it is better to remain in overtype mode.
+.topic HIDC_ALG
+Select the encryption algorithm from this list.
 
-.topic HIDC_AUTOFIT
-When selected, the number of columns is adjusted to fit the window when it is resized.  Otherwise the number of columns can be set using the Columns control to the left.
+.topic HIDC_FP_FORMAT
+Choose the floating point format from the list.  The native format supported Windows is IEEE (32 and 64 bit).
 
-.topic HIDC_DFFD_STRUCT
-The name of a pre-defined struct as created in the STRUCT DEFINITION dialog.  Use the arrow (to the right) to select from the current list of STRUCT DEFINITIONs.
+.topic HIDC_FOLDER_NAME
+This shows the current folder name.  You can also type in a name here or select from the history list of folder names you have previously typed in.
 
-.topic HIDC_DFFD_TYPE_NAME
-A comment field that may contain a generic name for the type of data in this field.  This is often the structure name or type definition used by the software that creates the data.
-
-.topic HIDC_DFFD_DOMAIN
-A boolean expression that says whether the data field is valid.  Use the special identifier "this" for the value of the current data field.  For integer fields this may include an enum which names the allowed values, for example "{NONE=0, WEAK, MEDIUM, STRONG=4}"
-
-.topic HIDC_DFFD_BITFIELD
-Consecutive bit-fields with identical "Length" and "Direction" values are taken from the same underlying storage unit (which has Type of Integer and size as specified in Length field).  The Bits control (to the right) determines how many bits of the storage unit are used for this bit-field.
-
-.topic HIDC_TABSBOTTOM
-Display file/window tabs at the bottom of the Hex Edit window rather than the top.
-
-.topic HIDC_ONE_ONLY
-This prevents multiple copies of HexEdit from running.  Any files specified are opened in the original instance.
-
-.topic HIDC_CLEAR_BOOKMARKS
-Bookmarks for all files are cleared.
+.topic HIDC_FOLDER_FLIP
+Flips between having the folder windows to the left of or on top of the files window.
 
 .topic HIDC_EXPORT_ADDRESS
 The output address of the first record exported to a Motorola S or Intel hex file.  Addresses of following records are relative to this.
 
-.topic HIDC_PLAY_NAME
-You can replay the current macro in memory (ie last recorded since you started HexEdit) or a macro you have previously saved to disk.  You can nest macros by playing a saved macro during recording of a new macro.
+.topic HIDC_CLEAR_BOOKMARKS
+Bookmarks for all files are cleared.
 
-.topic HIDC_PASSWORD_REENTER
-Re-enter the password here, when password masking is on.
+.topic HIDC_ONE_ONLY
+This prevents multiple copies of HexEdit from running.  Any files specified are opened in the original instance.
 
-.topic HIDC_FILL_NUMBER_TYPE
-Format (size) of numbers generated.
+.topic HIDC_TABSBOTTOM
+Display file/window tabs at the bottom of the Hex Edit window rather than the top.
 
-.topic HIDC_FILL_CLIPBOARD_LENGTH
-Read only field that displays the length in bytes of the current data on the clipboard.
+.topic HIDC_DFFD_BITFIELD
+Consecutive bit-fields with identical "Length" and "Direction" values are taken from the same underlying storage unit (which has Type of Integer and size as specified in Length field).  The Bits control (to the right) determines how many bits of the storage unit are used for this bit-field.
 
-.topic HIDC_FILL_SIZE_DATA
-The length of the data specified in the "Fill With" section below multiplied by the factor to the right gives the size of the file to be created.
+.topic HIDC_DFFD_DOMAIN
+A boolean expression that says whether the data field is valid.  Use the special identifier "this" for the value of the current data field.  For integer fields this may include an enum which names the allowed values, for example "{NONE=0, WEAK, MEDIUM, STRONG=4}"
 
-.topic HIDC_ROL
-Rotates the first value by the number of bits given in the second value.  The bits are moved to the right and any bits falling off the right end are added to the left end.  Rotating by the current number of bits in use gives the same value, since the bits are moved back to their original position.
+.topic HIDC_DFFD_TYPE_NAME
+A comment field that may contain a generic name for the type of data in this field.  This is often the structure name or type definition used by the software that creates the data.
 
-.topic HIDC_UNARY_FACTORIAL
-Calculates the factorial of the displayed number.  If the result is too big to display in the current number of bits then an overflow occurs.  Keyboard shortcut = !.
+.topic HIDC_DFFD_STRUCT
+The name of a pre-defined struct as created in the STRUCT DEFINITION dialog.  Use the arrow (to the right) to select from the current list of STRUCT DEFINITIONs.
 
-.topic HIDC_EOF_GET
-Gets the current length of the file.  (Note that there is no corresponding button change the length of file.)
+.topic HIDC_AUTOFIT
+When selected, the number of columns is adjusted to fit the window when it is resized.  Otherwise the number of columns can be set using the Columns control to the left.
 
-.topic HID_BCG_TOOL_SEL
-Opens the standard File Open dialog to allow you to select a program to run.
+.topic HIDC_INSERT
+Sets whether the window is in insert or overtype mode.  In insert mode bytes can be inserted or deleted from the file, so unless you know that you can change the length of the file it is better to remain in overtype mode.
 
-.topic HID_BCG_TOOLS
-Lists commands you have added to the Tools menu.  To modify a command select it in this list and edit the information in the boxes below.
+.topic HIDC_SAVE_DEFAULT
+Saves the current settings as the default.  The settings are used for files create in HexEdit and files that have not been opened in HexEdit before.
 
-.topic HIDC_FIND_HELP
-Obtain detailed help information.
+.topic HIDC_PRINT_UNITS
+Units for measurement for controls below (margins etc).
 
-.topic HIDC_FILE_SYSTEM
-Checked if the file is a system file.
+.topic HIDC_FILE_MODIFIED
+The date and time the file was last changed.
 
-.topic HIDC_FILE_SIZE
-The current size of the file.
+.topic HIDC_CHAR_HEX
+The hexadecimal value (00 to FF) of the byte at the current cursor position in the active window.
 
-.topic HIDC_INFO_DISK_SIZE
-The current size of the file on disk.
+.topic HIDC_DEC_64BIT
+The decimal value of the quad-word at the current cursor position (the 8 bytes following the cursor).
 
-.topic HIDC_NEW
-Adds a new entry to the list of filters.
+.topic HIDC_FP_EXP
+The exponent of the IEEE floating-point number.  Note that this is a power of 2 not 10.
 
-.topic HIDC_PRINT_LEFT
-The amount of space to leave blank on the left side of every page.
+.topic HIDC_IBMFP_VAL
+The value of the IBM floating-point number.
 
-.topic HIDC_PRINT_HEADINGS
-Headings are printed above each column showing the offset of that column from the left side.  These headings are in hex or decimal depending on how addresses are currently being displayed.
+.topic HIDC_FIND_HEX_STRING
+Type the hex bytes you want to search for or select a previous search from the list.  You are warned if you type an invalid hex digit.  A question mark (?) will match any hex digit (nybble).
 
-.topic HIDC_PRINT_FOOTER
-The text to be displayed at the bottom of each printed page.  Separate the left-aligned, centred, and right-aligned parts with a vertical bar (|).
+.topic HIDC_FIND_SCOPE_FILE
+Used to search the whole file from the start or end (depending on the direction chosen).
 
-.topic HIDC_REFRESH_BARS
-Check this box if you want display refreshes to include messages displayed on the status bar and the current search text in the Find Tool and the current address in the Hex and Decimal Address Tools on the Edit Bar.
+.topic HIDC_FIND_MATCH_CASE
+When selected the case of alphabetic characters is significant in text searches.
 
-.topic HIDC_NUM_KEYS
-The number of "keystrokes" between each display refresh.
+.topic HIDC_FIND_USE_MASK
+When selected the Mask bytes are used, otherwise all bits are significant in searches.
 
-.topic HIDC_DFFD_BIG_ENDIAN
-For integer and floating point and some date formats determines the byte order used.  If the checkbox is not on or off (ie grey) then the byte order is taken from the global template default (see Global Options).
+.topic HIDC_FIND_NUMBER_SIZE
+The number of bytes used for the specific Format of number searched for.
+
+.topic HIDC_BIG_ENDIAN_FILE_ACCESS
+Affects how numbers are read from the active file (using the @ buttons) or written to it (using the Store buttons).  If this option is on, the first byte of any number read from the file is the most significant byte.  Normally you would leave this option off, as Intel numbers are stored in little-endian format.  In 8 bit mode this option has no effect as all reads and writes of the file are just one byte.
+
+.topic HIDC_DIVIDE
+Binary operator that calculates the integer value when the first value is divided by the second.  Keyboard shortcut = /.
+
+.topic HIDC_MULTIPLY
+Binary operator that multiplies the first value by the second.  Keyboard shortcut = *.
+
+.topic HIDC_SIZE_FACTOR
+This is the number of copies of the data specified in the "Fill With" section below, that are added to the file if the Size: Data option is selected.
+
+.topic HIDC_SYSTYPE
+Normally you use the default value, "This system", for this field which lets HexEdit interrogate the system on which it's running.  If you are reporting a defect found on another system please enter the name and version of the operating system.
+
+.topic HIDC_NAME
+Please enter your name in case we have to get in contact with you for more information.
+
+.topic HID_MACRO_SAVE
+Saves the macro to the HexEdit macro folder with the supplied name.
+
+.topic HIDC_PLAY_OPTIONS
+Click the "Replay Options" button to change the options for macro playback before running the macro.
+
+.topic HIDC_FOLDER_FORW
+Return to the folder you were in when you last used the previous folder button.
 
 .topic HIDC_BOOKMARKS_VALIDATE
 The Validate All button removes any invalid bookmarks - that is, any bookmark for a file that is not present.  Any bookmark past the end of the file is moved to the end of file.
 
-.topic HIDC_REG_WEB
-Click this button to connect to the HexEdit web site to register and pay on-line.  If your web browser supports it, credit card details are encrypted and sent securely, otherwise you must use one of the alternative methods of payment.
+.topic HIDC_DFFD_BIG_ENDIAN
+For integer and floating point and some date formats determines the byte order used.  If the checkbox is not on or off (ie grey) then the byte order is taken from the global template default (see Global Options).
 
-.topic HIDC_REG_FORM
-Click this button to display the Order Form.  You should print the form, fill it out and mail it with your payment.
+.topic HIDC_NUM_KEYS
+The number of "keystrokes" between each display refresh.
 
-.topic HIDC_USER_NAME
-This is the name of the registered user, which is used for a single-user licence.  This name is displayed in the About box after the software is registered.
+.topic HIDC_REFRESH_BARS
+Check this box if you want display refreshes to include messages displayed on the status bar and the current search text in the Find Tool and the current address in the Hex and Decimal Address Tools on the Edit Bar.
 
-.topic HIDC_MACHINE
-Apply to register HexEdit to run on this machine only.
+.topic HIDC_PRINT_FOOTER
+The text to be displayed at the bottom of each printed page.  Separate the left-aligned, centred, and right-aligned parts with a vertical bar (|).
 
-.topic HID_MULTIPLAY_OK
-Click OK to start playing the macro.
+.topic HIDC_PRINT_HEADINGS
+Headings are printed above each column showing the offset of that column from the left side.  These headings are in hex or decimal depending on how addresses are currently being displayed.
 
-.topic HIDC_TEXT
-Enter the text of your message.  For a bug report try to describe the problem as fully as possible.  In particular, if the bug is reproducible list all the steps required to reproduce it, and include the exact wording of any error messages.
+.topic HIDC_PRINT_LEFT
+The amount of space to leave blank on the left side of every page.
 
-.topic HIDC_FILL_HEX
-Fill new file with hex values.
+.topic HIDC_NEW
+Adds a new entry to the list.
 
-.topic HIDC_DECIMAL_SIZE
-Specified initial size of new file in decimal.
+.topic HIDC_INFO_DISK_SIZE
+The current size of the file on disk.
 
-.topic HIDC_GO
-Jumps (in the active file) to the address displayed, first calculating the result if there is a binary operator pending.  This is equivalent to clicking the = button then the Set Cursor button and making the file window active.
+.topic HIDC_FILE_SIZE
+The current size of the file.
 
-.topic HIDC_UNARY_INC
-Adds one to the number.  If the new number is too large to be displayed in the number of bits then an overflow occurs
+.topic HIDC_FILE_SYSTEM
+Checked if the file is a system file.
 
-.topic HIDC_UNARY_ROL
-Rotates left by one bit.  That is all bits are shifted one position to the left and the leftmost bit is moved into the rightmost position.
+.topic HIDC_FIND_HELP
+Obtain detailed help information.
 
-.topic HIDC_UNARY_SQUARE_ROOT
-Calculates the square root of the displayed number.  If the result is not a whole integer the result is truncated to the next lowest number.  In decimal mode (ie, negative values allowed) an error occurs if the operand is negative.
+.topic HID_BCG_TOOLS
+Lists commands you have added to the Tools menu.  To modify a command select it in this list and edit the information in the boxes below.
 
-.topic HIDC_BCGBARRES_SHOW_MENUS_DELAY
-This is the delay before all menu items are displayed.
+.topic HID_BCG_TOOL_SEL
+Opens the standard File Open dialog to allow you to select a program to run.
 
-.topic HIDC_BCGBARRES_SHOW_TOOLTIPS
-Displays a short description if you leave the mouse cursor over a toolbar button for a second.
+.topic HIDC_EOF_GET
+Gets the current length of the file.  (Note that there is no corresponding button change the length of file.)
 
-.topic HIDC_BCGBARRES_CURRENT_KEYS_LIST
-Displays the current keyboard shortcut(s) for the currently selected command.
+.topic HIDC_UNARY_FACTORIAL
+Calculates the factorial of the displayed number.  If the result is too big to display in the current number of bits then an overflow occurs.  Keyboard shortcut = !.
 
-.topic HIDC_BCGBARRES_LIST_OF_COMMANDS
-This is the action to take when a mouse double-click event occurs in the area selected in the list on the left.
+.topic HIDC_ROL
+Rotates the first value by the number of bits given in the second value.  The bits are moved to the right and any bits falling off the right end are added to the left end.  Rotating by the current number of bits in use gives the same value, since the bits are moved back to their original position.
 
-.topic HIDC_BCGBARRES_USE_DBLCLIICK
-This allows an action to be selected (from the list below) for a mouse double-click event.
+.topic HIDC_FILL_SIZE_DATA
+The length of the data specified in the "Fill With" section below multiplied by the factor to the right gives the size of the file to be created.
 
-.topic HIDC_FIND_NUMBER_FORMAT
-What format of number are we searching for.  Along with the Size and Big-endian settings this determines the exact hex bytes that are searched for.
+.topic HIDC_FILL_CLIPBOARD_LENGTH
+Read only field that displays the length in bytes of the current data on the clipboard.
 
-.topic HIDC_FIND_DIRN_UP
-Used to determine the direction of the search.
+.topic HIDC_FILL_NUMBER_TYPE
+Format (size) of numbers generated.
 
-.topic HIDC_FIND_BOOKMARK_PREFIX
-When the above Bookmark All is used, the name of each bookmark created uses this prefix followed by a unique number.
+.topic HIDC_PASSWORD_REENTER
+Re-enter the password here, when password masking is on.
 
-.topic HIDC_FP_VAL
-The value of the IEEE floating-point number.
+.topic HIDC_PLAY_NAME
+You can replay the current macro in memory (ie last recorded since you started HexEdit) or a macro you have previously saved to disk.  You can nest macros by playing a saved macro during recording of a new macro.
 
-.topic HIDC_DEC_1COMP
-Select this option to view the decimal values as signed (1's complement format) numbers.
+.topic HIDC_FOLDER_FILTER
+Allows you to filter which files you see.  Use *.* to see all files.
 
-.topic HIDC_SELECT_FONT
-Allows selection of the font used to display Unicode characters.  This is useful if the current font does not have entries for the Unicode characters you are interested in.
+.topic HIDC_DFFD_SPLIT
+When a file is first opened or created the template is shown in a split window.  This will be the "default" template unless there is a template for the type of file opened (based on the file extension).
 
-.topic HIDC_PRINT_BOTTOM
-The amount of space to leave at the bottom of each page.  This includes space for a footer if you have one.
-
-.topic HIDC_REMOVE_SCHEME
-Delete the currently selected scheme from the list below.  The first 4 "standard" schemes cannot be deleted, although they can be modified in any way you like.
-
-.topic HIDC_REFRESH_NEVER
-The display (windows, status bar etc) is not updated until the macro finishes.
-
-.topic HIDC_CHANGE_TRACKING
-Show where bytes have been inserted, replaced and deleted.
-
-.topic HIDC_FONT
-Allows you to choose the font for the active window.  There are actually two fonts remembered depending on whether or not you are displaying the IBM/OEM character set (see Character Set below).
-
-.topic HIDC_DFFD_ORIGIN
-Determines whether the Address in the file (see above) that is jumped to is relative to the start of file, end of file, or the current file position.
-
-.topic HIDC_DFFD_DISPLAY_RESULT
-The EVAL node is normally only shown in edit mode.  If this is checked then it is displayed to the template user even if edit mode is off.
-
-.topic HIDC_DFFD_CONDITION
-The boolean expression that determines if the IF element (and sub-elements) are present in the file.  If it evaluates true then the first Element (below) is used.  If false the ELSE element (if any) is used.  If false and there is no ELSE then nothing is shown unless in edit mode.
-
-.topic HIDC_DFFD_FORMAT
-The specific format that the data takes.  The available options depend on the type of the data.
-
-.topic HIDC_BOOKMARK_NAME
-Enter the name of a bookmark to add or update.
-
-.topic HIDC_NET_RETAIN
-This checkbox preserves files on network and removeable drives when the Validate All button is clicked.  This is useful for files you want to keep that are not always available.
-
-.topic HIDC_ADDRESS_FILE
-Use file addresses as the output addresses when exporting to a Motorola S or Intel hex file.
+.topic HIDC_ALIGN
+The search bytes are matched when they occur at an address that is divisible by the alignment value (plus the Offset).  An alignment of one means there are no alignment restrictions.
 
 .topic HIDC_BACKUP_SPACE
 A backup file is only created if there is sufficient room on the current drive where the file is stored.
 
-.topic HIDC_COSTS
-This is an explanation of the costs and methods of payment.  Click the Help button for more information.
+.topic HIDC_ADDRESS_FILE
+Use file addresses as the output addresses when exporting to a Motorola S or Intel hex file.
 
-.topic HIDC_ADDRESS
-Please enter one or more email addresses in case we need to contact with you for more information.
+.topic HIDC_NET_RETAIN
+This checkbox preserves files on network and removeable drives when the Validate All button is clicked.  This is useful for files you want to keep that are not always available.
 
-.topic HIDC_PRINT_DUP_LINES
-Duplicate lines are printed once followed by a count of the number of identical lines.  This is useful when printing sections of files that contain large numbers of repeated bytes such a nuls.
+.topic HIDC_BOOKMARK_NAME
+Enter the name of a bookmark to add or update.
 
-.topic HIDC_CSRC_INT_SIZE
-Format of integers taken from the file (number of bytes).
+.topic HIDC_DFFD_FORMAT
+The specific format that the data takes.  The available options depend on the type of the data.
 
-.topic HIDC_FILL_NUMBER_VALUE
-Integer or floating point number for fill.
+.topic HIDC_DFFD_CONDITION
+The boolean expression that determines if the IF element (and sub-elements) are present in the file.  If it evaluates true then the first Element (below) is used.  If false the ELSE element (if any) is used.  If false and there is no ELSE then nothing is shown unless in edit mode.
 
-.topic HIDC_FILL_NUMBER
-Fill new file with integer or floating point numbers.
+.topic HIDC_DFFD_DISPLAY_RESULT
+The EVAL node is normally only shown in edit mode.  If this is checked then it is displayed to the template user even if edit mode is off.
 
-.topic HIDC_ASR
-The first value is shifted right by the number of bits in the second.  New leftmost bits retain the original topmost bit value so that negative numbers remain negative.  This is equivalent to dividing a signed (2's complement) number by a power of two.
+.topic HIDC_DFFD_ORIGIN
+Determines whether the Address in the file (see above) that is jumped to is relative to the start of file, end of file, or the current file position.
 
-.topic HIDC_UNARY_CUBE
-Cubes (raises to the power 3) the displayed number.  If the result is too big to display in the current number of bits then an overflow occurs.
+.topic HIDC_FONT
+Allows you to choose the font for the active window.  There are actually two fonts remembered depending on whether or not you are displaying the IBM/OEM character set (see Character Set below).
 
-.topic HIDC_MEM_ADD
-Adds the current value to the calculator memory.  Keyboard shortcut = Ctrl+P.
+.topic HIDC_CHANGE_TRACKING
+Show where bytes have been inserted, replaced and deleted.
 
-.topic HIDC_BCGBARRES_SHOW_TOOLTIPS_WITH_KEYS
-When this option is on, the tooltip displayed for a button also displays the keyboard shortcut (if any) associated with the toolbar button.
+.topic HIDC_REFRESH_NEVER
+The display (windows, status bar etc) is not updated until the macro finishes.
 
-.topic HID_BCG_TOOL_CMD
-Enter the full pathname of the exe file here.
+.topic HIDC_REMOVE_SCHEME
+Delete the currently selected scheme from the list below.  The first 4 "standard" schemes cannot be deleted, although they can be modified in any way you like.
 
-.topic HID_BCG_TOOL_DEL
-Deletes the user-defined tool which is currently selected in the list below.
+.topic HIDC_PRINT_BOTTOM
+The amount of space to leave at the bottom of each page.  This includes space for a footer if you have one.
 
-.topic HIDC_BCGBARRES_ASSIGN
-The Assign button assigns the last entered keyboard shortcut (shown in the "Press New Shortcut Key" box) to the currently selected command (shown in the "Commands" list).
+.topic HIDC_SELECT_FONT
+Allows selection of the font used to display Unicode characters.  This is useful if the current font does not have entries for the Unicode characters you are interested in.
 
-.topic HIDC_BCGBARRES_RESET_MENU
-Resets the context menu to its initial (default) state.
+.topic HIDC_DEC_1COMP
+Select this option to view the decimal values as signed (1's complement format) numbers.
 
-.topic HIDC_FIND_REPLACE_STRING
-The replacement item used when the Replace or Replace All button is clicked.  If both the search and replacement items contain only pairs of hex digits then a hex replacement is performed, otherwise a text replacement is done.
+.topic HIDC_FP_VAL
+The value of the IEEE floating-point number.
 
-.topic HIDC_DATE_NULL
-Sets the bytes to be an empty or invalid value in the currently selected date format.
+.topic HIDC_FIND_BOOKMARK_PREFIX
+When the above Bookmark All is used, the name of each bookmark created uses this prefix followed by a unique number.
 
-.topic HIDC_DATE_LAST
-Sets the date and time to the last valid value for the currently selected date format.
+.topic HIDC_FIND_DIRN_UP
+Used to determine the direction of the search.
 
-.topic HIDC_DATE_FORMAT
-Select from the list to view the bytes following the cursor in the desired date/time format.
+.topic HIDC_FIND_NUMBER_FORMAT
+What format of number are we searching for.  Along with the Size and Big-endian settings this determines the exact hex bytes that are searched for.
 
-.topic HIDC_DEC_2COMP
-Select this option to view the decimal values as signed (2's complement format) numbers.
+.topic HIDC_UNARY_SQUARE_ROOT
+Calculates the square root of the displayed number.  If the result is not a whole integer the result is truncated to the next lowest number.  In decimal mode (ie, negative values allowed) an error occurs if the operand is negative.
 
-.topic HIDC_PRINT_TOP
-The amount of space to leave at the top of each page.  This includes space for a header if you have one.
+.topic HIDC_UNARY_ROL
+Rotates left by one bit.  That is all bits are shifted one position to the left and the leftmost bit is moved into the rightmost position.
 
-.topic HIDC_PRINT_BORDER
-A box is printed around each page of data (not including the header and footer).
+.topic HIDC_UNARY_INC
+Adds one to the number.  If the new number is too large to be displayed in the number of bits then an overflow occurs
 
-.topic HIDC_NAMES
-The first 10 list entries are standard color items.  The entries below those are for defining groups of values that are all assigned the same color.  Click an entry before selecting its color (and/or values for group entries).
+.topic HIDC_GO
+Jumps (in the active file) to the address displayed, first calculating the result if there is a binary operator pending.  This is equivalent to clicking the = button then the Set Cursor button and making the file window active.
 
-.topic HIDC_NUM_PLAYS
-The number of macro replays between each display refresh.
+.topic HIDC_DECIMAL_SIZE
+Specified initial size of new file in decimal.
 
-.topic HIDC_REFRESH_SECS
-The display is updated while the macro is playing based on the passing of time (ie. after the number of seconds has passed).
+.topic HIDC_FILL_HEX
+Fill new file with hex values.
 
-.topic HIDC_DFFD_STRUCT_VAR
-Displays a list of all STRUCT DEFINITIONs.  Select one from the list to add it to the Type name control (to the left).
+.topic HIDC_TEXT
+Enter the text of your message.  For a bug report try to describe the problem as fully as possible.  In particular, if the bug is reproducible list all the steps required to reproduce it, and include the exact wording of any error messages.
 
-.topic HIDC_DFFD_DOWN
-Moves the current element down the order in the list of elements.
+.topic HID_MULTIPLAY_OK
+Click OK to start playing the macro.
 
-.topic HIDC_DFFD_STOP
-A boolean expression that determines if the current array item is the last item of the array.  The special identifier "this" is used for the value of the array item.  Of course array elements (and hence "this") can be of any type - for example, if the array element is a STRUCT with a DATA element with name "flag" then the termination condition could be "this.flag == 1".
+.topic HIDC_MACHINE
+Apply to register HexEdit to run on this machine only.
+
+.topic HIDC_USER_NAME
+This is the name of the registered user, which is used for a single-user licence.  This name is displayed in the About box after the software is registered.
+
+.topic HIDC_REG_FORM
+Click this button to display the Order Form.  You should print the form, fill it out and mail it with your payment.
+
+.topic HIDC_REG_WEB
+Click this button to connect to the HexEdit web site to register and pay on-line.  If your web browser supports it, credit card details are encrypted and sent securely, otherwise you must use one of the alternative methods of payment.
+
+.topic HIDC_FOLDER_REFRESH
+Refresh the file display.
+
+.topic HIDC_RELATIVE
+Alignment is relative to the current position of the mark.  No search occurrences are found before the mark.
 
 .topic HIDC_SAVE_NOW
 The current settings for all global options are saved immediately, even if "Save Settings on Exit" is not checked.
 
-.topic HIDC_REG_EMAIL
-Click this button to email your registration code and other information.  But you must send payment by regular mail for security.
+.topic HIDC_DFFD_STOP
+A boolean expression that determines if the current array item is the last item of the array.  The special identifier "this" is used for the value of the array item.  Of course array elements (and hence "this") can be of any type - for example, if the array element is a STRUCT with a DATA element with name "flag" then the termination condition could be "this.flag == 1".
 
-.topic HIDC_ALG_KEYLEN
-This is the key length used by the algorithm.  In general the bigger the key length, the harder the encryption is to break.
+.topic HIDC_DFFD_DOWN
+Moves the current element down the order in the list of elements.
 
-.topic HIDC_CSRC_STRING
-Generate string(s) enclosed in double-quotes, one for each line.  (To handle control characters it may generate multiple strings per line.)  A standard C compiler will concatenate these strings into one.
+.topic HIDC_DFFD_STRUCT_VAR
+Displays a list of all STRUCT DEFINITIONs.  Select one from the list to add it to the Type name control (to the left).
 
-.topic HIDC_UNARY_ASR
-Arithmetic shift right by one bit.  The new leftmost bit retains its previous value so that negative numbers remain negative.  This is equivalent to dividing a signed (2's complement) number by two.
+.topic HIDC_REFRESH_SECS
+The display is updated while the macro is playing based on the passing of time (ie. after the number of seconds has passed).
 
-.topic HIDC_BCGBARRES_COMMANDS_LIST
-This is the list of commands for the currently selected category above.
+.topic HIDC_NUM_PLAYS
+The number of macro replays between each display refresh.
 
-.topic HIDC_BCGBARRES_CATEGORY
-Lists the categories of commands.  Selecting a category from the list displays all the commands for that category in the Commands list.
+.topic HIDC_NAMES
+The first 10 list entries are standard color items.  The entries below those are for defining groups of values that are all assigned the same color.  Click an entry before selecting its color (and/or values for group entries).
 
-.topic HIDC_FIND_ALIGN1
-The search bytes match without any alignment restrictions.
+.topic HIDC_PRINT_BORDER
+A box is printed around each page of data (not including the header and footer).
 
-.topic HIDC_FIND_TYPE_UNICODE
-The search uses characters from Unicode (2 bytes per character).
+.topic HIDC_PRINT_TOP
+The amount of space to leave at the top of each page.  This includes space for a header if you have one.
 
-.topic HIDC_FIND_REPLACE_ALL
-Replaces all instances of the search item, in the specified scope, with the replacement item.
+.topic HIDC_DEC_2COMP
+Select this option to view the decimal values as signed (2's complement format) numbers.
 
-.topic HIDC_FIND_NEXT
-Find and select the next occurrence of the current search item.
+.topic HIDC_DATE_FORMAT
+Select from the list to view the bytes following the cursor in the desired date/time format.
 
-.topic HIDC_DATE_DISPLAY
-The date and time in the current long date format (set in the Control Panel).
+.topic HIDC_DATE_LAST
+Sets the date and time to the last valid value for the currently selected date format.
 
-.topic HIDC_DATE_LOCAL_TIME
-Select this option to view the date as local time rather than UTC (GMT).
+.topic HIDC_DATE_NULL
+Sets the bytes to be an empty or invalid value in the currently selected date format.
 
-.topic HIDC_CHAR_EBCDIC
-The EBCDIC character at the current cursor position.  The EBCDIC control character name is displayed for values less than 64, and "none" is displayed for invalid EBCDIC characters.
+.topic HIDC_FIND_REPLACE_STRING
+The replacement item used when the Replace or Replace All button is clicked.  If both the search and replacement items contain only pairs of hex digits then a hex replacement is performed, otherwise a text replacement is done.
 
-.topic HIDC_CHAR_OCTAL
-The octal value (000 to 377) of the byte at the current cursor position in the active window.
+.topic HID_BCG_TOOL_DEL
+Deletes the user-defined tool which is currently selected in the list below.
 
-.topic HIDC_PRINT_SPACE1
-Select this option to use normal (single line) spacing on the printer.
+.topic HID_BCG_TOOL_CMD
+Enter the full pathname of the exe file here.
 
-.topic HIDC_PRINT_HEADER
-The text to be displayed at the top of each printed page.  Separate the left-aligned, centered, and right-aligned parts with a vertical bar (|).
+.topic HIDC_MEM_ADD
+Adds the current value to the calculator memory.  Keyboard shortcut = Ctrl+P.
 
-.topic HIDC_ADD
-Adds a new group with the name appearing in the "Name" box, the color in the "Color" control and the range of values in the "Range" box.  This is disabled if "Name" contains the name of an existing group.
+.topic HIDC_UNARY_CUBE
+Cubes (raises to the power 3) the displayed number.  If the result is too big to display in the current number of bits then an overflow occurs.
 
-.topic HIDC_DFFD_ANSI
-Says that strings and characters use the ANSI character set unless otherwise specified.
+.topic HIDC_ASR
+The first value is shifted right by the number of bits in the second.  New leftmost bits retain the original topmost bit value so that negative numbers remain negative.  This is equivalent to dividing a signed (2's complement) number by a power of two.
 
-.topic HIDC_DFFD_IF_EDIT
-Allows editing the attributes of the element.  To replace the element with a different type of element use the "Insert" button (below).
+.topic HIDC_FILL_NUMBER
+Fill new file with integer or floating point numbers.
 
-.topic HIDC_DFFD_LENGTH
-An integer expression evaluated to determine the length of the field.  For "string" types (& "none") this can be any +ve value, but for other data types only certain values are allowed.  For example, for integers it can be any expression as long as the result is 1, 2, 4 or 8.
+.topic HIDC_FILL_NUMBER_VALUE
+Integer or floating point number for fill.
 
-.topic HIDC_RECENT_FILES
-Sets the number of recently opened files that appear in the File menu.  You can use any value from 1 to 16.
+.topic HIDC_CSRC_INT_SIZE
+Format of integers taken from the file (number of bytes).
 
-.topic HIDC_OPEN_FILES
-Click the Open button to open all the selected files.
+.topic HIDC_PRINT_DUP_LINES
+Duplicate lines are printed once followed by a count of the number of identical lines.  This is useful when printing sections of files that contain large numbers of repeated bytes such a nuls.
+
+.topic HIDC_ADDRESS
+Please enter one or more email addresses in case we need to contact with you for more information.
+
+.topic HIDC_COSTS
+This is an explanation of the costs and methods of payment.  Click the Help button for more information.
+
+.topic HIDC_COMPRESSION_WINDOW_SIZE
+Size of the window into the data that is used.  A large value is recommended.
+
+.topic HIDC_FILTER_OPTS
+Select from predefeined file filters or configure the filters list.
+
+.topic HIDC_GRID_FILTERS
+Use the columns of the filter list to enter the text description of the filter and the file "wildcard" pattern that is used to filter the files.  The check box on the left can be used to disable a filter without deleting it.
+
+.topic HIDC_ALIGN_SELECT
+Select a common alignment from the list.
 
 .topic HIDC_BACKUP_IF_SIZE
 A backup file is only created if there is sufficient room on the current drive where the file is stored.
 
-.topic HIDC_MACRO_NAME
-The file name for the macro.  The ".HEM" extension is added automatically.
+.topic HIDC_OPEN_FILES
+Click the Open button to open all the selected files.
 
-.topic HIDC_SUBJECT
-Enter a brief description of the bug or subject of the email.
+.topic HIDC_RECENT_FILES
+Sets the number of recently opened files that appear in the File menu.  You can use any value from 1 to 16.
 
-.topic HIDC_CSRC_FLOAT_SIZE
-Format of IEEE floating point numbers taken from the file.
+.topic HIDC_DFFD_LENGTH
+An integer expression evaluated to determine the length of the field.  For "string" types (& "none") this can be any +ve value, but for other data types only certain values are allowed.  For example, for integers it can be any expression as long as the result is 1, 2, 4 or 8.
 
-.topic HIDC_CSRC_ADDRESS
-Include original file address (in C comments) on each line.
+.topic HIDC_DFFD_IF_EDIT
+Allows editing the attributes of the element.  To replace the element with a different type of element use the "Insert" button (below).
 
-.topic HIDC_FILL_CLIPBOARD_SAMPLE
-Shows what is currently stored on the clipboard (or the first part of it).  May be hex (for hex data) or characters (for ASCII or Unicode data).
+.topic HIDC_DFFD_ANSI
+Says that strings and characters use the ANSI character set unless otherwise specified.
 
-.topic HIDC_FILL_DISK
-If this option is checked you are prompted for the disk file name as soon as you click OK and the file is immediately written to disk.  For large files (ie many Mbytes or GBytes) this can save a lot of time as HexEdit does not have to create a temporary file.
+.topic HIDC_ADD
+Adds a new group with the name appearing in the "Name" box, the color in the "Color" control and the range of values in the "Range" box.  This is disabled if "Name" contains the name of an existing group.
 
-.topic HIDC_MOD
-Binary operator that calculates the remainder when the first value is divided by the second.  Keyboard shortcut = %.
+.topic HIDC_PRINT_HEADER
+The text to be displayed at the top of each printed page.  Separate the left-aligned, centered, and right-aligned parts with a vertical bar (|).
 
-.topic HIDC_UNARY_REV
-Reverses the order of the bits, so that the leftmost bit is swapped with the rightmost bit etc.
+.topic HIDC_PRINT_SPACE1
+Select this option to use normal (single line) spacing on the printer.
 
-.topic HIDC_16BIT
-Changes the current number size for entry and calculations to 16 bits (2 bytes).  If the previous size was 64 or 32 bits and the current value does not fit into 16 bits an overflow is signalled.  Keyboard shortcut = F11.
+.topic HIDC_CHAR_OCTAL
+The octal value (000 to 377) of the byte at the current cursor position in the active window.
 
-.topic HID_BCG_TOOL_DIR
-Specifies the directory in which the program is to be run.
+.topic HIDC_DATE_LOCAL_TIME
+Select this option to view the date as local time rather than UTC (GMT).
 
-.topic HIDC_BCGBARRES_TEXT_LABELS
-Displays text labels under the buttons on the selected toolbar.
+.topic HIDC_DATE_DISPLAY
+The date and time in the current long date format (set in the Control Panel).
 
-.topic HIDC_BCGBARRES_TOOLBAR_LIST
-Lists the standard and custom toolbars.  Click the tick-box to show or hide a toolbar.  Use the Commands page to customise the buttons on the toolbars.
+.topic HIDC_FIND_NEXT
+Find and select the next occurrence of the current search item.
 
-.topic HIDC_FIND_ALIGN2
-The search bytes are matched only if they occur on an even byte (word) boundary.
+.topic HIDC_FIND_REPLACE_ALL
+Replaces all instances of the search item, in the specified scope, with the replacement item.
 
-.topic HIDC_BIG_ENDIAN
-Byte order of integer/float numbers taken from the file.
+.topic HIDC_FIND_TYPE_UNICODE
+The search uses characters from Unicode (2 bytes per character).
 
-.topic HIDC_FILE_PATH
-The directory where the file is stored.
+.topic HIDC_UNARY_ASR
+Arithmetic shift right by one bit.  The new leftmost bit retains its previous value so that negative numbers remain negative.  This is equivalent to dividing a signed (2's complement) number by two.
 
-.topic HIDC_PRINT_SPACE2
-Select this option to use double-line spacing on the printer.
+.topic HIDC_CSRC_STRING
+Generate string(s) enclosed in double-quotes, one for each line.  (To handle control characters it may generate multiple strings per line.)  A standard C compiler will concatenate these strings into one.
 
-.topic HIDC_SCHEMES
-List of available color schemes.  Select a scheme from the list before modifying its colors etc in the controls on the right.
+.topic HIDC_ALG_KEYLEN
+This is the key length used by the algorithm.  In general the bigger the key length, the harder the encryption is to break.
 
-.topic HIDC_MACRODIR
-Sets the folder where macros are saved and loaded from.
+.topic HIDC_REG_EMAIL
+Click this button to email your registration code and other information.  But you must send payment by regular mail for security.
 
-.topic HIDC_LOADMACRO
-Loads a macro file and makes it the current macro.
+.topic HIDC_CODE_PAGE
+Select the code page that is use to show the character at the left.  Depending on the code pagethe character shown may use more than one byte starting from the current cursor position.
 
-.topic HIDC_BORDERS
-Display disk sectors.  When editing disks/volumes this also shows bad sectors with a different background color.
+.topic HIDC_FOLDER_HIDDEN
+Toggle display of hidden files.
 
-.topic HIDC_MAX
-This says whether the active window is displayed normally or maximized.
-
-.topic HIDC_PACK16
-Default to 16-byte alignment.
-
-.topic HIDC_DFFD_EBCDIC
-Says that strings and characters use the EBCDIC character set unless otherwise specified.
-
-.topic HIDC_DFFD_EXPR
-An expression of any type to evaluate.  May also contain a string with embedded expressions enclosed in braces {} with optional format specifications.  For example, to display a field of flags in binary use something like "flags = {header.flags; bin}".
+.topic HIDC_DFFD_FORMAT_CHAR
+Determines how characters are displayed in the Data column of the tree view, for any character fields that do not have explicit formatting.  You can use C-language printf format specs such as "%c", "%d", %02.2x" etc.
 
 .topic HIDC_DFFD_IF_REPLACE
 Allows replacing the current element with a different type of element.  For example, you can replace a DATA element with a STRUCT.  Note that all attributes and sub-elements of the current element will be lost.
 
-.topic HIDC_DFFD_FORMAT_CHAR
-Determines how characters are displayed in the Data column of the tree view, for any character fields that do not have explicit formatting.  You can use C-language printf format specs such as "%c", "%d", %02.2x" etc.
+.topic HIDC_DFFD_EXPR
+An expression of any type to evaluate.  May also contain a string with embedded expressions enclosed in braces {} with optional format specifications.  For example, to display a field of flags in binary use something like "flags = {header.flags; bin}".
+
+.topic HIDC_DFFD_EBCDIC
+Says that strings and characters use the EBCDIC character set unless otherwise specified.
+
+.topic HIDC_PACK16
+Default to 16-byte alignment.
+
+.topic HIDC_MAX
+This says whether the active window is displayed normally or maximized.
+
+.topic HIDC_BORDERS
+Display the boundaries of disk sectors.  When editing disks/volumes this also shows bad sectors with a different background color.
+
+.topic HIDC_LOADMACRO
+Loads a macro file and makes it the current macro.
+
+.topic HIDC_MACRODIR
+Sets the folder where macros are saved and loaded from.
+
+.topic HIDC_SCHEMES
+List of available color schemes.  Select a scheme from the list before modifying its colors etc in the controls on the right.
+
+.topic HIDC_PRINT_SPACE2
+Select this option to use double-line spacing on the printer.
+
+.topic HIDC_FILE_PATH
+The directory where the file is stored.
+
+.topic HIDC_BIG_ENDIAN
+Byte order of integer/float numbers taken from the file.
+
+.topic HID_BCG_TOOL_DIR
+Specifies the directory in which the program is to be run.
+
+.topic HIDC_16BIT
+Changes the current number size for entry and calculations to 16 bits (2 bytes).  If the previous size was 64 or 32 bits and the current value does not fit into 16 bits an overflow is signalled.  Keyboard shortcut = F11.
+
+.topic HIDC_UNARY_REV
+Reverses the order of the bits, so that the leftmost bit is swapped with the rightmost bit etc.
+
+.topic HIDC_MOD
+Binary operator that calculates the remainder when the first value is divided by the second.  Keyboard shortcut = %.
+
+.topic HIDC_FILL_DISK
+If this option is checked you are prompted for the disk file name as soon as you click OK and the file is immediately written to disk.  For large files (ie many Mbytes or GBytes) this can save a lot of time as HexEdit does not have to create a temporary file.
+
+.topic HIDC_FILL_CLIPBOARD_SAMPLE
+Shows what is currently stored on the clipboard (or the first part of it).  May be hex (for hex data) or characters (for ASCII or Unicode data).
+
+.topic HIDC_CSRC_ADDRESS
+Include original file address (in C comments) on each line.
+
+.topic HIDC_CSRC_FLOAT_SIZE
+Format of IEEE floating point numbers taken from the file.
+
+.topic HIDC_SUBJECT
+Enter a brief description of the bug or subject of the email.
+
+.topic HIDC_MACRO_NAME
+The file name for the macro.  The ".HEM" extension is added automatically.
 

@@ -1,0 +1,105 @@
+.topic HIDC_BCGBARRES_RESET
+Resets a standard toolbar (the Tool Bar or Edit Bar) or the Menu Bar to its initial (default) state.
+
+.topic HIDC_BCGBARRES_NEW_TOOLBAR
+Creates a custom toolbar.
+
+.topic HIDC_BCGBARRES_RENAME_TOOLBAR
+Renames a custom toolbar.
+
+.topic HIDC_BCGBARRES_MENU_ANIMATION
+This list determines how the menus are drawn onto the screen.
+
+.topic HIDC_BCGBARRES_SHOW_RECENTLY_USED_MENUS
+This option changes menus so that they (initially) only show recently used items.  Holding the mouse down over the menu forces it to display all items for the menu after a short time.
+
+.topic HIDC_BCGBARRES_NEW_SHORTCUT_KEY
+To assign a new keyboard shortcut (or reassign an old one) select this box and type a keystroke.  When you click the Assign button the shortcut is assigned to the currently selected command.
+
+.topic HIDC_BCGBARRES_RESET_ALL
+Resets all standard toolbars and the Menu Bar to their default state.
+
+.topic HIDC_BCGBARRES_VIEW_TYPE
+Lists the keyboard tables available.  Currently there is only one (Default).
+
+.topic HIDC_BCGBARRES_LIST_VIEWS
+Lists the double-click areas that can be customised.  The 3 areas are the main hex area of the file display, the character area to the right (if present), and the address area to the left.
+
+.topic HIDC_BCGBARRES_REMOVE
+Removes the selected keyboard shortcut (shown in the "Current Keys" list) from the selected command (shown in the "Commands" list).
+
+.topic HIDC_BCGBARRES_RESET_SHORTCUTS
+Resets all keyboard shortcuts to their default (initial) state.
+
+.topic HIDC_BCGBARRES_LOOK2000
+This option turns on the toolbar and menu look associated with Windows 2000.
+
+.topic HIDC_BCGBARRES_RESET_USAGE_DATA
+This option resets all menus so that they do not remember which items have been recently used.
+
+.topic HIDC_BCGBARRES_MENU_LIST
+Lists the frame menus for HexEdit.  The Default menu is displayed when no files are open.  You can modify the selected menu using the Commands page.
+
+.topic HIDC_BCGBARRES_CONTEXT_MENU_LIST
+Lists the context menus for HexEdit.  There are 6 different menus.  They are for the main hex area of the file display, the character area to the right of the hex area (if present), the address area to the left of the hex area, the status bar, the current selection menu and the highlighted bytes menu.  You can customise the currently selected context menu using the Commands page.
+
+.topic HIDC_BCGBARRES_NO_DBLCLIICK
+This options means that no action is taken when a mouse double-click is performed.
+
+.topic HIDC_BCGBARRES_BUTTON_DESCR
+Provides a description of the selected command.
+
+.topic HIDC_BCGBARRES_MENU_SHADOWS
+Draw menus with a drop-shadow.
+
+.topic HIDC_BCGBARRES_USER_TOOLS
+Shows the items for the current category.  Drag the item you want from the box to a toolbar or the Menu Bar.
+
+.topic HIDC_BCGBARRES_DELETE_TOOLBAR
+Deletes a custom toolbar.
+
+.topic HIDC_BCGBARRES_RESET_FRAME_MENU
+Resets the frame menu to its initial (default) state.
+
+.topic HIDC_BCGBARRES_SKINS
+Select from a list of "skins" that change the look of toolbars, menus etc.
+
+.topic HIDC_BCGBARRES_LARGE_ICONS
+Displays larger buttons on all toolbars.
+
+.topic HIDC_BCGBARRES_USE_DBLCLIICK
+This allows an action to be selected (from the list below) for a mouse double-click event.
+
+.topic HIDC_BCGBARRES_LIST_OF_COMMANDS
+This is the action to take when a mouse double-click event occurs in the area selected in the list on the left.
+
+.topic HIDC_BCGBARRES_CURRENT_KEYS_LIST
+Displays the current keyboard shortcut(s) for the currently selected command.
+
+.topic HIDC_BCGBARRES_SHOW_TOOLTIPS
+Displays a short description if you leave the mouse cursor over a toolbar button for a second.
+
+.topic HIDC_BCGBARRES_SHOW_MENUS_DELAY
+This is the delay before all menu items are displayed.
+
+.topic HIDC_BCGBARRES_RESET_MENU
+Resets the context menu to its initial (default) state.
+
+.topic HIDC_BCGBARRES_ASSIGN
+The Assign button assigns the last entered keyboard shortcut (shown in the "Press New Shortcut Key" box) to the currently selected command (shown in the "Commands" list).
+
+.topic HIDC_BCGBARRES_SHOW_TOOLTIPS_WITH_KEYS
+When this option is on, the tooltip displayed for a button also displays the keyboard shortcut (if any) associated with the toolbar button.
+
+.topic HIDC_BCGBARRES_CATEGORY
+Lists the categories of commands.  Selecting a category from the list displays all the commands for that category in the Commands list.
+
+.topic HIDC_BCGBARRES_COMMANDS_LIST
+This is the list of commands for the currently selected category above.
+
+.topic HIDC_BCGBARRES_TOOLBAR_LIST
+Lists the standard and custom toolbars.  Click the tick-box to show or hide a toolbar.  Use the Commands page to customise the buttons on the toolbars.
+
+.topic HIDC_BCGBARRES_TEXT_LABELS
+Displays text labels under the buttons on the selected toolbar.
+
