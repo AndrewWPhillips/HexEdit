@@ -113,6 +113,7 @@ protected:
 	virtual void OnOK();
 public:
 	afx_msg void OnClose();
+	afx_msg void OnBnClickedAlgorithmHelp();
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -80,6 +80,7 @@ BEGIN_MESSAGE_MAP(COpenSpecialDlg, CDialog)
     ON_WM_CONTEXTMENU()
 	ON_MESSAGE(WM_USER+1, OnWmUser1)
 	ON_MESSAGE(WM_USER+2, OnWmUser2)
+	ON_BN_CLICKED(IDC_ALGORITHM_HELP, OnBnClickedAlgorithmHelp)
 END_MESSAGE_MAP()
 
 // Rebuild the tree nodes.  Does not change nodes if they already exist for the unique device id,
@@ -349,12 +350,13 @@ BOOL COpenSpecialDlg::OnInitDialog()
 	resizer_.Create(this);
 	resizer_.SetMinimumTrackingSize();
 	resizer_.SetGripEnabled(TRUE);
-    resizer_.Add(IDC_OPEN_TREE,      0,   0, 100, 100);
-    resizer_.Add(IDC_PROP_DESC,    100,   0,   0,   0);
-    resizer_.Add(IDC_OPEN_INFO,    100,   0,   0, 100);
-    resizer_.Add(IDC_OPEN_READONLY,100, 100,   0,   0);
-    resizer_.Add(IDOK,             100, 100,   0,   0);
-    resizer_.Add(IDCANCEL,         100, 100,   0,   0);
+    resizer_.Add(IDC_OPEN_TREE,        0,   0, 100, 100);
+    resizer_.Add(IDC_PROP_DESC,      100,   0,   0,   0);
+    resizer_.Add(IDC_OPEN_INFO,      100,   0,   0, 100);
+    resizer_.Add(IDC_OPEN_READONLY,  100, 100,   0,   0);
+    resizer_.Add(IDC_ALGORITHM_HELP, 100, 100,   0,   0);
+    resizer_.Add(IDOK,               100, 100,   0,   0);
+    resizer_.Add(IDCANCEL,           100, 100,   0,   0);
 
 	// Set up tree control
 	m_ctl_tree.ModifyStyle(0, TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS);
@@ -426,25 +428,13 @@ static DWORD id_pairs[] = {
 
 BOOL COpenSpecialDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pHelpInfo->hItemHandle, theApp.m_pszHelpFilePath, 
-                   HELP_WM_HELP, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
     return TRUE;
 }
 
 void COpenSpecialDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    ASSERT(theApp.m_pszHelpFilePath != NULL);
-
-    CWaitCursor wait;
-
-    if (!::WinHelp((HWND)pWnd->GetSafeHwnd(), theApp.m_pszHelpFilePath, 
-                   HELP_CONTEXTMENU, (DWORD) (LPSTR) id_pairs))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
 }
 
 LRESULT COpenSpecialDlg::OnKickIdle(WPARAM, LPARAM lCount)
@@ -559,4 +549,10 @@ void COpenSpecialDlg::OnDblclkOpenTree(NMHDR* pNMHDR, LRESULT* pResult)
 	OnOK();
 
 	*pResult = 0;
+}
+
+void COpenSpecialDlg::OnBnClickedAlgorithmHelp()
+{
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_OPEN_SPECIAL_HELP))
+        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }

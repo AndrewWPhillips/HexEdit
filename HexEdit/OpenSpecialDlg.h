@@ -79,6 +79,7 @@ protected:
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg LRESULT OnWmUser1(WPARAM, LPARAM);
 	afx_msg LRESULT OnWmUser2(WPARAM, LPARAM);
+	afx_msg void OnBnClickedAlgorithmHelp();
 	DECLARE_MESSAGE_MAP()
 
 	CResizeCtrl resizer_;               // Used to move controls around when the window is resized

@@ -25,6 +25,8 @@
 #include "ntapi.h"
 
 #include "resource.hm"    // help IDs
+#include "HelpID.hm"            // User defined help IDs
+#include ".\opendiskdlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -81,6 +83,7 @@ BEGIN_MESSAGE_MAP(COpenDiskDlg, CDialog)
     ON_WM_TIMER()
 	ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_ALGORITHM_HELP, OnBnClickedAlgorithmHelp)
 END_MESSAGE_MAP()
 
 void COpenDiskDlg::Update(int ii)
@@ -816,4 +819,10 @@ void COpenDiskDlg::OnDblclkOpenTree(NMHDR* pNMHDR, LRESULT* pResult)
 	OnOK();
 
 	*pResult = 0;
+}
+
+void COpenDiskDlg::OnBnClickedAlgorithmHelp()
+{
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_OPEN_SPECIAL_HELP))
+        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
