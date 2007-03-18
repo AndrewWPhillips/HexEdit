@@ -1783,8 +1783,8 @@ BEGIN
                     BS_VCENTER
     LTEXT           "Filter name",IDC_STATIC,22,9,35,8
     LTEXT           "Filter",IDC_STATIC,143,9,16,8
-    CONTROL         "Custom1",IDC_GRID,"MFCGridCtrl",WS_TABSTOP,3,18,249,108,
-                    0,HIDC_GRID
+    CONTROL         "Custom1",IDC_GRID_FILTERS,"MFCGridCtrl",WS_TABSTOP,3,18,
+                    249,108,0,HIDC_GRID_FILTERS
 END
 
 IDD_OPT_WINDISPLAY DIALOGEX 0, 0, 255, 127
@@ -1920,14 +1920,14 @@ BEGIN
     EDITTEXT        IDC_ALIGN,189,53,34,14,ES_AUTOHSCROLL,0,HIDC_ALIGN
     CONTROL         "",IDC_ALIGN_SPIN,"msctls_updown32",UDS_SETBUDDYINT | 
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
-                    UDS_NOTHOUSANDS,212,47,9,14,0,HIDC_ALIGN_SPIN
+                    UDS_NOTHOUSANDS,212,47,9,14
     PUSHBUTTON      "",IDC_ALIGN_SELECT,224,54,9,11,0,0,HIDC_ALIGN_SELECT
     LTEXT           "Offset:",IDC_STATIC,168,74,22,8
     EDITTEXT        IDC_FIND_OFFSET,189,71,34,14,ES_AUTOHSCROLL,0,
                     HIDC_FIND_OFFSET
     CONTROL         "",IDC_OFFSET_SPIN,"msctls_updown32",UDS_SETBUDDYINT | 
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
-                    UDS_NOTHOUSANDS,220,70,9,14,0,HIDC_OFFSET_SPIN
+                    UDS_NOTHOUSANDS,220,70,9,14
     CONTROL         "Relative to mark",IDC_RELATIVE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,168,88,64,10,0,HIDC_RELATIVE
     DEFPUSHBUTTON   "Find Next",IDC_FIND_NEXT,242,6,54,14,WS_GROUP
@@ -2043,7 +2043,7 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Basic    "
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    RTEXT           "Find:",IDC_FIND_DESC,0,9,32,8,0,0,HIDC_FIND_DESC
+    RTEXT           "Find:",IDC_FIND_DESC,0,9,32,8
     COMBOBOX        IDC_FIND_COMBINED_STRING,34,6,202,102,CBS_DROPDOWN | 
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,0,
                     HIDC_FIND_COMBINED_STRING
@@ -2059,7 +2059,7 @@ BEGIN
     CONTROL         "Up",IDC_FIND_DIRN_UP,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP | WS_TABSTOP,34,76,25,10,0,HIDC_FIND_DIRN_UP
     CONTROL         "Down",IDC_FIND_DIRN_DOWN,"Button",BS_AUTORADIOBUTTON,34,
-                    88,35,10,0,HIDC_FIND_DIRN_DOWN
+                    88,35,10
     GROUPBOX        "Scope",IDC_STATIC,94,42,65,60,WS_GROUP
     CONTROL         "To mark",IDC_FIND_SCOPE_TOMARK,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,99,52,42,10,0,
@@ -4094,7 +4094,7 @@ BEGIN
                     HIDC_REG_EMAIL
     LTEXT           "Or, check out help for details.",IDC_STATIC,7,169,149,
                     17
-    PUSHBUTTON      "Help",IDC_REG_HELP,161,167,74,14,0,0,HIDC_REG_HELP
+    PUSHBUTTON      "Help",IDC_REG_HELP,161,167,74,14
 END
 
 IDD_RECENT_FILES DIALOGEX 0, 0, 380, 185
@@ -4613,6 +4613,7 @@ BEGIN
                     HIDC_OPEN_READONLY
     DEFPUSHBUTTON   "OK",IDOK,303,107,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,303,125,50,14
+    PUSHBUTTON      "&Help",IDC_ALGORITHM_HELP,208,125,50,14,WS_GROUP
 END
 
 IDD_DFFD_EVAL DIALOGEX 0, 0, 292, 170
@@ -4880,6 +4881,7 @@ END
 
 IDD_COMPRESS DIALOGEX 0, 0, 354, 244
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "ZLIB Compression Options"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -4919,20 +4921,23 @@ BEGIN
     GROUPBOX        "Data recovery (full flush) points",IDC_STATIC,8,172,188,
                     64,WS_GROUP
     LTEXT           "Synchronize every: ",IDC_STATIC,15,187,62,8
-    EDITTEXT        IDC_COMPRESSION_SYNC,83,185,38,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMPRESSION_SYNC,83,185,38,14,ES_AUTOHSCROLL,0,
+                    HIDC_COMPRESSION_SYNC
     LTEXT           "KBytes",IDC_STATIC,128,187,35,8,NOT WS_GROUP
     LTEXT           "The value is rounded up to a multiple of the current buffer size (currently 16 Kb).  (A value of zero means no flush points are generated.)",
                     IDC_STATIC,15,203,173,28
     GROUPBOX        "Header",IDC_STATIC,205,5,139,52,WS_GROUP
     CONTROL         "Raw (no header)",IDC_COMPRESSION_HEADER_RAW,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,214,18,70,10
+                    BS_AUTORADIOBUTTON | WS_GROUP,214,18,70,10,0,
+                    HIDC_COMPRESSION_HEADER_RAW
     CONTROL         "Zlib header (default)",IDC_COMPRESSION_HEADER_ZLIB,
                     "Button",BS_AUTORADIOBUTTON,214,30,81,10
     CONTROL         "Gzip header",IDC_COMPRESSION_HEADER_GZIP,"Button",
                     BS_AUTORADIOBUTTON,214,42,54,10
     GROUPBOX        "Strategy",IDC_STATIC,205,64,139,102,WS_GROUP
     CONTROL         "Default",IDC_COMPRESSION_STRATEGY_DEFAULT,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,214,77,39,10
+                    BS_AUTORADIOBUTTON | WS_GROUP,214,77,39,10,0,
+                    HIDC_COMPRESSION_STRATEGY_DEFAULT
     CONTROL         "Filtered",IDC_COMPRESSION_STRATEGY_FILTERED,"Button",
                     BS_AUTORADIOBUTTON,214,88,40,10
     CONTROL         "Huffman only",IDC_COMPRESSION_STRATEGY_HUFFMAN,"Button",

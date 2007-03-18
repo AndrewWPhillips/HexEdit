@@ -17,7 +17,6 @@
 #define HIDC_ALG_KEYLEN                 0x80ee0490    // IDD_ALGORITHM [English (U.S.)]
 #define HIDC_ALIGN                      0x809605f2    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_ALIGN_SELECT               0x809605f3    // IDD_FIND_HEX [English (U.S.)]
-#define HIDC_ALIGN_SPIN                 0x809605f4    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_AND                        0x8075042e    // IDD_CALC
 #define HIDC_ASR                        0x80750433    // IDD_CALC
 #define HIDC_ATTACH                     0x80e5059a    // IDD_EMAIL
@@ -58,8 +57,12 @@
 #define HIDC_CODE_PAGE                  0x813205ce    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_COLOUR_PICKER              0x80e604bc    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_COLS                       0x810c0443    // IDD_OPT_WINDISPLAY [English (U.S.)]
+#define HIDC_COMPRESSION_HEADER_RAW     0x812a05e3    // IDD_COMPRESS
 #define HIDC_COMPRESSION_LEVEL          0x812a05f0    // IDD_COMPRESS
 #define HIDC_COMPRESSION_MEMORY_USAGE   0x812a05ee    // IDD_COMPRESS
+#define HIDC_COMPRESSION_STRATEGY_DEFAULT \
+                                        0x812a05e8    // IDD_COMPRESS
+#define HIDC_COMPRESSION_SYNC           0x812a05ef    // IDD_COMPRESS
 #define HIDC_COMPRESSION_WINDOW_SIZE    0x812a05ed    // IDD_COMPRESS
 #define HIDC_CONTROL                    0x810c04b1    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_COSTS                      0x80ec048b    // IDD_REG
@@ -211,8 +214,6 @@
 #define HIDC_FIND_BOOKMARK_ALL          0x8096051c    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_FIND_BOOKMARK_PREFIX       0x8096051d    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_FIND_COMBINED_STRING       0x80f904ec    // IDD_FIND_REPLACE [English (U.S.)]
-#define HIDC_FIND_DESC                  0x80fa04f6    // IDD_FIND_SIMPLE [English (U.S.)]
-#define HIDC_FIND_DIRN_DOWN             0x80fa04f8    // IDD_FIND_SIMPLE [English (U.S.)]
 #define HIDC_FIND_DIRN_UP               0x80fa04f7    // IDD_FIND_SIMPLE [English (U.S.)]
 #define HIDC_FIND_HELP                  0x80fa04f3    // IDD_FIND_SIMPLE [English (U.S.)]
 #define HIDC_FIND_HEX_STRING            0x809604ee    // IDD_FIND_HEX [English (U.S.)]
@@ -223,6 +224,7 @@
 #define HIDC_FIND_NUMBER_FORMAT         0x80980511    // IDD_FIND_NUMBER [English (U.S.)]
 #define HIDC_FIND_NUMBER_SIZE           0x80980512    // IDD_FIND_NUMBER [English (U.S.)]
 #define HIDC_FIND_NUM_STRING            0x809804f0    // IDD_FIND_NUMBER [English (U.S.)]
+#define HIDC_FIND_OFFSET                0x80960600    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_FIND_REPLACE               0x80f904ea    // IDD_FIND_REPLACE [English (U.S.)]
 #define HIDC_FIND_REPLACE_ALL           0x80f904eb    // IDD_FIND_REPLACE [English (U.S.)]
 #define HIDC_FIND_REPLACE_STRING        0x80f904f1    // IDD_FIND_REPLACE [English (U.S.)]
@@ -255,9 +257,10 @@
 #define HIDC_FP_MANT                    0x80a40433    // IDD_PROP_FLOAT [English (U.S.)]
 #define HIDC_FP_VAL                     0x80a40432    // IDD_PROP_FLOAT [English (U.S.)]
 #define HIDC_GO                         0x80750413    // IDD_CALC
-#define HIDC_GRID                       0x80f104a7    // IDD_OPT_FILTERS [English (U.S.)]
 #define HIDC_GRID_BL                    0x810f04cd    // IDD_BOOKMARKS
+#define HIDC_GRID_FILTERS               0x80f10601    // IDD_OPT_FILTERS [English (U.S.)]
 #define HIDC_GRID_RFL                   0x810e04c7    // IDD_RECENT_FILES
+#define HIDC_GRID_TIP                   0x81340602    // IDD_OPT_TIPS [English (U.S.)]
 #define HIDC_GROUPING                   0x810c0445    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_GTR                        0x8075042a    // IDD_CALC
 #define HIDC_HALT0                      0x80a9045d    // IDD_OPT_MACRO [English (U.S.)]
@@ -317,8 +320,7 @@
 #define HIDC_NUM_PLAYS                  0x80a90447    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_NUM_SECS                   0x80a90460    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_OCTAL                      0x807503eb    // IDD_CALC
-#define HIDC_OFFSET                     0x80960444    // IDD_FIND_HEX [English (U.S.)]
-#define HIDC_OFFSET_SPIN                0x809605f5    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_OFFSET                     0x80960444    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_ONE_ONLY                   0x809e0418    // IDD_OPT_SYSTEM [English (U.S.)]
 #define HIDC_OPEN_FILES                 0x810e04ac    // IDD_RECENT_FILES
 #define HIDC_OPEN_INFO                  0x8121056b    // IDD_OPEN_SPECIAL
@@ -368,7 +370,6 @@
 #define HIDC_REG_CODE                   0x80e70486    // IDD_REGISTER
 #define HIDC_REG_EMAIL                  0x80ec0485    // IDD_REG
 #define HIDC_REG_FORM                   0x80ec048c    // IDD_REG
-#define HIDC_REG_HELP                   0x810b0489    // IDD_STARTUP
 #define HIDC_REG_WEB                    0x80ec048a    // IDD_REG
 #define HIDC_RELATIVE                   0x809605f8    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_REMOVE                     0x80e6044e    // IDD_OPT_COLOURS [English (U.S.)]
