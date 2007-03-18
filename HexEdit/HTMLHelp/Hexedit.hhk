@@ -22,7 +22,7 @@
       <param name="Name" value="Date and Time Formats">
       <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
       <param name="Name" value="Date/Time Values Page">
-      <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+      <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
       <param name="Name" value="DATA Dialog">
       <param name="Local" value="dlg_templates\DATA_Dialog.htm">
     </object>
@@ -997,8 +997,6 @@
     <param name="Name" value="exponent">
     <param name="Name" value="Floating Point Values Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
-    <param name="Name" value="IBM Floating Point Values Page">
-    <param name="Local" value="dlg_properties\HIDD_PROP_IBMFP.htm">
     <param name="Name" value="Floating Point Numbers">
     <param name="Local" value="binary_files\Floating_Point_Numbers.htm">
   </object>
@@ -1109,6 +1107,8 @@
       <param name="Local" value="dlg_file\AFX_HIDD_FILESAVE.htm">
       <param name="Name" value="Filters">
       <param name="Local" value="dlg_options\Filters.htm">
+      <param name="Name" value="Save All command">
+      <param name="Local" value="cmd_file\HID_FILE_SAVE_ALL.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="writing the selection">
@@ -1245,8 +1245,6 @@
     <param name="Name" value="floating point">
     <param name="Name" value="Floating Point Values Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
-    <param name="Name" value="IBM Floating Point Values Page">
-    <param name="Local" value="dlg_properties\HIDD_PROP_IBMFP.htm">
     <param name="Name" value="Floating Point Numbers">
     <param name="Local" value="binary_files\Floating_Point_Numbers.htm">
     <param name="Name" value="Binary Files">
@@ -1447,8 +1445,6 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="IBM">
-    <param name="Name" value="IBM Floating Point Values Page">
-    <param name="Local" value="dlg_properties\HIDD_PROP_IBMFP.htm">
     <param name="Name" value="Properties Dialog">
     <param name="Local" value="overviewtools\prop.htm">
     <param name="Name" value="Floating Point Numbers">
@@ -1707,8 +1703,6 @@
     <param name="Name" value="mantissa">
     <param name="Name" value="Floating Point Values Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
-    <param name="Name" value="IBM Floating Point Values Page">
-    <param name="Local" value="dlg_properties\HIDD_PROP_IBMFP.htm">
     <param name="Name" value="Floating Point Numbers">
     <param name="Local" value="binary_files\Floating_Point_Numbers.htm">
   </object>
@@ -1999,10 +1993,8 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_FILE.htm">
     <param name="Name" value="Floating Point Values Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
-    <param name="Name" value="IBM Floating Point Values Page">
-    <param name="Local" value="dlg_properties\HIDD_PROP_IBMFP.htm">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="quad word">
@@ -2915,8 +2907,6 @@
       <param name="Local" value="dlg_properties\HIDD_PROP_DECIMAL.htm">
       <param name="Name" value="Floating Point Values Page">
       <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
-      <param name="Name" value="IBM Floating Point Values Page">
-      <param name="Local" value="dlg_properties\HIDD_PROP_IBMFP.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3038,13 +3028,11 @@
     <param name="Name" value="Numbers">
     <param name="Local" value="binary_files\Numbers.htm">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
     <param name="Name" value="Decimal Values Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_DECIMAL.htm">
     <param name="Name" value="Floating Point Values Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
-    <param name="Name" value="IBM Floating Point Values Page">
-    <param name="Local" value="dlg_properties\HIDD_PROP_IBMFP.htm">
     <param name="Name" value="Toggle Big Endian Command">
     <param name="Local" value="cmd_operations\HID_BIG_ENDIAN.htm">
   </object>
@@ -3056,7 +3044,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="time formats">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
     <param name="Name" value="Date and Time Formats">
     <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
   </object>
@@ -3114,35 +3102,35 @@
     <param name="Name" value="Date and Time Formats">
     <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="OLE DATE">
     <param name="Name" value="Date and Time Formats">
     <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="SYSTEMTIME">
     <param name="Name" value="Date and Time Formats">
     <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="FILETIME">
     <param name="Name" value="Date and Time Formats">
     <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="NTFS date/time">
     <param name="Name" value="Date and Time Formats">
     <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Masked search">
@@ -3154,21 +3142,21 @@
     <param name="Name" value="Date and Time Formats">
     <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="PCDOS date/time">
     <param name="Name" value="Date and Time Formats">
     <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="FAT filesystem date/time">
     <param name="Name" value="Date and Time Formats">
     <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="keeping original file times">
@@ -3907,7 +3895,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="64-bit time_t format">
     <param name="Name" value="Date/Time Values Page">
-    <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="categories">
@@ -4098,6 +4086,11 @@
     <param name="Name" value="Info Tips">
     <param name="Name" value="HIDD_OPT_TIPS">
     <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="disk editing">
+    <param name="Name" value="Open Special">
+    <param name="Local" value="cmd_file\HID_FILE_OPEN_SPECIAL.htm">
   </object>
 </ul>
 </html>

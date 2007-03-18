@@ -532,8 +532,8 @@
         <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Date/Time">
-        <param name="Local" value="dlg_properties\Date_Time_Values.htm">
+        <param name="Name" value="Date/Time Values Page">
+        <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
       </object>
       </ul>
     <li><object type="text/sitemap">
@@ -776,6 +776,10 @@
       <param name="Name" value="Other Dialogs">
     </object>
     <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Open Special dialog">
+        <param name="Local" value="dlg_other\HIDD_OPEN_SPECIAL.htm">
+      </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Font Dialog">
         <param name="Local" value="dlg_other\AFX_HIDD_FONT.htm">

@@ -51,6 +51,7 @@ Go To command | cmd_edit\HID_EDIT_GOTO.htm
 [File Commands]
 New File command | cmd_file\HID_FILE_NEW.htm
 File Open command | cmd_file\HID_FILE_OPEN.htm
+Open Special | cmd_file\HID_FILE_OPEN_SPECIAL.htm
 File Close command | cmd_file\HID_FILE_CLOSE.htm
 File Save command | cmd_file\HID_FILE_SAVE.htm
 File Save As command | cmd_file\HID_FILE_SAVE_AS.htm
@@ -314,6 +315,7 @@ Printer Options | dlg_options\Printer_Options.htm
 Filters page | dlg_options\Filters.htm
 
 [Other Dialogs]
+Open Special dialog | dlg_other\HIDD_OPEN_SPECIAL.htm
 Choose Font Dialog | dlg_other\AFX_HIDD_FONT.htm
 Window Manager Dialog | dlg_other\HIDD_WINDOW_MANAGER.htm
 Email HexEdit Support Dialog | dlg_other\HIDD_EMAIL.htm
@@ -358,7 +360,7 @@ File Properties Page | dlg_properties\HIDD_PROP_FILE.htm
 Byte Properties Page | dlg_properties\HIDD_PROP_CHAR.htm
 Integer Values Page | dlg_properties\HIDD_PROP_DECIMAL.htm
 Real Values Page | dlg_properties\HIDD_PROP_FLOAT.htm
-Date/Time Values Page | dlg_properties\Date_Time_Values.htm
+Date/Time Values Page | dlg_properties\HIDD_PROP_DATE.htm
 
 [System commands]
 Restore command | cmd_control\HID_SC_RESTORE.htm
