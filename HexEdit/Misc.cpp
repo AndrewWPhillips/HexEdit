@@ -156,6 +156,7 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 static char THIS_FILE[] = __FILE__;
 #endif
 
+#ifndef REGISTER_APP
 //-----------------------------------------------------------------------------
 // Routines for handling C# Decimal type
 
@@ -284,6 +285,7 @@ CString DecimalToString(const void *pdecimal, CString &sMantissa, CString &sExpo
 	else
 		return ss.Left(len - exp) + CString(".") + ss.Right(exp);
 }
+#endif
 
 // -------------------------------------------------------------------------
 // Colour routines
@@ -584,6 +586,8 @@ CString bin_str(__int64 val, int bits)
     retval.MakeReverse();
     return retval;
 }
+
+#ifndef REGISTER_APP
 
 // Add commas every 3 digits (or as appropriate to the locale) to a decimal string
 void AddCommas(CString &str)
@@ -916,6 +920,7 @@ long double ibm_fp64(const unsigned char *pp, int *pexp /*=NULL*/,
     else
         return -(mantissa / two_pow56) * powl(2, exponent);
 }
+#endif
 
 // The compiler does not provide a function for reading a 64 bit int from a string?!!
 __int64 strtoi64(const char *ss, int radix /*=0*/)
@@ -1209,6 +1214,7 @@ CString FileErrorMessage(const CFileException *fe, UINT mode /*=CFile::modeRead|
         return retval;
 }
 
+#ifndef REGISTER_APP
 // Gets rect of monitor which contains most of rect.
 // In non-multimon environment it just returns the rect of the
 // screen work area (excludes "always on top" docked windows).
@@ -1924,6 +1930,7 @@ static void sub1(char *ss)
     for ( ; *ss != '\0'; ++ss)
         *ss = *ss - 1;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // PRNGs
