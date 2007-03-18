@@ -660,7 +660,6 @@ void CPropFilePage::Update(CHexEditView *pv, FILE_ADDRESS address)
 	{
 		CSpecialList *psl = theApp.GetSpecialList();
 		int idx = psl->find((LPCTSTR)pf->GetFilePath());
-#if defined(BG_DEVICE_SEARCH)
 		CString ss;
 		switch (psl->type(idx))
 		{
@@ -716,11 +715,7 @@ void CPropFilePage::Update(CHexEditView *pv, FILE_ADDRESS address)
 			ss.Format(" @%ld bytes each", (long)sec_size);
 			file_modified_ += ss;
 		}
-#else
-		GetDlgItem(IDC_FILE_CREATED_DESC) ->SetWindowText("");
-		GetDlgItem(IDC_FILE_MODIFIED_DESC)->SetWindowText("");
-		GetDlgItem(IDC_FILE_ACCESSED_DESC)->SetWindowText("");
-#endif
+
 		// Check read only status of device
 		file_readonly_ = psl->read_only(idx);
 

@@ -27,6 +27,7 @@
 #define HIDD_EMAIL_HELP			      0x01000
 #define HID_EMAIL_SEND			      0x01001
 #define HID_MULTIPLAY_OK		      0x01010
+#define HIDD_MULTIPLAY_HELP           0x01018
 #define HIDD_MACRO_SAVE_HELP          0x01020
 #define HID_MACRO_SAVE                0x01021
 #define HIDD_REGISTER_HELP            0x01030
@@ -36,14 +37,15 @@
 #define HID_REG_FORM_US               0x01042
 #define HIDC_HELP_BUTTON              0x01050
 #define HIDD_ALGORITHM_HELP           0x01060
-#define HIDD_PASSWORD_HELP            0x01070
-#define HIDD_MULTIPLAY_HELP           0x01080
+#define HIDD_PASSWORD_HELP            0x01068
+#define HIDD_ZLIB_HELP                0x01078
+#define HIDD_NEW_FILE_HELP            0x01080
+#define HIDD_OPEN_SPECIAL_HELP        0x01088
 #define HIDD_CLEAR_HIST_HELP          0x01090
 #define HIDD_BOOKMARKS_HELP           0x010A0
 #define HIDD_RECENT_FILES_HELP        0x010B0
 #define HIDD_NEW_SCHEME_HELP          0x010C0
 #define HIDD_CSRC_HELP                0x010D0
-#define HIDD_NEW_FILE_HELP            0x010E0
 
 #define HIDD_CUST_COMMANDS            0x01100
 #define HIDD_CUST_TOOLBARS            0x01101

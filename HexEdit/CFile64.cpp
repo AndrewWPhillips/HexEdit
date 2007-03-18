@@ -1918,7 +1918,6 @@ CString CFileNC::GetFileName( void ) const
 		return CFile64::GetFileName();
 
 	CString retval;
-#if defined(BG_DEVICE_SEARCH)
 	CSpecialList *psl = theApp.GetSpecialList();
 	int idx = psl->find(m_FileName);
 	if (idx == -1)
@@ -1934,33 +1933,6 @@ CString CFileNC::GetFileName( void ) const
 		else
 			retval += ".RAW";
 	}
-#else
-	retval = ::DeviceName(m_FileName);
-	// If logical volume add the filesystem name as the "file extension"
-	if (_tcslen(m_FileName) == 6)
-	{
-		// xxx test this under NT and Windows 95
-		// Disk volume - file name of form <\\.\D:>
-		_TCHAR vol[4] = _T("?:\\");     // Path of root dir to pass to GetDiskFreeSpace
-		vol[0] = m_FileName[4];
-		TCHAR vol_name[128], fs_name[32];
-		DWORD vol_serno, max_component, flags;
-		if (::GetVolumeInformation(vol,
-									vol_name, sizeof(vol_name)/sizeof(*vol_name),
-									&vol_serno,
-									&max_component,
-									&flags,
-									fs_name, sizeof(fs_name)/sizeof(*fs_name) ) )
-		{
-			retval += _T(".") + CString(fs_name);
-		}
-	}
-	else
-	{
-		// Use .RAW as the "file extension"
-		retval += _T(".RAW");
-	}
-#endif
 	return retval;
 }
 
@@ -1970,16 +1942,12 @@ CString CFileNC::GetFileTitle( void ) const
 	if (!::IsDevice(m_FileName))
 		return CFile64::GetFileTitle();
 
-#if defined(BG_DEVICE_SEARCH)
 	CSpecialList *psl = theApp.GetSpecialList();
 	int idx = psl->find(m_FileName);
 	if (idx == -1)
 		return m_FileName;
 	else
 		return psl->name(idx);
-#else
-    return ::DeviceName(m_FileName);
-#endif
 }
 
 DWORD CFileNC::Read( void * buffer, DWORD len )

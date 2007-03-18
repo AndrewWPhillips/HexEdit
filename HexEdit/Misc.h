@@ -173,7 +173,6 @@ inline BOOL IsDevice(LPCTSTR ss) { return _tcsncmp(ss, _T("\\\\.\\"), 4) == 0; }
 // 4. \device\               - NO LONGER USED
 BSTR GetPhysicalDeviceName(LPCTSTR name); // get device name to use with native API (for 1,2,3 above)
 CString DeviceName(CString name);         // get nice display name for device file name
-LONGLONG DeviceSize(LPCTSTR filename);    // get size of physical device or volume
 int DeviceVolume(LPCTSTR filename);       // get volume (0=A:, 1=B: etc) of physical device (optical/removeable only) or -1 if none
 
 #endif

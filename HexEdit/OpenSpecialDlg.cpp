@@ -25,6 +25,7 @@
 #include "OpenSpecialDlg.h"
 #include "ntapi.h"
 
+#include "HelpID.hm"            // User defined help IDs
 #include "resource.hm"    // help IDs
 
 #ifdef _DEBUG

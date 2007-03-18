@@ -76,7 +76,6 @@ typedef __int64 FILE_ADDRESS;
 //STYLE WS_CHILD | DS_CONTEXTHELP
 //STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 
-#define BG_DEVICE_SEARCH 1  // Use class CSpecialList to get device details in bg thread (saves time when Open Special dialog inited)
 // Note: BG_DEVICE_SEARCH must be left on to avoid problems under 9X/ME
 // xxx NOTE we can remove use of DeviceSize() now xxx
 

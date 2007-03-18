@@ -466,9 +466,6 @@
 				RelativePath=".\NewScheme.cpp">
 			</File>
 			<File
-				RelativePath="OpenDiskDlg.cpp">
-			</File>
-			<File
 				RelativePath="OpenSpecialDlg.cpp">
 			</File>
 			<File
@@ -753,9 +750,6 @@
 			</File>
 			<File
 				RelativePath="ntapi.h">
-			</File>
-			<File
-				RelativePath="OpenDiskDlg.h">
 			</File>
 			<File
 				RelativePath="OpenSpecialDlg.h">
@@ -1120,10 +1114,10 @@
 				RelativePath=".\Install\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\Install\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

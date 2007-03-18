@@ -60,11 +60,7 @@
 #include "TabView.h"
 #include "UserTool.h"   // For CHexEditUserTool
 #include "Dialog.h"
-#if defined(BG_DEVICE_SEARCH)
 #include "OpenSpecialDlg.h"
-#else
-#include "OpenDiskDlg.h"
-#endif
 #include "Register.h"   // For About dialog
 #include "Algorithm.h"  // For encruption algorithm selection
 #include "CompressDlg.h" // For compression settings dialog
@@ -385,10 +381,8 @@ BOOL CHexEditApp::InitInstance()
                  osvi.dwMajorVersion >= 5) && ::GetSystemMetrics(SM_CMONITORS) > 1;
 //        mult_monitor_ = osvi.dwMajorVersion >= 5;
 
-#if defined(BG_DEVICE_SEARCH)
         // We must do this after getting version info as it relies on is_nt_
         m_pspecial_list = new CSpecialList();
-#endif
 
         // Check for hexedit.chm file  (USE_HTML_HELP)
         htmlhelp_file_ = m_pszHelpFilePath;
@@ -1104,11 +1098,7 @@ void CHexEditApp::OnFileCloseAll()
 
 void CHexEditApp::OnFileOpenSpecial() 
 {
-#if defined(BG_DEVICE_SEARCH)
 	COpenSpecialDlg dlg;
-#else
-    COpenDiskDlg dlg;
-#endif
 
     if (dlg.DoModal() == IDOK)
     {
