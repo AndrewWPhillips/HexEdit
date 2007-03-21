@@ -11,11 +11,11 @@ copy /y "I:\Devel\BCG6_2\BCGControlBar\Help\BCGControlBar.hm"  .\bcghelp.tmp
 REM Copy all help IDs into one file
 copy /y helpid.hm+resource.hm+hlp\HexEdit.hm+afxhelp.tmp+bcghelp.tmp  HexeditMap.tmp
 
-rem del afxhelp.tmp
-rem del bcghelp.tmp
+del afxhelp.tmp
+del bcghelp.tmp
 
 REM Make sure they all start with #define which is what RoboHelp expects
 sed "s/^HID/#define HID/"  <HexeditMap.tmp >HexeditMap2.tmp
-rem del HexeditMap.tmp
+del HexeditMap.tmp
 sed "s/^AFX_HID/#define AFX_HID/"  <HexeditMap2.tmp >HTMLHelp\HexeditMap.h
-rem del HexeditMap2.tmp
+del HexeditMap2.tmp

@@ -33,6 +33,14 @@ Version 3.1 release
 INSTALLER
 - what happens (eg AppData) under Windows 95
 
+SECURE WIPE OPTIONS
+ - file or disk
+ - any number of 00 then FF writes
+ - any number of randow writes
+ - final (optional) zero write
+ - all passes have optional read after write
+ - option to write past eof in last cluster
+
 DISK EDIT
  - bgsearch.cpp line 395 assertion
  > context help in open special dlg
@@ -295,6 +303,8 @@ Help
       - macro that runs when certain types of file are opened
  
 V3.2
+ - What's This help for modeless dlgs does not seem to work
+   - also update all right click help calls
  - New commands
    - save all
    - close all
@@ -314,7 +324,7 @@ V3.2
     - check alignment
     - endless possibilities
   - turn off any tip without deleting it
-  - tip window can be transparent - move mouse over it to make it fully opaque
+  > tip window can be transparent - move mouse over it to make it fully opaque
    > bookmark, user-defined expressions etc
    ? global option to turn on/off
    - handle all time formats, character sets for chars and strings
@@ -331,12 +341,12 @@ V3.2
 	MFC Grid Control - Chris Maunder (http://codeproject.com/miscctrl/gridctrl.asp)
 	MFC Grid Tree Extensions - Ken Bertelson (http://codeproject.com/miscctrl/gridtreectrl.asp)
 	64-bit file access (CFile64 class) - Samuel R. Blackburn (http://www.samblackburn.com/wfc/)
-	Window Splitter class - Robert A. T. Káldy (http://codeproject.com/splitter/kaldysimplesplitter.asp)
-	Dialog Resize class - Herbert Menke (http://www.codeproject.com/dialog/resizectrl.asp)
-	ZLIB
+	*Window Splitter class - Robert A. T. Káldy (http://codeproject.com/splitter/kaldysimplesplitter.asp)
+	*Dialog Resize class - Herbert Menke (http://www.codeproject.com/dialog/resizectrl.asp)
+	*ZLIB
 	MD5
-	EnBitmap
-	BigInteger
+	*EnBitmap
+	*BigInteger
 	CRC code
 	PRNG code
 	MS XML
