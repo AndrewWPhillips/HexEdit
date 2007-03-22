@@ -4493,10 +4493,11 @@ BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
     if ((nFlags & MK_CONTROL) != 0)
     {
+		// Ctrl+ mouse wheel zooms in/out
         if (zDelta < 0)
-            OnFontInc();
-        else if (zDelta > 0)
             OnFontDec();
+        else if (zDelta > 0)
+            OnFontInc();
         return TRUE;
     }
     else
