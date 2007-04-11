@@ -59,7 +59,8 @@
 				TypeLibraryName=".\Release/HexEdit.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="MakeHelpMap"/>
+				Description="Make help ID map files"
+				CommandLine="MakeHelp"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -187,7 +188,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Make help ID map files"
-				CommandLine="MakeHelpMap"/>
+				CommandLine="MakeHelp"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -1067,9 +1068,6 @@
 			<File
 				RelativePath=".\MakeHelp.bat">
 			</File>
-			<File
-				RelativePath=".\MakeHelpMap.bat">
-			</File>
 		</Filter>
 		<Filter
 			Name="Text Files"
@@ -1114,10 +1112,10 @@
 				RelativePath=".\Install\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\Install\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

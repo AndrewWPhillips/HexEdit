@@ -318,7 +318,8 @@ void CAbout::OnEmail()
 
 void CAbout::OnAckMore() 
 {
-	// xxx invoke help page for acknowledgements
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HID_ABOUT_ACK))
+        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CAbout::OnDblclkAck()

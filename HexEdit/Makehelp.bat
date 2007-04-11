@@ -14,8 +14,10 @@ del "CmdIdMap.tmp"
 REM MFC Command IDs
 rem copy /y I:\Micros~1\vc98\mfc\include\afxhelp.hm  AfxIdMap.tmp
 copy /y "C:\Program Files\Microsoft Visual Studio .NET\Vc7\atlmfc\include\afxhelp.hm"  AfxIdMap.tmp
-sed "s/^HID/#define HID/"  <AfxIdMap.tmp >"HTMLHELP\AfxIdMap.h"
+sed "s/^HID/#define HID/"  <AfxIdMap.tmp >AfxId2.tmp
+sed "s/^AFX_HID/#define AFX_HID/"  <AfxId2.tmp   >"HTMLHELP\AfxIdMap.h"
 del AfxIdMap.tmp
+del AfxId2.tmp
 
 REM Dialog IDs
 echo // MAKEHELP.BAT generated Help Map file. >"HTMLHELP\DlgIdMap.h"

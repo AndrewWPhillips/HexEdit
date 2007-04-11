@@ -392,7 +392,7 @@ void CHexEditDoc::CheckSaveTemplate()
         {
             if (AfxMessageBox(dlg.message_, MB_YESNO) != IDNO)
             {
-                CHexFileDialog dlgFile("TemplateFileDlg", FALSE, "xml", NULL, 
+                CHexFileDialog dlgFile("TemplateFileDlg", HIDD_FILE_TEMPLATE, FALSE, "xml", NULL, 
                                     OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
                                     "Template (XML) files - *.xml)|*.xml|All Files (*.*)|*.*||");
 
@@ -417,7 +417,7 @@ void CHexEditDoc::CheckSaveTemplate()
                 ptree_->Save();
                 break;
             case IDYES:
-                CHexFileDialog dlgFile("TemplateFileDlg", FALSE, "xml", path_name, 
+                CHexFileDialog dlgFile("TemplateFileDlg", HIDD_FILE_TEMPLATE, FALSE, "xml", path_name, 
                                     OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
                                     "Template (XML) files - *.xml)|*.xml|All Files (*.*)|*.*||");
 
@@ -1385,7 +1385,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
     if (fill_bits.create_on_disk)
     {
         // Ask the user for the file name to use
-        CHexFileDialog dlgFile("NewFileDlg", FALSE, NULL, NULL,
+        CHexFileDialog dlgFile("NewFileDlg", HIDD_FILE_NEW, FALSE, NULL, NULL,
                             OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
                             theApp.GetCurrentFilters(), AfxGetMainWnd());
 
@@ -1763,7 +1763,7 @@ void CHexEditDoc::OnDffdSave()
 
 void CHexEditDoc::OnDffdSaveAs()
 {
-    CHexFileDialog dlgFile("TemplateFileDlg", FALSE, "xml", ptree_->GetFileName(),
+    CHexFileDialog dlgFile("TemplateFileDlg", HIDD_FILE_TEMPLATE, FALSE, "xml", ptree_->GetFileName(),
                             OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
                             "Template (XML) files - *.xml)|*.xml|All Files (*.*)|*.*||");
 
@@ -4168,9 +4168,9 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
 				df_size = 0;
 			}
 			else if (big_endian && df_type == CHexEditDoc::DF_WSTRING)
-				flip_each_word(buf, df_size);      // flip bytes in each word of big-endian Unicode string
+				flip_each_word(buf, size_t(df_size));      // flip bytes in each word of big-endian Unicode string
 			else if (big_endian && df_type == CHexEditDoc::DF_DATESYSTEMTIME)
-				flip_each_word(buf, df_size);      // flip bytes of each (2 byte) field
+				flip_each_word(buf, size_t(df_size));      // flip bytes of each (2 byte) field
 			else if (big_endian)
 				flip_bytes(buf, size_t(df_size));  // Convert big-endian to little-endian
 		}

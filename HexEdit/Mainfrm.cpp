@@ -37,6 +37,10 @@
 #include "HelpID.hm"            // User defined help IDs
 #include "GRIDCTRL_SRC\InPlaceEdit.h"
 #include <HtmlHelp.h>
+#pragma warning(push)
+#pragma warning(disable:4005)
+#include <afxhh.h>
+#pragma warning(pop)
 
 extern CHexEditApp theApp;
 
@@ -1058,6 +1062,13 @@ void CMainFrame::OnHelp()
 {
     CBCGMDIFrameWnd::OnHelp();
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_help);
+}
+
+void CMainFrame::HtmlHelp(DWORD_PTR dwData, UINT nCmd)
+{
+	if (dwData == AFX_HIDD_FILEOPEN || dwData == AFX_HIDD_FILESAVE)
+		dwData = hid_last_file_dialog;
+	CBCGMDIFrameWnd::HtmlHelp(dwData, nCmd);
 }
 
 // This is here just so we can intercept calls in the debugger

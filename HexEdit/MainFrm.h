@@ -90,6 +90,8 @@ public:
 // Implementation
 public:
     virtual ~CMainFrame();
+	virtual void HtmlHelp(DWORD_PTR dwData, UINT nCmd);
+
 #ifdef _DEBUG
     virtual void AssertValid() const;
     virtual void Dump(CDumpContext& dc) const;

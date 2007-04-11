@@ -19,6 +19,7 @@
 #define AFX_DIALOG_H__55A0CEE1_3245_11D2_B012_0020AFDC3196__INCLUDED_
 
 #include "HexEdit.h"
+#include "HelpID.hm"
 #include "HexEditView.h"
 #include <vector>
 
@@ -235,6 +236,7 @@ class CHexFileDialog : public CFileDialog
 {
 public:
     CHexFileDialog(LPCTSTR name,
+		           DWORD help_id,
                    BOOL bOpenFileDialog,
                    LPCTSTR lpszDefExt = NULL,
                    LPCTSTR lpszFileName = NULL,
@@ -245,6 +247,7 @@ public:
         strName(name)
     {
         first_time = true;
+		hid_last_file_dialog = help_id;
     }
 
     // Overriden members of CFileDialog
@@ -292,10 +295,11 @@ class CImportDialog : public CHexFileDialog
 {
 public:
     CImportDialog(LPCTSTR lpszFileName = NULL,
+		          DWORD help_id = HIDD_FILE_IMPORT_MOTOROLA,
                   DWORD dwFlags = OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
                   LPCTSTR lpszFilter = NULL,
                   CWnd* pParentWnd = NULL) : 
-      	CHexFileDialog("FileImportDlg", TRUE, NULL, lpszFileName, dwFlags, lpszFilter, pParentWnd)
+      	CHexFileDialog("FileImportDlg", help_id, TRUE, NULL, lpszFileName, dwFlags, lpszFilter, pParentWnd)
     {
     }
 
@@ -313,11 +317,12 @@ class CExportDialog : public CHexFileDialog
 {
 public:
     CExportDialog(LPCTSTR lpszFileName = NULL,
+		          DWORD help_id = HIDD_FILE_EXPORT_MOTOROLA,
                   DWORD dwFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
                   LPCTSTR lpszFilter = NULL,
                   CHexEditView* pView = NULL,
 				  BOOL enable_discon_hl = TRUE) : 
-      	CHexFileDialog("ExportFileDlg", FALSE, NULL, lpszFileName, dwFlags, lpszFilter, pView)
+      	CHexFileDialog("ExportFileDlg", help_id, FALSE, NULL, lpszFileName, dwFlags, lpszFilter, pView)
     {
 		m_pview = pView;
 		m_enable_discon_hl = enable_discon_hl;
@@ -341,7 +346,7 @@ public:
                     DWORD dwFlags = OFN_SHOWHELP | OFN_ALLOWMULTISELECT | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR,
                     LPCTSTR lpszFilter = NULL,
                     CWnd* pParentWnd = NULL) : 
-      	CHexFileDialog("FileOpenDlg", TRUE, NULL, lpszFileName, dwFlags, lpszFilter, pParentWnd)
+      	CHexFileDialog("FileOpenDlg", HIDD_FILE_OPEN, TRUE, NULL, lpszFileName, dwFlags, lpszFilter, pParentWnd)
     {
     }
 

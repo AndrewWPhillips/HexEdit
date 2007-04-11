@@ -89,7 +89,6 @@
 #define IDB_CHAR_TOGGLEU                163
 #define IDD_PROP_DECIMAL                163
 #define IDB_CHAR_TOGGLEX                164
-#define IDD_PROP_FLOAT                  164
 #define IDB_CHAR_TOGGLED                165
 #define IDB_ASC_EBCX                    166
 #define IDD_MULTIPLAY                   166
@@ -100,7 +99,6 @@
 #define IDB_CONTROLD                    169
 #define IDD_OPT_MACRO                   169
 #define IDB_GRAPHIC_TOGGLEU             170
-#define IDD_PROP_IBMFP                  170
 #define IDB_GRAPHIC_TOGGLED             171
 #define IDB_GRAPHIC_TOGGLEX             172
 #define IDB_MARKX                       173
@@ -372,7 +370,6 @@
 #define ID_DFFD_TOGGLE_EDIT             373
 #define ID_DFFD_OPEN_TYPE_DUMMY         374
 #define ID_DFFD_OPTIONS                 375
-#define IDD_ABOUT2                      376
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000

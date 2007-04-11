@@ -4545,7 +4545,7 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
             // fall through
         case ID_DFFD_SAVEAS:
             {
-                CHexFileDialog dlgFile("TemplateFileDlg", FALSE, "xml", pdoc->ptree_->GetFileName(),
+                CHexFileDialog dlgFile("TemplateFileDlg", HIDD_FILE_SAVE, FALSE, "xml", pdoc->ptree_->GetFileName(),
                                        OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
                                        "Template (XML) files - *.xml)|*.xml|All Files (*.*)|*.*||");
 

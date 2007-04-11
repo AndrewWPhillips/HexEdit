@@ -184,6 +184,8 @@ class CSpecialList;
 class CHexEditView;         // Declare this so we can store a ptr to out view class (pview_)
 class boyer;
 
+extern DWORD hid_last_file_dialog;
+
 #ifndef NO_SECURITY
 extern int quick_check_called;
 extern int get_security_called;

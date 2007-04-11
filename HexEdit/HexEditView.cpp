@@ -6724,7 +6724,7 @@ void CHexEditView::OnReadFile()
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
     // Get name of file to read
-    CHexFileDialog dlgFile("ReadFileDlg", TRUE, NULL, aa->current_read_,
+    CHexFileDialog dlgFile("ReadFileDlg", HIDD_FILE_READ, TRUE, NULL, aa->current_read_,
                            OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
                            aa->GetCurrentFilters(), this);
 
@@ -6918,7 +6918,7 @@ void CHexEditView::OnEditWriteFile()
     }
 
     // Get the file name to write the selection to
-    CHexFileDialog dlgFile("WriteFileDlg", FALSE, NULL, aa->current_write_,
+    CHexFileDialog dlgFile("WriteFileDlg", HIDD_FILE_WRITE, FALSE, NULL, aa->current_write_,
                            OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
                            aa->GetCurrentFilters(), this);
 
@@ -6968,7 +6968,7 @@ void CHexEditView::OnEditAppendFile()
     }
 
     // Get the file name to write the selection to
-    CHexFileDialog dlgFile("WriteFileDlg", TRUE, NULL, aa->current_write_,
+    CHexFileDialog dlgFile("WriteFileDlg", HIDD_FILE_APPEND, TRUE, NULL, aa->current_write_,
                         OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
                         aa->GetCurrentFilters(), this);
 
@@ -7053,7 +7053,7 @@ void CHexEditView::OnExportSRecord(UINT nID)
 	}
 
     // Get the file name to write to (plus discontinuous setting)
-    CExportDialog dlgFile(theApp.current_export_,
+    CExportDialog dlgFile(theApp.current_export_, HIDD_FILE_EXPORT_MOTOROLA,
                         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
                         "Motorola S Files (*.s)|*.s|"+theApp.GetCurrentFilters(), this);
 
@@ -7253,7 +7253,7 @@ void CHexEditView::OnImportMotorolaS()
 //    CFileDialog dlgFile(TRUE, NULL, theApp.current_import_,
 //                        OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR,
 //                        theApp.GetCurrentFilters(), this);
-    CImportDialog dlgFile(theApp.current_import_,
+    CImportDialog dlgFile(theApp.current_import_, HIDD_FILE_IMPORT_MOTOROLA,
                         OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
                         "Motorola S Files (*.s)|*.s|"+theApp.GetCurrentFilters(), this);
 
@@ -7434,7 +7434,7 @@ void CHexEditView::OnImportIntel()
 //    CFileDialog dlgFile(TRUE, NULL, theApp.current_import_,
 //                        OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR,
 //                        theApp.GetCurrentFilters(), this);
-    CImportDialog dlgFile(theApp.current_import_,
+    CImportDialog dlgFile(theApp.current_import_, HIDD_FILE_IMPORT_INTEL,
                         OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
                         "Intel Hex Files (*,hex, *.ihx)|*.hex;*.ihx|"+theApp.GetCurrentFilters(), this);
 
@@ -7643,7 +7643,7 @@ void CHexEditView::OnExportIntel()
     }
 
     // Get the file name to write the selection to
-    CHexFileDialog dlgFile("ExportFileDlg", FALSE, NULL, theApp.current_export_,
+    CHexFileDialog dlgFile("ExportFileDlg", HIDD_FILE_EXPORT_INTEL, FALSE, NULL, theApp.current_export_,
                         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
                         theApp.GetCurrentFilters(), this);
 
@@ -7725,7 +7725,7 @@ void CHexEditView::OnUpdateExportIntel(CCmdUI* pCmdUI)
 void CHexEditView::OnImportHexText() 
 {
     // Get name of file to import
-    CHexFileDialog dlgFile("ImportFileDlg", TRUE, NULL, theApp.current_import_,
+    CHexFileDialog dlgFile("ImportFileDlg", HIDD_FILE_IMPORT_HEX, TRUE, NULL, theApp.current_import_,
                         OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
                         theApp.GetCurrentFilters(), this);
 
@@ -8085,7 +8085,7 @@ void CHexEditView::OnExportHexText()
     }
 
     // Get the file name to write the selection to
-    CHexFileDialog dlgFile("ExportFileDlg", FALSE, NULL, theApp.current_export_,
+    CHexFileDialog dlgFile("ExportFileDlg", HIDD_FILE_EXPORT_HEX, FALSE, NULL, theApp.current_export_,
                         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
                         theApp.GetCurrentFilters(), this);
 

@@ -32,6 +32,7 @@
 #define HID_MACRO_SAVE                0x01021
 #define HIDD_REGISTER_HELP            0x01030
 #define HID_REGISTER_INSTALL          0x01031
+#define HID_ABOUT_ACK	 		      0x01038
 #define HIDD_REG_HELP                 0x01040
 #define HID_REG_FORM                  0x01041
 #define HID_REG_FORM_US               0x01042
@@ -61,6 +62,25 @@
 #define HIDD_FIND_TEXT_HELP           0x01112
 #define HIDD_FIND_NUMBER_HELP         0x01113
 #define HIDD_FIND_REPLACE_HELP        0x01114
+
+// These are help ID that distinguish between different file open dialogs
+#define HIDD_FILE_OPEN                0x01180
+#define HIDD_FILE_READ                0x01181
+#define HIDD_FILE_APPEND              0x01182
+#define HIDD_FILE_IMPORT_HEX          0x01183
+#define HIDD_FILE_IMPORT_MOTOROLA     0x01184
+#define HIDD_FILE_IMPORT_INTEL        0x01185
+#define HIDD_FILE_MACRO               0x01186
+#define HIDD_FILE_ATTACH              0x01187
+
+// These are help ID that distinguish between different file save dialogs
+#define HIDD_FILE_SAVE                0x011A0
+#define HIDD_FILE_WRITE               0x011A1
+#define HIDD_FILE_NEW                 0x011A2
+#define HIDD_FILE_EXPORT_HEX          0x011A3
+#define HIDD_FILE_EXPORT_MOTOROLA     0x011A4
+#define HIDD_FILE_EXPORT_INTEL        0x011A5
+#define HIDD_FILE_TEMPLATE            0x011A6
 
 #define HIDD_DFFD_DATA                0x20115
 #define HIDD_DFFD_EVAL                0x20124

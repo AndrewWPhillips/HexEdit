@@ -202,7 +202,7 @@ void CEmailDlg::OnAttachmentBrowse()
 {
     UpdateData();
 
-    CHexFileDialog dlgFile("AttachmentDlg", TRUE, NULL, attachment_,
+    CHexFileDialog dlgFile("AttachmentDlg", HIDD_FILE_ATTACH, TRUE, NULL, attachment_,
                            OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT,
                            theApp.GetCurrentFilters(), this);
 

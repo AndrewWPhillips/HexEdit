@@ -91,6 +91,7 @@ int dummy_to_confuse = 0;
 int add_security_called = 0;
 int new_check_called = 0;
 #endif
+extern DWORD hid_last_file_dialog = HIDD_FILE_OPEN;
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditDocManager
@@ -102,7 +103,8 @@ public:
 	virtual BOOL DoPromptFileName(CString& fileName, UINT nIDSTitle,
 			DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate* pTemplate)
 	{
-		return CDocManager::DoPromptFileName(fileName, nIDSTitle, lFlags | OFN_ENABLESIZING, bOpenFileDialog, pTemplate);
+		hid_last_file_dialog = HIDD_FILE_SAVE;
+		return CDocManager::DoPromptFileName(fileName, nIDSTitle, lFlags | OFN_SHOWHELP | OFN_ENABLESIZING, bOpenFileDialog, pTemplate);
 	}
 };
 
@@ -638,12 +640,6 @@ BOOL CHexEditApp::InitInstance()
         p_printer->m_psp.dwFlags |= PSP_HASHELP;
         p_filters->m_psp.dwFlags |= PSP_HASHELP;
 		p_tips->m_psp.dwFlags |= PSP_HASHELP;
-
-#ifdef _AFXDLL
-        Enable3dControls();                     // Call this when using MFC in a shared DLL
-#else
-        Enable3dControlsStatic();       // Call this when linking to MFC statically
-#endif
 
         LoadStdProfileSettings(0);  // Load standard INI file options (including MRU)
 
