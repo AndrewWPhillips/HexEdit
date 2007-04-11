@@ -214,6 +214,44 @@
   </object>
   <ul>
     <li><object type="text/sitemap">
+      <param name="Name" value="Customization Tutorial">
+      <param name="New" value="1">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Customization Tutorial">
+        <param name="Local" value="tute_customize\CustomizeTute0.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Customizing Toolbars">
+        <param name="Local" value="tute_customize\CustomizeTute1.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Keyboard and Mouse Customization">
+        <param name="Local" value="tute_customize\CustomizeTute2.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Menu Customization">
+        <param name="Local" value="tute_customize\CustomizeTute3.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Setting up External Tools">
+        <param name="Local" value="tute_customize\CustomizeTute4.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Options Dialog">
+        <param name="Local" value="tute_customize\CustomizeTute5.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Info Tips">
+        <param name="Local" value="tute_customize\CustomizeTute6.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Miscellaneous Customization">
+        <param name="Local" value="tute_customize\CustomizeTute7.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
       <param name="Name" value="Keystroke Macro Tutorial">
     </object>
     <ul>

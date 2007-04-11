@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1269>
-<meta name=layout-width content=1225>
+<meta name=layout-height content=1635>
+<meta name=layout-width content=1304>
 
 
 <!--(Links)=========================================================-->
@@ -42,152 +42,330 @@
 
 <p>&nbsp;</p>
 
-<p>Thanks to the following people for providing software that is used in 
- HexEdit or used in its development.</p>
+<p>I couldn't do it all myself.</p>
 
 <p>&nbsp;</p>
 
-<p>BCG Control Bar 5.9 - Stas Levin et al at BCG (http://bcgsoft.com)</p>
-
-<p>MFC Grid Control - Chris Maunder (http://codeproject.com/miscctrl/gridctrl.asp)</p>
-
-<p>MFC Grid Tree Extensions - Ken Bertelson (http://codeproject.com/miscctrl/gridtreectrl.asp)</p>
-
-<p>64-bit file access (CFile64 class) - Samuel R. Blackburn (http://www.samblackburn.com/wfc/)</p>
-
-<p>Window Splitter class - Robert A. T. Káldy (http://codeproject.com/splitter/kaldysimplesplitter.asp)</p>
-
-<p>Dialog Resize class - Herbert Menke (http://www.codeproject.com/dialog/resizectrl.asp)</p>
-
-<p>range_set class - Andrew Phillips (http://www.ddj.com/dept/cpp/184403660)</p>
-
-<p>folder selection - (http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/)</p>
-
-<p>NT/W2K/XP internals (for disk editor) - Sven B. Schreiber (http://www.orgon.com/w2k_internals/)</p>
-
-<p>WIX installer toolkit - Rob Mensching et al (http://wix.sourceforge.net/)</p>
-
-<p>SVN (Sub-version) source control - Jim Blandy et al (http://subversion.tigris.org/)</p>
-
-<p>TSVN (TortoiseSVN) SVN client - Stefan Küng et al (http://tortoisesvn.sourceforge.net/)</p>
+<p style="font-weight: bold; font-size: 12pt;">Code/Libraries used in HexEdit</p>
 
 <p>&nbsp;</p>
 
-<p>Thanks to the following people for finding bugs:</p>
+<p style="font-weight: bold;"><a title="msdn2.microsoft.com/en-us/library/d06h2x6e(VS.80).aspx"
+								href="http://msdn2.microsoft.com/en-us/library/d06h2x6e(VS.80).aspx"
+								target=_blank>MFC</a> from Microsoft</p>
 
-<p>Bavart C</p>
+<p>Microsoft Foundation Classes is a useful library which wraps the Windows 
+ API in C++ classes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->MFC 
+ comes with Visual Studio (see below).</p>
 
-<p>Jim Masse</p>
+<p>&nbsp;</p>
 
-<p>Glenn Larsson</p>
+<p style="font-weight: bold;"><a href="http://bcgsoft.com"
+								target=_blank
+								title=bcgsoft.com>BCGControlBar</a> from 
+ BCGSoft</p>
 
-<p>Kevin Bollhorst</p>
+<p>This is the only commercial 3rd party library used within HexEdit (apart 
+ from MFC). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is an MFC extension library that provides a large number of useful facilities 
+ which greatly enhance the usability of HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, the Customize dialog which provides the ability to customize 
+ toolbars, menus, keyboard etc (see the <a HREF="../cmd_tools/HID_CUSTOMIZE.htm">Customize 
+ command</a>), and many other nice additions such as the colour selection 
+ dialog, <a HREF="../dlg_other/HIDD_WINDOW_MANAGER.htm">Windows dialog</a> 
+ etc.</p>
 
-<p>Mark Rogers</p>
+<p>&nbsp;</p>
 
-<p>Helmut Winkens</p>
+<p style="font-weight: bold;"><a title="codeproject.com/miscctrl/gridctrl.asp"
+								href="http://codeproject.com/miscctrl/gridctrl.asp"
+								target=_blank
+								style="font-weight: bold;">MFC Grid Control</a> 
+ by Chris Maunder</p>
 
-<p>Eugene Osintsev</p>
+<p>An excellent MFC grid control, which is used throughout HexEdit - for 
+ example, in the <a HREF="../dlg_options/Filters.htm">Filters page</a> 
+ and the <a HREF="../dlg_options/HIDD_OPT_TIPS.htm">Info Tips</a> page 
+ of the Options dialog, the <a HREF="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent 
+ File dialog</a> and also (with Tree Extensions - see below) the template 
+ tree view.</p>
 
-<p>Richard Webb</p>
+<p>&nbsp;</p>
 
-<p>David Yarbrough</p>
+<p style="font-weight: bold;"><a title="codeproject.com/miscctrl/gridtreectrl.asp"
+								href="http://codeproject.com/miscctrl/gridtreectrl.asp"
+								target=_blank>MFC Grid Tree Extensions</a> 
+ by Ken Bertelson</p>
 
-<p>Scott Rackham</p>
+<p>An extension to the MFC grid control that allows one of the columns 
+ to act as a &quot;tree control&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ allows the effect of a multi-column tree control which is invaluable for 
+ the HexEdit template (tree) view.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p>&nbsp;</p>
 
-<p>Thanks to the following people for enhancement suggestions:</p>
+<p style="font-weight: bold;"><a title="www.samblackburn.com/wfc/"
+								href="http://www.samblackburn.com/wfc/"
+								target=_blank>WFC</a> CFile64 Class by 
+ Sam Blackburn</p>
 
-<p>Adrie Goedegebuure</p>
+<p>When I released the source code for HexEdit 1.0 in 1999, Sam enhanced 
+ it to use &quot;64-bit&quot; file access, thereby allowing HexEdit to 
+ easily work with files greater than 4 GBytes (2^32) in size. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Windows 
+ supports 64 bit file positioning but the MFC CFile class only allows 32-bit 
+ file addresses). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Sam's 
+ CFile64 class (incorporated, with modifications, into HexEdit) is just 
+ one of numerous useful (non-UI) classes provided by his WFC library.</p>
 
-<p>David Tosh</p>
+<p>&nbsp;</p>
 
-<p>Pierre Leblanc</p>
+<p style="font-weight: bold;"><a title="codeproject.com/splitter/kaldysimplesplitter.asp"
+								href="http://codeproject.com/splitter/kaldysimplesplitter.asp"
+								target=_blank>Window Splitter class</a> 
+ by Robert A. T. Káldy</p>
 
-<p>Tom McCauley</p>
+<p>A simple, functional class that provides a nice-looking splitter. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Unlike 
+ MFC splitters I found it very easy to use and extend for my needs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is used for the split between the template &quot;tree&quot; view and the 
+ &quot;hex&quot; view of a file.</p>
 
-<p>Gherardo</p>
+<p>&nbsp;</p>
 
-<p>Mike Slater</p>
+<p style="font-weight: bold;"><a title="www.codeproject.com/dialog/resizectrl.asp"
+								href="http://www.codeproject.com/dialog/resizectrl.asp"
+								target=_blank>Dialog Resize class</a> by 
+ Herbert Menke</p>
 
-<p>David Ensminger</p>
+<p>A simple to use but very effective class that automatically moves controls 
+ in a dialog when it is resized. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is used for all resizable dialogs in HexEdit such as the <a HREF="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent 
+ File dialog</a> and the Calculator.</p>
 
-<p>Darrell Duffy</p>
+<p>&nbsp;</p>
 
-<p>Charles Davos</p>
+<p style="font-weight: bold;"><span style="font-weight: bold;"><a title="www.zlib.net/"
+	href="http://www.zlib.net/"
+	target=_blank
+	style="font-weight: bold;">ZLIB</a> Compression library by <a href="http://gailly.net/"
+	target=_blank
+	style="font-weight: bold;">Jean-loup Gailly</a> and <a href="http://www.alumni.caltech.edu/~madler/"
+															target=_blank
+															style="font-weight: bold;">Mark 
+ Adler</a></span></p>
 
-<p>Jim Masse</p>
+<p>This is a free general purpose compression library (with C source available) 
+ which is used extensively in the industry. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(I 
+ would consider it to be a de facto standard). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
+ added this in HexEdit 3.2 partly for my own convenience as I have used 
+ the ZLIB library in several other projects. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ <a HREF="../dlg_tools/CompressionSettings.htm">Compression Options</a> 
+ dialog offers complete control of all ZLIB options.</p>
 
-<p>Marc</p>
+<p>&nbsp;</p>
 
-<p>Mohit Garg</p>
+<p style="font-weight: bold;"><a title="en.wikipedia.org/wiki/MD5"
+								href="http://en.wikipedia.org/wiki/MD5"
+								target=_blank>MD5</a> algorithm by <a title="theory.lcs.mit.edu/~rivest"
+	href="http://theory.lcs.mit.edu/~rivest"
+	target=_blank>Ron Rivest</a></p>
 
-<p>Alan Hulley</p>
+<p>This algorithm is a cryptographic checksum (sometimes also called a 
+ one-way hash function or message digest). It generates a 128-bit value 
+ that is often used to check the veracity of files transferred over an 
+ insecure link in order to detect tampering. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ <a HREF="../cmd_operations/HID_MD5.htm">MD5 command</a> was added to HexEdit 
+ 3.2 as it is often provided for files downloaded via the Internet.</p>
 
-<p>Charles Jordan</p>
+<p>&nbsp;</p>
 
-<p>L. David Matheny</p>
+<p style="font-weight: bold;"><a title="www.ddj.com/dept/cpp/184403660"
+								href="http://www.ddj.com/dept/cpp/184403660"
+								target=_blank>range_set class</a> by Andrew 
+ Phillips</p>
 
-<p>Roland McIntosh</p>
+<p>I originally wrote this as a template class which emulates the STL std::set 
+ class but much more efficiently handles ranges of values, as well as adding 
+ facilities to input/output ranges as a string. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->An 
+ article on it appeared in the June 1999 C/C++ Users Journal. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Since 
+ then it has found numerous uses in HexEdit such as in the color range 
+ selection (<a HREF="../dlg_options/HIDD_OPT_PARTITIONS.htm">Colors page</a> 
+ of Options dialog) or the matching range of values for a CASE or a template 
+ SWITCH statement.</p>
 
-<p>Kevin Bollhorst</p>
+<p>&nbsp;</p>
 
-<p>Glenn Larsson</p>
+<p style="font-weight: bold;"><a title="www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/"
+								href="http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/"
+								target=_blank>Folder Selection class</a> 
+ by Andrew Phillips</p>
 
-<p>Samuel Blackburn</p>
+<p>I, like many, find the &quot;standard&quot; way of selecting a directory 
+ in Windows (SHBrowseForFolder) extremely annoying. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are numerous things wrong with it but the worst are that you can't see 
+ the files in a directory, you can't type in the path or part of it yourself, 
+ or resize the window etc etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
+ I wrote the class which uses the standard file open dialog (extending 
+ MFC's CFileDialog). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ HexEdit it is used to select the folder where macros are stored in the 
+ <a HREF="../dlg_options/HIDD_OPT_MACRO.htm">Macro Options page</a>.</p>
 
-<p>Helmut Winkens</p>
+<p>&nbsp;</p>
 
-<p>Kevin Stallard</p>
+<p style="font-weight: bold;"><a title="www.codeproject.com/bitmap/extendedbitmap2.asp"
+								href="http://www.codeproject.com/bitmap/extendedbitmap2.asp"
+								target=_blank>CEnBitmap</a> class by Daniel 
+ Godson</p>
 
-<p>Pau Serra</p>
+<p>Enhanced version of MFC CBitmap class that is used to load the background 
+ for the main HexEdit window and the About box.</p>
 
-<p>Tou-Soua Heu</p>
+<p>&nbsp;</p>
 
-<p>Robbert van Herksen</p>
+<p style="font-weight: bold;"><a title="www.codeproject.com/staticctrl/TransparentStaticCtrl.asp"
+								href="http://www.codeproject.com/staticctrl/TransparentStaticCtrl.asp"
+								target=_blank><span style="font-weight: bold;">Transparent 
+ Static Control</a> by <b style="font-weight: bold;">Ali Rafiee</b></span></p>
 
-<p>Antoon Milatz</p>
+<p>An MFC class that provides the static controls -- used in the HexEdit 
+ About box.</p>
 
-<p>Tony Sideris</p>
+<p>&nbsp;</p>
 
-<p>Tim Cheng</p>
+<p style="font-weight: bold;"><a title="www.codeproject.com/cpp/CppIntegerClass.asp"
+								href="http://www.codeproject.com/cpp/CppIntegerClass.asp"
+								target=_blank>Big Integer class</a> by 
+ C<b>ap'n Code</b></p>
 
-<p>Bill Davidson</p>
+<p>In order to be able to display C# Decimal values (new in HexEdit 3.2 
+ - see <a HREF="../dlg_properties/HIDD_PROP_FLOAT.htm">Real Values Page</a> 
+ of Properties dialog), I needed to be able to handle 96-bit integers. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The Microsoft 
+ compiler only supports integers up to 64-bits but I found this class at 
+ CodeProject. Despite some caveats on its use by the author I cannot fault 
+ it after extensive testing.</p>
 
-<p>Tony Brett</p>
+<p>&nbsp;</p>
 
-<p>Doug Nelson</p>
+<p>&nbsp;</p>
 
-<p>Dawn Leggett</p>
+<p style="font-weight: bold; font-size: 12pt;">Software Used to Develop 
+ HexEdit</p>
 
-<p>Imre András</p>
+<p style="font-size: 12pt;">&nbsp;</p>
 
-<p>Jürgen Efferz</p>
+<p style="font-weight: bold;"><a title="msdn2.microsoft.com/en-us/vstudio/default.aspx"
+								href="http://msdn2.microsoft.com/en-us/vstudio/default.aspx"
+								target=_blank>Visual Studio</a> by Microsoft</p>
 
-<p>Jim Seton</p>
+<p>HexEdit has always been developed using Visual Studio and the Microsoft 
+ C++ compiler that comes with it.</p>
 
-<p>Marc Graham</p>
+<p>&nbsp;</p>
 
-<p>Steve Mann</p>
+<p style="font-weight: bold;"><a title="www.adobe.com/products/robohelp/"
+								href="http://www.adobe.com/products/robohelp/"
+								target=_blank
+								style="font-weight: bold;">RoboHelp</a> 
+ by eHelp (now Adobe)</p>
 
-<p>Ian Grierson</p>
+<p>Since HexEdit 2.1 the on-line help has been provided in Html Help format. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It is created 
+ using RoboHelp 2000 developed by eHelp (bought out by Adobe).</p>
 
-<p>Mark Phillips</p>
+<p>&nbsp;</p>
 
-<p>and others that I may have forgotten (sorry).</p>
+<p style="font-weight: bold;"><a title=subversion.tigris.org
+								href="http://subversion.tigris.org"
+								target=_blank>Subversion</a> source control 
+ by Jim Blandy et al</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p>SVN (sub-version) provides an excellent free version control repository. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I have 
+ used many version control systems and this is easily the best.</p>
 
-<p>I’d also like to thank the many people who emailed just to say they 
- liked the program.</p>
+<p>&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="font-weight: bold;"><a title=tortoisesvn.sourceforge.net
+								href="http://tortoisesvn.sourceforge.net"
+								target=_blank
+								style="font-weight: bold;">TortoiseSVN</a> 
+ SVN client - Stefan Küng et al </p>
 
-<p>If you would like to see your name here in the next version of HexEdit 
- please report any bugs you find, or any ideas you have for enhancements, 
- to <span style="font-weight: bold;"><a title="Send Us Mail"
-										href="mailto:support@hexedit.com">support@hexedit.com</a></span></p>
+<p>TSVN (TortoiseSVN) provides a very nice interface to SVN, integrating 
+ with Windows Explorer. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(SVN 
+ itself only provides command line tools.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ the past I have found version control a pain but TSVN actually makes it 
+ enjoyable. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ file difference tool is also well done.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><a title=wix.sourceforge.net
+								href="http://wix.sourceforge.net"
+								target=_blank>WIX Installer Toolkit</a> 
+ by Rob Mensching et al</p>
+
+<p>In HexEdit 3.0 and earlier we used an 10 year old demo version of InstallShield 
+ that came with an old version of Visual Studio and it was showing its 
+ age. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ HexEdit 3.1 I searched for a free MSI based installer and WIX seemed to 
+ be the best. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ produces nice enough installations and is very flexible. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ it is somewhat difficult to understand and use.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><a title=www.vmware.com
+								href="http://www.vmware.com"
+								target=_blank
+								style="font-weight: bold;">VMWare Workstation</a> 
+ by VMWare</p>
+
+<p>This software allows running virtual machines with different versions 
+ of Windows installed and works very well. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ makes testing HexEdit on all the different versions of Windows (95,98,98SE,ME,NT,2K,XP,Vista) 
+ easy.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold; font-size: 12pt;">Sources of Information</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><a title="support.apress.com/books.asp?s=0&amp;bID=1874416923"
+								href="http://support.apress.com/books.asp?s=0&amp;bID=1874416923"
+								target=_blank>Revolutionary Guide to MFC 
+ 4 Programming</a> by Mike Blaszczak</p>
+
+<p>Around 1997 I started learning MFC using this book. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(I 
+ hadn't really done any serious C++ or Windows programming at the time 
+ either.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
+ started out as an experiment after fiddling with the &quot;HexView&quot; 
+ demo program provided with this book.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><a title="www.rawol.com/?topic=41"
+								href="http://www.rawol.com/?topic=41"
+								target=_blank
+								style="font-weight: bold;">Undocumented 
+ Windows 2000 Secrets</a> by Sven B. Schreiber</p>
+
+<p>This book was invaluable in creating the disk editor that is used for 
+ Windows 2000/XP/Vista.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold; font-size: 12pt;">People who helped</p>
+
+<p>&nbsp;</p>
+
+<p>Thanks also to all those people who reported bugs and suggested enhancements 
+ or just emailed to say they liked the program.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 

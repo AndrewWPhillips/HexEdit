@@ -1,0 +1,649 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Info Tips</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=4219>
+<meta name=layout-width content=1304>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="text-indent: 12px;"><font style="font-family: Arial;"
+									face=Arial>Step 6. Info Tips</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><a href="CustomizeTute5.htm"><img src="../preva.gif"
+													x-save-file=TRUE
+													x-save-method=compute-relative
+													x-maintain-ratio=TRUE
+													style="border-style: none;
+															border: none;
+															width: 52px;
+															height: 24px;
+															float: none;"
+													width=52
+													height=24
+													border=0></a> <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a 
+ href="CustomizeTute7.htm"><!--kadov_tag{{</spaces>}}--><img src="../nexta.gif"
+															x-save-file=TRUE
+															x-save-method=compute-relative
+															x-maintain-ratio=TRUE
+															style="border-style: none;
+	border: none;
+	width: 52px;
+	height: 24px;
+	float: none;"
+															width=52
+															height=24
+															border=0></a></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Many programs provide useful 
+ information in a pop-up &quot;tip&quot; window when you hold the mouse 
+ over an object of interest. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
+ 3.2 introduced a very useful new feature that provides this convenience 
+ but goes further -- it allows you to display an unlimited number of completely 
+ customizable tips. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ will demonstrate a few of the limitless possibilities.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Adding a Tip</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">First we need a test file to 
+ work with. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ useful type of file is one that has bytes with all possible bit patterns. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
+ provides a macro to create such a file which we will run now.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>1. Open HexEdit and select Play from the Tools 
+ menu (Tools/Play...).</p>
+
+<p class=Body-Text-Indent-2>2. Select the &quot;AllChars&quot; macro in 
+ the list and click OK.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 80px;"><img src="../dlg_tools/DlgPlay.gif"
+									style="border-style: none;
+											border: none;
+											width: 288px;
+											height: 186px;"
+									width=288
+									height=186
+									border=0></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>3. Click OK to close the dialog that explains 
+ the purpose of the macro.</p>
+
+<p class=Body-Text-Indent-2>4. Click OK if you are asked to turn off read-only 
+ mode and/or turn on insert mode.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">After a few seconds you will 
+ see a file of length 256 containing bytes with all the possible bit patterns 
+ that can be stored in a byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can save this file for later use, or just regenerate it whenever you want.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>5. Turn off change tracking (red background) 
+ if you find it distracting.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Imagine that you need to inspect 
+ the exact bit pattern of 64-bit integers throughout a file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>6. Open the Options dialog (Tools/Options...) 
+ and select the &quot;Info Tips&quot; tab.</p>
+
+<p class=Body-Text-Indent-2>7. Click the &quot;new&quot; button (tip = 
+ New Info Tip) near the top of the dialog.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">A new tip is created underneath 
+ the Bookmarks tip.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>The Bookmarks 
+ tip is a special tip that cannot be deleted and is always at the top of 
+ the list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ shows the name of a bookmark but only if the mouse is over a bookmark.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The new tip is enabled by default 
+ but you need to fill in the other columns.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>8. In the Name column (next to the checkbox) 
+ enter &quot;Quad word bits&quot;.</p>
+
+<p class=Body-Text-Indent-2>9. In the &quot;Expression&quot; column click 
+ the down-arrow button and select &quot;uqword&quot; from the list.</p>
+
+<p class=Body-Text-Indent-2>10. In the &quot;Format&quot; column enter 
+ &quot;binary&quot; or &quot;bin&quot; or select it from the list.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 80px;"><img src="../CustTute6-2.gif"
+									style="border-style: none;
+											border: none;
+											width: 410px;
+											height: 327px;"
+									width=410
+									height=327
+									border=0></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>11. Drag the Transparency slider (at the top) 
+ towards the right and click OK.</p>
+
+<p class=Body-Text-Indent-2>12. Hold the mouse over the first byte of the 
+ file we created above to see the tip.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 80px;"><img src="../CustTute6-3.gif"
+									style="border-style: none;
+											border: none;
+											width: 864px;
+											height: 303px;"
+									width=864
+									height=303
+									border=0></p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 80px;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0> If you have the 
+ tips set to a low transparency you can make the tip fully opaque by moving 
+ the mouse over it.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Byte Order</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">In the above binary tip it 
+ is important to understand where each bit comes from. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ identifier &quot;uqword&quot; is an abbreviation for unsigned quad word, 
+ which is an 8-byte integer, ie, 64 bits. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ uses the byte under the mouse pointer and the next seven bytes in the 
+ file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ displayed in binary, these are grouped into 8 groups of 8 bits each, where 
+ each group corresponds to a byte.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The default byte order is little-endian 
+ in HexEdit as that is what Intel processors (on which Windows is based) 
+ use. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ means that the bits for the left-most byte (the byte under the mouse cursor) 
+ are the least significant and shown at the right end of the tip.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The byte order used for tips 
+ is taken from the byte order setting for the active file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is shown in the status bar BE/LE pane. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It's 
+ also seen as the Big-Endian checkbox in the Windows page of the Options 
+ dialog and also in the &quot;Big-Endian&quot; checkbox in the calculator.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>13. Double-click the &quot;LE&quot; pane in 
+ the status bar so it changes to &quot;BE&quot; to change to big-endian 
+ format.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../ex_red_sm.jpg"
+												x-save-file=TRUE
+												x-save-method=compute-relative
+												style="border-style: none;
+														border: none;
+														float: none;
+														width: 17px;
+														height: 20px;"
+												width=17
+												height=20
+												border=0> This changes 
+ to big-endian format for this file only. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ setting is remembered the next time you open the file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>14. Hold the mouse over the first byte of the 
+ file to see the tip with the big-endian byte order. </p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 80px;"><img src="../CustTute6-4.gif"
+									style="border-style: none;
+											border: none;
+											width: 864px;
+											height: 303px;"
+									width=864
+									height=303
+									border=0></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0> Byte order also 
+ affects other types not just integers, including floating point, date, 
+ and even the order of bytes in Unicode characters. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}--></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Another thing to remember is 
+ that if there are not enough bytes to the end of file for the tip then 
+ it is displayed as blank.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>15. Hold the mouse over any of the last seven 
+ bytes of the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ quad words tip is blank.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Types</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">As you might have guessed the 
+ type of an info tip can be other types of values apart from integers. 
+ It can also be a floating-point value, a date, a string or a boolean. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See the 
+ topic on HexEdit <a HREF="../overviewadvanced/Expressions.htm">Expressions</a> 
+ for more details.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">We will experiment with a date 
+ field, but we first need to open a file containing dates - luckily the 
+ tutorial.HEG file you saw in the previous step has two date fields near 
+ the start of the file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>16. Open tutorial.HEG again. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(It 
+ can be found in the directory where HexEdit is installed.)</p>
+
+<p class=Body-Text-Indent-2>17. Open the Options dialog and select the 
+ &quot;Info Tips&quot; tab.</p>
+
+<p class=Body-Text-Indent-2>18. Click the new tip button near the top of 
+ the dialog.</p>
+
+<p class=Body-Text-Indent-2>19. In the &quot;Name&quot; column (next to 
+ the checkbox) enter &quot;Test date&quot;.</p>
+
+<p class=Body-Text-Indent-2>20. In the &quot;Expression&quot; column click 
+ the arrow button and select &quot;time_t&quot; from the list.</p>
+
+<p class=Body-Text-Indent-2>21. In the &quot;Format&quot; column enter 
+ &quot;%c&quot; or select it from the list.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 80px;"><img src="../CustTute6-5.gif"
+									style="border-style: none;
+											border: none;
+											width: 410px;
+											height: 327px;"
+									width=410
+									height=327
+									border=0></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>22. Click OK and verify that dates are being 
+ display correctly when you hold the mouse over the 4th and 8th bytes of 
+ the file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The date fields in the tutorial.HEG 
+ file are at the 4th and 8th bytes (ie addresses 3 and 7) and contain the 
+ time_t dates near the start of 1990 and 1994 respectively.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../ex_red_sm.jpg"
+												x-save-file=TRUE
+												x-save-method=compute-relative
+												style="border-style: none;
+														border: none;
+														float: none;
+														width: 17px;
+														height: 20px;"
+												width=17
+												height=20
+												border=0> The exact values 
+ displayed for the dates depend on your local time zone as time_t values 
+ are stored as UTC (universal coordinated time). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ GMT (Zulu) time this will be midnight.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>23. Open the Options dialog again.</p>
+
+<p class=Body-Text-Indent-2>24. Change the format for the &quot;Test date&quot; 
+ tip to be &quot;%A&quot;.</p>
+
+<p class=Body-Text-Indent-2>25. Click OK and check the tip by hovering 
+ over the date fields again.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The &quot;%A&quot; format specification 
+ is for the day of the week. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ the above date fields this should display &quot;Sunday&quot; and &quot;Friday&quot; 
+ or &quot;Monday&quot; and &quot;Saturday&quot;, depending on your time 
+ zone. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ &quot;strftime&quot; in any C-language reference manual for details on 
+ all the available format specs for dates.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Predefined values</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">The names you see in the &quot;Expressions&quot; 
+ drop-down list are all the predefined values that can be used in the expression 
+ for the tip. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Most 
+ of these relate to the bytes at the mouse position in various formats 
+ - ie, as integers, reals, or dates in various sizes and formats.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Most of the other predefined 
+ values are for addresses in the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, &quot;address&quot; is the address in the file of the byte the 
+ mouse is held over, &quot;cursor&quot; is the address of the flashing 
+ insertion point in the file (also called the caret), &quot;eof&quot; is 
+ the address of the end of file (ie the length of the file), &quot;mark&quot; 
+ is the address of the mark etc.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">We will now add a tip that 
+ displays the distance to the end of file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>26. Open the Options dialog and select the 
+ &quot;Info Tips&quot; tab.</p>
+
+<p class=Body-Text-Indent-2>27. Click the new tip button near the top of 
+ the dialog.</p>
+
+<p class=Body-Text-Indent-2>28. In the &quot;Name&quot; column (next to 
+ the checkbox) enter &quot;To EOF&quot;.</p>
+
+<p class=Body-Text-Indent-2>29. In the &quot;Expression&quot; column enter 
+ &quot;eof - address&quot;.</p>
+
+<p class=Body-Text-Indent-2>30. Leave the &quot;Format&quot; empty for 
+ now.</p>
+
+<p class=Body-Text-Indent-2>31. Click OK and check that the tip is working 
+ correctly.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that because we used the 
+ identifier &quot;address&quot; in the expression HexEdit assumes that 
+ the result is an address. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->And 
+ because you did not enter a format specification it displays the address 
+ as either hex or decimal depending on how addresses are currently being 
+ displayed for the active file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>32. Toggle between hex and decimal addresses 
+ using the View/Decimal Addresses menu item (or press Alt+D).</p>
+
+<p class=Body-Text-Indent-2>33. Check that the display of the tip changes 
+ between hex and decimal.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0> When HexEdit 
+ displays addresses in hex or decimal it also adjusts the color of the 
+ text according to the colors used for hex and decimal addresses in the 
+ current color scheme.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Expressions</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">To make it a bit more interesting, 
+ imagine we want to test whether the distance to end of file is divisible 
+ by eight.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>34. Open the Options dialog again.</p>
+
+<p class=Body-Text-Indent-2>35. Change the name of the tip from &quot;To 
+ EOF&quot; to &quot;EOF dist = QWORD&quot;.</p>
+
+<p class=Body-Text-Indent-2>36. Change the expression to &quot;(eof - address)%8 
+ == 0&quot;.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">This is expression will be 
+ familiar to C/C++ programmers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ checks if the remainder, when distance to EOF is divided by 8, is zero.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../ex_red_sm.jpg"
+												x-save-file=TRUE
+												x-save-method=compute-relative
+												style="border-style: none;
+														border: none;
+														float: none;
+														width: 17px;
+														height: 20px;"
+												width=17
+												height=20
+												border=0> Comparing for 
+ equality in expressions is done using two equals signs (==). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ single equals sign (=) is used for assignment. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ the above expression this would be an error and no value would be displayed.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>37. Add a format of &quot;NO&quot;.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>The result of 
+ the above expression is a boolean value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are only two results for a boolean expression (false or true), but there 
+ are many ways to format them, all of which just use the false format as 
+ an example (eg: &quot;false&quot;, &quot;F&quot;, &quot;0&quot;, &quot;n&quot;, 
+ &quot;OFF&quot; etc).</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 80px;"><img src="../dlg_options/DlgOptInfoTip.gif"
+									style="border-style: none;
+											border: none;
+											width: 410px;
+											height: 327px;"
+									width=410
+									height=327
+									border=0></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>38. Click OK and verify that when the distance 
+ to EOF is 8, 16 etc the tip shows &quot;YES&quot; else it shows &quot;NO&quot;.</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><a href="CustomizeTute5.htm"><img src="../preva.gif"
+													x-save-file=TRUE
+													x-save-method=compute-relative
+													x-maintain-ratio=TRUE
+													style="border-style: none;
+															border: none;
+															width: 52px;
+															height: 24px;
+															float: none;"
+													width=52
+													height=24
+													border=0></a> <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a 
+ href="CustomizeTute7.htm"><!--kadov_tag{{</spaces>}}--><img src="../nexta.gif"
+															x-save-file=TRUE
+															x-save-method=compute-relative
+															x-maintain-ratio=TRUE
+															style="border-style: none;
+	border: none;
+	width: 52px;
+	height: 24px;
+	float: none;"
+															width=52
+															height=24
+															border=0></a></p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

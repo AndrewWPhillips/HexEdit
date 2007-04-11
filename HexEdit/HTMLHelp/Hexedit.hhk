@@ -787,6 +787,8 @@
     <param name="Local" value="dlg_custom\HIDD_CUST_TOOLS.htm">
     <param name="Name" value="Customize command">
     <param name="Local" value="cmd_tools\HID_CUSTOMIZE.htm">
+    <param name="Name" value="Customization Tutorial">
+    <param name="Local" value="tute_customize\CustomizeTute0.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="cut to clipboard">
@@ -2527,6 +2529,8 @@
     <param name="Local" value="troubleshooting\problem_Toolbar_buttons..htm">
     <param name="Name" value="A toolbar or the status bar is missing">
     <param name="Local" value="troubleshooting\problem_missing_bar.htm">
+    <param name="Name" value="Customizing Toolbars">
+    <param name="Local" value="tute_customize\CustomizeTute1.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="tools">

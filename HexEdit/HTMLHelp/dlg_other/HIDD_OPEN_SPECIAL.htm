@@ -1,0 +1,162 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Open Special dialog</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=863>
+<meta name=layout-width content=1225>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+<!--(Generated ActiveX Object Tags)=================================-->
+<!--(WARNING: DO NOT EDIT OR DELETE THIS SECTION!)==================-->
+<!--begin!kadov{{===================================================-->
+<object id=hhctrl classid="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11" 
+ width=0 height=0 vspace=0 hspace=0 border=0 type="application/x-oleobject"></object>
+<!--}}end!kadov=====================================================-->
+<!--(==============================================================)-->
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Open Special dialog</font></h2>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><img src="DlgOpenSpecial.gif" style="border-style: none;
+								border: none;
+								width: 548px;
+								height: 293px;" width="548" height="293" border="0"></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Use this dialog to open a disk for viewing or editing. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ are divided into Logical Volumes, which are the mounted filesystems, and 
+ Physical Drives which are the raw drives, including hard disks, floppy 
+ drives, optical drives (CD, DVD etc), removable drives (flash drives, 
+ Zip drives, hard disks etc) - basically anything that can store data and 
+ looks like a &quot;drive&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../ex_red_sm.jpg"
+		x-save-file=TRUE
+		x-save-method=compute-relative
+		style="border-style: none;
+				border: none;
+				float: none;
+				width: 17px;
+				height: 20px;"
+		width=17
+		height=20
+		border=0> It is very dangerous to modify volumes or drives unless 
+ you know what you are doing. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Even 
+ then you should have a backup in case of mistakes.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Disk</span></p>
+
+<p style="margin-left: 18.00pt;">Select a disk from the list and click 
+ the OK button to open it.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Under logical volumes are all the currently 
+ mounted file systems (which typically have an associated drive letter 
+ shown after the name). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ do not always correspond one-to-one with physical devices - for example 
+ a hard disk may have multiple partitions which are mounted individually. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Only file 
+ systems supported by the operating system are shown - for Windows 9X (95, 
+ 98, ME) these are FAT type file systems only. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->NT 
+ only supports NTFS file systems whereas Windows 2000 and later (ie XP, 
+ Vista, etc) supports both FAT and NTFS. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ optical media filesystems are also supported (CDFS etc).</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Physical drives are the raw disk drives. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Note that 
+ physical drives are not supported under the Windows 9X operating systems.) 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For any 
+ logical volume above there is also a physical drive that contains the 
+ volume's data. <!--kadov_tag{{<spaces>}}-->&nbsp;<span style="margin-left: 18.00pt;"><!--kadov_tag{{</spaces>}}-->When 
+ possible the drive letter associated with the device is shown - but this 
+ is not always possible, for example, a hard disk may have several partitions 
+ all with their own drive letter.</span></p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Properties</span></p>
+
+<p style="margin-left: 18.00pt;">When opening drives it is often difficult 
+ to know (in other disk editors) exactly which device name corresponds 
+ to the device you want to work with, without hunting through device manager 
+ or even taking the cover off your computer to check the manufacturer and 
+ model. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ this reason HexEdit provides as much information as it can (drive letters, 
+ drive capacity, free space etc) about each disk so you can be confident 
+ you are using the right one.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">For logical volumes the file system type 
+ (eg, NTFS or FAT32) and <a class=popupspot
+							href="JavaScript:hhctrl.TextPopup('All file systems have a cluster size which is the minimal unit of disk space they deal with.  The cluster size is usually the underlying physical device\'s sector size or a binary multiple thereof.','Arial,8',10,10,00000000,0xc0ffff)">cluster 
+ size</a> are shown as well as the capacity and free space in three ways 
+ (abbreviated, total bytes, total clusters).</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">For physical drives the manufacturer, 
+ model number, serial number, EPROM revision etc are shown (if available), 
+ as well as the nominal physical layout (sectors, cylinders etc) and the 
+ total capacity.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Open as 
+ read only</span></p>
+
+<p style="margin-left: 18.00pt;">Unless you are changing something open 
+ the device read-only for safety. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ checkbox is disabled (and checked) for read-only devices (eg CD) or media 
+ (eg write protected floppy) since you can't modify them.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">OK</span></p>
+
+<p style="margin-left: 18.00pt;">Click OK to open the selected device. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This button 
+ is disabled if there is no device selected or it cannot be opened for 
+ some reason, such as no medium present for a removable device.</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>
