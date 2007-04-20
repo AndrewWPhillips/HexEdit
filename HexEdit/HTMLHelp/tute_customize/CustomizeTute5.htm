@@ -19,7 +19,7 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=3280>
+<meta name=layout-height content=3778>
 <meta name=layout-width content=1304>
 
 
@@ -225,10 +225,10 @@
 												width=31
 												height=12
 												border=0> Color groups 
- are scanned in order to find a match so if you don't move the new group 
- above the &quot;Other&quot; group it will have no effect. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- &quot;Other&quot; group has a byte range of &quot;0:255&quot; and will 
- match everything.</p>
+ are scanned from top to bottom to find a match so if you don't move the 
+ new group above the &quot;Other&quot; group it will have no effect. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ &quot;Other&quot; group has a byte range of 0 to 255 (ie all possible 
+ values) and will match everything.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -302,7 +302,7 @@
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">To see the effect of the colour 
- scheme we can try flipping between different schemes.</p>
+ scheme you can try flipping between different schemes.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -312,22 +312,13 @@
 <p class=Body-Text-Indent-2
 	style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p class=Body-Text-Indent-2
-	style="margin-top: 0;
-			margin-bottom: 0;
-			margin-left: 0px;">The Color Scheme tool is on the Standard 
- toolbar. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+<p>The Color Scheme tool is on the Standard toolbar. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
  may also have added it to you custom toolbar in Step 1 of this tutorial.</p>
 
 <p class=Body-Text-Indent-2
 	style="margin-top: 0;
 			margin-bottom: 0;
 			margin-left: 0px;">&nbsp;</p>
-
-<p class=Body-Text-Indent-2>19. Change back to the _HEG color scheme in 
- the same way.</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p style="margin-top: 0;
 			margin-bottom: 0;
@@ -342,9 +333,12 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p style="margin-top: 0;
-			margin-bottom: 0;
-			font-weight: bold;">&nbsp;</p>
+<p class=Body-Text-Indent-2>19. Change back to the _HEG color scheme in 
+ the same way.</p>
+
+<p class=body-text-indent-2>&nbsp;</p>
+
+<p>&nbsp;</p>
 
 <p style="margin-top: 0;
 			margin-bottom: 0;
@@ -354,16 +348,42 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">Most software deals with only 
  a handful of different types of files or at most a few dozen. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
- when you see a file open dialog you are presented with a small, fixed 
- number of file types in the &quot;Files of Type&quot; drop down list.</p>
+ you are normally presented with a small, fixed number of file types in 
+ the &quot;Files of type:&quot; drop down list.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">A hex editor is different in 
- that it is explictly designed to be able to view and modify any type of 
- file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Nevertheless 
- any particular user of a hex editor will usually only deal with a limited 
- set of file types, perhaps occasionally needing to deal with a new type.</p>
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>The &quot;Files 
+ of type:&quot; drop down list appears near the bottom of the standard 
+ file open dialog - just above the &quot;Open as read-only&quot; checkbox 
+ in HexEdit.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 80px;"><img src="../dlg_file/DlgFileOpen.gif"
+									style="border: none;
+											width: 634px;
+											height: 434px;"
+									width=634
+									height=434
+									border=0></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">A hex editor is different from 
+ other software in that it is explicitly designed to be able to view and 
+ modify any type of file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Nevertheless 
+ when using HexEdit you will usually only deal with a limited set of file 
+ types, perhaps occasionally needing to deal with a new type.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -402,7 +422,8 @@
  column and enter &quot;*.heg&quot;.</p>
 
 <p class=Body-Text-Indent-2>25. Click the down arrow (right-most of the 
- 4 buttons) to move the filter below the &quot;All Files&quot; filter.</p>
+ 4 buttons at the top) to move the filter below the &quot;All Files&quot; 
+ filter.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -419,7 +440,7 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p class=Body-Text-Indent-2>26. Click Ok to close the Options dialog.</p>
+<p class=Body-Text-Indent-2>26. Click OK to close the Options dialog.</p>
 
 <p class=Body-Text-Indent-2>27. Open the Open dialog (File/Open...) to 
  test the filter.</p>
