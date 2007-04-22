@@ -8,7 +8,7 @@
 
 <head>
 
-<title>Miscellaneous Customization</title>
+<title>Miscellaneous Customizations</title>
 
 <!--(Meta)==========================================================-->
 
@@ -19,7 +19,7 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=870>
+<meta name=layout-height content=1852>
 <meta name=layout-width content=1304>
 
 
@@ -37,7 +37,7 @@
 <body>
 
 <h2 style="text-indent: 12px;"><font style="font-family: Arial;"
-									face=Arial>Step 7. Miscellaneous Customization</font></h2>
+									face=Arial>Step 7. Miscellaneous Customizations</font></h2>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -72,7 +72,10 @@
 			text-align: center;"
 	align=center>&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">TBD xxx.</p>
+<p style="margin-top: 0; margin-bottom: 0;">In the final step of this tutorial 
+ we will look at several other simple customizations.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -83,7 +86,148 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">.</p>
+<p style="margin-top: 0; margin-bottom: 0;">By giving macros a special 
+ name they can be run automatically. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you save a macro using a name for a specific file extension then that 
+ macro will be run whenever a file with that extension is opened. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if you save a macro to a file called &quot;_EXE.HEM&quot; then 
+ whenever an .EXE file is opened in HexEdit the macro is run automatically.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">This facility can have many 
+ uses -- as an example, <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->for 
+ a certain file type you might always want to position the insertion point 
+ after the header at the start of file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0> Another special 
+ macro called &quot;AUTOEXEC.HEM&quot; is run whenever you start up HexEdit.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">To demonstrate we will create 
+ a macro for .HEG files that jumps past the header at the start of the 
+ file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ (fictitious) .HEG file format has a 16 byte header.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>1. Open any file, to allow recording of macro 
+ commands that operate on a file.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>2. Select Edit/Go To which brings up the Calculator, 
+ and click the &quot;Hex&quot; radio button if not already in Hex mode.</p>
+
+<p class=Body-Text-Indent-2
+	style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>We open the calculator before macro recording is started so that it 
+ is not recorded as part of the macro. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ need the calculator open as it is used to jump to address 16 (10 hex) 
+ in the file.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>3. Select Tools/Record Macro (or double-click 
+ the &quot;REC&quot; pane on the status bar) to start macro recording.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 76px;"><img src="../tute_macros/tute0_1_1.gif"
+									style="border-style: none;
+											border: none;
+											width: 727px;
+											height: 380px;"
+									width=727
+									height=380
+									border=0></p>
+
+<p class=body-text-indent-2
+	style="margin-left: 76px;">&nbsp;</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">3. Enter &quot;10&quot; in the calculator 
+ and click to &quot;GO&quot; button.</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">&nbsp;</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">4. Select Tools/Record Macro (or double-click 
+ the &quot;REC&quot; pane on the status bar) to stop macro recording.</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">&nbsp;</p>
+
+<p>Now we just need to save the macro we have created to disk. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is given the file name &quot;_HEG.HEM&quot; so that it is run when any 
+ .HEG file is opened. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that the first character of the file name (before HEG) is an underscore 
+ - this denotes that the macro file is special.</p>
+
+<p>&nbsp;</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">5. Open the Options dialog (Tools/Options) 
+ and select the &quot;Macro&quot; tab.</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">&nbsp;</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">6. Click the &quot;Save Current Macro&quot; 
+ button and name it &quot;_HEG&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Add 
+ a comment to the macro if you like.</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0> HexEdit add the &quot;.HEM&quot; file extension automatically 
+ for HexEdit macro files so you do not need to type that.</p>
+
+<p>&nbsp;</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">7. Click OK to save the macro then click 
+ OK to close the Options dialog.</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">&nbsp;</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">8. Open the file called &quot;TUTORIAL.HEG&quot; 
+ which you can find in the folder where HexEdit was installed.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=body-text-indent-2
+	style="margin-left: 36px;">9. Verify that the cursor (insertion point) 
+ jumps to the 16th byte.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">xxx more complex calcs</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -94,7 +238,89 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">.</p>
+<p style="margin-top: 0; margin-bottom: 0;">HexEdit remembers the display 
+ options for all files you have ever opened. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ you open a file that you have had open before all the formatting options 
+ are restored exactly as they were when you last used it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Even 
+ the cursor is restored to where it was when you closed the file.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">But when you open a file that 
+ you have never opened before the default display settings are used. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
+ are also used when you create a new file in HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can easily change the default settings as shown here.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p class=Body-Text-Indent-2>1. Open any file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ need a file open to modify (and preview) display settings.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>2. Open the Options dialog (Tools/Options) 
+ and go to the Window page.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p><img src="../ex_red_sm.jpg"
+		style="border-style: none;
+				border: none;
+				width: 17px;
+				height: 20px;"
+		width=17
+		height=20
+		border=0> The Window page of the Options dialog is not shown if 
+ you skipped step 1 and do not currently have a file open.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>3. To see the current default display settings 
+ click the &quot;Reset to Default&quot; button.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>4. Change some of the options. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, click the Font button to change the default font used.</p>
+
+<p class=body-text-indent-2>&nbsp;</p>
+
+<p>The factory default font is &quot;Courier&quot;, which is not a TrueType 
+ font. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ font is chosen as it is a fast, nice-looking monospaced (non-proportional) 
+ font available on all versions of Windows. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you prefer a True Type font (eg because they scale better) then Lucida 
+ Console is a nice monospaced font available on recent versions of Windows.</p>
+
+<p>&nbsp;</p>
+
+<p>See the <a HREF="../dlg_options/HIDD_OPT_WINDOW.htm">Window Display 
+ Options page</a> for information on the different fields.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0> To preview the display settings changes at any time just 
+ click the &quot;Apply&quot; button to see how they look in the active 
+ file.</p>
+
+<p>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>5. Click the &quot;Save as Default&quot; button.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
+
+<p class=Body-Text-Indent-2>6. Create a new file or open a file that you 
+ have never opened before in HexEdit and verify that the default settings 
+ are used.</p>
+
+<p class=Body-Text-Indent-2>&nbsp;</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 

@@ -445,13 +445,13 @@ Speeding up templates | troubleshooting\Speed_templates.htm
 
 [Tutorial: Customization]
 Customization Tutorial | tute_customize\CustomizeTute0.htm
-Keyboard and Mouse Customization | tute_customize\CustomizeTute1.htm
+Customizing Toolbars | tute_customize\CustomizeTute1.htm
 Keyboard and Mouse Customization | tute_customize\CustomizeTute2.htm
 Menu Customization | tute_customize\CustomizeTute3.htm
 Setting up External Tools | tute_customize\CustomizeTute4.htm
 Options Dialog | tute_customize\CustomizeTute5.htm
 Info Tips | tute_customize\CustomizeTute6.htm
-Miscellaneous Customization | tute_customize\CustomizeTute7.htm
+Miscellaneous Customizations | tute_customize\CustomizeTute7.htm
 
 [Tutorial: Macros]
 Keystroke Macro Tutorial | tute_macros\MacroTute0.htm
