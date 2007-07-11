@@ -238,11 +238,12 @@ BOOL CHexEditDoc::OnNewDocument()
 	{
 		CString ss = theApp.last_fill_str_;
 		__int64 state = theApp.last_fill_state_;
-		if (state == 0)
-		{
-			state = 0x0000200000000001;
-			ss = "0";
-		}
+		// This was for backward compatibility but a value of zero is valid (length 0 file)
+		//if (state == 0)
+		//{
+		//	state = 0x0000200000000001;
+		//	ss = "0";
+		//}
 		if (insert_block(0, state, ss) == -1)
 			return FALSE;       // Some error
 	}
@@ -595,10 +596,12 @@ void CHexEditDoc::OnFileSaveAs()
 // Called as part of Save and Save As commands
 BOOL CHexEditDoc::DoSave(LPCTSTR lpszPathName, BOOL bReplace)
 {
+	BOOL modified = IsModified();
+	if (modified) SetModifiedFlag(FALSE);                    // This gets rid of " *" from default filename
     BOOL retval = CDocument::DoSave(lpszPathName, bReplace);
+	if (!retval && modified) SetModifiedFlag();              // If not saved restore modified status
 
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    if (!retval && aa->mac_error_ < 2) aa->mac_error_ = 2;
+    if (!retval && theApp.mac_error_ < 2) theApp.mac_error_ = 2;
     return retval;
 }
 
@@ -4154,17 +4157,26 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
         FILE_ADDRESS df_size = mac_abs(pdoc->df_size_[ii]);
 
         ASSERT(df_type >= CHexEditDoc::DF_DATA);
-        unsigned char buf[128];
+		if (df_type <= CHexEditDoc::DF_NO_TYPE || pdoc->df_address_[ii] == -1)
+			df_size = 0;
+		unsigned char *buf = NULL;
+		unsigned char small_buf[128];                      // avoid heap memory for small (most) things
+		unsigned char *large_buf = NULL;                   // Only needed for long strings
 
 		// Get the bytes for the data (except for a BLOB which could be huge)
-		if (df_type > CHexEditDoc::DF_NO_TYPE)
+		if (df_size > 0)
 		{
-			if (pdoc->df_address_[ii] == -1 ||
-				pdoc->GetData(buf, size_t(__min(df_size, sizeof(buf))), pdoc->df_address_[ii]) != __min(df_size, sizeof(buf)))
+			if (df_size <= sizeof(small_buf))
+				buf = small_buf;
+			else
+			{
+				large_buf = new unsigned char[size_t(df_size)];
+				buf = large_buf;
+			}
+			if (pdoc->GetData(buf, size_t(df_size), pdoc->df_address_[ii]) != df_size)
 			{
 				// Set flag to say there is a problem and use null data
 				retval.error = true;
-				memset(buf, '\0', sizeof(buf));
 				df_size = 0;
 			}
 			else if (big_endian && df_type == CHexEditDoc::DF_WSTRING)
@@ -4415,6 +4427,8 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
                 break;
             }
         }
+		if (large_buf != NULL)
+			delete[] large_buf;
     }
 
     return retval;
