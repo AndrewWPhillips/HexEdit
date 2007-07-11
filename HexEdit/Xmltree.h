@@ -33,9 +33,9 @@ public:
     CXmlTree(const LPCTSTR filename = NULL);
     MSXML::IXMLDOMDocumentPtr m_pdoc;   // COM Interface ptr to doc itself
 
-	bool LoadFile(const LPCTSTR filename);
-	bool LoadString(const LPCTSTR ss);
-    bool Save(const LPCTSTR filename = NULL);
+	bool LoadFile(LPCTSTR filename);
+	bool LoadString(LPCTSTR ss);
+    bool Save(LPCTSTR filename = NULL);
     void SetFileName(const LPCTSTR filename) { m_filename = filename; }
     CString GetFileName() const { return m_filename; }
     CString GetDTDName() const;

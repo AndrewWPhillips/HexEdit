@@ -35,7 +35,7 @@ CXmlTree::CXmlTree(const LPCTSTR filename /*=NULL*/)
 }
 
 // Load XML from a file
-bool CXmlTree::LoadFile(const LPCTSTR filename)
+bool CXmlTree::LoadFile(LPCTSTR filename)
 {
     m_modified = false;
     m_filename = filename;
@@ -43,24 +43,32 @@ bool CXmlTree::LoadFile(const LPCTSTR filename)
 }
 
 // Load XML from a string
-bool CXmlTree::LoadString(const LPCTSTR ss)
+bool CXmlTree::LoadString(LPCTSTR ss)
 {
     m_modified = true;      // Anything already there is overwritten
     return !(m_error = !m_pdoc->loadXML(_bstr_t(ss)));
 }
 
-bool CXmlTree::Save(const LPCTSTR filename /*=NULL*/)
+bool CXmlTree::Save(LPCTSTR filename /*=NULL*/)
 {
-    HRESULT hr;
-    if (filename != NULL)
-        hr = m_pdoc->save(_bstr_t(filename));
-    else if (!m_filename.IsEmpty())
-        hr = m_pdoc->save(_bstr_t(m_filename));
-    else
-        return false;
+    if (filename == NULL)
+	{
+		if (m_filename.IsEmpty())
+			return false;
+		filename = m_filename;
+	}
+	try
+	{
+		HRESULT hr;
+		hr = m_pdoc->save(_bstr_t(filename));
 
-    m_modified = false;     // What's on disk now matches what's in memory
-    return hr == S_OK;
+		m_modified = false;     // What's on disk now matches what's in memory
+		return hr == S_OK;
+	}
+	catch (...)
+	{
+		return false;
+	}
 }
 
 CString CXmlTree::GetDTDName() const

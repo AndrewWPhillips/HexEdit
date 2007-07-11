@@ -4539,7 +4539,8 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
         case ID_DFFD_SAVE:
             if (pdoc->ptree_->GetFileName().Right(11).CompareNoCase("default.xml") != 0)
             {
-                pdoc->ptree_->Save();
+                if (!pdoc->ptree_->Save())
+					::HMessageBox("There was an error writing to the template file.  It may be read only.");
                 break;
             }
             // fall through
@@ -4555,23 +4556,27 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
                 if (dlgFile.DoModal() == IDOK)
                 {
                     pdoc->ptree_->SetFileName(dlgFile.GetPathName());
-                    pdoc->ptree_->Save();
-                    theApp.GetXMLFileList();        // rebuild the list with the new file name in it
+					if (!pdoc->ptree_->Save())
+						::HMessageBox("There was an error writing to the template file");
+					else
+					{
+						theApp.GetXMLFileList();        // rebuild the list with the new file name in it
 
-                    // Rebuild drop down list for this view
-                    CStringArray desc_list;   // Array of descriptions of format files
+						// Rebuild drop down list for this view
+						CStringArray desc_list;   // Array of descriptions of format files
 
-                    for (std::vector<CString>::const_iterator pp = theApp.xml_file_name_.begin();
-                         pp != theApp.xml_file_name_.end(); ++pp)
-                    {
-                        desc_list.Add(*pp);
-                    }
-                    CGridCellCombo *pCell = (CGridCellCombo*) grid_.GetCell(0, grid_.GetFixedColumnCount());
-                    pCell->SetOptions(desc_list);
+						for (std::vector<CString>::const_iterator pp = theApp.xml_file_name_.begin();
+							pp != theApp.xml_file_name_.end(); ++pp)
+						{
+							desc_list.Add(*pp);
+						}
+						CGridCellCombo *pCell = (CGridCellCombo*) grid_.GetCell(0, grid_.GetFixedColumnCount());
+						pCell->SetOptions(desc_list);
 
-                    // Make sure the doc knows the name of the template file
-                    GetDocument()->xml_file_num_ = theApp.FindXMLFile(dlgFile.GetFileTitle());
-                    pCell->SetText(GetDocument()->GetXMLFileDesc());
+						// Make sure the doc knows the name of the template file
+						GetDocument()->xml_file_num_ = theApp.FindXMLFile(dlgFile.GetFileTitle());
+						pCell->SetText(GetDocument()->GetXMLFileDesc());
+					}
                 }
             }
             break;
