@@ -3609,7 +3609,10 @@ CHexEditView *GetView()
     if (theApp.pv_ != NULL)
     {
         ASSERT(theApp.playing_ > 0);
-        return theApp.pv_;
+		if (!IsWindow(theApp.pv_->m_hWnd) || !theApp.pv_->IsKindOf(RUNTIME_CLASS(CHexEditView)))
+			return NULL;
+		else
+			return theApp.pv_;
     }
 
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
