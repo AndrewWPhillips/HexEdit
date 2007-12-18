@@ -183,6 +183,7 @@ ADMIN
  - add area to submit and retrieve XML DFFD templates to website
 
 Bugs
+ - tutorial menu items go to wrong page
  > chnaging charset in Window Options page does not change colour scheme (when default scheme in use)
  - in window options turning autofit on (Apply) does not update window columns
  > drag onto main window to open does not set open_current_readonly_
