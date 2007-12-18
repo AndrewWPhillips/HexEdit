@@ -105,12 +105,14 @@
 													<for name="Addr" count="" stop_test="this.addr == 0" type_name="" comment="">
 														<struct name="" type_name="" comment="" expr="this.addr &gt; 0 ? this.func.name : &quot;-----&quot;">
 															<data type="int" name="addr" format="signed" len="4" display="hex"/>
-															<jump offset="addr" comment="" origin="start">
-																<struct name="func" type_name="" comment="" expr="">
-																	<data type="int" name="ordinal" format="unsigned" len="2" display="hex"/>
-																	<data type="string" name="name" format="default" display=""/>
-																</struct>
-															</jump>
+															<if test="addr &gt; 0" comment="">
+																<jump offset="addr" comment="" origin="start">
+																	<struct name="func" type_name="" comment="" expr="">
+																		<data type="int" name="ordinal" format="unsigned" len="2" display="hex"/>
+																		<data type="string" name="name" format="default" display=""/>
+																	</struct>
+																</jump>
+															</if>
 														</struct>
 													</for>
 												</jump>
@@ -118,9 +120,11 @@
 											<data type="int" name="" format="unsigned" len="4" display=""/>
 											<data type="int" name="" format="unsigned" len="4" display=""/>
 											<data type="int" name="RVAModuleName" format="unsigned" len="4" display="hex" type_name="DWORD"/>
-											<jump offset="RVAModuleName" comment="" origin="start">
-												<data type="string" name="ModuleName" format="default" display=""/>
-											</jump>
+											<if test="RVAModuleName &gt; 0" comment="">
+												<jump offset="RVAModuleName" comment="" origin="start">
+													<data type="string" name="ModuleName" format="default" display=""/>
+												</jump>
+											</if>
 											<data type="int" name="RVAFuncAddrList" format="unsigned" len="4" display="hex" type_name="DWORD"/>
 										</struct>
 									</for>
