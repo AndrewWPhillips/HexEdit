@@ -1278,6 +1278,10 @@ void CHexEditApp::OnMacroRecord()
 
 void CHexEditApp::OnUpdateMacroRecord(CCmdUI* pCmdUI) 
 {
+	if (recording_)
+		pCmdUI->SetText("Stop Recording");
+	else
+		pCmdUI->SetText("Record Macro");
     pCmdUI->SetCheck(recording_);
 }
 
