@@ -3634,6 +3634,26 @@ CHexEditDoc::enum_t &CHexEditDoc::get_enum(CXmlTree::CElt &ee)
     return retval;
 }
 
+// Return the string representation of the value, including enum string for int values (if any)
+CString CHexEditDoc::get_str(CHexExpr::value_t val, int ii)
+{
+	if (val.typ == CHexExpr::TYPE_INT)
+	{
+		std::map<MSXML::IXMLDOMElementPtr::Interface *, enum_t>::const_iterator pev =
+			df_enum_.find((MSXML::IXMLDOMElementPtr::Interface *)df_elt_[ii].m_pelt);
+		if (pev != df_enum_.end())
+		{
+			enum_t::const_iterator pe = pev->second.find(val.int64);
+            if (pe != pev->second.end())
+			{
+                return pe->second;
+			}
+		}
+	}
+
+	return CString();
+}
+
 #ifdef _DEBUG
 void CHexEditDoc::dump_tree()
 {
@@ -3896,7 +3916,7 @@ ExprStringType CHexEditDoc::GetDataString(expr_eval::value_t val, CString strFor
 // is a "struct" or "binary_file_format" element.  If sym is "this" just return parent.
 // pac returns the number of the latest symbol (sequentially within the file) accessed.
 CHexExpr::value_t CHexExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,
-                                        __int64 &sym_size, __int64 &sym_address)
+                                        __int64 &sym_size, __int64 &sym_address, CString &sym_str)
 {
     ASSERT(pdoc->df_address_.size() == pdoc->df_size_.size());
     ASSERT(pdoc->df_address_.size() == pdoc->df_indent_.size());
@@ -3915,11 +3935,14 @@ CHexExpr::value_t CHexExpr::find_symbol(const char *sym, value_t parent, size_t 
     retval.int64 = 0;
     sym_size = 0;
     sym_address = -1;
+    sym_str.Empty();
 
     if (parent.typ == TYPE_NONE && _stricmp(sym, "this") == 0)
     {
+        // Just return the element (parent)
         if (parent.int64 > *pac) *pac = int(parent.int64);
         retval = get_value(int(parent.int64), sym_size, sym_address);
+        sym_str = pdoc->get_str(retval, int(parent.int64));
     }
     else if (parent.typ == TYPE_NONE)
     {
@@ -3937,6 +3960,7 @@ CHexExpr::value_t CHexExpr::find_symbol(const char *sym, value_t parent, size_t 
             if (pdoc->df_indent_[jj] == curr_indent &&
                      sym_found(sym, jj, retval, pac, sym_size, sym_address))
             {
+                sym_str = pdoc->get_str(retval, jj);
                 break;
             }
         }
@@ -3960,6 +3984,7 @@ CHexExpr::value_t CHexExpr::find_symbol(const char *sym, value_t parent, size_t 
             else if (pdoc->df_indent_[jj] == curr_indent + 1 &&
                      sym_found(sym, jj, retval, pac, sym_size, sym_address))
             {
+                sym_str = pdoc->get_str(retval, jj);
                 break;
             }
         }
@@ -3993,6 +4018,7 @@ CHexExpr::value_t CHexExpr::find_symbol(const char *sym, value_t parent, size_t 
 
             if (jj > *pac) *pac = jj;
             retval = get_value(jj, sym_size, sym_address);
+            sym_str = pdoc->get_str(retval, jj);
         }
     }
     else if (parent.typ == TYPE_BLOB)

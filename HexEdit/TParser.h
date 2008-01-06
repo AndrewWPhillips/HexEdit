@@ -33,7 +33,7 @@ class TExpr : public expr_eval
 public:
     TExpr(TParser * ptp) : expr_eval(10, false), ptp_(ptp) {}
     virtual value_t find_symbol(const char *sym, value_t parent, size_t index, int *pac,
-        __int64 &sym_size, __int64 &sym_address);
+        __int64 &sym_size, __int64 &sym_address, CString &sym_str);
 
 private:
 	TParser * ptp_;

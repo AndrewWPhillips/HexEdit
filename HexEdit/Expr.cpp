@@ -805,6 +805,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
     tok_t next_tok = get_next();
     value_t tmp;
     __int64 sym_size, sym_address;
+	CString sym_str;
     bool saved_const_sep_allowed;
 
     switch (next_tok)
@@ -830,15 +831,15 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		tmp.int64 = ref_;
         if (next_tok == TOK_SYMBOL)
 		{
-	        val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address);
+	        val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address, sym_str);
 		}
 		else if (next_tok == TOK_INT)
 		{
-	        val = find_symbol("int", tmp, 0, pac_, sym_size, sym_address);
+	        val = find_symbol("int", tmp, 0, pac_, sym_size, sym_address, sym_str);
 		}
 		else if (next_tok == TOK_CHAR)
 		{
-	        val = find_symbol("char", tmp, 0, pac_, sym_size, sym_address);
+	        val = find_symbol("char", tmp, 0, pac_, sym_size, sym_address, sym_str);
 		}
 		else
         {
@@ -865,7 +866,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
                     strcpy(error_buf_, "Symbol expected");
                     return TOK_NONE;
                 }
-                val = find_symbol(psymbol_, val, 0, pac_, sym_size, sym_address);
+                val = find_symbol(psymbol_, val, 0, pac_, sym_size, sym_address, sym_str);
                 if (val.typ == TYPE_NONE)
                 {
                     strcpy(error_buf_, "Unrecognised member name for struct");
@@ -892,7 +893,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
                     strcpy(error_buf_, "Array (for) index must be an integer");
                     return TOK_NONE;
                 }
-                val = find_symbol(NULL, val, size_t(tmp.int64), pac_, sym_size, sym_address);  // get value from array
+                val = find_symbol(NULL, val, size_t(tmp.int64), pac_, sym_size, sym_address, sym_str);  // get value from array
                 if (val.typ == TYPE_NONE)
                 {
                     strcpy(error_buf_, "Invalid array (for) index");
@@ -936,7 +937,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             }
             tmp.typ = TYPE_NONE;
             tmp.int64 = ref_;
-            val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address);
+            val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address, sym_str);
             next_tok = get_next();
             val.boolean = val.typ != TYPE_NONE;
             val.typ = TYPE_BOOLEAN;
@@ -953,14 +954,14 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             }
         }
         return next_tok;
-    case TOK_ADDRESSOF:
+    case TOK_STR:
         // Get opening bracket and first symbol within
-        if (error(next_tok = get_next(), "Expected opening parenthesis after ADDRESSOF"))
+        if (error(next_tok = get_next(), "Expected opening parenthesis after STRING"))
             return TOK_NONE;
 
         if (next_tok != TOK_LPAR)
         {
-            strcpy(error_buf_, "Expected opening parenthesis after ADDRESSOF");
+            strcpy(error_buf_, "Expected opening parenthesis after STRING");
             return TOK_NONE;
         }
         if (error(next_tok = get_next(), "Expected symbol name"))
@@ -974,7 +975,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 
         tmp.typ = TYPE_NONE;
         tmp.int64 = ref_;
-        val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address);
+        val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address, sym_str);
         next_tok = get_next();
         while (next_tok == TOK_DOT || next_tok == TOK_LBRA)
         {
@@ -994,7 +995,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
                     strcpy(error_buf_, "Symbol expected");
                     return TOK_NONE;
                 }
-                val = find_symbol(psymbol_, val, 0, pac_, sym_size, sym_address);
+                val = find_symbol(psymbol_, val, 0, pac_, sym_size, sym_address, sym_str);
                 if (val.typ == TYPE_NONE)
                 {
                     strcpy(error_buf_, "Unrecognised member name for struct");
@@ -1021,7 +1022,96 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
                     strcpy(error_buf_, "Array (for) index must be an integer");
                     return TOK_NONE;
                 }
-                val = find_symbol(NULL, val, size_t(tmp.int64), pac_, sym_size, sym_address);
+                val = find_symbol(NULL, val, size_t(tmp.int64), pac_, sym_size, sym_address, sym_str);
+                if (val.typ == TYPE_NONE)
+                {
+                    strcpy(error_buf_, "Invalid array (for) index");
+                    return TOK_NONE;
+                }
+                next_tok = get_next();
+                break;
+            }
+        }
+
+        if (next_tok != TOK_RPAR)
+        {
+            strcpy(error_buf_, "Expected closing parenthesis after STRING");
+            return TOK_NONE;
+        }
+
+        val.typ = TYPE_STRING;
+        val.error = false;      // don't care about errors - just need size
+		val.pstr = new ExprStringType(sym_str);
+        return get_next();
+    case TOK_ADDRESSOF:
+        // Get opening bracket and first symbol within
+        if (error(next_tok = get_next(), "Expected opening parenthesis after ADDRESSOF"))
+            return TOK_NONE;
+
+        if (next_tok != TOK_LPAR)
+        {
+            strcpy(error_buf_, "Expected opening parenthesis after ADDRESSOF");
+            return TOK_NONE;
+        }
+        if (error(next_tok = get_next(), "Expected symbol name"))
+            return TOK_NONE;
+
+        if (next_tok != TOK_SYMBOL)
+        {
+            strcpy(error_buf_, "Symbol expected");
+            return TOK_NONE;
+        }
+
+        tmp.typ = TYPE_NONE;
+        tmp.int64 = ref_;
+        val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address, sym_str);
+        next_tok = get_next();
+        while (next_tok == TOK_DOT || next_tok == TOK_LBRA)
+        {
+            switch (next_tok)
+            {
+            case TOK_DOT:
+                if (val.typ != TYPE_STRUCT)
+                {
+                    strcpy(error_buf_, "Dot operator (.) must only be used with struct");
+                    return TOK_NONE;
+                }
+                if (error(next_tok = get_next(), "Expected member name"))
+                    return TOK_NONE;
+
+                if (next_tok != TOK_SYMBOL)
+                {
+                    strcpy(error_buf_, "Symbol expected");
+                    return TOK_NONE;
+                }
+                val = find_symbol(psymbol_, val, 0, pac_, sym_size, sym_address, sym_str);
+                if (val.typ == TYPE_NONE)
+                {
+                    strcpy(error_buf_, "Unrecognised member name for struct");
+                    return TOK_NONE;
+                }
+                next_tok = get_next();
+                break;
+            case TOK_LBRA:
+                if (val.typ != TYPE_ARRAY)
+                {
+                    strcpy(error_buf_, "Array index on non-array symbol");
+                    return TOK_NONE;
+                }
+                if (error(next_tok = prec_lowest(tmp), "Expected array index"))
+                    return TOK_NONE;
+
+                if (next_tok != TOK_RBRA)
+                {
+                    strcpy(error_buf_, "Closing bracket (]) expected");
+                    return TOK_NONE;
+                }
+                else if (tmp.typ != TYPE_INT)
+                {
+                    strcpy(error_buf_, "Array (for) index must be an integer");
+                    return TOK_NONE;
+                }
+                val = find_symbol(NULL, val, size_t(tmp.int64), pac_, sym_size, sym_address, sym_str);
                 if (val.typ == TYPE_NONE)
                 {
                     strcpy(error_buf_, "Invalid array (for) index");
@@ -2169,7 +2259,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             sprintf(error_buf_, "\"%s\" is a reserved symbol", psymbol_);
             return TOK_NONE;
         }
-        val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address);
+        val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address, sym_str);
         if (val.typ == TYPE_NONE)
         {
             // Not a symbol referring to a file field so assume it is an internal variable
@@ -2243,7 +2333,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
                         strcpy(error_buf_, "Symbol expected");
                         return TOK_NONE;
                     }
-                    val = find_symbol(psymbol_, val, 0, pac_, sym_size, sym_address);
+                    val = find_symbol(psymbol_, val, 0, pac_, sym_size, sym_address, sym_str);
                     if (val.typ == TYPE_NONE)
                     {
                         strcpy(error_buf_, "Unrecognised member name for struct");
@@ -2272,7 +2362,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
                     }
                     if (val.typ == TYPE_ARRAY)
 					{
-						val = find_symbol(NULL, val, size_t(tmp.int64), pac_, sym_size, sym_address);
+						val = find_symbol(NULL, val, size_t(tmp.int64), pac_, sym_size, sym_address, sym_str);
 						if (val.typ == TYPE_NONE)
 						{
 							strcpy(error_buf_, "Invalid array (for) index");
@@ -2281,7 +2371,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 					}
                     else if (val.typ == TYPE_BLOB)
 					{
-						val = find_symbol(NULL, val, size_t(tmp.int64), pac_, sym_size, sym_address);
+						val = find_symbol(NULL, val, size_t(tmp.int64), pac_, sym_size, sym_address, sym_str);
 						if (val.typ == TYPE_NONE)
 						{
 							strcpy(error_buf_, "Invalid index into \"none\" DATA element");
@@ -2521,6 +2611,7 @@ struct
     {"MIN",       expr_eval::TOK_MIN},
     {"MAX",       expr_eval::TOK_MAX},
     {"POW",       expr_eval::TOK_POW},
+    {"STRING",    expr_eval::TOK_STR},
     {"INT",       expr_eval::TOK_INT},
     {"ATOI",      expr_eval::TOK_ATOI},
     {"ATOF",      expr_eval::TOK_ATOF},

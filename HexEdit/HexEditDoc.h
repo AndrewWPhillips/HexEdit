@@ -354,7 +354,7 @@ class CHexExpr : public expr_eval
 public:
     CHexExpr(CHexEditDoc *pp) { pdoc = pp; }
     virtual value_t find_symbol(const char *sym, value_t parent, size_t index, int *pac,
-                                __int64 &sym_size, __int64 &sym_address);
+                                __int64 &sym_size, __int64 &sym_address, CString &sym_str);
     CHexExpr::value_t get_value(int ii, __int64 &sym_size, __int64 &sym_address);
 
 private:
@@ -769,6 +769,7 @@ private:
     std::map<MSXML::IXMLDOMElementPtr::Interface *, enum_t> df_enum_; // Stores all enums: maps an element to its enum
 	bool add_enum(CXmlTree::CElt &ee, LPCTSTR estr); // Returns false if error parsing enum string
 	enum_t &get_enum(CXmlTree::CElt &ee);   // Returns ref. to enum for an element
+	CString get_str(CHexExpr::value_t val, int ii);
 
 #ifdef _DEBUG
     void dump_tree();

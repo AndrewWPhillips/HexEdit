@@ -31,7 +31,7 @@
 // This function is the sole reason we derived a new class from TExpr - it allows
 // the user to use symbols (with constant values) in a constant expression.
 expr_eval::value_t TExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,
-    __int64 &sym_size, __int64 &sym_address)
+    __int64 &sym_size, __int64 &sym_address, CString &sym_str)
 {
 	// We can ignore index, pac, sym_address and just check that parent is TYPE_NONE
 	// We only return a valid sym_size if "sym" is in the type list which is

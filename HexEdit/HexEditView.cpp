@@ -16122,7 +16122,7 @@ void CHexEditView::OnViewtest()
 }
 
 CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,
-        __int64 &sym_size, __int64 &sym_address)
+        __int64 &sym_size, __int64 &sym_address, CString &)
 {
 	ASSERT(pview_ != NULL);
     ASSERT(parent.typ == TYPE_NONE);    // Parent is not used here

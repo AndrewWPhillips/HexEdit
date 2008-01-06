@@ -5019,7 +5019,7 @@ void CMainFrame::OnTest()
 // sym is the name of the bookmark.  All other params are ignored.
 
 CJumpExpr::value_t CJumpExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,
-    __int64 &sym_size, __int64 &sym_address)
+    __int64 &sym_size, __int64 &sym_address, CString &sym_str)
 {
     value_t retval;
     CHexEditView *pview;

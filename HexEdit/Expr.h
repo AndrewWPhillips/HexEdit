@@ -46,6 +46,7 @@ public:
         TOK_SIZEOF, TOK_ADDRESSOF,
         TOK_ABS, TOK_MIN, TOK_MAX,
         TOK_POW,
+		TOK_STR,                        // Get srting for an enum
 		TOK_INT,                        // Convert real or boolean to int
 		TOK_ATOI, TOK_ATOF,             // Convert string to number
 		TOK_DATE, TOK_TIME,             // Convert string to date,date/time or time
@@ -139,7 +140,7 @@ public:
     int get_error_pos() { return error_pos_; }
 
     virtual value_t find_symbol(const char *sym, value_t parent, size_t index, int *pac,
-                                __int64 &sym_size, __int64 &sym_address) =0;
+                                __int64 &sym_size, __int64 &sym_address, CString &sym_str) =0;
 
     static tok_t func_token(const char *buf);// Check if a func name and return corresp. token (or TOK_NONE)
 

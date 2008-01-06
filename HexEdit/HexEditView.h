@@ -175,7 +175,7 @@ class CTipExpr : public expr_eval
 public:
     CTipExpr::CTipExpr(CHexEditView *pv) : pview_(pv), size_(0), unsigned_(false) {}
     virtual value_t find_symbol(const char *sym, value_t parent, size_t index, int *pac,
-        __int64 &sym_size, __int64 &sym_address);
+        __int64 &sym_size, __int64 &sym_address, CString &sym_str);
 	int GetSize() { return size_; }
 	bool GetUnsigned() { return unsigned_; }
 private:
