@@ -975,6 +975,7 @@ void CHexEditDoc::WriteInPlace()
             pfile1_->SetLength(length_);
         }
 #endif
+        pfile1_->Flush();
     }
     catch (CFileException *pfe)
     {
