@@ -1036,7 +1036,7 @@ void CHexEditView::StoreOptions()
 
         pfl->SetData(ii, CHexFileList::DISPLAY, disp_state_);
 
-        pfl->SetData(ii, CHexFileList::KEEP_TIMES, GetDocument()->keep_times());
+        pfl->SetData(ii, CHexFileList::DOC_FLAGS, GetDocument()->doc_flags());
         pfl->SetData(ii, CHexFileList::FORMAT, GetDocument()->GetFormatFileName());
 
         FILE_ADDRESS start_addr, end_addr;
@@ -9811,7 +9811,6 @@ void CHexEditView::OnDisplayReset()
 
     display_.readonly = theApp.open_display_.readonly;
     display_.overtype = theApp.open_display_.overtype;
-//    display_.keep_times = theApp.open_display_.keep_times;
 
     display_.vert_display = theApp.open_display_.vert_display;
     display_.borders = theApp.open_display_.borders;

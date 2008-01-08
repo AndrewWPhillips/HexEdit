@@ -379,7 +379,8 @@ public:
     CFile64 *pfile1_;
     FILE_ADDRESS length() const { return length_; }
     BOOL read_only() { return readonly_; }
-    BOOL keep_times() { return keep_times_; }
+    //BOOL keep_times() { return keep_times_; }
+    int doc_flags() { return (keep_times_ ? 1 : 0) | (dffd_edit_mode_ ? 2 : 0); }
     BOOL readonly_;
     BOOL shared_;
 

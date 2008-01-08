@@ -101,7 +101,7 @@ CHexEditDoc::CHexEditDoc()
     keep_times_ = theApp.open_keep_times_;
     length_ = 0L;
 
-	dffd_edit_mode_ = -1;
+	dffd_edit_mode_ = 0;
 
     pthread_ = NULL;
 
@@ -251,8 +251,7 @@ BOOL CHexEditDoc::OnNewDocument()
     if (aa->bg_search_ && pthread_ == NULL)
         CreateThread();
 
-    // Load XML DFFD file (should use "default")
-    OpenDataFormatFile();
+    OpenDataFormatFile("default");
 
 //    CHexEditView *pv = GetBestView();
 //    if (start_ebcdic)
@@ -309,7 +308,9 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
     int recent_file_index = -1;
     if ((recent_file_index = pfl->GetIndex(lpszPathName)) != -1)
     {
-        keep_times_ = BOOL(atoi(pfl->GetData(recent_file_index, CHexFileList::KEEP_TIMES)));
+        int flags = atoi(pfl->GetData(recent_file_index, CHexFileList::DOC_FLAGS));
+        keep_times_ = (flags & 0x1) != 0;
+        dffd_edit_mode_ = (flags & 0x2) != 0;
 		view_time_ = timer(atof(pfl->GetData(recent_file_index, CHexFileList::VIEW_TIME)));
 		edit_time_ = timer(atof(pfl->GetData(recent_file_index, CHexFileList::EDIT_TIME)));
     }
@@ -369,6 +370,9 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	// - may slow down file opening for no purpose if template is not used
 	// - user might get XML parse error messages even if not using templates
     OpenDataFormatFile();
+    
+    // Make sure file property page is updated
+    ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet->Update(GetBestView(), -1);
 
     return TRUE;
 }
@@ -506,21 +510,6 @@ void CHexEditDoc::load_icon(LPCTSTR lpszPathName)
         VERIFY(::SHGetFileInfo(__argv[0], 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_SMALLICON));
         hicon_ = sfi.hIcon;
 #endif
-
-    // Make sure file property page is updated
-    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    POSITION pos = GetFirstViewPosition();
-    while (pos != NULL)
-    {
-        CView *pview = GetNextView(pos);
-        if (pview->IsKindOf(RUNTIME_CLASS(CBCGTabView)))
-            pview = ((CBCGTabView *)pview)->GetActiveView();
-        if (pview->IsKindOf(RUNTIME_CLASS(CHexEditView)))
-        {
-            mm->m_wndProp.m_pSheet->Update((CHexEditView *)pview, -1);
-            break;
-        }
-    }
 }
 
 void CHexEditDoc::show_icon()
@@ -580,6 +569,9 @@ void CHexEditDoc::OnFileSave()
 	    CDocument::OnFileSave();
     CHECK_SECURITY(199);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_save);
+
+    // Make sure file property page is updated
+    ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet->Update(GetBestView(), -1);
 }
 
 // Save As command
@@ -591,6 +583,9 @@ void CHexEditDoc::OnFileSaveAs()
 
     load_icon(GetPathName());
     show_icon();
+
+    // Make sure file property page is updated
+    ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet->Update(GetBestView(), -1);
 }
 
 // Called as part of Save and Save As commands
@@ -1656,6 +1651,9 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
             load_icon(file_name);
             show_icon();
             SetPathName(file_name);
+
+            // Make sure file property page is updated
+            ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet->Update(GetBestView(), -1);
         }
         else
         {
@@ -1736,8 +1734,6 @@ void CHexEditDoc::OnDffdNew()
     CDFFDHint dffdh;
     UpdateAllViews(NULL, 0, &dffdh);
 
-	dffd_edit_mode_ = 1;
-
 	CHexEditView *pv = GetBestView();
 	if (pv != NULL)
 		pv->ShowDffd();
@@ -1789,15 +1785,6 @@ void CHexEditDoc::OnDffdSaveAs()
 // Is editing of the active template allowed?
 BOOL CHexEditDoc::DffdEditMode() 
 {
-    if (ptree_ == NULL || ptree_->Error())
-		return FALSE;    // should not happen - only if there is no template at all
-	if (dffd_edit_mode_ == -1)
-	{
-		CString ss;
-		ss = ptree_->GetRoot().GetAttr("allow_editing");
-        dffd_edit_mode_ = (ss.CompareNoCase("false") != 0);
-	}
-
 	return dffd_edit_mode_;
 }
 
@@ -2012,6 +1999,17 @@ void CHexEditDoc::OpenDataFormatFile(LPCTSTR data_file_name /*=NULL*/)
     }
 	else
 		xml_file_num_ = saved_file_num;
+
+    // If we are using the default template the user will more than likely want to change it so allow editing
+	if (filename == "default")
+        dffd_edit_mode_ = 1;
+    else if (ptree_ != NULL && !ptree_->Error() && dffd_edit_mode_ == 1)
+	{
+        // Turn off edit mode if template says to
+		CString ss;
+		ss = ptree_->GetRoot().GetAttr("allow_editing");
+        dffd_edit_mode_ = (ss.CompareNoCase("false") != 0);
+	}
 }
 
 BOOL CHexEditDoc::ScanInit()
@@ -3488,7 +3486,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             ASSERT(df_type_[ii] != DF_DATA);  // Ensure a specific type has been assigned
 
             CString strName = df_elt_[ii].GetAttr("name");
-            if (!DffdEditMode() && strName.IsEmpty())
+            if (!DffdEditMode() && strName.IsEmpty() && parent.GetName() != "for")
             {
                 // Hide nameless data elements in view mode (but show in edit mode)
                 df_type_.pop_back();

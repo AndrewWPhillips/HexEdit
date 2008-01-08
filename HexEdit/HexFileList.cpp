@@ -382,7 +382,7 @@ void CHexFileList::ReadList()
                 tt.display_.control = 0;
             SetData(name_.size()-1, DISPLAY, tt.disp_state_);
 
-            SetData(name_.size()-1, KEEP_TIMES, theApp.GetProfileInt(fnum, "KeepTimes", 0));
+            SetData(name_.size()-1, DOC_FLAGS, theApp.GetProfileInt(fnum, "KeepTimes", 0));
             SetData(name_.size()-1, FORMAT, theApp.GetProfileString(fnum, "FormatFile"));
 
             SetData(name_.size()-1, SELSTART, theApp.GetProfileString(fnum, "SelStart64"));
