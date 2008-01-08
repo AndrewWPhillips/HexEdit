@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="EMF_file" type_name="" comment="" allow_editing="false" expr="">
+	<struct name="EMF_header" type_name="ENHANCEDMETAHEADER">
+		<data type="int" name="RecordType" format="unsigned" len="4" display="hex" domain="this == 1" type_name="LONG" comment="Header record type (always 1)"/>
+		<data type="int" name="RecordSize" format="unsigned" len="4" display="" type_name="LONG"/>
+		<data type="int" name="BoundsLeft" format="signed" len="4" display="" type_name="LONG"/>
+		<data type="int" name="BoundsTop" format="signed" len="4" display="" type_name="LONG"/>
+		<data type="int" name="BoundsRight" format="signed" len="4" display="" type_name="LONG" domain="this &gt; BoundsLeft"/>
+		<data type="int" name="BoundsBottom" format="signed" len="4" display="" type_name="LONG" domain="this &gt; BoundsTop"/>
+		<data type="int" name="FrameLeft" format="signed" len="4" display="" type_name="LONG"/>
+		<data type="int" name="FrameTop" format="signed" len="4" display="" type_name="LONG"/>
+		<data type="int" name="FrameRight" format="signed" len="4" display="" type_name="LONG"/>
+		<data type="int" name="FrameBottom" format="signed" len="4" display="" type_name="LONG"/>
+		<data type="int" name="Signature" format="unsigned" len="4" display="hex" type_name="DWORD" domain="this == 0x464D4520" comment="Magic number"/>
+		<data type="int" name="Version" format="unsigned" len="4" display="hex" type_name="DWORD" domain="this == 0x00010000" comment="We only know how to handle version 1.0"/>
+		<data type="int" name="Size" format="unsigned" len="4" display="dec" type_name="DWORD" comment="Size of the file" units="bytes"/>
+		<data type="int" name="NumberOfRecords" format="unsigned" len="4" display="" type_name="DWORD" comment="Number of records (including this header)."/>
+		<data type="int" name="NumberOfHandles" format="unsigned" len="2" display="" type_name="WORD" comment="Number of objects in the file (pens etc)"/>
+		<data type="int" name="Reserved" format="unsigned" len="2" display="" type_name="WORD" domain="this == 0"/>
+		<data type="int" name="SizeOfDescription" format="unsigned" len="4" display="" type_name="DWORD" units="wide chars" comment="Length of the description string"/>
+		<data type="int" name="OffsetOfDescription" format="unsigned" len="4" display="hex" type_name="DWORD" units="bytes" comment="Offset in the file of the description"/>
+		<data type="int" name="NumPalEntries" format="unsigned" len="4" display="" type_name="DWORD" comment="Number of enrties in the palette at the end of the file, or 0 if none."/>
+		<data type="int" name="WidthDevPixels" format="signed" len="4" display="" type_name="LONG" units="pixels" comment="Width of display device"/>
+		<data type="int" name="HeightDevPixels" format="signed" len="4" display="" type_name="LONG" comment="Height of display device" units="pixels"/>
+		<data type="int" name="WidthDevMM" format="signed" len="4" display="" type_name="LONG" units="mm" comment="Width of display device"/>
+		<data type="int" name="HeightDevMM" format="signed" len="4" display="" type_name="LONG" units="mm" comment="Height of display device"/>
+	</struct>
+	<if test="EMF_header.SizeOfDescription &gt; 0" comment="">
+		<jump offset="EMF_header.OffsetOfDescription" comment="" origin="start">
+			<data type="string" name="Description" format="unicode" len="EMF_header.SizeOfDescription * 2" display=""/>
+		</jump>
+	</if>
+	<data type="none" name="" len="EMF_header.RecordSize - addressof(this)" comment="Consumes any remaining bytes to the end of the header record.  This element is not named so it is not seen except in edit mode."/>
+	<for name="record" count="EMF_header.NumberOfRecords - 1" stop_test="" type_name="WMFRECORD" comment="All the records except the header.">
+		<struct name="" type_name="" comment="" expr="{STRING(this.Function)}">
+			<data type="int" name="Function" format="unsigned" len="4" display="hex" type_name="WORD" comment="Type of record" domain="{POLYBEZIER=2,POLYGON,POLYLINE,POLYBEZIERTO,POLYLINETO,POLYPOLYLINE,POLYPOLYGON,SETWINDOWEXTEX,SETWINDOWORGEX,SETVIEWPORTEXTEX,SETVIEWPORTORGEX,SETBRUSHORGEX,EOF,SETPIXELV,SETMAPPERFLAGS,SETMAPMODE,SETBKMODE,SETPOLYFILLMODE,SETROP2,SETSTRETCHBLTMODE,SETTEXTALIGN,SETCOLORADJUSTMENT,SETTEXTCOLOR,SETBKCOLOR,OFFSETCLIPRGN,MOVETO,SETMETARGN,EXCLUDECLIPRECT,INTERSECTCLIPRECT,SCALEVIEWPORTEXTEX,SCALEWINDOWEXTEX,SAVEDC,RESTOREDC,SETWORLDTRANSFORM,MODIFYWORLDTRANSFORM,SELECTOBJECT,CREATEPEN,CREATEBRUSH,DELETEOBJECT,ANGLEARC,ELLIPSE,RECTANGLE,ROUNDRECT,ARC,CHORD,PIE,SELECTPALETTE,CREATEPALETTE,SETPALETTEENTRIES,RESIZEPALETTE,REALIZEPALETTE,EXTFLOODFILL,LINETO,ARCTO,POLYDRAW,SETARCDIRECTION,SETMITERLIMIT,BEGINPATH,ENDPATH,CLOSEFIGURE,FILLPATH,STROKEANDFILLPATH,STROKEPATH,FLATTENPATH,WIDENPATH,SELECTCLIPPATH,ABORTPATH, GDICOMMENT=70,FILLRGN,FRAMERGN,INVERTRGN,PAINTRGN,EXTSELECTCLIPRGN,BITBLT,STRETCHBLT,MASKBLT,PLGBLT,SETDIBITSTODEVICE,STRETCHDIBITS,EXTCREATEFONTINDIRECTW,EXTTEXTOUTA,EXTTEXTOUTW,POLYBEZIER16,POLYGON16,POLYLINE16,POLYBEZIERTO16,POLYLINETO16,POLYPOLYLINE16,POLYPOLYGON16,POLYDRAW16,CREATEMONOBRUSH,CREATEDIBPATTERNBRUSHPT,EXTCREATEPEN,POLYTEXTOUTA,POLYTEXTOUTW,SETICMMODE,CREATECOLORSPACE, SETCOLORSPACE,DELETECOLORSPACE,GLSRECORD,GLSBOUNDEDRECORD,PIXELFORMAT}"/>
+			<data type="int" name="Size" format="unsigned" len="4" display="dec" units="bytes" type_name="DWORD" comment="Length of this record"/>
+			<switch test="Function" comment="">
+				<case range="14"><struct name="EOF" type_name="" comment="EOF record with optional palette" expr=""><data type="int" name="NumPalEntries" format="unsigned" len="4" display=""/><data type="int" name="OffPalEntries" format="unsigned" len="4" display="" domain="this == 16" comment="Offset to palette from start of record - should always be 16 (ie straight after this)"/><for name="PalEntry" count="NumPalEntries" stop_test="" type_name="" comment=""><data type="int" name="" format="unsigned" len="4" display=""/></for><data type="int" name="Size2" format="unsigned" len="4" display="" domain="this == (NumPalEntries + 5) * 4" comment="Allows findinding the start of the EOF record when scanning from the end of file"/></struct></case><case range="19">
+					<data type="int" name="Mode" format="unsigned" domain="{ALTERNATE=1, WINDING=2}" len="4" display=""/>
+				</case>
+				<case range="27">
+					<struct name="MoveTo">
+						<data type="int" name="X" format="unsigned"/>
+						<data type="int" name="Y" format="unsigned"/>
+					</struct>
+				</case>
+				<case range="37">
+					<data type="int" name="Handle" format="unsigned" len="4" display="" comment="SelectObject has just one parameter the handle of the object"/>
+				</case>
+				<case range="38">
+					<struct name="CreatePen" type_name="" comment="" expr="">
+						<data type="int" name="Handle" format="unsigned" len="4" display="" type_name="DWORD"/>
+						<data type="int" name="Style" format="unsigned" len="4" display="" type_name="DWORD"/>
+						<data type="int" name="What" format="unsigned" len="4" display="" type_name="DWORD"/>
+						<data type="int" name="Width" format="unsigned" len="4" display="" type_name="DWORD"/>
+						<data type="int" name="Color" format="unsigned" len="4" display="" type_name="DWORD"/>
+					</struct>
+				</case>
+				<case range="39">
+					<struct name="" type_name="" comment="" expr="">
+						<data type="int" name="Handle" format="unsigned" len="4" display="" type_name="DWORD"/>
+						<data type="int" name="Style" format="unsigned" len="4" display="" type_name="DWORD"/>
+						<data type="int" name="Color" format="unsigned" len="4" display="" type_name="DWORD"/>
+						<data type="int" name="What" format="unsigned" len="4" display="" type_name="DWORD"/>
+					</struct>
+				</case>
+				<case range="40">
+					<data type="int" name="Handle" format="unsigned" len="4" display="" comment="DeleteObject has just one parameter the handle of the object"/>
+				</case>
+				<case range="54">
+					<struct name="LineTo">
+						<data type="int" name="X" format="unsigned"/>
+						<data type="int" name="Y" format="unsigned"/>
+					</struct>
+				</case>
+				<case range="88">
+					<struct name="PolyBezier16">
+						<data type="int" name="MinX" format="unsigned"/>
+						<data type="int" name="MinY" format="unsigned"/>
+						<data type="int" name="MaxX" format="unsigned"/>
+						<data type="int" name="MaxY" format="unsigned"/>
+						<data type="int" name="NumPoints" format="unsigned"/>
+						<for name="Point" count="NumPoints">
+							<struct>
+								<data type="int" name="X" format="unsigned" len="2"/>
+								<data type="int" name="Y" format="unsigned" len="2"/>
+							</struct>
+						</for>
+					</struct>
+				</case>
+				<case range="">
+					<data type="none" name="" len="Size - 8" comment="Just eat the parameters for any other record types"/>
+				</case>
+			</switch>
+		</struct>
+	</for>
+	<eval expr="EMF_header.Size == addressof(this)" display_error="true" display_result="false" comment=""/></binary_file_format>
