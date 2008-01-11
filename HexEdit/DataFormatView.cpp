@@ -1123,7 +1123,7 @@ void CDataFormatView::InitTree()
 //    item.nState = GVIS_READONLY;      // Whether or not editing is allowed is now handled by OnGridBeginLabelEdit
     item.nState = 0;
 
-    // Set colour of top tree cell - sets colour for whole tree
+    // Set colour of top tree cell - sets colour for whole tree column
     item.row = grid_.GetFixedRowCount();
     item.col = grid_.GetFixedColumnCount();
     item.mask = GVIF_BKCLR|GVIF_FGCLR;  // Just changing fg and bg colours
@@ -1960,7 +1960,7 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
                 val = *((unsigned __int64 *)buf);
                 break;
 
-				// xxx bitfields do not handle straddle yet
+            // NOTE: Bitfields do not handle straddle (yet?)
             case CHexEditDoc::DF_BITFIELD8:
 				ASSERT(signed char(pdoc->df_extra_[ii]) >= 0 && (pdoc->df_extra_[ii]&0xFF)+(pdoc->df_extra_[ii]>>8) <= 8);
                 val = (*((unsigned char *)buf)>>(pdoc->df_extra_[ii]&0xFF)) & ((1<<(pdoc->df_extra_[ii]>>8))-1);
@@ -2485,7 +2485,7 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
             }
             break;
 
-				// xxx bitfields do not handle straddle yet
+        // NOTE: Bitfields do not handle straddle - too hard
         case CHexEditDoc::DF_BITFIELD8:
 			{
 				long val = (*((unsigned char *)buf)>>(pdoc->df_extra_[ii]&0xFF)) & ((1<<(pdoc->df_extra_[ii]>>8))-1);
@@ -2763,6 +2763,8 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
     }
 }
 
+static COLORREF bg_edited = RGB(255, 180, 180);
+
 static char *heading[] =
 {
     "Click to Select",  // Only appears if nothing is selected in the drop list
@@ -2905,11 +2907,16 @@ void CDataFormatView::calc_colours(COLORREF &bg1, COLORREF &bg2, COLORREF &bg3)
         bg2 = get_rgb(hue+33, max(min(luminance,95),5), 100);
         bg3 = get_rgb(hue+67, max(min(luminance,95),5), 100);
     }
+    // Make sure the colours we use aren't the special colour used to flag that a field has been edited
+    ASSERT(bg_edited < RGB(255,255,255));       // Ensure we don't create an invalid colour by incrementing past white
+    if (bg1 == bg_edited) ++bg1;
+    if (bg2 == bg_edited) ++bg2;
+    if (bg3 == bg_edited) ++bg3;
 }
 
 // Formats bytes as a hex string.  The parameter (count) is the number of bytes but
 // no more than MAX_HEX_FORMAT bytes are used and "..." is added if there are more.
-// This is used for displaying data of tyep "none" in the tree view.
+// This is used for displaying data of type "none" in the tree view.
 CString CDataFormatView::hex_format(size_t count)
 {
     CString retval;
@@ -4745,6 +4752,7 @@ void CDataFormatView::OnGridEndSelChange(NMHDR *pNotifyStruct, LRESULT* /*pResul
     }
 }
 
+// Edit of grid cell - ie edit template data field
 void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 {
     NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
@@ -4765,7 +4773,7 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
 		df_type == CHexEditDoc::DF_NO_TYPE ||                               // non-editable data elt (edit as hex?)
 		pdoc->df_address_[ii] < 0 )                                        // data elt not present in file (so can't edit)
 	{
-		// Not in range of possible data rows or in data column
+		// Not in range of possible data rows or not data column or this row is not a data row
         *pResult = -1;
         return;
 	}
@@ -4964,7 +4972,7 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
         ss = disp;
         break;
 
-			// xxx bitfields do not handle straddle yet
+    // Bitfields do not handle straddle (yet?)
     case CHexEditDoc::DF_BITFIELD8:
 		ASSERT(signed char(pdoc->df_extra_[ii]) >= 0 && (pdoc->df_extra_[ii]&0xFF)+(pdoc->df_extra_[ii]>>8) <= 8);
         ss.Format("%lu", long((*((unsigned char *)buf)>>(pdoc->df_extra_[ii]&0xFF)) & ((1<<(pdoc->df_extra_[ii]>>8))-1)));
@@ -5067,6 +5075,8 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
     }
     delete[] buf;
 
+    // The actual field contents have been formatted as a string in ss (or as a date in odt)
+
     CString domain_str = pdoc->df_elt_[ii].GetAttr("domain");
 
     if (df_type >= CHexEditDoc::DF_CHAR &&
@@ -5077,7 +5087,7 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
         edit_row_type_changed_ = pItem->iRow;
         CGridCellCombo *pcell = (CGridCellCombo*) grid_.GetCell(pItem->iRow, pItem->iColumn);
 
-        // Make enum list for combo drop-down and also find current enum
+        // Convert the string back to an integer so we can look up the enum
         __int64 val;
         if (ss.GetLength() > 1 && ss[0] == '\'')
             val = ss[1];
@@ -5085,7 +5095,9 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
             val = ::strtoi64((const char *)ss+2, 16);   // current elt value - used to get enum string
         else
             val = ::strtoi64(ss);         // current elt value - used to get enum string
-        CString estr = ss;                  // current value's enum string (or number if enum not found)
+
+        // Make enum list for combo drop-down and also find current enum
+        CString estr = ss;                  // enum string (defaults to integer srting in case the enu is not found)
         CStringArray enum_list;             // Stores all enum strings to init combo drop down list
 
         CHexEditDoc::enum_t &ev = pdoc->get_enum(pdoc->df_elt_[ii]);
@@ -5113,16 +5125,21 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
 			odt = COleDateTime();
         pcell->Init(odt, strFormat);
     }
+    else if (grid_.GetCell(pItem->iRow, pItem->iColumn)->GetBackClr() == bg_edited)
+    {
+        ; // User has already edited the field - leave existing contents so they can adjust for any typoes
+    }
 #if _MSC_VER >= 1300
 	else if (df_type == CHexEditDoc::DF_WCHAR || df_type == CHexEditDoc::DF_WSTRING)
         grid_.SetItemText(pItem->iRow, pItem->iColumn, sw);
 #endif
     else
-        grid_.SetItemText(pItem->iRow, pItem->iColumn, ss);
-}
+        grid_.SetItemText(pItem->iRow, pItem->iColumn, ss);     // most common case (all except enum, date and wide string)
+} // OnGridBeginLabelEdit
 
 //#pragma function(memset)
 
+// After finished editing grid cell
 void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 {
     NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
@@ -5510,21 +5527,27 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
             ASSERT(df_size == 8);
             break;
 
-// xxx bitfields do not handle straddle yet
+        // NOTE: Bitfields are always unsigned (and do not handle straddle)
         case CHexEditDoc::DF_BITFIELD8:
             ASSERT(df_size == 1);
             pdata = (unsigned char *)&val8;
 			if (pdoc->GetData(pdata, 1, pdoc->df_address_[ii]) == 1)
 			{
-		        signed char tmp8;
+		        unsigned char tmp8;
 				if (is_enum)
-					tmp8 = (signed char)val64;
+					tmp8 = (unsigned char)val64;          // value of found enum string
 				else
-					tmp8 = (signed char)strtoul(CString(grid_.GetItemText(pItem->iRow, pItem->iColumn)), NULL, 0);
+					tmp8 = (unsigned char)strtoul(CString(grid_.GetItemText(pItem->iRow, pItem->iColumn)), NULL, 0);
 
-				//unsigned char xxx_mask = ~(((1<<(pdoc->df_extra_[ii]>>8))-1) << (pdoc->df_extra_[ii]&0xFF));
+				int bit_mask = (1<<(pdoc->df_extra_[ii]>>8)) - 1;
+				ASSERT(bit_mask <= 0x7F);
+				if (tmp8 > bit_mask)
+				{
+                    ::HMessageBox("Value exceeds available bits - truncated");
+                    tmp8 &= bit_mask;
+                }
 				// Mask out (set to zero) the existing bits
-				val8 &= ~(((1<<(pdoc->df_extra_[ii]>>8))-1) << (pdoc->df_extra_[ii]&0xFF));
+				val8 &= ~(bit_mask << (pdoc->df_extra_[ii]&0xFF));
 				// Set the new values of the bits
 				val8 |= tmp8 << (pdoc->df_extra_[ii]&0xFF);
 			}
@@ -5540,8 +5563,15 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				else
 					tmp16 = (unsigned short)strtoul(CString(grid_.GetItemText(pItem->iRow, pItem->iColumn)), NULL, 0);
 
+				int bit_mask = (1<<(pdoc->df_extra_[ii]>>8)) - 1;
+				ASSERT(bit_mask <= 0x7FFF);
+				if (tmp16 > bit_mask)
+				{
+                    ::HMessageBox("Value exceeds available bits - truncated");
+                    tmp16 &= bit_mask;
+                }
 				// Mask out (set to zero) the existing bits
-				val16 &= ~(((1<<(pdoc->df_extra_[ii]>>8))-1) << (pdoc->df_extra_[ii]&0xFF));
+				val16 &= ~(bit_mask << (pdoc->df_extra_[ii]&0xFF));
 				// Set the new values of the bits
 				val16 |= tmp16 << (pdoc->df_extra_[ii]&0xFF);
 			}
@@ -5557,8 +5587,15 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				else
 					tmp32 = strtoul(CString(grid_.GetItemText(pItem->iRow, pItem->iColumn)), NULL, 0);
 
+				unsigned long bit_mask = (1<<(pdoc->df_extra_[ii]>>8)) - 1;
+				ASSERT(bit_mask <= 0x7fffFFFF);
+				if (tmp32 > bit_mask)
+				{
+                    ::HMessageBox("Value exceeds available bits - truncated");
+                    tmp32 &= bit_mask;
+                }
 				// Mask out (set to zero) the existing bits
-				val32 &= ~(((1<<(pdoc->df_extra_[ii]>>8))-1) << (pdoc->df_extra_[ii]&0xFF));
+				val32 &= ~(bit_mask << (pdoc->df_extra_[ii]&0xFF));
 				// Set the new values of the bits
 				val32 |= tmp32 << (pdoc->df_extra_[ii]&0xFF);
 			}
@@ -5574,8 +5611,14 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				else
 					tmp64 = (unsigned __int64)strtoul(CString(grid_.GetItemText(pItem->iRow, pItem->iColumn)), NULL, 0);
 
+				unsigned __int64 bit_mask = (__int64(1)<<(pdoc->df_extra_[ii]>>8)) - 1;
+				if (tmp64 > bit_mask)
+				{
+                    ::HMessageBox("Value exceeds available bits - truncated");
+                    tmp64 &= bit_mask;
+                }
 				// Mask out (set to zero) the existing bits
-				val64 &= ~(((__int64(1)<<(pdoc->df_extra_[ii]>>8))-1) << (pdoc->df_extra_[ii]&0xFF));
+				val64 &= ~(bit_mask << (pdoc->df_extra_[ii]&0xFF));
 				// Set the new values of the bits
 				val64 |= tmp64 << (pdoc->df_extra_[ii]&0xFF);
 			}
@@ -5741,6 +5784,9 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
         // We only really need to do this for date (date-time ctrl) and enum (drop list) cells
 //        grid_.SetCellType(pItem->iRow, pItem->iColumn, RUNTIME_CLASS(CGridCell));
 //        edit_row_type_changed_ = -1;
+
+        // Change the background of the cell to indicate that it is not formatted for the cell - still has the edit text in it
+		grid_.GetCell(pItem->iRow, pItem->iColumn)->SetBackClr(bg_edited);
     }
 }
 
