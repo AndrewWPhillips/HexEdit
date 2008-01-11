@@ -199,7 +199,11 @@ expr_eval::tok_t expr_eval::prec_ternary(value_t &val, CString &vname)
 			changes_on_ = false;
 		}
         if (error(next_tok = prec_or(v1, vname), "Expected \"if\" expression for conditional (?:) operator"))
-            return TOK_NONE;
+            if (val.boolean)
+                return TOK_NONE;        // we needed a valid expression
+            else
+                next_tok = get_next();  // we didn't need it as we are only using the other (else) part
+ 
         if (!val.boolean)
 			changes_on_ = saved_changes_on;     // restore old value
 
@@ -218,7 +222,11 @@ expr_eval::tok_t expr_eval::prec_ternary(value_t &val, CString &vname)
 			changes_on_ = false;
 		}
         if (error(next_tok = prec_or(v2, vname), "Expected \"else\" expression for conditional (?:) operator"))
-            return TOK_NONE;
+            if (!val.boolean)
+                return TOK_NONE;        // we needed a valid expression
+            else
+                next_tok = get_next();  // we didn't need it as we are only using the above (if) part
+
         if (val.boolean)
 			changes_on_ = saved_changes_on;     // restore old value
 
@@ -295,7 +303,7 @@ expr_eval::tok_t expr_eval::prec_and(value_t &val, CString &vname)
         if (!val.boolean)
         {
             // If left operand is false then result is false and we don't care about right operand
-            // (even if it gets and eval error as long as it parses OK).
+            // (even if it gets an eval error as long as it parses OK).
             op2.error = false;
 			changes_on_ = saved_changes_on;
         }
