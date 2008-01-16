@@ -1,4 +1,4 @@
-This is the readme file for HexEdit version 3.2 (beta 1).
+This is the readme file for HexEdit version 3.2.
 
 HexEdit 3.2 is a shareware, binary file editor or hex editor for Windows 9X/ME
 /NT/2000/XP/Vista.  Internet Explorer 5.0 or later is required for some features
@@ -9,7 +9,7 @@ are available at a discount on request.  The unregistered version works exactly
 like the registered version for 30 days after which reminders are displayed.
 
 The unregistered version is freely distributable.  All code, images etc 
-are copyright 1999-2007 Expert Commercial Software Pty Ltd.
+are copyright 1999-2008 Expert Commercial Software Pty Ltd.
 
 3.2 is typically distributed as a file called hexed3_2.msi.  This file
 may in turn be stored in a zip file (with this readme) called hexed3_2.zip.
