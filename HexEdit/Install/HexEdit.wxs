@@ -102,6 +102,8 @@
           <Component Id='Templates' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7017'>
             <File Id='BmpTemplate' Name='_bmp.XML' DiskId='1' src='..\TestData\_bmp.XML' />
             <File Id='DbfTemplate' Name='_dbf.XML' DiskId='1' src='..\TestData\_dbf.XML' />
+            <File Id='EmfTemplate' Name='_emf.XML' DiskId='1' src='..\TestData\_emf.XML' />
+            <File Id='ExeTemplate' Name='_exe.XML' DiskId='1' src='..\TestData\_exe.XML' />
             <File Id='GifTemplate' Name='_gif.XML' DiskId='1' src='..\TestData\_gif.XML' />
             <File Id='HemTemplate' Name='_hem.XML' DiskId='1' src='..\TestData\_hem.XML' />
             <File Id='JpgTemplate' Name='_jpg.XML' DiskId='1' src='..\TestData\_jpg.XML' />
@@ -187,6 +189,8 @@
             <Component Id='TemplatesUser' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7057'>
               <File Id='BmpTemplateUser' Name='_bmp.XML' DiskId='1' src='..\TestData\_bmp.XML' />
               <File Id='DbfTemplateUser' Name='_dbf.XML' DiskId='1' src='..\TestData\_dbf.XML' />
+              <File Id='EmfTemplateUser' Name='_emf.XML' DiskId='1' src='..\TestData\_emf.XML' />
+              <File Id='ExeTemplateUser' Name='_exe.XML' DiskId='1' src='..\TestData\_exe.XML' />
               <File Id='GifTemplateUser' Name='_gif.XML' DiskId='1' src='..\TestData\_gif.XML' />
               <File Id='HemTemplateUser' Name='_hem.XML' DiskId='1' src='..\TestData\_hem.XML' />
               <File Id='JpgTemplateUser' Name='_jpg.XML' DiskId='1' src='..\TestData\_jpg.XML' />
