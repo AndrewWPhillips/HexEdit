@@ -1168,10 +1168,12 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 void CHexEditDoc::DeleteContents() 
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+    CString strPath;
 
     // Close file if it was opened successfully
     if (pfile1_ != NULL)
     {
+        strPath = pfile1_->GetFilePath();
         pfile1_->Close();
         delete pfile1_;
         pfile1_ = NULL;
@@ -1207,6 +1209,13 @@ void CHexEditDoc::DeleteContents()
 	base_type_ = 0;                        // Now we can use the saved file as base for compare
 
     CDocument::DeleteContents();
+
+    // m_atime does not seem to be chnaged under NTFS (unless you change m_mtime??!)
+    //if (!strPath.IsEmpty() && keep_times_ && !IsDevice())
+    //{
+    //    ASSERT(pfile1_ == NULL && pfile2_ == NULL);     // no point in setting access time if the file is still open
+    //    CFile::SetStatus(strPath, saved_status_);
+    //}
 }
 
 void CHexEditDoc::SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU /*=TRUE*/)
@@ -4321,7 +4330,7 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
                 retval.int64 = -(retval.int64&0x7fffFFFFffffFFFFi64);
             break;
 
-		// xxx bitfields do not handle straddle yet
+	    // Bitfields do not handle straddle - too hard
         case CHexEditDoc::DF_BITFIELD8:
             retval.typ = TYPE_INT;
 			ASSERT(signed char(pdoc->df_extra_[ii]) >= 0 && (pdoc->df_extra_[ii]&0xFF)+(pdoc->df_extra_[ii]>>8) <= 8);

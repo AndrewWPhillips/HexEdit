@@ -5408,13 +5408,14 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 					{
 						col = GetHexAddrCol();  // display in hex address colour
 					}
-					else if (format.Left(3).CompareNoCase("bin") != 0 &&
-						     format.Left(3).CompareNoCase("oct") != 0 &&
-							 format.Find('o') == -1)
+					else if (format.Left(3).CompareNoCase("dec") == 0 ||
+						     format.Find('u') != -1 ||
+							 format.Find('d') != -1)
 					{
-						// Assume decimal if not hex, binary or octal
 						col = GetDecAddrCol();   // display in decimal address colour
 					}
+					// else other int formats like octal, or non-int format such as:
+					// octal, %o, bin, false (boolean), no, off, %s (string) etc
 				}
 
 				// Work out where to put it

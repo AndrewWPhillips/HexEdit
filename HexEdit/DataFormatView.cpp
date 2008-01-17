@@ -623,6 +623,33 @@ BOOL CGridCtrl2::PreTranslateMessage(MSG* pMsg)
     return CGridCtrl::PreTranslateMessage(pMsg);
 }
 
+#if _MSC_VER >= 1300
+// virtual
+void CGridCtrl2::OnEditCell(int nRow, int nCol, CPoint point, UINT nChar)
+{
+    savedStr = GetItemText(nRow, nCol);
+    CGridCtrl::OnEditCell(nRow, nCol, point, nChar);
+}
+
+// virtual
+void CGridCtrl2::OnEndEditCell(int nRow, int nCol, CStringW str)
+{
+    CStringW strCurrentText = GetItemText(nRow, nCol);
+    if (strCurrentText == str)
+    {
+        // Text not edited - so restore the formatted text
+        // (this is nec. as formetted text may be eg octal, but unedited text is decimal)
+        SetItemText(nRow, nCol, savedStr);
+
+        CGridCellBase* pCell = GetCell(nRow, nCol);
+        if (pCell)
+            pCell->OnEndEdit();
+        return;
+    }
+    CGridCtrl::OnEndEditCell(nRow, nCol, str);
+}
+#endif
+
 void CGridCtrl2::OnSelchange()
 {
     if (sel_row_ != -2)
@@ -5075,8 +5102,16 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
     }
     delete[] buf;
 
-    // The actual field contents have been formatted as a string in ss (or as a date in odt)
+    // The actual field contents have been formatted as a srting in ss (or as a date in odt)
 
+	  GV_ITEM item;
+      item.nState = 0;
+      item.row = pItem->iRow;
+      item.col = pItem->iColumn;
+      item.mask = GVIF_BKCLR;
+      item.crBkClr = bg_edited;
+	  grid_.GetItem(&item);
+	    
     CString domain_str = pdoc->df_elt_[ii].GetAttr("domain");
 
     if (df_type >= CHexEditDoc::DF_CHAR &&
@@ -5786,7 +5821,13 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 //        edit_row_type_changed_ = -1;
 
         // Change the background of the cell to indicate that it is not formatted for the cell - still has the edit text in it
-		grid_.GetCell(pItem->iRow, pItem->iColumn)->SetBackClr(bg_edited);
+	    GV_ITEM item;
+        item.nState = 0;
+        item.row = pItem->iRow;
+        item.col = pItem->iColumn;
+        item.mask = GVIF_BKCLR;
+        item.crBkClr = bg_edited;
+	    grid_.SetItem(&item);
     }
 }
 

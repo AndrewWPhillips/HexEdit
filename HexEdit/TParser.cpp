@@ -2159,7 +2159,7 @@ long TParser::get_size(LPCTSTR name)
 // For data types this is usually just the size of the object except for
 // "none" types which have packing requirements of 1.
 // For STRUCT types it returns the packing required for the whole structure,
-// which is the smaller of the largest packing value and pack_ value
+// which is the smaller of the largest element packing value and pack_ value
 // that was in force when the STRUCT was parsed.
 // For "FOR" and "IF" types it is just the packing requirement of the contained elt.
 // Note: Currently the largest data type is 8 bytes so 16 should never be returned.

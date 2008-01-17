@@ -24,6 +24,10 @@ class CGridCtrl2 : public CGridCtrl
     DECLARE_DYNCREATE(CGridCtrl2)
 public:
     virtual BOOL PreTranslateMessage(MSG* pMsg);
+#if _MSC_VER >= 1300
+    virtual void OnEditCell(int nRow, int nCol, CPoint point, UINT nChar);
+    virtual void OnEndEditCell(int nRow, int nCol, CStringW str);
+#endif
 
 #ifndef GRIDCONTROL_NO_DRAGDROP
  public:
@@ -52,6 +56,7 @@ private:
     CHexEditDoc *pdoc_;
     CDataFormatView *pview_;
     int sel_row_;                       // Row selected when template selection drop list clicked
+    CStringW savedStr;
 };
 
 /////////////////////////////////////////////////////////////////////////////

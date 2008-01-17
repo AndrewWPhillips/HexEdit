@@ -91,6 +91,7 @@ typedef struct _GV_ITEMW {
 class CGridCellBase : public CObject
 {
     friend class CGridCtrl;
+    friend class CGridCtrl2;
     DECLARE_DYNCREATE(CGridCellBase)
 
 // Construction/Destruction
