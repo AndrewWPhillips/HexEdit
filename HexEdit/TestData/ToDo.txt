@@ -1,34 +1,34 @@
-MAJOR
- CDataFormatView::find_address sometimes gets stuck
-
-Version 3.1 release
- > get Digital Candle to update the code generation
+3.2 Version
+ - check new cracker codes and find workaround
  > update security_version_ (hexedit.h)
  > update range and default value for ver_ (RegisterDlg.cpp)
  > update X.Y version number, and add to email dlg drop list
  > change version number and copyright year in readme.txt, order.txt
- - check new cracker codes and find workaround
- > web site: add ver to bug report form drop list, update what's new, gifs etc
- > update help for new features, what's new, installation, order form etc
+ x Add encrypted list of existing users & rebuild
+ - update help for new features, what's new, installation, order form etc
  - add new tips of the day
- > create new release notes
- > create new bitmap for install
- - update licence agreement text (version no, year etc)
+ - create new release notes
+ - create new bitmap for install
+ > update licence agreement text (version no, year etc)
  - update PAD file (hexedit.xml)
    - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
  > change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
- > create installation (add any new files, templates etc)
- > change times of install files using touch2.bat (*.cab etc)
- > zip installation files and add readme.txt, hexedit.xml
- > change time of zip file using touch3.bat
- > test install on 95, 98, ME, NT4, W2K
- - generate MD5 and put on web site
+ - create installation (add any new files, templates etc)
+ - change times of install files using touch2.bat (*.cab etc)
+ - create zip of HexEd3_2.MSI file along with readme.txt, hexedit.xml
+ - change time of zip file using touch3.bat
+ - test install on 95, 98, ME, NT4, W2K, XP
  - submit to Simtel and change web links to new Simtel page
+ - web site: add ver to bug report form drop list, update what's new, gifs etc
+ - make announcement in forums
  - update to shareware download sites
  - email reg users about new release (staggered)
  - email others about new release
  - change normal activation code email template
  - send out press release
+
+MAJOR
+ CDataFormatView::find_address sometimes gets stuck
 
 INSTALLER
 - what happens (eg AppData) under Windows 95
@@ -588,7 +588,7 @@ Possible Features
   - special formats processing - TAR, TIF, ............
 
 New Version
- - get Digital Candle to update the code generation
+ - update code generation on web site
  - check new cracker codes and find workaround
  - update security_version_ (hexedit.h)
  - update range and default value for ver_ (RegisterDlg.cpp)
@@ -605,7 +605,7 @@ New Version
  - change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
  - create installation (add any new files, templates etc)
  - change times of install files using touch2.bat (*.cab etc)
- - zip installation files and add readme.txt, hexedit.xml
+ - create HexEdX_X.zip file containing HexEdX_X.MSI file along with readme.txt, hexedit.xml
  - change time of zip file using touch3.bat
  - test install on 95, 98, ME, NT4, W2K, XP
  - submit to Simtel and change web links to new Simtel page
