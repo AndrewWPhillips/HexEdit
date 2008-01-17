@@ -93,9 +93,6 @@
             <File Id='DefaultToolbarImagesFile' Name='DefTbIm.BMP' LongName='DefaultToolbarImages.BMP' DiskId='1' src='..\DefaultToolbarImages.BMP' />
           </Component>
 
-          <Component Id='ControlHelp' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7015'>
-            <File Id='ControlHelpFile' Name='HexEdit.hlp' DiskId='1' src='..\Release\HexEdit.hlp' />
-          </Component>
           <Component Id='TipHelp' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7016'>
             <File Id='TipHelpFile' Name='HexEdit.tip' DiskId='1' src='..\HexEdit.tip' />
           </Component>
@@ -286,7 +283,6 @@
         <ComponentRef Id='AboutBoxImage' />
         <ComponentRef Id='TemplateSupport' />
         <ComponentRef Id='DemoMacro' />
-        <ComponentRef Id='ControlHelp' />
         <ComponentRef Id='CFD' />
         <ComponentRef Id='TipHelp' />
         <ComponentRef Id='ReleaseNotes' />
