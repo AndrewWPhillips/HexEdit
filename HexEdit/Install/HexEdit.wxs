@@ -265,7 +265,7 @@
       </Component>
     </Directory>
 
-    <Icon Id="HexEdit.ico" SourceFile="..\res\idr_main.ico" />
+    <Icon Id="HexEdit.ico" SourceFile="..\res\hexedit2.ico" />
 
     <Feature Id='Complete' Title='Complete Package'
              Description='This includes HexEdit and all related features.'

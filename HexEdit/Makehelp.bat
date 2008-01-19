@@ -34,3 +34,7 @@ rem copy /y D:\bcg590\BCGControlBar\help\BCGControlBar.hm  BcgIdMap.tmp
 copy /y "I:\Devel\BCG6_2\BCGControlBar\Help\BCGControlBar.hm" BcgIdMap.tmp
 sed "s/^HID/#define HID/"  <BcgIdMap.tmp >"HTMLHELP\BcgIdMap.h"
 del BcgIdMap.tmp
+
+
+REM Fix up hexedit.exe icon since the resource compiler cannot handle the new icon format
+ReplaceVistaIcon  release\hexedit.exe   res\hexedit2.ico
