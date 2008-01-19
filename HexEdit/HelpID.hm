@@ -94,17 +94,6 @@
 #define HIDD_TPARSE                   0x20130
 #define HIDD_DFFD_SWITCH              0x20133
 
-// These are for invoking tutorials directly
-#define HID_HELP_TUTE1                0x28174
-#define HID_HELP_TUTE2                0x28175
-#define HID_HELP_TUTE3                0x28176
-#define HID_HELP_TUTE4                0x28177
-#define HID_HELP_TUTE5                0x28178
-#define HID_HELP_TUTE6                0x28179
-#define HID_HELP_TUTE7                0x2817A
-#define HID_HELP_TUTE8                0x2817B
-#define HID_HELP_TUTE9                0x2817C
-
 // Help for AfxMessageBoxes
 #define HID_DFFD_RO                   0x01200
 

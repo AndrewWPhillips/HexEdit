@@ -1054,7 +1054,7 @@ void CMainFrame::OnHelpKeyboardMap()
 void CMainFrame::OnHelpTute(UINT nID)
 {
     // Display help for this page
-    if (!::HtmlHelp(m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, 0x20000+nID))
+    if (!::HtmlHelp(m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, 0x10000+nID))
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
