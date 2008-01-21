@@ -85,6 +85,9 @@ Turn on masking if anyone could possibly see your screen while you enter the pas
 .topic HIDC_MACRO_COMMENT
 Used to describe what the macro is for and how to run it.  This comment is displayed when you load the macro.
 
+.topic HIDC_COMPRESSION_SYNC
+Writing flush points allows for recovery whend ecompressing if the data stream is corrupt.  But writing too many can greatly slow down compression speed.
+
 .topic HIDC_FOLDER_PARENT
 Go to the parent folder.
 
@@ -544,6 +547,9 @@ Select this to attach a file to send with the email.
 .topic HIDC_PASSWORD_MIN
 Set the minimum password length that is required for your purposes.
 
+.topic HIDC_COMPRESSION_HEADER_GZIP
+Use GZip headers if you are working with GZip files.  These headers contain more filesystem information than ZLIB headers. Decompression automatically detects ZLIB vs GZip headers.
+
 .topic HIDC_DFFD_FORMAT_INT
 Determines how integers are displayed in the Data column of the tree view, for fields that do not have explicit formatting.  You can use any C-language printf format spec, or special formats "hex", "dec", "bin" etc.  The "dec" format displays nice decimal values formatted according to regional conventions.
 
@@ -724,6 +730,9 @@ This is the block length for block ciphers, otherwise it indicates the algorithm
 .topic HIDC_INSTALL_CODE
 Type in your activation code here (or paste from the clipboard).  The activation code is given to you once you have supplied your name or registration code and paid for HexEdit.
 
+.topic HIDC_COMPRESSION_HEADER_RAW
+Writing raw data is not recommended as it provides no error checking. When decompressing you must use this option if the data was compressed without headers.
+
 .topic HIDC_DFFD_ARRAY_MAX
 Sets the number of elements of an array that are evaluated and displayed in the tree view.  This only applies to arrays with elements of a fixed size.
 
@@ -867,6 +876,9 @@ Click the "Send" button to send the email.  If you have no currently active mail
 
 .topic HIDC_ALG
 Select the encryption algorithm from this list.
+
+.topic HIDC_COMPRESSION_HEADER_ZLIB
+Using ZLIB headers is the recommended option. Compressed data is usually written in this format.
 
 .topic HIDC_FP_FORMAT
 Choose the floating point format from the list.  The native format supported Windows is IEEE (32 and 64 bit).
@@ -1035,6 +1047,9 @@ Re-enter the password here, when password masking is on.
 
 .topic HIDC_PLAY_NAME
 You can replay the current macro in memory (ie last recorded since you started HexEdit) or a macro you have previously saved to disk.  You can nest macros by playing a saved macro during recording of a new macro.
+
+.topic HIDC_COMPRESSION_STRATEGY_DEF
+Selecting a strategy to suit the type of data can produce better compression. Please refer to the ZLIB documentation for more information.
 
 .topic HIDC_FOLDER_FILTER
 Allows you to filter which files you see.  Use *.* to see all files.

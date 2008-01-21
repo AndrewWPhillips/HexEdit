@@ -41,6 +41,7 @@
 #define HIDD_PASSWORD_HELP            0x01068
 #define HIDD_ZLIB_HELP                0x01078
 #define HIDD_NEW_FILE_HELP            0x01080
+#define HIDD_INSERT_BLOCK_HELP        0x01081
 #define HIDD_OPEN_SPECIAL_HELP        0x01088
 #define HIDD_CLEAR_HIST_HELP          0x01090
 #define HIDD_BOOKMARKS_HELP           0x010A0

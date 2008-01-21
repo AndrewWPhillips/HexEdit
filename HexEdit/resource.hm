@@ -57,11 +57,12 @@
 #define HIDC_CODE_PAGE                  0x813205ce    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_COLOUR_PICKER              0x80e604bc    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_COLS                       0x810c0443    // IDD_OPT_WINDISPLAY [English (U.S.)]
+#define HIDC_COMPRESSION_HEADER_GZIP    0x812a05e5    // IDD_COMPRESS
 #define HIDC_COMPRESSION_HEADER_RAW     0x812a05e3    // IDD_COMPRESS
+#define HIDC_COMPRESSION_HEADER_ZLIB    0x812a05e4    // IDD_COMPRESS
 #define HIDC_COMPRESSION_LEVEL          0x812a05f0    // IDD_COMPRESS
 #define HIDC_COMPRESSION_MEMORY_USAGE   0x812a05ee    // IDD_COMPRESS
-#define HIDC_COMPRESSION_STRATEGY_DEFAULT \
-                                        0x812a05e8    // IDD_COMPRESS
+#define HIDC_COMPRESSION_STRATEGY_DEF   0x812a05e8    // IDD_COMPRESS
 #define HIDC_COMPRESSION_SYNC           0x812a05ef    // IDD_COMPRESS
 #define HIDC_COMPRESSION_WINDOW_SIZE    0x812a05ed    // IDD_COMPRESS
 #define HIDC_CONTROL                    0x810c04b1    // IDD_OPT_WINDISPLAY [English (U.S.)]
@@ -224,7 +225,6 @@
 #define HIDC_FIND_NUMBER_FORMAT         0x80980511    // IDD_FIND_NUMBER [English (U.S.)]
 #define HIDC_FIND_NUMBER_SIZE           0x80980512    // IDD_FIND_NUMBER [English (U.S.)]
 #define HIDC_FIND_NUM_STRING            0x809804f0    // IDD_FIND_NUMBER [English (U.S.)]
-#define HIDC_FIND_OFFSET                0x80960600    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_FIND_REPLACE               0x80f904ea    // IDD_FIND_REPLACE [English (U.S.)]
 #define HIDC_FIND_REPLACE_ALL           0x80f904eb    // IDD_FIND_REPLACE [English (U.S.)]
 #define HIDC_FIND_REPLACE_STRING        0x80f904f1    // IDD_FIND_REPLACE [English (U.S.)]
@@ -250,12 +250,10 @@
 #define HIDC_FOLDER_VIEW                0x81280597    // IDD_EXPLORER
 #define HIDC_FONT                       0x810c04b5    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_FOOTER_OPTS                0x80f004a6    // IDD_OPT_PRINT [English (U.S.)]
-#define HIDC_FP_32BIT                   0x80a40457    // IDD_PROP_FLOAT [English (U.S.)]
-#define HIDC_FP_64BIT                   0x80a40456    // IDD_PROP_FLOAT [English (U.S.)]
-#define HIDC_FP_EXP                     0x80a40434    // IDD_PROP_FLOAT [English (U.S.)]
+#define HIDC_FP_EXP                     0x80a40434    // IDD_PROP_REAL [English (U.S.)]
 #define HIDC_FP_FORMAT                  0x813505f9    // IDD_PROP_REAL [English (U.S.)]
-#define HIDC_FP_MANT                    0x80a40433    // IDD_PROP_FLOAT [English (U.S.)]
-#define HIDC_FP_VAL                     0x80a40432    // IDD_PROP_FLOAT [English (U.S.)]
+#define HIDC_FP_MANT                    0x80a40433    // IDD_PROP_REAL [English (U.S.)]
+#define HIDC_FP_VAL                     0x80a40432    // IDD_PROP_REAL [English (U.S.)]
 #define HIDC_GO                         0x80750413    // IDD_CALC
 #define HIDC_GRID_BL                    0x810f04cd    // IDD_BOOKMARKS
 #define HIDC_GRID_FILTERS               0x80f10601    // IDD_OPT_FILTERS [English (U.S.)]
@@ -270,11 +268,6 @@
 #define HIDC_HEX                        0x807503e9    // IDD_CALC
 #define HIDC_HEX_SIZE                   0x811c054c    // IDD_NEW_FILE
 #define HIDC_HEX_UCASE                  0x80eb0415    // IDD_OPT_SYSDISPLAY [English (U.S.)]
-#define HIDC_IBMFP_32BIT                0x80aa046d    // IDD_PROP_IBMFP [English (U.S.)]
-#define HIDC_IBMFP_64BIT                0x80aa046e    // IDD_PROP_IBMFP [English (U.S.)]
-#define HIDC_IBMFP_EXP                  0x80aa046c    // IDD_PROP_IBMFP [English (U.S.)]
-#define HIDC_IBMFP_MANT                 0x80aa046b    // IDD_PROP_IBMFP [English (U.S.)]
-#define HIDC_IBMFP_VAL                  0x80aa046a    // IDD_PROP_IBMFP [English (U.S.)]
 #define HIDC_INFO_CATEGORY              0x81270588    // IDD_PROP_INFO [English (U.S.)]
 #define HIDC_INFO_CATEGORY_SELECT       0x812705fd    // IDD_PROP_INFO [English (U.S.)]
 #define HIDC_INFO_COMMENTS              0x8127041b    // IDD_PROP_INFO [English (U.S.)]
@@ -320,7 +313,7 @@
 #define HIDC_NUM_PLAYS                  0x80a90447    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_NUM_SECS                   0x80a90460    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_OCTAL                      0x807503eb    // IDD_CALC
-#define HIDC_OFFSET                     0x80960444    // IDD_OPT_WINDISPLAY [English (U.S.)]
+#define HIDC_OFFSET                     0x80960444    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_ONE_ONLY                   0x809e0418    // IDD_OPT_SYSTEM [English (U.S.)]
 #define HIDC_OPEN_FILES                 0x810e04ac    // IDD_RECENT_FILES
 #define HIDC_OPEN_INFO                  0x8121056b    // IDD_OPEN_SPECIAL

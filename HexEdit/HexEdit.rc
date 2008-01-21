@@ -212,6 +212,8 @@ BEGIN
     BUTTON      ID_HELP_EMAIL
     BUTTON      ID_LITTLE_ENDIAN
     BUTTON      ID_BIG_ENDIAN
+    BUTTON      ID_ZLIB_COMPRESS
+    BUTTON      ID_ZLIB_DECOMPRESS
 END
 
 IDR_STDBAR TOOLBAR  16, 15
@@ -529,7 +531,7 @@ BEGIN
         END
         POPUP "Compression"
         BEGIN
-            MENUITEM "Settings",                    ID_ZLIB_SETTINGS
+            MENUITEM "Settings...",                 ID_ZLIB_SETTINGS
             MENUITEM "Compress",                    ID_ZLIB_COMPRESS
             MENUITEM "Decompress",                  ID_ZLIB_DECOMPRESS
         END
@@ -706,7 +708,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "&Save",                       ID_DFFD_SAVE
-        MENUITEM "Save &As",                    ID_DFFD_SAVEAS
+        MENUITEM "Save &As...",                 ID_DFFD_SAVEAS
         MENUITEM SEPARATOR
         MENUITEM "&Hide Tree View",             ID_DFFD_HIDE, CHECKED
         MENUITEM "&Split Window",               ID_DFFD_SPLIT
@@ -4592,56 +4594,58 @@ BEGIN
     GROUPBOX        "Compression level",IDC_STATIC,8,5,188,52,WS_GROUP
     CONTROL         "Default",IDC_COMPRESSION_LEVEL_DEFAULT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,18,39,10
+    LTEXT           "(range: 1 to 9)",IDC_STATIC,126,19,48,8,NOT WS_GROUP
+    LTEXT           "1 gives best speed, 9 gives best compression.\nThe default is a reasonable compromise (currently 6).",
+                    IDC_STATIC,15,33,175,18
     EDITTEXT        IDC_COMPRESSION_LEVEL,83,16,38,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_COMPRESSION_LEVEL
     CONTROL         "",IDC_COMPRESSION_LEVEL_SPIN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,114,13,11,14
-    LTEXT           "(range: 1 to 9)",IDC_STATIC,126,19,48,8,NOT WS_GROUP
-    LTEXT           "1 gives best speed, 9 gives best compression.\nThe default is a reasonable compromise (currently 6).",
-                    IDC_STATIC,15,33,175,18
     GROUPBOX        "Window size",IDC_STATIC,8,64,188,52,WS_GROUP
     CONTROL         "Default",IDC_COMPRESSION_WINDOW_SIZE_DEFAULT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,77,39,10
+    LTEXT           "(range: 8 to 15)",IDC_STATIC,126,76,52,8,NOT WS_GROUP
+    LTEXT           "You must use the same or a larger window size when decompressing as was used to compress the data.",
+                    IDC_STATIC,16,91,173,19
     EDITTEXT        IDC_COMPRESSION_WINDOW_SIZE,83,74,38,14,ES_RIGHT | 
                     ES_NUMBER,0,HIDC_COMPRESSION_WINDOW_SIZE
     CONTROL         "",IDC_COMPRESSION_WINDOW_SIZE_SPIN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,114,71,11,14
-    LTEXT           "(range: 8 to 15)",IDC_STATIC,126,76,52,8,NOT WS_GROUP
-    LTEXT           "You must use the same or a larger window size when decompressing as was used to compress the data.",
-                    IDC_STATIC,16,91,173,19
     GROUPBOX        "Memory usage",IDC_STATIC,8,123,188,43,WS_GROUP
     CONTROL         "Default",IDC_COMPRESSION_MEMORY_USAGE_DEFAULT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,138,39,10
+    LTEXT           "(range: 1 to 9)",IDC_STATIC,128,138,48,8,NOT WS_GROUP
+    LTEXT           "Use 1 for minimal memory usage.  Default value = 8.",
+                    IDC_STATIC,16,150,173,11
     EDITTEXT        IDC_COMPRESSION_MEMORY_USAGE,83,134,38,14,ES_RIGHT | 
                     ES_NUMBER,0,HIDC_COMPRESSION_MEMORY_USAGE
     CONTROL         "",IDC_COMPRESSION_MEMORY_USAGE_SPIN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,116,131,11,14
-    LTEXT           "(range: 1 to 9)",IDC_STATIC,128,138,48,8,NOT WS_GROUP
-    LTEXT           "Use 1 for minimal memory usage.  Default value = 8.",
-                    IDC_STATIC,16,150,173,11
     GROUPBOX        "Data recovery (full flush) points",IDC_STATIC,8,172,188,
                     64,WS_GROUP
     LTEXT           "Synchronize every: ",IDC_STATIC,15,187,62,8
-    EDITTEXT        IDC_COMPRESSION_SYNC,83,185,38,14,ES_AUTOHSCROLL,0,
-                    HIDC_COMPRESSION_SYNC
     LTEXT           "KBytes",IDC_STATIC,128,187,35,8,NOT WS_GROUP
     LTEXT           "The value is rounded up to a multiple of the current buffer size (currently 16 Kb).  (A value of zero means no flush points are generated.)",
                     IDC_STATIC,15,203,173,28
+    EDITTEXT        IDC_COMPRESSION_SYNC,83,185,38,14,ES_AUTOHSCROLL,0,
+                    HIDC_COMPRESSION_SYNC
     GROUPBOX        "Header",IDC_STATIC,205,5,139,52,WS_GROUP
     CONTROL         "Raw (no header)",IDC_COMPRESSION_HEADER_RAW,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,214,18,70,10,0,
                     HIDC_COMPRESSION_HEADER_RAW
     CONTROL         "Zlib header (default)",IDC_COMPRESSION_HEADER_ZLIB,
-                    "Button",BS_AUTORADIOBUTTON,214,30,81,10
+                    "Button",BS_AUTORADIOBUTTON,214,30,81,10,0,
+                    HIDC_COMPRESSION_HEADER_ZLIB
     CONTROL         "Gzip header",IDC_COMPRESSION_HEADER_GZIP,"Button",
-                    BS_AUTORADIOBUTTON,214,42,54,10
+                    BS_AUTORADIOBUTTON,214,42,54,10,0,
+                    HIDC_COMPRESSION_HEADER_GZIP
     GROUPBOX        "Strategy",IDC_STATIC,205,64,139,102,WS_GROUP
-    CONTROL         "Default",IDC_COMPRESSION_STRATEGY_DEFAULT,"Button",
+    CONTROL         "Default",IDC_COMPRESSION_STRATEGY_DEF,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,214,77,39,10,0,
-                    HIDC_COMPRESSION_STRATEGY_DEFAULT
+                    HIDC_COMPRESSION_STRATEGY_DEF
     CONTROL         "Filtered",IDC_COMPRESSION_STRATEGY_FILTERED,"Button",
                     BS_AUTORADIOBUTTON,214,88,40,10
     CONTROL         "Huffman only",IDC_COMPRESSION_STRATEGY_HUFFMAN,"Button",

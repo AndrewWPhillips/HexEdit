@@ -486,8 +486,12 @@ void CNewFile::OnOK()
 void CNewFile::OnHelp() 
 {
     // Display help for this page
-    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_NEW_FILE_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	if (insert_block_mode_)
+		if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_INSERT_BLOCK_HELP))
+			::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	else
+		if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_NEW_FILE_HELP))
+			::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CNewFile::OnDestroy() 
