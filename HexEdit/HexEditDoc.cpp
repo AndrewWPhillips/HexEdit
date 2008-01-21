@@ -1819,6 +1819,12 @@ void CHexEditDoc::OnUpdateEditMode(CCmdUI* pCmdUI)
 
 void CHexEditDoc::OnDffdOptions()
 {
+	if (df_elt_.size() == 0)
+	{
+		ASSERT(0);
+		return;
+	}
+
     CDFFDGlobal dlg(&df_elt_[0], GetBestView());
     if (dlg.DoModal() == IDOK && dlg.IsModified())
     {
@@ -1835,7 +1841,7 @@ void CHexEditDoc::OnDffdOptions()
 
 void CHexEditDoc::OnUpdateDffdOptions(CCmdUI* pCmdUI) 
 {
-	pCmdUI->Enable(DffdEditMode());
+	pCmdUI->Enable(DffdEditMode() && df_init_);
 }
 
 void CHexEditDoc::OnTest() 
