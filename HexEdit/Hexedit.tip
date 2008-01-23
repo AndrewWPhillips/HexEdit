@@ -12,7 +12,7 @@ You can drag a file onto the HexEdit window to open it.  If the HexEdit window i
 
 Change tracking allows you to easily see the changes that have been made to a file.  Replaced bytes are underlined while inserted bytes have a red background.  Use the button on the Edit Bar to toggle change tracking.
 
-You can change the background colour (or any of the window colours) using the Colours page of the Options dialog.  Select the Tools/Options menu item and click the Colours tab, select "Background" from the list on the right and select a new colour using the "Colour" tool below it.
+You can change the background color (or any of the window colors) using the Colors page of the Options dialog.  Select the Tools/Options menu item and click the Colors tab, select "Background" from the list on the right and select a new color using the "Color" tool below it.
 
 You can now convert a text file containing hex digits into binary.  See the File/Import/Hex Text menu item.  Spaces, commas etc are ignored.
 
@@ -36,7 +36,7 @@ Ctrl+Z (in the default keymap) is the keyboard shortcut for undo.  It not only u
 
 You can quickly search for a sequence of hex values using the Find Tool on the Edit Bar.  Press F6, or click the tool, type the hex digits and press Enter to start the search.
 
-You can quickly try different colour schemes using the drop-down list on the Standard Toolbar.  To change the colours or even add new schemes use the Colours page of the Options dialog.
+You can quickly try different color schemes using the drop-down list on the Standard Toolbar.  To change the colors or even add new schemes use the Colors page of the Options dialog.
 
 You can now hide the hex area by and just show characters using the Area drop-down menu on the Standard Toolbar and selecting "Char Area" (or use the View/Show Area/Char Area menu item).
 
@@ -54,7 +54,7 @@ To change the default window settings (for new files and files that have not bee
 
 To easily view information about the values at the current cursor location (decimal, floating point, date values etc), as you edit a file, open the Properties dialog (using View/Properties menu item), and select the desired page.  If you leave the dialog open the values are updated as you move the cursor.
 
-There are four "standard" colour schemes associated with the different character sets (ASCI, ANSI, IBM/OEM, EBCDIC).  If you are using a standard scheme and swap to a different character set display the colour scheme is automatically changed to match the display.
+There are four "standard" color schemes associated with the different character sets (ASCI, ANSI, IBM/OEM, EBCDIC).  If you are using a standard scheme and swap to a different character set display the color scheme is automatically changed to match the display.
 
 You can customize the keyboard using the "Keyboard" page of the the "Customize" dialog.  The keys you assign are shown in menu items and tooltips.  Use the Help/Keymap command to display or print all the current keyboard shortcuts.
 
@@ -86,11 +86,11 @@ You can find out how many bytes are selected at any time by pressing the Shift k
 
 The built-in calculator can be used as a quick base converter.  You can convert integers (up to 64 bits in size) between hex, decimal, octal and binary by clicking the appropriate radio buttons.  (You can also convert between hex and decimal using the hex/decimal address tools on the Edit Bar.)
 
-You can highlight a particular value or set of values throughout a file using the Colours page of the Options dialog.  Type in a set of values such as (65:70, 97:102), select a colour and give the range a name then click the "Add" button.  The values will be displayed in that colour.  (Another way to highlight occurrences of a particular value is using background searches.)
+You can highlight a particular value or set of values throughout a file using the Colors page of the Options dialog.  Type in a set of values such as (65:70, 97:102), select a color and give the range a name then click the "Add" button.  The values will be displayed in that color.  (Another way to highlight occurrences of a particular value is using background searches.)
 
 You can create your own toolbar buttons, by right-clicking a button (while the Customize dialog is open) and selecting the "Button Appearance" menu item, then click the "User-defined image" radio button and create a new image or edit an existing one.
 
-To avoid confusion between hex and decimal addresses these are now displayed in different colours.  By default hex addresses are red and decimal blue, but you can modify this colour scheme using the Colours page of the Options dialog.
+To avoid confusion between hex and decimal addresses these are now displayed in different colors.  By default hex addresses are red and decimal blue, but you can modify this color scheme using the Colors page of the Options dialog.
 
 You can bring up the properties dialog by double clicking the "byte values" indicator (Hex, Decimal, Octal, Binary, Character) of the status bar.
 
@@ -130,7 +130,7 @@ To open a contiguous group of files in the File Open dialog: click on the first 
 
 The "Flip" menu options reverse the byte order of the bytes following the current cursor position.  For numbers this flips between big-endian and little-endian formats.
 
-If you define a colour scheme with a name composed of an underscore followed by a file extension (eg, _EXE) then when files of that type (eg, .EXE files) are opened that colour scheme is automatically used.
+If you define a color scheme with a name composed of an underscore followed by a file extension (eg, _EXE) then when files of that type (eg, .EXE files) are opened that color scheme is automatically used.
 
 You can edit (select, cut, paste etc) in the calculator just like you would in any other edit box.  You should only paste valid digits for the current base (radix) you are using.
 

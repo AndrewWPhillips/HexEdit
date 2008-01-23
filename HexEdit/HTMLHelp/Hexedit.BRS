@@ -308,7 +308,7 @@ Clear Histories Dialog | dlg_options\Clear_Histories_Dialog.htm
 Display Options page | dlg_options\HIDD_OPT_SYSDISPLAY.htm
 Window Display Options page | dlg_options\HIDD_OPT_WINDOW.htm
 Info Tips Page | dlg_options\HIDD_OPT_TIPS.htm
-Colour Options page | dlg_options\HIDD_OPT_PARTITIONS.htm
+Color Options page | dlg_options\HIDD_OPT_PARTITIONS.htm
 New Scheme Dialog | dlg_options\New_Scheme_Dialog.htm
 Macro Options page | dlg_options\HIDD_OPT_MACRO.htm
 Printer Options | dlg_options\Printer_Options.htm
@@ -467,7 +467,7 @@ Step1. The Data File Format | tute_template_2\TemplateTute2-1.htm
 Creating the Header | tute_template_2\TemplateTute2-2.htm
 Creating the Graphical Object Structure | tute_template_2\TemplateTute2-3.htm
 Creating the Object Array | tute_template_2\TemplateTute2-4.htm
-Creating the Colour Table | tute_template_2\TemplateTute2-5.htm
+Creating the Color Table | tute_template_2\TemplateTute2-5.htm
 Validation and Testing | tute_template_2\TemplateTute2-6.htm
 
 [Tutorial: Template Basic]

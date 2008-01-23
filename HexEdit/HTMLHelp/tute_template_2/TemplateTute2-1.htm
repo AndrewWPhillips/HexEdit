@@ -142,7 +142,7 @@
 <p>&nbsp;</p>
 
 <p>The HEG format simply consists of a header followed by zero or more 
- graphical objects, and finally a colour table.</p>
+ graphical objects, and finally a color table.</p>
 
 <p>&nbsp;</p>
 
@@ -158,7 +158,7 @@
 
 <p>&nbsp;</p>
 
-<p>The first noteable feature of this format is the colour table at the 
+<p>The first noteable feature of this format is the color table at the 
  end of file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Having 
  this sort of table last is common where information is gathered while 
  a file is being written and &quot;header&quot; type information is written 
@@ -167,11 +167,11 @@
 
 <p>&nbsp;</p>
 
-<p>For our format putting the colour table last is a bit contrived since 
- the colour information is available to be written at the start of the 
+<p>For our format putting the color table last is a bit contrived since 
+ the color information is available to be written at the start of the 
  file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
  is used to demonstrate later in this tutorial how to process data out 
- of order, specifically to look up information from the colour table during 
+ of order, specifically to look up information from the color table during 
  processing of the graphical objects.</p>
 
 <p>&nbsp;</p>
@@ -191,7 +191,7 @@
 
 <p>The header is 16 bytes long consisting of four 4-byte fields: a &quot;magic&quot; 
  number, the date the file was originally created, the date the file was 
- last modified, and the address of the colour table.</p>
+ last modified, and the address of the color table.</p>
 
 <p>&nbsp;</p>
 
@@ -480,7 +480,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=36.87%>
-<p>Address in this file of the colour table</td></tr>
+<p>Address in this file of the color table</td></tr>
 </table>
 <!--begin!kadov{{--></div><!--}}end!kadov-->
 &nbsp; 
@@ -511,16 +511,16 @@
 
 <p>&nbsp;</p>
 
-<p>The colour table address is stored at the start of file so we can access 
+<p>The color table address is stored at the start of file so we can access 
  it without having to scan all the graphical objects in between. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
  a file of this type is (fictitiously) written out the address would initially 
  be unknown and just written as zero then after the graphical objects and 
- the colour table have been written the software would jump back to byte 
+ the color table have been written the software would jump back to byte 
  12 of the file and fill in this value.</p>
 
 <p>&nbsp;</p>
 
-<p>Note that the colour table address is only 32 bits so the file length 
+<p>Note that the color table address is only 32 bits so the file length 
  is effectively limited to 2^32 bytes or 4 Gbytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Most 
  file formats will store absolute file addresses in 32 bit numbers since, 
  until fairly recently, filesystems (and operating systems) only supported 
@@ -536,8 +536,8 @@
 
 <p>There are 3 types of graphical objects: a rectangle, a circle, and a 
  &quot;grouped&quot; object containing one or more other objects. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- primitive objects (rect and circle) have a colour value which is simply 
- an index into the colour table. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->All 
+ primitive objects (rect and circle) have a color value which is simply 
+ an index into the color table. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->All 
  objects have coordinates (X and Y) which stores their position which is 
  absolute for an &quot;ungrouped&quot; object or relative to the containing 
  object if they are part of a grouped object.</p>
@@ -754,7 +754,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=18.342%>
-<p>COLOUR</td>
+<p>color</td>
 <td style="width: 17.305%;
 			border-right-width: 1px;
 			border-right-color: #000000;
@@ -787,7 +787,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=39.378%>
-<p>Colour of the object (index into colour table).</td></tr>
+<p>color of the object (index into color table).</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -1223,7 +1223,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=17.721%>
-<p>COLOUR</td>
+<p>color</td>
 <td style="width: 17.203%;
 			border-right-width: 1px;
 			border-right-color: #000000;
@@ -1256,7 +1256,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=39.273%>
-<p>Colour of the object (index into colour table).</td></tr>
+<p>color of the object (index into color table).</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -2056,11 +2056,11 @@
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold;">Colour Table</p>
+<p style="font-weight: bold;">Color Table</p>
 
 <p>&nbsp;</p>
 
-<p>The colour table consists of the size of the table followed by the corresponding 
+<p>The color table consists of the size of the table followed by the corresponding 
  number of entries. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
  entry has a 13 byte name plus a single byte red, green and blue value. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The name 
@@ -2253,7 +2253,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=39.201%>
-<p>Name of the first colour</td></tr>
+<p>Name of the first color</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -2303,7 +2303,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=39.201%>
-<p>Red component of the colour</td></tr>
+<p>Red component of the color</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -2361,7 +2361,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=39.201%>
-<p>Green component of the colour</td></tr>
+<p>Green component of the color</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -2419,7 +2419,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=39.201%>
-<p>Blue component of the colour</td></tr>
+<p>Blue component of the color</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -2477,7 +2477,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=39.201%>
-<p>Name of the next colour</td></tr>
+<p>Name of the next color</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -2541,7 +2541,7 @@
 &nbsp; 
 
 <p style="font-weight: bold; text-align: center;"
-	align=center>Table 6. Colour Table</p>
+	align=center>Table 6. Color Table</p>
 
 <p>&nbsp;</p>
 

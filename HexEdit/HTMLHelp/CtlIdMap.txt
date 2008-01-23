@@ -1145,7 +1145,7 @@ Click OK to start playing the macro.
 Apply to register HexEdit to run on this machine only.
 
 .topic HIDC_USER_NAME
-This is the name of the registered user, which is used for a single-user licence.  This name is displayed in the About box after the software is registered.
+This is the name of the registered user, which is used for a single-user license.  This name is displayed in the About box after the software is registered.
 
 .topic HIDC_REG_FORM
 Click this button to display the Order Form.  You should print the form, fill it out and mail it with your payment.

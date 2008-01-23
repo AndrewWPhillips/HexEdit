@@ -8,7 +8,7 @@
 
 <head>
 
-<title>Creating the Colour Table</title>
+<title>Creating the Color Table</title>
 
 <!--(Meta)==========================================================-->
 
@@ -37,7 +37,7 @@
 <body>
 
 <h2><font style="font-family: Arial;"
-			face=Arial>Step 5: Creating the Colour Table</font></h2>
+			face=Arial>Step 5: Creating the Color Table</font></h2>
 
 <p>&nbsp;</p>
 
@@ -66,7 +66,7 @@
 <p>&nbsp;</p>
 
 <p>The final part of the file that needs to be handled by the template 
- is the colour table. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
+ is the color table. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->We 
  will put the whole thing in a STRUCT which will contain the number of 
  entries plus a FOR (array) of STRUCTs for the entries themselves.</p>
 
@@ -392,7 +392,7 @@
 <!--begin!kadov{{--></div><!--}}end!kadov-->
 <p style="margin-left: 40px;">&nbsp;</p>
 
-<p class=Body-Text-Indent-2>8. To show the colour name in the STRUCT node, 
+<p class=Body-Text-Indent-2>8. To show the color name in the STRUCT node, 
  put &quot;this.name&quot; in the &quot;Display&quot; field.</p>
 
 <p class=Body-Text-Indent-2>&nbsp;</p>
@@ -407,7 +407,7 @@
 						height=301
 						border=0><span style="font-weight: bold;"><br>
 <br>
-Figure 1. Displaying the colour name in the STRUCT tree node.</span></p>
+Figure 1. Displaying the color name in the STRUCT tree node.</span></p>
 
 <p>&nbsp;</p>
 
@@ -432,7 +432,7 @@ Figure 1. Displaying the colour name in the STRUCT tree node.</span></p>
 						height=274
 						border=0><span style="font-weight: bold;"><br>
 <br>
-Figure 2. Colour names in the tree.</span></p>
+Figure 2. color names in the tree.</span></p>
 
 <p>&nbsp;</p>
 
@@ -530,7 +530,7 @@ Figure 3. Selecting the JUMP address.</span></p>
 						height=352
 						border=0><span style="font-weight: bold;"><br>
 <br>
-Figure 4. Colour table nested in the JUMP.</span></p>
+Figure 4. color table nested in the JUMP.</span></p>
 
 <p>&nbsp;</p>
 
@@ -541,7 +541,7 @@ Figure 4. Colour table nested in the JUMP.</span></p>
 <p>The JUMP element allowed us to process the col_table before the object 
  list, but now after processing the object list we come to the col_table 
  data again. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
- is no point in having 2 colour tables so we will just add a fill DATA 
+ is no point in having 2 color tables so we will just add a fill DATA 
  object to use them up.</p>
 
 <p>&nbsp;</p>
@@ -563,7 +563,7 @@ Figure 4. Colour table nested in the JUMP.</span></p>
 <p>Note that we give a length for the element to make sure that the file 
  is the right length. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
  we just left the length field empty then there could be any number of 
- bytes after the colour table and the template would not complain. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Now 
+ bytes after the color table and the template would not complain. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Now 
  if the file is too long we will get a warning message &quot;Data past 
  expected end of file&quot;.</p>
 
@@ -590,7 +590,7 @@ Figure 5. The &quot;fill&quot; object.</span></p>
 <p>&nbsp;</p>
 
 <p>In the last part of the tutorial we will look at doing more validation 
- using the colour table as well as a few tests that the template handles 
+ using the color table as well as a few tests that the template handles 
  badly formed files properly.</p>
 
 <p>&nbsp;</p>
