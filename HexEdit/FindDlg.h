@@ -103,6 +103,9 @@ public:
 	UINT	offset_;
 	BOOL    relative_;                  // relative to current cursor position
 
+	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
+	DWORD (*id_pairs_)[100];
+
 // Operations
 public:
     static enum string_t { STRING_UNKNOWN, STRING_TEXT, STRING_HEX } StringType(LPCTSTR ss);

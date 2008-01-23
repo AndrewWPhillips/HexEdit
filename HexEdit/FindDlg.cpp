@@ -29,6 +29,7 @@ CFindSheet::CFindSheet(UINT iSelectPage /*=0*/)
         :CPropertySheet(_T("Find"), AfxGetMainWnd(), iSelectPage)
 {
     prefix_entered_ = FALSE;
+	help_hwnd_ = (HWND)0;
 
     search_buf_ = mask_buf_ = replace_buf_ = NULL;
 
@@ -1475,6 +1476,11 @@ LRESULT CFindSheet::OnKickIdle(WPARAM, LPARAM lCount)
         pp->GetDlgItem(IDC_FIND_BOOKMARK_ALL)->EnableWindow(!ss.IsEmpty());
     }
 
+	if (help_hwnd_ != (HWND)0)
+	{
+		theApp.HtmlHelpWmHelp(help_hwnd_, *id_pairs_);
+		help_hwnd_ = (HWND)0;
+	}
     return FALSE;
 }
 
@@ -1626,7 +1632,7 @@ void CSimplePage::OnFindNext()
     ((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_FIND_NEXT);
 }
 
-static DWORD id_pairs1[] = { 
+static DWORD id_pairs1[100] = { 
     IDC_FIND_DESC, HIDC_FIND_COMBINED_STRING,
     IDC_FIND_COMBINED_STRING, HIDC_FIND_COMBINED_STRING,
     IDC_FIND_MESSAGE, HIDC_FIND_MESSAGE,
@@ -1650,8 +1656,9 @@ void CSimplePage::OnContextMenu(CWnd* pWnd, CPoint point)
 
 BOOL CSimplePage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-//	return CPropertyPage::OnHelpInfo(pHelpInfo);
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs1);
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs1);
+	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+	pparent_->id_pairs_ = &id_pairs1;
     return TRUE;
 }
 
@@ -1923,7 +1930,7 @@ void CHexPage::OnBookmarkAll()
     ((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_BOOKMARK_ALL);
 }
 
-static DWORD id_pairs2[] = { 
+static DWORD id_pairs2[100] = { 
     IDC_FIND_HEX_STRING, HIDC_FIND_HEX_STRING,
     IDC_FIND_MASK_DESC, HIDC_FIND_MASK,
     IDC_FIND_MASK, HIDC_FIND_MASK,
@@ -1954,8 +1961,10 @@ void CHexPage::OnContextMenu(CWnd* pWnd, CPoint point)
 
 BOOL CHexPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
-    return TRUE;
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
+   	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+	pparent_->id_pairs_ = &id_pairs2;
+return TRUE;
 }
 
 void CHexPage::OnHelp()
@@ -2197,7 +2206,7 @@ void CTextPage::OnBookmarkAll()
     ((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_BOOKMARK_ALL);
 }
 
-static DWORD id_pairs3[] = { 
+static DWORD id_pairs3[100] = { 
     IDC_FIND_TEXT_STRING, HIDC_FIND_TEXT_STRING,
     IDC_FIND_ALLOW_WILDCARD, HIDC_FIND_ALLOW_WILDCARD,
     IDC_FIND_WILDCARD_CHAR, HIDC_FIND_ALLOW_WILDCARD,
@@ -2226,7 +2235,9 @@ void CTextPage::OnContextMenu(CWnd* pWnd, CPoint point)
 
 BOOL CTextPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
+	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+	pparent_->id_pairs_ = &id_pairs3;
     return TRUE;
 }
 
@@ -2584,7 +2595,7 @@ void CNumberPage::OnBookmarkAll()
     ((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_BOOKMARK_ALL);
 }
 
-static DWORD id_pairs4[] = { 
+static DWORD id_pairs4[100] = { 
     IDC_FIND_NUM_STRING, HIDC_FIND_NUM_STRING,
     IDC_FIND_NUMBER_FORMAT, HIDC_FIND_NUMBER_FORMAT,
     IDC_FIND_NUMBER_SIZE, HIDC_FIND_NUMBER_SIZE,
@@ -2614,7 +2625,9 @@ void CNumberPage::OnContextMenu(CWnd* pWnd, CPoint point)
 
 BOOL CNumberPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs4);
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs4);
+	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+	pparent_->id_pairs_ = &id_pairs4;
     return TRUE;
 }
 
@@ -2858,7 +2871,7 @@ void CReplacePage::OnFindNext()
     ((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_FIND_NEXT);
 }
 
-static DWORD id_pairs5[] = { 
+static DWORD id_pairs5[100] = { 
     IDC_FIND_DESC, HIDC_FIND_COMBINED_STRING,
     IDC_FIND_COMBINED_STRING, HIDC_FIND_COMBINED_STRING,
     IDC_FIND_REPLACE_STRING, HIDC_FIND_REPLACE_STRING,
@@ -2884,7 +2897,9 @@ void CReplacePage::OnContextMenu(CWnd* pWnd, CPoint point)
 
 BOOL CReplacePage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs5);
+	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs5);
+	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+	pparent_->id_pairs_ = &id_pairs5;
     return TRUE;
 }
 
