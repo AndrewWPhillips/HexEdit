@@ -10,9 +10,12 @@
 #include "SystemSound.h"
 #include "EnBitmap.h"
 #include "misc.h"
-#include "SVNRevision.h"
 #include "resource.hm"
 #include "HelpID.hm"            // User defined help IDs
+
+#ifndef _DEBUG
+#include "SVNRevision.h"
+#endif
 
 #include <HtmlHelp.h>
 
