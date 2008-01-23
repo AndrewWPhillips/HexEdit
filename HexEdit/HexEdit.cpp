@@ -1660,7 +1660,7 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
     ASSERT(AfxGetMainWnd() != NULL);
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 //    BOOL need_more = mm->UpdateBGSearchProgress();
-    //mm->m_wndFind.m_pSheet->SendMessage(WM_KICKIDLE);    // causes problem that we need to track down
+    mm->m_wndFind.m_pSheet->SendMessage(WM_KICKIDLE);    // xxx causes problem that we need to track down
     mm->m_wndBookmarks.SendMessage(WM_KICKIDLE);
 	mm->m_wndCalc.SendMessage(WM_KICKIDLE);
 	mm->m_wndProp.SendMessage(WM_KICKIDLE);
