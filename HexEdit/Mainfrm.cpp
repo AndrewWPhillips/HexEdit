@@ -34,6 +34,7 @@
 #include "SystemSound.h"
 #include "Misc.h"
 #include "BCGMisc.h"
+#include "BCGHelpIds.h"
 #include "HelpID.hm"            // User defined help IDs
 #include "GRIDCTRL_SRC\InPlaceEdit.h"
 #include <HtmlHelp.h>
@@ -58,6 +59,39 @@ IMPLEMENT_SERIAL(CHexEditFontSizeCombo, CBCGToolbarFontSizeCombo, 1)  // see BCG
 static const int max_search_hist = 48;
 static const int max_replace_hist = 16;
 static const int max_jump_hist = 16;
+
+// We need to dereive our own class from BCG cuctomize class so we can handle
+// What's This help properly using Html Help.
+class CHexEditCustomize : public CBCGToolbarCustomize
+{
+public:
+	CHexEditCustomize(CFrameWnd* pParent) : CBCGToolbarCustomize(pParent, TRUE,
+                        BCGCUSTOMIZE_MENU_SHADOWS | BCGCUSTOMIZE_TEXT_LABELS | 
+                        BCGCUSTOMIZE_LOOK_2000 | BCGCUSTOMIZE_MENU_ANIMATIONS |
+                        BCGCUSTOMIZE_CONTEXT_HELP  | BCGCUSTOMIZE_SELECT_SKINS)
+	{ }
+//	DECLARE_DYNAMIC(CHexEditCustomize)
+
+protected:
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	DECLARE_MESSAGE_MAP()
+};
+
+//IMPLEMENT_DYNAMIC(CHexEditCustomize, CBCGToolbarCustomize)
+BEGIN_MESSAGE_MAP(CHexEditCustomize, CBCGToolbarCustomize)
+	ON_WM_HELPINFO()
+END_MESSAGE_MAP()
+
+BOOL CHexEditCustomize::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	CWaitCursor wait;
+	if (::HtmlHelp((HWND)pHelpInfo->hItemHandle, theApp.htmlhelp_file_+"::BcgIdMap.txt", HH_TP_HELP_WM_HELP, (DWORD)(LPVOID)dwBCGResHelpIDs) == HWND(0))
+	{
+		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+		return FALSE;
+	}
+	return TRUE;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
@@ -4206,10 +4240,7 @@ BOOL CMainFrame::OnBarCheck(UINT nID)
 // The following were added for BCG
 void CMainFrame::OnCustomize() 
 {
-    CBCGToolbarCustomize *pdlg = new CBCGToolbarCustomize(this, TRUE,
-                        BCGCUSTOMIZE_MENU_SHADOWS | BCGCUSTOMIZE_TEXT_LABELS | 
-                        BCGCUSTOMIZE_LOOK_2000 | BCGCUSTOMIZE_MENU_ANIMATIONS |
-                        BCGCUSTOMIZE_CONTEXT_HELP  | BCGCUSTOMIZE_SELECT_SKINS);
+    CHexEditCustomize *pdlg = new CHexEditCustomize(this);
     pdlg->EnableUserDefinedToolbars();
 
     // Allow user to select commands that don't appear on any menus
