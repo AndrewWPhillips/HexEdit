@@ -1089,7 +1089,16 @@ void CHexEditApp::OnFileSaveAll()
 
 void CHexEditApp::OnFileCloseAll() 
 {
-	m_pDocManager->CloseAllDocuments(FALSE);
+    // For each document, allow the user to save it if modified, then close it
+    POSITION posn = m_pDocTemplate->GetFirstDocPosition();
+    while (posn != NULL)
+    {
+        CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
+        ASSERT(pdoc != NULL);
+        if (!pdoc->SaveModified())      // save/no save return true, cancel/error returns false
+            return;
+        pdoc->OnCloseDocument();
+    }
 }
 
 void CHexEditApp::OnFileOpenSpecial() 
@@ -1660,7 +1669,7 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
     ASSERT(AfxGetMainWnd() != NULL);
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 //    BOOL need_more = mm->UpdateBGSearchProgress();
-    mm->m_wndFind.m_pSheet->SendMessage(WM_KICKIDLE);    // xxx causes problem that we need to track down
+    mm->m_wndFind.m_pSheet->SendMessage(WM_KICKIDLE);    // causes problem that we need to track down
     mm->m_wndBookmarks.SendMessage(WM_KICKIDLE);
 	mm->m_wndCalc.SendMessage(WM_KICKIDLE);
 	mm->m_wndProp.SendMessage(WM_KICKIDLE);

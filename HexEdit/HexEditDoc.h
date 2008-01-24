@@ -473,12 +473,11 @@ public:
         virtual void OnCloseDocument();
         virtual void DeleteContents();
         virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
-        protected:
-        virtual BOOL SaveModified();
         //}}AFX_VIRTUAL
 
         virtual void SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU = TRUE);
         virtual void SetModifiedFlag(BOOL bMod = TRUE);
+        virtual BOOL SaveModified();
 
 public:
         afx_msg void OnFileClose();
