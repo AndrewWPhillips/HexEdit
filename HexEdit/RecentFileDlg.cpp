@@ -651,20 +651,34 @@ void CRecentFileDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 
 LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 {
-	ASSERT(GetDlgItem(IDC_OPEN_FILES) != NULL);
-	ASSERT(GetDlgItem(IDC_OPEN_RO) != NULL);
-	ASSERT(GetDlgItem(IDC_REMOVE_FILES) != NULL);
+    CHexFileList *pfl = theApp.GetFileList();           // recent file list
+	CSpecialList *psl = theApp.GetSpecialList();        // special file list (devices etc)
     CCellRange sel = grid_.GetSelectedCellRange();
-	GetDlgItem(IDC_OPEN_FILES)->EnableWindow(sel.IsValid());
-	GetDlgItem(IDC_OPEN_RO)->EnableWindow(sel.IsValid());
-	GetDlgItem(IDC_REMOVE_FILES)->EnableWindow(sel.IsValid());
 
     // Count the number of rows selected
     int fcc = grid_.GetFixedColumnCount();
     int rows_selected = 0;
+    bool ro = false;
 	for (int row = sel.GetMinRow(); row <= sel.GetMaxRow(); ++row)
 		if (grid_.IsCellSelected(row, fcc))
+		{
             ++rows_selected;
+            CString name = pfl->name_[grid_.GetItemData(row, fcc)];
+		    if (::IsDevice(name))
+		    {
+			    int device_idx = psl->find(name);
+			    if (device_idx > -1 && psl->read_only(device_idx))
+			        ro = true;
+			}
+        }
+            
+	ASSERT(GetDlgItem(IDC_OPEN_FILES) != NULL);
+	ASSERT(GetDlgItem(IDC_OPEN_RO) != NULL);
+	ASSERT(GetDlgItem(IDC_REMOVE_FILES) != NULL);
+	GetDlgItem(IDC_OPEN_RO)->EnableWindow(rows_selected > 0);
+	GetDlgItem(IDC_REMOVE_FILES)->EnableWindow(rows_selected > 0);
+    GetDlgItem(IDC_OPEN_FILES)->EnableWindow(rows_selected > 0 && !ro);
+	
     CString ss;
     ss.Format("%d", rows_selected);
     AddCommas(ss);
