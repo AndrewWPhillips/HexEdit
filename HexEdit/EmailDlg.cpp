@@ -204,7 +204,7 @@ void CEmailDlg::OnAttachmentBrowse()
 
     CHexFileDialog dlgFile("AttachmentDlg", HIDD_FILE_ATTACH, TRUE, NULL, attachment_,
                            OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT,
-                           theApp.GetCurrentFilters(), this);
+                           theApp.GetCurrentFilters(), "Attach", this);
 
     if (dlgFile.DoModal() == IDOK)
     {

@@ -242,9 +242,10 @@ public:
                    LPCTSTR lpszFileName = NULL,
                    DWORD dwFlags = OFN_HIDEREADONLY  | OFN_OVERWRITEPROMPT,
                    LPCTSTR lpszFilter = NULL,
+				   LPCTSTR lpszOKButtonName = NULL,
                    CWnd* pParentWnd = NULL) : 
       	CFileDialog(bOpenFileDialog, lpszDefExt, lpszFileName, dwFlags | OFN_ENABLESIZING, lpszFilter, pParentWnd),
-        strName(name)
+        strName(name), strOKName(lpszOKButtonName)
     {
         first_time = true;
 		hid_last_file_dialog = help_id;
@@ -253,6 +254,8 @@ public:
     // Overriden members of CFileDialog
     virtual void OnInitDone()
     {
+		if (!strOKName.IsEmpty())
+			SetControlText(IDOK, strOKName);
         CFileDialog::OnInitDone();
     }
 	virtual BOOL OnFileNameOK()
@@ -287,6 +290,7 @@ public:
     }
 private:
     CString strName;                    // Registry entries are based on this name
+	CString strOKName;                  // Text to put on the OK button
     bool first_time;                    // Only restore window on first call of OnFileNameChange
 };
 
@@ -299,7 +303,7 @@ public:
                   DWORD dwFlags = OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
                   LPCTSTR lpszFilter = NULL,
                   CWnd* pParentWnd = NULL) : 
-      	CHexFileDialog("FileImportDlg", help_id, TRUE, NULL, lpszFileName, dwFlags, lpszFilter, pParentWnd)
+      	CHexFileDialog("FileImportDlg", help_id, TRUE, NULL, lpszFileName, dwFlags, lpszFilter, "Import", pParentWnd)
     {
     }
 
@@ -322,7 +326,7 @@ public:
                   LPCTSTR lpszFilter = NULL,
                   CHexEditView* pView = NULL,
 				  BOOL enable_discon_hl = TRUE) : 
-      	CHexFileDialog("ExportFileDlg", help_id, FALSE, NULL, lpszFileName, dwFlags, lpszFilter, pView)
+      	CHexFileDialog("ExportFileDlg", help_id, FALSE, NULL, lpszFileName, dwFlags, lpszFilter, "Export", pView)
     {
 		m_pview = pView;
 		m_enable_discon_hl = enable_discon_hl;
@@ -346,7 +350,7 @@ public:
                     DWORD dwFlags = OFN_SHOWHELP | OFN_ALLOWMULTISELECT | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR,
                     LPCTSTR lpszFilter = NULL,
                     CWnd* pParentWnd = NULL) : 
-      	CHexFileDialog("FileOpenDlg", HIDD_FILE_OPEN, TRUE, NULL, lpszFileName, dwFlags, lpszFilter, pParentWnd)
+      	CHexFileDialog("FileOpenDlg", HIDD_FILE_OPEN, TRUE, NULL, lpszFileName, dwFlags, lpszFilter, NULL, pParentWnd)
     {
     }
 

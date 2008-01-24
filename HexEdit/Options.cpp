@@ -799,7 +799,7 @@ void CMacroPage::OnLoadmacro()
     ASSERT(aa->mac_dir_.Right(1) == "\\");
     CHexFileDialog dlg("MacroFileDlg", HIDD_FILE_MACRO, TRUE, "hem", NULL,
 		               OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT | OFN_SHOWHELP,
-                       "Macro Files (*.hem)|*.hem|All Files (*.*)|*.*||", this);
+                       "Macro Files (*.hem)|*.hem|All Files (*.*)|*.*||", "Load", this);
 	dlg.m_ofn.lpstrTitle = "Select Macro File";
     dlg.m_ofn.lpstrInitialDir = aa->mac_dir_;
 

@@ -6727,7 +6727,7 @@ void CHexEditView::OnReadFile()
     // Get name of file to read
     CHexFileDialog dlgFile("ReadFileDlg", HIDD_FILE_READ, TRUE, NULL, aa->current_read_,
                            OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
-                           aa->GetCurrentFilters(), this);
+                           aa->GetCurrentFilters(), "Read", this);
 
     // Set up the title of the dialog
     dlgFile.m_ofn.lpstrTitle = "Insert File";
@@ -6921,7 +6921,7 @@ void CHexEditView::OnEditWriteFile()
     // Get the file name to write the selection to
     CHexFileDialog dlgFile("WriteFileDlg", HIDD_FILE_WRITE, FALSE, NULL, aa->current_write_,
                            OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
-                           aa->GetCurrentFilters(), this);
+                           aa->GetCurrentFilters(), "Write", this);
 
     // Set up the title of the dialog
     dlgFile.m_ofn.lpstrTitle = "Save Selection As";
@@ -6971,7 +6971,7 @@ void CHexEditView::OnEditAppendFile()
     // Get the file name to write the selection to
     CHexFileDialog dlgFile("WriteFileDlg", HIDD_FILE_APPEND, TRUE, NULL, aa->current_write_,
                         OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
-                        aa->GetCurrentFilters(), this);
+                        aa->GetCurrentFilters(), "Append", this);
 
     // Set up the title of the dialog
     dlgFile.m_ofn.lpstrTitle = "Append Selection To";
@@ -7646,7 +7646,7 @@ void CHexEditView::OnExportIntel()
     // Get the file name to write the selection to
     CHexFileDialog dlgFile("ExportFileDlg", HIDD_FILE_EXPORT_INTEL, FALSE, NULL, theApp.current_export_,
                         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
-                        theApp.GetCurrentFilters(), this);
+                        theApp.GetCurrentFilters(), "Export", this);
 
     // Set up the title of the dialog
     dlgFile.m_ofn.lpstrTitle = "Export Intel Hex";
@@ -7728,7 +7728,7 @@ void CHexEditView::OnImportHexText()
     // Get name of file to import
     CHexFileDialog dlgFile("ImportFileDlg", HIDD_FILE_IMPORT_HEX, TRUE, NULL, theApp.current_import_,
                         OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
-                        theApp.GetCurrentFilters(), this);
+                        theApp.GetCurrentFilters(), "Import", this);
 
     // Set up the title of the dialog
     dlgFile.m_ofn.lpstrTitle = "Import Hex Text File";
@@ -8088,7 +8088,7 @@ void CHexEditView::OnExportHexText()
     // Get the file name to write the selection to
     CHexFileDialog dlgFile("ExportFileDlg", HIDD_FILE_EXPORT_HEX, FALSE, NULL, theApp.current_export_,
                         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
-                        theApp.GetCurrentFilters(), this);
+                        theApp.GetCurrentFilters(), "Export", this);
 
     // Set up the title of the dialog
     dlgFile.m_ofn.lpstrTitle = "Export Hex Text";

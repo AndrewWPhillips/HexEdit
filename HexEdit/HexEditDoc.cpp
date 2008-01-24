@@ -1394,7 +1394,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
         // Ask the user for the file name to use
         CHexFileDialog dlgFile("NewFileDlg", HIDD_FILE_NEW, FALSE, NULL, NULL,
                             OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
-                            theApp.GetCurrentFilters(), AfxGetMainWnd());
+                            theApp.GetCurrentFilters(), "Create", AfxGetMainWnd());
 
         // Set up the title of the dialog
         dlgFile.m_ofn.lpstrTitle = "New File Name";
