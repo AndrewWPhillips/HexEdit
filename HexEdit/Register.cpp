@@ -8,7 +8,11 @@
 #include "HexEdit.h"
 #include "Register.h"
 #include "SystemSound.h"
+#ifdef USE_FREE_IMAGE
+#include <FreeImage.h>
+#else
 #include "EnBitmap.h"
+#endif
 #include "misc.h"
 #include "resource.hm"
 #include "HelpID.hm"            // User defined help IDs
@@ -86,7 +90,11 @@ static const char *ack_name[] =
 	"MD5 Message-Digest Alg - RSA Data Security",
 	"CFile64 (MFC) class by Samuel R. Blackburn",
 	"Window Splitter class (MFC) - Robert A. T. Káldy",
+#ifdef USE_FREE_IMAGE
+    "FreeImage DLL - Hervé Drolon (+ F. van den Berg)",
+#else
 	"CEnBitmap class (MFC) - Daniel Godson",
+#endif
 	"Transparent controls (MFC) - Ali Rafiee",
 	"BigInteger used for C# Decimal - Cap'n Code",
 	"range_set class - Andrew W. Phillips",
@@ -107,7 +115,11 @@ static const char *ack_url[] =
 	"http://theory.lcs.mit.edu/~rivest/md5.c",
 	"http://www.samblackburn.com/wfc/",
 	"http://codeproject.com/splitter/kaldysimplesplitter.asp",
+#ifdef USE_FREE_IMAGE
+    "http://freeimage.sourceforge.net/"
+#else
 	"http://www.codeproject.com/bitmap/extendedbitmap2.asp",
+#endif
 	"http://www.codeproject.com/staticctrl/TransparentStaticCtrl.asp",
 	"http://www.codeproject.com/cpp/CppIntegerClass.asp",
 	"http://www.ddj.com/dept/cpp/184403660",
@@ -127,7 +139,7 @@ BOOL CAbout::OnInitDialog()
 
 	fix_controls();
 
-	// Set up achknowledgements
+	// Set up acknowledgements
     ctl_ack_.ResetContent();
     for (const char** ppp = ack_name; *ppp != NULL; ++ppp)
         ctl_ack_.AddString(*ppp);
@@ -135,7 +147,22 @@ BOOL CAbout::OnInitDialog()
 	return TRUE;
 }
 
+#ifdef USE_FREE_IMAGE
+BOOL CAbout::OnEraseBkgnd(CDC* pDC)
+{
+    FIBITMAP *dib = FreeImage_Load(FIF_BMP, ::GetExePath() + FILENAME_ABOUTBG);
+	if (dib == NULL)
+	    return CDialog::OnEraseBkgnd(pDC);
 
+    CRect rct;
+    this->GetClientRect(rct);
+    ::StretchDIBits(pDC->GetSafeHdc(),
+                    0, 0, rct.Width(), rct.Height(),
+                    0, 0, FreeImage_GetWidth(dib), FreeImage_GetHeight(dib),
+                    FreeImage_GetBits(dib), FreeImage_GetInfo(dib), DIB_RGB_COLORS, SRCCOPY);
+	return TRUE;
+}
+#else
 BOOL CAbout::OnEraseBkgnd(CDC* pDC)
 {
 	CEnBitmap bg;
@@ -160,6 +187,7 @@ BOOL CAbout::OnEraseBkgnd(CDC* pDC)
 	dcTmp.DeleteDC();
 	return TRUE;
 }
+#endif
 
 void CAbout::fix_controls()
 {

@@ -26,7 +26,9 @@
 #include "CalcDlg.h"
 #include "TipWnd.h"
 #include "expr.h"
-#ifdef DRAW_BACKGROUND
+#ifdef USE_FREE_IMAGE
+#include <FreeImage.h>
+#else
 #include "EnBitmap.h"
 #endif
 
@@ -306,10 +308,12 @@ private:
 
 	void move_dlgbar(CBCGDialogBar &bar, const CRect &rct);  // move so it does not intersect with rct
 
-#ifdef DRAW_BACKGROUND
+#ifdef USE_FREE_IMAGE
+    FIBITMAP *m_dib;
+#else
     CEnBitmap m_background;         // Background drawn in the client WM_ERASEBKGND event
-	int m_background_pos;
 #endif
+	int m_background_pos;
 	CBitmap m_search_image;       // Displayed in background search occurrences (status bar) pane
     bool bg_progress_enabled_;    // Is progress bar in search occ. pane enabled?
 
