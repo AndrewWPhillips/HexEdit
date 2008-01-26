@@ -1346,9 +1346,8 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 	{
 		if (fill_bits.type == CNewFile::FILL_CLIPBOARD)
 			::CloseClipboard();
-        ((CMainFrame *)AfxGetMainWnd())->StatusBarText("No fill data available");
-        theApp.mac_error_ = 2;
-		return -1;
+        return 0;     // Note: old macro files that stored 0 as km_new parameter should end up here
+
     }
 
     // Work out the length of the new file
@@ -1379,7 +1378,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 	{
 		if (fill_bits.type == CNewFile::FILL_CLIPBOARD)
 			::CloseClipboard();
-        return 0;     // Note: old macro files that stored 0 as km_new parameter should end up here
+        return 0;
     }
 
     // Work out if data is stored on disk (or in memory) and what the file name is
