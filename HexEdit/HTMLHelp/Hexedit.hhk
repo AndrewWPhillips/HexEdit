@@ -1046,6 +1046,8 @@
       <param name="Name" value="closing">
       <param name="Name" value="File Close command">
       <param name="Local" value="cmd_file\HID_FILE_CLOSE.htm">
+      <param name="Name" value="Close All command">
+      <param name="Local" value="cmd_file\HID_FILE_CLOSE_ALL.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="comparing">
@@ -2125,6 +2127,8 @@
     <param name="Local" value="dlg_file\AFX_HIDD_FILESAVE.htm">
     <param name="Name" value="File Save As command">
     <param name="Local" value="cmd_file\HID_FILE_SAVE_AS.htm">
+    <param name="Name" value="Save All command">
+    <param name="Local" value="cmd_file\HID_FILE_SAVE_ALL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="save macro">
@@ -4095,6 +4099,50 @@
     <param name="Name" value="disk editing">
     <param name="Name" value="Open Special">
     <param name="Local" value="cmd_file\HID_FILE_OPEN_SPECIAL.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="closing all files">
+    <param name="Name" value="Close All command">
+    <param name="Local" value="cmd_file\HID_FILE_CLOSE_ALL.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="saving all files">
+    <param name="Name" value="Save All command">
+    <param name="Local" value="cmd_file\HID_FILE_SAVE_ALL.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="compression">
+    <param name="Name" value="Compress">
+    <param name="Local" value="cmd_operations\HID_ZLIB_COMPRESS.htm">
+    <param name="Name" value="Decompress">
+    <param name="Local" value="cmd_operations\HID_ZLIB_DECOMPRESS.htm">
+    <param name="Name" value="Compression Settings">
+    <param name="Local" value="cmd_operations\HID_ZLIB_SETTINGS.htm">
+    <param name="Name" value="Compression Settings Dialog">
+    <param name="Local" value="dlg_tools\CompressionSettings.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Zlib">
+    <param name="Name" value="Compress">
+    <param name="Local" value="cmd_operations\HID_ZLIB_COMPRESS.htm">
+    <param name="Name" value="Decompress">
+    <param name="Local" value="cmd_operations\HID_ZLIB_DECOMPRESS.htm">
+    <param name="Name" value="Compression Settings">
+    <param name="Local" value="cmd_operations\HID_ZLIB_SETTINGS.htm">
+    <param name="Name" value="Compression Settings Dialog">
+    <param name="Local" value="dlg_tools\CompressionSettings.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="gzip">
+    <param name="Name" value="Decompress">
+    <param name="Local" value="cmd_operations\HID_ZLIB_DECOMPRESS.htm">
+    <param name="Name" value="Compression Settings Dialog">
+    <param name="Local" value="dlg_tools\CompressionSettings.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="deflate algorithm">
+    <param name="Name" value="Compression Settings Dialog">
+    <param name="Local" value="dlg_tools\CompressionSettings.htm">
   </object>
 </ul>
 </html>

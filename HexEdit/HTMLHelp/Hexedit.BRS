@@ -53,8 +53,10 @@ New File command | cmd_file\HID_FILE_NEW.htm
 File Open command | cmd_file\HID_FILE_OPEN.htm
 Open Special | cmd_file\HID_FILE_OPEN_SPECIAL.htm
 File Close command | cmd_file\HID_FILE_CLOSE.htm
+Close All command | cmd_file\HID_FILE_CLOSE_ALL.htm
 File Save command | cmd_file\HID_FILE_SAVE.htm
 File Save As command | cmd_file\HID_FILE_SAVE_AS.htm
+Save All command | cmd_file\HID_FILE_SAVE_ALL.htm
 File Print command | cmd_file\HID_FILE_PRINT.htm
 File Print Preview command | cmd_file\HID_FILE_PRINT_PREVIEW.htm
 File Print Setup command | cmd_file\HID_FILE_PRINT_SETUP.htm

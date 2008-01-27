@@ -27,9 +27,6 @@
  - change normal activation code email template
  - send out press release
 
-MAJOR
- CDataFormatView::find_address sometimes gets stuck
-
 INSTALLER
 - what happens (eg AppData) under Windows 95
 
@@ -43,7 +40,6 @@ SECURE WIPE OPTIONS
 
 DISK EDIT
  - bgsearch.cpp line 395 assertion
- > context help in open special dlg
  - save to floppy did nothing
  - show error in tip
  ? show sector boundary at consec errors
@@ -61,7 +57,6 @@ DISK EDIT
   - insert of blocks (new system)
   - insert of large files (new system)
   - dclick tree nodes in view mode
-  - Ctrl+<- and Ctrl+-> when collapsed
   - check disk lengths under various OS's (floppy, hard, CD)
     - floppy: 1,474,560, 010 is wrong (1,457,664), WinHex is OK
     - ZIP: 100,663,296, 010/WinHex are wrong (98,703,360)
@@ -97,11 +92,6 @@ DISK EDIT
   - email file menu option???
   - rename file menu option???
 
-
-- dockable modeless dlgs
-  > Unroll after open command (but not after toggle commands)
-  - check context ("what's this") help still works
-
 - disk editor
   - fix size of device file problems
     - XP use IOCTRL_DISK_GET_LENGTH_INFO
@@ -118,7 +108,6 @@ DISK EDIT
     - see SectorError() in OnDraw (HexEditView.cpp line 1895)
   > poll for changes if current device is removeable
   > don't display "open read-only" if read-only device selected
-
 
 - change tracking
   - invalidation problems: eg delete at 3 then insert at 1,2 moved delete at 1 not drawn
@@ -183,12 +172,6 @@ ADMIN
  - add area to submit and retrieve XML DFFD templates to website
 
 Bugs
- - tutorial menu items go to wrong page
- > chnaging charset in Window Options page does not change colour scheme (when default scheme in use)
- - in window options turning autofit on (Apply) does not update window columns
- > drag onto main window to open does not set open_current_readonly_
- > can't send attachment if it's open modeReadWrite
-
  - bg_search_ for device problem
  - find dlg char set (Text page) updates after chnaging char set or rest but not other times (eg undo)
    - could put in end_change() but this would mean it is chnaged irrespective of previous char set
@@ -276,6 +259,13 @@ Help
   - troubleshooting
     - why can't I modify a value in the properties dialog: file read-only, area read-only in template, near EOF
     - why is a menu item in the Operations menu disabled: length of selection
+  - what's this (text only help) does not work for Tools page of BCG Cust dialog
+    - dwBCGResHelpIDs does not have IDs for that page 
+		IDD_BCGBARRES_COMMANDS_LIST     16921
+		IDD_BCGBARRES_COMMAND           16922
+		IDD_BCGBARRES_BROWSE_COMMAND    16923
+		IDD_BCGBARRES_ARGUMENTS         16924
+		IDD_BCGBARRES_INITIAL_DIRECTORY 16925
   - new commands: keywords, browse sequence, menu page
   - New dialogs:
   > new toolbar & changed buttons on existing toolbars
@@ -289,7 +279,7 @@ Help
     - modulus arithmetic, zero based indexing, asymetric bounds
   > read/write Intel and Motorola binary file formats [Jim Seton]
   > add extra colour selection (highlight, background, address, etc) [Roland Glenn McIntosh]
-  - tutorials
+  > tutorials
     - customization
       - toolbars
         - new: fit, undo chnages, hex/dec addresses, highlighter, color scheme list, bookmarks, bm list, template sync, refresh
@@ -302,7 +292,7 @@ Help
       - colour scheme for .HEG files
       - filters for .HEG files
       - macro that runs when certain types of file are opened
- 
+
 V3.2
  - What's This help for modeless dlgs does not seem to work
    - also update all right click help calls
@@ -419,10 +409,14 @@ Free version
     - get revision from .rc not SVN
     - update email dialog revision nos
 
-V3.3 
+V3.3
   - new look web site
   - new icons
-  - time64_t support
+  - options in dialogs that ask repetitive questions
+    - also add options page where you can turn these on again
+    - paste in overtype mode
+    - turn off insert mode
+    - turn off read-only mode
   - nav forward and backward
   - calculator
     - new look calculator

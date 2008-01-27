@@ -20,7 +20,7 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1762>
+<meta name=layout-height content=1865>
 <meta name=layout-width content=1179>
 
 
@@ -53,23 +53,44 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>This page allows you to change the colors used in the active window 
- display and to create and save color &quot;schemes&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- can also display different groups of hex values in different colors, which 
- for many types of files can be useful for easily spotting patterns and 
- irregularities.</p>
+<p>This page allows you to change the colors used to display the active 
+ file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also create and use new color &quot;schemes&quot;, or delete and modify 
+ existing schemes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ very useful feature is the ability to display different groups of hex 
+ values in different colors, which can be useful for quickly spotting patterns 
+ and irregularities.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../ex_red_sm.jpg"
+		style="border-style: none;
+				border: none;
+				width: 17px;
+				height: 20px;"
+		width=17
+		height=20
+		border=0> <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you modify the color scheme for the active window all others files which 
+ use the same color scheme will be affected.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Schemes</p>
 
 <p>&nbsp;</p>
 
 <p>The left side of the page displays the current schemes with buttons 
  to create new schemes, and delete or reset the currently selected scheme. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The top 
- four schemes are standard schemes that cannot be deleted.</p>
+ four schemes are standard schemes that cannot be deleted. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ change the colors of a particular scheme (see below) first select it in 
+ the list.</p>
 
 <p>&nbsp;</p>
 
-<p>The four standard schemes are used automatically to display different 
- characters sets. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
+<p>The top four schemes are &quot;standard&quot; schemes used specially 
+ to display different characters sets. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
  if the current character set is ASCII (see <a href="..\cmd_view\Char_Set_ASCII.htm">Char 
  Set ASCII</a>) and the current scheme is &quot;ASCII default&quot; then 
  changing to the EBCDIC character set (see <a href="..\cmd_view\Char_Set_EBCDIC.htm">Char 
@@ -78,11 +99,25 @@
 
 <p>&nbsp;</p>
 
+<p><img src="../tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0> You can modify the colors for the standard schemes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ restore the factory default colors use the &quot;Reset&quot; button.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Colors</p>
+
 <p>&nbsp;</p>
 
 <p>The right side of the page displays the available colors for the currently 
  selected scheme. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- top six colors are standard ones that cannot be deleted, or reordered. 
+ top 10 colors are standard ones that cannot be deleted, or reordered. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Below the 
  standard colors are one or more entries that specify color groups that 
  can be created, deleted and reordered.</p>
@@ -90,20 +125,22 @@
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p>To use different colors you need to split the range of byte values (0-255) 
- into groups. A group can consist of individual values or discontiguous 
- ranges. For example, to use the values found in normal ASCII text files 
- use “9,10,13,32-126”, which are the values of tab, line-feed, carriage-return 
- and the range of normal display characters. As well as the values each 
- group has an associated name and, of course, a color.</p>
+ into groups. A group can consist of individual values or ranges. For example, 
+ to use the values found in normal ASCII text files use “9,10,13,32-126”, 
+ which are the values of tab, line-feed, carriage-return and the range 
+ of normal display characters. As well as the values each group has an 
+ associated name and, of course, a color.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>When displaying the hex byte HexEdit scans the groups from the top and 
- uses the color of the first group the value is found in. If a value appears 
- in more than one group the color from the higher group is used. You can 
- use the arrow buttons to change the order of the groups. Also if a value 
- is not assigned to any group then that value is not displayed. (Actually 
- it’s just displayed using the background color.)</p>
+<p>When displaying HexEdit scans the groups from the top and uses the color 
+ of the first group the value is found in. If a value appears in more than 
+ one group the color from the first group is used. You can use the arrow 
+ buttons to change the order of the groups. Also if a value is not assigned 
+ to any group then that value is not displayed. (Actually it’s just displayed 
+ using the background color.)</p>
+
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 
@@ -170,7 +207,7 @@
  that are the names of all the current groups. To change the color of any 
  of the entries first select it in this list before using the color selection 
  tool (below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
- that version 3.0 adds separate colors for the mark and bookmarks background.</p>
+ that since HexEdit 3.0 there are separate colors for the mark and bookmarks.</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
@@ -470,8 +507,8 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=677px>
-<p>Used to show the boundary of disk sectors and background for bad sectors 
- if the &quot;Sector Bounds&quot; option is on in the <a HREF="HIDD_OPT_WINDOW.htm">Window 
+<p>Used to show the boundary of disk sectors and the background color for 
+ bad sectors if the &quot;Sector Bounds&quot; option is on in the <a HREF="HIDD_OPT_WINDOW.htm">Window 
  Display Options page</a>.</td></tr>
 
 <tr style="x-cell-content-align: top;"
@@ -509,7 +546,8 @@
 <p>Addresses are shown in this color if the Decimal addresses toggle is 
  off. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
  used for hex addresses in the <a HREF="../bars/AFX_HIDW_STATUS_BAR.htm">status 
- bar</a> and <a HREF="../tools/HIDC_JUMP_HEX.htm">hex jump tool</a>.</td></tr>
+ bar</a> and <a HREF="../tools/HIDC_JUMP_HEX.htm">hex jump tool</a> and 
+ many other places.</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -542,7 +580,8 @@
 <p>Addresses are shown in this color if the Decimal addresses toggle is 
  on. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
  used for decimal addresses in the <a HREF="../bars/AFX_HIDW_STATUS_BAR.htm">status 
- bar</a> and <a HREF="../tools/HIDC_JUMP_DEC.htm">decimal jump tool</a>.</td></tr>
+ bar</a> and <a HREF="../tools/HIDC_JUMP_DEC.htm">decimal jump tool</a> 
+ and many other places..</td></tr>
 </table>
 <!--begin!kadov{{--></div><!--}}end!kadov-->
 <p style="margin-left: 18.00pt; text-align: center;"
