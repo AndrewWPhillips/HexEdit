@@ -19,9 +19,9 @@ Language=C:\Devel\RoboHelp Office\RoboHTML\Language\English\RoboHHRE.lng
 Stop List=C:\Devel\RoboHelp Office\RoboHTML\Language\English\System.stp
 
 [SS Settings: RoboHtml For OracleHelp]
-WindowType0=29755;FALSE;NewWindow;;;;;;;;;;
-WindowType1=29755;TRUE;main;;;;;;;;;;
-WindowType2=29755;FALSE;form;;;;;;;;;;
+WindowType0=23796;FALSE;NewWindow;;;;;;;;;;
+WindowType1=23796;TRUE;main;;;;;;;;;;
+WindowType2=23796;FALSE;form;;;;;;;;;;
 
 [Target:WebHelp]
 ResultFileName=D:\tmp\help\Hexedit.htm

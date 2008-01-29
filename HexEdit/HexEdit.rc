@@ -343,7 +343,9 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "&Tutorials"
         BEGIN
+            MENUITEM "&Customization Tutorial",     ID_HELP_TUTE4
             MENUITEM "&Macro Tutorial",             ID_HELP_TUTE1
+            MENUITEM SEPARATOR
             MENUITEM "&Basic Template Tutorial",    ID_HELP_TUTE2
             MENUITEM "&Advanced Template Tutorial", ID_HELP_TUTE3
         END
@@ -752,7 +754,9 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "&Tutorials"
         BEGIN
+            MENUITEM "&Customization Tutorial",     ID_HELP_TUTE4
             MENUITEM "&Macro Tutorial",             ID_HELP_TUTE1
+            MENUITEM SEPARATOR
             MENUITEM "&Basic Template Tutorial",    ID_HELP_TUTE2
             MENUITEM "&Advanced Template Tutorial", ID_HELP_TUTE3
         END
@@ -2881,6 +2885,7 @@ BEGIN
     ID_HELP_TUTE1           "Start the keystroke macro tutorial\nMacro Tutorial"
     ID_HELP_TUTE2           "Start the basic template tutorial\nBasic Template Tutorial"
     ID_HELP_TUTE3           "Start the advanced template tutorial\nAdvanced Template Tutorial"
+    ID_HELP_TUTE4           "Start the customization tutorial\nCustomization Tutorial"
     ID_VIEW_CALCULATOR      "Show/hide the Calculator\nToggle Calculator"
     ID_VIEW_BOOKMARKS       "Show/hide Bookmarks dialog\nToggle Bookmarks"
 END
@@ -4776,14 +4781,6 @@ BEGIN
         RIGHTMARGIN, 261
         TOPMARGIN, 7
         BOTTOMMARGIN, 128
-    END
-
-    IDD_REG, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 241
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 179
     END
 
     IDD_NEW_SCHEME, DIALOG

@@ -1340,6 +1340,8 @@
 #define ID_HELP_TUTE1                   33140
 #define ID_HELP_TUTE2                   33141
 #define ID_HELP_TUTE3                   33142
+#define ID_HELP_TUTE4                   33143
+#define ID_HELP_TUTE5                   33144
 #define ID_VIEW_CALCULATOR              33150
 #define ID_VIEW_BOOKMARKS               33151
 #define ID_VIEW_FIND                    33152
@@ -1391,7 +1393,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        377
-#define _APS_NEXT_COMMAND_VALUE         39001
+#define _APS_NEXT_COMMAND_VALUE         39002
 #define _APS_NEXT_CONTROL_VALUE         1539
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
