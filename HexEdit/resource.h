@@ -175,7 +175,6 @@
 #define IDB_DOWNX                       235
 #define IDD_OPT_SYSDISPLAY              235
 #define IDB_UPD                         236
-#define IDD_REG                         236
 #define IDB_UPU                         237
 #define IDD_OPT_COLOURS1                237
 #define IDB_UPX                         238

@@ -4382,7 +4382,7 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
                 retval.date = (odt.m_status == 0 ? odt.m_dt : -1e30);
             }
             break;
-#ifdef TIME64_T      // __time64_t is not supported in VC6
+#ifdef TIME64_T
         case CHexEditDoc::DF_DATEC64:
             {
                 retval.typ = TYPE_DATE;

@@ -2,6 +2,20 @@
 //
 // Copyright (c) 2003 by Andrew W. Phillips.
 
+// Notes:
+// A. Mystery info is stored in 2 places
+//   1. In registry under .BMP
+//   2. In a file
+//      OLD: HexEdit.IND in Windows directory
+//      NEW: $NTf-{X}.LOG in temp directory
+// B. Registration info is stores in 2 places:
+//   1. In registry under HKLM
+//      OLD: HKLM\Software\ECSoftware\Data
+//      NEW: HKLM\Software\ECSoftware\HexEdit\Global
+//   2. In a file:
+//      OLD: HexEdit.CFD in HexEdit binary directory
+//      NEW: in background file in users app data area
+
 #include "stdafx.h"
 #include <string.h>
 #include <sys/types.h>

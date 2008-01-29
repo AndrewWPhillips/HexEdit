@@ -1,7 +1,8 @@
 <?xml version='1.0'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'>
-  <Product Id='084e92c9-56e5-4eba-b5a3-4269739d3b01'
-           Name='HexEdit' Version='3.2.1'
+
+	<Product Id='16D11547-BD13-4efa-8A7D-976933A95102' UpgradeCode='A8871463-22A6-40cb-9152-6C577B7335A9'
+           Name='HexEdit' Version='3.2.0'
            Language='1033' Codepage='1252'
            Manufacturer='Expert Commercial Software Pty Ltd'>
 
@@ -15,7 +16,7 @@
 
     <Directory Id='TARGETDIR' Name='SourceDir'>
       <Directory Id='ProgramFilesFolder'>
-        <Directory Id='INSTALLDIR' Name='HexEdit'>
+        <Directory Id='INSTALLDIR' Name='HexEdit' LongName='HexEdit'>
           <Component Id='MainProgram' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7339'>
             <File Id='HexEditId' Name='HexEdit.exe' DiskId='1' src='..\Release\HexEdit.exe' Vital='yes'/>
           </Component>

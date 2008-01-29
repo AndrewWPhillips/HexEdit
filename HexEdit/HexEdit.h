@@ -64,28 +64,22 @@ typedef __int64 FILE_ADDRESS;
 #define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
 #define CHANGE_TRACKING 1   // Allow change tracking code
 #define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
-//#define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project
 #define SHOW_CODE_PAGE  1
 #define NEW_TIPS        1   // Use new (fading) tip control for view tips (selection length etc) - seems to work well
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
-// Note this still need: keyword search (RFL dialog), drop list of categories, no loss of info if return not pressed
-
 #define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
-// xxx Note: check if this is complete xxx
 
 #define DIALOG_BAR  1       // Put modeless dialogs into dockable/rollable dialog bars
 // Note: You also need to change dialog style (hexedit.rc) to WS_CHILD for dockable bars
 //STYLE WS_CHILD | DS_CONTEXTHELP
 //STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 
-// Note: BG_DEVICE_SEARCH must be left on to avoid problems under 9X/ME
-// xxx NOTE we can remove use of DeviceSize() now xxx
-
 // Flags for stuff in development
+//#define EXPLORER_WND    1   // Modeless dialog like Windows Explorer - works well but need to fix hidden files button image
+//#define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project
 //#define CALC_EXPR       1   // Allow expressions in calculator - needs testing
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
 //#define REFRESH_OFF     1   // Turn off display refresh when replacing all - doesn't seem to save much time so leave off for now
-//#define EXPLORER_WND    1   // Modeless dialog like Windows Explorer - works well but need to fix button images and stop floppy access on startup
 
 #define INTERNAL_ALGORITHM  "HexEdit Internal Encryption Algorithm"
 

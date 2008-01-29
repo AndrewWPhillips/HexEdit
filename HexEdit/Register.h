@@ -147,55 +147,6 @@ protected:
     CCodeEdit edit_;
 };
 
-#if 0   // No longer used - most functionality moved to CStartup
-/////////////////////////////////////////////////////////////////////////////
-// CReg dialog
-
-class CReg : public CDialog
-{
-// Construction
-public:
-	CReg(CWnd* pParent = NULL);   // standard constructor
-
-// Dialog Data
-	//{{AFX_DATA(CReg)
-	enum { IDD = IDD_REG };
-	CString	user_name_;
-	int		type_;
-	CString	costs_;
-	//}}AFX_DATA
-
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CReg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(CReg)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnUser();
-	afx_msg void OnMachine();
-	afx_msg void OnChangeUserName();
-	virtual void OnOK();
-	afx_msg void OnRegWeb();
-	afx_msg void OnRegEmail();
-	afx_msg void OnRegHelp();
-	afx_msg void OnClose();
-	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	afx_msg void OnRegForm();
-	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	DECLARE_MESSAGE_MAP()
-};
-#endif
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CStartup dialog
 
