@@ -2416,7 +2416,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Display program version and licence information\nAbout"
+    ID_APP_ABOUT            "Display program version and license information\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save changed files\nExit"
     ID_HELP_INDEX           "Display HexEdit help index\nHelp Index"
     ID_HELP_FINDER          "List Help topics\nHelp Topics"
@@ -3783,7 +3783,7 @@ BEGIN
     CTEXT           "Thankyou for trying HexEdit.",IDC_STATIC,7,7,228,8
     CTEXT           "Expires in 77 days.",IDC_TEXT,7,23,228,16,NOT WS_GROUP
     ICON            IDR_MAINFRAME,IDC_STATIC,7,7,20,20
-    LTEXT           "Once you have registered you won't see this message anymore.  You will also be entitled to the next release for free and upgrades to the lastest version ($15) for 2 years.\n\nA single user licence costs $40 (US).\n\nTo register now click the link below.",
+    LTEXT           "Once you have registered you won't see this message anymore.  You will also be entitled to the next release for free and upgrades to the lastest version ($15) for 2 years.\n\nA single user license costs $40 (US).\n\nTo register now click the link below.",
                     IDC_STATIC,7,41,228,64,NOT WS_GROUP
     DEFPUSHBUTTON   "registration web site",IDC_BUTTON_URL,7,107,228,14,
                     WS_GROUP
@@ -4488,62 +4488,6 @@ BEGIN
     PUSHBUTTON      "Help",ID_DFFD_HELP,315,269,50,14,WS_GROUP
 END
 
-IDD_TPARSE1 DIALOG  0, 0, 397, 382
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Import Types from Source"
-FONT 8, "MS Sans Serif"
-BEGIN
-    EDITTEXT        IDC_EDIT1,7,7,275,367,ES_MULTILINE | ES_AUTOHSCROLL | 
-                    WS_GROUP
-    GROUPBOX        "Default alignment (packing)",IDC_STATIC,291,7,99,76,
-                    WS_GROUP
-    CONTROL         "1 byte",IDC_PACK1,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,300,20,35,10
-    CONTROL         "2 bytes",IDC_PACK2,"Button",BS_AUTORADIOBUTTON,300,32,
-                    39,10
-    CONTROL         "4 bytes",IDC_PACK4,"Button",BS_AUTORADIOBUTTON,300,44,
-                    39,10
-    CONTROL         "8 bytes",IDC_PACK8,"Button",BS_AUTORADIOBUTTON,300,56,
-                    39,10
-    CONTROL         "16 bytes",IDC_PACK16,"Button",BS_AUTORADIOBUTTON,300,68,
-                    43,10
-    GROUPBOX        "Size of pointers",IDC_STATIC,291,88,99,51,WS_GROUP
-    CONTROL         "Word (2 bytes)",IDC_PTR_SIZE2,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,300,100,62,10
-    CONTROL         "Double Word (4 bytes)",IDC_PTR_SIZE4,"Button",
-                    BS_AUTORADIOBUTTON,300,112,87,10
-    CONTROL         "Quad Word (8 bytes)",IDC_PTR_SIZE8,"Button",
-                    BS_AUTORADIOBUTTON,300,124,81,10
-    GROUPBOX        "Size of function pointers",IDC_STATIC,291,145,99,51,
-                    WS_GROUP
-    CONTROL         "Word (2 bytes)",IDC_FUNC_PTR2,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,300,156,62,10
-    CONTROL         "Double Word (4 bytes)",IDC_FUNC_PTR4,"Button",
-                    BS_AUTORADIOBUTTON,300,168,87,10
-    CONTROL         "Quad Word (8 bytes)",IDC_FUNC_PTR8,"Button",
-                    BS_AUTORADIOBUTTON,300,180,81,10
-    GROUPBOX        "Predefined values",IDC_STATIC,291,200,99,53,WS_GROUP
-    CONTROL         "Custom",IDC_VALUES_CUSTOM,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,299,225,39,10
-    CONTROL         "Windows",IDC_VALUES_WINDOWS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,299,213,45,10
-    GROUPBOX        "Predefined types",IDC_STATIC,291,256,99,75,WS_GROUP
-    CONTROL         "Standard",IDC_TYPES_STD,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,299,269,45,10
-    CONTROL         "Common",IDC_TYPES_COMMON,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,299,281,43,10
-    CONTROL         "Windows",IDC_TYPES_WINDOWS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,299,293,45,10
-    CONTROL         "Custom",IDC_TYPES_CUSTOM,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,299,305,39,10
-    CONTROL         "Save new types",IDC_TYPES_SAVE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,311,317,67,10
-    DEFPUSHBUTTON   "OK",IDOK,340,340,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,340,361,50,14
-    CONTROL         "Save new types",IDC_TYPES_SAVE2,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,311,237,67,10
-END
-
 IDD_DFFD_SWITCH DIALOGEX 0, 0, 292, 170
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
@@ -5043,14 +4987,6 @@ BEGIN
         RIGHTMARGIN, 390
         TOPMARGIN, 7
         BOTTOMMARGIN, 283
-    END
-
-    IDD_TPARSE1, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 390
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 375
     END
 
     IDD_DFFD_SWITCH, DIALOG

@@ -851,7 +851,7 @@ BOOL CHexEditApp::InitInstance()
             ss = "Unfortunately, you are not licensed to run this version.";
             break;
         case 5:  // licence from 2 or more versions ago
-            ss = "You need to upgrade your licence to run this version.";
+            ss = "You need to upgrade your license to run this version.";
             break;
 
         case 3:  // temp licence
@@ -2912,7 +2912,7 @@ void CHexEditApp::set_general()
         {
 			// Create the registry entries that allow "Open with HexEdit" on shortcut menus
 			CString s1("Open with HexEdit");
-			CString s2 = GetExePath() + "HexEdit.exe %1";
+			CString s2 = GetExePath() + "\"HexEdit.exe\"  \"%1\"";
             RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY, REG_SZ, s1, s1.GetLength());
             RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, REG_SZ, s2, s2.GetLength());
         }
@@ -3741,9 +3741,9 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
     {
         dlg.to_ = "info@HexEdit.com";
         if (dlg.name_.IsEmpty())
-            dlg.subject_ = "Single-machine licence";
+            dlg.subject_ = "Single-machine license";
         else
-            dlg.subject_ = "Single-user licence";
+            dlg.subject_ = "Single-user license";
     }
 
     // If bug report then default attachment file name to be the active file

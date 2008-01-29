@@ -270,7 +270,6 @@
 #define IDB_REFRESH                     304
 #define IDD_TPARSE                      304
 #define IDB_PARENT                      305
-#define IDD_TPARSE1                     305
 #define IDR_FUNCTION                    305
 #define IDB_VIEW                        306
 #define ID_INTEGER_ABS                  306

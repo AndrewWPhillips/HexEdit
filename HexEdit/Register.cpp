@@ -246,7 +246,7 @@ void CAbout::fix_controls()
 	// Let the user know what licence they have if the licence is for previous version
     if (theApp.security_type_ > 3 && theApp.security_licensed_version_ > 2)
 	{
-		ss = "Licence is for version ";
+		ss = "Your license is for version ";
 
 		// See INTERNAL_VERSION for current value
 		switch (theApp.security_licensed_version_)
