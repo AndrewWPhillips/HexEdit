@@ -1,4 +1,4 @@
-// TabView.cpp : allows 2 nested (tabbed) views: CHexEditView & CDataFormatView
+// TabView.cpp : allows nested (tabbed) views: CHexEditView,CDataFormatView,CAerialView
 //
 // Copyright (c) 1999-2000 by Andrew W. Phillips.
 //
@@ -22,7 +22,6 @@
 #include "ChildFrm.h"
 #include "TabView.h"
 #include "HexEditView.h"
-#include "DataFormatView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -117,28 +116,10 @@ int CTabView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// If there is only one tab (ie, hex view only) hide the tabs
 	GetTabControl().HideSingleTab();
+	GetTabControl().AutoDestroyWindow();        // otherwise windows are not detroyed
 
     //AddView(RUNTIME_CLASS (CHexEditView), _T("Raw Data (Hex) View"));
     AddView(RUNTIME_CLASS(CHexEditView), _T("Raw Data (Hex) View"), -1, (CCreateContext *)lpCreateStruct->lpCreateParams);
-
-#if 0  // This is now done on a per file basis - so we have to do it in CHexEditView::OnInitialUpdate
-	if (theApp.tree_view_ == 2)
-	{
-		AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
-	    
-		SetActiveView(1);
-		CDataFormatView *pdfv = (CDataFormatView *)GetActiveView();
-		ASSERT_KINDOF(CDataFormatView, pdfv);
-
-		SetActiveView(0);
-		CHexEditView *phev = (CHexEditView *)GetActiveView();
-		ASSERT_KINDOF(CHexEditView, phev);
-
-		// Make sure dataformat view knows which hex view it is assoc. with
-		pdfv->phev_ = phev;
-		phev->pdfv_ = pdfv;
-	}
-#endif
 
     return 0;
 }
