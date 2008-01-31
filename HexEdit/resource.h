@@ -1028,7 +1028,7 @@
 #define IDC_ALIGN_SPIN                  1524
 #define IDC_OFFSET_SPIN                 1525
 #define IDC_COMPRESS_HELP               1526
-#define IDC_SLIDER                      1527
+#define IDC_SLIDER_TIP                  1527
 #define IDC_RELATIVE                    1528
 #define IDC_FP_FORMAT                   1529
 #define IDC_FP_GROUP                    1530

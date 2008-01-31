@@ -2132,8 +2132,9 @@ CAPTION "Info Tips"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Transparency:",IDC_STATIC,7,8,46,8
-    CONTROL         "",IDC_SLIDER,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | 
-                    WS_TABSTOP,54,5,83,15,WS_EX_TRANSPARENT,HIDC_SLIDER
+    CONTROL         "",IDC_SLIDER_TIP,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,54,5,83,15,WS_EX_TRANSPARENT,
+                    HIDC_SLIDER_TIP
     PUSHBUTTON      "New",IDC_NEW,186,4,14,14,BS_ICON | BS_CENTER | 
                     BS_VCENTER | WS_GROUP,0,HIDC_NEW
     PUSHBUTTON      "Del",IDC_DEL,203,4,14,14,BS_ICON | BS_CENTER | 

@@ -145,9 +145,6 @@ Select this option to email your registration information  Select info@hexedit.c
 .topic HIDC_INFO_CATEGORY_SELECT
 Enter any relevant comments here such as where the file came from, what it contains, who has changed it and why, etc.
 
-.topic HIDC_SLIDER
-Move the slider to adjust the transparency of the tip window.  Hold the mouse over the window to make it fully visible.
-
 .topic HIDC_HEX_UCASE
 Hex numbers are displayed using uppercase (digits A to F) rather than lowercase (a to f).
 
@@ -1302,6 +1299,9 @@ This is the key length used by the algorithm.  In general the bigger the key len
 
 .topic HIDC_REG_EMAIL
 Click this button to email your registration code and other information.  But you must send payment by regular mail for security.
+
+.topic HIDC_SLIDER_TIP
+Move the slider to adjust the transparency of the tip window.  Hold the mouse over the window to make it fully visible.
 
 .topic HIDC_CODE_PAGE
 Select the code page that is use to show the character at the left.  Depending on the code pagethe character shown may use more than one byte starting from the current cursor position.

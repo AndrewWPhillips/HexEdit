@@ -1479,7 +1479,7 @@ CTipsPage::~CTipsPage()
 void CTipsPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_SLIDER, ctl_slider_);
+	DDX_Control(pDX, IDC_SLIDER_TIP, ctl_slider_);
 	DDX_Control(pDX, IDC_UP, ctl_up_);
 	DDX_Control(pDX, IDC_NEW, ctl_new_);
 	DDX_Control(pDX, IDC_DOWN, ctl_down_);
@@ -1705,6 +1705,7 @@ BOOL CTipsPage::PreTranslateMessage(MSG* pMsg)
 
 static DWORD id_pairs8[] = { 
     IDC_GRID_TIP, HIDC_GRID_TIP,
+    IDC_SLIDER_TIP, HIDC_SLIDER_TIP,
     IDC_NEW, HIDC_NEW,
     IDC_DEL, HIDC_DEL,
     IDC_UP, HIDC_UP,

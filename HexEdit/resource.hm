@@ -66,7 +66,6 @@
 #define HIDC_COMPRESSION_SYNC           0x812a05ef    // IDD_COMPRESS
 #define HIDC_COMPRESSION_WINDOW_SIZE    0x812a05ed    // IDD_COMPRESS
 #define HIDC_CONTROL                    0x810c04b1    // IDD_OPT_WINDISPLAY [English (U.S.)]
-#define HIDC_COSTS                      0x80ec048b    // IDD_REG
 #define HIDC_CSRC_ADDRESS               0x811f0565    // IDD_CSRC
 #define HIDC_CSRC_CHAR                  0x811f0561    // IDD_CSRC
 #define HIDC_CSRC_FLOAT                 0x811f0564    // IDD_CSRC
@@ -361,9 +360,8 @@
 #define HIDC_REFRESH_SECS               0x80a9043f    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_REGISTER                   0x80e5047c    // IDD_EMAIL
 #define HIDC_REG_CODE                   0x80e70486    // IDD_REGISTER
-#define HIDC_REG_EMAIL                  0x80ec0485    // IDD_REG
-#define HIDC_REG_FORM                   0x80ec048c    // IDD_REG
-#define HIDC_REG_WEB                    0x80ec048a    // IDD_REG
+#define HIDC_REG_EMAIL                  0x80ec0485    // IDD_STARTUP
+#define HIDC_REG_FORM                   0x80ec048c    // IDD_STARTUP
 #define HIDC_RELATIVE                   0x809605f8    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_REMOVE                     0x80e6044e    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_REMOVE_FILES               0x810e04c8    // IDD_RECENT_FILES
@@ -391,7 +389,7 @@
 #define HIDC_SHOW_OTHER                 0x80eb041a    // IDD_OPT_SYSDISPLAY [English (U.S.)]
 #define HIDC_SIZE_FACTOR                0x811c0560    // IDD_NEW_FILE
 #define HIDC_SIZE_LENGTH                0x811c0562    // IDD_NEW_FILE
-#define HIDC_SLIDER                     0x813405f7    // IDD_OPT_TIPS [English (U.S.)]
+#define HIDC_SLIDER_TIP                 0x813405f7    // IDD_OPT_TIPS [English (U.S.)]
 #define HIDC_SOURCE_CODE                0x813005b2    // IDD_TPARSE
 #define HIDC_SUBJECT                    0x80e50435    // IDD_EMAIL
 #define HIDC_SUBTRACT                   0x80750428    // IDD_CALC
