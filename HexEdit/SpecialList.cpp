@@ -36,7 +36,8 @@ CSpecialList::CSpecialList() : m_hwnd(0), m_pthread(NULL)
 {
 	GetNTAPIFuncs();   // Make sure we have function addresses from ntdll.dll (if NT/2K/XP)
 
-    m_refresh_id = -1;  // Force rebuild
+    m_refresh_id = -1;  // Force complete rebuild ...
+    m_sleep = 5;        // but wait a few seconds on startup
 	build();
 }
 
@@ -246,6 +247,7 @@ void CSpecialList::refresh(HWND hwnd, short id /*= -1*/)
 {
 	m_hwnd = hwnd;
     m_refresh_id = id;
+    m_sleep = 0;
 
 	if (id == -1)
 	{
@@ -627,6 +629,7 @@ void CSpecialList::bg_update(int ii)
 UINT CSpecialList::background()
 {
 	TRACE("xxxx START THREAD\r\n");
+	if (m_sleep > 0) ::Sleep(m_sleep*1000);
 	CSingleLock sl(&m_mutex, TRUE);
 
 	VERIFY(sl.IsLocked());

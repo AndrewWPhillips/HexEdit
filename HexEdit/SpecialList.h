@@ -84,6 +84,7 @@ private:
     CWinThread *m_pthread;              // Background thread that fills in the details
 	HWND m_hwnd;                        // Where message is sent when background thread is finished
     short m_refresh_id;                 // Unique id of entry to update or -1 for all
+    int m_sleep;
 
 	// m_mutex protects mosts of the data members from being accessed from the main thread while they are
 	// being changed in the background thread.  Note that this does not include m_type, m_id, m_filename
