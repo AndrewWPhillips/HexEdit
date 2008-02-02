@@ -2869,6 +2869,8 @@
     <param name="Name" value="privacy">
     <param name="Name" value="Registration Dialog">
     <param name="Local" value="dlg_other\HIDD_REG_HELP.htm">
+    <param name="Name" value="Clear Histories Dialog">
+    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="large files">
@@ -3072,6 +3074,8 @@
     <param name="Local" value="binary_files\Encoding.htm">
     <param name="Name" value="tools">
     <param name="Local" value="overviewtools\other_tools.htm">
+    <param name="Name" value="Export Motorola dlg">
+    <param name="Local" value="dlg_file\Export_Motorola_dlg.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Intel Hex format">
@@ -3292,6 +3296,8 @@
     <param name="Local" value="menus\menu_file.htm">
     <param name="Name" value="tools">
     <param name="Local" value="overviewtools\other_tools.htm">
+    <param name="Name" value="Export Motorola dlg">
+    <param name="Local" value="dlg_file\Export_Motorola_dlg.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="importing files">
@@ -4143,6 +4149,18 @@
     <param name="Name" value="deflate algorithm">
     <param name="Name" value="Compression Settings Dialog">
     <param name="Local" value="dlg_tools\CompressionSettings.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="SVN (Subversion)">
+    <param name="Name" value="About HexEdit command">
+    <param name="Local" value="cmd_help\HID_APP_ABOUT.htm">
+    <param name="Name" value="Acknowledgements">
+    <param name="Local" value="intro\ack.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="acknowledgements">
+    <param name="Name" value="Acknowledgements">
+    <param name="Local" value="intro\ack.htm">
   </object>
 </ul>
 </html>

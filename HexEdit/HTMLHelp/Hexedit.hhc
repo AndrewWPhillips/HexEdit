@@ -702,6 +702,10 @@
         <param name="Local" value="dlg_file\Import_Motorola_dlg.htm">
       </object>
       <li><object type="text/sitemap">
+        <param name="Name" value="Export Motorola S Records Dialog">
+        <param name="Local" value="dlg_file\Export_Motorola_dlg.htm">
+      </object>
+      <li><object type="text/sitemap">
         <param name="Name" value="Import Intel Hex Records dialog">
         <param name="Local" value="dlg_file\Import_Intel_dlg.htm">
       </object>

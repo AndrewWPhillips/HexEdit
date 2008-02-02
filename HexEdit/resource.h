@@ -1386,6 +1386,15 @@
 #define ID_NAV_BACK_FIRST               34000
 #define ID_NAV_FORW_FIRST               36000
 #define ID_DFFD_OPEN_FIRST              38000
+#define ID_DFFD_OPEN_2ND                38001
+#define ID_DFFD_OPEN_3RD                38002
+#define ID_DFFD_OPEN_4TH                38003
+#define ID_DFFD_OPEN_5TH                38004
+#define ID_DFFD_OPEN_6TH                38005
+#define ID_DFFD_OPEN_7TH                38006
+#define ID_DFFD_OPEN_8TH                38007
+#define ID_DFFD_OPEN_9TH                38008
+#define ID_DFFD_OPEN_10TH               38009
 
 // Next default values for new objects
 // 

@@ -20,8 +20,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=747>
-<meta name=layout-width content=1156>
+<meta name=layout-height content=867>
+<meta name=layout-width content=1224>
 
 
 <!--(Links)=========================================================-->
@@ -42,12 +42,34 @@
 
 <p>&nbsp;</p>
 
-<p>Sometimes it is necessary to encode binary data in the form of text. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This is 
- mainly done to enable transmission over channels that cannot handle binary 
- data.</p>
+<p>Sometimes it is necessary to encode binary data in the form of text 
+ to enable transmission over channels that cannot handle 8-bit binary data. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The encoding 
+ schemes were invented for two general areas: transmitting binary data 
+ between UNIX systems over phone lines (or in general an serial link) and 
+ sending data to hardware devices during development of embedded systems.</p>
 
 <p>&nbsp;</p>
+
+<p>Although a single protocol would have sufficed a mini-plethora eventually 
+ came about, as commonly happens in software development, due to ignorance, 
+ egotism and commercial considerations.</p>
+
+<p>&nbsp;</p>
+
+<p>There were some differences which logically affected the designs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Encoding 
+ data for transmission emphasized packing the bits as efficiently as possible 
+ as long distance phone calls were timed and expensive. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ embedded systems this was less important as connections were shorter and 
+ usually not heavily costed, but they had their own requirements, for example 
+ the actual memory address the binary data is to be loaded at, is built 
+ into the encoding.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Data Transmission</p>
 
 <p>&nbsp;</p>
 
@@ -80,19 +102,27 @@
 
 <p>&nbsp;</p>
 
-<p>Similarly as email between different systems became popular, people 
- wanted to attach binary files to their email, but many systems could not 
- receive binary files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->MIME 
- was invented to handle this. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+<p>When non-UNIX systems wanted to join the party it was found that uuencoding 
+ would not always work for systems which did not support ASCII (typically 
+ IBM systems and compatibles that used EBCDIC). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are several &quot;base64&quot; encoding schemes the most common of which 
+ is used in MIME to encode binary files attached to email. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
  simply converts groups of 6 bits to a base 64 digit, which again stores 
  3 binary bytes in 4 text characters.</p>
 
 <p>&nbsp;</p>
 
-<p>Note that HexEdit does not (yet) support the import and export of uuencoded 
- and MIME files.</p>
+<p>Another similar format is BinHex, commonly used on Macintosh systems.</p>
 
 <p>&nbsp;</p>
+
+<p>Note that HexEdit does not (currently) support these formats..</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Embedded Systems</p>
 
 <p>&nbsp;</p>
 
@@ -107,13 +137,13 @@
 <p>&nbsp;</p>
 
 <p>In both of these formats several (typically 16 or 32) bytes of data 
- are each stored as 2 hex characters each in a line of text, along with 
- a checksum for the line and a few other things. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
+ are stored as a line of text. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ byte is converted to 2 hex characters and each line of text contains a 
+ memory address, a checksum etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
  these formats more than double the size of a binary file when encoded 
- as text. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However 
- this size doubling is not so important as for uuencode/MIME since there 
- are typically no costs associated with transmission apart from the extra 
- time taken.</p>
+ as text. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is not so important as there are typically no costs associated with transmission 
+ apart from the extra time taken.</p>
 
 <p>&nbsp;</p>
 
@@ -126,18 +156,19 @@
  loaded. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
  could be used, for example, to store object code in one part of the memory 
  map and data in another. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
- that HexEdit 2.6 now supports importing data at discontiguous addresses 
- (in previous versions of HexEdit addresses of data records had to be consecutive).</p>
+ that HexEdit now supports importing data at discontiguous addresses. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ also supports saving discontiguous chunks (whichever were &quot;selected&quot; 
+ using the highlighter) for Motorola S format.</p>
 
 <p>&nbsp;</p>
 
 <p>Error checking in both formats is accomplished using a checksum for 
  each line. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  Motorola S format also supports a record count as the last record, which 
- will detect if a whole line of text went missing. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
- HexEdit reads these types of files it validates all checksums (and the 
- Motorola S record count), and checks that all lines are for contiguous 
- pieces of memory.</p>
+ will detect if a whole line of text went missing. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Unlike 
+ other hex editors, HexEdit performs complete error checking when reading 
+ these types of files including all checksums, Motorola S record count, 
+ etc.</p>
 
 <p>&nbsp;</p>
 
