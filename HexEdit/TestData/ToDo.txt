@@ -357,6 +357,7 @@ Free version
     - update email dialog revision nos
 
 V3.3
+  - wait cursor for any long operation (search for EnablePaneProgressBar(0))
   - new look web site
   - new icons
   - options in dialogs that ask repetitive questions
