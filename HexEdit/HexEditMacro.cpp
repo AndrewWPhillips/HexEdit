@@ -112,7 +112,8 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
                     ;
 
-                if (msg.wParam != 'y' &&  // avoid accidental multiple presses of Y key from aborting
+                //if (msg.wParam != 'y' &&
+                if ((msg.wParam == '\x0C' || msg.wParam == ' ') && 
                     ::HMessageBox("Abort macro?", MB_YESNO) == IDYES)
                 {
                     ((CMainFrame *)AfxGetMainWnd())->StatusBarText("Macro aborted");
