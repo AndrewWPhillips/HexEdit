@@ -22,6 +22,7 @@ public:
     #define OEM_NAME "IBM/OEM default"
     #define EBCDIC_NAME "EBCDIC default"
     #define PLAIN_NAME "Black & white"
+    #define PRETTY_NAME "Rainbow"
 
     CScheme(const char *nn) : name_(nn)
     {

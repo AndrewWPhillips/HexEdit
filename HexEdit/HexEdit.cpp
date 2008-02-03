@@ -2615,12 +2615,28 @@ void CHexEditApp::LoadSchemes()
         scheme_.push_back(default_ebcdic_scheme_);
     if (ii < 4)
     {
-        // It seems that this is a new installation so add the plain mono scheme
+        // It seems that this is a new installation so add the plain and pretty schemes
         CScheme new_scheme(PLAIN_NAME);
         new_scheme.AddRange("ALL", -1, "0:255");
 		// Restore these to "Automatic" values which are mainly greys
         new_scheme.mark_col_ = new_scheme.hex_addr_col_ = new_scheme.dec_addr_col_ = -1;
         // new_scheme.can_delete_ = TRUE;
+        scheme_.push_back(new_scheme);
+
+        CScheme new_scheme(PRETTY_NAME);
+		new_scheme.AddRange("range1", RGB(255, 100, 100), "0:20");
+		new_scheme.AddRange("range2", RGB(255, 175, 100), "21:41");
+		new_scheme.AddRange("range3", RGB(255, 255, 100), "42:63");
+		new_scheme.AddRange("range4", RGB(175, 255, 100), "64:84");
+		new_scheme.AddRange("range5", RGB(100, 255, 100), "85:105");
+		new_scheme.AddRange("range6", RGB(100, 255, 175), "106:127");
+		new_scheme.AddRange("range7", RGB(100, 255, 255), "128:148");
+		new_scheme.AddRange("range8", RGB(100, 175, 255), "149:169");
+		new_scheme.AddRange("range9", RGB(100, 100, 255), "170:191");
+		new_scheme.AddRange("range10", RGB(175, 100, 255), "192:212");
+		new_scheme.AddRange("range11", RGB(255, 100, 255), "213:233");
+		new_scheme.AddRange("range11", RGB(255, 100, 175), "234:255");
+        new_scheme.AddRange("ALL", RGB(100, 100, 100), "0:255");
         scheme_.push_back(new_scheme);
     }
 }
