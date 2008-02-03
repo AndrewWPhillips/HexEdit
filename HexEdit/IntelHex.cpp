@@ -198,7 +198,7 @@ size_t CReadIntelHex::Get(void *data, size_t max, unsigned long &address)
         }
         else if (addr_ != address)
         {
-            error_.Format("ERROR: Non-contiguous address at line %ld", long(line_no_));
+            error_.Format("ERROR: Non-adjoining address at line %ld", long(line_no_));
             return 0;
         }
         addr_ += len;

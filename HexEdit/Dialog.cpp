@@ -1175,7 +1175,7 @@ void CImportDialog::OnInitDone()
     rct.InflateRect(0, 4, -rct.Width()/3, 4);   // Make 2/3 width, + make higher for 2 lines of text
     rct.OffsetRect(0, 26);
 
-    m_discon.Create(_T("Use import addresses\r\n(for discontiguous records)"),
+    m_discon.Create(_T("Use import addresses\r\n(for non-adjoining records)"),
                     WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, rct, pp, IDC_DISCON);
     m_discon.SetFont(pp->GetDlgItem(IDOK)->GetFont());
     m_discon.SetCheck(theApp.import_discon_);
@@ -1217,7 +1217,7 @@ void CExportDialog::OnInitDone()
     rct.InflateRect(0, 4, -(rct.Width()/2), 4);   // make higher for 2 lines of text and half the width
     rct.OffsetRect(0, 26);
 
-    m_discon_hl.Create(_T("Export (discontiguous)\r\nhighlighted areas only"),
+    m_discon_hl.Create(_T("Export (non-adjoining)\r\nhighlighted areas only"),
                     WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, rct, pp, IDC_DISCON);
     m_discon_hl.SetFont(pp->GetDlgItem(IDOK)->GetFont());
     m_discon_hl.SetCheck(theApp.import_discon_);
