@@ -491,10 +491,8 @@
 #define IDC_ROL                         1071
 #define IDC_BE_16BIT                    1072
 #define IDC_FILE_ACCESSED               1072
-#define IDC_CHAR_UNICODE                1072
 #define IDC_ROR                         1072
 #define IDC_BE_32BIT                    1073
-#define IDC_FILE_SIZE                   1073
 #define IDC_LSL                         1073
 #define IDC_BE_64BIT                    1074
 #define IDC_FP_VAL                      1074
@@ -589,6 +587,7 @@
 #define IDC_COLOUR                      1106
 #define IDC_ADD_SCHEME                  1107
 #define IDC_REMOVE_SCHEME               1108
+#define IDC_CHAR_UNICODE                1109
 #define IDC_FP_64BIT                    1110
 #define IDC_FP_32BIT                    1111
 #define IDC_REFRESH_PROPS               1115

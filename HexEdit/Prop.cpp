@@ -455,7 +455,6 @@ static DWORD id_pairs[] = {
     IDC_FILE_CREATED, HIDC_FILE_CREATED,
     IDC_FILE_MODIFIED, HIDC_FILE_MODIFIED,
     IDC_FILE_ACCESSED, HIDC_FILE_ACCESSED,
-    IDC_FILE_SIZE, HIDC_FILE_SIZE,
     IDC_FILE_READONLY, HIDC_FILE_READONLY,
     IDC_FILE_READONLY_DESC, HIDC_FILE_READONLY,
     IDC_FILE_HIDDEN, HIDC_FILE_HIDDEN,
@@ -553,7 +552,6 @@ CPropFilePage::CPropFilePage() : CPropUpdatePage(CPropFilePage::IDD)
         //{{AFX_DATA_INIT(CPropFilePage)
         file_name_ = _T("");
         file_path_ = _T("");
-        file_size_ = _T("");
         file_hidden_ = FALSE;
         file_readonly_ = FALSE;
         file_system_ = FALSE;
@@ -575,7 +573,6 @@ void CPropFilePage::DoDataExchange(CDataExchange* pDX)
         //{{AFX_DATA_MAP(CPropFilePage)
         DDX_Text(pDX, IDC_FILE_NAME, file_name_);
         DDX_Text(pDX, IDC_FILE_PATH, file_path_);
-        DDX_Text(pDX, IDC_FILE_SIZE, file_size_);
         DDX_Check(pDX, IDC_FILE_HIDDEN, file_hidden_);
         DDX_Check(pDX, IDC_FILE_READONLY, file_readonly_);
         DDX_Check(pDX, IDC_FILE_SYSTEM, file_system_);
@@ -593,7 +590,6 @@ void CPropFilePage::Update(CHexEditView *pv, FILE_ADDRESS address)
     file_name_ = "";
     file_path_ = "";
     file_type_ = "";
-    file_size_ = "";
     file_created_ = "";
     file_modified_ = "";
     file_accessed_ = "";
@@ -612,20 +608,6 @@ void CPropFilePage::Update(CHexEditView *pv, FILE_ADDRESS address)
 	BOOL is_device = pDoc->IsDevice();
 	if (address == -1)
 		address = pv->GetPos();
-
-	// Show file length
-    FILE_ADDRESS file_len = pDoc->length();
-    file_size_ = NumScale((double)file_len) + "bytes";
-    file_size_.TrimLeft();
-    if (file_len >= 995)
-    {
-        CString ss;
-        char buf[24];                    // temp buf where we sprintf
-        sprintf(buf, "%I64d", __int64(pDoc->length()));
-        ss = buf;
-        AddCommas(ss);
-        file_size_ += " (" + ss + ")";
-    }
 
 	// hide windows (controls) that are not used for device
 	GetDlgItem(IDC_FILE_HIDDEN)  ->ShowWindow(is_device ? SW_HIDE : SW_SHOW);

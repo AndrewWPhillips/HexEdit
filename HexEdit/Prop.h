@@ -160,7 +160,6 @@ public:
 	enum { IDD = IDD_PROP_FILE };
 	CString	file_name_;
 	CString	file_path_;
-	CString	file_size_;
 	int		file_hidden_;
 	int		file_readonly_;
 	int		file_system_;

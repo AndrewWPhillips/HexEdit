@@ -503,7 +503,7 @@ Select this option to view the 64 bit (8 byte) IBM floating-point number.
 Select this option to view the 64 bit (8 byte) IEEE floating-point number.  This is usually a "double" in the C/C++ language.
 
 .topic HIDC_FP_MANT
-The mantissa of the IEEE floating-point number.
+The mantissa of the floating-point number.
 
 .topic HIDC_INFO_CATEGORY
 You can enter anything here.  This field may be useful for grouping like files so they can be seen together in the Recent Files dialog.
@@ -917,7 +917,7 @@ Type the hex bytes you want to search for or select a previous search from the l
 The value of the IBM floating-point number.
 
 .topic HIDC_FP_EXP
-The exponent of the IEEE floating-point number.  Note that this is a power of 2 not 10.
+The exponent of the floating-point number.  For IEEE formats this is a power of 2, for IBM formats this is a power of 16 and for C# Decimal type it is a power of 10..
 
 .topic HIDC_DEC_64BIT
 The decimal value of the quad-word at the current cursor position (the 8 bytes following the cursor).
@@ -1048,6 +1048,9 @@ The Validate All button removes any invalid bookmarks - that is, any bookmark fo
 .topic HIDC_FOLDER_FORW
 Return to the folder you were in when you last used the previous folder button.
 
+.topic HIDC_MULTIBYTE_HOLDER
+Displays the charcaters associated with the byte(s) after the cursor.  Depending on the code page selected (to the right) and the data bytes values this could one or many bytes.
+
 .topic HIDC_REG_WEB
 Click this button to connect to the HexEdit web site to register and pay on-line.  If your web browser supports it, credit card details are encrypted and sent securely, otherwise you must use one of the alternative methods of payment.
 
@@ -1094,7 +1097,7 @@ Used to determine the direction of the search.
 When the above Bookmark All is used, the name of each bookmark created uses this prefix followed by a unique number.
 
 .topic HIDC_FP_VAL
-The value of the IEEE floating-point number.
+The value of the number.
 
 .topic HIDC_DEC_1COMP
 Select this option to view the decimal values as signed (1's complement format) numbers.
