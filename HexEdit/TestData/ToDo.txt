@@ -358,6 +358,9 @@ Free version
 
 V3.3
   - wait cursor for any long operation (search for EnablePaneProgressBar(0))
+  - icon not shown for 2nd and subsequent windows
+    - need to call show_icon() after opening a new window
+   font size in format toolbar flashes under Vista
   - new look web site
   - new icons
   - options in dialogs that ask repetitive questions

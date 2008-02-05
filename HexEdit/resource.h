@@ -450,8 +450,6 @@
 #define IDC_FILE_TYPE                   1050
 #define IDC_SHELLOPEN                   1050
 #define IDC_MARK_STORE                  1050
-#define IDC_SHOW_OTHER                  1050
-#define IDC_INFO_KEYWORDS               1050
 #define IDC_OPEN_INSERT                 1051
 #define IDC_MARK_CLEAR                  1051
 #define IDC_CLEAR_HIST                  1051
@@ -465,8 +463,12 @@
 #define IDC_MARK_AT_STORE               1054
 #define IDC_OPEN_OEM                    1055
 #define IDC_SEL_STORE                   1055
+#define IDC_DEC_64BIT                   1056
 #define IDC_SEL_AT_STORE                1056
 #define IDC_SEL_LEN_STORE               1057
+#define IDC_DEC_32BIT                   1057
+#define IDC_DEC_16BIT                   1058
+#define IDC_DEC_8BIT                    1059
 #define IDC_POW                         1060
 #define IDC_MOD                         1061
 #define IDC_DIVIDE                      1062
@@ -476,17 +478,12 @@
 #define IDC_CHAR_HEX                    1066
 #define IDC_GTR                         1066
 #define IDC_CHAR_DEC                    1067
-#define IDC_DEC_8BIT                    1067
 #define IDC_LESS                        1067
 #define IDC_CHAR_OCTAL                  1068
-#define IDC_DEC_16BIT                   1068
 #define IDC_XOR                         1068
-#define IDC_CHAR_BINARY                 1069
-#define IDC_DEC_32BIT                   1069
 #define IDC_FILE_PATH                   1069
 #define IDC_OR                          1069
 #define IDC_CHAR_ASCII                  1070
-#define IDC_DEC_64BIT                   1070
 #define IDC_AND                         1070
 #define IDC_CHAR_EBCDIC                 1071
 #define IDC_BE_8BIT                     1071
@@ -499,16 +496,12 @@
 #define IDC_BE_32BIT                    1073
 #define IDC_FILE_SIZE                   1073
 #define IDC_LSL                         1073
-#define IDC_PLACE_HOLDER                1073
 #define IDC_BE_64BIT                    1074
 #define IDC_FP_VAL                      1074
 #define IDC_LSR                         1074
-#define IDC_INFO_VIEW_TIME              1074
 #define IDC_FP_MANT                     1075
 #define IDC_ASR                         1075
-#define IDC_INFO_EDIT_TIME              1075
 #define IDC_FP_EXP                      1076
-#define IDC_INFO_DISK_SIZE              1076
 #define IDC_SUBJECT                     1077
 #define IDC_PRINT_HEADER                1077
 #define IDC_FILE_READONLY               1078
@@ -553,9 +546,6 @@
 #define IDC_OTHER                       1088
 #define IDC_UNARY_LSL                   1088
 #define IDC_SITE                        1088
-#define IDC_PRINT_SPACE2                1088
-#define IDC_DFFD_SPLIT2                 1088
-#define IDC_DFFD_NONE                   1088
 #define IDC_CHAR                        1089
 #define IDC_UNARY_LSR                   1089
 #define IDC_AUTOFIT                     1090
@@ -1040,6 +1030,15 @@
 #define IDC_FIND_OFFSET                 1536
 #define IDC_GRID_FILTERS                1537
 #define IDC_GRID_TIP                    1538
+#define IDC_INFO_KEYWORDS               1539
+#define IDC_CHAR_BINARY                 1540
+#define IDC_PLACE_HOLDER                1541
+#define IDC_INFO_VIEW_TIME              1542
+#define IDC_INFO_EDIT_TIME              1543
+#define IDC_INFO_DISK_SIZE              1544
+#define IDC_DFFD_NONE                   1545
+#define IDC_PRINT_SPACE2                1546
+#define IDC_SHOW_OTHER                  1547
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1403,7 +1402,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        377
 #define _APS_NEXT_COMMAND_VALUE         39002
-#define _APS_NEXT_CONTROL_VALUE         1539
+#define _APS_NEXT_CONTROL_VALUE         1549
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
