@@ -98,6 +98,7 @@ void CHexFileList::SetDefaults()
     SetDV(COLUMNS, theApp.open_rowsize_);
     SetDV(GROUPING, theApp.open_group_by_);
     SetDV(OFFSET, theApp.open_offset_);
+    SetDV(VERT_BUFFER_ZONE, theApp.open_vertbuffer_);
 
     ASSERT(theApp.open_disp_state_ != -1);    // Ensures we have read default values
     SetDV(DISPLAY, theApp.open_disp_state_);

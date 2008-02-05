@@ -2386,6 +2386,7 @@ void CWindowPage::OnSaveDefault()
     theApp.open_rowsize_ = cols_;
     theApp.open_group_by_ = grouping_;
     theApp.open_offset_ = offset_;
+	theApp.open_vertbuffer_ = vertbuffer_;
 
     if (theApp.open_plf_ == NULL)
         theApp.open_plf_ = new LOGFONT;
@@ -2406,6 +2407,7 @@ void CWindowPage::OnDispReset()
     cols_ = theApp.open_rowsize_;
     grouping_ = theApp.open_group_by_;
     offset_ = theApp.open_offset_;
+	vertbuffer_ = theApp.open_vertbuffer_;
 
     if (theApp.open_plf_ != NULL)
         lf_ = *theApp.open_plf_;
@@ -2460,6 +2462,7 @@ void CWindowPage::OnAutofit()
 
 void CWindowPage::OnChangeTracking() 
 {
+	UpdateData();
     // This will cause change_tracking_ to be set to 0 or 1 in DoDataExchange
     display_.hide_replace = display_.hide_insert = display_.hide_delete = change_tracking_;
     UpdateData(FALSE);

@@ -2125,7 +2125,7 @@ void CHexEditApp::LoadOptions()
 	else if (open_display_.char_set > 4)
 		open_display_.char_set = CHARSET_EBCDIC;      // EBCDIC: 4/5/6/7 -> 4
 
-    CString strFont = GetProfileString("Options", "OpenFont");      // Font info string (fields are comma sep.)
+    CString strFont = GetProfileString("Options", "OpenFont", "Courier,16"); // Font info string (fields are comma sep.)
     CString strFace;                                            // Font FaceName from string
     CString strHeight;                                          // Font height as string
     AfxExtractSubString(strFace, strFont, 0, ',');
@@ -2144,7 +2144,7 @@ void CHexEditApp::LoadOptions()
     else
         open_plf_ = NULL;
 
-    strFont = GetProfileString("Options", "OpenOemFont");     // Font info for oem font
+    strFont = GetProfileString("Options", "OpenOemFont", "Terminal,18");     // Font info for oem font
     AfxExtractSubString(strFace, strFont, 0, ',');
     AfxExtractSubString(strHeight, strFont, 1, ',');
     if (!strFace.IsEmpty())
@@ -2168,6 +2168,8 @@ void CHexEditApp::LoadOptions()
     if (open_group_by_ < 2) open_group_by_ = 2;
     open_offset_ = GetProfileInt("Options", "OpenOffset", 0);
     if (open_offset_ < 0 || open_offset_ >= open_rowsize_) open_offset_ = 0;
+    open_vertbuffer_ = GetProfileInt("Options", "OpenScrollZone", 0);
+    if (open_vertbuffer_ < 0) open_vertbuffer_ = 0;
 
     open_keep_times_ = GetProfileInt("Options", "OpenKeepTimes", 0) ? TRUE : FALSE;
 
@@ -2438,6 +2440,7 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "OpenColumns", open_rowsize_);
     WriteProfileInt("Options", "OpenGrouping", open_group_by_);
     WriteProfileInt("Options", "OpenOffset", open_offset_);
+    WriteProfileInt("Options", "OpenScrollZone", open_vertbuffer_);
 
     // Encryption password options
     WriteProfileInt("Options", "PasswordMask", password_mask_ ? 1 : 0);
@@ -2623,21 +2626,21 @@ void CHexEditApp::LoadSchemes()
         // new_scheme.can_delete_ = TRUE;
         scheme_.push_back(new_scheme);
 
-        CScheme new_scheme(PRETTY_NAME);
-		new_scheme.AddRange("range1", RGB(255, 100, 100), "0:20");
-		new_scheme.AddRange("range2", RGB(255, 175, 100), "21:41");
-		new_scheme.AddRange("range3", RGB(255, 255, 100), "42:63");
-		new_scheme.AddRange("range4", RGB(175, 255, 100), "64:84");
-		new_scheme.AddRange("range5", RGB(100, 255, 100), "85:105");
-		new_scheme.AddRange("range6", RGB(100, 255, 175), "106:127");
-		new_scheme.AddRange("range7", RGB(100, 255, 255), "128:148");
-		new_scheme.AddRange("range8", RGB(100, 175, 255), "149:169");
-		new_scheme.AddRange("range9", RGB(100, 100, 255), "170:191");
-		new_scheme.AddRange("range10", RGB(175, 100, 255), "192:212");
-		new_scheme.AddRange("range11", RGB(255, 100, 255), "213:233");
-		new_scheme.AddRange("range11", RGB(255, 100, 175), "234:255");
-        new_scheme.AddRange("ALL", RGB(100, 100, 100), "0:255");
-        scheme_.push_back(new_scheme);
+        CScheme new_scheme2(PRETTY_NAME);
+		new_scheme2.AddRange("range1", RGB(200, 0, 0), "0:20");
+		new_scheme2.AddRange("range2", RGB(200, 100, 0), "21:41");
+		new_scheme2.AddRange("range3", RGB(200, 200, 0), "42:63");
+		new_scheme2.AddRange("range4", RGB(100, 200, 0), "64:84");
+		new_scheme2.AddRange("range5", RGB(0, 200, 0), "85:105");
+		new_scheme2.AddRange("range6", RGB(0, 200, 100), "106:127");
+		new_scheme2.AddRange("range7", RGB(0, 200, 200), "128:148");
+		new_scheme2.AddRange("range8", RGB(0, 100, 200), "149:169");
+		new_scheme2.AddRange("range9", RGB(0, 0, 200), "170:191");
+		new_scheme2.AddRange("range10", RGB(100, 0, 200), "192:212");
+		new_scheme2.AddRange("range11", RGB(200, 0, 200), "213:233");
+		new_scheme2.AddRange("range12", RGB(200, 0, 100), "234:255");
+        new_scheme2.AddRange("ALL", RGB(100, 100, 100), "0:255");
+        scheme_.push_back(new_scheme2);
     }
 }
 

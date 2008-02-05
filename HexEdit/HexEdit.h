@@ -661,6 +661,7 @@ public:
     int open_rowsize_;                  // Default number of display columns
     int open_group_by_;                 // Default column grouping
     int open_offset_;                   // Display offset on open
+	int open_vertbuffer_;
 
 	BOOL open_keep_times_;              // Default to keeping file times?
 
