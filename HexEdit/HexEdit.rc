@@ -1393,9 +1393,6 @@ BEGIN
     RTEXT           "Location:",IDC_STATIC,0,22,31,8
     EDITTEXT        IDC_FILE_PATH,33,20,140,12,ES_AUTOHSCROLL | ES_READONLY,
                     0,HIDC_FILE_PATH
-    RTEXT           "Size:",IDC_STATIC,0,69,31,8,NOT WS_VISIBLE
-    EDITTEXT        IDC_FILE_SIZE,33,67,140,12,ES_AUTOHSCROLL | ES_READONLY | 
-                    NOT WS_VISIBLE,0,HIDC_FILE_SIZE
     RTEXT           "Created:",IDC_FILE_CREATED_DESC,0,36,31,8
     EDITTEXT        IDC_FILE_CREATED,33,34,140,12,ES_AUTOHSCROLL | 
                     ES_READONLY,0,HIDC_FILE_CREATED
@@ -2207,8 +2204,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,20,0,130
- PRODUCTVERSION 3,20,0,130
+ FILEVERSION 3,20,4,130
+ PRODUCTVERSION 3,20,4,130
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2225,12 +2222,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "3, 20, 0, 130"
+            VALUE "FileVersion", "3, 20, 4, 130"
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2008  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "3, 20, 0, 130"
+            VALUE "ProductVersion", "3, 20, 4, 130"
         END
     END
     BLOCK "VarFileInfo"
