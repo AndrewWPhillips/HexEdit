@@ -16,7 +16,7 @@
 
     <Directory Id='TARGETDIR' Name='SourceDir'>
       <Directory Id='ProgramFilesFolder'>
-        <Directory Id='INSTALLDIR' Name='HexEdit' LongName='HexEdit'>
+        <Directory Id='INSTALLDIR' Name='HexEdit'>
           <Component Id='MainProgram' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7339'>
             <File Id='HexEditId' Name='HexEdit.exe' DiskId='1' src='..\Release\HexEdit.exe' Vital='yes'/>
           </Component>
