@@ -2931,7 +2931,7 @@ void CHexEditApp::set_general()
         {
 			// Create the registry entries that allow "Open with HexEdit" on shortcut menus
 			CString s1("Open with HexEdit");
-			CString s2 = GetExePath() + "\"HexEdit.exe\"  \"%1\"";
+			CString s2 = "\"" + GetExePath() + "HexEdit.exe\"  \"%1\"";
             RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY, REG_SZ, s1, s1.GetLength());
             RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, REG_SZ, s2, s2.GetLength());
         }
