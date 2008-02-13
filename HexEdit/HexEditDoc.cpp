@@ -1104,7 +1104,9 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
             mess += "\r- too many files already open";
             break;
         case CFileException::accessDenied:
-            if (!CFile::GetStatus(lpszPathName, fs))
+			if (is_device)
+                mess += "\r- you need to run as administrator to access devices";
+            else if (!CFile::GetStatus(lpszPathName, fs))
                 mess += "\rdoes not exist";
             else
             {
