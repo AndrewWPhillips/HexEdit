@@ -277,9 +277,7 @@ void CSpecialList::refresh(HWND hwnd, short id /*= -1*/)
 	{
 	    // Start background process to update the entry
         ASSERT(m_pthread == NULL);
-		TRACE("xxxx CREATE THREAD\r\n");
         m_pthread = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_NORMAL);
-		TRACE("xxxx CREATED THREAD %p\r\n", m_pthread);
         ASSERT(m_pthread != NULL);
 	}
 }
@@ -419,9 +417,7 @@ void CSpecialList::build()
 
 	// Start background process to fill in details
     ASSERT(m_pthread == NULL);
-	TRACE("xxxx CREATE THREAD\r\n");
     m_pthread = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_NORMAL);
-	TRACE("xxxx CREATED THREAD %p\r\n", m_pthread);
     ASSERT(m_pthread != NULL);
 }
 
@@ -628,7 +624,7 @@ void CSpecialList::bg_update(int ii)
 // This member function is called in the background thread
 UINT CSpecialList::background()
 {
-	TRACE("xxxx START THREAD\r\n");
+	//TRACE("--- START THREAD\r\n");
 	if (m_sleep > 0) ::Sleep(m_sleep*1000);
 	CSingleLock sl(&m_mutex, TRUE);
 
@@ -672,7 +668,7 @@ UINT CSpecialList::background()
             ::PostMessage(m_hwnd, WM_USER + 2, 0, 0);
     }
 
-	TRACE("xxxx END THREAD %p\r\n", m_pthread);
+	//TRACE("--- END THREAD %p\r\n", m_pthread);
     m_pthread = NULL;
     sl.Unlock();
 

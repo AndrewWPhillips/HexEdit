@@ -3759,7 +3759,7 @@ BEGIN
     CTEXT           "Thankyou for trying HexEdit.",IDC_STATIC,7,7,228,8
     CTEXT           "Expires in 77 days.",IDC_TEXT,7,23,228,16,NOT WS_GROUP
     ICON            IDR_MAINFRAME,IDC_STATIC,7,7,20,20
-    LTEXT           "Once you have registered you won't see this message anymore.  You will also be entitled to the next release for free and upgrades to the lastest version ($15) for 2 years.\n\nA single user license costs $40 (US).\n\nTo register now click the link below.",
+    LTEXT           "Once you have registered you won't see this message anymore.  You will also be entitled to the next release for free and upgrades to the latest version ($15) for 2 years.\n\nA single user license costs $40 (US).\n\nTo register now click the link below.",
                     IDC_STATIC,7,41,228,64,NOT WS_GROUP
     DEFPUSHBUTTON   "registration web site",IDC_BUTTON_URL,7,107,228,14,
                     WS_GROUP
