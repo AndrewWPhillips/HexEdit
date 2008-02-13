@@ -7945,7 +7945,7 @@ void CHexEditView::do_hex_text(CString file_name)
                     while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
                         ;
 
-                    if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
                         ::HMessageBox("Abort hex import?", MB_YESNO) == IDYES)
                     {
 						fout.Close();
@@ -8202,7 +8202,7 @@ void CHexEditView::OnExportHexText()
             while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
                 ;
 
-            if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+            if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
                 ::HMessageBox("Abort exporting as hex?", MB_YESNO) == IDYES)
             {
 				theApp.mac_error_ = 10;
@@ -12423,7 +12423,7 @@ void CHexEditView::OnEditCompare()
                 while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
                     ;
 
-                if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+                if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
                     ::HMessageBox("Abort comparison?", MB_YESNO) == IDYES)
                 {
                     delete[] orig_buf;
@@ -12898,7 +12898,7 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 
 					CString mess;
 					mess.Format("Abort %s?", desc);
-                    if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
                         ::HMessageBox(mess, MB_YESNO) == IDYES)
                     {
 						ff.Close();
@@ -13138,7 +13138,7 @@ void CHexEditView::OnEncrypt()
 						while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
 							;
 
-						if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+						if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
 							::HMessageBox("Abort encryption?", MB_YESNO) == IDYES)
 						{
 							ff.Close();
@@ -13476,7 +13476,7 @@ void CHexEditView::OnDecrypt()
 						while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
 							;
 
-						if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+						if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
 							::HMessageBox("Abort decryption?", MB_YESNO) == IDYES)
 						{
 							ff.Close();
@@ -13839,7 +13839,7 @@ void CHexEditView::OnCompress()
                     while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
                         ;
 
-                    if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
                         ::HMessageBox("Abort compression?", MB_YESNO) == IDYES)
                     {
 						ff.Close();
@@ -14167,7 +14167,7 @@ void CHexEditView::OnDecompress()
                     while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
                         ;
 
-					if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+					if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
 						::HMessageBox("Abort decompression?", MB_YESNO) == IDYES)
                     {
 						ff.Close();
@@ -14561,7 +14561,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
             while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
                 ;
 
-            if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+            if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
                 ::HMessageBox("Abort calculation?", MB_YESNO) == IDYES)
             {
 				theApp.mac_error_ = 10;
@@ -14692,7 +14692,7 @@ void CHexEditView::OnMd5()
             while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
                 ;
 
-            if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+            if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
                 ::HMessageBox("Abort MD5 calculation?", MB_YESNO) == IDYES)
             {
 				theApp.mac_error_ = 10;
@@ -15023,7 +15023,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 
 					CString mess;
 					mess.Format("Abort %s operation?", desc);
-                    if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
                         ::HMessageBox(mess, MB_YESNO) == IDYES)
                     {
 						ff.Close();
@@ -15730,7 +15730,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 
 					CString mess;
 					mess.Format("Abort %s operation?", desc);
-                    if ((msg.wParam == '\x0C' || msg.wParam == ' ') && // Escape or space bar
+                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
                         ::HMessageBox(mess, MB_YESNO) == IDYES)
                     {
 						ff.Close();
@@ -15913,7 +15913,7 @@ void CHexEditView::OnFlip64bit()
 
 void CHexEditView::OnInvert() 
 {
-    ::OnOperateUnary<char>(this, unary_not, "invert bits of bytes", char(0));
+    ::OnOperateUnary<char>(this, unary_not, "invert bits", char(0));
 }
 
 void CHexEditView::OnNegByte() 

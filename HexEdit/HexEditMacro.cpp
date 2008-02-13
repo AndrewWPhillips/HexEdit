@@ -113,7 +113,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                     ;
 
                 //if (msg.wParam != 'y' &&
-                if ((msg.wParam == '\x0C' || msg.wParam == ' ') && 
+                if ((msg.wParam == '\x1B' || msg.wParam == ' ') && 
                     ::HMessageBox("Abort macro?", MB_YESNO) == IDYES)
                 {
                     ((CMainFrame *)AfxGetMainWnd())->StatusBarText("Macro aborted");
