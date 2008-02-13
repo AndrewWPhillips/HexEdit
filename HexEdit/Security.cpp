@@ -6,12 +6,13 @@
 // A. Mystery info is stored in 2 places
 //   1. In registry under .BMP
 //   2. In a file
-//      OLD: HexEdit.IND in Windows directory
-//      NEW: $NTf-{X}.LOG in temp directory
+//      3.1: HexEdit.IND in Windows directory
+//      3.2: $NTf-{X}.LOG in temp directory
 // B. Registration info is stores in 2 places:
 //   1. In registry under HKLM
 //      OLD: HKLM\Software\ECSoftware\Data
-//      NEW: HKLM\Software\ECSoftware\HexEdit\Global
+//      3.1: HKLM\Software\ECSoftware\HexEdit\Global
+//      3.2: HKCU\Software\ECSoftware\HexEdit\Global
 //   2. In a file:
 //      OLD: HexEdit.CFD in HexEdit binary directory
 //      NEW: in background file in users app data area
@@ -134,11 +135,12 @@ void CHexEditApp::AddSecurity(const char *name)
     ASSERT(sizeof(security_info) == 64);
 
     // Get security info from registry and decrypt
-    HKEY hkey, hkey2;
+    HKEY hkey, hkey2, hkey3;
 
     // Open (or create if not there) the place to store the info
     if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS ||
-		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS)
+		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS ||
+		::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
         return;
 
     // Create the info
@@ -170,7 +172,8 @@ void CHexEditApp::AddSecurity(const char *name)
         // Try to read current record
         DWORD reg_type;                     // The returned registry entry type
         DWORD reg_size = sizeof(security_info);
-        if (::RegQueryValueEx(hkey2, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) ||
+        if (::RegQueryValueEx(hkey3, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) ||
+			::RegQueryValueEx(hkey2, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) ||
 			::RegQueryValueEx(hkey, "Data", NULL, &reg_type, (BYTE *)&security_info, &reg_size) ||
             GetSecurityFile())
 		{
@@ -216,12 +219,13 @@ void CHexEditApp::AddSecurity(const char *name)
     set_key(STANDARD_KEY, 8);
     encrypt(&security_info, sizeof(security_info));
     set_key(DUMMY_KEY, 8);
-    ::RegSetValueEx(hkey2, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
+    ::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
 
     // Erase the data so it can't be searched for in memory
     memset(&security_info, '\0', sizeof(security_info));
     ::RegCloseKey(hkey);
     ::RegCloseKey(hkey2);
+    ::RegCloseKey(hkey3);
 
 	// Encrypt this now (later decrypted again in CheckSecurityActivated)
     ASSERT(strlen(REG_RECV_KEY) == 8);
@@ -485,18 +489,20 @@ int CHexEditApp::GetSecurity()
     security_type_ = 0;
 
     // Get security info from registry and decrypt
-    HKEY hkey, hkey2;
+    HKEY hkey, hkey2, hkey3;
 
     // Open (or create if not there) the place to store the info
     if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS ||
-		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS)
+		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS ||
+		::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
         return 0;     // return error if one or both could not be opened
 
     // Try getting security info from the registry.  If that fails try security file.
     // If that fails give up and just create the data (unregistered).
     DWORD reg_type;                     // The returned registry entry type
     DWORD reg_size = sizeof(security_info);
-    if (::RegQueryValueEx(hkey2, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS &&
+    if (::RegQueryValueEx(hkey3, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS &&
+		::RegQueryValueEx(hkey2, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS &&
 		::RegQueryValueEx(hkey, "Data", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS)
     {
         // Not found in (old or new) registry entry so check for security file
@@ -520,11 +526,12 @@ int CHexEditApp::GetSecurity()
             encrypt(&security_info, sizeof(security_info));
 		    // set_key(DUMMY_KEY, 8);
         }
-        ::RegSetValueEx(hkey2, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
+        ::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
 
         // at this point security_info is left encrypted with STANDARD_KEY
     }
     ::RegCloseKey(hkey);
+    ::RegCloseKey(hkey2);
 
     // Decrypt the security info and check it's OK
     set_key(STANDARD_KEY, 8);
@@ -705,7 +712,7 @@ int CHexEditApp::GetSecurity()
         SaveSecurityFile();
         set_key(STANDARD_KEY, 8);
         encrypt(&security_info, sizeof(security_info));
-        ::RegSetValueEx(hkey2, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
+        ::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
         set_key(DUMMY_KEY, 8);
     }
 	else if (::GetDataPath(filename) && !ff.FindFile(filename + FILENAME_BACKGROUND))
@@ -713,7 +720,7 @@ int CHexEditApp::GetSecurity()
 
     // Erase the data so it can't be searched for in memory
     memset(&security_info, '\0', sizeof(security_info));
-    ::RegCloseKey(hkey2);
+    ::RegCloseKey(hkey3);
     return sec_type;
 } // GetSecurity
 
@@ -1047,7 +1054,12 @@ void CHexEditApp::GetMystery()
         else if (file_found == 1)  // Use the info already read from the file
         {
 			// Save it to reg entry (which we know is not present)
-            ::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info));
+            if (::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info)) != ERROR_SUCCESS)
+			{
+				AfxMessageBox("Please run HexEdit the first time as administrator");
+			    CWinApp::OnAppExit();
+				return;
+			}
 
 #if 0 // this is already done in GetMysteryFile above
             set_key(STANDARD_KEY, 8);
@@ -1067,7 +1079,12 @@ void CHexEditApp::GetMystery()
             fclose(ff);
 
 			// Save info to registry
-            ::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info));
+            if (::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info)) != ERROR_SUCCESS)
+			{
+				AfxMessageBox("Please run HexEdit the first time as administrator");
+			    CWinApp::OnAppExit();
+				return;
+			}
 
             set_key(STANDARD_KEY, 8);
             decrypt(&myst_info, sizeof(myst_info));
@@ -1095,6 +1112,13 @@ void CHexEditApp::GetMystery()
             set_key(STANDARD_KEY, 8);
             encrypt(&myst_info, sizeof(myst_info));
 
+            if (::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info)) != ERROR_SUCCESS)
+			{
+				AfxMessageBox("Please run HexEdit the first time as administrator");
+			    CWinApp::OnAppExit();
+				return;
+			}
+
             // Write to backup file
 			ASSERT(file_found == 0);  // fullname should refer to a non-existent file name
             if ((ff = fopen(fullname, "wb")) != NULL)
@@ -1112,7 +1136,6 @@ void CHexEditApp::GetMystery()
 				}
             }
 
-            ::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info));
         }
 
         // At this point myst_info should be correct but encypted with STANDARD_KEY
@@ -1259,16 +1282,16 @@ void CHexEditApp::CheckSecurityActivated()
         ASSERT(sizeof(security_info) == 64);
 
         // Get security info from registry and decrypt
-        HKEY hkey2;
+        HKEY hkey3;
 
         // Open (or create if not there) the place to store the info
-        if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS)
+        if (::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
             return;
 
         // Try getting security info from the registry.
         DWORD reg_type;                     // The returned registry entry type
         DWORD reg_size = sizeof(security_info);
-        if (::RegQueryValueEx(hkey2, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS)
+        if (::RegQueryValueEx(hkey3, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS)
         {
             return;
         }
@@ -1286,11 +1309,11 @@ void CHexEditApp::CheckSecurityActivated()
         security_info.crc = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2);
         encrypt(&security_info, sizeof(security_info));
         set_key(DUMMY_KEY, 8);
-        ::RegSetValueEx(hkey2, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
+        ::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
 
         // Erase the data so it can't be searched for in memory
         memset(&security_info, '\0', sizeof(security_info));
-        ::RegCloseKey(hkey2);
+        ::RegCloseKey(hkey3);
     }
     set_key(REG_RECV_KEY, 8);
     encrypt(&send_info, sizeof(send_info));
