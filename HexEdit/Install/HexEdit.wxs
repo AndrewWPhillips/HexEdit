@@ -257,7 +257,7 @@
         </Registry>
         <Registry Id='HexEditOpenCommand' Root='HKCR' Key='*\Shell\HexEdit\command'
                   Action='write' Type='string'>
-          <RegistryValue>[INSTALLDIR]HexEdit.exe %1</RegistryValue>
+          <RegistryValue>"[INSTALLDIR]HexEdit.exe" "%1"</RegistryValue>
         </Registry>
         <Condition>ADDTOEXPLORER = "1"</Condition>
       </Component>

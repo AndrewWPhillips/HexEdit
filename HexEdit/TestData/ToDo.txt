@@ -4,8 +4,7 @@
  > update range and default value for ver_ (RegisterDlg.cpp)
  > update X.Y version number, and add to email dlg drop list
  > change version number and copyright year in readme.txt, order.txt
- x Add encrypted list of existing users & rebuild
- - update help for new features, what's new, installation, order form etc
+ > update help for new features, what's new, installation, order form etc
  - add new tips of the day
  > create new release notes
  > create new bitmap for install
