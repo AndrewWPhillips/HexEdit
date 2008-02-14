@@ -1097,9 +1097,6 @@
 				RelativePath=".\TestData\email3.txt">
 			</File>
 			<File
-				RelativePath=".\Hexedit.cfd">
-			</File>
-			<File
 				RelativePath=".\HexEdit.tip">
 			</File>
 			<File
@@ -1112,10 +1109,10 @@
 				RelativePath=".\Install\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\Install\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

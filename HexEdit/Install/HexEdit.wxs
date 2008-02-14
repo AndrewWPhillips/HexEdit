@@ -87,9 +87,6 @@
             <File Id='ParserWinTypes' Name='wintypes.xml' LongName='_windows_types.XML' DiskId='1' src='..\TestData\_windows_types.XML' />
             <File Id='ParserWinConst' Name='winconst.txt' LongName='_windows_constants.txt' DiskId='1' src='..\TestData\_windows_constants.txt' />
           </Component>
-          <Component Id='CFD' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7012'>
-            <File Id='CFDFile' Name='HexEdit.cfd' DiskId='1' src='..\HexEdit.cfd' />
-          </Component>
           <Component Id='ToolbarImages' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7013'>
             <File Id='DefaultToolbarImagesFile' Name='DefTbIm.BMP' LongName='DefaultToolbarImages.BMP' DiskId='1' src='..\DefaultToolbarImages.BMP' />
           </Component>
@@ -288,7 +285,6 @@
         <ComponentRef Id='AboutBoxImage' />
         <ComponentRef Id='TemplateSupport' />
         <ComponentRef Id='DemoMacro' />
-        <ComponentRef Id='CFD' />
         <ComponentRef Id='TipHelp' />
         <ComponentRef Id='ReleaseNotes' />
         <ComponentRef Id='OrderingInfo' />
