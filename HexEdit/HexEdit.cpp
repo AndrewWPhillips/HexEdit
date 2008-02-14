@@ -216,6 +216,8 @@ CHexEditApp::CHexEditApp() : CBCGWorkspace(TRUE), default_scheme_(""),
                              default_ascii_scheme_(ASCII_NAME), default_ansi_scheme_(ANSI_NAME),
                              default_oem_scheme_(OEM_NAME), default_ebcdic_scheme_(EBCDIC_NAME)
 {
+    security_rand_ = 0;
+
     // Add a memory allocation hook for debugging purposes
     // (Does nothing in release version.)
     _CrtSetAllocHook(&alloc_hook);
@@ -236,7 +238,7 @@ CHexEditApp::CHexEditApp() : CBCGWorkspace(TRUE), default_scheme_(""),
     mac_.reserve(128);
 #endif
     security_type_ = -1;                // Init so we can detect if code has been bypassed
-    security_rand_ = 0;
+	myst_just_init_ = 0;
 
     open_disp_state_ = -1;
 
@@ -356,11 +358,6 @@ BOOL CHexEditApp::InitInstance()
         // Seed the random number generators
         unsigned int seed = ::GetTickCount();
         srand(seed);                    // Seed compiler PRNG (simple one)
-
-#ifndef NO_SECURITY
-		// This must be done after getting version info since theApp.version_ is written to file
-        GetMystery();                   // Get mystery info for later security checks
-#endif
         rand_good_seed(seed);           // Seed our own PRNG
 
         // Getting OS version info
@@ -369,11 +366,16 @@ BOOL CHexEditApp::InitInstance()
         GetVersionEx(&osvi);
         is_nt_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT;
         is_xp_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 5 && osvi.dwMinorVersion >= 1;
+        is_vista_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 6;
 
         //win95_ = !(osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 4) &&   // NT4 and later
         //         !(osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && osvi.dwMajorVersion == 4 && osvi.dwMinorVersion >= 10);  // Win98 + later
         win95_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && osvi.dwMajorVersion <= 4 && osvi.dwMinorVersion < 10;
 
+#ifndef NO_SECURITY
+		// This must be done after getting version info since theApp.version_ is written to file
+        GetMystery();                   // Get mystery info for later security checks
+#endif
         // Determine if multiple monitor supported (Win 98 or NT >= 5.0)
         // Note that Windows 95 is 4.00 and Windows 98 is 4.10
         mult_monitor_ = 
@@ -3594,14 +3596,20 @@ void CHexEditApp::OnAppAbout()
 
 void CCommandLineParser::ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast)
 {
+	
     if (non_std)
     {
-        if (bFlag)
+        if (bFlag && CString("clean").CompareNoCase(pszParam) == 0)
+		{
+			theApp.CleanUp();
+			exit(0);
+		}
+        else if (bFlag)
         {
             // If there are any flags set then assume this is a standard command line
             non_std = FALSE;
         }
-        else
+		else
         {
             CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 		    ASSERT(aa->open_current_readonly_ == -1);

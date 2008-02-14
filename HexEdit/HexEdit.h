@@ -359,6 +359,7 @@ public:
 
     BOOL is_nt_;                        // Are we running under NT family? (NT/W2K/XP and later)
     BOOL is_xp_;                        // Is it XP or later?
+	BOOL is_vista_;                     // Is it Vista or later?
     BOOL mult_monitor_;                 // Are we running on an OS with multiple monitor support?
     BOOL is_us_;                        // Are we in US?  (for spelling fixes)
     BOOL win95_;                        // Is it Windows 95? (not 98 ot later and not NT or later)
@@ -705,9 +706,10 @@ public:
     void OnNewVersion(int, int);         // Called when version number changes
     int NewCheck();
 	void DeleteSecurityFiles();
+	void CleanUp();                     // Delete security files and reg entries
 
-    short security_rand_;                // Random number used for checks
-    time_t init_date_;                   // When HexEdit was 1st run
+	short myst_just_init_;              // Did we just create the myst info?
+    time_t init_date_;                  // When HexEdit was 1st run
 
     int security_type_;                 // 1 = not registered (trial expired)
                                         // 2 = not registered but still in 30 day trial
@@ -718,6 +720,7 @@ public:
                                         // -1 = error
     int days_left_;                     // Days till expiry (if security_type_ == 1 or 2)
     CString security_name_;             // Name of registered user (if security_type_ == 6)
+    short security_rand_;                // Random number used for checks
 
     // UPDATE THIS FOR EACH NEW VERSION
     static const int security_version_; // An incremented version number for the current release 

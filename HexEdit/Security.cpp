@@ -540,6 +540,18 @@ int CHexEditApp::GetSecurity()
 
     ++get_security_called;              // Remember how many times it has been called
 
+    BOOL bWriteBack = FALSE;            // Has security info changed, therefore needs to be written?
+
+	// If we somehow could not find the myst info and just created it then any existing security info
+	// is more than likely wrong so we just update it.  Note that this probably weakens our security
+	// but Vista's had a lot of "HexEdit has not been installed on this machine" problems due to this.
+    if (security_info.rand != security_rand_ && myst_just_init_)
+	{
+		security_info.rand = security_rand_;
+		myst_just_init_ = 0;
+        bWriteBack = TRUE;
+	}
+
     if (security_info.rand != security_rand_ ||
         (security_info.serial != disk_serial() && security_info.os_install_date != os_date()))
     {
@@ -548,7 +560,6 @@ int CHexEditApp::GetSecurity()
         return 0;
     }
 
-    BOOL bWriteBack = FALSE;            // Has security info changed, therefore needs to be written?
 
     // Allow one (but not both) of disk serial no and OS date to change
     if (security_info.serial != disk_serial())
@@ -830,7 +841,7 @@ bool CHexEditApp::CheckNewVersion()
     }
 	memset(fullname, '\0', sizeof(fullname));
 
-    // Write chnaged info to registry
+    // Write changed info to registry
     HKEY hkey;
     char buf[32];
 
@@ -938,6 +949,79 @@ int CHexEditApp::GetMysteryFile(const char * filename)
 	return (_access(filename, 0) == -1) ? 0 : -1;   // return -1 if exists (apparently invalid) or 0 if no file exists
 }
 
+// Clean out all traces of all security system files except for orig myst info in BMP reg entry
+// This should get rid of any "HexEdit has not been installed on this machine" errors.
+// 1. HexEdit.IND in Windows directory
+// 2. $Nt... file in temp folder
+// 3. HexEdit.cfd in HexEdit folder
+// 4. Background.BMP in user's hexedit data area
+// 5. HKLM\Software\ECSoftware\Data
+// 6. HKLM\Software\ECSoftware\HexEdit\Global
+// 7. HKCU\Software\ECSoftware\HexEdit\Global
+// 8. HKCU\Software\Classes\VirtualStore\MACHINE\Software\ECSoftware\Data
+// 9. HKCU\Software\Classes\VirtualStore\MACHINE\Software\ECSoftware\HexEdit\Global
+// 10. Writes .BMP reg entry if not present
+static bool in_clean = false;
+void CHexEditApp::CleanUp()
+{
+	in_clean = true;
+	DeleteSecurityFiles();
+
+    CString data_path;
+	::GetDataPath(data_path);
+	if (!data_path.IsEmpty())
+		remove(data_path + FILENAME_BACKGROUND);
+
+    ::DummyRegAccess(1);
+
+    HKEY hkey;
+
+    if (::RegOpenKey(HKEY_CLASSES_ROOT, ".bmp\\ShellNew\\", &hkey) != ERROR_SUCCESS ||
+		::RegDeleteValue(hkey, "Data") == ERROR_ACCESS_DENIED)
+	{
+		AfxMessageBox("When using the /clean option\n"
+					  "please run as administrator.\n");
+	    exit(1);
+	}
+    ::RegCloseKey(hkey);
+
+	// Remove reg entries ignoring errors since they may not all be there
+    if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
+	{
+		::RegDeleteValue(hkey, "Data");
+        ::RegCloseKey(hkey);
+	}
+    if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
+	{
+		::RegDeleteValue(hkey, "Global");
+        ::RegCloseKey(hkey);
+	}
+    if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
+	{
+		::RegDeleteValue(hkey,  "Global");
+        ::RegCloseKey(hkey);
+	}
+	if (theApp.is_vista_)
+	{
+		if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\Classes\\VirtualStore\\MACHINE\\Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
+		{
+			::RegDeleteValue(hkey, "Data");
+			::RegCloseKey(hkey);
+		}
+		if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\Classes\\VirtualStore\\MACHINE\\Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
+		{
+			::RegDeleteValue(hkey, "Global");
+			::RegCloseKey(hkey);
+		}
+	}
+
+	// Since we should be an admin we may as well write to .BMP reg entry now
+	GetMystery();
+
+	AfxMessageBox("HexEdit /clean operation completed\n");
+	exit(1);
+}
+
 // Get special value and date HexEdit was first run, from registry.
 // If this is the first time HexEdit is run then create these values.
 // Sets member variables: security_rand_ and init_date_.
@@ -1020,27 +1104,23 @@ void CHexEditApp::GetMystery()
             memcpy(&myst_info, reg_data, sizeof(myst_info));
             decrypt(&myst_info, sizeof(myst_info));
 
-            // Make sure the file with duplicate info is there
-            if (file_found == 0)
+            // Write the same info to file
+            set_key(STANDARD_KEY, 8);
+            encrypt(&myst_info, sizeof(myst_info));
+
+            // Always write the same info to the backup file
+            if ((ff = fopen(fullname, "wb")) != NULL)
             {
-                // Write the same info to file
-                set_key(STANDARD_KEY, 8);
-                encrypt(&myst_info, sizeof(myst_info));
+                fwrite((void *)&myst_info, sizeof(myst_info), 1, ff);
+                fclose(ff);
 
-                // Write to backup file
-                if ((ff = fopen(fullname, "wb")) != NULL)
-                {
-                    fwrite((void *)&myst_info, sizeof(myst_info), 1, ff);
-                    fclose(ff);
-
-					struct _stat status;                // used to get file times
-					if (_stat(fullname, &status) == 0)
-					{
-						struct _utimbuf times;          // Structure used to change file times
-						times.actime = times.modtime = status.st_mtime - (23*60*60); // 23 hrs ago
-						_utime(fullname, &times);
-					}
-                }
+				struct _stat status;                // used to get file times
+				if (_stat(fullname, &status) == 0)
+				{
+					struct _utimbuf times;          // Structure used to change file times
+					times.actime = times.modtime = status.st_mtime - (23*60*60); // 23 hrs ago
+					_utime(fullname, &times);
+				}
                 decrypt(&myst_info, sizeof(myst_info));
             }
 
@@ -1056,10 +1136,15 @@ void CHexEditApp::GetMystery()
 			// Save it to reg entry (which we know is not present)
             if (::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info)) != ERROR_SUCCESS)
 			{
-				AfxMessageBox("Please run HexEdit the first time as administrator");
-			    CWinApp::OnAppExit();
+				if (theApp.is_vista_)
+					AfxMessageBox("Please run HexEdit the first time as administrator.\n"
+								"On Vista right-click and select \"Open as Administrator\".");
+				else
+					AfxMessageBox("Please run HexEdit the first time as administrator.");
+			    exit(1);
 				return;
 			}
+			myst_just_init_ = 1;
 
 #if 0 // this is already done in GetMysteryFile above
             set_key(STANDARD_KEY, 8);
@@ -1081,10 +1166,15 @@ void CHexEditApp::GetMystery()
 			// Save info to registry
             if (::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info)) != ERROR_SUCCESS)
 			{
-				AfxMessageBox("Please run HexEdit the first time as administrator");
-			    CWinApp::OnAppExit();
+				if (theApp.is_vista_)
+					AfxMessageBox("Please run HexEdit the first time as administrator.\n"
+								"On Vista right-click and select \"Open as Administrator\".");
+				else
+					AfxMessageBox("Please run HexEdit the first time as administrator.");
+			    exit(1);
 				return;
 			}
+			myst_just_init_ = 1;
 
             set_key(STANDARD_KEY, 8);
             decrypt(&myst_info, sizeof(myst_info));
@@ -1114,10 +1204,18 @@ void CHexEditApp::GetMystery()
 
             if (::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info)) != ERROR_SUCCESS)
 			{
-				AfxMessageBox("Please run HexEdit the first time as administrator");
-			    CWinApp::OnAppExit();
+				if (in_clean)
+					AfxMessageBox("When using the /clean option\n"
+								"please run as an administrator.\n");
+				else if (theApp.is_vista_)
+					AfxMessageBox("Please run HexEdit the first time as administrator.\n"
+								"On Vista right-click and select \"Open as Administrator\".");
+				else
+					AfxMessageBox("Please run HexEdit the first time as administrator");
+			    exit(1);
 				return;
 			}
+			myst_just_init_ = 1;
 
             // Write to backup file
 			ASSERT(file_found == 0);  // fullname should refer to a non-existent file name
@@ -1135,7 +1233,6 @@ void CHexEditApp::GetMystery()
 					_utime(fullname, &times);
 				}
             }
-
         }
 
         // At this point myst_info should be correct but encypted with STANDARD_KEY
