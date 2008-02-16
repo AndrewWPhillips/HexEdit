@@ -708,7 +708,6 @@ public:
 	void DeleteSecurityFiles();
 	void CleanUp();                     // Delete security files and reg entries
 
-	short myst_just_init_;              // Did we just create the myst info?
     time_t init_date_;                  // When HexEdit was 1st run
 
     int security_type_;                 // 1 = not registered (trial expired)

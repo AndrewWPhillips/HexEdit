@@ -7,7 +7,7 @@
 //   1. In registry under .BMP
 //   2. In a file
 //      3.1: HexEdit.IND in Windows directory
-//      3.2: $NTf-{X}.LOG in temp directory
+//      3.2: Nt$f-{X}.LOG in temp directory
 // B. Registration info is stores in 2 places:
 //   1. In registry under HKLM
 //      OLD: HKLM\Software\ECSoftware\Data
@@ -52,7 +52,7 @@ static char THIS_FILE[] = __FILE__;
 #define BAD_USER      "DSBDLFE"         // User name "CRACKED"
 #define SEC_FILENAME  "Ifyfeju/dge"     // File name "Hexedit.cfd"
 #define SEC_FILENAME2 "Ifyfeju/joe"     // File name "Hexedit.ind"
-#define SEC_FILENAME3 "%Oug.|@~/MPH"    // File name "$Ntf-{?}.LOG"
+#define SEC_FILENAME3 "Ou%g.|@~/MPH"    // File name "Nt$f-{?}.LOG"
 
 #define EXPIRY_DAYS   30
 
@@ -255,7 +255,7 @@ void CHexEditApp::DeleteSecurityFiles()
         strcat(fullname, "\\");
     }
     strcpy(fullname + len, SEC_FILENAME2); sub1(fullname + len);
-	if (GetMysteryFile(fullname) == 1)  // Note: this may load old myst info but this will be overwritten by latest myst info below
+	if (GetMysteryFile(fullname) == 1)
 		remove(fullname);
 
 	// Check ver 3.2 myst file name(s)
@@ -501,7 +501,9 @@ int CHexEditApp::GetSecurity()
     // If that fails give up and just create the data (unregistered).
     DWORD reg_type;                     // The returned registry entry type
     DWORD reg_size = sizeof(security_info);
-    if (::RegQueryValueEx(hkey3, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS &&
+	bool from_new_file = ::RegQueryValueEx(hkey3, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) ==
+		                    ERROR_SUCCESS;
+    if ( !from_new_file &&
 		::RegQueryValueEx(hkey2, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS &&
 		::RegQueryValueEx(hkey, "Data", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS)
     {
@@ -542,13 +544,13 @@ int CHexEditApp::GetSecurity()
 
     BOOL bWriteBack = FALSE;            // Has security info changed, therefore needs to be written?
 
-	// If we somehow could not find the myst info and just created it then any existing security info
-	// is more than likely wrong so we just update it.  Note that this probably weakens our security
-	// but Vista's had a lot of "HexEdit has not been installed on this machine" problems due to this.
-    if (security_info.rand != security_rand_ && myst_just_init_)
+	// If the myst rand # does not match but it came from an older file type then it is possible
+	// that we are running as a different user under Vista and things have become confused.
+	// In this case we just update the security rand to match myst.  This probably weakens our security
+	// but Vista's had a lot of "HexEdit has not been installed on this machine" problems from this.
+    if (security_info.rand != security_rand_ && !from_new_file)
 	{
 		security_info.rand = security_rand_;
-		myst_just_init_ = 0;
         bWriteBack = TRUE;
 	}
 
@@ -949,79 +951,6 @@ int CHexEditApp::GetMysteryFile(const char * filename)
 	return (_access(filename, 0) == -1) ? 0 : -1;   // return -1 if exists (apparently invalid) or 0 if no file exists
 }
 
-// Clean out all traces of all security system files except for orig myst info in BMP reg entry
-// This should get rid of any "HexEdit has not been installed on this machine" errors.
-// 1. HexEdit.IND in Windows directory
-// 2. $Nt... file in temp folder
-// 3. HexEdit.cfd in HexEdit folder
-// 4. Background.BMP in user's hexedit data area
-// 5. HKLM\Software\ECSoftware\Data
-// 6. HKLM\Software\ECSoftware\HexEdit\Global
-// 7. HKCU\Software\ECSoftware\HexEdit\Global
-// 8. HKCU\Software\Classes\VirtualStore\MACHINE\Software\ECSoftware\Data
-// 9. HKCU\Software\Classes\VirtualStore\MACHINE\Software\ECSoftware\HexEdit\Global
-// 10. Writes .BMP reg entry if not present
-static bool in_clean = false;
-void CHexEditApp::CleanUp()
-{
-	in_clean = true;
-	DeleteSecurityFiles();
-
-    CString data_path;
-	::GetDataPath(data_path);
-	if (!data_path.IsEmpty())
-		remove(data_path + FILENAME_BACKGROUND);
-
-    ::DummyRegAccess(1);
-
-    HKEY hkey;
-
-    if (::RegOpenKey(HKEY_CLASSES_ROOT, ".bmp\\ShellNew\\", &hkey) != ERROR_SUCCESS ||
-		::RegDeleteValue(hkey, "Data") == ERROR_ACCESS_DENIED)
-	{
-		AfxMessageBox("When using the /clean option\n"
-					  "please run as administrator.\n");
-	    exit(1);
-	}
-    ::RegCloseKey(hkey);
-
-	// Remove reg entries ignoring errors since they may not all be there
-    if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
-	{
-		::RegDeleteValue(hkey, "Data");
-        ::RegCloseKey(hkey);
-	}
-    if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
-	{
-		::RegDeleteValue(hkey, "Global");
-        ::RegCloseKey(hkey);
-	}
-    if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
-	{
-		::RegDeleteValue(hkey,  "Global");
-        ::RegCloseKey(hkey);
-	}
-	if (theApp.is_vista_)
-	{
-		if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\Classes\\VirtualStore\\MACHINE\\Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
-		{
-			::RegDeleteValue(hkey, "Data");
-			::RegCloseKey(hkey);
-		}
-		if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\Classes\\VirtualStore\\MACHINE\\Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
-		{
-			::RegDeleteValue(hkey, "Global");
-			::RegCloseKey(hkey);
-		}
-	}
-
-	// Since we should be an admin we may as well write to .BMP reg entry now
-	GetMystery();
-
-	AfxMessageBox("HexEdit /clean operation completed\n");
-	exit(1);
-}
-
 // Get special value and date HexEdit was first run, from registry.
 // If this is the first time HexEdit is run then create these values.
 // Sets member variables: security_rand_ and init_date_.
@@ -1138,13 +1067,12 @@ void CHexEditApp::GetMystery()
 			{
 				if (theApp.is_vista_)
 					AfxMessageBox("Please run HexEdit the first time as administrator.\n"
-								"On Vista right-click and select \"Open as Administrator\".");
+								  "Right-click the icon and select \"Run as Administrator\".");
 				else
 					AfxMessageBox("Please run HexEdit the first time as administrator.");
 			    exit(1);
 				return;
 			}
-			myst_just_init_ = 1;
 
 #if 0 // this is already done in GetMysteryFile above
             set_key(STANDARD_KEY, 8);
@@ -1168,13 +1096,12 @@ void CHexEditApp::GetMystery()
 			{
 				if (theApp.is_vista_)
 					AfxMessageBox("Please run HexEdit the first time as administrator.\n"
-								"On Vista right-click and select \"Open as Administrator\".");
+								  "Right-click the icon and select \"Run as Administrator\".");
 				else
 					AfxMessageBox("Please run HexEdit the first time as administrator.");
 			    exit(1);
 				return;
 			}
-			myst_just_init_ = 1;
 
             set_key(STANDARD_KEY, 8);
             decrypt(&myst_info, sizeof(myst_info));
@@ -1204,18 +1131,14 @@ void CHexEditApp::GetMystery()
 
             if (::RegSetValueEx(hkey, buf, 0, REG_BINARY, (BYTE *)&myst_info, sizeof(myst_info)) != ERROR_SUCCESS)
 			{
-				if (in_clean)
-					AfxMessageBox("When using the /clean option\n"
-								"please run as an administrator.\n");
-				else if (theApp.is_vista_)
+				if (theApp.is_vista_)
 					AfxMessageBox("Please run HexEdit the first time as administrator.\n"
-								"On Vista right-click and select \"Open as Administrator\".");
+								  "Right-click the icon and select \"Run as Administrator\".");
 				else
 					AfxMessageBox("Please run HexEdit the first time as administrator");
 			    exit(1);
 				return;
 			}
-			myst_just_init_ = 1;
 
             // Write to backup file
 			ASSERT(file_found == 0);  // fullname should refer to a non-existent file name
@@ -1246,6 +1169,84 @@ void CHexEditApp::GetMystery()
     memset(buf, '\0', sizeof(buf));
     ::DummyRegAccess(1);
     ::DummyRegAccess(2);
+}
+
+// This is run in response to the /Clean command line option and cleans out all traces
+// of security files and reg settings except for orig myst info in BMP reg entry.
+// This should get rid of any "HexEdit has not been installed on this machine" errors.
+// 1. HexEdit.IND in Windows directory
+// 2. Nt$... file in temp folder
+// 3. HexEdit.cfd in HexEdit folder
+// 4. Background.BMP in user's hexedit data area
+// 5. HKLM\Software\ECSoftware\Data
+// 6. HKLM\Software\ECSoftware\HexEdit\Global
+// 7. HKCU\Software\ECSoftware\HexEdit\Global
+// 8. HKCU\Software\Classes\VirtualStore\MACHINE\Software\ECSoftware\Data
+// 9. HKCU\Software\Classes\VirtualStore\MACHINE\Software\ECSoftware\HexEdit\Global
+// 10. Writes .BMP reg entry if not present
+void CHexEditApp::CleanUp()
+{
+	DeleteSecurityFiles();
+
+    CString data_path;
+	::GetDataPath(data_path);
+	if (!data_path.IsEmpty())
+		remove(data_path + FILENAME_BACKGROUND);
+
+    ::DummyRegAccess(1);
+
+    HKEY hkey;
+	bool admin = true;           // are we an admin?
+
+    if (::RegOpenKey(HKEY_CLASSES_ROOT, ".bmp\\ShellNew\\", &hkey) == ERROR_SUCCESS)
+	{
+		if (::RegDeleteValue(hkey, "Data") == ERROR_ACCESS_DENIED)
+			admin = false;
+		::RegCloseKey(hkey);
+	}
+	else
+		admin = false;
+
+	// Remove reg entries ignoring errors since they may not all be there
+    if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
+	{
+		::RegDeleteValue(hkey, "Data");
+        ::RegCloseKey(hkey);
+	}
+    if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
+	{
+		::RegDeleteValue(hkey, "Global");
+        ::RegCloseKey(hkey);
+	}
+    if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
+	{
+		::RegDeleteValue(hkey,  "Global");
+        ::RegCloseKey(hkey);
+	}
+	if (theApp.is_vista_)
+	{
+		if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\Classes\\VirtualStore\\MACHINE\\Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
+		{
+			::RegDeleteValue(hkey, "Data");
+			::RegCloseKey(hkey);
+		}
+		if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\Classes\\VirtualStore\\MACHINE\\Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
+		{
+			::RegDeleteValue(hkey, "Global");
+			::RegCloseKey(hkey);
+		}
+	}
+
+	// Since we should be an admin we may as well write to .BMP reg entry now
+	GetMystery();
+	DeleteSecurityFiles();   // remove Nt$ file created by GetMystery
+
+	if (admin)
+		AfxMessageBox("HexEdit /clean operation completed\n");
+	else
+		AfxMessageBox("When using the /clean option\n"
+					  "please run as administrator.\n");
+	exit(1);
 }
 
 static CString create_reg_code(int send)

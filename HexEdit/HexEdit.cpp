@@ -238,7 +238,6 @@ CHexEditApp::CHexEditApp() : CBCGWorkspace(TRUE), default_scheme_(""),
     mac_.reserve(128);
 #endif
     security_type_ = -1;                // Init so we can detect if code has been bypassed
-	myst_just_init_ = 0;
 
     open_disp_state_ = -1;
 
