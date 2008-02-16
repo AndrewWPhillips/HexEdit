@@ -3,23 +3,63 @@ HexEdit 3.2 Release Notes
 
 Version 3.2 has some significant enhancements to existing features, some major new features and a few bug fixes.
 
+
+Installation
+------------
+
+If you are running a previous version of HexEdit you should install the new version over the top of the old one - that is do not uninstall the old version before installing the new one.  This preserves all options, customizations, license info, etc.  You can uninstall the old version after installing 3.2.
+
+You can also have an old and a new version installed side by side.  This allows you to try 3.2 before uninstalling the old one, or you can delete the new one if you want to keep using the old one.  This requires that you install 3.2 to a different location in the Custom Setup page (page 4) of the installation wizard - just use the Browse button to select a different folder.
+
+You can also now install HexEdit to the same location under different operating systems, for example in a Windows 98/XP dual boot system.
+
+
+Vista
+-----
+
+Although previous versions ran under Vista there were some problems.  Several minor problems have been fixed, such as the truncated title of modeless dialogs when they were floating.
+
+A major problem under Vista was that, by default, programs do not run with administrator privileges, while HexEdit assumes that it is running with administrator privileges.  (For example, being able to edit disks requires that HexEdit runs with administrator privileges.)
+
+HexEdit will now run without administrator privileges, with reduced functionality.  However, the first time you run HexEdit you need to run with administrator privileges so it can set up registry entries etc.  To do this right-click the HexEdit icon and select "Run as Administrator" - of course, you then need to enter an administrator password.
+
+
+Properties
+----------
+
 The Properties dialog has support for several new data types like time64_t, C# Decimal, and displaying characters using any available code page, including EBCDIC and DBCS/MBCS characters sets.
 
 You can also enter keywords, comments and category for any file (in the Summary page of the Properties dialog).  These are also visible in the recent file dialog, so for example, you could sort on the Category column to view all your files in the categories that you have assigned.
 
+
+ZLIB
+----
+
 Compression has been added using the ZLIB compression as used in many file formats (PNG, PDF, GZIP, ZIP) and data transfer protocols (HTTP).  There is complete support for all ZLIB options, including flush points, which makes it easy to test all ZLIB options without any programing needed.
+
+
+Info Tips
+---------
 
 A very useful new facility is Info Tips, which allow simple display of any value or expression by simply holding the mouse over any part of a file in HexEdit.  The tips display in a transparent popup window which becomes opaque when you move the mouse over it.  Any number of tips can be configured to display all manner of things (any expression involving integers, floating point numbers, dates, strings or boolean values).
 
-The Find dialog search alignment options now include an offset option, a relative to mark option.  Further the alignment is no longer restriected to 1,2,4 or 8 bytes.
 
-All operations on the selection have been fixed to allow a selection larger than 4 GBytes.  Long operations show a progress bar and can be cancelled by pressing Escape.
+Templates
+---------
 
 Templates are now much easier to work with due to the addition of the Template menu and the ability to turn on and off the template display at any time.  Also how a template is displayed and the columns visible in the template tree view (and their width etc) is remembered on a per file basis.  Editing of template data (Data Column) has been improved too.
 
 The template "language" has also been improved with support for SWITCH using a string (only integer SWITCH was allowed before).  A default case is also handled using an empty string (in both string and integer SWITCH statements).
 
 New templates for EXE/DLL/OCX and for .EMF files are now provided.  The .BMP and other templates have also been improved.
+
+
+Other
+-----
+
+The Find dialog search alignment options now include an offset option, a relative to mark option.  Further the alignment is no longer restriected to 1,2,4 or 8 bytes.
+
+All operations on the selection have been fixed to allow a selection larger than 4 GBytes.  Long operations show a progress bar and can be cancelled by pressing Escape.
 
 Improvements to disk editor.  For example, information on system devices and volumes is gathered in a background thread to avoid delays when starting up.  More information on volumes available such as total/used space in bytes and clusters.
 
@@ -28,3 +68,4 @@ There are also many other enhancements such as the the new Save All and Close Al
 See the What's New section of the help for more details.
 
 ---- End of Release Notes ----
+
