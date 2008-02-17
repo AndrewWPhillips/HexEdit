@@ -11,8 +11,10 @@ Payment can be made by credit card, or check in US dollars.
 
 Australian residents can pay in the equivalent Australian dollars but must include 10% GST.
 
-You may also pay by credit card using the secure web server page:
-https://orders.digitalcandle.com/order_php/order.php?productid=000331.
+You may also pay by credit card at: https://www.regnow.com/softsell/nph-softsell.cgi?item=4226-1
+
+Or use PayPal/credit card at: https://www.paypal.com/us/cgi-bin/webscr?cmd=_flow&SESSION=Y724J_pCV_xsQo6e3dRZblx2XNO-SSeoIG-pn7bKhewrZt7NF1n8uwtFA3q&dispatch=5885d80a13c0db1f35bed810ca29224194ca8b1b097b671988f0ad0034239f22
+
 
 When we have received your registration code or name and your payment, we will email instructions on how to register the software.  It is important that you supply a correct email address.
 
@@ -45,4 +47,4 @@ Email address(es): __________________________________________
 
 (  ) Place a tick here if you do not want to be informed of updates by email.
 
-Make cheques (checks) payable to Expert Commercial Software Pty Ltd.
+Make checks (cheques) payable to Expert Commercial Software Pty Ltd.

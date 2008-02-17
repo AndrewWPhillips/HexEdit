@@ -5,18 +5,18 @@
  > update X.Y version number, and add to email dlg drop list
  > change version number and copyright year in readme.txt, order.txt
  > update help for new features, what's new, installation, order form etc
- - add new tips of the day
+ > add new tips of the day
  > create new release notes
  > create new bitmap for install
  > update licence agreement text (version no, year etc)
- - update PAD file (hexedit.xml)
+ > update PAD file (hexedit.xml)
    - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
  > change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
- - create installation (add any new files, templates etc)
- - change times of install files using touch2.bat (*.cab etc)
- - create zip of HexEd3_2.MSI file along with readme.txt, hexedit.xml
- - change time of zip file using touch3.bat
- - test install on 95, 98, ME, NT4, W2K, XP
+ > create installation (add any new files, templates etc)
+ > change times of install files using touch2.bat (MSI file)
+ > create zip of HexEd3_2.MSI file along with readme.txt, hexedit.xml
+ > change time of zip file using touch3.bat
+ - test install on 95, ME, NT4, XP, Vista
  - submit to Simtel and change web links to new Simtel page
  - web site: add ver to bug report form drop list, update what's new, gifs etc
  - make announcement in forums

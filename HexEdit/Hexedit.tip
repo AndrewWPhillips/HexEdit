@@ -4,6 +4,8 @@ To switch to a different window that is already open just click on the tab at th
 
 The online help contains tutorials on creating keystroke macros and templates.  (These are the most common areas that users seems to have difficulties.)
 
+Be careful when undoing changes not to undo too much as HexEdit has no redo capability.
+
 Corrupt registry entries and configuration information can cause HexEdit to misbehave.  Several new repair options have been added to the Help menu to overcome these problems.
 
 The highlighter is useful for showing someone, or reminding yourself, about particular important bytes of a file.  Select the bytes you want to highlight and click the yellow highlighter on the Edit Bar.

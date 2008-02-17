@@ -2,7 +2,7 @@ License Agreement for the use of Hex Edit 3.2.
 
 By installing Hex Edit 3.2 (the product) you agree to be bound by the terms of this license agreement.  If you do not understand or agree to these terms, or your local regulations prohibit this form of license agreement, then do not install the product.
 
-Hex Edit 3.2 is copyright 2006 by Expert Commercial Software Pty Ltd.
+Hex Edit 3.2 is copyright 2008 by Expert Commercial Software Pty Ltd.
 
 All the brands or products referred to in the documentation are trademarks or registered trademarks of their respective holders.
 

@@ -1,8 +1,7 @@
-w:\bin\touch -t 0802140320 release\hexedit.exe
-w:\bin\touch -t 0802140320 HTMLHelp\HexEdit.CHM
-w:\bin\touch -t 0802140320 hexedit.tip
-w:\bin\touch -t 0802140320 relnotes.txt
-w:\bin\touch -t 0802140320 testdata\order.txt
-w:\bin\touch -t 0802140320 testdata\readme.txt
-w:\bin\touch -t 0802140320 HexEdit.xml
-
+touch 02180320 release\hexedit.exe
+touch 02180320 HTMLHelp\HexEdit.CHM
+touch 02180320 hexedit.tip
+touch 02180320 install\relnotes.txt
+touch 02180320 install\order.txt
+touch 02180320 install\readme.txt
+touch 02180320 HexEdit.xml
