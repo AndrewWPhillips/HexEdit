@@ -17,7 +17,7 @@ All operations on the selection have been fixed to allow a selection larger than
 
 Templates are now much easier to work with due to the addition of the Template menu and the ability to turn on and off the template display at any time.  Also how a template is displayed and the columns visible in the template tree view (and their width etc) is remembered on a per file basis.  Editing of template data (Data Column) has been improved too.
 
-The template "language" has also been improved with support for SWITCH using a string (only integer SWITCH was allowed before).  A default case is also handled using an empty string (in both string and integer SWITCH statements).  There is also a new function "STRING" which returns an number as a string but for the special case of an enum it returns the associated enum string.
+The template "language" has also been improved with support for SWITCH using a string (only integer SWITCH was allowed before).  A default case is also handled using an empty string (in both string and integer SWITCH statements).
 
 New templates for EXE/DLL/OCX and for .EMF files are now provided.  The .BMP and other templates have also been improved.
 
