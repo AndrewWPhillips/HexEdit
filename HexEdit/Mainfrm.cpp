@@ -237,23 +237,18 @@ CMainFrame::CMainFrame()
 	if (::GetDataPath(filename))
 		filename += FILENAME_BACKGROUND;
 	else
-		filename = ::GetExePath() + FILENAME_BACKGROUND;
+		filename = ::GetExePath() + FILENAME_BACKGROUND;   // No data path only on Win 95?
 
 	CString bgfile = theApp.GetProfileString("MainFrame", "BackgroundFileName", filename);
 #ifdef USE_FREE_IMAGE
-    #ifdef _DEBUG
+    #if 0
       // Test creating a big bitmap
       m_dib = FreeImage_Allocate(1000, 200000, 24); // 200 million pixels seems to be OK!!
       int xxx = FreeImage_GetDIBSize(m_dib);
       FreeImage_Unload(m_dib); m_dib = NULL;
     #endif
-    FREE_IMAGE_FORMAT fif = FreeImage_GetFileType(bgfile);
-    if (fif == FIF_UNKNOWN || (m_dib = FreeImage_Load(fif, bgfile)) == NULL)
-    {
-        bgfile = ::GetExePath() + FILENAME_BACKGROUND;
-        fif = FreeImage_GetFileType(bgfile);
-        m_dib = FreeImage_Load(fif, ::GetExePath() + FILENAME_ABOUTBG);
-    }
+    if ((m_dib = FreeImage_Load(FIF_BMP, bgfile)) == NULL)          // MUST be 24-bit BMP file
+        m_dib = FreeImage_Load(FIF_BMP, ::GetExePath() + FILENAME_BACKGROUND);
 #else
 	if (!m_background.LoadImage(bgfile))
 		m_background.LoadImage(GetExePath() + FILENAME_BACKGROUND);

@@ -476,7 +476,7 @@ int CHexEditApp::GetSecurity()
     // Open (or create if not there) the place to store the info
     if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS ||
 		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS)
-        return 0;
+        return 0;     // return error if one or both could not be opened
 
     // Try getting security info from the registry.  If that fails try security file.
     // If that fails give up and just create the data (unregistered).
@@ -485,7 +485,7 @@ int CHexEditApp::GetSecurity()
     if (::RegQueryValueEx(hkey2, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS &&
 		::RegQueryValueEx(hkey, "Data", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS)
     {
-        // Not found in registry so check for security file
+        // Not found in (old or new) registry entry so check for security file
         if (!GetSecurityFile())
         {
             // Not found (reg or file) so create the info making it unregistered (2)

@@ -1554,7 +1554,8 @@ int CHexEditApp::ExitInstance()
 		}
 
 		::SHDeleteKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit");  // machine settings
-		DeleteSecurityFiles();
+		::SHDeleteValue(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", "Data");
+		DeleteSecurityFiles();  // Note: FILENAME_BACKGROUND also deleted above
 	}
 
 	return retval;
