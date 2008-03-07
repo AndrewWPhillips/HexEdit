@@ -2628,18 +2628,18 @@ void CHexEditApp::LoadSchemes()
         scheme_.push_back(new_scheme);
 
         CScheme new_scheme2(PRETTY_NAME);
-		new_scheme2.AddRange("range1", RGB(200, 0, 0), "0:20");
-		new_scheme2.AddRange("range2", RGB(200, 100, 0), "21:41");
-		new_scheme2.AddRange("range3", RGB(200, 200, 0), "42:63");
-		new_scheme2.AddRange("range4", RGB(100, 200, 0), "64:84");
-		new_scheme2.AddRange("range5", RGB(0, 200, 0), "85:105");
-		new_scheme2.AddRange("range6", RGB(0, 200, 100), "106:127");
-		new_scheme2.AddRange("range7", RGB(0, 200, 200), "128:148");
-		new_scheme2.AddRange("range8", RGB(0, 100, 200), "149:169");
-		new_scheme2.AddRange("range9", RGB(0, 0, 200), "170:191");
-		new_scheme2.AddRange("range10", RGB(100, 0, 200), "192:212");
-		new_scheme2.AddRange("range11", RGB(200, 0, 200), "213:233");
-		new_scheme2.AddRange("range12", RGB(200, 0, 100), "234:255");
+		new_scheme2.AddRange("range1",  RGB(200, 0,   0  ), "0:20");
+		new_scheme2.AddRange("range2",  RGB(200, 130, 0  ), "21:41");
+		new_scheme2.AddRange("range3",  RGB(170, 170, 0  ), "42:63");
+		new_scheme2.AddRange("range4",  RGB(130, 170, 0  ), "64:84");
+		new_scheme2.AddRange("range5",  RGB(0,   180, 0  ), "85:105");
+		new_scheme2.AddRange("range6",  RGB(0,   170, 130), "106:127");
+		new_scheme2.AddRange("range7",  RGB(0,   180, 180), "128:148");
+		new_scheme2.AddRange("range8",  RGB(0,   130, 200), "149:169");
+		new_scheme2.AddRange("range9",  RGB(0,   0,   180), "170:191");
+		new_scheme2.AddRange("range10", RGB(130, 0,   170), "192:212");
+		new_scheme2.AddRange("range11", RGB(180, 0,   180), "213:233");
+		new_scheme2.AddRange("range12", RGB(180, 0,   120), "234:255");
         new_scheme2.AddRange("ALL", RGB(100, 100, 100), "0:255");
         scheme_.push_back(new_scheme2);
     }
@@ -3765,7 +3765,7 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
     dlg.name_ = def_name;
     if (def_type == 2)
     {
-        dlg.to_ = "info@HexEdit.com";
+        dlg.to_ = "aphillips@HexEdit.com";
         if (dlg.name_.IsEmpty())
             dlg.subject_ = "Single-machine license";
         else
