@@ -55,7 +55,7 @@ CEmailDlg::CEmailDlg(CWnd* pParent /*=NULL*/)
 
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-    to_ = "support@HexEdit.com";
+    to_ = "aphillips@HexEdit.com";
     type_ = 1;
     systype_ = "This system";
 //    version_ = CString("Version ") + CString(aa->version_);
