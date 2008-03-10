@@ -16,15 +16,27 @@
  > change times of install files using touch2.bat (MSI file)
  > create zip of HexEd3_2.MSI file along with readme.txt, hexedit.xml
  > change time of zip file using touch3.bat
- - test install on 95, ME, NT4, XP, Vista
+ > test install on 95, ME, NT4, XP, Vista
  - submit to Simtel and change web links to new Simtel page
  - web site: add ver to bug report form drop list, update what's new, gifs etc
- - make announcement in forums
- - update to shareware download sites
+ > make announcement in forums
+ > update to shareware download sites
  - email reg users about new release (staggered)
  - email others about new release
  - change normal activation code email template
  - send out press release
+
+WEB SITE
+
+Redesign using Exprssion Web
+Donate button (free version)
+3 main buttons: Download, Support, Purchase wih menu of extras
+ - Download: Download free ver, Download templates,  Download ver with MS DLLs, Downloads page
+ - Support: FAQ, Bugs, Help, Announcements, Main forum page
+ - Purchase: Donate (free ver), Upgrade, RegNow/PayPal
+ 
+ 
+
 
 INSTALLER
 - what happens (eg AppData) under Windows 95
@@ -567,7 +579,7 @@ New Version
  - send out press release
 
 
-New Options Layout (tree)
+New Options Layout (tree) - see also Aerial branch
 -------------------------
 System
   General
