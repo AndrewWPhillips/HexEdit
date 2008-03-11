@@ -1039,7 +1039,7 @@ void CExplorerWnd::OnFilterOpts()
     if (ctl_filter_opts_.m_nMenuResult == 0x7FFF)
     {
 		// Edit filters option - fire up options dlg at filters page
-        theApp.display_options(theApp.p_filters, TRUE);
+        theApp.display_options(FILTER_OPTIONS_PAGE, TRUE);
     }
     else if (ctl_filter_opts_.m_nMenuResult != 0)
     {
@@ -1427,7 +1427,7 @@ void CMultiplay::OnSelchangePlayName()
 void CMultiplay::OnPlayOptions() 
 {
     // Invoke the Options dlg with the macro page displayed
-    theApp.display_options(theApp.p_macro, TRUE);
+    theApp.display_options(MACRO_OPTIONS_PAGE, TRUE);
 }
 
 /////////////////////////////////////////////////////////////////////////////

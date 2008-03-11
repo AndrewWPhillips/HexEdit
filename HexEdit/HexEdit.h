@@ -151,7 +151,7 @@ struct display_bits
     unsigned int hide_delete: 1;    // Hide deletions (change tracking)
     unsigned int delete_count: 1;   // Show count of deletions (up to 9) instead of *
 
-	unsigned int vert_display: 1;   // Show vertical display instead of hex/char areas
+	unsigned int vert_display: 1;   // Show vertical display instead of hex/ch ar areas
 
 	unsigned int big_endian: 1;     // Operations on the file are big-endian?
 
@@ -166,6 +166,8 @@ struct display_bits
 #include "HexEditMacro.h"
 #include "Scheme.h"         // For colour schemes
 #include "NavManager.h"     // For CNavManager that handles nav points
+
+enum { COLOUR_OPTIONS_PAGE, MACRO_OPTIONS_PAGE, PRINTER_OPTIONS_PAGE, FILTER_OPTIONS_PAGE, WIN_OPTIONS_PAGE };
 
 class CHexEditDoc;
 class CHexFileList;
@@ -239,7 +241,7 @@ public:
     CSpecialList *m_pspecial_list;
     CSpecialList *GetSpecialList() const { return m_pspecial_list; }
 
-    void display_options(CPropertyPage *display_page = NULL, BOOL must_show_page = FALSE);
+    void display_options(int display_page = -1, BOOL must_show_page = FALSE);
     void LoadOptions();
     void SaveOptions();         // Save global options to INI/registry
     void ClearHist(BOOL, BOOL, BOOL);
@@ -248,15 +250,20 @@ public:
     void GetXMLFileList();
 //    bool GetColours(const char *, const char *, const char *, const char *, partn &retval);
 //    void SetColours(const char *, const char *, const char *, const char *, const partn &v);
-    void get_options();         // Load global options into prop pages
-    void set_general();         // Get options from System options page
-    void set_sysdisplay();      // Get options from System Display page
-    bool set_windisplay();      // Get options from window display page
-    bool set_schemes();         // Get schemes and set scheme for active view
-    void set_macro();           // Get options from macro page
-//    bool set_partitions();      // Get options from window colours (partitions) page
-    void set_printer();         // Get options from printer page
-    void set_filters();         // Get options from filters page
+	// Get global options and pu them into the property sheet
+    void get_options(struct OptValues &val);
+    void get_win_options(struct OptValues &val, CHexEditView *pview);  // Get active window options
+
+	// Set global options from values in options dialog
+	// Note: Info tips, Colours and Filters pages are handled differently
+	// They handle their own update in the OnOK members.
+    void set_general(struct OptValues &val);         // System options page
+    void set_sysdisplay(struct OptValues &val);      // Global Display page
+    void set_printer(struct OptValues &val);         // printer page
+    void set_macro(struct OptValues &val);           // macro page
+
+	// Set active window options
+    void set_windisplay(struct OptValues &val, CHexEditView *pview);  // display page
 
     CMultiDocTemplate* m_pDocTemplate;
 
@@ -345,24 +352,12 @@ public:
 		return TRUE;
 	}
 
-    // Pages of the options tabbed dialog
-    // (These are here so they can be easily accessed)
-    CGeneralPage *p_general;
-    CSysDisplayPage *p_sysdisplay;
-    CWindowPage *p_windisplay;
-//    CPartitionsPage *p_partitions;  // no longer used when schemes added
-    CColourSchemes *p_colours;
-    CMacroPage *p_macro;
-    CPrintPage *p_printer;
-    CFiltersPage *p_filters;
-	CTipsPage *p_tips;
-
     BOOL is_nt_;                        // Are we running under NT family? (NT/W2K/XP and later)
     BOOL is_xp_;                        // Is it XP or later?
 	BOOL is_vista_;                     // Is it Vista or later?
     BOOL mult_monitor_;                 // Are we running on an OS with multiple monitor support?
     BOOL is_us_;                        // Are we in US?  (for spelling fixes)
-    BOOL win95_;                        // Is it Windows 95? (not 98 ot later and not NT or later)
+    BOOL win95_;                        // Is it Windows 95? (not 98 or later and not NT or later)
 
 	// Locale settings
     char dec_sep_char_;		            // Char to use as "thousands" separator for decimals
@@ -379,8 +374,8 @@ public:
 
     BOOL highlight_;                    // Is highlighting on?
 
-    CPropertyPage *p_last_page_;        // Ptr to active page when options dlg was last used
-//    CRuntimeClass *last_opt_class_ptr_; // Runtime class of last active page
+    //CPropertyPage *p_last_page_;        // Ptr to active page when options dlg was last used
+    int last_opt_page_;                 // Index of last active options page
 
     // The following are options for the binary file format tree view display
     unsigned int tree_view_;            // 0=none, 1=splitter views, 2=tabbed views

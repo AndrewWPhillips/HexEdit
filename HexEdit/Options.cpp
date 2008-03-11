@@ -47,6 +47,82 @@ IMPLEMENT_DYNAMIC(COptSheet, CPropertySheet)
 COptSheet::COptSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
         :CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
+    // Set up default values (these should be overwritten later)
+	val_.shell_open_ = FALSE;
+	val_.one_only_ = FALSE;
+	val_.bg_search_ = FALSE;
+    val_.save_exit_ = FALSE;
+	val_.recent_files_ = 0;
+
+    val_.backup_ = FALSE;
+	val_.backup_space_ = FALSE;
+	val_.backup_size_ = 0;
+	val_.backup_prompt_ = FALSE;
+	val_.backup_if_size_ = FALSE;
+	val_.address_specified_ = -1;
+    val_.base_address_ = 0;
+	val_.export_line_len_ = 0;
+
+	val_.open_restore_ = FALSE;
+	val_.mditabs_ = FALSE;
+	val_.tabsbottom_ = FALSE;
+	val_.large_cursor_ = FALSE;
+	val_.hex_ucase_ = FALSE;
+	val_.show_other_ = FALSE;
+    val_.nice_addr_ = TRUE;
+
+	val_.dffd_view_ = -1;
+	val_.max_fix_for_elts_ = 0;
+	val_.default_char_format_ = _T("");
+	val_.default_int_format_ = _T("");
+	val_.default_unsigned_format_ = _T("");
+	val_.default_string_format_ = _T("");
+	val_.default_real_format_ = _T("");
+	val_.default_date_format_ = _T("");
+
+    // Macros
+    val_.refresh_ = -1;
+    val_.num_secs_ = 0;
+    val_.num_keys_ = 0;
+    val_.num_plays_ = 0;
+    val_.refresh_props_ = FALSE;
+    val_.refresh_bars_ = FALSE;
+    val_.halt_level_ = -1;
+
+    // Printing
+	val_.header_ = _T("");
+	val_.footer_ = _T("");
+	val_.border_ = FALSE;
+	val_.headings_ = FALSE;
+	val_.units_ = 0;   // default to inches
+	val_.spacing_ = -1;
+	val_.left_ = 0.0;
+	val_.top_ = 0.0;
+	val_.right_ = 0.0;
+	val_.bottom_ = 0.0;
+	val_.header_edge_ = 0.0;
+	val_.footer_edge_ = 0.0;
+
+    // Window
+    val_.disp_state_ = 0;
+
+	val_.show_area_ = -1;
+	val_.charset_ = -1;
+	val_.control_ = -1;
+    val_.addr_dec_ = FALSE;
+	val_.autofit_ = FALSE;
+	val_.maximize_ = FALSE;
+    val_.borders_ = FALSE;
+
+	val_.cols_ = 0;
+	val_.offset_ = 0;
+	val_.grouping_ = 0;
+    val_.vertbuffer_ = 0;
+
+	val_.insert_ = -1;
+	val_.modify_ = -1;
+	val_.big_endian_ = FALSE;
+    val_.change_tracking_ = 0;
 }
 
 COptSheet::COptSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
@@ -80,111 +156,104 @@ BOOL COptSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 
 BOOL COptSheet::DestroyWindow() 
 {
-    theApp.p_last_page_ = GetPage(GetActiveIndex());
-//    theApp.last_opt_class_ptr_ = GetPage(theApp.last_opt_page_)->GetRuntimeClass();
+    theApp.last_opt_page_ = GetActiveIndex();
 	
     return CPropertySheet::DestroyWindow();
 }
 
 LRESULT COptSheet::OnKickIdle(WPARAM, LPARAM lCount)
 {
-    if (GetActivePage() == theApp.p_filters)
-        return theApp.p_filters->OnIdle(lCount);
-    else if (GetActivePage() == theApp.p_tips)
-        return theApp.p_tips->OnIdle(lCount);
-    else if (GetActivePage() == theApp.p_colours)
-        return theApp.p_colours->OnIdle(lCount);
-    else
-        return FALSE;
+    COptPage *pp = dynamic_cast<COptPage *>(GetActivePage());
+    return pp->OnIdle(lCount);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// COptPage
+
+IMPLEMENT_DYNAMIC(COptPage, CPropertyPage)
+
+COptPage::COptPage(COptSheet *pp, UINT nIDI, UINT nIDD, UINT nIDCaption /* = 0 */) : CPropertyPage(nIDD, nIDCaption)
+{
+    // Store ptr to containing sheet for later use
+	ASSERT(pp != NULL && pp->IsKindOf(RUNTIME_CLASS(COptSheet)));
+    pParent = pp;
+
+	if (nIDI != 0)
+	{
+		// Load this page's icon
+		HICON hh = theApp.LoadIcon(nIDI);
+		m_psp.hIcon = hh;
+		m_psp.dwFlags &= ~PSP_USEICONID;
+		m_psp.dwFlags |= PSP_USEHICON;
+	}
+	m_psp.dwFlags |= PSP_HASHELP;
 }
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CGeneralPage property page
 
-IMPLEMENT_DYNCREATE(CGeneralPage, CPropertyPage)
+IMPLEMENT_DYNCREATE(CGeneralPage, COptPage)
 
-CGeneralPage::CGeneralPage() : CPropertyPage(CGeneralPage::IDD)
+CGeneralPage::CGeneralPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CGeneralPage::IDD)
 {
-        //{{AFX_DATA_INIT(CGeneralPage)
-        save_exit_ = FALSE;
-	one_only_ = FALSE;
-	shell_open_ = FALSE;
-	bg_search_ = FALSE;
-	address_specified_ = -1;
-	export_line_len_ = 0;
-	recent_files_ = 0;
-	backup_ = FALSE;
-	backup_space_ = FALSE;
-	backup_size_ = 0;
-	backup_prompt_ = FALSE;
-	backup_if_size_ = FALSE;
+    //{{AFX_DATA_INIT(CGeneralPage)
 	//}}AFX_DATA_INIT
-        base_address_ = 0;
-
-    HICON hh = AfxGetApp()->LoadIcon(IDI_COGS);
-    m_psp.hIcon = hh;
-    m_psp.dwFlags &= ~PSP_USEICONID;
-    m_psp.dwFlags |= PSP_USEHICON;
-}
-
-CGeneralPage::~CGeneralPage()
-{
 }
 
 void CGeneralPage::DoDataExchange(CDataExchange* pDX)
 {
-        CPropertyPage::DoDataExchange(pDX);
+        COptPage::DoDataExchange(pDX);
         //{{AFX_DATA_MAP(CGeneralPage)
 	DDX_Control(pDX, IDC_BACKUP_SPACE, ctl_backup_space_);
 	DDX_Control(pDX, IDC_BACKUP_SIZE, ctl_backup_size_);
 	DDX_Control(pDX, IDC_BACKUP_PROMPT, ctl_backup_prompt_);
 	DDX_Control(pDX, IDC_BACKUP_IF_SIZE, ctl_backup_if_size_);
 	DDX_Control(pDX, IDC_EXPORT_ADDRESS, address_ctl_);
-        DDX_Check(pDX, IDC_SAVE_EXIT, save_exit_);
-        DDX_Check(pDX, IDC_ONE_ONLY, one_only_);
-        DDX_Check(pDX, IDC_SHELLOPEN, shell_open_);
-        DDX_Check(pDX, IDC_BG_SEARCH, bg_search_);
-	DDX_Radio(pDX, IDC_ADDRESS_FILE, address_specified_);
-	DDX_Text(pDX, IDC_EXPORT_LINELEN, export_line_len_);
-	DDV_MinMaxUInt(pDX, export_line_len_, 8, 250);
-	DDX_Text(pDX, IDC_RECENT_FILES, recent_files_);
-	DDV_MinMaxUInt(pDX, recent_files_, 1, 16);
-	DDX_Check(pDX, IDC_BACKUP, backup_);
-	DDX_Check(pDX, IDC_BACKUP_SPACE, backup_space_);
-	DDX_Text(pDX, IDC_BACKUP_SIZE, backup_size_);
-	DDX_Check(pDX, IDC_BACKUP_PROMPT, backup_prompt_);
-	DDX_Check(pDX, IDC_BACKUP_IF_SIZE, backup_if_size_);
 	//}}AFX_DATA_MAP
-        if (pDX->m_bSaveAndValidate)
-        {
-            if (address_specified_)
-            {
-                CString ss;
+    DDX_Check(pDX, IDC_SHELLOPEN, pParent->val_.shell_open_);
+    DDX_Check(pDX, IDC_ONE_ONLY, pParent->val_.one_only_);
+    DDX_Check(pDX, IDC_BG_SEARCH, pParent->val_.bg_search_);
+    DDX_Check(pDX, IDC_SAVE_EXIT, pParent->val_.save_exit_);
+	DDX_Text(pDX, IDC_RECENT_FILES, pParent->val_.recent_files_);
+	DDV_MinMaxUInt(pDX, pParent->val_.recent_files_, 1, 16);
 
-                address_ctl_.GetWindowText(ss);
-//                base_address_ = strtol(ss, NULL, 16);
-                base_address_ = long(::strtoi64(ss, 16));
-            }
-        }
-        else
+	DDX_Radio(pDX, IDC_ADDRESS_FILE, pParent->val_.address_specified_);
+	DDX_Text(pDX, IDC_EXPORT_LINELEN, pParent->val_.export_line_len_);
+	DDV_MinMaxUInt(pDX, pParent->val_.export_line_len_, 8, 250);
+    if (pDX->m_bSaveAndValidate)
+    {
+        if (pParent->val_.address_specified_)
         {
-            if (address_specified_)
-            {
-                char buf[22];
+            CString ss;
 
-                if (theApp.hex_ucase_)
-                    sprintf(buf, "%I64X", __int64(base_address_));
-                else
-                    sprintf(buf, "%I64x", __int64(base_address_));
-                address_ctl_.SetWindowText(buf);
-                address_ctl_.add_spaces();
-            }
+            address_ctl_.GetWindowText(ss);
+            pParent->val_.base_address_ = long(::strtoi64(ss, 16));
         }
+    }
+    else
+    {
+        if (pParent->val_.address_specified_)
+        {
+            char buf[22];
+
+            if (theApp.hex_ucase_)
+                sprintf(buf, "%I64X", __int64(pParent->val_.base_address_));
+            else
+                sprintf(buf, "%I64x", __int64(pParent->val_.base_address_));
+            address_ctl_.SetWindowText(buf);
+            address_ctl_.add_spaces();
+        }
+    }
+	DDX_Check(pDX, IDC_BACKUP, pParent->val_.backup_);
+	DDX_Check(pDX, IDC_BACKUP_SPACE, pParent->val_.backup_space_);
+	DDX_Check(pDX, IDC_BACKUP_IF_SIZE, pParent->val_.backup_if_size_);
+	DDX_Text(pDX, IDC_BACKUP_SIZE, pParent->val_.backup_size_);
+	DDX_Check(pDX, IDC_BACKUP_PROMPT, pParent->val_.backup_prompt_);
 }
 
-
-BEGIN_MESSAGE_MAP(CGeneralPage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CGeneralPage, COptPage)
         //{{AFX_MSG_MAP(CGeneralPage)
         ON_BN_CLICKED(IDC_SAVE_NOW, OnSaveNow)
         ON_WM_HELPINFO()
@@ -212,25 +281,23 @@ END_MESSAGE_MAP()
 
 BOOL CGeneralPage::OnInitDialog() 
 {
-    CPropertyPage::OnInitDialog();
+    COptPage::OnInitDialog();
 
     ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RECENT_FILES))->SetRange(1, 16);
     ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_EXPORT_LINELEN))->SetRange(8, 250);
 
-    ctl_backup_space_.EnableWindow(backup_);
-    ctl_backup_if_size_.EnableWindow(backup_);
-    ctl_backup_size_.EnableWindow(backup_ && backup_if_size_);
-    ctl_backup_prompt_.EnableWindow(backup_);
+    ctl_backup_space_.EnableWindow(pParent->val_.backup_);
+    ctl_backup_if_size_.EnableWindow(pParent->val_.backup_);
+    ctl_backup_size_.EnableWindow(pParent->val_.backup_ && pParent->val_.backup_if_size_);
+    ctl_backup_prompt_.EnableWindow(pParent->val_.backup_);
 
     return TRUE;
 }
 
 void CGeneralPage::OnOK() 
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    aa->set_general();
-
-    CPropertyPage::OnOK();
+	theApp.set_general(pParent->val_);
+    COptPage::OnOK();
 }
 
 static DWORD id_pairs7[] = { 
@@ -274,14 +341,14 @@ void CGeneralPage::OnChange()
 void CGeneralPage::OnShellopen() 
 {
     UpdateData();
-    if (shell_open_)
+    if (pParent->val_.shell_open_)
     {
         if (AfxMessageBox("This option affects all users of the system and\n"
                           "can cause problems with some program launchers.\n"
                           "Do you want to enable this option anyway?",
                           MB_YESNO) != IDYES)
         {
-            shell_open_ = FALSE;
+            pParent->val_.shell_open_ = FALSE;
             UpdateData(FALSE);
         }
     }
@@ -296,12 +363,9 @@ void CGeneralPage::OnClearHist()
 
 void CGeneralPage::OnSaveNow() 
 {
-    CPropertySheet *oo = dynamic_cast<CPropertySheet *>(GetParent());
-
-    // BUG: PressButton() always returns zero - so ignore return value
-    (void)oo->PressButton(PSBTN_APPLYNOW);
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    aa->SaveOptions();
+    // PressButton() always returns zero - so ignore return value
+    (void)pParent->PressButton(PSBTN_APPLYNOW);
+    theApp.SaveOptions();
 }
 
 void CGeneralPage::OnAddressFile() 
@@ -325,10 +389,10 @@ void CGeneralPage::OnAddressSpecified()
 void CGeneralPage::OnBackup() 
 {
     UpdateData();
-    ctl_backup_space_.EnableWindow(backup_);
-    ctl_backup_if_size_.EnableWindow(backup_);
-    ctl_backup_size_.EnableWindow(backup_ && backup_if_size_);
-    ctl_backup_prompt_.EnableWindow(backup_);
+    ctl_backup_space_.EnableWindow(pParent->val_.backup_);
+    ctl_backup_if_size_.EnableWindow(pParent->val_.backup_);
+    ctl_backup_size_.EnableWindow(pParent->val_.backup_ && pParent->val_.backup_if_size_);
+    ctl_backup_prompt_.EnableWindow(pParent->val_.backup_);
 	
     SetModified(TRUE);
 }
@@ -336,71 +400,50 @@ void CGeneralPage::OnBackup()
 void CGeneralPage::OnBackupIfSize() 
 {
     UpdateData();
-    ASSERT(backup_);
-    ctl_backup_size_.EnableWindow(backup_if_size_);
+    ASSERT(pParent->val_.backup_);
+    ctl_backup_size_.EnableWindow(pParent->val_.backup_if_size_);
 	
     SetModified(TRUE);
 }
 
+//===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CSysDisplayPage property page
 
-IMPLEMENT_DYNCREATE(CSysDisplayPage, CPropertyPage)
+IMPLEMENT_DYNCREATE(CSysDisplayPage, COptPage)
 
-CSysDisplayPage::CSysDisplayPage() : CPropertyPage(CSysDisplayPage::IDD)
+CSysDisplayPage::CSysDisplayPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CSysDisplayPage::IDD)
 {
 	//{{AFX_DATA_INIT(CSysDisplayPage)
-	large_cursor_ = FALSE;
-	hex_ucase_ = FALSE;
-	open_restore_ = FALSE;
-	mditabs_ = FALSE;
-	tabsbottom_ = FALSE;
-	show_other_ = FALSE;
-	max_fix_for_elts_ = 0;
-	default_char_format_ = _T("");
-	default_date_format_ = _T("");
-	default_int_format_ = _T("");
-	default_real_format_ = _T("");
-	default_string_format_ = _T("");
-	default_unsigned_format_ = _T("");
 	//}}AFX_DATA_INIT
-	dffd_view_ = -1;
-
-    HICON hh = AfxGetApp()->LoadIcon(IDI_DISPLAY);
-    m_psp.hIcon = hh;
-    m_psp.dwFlags &= ~PSP_USEICONID;
-    m_psp.dwFlags |= PSP_USEHICON;
-}
-
-CSysDisplayPage::~CSysDisplayPage()
-{
 }
 
 void CSysDisplayPage::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	COptPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSysDisplayPage)
-	DDX_Check(pDX, IDC_LARGE_CURSOR, large_cursor_);
-	DDX_Check(pDX, IDC_HEX_UCASE, hex_ucase_);
-	DDX_Check(pDX, IDC_RESTORE, open_restore_);
-	DDX_Check(pDX, IDC_MDITABS, mditabs_);
-	DDX_Check(pDX, IDC_TABSBOTTOM, tabsbottom_);
-	DDX_Check(pDX, IDC_SHOW_OTHER, show_other_);
-	DDX_Text(pDX, IDC_DFFD_ARRAY_MAX, max_fix_for_elts_);
-	DDV_MinMaxUInt(pDX, max_fix_for_elts_, 2, 999999);
-	DDX_Text(pDX, IDC_DFFD_FORMAT_CHAR, default_char_format_);
-	DDX_Text(pDX, IDC_DFFD_FORMAT_DATE, default_date_format_);
-	DDX_Text(pDX, IDC_DFFD_FORMAT_INT, default_int_format_);
-	DDX_Text(pDX, IDC_DFFD_FORMAT_REAL, default_real_format_);
-	DDX_Text(pDX, IDC_DFFD_FORMAT_STRING, default_string_format_);
-	DDX_Text(pDX, IDC_DFFD_FORMAT_UINT, default_unsigned_format_);
 	//}}AFX_DATA_MAP
-	DDX_Radio(pDX, IDC_DFFD_NONE, dffd_view_);
-//	DDX_Check(pDX, IDC_NICE_ADDR, nice_addr_);
+	DDX_Check(pDX, IDC_RESTORE, pParent->val_.open_restore_);
+	DDX_Check(pDX, IDC_MDITABS, pParent->val_.mditabs_);
+	DDX_Check(pDX, IDC_TABSBOTTOM, pParent->val_.tabsbottom_);
+	DDX_Check(pDX, IDC_LARGE_CURSOR, pParent->val_.large_cursor_);
+	DDX_Check(pDX, IDC_HEX_UCASE, pParent->val_.hex_ucase_);
+	DDX_Check(pDX, IDC_SHOW_OTHER, pParent->val_.show_other_);
+//	DDX_Check(pDX, IDC_NICE_ADDR, pParent->val_.nice_addr_);
+
+	DDX_Radio(pDX, IDC_DFFD_NONE, pParent->val_.dffd_view_);
+	DDX_Text(pDX, IDC_DFFD_ARRAY_MAX, pParent->val_.max_fix_for_elts_);
+	DDV_MinMaxUInt(pDX, pParent->val_.max_fix_for_elts_, 2, 999999);
+	DDX_Text(pDX, IDC_DFFD_FORMAT_CHAR, pParent->val_.default_char_format_);
+	DDX_Text(pDX, IDC_DFFD_FORMAT_INT, pParent->val_.default_int_format_);
+	DDX_Text(pDX, IDC_DFFD_FORMAT_UINT, pParent->val_.default_unsigned_format_);
+	DDX_Text(pDX, IDC_DFFD_FORMAT_STRING, pParent->val_.default_string_format_);
+	DDX_Text(pDX, IDC_DFFD_FORMAT_REAL, pParent->val_.default_real_format_);
+	DDX_Text(pDX, IDC_DFFD_FORMAT_DATE, pParent->val_.default_date_format_);
 }
 
 
-BEGIN_MESSAGE_MAP(CSysDisplayPage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CSysDisplayPage, COptPage)
 	//{{AFX_MSG_MAP(CSysDisplayPage)
 	ON_WM_HELPINFO()
 	ON_BN_CLICKED(IDC_HEX_UCASE, OnChange)
@@ -430,7 +473,7 @@ END_MESSAGE_MAP()
 
 BOOL CSysDisplayPage::OnInitDialog() 
 {
-	CPropertyPage::OnInitDialog();
+	COptPage::OnInitDialog();
 	
     ASSERT(GetDlgItem(IDC_SPIN_DFFD_ARRAY_MAX) != NULL);
     ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_DFFD_ARRAY_MAX))->SetRange(2, UD_MAXVAL);
@@ -445,7 +488,7 @@ void CSysDisplayPage::OnChange()
 
 void CSysDisplayPage::OnRButtonDblClk(UINT nFlags, CPoint point) 
 {
-	CPropertyPage::OnRButtonDblClk(nFlags, point);
+	COptPage::OnRButtonDblClk(nFlags, point);
 }
 
 void CSysDisplayPage::OnVisualizations() 
@@ -457,16 +500,14 @@ void CSysDisplayPage::OnChangeMditabs()
 {
     UpdateData();
     ASSERT(GetDlgItem(IDC_TABSBOTTOM) != NULL);
-    GetDlgItem(IDC_TABSBOTTOM)->EnableWindow(mditabs_);
+    GetDlgItem(IDC_TABSBOTTOM)->EnableWindow(pParent->val_.mditabs_);
     SetModified(TRUE);
 }
 
 void CSysDisplayPage::OnOK() 
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    aa->set_sysdisplay();
-        
-    CPropertyPage::OnOK();
+	theApp.set_sysdisplay(pParent->val_);
+    COptPage::OnOK();
 }
 
 static DWORD id_pairs1[] = { 
@@ -513,972 +554,17 @@ void CSysDisplayPage::OnContextMenu(CWnd* pWnd, CPoint point)
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
-// CMacroPage property page
-
-IMPLEMENT_DYNCREATE(CMacroPage, CPropertyPage)
-
-CMacroPage::CMacroPage() : CPropertyPage(CMacroPage::IDD)
-{
-        //{{AFX_DATA_INIT(CMacroPage)
-        num_keys_ = 0;
-        num_plays_ = 0;
-        num_secs_ = 0;
-        refresh_ = -1;
-        refresh_bars_ = FALSE;
-        refresh_props_ = FALSE;
-        halt_level_ = -1;
-        //}}AFX_DATA_INIT
-    HICON hh = AfxGetApp()->LoadIcon(IDI_MACRO);
-    m_psp.hIcon = hh;
-    m_psp.dwFlags &= ~PSP_USEICONID;
-    m_psp.dwFlags |= PSP_USEHICON;
-}
-
-CMacroPage::~CMacroPage()
-{
-}
-
-void CMacroPage::DoDataExchange(CDataExchange* pDX)
-{
-        CPropertyPage::DoDataExchange(pDX);
-        //{{AFX_DATA_MAP(CMacroPage)
-        DDX_Text(pDX, IDC_NUM_KEYS, num_keys_);
-        DDV_MinMaxLong(pDX, num_keys_, 1, 999);
-        DDX_Text(pDX, IDC_NUM_PLAYS, num_plays_);
-        DDV_MinMaxLong(pDX, num_plays_, 1, 999);
-        DDX_Text(pDX, IDC_NUM_SECS, num_secs_);
-        DDV_MinMaxLong(pDX, num_secs_, 1, 999);
-        DDX_Radio(pDX, IDC_REFRESH_NEVER, refresh_);
-        DDX_Check(pDX, IDC_REFRESH_BARS, refresh_bars_);
-        DDX_Check(pDX, IDC_REFRESH_PROPS, refresh_props_);
-        DDX_Radio(pDX, IDC_HALT0, halt_level_);
-        //}}AFX_DATA_MAP
-}
-
-
-BEGIN_MESSAGE_MAP(CMacroPage, CPropertyPage)
-        //{{AFX_MSG_MAP(CMacroPage)
-        ON_WM_HELPINFO()
-        ON_BN_CLICKED(IDC_HALT0, OnChange)
-        ON_BN_CLICKED(IDC_REFRESH_NEVER, OnRefreshNever)
-        ON_BN_CLICKED(IDC_REFRESH_PLAYS, OnRefreshPlays)
-        ON_BN_CLICKED(IDC_REFRESH_SECS, OnRefreshSecs)
-        ON_BN_CLICKED(IDC_REFRESH_KEYS, OnRefreshKeys)
-        ON_BN_CLICKED(IDC_HALT1, OnChange)
-        ON_BN_CLICKED(IDC_HALT2, OnChange)
-        ON_EN_CHANGE(IDC_NUM_KEYS, OnChange)
-        ON_EN_CHANGE(IDC_NUM_PLAYS, OnChange)
-        ON_EN_CHANGE(IDC_NUM_SECS, OnChange)
-        ON_BN_CLICKED(IDC_REFRESH_BARS, OnChange)
-        ON_BN_CLICKED(IDC_REFRESH_PROPS, OnChange)
-	ON_BN_CLICKED(IDC_SAVEMACRO, OnSavemacro)
-	ON_BN_CLICKED(IDC_LOADMACRO, OnLoadmacro)
-	ON_BN_CLICKED(IDC_MACRODIR, OnMacrodir)
-	//}}AFX_MSG_MAP
-    ON_WM_CONTEXTMENU()
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CMacroPage message handlers
-
-BOOL CMacroPage::OnInitDialog() 
-{
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    CPropertyPage::OnInitDialog();
-
-    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
-    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_SECS))->SetRange(1, 999);
-    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
-    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_KEYS))->SetRange(1, 999);
-    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
-    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_PLAYS))->SetRange(1, 999);
-
-    // Set edit box, spin control, static text for all 3 refresh options
-    ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_SECS) != NULL);
-    GetDlgItem(IDC_NUM_SECS)->EnableWindow(refresh_ == 1);
-    GetDlgItem(IDC_SPIN_SECS)->EnableWindow(refresh_ == 1);
-    GetDlgItem(IDC_DESC_SECS)->EnableWindow(refresh_ == 1);
-
-    ASSERT(GetDlgItem(IDC_NUM_KEYS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_KEYS) != NULL);
-    GetDlgItem(IDC_NUM_KEYS)->EnableWindow(refresh_ == 2);
-    GetDlgItem(IDC_SPIN_KEYS)->EnableWindow(refresh_ == 2);
-    GetDlgItem(IDC_DESC_KEYS)->EnableWindow(refresh_ == 2);
-
-    ASSERT(GetDlgItem(IDC_NUM_PLAYS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_PLAYS) != NULL);
-    GetDlgItem(IDC_NUM_PLAYS)->EnableWindow(refresh_ == 3);
-    GetDlgItem(IDC_SPIN_PLAYS)->EnableWindow(refresh_ == 3);
-    GetDlgItem(IDC_DESC_PLAYS)->EnableWindow(refresh_ == 3);
-
-    ASSERT(GetDlgItem(IDC_SAVEMACRO) != NULL);
-    GetDlgItem(IDC_SAVEMACRO)->EnableWindow(!aa->recording_ && aa->mac_.size() > 0);
-    return TRUE;
-}
-
-void CMacroPage::OnChange() 
-{
-    SetModified(TRUE);
-}
-
-void CMacroPage::OnOK() 
-{
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    aa->set_macro();
-
-    CPropertyPage::OnOK();
-}
-
-static DWORD id_pairs2[] = { 
-    IDC_REFRESH_NEVER, HIDC_REFRESH_NEVER,
-    IDC_REFRESH_SECS, HIDC_REFRESH_SECS,
-    IDC_REFRESH_KEYS, HIDC_REFRESH_KEYS,
-    IDC_REFRESH_PLAYS, HIDC_REFRESH_PLAYS,
-    IDC_NUM_SECS, HIDC_NUM_SECS,
-    IDC_SPIN_SECS, HIDC_NUM_SECS,
-    IDC_DESC_SECS, HIDC_NUM_SECS,
-    IDC_NUM_KEYS, HIDC_NUM_KEYS,
-    IDC_SPIN_KEYS, HIDC_NUM_KEYS,
-    IDC_DESC_KEYS, HIDC_NUM_KEYS,
-    IDC_NUM_PLAYS, HIDC_NUM_PLAYS,
-    IDC_SPIN_PLAYS, HIDC_NUM_PLAYS,
-    IDC_DESC_PLAYS, HIDC_NUM_PLAYS,
-    IDC_REFRESH_BARS, HIDC_REFRESH_BARS,
-    IDC_REFRESH_PROPS, HIDC_REFRESH_PROPS,
-    IDC_HALT0, HIDC_HALT0,
-    IDC_HALT1, HIDC_HALT1,
-    IDC_HALT2, HIDC_HALT2,
-    IDC_SAVEMACRO, HIDC_SAVEMACRO,
-    IDC_LOADMACRO, HIDC_LOADMACRO,
-    IDC_MACRODIR, HIDC_MACRODIR,
-    0,0 
-};
-
-BOOL CMacroPage::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
-    return TRUE;
-}
-
-void CMacroPage::OnContextMenu(CWnd* pWnd, CPoint point) 
-{
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs2);
-}
-
-void CMacroPage::OnRefreshNever() 
-{
-    // Disable edit box, spin control, static text for all 3 refresh options
-    ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_SECS) != NULL);
-    GetDlgItem(IDC_NUM_SECS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_SPIN_SECS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_DESC_SECS)->EnableWindow(FALSE);
-
-    ASSERT(GetDlgItem(IDC_NUM_PLAYS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_PLAYS) != NULL);
-    GetDlgItem(IDC_NUM_PLAYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_SPIN_PLAYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_DESC_PLAYS)->EnableWindow(FALSE);
-
-    ASSERT(GetDlgItem(IDC_NUM_KEYS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_KEYS) != NULL);
-    GetDlgItem(IDC_NUM_KEYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_SPIN_KEYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_DESC_KEYS)->EnableWindow(FALSE);
-
-    SetModified(TRUE);
-}
-
-void CMacroPage::OnRefreshPlays() 
-{
-    // Disable edit box, spin control, static text KEYS and SECS
-    // Enable them for PLAYS
-    ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_SECS) != NULL);
-    GetDlgItem(IDC_NUM_SECS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_SPIN_SECS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_DESC_SECS)->EnableWindow(FALSE);
-
-    ASSERT(GetDlgItem(IDC_NUM_PLAYS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_PLAYS) != NULL);
-    GetDlgItem(IDC_NUM_PLAYS)->EnableWindow(TRUE);
-    GetDlgItem(IDC_SPIN_PLAYS)->EnableWindow(TRUE);
-    GetDlgItem(IDC_DESC_PLAYS)->EnableWindow(TRUE);
-
-    ASSERT(GetDlgItem(IDC_NUM_KEYS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_KEYS) != NULL);
-    GetDlgItem(IDC_NUM_KEYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_SPIN_KEYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_DESC_KEYS)->EnableWindow(FALSE);
-
-    SetModified(TRUE);
-}
-
-void CMacroPage::OnRefreshSecs() 
-{
-    // Disable edit box, spin control, static text KEYS and PLAYS
-    // Enable them for SECS
-    ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_SECS) != NULL);
-    GetDlgItem(IDC_NUM_SECS)->EnableWindow(TRUE);
-    GetDlgItem(IDC_SPIN_SECS)->EnableWindow(TRUE);
-    GetDlgItem(IDC_DESC_SECS)->EnableWindow(TRUE);
-
-    ASSERT(GetDlgItem(IDC_NUM_PLAYS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_PLAYS) != NULL);
-    GetDlgItem(IDC_NUM_PLAYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_SPIN_PLAYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_DESC_PLAYS)->EnableWindow(FALSE);
-
-    ASSERT(GetDlgItem(IDC_NUM_KEYS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_KEYS) != NULL);
-    GetDlgItem(IDC_NUM_KEYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_SPIN_KEYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_DESC_KEYS)->EnableWindow(FALSE);
-
-    SetModified(TRUE);
-}
-
-void CMacroPage::OnRefreshKeys() 
-{
-    // Disable edit box, spin control, static text PLAYS and SECS
-    // Enable them for KEYS
-    ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_SECS) != NULL);
-    GetDlgItem(IDC_NUM_SECS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_SPIN_SECS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_DESC_SECS)->EnableWindow(FALSE);
-
-    ASSERT(GetDlgItem(IDC_NUM_PLAYS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_PLAYS) != NULL);
-    GetDlgItem(IDC_NUM_PLAYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_SPIN_PLAYS)->EnableWindow(FALSE);
-    GetDlgItem(IDC_DESC_PLAYS)->EnableWindow(FALSE);
-
-    ASSERT(GetDlgItem(IDC_NUM_KEYS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
-    ASSERT(GetDlgItem(IDC_DESC_KEYS) != NULL);
-    GetDlgItem(IDC_NUM_KEYS)->EnableWindow(TRUE);
-    GetDlgItem(IDC_SPIN_KEYS)->EnableWindow(TRUE);
-    GetDlgItem(IDC_DESC_KEYS)->EnableWindow(TRUE);
-
-    SetModified(TRUE);
-}
-
-void CMacroPage::OnSavemacro() 
-{
-    if (!UpdateData(TRUE))
-        return;                         // DDV failed
-
-    CSaveMacro dlg;
-    dlg.halt_level_ = halt_level_;
-
-    dlg.DoModal();
-}
-
-void CMacroPage::OnLoadmacro() 
-{
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    ASSERT_VALID(aa);
-
-    ASSERT(aa->mac_dir_.Right(1) == "\\");
-    CHexFileDialog dlg("MacroFileDlg", HIDD_FILE_MACRO, TRUE, "hem", NULL,
-		               OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT | OFN_SHOWHELP,
-                       "Macro Files (*.hem)|*.hem|All Files (*.*)|*.*||", "Load", this);
-	dlg.m_ofn.lpstrTitle = "Select Macro File";
-    dlg.m_ofn.lpstrInitialDir = aa->mac_dir_;
-
-    if (dlg.DoModal() == IDOK)
-	{
-        std::vector<key_macro> tmp;     // Load macro into temp so that if something goes wrong we don't lose the current macro
-        CString comment;
-        int halt_lev;
-        long plays;
-		int version;  // Version of HexEdit in which the macro was recorded
-
-        if (aa->macro_load(dlg.GetPathName(), &tmp,
-                           comment, halt_lev, plays, version))
-        {
-            aa->mac_ = tmp;             // Store the temp macro to current HexEdit macro
-            aa->mac_filename_ = dlg.GetFileTitle();
-            aa->mac_comment_ = comment;
-            aa->plays_ = plays;
-			aa->macro_version_ = version;
-            halt_level_ = halt_lev;     // Set halt level requested by saved macro in this dialog
-            UpdateData(FALSE);
-
-            // Now enable save button since we now have a macro loaded
-            ASSERT(GetDlgItem(IDC_SAVEMACRO) != NULL);
-            GetDlgItem(IDC_SAVEMACRO)->EnableWindow(TRUE);
-
-            // Display the comment for this macro
-            if (!comment.IsEmpty())
-                ::HMessageBox(comment);
-        }
-	}
-}
-
-void CMacroPage::OnMacrodir() 
-{
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    ASSERT_VALID(aa);
-
-    ASSERT(aa->mac_dir_.Right(1) == "\\");
-    CDirDialog dlg(aa->mac_dir_, "Macro Files (*.hem)|*.hem|All Files (*.*)|*.*||", this);
-    dlg.m_ofn.lpstrTitle = "Select Folder for HexEdit Macros";
-
-    if (dlg.DoModal() == IDOK)
-        aa->mac_dir_ = dlg.GetPath();
-    ASSERT(aa->mac_dir_.Right(1) == "\\");
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintPage property page
-
-IMPLEMENT_DYNCREATE(CPrintPage, CPropertyPage)
-
-CPrintPage::CPrintPage() : CPropertyPage(CPrintPage::IDD)
-{
-	//{{AFX_DATA_INIT(CPrintPage)
-	bottom_ = 0.0;
-	top_ = 0.0;
-	left_ = 0.0;
-	right_ = 0.0;
-	footer_ = _T("");
-	header_ = _T("");
-	spacing_ = -1;
-	border_ = FALSE;
-	headings_ = FALSE;
-	header_edge_ = 0.0;
-	footer_edge_ = 0.0;
-	//}}AFX_DATA_INIT
-	units_ = 0;   // default to inches
-    HICON hh = AfxGetApp()->LoadIcon(IDI_PRINTER);
-    m_psp.hIcon = hh;
-    m_psp.dwFlags &= ~PSP_USEICONID;
-    m_psp.dwFlags |= PSP_USEHICON;
-}
-
-CPrintPage::~CPrintPage()
-{
-}
-
-void CPrintPage::DoDataExchange(CDataExchange* pDX)
-{
-	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CPrintPage)
-	DDX_Control(pDX, IDC_PRINT_FOOTER, ctl_footer_);
-	DDX_Control(pDX, IDC_PRINT_HEADER, ctl_header_);
-	DDX_Control(pDX, IDC_FOOTER_OPTS, footer_args_);
-	DDX_Control(pDX, IDC_HEADER_OPTS, header_args_);
-	DDX_Text(pDX, IDC_PRINT_BOTTOM, bottom_);
-	DDX_Text(pDX, IDC_PRINT_TOP, top_);
-	DDX_Text(pDX, IDC_PRINT_LEFT, left_);
-	DDX_Text(pDX, IDC_PRINT_RIGHT, right_);
-	DDX_Text(pDX, IDC_PRINT_FOOTER, footer_);
-	DDX_Text(pDX, IDC_PRINT_HEADER, header_);
-	DDX_Radio(pDX, IDC_PRINT_SPACE1, spacing_);
-	DDX_Check(pDX, IDC_PRINT_BORDER, border_);
-	DDX_Check(pDX, IDC_PRINT_HEADINGS, headings_);
-	DDX_Text(pDX, IDC_PRINT_HEADER_EDGE, header_edge_);
-	DDX_Text(pDX, IDC_PRINT_FOOTER_EDGE, footer_edge_);
-	//}}AFX_DATA_MAP
-	DDX_CBIndex(pDX, IDC_PRINT_UNITS, units_);
-}
-
-BEGIN_MESSAGE_MAP(CPrintPage, CPropertyPage)
-	//{{AFX_MSG_MAP(CPrintPage)
-	ON_WM_HELPINFO()
-	ON_EN_CHANGE(IDC_PRINT_BOTTOM, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_FOOTER, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_HEADER, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_LEFT, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_RIGHT, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_TOP, OnChange)
-	ON_BN_CLICKED(IDC_PRINT_SPACE1, OnChange)
-	ON_BN_CLICKED(IDC_PRINT_SPACE1HALF, OnChange)
-	ON_BN_CLICKED(IDC_PRINT_SPACE2, OnChange)
-	ON_BN_CLICKED(IDC_FOOTER_OPTS, OnFooterOpts)
-	ON_BN_CLICKED(IDC_HEADER_OPTS, OnHeaderOpts)
-	//}}AFX_MSG_MAP
-    ON_WM_CONTEXTMENU()
-	ON_CBN_SELCHANGE(IDC_PRINT_UNITS, OnChangeUnits)
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintPage message handlers
-
-BOOL CPrintPage::OnInitDialog() 
-{
-    CPropertyPage::OnInitDialog();
-
-    VERIFY(arrow_icon_ = AfxGetApp()->LoadIcon(IDI_ARROW));
-    ASSERT(GetDlgItem(IDC_HEADER_OPTS) != NULL);
-    ((CButton *)GetDlgItem(IDC_HEADER_OPTS))->SetIcon(arrow_icon_);
-    ASSERT(GetDlgItem(IDC_FOOTER_OPTS) != NULL);
-    ((CButton *)GetDlgItem(IDC_FOOTER_OPTS))->SetIcon(arrow_icon_);
-
-    if (args_menu_.m_hMenu == NULL)
-        args_menu_.LoadMenu(IDR_PRINT_ARGS);
-    header_args_.m_hMenu = args_menu_.GetSubMenu(0)->GetSafeHmenu();
-    header_args_.m_bRightArrow = TRUE;
-    footer_args_.m_hMenu = args_menu_.GetSubMenu(0)->GetSafeHmenu();
-    footer_args_.m_bRightArrow = TRUE;
-
-    return TRUE;
-}
-
-void CPrintPage::OnOK() 
-{
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    ASSERT_VALID(aa);
-    (void)aa->set_printer();
-
-    CPropertyPage::OnOK();
-}
-
-void CPrintPage::OnHeaderOpts() 
-{
-    if (header_args_.m_nMenuResult != 0)
-    {
-        CString ss;
-        ss.LoadString (header_args_.m_nMenuResult);
-
-        for (int i = 0; i < ss.GetLength (); i++)
-        {
-            ctl_header_.SendMessage (WM_CHAR, (TCHAR) ss [i]);
-        }
-        SetModified(TRUE);
-    }
-}
-
-void CPrintPage::OnFooterOpts() 
-{
-    if (footer_args_.m_nMenuResult != 0)
-    {
-        CString ss;
-        ss.LoadString (footer_args_.m_nMenuResult);
-
-        for (int i = 0; i < ss.GetLength (); i++)
-        {
-            ctl_footer_.SendMessage (WM_CHAR, (TCHAR) ss [i]);
-        }
-        SetModified(TRUE);
-    }
-}
-
-void CPrintPage::OnChangeUnits()
-{
-	// Get factor for units converting from
-	double factor = 1.0;
-	switch (units_)
-	{
-	case 1:
-		factor = 2.54;
-		break;
-	}
-	UpdateData();
-	// Modify factor for units converting to
-	switch (units_)
-	{
-	case 1:
-		factor /= 2.54;
-		break;
-	}
-	// Fix all distance values according to new units
-	bottom_      = floor(1000.0*bottom_     /factor + 0.5)/1000.0;
-	top_         = floor(1000.0*top_        /factor + 0.5)/1000.0;
-	left_        = floor(1000.0*left_       /factor + 0.5)/1000.0;
-	right_       = floor(1000.0*right_      /factor + 0.5)/1000.0;
-	header_edge_ = floor(1000.0*header_edge_/factor + 0.5)/1000.0;
-	footer_edge_ = floor(1000.0*footer_edge_/factor + 0.5)/1000.0;
-
-	UpdateData(FALSE);    // Put new values back into the controls
-
-    SetModified(TRUE);
-}
-
-void CPrintPage::OnChange() 
-{
-    SetModified(TRUE);
-}
-
-static DWORD id_pairs3[] = { 
-    IDC_PRINT_HEADER, HIDC_PRINT_HEADER,
-    IDC_HEADER_OPTS, HIDC_HEADER_OPTS,
-    IDC_PRINT_FOOTER, HIDC_PRINT_FOOTER,
-    IDC_FOOTER_OPTS, HIDC_FOOTER_OPTS,
-    IDC_PRINT_BORDER, HIDC_PRINT_BORDER,
-    IDC_PRINT_HEADINGS, HIDC_PRINT_HEADINGS,
-
-    IDC_PRINT_UNITS, HIDC_PRINT_UNITS,
-    IDC_PRINT_SPACE1, HIDC_PRINT_SPACE1,
-    IDC_PRINT_SPACE1HALF, HIDC_PRINT_SPACE1HALF,
-    IDC_PRINT_SPACE2, HIDC_PRINT_SPACE2,
-    IDC_PRINT_LEFT, HIDC_PRINT_LEFT,
-    IDC_PRINT_RIGHT, HIDC_PRINT_RIGHT,
-    IDC_PRINT_TOP, HIDC_PRINT_TOP,
-    IDC_PRINT_BOTTOM, HIDC_PRINT_BOTTOM,
-    IDC_PRINT_HEADER_EDGE, HIDC_PRINT_HEADER_EDGE,
-    IDC_PRINT_FOOTER_EDGE, HIDC_PRINT_FOOTER_EDGE,
-    0,0 
-};
-
-BOOL CPrintPage::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
-    return TRUE;
-}
-
-void CPrintPage::OnContextMenu(CWnd* pWnd, CPoint point) 
-{
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs3);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// CFiltersPage property page
-
-IMPLEMENT_DYNCREATE(CFiltersPage, CPropertyPage)
-
-CFiltersPage::CFiltersPage() : CPropertyPage(CFiltersPage::IDD)
-{
-	//{{AFX_DATA_INIT(CFiltersPage)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
-    HICON hh = AfxGetApp()->LoadIcon(IDI_FILTER);
-    m_psp.hIcon = hh;
-    m_psp.dwFlags &= ~PSP_USEICONID;
-    m_psp.dwFlags |= PSP_USEHICON;
-}
-
-CFiltersPage::~CFiltersPage()
-{
-}
-
-void CFiltersPage::DoDataExchange(CDataExchange* pDX)
-{
-	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CFiltersPage)
-	DDX_Control(pDX, IDC_UP, ctl_up_);
-	DDX_Control(pDX, IDC_NEW, ctl_new_);
-	DDX_Control(pDX, IDC_DOWN, ctl_down_);
-	DDX_Control(pDX, IDC_DEL, ctl_del_);
-	//}}AFX_DATA_MAP
-    DDX_GridControl(pDX, IDC_GRID_FILTERS, grid_);             // associate the grid window with a C++ object
-}
-
-BEGIN_MESSAGE_MAP(CFiltersPage, CPropertyPage)
-	//{{AFX_MSG_MAP(CFiltersPage)
-	ON_WM_HELPINFO()
-	ON_BN_CLICKED(IDC_DEL, OnDel)
-	ON_BN_CLICKED(IDC_NEW, OnNew)
-	ON_BN_CLICKED(IDC_UP, OnUp)
-	ON_BN_CLICKED(IDC_DOWN, OnDown)
-	//}}AFX_MSG_MAP
-    ON_WM_CONTEXTMENU()
-    ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID_FILTERS, OnGridEndEdit)
-    ON_NOTIFY(NM_CLICK, IDC_GRID_FILTERS, OnGridClick)
-END_MESSAGE_MAP()
-
-void CFiltersPage::add_row(int row, BOOL is_checked /*=TRUE*/, CString s1/*=""*/, CString s2 /*=""*/)
-{
-    row = grid_.InsertRow("", row);
-    
-//    CString str;
-//    str.Format("%ld", long(row-header_rows+1));
-//    grid_.SetItemText(row, column_number, str);
-
-    CGridBtnCell *pbtn;
-    grid_.SetCellType(row, column_check, RUNTIME_CLASS(CGridBtnCell));
-    pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
-    if (pbtn != NULL)
-    {
-        pbtn->SetBtnDataBase(&btn_db_);
-        pbtn->SetupBtns(0, DFC_BUTTON, DFCS_BUTTONCHECK, CGridBtnCellBase::CTL_ALIGN_LEFT, 20, FALSE, " ");
-        UINT state = pbtn->GetDrawCtlState(0);
-        if (is_checked)
-            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
-        else
-            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
-    }
-
-    grid_.SetItemText(row, column_files, s1);
-    grid_.SetItemText(row, column_filter, s2);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// CFiltersPage message handlers
-
-BOOL CFiltersPage::OnInitDialog() 
-{
-    CPropertyPage::OnInitDialog();
-
-    // Set up icons on buttons
-    VERIFY(icon_new_ = AfxGetApp()->LoadIcon(IDI_NEW));
-    ctl_new_.SetIcon(icon_new_);
-    VERIFY(icon_del_ = AfxGetApp()->LoadIcon(IDI_DEL));
-    ctl_del_.SetIcon(icon_del_);
-    VERIFY(icon_up_ = AfxGetApp()->LoadIcon(IDI_UP));
-    ctl_up_.SetIcon(icon_up_);
-    VERIFY(icon_down_ = AfxGetApp()->LoadIcon(IDI_DOWN));
-    ctl_down_.SetIcon(icon_down_);
-
-    // Add tooltips for buttons
-    if (m_cToolTip.Create(this))
-    {
-        m_cToolTip.AddTool(&ctl_new_, IDS_NEW);
-        m_cToolTip.AddTool(&ctl_del_, IDS_DEL);
-        m_cToolTip.AddTool(&ctl_up_, IDS_UP);
-        m_cToolTip.AddTool(&ctl_down_, IDS_DOWN);
-        m_cToolTip.Activate(TRUE);
-    }
-
-    // Set up the grid
-    grid_.SetEditable(TRUE);
-    grid_.GetDefaultCell(FALSE, FALSE)->SetBackClr(RGB(0xF8, 0xF8, 0xFF));
-
-    grid_.SetFixedColumnSelection(FALSE);
-    grid_.SetFixedRowSelection(FALSE);
-
-    grid_.AutoSize();
-
-//    grid_.SetSortColumn(-1);
-    btn_db_.SetGrid(&grid_);
-
-    // Set up the grid rows and columns
-    grid_.SetColumnCount(column_count);
-    grid_.SetFixedColumnCount(0);
-    grid_.SetRowCount(header_rows);
-    grid_.SetFixedRowCount(header_rows);
-
-    // Set up the grid sizes
-//    grid_.SetColumnWidth(column_number, 28);
-    grid_.SetColumnWidth(column_check, 22);
-    grid_.SetColumnWidth(column_files, 185);
-    grid_.SetColumnWidth(column_filter, 146);
-
-    // Set up column headers
-//    grid_.SetItemText(0, column_files, "Filter Name");
-//    grid_.SetItemText(0, column_filter, "Files to Filter");
-
-    // Set up the grid cells
-    for (int ii = 0; ; ++ii)
-    {
-        CString s1, s2;
-        BOOL is_checked = TRUE;
-
-        AfxExtractSubString(s1, theApp.current_filters_, ii*2, '|');
-
-        AfxExtractSubString(s2, theApp.current_filters_, ii*2+1, '|');
-
-        if (s1.IsEmpty() && s2.IsEmpty())
-            break;
-
-        // Check if this is a disabled filter
-        if (s2.IsEmpty() || s2[0] == '>')
-        {
-            is_checked = FALSE;
-            if (!s2.IsEmpty()) s2 = s2.Mid(1);
-        }
-
-        add_row(-1, is_checked, s1, s2);
-    }
-    grid_.RedrawWindow();
-
-    grid_.SetListMode(TRUE);
-    grid_.SetSingleRowSelection(TRUE);
-
-    return TRUE;
-}
-
-void CFiltersPage::OnOK() 
-{
-    int max_filt = grid_.GetRowCount() - header_rows;
-
-    theApp.current_filters_.Empty();
-
-    for (int ii = 0; ii < max_filt; ++ii)
-    {
-        CString s1 = grid_.GetItemText(ii+header_rows, column_files);
-        CString s2 = grid_.GetItemText(ii+header_rows, column_filter);
-
-        if (s1.IsEmpty() && s2.IsEmpty())
-            continue;
-
-        theApp.current_filters_ += s1;
-        theApp.current_filters_ += '|';
-
-        CGridBtnCell *pbtn;
-        pbtn = (CGridBtnCell *)grid_.GetCell(ii+header_rows, column_check);
-        if ((pbtn->GetDrawCtlState(0) & DFCS_CHECKED) == 0)
-            theApp.current_filters_ += '>';
-
-        theApp.current_filters_ += s2;
-        theApp.current_filters_ += '|';
-    }
-    theApp.current_filters_ +='|';
-	
-    CPropertyPage::OnOK();
-}
-
-BOOL CFiltersPage::PreTranslateMessage(MSG* pMsg) 
-{
-    m_cToolTip.RelayEvent(pMsg);	
-
-    return CDialog::PreTranslateMessage(pMsg);
-}
-
-static DWORD id_pairs4[] = { 
-    IDC_GRID_FILTERS, HIDC_GRID_FILTERS,
-    IDC_NEW, HIDC_NEW,
-    IDC_DEL, HIDC_DEL,
-    IDC_UP, HIDC_UP,
-    IDC_DOWN, HIDC_DOWN,
-    0,0 
-}; 
-
-BOOL CFiltersPage::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs4);
-    return TRUE;
-}
-
-void CFiltersPage::OnContextMenu(CWnd* pWnd, CPoint point) 
-{
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs4);
-}
-
-void CFiltersPage::OnNew() 
-{
-    int row;
-    CCellRange sel = grid_.GetSelectedCellRange();
-
-    if (sel.IsValid())
-        row = sel.GetMinRow();
-    else
-        row = header_rows;       // If no row selected add new row at top
-
-    add_row(row);
-    grid_.RedrawWindow();
-    grid_.SetSelectedRange(row, 0, row, column_count-1);
-    grid_.SetFocusCell(row, column_files);
-
-    grid_.RedrawWindow();
-    grid_.SetFocus();
-
-    SetModified(TRUE);
-}
-
-void CFiltersPage::OnDel() 
-{
-    CCellRange sel = grid_.GetSelectedCellRange();
-    if (sel.IsValid())
-    {
-        int row = sel.GetMinRow();
-        grid_.DeleteRow(row);
-        if (row < grid_.GetRowCount())
-            grid_.SetSelectedRange(row, 0, row, column_count-1);
-
-        grid_.RedrawWindow();
-
-        SetModified(TRUE);
-    }
-}
-
-void CFiltersPage::OnUp() 
-{
-    CCellRange sel = grid_.GetSelectedCellRange();
-    int row;
-
-    // If there is a row selected and its not at the top
-    if (sel.IsValid() && (row = sel.GetMinRow()) > header_rows)
-    {
-        // Save info from the current and above row
-        CString s1 = grid_.GetItemText(row, column_files);
-        CString s2 = grid_.GetItemText(row, column_filter);
-        CString s1_above = grid_.GetItemText(row-1, column_files);
-        CString s2_above = grid_.GetItemText(row-1, column_filter);
-        BOOL is_checked, is_checked_above;
-
-        CGridBtnCell *pbtn;
-        UINT state;
-
-        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
-        is_checked = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
-        pbtn = (CGridBtnCell *)grid_.GetCell(row-1, column_check);
-        is_checked_above = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
-
-        // Swap the contents of the rows
-        grid_.SetItemText(row-1, column_files, s1);
-        grid_.SetItemText(row-1, column_filter, s2);
-        pbtn = (CGridBtnCell *)grid_.GetCell(row-1, column_check);
-        state = pbtn->GetDrawCtlState(0);
-        if (is_checked)
-            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
-        else
-            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
-
-        grid_.SetItemText(row, column_files, s1_above);
-        grid_.SetItemText(row, column_filter, s2_above);
-        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
-        state = pbtn->GetDrawCtlState(0);
-        if (is_checked_above)
-            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
-        else
-            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
-
-
-        grid_.SetSelectedRange(row-1, 0, row-1, column_count-1);
-
-        grid_.RedrawWindow();
-        SetModified(TRUE);
-    }
-}
-
-void CFiltersPage::OnDown() 
-{
-    CCellRange sel = grid_.GetSelectedCellRange();
-    int row;
-    if (sel.IsValid() && (row = sel.GetMinRow()) < grid_.GetRowCount()-1)
-    {
-        // Save info from current row and row below
-        CString s1 = grid_.GetItemText(row, column_files);
-        CString s2 = grid_.GetItemText(row, column_filter);
-        CString s1_below = grid_.GetItemText(row+1, column_files);
-        CString s2_below = grid_.GetItemText(row+1, column_filter);
-        BOOL is_checked, is_checked_below;
-
-        CGridBtnCell *pbtn;
-        UINT state;
-
-        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
-        is_checked = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
-        pbtn = (CGridBtnCell *)grid_.GetCell(row+1, column_check);
-        is_checked_below = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
-
-        // Swap the contents of the rows
-        grid_.SetItemText(row+1, column_files, s1);
-        grid_.SetItemText(row+1, column_filter, s2);
-        pbtn = (CGridBtnCell *)grid_.GetCell(row+1, column_check);
-        state = pbtn->GetDrawCtlState(0);
-        if (is_checked)
-            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
-        else
-            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
-
-        grid_.SetItemText(row, column_files, s1_below);
-        grid_.SetItemText(row, column_filter, s2_below);
-        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
-        state = pbtn->GetDrawCtlState(0);
-        if (is_checked_below)
-            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
-        else
-            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
-
-        grid_.SetSelectedRange(row+1, 0, row+1, column_count-1);
-
-        grid_.RedrawWindow();
-        SetModified(TRUE);
-    }
-}
-
-LRESULT CFiltersPage::OnIdle(long lCount)
-{
-    if (lCount == 0)
-    {
-        int num_rows = grid_.GetRowCount() - header_rows;
-        int curr_row = -1;
-
-        CCellRange sel = grid_.GetSelectedCellRange();
-        if (sel.IsValid())
-        {
-            curr_row = sel.GetMinRow() - header_rows;
-        }
-//        ASSERT(GetDlgItem(IDC_NEW) != NULL);
-//        GetDlgItem(IDC_NEW)->EnableWindow(curr_row != -1);
-        ASSERT(GetDlgItem(IDC_DEL) != NULL);
-        GetDlgItem(IDC_DEL)->EnableWindow(curr_row != -1);
-        ASSERT(GetDlgItem(IDC_UP) != NULL);
-        GetDlgItem(IDC_UP)->EnableWindow(curr_row != -1 && curr_row > 0);
-        ASSERT(GetDlgItem(IDC_DOWN) != NULL);
-        GetDlgItem(IDC_DOWN)->EnableWindow(curr_row != -1 && curr_row < num_rows - 1);
-    }
-
-    return FALSE;
-}
-
-#define FILTER_DISALLOWED_CHARACTERS "\\/:\"<>|"
-
-void CFiltersPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
-{
-    NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
-    TRACE(_T("End Edit on row %d, col %d\n"), pItem->iRow, pItem->iColumn);
-    if (pItem->iColumn == column_filter)
-    {
-        CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
-        if (ss.FindOneOf(FILTER_DISALLOWED_CHARACTERS) != -1)
-        {
-            AfxMessageBox("Filters may not contain any of these characters:\n" FILTER_DISALLOWED_CHARACTERS);
-            *pResult = -1;
-            return;
-        }
-    }
-    else if (pItem->iColumn == column_files)
-    {
-        CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
-        if (ss.FindOneOf("|") != -1)
-        {
-            AfxMessageBox("Please do not use a vertical bar (|)");
-            *pResult = -1;
-            return;
-        }
-    }
-    SetModified(TRUE);
-    *pResult = 0;
-}
-
-void CFiltersPage::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
-{
-    NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
-    if (pItem->iColumn == 0)
-        SetModified(TRUE);
-}
-
-/////////////////////////////////////////////////////////////////////////////
 // CTipsPage property page
 
-IMPLEMENT_DYNCREATE(CTipsPage, CPropertyPage)
+IMPLEMENT_DYNCREATE(CTipsPage, COptPage)
 
-CTipsPage::CTipsPage() : CPropertyPage(CTipsPage::IDD)
-{
-    HICON hh = AfxGetApp()->LoadIcon(IDI_TIPS);
-    m_psp.hIcon = hh;
-    m_psp.dwFlags &= ~PSP_USEICONID;
-    m_psp.dwFlags |= PSP_USEHICON;
-}
-
-CTipsPage::~CTipsPage()
+CTipsPage::CTipsPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CTipsPage::IDD)
 {
 }
 
 void CTipsPage::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	COptPage::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_SLIDER_TIP, ctl_slider_);
 	DDX_Control(pDX, IDC_UP, ctl_up_);
 	DDX_Control(pDX, IDC_NEW, ctl_new_);
@@ -1487,7 +573,7 @@ void CTipsPage::DoDataExchange(CDataExchange* pDX)
     DDX_GridControl(pDX, IDC_GRID_TIP, grid_);             // associate the grid window with a C++ object
 }
 
-BEGIN_MESSAGE_MAP(CTipsPage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CTipsPage, COptPage)
 	ON_WM_HELPINFO()
 	ON_BN_CLICKED(IDC_DEL, OnDel)
 	ON_BN_CLICKED(IDC_NEW, OnNew)
@@ -1585,7 +671,7 @@ BOOL CTipsPage::OnInitDialog()
 		string_list.Add("%s");
 	}
 
-    CPropertyPage::OnInitDialog();
+    COptPage::OnInitDialog();
 
 	ctl_slider_.SetRange(1, 255);
 	ctl_slider_.SetPos(theApp.tip_transparency_);
@@ -1693,7 +779,7 @@ void CTipsPage::OnOK()
     }
 	theApp.tip_transparency_ = ctl_slider_.GetPos();
 
-    CPropertyPage::OnOK();
+    COptPage::OnOK();
 }
 
 BOOL CTipsPage::PreTranslateMessage(MSG* pMsg) 
@@ -1992,569 +1078,25 @@ void CTipsPage::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
         SetModified(TRUE);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CWindowPage property page
-
-IMPLEMENT_DYNCREATE(CWindowPage, CPropertyPage)
-
-CWindowPage::CWindowPage() : CPropertyPage(CWindowPage::IDD)
-{
-    update_ok_ = false;
-    disp_state_ = 0;
-
-	//{{AFX_DATA_INIT(CWindowPage)
-	charset_ = -1;
-	insert_ = -1;
-	maximize_ = FALSE;
-	modify_ = -1;
-	show_area_ = -1;
-	cols_ = 0;
-	grouping_ = 0;
-	offset_ = 0;
-	control_ = -1;
-	addr_dec_ = FALSE;
-	autofit_ = FALSE;
-	//}}AFX_DATA_INIT
-    vertbuffer_ = 0;
-	big_endian_ = FALSE;
-    borders_ = FALSE;
-    change_tracking_ = 0;
-
-    HICON hh = AfxGetApp()->LoadIcon(IDI_WINDOW);
-    m_psp.hIcon = hh;
-    m_psp.dwFlags &= ~PSP_USEICONID;
-    m_psp.dwFlags |= PSP_USEHICON;
-}
-
-CWindowPage::~CWindowPage()
-{
-}
-
-void CWindowPage::DoDataExchange(CDataExchange* pDX)
-{
-	CPropertyPage::DoDataExchange(pDX);
-    if (!pDX->m_bSaveAndValidate)
-    {
-        // Move info into member variables (before move to controls)
-		if (display_.vert_display)
-			show_area_ = 3;
-        else if (display_.hex_area && display_.char_area)
-            show_area_ = 2;
-        else if (display_.char_area)
-            show_area_ = 1;
-        else
-            show_area_ = 0;
-
-        if (display_.char_set == CHARSET_EBCDIC)
-            charset_ = 3;
-        else if (display_.char_set == CHARSET_OEM)
-            charset_ = 2;
-        else if (display_.char_set == CHARSET_ANSI)
-            charset_ = 1;
-        else if (display_.char_set == CHARSET_ASCII)
-            charset_ = 0;
-        else
-            charset_ = -1;
-
-        control_ = display_.control;
-
-        addr_dec_ = display_.dec_addr;
-        autofit_ = display_.autofit;
-
-        insert_ = !display_.overtype;
-        modify_ = !display_.readonly;
-		big_endian_ = display_.big_endian;
-
-        borders_ = display_.borders;
-        if (display_.hide_replace && display_.hide_insert && display_.hide_delete)
-            change_tracking_ = 0;
-        else if (!display_.hide_replace && !display_.hide_insert && !display_.hide_delete)
-            change_tracking_ = 1;
-        else
-            change_tracking_ = 2;    // Some options on, some off
-
-        // Display the name of the window in the group box
-        CWnd *pwnd = GetDlgItem(IDC_BOX);
-        if (pwnd != NULL)
-        {
-            CString ss;
-
-            ss.Format("Display for %s", window_name_);
-            pwnd->SetWindowText(ss);
-        }
-    }
-
-	//{{AFX_DATA_MAP(CWindowPage)
-	DDX_CBIndex(pDX, IDC_CHARSET, charset_);
-	DDX_CBIndex(pDX, IDC_INSERT, insert_);
-	DDX_Check(pDX, IDC_MAX, maximize_);
-	DDX_CBIndex(pDX, IDC_MODIFY, modify_);
-	DDX_CBIndex(pDX, IDC_SHOW_AREA, show_area_);
-	DDX_Text(pDX, IDC_COLS, cols_);
-	DDX_Text(pDX, IDC_GROUPING, grouping_);
-	DDX_Text(pDX, IDC_OFFSET, offset_);
-	DDX_CBIndex(pDX, IDC_CONTROL, control_);
-	DDX_Check(pDX, IDC_ADDR_DEC, addr_dec_);
-	DDX_Check(pDX, IDC_AUTOFIT, autofit_);
-	//}}AFX_DATA_MAP
-	DDX_Text(pDX, IDC_VERTBUFFER, vertbuffer_);
-	DDX_Check(pDX, IDC_BIG_ENDIAN, big_endian_);
-	DDX_Check(pDX, IDC_BORDERS, borders_);
-	DDX_Check(pDX, IDC_CHANGE_TRACKING, change_tracking_);
-
-    if (pDX->m_bSaveAndValidate)
-    {
-        // Get info from members (after filled from controls)
-        switch (show_area_)
-        {
-        default:
-            ASSERT(0);
-            /* fall through */
-        case 0:
-            display_.hex_area = TRUE;
-            display_.char_area = FALSE;
-            display_.edit_char = FALSE;
-			display_.vert_display = FALSE;
-            break;
-        case 1:
-            display_.hex_area = FALSE;
-            display_.char_area = TRUE;
-            display_.edit_char = TRUE;
-			display_.vert_display = FALSE;
-            break;
-        case 2:
-            display_.hex_area = TRUE;
-            display_.char_area = TRUE;
-			display_.vert_display = FALSE;
-            break;
-		case 3:
-			display_.vert_display = TRUE;
-			break;
-        }
-
-        switch (charset_)
-        {
-        default:
-            ASSERT(0);
-            /* fall through */
-        case 0:
-			display_.char_set = CHARSET_ASCII;
-            break;
-        case 1:
-			display_.char_set = CHARSET_ANSI;
-            break;
-        case 2:
-			display_.char_set = CHARSET_OEM;
-            break;
-        case 3:
-			display_.char_set = CHARSET_EBCDIC;
-            break;
-        }
-
-        display_.control = control_;
-
-        display_.dec_addr = addr_dec_;
-        display_.autofit = autofit_;
-
-        display_.overtype = !insert_;
-        display_.readonly = !modify_;
-		display_.big_endian = big_endian_;
-
-        display_.borders = borders_;
-        if (change_tracking_ != 2)
-            display_.hide_insert = display_.hide_replace = display_.hide_delete = (change_tracking_ == 0);
-
-    }
-}
-
-BEGIN_MESSAGE_MAP(CWindowPage, CPropertyPage)
-	//{{AFX_MSG_MAP(CWindowPage)
-	ON_WM_HELPINFO()
-	ON_BN_CLICKED(IDC_SAVE_DEFAULT, OnSaveDefault)
-	ON_BN_CLICKED(IDC_FONT, OnFont)
-	ON_BN_CLICKED(IDC_ADDR_DEC, OnChange)
-	ON_BN_CLICKED(IDC_AUTOFIT, OnAutofit)
-	ON_EN_CHANGE(IDC_COLS, OnChangeCols)
-	ON_CBN_SELCHANGE(IDC_SHOW_AREA, OnSelchangeShowArea)
-	ON_CBN_SELCHANGE(IDC_CHARSET, OnSelchangeCharset)
-	ON_CBN_SELCHANGE(IDC_CONTROL, OnSelchangeControl)
-	ON_CBN_SELCHANGE(IDC_MODIFY, OnSelchangeModify)
-	ON_CBN_SELCHANGE(IDC_INSERT, OnSelchangeInsert)
-	ON_BN_CLICKED(IDC_DISP_RESET, OnDispReset)
-	ON_BN_CLICKED(IDC_MAX, OnChange)
-	ON_EN_CHANGE(IDC_GROUPING, OnChange)
-	ON_EN_CHANGE(IDC_OFFSET, OnChange)
-	//}}AFX_MSG_MAP
-    ON_WM_CONTEXTMENU()
-	ON_EN_CHANGE(IDC_VERTBUFFER, OnChange)
-	ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChange)
-	ON_BN_CLICKED(IDC_BORDERS, OnChange)
-	ON_BN_CLICKED(IDC_CHANGE_TRACKING, OnChangeTracking)
-END_MESSAGE_MAP()
-
-void CWindowPage::fix_controls()
-{
-    // Check that all the control we need are available
-    ASSERT(GetDlgItem(IDC_COLS_DESC) != NULL);
-    ASSERT(GetDlgItem(IDC_COLS) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_COLS) != NULL);
-    ASSERT(GetDlgItem(IDC_GROUPING_DESC) != NULL);
-    ASSERT(GetDlgItem(IDC_GROUPING) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_GROUPING) != NULL);
-    ASSERT(GetDlgItem(IDC_CHARSET) != NULL);
-    ASSERT(GetDlgItem(IDC_CHARSET_DESC) != NULL);
-    ASSERT(GetDlgItem(IDC_CONTROL) != NULL);
-    ASSERT(GetDlgItem(IDC_CONTROL_DESC) != NULL);
-    ASSERT(GetDlgItem(IDC_INSERT) != NULL);
-    ASSERT(GetDlgItem(IDC_INSERT_DESC) != NULL);
-    ASSERT(GetDlgItem(IDC_SPIN_OFFSET) != NULL);
-
-    // If autofit is on disable setting of no of columns
-    GetDlgItem(IDC_COLS_DESC)->EnableWindow(!autofit_);
-    GetDlgItem(IDC_COLS)->EnableWindow(!autofit_);
-    GetDlgItem(IDC_SPIN_COLS)->EnableWindow(!autofit_);
-
-    // If no char area disable charset and control char selection
-    GetDlgItem(IDC_CHARSET)->EnableWindow(show_area_ != 0);
-    GetDlgItem(IDC_CHARSET_DESC)->EnableWindow(show_area_ != 0);
-    GetDlgItem(IDC_CONTROL)->EnableWindow(show_area_ != 0 && charset_ < 2);
-    GetDlgItem(IDC_CONTROL_DESC)->EnableWindow(show_area_ != 0 && charset_ < 2);
-
-    // If no hex area disable setting of column grouping
-    GetDlgItem(IDC_GROUPING_DESC)->EnableWindow(show_area_ != 1);
-    GetDlgItem(IDC_GROUPING)->EnableWindow(show_area_ != 1);
-    GetDlgItem(IDC_SPIN_GROUPING)->EnableWindow(show_area_ != 1);
-
-    // If readonly disable setting of mode (OVR/INS)
-    GetDlgItem(IDC_INSERT)->EnableWindow(modify_ == 1);
-    GetDlgItem(IDC_INSERT_DESC)->EnableWindow(modify_ == 1);
-
-    // Set offset spin range to be 0 to cols-1
-    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_OFFSET))->SetRange(0, cols_-1);
-}
-
-BOOL CWindowPage::validated()
-{
-    if (cols_ < 4)
-    {
-        ::HMessageBox("You must have at least 4 columns");
-        GetDlgItem(IDC_COLS)->SetFocus();
-        return FALSE;
-    }
-    if (cols_ > CHexEditView::max_buf)
-    {
-        ::HMessageBox("Too many columns");
-        GetDlgItem(IDC_COLS)->SetFocus();
-        return FALSE;
-    }
-    if (offset_ >= cols_)
-    {
-        ::HMessageBox("Offset must be less than the number of columns");
-        GetDlgItem(IDC_OFFSET)->SetFocus();
-        return FALSE;
-    }
-    if (display_.hex_area && grouping_ < 2)
-    {
-        ::HMessageBox("There must be at least 2 columns per group");
-        GetDlgItem(IDC_GROUPING)->SetFocus();
-        return FALSE;
-    }
-
-    return TRUE;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// CWindowPage message handlers
-
-BOOL CWindowPage::OnInitDialog() 
-{
-	CPropertyPage::OnInitDialog();
-	
-    // Set columns spin control range to 4 to max
-    CSpinButtonCtrl *pspin;
-    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_COLS);
-    ASSERT(pspin != NULL);
-    pspin->SetRange(4, CHexEditView::max_buf);
-
-    // Set grouping spin ctrl to 2 to max (when >= columns no grouping is done)
-    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_GROUPING);
-    ASSERT(pspin != NULL);
-    pspin->SetRange(2, CHexEditView::max_buf);
-
-    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_VERTBUFFER);
-    ASSERT(pspin != NULL);
-    pspin->SetRange(0, 999);
-
-    fix_controls();
-
-	return TRUE;
-}
-
-void CWindowPage::OnOK() 
-{
-    theApp.set_windisplay();
-	
-	CPropertyPage::OnOK();
-}
-
-static DWORD id_pairs5[] = { 
-    IDC_FONT, HIDC_FONT,
-    IDC_SHOW_AREA, HIDC_SHOW_AREA,
-    IDC_CHARSET, HIDC_CHARSET,
-    IDC_CHARSET_DESC, HIDC_CHARSET,
-    IDC_CONTROL, HIDC_CONTROL,
-    IDC_CONTROL_DESC, HIDC_CONTROL,
-    IDC_MAX, HIDC_MAX,
-    IDC_ADDR_DEC, HIDC_ADDR_DEC,
-    IDC_AUTOFIT, HIDC_AUTOFIT,
-    IDC_COLS, HIDC_COLS,
-    IDC_COLS_DESC, HIDC_COLS,
-    IDC_SPIN_COLS, HIDC_COLS,
-    IDC_OFFSET, HIDC_OFFSET,
-    IDC_SPIN_OFFSET, HIDC_OFFSET,
-    IDC_GROUPING, HIDC_GROUPING,
-    IDC_GROUPING_DESC, HIDC_GROUPING,
-    IDC_SPIN_GROUPING, HIDC_GROUPING,
-    IDC_VERTBUFFER, HIDC_VERTBUFFER,
-    IDC_VERTBUFFER_DESC, HIDC_VERTBUFFER,
-    IDC_SPIN_VERTBUFFER, HIDC_VERTBUFFER,
-    IDC_DISP_RESET, HIDC_DISP_RESET,
-    IDC_MODIFY, HIDC_MODIFY,
-    IDC_INSERT, HIDC_INSERT,
-    IDC_INSERT_DESC, HIDC_INSERT,
-    IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-    IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
-    IDC_BORDERS, HIDC_BORDERS,
-    IDC_CHANGE_TRACKING, HIDC_CHANGE_TRACKING,
-    0,0 
-}; 
-
-BOOL CWindowPage::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs5);
-    return TRUE;
-}
-
-void CWindowPage::OnContextMenu(CWnd* pWnd, CPoint point) 
-{
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs5);
-}
-
-BOOL CWindowPage::OnSetActive() 
-{
-    BOOL retval = CPropertyPage::OnSetActive();
-    update_ok_ = true;          // Its now OK to allow changes to cols field to be processed
-    return retval;
-}
-
-BOOL CWindowPage::OnKillActive() 
-{
-    BOOL retval = CPropertyPage::OnKillActive();
-
-    if (retval)
-    {
-        if (!validated())
-            return 0;
-
-        // All validation is OK so we will be deactivated
-        update_ok_ = false;
-    }
-
-    return retval;
-}
-
-void CWindowPage::OnCancel() 
-{
-    update_ok_ = false;
-	
-	CPropertyPage::OnCancel();
-}
-
-void CWindowPage::OnSaveDefault() 
-{
-    UpdateData();
-    if (!validated())
-        return;
-
-    if (AfxMessageBox("The default settings are used when you open a file which you\n"
-                      "haven't opened in HexEdit before, or when you create a new file.\n\n"
-                      "Are you sure you want to use these settings as the default?", MB_OKCANCEL) != IDOK)
-        return;
-
-    theApp.open_disp_state_ = disp_state_;
-    theApp.open_max_ = maximize_;
-    theApp.open_rowsize_ = cols_;
-    theApp.open_group_by_ = grouping_;
-    theApp.open_offset_ = offset_;
-	theApp.open_vertbuffer_ = vertbuffer_;
-
-    if (theApp.open_plf_ == NULL)
-        theApp.open_plf_ = new LOGFONT;
-    *theApp.open_plf_ = lf_;
-    if (theApp.open_oem_plf_ == NULL)
-        theApp.open_oem_plf_ = new LOGFONT;
-    *theApp.open_oem_plf_ = oem_lf_;
-
-    theApp.GetFileList()->SetDefaults();
-}
-
-void CWindowPage::OnDispReset() 
-{
-    // Reset to default display values
-    ASSERT(theApp.open_disp_state_ != -1);
-    disp_state_ = theApp.open_disp_state_;
-    maximize_ = theApp.open_max_;
-    cols_ = theApp.open_rowsize_;
-    grouping_ = theApp.open_group_by_;
-    offset_ = theApp.open_offset_;
-	vertbuffer_ = theApp.open_vertbuffer_;
-
-    if (theApp.open_plf_ != NULL)
-        lf_ = *theApp.open_plf_;
-    if (theApp.open_oem_plf_ != NULL)
-        oem_lf_ = *theApp.open_oem_plf_;
-	
-    UpdateData(FALSE);
-    fix_controls();
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnFont() 
-{
-    UpdateData();
-
-    CFontDialog dlg;
-//    dlg.SetWindowText(open_display_char_ && !open_ebcdic_ && open_graphic_ && open_oem_ ?
-//                      "Default OEM/IBM window font" : "Default font");
-    if (display_.FontRequired() == FONT_OEM)
-        dlg.m_cf.lpLogFont = &oem_lf_;
-    else
-        dlg.m_cf.lpLogFont = &lf_;
-    dlg.m_cf.Flags |= CF_INITTOLOGFONTSTRUCT | CF_SHOWHELP;
-    dlg.m_cf.Flags &= ~(CF_EFFECTS);              // Disable selection of strikethrough, colours etc
-
-    if (dlg.DoModal() == IDOK)
-    {
-        if (display_.FontRequired() == FONT_OEM)
-        {
-            if (oem_lf_.lfHeight < 0) oem_lf_.lfHeight = -oem_lf_.lfHeight;
-        }
-        else
-        {
-            if (lf_.lfHeight < 0) lf_.lfHeight = -lf_.lfHeight;
-        }
-        SetModified(TRUE);
-    }
-}
-
-void CWindowPage::OnChange() 
-{
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnAutofit() 
-{
-    UpdateData();
-    fix_controls();
-	
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnChangeTracking() 
-{
-	UpdateData();
-    // This will cause change_tracking_ to be set to 0 or 1 in DoDataExchange
-    display_.hide_replace = display_.hide_insert = display_.hide_delete = change_tracking_;
-    UpdateData(FALSE);
-
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnChangeCols() 
-{
-    if (!update_ok_)
-        return;
-    update_ok_ = false;
-
-    // Get cols_ value from dialog controls
-    if (UpdateData())
-    {
-        // Change the offset spin control range
-        CSpinButtonCtrl *pspin;
-        pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_OFFSET);
-        ASSERT(pspin != NULL);
-        pspin->SetRange(0, cols_-1);
-    }
-
-    SetModified(TRUE);
-    update_ok_ = true;
-}
-
-void CWindowPage::OnSelchangeShowArea() 
-{
-    UpdateData();
-    if (show_area_ == 3 && vertbuffer_ < 2)
-    {
-        vertbuffer_ = 2;
-        UpdateData(FALSE);
-    }
-	fix_controls();
-	
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnSelchangeCharset() 
-{
-    UpdateData();
-	fix_controls();
-
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnSelchangeControl() 
-{
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnSelchangeModify() 
-{
-    UpdateData();
-	fix_controls();
-	
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnSelchangeInsert() 
-{
-    SetModified(TRUE);
-}
-
+//===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CColourSchemes property page
 
-IMPLEMENT_DYNCREATE(CColourSchemes, CPropertyPage)
+IMPLEMENT_DYNCREATE(CColourSchemes, COptPage)
 
-CColourSchemes::CColourSchemes() : CPropertyPage(CColourSchemes::IDD, theApp.is_us_ ? IDS_COLORS : 0)
+CColourSchemes::CColourSchemes(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CColourSchemes::IDD, theApp.is_us_ ? IDS_COLORS : 0)
 {
 	//{{AFX_DATA_INIT(CColourSchemes)
 	scheme_no_ = -1;
 	name_no_ = -1;
 	//}}AFX_DATA_INIT
-    HICON hh = AfxGetApp()->LoadIcon(IDI_COLOUR);
-    m_psp.hIcon = hh;
-    m_psp.dwFlags &= ~PSP_USEICONID;
-    m_psp.dwFlags |= PSP_USEHICON;
-}
-
-CColourSchemes::~CColourSchemes()
-{
 }
 
 void CColourSchemes::DoDataExchange(CDataExchange* pDX)
 {
         ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size());
 
-	CPropertyPage::DoDataExchange(pDX);
+	COptPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CColourSchemes)
 	DDX_Control(pDX, IDC_COLOUR_PICKER, m_ColourPicker);
 	DDX_LBIndex(pDX, IDC_SCHEMES, scheme_no_);
@@ -2562,7 +1104,7 @@ void CColourSchemes::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(CColourSchemes, CPropertyPage)
+BEGIN_MESSAGE_MAP(CColourSchemes, COptPage)
 	//{{AFX_MSG_MAP(CColourSchemes)
 	ON_WM_HELPINFO()
 	ON_BN_CLICKED(IDC_ADD_SCHEME, OnAddScheme)
@@ -2612,7 +1154,7 @@ BOOL CColourSchemes::OnInitDialog()
         }
     }
 
-    CPropertyPage::OnInitDialog();
+    COptPage::OnInitDialog();
 
     if (theApp.is_us_)
     {
@@ -2730,9 +1272,27 @@ void CColourSchemes::set_scheme()
 
 void CColourSchemes::OnOK()
 {
-    theApp.set_schemes();
+    // Save any chnages to schemes
+    theApp.scheme_ = scheme_;
 
-    CPropertyPage::OnOK();
+    // Update the colours for the current view
+    CHexEditView *pview = GetView();    // The active view
+    if (pview != NULL)
+    {
+        if (pview->GetSchemeName() != scheme_[scheme_no_].name_)
+        {
+            // New scheme used
+            pview->SetScheme(scheme_[scheme_no_].name_);
+        }
+        else
+        {
+            // Even if the scheme has not changed some of its colours may have
+            pview->set_colours();
+            pview->DoInvalidate();
+        }
+    }
+
+    COptPage::OnOK();
 }
 
 LRESULT CColourSchemes::OnIdle(long lCount)
@@ -3251,4 +1811,1426 @@ void CColourSchemes::OnChangeRange()
         SetModified(TRUE);
     }
 }
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CMacroPage property page
+
+IMPLEMENT_DYNCREATE(CMacroPage, COptPage)
+
+CMacroPage::CMacroPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CMacroPage::IDD)
+{
+        //{{AFX_DATA_INIT(CMacroPage)
+        //}}AFX_DATA_INIT
+}
+
+void CMacroPage::DoDataExchange(CDataExchange* pDX)
+{
+        COptPage::DoDataExchange(pDX);
+        //{{AFX_DATA_MAP(CMacroPage)
+        //}}AFX_DATA_MAP
+        DDX_Radio(pDX, IDC_REFRESH_NEVER, pParent->val_.refresh_);
+        DDX_Text(pDX, IDC_NUM_SECS, pParent->val_.num_secs_);
+        DDV_MinMaxLong(pDX, pParent->val_.num_secs_, 1, 999);
+        DDX_Text(pDX, IDC_NUM_KEYS, pParent->val_.num_keys_);
+        DDV_MinMaxLong(pDX, pParent->val_.num_keys_, 1, 999);
+        DDX_Text(pDX, IDC_NUM_PLAYS, pParent->val_.num_plays_);
+        DDV_MinMaxLong(pDX, pParent->val_.num_plays_, 1, 999);
+        DDX_Check(pDX, IDC_REFRESH_PROPS, pParent->val_.refresh_props_);
+        DDX_Check(pDX, IDC_REFRESH_BARS, pParent->val_.refresh_bars_);
+        DDX_Radio(pDX, IDC_HALT0, pParent->val_.halt_level_);
+}
+
+
+BEGIN_MESSAGE_MAP(CMacroPage, COptPage)
+        //{{AFX_MSG_MAP(CMacroPage)
+        ON_WM_HELPINFO()
+        ON_BN_CLICKED(IDC_HALT0, OnChange)
+        ON_BN_CLICKED(IDC_REFRESH_NEVER, OnRefreshNever)
+        ON_BN_CLICKED(IDC_REFRESH_PLAYS, OnRefreshPlays)
+        ON_BN_CLICKED(IDC_REFRESH_SECS, OnRefreshSecs)
+        ON_BN_CLICKED(IDC_REFRESH_KEYS, OnRefreshKeys)
+        ON_BN_CLICKED(IDC_HALT1, OnChange)
+        ON_BN_CLICKED(IDC_HALT2, OnChange)
+        ON_EN_CHANGE(IDC_NUM_KEYS, OnChange)
+        ON_EN_CHANGE(IDC_NUM_PLAYS, OnChange)
+        ON_EN_CHANGE(IDC_NUM_SECS, OnChange)
+        ON_BN_CLICKED(IDC_REFRESH_BARS, OnChange)
+        ON_BN_CLICKED(IDC_REFRESH_PROPS, OnChange)
+	ON_BN_CLICKED(IDC_SAVEMACRO, OnSavemacro)
+	ON_BN_CLICKED(IDC_LOADMACRO, OnLoadmacro)
+	ON_BN_CLICKED(IDC_MACRODIR, OnMacrodir)
+	//}}AFX_MSG_MAP
+    ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CMacroPage message handlers
+
+BOOL CMacroPage::OnInitDialog() 
+{
+    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+    COptPage::OnInitDialog();
+
+    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_SECS))->SetRange(1, 999);
+    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_KEYS))->SetRange(1, 999);
+    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_PLAYS))->SetRange(1, 999);
+
+    // Set edit box, spin control, static text for all 3 refresh options
+    ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_SECS) != NULL);
+    GetDlgItem(IDC_NUM_SECS)->EnableWindow(pParent->val_.refresh_ == 1);
+    GetDlgItem(IDC_SPIN_SECS)->EnableWindow(pParent->val_.refresh_ == 1);
+    GetDlgItem(IDC_DESC_SECS)->EnableWindow(pParent->val_.refresh_ == 1);
+
+    ASSERT(GetDlgItem(IDC_NUM_KEYS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_KEYS) != NULL);
+    GetDlgItem(IDC_NUM_KEYS)->EnableWindow(pParent->val_.refresh_ == 2);
+    GetDlgItem(IDC_SPIN_KEYS)->EnableWindow(pParent->val_.refresh_ == 2);
+    GetDlgItem(IDC_DESC_KEYS)->EnableWindow(pParent->val_.refresh_ == 2);
+
+    ASSERT(GetDlgItem(IDC_NUM_PLAYS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_PLAYS) != NULL);
+    GetDlgItem(IDC_NUM_PLAYS)->EnableWindow(pParent->val_.refresh_ == 3);
+    GetDlgItem(IDC_SPIN_PLAYS)->EnableWindow(pParent->val_.refresh_ == 3);
+    GetDlgItem(IDC_DESC_PLAYS)->EnableWindow(pParent->val_.refresh_ == 3);
+
+    ASSERT(GetDlgItem(IDC_SAVEMACRO) != NULL);
+    GetDlgItem(IDC_SAVEMACRO)->EnableWindow(!aa->recording_ && aa->mac_.size() > 0);
+    return TRUE;
+}
+
+void CMacroPage::OnChange() 
+{
+    SetModified(TRUE);
+}
+
+void CMacroPage::OnOK() 
+{
+	theApp.set_macro(pParent->val_);
+    COptPage::OnOK();
+}
+
+static DWORD id_pairs2[] = { 
+    IDC_REFRESH_NEVER, HIDC_REFRESH_NEVER,
+    IDC_REFRESH_SECS, HIDC_REFRESH_SECS,
+    IDC_REFRESH_KEYS, HIDC_REFRESH_KEYS,
+    IDC_REFRESH_PLAYS, HIDC_REFRESH_PLAYS,
+    IDC_NUM_SECS, HIDC_NUM_SECS,
+    IDC_SPIN_SECS, HIDC_NUM_SECS,
+    IDC_DESC_SECS, HIDC_NUM_SECS,
+    IDC_NUM_KEYS, HIDC_NUM_KEYS,
+    IDC_SPIN_KEYS, HIDC_NUM_KEYS,
+    IDC_DESC_KEYS, HIDC_NUM_KEYS,
+    IDC_NUM_PLAYS, HIDC_NUM_PLAYS,
+    IDC_SPIN_PLAYS, HIDC_NUM_PLAYS,
+    IDC_DESC_PLAYS, HIDC_NUM_PLAYS,
+    IDC_REFRESH_BARS, HIDC_REFRESH_BARS,
+    IDC_REFRESH_PROPS, HIDC_REFRESH_PROPS,
+    IDC_HALT0, HIDC_HALT0,
+    IDC_HALT1, HIDC_HALT1,
+    IDC_HALT2, HIDC_HALT2,
+    IDC_SAVEMACRO, HIDC_SAVEMACRO,
+    IDC_LOADMACRO, HIDC_LOADMACRO,
+    IDC_MACRODIR, HIDC_MACRODIR,
+    0,0 
+};
+
+BOOL CMacroPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
+    return TRUE;
+}
+
+void CMacroPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs2);
+}
+
+void CMacroPage::OnRefreshNever() 
+{
+    // Disable edit box, spin control, static text for all 3 refresh options
+    ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_SECS) != NULL);
+    GetDlgItem(IDC_NUM_SECS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_SPIN_SECS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_DESC_SECS)->EnableWindow(FALSE);
+
+    ASSERT(GetDlgItem(IDC_NUM_PLAYS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_PLAYS) != NULL);
+    GetDlgItem(IDC_NUM_PLAYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_SPIN_PLAYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_DESC_PLAYS)->EnableWindow(FALSE);
+
+    ASSERT(GetDlgItem(IDC_NUM_KEYS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_KEYS) != NULL);
+    GetDlgItem(IDC_NUM_KEYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_SPIN_KEYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_DESC_KEYS)->EnableWindow(FALSE);
+
+    SetModified(TRUE);
+}
+
+void CMacroPage::OnRefreshPlays() 
+{
+    // Disable edit box, spin control, static text KEYS and SECS
+    // Enable them for PLAYS
+    ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_SECS) != NULL);
+    GetDlgItem(IDC_NUM_SECS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_SPIN_SECS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_DESC_SECS)->EnableWindow(FALSE);
+
+    ASSERT(GetDlgItem(IDC_NUM_PLAYS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_PLAYS) != NULL);
+    GetDlgItem(IDC_NUM_PLAYS)->EnableWindow(TRUE);
+    GetDlgItem(IDC_SPIN_PLAYS)->EnableWindow(TRUE);
+    GetDlgItem(IDC_DESC_PLAYS)->EnableWindow(TRUE);
+
+    ASSERT(GetDlgItem(IDC_NUM_KEYS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_KEYS) != NULL);
+    GetDlgItem(IDC_NUM_KEYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_SPIN_KEYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_DESC_KEYS)->EnableWindow(FALSE);
+
+    SetModified(TRUE);
+}
+
+void CMacroPage::OnRefreshSecs() 
+{
+    // Disable edit box, spin control, static text KEYS and PLAYS
+    // Enable them for SECS
+    ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_SECS) != NULL);
+    GetDlgItem(IDC_NUM_SECS)->EnableWindow(TRUE);
+    GetDlgItem(IDC_SPIN_SECS)->EnableWindow(TRUE);
+    GetDlgItem(IDC_DESC_SECS)->EnableWindow(TRUE);
+
+    ASSERT(GetDlgItem(IDC_NUM_PLAYS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_PLAYS) != NULL);
+    GetDlgItem(IDC_NUM_PLAYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_SPIN_PLAYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_DESC_PLAYS)->EnableWindow(FALSE);
+
+    ASSERT(GetDlgItem(IDC_NUM_KEYS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_KEYS) != NULL);
+    GetDlgItem(IDC_NUM_KEYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_SPIN_KEYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_DESC_KEYS)->EnableWindow(FALSE);
+
+    SetModified(TRUE);
+}
+
+void CMacroPage::OnRefreshKeys() 
+{
+    // Disable edit box, spin control, static text PLAYS and SECS
+    // Enable them for KEYS
+    ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_SECS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_SECS) != NULL);
+    GetDlgItem(IDC_NUM_SECS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_SPIN_SECS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_DESC_SECS)->EnableWindow(FALSE);
+
+    ASSERT(GetDlgItem(IDC_NUM_PLAYS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_PLAYS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_PLAYS) != NULL);
+    GetDlgItem(IDC_NUM_PLAYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_SPIN_PLAYS)->EnableWindow(FALSE);
+    GetDlgItem(IDC_DESC_PLAYS)->EnableWindow(FALSE);
+
+    ASSERT(GetDlgItem(IDC_NUM_KEYS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_KEYS) != NULL);
+    ASSERT(GetDlgItem(IDC_DESC_KEYS) != NULL);
+    GetDlgItem(IDC_NUM_KEYS)->EnableWindow(TRUE);
+    GetDlgItem(IDC_SPIN_KEYS)->EnableWindow(TRUE);
+    GetDlgItem(IDC_DESC_KEYS)->EnableWindow(TRUE);
+
+    SetModified(TRUE);
+}
+
+void CMacroPage::OnSavemacro() 
+{
+    if (!UpdateData(TRUE))
+        return;                         // DDV failed
+
+    CSaveMacro dlg;
+    dlg.halt_level_ = pParent->val_.halt_level_;
+
+    dlg.DoModal();
+}
+
+void CMacroPage::OnLoadmacro() 
+{
+    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+    ASSERT_VALID(aa);
+
+    ASSERT(aa->mac_dir_.Right(1) == "\\");
+    CHexFileDialog dlg("MacroFileDlg", HIDD_FILE_MACRO, TRUE, "hem", NULL,
+		               OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT | OFN_SHOWHELP,
+                       "Macro Files (*.hem)|*.hem|All Files (*.*)|*.*||", "Load", this);
+	dlg.m_ofn.lpstrTitle = "Select Macro File";
+    dlg.m_ofn.lpstrInitialDir = aa->mac_dir_;
+
+    if (dlg.DoModal() == IDOK)
+	{
+        std::vector<key_macro> tmp;     // Load macro into temp so that if something goes wrong we don't lose the current macro
+        CString comment;
+        int halt_lev;
+        long plays;
+		int version;  // Version of HexEdit in which the macro was recorded
+
+        if (aa->macro_load(dlg.GetPathName(), &tmp,
+                           comment, halt_lev, plays, version))
+        {
+            aa->mac_ = tmp;             // Store the temp macro to current HexEdit macro
+            aa->mac_filename_ = dlg.GetFileTitle();
+            aa->mac_comment_ = comment;
+            aa->plays_ = plays;
+			aa->macro_version_ = version;
+            pParent->val_.halt_level_ = halt_lev;     // Set halt level requested by saved macro in this dialog
+            UpdateData(FALSE);
+
+            // Now enable save button since we now have a macro loaded
+            ASSERT(GetDlgItem(IDC_SAVEMACRO) != NULL);
+            GetDlgItem(IDC_SAVEMACRO)->EnableWindow(TRUE);
+
+            // Display the comment for this macro
+            if (!comment.IsEmpty())
+                ::HMessageBox(comment);
+        }
+	}
+}
+
+void CMacroPage::OnMacrodir() 
+{
+    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+    ASSERT_VALID(aa);
+
+    ASSERT(aa->mac_dir_.Right(1) == "\\");
+    CDirDialog dlg(aa->mac_dir_, "Macro Files (*.hem)|*.hem|All Files (*.*)|*.*||", this);
+    dlg.m_ofn.lpstrTitle = "Select Folder for HexEdit Macros";
+
+    if (dlg.DoModal() == IDOK)
+        aa->mac_dir_ = dlg.GetPath();
+    ASSERT(aa->mac_dir_.Right(1) == "\\");
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CPrintPage property page
+
+IMPLEMENT_DYNCREATE(CPrintPage, COptPage)
+
+CPrintPage::CPrintPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CPrintPage::IDD)
+{
+	//{{AFX_DATA_INIT(CPrintPage)
+	//}}AFX_DATA_INIT
+}
+
+void CPrintPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CPrintPage)
+	DDX_Control(pDX, IDC_PRINT_FOOTER, ctl_footer_);
+	DDX_Control(pDX, IDC_PRINT_HEADER, ctl_header_);
+	DDX_Control(pDX, IDC_FOOTER_OPTS, footer_args_);
+	DDX_Control(pDX, IDC_HEADER_OPTS, header_args_);
+	//}}AFX_DATA_MAP
+	DDX_Text(pDX, IDC_PRINT_HEADER, pParent->val_.header_);
+	DDX_Text(pDX, IDC_PRINT_FOOTER, pParent->val_.footer_);
+	DDX_Check(pDX, IDC_PRINT_BORDER, pParent->val_.border_);
+	DDX_Check(pDX, IDC_PRINT_HEADINGS, pParent->val_.headings_);
+	DDX_CBIndex(pDX, IDC_PRINT_UNITS, pParent->val_.units_);
+	DDX_Radio(pDX, IDC_PRINT_SPACE1, pParent->val_.spacing_);
+	DDX_Text(pDX, IDC_PRINT_LEFT, pParent->val_.left_);
+	DDX_Text(pDX, IDC_PRINT_TOP, pParent->val_.top_);
+	DDX_Text(pDX, IDC_PRINT_RIGHT, pParent->val_.right_);
+	DDX_Text(pDX, IDC_PRINT_BOTTOM, pParent->val_.bottom_);
+	DDX_Text(pDX, IDC_PRINT_HEADER_EDGE, pParent->val_.header_edge_);
+	DDX_Text(pDX, IDC_PRINT_FOOTER_EDGE, pParent->val_.footer_edge_);
+}
+
+BEGIN_MESSAGE_MAP(CPrintPage, COptPage)
+	//{{AFX_MSG_MAP(CPrintPage)
+	ON_WM_HELPINFO()
+	ON_EN_CHANGE(IDC_PRINT_BOTTOM, OnChange)
+	ON_EN_CHANGE(IDC_PRINT_FOOTER, OnChange)
+	ON_EN_CHANGE(IDC_PRINT_HEADER, OnChange)
+	ON_EN_CHANGE(IDC_PRINT_LEFT, OnChange)
+	ON_EN_CHANGE(IDC_PRINT_RIGHT, OnChange)
+	ON_EN_CHANGE(IDC_PRINT_TOP, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_SPACE1, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_SPACE1HALF, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_SPACE2, OnChange)
+	ON_BN_CLICKED(IDC_FOOTER_OPTS, OnFooterOpts)
+	ON_BN_CLICKED(IDC_HEADER_OPTS, OnHeaderOpts)
+	//}}AFX_MSG_MAP
+    ON_WM_CONTEXTMENU()
+	ON_CBN_SELCHANGE(IDC_PRINT_UNITS, OnChangeUnits)
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CPrintPage message handlers
+
+BOOL CPrintPage::OnInitDialog() 
+{
+    COptPage::OnInitDialog();
+
+    VERIFY(arrow_icon_ = AfxGetApp()->LoadIcon(IDI_ARROW));
+    ASSERT(GetDlgItem(IDC_HEADER_OPTS) != NULL);
+    ((CButton *)GetDlgItem(IDC_HEADER_OPTS))->SetIcon(arrow_icon_);
+    ASSERT(GetDlgItem(IDC_FOOTER_OPTS) != NULL);
+    ((CButton *)GetDlgItem(IDC_FOOTER_OPTS))->SetIcon(arrow_icon_);
+
+    if (args_menu_.m_hMenu == NULL)
+        args_menu_.LoadMenu(IDR_PRINT_ARGS);
+    header_args_.m_hMenu = args_menu_.GetSubMenu(0)->GetSafeHmenu();
+    header_args_.m_bRightArrow = TRUE;
+    footer_args_.m_hMenu = args_menu_.GetSubMenu(0)->GetSafeHmenu();
+    footer_args_.m_bRightArrow = TRUE;
+
+    return TRUE;
+}
+
+void CPrintPage::OnOK() 
+{
+	theApp.set_printer(pParent->val_);
+    COptPage::OnOK();
+}
+
+void CPrintPage::OnHeaderOpts() 
+{
+    if (header_args_.m_nMenuResult != 0)
+    {
+        CString ss;
+        ss.LoadString (header_args_.m_nMenuResult);
+
+        for (int i = 0; i < ss.GetLength (); i++)
+        {
+            ctl_header_.SendMessage (WM_CHAR, (TCHAR) ss [i]);
+        }
+        SetModified(TRUE);
+    }
+}
+
+void CPrintPage::OnFooterOpts() 
+{
+    if (footer_args_.m_nMenuResult != 0)
+    {
+        CString ss;
+        ss.LoadString (footer_args_.m_nMenuResult);
+
+        for (int i = 0; i < ss.GetLength (); i++)
+        {
+            ctl_footer_.SendMessage (WM_CHAR, (TCHAR) ss [i]);
+        }
+        SetModified(TRUE);
+    }
+}
+
+void CPrintPage::OnChangeUnits()
+{
+	// Get factor for units converting from
+	double factor = 1.0;
+	switch (pParent->val_.units_)
+	{
+	case 1:
+		factor = 2.54;
+		break;
+	}
+	UpdateData();
+	// Modify factor for units converting to
+	switch (pParent->val_.units_)
+	{
+	case 1:
+		factor /= 2.54;
+		break;
+	}
+	// Fix all distance values according to new units
+	pParent->val_.bottom_      = floor(1000.0*pParent->val_.bottom_     /factor + 0.5)/1000.0;
+	pParent->val_.top_         = floor(1000.0*pParent->val_.top_        /factor + 0.5)/1000.0;
+	pParent->val_.left_        = floor(1000.0*pParent->val_.left_       /factor + 0.5)/1000.0;
+	pParent->val_.right_       = floor(1000.0*pParent->val_.right_      /factor + 0.5)/1000.0;
+	pParent->val_.header_edge_ = floor(1000.0*pParent->val_.header_edge_/factor + 0.5)/1000.0;
+	pParent->val_.footer_edge_ = floor(1000.0*pParent->val_.footer_edge_/factor + 0.5)/1000.0;
+
+	UpdateData(FALSE);    // Put new values back into the controls
+
+    SetModified(TRUE);
+}
+
+void CPrintPage::OnChange() 
+{
+    SetModified(TRUE);
+}
+
+static DWORD id_pairs3[] = { 
+    IDC_PRINT_HEADER, HIDC_PRINT_HEADER,
+    IDC_HEADER_OPTS, HIDC_HEADER_OPTS,
+    IDC_PRINT_FOOTER, HIDC_PRINT_FOOTER,
+    IDC_FOOTER_OPTS, HIDC_FOOTER_OPTS,
+    IDC_PRINT_BORDER, HIDC_PRINT_BORDER,
+    IDC_PRINT_HEADINGS, HIDC_PRINT_HEADINGS,
+
+    IDC_PRINT_UNITS, HIDC_PRINT_UNITS,
+    IDC_PRINT_SPACE1, HIDC_PRINT_SPACE1,
+    IDC_PRINT_SPACE1HALF, HIDC_PRINT_SPACE1HALF,
+    IDC_PRINT_SPACE2, HIDC_PRINT_SPACE2,
+    IDC_PRINT_LEFT, HIDC_PRINT_LEFT,
+    IDC_PRINT_RIGHT, HIDC_PRINT_RIGHT,
+    IDC_PRINT_TOP, HIDC_PRINT_TOP,
+    IDC_PRINT_BOTTOM, HIDC_PRINT_BOTTOM,
+    IDC_PRINT_HEADER_EDGE, HIDC_PRINT_HEADER_EDGE,
+    IDC_PRINT_FOOTER_EDGE, HIDC_PRINT_FOOTER_EDGE,
+    0,0 
+};
+
+BOOL CPrintPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
+    return TRUE;
+}
+
+void CPrintPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs3);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CFiltersPage property page
+
+IMPLEMENT_DYNCREATE(CFiltersPage, COptPage)
+
+CFiltersPage::CFiltersPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CFiltersPage::IDD)
+{
+	//{{AFX_DATA_INIT(CFiltersPage)
+		// NOTE: the ClassWizard will add member initialization here
+	//}}AFX_DATA_INIT
+}
+
+void CFiltersPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CFiltersPage)
+	DDX_Control(pDX, IDC_UP, ctl_up_);
+	DDX_Control(pDX, IDC_NEW, ctl_new_);
+	DDX_Control(pDX, IDC_DOWN, ctl_down_);
+	DDX_Control(pDX, IDC_DEL, ctl_del_);
+	//}}AFX_DATA_MAP
+    DDX_GridControl(pDX, IDC_GRID_FILTERS, grid_);             // associate the grid window with a C++ object
+}
+
+BEGIN_MESSAGE_MAP(CFiltersPage, COptPage)
+	//{{AFX_MSG_MAP(CFiltersPage)
+	ON_WM_HELPINFO()
+	ON_BN_CLICKED(IDC_DEL, OnDel)
+	ON_BN_CLICKED(IDC_NEW, OnNew)
+	ON_BN_CLICKED(IDC_UP, OnUp)
+	ON_BN_CLICKED(IDC_DOWN, OnDown)
+	//}}AFX_MSG_MAP
+    ON_WM_CONTEXTMENU()
+    ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID_FILTERS, OnGridEndEdit)
+    ON_NOTIFY(NM_CLICK, IDC_GRID_FILTERS, OnGridClick)
+END_MESSAGE_MAP()
+
+void CFiltersPage::add_row(int row, BOOL is_checked /*=TRUE*/, CString s1/*=""*/, CString s2 /*=""*/)
+{
+    row = grid_.InsertRow("", row);
+    
+//    CString str;
+//    str.Format("%ld", long(row-header_rows+1));
+//    grid_.SetItemText(row, column_number, str);
+
+    CGridBtnCell *pbtn;
+    grid_.SetCellType(row, column_check, RUNTIME_CLASS(CGridBtnCell));
+    pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
+    if (pbtn != NULL)
+    {
+        pbtn->SetBtnDataBase(&btn_db_);
+        pbtn->SetupBtns(0, DFC_BUTTON, DFCS_BUTTONCHECK, CGridBtnCellBase::CTL_ALIGN_LEFT, 20, FALSE, " ");
+        UINT state = pbtn->GetDrawCtlState(0);
+        if (is_checked)
+            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
+        else
+            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
+    }
+
+    grid_.SetItemText(row, column_files, s1);
+    grid_.SetItemText(row, column_filter, s2);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CFiltersPage message handlers
+
+BOOL CFiltersPage::OnInitDialog() 
+{
+    COptPage::OnInitDialog();
+
+    // Set up icons on buttons
+    VERIFY(icon_new_ = AfxGetApp()->LoadIcon(IDI_NEW));
+    ctl_new_.SetIcon(icon_new_);
+    VERIFY(icon_del_ = AfxGetApp()->LoadIcon(IDI_DEL));
+    ctl_del_.SetIcon(icon_del_);
+    VERIFY(icon_up_ = AfxGetApp()->LoadIcon(IDI_UP));
+    ctl_up_.SetIcon(icon_up_);
+    VERIFY(icon_down_ = AfxGetApp()->LoadIcon(IDI_DOWN));
+    ctl_down_.SetIcon(icon_down_);
+
+    // Add tooltips for buttons
+    if (m_cToolTip.Create(this))
+    {
+        m_cToolTip.AddTool(&ctl_new_, IDS_NEW);
+        m_cToolTip.AddTool(&ctl_del_, IDS_DEL);
+        m_cToolTip.AddTool(&ctl_up_, IDS_UP);
+        m_cToolTip.AddTool(&ctl_down_, IDS_DOWN);
+        m_cToolTip.Activate(TRUE);
+    }
+
+    // Set up the grid
+    grid_.SetEditable(TRUE);
+    grid_.GetDefaultCell(FALSE, FALSE)->SetBackClr(RGB(0xF8, 0xF8, 0xFF));
+
+    grid_.SetFixedColumnSelection(FALSE);
+    grid_.SetFixedRowSelection(FALSE);
+
+    grid_.AutoSize();
+
+//    grid_.SetSortColumn(-1);
+    btn_db_.SetGrid(&grid_);
+
+    // Set up the grid rows and columns
+    grid_.SetColumnCount(column_count);
+    grid_.SetFixedColumnCount(0);
+    grid_.SetRowCount(header_rows);
+    grid_.SetFixedRowCount(header_rows);
+
+    // Set up the grid sizes
+//    grid_.SetColumnWidth(column_number, 28);
+    grid_.SetColumnWidth(column_check, 22);
+    grid_.SetColumnWidth(column_files, 185);
+    grid_.SetColumnWidth(column_filter, 146);
+
+    // Set up column headers
+//    grid_.SetItemText(0, column_files, "Filter Name");
+//    grid_.SetItemText(0, column_filter, "Files to Filter");
+
+    // Set up the grid cells
+    for (int ii = 0; ; ++ii)
+    {
+        CString s1, s2;
+        BOOL is_checked = TRUE;
+
+        AfxExtractSubString(s1, theApp.current_filters_, ii*2, '|');
+
+        AfxExtractSubString(s2, theApp.current_filters_, ii*2+1, '|');
+
+        if (s1.IsEmpty() && s2.IsEmpty())
+            break;
+
+        // Check if this is a disabled filter
+        if (s2.IsEmpty() || s2[0] == '>')
+        {
+            is_checked = FALSE;
+            if (!s2.IsEmpty()) s2 = s2.Mid(1);
+        }
+
+        add_row(-1, is_checked, s1, s2);
+    }
+    grid_.RedrawWindow();
+
+    grid_.SetListMode(TRUE);
+    grid_.SetSingleRowSelection(TRUE);
+
+    return TRUE;
+}
+
+void CFiltersPage::OnOK() 
+{
+    int max_filt = grid_.GetRowCount() - header_rows;
+
+    theApp.current_filters_.Empty();
+
+    for (int ii = 0; ii < max_filt; ++ii)
+    {
+        CString s1 = grid_.GetItemText(ii+header_rows, column_files);
+        CString s2 = grid_.GetItemText(ii+header_rows, column_filter);
+
+        if (s1.IsEmpty() && s2.IsEmpty())
+            continue;
+
+        theApp.current_filters_ += s1;
+        theApp.current_filters_ += '|';
+
+        CGridBtnCell *pbtn;
+        pbtn = (CGridBtnCell *)grid_.GetCell(ii+header_rows, column_check);
+        if ((pbtn->GetDrawCtlState(0) & DFCS_CHECKED) == 0)
+            theApp.current_filters_ += '>';
+
+        theApp.current_filters_ += s2;
+        theApp.current_filters_ += '|';
+    }
+    theApp.current_filters_ +='|';
+	
+    COptPage::OnOK();
+}
+
+BOOL CFiltersPage::PreTranslateMessage(MSG* pMsg) 
+{
+    m_cToolTip.RelayEvent(pMsg);	
+
+    return CDialog::PreTranslateMessage(pMsg);
+}
+
+static DWORD id_pairs4[] = { 
+    IDC_GRID_FILTERS, HIDC_GRID_FILTERS,
+    IDC_NEW, HIDC_NEW,
+    IDC_DEL, HIDC_DEL,
+    IDC_UP, HIDC_UP,
+    IDC_DOWN, HIDC_DOWN,
+    0,0 
+}; 
+
+BOOL CFiltersPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs4);
+    return TRUE;
+}
+
+void CFiltersPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs4);
+}
+
+void CFiltersPage::OnNew() 
+{
+    int row;
+    CCellRange sel = grid_.GetSelectedCellRange();
+
+    if (sel.IsValid())
+        row = sel.GetMinRow();
+    else
+        row = header_rows;       // If no row selected add new row at top
+
+    add_row(row);
+    grid_.RedrawWindow();
+    grid_.SetSelectedRange(row, 0, row, column_count-1);
+    grid_.SetFocusCell(row, column_files);
+
+    grid_.RedrawWindow();
+    grid_.SetFocus();
+
+    SetModified(TRUE);
+}
+
+void CFiltersPage::OnDel() 
+{
+    CCellRange sel = grid_.GetSelectedCellRange();
+    if (sel.IsValid())
+    {
+        int row = sel.GetMinRow();
+        grid_.DeleteRow(row);
+        if (row < grid_.GetRowCount())
+            grid_.SetSelectedRange(row, 0, row, column_count-1);
+
+        grid_.RedrawWindow();
+
+        SetModified(TRUE);
+    }
+}
+
+void CFiltersPage::OnUp() 
+{
+    CCellRange sel = grid_.GetSelectedCellRange();
+    int row;
+
+    // If there is a row selected and its not at the top
+    if (sel.IsValid() && (row = sel.GetMinRow()) > header_rows)
+    {
+        // Save info from the current and above row
+        CString s1 = grid_.GetItemText(row, column_files);
+        CString s2 = grid_.GetItemText(row, column_filter);
+        CString s1_above = grid_.GetItemText(row-1, column_files);
+        CString s2_above = grid_.GetItemText(row-1, column_filter);
+        BOOL is_checked, is_checked_above;
+
+        CGridBtnCell *pbtn;
+        UINT state;
+
+        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
+        is_checked = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
+        pbtn = (CGridBtnCell *)grid_.GetCell(row-1, column_check);
+        is_checked_above = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
+
+        // Swap the contents of the rows
+        grid_.SetItemText(row-1, column_files, s1);
+        grid_.SetItemText(row-1, column_filter, s2);
+        pbtn = (CGridBtnCell *)grid_.GetCell(row-1, column_check);
+        state = pbtn->GetDrawCtlState(0);
+        if (is_checked)
+            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
+        else
+            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
+
+        grid_.SetItemText(row, column_files, s1_above);
+        grid_.SetItemText(row, column_filter, s2_above);
+        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
+        state = pbtn->GetDrawCtlState(0);
+        if (is_checked_above)
+            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
+        else
+            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
+
+
+        grid_.SetSelectedRange(row-1, 0, row-1, column_count-1);
+
+        grid_.RedrawWindow();
+        SetModified(TRUE);
+    }
+}
+
+void CFiltersPage::OnDown() 
+{
+    CCellRange sel = grid_.GetSelectedCellRange();
+    int row;
+    if (sel.IsValid() && (row = sel.GetMinRow()) < grid_.GetRowCount()-1)
+    {
+        // Save info from current row and row below
+        CString s1 = grid_.GetItemText(row, column_files);
+        CString s2 = grid_.GetItemText(row, column_filter);
+        CString s1_below = grid_.GetItemText(row+1, column_files);
+        CString s2_below = grid_.GetItemText(row+1, column_filter);
+        BOOL is_checked, is_checked_below;
+
+        CGridBtnCell *pbtn;
+        UINT state;
+
+        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
+        is_checked = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
+        pbtn = (CGridBtnCell *)grid_.GetCell(row+1, column_check);
+        is_checked_below = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
+
+        // Swap the contents of the rows
+        grid_.SetItemText(row+1, column_files, s1);
+        grid_.SetItemText(row+1, column_filter, s2);
+        pbtn = (CGridBtnCell *)grid_.GetCell(row+1, column_check);
+        state = pbtn->GetDrawCtlState(0);
+        if (is_checked)
+            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
+        else
+            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
+
+        grid_.SetItemText(row, column_files, s1_below);
+        grid_.SetItemText(row, column_filter, s2_below);
+        pbtn = (CGridBtnCell *)grid_.GetCell(row, column_check);
+        state = pbtn->GetDrawCtlState(0);
+        if (is_checked_below)
+            pbtn->SetDrawCtlState(0, state | DFCS_CHECKED);
+        else
+            pbtn->SetDrawCtlState(0, state & ~DFCS_CHECKED);
+
+        grid_.SetSelectedRange(row+1, 0, row+1, column_count-1);
+
+        grid_.RedrawWindow();
+        SetModified(TRUE);
+    }
+}
+
+LRESULT CFiltersPage::OnIdle(long lCount)
+{
+    if (lCount == 0)
+    {
+        int num_rows = grid_.GetRowCount() - header_rows;
+        int curr_row = -1;
+
+        CCellRange sel = grid_.GetSelectedCellRange();
+        if (sel.IsValid())
+        {
+            curr_row = sel.GetMinRow() - header_rows;
+        }
+//        ASSERT(GetDlgItem(IDC_NEW) != NULL);
+//        GetDlgItem(IDC_NEW)->EnableWindow(curr_row != -1);
+        ASSERT(GetDlgItem(IDC_DEL) != NULL);
+        GetDlgItem(IDC_DEL)->EnableWindow(curr_row != -1);
+        ASSERT(GetDlgItem(IDC_UP) != NULL);
+        GetDlgItem(IDC_UP)->EnableWindow(curr_row != -1 && curr_row > 0);
+        ASSERT(GetDlgItem(IDC_DOWN) != NULL);
+        GetDlgItem(IDC_DOWN)->EnableWindow(curr_row != -1 && curr_row < num_rows - 1);
+    }
+
+    return FALSE;
+}
+
+#define FILTER_DISALLOWED_CHARACTERS "\\/:\"<>|"
+
+void CFiltersPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
+{
+    NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
+    TRACE(_T("End Edit on row %d, col %d\n"), pItem->iRow, pItem->iColumn);
+    if (pItem->iColumn == column_filter)
+    {
+        CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+        if (ss.FindOneOf(FILTER_DISALLOWED_CHARACTERS) != -1)
+        {
+            AfxMessageBox("Filters may not contain any of these characters:\n" FILTER_DISALLOWED_CHARACTERS);
+            *pResult = -1;
+            return;
+        }
+    }
+    else if (pItem->iColumn == column_files)
+    {
+        CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+        if (ss.FindOneOf("|") != -1)
+        {
+            AfxMessageBox("Please do not use a vertical bar (|)");
+            *pResult = -1;
+            return;
+        }
+    }
+    SetModified(TRUE);
+    *pResult = 0;
+}
+
+void CFiltersPage::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
+{
+    NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
+    if (pItem->iColumn == 0)
+        SetModified(TRUE);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CWindowPage property page
+
+IMPLEMENT_DYNCREATE(CWindowPage, COptPage)
+
+CWindowPage::CWindowPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CWindowPage::IDD)
+{
+    update_ok_ = false;
+
+	//{{AFX_DATA_INIT(CWindowPage)
+	//}}AFX_DATA_INIT
+}
+
+void CWindowPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+    if (!pDX->m_bSaveAndValidate)
+    {
+        // Move info into member variables (before move to controls)
+        if (pParent->val_.display_.vert_display)
+			pParent->val_.show_area_ = 3;
+        else if (pParent->val_.display_.hex_area && pParent->val_.display_.char_area)
+            pParent->val_.show_area_ = 2;
+        else if (pParent->val_.display_.char_area)
+            pParent->val_.show_area_ = 1;
+        else
+            pParent->val_.show_area_ = 0;
+
+        if (pParent->val_.display_.char_set == CHARSET_EBCDIC)
+            pParent->val_.charset_ = 3;
+        else if (pParent->val_.display_.char_set == CHARSET_OEM)
+            pParent->val_.charset_ = 2;
+        else if (pParent->val_.display_.char_set == CHARSET_ANSI)
+            pParent->val_.charset_ = 1;
+        else if (pParent->val_.display_.char_set == CHARSET_ASCII)
+            pParent->val_.charset_ = 0;
+        else
+            pParent->val_.charset_ = -1;
+
+        pParent->val_.control_ = pParent->val_.display_.control;
+
+        pParent->val_.addr_dec_ = pParent->val_.display_.dec_addr;
+        pParent->val_.autofit_ = pParent->val_.display_.autofit;
+
+        pParent->val_.insert_ = !pParent->val_.display_.overtype;
+        pParent->val_.modify_ = !pParent->val_.display_.readonly;
+		pParent->val_.big_endian_ = pParent->val_.display_.big_endian;
+
+        pParent->val_.borders_ = pParent->val_.display_.borders;
+        if (pParent->val_.display_.hide_replace && pParent->val_.display_.hide_insert && pParent->val_.display_.hide_delete)
+            pParent->val_.change_tracking_ = 0;
+        else if (!pParent->val_.display_.hide_replace && !pParent->val_.display_.hide_insert && !pParent->val_.display_.hide_delete)
+            pParent->val_.change_tracking_ = 1;
+        else
+            pParent->val_.change_tracking_ = 2;    // Some options on, some off
+
+        // Display the name of the window in the group box
+        CWnd *pwnd = GetDlgItem(IDC_BOX);
+        if (pwnd != NULL)
+        {
+            CString ss;
+
+            ss.Format("Display for %s", pParent->val_.window_name_);
+            pwnd->SetWindowText(ss);
+        }
+    }
+
+	//{{AFX_DATA_MAP(CWindowPage)
+	//}}AFX_DATA_MAP
+	DDX_CBIndex(pDX, IDC_SHOW_AREA, pParent->val_.show_area_);
+	DDX_CBIndex(pDX, IDC_CHARSET, pParent->val_.charset_);
+	DDX_CBIndex(pDX, IDC_CONTROL, pParent->val_.control_);
+	DDX_Check(pDX, IDC_ADDR_DEC, pParent->val_.addr_dec_);
+	DDX_Check(pDX, IDC_AUTOFIT, pParent->val_.autofit_);
+	DDX_Check(pDX, IDC_MAX, pParent->val_.maximize_);
+	DDX_Check(pDX, IDC_BORDERS, pParent->val_.borders_);
+	DDX_Text(pDX, IDC_COLS, pParent->val_.cols_);
+	DDX_Text(pDX, IDC_OFFSET, pParent->val_.offset_);
+	DDX_Text(pDX, IDC_GROUPING, pParent->val_.grouping_);
+	DDX_Text(pDX, IDC_VERTBUFFER, pParent->val_.vertbuffer_);
+	DDX_CBIndex(pDX, IDC_INSERT, pParent->val_.insert_);
+	DDX_CBIndex(pDX, IDC_MODIFY, pParent->val_.modify_);
+	DDX_Check(pDX, IDC_BIG_ENDIAN, pParent->val_.big_endian_);
+	DDX_Check(pDX, IDC_CHANGE_TRACKING, pParent->val_.change_tracking_);
+
+    if (pDX->m_bSaveAndValidate)
+    {
+        // Get info from members (after filled from controls)
+        switch (pParent->val_.show_area_)
+        {
+        default:
+            ASSERT(0);
+            /* fall through */
+        case 0:
+            pParent->val_.display_.hex_area = TRUE;
+            pParent->val_.display_.char_area = FALSE;
+            pParent->val_.display_.edit_char = FALSE;
+			pParent->val_.display_.vert_display = FALSE;
+            break;
+        case 1:
+            pParent->val_.display_.hex_area = FALSE;
+            pParent->val_.display_.char_area = TRUE;
+            pParent->val_.display_.edit_char = TRUE;
+			pParent->val_.display_.vert_display = FALSE;
+            break;
+        case 2:
+            pParent->val_.display_.hex_area = TRUE;
+            pParent->val_.display_.char_area = TRUE;
+			pParent->val_.display_.vert_display = FALSE;
+            break;
+		case 3:
+			pParent->val_.display_.vert_display = TRUE;
+			break;
+        }
+
+        switch (pParent->val_.charset_)
+        {
+        default:
+            ASSERT(0);
+            /* fall through */
+        case 0:
+			pParent->val_.display_.char_set = CHARSET_ASCII;
+            break;
+        case 1:
+			pParent->val_.display_.char_set = CHARSET_ANSI;
+            break;
+        case 2:
+			pParent->val_.display_.char_set = CHARSET_OEM;
+            break;
+        case 3:
+			pParent->val_.display_.char_set = CHARSET_EBCDIC;
+            break;
+        }
+
+        pParent->val_.display_.control = pParent->val_.control_;
+
+        pParent->val_.display_.dec_addr = pParent->val_.addr_dec_;
+        pParent->val_.display_.autofit = pParent->val_.autofit_;
+
+        pParent->val_.display_.overtype = !pParent->val_.insert_;
+        pParent->val_.display_.readonly = !pParent->val_.modify_;
+		pParent->val_.display_.big_endian = pParent->val_.big_endian_;
+
+        pParent->val_.display_.borders = pParent->val_.borders_;
+        if (pParent->val_.change_tracking_ != 2)
+            pParent->val_.display_.hide_insert = 
+			pParent->val_.display_.hide_replace = 
+			pParent->val_.display_.hide_delete = 
+			    (pParent->val_.change_tracking_ == 0);
+
+    }
+}
+
+BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
+	//{{AFX_MSG_MAP(CWindowPage)
+	ON_WM_HELPINFO()
+	ON_BN_CLICKED(IDC_SAVE_DEFAULT, OnSaveDefault)
+	ON_BN_CLICKED(IDC_FONT, OnFont)
+	ON_BN_CLICKED(IDC_ADDR_DEC, OnChange)
+	ON_BN_CLICKED(IDC_AUTOFIT, OnAutofit)
+	ON_EN_CHANGE(IDC_COLS, OnChangeCols)
+	ON_CBN_SELCHANGE(IDC_SHOW_AREA, OnSelchangeShowArea)
+	ON_CBN_SELCHANGE(IDC_CHARSET, OnSelchangeCharset)
+	ON_CBN_SELCHANGE(IDC_CONTROL, OnSelchangeControl)
+	ON_CBN_SELCHANGE(IDC_MODIFY, OnSelchangeModify)
+	ON_CBN_SELCHANGE(IDC_INSERT, OnSelchangeInsert)
+	ON_BN_CLICKED(IDC_DISP_RESET, OnDispReset)
+	ON_BN_CLICKED(IDC_MAX, OnChange)
+	ON_EN_CHANGE(IDC_GROUPING, OnChange)
+	ON_EN_CHANGE(IDC_OFFSET, OnChange)
+	//}}AFX_MSG_MAP
+    ON_WM_CONTEXTMENU()
+	ON_EN_CHANGE(IDC_VERTBUFFER, OnChange)
+	ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChange)
+	ON_BN_CLICKED(IDC_BORDERS, OnChange)
+	ON_BN_CLICKED(IDC_CHANGE_TRACKING, OnChangeTracking)
+END_MESSAGE_MAP()
+
+void CWindowPage::fix_controls()
+{
+    // Check that all the control we need are available
+    ASSERT(GetDlgItem(IDC_COLS_DESC) != NULL);
+    ASSERT(GetDlgItem(IDC_COLS) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_COLS) != NULL);
+    ASSERT(GetDlgItem(IDC_GROUPING_DESC) != NULL);
+    ASSERT(GetDlgItem(IDC_GROUPING) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_GROUPING) != NULL);
+    ASSERT(GetDlgItem(IDC_CHARSET) != NULL);
+    ASSERT(GetDlgItem(IDC_CHARSET_DESC) != NULL);
+    ASSERT(GetDlgItem(IDC_CONTROL) != NULL);
+    ASSERT(GetDlgItem(IDC_CONTROL_DESC) != NULL);
+    ASSERT(GetDlgItem(IDC_INSERT) != NULL);
+    ASSERT(GetDlgItem(IDC_INSERT_DESC) != NULL);
+    ASSERT(GetDlgItem(IDC_SPIN_OFFSET) != NULL);
+
+    // If autofit is on disable setting of no of columns
+    GetDlgItem(IDC_COLS_DESC)->EnableWindow(!pParent->val_.autofit_);
+    GetDlgItem(IDC_COLS)->EnableWindow(!pParent->val_.autofit_);
+    GetDlgItem(IDC_SPIN_COLS)->EnableWindow(!pParent->val_.autofit_);
+
+    // If no char area disable charset and control char selection
+    GetDlgItem(IDC_CHARSET)->EnableWindow(pParent->val_.show_area_ != 0);
+    GetDlgItem(IDC_CHARSET_DESC)->EnableWindow(pParent->val_.show_area_ != 0);
+    GetDlgItem(IDC_CONTROL)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ < 2);
+    GetDlgItem(IDC_CONTROL_DESC)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ < 2);
+
+    // If no hex area disable setting of column grouping
+    GetDlgItem(IDC_GROUPING_DESC)->EnableWindow(pParent->val_.show_area_ != 1);
+    GetDlgItem(IDC_GROUPING)->EnableWindow(pParent->val_.show_area_ != 1);
+    GetDlgItem(IDC_SPIN_GROUPING)->EnableWindow(pParent->val_.show_area_ != 1);
+
+    // If readonly disable setting of mode (OVR/INS)
+    GetDlgItem(IDC_INSERT)->EnableWindow(pParent->val_.modify_ == 1);
+    GetDlgItem(IDC_INSERT_DESC)->EnableWindow(pParent->val_.modify_ == 1);
+
+    // Set offset spin range to be 0 to cols-1
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_OFFSET))->SetRange(0, pParent->val_.cols_-1);
+}
+
+BOOL CWindowPage::validated()
+{
+    if (pParent->val_.cols_ < 4)
+    {
+        ::HMessageBox("You must have at least 4 columns");
+        GetDlgItem(IDC_COLS)->SetFocus();
+        return FALSE;
+    }
+    if (pParent->val_.cols_ > CHexEditView::max_buf)
+    {
+        ::HMessageBox("Too many columns");
+        GetDlgItem(IDC_COLS)->SetFocus();
+        return FALSE;
+    }
+    if (pParent->val_.offset_ >= pParent->val_.cols_)
+    {
+        ::HMessageBox("Offset must be less than the number of columns");
+        GetDlgItem(IDC_OFFSET)->SetFocus();
+        return FALSE;
+    }
+    if (pParent->val_.display_.hex_area && pParent->val_.grouping_ < 2)
+    {
+        ::HMessageBox("There must be at least 2 columns per group");
+        GetDlgItem(IDC_GROUPING)->SetFocus();
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CWindowPage message handlers
+
+BOOL CWindowPage::OnInitDialog() 
+{
+	COptPage::OnInitDialog();
+	
+    // Set columns spin control range to 4 to max
+    CSpinButtonCtrl *pspin;
+    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_COLS);
+    ASSERT(pspin != NULL);
+    pspin->SetRange(4, CHexEditView::max_buf);
+
+    // Set grouping spin ctrl to 2 to max (when >= columns no grouping is done)
+    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_GROUPING);
+    ASSERT(pspin != NULL);
+    pspin->SetRange(2, CHexEditView::max_buf);
+
+    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_VERTBUFFER);
+    ASSERT(pspin != NULL);
+    pspin->SetRange(0, 999);
+
+    fix_controls();
+
+	return TRUE;
+}
+
+void CWindowPage::OnOK() 
+{
+    CHexEditView *pview = GetView();
+	if (pview != NULL)
+		theApp.set_windisplay(pParent->val_, pview);
+	COptPage::OnOK();
+}
+
+static DWORD id_pairs5[] = { 
+    IDC_FONT, HIDC_FONT,
+    IDC_SHOW_AREA, HIDC_SHOW_AREA,
+    IDC_CHARSET, HIDC_CHARSET,
+    IDC_CHARSET_DESC, HIDC_CHARSET,
+    IDC_CONTROL, HIDC_CONTROL,
+    IDC_CONTROL_DESC, HIDC_CONTROL,
+    IDC_MAX, HIDC_MAX,
+    IDC_ADDR_DEC, HIDC_ADDR_DEC,
+    IDC_AUTOFIT, HIDC_AUTOFIT,
+    IDC_COLS, HIDC_COLS,
+    IDC_COLS_DESC, HIDC_COLS,
+    IDC_SPIN_COLS, HIDC_COLS,
+    IDC_OFFSET, HIDC_OFFSET,
+    IDC_SPIN_OFFSET, HIDC_OFFSET,
+    IDC_GROUPING, HIDC_GROUPING,
+    IDC_GROUPING_DESC, HIDC_GROUPING,
+    IDC_SPIN_GROUPING, HIDC_GROUPING,
+    IDC_VERTBUFFER, HIDC_VERTBUFFER,
+    IDC_VERTBUFFER_DESC, HIDC_VERTBUFFER,
+    IDC_SPIN_VERTBUFFER, HIDC_VERTBUFFER,
+    IDC_DISP_RESET, HIDC_DISP_RESET,
+    IDC_MODIFY, HIDC_MODIFY,
+    IDC_INSERT, HIDC_INSERT,
+    IDC_INSERT_DESC, HIDC_INSERT,
+    IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
+    IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
+    IDC_BORDERS, HIDC_BORDERS,
+    IDC_CHANGE_TRACKING, HIDC_CHANGE_TRACKING,
+    0,0 
+}; 
+
+BOOL CWindowPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs5);
+    return TRUE;
+}
+
+void CWindowPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs5);
+}
+
+BOOL CWindowPage::OnSetActive() 
+{
+    BOOL retval = COptPage::OnSetActive();
+    update_ok_ = true;          // Its now OK to allow changes to cols field to be processed
+    return retval;
+}
+
+BOOL CWindowPage::OnKillActive() 
+{
+    BOOL retval = COptPage::OnKillActive();
+
+    if (retval)
+    {
+        if (!validated())
+            return 0;
+
+        // All validation is OK so we will be deactivated
+        update_ok_ = false;
+    }
+
+    return retval;
+}
+
+void CWindowPage::OnCancel() 
+{
+    update_ok_ = false;
+	
+	COptPage::OnCancel();
+}
+
+void CWindowPage::OnSaveDefault() 
+{
+    UpdateData();
+    if (!validated())
+        return;
+
+    if (AfxMessageBox("The default settings are used when you open a file which you\n"
+                      "haven't opened in HexEdit before, or when you create a new file.\n\n"
+                      "Are you sure you want to use these settings as the default?", MB_OKCANCEL) != IDOK)
+        return;
+
+    theApp.open_disp_state_ = pParent->val_.disp_state_;
+    theApp.open_max_ = pParent->val_.maximize_;
+    theApp.open_rowsize_ = pParent->val_.cols_;
+    theApp.open_group_by_ = pParent->val_.grouping_;
+    theApp.open_offset_ = pParent->val_.offset_;
+	theApp.open_vertbuffer_ = pParent->val_.vertbuffer_;
+
+    if (theApp.open_plf_ == NULL)
+        theApp.open_plf_ = new LOGFONT;
+    *theApp.open_plf_ = pParent->val_.lf_;
+    if (theApp.open_oem_plf_ == NULL)
+        theApp.open_oem_plf_ = new LOGFONT;
+    *theApp.open_oem_plf_ = pParent->val_.oem_lf_;
+
+    theApp.GetFileList()->SetDefaults();
+}
+
+void CWindowPage::OnDispReset() 
+{
+    // Reset to default display values
+    ASSERT(theApp.open_disp_state_ != -1);
+    pParent->val_.disp_state_ = theApp.open_disp_state_;
+    pParent->val_.maximize_ = theApp.open_max_;
+    pParent->val_.cols_ = theApp.open_rowsize_;
+    pParent->val_.grouping_ = theApp.open_group_by_;
+    pParent->val_.offset_ = theApp.open_offset_;
+	pParent->val_.vertbuffer_ = theApp.open_vertbuffer_;
+
+    if (theApp.open_plf_ != NULL)
+        pParent->val_.lf_ = *theApp.open_plf_;
+    if (theApp.open_oem_plf_ != NULL)
+        pParent->val_.oem_lf_ = *theApp.open_oem_plf_;
+	
+    UpdateData(FALSE);
+    fix_controls();
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnFont() 
+{
+    UpdateData();
+
+    CFontDialog dlg;
+//    dlg.SetWindowText(open_display_char_ && !open_ebcdic_ && open_graphic_ && open_oem_ ?
+//                      "Default OEM/IBM window font" : "Default font");
+    if (pParent->val_.display_.FontRequired() == FONT_OEM)
+        dlg.m_cf.lpLogFont = &pParent->val_.oem_lf_;
+    else
+        dlg.m_cf.lpLogFont = &pParent->val_.lf_;
+    dlg.m_cf.Flags |= CF_INITTOLOGFONTSTRUCT | CF_SHOWHELP;
+    dlg.m_cf.Flags &= ~(CF_EFFECTS);              // Disable selection of strikethrough, colours etc
+
+    if (dlg.DoModal() == IDOK)
+    {
+        if (pParent->val_.display_.FontRequired() == FONT_OEM)
+        {
+            if (pParent->val_.oem_lf_.lfHeight < 0) pParent->val_.oem_lf_.lfHeight = -pParent->val_.oem_lf_.lfHeight;
+        }
+        else
+        {
+            if (pParent->val_.lf_.lfHeight < 0) pParent->val_.lf_.lfHeight = -pParent->val_.lf_.lfHeight;
+        }
+        SetModified(TRUE);
+    }
+}
+
+void CWindowPage::OnChange() 
+{
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnAutofit() 
+{
+    UpdateData();
+    fix_controls();
+	
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnChangeTracking() 
+{
+	UpdateData();
+    // This will cause change_tracking_ to be set to 0 or 1 in DoDataExchange
+    pParent->val_.display_.hide_replace = 
+	pParent->val_.display_.hide_insert = 
+	pParent->val_.display_.hide_delete = pParent->val_.change_tracking_;
+    UpdateData(FALSE);
+
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnChangeCols() 
+{
+    if (!update_ok_)
+        return;
+    update_ok_ = false;
+
+    // Get cols_ value from dialog controls
+    if (UpdateData())
+    {
+        // Change the offset spin control range
+        CSpinButtonCtrl *pspin;
+        pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_OFFSET);
+        ASSERT(pspin != NULL);
+        pspin->SetRange(0, pParent->val_.cols_-1);
+    }
+
+    SetModified(TRUE);
+    update_ok_ = true;
+}
+
+void CWindowPage::OnSelchangeShowArea() 
+{
+    UpdateData();
+    if (pParent->val_.show_area_ == 3 && pParent->val_.vertbuffer_ < 2)
+    {
+        pParent->val_.vertbuffer_ = 2;
+        UpdateData(FALSE);
+    }
+	fix_controls();
+	
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnSelchangeCharset() 
+{
+    UpdateData();
+	fix_controls();
+
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnSelchangeControl() 
+{
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnSelchangeModify() 
+{
+    UpdateData();
+	fix_controls();
+	
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnSelchangeInsert() 
+{
+    SetModified(TRUE);
+}
+
 

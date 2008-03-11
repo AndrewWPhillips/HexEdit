@@ -4073,7 +4073,7 @@ void CMainFrame::OnCalculator()
 
 void CMainFrame::OnOptionsScheme() 
 {
-    theApp.display_options(theApp.p_colours, TRUE);
+    theApp.display_options(COLOUR_OPTIONS_PAGE, TRUE);
 }
 
 void CMainFrame::OnBookmarks() 

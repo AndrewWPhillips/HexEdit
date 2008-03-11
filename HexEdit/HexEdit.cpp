@@ -275,16 +275,7 @@ CHexEditApp::CHexEditApp() : CBCGWorkspace(TRUE), default_scheme_(""),
 
     algorithm_ = 0;   // Default to built-in encryption
 
-    p_last_page_ = NULL;
-    p_general = NULL;
-    p_sysdisplay = NULL;
-    p_windisplay = NULL;
-//    p_partitions = NULL;  // no longer used when schemes added
-    p_colours = NULL;
-    p_macro = NULL;
-    p_printer = NULL;
-    p_filters = NULL;
-	p_tips = NULL;
+    last_opt_page_ = -1;
 
     m_pbookmark_list = NULL;
     open_file_shared_ = FALSE;
@@ -616,31 +607,6 @@ BOOL CHexEditApp::InitInstance()
 #endif
 
         LoadOptions();
-
-        // Construct property pages for later use in options dialog
-        // Note: Had to put this here since before the constructor (being
-        // called in the app constructor) was trying to reference resources
-        // before that was possible.
-        p_general = new CGeneralPage;
-        p_sysdisplay = new CSysDisplayPage;
-        p_windisplay = new CWindowPage;
-//        p_partitions = new CPartitionsPage;  // no longer used when schemes added
-        p_colours = new CColourSchemes;
-        p_macro = new CMacroPage;
-        p_printer = new CPrintPage;
-        p_filters = new CFiltersPage;
-		p_tips = new CTipsPage;
-
-        // Enable help button for all pages (must be done after construction)
-        p_general->m_psp.dwFlags |= PSP_HASHELP;
-        p_sysdisplay->m_psp.dwFlags |= PSP_HASHELP;
-        p_windisplay->m_psp.dwFlags |= PSP_HASHELP;
-//        p_partitions->m_psp.dwFlags |= PSP_HASHELP;  // no longer used when schemes added
-        p_colours->m_psp.dwFlags |= PSP_HASHELP;
-        p_macro->m_psp.dwFlags |= PSP_HASHELP;
-        p_printer->m_psp.dwFlags |= PSP_HASHELP;
-        p_filters->m_psp.dwFlags |= PSP_HASHELP;
-		p_tips->m_psp.dwFlags |= PSP_HASHELP;
 
         LoadStdProfileSettings(0);  // Load standard INI file options (including MRU)
 
@@ -1513,16 +1479,6 @@ int CHexEditApp::ExitInstance()
 
     if (pboyer_ != NULL)
         delete pboyer_;
-
-    delete p_general;
-    delete p_sysdisplay;
-    delete p_windisplay;
-//    delete p_partitions;  // no longer used when schemes added
-    delete p_colours;
-    delete p_macro;
-    delete p_printer;
-    delete p_filters;
-	delete p_tips;
 
     ::BCGCBCleanUp();
 
@@ -2628,18 +2584,18 @@ void CHexEditApp::LoadSchemes()
         scheme_.push_back(new_scheme);
 
         CScheme new_scheme2(PRETTY_NAME);
-		new_scheme2.AddRange("range1",  RGB(200, 0,   0  ), "0:20");
-		new_scheme2.AddRange("range2",  RGB(200, 130, 0  ), "21:41");
-		new_scheme2.AddRange("range3",  RGB(170, 170, 0  ), "42:63");
-		new_scheme2.AddRange("range4",  RGB(130, 170, 0  ), "64:84");
-		new_scheme2.AddRange("range5",  RGB(0,   180, 0  ), "85:105");
-		new_scheme2.AddRange("range6",  RGB(0,   170, 130), "106:127");
-		new_scheme2.AddRange("range7",  RGB(0,   180, 180), "128:148");
-		new_scheme2.AddRange("range8",  RGB(0,   130, 200), "149:169");
-		new_scheme2.AddRange("range9",  RGB(0,   0,   180), "170:191");
-		new_scheme2.AddRange("range10", RGB(130, 0,   170), "192:212");
-		new_scheme2.AddRange("range11", RGB(180, 0,   180), "213:233");
-		new_scheme2.AddRange("range12", RGB(180, 0,   120), "234:255");
+		new_scheme2.AddRange("range1", RGB(200, 0, 0), "0:20");
+		new_scheme2.AddRange("range2", RGB(200, 100, 0), "21:41");
+		new_scheme2.AddRange("range3", RGB(200, 200, 0), "42:63");
+		new_scheme2.AddRange("range4", RGB(100, 200, 0), "64:84");
+		new_scheme2.AddRange("range5", RGB(0, 200, 0), "85:105");
+		new_scheme2.AddRange("range6", RGB(0, 200, 100), "106:127");
+		new_scheme2.AddRange("range7", RGB(0, 200, 200), "128:148");
+		new_scheme2.AddRange("range8", RGB(0, 100, 200), "149:169");
+		new_scheme2.AddRange("range9", RGB(0, 0, 200), "170:191");
+		new_scheme2.AddRange("range10", RGB(100, 0, 200), "192:212");
+		new_scheme2.AddRange("range11", RGB(200, 0, 200), "213:233");
+		new_scheme2.AddRange("range12", RGB(200, 0, 100), "234:255");
         new_scheme2.AddRange("ALL", RGB(100, 100, 100), "0:255");
         scheme_.push_back(new_scheme2);
     }
@@ -2772,163 +2728,199 @@ void CHexEditApp::OnOptions()
 
 void CHexEditApp::OnOptions2()
 {
-    display_options(p_windisplay);
+    display_options(WIN_OPTIONS_PAGE);
 }
 
-void CHexEditApp::display_options(CPropertyPage *display_page /*=NULL*/, BOOL must_show_page /*=FALSE*/)
+// Invoke the options dialog
+// Param "display_page" indicates which page we want to show
+// Param "must_show_page" means to force showing of the page
+void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_page /*=FALSE*/)
 {
+    CHexEditView *pview = GetView();
+
     // Construct property sheet + its pages
-    COptSheet options_sheet(_T("HexEdit Options"));
+    COptSheet optSheet(_T("HexEdit Options"));
+    CGeneralPage generalPage(&optSheet, IDI_COGS);
+    CSysDisplayPage sysdisplayPage(&optSheet, IDI_DISPLAY);
+    CWindowPage windisplayPage(&optSheet, IDI_WINDOW);
+	CTipsPage tipsPage(&optSheet, IDI_TIPS);
+    CColourSchemes coloursPage(&optSheet, IDI_COLOUR);
+    CMacroPage macroPage(&optSheet, IDI_MACRO);
+    CPrintPage printerPage(&optSheet, IDI_PRINTER);
+    CFiltersPage filtersPage(&optSheet, IDI_FILTER);
 
-    get_options();
+	CPropertyPage *pPage = NULL;
+	switch (display_page)
+	{
+	case COLOUR_OPTIONS_PAGE:
+		pPage = &coloursPage;
+		break;
+	case MACRO_OPTIONS_PAGE:
+		pPage = &macroPage;
+		break;
+	case PRINTER_OPTIONS_PAGE:
+		pPage = &printerPage;
+		break;
+	case FILTER_OPTIONS_PAGE:
+		pPage = &filtersPage;
+		break;
+	}
 
-    options_sheet.AddPage(p_general);
-    options_sheet.AddPage(p_sysdisplay);
-    if (GetView() != NULL)
-    {
-        options_sheet.AddPage(p_windisplay);
-//        options_sheet.AddPage(p_partitions);  // no longer used when schemes added
-    }
-    options_sheet.AddPage(p_tips);
-    options_sheet.AddPage(p_colours);
-    options_sheet.AddPage(p_macro);
-    options_sheet.AddPage(p_printer);
-    options_sheet.AddPage(p_filters);
+    // Load current settings into the property sheet
+    get_options(optSheet.val_);
+	if (pview != NULL)
+	{
+        get_win_options(optSheet.val_, pview);
+		if (display_page == WIN_OPTIONS_PAGE)
+			pPage = &windisplayPage;
+	}
 
-    if (must_show_page && display_page != NULL && options_sheet.GetPageIndex(display_page) != -1)
+    // Add pages and set the initial active page
+    optSheet.AddPage(&generalPage);
+    optSheet.AddPage(&sysdisplayPage);
+    optSheet.AddPage(&tipsPage);
+    optSheet.AddPage(&coloursPage);
+    optSheet.AddPage(&macroPage);
+    optSheet.AddPage(&printerPage);
+    optSheet.AddPage(&filtersPage);
+	if (pview != NULL)
     {
-        options_sheet.SetActivePage(display_page);
-    }
-    else if (p_last_page_ != NULL && options_sheet.GetPageIndex(p_last_page_) != -1)
-    {
-        options_sheet.SetActivePage(p_last_page_);
-    }
-    else if (display_page != NULL)
-    {
-        options_sheet.SetActivePage(display_page);
+        optSheet.AddPage(&windisplayPage);
     }
 
-    options_sheet.m_psh.dwFlags &= ~(PSH_HASHELP);      // Turn off help button
+    if (must_show_page && pPage != NULL)
+    {
+        optSheet.SetActivePage(pPage);
+    }
+    else if (last_opt_page_ != -1 && last_opt_page_ < optSheet.GetPageCount())
+    {
+        optSheet.SetActivePage(last_opt_page_);
+    }
+    else if (pPage != NULL)
+    {
+        optSheet.SetActivePage(pPage);
+    }
+
+    optSheet.m_psh.dwFlags &= ~(PSH_HASHELP);      // Turn off help button
 
     CHECK_SECURITY(201);
-    options_sheet.DoModal();
-
-//    if (options_sheet.DoModal() == IDOK)
-//      SaveToMacro(km_options, (long)display_page);
-//    else
-//      mac_error_ = 2;
+    optSheet.DoModal();
+	// Note: updating the options in response to DoModal returning IDOK is
+	// not a good idea as then the Apply button does nothing.  The updating
+	// for most pages is handled in the CGeneralPage::OnOK() member.
 
     // BG search finished message may be lost if modeless dlg running
     CheckBGSearchFinished();
 }
 
-// Get current options into member variables for pages
-void CHexEditApp::get_options()
+// Get current options into member variables for most pages.
+// Note: Info tips, Colours and Filters pages are handled differently
+// They handle their own initialization (OnInitDialog)
+void CHexEditApp::get_options(struct OptValues &val)
 {
-    CHexEditView *pview;                // The active view (or NULL if none)
     char buf[_MAX_PATH + 3];            // Stores value of key (not used)
     long buf_size = sizeof(buf);        // Size of buffer and returned key value
 
-    // Init dialog fields with option values
-    p_general->shell_open_ = 
-        RegQueryValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, buf, &buf_size) == ERROR_SUCCESS;
-    p_general->one_only_ = one_only_;
-    p_general->bg_search_ = bg_search_;
-    p_general->save_exit_ = save_exit_;
-    p_general->backup_ = backup_;
-    p_general->backup_space_ = backup_space_;
-    p_general->backup_if_size_ = backup_size_ > 0;
-    p_general->backup_size_ = backup_size_;
-    p_general->backup_prompt_ = backup_prompt_;
+    // General
+    val.shell_open_ = RegQueryValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, buf, &buf_size) == ERROR_SUCCESS;
+    val.one_only_ = one_only_;
+    val.bg_search_ = bg_search_;
+    val.save_exit_ = save_exit_;
+    val.recent_files_ = recent_files_;
 
-    p_general->address_specified_ = export_base_addr_ != -1;
-    p_general->base_address_ = export_base_addr_ != -1 ? export_base_addr_ : 0;
-    p_general->export_line_len_ = export_line_len_;
-    p_general->recent_files_ = recent_files_;
+    // Backup
+    val.backup_ = backup_;
+    val.backup_space_ = backup_space_;
+    val.backup_if_size_ = backup_size_ > 0;
+    val.backup_size_ = backup_size_;
+    val.backup_prompt_ = backup_prompt_;
 
-    p_sysdisplay->open_restore_ = open_restore_;
-    p_sysdisplay->hex_ucase_ = hex_ucase_;
-	//p_sysdisplay->nice_addr_ = nice_addr_;
-    p_sysdisplay->large_cursor_ = large_cursor_;
-    p_sysdisplay->show_other_ = show_other_;
-    p_sysdisplay->mditabs_ = mditabs_;
-    p_sysdisplay->tabsbottom_ = tabsbottom_;
+    // Export
+    val.address_specified_ = export_base_addr_ != -1;
+    val.base_address_ = export_base_addr_ != -1 ? export_base_addr_ : 0;
+    val.export_line_len_ = export_line_len_;
 
-	p_sysdisplay->dffd_view_ = tree_view_;
-    //p_sysdisplay->tree_edit_ = tree_edit_;
-    p_sysdisplay->max_fix_for_elts_ = max_fix_for_elts_;
-    p_sysdisplay->default_char_format_ = default_char_format_;
-    p_sysdisplay->default_int_format_ = default_int_format_;
-    p_sysdisplay->default_unsigned_format_ = default_unsigned_format_;
-    p_sysdisplay->default_string_format_ = default_string_format_;
-    p_sysdisplay->default_real_format_ = default_real_format_;
-    p_sysdisplay->default_date_format_ = default_date_format_;
+    // Global display
+    val.open_restore_ = open_restore_;
+    val.mditabs_ = mditabs_;
+    val.tabsbottom_ = tabsbottom_;
+    val.hex_ucase_ = hex_ucase_;
+    val.large_cursor_ = large_cursor_;
+    val.show_other_ = show_other_;
+	val.nice_addr_ = nice_addr_;
 
-    if ((pview = GetView()) != NULL)
-    {
-        // Set up the Window Display page
-        // Get the name of the active view window and save in window_name_
-        ((CMDIChildWnd *)((CMainFrame *)AfxGetMainWnd())->MDIGetActive())->
-            GetWindowText(p_windisplay->window_name_);
+    // Global template
+	val.dffd_view_ = tree_view_;
+    val.max_fix_for_elts_ = max_fix_for_elts_;
+    val.default_char_format_ = default_char_format_;
+    val.default_int_format_ = default_int_format_;
+    val.default_unsigned_format_ = default_unsigned_format_;
+    val.default_string_format_ = default_string_format_;
+    val.default_real_format_ = default_real_format_;
+    val.default_date_format_ = default_date_format_;
 
-        p_windisplay->disp_state_ = pview->disp_state_;
+    // Macros
+    val.refresh_ = refresh_;
+    val.num_secs_ = num_secs_;
+    val.num_keys_ = num_keys_;
+    val.num_plays_ = num_plays_;
+    val.refresh_props_ = refresh_props_;
+    val.refresh_bars_ = refresh_bars_;
+    val.halt_level_ = halt_level_;
 
-        p_windisplay->cols_ = pview->rowsize_;
-        p_windisplay->grouping_ = pview->group_by_;
-//      p_windisplay->offset_ = pview->offset_;
-        p_windisplay->offset_ = (pview->rowsize_ - pview->offset_)%pview->rowsize_;
-        p_windisplay->vertbuffer_ = pview->GetVertBufferZone();
-
-        // Get whether or not the window is currently maximized
-        WINDOWPLACEMENT wp;
-
-        // Get owner child frame (ancestor window)
-        CWnd *cc = pview->GetParent();
-        while (cc != NULL && !cc->IsKindOf(RUNTIME_CLASS(CChildFrame)))  // view may be in splitter(s)
-            cc = cc->GetParent();
-        ASSERT_KINDOF(CChildFrame, cc);
-
-        cc->GetWindowPlacement(&wp);
-        p_windisplay->maximize_ = wp.showCmd == SW_SHOWMAXIMIZED;
-
-        p_windisplay->lf_ = pview->lf_;
-        p_windisplay->oem_lf_ = pview->oem_lf_;
-    }
-
-    p_macro->refresh_ = refresh_;
-    p_macro->num_secs_ = num_secs_;
-    p_macro->num_keys_ = num_keys_;
-    p_macro->num_plays_ = num_plays_;
-    p_macro->refresh_bars_ = refresh_bars_;
-    p_macro->refresh_props_ = refresh_props_;
-    p_macro->halt_level_ = halt_level_;
-
-    p_printer->units_ = int(print_units_);
-    p_printer->footer_ = footer_;
-    p_printer->header_ = header_;
-    p_printer->border_ = print_box_;
-    p_printer->headings_ = print_hdr_;
-    p_printer->left_ = left_margin_;
-    p_printer->right_ = right_margin_;
-    p_printer->top_ = top_margin_;
-    p_printer->bottom_ = bottom_margin_;
-    p_printer->header_edge_ = header_edge_;
-    p_printer->footer_edge_ = footer_edge_;
-    p_printer->spacing_ = spacing_;
+    // Printer page
+    val.units_ = int(print_units_);
+    val.footer_ = footer_;
+    val.header_ = header_;
+    val.border_ = print_box_;
+    val.headings_ = print_hdr_;
+    val.left_ = left_margin_;
+    val.right_ = right_margin_;
+    val.top_ = top_margin_;
+    val.bottom_ = bottom_margin_;
+    val.header_edge_ = header_edge_;
+    val.footer_edge_ = footer_edge_;
+    val.spacing_ = spacing_;
 }
 
-void CHexEditApp::set_general()
+// Get options for the active window
+void CHexEditApp::get_win_options(struct OptValues &val, CHexEditView *pview)
+{
+    // Get the name of the active view window and save in window_name_
+    ((CMDIChildWnd *)((CMainFrame *)AfxGetMainWnd())->MDIGetActive())->
+        GetWindowText(val.window_name_);
+
+    val.disp_state_ = pview->disp_state_;
+    val.lf_ = pview->lf_;
+    val.oem_lf_ = pview->oem_lf_;
+
+    val.cols_ = pview->rowsize_;
+//      val.offset_ = pview->offset_;
+    val.offset_ = (pview->rowsize_ - pview->offset_)%pview->rowsize_;
+    val.grouping_ = pview->group_by_;
+    val.vertbuffer_ = pview->GetVertBufferZone();
+
+    // Get whether or not the window is currently maximized
+    WINDOWPLACEMENT wp;
+    CWnd *cc = pview->GetParent();    // Get owner child frame (ancestor window)
+    while (cc != NULL && !cc->IsKindOf(RUNTIME_CLASS(CChildFrame)))  // view may be in splitter(s)
+        cc = cc->GetParent();
+    ASSERT_KINDOF(CChildFrame, cc);
+    cc->GetWindowPlacement(&wp);
+    val.maximize_ = wp.showCmd == SW_SHOWMAXIMIZED;
+}
+
+// The following set global options from dialog after user clicks OK/APPLY
+void CHexEditApp::set_general(struct OptValues &val)
 {
     char buf[_MAX_PATH + 3];            // Stores value of key (not used)
     long buf_size = sizeof(buf);        // Size of buffer and returned key value
 
-    save_exit_ = p_general->save_exit_;
-
-    if (p_general->shell_open_ != 
+    if (val.shell_open_ != 
         (RegQueryValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, buf, &buf_size) == ERROR_SUCCESS))
     {
         // Option has been changed (turned on or off)
-        if (p_general->shell_open_)
+        if (val.shell_open_)
         {
 			// Create the registry entries that allow "Open with HexEdit" on shortcut menus
 			CString s1("Open with HexEdit");
@@ -2942,9 +2934,10 @@ void CHexEditApp::set_general()
             RegDeleteKey(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY);    // Delete registry entries
         }
     }
-    if (bg_search_ != p_general->bg_search_)
+
+    if (bg_search_ != val.bg_search_)
     {
-        if (p_general->bg_search_)
+        if (val.bg_search_)
         {
             bg_search_ = TRUE;
 
@@ -2984,76 +2977,44 @@ void CHexEditApp::set_general()
         }
     }
 
-    one_only_ = p_general->one_only_;
-    backup_ = p_general->backup_;
-    backup_space_ = p_general->backup_space_;
-    backup_size_ = p_general->backup_if_size_ ? p_general->backup_size_ : 0;
-    backup_prompt_ = p_general->backup_prompt_;
-    export_base_addr_ = p_general->address_specified_ ? p_general->base_address_ : -1;
-    export_line_len_ = p_general->export_line_len_;
-    if (recent_files_ != p_general->recent_files_)
+    one_only_ = val.one_only_;
+    save_exit_ = val.save_exit_;
+    if (recent_files_ != val.recent_files_)
     {
-        recent_files_ = p_general->recent_files_;
+        recent_files_ = val.recent_files_;
         GetFileList()->ChangeSize(recent_files_);
     }
+
+    backup_ = val.backup_;
+    backup_space_ = val.backup_space_;
+    backup_size_ = val.backup_if_size_ ? val.backup_size_ : 0;
+    backup_prompt_ = val.backup_prompt_;
+
+    export_base_addr_ = val.address_specified_ ? val.base_address_ : -1;
+    export_line_len_ = val.export_line_len_;
 }
 
-void CHexEditApp::set_sysdisplay()
+void CHexEditApp::set_sysdisplay(struct OptValues &val)
 {
-    open_restore_ = p_sysdisplay->open_restore_;
-
-    if (large_cursor_ != p_sysdisplay->large_cursor_)
+    open_restore_ = val.open_restore_;
+    if (mditabs_ != val.mditabs_ ||
+        (mditabs_ && tabsbottom_ != val.tabsbottom_))
     {
-        large_cursor_ = p_sysdisplay->large_cursor_;
+        mditabs_ = val.mditabs_;
+        tabsbottom_ = val.tabsbottom_;
 
-        // Change caret of all views
-        CMainFrame *mm = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
-        CMDIChildWnd *nextc;    // Loops through all MDI child frames
-
-        // Find all view windows
-        for (nextc = dynamic_cast<CMDIChildWnd *>(mm->MDIGetActive());
-             nextc != NULL;
-             nextc = dynamic_cast<CMDIChildWnd *>(nextc->GetWindow(GW_HWNDNEXT)) )
-        {
-            CHexEditView *pview = dynamic_cast<CHexEditView *>(nextc->GetActiveView());
-            // Note pview may be NULL if in print preview
-            if (pview != NULL && pview->IsKindOf(RUNTIME_CLASS(CHexEditView)))
-            {
-                if (large_cursor_)
-                    pview->BlockCaret();
-                else
-                    pview->LineCaret();
-            }
-        }
+        CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+        ASSERT_KINDOF(CMainFrame, mm);
+        if (mm != NULL)
+            mm->EnableMDITabs(mditabs_, tabicons_,
+                tabsbottom_ ? CBCGTabWnd::LOCATION_BOTTOM : CBCGTabWnd::LOCATION_TOP);
     }
 
-    if (show_other_ != p_sysdisplay->show_other_)
+    if (hex_ucase_ != val.hex_ucase_)
     {
-        show_other_ = p_sysdisplay->show_other_;
+        hex_ucase_ = val.hex_ucase_;
 
-        // Invalidate all views to show/hide 2nd "cursor"
-        CMainFrame *mm = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
-        CMDIChildWnd *nextc;    // Loops through all MDI child frames
-
-        // Invalidate all view windows
-        for (nextc = dynamic_cast<CMDIChildWnd *>(mm->MDIGetActive());
-             nextc != NULL;
-             nextc = dynamic_cast<CMDIChildWnd *>(nextc->GetWindow(GW_HWNDNEXT)) )
-        {
-            CHexEditView *pview = dynamic_cast<CHexEditView *>(nextc->GetActiveView());
-            // Note pview may be NULL if in print preview
-            if (pview != NULL && pview->IsKindOf(RUNTIME_CLASS(CHexEditView)))
-            {
-                pview->DoInvalidate();
-            }
-        }
-    }
-
-    if (hex_ucase_ != p_sysdisplay->hex_ucase_ /* || nice_addr_ != p_sysdisplay->nice_addr_ */)
-    {
-        hex_ucase_ = p_sysdisplay->hex_ucase_;
-//        nice_addr_ = p_sysdisplay->nice_addr_;
-
+        // xxx invalidate all views
         // Invalidate all views to change display of hex digits
         CMainFrame *mm = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
         CMDIChildWnd *nextc;    // Loops through all MDI child frames
@@ -3088,10 +3049,10 @@ void CHexEditApp::set_sysdisplay()
                 pedit->Redisplay();
             }
         }
-        //if (mm->pfind_ != NULL)
-            mm->m_wndFind.m_pSheet->Redisplay();
 
-        // Fix up case of hex addresses
+        mm->m_wndFind.m_pSheet->Redisplay();
+
+        // Fix up case of hex addresses in hex jump tool(s)
         if (CBCGToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
         {
             for (POSITION posCombo = listButtons.GetHeadPosition (); 
@@ -3112,45 +3073,99 @@ void CHexEditApp::set_sysdisplay()
             mm->m_wndCalc.Redisplay();
     }
 
-    if (mditabs_ != p_sysdisplay->mditabs_ ||
-        (mditabs_ && tabsbottom_ != p_sysdisplay->tabsbottom_))
+    if (large_cursor_ != val.large_cursor_)
     {
-        mditabs_ = p_sysdisplay->mditabs_;
-        tabsbottom_ = p_sysdisplay->tabsbottom_;
+        large_cursor_ = val.large_cursor_;
 
-        CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-        ASSERT_KINDOF(CMainFrame, mm);
-        if (mm != NULL)
-            mm->EnableMDITabs(mditabs_, tabicons_,
-                tabsbottom_ ? CBCGTabWnd::LOCATION_BOTTOM : CBCGTabWnd::LOCATION_TOP);
+        // Change caret of all views
+        CMainFrame *mm = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
+        CMDIChildWnd *nextc;    // Loops through all MDI child frames
+
+        // Find all view windows
+        for (nextc = dynamic_cast<CMDIChildWnd *>(mm->MDIGetActive());
+             nextc != NULL;
+             nextc = dynamic_cast<CMDIChildWnd *>(nextc->GetWindow(GW_HWNDNEXT)) )
+        {
+            CHexEditView *pview = dynamic_cast<CHexEditView *>(nextc->GetActiveView());
+            // Note pview may be NULL if in print preview
+            if (pview != NULL && pview->IsKindOf(RUNTIME_CLASS(CHexEditView)))
+            {
+                if (large_cursor_)
+                    pview->BlockCaret();
+                else
+                    pview->LineCaret();
+            }
+        }
     }
 
-	tree_view_ = p_sysdisplay->dffd_view_;
-    //tree_edit_ = p_sysdisplay->tree_edit_;
-    max_fix_for_elts_ = p_sysdisplay->max_fix_for_elts_;
-    default_char_format_ = p_sysdisplay->default_char_format_;
-    default_int_format_ = p_sysdisplay->default_int_format_;
-    default_unsigned_format_ = p_sysdisplay->default_unsigned_format_;
-    default_string_format_ = p_sysdisplay->default_string_format_;
-    default_real_format_ = p_sysdisplay->default_real_format_;
-    default_date_format_ = p_sysdisplay->default_date_format_;
+    if (show_other_ != val.show_other_)
+    {
+        show_other_ = val.show_other_;
+
+        // Invalidate all views to show/hide 2nd "cursor"
+        CMainFrame *mm = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
+        CMDIChildWnd *nextc;    // Loops through all MDI child frames
+
+        //xxx invalidate all views
+        // Invalidate all view windows
+        for (nextc = dynamic_cast<CMDIChildWnd *>(mm->MDIGetActive());
+             nextc != NULL;
+             nextc = dynamic_cast<CMDIChildWnd *>(nextc->GetWindow(GW_HWNDNEXT)) )
+        {
+            CHexEditView *pview = dynamic_cast<CHexEditView *>(nextc->GetActiveView());
+            // Note pview may be NULL if in print preview
+            if (pview != NULL && pview->IsKindOf(RUNTIME_CLASS(CHexEditView)))
+            {
+                pview->DoInvalidate();
+            }
+        }
+    }
+
+    if (nice_addr_ != val.nice_addr_)
+    {
+        nice_addr_ = val.nice_addr_;
+        //xxx invalidate all views
+    }
+
+    // global template options
+	tree_view_ = val.dffd_view_;
+    max_fix_for_elts_ = val.max_fix_for_elts_;
+    default_char_format_ = val.default_char_format_;
+    default_int_format_ = val.default_int_format_;
+    default_unsigned_format_ = val.default_unsigned_format_;
+    default_string_format_ = val.default_string_format_;
+    default_real_format_ = val.default_real_format_;
+    default_date_format_ = val.default_date_format_;
 }
 
-// Change macro options according to Macro Options page
-void CHexEditApp::set_macro()
+void CHexEditApp::set_macro(struct OptValues &val)
 {
-    // Set global options from the macro page values (possibly) changed
-    // xxx save any of these option changes to recorded macro?
-    refresh_ = p_macro->refresh_;
-    num_secs_ = p_macro->num_secs_;
-    num_keys_ = p_macro->num_keys_;
-    num_plays_ = p_macro->num_plays_;
-    refresh_bars_ = p_macro->refresh_bars_;
-    refresh_props_ = p_macro->refresh_props_;
-    halt_level_ = p_macro->halt_level_;
+    refresh_ = val.refresh_;
+    num_secs_ = val.num_secs_;
+    num_keys_ = val.num_keys_;
+    num_plays_ = val.num_plays_;
+    refresh_props_ = val.refresh_props_;
+    refresh_bars_ = val.refresh_bars_;
+    halt_level_ = val.halt_level_;
 }
 
-bool CHexEditApp::set_windisplay()
+void CHexEditApp::set_printer(struct OptValues &val)
+{
+    print_units_ = prn_unit_t(val.units_);
+    footer_ = val.footer_;
+    header_ = val.header_;
+    print_box_ = val.border_ ? true : false;
+    print_hdr_ = val.headings_ ? true : false;
+    left_margin_ = val.left_;
+    right_margin_ = val.right_;
+    top_margin_ = val.top_;
+    bottom_margin_ = val.bottom_;
+    header_edge_ = val.header_edge_;
+    footer_edge_ = val.footer_edge_;
+    spacing_ = val.spacing_;
+}
+
+void CHexEditApp::set_windisplay(struct OptValues &val, CHexEditView *pview)
 {
     bool one_done = false;              // Have we already made a change (saving undo info)
     // one_done is used to keep track of the changes made to the view so that
@@ -3158,195 +3173,147 @@ bool CHexEditApp::set_windisplay()
     // first.  This allows all the changes made at the same time to be undone
     // with one undo operation, which will make more sense to the user.
 
-    CHexEditView *pview = GetView();    // The active view
-    ASSERT(pview != NULL);
-    if (pview != NULL)
+    // Make the window maximized or not depending on setting chosen
+    WINDOWPLACEMENT wp;
+
+    // Get owner child frame (ancestor window)
+    CWnd *cc = pview->GetParent();
+    while (cc != NULL && !cc->IsKindOf(RUNTIME_CLASS(CChildFrame)))  // view may be in splitter(s)
+        cc = cc->GetParent();
+    ASSERT_KINDOF(CChildFrame, cc);
+
+    cc->GetWindowPlacement(&wp);
+    if (val.maximize_ != (wp.showCmd == SW_SHOWMAXIMIZED))
     {
-        // Make the window maximized or not depending on setting chosen
-        WINDOWPLACEMENT wp;
+        wp.showCmd = val.maximize_ ? SW_SHOWMAXIMIZED : SW_SHOWNORMAL;
+        cc->SetWindowPlacement(&wp);
+    }
 
-        // Get owner child frame (ancestor window)
-        CWnd *cc = pview->GetParent();
-        while (cc != NULL && !cc->IsKindOf(RUNTIME_CLASS(CChildFrame)))  // view may be in splitter(s)
-            cc = cc->GetParent();
-        ASSERT_KINDOF(CChildFrame, cc);
-
-        cc->GetWindowPlacement(&wp);
-        if (p_windisplay->maximize_ != (wp.showCmd == SW_SHOWMAXIMIZED))
-        {
-            wp.showCmd = p_windisplay->maximize_ ? SW_SHOWMAXIMIZED : SW_SHOWNORMAL;
-            cc->SetWindowPlacement(&wp);
-        }
-
-        // Make other (undoable) changes if any of the options have changed
+    // Make other (undoable) changes if any of the options have changed
 #if 0
-        bool change_required = (!p_windisplay->autofit_ && pview->rowsize_ != p_windisplay->cols_) ||
-                               (pview->group_by_ != p_windisplay->grouping_) ||
-                               (pview->real_offset_ != (p_windisplay->cols_ - p_windisplay->offset_)%p_windisplay->cols_) ||
-                               pview->disp_state_ != p_windisplay->disp_state_ ||
-                               ((!p_windisplay->display_.char_area || p_windisplay->display_.ebcdic ||
-                                 !p_windisplay->display_.graphic || !p_windisplay->display_.oem) &&
-                                memcmp(&pview->lf_, &p_windisplay->lf_, sizeof(LOGFONT)) != 0) ||
-                               (p_windisplay->display_.char_area && !p_windisplay->display_.ebcdic &&
-                                p_windisplay->display_.graphic && p_windisplay->display_.oem &&
-                                memcmp(&pview->oem_lf_, &p_windisplay->oem_lf_, sizeof(LOGFONT)) != 0);
+    bool change_required = (!val.autofit_ && pview->rowsize_ != val.cols_) ||
+                            (pview->group_by_ != val.grouping_) ||
+                            (pview->real_offset_ != (val.cols_ - val.offset_)%val.cols_) ||
+                            pview->disp_state_ != val.disp_state_ ||
+                            ((!val.display_.char_area || val.display_.ebcdic ||
+                                !val.display_.graphic || !val.display_.oem) &&
+                            memcmp(&pview->lf_, &val.lf_, sizeof(LOGFONT)) != 0) ||
+                            (val.display_.char_area && !val.display_.ebcdic &&
+                            val.display_.graphic && val.display_.oem &&
+                            memcmp(&pview->oem_lf_, &val.oem_lf_, sizeof(LOGFONT)) != 0);
 #else
-        bool change_required = (!p_windisplay->autofit_ && pview->rowsize_ != p_windisplay->cols_) ||
-                               (pview->group_by_ != p_windisplay->grouping_) ||
-                               (pview->real_offset_ != (p_windisplay->cols_ - p_windisplay->offset_)%p_windisplay->cols_) ||
-                               pview->disp_state_ != p_windisplay->disp_state_ ||
-							   (p_windisplay->display_.FontRequired() == FONT_ANSI && memcmp(&pview->lf_, &p_windisplay->lf_, sizeof(LOGFONT)) != 0) ||
-							   (p_windisplay->display_.FontRequired() == FONT_OEM  && memcmp(&pview->oem_lf_, &p_windisplay->oem_lf_, sizeof(LOGFONT)) != 0);
+    bool change_required = (!val.autofit_ && pview->rowsize_ != val.cols_) ||
+                            (pview->group_by_ != val.grouping_) ||
+                            (pview->real_offset_ != (val.cols_ - val.offset_)%val.cols_) ||
+                            pview->disp_state_ != val.disp_state_ ||
+							(val.display_.FontRequired() == FONT_ANSI && memcmp(&pview->lf_, &val.lf_, sizeof(LOGFONT)) != 0) ||
+							(val.display_.FontRequired() == FONT_OEM  && memcmp(&pview->oem_lf_, &val.oem_lf_, sizeof(LOGFONT)) != 0);
 #endif
-        if (change_required)
-            pview->begin_change();
+    if (change_required)
+        pview->begin_change();
 
-		// Id current scheme is std scheme matching charset change scheme to match new charset
-        if (p_windisplay->display_.char_set != pview->display_.char_set)
+	// Id current scheme is std scheme matching charset change scheme to match new charset
+    if (val.display_.char_set != pview->display_.char_set)
+	{
+		if (pview->scheme_name_ == ANSI_NAME   && pview->display_.char_set == CHARSET_ANSI ||
+			pview->scheme_name_ == ASCII_NAME  && pview->display_.char_set == CHARSET_ASCII ||
+			pview->scheme_name_ == OEM_NAME    && pview->display_.char_set == CHARSET_OEM  ||
+			pview->scheme_name_ == EBCDIC_NAME && pview->display_.char_set == CHARSET_EBCDIC )
 		{
-			if (pview->scheme_name_ == ANSI_NAME   && pview->display_.char_set == CHARSET_ANSI ||
-				pview->scheme_name_ == ASCII_NAME  && pview->display_.char_set == CHARSET_ASCII ||
-				pview->scheme_name_ == OEM_NAME    && pview->display_.char_set == CHARSET_OEM  ||
-				pview->scheme_name_ == EBCDIC_NAME && pview->display_.char_set == CHARSET_EBCDIC )
-			{
-				if (p_windisplay->display_.char_set == CHARSET_ASCII)
-                    pview->SetScheme(ASCII_NAME);
-				else if (p_windisplay->display_.char_set == CHARSET_OEM)
-                    pview->SetScheme(OEM_NAME);
-				else if (p_windisplay->display_.char_set == CHARSET_EBCDIC)
-                    pview->SetScheme(EBCDIC_NAME);
-				else
-                    pview->SetScheme(ANSI_NAME);
-				if (one_done) pview->undo_.back().previous_too = true;
-				one_done = true;
-			}
+			if (val.display_.char_set == CHARSET_ASCII)
+                pview->SetScheme(ASCII_NAME);
+			else if (val.display_.char_set == CHARSET_OEM)
+                pview->SetScheme(OEM_NAME);
+			else if (val.display_.char_set == CHARSET_EBCDIC)
+                pview->SetScheme(EBCDIC_NAME);
+			else
+                pview->SetScheme(ANSI_NAME);
+			if (one_done) pview->undo_.back().previous_too = true;
+			one_done = true;
 		}
-        if (p_windisplay->display_.autofit != pview->display_.autofit)
-        {
-            pview->do_autofit(p_windisplay->display_.autofit);
-            if (one_done) pview->undo_.back().previous_too = true;
-            one_done = true;
-        }
-
-        pview->disp_state_ = p_windisplay->disp_state_;
-
-        if (change_required)
-        {
-            one_done = pview->make_change(one_done) != 0;    // save disp_state_ in undo vector
-            SaveToMacro(km_display_state, pview->disp_state_);
-        }
-
-        if (p_windisplay->display_.vert_display && pview->GetVertBufferZone() < 2)
-            pview->SetVertBufferZone(2);   // Make sure we can always see the other 2 rows at the same address
-
-        // Do this after autofit changed so that rowsize_ is not messed up by old autofit value
-        if (!p_windisplay->display_.autofit && pview->rowsize_ != p_windisplay->cols_)
-        {
-            pview->change_rowsize(p_windisplay->cols_);
-            if (one_done) pview->undo_.back().previous_too = true;
-            one_done = true;
-        }
-        if (pview->group_by_ != p_windisplay->grouping_)
-        {
-            pview->change_group_by(p_windisplay->grouping_);
-            if (one_done) pview->undo_.back().previous_too = true;
-            one_done = true;
-        }
-        if (pview->real_offset_ != (p_windisplay->cols_ - p_windisplay->offset_)%p_windisplay->cols_)
-        {
-            pview->change_offset((p_windisplay->cols_ - p_windisplay->offset_)%p_windisplay->cols_);
-            if (one_done) pview->undo_.back().previous_too = true;
-            one_done = true;
-        }
-
-        // Vert buffer zone is not an undioable operation
-        if (p_windisplay->vertbuffer_ != pview->GetVertBufferZone())
-            pview->SetVertBufferZone(p_windisplay->vertbuffer_);
-
-        // Do this after disp_state_ change as restoring the correct font
-        // (ANSI or OEM) relies on the state being correct.
-#if 0
-        if (( !p_windisplay->display_.char_area || p_windisplay->display_.ebcdic ||
-              !p_windisplay->display_.graphic || !p_windisplay->display_.oem) &&
-#else
-        if (p_windisplay->display_.FontRequired() == FONT_ANSI &&
-#endif
-            memcmp(&pview->lf_, &p_windisplay->lf_, sizeof(LOGFONT)) != 0)
-        {
-            LOGFONT *prev_lf = new LOGFONT;
-            *prev_lf = pview->lf_;
-            pview->lf_ = p_windisplay->lf_;
-            pview->undo_.push_back(view_undo(undo_font));      // Allow undo of font change
-            pview->undo_.back().plf = prev_lf;
-            if (one_done) pview->undo_.back().previous_too = true;
-            one_done = true;
-        }
-#if 0
-        else if (p_windisplay->display_.char_area && !p_windisplay->display_.ebcdic &&
-                 p_windisplay->display_.graphic && p_windisplay->display_.oem &&
-#else
-        else if (p_windisplay->display_.FontRequired() == FONT_OEM &&
-#endif
-                 memcmp(&pview->oem_lf_, &p_windisplay->oem_lf_, sizeof(LOGFONT)) != 0)
-        {
-            LOGFONT *prev_lf = new LOGFONT;
-            *prev_lf = pview->oem_lf_;
-            pview->oem_lf_ = p_windisplay->oem_lf_;
-            pview->undo_.push_back(view_undo(undo_font));      // Allow undo of font change
-            pview->undo_.back().plf = prev_lf;
-            if (one_done) pview->undo_.back().previous_too = true;
-            one_done = true;
-        }
-
-        if (change_required)
-        {
-            pview->end_change();                // updates display
-            AfxGetApp()->OnIdle(0);             // This forces buttons & status bar pane update when Apply button used
-        }
-    }
-    return one_done;
-}
-
-bool CHexEditApp::set_schemes()
-{
-    scheme_ = p_colours->scheme_;
-
-    // Update the colours for the current view
-    CHexEditView *pview = GetView();    // The active view
-    if (pview != NULL)
+	}
+    if (val.display_.autofit != pview->display_.autofit)
     {
-        if (pview->scheme_name_ != p_colours->scheme_[p_colours->scheme_no_].name_)
-        {
-            pview->SetScheme(p_colours->scheme_[p_colours->scheme_no_].name_);
-        }
-        else
-        {
-            // Even if the scheme has not changed some of its colours may have
-            pview->set_colours();
-            pview->DoInvalidate();
-        }
+        pview->do_autofit(val.display_.autofit);
+        if (one_done) pview->undo_.back().previous_too = true;
+        one_done = true;
     }
-    return true;
-}
 
-void CHexEditApp::set_printer()
-{
-    print_units_ = prn_unit_t(p_printer->units_);
-    footer_ = p_printer->footer_;
-    header_ = p_printer->header_;
-    print_box_ = p_printer->border_ ? true : false;
-    print_hdr_ = p_printer->headings_ ? true : false;
-    left_margin_ = p_printer->left_;
-    right_margin_ = p_printer->right_;
-    top_margin_ = p_printer->top_;
-    bottom_margin_ = p_printer->bottom_;
-    header_edge_ = p_printer->header_edge_;
-    footer_edge_ = p_printer->footer_edge_;
-    spacing_ = p_printer->spacing_;
-}
+    pview->disp_state_ = val.disp_state_;
 
-void CHexEditApp::set_filters()
-{
+    if (change_required)
+    {
+        one_done = pview->make_change(one_done) != 0;    // save disp_state_ in undo vector
+        SaveToMacro(km_display_state, pview->disp_state_);
+    }
+
+    if (val.display_.vert_display && pview->GetVertBufferZone() < 2)
+        pview->SetVertBufferZone(2);   // Make sure we can always see the other 2 rows at the same address
+
+    // Do this after autofit changed so that rowsize_ is not messed up by old autofit value
+    if (!val.display_.autofit && pview->rowsize_ != val.cols_)
+    {
+        pview->change_rowsize(val.cols_);
+        if (one_done) pview->undo_.back().previous_too = true;
+        one_done = true;
+    }
+    if (pview->group_by_ != val.grouping_)
+    {
+        pview->change_group_by(val.grouping_);
+        if (one_done) pview->undo_.back().previous_too = true;
+        one_done = true;
+    }
+    if (pview->real_offset_ != (val.cols_ - val.offset_)%val.cols_)
+    {
+        pview->change_offset((val.cols_ - val.offset_)%val.cols_);
+        if (one_done) pview->undo_.back().previous_too = true;
+        one_done = true;
+    }
+
+    // Vert buffer zone is not an undioable operation
+    if (val.vertbuffer_ != pview->GetVertBufferZone())
+        pview->SetVertBufferZone(val.vertbuffer_);
+
+    // Do this after disp_state_ change as restoring the correct font
+    // (ANSI or OEM) relies on the state being correct.
+#if 0
+    if (( !val.display_.char_area || val.display_.ebcdic ||
+            !val.display_.graphic || !val.display_.oem) &&
+#else
+    if (val.display_.FontRequired() == FONT_ANSI &&
+#endif
+        memcmp(&pview->lf_, &val.lf_, sizeof(LOGFONT)) != 0)
+    {
+        LOGFONT *prev_lf = new LOGFONT;
+        *prev_lf = pview->lf_;
+        pview->lf_ = val.lf_;
+        pview->undo_.push_back(view_undo(undo_font));      // Allow undo of font change
+        pview->undo_.back().plf = prev_lf;
+        if (one_done) pview->undo_.back().previous_too = true;
+        one_done = true;
+    }
+#if 0
+    else if (val.display_.char_area && !val.display_.ebcdic &&
+                val.display_.graphic && val.display_.oem &&
+#else
+    else if (val.display_.FontRequired() == FONT_OEM &&
+#endif
+                memcmp(&pview->oem_lf_, &val.oem_lf_, sizeof(LOGFONT)) != 0)
+    {
+        LOGFONT *prev_lf = new LOGFONT;
+        *prev_lf = pview->oem_lf_;
+        pview->oem_lf_ = val.oem_lf_;
+        pview->undo_.push_back(view_undo(undo_font));      // Allow undo of font change
+        pview->undo_.back().plf = prev_lf;
+        if (one_done) pview->undo_.back().previous_too = true;
+        one_done = true;
+    }
+
+    if (change_required)
+    {
+        pview->end_change();                // updates display
+        AfxGetApp()->OnIdle(0);             // This forces buttons & status bar pane update when Apply button used
+    }
 }
 
 CString CHexEditApp::GetCurrentFilters()
@@ -3765,7 +3732,7 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
     dlg.name_ = def_name;
     if (def_type == 2)
     {
-        dlg.to_ = "aphillips@HexEdit.com";
+        dlg.to_ = "info@HexEdit.com";
         if (dlg.name_.IsEmpty())
             dlg.subject_ = "Single-machine license";
         else

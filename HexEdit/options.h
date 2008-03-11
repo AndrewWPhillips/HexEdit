@@ -26,70 +26,120 @@
 #include "Scheme.h"
 
 #include "control.h"
-// #include "Partition.h"  // no longer used when schemes added
+
+// NOTES
+// To add a new property:
+//   1. Add field to OptValues to hold the value for the dialog
+//   2. Init the field in the COptSheet c'tor (even though it gets overwritten later)
+//   3. Add a control into a page to let the user chnage it
+//   4. Add DDX (and validation) to the page's class
+//   5. Init field in CHexEditApp::get_options (before dlg called)
+//   6. Save the field in CHexEditApp::put_* method for the page (for OK/Apply)
+// To move a field between pages:
+//   1. Move the control to the new page
+//   2. Move DXX (validation etc) to the new pages class
+//   3. Move the saving of the field to the CHexEditApp::put_* method for the page
+// This last step is VERY IMPORTANT as OnOK is not necessarilly called for all pages
+// when the user clicks OK or APPLY (ie if the user never went into the page).
+// If the saving of the field is in the wrong place it may sometimes work and
+// sometimes not which could be very confusing to the user (and in testing).
 
 /////////////////////////////////////////////////////////////////////////////
-// CGeneralPage dialog
-
-class CGeneralPage : public CPropertyPage
+// OptValues - stores all option values in one place
+struct OptValues
 {
-	DECLARE_DYNCREATE(CGeneralPage)
-
-// Construction
-public:
-	CGeneralPage();
-	~CGeneralPage();
-
-// Dialog Data
-	//{{AFX_DATA(CGeneralPage)
-	enum { IDD = IDD_OPT_SYSTEM };
-	CButton	ctl_backup_space_;
-	CEdit	ctl_backup_size_;
-	CButton	ctl_backup_prompt_;
-	CButton	ctl_backup_if_size_;
-	CHexEditControl	address_ctl_;
-	BOOL	save_exit_;
-	BOOL	one_only_;
 	BOOL	shell_open_;
+	BOOL	one_only_;
 	BOOL	bg_search_;
-	int		address_specified_;
-	UINT	export_line_len_;
+	BOOL	save_exit_;
 	UINT	recent_files_;
+
+    // Backup options
 	int		backup_;
 	BOOL	backup_space_;
+	BOOL	backup_if_size_;
 	UINT	backup_size_;
 	BOOL	backup_prompt_;
-	BOOL	backup_if_size_;
-	//}}AFX_DATA
 
-        long base_address_;
+    // Export options
+	int		address_specified_;
+    long    base_address_;
+	UINT	export_line_len_;
 
-// Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CGeneralPage)
-	public:
-	virtual void OnOK();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+    // System display
+	BOOL	open_restore_;
+	BOOL	mditabs_;
+	BOOL	tabsbottom_;
+	BOOL	large_cursor_;
+	BOOL	hex_ucase_;
+	BOOL	show_other_;
+    BOOL    nice_addr_;
 
-// Implementation
-protected:
-	// Generated message map functions
-	//{{AFX_MSG(CGeneralPage)
-	afx_msg void OnSaveNow();
-	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	afx_msg void OnShellopen();
-	afx_msg void OnAddressSpecified();
-	afx_msg void OnAddressFile();
-	virtual BOOL OnInitDialog();
-	afx_msg void OnClearHist();
-	afx_msg void OnChange();
-	afx_msg void OnBackup();
-	afx_msg void OnBackupIfSize();
-	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	DECLARE_MESSAGE_MAP()
+    // Template
+	int		dffd_view_;
+	UINT	max_fix_for_elts_;
+	CString	default_char_format_;
+	CString	default_date_format_;
+	CString	default_int_format_;
+	CString	default_real_format_;
+	CString	default_string_format_;
+	CString	default_unsigned_format_;
+
+    // Macros
+	int		refresh_;
+	long	num_secs_;
+	long	num_keys_;
+	long	num_plays_;
+	BOOL	refresh_props_;
+	BOOL	refresh_bars_;
+	int		halt_level_;
+
+    // Printer
+	CString	header_;
+	CString	footer_;
+	BOOL	border_;
+	BOOL	headings_;
+	int     units_;  // 0 = inches, 1 = cm
+	int		spacing_;
+	double	left_;
+	double	top_;
+	double	right_;
+	double	bottom_;
+	double	header_edge_;
+	double	footer_edge_;
+
+    // The rest are only used if there is a window open
+    CString window_name_;       // Active view's window name
+
+    // Window display
+	int		show_area_;
+	int		charset_;
+	int		control_;
+
+    // xxx check if these can be stored in the page (only used temporailly I think)
+    LOGFONT lf_;                 // Default logical font (normal ASCII, ANSI, EBCDIC)
+    LOGFONT oem_lf_;             // Logical font if displaying IBM/OEM character set
+
+	UINT	cols_;
+	UINT	offset_;
+	UINT	grouping_;
+    UINT    vertbuffer_;
+	BOOL	autofit_;
+	BOOL	addr_dec_;
+	BOOL	maximize_;
+    BOOL    borders_;
+    // Display state stored in a DWORD (as in view)
+    union
+    {
+        DWORD disp_state_;
+        struct display_bits display_;
+    };
+
+    // Window edit
+	int		modify_;
+	int		insert_;
+	BOOL    big_endian_;
+    int     change_tracking_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -121,6 +171,8 @@ public:
 public:
 	virtual ~COptSheet();
 
+    struct OptValues val_;      // Property values that the user can change
+
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(COptSheet)
@@ -131,27 +183,82 @@ protected:
 };
 
 /////////////////////////////////////////////////////////////////////////////
+// COptPage - base class for all options pages
+class COptPage : public CPropertyPage
+{
+	DECLARE_DYNAMIC(COptPage)
+public:
+    explicit COptPage(COptSheet *pParent = NULL, UINT nIDI = 0, UINT nIDD = 0, UINT nIDCaption = 0);
+    virtual LRESULT OnIdle(long) { return FALSE; }
+    COptSheet *pParent;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CGeneralPage dialog
+
+class CGeneralPage : public COptPage
+{
+	DECLARE_DYNCREATE(CGeneralPage)
+
+// Construction
+public:
+    CGeneralPage() { ASSERT(0); } // make sure this is not called
+    CGeneralPage(COptSheet *pParent, UINT IDI);
+
+// Dialog Data
+	//{{AFX_DATA(CGeneralPage)
+	enum { IDD = IDD_OPT_SYSTEM };
+	CButton	ctl_backup_space_;
+	CEdit	ctl_backup_size_;
+	CButton	ctl_backup_prompt_;
+	CButton	ctl_backup_if_size_;
+	CHexEditControl	address_ctl_;
+	//}}AFX_DATA
+
+
+// Overrides
+	// ClassWizard generate virtual function overrides
+	//{{AFX_VIRTUAL(CGeneralPage)
+	public:
+	virtual void OnOK();
+	protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	//}}AFX_VIRTUAL
+
+// Implementation
+protected:
+	// Generated message map functions
+	//{{AFX_MSG(CGeneralPage)
+	afx_msg void OnSaveNow();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnShellopen();
+	afx_msg void OnAddressSpecified();
+	afx_msg void OnAddressFile();
+	virtual BOOL OnInitDialog();
+	afx_msg void OnClearHist();
+	afx_msg void OnChange();
+	afx_msg void OnBackup();
+	afx_msg void OnBackupIfSize();
+	//}}AFX_MSG
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	DECLARE_MESSAGE_MAP()
+};
+
+/////////////////////////////////////////////////////////////////////////////
 // CMacroPage dialog
 
-class CMacroPage : public CPropertyPage
+class CMacroPage : public COptPage
 {
 	DECLARE_DYNCREATE(CMacroPage)
 
 // Construction
 public:
-	CMacroPage();
-	~CMacroPage();
+	CMacroPage() { ASSERT(0); } // make sure this is not called
+    CMacroPage(COptSheet *pParent, UINT IDI);
 
 // Dialog Data
 	//{{AFX_DATA(CMacroPage)
 	enum { IDD = IDD_OPT_MACRO };
-	long	num_keys_;
-	long	num_plays_;
-	long	num_secs_;
-	int		refresh_;
-	BOOL	refresh_bars_;
-	BOOL	refresh_props_;
-	int		halt_level_;
 	//}}AFX_DATA
 
 
@@ -187,33 +294,19 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CSysDisplayPage dialog
 
-class CSysDisplayPage : public CPropertyPage
+class CSysDisplayPage : public COptPage
 {
 	DECLARE_DYNCREATE(CSysDisplayPage)
 
 // Construction
 public:
-	CSysDisplayPage();
-	~CSysDisplayPage();
+	CSysDisplayPage() { ASSERT(0); } // make sure this is not called
+    CSysDisplayPage(COptSheet *pParent, UINT IDI);
 
 // Dialog Data
 	//{{AFX_DATA(CSysDisplayPage)
 	enum { IDD = IDD_OPT_SYSDISPLAY };
-	BOOL	large_cursor_;
-	BOOL	hex_ucase_;
-	BOOL	open_restore_;
-	BOOL	mditabs_;
-	BOOL	tabsbottom_;
-	BOOL	show_other_;
-	UINT	max_fix_for_elts_;
-	CString	default_char_format_;
-	CString	default_date_format_;
-	CString	default_int_format_;
-	CString	default_real_format_;
-	CString	default_string_format_;
-	CString	default_unsigned_format_;
 	//}}AFX_DATA
-	int		dffd_view_;
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -241,14 +334,14 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CPrintPage dialog
 
-class CPrintPage : public CPropertyPage
+class CPrintPage : public COptPage
 {
 	DECLARE_DYNCREATE(CPrintPage)
 
 // Construction
 public:
-	CPrintPage();
-	~CPrintPage();
+	CPrintPage() { ASSERT(0); } // make sure this is not called
+    CPrintPage(COptSheet *pParent, UINT IDI);
 
 // Dialog Data
 	//{{AFX_DATA(CPrintPage)
@@ -257,19 +350,7 @@ public:
 	CEdit	ctl_header_;
 	CBCGMenuButton	footer_args_;
 	CBCGMenuButton	header_args_;
-	double	bottom_;
-	double	top_;
-	double	left_;
-	double	right_;
-	CString	footer_;
-	CString	header_;
-	int		spacing_;
-	BOOL	border_;
-	BOOL	headings_;
-	double	header_edge_;
-	double	footer_edge_;
 	//}}AFX_DATA
-	int units_;  // 0 = inches, 1 = cm
 
 // Controls
         HICON arrow_icon_;
@@ -302,14 +383,14 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CFiltersPage dialog
 
-class CFiltersPage : public CPropertyPage
+class CFiltersPage : public COptPage
 {
 	DECLARE_DYNCREATE(CFiltersPage)
 
 // Construction
 public:
-	CFiltersPage();
-	~CFiltersPage();
+	CFiltersPage() { ASSERT(0); } // make sure this is not called
+    CFiltersPage(COptSheet *pParent, UINT IDI);
 
 // Dialog Data
 	//{{AFX_DATA(CFiltersPage)
@@ -364,14 +445,14 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CTipsPage dialog
 
-class CTipsPage : public CPropertyPage
+class CTipsPage : public COptPage
 {
 	DECLARE_DYNCREATE(CTipsPage)
 
 // Construction
 public:
-	CTipsPage();
-	~CTipsPage();
+	CTipsPage() { ASSERT(0); } // make sure this is not called
+    CTipsPage(COptSheet *pParent, UINT IDI);
 
 // Dialog Data
 	enum { IDD = IDD_OPT_TIPS };
@@ -420,49 +501,25 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CWindowPage dialog
 
-class CWindowPage : public CPropertyPage
+class CWindowPage : public COptPage
 {
 	DECLARE_DYNCREATE(CWindowPage)
 
 // Construction
 public:
-	CWindowPage();
-	~CWindowPage();
+	CWindowPage() { ASSERT(0); } // make sure this is not called
+    CWindowPage(COptSheet *pParent, UINT IDI);
 
 // Dialog Data
 	//{{AFX_DATA(CWindowPage)
 	enum { IDD = IDD_OPT_WINDISPLAY };
-	int		charset_;
-	int		insert_;
-	BOOL	maximize_;
-	int		modify_;
-	int		show_area_;
-	UINT	cols_;
-	UINT	grouping_;
-	UINT	offset_;
-	int		control_;
-	BOOL	addr_dec_;
-	BOOL	autofit_;
 	//}}AFX_DATA
-    UINT    vertbuffer_;
-	BOOL    big_endian_;
-    BOOL    borders_;
-    int     change_tracking_;
 
     void fix_controls();        // Disable/enable controls depending on value/state of other controls
     BOOL validated();           // Check if control state is valid
 
-    CString window_name_;       // View's window name
 	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
 
-    // Display state stored in a DWORD (as in view)
-    union
-    {
-        DWORD disp_state_;
-        struct display_bits display_;
-    };
-    LOGFONT lf_;                 // Default logical font (normal ASCII, ANSI, EBCDIC)
-    LOGFONT oem_lf_;             // Logical font if displaying IBM/OEM character set
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -502,7 +559,7 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CColourSchemes dialog
 
-class CColourSchemes : public CPropertyPage
+class CColourSchemes : public COptPage
 {
 	DECLARE_DYNCREATE(CColourSchemes)
 
@@ -522,8 +579,8 @@ public:
         INDEX_LAST                                        // count of colours (keep at end)
     };
 
-    CColourSchemes();
-    ~CColourSchemes();
+	CColourSchemes() { ASSERT(0); } // make sure this is not called
+    CColourSchemes(COptSheet *pParent, UINT IDI);
 
     HICON icon_new_, icon_del_, icon_up_, icon_down_;
     std::vector<CScheme> scheme_;

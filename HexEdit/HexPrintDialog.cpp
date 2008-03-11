@@ -171,6 +171,6 @@ BOOL CHexPrintDialog::OnClickSel()
 
 void CHexPrintDialog::OnPrintOptions() 
 {
-    theApp.display_options(theApp.p_printer, TRUE);
+    theApp.display_options(PRINTER_OPTIONS_PAGE, TRUE);
 }
 

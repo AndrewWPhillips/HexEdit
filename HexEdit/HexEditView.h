@@ -348,12 +348,12 @@ public:
         virtual void AssertValid() const;
         virtual void Dump(CDumpContext& dc) const;
 #endif
+    virtual void DoInvalidate();
 
 protected:
     virtual void ValidateCaret(CPointAp &pos, BOOL inside=TRUE);
     virtual void ValidateScroll(CPointAp &pos, BOOL strict=FALSE);
     virtual void InvalidateRange(CPointAp start, CPointAp end);
-    virtual void DoInvalidate();
     virtual void DoInvalidateRect(LPCRECT lpRect);
     virtual void DoInvalidateRgn(CRgn* pRgn);
     virtual void DoScrollWindow(int xx, int yy);
@@ -715,6 +715,7 @@ public:
     CPointAp addr2pos(FILE_ADDRESS address, int row = 0) const; // Convert byte address in doc to display position
 
 	void check_error();          // Check for read errors and mention them to the user
+    BOOL set_colours();         // Set colours from app schemes using current scheme_name_
 
 private:
     enum { max_font_size = 100 };
@@ -767,7 +768,6 @@ private:
     void change_rowsize(int rowsize);
     void change_group_by(int group_by);
     void change_offset(int offset);
-    BOOL set_colours();         // Set colours from app schemes using current scheme_name_
     void redo_font();
 
     CSizeAp win_size_;          // Current window dimensions (doc coords)
