@@ -3054,7 +3054,6 @@ IDB_HIDE                BITMAP                  "res\\hide.bmp"
 IDB_OPTIONSIMAGES       BITMAP                  "RES\\optionsimages.bmp"
 IDB_STDBAR              BITMAP                  "RES\\toolbar24.bmp"
 IDB_STDBAR_C            BITMAP                  "RES\\toolbar24_cold.bmp"
-IDB_BITMAP3             BITMAP                  "res\\bitmap3.bmp"
 IDB_STDBAR_D            BITMAP                  "RES\\toolbar24_disabled.bmp"
 
 /////////////////////////////////////////////////////////////////////////////

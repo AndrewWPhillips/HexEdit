@@ -308,6 +308,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
         // Create Tool bar
         if (!m_wndBar1.Create(this, dwDefaultToolbarStyle, IDR_STDBAR) || 
+            // !m_wndBar1.LoadToolBar(IDR_STDBAR, IDB_STDBAR_C, 0, FALSE, IDB_STDBAR_D, 0, IDB_STDBAR))
             !m_wndBar1.LoadToolBar(IDR_STDBAR))
         {
             TRACE0("Failed to create Standard Toolbar\n");

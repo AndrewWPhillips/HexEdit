@@ -990,6 +990,9 @@
 				RelativePath=".\Res\new.ico">
 			</File>
 			<File
+				RelativePath=".\RES\optionsimages.bmp">
+			</File>
+			<File
 				RelativePath="RES\parent.bmp">
 			</File>
 			<File
@@ -1033,6 +1036,15 @@
 			</File>
 			<File
 				RelativePath=".\res\Toolbar.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\toolbar24.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\toolbar24_cold.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\toolbar24_disabled.bmp">
 			</File>
 			<File
 				RelativePath=".\RES\up.ico">
@@ -1109,10 +1121,10 @@
 				RelativePath=".\Install\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\Install\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">
