@@ -1292,7 +1292,7 @@ END
 IDD_OPT_SYSTEM DIALOGEX 0, 0, 256, 127
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "System"
+CAPTION "General"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     GROUPBOX        "General",IDC_STATIC,7,2,242,57,WS_GROUP
@@ -3051,6 +3051,11 @@ IDB_VERT_HOT            BITMAP                  "res\\vert_hot.bmp"
 IDB_HIDE_HOT            BITMAP                  "res\\hide_hot.bmp"
 IDB_SHOW                BITMAP                  "res\\show.bmp"
 IDB_HIDE                BITMAP                  "res\\hide.bmp"
+IDB_OPTIONSIMAGES       BITMAP                  "RES\\optionsimages.bmp"
+IDB_STDBAR              BITMAP                  "RES\\toolbar24.bmp"
+IDB_STDBAR_C            BITMAP                  "RES\\toolbar24_cold.bmp"
+IDB_BITMAP3             BITMAP                  "res\\bitmap3.bmp"
+IDB_STDBAR_D            BITMAP                  "RES\\toolbar24_disabled.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

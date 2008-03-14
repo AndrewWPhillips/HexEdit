@@ -374,7 +374,6 @@ public:
 
     BOOL highlight_;                    // Is highlighting on?
 
-    //CPropertyPage *p_last_page_;        // Ptr to active page when options dlg was last used
     int last_opt_page_;                 // Index of last active options page
 
     // The following are options for the binary file format tree view display

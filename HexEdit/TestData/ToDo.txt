@@ -582,101 +582,162 @@ New Version
 New Options Layout (tree) - see also Aerial branch
 -------------------------
 System
-  General
-    - open with hexedit
-    - only one instance
-    - reload open files??
-    - save setting on exit/now
-    - Startup options: nothing, new file, open file, startup window
-    - run autoexec option
-    - tips at startup
-    - recently use list size
-    - search hist size
-
-  Layout
-     - restore main window
-     - tabs
-       - tabs at top
-     - dockable/rollable dlgs
-     - undocked dlgs move out of the way
-     - ruler?
-     - background image
-
-  Macro
-    - all existing options
-
-  Filters
-    - all existing options
+  General page
+    Global Settings
+    - save setting on exit
+      -> save now button
+    General
+    - open with hexedit(1)
+    - only one instance(1)
+    - background searching(1)
+      -> button for edit page
+    + enable sounds
+      -> button to invoke control panel sounds
+    History Lists
+    - recently use file list size
+    + hist list sizes: search, replace, goto,
+      -> button for privacy page
     
-  Privacy
-    - dont add to recently used folder
-    - clear lists: search, rfl, bm
+  Privacy page
+    + dont add to recently used folder (Start Menu)
+    - clear lists: rfl, bm, search (replace, goto?)
       - always clear on exit
 
-Edit
-  General
-    - bg search
-      - exclude network/removeable
-    - paste replaces selection?
-    - select after paste (dv off) OR highlight?
-    - undo
-      - intelligent undo
-      - warn if undoing change made in other window
-      - merge size (dv 4)
-      - option to undo display settings
-    - export
-      - addr: file/spec
-      - byte per line
+  Startup page
+    - restore main window on startup(1)
+    - open with hexedit(2)
+    - only one instance(2)
+    + reload open files??
+    + run autoexec option
+    + tips at startup
+    + Startup options: nothing, new file, open file, startup window
 
-  Display
-     - ucase hex
-     - K = 1024/1000 (M=1024*1024/1e6 etc)
+  Macro page
+    - all existing options
+
+  Filters page
+    - all existing options
+
+  Printing page    
+    - all existing options
+
+Workspace
+  Display page
+    Cursor
      - large cursor
      - shadow cursor (Hex+char mode)
+    Display
      - nice addresses
-     - mouse wheel units?
-     - scroll past ends
-     - show selection length "tip"
+     + show selection length "tip"
        - show base-2 divisibility
-       
-  Info Tip
-    - all exisiting options
+    Scroll
+     + mouse wheel units?
+     + scroll past ends
+    Misc
+     - ucase hex
+     + K = 1024/1000 (M=1024*1024/1e6 etc)
 
-  Save
-    - autosave recovery info
-    - create backups
+  Layout page
+    Main window
+     - restore main window on startup(2)
+       -> Startup page
+     - tabs
+       - tabs at top
+     + background image
+    Modeless dialogs
+     + show checkboxes for each
+     + allow docking dlgs
+     + undocked dlgs move out of the way
+
+  Edit page
+    Paste
+      + paste replaces selection?
+      + select after paste (dv off) OR highlight?
+    Background Operations
+      - background searching(2)
+        + exclude network/removeable
+      + gather statistics
+    Undo
+      + intelligent undo
+      + warn if undoing change made in other window
+      + merge size (dv 4)
+      + option to undo display settings
+    Export
+      - addr: file/spec
+      - byte per line
+    + Enter = 0D0A??
+
+  Info Tip page
+    - all existing options
+
+  Save page
+    AutoSave
+     + autosave recovery info
+    Backups
+     - create backups
       - space
       - size
       - prompt
-      - ext. options: none, replace, append
-      - backup ext + extra ext
-      - backup folder
-    - warn if editing file that will not be backed up??
+      + ext. options: none, replace, append
+      + backup ext + extra ext
+      + backup folder
+     + warn if editing file that will not be backed up??
 
-  Templates
-    - alt bg colours
+  Template page
+    + alt bg colours
     - etc
-
-
-Active Window
-  General
-    - restore and save as default buttons
     
-  Display
-    - existing display options
+  Aerial page
+    + default dpix
+    + max bitmap
 
-  Colours
+Document
+  General page
+    Defaults
+      - restore and save as default buttons
+        -> button for display page
+        -> button for edit page
+    Views
+      + which other windows to display and how (tab/split)
+
+  Colours page
     - all existing options
 
-  Editing
-    - RO/RW
-    - mode
-    - hide bm
-    - hide highlight
-    - keep file times
-    - Enter = 0D0A
-    - change Tracking
+  Hex Display page
+    Layout
+      - Show areas
+      - Columns, offset, grouping
+      - Autofit
+      
+    Display
+      - char set
+      - control chars
+      - font buttons
+      - decimal addr
+      - sector bounds
+      + hide bookmarks
+      + hide highlight
 
-  Templates
-    - use
-      - split/tab
+    Window
+      - maximize
+      + ruler?
+
+  Template Display page
+      -> global template page button
+
+  Aerial Display page
+      -> global aerial page button
+
+  Edit page
+    Cursor
+      - scroll zone
+    Modes
+      - RO/RW
+      - OVR/INS
+    Change tracking
+      + insert
+      + delete
+      + changed
+    Misc    
+      + keep file times
+

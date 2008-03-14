@@ -2775,19 +2775,28 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 			pPage = &windisplayPage;
 	}
 
-    // Add pages and set the initial active page
-    optSheet.AddPage(&generalPage);
-    optSheet.AddPage(&sysdisplayPage);
-    optSheet.AddPage(&tipsPage);
-    optSheet.AddPage(&coloursPage);
-    optSheet.AddPage(&macroPage);
-    optSheet.AddPage(&printerPage);
-    optSheet.AddPage(&filtersPage);
+    // Add categories to the tree and pages under the categories
+	CBCGPropSheetCategory * pCatSys = optSheet.AddTreeCategory("System", 0, 1);
+    optSheet.AddPageToTree(pCatSys, &generalPage, -1, 2);
+    optSheet.AddPageToTree(pCatSys, &macroPage, -1, 2);
+    optSheet.AddPageToTree(pCatSys, &printerPage, -1, 2);
+    optSheet.AddPageToTree(pCatSys, &filtersPage, -1, 2);
+
+	CBCGPropSheetCategory * pCatWS  = optSheet.AddTreeCategory("Workspace", 0, 1);
+    optSheet.AddPageToTree(pCatWS, &sysdisplayPage, -1, 2);
+    optSheet.AddPageToTree(pCatWS, &tipsPage, -1, 2);
 	if (pview != NULL)
     {
-        optSheet.AddPage(&windisplayPage);
+		CBCGPropSheetCategory * pCatDoc = optSheet.AddTreeCategory("Document", 0, 1);  // xxx add name of file
+	    optSheet.AddPageToTree(pCatDoc, &coloursPage, -1, 2);
+        optSheet.AddPageToTree(pCatDoc, &windisplayPage, -1, 2);
     }
+	else
+	{
+	    optSheet.AddPageToTree(pCatWS, &coloursPage, -1, 2);
+	}
 
+	// Set initial active page
     if (must_show_page && pPage != NULL)
     {
         optSheet.SetActivePage(pPage);

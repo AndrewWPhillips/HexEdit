@@ -145,7 +145,7 @@ struct OptValues
 /////////////////////////////////////////////////////////////////////////////
 // COptSheet
 
-class COptSheet : public CPropertySheet
+class COptSheet : public CBCGPropertySheet
 {
 	DECLARE_DYNAMIC(COptSheet)
 
@@ -179,12 +179,15 @@ protected:
 	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct);
 	//}}AFX_MSG
     afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+    afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
+
+	void init();
 };
 
 /////////////////////////////////////////////////////////////////////////////
 // COptPage - base class for all options pages
-class COptPage : public CPropertyPage
+class COptPage : public CBCGPropertyPage
 {
 	DECLARE_DYNAMIC(COptPage)
 public:

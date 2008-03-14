@@ -42,10 +42,20 @@ extern CHexEditApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // COptSheet
 
-IMPLEMENT_DYNAMIC(COptSheet, CPropertySheet)
+IMPLEMENT_DYNAMIC(COptSheet, CBCGPropertySheet)
 
+COptSheet::COptSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
+        :CBCGPropertySheet(pszCaption, pParentWnd, iSelectPage)
+{
+	init();
+}
 COptSheet::COptSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
-        :CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+        :CBCGPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+{
+	init();
+}
+
+void COptSheet::init()
 {
     // Set up default values (these should be overwritten later)
 	val_.shell_open_ = FALSE;
@@ -123,21 +133,21 @@ COptSheet::COptSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	val_.modify_ = -1;
 	val_.big_endian_ = FALSE;
     val_.change_tracking_ = 0;
-}
 
-COptSheet::COptSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
-        :CPropertySheet(pszCaption, pParentWnd, iSelectPage)
-{
+	// Set up page navigation
+	SetLook(PropSheetLook_Tree, 200);
+	SetIconsList (IDB_OPTIONSIMAGES, 16 /* Image width */);
 }
 
 COptSheet::~COptSheet()
 {
 }
 
-BEGIN_MESSAGE_MAP(COptSheet, CPropertySheet)
+BEGIN_MESSAGE_MAP(COptSheet, CBCGPropertySheet)
         //{{AFX_MSG_MAP(COptSheet)
         ON_WM_NCCREATE()
 	//}}AFX_MSG_MAP
+	ON_WM_CREATE()
     ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 END_MESSAGE_MAP()
 
@@ -146,7 +156,7 @@ END_MESSAGE_MAP()
 
 BOOL COptSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct) 
 {
-        if (!CPropertySheet::OnNcCreate(lpCreateStruct))
+        if (!CBCGPropertySheet::OnNcCreate(lpCreateStruct))
                 return FALSE;
         
         ModifyStyleEx(0, WS_EX_CONTEXTHELP);
@@ -158,7 +168,17 @@ BOOL COptSheet::DestroyWindow()
 {
     theApp.last_opt_page_ = GetActiveIndex();
 	
-    return CPropertySheet::DestroyWindow();
+    return CBCGPropertySheet::DestroyWindow();
+}
+
+int COptSheet::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+      // Stacked tabs seems to interfere with PropSheetLook_Tree
+      EnableStackedTabs(FALSE);
+
+	  if (CBCGPropertySheet::OnCreate(lpCreateStruct) == 1)
+            return -1;
+      return 0;
 }
 
 LRESULT COptSheet::OnKickIdle(WPARAM, LPARAM lCount)
@@ -171,9 +191,9 @@ LRESULT COptSheet::OnKickIdle(WPARAM, LPARAM lCount)
 /////////////////////////////////////////////////////////////////////////////
 // COptPage
 
-IMPLEMENT_DYNAMIC(COptPage, CPropertyPage)
+IMPLEMENT_DYNAMIC(COptPage, CBCGPropertyPage)
 
-COptPage::COptPage(COptSheet *pp, UINT nIDI, UINT nIDD, UINT nIDCaption /* = 0 */) : CPropertyPage(nIDD, nIDCaption)
+COptPage::COptPage(COptSheet *pp, UINT nIDI, UINT nIDD, UINT nIDCaption /* = 0 */) : CBCGPropertyPage(nIDD, nIDCaption)
 {
     // Store ptr to containing sheet for later use
 	ASSERT(pp != NULL && pp->IsKindOf(RUNTIME_CLASS(COptSheet)));
