@@ -368,11 +368,22 @@
 #define ID_DFFD_TOGGLE_EDIT             373
 #define ID_DFFD_OPEN_TYPE_DUMMY         374
 #define ID_DFFD_OPTIONS                 375
-#define IDB_OPTIONSIMAGES               377
-#define IDB_STDBAR                      378
-#define IDB_STDBAR_C                    379
-#define IDB_BITMAP3                     380
-#define IDB_STDBAR_D                    381
+#define IDB_OPTIONSIMAGES               376
+#define IDB_STDBAR                      380
+#define IDB_STDBAR_C                    381
+#define IDB_STDBAR_D                    382
+#define IDB_EDITBAR                     383
+#define IDB_EDITBAR_C                   384
+#define IDB_EDITBAR_D                   385
+#define IDB_NAVBAR                      386
+#define IDB_NAVBAR_C                    387
+#define IDB_NAVBAR_D                    388
+#define IDB_FMTBAR                      389
+#define IDB_FMTBAR_C                    390
+#define IDB_FMTBAR_D                    392
+#define IDB_MISCBAR                     393
+#define IDB_MISCBAR_C                   394
+#define IDB_MISCBAR_D                   395
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -1404,7 +1415,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        382
+#define _APS_NEXT_RESOURCE_VALUE        399
 #define _APS_NEXT_COMMAND_VALUE         39002
 #define _APS_NEXT_CONTROL_VALUE         1549
 #define _APS_NEXT_SYMED_VALUE           252

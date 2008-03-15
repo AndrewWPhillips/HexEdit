@@ -1,45 +1,90 @@
 3.2 Version
- - check new cracker codes and find workaround
- > update security_version_ (hexedit.h)
- > update range and default value for ver_ (RegisterDlg.cpp)
- > update X.Y version number, and add to email dlg drop list
- > change version number and copyright year in readme.txt, order.txt
- > update help for new features, what's new, installation, order form etc
- > add new tips of the day
- > create new release notes
- > create new bitmap for install
- > update licence agreement text (version no, year etc)
- > update PAD file (hexedit.xml)
-   - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
- > change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
- > create installation (add any new files, templates etc)
- > change times of install files using touch2.bat (MSI file)
- > create zip of HexEd3_2.MSI file along with readme.txt, hexedit.xml
- > change time of zip file using touch3.bat
- > test install on 95, ME, NT4, XP, Vista
  - submit to Simtel and change web links to new Simtel page
  - web site: add ver to bug report form drop list, update what's new, gifs etc
- > make announcement in forums
- > update to shareware download sites
  - email reg users about new release (staggered)
  - email others about new release
  - change normal activation code email template
  - send out press release
 
 WEB SITE
-
-Redesign using Exprssion Web
-Donate button (free version)
-3 main buttons: Download, Support, Purchase wih menu of extras
- - Download: Download free ver, Download templates,  Download ver with MS DLLs, Downloads page
- - Support: FAQ, Bugs, Help, Announcements, Main forum page
- - Purchase: Donate (free ver), Upgrade, RegNow/PayPal
- 
- 
-
+ - Redesign using Exprssion Web
+ - 3 main buttons: Download, Support, Purchase wih menu of extras
+   - Download: Download free ver, Download templates,  Download ver with MS DLLs, Downloads page
+   - Support: FAQ, Bugs, Help, Announcements, Main forum page
+   - Purchase: Donate (free ver), Upgrade, RegNow/PayPal
+ - include hidden pages (register, donate etc)
+ - include hidden files (hexedit.xml, hexeditfree.xml etc)
+ - Donate button (free version)
+ - register/donate using PayPal API
 
 INSTALLER
-- what happens (eg AppData) under Windows 95
+
+
+TEST
+  - display/editing of all types in tree view
+  - display/validation of enums
+  - drag and drop of new elements
+  - check disk lengths under various OS's (floppy, hard, CD)
+    - floppy: 1,474,560, 010 is wrong (1,457,664), WinHex is OK
+    - ZIP: 100,663,296, 010/WinHex are wrong (98,703,360)
+    - MSDN VC6 CD2: 571,191,296 010/WinHex are wrong (570,425,344)
+
+   - handle IDS_WEB_UPGRADE where IDS_WEB_REG_USER used
+   - add upgrade page to web site?
+   - add upgrade info to help
+   - 30 day ext. code
+   - upgrade code
+
+*** after convert to use ptr to CFile, test:
+	- background searches (normal and device file)
+	- invoke NotePad with filename on command line (device file)
+	- printing with %A, %F, %C, %M
+	- opening templates based on extension (.fat32 etc)
+	- opening colour scheme based on ext.
+	- bookmarks on normal and device files
+	- save/restore options for device file
+	- shown in recent ile list menu and dlg
+	- Retain file times not performed (icon disabled) for device files
+	- no backup done for device files
+	- open, save, save-as, write file etc
+
+BUGS
+ - MSC7 time_t - clicking Now or Last disables date/time controls
+ - bg_search_ for device problem
+ - find dlg char set (Text page) updates after chnaging char set or rest but not other times (eg undo)
+   - could put in end_change() but this would mean it is chnaged irrespective of previous char set
+   - see HexEditView.cpp "RB_CHARSET_EBCDIC" and "RB_CHARSET_ASCII"
+
+ - when displaying strings in calculator escape double-quote (and other special chars)
+ - in tree view size of 1/2 byte ints is shown as 4??
+ - template bug: when reading ntoskrnl.exe and max fix for=20 then sections treated as fixed but are variable
+ - recorded/saved num search alignment=8, restart, load, run found background occurrence where alignment != 8, could not repeat
+ ? caret hides character (block caret) when left click under Windows 98 (not W2K)
+ - if reset display turns off autofit and squeezes offset then save offset for undo?
+ - cancel File/SaveAs dialog loses icon
+ - file open/save dialogs' types [?????(*.*)]
+ - ASSERT(wait_status == WAIT_OBJECT_0); on close if no search done
+ - icon (top left) gets messed up
+ ? somehow caret disappeared in one window when using find/goto tools (F4, F5, F6 etc)
+ ? some how got ¦"~abc" into find dlg edit control rather than "abc" when selecting from hist list and
+   changing between ASCII/EBCDIC
+ - some printer drivers (eg text only) return GetDeviceCaps(VERTRES)=66
+ 
+EXPLORER
+  - fix hidden files icon
+  - chnage background when filter is not *.*
+  - update list after drag and drop
+  - fix for 64 bit file sizes
+  - drag and drop into tree (BCGShellTree.cpp changes)
+  - send BCGShell* changes to BCG
+  - in place editing for rename
+  > attributes column in details view (OnSetColumns, OnGetItemText)
+  > show hidden/system files/folders option? (SetItemTypes)
+  - new folder button
+  - undo/redo drop downs
+  - wipe file menu option???
+  - email file menu option???
+  - rename file menu option???
 
 SECURE WIPE OPTIONS
  - file or disk
@@ -58,80 +103,22 @@ DISK EDIT
  - rescan for physical devices after device insert
  - vmware cd reports no media present (IOCTL_DISK_GET_DRIVE_GEOMETRY timeout)
 
-- TEST
-  - display/editing of all types in tree view
-  - display/validation of enums
-  - drag and drop of new elements
-  - check disk lengths under various OS's (floppy, hard, CD)
-    - floppy: 1,474,560, 010 is wrong (1,457,664), WinHex is OK
-    - ZIP: 100,663,296, 010/WinHex are wrong (98,703,360)
-    - MSDN VC6 CD2: 571,191,296 010/WinHex are wrong (570,425,344)
-
-   - handle IDS_WEB_UPGRADE where IDS_WEB_REG_USER used
-   - add upgrade page to web site?
-   - add upgrade info to help
-   - 30 day ext. code
-   - upgrade code
-
- - change web addresses and email addresses
- - web site: add ver to bug report from drop list, update what's new, gifs etc
- - update to shareware download sites
- - email reg users about new release
- - email others about new release
- - change normal activation code email template
- - send out press release
-
-- explorer window
-  - fix hidden files icon
-  - chnage background when filter is not *.*
-  - update list after drag and drop
-  - fix for 64 bit file sizes
-  - drag and drop into tree (BCGShellTree.cpp changes)
-  - send BCGShell* changes to BCG
-  - in place editing for rename
-  > attributes column in details view (OnSetColumns, OnGetItemText)
-  > show hidden/system files/folders option? (SetItemTypes)
-  - new folder button
-  - undo/redo drop downs
-  - wipe file menu option???
-  - email file menu option???
-  - rename file menu option???
-
-- disk editor
   - fix size of device file problems
     - XP use IOCTRL_DISK_GET_LENGTH_INFO
     - volumes use GetDiskFreeSpaceEx
     - disks under NT/2K: use 
     - may need to go to end then keep reading sectors till real end found
-  > disable keep time button for devices
-  > fix file/path in recent file list
   - monitor disk insert/remove message in open dialog
   - fix Validate All for device files
   - don't add cd's to phys list unless XP
   - test under 95/98/ME
-  > bad sector is checked (for bg col.) before we have tried to read the sector
-    - see SectorError() in OnDraw (HexEditView.cpp line 1895)
-  > poll for changes if current device is removeable
-  > don't display "open read-only" if read-only device selected
 
 - change tracking
   - invalidation problems: eg delete at 3 then insert at 1,2 moved delete at 1 not drawn
   - also undo previous and moved delete (back to 3) not drawn (until window refreshed)
   ? add next/prev change
-  ? add separate control of change display (rep/ins/del/del-count)
+  - add separate control of change display (rep/ins/del/del-count) in new opt dlg
 
-after convert to use ptr to CFile, test:
-- background searches (normal and device file)
-- invoke NotePad with filename on command line (device file)
-- printing with %A, %F, %C, %M
-- opening templates based on extension (.fat32 etc)
-- opening colour scheme based on ext.
-- bookmarks on normal and device files
-- save/restore options for device file
-- shown in recent ile list menu and dlg
-- Retain file times not performed (icon disabled) for device files
-- no backup done for device files
-- open, save, save-as, write file etc
 
 
 TODO
@@ -167,27 +154,6 @@ TODO
  - fix relnotes
  - hourglass cursor during long operations?
  - send out press release (try www.dpdirectory.com?)
-
-Bugs
- - bg_search_ for device problem
- - find dlg char set (Text page) updates after chnaging char set or rest but not other times (eg undo)
-   - could put in end_change() but this would mean it is chnaged irrespective of previous char set
-   - see HexEditView.cpp "RB_CHARSET_EBCDIC" and "RB_CHARSET_ASCII"
-
- - when displaying strings in calculator escape double-quote (and other special chars)
- - in tree view size of 1/2 byte ints is shown as 4??
- - template bug: when reading ntoskrnl.exe and max fix for=20 then sections treated as fixed but are variable
- - recorded/saved num search alignment=8, restart, load, run found background occurrence where alignment != 8, could not repeat
- ? caret hides character (block caret) when left click under Windows 98 (not W2K)
- - if reset display turns off autofit and squeezes offset then save offset for undo?
- - cancel File/SaveAs dialog loses icon
- - file open/save dialogs' types [?????(*.*)]
- - ASSERT(wait_status == WAIT_OBJECT_0); on close if no search done
- - icon (top left) gets messed up
- ? somehow caret disappeared in one window when using find/goto tools (F4, F5, F6 etc)
- ? some how got ¦"~abc" into find dlg edit control rather than "abc" when selecting from hist list and
-   changing between ASCII/EBCDIC
- - some printer drivers (eg text only) return GetDeviceCaps(VERTRES)=66
 
 Tip of Day
   - type expression into jump tools
@@ -280,41 +246,11 @@ Help
 
 V3.2
  - New commands
-   > save all
-   > close all
    - reload?
  > new Motorolas S option to export highlighted areas only
    - move S1/S2/S3 items to drop-list in the File Save dialog
- > fix info in open special dialog
-   > bug in total space calcs
-   > show total/free space in bytes and clusters
- > info tip
-  > tip window appears when mouse hovers over a byte in hex or char area
-  > display any number of tips about the current hover point
-  > tips can evaluate any expression including many predefined values (address, byte word etc)
-    - eg check whether a bit is on in a byte
-    - check if a word is within a certain range
-    - display distance to EOF, to mark etc
-    - check alignment
-    - endless possibilities
-  > turn off any tip without deleting it
-  > tip window can be transparent - move mouse over it to make it fully opaque
-   > bookmark, user-defined expressions etc
-   > handle all time formats, character sets for chars and strings
-   ??? show tip of template data at that location
- > make sure no files are modified in .EXE directory
- - more acknowledgements in help
-	CRC code
-	PRNG code
-	MS XML
-	VMWare
-	SmartFTP
-	NoteTab Pro
-	XPlorer2
-	Paint.Net
-	FrontPage
-	IkonBoard
-	FireFox
+ - info tips
+   - show tip of template data at that location ???
 
  - allow enter expressions (incl assign to vars) in hex/dec jump tools
  > add select current highlight command and make default for dclick on highlight?
@@ -368,34 +304,36 @@ Free version
     - update email dialog revision nos
 
 V3.3
-  - wait cursor for any long operation (search for EnablePaneProgressBar(0))
-  - icon not shown for 2nd and subsequent windows
-    - need to call show_icon() after opening a new window
-   font size in format toolbar flashes under Vista
-  - new look web site
   - new icons
-  - options in dialogs that ask repetitive questions
-    - also add options page where you can turn these on again
-    - paste in overtype mode
-    - turn off insert mode
-    - turn off read-only mode
-  - nav forward and backward
-  - explorer window
+ - enable explorer window
+   - fix show hidden files icon (use drop list?)
+ - enable navigation points
+   - don't save nav pt when flipping between files
   - calculator
     - new look calculator
     - Goto history(s) in calculator
     - bookmarks list
     - expressions in calculator
+ - more acknowledgements in help
+	SmartFTP
+	FrontPage
+	IkonBoard
+	FireFox
+	Parcom
+  - wait cursor for any long operation (search for EnablePaneProgressBar(0))
+  - icon not shown for 2nd and subsequent windows
+    - need to call show_icon() after opening a new window
+  - font size in format toolbar flashes under Vista
+  - options in dialogs that ask repetitive questions
+    - also add options page where you can turn these on again
+    - paste in overtype mode
+    - turn off insert mode
+    - turn off read-only mode
   - repair
       MsiSetInternalUI(INSTALLUILEVEL_NONE,NULL);
       MsiReinstallProduct("{A5A0D1C0-DF1A-11D3-99DC-00A0CCFFFAA1}",
           REINSTALLMODE_FILEVERIFY | REINSTALLMODE_FILEMISSING |
           REINSTALLMODE_FILEOLDERVERSION | REINSTALLMODE_REPAIR);
- - new installer
-   - get MFC merge module (.msm file) to include used MFC in installation (.msi)
-     - use MFC 7.1 (same as UBCD4Win - Ultimate boot CD for Windows) - MFC71.DLL, MSVCRT71.DLL
-   - is it possible to have install modules (eg MFC) come from web only when needed?
-   - add backgrnd.BMP and About.BMP to exe directory
   - extra CRC types
   - fix options dialog to use BCG prop sheet with tree (see below for layout)
    - add ability to select which prop pages are displayed (and order?)???\
@@ -404,14 +342,19 @@ V3.3
   - Convert to use FileErrorMessage() ???
   > clear histories (search/jump tools, recent file list, bookmarks?)
     - bookmarks does not remove from the lists of open files
-  ? handle write past 2^32 problems on Win9X better somehow?
   - check new cracker codes and find workaround
-  ? option for mouse wheel units like WinHex?
+  - option for mouse wheel units
   ? allow editing read-only files
   - insert file option should read a file even if it's in use
   - use FindFirstFile for file size
 
 V3.4
+ - aerial view
+ - new installer
+   - get MFC merge module (.msm file) to include used MFC in installation (.msi)
+     - use MFC 7.1 (same as UBCD4Win - Ultimate boot CD for Windows) - MFC71.DLL, MSVCRT71.DLL
+   - is it possible to have install modules (eg MFC) come from web only when needed?
+   - add backgrnd.BMP and About.BMP to exe directory
   - welcome screen that has a tutorial option?
   - if file open for write elsewhere warn when it changes
   - if file opened in shareDenyNone mode monitor it and warn when it changes.
@@ -438,11 +381,7 @@ V3.4
   - encrypt using number not password
   - better printing
     - work out numbers of pages at start (use aa->GetPrinterDeviceDefaults(); then aa->CreatePrinterDC())
-    ? print in black and white for monochrome printers (else light coloured text is invisible)
-    ? print preview in grey for monochrome printers (already fixed in MFC?)
-      - colour to greyscale: red=green=blue=(red*30 + green*59 + blue*11)/100
   - facility to split and merge files (default to ext .001, .002, size 1.44 Mbytes)
-  - get/set sec info using bits of background bitmap before hexedit.ind
   - macro
 	- look at speeding macro playback
 	- macro toolbar: rec, clear, play, options, message, multiplay, select macro from drop list
@@ -456,6 +395,7 @@ V3.5
   - add keep time command to macros
   - checksums page [Dave Ewen]?
   - CRC page
+  - stats page
   - show selection: move to middle if not currently visible
 
 
