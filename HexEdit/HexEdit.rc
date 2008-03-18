@@ -1289,63 +1289,63 @@ END
 // Dialog
 //
 
-IDD_OPT_SYSTEM DIALOGEX 0, 0, 256, 127
+IDD_OPT_SYSTEM DIALOGEX 0, 0, 260, 140
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "General"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    GROUPBOX        "General",IDC_STATIC,7,2,242,57,WS_GROUP
+    GROUPBOX        "General",IDC_STATIC,9,4,243,64,WS_GROUP
     CONTROL         "&Add ""Open with HexEdit"" to menus",IDC_SHELLOPEN,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,13,128,10,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,16,128,10,0,
                     HIDC_SHELLOPEN
     CONTROL         "&Only permit one instance of Hexedit",IDC_ONE_ONLY,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,24,127,10,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,28,127,10,0,
                     HIDC_ONE_ONLY
     CONTROL         "Allow &background searching",IDC_BG_SEARCH,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,14,35,105,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,40,105,10,0,
                     HIDC_BG_SEARCH
     CONTROL         "Save settings on e&xit",IDC_SAVE_EXIT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,14,46,95,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,52,95,10,0,
                     HIDC_SAVE_EXIT
-    PUSHBUTTON      "&Clear History Lists...",IDC_CLEAR_HIST,149,10,94,13,
+    PUSHBUTTON      "&Clear History Lists...",IDC_CLEAR_HIST,151,14,94,13,
                     WS_GROUP,0,HIDC_CLEAR_HIST
-    LTEXT           "Recent file entries:",IDC_STATIC,149,29,60,8
-    EDITTEXT        IDC_RECENT_FILES,210,25,33,14,ES_RIGHT | ES_NUMBER,0,
+    LTEXT           "Recent file entries:",IDC_STATIC,151,34,60,8
+    EDITTEXT        IDC_RECENT_FILES,212,30,33,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_RECENT_FILES
     CONTROL         "Spin1",IDC_SPIN_RECENT_FILES,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,236,25,11,12
-    PUSHBUTTON      "&Save Settings Now",IDC_SAVE_NOW,149,42,94,13,WS_GROUP,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,238,28,11,12
+    PUSHBUTTON      "&Save Settings Now",IDC_SAVE_NOW,151,48,94,13,WS_GROUP,
                     0,HIDC_SAVE_NOW
-    GROUPBOX        "",IDC_STATIC,7,62,123,60,WS_GROUP
+    GROUPBOX        "",IDC_STATIC,9,72,123,61,WS_GROUP
     CONTROL         "&Create backup files",IDC_BACKUP,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,14,62,74,10,0,HIDC_BACKUP
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,72,74,10,0,HIDC_BACKUP
     CONTROL         "Only if sufficient disk space",IDC_BACKUP_SPACE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,23,73,100,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,25,83,100,10,0,
                     HIDC_BACKUP_SPACE
     CONTROL         "Only if size is less than:",IDC_BACKUP_IF_SIZE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,23,84,102,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,25,94,102,10,0,
                     HIDC_BACKUP_IF_SIZE
-    EDITTEXT        IDC_BACKUP_SIZE,58,95,34,13,ES_RIGHT | ES_AUTOHSCROLL,0,
+    EDITTEXT        IDC_BACKUP_SIZE,60,105,34,13,ES_RIGHT | ES_AUTOHSCROLL,0,
                     HIDC_BACKUP_SIZE
-    LTEXT           "KBytes",IDC_STATIC,96,97,28,8,NOT WS_GROUP
+    LTEXT           "KBytes",IDC_STATIC,98,107,28,8,NOT WS_GROUP
     CONTROL         "Prompt",IDC_BACKUP_PROMPT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,23,109,102,10,0,HIDC_BACKUP_PROMPT
-    GROUPBOX        "Export",IDC_STATIC,138,62,111,60,WS_GROUP
+                    WS_TABSTOP,25,119,102,10,0,HIDC_BACKUP_PROMPT
+    GROUPBOX        "Export",IDC_STATIC,140,72,112,61,WS_GROUP
     CONTROL         "Use &file addresses",IDC_ADDRESS_FILE,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,145,74,73,10,
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,147,84,73,10,
                     0,HIDC_ADDRESS_FILE
     CONTROL         "Start address:",IDC_ADDRESS_SPECIFIED,"Button",
-                    BS_AUTORADIOBUTTON,145,86,55,10,0,HIDC_ADDRESS_SPECIFIED
-    EDITTEXT        IDC_EXPORT_ADDRESS,205,84,37,14,ES_RIGHT | 
+                    BS_AUTORADIOBUTTON,147,96,55,10,0,HIDC_ADDRESS_SPECIFIED
+    EDITTEXT        IDC_EXPORT_ADDRESS,207,94,37,14,ES_RIGHT | 
                     ES_AUTOHSCROLL | WS_GROUP,0,HIDC_EXPORT_ADDRESS
-    LTEXT           "Bytes per line:",IDC_STATIC,155,106,45,8
-    EDITTEXT        IDC_EXPORT_LINELEN,205,103,37,14,ES_RIGHT | ES_NUMBER,0,
+    LTEXT           "Bytes per line:",IDC_STATIC,157,116,45,8
+    EDITTEXT        IDC_EXPORT_LINELEN,207,113,37,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_EXPORT_LINELEN
     CONTROL         "Spin1",IDC_SPIN_EXPORT_LINELEN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,238,103,11,12
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,240,113,11,12
 END
 
 IDD_PROP_INFO DIALOGEX 0, 0, 223, 79
@@ -1448,121 +1448,129 @@ BEGIN
                     BS_AUTORADIOBUTTON,153,59,63,10,0,HIDC_DEC_SIGN_MAG
 END
 
-IDD_OPT_MACRO DIALOGEX 0, 0, 255, 127
+IDD_OPT_MACRO DIALOGEX 0, 0, 260, 140
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Macro"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    GROUPBOX        "Refresh Display",IDC_STATIC,9,7,126,104,WS_GROUP
+    GROUPBOX        "Refresh Display",IDC_STATIC,11,20,126,108,WS_GROUP
     CONTROL         "&Never",IDC_REFRESH_NEVER,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,16,18,35,10,0,HIDC_REFRESH_NEVER
-    CONTROL         "Every",IDC_REFRESH_SECS,"Button",BS_AUTORADIOBUTTON,16,
-                    31,34,10,0,HIDC_REFRESH_SECS
-    CONTROL         "Every",IDC_REFRESH_KEYS,"Button",BS_AUTORADIOBUTTON,16,
-                    44,34,10,0,HIDC_REFRESH_KEYS
-    CONTROL         "Every",IDC_REFRESH_PLAYS,"Button",BS_AUTORADIOBUTTON,16,
-                    57,34,10,0,HIDC_REFRESH_PLAYS
-    EDITTEXT        IDC_NUM_SECS,51,29,28,12,ES_NUMBER | WS_GROUP,
+                    WS_GROUP | WS_TABSTOP,18,31,35,10,0,HIDC_REFRESH_NEVER
+    CONTROL         "Every",IDC_REFRESH_SECS,"Button",BS_AUTORADIOBUTTON,18,
+                    44,34,10,0,HIDC_REFRESH_SECS
+    CONTROL         "Every",IDC_REFRESH_KEYS,"Button",BS_AUTORADIOBUTTON,18,
+                    57,34,10,0,HIDC_REFRESH_KEYS
+    CONTROL         "Every",IDC_REFRESH_PLAYS,"Button",BS_AUTORADIOBUTTON,18,
+                    70,34,10,0,HIDC_REFRESH_PLAYS
+    EDITTEXT        IDC_NUM_SECS,53,42,28,12,ES_NUMBER | WS_GROUP,
                     WS_EX_RIGHT,HIDC_NUM_SECS
     CONTROL         "Spin1",IDC_SPIN_SECS,"msctls_updown32",UDS_SETBUDDYINT | 
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
-                    UDS_NOTHOUSANDS,74,29,9,12
-    LTEXT           "seconds",IDC_DESC_SECS,81,31,28,8
-    EDITTEXT        IDC_NUM_KEYS,51,42,28,12,ES_NUMBER,WS_EX_RIGHT,
+                    UDS_NOTHOUSANDS,76,42,9,12
+    LTEXT           "seconds",IDC_DESC_SECS,83,44,28,8
+    EDITTEXT        IDC_NUM_KEYS,53,55,28,12,ES_NUMBER,WS_EX_RIGHT,
                     HIDC_NUM_KEYS
     CONTROL         "Spin1",IDC_SPIN_KEYS,"msctls_updown32",UDS_SETBUDDYINT | 
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
-                    UDS_NOTHOUSANDS,73,42,10,12
-    LTEXT           "keystrokes",IDC_DESC_KEYS,81,44,35,8
-    EDITTEXT        IDC_NUM_PLAYS,51,55,28,12,ES_NUMBER,WS_EX_RIGHT,
+                    UDS_NOTHOUSANDS,75,55,10,12
+    LTEXT           "keystrokes",IDC_DESC_KEYS,83,57,35,8
+    EDITTEXT        IDC_NUM_PLAYS,53,68,28,12,ES_NUMBER,WS_EX_RIGHT,
                     HIDC_NUM_PLAYS
     CONTROL         "Spin1",IDC_SPIN_PLAYS,"msctls_updown32",UDS_SETBUDDYINT | 
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
-                    UDS_NOTHOUSANDS,73,55,10,12
-    LTEXT           "replays",IDC_DESC_PLAYS,81,57,23,8
+                    UDS_NOTHOUSANDS,75,68,10,12
+    LTEXT           "replays",IDC_DESC_PLAYS,83,70,23,8
     CONTROL         "Include &properties dialog",IDC_REFRESH_PROPS,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,16,76,93,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,18,89,93,10,0,
                     HIDC_REFRESH_PROPS
     CONTROL         "Include &tools and status bar",IDC_REFRESH_BARS,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,16,88,103,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,18,101,103,10,0,
                     HIDC_REFRESH_BARS
-    GROUPBOX        "Halt Conditions",IDC_STATIC,147,7,97,52,WS_GROUP
+    GROUPBOX        "Halt Conditions",IDC_STATIC,149,20,97,52,WS_GROUP
     CONTROL         "All &warnings/errors",IDC_HALT0,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,154,20,74,10,
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,156,33,74,10,
                     0,HIDC_HALT0
     CONTROL         "Minor &errors",IDC_HALT1,"Button",BS_AUTORADIOBUTTON,
-                    154,31,53,10,0,HIDC_HALT1
+                    156,44,53,10,0,HIDC_HALT1
     CONTROL         "&Major errors only",IDC_HALT2,"Button",
-                    BS_AUTORADIOBUTTON,154,42,67,10,0,HIDC_HALT2
-    PUSHBUTTON      "Save Current Macro...",IDC_SAVEMACRO,147,64,97,14,
+                    BS_AUTORADIOBUTTON,156,55,67,10,0,HIDC_HALT2
+    PUSHBUTTON      "Save Current Macro...",IDC_SAVEMACRO,149,77,97,14,
                     WS_DISABLED | WS_GROUP,0,HIDC_SAVEMACRO
-    PUSHBUTTON      "&Load Macro...",IDC_LOADMACRO,147,81,97,14,0,0,
+    PUSHBUTTON      "&Load Macro...",IDC_LOADMACRO,149,95,97,14,0,0,
                     HIDC_LOADMACRO
-    PUSHBUTTON      "Change Macro &Folder...",IDC_MACRODIR,147,98,97,14,0,0,
+    PUSHBUTTON      "Change Macro &Folder...",IDC_MACRODIR,149,113,97,14,0,0,
                     HIDC_MACRODIR
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,75,10,
+                    171,1
+    LTEXT           "Keystroke Macros",IDC_STATIC,11,6,58,8
 END
 
-IDD_OPT_SYSDISPLAY DIALOGEX 0, 0, 255, 127
+IDD_OPT_SYSDISPLAY DIALOGEX 0, 0, 260, 140
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Display"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    GROUPBOX        "Global settings",IDC_STATIC,7,3,241,47,WS_GROUP
     CONTROL         "&Restore main window on startup",IDC_RESTORE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,14,14,117,10,0,HIDC_RESTORE
+                    BS_AUTOCHECKBOX | WS_TABSTOP,17,18,117,10,0,HIDC_RESTORE
     CONTROL         "Display Window &Tabs",IDC_MDITABS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,14,25,87,10,0,HIDC_MDITABS
+                    BS_AUTOCHECKBOX | WS_TABSTOP,17,29,87,10,0,HIDC_MDITABS
     CONTROL         "Window Tabs at &Bottom",IDC_TABSBOTTOM,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,26,36,100,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,29,40,100,10,0,
                     HIDC_TABSBOTTOM
     CONTROL         "Display &hex in uppercase",IDC_HEX_UCASE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,138,14,104,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,141,18,104,10,0,
                     HIDC_HEX_UCASE
     CONTROL         "&Large (block) cursor",IDC_LARGE_CURSOR,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,138,25,104,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,141,29,104,10,0,
                     HIDC_LARGE_CURSOR
     CONTROL         "Shadow &cursor in other area",IDC_SHOW_OTHER,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,138,36,104,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,141,40,104,10,0,
                     HIDC_SHOW_OTHER
-    GROUPBOX        "Templates",IDC_DFFD_GROUP1,7,53,90,70,WS_GROUP
-    LTEXT           "When opening new files:",IDC_STATIC,13,62,79,8
+    LTEXT           "When opening new files:",IDC_STATIC,16,69,79,8
     CONTROL         "No template view",IDC_DFFD_NONE,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,16,72,71,10,0,
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,19,79,71,10,0,
                     HIDC_DFFD_NONE
     CONTROL         "Split window",IDC_DFFD_SPLIT,"Button",
-                    BS_AUTORADIOBUTTON | WS_TABSTOP,16,82,55,10,0,
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,19,89,55,10,0,
                     HIDC_DFFD_SPLIT
-    CONTROL         "Tab window",IDC_DFFD_TAB,"Button",BS_AUTORADIOBUTTON,16,
-                    92,55,10,0,HIDC_DFFD_TAB
-    RTEXT           "No of fixed\rarray elements",IDC_DESC_DFFD_ARRAY_MAX,9,
-                    103,45,17
-    EDITTEXT        IDC_DFFD_ARRAY_MAX,58,104,31,14,ES_AUTOHSCROLL | 
+    CONTROL         "Tab window",IDC_DFFD_TAB,"Button",BS_AUTORADIOBUTTON,19,
+                    99,55,10,0,HIDC_DFFD_TAB
+    RTEXT           "No of fixed\rarray elements",IDC_DESC_DFFD_ARRAY_MAX,12,
+                    112,45,17
+    EDITTEXT        IDC_DFFD_ARRAY_MAX,61,113,31,14,ES_AUTOHSCROLL | 
                     ES_NUMBER,0,HIDC_DFFD_ARRAY_MAX
     CONTROL         "Spin1",IDC_SPIN_DFFD_ARRAY_MAX,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,80,105,11,14
-    GROUPBOX        "Default template format strings",IDC_DFFD_GROUP2,96,53,
-                    152,70,WS_GROUP
-    RTEXT           "Character:",IDC_DESC_DFFD_FORMAT_CHAR,100,68,41,8
-    EDITTEXT        IDC_DFFD_FORMAT_CHAR,144,65,31,14,ES_AUTOHSCROLL,0,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,83,114,11,14
+    RTEXT           "Character:",IDC_DESC_DFFD_FORMAT_CHAR,103,75,41,8
+    EDITTEXT        IDC_DFFD_FORMAT_CHAR,147,72,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_CHAR
-    RTEXT           "Integer:",IDC_DESC_DFFD_FORMAT_INT,100,86,41,8
-    EDITTEXT        IDC_DFFD_FORMAT_INT,144,83,31,14,ES_AUTOHSCROLL,0,
+    RTEXT           "Integer:",IDC_DESC_DFFD_FORMAT_INT,103,93,41,8
+    EDITTEXT        IDC_DFFD_FORMAT_INT,147,90,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_INT
-    RTEXT           "Unsigned int:",IDC_DESC_DFFD_FORMAT_UINT,100,104,41,8
-    EDITTEXT        IDC_DFFD_FORMAT_UINT,144,102,31,14,ES_AUTOHSCROLL,0,
+    RTEXT           "Unsigned int:",IDC_DESC_DFFD_FORMAT_UINT,103,111,41,8
+    EDITTEXT        IDC_DFFD_FORMAT_UINT,147,109,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_UINT
-    RTEXT           "String:",IDC_DESC_DFFD_FORMAT_STRING,179,68,27,8
-    EDITTEXT        IDC_DFFD_FORMAT_STRING,209,65,31,14,ES_AUTOHSCROLL,0,
+    RTEXT           "String:",IDC_DESC_DFFD_FORMAT_STRING,182,75,27,8
+    EDITTEXT        IDC_DFFD_FORMAT_STRING,212,72,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_STRING
-    RTEXT           "Real:",IDC_DESC_DFFD_FORMAT_REAL,179,86,27,8
-    EDITTEXT        IDC_DFFD_FORMAT_REAL,209,83,31,14,ES_AUTOHSCROLL,0,
+    RTEXT           "Real:",IDC_DESC_DFFD_FORMAT_REAL,182,93,27,8
+    EDITTEXT        IDC_DFFD_FORMAT_REAL,212,90,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_REAL
-    RTEXT           "Date:",IDC_DESC_DFFD_FORMAT_DATE,179,104,27,8
-    EDITTEXT        IDC_DFFD_FORMAT_DATE,209,102,31,14,ES_AUTOHSCROLL,0,
+    RTEXT           "Date:",IDC_DESC_DFFD_FORMAT_DATE,182,111,27,8
+    EDITTEXT        IDC_DFFD_FORMAT_DATE,212,109,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_DATE
+    LTEXT           "Global Settings",IDC_STATIC,12,4,48,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,67,8,
+                    187,1
+    LTEXT           "Default template format strings",IDC_STATIC,103,55,96,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,52,59,
+                    44,1
+    LTEXT           "Templates",IDC_STATIC,12,55,34,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,206,59,
+                    48,1
 END
 
 IDD_PASSWORD DIALOGEX 0, 0, 255, 118
@@ -1647,174 +1655,166 @@ BEGIN
     PUSHBUTTON      "&Invalid",IDC_DATE_NULL,182,60,28,11,0,0,HIDC_DATE_NULL
 END
 
-IDD_OPT_PRINT DIALOGEX 0, 0, 254, 127
+IDD_OPT_PRINT DIALOGEX 0, 0, 260, 140
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Printing"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    RTEXT           "&Header:",IDC_STATIC,9,11,26,8
-    EDITTEXT        IDC_PRINT_HEADER,39,8,189,14,ES_AUTOHSCROLL,0,
-                    HIDC_PRINT_HEADER
-    PUSHBUTTON      "",IDC_HEADER_OPTS,232,8,14,14,0,0,HIDC_HEADER_OPTS
-    RTEXT           "&Footer:",IDC_STATIC,12,27,23,8
-    EDITTEXT        IDC_PRINT_FOOTER,39,24,189,14,ES_AUTOHSCROLL,0,
-                    HIDC_PRINT_FOOTER
-    PUSHBUTTON      "",IDC_FOOTER_OPTS,232,24,14,14,0,0,HIDC_FOOTER_OPTS
-    LTEXT           "Separate the three header/footer sections with vertical bars (|)",
-                    IDC_STATIC,39,40,211,8
+    LTEXT           "Layout",IDC_STATIC,12,4,22,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,41,8,
+                    213,1
     CONTROL         "Dr&aw border",IDC_PRINT_BORDER,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,39,50,55,10,0,HIDC_PRINT_BORDER
+                    WS_GROUP | WS_TABSTOP,20,17,55,10,0,HIDC_PRINT_BORDER
     CONTROL         "&Column headings",IDC_PRINT_HEADINGS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,39,60,70,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,79,17,70,10,0,
                     HIDC_PRINT_HEADINGS
-    GROUPBOX        "L&ine spacing",IDC_STATIC,7,72,53,49,WS_GROUP
-    CONTROL         "&Single",IDC_PRINT_SPACE1,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,15,83,35,10,0,HIDC_PRINT_SPACE1
-    CONTROL         "&1.5",IDC_PRINT_SPACE1HALF,"Button",BS_AUTORADIOBUTTON,
-                    15,94,26,10,0,HIDC_PRINT_SPACE1HALF
-    CONTROL         "&Double",IDC_PRINT_SPACE2,"Button",BS_AUTORADIOBUTTON,
-                    15,106,39,10,0,HIDC_PRINT_SPACE2
-    RTEXT           "&Units:",IDC_STATIC,134,58,19,8
-    COMBOBOX        IDC_PRINT_UNITS,157,56,56,47,CBS_DROPDOWNLIST | 
+    RTEXT           "&Units:",IDC_STATIC,165,18,19,8
+    COMBOBOX        IDC_PRINT_UNITS,187,16,56,47,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_PRINT_UNITS
-    GROUPBOX        "&Margins",IDC_STATIC,68,72,108,49,WS_GROUP
-    RTEXT           "&Left:",IDC_STATIC,75,86,15,8
-    EDITTEXT        IDC_PRINT_LEFT,91,83,24,14,ES_AUTOHSCROLL,0,
+    GROUPBOX        "L&ine spacing",IDC_STATIC,12,33,52,49,WS_GROUP
+    CONTROL         "&Single",IDC_PRINT_SPACE1,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,20,44,35,10,0,HIDC_PRINT_SPACE1
+    CONTROL         "&1.5",IDC_PRINT_SPACE1HALF,"Button",BS_AUTORADIOBUTTON,
+                    20,56,26,10,0,HIDC_PRINT_SPACE1HALF
+    CONTROL         "&Double",IDC_PRINT_SPACE2,"Button",BS_AUTORADIOBUTTON,
+                    20,68,39,10,0,HIDC_PRINT_SPACE2
+    GROUPBOX        "&Margins",IDC_STATIC,72,33,108,49,WS_GROUP
+    RTEXT           "&Left:",IDC_STATIC,79,47,15,8
+    EDITTEXT        IDC_PRINT_LEFT,95,44,24,14,ES_AUTOHSCROLL,0,
                     HIDC_PRINT_LEFT
-    RTEXT           "&Right:",IDC_STATIC,123,86,20,8
-    EDITTEXT        IDC_PRINT_RIGHT,144,83,24,14,ES_AUTOHSCROLL,0,
-                    HIDC_PRINT_RIGHT
-    RTEXT           "&Top:",IDC_STATIC,74,104,16,8
-    EDITTEXT        IDC_PRINT_TOP,91,101,24,14,ES_AUTOHSCROLL,0,
+    RTEXT           "&Top:",IDC_STATIC,78,65,16,8
+    EDITTEXT        IDC_PRINT_TOP,95,62,24,14,ES_AUTOHSCROLL,0,
                     HIDC_PRINT_TOP
-    RTEXT           "&Bottom:",IDC_STATIC,118,104,25,8
-    EDITTEXT        IDC_PRINT_BOTTOM,144,101,24,14,ES_AUTOHSCROLL,0,
+    RTEXT           "&Right:",IDC_STATIC,127,47,20,8
+    EDITTEXT        IDC_PRINT_RIGHT,148,44,24,14,ES_AUTOHSCROLL,0,
+                    HIDC_PRINT_RIGHT
+    RTEXT           "&Bottom:",IDC_STATIC,122,65,25,8
+    EDITTEXT        IDC_PRINT_BOTTOM,148,62,24,14,ES_AUTOHSCROLL,0,
                     HIDC_PRINT_BOTTOM
-    GROUPBOX        "From &edge",IDC_STATIC,184,72,63,49,WS_GROUP
-    RTEXT           "&Header:",IDC_STATIC,188,86,26,8
-    EDITTEXT        IDC_PRINT_HEADER_EDGE,216,83,24,14,ES_AUTOHSCROLL,0,
+    GROUPBOX        "From &edge",IDC_STATIC,187,33,63,49,WS_GROUP
+    RTEXT           "&Header:",IDC_STATIC,191,47,26,8
+    EDITTEXT        IDC_PRINT_HEADER_EDGE,219,44,24,14,ES_AUTOHSCROLL,0,
                     HIDC_PRINT_HEADER_EDGE
-    RTEXT           "&Footer:",IDC_STATIC,192,104,23,8
-    EDITTEXT        IDC_PRINT_FOOTER_EDGE,216,101,24,14,ES_AUTOHSCROLL,0,
+    RTEXT           "&Footer:",IDC_STATIC,195,65,23,8
+    EDITTEXT        IDC_PRINT_FOOTER_EDGE,219,62,24,14,ES_AUTOHSCROLL,0,
                     HIDC_PRINT_FOOTER_EDGE
+    LTEXT           "Header/Footer",IDC_STATIC,12,90,48,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,66,94,
+                    188,1
+    RTEXT           "&Header:",IDC_STATIC,19,104,26,8
+    EDITTEXT        IDC_PRINT_HEADER,49,101,189,14,ES_AUTOHSCROLL,0,
+                    HIDC_PRINT_HEADER
+    PUSHBUTTON      "",IDC_HEADER_OPTS,239,101,14,14,0,0,HIDC_HEADER_OPTS
+    RTEXT           "&Footer:",IDC_STATIC,22,120,23,8
+    EDITTEXT        IDC_PRINT_FOOTER,49,117,189,14,ES_AUTOHSCROLL,0,
+                    HIDC_PRINT_FOOTER
+    PUSHBUTTON      "",IDC_FOOTER_OPTS,239,117,14,14,0,0,HIDC_FOOTER_OPTS
 END
 
-IDD_OPT_FILTERS DIALOGEX 0, 0, 255, 127
+IDD_OPT_FILTERS DIALOGEX 0, 0, 260, 140
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Filters"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    PUSHBUTTON      "New",IDC_NEW,186,2,14,14,BS_ICON | BS_CENTER | 
+    PUSHBUTTON      "New",IDC_NEW,190,8,14,14,BS_ICON | BS_CENTER | 
                     BS_VCENTER,0,HIDC_NEW
-    PUSHBUTTON      "Del",IDC_DEL,203,2,14,14,BS_ICON | BS_CENTER | 
+    PUSHBUTTON      "Del",IDC_DEL,207,8,14,14,BS_ICON | BS_CENTER | 
                     BS_VCENTER,0,HIDC_DEL
-    PUSHBUTTON      "Up",IDC_UP,220,2,14,14,BS_ICON | BS_CENTER | BS_VCENTER
-    PUSHBUTTON      "Down",IDC_DOWN,237,2,14,14,BS_ICON | BS_CENTER | 
+    PUSHBUTTON      "Up",IDC_UP,224,8,14,14,BS_ICON | BS_CENTER | BS_VCENTER
+    PUSHBUTTON      "Down",IDC_DOWN,241,8,14,14,BS_ICON | BS_CENTER | 
                     BS_VCENTER
-    LTEXT           "Filter name",IDC_STATIC,22,9,35,8
-    LTEXT           "Filter",IDC_STATIC,143,9,16,8
-    CONTROL         "Custom1",IDC_GRID_FILTERS,"MFCGridCtrl",WS_TABSTOP,3,18,
+    LTEXT           "Filter name",IDC_STATIC,26,15,35,8
+    LTEXT           "Filter",IDC_STATIC,147,15,16,8
+    CONTROL         "Custom1",IDC_GRID_FILTERS,"MFCGridCtrl",WS_TABSTOP,7,24,
                     249,108,0,HIDC_GRID_FILTERS
+    LTEXT           "File Type Filters",IDC_STATIC,6,4,50,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,62,8,
+                    122,1
 END
 
-IDD_OPT_WINDISPLAY DIALOGEX 0, 0, 255, 127
+IDD_OPT_WINDISPLAY DIALOGEX 0, 0, 260, 140
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "Window"
+CAPTION "Window Display"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    LTEXT           "S&how Area(s):",IDC_STATIC,14,15,69,8
-    COMBOBOX        IDC_SHOW_AREA,14,24,70,53,CBS_DROPDOWNLIST | WS_VSCROLL | 
+    LTEXT           "Layout",IDC_STATIC,12,4,22,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,40,8,
+                    205,1
+    LTEXT           "S&how Area(s):",IDC_STATIC,20,18,48,8
+    COMBOBOX        IDC_SHOW_AREA,81,17,70,53,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_SHOW_AREA
-    PUSHBUTTON      "&Font...",IDC_FONT,27,41,43,12,0,0,HIDC_FONT
-    LTEXT           "&Character Set:",IDC_CHARSET_DESC,88,15,61,8
-    COMBOBOX        IDC_CHARSET,88,24,63,60,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP,0,HIDC_CHARSET
-    LTEXT           "C&ontrol Characters:",IDC_CONTROL_DESC,88,40,61,8
-    COMBOBOX        IDC_CONTROL,88,49,63,58,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP,0,HIDC_CONTROL
-    RTEXT           "&Columns:",IDC_COLS_DESC,14,63,32,8
-    EDITTEXT        IDC_COLS,48,61,36,12,ES_NUMBER,WS_EX_RIGHT,HIDC_COLS
+    LTEXT           "&Columns:",IDC_COLS_DESC,20,37,32,8
+    EDITTEXT        IDC_COLS,81,35,36,12,ES_NUMBER,WS_EX_RIGHT,HIDC_COLS
     CONTROL         "Spin1",IDC_SPIN_COLS,"msctls_updown32",UDS_SETBUDDYINT | 
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
-                    UDS_NOTHOUSANDS,79,61,9,12
-    RTEXT           "Offs&et:",IDC_STATIC,14,77,32,8
-    EDITTEXT        IDC_OFFSET,48,75,36,12,ES_NUMBER,WS_EX_RIGHT,HIDC_OFFSET
-    CONTROL         "Spin1",IDC_SPIN_OFFSET,"msctls_updown32",
-                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,79,75,9,12
-    RTEXT           "&Grouping:",IDC_GROUPING_DESC,14,91,32,8
-    EDITTEXT        IDC_GROUPING,48,89,36,12,ES_NUMBER,WS_EX_RIGHT,
+                    UDS_NOTHOUSANDS,118,35,11,12
+    LTEXT           "&Grouping:",IDC_GROUPING_DESC,20,54,32,8
+    EDITTEXT        IDC_GROUPING,81,52,36,12,ES_NUMBER,WS_EX_RIGHT,
                     HIDC_GROUPING
     CONTROL         "Spin1",IDC_SPIN_GROUPING,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,79,89,9,12
-    RTEXT           "Scroll &Zone:",IDC_VERTBUFFER_DESC,6,105,40,8
-    EDITTEXT        IDC_VERTBUFFER,48,103,36,12,ES_NUMBER,WS_EX_RIGHT,
-                    HIDC_VERTBUFFER
-    CONTROL         "Spin1",IDC_SPIN_VERTBUFFER,"msctls_updown32",
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,118,52,11,12
+    LTEXT           "Offs&et:",IDC_STATIC,20,71,32,8
+    EDITTEXT        IDC_OFFSET,81,69,36,12,ES_NUMBER,WS_EX_RIGHT,HIDC_OFFSET
+    CONTROL         "Spin1",IDC_SPIN_OFFSET,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,79,103,9,12
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,118,69,11,12
     CONTROL         "&Autofit",IDC_AUTOFIT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,88,64,68,10,0,HIDC_AUTOFIT
+                    WS_GROUP | WS_TABSTOP,131,36,68,10,0,HIDC_AUTOFIT
     CONTROL         "&Decimal Address",IDC_ADDR_DEC,"Button",BS_AUTOCHECKBOX | 
-                    BS_MULTILINE | WS_TABSTOP,88,75,68,10,0,HIDC_ADDR_DEC
-    CONTROL         "&Maximize",IDC_MAX,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
-                    WS_TABSTOP,88,86,68,10,0,HIDC_MAX
+                    BS_MULTILINE | WS_TABSTOP,131,48,68,10,0,HIDC_ADDR_DEC
+    CONTROL         "&Maximize",IDC_MAX,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,131,60,68,10,0,HIDC_MAX
     CONTROL         "Sector &bounds",IDC_BORDERS,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,88,97,68,10,0,HIDC_BORDERS
-    PUSHBUTTON      "&Reset to Default",IDC_DISP_RESET,166,7,82,13,
-                    BS_MULTILINE | WS_GROUP,0,HIDC_DISP_RESET
-    GROUPBOX        "Edit",IDC_STATIC,166,23,82,80,WS_GROUP
-    LTEXT           "Modifiability",IDC_STATIC,175,32,54,8
-    COMBOBOX        IDC_MODIFY,175,41,64,47,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP,0,HIDC_MODIFY
-    LTEXT           "Mode",IDC_INSERT_DESC,175,55,54,8
-    COMBOBOX        IDC_INSERT,175,64,64,43,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP,0,HIDC_INSERT
-    CONTROL         "&Big Endian",IDC_BIG_ENDIAN,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,175,79,67,10
-    CONTROL         "&Change tracking",IDC_CHANGE_TRACKING,"Button",
-                    BS_3STATE | WS_TABSTOP,175,90,67,10,0,
-                    HIDC_CHANGE_TRACKING
-    PUSHBUTTON      "&Save As Default...",IDC_SAVE_DEFAULT,166,107,82,13,
-                    BS_MULTILINE | WS_GROUP,0,HIDC_SAVE_DEFAULT
-    GROUPBOX        "Display",IDC_STATIC,6,3,151,117
+                    WS_TABSTOP,131,72,68,10,0,HIDC_BORDERS
+    LTEXT           "Character Area",IDC_STATIC,12,88,48,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,67,92,
+                    178,1
+    LTEXT           "&Character Set:",IDC_CHARSET_DESC,19,102,61,8
+    COMBOBOX        IDC_CHARSET,81,100,70,60,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP,0,HIDC_CHARSET
+    PUSHBUTTON      "&Font...",IDC_FONT,159,100,43,12,0,0,HIDC_FONT
+    LTEXT           "C&ontrol Characters:",IDC_CONTROL_DESC,18,119,61,8
+    COMBOBOX        IDC_CONTROL,81,117,70,58,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP,0,HIDC_CONTROL
 END
 
-IDD_OPT_COLOURS DIALOGEX 0, 0, 255, 127
+IDD_OPT_COLOURS DIALOGEX 0, 0, 260, 140
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Colours"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    LTEXT           "&Schemes:",IDC_STATIC,4,7,32,8
-    LISTBOX         IDC_SCHEMES,3,21,98,102,LBS_NOINTEGRALHEIGHT | 
-                    WS_VSCROLL | WS_TABSTOP,0,HIDC_SCHEMES
-    PUSHBUTTON      "Add ",IDC_ADD_SCHEME,39,4,14,14,BS_ICON,0,
+    LTEXT           "Schemes",IDC_STATIC,6,3,30,8
+    LISTBOX         IDC_SCHEMES,4,32,98,99,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP,0,HIDC_SCHEMES
+    PUSHBUTTON      "Add ",IDC_ADD_SCHEME,6,15,14,14,BS_ICON,0,
                     HIDC_ADD_SCHEME
-    PUSHBUTTON      "Remove ",IDC_REMOVE_SCHEME,55,4,14,14,BS_ICON | 
+    PUSHBUTTON      "Remove ",IDC_REMOVE_SCHEME,22,15,14,14,BS_ICON | 
                     WS_DISABLED,0,HIDC_REMOVE_SCHEME
-    PUSHBUTTON      "&Reset",IDC_RESET,72,4,29,14,0,0,HIDC_RESET
-    RTEXT           "&Name:",IDC_STATIC,107,7,22,8
-    EDITTEXT        IDC_CURRENT,131,4,103,14,ES_AUTOHSCROLL,0,HIDC_CURRENT
-    LISTBOX         IDC_NAMES,131,17,103,75,LBS_NOINTEGRALHEIGHT | 
+    PUSHBUTTON      "&Reset",IDC_RESET,39,15,29,14,0,0,HIDC_RESET
+    RTEXT           "&Name:",IDC_STATIC,110,18,22,8
+    EDITTEXT        IDC_CURRENT,134,15,103,14,ES_AUTOHSCROLL,0,HIDC_CURRENT
+    LISTBOX         IDC_NAMES,134,28,103,70,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_NAMES
-    RTEXT           "&Colour:",IDC_DESC_COLOUR,106,97,23,8
-    PUSHBUTTON      "Picker",IDC_COLOUR_PICKER,131,94,121,14,0,0,
+    RTEXT           "&Colour:",IDC_DESC_COLOUR,109,104,23,8
+    PUSHBUTTON      "Picker",IDC_COLOUR_PICKER,134,101,121,14,0,0,
                     HIDC_COLOUR_PICKER
-    RTEXT           "&Values:",IDC_STATIC,105,113,24,8
-    EDITTEXT        IDC_RANGES,131,110,121,14,ES_AUTOHSCROLL | WS_DISABLED,0,
+    RTEXT           "&Values:",IDC_STATIC,108,120,24,8
+    EDITTEXT        IDC_RANGES,134,117,121,14,ES_AUTOHSCROLL | WS_DISABLED,0,
                     HIDC_RANGES
-    PUSHBUTTON      "Add ",IDC_ADD,238,4,14,14,BS_ICON | WS_DISABLED,0,
+    PUSHBUTTON      "Add ",IDC_ADD,241,15,14,14,BS_ICON | WS_DISABLED,0,
                     HIDC_ADD
-    PUSHBUTTON      "Remove ",IDC_REMOVE,238,22,14,14,BS_ICON | WS_DISABLED,
+    PUSHBUTTON      "Remove ",IDC_REMOVE,241,33,14,14,BS_ICON | WS_DISABLED,
                     0,HIDC_REMOVE
-    PUSHBUTTON      "Up",IDC_UP,238,40,14,14,BS_ICON | WS_DISABLED,0,HIDC_UP
-    PUSHBUTTON      "Dn",IDC_DOWN,238,58,14,14,BS_ICON | WS_DISABLED,0,
+    PUSHBUTTON      "Up",IDC_UP,241,51,14,14,BS_ICON | WS_DISABLED,0,HIDC_UP
+    PUSHBUTTON      "Dn",IDC_DOWN,241,69,14,14,BS_ICON | WS_DISABLED,0,
                     HIDC_DOWN
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,44,7,58,
+                    1
 END
 
 IDD_FIND_HEX DIALOGEX 0, 0, 304, 111
@@ -2122,28 +2122,32 @@ BEGIN
                     HIDC_SELECT_FONT
 END
 
-IDD_OPT_TIPS DIALOGEX 0, 0, 255, 127
+IDD_OPT_TIPS DIALOGEX 0, 0, 270, 140
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Info Tips"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    LTEXT           "Transparency:",IDC_STATIC,7,8,46,8
+    LTEXT           "Info Tips",IDC_STATIC,2,8,28,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,37,12,
+                    82,1
+    LTEXT           "Transparency:",IDC_STATIC,126,8,46,8
     CONTROL         "",IDC_SLIDER_TIP,"msctls_trackbar32",TBS_BOTH | 
-                    TBS_NOTICKS | WS_TABSTOP,54,5,83,15,WS_EX_TRANSPARENT,
+                    TBS_NOTICKS | WS_TABSTOP,173,5,83,15,WS_EX_TRANSPARENT,
                     HIDC_SLIDER_TIP
-    PUSHBUTTON      "New",IDC_NEW,186,4,14,14,BS_ICON | BS_CENTER | 
+    CONTROL         "Custom1",IDC_GRID_TIP,"MFCGridCtrl",WS_TABSTOP,2,30,249,
+                    104,0,HIDC_GRID_TIP
+    LTEXT           "Name",IDC_STATIC,21,21,20,8
+    LTEXT           "Expression",IDC_STATIC,87,21,35,8
+    LTEXT           "Format",IDC_STATIC,195,21,22,8
+    PUSHBUTTON      "New",IDC_NEW,253,30,14,14,BS_ICON | BS_CENTER | 
                     BS_VCENTER | WS_GROUP,0,HIDC_NEW
-    PUSHBUTTON      "Del",IDC_DEL,203,4,14,14,BS_ICON | BS_CENTER | 
+    PUSHBUTTON      "Del",IDC_DEL,253,49,14,14,BS_ICON | BS_CENTER | 
                     BS_VCENTER,0,HIDC_DEL
-    PUSHBUTTON      "Up",IDC_UP,220,4,14,14,BS_ICON | BS_CENTER | BS_VCENTER
-    PUSHBUTTON      "Down",IDC_DOWN,237,4,14,14,BS_ICON | BS_CENTER | 
+    PUSHBUTTON      "Up",IDC_UP,253,68,14,14,BS_ICON | BS_CENTER | 
                     BS_VCENTER
-    LTEXT           "Name",IDC_STATIC,22,21,20,8
-    LTEXT           "Expression",IDC_STATIC,88,21,35,8
-    LTEXT           "Format",IDC_STATIC,196,21,22,8
-    CONTROL         "Custom1",IDC_GRID_TIP,"MFCGridCtrl",WS_TABSTOP,3,30,249,
-                    96,0,HIDC_GRID_TIP
+    PUSHBUTTON      "Down",IDC_DOWN,253,87,14,14,BS_ICON | BS_CENTER | 
+                    BS_VCENTER
 END
 
 IDD_PROP_REAL DIALOGEX 0, 0, 223, 79
@@ -2195,6 +2199,47 @@ BEGIN
     LISTBOX         IDC_LICENCE,150,100,166,32,LBS_OWNERDRAWFIXED | 
                     LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_NODATA | 
                     WS_VSCROLL
+END
+
+IDD_OPT_WINEDIT DIALOGEX 0, 0, 260, 140
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Window Edit"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Editing Modes",IDC_STATIC,12,4,46,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,64,7,
+                    186,1
+    LTEXT           "Modifiability",IDC_STATIC,17,19,41,8
+    COMBOBOX        IDC_MODIFY,61,17,64,47,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP,0,HIDC_MODIFY
+    LTEXT           "Mode",IDC_INSERT_DESC,17,35,41,8
+    COMBOBOX        IDC_INSERT,61,33,64,43,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP,0,HIDC_INSERT
+    LTEXT           "Scrolling",IDC_STATIC,12,50,28,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,47,53,
+                    203,1
+    LTEXT           "Scroll &Zone:",IDC_VERTBUFFER_DESC,17,64,40,8
+    EDITTEXT        IDC_VERTBUFFER,61,62,36,12,ES_NUMBER,WS_EX_RIGHT,
+                    HIDC_VERTBUFFER
+    CONTROL         "Spin1",IDC_SPIN_VERTBUFFER,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,93,62,11,12
+    LTEXT           "Change Tracking",IDC_STATIC,12,81,56,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,75,85,
+                    175,1
+    CONTROL         "&Change tracking",IDC_CHANGE_TRACKING,"Button",
+                    BS_3STATE | WS_TABSTOP,17,95,67,10,0,
+                    HIDC_CHANGE_TRACKING
+    LTEXT           "Operations",IDC_STATIC,12,108,35,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,53,113,
+                    197,1
+    CONTROL         "&Big Endian",IDC_BIG_ENDIAN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,17,120,67,10
+    PUSHBUTTON      "&Reset to Default",IDC_DISP_RESET,154,16,82,13,
+                    BS_MULTILINE | WS_GROUP,0,HIDC_DISP_RESET
+    PUSHBUTTON      "&Save As Default...",IDC_SAVE_DEFAULT,155,33,82,13,
+                    BS_MULTILINE | WS_GROUP,0,HIDC_SAVE_DEFAULT
 END
 
 
@@ -2296,14 +2341,6 @@ BEGIN
 0x6c41, 0x6870, 0x0061, 
     IDC_CONTROL, 0x403, 6, 0
 0x2f43, 0x2b43, 0x002b, 
-    IDC_MODIFY, 0x403, 10, 0
-0x6552, 0x6461, 0x4f2d, 0x6c6e, 0x0079, 
-    IDC_MODIFY, 0x403, 11, 0
-0x6552, 0x6461, 0x572f, 0x6972, 0x6574, "\000" 
-    IDC_INSERT, 0x403, 9, 0
-0x764f, 0x7265, 0x7974, 0x6570, "\000" 
-    IDC_INSERT, 0x403, 12, 0
-0x6e49, 0x6573, 0x7472, 0x6d20, 0x646f, 0x0065, 
     0
 END
 
@@ -2351,6 +2388,66 @@ BEGIN
 0x2343, 0x4420, 0x6365, 0x6d69, 0x6c61, "\000" 
     0
 END
+
+IDD_OPT_WINEDIT DLGINIT
+BEGIN
+    IDC_MODIFY, 0x403, 10, 0
+0x6552, 0x6461, 0x4f2d, 0x6c6e, 0x0079, 
+    IDC_MODIFY, 0x403, 11, 0
+0x6552, 0x6461, 0x572f, 0x6972, 0x6574, "\000" 
+    IDC_INSERT, 0x403, 9, 0
+0x764f, 0x7265, 0x7974, 0x6570, "\000" 
+    IDC_INSERT, 0x403, 12, 0
+0x6e49, 0x6573, 0x7472, 0x6d20, 0x646f, 0x0065, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_OPT_MACRO, DIALOG
+    BEGIN
+        RIGHTMARGIN, 255
+        BOTTOMMARGIN, 127
+    END
+
+    IDD_OPT_FILTERS, DIALOG
+    BEGIN
+        RIGHTMARGIN, 255
+        BOTTOMMARGIN, 127
+    END
+
+    IDD_OPT_WINDISPLAY, DIALOG
+    BEGIN
+        RIGHTMARGIN, 246
+        BOTTOMMARGIN, 130
+    END
+
+    IDD_OPT_COLOURS, DIALOG
+    BEGIN
+        RIGHTMARGIN, 255
+        BOTTOMMARGIN, 127
+    END
+
+    IDD_OPT_TIPS, DIALOG
+    BEGIN
+        RIGHTMARGIN, 265
+        BOTTOMMARGIN, 127
+    END
+
+    IDD_OPT_WINEDIT, DIALOG
+    BEGIN
+        RIGHTMARGIN, 234
+        BOTTOMMARGIN, 122
+    END
+END
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3052,9 +3149,6 @@ IDB_HIDE_HOT            BITMAP                  "res\\hide_hot.bmp"
 IDB_SHOW                BITMAP                  "res\\show.bmp"
 IDB_HIDE                BITMAP                  "res\\hide.bmp"
 IDB_OPTIONSIMAGES       BITMAP                  "RES\\optionsimages.bmp"
-IDB_STDBAR              BITMAP                  "RES\\toolbar24.bmp"
-IDB_STDBAR_C            BITMAP                  "RES\\toolbar24_cold.bmp"
-IDB_STDBAR_D            BITMAP                  "RES\\toolbar24_disabled.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

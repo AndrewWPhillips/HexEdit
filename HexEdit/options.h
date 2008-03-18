@@ -514,9 +514,52 @@ public:
     CWindowPage(COptSheet *pParent, UINT IDI);
 
 // Dialog Data
-	//{{AFX_DATA(CWindowPage)
 	enum { IDD = IDD_OPT_WINDISPLAY };
-	//}}AFX_DATA
+
+    void fix_controls();        // Disable/enable controls depending on value/state of other controls
+    BOOL validated();           // Check if control state is valid
+
+	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
+
+// Overrides
+public:
+	virtual void OnOK();
+	virtual BOOL OnSetActive();
+	virtual BOOL OnKillActive();
+	virtual void OnCancel();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+	// Message map functions
+	virtual BOOL OnInitDialog();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnFont();
+	afx_msg void OnChange();
+	afx_msg void OnAutofit();
+	afx_msg void OnChangeCols();
+	afx_msg void OnSelchangeShowArea();
+	afx_msg void OnSelchangeCharset();
+	afx_msg void OnSelchangeControl();
+	DECLARE_MESSAGE_MAP()
+
+};
+/////////////////////////////////////////////////////////////////////////////
+// CWindowEditPage dialog
+
+class CWindowEditPage : public COptPage
+{
+	DECLARE_DYNCREATE(CWindowEditPage)
+
+// Construction
+public:
+	CWindowEditPage() { ASSERT(0); } // make sure this is not called
+    CWindowEditPage(COptSheet *pParent, UINT IDI);
+
+// Dialog Data
+	enum { IDD = IDD_OPT_WINEDIT };
 
     void fix_controls();        // Disable/enable controls depending on value/state of other controls
     BOOL validated();           // Check if control state is valid
@@ -525,40 +568,29 @@ public:
 
 
 // Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CWindowPage)
-	public:
+public:
 	virtual void OnOK();
 	virtual BOOL OnSetActive();
 	virtual BOOL OnKillActive();
 	virtual void OnCancel();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	// Generated message map functions
-	//{{AFX_MSG(CWindowPage)
+	// Message map functions
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnSaveDefault();
-	afx_msg void OnFont();
+	afx_msg void OnDispReset();
 	afx_msg void OnChange();
-	afx_msg void OnAutofit();
-	afx_msg void OnChangeCols();
-	afx_msg void OnSelchangeShowArea();
-	afx_msg void OnSelchangeCharset();
-	afx_msg void OnSelchangeControl();
 	afx_msg void OnSelchangeModify();
 	afx_msg void OnSelchangeInsert();
-	afx_msg void OnDispReset();
-	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnChangeTracking();
 	DECLARE_MESSAGE_MAP()
-
 };
+
 /////////////////////////////////////////////////////////////////////////////
 // CColourSchemes dialog
 

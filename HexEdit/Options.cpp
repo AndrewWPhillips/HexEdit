@@ -135,7 +135,7 @@ void COptSheet::init()
     val_.change_tracking_ = 0;
 
 	// Set up page navigation
-	SetLook(PropSheetLook_Tree, 200);
+	SetLook(PropSheetLook_Tree, 150);
 	SetIconsList (IDB_OPTIONSIMAGES, 16 /* Image width */);
 }
 
@@ -316,7 +316,7 @@ BOOL CGeneralPage::OnInitDialog()
 
 void CGeneralPage::OnOK() 
 {
-	theApp.set_general(pParent->val_);
+	theApp.set_options(pParent->val_);
     COptPage::OnOK();
 }
 
@@ -526,7 +526,7 @@ void CSysDisplayPage::OnChangeMditabs()
 
 void CSysDisplayPage::OnOK() 
 {
-	theApp.set_sysdisplay(pParent->val_);
+	theApp.set_options(pParent->val_);
     COptPage::OnOK();
 }
 
@@ -1933,7 +1933,7 @@ void CMacroPage::OnChange()
 
 void CMacroPage::OnOK() 
 {
-	theApp.set_macro(pParent->val_);
+	theApp.set_options(pParent->val_);
     COptPage::OnOK();
 }
 
@@ -2230,7 +2230,7 @@ BOOL CPrintPage::OnInitDialog()
 
 void CPrintPage::OnOK() 
 {
-	theApp.set_printer(pParent->val_);
+	theApp.set_options(pParent->val_);
     COptPage::OnOK();
 }
 
@@ -2743,9 +2743,6 @@ IMPLEMENT_DYNCREATE(CWindowPage, COptPage)
 CWindowPage::CWindowPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CWindowPage::IDD)
 {
     update_ok_ = false;
-
-	//{{AFX_DATA_INIT(CWindowPage)
-	//}}AFX_DATA_INIT
 }
 
 void CWindowPage::DoDataExchange(CDataExchange* pDX)
@@ -2779,20 +2776,10 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.addr_dec_ = pParent->val_.display_.dec_addr;
         pParent->val_.autofit_ = pParent->val_.display_.autofit;
 
-        pParent->val_.insert_ = !pParent->val_.display_.overtype;
-        pParent->val_.modify_ = !pParent->val_.display_.readonly;
-		pParent->val_.big_endian_ = pParent->val_.display_.big_endian;
-
         pParent->val_.borders_ = pParent->val_.display_.borders;
-        if (pParent->val_.display_.hide_replace && pParent->val_.display_.hide_insert && pParent->val_.display_.hide_delete)
-            pParent->val_.change_tracking_ = 0;
-        else if (!pParent->val_.display_.hide_replace && !pParent->val_.display_.hide_insert && !pParent->val_.display_.hide_delete)
-            pParent->val_.change_tracking_ = 1;
-        else
-            pParent->val_.change_tracking_ = 2;    // Some options on, some off
 
         // Display the name of the window in the group box
-        CWnd *pwnd = GetDlgItem(IDC_BOX);
+        CWnd *pwnd = GetDlgItem(IDC_BOX);  // xxx no IDC_BOX anymore
         if (pwnd != NULL)
         {
             CString ss;
@@ -2802,23 +2789,16 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
         }
     }
 
-	//{{AFX_DATA_MAP(CWindowPage)
-	//}}AFX_DATA_MAP
+	DDX_Check(pDX, IDC_MAX, pParent->val_.maximize_);
 	DDX_CBIndex(pDX, IDC_SHOW_AREA, pParent->val_.show_area_);
 	DDX_CBIndex(pDX, IDC_CHARSET, pParent->val_.charset_);
 	DDX_CBIndex(pDX, IDC_CONTROL, pParent->val_.control_);
-	DDX_Check(pDX, IDC_ADDR_DEC, pParent->val_.addr_dec_);
-	DDX_Check(pDX, IDC_AUTOFIT, pParent->val_.autofit_);
-	DDX_Check(pDX, IDC_MAX, pParent->val_.maximize_);
-	DDX_Check(pDX, IDC_BORDERS, pParent->val_.borders_);
 	DDX_Text(pDX, IDC_COLS, pParent->val_.cols_);
 	DDX_Text(pDX, IDC_OFFSET, pParent->val_.offset_);
 	DDX_Text(pDX, IDC_GROUPING, pParent->val_.grouping_);
-	DDX_Text(pDX, IDC_VERTBUFFER, pParent->val_.vertbuffer_);
-	DDX_CBIndex(pDX, IDC_INSERT, pParent->val_.insert_);
-	DDX_CBIndex(pDX, IDC_MODIFY, pParent->val_.modify_);
-	DDX_Check(pDX, IDC_BIG_ENDIAN, pParent->val_.big_endian_);
-	DDX_Check(pDX, IDC_CHANGE_TRACKING, pParent->val_.change_tracking_);
+	DDX_Check(pDX, IDC_AUTOFIT, pParent->val_.autofit_);
+	DDX_Check(pDX, IDC_ADDR_DEC, pParent->val_.addr_dec_);
+	DDX_Check(pDX, IDC_BORDERS, pParent->val_.borders_);
 
     if (pDX->m_bSaveAndValidate)
     {
@@ -2871,69 +2851,41 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 
         pParent->val_.display_.control = pParent->val_.control_;
 
-        pParent->val_.display_.dec_addr = pParent->val_.addr_dec_;
         pParent->val_.display_.autofit = pParent->val_.autofit_;
-
-        pParent->val_.display_.overtype = !pParent->val_.insert_;
-        pParent->val_.display_.readonly = !pParent->val_.modify_;
-		pParent->val_.display_.big_endian = pParent->val_.big_endian_;
-
-        pParent->val_.display_.borders = pParent->val_.borders_;
-        if (pParent->val_.change_tracking_ != 2)
-            pParent->val_.display_.hide_insert = 
-			pParent->val_.display_.hide_replace = 
-			pParent->val_.display_.hide_delete = 
-			    (pParent->val_.change_tracking_ == 0);
-
+        pParent->val_.display_.dec_addr = pParent->val_.addr_dec_;
     }
 }
 
 BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
-	//{{AFX_MSG_MAP(CWindowPage)
 	ON_WM_HELPINFO()
-	ON_BN_CLICKED(IDC_SAVE_DEFAULT, OnSaveDefault)
-	ON_BN_CLICKED(IDC_FONT, OnFont)
-	ON_BN_CLICKED(IDC_ADDR_DEC, OnChange)
-	ON_BN_CLICKED(IDC_AUTOFIT, OnAutofit)
-	ON_EN_CHANGE(IDC_COLS, OnChangeCols)
+    ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_MAX, OnChange)
 	ON_CBN_SELCHANGE(IDC_SHOW_AREA, OnSelchangeShowArea)
 	ON_CBN_SELCHANGE(IDC_CHARSET, OnSelchangeCharset)
 	ON_CBN_SELCHANGE(IDC_CONTROL, OnSelchangeControl)
-	ON_CBN_SELCHANGE(IDC_MODIFY, OnSelchangeModify)
-	ON_CBN_SELCHANGE(IDC_INSERT, OnSelchangeInsert)
-	ON_BN_CLICKED(IDC_DISP_RESET, OnDispReset)
-	ON_BN_CLICKED(IDC_MAX, OnChange)
+	ON_BN_CLICKED(IDC_FONT, OnFont)
+	ON_EN_CHANGE(IDC_COLS, OnChangeCols)
 	ON_EN_CHANGE(IDC_GROUPING, OnChange)
 	ON_EN_CHANGE(IDC_OFFSET, OnChange)
-	//}}AFX_MSG_MAP
-    ON_WM_CONTEXTMENU()
-	ON_EN_CHANGE(IDC_VERTBUFFER, OnChange)
-	ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChange)
+	ON_BN_CLICKED(IDC_AUTOFIT, OnAutofit)
+	ON_BN_CLICKED(IDC_ADDR_DEC, OnChange)
 	ON_BN_CLICKED(IDC_BORDERS, OnChange)
-	ON_BN_CLICKED(IDC_CHANGE_TRACKING, OnChangeTracking)
 END_MESSAGE_MAP()
 
 void CWindowPage::fix_controls()
 {
     // Check that all the control we need are available
+    ASSERT(GetDlgItem(IDC_CHARSET) != NULL);
+    ASSERT(GetDlgItem(IDC_CHARSET_DESC) != NULL);
+    ASSERT(GetDlgItem(IDC_CONTROL) != NULL);
+    ASSERT(GetDlgItem(IDC_CONTROL_DESC) != NULL);
     ASSERT(GetDlgItem(IDC_COLS_DESC) != NULL);
     ASSERT(GetDlgItem(IDC_COLS) != NULL);
     ASSERT(GetDlgItem(IDC_SPIN_COLS) != NULL);
     ASSERT(GetDlgItem(IDC_GROUPING_DESC) != NULL);
     ASSERT(GetDlgItem(IDC_GROUPING) != NULL);
     ASSERT(GetDlgItem(IDC_SPIN_GROUPING) != NULL);
-    ASSERT(GetDlgItem(IDC_CHARSET) != NULL);
-    ASSERT(GetDlgItem(IDC_CHARSET_DESC) != NULL);
-    ASSERT(GetDlgItem(IDC_CONTROL) != NULL);
-    ASSERT(GetDlgItem(IDC_CONTROL_DESC) != NULL);
-    ASSERT(GetDlgItem(IDC_INSERT) != NULL);
-    ASSERT(GetDlgItem(IDC_INSERT_DESC) != NULL);
     ASSERT(GetDlgItem(IDC_SPIN_OFFSET) != NULL);
-
-    // If autofit is on disable setting of no of columns
-    GetDlgItem(IDC_COLS_DESC)->EnableWindow(!pParent->val_.autofit_);
-    GetDlgItem(IDC_COLS)->EnableWindow(!pParent->val_.autofit_);
-    GetDlgItem(IDC_SPIN_COLS)->EnableWindow(!pParent->val_.autofit_);
 
     // If no char area disable charset and control char selection
     GetDlgItem(IDC_CHARSET)->EnableWindow(pParent->val_.show_area_ != 0);
@@ -2946,9 +2898,10 @@ void CWindowPage::fix_controls()
     GetDlgItem(IDC_GROUPING)->EnableWindow(pParent->val_.show_area_ != 1);
     GetDlgItem(IDC_SPIN_GROUPING)->EnableWindow(pParent->val_.show_area_ != 1);
 
-    // If readonly disable setting of mode (OVR/INS)
-    GetDlgItem(IDC_INSERT)->EnableWindow(pParent->val_.modify_ == 1);
-    GetDlgItem(IDC_INSERT_DESC)->EnableWindow(pParent->val_.modify_ == 1);
+    // If autofit is on disable setting of no of columns
+    GetDlgItem(IDC_COLS_DESC)->EnableWindow(!pParent->val_.autofit_);
+    GetDlgItem(IDC_COLS)->EnableWindow(!pParent->val_.autofit_);
+    GetDlgItem(IDC_SPIN_COLS)->EnableWindow(!pParent->val_.autofit_);
 
     // Set offset spin range to be 0 to cols-1
     ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_OFFSET))->SetRange(0, pParent->val_.cols_-1);
@@ -3002,10 +2955,6 @@ BOOL CWindowPage::OnInitDialog()
     ASSERT(pspin != NULL);
     pspin->SetRange(2, CHexEditView::max_buf);
 
-    pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_VERTBUFFER);
-    ASSERT(pspin != NULL);
-    pspin->SetRange(0, 999);
-
     fix_controls();
 
 	return TRUE;
@@ -3013,22 +2962,18 @@ BOOL CWindowPage::OnInitDialog()
 
 void CWindowPage::OnOK() 
 {
-    CHexEditView *pview = GetView();
-	if (pview != NULL)
-		theApp.set_windisplay(pParent->val_, pview);
+	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
 }
 
-static DWORD id_pairs5[] = { 
-    IDC_FONT, HIDC_FONT,
+static DWORD id_pairs_windisplay[] = { 
+    IDC_MAX, HIDC_MAX,
     IDC_SHOW_AREA, HIDC_SHOW_AREA,
     IDC_CHARSET, HIDC_CHARSET,
     IDC_CHARSET_DESC, HIDC_CHARSET,
     IDC_CONTROL, HIDC_CONTROL,
     IDC_CONTROL_DESC, HIDC_CONTROL,
-    IDC_MAX, HIDC_MAX,
-    IDC_ADDR_DEC, HIDC_ADDR_DEC,
-    IDC_AUTOFIT, HIDC_AUTOFIT,
+    IDC_FONT, HIDC_FONT,
     IDC_COLS, HIDC_COLS,
     IDC_COLS_DESC, HIDC_COLS,
     IDC_SPIN_COLS, HIDC_COLS,
@@ -3037,29 +2982,21 @@ static DWORD id_pairs5[] = {
     IDC_GROUPING, HIDC_GROUPING,
     IDC_GROUPING_DESC, HIDC_GROUPING,
     IDC_SPIN_GROUPING, HIDC_GROUPING,
-    IDC_VERTBUFFER, HIDC_VERTBUFFER,
-    IDC_VERTBUFFER_DESC, HIDC_VERTBUFFER,
-    IDC_SPIN_VERTBUFFER, HIDC_VERTBUFFER,
-    IDC_DISP_RESET, HIDC_DISP_RESET,
-    IDC_MODIFY, HIDC_MODIFY,
-    IDC_INSERT, HIDC_INSERT,
-    IDC_INSERT_DESC, HIDC_INSERT,
-    IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-    IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
+    IDC_AUTOFIT, HIDC_AUTOFIT,
+    IDC_ADDR_DEC, HIDC_ADDR_DEC,
     IDC_BORDERS, HIDC_BORDERS,
-    IDC_CHANGE_TRACKING, HIDC_CHANGE_TRACKING,
     0,0 
 }; 
 
 BOOL CWindowPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs5);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_windisplay);
     return TRUE;
 }
 
 void CWindowPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs5);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_windisplay);
 }
 
 BOOL CWindowPage::OnSetActive() 
@@ -3092,52 +3029,34 @@ void CWindowPage::OnCancel()
 	COptPage::OnCancel();
 }
 
-void CWindowPage::OnSaveDefault() 
+void CWindowPage::OnChange() 
 {
-    UpdateData();
-    if (!validated())
-        return;
-
-    if (AfxMessageBox("The default settings are used when you open a file which you\n"
-                      "haven't opened in HexEdit before, or when you create a new file.\n\n"
-                      "Are you sure you want to use these settings as the default?", MB_OKCANCEL) != IDOK)
-        return;
-
-    theApp.open_disp_state_ = pParent->val_.disp_state_;
-    theApp.open_max_ = pParent->val_.maximize_;
-    theApp.open_rowsize_ = pParent->val_.cols_;
-    theApp.open_group_by_ = pParent->val_.grouping_;
-    theApp.open_offset_ = pParent->val_.offset_;
-	theApp.open_vertbuffer_ = pParent->val_.vertbuffer_;
-
-    if (theApp.open_plf_ == NULL)
-        theApp.open_plf_ = new LOGFONT;
-    *theApp.open_plf_ = pParent->val_.lf_;
-    if (theApp.open_oem_plf_ == NULL)
-        theApp.open_oem_plf_ = new LOGFONT;
-    *theApp.open_oem_plf_ = pParent->val_.oem_lf_;
-
-    theApp.GetFileList()->SetDefaults();
+    SetModified(TRUE);
 }
 
-void CWindowPage::OnDispReset() 
+void CWindowPage::OnSelchangeShowArea() 
 {
-    // Reset to default display values
-    ASSERT(theApp.open_disp_state_ != -1);
-    pParent->val_.disp_state_ = theApp.open_disp_state_;
-    pParent->val_.maximize_ = theApp.open_max_;
-    pParent->val_.cols_ = theApp.open_rowsize_;
-    pParent->val_.grouping_ = theApp.open_group_by_;
-    pParent->val_.offset_ = theApp.open_offset_;
-	pParent->val_.vertbuffer_ = theApp.open_vertbuffer_;
-
-    if (theApp.open_plf_ != NULL)
-        pParent->val_.lf_ = *theApp.open_plf_;
-    if (theApp.open_oem_plf_ != NULL)
-        pParent->val_.oem_lf_ = *theApp.open_oem_plf_;
+    UpdateData();
+    if (pParent->val_.show_area_ == 3 && pParent->val_.vertbuffer_ < 2)
+    {
+        pParent->val_.vertbuffer_ = 2;
+        UpdateData(FALSE);
+    }
+	fix_controls();
 	
-    UpdateData(FALSE);
-    fix_controls();
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnSelchangeCharset() 
+{
+    UpdateData();
+	fix_controls();
+
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnSelchangeControl() 
+{
     SetModified(TRUE);
 }
 
@@ -3169,31 +3088,6 @@ void CWindowPage::OnFont()
     }
 }
 
-void CWindowPage::OnChange() 
-{
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnAutofit() 
-{
-    UpdateData();
-    fix_controls();
-	
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnChangeTracking() 
-{
-	UpdateData();
-    // This will cause change_tracking_ to be set to 0 or 1 in DoDataExchange
-    pParent->val_.display_.hide_replace = 
-	pParent->val_.display_.hide_insert = 
-	pParent->val_.display_.hide_delete = pParent->val_.change_tracking_;
-    UpdateData(FALSE);
-
-    SetModified(TRUE);
-}
-
 void CWindowPage::OnChangeCols() 
 {
     if (!update_ok_)
@@ -3214,43 +3108,254 @@ void CWindowPage::OnChangeCols()
     update_ok_ = true;
 }
 
-void CWindowPage::OnSelchangeShowArea() 
+void CWindowPage::OnAutofit() 
 {
     UpdateData();
-    if (pParent->val_.show_area_ == 3 && pParent->val_.vertbuffer_ < 2)
+    fix_controls();
+	
+    SetModified(TRUE);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CWindowEditPage property page
+
+IMPLEMENT_DYNCREATE(CWindowEditPage, COptPage)
+
+CWindowEditPage::CWindowEditPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CWindowEditPage::IDD)
+{
+    update_ok_ = false;
+}
+
+void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+    if (!pDX->m_bSaveAndValidate)
     {
-        pParent->val_.vertbuffer_ = 2;
-        UpdateData(FALSE);
+        // Move info into member variables (before move to controls)
+        pParent->val_.modify_ = !pParent->val_.display_.readonly;
+        pParent->val_.insert_ = !pParent->val_.display_.overtype;
+		pParent->val_.big_endian_ = pParent->val_.display_.big_endian;
+
+        if (pParent->val_.display_.hide_replace && pParent->val_.display_.hide_insert && pParent->val_.display_.hide_delete)
+            pParent->val_.change_tracking_ = 0;
+        else if (!pParent->val_.display_.hide_replace && !pParent->val_.display_.hide_insert && !pParent->val_.display_.hide_delete)
+            pParent->val_.change_tracking_ = 1;
+        else
+            pParent->val_.change_tracking_ = 2;    // Some options on, some off
+
+        // Display the name of the window in the group box
+        CWnd *pwnd = GetDlgItem(IDC_BOX);   // xxx no IDC_BOX yet/anymore
+        if (pwnd != NULL)
+        {
+            CString ss;
+
+            ss.Format("Edit Options for %s", pParent->val_.window_name_);
+            pwnd->SetWindowText(ss);
+        }
     }
+
+	DDX_CBIndex(pDX, IDC_MODIFY, pParent->val_.modify_);
+	DDX_CBIndex(pDX, IDC_INSERT, pParent->val_.insert_);
+	DDX_Check(pDX, IDC_BIG_ENDIAN, pParent->val_.big_endian_);
+	DDX_Check(pDX, IDC_CHANGE_TRACKING, pParent->val_.change_tracking_);
+	DDX_Text(pDX, IDC_VERTBUFFER, pParent->val_.vertbuffer_);
+
+    if (pDX->m_bSaveAndValidate)
+    {
+        pParent->val_.display_.overtype = !pParent->val_.insert_;
+        pParent->val_.display_.readonly = !pParent->val_.modify_;
+		pParent->val_.display_.big_endian = pParent->val_.big_endian_;
+
+        if (pParent->val_.change_tracking_ != 2)
+            pParent->val_.display_.hide_insert = 
+			pParent->val_.display_.hide_replace = 
+			pParent->val_.display_.hide_delete = 
+			    (pParent->val_.change_tracking_ == 0);
+
+    }
+}
+
+BEGIN_MESSAGE_MAP(CWindowEditPage, COptPage)
+	ON_WM_HELPINFO()
+    ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_SAVE_DEFAULT, OnSaveDefault)
+	ON_BN_CLICKED(IDC_DISP_RESET, OnDispReset)
+	ON_CBN_SELCHANGE(IDC_MODIFY, OnSelchangeModify)
+	ON_CBN_SELCHANGE(IDC_INSERT, OnSelchangeInsert)
+	ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChange)
+	ON_BN_CLICKED(IDC_CHANGE_TRACKING, OnChangeTracking)
+	ON_EN_CHANGE(IDC_VERTBUFFER, OnChange)
+END_MESSAGE_MAP()
+
+void CWindowEditPage::fix_controls()
+{
+    // Check that all the control we need are available
+    ASSERT(GetDlgItem(IDC_INSERT) != NULL);
+    ASSERT(GetDlgItem(IDC_INSERT_DESC) != NULL);
+
+    // If readonly disable setting of mode (OVR/INS)
+    GetDlgItem(IDC_INSERT)->EnableWindow(pParent->val_.modify_ == 1);
+    GetDlgItem(IDC_INSERT_DESC)->EnableWindow(pParent->val_.modify_ == 1);
+}
+
+BOOL CWindowEditPage::validated()
+{
+    return TRUE;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CWindowEditPage message handlers
+
+BOOL CWindowEditPage::OnInitDialog() 
+{
+	COptPage::OnInitDialog();
+
+    CSpinButtonCtrl * pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_VERTBUFFER);
+    ASSERT(pspin != NULL);
+    pspin->SetRange(0, 999);
+
+    fix_controls();
+
+	return TRUE;
+}
+
+void CWindowEditPage::OnOK() 
+{
+	theApp.set_options(pParent->val_);
+	COptPage::OnOK();
+}
+
+static DWORD id_pairs_winedit[] = { 
+    IDC_DISP_RESET, HIDC_DISP_RESET,
+    IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
+    IDC_MODIFY, HIDC_MODIFY,
+    IDC_INSERT, HIDC_INSERT,
+    IDC_INSERT_DESC, HIDC_INSERT,
+    IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
+    IDC_CHANGE_TRACKING, HIDC_CHANGE_TRACKING,
+    IDC_VERTBUFFER, HIDC_VERTBUFFER,
+    IDC_VERTBUFFER_DESC, HIDC_VERTBUFFER,
+    IDC_SPIN_VERTBUFFER, HIDC_VERTBUFFER,
+    0,0 
+};
+BOOL CWindowEditPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_winedit);
+    return TRUE;
+}
+
+void CWindowEditPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_winedit);
+}
+
+BOOL CWindowEditPage::OnSetActive() 
+{
+    BOOL retval = COptPage::OnSetActive();
+    update_ok_ = true;          // Its now OK to allow changes to cols field to be processed
+    return retval;
+}
+
+BOOL CWindowEditPage::OnKillActive() 
+{
+    BOOL retval = COptPage::OnKillActive();
+
+    if (retval)
+    {
+        if (!validated())
+            return FALSE;
+
+        // All validation is OK so we will be deactivated
+        update_ok_ = false;
+    }
+
+    return retval;
+}
+
+void CWindowEditPage::OnCancel() 
+{
+    update_ok_ = false;
+	
+	COptPage::OnCancel();
+}
+
+void CWindowEditPage::OnSaveDefault() 
+{
+    UpdateData();
+    if (!validated())
+        return;
+
+    if (AfxMessageBox("The default settings are used when you open a file which you\n"
+                      "haven't opened in HexEdit before, or when you create a new file.\n\n"
+                      "Are you sure you want to use these settings as the default?", MB_OKCANCEL) != IDOK)
+        return;
+
+    theApp.open_disp_state_ = pParent->val_.disp_state_;
+    theApp.open_max_ = pParent->val_.maximize_;
+    theApp.open_rowsize_ = pParent->val_.cols_;
+    theApp.open_group_by_ = pParent->val_.grouping_;
+    theApp.open_offset_ = pParent->val_.offset_;
+	theApp.open_vertbuffer_ = pParent->val_.vertbuffer_;
+
+    if (theApp.open_plf_ == NULL)
+        theApp.open_plf_ = new LOGFONT;
+    *theApp.open_plf_ = pParent->val_.lf_;
+    if (theApp.open_oem_plf_ == NULL)
+        theApp.open_oem_plf_ = new LOGFONT;
+    *theApp.open_oem_plf_ = pParent->val_.oem_lf_;
+
+    theApp.GetFileList()->SetDefaults();
+}
+
+void CWindowEditPage::OnDispReset() 
+{
+    // Reset to default display values
+    ASSERT(theApp.open_disp_state_ != -1);
+    pParent->val_.disp_state_ = theApp.open_disp_state_;
+    pParent->val_.maximize_ = theApp.open_max_;
+    pParent->val_.cols_ = theApp.open_rowsize_;
+    pParent->val_.grouping_ = theApp.open_group_by_;
+    pParent->val_.offset_ = theApp.open_offset_;
+	pParent->val_.vertbuffer_ = theApp.open_vertbuffer_;
+
+    if (theApp.open_plf_ != NULL)
+        pParent->val_.lf_ = *theApp.open_plf_;
+    if (theApp.open_oem_plf_ != NULL)
+        pParent->val_.oem_lf_ = *theApp.open_oem_plf_;
+	
+    UpdateData(FALSE);
+    fix_controls();     // xxx what about windisplay??
+    SetModified(TRUE);
+}
+
+void CWindowEditPage::OnChange() 
+{
+    SetModified(TRUE);
+}
+
+void CWindowEditPage::OnSelchangeModify() 
+{
+    UpdateData();
 	fix_controls();
 	
     SetModified(TRUE);
 }
 
-void CWindowPage::OnSelchangeCharset() 
-{
-    UpdateData();
-	fix_controls();
-
-    SetModified(TRUE);
-}
-
-void CWindowPage::OnSelchangeControl() 
+void CWindowEditPage::OnSelchangeInsert() 
 {
     SetModified(TRUE);
 }
 
-void CWindowPage::OnSelchangeModify() 
+void CWindowEditPage::OnChangeTracking() 
 {
-    UpdateData();
-	fix_controls();
-	
+	UpdateData();
+    // This will cause change_tracking_ to be set to 0 or 1 in DoDataExchange
+    pParent->val_.display_.hide_replace = 
+	pParent->val_.display_.hide_insert = 
+	pParent->val_.display_.hide_delete = pParent->val_.change_tracking_;
+    UpdateData(FALSE);
+
     SetModified(TRUE);
 }
-
-void CWindowPage::OnSelchangeInsert() 
-{
-    SetModified(TRUE);
-}
-
-

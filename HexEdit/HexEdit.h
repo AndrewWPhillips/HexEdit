@@ -166,6 +166,7 @@ struct display_bits
 #include "HexEditMacro.h"
 #include "Scheme.h"         // For colour schemes
 #include "NavManager.h"     // For CNavManager that handles nav points
+#include "timer.h"
 
 enum { COLOUR_OPTIONS_PAGE, MACRO_OPTIONS_PAGE, PRINTER_OPTIONS_PAGE, FILTER_OPTIONS_PAGE, WIN_OPTIONS_PAGE };
 
@@ -252,18 +253,20 @@ public:
 //    void SetColours(const char *, const char *, const char *, const char *, const partn &v);
 	// Get global options and pu them into the property sheet
     void get_options(struct OptValues &val);
-    void get_win_options(struct OptValues &val, CHexEditView *pview);  // Get active window options
 
 	// Set global options from values in options dialog
 	// Note: Info tips, Colours and Filters pages are handled differently
 	// They handle their own update in the OnOK members.
-    void set_general(struct OptValues &val);         // System options page
-    void set_sysdisplay(struct OptValues &val);      // Global Display page
-    void set_printer(struct OptValues &val);         // printer page
-    void set_macro(struct OptValues &val);           // macro page
+    void set_options(struct OptValues &val);
+//    void set_general(struct OptValues &val);         // System options page
+//    void set_sysdisplay(struct OptValues &val);      // Global Display page
+//    void set_printer(struct OptValues &val);         // printer page
+//    void set_macro(struct OptValues &val);           // macro page
+    timer set_options_timer;    // See description of the use of this in set_options()
 
 	// Set active window options
-    void set_windisplay(struct OptValues &val, CHexEditView *pview);  // display page
+//    void set_windisplay(struct OptValues &val, CHexEditView *pview);  // window display page
+//    void set_winedit(struct OptValues &val, CHexEditView *pview);     // window edit page
 
     CMultiDocTemplate* m_pDocTemplate;
 

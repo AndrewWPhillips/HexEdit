@@ -286,6 +286,7 @@
 #define IDB_BACK_HOT                    310
 #define ID_INTEGER_INT                  310
 #define IDD_ABOUT1                      310
+#define IDD_OPT_WINEDIT                 310
 #define IDB_FORW_HOT                    311
 #define ID_INTEGER_INT311               311
 #define IDB_PARENT_HOT                  312
