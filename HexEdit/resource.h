@@ -289,6 +289,7 @@
 #define IDD_OPT_WINEDIT                 310
 #define IDB_FORW_HOT                    311
 #define ID_INTEGER_INT311               311
+#define IDD_OPT_WINGENERAL              311
 #define IDB_PARENT_HOT                  312
 #define ID_INTEGER_ATOI                 312
 #define IDB_VIEW1                       313
@@ -635,10 +636,14 @@
 #define IDC_TO                          1139
 #define IDC_CHANGE_TRACKING             1140
 #define IDC_BORDERS                     1141
+#define IDC_CT_INSERTIONS               1141
 #define IDC_SYSTYPE                     1142
+#define IDC_CT_MODIFICATIONS            1142
 #define IDC_TEXT                        1143
+#define IDC_CT_DELETIONS                1143
 #define IDC_DEL                         1144
 #define IDC_VERSION                     1144
+#define IDC_CT_DELCOUNT                 1144
 #define IDC_UP                          1145
 #define IDC_OPEN_FONT                   1145
 #define IDC_DFFD_DOWN                   1146

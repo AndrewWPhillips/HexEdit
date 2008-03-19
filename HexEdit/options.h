@@ -139,7 +139,8 @@ struct OptValues
 	int		modify_;
 	int		insert_;
 	BOOL    big_endian_;
-    int     change_tracking_;
+    //int     change_tracking_;
+    BOOL    ct_modifications_, ct_insertions_, ct_deletions_, ct_delcount_; // change tracking options
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -191,9 +192,16 @@ class COptPage : public CBCGPropertyPage
 {
 	DECLARE_DYNAMIC(COptPage)
 public:
-    explicit COptPage(COptSheet *pParent = NULL, UINT nIDI = 0, UINT nIDD = 0, UINT nIDCaption = 0);
+    explicit COptPage(UINT nIDD = 0, UINT nIDCaption = 0) : CBCGPropertyPage(nIDD, nIDCaption), pParent(NULL) { }
     virtual LRESULT OnIdle(long) { return FALSE; }
     COptSheet *pParent;
+protected:
+	virtual BOOL OnInitDialog()
+    {
+        pParent = (COptSheet *)GetParent();
+	    ASSERT(pParent != NULL && pParent->IsKindOf(RUNTIME_CLASS(COptSheet)));
+        return CBCGPropertyPage::OnInitDialog();
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -205,8 +213,7 @@ class CGeneralPage : public COptPage
 
 // Construction
 public:
-    CGeneralPage() { ASSERT(0); } // make sure this is not called
-    CGeneralPage(COptSheet *pParent, UINT IDI);
+    CGeneralPage() : COptPage(IDD) { }
 
 // Dialog Data
 	//{{AFX_DATA(CGeneralPage)
@@ -256,8 +263,7 @@ class CMacroPage : public COptPage
 
 // Construction
 public:
-	CMacroPage() { ASSERT(0); } // make sure this is not called
-    CMacroPage(COptSheet *pParent, UINT IDI);
+    CMacroPage() : COptPage(CMacroPage::IDD) { }
 
 // Dialog Data
 	//{{AFX_DATA(CMacroPage)
@@ -303,8 +309,7 @@ class CSysDisplayPage : public COptPage
 
 // Construction
 public:
-	CSysDisplayPage() { ASSERT(0); } // make sure this is not called
-    CSysDisplayPage(COptSheet *pParent, UINT IDI);
+	CSysDisplayPage() : COptPage(IDD) { }
 
 // Dialog Data
 	//{{AFX_DATA(CSysDisplayPage)
@@ -343,8 +348,7 @@ class CPrintPage : public COptPage
 
 // Construction
 public:
-	CPrintPage() { ASSERT(0); } // make sure this is not called
-    CPrintPage(COptSheet *pParent, UINT IDI);
+	CPrintPage() : COptPage(IDD) { }
 
 // Dialog Data
 	//{{AFX_DATA(CPrintPage)
@@ -392,8 +396,7 @@ class CFiltersPage : public COptPage
 
 // Construction
 public:
-	CFiltersPage() { ASSERT(0); } // make sure this is not called
-    CFiltersPage(COptSheet *pParent, UINT IDI);
+	CFiltersPage() : COptPage(IDD) { }
 
 // Dialog Data
 	//{{AFX_DATA(CFiltersPage)
@@ -454,8 +457,7 @@ class CTipsPage : public COptPage
 
 // Construction
 public:
-	CTipsPage() { ASSERT(0); } // make sure this is not called
-    CTipsPage(COptSheet *pParent, UINT IDI);
+	CTipsPage() : COptPage(IDD) { }
 
 // Dialog Data
 	enum { IDD = IDD_OPT_TIPS };
@@ -501,17 +503,47 @@ protected:
     afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 };
+
+/////////////////////////////////////////////////////////////////////////////
+// CWindowGeneralPage dialog
+
+class CWindowGeneralPage : public COptPage
+{
+	DECLARE_DYNCREATE(CWindowGeneralPage)
+
+// Construction
+public:
+	CWindowGeneralPage() : COptPage(IDD) { }
+
+// Dialog Data
+	enum { IDD = IDD_OPT_WINGENERAL };
+
+// Overrides
+public:
+	virtual void OnOK();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+	// Message map functions
+	virtual BOOL OnInitDialog();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnSaveDefault();
+	afx_msg void OnDispReset();
+	DECLARE_MESSAGE_MAP()
+};
+
 /////////////////////////////////////////////////////////////////////////////
 // CWindowPage dialog
-
 class CWindowPage : public COptPage
 {
 	DECLARE_DYNCREATE(CWindowPage)
 
 // Construction
 public:
-	CWindowPage() { ASSERT(0); } // make sure this is not called
-    CWindowPage(COptSheet *pParent, UINT IDI);
+	CWindowPage();
 
 // Dialog Data
 	enum { IDD = IDD_OPT_WINDISPLAY };
@@ -520,6 +552,8 @@ public:
     BOOL validated();           // Check if control state is valid
 
 	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
+
+    LRESULT OnIdle(long);
 
 // Overrides
 public:
@@ -538,7 +572,7 @@ protected:
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnFont();
 	afx_msg void OnChange();
-	afx_msg void OnAutofit();
+	afx_msg void OnChangeUpdate();
 	afx_msg void OnChangeCols();
 	afx_msg void OnSelchangeShowArea();
 	afx_msg void OnSelchangeCharset();
@@ -546,17 +580,16 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 };
+
 /////////////////////////////////////////////////////////////////////////////
 // CWindowEditPage dialog
-
 class CWindowEditPage : public COptPage
 {
 	DECLARE_DYNCREATE(CWindowEditPage)
 
 // Construction
 public:
-	CWindowEditPage() { ASSERT(0); } // make sure this is not called
-    CWindowEditPage(COptSheet *pParent, UINT IDI);
+	CWindowEditPage();
 
 // Dialog Data
 	enum { IDD = IDD_OPT_WINEDIT };
@@ -566,6 +599,7 @@ public:
 
 	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
 
+    LRESULT OnIdle(long);
 
 // Overrides
 public:
@@ -582,9 +616,8 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg void OnSaveDefault();
-	afx_msg void OnDispReset();
 	afx_msg void OnChange();
+	afx_msg void OnChangeUpdate();
 	afx_msg void OnSelchangeModify();
 	afx_msg void OnSelchangeInsert();
 	afx_msg void OnChangeTracking();
@@ -600,6 +633,8 @@ class CColourSchemes : public COptPage
 
 // Construction
 public:
+	CColourSchemes();
+
     // These enums give the order of the fixed colours in the list box
     enum
     {
@@ -613,9 +648,6 @@ public:
         INDEX_HEX_ADDR, INDEX_DEC_ADDR,                   // text colours
         INDEX_LAST                                        // count of colours (keep at end)
     };
-
-	CColourSchemes() { ASSERT(0); } // make sure this is not called
-    CColourSchemes(COptSheet *pParent, UINT IDI);
 
     HICON icon_new_, icon_del_, icon_up_, icon_down_;
     std::vector<CScheme> scheme_;

@@ -132,7 +132,8 @@ void COptSheet::init()
 	val_.insert_ = -1;
 	val_.modify_ = -1;
 	val_.big_endian_ = FALSE;
-    val_.change_tracking_ = 0;
+    //val_.change_tracking_ = 0;
+    val_.ct_modifications_ = val_.ct_insertions_ = val_.ct_deletions_ = val_.ct_delcount_ = false;
 
 	// Set up page navigation
 	SetLook(PropSheetLook_Tree, 150);
@@ -193,34 +194,11 @@ LRESULT COptSheet::OnKickIdle(WPARAM, LPARAM lCount)
 
 IMPLEMENT_DYNAMIC(COptPage, CBCGPropertyPage)
 
-COptPage::COptPage(COptSheet *pp, UINT nIDI, UINT nIDD, UINT nIDCaption /* = 0 */) : CBCGPropertyPage(nIDD, nIDCaption)
-{
-    // Store ptr to containing sheet for later use
-	ASSERT(pp != NULL && pp->IsKindOf(RUNTIME_CLASS(COptSheet)));
-    pParent = pp;
-
-	if (nIDI != 0)
-	{
-		// Load this page's icon
-		HICON hh = theApp.LoadIcon(nIDI);
-		m_psp.hIcon = hh;
-		m_psp.dwFlags &= ~PSP_USEICONID;
-		m_psp.dwFlags |= PSP_USEHICON;
-	}
-	m_psp.dwFlags |= PSP_HASHELP;
-}
-
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CGeneralPage property page
 
 IMPLEMENT_DYNCREATE(CGeneralPage, COptPage)
-
-CGeneralPage::CGeneralPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CGeneralPage::IDD)
-{
-    //{{AFX_DATA_INIT(CGeneralPage)
-	//}}AFX_DATA_INIT
-}
 
 void CGeneralPage::DoDataExchange(CDataExchange* pDX)
 {
@@ -432,12 +410,6 @@ void CGeneralPage::OnBackupIfSize()
 
 IMPLEMENT_DYNCREATE(CSysDisplayPage, COptPage)
 
-CSysDisplayPage::CSysDisplayPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CSysDisplayPage::IDD)
-{
-	//{{AFX_DATA_INIT(CSysDisplayPage)
-	//}}AFX_DATA_INIT
-}
-
 void CSysDisplayPage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
@@ -577,10 +549,6 @@ void CSysDisplayPage::OnContextMenu(CWnd* pWnd, CPoint point)
 // CTipsPage property page
 
 IMPLEMENT_DYNCREATE(CTipsPage, COptPage)
-
-CTipsPage::CTipsPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CTipsPage::IDD)
-{
-}
 
 void CTipsPage::DoDataExchange(CDataExchange* pDX)
 {
@@ -1102,9 +1070,11 @@ void CTipsPage::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 /////////////////////////////////////////////////////////////////////////////
 // CColourSchemes property page
 
+// xxx add static text at top of right side to indicate which scheme is being modified
+
 IMPLEMENT_DYNCREATE(CColourSchemes, COptPage)
 
-CColourSchemes::CColourSchemes(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CColourSchemes::IDD, theApp.is_us_ ? IDS_COLORS : 0)
+CColourSchemes::CColourSchemes() : COptPage(CColourSchemes::IDD, theApp.is_us_ ? IDS_COLORS : 0)
 {
 	//{{AFX_DATA_INIT(CColourSchemes)
 	scheme_no_ = -1;
@@ -1838,12 +1808,6 @@ void CColourSchemes::OnChangeRange()
 
 IMPLEMENT_DYNCREATE(CMacroPage, COptPage)
 
-CMacroPage::CMacroPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CMacroPage::IDD)
-{
-        //{{AFX_DATA_INIT(CMacroPage)
-        //}}AFX_DATA_INIT
-}
-
 void CMacroPage::DoDataExchange(CDataExchange* pDX)
 {
         COptPage::DoDataExchange(pDX);
@@ -2157,12 +2121,6 @@ void CMacroPage::OnMacrodir()
 
 IMPLEMENT_DYNCREATE(CPrintPage, COptPage)
 
-CPrintPage::CPrintPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CPrintPage::IDD)
-{
-	//{{AFX_DATA_INIT(CPrintPage)
-	//}}AFX_DATA_INIT
-}
-
 void CPrintPage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
@@ -2337,13 +2295,6 @@ void CPrintPage::OnContextMenu(CWnd* pWnd, CPoint point)
 // CFiltersPage property page
 
 IMPLEMENT_DYNCREATE(CFiltersPage, COptPage)
-
-CFiltersPage::CFiltersPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CFiltersPage::IDD)
-{
-	//{{AFX_DATA_INIT(CFiltersPage)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
-}
 
 void CFiltersPage::DoDataExchange(CDataExchange* pDX)
 {
@@ -2736,11 +2687,115 @@ void CFiltersPage::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
+// CWindowGeneralPage property page
+
+// xxx add info about the doc at the top of the page, and comments about the buttons etc
+
+IMPLEMENT_DYNCREATE(CWindowGeneralPage, COptPage)
+
+void CWindowGeneralPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+}
+
+BEGIN_MESSAGE_MAP(CWindowGeneralPage, COptPage)
+	ON_WM_HELPINFO()
+    ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_SAVE_DEFAULT, OnSaveDefault)
+	ON_BN_CLICKED(IDC_DISP_RESET, OnDispReset)
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CWindowGeneralPage message handlers
+
+BOOL CWindowGeneralPage::OnInitDialog() 
+{
+	COptPage::OnInitDialog();
+
+	return TRUE;
+}
+
+void CWindowGeneralPage::OnOK() 
+{
+	theApp.set_options(pParent->val_);
+	COptPage::OnOK();
+}
+
+static DWORD id_pairs_wingeneral[] = { 
+    IDC_DISP_RESET, HIDC_DISP_RESET,
+    IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
+    0,0 
+};
+BOOL CWindowGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_wingeneral);
+    return TRUE;
+}
+
+void CWindowGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_wingeneral);
+}
+
+void CWindowGeneralPage::OnSaveDefault() 
+{
+    // It's not really necessary currently to call UpdateData as this page has
+    // no editable controls, but it may in the future.
+    UpdateData();
+
+    // Note that all the current values from other pages (in pParent->val_) are
+    // valid at this point as any edited pages would have had their UpdateData()
+    // member called before now, ie when switching out of that page.
+
+    if (AfxMessageBox("The default settings are used when you open a file which you\n"
+                      "haven't opened in HexEdit before, or when you create a new file.\n\n"
+                      "Are you sure you want to use these settings as the default?", MB_OKCANCEL) != IDOK)
+        return;
+
+    theApp.open_disp_state_ = pParent->val_.disp_state_;
+    theApp.open_max_ = pParent->val_.maximize_;
+    theApp.open_rowsize_ = pParent->val_.cols_;
+    theApp.open_group_by_ = pParent->val_.grouping_;
+    theApp.open_offset_ = pParent->val_.offset_;
+	theApp.open_vertbuffer_ = pParent->val_.vertbuffer_;
+
+    if (theApp.open_plf_ == NULL)
+        theApp.open_plf_ = new LOGFONT;
+    *theApp.open_plf_ = pParent->val_.lf_;
+    if (theApp.open_oem_plf_ == NULL)
+        theApp.open_oem_plf_ = new LOGFONT;
+    *theApp.open_oem_plf_ = pParent->val_.oem_lf_;
+
+    theApp.GetFileList()->SetDefaults();
+}
+
+void CWindowGeneralPage::OnDispReset() 
+{
+    // Reset to default display values
+    ASSERT(theApp.open_disp_state_ != -1);
+    pParent->val_.disp_state_ = theApp.open_disp_state_;
+    pParent->val_.maximize_ = theApp.open_max_;
+    pParent->val_.cols_ = theApp.open_rowsize_;
+    pParent->val_.grouping_ = theApp.open_group_by_;
+    pParent->val_.offset_ = theApp.open_offset_;
+	pParent->val_.vertbuffer_ = theApp.open_vertbuffer_;
+
+    if (theApp.open_plf_ != NULL)
+        pParent->val_.lf_ = *theApp.open_plf_;
+    if (theApp.open_oem_plf_ != NULL)
+        pParent->val_.oem_lf_ = *theApp.open_oem_plf_;
+	
+    UpdateData(FALSE);
+    SetModified(TRUE);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
 // CWindowPage property page
 
 IMPLEMENT_DYNCREATE(CWindowPage, COptPage)
 
-CWindowPage::CWindowPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CWindowPage::IDD)
+CWindowPage::CWindowPage() : COptPage(CWindowPage::IDD)
 {
     update_ok_ = false;
 }
@@ -2867,7 +2922,7 @@ BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
 	ON_EN_CHANGE(IDC_COLS, OnChangeCols)
 	ON_EN_CHANGE(IDC_GROUPING, OnChange)
 	ON_EN_CHANGE(IDC_OFFSET, OnChange)
-	ON_BN_CLICKED(IDC_AUTOFIT, OnAutofit)
+	ON_BN_CLICKED(IDC_AUTOFIT, OnChangeUpdate)
 	ON_BN_CLICKED(IDC_ADDR_DEC, OnChange)
 	ON_BN_CLICKED(IDC_BORDERS, OnChange)
 END_MESSAGE_MAP()
@@ -3029,8 +3084,22 @@ void CWindowPage::OnCancel()
 	COptPage::OnCancel();
 }
 
+LRESULT CWindowPage::OnIdle(long lCount)
+{
+	fix_controls();
+    return FALSE;
+}
+
+// This is for controls that just need to record that they have changed
 void CWindowPage::OnChange() 
 {
+    SetModified(TRUE);
+}
+
+// This is for controls that affect other controls when they have changed (see fix_controls())
+void CWindowPage::OnChangeUpdate() 
+{
+    UpdateData();
     SetModified(TRUE);
 }
 
@@ -3042,7 +3111,6 @@ void CWindowPage::OnSelchangeShowArea()
         pParent->val_.vertbuffer_ = 2;
         UpdateData(FALSE);
     }
-	fix_controls();
 	
     SetModified(TRUE);
 }
@@ -3050,7 +3118,6 @@ void CWindowPage::OnSelchangeShowArea()
 void CWindowPage::OnSelchangeCharset() 
 {
     UpdateData();
-	fix_controls();
 
     SetModified(TRUE);
 }
@@ -3108,21 +3175,15 @@ void CWindowPage::OnChangeCols()
     update_ok_ = true;
 }
 
-void CWindowPage::OnAutofit() 
-{
-    UpdateData();
-    fix_controls();
-	
-    SetModified(TRUE);
-}
-
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CWindowEditPage property page
 
+// xxx make RO/RW and OVR/INS into radio buttons, add show hl/bm checkboxes
+
 IMPLEMENT_DYNCREATE(CWindowEditPage, COptPage)
 
-CWindowEditPage::CWindowEditPage(COptSheet *pParent, UINT IDI) : COptPage(pParent, IDI, CWindowEditPage::IDD)
+CWindowEditPage::CWindowEditPage() : COptPage(CWindowEditPage::IDD)
 {
     update_ok_ = false;
 }
@@ -3133,16 +3194,13 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
     if (!pDX->m_bSaveAndValidate)
     {
         // Move info into member variables (before move to controls)
-        pParent->val_.modify_ = !pParent->val_.display_.readonly;
-        pParent->val_.insert_ = !pParent->val_.display_.overtype;
-		pParent->val_.big_endian_ = pParent->val_.display_.big_endian;
-
-        if (pParent->val_.display_.hide_replace && pParent->val_.display_.hide_insert && pParent->val_.display_.hide_delete)
-            pParent->val_.change_tracking_ = 0;
-        else if (!pParent->val_.display_.hide_replace && !pParent->val_.display_.hide_insert && !pParent->val_.display_.hide_delete)
-            pParent->val_.change_tracking_ = 1;
-        else
-            pParent->val_.change_tracking_ = 2;    // Some options on, some off
+        pParent->val_.modify_           = !pParent->val_.display_.readonly;
+        pParent->val_.insert_           = !pParent->val_.display_.overtype;
+		pParent->val_.big_endian_       = pParent->val_.display_.big_endian;
+        pParent->val_.ct_insertions_    = !pParent->val_.display_.hide_insert;
+        pParent->val_.ct_modifications_ = !pParent->val_.display_.hide_replace;
+        pParent->val_.ct_deletions_     = !pParent->val_.display_.hide_delete;
+        pParent->val_.ct_delcount_      = pParent->val_.display_.delete_count;
 
         // Display the name of the window in the group box
         CWnd *pwnd = GetDlgItem(IDC_BOX);   // xxx no IDC_BOX yet/anymore
@@ -3155,36 +3213,38 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
         }
     }
 
-	DDX_CBIndex(pDX, IDC_MODIFY, pParent->val_.modify_);
-	DDX_CBIndex(pDX, IDC_INSERT, pParent->val_.insert_);
-	DDX_Check(pDX, IDC_BIG_ENDIAN, pParent->val_.big_endian_);
-	DDX_Check(pDX, IDC_CHANGE_TRACKING, pParent->val_.change_tracking_);
-	DDX_Text(pDX, IDC_VERTBUFFER, pParent->val_.vertbuffer_);
+	DDX_CBIndex(pDX, IDC_MODIFY,         pParent->val_.modify_);
+	DDX_CBIndex(pDX, IDC_INSERT,         pParent->val_.insert_);
+	DDX_Check(pDX, IDC_BIG_ENDIAN,       pParent->val_.big_endian_);
+	//DDX_Check(pDX, IDC_CHANGE_TRACKING, pParent->val_.change_tracking_);
+	DDX_Check(pDX, IDC_CT_INSERTIONS,    pParent->val_.ct_insertions_);
+	DDX_Check(pDX, IDC_CT_MODIFICATIONS, pParent->val_.ct_modifications_);
+	DDX_Check(pDX, IDC_CT_DELETIONS,     pParent->val_.ct_deletions_);
+	DDX_Check(pDX, IDC_CT_DELCOUNT,      pParent->val_.ct_delcount_);
+	DDX_Text(pDX, IDC_VERTBUFFER,        pParent->val_.vertbuffer_);
 
     if (pDX->m_bSaveAndValidate)
     {
-        pParent->val_.display_.overtype = !pParent->val_.insert_;
-        pParent->val_.display_.readonly = !pParent->val_.modify_;
-		pParent->val_.display_.big_endian = pParent->val_.big_endian_;
-
-        if (pParent->val_.change_tracking_ != 2)
-            pParent->val_.display_.hide_insert = 
-			pParent->val_.display_.hide_replace = 
-			pParent->val_.display_.hide_delete = 
-			    (pParent->val_.change_tracking_ == 0);
-
+        pParent->val_.display_.overtype     = !pParent->val_.insert_;
+        pParent->val_.display_.readonly     = !pParent->val_.modify_;
+		pParent->val_.display_.big_endian   = pParent->val_.big_endian_;
+        pParent->val_.display_.hide_insert  = !pParent->val_.ct_insertions_;
+        pParent->val_.display_.hide_replace = !pParent->val_.ct_modifications_;
+        pParent->val_.display_.hide_delete  = !pParent->val_.ct_deletions_;
+        pParent->val_.display_.delete_count = pParent->val_.ct_delcount_;
     }
 }
 
 BEGIN_MESSAGE_MAP(CWindowEditPage, COptPage)
 	ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
-	ON_BN_CLICKED(IDC_SAVE_DEFAULT, OnSaveDefault)
-	ON_BN_CLICKED(IDC_DISP_RESET, OnDispReset)
 	ON_CBN_SELCHANGE(IDC_MODIFY, OnSelchangeModify)
 	ON_CBN_SELCHANGE(IDC_INSERT, OnSelchangeInsert)
 	ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChange)
-	ON_BN_CLICKED(IDC_CHANGE_TRACKING, OnChangeTracking)
+	ON_BN_CLICKED(IDC_CT_INSERTIONS, OnChange)
+	ON_BN_CLICKED(IDC_CT_MODIFICATIONS, OnChange)
+	ON_BN_CLICKED(IDC_CT_DELETIONS, OnChangeUpdate)     // state affects whether IDC_CT_DELCOUNT is enabled
+	ON_BN_CLICKED(IDC_CT_DELCOUNT, OnChange)
 	ON_EN_CHANGE(IDC_VERTBUFFER, OnChange)
 END_MESSAGE_MAP()
 
@@ -3193,10 +3253,12 @@ void CWindowEditPage::fix_controls()
     // Check that all the control we need are available
     ASSERT(GetDlgItem(IDC_INSERT) != NULL);
     ASSERT(GetDlgItem(IDC_INSERT_DESC) != NULL);
+    ASSERT(GetDlgItem(IDC_CT_DELCOUNT) != NULL);
 
     // If readonly disable setting of mode (OVR/INS)
     GetDlgItem(IDC_INSERT)->EnableWindow(pParent->val_.modify_ == 1);
     GetDlgItem(IDC_INSERT_DESC)->EnableWindow(pParent->val_.modify_ == 1);
+    GetDlgItem(IDC_CT_DELCOUNT)->EnableWindow(pParent->val_.ct_deletions_);
 }
 
 BOOL CWindowEditPage::validated()
@@ -3227,13 +3289,15 @@ void CWindowEditPage::OnOK()
 }
 
 static DWORD id_pairs_winedit[] = { 
-    IDC_DISP_RESET, HIDC_DISP_RESET,
-    IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
     IDC_MODIFY, HIDC_MODIFY,
     IDC_INSERT, HIDC_INSERT,
     IDC_INSERT_DESC, HIDC_INSERT,
     IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-    IDC_CHANGE_TRACKING, HIDC_CHANGE_TRACKING,
+    //IDC_CHANGE_TRACKING, HIDC_CHANGE_TRACKING,
+    IDC_CT_MODIFICATIONS, HIDC_CT_MODIFICATIONS,
+    IDC_CT_INSERTIONS, HIDC_CT_INSERTIONS,
+    IDC_CT_DELETIONS, HIDC_CT_DELETIONS,
+    IDC_CT_DELCOUNT, HIDC_CT_DELCOUNT,
     IDC_VERTBUFFER, HIDC_VERTBUFFER,
     IDC_VERTBUFFER_DESC, HIDC_VERTBUFFER,
     IDC_SPIN_VERTBUFFER, HIDC_VERTBUFFER,
@@ -3241,7 +3305,6 @@ static DWORD id_pairs_winedit[] = {
 };
 BOOL CWindowEditPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_winedit);
     return TRUE;
 }
@@ -3277,69 +3340,31 @@ BOOL CWindowEditPage::OnKillActive()
 void CWindowEditPage::OnCancel() 
 {
     update_ok_ = false;
-	
 	COptPage::OnCancel();
 }
 
-void CWindowEditPage::OnSaveDefault() 
+LRESULT CWindowEditPage::OnIdle(long lCount)
 {
-    UpdateData();
-    if (!validated())
-        return;
-
-    if (AfxMessageBox("The default settings are used when you open a file which you\n"
-                      "haven't opened in HexEdit before, or when you create a new file.\n\n"
-                      "Are you sure you want to use these settings as the default?", MB_OKCANCEL) != IDOK)
-        return;
-
-    theApp.open_disp_state_ = pParent->val_.disp_state_;
-    theApp.open_max_ = pParent->val_.maximize_;
-    theApp.open_rowsize_ = pParent->val_.cols_;
-    theApp.open_group_by_ = pParent->val_.grouping_;
-    theApp.open_offset_ = pParent->val_.offset_;
-	theApp.open_vertbuffer_ = pParent->val_.vertbuffer_;
-
-    if (theApp.open_plf_ == NULL)
-        theApp.open_plf_ = new LOGFONT;
-    *theApp.open_plf_ = pParent->val_.lf_;
-    if (theApp.open_oem_plf_ == NULL)
-        theApp.open_oem_plf_ = new LOGFONT;
-    *theApp.open_oem_plf_ = pParent->val_.oem_lf_;
-
-    theApp.GetFileList()->SetDefaults();
+	fix_controls();
+    return FALSE;
 }
 
-void CWindowEditPage::OnDispReset() 
+// This is for controls that just need to record that they have changed
+void CWindowEditPage::OnChange() 
 {
-    // Reset to default display values
-    ASSERT(theApp.open_disp_state_ != -1);
-    pParent->val_.disp_state_ = theApp.open_disp_state_;
-    pParent->val_.maximize_ = theApp.open_max_;
-    pParent->val_.cols_ = theApp.open_rowsize_;
-    pParent->val_.grouping_ = theApp.open_group_by_;
-    pParent->val_.offset_ = theApp.open_offset_;
-	pParent->val_.vertbuffer_ = theApp.open_vertbuffer_;
-
-    if (theApp.open_plf_ != NULL)
-        pParent->val_.lf_ = *theApp.open_plf_;
-    if (theApp.open_oem_plf_ != NULL)
-        pParent->val_.oem_lf_ = *theApp.open_oem_plf_;
-	
-    UpdateData(FALSE);
-    fix_controls();     // xxx what about windisplay??
     SetModified(TRUE);
 }
 
-void CWindowEditPage::OnChange() 
+// This is for controls that affect other controls when they have changed (see fix_controls())
+void CWindowEditPage::OnChangeUpdate() 
 {
+    UpdateData();
     SetModified(TRUE);
 }
 
 void CWindowEditPage::OnSelchangeModify() 
 {
     UpdateData();
-	fix_controls();
-	
     SetModified(TRUE);
 }
 
@@ -3348,14 +3373,3 @@ void CWindowEditPage::OnSelchangeInsert()
     SetModified(TRUE);
 }
 
-void CWindowEditPage::OnChangeTracking() 
-{
-	UpdateData();
-    // This will cause change_tracking_ to be set to 0 or 1 in DoDataExchange
-    pParent->val_.display_.hide_replace = 
-	pParent->val_.display_.hide_insert = 
-	pParent->val_.display_.hide_delete = pParent->val_.change_tracking_;
-    UpdateData(FALSE);
-
-    SetModified(TRUE);
-}

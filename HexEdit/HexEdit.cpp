@@ -2742,15 +2742,16 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 
     // Construct property sheet + its pages
     COptSheet optSheet(_T("HexEdit Options"));
-    CGeneralPage generalPage(&optSheet, IDI_COGS);
-    CSysDisplayPage sysdisplayPage(&optSheet, IDI_DISPLAY);
-	CTipsPage tipsPage(&optSheet, IDI_TIPS);
-    CColourSchemes coloursPage(&optSheet, IDI_COLOUR);
-    CMacroPage macroPage(&optSheet, IDI_MACRO);
-    CPrintPage printerPage(&optSheet, IDI_PRINTER);
-    CFiltersPage filtersPage(&optSheet, IDI_FILTER);
-    CWindowPage windisplayPage(&optSheet, IDI_WINDOW);
-    CWindowEditPage wineditPage(&optSheet, IDI_WINDOW);
+    CGeneralPage generalPage;
+    CSysDisplayPage sysdisplayPage;
+	CTipsPage tipsPage;
+    CColourSchemes coloursPage;
+    CMacroPage macroPage;
+    CPrintPage printerPage;
+    CFiltersPage filtersPage;
+    CWindowGeneralPage wingeneralPage;
+    CWindowPage windisplayPage;
+    CWindowEditPage wineditPage;
 
 	CPropertyPage *pPage = NULL;
 	switch (display_page)
@@ -2788,9 +2789,10 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 	if (pview != NULL)
     {
 		CBCGPropSheetCategory * pCatDoc = optSheet.AddTreeCategory("Document", 0, 1);
-	    optSheet.AddPageToTree(pCatDoc, &coloursPage, -1, 2);
+        optSheet.AddPageToTree(pCatDoc, &wingeneralPage, -1, 2);
         optSheet.AddPageToTree(pCatDoc, &windisplayPage, -1, 2);
         optSheet.AddPageToTree(pCatDoc, &wineditPage, -1, 2);
+	    optSheet.AddPageToTree(pCatDoc, &coloursPage, -1, 2);
     }
 	else
 	{
