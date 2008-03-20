@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "HexEdit.h"
 #include "HexEditView.h"
+#include "HexEditDoc.h"
 #include "Dialog.h"             // For Macro Save dialog etc
 #include "DirDialog.h"          // For directory selection dialog
 #include "ClearHistDlg.h"
@@ -703,9 +704,9 @@ BOOL CTipsPage::OnInitDialog()
 
     // Set up the grid sizes
     grid_.SetColumnWidth(column_check, 22);
-    grid_.SetColumnWidth(column_name, 100);
-    grid_.SetColumnWidth(column_expr, 162);
-    grid_.SetColumnWidth(column_format, 70);
+    grid_.SetColumnWidth(column_name,  96);
+    grid_.SetColumnWidth(column_expr, 160);
+    grid_.SetColumnWidth(column_format,66);
 
     // Set up the grid cells
     for (int ii = 0; ii < theApp.tip_name_.size(); ++ii)
@@ -1070,8 +1071,6 @@ void CTipsPage::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 /////////////////////////////////////////////////////////////////////////////
 // CColourSchemes property page
 
-// xxx add static text at top of right side to indicate which scheme is being modified
-
 IMPLEMENT_DYNCREATE(CColourSchemes, COptPage)
 
 CColourSchemes::CColourSchemes() : COptPage(CColourSchemes::IDD, theApp.is_us_ ? IDS_COLORS : 0)
@@ -1150,6 +1149,7 @@ BOOL CColourSchemes::OnInitDialog()
     {
         ASSERT(GetDlgItem(IDC_DESC_COLOUR) != NULL);
 #ifdef _DEBUG
+        // Make sure we are modifying the right control
         CString ss;
         GetDlgItem(IDC_DESC_COLOUR)->GetWindowText(ss);
         ASSERT(ss == "&Colour:");
@@ -1201,6 +1201,27 @@ BOOL CColourSchemes::OnInitDialog()
 void CColourSchemes::set_scheme()
 {
     ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size());
+
+    CWnd * pw = GetDlgItem(IDC_DESC_SCHEME);
+    ASSERT(pw != NULL);
+    if (pw != NULL)
+    {
+        CClientDC dc(pw);
+        int nSave = dc.SaveDC();
+        dc.SelectObject(pw->GetFont());
+
+        CString ss = scheme_[scheme_no_].name_ + " scheme";
+
+        CRect rct;
+        pw->GetWindowRect(&rct);
+        ScreenToClient(&rct);
+        rct.right = rct.left + dc.GetTextExtent(ss).cx;
+        pw->MoveWindow(&rct, TRUE);
+
+        ss.Replace("&", "&&");  // Do this after GetTextExtent as it seems to allow for both &'s
+        pw->SetWindowText(ss);
+        dc.RestoreDC(nSave);
+    }
 
     // Add the names of the ranges to the names list
     CListBox *plist = (CListBox *)GetDlgItem(IDC_NAMES);
@@ -2689,13 +2710,12 @@ void CFiltersPage::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 /////////////////////////////////////////////////////////////////////////////
 // CWindowGeneralPage property page
 
-// xxx add info about the doc at the top of the page, and comments about the buttons etc
-
 IMPLEMENT_DYNCREATE(CWindowGeneralPage, COptPage)
 
 void CWindowGeneralPage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_FILE_ICON, ctl_icon_);
 }
 
 BEGIN_MESSAGE_MAP(CWindowGeneralPage, COptPage)
@@ -2710,22 +2730,91 @@ END_MESSAGE_MAP()
 
 BOOL CWindowGeneralPage::OnInitDialog() 
 {
+    hicon_ = HICON(0);
 	COptPage::OnInitDialog();
+
+    ASSERT(GetView() != NULL && GetView()->GetDocument() != NULL);
+    CHexEditView *pview;
+    CHexEditDoc * pdoc;
+    if ((pview = GetView()) != NULL && 
+        (pdoc = pview->GetDocument()) != NULL)
+    {
+        ASSERT(GetDlgItem(IDC_FILENAME) != NULL);
+        //GetDlgItem(IDC_FILENAME)->SetWindowText(pdoc->GetPathName());
+        GetDlgItem(IDC_FILENAME)->SetWindowText(pParent->val_.window_name_);
+    }
 
 	return TRUE;
 }
 
 void CWindowGeneralPage::OnOK() 
 {
+    // Note: Icon destroyed in OnKillActive (always called when OnOK is called)
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
 }
+
+BOOL CWindowGeneralPage::OnSetActive() 
+{
+    // Get icon
+    // Note: Because of the clumsy way the CPropertyPages are implemented I have to create
+    // the icon every time the user enters the page and destroy it when they leave.
+    // The problem is that there is no "OnExit" member (the complement of OnInitDialog).
+    // Although either OnOK or OnCancel are called when the property sheet is closed
+    // (and the page has been entered) they can't be used as OnOK is also called when
+    // theuser clicks the Apply button.
+    ASSERT(GetView() != NULL && GetView()->GetDocument() != NULL);
+    CHexEditView *pview;
+    CHexEditDoc * pdoc;
+    if ((pview = GetView()) != NULL && 
+        (pdoc = pview->GetDocument()) != NULL)
+    {
+        CString ss = pdoc->GetPathName();
+        if (!ss.IsEmpty() && strrchr(ss, '.') != NULL && !::IsDevice(ss))
+        {
+            SHFILEINFO sfi;
+            // Get large icon
+            VERIFY(SHGetFileInfo(ss, 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_LARGEICON));
+            hicon_ = sfi.hIcon;
+            ctl_icon_.SetIcon(hicon_);
+        }
+    }
+    return COptPage::OnSetActive();
+}
+
+BOOL CWindowGeneralPage::OnKillActive() 
+{
+    // On KillActive is called when the page is left OR when OK button is clicked
+    if (hicon_ != HICON(0))
+    {
+        ctl_icon_.SetIcon(HICON(0));
+        DestroyIcon(hicon_);
+        hicon_ = HICON(0);
+    }
+    return COptPage::OnKillActive();
+}
+
+void CWindowGeneralPage::OnCancel() 
+{
+    // Need this here too as OnKillActive is not called for the page if the Cancel
+    // button is clicked when the page is active.
+    if (hicon_ != HICON(0))
+    {
+        ctl_icon_.SetIcon(HICON(0));
+        DestroyIcon(hicon_);
+        hicon_ = HICON(0);
+    }
+	
+	COptPage::OnCancel();
+}
+
 
 static DWORD id_pairs_wingeneral[] = { 
     IDC_DISP_RESET, HIDC_DISP_RESET,
     IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
     0,0 
 };
+
 BOOL CWindowGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_wingeneral);
@@ -2747,9 +2836,7 @@ void CWindowGeneralPage::OnSaveDefault()
     // valid at this point as any edited pages would have had their UpdateData()
     // member called before now, ie when switching out of that page.
 
-    if (AfxMessageBox("The default settings are used when you open a file which you\n"
-                      "haven't opened in HexEdit before, or when you create a new file.\n\n"
-                      "Are you sure you want to use these settings as the default?", MB_OKCANCEL) != IDOK)
+    if (AfxMessageBox("Are you sure you want to use the current settings as the defaults?", MB_OKCANCEL) != IDOK)
         return;
 
     theApp.open_disp_state_ = pParent->val_.disp_state_;
@@ -2832,16 +2919,6 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.autofit_ = pParent->val_.display_.autofit;
 
         pParent->val_.borders_ = pParent->val_.display_.borders;
-
-        // Display the name of the window in the group box
-        CWnd *pwnd = GetDlgItem(IDC_BOX);  // xxx no IDC_BOX anymore
-        if (pwnd != NULL)
-        {
-            CString ss;
-
-            ss.Format("Display for %s", pParent->val_.window_name_);
-            pwnd->SetWindowText(ss);
-        }
     }
 
 	DDX_Check(pDX, IDC_MAX, pParent->val_.maximize_);
@@ -3201,16 +3278,6 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.ct_modifications_ = !pParent->val_.display_.hide_replace;
         pParent->val_.ct_deletions_     = !pParent->val_.display_.hide_delete;
         pParent->val_.ct_delcount_      = pParent->val_.display_.delete_count;
-
-        // Display the name of the window in the group box
-        CWnd *pwnd = GetDlgItem(IDC_BOX);   // xxx no IDC_BOX yet/anymore
-        if (pwnd != NULL)
-        {
-            CString ss;
-
-            ss.Format("Edit Options for %s", pParent->val_.window_name_);
-            pwnd->SetWindowText(ss);
-        }
     }
 
 	DDX_CBIndex(pDX, IDC_MODIFY,         pParent->val_.modify_);

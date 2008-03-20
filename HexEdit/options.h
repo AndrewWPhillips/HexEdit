@@ -517,10 +517,15 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_OPT_WINGENERAL };
+    HICON hicon_;               // Large icon for the file type
+    CStatic ctl_icon_;
 
 // Overrides
 public:
 	virtual void OnOK();
+	virtual BOOL OnSetActive();
+	virtual BOOL OnKillActive();
+	virtual void OnCancel();
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 

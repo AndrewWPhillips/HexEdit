@@ -664,6 +664,7 @@
 #define IDC_REG_EMAIL                   1157
 #define IDC_MACRODIR                    1158
 #define IDC_REG_CODE                    1158
+#define IDC_DESC_SCHEME                 1158
 #define IDC_DESC_NAME                   1159
 #define IDC_USER_NAME                   1160
 #define IDC_REG_HELP                    1161
@@ -1060,6 +1061,10 @@
 #define IDC_DFFD_NONE                   1545
 #define IDC_PRINT_SPACE2                1546
 #define IDC_SHOW_OTHER                  1547
+#define IDC_PAGE_ICON                   1549
+#define IDC_FILE_ICON                   1550
+#define IDC_PAGE_ICON2                  1551
+#define IDC_FILENAME                    1552
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1423,7 +1428,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        399
 #define _APS_NEXT_COMMAND_VALUE         39002
-#define _APS_NEXT_CONTROL_VALUE         1549
+#define _APS_NEXT_CONTROL_VALUE         1553
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

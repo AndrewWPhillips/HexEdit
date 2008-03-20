@@ -522,7 +522,7 @@ New Version
 New Options Layout (tree) - see also Aerial branch
 -------------------------
 System
-  General page
+  General page (COGS)
     Global Settings
     - save setting on exit
       -> save now button
@@ -538,7 +538,7 @@ System
     + hist list sizes: search, replace, goto,
       -> button for privacy page
     
-  Privacy page
+  Privacy page (LOCK or PERSON)
     + dont add to recently used folder (Start Menu)
     - clear lists: rfl, bm, search (replace, goto?)
       - always clear on exit
@@ -552,17 +552,17 @@ System
     + tips at startup
     + Startup options: nothing, new file, open file, startup window
 
-  Macro page
+  Macro page (KEYBOARD)
     - all existing options
 
-  Filters page
+  Filters page (FLOPPY?)
     - all existing options
 
-  Printing page    
+  Printing page (PRINTER)
     - all existing options
 
 Workspace
-  Display page
+  Display page (MONITOR)
     Cursor
      - large cursor
      - shadow cursor (Hex+char mode)
@@ -577,19 +577,20 @@ Workspace
      - ucase hex
      + K = 1024/1000 (M=1024*1024/1e6 etc)
 
-  Layout page
+  Layout page (RULER/PROTRACTOR/ETC)
     Main window
      - restore main window on startup(2)
        -> Startup page
      - tabs
        - tabs at top
+       - icons
      + background image
     Modeless dialogs
      + show checkboxes for each
      + allow docking dlgs
      + undocked dlgs move out of the way
 
-  Edit page
+  Edit page (PENCIL)
     Paste
       + paste replaces selection?
       + select after paste (dv off) OR highlight?
@@ -607,10 +608,10 @@ Workspace
       - byte per line
     + Enter = 0D0A??
 
-  Info Tip page
+  Info Tip page (BULB)
     - all existing options
 
-  Save page
+  Save page (FLOPPY)
     AutoSave
      + autosave recovery info
     Backups
@@ -623,27 +624,22 @@ Workspace
       + backup folder
      + warn if editing file that will not be backed up??
 
-  Template page
+  Template page (COOKIE CUTTER)
     + alt bg colours
     - etc
     
-  Aerial page
+  Aerial page (PLANE)
     + default dpix
     + max bitmap
 
 Document
-  General page
+  General page (WINDOW)
     Defaults
       - restore and save as default buttons
         -> button for display page
         -> button for edit page
-    Views
-      + which other windows to display and how (tab/split)
 
-  Colours page
-    - all existing options
-
-  Hex Display page
+  Display page (SPECS)
     Layout
       - Show areas
       - Columns, offset, grouping
@@ -655,29 +651,43 @@ Document
       - font buttons
       - decimal addr
       - sector bounds
-      + hide bookmarks
-      + hide highlight
 
     Window
       - maximize
       + ruler?
 
-  Template Display page
-      -> global template page button
+  Template Display page (COOKIE CUTTER)
+    - use
+      - split/tab
+    - columns to display?
+      - widths?
+    -> global template page button
 
-  Aerial Display page
-      -> global aerial page button
+  Aerial Display page (PLANE)
+    - use
+      - split/tab
+    - borders display options
+    - ant display options
+    -> global aerial page button
 
-  Edit page
-    Cursor
-      - scroll zone
+  Edit page (PENCIL)
     Modes
       - RO/RW
       - OVR/INS
+      - big endian
+      + keep file times
+    Scroll
+      - scroll zone
+      - scroll past ends
+      - wheel units?
     Change tracking
       + insert
       + delete
       + changed
     Misc    
-      + keep file times
+      + hide bookmarks
+      + hide highlight
+
+  Colours page (PALETTE)
+    - all existing options
 
