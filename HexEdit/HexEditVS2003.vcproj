@@ -894,6 +894,9 @@
 				RelativePath=".\RES\down.ico">
 			</File>
 			<File
+				RelativePath=".\RES\edit.ico">
+			</File>
+			<File
 				RelativePath=".\RES\editbar.bmp">
 			</File>
 			<File
@@ -967,6 +970,9 @@
 			</File>
 			<File
 				RelativePath="RES\jump.ico">
+			</File>
+			<File
+				RelativePath=".\RES\layout.ico">
 			</File>
 			<File
 				RelativePath=".\res\litebulb.bmp">
