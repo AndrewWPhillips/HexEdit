@@ -134,7 +134,8 @@ void COptSheet::init()
 	val_.modify_ = -1;
 	val_.big_endian_ = FALSE;
     //val_.change_tracking_ = 0;
-    val_.ct_modifications_ = val_.ct_insertions_ = val_.ct_deletions_ = val_.ct_delcount_ = false;
+    val_.ct_modifications_ = val_.ct_insertions_ = val_.ct_deletions_ = val_.ct_delcount_ = FALSE;
+    val_.show_bookmarks_ = val_.show_highlights_ = TRUE;
 
 	// Set up page navigation
 	SetLook(PropSheetLook_Tree, 150);
@@ -407,23 +408,102 @@ void CGeneralPage::OnBackupIfSize()
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
-// CSysDisplayPage property page
+// CWorkspaceDisplayPage property page
 
-IMPLEMENT_DYNCREATE(CSysDisplayPage, COptPage)
+IMPLEMENT_DYNCREATE(CWorkspaceDisplayPage, COptPage)
 
-void CSysDisplayPage::DoDataExchange(CDataExchange* pDX)
+void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSysDisplayPage)
-	//}}AFX_DATA_MAP
 	DDX_Check(pDX, IDC_RESTORE, pParent->val_.open_restore_);
 	DDX_Check(pDX, IDC_MDITABS, pParent->val_.mditabs_);
 	DDX_Check(pDX, IDC_TABSBOTTOM, pParent->val_.tabsbottom_);
 	DDX_Check(pDX, IDC_LARGE_CURSOR, pParent->val_.large_cursor_);
 	DDX_Check(pDX, IDC_HEX_UCASE, pParent->val_.hex_ucase_);
 	DDX_Check(pDX, IDC_SHOW_OTHER, pParent->val_.show_other_);
-//	DDX_Check(pDX, IDC_NICE_ADDR, pParent->val_.nice_addr_);
+	DDX_Check(pDX, IDC_NICE_ADDR, pParent->val_.nice_addr_);
+}
 
+
+BEGIN_MESSAGE_MAP(CWorkspaceDisplayPage, COptPage)
+	ON_WM_HELPINFO()
+	ON_BN_CLICKED(IDC_HEX_UCASE, OnChange)
+	ON_BN_CLICKED(IDC_MDITABS, OnChangeMditabs)
+	ON_BN_CLICKED(IDC_VISUALIZATIONS, OnVisualizations)
+	ON_BN_CLICKED(IDC_RESTORE, OnChange)
+	ON_BN_CLICKED(IDC_LARGE_CURSOR, OnChange)
+	ON_BN_CLICKED(IDC_TABSBOTTOM, OnChange)
+	ON_BN_CLICKED(IDC_SHOW_OTHER, OnChange)
+	ON_BN_CLICKED(IDC_NICE_ADDR, OnChange)
+    ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspaceDisplayPage message handlers
+
+BOOL CWorkspaceDisplayPage::OnInitDialog() 
+{
+	COptPage::OnInitDialog();
+	
+	return TRUE;
+}
+
+void CWorkspaceDisplayPage::OnChange() 
+{
+    SetModified(TRUE);
+}
+
+void CWorkspaceDisplayPage::OnVisualizations() 
+{
+    theApp.GetSkinManager()->ShowSelectSkinDlg();
+}
+
+void CWorkspaceDisplayPage::OnChangeMditabs() 
+{
+    UpdateData();
+    ASSERT(GetDlgItem(IDC_TABSBOTTOM) != NULL);
+    GetDlgItem(IDC_TABSBOTTOM)->EnableWindow(pParent->val_.mditabs_);
+    SetModified(TRUE);
+}
+
+void CWorkspaceDisplayPage::OnOK() 
+{
+	theApp.set_options(pParent->val_);
+    COptPage::OnOK();
+}
+
+static DWORD id_pairs_workspace_display[] = {
+    IDC_RESTORE, HIDC_RESTORE,
+    IDC_HEX_UCASE, HIDC_HEX_UCASE,
+    IDC_MDITABS, HIDC_MDITABS,
+    IDC_TABSBOTTOM, HIDC_TABSBOTTOM,
+    IDC_NICE_ADDR, HIDC_NICE_ADDR,
+    IDC_LARGE_CURSOR, HIDC_LARGE_CURSOR,
+    IDC_SHOW_OTHER, HIDC_SHOW_OTHER,
+//        IDC_VISUALIZATIONS, 0x41000+IDC_BCGBARRES_SKINS,
+    0,0
+};
+
+BOOL CWorkspaceDisplayPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_workspace_display);
+    return TRUE;
+}
+
+void CWorkspaceDisplayPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_workspace_display);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CTemplatePage property page
+
+IMPLEMENT_DYNCREATE(CTemplatePage, COptPage)
+
+void CTemplatePage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
 	DDX_Radio(pDX, IDC_DFFD_NONE, pParent->val_.dffd_view_);
 	DDX_Text(pDX, IDC_DFFD_ARRAY_MAX, pParent->val_.max_fix_for_elts_);
 	DDV_MinMaxUInt(pDX, pParent->val_.max_fix_for_elts_, 2, 999999);
@@ -436,16 +516,8 @@ void CSysDisplayPage::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CSysDisplayPage, COptPage)
-	//{{AFX_MSG_MAP(CSysDisplayPage)
+BEGIN_MESSAGE_MAP(CTemplatePage, COptPage)
 	ON_WM_HELPINFO()
-	ON_BN_CLICKED(IDC_HEX_UCASE, OnChange)
-	ON_BN_CLICKED(IDC_MDITABS, OnChangeMditabs)
-	ON_BN_CLICKED(IDC_VISUALIZATIONS, OnVisualizations)
-	ON_BN_CLICKED(IDC_RESTORE, OnChange)
-	ON_BN_CLICKED(IDC_LARGE_CURSOR, OnChange)
-	ON_BN_CLICKED(IDC_TABSBOTTOM, OnChange)
-	ON_BN_CLICKED(IDC_SHOW_OTHER, OnChange)
 	ON_EN_CHANGE(IDC_DFFD_FORMAT_CHAR, OnChange)
 	ON_EN_CHANGE(IDC_DFFD_FORMAT_DATE, OnChange)
 	ON_EN_CHANGE(IDC_DFFD_FORMAT_INT, OnChange)
@@ -455,16 +527,13 @@ BEGIN_MESSAGE_MAP(CSysDisplayPage, COptPage)
 	ON_BN_CLICKED(IDC_DFFD_SPLIT, OnChange)
 	ON_BN_CLICKED(IDC_DFFD_TAB, OnChange)
 	ON_EN_CHANGE(IDC_DFFD_ARRAY_MAX, OnChange)
-	ON_WM_RBUTTONDBLCLK()
-	//}}AFX_MSG_MAP
     ON_WM_CONTEXTMENU()
-//	ON_BN_CLICKED(IDC_NICE_ADDR, OnChange)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSysDisplayPage message handlers
+// CTemplatePage message handlers
 
-BOOL CSysDisplayPage::OnInitDialog() 
+BOOL CTemplatePage::OnInitDialog() 
 {
 	COptPage::OnInitDialog();
 	
@@ -474,43 +543,18 @@ BOOL CSysDisplayPage::OnInitDialog()
 	return TRUE;
 }
 
-void CSysDisplayPage::OnChange() 
+void CTemplatePage::OnChange() 
 {
     SetModified(TRUE);
 }
 
-void CSysDisplayPage::OnRButtonDblClk(UINT nFlags, CPoint point) 
-{
-	COptPage::OnRButtonDblClk(nFlags, point);
-}
-
-void CSysDisplayPage::OnVisualizations() 
-{
-    theApp.GetSkinManager()->ShowSelectSkinDlg();
-}
-
-void CSysDisplayPage::OnChangeMditabs() 
-{
-    UpdateData();
-    ASSERT(GetDlgItem(IDC_TABSBOTTOM) != NULL);
-    GetDlgItem(IDC_TABSBOTTOM)->EnableWindow(pParent->val_.mditabs_);
-    SetModified(TRUE);
-}
-
-void CSysDisplayPage::OnOK() 
+void CTemplatePage::OnOK() 
 {
 	theApp.set_options(pParent->val_);
     COptPage::OnOK();
 }
 
-static DWORD id_pairs1[] = { 
-    IDC_RESTORE, HIDC_RESTORE,
-    IDC_HEX_UCASE, HIDC_HEX_UCASE,
-    IDC_MDITABS, HIDC_MDITABS,
-    IDC_TABSBOTTOM, HIDC_TABSBOTTOM,
-//        IDC_NICE_ADDR, HIDC_NICE_ADDR,
-    IDC_LARGE_CURSOR, HIDC_LARGE_CURSOR,
-    IDC_SHOW_OTHER, HIDC_SHOW_OTHER,
+static DWORD id_pairs_template[] = { 
     IDC_DFFD_NONE, HIDC_DFFD_NONE,
     IDC_DFFD_SPLIT, HIDC_DFFD_SPLIT,
     IDC_DFFD_TAB, HIDC_DFFD_TAB,
@@ -530,19 +574,18 @@ static DWORD id_pairs1[] = {
     IDC_DESC_DFFD_FORMAT_REAL, HIDC_DFFD_FORMAT_REAL,
     IDC_DFFD_FORMAT_DATE, HIDC_DFFD_FORMAT_DATE,
     IDC_DESC_DFFD_FORMAT_DATE, HIDC_DFFD_FORMAT_DATE,
-//        IDC_VISUALIZATIONS, 0x41000+IDC_BCGBARRES_SKINS,
     0,0
 };
 
-BOOL CSysDisplayPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CTemplatePage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs1);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_template);
     return TRUE;
 }
 
-void CSysDisplayPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CTemplatePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs1);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_template);
 }
 
 //===========================================================================
@@ -3278,27 +3321,32 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.ct_modifications_ = !pParent->val_.display_.hide_replace;
         pParent->val_.ct_deletions_     = !pParent->val_.display_.hide_delete;
         pParent->val_.ct_delcount_      = pParent->val_.display_.delete_count;
+        pParent->val_.show_bookmarks_   = !pParent->val_.display_.hide_bookmarks;
+        pParent->val_.show_highlights_  = !pParent->val_.display_.hide_highlight;
     }
 
 	DDX_CBIndex(pDX, IDC_MODIFY,         pParent->val_.modify_);
 	DDX_CBIndex(pDX, IDC_INSERT,         pParent->val_.insert_);
 	DDX_Check(pDX, IDC_BIG_ENDIAN,       pParent->val_.big_endian_);
-	//DDX_Check(pDX, IDC_CHANGE_TRACKING, pParent->val_.change_tracking_);
 	DDX_Check(pDX, IDC_CT_INSERTIONS,    pParent->val_.ct_insertions_);
 	DDX_Check(pDX, IDC_CT_MODIFICATIONS, pParent->val_.ct_modifications_);
 	DDX_Check(pDX, IDC_CT_DELETIONS,     pParent->val_.ct_deletions_);
 	DDX_Check(pDX, IDC_CT_DELCOUNT,      pParent->val_.ct_delcount_);
 	DDX_Text(pDX, IDC_VERTBUFFER,        pParent->val_.vertbuffer_);
+    DDX_Check(pDX, IDC_SHOW_HIGHLIGHTS,  pParent->val_.show_highlights_);
+    DDX_Check(pDX, IDC_SHOW_BOOKMARKS,   pParent->val_.show_bookmarks_);
 
     if (pDX->m_bSaveAndValidate)
     {
-        pParent->val_.display_.overtype     = !pParent->val_.insert_;
-        pParent->val_.display_.readonly     = !pParent->val_.modify_;
-		pParent->val_.display_.big_endian   = pParent->val_.big_endian_;
-        pParent->val_.display_.hide_insert  = !pParent->val_.ct_insertions_;
-        pParent->val_.display_.hide_replace = !pParent->val_.ct_modifications_;
-        pParent->val_.display_.hide_delete  = !pParent->val_.ct_deletions_;
-        pParent->val_.display_.delete_count = pParent->val_.ct_delcount_;
+        pParent->val_.display_.overtype       = !pParent->val_.insert_;
+        pParent->val_.display_.readonly       = !pParent->val_.modify_;
+		pParent->val_.display_.big_endian     = pParent->val_.big_endian_;
+        pParent->val_.display_.hide_insert    = !pParent->val_.ct_insertions_;
+        pParent->val_.display_.hide_replace   = !pParent->val_.ct_modifications_;
+        pParent->val_.display_.hide_delete    = !pParent->val_.ct_deletions_;
+        pParent->val_.display_.delete_count   = pParent->val_.ct_delcount_;
+        pParent->val_.display_.hide_bookmarks = !pParent->val_.show_bookmarks_;
+        pParent->val_.display_.hide_highlight = !pParent->val_.show_highlights_;
     }
 }
 
@@ -3313,6 +3361,8 @@ BEGIN_MESSAGE_MAP(CWindowEditPage, COptPage)
 	ON_BN_CLICKED(IDC_CT_DELETIONS, OnChangeUpdate)     // state affects whether IDC_CT_DELCOUNT is enabled
 	ON_BN_CLICKED(IDC_CT_DELCOUNT, OnChange)
 	ON_EN_CHANGE(IDC_VERTBUFFER, OnChange)
+	ON_BN_CLICKED(IDC_SHOW_BOOKMARKS, OnChange)
+	ON_BN_CLICKED(IDC_SHOW_HIGHLIGHTS, OnChange)
 END_MESSAGE_MAP()
 
 void CWindowEditPage::fix_controls()
@@ -3360,7 +3410,6 @@ static DWORD id_pairs_winedit[] = {
     IDC_INSERT, HIDC_INSERT,
     IDC_INSERT_DESC, HIDC_INSERT,
     IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-    //IDC_CHANGE_TRACKING, HIDC_CHANGE_TRACKING,
     IDC_CT_MODIFICATIONS, HIDC_CT_MODIFICATIONS,
     IDC_CT_INSERTIONS, HIDC_CT_INSERTIONS,
     IDC_CT_DELETIONS, HIDC_CT_DELETIONS,
@@ -3368,8 +3417,11 @@ static DWORD id_pairs_winedit[] = {
     IDC_VERTBUFFER, HIDC_VERTBUFFER,
     IDC_VERTBUFFER_DESC, HIDC_VERTBUFFER,
     IDC_SPIN_VERTBUFFER, HIDC_VERTBUFFER,
+    IDC_SHOW_HIGHLIGHTS, HIDC_SHOW_HIGHLIGHTS,
+    IDC_SHOW_BOOKMARKS, HIDC_SHOW_BOOKMARKS,
     0,0 
 };
+
 BOOL CWindowEditPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_winedit);

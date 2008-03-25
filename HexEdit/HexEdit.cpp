@@ -2745,7 +2745,8 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     // Construct property sheet + its pages
     COptSheet optSheet(_T("HexEdit Options"));
     CGeneralPage generalPage;
-    CSysDisplayPage sysdisplayPage;
+    CWorkspaceDisplayPage workspacedisplayPage;
+    CTemplatePage templatePage;
 	CTipsPage tipsPage;
     CColourSchemes coloursPage;
     CMacroPage macroPage;
@@ -2786,8 +2787,9 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     optSheet.AddPageToTree(pCatSys, &filtersPage, -1, 2);
 
 	CBCGPropSheetCategory * pCatWS  = optSheet.AddTreeCategory("Workspace", 0, 1);
-    optSheet.AddPageToTree(pCatWS, &sysdisplayPage, -1, 2);
+    optSheet.AddPageToTree(pCatWS, &workspacedisplayPage, -1, 2);
     optSheet.AddPageToTree(pCatWS, &tipsPage, -1, 2);
+    optSheet.AddPageToTree(pCatWS, &templatePage, -1, 2);
 	if (pview != NULL)
     {
 		CBCGPropSheetCategory * pCatDoc = optSheet.AddTreeCategory("Document", 0, 1);

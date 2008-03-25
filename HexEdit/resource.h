@@ -173,7 +173,7 @@
 #define IDB_DOWND                       234
 #define IDD_MACROSAVE                   234
 #define IDB_DOWNX                       235
-#define IDD_OPT_SYSDISPLAY              235
+#define IDD_OPT_WORKDISPLAY             235
 #define IDB_UPD                         236
 #define IDB_UPU                         237
 #define IDD_OPT_COLOURS1                237
@@ -292,6 +292,7 @@
 #define IDD_OPT_WINGENERAL              311
 #define IDB_PARENT_HOT                  312
 #define ID_INTEGER_ATOI                 312
+#define IDD_OPT_WORKTEMPLATE            312
 #define IDB_VIEW1                       313
 #define ID_INTEGER_STRLEN               313
 #define IDB_VIEW_HOT                    314
@@ -351,6 +352,7 @@
 #define IDI_ICON2                       353
 #define IDI_ICON3                       354
 #define IDI_TIPS                        355
+#define IDI_EDIT                        356
 #define ID_CHECKSUM_MD5                 357
 #define ID_CONVERT_UPPERCASE            358
 #define ID_CONVERT_LOWERCASE            359
@@ -386,6 +388,7 @@
 #define IDB_MISCBAR                     393
 #define IDB_MISCBAR_C                   394
 #define IDB_MISCBAR_D                   395
+#define IDI_LAYOUT                      399
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -472,6 +475,8 @@
 #define IDC_MARK_CLEAR                  1051
 #define IDC_CLEAR_HIST                  1051
 #define IDC_INFO_COMMENTS               1051
+#define IDC_LARGE_CURSOR2               1051
+#define IDC_NICE_ADDRESSES              1051
 #define IDC_OPEN_READONLY               1052
 #define IDC_MARK_ADD                    1052
 #define IDC_BACKUP_IF_SIZE              1052
@@ -646,7 +651,9 @@
 #define IDC_CT_DELCOUNT                 1144
 #define IDC_UP                          1145
 #define IDC_OPEN_FONT                   1145
+#define IDC_SHOW_HIGHLIGHTS             1145
 #define IDC_DFFD_DOWN                   1146
+#define IDC_SHOW_BOOKMARKS              1146
 #define IDC_OP_DISPLAY                  1147
 #define IDC_REGISTER                    1148
 #define IDC_LINE1                       1149
@@ -1426,7 +1433,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        399
+#define _APS_NEXT_RESOURCE_VALUE        400
 #define _APS_NEXT_COMMAND_VALUE         39002
 #define _APS_NEXT_CONTROL_VALUE         1553
 #define _APS_NEXT_SYMED_VALUE           252

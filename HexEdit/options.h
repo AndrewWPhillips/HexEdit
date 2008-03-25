@@ -141,6 +141,7 @@ struct OptValues
 	BOOL    big_endian_;
     //int     change_tracking_;
     BOOL    ct_modifications_, ct_insertions_, ct_deletions_, ct_delcount_; // change tracking options
+    BOOL    show_bookmarks_, show_highlights_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -301,44 +302,66 @@ protected:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-// CSysDisplayPage dialog
+// CWorkspaceDisplayPage dialog - global display options
 
-class CSysDisplayPage : public COptPage
+class CWorkspaceDisplayPage : public COptPage
 {
-	DECLARE_DYNCREATE(CSysDisplayPage)
+	DECLARE_DYNCREATE(CWorkspaceDisplayPage)
 
 // Construction
 public:
-	CSysDisplayPage() : COptPage(IDD) { }
+	CWorkspaceDisplayPage() : COptPage(IDD) { }
 
 // Dialog Data
-	//{{AFX_DATA(CSysDisplayPage)
-	enum { IDD = IDD_OPT_SYSDISPLAY };
-	//}}AFX_DATA
+	enum { IDD = IDD_OPT_WORKDISPLAY };
 
 // Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CSysDisplayPage)
-	public:
+public:
 	virtual void OnOK();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	// Generated message map functions
-	//{{AFX_MSG(CSysDisplayPage)
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnChange();
 	afx_msg void OnChangeMditabs();
 	afx_msg void OnVisualizations();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnRButtonDblClk(UINT nFlags, CPoint point);
-	//}}AFX_MSG
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 };
+
+/////////////////////////////////////////////////////////////////////////////
+// CTemplatePage dialog - global template options
+
+class CTemplatePage : public COptPage
+{
+	DECLARE_DYNCREATE(CTemplatePage)
+
+// Construction
+public:
+	CTemplatePage() : COptPage(IDD) { }
+
+// Dialog Data
+	enum { IDD = IDD_OPT_WORKTEMPLATE };
+
+// Overrides
+public:
+	virtual void OnOK();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnChange();
+	virtual BOOL OnInitDialog();
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	DECLARE_MESSAGE_MAP()
+};
+
+
 /////////////////////////////////////////////////////////////////////////////
 // CPrintPage dialog
 

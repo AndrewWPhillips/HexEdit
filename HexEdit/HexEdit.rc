@@ -1507,72 +1507,40 @@ BEGIN
                     HIDC_MACRODIR
 END
 
-IDD_OPT_SYSDISPLAY DIALOGEX 0, 0, 260, 140
+IDD_OPT_WORKDISPLAY DIALOGEX 0, 0, 260, 140
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Global Display"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_DISPLAY,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,67,8,
-                    187,1
-    LTEXT           "Global Settings",IDC_STATIC,22,5,48,8
+    ICON            IDI_LAYOUT,IDC_PAGE_ICON,0,0,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,8,
+                    219,1
+    LTEXT           "Layout",IDC_STATIC,22,5,22,8
     CONTROL         "&Restore main window on startup",IDC_RESTORE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,17,20,117,10,0,HIDC_RESTORE
+                    BS_AUTOCHECKBOX | WS_TABSTOP,20,17,117,10,0,HIDC_RESTORE
     CONTROL         "Display Window &Tabs",IDC_MDITABS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,17,31,87,10,0,HIDC_MDITABS
+                    BS_AUTOCHECKBOX | WS_TABSTOP,20,29,87,10,0,HIDC_MDITABS
     CONTROL         "Window Tabs at &Bottom",IDC_TABSBOTTOM,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,29,42,100,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,32,40,100,10,0,
                     HIDC_TABSBOTTOM
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,59,
+                    219,1
+    LTEXT           "Global formatting",IDC_STATIC,9,56,54,8
     CONTROL         "Display &hex in uppercase",IDC_HEX_UCASE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,141,20,104,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,20,70,104,10,0,
                     HIDC_HEX_UCASE
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,92,
+                    219,1
+    LTEXT           "Document",IDC_STATIC,11,89,34,8
     CONTROL         "&Large (block) cursor",IDC_LARGE_CURSOR,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,141,31,104,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,20,103,104,10,0,
                     HIDC_LARGE_CURSOR
-    CONTROL         "Shadow &cursor in other area",IDC_SHOW_OTHER,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,141,42,104,10,0,
-                    HIDC_SHOW_OTHER
-    LTEXT           "When opening new files:",IDC_STATIC,16,71,79,8
-    CONTROL         "No template view",IDC_DFFD_NONE,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,19,81,71,10,0,
-                    HIDC_DFFD_NONE
-    CONTROL         "Split window",IDC_DFFD_SPLIT,"Button",
-                    BS_AUTORADIOBUTTON | WS_TABSTOP,19,91,55,10,0,
-                    HIDC_DFFD_SPLIT
-    CONTROL         "Tab window",IDC_DFFD_TAB,"Button",BS_AUTORADIOBUTTON,19,
-                    101,55,10,0,HIDC_DFFD_TAB
-    RTEXT           "No of fixed\rarray elements",IDC_DESC_DFFD_ARRAY_MAX,12,
-                    114,45,17
-    EDITTEXT        IDC_DFFD_ARRAY_MAX,61,115,31,14,ES_AUTOHSCROLL | 
-                    ES_NUMBER,0,HIDC_DFFD_ARRAY_MAX
-    CONTROL         "Spin1",IDC_SPIN_DFFD_ARRAY_MAX,"msctls_updown32",
-                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,83,116,11,14
-    RTEXT           "Character:",IDC_DESC_DFFD_FORMAT_CHAR,103,77,41,8
-    EDITTEXT        IDC_DFFD_FORMAT_CHAR,147,74,31,14,ES_AUTOHSCROLL,0,
-                    HIDC_DFFD_FORMAT_CHAR
-    RTEXT           "Integer:",IDC_DESC_DFFD_FORMAT_INT,103,95,41,8
-    EDITTEXT        IDC_DFFD_FORMAT_INT,147,92,31,14,ES_AUTOHSCROLL,0,
-                    HIDC_DFFD_FORMAT_INT
-    RTEXT           "Unsigned int:",IDC_DESC_DFFD_FORMAT_UINT,103,113,41,8
-    EDITTEXT        IDC_DFFD_FORMAT_UINT,147,111,31,14,ES_AUTOHSCROLL,0,
-                    HIDC_DFFD_FORMAT_UINT
-    RTEXT           "String:",IDC_DESC_DFFD_FORMAT_STRING,182,77,27,8
-    EDITTEXT        IDC_DFFD_FORMAT_STRING,212,74,31,14,ES_AUTOHSCROLL,0,
-                    HIDC_DFFD_FORMAT_STRING
-    RTEXT           "Real:",IDC_DESC_DFFD_FORMAT_REAL,182,95,27,8
-    EDITTEXT        IDC_DFFD_FORMAT_REAL,212,92,31,14,ES_AUTOHSCROLL,0,
-                    HIDC_DFFD_FORMAT_REAL
-    RTEXT           "Date:",IDC_DESC_DFFD_FORMAT_DATE,182,113,27,8
-    EDITTEXT        IDC_DFFD_FORMAT_DATE,212,111,31,14,ES_AUTOHSCROLL,0,
-                    HIDC_DFFD_FORMAT_DATE
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,46,61,
-                    50,1
-    LTEXT           "Templates",IDC_STATIC,12,57,34,8
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,199,61,
-                    55,1
-    LTEXT           "Default template format strings",IDC_STATIC,103,57,96,8
+    CONTROL         "&Nice addresses",IDC_NICE_ADDR,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,137,103,104,10,0,HIDC_NICE_ADDR
+    CONTROL         "Display ""shadow"" &cursor in other (hex/char) area",
+                    IDC_SHOW_OTHER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,
+                    114,169,10,0,HIDC_SHOW_OTHER
 END
 
 IDD_PASSWORD DIALOGEX 0, 0, 255, 118
@@ -1721,6 +1689,10 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "File Type Filters"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
+    ICON            IDI_FILTER,IDC_PAGE_ICON,0,0,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,33,8,
+                    151,1
+    LTEXT           "File Type Filters",IDC_STATIC,21,4,50,8
     PUSHBUTTON      "New",IDC_NEW,190,8,14,14,BS_ICON | BS_CENTER | 
                     BS_VCENTER,0,HIDC_NEW
     PUSHBUTTON      "Del",IDC_DEL,207,8,14,14,BS_ICON | BS_CENTER | 
@@ -1729,12 +1701,9 @@ BEGIN
     PUSHBUTTON      "Down",IDC_DOWN,241,8,14,14,BS_ICON | BS_CENTER | 
                     BS_VCENTER
     LTEXT           "Filter name",IDC_STATIC,26,15,35,8
-    LTEXT           "Filter",IDC_STATIC,147,15,16,8
+    LTEXT           "Pattern(s)",IDC_STATIC,147,15,31,8
     CONTROL         "Custom1",IDC_GRID_FILTERS,"MFCGridCtrl",WS_TABSTOP,7,24,
                     249,108,0,HIDC_GRID_FILTERS
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,23,8,
-                    161,1
-    ICON            IDI_FILTER,IDC_PAGE_ICON,0,0,20,20
 END
 
 IDD_OPT_WINDISPLAY DIALOGEX 0, 0, 260, 140
@@ -2216,10 +2185,10 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Editing"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            "",IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,44,11,
-                    206,1
-    LTEXT           "Editing",IDC_STATIC,22,7,22,8
+    ICON            IDI_EDIT,IDC_PAGE_ICON,0,0,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,40,11,
+                    210,1
+    LTEXT           "Editing",IDC_STATIC,20,7,22,8
     LTEXT           "Modifiability",IDC_STATIC,17,20,41,8
     COMBOBOX        IDC_MODIFY,61,19,64,47,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_MODIFY
@@ -2242,10 +2211,10 @@ BEGIN
                     183,1
     LTEXT           "Change Tracking",IDC_STATIC,12,75,56,8
     CONTROL         "Show inserted bytes",IDC_CT_INSERTIONS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,17,86,85,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,17,86,100,10,0,
                     HIDC_CT_INSERTIONS
     CONTROL         "Show modified bytes",IDC_CT_MODIFICATIONS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,17,97,85,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,17,97,100,10,0,
                     HIDC_CT_MODIFICATIONS
     CONTROL         "Show deleted bytes",IDC_CT_DELETIONS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,135,87,85,10,0,
@@ -2256,6 +2225,12 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,31,113,
                     219,1
     LTEXT           "Other",IDC_STATIC,12,109,18,8
+    CONTROL         "Show bookmarks",IDC_SHOW_BOOKMARKS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,17,120,100,10,0,
+                    HIDC_SHOW_BOOKMARKS
+    CONTROL         "Show highlights",IDC_SHOW_HIGHLIGHTS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,135,120,100,10,0,
+                    HIDC_SHOW_HIGHLIGHTS
 END
 
 IDD_OPT_WINGENERAL DIALOGEX 0, 0, 260, 140
@@ -2279,6 +2254,58 @@ BEGIN
     LTEXT           "Saves the current settings (including those in the following pages) as the defaults used when you open a file which you haven't opened in HexEdit before, or when you create a new file.",
                     IDC_STATIC,20,102,225,25
     ICON            IDI_WINDOW,IDC_PAGE_ICON,0,0,21,20
+END
+
+IDD_OPT_WORKTEMPLATE DIALOGEX 0, 0, 260, 140
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Templates"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    ICON            IDI_DISPLAY,IDC_PAGE_ICON,0,0,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,46,9,
+                    209,1
+    LTEXT           "Default template display",IDC_STATIC,21,5,76,8
+    CONTROL         "No template view",IDC_DFFD_NONE,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,20,17,71,10,0,
+                    HIDC_DFFD_NONE
+    CONTROL         "Split window",IDC_DFFD_SPLIT,"Button",
+                    BS_AUTORADIOBUTTON,20,28,55,10,0,HIDC_DFFD_SPLIT
+    CONTROL         "Tab window",IDC_DFFD_TAB,"Button",BS_AUTORADIOBUTTON,20,
+                    39,55,10,0,HIDC_DFFD_TAB
+    LTEXT           "Determines how any associated template is displayed when you open a file which you haven't opened in HexEdit before, or when you create a new file.",
+                    IDC_STATIC,112,16,134,35
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,55,
+                    219,1
+    LTEXT           "Processing",IDC_STATIC,10,51,36,8
+    RTEXT           "Number of fixed array elements:",
+                    IDC_DESC_DFFD_ARRAY_MAX,16,65,100,8
+    EDITTEXT        IDC_DFFD_ARRAY_MAX,117,62,31,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER,0,HIDC_DFFD_ARRAY_MAX
+    CONTROL         "Spin1",IDC_SPIN_DFFD_ARRAY_MAX,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,139,65,11,14
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,84,
+                    219,1
+    LTEXT           "Default format strings",IDC_STATIC,10,81,67,8
+    RTEXT           "Character:",IDC_DESC_DFFD_FORMAT_CHAR,8,97,41,8
+    EDITTEXT        IDC_DFFD_FORMAT_CHAR,50,94,31,14,ES_AUTOHSCROLL,0,
+                    HIDC_DFFD_FORMAT_CHAR
+    RTEXT           "String:",IDC_DESC_DFFD_FORMAT_STRING,22,115,27,8
+    EDITTEXT        IDC_DFFD_FORMAT_STRING,50,112,31,14,ES_AUTOHSCROLL,0,
+                    HIDC_DFFD_FORMAT_STRING
+    RTEXT           "Signed integer:",IDC_DESC_DFFD_FORMAT_INT,83,97,49,8
+    EDITTEXT        IDC_DFFD_FORMAT_INT,133,94,31,14,ES_AUTOHSCROLL,0,
+                    HIDC_DFFD_FORMAT_INT
+    RTEXT           "Unsigned int:",IDC_DESC_DFFD_FORMAT_UINT,91,114,41,8
+    EDITTEXT        IDC_DFFD_FORMAT_UINT,133,111,31,14,ES_AUTOHSCROLL,0,
+                    HIDC_DFFD_FORMAT_UINT
+    RTEXT           "Floating point:",IDC_DESC_DFFD_FORMAT_REAL,169,97,46,8
+    EDITTEXT        IDC_DFFD_FORMAT_REAL,216,94,31,14,ES_AUTOHSCROLL,0,
+                    HIDC_DFFD_FORMAT_REAL
+    RTEXT           "Date:",IDC_DESC_DFFD_FORMAT_DATE,188,114,27,8
+    EDITTEXT        IDC_DFFD_FORMAT_DATE,216,111,31,14,ES_AUTOHSCROLL,0,
+                    HIDC_DFFD_FORMAT_DATE
 END
 
 
@@ -3126,6 +3153,8 @@ IDI_SWITCH              ICON                    "res\\switch.ico"
 IDI_ICON2               ICON                    "res\\icon2.ico"
 IDI_ICON3               ICON                    "res\\icon3.ico"
 IDI_TIPS                ICON                    "res\\tips.ico"
+IDI_EDIT                ICON                    "res\\chtrack.ico"
+IDI_LAYOUT              ICON                    "res\\layout.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
