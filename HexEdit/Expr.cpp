@@ -2658,7 +2658,8 @@ struct
 
 expr_eval::tok_t expr_eval::func_token(const char *buf)
 {
-    for (int ii = 0; func_list[ii].name != NULL; ++ii)
+	int ii;
+    for (ii = 0; func_list[ii].name != NULL; ++ii)
         if (stricmp(buf, func_list[ii].name) == 0)
             break;
 

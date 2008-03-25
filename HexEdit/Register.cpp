@@ -597,7 +597,8 @@ void CRegister::OnOK()
     {
         ASSERT(type_ == 1);
         int code_type = -1;
-        for (int flags = 0; flags < 256; ++flags)
+		int flags;
+        for (flags = 0; flags < 256; ++flags)
         {
             if (strnicmp(install_code_, user_reg_code(0, user_name_, code_type = 6, flags), 11) == 0 ||
                 strnicmp(install_code_, user_reg_code(0, user_name_, code_type = 6, flags, -1), 11) == 0 ||

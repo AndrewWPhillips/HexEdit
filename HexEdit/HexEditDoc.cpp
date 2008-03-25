@@ -2397,7 +2397,8 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 
                 // Create more array elts until we have displayed them all (or as many as
                 // we are going to display for fixed elt arrays) or we are told to stop (strTest)
-                for (int elt_num = 1; elt_num < display_elts; ++elt_num)
+				int elt_num;
+                for (elt_num = 1; elt_num < display_elts; ++elt_num)
                 {
 					// Check if we need to stop at EOF
                     if (strCount.IsEmpty() &&
@@ -3594,7 +3595,7 @@ bool CHexEditDoc::add_enum(CXmlTree::CElt &ee, LPCTSTR pp)
 	bool retval = true;
 
     // Find the end so we know where to stop
-    char *pend = strchr(pp, '}');
+    const char *pend = strchr(pp, '}');
     if (pend == NULL)
 	{
 		pend = (char *)(pp + strlen(pp));

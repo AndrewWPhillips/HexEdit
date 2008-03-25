@@ -2924,7 +2924,8 @@ CCellRange CGridCtrl::GetVisibleNonFixedCellRange(LPRECT pRect /*=NULL*/,
 
     // calc bottom
     int bottom = GetFixedRowHeight();
-    for (int i = idTopLeft.row; i < GetRowCount(); i++)
+	int i;
+    for (i = idTopLeft.row; i < GetRowCount(); i++)
     {
         bottom += GetRowHeight(i);
         if (bottom >= rect.bottom)
@@ -2967,7 +2968,8 @@ CCellRange CGridCtrl::GetUnobstructedNonFixedCellRange(BOOL bForceRecalculation 
 
     // calc bottom
     int bottom = GetFixedRowHeight();
-    for (int i = idTopLeft.row; i < GetRowCount(); i++)
+	int i;
+    for (i = idTopLeft.row; i < GetRowCount(); i++)
     {
         bottom += GetRowHeight(i);
         if (bottom >= rect.bottom)
@@ -3491,7 +3493,8 @@ BOOL CGridCtrl::SetFixedColumnCount(int nFixedCols)
         }
         else
         {
-            for (int i = 0; i < GetFixedRowCount(); i++)
+			int i;
+            for (i = 0; i < GetFixedRowCount(); i++)
                 for (int j = nFixedCols; j < m_nFixedCols; j++)
                     SetItemState(i, j, GetItemState(i, j) & ~GVIS_FIXEDCOL );
 
@@ -3655,7 +3658,8 @@ BOOL CGridCtrl::SetColumnCount(int nCols)
         {
             // initialized column widths
             int startCol = nCols - addedCols;
-            for (int col = startCol; col < nCols; col++)
+			int col;
+            for (col = startCol; col < nCols; col++)
                 m_arColWidths[col] = m_cellFixedColDef.GetWidth();
         
             // initialise column data
@@ -4596,7 +4600,7 @@ LPARAM CGridCtrl::GetItemData(int nRow, int nCol) const
     if (!pCell)
         return (LPARAM) 0;
 
-    return pCell->GetData();
+    return LPARAM(pCell->GetData());
 }
 
 BOOL CGridCtrl::SetItemImage(int nRow, int nCol, int iImage)
@@ -5184,7 +5188,8 @@ void CGridCtrl::ExpandColumnsToFit(BOOL bExpandFixed /*=TRUE*/)
     int nFirstColumn = (bExpandFixed)? 0 : GetFixedColumnCount();
 
     int nNumColumnsAffected = 0;
-    for (int col = nFirstColumn; col < GetColumnCount(); col++)
+	int col;
+    for (col = nFirstColumn; col < GetColumnCount(); col++)
     {
         if (m_arColWidths[col] > 0)
             nNumColumnsAffected++;
@@ -5283,7 +5288,8 @@ void CGridCtrl::ExpandRowsToFit(BOOL bExpandFixed /*=TRUE*/)
     int nFirstRow = (bExpandFixed)? 0 : GetFixedRowCount();
 
     int nNumRowsAffected = 0;
-    for (int row = nFirstRow; row < GetRowCount(); row++)
+	int row;
+    for (row = nFirstRow; row < GetRowCount(); row++)
     {
         if (m_arRowHeights[row] > 0)
             nNumRowsAffected++;

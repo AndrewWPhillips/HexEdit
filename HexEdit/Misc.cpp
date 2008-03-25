@@ -185,7 +185,8 @@ bool StringToDecimal(const char *ss, void *presult)
 	bool neg = false;           // minus sign seen?
 
 	// Scan the characters of the value
-	for (const char *pp = ss; *pp != '\0'; ++pp)
+	const char *pp;
+	for (pp = ss; *pp != '\0'; ++pp)
 	{
 		if (*pp == '-')
 		{
@@ -962,7 +963,8 @@ __int64 strtoi64(const char *ss, int radix, const char **endptr)
 
     unsigned __int64 maxval = _UI64_MAX / radix;
 
-    for (const char *src = ss; *src != '\0'; ++src)
+	const char * src;
+    for (src = ss; *src != '\0'; ++src)
     {
         // Ignore everything except valid digits
         unsigned int digval;

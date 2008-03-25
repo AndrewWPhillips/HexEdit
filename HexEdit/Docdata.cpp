@@ -1076,7 +1076,8 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
         if (append)
             ff.SeekToEnd();
 
-        for (FILE_ADDRESS address = start; address < end; address += FILE_ADDRESS(got))
+		FILE_ADDRESS address;
+        for (address = start; address < end; address += FILE_ADDRESS(got))
         {
             got = GetData(buf, size_t(min(end-address, FILE_ADDRESS(copy_buf_len))), address);
             ASSERT(got > 0);

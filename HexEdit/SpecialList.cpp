@@ -641,7 +641,8 @@ UINT CSpecialList::background()
     }
     else
     {
-        for (int ii = 0; ii < (int)m_id.size(); ++ii)
+		int ii;
+        for (ii = 0; ii < (int)m_id.size(); ++ii)
 			if (m_id[ii] == m_refresh_id)
 			{
 				// Default values that may be different from last time

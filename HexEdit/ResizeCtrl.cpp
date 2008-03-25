@@ -817,7 +817,8 @@ BOOL CResizeCtrl::PropertySheetPrepare( CPropertySheet * sheet )
 		int selectedPage = sheet->GetActiveIndex();
 		// Activated all pages except the current active page
 		// this ensures, that all pages are created
-		for( int currentPage = 0; currentPage < count; currentPage++ )
+		int currentPage;
+		for (currentPage = 0; currentPage < count; currentPage++ )
 		{
 			if( currentPage != selectedPage )
 				sheet->SetActivePage(currentPage );

@@ -5365,7 +5365,8 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 	pt.x = rct.right;
 
 	int idx = 0;
-	for (size_t ii = 0; ii < theApp.tip_name_.size(); ++ii)
+	size_t ii;
+	for (ii = 0; ii < theApp.tip_name_.size(); ++ii)
 	{
 		if (theApp.tip_on_[ii])
 		{
@@ -7677,7 +7678,8 @@ void CHexEditView::OnExportIntel()
 
         CHECK_SECURITY(16);
 
-        for (FILE_ADDRESS curr = start; curr < end; curr += len)
+		FILE_ADDRESS curr;
+        for (curr = start; curr < end; curr += len)
         {
             len = min(4096, int(end - curr));
             VERIFY(GetDocument()->GetData(buf, len, curr) == len);
@@ -8409,7 +8411,8 @@ bool CHexEditView::CopyToClipboard()
         unsigned char *buf = new unsigned char[clipboard_buf_len];
         size_t len;
         pp = p_cb;
-        for (FILE_ADDRESS curr = start; curr < end; curr += len)
+		FILE_ADDRESS curr;
+        for (curr = start; curr < end; curr += len)
         {
             len = min(clipboard_buf_len, int(end - curr));
             VERIFY(GetDocument()->GetData(buf, len, curr) == len);
@@ -8586,7 +8589,8 @@ void CHexEditView::OnCopyHex()
 
         pp = p_cb;
 
-        for (FILE_ADDRESS curr = start; curr < end; )
+		FILE_ADDRESS curr;
+        for (curr = start; curr < end; )
         {
             VERIFY(GetDocument()->GetData(&cc, 1, curr) == 1);
             *pp++ = hex[(cc>>4)&0xF];
@@ -12466,7 +12470,8 @@ void CHexEditView::OnEditCompare()
         if (memcmp(orig_buf, comp_buf, comp_len) != 0)
         {
             // Difference found
-            for (size_t pos = 0; pos < comp_len; ++pos)
+			size_t pos;
+            for (pos = 0; pos < comp_len; ++pos)
                 if (orig_buf[pos] != comp_buf[pos])
                     break;
             ASSERT(pos < comp_len);

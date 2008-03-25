@@ -1750,7 +1750,8 @@ void CHexEditApp::set_alg(const char *pp)
 
     if (strcmp(pp, INTERNAL_ALGORITHM) != 0)
     {
-        for (int ii = 0; ii < (int)crypto_.GetNum(); ++ii)
+		int ii;
+        for (ii = 0; ii < (int)crypto_.GetNum(); ++ii)
         {
             if (strcmp(crypto_.GetName(ii), pp) == 0)
             {
@@ -2507,7 +2508,8 @@ void CHexEditApp::LoadSchemes()
     int num_schemes = GetProfileInt("Options", "NumberOfSchemes", 0);
 
     // For each scheme
-    for (int ii = 0; ii < num_schemes; ++ii)
+	int ii;
+    for (ii = 0; ii < num_schemes; ++ii)
     {
         CString strKey;
 
@@ -3412,7 +3414,7 @@ BOOL CHexEditApp::backup(LPCTSTR filename, FILE_ADDRESS file_len) const
 			{
 				// UNC file name (eg \\MyServer\MyShare\MyFile)
 				// Find 4th backslash and copy everything up to it
-				_TCHAR *pp = strchr(filename+2, '\\');      // 3rd
+				const char *pp = strchr(filename+2, '\\');      // 3rd
 				if (pp != NULL) pp = strchr(pp+1, '\\');    // 4th
 
 				if (pp != NULL && pp-filename + 1 < sizeof(vol)/sizeof(*vol))

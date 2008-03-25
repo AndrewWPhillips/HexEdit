@@ -467,7 +467,7 @@ struct key_macro                // Stores one keystroke of the macro
         return *this;
     }
     // These are required by vector<> under VC++ 5 even though not used
-    operator==(const key_macro &) const { return false; }
-    operator<(const key_macro &) const { return false; }
+    bool operator==(const key_macro &) const { return false; }
+    bool operator<(const key_macro &) const { return false; }
 };
 #pragma pack()

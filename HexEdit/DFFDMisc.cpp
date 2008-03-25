@@ -569,7 +569,7 @@ bool get_enum(LPCTSTR pp, std::vector<enum_entry> &retval)
     if (pp[0] != '{') return false;
 
     // Get rid of the trailing } so we just have the enum strings
-    char *pend = strchr(pp, '}');
+    const char *pend = strchr(pp, '}');
     if (pend == NULL) return false;
 
     CString ss(pp+1, pend-pp-1);

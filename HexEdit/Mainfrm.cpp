@@ -2297,7 +2297,8 @@ void CMainFrame::OnSearchSel()
     {
         buf[end-start] = '\0';
         // Check if all chars are normal ASCII text and set search text
-        for (unsigned char *pp = buf; pp < buf+end-start; ++pp)
+		unsigned char *pp;
+        for (pp = buf; pp < buf+end-start; ++pp)
             if (*pp <= '\r')
                 break;
         if (pp == buf+end-start)

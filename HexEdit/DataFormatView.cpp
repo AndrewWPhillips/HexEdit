@@ -3984,7 +3984,8 @@ CString CDataFormatView::get_name(int ii)
     unsigned char ind = pdoc->df_indent_[ii];
     int same_level = 0;
 
-    for (int jj = ii - 1; pdoc->df_indent_[jj] >= ind && jj > 0; jj--)
+	int jj;
+    for (jj = ii - 1; pdoc->df_indent_[jj] >= ind && jj > 0; jj--)
         if (pdoc->df_indent_[jj] == ind)
             ++same_level;
 

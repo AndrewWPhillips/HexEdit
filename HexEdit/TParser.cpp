@@ -1285,7 +1285,8 @@ CString TParser::get_next()
 	{
 		// Just punctuation, so check for multi-char tokens
 		size_t len = 0;
-		for (char ** ptok = ctokens; *ptok != NULL; ++ptok)
+		char ** ptok;
+		for (ptok = ctokens; *ptok != NULL; ++ptok)
 		{
 			len = strlen(*ptok);
 			if (strncmp(pp_, *ptok, len) == 0)

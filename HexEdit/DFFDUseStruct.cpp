@@ -63,7 +63,8 @@ CDFFDUseStruct::CDFFDUseStruct(CXmlTree::CElt *pp, signed char parent_type, CWnd
     // Build menu of structure definitions that the user can use
     // Note: define_struct elements are always the first children of the root (file) node
     CXmlTree::CElt ee = pelt_->GetOwner()->GetRoot().GetFirstChild();
-    for (int item_no = 1; !ee.IsEmpty() && ee.GetName() == "define_struct"; ++item_no, ++ee)
+	int item_no;
+    for (item_no = 1; !ee.IsEmpty() && ee.GetName() == "define_struct"; ++item_no, ++ee)
         pstruct_menu_->AppendMenu(MF_ENABLED, item_no, ee.GetAttr("type_name"));
 
     // Check if no items were added (no struct definitions found)
