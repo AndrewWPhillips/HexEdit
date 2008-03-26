@@ -2756,6 +2756,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     CWindowPage windisplayPage;
     CWindowEditPage wineditPage;
 
+	// Set up initial page
 	CPropertyPage *pPage = NULL;
 	switch (display_page)
 	{
@@ -2775,6 +2776,9 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 	    if (pview != NULL) pPage = &windisplayPage;
         break;
 	}
+
+	// Allow pages to communicate with each other
+	workspacedisplayPage.SetStartupPage(&generalPage);
 
     // Load current settings into the property sheet
     get_options(optSheet.val_);

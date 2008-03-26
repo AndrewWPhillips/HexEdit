@@ -1442,6 +1442,7 @@ BEGIN
     CONTROL         "&Nice addresses",IDC_NICE_ADDR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,137,103,104,10,0,HIDC_NICE_ADDR
     CONTROL         "Display ""shadow"" &cursor in other (hex/char) area",IDC_SHOW_OTHER,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,114,169,10,0,HIDC_SHOW_OTHER
+    PUSHBUTTON      "More Startup Options >>",IDC_STARTUP_PAGE,154,15,94,14,0,0,HIDC_STARTUP_PAGE
 END
 
 IDD_PASSWORD DIALOGEX 0, 0, 255, 118
@@ -1927,13 +1928,13 @@ FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,74,8,181,1
     LTEXT           "Window Settings",IDC_STATIC,22,4,54,8
-    ICON            "",IDC_FILE_ICON,20,14,21,20
-    LTEXT           "",IDC_FILENAME,45,19,210,12
-    PUSHBUTTON      "&Load Default Settings",IDC_DISP_RESET,20,40,225,17,BS_MULTILINE | WS_GROUP,0,HIDC_DISP_RESET
-    LTEXT           "Loads default document settings (including those in the following pages)",IDC_STATIC,20,60,225,20
-    PUSHBUTTON      "&Save Current Window Settings As the Default...",IDC_SAVE_DEFAULT,20,82,225,17,BS_MULTILINE | WS_GROUP,0,HIDC_SAVE_DEFAULT
+    ICON            "",IDC_FILE_ICON,20,16,21,20
+    LTEXT           "",IDC_FILENAME,45,21,210,12
+    PUSHBUTTON      "&Load Default Settings",IDC_DISP_RESET,20,42,225,15,BS_MULTILINE | WS_GROUP,0,HIDC_DISP_RESET
+    LTEXT           "Loads default document settings (including those in the following pages)",IDC_STATIC,20,61,225,20
+    PUSHBUTTON      "&Save Current Window Settings As the Default...",IDC_SAVE_DEFAULT,20,83,225,15,BS_MULTILINE | WS_GROUP,0,HIDC_SAVE_DEFAULT
     LTEXT           "Saves the current settings (including those in the following pages) as the defaults used when you open a file which you haven't opened in HexEdit before, or when you create a new file.",IDC_STATIC,20,102,225,25
-    ICON            IDI_WINDOW,IDC_PAGE_ICON,0,0,21,20
+    ICON            IDI_WINDOW,IDC_PAGE_ICON,0,0,20,20
 END
 
 IDD_OPT_WORKTEMPLATE DIALOGEX 0, 0, 260, 140

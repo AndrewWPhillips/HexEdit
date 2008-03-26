@@ -1072,6 +1072,7 @@
 #define IDC_FILE_ICON                   1550
 #define IDC_PAGE_ICON2                  1551
 #define IDC_FILENAME                    1552
+#define IDC_STARTUP_PAGE                1553
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1435,7 +1436,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        400
 #define _APS_NEXT_COMMAND_VALUE         39002
-#define _APS_NEXT_CONTROL_VALUE         1553
+#define _APS_NEXT_CONTROL_VALUE         1554
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

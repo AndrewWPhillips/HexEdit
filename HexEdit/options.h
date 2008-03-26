@@ -310,10 +310,12 @@ class CWorkspaceDisplayPage : public COptPage
 
 // Construction
 public:
-	CWorkspaceDisplayPage() : COptPage(IDD) { }
+	CWorkspaceDisplayPage() : COptPage(IDD) { pStartupPage = NULL; }
 
 // Dialog Data
 	enum { IDD = IDD_OPT_WORKDISPLAY };
+
+	void SetStartupPage(COptPage * pPage) { pStartupPage = pPage; }
 
 // Overrides
 public:
@@ -325,11 +327,14 @@ protected:
 protected:
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnChange();
+	afx_msg void OnStartupPage();
 	afx_msg void OnChangeMditabs();
 	afx_msg void OnVisualizations();
 	virtual BOOL OnInitDialog();
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
+private:
+	COptPage * pStartupPage;
 };
 
 /////////////////////////////////////////////////////////////////////////////

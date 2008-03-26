@@ -424,7 +424,6 @@ void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_NICE_ADDR, pParent->val_.nice_addr_);
 }
 
-
 BEGIN_MESSAGE_MAP(CWorkspaceDisplayPage, COptPage)
 	ON_WM_HELPINFO()
 	ON_BN_CLICKED(IDC_HEX_UCASE, OnChange)
@@ -435,6 +434,7 @@ BEGIN_MESSAGE_MAP(CWorkspaceDisplayPage, COptPage)
 	ON_BN_CLICKED(IDC_TABSBOTTOM, OnChange)
 	ON_BN_CLICKED(IDC_SHOW_OTHER, OnChange)
 	ON_BN_CLICKED(IDC_NICE_ADDR, OnChange)
+	ON_BN_CLICKED(IDC_STARTUP_PAGE, OnStartupPage)
     ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
@@ -451,6 +451,12 @@ BOOL CWorkspaceDisplayPage::OnInitDialog()
 void CWorkspaceDisplayPage::OnChange() 
 {
     SetModified(TRUE);
+}
+
+void CWorkspaceDisplayPage::OnStartupPage()
+{
+	if (pStartupPage != NULL)
+		pParent->SetActivePage(pStartupPage);
 }
 
 void CWorkspaceDisplayPage::OnVisualizations() 

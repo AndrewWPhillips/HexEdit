@@ -14,7 +14,7 @@ void CNavManager::Add(LPCTSTR desc, LPCTSTR info, CHexEditView *pv, FILE_ADDRESS
 	ASSERT(pos_ >= -1 && pos_ < int(v_.size()));
 
 	// Truncate the list past the current pos
-	v_.erase(v_.begin() + pos_ + 1, v_.end());
+	v_.erase(v_.begin() + (pos_ + 1), v_.end());
 
 	// Push new entry on the end
 	CHexEditDoc *pdoc = pv->GetDocument();
