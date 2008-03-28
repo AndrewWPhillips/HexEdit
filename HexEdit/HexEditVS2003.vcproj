@@ -891,6 +891,12 @@
 				RelativePath=".\Res\display.ico">
 			</File>
 			<File
+				RelativePath=".\Res\docdisp.ico">
+			</File>
+			<File
+				RelativePath=".\Res\docedit.ico">
+			</File>
+			<File
 				RelativePath=".\RES\down.ico">
 			</File>
 			<File
@@ -1127,10 +1133,10 @@
 				RelativePath=".\Install\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\Install\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">
