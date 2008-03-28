@@ -61,10 +61,13 @@ void COptSheet::init()
     // Set up default values (these should be overwritten later)
 	val_.shell_open_ = FALSE;
 	val_.one_only_ = FALSE;
-	val_.bg_search_ = FALSE;
+    val_.run_autoexec_ = TRUE;
     val_.save_exit_ = FALSE;
 	val_.recent_files_ = 0;
+    val_.no_recent_add_ = FALSE;
 
+	val_.bg_search_ = FALSE;
+    val_.undo_limit_ = 4;
     val_.backup_ = FALSE;
 	val_.backup_space_ = FALSE;
 	val_.backup_size_ = 0;
@@ -77,6 +80,7 @@ void COptSheet::init()
 	val_.open_restore_ = FALSE;
 	val_.mditabs_ = FALSE;
 	val_.tabsbottom_ = FALSE;
+    val_.tabicons_ = TRUE;
 	val_.large_cursor_ = FALSE;
 	val_.hex_ucase_ = FALSE;
 	val_.show_other_ = FALSE;
@@ -198,27 +202,142 @@ IMPLEMENT_DYNAMIC(COptPage, CBCGPropertyPage)
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
-// CGeneralPage property page
+// CSystemGeneralPage property page
 
-IMPLEMENT_DYNCREATE(CGeneralPage, COptPage)
+IMPLEMENT_DYNCREATE(CSystemGeneralPage, COptPage)
 
-void CGeneralPage::DoDataExchange(CDataExchange* pDX)
+void CSystemGeneralPage::DoDataExchange(CDataExchange* pDX)
 {
-        COptPage::DoDataExchange(pDX);
-        //{{AFX_DATA_MAP(CGeneralPage)
+    COptPage::DoDataExchange(pDX);
+    DDX_Check(pDX, IDC_SHELLOPEN, pParent->val_.shell_open_);
+    DDX_Check(pDX, IDC_ONE_ONLY, pParent->val_.one_only_);
+    DDX_Check(pDX, IDC_AUTOEXEC, pParent->val_.run_autoexec_);
+	DDX_Check(pDX, IDC_RESTORE, pParent->val_.open_restore_);
+    //DDX_Check(pDX, IDC_BG_SEARCH, pParent->val_.bg_search_);
+	DDX_Text(pDX, IDC_RECENT_FILES, pParent->val_.recent_files_);
+	DDV_MinMaxUInt(pDX, pParent->val_.recent_files_, 1, 16);
+    DDX_Check(pDX, IDC_NO_RECENT, pParent->val_.no_recent_add_);
+    DDX_Check(pDX, IDC_SAVE_EXIT, pParent->val_.save_exit_);
+}
+
+BEGIN_MESSAGE_MAP(CSystemGeneralPage, COptPage)
+    ON_WM_HELPINFO()
+    ON_WM_CONTEXTMENU()
+    ON_BN_CLICKED(IDC_SHELLOPEN, OnShellopen)
+    ON_BN_CLICKED(IDC_ONE_ONLY, OnChange)
+    ON_BN_CLICKED(IDC_NO_RECENT, OnChange)
+    ON_BN_CLICKED(IDC_AUTOEXEC, OnChange)
+	ON_BN_CLICKED(IDC_RESTORE, OnChange)
+    //ON_BN_CLICKED(IDC_BG_SEARCH, OnChange)
+	ON_EN_CHANGE(IDC_RECENT_FILES, OnChange)
+	ON_BN_CLICKED(IDC_CLEAR_HIST, OnClearHist)
+    ON_BN_CLICKED(IDC_SAVE_EXIT, OnChange)
+    ON_BN_CLICKED(IDC_SAVE_NOW, OnSaveNow)
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CSystemGeneralPage message handlers
+
+BOOL CSystemGeneralPage::OnInitDialog() 
+{
+    COptPage::OnInitDialog();
+
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RECENT_FILES))->SetRange(1, 16);
+
+    return TRUE;
+}
+
+void CSystemGeneralPage::OnOK() 
+{
+	theApp.set_options(pParent->val_);
+    COptPage::OnOK();
+}
+
+static DWORD id_pairs_sys[] = {
+    IDC_SHELLOPEN, HIDC_SHELLOPEN,
+    IDC_ONE_ONLY, HIDC_ONE_ONLY,
+    IDC_NO_RECENT, HIDC_NO_RECENT,
+    IDC_AUTOEXEC, HIDC_AUTOEXEC,
+    IDC_RESTORE, HIDC_RESTORE,
+    //IDC_BG_SEARCH, HIDC_BG_SEARCH,
+    IDC_RECENT_FILES, HIDC_RECENT_FILES,
+    IDC_CLEAR_HIST, HIDC_CLEAR_HIST,
+    IDC_SPIN_RECENT_FILES, HIDC_RECENT_FILES,
+    IDC_SAVE_EXIT, HIDC_SAVE_EXIT,
+    IDC_SAVE_NOW, HIDC_SAVE_NOW,
+    0,0 
+}; 
+
+BOOL CSystemGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_sys);
+    return TRUE;
+}
+
+void CSystemGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_sys);
+}
+
+void CSystemGeneralPage::OnChange() 
+{
+    SetModified(TRUE);
+}
+
+void CSystemGeneralPage::OnShellopen() 
+{
+    UpdateData();
+    if (pParent->val_.shell_open_)
+    {
+        if (AfxMessageBox("This option affects all users of the system and\n"
+                          "can cause problems with some program launchers.\n"
+                          "Do you want to enable this option anyway?",
+                          MB_YESNO) != IDYES)
+        {
+            pParent->val_.shell_open_ = FALSE;
+            UpdateData(FALSE);
+        }
+    }
+    SetModified(TRUE);
+}
+
+void CSystemGeneralPage::OnClearHist() 
+{
+    CClearHistDlg dlg;
+    dlg.DoModal();
+}
+
+void CSystemGeneralPage::OnSaveNow() 
+{
+    // PressButton() always returns zero - so ignore return value
+    (void)pParent->PressButton(PSBTN_APPLYNOW);
+    theApp.SaveOptions();
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspacePage property page
+
+IMPLEMENT_DYNCREATE(CWorkspacePage, COptPage)
+
+void CWorkspacePage::DoDataExchange(CDataExchange* pDX)
+{
+    COptPage::DoDataExchange(pDX);
+    DDX_Check(pDX, IDC_BG_SEARCH, pParent->val_.bg_search_);
+    DDX_Text(pDX, IDC_UNDO_MERGE, pParent->val_.undo_limit_);
+	DDV_MinMaxUInt(pDX, pParent->val_.undo_limit_, 1, 16);
+
+	DDX_Check(pDX, IDC_BACKUP, pParent->val_.backup_);
 	DDX_Control(pDX, IDC_BACKUP_SPACE, ctl_backup_space_);
 	DDX_Control(pDX, IDC_BACKUP_SIZE, ctl_backup_size_);
 	DDX_Control(pDX, IDC_BACKUP_PROMPT, ctl_backup_prompt_);
 	DDX_Control(pDX, IDC_BACKUP_IF_SIZE, ctl_backup_if_size_);
-	DDX_Control(pDX, IDC_EXPORT_ADDRESS, address_ctl_);
-	//}}AFX_DATA_MAP
-    DDX_Check(pDX, IDC_SHELLOPEN, pParent->val_.shell_open_);
-    DDX_Check(pDX, IDC_ONE_ONLY, pParent->val_.one_only_);
-    DDX_Check(pDX, IDC_BG_SEARCH, pParent->val_.bg_search_);
-    DDX_Check(pDX, IDC_SAVE_EXIT, pParent->val_.save_exit_);
-	DDX_Text(pDX, IDC_RECENT_FILES, pParent->val_.recent_files_);
-	DDV_MinMaxUInt(pDX, pParent->val_.recent_files_, 1, 16);
+	DDX_Check(pDX, IDC_BACKUP_SPACE, pParent->val_.backup_space_);
+	DDX_Text(pDX, IDC_BACKUP_SIZE, pParent->val_.backup_size_);
+	DDX_Check(pDX, IDC_BACKUP_PROMPT, pParent->val_.backup_prompt_);
+	DDX_Check(pDX, IDC_BACKUP_IF_SIZE, pParent->val_.backup_if_size_);
 
+	DDX_Control(pDX, IDC_EXPORT_ADDRESS, address_ctl_);
 	DDX_Radio(pDX, IDC_ADDRESS_FILE, pParent->val_.address_specified_);
 	DDX_Text(pDX, IDC_EXPORT_LINELEN, pParent->val_.export_line_len_);
 	DDV_MinMaxUInt(pDX, pParent->val_.export_line_len_, 8, 250);
@@ -246,45 +365,33 @@ void CGeneralPage::DoDataExchange(CDataExchange* pDX)
             address_ctl_.add_spaces();
         }
     }
-	DDX_Check(pDX, IDC_BACKUP, pParent->val_.backup_);
-	DDX_Check(pDX, IDC_BACKUP_SPACE, pParent->val_.backup_space_);
-	DDX_Check(pDX, IDC_BACKUP_IF_SIZE, pParent->val_.backup_if_size_);
-	DDX_Text(pDX, IDC_BACKUP_SIZE, pParent->val_.backup_size_);
-	DDX_Check(pDX, IDC_BACKUP_PROMPT, pParent->val_.backup_prompt_);
 }
 
-BEGIN_MESSAGE_MAP(CGeneralPage, COptPage)
-        //{{AFX_MSG_MAP(CGeneralPage)
-        ON_BN_CLICKED(IDC_SAVE_NOW, OnSaveNow)
-        ON_WM_HELPINFO()
-        ON_BN_CLICKED(IDC_SHELLOPEN, OnShellopen)
-	ON_BN_CLICKED(IDC_ADDRESS_SPECIFIED, OnAddressSpecified)
-	ON_BN_CLICKED(IDC_ADDRESS_FILE, OnAddressFile)
-	ON_BN_CLICKED(IDC_CLEAR_HIST, OnClearHist)
-        ON_BN_CLICKED(IDC_SAVE_EXIT, OnChange)
+BEGIN_MESSAGE_MAP(CWorkspacePage, COptPage)
+    ON_WM_HELPINFO()
+    ON_WM_CONTEXTMENU()
+    ON_BN_CLICKED(IDC_BG_SEARCH, OnChange)
+	ON_EN_CHANGE(IDC_UNDO_MERGE, OnChange)
 	ON_BN_CLICKED(IDC_BACKUP, OnBackup)
 	ON_BN_CLICKED(IDC_BACKUP_IF_SIZE, OnBackupIfSize)
-        ON_BN_CLICKED(IDC_ONE_ONLY, OnChange)
-        ON_BN_CLICKED(IDC_BG_SEARCH, OnChange)
-	ON_EN_CHANGE(IDC_EXPORT_LINELEN, OnChange)
-	ON_EN_CHANGE(IDC_EXPORT_ADDRESS, OnChange)
-	ON_EN_CHANGE(IDC_RECENT_FILES, OnChange)
 	ON_BN_CLICKED(IDC_BACKUP_PROMPT, OnChange)
 	ON_EN_CHANGE(IDC_BACKUP_SIZE, OnChange)
 	ON_BN_CLICKED(IDC_BACKUP_SPACE, OnChange)
-	//}}AFX_MSG_MAP
-    ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_ADDRESS_SPECIFIED, OnAddressSpecified)
+	ON_BN_CLICKED(IDC_ADDRESS_FILE, OnAddressFile)
+	ON_EN_CHANGE(IDC_EXPORT_LINELEN, OnChange)
+	ON_EN_CHANGE(IDC_EXPORT_ADDRESS, OnChange)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CGeneralPage message handlers
+// CWorkspacePage message handlers
 
-BOOL CGeneralPage::OnInitDialog() 
+BOOL CWorkspacePage::OnInitDialog() 
 {
     COptPage::OnInitDialog();
 
-    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RECENT_FILES))->SetRange(1, 16);
     ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_EXPORT_LINELEN))->SetRange(8, 250);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_UNDO_MERGE))->SetRange(1, 16);
 
     ctl_backup_space_.EnableWindow(pParent->val_.backup_);
     ctl_backup_if_size_.EnableWindow(pParent->val_.backup_);
@@ -294,21 +401,14 @@ BOOL CGeneralPage::OnInitDialog()
     return TRUE;
 }
 
-void CGeneralPage::OnOK() 
+void CWorkspacePage::OnOK() 
 {
 	theApp.set_options(pParent->val_);
     COptPage::OnOK();
 }
 
-static DWORD id_pairs7[] = { 
-    IDC_SHELLOPEN, HIDC_SHELLOPEN,
-    IDC_ONE_ONLY, HIDC_ONE_ONLY,
+static DWORD id_pairs_ws[] = { 
     IDC_BG_SEARCH, HIDC_BG_SEARCH,
-    IDC_SAVE_EXIT, HIDC_SAVE_EXIT,
-    IDC_SAVE_NOW, HIDC_SAVE_NOW,
-    IDC_RECENT_FILES, HIDC_RECENT_FILES,
-    IDC_CLEAR_HIST, HIDC_CLEAR_HIST,
-    IDC_SPIN_RECENT_FILES, HIDC_RECENT_FILES,
     IDC_BACKUP, HIDC_BACKUP,
     IDC_BACKUP_SPACE, HIDC_BACKUP_SPACE,
     IDC_BACKUP_IF_SIZE, HIDC_BACKUP_IF_SIZE,
@@ -319,62 +419,34 @@ static DWORD id_pairs7[] = {
     IDC_EXPORT_ADDRESS, HIDC_EXPORT_ADDRESS,
     IDC_EXPORT_LINELEN, HIDC_EXPORT_LINELEN,
     IDC_SPIN_EXPORT_LINELEN, HIDC_EXPORT_LINELEN,
+    IDC_UNDO_MERGE, HIDC_UNDO_MERGE,
+    IDC_SPIN_UNDO_MERGE, HIDC_UNDO_MERGE,
     0,0 
 }; 
 
-BOOL CGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CWorkspacePage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs7);
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_ws);
     return TRUE;
 }
 
-void CGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CWorkspacePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs7);
+	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_ws);
 }
 
-void CGeneralPage::OnChange() 
+void CWorkspacePage::OnChange() 
 {
     SetModified(TRUE);
 }
 
-void CGeneralPage::OnShellopen() 
-{
-    UpdateData();
-    if (pParent->val_.shell_open_)
-    {
-        if (AfxMessageBox("This option affects all users of the system and\n"
-                          "can cause problems with some program launchers.\n"
-                          "Do you want to enable this option anyway?",
-                          MB_YESNO) != IDYES)
-        {
-            pParent->val_.shell_open_ = FALSE;
-            UpdateData(FALSE);
-        }
-    }
-    SetModified(TRUE);
-}
-
-void CGeneralPage::OnClearHist() 
-{
-    CClearHistDlg dlg;
-    dlg.DoModal();
-}
-
-void CGeneralPage::OnSaveNow() 
-{
-    // PressButton() always returns zero - so ignore return value
-    (void)pParent->PressButton(PSBTN_APPLYNOW);
-    theApp.SaveOptions();
-}
-
-void CGeneralPage::OnAddressFile() 
+void CWorkspacePage::OnAddressFile() 
 {
     address_ctl_.EnableWindow(FALSE);
     SetModified(TRUE);
 }
 
-void CGeneralPage::OnAddressSpecified() 
+void CWorkspacePage::OnAddressSpecified() 
 {
     CString ss;
     address_ctl_.EnableWindow();
@@ -386,7 +458,7 @@ void CGeneralPage::OnAddressSpecified()
     SetModified(TRUE);
 }
 
-void CGeneralPage::OnBackup() 
+void CWorkspacePage::OnBackup() 
 {
     UpdateData();
     ctl_backup_space_.EnableWindow(pParent->val_.backup_);
@@ -397,7 +469,7 @@ void CGeneralPage::OnBackup()
     SetModified(TRUE);
 }
 
-void CGeneralPage::OnBackupIfSize() 
+void CWorkspacePage::OnBackupIfSize() 
 {
     UpdateData();
     ASSERT(pParent->val_.backup_);
@@ -418,6 +490,7 @@ void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_RESTORE, pParent->val_.open_restore_);
 	DDX_Check(pDX, IDC_MDITABS, pParent->val_.mditabs_);
 	DDX_Check(pDX, IDC_TABSBOTTOM, pParent->val_.tabsbottom_);
+	DDX_Check(pDX, IDC_TABICONS, pParent->val_.tabicons_);
 	DDX_Check(pDX, IDC_LARGE_CURSOR, pParent->val_.large_cursor_);
 	DDX_Check(pDX, IDC_HEX_UCASE, pParent->val_.hex_ucase_);
 	DDX_Check(pDX, IDC_SHOW_OTHER, pParent->val_.show_other_);
@@ -426,16 +499,17 @@ void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CWorkspaceDisplayPage, COptPage)
 	ON_WM_HELPINFO()
+    ON_WM_CONTEXTMENU()
 	ON_BN_CLICKED(IDC_HEX_UCASE, OnChange)
 	ON_BN_CLICKED(IDC_MDITABS, OnChangeMditabs)
 	ON_BN_CLICKED(IDC_VISUALIZATIONS, OnVisualizations)
 	ON_BN_CLICKED(IDC_RESTORE, OnChange)
 	ON_BN_CLICKED(IDC_LARGE_CURSOR, OnChange)
 	ON_BN_CLICKED(IDC_TABSBOTTOM, OnChange)
+	ON_BN_CLICKED(IDC_TABICONS, OnChange)
 	ON_BN_CLICKED(IDC_SHOW_OTHER, OnChange)
 	ON_BN_CLICKED(IDC_NICE_ADDR, OnChange)
 	ON_BN_CLICKED(IDC_STARTUP_PAGE, OnStartupPage)
-    ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -469,6 +543,8 @@ void CWorkspaceDisplayPage::OnChangeMditabs()
     UpdateData();
     ASSERT(GetDlgItem(IDC_TABSBOTTOM) != NULL);
     GetDlgItem(IDC_TABSBOTTOM)->EnableWindow(pParent->val_.mditabs_);
+    ASSERT(GetDlgItem(IDC_TABICONS) != NULL);
+    GetDlgItem(IDC_TABICONS)->EnableWindow(pParent->val_.mditabs_);
     SetModified(TRUE);
 }
 
@@ -483,6 +559,7 @@ static DWORD id_pairs_workspace_display[] = {
     IDC_HEX_UCASE, HIDC_HEX_UCASE,
     IDC_MDITABS, HIDC_MDITABS,
     IDC_TABSBOTTOM, HIDC_TABSBOTTOM,
+    IDC_TABICONS, HIDC_TABICONS,
     IDC_NICE_ADDR, HIDC_NICE_ADDR,
     IDC_LARGE_CURSOR, HIDC_LARGE_CURSOR,
     IDC_SHOW_OTHER, HIDC_SHOW_OTHER,
@@ -753,9 +830,9 @@ BOOL CTipsPage::OnInitDialog()
 
     // Set up the grid sizes
     grid_.SetColumnWidth(column_check, 22);
-    grid_.SetColumnWidth(column_name,  96);
+    grid_.SetColumnWidth(column_name,  95);
     grid_.SetColumnWidth(column_expr, 160);
-    grid_.SetColumnWidth(column_format,66);
+    grid_.SetColumnWidth(column_format,65);
 
     // Set up the grid cells
     for (int ii = 0; ii < theApp.tip_name_.size(); ++ii)
@@ -2934,6 +3011,7 @@ IMPLEMENT_DYNCREATE(CWindowPage, COptPage)
 CWindowPage::CWindowPage() : COptPage(CWindowPage::IDD)
 {
     update_ok_ = false;
+    pGlobalPage = NULL;
 }
 
 void CWindowPage::DoDataExchange(CDataExchange* pDX)
@@ -3040,7 +3118,7 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
 	ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
-	ON_BN_CLICKED(IDC_MAX, OnChange)
+	ON_BN_CLICKED(IDC_GLOBAL_PAGE, OnGlobalPage)
 	ON_CBN_SELCHANGE(IDC_SHOW_AREA, OnSelchangeShowArea)
 	ON_CBN_SELCHANGE(IDC_CHARSET, OnSelchangeCharset)
 	ON_CBN_SELCHANGE(IDC_CONTROL, OnSelchangeControl)
@@ -3049,9 +3127,16 @@ BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
 	ON_EN_CHANGE(IDC_GROUPING, OnChange)
 	ON_EN_CHANGE(IDC_OFFSET, OnChange)
 	ON_BN_CLICKED(IDC_AUTOFIT, OnChangeUpdate)
+	ON_BN_CLICKED(IDC_MAX, OnChange)
 	ON_BN_CLICKED(IDC_ADDR_DEC, OnChange)
 	ON_BN_CLICKED(IDC_BORDERS, OnChange)
 END_MESSAGE_MAP()
+
+void CWindowPage::OnGlobalPage()
+{
+	if (pGlobalPage != NULL)
+		pParent->SetActivePage(pGlobalPage);
+}
 
 void CWindowPage::fix_controls()
 {
@@ -3305,13 +3390,14 @@ void CWindowPage::OnChangeCols()
 /////////////////////////////////////////////////////////////////////////////
 // CWindowEditPage property page
 
-// xxx make RO/RW and OVR/INS into radio buttons, add show hl/bm checkboxes
+// xxx make RO/RW and OVR/INS into radio buttons
 
 IMPLEMENT_DYNCREATE(CWindowEditPage, COptPage)
 
 CWindowEditPage::CWindowEditPage() : COptPage(CWindowEditPage::IDD)
 {
     update_ok_ = false;
+    pGlobalPage = NULL;
 }
 
 void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
@@ -3359,6 +3445,7 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CWindowEditPage, COptPage)
 	ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_GLOBAL_PAGE, OnGlobalPage)
 	ON_CBN_SELCHANGE(IDC_MODIFY, OnSelchangeModify)
 	ON_CBN_SELCHANGE(IDC_INSERT, OnSelchangeInsert)
 	ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChange)
@@ -3370,6 +3457,12 @@ BEGIN_MESSAGE_MAP(CWindowEditPage, COptPage)
 	ON_BN_CLICKED(IDC_SHOW_BOOKMARKS, OnChange)
 	ON_BN_CLICKED(IDC_SHOW_HIGHLIGHTS, OnChange)
 END_MESSAGE_MAP()
+
+void CWindowEditPage::OnGlobalPage()
+{
+	if (pGlobalPage != NULL)
+		pParent->SetActivePage(pGlobalPage);
+}
 
 void CWindowEditPage::fix_controls()
 {

@@ -565,6 +565,26 @@ public:
     // Temp flags for passing to CHexEditDocument::open_file
     BOOL open_current_readonly_;
 
+    // Startup options
+    BOOL one_only_;                     // Only allow one instance of app to run
+    BOOL run_autoexec_;                 // Run AutoExec.HEM at startup if it exists
+    BOOL open_restore_;                 // Restore main frame window on startup?
+    BOOL save_exit_;                    // Save settings on exit?
+    BOOL orig_save_exit_;               // Original value of save_exit_
+
+    // History list options
+    BOOL clear_hist_;                   // Default to clearing search history
+    BOOL clear_recent_file_list_;       // Default to clearing recent file list
+    BOOL clear_bookmarks_;              // Default to clearing bookmarks
+    BOOL clear_on_exit_;                // Clear the above on exit
+	BOOL no_recent_add_;                // When a file is opened it is not added to "My Recent Documents" (OFN_DONTADDTORECENT)
+
+    // Backup options
+    BOOL backup_;                       // Create backups on save? (following conditions must also be satisfied)
+	BOOL backup_space_;                 // Only if enough disk space.
+	int backup_size_;                   // Only if the file is less than this many MBytes (0 = always)
+	BOOL backup_prompt_;                // Only backup after prompting user.
+
     // Macro options
     int refresh_;                       // Refresh type (0=none,1=secs,2=keys,3=plays)
     long num_secs_;                     // Number of seconds before refresh (refresh_ == 1)
@@ -575,31 +595,16 @@ public:
     BOOL refresh_bars_;                 // Refresh status bar and tools on edit bar
     long plays_;                        // Default number of plays in Multiplay dlg
 
-    // Global options
-    BOOL save_exit_;                    // Save settings on exit?
-    BOOL orig_save_exit_;               // Original value of save_exit_
-    BOOL open_restore_;                 // Restore main frame window on startup?
+    BOOL bg_search_;                    // Do background searches?
+
+    // Global display options
     BOOL hex_ucase_;                    // Display hex in upper case?
     BOOL nice_addr_;                    // Display nice looking addresses?
-
-    BOOL backup_;                       // Create backups on save? (following conditions must also be satisfied)
-	BOOL backup_space_;                 // Only if enough disk space.
-	int backup_size_;                   // Only if the file is less than this many MBytes (0 = always)
-	BOOL backup_prompt_;                // Only backup after prompting user.
-
-    BOOL bg_search_;                    // Do background searches?
-    BOOL one_only_;                     // Only allow one instance of app to run
     BOOL large_cursor_;                 // Use large (block) cursor
     BOOL show_other_;                   // Show where the cursor would be in the other (hex/char) area
     BOOL mditabs_;                      // Show MDI tabs
     BOOL tabsbottom_;                   // Show MDI tabs at bottom (not top)
     BOOL tabicons_;                     // Show icons in MDI tabs
-
-    BOOL clear_hist_;                   // Default to clearing search history
-    BOOL clear_recent_file_list_;       // Default to clearing recent file list
-    BOOL clear_bookmarks_;              // Default to clearing bookmarks
-    BOOL clear_on_exit_;                // Clear the above on exit
-	BOOL no_recent_add_;                // When a file is opened it is not added to "My Recent Documents" (OFN_DONTADDTORECENT)
 
 	BOOL delete_reg_settings_;          // Delete all registry settings on exit (used in repair commands)
 	BOOL delete_all_settings_;          // Delete settings files (recent file list etc), reg info. etc

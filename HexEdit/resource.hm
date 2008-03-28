@@ -5,32 +5,33 @@
 #define HIDC_32BIT                      0x807503ee    // IDD_CALC
 #define HIDC_64BIT                      0x807503ed    // IDD_CALC
 #define HIDC_8BIT                       0x807503f0    // IDD_CALC
-#define HIDC_ADD                        0x80e6044d    // IDD_OPT_COLOURS [English (United States)]
+#define HIDC_ADD                        0x80e6044d    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_ADDOP                      0x80750429    // IDD_CALC
 #define HIDC_ADDRESS                    0x80e50437    // IDD_EMAIL
-#define HIDC_ADDRESS_FILE               0x809e043e    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_ADDRESS_SPECIFIED          0x809e043f    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_ADDR_DEC                   0x810c04b4    // IDD_OPT_WINDISPLAY [English (United States)]
-#define HIDC_ADD_SCHEME                 0x80e60453    // IDD_OPT_COLOURS [English (United States)]
-#define HIDC_ALG                        0x80ee048e    // IDD_ALGORITHM [English (United States)]
-#define HIDC_ALG_BLOCKLEN               0x80ee048f    // IDD_ALGORITHM [English (United States)]
-#define HIDC_ALG_KEYLEN                 0x80ee0490    // IDD_ALGORITHM [English (United States)]
-#define HIDC_ALIGN                      0x809605f2    // IDD_FIND_HEX [English (United States)]
-#define HIDC_ALIGN_SELECT               0x809605f3    // IDD_FIND_HEX [English (United States)]
+#define HIDC_ADDRESS_FILE               0x8139043e    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_ADDRESS_SPECIFIED          0x8139043f    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_ADDR_DEC                   0x810c04b4    // IDD_OPT_WINDISPLAY [English (U.S.)]
+#define HIDC_ADD_SCHEME                 0x80e60453    // IDD_OPT_COLOURS [English (U.S.)]
+#define HIDC_ALG                        0x80ee048e    // IDD_ALGORITHM [English (U.S.)]
+#define HIDC_ALG_BLOCKLEN               0x80ee048f    // IDD_ALGORITHM [English (U.S.)]
+#define HIDC_ALG_KEYLEN                 0x80ee0490    // IDD_ALGORITHM [English (U.S.)]
+#define HIDC_ALIGN                      0x809605f2    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_ALIGN_SELECT               0x809605f3    // IDD_FIND_HEX [English (U.S.)]
 #define HIDC_AND                        0x8075042e    // IDD_CALC
 #define HIDC_ASR                        0x80750433    // IDD_CALC
 #define HIDC_ATTACH                     0x80e5059a    // IDD_EMAIL
 #define HIDC_ATTACHMENT                 0x80e50438    // IDD_EMAIL
 #define HIDC_ATTACHMENT_BROWSE          0x80e5059b    // IDD_EMAIL
-#define HIDC_AUTOFIT                    0x810c0442    // IDD_OPT_WINDISPLAY [English (United States)]
+#define HIDC_AUTOEXEC                   0x809e0415    // IDD_OPT_SYSTEM [English (U.S.)]
+#define HIDC_AUTOFIT                    0x810c0442    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_BACKSPACE                  0x8075040f    // IDD_CALC
-#define HIDC_BACKUP                     0x809e0413    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_BACKUP_IF_SIZE             0x809e041c    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_BACKUP_PROMPT              0x809e0415    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_BACKUP_SIZE                0x809e04c4    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_BACKUP_SPACE               0x809e0414    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_BG_SEARCH                  0x809e0419    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_BIG_ENDIAN                 0x80a30469    // IDD_PROP_DECIMAL [English (United States)]
+#define HIDC_BACKUP                     0x81390413    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_BACKUP_IF_SIZE             0x8139041c    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_BACKUP_PROMPT              0x81390415    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_BACKUP_SIZE                0x813904c4    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_BACKUP_SPACE               0x81390414    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_BG_SEARCH                  0x81390419    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_BIG_ENDIAN                 0x80a30469    // IDD_PROP_DECIMAL [English (U.S.)]
 #define HIDC_BIG_ENDIAN_FILE_ACCESS     0x8075048c    // IDD_CALC
 #define HIDC_BINARY                     0x807503ec    // IDD_CALC
 #define HIDC_BOOKMARKS_VALIDATE         0x810f04cc    // IDD_BOOKMARKS
@@ -38,24 +39,24 @@
 #define HIDC_BOOKMARK_GOTO              0x810f04c9    // IDD_BOOKMARKS
 #define HIDC_BOOKMARK_NAME              0x810f04cf    // IDD_BOOKMARKS
 #define HIDC_BOOKMARK_REMOVE            0x810f04ca    // IDD_BOOKMARKS
-#define HIDC_BORDERS                    0x810c0475    // IDD_OPT_WINDISPLAY [English (United States)]
+#define HIDC_BORDERS                    0x810c0475    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_BUG                        0x80e5043e    // IDD_EMAIL
-#define HIDC_CHARSET                    0x810c04b0    // IDD_OPT_WINDISPLAY [English (United States)]
-#define HIDC_CHAR_ASCII                 0x8132042e    // IDD_PROP_CHAR [English (United States)]
-#define HIDC_CHAR_BINARY                0x81320604    // IDD_PROP_CHAR [English (United States)]
-#define HIDC_CHAR_DEC                   0x8132042b    // IDD_PROP_CHAR [English (United States)]
-#define HIDC_CHAR_HEX                   0x8132042a    // IDD_PROP_CHAR [English (United States)]
-#define HIDC_CHAR_OCTAL                 0x8132042c    // IDD_PROP_CHAR [English (United States)]
+#define HIDC_CHARSET                    0x810c04b0    // IDD_OPT_WINDISPLAY [English (U.S.)]
+#define HIDC_CHAR_ASCII                 0x8132042e    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_CHAR_BINARY                0x81320604    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_CHAR_DEC                   0x8132042b    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_CHAR_HEX                   0x8132042a    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_CHAR_OCTAL                 0x8132042c    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_CLEAR                      0x80750411    // IDD_CALC
 #define HIDC_CLEAR_BOOKMARKS            0x811204a8    // IDD_CLEAR_HIST
 #define HIDC_CLEAR_ENTRY                0x80750410    // IDD_CALC
-#define HIDC_CLEAR_HIST                 0x809e041b    // IDD_OPT_SYSTEM [English (United States)]
+#define HIDC_CLEAR_HIST                 0x809e041b    // IDD_OPT_SYSTEM [English (U.S.)]
 #define HIDC_CLEAR_ON_EXIT              0x811204a9    // IDD_CLEAR_HIST
 #define HIDC_CLEAR_RECENT_FILE          0x811204a7    // IDD_CLEAR_HIST
 #define HIDC_CLEAR_SEARCH               0x811204a6    // IDD_CLEAR_HIST
-#define HIDC_CODE_PAGE                  0x813205ce    // IDD_PROP_CHAR [English (United States)]
-#define HIDC_COLOUR_PICKER              0x80e604bc    // IDD_OPT_COLOURS [English (United States)]
-#define HIDC_COLS                       0x810c0443    // IDD_OPT_WINDISPLAY [English (United States)]
+#define HIDC_CODE_PAGE                  0x813205ce    // IDD_PROP_CHAR [English (U.S.)]
+#define HIDC_COLOUR_PICKER              0x80e604bc    // IDD_OPT_COLOURS [English (U.S.)]
+#define HIDC_COLS                       0x810c0443    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_COMPRESSION_HEADER_GZIP    0x812a05e5    // IDD_COMPRESS
 #define HIDC_COMPRESSION_HEADER_RAW     0x812a05e3    // IDD_COMPRESS
 #define HIDC_COMPRESSION_HEADER_ZLIB    0x812a05e4    // IDD_COMPRESS
@@ -64,7 +65,7 @@
 #define HIDC_COMPRESSION_STRATEGY_DEF   0x812a05e8    // IDD_COMPRESS
 #define HIDC_COMPRESSION_SYNC           0x812a05ef    // IDD_COMPRESS
 #define HIDC_COMPRESSION_WINDOW_SIZE    0x812a05ed    // IDD_COMPRESS
-#define HIDC_CONTROL                    0x810c04b1    // IDD_OPT_WINDISPLAY [English (United States)]
+#define HIDC_CONTROL                    0x810c04b1    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_CSRC_ADDRESS               0x811f0565    // IDD_CSRC
 #define HIDC_CSRC_CHAR                  0x811f0561    // IDD_CSRC
 #define HIDC_CSRC_FLOAT                 0x811f0564    // IDD_CSRC
@@ -74,35 +75,35 @@
 #define HIDC_CSRC_INT_SIZE              0x811f0558    // IDD_CSRC
 #define HIDC_CSRC_INT_TYPE              0x811f0563    // IDD_CSRC
 #define HIDC_CSRC_STRING                0x811f0560    // IDD_CSRC
-#define HIDC_CT_DELCOUNT                0x81360478    // IDD_OPT_WINEDIT [English (United States)]
-#define HIDC_CT_DELETIONS               0x81360477    // IDD_OPT_WINEDIT [English (United States)]
-#define HIDC_CT_INSERTIONS              0x81360475    // IDD_OPT_WINEDIT [English (United States)]
-#define HIDC_CT_MODIFICATIONS           0x81360476    // IDD_OPT_WINEDIT [English (United States)]
-#define HIDC_CURRENT                    0x80e60470    // IDD_OPT_COLOURS [English (United States)]
-#define HIDC_DATE_BIG_ENDIAN            0x810d049e    // IDD_PROP_DATE [English (United States)]
-#define HIDC_DATE_DATE                  0x810d0494    // IDD_PROP_DATE [English (United States)]
-#define HIDC_DATE_DISPLAY               0x810d049d    // IDD_PROP_DATE [English (United States)]
-#define HIDC_DATE_FIRST                 0x810d0496    // IDD_PROP_DATE [English (United States)]
-#define HIDC_DATE_FORMAT                0x810d0493    // IDD_PROP_DATE [English (United States)]
-#define HIDC_DATE_FORMAT_DESC           0x810d049b    // IDD_PROP_DATE [English (United States)]
-#define HIDC_DATE_LAST                  0x810d0497    // IDD_PROP_DATE [English (United States)]
-#define HIDC_DATE_LOCAL_TIME            0x810d046a    // IDD_PROP_DATE [English (United States)]
-#define HIDC_DATE_NOW                   0x810d0498    // IDD_PROP_DATE [English (United States)]
-#define HIDC_DATE_NULL                  0x810d049a    // IDD_PROP_DATE [English (United States)]
-#define HIDC_DATE_TIME                  0x810d0495    // IDD_PROP_DATE [English (United States)]
+#define HIDC_CT_DELCOUNT                0x81360478    // IDD_OPT_WINEDIT [English (U.S.)]
+#define HIDC_CT_DELETIONS               0x81360477    // IDD_OPT_WINEDIT [English (U.S.)]
+#define HIDC_CT_INSERTIONS              0x81360475    // IDD_OPT_WINEDIT [English (U.S.)]
+#define HIDC_CT_MODIFICATIONS           0x81360476    // IDD_OPT_WINEDIT [English (U.S.)]
+#define HIDC_CURRENT                    0x80e60470    // IDD_OPT_COLOURS [English (U.S.)]
+#define HIDC_DATE_BIG_ENDIAN            0x810d049e    // IDD_PROP_DATE [English (U.S.)]
+#define HIDC_DATE_DATE                  0x810d0494    // IDD_PROP_DATE [English (U.S.)]
+#define HIDC_DATE_DISPLAY               0x810d049d    // IDD_PROP_DATE [English (U.S.)]
+#define HIDC_DATE_FIRST                 0x810d0496    // IDD_PROP_DATE [English (U.S.)]
+#define HIDC_DATE_FORMAT                0x810d0493    // IDD_PROP_DATE [English (U.S.)]
+#define HIDC_DATE_FORMAT_DESC           0x810d049b    // IDD_PROP_DATE [English (U.S.)]
+#define HIDC_DATE_LAST                  0x810d0497    // IDD_PROP_DATE [English (U.S.)]
+#define HIDC_DATE_LOCAL_TIME            0x810d046a    // IDD_PROP_DATE [English (U.S.)]
+#define HIDC_DATE_NOW                   0x810d0498    // IDD_PROP_DATE [English (U.S.)]
+#define HIDC_DATE_NULL                  0x810d049a    // IDD_PROP_DATE [English (U.S.)]
+#define HIDC_DATE_TIME                  0x810d0495    // IDD_PROP_DATE [English (U.S.)]
 #define HIDC_DECIMAL                    0x807503ea    // IDD_CALC
 #define HIDC_DECIMAL_SIZE               0x811c054b    // IDD_NEW_FILE
-#define HIDC_DEC_16BIT                  0x80a3042c    // IDD_PROP_DECIMAL [English (United States)]
-#define HIDC_DEC_1COMP                  0x80a30444    // IDD_PROP_DECIMAL [English (United States)]
-#define HIDC_DEC_2COMP                  0x80a30443    // IDD_PROP_DECIMAL [English (United States)]
-#define HIDC_DEC_32BIT                  0x80a3042d    // IDD_PROP_DECIMAL [English (United States)]
-#define HIDC_DEC_64BIT                  0x80a3042e    // IDD_PROP_DECIMAL [English (United States)]
-#define HIDC_DEC_8BIT                   0x80a3042b    // IDD_PROP_DECIMAL [English (United States)]
-#define HIDC_DEC_SIGN_MAG               0x80a30445    // IDD_PROP_DECIMAL [English (United States)]
-#define HIDC_DEC_UNSIGNED               0x80a30442    // IDD_PROP_DECIMAL [English (United States)]
-#define HIDC_DEL                        0x80f10478    // IDD_OPT_FILTERS [English (United States)]
+#define HIDC_DEC_16BIT                  0x80a3042c    // IDD_PROP_DECIMAL [English (U.S.)]
+#define HIDC_DEC_1COMP                  0x80a30444    // IDD_PROP_DECIMAL [English (U.S.)]
+#define HIDC_DEC_2COMP                  0x80a30443    // IDD_PROP_DECIMAL [English (U.S.)]
+#define HIDC_DEC_32BIT                  0x80a3042d    // IDD_PROP_DECIMAL [English (U.S.)]
+#define HIDC_DEC_64BIT                  0x80a3042e    // IDD_PROP_DECIMAL [English (U.S.)]
+#define HIDC_DEC_8BIT                   0x80a3042b    // IDD_PROP_DECIMAL [English (U.S.)]
+#define HIDC_DEC_SIGN_MAG               0x80a30445    // IDD_PROP_DECIMAL [English (U.S.)]
+#define HIDC_DEC_UNSIGNED               0x80a30442    // IDD_PROP_DECIMAL [English (U.S.)]
+#define HIDC_DEL                        0x80f10478    // IDD_OPT_FILTERS [English (U.S.)]
 #define HIDC_DFFD_ANSI                  0x81190540    // IDD_DFFD_GLOBAL
-#define HIDC_DFFD_ARRAY_MAX             0x813804d8    // IDD_OPT_WORKTEMPLATE [English (United States)]
+#define HIDC_DFFD_ARRAY_MAX             0x813804d8    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
 #define HIDC_DFFD_ASCII                 0x8119053f    // IDD_DFFD_GLOBAL
 #define HIDC_DFFD_BIG_ENDIAN            0x81150525    // IDD_DFFD_DATA
 #define HIDC_DFFD_BITFIELD              0x811505d6    // IDD_DFFD_DATA
@@ -135,12 +136,12 @@
 #define HIDC_DFFD_EXPR                  0x8124056e    // IDD_DFFD_EVAL
 #define HIDC_DFFD_EXPR_VAR              0x8124056f    // IDD_DFFD_EVAL
 #define HIDC_DFFD_FORMAT                0x81150493    // IDD_DFFD_DATA
-#define HIDC_DFFD_FORMAT_CHAR           0x813804d5    // IDD_OPT_WORKTEMPLATE [English (United States)]
-#define HIDC_DFFD_FORMAT_DATE           0x813804d4    // IDD_OPT_WORKTEMPLATE [English (United States)]
-#define HIDC_DFFD_FORMAT_INT            0x813804d6    // IDD_OPT_WORKTEMPLATE [English (United States)]
-#define HIDC_DFFD_FORMAT_REAL           0x813804d3    // IDD_OPT_WORKTEMPLATE [English (United States)]
-#define HIDC_DFFD_FORMAT_STRING         0x813804d2    // IDD_OPT_WORKTEMPLATE [English (United States)]
-#define HIDC_DFFD_FORMAT_UINT           0x813804d7    // IDD_OPT_WORKTEMPLATE [English (United States)]
+#define HIDC_DFFD_FORMAT_CHAR           0x813804d5    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
+#define HIDC_DFFD_FORMAT_DATE           0x813804d4    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
+#define HIDC_DFFD_FORMAT_INT            0x813804d6    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
+#define HIDC_DFFD_FORMAT_REAL           0x813804d3    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
+#define HIDC_DFFD_FORMAT_STRING         0x813804d2    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
+#define HIDC_DFFD_FORMAT_UINT           0x813804d7    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
 #define HIDC_DFFD_IF_EDIT               0x8118057a    // IDD_DFFD_IF
 #define HIDC_DFFD_IF_ELT                0x81180579    // IDD_DFFD_IF
 #define HIDC_DFFD_IF_REPLACE            0x8118057b    // IDD_DFFD_IF
@@ -148,30 +149,30 @@
 #define HIDC_DFFD_LENGTH                0x81150522    // IDD_DFFD_DATA
 #define HIDC_DFFD_LENGTH_VAR            0x8115053c    // IDD_DFFD_DATA
 #define HIDC_DFFD_NAME                  0x8115052b    // IDD_DFFD_DATA
-#define HIDC_DFFD_NONE                  0x81380609    // IDD_OPT_WORKTEMPLATE [English (United States)]
+#define HIDC_DFFD_NONE                  0x81380609    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
 #define HIDC_DFFD_OEM                   0x81190541    // IDD_DFFD_GLOBAL
 #define HIDC_DFFD_OFFSET                0x81250572    // IDD_DFFD_JUMP
 #define HIDC_DFFD_OFFSET_VAR            0x81250573    // IDD_DFFD_JUMP
 #define HIDC_DFFD_ORIGIN                0x81250574    // IDD_DFFD_JUMP
 #define HIDC_DFFD_READ_ONLY             0x81150526    // IDD_DFFD_DATA
 #define HIDC_DFFD_REPLACE               0x81170537    // IDD_DFFD_FOR
-#define HIDC_DFFD_SPLIT                 0x8138043e    // IDD_OPT_WORKTEMPLATE [English (United States)]
+#define HIDC_DFFD_SPLIT                 0x8138043e    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
 #define HIDC_DFFD_STOP                  0x81170538    // IDD_DFFD_FOR
 #define HIDC_DFFD_STOP_VAR              0x81170534    // IDD_DFFD_FOR
 #define HIDC_DFFD_STRUCT                0x8126057d    // IDD_DFFD_USE_STRUCT
 #define HIDC_DFFD_STRUCT_VAR            0x8126057e    // IDD_DFFD_USE_STRUCT
 #define HIDC_DFFD_SWITCH_EXPR           0x813305d3    // IDD_DFFD_SWITCH
 #define HIDC_DFFD_SWITCH_EXPR_VAR       0x813305d5    // IDD_DFFD_SWITCH
-#define HIDC_DFFD_TAB                   0x8138043f    // IDD_OPT_WORKTEMPLATE [English (United States)]
+#define HIDC_DFFD_TAB                   0x8138043f    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
 #define HIDC_DFFD_TREE_DISPLAY          0x812605de    // IDD_DFFD_USE_STRUCT
 #define HIDC_DFFD_TYPE                  0x81150520    // IDD_DFFD_DATA
 #define HIDC_DFFD_TYPE_NAME             0x81150529    // IDD_DFFD_DATA
 #define HIDC_DFFD_UNITS                 0x81150528    // IDD_DFFD_DATA
 #define HIDC_DFFD_UP                    0x8116053a    // IDD_DFFD_STRUCT
 #define HIDC_DIGIT_0                    0x807503f2    // IDD_CALC
-#define HIDC_DISP_RESET                 0x813704c3    // IDD_OPT_WINGENERAL [English (United States)]
+#define HIDC_DISP_RESET                 0x813704c3    // IDD_OPT_WINGENERAL [English (U.S.)]
 #define HIDC_DIVIDE                     0x80750426    // IDD_CALC
-#define HIDC_DOWN                       0x80e60472    // IDD_OPT_COLOURS [English (United States)]
+#define HIDC_DOWN                       0x80e60472    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_EDIT                       0x807503e8    // IDD_CALC
 #define HIDC_ELT_OFFSET                 0x81160549    // IDD_DFFD_STRUCT
 #define HIDC_ELT_SIZE                   0x81160548    // IDD_DFFD_STRUCT
@@ -179,19 +180,19 @@
 #define HIDC_EOF_GET                    0x8075040b    // IDD_CALC
 #define HIDC_EQUALS                     0x80750412    // IDD_CALC
 #define HIDC_EXPLORER                   0x81280598    // IDD_EXPLORER
-#define HIDC_EXPORT_ADDRESS             0x809e04c2    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_EXPORT_LINELEN             0x809e04c5    // IDD_OPT_SYSTEM [English (United States)]
+#define HIDC_EXPORT_ADDRESS             0x813904c2    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_EXPORT_LINELEN             0x813904c5    // IDD_OPT_WORKSPACE [English (U.S.)]
 #define HIDC_FILES_SELECTED             0x810e04d1    // IDD_RECENT_FILES
-#define HIDC_FILE_ACCESSED              0x80970430    // IDD_PROP_FILE [English (United States)]
-#define HIDC_FILE_ARCHIVED              0x80970439    // IDD_PROP_FILE [English (United States)]
-#define HIDC_FILE_CREATED               0x809704a8    // IDD_PROP_FILE [English (United States)]
-#define HIDC_FILE_HIDDEN                0x80970437    // IDD_PROP_FILE [English (United States)]
-#define HIDC_FILE_MODIFIED              0x8097042f    // IDD_PROP_FILE [English (United States)]
-#define HIDC_FILE_NAME                  0x80970419    // IDD_PROP_FILE [English (United States)]
-#define HIDC_FILE_PATH                  0x8097042d    // IDD_PROP_FILE [English (United States)]
-#define HIDC_FILE_READONLY              0x80970436    // IDD_PROP_FILE [English (United States)]
-#define HIDC_FILE_SYSTEM                0x80970438    // IDD_PROP_FILE [English (United States)]
-#define HIDC_FILE_TYPE                  0x8097041a    // IDD_PROP_FILE [English (United States)]
+#define HIDC_FILE_ACCESSED              0x80970430    // IDD_PROP_FILE [English (U.S.)]
+#define HIDC_FILE_ARCHIVED              0x80970439    // IDD_PROP_FILE [English (U.S.)]
+#define HIDC_FILE_CREATED               0x809704a8    // IDD_PROP_FILE [English (U.S.)]
+#define HIDC_FILE_HIDDEN                0x80970437    // IDD_PROP_FILE [English (U.S.)]
+#define HIDC_FILE_MODIFIED              0x8097042f    // IDD_PROP_FILE [English (U.S.)]
+#define HIDC_FILE_NAME                  0x80970419    // IDD_PROP_FILE [English (U.S.)]
+#define HIDC_FILE_PATH                  0x8097042d    // IDD_PROP_FILE [English (U.S.)]
+#define HIDC_FILE_READONLY              0x80970436    // IDD_PROP_FILE [English (U.S.)]
+#define HIDC_FILE_SYSTEM                0x80970438    // IDD_PROP_FILE [English (U.S.)]
+#define HIDC_FILE_TYPE                  0x8097041a    // IDD_PROP_FILE [English (U.S.)]
 #define HIDC_FILL_CLIPBOARD             0x811c0553    // IDD_NEW_FILE
 #define HIDC_FILL_CLIPBOARD_LENGTH      0x811c055f    // IDD_NEW_FILE
 #define HIDC_FILL_CLIPBOARD_SAMPLE      0x811c0556    // IDD_NEW_FILE
@@ -211,35 +212,35 @@
 #define HIDC_FILL_STRING_CHARSET        0x811c0555    // IDD_NEW_FILE
 #define HIDC_FILL_STRING_VALUE          0x811c0552    // IDD_NEW_FILE
 #define HIDC_FILTER_OPTS                0x81280599    // IDD_EXPLORER
-#define HIDC_FIND_ALLOW_WILDCARD        0x80fb0505    // IDD_FIND_TEXT [English (United States)]
-#define HIDC_FIND_BIG_ENDIAN            0x80980510    // IDD_FIND_NUMBER [English (United States)]
-#define HIDC_FIND_BOOKMARK_ALL          0x8096051c    // IDD_FIND_HEX [English (United States)]
-#define HIDC_FIND_BOOKMARK_PREFIX       0x8096051d    // IDD_FIND_HEX [English (United States)]
-#define HIDC_FIND_COMBINED_STRING       0x80f904ec    // IDD_FIND_REPLACE [English (United States)]
-#define HIDC_FIND_DIRN_UP               0x80fa04f7    // IDD_FIND_SIMPLE [English (United States)]
-#define HIDC_FIND_HELP                  0x80fa04f3    // IDD_FIND_SIMPLE [English (United States)]
-#define HIDC_FIND_HEX_STRING            0x809604ee    // IDD_FIND_HEX [English (United States)]
-#define HIDC_FIND_MASK                  0x809604ef    // IDD_FIND_HEX [English (United States)]
-#define HIDC_FIND_MATCH_CASE            0x80fa04fe    // IDD_FIND_SIMPLE [English (United States)]
-#define HIDC_FIND_MESSAGE               0x80fa04f5    // IDD_FIND_SIMPLE [English (United States)]
-#define HIDC_FIND_NEXT                  0x80fa04e9    // IDD_FIND_SIMPLE [English (United States)]
-#define HIDC_FIND_NUMBER_FORMAT         0x80980511    // IDD_FIND_NUMBER [English (United States)]
-#define HIDC_FIND_NUMBER_SIZE           0x80980512    // IDD_FIND_NUMBER [English (United States)]
-#define HIDC_FIND_NUM_STRING            0x809804f0    // IDD_FIND_NUMBER [English (United States)]
-#define HIDC_FIND_REPLACE               0x80f904ea    // IDD_FIND_REPLACE [English (United States)]
-#define HIDC_FIND_REPLACE_ALL           0x80f904eb    // IDD_FIND_REPLACE [English (United States)]
-#define HIDC_FIND_REPLACE_STRING        0x80f904f1    // IDD_FIND_REPLACE [English (United States)]
-#define HIDC_FIND_SCOPE_ALL             0x80fa04fd    // IDD_FIND_SIMPLE [English (United States)]
-#define HIDC_FIND_SCOPE_FILE            0x80fa04fc    // IDD_FIND_SIMPLE [English (United States)]
-#define HIDC_FIND_SCOPE_TOEND           0x80fa04fb    // IDD_FIND_SIMPLE [English (United States)]
-#define HIDC_FIND_SCOPE_TOMARK          0x809604fa    // IDD_FIND_HEX [English (United States)]
-#define HIDC_FIND_TEXT_STRING           0x80fb04ed    // IDD_FIND_TEXT [English (United States)]
-#define HIDC_FIND_TYPE_ASCII            0x80fb0500    // IDD_FIND_TEXT [English (United States)]
-#define HIDC_FIND_TYPE_EBCDIC           0x80fb0501    // IDD_FIND_TEXT [English (United States)]
-#define HIDC_FIND_TYPE_UNICODE          0x80fb0502    // IDD_FIND_TEXT [English (United States)]
-#define HIDC_FIND_USE_MASK              0x80960507    // IDD_FIND_HEX [English (United States)]
-#define HIDC_FIND_WHOLE_WORD            0x80fa04ff    // IDD_FIND_SIMPLE [English (United States)]
-#define HIDC_FIND_WILDCARD_CHAR         0x80fb0506    // IDD_FIND_TEXT [English (United States)]
+#define HIDC_FIND_ALLOW_WILDCARD        0x80fb0505    // IDD_FIND_TEXT [English (U.S.)]
+#define HIDC_FIND_BIG_ENDIAN            0x80980510    // IDD_FIND_NUMBER [English (U.S.)]
+#define HIDC_FIND_BOOKMARK_ALL          0x8096051c    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_FIND_BOOKMARK_PREFIX       0x8096051d    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_FIND_COMBINED_STRING       0x80f904ec    // IDD_FIND_REPLACE [English (U.S.)]
+#define HIDC_FIND_DIRN_UP               0x80fa04f7    // IDD_FIND_SIMPLE [English (U.S.)]
+#define HIDC_FIND_HELP                  0x80fa04f3    // IDD_FIND_SIMPLE [English (U.S.)]
+#define HIDC_FIND_HEX_STRING            0x809604ee    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_FIND_MASK                  0x809604ef    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_FIND_MATCH_CASE            0x80fa04fe    // IDD_FIND_SIMPLE [English (U.S.)]
+#define HIDC_FIND_MESSAGE               0x80fa04f5    // IDD_FIND_SIMPLE [English (U.S.)]
+#define HIDC_FIND_NEXT                  0x80fa04e9    // IDD_FIND_SIMPLE [English (U.S.)]
+#define HIDC_FIND_NUMBER_FORMAT         0x80980511    // IDD_FIND_NUMBER [English (U.S.)]
+#define HIDC_FIND_NUMBER_SIZE           0x80980512    // IDD_FIND_NUMBER [English (U.S.)]
+#define HIDC_FIND_NUM_STRING            0x809804f0    // IDD_FIND_NUMBER [English (U.S.)]
+#define HIDC_FIND_REPLACE               0x80f904ea    // IDD_FIND_REPLACE [English (U.S.)]
+#define HIDC_FIND_REPLACE_ALL           0x80f904eb    // IDD_FIND_REPLACE [English (U.S.)]
+#define HIDC_FIND_REPLACE_STRING        0x80f904f1    // IDD_FIND_REPLACE [English (U.S.)]
+#define HIDC_FIND_SCOPE_ALL             0x80fa04fd    // IDD_FIND_SIMPLE [English (U.S.)]
+#define HIDC_FIND_SCOPE_FILE            0x80fa04fc    // IDD_FIND_SIMPLE [English (U.S.)]
+#define HIDC_FIND_SCOPE_TOEND           0x80fa04fb    // IDD_FIND_SIMPLE [English (U.S.)]
+#define HIDC_FIND_SCOPE_TOMARK          0x809604fa    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_FIND_TEXT_STRING           0x80fb04ed    // IDD_FIND_TEXT [English (U.S.)]
+#define HIDC_FIND_TYPE_ASCII            0x80fb0500    // IDD_FIND_TEXT [English (U.S.)]
+#define HIDC_FIND_TYPE_EBCDIC           0x80fb0501    // IDD_FIND_TEXT [English (U.S.)]
+#define HIDC_FIND_TYPE_UNICODE          0x80fb0502    // IDD_FIND_TEXT [English (U.S.)]
+#define HIDC_FIND_USE_MASK              0x80960507    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_FIND_WHOLE_WORD            0x80fa04ff    // IDD_FIND_SIMPLE [English (U.S.)]
+#define HIDC_FIND_WILDCARD_CHAR         0x80fb0506    // IDD_FIND_TEXT [English (U.S.)]
 #define HIDC_FOLDER_BACK                0x81280590    // IDD_EXPLORER
 #define HIDC_FOLDER_FILTER              0x81280594    // IDD_EXPLORER
 #define HIDC_FOLDER_FLIP                0x81280596    // IDD_EXPLORER
@@ -249,43 +250,44 @@
 #define HIDC_FOLDER_PARENT              0x81280592    // IDD_EXPLORER
 #define HIDC_FOLDER_REFRESH             0x81280595    // IDD_EXPLORER
 #define HIDC_FOLDER_VIEW                0x81280597    // IDD_EXPLORER
-#define HIDC_FONT                       0x810c04b5    // IDD_OPT_WINDISPLAY [English (United States)]
-#define HIDC_FOOTER_OPTS                0x80f004a6    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_FP_EXP                     0x81350434    // IDD_PROP_REAL [English (United States)]
-#define HIDC_FP_FORMAT                  0x813505f9    // IDD_PROP_REAL [English (United States)]
-#define HIDC_FP_MANT                    0x81350433    // IDD_PROP_REAL [English (United States)]
-#define HIDC_FP_VAL                     0x81350432    // IDD_PROP_REAL [English (United States)]
+#define HIDC_FONT                       0x810c04b5    // IDD_OPT_WINDISPLAY [English (U.S.)]
+#define HIDC_FOOTER_OPTS                0x80f004a6    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_FP_EXP                     0x81350434    // IDD_PROP_REAL [English (U.S.)]
+#define HIDC_FP_FORMAT                  0x813505f9    // IDD_PROP_REAL [English (U.S.)]
+#define HIDC_FP_MANT                    0x81350433    // IDD_PROP_REAL [English (U.S.)]
+#define HIDC_FP_VAL                     0x81350432    // IDD_PROP_REAL [English (U.S.)]
 #define HIDC_GO                         0x80750413    // IDD_CALC
 #define HIDC_GRID_BL                    0x810f04cd    // IDD_BOOKMARKS
-#define HIDC_GRID_FILTERS               0x80f10601    // IDD_OPT_FILTERS [English (United States)]
+#define HIDC_GRID_FILTERS               0x80f10601    // IDD_OPT_FILTERS [English (U.S.)]
 #define HIDC_GRID_RFL                   0x810e04c7    // IDD_RECENT_FILES
-#define HIDC_GRID_TIP                   0x81340602    // IDD_OPT_TIPS [English (United States)]
-#define HIDC_GROUPING                   0x810c0445    // IDD_OPT_WINDISPLAY [English (United States)]
+#define HIDC_GRID_TIP                   0x81340602    // IDD_OPT_TIPS [English (U.S.)]
+#define HIDC_GROUPING                   0x810c0445    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_GTR                        0x8075042a    // IDD_CALC
-#define HIDC_HALT0                      0x80a9045d    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_HALT1                      0x80a9045e    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_HALT2                      0x80a9045f    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_HEADER_OPTS                0x80f004a5    // IDD_OPT_PRINT [English (United States)]
+#define HIDC_HALT0                      0x80a9045d    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_HALT1                      0x80a9045e    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_HALT2                      0x80a9045f    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_HEADER_OPTS                0x80f004a5    // IDD_OPT_PRINT [English (U.S.)]
 #define HIDC_HEX                        0x807503e9    // IDD_CALC
 #define HIDC_HEX_SIZE                   0x811c054c    // IDD_NEW_FILE
-#define HIDC_HEX_UCASE                  0x80eb0415    // IDD_OPT_WORKDISPLAY [English (United States)]
-#define HIDC_INFO_CATEGORY              0x81270588    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INFO_CATEGORY_SELECT       0x812705fd    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INFO_COMMENTS              0x8127041b    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INFO_DISK_SIZE             0x81270608    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INFO_EDIT_TIME             0x81270607    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INFO_KEYWORDS              0x81270603    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INFO_SIZE                  0x81270589    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INFO_VIEW_TIME             0x81270606    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INSERT                     0x813604b2    // IDD_OPT_WINEDIT [English (United States)]
+#define HIDC_HEX_UCASE                  0x80eb0415    // IDD_OPT_WORKDISPLAY [English (U.S.)]
+#define HIDC_INFO_CATEGORY              0x81270588    // IDD_PROP_INFO [English (U.S.)]
+#define HIDC_INFO_CATEGORY_SELECT       0x812705fd    // IDD_PROP_INFO [English (U.S.)]
+#define HIDC_INFO_COMMENTS              0x8127041b    // IDD_PROP_INFO [English (U.S.)]
+#define HIDC_INFO_DISK_SIZE             0x81270608    // IDD_PROP_INFO [English (U.S.)]
+#define HIDC_INFO_EDIT_TIME             0x81270607    // IDD_PROP_INFO [English (U.S.)]
+#define HIDC_INFO_KEYWORDS              0x81270603    // IDD_PROP_INFO [English (U.S.)]
+#define HIDC_INFO_SIZE                  0x81270589    // IDD_PROP_INFO [English (U.S.)]
+#define HIDC_INFO_VIEW_TIME             0x81270606    // IDD_PROP_INFO [English (U.S.)]
+#define HIDC_INSERT                     0x813604b2    // IDD_OPT_WINEDIT [English (U.S.)]
 #define HIDC_INSTALL_CODE               0x80e70437    // IDD_REGISTER
-#define HIDC_LARGE_CURSOR               0x80eb0419    // IDD_OPT_WORKDISPLAY [English (United States)]
+#define HIDC_INTELLIGENT_UNDO           0x81390416    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_LARGE_CURSOR               0x80eb0419    // IDD_OPT_WORKDISPLAY [English (U.S.)]
 #define HIDC_LESS                       0x8075042b    // IDD_CALC
-#define HIDC_LOADMACRO                  0x80a90483    // IDD_OPT_MACRO [English (United States)]
+#define HIDC_LOADMACRO                  0x80a90483    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_LSL                        0x80750431    // IDD_CALC
 #define HIDC_LSR                        0x80750432    // IDD_CALC
 #define HIDC_MACHINE                    0x80e7043e    // IDD_REGISTER
-#define HIDC_MACRODIR                   0x80a90486    // IDD_OPT_MACRO [English (United States)]
+#define HIDC_MACRODIR                   0x80a90486    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_MACRO_COMMENT              0x80ea0484    // IDD_MACROSAVE
 #define HIDC_MACRO_NAME                 0x80ea0483    // IDD_MACROSAVE
 #define HIDC_MARK_ADD                   0x8075041c    // IDD_CALC
@@ -295,28 +297,29 @@
 #define HIDC_MARK_GET                   0x80750405    // IDD_CALC
 #define HIDC_MARK_STORE                 0x8075041a    // IDD_CALC
 #define HIDC_MARK_SUBTRACT              0x8075041d    // IDD_CALC
-#define HIDC_MAX                        0x810c04a8    // IDD_OPT_WINDISPLAY [English (United States)]
-#define HIDC_MDITABS                    0x80eb0416    // IDD_OPT_WORKDISPLAY [English (United States)]
+#define HIDC_MAX                        0x810c04a8    // IDD_OPT_WINDISPLAY [English (U.S.)]
+#define HIDC_MDITABS                    0x80eb0416    // IDD_OPT_WORKDISPLAY [English (U.S.)]
 #define HIDC_MEM_ADD                    0x80750418    // IDD_CALC
 #define HIDC_MEM_CLEAR                  0x80750417    // IDD_CALC
 #define HIDC_MEM_GET                    0x80750404    // IDD_CALC
 #define HIDC_MEM_STORE                  0x80750416    // IDD_CALC
 #define HIDC_MEM_SUBTRACT               0x80750419    // IDD_CALC
 #define HIDC_MOD                        0x80750425    // IDD_CALC
-#define HIDC_MODIFY                     0x813604b7    // IDD_OPT_WINEDIT [English (United States)]
-#define HIDC_MULTIBYTE_HOLDER           0x813205cd    // IDD_PROP_CHAR [English (United States)]
+#define HIDC_MODIFY                     0x813604b7    // IDD_OPT_WINEDIT [English (U.S.)]
+#define HIDC_MULTIBYTE_HOLDER           0x813205cd    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_MULTIPLY                   0x80750427    // IDD_CALC
 #define HIDC_NAME                       0x80e50436    // IDD_EMAIL
-#define HIDC_NAMES                      0x80e6044c    // IDD_OPT_COLOURS [English (United States)]
+#define HIDC_NAMES                      0x80e6044c    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_NET_RETAIN                 0x810f04a6    // IDD_BOOKMARKS
-#define HIDC_NEW                        0x80f10471    // IDD_OPT_FILTERS [English (United States)]
-#define HIDC_NICE_ADDR                  0x80eb0418    // IDD_OPT_WORKDISPLAY [English (United States)]
-#define HIDC_NUM_KEYS                   0x80a90446    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_NUM_PLAYS                  0x80a90447    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_NUM_SECS                   0x80a90460    // IDD_OPT_MACRO [English (United States)]
+#define HIDC_NEW                        0x80f10471    // IDD_OPT_FILTERS [English (U.S.)]
+#define HIDC_NICE_ADDR                  0x80eb0418    // IDD_OPT_WORKDISPLAY [English (U.S.)]
+#define HIDC_NO_RECENT                  0x809e0419    // IDD_OPT_SYSTEM [English (U.S.)]
+#define HIDC_NUM_KEYS                   0x80a90446    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_NUM_PLAYS                  0x80a90447    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_NUM_SECS                   0x80a90460    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_OCTAL                      0x807503eb    // IDD_CALC
-#define HIDC_OFFSET                     0x80960444    // IDD_FIND_HEX [English (United States)]
-#define HIDC_ONE_ONLY                   0x809e0418    // IDD_OPT_SYSTEM [English (United States)]
+#define HIDC_OFFSET                     0x80960444    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_ONE_ONLY                   0x809e0418    // IDD_OPT_SYSTEM [English (U.S.)]
 #define HIDC_OPEN_FILES                 0x810e04ac    // IDD_RECENT_FILES
 #define HIDC_OPEN_INFO                  0x8121056b    // IDD_OPEN_SPECIAL
 #define HIDC_OPEN_READONLY              0x8121041c    // IDD_OPEN_SPECIAL
@@ -330,77 +333,78 @@
 #define HIDC_PACK2                      0x813005a4    // IDD_TPARSE
 #define HIDC_PACK4                      0x813005a5    // IDD_TPARSE
 #define HIDC_PACK8                      0x813005a6    // IDD_TPARSE
-#define HIDC_PASSWORD_ENTER             0x808d03e9    // IDD_PASSWORD [English (United States)]
-#define HIDC_PASSWORD_MASK              0x808d03e8    // IDD_PASSWORD [English (United States)]
-#define HIDC_PASSWORD_MIN               0x808d03ed    // IDD_PASSWORD [English (United States)]
-#define HIDC_PASSWORD_REENTER           0x808d03ea    // IDD_PASSWORD [English (United States)]
-#define HIDC_PLACE_HOLDER               0x81320605    // IDD_PROP_CHAR [English (United States)]
+#define HIDC_PASSWORD_ENTER             0x808d03e9    // IDD_PASSWORD [English (U.S.)]
+#define HIDC_PASSWORD_MASK              0x808d03e8    // IDD_PASSWORD [English (U.S.)]
+#define HIDC_PASSWORD_MIN               0x808d03ed    // IDD_PASSWORD [English (U.S.)]
+#define HIDC_PASSWORD_REENTER           0x808d03ea    // IDD_PASSWORD [English (U.S.)]
+#define HIDC_PLACE_HOLDER               0x81320605    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_PLAYS                      0x80a60465    // IDD_MULTIPLAY
 #define HIDC_PLAY_NAME                  0x80a604c0    // IDD_MULTIPLAY
 #define HIDC_PLAY_OPTIONS               0x80a60466    // IDD_MULTIPLAY
 #define HIDC_POW                        0x80750424    // IDD_CALC
-#define HIDC_PRINT_BORDER               0x80f004e4    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_BOTTOM               0x80f004a3    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_FOOTER               0x80f00436    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_FOOTER_EDGE          0x80f004a8    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_HEADER               0x80f00435    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_HEADER_EDGE          0x80f004a7    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_HEADINGS             0x80f004e5    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_LEFT                 0x80f004a1    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_RIGHT                0x80f004a4    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_SPACE1               0x80f0043e    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_SPACE1HALF           0x80f0043f    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_SPACE2               0x80f0060a    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_TOP                  0x80f004a2    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_PRINT_UNITS                0x80f0056c    // IDD_OPT_PRINT [English (United States)]
-#define HIDC_RANGES                     0x80e60451    // IDD_OPT_COLOURS [English (United States)]
-#define HIDC_RECENT_FILES               0x809e04c6    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_REFRESH_BARS               0x80a9045c    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_REFRESH_KEYS               0x80a90442    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_REFRESH_NEVER              0x80a9043e    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_REFRESH_PLAYS              0x80a90440    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_REFRESH_PROPS              0x80a9045b    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_REFRESH_SECS               0x80a9043f    // IDD_OPT_MACRO [English (United States)]
+#define HIDC_PRINT_BORDER               0x80f004e4    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_BOTTOM               0x80f004a3    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_FOOTER               0x80f00436    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_FOOTER_EDGE          0x80f004a8    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_HEADER               0x80f00435    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_HEADER_EDGE          0x80f004a7    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_HEADINGS             0x80f004e5    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_LEFT                 0x80f004a1    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_RIGHT                0x80f004a4    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_SPACE1               0x80f0043e    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_SPACE1HALF           0x80f0043f    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_SPACE2               0x80f0060a    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_TOP                  0x80f004a2    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_PRINT_UNITS                0x80f0056c    // IDD_OPT_PRINT [English (U.S.)]
+#define HIDC_RANGES                     0x80e60451    // IDD_OPT_COLOURS [English (U.S.)]
+#define HIDC_RECENT_FILES               0x809e04c6    // IDD_OPT_SYSTEM [English (U.S.)]
+#define HIDC_REFRESH_BARS               0x80a9045c    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_REFRESH_KEYS               0x80a90442    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_REFRESH_NEVER              0x80a9043e    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_REFRESH_PLAYS              0x80a90440    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_REFRESH_PROPS              0x80a9045b    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_REFRESH_SECS               0x80a9043f    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_REGISTER                   0x80e5047c    // IDD_EMAIL
 #define HIDC_REG_CODE                   0x80e70486    // IDD_REGISTER
 #define HIDC_REG_EMAIL                  0x80ec0485    // IDD_STARTUP
 #define HIDC_REG_FORM                   0x80ec048c    // IDD_STARTUP
-#define HIDC_RELATIVE                   0x809605f8    // IDD_FIND_HEX [English (United States)]
-#define HIDC_REMOVE                     0x80e6044e    // IDD_OPT_COLOURS [English (United States)]
+#define HIDC_RELATIVE                   0x809605f8    // IDD_FIND_HEX [English (U.S.)]
+#define HIDC_REMOVE                     0x80e6044e    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_REMOVE_FILES               0x810e04c8    // IDD_RECENT_FILES
-#define HIDC_REMOVE_SCHEME              0x80e60454    // IDD_OPT_COLOURS [English (United States)]
-#define HIDC_RESET                      0x80e6044f    // IDD_OPT_COLOURS [English (United States)]
-#define HIDC_RESTORE                    0x80eb0414    // IDD_OPT_WORKDISPLAY [English (United States)]
+#define HIDC_REMOVE_SCHEME              0x80e60454    // IDD_OPT_COLOURS [English (U.S.)]
+#define HIDC_RESET                      0x80e6044f    // IDD_OPT_COLOURS [English (U.S.)]
+#define HIDC_RESTORE                    0x809e0414    // IDD_OPT_SYSTEM [English (U.S.)]
 #define HIDC_ROL                        0x8075042f    // IDD_CALC
 #define HIDC_ROR                        0x80750430    // IDD_CALC
-#define HIDC_SAVEMACRO                  0x80a90485    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_SAVE_DEFAULT               0x813704b6    // IDD_OPT_WINGENERAL [English (United States)]
-#define HIDC_SAVE_EXIT                  0x809e0416    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_SAVE_NOW                   0x809e0417    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_SCHEMES                    0x80e60450    // IDD_OPT_COLOURS [English (United States)]
+#define HIDC_SAVEMACRO                  0x80a90485    // IDD_OPT_MACRO [English (U.S.)]
+#define HIDC_SAVE_DEFAULT               0x813704b6    // IDD_OPT_WINGENERAL [English (U.S.)]
+#define HIDC_SAVE_EXIT                  0x809e0416    // IDD_OPT_SYSTEM [English (U.S.)]
+#define HIDC_SAVE_NOW                   0x809e0417    // IDD_OPT_SYSTEM [English (U.S.)]
+#define HIDC_SCHEMES                    0x80e60450    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_SCHEME_LIST                0x810704be    // IDD_NEW_SCHEME
 #define HIDC_SCHEME_NAME                0x810704bd    // IDD_NEW_SCHEME
-#define HIDC_SELECT_FONT                0x8132058a    // IDD_PROP_CHAR [English (United States)]
+#define HIDC_SELECT_FONT                0x8132058a    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_SEL_AT                     0x80750408    // IDD_CALC
 #define HIDC_SEL_AT_STORE               0x80750420    // IDD_CALC
 #define HIDC_SEL_GET                    0x80750407    // IDD_CALC
 #define HIDC_SEL_LEN                    0x8075040a    // IDD_CALC
 #define HIDC_SEL_LEN_STORE              0x80750421    // IDD_CALC
 #define HIDC_SEL_STORE                  0x8075041f    // IDD_CALC
-#define HIDC_SHELLOPEN                  0x809e041a    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_SHOW_AREA                  0x810c04af    // IDD_OPT_WINDISPLAY [English (United States)]
-#define HIDC_SHOW_BOOKMARKS             0x8136047a    // IDD_OPT_WINEDIT [English (United States)]
-#define HIDC_SHOW_HIGHLIGHTS            0x81360479    // IDD_OPT_WINEDIT [English (United States)]
-#define HIDC_SHOW_OTHER                 0x80eb060b    // IDD_OPT_WORKDISPLAY [English (United States)]
+#define HIDC_SHELLOPEN                  0x809e041a    // IDD_OPT_SYSTEM [English (U.S.)]
+#define HIDC_SHOW_AREA                  0x810c04af    // IDD_OPT_WINDISPLAY [English (U.S.)]
+#define HIDC_SHOW_BOOKMARKS             0x8136047a    // IDD_OPT_WINEDIT [English (U.S.)]
+#define HIDC_SHOW_HIGHLIGHTS            0x81360479    // IDD_OPT_WINEDIT [English (U.S.)]
+#define HIDC_SHOW_OTHER                 0x80eb060b    // IDD_OPT_WORKDISPLAY [English (U.S.)]
 #define HIDC_SIZE_FACTOR                0x811c0560    // IDD_NEW_FILE
 #define HIDC_SIZE_LENGTH                0x811c0562    // IDD_NEW_FILE
-#define HIDC_SLIDER_TIP                 0x813405f7    // IDD_OPT_TIPS [English (United States)]
+#define HIDC_SLIDER_TIP                 0x813405f7    // IDD_OPT_TIPS [English (U.S.)]
 #define HIDC_SOURCE_CODE                0x813005b2    // IDD_TPARSE
-#define HIDC_STARTUP_PAGE               0x80eb0611    // IDD_OPT_WORKDISPLAY [English (United States)]
+#define HIDC_STARTUP_PAGE               0x80eb0611    // IDD_OPT_WORKDISPLAY [English (U.S.)]
 #define HIDC_SUBJECT                    0x80e50435    // IDD_EMAIL
 #define HIDC_SUBTRACT                   0x80750428    // IDD_CALC
 #define HIDC_SYSTYPE                    0x80e50476    // IDD_EMAIL
-#define HIDC_TABSBOTTOM                 0x80eb0417    // IDD_OPT_WORKDISPLAY [English (United States)]
+#define HIDC_TABICONS                   0x80eb041a    // IDD_OPT_WORKDISPLAY [English (U.S.)]
+#define HIDC_TABSBOTTOM                 0x80eb0417    // IDD_OPT_WORKDISPLAY [English (U.S.)]
 #define HIDC_TEXT                       0x80e50477    // IDD_EMAIL
 #define HIDC_TO                         0x80e50473    // IDD_EMAIL
 #define HIDC_TYPES_COMMON               0x813005ab    // IDD_TPARSE
@@ -424,7 +428,8 @@
 #define HIDC_UNARY_SIGN                 0x80750438    // IDD_CALC
 #define HIDC_UNARY_SQUARE               0x80750444    // IDD_CALC
 #define HIDC_UNARY_SQUARE_ROOT          0x80750446    // IDD_CALC
-#define HIDC_UP                         0x80e60479    // IDD_OPT_COLOURS [English (United States)]
+#define HIDC_UNDO_MERGE                 0x813904c6    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_UP                         0x80e60479    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_USER                       0x80e7043f    // IDD_REGISTER
 #define HIDC_USER_NAME                  0x80e70488    // IDD_REGISTER
 #define HIDC_VALIDATE                   0x810e044f    // IDD_RECENT_FILES
@@ -432,7 +437,7 @@
 #define HIDC_VALUES_SAVE                0x813005b3    // IDD_TPARSE
 #define HIDC_VALUES_WINDOWS             0x813005a9    // IDD_TPARSE
 #define HIDC_VERSION                    0x80e50478    // IDD_EMAIL
-#define HIDC_VERTBUFFER                 0x81360446    // IDD_OPT_WINEDIT [English (United States)]
+#define HIDC_VERTBUFFER                 0x81360446    // IDD_OPT_WINEDIT [English (U.S.)]
 #define HIDC_WEB_ADDRESS                0x8119053d    // IDD_DFFD_GLOBAL
 #define HIDC_WEB_CHECK                  0x8119053e    // IDD_DFFD_GLOBAL
 #define HIDC_XOR                        0x8075042c    // IDD_CALC

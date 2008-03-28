@@ -295,6 +295,7 @@
 #define IDD_OPT_WORKTEMPLATE            312
 #define IDB_VIEW1                       313
 #define ID_INTEGER_STRLEN               313
+#define IDD_OPT_WORKSPACE               313
 #define IDB_VIEW_HOT                    314
 #define ID_INTEGER_STRCHR               314
 #define IDB_REFRESH1                    315
@@ -389,6 +390,8 @@
 #define IDB_MISCBAR_C                   394
 #define IDB_MISCBAR_D                   395
 #define IDI_LAYOUT                      399
+#define IDI_DOCEDIT                     400
+#define IDI_DOCDISPLAY                  401
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -450,10 +453,12 @@
 #define IDC_OPEN_AUTOFIT                1045
 #define IDC_HEX_UCASE                   1045
 #define IDC_BACKUP_PROMPT               1045
+#define IDC_AUTOEXEC                    1045
 #define IDC_SAVE_EXIT                   1046
 #define IDC_OPEN_ADDR_DEC               1046
 #define IDC_MEM_STORE                   1046
 #define IDC_MDITABS                     1046
+#define IDC_INTELLIGENT_UNDO            1046
 #define IDC_SAVE_NOW                    1047
 #define IDC_OPEN_GRAPHIC                1047
 #define IDC_MEM_CLEAR                   1047
@@ -467,10 +472,12 @@
 #define IDC_MEM_SUBTRACT                1049
 #define IDC_LARGE_CURSOR                1049
 #define IDC_BG_SEARCH                   1049
+#define IDC_NO_RECENT                   1049
 #define IDC_OPEN_OVERTYPE               1050
 #define IDC_FILE_TYPE                   1050
 #define IDC_SHELLOPEN                   1050
 #define IDC_MARK_STORE                  1050
+#define IDC_TABICONS                    1050
 #define IDC_OPEN_INSERT                 1051
 #define IDC_MARK_CLEAR                  1051
 #define IDC_CLEAR_HIST                  1051
@@ -592,6 +599,8 @@
 #define IDC_SPIN_DFFD_ARRAY_MAX         1095
 #define IDC_SPIN_OFFSET                 1096
 #define IDC_SPIN_RECENT_FILES           1096
+#define IDC_SPIN_EXPORT_LINELEN2        1096
+#define IDC_SPIN_UNDO_MERGE             1096
 #define IDC_SPIN_GROUPING               1097
 #define IDC_COLS_DESC                   1098
 #define IDC_SPIN_GROUPING2              1098
@@ -754,6 +763,7 @@
 #define IDC_BACKUP_SIZE                 1220
 #define IDC_EXPORT_LINELEN              1221
 #define IDC_RECENT_FILES                1222
+#define IDC_UNDO_MERGE                  1222
 #define IDC_GRID_RFL                    1223
 #define IDC_REMOVE_FILES                1224
 #define IDC_BOOKMARK_GOTO               1225
@@ -1073,6 +1083,7 @@
 #define IDC_PAGE_ICON2                  1551
 #define IDC_FILENAME                    1552
 #define IDC_STARTUP_PAGE                1553
+#define IDC_GLOBAL_PAGE                 1554
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1436,7 +1447,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        400
 #define _APS_NEXT_COMMAND_VALUE         39002
-#define _APS_NEXT_CONTROL_VALUE         1554
+#define _APS_NEXT_CONTROL_VALUE         1555
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

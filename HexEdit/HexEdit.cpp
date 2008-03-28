@@ -862,7 +862,7 @@ BOOL CHexEditApp::InitInstance()
         }
 #endif
 
-        RunAutoExec();
+        if (run_autoexec_) RunAutoExec();
 
         return TRUE;
 }
@@ -1873,16 +1873,16 @@ void CHexEditApp::LoadOptions()
     default:
         orig_save_exit_ = save_exit_ = TRUE;
     }
+    one_only_ = GetProfileInt("Options", "OneInstanceOnly", 1) ? TRUE : FALSE;
+    run_autoexec_ = GetProfileInt("Options", "RunAutoExec", 1) ? TRUE : FALSE;
     open_restore_ = GetProfileInt("MainFrame", "Restore", 1) ? TRUE : FALSE;
-    hex_ucase_ = GetProfileInt("Options", "UpperCaseHex", 1) ? TRUE : FALSE;
-    nice_addr_ = GetProfileInt("Options", "NiceAddresses", 1) ? TRUE : FALSE;
+
     backup_        = (BOOL)GetProfileInt("Options", "CreateBackup",  0);
 	backup_space_  = (BOOL)GetProfileInt("Options", "BackupIfSpace", 1);
 	backup_size_   =       GetProfileInt("Options", "BackupIfLess",  0);  // 1 = 1KByte, 0 = always
 	backup_prompt_ = (BOOL)GetProfileInt("Options", "BackupPrompt",  1);
 
     bg_search_ = GetProfileInt("Options", "BackgroundSearch", 1) ? TRUE : FALSE;
-    one_only_ = GetProfileInt("Options", "OneInstanceOnly", 1) ? TRUE : FALSE;
     large_cursor_ = GetProfileInt("Options", "LargeCursor", 0) ? TRUE : FALSE;
     show_other_ = GetProfileInt("Options", "OtherAreaCursor", 1) ? TRUE : FALSE;
 
@@ -1890,10 +1890,12 @@ void CHexEditApp::LoadOptions()
     clear_recent_file_list_ = GetProfileInt("Options", "ClearRecentFileList", 1) ? TRUE : FALSE;
     clear_bookmarks_ = GetProfileInt("Options", "ClearBookmarks", 0) ? TRUE : FALSE;
     clear_on_exit_ = GetProfileInt("Options", "ClearOnExit", 0) ? TRUE : FALSE;
-	no_recent_add_ = GetProfileInt("Options", "DontAddToRecent", 1) ? TRUE : FALSE;
+	no_recent_add_ = GetProfileInt("Options", "DontAddToRecent", 0) ? TRUE : FALSE;
+    hex_ucase_ = GetProfileInt("Options", "UpperCaseHex", 1) ? TRUE : FALSE;
+    nice_addr_ = GetProfileInt("Options", "NiceAddresses", 1) ? TRUE : FALSE;
 
     intelligent_undo_ = GetProfileInt("Options", "UndoIntelligent", 0) ? TRUE : FALSE;
-    undo_limit_ = GetProfileInt("Options", "UndoMerge", 4);
+    undo_limit_ = GetProfileInt("Options", "UndoMerge", 5);
 
     char buf[2];
     if (::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_IMEASURE, buf, 2) > 0 &&
@@ -2282,6 +2284,8 @@ void CHexEditApp::SaveOptions()
     CHECK_SECURITY(111);
 
     // Save general options
+    WriteProfileInt("Options", "OneInstanceOnly", one_only_ ? 1 : 0);
+    WriteProfileInt("Options", "RunAutoExec", run_autoexec_ ? 1 : 0);
     WriteProfileInt("Options", "SaveExit", save_exit_ ? 1 : 0);
     WriteProfileInt("Options", "UpperCaseHex", hex_ucase_ ? 1 : 0);
     WriteProfileInt("Options", "NiceAddresses", nice_addr_ ? 1 : 0);
@@ -2290,7 +2294,6 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "BackupIfLess", backup_size_);
     WriteProfileInt("Options", "BackupPrompt", int(backup_prompt_));
     WriteProfileInt("Options", "BackgroundSearch", bg_search_ ? 1 : 0);
-    WriteProfileInt("Options", "OneInstanceOnly", one_only_ ? 1 : 0);
     WriteProfileInt("Options", "LargeCursor", large_cursor_ ? 1 : 0);
     WriteProfileInt("Options", "OtherAreaCursor", show_other_ ? 1 : 0);
 
@@ -2744,14 +2747,15 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 
     // Construct property sheet + its pages
     COptSheet optSheet(_T("HexEdit Options"));
-    CGeneralPage generalPage;
-    CWorkspaceDisplayPage workspacedisplayPage;
-    CTemplatePage templatePage;
-	CTipsPage tipsPage;
-    CColourSchemes coloursPage;
-    CMacroPage macroPage;
-    CPrintPage printerPage;
+    CSystemGeneralPage sysgeneralPage;
     CFiltersPage filtersPage;
+    CPrintPage printerPage;
+    CMacroPage macroPage;
+    CWorkspaceDisplayPage workspacedisplayPage;
+    CWorkspacePage workspacePage;
+	CTipsPage tipsPage;
+    CTemplatePage templatePage;
+    CColourSchemes coloursPage;
     CWindowGeneralPage wingeneralPage;
     CWindowPage windisplayPage;
     CWindowEditPage wineditPage;
@@ -2777,21 +2781,24 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
         break;
 	}
 
-	// Allow pages to communicate with each other
-	workspacedisplayPage.SetStartupPage(&generalPage);
+	// Allow pages to activate each other
+	workspacedisplayPage.SetStartupPage(&sysgeneralPage);
+    windisplayPage.SetGlobalDisplayPage(&workspacedisplayPage);
+    wineditPage.SetGlobalEditPage(&workspacePage);
 
     // Load current settings into the property sheet
     get_options(optSheet.val_);
 
     // Add categories to the tree and pages under the categories
 	CBCGPropSheetCategory * pCatSys = optSheet.AddTreeCategory("System", 0, 1);
-    optSheet.AddPageToTree(pCatSys, &generalPage, -1, 2);
-    optSheet.AddPageToTree(pCatSys, &macroPage, -1, 2);
-    optSheet.AddPageToTree(pCatSys, &printerPage, -1, 2);
+    optSheet.AddPageToTree(pCatSys, &sysgeneralPage, -1, 2);
     optSheet.AddPageToTree(pCatSys, &filtersPage, -1, 2);
+    optSheet.AddPageToTree(pCatSys, &printerPage, -1, 2);
+    optSheet.AddPageToTree(pCatSys, &macroPage, -1, 2);
 
 	CBCGPropSheetCategory * pCatWS  = optSheet.AddTreeCategory("Workspace", 0, 1);
     optSheet.AddPageToTree(pCatWS, &workspacedisplayPage, -1, 2);
+    optSheet.AddPageToTree(pCatWS, &workspacePage, -1, 2);
     optSheet.AddPageToTree(pCatWS, &tipsPage, -1, 2);
     optSheet.AddPageToTree(pCatWS, &templatePage, -1, 2);
 	if (pview != NULL)
@@ -2841,43 +2848,13 @@ void CHexEditApp::get_options(struct OptValues &val)
     char buf[_MAX_PATH + 3];            // Stores value of key (not used)
     long buf_size = sizeof(buf);        // Size of buffer and returned key value
 
-    // General
+    // System
     val.shell_open_ = RegQueryValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, buf, &buf_size) == ERROR_SUCCESS;
     val.one_only_ = one_only_;
-    val.bg_search_ = bg_search_;
+    val.run_autoexec_ = run_autoexec_;
     val.save_exit_ = save_exit_;
     val.recent_files_ = recent_files_;
-
-    // Backup
-    val.backup_ = backup_;
-    val.backup_space_ = backup_space_;
-    val.backup_if_size_ = backup_size_ > 0;
-    val.backup_size_ = backup_size_;
-    val.backup_prompt_ = backup_prompt_;
-
-    // Export
-    val.address_specified_ = export_base_addr_ != -1;
-    val.base_address_ = export_base_addr_ != -1 ? export_base_addr_ : 0;
-    val.export_line_len_ = export_line_len_;
-
-    // Global display
-    val.open_restore_ = open_restore_;
-    val.mditabs_ = mditabs_;
-    val.tabsbottom_ = tabsbottom_;
-    val.hex_ucase_ = hex_ucase_;
-    val.large_cursor_ = large_cursor_;
-    val.show_other_ = show_other_;
-	val.nice_addr_ = nice_addr_;
-
-    // Global template
-	val.dffd_view_ = tree_view_;
-    val.max_fix_for_elts_ = max_fix_for_elts_;
-    val.default_char_format_ = default_char_format_;
-    val.default_int_format_ = default_int_format_;
-    val.default_unsigned_format_ = default_unsigned_format_;
-    val.default_string_format_ = default_string_format_;
-    val.default_real_format_ = default_real_format_;
-    val.default_date_format_ = default_date_format_;
+    val.no_recent_add_ = no_recent_add_;
 
     // Macros
     val.refresh_ = refresh_;
@@ -2901,6 +2878,42 @@ void CHexEditApp::get_options(struct OptValues &val)
     val.header_edge_ = header_edge_;
     val.footer_edge_ = footer_edge_;
     val.spacing_ = spacing_;
+
+    // Global display
+    val.open_restore_ = open_restore_;
+    val.mditabs_ = mditabs_;
+    val.tabsbottom_ = tabsbottom_;
+    val.tabicons_ = tabicons_;
+    val.hex_ucase_ = hex_ucase_;
+    val.large_cursor_ = large_cursor_;
+    val.show_other_ = show_other_;
+	val.nice_addr_ = nice_addr_;
+
+    // Workspace
+    val.bg_search_ = bg_search_;
+    val.undo_limit_ = undo_limit_ - 1;
+
+    // Backup
+    val.backup_ = backup_;
+    val.backup_space_ = backup_space_;
+    val.backup_if_size_ = backup_size_ > 0;
+    val.backup_size_ = backup_size_;
+    val.backup_prompt_ = backup_prompt_;
+
+    // Export
+    val.address_specified_ = export_base_addr_ != -1;
+    val.base_address_ = export_base_addr_ != -1 ? export_base_addr_ : 0;
+    val.export_line_len_ = export_line_len_;
+
+    // Global template
+	val.dffd_view_ = tree_view_;
+    val.max_fix_for_elts_ = max_fix_for_elts_;
+    val.default_char_format_ = default_char_format_;
+    val.default_int_format_ = default_int_format_;
+    val.default_unsigned_format_ = default_unsigned_format_;
+    val.default_string_format_ = default_string_format_;
+    val.default_real_format_ = default_real_format_;
+    val.default_date_format_ = default_date_format_;
 
     // Window page(s)
     CHexEditView *pview = GetView();
@@ -2981,6 +2994,16 @@ void CHexEditApp::set_options(struct OptValues &val)
         }
     }
 
+    one_only_ = val.one_only_;
+    run_autoexec_ = val.run_autoexec_;
+    save_exit_ = val.save_exit_;
+    if (recent_files_ != val.recent_files_)
+    {
+        recent_files_ = val.recent_files_;
+        GetFileList()->ChangeSize(recent_files_);
+    }
+    no_recent_add_ = val.no_recent_add_;
+
     if (bg_search_ != val.bg_search_)
     {
         if (val.bg_search_)
@@ -3022,14 +3045,7 @@ void CHexEditApp::set_options(struct OptValues &val)
             bg_search_ = FALSE;
         }
     }
-
-    one_only_ = val.one_only_;
-    save_exit_ = val.save_exit_;
-    if (recent_files_ != val.recent_files_)
-    {
-        recent_files_ = val.recent_files_;
-        GetFileList()->ChangeSize(recent_files_);
-    }
+    undo_limit_ = val.undo_limit_ + 1;
 
     backup_ = val.backup_;
     backup_space_ = val.backup_space_;
@@ -3042,10 +3058,12 @@ void CHexEditApp::set_options(struct OptValues &val)
     /////////////////////////////////////////////////////////
     open_restore_ = val.open_restore_;
     if (mditabs_ != val.mditabs_ ||
-        (mditabs_ && tabsbottom_ != val.tabsbottom_))
+        (mditabs_ && tabsbottom_ != val.tabsbottom_) ||
+        (mditabs_ && tabicons_ != val.tabicons_))
     {
         mditabs_ = val.mditabs_;
         tabsbottom_ = val.tabsbottom_;
+        tabicons_ = val.tabicons_;
 
         ASSERT_KINDOF(CMainFrame, mm);
         if (mm != NULL)

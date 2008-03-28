@@ -50,9 +50,11 @@ struct OptValues
 {
 	BOOL	shell_open_;
 	BOOL	one_only_;
+    BOOL    run_autoexec_;
 	BOOL	bg_search_;
 	BOOL	save_exit_;
 	UINT	recent_files_;
+	BOOL    no_recent_add_;
 
     // Backup options
 	int		backup_;
@@ -65,11 +67,13 @@ struct OptValues
 	int		address_specified_;
     long    base_address_;
 	UINT	export_line_len_;
+    UINT    undo_limit_;
 
     // System display
 	BOOL	open_restore_;
 	BOOL	mditabs_;
 	BOOL	tabsbottom_;
+    BOOL    tabicons_;
 	BOOL	large_cursor_;
 	BOOL	hex_ucase_;
 	BOOL	show_other_;
@@ -206,52 +210,71 @@ protected:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-// CGeneralPage dialog
+// CSystemGeneralPage dialog
 
-class CGeneralPage : public COptPage
+class CSystemGeneralPage : public COptPage
 {
-	DECLARE_DYNCREATE(CGeneralPage)
+	DECLARE_DYNCREATE(CSystemGeneralPage)
 
 // Construction
 public:
-    CGeneralPage() : COptPage(IDD) { }
+    CSystemGeneralPage() : COptPage(IDD) { }
 
 // Dialog Data
-	//{{AFX_DATA(CGeneralPage)
 	enum { IDD = IDD_OPT_SYSTEM };
+
+// Overrides
+public:
+	virtual void OnOK();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+	virtual BOOL OnInitDialog();
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnSaveNow();
+	afx_msg void OnShellopen();
+	afx_msg void OnClearHist();
+	afx_msg void OnChange();
+	DECLARE_MESSAGE_MAP()
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspacePage - general workspace options
+
+class CWorkspacePage : public COptPage
+{
+	DECLARE_DYNCREATE(CWorkspacePage)
+
+// Construction
+public:
+    CWorkspacePage() : COptPage(IDD) { }
+
+	enum { IDD = IDD_OPT_WORKSPACE };
 	CButton	ctl_backup_space_;
 	CEdit	ctl_backup_size_;
 	CButton	ctl_backup_prompt_;
 	CButton	ctl_backup_if_size_;
 	CHexEditControl	address_ctl_;
-	//}}AFX_DATA
-
 
 // Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CGeneralPage)
-	public:
+public:
 	virtual void OnOK();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	// Generated message map functions
-	//{{AFX_MSG(CGeneralPage)
-	afx_msg void OnSaveNow();
-	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	afx_msg void OnShellopen();
-	afx_msg void OnAddressSpecified();
-	afx_msg void OnAddressFile();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnClearHist();
-	afx_msg void OnChange();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnBackup();
 	afx_msg void OnBackupIfSize();
-	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnAddressSpecified();
+	afx_msg void OnAddressFile();
+	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -325,13 +348,13 @@ protected:
 
 // Implementation
 protected:
+	virtual BOOL OnInitDialog();
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	afx_msg void OnChange();
 	afx_msg void OnStartupPage();
 	afx_msg void OnChangeMditabs();
 	afx_msg void OnVisualizations();
-	virtual BOOL OnInitDialog();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 private:
 	COptPage * pStartupPage;
@@ -359,10 +382,10 @@ protected:
 
 // Implementation
 protected:
-	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	afx_msg void OnChange();
 	virtual BOOL OnInitDialog();
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -581,10 +604,7 @@ public:
 // Dialog Data
 	enum { IDD = IDD_OPT_WINDISPLAY };
 
-    void fix_controls();        // Disable/enable controls depending on value/state of other controls
-    BOOL validated();           // Check if control state is valid
-
-	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
+	void SetGlobalDisplayPage(COptPage * pPage) { pGlobalPage = pPage; }
 
     LRESULT OnIdle(long);
 
@@ -603,15 +623,22 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnGlobalPage();
 	afx_msg void OnFont();
-	afx_msg void OnChange();
-	afx_msg void OnChangeUpdate();
 	afx_msg void OnChangeCols();
 	afx_msg void OnSelchangeShowArea();
 	afx_msg void OnSelchangeCharset();
 	afx_msg void OnSelchangeControl();
+	afx_msg void OnChangeUpdate();
+	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 
+private:
+    void fix_controls();        // Disable/enable controls depending on value/state of other controls
+    BOOL validated();           // Check if control state is valid
+
+	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
+	COptPage * pGlobalPage;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -627,10 +654,7 @@ public:
 // Dialog Data
 	enum { IDD = IDD_OPT_WINEDIT };
 
-    void fix_controls();        // Disable/enable controls depending on value/state of other controls
-    BOOL validated();           // Check if control state is valid
-
-	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
+	void SetGlobalEditPage(COptPage * pPage) { pGlobalPage = pPage; }
 
     LRESULT OnIdle(long);
 
@@ -649,12 +673,20 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg void OnChange();
-	afx_msg void OnChangeUpdate();
+	afx_msg void OnGlobalPage();
 	afx_msg void OnSelchangeModify();
 	afx_msg void OnSelchangeInsert();
 	afx_msg void OnChangeTracking();
+	afx_msg void OnChangeUpdate();
+	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
+
+private:
+    void fix_controls();        // Disable/enable controls depending on value/state of other controls
+    BOOL validated();           // Check if control state is valid
+
+	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
+	COptPage * pGlobalPage;
 };
 
 /////////////////////////////////////////////////////////////////////////////
