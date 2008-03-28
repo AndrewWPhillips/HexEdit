@@ -5330,6 +5330,7 @@ LRESULT CHexEditView::OnMouseHover(WPARAM, LPARAM lp)
 // The parameter (addr) if the address about which we show information
 bool CHexEditView::update_tip(FILE_ADDRESS addr)
 {
+	size_t ii;
 	tip_addr_ = addr;
 
 	ASSERT(theApp.tip_name_.size() > 0); // we should at least have bookmarks
@@ -5339,7 +5340,7 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 
 	tip_.Clear();
 	// Do desciptions
-	for (size_t ii = 0; ii < theApp.tip_name_.size(); ++ii)
+	for (ii = 0; ii < theApp.tip_name_.size(); ++ii)
 	{
 		if (theApp.tip_on_[ii])
 		{
@@ -5365,7 +5366,6 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 	pt.x = rct.right;
 
 	int idx = 0;
-	size_t ii;
 	for (ii = 0; ii < theApp.tip_name_.size(); ++ii)
 	{
 		if (theApp.tip_on_[ii])

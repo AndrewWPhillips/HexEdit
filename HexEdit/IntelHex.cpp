@@ -271,7 +271,7 @@ int CReadIntelHex::get_rec(void *data, size_t max_len, size_t &len, unsigned lon
         for (size_t ii = 0; ii < len; ++ii, pp+=2)
         {
             if (data != NULL)
-                *((char *)data + ii) = get_hex(pp, 1, checksum);
+                *((char *)data + ii) = (char)get_hex(pp, 1, checksum);
             else
                 (void)get_hex(pp, 1, checksum);
         }

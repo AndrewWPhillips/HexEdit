@@ -244,7 +244,7 @@ CMainFrame::CMainFrame()
     #if 0
       // Test creating a big bitmap
       m_dib = FreeImage_Allocate(1000, 200000, 24); // 200 million pixels seems to be OK!!
-      int xxx = FreeImage_GetDIBSize(m_dib);
+      int sz = FreeImage_GetDIBSize(m_dib);
       FreeImage_Unload(m_dib); m_dib = NULL;
     #endif
     if ((m_dib = FreeImage_Load(FIF_BMP, bgfile)) == NULL)          // MUST be 24-bit BMP file
