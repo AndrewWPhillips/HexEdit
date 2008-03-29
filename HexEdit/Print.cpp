@@ -22,6 +22,7 @@
 #include "HexEditDoc.h"
 #include "HexEditView.h"
 #include "MainFrm.h"
+#include "HexFileList.h"
 #include "HexPrintDialog.h"
 
 #ifdef _DEBUG
@@ -445,6 +446,10 @@ CString CHexEditView::create_header(const char *fmt, long pagenum)
     CString sin = fmt;                  // Rest of input string
     int pos;                            // Posn in string of param.
     CString ss;                         // Temporary string
+    CHexFileList *pfl = theApp.GetFileList();
+    int ii = -1;
+	if (GetDocument()->pfile1_ != NULL) // make sure there is a disk file (pfl requires a disk file name)
+		ii = pfl->GetIndex(GetDocument()->pfile1_->GetFilePath());
 
     CFileStatus status;                 // Get status of file (for times)
     if (bDiskFile && !bDevice)
@@ -494,6 +499,18 @@ CString CHexEditView::create_header(const char *fmt, long pagenum)
                     retval += status.m_atime.Format("%c");
                 break;
 #endif
+            case 'G':
+                if (ii > -1)
+                    retval += pfl->GetData(ii, CHexFileList::CATEGORY);
+                break;
+            case 'K':
+                if (ii > -1)
+                    retval += pfl->GetData(ii, CHexFileList::KEYWORDS);
+                break;
+            case 'X':
+                if (ii > -1)
+                    retval += pfl->GetData(ii, CHexFileList::COMMENTS);
+                break;
             default:
             case '&':
                 retval += sin[pos+1];

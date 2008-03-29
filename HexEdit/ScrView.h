@@ -66,6 +66,8 @@ public:
     {
         return scroll_up_;
     }
+    void SetStrictScroll(BOOL v = TRUE) { strict_scroll_ = v; }
+    BOOL GetStrictScroll() { return strict_scroll_; }
 
     void CaretMode();           // Set caret mode (arrow keys move caret)
     void ScrollMode();          // Set scroll mode (arrow keys scroll)
@@ -88,6 +90,7 @@ public:
     void EnableCaret();
     void DisableCaret();
     void CaretShow();
+
 
     void SetHorzBufferZone(int n = 1) { horz_buffer_zone_ = n; }
     int GetHorzBufferZone() { return horz_buffer_zone_; }
@@ -205,7 +208,8 @@ private:
     BOOL caret_seen_;           // Is caret actually on (when caret_level_ == 0)
     BOOL caret_block_;          // Is the caret a line or block?
 
-    BOOL scroll_up_;
+    BOOL scroll_up_;            // Tracks which last scroll dirn so that screen refreshes are drawn to match
+    BOOL strict_scroll_;        // Disallow scroll past ends
 
     int horz_buffer_zone_;      // When displaying caret how many characters from right edge to buffer
     int vert_buffer_zone_;      // Make sure caret stays this many lines from bottom/top edge

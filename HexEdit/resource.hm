@@ -383,6 +383,7 @@
 #define HIDC_SCHEMES                    0x80e60450    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_SCHEME_LIST                0x810704be    // IDD_NEW_SCHEME
 #define HIDC_SCHEME_NAME                0x810704bd    // IDD_NEW_SCHEME
+#define HIDC_SCROLL_PAST_ENDS           0x8136047b    // IDD_OPT_WINEDIT [English (U.S.)]
 #define HIDC_SELECT_FONT                0x8132058a    // IDD_PROP_CHAR [English (U.S.)]
 #define HIDC_SEL_AT                     0x80750408    // IDD_CALC
 #define HIDC_SEL_AT_STORE               0x80750420    // IDD_CALC

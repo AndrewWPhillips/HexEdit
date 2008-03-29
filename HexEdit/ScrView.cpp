@@ -50,6 +50,7 @@ CScrView::CScrView()
 
     horz_buffer_zone_ = 1;              // At least one char from caret to right edge of screen
     vert_buffer_zone_ = 2;
+    strict_scroll_ = FALSE;
 
     mouse_down_ = FALSE;
 
@@ -434,6 +435,7 @@ BOOL CScrView::CaretDisplayed(CSizeAp win_size)
 // Typically overridden in derived class (but this base class should still be called).
 void CScrView::ValidateScroll(CPointAp &pos, BOOL strict /* =FALSE */)
 {
+    if (strict_scroll_) strict = TRUE;  // Disallow scroll past ends according to this setting
     TEXTMETRIC tm;
     {
         CClientDC dc(this);

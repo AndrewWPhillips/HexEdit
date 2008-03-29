@@ -3090,6 +3090,12 @@ void CHexEditView::recalc_display()
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
+    if (GetStrictScroll() != BOOL(display_.strict_scroll))
+    {
+        SetStrictScroll(display_.strict_scroll);
+        SetScroll(GetScroll());
+    }
+
     // Save info on the current font
     {
         TEXTMETRIC tm;
@@ -9819,6 +9825,7 @@ void CHexEditView::OnDisplayReset()
 
     display_.vert_display = theApp.open_display_.vert_display;
     display_.borders = theApp.open_display_.borders;
+    display_.strict_scroll = theApp.open_display_.strict_scroll;
 	if (GetDocument()->IsDevice())
 	{
 		display_.overtype = 1;  // INS not allowed

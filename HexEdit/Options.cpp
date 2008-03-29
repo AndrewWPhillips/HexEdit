@@ -38,6 +38,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+// xxx check save as default set scheme
+
 extern CHexEditApp theApp;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -137,6 +139,7 @@ void COptSheet::init()
 	val_.insert_ = -1;
 	val_.modify_ = -1;
 	val_.big_endian_ = FALSE;
+    val_.scroll_past_ends_ = TRUE;
     //val_.change_tracking_ = 0;
     val_.ct_modifications_ = val_.ct_insertions_ = val_.ct_deletions_ = val_.ct_delcount_ = FALSE;
     val_.show_bookmarks_ = val_.show_highlights_ = TRUE;
@@ -324,6 +327,7 @@ void CWorkspacePage::DoDataExchange(CDataExchange* pDX)
 {
     COptPage::DoDataExchange(pDX);
     DDX_Check(pDX, IDC_BG_SEARCH, pParent->val_.bg_search_);
+	DDX_Check(pDX, IDC_INTELLIGENT_UNDO, pParent->val_.intelligent_undo_);
     DDX_Text(pDX, IDC_UNDO_MERGE, pParent->val_.undo_limit_);
 	DDV_MinMaxUInt(pDX, pParent->val_.undo_limit_, 1, 16);
 
@@ -371,6 +375,7 @@ BEGIN_MESSAGE_MAP(CWorkspacePage, COptPage)
     ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
     ON_BN_CLICKED(IDC_BG_SEARCH, OnChange)
+    ON_BN_CLICKED(IDC_INTELLIGENT_UNDO, OnChange)
 	ON_EN_CHANGE(IDC_UNDO_MERGE, OnChange)
 	ON_BN_CLICKED(IDC_BACKUP, OnBackup)
 	ON_BN_CLICKED(IDC_BACKUP_IF_SIZE, OnBackupIfSize)
@@ -419,6 +424,7 @@ static DWORD id_pairs_ws[] = {
     IDC_EXPORT_ADDRESS, HIDC_EXPORT_ADDRESS,
     IDC_EXPORT_LINELEN, HIDC_EXPORT_LINELEN,
     IDC_SPIN_EXPORT_LINELEN, HIDC_EXPORT_LINELEN,
+    IDC_INTELLIGENT_UNDO, HIDC_INTELLIGENT_UNDO,
     IDC_UNDO_MERGE, HIDC_UNDO_MERGE,
     IDC_SPIN_UNDO_MERGE, HIDC_UNDO_MERGE,
     0,0 
@@ -448,12 +454,13 @@ void CWorkspacePage::OnAddressFile()
 
 void CWorkspacePage::OnAddressSpecified() 
 {
+    // Enable and select address text box
     CString ss;
     address_ctl_.EnableWindow();
     address_ctl_.GetWindowText(ss);
     if (ss.IsEmpty())
         address_ctl_.SetWindowText("0");
-//    address_ctl_.Redisplay();
+    address_ctl_.SetSel(0, -1, TRUE);
     address_ctl_.SetFocus();
     SetModified(TRUE);
 }
@@ -497,6 +504,14 @@ void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_NICE_ADDR, pParent->val_.nice_addr_);
 }
 
+void CWorkspaceDisplayPage::fix_controls()
+{
+    ASSERT(GetDlgItem(IDC_TABSBOTTOM) != NULL);
+    GetDlgItem(IDC_TABSBOTTOM)->EnableWindow(pParent->val_.mditabs_);
+    ASSERT(GetDlgItem(IDC_TABICONS) != NULL);
+    GetDlgItem(IDC_TABICONS)->EnableWindow(pParent->val_.mditabs_);
+}
+
 BEGIN_MESSAGE_MAP(CWorkspaceDisplayPage, COptPage)
 	ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
@@ -518,6 +533,8 @@ END_MESSAGE_MAP()
 BOOL CWorkspaceDisplayPage::OnInitDialog() 
 {
 	COptPage::OnInitDialog();
+
+    fix_controls();
 	
 	return TRUE;
 }
@@ -541,10 +558,7 @@ void CWorkspaceDisplayPage::OnVisualizations()
 void CWorkspaceDisplayPage::OnChangeMditabs() 
 {
     UpdateData();
-    ASSERT(GetDlgItem(IDC_TABSBOTTOM) != NULL);
-    GetDlgItem(IDC_TABSBOTTOM)->EnableWindow(pParent->val_.mditabs_);
-    ASSERT(GetDlgItem(IDC_TABICONS) != NULL);
-    GetDlgItem(IDC_TABICONS)->EnableWindow(pParent->val_.mditabs_);
+    fix_controls();
     SetModified(TRUE);
 }
 
@@ -3112,6 +3126,8 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 
         pParent->val_.display_.autofit = pParent->val_.autofit_;
         pParent->val_.display_.dec_addr = pParent->val_.addr_dec_;
+
+        pParent->val_.display_.borders = pParent->val_.borders_;
     }
 }
 
@@ -3396,7 +3412,6 @@ IMPLEMENT_DYNCREATE(CWindowEditPage, COptPage)
 
 CWindowEditPage::CWindowEditPage() : COptPage(CWindowEditPage::IDD)
 {
-    update_ok_ = false;
     pGlobalPage = NULL;
 }
 
@@ -3409,6 +3424,7 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.modify_           = !pParent->val_.display_.readonly;
         pParent->val_.insert_           = !pParent->val_.display_.overtype;
 		pParent->val_.big_endian_       = pParent->val_.display_.big_endian;
+        pParent->val_.scroll_past_ends_ = !pParent->val_.display_.strict_scroll;
         pParent->val_.ct_insertions_    = !pParent->val_.display_.hide_insert;
         pParent->val_.ct_modifications_ = !pParent->val_.display_.hide_replace;
         pParent->val_.ct_deletions_     = !pParent->val_.display_.hide_delete;
@@ -3420,6 +3436,7 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_MODIFY,         pParent->val_.modify_);
 	DDX_CBIndex(pDX, IDC_INSERT,         pParent->val_.insert_);
 	DDX_Check(pDX, IDC_BIG_ENDIAN,       pParent->val_.big_endian_);
+    DDX_Check(pDX, IDC_SCROLL_PAST_ENDS, pParent->val_.scroll_past_ends_);
 	DDX_Check(pDX, IDC_CT_INSERTIONS,    pParent->val_.ct_insertions_);
 	DDX_Check(pDX, IDC_CT_MODIFICATIONS, pParent->val_.ct_modifications_);
 	DDX_Check(pDX, IDC_CT_DELETIONS,     pParent->val_.ct_deletions_);
@@ -3433,6 +3450,7 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.display_.overtype       = !pParent->val_.insert_;
         pParent->val_.display_.readonly       = !pParent->val_.modify_;
 		pParent->val_.display_.big_endian     = pParent->val_.big_endian_;
+        pParent->val_.display_.strict_scroll = !pParent->val_.scroll_past_ends_;
         pParent->val_.display_.hide_insert    = !pParent->val_.ct_insertions_;
         pParent->val_.display_.hide_replace   = !pParent->val_.ct_modifications_;
         pParent->val_.display_.hide_delete    = !pParent->val_.ct_deletions_;
@@ -3449,6 +3467,7 @@ BEGIN_MESSAGE_MAP(CWindowEditPage, COptPage)
 	ON_CBN_SELCHANGE(IDC_MODIFY, OnSelchangeModify)
 	ON_CBN_SELCHANGE(IDC_INSERT, OnSelchangeInsert)
 	ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChange)
+	ON_BN_CLICKED(IDC_SCROLL_PAST_ENDS, OnChange)
 	ON_BN_CLICKED(IDC_CT_INSERTIONS, OnChange)
 	ON_BN_CLICKED(IDC_CT_MODIFICATIONS, OnChange)
 	ON_BN_CLICKED(IDC_CT_DELETIONS, OnChangeUpdate)     // state affects whether IDC_CT_DELCOUNT is enabled
@@ -3475,11 +3494,6 @@ void CWindowEditPage::fix_controls()
     GetDlgItem(IDC_INSERT)->EnableWindow(pParent->val_.modify_ == 1);
     GetDlgItem(IDC_INSERT_DESC)->EnableWindow(pParent->val_.modify_ == 1);
     GetDlgItem(IDC_CT_DELCOUNT)->EnableWindow(pParent->val_.ct_deletions_);
-}
-
-BOOL CWindowEditPage::validated()
-{
-    return TRUE;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3509,6 +3523,7 @@ static DWORD id_pairs_winedit[] = {
     IDC_INSERT, HIDC_INSERT,
     IDC_INSERT_DESC, HIDC_INSERT,
     IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
+    IDC_SCROLL_PAST_ENDS, HIDC_SCROLL_PAST_ENDS,
     IDC_CT_MODIFICATIONS, HIDC_CT_MODIFICATIONS,
     IDC_CT_INSERTIONS, HIDC_CT_INSERTIONS,
     IDC_CT_DELETIONS, HIDC_CT_DELETIONS,
@@ -3532,34 +3547,24 @@ void CWindowEditPage::OnContextMenu(CWnd* pWnd, CPoint point)
 	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_winedit);
 }
 
+#if 0
 BOOL CWindowEditPage::OnSetActive() 
 {
     BOOL retval = COptPage::OnSetActive();
-    update_ok_ = true;          // Its now OK to allow changes to cols field to be processed
     return retval;
 }
 
 BOOL CWindowEditPage::OnKillActive() 
 {
     BOOL retval = COptPage::OnKillActive();
-
-    if (retval)
-    {
-        if (!validated())
-            return FALSE;
-
-        // All validation is OK so we will be deactivated
-        update_ok_ = false;
-    }
-
     return retval;
 }
 
 void CWindowEditPage::OnCancel() 
 {
-    update_ok_ = false;
 	COptPage::OnCancel();
 }
+#endif
 
 LRESULT CWindowEditPage::OnIdle(long lCount)
 {

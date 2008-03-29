@@ -48,13 +48,18 @@
 // OptValues - stores all option values in one place
 struct OptValues
 {
+    // System options
 	BOOL	shell_open_;
 	BOOL	one_only_;
     BOOL    run_autoexec_;
-	BOOL	bg_search_;
 	BOOL	save_exit_;
 	UINT	recent_files_;
 	BOOL    no_recent_add_;
+
+    // Workspace
+	BOOL	bg_search_;
+	BOOL    intelligent_undo_;
+    UINT    undo_limit_;
 
     // Backup options
 	int		backup_;
@@ -67,7 +72,6 @@ struct OptValues
 	int		address_specified_;
     long    base_address_;
 	UINT	export_line_len_;
-    UINT    undo_limit_;
 
     // System display
 	BOOL	open_restore_;
@@ -132,6 +136,7 @@ struct OptValues
 	BOOL	addr_dec_;
 	BOOL	maximize_;
     BOOL    borders_;
+    BOOL    scroll_past_ends_;
     // Display state stored in a DWORD (as in view)
     union
     {
@@ -358,6 +363,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 private:
 	COptPage * pStartupPage;
+    void fix_controls();
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -661,9 +667,6 @@ public:
 // Overrides
 public:
 	virtual void OnOK();
-	virtual BOOL OnSetActive();
-	virtual BOOL OnKillActive();
-	virtual void OnCancel();
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
@@ -683,9 +686,7 @@ protected:
 
 private:
     void fix_controls();        // Disable/enable controls depending on value/state of other controls
-    BOOL validated();           // Check if control state is valid
 
-	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
 	COptPage * pGlobalPage;
 };
 

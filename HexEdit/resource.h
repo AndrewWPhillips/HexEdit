@@ -193,7 +193,6 @@
 #define IDI_UP                          245
 #define IDR_TOOLBAR                     245
 #define IDR_VIEWBAR                     245
-#define IDD_OPT_COLOURS2                245
 #define IDR_STDBAR                      245
 #define IDI_DOWN                        246
 #define IDR_NAVBAR                      246
@@ -482,7 +481,6 @@
 #define IDC_MARK_CLEAR                  1051
 #define IDC_CLEAR_HIST                  1051
 #define IDC_INFO_COMMENTS               1051
-#define IDC_LARGE_CURSOR2               1051
 #define IDC_NICE_ADDRESSES              1051
 #define IDC_OPEN_READONLY               1052
 #define IDC_MARK_ADD                    1052
@@ -599,13 +597,10 @@
 #define IDC_SPIN_DFFD_ARRAY_MAX         1095
 #define IDC_SPIN_OFFSET                 1096
 #define IDC_SPIN_RECENT_FILES           1096
-#define IDC_SPIN_EXPORT_LINELEN2        1096
 #define IDC_SPIN_UNDO_MERGE             1096
 #define IDC_SPIN_GROUPING               1097
 #define IDC_COLS_DESC                   1098
-#define IDC_SPIN_GROUPING2              1098
 #define IDC_SPIN_KEYS                   1098
-#define IDC_SPIN_GROUPING3              1099
 #define IDC_SPIN_PLAYS                  1099
 #define IDC_DISPLAY_HEX                 1099
 #define IDC_SPIN_VERTBUFFER             1099
@@ -664,6 +659,7 @@
 #define IDC_DFFD_DOWN                   1146
 #define IDC_SHOW_BOOKMARKS              1146
 #define IDC_OP_DISPLAY                  1147
+#define IDC_SCROLL_PAST_ENDS            1147
 #define IDC_REGISTER                    1148
 #define IDC_LINE1                       1149
 #define IDC_LINE2                       1150
@@ -709,7 +705,6 @@
 #define IDC_DATE_NOW                    1176
 #define IDC_STORE                       1177
 #define IDC_DATE_STORE                  1177
-#define IDC_NOW2                        1178
 #define IDC_DATE_NULL                   1178
 #define IDC_FORMAT_DESC                 1179
 #define IDC_DATE_FORMAT_DESC            1179
@@ -1228,6 +1223,7 @@
 #define ID_BOOKMARKS_HIDE               32954
 #define ID_BOOKMARKS                    32955
 #define ID_BOOKMARK_TOGGLE              32956
+#define ID_PRINTERARGS_COMMENTS         32957
 #define ID_PRINTERARGS_PAGENUMBER       32958
 #define ID_PRINTERARGS_CURRENTDATE      32959
 #define ID_PRINTERARGS_CURRENTTIME      32960
@@ -1237,6 +1233,8 @@
 #define ID_PRINTERARGS_FILEACCESSDDATETIME 32964
 #define ID_PRINTERARGS_FULLNAME         32965
 #define ID_PRINTERARGS_FILENAME         32966
+#define ID_PRINTERARGS_KEYWORDS         32967
+#define ID_PRINTERARGS_CATEGORY         32968
 #define ID_CALC_SEL                     32969
 #define ID_DISPLAY_RESET                32970
 #define ID_DISPLAY_DROPDOWN             32971

@@ -1295,45 +1295,45 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "General"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_COGS,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,41,10,
+    ICON            IDI_COGS,IDC_PAGE_ICON,0,0,21,20
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,41,9,
                     214,1
-    LTEXT           "Startup",IDC_STATIC,20,6,24,8
+    LTEXT           "Global settings",IDC_STATIC,20,4,47,8
+    CONTROL         "Save settings on e&xit",IDC_SAVE_EXIT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,22,17,95,10,0,
+                    HIDC_SAVE_EXIT
+    PUSHBUTTON      "&Save Settings Now",IDC_SAVE_NOW,152,15,94,13,WS_GROUP,
+                    0,HIDC_SAVE_NOW
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,36,
+                    226,1
+    LTEXT           "Startup",IDC_STATIC,12,32,24,8
     CONTROL         "&Only permit one instance to run",IDC_ONE_ONLY,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,22,18,126,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,22,44,126,10,0,
                     HIDC_ONE_ONLY
     CONTROL         "&Add ""Open with HexEdit"" to menus",IDC_SHELLOPEN,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,30,126,10,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,56,126,10,0,
                     HIDC_SHELLOPEN
     CONTROL         "&Restore main window",IDC_RESTORE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,152,18,102,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,152,44,102,10,0,
                     HIDC_RESTORE
     CONTROL         "Run AutoExec macro",IDC_AUTOEXEC,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,152,30,102,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,152,56,102,10,0,
                     HIDC_AUTOEXEC
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,50,
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,76,
                     219,1
-    LTEXT           "History lists",IDC_STATIC,12,45,36,8
-    LTEXT           "Recently used file list entries:",IDC_STATIC,22,58,59,
+    LTEXT           "History lists",IDC_STATIC,12,71,36,8
+    LTEXT           "Recently used file list entries:",IDC_STATIC,22,84,59,
                     16
-    EDITTEXT        IDC_RECENT_FILES,83,59,33,14,ES_RIGHT | ES_NUMBER,0,
+    EDITTEXT        IDC_RECENT_FILES,83,85,33,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_RECENT_FILES
     CONTROL         "Spin1",IDC_SPIN_RECENT_FILES,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,107,57,11,12
-    PUSHBUTTON      "&Clear History Lists...",IDC_CLEAR_HIST,152,59,94,13,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,107,83,11,12
+    PUSHBUTTON      "&Clear History Lists...",IDC_CLEAR_HIST,152,85,94,13,
                     WS_GROUP,0,HIDC_CLEAR_HIST
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,41,105,
-                    214,1
-    LTEXT           "Global Settings",IDC_STATIC,12,101,48,8
-    CONTROL         "Save settings on e&xit",IDC_SAVE_EXIT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,22,114,95,10,0,
-                    HIDC_SAVE_EXIT
-    PUSHBUTTON      "&Save Settings Now",IDC_SAVE_NOW,152,112,94,13,WS_GROUP,
-                    0,HIDC_SAVE_NOW
     CONTROL         "Never add files opened to the ""My Recent Documents"" list.",
                     IDC_NO_RECENT,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | 
-                    WS_TABSTOP,22,78,109,16,0,HIDC_NO_RECENT
+                    WS_TABSTOP,22,104,109,16,0,HIDC_NO_RECENT
 END
 
 IDD_PROP_INFO DIALOGEX 0, 0, 223, 79
@@ -1504,7 +1504,7 @@ BEGIN
     ICON            IDI_DISPLAY,IDC_PAGE_ICON,0,0,20,20
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,8,
                     219,1
-    LTEXT           "Layout",IDC_STATIC,20,5,22,8
+    LTEXT           "Layout",IDC_STATIC,20,4,22,8
     CONTROL         "&Restore main window on startup",IDC_RESTORE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,20,17,117,10,0,HIDC_RESTORE
     PUSHBUTTON      "More Startup Options >>",IDC_STARTUP_PAGE,154,15,94,14,
@@ -1709,7 +1709,6 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,42,8,
                     119,1
     LTEXT           "Layout",IDC_STATIC,20,4,22,8
-    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,8,91,14
     LTEXT           "S&how Area(s):",IDC_STATIC,19,18,48,8
     COMBOBOX        IDC_SHOW_AREA,69,17,61,53,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_SHOW_AREA
@@ -1744,6 +1743,7 @@ BEGIN
     COMBOBOX        IDC_CHARSET,69,100,94,60,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_CHARSET
     PUSHBUTTON      "&Font...",IDC_FONT,167,100,43,12,0,0,HIDC_FONT
+    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,7,91,14
     LTEXT           "C&ontrol Chars:",IDC_CONTROL_DESC,19,119,48,8
     COMBOBOX        IDC_CONTROL,69,117,94,58,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_CONTROL
@@ -2180,10 +2180,9 @@ CAPTION "Editing"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     ICON            IDI_DOCEDIT,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,40,10,
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,40,8,
                     120,1
-    LTEXT           "Editing",IDC_STATIC,20,6,22,8
-    PUSHBUTTON      "Global Editing Options >>",IDC_GLOBAL_PAGE,165,9,91,14
+    LTEXT           "Editing",IDC_STATIC,20,4,22,8
     LTEXT           "Modifiability",IDC_STATIC,21,20,39,8
     COMBOBOX        IDC_MODIFY,63,18,64,47,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_MODIFY
@@ -2202,6 +2201,9 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_VERTBUFFER,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,97,59,11,12
+    CONTROL         "Allow scroll past ends",IDC_SCROLL_PAST_ENDS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,135,60,115,10,0,
+                    HIDC_SCROLL_PAST_ENDS
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,65,79,
                     191,1
     LTEXT           "Change Tracking",IDC_STATIC,12,75,56,8
@@ -2212,10 +2214,10 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,21,97,100,10,0,
                     HIDC_CT_MODIFICATIONS
     CONTROL         "Show deleted bytes",IDC_CT_DELETIONS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,135,87,85,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,135,87,115,10,0,
                     HIDC_CT_DELETIONS
     CONTROL         "Deletion count (in hex area)",IDC_CT_DELCOUNT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,135,98,119,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,135,98,115,10,0,
                     HIDC_CT_DELCOUNT
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,113,
                     227,1
@@ -2224,8 +2226,9 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,21,120,100,10,0,
                     HIDC_SHOW_BOOKMARKS
     CONTROL         "Show highlights",IDC_SHOW_HIGHLIGHTS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,135,120,100,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,135,120,115,10,0,
                     HIDC_SHOW_HIGHLIGHTS
+    PUSHBUTTON      "Global Editing Options >>",IDC_GLOBAL_PAGE,165,7,91,14
 END
 
 IDD_OPT_WINGENERAL DIALOGEX 0, 0, 260, 140
@@ -2533,6 +2536,11 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
+    IDD_OPT_SYSTEM, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 116
+    END
+
     IDD_OPT_MACRO, DIALOG
     BEGIN
         RIGHTMARGIN, 255
@@ -2906,6 +2914,15 @@ BEGIN
     ID_PRINTERARGS_FILEACCESSDDATETIME "&U"
     ID_PRINTERARGS_FULLNAME "&A"
     ID_PRINTERARGS_FILENAME "&F"
+    ID_PRINTERARGS_PAGENUMBER "&P"
+    ID_PRINTERARGS_CURRENTDATE "&D"
+    ID_PRINTERARGS_CATEGORY "&G"
+    ID_PRINTERARGS_KEYWORDS "&K"
+    ID_PRINTERARGS_COMMENTS "&X"
+END
+
+STRINGTABLE 
+BEGIN
     ID_CALC_SEL             "Load selection into calculator\nCalculate Selection"
     ID_DISPLAY_RESET        "Resets window display options to the current defaults\nReset To Defaults"
     ID_DISPLAY_DROPDOWN     "Select which areas (hex/char) to display\nDisplay Areas"
@@ -2913,10 +2930,6 @@ BEGIN
     ID_CONTROL_DROPDOWN     "Select how to display control characters\nControl Chars"
     ID_DISPLAY_HEX          "Display hex area only (hide char area)\nHex Area"
     ID_DISPLAY_CHAR         "Display char area only (hide hex area)\nChar Area"
-END
-
-STRINGTABLE 
-BEGIN
     ID_EXPORT_S1            "Export to file as Motorola S1 (16 bit address) records\nExport Motorola S1"
     ID_EXPORT_S2            "Export to file as Motorola S2 (24 bit address) records\nExport Motorola S2"
     ID_EXPORT_S3            "Export to file as Motorola S3 (32 bit address) records\nExport Motorola S3"
@@ -2927,8 +2940,6 @@ BEGIN
     ID_BOOKMARKS_NEXT       "Go to next bookmark\nNext Bookmark"
     ID_BOOKMARKS_HIDE       "Hide bookmarks in this file\nHide Bookmarks"
     ID_BOOKMARK_TOGGLE      "Create an unnamed bookmark or delete bookmark\nToggle Bookmark"
-    ID_PRINTERARGS_PAGENUMBER "&P"
-    ID_PRINTERARGS_CURRENTDATE "&D"
 END
 
 STRINGTABLE 
@@ -3267,12 +3278,13 @@ BEGIN
         MENUITEM "Current Date",                ID_PRINTERARGS_CURRENTDATE
         MENUITEM "Current Time",                ID_PRINTERARGS_CURRENTTIME
         MENUITEM "Long Format Date && Time",    ID_PRINTERARGS_LONGFORMATDATETIME
-
         MENUITEM SEPARATOR
         MENUITEM "File Creation Date && Time",  ID_PRINTERARGS_FILECREATIONDATETIME
-
         MENUITEM "File Modified Date && Time",  ID_PRINTERARGS_FILECHANGEDDATETIME
-
+        MENUITEM SEPARATOR
+        MENUITEM "Category",                    ID_PRINTERARGS_CATEGORY
+        MENUITEM "Keywords",                    ID_PRINTERARGS_KEYWORDS
+        MENUITEM "Comments",                    ID_PRINTERARGS_COMMENTS
     END
 END
 

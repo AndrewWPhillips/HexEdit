@@ -157,6 +157,8 @@ struct display_bits
 
     unsigned int borders: 1;        // Display sector borders
 
+    unsigned int strict_scroll: 1;  // Disallow scroll past ends
+
 	// Returns font required for display: currently ANSI unless displaying char area and OEM char set selected
 	font_t FontRequired() { return char_area && char_set == CHARSET_OEM ? FONT_OEM : FONT_ANSI; }
 };

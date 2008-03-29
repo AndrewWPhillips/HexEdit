@@ -1890,7 +1890,7 @@ void CHexEditApp::LoadOptions()
     clear_recent_file_list_ = GetProfileInt("Options", "ClearRecentFileList", 1) ? TRUE : FALSE;
     clear_bookmarks_ = GetProfileInt("Options", "ClearBookmarks", 0) ? TRUE : FALSE;
     clear_on_exit_ = GetProfileInt("Options", "ClearOnExit", 0) ? TRUE : FALSE;
-	no_recent_add_ = GetProfileInt("Options", "DontAddToRecent", 0) ? TRUE : FALSE;
+	no_recent_add_ = GetProfileInt("Options", "DontAddToRecent", 1) ? TRUE : FALSE;
     hex_ucase_ = GetProfileInt("Options", "UpperCaseHex", 1) ? TRUE : FALSE;
     nice_addr_ = GetProfileInt("Options", "NiceAddresses", 1) ? TRUE : FALSE;
 
@@ -2021,35 +2021,40 @@ void CHexEditApp::LoadOptions()
 	{
 		open_disp_state_ = 0;  // all options off
 
-		// We are now saving all state in open_disp_state_ but old registry entries may have been written
-		open_display_.hex_area = GetProfileInt("Options", "OpenDisplayHex", 1) ? TRUE : FALSE;
-		open_display_.char_area = GetProfileInt("Options", "OpenDisplayChar", 1) ? TRUE : FALSE;
+	    // The following block of code is usually redundant as we are saving all state info
+        // in open_disp_state_ but this is here in case of old registry entries.
+        {
+		    open_display_.hex_area = GetProfileInt("Options", "OpenDisplayHex", 1) ? TRUE : FALSE;
+		    open_display_.char_area = GetProfileInt("Options", "OpenDisplayChar", 1) ? TRUE : FALSE;
 
-		if (GetProfileInt("Options", "OpenEBCDIC", 0) != 0)
-			open_display_.char_set = CHARSET_EBCDIC;
-		else if (GetProfileInt("Options", "OpenGraphicChars", 0) == 0)  // no graphics means ASCII
-			open_display_.char_set = CHARSET_ASCII;
-		else if (GetProfileInt("Options", "OpenOemChars", 0) != 0)
-			open_display_.char_set = CHARSET_OEM;
-		else
-			open_display_.char_set = CHARSET_ANSI;
+		    if (GetProfileInt("Options", "OpenEBCDIC", 0) != 0)
+			    open_display_.char_set = CHARSET_EBCDIC;
+		    else if (GetProfileInt("Options", "OpenGraphicChars", 0) == 0)  // no graphics means ASCII
+			    open_display_.char_set = CHARSET_ASCII;
+		    else if (GetProfileInt("Options", "OpenOemChars", 0) != 0)
+			    open_display_.char_set = CHARSET_OEM;
+		    else
+			    open_display_.char_set = CHARSET_ANSI;
 
-		open_display_.control = GetProfileInt("Options", "OpenControlChars", 0);
+		    open_display_.control = GetProfileInt("Options", "OpenControlChars", 0);
 
-		open_display_.autofit = GetProfileInt("Options", "OpenAutoFit", 0) ? TRUE : FALSE;
-		open_display_.dec_addr = GetProfileInt("Options", "OpenDecimalAddresses", 0) ? TRUE : FALSE;
-		open_display_.hide_highlight = GetProfileInt("Options", "OpenHideHighlight", 0) ? TRUE : FALSE;
-		open_display_.hide_bookmarks = GetProfileInt("Options", "OpenHideBookmarks", 0) ? TRUE : FALSE;
+		    open_display_.autofit = GetProfileInt("Options", "OpenAutoFit", 0) ? TRUE : FALSE;
+		    open_display_.dec_addr = GetProfileInt("Options", "OpenDecimalAddresses", 0) ? TRUE : FALSE;
+		    open_display_.hide_highlight = GetProfileInt("Options", "OpenHideHighlight", 0) ? TRUE : FALSE;
+		    open_display_.hide_bookmarks = GetProfileInt("Options", "OpenHideBookmarks", 0) ? TRUE : FALSE;
 
-		open_display_.hide_replace = GetProfileInt("Options", "OpenHideReplace", 0) ? TRUE : FALSE;
-		open_display_.hide_insert = GetProfileInt("Options", "OpenHideInsert", 0) ? TRUE : FALSE;
-		open_display_.hide_delete = GetProfileInt("Options", "OpenHideDelete", 0) ? TRUE : FALSE;
-		open_display_.delete_count = GetProfileInt("Options", "OpenDeleteCount", 1) ? TRUE : FALSE;
+		    open_display_.hide_replace = GetProfileInt("Options", "OpenHideReplace", 0) ? TRUE : FALSE;
+		    open_display_.hide_insert = GetProfileInt("Options", "OpenHideInsert", 0) ? TRUE : FALSE;
+		    open_display_.hide_delete = GetProfileInt("Options", "OpenHideDelete", 0) ? TRUE : FALSE;
+		    open_display_.delete_count = GetProfileInt("Options", "OpenDeleteCount", 1) ? TRUE : FALSE;
 
-		open_display_.readonly = GetProfileInt("Options", "OpenAllowMods", 0) ? FALSE : TRUE; // reverse of reg value!
-		open_display_.overtype = GetProfileInt("Options", "OpenInsert", 0) ? FALSE : TRUE;    // reverse of reg value!
+		    open_display_.readonly = GetProfileInt("Options", "OpenAllowMods", 0) ? FALSE : TRUE; // reverse of reg value!
+		    open_display_.overtype = GetProfileInt("Options", "OpenInsert", 0) ? FALSE : TRUE;    // reverse of reg value!
 
-		open_display_.big_endian = GetProfileInt("Options", "OpenBigEndian", 0) ? TRUE : FALSE;
+		    open_display_.big_endian = GetProfileInt("Options", "OpenBigEndian", 0) ? TRUE : FALSE;
+
+            // Don't add any more DISPLAY flags here
+        }
 
 		// Save back now in new entry in case we crash (and are left with no registry settings)
 		WriteProfileInt("Options", "OpenDisplayOptions", open_disp_state_);
@@ -2891,6 +2896,7 @@ void CHexEditApp::get_options(struct OptValues &val)
 
     // Workspace
     val.bg_search_ = bg_search_;
+    val.intelligent_undo_ = intelligent_undo_;
     val.undo_limit_ = undo_limit_ - 1;
 
     // Backup
@@ -3045,6 +3051,7 @@ void CHexEditApp::set_options(struct OptValues &val)
             bg_search_ = FALSE;
         }
     }
+    intelligent_undo_ = val.intelligent_undo_;
     undo_limit_ = val.undo_limit_ + 1;
 
     backup_ = val.backup_;
