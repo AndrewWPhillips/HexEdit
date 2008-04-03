@@ -68,6 +68,7 @@ typedef __int64 FILE_ADDRESS;
 #define NEW_TIPS        1   // Use new (fading) tip control for view tips (selection length etc) - seems to work well
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
 #define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
+#define EXPLORER_WND    1   // Modeless dialog like Windows Explorer - works well but need to fix hidden files button image
 
 #define DIALOG_BAR  1       // Put modeless dialogs into dockable/rollable dialog bars
 // Note: You also need to change dialog style (hexedit.rc) to WS_CHILD for dockable bars
@@ -75,7 +76,6 @@ typedef __int64 FILE_ADDRESS;
 //STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 
 // Flags for stuff in development
-//#define EXPLORER_WND    1   // Modeless dialog like Windows Explorer - works well but need to fix hidden files button image
 //#define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project
 //#define CALC_EXPR       1   // Allow expressions in calculator - needs testing
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
@@ -107,6 +107,11 @@ enum font_t {
 
 // This is used to store all display flags in one int
 // Note: only add to end since this struct is written to files
+// We are limited to 32 bits and if we run out of bits then we can use:
+//   - not_used_now - spare bit
+//   - strict_scroll - this could be made into a global option to free up this bit
+//   - mark_char - not really that important
+//   - vert_display - should at some stage be combined with hex_area/char_area
 struct display_bits
 {
     unsigned int hex_area: 1;   // Display hex area?
@@ -151,13 +156,13 @@ struct display_bits
     unsigned int hide_delete: 1;    // Hide deletions (change tracking)
     unsigned int delete_count: 1;   // Show count of deletions (up to 9) instead of *
 
-	unsigned int vert_display: 1;   // Show vertical display instead of hex/ch ar areas
+	unsigned int vert_display: 1;   // Show vertical display instead of hex/char areas
 
 	unsigned int big_endian: 1;     // Operations on the file are big-endian?
 
     unsigned int borders: 1;        // Display sector borders
 
-    unsigned int strict_scroll: 1;  // Disallow scroll past ends
+    unsigned int strict_scroll: 1;  // This is pretty stupid as a per file option - should just be a global option
 
 	// Returns font required for display: currently ANSI unless displaying char area and OEM char set selected
 	font_t FontRequired() { return char_area && char_set == CHARSET_OEM ? FONT_OEM : FONT_ANSI; }

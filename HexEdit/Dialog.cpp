@@ -116,7 +116,7 @@ HRESULT CHistoryShellList::DisplayFolder(LPBCGCBITEMINFO lpItemInfo)
 		{
 			// Truncate the list past the current pos
 			ASSERT(pos_ >= -1 && pos_ < int(name_.size()));
-			name_.erase(name_.begin() + pos_ + 1, name_.end());
+			name_.erase(name_.begin() + (pos_ + 1), name_.end());
     		pos_ = name_.size();
 
 			name_.push_back(curr);
@@ -824,7 +824,8 @@ void CExplorerWnd::NewFilter()
 	// Add string entered into drop down list if not there
 	int count = ctl_filter_.GetCount();
 	CString tmp = curr_filter_; tmp.MakeUpper();  // Get uppercase version for case-insensitive compare
-	for (int ii = 0; ii < count; ++ii)
+	int ii;
+	for (ii = 0; ii < count; ++ii)
 	{
 		CString ss;
 		ctl_filter_.GetLBText(ii, ss);
@@ -858,7 +859,8 @@ void CExplorerWnd::NewFolder()
 	// Add string entered into drop down list if not there
 	int count = ctl_name_.GetCount();
 	CString tmp = curr_name_; tmp.MakeUpper();  // Get uppercase version for case-insensitive compare
-	for (int ii = 0; ii < count; ++ii)
+	int ii;
+	for (ii = 0; ii < count; ++ii)
 	{
 		CString ss;
 		ctl_name_.GetLBText(ii, ss);
