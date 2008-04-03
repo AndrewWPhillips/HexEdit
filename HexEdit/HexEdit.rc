@@ -936,6 +936,7 @@ BEGIN
             MENUITEM "&Bookmarks",                  ID_VIEW_BOOKMARKS
             MENUITEM "&Find",                       ID_VIEW_FIND
             MENUITEM "&Properties",                 ID_VIEW_PROPERTIES
+            MENUITEM "&Explorer",                   ID_VIEW_EXPL
         END
         MENUITEM SEPARATOR
         MENUITEM "&Standard Toolbar",           ID_VIEW_VIEWBAR
@@ -2357,7 +2358,7 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_EXPORT_LINELEN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,239,120,11,12
-    RTEXT           "Number of onsecutive changes to merge:",IDC_STATIC,128,
+    RTEXT           "Number of consecutive changes to merge:",IDC_STATIC,128,
                     36,76,17
     EDITTEXT        IDC_UNDO_MERGE,206,38,37,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_UNDO_MERGE
@@ -2907,29 +2908,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_PRINTERARGS_CURRENTTIME "&T"
-    ID_PRINTERARGS_LONGFORMATDATETIME "&N"
-    ID_PRINTERARGS_FILECREATIONDATETIME "&C"
-    ID_PRINTERARGS_FILECHANGEDDATETIME "&M"
-    ID_PRINTERARGS_FILEACCESSDDATETIME "&U"
-    ID_PRINTERARGS_FULLNAME "&A"
-    ID_PRINTERARGS_FILENAME "&F"
-    ID_PRINTERARGS_PAGENUMBER "&P"
-    ID_PRINTERARGS_CURRENTDATE "&D"
-    ID_PRINTERARGS_CATEGORY "&G"
-    ID_PRINTERARGS_KEYWORDS "&K"
-    ID_PRINTERARGS_COMMENTS "&X"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_CALC_SEL             "Load selection into calculator\nCalculate Selection"
-    ID_DISPLAY_RESET        "Resets window display options to the current defaults\nReset To Defaults"
-    ID_DISPLAY_DROPDOWN     "Select which areas (hex/char) to display\nDisplay Areas"
-    ID_CHARSET_DROPDOWN     "Select how to display characters\nChar Set"
-    ID_CONTROL_DROPDOWN     "Select how to display control characters\nControl Chars"
-    ID_DISPLAY_HEX          "Display hex area only (hide char area)\nHex Area"
-    ID_DISPLAY_CHAR         "Display char area only (hide hex area)\nChar Area"
     ID_EXPORT_S1            "Export to file as Motorola S1 (16 bit address) records\nExport Motorola S1"
     ID_EXPORT_S2            "Export to file as Motorola S2 (24 bit address) records\nExport Motorola S2"
     ID_EXPORT_S3            "Export to file as Motorola S3 (32 bit address) records\nExport Motorola S3"
@@ -2940,6 +2918,29 @@ BEGIN
     ID_BOOKMARKS_NEXT       "Go to next bookmark\nNext Bookmark"
     ID_BOOKMARKS_HIDE       "Hide bookmarks in this file\nHide Bookmarks"
     ID_BOOKMARK_TOGGLE      "Create an unnamed bookmark or delete bookmark\nToggle Bookmark"
+    ID_PRINTERARGS_COMMENTS "&X"
+    ID_PRINTERARGS_PAGENUMBER "&P"
+    ID_PRINTERARGS_CURRENTDATE "&D"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_PRINTERARGS_CURRENTTIME "&T"
+    ID_PRINTERARGS_LONGFORMATDATETIME "&N"
+    ID_PRINTERARGS_FILECREATIONDATETIME "&C"
+    ID_PRINTERARGS_FILECHANGEDDATETIME "&M"
+    ID_PRINTERARGS_FILEACCESSDDATETIME "&U"
+    ID_PRINTERARGS_FULLNAME "&A"
+    ID_PRINTERARGS_FILENAME "&F"
+    ID_PRINTERARGS_KEYWORDS "&K"
+    ID_PRINTERARGS_CATEGORY "&G"
+    ID_CALC_SEL             "Load selection into calculator\nCalculate Selection"
+    ID_DISPLAY_RESET        "Resets window display options to the current defaults\nReset To Defaults"
+    ID_DISPLAY_DROPDOWN     "Select which areas (hex/char) to display\nDisplay Areas"
+    ID_CHARSET_DROPDOWN     "Select how to display characters\nChar Set"
+    ID_CONTROL_DROPDOWN     "Select how to display control characters\nControl Chars"
+    ID_DISPLAY_HEX          "Display hex area only (hide char area)\nHex Area"
+    ID_DISPLAY_CHAR         "Display char area only (hide hex area)\nChar Area"
 END
 
 STRINGTABLE 
@@ -3475,6 +3476,11 @@ BEGIN
         MENUITEM "&Small Icons",                ID_VIEW_SMALLICON
         MENUITEM "L&ist",                       ID_VIEW_LIST
         MENUITEM "&Details",                    ID_VIEW_DETAILS
+    END
+    POPUP "Hidden Files"
+    BEGIN
+        MENUITEM "&Don't show hidden files",    ID_HIDDEN_HIDE
+        MENUITEM "&Show hidden files",          ID_HIDDEN_SHOW
     END
 END
 
@@ -4616,8 +4622,8 @@ BEGIN
     COMBOBOX        IDC_FOLDER_FILTER,71,10,64,30,CBS_DROPDOWN | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_FOLDER_FILTER
     PUSHBUTTON      "",IDC_FILTER_OPTS,135,9,14,14,0,0,HIDC_FILTER_OPTS
-    PUSHBUTTON      "",IDC_FOLDER_VIEW,152,3,34,20,0,0,HIDC_FOLDER_VIEW
-    PUSHBUTTON      "",IDC_FOLDER_HIDDEN,186,3,22,20,0,0,HIDC_FOLDER_HIDDEN
+    PUSHBUTTON      "",IDC_FOLDER_VIEW,152,3,28,20,0,0,HIDC_FOLDER_VIEW
+    PUSHBUTTON      "",IDC_FOLDER_HIDDEN,180,3,28,20,0,0,HIDC_FOLDER_HIDDEN
     PUSHBUTTON      "",IDC_FOLDER_FLIP,2,24,14,14,0,0,HIDC_FOLDER_FLIP
     LTEXT           "Address:",IDC_STATIC,18,26,28,8
     COMBOBOX        IDC_FOLDER_NAME,46,24,148,30,CBS_DROPDOWN | WS_VSCROLL | 
