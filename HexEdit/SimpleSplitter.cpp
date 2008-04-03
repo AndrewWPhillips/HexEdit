@@ -189,12 +189,14 @@ void CSimpleSplitter::Flip()
         factor = (double)rct.Width() / rct.Height();
     }
 
+#if 0   // Let RecalcLayout do it's job
     int i;
 	for (i = 1; i <= m_nPanes; i++)
         m_orig[i] = int(factor*m_orig[i]);
 	for (i = 0; i < m_nPanes; i++)
         m_size[i] = int(factor*m_size[i]);
     m_nMinSize = int(factor*m_nMinSize);
+#endif
 
 	RecalcLayout();
 	ResizePanes();
@@ -312,8 +314,9 @@ void CSimpleSplitter::OnPaint()
 
 BOOL CSimpleSplitter::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
 {
-    if (pWnd != this)
+    if (pWnd != this || nHitTest != HTCLIENT)
         return FALSE;
+    //TRACE("xxx cursor hit test %d xxx\n", nHitTest);
 
     SetCursor(AfxGetApp()->LoadStandardCursor(m_nOrientation == SSP_HORZ ? IDC_SIZEWE : IDC_SIZENS));
     return TRUE;
