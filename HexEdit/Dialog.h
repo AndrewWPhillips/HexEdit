@@ -167,33 +167,33 @@ public:
 	virtual BOOL OnInitDialog();
 
 	void UpdateFolderInfo(CString folder);   // called when current folder changes
-	void Refresh();             // Set folder/filter from edit controls and refresh the folder display
+	void Refresh();                 // Set folder/filter from edit controls and refresh the folder display
 	void Update(LPCTSTR file_name = NULL); // Mark for possible later (idle) refresh
-	void NewFilter();           // New filter name entered
-	void OldFilter();           // Restore old filter name (Esc hit).
-	void NewFolder();           // New folder name entered
-	void OldFolder();           // Restore old folder name (Esc hit).
+	void NewFilter();               // New filter name entered
+	void OldFilter();               // Restore old filter name (Esc hit).
+	void NewFolder();               // New folder name entered
+	void OldFolder();               // Restore old folder name (Esc hit).
 
 	// overrides
 //	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	CBCGButton ctl_back_;      // back (undo)
-	CBCGButton ctl_forw_;      // forward (redo)
-	CBCGButton ctl_up_;        // up to parent folder
-	CBCGButton ctl_refresh_;   // redraws the list
-	//CBCGButton ctl_showall_;   // show hidden and system files too
-    CBCGMenuButton ctl_view_;  // shows menu of 4 items allowing user to say how the view is to be displayed
-    CBCGButton ctl_show_all_;  // Show hidden/system files
-    CBCGButton ctl_flip_;      // determines orientation of tree/list in splitter window
+	CBCGButton ctl_back_;           // back (undo)
+	CBCGButton ctl_forw_;           // forward (redo)
+	CBCGButton ctl_up_;             // up to parent folder
+	CBCGButton ctl_refresh_;        // redraws the list
+    CBCGMenuButton ctl_view_;       // shows menu of 4 items allowing user to say how the view is to be displayed
+    //CBCGButton ctl_show_all_;       // Show hidden/system files
+    CBCGMenuButton ctl_show_all_;   // shows menu for hiding/showing hidden files
+    CBCGButton ctl_flip_;           // determines orientation of tree/list in splitter window
 
-    CBCGMenuButton ctl_filter_opts_;  // Shows menu with filter list
+    CBCGMenuButton ctl_filter_opts_;// Shows menu with filter list
 
-    CComboBox ctl_filter_;     // restricts files displayed in list
-	CFilterEdit ctl_filter_edit_; // The edit control within the combo
-    CComboBox ctl_name_;       // user can enter folder name here or select from history list
-	CFolderEdit ctl_name_edit_; // The edit control within the combo
+    CComboBox ctl_filter_;          // restricts files displayed in list
+	CFilterEdit ctl_filter_edit_;   // The edit control within the combo
+    CComboBox ctl_name_;            // user can enter folder name here or select from history list
+	CFolderEdit ctl_name_edit_;     // The edit control within the combo
 
-	CMenu m_menu;              // menu for ctl_view_
+	CMenu m_menu_;                  // menus for ctl_view_ and ctl_show_all_
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support

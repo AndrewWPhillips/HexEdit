@@ -1437,6 +1437,8 @@
 #define ID_DFFD_OPEN_8TH                38007
 #define ID_DFFD_OPEN_9TH                38008
 #define ID_DFFD_OPEN_10TH               38009
+#define ID_HIDDEN_SHOW                  39001
+#define ID_HIDDEN_HIDE                  39002
 
 // Next default values for new objects
 // 
@@ -1444,7 +1446,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        400
-#define _APS_NEXT_COMMAND_VALUE         39002
+#define _APS_NEXT_COMMAND_VALUE         39003
 #define _APS_NEXT_CONTROL_VALUE         1555
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

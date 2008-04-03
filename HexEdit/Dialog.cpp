@@ -103,6 +103,7 @@ LRESULT CHexDialogBar::InitDialogBarHandler(WPARAM, LPARAM)
 #ifdef EXPLORER_WND
 /////////////////////////////////////////////////////////////////////////////
 // CHistoryShellList - keeps history of folders that have been shown
+
 // This is a virtual function that is called whenever the current folder is to change
 HRESULT CHistoryShellList::DisplayFolder(LPBCGCBITEMINFO lpItemInfo)
 {
@@ -162,8 +163,14 @@ void CHistoryShellList::AdjustMenu(HMENU hm)
 void CHistoryShellList::MenuCommand(HMENU hm, UINT id, LPCTSTR file_name)
 {
     ASSERT(id == ID_EXPLORER_OPEN || id == ID_EXPLORER_OPEN_RO);
+    CString full_name;
     struct _stat stat;
-    if (::_stat(file_name, &stat) == -1)
+
+    if (!GetCurrentFolder(full_name))
+        return;
+
+    full_name += CString("\\") + file_name;
+    if (::_stat(full_name, &stat) == -1)
         return;
 
     // Open the file if it is not a directory
@@ -171,7 +178,7 @@ void CHistoryShellList::MenuCommand(HMENU hm, UINT id, LPCTSTR file_name)
     {
 	    ASSERT(theApp.open_current_readonly_ == -1);
         theApp.open_current_readonly_ = (id == ID_EXPLORER_OPEN_RO);
-        theApp.OpenDocumentFile(file_name);
+        theApp.OpenDocumentFile(full_name);
     }
     // else open all files in directory??
 }
@@ -464,6 +471,7 @@ void CHistoryShellList::OnDblclk(NMHDR * pNMHDR, LRESULT * pResult)
 	ZeroMemory(&lvItem, sizeof(lvItem));
 	lvItem.mask = LVIF_PARAM;
 
+    // Get info on the focused item (ie, the one d-clicked)
 	if ((lvItem.iItem = GetNextItem(-1, LVNI_FOCUSED)) == -1 ||
         !GetItem (&lvItem))
     {
@@ -478,6 +486,7 @@ void CHistoryShellList::OnDblclk(NMHDR * pNMHDR, LRESULT * pResult)
 	}
 
     // Don't do anything with folders (ie, call base class)
+    // Note pInfo->pParentFolder is of type IShellFolder *
 	ULONG ulAttrs = SFGAO_FOLDER;
 	pInfo->pParentFolder->GetAttributesOf (1, 
 		(const struct _ITEMIDLIST **) &pInfo->pidlRel, &ulAttrs);
@@ -488,16 +497,52 @@ void CHistoryShellList::OnDblclk(NMHDR * pNMHDR, LRESULT * pResult)
         return;
     }
 
+    // Get the full path name of the file
     CString full_name;
     STRRET str;
-	if (GetCurrentFolder(full_name) &&
-        pInfo->pParentFolder->GetDisplayNameOf(pInfo->pidlRel, SHGDN_INFOLDER, &str) != S_FALSE)
+	if (!GetCurrentFolder(full_name) ||
+        pInfo->pParentFolder->GetDisplayNameOf(pInfo->pidlRel, SHGDN_INFOLDER, &str) == S_FALSE)
     {
-        full_name += CString("\\") + CString((LPCWSTR)str.pOleStr);
-	    ASSERT(theApp.open_current_readonly_ == -1);
-        theApp.OpenDocumentFile(full_name);
+        CBCGShellList::OnDblclk(pNMHDR, pResult);
+        return;
     }
+    full_name += CString("\\") + CString((LPCWSTR)str.pOleStr);
+
+    // Check if it is a shortcut (.LNK) file
+    // (See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_int/shell_int_programming/shortcuts/shortcut.asp)
+    IShellLink * psl = NULL;
+    IPersistFile * ppf = NULL;
+    WCHAR wide_name[MAX_PATH];  // Shortcut file name as a wide string
+    char dest_name[MAX_PATH];   // Shortcut destination - ie the file/folder we want
+    WIN32_FIND_DATA wfd;        // Info about shortcut destination file/folder
+
+    if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&psl)) &&
+        SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (void**)&ppf)) &&
+        SUCCEEDED(MultiByteToWideChar(CP_ACP, 0, full_name, -1, wide_name, MAX_PATH)) &&
+        wcscat(wide_name, L".LNK") != NULL &&
+        SUCCEEDED(ppf->Load(wide_name, STGM_READ)) &&
+        SUCCEEDED(psl->GetPath(dest_name, MAX_PATH, &wfd, 0)) )
+    {
+        // We now have the path and info about the shortcut dest.
+        if ((wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+        {
+            // If its a shortcut to a directory then change to that directory
+            DisplayFolder(dest_name);
+            ppf->Release();
+            psl->Release();
+            return;
+        }
+
+        // Make the name of the file to be opened = destination of shortcut
+        full_name = dest_name;
+    }
+    if (ppf != NULL) ppf->Release();
+    if (psl != NULL) psl->Release();
+
+	ASSERT(theApp.open_current_readonly_ == -1);
+    theApp.OpenDocumentFile(full_name);
 }
+
 /////////////////////////////////////////////////////////////////////////////
 // CFilterEdit - edit control which uses entered filter when CR hit
 BEGIN_MESSAGE_MAP(CFilterEdit, CEdit)
@@ -615,7 +660,6 @@ void CExplorerWnd::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FOLDER_PARENT,  ctl_up_);
     DDX_Control(pDX, IDC_FILTER_OPTS,    ctl_filter_opts_);
 	DDX_Control(pDX, IDC_FOLDER_REFRESH, ctl_refresh_);
-	//DDX_Control(pDX, IDC_FOLDER_SHOWALL, ctl_showall_);
 	DDX_Control(pDX, IDC_FOLDER_VIEW,    ctl_view_);
 	DDX_Control(pDX, IDC_FOLDER_HIDDEN,  ctl_show_all_);
 	DDX_Control(pDX, IDC_FOLDER_FLIP,    ctl_flip_);
@@ -662,17 +706,9 @@ BOOL CExplorerWnd::OnInitDialog()
 	list_.ModifyStyle(LVS_TYPEMASK, lvs);
 
     if (theApp.GetProfileInt("File-Settings", "ExplorerShowHidden", 1) == 1)
-    {
         list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS | SHCONTF_INCLUDEHIDDEN));
-        ctl_show_all_.SetImage(IDB_HIDE, IDB_HIDE_HOT);
-        ctl_show_all_.SetTooltip(_T("Don't show hidden files"));
-    }
     else
-    {
         list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS));
-        ctl_show_all_.SetImage(IDB_SHOW, IDB_SHOW_HOT);
-        ctl_show_all_.SetTooltip(_T("Show hidden files"));
-    }
 
     int ii;
 
@@ -737,9 +773,11 @@ BOOL CExplorerWnd::OnInitDialog()
     ctl_refresh_.SetTooltip(_T("Refresh"));
 	ctl_refresh_.Invalidate();
 
+#if 0
 	ctl_show_all_.m_bTransparent = TRUE;
     ctl_show_all_.m_nFlatStyle = CBCGButton::BUTTONSTYLE_FLAT;
 	ctl_show_all_.Invalidate();
+#endif
 
     if (splitter_.Orientation() == SSP_VERT)
         ctl_flip_.SetImage(IDB_VERT, IDB_VERT_HOT);
@@ -751,8 +789,9 @@ BOOL CExplorerWnd::OnInitDialog()
     ctl_flip_.SetTooltip(_T("Flip vertical/horizontal"));
 	ctl_flip_.Invalidate();
 
-	m_menu.LoadMenu(IDR_EXPL);
-	ctl_view_.m_hMenu = m_menu.GetSubMenu(0)->GetSafeHmenu();
+	m_menu_.LoadMenu(IDR_EXPL);
+    // Views menu
+	ctl_view_.m_hMenu = m_menu_.GetSubMenu(0)->GetSafeHmenu();
 	ctl_view_.m_bOSMenu = FALSE;
     ctl_view_.SetImage(IDB_VIEW, IDB_VIEW_HOT);
 	ctl_view_.m_bTransparent = TRUE;
@@ -760,6 +799,15 @@ BOOL CExplorerWnd::OnInitDialog()
     //ctl_view_.SizeToContent();
     ctl_view_.SetTooltip(_T("Change Folder View"));
 	ctl_view_.Invalidate();
+    // Hide/show hidden files menu
+	ctl_show_all_.m_hMenu = m_menu_.GetSubMenu(1)->GetSafeHmenu();
+	ctl_show_all_.m_bOSMenu = FALSE;
+    ctl_show_all_.SetImage(IDB_HIDE, IDB_HIDE_HOT);
+	ctl_show_all_.m_bTransparent = TRUE;
+    ctl_show_all_.m_nFlatStyle = CBCGButton::BUTTONSTYLE_FLAT;
+    //ctl_show_all_.SizeToContent();
+    ctl_show_all_.SetTooltip(_T("Show/hide hidden files"));
+	ctl_show_all_.Invalidate();
 
     return TRUE;
 }
@@ -824,8 +872,7 @@ void CExplorerWnd::NewFilter()
 	// Add string entered into drop down list if not there
 	int count = ctl_filter_.GetCount();
 	CString tmp = curr_filter_; tmp.MakeUpper();  // Get uppercase version for case-insensitive compare
-	int ii;
-	for (ii = 0; ii < count; ++ii)
+	for (int ii = 0; ii < count; ++ii)
 	{
 		CString ss;
 		ctl_filter_.GetLBText(ii, ss);
@@ -859,8 +906,7 @@ void CExplorerWnd::NewFolder()
 	// Add string entered into drop down list if not there
 	int count = ctl_name_.GetCount();
 	CString tmp = curr_name_; tmp.MakeUpper();  // Get uppercase version for case-insensitive compare
-	int ii;
-	for (ii = 0; ii < count; ++ii)
+	for (int ii = 0; ii < count; ++ii)
 	{
 		CString ss;
 		ctl_name_.GetLBText(ii, ss);
@@ -994,10 +1040,14 @@ LRESULT CExplorerWnd::OnKickIdle(WPARAM, LPARAM lCount)
 
 	// Update view check of menu items to reflect current view type
 	DWORD lvs = (list_.GetStyle () & LVS_TYPEMASK);
-	m_menu.GetSubMenu(0)->CheckMenuItem(0, MF_BYPOSITION | (lvs == LVS_ICON      ? MF_CHECKED : MF_UNCHECKED));
-	m_menu.GetSubMenu(0)->CheckMenuItem(1, MF_BYPOSITION | (lvs == LVS_SMALLICON ? MF_CHECKED : MF_UNCHECKED));
-	m_menu.GetSubMenu(0)->CheckMenuItem(2, MF_BYPOSITION | (lvs == LVS_LIST      ? MF_CHECKED : MF_UNCHECKED));
-	m_menu.GetSubMenu(0)->CheckMenuItem(3, MF_BYPOSITION | (lvs == LVS_REPORT    ? MF_CHECKED : MF_UNCHECKED));
+	m_menu_.GetSubMenu(0)->CheckMenuItem(0, MF_BYPOSITION | (lvs == LVS_ICON      ? MF_CHECKED : MF_UNCHECKED));
+	m_menu_.GetSubMenu(0)->CheckMenuItem(1, MF_BYPOSITION | (lvs == LVS_SMALLICON ? MF_CHECKED : MF_UNCHECKED));
+	m_menu_.GetSubMenu(0)->CheckMenuItem(2, MF_BYPOSITION | (lvs == LVS_LIST      ? MF_CHECKED : MF_UNCHECKED));
+	m_menu_.GetSubMenu(0)->CheckMenuItem(3, MF_BYPOSITION | (lvs == LVS_REPORT    ? MF_CHECKED : MF_UNCHECKED));
+
+    bool show = (list_.GetItemTypes() & SHCONTF_INCLUDEHIDDEN) != 0;
+	m_menu_.GetSubMenu(1)->CheckMenuItem(0, MF_BYPOSITION | (!show ? MF_CHECKED : MF_UNCHECKED));
+	m_menu_.GetSubMenu(1)->CheckMenuItem(1, MF_BYPOSITION | (show ? MF_CHECKED : MF_UNCHECKED));
 
     build_filter_menu();
 
@@ -1070,6 +1120,7 @@ void CExplorerWnd::OnFolderRefresh()
 
 void CExplorerWnd::OnFolderHidden()
 {
+#if 0
     if ((list_.GetItemTypes() & SHCONTF_INCLUDEHIDDEN) == 0)
     {
         list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS | SHCONTF_INCLUDEHIDDEN));
@@ -1082,6 +1133,21 @@ void CExplorerWnd::OnFolderHidden()
         ctl_show_all_.SetImage(IDB_SHOW, IDB_SHOW_HOT);
         ctl_show_all_.SetTooltip(_T("Show hidden files"));
     }
+#endif
+	switch (ctl_show_all_.m_nMenuResult)
+	{
+	case ID_HIDDEN_HIDE:
+        list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS));
+		break;
+
+    case ID_HIDDEN_SHOW:
+        list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS | SHCONTF_INCLUDEHIDDEN));
+		break;
+
+	default:
+		ASSERT(0);
+		return;
+	}
 }
 
 void CExplorerWnd::OnFolderFlip()
