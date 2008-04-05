@@ -204,23 +204,83 @@ void CHistoryShellList::do_move(int ii)
 	pos_ = ii;
 }
 
-
 void CHistoryShellList::OnSetColumns()
 {
-    // Call base class to get normal BCG columns
-    CBCGShellList::OnSetColumns();
+    int col;            // loops through columns
+    CString ss;         // temp string
 
-	const TCHAR* szName [] = 
+	ModifyStyle(LVS_TYPEMASK, LVS_REPORT);  // Need to set details mode before setting up columns
+
+    // As we still rely on the BCG base class to handle a few things we just need
+    // to check that BCG has not pulled the rug by reordering the columns.
+    ASSERT(BCGShellList_ColumnName     == COLNAME &&
+           BCGShellList_ColumnSize     == COLSIZE &&
+           BCGShellList_ColumnType     == COLTYPE &&
+           BCGShellList_ColumnModified == COLMOD);
+
+    // Column names that appear in the column header
+	static const TCHAR * name[] = 
 	{
-		_T("Attributes"),      // ColumnAttr
-		_T("Last Opened"),     // ColumnOpened
+		_T("Name"),             // COLNAME
+		_T("Size"),             // COLSIZE
+		_T("Type"),             // COLTYPE
+		_T("Modified"),         // COLMOD
+		_T("Attributes"),       // COLATTR
+		_T("Last Opened"),      // COLOPENED
+        NULL
 	};
+    ASSERT(name[COLLAST] == NULL);      // check numbering consistency
 
-	ASSERT(m_wndHeader.GetItemCount() == ColumnFirst);  // Make sure BCG has not added more columns
-	ASSERT(sizeof(szName)/sizeof(*szName) == ColumnLast - ColumnFirst);  // Do we have the right no of strings?
+    CString widths = theApp.GetProfileString("File-Settings", "ExplorerColWidths", _T("150|60|150|150|60|150"));  // name,size,type,mod-time,attr,last-opened-time
 
-	for (int ii = ColumnFirst; ii < ColumnLast; ++ii)
-		InsertColumn(ii, szName[ii - ColumnFirst], LVCFMT_LEFT, 150, ii);
+    // First work out the order and widths of the columns
+	for (col = 0; col < COLLAST; ++col)
+    {
+        // Work out format, width etc of this column
+    	int fmt = col == COLSIZE ? LVCFMT_RIGHT : LVCFMT_LEFT;
+        AfxExtractSubString(ss, widths, col, '|');
+        int width = atoi(ss);
+
+		InsertColumn(col, name[col], fmt, width, col);
+    }
+
+    // xxx add HDS_DRAGDROP to the header style to allow the user to reorder the columns
+    CString orders = theApp.GetProfileString("File-Settings", "ExplorerColOrder");
+    int order[COLLAST];
+	for (col = 0; col < COLLAST; ++col)
+    {
+        AfxExtractSubString(ss, orders, col, '|');
+        if (ss.IsEmpty())
+            order[col] = col;           // this means that an empty string will just give display order = col order
+        else
+            order[col] = atoi(ss);
+    }
+    SetColumnOrderArray(COLLAST, order);
+}
+
+void CHistoryShellList::SaveLayout()
+{
+	// Save current folder view mode
+	DWORD lvs = (GetStyle () & LVS_TYPEMASK);
+	theApp.WriteProfileInt("File-Settings", "ExplorerView", lvs);
+    if (lvs == LVS_REPORT)
+    {
+        CString widths, orders;         // Strings written to registry with column order and widths
+        CString ss;
+        int order[COLLAST];
+        GetColumnOrderArray(order, COLLAST);
+
+        // Save widths and order of columns
+        for (int col = 0; col < COLLAST; ++col)
+        {
+            ss.Format("%d|", GetColumnWidth(col));
+            widths += ss;
+            ss.Format("%d|", order[col]);
+            orders += ss;
+        }
+	    theApp.WriteProfileString("File-Settings", "ExplorerColWidths", widths);
+	    theApp.WriteProfileString("File-Settings", "ExplorerColOrder", orders);
+    }
 }
 
 CString CHistoryShellList::OnGetItemText(int iItem, int iColumn, 
@@ -249,7 +309,7 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 	}
 
 	// Call BCG base class for columns it can handle
-    if (iColumn < ColumnFirst)
+    if (iColumn < COLATTR)
         return CBCGShellList::OnGetItemText(iItem, iColumn, pItem);
 
     CString retval;
@@ -261,7 +321,7 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 
 	switch (iColumn)
 	{
-	case ColumnAttr:  // Attributes
+	case COLATTR:  // Attributes
 		sfi.dwAttributes = SFGAO_READONLY | SFGAO_HIDDEN | SFGAO_COMPRESSED | SFGAO_ENCRYPTED;
 		// Get file name then get attributes
 		if (SHGetPathFromIDList(pItem->pidlFQ, path))
@@ -298,7 +358,7 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 		}
 		break;
 
-	case ColumnOpened:
+	case COLOPENED:
 		{
 			CString retval;
 			if (pfl != NULL && fl_idx_ > -1)
@@ -360,7 +420,7 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 			}
 		}
 		break;
-	case ColumnAttr:
+	case COLATTR:
 		{
 			SHFILEINFO sfi1, sfi2;
 			sfi1.dwAttributes = sfi2.dwAttributes = SFGAO_FOLDER|SFGAO_STREAM|SFGAO_READONLY|SFGAO_HIDDEN|SFGAO_COMPRESSED|SFGAO_ENCRYPTED;
@@ -425,7 +485,7 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 		}
 		break;
 		
-	case ColumnOpened:
+	case COLOPENED:
 		{
 			LPBCGCBITEMINFO pItem1 = (LPBCGCBITEMINFO)lParam1;
 			LPBCGCBITEMINFO	pItem2 = (LPBCGCBITEMINFO)lParam2;
@@ -694,15 +754,6 @@ BOOL CExplorerWnd::OnInitDialog()
 
 	// Restore last used view type
 	DWORD lvs = theApp.GetProfileInt("File-Settings", "ExplorerView", LVS_REPORT);
-	list_.ModifyStyle(LVS_TYPEMASK, LVS_REPORT);  // Doing this first causes icons to be repositioned nicely
-    CString widths = theApp.GetProfileString("File-Settings", "ExplorerColWidths", _T("150|60|150|150|60|150"));  // name,size,type,mod-time,attr,last-opened-time
-    for (int col = 0; col < 5; ++col)
-    {
-        CString ss;
-        AfxExtractSubString(ss, widths, col, '|');
-        int ww = atoi(ss);
-        list_.SetColumnWidth(col, ww);
-    }
 	list_.ModifyStyle(LVS_TYPEMASK, lvs);
 
     if (theApp.GetProfileInt("File-Settings", "ExplorerShowHidden", 1) == 1)
@@ -870,9 +921,9 @@ void CExplorerWnd::NewFilter()
 		list_.SetFilter(curr_filter_);
 
 	// Add string entered into drop down list if not there
-	int count = ctl_filter_.GetCount();
+	int ii, count = ctl_filter_.GetCount();
 	CString tmp = curr_filter_; tmp.MakeUpper();  // Get uppercase version for case-insensitive compare
-	for (int ii = 0; ii < count; ++ii)
+	for (ii = 0; ii < count; ++ii)
 	{
 		CString ss;
 		ctl_filter_.GetLBText(ii, ss);
@@ -904,9 +955,9 @@ void CExplorerWnd::NewFolder()
         list_.DisplayFolder(curr_name_);
 
 	// Add string entered into drop down list if not there
-	int count = ctl_name_.GetCount();
+	int ii, count = ctl_name_.GetCount();
 	CString tmp = curr_name_; tmp.MakeUpper();  // Get uppercase version for case-insensitive compare
-	for (int ii = 0; ii < count; ++ii)
+	for (ii = 0; ii < count; ++ii)
 	{
 		CString ss;
 		ctl_name_.GetLBText(ii, ss);
@@ -949,21 +1000,8 @@ void CExplorerWnd::OnDestroy()
 
 	CString hist;               // Last 32 strings in drop down history list
 
-	// Save current folder view mode
-	DWORD lvs = (list_.GetStyle () & LVS_TYPEMASK);
-	theApp.WriteProfileInt("File-Settings", "ExplorerView", lvs);
-    if (lvs == LVS_REPORT)
-    {
-        CString widths;
-        CString ss;
-        // Save widths of columns
-        for (int col = 0; col < 5; ++col)
-        {
-            ss.Format("%d|", list_.GetColumnWidth(col));
-            widths += ss;
-        }
-	    theApp.WriteProfileString("File-Settings", "ExplorerColWidths", widths);
-    }
+    list_.SaveLayout();         // save columns etc for list
+
 	theApp.WriteProfileInt("File-Settings", "ExplorerShowHidden",
                            (list_.GetItemTypes() & SHCONTF_INCLUDEHIDDEN) != 0);
 

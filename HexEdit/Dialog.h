@@ -81,25 +81,28 @@ class CHistoryShellList : public CBCGShellList
 	// This is a continuation of BCGShellListColumns
 	enum
 	{
-		ColumnFirst = 4,   // Must be the same number as the next one
-		ColumnAttr = 4,    // File attributes
-		ColumnOpened = 5,  // Time last opened in HexEdit
-		ColumnLast         // Leave this one at the end (to be one past last used value)
+		COLNAME, COLSIZE, COLTYPE, COLMOD,
+        COLATTR,        // file attributes
+        COLOPENED,      // time last opened in hexedit
+		COLLAST         // Leave this one at the end (to be one past last used value)
 	};
 public:
     CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false) { }
 	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
 
+    // Handles back and forward buttons
 	void Back(int count = 1);
 	void Forw(int count = 1);
 	bool BackAllowed() { return pos_ > 0; }
 	bool ForwAllowed() { return pos_ < int(name_.size()) - 1; }
 
+    void SaveLayout();                                                          // save layout to registry (on close)
+
    	virtual HRESULT DisplayFolder(LPBCGCBITEMINFO lpItemInfo);
 	virtual HRESULT DisplayFolder(LPCTSTR lpszPath) { return CBCGShellList::DisplayFolder(lpszPath); }
-	virtual void OnSetColumns();                                                   // sets up columns (in detail view mode)
-	virtual CString OnGetItemText(int iItem, int iColumn, LPBCGCBITEMINFO pItem);  // used in displaying text in columns
-	virtual int OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColumn);       // used in sorting on a column
+	virtual void OnSetColumns();                                                // sets up columns (in detail view mode)
+	virtual CString OnGetItemText(int iItem, int iColumn, LPBCGCBITEMINFO pItem); // used in displaying text in columns
+	virtual int OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColumn);    // used in sorting on a column
 
 	CString Folder() { ASSERT(pos_ > -1 && pos_ < int(name_.size())); return name_[pos_]; }
 
