@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
 <binary_file_format name="WindowsEXE" type_name="" comment="" default_byte_order="little" default_read_only="false" default_char_set="ansi" web_site="http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/pefile.html" expr="">
+	<eval expr="export_addr = export_offset = 0" display_error="false" display_result="false" comment="This is used later to calculate the address of the export table in the file."/>
 	<eval expr="import_addr = import_offset = 0" display_error="false" display_result="false" comment="This is used later to calculate the address of the import table in the file."/>
 	<struct name="DOS_hdr" type_name="IMAGE_DOS_HEADER" comment="" expr="">
 		<data type="string" name="e_magic" format="ascii" len="2" display="" type_name="WORD" domain="this == &quot;MZ&quot;" comment="File signature of executable (Mark's initials)"/>
@@ -91,7 +92,7 @@
 					<eval expr="dir_no = dir_no + 1" display_error="false" display_result="false" comment=""/>
 					<switch test="dir_no">
 						<case range="0">
-							<eval expr="export_va = va" display_error="false" display_result="false"/>
+							<eval expr="export_addr = va" display_error="false" display_result="false"/>
 						</case>
 						<case range="1">
 							<eval expr="import_addr = va" display_error="false" display_result="false"/>
@@ -101,7 +102,7 @@
 			</for>
 		</struct>
 	</if>
-    <for name="section_header" count="nt_hdr.file_hdr.sections" stop_test="" type_name="" comment="">
+	<for name="section_header" count="nt_hdr.file_hdr.sections" stop_test="" type_name="" comment="">
 		<struct name="section" type_name="IMAGE_SECTION_HEADER" comment="" expr="this.name">
 			<data type="string" name="name" format="ascii" len="8" display="" comment="length is always 8 - given by:
 #define IMAGE_SIZEOF_SHORT_NAME  8"/>
@@ -130,46 +131,107 @@
 			<data type="int" name="MEM_EXECUTE" format="unsigned" len="4" display="hex" type_name="bit-field" bits="1" direction="up" domain="{FALSE,TRUE}" comment="Executable section"/>
 			<data type="int" name="MEM_READ" format="unsigned" len="4" display="hex" type_name="bit-field" bits="1" direction="up" domain="{FALSE,TRUE}" comment="Readable section"/>
 			<data type="int" name="MEM_WRITE" format="unsigned" len="4" display="hex" type_name="bit-field" bits="1" direction="up" domain="{FALSE,TRUE}" comment="Writable section"/>
-			<if test = "import_addr &gt;= RVA &amp;&amp; import_addr &lt; RVA + phys_size">
-               	<eval expr="import_offset = phys_offset - RVA"/>
-            </if>
+			<if test="export_addr &gt;= RVA &amp;&amp; export_addr &lt; RVA + phys_size">
+				<eval expr="export_offset = phys_offset - RVA"/>
+			</if>
+			<if test="import_addr &gt;= RVA &amp;&amp; import_addr &lt; RVA + phys_size">
+				<eval expr="import_offset = phys_offset - RVA"/>
+			</if>
 		</struct>
 	</for>
-	<data type="none" name="fill" len="ii=0, section_header[0].RVA - addressof(this)"/>
+	<data type="none" name="fill" len="ii=0, section_header[0].phys_offset - addressof(this)"/>
 	<for name="section" count="nt_hdr.file_hdr.sections" stop_test="" type_name="">
 		<data type="none" name="section" len="ii=ii+1, section_header[ii-1].phys_size"/>
 	</for>
-    <jump offset="import_addr + import_offset" origin="start">
-		<for name="IMPORT" stop_test="this.RVAFuncNameList == 0">
-			<struct name="entry" expr="this.RVAModuleName &gt; 0 ? this.ModuleName  : &quot;-----&quot;">
-				<data type="int" name="RVAFuncNameList" format="unsigned" len="4" display="hex" type_name="DWORD" comment="Ptr to list of names"/>
-				<if test="RVAFuncNameList &gt; 0" comment="">
-					<jump offset="RVAFuncNameList + import_offset" comment="" origin="start">
-						<for name="Addr" count="" stop_test="this.addr == 0" type_name="" comment="">
-							<struct name="" type_name="" comment="" expr="this.addr &gt; 0 ? this.func.name : &quot;-----&quot;">
-								<data type="int" name="addr" format="signed" len="4" display="hex"/>
-								<if test="addr &gt; 0" comment="">
-									<jump offset="addr + import_offset" comment="" origin="start">
-										<struct name="func" type_name="" comment="" expr="">
-											<data type="int" name="ordinal" format="unsigned" len="2" display="hex"/>
-											<data type="string" name="name" format="default" display=""/>
-										</struct>
-									</jump>
-								</if>
-							</struct>
-						</for>
-					</jump>
-				</if>
-				<data type="int" name="" format="unsigned" len="4" display=""/>
-				<data type="int" name="" format="unsigned" len="4" display=""/>
-				<data type="int" name="RVAModuleName" format="unsigned" len="4" display="hex" type_name="DWORD"/>
-				<if test="RVAModuleName &gt; 0" comment="">
-					<jump offset="RVAModuleName + import_offset" comment="" origin="start">
-						<data type="string" name="ModuleName" format="default" display=""/>
-					</jump>
-				</if>
-				<data type="int" name="RVAFuncAddrList" format="unsigned" len="4" display="hex" type_name="DWORD"/>
+	<eval expr="export_offset" display_error="false" display_result="false" comment="xxx to be removed"/>
+	<if test="export_addr &gt; 0">
+		<jump offset="export_addr + export_offset" origin="start">
+			<struct name="EXPORT_DIRECTORY" type_name="" comment="" expr="">
+				<data type="int" name="Characteristics" format="unsigned" len="4" display="hex"/>
+				<data type="date" name="TimeDateStamp" format="c" display=""/>
+				<data type="int" name="MajorVersion" format="unsigned" display="" len="2"/>
+				<data type="int" name="MinorVersion" format="unsigned" display="" len="2"/>
+				<data type="int" name="NameRVA" format="unsigned" display="hex" len="4"/>
+				<if test="NameRVA &gt; 0" comment=""><jump offset="NameRVA + export_offset" comment="" origin="start"><data type="string" name="Name" format="default" display=""/></jump></if><data type="int" name="OrdinalBase" format="unsigned" display="dec" len="4"/>
+				<data type="int" name="NumFunctions" format="unsigned" display="dec" len="4"/>
+				<data type="int" name="NumNames" format="unsigned" display="dec" len="4"/>
+				<data type="int" name="AddressTableRVA" format="unsigned" display="hex" len="4"/>
+				<jump offset="AddressTableRVA + export_offset" comment="" origin="start">
+					<for name="FuncAddr" count="NumFunctions" stop_test="" type_name="" comment="">
+						<data type="int" name="" format="unsigned" len="4" display="hex"/>
+					</for>
+				</jump>
+				<data type="int" name="NamePointerTableRVA" format="unsigned" display="hex" len="4"/>
+				<jump offset="NamePointerTableRVA + export_offset" comment="" origin="start">
+					<for name="NAME" count="NumNames" stop_test="" type_name="">
+						<struct name="" type_name="" expr="this.Name" comment="">
+							<data type="int" name="NameRVA" format="unsigned" len="4" display=""/>
+							<jump offset="NameRVA + export_offset" comment="" origin="start">
+								<data type="string" name="Name" format="default" display=""/>
+							</jump>
+						</struct>
+					</for>
+				</jump>
+				<data type="int" name="OrdinalTableRVA" format="unsigned" display="hex" len="4"/>
+				<jump offset="OrdinalTableRVA + export_offset" origin="start">
+					<for name="ORDINAL" count="NumNames" stop_test="" type_name="">
+						<data type="int" name="Ordinal" format="unsigned" len="2" display=""/>
+					</for>
+				</jump>
 			</struct>
-		</for>
-	</jump>
+		</jump>
+	</if>
+	<eval expr="import_offset" display_error="false" display_result="false" comment="xxx to be removed"/>
+	<if test="import_addr &gt; 0" comment="">
+		<jump offset="import_addr + import_offset" origin="start">
+			<for name="IMPORT" stop_test="this.RVAModuleName == 0" count="" type_name="" comment="">
+				<struct name="entry" expr="this.RVAModuleName &gt; 0 ? this.ModuleName  : &quot;-----&quot;" type_name="" comment="">
+					<data type="int" name="RVAFuncNameList" format="unsigned" len="4" display="hex" type_name="DWORD" comment="Ptr to list of names"/>
+					<if test="RVAFuncNameList &gt; 0" comment="">
+						<jump offset="RVAFuncNameList + import_offset" comment="" origin="start">
+							<for name="Addr" count="" stop_test="this.addr == 0" type_name="" comment="">
+								<struct name="" type_name="" comment="" expr="this.addr &gt; 0 ? this.func.name : &quot;-----&quot;">
+									<data type="int" name="addr" format="signed" len="4" display="hex"/>
+									<if test="addr &gt; 0" comment="">
+										<jump offset="addr + import_offset" comment="" origin="start">
+											<struct name="func" type_name="" comment="" expr="">
+												<data type="int" name="ordinal" format="unsigned" len="2" display="hex"/>
+												<data type="string" name="name" format="default" display=""/>
+											</struct>
+										</jump>
+									</if>
+								</struct>
+							</for>
+						</jump>
+					</if>
+					<data type="date" name="TimeDateStamp" format="c" display=""/>
+					<data type="int" name="ForwarderChain" format="unsigned" len="4" display="hex"/>
+					<data type="int" name="RVAModuleName" format="unsigned" len="4" display="hex" type_name="DWORD"/>
+					<if test="RVAModuleName &gt; 0" comment="">
+						<jump offset="RVAModuleName + import_offset" comment="" origin="start">
+							<data type="string" name="ModuleName" format="default" display=""/>
+						</jump>
+					</if>
+					<data type="int" name="RVAFuncAddrList" format="unsigned" len="4" display="hex" type_name="DWORD"/>
+					<if test="RVAFuncAddrList  &gt; 0" comment="">
+						<jump offset="RVAFuncAddrList + import_offset" comment="" origin="start">
+							<for name="ActualAddr" count="" stop_test="this.addr == 0" type_name="" comment="These addresses are the same as in the FuncNameList but are modified in memory.">
+								<struct name="" type_name="" comment="" expr="this.addr &gt; 0 ? this.func.name : &quot;-----&quot;">
+									<data type="int" name="addr" format="signed" len="4" display="hex"/>
+									<if test="addr &gt; 0" comment="">
+										<jump offset="addr + import_offset" comment="" origin="start">
+											<struct name="func" type_name="" comment="" expr="">
+												<data type="int" name="ordinal" format="unsigned" len="2" display="hex"/>
+												<data type="string" name="name" format="default" display=""/>
+											</struct>
+										</jump>
+									</if>
+								</struct>
+							</for>
+						</jump>
+					</if>
+				</struct>
+			</for>
+		</jump>
+	</if>
 </binary_file_format>
