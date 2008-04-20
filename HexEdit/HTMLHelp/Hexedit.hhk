@@ -14,8 +14,8 @@
       <param name="Local" value="overviewadvanced\Editing_templates.htm">
       <param name="Name" value="DATA Dialog">
       <param name="Local" value="dlg_templates\DATA_Dialog.htm">
-      <param name="Name" value="Display Options page">
-      <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+      <param name="Name" value="Template Options">
+      <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="supported formats">
@@ -107,6 +107,8 @@
     <param name="Local" value="cmd_view\Char_Set_IBM_OEM.htm">
     <param name="Name" value="Character Properties Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_CHAR.htm">
+    <param name="Name" value="Window Display Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="repair">
@@ -305,8 +307,8 @@
     <param name="Name" value="numeric display">
     <param name="Name" value="Technical Information">
     <param name="Local" value="intro\technical.htm">
-    <param name="Name" value="Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Name" value="Template Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="limitations">
@@ -331,12 +333,12 @@
     </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="background search">
-    <param name="Name" value="System Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
     <param name="Name" value="How Do I Search Through Several Files?">
     <param name="Local" value="howdoi\HowSearchFiles.htm">
     <param name="Name" value="Status Bar">
     <param name="Local" value="bars\AFX_HIDW_STATUS_BAR.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="1s complement">
@@ -457,8 +459,8 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="backups">
-    <param name="Name" value="System Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="backward search">
@@ -489,6 +491,8 @@
     <param name="Local" value="cmd_misc\HID_TOGGLE_ENDIAN.htm">
     <param name="Name" value="Little Endian Mode">
     <param name="Local" value="cmd_operations\HID_LITTLE_ENDIAN.htm">
+    <param name="Name" value="Document Edit Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="binary (base 2)">
@@ -608,6 +612,8 @@
     <param name="Local" value="cmd_view\Show_Char_Area.htm">
     <param name="Name" value="Show Both Areas">
     <param name="Local" value="cmd_view\Show_Both_Areas.htm">
+    <param name="Name" value="Window Display Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="choosing fonts">
@@ -638,15 +644,6 @@
     <param name="Local" value="overviewbasics\clipboard.htm">
     <param name="Name" value="How Do I Build a Large File?">
     <param name="Local" value="howdoi\HowBuildLargeFile.htm">
-  </object>
-  <li><object type="text/sitemap">
-    <param name="Name" value="colours">
-    <param name="Name" value="Colour Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_PARTITIONS.htm">
-    <param name="Name" value="Colour Scheme Tool">
-    <param name="Local" value="tools\Colour_Scheme_Tool.htm">
-    <param name="Name" value="New Scheme Dialog">
-    <param name="Local" value="dlg_options\New_Scheme_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="columns (display)">
@@ -718,6 +715,8 @@
     <param name="Local" value="cmd_view\Char_Set_ANSI.htm">
     <param name="Name" value="Char Set ASCII">
     <param name="Local" value="cmd_view\Char_Set_ASCII.htm">
+    <param name="Name" value="Window Display Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="convert">
@@ -799,8 +798,6 @@
     <param name="Name" value="decimal addresses">
     <param name="Name" value="Decimal Addresses command">
     <param name="Local" value="cmd_view\HID_ADDR_TOGGLE.htm">
-    <param name="Name" value="Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
     <param name="Name" value="Window Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
   </object>
@@ -822,12 +819,12 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="default window settings">
-    <param name="Name" value="Window Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
     <param name="Name" value="Reset To Defaults">
     <param name="Local" value="cmd_view\HID_DISPLAY_RESET.htm">
     <param name="Name" value="How Do I Change the Default Window Display">
     <param name="Local" value="howdoi\HowDefaultDisplay.htm">
+    <param name="Name" value="Document General Options">
+    <param name="Local" value="dlg_options\Document_General_Options.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="delete">
@@ -885,8 +882,8 @@
       <param name="Name" value="numbers">
       <param name="Name" value="Technical Information">
       <param name="Local" value="intro\technical.htm">
-      <param name="Name" value="Display Options page">
-      <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+      <param name="Name" value="Template Options">
+      <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -919,8 +916,8 @@
     <param name="Name" value="restore default display settings">
     <param name="Name" value="Reset To Defaults">
     <param name="Local" value="cmd_view\HID_DISPLAY_RESET.htm">
-    <param name="Name" value="Window Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+    <param name="Name" value="Document General Options">
+    <param name="Local" value="dlg_options\Document_General_Options.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="double-click">
@@ -1177,6 +1174,8 @@
     <param name="Local" value="cmd_edit\HID_HIGHLIGHT.htm">
     <param name="Name" value="Hide Highlights">
     <param name="Local" value="cmd_misc\HID_HIGHLIGHT_HIDE.htm">
+    <param name="Name" value="Document Edit Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="find">
@@ -1190,8 +1189,6 @@
     <param name="Local" value="cmd_misc\HID_SEARCH_SEL.htm">
     <param name="Name" value="Find Tool">
     <param name="Local" value="tools\HIDC_SEARCH.htm">
-    <param name="Name" value="System Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
     <param name="Name" value="Properties Dialog">
     <param name="Local" value="overviewtools\prop.htm">
     <param name="Name" value="How Do I Search for a Number?">
@@ -1206,6 +1203,8 @@
     <param name="Local" value="troubleshooting\problem_search_failed.htm">
     <param name="Name" value="Searching">
     <param name="Local" value="overviewtools\Searching.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -1425,6 +1424,8 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_FILE.htm">
     <param name="Name" value="How Do I Change a File's Read-Only Attribute?">
     <param name="Local" value="howdoi\HowFileAttribute.htm">
+    <param name="Name" value="Explorer Dialog">
+    <param name="Local" value="dlg_file\Explorer_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="hide">
@@ -1512,6 +1513,8 @@
     <param name="Local" value="cmd_misc\HID_INSERT.htm">
     <param name="Name" value="Track Changes command">
     <param name="Local" value="cmd_misc\HID_TRACK_CHANGES.htm">
+    <param name="Name" value="Document Edit Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="inserting a file">
@@ -1905,6 +1908,8 @@
     <param name="Name" value="overtype mode">
     <param name="Name" value="Insert Mode Toggle">
     <param name="Local" value="cmd_misc\HID_INSERT.htm">
+    <param name="Name" value="Document Edit Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="paste">
@@ -2024,11 +2029,15 @@
     <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
     <param name="Name" value="Recently Opened Files Dialog">
     <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
+    <param name="Name" value="Document Edit Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="read-write mode">
     <param name="Name" value="Allow Changes Toggle">
     <param name="Local" value="cmd_misc\HID_ALLOW_MODS.htm">
+    <param name="Name" value="Document Edit Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="reading a file">
@@ -2143,6 +2152,8 @@
     <param name="Name" value="saving settings">
     <param name="Name" value="System Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
+    <param name="Name" value="Document General Options">
+    <param name="Local" value="dlg_options\Document_General_Options.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="screen tips">
@@ -2211,10 +2222,10 @@
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="background">
-      <param name="Name" value="System Options page">
-      <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
       <param name="Name" value="How Do I Search Through Several Files?">
       <param name="Local" value="howdoi\HowSearchFiles.htm">
+      <param name="Name" value="Workspace Editing Options">
+      <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="replace">
@@ -2306,8 +2317,6 @@
     <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
     <param name="Name" value="Macro Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_MACRO.htm">
-    <param name="Name" value="Window Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
     <param name="Name" value="Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
     <param name="Name" value="Printer Options">
@@ -2320,13 +2329,15 @@
       <param name="Name" value="restoring default">
       <param name="Name" value="Reset To Defaults">
       <param name="Local" value="cmd_view\HID_DISPLAY_RESET.htm">
+      <param name="Name" value="Document General Options">
+      <param name="Local" value="dlg_options\Document_General_Options.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="saving default">
       <param name="Name" value="How Do I Change the Default Window Display">
       <param name="Local" value="howdoi\HowDefaultDisplay.htm">
-      <param name="Name" value="Window Display Options page">
-      <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+      <param name="Name" value="Document General Options">
+      <param name="Local" value="dlg_options\Document_General_Options.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -2599,6 +2610,8 @@
     <param name="Local" value="overviewbasics\edit.htm">
     <param name="Name" value="Undo Changes command">
     <param name="Local" value="cmd_edit\HID_UNDO_CHANGES.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Unicode">
@@ -3068,14 +3081,14 @@
     <param name="Local" value="cmd_file\Export_Motorola_S3_Records.htm">
     <param name="Name" value="Import Motorola S Records">
     <param name="Local" value="cmd_file\Import_Motorola_S_Records.htm">
-    <param name="Name" value="System Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
     <param name="Name" value="Encoding Binary Data">
     <param name="Local" value="binary_files\Encoding.htm">
     <param name="Name" value="tools">
     <param name="Local" value="overviewtools\other_tools.htm">
     <param name="Name" value="Export Motorola dlg">
     <param name="Local" value="dlg_file\Export_Motorola_dlg.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Intel Hex format">
@@ -3085,10 +3098,10 @@
     <param name="Local" value="cmd_file\Import_Intel_Hex.htm">
     <param name="Name" value="Export Intel Hex Records">
     <param name="Local" value="cmd_file\Export_Intel_Hex_Records.htm">
-    <param name="Name" value="System Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
     <param name="Name" value="tools">
     <param name="Local" value="overviewtools\other_tools.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="BCD">
@@ -3298,6 +3311,8 @@
     <param name="Local" value="overviewtools\other_tools.htm">
     <param name="Name" value="Export Motorola dlg">
     <param name="Local" value="dlg_file\Export_Motorola_dlg.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="importing files">
@@ -3452,6 +3467,8 @@
     <param name="Local" value="overviewtools\Bookmarks.htm">
     <param name="Name" value="HIDD_OPT_TIPS">
     <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
+    <param name="Name" value="Document Edit Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="marking file locations">
@@ -3501,8 +3518,8 @@
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="backups">
-      <param name="Name" value="System Options page">
-      <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
+      <param name="Name" value="Workspace Editing Options">
+      <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="bookmark">
@@ -3865,6 +3882,10 @@
     <param name="Name" value="change tracking">
     <param name="Name" value="Track Changes command">
     <param name="Local" value="cmd_misc\HID_TRACK_CHANGES.htm">
+    <param name="Name" value="Printer Options">
+    <param name="Local" value="dlg_options\Printer_Options.htm">
+    <param name="Name" value="Document Edit Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="tracking changes">
@@ -3917,6 +3938,8 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
     <param name="Name" value="Recently Opened Files Dialog">
     <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
+    <param name="Name" value="Printer Options">
+    <param name="Local" value="dlg_options\Printer_Options.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="keywords">
@@ -3931,6 +3954,8 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
     <param name="Name" value="Recently Opened Files Dialog">
     <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
+    <param name="Name" value="Printer Options">
+    <param name="Local" value="dlg_options\Printer_Options.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="size of file">
@@ -4024,6 +4049,8 @@
       <param name="Local" value="cmd_template\HID_DFFD_SPLIT.htm">
       <param name="Name" value="Refresh Tree View">
       <param name="Local" value="cmd_template\HID_DFFD_REFRESH.htm">
+      <param name="Name" value="Template Options">
+      <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="tutorials">
@@ -4161,6 +4188,64 @@
     <param name="Name" value="acknowledgements">
     <param name="Name" value="Acknowledgements">
     <param name="Local" value="intro\ack.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="tabs">
+    <param name="Name" value="Template Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
+    <param name="Name" value="Workspace Display Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="split window">
+    <param name="Name" value="Template Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="document settings">
+    <param name="Name" value="Document General Options">
+    <param name="Local" value="dlg_options\Document_General_Options.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="sector bounds">
+    <param name="Name" value="Window Display Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="grouping">
+    <param name="Name" value="Window Display Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="scrolling options">
+    <param name="Name" value="Document Edit Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="colors">
+    <param name="Name" value="Color Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PARTITIONS.htm">
+    <param name="Name" value="Color Scheme Tool">
+    <param name="Local" value="tools\Colour_Scheme_Tool.htm">
+    <param name="Name" value="New Scheme Dialog">
+    <param name="Local" value="dlg_options\New_Scheme_Dialog.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Autoexec macro">
+    <param name="Name" value="System General Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
+    <param name="Name" value="Miscellaneous Customizations">
+    <param name="Local" value="tute_customize\CustomizeTute7.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="details view">
+    <param name="Name" value="Explorer Dialog">
+    <param name="Local" value="dlg_file\Explorer_Dialog.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Explorer window">
+    <param name="Name" value="Explorer Dialog">
+    <param name="Local" value="dlg_file\Explorer_Dialog.htm">
   </object>
 </ul>
 </html>

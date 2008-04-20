@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=783>
-<meta name=layout-width content=849>
+<meta name=layout-height content=810>
+<meta name=layout-width content=1311>
 
 
 <!--(Links)=========================================================-->
@@ -45,10 +45,15 @@
 
 <p>If you are acquainted with printing in other Windows programs printing 
  is fairly simple and straightforward. What you see in the window is almost 
- exactly what is printed, but to see how the file would be spread across 
- pages you can use the Print Preview command. You can select the printer 
- to use, and options such as landscape or portrait printing with the Page 
- Setup command.</p>
+ exactly what is printed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are optional extras though, such as printing headers and footers, a border 
+ around the whole page, etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ see how it looks and how the file would be spread across pages you can 
+ use the <a HREF="../cmd_file/HID_FILE_PRINT_PREVIEW.htm">Print Preview 
+ command</a> command. The preview depends on the currently selected printer 
+ which you can change with the <a HREF="../cmd_file/HID_FILE_PAGE_SETUP.htm">Page 
+ Setup Command</a> as well as options such as landscape or portrait printing 
+ etc.</p>
 
 <p>&nbsp;</p>
 
@@ -56,25 +61,22 @@
 
 <p>&nbsp;</p>
 
-<p>The Printer section of the Options Dialog allows setting of page margins, 
- line-spacing, etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- can also customize the header and footer displayed on each page, with 
- the current date/time, page number, filename, time file was last modified 
- etc. There are also options to print a box around the actual data (ie, 
- excluding the header and footer) and to print column headers so you can 
- work out the exact address of any byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Use 
- the Print Preview command to see exactly how the printed page will look.</p>
+<p>The <a HREF="../dlg_options/Printer_Options.htm">Printer Options</a> 
+ page of the Options Dialog allows setting of page margins, line-spacing, 
+ header/footer etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are also other options such as printing column headers so you can easily 
+ work out the exact address of any byte. The header and footer are displayed 
+ at the top and bottom of each page can be any text, including special 
+ codes for the current date/time, page number, filename, time file was 
+ last modified, as well as category, keywords and comments if you have 
+ added any using the <a HREF="../dlg_properties/HIDD_PROP_SUMMARY.htm">Summary 
+ Page</a> of the Properties dialog.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>In versions prior to HexEdit 2.1 printing was always done in the same 
- size font as was displayed on screen. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- meant that, depending on the width of the printer page and the number 
- of columns displayed on screen some of the printing may have been lost 
- off the right side of the display. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- has now been addressed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Now, 
- if the printed line does not fit between the left and right margins, then 
- a smaller version of the same font is used so that it does fit.</p>
+<p>If you have a wide screen (or use a long line length and the scroll 
+ bars) then the printed lines may not fit across the page. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ this case a smaller version of the screen font is used.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -85,8 +87,8 @@
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p>It is not unusual to want to print a small part of a binary file. You 
- can do this in HexEdit by printing a range of pages or by printing the 
- selection.</p>
+ can do this in HexEdit by printing a range of pages <span style="font-style: italic;">or</span> 
+ by printing the selection.</p>
 
 <p>&nbsp;</p>
 
@@ -101,10 +103,11 @@
 
 <p>A better way to print part of a file is to select the bytes you want 
  to print and use the “Print Selection” option of the Print Dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
- when you print the selection you have the option of not printing duplicate 
- lines (instead the line is printed just once with a count of the number 
- of repeats below) -- this can be very useful if the section you want to 
- print contains large areas of null (zero) bytes.</p>
+ when you print the selection you have the option of <span style="font-weight: bold;">not 
+ printing duplicate lines</span> (instead the line is printed just once 
+ with a count of the number of repeats underneath) -- this can be very 
+ useful if the section you want to print contains large areas of bytes 
+ all the same such as 00 or FF.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -127,11 +130,12 @@
 
 <p style="font-weight: bold;">For further information see:</p>
 
-<p style="font-weight: normal;"><a HREF="..\cmd_file\HID_FILE_PRINT.htm" style="font-weight: normal;"><span 
+<p style="font-weight: normal;"><a HREF="..\cmd_file\HID_FILE_PRINT.htm"><span 
  style="font-weight: normal;">Print command</a> to print all or part of 
  the file</span></p>
 
-<p style="font-weight: normal;"><a HREF="..\cmd_file\HID_FILE_PRINT_PREVIEW.htm" style="font-weight: normal;">Print 
+<p style="font-weight: normal;"><a HREF="..\cmd_file\HID_FILE_PRINT_PREVIEW.htm"
+									style="font-weight: normal;">Print 
  Preview command</a> to preview the printed pages</p>
 
 <p><a HREF="..\dlg_options\Printer_Options.htm">Printer Options</a> page 
@@ -151,6 +155,10 @@
 
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\dlg_options\HIDD_OPT_WINDOW.htm">Window 
  Options Page</a>&nbsp;to change the number of displayed columns etc</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="../dlg_properties/HIDD_PROP_SUMMARY.htm">File 
+ Summary Page</a> to set category, comments etc that can be printed in 
+ the page header/footer</p>
 
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;">&nbsp;</p>
 

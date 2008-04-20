@@ -8,7 +8,7 @@
 
 <head>
 
-<title>Display Options page</title>
+<title>Workspace Display Options page</title>
 
 <!--(Meta)==========================================================-->
 
@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1054>
-<meta name=layout-width content=1161>
+<meta name=layout-height content=810>
+<meta name=layout-width content=1311>
 
 
 <!--(Links)=========================================================-->
@@ -39,7 +39,7 @@
 <body>
 
 <h2><font style="font-family: Arial;"
-			face=Arial>Display Options Page</font></h2>
+			face=Arial>Workspace Display Options Page</font></h2>
 
 <p style="text-align: center;"
 	align=center>&nbsp;</p>
@@ -47,14 +47,9 @@
 <p style="margin-top: 0;
 			margin-bottom: 0;
 			text-align: center;"
-	align=center><img src="DlgOptDisplay.gif"
-						style="border-style: none;
-								border: none;
-								width: 410px;
-								height: 327px;"
-						width=410
-						height=327
-						border=0></p>
+	align=center><img src="OptWorkspaceDisplay.gif" style="border: none;
+								width: 560px;
+								height: 289px;" width="560" height="289" border="0"></p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -67,10 +62,7 @@
  main HexEdit window on startup</span></p>
 
 <p style="margin-left: 18.00pt;">The main HexEdit window is restored to 
- its position when you last ran the program. For this option to have any 
- effect the settings must be saved (see the <span style="font-weight: bold;">Save 
- settings</span> options below) since it is only effective when the HexEdit 
- starts up.</p>
+ its position when you last ran the program.</p>
 
 <p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Display 
  Window Tabs</span></p>
@@ -88,10 +80,16 @@
  above) are displayed at the bottom of the main HexEdit window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Otherwise 
  they are displayed at the top.</p>
 
-<p style="margin-left: 18.00pt;">&nbsp;</p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Show Icons 
+ in Tabs</span></p>
 
-<p style="margin-top: 3.00pt; font-weight: bold;">Display hex digits in 
- uppercase</p>
+<p style="margin-left: 18.00pt;">Shows an icon for the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ icon is obtained from Windows and comes from the file or from the .EXE 
+ file fro which the file type is associated.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Display hex in uppercase</p>
 
 <p style="margin-left: 18.00pt;">When this option is selected the digits 
  A to F in all hex numbers are displayed in uppercase. This affects all 
@@ -110,8 +108,16 @@
  at the edit position. This is useful for people using a small monitor 
  at high resolution or for people with poor eyesight.</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Shadow 
- Cursor in Hex/char Area</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Nice Addresses</span></p>
+
+<p style="margin-left: 18.00pt;">Displays addresses in a nicer format. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For hex 
+ addresses the means digits are grouped into fours. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ decimal addresses numbers are formatted to local specification (eg with 
+ thousands separators) as specified in the Window Control Panel.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Display &quot;shadow&quot; 
+ cursor in Hex/char Area</p>
 
 <p style="margin-left: 18.00pt;">When you are editing you current edit 
  position is marked with a flashing cursor. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
@@ -119,58 +125,6 @@
  what the corresponding value in the other (character or hex) area is. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When this 
  option is on the current value in the other area is indicated also.</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">&nbsp;</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">No Template View</p>
-
-<p style="margin-left: 18.00pt;">When you create a new file or open a file 
- that you have not opened in HexEdit before this option says to not show 
- the template view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
- that even with this option on it is a simple matter (since HexEdit 3.2) 
- to open the template view using the <a HREF="../cmd_template/HID_DFFD_SPLIT.htm">Split 
- Window</a> command or the <a HREF="../cmd_template/HID_DFFD_TAB.htm">Tabbed 
- Window</a> command on the <a HREF="../menus/menu_template.htm">Template 
- Menu</a>.</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">Split Window</p>
-
-<p style="margin-left: 18.00pt;">When creating or opening a new file the 
- template is displayed to the left of the normal view in a split window. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This allows 
- you to see the template view and the data view at the same time and even 
- adjust their relative sizes by dragging the splitter. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- template used is that associated with the file extension of the file or 
- the &quot;default&quot; template if there is none.</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">Tab Window</p>
-
-<p style="margin-left: 18.00pt;">When creating or opening a new file the 
- template is the tree view is displayed in a separate tabbed window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- can only see one of the normal view or the tree view at a time but can 
- easily switch between them by clicking on the appropriate tab. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- template used is that associated with the file extension of the file or 
- the &quot;default&quot; template if there is none.</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">No of fixed array elements</p>
-
-<p style="margin-left: 18.00pt;">For large arrays (with constant element 
- size) it may be faster to display only the first few elements of arrays. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This setting 
- allows you to change how many elements are displayed..</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">Default template data 
- format strings</p>
-
-<p style="margin-left: 18.00pt;">These strings determine how data elements 
- of a template are displayed if the template file does not explicitly specify 
- the format. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- example, you may want to see unsigned integers displayed in hex (%x) rather 
- than decimal (%u). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Refer 
- to C language printf format specifications for more information, and strftime 
- for date formats.</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">&nbsp;</p>
 
 </body>
 

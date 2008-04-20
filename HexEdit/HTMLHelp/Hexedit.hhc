@@ -215,7 +215,6 @@
   <ul>
     <li><object type="text/sitemap">
       <param name="Name" value="Customization Tutorial">
-      <param name="New" value="1">
     </object>
     <ul>
       <li><object type="text/sitemap">
@@ -496,7 +495,7 @@
         <param name="Local" value="menus\menu_operations.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Template Menu Commands">
+        <param name="Name" value="Template Menu">
         <param name="Local" value="menus\menu_template.htm">
       </object>
       <li><object type="text/sitemap">
@@ -533,7 +532,7 @@
         <param name="Local" value="bars\Navigation_Bar.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Toolbar">
+        <param name="Name" value="Old Toolbar">
         <param name="Local" value="bars\HIDW_TBAR.htm">
       </object>
       <li><object type="text/sitemap">
@@ -579,7 +578,7 @@
     </object>
     <ul>
       <li><object type="text/sitemap">
-        <param name="Name" value="System Options">
+        <param name="Name" value="System General Options">
         <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
       </object>
       <li><object type="text/sitemap">
@@ -587,16 +586,44 @@
         <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Display Options">
+        <param name="Name" value="File Type Filters">
+        <param name="Local" value="dlg_options\Filters.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Printer Options">
+        <param name="Local" value="dlg_options\Printer_Options.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Keystroke Macro Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_MACRO.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Workspace Display Options">
         <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Window Display">
+        <param name="Name" value="Workspace Editing Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Info Tips Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Template Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Document General Options">
+        <param name="Local" value="dlg_options\Document_General_Options.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Document Display Options">
         <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Info Tips Page">
-        <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
+        <param name="Name" value="Document Editing Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Colour Options">
@@ -605,18 +632,6 @@
       <li><object type="text/sitemap">
         <param name="Name" value="New Scheme Dialog">
         <param name="Local" value="dlg_options\New_Scheme_Dialog.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Macro Options">
-        <param name="Local" value="dlg_options\HIDD_OPT_MACRO.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Printer Options">
-        <param name="Local" value="dlg_options\Printer_Options.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Filters">
-        <param name="Local" value="dlg_options\Filters.htm">
       </object>
       </ul>
     <li><object type="text/sitemap">
@@ -682,6 +697,10 @@
     </object>
     <ul>
       <li><object type="text/sitemap">
+        <param name="Name" value="Explorer Dialog">
+        <param name="Local" value="dlg_file\Explorer_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
         <param name="Name" value="New File Dialog">
         <param name="Local" value="dlg_file\New_File_Dialog.htm">
       </object>
@@ -729,7 +748,6 @@
       </ul>
     <li><object type="text/sitemap">
       <param name="Name" value="Tools Dialogs">
-      <param name="New" value="1">
     </object>
     <ul>
       <li><object type="text/sitemap">

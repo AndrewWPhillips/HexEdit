@@ -8,7 +8,7 @@
 
 <head>
 
-<title>System Options page</title>
+<title>System General Options page</title>
 
 <!--(Meta)==========================================================-->
 
@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1412>
-<meta name=layout-width content=1161>
+<meta name=layout-height content=986>
+<meta name=layout-width content=1311>
 
 
 <!--(Links)=========================================================-->
@@ -38,74 +38,29 @@
 
 <body>
 
-<h2 style="font-family: Arial;">System Options Page</h2>
+<h2 style="font-family: Arial;">System General Options Page</h2>
 
 <p style="text-align: center;"
 	align=center>&nbsp;</p>
 
 <p style="text-align: center;"
-	align=center><img src="DlgOptSystem.gif" style="border: none;
-								width: 410px;
-								height: 327px;" width="410" height="327" border="0"></p>
+	align=center><img src="OptSystemGeneral.gif"
+						style="border-style: none;
+								border: none;
+								width: 560px;
+								height: 289px;"
+						width=560
+						height=289
+						border=0></p>
+
+<p>&nbsp;</p>
+
+<p>This page allows you to change some global system settings.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>The System options page allows you to change how HexEdit behaves globally.</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Add “Open 
- with HexEdit” to Shell shortcut menus</span></p>
-
-<p style="margin-left: 18.00pt;">This allows any file to be opened with 
- HexEdit using the shell shortcut menus which you see when you right-click 
- on a file in Windows Explorer. The menu item says “Open with HexEdit”. 
- When you click this menu item the file is opened in HexEdit.</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-left: 18.00pt;">Note that this option causes problems 
- for some ill-behaved program launchers such as the Office 97 shortcut 
- bar. If you use these then you will have to disable this option in HexEdit.</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Only permit 
- one instance of HexEdit to run</span></p>
-
-<p style="margin-left: 18.00pt;">If you run HexEdit but HexEdit is already 
- running then the new instance does not run, rather the original instance 
- is brought to the front. Any files specified on the command line or via 
- the shell are added to the files already open in the original instance.</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Allow background 
- searching</span></p>
-
-<p style="margin-left: 18.00pt;">When the current search text is changed 
- (either in the Find Tool or the Find dialog) a background search is started 
- for all other occurrences of the same text. The search is done using low-priority 
- background thread(s), so that you should not notice any difference to 
- your normal use of HexEdit. (The search is done using a background thread 
- with PRIORITY_LOWEST in the active file and even lower-priority (PRIORITY_IDLE) 
- threads for any other open files.)</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-left: 18.00pt;">When the background search is finished 
- the found occurrences are highlighted with a light-green background. Also 
- when the background search is finished subsequent searches for the same 
- search text are much faster – this is particularly noticeable for a large 
- file.</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-left: 18.00pt;">You would normally leave this option on 
- unless you had reason no to. You might turn it off if you do not need 
- the facility and you are working with large files on a network and the 
- file access is slowing down the network. Or perhaps you have another background 
- task that is CPU intensive, so you want to give CPU time to that instead 
- of the background searches.</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Save settings 
- on exit</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;"><span style="font-weight: bold;">S</span>ave 
+ settings on exit</span></p>
 
 <p style="margin-left: 18px;">Selecting this option forces all the current 
  global settings to be saved when HexEdit is closed. Other less obvious 
@@ -123,102 +78,86 @@
  as the default number of columns and column grouping in a window – you 
  might like to modify these with a text editor.</font></p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Clear History 
- Lists</span></p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;"><span 
+ style="font-weight: bold;">S</span>ave settings now</span></p>
+
+<p style="margin-left: 18.00pt;">Clicking this button forces all the current 
+ options to be saved immediately (even if the <span style="font-weight: bold;">Save 
+ settings on exit</span> option is not selected).</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Only permit 
+ one instance of HexEdit to run</span></p>
+
+<p style="margin-left: 18.00pt;">If you run HexEdit but HexEdit is already 
+ running then the new instance does not run, rather the original instance 
+ is brought to the front. Any files specified on the command line or via 
+ the shell are added to the files already open in the original instance.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Add “Open with HexEdit” 
+ to Shell shortcut menus</p>
+
+<p style="margin-left: 18.00pt;">This allows any file to be opened with 
+ HexEdit using the shell shortcut menus which you see when you right-click 
+ on a file in Windows Explorer. The menu item says “Open with HexEdit”. 
+ When you click this menu item the file is opened in HexEdit.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Note that this option causes problems 
+ for some ill-behaved program launchers such as the Office 97 shortcut 
+ bar. If you use these then you will have to disable this option in HexEdit.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Restore 
+ main window</span></p>
+
+<p style="margin-left: 18.00pt;">The main HexEdit window is restored to 
+ its position when you last ran the program. For this option to have any 
+ effect the settings must be saved (see the <span style="font-weight: bold;">Save 
+ settings</span> options above) since it is only effective when the HexEdit 
+ starts up.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Run 
+ AutoExec Macro</span></p>
+
+<p style="margin-left: 18.00pt;">If you create a keystroke macro and save 
+ it with the name &quot;AutoExec.HEM&quot; then it is run whenever you 
+ start HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ there is a problem with the macro you can prevent it running using this 
+ option.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Recent 
+ File Entries</span></p>
+
+<p style="margin-left: 18.00pt;">This sets the number of recently opened 
+ file entries displayed in the <a href="../menus/menu_file.htm">File menu</a>. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You can 
+ enter any value between 1 and 16 inclusive. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you want to open a file the you opened in the past but less recently than 
+ the last entry in the list then you can used the <a href="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent 
+ Files Dialog</a>.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Clear History Lists</p>
 
 <p style="margin-left: 18.00pt;">Invokes the <a HREF="Clear_Histories_Dialog.htm">Clear 
  Histories Dialog</a> to delete search histories, bookmarks and the recently 
  open file list, and have these automatically deleted each time you run 
  HexEdit.</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Recent 
- File Entries</span></p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Never 
+ add file to the &quot;My Recent Documents&quot; list</span></p>
 
-<p style="margin-left: 18.00pt;">This sets the number of recently opened 
- file entries displayed in the <a HREF="..\menus\menu_file.htm">File menu</a>. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You can 
- enter any value between 1 and 16 inclusive. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- you want to open a file the you opened in the past but less recently than 
- the last entry in the list then you can used the <a HREF="..\dlg_file\Recently_Opened_Files_Dialog.htm">Recent 
- Files Dialog</a>.</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">Save settings now</p>
-
-<p style="margin-left: 18.00pt;">Clicking this button forces all the current 
- options to be saved immediately (even if the <span style="font-weight: bold;">Save 
- settings on exit</span> option is not selected).</p>
+<p style="margin-left: 18.00pt;">Most of the time when you open or read 
+ a file in any program Windows remembers that you have opened it and adds 
+ it to the &quot;My Recent Documents&quot; folder which can be accessed 
+ using the Start Menu. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ probably doesn't make sense for HexEdit since you can open any type of 
+ file</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Create 
- backup files</span></p>
-
-<p style="margin-left: 18.00pt;">If this option is selected (and <span 
- style="font-weight: bold;">all</span> of the conditions below are met) 
- then whenever you save a file the previous version of the file, if any, 
- is retained with the file extension of “.BAK”. (If you are editing a file 
- with extension of “.BAK” the backup file has an extension of “.BAC”). 
- The previous backup file, if any, is discarded.</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-left: 18.00pt;">To always create backup files turn on 
- this option and turn off all the sub-options below.</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Only if 
- sufficient disk space</span></p>
-
-<p style="margin-left: 18.00pt;">A backup is only created if there is free 
- disk space (on the same volume) to accommodate the original file (which 
- becomes the backup file) and the new file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
- that this does not guarantee that the file will be able to be written 
- to disk, since other processes or even the operating system may change 
- the available disk space while the file is being written to disk.</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Only if 
- size is less than</span></p>
-
-<p style="margin-left: 18.00pt;">Selecting this option allows you to specify 
- a maximum file size. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- the (new) file is bigger than this a backup will not be created.</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Prompt</span></p>
-
-<p style="margin-left: 18.00pt;">Asks when the file is saved if you want 
- to create a backup copy. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- are only asked if all the above options say that a backup should be created.</p>
-
-<p>&nbsp;</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">Use file selection address</p>
-
-<p style="margin-left: 18.00pt;">When exporting the selection to a Motorola 
- S or Intel Hex file you need to specify a starting address. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Selecting 
- this option says to use the address within the file of the start of the 
- selection. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- example, if you select and export the whole file the starting address 
- will be zero..</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Use address</span></p>
-
-<p style="margin-left: 18.00pt;">When exporting the selection to a Motorola 
- S or Intel Hex file this option allows you to specify the starting address, 
- ie the address of the first line written to the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
- this case the file address of the selection to be exported is ignored.</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Bytes per 
- line</span></p>
-
-<p style="margin-left: 18.00pt;">This is the number of data bytes that 
- are written to the exported text files created by the <a HREF="..\cmd_file\Export_Motorola_S1_Records.htm">Export 
- Motorola S1 Records</a>, <a HREF="..\cmd_file\Export_Motorola_S2_Records.htm">Export 
- Motorola S2 Records</a>, <a HREF="..\cmd_file\Export_Motorola_S3_Records.htm">Export 
- Motorola S3 Records</a>, <a HREF="..\cmd_file\Export_Intel_Hex_Records.htm">Export 
- Intel Hex Records</a>, and <a HREF="../cmd_file/Export_Hex_Text.htm">Export 
- Hex Text</a> commands. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- number should be kept within a reasonable range (and always between 8 
- and 250) as some software may have trouble reading very long lines. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
- reasonable number would be 16 or 32.</p>
 
 <p>&nbsp;</p>
 

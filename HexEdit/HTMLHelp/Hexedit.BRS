@@ -305,16 +305,20 @@ XOR Double Word command | cmd_operations\XOR_Double_Word_command.htm
 XOR Quad Word command | cmd_operations\XOR_Quad_Word_command.htm
 
 [Options Dialog]
-System Options page | dlg_options\HIDD_OPT_SYSTEM.htm
+System General Options page | dlg_options\HIDD_OPT_SYSTEM.htm
 Clear Histories Dialog | dlg_options\Clear_Histories_Dialog.htm
-Display Options page | dlg_options\HIDD_OPT_SYSDISPLAY.htm
-Window Display Options page | dlg_options\HIDD_OPT_WINDOW.htm
+Filters page | dlg_options\Filters.htm
+Printer Options | dlg_options\Printer_Options.htm
+Macro Options page | dlg_options\HIDD_OPT_MACRO.htm
+Workspace Display Options page | dlg_options\HIDD_OPT_SYSDISPLAY.htm
+Workspace Editing Options | dlg_options\HIDD_OPT_WORKSPACE.htm
 Info Tips Page | dlg_options\HIDD_OPT_TIPS.htm
+Template Options | dlg_options\HIDD_OPT_TEMPLATE.htm
+Document General Options | dlg_options\Document_General_Options.htm
+Document Edit Options | dlg_options\HIDD_OPT_WINEDIT.htm
+Document Display Options page | dlg_options\HIDD_OPT_WINDOW.htm
 Color Options page | dlg_options\HIDD_OPT_PARTITIONS.htm
 New Scheme Dialog | dlg_options\New_Scheme_Dialog.htm
-Macro Options page | dlg_options\HIDD_OPT_MACRO.htm
-Printer Options | dlg_options\Printer_Options.htm
-Filters page | dlg_options\Filters.htm
 
 [Other Dialogs]
 Open Special dialog | dlg_other\HIDD_OPEN_SPECIAL.htm

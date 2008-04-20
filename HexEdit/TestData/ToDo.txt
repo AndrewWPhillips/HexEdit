@@ -49,6 +49,10 @@ TEST
 	- open, save, save-as, write file etc
 
 BUGS
+ - Explorer window still has a few minor things
+   - beep when press Enter in filter and path controls
+   - filter and path history lists only seem to retain one entry
+   - it would be nice to be able to select columns
  - MSC7 time_t - clicking Now or Last disables date/time controls
  - bg_search_ for device problem
  - find dlg char set (Text page) updates after chnaging char set or rest but not other times (eg undo)
