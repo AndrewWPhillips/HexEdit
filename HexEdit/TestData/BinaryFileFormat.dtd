@@ -2,12 +2,12 @@
 <!ELEMENT define_struct (struct|use_struct|for|if|switch|jump|eval|data)* >
 <!ELEMENT struct (struct|use_struct|for|if|switch|jump|eval|data)* >
 <!ELEMENT use_struct EMPTY>
-<!ELEMENT for (struct|use_struct|for|if|switch|jump|data) >
-<!ELEMENT if ((struct|use_struct|for|if|switch|jump|data), (else, (struct|use_struct|for|if|switch|jump|data))? ) >
+<!ELEMENT for (struct|use_struct|for|if|switch|jump|eval|data) >
+<!ELEMENT if ((struct|use_struct|for|if|switch|jump|eval|data), (else, (struct|use_struct|for|if|switch|jump|eval|data))? ) >
 <!ELEMENT else EMPTY>
 <!ELEMENT switch (case)* >
-<!ELEMENT case (struct|use_struct|for|if|switch|jump|data) >
-<!ELEMENT jump (struct|use_struct|for|if|switch|jump|data) >
+<!ELEMENT case (struct|use_struct|for|if|switch|jump|eval|data) >
+<!ELEMENT jump (struct|use_struct|for|if|switch|jump|eval|data) >
 <!ELEMENT eval EMPTY>
 <!ELEMENT data EMPTY>
 <!ATTLIST binary_file_format name CDATA #IMPLIED

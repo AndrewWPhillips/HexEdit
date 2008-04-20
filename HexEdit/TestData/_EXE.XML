@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
 <binary_file_format name="WindowsEXE" type_name="" comment="" default_byte_order="little" default_read_only="false" default_char_set="ansi" web_site="http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/pefile.html" expr="">
+	<eval expr="import_addr = import_offset = 0" display_error="false" display_result="false" comment="This is used later to calculate the address of the import table in the file."/>
 	<struct name="DOS_hdr" type_name="IMAGE_DOS_HEADER" comment="" expr="">
 		<data type="string" name="e_magic" format="ascii" len="2" display="" type_name="WORD" domain="this == &quot;MZ&quot;" comment="File signature of executable (Mark's initials)"/>
 		<data type="int" name="e_cblp" format="signed" len="2" display="" type_name="WORD" comment="Bytes on last page of the file"/>
-		<data type="int" name="e_cp" format="signed" len="2" display="" type_name="WORD" comment="Number of page in the file"/>
+		<data type="int" name="e_cp" format="signed" len="2" display="" type_name="WORD" comment="Number of pages in the file"/>
 		<data type="int" name="e_crlc" format="signed" len="2" display="" type_name="WORD" comment="Relocations"/>
 		<data type="int" name="e_cparhdr" format="signed" len="2" display="" type_name="WORD" comment="Size of header in paragraphs"/>
 		<data type="int" name="e_minalloc" format="signed" len="2" display="" type_name="WORD" comment="Minimum extra paragraphs needed"/>
-		<data type="int" name="e_maxalloc" format="unsigned" len="2" display="" type_name="WORD" comment="Maximum extra paragraphs needed"/>
+		<data type="int" name="e_maxalloc" format="unsigned" len="2" display="dec" type_name="WORD" comment="Maximum extra paragraphs needed"/>
 		<data type="int" name="e_ss" format="signed" len="2" display="" type_name="WORD" comment="Initial SS (stack segment)"/>
 		<data type="int" name="e_sp" format="signed" len="2" display="" type_name="WORD" comment="Initial SP (stack pointer)"/>
 		<data type="int" name="e_csum" format="signed" len="2" display="" type_name="WORD" comment="checksum"/>
@@ -50,17 +51,17 @@
 			<data type="int" name="BYTES_REVERSED_HI" format="unsigned" len="2" display="" type_name="bit-field" bits="1" direction="up" domain="{FALSE,TRUE}"/>
 		</struct>
 	</struct>
-	<data type="int" name="magic" format="unsigned" len="2" display="hex" domain="{ NT32=267, NT64=523, ROM=263}"/>
+	<data type="int" name="magic" format="unsigned" len="2" display="" domain="{ NT32=267, NT64=523, ROM=263}"/>
 	<if test="magic == 0x10B" comment="">
-		<struct name="NT_opthdr" type_name="IMAGE_OPTIONAL_HEADER32" comment="Entry point relative to image base">
+		<struct name="NT_opthdr" type_name="IMAGE_OPTIONAL_HEADER32" comment="Entry point relative to image base" expr="">
 			<data type="int" name="LinkerMajor" format="unsigned" len="1" display=""/>
 			<data type="int" name="LinkerMinor" format="unsigned" len="1" display=""/>
-			<data type="int" name="code_size" format="signed" len="4" display="" type_name="DWORD"/>
-			<data type="int" name="init_size" format="signed" len="4" display="" type_name="DWORD" comment="SizeOfInitializedData"/>
-			<data type="int" name="uninit_size" format="signed" len="4" display="" type_name="DWORD" comment="SizeOfUninitializedData"/>
+			<data type="int" name="code_size" format="signed" len="4" display="dec" type_name="DWORD" comment="Size of code"/>
+			<data type="int" name="init_size" format="signed" len="4" display="dec" type_name="DWORD" comment="SizeOfInitializedData"/>
+			<data type="int" name="uninit_size" format="signed" len="4" display="dec" type_name="DWORD" comment="SizeOfUninitializedData"/>
 			<data type="int" name="entry" format="signed" len="4" display="hex" type_name="DWORD" comment="Address of entry point."/>
-			<data type="int" name="code_base" format="signed" len="4" display="hex" type_name="DWORD"/>
-			<data type="int" name="data_base" format="signed" len="4" display="hex" type_name="DWORD"/>
+			<data type="int" name="code_base" format="signed" len="4" display="hex" type_name="DWORD" comment="Base of code"/>
+			<data type="int" name="data_base" format="signed" len="4" display="hex" type_name="DWORD" comment="Base of data"/>
 			<data type="int" name="image_base" format="signed" len="4" display="hex" type_name="DWORD" comment="Virtual address of 1st byte of the file (64K multiple)"/>
 			<data type="int" name="sect_align" format="signed" len="4" display="hex" type_name="DWORD" comment="Must be power of 2 between 2^9 and 2^28)"/>
 			<data type="int" name="file_align" format="signed" len="4" display="hex" type_name="DWORD" comment="Must be power of 2 between 2^9 and 2^16)"/>
@@ -71,15 +72,15 @@
 			<data type="int" name="SubMajor" format="unsigned" len="2" display="" type_name="WORD"/>
 			<data type="int" name="SubMinor" format="unsigned" len="2" display="" type_name="WORD"/>
 			<data type="int" name="Win32Ver" format="signed" len="4" display="" type_name="WORD"/>
-			<data type="int" name="image_size" format="signed" len="4" display="hex" type_name="DWORD" comment="Total size including headers (must be multiple of sect_align)"/>
-			<data type="int" name="header_size" format="signed" len="4" display="hex" type_name="DWORD" comment="Size of DOS hdr, PE hdr and sector table."/>
+			<data type="int" name="image_size" format="signed" len="4" display="dec" type_name="DWORD" comment="Total size including headers (must be multiple of sect_align)"/>
+			<data type="int" name="header_size" format="signed" len="4" display="dec" type_name="DWORD" comment="Size of DOS hdr, PE hdr and sector table."/>
 			<data type="int" name="checksum" format="signed" len="4" display="" type_name="DWORD" comment="May be zero if not set."/>
 			<data type="int" name="subsystem" format="unsigned" len="2" display="hex" type_name="WORD" domain="{UNKNOWN, NATIVE, WIN32, CONSOLE, OS2=5, POSIX=7 }"/>
 			<data type="int" name="DLL_characteristics" format="unsigned" len="2" display="hex" type_name="WORD"/>
-			<data type="int" name="stack_reserve_size" format="unsigned" len="4" display="%d" type_name="DWORD"/>
-			<data type="int" name="stack_commit_size" format="unsigned" len="4" display="" type_name="WORD"/>
-			<data type="int" name="heap_reserve_size" format="unsigned" len="4" display="" type_name="WORD"/>
-			<data type="int" name="heap_commit_size" format="unsigned" len="4" display="" type_name="DWORD"/>
+			<data type="int" name="stack_reserve_size" format="unsigned" len="4" display="dec" type_name="DWORD"/>
+			<data type="int" name="stack_commit_size" format="unsigned" len="4" display="dec" type_name="WORD"/>
+			<data type="int" name="heap_reserve_size" format="unsigned" len="4" display="dec" type_name="WORD"/>
+			<data type="int" name="heap_commit_size" format="unsigned" len="4" display="dec" type_name="DWORD"/>
 			<data type="int" name="LoaderFlags" format="signed" len="4" display="hex" type_name="DWORD"/>
 			<data type="int" name="va_count" format="signed" len="4" display="" type_name="DWORD" comment="No of data dirs (ie size of following array)"/>
 			<eval expr="dir_no = -1" display_error="false" display_result="false" comment=""/>
@@ -88,68 +89,30 @@
 					<data type="int" name="va" format="unsigned" len="4" display="hex" comment="Virtual address" type_name="ULONG"/>
 					<data type="int" name="size" format="unsigned" len="4" display="" type_name="ULONG"/>
 					<eval expr="dir_no = dir_no + 1" display_error="false" display_result="false" comment=""/>
-					<if test="va &gt; 0 &amp;&amp; size &gt; 0" comment="">
-						<jump offset="va" comment="" origin="start">
-							<switch test="dir_no" comment="">
-								<case range="0">
-									<struct name="EXPORT_Table" type_name="" comment="" expr="">
-										<data type="none" name="xxx" len="1" comment="dummy "/>
-									</struct>
-								</case>
-								<case range="1">
-									<for name="IMPORT" count="" stop_test="this.RVAFuncNameList == 0" type_name="" comment="">
-										<struct name="entry" type_name="" comment="" expr="this.RVAModuleName &gt; 0 ? this.ModuleName  : &quot;-----&quot;">
-											<data type="int" name="RVAFuncNameList" format="unsigned" len="4" display="hex" type_name="DWORD" comment="Ptr to list of names"/>
-											<if test="RVAFuncNameList &gt; 0" comment="">
-												<jump offset="RVAFuncNameList" comment="" origin="start">
-													<for name="Addr" count="" stop_test="this.addr == 0" type_name="" comment="">
-														<struct name="" type_name="" comment="" expr="this.addr &gt; 0 ? this.func.name : &quot;-----&quot;">
-															<data type="int" name="addr" format="signed" len="4" display="hex"/>
-															<if test="addr &gt; 0" comment="">
-																<jump offset="addr" comment="" origin="start">
-																	<struct name="func" type_name="" comment="" expr="">
-																		<data type="int" name="ordinal" format="unsigned" len="2" display="hex"/>
-																		<data type="string" name="name" format="default" display=""/>
-																	</struct>
-																</jump>
-															</if>
-														</struct>
-													</for>
-												</jump>
-											</if>
-											<data type="int" name="" format="unsigned" len="4" display=""/>
-											<data type="int" name="" format="unsigned" len="4" display=""/>
-											<data type="int" name="RVAModuleName" format="unsigned" len="4" display="hex" type_name="DWORD"/>
-											<if test="RVAModuleName &gt; 0" comment="">
-												<jump offset="RVAModuleName" comment="" origin="start">
-													<data type="string" name="ModuleName" format="default" display=""/>
-												</jump>
-											</if>
-											<data type="int" name="RVAFuncAddrList" format="unsigned" len="4" display="hex" type_name="DWORD"/>
-										</struct>
-									</for>
-								</case>
-							</switch>
-						</jump>
-					</if>
+					<switch test="dir_no">
+						<case range="0">
+							<eval expr="export_va = va" display_error="false" display_result="false"/>
+						</case>
+						<case range="1">
+							<eval expr="import_addr = va" display_error="false" display_result="false"/>
+						</case>
+					</switch>
 				</struct>
 			</for>
 		</struct>
 	</if>
-	<for name="section_header" count="nt_hdr.file_hdr.sections" stop_test="" type_name="" comment="">
+    <for name="section_header" count="nt_hdr.file_hdr.sections" stop_test="" type_name="" comment="">
 		<struct name="section" type_name="IMAGE_SECTION_HEADER" comment="" expr="this.name">
 			<data type="string" name="name" format="ascii" len="8" display="" comment="length is always 8 - given by:
-#define IMAGE_SIZEOF_SHORT_NAME  8
-"/>
-			<data type="int" name="virt_size" format="unsigned" len="4" display="" type_name="DWORD" comment="physical address OR virtual size (not used?)
-"/>
+#define IMAGE_SIZEOF_SHORT_NAME  8"/>
+			<data type="int" name="virt_size" format="unsigned" len="4" display="" type_name="DWORD" comment="physical address OR virtual size (not used?)"/>
 			<data type="int" name="RVA" comment="Relative Virtual Address.  The virtual address the object is currently relocated to, relative to the Image Base." format="unsigned" len="4" display="hex" type_name="DWORD"/>
 			<data type="int" name="phys_size" format="unsigned" len="4" display="hex" type_name="DWORD" comment="size of raw data"/>
 			<data type="int" name="phys_offset" format="unsigned" len="4" display="" type_name="DWORD" comment="pointer to raw data"/>
-			<data type="int" name="res1" format="unsigned" len="4" display="" type_name="DWORD"/>
-			<data type="int" name="res2" format="unsigned" len="4" display="" type_name="DWORD"/>
-			<data type="int" name="res3" format="unsigned" len="2" display="" type_name="WORD"/>
-			<data type="int" name="res4" format="unsigned" len="2" display="" type_name="WORD"/>
+			<data type="int" name="reloc_offset" format="unsigned" len="4" display="" type_name="DWORD" comment="Pointer to relocations"/>
+			<data type="int" name="line_numbers_offset" format="unsigned" len="4" display="" type_name="DWORD" comment="Pointer to line numbers"/>
+			<data type="int" name="num_reloc" format="unsigned" len="2" display="" type_name="WORD" comment="Number of relocations"/>
+			<data type="int" name="num_line_numbers" format="unsigned" len="2" display="" type_name="WORD" comment="Number of line numbers"/>
 			<data type="int" name="" format="unsigned" len="4" display="hex" type_name="bit-field" comment="5 reserved bits" bits="5" direction="up"/>
 			<data type="int" name="CODE_SECTION" format="unsigned" len="4" display="hex" type_name="bit-field" bits="1" direction="up" domain="{FALSE,TRUE}" comment="Code section"/>
 			<data type="int" name="INIT_DATA_SECTION" format="unsigned" len="4" display="hex" type_name="bit-field" bits="1" direction="up" domain="{FALSE,TRUE}" comment="Initialized data section"/>
@@ -167,11 +130,46 @@
 			<data type="int" name="MEM_EXECUTE" format="unsigned" len="4" display="hex" type_name="bit-field" bits="1" direction="up" domain="{FALSE,TRUE}" comment="Executable section"/>
 			<data type="int" name="MEM_READ" format="unsigned" len="4" display="hex" type_name="bit-field" bits="1" direction="up" domain="{FALSE,TRUE}" comment="Readable section"/>
 			<data type="int" name="MEM_WRITE" format="unsigned" len="4" display="hex" type_name="bit-field" bits="1" direction="up" domain="{FALSE,TRUE}" comment="Writable section"/>
+			<if test = "import_addr &gt;= RVA &amp;&amp; import_addr &lt; RVA + phys_size">
+               	<eval expr="import_offset = phys_offset - RVA"/>
+            </if>
 		</struct>
 	</for>
-	<data type="none" name="fill" len="ii=0, section_header[0].phys_offset - (addressof(section_header) + sizeof(section_header))"/>
-	<for name="section" count="nt_hdr.file_hdr.sections" stop_test="" type_name="" comment="">
+	<data type="none" name="fill" len="ii=0, section_header[0].RVA - addressof(this)"/>
+	<for name="section" count="nt_hdr.file_hdr.sections" stop_test="" type_name="">
 		<data type="none" name="section" len="ii=ii+1, section_header[ii-1].phys_size"/>
 	</for>
-	<data type="none" name="none"/>
+    <jump offset="import_addr + import_offset" origin="start">
+		<for name="IMPORT" stop_test="this.RVAFuncNameList == 0">
+			<struct name="entry" expr="this.RVAModuleName &gt; 0 ? this.ModuleName  : &quot;-----&quot;">
+				<data type="int" name="RVAFuncNameList" format="unsigned" len="4" display="hex" type_name="DWORD" comment="Ptr to list of names"/>
+				<if test="RVAFuncNameList &gt; 0" comment="">
+					<jump offset="RVAFuncNameList + import_offset" comment="" origin="start">
+						<for name="Addr" count="" stop_test="this.addr == 0" type_name="" comment="">
+							<struct name="" type_name="" comment="" expr="this.addr &gt; 0 ? this.func.name : &quot;-----&quot;">
+								<data type="int" name="addr" format="signed" len="4" display="hex"/>
+								<if test="addr &gt; 0" comment="">
+									<jump offset="addr + import_offset" comment="" origin="start">
+										<struct name="func" type_name="" comment="" expr="">
+											<data type="int" name="ordinal" format="unsigned" len="2" display="hex"/>
+											<data type="string" name="name" format="default" display=""/>
+										</struct>
+									</jump>
+								</if>
+							</struct>
+						</for>
+					</jump>
+				</if>
+				<data type="int" name="" format="unsigned" len="4" display=""/>
+				<data type="int" name="" format="unsigned" len="4" display=""/>
+				<data type="int" name="RVAModuleName" format="unsigned" len="4" display="hex" type_name="DWORD"/>
+				<if test="RVAModuleName &gt; 0" comment="">
+					<jump offset="RVAModuleName + import_offset" comment="" origin="start">
+						<data type="string" name="ModuleName" format="default" display=""/>
+					</jump>
+				</if>
+				<data type="int" name="RVAFuncAddrList" format="unsigned" len="4" display="hex" type_name="DWORD"/>
+			</struct>
+		</for>
+	</jump>
 </binary_file_format>
