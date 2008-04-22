@@ -1,8 +1,45 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
 <binary_file_format name="WindowsEXE" type_name="" comment="" default_byte_order="little" default_read_only="false" default_char_set="ansi" web_site="http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/pefile.html" expr="">
+	<define_struct type_name="resdir" comment="RESOURCE_DIR">
+		<data type="int" name="Characteristics" format="signed" len="4" display="hex"/>
+		<data type="date" name="TimeDateStamp" format="c" display="%c"/>
+		<data type="int" name="MajorVer" format="unsigned" display="dec" len="2"/>
+		<data type="int" name="MinorVer" format="unsigned" display="dec" len="2"/>
+		<data type="int" name="NumberNamed" format="unsigned" display="dec" len="2" comment="Size of following ByName array"/>
+		<data type="int" name="NumberIDed" format="unsigned" display="dec" len="2" comment="Size of following ByID array"/>
+		<for name="ByName" count="NumberNamed">
+			<struct name="" expr="this.ResString.Chars" type_name="" comment="">
+				<data type="int" name="Name" format="unsigned" len="4" display="hex"/>
+				<jump offset="root_addr + (Name &amp; 0x7FFFFFFF)" comment="" origin="start">
+					<struct name="ResString" type_name="IMAGE_RESOURCE_DIR_STRING_U" comment="" expr="">
+						<data type="int" name="Length" format="unsigned" len="2" display="dec" comment="Number of chars in the string"/>
+						<data type="string" name="Chars" format="unicode" len="Length*2" display="" comment="Array of Unicode chars (length given in bytes)"/>
+					</struct>
+				</jump>
+				<data type="int" name="Offset" format="unsigned" len="4" display="hex"/>
+				<if test="Offset &gt;= 0x80000000" comment="">
+					<jump offset="root_addr + (Offset &amp; 0x7FFFFFFF)" comment="" origin="start">
+						<use_struct name="resdir" expr="" type_name="resdir" comment="Recursive use of resdir"/>
+					</jump>
+				</if>
+			</struct>
+		</for>
+		<for name="ByID" count="NumberIDed" stop_test="" type_name="" comment="">
+			<struct name="" expr="this.ID">
+				<data type="int" name="ID" format="unsigned" len="4" display=""/>
+				<data type="int" name="Offset" format="unsigned" len="4" display="hex"/>
+				<if test="Offset &gt;= 0x80000000" comment="">
+					<jump offset="root_addr + (Offset &amp; 0x7FFFFFFF)" comment="" origin="start">
+						<use_struct name="resdir" expr="" type_name="resdir" comment="Recursive use of resdir"/>
+					</jump>
+				</if>
+			</struct>
+		</for>
+	</define_struct>
 	<eval expr="export_addr = export_offset = 0" display_error="false" display_result="false" comment="This is used later to calculate the address of the export table in the file."/>
 	<eval expr="import_addr = import_offset = 0" display_error="false" display_result="false" comment="This is used later to calculate the address of the import table in the file."/>
+	<eval expr="rsrc_addr = rsrc_offset = 0" display_error="false" display_result="false" comment="This is used later to calculate the address of the import table in the file."/>
 	<struct name="DOS_hdr" type_name="IMAGE_DOS_HEADER" comment="" expr="">
 		<data type="string" name="e_magic" format="ascii" len="2" display="" type_name="WORD" domain="this == &quot;MZ&quot;" comment="File signature of executable (Mark's initials)"/>
 		<data type="int" name="e_cblp" format="signed" len="2" display="" type_name="WORD" comment="Bytes on last page of the file"/>
@@ -97,6 +134,9 @@
 						<case range="1">
 							<eval expr="import_addr = va" display_error="false" display_result="false"/>
 						</case>
+						<case range="2">
+							<eval expr="rsrc_addr = va" display_error="false" display_result="false"/>
+						</case>
 					</switch>
 				</struct>
 			</for>
@@ -137,13 +177,15 @@
 			<if test="import_addr &gt;= RVA &amp;&amp; import_addr &lt; RVA + phys_size">
 				<eval expr="import_offset = phys_offset - RVA"/>
 			</if>
+			<if test="rsrc_addr &gt;= RVA &amp;&amp; rsrc_addr &lt; RVA + phys_size">
+				<eval expr="rsrc_offset = phys_offset - RVA"/>
+			</if>
 		</struct>
 	</for>
 	<data type="none" name="fill" len="ii=0, section_header[0].phys_offset - addressof(this)"/>
 	<for name="section" count="nt_hdr.file_hdr.sections" stop_test="" type_name="">
 		<data type="none" name="section" len="ii=ii+1, section_header[ii-1].phys_size"/>
 	</for>
-	<eval expr="export_offset" display_error="false" display_result="false" comment="xxx to be removed"/>
 	<if test="export_addr &gt; 0">
 		<jump offset="export_addr + export_offset" origin="start">
 			<struct name="EXPORT_DIRECTORY" type_name="" comment="" expr="">
@@ -152,7 +194,12 @@
 				<data type="int" name="MajorVersion" format="unsigned" display="" len="2"/>
 				<data type="int" name="MinorVersion" format="unsigned" display="" len="2"/>
 				<data type="int" name="NameRVA" format="unsigned" display="hex" len="4"/>
-				<if test="NameRVA &gt; 0" comment=""><jump offset="NameRVA + export_offset" comment="" origin="start"><data type="string" name="Name" format="default" display=""/></jump></if><data type="int" name="OrdinalBase" format="unsigned" display="dec" len="4"/>
+				<if test="NameRVA &gt; 0" comment="">
+					<jump offset="NameRVA + export_offset" comment="" origin="start">
+						<data type="string" name="Name" format="default" display=""/>
+					</jump>
+				</if>
+				<data type="int" name="OrdinalBase" format="unsigned" display="dec" len="4"/>
 				<data type="int" name="NumFunctions" format="unsigned" display="dec" len="4"/>
 				<data type="int" name="NumNames" format="unsigned" display="dec" len="4"/>
 				<data type="int" name="AddressTableRVA" format="unsigned" display="hex" len="4"/>
@@ -181,7 +228,6 @@
 			</struct>
 		</jump>
 	</if>
-	<eval expr="import_offset" display_error="false" display_result="false" comment="xxx to be removed"/>
 	<if test="import_addr &gt; 0" comment="">
 		<jump offset="import_addr + import_offset" origin="start">
 			<for name="IMPORT" stop_test="this.RVAModuleName == 0" count="" type_name="" comment="">
@@ -215,23 +261,54 @@
 					<data type="int" name="RVAFuncAddrList" format="unsigned" len="4" display="hex" type_name="DWORD"/>
 					<if test="RVAFuncAddrList  &gt; 0" comment="">
 						<jump offset="RVAFuncAddrList + import_offset" comment="" origin="start">
-							<for name="ActualAddr" count="" stop_test="this.addr == 0" type_name="" comment="These addresses are the same as in the FuncNameList but are modified in memory.">
-								<struct name="" type_name="" comment="" expr="this.addr &gt; 0 ? this.func.name : &quot;-----&quot;">
-									<data type="int" name="addr" format="signed" len="4" display="hex"/>
-									<if test="addr &gt; 0" comment="">
-										<jump offset="addr + import_offset" comment="" origin="start">
-											<struct name="func" type_name="" comment="" expr="">
-												<data type="int" name="ordinal" format="unsigned" len="2" display="hex"/>
-												<data type="string" name="name" format="default" display=""/>
-											</struct>
-										</jump>
-									</if>
-								</struct>
+							<for name="ActualAddr" count="" stop_test="this == 0" type_name="" comment="These addresses are the same as in the FuncNameList but are modified in memory.">
+								<data type="int" name="" format="unsigned" len="4" display="hex"/>
 							</for>
 						</jump>
 					</if>
 				</struct>
 			</for>
+		</jump>
+	</if>
+	<if test="rsrc_addr &gt; 0">
+		<jump offset="rsrc_addr + rsrc_offset" origin="start">
+			<struct name="RESOURCE_DIR" type_name="IMAGE_RESOURCE_DIRECTORY">
+				<eval expr="root_addr = addressof(this)" display_error="false" display_result="false" comment="We need to store the address of the root resource node as many offsets are relative to this."/>
+				<data type="int" name="Characteristics" format="signed" len="4" display="hex"/>
+				<data type="date" name="TimeDateStamp" format="c" display="%c"/>
+				<data type="int" name="MajorVer" format="unsigned" display="dec" len="2"/>
+				<data type="int" name="MinorVer" format="unsigned" display="dec" len="2"/>
+				<data type="int" name="NumberNamed" format="unsigned" display="dec" len="2" comment="Size of following ByName array"/>
+				<data type="int" name="NumberIDed" format="unsigned" display="dec" len="2" comment="Size of following ByID array"/>
+				<for name="ByName" count="NumberNamed">
+					<struct name="" type_name="" comment="" expr="this.ResString.Chars; %10s">
+						<data type="int" name="Name" format="unsigned" len="4" display="hex"/>
+						<jump offset="root_addr + (Name &amp; 0x7FFFFFFF)" comment="" origin="start">
+							<struct name="ResString" type_name="IMAGE_RESOURCE_DIR_STRING_U" comment="" expr="this.Chars">
+								<data type="int" name="Length" format="unsigned" len="2" display="dec" comment="Number of chars in the string"/>
+								<data type="string" name="Chars" format="unicode" len="Length*2" display="" comment="Array of Unicode chars (length given in bytes)"/>
+							</struct>
+						</jump>
+						<data type="int" name="Offset" format="unsigned" len="4" display="hex"/>
+						<if test="Offset &gt;= 0x80000000" comment="">
+							<jump offset="root_addr + (Offset &amp; 0x7FFFFFFF)" comment="" origin="start">
+								<use_struct name="resdir" expr="" type_name="resdir" comment=""/>
+							</jump>
+						</if>
+					</struct>
+				</for>
+				<for name="ByID" count="NumberIDed" stop_test="" type_name="" comment="">
+					<struct name="" type_name="" comment="" expr="string(this.ID)">
+						<data type="int" name="ID" format="unsigned" len="4" display="" domain="{ RT_CURSOR=1, RT_BITMAP, RT_ICON, RT_MENU, RT_DIALOG, RT_STRING,  RT_FONTDIR, RT_FONT, RT_ACCELERATOR, RT_RCDATA, RT_MESSAGETABLE, RT_GROUP_CURSOR, RT_GROUP_ICON=14, RT_VERSION=16, RT_DLGINCLUDE, RT_PLUGPLAY=19, RT_VXD, RT_ANICURSOR, RT_ANIICON, RT_HTML, RT_MANIFEST }"/>
+						<data type="int" name="Offset" format="unsigned" len="4" display="hex"/>
+						<if test="Offset &gt;= 0x80000000" comment="">
+							<jump offset="root_addr + (Offset &amp; 0x7FFFFFFF)" comment="" origin="start">
+								<use_struct name="resdir" expr="" type_name="resdir" comment=""/>
+							</jump>
+						</if>
+					</struct>
+				</for>
+			</struct>
 		</jump>
 	</if>
 </binary_file_format>
