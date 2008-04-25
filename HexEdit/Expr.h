@@ -46,7 +46,7 @@ public:
         TOK_SIZEOF, TOK_ADDRESSOF,
         TOK_ABS, TOK_MIN, TOK_MAX,
         TOK_POW,
-		TOK_STR,                        // Get srting for an enum
+		TOK_STR,                        // Get string for an enum
 		TOK_INT,                        // Convert real or boolean to int
 		TOK_ATOI, TOK_ATOF,             // Convert string to number
 		TOK_DATE, TOK_TIME,             // Convert string to date,date/time or time
@@ -59,9 +59,11 @@ public:
 		TOK_STRICMP,                    // String compare: 0, -1, +1
         TOK_LTRIM, TOK_RTRIM,           // Trim leading/trailing spaces
 		TOK_CHAR,                       // Get single char from string (or -1)
+		TOK_A2E, TOK_E2A,               // Convert between ASCII and EBCDIC
+
 		TOK_SQRT,                       // Floating point square root
 		TOK_SIN, TOK_COS, TOK_TAN,      // Transcendental funcs (radians)
-		TOK_ASIN, TOK_ACOS, TOK_ATAN,
+		TOK_ASIN, TOK_ACOS, TOK_ATAN,   // Inverse transcendental
 		TOK_EXP, TOK_LOG,               // e funcs
         TOK_DEFINED,
 

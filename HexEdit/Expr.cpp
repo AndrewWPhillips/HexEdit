@@ -2258,11 +2258,81 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             val.typ = TYPE_INT;
         }
         return get_next();
+    case TOK_A2E:
+        if ((next_tok = get_next()) != TOK_LPAR)
+        {
+            strcpy(error_buf_, "Opening parenthesis expect after \"asc2ebc\"");
+            return TOK_NONE;
+        }
+        if (error(next_tok = prec_assign(val), "Expected parameter for \"asc2ebc\""))
+            return TOK_NONE;
+
+        if (next_tok != TOK_RPAR)
+        {
+            strcpy(error_buf_, "Closing parenthesis expected for \"asc2ebc\"");
+            return TOK_NONE;
+        }
+        else if (val.typ == TYPE_STRING)
+        {
+#ifdef UNICODE_TYPE_STRING
+			wchar_t *pp = (*val.pstr).GetBuffer();
+#else
+			char *pp = (*val.pstr).GetBuffer();
+#endif
+			for (int ii = 0; ii < (*val.pstr).GetLength(); ++ii)
+			{
+				if (pp[ii] < sizeof(a2e_tab) && a2e_tab[pp[ii]] != 0)
+					pp[ii] = a2e_tab[pp[ii]];
+				else
+					pp[ii] = a2e_tab['?'];
+			}
+        }
+        else
+        {
+            strcpy(error_buf_, "Parameter for \"asc2ebc\" must be a string");
+            return TOK_NONE;
+        }
+        return get_next();
+    case TOK_E2A:
+        if ((next_tok = get_next()) != TOK_LPAR)
+        {
+            strcpy(error_buf_, "Opening parenthesis expect after \"ebc2asc\"");
+            return TOK_NONE;
+        }
+        if (error(next_tok = prec_assign(val), "Expected parameter for \"ebc2asc\""))
+            return TOK_NONE;
+
+        if (next_tok != TOK_RPAR)
+        {
+            strcpy(error_buf_, "Closing parenthesis expected for \"ebc2asc\"");
+            return TOK_NONE;
+        }
+        else if (val.typ == TYPE_STRING)
+        {
+#ifdef UNICODE_TYPE_STRING
+			wchar_t *pp = (*val.pstr).GetBuffer();
+#else
+			char *pp = (*val.pstr).GetBuffer();
+#endif
+			for (int ii = 0; ii < (*val.pstr).GetLength(); ++ii)
+			{
+				if (pp[ii] < sizeof(e2a_tab) && e2a_tab[pp[ii]] != 0)
+					pp[ii] = e2a_tab[pp[ii]];
+				else
+					pp[ii] = e2a_tab['?'];
+			}
+        }
+        else
+        {
+            strcpy(error_buf_, "Parameter for \"ebc2asc\" must be a string");
+            return TOK_NONE;
+        }
+        return get_next();
 
     case TOK_SYMBOL:
         tmp.typ = TYPE_NONE;
         tmp.int64 = ref_;
-        if (stricmp(psymbol_, "end") == 0 || stricmp(psymbol_, "index") == 0  || stricmp(psymbol_, "member") == 0)
+        if (_stricmp(psymbol_, "end") == 0 || _stricmp(psymbol_, "index") == 0  || _stricmp(psymbol_, "member") == 0)
         {
             sprintf(error_buf_, "\"%s\" is a reserved symbol", psymbol_);
             return TOK_NONE;
@@ -2642,6 +2712,8 @@ struct
     {"STRCHR",    expr_eval::TOK_STRCHR},
     {"STRSTR",    expr_eval::TOK_STRSTR},
     {"STRICMP",   expr_eval::TOK_STRICMP},
+    {"ASC2EBC",   expr_eval::TOK_A2E},
+    {"EBC2ASC",   expr_eval::TOK_E2A},
     {"SQRT",      expr_eval::TOK_SQRT},
     {"SIN",       expr_eval::TOK_SIN},
     {"COS",       expr_eval::TOK_COS},
@@ -2660,7 +2732,7 @@ expr_eval::tok_t expr_eval::func_token(const char *buf)
 {
 	int ii;
     for (ii = 0; func_list[ii].name != NULL; ++ii)
-        if (stricmp(buf, func_list[ii].name) == 0)
+        if (_stricmp(buf, func_list[ii].name) == 0)
             break;
 
     return func_list[ii].tok;
@@ -2723,12 +2795,12 @@ expr_eval::tok_t expr_eval::get_next()
             buf[len] = '\0';
             tok_t token;
 
-            if (stricmp(buf, "true") == 0)
+            if (_stricmp(buf, "true") == 0)
             {
                 last_val_ = value_t(true);
                 return TOK_CONST;
             }
-            else if (stricmp(buf, "false") == 0)
+            else if (_stricmp(buf, "false") == 0)
             {
                 last_val_ = value_t(false);
                 return TOK_CONST;
@@ -2770,7 +2842,7 @@ expr_eval::tok_t expr_eval::get_next()
 					buf[len] = '\0';
 				}
                 free(psymbol_);                // Make sure any previously allocated memory is freed
-                psymbol_ = strdup(buf);
+                psymbol_ = _strdup(buf);
                 return TOK_SYMBOL;
             }
         }

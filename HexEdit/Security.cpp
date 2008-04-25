@@ -675,7 +675,7 @@ int CHexEditApp::GetSecurity()
 //                  "TEAM DISTINCT"
         strcpy(buf, "UFBN!EJTUJODU");
         sub1(buf);
-        if (stricmp(buf, security_info.user.name) == 0)
+        if (_stricmp(buf, security_info.user.name) == 0)
             return 0;
 
         if ((security_info.user.flags >> 1) < security_version_ - UPGRADE_DIFF)
