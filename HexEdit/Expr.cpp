@@ -2956,7 +2956,7 @@ expr_eval::tok_t expr_eval::get_next()
         // Get string constant
         for (++p_; *p_ != '"' && *p_ != '\0' ; ++p_)
         {
-            if (*p_ == '\\' && strchr("abtnvfr\"", *(p_+1)) != NULL)
+            if (*p_ == '\\' && strchr("abtnvfrx\"", *(p_+1)) != NULL)
             {
                 ++p_;
                 switch(*p_)
@@ -2985,6 +2985,21 @@ expr_eval::tok_t expr_eval::get_next()
                 case '0':
                     ss += '\0';
                     break;
+				case 'x':
+					if (isxdigit(*(p_+1)))
+					{
+						++p_;
+						int cc = isdigit(*p_) ? (*p_ - '0') : (toupper(*p_) - 'A' + 10);
+						if (isxdigit(*(p_+1)))
+						{
+							++p_;
+							cc = cc*16 + (isdigit(*p_) ? (*p_ - '0') : (toupper(*p_) - 'A' + 10));
+						}
+						ss += (char)cc;
+					}
+					else
+						ss += '\0';
+					break;
                 case '"':
                     ss += '"';
                     break;
