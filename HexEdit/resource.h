@@ -349,7 +349,6 @@
 #define ID_BOOLEAN_TRUE                 349
 #define ID_STRING_LTRIM                 350
 #define ID_STRING_RTRIM                 351
-#define IDI_ICON2                       353
 #define IDI_ICON3                       354
 #define IDI_TIPS                        355
 #define IDI_EDIT                        356
@@ -391,6 +390,8 @@
 #define IDI_LAYOUT                      399
 #define IDI_DOCEDIT                     400
 #define IDI_DOCDISPLAY                  401
+#define IDB_BITMAP2                     405
+#define IDD_GETINT                      407
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -966,6 +967,7 @@
 #define IDC_FOLDER_HIDDEN               1434
 #define IDC_ATTACHMENT_BROWSE           1435
 #define IDC_EDIT1                       1436
+#define IDC_VALUE                       1436
 #define IDC_PTR_SIZE2                   1437
 #define IDC_EDIT2                       1437
 #define IDC_ACK                         1437
@@ -1079,6 +1081,7 @@
 #define IDC_FILENAME                    1552
 #define IDC_STARTUP_PAGE                1553
 #define IDC_GLOBAL_PAGE                 1554
+#define IDC_PROMPT                      1555
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1445,9 +1448,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        400
+#define _APS_NEXT_RESOURCE_VALUE        408
 #define _APS_NEXT_COMMAND_VALUE         39003
-#define _APS_NEXT_CONTROL_VALUE         1555
+#define _APS_NEXT_CONTROL_VALUE         1556
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

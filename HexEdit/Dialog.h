@@ -485,4 +485,27 @@ protected:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 
+// GetInt dialog - used byt getint() function of expressions to ask the user for an integer value
+class GetInt : public CDialog
+{
+	DECLARE_DYNAMIC(GetInt)
+
+public:
+	GetInt(CWnd* pParent = NULL);   // standard constructor
+	virtual ~GetInt();
+
+// Dialog Data
+	enum { IDD = IDD_GETINT };
+
+	CString prompt_;               // Text to display to the user
+	long value_;                   // value in/out
+	long min_, max_;               // Allowed range
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+	DECLARE_MESSAGE_MAP()
+public:
+};
+
 #endif // !defined(AFX_DIALOG_H__55A0CEE1_3245_11D2_B012_0020AFDC3196__INCLUDED_)

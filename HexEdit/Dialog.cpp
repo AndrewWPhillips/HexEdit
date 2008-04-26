@@ -1645,7 +1645,6 @@ void CSaveMacro::OnMacroHelp()
 /////////////////////////////////////////////////////////////////////////////
 // CMacroMessage dialog
 
-
 CMacroMessage::CMacroMessage(CWnd* pParent /*=NULL*/)
 	: CDialog(CMacroMessage::IDD, pParent)
 {
@@ -1653,7 +1652,6 @@ CMacroMessage::CMacroMessage(CWnd* pParent /*=NULL*/)
 	message_ = _T("");
 	//}}AFX_DATA_INIT
 }
-
 
 void CMacroMessage::DoDataExchange(CDataExchange* pDX)
 {
@@ -1686,4 +1684,32 @@ void CMacroMessage::OnOK()
 
     CDialog::OnOK();
 }
+
+/////////////////////////////////////////////////////////////////////////////
+// GetInt dialog
+
+IMPLEMENT_DYNAMIC(GetInt, CDialog)
+
+GetInt::GetInt(CWnd* pParent /*=NULL*/)
+	: CDialog(GetInt::IDD, pParent)
+{
+}
+
+GetInt::~GetInt()
+{
+}
+
+void GetInt::DoDataExchange(CDataExchange* pDX)
+{
+	CDialog::DoDataExchange(pDX);
+    DDX_Text(pDX, IDC_VALUE, value_);
+    DDV_MinMaxLong(pDX, value_, min_, max_);
+    DDX_Text(pDX, IDC_PROMPT, prompt_);
+}
+
+BEGIN_MESSAGE_MAP(GetInt, CDialog)
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// GetInt message handlers
 

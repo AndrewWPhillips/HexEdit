@@ -59,6 +59,7 @@
 
 #include "HexEdit.h"
 #include "expr.h"
+#include "dialog.h"
 #include "misc.h"
 
 expr_eval::expr_eval(int mr /*=10*/, bool csa /*=false*/)
@@ -815,6 +816,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
     __int64 sym_size, sym_address;
 	CString sym_str;
     bool saved_const_sep_allowed;
+	GetInt *pGetIntDlg;
 
     switch (next_tok)
     {
@@ -1051,7 +1053,113 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
         val.error = false;      // don't care about errors - just need size
 		val.pstr = new ExprStringType(sym_str);
         return get_next();
-    case TOK_ADDRESSOF:
+    case TOK_GETINT:
+		pGetIntDlg = new GetInt();
+
+        // Get opening bracket and first symbol within
+        if ((next_tok = get_next()) != TOK_LPAR)
+        {
+            strcpy(error_buf_, "Expected opening parenthesis after GETINT");
+			delete pGetIntDlg;
+            return TOK_NONE;
+        }
+
+        if (error(next_tok = prec_assign(val), "Expected prompt string for GETINT"))
+		{
+			delete pGetIntDlg;
+            return TOK_NONE;
+		}
+        if (val.typ != TYPE_STRING)
+        {
+            strcpy(error_buf_, "First parameter for GETINT must be a string");
+			delete pGetIntDlg;
+            return TOK_NONE;
+        }
+		pGetIntDlg->prompt_ = CString(*(val.pstr));
+		pGetIntDlg->value_ = 0L;
+		pGetIntDlg->min_ = LONG_MIN;
+		pGetIntDlg->max_ = LONG_MAX;
+
+		// Get optional parameters: default value, min, max
+		if (next_tok == TOK_COMMA)
+		{
+			value_t tmp2;
+
+			if (error(next_tok = prec_assign(tmp2), "Expected 2nd parameter to GETINT"))
+			{
+				delete pGetIntDlg;
+				return TOK_NONE;
+			}
+			if (tmp2.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "2nd parameter for GETINT must be an integer");
+				delete pGetIntDlg;
+				return TOK_NONE;
+			}
+			pGetIntDlg->value_ = long(tmp2.int64);
+
+			if (next_tok == TOK_COMMA)
+			{
+				value_t tmp3;
+
+				if (error(next_tok = prec_assign(tmp3), "Expected 3rd parameter to GETINT"))
+				{
+					delete pGetIntDlg;
+					return TOK_NONE;
+				}
+				if (tmp3.typ != TYPE_INT)
+				{
+					strcpy(error_buf_, "3rd parameter for GETINT must be an integer");
+					delete pGetIntDlg;
+					return TOK_NONE;
+				}
+				pGetIntDlg->min_ = long(tmp3.int64);
+
+				if (next_tok == TOK_COMMA)
+				{
+					value_t tmp4;
+
+					if (error(next_tok = prec_assign(tmp4), "Expected 4th parameter to GETINT"))
+					{
+						delete pGetIntDlg;
+						return TOK_NONE;
+					}
+					if (tmp4.typ != TYPE_INT)
+					{
+						strcpy(error_buf_, "4th parameter for GETINT must be an integer");
+						delete pGetIntDlg;
+						return TOK_NONE;
+					}
+					pGetIntDlg->max_ = long(tmp4.int64);
+				}
+			}
+		}
+
+		if (next_tok != TOK_RPAR)
+		{
+			strcpy(error_buf_, "Closing parenthesis expected for GETINT");
+			delete pGetIntDlg;
+			return TOK_NONE;
+		}
+
+		// Make sure the value is within range
+		if (pGetIntDlg->value_ < pGetIntDlg->min_)
+			pGetIntDlg->value_ = pGetIntDlg->min_;
+		if (pGetIntDlg->value_ > pGetIntDlg->max_)
+			pGetIntDlg->value_ = pGetIntDlg->max_;
+
+		if (pGetIntDlg->DoModal() != IDOK)
+		{
+			delete pGetIntDlg;
+			return TOK_NONE;
+		}
+		ASSERT(val.typ == TYPE_STRING);   // make sure its has a string before freeing the memory
+		delete val.pstr;
+		val.int64 = pGetIntDlg->value_;
+        val.typ = TYPE_INT;
+		delete pGetIntDlg;
+        return get_next();
+	case TOK_ADDRESSOF:
         // Get opening bracket and first symbol within
         if (error(next_tok = get_next(), "Expected opening parenthesis after ADDRESSOF"))
             return TOK_NONE;
@@ -2714,6 +2822,7 @@ struct
     {"STRICMP",   expr_eval::TOK_STRICMP},
     {"ASC2EBC",   expr_eval::TOK_A2E},
     {"EBC2ASC",   expr_eval::TOK_E2A},
+    {"GETINT",    expr_eval::TOK_GETINT},
     {"SQRT",      expr_eval::TOK_SQRT},
     {"SIN",       expr_eval::TOK_SIN},
     {"COS",       expr_eval::TOK_COS},
