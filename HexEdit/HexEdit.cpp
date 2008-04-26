@@ -67,7 +67,7 @@
 #include "Password.h"   // For encryption password dialog
 #include "Misc.h"
 #include "SpecialList.h"    // For volume/device list (Open Special etc)
-
+#include "Splasher.h"       // For splash window
 
 // The following is not in a public header
 extern BOOL AFXAPI AfxFullPath(LPTSTR lpszPathOut, LPCTSTR lpszFileIn);
@@ -302,6 +302,15 @@ UINT CHexEditApp::wm_hexedit = ::RegisterWindowMessage("HexEditOpenMessage");
 
 BOOL CHexEditApp::InitInstance()
 {
+		//Bring up the splash screen in a secondary UI thread
+		CSplashThread* pSplashThread = (CSplashThread*) AfxBeginThread(RUNTIME_CLASS(CSplashThread), THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
+		if (pSplashThread != NULL)
+		{
+			ASSERT(pSplashThread->IsKindOf(RUNTIME_CLASS(CSplashThread)));
+			pSplashThread->SetBitmapToUse(::GetExePath() + FILENAME_ABOUTBG); 
+			pSplashThread->ResumeThread();  //Resume the thread now that we have set it up 
+		}
+
         if (!AfxOleInit())              // For BCG and COM (calls CoInitialize())
         {
             AfxMessageBox("OLE initialization failed.  Make sure that the OLE libraries are the correct version.");
@@ -690,9 +699,13 @@ BOOL CHexEditApp::InitInstance()
 #ifdef _DEBUG
         // This avoids all sorts of confusion when testing/debugging
 		// NOTE: we get a very odd crash in here when the skins DLLs are
-		// incompatible - seesm to happen when we build with VS 2003.
+		// incompatible - seems to happen when we build with VS 2003.
         CBCGToolBar::ResetAll();
 #endif
+
+		// It's about time to hide the splash window
+		if (pSplashThread != NULL)
+			pSplashThread->HideSplash();
 
         switch (GetProfileInt("MainFrame", "ShowCalcDlg", 0))
 		{
