@@ -1,6 +1,6 @@
-This is the readme file for HexEdit version 3.2.
+This is the readme file for HexEdit version 3.3.
 
-HexEdit 3.2 is a shareware, binary file editor or hex editor for Windows 9X/ME
+HexEdit 3.3 is a shareware, binary file editor or hex editor for Windows 9X/ME
 /NT/2000/XP/Vista.  Internet Explorer 5.0 or later is required for some features
 (noteably the on-line help and the template system).
 
@@ -11,12 +11,12 @@ like the registered version for 30 days after which reminders are displayed.
 The unregistered version is freely distributable.  All code, images etc 
 are copyright 1999-2008 Expert Commercial Software Pty Ltd.
 
-3.2 is typically distributed as a file called hexed3_2.msi.  This file
-may in turn be stored in a zip file (with this readme) called hexed3_2.zip.
-Hexed3_2.msi is a Microsoft Installer file that will install all
+3.3 is typically distributed as a file called hexed3_3.msi.  This file
+may in turn be stored in a zip file (with this readme) called hexed3_3.zip.
+Hexed3_3.msi is a Microsoft Installer file that will install all
 required files on your system (apart from MFC DLLs - see below).
 
-To install Hexedit start hexed3_2.msi and follow the instructions.
+To install Hexedit start hexed3_3.msi and follow the instructions.
 Windows 2000/XP/Vista include the Microsoft Installer but if you
 are using Windows 9X and you do not have the software already installed
 you can download it from http://www.microsoft.com/downloads by searching for
