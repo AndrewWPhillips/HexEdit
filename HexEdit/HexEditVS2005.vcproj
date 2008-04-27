@@ -700,6 +700,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Splasher.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SRecord.cpp"
 				>
 			</File>
@@ -1097,6 +1101,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Splasher.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SRecord.h"
 				>
 			</File>
@@ -1180,6 +1188,10 @@
 			</File>
 			<File
 				RelativePath="RES\back_hot.bmp"
+				>
+			</File>
+			<File
+				RelativePath="D:\Andrew\graphics\HexEditButtons\calc.bmp"
 				>
 			</File>
 			<File
@@ -1300,10 +1312,6 @@
 			</File>
 			<File
 				RelativePath=".\Res\ico00002.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\RES\icon2.ico"
 				>
 			</File>
 			<File
@@ -1532,11 +1540,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File

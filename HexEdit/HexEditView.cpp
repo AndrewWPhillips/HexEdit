@@ -6298,7 +6298,7 @@ BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
             return TRUE;
         }
     }
-        
+
     return CScrView::OnSetCursor(pWnd, nHitTest, message);
 }
 

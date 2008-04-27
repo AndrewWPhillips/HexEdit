@@ -1602,9 +1602,9 @@ void CColourSchemes::OnRemoveRange()
     ASSERT(name_no_ >= INDEX_LAST && name_no_ < INDEX_LAST + scheme_[scheme_no_].range_val_.size());
 
     // Remove the item from the list box and corresponding vector element
-    scheme_[scheme_no_].range_name_.erase(scheme_[scheme_no_].range_name_.begin() + name_no_ - INDEX_LAST);
-    scheme_[scheme_no_].range_col_.erase(scheme_[scheme_no_].range_col_.begin() + name_no_ - INDEX_LAST);
-    scheme_[scheme_no_].range_val_.erase(scheme_[scheme_no_].range_val_.begin() + name_no_ - INDEX_LAST);
+    scheme_[scheme_no_].range_name_.erase(scheme_[scheme_no_].range_name_.begin() + (name_no_ - INDEX_LAST));
+    scheme_[scheme_no_].range_col_.erase(scheme_[scheme_no_].range_col_.begin() + (name_no_ - INDEX_LAST));
+    scheme_[scheme_no_].range_val_.erase(scheme_[scheme_no_].range_val_.begin() + (name_no_ - INDEX_LAST));
     plist->DeleteString(name_no_);
     name_no_ = -1;
 
@@ -1631,12 +1631,12 @@ void CColourSchemes::OnUp()
     CString range_name = scheme_[scheme_no_].range_name_[name_no_ - INDEX_LAST];
     COLORREF range_col = scheme_[scheme_no_].range_col_[name_no_ - INDEX_LAST];
     range_set<int> range_val = scheme_[scheme_no_].range_val_[name_no_ - INDEX_LAST];
-    scheme_[scheme_no_].range_name_.erase(scheme_[scheme_no_].range_name_.begin() + name_no_ - INDEX_LAST);
-    scheme_[scheme_no_].range_col_.erase(scheme_[scheme_no_].range_col_.begin() + name_no_ - INDEX_LAST);
-    scheme_[scheme_no_].range_val_.erase(scheme_[scheme_no_].range_val_.begin() + name_no_ - INDEX_LAST);
-    scheme_[scheme_no_].range_name_.insert(scheme_[scheme_no_].range_name_.begin() + name_no_ - INDEX_LAST- 1, range_name);
-    scheme_[scheme_no_].range_col_.insert(scheme_[scheme_no_].range_col_.begin() + name_no_ - INDEX_LAST - 1, range_col);
-    scheme_[scheme_no_].range_val_.insert(scheme_[scheme_no_].range_val_.begin() + name_no_ - INDEX_LAST - 1, range_val);
+    scheme_[scheme_no_].range_name_.erase(scheme_[scheme_no_].range_name_.begin() + (name_no_ - INDEX_LAST));
+    scheme_[scheme_no_].range_col_.erase(scheme_[scheme_no_].range_col_.begin() + (name_no_ - INDEX_LAST));
+    scheme_[scheme_no_].range_val_.erase(scheme_[scheme_no_].range_val_.begin() + (name_no_ - INDEX_LAST));
+    scheme_[scheme_no_].range_name_.insert(scheme_[scheme_no_].range_name_.begin() + (name_no_ - INDEX_LAST - 1), range_name);
+    scheme_[scheme_no_].range_col_.insert(scheme_[scheme_no_].range_col_.begin() + (name_no_ - INDEX_LAST - 1), range_col);
+    scheme_[scheme_no_].range_val_.insert(scheme_[scheme_no_].range_val_.begin() + (name_no_ - INDEX_LAST - 1), range_val);
 
     ASSERT(scheme_[scheme_no_].range_name_.size() == scheme_[scheme_no_].range_col_.size());
     ASSERT(scheme_[scheme_no_].range_name_.size() == scheme_[scheme_no_].range_val_.size());
@@ -1663,12 +1663,12 @@ void CColourSchemes::OnDown()
     CString range_name = scheme_[scheme_no_].range_name_[name_no_ - INDEX_LAST];
     COLORREF range_col = scheme_[scheme_no_].range_col_[name_no_ - INDEX_LAST];
     range_set<int> range_val = scheme_[scheme_no_].range_val_[name_no_ - INDEX_LAST];
-    scheme_[scheme_no_].range_name_.erase(scheme_[scheme_no_].range_name_.begin() + name_no_ - INDEX_LAST);
-    scheme_[scheme_no_].range_col_.erase(scheme_[scheme_no_].range_col_.begin() + name_no_ - INDEX_LAST);
-    scheme_[scheme_no_].range_val_.erase(scheme_[scheme_no_].range_val_.begin() + name_no_ - INDEX_LAST);
-    scheme_[scheme_no_].range_name_.insert(scheme_[scheme_no_].range_name_.begin() + name_no_ - INDEX_LAST + 1, range_name);
-    scheme_[scheme_no_].range_col_.insert(scheme_[scheme_no_].range_col_.begin() + name_no_ - INDEX_LAST + 1, range_col);
-    scheme_[scheme_no_].range_val_.insert(scheme_[scheme_no_].range_val_.begin() + name_no_ - INDEX_LAST + 1, range_val);
+    scheme_[scheme_no_].range_name_.erase(scheme_[scheme_no_].range_name_.begin() + (name_no_ - INDEX_LAST));
+    scheme_[scheme_no_].range_col_.erase(scheme_[scheme_no_].range_col_.begin() + (name_no_ - INDEX_LAST));
+    scheme_[scheme_no_].range_val_.erase(scheme_[scheme_no_].range_val_.begin() + (name_no_ - INDEX_LAST));
+    scheme_[scheme_no_].range_name_.insert(scheme_[scheme_no_].range_name_.begin() + (name_no_ - INDEX_LAST + 1), range_name);
+    scheme_[scheme_no_].range_col_.insert(scheme_[scheme_no_].range_col_.begin() + (name_no_ - INDEX_LAST + 1), range_col);
+    scheme_[scheme_no_].range_val_.insert(scheme_[scheme_no_].range_val_.begin() + (name_no_ - INDEX_LAST + 1), range_val);
 
     ASSERT(scheme_[scheme_no_].range_name_.size() == scheme_[scheme_no_].range_col_.size());
     ASSERT(scheme_[scheme_no_].range_name_.size() == scheme_[scheme_no_].range_val_.size());

@@ -90,6 +90,7 @@ static const char *ack_name[] =
 	"MD5 Message-Digest Alg - RSA Data Security",
 	"CFile64 (MFC) class by Samuel R. Blackburn",
 	"Window Splitter class (MFC) - Robert A. T. Káldy",
+	"Splash screen (MFC) - P. J. Naughter",
 #ifdef USE_FREE_IMAGE
     "FreeImage DLL - Hervé Drolon (+ F. van den Berg)",
 #else
@@ -108,20 +109,21 @@ static const char *ack_name[] =
 static const char *ack_url[] =
 {
 	"http://bcgsoft.com/",
-	"http://codeproject.com/miscctrl/gridctrl.asp",
-	"http://codeproject.com/miscctrl/gridtreectrl.asp",
-	"http://www.codeproject.com/dialog/resizectrl.asp",
+	"http://www.codeproject.com/KB/miscctrl/gridctrl.aspx",
+	"http://www.codeproject.com/KB/miscctrl/gridtreectrl.aspx",
+	"http://www.codeproject.com/KB/dialog/resizectrl.aspx",
 	"http://www.zlib.net/",
 	"http://theory.lcs.mit.edu/~rivest/md5.c",
 	"http://www.samblackburn.com/wfc/",
-	"http://codeproject.com/splitter/kaldysimplesplitter.asp",
+	"http://www.codeproject.com/KB/splitter/kaldysimplesplitter.aspx",
+	"http://www.codeproject.com/KB/dialog/splasher.aspx"
 #ifdef USE_FREE_IMAGE
     "http://freeimage.sourceforge.net/"
 #else
 	"http://www.codeproject.com/bitmap/extendedbitmap2.asp",
 #endif
-	"http://www.codeproject.com/staticctrl/TransparentStaticCtrl.asp",
-	"http://www.codeproject.com/cpp/CppIntegerClass.asp",
+	"http://www.codeproject.com/KB/static/TransparentStaticCtrl.aspx",
+	"http://www.codeproject.com/KB/cpp/CppIntegerClass.aspx",
 	"http://www.ddj.com/dept/cpp/184403660",
 	"http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/",
 	"http://subversion.tigris.org/",

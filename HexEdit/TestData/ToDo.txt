@@ -75,20 +75,26 @@ BUGS
  - some printer drivers (eg text only) return GetDeviceCaps(VERTRES)=66
  
 EXPLORER
-  - fix hidden files icon
+  > fix hidden files icon
   - chnage background when filter is not *.*
   - update list after drag and drop
-  - fix for 64 bit file sizes
+  > fix for 64 bit file sizes
   - drag and drop into tree (BCGShellTree.cpp changes)
-  - send BCGShell* changes to BCG
   - in place editing for rename
   > attributes column in details view (OnSetColumns, OnGetItemText)
   > show hidden/system files/folders option? (SetItemTypes)
   - new folder button
-  - undo/redo drop downs
+  - find active file button
+  - undo/redo drop downs??
   - wipe file menu option???
   - email file menu option???
   - rename file menu option???
+
+BOOKMARKS
+ - move text buttons on right to icon buttons at top
+   - need way to change name
+ - add categories columns
+ - add new toolbar buttons next/prev in category, next/prev global
 
 SECURE WIPE OPTIONS
  - file or disk
@@ -126,6 +132,11 @@ DISK EDIT
 
 
 TODO
+ - allow editing of NTFS ADS (alternate data streams)
+ - find in files
+ - replace in files
+ - statistics
+ - alt char sets: Unicode odd/even/both, Code page
  - fix CBCGPopupMenuBar::OnChangeHot for WM_MENUSELCT (WM_ENTERIDLE)
    - CBCGPopupMenu* pParentMenu = DYNAMIC_DOWNCAST (CBCGPopupMenu, pCBCGPopupMenuBar->GetParent ());
  > turn on templates defaults to tab wnd should be splitter
