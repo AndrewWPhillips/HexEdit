@@ -2374,8 +2374,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,20,0,130
- PRODUCTVERSION 3,20,0,130
+ FILEVERSION 3,30,1,130
+ PRODUCTVERSION 3,30,1,130
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2392,12 +2392,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "3, 20, 0, 130"
+            VALUE "FileVersion", "3, 30, 1, 130"
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2008  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "3, 20, 0, 130"
+            VALUE "ProductVersion", "3, 30, 1, 130"
         END
     END
     BLOCK "VarFileInfo"
@@ -3279,9 +3279,12 @@ BEGIN
         MENUITEM "Current Date",                ID_PRINTERARGS_CURRENTDATE
         MENUITEM "Current Time",                ID_PRINTERARGS_CURRENTTIME
         MENUITEM "Long Format Date && Time",    ID_PRINTERARGS_LONGFORMATDATETIME
+
         MENUITEM SEPARATOR
         MENUITEM "File Creation Date && Time",  ID_PRINTERARGS_FILECREATIONDATETIME
+
         MENUITEM "File Modified Date && Time",  ID_PRINTERARGS_FILECHANGEDDATETIME
+
         MENUITEM SEPARATOR
         MENUITEM "Category",                    ID_PRINTERARGS_CATEGORY
         MENUITEM "Keywords",                    ID_PRINTERARGS_KEYWORDS
@@ -4798,7 +4801,8 @@ BEGIN
 END
 
 IDD_GETINT DIALOGEX 0, 0, 186, 90
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 CAPTION "Enter a number"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
@@ -4807,6 +4811,7 @@ BEGIN
     LTEXT           "",IDC_PROMPT,6,7,173,39
     EDITTEXT        IDC_VALUE,45,57,40,14,ES_AUTOHSCROLL
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
