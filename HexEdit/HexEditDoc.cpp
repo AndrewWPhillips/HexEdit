@@ -2375,7 +2375,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 
                 // Now get the sub-element of the FOR
                 elts_ac = add_branch(elt, addr, ind+1, ee, elt_size, -1, true);
-                ASSERT(elt_size > 0 || bits_used_ > 0);
+                // ASSERT(elt_size > 0 || bits_used_ > 0); // Can be zero with zero-sized string/none
 
                 if (elts_ac > ii || !strTest.IsEmpty())
                 {
@@ -4082,6 +4082,8 @@ BOOL CHexExpr::sym_found(const char * sym, int ii, CHexExpr::value_t &val, int *
     else if (pdoc->df_type_[ii] == CHexEditDoc::DF_IF)
     {
         ++ii;                           // Move to sub-element of IF
+		if (ii >= (int)pdoc->df_address_.size())
+            return FALSE;
 
         // Check IF part first
         BOOL found_in_if = sym_found(sym, ii, val, pac, sym_size, sym_address);
@@ -4121,6 +4123,9 @@ BOOL CHexExpr::sym_found(const char * sym, int ii, CHexExpr::value_t &val, int *
     else if (pdoc->df_type_[ii] == CHexEditDoc::DF_SWITCH)
 	{
 		++ii;                                    // First case in switch is next
+		if (ii >= (int)pdoc->df_address_.size())
+            return FALSE;
+
         int curr_indent = pdoc->df_indent_[ii];  // indent of all cases in the switch
 
 		BOOL found = FALSE;
