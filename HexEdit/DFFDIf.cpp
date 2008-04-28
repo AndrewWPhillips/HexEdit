@@ -28,6 +28,7 @@
 #include "DFFDIf.h"
 #include "DFFDSwitch.h"
 #include "DFFDJump.h"
+#include "DFFDEval.h"
 #include "DFFDData.h"
 #include "DFFDMisc.h"
 #include "resource.hm"      // Help IDs
@@ -182,12 +183,12 @@ BOOL CDFFDIf::OnInitDialog()
     VERIFY(button_menu_.LoadMenu(IDR_DFFD));
     CString strTemp;
     ASSERT((button_menu_.GetMenuString(4, strTemp, MF_BYPOSITION), strTemp == "ButtonReplace"));
-    ctl_if_replace_.m_hMenu = button_menu_.GetSubMenu(4)->GetSafeHmenu();
+    ctl_if_replace_.m_hMenu = button_menu_.GetSubMenu(3)->GetSafeHmenu();
 //    ctl_if_replace_.SizeToContent();
     ctl_if_replace_.m_bOSMenu = TRUE;
     ctl_if_replace_.m_bStayPressed = TRUE;
     ctl_if_replace_.m_bRightArrow = TRUE;
-    ctl_else_replace_.m_hMenu = button_menu_.GetSubMenu(4)->GetSafeHmenu();
+    ctl_else_replace_.m_hMenu = button_menu_.GetSubMenu(3)->GetSafeHmenu();
 //    ctl_else_replace_.SizeToContent();
     ctl_else_replace_.m_bOSMenu = TRUE;
     ctl_else_replace_.m_bStayPressed = TRUE;
@@ -590,6 +591,17 @@ void CDFFDIf::OnIfReplace()
             dlg_ret = dlg.DoModal();
         }
         break;
+    case ID_DFFD_INSERT_EVAL:
+        ee = pelt_->InsertNewChild("eval", pbefore);
+        ee.SetAttr("expr", "true");
+
+        {
+            CDFFDEval dlg(&ee, CHexEditDoc::DF_IF, this);
+            dlg.SetModified();          // Force validation as it is incomplete
+            dlg.SetPosition(pt, orig_);
+            dlg_ret = dlg.DoModal();
+        }
+        break;
     case ID_DFFD_INSERT_DATA:
         ee = pelt_->InsertNewChild("data", pbefore);
         ee.SetAttr("type", "none");
@@ -822,6 +834,17 @@ void CDFFDIf::OnElseReplace()
 
         {
             CDFFDJump dlg(&ee, CHexEditDoc::DF_IF, this);
+            dlg.SetModified();          // Force validation as it is incomplete
+            dlg.SetPosition(pt, orig_);
+            dlg_ret = dlg.DoModal();
+        }
+        break;
+    case ID_DFFD_INSERT_EVAL:
+        ee = pelt_->InsertNewChild("eval");
+        ee.SetAttr("expr", "true");
+
+        {
+            CDFFDEval dlg(&ee, CHexEditDoc::DF_IF, this);
             dlg.SetModified();          // Force validation as it is incomplete
             dlg.SetPosition(pt, orig_);
             dlg_ret = dlg.DoModal();
