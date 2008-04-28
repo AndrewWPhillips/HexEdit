@@ -575,7 +575,6 @@ void CTreeColumn::TreeDataExpandOneLevel( int aiGridRow)
 //            pGridTreeCell->SetViewable( FALSE);
 
     }
-
 }
 
 /*****************************************************************************
@@ -651,13 +650,29 @@ void CTreeColumn::TreeExpandCollapseToggle( int aiGridRow) // Grid row of node t
     if( pGridTreeCell->IsViewable() )
     {
         TreeDataCollapseAllSubLevels( aiGridRow);
+		TreeRefreshRows();
     }
     else
     {
         TreeDataExpandOneLevel( aiGridRow);
-    }
-    TreeRefreshRows();
+		TreeRefreshRows();
 
+		// Make sure bottom expanded row is visible (or as many of the expanded rows as possible)
+		CGridTreeCell* pGridTreeCell = (CGridTreeCell*)m_pGrid->GetCell(aiGridRow, m_iColumnWithTree);
+		if( pGridTreeCell == NULL)
+			return;
+		UCHAR lev = pGridTreeCell->GetLevel();
+		int ii;
+		for (ii = aiGridRow + 1; ii < m_iRowCount; ii++)
+		{
+			pGridTreeCell = (CGridTreeCell*)m_pGrid->GetCell(ii, m_iColumnWithTree);
+			if (pGridTreeCell == NULL || pGridTreeCell->GetLevel() <= lev)
+				break;
+		}
+
+		m_pGrid->EnsureVisible(ii-1, m_iColumnWithTree);
+		m_pGrid->EnsureVisible(aiGridRow, m_iColumnWithTree);
+    }
 }
 
 /*****************************************************************************
