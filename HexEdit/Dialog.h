@@ -507,5 +507,26 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 };
+// GetBool dialog - used byt getbool() function of expressions to ask the user a question
+class GetBool : public CDialog
+{
+	DECLARE_DYNAMIC(GetBool)
+
+public:
+	GetBool(CWnd* pParent = NULL);   // standard constructor
+	virtual ~GetBool();
+
+// Dialog Data
+	enum { IDD = IDD_GETBOOL };
+
+	CString prompt_;               // Text to display to the user
+	CString yes_, no_;
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+	DECLARE_MESSAGE_MAP()
+public:
+};
 
 #endif // !defined(AFX_DIALOG_H__55A0CEE1_3245_11D2_B012_0020AFDC3196__INCLUDED_)

@@ -817,6 +817,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	CString sym_str;
     bool saved_const_sep_allowed;
 	GetInt *pGetIntDlg;
+	GetBool *pGetBoolDlg;
 
     switch (next_tok)
     {
@@ -1158,6 +1159,76 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		val.int64 = pGetIntDlg->value_;
         val.typ = TYPE_INT;
 		delete pGetIntDlg;
+        return get_next();
+    case TOK_GETBOOL:
+		pGetBoolDlg = new GetBool();
+
+        // Get opening bracket and first symbol within
+        if ((next_tok = get_next()) != TOK_LPAR)
+        {
+            strcpy(error_buf_, "Expected opening parenthesis after GETBOOL");
+			delete pGetBoolDlg;
+            return TOK_NONE;
+        }
+
+        if (error(next_tok = prec_assign(val), "Expected prompt string for GETBOOL"))
+		{
+			delete pGetBoolDlg;
+            return TOK_NONE;
+		}
+        if (val.typ != TYPE_STRING)
+        {
+            strcpy(error_buf_, "First parameter for GETBOOL must be a string");
+			delete pGetBoolDlg;
+            return TOK_NONE;
+        }
+		pGetBoolDlg->prompt_ = CString(*(val.pstr));
+
+		// Get optional parameters: default value, min, max
+		if (next_tok == TOK_COMMA)
+		{
+			if (error(next_tok = prec_assign(val), "Expected 2nd parameter to GETBOOL"))
+			{
+				delete pGetBoolDlg;
+				return TOK_NONE;
+			}
+			if (val.typ != TYPE_STRING)
+			{
+				strcpy(error_buf_, "2nd parameter for GETBOOL must be a string");
+				delete pGetBoolDlg;
+				return TOK_NONE;
+			}
+			pGetBoolDlg->yes_ = CString(*(val.pstr));
+
+			if (next_tok == TOK_COMMA)
+			{
+				if (error(next_tok = prec_assign(val), "Expected 3rd parameter to GETBOOL"))
+				{
+					delete pGetBoolDlg;
+					return TOK_NONE;
+				}
+				if (val.typ != TYPE_STRING)
+				{
+					strcpy(error_buf_, "3rd parameter for GETBOOL must be a string");
+					delete pGetBoolDlg;
+					return TOK_NONE;
+				}
+				pGetBoolDlg->no_ = CString(*(val.pstr));
+			}
+		}
+
+		if (next_tok != TOK_RPAR)
+		{
+			strcpy(error_buf_, "Closing parenthesis expected for GETBOOL");
+			delete pGetBoolDlg;
+			return TOK_NONE;
+		}
+
+		ASSERT(val.typ == TYPE_STRING);   // make sure its has a string before freeing the memory
+		delete val.pstr;
+		val.typ = TYPE_BOOLEAN;
+		val.boolean = pGetBoolDlg->DoModal() == IDOK;
+		delete pGetBoolDlg;
         return get_next();
 	case TOK_ADDRESSOF:
         // Get opening bracket and first symbol within
@@ -2823,6 +2894,7 @@ struct
     {"ASC2EBC",   expr_eval::TOK_A2E},
     {"EBC2ASC",   expr_eval::TOK_E2A},
     {"GETINT",    expr_eval::TOK_GETINT},
+    {"GETBOOL",   expr_eval::TOK_GETBOOL},
     {"SQRT",      expr_eval::TOK_SQRT},
     {"SIN",       expr_eval::TOK_SIN},
     {"COS",       expr_eval::TOK_COS},

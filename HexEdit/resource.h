@@ -392,6 +392,7 @@
 #define IDI_DOCDISPLAY                  401
 #define IDB_BITMAP2                     405
 #define IDD_GETINT                      407
+#define IDD_GETBOOL                     408
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000

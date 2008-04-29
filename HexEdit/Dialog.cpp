@@ -1713,3 +1713,32 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // GetInt message handlers
 
+/////////////////////////////////////////////////////////////////////////////
+// GetBool dialog
+
+IMPLEMENT_DYNAMIC(GetBool, CDialog)
+
+GetBool::GetBool(CWnd* pParent /*=NULL*/)
+	: CDialog(GetBool::IDD, pParent)
+{
+	yes_ = "YES";
+	no_ = "NO";
+}
+
+GetBool::~GetBool()
+{
+}
+
+void GetBool::DoDataExchange(CDataExchange* pDX)
+{
+	CDialog::DoDataExchange(pDX);
+    DDX_Text(pDX, IDC_PROMPT, prompt_);
+	if (!pDX->m_bSaveAndValidate)
+	{
+		SetDlgItemText(IDOK, yes_);
+		SetDlgItemText(IDCANCEL, no_);
+	}
+}
+
+BEGIN_MESSAGE_MAP(GetBool, CDialog)
+END_MESSAGE_MAP()

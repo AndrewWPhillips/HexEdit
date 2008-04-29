@@ -60,7 +60,7 @@ public:
         TOK_LTRIM, TOK_RTRIM,           // Trim leading/trailing spaces
 		TOK_CHAR,                       // Get single char from string (or -1)
 		TOK_A2E, TOK_E2A,               // Convert between ASCII and EBCDIC
-		TOK_GETINT,                     // Get a value from the user
+		TOK_GETINT, TOK_GETBOOL,        // Get a value from the user
 
 		TOK_SQRT,                       // Floating point square root
 		TOK_SIN, TOK_COS, TOK_TAN,      // Transcendental funcs (radians)
