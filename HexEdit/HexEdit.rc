@@ -2374,8 +2374,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,30,1,130
- PRODUCTVERSION 3,30,1,130
+ FILEVERSION 3,30,2,132
+ PRODUCTVERSION 3,30,2,132
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2392,12 +2392,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "3, 30, 1, 130"
+            VALUE "FileVersion", "3, 30, 2, 132"
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2008  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "3, 30, 1, 130"
+            VALUE "ProductVersion", "3, 30, 2, 132"
         END
     END
     BLOCK "VarFileInfo"
@@ -4812,6 +4812,16 @@ BEGIN
     EDITTEXT        IDC_VALUE,45,57,40,14,ES_AUTOHSCROLL
 END
 
+IDD_GETBOOL DIALOGEX 0, 0, 186, 68
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "HexEdit"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,8,47,80,14
+    PUSHBUTTON      "Cancel",IDCANCEL,98,47,80,14
+    LTEXT           "",IDC_PROMPT,6,7,175,37
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
