@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "hexedit.h"
 #include <CommCtrl.h>
 #include "TipWnd.h"
 #include "Misc.h"    // For window within screen/monitor checks
@@ -30,7 +31,7 @@ CTipWnd::CTipWnd(UINT fmt /* = DT_NOCLIP | DT_NOPREFIX | DT_EXPANDTABS */)
         ASSERT(!strClass.IsEmpty());
     }
 
-	m_hovering = m_visible = false;
+	m_hovering = m_visible = m_down = false;
 	m_fmt = fmt;
 	m_margins = CSize(2, 2);
     m_bg_colour = ::GetSysColor(COLOR_INFOBK);
@@ -73,7 +74,10 @@ BEGIN_MESSAGE_MAP(CTipWnd, CWnd)
 	ON_WM_PAINT()
 	ON_MESSAGE(WM_SETTEXT, OnSetText)
 	ON_WM_TIMER()
+    ON_WM_LBUTTONDOWN()
+    ON_WM_LBUTTONUP()
     ON_WM_MOUSEMOVE()
+	ON_WM_SETCURSOR()
 	ON_MESSAGE(WM_MOUSEHOVER, OnMouseHover)
 	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 END_MESSAGE_MAP()
@@ -104,7 +108,7 @@ void CTipWnd::Show(int delay /* = 0 */, int fade)
 	GetWindowRect(&rect);
 	if (::OutsideMonitor(rect))
 	{
-		CRect cont_rect = ::MonitorRect(rect);
+		CRect cont_rect = ::MonitorMouse();
 		if (rect.right > cont_rect.right)
 			rect += CPoint(cont_rect.right - rect.right, 0);
 		if (rect.left < cont_rect.left)
@@ -360,11 +364,49 @@ void CTipWnd::OnTimer(UINT nIDEvent)
 
 void CTipWnd::OnMouseMove(UINT nFlags, CPoint point) 
 {
-    if (m_pSLWAfunc != 0)
+	if (m_down)
+	{
+		CPoint pt;
+		GetCursorPos(&pt);
+		pt -= m_down_pt;
+		SetWindowPos(NULL, pt.x, pt.y, -1, -1, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
+	}
+    else if (m_pSLWAfunc != 0)
 	{
 		m_hovering = true;
         track_mouse(TME_LEAVE);
 	}
+}
+
+void CTipWnd::OnLButtonDown(UINT nFlags, CPoint point) 
+{
+	if (GetCursorPos(&m_down_pt))
+	{
+        ScreenToClient(&m_down_pt);
+		m_down = true;
+		SetCapture();
+	}
+	CWnd::OnLButtonDown(nFlags, point) ;
+}
+
+void CTipWnd::OnLButtonUp(UINT nFlags, CPoint point) 
+{
+	if (m_down)
+	{
+		ReleaseCapture();
+		m_down = false;
+	}
+	CWnd::OnLButtonUp(nFlags, point) ;
+}
+
+BOOL CTipWnd::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
+{
+    if (nHitTest == HTCLIENT)
+    {
+        ::SetCursor(theApp.LoadStandardCursor(IDC_SIZEALL));
+        return TRUE;
+	}
+    return CWnd::OnSetCursor(pWnd, nHitTest, message);
 }
 
 LRESULT CTipWnd::OnMouseHover(WPARAM, LPARAM lp)

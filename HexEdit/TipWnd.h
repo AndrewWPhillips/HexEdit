@@ -46,7 +46,10 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg LRESULT OnSetText(WPARAM wp, LPARAM lp);
+    afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
     afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+    afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg LRESULT OnMouseHover(WPARAM wp, LPARAM lp);
 	afx_msg LRESULT OnMouseLeave(WPARAM wp, LPARAM lp);
 	DECLARE_MESSAGE_MAP()
@@ -59,6 +62,8 @@ private:
 	COLORREF m_text_colour;        // Colour of text
 	int m_stock_font;
 	bool  m_visible;            // Is window visible or about to be?
+	bool  m_down;               // Is mouse down?
+	CPoint m_down_pt;           // Point when left mouse button went down
 
 #if _MSC_VER >= 1300
 	typedef CStringW StringType;

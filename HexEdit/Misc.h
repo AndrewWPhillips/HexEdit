@@ -63,6 +63,7 @@ CString GetExePath();
 BOOL GetDataPath(CString &data_path);
 CString FileErrorMessage(const CFileException *fe, UINT mode = CFile::modeRead|CFile::modeWrite);
 bool OutsideMonitor(CRect);
+CRect MonitorMouse();
 CRect MonitorRect(CRect);
 bool NeedsFix(CRect &rect);
 

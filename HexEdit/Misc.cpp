@@ -1217,6 +1217,16 @@ CString FileErrorMessage(const CFileException *fe, UINT mode /*=CFile::modeRead|
 }
 
 #ifndef REGISTER_APP
+// Gets rect of the monitor which contains the mouse
+CRect MonitorMouse()
+{
+	CPoint pt;
+	GetCursorPos(&pt);
+
+	CRect rect(pt.x, pt.y, pt.x+1, pt.y+1);
+	return MonitorRect(rect);
+}
+
 // Gets rect of monitor which contains most of rect.
 // In non-multimon environment it just returns the rect of the
 // screen work area (excludes "always on top" docked windows).
