@@ -92,11 +92,11 @@ void CCalcEdit::Put()
         {
         case 8:
             s8 = (signed char)pp_->current_;
-            itoa((int)s8, buf, pp_->radix_);
+            _itoa((int)s8, buf, pp_->radix_);
             break;
         case 16:
             s16 = (signed short)pp_->current_;
-            itoa((int)s16, buf, pp_->radix_);
+            _itoa((int)s16, buf, pp_->radix_);
             break;
         case 32:
             s32 = (signed long)pp_->current_;

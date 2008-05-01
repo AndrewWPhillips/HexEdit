@@ -486,7 +486,7 @@ BOOL CHexEditApp::InitInstance()
 			dec_point_ = *plconv->decimal_point;
 
         // Work out if we appear to be in US for spelling changes
-        is_us_ = strnicmp("English_United States", ::setlocale(LC_COLLATE, NULL), 20) == 0;
+        is_us_ = _strnicmp("English_United States", ::setlocale(LC_COLLATE, NULL), 20) == 0;
 
         // The following are for BCG init
         SetRegistryBase(_T("Settings"));
@@ -586,7 +586,7 @@ BOOL CHexEditApp::InitInstance()
         if (!reg.Open(GetRegSectionPath() + _T("Skin")))
         {
             for (int ii = 0; ii < GetSkinManager()->GetSkinsCount(); ++ii)
-                if (strnicmp(GetSkinManager()->GetSkinName(ii), "Gradient Bar", 12) == 0)
+                if (_strnicmp(GetSkinManager()->GetSkinName(ii), "Gradient Bar", 12) == 0)
                 {
                     GetSkinManager()->SetActiveSkin(ii);
                     break;

@@ -584,11 +584,11 @@ void CRegister::OnOK()
     if (type_ == 0)
     {
         // Machine codes (de-activated)
-        if (strnicmp(install_code_, reg_code(0, 1), 11) == 0)
+        if (_strnicmp(install_code_, reg_code(0, 1), 11) == 0)
         {
             bTempReg = TRUE;            // Signal temp reg
         }
-        else if (strnicmp(install_code_, reg_code(0), 11) != 0)
+        else if (_strnicmp(install_code_, reg_code(0), 11) != 0)
         {
             ::HMessageBox("The activation code is invalid for this machine.\n"
                           "Please make sure you typed it correctly.");
@@ -602,9 +602,9 @@ void CRegister::OnOK()
 		int flags;
         for (flags = 0; flags < 256; ++flags)
         {
-            if (strnicmp(install_code_, user_reg_code(0, user_name_, code_type = 6, flags), 11) == 0 ||
-                strnicmp(install_code_, user_reg_code(0, user_name_, code_type = 6, flags, -1), 11) == 0 ||
-                strnicmp(install_code_, user_reg_code(0, user_name_, code_type = 14, flags, -1), 11) == 0)
+            if (_strnicmp(install_code_, user_reg_code(0, user_name_, code_type = 6, flags), 11) == 0 ||
+                _strnicmp(install_code_, user_reg_code(0, user_name_, code_type = 6, flags, -1), 11) == 0 ||
+                _strnicmp(install_code_, user_reg_code(0, user_name_, code_type = 14, flags, -1), 11) == 0)
             {
                 break;
             }
