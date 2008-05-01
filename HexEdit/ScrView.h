@@ -56,6 +56,12 @@ public:
         page = page_;
         line = line_;
     }
+    void GetDisplayRect(CRect * rct) const
+	{
+        GetClientRect(rct);
+        rct->DeflateRect(bdr_left_, bdr_top_, bdr_right_, bdr_bottom_);
+    }
+
     void SetScroll(CPointAp, BOOL strict=FALSE);
     void SetTScroll(CPointAp);    // set upper left in text units
     CPointAp GetScroll() const    // get upper left pos of display
@@ -144,7 +150,12 @@ protected:
     virtual void DoInvalidate() { Invalidate(); }
     virtual void DoInvalidateRect(LPCRECT lpRect) { InvalidateRect(lpRect); }
     virtual void DoInvalidateRgn(CRgn* pRgn) { InvalidateRgn(pRgn); }
-    virtual void DoScrollWindow(int xx, int yy) { ScrollWindow(xx, yy); }
+    virtual void DoScrollWindow(int xx, int yy)
+    {
+        CRect rct;
+        GetDisplayRect(&rct);
+        ScrollWindow(xx, yy, &rct, &rct);
+    }
     virtual void DoUpdateWindow() { UpdateWindow(); }
     virtual void DoHScroll(int total, int page, int pos);
     virtual void DoVScroll(int total, int page, int pos);
@@ -158,6 +169,8 @@ protected:
     virtual void AssertValid() const;
     virtual void Dump(CDumpContext& dc) const;
 #endif
+
+    int bdr_top_, bdr_left_, bdr_bottom_, bdr_right_; // Borders reserved for ruler etc
 
 private:
     // The following are in logical units for the window.

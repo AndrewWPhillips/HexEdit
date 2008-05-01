@@ -738,11 +738,15 @@ private:
         if (widthd == 0) widthd = text_width_;
         if (widthw == 0) widthw = text_width_w_;
         if (display_.vert_display)
-            return addr_width_*widthd + (column + column/group_by_)*widthw;
+            return addr_width_*widthd +
+                   (column + column/group_by_)*widthw;
         else if (display_.hex_area)
-            return (addr_width_ + rowsize_*3)*widthd + ((rowsize_-1)/group_by_)*widthd + column*widthw;
+            return (addr_width_ + rowsize_*3)*widthd +
+                   ((rowsize_-1)/group_by_)*widthd +
+                   column*widthw;
         else
-            return addr_width_*widthd + column*widthw;
+            return addr_width_*widthd +
+                   column*widthw;
     }
     int pos_hex(int, BOOL inside = FALSE) const;  // Closest hex display col given X
     int pos_char(int, BOOL inside = FALSE) const; // Closest char area col given X
@@ -816,7 +820,7 @@ private:
     // Display colours
     COLORREF bg_col_, mark_col_, hi_col_, bm_col_, search_col_, text_col_;
     COLORREF trk_col_, trk_bg_col_;             // Change tracking colours
-    COLORREF addr_bg_col_, dec_addr_col_, hex_addr_col_;
+    COLORREF addr_bg_col_, addr_edge_col_, dec_addr_col_, hex_addr_col_; // colour for adresses/ruler
 	COLORREF sector_col_, sector_bg_col_;       // Displays sector bondaries and bad sector background
 
     CString scheme_name_;

@@ -706,11 +706,9 @@ public:
     {
         INDEX_BG,
 		INDEX_MARK, INDEX_HI, INDEX_BM, INDEX_SEARCH,       // background colours
-#ifdef CHANGE_TRACKING
 		INDEX_TRK,
 		INDEX_ADDR_BG,   // address area background col
 		INDEX_SECTOR,    // sector boundary (and bad sector background)
-#endif
         INDEX_HEX_ADDR, INDEX_DEC_ADDR,                   // text colours
         INDEX_LAST                                        // count of colours (keep at end)
     };

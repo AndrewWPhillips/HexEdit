@@ -661,6 +661,12 @@ void CHexEditView::OnInitialUpdate()
         recent_file_index = pfl->GetIndex(pDoc->pfile1_->GetFilePath());
 	int swidth;      // = width of split tree view or 0 (no tree view) or 2 (tree in tab view)
 
+    bdr_top_ = 8;    // This will change later dep. on whether ruler is on or not
+#ifdef _DEBUG
+    // This allows testing of borders code even though we don't use it yet
+    bdr_top_ = bdr_bottom_ = bdr_left_ = bdr_right_ = 25;
+#endif
+
     if (recent_file_index != -1)
     {
 		swidth = atoi(pfl->GetData(recent_file_index, CHexFileList::DFFDVIEW));
@@ -871,19 +877,7 @@ void CHexEditView::OnInitialUpdate()
 			CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
 			ASSERT(psplitter->m_hWnd != 0);
 
-#if 0  // client rect is not yet valid
-			// Make sure width of splitter window is OK
-			CRect rr;
-			GetClientRect(&rr);
-			if (width < 10 || width > rr.Width())
-			{
-				width = rr.Width()/3;
-				if (width < 10)
-					width = 10;
-			}
-#else
 			if (swidth < 10) swidth = 10;
-#endif
 
 			// Add left column for DFFD (template) view
 			VERIFY(psplitter->InsColumn(0, swidth, RUNTIME_CLASS(CDataFormatView), &ctxt));
@@ -1138,8 +1132,8 @@ BOOL CHexEditView::set_colours()
     hi_col_        = ps->hi_col_ == -1       ? RGB(255, 255, 0) : ps->hi_col_;              // yellow
     bm_col_        = ps->bm_col_ == -1       ? RGB(160, 192, 255) : ps->bm_col_;
     search_col_    = ps->search_col_ == -1   ? RGB(160, 255, 224) : ps->search_col_;
-#ifdef CHANGE_TRACKING
     addr_bg_col_   = ps->addr_bg_col_ == -1  ? ::tone_down(::GetSysColor(COLOR_INACTIVEBORDER), bg_col_, 0.5) : ps->addr_bg_col_;
+	addr_edge_col_ = same_hue(addr_bg_col_, 50, 50);
     // Getting change tracking colour and make a version closer to the background colour in luminance
     // trk_col_ is used to underline replacements, trk_bg_col_ is used as background for insertions
     trk_col_ = ps->trk_col_ == -1 ? RGB(255, 0, 0) : ps->trk_col_;              // red
@@ -1147,9 +1141,6 @@ BOOL CHexEditView::set_colours()
 
     sector_col_    = ps->sector_col_ == -1   ? RGB(255, 160, 128)   : ps->sector_col_;          // pinkish orange
     sector_bg_col_ = ::tone_down(sector_col_, bg_col_);
-#else
-    addr_bg_col_   = bg_col_;
-#endif
     hex_addr_col_  = ps->hex_addr_col_ == -1 ? ::GetSysColor(COLOR_WINDOWTEXT) : ps->hex_addr_col_;
     dec_addr_col_  = ps->dec_addr_col_ == -1 ? ::GetSysColor(COLOR_WINDOWTEXT) : ps->dec_addr_col_;
 
@@ -1411,7 +1402,7 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
         CRectAp clip_rect;                // rectangle for calcs/clipping
 
         // Calculate where the display in document
-        GetClientRect(&rct);      // First: get client rectangle
+        GetDisplayRect(&rct);      // First: get client rectangle
         clip_rect = ConvertFromDP(rct);
 
         // Calculate the address of the first byte of the top row of the
@@ -1549,13 +1540,11 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
     }
     else if (pHint != NULL && pHint->IsKindOf(RUNTIME_CLASS(CTrackHint)))
     {
-#ifdef CHANGE_TRACKING
         if (!display_.hide_replace || !display_.hide_insert || !display_.hide_delete)
         {
             CTrackHint *pth = dynamic_cast<CTrackHint *>(pHint);
             invalidate_addr_range(pth->start_, pth->end_);
         }
-#endif
     }
     else
     {
@@ -1676,7 +1665,7 @@ void CHexEditView::OnDraw(CDC* pDC)
     {
         // Get the reason that there's no data from the document & display it
         CRect cli;
-        GetClientRect(&cli);
+        GetClientRect(&cli);  // xxx add bdr_top_ before drawing text on screen
         pDC->DPtoLP(&cli);
         if (pDC->IsPrinting())
         {
@@ -1774,21 +1763,24 @@ void CHexEditView::OnDraw(CDC* pDC)
     }
     else
     {
+        // Draw decorative borders (not printed) like ruler
+        // xxx
+
         has_focus = (GetFocus() == this);
         HideCaret();
         neg_x = negx(); neg_y = negy();
 
         // Get display rect in logical units but with origin at top left of window
         CRect rct;
-        GetClientRect(&rct);
+        GetDisplayRect(&rct);
         doc_rect = ConvertFromDP(rct);
 
         // Display = client rectangle translated to posn in document
 //        norm_rect = doc_rect - GetScroll();
-        norm_rect.left = doc_rect.left - GetScroll().x;
-        norm_rect.right = doc_rect.right - GetScroll().x;
-        norm_rect.top = int(doc_rect.top - GetScroll().y);
-        norm_rect.bottom = int(doc_rect.bottom - GetScroll().y);
+        norm_rect.left  = doc_rect.left  - GetScroll().x + bdr_left_;
+        norm_rect.right = doc_rect.right - GetScroll().x + bdr_left_;
+        norm_rect.top    = int(doc_rect.top    - GetScroll().y) + bdr_top_;
+        norm_rect.bottom = int(doc_rect.bottom - GetScroll().y) + bdr_top_;
 
         // Get the current selection so that we can display it in reverse video
         GetSelAddr(start_addr, end_addr);
@@ -1895,113 +1887,15 @@ void CHexEditView::OnDraw(CDC* pDC)
 
     CPoint pt;   // moved this here to avoid a spurious compiler error
 
-    // Skip background drawing in this case becuase it's too hard.
+    // Skip background drawing in this case because it's too hard.
     // Note that this goto greatly simplifies the tests below.
     if (pDC->IsPrinting() && print_sel_ && dup_lines_)
         goto end_of_background_drawing;
 
-    // Note we draw bookmarks, bad sectors and change-tracking deletions first as
-    // they are always drawn from the top of screen (or page) downwards.  This is
-    // so the user is less likely to notice the wrong direction.
+    // Note: We draw bad sectors, change-tracking deletions, bookmarks etc first
+    // as they are always drawn from the top of screen (or page) downwards.  This
+    // is so the user is less likely to notice the wrong direction.
 
-    if (!display_.hide_bookmarks)
-    {
-        // Draw bookmarks
-        for (std::vector<FILE_ADDRESS>::const_iterator pbm = pDoc->bm_posn_.begin();
-             pbm != pDoc->bm_posn_.end(); ++pbm)
-        {
-            if (*pbm >= first_addr && *pbm <= last_addr)
-            {
-                CRect mark_rect;
-
-                mark_rect.top = int(((*pbm + offset_)/rowsize_) * line_height - doc_rect.top + 1);
-//                mark_rect.bottom = mark_rect.top + line_height - 3;
-                mark_rect.bottom = mark_rect.top + line_height - 1;
-                if (neg_y)
-                {
-                    mark_rect.top = -mark_rect.top;
-                    mark_rect.bottom = -mark_rect.bottom;
-                }
-
-                if (!display_.vert_display && display_.hex_area)
-                {
-                    mark_rect.left = hex_pos(int((*pbm + offset_)%rowsize_), char_width) - 
-                                    doc_rect.left;
-//                        mark_rect.right = mark_rect.left + 2*char_width;
-                    mark_rect.right = mark_rect.left + 2*char_width + 2;
-                    if (neg_x)
-                    {
-                        mark_rect.left = -mark_rect.left;
-                        mark_rect.right = -mark_rect.right;
-                    }
-
-                    pDC->FillSolidRect(&mark_rect, bm_col_);
-                }
-
-                if (display_.vert_display || display_.char_area)
-                {
-                    mark_rect.left = char_pos(int((*pbm + offset_)%rowsize_), char_width, char_width_w) - 
-                                    doc_rect.left + 1;
-//                        mark_rect.right = mark_rect.left + char_width_w - 2;
-                    mark_rect.right = mark_rect.left + char_width_w;
-                    if (neg_x)
-                    {
-                        mark_rect.left = -mark_rect.left;
-                        mark_rect.right = -mark_rect.right;
-                    }
-                    pDC->FillSolidRect(&mark_rect, bm_col_);
-                }
-            }
-        }
-    }
-
-    // Draw mark if within display area
-    // xxx if (mark >= first_addr && mark < last_virst && mark <= last_addr) ???
-    if (!pDC->IsPrinting() && mark_ >= first_virt && mark_ < last_virt || 
-         pDC->IsPrinting() && mark_ >= first_addr && mark_ < last_addr )
-    {
-        CRect mark_rect;                // Where mark is drawn in logical coords
-
-        mark_rect.top = int(((mark_ + offset_)/rowsize_) * line_height - doc_rect.top + 1);
-//        mark_rect.bottom = mark_rect.top + line_height - 3;
-        mark_rect.bottom = mark_rect.top + line_height - 1;
-        if (neg_y)
-        {
-            mark_rect.top = -mark_rect.top;
-            mark_rect.bottom = -mark_rect.bottom;
-        }
-
-        if (!display_.vert_display && display_.hex_area)
-        {
-            mark_rect.left = hex_pos(int((mark_ + offset_)%rowsize_), char_width) - 
-                             doc_rect.left;
-//            mark_rect.right = mark_rect.left + 2*char_width;
-            mark_rect.right = mark_rect.left + 2*char_width + 2;
-            if (neg_x)
-            {
-                mark_rect.left = -mark_rect.left;
-                mark_rect.right = -mark_rect.right;
-            }
-
-            pDC->FillSolidRect(&mark_rect, mark_col_);
-        }
-
-        if (display_.vert_display || display_.char_area)
-        {
-            mark_rect.left = char_pos(int((mark_ + offset_)%rowsize_), char_width, char_width_w) - 
-                             doc_rect.left + 1;
-//            mark_rect.right = mark_rect.left + char_width_w - 2;
-            mark_rect.right = mark_rect.left + char_width_w;
-            if (neg_x)
-            {
-                mark_rect.left = -mark_rect.left;
-                mark_rect.right = -mark_rect.right;
-            }
-            pDC->FillSolidRect(&mark_rect, mark_col_);
-        }
-    }
-
-#ifdef CHANGE_TRACKING
     // Preread device blocks so we know if there are bad sectors
 	if (GetDocument()->IsDevice())
     {
@@ -2017,23 +1911,26 @@ void CHexEditView::OnDraw(CDC* pDC)
     if (display_.borders)
         pPen = new CPen(PS_SOLID, char_width/12+1, sector_col_);
     else
-        pPen = new CPen(PS_SOLID, char_width/6+1, addr_bg_col_);
+        pPen = new CPen(PS_SOLID, 0, addr_edge_col_);
     pOldPen = pDC->SelectObject(pPen);
 
     if (!pDC->IsPrinting())
     {
-        // This will draw outside margins (and is not really necessary esp. if printing borders is on)
-        pt.y = 0;
-        pt.x = addr_width_*char_width - char_width/2 - doc_rect.left;
-        if (neg_x) pt.x = - pt.x;
-        pDC->MoveTo(pt);
-        pt.y = 30000;
-        if (neg_y) pt.y = -30000;
-        pDC->LineTo(pt);
+        // Vert. line between address and hex areas
+		pt.y = bdr_top_;
+        if (neg_y) pt.y = -bdr_top_;
+		pt.x = addr_width_*char_width - char_width/2 - doc_rect.left + bdr_left_;
+		if (neg_x) pt.x = - pt.x;
+		pDC->MoveTo(pt);
+		pt.y = 30000;
+		if (neg_y) pt.y = -30000;
+		pDC->LineTo(pt);
         if (!display_.vert_display && display_.hex_area)
         {
-            pt.y = 0;
-            pt.x = char_pos(0, char_width) - char_width_w/2 - doc_rect.left;
+			// Vert line to right of hex area
+            pt.y = bdr_top_;
+			if (neg_y) pt.y = -bdr_top_;
+            pt.x = char_pos(0, char_width) - char_width_w/2 - doc_rect.left + bdr_left_;
             if (neg_x) pt.x = - pt.x;
             pDC->MoveTo(pt);
             pt.y = 30000;
@@ -2042,15 +1939,44 @@ void CHexEditView::OnDraw(CDC* pDC)
         }
         if (display_.char_area)
         {
-            pt.y = 0;
-            pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + (3*char_width_w)/2 - doc_rect.left;
+			// Vert line to right of char area
+            pt.y = bdr_top_;
+			if (neg_y) pt.y = -bdr_top_;
+            pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + 
+                   (3*char_width_w)/2 - doc_rect.left + bdr_left_;
             if (neg_x) pt.x = - pt.x;
             pDC->MoveTo(pt);
             pt.y = 30000;
             if (neg_y) pt.y = -30000;
             pDC->LineTo(pt);
         }
+		if (bdr_top_ > 0)
+		{
+			// Horiz line under ruler
+			pt.y = bdr_top_ - 1;
+			if (neg_y) pt.y = -bdr_top_;
+			pt.x = addr_width_*char_width - char_width/2 - doc_rect.left + bdr_left_;
+			if (neg_x) pt.x = - pt.x;
+			pDC->MoveTo(pt);
+			pt.x = 30000;
+			if (neg_x) pt.x = -30000;
+			pDC->LineTo(pt);
+		}
     }
+
+    // We can't avoid overlapping our "borders" slightly, so we set
+    // the clipping rect so this small amount of drawing isn't seen.
+    // But in debug we want to see if the drawing may be inefficient.
+	// Note: This needs to be done after drawing things in borders 
+	// like the ruler but before hex area drawing like bookmarks etc.
+//#ifndef _DEBUG
+    if (!pDC->IsPrinting())
+	{
+		CRect rct;
+		GetDisplayRect(&rct);
+		pDC->IntersectClipRect(&rct);
+	}
+//#endif
 
     int seclen = pDoc->GetSectorSize();
     if (pDoc->pfile1_ != NULL && display_.borders && seclen > 0)
@@ -2074,24 +2000,27 @@ void CHexEditView::OnDraw(CDC* pDC)
                 if (!display_.vert_display && display_.hex_area)
                 {
                     // Hex area
-                    pt.y = int(((sector + offset_)/rowsize_) * line_height - doc_rect.top - 1);
+                    pt.y = int(((sector + offset_)/rowsize_) * line_height -
+                               doc_rect.top + bdr_top_ - 1);
                     if (neg_y) pt.y = -pt.y;
 
-                    //pt.x = hex_pos(rowsize_ - 1, char_width) + 2*char_width - doc_rect.left;
-                    pt.x = char_pos(0, char_width) - char_width/2 - doc_rect.left;
+                    //pt.x = hex_pos(rowsize_ - 1, char_width) + 2*char_width - doc_rect.left + bdr_left_;
+                    pt.x = char_pos(0, char_width) - char_width/2 - doc_rect.left + bdr_left_;
                     if (neg_x) pt.x = - pt.x;
                     pDC->MoveTo(pt);
-                    pt.x = hex_pos(int((sector + offset_)%rowsize_), char_width) - char_width/2 - doc_rect.left;
+                    pt.x = hex_pos(int((sector + offset_)%rowsize_), char_width) - 
+                           char_width/2 - doc_rect.left + bdr_left_;
                     if (neg_x) pt.x = - pt.x;
                     pDC->LineTo(pt);
 
                     if ((sector + offset_)%rowsize_ != 0)
                     {
                         // Draw on line below and vertical bit too
-                        pt.y = int(((sector + offset_)/rowsize_ + 1) * line_height - doc_rect.top - 1);
+                        pt.y = int(((sector + offset_)/rowsize_ + 1) * line_height - 
+                                   doc_rect.top + bdr_top_ - 1);
                         if (neg_y) pt.y = -pt.y;
                         pDC->LineTo(pt);
-                        pt.x = hex_pos(0, char_width) - doc_rect.left;
+                        pt.x = hex_pos(0, char_width) - doc_rect.left + bdr_left_;
                         if (neg_x) pt.x = - pt.x;
                         pDC->LineTo(pt);
                     }
@@ -2099,37 +2028,43 @@ void CHexEditView::OnDraw(CDC* pDC)
                 if (display_.vert_display || display_.char_area)
                 {
                     // Do char area (or stacked mode)
-                    pt.y = int(((sector + offset_)/rowsize_) * line_height - doc_rect.top - 1);
+                    pt.y = int(((sector + offset_)/rowsize_) * line_height -
+                               doc_rect.top + bdr_top_ - 1);
                     if (neg_y) pt.y = -pt.y;
 
-                    //pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + char_width_w - doc_rect.left;
-                    pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + (3*char_width_w)/2 - doc_rect.left;
+                    //pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + char_width_w - doc_rect.left + bdr_left_;
+                    pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + 
+                           (3*char_width_w)/2 - doc_rect.left + bdr_left_;
                     if (neg_x) pt.x = - pt.x;
                     pDC->MoveTo(pt);
-                    pt.x = char_pos(int((sector + offset_)%rowsize_), char_width, char_width_w) - doc_rect.left;
+                    pt.x = char_pos(int((sector + offset_)%rowsize_), char_width, char_width_w) -
+                           doc_rect.left + bdr_left_;
                     if (neg_x) pt.x = - pt.x;
                     pDC->LineTo(pt);
 
                     if ((sector + offset_)%rowsize_ != 0)
                     {
                         // Draw on line below and vertical bit too
-                        pt.y = int(((sector + offset_)/rowsize_ + 1) * line_height - doc_rect.top - 1);
+                        pt.y = int(((sector + offset_)/rowsize_ + 1) * line_height -
+                                   doc_rect.top + bdr_top_ - 1);
                         if (neg_y) pt.y = -pt.y;
                         pDC->LineTo(pt);
-                        pt.x = char_pos(0, char_width, char_width_w) - doc_rect.left;
+                        pt.x = char_pos(0, char_width, char_width_w) - doc_rect.left + bdr_left_;
                         if (neg_x) pt.x = - pt.x;
                         pDC->LineTo(pt);
                     }
                     // This fills in a little bit between hex/char areas
-                    pt.x = char_pos(0, char_width, char_width_w) - char_width_w/2 - doc_rect.left;
+                    pt.x = char_pos(0, char_width, char_width_w) -
+                           char_width_w/2 - doc_rect.left + bdr_left_;
                     if (neg_x) pt.x = - pt.x;
                     pDC->LineTo(pt);
                 }
                 // Draw a little bit more in the gap between address area and left side
-                pt.x = addr_width_*char_width - char_width/2 - doc_rect.left;
+                pt.x = addr_width_*char_width - char_width/2 - doc_rect.left + bdr_left_;
                 if (neg_x) pt.x = - pt.x;
                 pDC->MoveTo(pt);
-                pt.x = addr_width_*char_width + char_width/8 - doc_rect.left;  // Extra char_width/8 due to one pixel out on screen (and many on printer)
+                pt.x = addr_width_*char_width + char_width/8 -  // Extra char_width/8 due to one pixel out on screen (and many on printer)
+                       doc_rect.left + bdr_left_;
                 if (neg_x) pt.x = - pt.x;
                 pDC->LineTo(pt);
             }
@@ -2160,7 +2095,8 @@ void CHexEditView::OnDraw(CDC* pDC)
 
             CRect draw_rect;
 
-            draw_rect.top = int(((pp->first + offset_)/rowsize_) * line_height - doc_rect.top);
+            draw_rect.top = int(((pp->first + offset_)/rowsize_) * line_height - 
+                                doc_rect.top + bdr_top_);
             draw_rect.bottom = draw_rect.top + line_height;
             if (neg_y)
             {
@@ -2171,7 +2107,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (!display_.vert_display && display_.hex_area)
             {
                 draw_rect.left = hex_pos(int((pp->first + offset_)%rowsize_), char_width) - 
-                                    char_width - doc_rect.left;
+                                    char_width - doc_rect.left + bdr_left_;
                 draw_rect.right = draw_rect.left + char_width;
                 if (neg_x)
                 {
@@ -2185,7 +2121,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (display_.vert_display || display_.char_area)
             {
                 draw_rect.left = char_pos(int((pp->first + offset_)%rowsize_), char_width, char_width_w) - 
-                                    doc_rect.left - 2;
+                                    doc_rect.left + bdr_left_ - 2;
                 draw_rect.right = draw_rect.left + char_width_w/5+1;
                 if (neg_x)
                 {
@@ -2278,7 +2214,105 @@ void CHexEditView::OnDraw(CDC* pDC)
             }
         }
     }
-#endif
+
+    if (!display_.hide_bookmarks)
+    {
+        // Draw bookmarks
+        for (std::vector<FILE_ADDRESS>::const_iterator pbm = pDoc->bm_posn_.begin();
+             pbm != pDoc->bm_posn_.end(); ++pbm)
+        {
+            if (*pbm >= first_addr && *pbm <= last_addr)
+            {
+                CRect mark_rect;
+
+                mark_rect.top = int(((*pbm + offset_)/rowsize_) * line_height - 
+                                    doc_rect.top + bdr_top_ + 1);
+//                mark_rect.bottom = mark_rect.top + line_height - 3;
+                mark_rect.bottom = mark_rect.top + line_height - 1;
+                if (neg_y)
+                {
+                    mark_rect.top = -mark_rect.top;
+                    mark_rect.bottom = -mark_rect.bottom;
+                }
+
+                if (!display_.vert_display && display_.hex_area)
+                {
+                    mark_rect.left = hex_pos(int((*pbm + offset_)%rowsize_), char_width) - 
+                                    doc_rect.left + bdr_left_;
+//                        mark_rect.right = mark_rect.left + 2*char_width;
+                    mark_rect.right = mark_rect.left + 2*char_width + 2;
+                    if (neg_x)
+                    {
+                        mark_rect.left = -mark_rect.left;
+                        mark_rect.right = -mark_rect.right;
+                    }
+
+                    pDC->FillSolidRect(&mark_rect, bm_col_);
+                }
+
+                if (display_.vert_display || display_.char_area)
+                {
+                    mark_rect.left = char_pos(int((*pbm + offset_)%rowsize_), char_width, char_width_w) - 
+                                    doc_rect.left  + bdr_left_ + 1;
+//                        mark_rect.right = mark_rect.left + char_width_w - 2;
+                    mark_rect.right = mark_rect.left + char_width_w;
+                    if (neg_x)
+                    {
+                        mark_rect.left = -mark_rect.left;
+                        mark_rect.right = -mark_rect.right;
+                    }
+                    pDC->FillSolidRect(&mark_rect, bm_col_);
+                }
+            }
+        }
+    }
+
+    // Draw mark if within display area
+    // xxx if (mark >= first_addr && mark < last_virst && mark <= last_addr) ???
+    if (!pDC->IsPrinting() && mark_ >= first_virt && mark_ < last_virt || 
+         pDC->IsPrinting() && mark_ >= first_addr && mark_ < last_addr )
+    {
+        CRect mark_rect;                // Where mark is drawn in logical coords
+
+        mark_rect.top = int(((mark_ + offset_)/rowsize_) * line_height - 
+                            doc_rect.top + bdr_top_ + 1);
+//        mark_rect.bottom = mark_rect.top + line_height - 3;
+        mark_rect.bottom = mark_rect.top + line_height - 1;
+        if (neg_y)
+        {
+            mark_rect.top = -mark_rect.top;
+            mark_rect.bottom = -mark_rect.bottom;
+        }
+
+        if (!display_.vert_display && display_.hex_area)
+        {
+            mark_rect.left = hex_pos(int((mark_ + offset_)%rowsize_), char_width) - 
+                             doc_rect.left + bdr_left_;
+//            mark_rect.right = mark_rect.left + 2*char_width;
+            mark_rect.right = mark_rect.left + 2*char_width + 2;
+            if (neg_x)
+            {
+                mark_rect.left = -mark_rect.left;
+                mark_rect.right = -mark_rect.right;
+            }
+
+            pDC->FillSolidRect(&mark_rect, mark_col_);
+        }
+
+        if (display_.vert_display || display_.char_area)
+        {
+            mark_rect.left = char_pos(int((mark_ + offset_)%rowsize_), char_width, char_width_w) - 
+                             doc_rect.left + bdr_left_ + 1;
+//            mark_rect.right = mark_rect.left + char_width_w - 2;
+            mark_rect.right = mark_rect.left + char_width_w;
+            if (neg_x)
+            {
+                mark_rect.left = -mark_rect.left;
+                mark_rect.right = -mark_rect.right;
+            }
+            pDC->FillSolidRect(&mark_rect, mark_col_);
+        }
+    }
 
     if (!display_.hide_highlight)
     {
@@ -2847,7 +2881,7 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
     if (start_line == end_line)
     {
         // Draw the block (all on one line)
-        rct.bottom = int((start_line+1) * line_height - doc_rect.top);
+        rct.bottom = int((start_line+1) * line_height - doc_rect.top + bdr_top_);
         rct.top = rct.bottom - (draw_height > 0 ? draw_height : line_height);
         if (neg_y)
         {
@@ -2857,8 +2891,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 
         if (!display_.vert_display && display_.hex_area)
         {
-            rct.left = hex_pos(start_in_row, char_width) - doc_rect.left;
-            rct.right = hex_pos(end_in_row - 1, char_width) + 2*char_width - doc_rect.left;
+            rct.left = hex_pos(start_in_row, char_width) - 
+                       doc_rect.left + bdr_left_;
+            rct.right = hex_pos(end_in_row - 1, char_width) +
+                        2*char_width - doc_rect.left + bdr_left_;
             if (neg_x)
             {
                 rct.left = -rct.left;
@@ -2877,8 +2913,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
         {
             // rct.top = start_line * line_height;
             // rct.bottom = rct.top + line_height;
-            rct.left = char_pos(start_in_row, char_width, char_width_w) - doc_rect.left;
-            rct.right = char_pos(end_in_row - 1, char_width, char_width_w) + char_width_w - doc_rect.left;
+            rct.left = char_pos(start_in_row, char_width, char_width_w) -
+                       doc_rect.left + bdr_left_;
+            rct.right = char_pos(end_in_row - 1, char_width, char_width_w) +
+                        char_width_w - doc_rect.left + bdr_left_;
             if (neg_x)
             {
                 rct.left = -rct.left;
@@ -2900,7 +2938,7 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
     }
 
     // Block extends over (at least) 2 lines so draw the partial lines at each end
-    rct.bottom = int((start_line+1) * line_height - doc_rect.top);
+    rct.bottom = int((start_line+1) * line_height - doc_rect.top + bdr_top_);
     rct.top = rct.bottom - (draw_height > 0 ? draw_height : line_height);
     if (neg_y)
     {
@@ -2909,8 +2947,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
     }
     if (!display_.vert_display && display_.hex_area)
     {
-        rct.left = hex_pos(start_in_row, char_width) - doc_rect.left;
-        rct.right = hex_pos(rowsize_ - 1, char_width) + 2*char_width - doc_rect.left;
+        rct.left = hex_pos(start_in_row, char_width) -
+                   doc_rect.left + bdr_left_;
+        rct.right = hex_pos(rowsize_ - 1, char_width) +
+                    2*char_width - doc_rect.left + bdr_left_;
         if (neg_x)
         {
             rct.left = -rct.left;
@@ -2926,8 +2966,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 
     if (display_.vert_display || display_.char_area)
     {
-        rct.left = char_pos(start_in_row, char_width, char_width_w) - doc_rect.left;
-        rct.right = char_pos(rowsize_ - 1, char_width, char_width_w) + char_width_w - doc_rect.left;
+        rct.left = char_pos(start_in_row, char_width, char_width_w) -
+                   doc_rect.left + bdr_left_;
+        rct.right = char_pos(rowsize_ - 1, char_width, char_width_w) +
+                    char_width_w - doc_rect.left + bdr_left_;
         if (neg_x)
         {
             rct.left = -rct.left;
@@ -2941,7 +2983,7 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
     }
 
     // Last (partial) line
-    rct.bottom = int((end_line+1) * line_height - doc_rect.top);
+    rct.bottom = int((end_line+1) * line_height - doc_rect.top + bdr_top_);
     rct.top = rct.bottom - (draw_height > 0 ? draw_height : line_height);
     if (neg_y)
     {
@@ -2950,8 +2992,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
     }
     if (!display_.vert_display && display_.hex_area)
     {
-        rct.left = hex_pos(0, char_width) - doc_rect.left;
-        rct.right = hex_pos(end_in_row - 1, char_width) + 2*char_width - doc_rect.left;
+        rct.left = hex_pos(0, char_width) -
+                   doc_rect.left + bdr_left_;
+        rct.right = hex_pos(end_in_row - 1, char_width) +
+                    2*char_width - doc_rect.left + bdr_left_;
         if (neg_x)
         {
             rct.left = -rct.left;
@@ -2967,8 +3011,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 
     if (display_.vert_display || display_.char_area)
     {
-        rct.left = char_pos(0, char_width, char_width_w) - doc_rect.left;
-        rct.right = char_pos(end_in_row - 1, char_width, char_width_w) + char_width_w - doc_rect.left;
+        rct.left = char_pos(0, char_width, char_width_w) -
+                   doc_rect.left + bdr_left_;
+        rct.right = char_pos(end_in_row - 1, char_width, char_width_w) +
+                    char_width_w - doc_rect.left + bdr_left_;
         if (neg_x)
         {
             rct.left = -rct.left;
@@ -2988,7 +3034,7 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
         // we have to do each line of text individually
         for (++start_line; start_line < end_line; ++start_line)
         {
-            rct.bottom = int((start_line+1) * line_height - doc_rect.top);
+            rct.bottom = int((start_line+1) * line_height - doc_rect.top + bdr_top_);
             rct.top = rct.bottom - draw_height;
             if (neg_y)
             {
@@ -2997,8 +3043,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
             }
             if (!display_.vert_display && display_.hex_area)
             {
-                rct.left = hex_pos(0, char_width) - doc_rect.left;
-                rct.right = hex_pos(rowsize_ - 1, char_width) + 2*char_width - doc_rect.left;
+                rct.left = hex_pos(0, char_width) -
+                           doc_rect.left + bdr_left_;
+                rct.right = hex_pos(rowsize_ - 1, char_width) +
+                            2*char_width - doc_rect.left + bdr_left_;
                 if (neg_x)
                 {
                     rct.left = -rct.left;
@@ -3014,8 +3062,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 
             if (display_.vert_display || display_.char_area)
             {
-                rct.left = char_pos(0, char_width, char_width_w) - doc_rect.left;
-                rct.right = char_pos(rowsize_ - 1, char_width, char_width_w) + char_width_w - doc_rect.left;
+                rct.left = char_pos(0, char_width, char_width_w) -
+                           doc_rect.left + bdr_left_;
+                rct.right = char_pos(rowsize_ - 1, char_width, char_width_w) +
+                            char_width_w - doc_rect.left + bdr_left_;
                 if (neg_x)
                 {
                     rct.left = -rct.left;
@@ -3032,8 +3082,8 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
     else if (start_line + 1 < end_line)
     {
         // Draw the complete lines as one block
-        rct.top = int((start_line + 1) * line_height - doc_rect.top);
-        rct.bottom = int(end_line * line_height - doc_rect.top);
+        rct.top = int((start_line + 1) * line_height - doc_rect.top + bdr_top_);
+        rct.bottom = int(end_line * line_height - doc_rect.top + bdr_top_);
         if (neg_y)
         {
             rct.top = -rct.top;
@@ -3042,8 +3092,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 
         if (!display_.vert_display && display_.hex_area)
         {
-            rct.left = hex_pos(0, char_width) - doc_rect.left;
-            rct.right = hex_pos(rowsize_ - 1, char_width) + 2*char_width - doc_rect.left;
+            rct.left = hex_pos(0, char_width) -
+                       doc_rect.left + bdr_left_;
+            rct.right = hex_pos(rowsize_ - 1, char_width) +
+                        2*char_width - doc_rect.left + bdr_left_;
             if (neg_x)
             {
                 rct.left = -rct.left;
@@ -3059,8 +3111,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 
         if (display_.vert_display || display_.char_area)
         {
-            rct.left = char_pos(0, char_width, char_width_w) - doc_rect.left;
-            rct.right = char_pos(rowsize_ - 1, char_width, char_width_w) + char_width_w - doc_rect.left;
+            rct.left = char_pos(0, char_width, char_width_w) -
+                       doc_rect.left + bdr_left_;
+            rct.right = char_pos(rowsize_ - 1, char_width, char_width_w) +
+                        char_width_w - doc_rect.left + bdr_left_;
             if (neg_x)
             {
                 rct.left = -rct.left;
@@ -3247,7 +3301,7 @@ void CHexEditView::recalc_display()
     {
         CRect cli;              /* Client rectangle */
         CRectAp rect;           // Client rectangle in norm. coords
-        GetClientRect(&cli);
+        GetDisplayRect(&cli);
         rect = ConvertFromDP(cli) - GetScroll();
         ASSERT(rect.left == 0 && rect.top == 0);
 
@@ -3346,7 +3400,7 @@ void CHexEditView::recalc_display()
     }
 } /* recalc_display() */
 
-// Return display position given a hex area column number
+// Return doc position given a hex area column number
 // int CHexEditView::hex_pos(int column, int width) const;
 
 // Return closest hex area column given x display position
@@ -3381,8 +3435,8 @@ int CHexEditView::pos_char(int pos, BOOL inside) const
         col -= col/(group_by_+1);
     }
     else if (display_.hex_area)
-        col = (pos - addr_width_*text_width_ - rowsize_*3*text_width_ -
-                ((rowsize_-1)/group_by_)*text_width_) / text_width_w_;
+        col = (pos - addr_width_*text_width_ -
+               rowsize_*3*text_width_ - ((rowsize_-1)/group_by_)*text_width_) / text_width_w_;
     else
         col = (pos - addr_width_*text_width_) / text_width_w_;
 
@@ -3527,7 +3581,7 @@ void CHexEditView::invalidate_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS e
     CRect cli;                          // Client rectangle in device coords
     CRectAp inv;                        // The rectangle to actually invalidate (doc coords)
     CRectAp disp_rect;                  // Rectangle of display in our coords
-    GetClientRect(&cli);
+    GetDisplayRect(&cli);
     disp_rect = ConvertFromDP(cli);
 
     // Work out the addresses of the first and (one past) the last byte in display
@@ -3634,7 +3688,7 @@ void CHexEditView::ValidateScroll(CPointAp &pos, BOOL strict /* =FALSE */)
         CHexEditDoc *pdoc = GetDocument();
         CRect cli;
         CRectAp rct;
-        GetClientRect(&cli);
+        GetDisplayRect(&cli);
         rct = ConvertFromDP(cli);
         FILE_ADDRESS start, end;            // range of file addresses within display
 
@@ -3730,7 +3784,7 @@ void CHexEditView::move_dlgs()
 
     // Get display rectangle (also in doc coords)
     CRect cli;
-    GetClientRect(&cli);
+    GetDisplayRect(&cli);
     CRectAp doc_rect = ConvertFromDP(cli);
 
     // See if any of the selection is visible (intersect selection & display)
@@ -4190,7 +4244,7 @@ void CHexEditView::SaveMove()
 }
 #endif
 
-// Convert an address to a display position
+// Convert an address to a document position
 CPointAp CHexEditView::addr2pos(FILE_ADDRESS address, int row /*=0*/) const
 {
     ASSERT(row == 0 || (display_.vert_display && row < 3));
@@ -4387,7 +4441,7 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
     pDC->FillRect(rct, &backBrush);
 
     // Get rect for address area
-    rct.right = hex_pos(0) - GetScroll().x - text_width_/2;
+    rct.right = hex_pos(0) - GetScroll().x - text_width_/2 + bdr_left_;
 
     // If address area is visible and address background is different to normal background ...
     if (rct.right > rct.left && addr_bg_col_ != bg_col_)
@@ -4398,6 +4452,34 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
         addrBrush.UnrealizeObject();
         pDC->FillRect(rct, &addrBrush);
     }
+    if (bdr_top_ > 0 && addr_bg_col_ != bg_col_)
+    {
+		// Ruler background
+	    GetClientRect(rct);
+		rct.bottom = bdr_top_ - 1;
+        CBrush addrBrush;
+        addrBrush.CreateSolidBrush(addr_bg_col_);
+        addrBrush.UnrealizeObject();
+        pDC->FillRect(rct, &addrBrush);
+    }
+
+#ifdef _DEBUG
+    // Draw the location of the borders to make sure nothing's drawn outside
+    GetClientRect(rct);
+    CPen *pPen, *pOldPen;
+    pPen = new CPen(PS_SOLID, 1, RGB(255,0,0));
+    pOldPen = pDC->SelectObject(pPen);
+
+    CPoint pt;
+    pt.x = rct.right - bdr_right_;pt.y = bdr_top_ - 1;
+    pDC->MoveTo(pt);
+    pt.y = rct.bottom - bdr_bottom_;
+    pDC->LineTo(pt);
+    pt.x = bdr_left_ - 1;
+    pDC->LineTo(pt);
+    pt.y = bdr_top_ - 1;
+    pDC->LineTo(pt);
+#endif
 
     return TRUE;
 }
@@ -4470,15 +4552,8 @@ void CHexEditView::OnSize(UINT nType, int cx, int cy)
     // Make sure we have all the search occurrences for the new window size
     ValidateScroll(GetScroll());
 
-    win_size_ = ConvertFromDP(CSize(cx, cy));
-    // Keep track of current window size
-//    win_size_.cx = cx;
-//    win_size_.cy = cy;
-//    {
-//        CClientDC dc(this);
-//        OnPrepareDC(&dc);
-//        dc.DPtoLP(&win_size_);
-//    }
+    // Keep track of current display area size
+    win_size_ = ConvertFromDP(CSize(cx - bdr_left_ - bdr_right_, cy - bdr_top_ - bdr_bottom_));
 }
 
 void CHexEditView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
@@ -4717,7 +4792,7 @@ void CHexEditView::do_char(UINT nChar)
         CRect cli;
 
         // Work out window height in logical units
-        GetClientRect(&cli);
+        GetDisplayRect(&cli);
         CRectAp doc_rect = ConvertFromDP(cli);
 
         // Move display so that caret is centred vertically
@@ -5982,7 +6057,7 @@ void CHexEditView::update_sel_tip(int delay /*=0*/)
         ScreenToClient(&rct);
         CRectAp tip_rct = ConvertFromDP(rct);
 
-        GetClientRect(rct);
+        GetDisplayRect(&rct);
         CRectAp cli_rct = ConvertFromDP(rct);
 
         bnd_rct.top -= tip_rct.Height()/2;
@@ -6430,7 +6505,7 @@ void CHexEditView::OnRedraw()
     CRect cli;
 
     // Work out window height in logical units
-    GetClientRect(&cli);
+    GetDisplayRect(&cli);
     CRectAp doc_rect = ConvertFromDP(cli);
 
     // Move display so that caret is centred vertically

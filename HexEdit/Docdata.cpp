@@ -1294,7 +1294,6 @@ void CHexEditDoc::loc_split(FILE_ADDRESS address, FILE_ADDRESS pos, ploc_t pl)
 
 void CHexEditDoc::rebuild_change_tracking()
 {
-#ifdef CHANGE_TRACKING
     // Clear the info before rebuild
     replace_pair_.clear();
     insert_pair_.clear();
@@ -1405,14 +1404,11 @@ void CHexEditDoc::rebuild_change_tracking()
     pos += nf_bytes;
 
     ASSERT(pos == length_);
-#endif
-
     need_change_track_ = false;            // Signal that they have been rebuilt
 }
 
 void CHexEditDoc::send_change_hint(FILE_ADDRESS address)
 {
-#ifdef CHANGE_TRACKING
     FILE_ADDRESS pos = 0;         // Tracks position in current (displayed file)
     FILE_ADDRESS prev_change = 0; // Address of previous change in the file
     for (ploc_t pl = loc_.begin(); pl != loc_.end(); ++pl)
@@ -1428,5 +1424,4 @@ void CHexEditDoc::send_change_hint(FILE_ADDRESS address)
     // Everything from start of previous change to current change needs invalidating
     CTrackHint th(prev_change, address);
     UpdateAllViews(NULL, 0, &th);
-#endif
 }

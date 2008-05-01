@@ -37,6 +37,7 @@ CScrView::CScrView()
 {
     init_coord_ = false;
     total_ = page_ = line_ = null_size;
+    bdr_top_ = bdr_bottom_ = bdr_left_ = bdr_right_ = 0;
     maxbar_ = null_size;
     scrollpos_ = caretpos_ = selpos_ = basepos_ = CPointAp(0,0);
     page_specified_ = line_specified_ = FALSE;
@@ -407,7 +408,7 @@ void CScrView::DisplayCaret(int char_width /*=-1*/)
 // Is the caret currently within the display window?
 BOOL CScrView::CaretDisplayed(CSizeAp win_size)
 {
-    if (!caret_mode_ || ! caret_changes_) // xxx not sure to use caret_changes_ here
+    if (!caret_mode_ || ! caret_changes_)
         return FALSE;
 
     // Work out bounding rectangles of display and caret
@@ -420,7 +421,7 @@ BOOL CScrView::CaretDisplayed(CSizeAp win_size)
     else
     {
         CRect rct;
-        GetClientRect(&rct);
+        GetDisplayRect(&rct);
         disp_rect = ConvertFromDP(rct);
     }
 
@@ -657,8 +658,8 @@ void CScrView::update_bars(CPointAp newpos)
 
     // Get display area and convert to logical units (but with +ve values)
     CRect cli;
-    GetClientRect(&cli);
-    CRectAp doc_rect = ConvertFromDP(cli) - GetScroll();
+    GetDisplayRect(&cli);
+    //CRectAp doc_rect = ConvertFromDP(cli) - GetScroll();
 
     // If newpos not specified use old pos
     if (newpos == null_point)
@@ -770,8 +771,8 @@ void CScrView::update_bars(CPointAp newpos)
 
     // Get client window again as changing the scroll bars may have changed it
     // (and nested size event was blocked by in_update_ flag)
-    GetClientRect(&cli);
-    doc_rect = ConvertFromDP(cli);
+    GetDisplayRect(&cli);
+    CRectAp doc_rect = ConvertFromDP(cli);
 
     win_height_ = doc_rect.bottom - doc_rect.top;
     win_width_ = doc_rect.right - doc_rect.left;
@@ -821,6 +822,8 @@ CRect CScrView::ConvertToDP(CRectAp rr)
     CClientDC dc(this);
     OnPrepareDC(&dc);
     dc.LPtoDP(&retval);
+    retval.left += bdr_left_; retval.right  += bdr_left_;
+    retval.top  += bdr_top_;  retval.bottom += bdr_top_;
     return retval;
 }
 
@@ -841,6 +844,7 @@ CPoint CScrView::ConvertToDP(CPointAp pp)
     CClientDC dc(this);
     OnPrepareDC(&dc);
     dc.LPtoDP(&retval);
+    retval.x += bdr_left_; retval.y += bdr_top_;
     return retval;
 }
 
@@ -862,6 +866,8 @@ CRectAp CScrView::ConvertFromDP(CRect rr)
     ASSERT(init_coord_);
     CClientDC dc(this);
     OnPrepareDC(&dc);
+    rr.left -= bdr_left_; rr.right -= bdr_left_;
+    rr.top -= bdr_top_; rr.bottom -= bdr_top_;
     dc.DPtoLP(&rr);
     if (negx_)
     {
@@ -883,6 +889,7 @@ CPointAp CScrView::ConvertFromDP(CPoint pp)
     ASSERT(init_coord_);
     CClientDC dc(this);
     OnPrepareDC(&dc);
+    pp.x -= bdr_left_; pp.y -= bdr_top_;
     dc.DPtoLP(&pp);
     if (negx_)
         pp.x = -pp.x;
@@ -988,7 +995,7 @@ void CScrView::caret_show()
             caret_seen_ = TRUE;                 // Caret has been displayed
 
             // Set the caret location in device coords
-            DoSetCaretPos(CPoint(caret.x - scroll.x, int(caret.y - scroll.y)));
+            DoSetCaretPos(CPoint(caret.x - scroll.x + bdr_left_, int(caret.y - scroll.y) + bdr_top_));
 
             // Display it (may be "on" but not visible within display area)
             ShowCaret();
@@ -1340,8 +1347,7 @@ void CScrView::OnSelUpdate(CPoint point)
         last = caretpos_;
 
     CRect cli;                          // Display area (client coords)
-    GetClientRect(&cli);
-
+    GetDisplayRect(&cli);
     CRectAp disp = ConvertFromDP(cli);  // Display area ("cli") in our coords
     CPointAp pp = ConvertFromDP(point); // Mouse point ("point") in our coords
 
@@ -1475,7 +1481,7 @@ void CScrView::InvalidateRange(CPointAp start, CPointAp end)
     CRect norm_rect = ConvertToDP(rr);
 
     CRect cli;
-    GetClientRect(&cli);
+    GetDisplayRect(&cli);
 
     // Invalidate the previous selection so that it is drawn unselected
     CRect rct;

@@ -413,6 +413,21 @@ COLORREF tone_down(COLORREF col, COLORREF bg_col, double amt /* = 0.75*/)
     return get_rgb(hue, luminance, saturation);
 }
 
+// This gets a colour of the same hue but with adjusted luminance and/or
+// saturation.  This can be used for nice colour effects.
+// Supply values for lum and sat in the range 0 - 100 or
+// use -1 for lum or sat to not change them.
+COLORREF same_hue(COLORREF col, int sat, int lum /* = -1 */)
+{
+    int hue, luminance, saturation;
+    get_hls(col, hue, luminance, saturation);
+
+	if (lum > -1) luminance = lum;
+	if (sat > -1) saturation = sat;
+    
+    return get_rgb(hue, luminance, saturation);
+}
+
 /* OLD version
 COLORREF tone_down(COLORREF col, COLORREF bg_col)
 {

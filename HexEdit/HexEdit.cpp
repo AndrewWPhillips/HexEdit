@@ -2558,13 +2558,11 @@ void CHexEditApp::LoadSchemes()
 		// (This should make the mark the same colour as in previous version for upgraders.)
 		if (scheme.mark_col_ == -2) scheme.mark_col_ = is_new ? -1 : (scheme.bm_col_ == -1 ? RGB(0, 224, 224) : scheme.bm_col_);
         scheme.search_col_ = GetProfileInt(strKey, "SearchColour", -1);
-#ifdef CHANGE_TRACKING
         scheme.trk_col_ = GetProfileInt(strKey, "ChangeTrackingColour", -1);
         scheme.addr_bg_col_ = GetProfileInt(strKey, "AddressBackgroundColour", -2);
 		// Make address background same as normal background for upgraders.
 		if (scheme.addr_bg_col_ == -2) scheme.addr_bg_col_ = is_new ? -1 : scheme.bg_col_;
         scheme.sector_col_ = GetProfileInt(strKey, "SectorColour", -1);
-#endif
 
         // For all ranges
         for (int jj = 0; ; ++jj)
@@ -2651,11 +2649,9 @@ void CHexEditApp::SaveSchemes()
         WriteProfileInt(strKey, "BookmarkColour", ps->bm_col_);
         WriteProfileInt(strKey, "MarkColour", ps->mark_col_);
         WriteProfileInt(strKey, "SearchColour", ps->search_col_);
-#ifdef CHANGE_TRACKING
         WriteProfileInt(strKey, "ChangeTrackingColour", ps->trk_col_);
         WriteProfileInt(strKey, "AddressBackgroundColour", ps->addr_bg_col_);
         WriteProfileInt(strKey, "SectorColour", ps->sector_col_);
-#endif
 
         // Save each range
         for (jj = 0; jj < (int)ps->range_name_.size(); ++jj)

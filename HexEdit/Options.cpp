@@ -1374,11 +1374,9 @@ void CColourSchemes::set_scheme()
     plist->AddString("Highlighting");
     plist->AddString("Bookmarks");
     plist->AddString("Search occurrences");
-#ifdef CHANGE_TRACKING
     plist->AddString("Change Tracking");
-    plist->AddString("Address background");
+    plist->AddString("Address/ruler backgrnd");
     plist->AddString("Sector boundary");
-#endif
     plist->AddString("Hex addresses");
     plist->AddString("Decimal addresses");
 
@@ -1818,7 +1816,6 @@ void CColourSchemes::OnSelchangeRange()
             m_ColourPicker.EnableAutomaticButton(_T("Automatic"), RGB(160, 255, 224)); // greenish
             m_ColourPicker.SetColor(scheme_[scheme_no_].search_col_);
             break;
-#ifdef CHANGE_TRACKING
         case INDEX_TRK:
             m_ColourPicker.EnableAutomaticButton(_T("Automatic"), RGB(255, 0, 0));  // red
             m_ColourPicker.SetColor(scheme_[scheme_no_].trk_col_);
@@ -1832,7 +1829,6 @@ void CColourSchemes::OnSelchangeRange()
             m_ColourPicker.EnableAutomaticButton(_T("Automatic"), RGB(255, 160, 128));  // pinkish orange
             m_ColourPicker.SetColor(scheme_[scheme_no_].sector_col_);
             break;
-#endif
         case INDEX_HEX_ADDR:
             m_ColourPicker.EnableAutomaticButton(_T("Automatic"), ::GetSysColor(COLOR_WINDOWTEXT));
             m_ColourPicker.SetColor(scheme_[scheme_no_].hex_addr_col_);
@@ -1913,7 +1909,6 @@ void CColourSchemes::OnColourPicker()
             case INDEX_SEARCH:
                 scheme_[scheme_no_].search_col_ = m_ColourPicker.GetColor();
                 break;
-#ifdef CHANGE_TRACKING
             case INDEX_TRK:
                 scheme_[scheme_no_].trk_col_ = m_ColourPicker.GetColor();
                 break;
@@ -1923,7 +1918,6 @@ void CColourSchemes::OnColourPicker()
             case INDEX_SECTOR:
                 scheme_[scheme_no_].sector_col_ = m_ColourPicker.GetColor();
                 break;
-#endif
             case INDEX_HEX_ADDR:
                 scheme_[scheme_no_].hex_addr_col_ = m_ColourPicker.GetColor();
                 break;
