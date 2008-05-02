@@ -672,10 +672,10 @@ void CScrView::update_bars(CPointAp newpos)
         if (!page_specified_)
         {
             // Recalc page size
-            int lines = cli.bottom/tm.tmHeight + tm.tmExternalLeading - 1;
+			int lines = cli.Height()/tm.tmHeight + tm.tmExternalLeading - 1;
             if (lines < 1)
                 lines = 1;
-            page_.cx = cli.right - tm.tmAveCharWidth;
+            page_.cx = cli.Width() - tm.tmAveCharWidth;
             page_.cy = lines * (tm.tmHeight + tm.tmExternalLeading);
         }
 
@@ -707,7 +707,7 @@ void CScrView::update_bars(CPointAp newpos)
 //      // does not move caret properly!?!? - so we do it ourselves!
 
         __int64 tmp = t_scroll.y < t_newpos.y ? t_newpos.y - t_scroll.y : t_scroll.y - t_newpos.y;
-        if (abs(int(t_scroll.x - t_newpos.x)) > cli.right || tmp > __int64(cli.bottom))
+		if (abs(int(t_scroll.x - t_newpos.x)) > cli.Width() || tmp > __int64(cli.Height()))
             DoInvalidate();     // ScrollWindow() can't handle big numbers
         else
         {
@@ -731,33 +731,33 @@ void CScrView::update_bars(CPointAp newpos)
 
     if (total_.cx <= 0)
         DoHScroll(0, 0, 0);                     // disable scroll bar
-    else if (newpos.x > total_.cx - cli.right)
+    else if (newpos.x > total_.cx - cli.Width())
     {
         // Handle scroll position past right edge
-        DoHScroll(int(((__int64)(newpos.x + cli.right) * maxbar_.cx) / total_.cx),
-                  (cli.right * maxbar_.cx) / total_.cx + 1,
+        DoHScroll(int(((__int64)(newpos.x + cli.Width()) * maxbar_.cx) / total_.cx),
+                  (cli.Width() * maxbar_.cx) / total_.cx + 1,
                   int(((__int64)newpos.x * maxbar_.cx) / total_.cx) );
     }
     else
     {
         DoHScroll(maxbar_.cx,
-                  (cli.right * maxbar_.cx) / total_.cx + 1,
+                  (cli.Width() * maxbar_.cx) / total_.cx + 1,
                   int(((__int64)newpos.x * maxbar_.cx) / total_.cx) );
     }
 
     if (total_.cy <= 0)
         DoVScroll(0, 0, 0);                     // disable scroll bar
-    else if (newpos.y > total_.cy - cli.bottom)
+    else if (newpos.y > total_.cy - cli.Height())
     {
         // Handle scroll position if (somehow) moved past end
-        DoVScroll(int(((__int64)(newpos.y + cli.bottom) * maxbar_.cy) / total_.cy),
-                  int((cli.bottom * maxbar_.cy) / total_.cy + 1),
+        DoVScroll(int(((__int64)(newpos.y + cli.Height()) * maxbar_.cy) / total_.cy),
+                  int((cli.Height() * maxbar_.cy) / total_.cy + 1),
                   int(((__int64)newpos.y * maxbar_.cy) / total_.cy) );
     }
     else
     {
         DoVScroll(int(maxbar_.cy),
-                  int((cli.bottom * maxbar_.cy) / total_.cy + 1),
+                  int((cli.Height() * maxbar_.cy) / total_.cy + 1),
                   int(((__int64)newpos.y * maxbar_.cy) / total_.cy) );
     }
 

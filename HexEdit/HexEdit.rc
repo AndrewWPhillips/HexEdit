@@ -1739,6 +1739,8 @@ BEGIN
                     WS_TABSTOP,119,72,68,10,0,HIDC_BORDERS
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,57,92,
                     199,1
+    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
+                    WS_TABSTOP,193,36,55,10,0,HIDC_RULER
     LTEXT           "Character Area",IDC_STATIC,12,88,48,8
     LTEXT           "&Character Set:",IDC_CHARSET_DESC,19,102,48,8
     COMBOBOX        IDC_CHARSET,69,100,94,60,CBS_DROPDOWNLIST | WS_VSCROLL | 

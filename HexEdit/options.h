@@ -136,6 +136,7 @@ struct OptValues
 	BOOL	addr_dec_;
 	BOOL	maximize_;
     BOOL    borders_;
+	BOOL    ruler_;
     BOOL    scroll_past_ends_;
     // Display state stored in a DWORD (as in view)
     union

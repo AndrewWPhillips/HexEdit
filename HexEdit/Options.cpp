@@ -130,6 +130,7 @@ void COptSheet::init()
 	val_.autofit_ = FALSE;
 	val_.maximize_ = FALSE;
     val_.borders_ = FALSE;
+	val_.ruler_ = FALSE;
 
 	val_.cols_ = 0;
 	val_.offset_ = 0;
@@ -3054,6 +3055,7 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.autofit_ = pParent->val_.display_.autofit;
 
         pParent->val_.borders_ = pParent->val_.display_.borders;
+		pParent->val_.ruler_ = pParent->val_.display_.ruler;
     }
 
 	DDX_Check(pDX, IDC_MAX, pParent->val_.maximize_);
@@ -3066,6 +3068,7 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_AUTOFIT, pParent->val_.autofit_);
 	DDX_Check(pDX, IDC_ADDR_DEC, pParent->val_.addr_dec_);
 	DDX_Check(pDX, IDC_BORDERS, pParent->val_.borders_);
+	DDX_Check(pDX, IDC_RULER, pParent->val_.ruler_);
 
     if (pDX->m_bSaveAndValidate)
     {
@@ -3120,8 +3123,12 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 
         pParent->val_.display_.autofit = pParent->val_.autofit_;
         pParent->val_.display_.dec_addr = pParent->val_.addr_dec_;
+		// This is just temp until we add 2 checkboxes and get rid of dec_addr flag
+		pParent->val_.display_.decimal_addr = pParent->val_.display_.dec_addr;
+		pParent->val_.display_.hex_addr = !pParent->val_.display_.dec_addr;
 
         pParent->val_.display_.borders = pParent->val_.borders_;
+		pParent->val_.display_.ruler = pParent->val_.ruler_;
     }
 }
 

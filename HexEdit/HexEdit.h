@@ -138,17 +138,19 @@ struct display_bits
 #endif
 
     unsigned int autofit: 1;    // Autofit mode is on?
-    unsigned int dec_addr: 1;   // Addresses in hex (or decimal)?
+	// --- 8
+    unsigned int dec_addr: 1;   // Addresses in hex (or decimal)?  To be phased out when sep. hex_addr and decimal_addr implemented
     unsigned int edit_char: 1;  // Caret is in char area (or hex)?
     unsigned int mark_char: 1;  // Mark is in char area (or hex)?
 
     unsigned int overtype: 1;       // Are we in overtype mode?
     unsigned int readonly: 1;
-    unsigned int not_used_now: 1;   // SPARE BIT!
+
+	unsigned int ruler: 1;          // Show ruler?
 
     unsigned int hide_highlight: 1; // Hide display of highlights
     unsigned int hide_bookmarks: 1; // Hide display of bookmarks
-
+    // --- 16
     unsigned int auto_sync: 1;      // Automatically sync DFFD view and main view selections
 
     unsigned int hide_replace: 1;   // Hide replacements (change tracking)
@@ -161,6 +163,12 @@ struct display_bits
 	unsigned int big_endian: 1;     // Operations on the file are big-endian?
 
     unsigned int borders: 1;        // Display sector borders
+    // --- 24
+	// The user can now display 3 things independently in the address area: hex address, dec address, line #
+	// Note that this subsumes the dec_addr flag (toggles hex/dec address) which can later be recycled
+	unsigned int line_nums: 1;      // Show line numbers?
+	unsigned int hex_addr: 1;       // Show hex addresses?
+	unsigned int decimal_addr: 1;   // Show decimal addresses?
 
     unsigned int strict_scroll: 1;  // This is pretty stupid as a per file option - should just be a global option
 

@@ -19,6 +19,14 @@ WEB SITE
 
 INSTALLER
 
+RULER
+ - partial lines at top look bad when there is a ruler
+ - caret can be shown in ruler area
+ - tick marks?
+ - right edge not quite far enough in scroll bar
+   - eg click and drag to the right does not select last column
+ - clip draw of bytes to left of window for speed with long lines
+ - change font size, chnage display mode etc move scroll posn strangely
 
 TEST
   - display/editing of all types in tree view

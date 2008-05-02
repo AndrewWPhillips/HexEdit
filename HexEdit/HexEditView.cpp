@@ -46,6 +46,15 @@
 #include "timer.h"
 #endif
 
+// This #define allows checking that the drawing code does clipping properly for
+// efficiency.  For example for very long lines we don't want to draw a huge no
+// of byte values to the right and/or left of the display area.  It does this by
+// moving the borders in and turning off the clipping rectangle use in OnDraw
+// (see GetDisplayRect) and also drawing red border lines in OnEraseBkgnd.
+// Also note that when in vert_display mode that up to 3 lines can be drawn past
+// the top and bottom of the display area.
+//#define TEST_CLIPPING  1
+
 #define MAX_CLIPBOARD 16000000L  // Putting more than this on the clipboard (Win 95/98) causes crash
 
 #ifdef _DEBUG
@@ -661,10 +670,10 @@ void CHexEditView::OnInitialUpdate()
         recent_file_index = pfl->GetIndex(pDoc->pfile1_->GetFilePath());
 	int swidth;      // = width of split tree view or 0 (no tree view) or 2 (tree in tab view)
 
-    bdr_top_ = 8;    // This will change later dep. on whether ruler is on or not
-#ifdef _DEBUG
-    // This allows testing of borders code even though we don't use it yet
-    bdr_top_ = bdr_bottom_ = bdr_left_ = bdr_right_ = 25;
+#ifdef TEST_CLIPPING
+    bdr_top_ = bdr_bottom_ = 80;
+	bdr_left_ = 120;
+	bdr_right_ = 40;
 #endif
 
     if (recent_file_index != -1)
@@ -895,7 +904,7 @@ void CHexEditView::OnInitialUpdate()
 		break;
 	}
 
-	// if (pfl->GetVersion() < 3)  // xxx this is not really sufficient if the file is not actually opened since the recent file list gets written back with same DISPLAY value (but new version number)
+	// if (pfl->GetVersion() < 3)  // this is not really sufficient if the file is not actually opened since the recent file list gets written back with same DISPLAY value (but new version number)
 	{
 		// In version 2 files there were 3 separate flags (eg when EBCDIC flag on other 2 flags ignored).
 		// Now the 3 bits are used together to indicate char set but we allow for other bit patterns.
@@ -1133,7 +1142,7 @@ BOOL CHexEditView::set_colours()
     bm_col_        = ps->bm_col_ == -1       ? RGB(160, 192, 255) : ps->bm_col_;
     search_col_    = ps->search_col_ == -1   ? RGB(160, 255, 224) : ps->search_col_;
     addr_bg_col_   = ps->addr_bg_col_ == -1  ? ::tone_down(::GetSysColor(COLOR_INACTIVEBORDER), bg_col_, 0.5) : ps->addr_bg_col_;
-	addr_edge_col_ = same_hue(addr_bg_col_, 50, 50);
+	addr_edge_col_ = same_hue(addr_bg_col_, 100, 20);
     // Getting change tracking colour and make a version closer to the background colour in luminance
     // trk_col_ is used to underline replacements, trk_bg_col_ is used as background for insertions
     trk_col_ = ps->trk_col_ == -1 ? RGB(255, 0, 0) : ps->trk_col_;              // red
@@ -1660,12 +1669,13 @@ void CHexEditView::OnDraw(CDC* pDC)
                     pDC->m_hDC != pDC->m_hAttribDC;
      */
 
+    pDC->SetBkMode(TRANSPARENT);
     // Are we in overtype mode and file is empty?
     if (display_.overtype && pDoc->length() == 0)
     {
         // Get the reason that there's no data from the document & display it
         CRect cli;
-        GetClientRect(&cli);  // xxx add bdr_top_ before drawing text on screen
+        GetDisplayRect(&cli);
         pDC->DPtoLP(&cli);
         if (pDC->IsPrinting())
         {
@@ -1763,14 +1773,11 @@ void CHexEditView::OnDraw(CDC* pDC)
     }
     else
     {
-        // Draw decorative borders (not printed) like ruler
-        // xxx
-
         has_focus = (GetFocus() == this);
         HideCaret();
         neg_x = negx(); neg_y = negy();
 
-        // Get display rect in logical units but with origin at top left of window
+        // Get display rect in logical units but with origin at top left of display area in window
         CRect rct;
         GetDisplayRect(&rct);
         doc_rect = ConvertFromDP(rct);
@@ -1789,7 +1796,6 @@ void CHexEditView::OnDraw(CDC* pDC)
         char_width = text_width_;
         char_width_w = text_width_w_;
     }
-    pDC->SetBkMode(TRANSPARENT);
 
     // Get range of addresses that are visible the in window (overridden for printing below)
     first_virt = (doc_rect.top/line_height) * rowsize_ - offset_;
@@ -1917,8 +1923,8 @@ void CHexEditView::OnDraw(CDC* pDC)
     if (!pDC->IsPrinting())
     {
         // Vert. line between address and hex areas
-		pt.y = bdr_top_;
-        if (neg_y) pt.y = -bdr_top_;
+		pt.y = bdr_top_ - 2;
+        if (neg_y) pt.y = -pt.y;
 		pt.x = addr_width_*char_width - char_width/2 - doc_rect.left + bdr_left_;
 		if (neg_x) pt.x = - pt.x;
 		pDC->MoveTo(pt);
@@ -1928,8 +1934,8 @@ void CHexEditView::OnDraw(CDC* pDC)
         if (!display_.vert_display && display_.hex_area)
         {
 			// Vert line to right of hex area
-            pt.y = bdr_top_;
-			if (neg_y) pt.y = -bdr_top_;
+            pt.y = bdr_top_ - 2;
+			if (neg_y) pt.y = -pt.y;
             pt.x = char_pos(0, char_width) - char_width_w/2 - doc_rect.left + bdr_left_;
             if (neg_x) pt.x = - pt.x;
             pDC->MoveTo(pt);
@@ -1940,8 +1946,8 @@ void CHexEditView::OnDraw(CDC* pDC)
         if (display_.char_area)
         {
 			// Vert line to right of char area
-            pt.y = bdr_top_;
-			if (neg_y) pt.y = -bdr_top_;
+            pt.y = bdr_top_ - 2;
+			if (neg_y) pt.y = -pt.y;
             pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + 
                    (3*char_width_w)/2 - doc_rect.left + bdr_left_;
             if (neg_x) pt.x = - pt.x;
@@ -1950,11 +1956,12 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (neg_y) pt.y = -30000;
             pDC->LineTo(pt);
         }
-		if (bdr_top_ > 0)
+		if (display_.ruler)
 		{
+			ASSERT(bdr_top_ > 0);
 			// Horiz line under ruler
-			pt.y = bdr_top_ - 1;
-			if (neg_y) pt.y = -bdr_top_;
+			pt.y = bdr_top_ - 3;
+			if (neg_y) pt.y = -pt.y;
 			pt.x = addr_width_*char_width - char_width/2 - doc_rect.left + bdr_left_;
 			if (neg_x) pt.x = - pt.x;
 			pDC->MoveTo(pt);
@@ -1964,19 +1971,88 @@ void CHexEditView::OnDraw(CDC* pDC)
 		}
     }
 
+	if (display_.ruler)
+	{
+		// Get display rect for clipping at right and left
+		CRect cli;
+		GetDisplayRect(&cli);
+
+		// Show offsets in the top border (ruler)
+		int vert = 0;                              // Screen row to display the text at
+		int horz = bdr_left_ - GetScroll().x;
+		if (display_.hex_addr)
+		{
+			CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_);
+			CString ss;
+            pDC->SetTextColor(GetHexAddrCol());   // Colour of hex addresses
+			if (!display_.vert_display && display_.hex_area)
+				for (int column = 0; column < rowsize_; ++column)
+				{
+					if (theApp.hex_ucase_)
+						ss.Format("%02X", column%256);
+					else
+						ss.Format("%02x", column%256);
+					rect.left  = rect.right;
+					rect.right = hex_pos(column + 1) + horz;
+					if (rect.left >= cli.left && rect.left < cli.right)
+						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+				}
+			rect.right = char_pos(0) + horz;
+			if (display_.char_area)
+				for (int column = 0; column < rowsize_; ++column)
+				{
+					if (theApp.hex_ucase_)
+						ss.Format("%1X", column%16);
+					else
+						ss.Format("%1x", column%16);
+					rect.left  = rect.right;
+					rect.right = char_pos(column + 1) + horz;
+					if (rect.left >= cli.left && rect.right <= cli.right)
+						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+				}
+			vert += text_height_;  // Move down for anything to be drawn underneath
+		}
+		if (display_.decimal_addr)
+		{
+			CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_);
+			CString ss;
+            pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
+			if (!display_.vert_display && display_.hex_area)
+				for (int column = 0; column < rowsize_; ++column)
+				{
+					ss.Format("%02d", column%100);
+					rect.left  = rect.right;
+					rect.right = hex_pos(column + 1) + horz;
+					if (rect.left >= cli.left && rect.left < cli.right)
+						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+				}
+			rect.right = char_pos(0) + horz;
+			if (display_.char_area)
+				for (int column = 0; column < rowsize_; ++column)
+				{
+					ss.Format("%1d", column%10);
+					rect.left  = rect.right;
+					rect.right = char_pos(column + 1) + horz;
+					if (rect.left >= cli.left && rect.right <= cli.right)
+						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+				}
+			vert += text_height_;  // Move down for anything to be drawn underneath (currently nothing)
+		}
+	}
+
     // We can't avoid overlapping our "borders" slightly, so we set
     // the clipping rect so this small amount of drawing isn't seen.
     // But in debug we want to see if the drawing may be inefficient.
 	// Note: This needs to be done after drawing things in borders 
 	// like the ruler but before hex area drawing like bookmarks etc.
-//#ifndef _DEBUG
+#ifndef TEST_CLIPPING
     if (!pDC->IsPrinting())
 	{
 		CRect rct;
 		GetDisplayRect(&rct);
 		pDC->IntersectClipRect(&rct);
 	}
-//#endif
+#endif
 
     int seclen = pDoc->GetSectorSize();
     if (pDoc->pfile1_ != NULL && display_.borders && seclen > 0)
@@ -2419,6 +2495,7 @@ end_of_background_drawing:
 //      vert_offset = (vert_offset*15)/16;  // Leave a gap between rows
     }
 
+	// THIS IS WHERE THE ACTUAL LINES ARE DRAWN
     // Note: we use != (line != last_line) since we may be drawing from bottom or top
     for (FILE_ADDRESS line = first_line; line != last_line;
                             line += line_inc, norm_rect += rect_inc)
@@ -2521,7 +2598,7 @@ end_of_background_drawing:
         }
 
         // Don't draw address if off to the left
-        if ((addr_width_ - 1)*char_width + tt.left > 0)
+        if ((addr_width_ - 1)*char_width + tt.left > bdr_left_)
         {
             // Draw the address into the window
             // Note: we need sprintf because CString::Format does not support 64 bit numbers
@@ -2559,11 +2636,11 @@ end_of_background_drawing:
             }
         }
 
+        // Keep track of the current colour so we only set it when it changes
         COLORREF current_colour = kala[buf[ii]];
         pDC->SetTextColor(current_colour);
         if (display_.vert_display || display_.hex_area)
         {
-            // Keep track of the current colour so we only set it when it changes
             int posx = tt.left + hex_pos(0, char_width);                 // Horiz pos of 1st hex column
 
             // Display each byte as hex (and char if nec.)
@@ -2816,7 +2893,7 @@ end_of_background_drawing:
             }
             pDC->PatBlt(rev.left, rev.top, rev.right-rev.left, rev.bottom-rev.top, PATINVERT);
         }
-    } /* for */
+    } // for each display (text) line
 
     if (pDC->IsPrinting() && print_sel_ && dup_lines_)
     {
@@ -3178,6 +3255,20 @@ void CHexEditView::recalc_display()
             line_height_ = text_height_;
     }
 
+	// Adjust border for ruler
+	bdr_top_ = 0;
+	if (display_.ruler)
+	{
+		if (display_.hex_addr)
+			bdr_top_ += text_height_;  // one row of text for hex offsets
+		if (display_.decimal_addr)
+			bdr_top_ += text_height_;  // one row of text for dec offsets
+		bdr_top_ += 4;                 // allow room for a thin line
+	}
+#ifdef TEST_CLIPPING
+	bdr_top_ += 40;
+#endif
+
     FILE_ADDRESS length = GetDocument()->length();
 
     // Work out how much room we need to display addresses on left of window
@@ -3477,7 +3568,26 @@ void CHexEditView::DoScrollWindow(int xx, int yy)
     if (((CHexEditApp *)AfxGetApp())->refresh_off_)
         needs_refresh_ = true;
     else
+	{
+		if (display_.ruler && xx != 0)
+		{
+			// We need to scroll the ruler horizontally
+			CRect rct;
+			GetDisplayRect(&rct);
+			rct.top = 0;
+			rct.bottom = bdr_top_;
+			ScrollWindow(xx, 0, &rct, &rct);
+			// Also since we do not draw partial numbers at either end
+			// we have to invalidate a bit more at either end than
+			// is invalidated by ScrollWindow.
+			if (xx > 0)
+				rct.right = rct.left + xx + text_width_*3;
+			else
+				rct.left = rct.right + xx - text_width_*3;
+			DoInvalidateRect(&rct);
+		}
         CScrView::DoScrollWindow(xx, yy);
+	}
 }
 
 void CHexEditView::DoUpdateWindow()
@@ -4452,11 +4562,11 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
         addrBrush.UnrealizeObject();
         pDC->FillRect(rct, &addrBrush);
     }
-    if (bdr_top_ > 0 && addr_bg_col_ != bg_col_)
+    if (display_.ruler && addr_bg_col_ != bg_col_)
     {
 		// Ruler background
 	    GetClientRect(rct);
-		rct.bottom = bdr_top_ - 1;
+		rct.bottom = bdr_top_ - 2;
         CBrush addrBrush;
         addrBrush.CreateSolidBrush(addr_bg_col_);
         addrBrush.UnrealizeObject();
@@ -10283,6 +10393,8 @@ void CHexEditView::OnAddrToggle()
 {
     begin_change();
     display_.dec_addr = !display_.dec_addr;
+	display_.decimal_addr = display_.dec_addr;
+	display_.hex_addr = !display_.dec_addr;
     make_change();
     end_change();
 
@@ -10337,7 +10449,7 @@ void CHexEditView::do_chartoggle(int state /*=-1*/)
 {
     if (display_.vert_display)
     {
-        ::HMessageBox("You can't toggle char area in xxx mode");
+        ::HMessageBox("You can't toggle char area in stacked mode");
         theApp.mac_error_ = 2;
         return;
     }
