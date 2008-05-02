@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\ReleaseVS2005"
-			IntermediateDirectory=".\ReleaseVS2005"
+			OutputDirectory="D:\Andrew\cpp_out\HexEdit\ReleaseVS2005"
+			IntermediateDirectory="D:\Andrew\cpp_out\HexEdit\ReleaseVS2005"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
@@ -54,10 +54,10 @@
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
-				PrecompiledHeaderFile=".\ReleaseVS2005/HexEdit.pch"
-				AssemblerListingLocation=".\ReleaseVS2005\"
-				ObjectFile=".\ReleaseVS2005\"
-				ProgramDataBaseFileName=".\ReleaseVS2005\"
+				PrecompiledHeaderFile="$(IntDir)/HexEdit.pch"
+				AssemblerListingLocation="$(IntDir)/"
+				ObjectFile="$(IntDir)/"
+				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
@@ -77,10 +77,10 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="version.lib setargv.obj imagehlp.lib htmlhelp.lib Winmm.lib"
-				OutputFile=".\ReleaseVS2005/HexEdit.exe"
+				OutputFile="$(OutDir)\HexEdit.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				ProgramDatabaseFile=".\ReleaseVS2005/HexEdit.pdb"
+				ProgramDatabaseFile="$(IntDir)\HexEdit.pdb"
 				SubSystem="2"
 			/>
 			<Tool
@@ -205,8 +205,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\DebugVS2005"
-			IntermediateDirectory=".\DebugVS2005"
+			OutputDirectory="D:\Andrew\cpp_out\HexEdit\DebugVS2005"
+			IntermediateDirectory="D:\Andrew\cpp_out\HexEdit\DebugVS2005"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
@@ -240,11 +240,12 @@
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
-				PrecompiledHeaderFile=".\DebugVS2005\HexEdit.pch"
-				AssemblerListingLocation=".\DebugVS2003\"
-				ObjectFile=".\DebugVS2003\"
+				PrecompiledHeaderFile="$(IntDir)\HexEdit.pch"
+				AssemblerListingLocation="$(IntDir)/"
+				ObjectFile="$(IntDir)/"
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				BrowseInformation="1"
+				BrowseInformationFile="$(IntDir)\"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
@@ -264,11 +265,11 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="version.lib setargv.obj imagehlp.lib htmlhelp.lib Winmm.lib"
-				OutputFile=".\DebugVS2005\HexEdit.exe"
+				OutputFile="$(OutDir)\HexEdit.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\DebugVS2003\HexEdit.pdb"
+				ProgramDatabaseFile="$(IntDir)\HexEdit.pdb"
 				SubSystem="2"
 			/>
 			<Tool
@@ -1312,6 +1313,10 @@
 			</File>
 			<File
 				RelativePath=".\Res\ico00002.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\icon2.ico"
 				>
 			</File>
 			<File
