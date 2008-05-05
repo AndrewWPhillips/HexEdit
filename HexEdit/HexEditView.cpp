@@ -724,6 +724,13 @@ void CHexEditView::OnInitialUpdate()
             mark_ = 0;
         ASSERT(display_.hex_area || display_.edit_char);  // if no hex area we must be editing chars
 
+		// Make sure that something is displayed in the address area
+		if (!display_.decimal_addr && !display_.hex_addr && !display_.line_nums)
+		{
+			display_.decimal_addr = display_.dec_addr;
+			display_.hex_addr = !display_.dec_addr;
+		}
+
         // Get saved font info
         strncpy(lf_.lfFaceName, pfl->GetData(recent_file_index, CHexFileList::FONT), LF_FACESIZE-1);
         lf_.lfFaceName[LF_FACESIZE-1] = '\0';
@@ -1658,8 +1665,6 @@ void CHexEditView::OnDraw(CDC* pDC)
 {
     if (pfont_ == NULL) return;
 
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
     CHexEditDoc* pDoc = GetDocument();
     ASSERT_VALID(pDoc);
 
@@ -1697,7 +1702,7 @@ void CHexEditView::OnDraw(CDC* pDC)
     }
 
     const char *hex;
-    if (aa->hex_ucase_)
+    if (theApp.hex_ucase_)
         hex = "0123456789ABCDEF?";
     else
         hex = "0123456789abcdef?";
@@ -2615,51 +2620,74 @@ end_of_background_drawing:
         // Don't draw address if off to the left
         if ((addr_width_ - 1)*char_width + tt.left > 0)
         {
-            // Draw the address into the window
-            // Note: we need sprintf because CString::Format does not support 64 bit numbers
-            char *addr_buf = ss.GetBuffer(24);             // reserve space for 64 bit address
-            sprintf(addr_buf, addr_format_, line*rowsize_ - offset_ > first_addr ?
-                                            line*rowsize_ - offset_ : first_addr);
-            ss.ReleaseBuffer(-1);
-
+            addr_rect = tt;            // tt with right margin where addresses end
 			// Show address of current row with a different background colour
 		    if (start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
 			{
-                addr_rect = tt;            // tt with right margin where addresses end
                 addr_rect.right = addr_rect.left + addr_width_*char_width - char_width/2;
 				addr_rect.bottom = addr_rect.top + text_height_;
 				pDC->FillRect(&addr_rect, &backBrush);
 			}
-			// Set colour of address text
-//            if (pDC->IsPrinting())
-//                pDC->SetTextColor(RGB(0,0,0));      // Draw addresses in black on printer
-//            else
-            if (display_.dec_addr)
-                pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
-            else
-                pDC->SetTextColor(GetHexAddrCol());   // Colour of hex addresses
-			//if (start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_) pDC->SetBkMode(OPAQUE);
-            if (aa->nice_addr_)
-            {
-                if (display_.dec_addr)
-                {
-                    addr_rect = tt;            // tt with right margin where addresses end
 
-                    addr_rect.right = addr_rect.left + (addr_width_ - 1)*char_width;
-                    AddCommas(ss);
-                    pDC->DrawText(ss, &addr_rect, DT_TOP | DT_RIGHT | DT_NOPREFIX | DT_SINGLELINE);
-                }
-                else
-                {
-                    AddSpaces(ss);
-                    pDC->DrawText(ss, &tt, DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
-                }
-            }
-            else
+            if (hex_width_ > 0)
             {
-                pDC->DrawText(ss, &tt, DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
+				int ww = hex_width_ + 1;
+                char *addr_buf = ss.GetBuffer(24);             // reserve space for 64 bit address
+                sprintf(addr_buf,
+                    theApp.hex_ucase_ ? "%0*I64X:" : "%0*I64x:",
+                        hex_width_,
+                        line*rowsize_ - offset_ > first_addr ? line*rowsize_ - offset_ : first_addr);
+                ss.ReleaseBuffer(-1);
+                if (theApp.nice_addr_)
+				{
+                    AddSpaces(ss);
+					ww += (hex_width_-1)/4;
+				}
+                pDC->SetTextColor(GetHexAddrCol());   // Colour of hex addresses
+                addr_rect.right = addr_rect.left + ww*char_width;
+                pDC->DrawText(ss, &addr_rect, DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
+                addr_rect.left = addr_rect.right;
             }
-			//if (start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_) pDC->SetBkMode(TRANSPARENT);
+
+            if (dec_width_ > 0)
+            {
+				int ww = dec_width_ + 1;
+                char *addr_buf = ss.GetBuffer(24);             // reserve space for 64 bit address
+                sprintf(addr_buf,
+                        "%*I64d:",
+                        dec_width_,
+                        line*rowsize_ - offset_ > first_addr ? line*rowsize_ - offset_ : first_addr);
+                ss.ReleaseBuffer(-1);
+                if (theApp.nice_addr_)
+				{
+                    AddCommas(ss);
+					ww += (dec_width_-1)/3;
+				}
+                pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
+                addr_rect.right = addr_rect.left + ww*char_width;
+                pDC->DrawText(ss, &addr_rect, DT_TOP | DT_RIGHT | DT_NOPREFIX | DT_SINGLELINE);
+                addr_rect.left = addr_rect.right;
+            }
+
+            if (num_width_ > 0)
+            {
+				int ww = num_width_ + 1;
+                char *addr_buf = ss.GetBuffer(24);             // reserve space for 64 bit address
+                sprintf(addr_buf,
+                        "%*I64d:",
+                        num_width_,
+                        line + 1);
+                ss.ReleaseBuffer(-1);
+                if (theApp.nice_addr_)
+				{
+                    AddCommas(ss);
+					ww += (num_width_-1)/3;
+				}
+                pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
+                addr_rect.right = addr_rect.left + ww*char_width;
+                pDC->DrawText(ss, &addr_rect, DT_TOP | DT_RIGHT | DT_NOPREFIX | DT_SINGLELINE);
+                addr_rect.left = addr_rect.right;
+            }
         }
 
         // Keep track of the current colour so we only set it when it changes
@@ -3296,199 +3324,53 @@ void CHexEditView::recalc_display()
 #endif
 
     FILE_ADDRESS length = GetDocument()->length();
+    // xxx add one if addresses start at 1
 
-	int hw=0, dw=0, lnw=0;                   // Widths of hex, decimal and line number parts
+    hex_width_ = display_.hex_addr ? SigDigits(length, 16) : 0;
+    dec_width_ = display_.decimal_addr ? SigDigits(length) : 0;
+    if (hex_width_ > 0) dec_width_ = 0; // xxx disable showing both at same time for now
 
-    // Work out how much room we need to display addresses on left of window
-    if (display_.dec_addr)
+    num_width_ = 0;
+    calc_addr_width();
+    if (display_.autofit && display_.line_nums)
     {
-        if (length < 10000)
-        {
-            dw = 7;
-            addr_format_ = "%4I64d:";
-        }
-        else if (length < 100000)
-        {
-            dw = 8;
-            addr_format_ = "%5I64d:";
-        }
-        else if (length < 1000000)
-        {
-            dw = 9;
-            addr_format_ = "%6I64d:";
-        }
-        else if (length < 10000000)
-        {
-            dw = 11;
-            addr_format_ = "%7I64d:";
-        }
-        else if (length < 100000000)
-        {
-            dw = 12;
-            addr_format_ = "%8I64d:";
-        }
-        else if (length < 1000000000)
-        {
-            dw = 13;
-            addr_format_ = "%9I64d:";
-        }
-        else if (length < 10000000000)
-        {
-            dw = 15;
-            addr_format_ = "%10I64d:";
-        }
-        else if (length < 100000000000)
-        {
-            dw = 16;
-            addr_format_ = "%11I64d:";
-        }
-        else if (length < 1000000000000)
-        {
-            dw = 17;
-            addr_format_ = "%12I64d:";
-        }
-        else if (length < 10000000000000)
-        {
-            dw = 19;
-            addr_format_ = "%13I64d:";
-        }
-        else
-        {
-            dw = 20;
-            addr_format_ = "%14I64d:";
-        }
-    }
-    else if(aa->hex_ucase_)
-    {
-        if (length < 0x10000)
-        {
-            hw = 6;
-            addr_format_ = "%04I64X:";
-        }
-        else if (length < 0x1000000)
-        {
-            hw = 9;
-            addr_format_ = "%06I64X:";
-        }
-        else if (length < 0x100000000)
-        {
-            hw = 11;
-            addr_format_ = "%08I64X:";
-        }
-        else if (length < 0x10000000000)
-        {
-            hw = 14;
-            addr_format_ = "%010I64X:";
-        }
-        else
-        {
-            hw = 16;
-            addr_format_ = "%012I64X:";
-        }
-    }
-    else
-    {
-        if (length < 0x10000)
-        {
-            hw = 6;
-            addr_format_ = "%04I64x:";
-        }
-        else if (length < 0x1000000)
-        {
-            hw = 9;
-            addr_format_ = "%06I64x:";
-        }
-        else if (length < 0x100000000)
-        {
-            hw = 11;
-            addr_format_ = "%08I64x:";
-        }
-        else if (length < 0x10000000000)
-        {
-            hw = 14;
-            addr_format_ = "%010I64x:";
-        }
-        else
-        {
-            hw = 16;
-            addr_format_ = "%012I64x:";
-        }
-    }
-	// xxx if showing line numbers also work out lnw
+        // If autofit is on then rowsize_ and num_width_ are mutually dependent so
+        // we have to handle this carefully.
+        int prev_rowsize = 4;
 
-	addr_width_ = dw + hw + lnw;
+        // Loop a few timres and see if the value converges
+        for (int ii = 0; ii < 10; ++ii)
+        {
+            num_width_ = SigDigits(length/prev_rowsize);
+            calc_addr_width();
+            calc_autofit();
+            if (rowsize_ == prev_rowsize)
+                break;
+            prev_rowsize = rowsize_;
+        }
+        // If it didn't converge then favour the larger value
+        // (I think non-convergence only occurs when the row
+        // size oscillates between 2 adjacent integer values.)
+        if (rowsize_ < prev_rowsize)
+            rowsize_ = prev_rowsize;
+    }
+	else if (display_.autofit)
+        calc_autofit();
+    else if (display_.line_nums)
+	{
+        num_width_ = SigDigits(length/rowsize_);
+        calc_addr_width();
+	}
 
     // Fit columns to window width?
     if (display_.autofit)
     {
-        CRect cli;              /* Client rectangle */
-        CRectAp rect;           // Client rectangle in norm. coords
-        GetDisplayRect(&cli);
-        rect = ConvertFromDP(cli) - GetScroll();
-        ASSERT(rect.left == 0 && rect.top == 0);
-
-        // Work out the scroll pos (address of byte in top left of display)
-//        CPointAp pp = GetScroll();
-//        FILE_ADDRESS topleft = (pp.y/line_height_) * rowsize_;
-
         // Work out the current address of the caret/selection
-//      FILE_ADDRESS address = pos2addr(GetCaret());
         FILE_ADDRESS start_addr, end_addr;
         GetSelAddr(start_addr, end_addr);
         int row = 0;
         if (start_addr == end_addr && display_.vert_display)
             row = pos2row(GetCaret());
-
-        // Work out how many columns we can display across the window
-        // NOTE: These calcs are directly related to the calcs in hex_pos and char_pos
-        
-        // Work out width of display area (total minus address area width)
-        int daw = rect.right - addr_width_*text_width_ - text_width_/2 - 1;
-        if (display_.vert_display)
-        {
-            int group_offset = (daw/text_width_w_)%(group_by_ + 1);
-            if (group_offset == 0) group_offset = group_by_;
-            rowsize_ = ((daw/text_width_w_ - 1)/(group_by_ + 1)) * group_by_ + group_offset;
-
-            // Make sure scroll bars are not shown
-            ASSERT(rowsize_ < 5 || rect.right >= char_pos(rowsize_-1)+text_width_w_);
-        }
-        else if (display_.char_area && display_.hex_area)
-        {
-            //rowsize_ = (daw - daw/(4*group_by_ + 1))/(3*text_width_ + text_width_w_);
-            int sec_len = group_by_*(3*text_width_ + text_width_w_) + text_width_;
-            int group_offset = (daw % sec_len)/(3*text_width_ + text_width_w_);
-            if (group_offset == group_by_) group_offset = 0;
-            rowsize_ = ((daw + text_width_) / sec_len) * group_by_ + group_offset;
-            ASSERT(rowsize_ < 5 || rect.right >= char_pos(rowsize_-1)+text_width_w_);
-        }
-        else if (display_.char_area)
-        {
-            // This is easy as char area has no grouping
-            rowsize_ = daw/text_width_w_;
-            ASSERT(rowsize_ < 5 || rect.right >= char_pos(rowsize_-1)+text_width_w_);
-        }
-        else
-        {
-            ASSERT(display_.hex_area);
-            display_.hex_area = TRUE; // defensive
-            //rowsize_ = (daw - daw/(3*group_by_+1))/(3*text_width_);
-            int group_offset = (daw/text_width_ - 2)%(3*group_by_ + 1);
-            if (group_offset == 3*group_by_) group_offset--;
-
-            rowsize_ = ((daw/text_width_ - 2)/(3*group_by_ + 1))*group_by_ + group_offset/3 + 1;
-            ASSERT(rowsize_ < 5 || rect.right >= hex_pos(rowsize_-1)+2*text_width_);
-        }
-
-        // Must display at least 4 columns & no more than buffer can hold
-        if (rowsize_ < 4)
-            rowsize_ = 4;
-        else if (rowsize_ > max_buf)
-            rowsize_ = max_buf;
-        if (real_offset_ >= rowsize_)
-            offset_ = rowsize_ - 1;
-        else
-            offset_ = real_offset_;
 
         // Set size before setting scroll/caret to avoid them being moved to "valid" pos
         if (display_.vert_display)
@@ -3521,6 +3403,82 @@ void CHexEditView::recalc_display()
         SetSize(CSize(hex_pos(rowsize_-1)+2*text_width_, -1));
     }
 } /* recalc_display() */
+
+void CHexEditView::calc_addr_width()
+{
+    addr_width_ = hex_width_ + dec_width_ + num_width_;
+
+    // Allow for separators (spaces and commas)
+    if (theApp.nice_addr_)
+        addr_width_ += (hex_width_-1)/4 + (dec_width_-1)/3 + (num_width_-1)/3;
+
+    // Also add 1 for the colon
+    addr_width_ += hex_width_ > 0 ? 1 : 0;
+    addr_width_ += dec_width_ > 0 ? 1 : 0;
+    addr_width_ += num_width_ > 0 ? 1 : 0;
+	++addr_width_;
+}
+
+void CHexEditView::calc_autofit()
+{
+    CRect cli;
+    CRectAp rect;           // Client rectangle in norm. coords
+    GetDisplayRect(&cli);
+    rect = ConvertFromDP(cli) - GetScroll();
+    ASSERT(rect.left == 0 && rect.top == 0);
+
+    // Work out how many columns we can display across the window
+    // NOTE: These calcs are directly related to the calcs in hex_pos and char_pos
+    
+    // Work out width of display area (total minus address area width)
+    int daw = rect.right - addr_width_*text_width_ - text_width_/2 - 1;
+    if (display_.vert_display)
+    {
+        int group_offset = (daw/text_width_w_)%(group_by_ + 1);
+        if (group_offset == 0) group_offset = group_by_;
+        rowsize_ = ((daw/text_width_w_ - 1)/(group_by_ + 1)) * group_by_ + group_offset;
+
+        // Make sure scroll bars are not shown
+        ASSERT(rowsize_ < 5 || rect.right >= char_pos(rowsize_-1)+text_width_w_);
+    }
+    else if (display_.char_area && display_.hex_area)
+    {
+        int sec_len = group_by_*(3*text_width_ + text_width_w_) + text_width_;
+        int group_offset = (daw % sec_len)/(3*text_width_ + text_width_w_);
+        if (group_offset == group_by_) group_offset = 0;
+        rowsize_ = ((daw + text_width_) / sec_len) * group_by_ + group_offset;
+        ASSERT(rowsize_ < 5 || rect.right >= char_pos(rowsize_-1)+text_width_w_);
+    }
+    else if (display_.char_area)
+    {
+        // This is easy as char area has no grouping
+        rowsize_ = daw/text_width_w_;
+        ASSERT(rowsize_ < 5 || rect.right >= char_pos(rowsize_-1)+text_width_w_);
+    }
+    else
+    {
+        ASSERT(display_.hex_area);
+        display_.hex_area = TRUE; // defensive
+        //rowsize_ = (daw - daw/(3*group_by_+1))/(3*text_width_);
+        int group_offset = (daw/text_width_ - 2)%(3*group_by_ + 1);
+        if (group_offset == 3*group_by_) group_offset--;
+
+        rowsize_ = ((daw/text_width_ - 2)/(3*group_by_ + 1))*group_by_ + group_offset/3 + 1;
+        ASSERT(rowsize_ < 5 || rect.right >= hex_pos(rowsize_-1)+2*text_width_);
+    }
+
+    // Must display at least 4 columns & no more than buffer can hold
+    if (rowsize_ < 4)
+        rowsize_ = 4;
+    else if (rowsize_ > max_buf)
+        rowsize_ = max_buf;
+
+    // Ensure offset is within valid range
+    if (real_offset_ >= rowsize_)
+        offset_ = rowsize_ - 1;
+    else
+        offset_ = real_offset_;
+}
 
 // Return doc position given a hex area column number
 // int CHexEditView::hex_pos(int column, int width) const;
@@ -4287,7 +4245,6 @@ void CHexEditView::SetSel(CPointAp start, CPointAp end, bool base1 /*= false*/)
     addr_rect.right = bdr_left_ - doc_rect.left + addr_width_*text_width_ - text_width_/2;
 
 	// If moved and the address area is visible ...
-	//if (old_addr != new_addr && (addr_width_ - 1)*text_width_ > doc_rect.left)
 	if (old_addr != new_addr && addr_rect.right > addr_rect.left)
 	{
 	    FILE_ADDRESS first_disp = (doc_rect.top/line_height_) * rowsize_ - offset_;
@@ -9064,8 +9021,17 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
             // Add initial address
             *pp++ = '/';
             *pp++ = '*';
-            slen = sprintf(pp, addr_format_, start);  // xxx can now show both addresses and line num
-            pp += slen;
+            if (hex_width_ > 0)
+            {
+                slen = sprintf(pp,	theApp.hex_ucase_ ? "%0*I64X:" : "%0*I64x:", hex_width_, start);
+				pp += slen;
+            }
+            if (dec_width_ > 0)
+            {
+                slen = sprintf(pp, "%*I64d:", dec_width_, start);
+				pp += slen;
+            }
+			// xxx also line numbers (num_width_)
             *pp++ = '*';
             *pp++ = '/';
             *pp++ = ' ';
@@ -9369,8 +9335,17 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
                         // Output address (in comments) at the start of the line
                         *pp++ = '/';
                         *pp++ = '*';
-                        slen = sprintf(pp, addr_format_, curr);
-                        pp += slen;
+						if (hex_width_ > 0)
+						{
+							slen = sprintf(pp,	theApp.hex_ucase_ ? "%0*I64X:" : "%0*I64x:", hex_width_, curr);
+							pp += slen;
+						}
+						if (dec_width_ > 0)
+						{
+							slen = sprintf(pp, "%*I64d:", dec_width_, curr);
+							pp += slen;
+						}
+						// xxx also line numbers (num_width_)
                         *pp++ = '*';
                         *pp++ = '/';
                         *pp++ = ' ';

@@ -131,6 +131,16 @@ inline void flip_each_word(unsigned char *pp, size_t count)
 	}
 }
 
+// The number of significant digits in a number
+inline int SigDigits(__int64 val, int base = 10)
+{
+	ASSERT(base > 1);
+	int retval = 0;
+	for (retval = 0; val > 0; ++retval)
+		val /= base;
+	return retval;
+}
+
 #ifndef _LONGLONG
 // This is needed since std streams don't support __int64
 inline std::istream &operator>>(std::istream &ss, __int64 &ii)

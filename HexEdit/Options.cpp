@@ -131,6 +131,7 @@ void COptSheet::init()
 	val_.maximize_ = FALSE;
     val_.borders_ = FALSE;
 	val_.ruler_ = FALSE;
+    val_.line_nums_ = FALSE;
 
 	val_.cols_ = 0;
 	val_.offset_ = 0;
@@ -3056,6 +3057,7 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 
         pParent->val_.borders_ = pParent->val_.display_.borders;
 		pParent->val_.ruler_ = pParent->val_.display_.ruler;
+		pParent->val_.line_nums_ = pParent->val_.display_.line_nums;
     }
 
 	DDX_Check(pDX, IDC_MAX, pParent->val_.maximize_);
@@ -3069,6 +3071,7 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_ADDR_DEC, pParent->val_.addr_dec_);
 	DDX_Check(pDX, IDC_BORDERS, pParent->val_.borders_);
 	DDX_Check(pDX, IDC_RULER, pParent->val_.ruler_);
+	DDX_Check(pDX, IDC_LINENOS, pParent->val_.line_nums_);
 
     if (pDX->m_bSaveAndValidate)
     {
@@ -3129,6 +3132,7 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 
         pParent->val_.display_.borders = pParent->val_.borders_;
 		pParent->val_.display_.ruler = pParent->val_.ruler_;
+		pParent->val_.display_.line_nums = pParent->val_.line_nums_;
     }
 }
 
@@ -3147,6 +3151,8 @@ BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
 	ON_BN_CLICKED(IDC_MAX, OnChange)
 	ON_BN_CLICKED(IDC_ADDR_DEC, OnChange)
 	ON_BN_CLICKED(IDC_BORDERS, OnChange)
+	ON_BN_CLICKED(IDC_RULER, OnChange)
+	ON_BN_CLICKED(IDC_LINENOS, OnChange)
 END_MESSAGE_MAP()
 
 void CWindowPage::OnGlobalPage()
@@ -3268,6 +3274,8 @@ static DWORD id_pairs_windisplay[] = {
     IDC_AUTOFIT, HIDC_AUTOFIT,
     IDC_ADDR_DEC, HIDC_ADDR_DEC,
     IDC_BORDERS, HIDC_BORDERS,
+	IDC_RULER, HIDC_RULER,
+	IDC_LINENOS, HIDC_LINENOS,
     0,0 
 }; 
 

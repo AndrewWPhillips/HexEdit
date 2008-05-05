@@ -256,6 +256,8 @@ public:
 
 // Operations
     void recalc_display();      // Recalculate display parameters
+    void calc_autofit();        // Calc. columns (rowsize_) as part of recalc_display
+    void calc_addr_width();     // Also used by recalc_display
     void draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
                  int char_height, int char_width, int char_width_w,
                  COLORREF, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
@@ -794,8 +796,8 @@ private:
     int text_width_w_;          // How wide is widest char (W)?
     int line_height_;           // Same as text_height_ unless vert_display mode (= 3*text_height_)
     BCHAR first_char_, last_char_; // Range of chars in current font
-    int addr_width_;            // How much room in display does address take?
-    const char *addr_format_;   // What format string to use for address
+    int addr_width_;            // How much room in display does address area take?
+    int hex_width_, dec_width_, num_width_; // Components of addr_width_
 
     FILE_ADDRESS mark_;         // Address of marked position
 

@@ -1737,10 +1737,12 @@ BEGIN
                     WS_TABSTOP,119,60,68,10,0,HIDC_MAX
     CONTROL         "Sector &bounds",IDC_BORDERS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,119,72,68,10,0,HIDC_BORDERS
+    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
+                    WS_TABSTOP,193,36,58,10,0,HIDC_RULER
+    CONTROL         "&Line Numbers",IDC_LINENOS,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,193,48,58,10,0,HIDC_LINENOS
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,57,92,
                     199,1
-    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
-                    WS_TABSTOP,193,36,55,10,0,HIDC_RULER
     LTEXT           "Character Area",IDC_STATIC,12,88,48,8
     LTEXT           "&Character Set:",IDC_CHARSET_DESC,19,102,48,8
     COMBOBOX        IDC_CHARSET,69,100,94,60,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -2360,8 +2362,8 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_EXPORT_LINELEN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,239,120,11,12
-    RTEXT           "Number of consecutive byte changes to merge:",IDC_STATIC,128,
-                    36,76,17
+    RTEXT           "Number of consecutive byte changes to merge:",
+                    IDC_STATIC,128,36,76,17
     EDITTEXT        IDC_UNDO_MERGE,206,38,37,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_UNDO_MERGE
     CONTROL         "",IDC_SPIN_UNDO_MERGE,"msctls_updown32",UDS_SETBUDDYINT | 
@@ -4815,7 +4817,8 @@ BEGIN
 END
 
 IDD_GETBOOL DIALOGEX 0, 0, 186, 68
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 EXSTYLE WS_EX_TOOLWINDOW
 CAPTION "HexEdit"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -4824,6 +4827,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,98,47,80,14
     LTEXT           "",IDC_PROMPT,6,7,175,37
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

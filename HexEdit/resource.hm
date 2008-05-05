@@ -283,6 +283,7 @@
 #define HIDC_INTELLIGENT_UNDO           0x81390416    // IDD_OPT_WORKSPACE [English (U.S.)]
 #define HIDC_LARGE_CURSOR               0x80eb0419    // IDD_OPT_WORKDISPLAY [English (U.S.)]
 #define HIDC_LESS                       0x8075042b    // IDD_CALC
+#define HIDC_LINENOS                    0x810c0615    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_LOADMACRO                  0x80a90483    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_LSL                        0x80750431    // IDD_CALC
 #define HIDC_LSR                        0x80750432    // IDD_CALC
@@ -376,6 +377,7 @@
 #define HIDC_RESTORE                    0x809e0414    // IDD_OPT_SYSTEM [English (U.S.)]
 #define HIDC_ROL                        0x8075042f    // IDD_CALC
 #define HIDC_ROR                        0x80750430    // IDD_CALC
+#define HIDC_RULER                      0x810c0614    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_SAVEMACRO                  0x80a90485    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_SAVE_DEFAULT               0x813704b6    // IDD_OPT_WINGENERAL [English (U.S.)]
 #define HIDC_SAVE_EXIT                  0x809e0416    // IDD_OPT_SYSTEM [English (U.S.)]
