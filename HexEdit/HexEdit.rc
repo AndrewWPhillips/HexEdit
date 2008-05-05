@@ -2360,7 +2360,7 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_EXPORT_LINELEN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,239,120,11,12
-    RTEXT           "Number of consecutive changes to merge:",IDC_STATIC,128,
+    RTEXT           "Number of consecutive byte changes to merge:",IDC_STATIC,128,
                     36,76,17
     EDITTEXT        IDC_UNDO_MERGE,206,38,37,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_UNDO_MERGE
