@@ -103,7 +103,7 @@ public:
     void SetVertBufferZone(int n = 0) { vert_buffer_zone_ = n; }
     int GetVertBufferZone() { return vert_buffer_zone_; }
 
-    void SetSel(CPointAp, CPointAp, bool base1 = false);  // set selection
+    virtual void SetSel(CPointAp, CPointAp, bool base1 = false);  // set selection
     void SetTSel(CPointAp, CPointAp); // set selection in text units
     // Return start and end of current selection
     BOOL GetSel(CPointAp &start, CPointAp &end) const

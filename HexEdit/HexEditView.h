@@ -297,6 +297,7 @@ public:
 	{
 		MoveToAddress(start_addr, end_addr, pstart, pend, ptoo, no_dffd, row, desc);
 	}
+    virtual void SetSel(CPointAp, CPointAp, bool base1 = false);
 
     void ToggleInsert() { OnInsert(); }
     void AllowMods() { OnAllowMods(); }

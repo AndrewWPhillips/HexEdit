@@ -1669,7 +1669,12 @@ void CHexEditView::OnDraw(CDC* pDC)
                     pDC->m_hDC != pDC->m_hAttribDC;
      */
 
+    CBrush backBrush;
+    backBrush.CreateSolidBrush(bg_col_);
+    backBrush.UnrealizeObject();
+
     pDC->SetBkMode(TRANSPARENT);
+
     // Are we in overtype mode and file is empty?
     if (display_.overtype && pDoc->length() == 0)
     {
@@ -1973,6 +1978,8 @@ void CHexEditView::OnDraw(CDC* pDC)
 
 	if (display_.ruler)
 	{
+		int hicol = int(start_addr%rowsize_);         // Column with cursor is to be highlighted
+
 		// Get display rect for clipping at right and left
 		CRect cli;
 		GetDisplayRect(&cli);
@@ -1994,8 +2001,10 @@ void CHexEditView::OnDraw(CDC* pDC)
 						ss.Format("%02x", column%256);
 					rect.left  = rect.right;
 					rect.right = hex_pos(column + 1) + horz;
+					if (column == hicol) pDC->SetBkMode(OPAQUE);
 					if (rect.left >= cli.left && rect.left < cli.right)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+					if (column == hicol) pDC->SetBkMode(TRANSPARENT);
 				}
 			rect.right = char_pos(0) + horz;
 			if (display_.char_area)
@@ -2007,8 +2016,10 @@ void CHexEditView::OnDraw(CDC* pDC)
 						ss.Format("%1x", column%16);
 					rect.left  = rect.right;
 					rect.right = char_pos(column + 1) + horz;
+					if (column == hicol) pDC->SetBkMode(OPAQUE);
 					if (rect.left >= cli.left && rect.right <= cli.right)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+					if (column == hicol) pDC->SetBkMode(TRANSPARENT);
 				}
 			vert += text_height_;  // Move down for anything to be drawn underneath
 		}
@@ -2023,8 +2034,10 @@ void CHexEditView::OnDraw(CDC* pDC)
 					ss.Format("%02d", column%100);
 					rect.left  = rect.right;
 					rect.right = hex_pos(column + 1) + horz;
+					if (column == hicol) pDC->SetBkMode(OPAQUE);
 					if (rect.left >= cli.left && rect.left < cli.right)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+					if (column == hicol) pDC->SetBkMode(TRANSPARENT);
 				}
 			rect.right = char_pos(0) + horz;
 			if (display_.char_area)
@@ -2033,8 +2046,10 @@ void CHexEditView::OnDraw(CDC* pDC)
 					ss.Format("%1d", column%10);
 					rect.left  = rect.right;
 					rect.right = char_pos(column + 1) + horz;
+					if (column == hicol) pDC->SetBkMode(OPAQUE);
 					if (rect.left >= cli.left && rect.right <= cli.right)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+					if (column == hicol) pDC->SetBkMode(TRANSPARENT);
 				}
 			vert += text_height_;  // Move down for anything to be drawn underneath (currently nothing)
 		}
@@ -2042,7 +2057,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 
     // We can't avoid overlapping our "borders" slightly, so we set
     // the clipping rect so this small amount of drawing isn't seen.
-    // But in debug we want to see if the drawing may be inefficient.
+    // (Use TEST_CLIPPING to see if the drawing may be inefficient.)
 	// Note: This needs to be done after drawing things in borders 
 	// like the ruler but before hex area drawing like bookmarks etc.
 #ifndef TEST_CLIPPING
@@ -2598,7 +2613,7 @@ end_of_background_drawing:
         }
 
         // Don't draw address if off to the left
-        if ((addr_width_ - 1)*char_width + tt.left > bdr_left_)
+        if ((addr_width_ - 1)*char_width + tt.left > 0)
         {
             // Draw the address into the window
             // Note: we need sprintf because CString::Format does not support 64 bit numbers
@@ -2607,6 +2622,15 @@ end_of_background_drawing:
                                             line*rowsize_ - offset_ : first_addr);
             ss.ReleaseBuffer(-1);
 
+			// Show address of current row with a different background colour
+		    if (start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
+			{
+                addr_rect = tt;            // tt with right margin where addresses end
+                addr_rect.right = addr_rect.left + addr_width_*char_width - char_width/2;
+				addr_rect.bottom = addr_rect.top + text_height_;
+				pDC->FillRect(&addr_rect, &backBrush);
+			}
+			// Set colour of address text
 //            if (pDC->IsPrinting())
 //                pDC->SetTextColor(RGB(0,0,0));      // Draw addresses in black on printer
 //            else
@@ -2614,6 +2638,7 @@ end_of_background_drawing:
                 pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
             else
                 pDC->SetTextColor(GetHexAddrCol());   // Colour of hex addresses
+			//if (start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_) pDC->SetBkMode(OPAQUE);
             if (aa->nice_addr_)
             {
                 if (display_.dec_addr)
@@ -2634,6 +2659,7 @@ end_of_background_drawing:
             {
                 pDC->DrawText(ss, &tt, DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
             }
+			//if (start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_) pDC->SetBkMode(TRANSPARENT);
         }
 
         // Keep track of the current colour so we only set it when it changes
@@ -3271,62 +3297,64 @@ void CHexEditView::recalc_display()
 
     FILE_ADDRESS length = GetDocument()->length();
 
+	int hw=0, dw=0, lnw=0;                   // Widths of hex, decimal and line number parts
+
     // Work out how much room we need to display addresses on left of window
     if (display_.dec_addr)
     {
         if (length < 10000)
         {
-            addr_width_ = 7;
+            dw = 7;
             addr_format_ = "%4I64d:";
         }
         else if (length < 100000)
         {
-            addr_width_ = 8;
+            dw = 8;
             addr_format_ = "%5I64d:";
         }
         else if (length < 1000000)
         {
-            addr_width_ = 9;
+            dw = 9;
             addr_format_ = "%6I64d:";
         }
         else if (length < 10000000)
         {
-            addr_width_ = 11;
+            dw = 11;
             addr_format_ = "%7I64d:";
         }
         else if (length < 100000000)
         {
-            addr_width_ = 12;
+            dw = 12;
             addr_format_ = "%8I64d:";
         }
         else if (length < 1000000000)
         {
-            addr_width_ = 13;
+            dw = 13;
             addr_format_ = "%9I64d:";
         }
         else if (length < 10000000000)
         {
-            addr_width_ = 15;
+            dw = 15;
             addr_format_ = "%10I64d:";
         }
         else if (length < 100000000000)
         {
-            addr_width_ = 16;
+            dw = 16;
             addr_format_ = "%11I64d:";
         }
         else if (length < 1000000000000)
         {
-            addr_width_ = 17;
+            dw = 17;
             addr_format_ = "%12I64d:";
         }
         else if (length < 10000000000000)
         {
-            addr_width_ = 19;
+            dw = 19;
             addr_format_ = "%13I64d:";
         }
         else
         {
-            addr_width_ = 20;
+            dw = 20;
             addr_format_ = "%14I64d:";
         }
     }
@@ -3334,27 +3362,27 @@ void CHexEditView::recalc_display()
     {
         if (length < 0x10000)
         {
-            addr_width_ = 6;
+            hw = 6;
             addr_format_ = "%04I64X:";
         }
         else if (length < 0x1000000)
         {
-            addr_width_ = 9;
+            hw = 9;
             addr_format_ = "%06I64X:";
         }
         else if (length < 0x100000000)
         {
-            addr_width_ = 11;
+            hw = 11;
             addr_format_ = "%08I64X:";
         }
         else if (length < 0x10000000000)
         {
-            addr_width_ = 14;
+            hw = 14;
             addr_format_ = "%010I64X:";
         }
         else
         {
-            addr_width_ = 16;
+            hw = 16;
             addr_format_ = "%012I64X:";
         }
     }
@@ -3362,30 +3390,33 @@ void CHexEditView::recalc_display()
     {
         if (length < 0x10000)
         {
-            addr_width_ = 6;
+            hw = 6;
             addr_format_ = "%04I64x:";
         }
         else if (length < 0x1000000)
         {
-            addr_width_ = 9;
+            hw = 9;
             addr_format_ = "%06I64x:";
         }
         else if (length < 0x100000000)
         {
-            addr_width_ = 11;
+            hw = 11;
             addr_format_ = "%08I64x:";
         }
         else if (length < 0x10000000000)
         {
-            addr_width_ = 14;
+            hw = 14;
             addr_format_ = "%010I64x:";
         }
         else
         {
-            addr_width_ = 16;
+            hw = 16;
             addr_format_ = "%012I64x:";
         }
     }
+	// xxx if showing line numbers also work out lnw
+
+	addr_width_ = dw + hw + lnw;
 
     // Fit columns to window width?
     if (display_.autofit)
@@ -4208,6 +4239,78 @@ void CHexEditView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
     DisplayCaret();                             // Make sure caret is in the display
 }
 
+void CHexEditView::SetSel(CPointAp start, CPointAp end, bool base1 /*= false*/)
+{
+    FILE_ADDRESS old_addr, end_addr, new_addr;
+    GetSelAddr(old_addr, end_addr);             // Get current caret before CScrView::SetSel moves it
+
+	CScrView::SetSel(start, end, base1);
+
+	int horz = bdr_left_ - GetScroll().x;       // Offset of left side of doc from left side of window
+
+	new_addr = pos2addr(start);
+
+	// If we have moved the caret and we are showing the ruler ...
+	if (old_addr != new_addr && display_.ruler)
+	{
+		// Invalidate ruler areas which indicate the old and new caret position
+		CRect rct;
+		rct.top = 0;
+		rct.bottom = bdr_top_;
+		if (!display_.vert_display && display_.hex_area)
+		{
+			rct.left  = hex_pos(int(old_addr%rowsize_)) + horz;
+			rct.right = hex_pos(int(old_addr%rowsize_)+1) + horz;
+			DoInvalidateRect(&rct);
+            // xxx also do end_addr?
+			rct.left  = hex_pos(int(new_addr%rowsize_)) + horz;
+			rct.right = hex_pos(int(new_addr%rowsize_)+1) + horz;
+			DoInvalidateRect(&rct);
+		}
+		if (display_.char_area)
+		{
+			rct.left  = char_pos(int(old_addr%rowsize_)) + horz;
+			rct.right = char_pos(int(old_addr%rowsize_)+1) + horz;
+			DoInvalidateRect(&rct);
+            // xxx also do end_addr?
+			rct.left  = char_pos(int(new_addr%rowsize_)) + horz;
+			rct.right = char_pos(int(new_addr%rowsize_)+1) + horz;
+			DoInvalidateRect(&rct);
+		}
+	}
+
+    CRect rct;
+    GetDisplayRect(&rct);
+    CRectAp doc_rect = ConvertFromDP(rct);
+    CRect addr_rect;
+    addr_rect.left  = bdr_left_;
+    addr_rect.right = bdr_left_ - doc_rect.left + addr_width_*text_width_ - text_width_/2;
+
+	// If moved and the address area is visible ...
+	//if (old_addr != new_addr && (addr_width_ - 1)*text_width_ > doc_rect.left)
+	if (old_addr != new_addr && addr_rect.right > addr_rect.left)
+	{
+	    FILE_ADDRESS first_disp = (doc_rect.top/line_height_) * rowsize_ - offset_;
+		FILE_ADDRESS last_disp = (doc_rect.bottom/line_height_ + 1) * rowsize_ - offset_;
+
+		if (old_addr >= first_disp && old_addr < last_disp)
+		{
+            addr_rect.top    = int(bdr_top_ - doc_rect.top + addr2pos(old_addr).y);
+			addr_rect.bottom = addr_rect.top + text_height_;
+            DoInvalidateRect(&addr_rect);
+		}
+
+        // xxx also do end_addr as drag upwards leaves end_addr as the highlighted address
+
+		if (new_addr >= first_disp && new_addr < last_disp)
+		{
+            addr_rect.top    = int(bdr_top_ - doc_rect.top + addr2pos(new_addr).y);
+			addr_rect.bottom = addr_rect.top + text_height_;
+            DoInvalidateRect(&addr_rect);
+		}
+	}
+}
+
 void CHexEditView::nav_save(FILE_ADDRESS astart, FILE_ADDRESS aend, LPCTSTR desc)
 {
 	if (theApp.navman_.InMove())
@@ -4551,7 +4654,7 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
     pDC->FillRect(rct, &backBrush);
 
     // Get rect for address area
-    rct.right = hex_pos(0) - GetScroll().x - text_width_/2 + bdr_left_;
+    rct.right = addr_width_*text_width_ - GetScroll().x - text_width_/2 + bdr_left_;
 
     // If address area is visible and address background is different to normal background ...
     if (rct.right > rct.left && addr_bg_col_ != bg_col_)
@@ -8961,7 +9064,7 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
             // Add initial address
             *pp++ = '/';
             *pp++ = '*';
-            slen = sprintf(pp, addr_format_, start);
+            slen = sprintf(pp, addr_format_, start);  // xxx can now show both addresses and line num
             pp += slen;
             *pp++ = '*';
             *pp++ = '/';
