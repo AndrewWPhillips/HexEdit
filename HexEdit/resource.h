@@ -1085,6 +1085,8 @@
 #define IDC_PROMPT                      1555
 #define IDC_RULER                       1556
 #define IDC_LINENOS                     1557
+#define IDC_LINENOS2                    1558
+#define IDC_ADDRBASE1                   1558
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773

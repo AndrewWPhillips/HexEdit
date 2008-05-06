@@ -1733,14 +1733,17 @@ BEGIN
                     WS_GROUP | WS_TABSTOP,119,36,68,10,0,HIDC_AUTOFIT
     CONTROL         "&Decimal Address",IDC_ADDR_DEC,"Button",BS_AUTOCHECKBOX | 
                     BS_MULTILINE | WS_TABSTOP,119,48,68,10,0,HIDC_ADDR_DEC
-    CONTROL         "&Maximize",IDC_MAX,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,119,60,68,10,0,HIDC_MAX
-    CONTROL         "Sector &bounds",IDC_BORDERS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,119,72,68,10,0,HIDC_BORDERS
-    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
-                    WS_TABSTOP,193,36,58,10,0,HIDC_RULER
     CONTROL         "&Line Numbers",IDC_LINENOS,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,193,48,58,10,0,HIDC_LINENOS
+                    WS_GROUP | WS_TABSTOP,119,60,58,10,0,HIDC_LINENOS
+    CONTROL         "Addresses start at &1 not zero",IDC_ADDRBASE1,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,119,72,103,10,0,
+                    HIDC_ADDRBASE1
+    CONTROL         "&Maximize",IDC_MAX,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,192,36,63,10,0,HIDC_MAX
+    CONTROL         "Sector &bounds",IDC_BORDERS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,192,48,63,10,0,HIDC_BORDERS
+    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
+                    WS_TABSTOP,192,60,58,10,0,HIDC_RULER
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,57,92,
                     199,1
     LTEXT           "Character Area",IDC_STATIC,12,88,48,8
@@ -1748,10 +1751,10 @@ BEGIN
     COMBOBOX        IDC_CHARSET,69,100,94,60,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_CHARSET
     PUSHBUTTON      "&Font...",IDC_FONT,167,100,43,12,0,0,HIDC_FONT
-    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,7,91,14
     LTEXT           "C&ontrol Chars:",IDC_CONTROL_DESC,19,119,48,8
     COMBOBOX        IDC_CONTROL,69,117,94,58,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_CONTROL
+    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,7,91,14
 END
 
 IDD_OPT_COLOURS DIALOGEX 0, 0, 260, 140

@@ -7,6 +7,7 @@
 #define HIDC_8BIT                       0x807503f0    // IDD_CALC
 #define HIDC_ADD                        0x80e6044d    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_ADDOP                      0x80750429    // IDD_CALC
+#define HIDC_ADDRBASE1                  0x810c0616    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_ADDRESS                    0x80e50437    // IDD_EMAIL
 #define HIDC_ADDRESS_FILE               0x8139043e    // IDD_OPT_WORKSPACE [English (U.S.)]
 #define HIDC_ADDRESS_SPECIFIED          0x8139043f    // IDD_OPT_WORKSPACE [English (U.S.)]
