@@ -2156,7 +2156,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About HexEdit"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "HexEdit 3.2",IDC_LINE1,150,24,166,8
+    LTEXT           "HexEdit 3.3",IDC_LINE1,150,24,166,8
     LTEXT           "Copyright 1999-2008 Expert Commercial Software Pty Ltd",
                     IDC_LINE2,150,38,96,18
     PUSHBUTTON      "&Email...",IDC_EMAIL,322,38,61,14
@@ -4886,6 +4886,8 @@ BEGIN
 0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0031, 
     IDC_VERSION, 0x403, 12, 0
 0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0032, 
+    IDC_VERSION, 0x403, 12, 0
+0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0033, 
     0
 END
 
