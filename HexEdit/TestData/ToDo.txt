@@ -26,7 +26,9 @@ RULER
  - right edge not quite far enough in scroll bar
    - eg click and drag to the right does not select last column
  - clip draw of bytes to left of window for speed with long lines
- - change font size, chnage display mode etc move scroll posn strangely
+ - change font size, change display mode etc cause scroll posn to move strangely
+ - addr/ruler not invalidated when change caret by clickin in other (hex/char) area
+   - also after dragging up (highlights start of drag not caret)
 
 TEST
   - display/editing of all types in tree view
