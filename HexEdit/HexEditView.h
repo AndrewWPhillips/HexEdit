@@ -801,6 +801,11 @@ private:
 
     FILE_ADDRESS mark_;         // Address of marked position
 
+    FILE_ADDRESS mouse_addr_;   // Address of the byte under the mouse (or -1 if none)
+    void set_mouse_addr(FILE_ADDRESS addr);     // change mouse_addr_ (making sure ruler/address area invalidated properly)
+    void invalidate_addr(FILE_ADDRESS addr);    // invalidate address area of line containing address
+    void invalidate_ruler(FILE_ADDRESS addr);   // invlidate part of ruler at offset for address
+
     // The display state is now stored in one 32 bit value for ease of saving the state
     // in undo vector and in registry
     union
@@ -823,7 +828,7 @@ private:
     // Display colours
     COLORREF bg_col_, mark_col_, hi_col_, bm_col_, search_col_, text_col_;
     COLORREF trk_col_, trk_bg_col_;             // Change tracking colours
-    COLORREF addr_bg_col_, addr_edge_col_, dec_addr_col_, hex_addr_col_; // colour for adresses/ruler
+    COLORREF addr_bg_col_, dec_addr_col_, hex_addr_col_; // colour for adresses/ruler
 	COLORREF sector_col_, sector_bg_col_;       // Displays sector bondaries and bad sector background
 
     CString scheme_name_;

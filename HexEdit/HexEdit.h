@@ -80,6 +80,8 @@ typedef __int64 FILE_ADDRESS;
 //#define CALC_EXPR       1   // Allow expressions in calculator - needs testing
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
 //#define REFRESH_OFF     1   // Turn off display refresh when replacing all - doesn't seem to save much time so leave off for now
+#define HIGHLIGHT_CARET 1   // Highlight current caret posn in the ruler/address area
+#define HIGHLIGHT_MOUSE 1   // Highlight the address under the mouse in the ruler/address area
 
 #define INTERNAL_ALGORITHM  "HexEdit Internal Encryption Algorithm"
 

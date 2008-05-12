@@ -582,6 +582,8 @@ CHexEditView::CHexEditView() : expr_(this)
     else
         display_.edit_char = display_.mark_char = FALSE;    // Caret init. in hex not char area
 
+    mouse_addr_ = -1;           // Only used when HIGHLIGHT_MOUSE is #defined
+
     mouse_down_ = false;
     needs_refresh_ = false;
     needs_hscroll_ = false;
@@ -1149,7 +1151,6 @@ BOOL CHexEditView::set_colours()
     bm_col_        = ps->bm_col_ == -1       ? RGB(160, 192, 255) : ps->bm_col_;
     search_col_    = ps->search_col_ == -1   ? RGB(160, 255, 224) : ps->search_col_;
     addr_bg_col_   = ps->addr_bg_col_ == -1  ? ::tone_down(::GetSysColor(COLOR_INACTIVEBORDER), bg_col_, 0.5) : ps->addr_bg_col_;
-	addr_edge_col_ = same_hue(addr_bg_col_, 100, 20);
     // Getting change tracking colour and make a version closer to the background colour in luminance
     // trk_col_ is used to underline replacements, trk_bg_col_ is used as background for insertions
     trk_col_ = ps->trk_col_ == -1 ? RGB(255, 0, 0) : ps->trk_col_;              // red
@@ -1674,9 +1675,9 @@ void CHexEditView::OnDraw(CDC* pDC)
                     pDC->m_hDC != pDC->m_hAttribDC;
      */
 
-    CBrush backBrush;
-    backBrush.CreateSolidBrush(bg_col_);
-    backBrush.UnrealizeObject();
+    //CBrush backBrush;
+    //backBrush.CreateSolidBrush(bg_col_);
+    //backBrush.UnrealizeObject();
 
     pDC->SetBkMode(TRANSPARENT);
 
@@ -1901,7 +1902,13 @@ void CHexEditView::OnDraw(CDC* pDC)
     if (first_addr < first_virt) first_addr = first_virt;
     if (last_addr > last_virt) last_addr = last_virt;
 
-    CPoint pt;   // moved this here to avoid a spurious compiler error
+	CPoint pt;   // moved this here to avoid a spurious compiler error C2362
+    CPen pen1(PS_SOLID, 0, same_hue(sector_col_, 100, 30));    // dark sector_col_
+    CPen pen2(PS_SOLID, 0, same_hue(addr_bg_col_, 100, 30));   // dark addr_bg_col_
+    CPen *psaved_pen;
+#ifdef HIGHLIGHT_MOUSE
+    CBrush brush(sector_col_);
+#endif
 
     // Skip background drawing in this case because it's too hard.
     // Note that this goto greatly simplifies the tests below.
@@ -1923,12 +1930,10 @@ void CHexEditView::OnDraw(CDC* pDC)
         pDoc->GetData(&cc, 1, (first_addr + last_addr)/2);
     }
 
-    CPen *pPen, *pOldPen;
     if (display_.borders)
-        pPen = new CPen(PS_SOLID, char_width/12+1, sector_col_);
+        psaved_pen = pDC->SelectObject(&pen1);
     else
-        pPen = new CPen(PS_SOLID, 0, addr_edge_col_);
-    pOldPen = pDC->SelectObject(pPen);
+        psaved_pen = pDC->SelectObject(&pen2);
 
     if (!pDC->IsPrinting())
     {
@@ -1953,7 +1958,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (neg_y) pt.y = -30000;
             pDC->LineTo(pt);
         }
-        if (display_.char_area)
+        if (display_.char_area) // xxx vert?
         {
 			// Vert line to right of char area
             pt.y = bdr_top_ - 2;
@@ -1983,15 +1988,57 @@ void CHexEditView::OnDraw(CDC* pDC)
 
 	if (display_.ruler)
 	{
-		int hicol = int(start_addr%rowsize_);         // Column with cursor is to be highlighted
+		int vert = 0;                           // Screen row to display the text at
+		int horz = bdr_left_ - GetScroll().x;
+
+#ifdef HIGHLIGHT_CARET
+        // Do highlighting with a background rectangle in ruler/address area
+        int hicol = int(start_addr%rowsize_);   // Column with cursor is to be highlighted
+        CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
+		psaved_pen = pDC->SelectObject(&pen1);
+		if (!display_.vert_display && display_.hex_area)
+        {
+			hi_rect.left  = hex_pos(hicol) + horz;
+			hi_rect.right = hi_rect.left + text_width_*2 + 1;
+			pDC->Rectangle(&hi_rect);
+        }
+		if (display_.char_area) // xxx vert?
+        {
+			hi_rect.left  = char_pos(hicol) + horz;
+			hi_rect.right = hi_rect.left + text_width_ + 1;
+			pDC->Rectangle(&hi_rect);
+		}
+		(void)pDC->SelectObject(psaved_pen);
+#endif
+#ifdef HIGHLIGHT_MOUSE
+		if (mouse_addr_ > -1)
+		{
+			int hicol = int(mouse_addr_%rowsize_);   // Column with cursor is to be highlighted
+			CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
+			CBrush *psaved_brush = pDC->SelectObject(&brush);
+			psaved_pen = pDC->SelectObject(&pen2);
+			if (!display_.vert_display && display_.hex_area)
+			{
+				hi_rect.left  = hex_pos(hicol) + horz;
+				hi_rect.right = hi_rect.left + text_width_*2 + 1;
+				pDC->Rectangle(&hi_rect);
+			}
+			if (display_.char_area) // xxx vert?
+			{
+				hi_rect.left  = char_pos(hicol) + horz;
+				hi_rect.right = hi_rect.left + text_width_ + 1;
+				pDC->Rectangle(&hi_rect);
+			}
+			(void)pDC->SelectObject(psaved_pen);
+			(void)pDC->SelectObject(psaved_brush);
+		}
+#endif
 
 		// Get display rect for clipping at right and left
 		CRect cli;
 		GetDisplayRect(&cli);
 
 		// Show offsets in the top border (ruler)
-		int vert = 0;                              // Screen row to display the text at
-		int horz = bdr_left_ - GetScroll().x;
 		if (display_.hex_addr)
 		{
 			CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_);
@@ -2006,13 +2053,11 @@ void CHexEditView::OnDraw(CDC* pDC)
 						ss.Format("%02x", column%256);
 					rect.left  = rect.right;
 					rect.right = hex_pos(column + 1) + horz;
-					if (column == hicol) pDC->SetBkMode(OPAQUE);
 					if (rect.left >= cli.left && rect.left < cli.right)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-					if (column == hicol) pDC->SetBkMode(TRANSPARENT);
 				}
 			rect.right = char_pos(0) + horz;
-			if (display_.char_area)
+			if (display_.char_area) // xxx vert?
 				for (int column = 0; column < rowsize_; ++column)
 				{
 					if (theApp.hex_ucase_)
@@ -2021,10 +2066,8 @@ void CHexEditView::OnDraw(CDC* pDC)
 						ss.Format("%1x", column%16);
 					rect.left  = rect.right;
 					rect.right = char_pos(column + 1) + horz;
-					if (column == hicol) pDC->SetBkMode(OPAQUE);
 					if (rect.left >= cli.left && rect.right <= cli.right)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-					if (column == hicol) pDC->SetBkMode(TRANSPARENT);
 				}
 			vert += text_height_;  // Move down for anything to be drawn underneath
 		}
@@ -2039,22 +2082,18 @@ void CHexEditView::OnDraw(CDC* pDC)
 					ss.Format("%02d", column%100);
 					rect.left  = rect.right;
 					rect.right = hex_pos(column + 1) + horz;
-					if (column == hicol) pDC->SetBkMode(OPAQUE);
 					if (rect.left >= cli.left && rect.left < cli.right)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-					if (column == hicol) pDC->SetBkMode(TRANSPARENT);
 				}
 			rect.right = char_pos(0) + horz;
-			if (display_.char_area)
+			if (display_.char_area) // xxx vert?
 				for (int column = 0; column < rowsize_; ++column)
 				{
 					ss.Format("%1d", column%10);
 					rect.left  = rect.right;
 					rect.right = char_pos(column + 1) + horz;
-					if (column == hicol) pDC->SetBkMode(OPAQUE);
 					if (rect.left >= cli.left && rect.right <= cli.right)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-					if (column == hicol) pDC->SetBkMode(TRANSPARENT);
 				}
 			vert += text_height_;  // Move down for anything to be drawn underneath (currently nothing)
 		}
@@ -2170,8 +2209,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             }
         }
     }
-    pDC->SelectObject(pOldPen);
-    delete pPen;
+    pDC->SelectObject(psaved_pen);      // restore pen after drawing borders etc
 
     // Draw deletion marks always from top (shouldn't be too visible)
     if (!display_.hide_delete)
@@ -2621,13 +2659,27 @@ end_of_background_drawing:
         if ((addr_width_ - 1)*char_width + tt.left > 0)
         {
             addr_rect = tt;            // tt with right margin where addresses end
-			// Show address of current row with a different background colour
+            addr_rect.right = addr_rect.left + addr_width_*char_width - char_width/2 - 1;
+			addr_rect.bottom = addr_rect.top + text_height_;
+#ifdef HIGHLIGHT_CARET
 		    if (start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
+            {
+                psaved_pen = pDC->SelectObject(&pen1);
+				pDC->Rectangle(&addr_rect);
+                (void)pDC->SelectObject(psaved_pen);
+            }
+#endif
+#ifdef HIGHLIGHT_MOUSE
+			// Show address of current row with a different background colour
+		    if (mouse_addr_ >= line*rowsize_ - offset_ && mouse_addr_ < (line+1)*rowsize_ - offset_)
 			{
-                addr_rect.right = addr_rect.left + addr_width_*char_width - char_width/2;
-				addr_rect.bottom = addr_rect.top + text_height_;
-				pDC->FillRect(&addr_rect, &backBrush);
+                CBrush *psaved_brush = pDC->SelectObject(&brush);
+                psaved_pen = pDC->SelectObject(&pen2);
+				pDC->Rectangle(&addr_rect);
+                (void)pDC->SelectObject(psaved_pen);
+                (void)pDC->SelectObject(psaved_brush);
 			}
+#endif
 
             if (hex_width_ > 0)
             {
@@ -3859,7 +3911,15 @@ void CHexEditView::DisplayCaret(int char_width /*= -1*/)
     else if (char_width == -1)
         char_width = text_width_;
     CScrView::DisplayCaret(char_width);
-    move_dlgs();
+
+    // Since the window may be scrolled without the mouse even moving we
+    // have to make sure that the byte addr/ruler highlight byte is updated.
+    CPoint pt;
+    ::GetCursorPos(&pt);            // get mouse location (screen coords)
+    ScreenToClient(&pt);
+    set_mouse_addr(address_at(pt));
+
+    move_dlgs();  // scrolling may also have moved caret under a dialog
 }
 
 // Move the modeless dialogs if visible and it/they obscure the caret
@@ -4199,44 +4259,73 @@ void CHexEditView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
 
 void CHexEditView::SetSel(CPointAp start, CPointAp end, bool base1 /*= false*/)
 {
+#ifdef HIGHLIGHT_CARET
     FILE_ADDRESS old_addr, end_addr, new_addr;
-    GetSelAddr(old_addr, end_addr);             // Get current caret before CScrView::SetSel moves it
+    BOOL end_base = GetSelAddr(old_addr, end_addr);             // Get current caret before CScrView::SetSel moves it
+    //if (end_base) old_addr = end_addr;
 
 	CScrView::SetSel(start, end, base1);
 
-	int horz = bdr_left_ - GetScroll().x;       // Offset of left side of doc from left side of window
-
 	new_addr = pos2addr(start);
+    if (old_addr != new_addr)
+    {
+        invalidate_addr(old_addr);
+        invalidate_addr(new_addr);
+        invalidate_ruler(old_addr);
+        invalidate_ruler(new_addr);
+    }
+#else
+	CScrView::SetSel(start, end, base1);
+#endif
+}
 
-	// If we have moved the caret and we are showing the ruler ...
-	if (old_addr != new_addr && display_.ruler)
+void CHexEditView::set_mouse_addr(FILE_ADDRESS addr)
+{
+#ifdef HIGHLIGHT_MOUSE
+    if (addr == mouse_addr_)
+        return;                 // no change so do nothing
+
+    FILE_ADDRESS old_addr = mouse_addr_;
+    mouse_addr_ = addr;
+    invalidate_addr(old_addr);
+    invalidate_ruler(old_addr);
+    invalidate_addr(addr);
+    invalidate_ruler(addr);
+
+    if (addr > - 1)
+		track_mouse(TME_LEAVE); // make sure we get a leave event when the mouse is moved outside
+#endif
+}
+
+// Invalidate part of ruler related to an address
+void CHexEditView::invalidate_ruler(FILE_ADDRESS addr)
+{
+	if (!display_.ruler)
+        return;
+
+	TRACE("*** INV %d *** xxx\n", addr);
+ 	int horz = bdr_left_ - GetScroll().x;       // Offset of left side of doc from left side of window
+
+	CRect rct;
+	rct.top = 0;
+	rct.bottom = bdr_top_;
+	if (!display_.vert_display && display_.hex_area)
 	{
-		// Invalidate ruler areas which indicate the old and new caret position
-		CRect rct;
-		rct.top = 0;
-		rct.bottom = bdr_top_;
-		if (!display_.vert_display && display_.hex_area)
-		{
-			rct.left  = hex_pos(int(old_addr%rowsize_)) + horz;
-			rct.right = hex_pos(int(old_addr%rowsize_)+1) + horz;
-			DoInvalidateRect(&rct);
-            // xxx also do end_addr?
-			rct.left  = hex_pos(int(new_addr%rowsize_)) + horz;
-			rct.right = hex_pos(int(new_addr%rowsize_)+1) + horz;
-			DoInvalidateRect(&rct);
-		}
-		if (display_.char_area)
-		{
-			rct.left  = char_pos(int(old_addr%rowsize_)) + horz;
-			rct.right = char_pos(int(old_addr%rowsize_)+1) + horz;
-			DoInvalidateRect(&rct);
-            // xxx also do end_addr?
-			rct.left  = char_pos(int(new_addr%rowsize_)) + horz;
-			rct.right = char_pos(int(new_addr%rowsize_)+1) + horz;
-			DoInvalidateRect(&rct);
-		}
+		rct.left  = hex_pos(int(addr%rowsize_)) + horz;
+		rct.right = hex_pos(int(addr%rowsize_)+1) + horz;
+		DoInvalidateRect(&rct);
 	}
+	if (display_.char_area)
+	{
+		rct.left  = char_pos(int(addr%rowsize_)) + horz;
+		rct.right = char_pos(int(addr%rowsize_)+1) + horz + 1;
+		DoInvalidateRect(&rct);
+	}
+}
 
+// Invalidate address area based on an address
+void CHexEditView::invalidate_addr(FILE_ADDRESS addr)
+{
     CRect rct;
     GetDisplayRect(&rct);
     CRectAp doc_rect = ConvertFromDP(rct);
@@ -4245,26 +4334,16 @@ void CHexEditView::SetSel(CPointAp start, CPointAp end, bool base1 /*= false*/)
     addr_rect.right = bdr_left_ - doc_rect.left + addr_width_*text_width_ - text_width_/2;
 
 	// If moved and the address area is visible ...
-	if (old_addr != new_addr && addr_rect.right > addr_rect.left)
+	if (addr_rect.right <= addr_rect.left)
+        return;         // Address area is off window to the left
+
+	FILE_ADDRESS first_disp = (doc_rect.top/line_height_) * rowsize_ - offset_;
+	FILE_ADDRESS last_disp = (doc_rect.bottom/line_height_ + 1) * rowsize_ - offset_;
+	if (addr >= first_disp && addr < last_disp)
 	{
-	    FILE_ADDRESS first_disp = (doc_rect.top/line_height_) * rowsize_ - offset_;
-		FILE_ADDRESS last_disp = (doc_rect.bottom/line_height_ + 1) * rowsize_ - offset_;
-
-		if (old_addr >= first_disp && old_addr < last_disp)
-		{
-            addr_rect.top    = int(bdr_top_ - doc_rect.top + addr2pos(old_addr).y);
-			addr_rect.bottom = addr_rect.top + text_height_;
-            DoInvalidateRect(&addr_rect);
-		}
-
-        // xxx also do end_addr as drag upwards leaves end_addr as the highlighted address
-
-		if (new_addr >= first_disp && new_addr < last_disp)
-		{
-            addr_rect.top    = int(bdr_top_ - doc_rect.top + addr2pos(new_addr).y);
-			addr_rect.bottom = addr_rect.top + text_height_;
-            DoInvalidateRect(&addr_rect);
-		}
+        addr_rect.top    = int(bdr_top_ - doc_rect.top + addr2pos(addr).y);
+		addr_rect.bottom = addr_rect.top + text_height_;
+        DoInvalidateRect(&addr_rect);
 	}
 }
 
@@ -4742,6 +4821,12 @@ void CHexEditView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) 
 {
+    BOOL retval;
+
+    // As the address under the mouse will probably change we need to get
+    // rid of the tip window which shows info about the byte under the mouse.
+    tip_.Hide(0);
+
     if ((nFlags & MK_CONTROL) != 0)
     {
 		// Ctrl+ mouse wheel zooms in/out
@@ -4749,10 +4834,21 @@ BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
             OnFontDec();
         else if (zDelta > 0)
             OnFontInc();
-        return TRUE;
+        retval = TRUE;
     }
     else
-        return CScrView::OnMouseWheel(nFlags, zDelta, pt);
+        retval = CScrView::OnMouseWheel(nFlags, zDelta, pt);
+#ifdef HIGHLIGHT_MOUSE
+    {
+        // Since the window may be scrolled without the mouse even moving we
+        // have to make sure that the byte addr/ruler highlight byte is updated.
+        CPoint point;
+        ::GetCursorPos(&point);         // get mouse location (screen coords)
+        ScreenToClient(&point);
+        set_mouse_addr(address_at(point));
+    }
+#endif
+    return retval;
 }
 
 void CHexEditView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
@@ -5393,7 +5489,8 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
     if (prev_start_ == prev_end_ && display_.vert_display)
         prev_row_ = pos2row(GetCaret());
 
-    if (!shift_down_)
+    FILE_ADDRESS swap_addr = -1;                // caret addr before swap (or -1 if no swap)
+	if (!shift_down_)
     {
         num_entered_ = num_del_ = num_bs_ = 0;  // Can't be editing while mousing
         if (!display_.vert_display && display_.char_area && display_.hex_area)
@@ -5411,12 +5508,18 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
                     SetHorzBufferZone(1);
                 else
                     SetHorzBufferZone(2);
+
+                swap_addr = prev_start_;
             }
         }
     }
 
     CScrView::OnLButtonDown(nFlags, point);
 
+#ifdef HIGHLIGHT_CARET
+    if (swap_addr > -1)
+        invalidate_ruler(swap_addr);
+#endif
     reset_tip();
     show_prop();
     show_calc();
@@ -5488,33 +5591,48 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CHexEditView::OnMouseMove(UINT nFlags, CPoint point) 
 {
+    FILE_ADDRESS old_addr, end_addr, new_addr;
+    if (mouse_down_)
+	    GetSelAddr(old_addr, end_addr);             // Get current caret before moved
     CScrView::OnMouseMove(nFlags, point);
+    if (mouse_down_)
+		GetSelAddr(new_addr, end_addr);
 
+    FILE_ADDRESS addr = address_at(point);      // Address of byte mouse is over (or -1)
     if (mouse_down_)
     {
-#ifdef NEW_TIPS
-		tip_.Hide(0);                    // Make sure there is no mouse tip while dragging
-#else
-		tip_.Hide(0);
-#endif
+		tip_.Hide(0);                           // Make sure there is no mouse tip while dragging
         move_dlgs();
-        update_sel_tip(200);                // Update selection tip
+        update_sel_tip(200);                    // Update selection tip
+#ifdef HIGHLIGHT_CARET
+        if (old_addr != new_addr)
+        {
+            // Invalidate while dragging start of selection area
+            invalidate_addr(old_addr);
+            invalidate_addr(new_addr);
+            invalidate_ruler(old_addr);
+            invalidate_ruler(new_addr);
+        }
+#endif
     }
     else if (!tip_.IsWindowVisible())
     {
         // Set a timer so that we can check if we want to display a tip window
         track_mouse(TME_HOVER);
     }
-	else if (address_at(point) != last_tip_addr_ && tip_.IsWindowVisible())
+	else if (addr != last_tip_addr_ && tip_.IsWindowVisible())
     {
         // Hide the tip window since the mouse has moved away
 #ifdef NEW_TIPS
-		if (!tip_.FadingOut())   // Don't keep it alive if we have already told it to fade away
+		if (!tip_.FadingOut())                  // Don't keep it alive if we have already told it to fade away
 			tip_.Hide(300);
 #else
 		tip_.Hide(0);
 #endif
     }
+#ifdef HIGHLIGHT_MOUSE
+    set_mouse_addr(addr);
+#endif
 }
 
 /*
@@ -5697,7 +5815,10 @@ LRESULT CHexEditView::OnMouseLeave(WPARAM, LPARAM lp)
 #else
 	tip_.Hide(0);
 #endif
-    return 0;
+#ifdef HIGHLIGHT_MOUSE
+    set_mouse_addr(-1);
+#endif
+	return 0;
 }
 
 void CHexEditView::OnSysColorChange()

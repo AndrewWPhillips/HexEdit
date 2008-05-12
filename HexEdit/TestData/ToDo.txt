@@ -1,13 +1,39 @@
 3.2 Version
  - submit to Simtel and change web links to new Simtel page
  - web site: add ver to bug report form drop list, update what's new, gifs etc
+ - email others about new release
+ 
+3.3 Version
+ - check new cracker codes and find workaround
+ - update security_version_ (hexedit.h)
+ - update range and default value for ver_ (RegisterDlg.cpp)
+ - update X.Y version number, and add to email dlg drop list
+ > change version number and copyright year in readme.txt, order.txt
+ x Add encrypted list of existing users & rebuild
+ - update help for new features, what's new, installation, order form etc
+ - add new tips of the day
+ - create new release notes
+ - create new bitmap for install
+ - update licence agreement text (version no, year etc)
+ - update PAD file (hexedit.xml)
+   - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
+ - change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
+ - create installation (add any new files, templates etc)
+ - change times of install files using touch2.bat (*.cab etc)
+ - create HexEdX_X.zip file containing HexEdX_X.MSI file along with readme.txt, hexedit.xml
+ - change time of zip file using touch3.bat
+ - test install on 95, 98, ME, NT4, W2K, XP
+ - submit to Simtel and change web links to new Simtel page
+ - web site: add ver to bug report form drop list, update what's new, gifs etc
+ - make announcement in forums
+ - update to shareware download sites
  - email reg users about new release (staggered)
  - email others about new release
  - change normal activation code email template
  - send out press release
 
 WEB SITE
- - Redesign using Exprssion Web
+ - Redesign using Expression Web
  - 3 main buttons: Download, Support, Purchase wih menu of extras
    - Download: Download free ver, Download templates,  Download ver with MS DLLs, Downloads page
    - Support: FAQ, Bugs, Help, Announcements, Main forum page
@@ -27,9 +53,8 @@ RULER
    - eg click and drag to the right does not select last column
  - clip draw of bytes to left of window for speed with long lines
  - change font size, change display mode etc cause scroll posn to move strangely
- - addr/ruler not invalidated when change caret by clickin in other (hex/char) area
-   - also after dragging up (highlights start of drag not caret)
-
+ - invalidation error for HIGHLIGHT_CARET when autoscrolling up
+ 
 TEST
   - display/editing of all types in tree view
   - display/validation of enums
@@ -513,7 +538,120 @@ Possible Features
     - bits on/off is better (allows some error checking)
   - special formats processing - TAR, TIF, ............
 
+More Options (see also Aerial branch)
+------------
+System
+  General page (COGS)
+    Sounds
+     + enable sounds
+     + -> button to invoke control panel sounds
+    Startup
+     + reload open files??
+     + tips at startup
+     + Startup options: nothing, new file, open file, startup window
+    
+  Privacy page (LOCK or PERSON)
+    History Lists
+    - recently use file list size
+    + hist list sizes: search, replace, goto,
+      -> button for privacy page
+    + dont add to recently used folder (Start Menu)
+    - clear lists: rfl, bm, search (replace, goto?)
+      - always clear on exit
+
+Workspace
+  Document page (MONITOR)
+    Display
+     + show selection length "tip"
+       - show base-2 divisibility
+    Ruler/Addresses
+     + Show ruler
+     + Highlight cursor position
+     + Addresses start at 1
+    Scroll
+     + mouse wheel units?
+     + scroll past ends
+    Global
+     - ucase hex
+     + K = 1024/1000 (M=1024*1024/1e6 etc)
+
+  Layout page (RULER/PROTRACTOR/ETC)
+    Main window
+     - restore main window on startup(2)
+       -> Startup page
+     - tabs
+       - tabs at top
+       - icons
+     + background image
+    Modeless dialogs
+     + show checkboxes for each
+     + allow docking dlgs
+     + undocked dlgs move out of the way
+
+  Edit page (PENCIL)
+    Paste
+      + paste replaces selection?
+      + select after paste (dv off) OR highlight?
+    Background Operations
+      - background searching
+        + exclude network/removeable
+      + gather statistics
+    Undo
+      + warn if undoing change made in other window
+      + option to undo display settings
+    Export
+      - addr: file/spec
+      - byte per line
+    + Enter = 0D0A??
+
+  Save page (FLOPPY)
+    AutoSave
+     + autosave recovery info
+    Backups
+     - create backups
+      - space
+      - size
+      - prompt
+      + ext. options: none, replace, append
+      + backup ext + extra ext
+      + backup folder
+     + warn if editing file that will not be backed up??
+
+  Template page (COOKIE CUTTER)
+    + alt bg colours
+    - etc
+    
+  Aerial page (PLANE)
+    + default dpix
+    + max bitmap
+
+Document
+  Display page (SPECS)
+    + hex addresses
+    + dec addresses
+    + line numbers
+    + addresses start at 1
+
+  Template Display page (COOKIE CUTTER)
+    - use
+      - split/tab
+    - columns to display?
+      - widths?
+    -> global template page button
+
+  Aerial Display page (PLANE)
+    - use
+      - split/tab
+    - borders display options
+    - ant display options
+    -> global aerial page button
+
+  Edit page (PENCIL)
+    Modes
+      + keep file times
+
 New Version
+-----------
  - update code generation on web site
  - check new cracker codes and find workaround
  - update security_version_ (hexedit.h)
@@ -542,177 +680,3 @@ New Version
  - email others about new release
  - change normal activation code email template
  - send out press release
-
-
-New Options Layout (tree) - see also Aerial branch
--------------------------
-System
-  General page (COGS)
-    Global Settings
-    - save setting on exit
-      -> save now button
-    General
-    - open with hexedit(1)
-    - only one instance(1)
-    - background searching(1)
-      -> button for edit page
-    + enable sounds
-      -> button to invoke control panel sounds
-    History Lists
-    - recently use file list size
-    + hist list sizes: search, replace, goto,
-      -> button for privacy page
-    
-  Privacy page (LOCK or PERSON)
-    + dont add to recently used folder (Start Menu)
-    - clear lists: rfl, bm, search (replace, goto?)
-      - always clear on exit
-
-  Startup page
-    - restore main window on startup(1)
-    - open with hexedit(2)
-    - only one instance(2)
-    + reload open files??
-    + run autoexec option
-    + tips at startup
-    + Startup options: nothing, new file, open file, startup window
-
-  Macro page (KEYBOARD)
-    - all existing options
-
-  Filters page (FLOPPY?)
-    - all existing options
-
-  Printing page (PRINTER)
-    - all existing options
-
-Workspace
-  Display page (MONITOR)
-    Cursor
-     - large cursor
-     - shadow cursor (Hex+char mode)
-    Display
-     - nice addresses
-     + show selection length "tip"
-       - show base-2 divisibility
-    Scroll
-     + mouse wheel units?
-     + scroll past ends
-    Misc
-     - ucase hex
-     + K = 1024/1000 (M=1024*1024/1e6 etc)
-
-  Layout page (RULER/PROTRACTOR/ETC)
-    Main window
-     - restore main window on startup(2)
-       -> Startup page
-     - tabs
-       - tabs at top
-       - icons
-     + background image
-    Modeless dialogs
-     + show checkboxes for each
-     + allow docking dlgs
-     + undocked dlgs move out of the way
-
-  Edit page (PENCIL)
-    Paste
-      + paste replaces selection?
-      + select after paste (dv off) OR highlight?
-    Background Operations
-      - background searching(2)
-        + exclude network/removeable
-      + gather statistics
-    Undo
-      + intelligent undo
-      + warn if undoing change made in other window
-      + merge size (dv 4)
-      + option to undo display settings
-    Export
-      - addr: file/spec
-      - byte per line
-    + Enter = 0D0A??
-
-  Info Tip page (BULB)
-    - all existing options
-
-  Save page (FLOPPY)
-    AutoSave
-     + autosave recovery info
-    Backups
-     - create backups
-      - space
-      - size
-      - prompt
-      + ext. options: none, replace, append
-      + backup ext + extra ext
-      + backup folder
-     + warn if editing file that will not be backed up??
-
-  Template page (COOKIE CUTTER)
-    + alt bg colours
-    - etc
-    
-  Aerial page (PLANE)
-    + default dpix
-    + max bitmap
-
-Document
-  General page (WINDOW)
-    Defaults
-      - restore and save as default buttons
-        -> button for display page
-        -> button for edit page
-
-  Display page (SPECS)
-    Layout
-      - Show areas
-      - Columns, offset, grouping
-      - Autofit
-      
-    Display
-      - char set
-      - control chars
-      - font buttons
-      - decimal addr
-      - sector bounds
-
-    Window
-      - maximize
-      + ruler?
-
-  Template Display page (COOKIE CUTTER)
-    - use
-      - split/tab
-    - columns to display?
-      - widths?
-    -> global template page button
-
-  Aerial Display page (PLANE)
-    - use
-      - split/tab
-    - borders display options
-    - ant display options
-    -> global aerial page button
-
-  Edit page (PENCIL)
-    Modes
-      - RO/RW
-      - OVR/INS
-      - big endian
-      + keep file times
-    Scroll
-      - scroll zone
-      - scroll past ends
-      - wheel units?
-    Change tracking
-      + insert
-      + delete
-      + changed
-    Misc    
-      + hide bookmarks
-      + hide highlight
-
-  Colours page (PALETTE)
-    - all existing options
-
