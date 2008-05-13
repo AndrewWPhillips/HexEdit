@@ -81,9 +81,10 @@ class CHistoryShellList : public CBCGShellList
 	// This is a continuation of BCGShellListColumns
 	enum
 	{
-		COLNAME, COLSIZE, COLTYPE, COLMOD,
-        COLATTR,        // file attributes
-        COLOPENED,      // time last opened in hexedit
+		COLNAME, COLSIZE, COLTYPE, COLMOD,		// Normal columns provided by BCG
+        COLATTR,								// file attributes
+        COLOPENED,								// time last opened in hexedit
+		COLCATEGORY, COLKEYWORDS, COLCOMMENTS,	// Extra info on file entered by user (Summary page)
 		COLLAST         // Leave this one at the end (to be one past last used value)
 	};
 public:

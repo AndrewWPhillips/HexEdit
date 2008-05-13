@@ -1906,7 +1906,7 @@ void CHexEditView::OnDraw(CDC* pDC)
     CPen pen1(PS_SOLID, 0, same_hue(sector_col_, 100, 30));    // dark sector_col_
     CPen pen2(PS_SOLID, 0, same_hue(addr_bg_col_, 100, 30));   // dark addr_bg_col_
     CPen *psaved_pen;
-#ifdef HIGHLIGHT_MOUSE
+#if defined(HIGHLIGHT_CARET) || defined(HIGHLIGHT_MOUSE)
     CBrush brush(sector_col_);
 #endif
 
@@ -1992,31 +1992,12 @@ void CHexEditView::OnDraw(CDC* pDC)
 		int horz = bdr_left_ - GetScroll().x;
 
 #ifdef HIGHLIGHT_CARET
-        // Do highlighting with a background rectangle in ruler/address area
-        int hicol = int(start_addr%rowsize_);   // Column with cursor is to be highlighted
-        CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
-		psaved_pen = pDC->SelectObject(&pen1);
-		if (!display_.vert_display && display_.hex_area)
-        {
-			hi_rect.left  = hex_pos(hicol) + horz;
-			hi_rect.right = hi_rect.left + text_width_*2 + 1;
-			pDC->Rectangle(&hi_rect);
-        }
-		if (display_.char_area) // xxx vert?
-        {
-			hi_rect.left  = char_pos(hicol) + horz;
-			hi_rect.right = hi_rect.left + text_width_ + 1;
-			pDC->Rectangle(&hi_rect);
-		}
-		(void)pDC->SelectObject(psaved_pen);
-#endif
-#ifdef HIGHLIGHT_MOUSE
-		if (mouse_addr_ > -1)
 		{
-			int hicol = int(mouse_addr_%rowsize_);   // Column with cursor is to be highlighted
+			// Do highlighting with a background rectangle in ruler/address area
+			int hicol = int(start_addr%rowsize_);   // Column with cursor is to be highlighted
 			CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
-			CBrush *psaved_brush = pDC->SelectObject(&brush);
-			psaved_pen = pDC->SelectObject(&pen2);
+			CBrush * psaved_brush = pDC->SelectObject(&brush);
+			CPen * psaved_pen = pDC->SelectObject(&pen1);
 			if (!display_.vert_display && display_.hex_area)
 			{
 				hi_rect.left  = hex_pos(hicol) + horz;
@@ -2025,6 +2006,30 @@ void CHexEditView::OnDraw(CDC* pDC)
 			}
 			if (display_.char_area) // xxx vert?
 			{
+				hi_rect.left  = char_pos(hicol) + horz;
+				hi_rect.right = hi_rect.left + text_width_ + 1;
+				pDC->Rectangle(&hi_rect);
+			}
+			(void)pDC->SelectObject(psaved_pen);
+			(void)pDC->SelectObject(psaved_brush);
+		}
+#endif
+#ifdef HIGHLIGHT_MOUSE
+		if (mouse_addr_ > -1)
+		{
+			int hicol = int(mouse_addr_%rowsize_);   // Column with cursor is to be highlighted
+			CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
+			CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
+			CPen * psaved_pen = pDC->SelectObject(&pen1);
+			if (!display_.vert_display && display_.hex_area)
+			{
+				hi_rect.left  = hex_pos(hicol) + horz;
+				hi_rect.right = hi_rect.left + text_width_*2 + 1;
+				pDC->Rectangle(&hi_rect);
+			}
+			if (display_.char_area) // xxx vert?
+			{
+				// 
 				hi_rect.left  = char_pos(hicol) + horz;
 				hi_rect.right = hi_rect.left + text_width_ + 1;
 				pDC->Rectangle(&hi_rect);
@@ -2664,17 +2669,19 @@ end_of_background_drawing:
 #ifdef HIGHLIGHT_CARET
 		    if (start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
             {
-                psaved_pen = pDC->SelectObject(&pen1);
+                CBrush * psaved_brush = pDC->SelectObject(&brush);
+                CPen * psaved_pen = pDC->SelectObject(&pen1);
 				pDC->Rectangle(&addr_rect);
                 (void)pDC->SelectObject(psaved_pen);
+                (void)pDC->SelectObject(psaved_brush);
             }
 #endif
 #ifdef HIGHLIGHT_MOUSE
 			// Show address of current row with a different background colour
 		    if (mouse_addr_ >= line*rowsize_ - offset_ && mouse_addr_ < (line+1)*rowsize_ - offset_)
 			{
-                CBrush *psaved_brush = pDC->SelectObject(&brush);
-                psaved_pen = pDC->SelectObject(&pen2);
+				CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
+                CPen * psaved_pen = pDC->SelectObject(&pen1);
 				pDC->Rectangle(&addr_rect);
                 (void)pDC->SelectObject(psaved_pen);
                 (void)pDC->SelectObject(psaved_brush);
@@ -3049,9 +3056,9 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 #ifdef USE_ROP2
     int saved_rop = pDC->SetROP2(R2_NOTXORPEN);
     CPen pen(PS_SOLID, 0, clr);
-    CPen *psaved_pen = pDC->SelectObject(&pen);
+    CPen * psaved_pen = pDC->SelectObject(&pen);
     CBrush brush(clr);
-    CBrush *psaved_brush = pDC->SelectObject(&brush);
+    CBrush * psaved_brush = pDC->SelectObject(&brush);
 #endif
 
     FILE_ADDRESS start_line = (start_addr + offset_)/rowsize_;
@@ -4715,9 +4722,8 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
 #ifdef _DEBUG
     // Draw the location of the borders to make sure nothing's drawn outside
     GetClientRect(rct);
-    CPen *pPen, *pOldPen;
-    pPen = new CPen(PS_SOLID, 1, RGB(255,0,0));
-    pOldPen = pDC->SelectObject(pPen);
+    CPen *psaved, pen(PS_SOLID, 1, RGB(255,0,0));
+    psaved = pDC->SelectObject(&pen);
 
     CPoint pt;
     pt.x = rct.right - bdr_right_;pt.y = bdr_top_ - 1;
@@ -4728,6 +4734,7 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
     pDC->LineTo(pt);
     pt.y = bdr_top_ - 1;
     pDC->LineTo(pt);
+	pDC->SelectObject(psaved);
 #endif
 
     return TRUE;
