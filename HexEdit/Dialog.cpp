@@ -101,6 +101,8 @@ LRESULT CHexDialogBar::InitDialogBarHandler(WPARAM, LPARAM)
 }
 
 #ifdef EXPLORER_WND
+/* Here we have CExplorerWnd and related classes */
+
 /////////////////////////////////////////////////////////////////////////////
 // CHistoryShellList - keeps history of folders that have been shown
 
@@ -227,6 +229,10 @@ void CHistoryShellList::OnSetColumns()
 		_T("Modified"),         // COLMOD
 		_T("Attributes"),       // COLATTR
 		_T("Last Opened"),      // COLOPENED
+        _T("Category"),         // COLCATEGORY
+        _T("Keywords"),         // COLKEYWORDS
+        _T("Comments"),         // COLCOMMENTS
+
         NULL
 	};
     ASSERT(name[COLLAST] == NULL);      // check numbering consistency
@@ -286,13 +292,18 @@ void CHistoryShellList::SaveLayout()
 CString CHistoryShellList::OnGetItemText(int iItem, int iColumn, 
 									     LPBCGCBITEMINFO pItem)
 {
-	if (iColumn == BCGShellList_ColumnName)
+    // We use fl_idx_ to store the index into recent file list (pfl) of the current file,
+    // which saves time by avoiding calls to SHGetPathFromIDList for each column.
+    // This is obtained when getting the first of our columns (COLATTR) but this may need
+    // fixing when the user can reorder columns (not sure COLATTR will still be done first).
+    // (A better soln might be to save pItem to compare in the next call.)
+	if (iColumn == COLNAME)
 		fl_idx_ = -2;  // Reset recent file list index at the start of a new row to help detect bugs/problems
 
 	TCHAR path[MAX_PATH];
 
 	// Handle size column since BCG base class can't handle file sizes > 2Gbytes
-	if (iColumn == BCGShellList_ColumnSize)
+	if (iColumn == COLSIZE)
 	{
         CFileStatus fs;
 		if (SHGetPathFromIDList(pItem->pidlFQ, path) &&
@@ -366,6 +377,22 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 			return retval;
 		}
 		break;
+
+    case COLCATEGORY:
+		if (pfl != NULL && fl_idx_ > -1)
+            return pfl->GetData(fl_idx_, CHexFileList::CATEGORY);
+        break;
+
+    case COLKEYWORDS:
+		if (pfl != NULL && fl_idx_ > -1)
+            return pfl->GetData(fl_idx_, CHexFileList::KEYWORDS);
+        break;
+
+    case COLCOMMENTS:
+		if (pfl != NULL && fl_idx_ > -1)
+            return pfl->GetData(fl_idx_, CHexFileList::COMMENTS);
+        break;
+
 	default:
 		ASSERT(0);
 		break;
@@ -376,6 +403,11 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 
 int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColumn)
 {
+	LPBCGCBITEMINFO pItem1 = (LPBCGCBITEMINFO)lParam1;
+	LPBCGCBITEMINFO	pItem2 = (LPBCGCBITEMINFO)lParam2;
+	ASSERT(pItem1 != NULL);
+	ASSERT(pItem2 != NULL);
+
     CHexFileList * pfl;
 	TCHAR path1[MAX_PATH];
 	TCHAR path2[MAX_PATH];
@@ -383,14 +415,10 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 	// Handle size column ourselves since BCG base class can't handle file sizes > 2Gbytes
 	switch (iColumn)
 	{
-	case BCGShellList_ColumnSize:
+	case COLSIZE:
 		{
 			SHFILEINFO sfi1, sfi2;
 			sfi1.dwAttributes = sfi2.dwAttributes = SFGAO_FOLDER|SFGAO_STREAM;
-			LPBCGCBITEMINFO pItem1 = (LPBCGCBITEMINFO)lParam1;
-			LPBCGCBITEMINFO	pItem2 = (LPBCGCBITEMINFO)lParam2;
-			ASSERT(pItem1 != NULL);
-			ASSERT(pItem2 != NULL);
 
 			CFileStatus fs1, fs2;
 
@@ -420,14 +448,11 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 			}
 		}
 		break;
+
 	case COLATTR:
 		{
 			SHFILEINFO sfi1, sfi2;
 			sfi1.dwAttributes = sfi2.dwAttributes = SFGAO_FOLDER|SFGAO_STREAM|SFGAO_READONLY|SFGAO_HIDDEN|SFGAO_COMPRESSED|SFGAO_ENCRYPTED;
-			LPBCGCBITEMINFO pItem1 = (LPBCGCBITEMINFO)lParam1;
-			LPBCGCBITEMINFO	pItem2 = (LPBCGCBITEMINFO)lParam2;
-			ASSERT(pItem1 != NULL);
-			ASSERT(pItem2 != NULL);
 
 			CFileStatus fs1, fs2;
 
@@ -487,9 +512,6 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 		
 	case COLOPENED:
 		{
-			LPBCGCBITEMINFO pItem1 = (LPBCGCBITEMINFO)lParam1;
-			LPBCGCBITEMINFO	pItem2 = (LPBCGCBITEMINFO)lParam2;
-
 			if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
 				SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
 				(pfl = theApp.GetFileList()) != NULL)
@@ -513,6 +535,55 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 			}
 		}
 		break;
+
+    case COLCATEGORY:
+		if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
+			SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
+			(pfl = theApp.GetFileList()) != NULL)
+		{
+			int idx1 = pfl->GetIndex(path1);
+			int idx2 = pfl->GetIndex(path2);
+
+            CString ss1, ss2;
+            if (idx1 != -1) ss1 = pfl->GetData(idx1, CHexFileList::CATEGORY);
+            if (idx2 != -1) ss2 = pfl->GetData(idx2, CHexFileList::CATEGORY);
+            int retval = ss1.CompareNoCase(ss2);
+            if (retval == 0)
+                return CString(path1).CompareNoCase(path2);  // sort by file name within category
+            else
+                return retval;
+        }
+        break;
+
+    case COLKEYWORDS:
+		if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
+			SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
+			(pfl = theApp.GetFileList()) != NULL)
+		{
+			int idx1 = pfl->GetIndex(path1);
+			int idx2 = pfl->GetIndex(path2);
+
+            CString ss1, ss2;
+            if (idx1 != -1) ss1 = pfl->GetData(idx1, CHexFileList::KEYWORDS);
+            if (idx2 != -1) ss2 = pfl->GetData(idx2, CHexFileList::KEYWORDS);
+            return ss1.CompareNoCase(ss2);
+        }
+        break;
+
+    case COLCOMMENTS:
+		if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
+			SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
+			(pfl = theApp.GetFileList()) != NULL)
+		{
+			int idx1 = pfl->GetIndex(path1);
+			int idx2 = pfl->GetIndex(path2);
+
+            CString ss1, ss2;
+            if (idx1 != -1) ss1 = pfl->GetData(idx1, CHexFileList::COMMENTS);
+            if (idx2 != -1) ss2 = pfl->GetData(idx2, CHexFileList::COMMENTS);
+            return ss1.CompareNoCase(ss2);
+        }
+        break;
 	}
 
 	return CBCGShellList::OnCompareItems(lParam1, lParam2, iColumn);
@@ -728,7 +799,7 @@ void CExplorerWnd::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FOLDER_NAME,    ctl_name_);
 
 	DDX_CBString(pDX, IDC_FOLDER_FILTER, curr_filter_);
-	DDX_CBString(pDX, IDC_FOLDER_NAME, curr_name_);
+	DDX_CBString(pDX, IDC_FOLDER_NAME,   curr_name_);
 }
 
 BOOL CExplorerWnd::OnInitDialog()
