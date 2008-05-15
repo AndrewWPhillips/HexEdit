@@ -1372,41 +1372,47 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 			const_sep_allowed_ = saved_const_sep_allowed;
             return TOK_NONE;
 		}
-		const_sep_allowed_ = saved_const_sep_allowed;
+		if (val.typ != TYPE_REAL && val.typ != TYPE_INT)
+		{
+			const_sep_allowed_ = saved_const_sep_allowed;
+			strcpy(error_buf_, "Parameter for \"min\" must be numeric");
+			return TOK_NONE;
+		}
 
-        if (next_tok != TOK_COMMA)
+        while (next_tok == TOK_COMMA)
         {
-            strcpy(error_buf_, "Expected comma and 2nd parameter for \"min\"");
-            return TOK_NONE;
-        }
+			if (error(next_tok = prec_assign(tmp), "Expected next parameter for \"min\""))
+			{
+				const_sep_allowed_ = saved_const_sep_allowed;
+				return TOK_NONE;
+			}
 
-        if (error(next_tok = prec_assign(tmp), "Expected 2nd parameter to \"min\""))
-            return TOK_NONE;
-
+			if (tmp.typ != TYPE_REAL && tmp.typ != TYPE_INT)
+			{
+				const_sep_allowed_ = saved_const_sep_allowed;
+				strcpy(error_buf_, "Parameter for \"min\" must be numeric");
+				return TOK_NONE;
+			}
+			else if (val.typ == TYPE_INT && tmp.typ == TYPE_INT)
+			{
+				if (tmp.int64 < val.int64)
+					val.int64 = tmp.int64;
+			}
+			else
+			{
+				double dd = make_real(tmp);
+				val.real64 = make_real(val);
+				if (dd < val.real64) val.real64 = dd;
+				val.typ = TYPE_REAL;
+			}
+			val.error = val.error || tmp.error;
+		}
+		const_sep_allowed_ = saved_const_sep_allowed;
         if (next_tok != TOK_RPAR)
         {
             strcpy(error_buf_, "Closing parenthesis expected for \"min\"");
             return TOK_NONE;
         }
-        else if (val.typ != TYPE_REAL && val.typ != TYPE_INT || 
-                 tmp.typ != TYPE_REAL && tmp.typ != TYPE_INT)
-        {
-            strcpy(error_buf_, "Parameter for \"min\" must be numeric");
-            return TOK_NONE;
-        }
-        else if (val.typ == TYPE_INT && tmp.typ == TYPE_INT)
-        {
-            if (tmp.int64 < val.int64)
-                val.int64 = tmp.int64;
-        }
-        else
-        {
-            double dd = make_real(tmp);
-            val.real64 = make_real(val);
-            if (dd < val.real64) val.real64 = dd;
-            val.typ = TYPE_REAL;
-        }
-        val.error = val.error || tmp.error;
         return get_next();
     case TOK_MAX:
         if ((next_tok = get_next()) != TOK_LPAR)
@@ -1422,41 +1428,47 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 			const_sep_allowed_ = saved_const_sep_allowed;
             return TOK_NONE;
 		}
+		if (val.typ != TYPE_REAL && val.typ != TYPE_INT)
+		{
+			const_sep_allowed_ = saved_const_sep_allowed;
+			strcpy(error_buf_, "Parameter for \"max\" must be numeric");
+			return TOK_NONE;
+		}
+
+        while (next_tok == TOK_COMMA)
+		{
+			if (error(next_tok = prec_assign(tmp), "Expected parameter for \"max\""))
+			{
+				const_sep_allowed_ = saved_const_sep_allowed;
+				return TOK_NONE;
+			}
+
+			if (tmp.typ != TYPE_REAL && tmp.typ != TYPE_INT)
+			{
+				const_sep_allowed_ = saved_const_sep_allowed;
+				strcpy(error_buf_, "Parameter for \"max\" must be numeric");
+				return TOK_NONE;
+			}
+			else if (val.typ == TYPE_INT && tmp.typ == TYPE_INT)
+			{
+				if (tmp.int64 > val.int64)
+					val.int64 = tmp.int64;
+			}
+			else
+			{
+				double dd = make_real(tmp);
+				val.real64 = make_real(val);
+				if (dd > val.real64) val.real64 = dd;
+				val.typ = TYPE_REAL;
+			}
+	        val.error = val.error || tmp.error;
+		}
 		const_sep_allowed_ = saved_const_sep_allowed;
-
-        if (next_tok != TOK_COMMA)
-        {
-            strcpy(error_buf_, "Expected comma and 2nd parameter for \"max\"");
-            return TOK_NONE;
-        }
-
-        if (error(next_tok = prec_assign(tmp), "Expected 2nd parameter to \"max\""))
-            return TOK_NONE;
-
         if (next_tok != TOK_RPAR)
         {
             strcpy(error_buf_, "Closing parenthesis expected for \"max\"");
             return TOK_NONE;
         }
-        else if (val.typ != TYPE_REAL && val.typ != TYPE_INT || 
-                 tmp.typ != TYPE_REAL && tmp.typ != TYPE_INT)
-        {
-            strcpy(error_buf_, "Parameter for \"max\" must be numeric");
-            return TOK_NONE;
-        }
-        else if (val.typ == TYPE_INT && tmp.typ == TYPE_INT)
-        {
-            if (tmp.int64 > val.int64)
-                val.int64 = tmp.int64;
-        }
-        else
-        {
-            double dd = make_real(tmp);
-            val.real64 = make_real(val);
-            if (dd > val.real64) val.real64 = dd;
-            val.typ = TYPE_REAL;
-        }
-        val.error = val.error || tmp.error;
         return get_next();
     case TOK_POW:
         if ((next_tok = get_next()) != TOK_LPAR)
