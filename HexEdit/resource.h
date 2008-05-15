@@ -202,6 +202,7 @@
 #define IDC_HIGHLIGHT                   248
 #define IDR_MAINFRAME4                  248
 #define IDD_FIND_REPLACE                249
+#define IDC_SMALLARROWS                 249
 #define IDD_FIND_SIMPLE                 250
 #define IDD_FIND_TEXT                   251
 #define IDR_PRINT_ARGS                  252
@@ -740,6 +741,7 @@
 #define IDC_CHARSET                     1200
 #define IDC_CONTROL                     1201
 #define IDC_INSERT                      1202
+#define IDC_ADDR_HEX                    1203
 #define IDC_ADDR_DEC                    1204
 #define IDC_FONT                        1205
 #define IDC_SAVE_DEFAULT                1206

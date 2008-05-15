@@ -1204,6 +1204,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\curSmallArrows.cur"
+				>
+			</File>
+			<File
 				RelativePath=".\RES\data.ico"
 				>
 			</File>
@@ -1545,11 +1549,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File

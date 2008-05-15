@@ -379,7 +379,7 @@ V3.3
     - paste in overtype mode
     - turn off insert mode
     - turn off read-only mode
-  - repair
+  - repair (http://www.codeproject.com/KB/cpp/installer.aspx)
       MsiSetInternalUI(INSTALLUILEVEL_NONE,NULL);
       MsiReinstallProduct("{A5A0D1C0-DF1A-11D3-99DC-00A0CCFFFAA1}",
           REINSTALLMODE_FILEVERIFY | REINSTALLMODE_FILEMISSING |

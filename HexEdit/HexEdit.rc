@@ -5272,6 +5272,7 @@ END
 //
 
 IDC_HIGHLIGHT           CURSOR                  "res\\highligh.cur"
+IDC_SMALLARROWS         CURSOR                  "res\\curSmallArrows.cur"
 
 /////////////////////////////////////////////////////////////////////////////
 //

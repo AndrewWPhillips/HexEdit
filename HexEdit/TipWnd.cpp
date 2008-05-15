@@ -403,7 +403,8 @@ BOOL CTipWnd::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
     if (nHitTest == HTCLIENT)
     {
-        ::SetCursor(theApp.LoadStandardCursor(IDC_SIZEALL));
+        ::SetCursor(theApp.LoadCursor(IDC_SMALLARROWS));
+        //::SetCursor(theApp.LoadStandardCursor(IDC_SIZEALL));
         return TRUE;
 	}
     return CWnd::OnSetCursor(pWnd, nHitTest, message);
