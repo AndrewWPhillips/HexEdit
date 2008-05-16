@@ -1729,21 +1729,14 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_OFFSET,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,106,69,11,12
-    CONTROL         "&Autofit",IDC_AUTOFIT,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,119,36,68,10,0,HIDC_AUTOFIT
-    CONTROL         "&Decimal Address",IDC_ADDR_DEC,"Button",BS_AUTOCHECKBOX | 
-                    BS_MULTILINE | WS_TABSTOP,119,48,68,10,0,HIDC_ADDR_DEC
-    CONTROL         "&Line Numbers",IDC_LINENOS,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,119,60,58,10,0,HIDC_LINENOS
-    CONTROL         "Addresses start at &1 not zero",IDC_ADDRBASE1,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,119,72,103,10,0,
-                    HIDC_ADDRBASE1
-    CONTROL         "&Maximize",IDC_MAX,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,192,36,63,10,0,HIDC_MAX
-    CONTROL         "Sector &bounds",IDC_BORDERS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,192,48,63,10,0,HIDC_BORDERS
-    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
-                    WS_TABSTOP,192,60,58,10,0,HIDC_RULER
+    CONTROL         "&Autofit",IDC_AUTOFIT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,121,37,59,10,0,HIDC_AUTOFIT
+    CONTROL         "&Maximize",IDC_MAX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,121,49,59,10,0,HIDC_MAX
+    CONTROL         "Sector &bounds",IDC_BORDERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,121,62,59,10,0,HIDC_BORDERS
+    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,184,25,75,10,0,HIDC_RULER
+    CONTROL         "&Hex Address",IDC_ADDR_HEX,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,184,37,75,10,0,HIDC_ADDR_HEX
+    CONTROL         "&Decimal Address",IDC_ADDR_DEC,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,184,49,75,10,0,HIDC_ADDR_DEC
+    CONTROL         "&Line Numbers",IDC_LINENOS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,184,61,75,10,0,HIDC_LINENOS
+    CONTROL         "Addresses start at &1",IDC_ADDRBASE1,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,184,73,75,10,0,HIDC_ADDRBASE1
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,57,92,
                     199,1
     LTEXT           "Character Area",IDC_STATIC,12,88,48,8

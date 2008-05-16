@@ -802,7 +802,7 @@ void CMainFrame::show_tip(UINT id /* = -1 */)
 
 void CMainFrame::OnMenuSelect(UINT nItemID, UINT nFlags, HMENU hMenu)
 {
-	TRACE("WM_MENUSELECT %d, %x, %d\n", nItemID, nFlags, int(hMenu));
+	//TRACE("WM_MENUSELECT %d, %x, %d\n", nItemID, nFlags, int(hMenu));
 	if ((nFlags & 0xFFFF) == 0xFFFF || (nFlags & MF_POPUP) != 0 || (nFlags & MF_SEPARATOR) != 0)
         menu_tip_.Hide();
 	else

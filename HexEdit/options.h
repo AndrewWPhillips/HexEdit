@@ -133,11 +133,12 @@ struct OptValues
 	UINT	grouping_;
     UINT    vertbuffer_;
 	BOOL	autofit_;
-	BOOL	addr_dec_;
 	BOOL	maximize_;
     BOOL    borders_;
 	BOOL    ruler_;
+	BOOL	addr_dec_, addr_hex_;
     BOOL    line_nums_;
+	BOOL	addrbase1_;
     BOOL    scroll_past_ends_;
     // Display state stored in a DWORD (as in view)
     union
@@ -637,6 +638,9 @@ protected:
 	afx_msg void OnSelchangeShowArea();
 	afx_msg void OnSelchangeCharset();
 	afx_msg void OnSelchangeControl();
+	afx_msg void OnChangeAddrDec();
+	afx_msg void OnChangeAddrHex();
+	afx_msg void OnChangeLineNos();
 	afx_msg void OnChangeUpdate();
 	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()

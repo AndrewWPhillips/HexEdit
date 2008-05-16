@@ -126,12 +126,14 @@ void COptSheet::init()
 	val_.show_area_ = -1;
 	val_.charset_ = -1;
 	val_.control_ = -1;
-    val_.addr_dec_ = FALSE;
 	val_.autofit_ = FALSE;
 	val_.maximize_ = FALSE;
     val_.borders_ = FALSE;
 	val_.ruler_ = FALSE;
+    val_.addr_hex_ = TRUE;
+    val_.addr_dec_ = FALSE;
     val_.line_nums_ = FALSE;
+	val_.addrbase1_ = FALSE;
 
 	val_.cols_ = 0;
 	val_.offset_ = 0;
@@ -3052,12 +3054,13 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 
         pParent->val_.control_ = pParent->val_.display_.control;
 
-        pParent->val_.addr_dec_ = pParent->val_.display_.dec_addr;
         pParent->val_.autofit_ = pParent->val_.display_.autofit;
-
         pParent->val_.borders_ = pParent->val_.display_.borders;
 		pParent->val_.ruler_ = pParent->val_.display_.ruler;
+        pParent->val_.addr_hex_ = pParent->val_.display_.hex_addr;
+		pParent->val_.addr_dec_ = pParent->val_.display_.decimal_addr;
 		pParent->val_.line_nums_ = pParent->val_.display_.line_nums;
+		pParent->val_.addrbase1_ = pParent->val_.display_.addrbase1;
     }
 
 	DDX_Check(pDX, IDC_MAX, pParent->val_.maximize_);
@@ -3068,10 +3071,12 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_OFFSET, pParent->val_.offset_);
 	DDX_Text(pDX, IDC_GROUPING, pParent->val_.grouping_);
 	DDX_Check(pDX, IDC_AUTOFIT, pParent->val_.autofit_);
-	DDX_Check(pDX, IDC_ADDR_DEC, pParent->val_.addr_dec_);
 	DDX_Check(pDX, IDC_BORDERS, pParent->val_.borders_);
 	DDX_Check(pDX, IDC_RULER, pParent->val_.ruler_);
+	DDX_Check(pDX, IDC_ADDR_HEX, pParent->val_.addr_hex_);
+	DDX_Check(pDX, IDC_ADDR_DEC, pParent->val_.addr_dec_);
 	DDX_Check(pDX, IDC_LINENOS, pParent->val_.line_nums_);
+	DDX_Check(pDX, IDC_ADDRBASE1, pParent->val_.addrbase1_);
 
     if (pDX->m_bSaveAndValidate)
     {
@@ -3125,14 +3130,12 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.display_.control = pParent->val_.control_;
 
         pParent->val_.display_.autofit = pParent->val_.autofit_;
-        pParent->val_.display_.dec_addr = pParent->val_.addr_dec_;
-		// This is just temp until we add 2 checkboxes and get rid of dec_addr flag
-		pParent->val_.display_.decimal_addr = pParent->val_.display_.dec_addr;
-		pParent->val_.display_.hex_addr = !pParent->val_.display_.dec_addr;
-
         pParent->val_.display_.borders = pParent->val_.borders_;
 		pParent->val_.display_.ruler = pParent->val_.ruler_;
+		pParent->val_.display_.decimal_addr = pParent->val_.addr_dec_;
+		pParent->val_.display_.hex_addr = pParent->val_.addr_hex_;
 		pParent->val_.display_.line_nums = pParent->val_.line_nums_;
+		pParent->val_.display_.addrbase1 = pParent->val_.addrbase1_;
     }
 }
 
@@ -3149,10 +3152,12 @@ BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
 	ON_EN_CHANGE(IDC_OFFSET, OnChange)
 	ON_BN_CLICKED(IDC_AUTOFIT, OnChangeUpdate)
 	ON_BN_CLICKED(IDC_MAX, OnChange)
-	ON_BN_CLICKED(IDC_ADDR_DEC, OnChange)
 	ON_BN_CLICKED(IDC_BORDERS, OnChange)
 	ON_BN_CLICKED(IDC_RULER, OnChange)
-	ON_BN_CLICKED(IDC_LINENOS, OnChange)
+	ON_BN_CLICKED(IDC_ADDR_HEX, OnChangeAddrHex)
+	ON_BN_CLICKED(IDC_ADDR_DEC, OnChangeAddrDec)
+	ON_BN_CLICKED(IDC_LINENOS, OnChangeLineNos)
+	ON_BN_CLICKED(IDC_ADDRBASE1, OnChange)
 END_MESSAGE_MAP()
 
 void CWindowPage::OnGlobalPage()
@@ -3272,10 +3277,12 @@ static DWORD id_pairs_windisplay[] = {
     IDC_GROUPING_DESC, HIDC_GROUPING,
     IDC_SPIN_GROUPING, HIDC_GROUPING,
     IDC_AUTOFIT, HIDC_AUTOFIT,
-    IDC_ADDR_DEC, HIDC_ADDR_DEC,
     IDC_BORDERS, HIDC_BORDERS,
 	IDC_RULER, HIDC_RULER,
+    IDC_ADDR_HEX, HIDC_ADDR_HEX,
+    IDC_ADDR_DEC, HIDC_ADDR_DEC,
 	IDC_LINENOS, HIDC_LINENOS,
+    IDC_ADDRBASE1, HIDC_ADDRBASE1,
     0,0 
 }; 
 
@@ -3329,6 +3336,39 @@ LRESULT CWindowPage::OnIdle(long lCount)
 // This is for controls that just need to record that they have changed
 void CWindowPage::OnChange() 
 {
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnChangeLineNos()
+{
+    UpdateData();
+	if (!pParent->val_.addr_dec_ && !pParent->val_.addr_hex_ && !pParent->val_.line_nums_)
+	{
+		pParent->val_.display_.hex_addr = 1;
+        UpdateData(FALSE);
+	}
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnChangeAddrDec() 
+{
+    UpdateData();
+	if (!pParent->val_.addr_dec_ && !pParent->val_.addr_hex_ && !pParent->val_.line_nums_)
+	{
+		pParent->val_.display_.hex_addr = 1;
+        UpdateData(FALSE);
+	}
+    SetModified(TRUE);
+}
+
+void CWindowPage::OnChangeAddrHex() 
+{
+    UpdateData();
+	if (!pParent->val_.addr_dec_ && !pParent->val_.addr_hex_ && !pParent->val_.line_nums_)
+	{
+		pParent->val_.display_.decimal_addr = 1;
+        UpdateData(FALSE);
+	}
     SetModified(TRUE);
 }
 

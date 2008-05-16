@@ -141,14 +141,14 @@ struct display_bits
 
     unsigned int autofit: 1;    // Autofit mode is on?
 	// --- 8
-    unsigned int dec_addr: 1;   // Addresses in hex (or decimal)?  To be phased out when sep. hex_addr and decimal_addr implemented
+    unsigned int dec_addr: 1;   // Replaced by sep. hex_addr and decimal_addr flags (below) - can be reused
     unsigned int edit_char: 1;  // Caret is in char area (or hex)?
     unsigned int mark_char: 1;  // Mark is in char area (or hex)?
 
     unsigned int overtype: 1;       // Are we in overtype mode?
     unsigned int readonly: 1;
 
-	unsigned int ruler: 1;          // Show ruler?
+	unsigned int ruler: 1;          // Show ruler - should be a global option
 
     unsigned int hide_highlight: 1; // Hide display of highlights
     unsigned int hide_bookmarks: 1; // Hide display of bookmarks
@@ -171,6 +171,7 @@ struct display_bits
 	unsigned int line_nums: 1;      // Show line numbers?
 	unsigned int hex_addr: 1;       // Show hex addresses?
 	unsigned int decimal_addr: 1;   // Show decimal addresses?
+	unsigned int addrbase1: 1;      // Addresses start at 1 not zero
 
     unsigned int strict_scroll: 1;  // This is pretty stupid as a per file option - should just be a global option
 

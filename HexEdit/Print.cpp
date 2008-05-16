@@ -366,7 +366,7 @@ void CHexEditView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
         for (int ii = 0; ii < rowsize_; ++ii)
         {
             char buf[10];
-            if (display_.dec_addr)
+            if (!display_.hex_addr)            // Probably showing dec addresses and/or line numbers so show dec hdr
                 sprintf(buf, "%2d", ii%100);
             else if (theApp.hex_ucase_)
                 sprintf(buf, "%02X", ii%0x100);

@@ -248,7 +248,7 @@ public:
     BOOL ANSIMode() const { return display_.char_set == CHARSET_ANSI; }
 #endif
     BOOL MouseDown() const { return BOOL(mouse_down_); }
-    BOOL DecAddresses() const { return display_.dec_addr; }
+	BOOL DecAddresses() const { return !display_.hex_addr; }  // Now that user can show both addresses at once this is probably the best return value
     BOOL AutoSync() const { return display_.auto_sync; }
     void SetAutoSync(BOOL b) { display_.auto_sync = b; }
     BOOL BigEndian() const { return display_.big_endian; }

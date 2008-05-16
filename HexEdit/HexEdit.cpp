@@ -2053,8 +2053,7 @@ void CHexEditApp::LoadOptions()
 
 		    open_display_.autofit = GetProfileInt("Options", "OpenAutoFit", 0) ? TRUE : FALSE;
 		    open_display_.dec_addr = GetProfileInt("Options", "OpenDecimalAddresses", 0) ? TRUE : FALSE;
-			open_display_.decimal_addr = open_display_.dec_addr;
-			open_display_.hex_addr = !open_display_.dec_addr;
+			open_display_.hex_addr = !(open_display_.decimal_addr = open_display_.dec_addr); // don't change this - see above
 		    open_display_.hide_highlight = GetProfileInt("Options", "OpenHideHighlight", 0) ? TRUE : FALSE;
 		    open_display_.hide_bookmarks = GetProfileInt("Options", "OpenHideBookmarks", 0) ? TRUE : FALSE;
 

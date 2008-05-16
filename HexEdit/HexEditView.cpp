@@ -726,13 +726,6 @@ void CHexEditView::OnInitialUpdate()
             mark_ = 0;
         ASSERT(display_.hex_area || display_.edit_char);  // if no hex area we must be editing chars
 
-		// Make sure that something is displayed in the address area
-		if (!display_.decimal_addr && !display_.hex_addr && !display_.line_nums)
-		{
-			display_.decimal_addr = display_.dec_addr;
-			display_.hex_addr = !display_.dec_addr;
-		}
-
         // Get saved font info
         strncpy(lf_.lfFaceName, pfl->GetData(recent_file_index, CHexFileList::FONT), LF_FACESIZE-1);
         lf_.lfFaceName[LF_FACESIZE-1] = '\0';
@@ -864,6 +857,13 @@ void CHexEditView::OnInitialUpdate()
             oem_lf_ = *aa->open_oem_plf_;
         }
     }
+
+	// Make sure that something is displayed in the address area
+	if (!display_.decimal_addr && !display_.hex_addr && !display_.line_nums)
+	{
+		display_.decimal_addr = display_.dec_addr;
+		display_.hex_addr = !display_.dec_addr;
+	}
 
 	switch (swidth)
 	{
@@ -1958,7 +1958,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (neg_y) pt.y = -30000;
             pDC->LineTo(pt);
         }
-        if (display_.char_area) // xxx vert?
+        if (display_.char_area)
         {
 			// Vert line to right of char area
             pt.y = bdr_top_ - 2;
@@ -2004,7 +2004,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 				hi_rect.right = hi_rect.left + text_width_*2 + 1;
 				pDC->Rectangle(&hi_rect);
 			}
-			if (display_.char_area) // xxx vert?
+			if (display_.char_area)
 			{
 				hi_rect.left  = char_pos(hicol) + horz;
 				hi_rect.right = hi_rect.left + text_width_ + 1;
@@ -2027,7 +2027,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 				hi_rect.right = hi_rect.left + text_width_*2 + 1;
 				pDC->Rectangle(&hi_rect);
 			}
-			if (display_.char_area) // xxx vert?
+			if (display_.char_area)
 			{
 				// 
 				hi_rect.left  = char_pos(hicol) + horz;
@@ -2053,22 +2053,22 @@ void CHexEditView::OnDraw(CDC* pDC)
 				for (int column = 0; column < rowsize_; ++column)
 				{
 					if (theApp.hex_ucase_)
-						ss.Format("%02X", column%256);
+						ss.Format("%02X", (column + display_.addrbase1)%256);
 					else
-						ss.Format("%02x", column%256);
+						ss.Format("%02x", (column + display_.addrbase1)%256);
 					rect.left  = rect.right;
 					rect.right = hex_pos(column + 1) + horz;
 					if (rect.left >= cli.left && rect.left < cli.right)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
 				}
 			rect.right = char_pos(0) + horz;
-			if (display_.char_area) // xxx vert?
+			if (display_.char_area)
 				for (int column = 0; column < rowsize_; ++column)
 				{
 					if (theApp.hex_ucase_)
-						ss.Format("%1X", column%16);
+						ss.Format("%1X", (column + display_.addrbase1)%16);
 					else
-						ss.Format("%1x", column%16);
+						ss.Format("%1x", (column + display_.addrbase1)%16);
 					rect.left  = rect.right;
 					rect.right = char_pos(column + 1) + horz;
 					if (rect.left >= cli.left && rect.right <= cli.right)
@@ -2076,7 +2076,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 				}
 			vert += text_height_;  // Move down for anything to be drawn underneath
 		}
-		if (display_.decimal_addr)
+		if (display_.decimal_addr || display_.line_nums)
 		{
 			CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_);
 			CString ss;
@@ -2084,17 +2084,17 @@ void CHexEditView::OnDraw(CDC* pDC)
 			if (!display_.vert_display && display_.hex_area)
 				for (int column = 0; column < rowsize_; ++column)
 				{
-					ss.Format("%02d", column%100);
+					ss.Format("%02d", (column + display_.addrbase1)%100);
 					rect.left  = rect.right;
 					rect.right = hex_pos(column + 1) + horz;
 					if (rect.left >= cli.left && rect.left < cli.right)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
 				}
 			rect.right = char_pos(0) + horz;
-			if (display_.char_area) // xxx vert?
+			if (display_.char_area)
 				for (int column = 0; column < rowsize_; ++column)
 				{
-					ss.Format("%1d", column%10);
+					ss.Format("%1d", (column + display_.addrbase1)%10);
 					rect.left  = rect.right;
 					rect.right = char_pos(column + 1) + horz;
 					if (rect.left >= cli.left && rect.right <= cli.right)
@@ -2695,7 +2695,7 @@ end_of_background_drawing:
                 sprintf(addr_buf,
                     theApp.hex_ucase_ ? "%0*I64X:" : "%0*I64x:",
                         hex_width_,
-                        line*rowsize_ - offset_ > first_addr ? line*rowsize_ - offset_ : first_addr);
+                        (line*rowsize_ - offset_ > first_addr ? line*rowsize_ - offset_ : first_addr) + display_.addrbase1);
                 ss.ReleaseBuffer(-1);
                 if (theApp.nice_addr_)
 				{
@@ -2715,7 +2715,7 @@ end_of_background_drawing:
                 sprintf(addr_buf,
                         "%*I64d:",
                         dec_width_,
-                        line*rowsize_ - offset_ > first_addr ? line*rowsize_ - offset_ : first_addr);
+                        (line*rowsize_ - offset_ > first_addr ? line*rowsize_ - offset_ : first_addr) + display_.addrbase1);
                 ss.ReleaseBuffer(-1);
                 if (theApp.nice_addr_)
 				{
@@ -2735,7 +2735,7 @@ end_of_background_drawing:
                 sprintf(addr_buf,
                         "%*I64d:",
                         num_width_,
-                        line + 1);
+                        line + display_.addrbase1);
                 ss.ReleaseBuffer(-1);
                 if (theApp.nice_addr_)
 				{
@@ -3374,7 +3374,7 @@ void CHexEditView::recalc_display()
 	{
 		if (display_.hex_addr)
 			bdr_top_ += text_height_;  // one row of text for hex offsets
-		if (display_.decimal_addr)
+		if (display_.decimal_addr || display_.line_nums)
 			bdr_top_ += text_height_;  // one row of text for dec offsets
 		bdr_top_ += 4;                 // allow room for a thin line
 	}
@@ -3382,12 +3382,10 @@ void CHexEditView::recalc_display()
 	bdr_top_ += 40;
 #endif
 
-    FILE_ADDRESS length = GetDocument()->length();
-    // xxx add one if addresses start at 1
+	FILE_ADDRESS length = GetDocument()->length() + display_.addrbase1;
 
     hex_width_ = display_.hex_addr ? SigDigits(length, 16) : 0;
     dec_width_ = display_.decimal_addr ? SigDigits(length) : 0;
-    if (hex_width_ > 0) dec_width_ = 0; // xxx disable showing both at same time for now
 
     num_width_ = 0;
     calc_addr_width();
@@ -4310,7 +4308,6 @@ void CHexEditView::invalidate_ruler(FILE_ADDRESS addr)
 	if (!display_.ruler)
         return;
 
-	TRACE("*** INV %d *** xxx\n", addr);
  	int horz = bdr_left_ - GetScroll().x;       // Offset of left side of doc from left side of window
 
 	CRect rct;
@@ -6270,7 +6267,7 @@ void CHexEditView::update_sel_tip(int delay /*=0*/)
 
         __int64 len = __int64(end_addr - start_addr);
 
-        if (display_.dec_addr)
+        if (!display_.hex_addr)
         {
             char buf[22];                    // temp buf where we sprintf
             sprintf(buf, "%I64d", __int64(len));
@@ -9151,12 +9148,12 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
             *pp++ = '*';
             if (hex_width_ > 0)
             {
-                slen = sprintf(pp,	theApp.hex_ucase_ ? "%0*I64X:" : "%0*I64x:", hex_width_, start);
+                slen = sprintf(pp,	theApp.hex_ucase_ ? "%0*I64X:" : "%0*I64x:", hex_width_, start + display_.addrbase1);
 				pp += slen;
             }
             if (dec_width_ > 0)
             {
-                slen = sprintf(pp, "%*I64d:", dec_width_, start);
+                slen = sprintf(pp, "%*I64d:", dec_width_, start + display_.addrbase1);
 				pp += slen;
             }
 			// xxx also line numbers (num_width_)
@@ -9465,12 +9462,12 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
                         *pp++ = '*';
 						if (hex_width_ > 0)
 						{
-							slen = sprintf(pp,	theApp.hex_ucase_ ? "%0*I64X:" : "%0*I64x:", hex_width_, curr);
+							slen = sprintf(pp,	theApp.hex_ucase_ ? "%0*I64X:" : "%0*I64x:", hex_width_, curr + display_.addrbase1);
 							pp += slen;
 						}
 						if (dec_width_ > 0)
 						{
-							slen = sprintf(pp, "%*I64d:", dec_width_, curr);
+							slen = sprintf(pp, "%*I64d:", dec_width_, curr + display_.addrbase1);
 							pp += slen;
 						}
 						// xxx also line numbers (num_width_)
@@ -10209,7 +10206,11 @@ void CHexEditView::OnDisplayReset()
     display_.control = theApp.open_display_.control;
 
     display_.autofit = theApp.open_display_.autofit;
-    display_.dec_addr = theApp.open_display_.dec_addr;
+    display_.dec_addr = theApp.open_display_.dec_addr;       // remove now or later?
+	display_.decimal_addr = theApp.open_display_.decimal_addr;
+	display_.hex_addr = theApp.open_display_.hex_area;
+	display_.line_nums = theApp.open_display_.line_nums;
+	display_.addrbase1 = theApp.open_display_.addrbase1;
 
     display_.readonly = theApp.open_display_.readonly;
     display_.overtype = theApp.open_display_.overtype;
@@ -10598,9 +10599,8 @@ BOOL CHexEditView::do_undo()
 void CHexEditView::OnAddrToggle()
 {
     begin_change();
-    display_.dec_addr = !display_.dec_addr;
-	display_.decimal_addr = display_.dec_addr;
-	display_.hex_addr = !display_.dec_addr;
+	display_.decimal_addr = display_.hex_addr;  // Display decimal addr if currently displaying hex or both
+	display_.hex_addr = !display_.decimal_addr;
     make_change();
     end_change();
 
@@ -10609,7 +10609,7 @@ void CHexEditView::OnAddrToggle()
 
 void CHexEditView::OnUpdateAddrToggle(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck(display_.dec_addr);
+    pCmdUI->SetCheck(!display_.hex_addr);
 }
 
 void CHexEditView::OnGraphicToggle() 
