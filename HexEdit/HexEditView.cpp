@@ -818,12 +818,12 @@ void CHexEditView::OnInitialUpdate()
 
         // Set horiz size, vert size, and scroll posn
         if (display_.vert_display || display_.char_area)
-            SetSize(CSize(char_pos(rowsize_-1)+text_width_w_, -1));
+			SetSize(CSize(char_pos(rowsize_-1)+text_width_w_+text_width_w_/2+1, -1));
         else
         {
             ASSERT(display_.hex_area);
             display_.hex_area = TRUE; // defensive
-            SetSize(CSize(hex_pos(rowsize_-1)+2*text_width_, -1));
+			SetSize(CSize(hex_pos(rowsize_-1)+2*text_width_+text_width_/2+1, -1));
         }
         if (display_.vert_display)
             SetTSize(CSizeAp(-1, ((GetDocument()->length() + offset_)/rowsize_ + 1)*3));  // 3 rows of text
@@ -1926,7 +1926,6 @@ void CHexEditView::OnDraw(CDC* pDC)
 		// distance from start of top line to end of bottom line) then this should read all
 		// sectors to be dipslayed.
         unsigned char cc;
-		TRACE("xxx Display size is %ld\n", long(last_addr - first_addr));
         pDoc->GetData(&cc, 1, (first_addr + last_addr)/2);
     }
 
@@ -1992,6 +1991,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 		int horz = bdr_left_ - GetScroll().x;
 
 #ifdef HIGHLIGHT_CARET
+		if (!mouse_down_)
 		{
 			// Do highlighting with a background rectangle in ruler/address area
 			int hicol = int(start_addr%rowsize_);   // Column with cursor is to be highlighted
@@ -2667,7 +2667,9 @@ end_of_background_drawing:
             addr_rect.right = addr_rect.left + addr_width_*char_width - char_width/2 - 1;
 			addr_rect.bottom = addr_rect.top + text_height_;
 #ifdef HIGHLIGHT_CARET
-		    if (start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
+			// Not highlighting  when the mouse is down avoids a problem with invalidation of
+			// the address area when autoscrolling (old highlights sometimes left behind).
+			if (!mouse_down_ && start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
             {
                 CBrush * psaved_brush = pDC->SelectObject(&brush);
                 CPen * psaved_pen = pDC->SelectObject(&pen1);
@@ -3452,12 +3454,12 @@ void CHexEditView::recalc_display()
 
     // Make sure we know the width of the display area
     if (display_.vert_display || display_.char_area)
-        SetSize(CSize(char_pos(rowsize_-1)+text_width_w_, -1));
+        SetSize(CSize(char_pos(rowsize_-1)+text_width_w_+text_width_w_/2+1, -1));
     else
     {
         ASSERT(display_.hex_area);
         display_.hex_area = TRUE; // defensive
-        SetSize(CSize(hex_pos(rowsize_-1)+2*text_width_, -1));
+        SetSize(CSize(hex_pos(rowsize_-1)+2*text_width_+text_width_/2+1, -1));
     }
 } /* recalc_display() */
 
@@ -5590,6 +5592,10 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
         show_pos();
         mouse_down_ = false;
         update_sel_tip();           // Make sure window hidden when mouse button up
+#ifdef HIGHLIGHT_CARET
+        invalidate_addr(start_addr);
+        invalidate_ruler(start_addr);
+#endif
     }
 }
 
@@ -5608,7 +5614,7 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
 		tip_.Hide(0);                           // Make sure there is no mouse tip while dragging
         move_dlgs();
         update_sel_tip(200);                    // Update selection tip
-#ifdef HIGHLIGHT_CARET
+#if 0 // def HIGHLIGHT_CARET // no longer necessary since we now hide the highlight while mouse is down
         if (old_addr != new_addr)
         {
             // Invalidate while dragging start of selection area
@@ -11209,7 +11215,7 @@ void CHexEditView::OnUpdateFontSize(CCmdUI* pCmdUI)
                         {
                             pCombo->RebuildFontSizes(pDesc->m_strName);
                             pCombo->font_name_ = pDesc->m_strName;
-                            TRACE1("$$$$$ rebuilt font sizes %s\n", pCombo->font_name_);
+                            //TRACE1("$$$$$ rebuilt font sizes %s\n", pCombo->font_name_);
                         }
                         pcb->SetCurSel(-1);
                         pCombo->SetTwipSize(nSize);

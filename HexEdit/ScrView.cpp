@@ -977,10 +977,11 @@ void CScrView::caret_show()
         CPoint scroll = ConvertToDP(scrollpos_);  // scroll pos in dev coords
         CPoint caret = ConvertToDP(caretpos_);    // caret pos in dev coords
 
-        __int64 tmp = scrollpos_.y < caretpos_.y ? caretpos_.y - scrollpos_.y : scrollpos_.y - caretpos_.y;
-        // SetCaretPos can't handle big numbers so make sure its close
-        if (abs(scrollpos_.x - caretpos_.x) < win_width_ + size.cx &&
-            tmp < win_height_ + size.cy )
+        // We have to handle hiding of the caret ourselves because CWnd::SetCaretPos can't
+		// handle big numbers and may show the cursor in the wrong spot with big files, and
+		// we don't want the cursor appearing in the borders (notably the ruler).
+        if (abs(scrollpos_.x - caretpos_.x) < win_width_ + size.cx &&  // this will need fixing if we put something in bdr_left_
+			caretpos_.y >= scrollpos_.y && caretpos_.y <= scrollpos_.y + win_height_ - size.cy)
         {
             // Create a solid caret (device coords)
             CSize dev_size;

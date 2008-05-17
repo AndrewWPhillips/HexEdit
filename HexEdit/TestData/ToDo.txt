@@ -47,13 +47,9 @@ INSTALLER
 
 RULER
  - partial lines at top look bad when there is a ruler
- - caret can be shown in ruler area
  - tick marks?
- - right edge not quite far enough in scroll bar
-   - eg click and drag to the right does not select last column
  - clip draw of bytes to left of window for speed with long lines
  - change font size, change display mode etc cause scroll posn to move strangely
- - invalidation error for HIGHLIGHT_CARET when autoscrolling up
  
 TEST
   - display/editing of all types in tree view
