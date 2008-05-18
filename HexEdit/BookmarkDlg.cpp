@@ -863,7 +863,6 @@ void CBookmarkDlg::OnHelp()
         ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-// This is no longer used sicen we made the dialog dockable but leave just in case
 BOOL CBookmarkDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 

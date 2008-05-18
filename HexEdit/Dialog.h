@@ -214,6 +214,7 @@ protected:
 	afx_msg void OnFolderFlip();
 	afx_msg void OnSelchangeFolderName();
 	afx_msg void OnSelchangeFilter();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	DECLARE_MESSAGE_MAP()
 
 	CSimpleSplitter   splitter_;        // Contains the tree and folder view with a splitter in between

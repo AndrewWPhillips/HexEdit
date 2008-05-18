@@ -4573,7 +4573,7 @@ BOOL CMainFrame::OnShowPopupMenu (CBCGPopupMenu *pMenuPopup)
         return TRUE;
     }
     popup_menu_.push_back(pMenuPopup);
-    TRACE("OPEN POPUP %p %x\n", pMenuPopup, pMenuPopup->m_hWnd);
+    //TRACE("OPEN POPUP %p %x\n", pMenuPopup, pMenuPopup->m_hWnd);
     
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_VIEW_TOOLBARS) >= 0)
     {

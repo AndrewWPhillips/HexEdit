@@ -1051,6 +1051,7 @@ BEGIN_MESSAGE_MAP(CExplorerWnd, CHexDialogBar)
 	//ON_WM_SIZE()
 	ON_WM_DESTROY()
     ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
+	ON_WM_HELPINFO()
 	ON_BN_CLICKED(IDC_FOLDER_BACK, OnFolderBack)
 	ON_BN_CLICKED(IDC_FOLDER_FORW, OnFolderForw)
 	ON_BN_CLICKED(IDC_FOLDER_PARENT, OnFolderParent)
@@ -1141,6 +1142,32 @@ void CExplorerWnd::Update(LPCTSTR file_name /* = NULL */)
 	}
 }
 
+static DWORD id_pairs_explorer[] = {
+	IDC_FOLDER_BACK, HIDC_FOLDER_BACK,
+	IDC_FOLDER_FORW, HIDC_FOLDER_FORW,
+	IDC_FOLDER_PARENT, HIDC_FOLDER_PARENT,
+	IDC_FOLDER_FILTER, HIDC_FOLDER_FILTER,
+	IDC_FILTER_OPTS, HIDC_FILTER_OPTS,
+	IDC_FOLDER_VIEW, HIDC_FOLDER_VIEW,
+	IDC_FOLDER_HIDDEN, HIDC_FOLDER_HIDDEN,
+	IDC_FOLDER_FLIP, HIDC_FOLDER_FLIP,
+	IDC_FOLDER_NAME, HIDC_FOLDER_NAME,
+	IDC_FOLDER_REFRESH, HIDC_FOLDER_REFRESH,
+	IDC_EXPLORER, HIDC_EXPLORER,
+	IDC_EXPLORER_TREE, HIDC_EXPLORER,
+	IDC_EXPLORER_LIST, HIDC_EXPLORER,
+    0,0 
+}; 
+
+BOOL CExplorerWnd::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
+	// and then disappear when mouse up evenet is seen.  The only soln I could
+	// find after a lot of experimenetation is to do it later (in OnKickIdle).
+	help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+    return TRUE;
+}
+
 LRESULT CExplorerWnd::OnKickIdle(WPARAM, LPARAM lCount)
 {
 	ctl_back_.EnableWindow(list_.BackAllowed());
@@ -1169,6 +1196,13 @@ LRESULT CExplorerWnd::OnKickIdle(WPARAM, LPARAM lCount)
 	{
 		Refresh();
 		update_required_ = false;
+	}
+
+	// Display context help for ctrl set up in call to a page's OnHelpInfo
+	if (help_hwnd_ != (HWND)0)
+	{
+		theApp.HtmlHelpWmHelp(help_hwnd_, id_pairs_explorer);
+		help_hwnd_ = (HWND)0;
 	}
 
 	return FALSE;

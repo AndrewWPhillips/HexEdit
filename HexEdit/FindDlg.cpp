@@ -1964,7 +1964,7 @@ BOOL CHexPage::OnHelpInfo(HELPINFO* pHelpInfo)
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
    	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
 	pparent_->id_pairs_ = &id_pairs2;
-return TRUE;
+	return TRUE;
 }
 
 void CHexPage::OnHelp()
