@@ -1957,7 +1957,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (neg_y) pt.y = -30000;
             pDC->LineTo(pt);
         }
-        if (display_.char_area)
+        if (display_.vert_display || display_.char_area)
         {
 			// Vert line to right of char area
             pt.y = bdr_top_ - 2;
@@ -2004,7 +2004,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 				hi_rect.right = hi_rect.left + text_width_*2 + 1;
 				pDC->Rectangle(&hi_rect);
 			}
-			if (display_.char_area)
+			if (display_.vert_display || display_.char_area)
 			{
 				hi_rect.left  = char_pos(hicol) + horz;
 				hi_rect.right = hi_rect.left + text_width_ + 1;
@@ -2027,7 +2027,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 				hi_rect.right = hi_rect.left + text_width_*2 + 1;
 				pDC->Rectangle(&hi_rect);
 			}
-			if (display_.char_area)
+			if (display_.vert_display || display_.char_area)
 			{
 				// 
 				hi_rect.left  = char_pos(hicol) + horz;
@@ -2062,7 +2062,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
 				}
 			rect.right = char_pos(0) + horz;
-			if (display_.char_area)
+			if (display_.vert_display || display_.char_area)
 				for (int column = 0; column < rowsize_; ++column)
 				{
 					if (theApp.hex_ucase_)
@@ -2091,7 +2091,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
 				}
 			rect.right = char_pos(0) + horz;
-			if (display_.char_area)
+			if (display_.vert_display || display_.char_area)
 				for (int column = 0; column < rowsize_; ++column)
 				{
 					ss.Format("%1d", (column + display_.addrbase1)%10);
@@ -4321,7 +4321,7 @@ void CHexEditView::invalidate_ruler(FILE_ADDRESS addr)
 		rct.right = hex_pos(int(addr%rowsize_)+1) + horz;
 		DoInvalidateRect(&rct);
 	}
-	if (display_.char_area)
+	if (display_.vert_display || display_.char_area)
 	{
 		rct.left  = char_pos(int(addr%rowsize_)) + horz;
 		rct.right = char_pos(int(addr%rowsize_)+1) + horz + 1;
