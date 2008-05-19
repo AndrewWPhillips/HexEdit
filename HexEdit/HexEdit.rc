@@ -1747,7 +1747,7 @@ BEGIN
     LTEXT           "C&ontrol Chars:",IDC_CONTROL_DESC,19,119,48,8
     COMBOBOX        IDC_CONTROL,69,117,94,58,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_CONTROL
-    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,7,91,14
+    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,7,91,14,0,0,HIDC_GLOBAL_PAGE
 END
 
 IDD_OPT_COLOURS DIALOGEX 0, 0, 260, 140
@@ -2242,8 +2242,8 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,74,8,
                     181,1
     LTEXT           "Document Settings",IDC_STATIC,20,4,61,8
-    ICON            "",IDC_FILE_ICON,20,16,20,20
-    LTEXT           "",IDC_FILENAME,45,21,210,12
+    ICON            "",IDC_FILE_ICON,20,16,20,20,0,0,HIDC_FILE_ICON
+    LTEXT           "",IDC_FILENAME,45,21,210,12,0,0,HIDC_FILENAME
     PUSHBUTTON      "Use &Default Settings",IDC_DISP_RESET,20,42,228,15,
                     BS_MULTILINE | WS_GROUP,0,HIDC_DISP_RESET
     LTEXT           "Loads default document settings (including those in the following pages).",
