@@ -1982,129 +1982,127 @@ void CHexEditView::OnDraw(CDC* pDC)
 			pt.x = 30000;
 			if (neg_x) pt.x = -30000;
 			pDC->LineTo(pt);
+
+			// Draw the ruler
+			int vert = 0;                           // Screen row to display the text at
+			int horz = bdr_left_ - GetScroll().x;
+
+#ifdef HIGHLIGHT_CARET
+			if (!mouse_down_)
+			{
+				// Do highlighting with a background rectangle in ruler/address area
+				int hicol = int(start_addr%rowsize_);   // Column with cursor is to be highlighted
+				CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
+				CBrush * psaved_brush = pDC->SelectObject(&brush);
+				CPen * psaved_pen = pDC->SelectObject(&pen1);
+				if (!display_.vert_display && display_.hex_area)
+				{
+					hi_rect.left  = hex_pos(hicol) + horz;
+					hi_rect.right = hi_rect.left + text_width_*2 + 1;
+					pDC->Rectangle(&hi_rect);
+				}
+				if (display_.vert_display || display_.char_area)
+				{
+					hi_rect.left  = char_pos(hicol) + horz;
+					hi_rect.right = hi_rect.left + text_width_ + 1;
+					pDC->Rectangle(&hi_rect);
+				}
+				(void)pDC->SelectObject(psaved_pen);
+				(void)pDC->SelectObject(psaved_brush);
+			}
+#endif
+#ifdef HIGHLIGHT_MOUSE
+			if (mouse_addr_ > -1)
+			{
+				int hicol = int(mouse_addr_%rowsize_);   // Column with cursor is to be highlighted
+				CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
+				CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
+				CPen * psaved_pen = pDC->SelectObject(&pen1);
+				if (!display_.vert_display && display_.hex_area)
+				{
+					hi_rect.left  = hex_pos(hicol) + horz;
+					hi_rect.right = hi_rect.left + text_width_*2 + 1;
+					pDC->Rectangle(&hi_rect);
+				}
+				if (display_.vert_display || display_.char_area)
+				{
+					// 
+					hi_rect.left  = char_pos(hicol) + horz;
+					hi_rect.right = hi_rect.left + text_width_ + 1;
+					pDC->Rectangle(&hi_rect);
+				}
+				(void)pDC->SelectObject(psaved_pen);
+				(void)pDC->SelectObject(psaved_brush);
+			}
+#endif
+
+			// Get display rect for clipping at right and left
+			CRect cli;
+			GetDisplayRect(&cli);
+
+			// Show offsets in the top border (ruler)
+			if (display_.hex_addr)
+			{
+				CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_);
+				CString ss;
+				pDC->SetTextColor(GetHexAddrCol());   // Colour of hex addresses
+				if (!display_.vert_display && display_.hex_area)
+					for (int column = 0; column < rowsize_; ++column)
+					{
+						if (theApp.hex_ucase_)
+							ss.Format("%02X", (column + display_.addrbase1)%256);
+						else
+							ss.Format("%02x", (column + display_.addrbase1)%256);
+						rect.left  = rect.right;
+						rect.right = hex_pos(column + 1) + horz;
+						if (rect.left >= cli.left && rect.left < cli.right)
+							pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+					}
+				rect.right = char_pos(0) + horz;
+				if (display_.vert_display || display_.char_area)
+					for (int column = 0; column < rowsize_; ++column)
+					{
+						if (theApp.hex_ucase_)
+							ss.Format("%1X", (column + display_.addrbase1)%16);
+						else
+							ss.Format("%1x", (column + display_.addrbase1)%16);
+						rect.left  = rect.right;
+						rect.right = char_pos(column + 1) + horz;
+						if (rect.left >= cli.left && rect.right <= cli.right)
+							pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+					}
+				vert += text_height_;  // Move down for anything to be drawn underneath
+			}
+			if (display_.decimal_addr || display_.line_nums)
+			{
+				CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_);
+				CString ss;
+				pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
+				if (!display_.vert_display && display_.hex_area)
+					for (int column = 0; column < rowsize_; ++column)
+					{
+						ss.Format("%02d", (column + display_.addrbase1)%100);
+						rect.left  = rect.right;
+						rect.right = hex_pos(column + 1) + horz;
+						if (rect.left >= cli.left && rect.left < cli.right)
+							pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+					}
+				rect.right = char_pos(0) + horz;
+				if (display_.vert_display || display_.char_area)
+					for (int column = 0; column < rowsize_; ++column)
+					{
+						ss.Format("%1d", (column + display_.addrbase1)%10);
+						rect.left  = rect.right;
+						rect.right = char_pos(column + 1) + horz;
+						if (rect.left >= cli.left && rect.right <= cli.right)
+							pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+					}
+				vert += text_height_;  // Move down for anything to be drawn underneath (currently nothing)
+			}
 		}
     }
 
-	if (display_.ruler)
-	{
-		int vert = 0;                           // Screen row to display the text at
-		int horz = bdr_left_ - GetScroll().x;
-
-#ifdef HIGHLIGHT_CARET
-		if (!mouse_down_)
-		{
-			// Do highlighting with a background rectangle in ruler/address area
-			int hicol = int(start_addr%rowsize_);   // Column with cursor is to be highlighted
-			CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
-			CBrush * psaved_brush = pDC->SelectObject(&brush);
-			CPen * psaved_pen = pDC->SelectObject(&pen1);
-			if (!display_.vert_display && display_.hex_area)
-			{
-				hi_rect.left  = hex_pos(hicol) + horz;
-				hi_rect.right = hi_rect.left + text_width_*2 + 1;
-				pDC->Rectangle(&hi_rect);
-			}
-			if (display_.vert_display || display_.char_area)
-			{
-				hi_rect.left  = char_pos(hicol) + horz;
-				hi_rect.right = hi_rect.left + text_width_ + 1;
-				pDC->Rectangle(&hi_rect);
-			}
-			(void)pDC->SelectObject(psaved_pen);
-			(void)pDC->SelectObject(psaved_brush);
-		}
-#endif
-#ifdef HIGHLIGHT_MOUSE
-		if (mouse_addr_ > -1)
-		{
-			int hicol = int(mouse_addr_%rowsize_);   // Column with cursor is to be highlighted
-			CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
-			CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
-			CPen * psaved_pen = pDC->SelectObject(&pen1);
-			if (!display_.vert_display && display_.hex_area)
-			{
-				hi_rect.left  = hex_pos(hicol) + horz;
-				hi_rect.right = hi_rect.left + text_width_*2 + 1;
-				pDC->Rectangle(&hi_rect);
-			}
-			if (display_.vert_display || display_.char_area)
-			{
-				// 
-				hi_rect.left  = char_pos(hicol) + horz;
-				hi_rect.right = hi_rect.left + text_width_ + 1;
-				pDC->Rectangle(&hi_rect);
-			}
-			(void)pDC->SelectObject(psaved_pen);
-			(void)pDC->SelectObject(psaved_brush);
-		}
-#endif
-
-		// Get display rect for clipping at right and left
-		CRect cli;
-		GetDisplayRect(&cli);
-
-		// Show offsets in the top border (ruler)
-		if (display_.hex_addr)
-		{
-			CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_);
-			CString ss;
-            pDC->SetTextColor(GetHexAddrCol());   // Colour of hex addresses
-			if (!display_.vert_display && display_.hex_area)
-				for (int column = 0; column < rowsize_; ++column)
-				{
-					if (theApp.hex_ucase_)
-						ss.Format("%02X", (column + display_.addrbase1)%256);
-					else
-						ss.Format("%02x", (column + display_.addrbase1)%256);
-					rect.left  = rect.right;
-					rect.right = hex_pos(column + 1) + horz;
-					if (rect.left >= cli.left && rect.left < cli.right)
-						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-				}
-			rect.right = char_pos(0) + horz;
-			if (display_.vert_display || display_.char_area)
-				for (int column = 0; column < rowsize_; ++column)
-				{
-					if (theApp.hex_ucase_)
-						ss.Format("%1X", (column + display_.addrbase1)%16);
-					else
-						ss.Format("%1x", (column + display_.addrbase1)%16);
-					rect.left  = rect.right;
-					rect.right = char_pos(column + 1) + horz;
-					if (rect.left >= cli.left && rect.right <= cli.right)
-						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-				}
-			vert += text_height_;  // Move down for anything to be drawn underneath
-		}
-		if (display_.decimal_addr || display_.line_nums)
-		{
-			CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_);
-			CString ss;
-            pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
-			if (!display_.vert_display && display_.hex_area)
-				for (int column = 0; column < rowsize_; ++column)
-				{
-					ss.Format("%02d", (column + display_.addrbase1)%100);
-					rect.left  = rect.right;
-					rect.right = hex_pos(column + 1) + horz;
-					if (rect.left >= cli.left && rect.left < cli.right)
-						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-				}
-			rect.right = char_pos(0) + horz;
-			if (display_.vert_display || display_.char_area)
-				for (int column = 0; column < rowsize_; ++column)
-				{
-					ss.Format("%1d", (column + display_.addrbase1)%10);
-					rect.left  = rect.right;
-					rect.right = char_pos(column + 1) + horz;
-					if (rect.left >= cli.left && rect.right <= cli.right)
-						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-				}
-			vert += text_height_;  // Move down for anything to be drawn underneath (currently nothing)
-		}
-	}
-
-    // We can't avoid overlapping our "borders" slightly, so we set
+    // We can't avoid overlapping into "borders" slightly, so we set
     // the clipping rect so this small amount of drawing isn't seen.
     // (Use TEST_CLIPPING to see if the drawing may be inefficient.)
 	// Note: This needs to be done after drawing things in borders 
@@ -2665,11 +2663,20 @@ end_of_background_drawing:
         {
             addr_rect = tt;            // tt with right margin where addresses end
             addr_rect.right = addr_rect.left + addr_width_*char_width - char_width/2 - 1;
-			addr_rect.bottom = addr_rect.top + text_height_;
+			if (pDC->IsPrinting())
+				if (neg_y)
+					addr_rect.bottom = addr_rect.top - print_text_height_;
+				else
+					addr_rect.bottom = addr_rect.top + print_text_height_;
+			else
+				if (neg_y)
+					addr_rect.bottom = addr_rect.top - text_height_;
+				else
+					addr_rect.bottom = addr_rect.top + text_height_;
 #ifdef HIGHLIGHT_CARET
 			// Not highlighting  when the mouse is down avoids a problem with invalidation of
 			// the address area when autoscrolling (old highlights sometimes left behind).
-			if (!mouse_down_ && start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
+			if (!pDC->IsPrinting() && !mouse_down_ && start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
             {
                 CBrush * psaved_brush = pDC->SelectObject(&brush);
                 CPen * psaved_pen = pDC->SelectObject(&pen1);
@@ -2680,7 +2687,7 @@ end_of_background_drawing:
 #endif
 #ifdef HIGHLIGHT_MOUSE
 			// Show address of current row with a different background colour
-		    if (mouse_addr_ >= line*rowsize_ - offset_ && mouse_addr_ < (line+1)*rowsize_ - offset_)
+		    if (!pDC->IsPrinting() && mouse_addr_ >= line*rowsize_ - offset_ && mouse_addr_ < (line+1)*rowsize_ - offset_)
 			{
 				CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
                 CPen * psaved_pen = pDC->SelectObject(&pen1);

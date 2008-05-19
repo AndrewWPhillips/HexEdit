@@ -372,8 +372,10 @@ void CHexEditView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
                 sprintf(buf, "%02X", ii%0x100);
             else
                 sprintf(buf, "%02x", ii%0x100);
-            pDC->TextOut(rct.left + hex_pos(ii, print_text_width_), rct.top, buf, 2);
-            pDC->TextOut(rct.left + char_pos(ii, print_text_width_, print_text_width_w_), rct.top, buf+1, 1);
+			if (!display_.vert_display && display_.hex_area)
+				pDC->TextOut(rct.left + hex_pos(ii, print_text_width_), rct.top, buf, 2);
+			if (display_.vert_display || display_.char_area)
+				pDC->TextOut(rct.left + char_pos(ii, print_text_width_, print_text_width_w_), rct.top, buf+1, 1);
         }
     }
 
