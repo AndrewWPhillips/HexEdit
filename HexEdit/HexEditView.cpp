@@ -1939,7 +1939,7 @@ void CHexEditView::OnDraw(CDC* pDC)
         // Vert. line between address and hex areas
 		pt.y = bdr_top_ - 2;
         if (neg_y) pt.y = -pt.y;
-		pt.x = addr_width_*char_width - char_width/2 - doc_rect.left + bdr_left_;
+		pt.x = addr_width_*char_width - char_width - doc_rect.left + bdr_left_;
 		if (neg_x) pt.x = - pt.x;
 		pDC->MoveTo(pt);
 		pt.y = 30000;
@@ -1976,7 +1976,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 			// Horiz line under ruler
 			pt.y = bdr_top_ - 3;
 			if (neg_y) pt.y = -pt.y;
-			pt.x = addr_width_*char_width - char_width/2 - doc_rect.left + bdr_left_;
+			pt.x = addr_width_*char_width - char_width - doc_rect.left + bdr_left_;
 			if (neg_x) pt.x = - pt.x;
 			pDC->MoveTo(pt);
 			pt.x = 30000;
@@ -2102,17 +2102,21 @@ void CHexEditView::OnDraw(CDC* pDC)
 		}
     }
 
-    // We can't avoid overlapping into "borders" slightly, so we set
-    // the clipping rect so this small amount of drawing isn't seen.
-    // (Use TEST_CLIPPING to see if the drawing may be inefficient.)
-	// Note: This needs to be done after drawing things in borders 
-	// like the ruler but before hex area drawing like bookmarks etc.
+	// Mask out the ruler so we don't get top of topmost line drawn into it.
+	// Doing it this way allows the address of the top line to be drawn
+	// higher (ie into ruler area) without being clipped.
+	// Note that we currently only use bdr_top_ (for the ruler) but if
+	// other borders are used similarly we would need to clip them too.
+	// Note: This needs to be done after drawing the ruler.
 #ifndef TEST_CLIPPING
     if (!pDC->IsPrinting())
 	{
 		CRect rct;
 		GetDisplayRect(&rct);
-		pDC->IntersectClipRect(&rct);
+		rct.bottom = rct.top;
+		rct.top = 0;
+		rct.left = (addr_width_ - 1)*char_width + norm_rect.left + bdr_left_;
+		pDC->ExcludeClipRect(&rct);
 	}
 #endif
 
@@ -2658,11 +2662,12 @@ end_of_background_drawing:
             }
         }
 
-        // Don't draw address if off to the left
-        if ((addr_width_ - 1)*char_width + tt.left > 0)
+        // Draw address if ...
+        if ((addr_width_ - 1)*char_width + tt.left > 0 &&    // not off to the left
+			tt.top + text_height_/4 >= bdr_top_)             // and does not encroach into ruler
         {
             addr_rect = tt;            // tt with right margin where addresses end
-            addr_rect.right = addr_rect.left + addr_width_*char_width - char_width/2 - 1;
+            addr_rect.right = addr_rect.left + addr_width_*char_width - char_width - 1;
 			if (pDC->IsPrinting())
 				if (neg_y)
 					addr_rect.bottom = addr_rect.top - print_text_height_;
@@ -3626,7 +3631,7 @@ void CHexEditView::DoScrollWindow(int xx, int yy)
 	{
 		if (display_.ruler && xx != 0)
 		{
-			// We need to scroll the ruler horizontally
+			// We need to scroll the ruler (as it's outside the scroll region)
 			CRect rct;
 			GetDisplayRect(&rct);
 			rct.top = 0;
@@ -3642,6 +3647,16 @@ void CHexEditView::DoScrollWindow(int xx, int yy)
 			DoInvalidateRect(&rct);
 		}
         CScrView::DoScrollWindow(xx, yy);
+		if (yy != 0)
+		{
+			// We need to invalidate a bit of the address area near the top so that partial addresses are not drawn
+			CRect rct;
+			GetDisplayRect(&rct);
+			rct.bottom = rct.top + line_height_;
+			rct.top -= line_height_/4;
+			rct.right = rct.left + addr_width_*text_width_;
+			DoInvalidateRect(&rct);
+		}
 	}
 }
 
@@ -4703,7 +4718,7 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
     pDC->FillRect(rct, &backBrush);
 
     // Get rect for address area
-    rct.right = addr_width_*text_width_ - GetScroll().x - text_width_/2 + bdr_left_;
+    rct.right = addr_width_*text_width_ - GetScroll().x - text_width_ + bdr_left_;
 
     // If address area is visible and address background is different to normal background ...
     if (rct.right > rct.left && addr_bg_col_ != bg_col_)
