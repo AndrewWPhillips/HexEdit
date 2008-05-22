@@ -550,6 +550,18 @@ LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
     return FALSE;
 }
 
+BOOL CBookmarkDlg::PreTranslateMessage(MSG* pMsg) 
+{
+
+    if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
+    {
+		OnAdd();
+        return TRUE;
+    }
+
+    return CHexDialogBar::PreTranslateMessage(pMsg);
+}
+
 void CBookmarkDlg::OnAdd() 
 {
     int index;                          // bookmark index of an existing bookmark of same name (or -1)
@@ -562,8 +574,8 @@ void CBookmarkDlg::OnAdd()
 	ASSERT(GetDlgItem(IDC_BOOKMARK_NAME) != NULL);
 	CString name;
 	GetDlgItem(IDC_BOOKMARK_NAME)->GetWindowText(name);
+    if (name.GetLength() == 0) return;
 
-    ASSERT(name.GetLength() > 0);
     if (name[0] == '_')
 	{
 		AfxMessageBox("Names beginning with an underscore\r"
@@ -577,11 +589,15 @@ void CBookmarkDlg::OnAdd()
 		return;
 	}
 
-	if ((index = pbl->GetIndex(name)) != -1)
+	CString file_name = pview->GetDocument()->pfile1_->GetFilePath();
+
+	if ((index = pbl->GetIndex(name)) != -1 &&
+		file_name.CompareNoCase(pbl->GetFileName(index)))
 	{
 		CString ss;
-		ss.Format("A bookmark with the name \"%s\" already exists?\r\r"
-			      "Do you want to overwrite it?", name);
+		ss.Format("Bookmark \"%s\" already exists\r"
+				  "in \"%s\".\r"
+			      "Do you want to move it?", name);
 		if (AfxMessageBox(ss, MB_YESNO) != IDYES)
 			return;
 
@@ -597,7 +613,7 @@ void CBookmarkDlg::OnAdd()
 	}
 
     // Add the bookmark to the list (overwrites existing bookmark of same name)
-	int ii = pbl->AddBookmark(name, pview->GetDocument()->pfile1_->GetFilePath(),
+	int ii = pbl->AddBookmark(name, file_name,
                               pview->GetPos(), NULL, pview->GetDocument());
 
     theApp.SaveToMacro(km_bookmarks_add, name);

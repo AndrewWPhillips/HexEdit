@@ -67,6 +67,7 @@ public:
 
 public:
 	virtual BOOL Create(CWnd* pParentWnd);
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
 	CSize m_sizeInitial;
 
 // Implementation

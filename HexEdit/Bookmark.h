@@ -45,6 +45,7 @@ public:
     virtual void RemoveBookmark(int index); // Remove bookmark and update bookmark dlg
     virtual void Clear(LPCTSTR filename);   // Clear all bookmarks in a file
     virtual void ClearAll();
+	CString GetFileName(int index) { return file_[index]; }
     // Get all bookmarks for a file
     virtual void GetAll(LPCTSTR filename, std::vector<int> &bookmark, std::vector<__int64> &posn); 
     virtual  int AddBookmark(LPCTSTR name); // Add a bookmark at the current position of the active file
