@@ -296,15 +296,19 @@ long get_size(const CXmlTree::CElt &ee, int first /*=0*/, int last /*=999999999*
         }
         else if (elt_type == "use_struct")
         {
+            long tmp = -1;
             // Find define_struct and get its size
             CString ss = child.GetAttr("type_name");            // Find struct name to use
             CXmlTree::CElt ee = child.GetOwner()->GetRoot().GetFirstChild();
             for ( ; !ee.IsEmpty() && ee.GetName() == "define_struct"; ++ee)
                 if (ss == ee.GetAttr("type_name"))
-                    return get_size(ee);
+                    tmp = get_size(ee);
 
             // Not found
-            return -1L;
+            if (tmp == -1)
+                return -1L;
+            else
+                retval += tmp;
         }
         else if (elt_type == "eval" || elt_type == "jump" || elt_type == "define_struct")
             ;  // zero size so just do nothing to retval
