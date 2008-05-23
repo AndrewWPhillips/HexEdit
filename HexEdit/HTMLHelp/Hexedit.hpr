@@ -1,27 +1,27 @@
 [PreSingleSource]
-Html Help Project=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.hhp
-Table Of Content=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.hhc
-Index=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit_merged$.hhk
-See Also Index=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.hha
-Browse Sequence=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.brs
-Topic Properties=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.trs
-Active Folders=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.trf
-Baggage Files=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.trb
-Default Topic=D:\work\andrew\cpp\HexEdit\HTMLHelp\Start_Here.htm
+Html Help Project=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Hexedit.hhp
+Table Of Content=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Hexedit.hhc
+Index=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Hexedit_merged$.hhk
+See Also Index=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Hexedit.hha
+Browse Sequence=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Hexedit.brs
+Topic Properties=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Hexedit.trs
+Active Folders=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Hexedit.trf
+Baggage Files=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Hexedit.trb
+Default Topic=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Start_Here.htm
 Build Tags=NORMAL | WEB
 Build Expression=
 ActiveSkin=Default|!SkinSubFolder!\Default\Default.skn
-Skin List=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.trk
-OriginalHhk=D:\work\andrew\cpp\HexEdit\HTMLHelp\Hexedit.hhk
+Skin List=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Hexedit.trk
+OriginalHhk=E:\Work\Andrew\cpp\HexEdit\HTMLHelp\Hexedit.hhk
 Language ID=1033
 Language Name=English
-Language=C:\Devel\RoboHelp Office\RoboHTML\Language\English\RoboHHRE.lng
-Stop List=C:\Devel\RoboHelp Office\RoboHTML\Language\English\System.stp
+Language=C:\Program Files\RoboHelp Office\RoboHTML\Language\English\RoboHHRE.lng
+Stop List=C:\Program Files\RoboHelp Office\RoboHTML\Language\English\System.stp
 
 [SS Settings: RoboHtml For OracleHelp]
-WindowType0=3279;FALSE;NewWindow;;;;;;;;;;
-WindowType1=3279;TRUE;main;;;;;;;;;;
-WindowType2=3279;FALSE;form;;;;;;;;;;
+WindowType0=10905;FALSE;NewWindow;;;;;;;;;;
+WindowType1=10905;TRUE;main;;;;;;;;;;
+WindowType2=10905;FALSE;form;;;;;;;;;;
 
 [Target:WebHelp]
 ResultFileName=D:\tmp\help\Hexedit.htm
@@ -378,7 +378,7 @@ m_bTocFloderIcon=0
 DestinationProjectName=Hexedit.chm
 BuildExpression=NORMAL    
 PublishString=
-CreateProjectTime=17:47, February 13, 2008
+CreateProjectTime=00:15, May 24, 2008
 CreateProjectUser=Andrew
 ViewFileName=Hexedit.chm
 Enable Result Dialog=1

@@ -394,6 +394,11 @@
       <param name="Name" value="Colour Options page">
       <param name="Local" value="dlg_options\HIDD_OPT_PARTITIONS.htm">
     </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="offset">
+      <param name="Name" value="Document Display Options page">
+      <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+    </object>
     </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="allow changes">
@@ -4246,6 +4251,16 @@
     <param name="Name" value="Explorer window">
     <param name="Name" value="Explorer Dialog">
     <param name="Local" value="dlg_file\Explorer_Dialog.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="ruler">
+    <param name="Name" value="Document Display Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="line numbers">
+    <param name="Name" value="Document Display Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
   </object>
 </ul>
 </html>

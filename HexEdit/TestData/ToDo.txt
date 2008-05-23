@@ -42,6 +42,20 @@ WEB SITE
  - include hidden files (hexedit.xml, hexeditfree.xml etc)
  - Donate button (free version)
  - register/donate using PayPal API
+ - Better looking download page with table of things to download with columns:
+	1. Name + ver
+	2. Release date
+	3. Size
+	4. File name as download link
+	5. Alt download link
+	6. MD5 (or SHA-1)
+	7. Description
+	
+	HexEdit 3.2       14 Feb 2008  9.1Mb    hexed3_2.zip       Download.com  B527 74EB 7845 9EF1 D9D6 DE01 3E30 7015 Includes MFC DLLs
+	HexEdit 3.2       14 Feb 2008  3.1Mb    hexed3_2Min.zip                  B527 74EB 7845 9EF1 D9D6 DE01 3E30 7015 No MFC DLLs
+	Extra templates   10 May 2008  10 Kb    ExtraTemplates.zip               B527 74EB 7845 9EF1 D9D6 DE01 3E30 7015 Includes latest PE template
+
+
 
 INSTALLER
 
