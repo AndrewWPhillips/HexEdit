@@ -1087,8 +1087,8 @@
 #define IDC_PROMPT                      1555
 #define IDC_RULER                       1556
 #define IDC_LINENOS                     1557
-#define IDC_LINENOS2                    1558
 #define IDC_ADDRBASE1                   1558
+#define IDC_TEMPLATEDIR                 1559
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1457,7 +1457,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        408
 #define _APS_NEXT_COMMAND_VALUE         39003
-#define _APS_NEXT_CONTROL_VALUE         1558
+#define _APS_NEXT_CONTROL_VALUE         1560
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

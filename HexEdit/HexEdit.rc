@@ -1729,14 +1729,23 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_OFFSET,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,106,69,11,12
-    CONTROL         "&Autofit",IDC_AUTOFIT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,121,37,59,10,0,HIDC_AUTOFIT
-    CONTROL         "&Maximize",IDC_MAX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,121,49,59,10,0,HIDC_MAX
-    CONTROL         "Sector &bounds",IDC_BORDERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,121,62,59,10,0,HIDC_BORDERS
-    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,184,25,75,10,0,HIDC_RULER
-    CONTROL         "&Hex Address",IDC_ADDR_HEX,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,184,37,75,10,0,HIDC_ADDR_HEX
-    CONTROL         "&Decimal Address",IDC_ADDR_DEC,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,184,49,75,10,0,HIDC_ADDR_DEC
-    CONTROL         "&Line Numbers",IDC_LINENOS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,184,61,75,10,0,HIDC_LINENOS
-    CONTROL         "Addresses start at &1",IDC_ADDRBASE1,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,184,73,75,10,0,HIDC_ADDRBASE1
+    CONTROL         "&Autofit",IDC_AUTOFIT,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,121,37,59,10,0,HIDC_AUTOFIT
+    CONTROL         "&Maximize",IDC_MAX,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,121,49,59,10,0,HIDC_MAX
+    CONTROL         "Sector &bounds",IDC_BORDERS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,121,62,59,10,0,HIDC_BORDERS
+    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
+                    WS_TABSTOP,184,25,75,10,0,HIDC_RULER
+    CONTROL         "&Hex Address",IDC_ADDR_HEX,"Button",BS_AUTOCHECKBOX | 
+                    BS_MULTILINE | WS_TABSTOP,184,37,75,10,0,HIDC_ADDR_HEX
+    CONTROL         "&Decimal Address",IDC_ADDR_DEC,"Button",BS_AUTOCHECKBOX | 
+                    BS_MULTILINE | WS_TABSTOP,184,49,75,10,0,HIDC_ADDR_DEC
+    CONTROL         "&Line Numbers",IDC_LINENOS,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,184,61,75,10,0,HIDC_LINENOS
+    CONTROL         "Addresses start at &1",IDC_ADDRBASE1,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,184,73,75,10,0,
+                    HIDC_ADDRBASE1
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,57,92,
                     199,1
     LTEXT           "Character Area",IDC_STATIC,12,88,48,8
@@ -1747,7 +1756,8 @@ BEGIN
     LTEXT           "C&ontrol Chars:",IDC_CONTROL_DESC,19,119,48,8
     COMBOBOX        IDC_CONTROL,69,117,94,58,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_CONTROL
-    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,7,91,14,0,0,HIDC_GLOBAL_PAGE
+    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,7,91,14,
+                    0,0,HIDC_GLOBAL_PAGE
 END
 
 IDD_OPT_COLOURS DIALOGEX 0, 0, 260, 140
@@ -2273,17 +2283,19 @@ BEGIN
     CONTROL         "Tab window",IDC_DFFD_TAB,"Button",BS_AUTORADIOBUTTON,20,
                     39,55,10,0,HIDC_DFFD_TAB
     LTEXT           "Determines how any associated template is displayed when you open a file which you haven't opened in HexEdit before, or when you create a new file.",
-                    IDC_STATIC,112,16,134,35
+                    IDC_STATIC,113,16,134,35
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,55,
                     219,1
     LTEXT           "Processing",IDC_STATIC,10,51,36,8
     RTEXT           "Number of fixed array elements:",
-                    IDC_DESC_DFFD_ARRAY_MAX,16,65,100,8
-    EDITTEXT        IDC_DFFD_ARRAY_MAX,117,62,31,14,ES_AUTOHSCROLL | 
+                    IDC_DESC_DFFD_ARRAY_MAX,11,65,100,8
+    EDITTEXT        IDC_DFFD_ARRAY_MAX,113,62,31,14,ES_AUTOHSCROLL | 
                     ES_NUMBER,0,HIDC_DFFD_ARRAY_MAX
     CONTROL         "Spin1",IDC_SPIN_DFFD_ARRAY_MAX,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,139,65,11,14
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,132,58,11,14
+    PUSHBUTTON      "Change Templates &Folder...",IDC_TEMPLATEDIR,156,62,94,
+                    14,0,0,HIDC_TEMPLATEDIR
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,84,
                     219,1
     LTEXT           "Default format strings",IDC_STATIC,10,81,67,8
@@ -2293,17 +2305,17 @@ BEGIN
     RTEXT           "String:",IDC_DESC_DFFD_FORMAT_STRING,22,115,27,8
     EDITTEXT        IDC_DFFD_FORMAT_STRING,50,112,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_STRING
-    RTEXT           "Signed integer:",IDC_DESC_DFFD_FORMAT_INT,83,97,49,8
-    EDITTEXT        IDC_DFFD_FORMAT_INT,133,94,31,14,ES_AUTOHSCROLL,0,
+    RTEXT           "Signed integer:",IDC_DESC_DFFD_FORMAT_INT,85,97,49,8
+    EDITTEXT        IDC_DFFD_FORMAT_INT,135,94,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_INT
-    RTEXT           "Unsigned int:",IDC_DESC_DFFD_FORMAT_UINT,91,114,41,8
-    EDITTEXT        IDC_DFFD_FORMAT_UINT,133,111,31,14,ES_AUTOHSCROLL,0,
+    RTEXT           "Unsigned int:",IDC_DESC_DFFD_FORMAT_UINT,93,114,41,8
+    EDITTEXT        IDC_DFFD_FORMAT_UINT,135,111,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_UINT
-    RTEXT           "Floating point:",IDC_DESC_DFFD_FORMAT_REAL,169,97,46,8
-    EDITTEXT        IDC_DFFD_FORMAT_REAL,216,94,31,14,ES_AUTOHSCROLL,0,
+    RTEXT           "Floating point:",IDC_DESC_DFFD_FORMAT_REAL,171,97,46,8
+    EDITTEXT        IDC_DFFD_FORMAT_REAL,218,94,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_REAL
-    RTEXT           "Date:",IDC_DESC_DFFD_FORMAT_DATE,188,114,27,8
-    EDITTEXT        IDC_DFFD_FORMAT_DATE,216,111,31,14,ES_AUTOHSCROLL,0,
+    RTEXT           "Date:",IDC_DESC_DFFD_FORMAT_DATE,190,114,27,8
+    EDITTEXT        IDC_DFFD_FORMAT_DATE,218,111,31,14,ES_AUTOHSCROLL,0,
                     HIDC_DFFD_FORMAT_DATE
 END
 

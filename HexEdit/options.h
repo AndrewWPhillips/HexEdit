@@ -395,9 +395,9 @@ protected:
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnChange();
+    afx_msg void OnTemplatedir();
 	DECLARE_MESSAGE_MAP()
 };
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CPrintPage dialog

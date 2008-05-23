@@ -630,6 +630,7 @@ BEGIN_MESSAGE_MAP(CTemplatePage, COptPage)
 	ON_BN_CLICKED(IDC_DFFD_TAB, OnChange)
 	ON_EN_CHANGE(IDC_DFFD_ARRAY_MAX, OnChange)
     ON_WM_CONTEXTMENU()
+    ON_BN_CLICKED(IDC_TEMPLATEDIR, OnTemplatedir)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -643,6 +644,35 @@ BOOL CTemplatePage::OnInitDialog()
     ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_DFFD_ARRAY_MAX))->SetRange(2, UD_MAXVAL);
 	
 	return TRUE;
+}
+
+void CTemplatePage::OnTemplatedir()
+{
+    ASSERT(theApp.xml_dir_.Right(1) == "\\");
+    CDirDialog dlg(theApp.xml_dir_, "Template Files (*.xml etc)|*.XML;BinaryFileFormat.DTD;_*_constants.txt|All Files (*.*)|*.*||", this);
+    dlg.m_ofn.lpstrTitle = "Select Folder for HexEdit Templates";
+
+    if (dlg.DoModal() == IDOK &&
+        AfxMessageBox("The folder takes effect for any subsequent files you open.\n\n"
+                      "Please ensure that the folder contains the following files\n"
+                      "as well as any template (XML) files you require:\n"
+                      "\n"
+                      "BinaryFileFormat.DTD\n"
+                      "Default.XML\n"
+                      "\n"
+                      "To use the C/C++ parser you also need the following files\n"
+                      "(and custom types/constants if you have defined them):\n"
+                      "\n"
+                      "_standard_types.XML\n"
+                      "_common_types.XML\n"
+                      "_windows_types.XML\n"
+                      "_windows_constants.TXT",
+                      MB_OKCANCEL) == IDOK)
+    {
+        theApp.xml_dir_ = dlg.GetPath();
+        ASSERT(theApp.xml_dir_.Right(1) == "\\");
+        theApp.GetXMLFileList();
+    }
 }
 
 void CTemplatePage::OnChange() 
@@ -3649,4 +3679,5 @@ void CWindowEditPage::OnSelchangeInsert()
 {
     SetModified(TRUE);
 }
+
 
