@@ -414,6 +414,7 @@ public:
         }
     }
     CString GetType() { return strTypeName_; }
+    CString GetFileName() { return pfile1_->GetFileName(); }
 
 	BOOL IsDevice() const { return dynamic_cast<CFileNC *>(pfile1_) != NULL; }
 	DWORD GetSectorSize() const { if (pfile1_ == NULL) return 0; else return pfile1_->SectorSize(); }

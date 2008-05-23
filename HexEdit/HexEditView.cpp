@@ -680,16 +680,22 @@ void CHexEditView::OnInitialUpdate()
 
     if (recent_file_index != -1)
     {
-		swidth = atoi(pfl->GetData(recent_file_index, CHexFileList::DFFDVIEW));
+        CString ss = pfl->GetData(recent_file_index, CHexFileList::DFFDVIEW);
+        if (ss.IsEmpty())
+		    swidth = theApp.tree_view_;
+        else
+		    swidth = atoi(ss);
 
         disp_state_ = atoi(pfl->GetData(recent_file_index, CHexFileList::DISPLAY));
         SetVertBufferZone(atoi(pfl->GetData(recent_file_index, CHexFileList::VERT_BUFFER_ZONE)));
 
+        // Get the colour scheme, if none try to find one based on file extension, otherwise
+        // let set_colours() handle it using the default scheme for the current char set.
         scheme_name_ = pfl->GetData(recent_file_index, CHexFileList::SCHEME);
         if (scheme_name_.IsEmpty())
         {
             // Get file extension and change "." to "_"
-            CString ss = pDoc->pfile1_->GetFileName();
+            ss = pDoc->GetFileName();
             if (ss.ReverseFind('.') == -1)
                 ss = "_";
             else
@@ -833,9 +839,12 @@ void CHexEditView::OnInitialUpdate()
     }
     else
     {
+        ASSERT(pDoc->pfile1_ == NULL);   // we should only get here (now) if not yet saved to disk
 		swidth = theApp.tree_view_;
-        scheme_name_ = "";          // Force scheme reset
-        set_colours();
+
+        // Force colour scheme based on char set (not file extension as we don't have one)
+        scheme_name_ = "";
+		set_colours();
 
         if (aa->open_max_)
         {
