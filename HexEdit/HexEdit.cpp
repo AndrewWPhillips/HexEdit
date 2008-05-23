@@ -1243,11 +1243,17 @@ void CHexEditApp::CheckBGSearchFinished()
 
 void CHexEditApp::OnMacroRecord() 
 {
+    // Allow calculator to tidy up any pending macro ops
+    if (recording_)
+        ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.FinishMacro();
+
     recording_ = !recording_;
     // Don't clear the last macro until we get the first key of the next
     if (recording_)
 		no_keys_ = TRUE;            // Flag to say new macro started
 	else
+        // Track that we are recording in the current version.  Note that macro_version_
+        // may be different if we loaded a macro recorded in a diff version of HexEdt.
 		macro_version_ = INTERNAL_VERSION;
 
 #ifdef _DEBUG

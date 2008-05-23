@@ -51,6 +51,7 @@ public:
 	CSize m_sizeInitial;
 
     void Redisplay();
+    void FinishMacro();
     void ShowStatus();
     void ShowBinop(int ii = -1);
     void FixFileButtons();

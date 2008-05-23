@@ -862,6 +862,14 @@ void CCalcDlg::Redisplay()
     edit_.SetSel(sel);
 }
 
+// Tidy up any pending ops if macro is finishing
+void CCalcDlg::FinishMacro()
+{
+    if (source_ != km_result)
+        aa_->SaveToMacro(source_, current_&mask_);
+    source_ = km_result;
+}
+
 // Check if the current expression in the edit box is a valid expression returning an integer
 bool CCalcDlg::invalid_expression()
 {
