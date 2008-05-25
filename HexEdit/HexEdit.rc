@@ -214,6 +214,7 @@ BEGIN
     BUTTON      ID_BIG_ENDIAN
     BUTTON      ID_ZLIB_COMPRESS
     BUTTON      ID_ZLIB_DECOMPRESS
+    BUTTON      ID_DFFD_TOGGLE_EDIT
 END
 
 IDR_STDBAR TOOLBAR  16, 15
@@ -718,7 +719,7 @@ BEGIN
         MENUITEM "&Auto Sync",                  ID_DFFD_AUTO_SYNC
         MENUITEM "&Refresh",                    ID_DFFD_REFRESH
         MENUITEM SEPARATOR
-        MENUITEM "Allow &Editing",              ID_DFFD_TOGGLE_EDIT
+        MENUITEM "D&esign Mode",                ID_DFFD_TOGGLE_EDIT
         MENUITEM "Settings...",                 ID_DFFD_OPTIONS
     END
     POPUP "&Tools"
@@ -3407,12 +3408,12 @@ BEGIN
     POPUP "RootNode"
     BEGIN
         MENUITEM "E&xpand All",                 ID_DFFD_EXPANDALL
-        MENUITEM "&Disallow Editing",           ID_DFFD_VIEW_MODE
+        MENUITEM "&Design Mode Off",            ID_DFFD_VIEW_MODE
         MENUITEM SEPARATOR
         MENUITEM "&Save Template File",         ID_DFFD_SAVE
         MENUITEM "Save &As...",                 ID_DFFD_SAVEAS
         MENUITEM SEPARATOR
-        MENUITEM "Add Struct Definition",       ID_DFFD_INSERT_DEFINE_STRUCT
+        MENUITEM "Add Struct Definition...",    ID_DFFD_INSERT_DEFINE_STRUCT
         MENUITEM "Settings...",                 ID_DFFD_GLOBAL
         MENUITEM "&Edit...",                    ID_DFFD_EDIT
     END
@@ -3458,7 +3459,7 @@ BEGIN
     POPUP "RootNodeViewMode"
     BEGIN
         MENUITEM "E&xpand All",                 ID_DFFD_EXPANDALL
-        MENUITEM "&Allow Editing",              ID_DFFD_EDIT_MODE
+        MENUITEM "&Design Mode On",             ID_DFFD_EDIT_MODE
     END
     POPUP "DefineStruct"
     BEGIN

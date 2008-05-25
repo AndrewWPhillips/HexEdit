@@ -1802,6 +1802,8 @@ bool CDataFormatView::InitTreeCol(int ii, GV_ITEM & item)
             item.iImage = IMAGE_DATA_REAL;
         else if (abs(pdoc->df_type_[ii]) >= CHexEditDoc::DF_DATEC)
             item.iImage = IMAGE_DATA_DATE;
+        else if (abs(pdoc->df_type_[ii]) >= CHexEditDoc::DF_BITFIELD8)
+            item.iImage = IMAGE_DATA_BITFIELD;
         else
             item.iImage = IMAGE_DATA;
         break;
@@ -4035,7 +4037,12 @@ void CDataFormatView::OnInitialUpdate()
     GetClientRect(rect);
     grid_.Create(rect, this, 100);
 
-    imagelist_.Create(MAKEINTRESOURCE(IDB_IMAGELIST), 16, 1, RGB(0xFF, 0xFF, 0xFF));
+    //imagelist_.Create(MAKEINTRESOURCE(IDB_IMAGELIST), 16, 1, RGB(0xFF, 0xFF, 0xFF));
+	{
+		HINSTANCE hInst = AfxFindResourceHandle(MAKEINTRESOURCE(IDB_IMAGELIST), RT_BITMAP);
+		ASSERT(hInst != NULL);
+		imagelist_.Attach(AfxImageList_LoadImage(hInst, MAKEINTRESOURCE(IDB_IMAGELIST), 16, 1, RGB(0xFF, 0xFF, 0xFF), IMAGE_BITMAP, LR_CREATEDIBSECTION));
+	}
 
     grid_.SetImageList(&imagelist_);
     btn_db_.SetGrid(&grid_);

@@ -501,6 +501,9 @@ enum  // Each index into imagelist_
     IMAGE_DATA_DATE,
     IMAGE_DATA_STRING,
     IMAGE_DATA_REAL,
+    IMAGE_DATA_GREEN,
+    IMAGE_DATA_RED,
+    IMAGE_DATA_BITFIELD,
 
     IMAGE_LAST   // leave this last
 };
