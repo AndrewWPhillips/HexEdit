@@ -817,6 +817,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	CString sym_str;
     bool saved_const_sep_allowed;
 	GetInt *pGetIntDlg;
+	GetStr *pGetStrDlg;
 	GetBool *pGetBoolDlg;
 
     switch (next_tok)
@@ -1160,7 +1161,68 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
         val.typ = TYPE_INT;
 		delete pGetIntDlg;
         return get_next();
-    case TOK_GETBOOL:
+
+    case TOK_GETSTR:
+		pGetStrDlg = new GetStr();
+
+        // Get opening bracket and first symbol within
+        if ((next_tok = get_next()) != TOK_LPAR)
+        {
+            strcpy(error_buf_, "Expected opening parenthesis after GETSTRING");
+			delete pGetStrDlg;
+            return TOK_NONE;
+        }
+
+        if (error(next_tok = prec_assign(val), "Expected prompt string for GETSTRING"))
+		{
+			delete pGetStrDlg;
+            return TOK_NONE;
+		}
+        if (val.typ != TYPE_STRING)
+        {
+            strcpy(error_buf_, "First parameter for GETSTRING must be a string");
+			delete pGetStrDlg;
+            return TOK_NONE;
+        }
+		pGetStrDlg->prompt_ = CString(*(val.pstr));
+
+		// Get optional parameter: default value
+		if (next_tok == TOK_COMMA)
+		{
+			value_t tmp2;
+
+			if (error(next_tok = prec_assign(tmp2), "Expected 2nd parameter to GETSTRING"))
+			{
+				delete pGetStrDlg;
+				return TOK_NONE;
+			}
+			if (tmp2.typ != TYPE_STRING)
+			{
+				strcpy(error_buf_, "2nd parameter for GETSTRING must be a string");
+				delete pGetStrDlg;
+				return TOK_NONE;
+			}
+			pGetStrDlg->value_ = CString(*(tmp2.pstr));
+		}
+
+		if (next_tok != TOK_RPAR)
+		{
+			strcpy(error_buf_, "Closing parenthesis expected for GETSTRING");
+			delete pGetStrDlg;
+			return TOK_NONE;
+		}
+
+		if (pGetStrDlg->DoModal() != IDOK)
+		{
+			delete pGetStrDlg;
+			return TOK_NONE;
+		}
+		ASSERT(val.typ == TYPE_STRING);   // make sure its has a string before freeing the memory
+		*val.pstr = pGetStrDlg->value_;
+		delete pGetStrDlg;
+        return get_next();
+
+	case TOK_GETBOOL:
 		pGetBoolDlg = new GetBool();
 
         // Get opening bracket and first symbol within

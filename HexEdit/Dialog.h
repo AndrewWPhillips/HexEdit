@@ -509,6 +509,28 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 };
+
+// GetStr dialog - used by getstring() function of expressions to ask the user for a string
+class GetStr : public CDialog
+{
+	DECLARE_DYNAMIC(GetStr)
+
+public:
+	GetStr(CWnd* pParent = NULL);   // standard constructor
+
+// Dialog Data
+	enum { IDD = IDD_GETSTR };
+
+	CString prompt_;               // Text to display to the user
+	CString value_;                // value in/out
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+	DECLARE_MESSAGE_MAP()
+public:
+};
+
 // GetBool dialog - used byt getbool() function of expressions to ask the user a question
 class GetBool : public CDialog
 {

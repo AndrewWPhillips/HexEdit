@@ -1819,6 +1819,27 @@ END_MESSAGE_MAP()
 // GetInt message handlers
 
 /////////////////////////////////////////////////////////////////////////////
+// GetStr dialog
+
+IMPLEMENT_DYNAMIC(GetStr, CDialog)
+
+GetStr::GetStr(CWnd* pParent /*=NULL*/)
+	: CDialog(GetStr::IDD, pParent)
+{
+}
+
+void GetStr::DoDataExchange(CDataExchange* pDX)
+{
+	CDialog::DoDataExchange(pDX);
+    DDX_Text(pDX, IDC_PROMPT, prompt_);
+    DDX_Text(pDX, IDC_VALUE, value_);
+}
+
+BEGIN_MESSAGE_MAP(GetStr, CDialog)
+END_MESSAGE_MAP()
+
+
+/////////////////////////////////////////////////////////////////////////////
 // GetBool dialog
 
 IMPLEMENT_DYNAMIC(GetBool, CDialog)

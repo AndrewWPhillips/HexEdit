@@ -393,7 +393,8 @@
 #define IDI_DOCDISPLAY                  401
 #define IDB_BITMAP2                     405
 #define IDD_GETINT                      407
-#define IDD_GETBOOL                     408
+#define IDD_GETSTR                      408
+#define IDD_GETBOOL                     409
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -1455,7 +1456,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        408
+#define _APS_NEXT_RESOURCE_VALUE        410
 #define _APS_NEXT_COMMAND_VALUE         39003
 #define _APS_NEXT_CONTROL_VALUE         1560
 #define _APS_NEXT_SYMED_VALUE           252
