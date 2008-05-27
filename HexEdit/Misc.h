@@ -47,6 +47,9 @@ void AddCommas(CString &str);
 void AddSpaces(CString &str);
 CString get_menu_text(CMenu *pmenu,int id);
 
+void LoadHist(std::vector<CString> & hh, LPCSTR name, size_t smax);
+void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax);
+
 CString DecimalToString(const void * pdecimal, CString & sMantissa, CString & sExponent);
 bool StringToDecimal(const char * ss, void * presult);
 

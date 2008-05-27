@@ -591,6 +591,13 @@ public:
     BOOL orig_save_exit_;               // Original value of save_exit_
 
     // History list options
+    int max_search_hist_;               // dv = 48;
+    int max_replace_hist_;              // dv = 16;
+    int max_hex_jump_hist_;             // dv = 16;
+    int max_dec_jump_hist_;             // dv = 16;
+    int max_expl_dir_hist_;             // dv = 32;
+    int max_expl_filt_hist_;            // dv = 16
+
     BOOL clear_hist_;                   // Default to clearing search history
     BOOL clear_recent_file_list_;       // Default to clearing recent file list
     BOOL clear_bookmarks_;              // Default to clearing bookmarks

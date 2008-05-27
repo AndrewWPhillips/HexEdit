@@ -157,6 +157,43 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #ifndef REGISTER_APP
+
+//-----------------------------------------------------------------------------
+// Routines for loading/saving history lists in the registry
+// Loads a list of history strings from the registry
+void LoadHist(std::vector<CString> & hh, LPCSTR name, size_t smax)
+{
+    CString ss, entry;
+    CString fmt = CString(name) + "%d";
+
+    hh.clear();
+    for (int ii = smax; ii > 0; ii--)
+    {
+        entry.Format(fmt, ii);
+        ss = theApp.GetProfileString("History", entry);
+        if (!ss.IsEmpty())
+            hh.push_back(ss);
+    }
+}
+
+void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax)
+{
+    CString entry;
+    CString fmt = CString(name) + "%d";
+
+    int last = hh.size();
+    for (int ii = 1; ii <= smax; ++ii)
+    {
+        entry.Format(fmt, ii);
+
+        // Note this clears any trailing entries OR
+        // it clears all entries we are clearing the search history on exit
+        theApp.WriteProfileString("History", 
+                                  entry, 
+                                  last < ii ? (LPCTSTR)NULL : (LPCTSTR)hh[last-ii]);
+    }
+}
+
 //-----------------------------------------------------------------------------
 // Routines for handling C# Decimal type
 

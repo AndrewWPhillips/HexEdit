@@ -123,6 +123,8 @@ HRESULT CHistoryShellList::DisplayFolder(LPBCGCBITEMINFO lpItemInfo)
     		pos_ = name_.size();
 
 			name_.push_back(curr);
+            if (add_to_hist_)
+                pExpl_->AddFolder();
 		}
 		pExpl_->UpdateFolderInfo(curr);
     }
@@ -237,7 +239,7 @@ void CHistoryShellList::OnSetColumns()
 	};
     ASSERT(name[COLLAST] == NULL);      // check numbering consistency
 
-    CString widths = theApp.GetProfileString("File-Settings", "ExplorerColWidths", _T("150|60|150|150|60|150"));  // name,size,type,mod-time,attr,last-opened-time
+    CString widths = theApp.GetProfileString("File-Settings", "ExplorerColWidths", _T("150|60|150|150|60|150|60|100|200"));  // name,size,type,mod-time,attr,last-opened-timecat,kw,comments
 
     // First work out the order and widths of the columns
 	for (col = 0; col < COLLAST; ++col)
@@ -834,23 +836,29 @@ BOOL CExplorerWnd::OnInitDialog()
 
     int ii;
 
-	// Restore history to the drop down list
-	CString hist = theApp.GetProfileString("File-Settings", "ExplorerHistory");
-	CString ss;
-	for (ii = 0; AfxExtractSubString(ss, hist, ii, '|'); ++ii)
-		if (!ss.IsEmpty())
-			ctl_name_.AddString(ss);
+	// Restore filter history to the drop down list
+    std::vector<CString> sv;
+    ::LoadHist(sv,  "ExplorerFilters", theApp.max_expl_filt_hist_);
+	for (ii = 0; ii < sv.size(); ++ii)
+		if (!sv[ii].IsEmpty())
+			ctl_filter_.AddString(sv[ii]);
+	//for (ii = 0; AfxExtractSubString(ss, hist, ii, '|'); ++ii)
+	//	if (!ss.IsEmpty())
+	//		ctl_filter_.AddString(ss);
 
 	// Restore last used filter
     CString filter = theApp.GetProfileString("File-Settings", "ExplorerFilter", "*.*");
 	ctl_filter_.SetWindowText(filter);
 	list_.SetFilter(filter);
 
-	// Restore filter history to the drop down list
-	hist = theApp.GetProfileString("File-Settings", "ExplorerFilterHistory");
-	for (ii = 0; AfxExtractSubString(ss, hist, ii, '|'); ++ii)
-		if (!ss.IsEmpty())
-			ctl_filter_.AddString(ss);
+	// Restore folder history to the drop down list
+	//for (ii = 0; AfxExtractSubString(ss, hist, ii, '|'); ++ii)
+	//	if (!ss.IsEmpty())
+	//		ctl_name_.AddString(ss);
+    ::LoadHist(sv,  "ExplorerFolders", theApp.max_expl_dir_hist_);
+	for (ii = 0; ii < sv.size(); ++ii)
+		if (!sv[ii].IsEmpty())
+			ctl_name_.AddString(sv[ii]);
 
 	// Restore last used folder
     if (IsVisible())
@@ -992,20 +1000,32 @@ void CExplorerWnd::NewFilter()
 		list_.SetFilter(curr_filter_);
 
 	// Add string entered into drop down list if not there
+    AddFilter();
+
+	Refresh();
+}
+
+// Add current filter to the drop down list or move to top if already there
+void CExplorerWnd::AddFilter() 
+{
 	int ii, count = ctl_filter_.GetCount();
-	CString tmp = curr_filter_; tmp.MakeUpper();  // Get uppercase version for case-insensitive compare
-	for (ii = 0; ii < count; ++ii)
+    CString tmp = curr_filter_;
+    tmp.MakeUpper();  // Get uppercase version for case-insensitive compare
+
+    // See if it is already there
+    for (ii = 0; ii < count; ++ii)
 	{
 		CString ss;
 		ctl_filter_.GetLBText(ii, ss);
         ss.MakeUpper();
 		if (tmp == ss)
+        {
+            // Delete it from the list so we can add it at the top (below)
+            ctl_filter_.DeleteString(ii);
 			break;
+        }
 	}
-	if (ii == count)
-		ctl_filter_.InsertString(0, curr_filter_);
-
-	Refresh();
+	ctl_filter_.InsertString(0, curr_filter_);
 }
 
 void CExplorerWnd::OldFilter() 
@@ -1013,7 +1033,8 @@ void CExplorerWnd::OldFilter()
 	VERIFY(UpdateData(FALSE));
 }
 
-void CExplorerWnd::NewFolder() 
+// User typed in a folder name
+void CExplorerWnd::NewFolder()
 {
 	VERIFY(UpdateData());
 
@@ -1025,21 +1046,30 @@ void CExplorerWnd::NewFolder()
     if (!list_.GetCurrentFolder(dir) || curr_name_ != dir)
         list_.DisplayFolder(curr_name_);
 
-	// Add string entered into drop down list if not there
+	Refresh();
+}
+
+// Add current folder to the drop down list or move to top if already there
+void CExplorerWnd::AddFolder()
+{
 	int ii, count = ctl_name_.GetCount();
-	CString tmp = curr_name_; tmp.MakeUpper();  // Get uppercase version for case-insensitive compare
+    CString tmp = list_.Folder();
+    tmp.MakeUpper();  // Get uppercase version for case-insensitive compare
+
+    // See if it is already there
 	for (ii = 0; ii < count; ++ii)
 	{
 		CString ss;
 		ctl_name_.GetLBText(ii, ss);
         ss.MakeUpper();
 		if (tmp == ss)
+        {
+            // Delete it from the list so we can add it to the top (below)
+            ctl_name_.DeleteString(ii);
 			break;
+        }
 	}
-	if (ii == count)
-		ctl_name_.InsertString(0, curr_name_);
-
-	Refresh();
+	ctl_name_.InsertString(0, list_.Folder());  // Add original string (with case)
 }
 
 void CExplorerWnd::OldFolder() 
@@ -1070,8 +1100,6 @@ void CExplorerWnd::OnDestroy()
     theApp.WriteProfileInt("File-Settings", "ExplorerTreeSize", splitter_.GetPaneSize(0));
     theApp.WriteProfileInt("File-Settings", "ExplorerListSize", splitter_.GetPaneSize(1));
 
-	CString hist;               // Last 32 strings in drop down history list
-
     list_.SaveLayout();         // save columns etc for list
 
 	theApp.WriteProfileInt("File-Settings", "ExplorerShowHidden",
@@ -1083,16 +1111,25 @@ void CExplorerWnd::OnDestroy()
         theApp.WriteProfileString("File-Settings", "ExplorerDir", dir);
 
 	// Save folder history
-	int count = ctl_name_.GetCount();
-	for (int ii = 0; ii < count && ii < 32; ++ii)
-	{
-		if (!hist.IsEmpty())
-			hist += CString("|");
+	//int count = ctl_name_.GetCount();
+	//for (int ii = 0; ii < count && ii < 32; ++ii)
+	//{
+	//	if (!hist.IsEmpty())
+	//		hist += CString("|");
+	//	CString ss;
+	//	ctl_name_.GetLBText(ii, ss);
+	//	hist += ss;
+	//}
+    //theApp.WriteProfileString("File-Settings", "ExplorerHistory", hist);
+    std::vector<CString> sv;
+	int count = min(ctl_name_.GetCount(), theApp.max_expl_dir_hist_);
+	for (int ii = 0; ii < count; ++ii)
+    {
 		CString ss;
 		ctl_name_.GetLBText(ii, ss);
-		hist += ss;
-	}
-    theApp.WriteProfileString("File-Settings", "ExplorerHistory", hist);
+        sv.push_back(ss);
+    }
+    ::SaveHist(sv,  "ExplorerFolders", theApp.max_expl_dir_hist_);
 
 	// Save current filter to restore later
 	CString filter;
@@ -1100,17 +1137,27 @@ void CExplorerWnd::OnDestroy()
 	theApp.WriteProfileString("File-Settings", "ExplorerFilter", filter);
 
 	// Save filter history
-	hist.Empty();
-	count = ctl_filter_.GetCount();
-	for (int jj = 0; jj < count && jj < 16; ++jj)
-	{
-		if (jj > 0)
-			hist += CString("|");
+	//hist.Empty();
+	//count = ctl_filter_.GetCount();
+	//for (int jj = 0; jj < count && jj < 16; ++jj)
+	//{
+	//	if (jj > 0)
+	//		hist += CString("|");
+	//	CString ss;
+	//	ctl_filter_.GetLBText(jj, ss);
+	//	hist += ss;
+	//}
+    //theApp.WriteProfileString("File-Settings", "ExplorerFilterHistory", hist);
+
+    sv.clear();
+	count = min(ctl_filter_.GetCount(), theApp.max_expl_filt_hist_);
+	for (int ii = 0; ii < count; ++ii)
+    {
 		CString ss;
-		ctl_filter_.GetLBText(jj, ss);
-		hist += ss;
-	}
-    theApp.WriteProfileString("File-Settings", "ExplorerFilterHistory", hist);
+		ctl_filter_.GetLBText(ii, ss);
+        sv.push_back(ss);
+    }
+    ::SaveHist(sv,  "ExplorerFilters", theApp.max_expl_filt_hist_);
 
 	if (hh_ != 0)
 	{
@@ -1222,6 +1269,7 @@ void CExplorerWnd::OnFolderForw()
         list_.Forw();
 }
 
+// User clicked the parent folder (up) button
 void CExplorerWnd::OnFolderParent()
 {
 	ASSERT(!list_.IsDesktop());
@@ -1248,6 +1296,8 @@ void CExplorerWnd::OnFilterOpts()
 	    VERIFY(UpdateData());
 	    list_.SetFilter(curr_filter_);
 
+        AddFilter();
+
 	    Refresh();
     }
 }
@@ -1257,7 +1307,9 @@ void CExplorerWnd::OnFolderRefresh()
 {
 	VERIFY(UpdateData());               // get any new filter or folder name string
 	list_.SetFilter(curr_filter_);
+    list_.add_to_hist_ = false;
     list_.DisplayFolder(curr_name_);
+    list_.add_to_hist_ = true;
 	Refresh();
 }
 
@@ -1346,7 +1398,9 @@ void CExplorerWnd::OnSelchangeFolderName()
 	ctl_name_.SetWindowText(ss);
 
 	VERIFY(UpdateData());
+    list_.add_to_hist_ = false;
     list_.DisplayFolder(curr_name_);
+    list_.add_to_hist_ = true;
 
 	Refresh();
 }
@@ -1814,9 +1868,6 @@ void GetInt::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(GetInt, CDialog)
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// GetInt message handlers
 
 /////////////////////////////////////////////////////////////////////////////
 // GetStr dialog

@@ -78,7 +78,8 @@ class CExplorerWnd;
 // CHistoryShellList - keeps a history of folders displayed
 class CHistoryShellList : public CBCGShellList
 {
-	// This is a continuation of BCGShellListColumns
+    friend class CExplorerWnd;
+	// This replaces BCGShellListColumns
 	enum
 	{
 		COLNAME, COLSIZE, COLTYPE, COLMOD,		// Normal columns provided by BCG
@@ -88,7 +89,7 @@ class CHistoryShellList : public CBCGShellList
 		COLLAST         // Leave this one at the end (to be one past last used value)
 	};
 public:
-    CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false) { }
+    CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true) { }
 	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
 
     // Handles back and forward buttons
@@ -122,6 +123,7 @@ private:
     std::vector<CString> name_;  // Names of folders
     int pos_;                    // Index of current folder
     bool in_move_;               // Used to prevent storing moves when just going forward/backward in the list
+    bool add_to_hist_;           // Used to prevent adding to dop-down list in sme circumstances (default to true)
     int normal_count_;           // No of columns added in base class (CBCGSHellList)
 	int fl_idx_;                 // This is saved index into recent file list (cached for list box row while processing fields)
 };
@@ -174,9 +176,11 @@ public:
 	void Refresh();                 // Set folder/filter from edit controls and refresh the folder display
 	void Update(LPCTSTR file_name = NULL); // Mark for possible later (idle) refresh
 	void NewFilter();               // New filter name entered
+    void AddFilter();               // Add current filter to the history list
 	void OldFilter();               // Restore old filter name (Esc hit).
 	void NewFolder();               // New folder name entered
 	void OldFolder();               // Restore old folder name (Esc hit).
+    void AddFolder();               // Add current folder to history list
 
 	// overrides
 //	virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -484,6 +488,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
+
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 

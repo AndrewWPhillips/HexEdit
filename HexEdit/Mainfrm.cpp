@@ -56,11 +56,7 @@ extern CHexEditApp theApp;
 IMPLEMENT_SERIAL(CHexEditFontCombo, CBCGToolbarFontCombo, 1)  // see BCGMisc.h
 IMPLEMENT_SERIAL(CHexEditFontSizeCombo, CBCGToolbarFontSizeCombo, 1)  // see BCGMisc.h
 
-static const int max_search_hist = 48;
-static const int max_replace_hist = 16;
-static const int max_jump_hist = 16;
-
-// We need to dereive our own class from BCG cuctomize class so we can handle
+// We need to derive our own class from BCG cuctomize class so we can handle
 // What's This help properly using Html Help.
 class CHexEditCustomize : public CBCGToolbarCustomize
 {
@@ -2033,27 +2029,8 @@ void CMainFrame::AddDecHistory(const CString &ss)
 // Retrieve hex/dec jump histories from registry
 void CMainFrame::LoadJumpHistory(CHexEditApp *aa)
 {
-    CString ss;                         // Profile string
-    CString entry;                      // "Search1" etc
-    int ii;
-
-    hex_hist_.clear();
-    for (ii = max_jump_hist; ii > 0; ii--)
-    {
-        entry.Format("HexJump%d", ii);
-        ss = aa->GetProfileString("History", entry);
-        if (!ss.IsEmpty())
-            hex_hist_.push_back(ss);
-    }
-
-    dec_hist_.clear();
-    for (ii = max_jump_hist; ii > 0; ii--)
-    {
-        entry.Format("DecJump%d", ii);
-        ss = aa->GetProfileString("History", entry);
-        if (!ss.IsEmpty())
-            dec_hist_.push_back(ss);
-    }
+    ::LoadHist(hex_hist_, "HexJump", theApp.max_hex_jump_hist_);
+    ::LoadHist(dec_hist_, "DecJump", theApp.max_dec_jump_hist_);
 
 	hex_hist_changed_ = dec_hist_changed_ = clock();
 }
@@ -2061,33 +2038,13 @@ void CMainFrame::LoadJumpHistory(CHexEditApp *aa)
 // Save hex/dec histories to registry
 void CMainFrame::SaveJumpHistory(CHexEditApp *aa)
 {
-    CString ss;                         // Profile string
-    CString entry;                      // "HexJump1" etc
-    int ii;
-
-    int last = hex_hist_.size();
-    for (ii = 1; ii <= max_jump_hist; ++ii)
+    if (theApp.clear_on_exit_ && theApp.clear_hist_)
     {
-        entry.Format("HexJump%d", ii);
-
-        // Note this clears any empty trailing entries OR
-        // it clears all entries we are clearing the histories on exit
-        aa->WriteProfileString("History", 
-                               entry, 
-                               last < ii || (aa->clear_on_exit_ && aa->clear_hist_) ? (LPCTSTR)NULL : (LPCTSTR)hex_hist_[last-ii]);
+        hex_hist_.clear();
+        dec_hist_.clear();
     }
-
-    last = dec_hist_.size();
-    for (ii = 1; ii <= max_jump_hist; ++ii)
-    {
-        entry.Format("DecJump%d", ii);
-
-        // Note this clears any trailing entries OR
-        // it clears all entries we are clearing the histories on exit
-        aa->WriteProfileString("History", 
-                               entry, 
-                               last < ii || (aa->clear_on_exit_ && aa->clear_hist_) ? (LPCTSTR)NULL : (LPCTSTR)dec_hist_[last-ii]);
-    }
+    ::SaveHist(hex_hist_, "HexJump", theApp.max_hex_jump_hist_);
+    ::SaveHist(dec_hist_, "DecJump", theApp.max_dec_jump_hist_);
 }
 
 // Add a search string to the list box of the search combo
@@ -2145,62 +2102,31 @@ void CMainFrame::AddReplaceHistory(const CString &ss)
     replace_hist_.push_back(ss);
 }
 
+// xxx changes required here (3.4?):
+// 1. Make max_search_hist_ etc options the user can chnage
+// 1a. Add individual "Clear Now" buttons for all lists
+// 2. On load - load all entries (ignore max_search_hist_ etc)
+// 3. On Save - set size of list to max_search_hist_ etc, then save all entries in the list
+// 4. Get rid of clear_on_exit_ etc options as this can now be done by seeting a size of zero.
+// 5. Clear reg entries past last used (since user can change hist sizes and we don't weant to leave unused one behind)
+
 // Retrieve search/replace histories from registry
 void CMainFrame::LoadSearchHistory(CHexEditApp *aa)
 {
-    CString ss;                         // Profile string
-    CString entry;                      // "Search1" etc
-    int ii;
-
-    search_hist_.clear();
-    for (ii = max_search_hist; ii > 0; ii--)
-    {
-        entry.Format("Search%d", ii);
-        ss = aa->GetProfileString("History", entry);
-        if (!ss.IsEmpty())
-            search_hist_.push_back(ss);
-    }
-
-    replace_hist_.clear();
-    for (ii = max_replace_hist; ii > 0; ii--)
-    {
-        entry.Format("Replace%d", ii);
-        ss = aa->GetProfileString("History", entry);
-        if (!ss.IsEmpty())
-            replace_hist_.push_back(ss);
-    }
+    ::LoadHist(search_hist_,  "Search",  theApp.max_search_hist_);
+    ::LoadHist(replace_hist_, "Replace", theApp.max_replace_hist_);
 }
 
 // Save search/replace histories to registry
 void CMainFrame::SaveSearchHistory(CHexEditApp *aa)
 {
-    CString ss;                         // Profile string
-    CString entry;                      // "Search1" etc
-    int ii;
-
-    int last = search_hist_.size();
-    for (ii = 1; ii <= max_search_hist; ++ii)
+    if (theApp.clear_on_exit_ && theApp.clear_hist_)
     {
-        entry.Format("Search%d", ii);
-
-        // Note this clears any trailing entries OR
-        // it clears all entries we are clearing the search history on exit
-        aa->WriteProfileString("History", 
-                               entry, 
-                               last < ii || (aa->clear_on_exit_ && aa->clear_hist_) ? (LPCTSTR)NULL : (LPCTSTR)search_hist_[last-ii]);
+        search_hist_.clear();
+        replace_hist_.clear();
     }
-
-    last = replace_hist_.size();
-    for (ii = 1; ii <= max_replace_hist; ++ii)
-    {
-        entry.Format("Replace%d", ii);
-
-        // Note this clears any trailing entries OR
-        // it clears all entries we are clearing the replace history on exit
-        aa->WriteProfileString("History", 
-                               entry, 
-                               last < ii || (aa->clear_on_exit_ && aa->clear_hist_) ? (LPCTSTR)NULL : (LPCTSTR)replace_hist_[last-ii]);
-    }
+    ::SaveHist(search_hist_,  "Search",  theApp.max_search_hist_);
+    ::SaveHist(replace_hist_, "Replace", theApp.max_replace_hist_);
 }
 
 void CMainFrame::OnFindNext()

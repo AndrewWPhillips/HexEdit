@@ -1905,6 +1905,13 @@ void CHexEditApp::LoadOptions()
     large_cursor_ = GetProfileInt("Options", "LargeCursor", 0) ? TRUE : FALSE;
     show_other_ = GetProfileInt("Options", "OtherAreaCursor", 1) ? TRUE : FALSE;
 
+    max_search_hist_ = GetProfileInt("History", "MaxSearch", 48);
+    max_replace_hist_ = GetProfileInt("History", "MaxReplace", 16);
+    max_hex_jump_hist_ = GetProfileInt("History", "MaxHexJump", 16);
+    max_dec_jump_hist_ = GetProfileInt("History", "MaxDecJump", 16);
+    max_expl_dir_hist_ = GetProfileInt("History", "MaxExplorerFolders", 32);
+    max_expl_filt_hist_ = GetProfileInt("History", "MaxExplorerFilters", 16);
+
     clear_hist_ = GetProfileInt("Options", "ClearHist", 1) ? TRUE : FALSE;
     clear_recent_file_list_ = GetProfileInt("Options", "ClearRecentFileList", 1) ? TRUE : FALSE;
     clear_bookmarks_ = GetProfileInt("Options", "ClearBookmarks", 0) ? TRUE : FALSE;
@@ -2321,12 +2328,19 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "BackgroundSearch", bg_search_ ? 1 : 0);
     WriteProfileInt("Options", "LargeCursor", large_cursor_ ? 1 : 0);
     WriteProfileInt("Options", "OtherAreaCursor", show_other_ ? 1 : 0);
-
+    WriteProfileInt("History", "MaxSearch", max_search_hist_);
+    WriteProfileInt("History", "MaxReplace", max_replace_hist_);
+    WriteProfileInt("History", "MaxHexJump", max_hex_jump_hist_);
+    WriteProfileInt("History", "MaxDecJump", max_dec_jump_hist_);
+    WriteProfileInt("History", "MaxExplorerFolders", max_expl_dir_hist_);
+    WriteProfileInt("History", "MaxExplorerFilters", max_expl_filt_hist_);
+    // xxx NOTE: ClearHist, ClearOnExit are to be phased out
     WriteProfileInt("Options", "ClearHist", clear_hist_ ? 1 : 0);
+    WriteProfileInt("Options", "ClearOnExit", clear_on_exit_ ? 1 : 0);
+
+    WriteProfileInt("Options", "DontAddToRecent", no_recent_add_ ? 1 : 0);
     WriteProfileInt("Options", "ClearRecentFileList", clear_recent_file_list_ ? 1 : 0);
     WriteProfileInt("Options", "ClearBookmarks", clear_bookmarks_ ? 1 : 0);
-    WriteProfileInt("Options", "ClearOnExit", clear_on_exit_ ? 1 : 0);
-    WriteProfileInt("Options", "DontAddToRecent", no_recent_add_ ? 1 : 0);
 
     WriteProfileInt("Options", "UndoIntelligent", intelligent_undo_ ? 1 : 0);
     WriteProfileInt("Options", "UndoMerge", undo_limit_);
