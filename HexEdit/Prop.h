@@ -420,7 +420,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	// This relates format types to Combo Box elements
-	enum { FMT_IEEE32, FMT_IEEE64, FMT_IBM32, FMT_IBM64, FMT_DECIMAL,
+	enum { FMT_IEEE32, FMT_IEEE64, FMT_IBM32, FMT_IBM64, FMT_REAL48, FMT_DECIMAL,
 		   FMT_LAST };
 	void FixDesc() ;
 };

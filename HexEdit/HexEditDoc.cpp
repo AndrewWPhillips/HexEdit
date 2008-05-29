@@ -1,6 +1,6 @@
 // HexEditDoc.cpp : implementation of the CHexEditDoc class
 //
-// Copyright (c) 2003 by Andrew W. Phillips. 
+// Copyright (c) 2008 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -3350,6 +3350,11 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                     df_size_[ii] = 8;
                 }
             }
+            else if (data_type == "real" && toupper(data_format[0]) == 'B')
+            {
+                df_type_[ii] = DF_REAL48;
+                df_size_[ii] = 6;
+            }
             else if (data_type == "real")
             {
                 if (data_len.int64 == 4)
@@ -4382,6 +4387,10 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
             retval.typ = TYPE_REAL;
             retval.real64 = ::ibm_fp64(buf);
             break;
+        case CHexEditDoc::DF_REAL48:
+            retval.typ = TYPE_REAL;
+            retval.real64 = ::real48(buf);
+            break;
 
         case CHexEditDoc::DF_DATEC:
             {
@@ -4546,6 +4555,7 @@ DF_REAL32         real   -       32        C/C++ printf format specifiers (%g, %
 DF_REAL64         real   -       -
 DF_IBMREAL32      real   ibm     32
 DF_IBMREAL64      real   ibm     -
+DF_REAL48         real   borland -
 DF_DATEC          date   -       c         C/C++ strftime format (%c, %#c, %#x etc)
 DF_DATEC51        date   -       c51
 DF_DATEC7         date   -       c7

@@ -798,6 +798,7 @@ BOOL CTipsPage::OnInitDialog()
 		var_list.Add("ieee64");
 		var_list.Add("ibm32");
 		var_list.Add("ibm64");
+		var_list.Add("Real48");
 		var_list.Add("time_t");
 		var_list.Add("time_t_80");
 		var_list.Add("time_t_1899");
@@ -821,6 +822,10 @@ BOOL CTipsPage::OnInitDialog()
 		real32_list.Add("%f");
 		real32_list.Add("%g");
 		real32_list.Add("%.7g");
+		real48_list.Add("%e");
+		real48_list.Add("%f");
+		real48_list.Add("%g");
+		real48_list.Add("%.12g");
 		real64_list.Add("%e");
 		real64_list.Add("%f");
 		real64_list.Add("%g");
@@ -1163,7 +1168,7 @@ void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 	// If expression edited using drop down list then fill corresponding format list
     if (pItem->iColumn == column_expr && grid_.GetCell(pItem->iRow, column_expr)->IsKindOf(RUNTIME_CLASS(CGridCellCombo)))
 	{
-		enum { tnone, tint, tuint, treal32, treal64, tdate, tchar, tstring } tt = tnone;
+		enum { tnone, tint, tuint, treal32, treal64, treal48, tdate, tchar, tstring } tt = tnone;
 
 		if (ss.Find("sbyte") != -1)
 		    tt = tint;
@@ -1190,6 +1195,9 @@ void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 			     ss.Find("ibm64") != -1
 		        )
 			tt = treal64;
+		else if (ss.Find("Real48") != -1
+		        )
+			tt = treal48;
 		else if (ss.Find("date") != -1 ||
 				 ss.Find("time") != -1       // includes time_t, time64_t etc
 		        )
@@ -1219,6 +1227,9 @@ void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				break;
 			case treal64:
 				pcell->SetOptions(real64_list);
+				break;
+			case treal48:
+				pcell->SetOptions(real48_list);
 				break;
 			case tdate:
 				pcell->SetOptions(date_list);

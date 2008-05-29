@@ -1,6 +1,6 @@
 // Misc.cpp : miscellaneous routines
 //
-// Copyright (c) 1999-2003 by Andrew W. Phillips.
+// Copyright (c) 1999-2008 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -746,6 +746,87 @@ CString get_menu_text(CMenu *pmenu, int id)
 
 //-----------------------------------------------------------------------------
 // Conversions
+
+static const long double two_pow40 = 1099511627776.0L;
+
+// Make a real48 (8 bit exponent, 39 bit mantissa) from a double.
+// Returns false on overflow, returns true (and zero value) on underflow
+bool make_real48(unsigned char pp[6], double val, bool little_endian /*=false*/)
+{
+    int exp;                    // Base 2 exponent of val
+    val = frexp(val, &exp);
+
+	if (val == 0.0 || exp < -128)       // zero or underflow
+	{
+		memset(pp, 0, 6);
+		return true;
+	}
+	else if (exp== -1 || exp > 127)     // inf or overflow
+		return false;
+
+	assert(exp + 128 >= 0 && exp + 128 < 256);
+    pp[0] = exp + 128;                  // biassed exponent in first byte
+
+	bool neg = val < 0.0;               // remember if -ve
+	val = fabs(val);
+
+    // Work out mantissa bits
+    __int64 imant = (__int64)(val * two_pow40);
+    assert(imant < two_pow40);
+    pp[1] = unsigned char((imant) & 0xFF);
+    pp[2] = unsigned char((imant>>8) & 0xFF);
+    pp[3] = unsigned char((imant>>16) & 0xFF);
+    pp[4] = unsigned char((imant>>24) & 0xFF);
+    pp[5] = unsigned char((imant>>32) & 0x7F);  // masks off bit 40 (always on)
+	if (neg)
+		pp[5] |= 0x80;                  // set -ve bit
+
+    if (little_endian)
+        flip_bytes(pp, 6);
+	return true;
+}
+
+// Make a double from a Real48
+// Also returns the exponent (base 2) and mantissa if pexp/pmant are not NULL
+double real48(const unsigned char *pp, int *pexp, long double *pmant, bool little_endian /*=false*/)
+{
+    // Copy bytes containing the real48 in case we have to flip byte order
+    unsigned char buf[6];
+    memcpy(buf, pp, 6);
+    if (little_endian)
+        flip_bytes(buf, 6);
+
+    int exponent = (int)buf[0] - 128;
+    if (pexp != NULL) *pexp = exponent;
+
+	// Build integer mantissa (without implicit leading bit)
+    __int64 mantissa = buf[1] + ((__int64)buf[2]<<8) + ((__int64)buf[3]<<16) +
+	                ((__int64)buf[4]<<24) + ((__int64)(buf[5]&0x7F)<<32);
+
+	// Special check for zero
+	if (buf[0] == 0 && mantissa < two_pow40/4)
+	{
+        if (pmant != NULL) *pmant = 0.0;
+        return 0.0;
+	}
+
+	// Add implicit leading 1 bit
+	mantissa +=  (_int64)1<<39;
+
+    if (pmant != NULL)
+    {
+        if ((buf[5] & 0x80) == 0)
+            *pmant = mantissa / (two_pow40 / 2);
+        else
+            *pmant = -(mantissa / (two_pow40 / 2));
+    }
+    
+    // Check sign bit and return appropriate result
+    if ((buf[5] & 0x80) == 0)
+        return (mantissa / two_pow40) * powl(2, exponent);
+    else
+        return -(mantissa / two_pow40) * powl(2, exponent);
+}
 
 static const long double two_pow24 = 16777216.0L;
 static const long double two_pow56 = 72057594037927936.0L;

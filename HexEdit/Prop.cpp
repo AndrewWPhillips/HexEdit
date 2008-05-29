@@ -2566,6 +2566,9 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 	case FMT_IBM32:
 		needed = 4;
 		break;
+	case FMT_REAL48:
+		needed = 6;
+		break;
 	case FMT_DECIMAL:
 		needed = 16;
 		break;
@@ -2608,16 +2611,24 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 		case FMT_IEEE32:
 			value = *(float *)buf;
 			mantissa = frexp(value, &exponent);
+			mant_.Format("%.7f", (double)mantissa);
 			break;
 		case FMT_IEEE64:
 			value = *(double *)buf;
 			mantissa = frexp(value, &exponent);
+			mant_.Format("%.16f", (double)mantissa);
 			break;
 		case FMT_IBM32:
+			mant_.Format("%.7f", (double)mantissa);
 			value = ::ibm_fp32(buf, &exponent, &mantissa, true);
 			break;
 		case FMT_IBM64:
 			value = ::ibm_fp64(buf, &exponent, &mantissa, true);
+			mant_.Format("%.16f", (double)mantissa);
+			break;
+		case FMT_REAL48:
+			mant_.Format("%.12f", (double)mantissa);
+			value = ::real48(buf, &exponent, &mantissa, true);
 			break;
 		default:
 			ASSERT(0);
@@ -2625,7 +2636,6 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 
 		// Work out what to display
 		exp_.Format("%d", (int)exponent);
-		mant_.Format(format_ == FMT_IEEE32 || format_ == FMT_IBM32 ? "%.7f" : "%.16f" , (double)mantissa);
 		switch (_fpclass(value))
 		{
 		case _FPCLASS_SNAN:
@@ -2639,7 +2649,12 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 			val_ = "+Inf";
 			break;
 		default:
-			val_.Format(format_ == FMT_IEEE32 || format_ == FMT_IBM32 ? "%.7g" : "%.16g", (double)value);
+			if (format_ == FMT_IEEE32 || format_ == FMT_IBM32)
+				val_.Format("%.7g", (double)value);
+			else if (format_ == FMT_REAL48)
+				val_.Format("%.12g", (double)value);
+			else
+				val_.Format("%.16g", (double)value);
 			break;
 		}
 	}
@@ -2657,6 +2672,7 @@ void CPropRealPage::FixDesc()
 	{
 	case FMT_IEEE32:
 	case FMT_IEEE64:
+	case FMT_REAL48:
 		exp_desc_ = "Exponent (Power 2):";
 		break;
 	case FMT_IBM32:
@@ -2725,6 +2741,9 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 			case FMT_IEEE32:
 			case FMT_IBM32:
 				len = 4;
+				break;
+			case FMT_REAL48:
+				len = 6;
 				break;
 			case FMT_DECIMAL:
 				len = 16;
@@ -2796,6 +2815,16 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 					break;
 				case FMT_IBM64:
 					if (!::make_ibm_fp64(buf, dbl_val, true))
+					{
+						AfxMessageBox("Value too big");
+						Update(pview);
+		                ctl_val_.SetFocus();
+					}
+					else
+						pp = buf;
+					break;
+				case FMT_REAL48:
+					if (!::make_real48(buf, dbl_val, true))
 					{
 						AfxMessageBox("Value too big");
 						Update(pview);

@@ -546,7 +546,7 @@ protected:
     CBtnDataBase btn_db_;                  // Needed for button cells (check box)
 
     CStringArray var_list;                 // Stores all "variable" names that can be used in an expression used for column_expr drop list
-	CStringArray int_list,uint_list,real32_list,real64_list,date_list,char_list,string_list;
+	CStringArray int_list,uint_list,real32_list,real64_list,real48_list,date_list,char_list,string_list;
 
     CToolTipCtrl m_cToolTip;
     void add_row(int row, BOOL is_checked = TRUE, CString s1 = "", CString s2 = "", CString s3 = "");

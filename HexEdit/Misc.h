@@ -3,7 +3,7 @@
 
 // Misc.h
 
-// Copyright (c) 1999 by Andrew W. Phillips.
+// Copyright (c) 2008 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -53,6 +53,8 @@ void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax);
 CString DecimalToString(const void * pdecimal, CString & sMantissa, CString & sExponent);
 bool StringToDecimal(const char * ss, void * presult);
 
+bool make_real48(unsigned char pp[6], double val, bool little_endian = true);
+double real48(const unsigned char *pp, int *pexp = NULL, long double *pmant = NULL, bool little_endian = true);
 bool make_ibm_fp32(unsigned char pp[4], double val, bool little_endian = false);
 bool make_ibm_fp64(unsigned char pp[8], double val, bool little_endian = false);
 long double ibm_fp32(const unsigned char *pp, int *pexp = NULL,

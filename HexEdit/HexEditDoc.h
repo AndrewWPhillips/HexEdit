@@ -661,6 +661,7 @@ public:
         DF_REAL64,
         DF_IBMREAL32,       // IBM floating point numbers
         DF_IBMREAL64,
+		DF_REAL48,          // Real as in Turbo Pascal and Real48 of Delphi
 
 		DF_LAST_NUM,
 

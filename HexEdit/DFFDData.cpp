@@ -419,6 +419,7 @@ void CDFFDData::fix_formats()
     case 3:     // real
         ctl_format_.AddString("IEEE");
         ctl_format_.AddString("IBM");
+		ctl_format_.AddString("Borland");
         break;
     case 4:     // date
         ctl_format_.AddString("normal time_t");
@@ -463,10 +464,10 @@ void CDFFDData::fix_controls()
 
 void CDFFDData::fix_big_endian()
 {
-    ctl_big_endian_.EnableWindow(type_ ==2 || type_ == 3 ||       // numeric 
-		                         type_ == 4 ||                    // date
-								 (type_ == 1 && format_ == 5) ||  // unicode char
-								 (type_ ==5 && format_ == 5));    // unicode string
+    ctl_big_endian_.EnableWindow(type_ == 2 || type_ == 3 ||       // numeric 
+		                         type_ == 4 ||                     // date
+								 (type_ == 1 && format_ == 5) ||   // unicode char
+								 (type_ == 5 && format_ == 5));    // unicode string
 }
 
 void CDFFDData::OnGetLengthVar()
@@ -607,6 +608,8 @@ void CDFFDData::load_data()
             format_ = 0;
         else if (format_str.CompareNoCase("ibm") == 0)
             format_ = 1;
+        else if (format_str.CompareNoCase("borland") == 0)
+            format_ = 2;
         else
             format_ = 0;
         break;
@@ -910,6 +913,9 @@ void CDFFDData::save_data()
             break;
         case 1:
             pelt_->SetAttr("format", "ibm");
+            break;
+		case 2:
+            pelt_->SetAttr("format", "borland");
             break;
         }
         break;

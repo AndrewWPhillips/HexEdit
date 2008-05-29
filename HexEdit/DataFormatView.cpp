@@ -1429,6 +1429,10 @@ void CDataFormatView::InitTree()
                     case CHexEditDoc::DF_IBMREAL64:
                         item.strText = "IBM 64-bit real";
                         break;
+                    case CHexEditDoc::DF_REAL48:
+                        item.strText = "Borland Real48";
+                        break;
+
                     case CHexEditDoc::DF_DATEC:
                         item.strText = "Common time_t";
                         break;
@@ -1479,6 +1483,7 @@ void CDataFormatView::InitTree()
                     case CHexEditDoc::DF_BITFIELD64:
                     case CHexEditDoc::DF_REAL32:
                     case CHexEditDoc::DF_REAL64:
+					case CHexEditDoc::DF_REAL48:
                         if (pdoc->df_type_[ii] < 0)
                             item.strText += " big-endian";
                         break;
@@ -1884,6 +1889,7 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
         case CHexEditDoc::DF_REAL64:
         case CHexEditDoc::DF_IBMREAL32:
         case CHexEditDoc::DF_IBMREAL64:
+		case CHexEditDoc::DF_REAL48:
             strFormat = theApp.default_real_format_;
             break;
         case CHexEditDoc::DF_DATEC:
@@ -2692,6 +2698,12 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
                 ss.Format("%.16g", double(ibm_fp64(buf)));
             else
                 ss.Format(strFormat, double(ibm_fp64(buf)));
+            break;
+		case CHexEditDoc::DF_REAL48:
+            if (strFormat.Find('%') == -1)
+                ss.Format("%.12g", double(real48(buf)));
+            else
+                ss.Format(strFormat, double(real48(buf)));
             break;
 
         case CHexEditDoc::DF_DATEC:
@@ -5071,6 +5083,9 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
     case CHexEditDoc::DF_IBMREAL64:
         ss.Format("%.16g", double(ibm_fp64(buf)));
         break;
+    case CHexEditDoc::DF_REAL48:
+        ss.Format("%.12g", double(real48(buf)));
+        break;
 
     case CHexEditDoc::DF_DATEC:
         odt = COleDateTime(*((time_t *)buf));
@@ -5677,7 +5692,6 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
             pdata = (unsigned char *)&real64;
             ASSERT(df_size == 8);
             break;
-
         case CHexEditDoc::DF_IBMREAL32:
             real64 = strtod(CString(grid_.GetItemText(pItem->iRow, pItem->iColumn)), NULL);
             make_ibm_fp32((unsigned char *)&val32, real64);
@@ -5689,6 +5703,12 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
             make_ibm_fp64((unsigned char *)&val64, real64);
             pdata = (unsigned char *)&val64;
             ASSERT(df_size == 8);
+            break;
+        case CHexEditDoc::DF_REAL48:
+            real64 = strtod(CString(grid_.GetItemText(pItem->iRow, pItem->iColumn)), NULL);
+            make_real48((unsigned char *)&val64, real64);
+            pdata = (unsigned char *)&val64;
+            ASSERT(df_size == 6);
             break;
 
         case CHexEditDoc::DF_DATEC:
