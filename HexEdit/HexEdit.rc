@@ -2272,7 +2272,7 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Templates"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_EVAL,IDC_PAGE_ICON,0,0,20,20
+    ICON            IDI_TEMPLATES,IDC_PAGE_ICON,0,0,20,20
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,46,9,
                     209,1
     LTEXT           "Default template display",IDC_STATIC,20,5,76,8
@@ -3240,6 +3240,7 @@ IDI_EDIT                ICON                    "res\\edit.ico"
 IDI_LAYOUT              ICON                    "res\\layout.ico"
 IDI_DOCEDIT             ICON                    "res\\docedit.ico"
 IDI_DOCDISPLAY          ICON                    "res\\docdisp.ico"
+IDI_TEMPLATES           ICON                    "res\\templates.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

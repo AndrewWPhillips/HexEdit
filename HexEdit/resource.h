@@ -391,6 +391,7 @@
 #define IDI_LAYOUT                      399
 #define IDI_DOCEDIT                     400
 #define IDI_DOCDISPLAY                  401
+#define IDI_TEMPLATES                   402
 #define IDB_BITMAP2                     405
 #define IDD_GETINT                      407
 #define IDD_GETSTR                      408
