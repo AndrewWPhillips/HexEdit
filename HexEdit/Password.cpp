@@ -223,7 +223,7 @@ BOOL CPassword::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CPassword::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 void CPassword::OnPasswordHelp() 

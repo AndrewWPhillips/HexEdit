@@ -134,7 +134,7 @@ BOOL CCompressDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CCompressDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 void CCompressDlg::OnBnClickedCompressHelp()

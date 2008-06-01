@@ -646,7 +646,7 @@ void CRecentFileDlg::OnContextMenu(CWnd* pWnd, CPoint point)
             return;
     }
 
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)

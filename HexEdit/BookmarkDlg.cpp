@@ -907,5 +907,5 @@ void CBookmarkDlg::OnContextMenu(CWnd* pWnd, CPoint point)
     // It took me days to work out how right click of the "Name:" static
     // text should show the "What's This" context menu.
 
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }

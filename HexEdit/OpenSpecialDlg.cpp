@@ -435,7 +435,7 @@ BOOL COpenSpecialDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void COpenSpecialDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 LRESULT COpenSpecialDlg::OnKickIdle(WPARAM, LPARAM lCount)

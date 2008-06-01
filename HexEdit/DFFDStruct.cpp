@@ -618,7 +618,7 @@ BOOL CDFFDStruct::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CDFFDStruct::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 void CDFFDStruct::OnHelp() 

@@ -1651,7 +1651,7 @@ static DWORD id_pairs1[100] = {
 
 void CSimplePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs1);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs1);
 }
 
 BOOL CSimplePage::OnHelpInfo(HELPINFO* pHelpInfo) 
@@ -1956,7 +1956,7 @@ static DWORD id_pairs2[100] = {
 
 void CHexPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs2);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs2);
 }
 
 BOOL CHexPage::OnHelpInfo(HELPINFO* pHelpInfo) 
@@ -2230,7 +2230,7 @@ static DWORD id_pairs3[100] = {
 
 void CTextPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs3);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs3);
 }
 
 BOOL CTextPage::OnHelpInfo(HELPINFO* pHelpInfo) 
@@ -2620,7 +2620,7 @@ static DWORD id_pairs4[100] = {
 
 void CNumberPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs4);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs4);
 }
 
 BOOL CNumberPage::OnHelpInfo(HELPINFO* pHelpInfo) 
@@ -2892,7 +2892,7 @@ static DWORD id_pairs5[100] = {
 
 void CReplacePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs5);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs5);
 }
 
 BOOL CReplacePage::OnHelpInfo(HELPINFO* pHelpInfo) 

@@ -722,7 +722,7 @@ BOOL CRegister::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CRegister::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs2);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs2);
 }
 
 void CRegister::OnRegHelp() 
@@ -952,7 +952,7 @@ BOOL CReg::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CReg::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs1);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs1);
 }
 
 void CReg::OnRegHelp() 

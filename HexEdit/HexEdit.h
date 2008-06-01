@@ -362,6 +362,23 @@ public:
 		return TRUE;
 	}
 
+	void HtmlHelpContextMenu(CWnd * pWnd, DWORD *id_pairs)
+	{
+		int id;
+		while (pWnd != NULL && (id = pWnd->GetDlgCtrlID()) == IDC_STATIC)
+			pWnd = pWnd->GetNextWindow();
+
+		if (pWnd == NULL || id < 1)
+			return;
+
+	    CWaitCursor wait;
+		if (::HtmlHelp((HWND)pWnd->GetSafeHwnd(),
+			           htmlhelp_file_+"::/CtlIdMap.txt",
+					   HH_TP_HELP_CONTEXTMENU, 
+					   (DWORD) (LPSTR) id_pairs) == HWND(0))
+			TRACE("Failed to launch help for ID %d ($%X)\n", id, id);
+	}
+#if 0
 	BOOL HtmlHelpContextMenu(HWND hw, DWORD *id_pairs)
 	{
 	    CWaitCursor wait;
@@ -372,6 +389,7 @@ public:
 		}
 		return TRUE;
 	}
+#endif
 
     BOOL is_nt_;                        // Are we running under NT family? (NT/W2K/XP and later)
     BOOL is_xp_;                        // Is it XP or later?

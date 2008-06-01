@@ -211,7 +211,7 @@ BOOL CDFFDJump::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CDFFDJump::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 void CDFFDJump::OnHelp() 

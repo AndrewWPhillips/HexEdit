@@ -1681,7 +1681,7 @@ BOOL CMultiplay::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CMultiplay::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_play);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_play);
 }
 
 void CMultiplay::OnSelchangePlayName()
@@ -1791,7 +1791,7 @@ BOOL CSaveMacro::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CSaveMacro::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_save);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_save);
 }
 
 void CSaveMacro::OnMacroHelp() 

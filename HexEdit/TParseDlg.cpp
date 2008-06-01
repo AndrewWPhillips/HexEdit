@@ -244,7 +244,7 @@ BOOL TParseDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void TParseDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 void TParseDlg::OnHelp() 

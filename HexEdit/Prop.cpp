@@ -790,13 +790,7 @@ BOOL CPropFilePage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CPropFilePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    while (pWnd->GetDlgCtrlID() == IDC_STATIC) // xxx use this everywhere?? (ie in HtmlHelpContextMenu)
-    {
-        pWnd = pWnd->GetNextWindow();
-        if (pWnd == NULL)
-            return;
-    }
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 
@@ -1247,7 +1241,7 @@ BOOL CPropInfoPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CPropInfoPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 //===========================================================================
@@ -1928,7 +1922,7 @@ void CPropCharPage::OnContextMenu(CWnd* pWnd, CPoint point)
     // the text box it is associated with must be next in the tab order + the
     // text box MUST HAVE THE TABSTOP OPTION TURNED ON (ie no NOT WS_TABSTOP).
 
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 #ifdef SHOW_CODE_PAGE
@@ -2497,7 +2491,7 @@ BOOL CPropDecPage::OnHelpInfo(HELPINFO *pHelpInfo)
 
 void CPropDecPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 //===========================================================================
@@ -2911,7 +2905,7 @@ BOOL CPropRealPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CPropRealPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3432,7 +3426,7 @@ BOOL CPropDatePage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CPropDatePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 void CPropDatePage::OnDateFirst() 

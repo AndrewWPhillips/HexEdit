@@ -283,7 +283,7 @@ BOOL CSystemGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CSystemGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_sys);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_sys);
 }
 
 void CSystemGeneralPage::OnChange() 
@@ -442,7 +442,7 @@ BOOL CWorkspacePage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CWorkspacePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_ws);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_ws);
 }
 
 void CWorkspacePage::OnChange() 
@@ -594,7 +594,7 @@ BOOL CWorkspaceDisplayPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CWorkspaceDisplayPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_workspace_display);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_workspace_display);
 }
 
 //===========================================================================
@@ -718,7 +718,7 @@ BOOL CTemplatePage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CTemplatePage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_template);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_template);
 }
 
 //===========================================================================
@@ -977,7 +977,7 @@ BOOL CTipsPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CTipsPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs8);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs8);
 }
 
 void CTipsPage::OnNew() 
@@ -1539,7 +1539,7 @@ BOOL CColourSchemes::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CColourSchemes::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs6);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs6);
 }
 
 // Add Scheme button
@@ -2136,7 +2136,7 @@ BOOL CMacroPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CMacroPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs2);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs2);
 }
 
 void CMacroPage::OnRefreshNever() 
@@ -2489,7 +2489,7 @@ BOOL CPrintPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CPrintPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs3);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs3);
 }
 
 //===========================================================================
@@ -2688,7 +2688,7 @@ BOOL CFiltersPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CFiltersPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs4);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs4);
 }
 
 void CFiltersPage::OnNew() 
@@ -3006,7 +3006,7 @@ BOOL CWindowGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CWindowGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_wingeneral);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_wingeneral);
 }
 
 void CWindowGeneralPage::OnSaveDefault() 
@@ -3340,7 +3340,7 @@ BOOL CWindowPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CWindowPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_windisplay);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_windisplay);
 }
 
 BOOL CWindowPage::OnSetActive() 
@@ -3640,7 +3640,7 @@ BOOL CWindowEditPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CWindowEditPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-	theApp.HtmlHelpContextMenu((HWND)pWnd->GetSafeHwnd(), id_pairs_winedit);
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_winedit);
 }
 
 #if 0
