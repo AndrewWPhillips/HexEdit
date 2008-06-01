@@ -365,10 +365,12 @@ public:
 	void HtmlHelpContextMenu(CWnd * pWnd, DWORD *id_pairs)
 	{
 		int id;
-		while (pWnd != NULL && (id = pWnd->GetDlgCtrlID()) == IDC_STATIC)
-			pWnd = pWnd->GetNextWindow();
+		// This never gets executed - Windows seems to use the parent window for the context menu of static controls
+		//while (pWnd != NULL && (id = pWnd->GetDlgCtrlID()) == IDC_STATIC)
+		//	pWnd = pWnd->GetNextWindow();
 
-		if (pWnd == NULL || id < 1)
+		// Ignore windows with no ID (probably dialog window)
+		if (pWnd == NULL || (id = pWnd->GetDlgCtrlID()) < 1)
 			return;
 
 	    CWaitCursor wait;
