@@ -4262,5 +4262,20 @@
     <param name="Name" value="Document Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
   </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Real48">
+    <param name="Name" value="Copy As C Source Dialog">
+    <param name="Local" value="dlg_tools\Copy_As_C_Source.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="CSV">
+    <param name="Name" value="Copy As C Source Dialog">
+    <param name="Local" value="dlg_tools\Copy_As_C_Source.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="comma-separated values">
+    <param name="Name" value="Copy As C Source Dialog">
+    <param name="Local" value="dlg_tools\Copy_As_C_Source.htm">
+  </object>
 </ul>
 </html>

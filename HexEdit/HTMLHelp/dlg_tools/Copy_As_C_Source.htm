@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1204>
-<meta name=layout-width content=1161>
+<meta name=layout-height content=1268>
+<meta name=layout-width content=1311>
 
 
 <!--(Links)=========================================================-->
@@ -41,9 +41,14 @@
 <p>&nbsp;</p>
 
 <p style="text-align: center;"
-	align=center><img src="DlgSaveCSrc.gif" style="border: none;
+	align=center><img src="DlgSaveCSrc.gif"
+						style="border-style: none;
+								border: none;
 								width: 390px;
-								height: 247px;" width="390" height="247" border="0"></p>
+								height: 247px;"
+						width=390
+						height=247
+						border=0></p>
 
 <p>&nbsp;</p>
 
@@ -52,7 +57,20 @@
  allows you to copy the selected bytes to the clipboard in many different 
  text formats. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
  formats are suitable for pasting into a C or C++ program to initialise 
- an array, but may also be useful in other situations.</p>
+ an array.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0> This is not just useful for generating source code. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example the integer and floating point options generate text in the CSV 
+ (comma-separated values) format suitable for importing into many programs 
+ such as spreadsheets.</p>
 
 <p>&nbsp;</p>
 
@@ -153,29 +171,36 @@
 
 <p>&nbsp;</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">IEEE floating 
- point</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">F</span><span 
+ style="font-weight: bold;">loating point</span></p>
 
 <p style="margin-left: 18.00pt;">Generates a floating point value in %g 
- format, assuming the file bytes are in IEEE format. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Values 
- are generated with enough significant digits that no accuracy is lost, 
- however, depending on your compiler the exact same bits may not be generated 
- when the number is compiled and stored in another IEEE floating point 
- variable.</p>
+ format. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Values 
+ are generated with enough significant digits that no accuracy is lost. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note that, 
+ depending on your compiler, the exact same bits may not be generated when 
+ the number is compiled and stored as a floating point variable in the 
+ least significant bits of the mantissa.</p>
 
 <p>&nbsp;</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">size</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">type</span></p>
 
 <p style="margin-left: 18.00pt;">32-bit and 64-bit IEEE values are supported. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->32-bit 
  values have 7 significant digits, 64-bit values have 15 significant digits.</p>
 
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">New in HexEdit 3.3 is support for Real48 
+ (as used in Delphi and Turbo Pascal). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is a 48-bit value having an 8-bit exponent and about 12 significant digits.</p>
+
 <p>&nbsp;</p>
 
 <p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Big-endian</span></p>
 
-<p style="margin-left: 18.00pt;">The byte order is siginificant for integer 
+<p style="margin-left: 18.00pt;">The byte order is significant for integer 
  and floating point numbers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(See 
  the information on byte order in <a href="..\binary_files\Numbers.htm">Numeric 
  Operations</a>.)</p>
