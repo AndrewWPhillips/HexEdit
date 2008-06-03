@@ -4172,7 +4172,7 @@ BOOL CHexExpr::sym_found(const char * sym, int ii, CHexExpr::value_t &val, int *
 // Gets the value of an element.  For data elements the type is TYPE_INT/TYPE_STRING/TYPE_REAL/
 // TYPE_DATE and the value is returned in the appropriate value field. 
 // If there is no actual associated data (eg if the data is in an "if" where the test failed or
-// the data is past the EOF of the physical data file) then xxx.
+// the data is past the EOF of the physical data file) then it returns a value of TYPE_NONE.
 // For a "for" or "struct" the return type is set to TYPE_ARRAY or TYPE_STRUCT and the int64 field
 // is set to the vector index (into df_type_ etc).
 CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_address)
@@ -4182,8 +4182,11 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
 
     sym_size = mac_abs(pdoc->df_size_[ii]);
     sym_address = pdoc->df_address_[ii];
-
-    if (pdoc->df_type_[ii] == CHexEditDoc::DF_STRUCT || 
+	if (sym_address == -1)
+	{
+        retval.typ = TYPE_NONE;
+	}
+    else if (pdoc->df_type_[ii] == CHexEditDoc::DF_STRUCT || 
         pdoc->df_type_[ii] == CHexEditDoc::DF_USE_STRUCT || 
         pdoc->df_type_[ii] == CHexEditDoc::DF_FILE)
     {
