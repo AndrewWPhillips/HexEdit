@@ -9249,6 +9249,9 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
             case CCopyCSrc::FLOAT_32:
                 get_len = 4;
                 break;
+            case CCopyCSrc::REAL_48:
+                get_len = 6;
+                break;
             }
             break;
         }
@@ -9469,6 +9472,9 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
                     break;
                 case CCopyCSrc::FLOAT_32:
                     slen = sprintf(pp, "%14.7g, ", *(float *)buf);
+                    break;
+                case CCopyCSrc::REAL_48:
+					slen = sprintf(pp, "%19.12g, ", real48(buf));
                     break;
                 }
                 pp += slen;
