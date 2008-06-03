@@ -274,8 +274,11 @@ void CAbout::fix_controls()
 		case 9:
 			ss += "3.3";
 			break;
+		case 10:
+			ss += "3.4";  // we currently have plans for this - nav pts etc
+			break;
 		default:
-			ss += "3.4 or later";
+			ss += "3.5 or later";
 			break;
 		}
 		ctl_licence_.AddString(ss);

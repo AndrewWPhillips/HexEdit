@@ -131,7 +131,7 @@
 		<data type="int" name="LowPart" format="signed" len="8" type_name="__int64"/>
 		<data type="int" name="HighPart" format="signed" len="8" type_name="__int64"/>
 	</struct>
-	<struct name="_GUID" pack="4">
+	<struct name="_GUID" pack="4" expr="{this.Data1;%08X}-{this.Data2;%04X}-{this.Data3;%04X}-{this.Data4[0];%02X}{this.Data4[1];%02X}-{this.Data4[2];%02X}{this.Data4[3];%02X}{this.Data4[4];%02X}{this.Data4[5];%02X}{this.Data4[6];%02X}{this.Data4[7];%02X}">
 		<data type="int" name="Data1" format="unsigned" len="4" type_name="unsigned long"/>
 		<data type="int" name="Data2" format="unsigned" len="2" type_name="unsigned short"/>
 		<data type="int" name="Data3" format="unsigned" len="2" type_name="unsigned short"/>
@@ -139,7 +139,7 @@
 			<data type="int" format="unsigned" len="1" type_name="unsigned char"/>
 		</for>
 	</struct>
-	<struct name="GUID" pack="4" type_name="GUID">
+	<struct name="GUID" pack="4" type_name="GUID" expr="{this.Data1;%08X}-{this.Data2;%04X}-{this.Data3;%04X}-{this.Data4[0];%02X}{this.Data4[1];%02X}-{this.Data4[2];%02X}{this.Data4[3];%02X}{this.Data4[4];%02X}{this.Data4[5];%02X}{this.Data4[6];%02X}{this.Data4[7];%02X}">
 		<data type="int" name="Data1" format="unsigned" len="4" type_name="unsigned long"/>
 		<data type="int" name="Data2" format="unsigned" len="2" type_name="unsigned short"/>
 		<data type="int" name="Data3" format="unsigned" len="2" type_name="unsigned short"/>
@@ -362,7 +362,7 @@
 		<data type="int" name="right" format="signed" len="4" type_name="LONG"/>
 		<data type="int" name="bottom" format="signed" len="4" type_name="LONG"/>
 	</struct>
-	<struct name="RECT" pack="4" type_name="RECT">
+	<struct name="RECT" pack="4" type_name="RECT" expr="left={this.left} top={this.top} right={this.right} bottom={this.bottom}">
 		<data type="int" name="left" format="signed" len="4" type_name="LONG"/>
 		<data type="int" name="top" format="signed" len="4" type_name="LONG"/>
 		<data type="int" name="right" format="signed" len="4" type_name="LONG"/>
@@ -433,17 +433,17 @@
 	</struct>
 	<data type="int" name="PPOINTS" format="unsigned" len="4" display="hex" type_name="PPOINTS"/>
 	<data type="int" name="LPPOINTS" format="unsigned" len="4" display="hex" type_name="LPPOINTS"/>
-	<struct name="CPoint" pack="4" type_name="CPoint">
+	<struct name="CPoint" pack="4" type_name="CPoint" expr="({this.x}, {this.y})">
 		<data type="int" name="x" format="signed" len="4" type_name="LONG"/>
 		<data type="int" name="y" format="signed" len="4" type_name="LONG"/>
 	</struct>
-	<struct name="CRect" pack="4" type_name="CRect">
+	<struct name="CRect" pack="4" type_name="CRect" expr="left={this.left} top={this.top} right={this.right} bottom={this.bottom}">
 		<data type="int" name="left" format="signed" len="4" type_name="LONG"/>
 		<data type="int" name="top" format="signed" len="4" type_name="LONG"/>
 		<data type="int" name="right" format="signed" len="4" type_name="LONG"/>
 		<data type="int" name="bottom" format="signed" len="4" type_name="LONG"/>
 	</struct>
-	<struct name="CSize" pack="4" type_name="CSize">
+	<struct name="CSize" pack="4" type_name="CSize" expr="{this.cx} X {this.cy}">
 		<data type="int" name="cx" format="signed" len="4" type_name="LONG"/>
 		<data type="int" name="cy" format="signed" len="4" type_name="LONG"/>
 	</struct>
