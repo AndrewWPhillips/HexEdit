@@ -4291,7 +4291,7 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
 			    if (pp != NULL)
 				    retval.pstr = new ExprStringType((wchar_t *)buf, pp-(wchar_t *)buf);
 			    else
-				    retval.pstr = new ExprStringType((wchar_t *)buf, size_t(df_size));  // use full length of field
+				    retval.pstr = new ExprStringType((wchar_t *)buf, size_t(df_size/2));
             }
             break;
         case CHexEditDoc::DF_INT8:
