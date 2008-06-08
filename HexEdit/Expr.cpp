@@ -2585,7 +2585,10 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
     case TOK_SYMBOL:
         tmp.typ = TYPE_NONE;
         tmp.int64 = ref_;
-        if (_stricmp(psymbol_, "end") == 0 || _stricmp(psymbol_, "index") == 0  || _stricmp(psymbol_, "member") == 0)
+        if (_stricmp(psymbol_, "end") == 0 ||
+			_stricmp(psymbol_, "next") == 0  ||
+			_stricmp(psymbol_, "index") == 0  ||
+			_stricmp(psymbol_, "member") == 0)
         {
             sprintf(error_buf_, "\"%s\" is a reserved symbol", psymbol_);
             return TOK_NONE;
