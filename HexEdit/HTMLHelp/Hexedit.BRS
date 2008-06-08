@@ -389,7 +389,7 @@ Tabbed Window | cmd_template\HID_DFFD_TAB.htm
 Synchronise Tree and Data | cmd_template\HID_DFFD_SYNC.htm
 Auto Sync Tree/Data Toggle | cmd_template\HID_DFFD_AUTO_SYNC.htm
 Refresh Tree View | cmd_template\HID_DFFD_REFRESH.htm
-Allow Editing | cmd_template\HID_DFFD_TOGGLE_EDIT.htm
+Design Mode | cmd_template\HID_DFFD_TOGGLE_EDIT.htm
 Settings... | cmd_template\HID_DFFD_SETTINGS.htm
 Template Web Site | cmd_template\HID_DFFD_WEB.htm
 

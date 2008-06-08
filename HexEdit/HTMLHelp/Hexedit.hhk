@@ -4277,5 +4277,10 @@
     <param name="Name" value="Copy As C Source Dialog">
     <param name="Local" value="dlg_tools\Copy_As_C_Source.htm">
   </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="design mode (templates)">
+    <param name="Name" value="Design Mode">
+    <param name="Local" value="cmd_template\HID_DFFD_TOGGLE_EDIT.htm">
+  </object>
 </ul>
 </html>

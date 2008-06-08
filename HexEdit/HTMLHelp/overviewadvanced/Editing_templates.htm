@@ -19,7 +19,7 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=2941>
+<meta name=layout-height content=2973>
 <meta name=layout-width content=1311>
 
 
@@ -43,8 +43,8 @@
 <p>&nbsp;</p>
 
 <p>HexEdit templates are based on XML files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- may create and edit these files directly (see the <a HREF="Template_Files.htm">Template 
- Files</a> section). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Alternatively, 
+ may create and edit these files directly using a text editor or XML editor 
+ (see the <a HREF="Template_Files.htm">Template Files</a> section). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Alternatively, 
  you can use the built-in template editing facilities. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
  allow access to all template capabilities (plus have many extra convenience 
  features), so you never have to see the XML file if you don't want to.</p>
@@ -55,28 +55,32 @@
 
 <p>&nbsp;</p>
 
-<p>To use the built-in template editing you must have the template &quot;tree 
- view&quot; visible. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
- do this select the &quot;Use templates&quot; check box in the <a HREF="../dlg_options/HIDD_OPT_SYSDISPLAY.htm">Display 
- page</a> of the Options dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(See 
- the earlier <a HREF="../overviewtools/Templates.htm">Using Templates</a> 
- section for details.) <!--kadov_tag{{<spaces>}}-->&nbsp;<span style="font-weight: bold;"><!--kadov_tag{{</spaces>}}-->To 
- allow template editing also select the &quot;Allow edit&quot; check box.</span></p>
+<p>To use the built-in template editing you must have a file open and have 
+ the template &quot;tree view&quot; visible. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ do this select &quot;Split Window&quot; or &quot;Tabbed Window&quot; from 
+ the Template menu. <span style="font-weight: bold;">You must also allow 
+ template editing by selecting &quot;Design Mode&quot; near the bottom 
+ of the menu.</span></p>
 
 <p>&nbsp;</p>
 
-<p>To see the tree view you also need to have a file open, and be using 
- the template you want to edit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
- change the template simply select from the drop down list at the top of 
- the tree column in the tree view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
- create a new template you simply edit an existing template (eg, the &quot;default&quot; 
- template if nothing better is available) and save it under a different 
- name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+<p>To change the template in use simply select from the drop down list 
+ at the top of the tree column in the tree view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ may also select a different template from the Template menu under &quot;Open 
+ File Type&quot; all the templates associated with a file extension) or 
+ &quot;Open Other&quot; (all other templates).</p>
+
+<p>&nbsp;</p>
+
+<p>To create a new template you simply edit an existing template (eg, the 
+ &quot;default&quot; template if nothing better is available) and save 
+ it under a different name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  actual file you have open for hex editing does not matter but it's best 
- to open a file typical of the type of file used with the template. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- gives one of the greatest advantages of the built-in template editing: 
- that you can see the results of your changes instantly using the file 
- you have open. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+ to open a file typical of the type of the file to be used with the template. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This gives 
+ one of the greatest advantages of the built-in template editing: that 
+ you can see the results of your changes instantly using the file you have 
+ open. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
  you modify the template you can see the effects of your changes (by clicking 
  the refresh button <img src="../cmd_misc/refresh.gif"
 						style="border-style: none;
@@ -97,14 +101,16 @@
  of the item clicked. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
  are seven different edit dialogs corresponding to the <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->different 
  types of template elements (<img src="../dffd/TemplateStruct.gif"
-									style="border: none;
+									style="border-style: none;
+											border: none;
 											width: 15px;
 											height: 13px;"
 									width=15
 									height=13
 									border=0> <span style="font-weight: bold;">STRUCT</span>,<img 
  src="../dffd/TemplateStructDef.gif"
-	style="border: none;
+	style="border-style: none;
+			border: none;
 			width: 15px;
 			height: 15px;"
 	width=15
@@ -119,26 +125,30 @@
 		height=14
 		border=0> <span style="font-weight: bold;">JUMP</span>, <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}--><img 
  src="../dffd/TemplateFor.gif"
-	style="border: none;
+	style="border-style: none;
+			border: none;
 			width: 15px;
 			height: 14px;"
 	width=15
 	height=14
 	border=0> <span style="font-weight: bold;">FOR</span>, <img src="../dffd/TemplateIf.gif"
-	style="border: none;
+	style="border-style: none;
+			border: none;
 			width: 13px;
 			height: 13px;"
 	width=13
 	height=13
 	border=0> <span style="font-weight: bold;">IF, <img src="../dffd/TemplateSwitch.gif"
-														style="border: none;
+														style="border-style: none;
+	border: none;
 	width: 13px;
 	height: 15px;"
 														width=13
 														height=15
 														border=0> SWITCH, 
  <img src="../dffd/TemplateEval.gif"
-		style="border: none;
+		style="border-style: none;
+				border: none;
 				width: 14px;
 				height: 13px;"
 		width=14
@@ -235,7 +245,7 @@
 
 <p>&nbsp;</p>
 
-<p>TBD defining reuseable structs, including recursive data structures</p>
+<p>TBD xxx defining reuseable structs, including recursive data structures</p>
 
 <p>&nbsp;</p>
 
@@ -705,7 +715,7 @@
 			border-bottom-color: #000000;
 			border-bottom-width: 1px;"
 	width=40.476%>
-<p>As for STRUCT (see below)</td>
+<p>As for STRUCT</td>
 <td colspan=1
 	rowspan=1
 	style="width: 31.083%;
@@ -780,7 +790,7 @@
 			border-bottom-color: #000000;
 			border-bottom-width: 1px;"
 	width=40.476%>
-<p>New file address (use depends on origin field)</td>
+<p>New file address (also depends on origin field)</td>
 <td colspan=1
 	rowspan=1
 	style="width: 31.083%;
@@ -1275,7 +1285,7 @@
  specifications are described in the section on Template Files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
  example, for an integer expression you can specifiy &quot;dec&quot;, &quot;hex&quot;, 
  &quot;oct&quot; or &quot;bin&quot; or a printf format specification like 
- %d.</p>
+ %d, %4.4X etc.</p>
 
 <p>&nbsp;</p>
 
