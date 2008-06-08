@@ -3051,8 +3051,10 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                     else
                         HandleError(CString(ee.get_error_message()) + "\nin \"length\" attribute.");
 
-                    data_len = CHexExpr::value_t(-2);
+                    data_len = CHexExpr::value_t(0);
                 }
+				else if (data_len.int64 < 0)   // -ve becomes zero so we don't go backwards
+					data_len.int64 = 0;
             }
 
 			// Work out byte order - this is only used for numeric types longer than 1 byte plus Unicode text (DF_WCHAR/DF_WSTRING)

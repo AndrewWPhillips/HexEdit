@@ -465,6 +465,14 @@ void CDFFDIf::OnIfEdit()
         if (dlg_ret != IDCANCEL && dlg.IsModified())
             modified_ = true;
     }
+	else if (elt_type == "eval")
+	{
+        CDFFDEval dlg(&ee, CHexEditDoc::DF_IF, this);
+        dlg.SetPosition(pt, orig_);
+        dlg_ret = dlg.DoModal();
+        if (dlg_ret != IDCANCEL && dlg.IsModified())
+            modified_ = true;
+	}
     else if (elt_type == "data")
     {
         // Edit the data element node
@@ -709,6 +717,14 @@ void CDFFDIf::OnElseEdit()
         if (dlg_ret != IDCANCEL && dlg.IsModified())
             modified_ = true;
     }
+	else if (elt_type == "eval")
+	{
+        CDFFDEval dlg(&ee, CHexEditDoc::DF_IF, this);
+        dlg.SetPosition(pt, orig_);
+        dlg_ret = dlg.DoModal();
+        if (dlg_ret != IDCANCEL && dlg.IsModified())
+            modified_ = true;
+	}
     else if (elt_type == "data")
     {
         // Edit the data element node
