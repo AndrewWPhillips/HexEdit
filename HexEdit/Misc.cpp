@@ -751,7 +751,7 @@ static const long double two_pow40 = 1099511627776.0L;
 
 // Make a real48 (8 bit exponent, 39 bit mantissa) from a double.
 // Returns false on overflow, returns true (and zero value) on underflow
-bool make_real48(unsigned char pp[6], double val, bool little_endian /*=false*/)
+bool make_real48(unsigned char pp[6], double val, bool big_endian /*=false*/)
 {
     int exp;                    // Base 2 exponent of val
     val = frexp(val, &exp);
@@ -781,19 +781,19 @@ bool make_real48(unsigned char pp[6], double val, bool little_endian /*=false*/)
 	if (neg)
 		pp[5] |= 0x80;                  // set -ve bit
 
-    if (little_endian)
+    if (big_endian)
         flip_bytes(pp, 6);
 	return true;
 }
 
 // Make a double from a Real48
 // Also returns the exponent (base 2) and mantissa if pexp/pmant are not NULL
-double real48(const unsigned char *pp, int *pexp, long double *pmant, bool little_endian /*=false*/)
+double real48(const unsigned char *pp, int *pexp, long double *pmant, bool big_endian /*=false*/)
 {
     // Copy bytes containing the real48 in case we have to flip byte order
     unsigned char buf[6];
     memcpy(buf, pp, 6);
-    if (little_endian)
+    if (big_endian)
         flip_bytes(buf, 6);
 
     int exponent = (int)buf[0] - 128;
@@ -804,7 +804,7 @@ double real48(const unsigned char *pp, int *pexp, long double *pmant, bool littl
 	                ((__int64)buf[4]<<24) + ((__int64)(buf[5]&0x7F)<<32);
 
 	// Special check for zero
-	if (buf[0] == 0 && mantissa < two_pow40/4)
+	if (::memcmp(buf, "\0\0\0\0\0", 5)== 0 && (buf[5] & 0x7F) == 0)
 	{
         if (pmant != NULL) *pmant = 0.0;
         return 0.0;
@@ -822,7 +822,9 @@ double real48(const unsigned char *pp, int *pexp, long double *pmant, bool littl
     }
     
     // Check sign bit and return appropriate result
-    if ((buf[5] & 0x80) == 0)
+	if (buf[0] == 0 && mantissa < two_pow40/4)
+		return 0.0;                            // underflow
+    else if ((buf[5] & 0x80) == 0)
         return (mantissa / two_pow40) * powl(2, exponent);
     else
         return -(mantissa / two_pow40) * powl(2, exponent);

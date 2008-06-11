@@ -798,7 +798,7 @@ BOOL CTipsPage::OnInitDialog()
 		var_list.Add("ieee64");
 		var_list.Add("ibm32");
 		var_list.Add("ibm64");
-		var_list.Add("Real48");
+		var_list.Add("real48");
 		var_list.Add("time_t");
 		var_list.Add("time_t_80");
 		var_list.Add("time_t_1899");
@@ -1195,7 +1195,7 @@ void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 			     ss.Find("ibm64") != -1
 		        )
 			tt = treal64;
-		else if (ss.Find("Real48") != -1
+		else if (ss.Find("real48") != -1
 		        )
 			tt = treal48;
 		else if (ss.Find("date") != -1 ||

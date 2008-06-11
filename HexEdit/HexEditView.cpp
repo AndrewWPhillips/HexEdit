@@ -16783,13 +16783,13 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 			sym_size = sizeof(val);
 		}
 	}
-	else if (sym_str.CompareNoCase("Real48") == 0)
+	else if (sym_str.CompareNoCase("real48") == 0)
 	{
         unsigned char val[6];
         if (pview_->GetDocument()->GetData(val, sizeof(val), sym_address) == sizeof(val))
 		{
 			retval.typ = TYPE_REAL;
-			retval.real64 = ::real48(val, NULL, NULL, !pview_->BigEndian());
+			retval.real64 = ::real48(val, NULL, NULL, pview_->BigEndian() == TRUE);
 			sym_size = sizeof(val);
 		}
 	}

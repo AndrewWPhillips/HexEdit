@@ -2622,7 +2622,7 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 			break;
 		case FMT_REAL48:
 			mant_.Format("%.12f", (double)mantissa);
-			value = ::real48(buf, &exponent, &mantissa, true);
+			value = ::real48(buf, &exponent, &mantissa);
 			break;
 		default:
 			ASSERT(0);
