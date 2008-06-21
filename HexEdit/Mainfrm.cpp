@@ -146,10 +146,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGMDIFrameWnd)
         ON_UPDATE_COMMAND_UI(ID_VIEW_BOOKMARKS, OnUpdateViewBookmarks)
         ON_COMMAND(ID_VIEW_FIND, OnViewFind)
         ON_UPDATE_COMMAND_UI(ID_VIEW_FIND, OnUpdateViewFind)
-#if 1 //#ifdef EXPLORER_WND
         ON_COMMAND(ID_VIEW_EXPL, OnViewExpl)
         ON_UPDATE_COMMAND_UI(ID_VIEW_EXPL, OnUpdateViewExpl)
-#endif
         ON_COMMAND(ID_VIEW_PROPERTIES, OnViewProperties)
         ON_UPDATE_COMMAND_UI(ID_VIEW_PROPERTIES, OnUpdateViewProperties)
 

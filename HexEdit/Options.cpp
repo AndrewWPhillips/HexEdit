@@ -38,8 +38,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// xxx check save as default set scheme
-
 extern CHexEditApp theApp;
 
 /////////////////////////////////////////////////////////////////////////////

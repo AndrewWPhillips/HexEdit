@@ -35,8 +35,8 @@
 //#define INTERNAL_VERSION 5              // version 2.6
 //#define INTERNAL_VERSION 6              // version 3.0
 //#define INTERNAL_VERSION 7              // version 3.1
-#define INTERNAL_VERSION 8              // version 3.2
-//#define INTERNAL_VERSION 9              // version 3.3
+//#define INTERNAL_VERSION 8              // version 3.2
+#define INTERNAL_VERSION 9              // version 3.3
 //#define INTERNAL_VERSION 10             // version 3.4
 
 // may need to adjust this depending on how many versions there were in last 2 years
@@ -61,7 +61,7 @@ typedef __int64 FILE_ADDRESS;
 
 // Conditional compilation flags - always to be used
 #define USE_OWN_PRINTDLG 1  // Replace the standard print dialog with our own derived dialog
-#define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
+#define INPLACE_MOVE    1   // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
 #define CHANGE_TRACKING 1   // Allow change tracking code
 #define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
 #define SHOW_CODE_PAGE  1
