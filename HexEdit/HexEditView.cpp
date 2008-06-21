@@ -3656,13 +3656,24 @@ void CHexEditView::DoScrollWindow(int xx, int yy)
 			DoInvalidateRect(&rct);
 		}
         CScrView::DoScrollWindow(xx, yy);
-		if (yy != 0)
+		if (yy < 0)
 		{
 			// We need to invalidate a bit of the address area near the top so that partial addresses are not drawn
 			CRect rct;
 			GetDisplayRect(&rct);
 			rct.bottom = rct.top + line_height_;
 			rct.top -= line_height_/4;
+			rct.right = rct.left + addr_width_*text_width_;
+			DoInvalidateRect(&rct);
+		}
+		else if (yy > 0)
+		{
+			// We need to invalidate a bit below the scrolled bit in the address area since
+			// it may be blank when scrolling up (blank area avoids drawing partial address)
+			CRect rct;
+			GetDisplayRect(&rct);
+			rct.top += yy;
+			rct.bottom = rct.top + line_height_;
 			rct.right = rct.left + addr_width_*text_width_;
 			DoInvalidateRect(&rct);
 		}
