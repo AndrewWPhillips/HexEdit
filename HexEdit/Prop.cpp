@@ -2600,6 +2600,7 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 		long double mantissa;
 		int exponent;
 
+		// Calc the value, format the mantissa
 		switch (format_)
 		{
 		case FMT_IEEE32:
@@ -2613,23 +2614,25 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 			mant_.Format("%.16f", (double)mantissa);
 			break;
 		case FMT_IBM32:
-			mant_.Format("%.7f", (double)mantissa);
 			value = ::ibm_fp32(buf, &exponent, &mantissa, true);
+			mant_.Format("%.7f", (double)mantissa);
 			break;
 		case FMT_IBM64:
 			value = ::ibm_fp64(buf, &exponent, &mantissa, true);
 			mant_.Format("%.16f", (double)mantissa);
 			break;
 		case FMT_REAL48:
-			mant_.Format("%.12f", (double)mantissa);
 			value = ::real48(buf, &exponent, &mantissa);
+			mant_.Format("%.12f", (double)mantissa);
 			break;
 		default:
 			ASSERT(0);
 		}
 
-		// Work out what to display
+		// Format the exponent
 		exp_.Format("%d", (int)exponent);
+
+		// Format the value
 		switch (_fpclass(value))
 		{
 		case _FPCLASS_SNAN:
