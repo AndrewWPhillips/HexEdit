@@ -4053,7 +4053,7 @@ void CDataFormatView::OnInitialUpdate()
 	{
 		HINSTANCE hInst = AfxFindResourceHandle(MAKEINTRESOURCE(IDB_IMAGELIST), RT_BITMAP);
 		ASSERT(hInst != NULL);
-		imagelist_.Attach(AfxImageList_LoadImage(hInst, MAKEINTRESOURCE(IDB_IMAGELIST), 16, 1, RGB(0xFF, 0xFF, 0xFF), IMAGE_BITMAP, LR_CREATEDIBSECTION));
+		imagelist_.Attach(ImageList_LoadImage(hInst, MAKEINTRESOURCE(IDB_IMAGELIST), 16, 1, RGB(0xFF, 0xFF, 0xFF), IMAGE_BITMAP, LR_CREATEDIBSECTION));
 	}
 
     grid_.SetImageList(&imagelist_);
