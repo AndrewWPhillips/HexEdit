@@ -882,6 +882,9 @@
 				RelativePath=".\Res\colour.ico">
 			</File>
 			<File
+				RelativePath=".\RES\curSmallArrows.cur">
+			</File>
+			<File
 				RelativePath=".\RES\data.ico">
 			</File>
 			<File
@@ -1047,6 +1050,9 @@
 				RelativePath="RES\switch.ico">
 			</File>
 			<File
+				RelativePath=".\RES\templates.ico">
+			</File>
+			<File
 				RelativePath=".\RES\tips.ico">
 			</File>
 			<File
@@ -1139,10 +1145,10 @@
 				RelativePath=".\Install\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\Install\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">
