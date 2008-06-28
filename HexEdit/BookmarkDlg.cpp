@@ -591,13 +591,12 @@ void CBookmarkDlg::OnAdd()
 
 	CString file_name = pview->GetDocument()->pfile1_->GetFilePath();
 
-	if ((index = pbl->GetIndex(name)) != -1 &&
-		file_name.CompareNoCase(pbl->GetFileName(index)))
+	if ((index = pbl->GetIndex(name, file_name)) != -1)
 	{
 		CString ss;
 		ss.Format("Bookmark \"%s\" already exists\r"
 				  "in \"%s\".\r"
-			      "Do you want to move it?", name);
+			      "Do you want to move it?", name, file_name);
 		if (AfxMessageBox(ss, MB_YESNO) != IDYES)
 			return;
 

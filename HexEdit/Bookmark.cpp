@@ -95,6 +95,21 @@ int CBookmarkList::GetIndex(LPCTSTR nn) const
         return pn - name_.begin();
 }
 
+// Get index of a bookmark given its name and file name.  Returns -1 if not found.
+int CBookmarkList::GetIndex(LPCTSTR nn, LPCTSTR fn) const
+{
+    std::vector<CString>::const_iterator pn = std::find(name_.begin(), name_.end(), nn);
+
+	while (pn != name_.end())
+	{
+		if (GetFileName(pn - name_.begin()).CompareNoCase(fn) == 0)
+			return pn - name_.begin();
+		++pn;
+		pn = std::find(pn, name_.end(), nn);
+	}
+	return -1;
+}
+
 // Get closest bookmark given a filename and address within that file.
 // "Closest" currently means the first one with a lesser address.
 // If there is no bookmark before the start of file then -1 is returned.
@@ -312,8 +327,15 @@ int CBookmarkList::AddBookmark(LPCTSTR nn, LPCTSTR filename, __int64 filepos, LP
 
     std::vector<CString>::const_iterator pn = std::find(name_.begin(), name_.end(), nn);
 
-    if (pn != name_.end())
-        RemoveBookmark(pn - name_.begin());
+	// Search all bookmarks for those with the same name
+	while (pn != name_.end())
+	{
+		// If bookmark already exists in the same file remove it
+		if (GetFileName(pn - name_.begin()).CompareNoCase(filename) == 0)
+			RemoveBookmark(pn - name_.begin());
+		++pn;
+		pn = std::find(pn, std::vector<CString>::const_iterator(name_.end()), nn);
+	}
 
 	// Add the new one at the end of the list
 	retval = name_.size();
