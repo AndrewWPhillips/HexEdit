@@ -106,7 +106,7 @@ public:
 	virtual CString OnGetItemText(int iItem, int iColumn, LPBCGCBITEMINFO pItem); // used in displaying text in columns
 	virtual int OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColumn);    // used in sorting on a column
 
-	CString Folder() { ASSERT(pos_ > -1 && pos_ < int(name_.size())); return name_[pos_]; }
+	CString Folder() { if (pos_ > -1 && pos_ < int(name_.size())) return name_[pos_]; else return CString(); }
 
     virtual void AdjustMenu(HMENU);
     virtual void MenuCommand(HMENU, UINT, LPCTSTR);
