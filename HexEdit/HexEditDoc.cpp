@@ -1729,12 +1729,13 @@ void CHexEditDoc::OnUpdateKeepTimes(CCmdUI* pCmdUI)
 
 void CHexEditDoc::OnDffdRefresh() 
 {
+	update_needed_ = true; // force update
     CheckUpdate();
 }
 
 void CHexEditDoc::OnUpdateDffdRefresh(CCmdUI* pCmdUI) 
 {
-    pCmdUI->Enable(update_needed_);
+    //pCmdUI->Enable(update_needed_);  // With advent of getint/bool/string the user may want to rerun the template at any time
 }
 
 void CHexEditDoc::OnDffdNew()
