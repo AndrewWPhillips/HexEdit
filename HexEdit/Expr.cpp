@@ -2971,6 +2971,7 @@ struct
     {"ASC2EBC",   expr_eval::TOK_A2E},
     {"EBC2ASC",   expr_eval::TOK_E2A},
     {"GETINT",    expr_eval::TOK_GETINT},
+    {"GETSTRING", expr_eval::TOK_GETSTR},
     {"GETBOOL",   expr_eval::TOK_GETBOOL},
     {"SQRT",      expr_eval::TOK_SQRT},
     {"SIN",       expr_eval::TOK_SIN},
