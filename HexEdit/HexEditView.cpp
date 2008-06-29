@@ -811,6 +811,8 @@ void CHexEditView::OnInitialUpdate()
             }
 
             wp.rcNormalPosition = newpos;
+			if (wp.showCmd == SW_SHOWMAXIMIZED)
+				wp.flags = WPF_RESTORETOMAXIMIZED;
             GetFrame()->SetWindowPlacement(&wp);
         }
         else if (atoi(pfl->GetData(recent_file_index, CHexFileList::CMD)) == SW_SHOWMAXIMIZED)
