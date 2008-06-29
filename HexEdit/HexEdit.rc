@@ -2387,8 +2387,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,30,2,132
- PRODUCTVERSION 3,30,2,132
+ FILEVERSION 3,30,0,436
+ PRODUCTVERSION 3,30,0,436
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2405,12 +2405,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "3, 30, 2, 132"
+            VALUE "FileVersion", "3, 30, 0, 436"
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2008  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "3, 30, 2, 132"
+            VALUE "ProductVersion", "3, 30, 0, 436"
         END
     END
     BLOCK "VarFileInfo"
@@ -2524,7 +2524,7 @@ BEGIN
     IDC_FP_FORMAT, 0x403, 14, 0
 0x4249, 0x204d, 0x5046, 0x3620, 0x2d34, 0x6962, 0x0074, 
     IDC_FP_FORMAT, 0x403, 13, 0
-0x7554, 0x6272, 0x206f, 0x6552, 0x6c61, 0x3834, "\000",
+0x7554, 0x6272, 0x206f, 0x6552, 0x6c61, 0x3834, "\000" 
     IDC_FP_FORMAT, 0x403, 11, 0
 0x2343, 0x4420, 0x6365, 0x6d69, 0x6c61, "\000" 
     0
@@ -4980,11 +4980,11 @@ BEGIN
     IDC_CSRC_INT_SIZE, 0x403, 6, 0
 0x5751, 0x726f, 0x0064, 
     IDC_CSRC_FLOAT_SIZE, 0x403, 12, 0
-"32 bit IEEE\000" 
+0x3233, 0x6220, 0x7469, 0x4920, 0x4545, 0x0045, 
     IDC_CSRC_FLOAT_SIZE, 0x403, 12, 0
-"64 bit IEEE\000" 
+0x3436, 0x6220, 0x7469, 0x4920, 0x4545, 0x0045, 
     IDC_CSRC_FLOAT_SIZE, 0x403, 17, 0
-"Real48 (Borland)\000" 
+0x6552, 0x6c61, 0x3834, 0x2820, 0x6f42, 0x6c72, 0x6e61, 0x2964, "\000" 
     0
 END
 
