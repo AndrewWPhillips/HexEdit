@@ -275,10 +275,13 @@ void CAbout::fix_controls()
 			ss += "3.3";
 			break;
 		case 10:
-			ss += "3.4";  // we currently have plans for this - nav pts etc
+			ss += "3.4";  // we currently have plans for this - nav pts, more options etc
+			break;
+		case 11:
+			ss += "3.5";  // aerial view, new icons etc
 			break;
 		default:
-			ss += "3.5 or later";
+			ss += "4.0 or later";
 			break;
 		}
 		ctl_licence_.AddString(ss);

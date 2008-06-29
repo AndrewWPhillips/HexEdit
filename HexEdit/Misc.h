@@ -47,6 +47,7 @@ void AddCommas(CString &str);
 void AddSpaces(CString &str);
 CString get_menu_text(CMenu *pmenu,int id);
 
+#ifndef REGISTER_APP
 void LoadHist(std::vector<CString> & hh, LPCSTR name, size_t smax);
 void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax);
 
@@ -79,8 +80,9 @@ unsigned long rand1();
 unsigned long rand2();
 void rand_good_seed(unsigned long seed);
 unsigned long rand_good();
+#endif
 
-unsigned short crc16(const void *buffer, size_t len);
+unsigned short crc16(const void *buffer, size_t len);  // NOTE: also see RegisterDlg.cpp
 
 unsigned long crc_32(const void *buffer, size_t len);
 // Use the following for CRC 32 which is too big for a single buffer
@@ -98,14 +100,14 @@ void crc_ccitt2_init(int init = -1);
 void crc_ccitt2_update(const void *buf, size_t len);
 unsigned short crc_ccitt2_final();
 
-char letter_valid(char cc);
-int letter_decode(const char *str, size_t str_len, void *result);
-void letter_encode(const void *buf, size_t len, char *result);
-
-// Encryption routines
+// Encryption routines NOTE: also see RegisterDlg.cpp
 void set_key(const char *pp, size_t len);
 void encrypt(void *buffer, size_t len);
 void decrypt(void *buffer, size_t len);
+
+char letter_valid(char cc);
+int letter_decode(const char *str, size_t str_len, void *result);
+void letter_encode(const void *buf, size_t len, char *result);
 
 // flip_bytes is typically used to switch between big- and little-endian byte order but
 // works with any number of bytes (including an odd number whence middle byte not moved)
