@@ -1,11 +1,10 @@
 HexEdit 3.3 Release Notes
 =========================
 
-Version 3.3 has some significant enhancements to existing features, some major new features and a few bug fixes.
+Version 3.3 has reorganised and simplified the Options dialog and added more than a dozen new options.  A major new feature is the addition of the "Explorer" window.  Other new features are support for real48 (as used in Turbo Pascal and Delphi), ruler, and line numbers.
 
-
+Several new functions have been added to expressions including GetInt, GetString and GetBool, which allow input from the user and are very useful for chnaging the behaviour of templates under user control.
 
 See the What's New section of the help for more details.
 
 ---- End of Release Notes ----
-
