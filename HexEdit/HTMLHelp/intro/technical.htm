@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=986>
-<meta name=layout-width content=1179>
+<meta name=layout-height content=1251>
+<meta name=layout-width content=1311>
 
 
 <!--(Links)=========================================================-->
@@ -62,7 +62,313 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p><span style="font-weight: bold;">Limitations</span></p>
+<p><span style="font-weight: bold;">Version Numbers</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>HexEdit version numbers consist of 4 parts: major version, minor version 
+ + variation, update release and revision. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Internally 
+ these are stored as 4 numbers.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px;">Major version: A new major version number 
+ indicates a major new release (though minor releases are not insignificant)</p>
+
+<p style="margin-left: 40px;">Minor version: Each new release increases 
+ the minor version number. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ more significant release may jump to a 5 minor version or the next major 
+ version.</p>
+
+<p style="margin-left: 40px;">Variation: An update letter may be added 
+ after the minor version to indicate a variation on a release. This could 
+ be for minor bug fixes or small changes.</p>
+
+<p style="margin-left: 40px;">Update release: If a major bug is found after 
+ release with no workaround then an update release will be created.</p>
+
+<p style="margin-left: 40px;">Revision: This is an internal number indicating 
+ the SVN revision number. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is different for every release and monotonically increasing over time.</p>
+
+<p>&nbsp;</p>
+
+<p>There have been 3 major version and several minor versions and one variation 
+ (2.5F). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ has never been necessary to produce an update release.</p>
+
+<p>&nbsp;</p>
+
+<p>Internally the original minor version is stored as a single digit, but 
+ variations multiply by 10 and add 1 to 8 for variations &quot;A&quot; 
+ to &quot;H&quot;.</p>
+
+<p>&nbsp;</p>
+
+<p>Note: The file time (modified time) of HexEdit.exe and other files are 
+ modified for a release to indicate the version number. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example for 2.5F the time is 2:56AM.</p>
+
+<p>&nbsp;</p>
+
+<p>Here are some example (not actual) version numbers:</p>
+
+<p>&nbsp;</p>
+
+<!--(Table)=========================================================-->
+<!--begin!kadov{{--><div align=left><!--}}end!kadov-->
+<table x-use-null-cells
+		style="x-cell-content-align: top;
+				float: alignleft;
+				border-spacing: 0px;
+				margin-left: 80px;
+				width: 55.023%;"
+		width=55.023%
+		cellspacing=0>
+<col style="width: 34.906%;">
+<col style="width: 32.547%;">
+<col style="width: 32.547%;">
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-width: 1px;
+			border-left-color: #000000;
+			border-left-style: Solid;
+			border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	bgcolor=#C0C0C0
+	width=34.906%>
+<p style="font-weight: bold; margin-left: 0px;">Displayed Version</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=32.547%>
+<p style="font-weight: bold; margin-left: 0px;"><span style="font-weight: bold;">Internal 
+ Version Numbers</span></td>
+<td colspan=1
+	rowspan=1
+	style="border-right-width: 1px;
+			border-right-color: #000000;
+			border-right-style: Solid;
+			border-bottom-width: 1px;
+			border-bottom-color: #000000;
+			border-bottom-style: Solid;
+			padding-right: 10px;
+			padding-left: 10px;
+			border-top-width: 1px;
+			border-top-color: #000000;
+			border-top-style: Solid;"
+	width=32.547%>
+<p style="font-weight: bold;">File times</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=34.906%>
+<p style="margin-left: 0px;">2.5</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.547%>
+<p>2 <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->5 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->0 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->200</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.547%>
+<p>2:50:00 AM</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=34.906%>
+<p style="margin-left: 0px;">2.5F</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.547%>
+<p>2 <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->56 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->0 <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->220</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.547%>
+<p>2:56:00 AM</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=34.906%>
+<p style="margin-left: 0px;">3.3</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.547%>
+<p>3 <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->3 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->0 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->250</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.547%>
+<p>3:30:00 AM</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=34.906%>
+<p style="margin-left: 0px;">2.5F update 1</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.547%>
+<p>2 <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->56 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->1 <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->300</td>
+<td colspan=1
+	rowspan=1
+	style="border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=32.547%>
+<p>2:56:01 AM</td></tr>
+</table>
+<!--begin!kadov{{--></div><!--}}end!kadov-->
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Limitations</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
