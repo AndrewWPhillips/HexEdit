@@ -2041,7 +2041,7 @@ void CHexEditApp::LoadOptions()
     halt_level_ = GetProfileInt("MacroOptions", "ErrorHaltLevel", 1);
     plays_ = GetProfileInt("MacroOptions", "NumPlays", 1);
 
-    open_max_ = GetProfileInt("Options", "OpenMax", 0) ? TRUE : FALSE;
+    open_max_ = GetProfileInt("Options", "OpenMax", 1) ? TRUE : FALSE;
     open_disp_state_ = GetProfileInt("Options", "OpenDisplayOptions", -1);
 	if (open_disp_state_ == -1)
 	{
