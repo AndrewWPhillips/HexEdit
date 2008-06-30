@@ -1737,6 +1737,8 @@ void CHexEditDoc::OnDffdRefresh()
 void CHexEditDoc::OnUpdateDffdRefresh(CCmdUI* pCmdUI) 
 {
     //pCmdUI->Enable(update_needed_);  // With advent of getint/bool/string the user may want to rerun the template at any time
+	CHexEditView *pv = GetBestView();
+	pCmdUI->Enable(pv != NULL && pv->pdfv_ != NULL);  // enable if there's a data format view 
 }
 
 void CHexEditDoc::OnDffdNew()
