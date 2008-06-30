@@ -2673,9 +2673,9 @@ end_of_background_drawing:
             }
         }
 
-        // Draw address if ...
-        if ((addr_width_ - 1)*char_width + tt.left > 0 &&    // not off to the left
-			tt.top + text_height_/4 >= bdr_top_)             // and does not encroach into ruler
+        // Draw address if not off to left and does not encroach into ruler area (unless printing whence there is no ruler)
+        if ((addr_width_ - 1)*char_width + tt.left > 0 &&
+			(tt.top + text_height_/4 >= bdr_top_ || pDC->IsPrinting()))
         {
             addr_rect = tt;            // tt with right margin where addresses end
             addr_rect.right = addr_rect.left + addr_width_*char_width - char_width - 1;
