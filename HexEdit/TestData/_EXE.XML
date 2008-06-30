@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
-<binary_file_format name="WindowsEXE" default_byte_order="little" default_read_only="false" default_char_set="ansi" web_site="http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/pefile.html">
+<binary_file_format name="WindowsEXE" default_byte_order="little" default_read_only="false" default_char_set="ansi" web_site="http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/pefile.html" allow_editing="false">
 	<define_struct type_name="resdir" comment="RESOURCE_DIR">
 		<data type="int" name="Characteristics" format="signed" len="4" display="hex"/>
 		<data type="date" name="TimeDateStamp" format="c" display="%c"/>

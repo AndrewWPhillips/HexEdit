@@ -1,156 +1,155 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
 
-<binary_file_format name="GIF"
-default_byte_order="little" default_read_only="false" default_char_set="ascii"
-web_site="http://www.dcs.ed.ac.uk/home/mxr/gfx/2d/GIF89a.txt">
-<struct name="Header" type_name="" comment="">
-  <data type="string" name="Signature" format="ascii" len="3" comment="Should be
+<binary_file_format name="GIF" default_byte_order="little" default_read_only="false" default_char_set="ascii"
+                    web_site="http://www.dcs.ed.ac.uk/home/mxr/gfx/2d/GIF89a.txt" allow_editing="false">
+  <struct name="Header" type_name="" comment="">
+    <data type="string" name="Signature" format="ascii" len="3" comment="Should be
 GIF"/>
-  <data type="string" name="Version" format="ascii" len="3" comment="Should be
+    <data type="string" name="Version" format="ascii" len="3" comment="Should be
 either 87a or 89a"/>
-</struct>
-<struct name="Logical_Screen_Descriptor" type_name="" comment="">
-  <data type="int" format="unsigned" name="Logical Screen Width" len ="2"/>
-  <data type="int" format="unsigned" name="Logical Screen Height" len ="2"/>
-  <data type="int" format="unsigned" name="Packed_Fields" len ="1" display="bin"
-comment="MSB = Global Color Table Flag(1bit) Color Resolution(3bits) Sort
+  </struct>
+  <struct name="Logical_Screen_Descriptor" type_name="" comment="">
+    <data type="int" format="unsigned" name="Logical Screen Width" len ="2"/>
+    <data type="int" format="unsigned" name="Logical Screen Height" len ="2"/>
+    <data type="int" format="unsigned" name="Packed_Fields" len ="1" display="bin"
+  comment="MSB = Global Color Table Flag(1bit) Color Resolution(3bits) Sort
 Flag(1bit) Size of Global Color Table (3bits)"/>
-  <data type="int" format="unsigned" name="Background Color Index" len ="1"/>
-  <data type="int" format="unsigned" name="Pixel Aspect Ratio" len ="1"/>
-</struct>
+    <data type="int" format="unsigned" name="Background Color Index" len ="1"/>
+    <data type="int" format="unsigned" name="Pixel Aspect Ratio" len ="1"/>
+  </struct>
   <if test="Logical_Screen_Descriptor.Packed_Fields > 0x7f">
     <for name="Global Color Table" count="1 &lt;&lt;
 ((Logical_Screen_Descriptor.Packed_Fields &amp; 0x07)+1)" type_name="">
-     <struct name="Color" type_name="" comment="">
-       <data type="int" format="unsigned" name="Red" len ="1"/>
-       <data type="int" format="unsigned" name="Green" len ="1"/>
-       <data type="int" format="unsigned" name="Blue" len ="1"/>
-     </struct>
-   </for>
-</if>
+      <struct name="Color" type_name="" comment="">
+        <data type="int" format="unsigned" name="Red" len ="1"/>
+        <data type="int" format="unsigned" name="Green" len ="1"/>
+        <data type="int" format="unsigned" name="Blue" len ="1"/>
+      </struct>
+    </for>
+  </if>
 
 
-<for name="Field" stop_test="this.Seperator == 0x3B" type_name=""
-comment="Determine the type of Field">
-  <struct name="Field">
-  <data type="int" format="unsigned" name="Seperator" display="hex" len ="1"
-comment=""/>
-  <if test="Seperator == 0x2c" comment="">
-    <struct name="Image_Descriptor" type_name="" comment="Image field">
-      <data type="int" format="unsigned" name="Image Left Position" len ="2"/>
-      <data type="int" format="unsigned" name="Image Top Position" len ="2"/>
-      <data type="int" format="unsigned" name="Image Width" len ="2"/>
-      <data type="int" format="unsigned" name="Image Heigth" len ="2"/>
-      <data type="int" format="unsigned" name="Packed_Fields" display="bin" len
+  <for name="Field" stop_test="this.Seperator == 0x3B" type_name=""
+  comment="Determine the type of Field">
+    <struct name="Field">
+      <data type="int" format="unsigned" name="Seperator" display="hex" len ="1"
+    comment=""/>
+      <if test="Seperator == 0x2c" comment="">
+        <struct name="Image_Descriptor" type_name="" comment="Image field">
+          <data type="int" format="unsigned" name="Image Left Position" len ="2"/>
+          <data type="int" format="unsigned" name="Image Top Position" len ="2"/>
+          <data type="int" format="unsigned" name="Image Width" len ="2"/>
+          <data type="int" format="unsigned" name="Image Heigth" len ="2"/>
+          <data type="int" format="unsigned" name="Packed_Fields" display="bin" len
 ="1"/>
-      <if test="Packed_Fields > 0x7f" comment="">
-        <struct name="Local Color Table" type_name="" comment="">
-          <for name="Color" count="1 &lt;&lt; ((Packed_Fields &amp; 0x07)+1)"
-type_name="" comment="" >
-            <struct name="Color">
-              <data type="int" format="unsigned" name="Red" len ="1"/>
-              <data type="int" format="unsigned" name="Green" len ="1"/>
-              <data type="int" format="unsigned" name="Blue" len ="1"/>
+          <if test="Packed_Fields > 0x7f" comment="">
+            <struct name="Local Color Table" type_name="" comment="">
+              <for name="Color" count="1 &lt;&lt; ((Packed_Fields &amp; 0x07)+1)"
+    type_name="" comment="" >
+                <struct name="Color">
+                  <data type="int" format="unsigned" name="Red" len ="1"/>
+                  <data type="int" format="unsigned" name="Green" len ="1"/>
+                  <data type="int" format="unsigned" name="Blue" len ="1"/>
+                </struct>
+              </for>
             </struct>
-          </for>
+          </if>
+          <struct name="Table Based Image Data" type_name="" comment="">
+            <data type="int" format="unsigned" name="LZW Minimum Code Size" len
+="1"/>
+            <for name="LZW Data" stop_test="this.blocksize == 0x00" type_name=""
+    comment="" >
+              <struct name="Data ssubblock" type_name="" comment="">
+                <data type="int" format="unsigned" name="blocksize" len="1"/>
+                <for count="blocksize">
+                  <data type="int" format="unsigned" name="data" display="hex"
+      len="1"/>
+                </for>
+              </struct>
+            </for>
+          </struct>
         </struct>
       </if>
-      <struct name="Table Based Image Data" type_name="" comment="">
-        <data type="int" format="unsigned" name="LZW Minimum Code Size" len
+      <if test="Seperator == 0x21" comment="">
+        <struct name="Extension">
+          <data type="int" format="unsigned" name="Label" display="hex" len ="1"/>
+          <if test="Label == 0xF9" comment="">
+            <for name="Graphic Control" stop_test="this.BlockSize == 0x00"
+      type_name="" comment="" >
+              <struct name="BLOCK" >
+                <data type="int" format="unsigned" name="BlockSize" len ="1"/>
+                <if test="BlockSize &gt; 0" comment="" >
+                  <struct name="DATA" >
+                    <data type="int" format="unsigned" name="Packed_Fields" len ="1"/>
+                    <data type="int" format="unsigned" name="Delay Time" len ="2"/>
+                    <data type="int" format="unsigned" name="Transparent Color Index" len
 ="1"/>
-        <for name="LZW Data" stop_test="this.blocksize == 0x00" type_name=""
-comment="" >  
-          <struct name="Data ssubblock" type_name="" comment="">
-            <data type="int" format="unsigned" name="blocksize" len="1"/>
-            <for count="blocksize">
-            <data type="int" format="unsigned" name="data" display="hex"
-len="1"/>
-	      </for>
-          </struct>
-        </for>
-      </struct>
-    </struct>
-  </if>
-  <if test="Seperator == 0x21" comment="">
-    <struct name="Extension">
-    <data type="int" format="unsigned" name="Label" display="hex" len ="1"/>
-    <if test="Label == 0xF9" comment="">
-      <for name="Graphic Control" stop_test="this.BlockSize == 0x00"
-type_name="" comment="" >
-        <struct name="BLOCK" >
-        <data type="int" format="unsigned" name="BlockSize" len ="1"/>
-        <if test="BlockSize &gt; 0" comment="" >
-          <struct name="DATA" >
-          <data type="int" format="unsigned" name="Packed_Fields" len ="1"/>
-          <data type="int" format="unsigned" name="Delay Time" len ="2"/>
-          <data type="int" format="unsigned" name="Transparent Color Index" len
-="1"/>
-          </struct>
-        </if>
-        </struct>
-      </for>
-    </if>
-    <if test="Label == 0xFE" comment="">
-      <for name="Comment string" stop_test="this.BlockSize == 0x00" type_name=""
-comment="" >
-        <struct name="Comment string">
-        <data type="int" format="unsigned" name="BlockSize" len ="1"/>
-        <if test="BlockSize &gt; 0x00" >
-          <data type="string" format="ascii" name="data" len ="BlockSize"/>
-        </if>
-        </struct>
-      </for>
-    </if>
-    <if test="Label == 0x01" comment="">
-        <struct name="Plain text" >
-          <data type="int" format="unsigned" name="BlockSize" len ="1"/>
-          <data type="int" format="unsigned" name="Text Grid Left Posistion" len
+                  </struct>
+                </if>
+              </struct>
+            </for>
+          </if>
+          <if test="Label == 0xFE" comment="">
+            <for name="Comment string" stop_test="this.BlockSize == 0x00" type_name=""
+      comment="" >
+              <struct name="Comment string">
+                <data type="int" format="unsigned" name="BlockSize" len ="1"/>
+                <if test="BlockSize &gt; 0x00" >
+                  <data type="string" format="ascii" name="data" len ="BlockSize"/>
+                </if>
+              </struct>
+            </for>
+          </if>
+          <if test="Label == 0x01" comment="">
+            <struct name="Plain text" >
+              <data type="int" format="unsigned" name="BlockSize" len ="1"/>
+              <data type="int" format="unsigned" name="Text Grid Left Posistion" len
 ="2"/>
-          <data type="int" format="unsigned" name="Text Grid Top Posistion" len
+              <data type="int" format="unsigned" name="Text Grid Top Posistion" len
 ="2"/>
-          <data type="int" format="unsigned" name="Text Grid Width" len ="2"/>
-          <data type="int" format="unsigned" name="Text Grid Height" len ="2"/>
-          <data type="int" format="unsigned" name="Character Cell Width" len
+              <data type="int" format="unsigned" name="Text Grid Width" len ="2"/>
+              <data type="int" format="unsigned" name="Text Grid Height" len ="2"/>
+              <data type="int" format="unsigned" name="Character Cell Width" len
 ="1"/>
-          <data type="int" format="unsigned" name="Character Cell Height" len
+              <data type="int" format="unsigned" name="Character Cell Height" len
 ="1"/>
-          <data type="int" format="unsigned" name="Text Foreground Color Index"
-len ="1"/>
-          <data type="int" format="unsigned" name="Text Background Color Index"
-len ="1"/>
-          <for name="text" stop_test="this.blocksize == 0x00" type_name=""
-comment="" >  
-            <struct name="Data subblock" type_name="" comment="">
-              <data type="int" format="unsigned" name="blocksize" len ="1"/>
-              <data type="string" format="ascii" name="data" len ="blocksize"/>	
+              <data type="int" format="unsigned" name="Text Foreground Color Index"
+    len ="1"/>
+              <data type="int" format="unsigned" name="Text Background Color Index"
+    len ="1"/>
+              <for name="text" stop_test="this.blocksize == 0x00" type_name=""
+    comment="" >
+                <struct name="Data subblock" type_name="" comment="">
+                  <data type="int" format="unsigned" name="blocksize" len ="1"/>
+                  <data type="string" format="ascii" name="data" len ="blocksize"/>
+                </struct>
+              </for>
             </struct>
-          </for>
-        </struct>
-    </if>
+          </if>
 
-    <if test="Label == 0xFF">
-      <struct name="Application">
-        <data type="int" format="unsigned" name="BlockSize" len ="1"
-comment="Should always be 11"/>   
-        <data type="string" format="ascii" name="Application Identifier" len
+          <if test="Label == 0xFF">
+            <struct name="Application">
+              <data type="int" format="unsigned" name="BlockSize" len ="1"
+      comment="Should always be 11"/>
+              <data type="string" format="ascii" name="Application Identifier" len
 ="8"/>
-        <data type="string" format="ascii" name="Application Authentication
+              <data type="string" format="ascii" name="Application Authentication
 Code" len ="3"/>
-        <for name="Data" stop_test="this.blocksize == 0x00" type_name=""
-comment="" >  
-          <struct name="Application Data" type_name="" comment="">
-            <data type="int" format="unsigned" name="blocksize" len ="1"/>
-            <data type="none" display="hex" name="data" len ="blocksize"/>	
-          </struct>
-        </for>       
-     </struct>
-    </if>
+              <for name="Data" stop_test="this.blocksize == 0x00" type_name=""
+      comment="" >
+                <struct name="Application Data" type_name="" comment="">
+                  <data type="int" format="unsigned" name="blocksize" len ="1"/>
+                  <data type="none" display="hex" name="data" len ="blocksize"/>
+                </struct>
+              </for>
+            </struct>
+          </if>
 
-   </struct>
-  </if>
-</struct>
-</for>
+        </struct>
+      </if>
+    </struct>
+  </for>
 </binary_file_format>
 
- 
+

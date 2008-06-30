@@ -4,15 +4,15 @@
 <binary_file_format name="TARGA_format" 
    type_name="" comment="" default_byte_order="little" 
    default_read_only="false" default_char_set="ascii" 
-  
-web_site="http://www.dca.fee.unicamp.br/~martino/disciplinas/ea978/tgaffs.pdf">
-<struct name="TARGA_header" type_name="" comment="">
+   web_site="http://www.dca.fee.unicamp.br/~martino/disciplinas/ea978/tgaffs.pdf"
+   allow_editing="false">
+  <struct name="TARGA_header" type_name="" comment="">
     <data type="int" name="idlen" format="unsigned" len="1" display="dec"
 comment="ID Length"/>
-   <data type="int" name="cmap_type" format="unsigned" len="1" display="dec"
-comment="CMAP Type: 0 or 1 "/>
-   <data type="int" name="image_type" format="unsigned" len="1"  display="dec"
-comment="Image Type"/>
+    <data type="int" name="cmap_type" format="unsigned" len="1" display="dec"
+ comment="CMAP Type: 0 or 1 "/>
+    <data type="int" name="image_type" format="unsigned" len="1"  display="dec"
+ comment="Image Type"/>
     <data type="int" name="FEI" format="unsigned" len="2" display="dec"
 comment="First entry index"/>
     <data type="int" name="CML" format="unsigned" len="2" display="dec"
@@ -27,32 +27,32 @@ comment="Color Map entry Size"/>
 display="dec"/>
     <data type="int" name="image_descriptor" format="unsigned" len="1"
 display="dec"/>
-   <if test="idlen !=0x00 0" comment="">
-     <data type="string" name="iddescription" format="ascii" len="idlen"
-display=""/>
-   </if>
-</struct>
+    <if test="idlen !=0x00 0" comment="">
+      <data type="string" name="iddescription" format="ascii" len="idlen"
+ display=""/>
+    </if>
+  </struct>
 
-<if test="TARGA_header.cmap_type != 0x00" comment="">
-<struct name="cmap_data" type_name="" comment="">
-<for name="empty" count="" stop_test="this.marker == TARGA_header.FEI"
-type_name="" comment="">
-  <data type="int" name="empty" format="unsigned" len="1" display="dec"/>
-</for>
-<for name="color" count="" stop_test="this.marker ==
+  <if test="TARGA_header.cmap_type != 0x00" comment="">
+    <struct name="cmap_data" type_name="" comment="">
+      <for name="empty" count="" stop_test="this.marker == TARGA_header.FEI"
+      type_name="" comment="">
+        <data type="int" name="empty" format="unsigned" len="1" display="dec"/>
+      </for>
+      <for name="color" count="" stop_test="this.marker ==
 TARGA_header.FEI+TARGA_header.CML" type_name="" comment="">
-  <data type="int" name="image_descriptor" format="unsigned"
-len="TARGA_header.CMES" display="hex"/>
-</for>
-</struct>
-</if>
-<if test="TARGA_header.image_type != 0x00" comment="">
-<struct name="image_data" type_name="" comment="">
-<for name="pixel" count="" stop_test="this.marker ==
+        <data type="int" name="image_descriptor" format="unsigned"
+      len="TARGA_header.CMES" display="hex"/>
+      </for>
+    </struct>
+  </if>
+  <if test="TARGA_header.image_type != 0x00" comment="">
+    <struct name="image_data" type_name="" comment="">
+      <for name="pixel" count="" stop_test="this.marker ==
 TARGA_header.width*TARGA_header.height" type_name="" comment="">
-    <data type="int" name="pixel" format="unsigned"
-len="TARGA_header.pixel_depth/8" display="hex"/>
-</for>
- </struct>
-</if>
+        <data type="int" name="pixel" format="unsigned"
+    len="TARGA_header.pixel_depth/8" display="hex"/>
+      </for>
+    </struct>
+  </if>
 </binary_file_format>

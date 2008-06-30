@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
 <binary_file_format name="Windows_bitmap" allow_editing="false" comment="File format for storing Windows device independent bitmap."
-                    expr="{this.infohdr.width} X {this.infohdr.height} @ {this.infohdr.bitcount} bpp">
+                    expr="{this.infohdr.width} X {this.infohdr.height} @ {this.infohdr.bitcount} bpp" allow_editing="false">
 	<struct name="filehdr" type_name="BITMAPFILEHEADER" comment="Info related to the file" expr="">
 		<data name="type" type="string" len="2" domain="this==&quot;BM&quot;" format="ascii" display="" comment="Magic number"/>
 		<data name="size" type="int" len="4" format="signed" display="" comment="Size of the whole file." units="bytes"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
-<binary_file_format name="MPEG" type_name="" comment="" expr="">
-	<define_struct type_name="header" comment="" expr="={this.start_code;%.02X}">
+<binary_file_format name="MPEG" allow_editing="false">
+  <define_struct type_name="header" comment="" expr="={this.start_code;%.02X}">
 		<data type="int" name="start_code" format="unsigned" domain="this &gt;= 0x00000100 &amp;&amp; this &lt;= 0x000001FF" display="" byte_order="big" len="4"/>
 		<if test="start_code==0x000001BA" comment="">
 			<struct name="PackLayer" type_name="" comment="" expr="">

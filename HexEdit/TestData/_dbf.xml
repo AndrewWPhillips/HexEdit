@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
-<binary_file_format name="dBase 3 .DBF file">
+<binary_file_format name="dBase 3 .DBF file" allow_editing="false">
   <struct name="header" comment="Contains info on the database fields and structure.">
     <data name="version"    type="int"  format="u" len="1"  comment="dBase III version number"/>
     <data name="update"     type="none" len="3"   comment="date of last update"/>

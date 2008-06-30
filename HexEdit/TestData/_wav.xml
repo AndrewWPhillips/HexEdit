@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
-<binary_file_format name="Microsoft WAV Sound File (WAV)">
+<binary_file_format name="Microsoft WAV Sound File (WAV)" allow_editing="false">
 	<struct name="RiffHeader" type_name="RIFFHEADER">
 		<data name="ChunkID" type="string" len="4" domain="this==&quot;BM&quot;" format="ascii" display=""/>
 		<data name="ChunkSize" type="int" len="4"/>
