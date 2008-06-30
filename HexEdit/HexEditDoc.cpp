@@ -942,12 +942,13 @@ void CHexEditDoc::AddBookmark(int index, FILE_ADDRESS pos)
 void CHexEditDoc::RemoveBookmark(int index)
 {
     std::vector<int>::iterator pp = std::find(bm_index_.begin(), bm_index_.end(), index);
+	std::vector<int>::iterator ppc = pp;
     if (pp != bm_index_.end())
     {
         bm_index_.erase(pp);
-        ASSERT(pp-bm_index_.begin() < (int)bm_posn_.size());
-        FILE_ADDRESS address = bm_posn_[pp-bm_index_.begin()];
-        bm_posn_.erase(bm_posn_.begin() + (pp-bm_index_.begin()));
+        ASSERT(ppc-bm_index_.begin() < (int)bm_posn_.size());
+        FILE_ADDRESS address = bm_posn_[ppc-bm_index_.begin()];
+        bm_posn_.erase(bm_posn_.begin() + (ppc-bm_index_.begin()));
 
         CBookmarkHint bmh(address);
         UpdateAllViews(NULL, 0, &bmh);
@@ -961,7 +962,7 @@ void CHexEditDoc::RemoveBookmark(int index)
 // Returns bookmark index or -1 if no bookmark there
 int CHexEditDoc::GetBookmarkAt(FILE_ADDRESS pos)
 {
-    std::vector<FILE_ADDRESS>::iterator pp = std::find(bm_posn_.begin(), bm_posn_.end(), pos);
+    std::vector<FILE_ADDRESS>::const_iterator pp = std::find(bm_posn_.begin(), bm_posn_.end(), pos);
     if (pp != bm_posn_.end())
         return bm_index_[pp-bm_posn_.begin()];
     else

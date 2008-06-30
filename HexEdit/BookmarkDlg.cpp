@@ -629,6 +629,8 @@ void CBookmarkDlg::OnAdd()
 	grid_.SetSelectedRange(row, grid_.GetFixedColumnCount(), row, grid_.GetColumnCount()-1);
 	grid_.EnsureVisible(row, 0);
 
+	pbl->GoTo(ii);
+
 #if 0 // moved to CBookmark::Add (now calls CBookmarkDlg::UpdateBookmark)
 	// Save sort col (lost when we modify the grid) so we can re-sort later
 //	int sort_col = grid_.GetSortColumn();
