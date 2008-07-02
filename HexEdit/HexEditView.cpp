@@ -2716,9 +2716,9 @@ end_of_background_drawing:
             }
         }
 
-        // Draw address if not off to left and does not encroach into ruler area (unless printing whence there is no ruler)
-        if ((addr_width_ - 1)*char_width + tt.left > 0 &&
-            (tt.top + text_height_/4 >= bdr_top_ || pDC->IsPrinting()))
+        // Draw address if ...
+        if ((addr_width_ - 1)*char_width + tt.left > 0 &&    // not off to the left
+			(tt.top + text_height_/4 >= bdr_top_ || pDC->IsPrinting()))   // and does not encroach into ruler
         {
             addr_rect = tt;            // tt with right margin where addresses end
             addr_rect.right = addr_rect.left + addr_width_*char_width - char_width - 1;
@@ -10792,11 +10792,11 @@ void CHexEditView::do_hextoggle(int state /*=-1*/)
 
 void CHexEditView::OnOemToggle() 
 {
-    if (!display_.char_area || display_.char_set == CHARSET_EBCDIC)
+    if (!(display_.vert_display || display_.char_area) || display_.char_set == CHARSET_EBCDIC)
     {
         // Can't toggle OEM chars, presumably in macro playback
         ASSERT(theApp.playing_);
-        if (!display_.char_area)
+        if (!(display_.vert_display || display_.char_area))
             ::HMessageBox("You can't display OEM/ANSI graphic characters without the char area");
         else if (display_.char_set == CHARSET_EBCDIC)
             ::HMessageBox("Graphic characters are not supported for EBCDIC");
@@ -10817,7 +10817,7 @@ void CHexEditView::OnOemToggle()
 
 void CHexEditView::OnUpdateOemToggle(CCmdUI* pCmdUI) 
 {
-    pCmdUI->Enable(display_.char_area && display_.char_set != CHARSET_EBCDIC);
+    pCmdUI->Enable((display_.vert_display || display_.char_area) && display_.char_set != CHARSET_EBCDIC);
     pCmdUI->SetCheck(display_.char_set == CHARSET_OEM);
 }
 
@@ -11696,7 +11696,7 @@ void CHexEditView::OnCharsetAscii()
 {
     bool std_scheme = false;
 
-    if (!display_.char_area)
+    if (!(display_.vert_display || display_.char_area))
     {
         ASSERT(theApp.playing_);
         ::HMessageBox("You can't change characters sets without the char area");
@@ -11739,11 +11739,11 @@ void CHexEditView::OnUpdateCharsetAscii(CCmdUI *pCmdUI)
     {
         // This happens when popup menu itself is drawn
         pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-            MF_BYPOSITION | (display_.char_area ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
+            MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
     }
     else
     {
-        pCmdUI->Enable(display_.char_area);
+        pCmdUI->Enable((display_.vert_display || display_.char_area));
         pCmdUI->SetCheck(display_.char_set == CHARSET_ASCII);
     }
 }
@@ -11752,7 +11752,7 @@ void CHexEditView::OnCharsetAnsi()
 {
     bool std_scheme = false;
 
-    if (!display_.char_area)
+    if (!(display_.vert_display || display_.char_area))
     {
         ASSERT(theApp.playing_);
         ::HMessageBox("You can't change characters sets without the char area");
@@ -11795,11 +11795,11 @@ void CHexEditView::OnUpdateCharsetAnsi(CCmdUI *pCmdUI)
     {
         // This happens when popup menu itself is drawn
         pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-            MF_BYPOSITION | (display_.char_area ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
+            MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
     }
     else
     {
-        pCmdUI->Enable(display_.char_area);
+        pCmdUI->Enable((display_.vert_display || display_.char_area));
         pCmdUI->SetCheck(display_.char_set == CHARSET_ANSI);
     }
 }
@@ -11808,7 +11808,7 @@ void CHexEditView::OnCharsetOem()
 {
     bool std_scheme = false;
 
-    if (!display_.char_area)
+    if (!(display_.vert_display || display_.char_area))
     {
         ASSERT(theApp.playing_);
         ::HMessageBox("You can't change characters sets without the char area");
@@ -11851,11 +11851,11 @@ void CHexEditView::OnUpdateCharsetOem(CCmdUI *pCmdUI)
     {
         // This happens when popup menu itself is drawn
         pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-            MF_BYPOSITION | (display_.char_area ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
+            MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
     }
     else
     {
-        pCmdUI->Enable(display_.char_area);
+        pCmdUI->Enable((display_.vert_display || display_.char_area));
         pCmdUI->SetCheck(display_.char_set == CHARSET_OEM);
     }
 }
@@ -11864,7 +11864,7 @@ void CHexEditView::OnCharsetEbcdic()
 {
     bool std_scheme = false;
 
-    if (!display_.char_area)
+    if (!(display_.vert_display || display_.char_area))
     {
         ASSERT(theApp.playing_);
         ::HMessageBox("You can't change characters sets without the char area");
@@ -11907,21 +11907,21 @@ void CHexEditView::OnUpdateCharsetEbcdic(CCmdUI *pCmdUI)
     {
         // This happens when popup menu itself is drawn
         pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-            MF_BYPOSITION | (display_.char_area ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
+            MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
     }
     else
     {
-        pCmdUI->Enable(display_.char_area);
+        pCmdUI->Enable((display_.vert_display || display_.char_area));
         pCmdUI->SetCheck(display_.char_set == CHARSET_EBCDIC);
     }
 }
 
 void CHexEditView::OnControlNone()
 {
-    if (!display_.char_area || display_.char_set == CHARSET_EBCDIC)
+    if (!(display_.vert_display || display_.char_area) || display_.char_set == CHARSET_EBCDIC)
     {
         ASSERT(theApp.playing_);
-        if (!display_.char_area)
+        if (!(display_.vert_display || display_.char_area))
             ::HMessageBox("You can't display control characters without the char area");
         else if (display_.char_set == CHARSET_EBCDIC)
             ::HMessageBox("You can't display control characters in EBCDIC");
@@ -11945,22 +11945,22 @@ void CHexEditView::OnUpdateControlNone(CCmdUI *pCmdUI)
         // This happens when popup menu itself is drawn
         pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
             MF_BYPOSITION | 
-            (display_.char_area && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI) ?
+            ((display_.vert_display || display_.char_area) && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI) ?
 			        MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
     }
     else
     {
-        pCmdUI->Enable(display_.char_area && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI));
+        pCmdUI->Enable((display_.vert_display || display_.char_area) && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI));
         pCmdUI->SetCheck(display_.control == 0);
     }
 }
 
 void CHexEditView::OnControlAlpha()
 {
-    if (!display_.char_area || display_.char_set == CHARSET_EBCDIC)
+    if (!(display_.vert_display || display_.char_area) || display_.char_set == CHARSET_EBCDIC)
     {
         ASSERT(theApp.playing_);
-        if (!display_.char_area)
+        if (!(display_.vert_display || display_.char_area))
             ::HMessageBox("You can't display control characters without the char area");
         else if (display_.char_set == CHARSET_EBCDIC)
             ::HMessageBox("You can't display control characters in EBCDIC");
@@ -11983,21 +11983,21 @@ void CHexEditView::OnUpdateControlAlpha(CCmdUI *pCmdUI)
         // This happens when popup menu itself is drawn
         pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
             MF_BYPOSITION | 
-            (display_.char_area && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
+            ((display_.vert_display || display_.char_area) && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
     }
     else
     {
-        pCmdUI->Enable(display_.char_area && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI));
+        pCmdUI->Enable((display_.vert_display || display_.char_area) && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI));
         pCmdUI->SetCheck(display_.control == 1);
     }
 }
 
 void CHexEditView::OnControlC()
 {
-    if (!display_.char_area || display_.char_set == CHARSET_EBCDIC)
+    if (!(display_.vert_display || display_.char_area) || display_.char_set == CHARSET_EBCDIC)
     {
         ASSERT(theApp.playing_);
-        if (!display_.char_area)
+        if (!(display_.vert_display || display_.char_area))
             ::HMessageBox("You can't display control characters without the char area");
         else if (display_.char_set == CHARSET_EBCDIC)
             ::HMessageBox("You can't display control characters in EBCDIC");
@@ -12020,18 +12020,18 @@ void CHexEditView::OnUpdateControlC(CCmdUI *pCmdUI)
         // This happens when popup menu itself is drawn
         pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
             MF_BYPOSITION | 
-            (display_.char_area && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
+            ((display_.vert_display || display_.char_area) && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
     }
     else
     {
-        pCmdUI->Enable(display_.char_area && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI));
+        pCmdUI->Enable((display_.vert_display || display_.char_area) && (display_.char_set == CHARSET_ASCII || display_.char_set == CHARSET_ANSI));
         pCmdUI->SetCheck(display_.control == 2);
     }
 }
 
 void CHexEditView::OnAscEbc() 
 {
-    if (!display_.char_area)
+    if (!(display_.vert_display || display_.char_area))
     {
         // Can't display EBCDIC, presumably in macro playback
         ASSERT(theApp.playing_);
@@ -12061,7 +12061,7 @@ void CHexEditView::OnAscEbc()
 
 void CHexEditView::OnUpdateAscEbc(CCmdUI* pCmdUI) 
 {
-    pCmdUI->Enable(display_.char_area);
+    pCmdUI->Enable((display_.vert_display || display_.char_area));
     pCmdUI->SetCheck(display_.char_set == CHARSET_EBCDIC);
 }
 
@@ -12071,11 +12071,11 @@ void CHexEditView::OnControl()
 
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
-    if (!display_.char_area || display_.char_set == CHARSET_EBCDIC)
+    if (!(display_.vert_display || display_.char_area) || display_.char_set == CHARSET_EBCDIC)
     {
         // Can't toggle control chars, presumably in macro playback
         ASSERT(aa->playing_);
-        if (!display_.char_area)
+        if (!(display_.vert_display || display_.char_area))
             ::HMessageBox("You can't display control characters without the char area");
         else
             ::HMessageBox("Control character display is not supported for EBCDIC");
@@ -12094,11 +12094,11 @@ void CHexEditView::OnControl()
 void CHexEditView::OnControlToggle() 
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    if (!display_.char_area || display_.char_set == CHARSET_EBCDIC)
+    if (!(display_.vert_display || display_.char_area) || display_.char_set == CHARSET_EBCDIC)
     {
         // Can't toggle control chars, presumably in macro playback
         ASSERT(aa->playing_);
-        if (!display_.char_area)
+        if (!(display_.vert_display || display_.char_area))
             ::HMessageBox("You can't display control characters without the char area");
         else
             ::HMessageBox("Control character display is not supported for EBCDIC");
@@ -12121,7 +12121,7 @@ void CHexEditView::OnControlToggle()
 
 void CHexEditView::OnUpdateControl(CCmdUI* pCmdUI) 
 {
-    pCmdUI->Enable(display_.char_area && display_.char_set != CHARSET_EBCDIC);
+    pCmdUI->Enable((display_.vert_display || display_.char_area) && display_.char_set != CHARSET_EBCDIC);
     pCmdUI->SetCheck(display_.control != 0);
 }
 
