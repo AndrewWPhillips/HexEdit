@@ -187,8 +187,14 @@ public:
     afx_msg void OnUpdateViewExpl(CCmdUI* pCmdUI);
     afx_msg void OnViewExpl();
 #endif
-    afx_msg void OnUpdateViewProperties(CCmdUI* pCmdUI);
+    afx_msg void OnViewRuler();
+    afx_msg void OnUpdateViewRuler(CCmdUI* pCmdUI);
+    afx_msg void OnViewHighlightCaret();
+    afx_msg void OnUpdateViewHighlightCaret(CCmdUI* pCmdUI);
+    afx_msg void OnViewHighlightMouse();
+    afx_msg void OnUpdateViewHighlightMouse(CCmdUI* pCmdUI);
     afx_msg void OnViewProperties();
+    afx_msg void OnUpdateViewProperties(CCmdUI* pCmdUI);
 
     afx_msg void OnContextHelp();   // for Shift+F1 help
     afx_msg void OnHelpFinder();

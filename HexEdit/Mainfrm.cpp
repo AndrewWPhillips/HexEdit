@@ -150,6 +150,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGMDIFrameWnd)
         ON_COMMAND(ID_VIEW_EXPL, OnViewExpl)
         ON_UPDATE_COMMAND_UI(ID_VIEW_EXPL, OnUpdateViewExpl)
 #endif
+        ON_COMMAND(ID_VIEW_RULER, OnViewRuler)
+        ON_UPDATE_COMMAND_UI(ID_VIEW_RULER, OnUpdateViewRuler)
+        ON_COMMAND(ID_VIEW_HL_CURSOR, OnViewHighlightCaret)
+        ON_UPDATE_COMMAND_UI(ID_VIEW_HL_CURSOR, OnUpdateViewHighlightCaret)
+        ON_COMMAND(ID_VIEW_HL_MOUSE, OnViewHighlightMouse)
+        ON_UPDATE_COMMAND_UI(ID_VIEW_HL_MOUSE, OnUpdateViewHighlightMouse)
         ON_COMMAND(ID_VIEW_PROPERTIES, OnViewProperties)
         ON_UPDATE_COMMAND_UI(ID_VIEW_PROPERTIES, OnUpdateViewProperties)
 
@@ -1371,6 +1377,55 @@ void CMainFrame::OnViewExpl()
     theApp.SaveToMacro(km_toolbar, 14);
 }
 #endif
+
+void CMainFrame::OnUpdateViewRuler(CCmdUI* pCmdUI) 
+{
+    //CHexEditView *pview = GetView();
+    //pCmdUI->Enable(pview != NULL);
+    pCmdUI->SetCheck(theApp.ruler_);
+}
+
+void CMainFrame::OnViewRuler() 
+{
+    CHexEditView *pview = GetView();
+    if (pview != NULL)
+    {
+        theApp.ruler_ = !theApp.ruler_;
+        pview->recalc_display();        // need to adjust border
+        pview->DoInvalidate();
+    }
+    theApp.SaveToMacro(km_toolbar, 15);
+}
+
+void CMainFrame::OnUpdateViewHighlightCaret(CCmdUI* pCmdUI) 
+{
+    pCmdUI->SetCheck(theApp.hl_caret_);
+}
+
+void CMainFrame::OnViewHighlightCaret()
+{
+    CHexEditView *pview = GetView();
+    if (pview != NULL)
+    {
+        theApp.hl_caret_ = !theApp.hl_caret_;
+    }
+    theApp.SaveToMacro(km_toolbar, 16);
+}
+
+void CMainFrame::OnUpdateViewHighlightMouse(CCmdUI* pCmdUI) 
+{
+    pCmdUI->SetCheck(theApp.hl_mouse_);
+}
+
+void CMainFrame::OnViewHighlightMouse() 
+{
+    CHexEditView *pview = GetView();
+    if (pview != NULL)
+    {
+        theApp.hl_mouse_ = !theApp.hl_mouse_;
+    }
+    theApp.SaveToMacro(km_toolbar, 17);
+}
 
 void CMainFrame::OnUpdateViewProperties(CCmdUI* pCmdUI) 
 {
