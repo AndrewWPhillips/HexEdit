@@ -1380,7 +1380,7 @@ void CScrView::OnSelUpdate(CPoint point)
             // Use clock to ensure scrolling does not get faster with more mouse move events
             clock_t curr_clock = clock();
             clock_t diff_clock = curr_clock - last_clock;
-            if (diff_clock > CLOCKS_PER_SEC) diff_clock = CLOCKS_PER_SEC;
+            if (diff_clock > CLOCKS_PER_SEC/5) diff_clock = CLOCKS_PER_SEC/5;
 
             // Scroll speed depends on distance mouse is above window
 //            int diff_pixel = ((disp.top - pp.y)*(disp.top - pp.y))/10;
@@ -1393,10 +1393,10 @@ void CScrView::OnSelUpdate(CPoint point)
             if (disp.top < rr.top) to_move = line_.cy - (rr.top - disp.top);
 
             // If enough time has passed or mouse is far enough above the window...
-            if (disp.top > pp.y && diff_clock * autoscroll >= CLOCKS_PER_SEC)
+            if (disp.top > pp.y && diff_clock * autoscroll >= CLOCKS_PER_SEC/5)
             {
                 // Scroll according to time and distance
-                to_move += line_.cy*((diff_clock * autoscroll)/CLOCKS_PER_SEC);
+                to_move += line_.cy*((diff_clock * autoscroll)/(CLOCKS_PER_SEC/5));
                 last_clock = curr_clock;
             }
             newpos.y = scrollpos_.y - to_move;
@@ -1406,15 +1406,15 @@ void CScrView::OnSelUpdate(CPoint point)
             // See above comments (same but for bottom of window not top)
             clock_t curr_clock = clock();
             clock_t diff_clock = curr_clock - last_clock;
-            if (diff_clock > CLOCKS_PER_SEC) diff_clock = CLOCKS_PER_SEC;
+            if (diff_clock > CLOCKS_PER_SEC/5) diff_clock = CLOCKS_PER_SEC/5;
             int diff_pixel = int(pp.y - disp.bottom);
             int autoscroll = (int)pow((double)diff_pixel, autoscroll_accel_/10.0);
 
             __int64 to_move = 0;
             if (disp.bottom > rr.bottom) to_move = line_.cy - (disp.bottom - rr.bottom);
-            if (disp.bottom < pp.y && diff_clock * autoscroll >= CLOCKS_PER_SEC)
+            if (disp.bottom < pp.y && diff_clock * autoscroll >= CLOCKS_PER_SEC/5)
             {
-                to_move += line_.cy*((diff_clock * autoscroll)/CLOCKS_PER_SEC);
+                to_move += line_.cy*((diff_clock * autoscroll)/(CLOCKS_PER_SEC/5));
                 last_clock = curr_clock;
             }
             newpos.y = scrollpos_.y + to_move;
