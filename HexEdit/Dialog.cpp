@@ -1,6 +1,6 @@
 // Dialog.cpp : implementation file
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2008 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -1183,7 +1183,7 @@ void CExplorerWnd::Update(LPCTSTR file_name /* = NULL */)
 		::PathRemoveFileSpec(ss.GetBuffer(1));
 		ss.ReleaseBuffer();
 
-		// If the file's folder is the folder we are displaying the remember that we need to refresh it
+		// If the file's folder is the folder we are displaying then remember that we need to refresh it
 		if (AfxComparePath(ss, list_.Folder()))
 			update_required_ = true;
 	}

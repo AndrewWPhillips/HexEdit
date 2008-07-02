@@ -2659,6 +2659,10 @@ void CHexEditApp::LoadSchemes()
         new_scheme.AddRange("ALL", -1, "0:255");
 		// Restore these to "Automatic" values which are mainly greys
         new_scheme.mark_col_ = new_scheme.hex_addr_col_ = new_scheme.dec_addr_col_ = -1;
+        new_scheme.addr_bg_col_  = RGB(240, 240, 240);  // Make sure this is always grey
+        new_scheme.hi_col_ = RGB(255, 255, 192);
+        new_scheme.sector_col_ = RGB(224, 192, 192);
+        new_scheme.trk_col_ = RGB(255, 128, 128);
         // new_scheme.can_delete_ = TRUE;
         scheme_.push_back(new_scheme);
 

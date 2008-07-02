@@ -413,7 +413,7 @@ COLORREF get_rgb(int hue,int luminance, int saturation)
     int red, green, blue;
     int magic1, magic2;
 
-    if (saturation == 0)
+    if (hue == -1 || saturation == 0)
     {
         red = green = blue = (luminance*rgbmax)/hlsmax;
     }
@@ -434,12 +434,14 @@ COLORREF get_rgb(int hue,int luminance, int saturation)
    return RGB(red, green, blue);
 } 
 
-// Make a colour closer in tone (ie luminance) to another colour but the same colour (hue/saturation)
-// The parameter amt determines the amount of toning down:
+// Make a colour (col) closer in tone (ie brightness or luminance) to another
+// colour (bg_col) but the otherwise keep the same colour (hue/saturation).
+// The parameter amt determines the amount of adjustment.
 //  0 = no change
 //  0.5 = default means half way to background
 //  1 = fully toned down (same as background colour)
 //  -ve values = tone "up"
+// Note. Despite the name if bg_col is brighter than col it will "tone up".
 COLORREF tone_down(COLORREF col, COLORREF bg_col, double amt /* = 0.75*/)
 {
     int hue, luminance, saturation;
@@ -472,8 +474,10 @@ COLORREF same_hue(COLORREF col, int sat, int lum /* = -1 */)
     int hue, luminance, saturation;
     get_hls(col, hue, luminance, saturation);
 
-	if (lum > -1) luminance = lum;
-	if (sat > -1) saturation = sat;
+	if (lum > -1)
+        luminance = lum;
+	if (sat > -1)
+        saturation = sat;
     
     return get_rgb(hue, luminance, saturation);
 }
