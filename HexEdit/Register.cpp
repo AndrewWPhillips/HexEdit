@@ -116,9 +116,9 @@ static const char *ack_url[] =
 	"http://theory.lcs.mit.edu/~rivest/md5.c",
 	"http://www.samblackburn.com/wfc/",
 	"http://www.codeproject.com/KB/splitter/kaldysimplesplitter.aspx",
-	"http://www.codeproject.com/KB/dialog/splasher.aspx"
+	"http://www.codeproject.com/KB/dialog/splasher.aspx",
 #ifdef USE_FREE_IMAGE
-    "http://freeimage.sourceforge.net/"
+    "http://freeimage.sourceforge.net/",
 #else
 	"http://www.codeproject.com/bitmap/extendedbitmap2.asp",
 #endif
@@ -275,13 +275,10 @@ void CAbout::fix_controls()
 			ss += "3.3";
 			break;
 		case 10:
-			ss += "3.4";  // we currently have plans for this - nav pts, more options etc
-			break;
-		case 11:
-			ss += "3.5";  // aerial view, new icons etc
+			ss += "3.4";  // we currently have plans for this - nav pts etc
 			break;
 		default:
-			ss += "4.0 or later";
+			ss += "3.5 or later";
 			break;
 		}
 		ctl_licence_.AddString(ss);
