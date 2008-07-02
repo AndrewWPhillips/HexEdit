@@ -4,7 +4,7 @@
 // options.h : header file for Options tabbed dialog box
 //
 
-// Copyright (c) 1999 by Andrew W. Phillips.
+// Copyright (c) 2008 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -73,15 +73,26 @@ struct OptValues
     long    base_address_;
 	UINT	export_line_len_;
 
-    // System display
+    // System layout
 	BOOL	open_restore_;
 	BOOL	mditabs_;
 	BOOL	tabsbottom_;
     BOOL    tabicons_;
-	BOOL	large_cursor_;
+    BOOL    dlg_dock_, dlg_move_;
 	BOOL	hex_ucase_;
+    int     k_abbrev_;
+
+    // Global document options
+	BOOL	large_cursor_;
 	BOOL	show_other_;
     BOOL    nice_addr_;
+    BOOL    sel_len_tip_, sel_len_div2_;
+    BOOL    scroll_past_ends_;
+    int     autoscroll_accel_;
+	BOOL    ruler_;
+    UINT    ruler_dec_ticks_, ruler_dec_nums_;
+    UINT    ruler_hex_ticks_, ruler_hex_nums_;
+    BOOL    hl_caret_, hl_mouse_;
 
     // Template
 	int		dffd_view_;
@@ -135,11 +146,10 @@ struct OptValues
 	BOOL	autofit_;
 	BOOL	maximize_;
     BOOL    borders_;
-	BOOL    ruler_;
 	BOOL	addr_dec_, addr_hex_;
     BOOL    line_nums_;
 	BOOL	addrbase1_;
-    BOOL    scroll_past_ends_;
+
     // Display state stored in a DWORD (as in view)
     union
     {
@@ -333,18 +343,18 @@ protected:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-// CWorkspaceDisplayPage dialog - global display options
+// CWorkspaceLayoutPage dialog - main window layout options
 
-class CWorkspaceDisplayPage : public COptPage
+class CWorkspaceLayoutPage : public COptPage
 {
-	DECLARE_DYNCREATE(CWorkspaceDisplayPage)
+	DECLARE_DYNCREATE(CWorkspaceLayoutPage)
 
 // Construction
 public:
-	CWorkspaceDisplayPage() : COptPage(IDD) { pStartupPage = NULL; }
+    CWorkspaceLayoutPage() : COptPage(IDD), pStartupPage(NULL) { }
 
 // Dialog Data
-	enum { IDD = IDD_OPT_WORKDISPLAY };
+	enum { IDD = IDD_OPT_WORKLAYOUT };
 
 	void SetStartupPage(COptPage * pPage) { pStartupPage = pPage; }
 
@@ -367,6 +377,47 @@ protected:
 private:
 	COptPage * pStartupPage;
     void fix_controls();
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspaceDisplayPage dialog - global display options
+
+class CWorkspaceDisplayPage : public COptPage
+{
+	DECLARE_DYNCREATE(CWorkspaceDisplayPage)
+
+// Construction
+public:
+	CWorkspaceDisplayPage() : COptPage(IDD), pDocPage(NULL) { }
+
+// Dialog Data
+	enum { IDD = IDD_OPT_WORKDISPLAY };
+	//CSliderCtrl ctl_slider_autoscroll_;
+
+    LRESULT OnIdle(long);
+
+	void SetDocDisplayPage(COptPage * pPage) { pDocPage = pPage; }
+
+// Overrides
+public:
+	virtual void OnOK();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+	virtual BOOL OnInitDialog();
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnChange();
+	afx_msg void OnChangeUpdate();
+	afx_msg void OnDocPage();
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	DECLARE_MESSAGE_MAP()
+
+private:
+    void fix_controls();
+	COptPage * pDocPage;
 };
 
 /////////////////////////////////////////////////////////////////////////////

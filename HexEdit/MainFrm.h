@@ -119,8 +119,6 @@ public:
 #endif
     CPropWnd m_wndProp;                 // Properties dialog/bar
 
-    BOOL dockable_;                     // Are modeless dialogs dockable?
-
 	CBCGToolBarImages	m_UserImages;
     CString m_strImagesFileName;
 

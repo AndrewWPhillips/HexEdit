@@ -61,11 +61,10 @@ typedef __int64 FILE_ADDRESS;
 
 // Conditional compilation flags - always to be used
 #define USE_OWN_PRINTDLG 1  // Replace the standard print dialog with our own derived dialog
-#define INPLACE_MOVE    1   // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
+#define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
 #define CHANGE_TRACKING 1   // Allow change tracking code
 #define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
 #define SHOW_CODE_PAGE  1
-#define NEW_TIPS        1   // Use new (fading) tip control for view tips (selection length etc) - seems to work well
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
 #define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
 #define EXPLORER_WND    1   // Modeless dialog like Windows Explorer - works well but need to fix hidden files button image
@@ -80,8 +79,6 @@ typedef __int64 FILE_ADDRESS;
 //#define CALC_EXPR       1   // Allow expressions in calculator - needs testing
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
 //#define REFRESH_OFF     1   // Turn off display refresh when replacing all - doesn't seem to save much time so leave off for now
-#define HIGHLIGHT_CARET 1   // Highlight current caret posn in the ruler/address area
-#define HIGHLIGHT_MOUSE 1   // Highlight the address under the mouse in the ruler/address area
 
 #define INTERNAL_ALGORITHM  "HexEdit Internal Encryption Algorithm"
 
@@ -111,7 +108,6 @@ enum font_t {
 // Note: only add to end since this struct is written to files
 // We are limited to 32 bits and if we run out of bits then we can use:
 //   - not_used_now - spare bit
-//   - strict_scroll - this could be made into a global option to free up this bit
 //   - mark_char - not really that important
 //   - vert_display - should at some stage be combined with hex_area/char_area
 struct display_bits
@@ -148,7 +144,7 @@ struct display_bits
     unsigned int overtype: 1;       // Are we in overtype mode?
     unsigned int readonly: 1;
 
-	unsigned int ruler: 1;          // Show ruler - should be a global option
+	unsigned int unused1: 1;        // Was ruler - made into a global option
 
     unsigned int hide_highlight: 1; // Hide display of highlights
     unsigned int hide_bookmarks: 1; // Hide display of bookmarks
@@ -173,7 +169,7 @@ struct display_bits
 	unsigned int decimal_addr: 1;   // Show decimal addresses?
 	unsigned int addrbase1: 1;      // Addresses start at 1 not zero
 
-    unsigned int strict_scroll: 1;  // This is pretty stupid as a per file option - should just be a global option
+    unsigned int unused2: 1;        // Was strict_scroll - made into global option
 
 	// Returns font required for display: currently ANSI unless displaying char area and OEM char set selected
 	font_t FontRequired() { return char_area && char_set == CHARSET_OEM ? FONT_OEM : FONT_ANSI; }
@@ -643,13 +639,24 @@ public:
     BOOL bg_search_;                    // Do background searches?
 
     // Global display options
-    BOOL hex_ucase_;                    // Display hex in upper case?
-    BOOL nice_addr_;                    // Display nice looking addresses?
-    BOOL large_cursor_;                 // Use large (block) cursor
-    BOOL show_other_;                   // Show where the cursor would be in the other (hex/char) area
     BOOL mditabs_;                      // Show MDI tabs
     BOOL tabsbottom_;                   // Show MDI tabs at bottom (not top)
     BOOL tabicons_;                     // Show icons in MDI tabs
+    BOOL large_cursor_;                 // Use large (block) cursor
+    BOOL show_other_;                   // Show where the cursor would be in the other (hex/char) area
+    BOOL nice_addr_;                    // Display nice looking addresses?
+    BOOL sel_len_tip_, sel_len_div2_;   // Show selection len tip window when dragging or when SHIFT held down?
+    BOOL scroll_past_ends_;             // Scrolling past end of doc allowed?
+    int autoscroll_accel_;              // How quickly autoscroll increases as mouse is dragged past edge of window (0 = none, 10 = linear, 20 = squared etc)
+    BOOL dlg_dock_, dlg_move_;          // Modeless dialogs: can dock? move out of the way when floating?
+
+    BOOL hex_ucase_;                    // Display hex in upper case?
+    int k_abbrev_;                      // How are K/M/G abbreviated (0=1000/1000/1000, 1=1024/1000/1000, 2=1024/1024/1000, 3=1024/1024/1024) 
+
+    BOOL ruler_;                        // Show (hex and/or decimal) ruler?
+    UINT ruler_hex_ticks_, ruler_dec_ticks_; // How often to show major ticks in the ruler(s)
+    UINT ruler_hex_nums_, ruler_dec_nums_;   // How often to show digits in the rulers
+    BOOL hl_caret_, hl_mouse_;          // Highlight caret or mouse in ruler/address area
 
 	BOOL delete_reg_settings_;          // Delete all registry settings on exit (used in repair commands)
 	BOOL delete_all_settings_;          // Delete settings files (recent file list etc), reg info. etc

@@ -582,7 +582,7 @@ CHexEditView::CHexEditView() : expr_(this)
     else
         display_.edit_char = display_.mark_char = FALSE;    // Caret init. in hex not char area
 
-    mouse_addr_ = -1;           // Only used when HIGHLIGHT_MOUSE is #defined
+    mouse_addr_ = -1;           // Only used when theApp.hl_mouse_ is on
 
     mouse_down_ = false;
     needs_refresh_ = false;
@@ -811,8 +811,8 @@ void CHexEditView::OnInitialUpdate()
             }
 
             wp.rcNormalPosition = newpos;
-			if (wp.showCmd == SW_SHOWMAXIMIZED)
-				wp.flags = WPF_RESTORETOMAXIMIZED;
+            if (wp.showCmd == SW_SHOWMAXIMIZED)
+                wp.flags = WPF_RESTORETOMAXIMIZED;
             GetFrame()->SetWindowPlacement(&wp);
         }
         else if (atoi(pfl->GetData(recent_file_index, CHexFileList::CMD)) == SW_SHOWMAXIMIZED)
@@ -1917,9 +1917,7 @@ void CHexEditView::OnDraw(CDC* pDC)
     CPen pen1(PS_SOLID, 0, same_hue(sector_col_, 100, 30));    // dark sector_col_
     CPen pen2(PS_SOLID, 0, same_hue(addr_bg_col_, 100, 30));   // dark addr_bg_col_
     CPen *psaved_pen;
-#if defined(HIGHLIGHT_CARET) || defined(HIGHLIGHT_MOUSE)
     CBrush brush(sector_col_);
-#endif
 
     // Skip background drawing in this case because it's too hard.
     // Note that this goto greatly simplifies the tests below.
@@ -1981,7 +1979,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (neg_y) pt.y = -30000;
             pDC->LineTo(pt);
         }
-		if (display_.ruler)
+		if (theApp.ruler_)
 		{
 			ASSERT(bdr_top_ > 0);
 			// Horiz line under ruler
@@ -1997,12 +1995,12 @@ void CHexEditView::OnDraw(CDC* pDC)
 			// Draw the ruler
 			int vert = 0;                           // Screen row to display the text at
 			int horz = bdr_left_ - GetScroll().x;
+			int hicol = -1;                         // Column with cursor is to be highlighted
 
-#ifdef HIGHLIGHT_CARET
-			if (!mouse_down_)
+            if (theApp.hl_caret_ && !mouse_down_)
 			{
 				// Do highlighting with a background rectangle in ruler/address area
-				int hicol = int(start_addr%rowsize_);   // Column with cursor is to be highlighted
+                hicol = int(start_addr%rowsize_);
 				CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
 				CBrush * psaved_brush = pDC->SelectObject(&brush);
 				CPen * psaved_pen = pDC->SelectObject(&pen1);
@@ -2021,31 +2019,28 @@ void CHexEditView::OnDraw(CDC* pDC)
 				(void)pDC->SelectObject(psaved_pen);
 				(void)pDC->SelectObject(psaved_brush);
 			}
-#endif
-#ifdef HIGHLIGHT_MOUSE
-			if (mouse_addr_ > -1)
+            if (theApp.hl_mouse_ && mouse_addr_ > -1)
 			{
-				int hicol = int(mouse_addr_%rowsize_);   // Column with cursor is to be highlighted
+				int mousecol = int(mouse_addr_%rowsize_);   // Mouse column to be highlighted
 				CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
 				CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
 				CPen * psaved_pen = pDC->SelectObject(&pen1);
 				if (!display_.vert_display && display_.hex_area)
 				{
-					hi_rect.left  = hex_pos(hicol) + horz;
+					hi_rect.left  = hex_pos(mousecol) + horz;
 					hi_rect.right = hi_rect.left + text_width_*2 + 1;
 					pDC->Rectangle(&hi_rect);
 				}
 				if (display_.vert_display || display_.char_area)
 				{
 					// 
-					hi_rect.left  = char_pos(hicol) + horz;
+					hi_rect.left  = char_pos(mousecol) + horz;
 					hi_rect.right = hi_rect.left + text_width_ + 1;
 					pDC->Rectangle(&hi_rect);
 				}
 				(void)pDC->SelectObject(psaved_pen);
 				(void)pDC->SelectObject(psaved_brush);
 			}
-#endif
 
 			// Get display rect for clipping at right and left
 			CRect cli;
@@ -2054,63 +2049,111 @@ void CHexEditView::OnDraw(CDC* pDC)
 			// Show offsets in the top border (ruler)
 			if (display_.hex_addr)
 			{
-				CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_);
+                // Do hex ruler
+				CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_ + 1);
 				CString ss;
 				pDC->SetTextColor(GetHexAddrCol());   // Colour of hex addresses
 				if (!display_.vert_display && display_.hex_area)
 					for (int column = 0; column < rowsize_; ++column)
 					{
+						rect.left  = rect.right;
+						rect.right = hex_pos(column + 1) + horz;
+						if (rect.left < cli.left)
+                            continue;
+                        if (rect.left > cli.right)
+                            break;
 						if (theApp.hex_ucase_)
 							ss.Format("%02X", (column + display_.addrbase1)%256);
 						else
 							ss.Format("%02x", (column + display_.addrbase1)%256);
-						rect.left  = rect.right;
-						rect.right = hex_pos(column + 1) + horz;
-						if (rect.left >= cli.left && rect.left < cli.right)
-							pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+						pDC->DrawText(ss, &rect, DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
 					}
 				rect.right = char_pos(0) + horz;
 				if (display_.vert_display || display_.char_area)
 					for (int column = 0; column < rowsize_; ++column)
 					{
-						if (theApp.hex_ucase_)
-							ss.Format("%1X", (column + display_.addrbase1)%16);
-						else
-							ss.Format("%1x", (column + display_.addrbase1)%16);
 						rect.left  = rect.right;
 						rect.right = char_pos(column + 1) + horz;
-						if (rect.left >= cli.left && rect.right <= cli.right)
-							pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+						if (rect.left < cli.left)
+                            continue;
+                        if (rect.left > cli.right)
+                            break;
+
+                        UINT fmt = DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE;
+                        if (column == hicol || (column+1)%theApp.ruler_hex_nums_ == 0)
+                        {
+                            int ii;
+                            if (display_.addrbase1 && (column+1)%theApp.ruler_hex_nums_ == 0 &&
+                                (column+1)%16 == 0 && theApp.ruler_hex_nums_%4 == 0)
+                            {
+                                fmt &= ~DT_BOTTOM;      // == DT_TOP
+						        ii = column/16 + 1;     // show "16's" not units
+                            }
+                            else
+                                ii = (column + display_.addrbase1)%16;
+						    if (theApp.hex_ucase_)
+							    ss.Format("%1X", ii);
+						    else
+							    ss.Format("%1x", ii);
+							pDC->DrawText(ss, &rect, fmt);
+                        }
+                        else if ((column+1)%theApp.ruler_hex_ticks_ == 0)
+							pDC->DrawText("|", &rect, fmt);
+                        else
+							pDC->DrawText(".", &rect, fmt);
 					}
 				vert += text_height_;  // Move down for anything to be drawn underneath
 			}
 			if (display_.decimal_addr || display_.line_nums)
 			{
-				CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_);
+                // Do decimal ruler
+				CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_ + 1);
 				CString ss;
 				pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
 				if (!display_.vert_display && display_.hex_area)
 					for (int column = 0; column < rowsize_; ++column)
 					{
-						ss.Format("%02d", (column + display_.addrbase1)%100);
 						rect.left  = rect.right;
 						rect.right = hex_pos(column + 1) + horz;
-						if (rect.left >= cli.left && rect.left < cli.right)
-							pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+						if (rect.left < cli.left)
+                            continue;
+                        if (rect.left > cli.right)
+                            break;
+						ss.Format("%02d", (column + display_.addrbase1)%100);
+						pDC->DrawText(ss, &rect, DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
 					}
 				rect.right = char_pos(0) + horz;
 				if (display_.vert_display || display_.char_area)
 					for (int column = 0; column < rowsize_; ++column)
 					{
-						ss.Format("%1d", (column + display_.addrbase1)%10);
 						rect.left  = rect.right;
 						rect.right = char_pos(column + 1) + horz;
-						if (rect.left >= cli.left && rect.right <= cli.right)
-							pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+						if (rect.left < cli.left)
+                            continue;
+                        if (rect.left > cli.right)
+                            break;
+
+                        UINT fmt = DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE;
+                        if (column == hicol || (column+1)%theApp.ruler_dec_nums_ == 0)
+                        {
+                            if (display_.addrbase1 && (column+1)%theApp.ruler_dec_nums_ == 0 &&
+                                (column+1)%10 == 0 && theApp.ruler_dec_nums_%5 == 0)
+                            {
+                                fmt &= ~DT_BOTTOM;                  // == DT_TOP
+						        ss.Format("%1d", column/10 + 1);    // show tens not units
+                            }
+                            else
+						        ss.Format("%1d", (column + display_.addrbase1)%10);
+							pDC->DrawText(ss, &rect, fmt);
+                        }
+                        else if ((column+1)%theApp.ruler_dec_ticks_ == 0)
+							pDC->DrawText("|", &rect, fmt);
+                        else
+							pDC->DrawText(".", &rect, fmt);
 					}
 				vert += text_height_;  // Move down for anything to be drawn underneath (currently nothing)
 			}
-		}
+		} // end ruler drawing
     }
 
 	// Mask out the ruler so we don't get top of topmost line drawn into it.
@@ -2675,7 +2718,7 @@ end_of_background_drawing:
 
         // Draw address if not off to left and does not encroach into ruler area (unless printing whence there is no ruler)
         if ((addr_width_ - 1)*char_width + tt.left > 0 &&
-			(tt.top + text_height_/4 >= bdr_top_ || pDC->IsPrinting()))
+            (tt.top + text_height_/4 >= bdr_top_ || pDC->IsPrinting()))
         {
             addr_rect = tt;            // tt with right margin where addresses end
             addr_rect.right = addr_rect.left + addr_width_*char_width - char_width - 1;
@@ -2689,10 +2732,9 @@ end_of_background_drawing:
 					addr_rect.bottom = addr_rect.top - text_height_;
 				else
 					addr_rect.bottom = addr_rect.top + text_height_;
-#ifdef HIGHLIGHT_CARET
 			// Not highlighting  when the mouse is down avoids a problem with invalidation of
 			// the address area when autoscrolling (old highlights sometimes left behind).
-			if (!pDC->IsPrinting() && !mouse_down_ && start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
+			if (theApp.hl_caret_ && !pDC->IsPrinting() && !mouse_down_ && start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
             {
                 CBrush * psaved_brush = pDC->SelectObject(&brush);
                 CPen * psaved_pen = pDC->SelectObject(&pen1);
@@ -2700,10 +2742,9 @@ end_of_background_drawing:
                 (void)pDC->SelectObject(psaved_pen);
                 (void)pDC->SelectObject(psaved_brush);
             }
-#endif
-#ifdef HIGHLIGHT_MOUSE
+
 			// Show address of current row with a different background colour
-		    if (!pDC->IsPrinting() && mouse_addr_ >= line*rowsize_ - offset_ && mouse_addr_ < (line+1)*rowsize_ - offset_)
+            if (theApp.hl_mouse_ && !pDC->IsPrinting() && mouse_addr_ >= line*rowsize_ - offset_ && mouse_addr_ < (line+1)*rowsize_ - offset_)
 			{
 				CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
                 CPen * psaved_pen = pDC->SelectObject(&pen1);
@@ -2711,7 +2752,6 @@ end_of_background_drawing:
                 (void)pDC->SelectObject(psaved_pen);
                 (void)pDC->SelectObject(psaved_brush);
 			}
-#endif
 
             if (hex_width_ > 0)
             {
@@ -3359,11 +3399,12 @@ void CHexEditView::recalc_display()
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-    if (GetStrictScroll() != BOOL(display_.strict_scroll))
+    if (GetScrollPastEnds() != theApp.scroll_past_ends_)
     {
-        SetStrictScroll(display_.strict_scroll);
+        SetScrollPastEnds(theApp.scroll_past_ends_);
         SetScroll(GetScroll());
     }
+    SetAutoscroll(theApp.autoscroll_accel_);
 
     // Save info on the current font
     {
@@ -3395,7 +3436,7 @@ void CHexEditView::recalc_display()
 
 	// Adjust border for ruler
 	bdr_top_ = 0;
-	if (display_.ruler)
+	if (theApp.ruler_)
 	{
 		if (display_.hex_addr)
 			bdr_top_ += text_height_;  // one row of text for hex offsets
@@ -3640,7 +3681,7 @@ void CHexEditView::DoScrollWindow(int xx, int yy)
         needs_refresh_ = true;
     else
 	{
-		if (display_.ruler && xx != 0)
+		if (theApp.ruler_ && xx != 0)
 		{
 			// We need to scroll the ruler (as it's outside the scroll region)
 			CRect rct;
@@ -4008,7 +4049,8 @@ void CHexEditView::move_dlgs()
 
     HideCaret();
     // Tell mainframe to move all its dialog bars
-    ((CMainFrame *)theApp.m_pMainWnd)->move_bars(dev_rect);
+    if (theApp.dlg_move_)
+        ((CMainFrame *)theApp.m_pMainWnd)->move_bars(dev_rect);
     ShowCaret();
 }
 
@@ -4310,30 +4352,30 @@ void CHexEditView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
 
 void CHexEditView::SetSel(CPointAp start, CPointAp end, bool base1 /*= false*/)
 {
-#ifdef HIGHLIGHT_CARET
-    FILE_ADDRESS old_addr, end_addr, new_addr;
-    BOOL end_base = GetSelAddr(old_addr, end_addr);             // Get current caret before CScrView::SetSel moves it
-    //if (end_base) old_addr = end_addr;
-
-	CScrView::SetSel(start, end, base1);
-
-	new_addr = pos2addr(start);
-    if (old_addr != new_addr)
+    if (theApp.hl_caret_)
     {
-        invalidate_addr(old_addr);
-        invalidate_addr(new_addr);
-        invalidate_ruler(old_addr);
-        invalidate_ruler(new_addr);
+        FILE_ADDRESS old_addr, end_addr, new_addr;
+        BOOL end_base = GetSelAddr(old_addr, end_addr);             // Get current caret before CScrView::SetSel moves it
+        //if (end_base) old_addr = end_addr;
+
+	    CScrView::SetSel(start, end, base1);
+
+	    new_addr = pos2addr(start);
+        if (old_addr != new_addr)
+        {
+            invalidate_addr(old_addr);
+            invalidate_addr(new_addr);
+            invalidate_ruler(old_addr);
+            invalidate_ruler(new_addr);
+        }
     }
-#else
-	CScrView::SetSel(start, end, base1);
-#endif
+    else
+	    CScrView::SetSel(start, end, base1);
 }
 
 void CHexEditView::set_mouse_addr(FILE_ADDRESS addr)
 {
-#ifdef HIGHLIGHT_MOUSE
-    if (addr == mouse_addr_)
+    if (!theApp.hl_mouse_ || addr == mouse_addr_)
         return;                 // no change so do nothing
 
     FILE_ADDRESS old_addr = mouse_addr_;
@@ -4345,13 +4387,12 @@ void CHexEditView::set_mouse_addr(FILE_ADDRESS addr)
 
     if (addr > - 1)
 		track_mouse(TME_LEAVE); // make sure we get a leave event when the mouse is moved outside
-#endif
 }
 
 // Invalidate part of ruler related to an address
 void CHexEditView::invalidate_ruler(FILE_ADDRESS addr)
 {
-	if (!display_.ruler)
+	if (!theApp.ruler_)
         return;
 
  	int horz = bdr_left_ - GetScroll().x;       // Offset of left side of doc from left side of window
@@ -4751,7 +4792,7 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
         addrBrush.UnrealizeObject();
         pDC->FillRect(rct, &addrBrush);
     }
-    if (display_.ruler && addr_bg_col_ != bg_col_)
+    if (theApp.ruler_ && addr_bg_col_ != bg_col_)
     {
 		// Ruler background
 	    GetClientRect(rct);
@@ -4888,7 +4929,8 @@ BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
     }
     else
         retval = CScrView::OnMouseWheel(nFlags, zDelta, pt);
-#ifdef HIGHLIGHT_MOUSE
+
+    if (theApp.hl_mouse_)
     {
         // Since the window may be scrolled without the mouse even moving we
         // have to make sure that the byte addr/ruler highlight byte is updated.
@@ -4897,7 +4939,7 @@ BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
         ScreenToClient(&point);
         set_mouse_addr(address_at(point));
     }
-#endif
+
     return retval;
 }
 
@@ -5292,11 +5334,7 @@ void CHexEditView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	// Also make sure info tip is hidden
     if (nChar != VK_SHIFT)
-#ifdef NEW_TIPS
         tip_.Hide(0);  // hide immediately
-#else
-        tip_.Hide(0);
-#endif
 }
 
 void CHexEditView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
@@ -5566,10 +5604,8 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 
     CScrView::OnLButtonDown(nFlags, point);
 
-#ifdef HIGHLIGHT_CARET
-    if (swap_addr > -1)
+    if (theApp.hl_caret_ && swap_addr > -1)
         invalidate_ruler(swap_addr);
-#endif
     reset_tip();
     show_prop();
     show_calc();
@@ -5636,10 +5672,11 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
         show_pos();
         mouse_down_ = false;
         update_sel_tip();           // Make sure window hidden when mouse button up
-#ifdef HIGHLIGHT_CARET
-        invalidate_addr(start_addr);
-        invalidate_ruler(start_addr);
-#endif
+        if (theApp.hl_caret_)
+        {
+            invalidate_addr(start_addr);
+            invalidate_ruler(start_addr);
+        }
     }
 }
 
@@ -5658,8 +5695,8 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
 		tip_.Hide(0);                           // Make sure there is no mouse tip while dragging
         move_dlgs();
         update_sel_tip(200);                    // Update selection tip
-#if 0 // def HIGHLIGHT_CARET // no longer necessary since we now hide the highlight while mouse is down
-        if (old_addr != new_addr)
+#if 0  // no longer necessary since we now hide the highlight while mouse is down
+        if (theApp.hl_caret_ && old_addr != new_addr)
         {
             // Invalidate while dragging start of selection area
             invalidate_addr(old_addr);
@@ -5677,16 +5714,11 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
 	else if (addr != last_tip_addr_ && tip_.IsWindowVisible())
     {
         // Hide the tip window since the mouse has moved away
-#ifdef NEW_TIPS
 		if (!tip_.FadingOut())                  // Don't keep it alive if we have already told it to fade away
 			tip_.Hide(300);
-#else
-		tip_.Hide(0);
-#endif
     }
-#ifdef HIGHLIGHT_MOUSE
-    set_mouse_addr(addr);
-#endif
+    if (theApp.hl_mouse_)
+        set_mouse_addr(addr);
 }
 
 /*
@@ -5715,11 +5747,7 @@ void CHexEditView::OnTimer(UINT nIDEvent)
 			CPoint point = last_mouse_ + CSize(text_width_w_, text_height_);
 		    ClientToScreen(&point);
             tip_.Move(point, false);
-#ifdef NEW_TIPS
             tip_.Show();
-#else
-            tip_.Show(0, 0);
-#endif
         }
     }
     else
@@ -5739,11 +5767,7 @@ LRESULT CHexEditView::OnMouseHover(WPARAM, LPARAM lp)
 		last_tip_addr_ = addr;
 		ClientToScreen(&tip_pt);
         tip_.Move(tip_pt, false);
-#ifdef NEW_TIPS
         tip_.Show();
-#else
-        tip_.Show(0, 0);
-#endif
 		track_mouse(TME_LEAVE);
     }
     return 0;
@@ -5864,14 +5888,9 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 
 LRESULT CHexEditView::OnMouseLeave(WPARAM, LPARAM lp)
 {
-#ifdef NEW_TIPS
 	tip_.Hide(300);
-#else
-	tip_.Hide(0);
-#endif
-#ifdef HIGHLIGHT_MOUSE
-    set_mouse_addr(-1);
-#endif
+    if (theApp.hl_mouse_)
+        set_mouse_addr(-1);
 	return 0;
 }
 
@@ -6298,11 +6317,7 @@ void CHexEditView::reset_tip()
 	ClientToScreen(&point);
 
 	sel_tip_.Move(point);
-#ifdef NEW_TIPS
 	sel_tip_.Hide();
-#else
-	sel_tip_.Hide(0);
-#endif
 }
 
 void CHexEditView::update_sel_tip(int delay /*=0*/)
@@ -6310,7 +6325,7 @@ void CHexEditView::update_sel_tip(int delay /*=0*/)
     FILE_ADDRESS start_addr, end_addr;
     GetSelAddr(start_addr, end_addr);
 
-    if ((mouse_down_ || shift_down()) && start_addr != end_addr)
+    if (theApp.sel_len_tip_ && (mouse_down_ || shift_down()) && start_addr != end_addr)
     {
         CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
         CString ss;
@@ -6367,7 +6382,7 @@ void CHexEditView::update_sel_tip(int delay /*=0*/)
         else
             sel_tip_.SetTextCol(RGB(128, 128, 128));
 #endif
-        if (len > 10)  // User should know divisibility by 2,4 for numbers this small so don't show
+        if (theApp.sel_len_div2_ && len > 10)  // User should know divisibility by 2,4 for numbers this small so don't show
         {
             int pow2;
 
@@ -6454,20 +6469,12 @@ void CHexEditView::update_sel_tip(int delay /*=0*/)
 		ClientToScreen(&point);
         sel_tip_.Move(point);
 
-#ifdef NEW_TIPS
         sel_tip_.Show(100, delay);
-#else
-        sel_tip_.Show(0,0);
-#endif
         SetFocus();
     }
     else
     {
-#ifdef NEW_TIPS
         sel_tip_.Hide();
-#else
-        sel_tip_.Hide(0);
-#endif
     }
 }
 
@@ -10266,14 +10273,14 @@ void CHexEditView::OnDisplayReset()
 	display_.decimal_addr = theApp.open_display_.decimal_addr;
 	display_.hex_addr = theApp.open_display_.hex_area;
 	display_.line_nums = theApp.open_display_.line_nums;
-	display_.addrbase1 = theApp.open_display_.addrbase1;
+	display_.addrbase1 = theApp.open_display_.addrbase1;        // addresses start at 1 (not 0)
 
     display_.readonly = theApp.open_display_.readonly;
     display_.overtype = theApp.open_display_.overtype;
 
     display_.vert_display = theApp.open_display_.vert_display;
     display_.borders = theApp.open_display_.borders;
-    display_.strict_scroll = theApp.open_display_.strict_scroll;
+
 	if (GetDocument()->IsDevice())
 	{
 		display_.overtype = 1;  // INS not allowed
@@ -16580,6 +16587,8 @@ void CHexEditView::OnUpdateDffdTab(CCmdUI* pCmdUI)
 void CHexEditView::OnViewtest() 
 {
 	// for testing new commands
+    double dd = 65535.0;
+    NumScale(dd);
 }
 
 CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,

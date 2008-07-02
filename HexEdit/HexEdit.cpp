@@ -1,6 +1,6 @@
 // HexEdit.cpp : Defines the class behaviors for the application.
 //
-// Copyright (c) 2004 by Andrew W. Phillips. 
+// Copyright (c) 2008 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -1917,8 +1917,26 @@ void CHexEditApp::LoadOptions()
     clear_bookmarks_ = GetProfileInt("Options", "ClearBookmarks", 0) ? TRUE : FALSE;
     clear_on_exit_ = GetProfileInt("Options", "ClearOnExit", 0) ? TRUE : FALSE;
 	no_recent_add_ = GetProfileInt("Options", "DontAddToRecent", 1) ? TRUE : FALSE;
+
     hex_ucase_ = GetProfileInt("Options", "UpperCaseHex", 1) ? TRUE : FALSE;
+    k_abbrev_ = GetProfileInt("Options", "KAbbrev", 1);
+    if (k_abbrev_ < 0) k_abbrev_ = 1;
+
+    dlg_dock_ = GetProfileInt("MainFrame", "DockableDialogs", 0) > 0 ? TRUE : FALSE;
+    dlg_move_ = GetProfileInt("MainFrame", "FloatDialogsMove", 1) ? TRUE : FALSE;
     nice_addr_ = GetProfileInt("Options", "NiceAddresses", 1) ? TRUE : FALSE;
+    sel_len_tip_ = GetProfileInt("Options", "SelLenTip", 1) ? TRUE : FALSE;
+    sel_len_div2_ = GetProfileInt("Options", "SelLenDiv2", 1) ? TRUE : FALSE;
+    scroll_past_ends_ = GetProfileInt("Options", "ScrollPastEnds", 1) ? TRUE : FALSE;
+    autoscroll_accel_ = GetProfileInt("Options", "AutoscrollAcceleration", 10);
+    if (autoscroll_accel_ < 0 || autoscroll_accel_ > 50) autoscroll_accel_ = 10;
+    ruler_ = GetProfileInt("Options", "ShowRuler", 1) ? TRUE : FALSE;
+    ruler_hex_ticks_ = GetProfileInt("Options", "RulerHexTicks", 4);
+    ruler_dec_ticks_ = GetProfileInt("Options", "RulerDecTicks", 5);
+    ruler_hex_nums_  = GetProfileInt("Options", "RulerHexNums", 1);
+    ruler_dec_nums_  = GetProfileInt("Options", "RulerDecNums", 10);
+    hl_caret_ = GetProfileInt("Options", "ShowCursorInRuler", 1) ? TRUE : FALSE;
+    hl_mouse_ = GetProfileInt("Options", "ShowMouseInRuler", 1) ? TRUE : FALSE;
 
     intelligent_undo_ = GetProfileInt("Options", "UndoIntelligent", 0) ? TRUE : FALSE;
     undo_limit_ = GetProfileInt("Options", "UndoMerge", 5);
@@ -2319,8 +2337,25 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "OneInstanceOnly", one_only_ ? 1 : 0);
     WriteProfileInt("Options", "RunAutoExec", run_autoexec_ ? 1 : 0);
     WriteProfileInt("Options", "SaveExit", save_exit_ ? 1 : 0);
+    WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
+    WriteProfileInt("MainFrame", "FloatDialogsMove", dlg_move_ ? 1 : 0);
     WriteProfileInt("Options", "UpperCaseHex", hex_ucase_ ? 1 : 0);
+    WriteProfileInt("Options", "KAbbrev", k_abbrev_);
+
     WriteProfileInt("Options", "NiceAddresses", nice_addr_ ? 1 : 0);
+    WriteProfileInt("Options", "SelLenTip", sel_len_tip_ ? 1 : 0);
+    WriteProfileInt("Options", "SelLenDiv2", sel_len_div2_ ? 1 : 0);
+    WriteProfileInt("Options", "ScrollPastEnds", scroll_past_ends_ ? 1 : 0);
+    WriteProfileInt("Options", "AutoscrollAcceleration", autoscroll_accel_);
+
+    WriteProfileInt("Options", "ShowRuler", ruler_ ? 1 : 0);
+    WriteProfileInt("Options", "RulerHexTicks", ruler_hex_ticks_);
+    WriteProfileInt("Options", "RulerDecTicks", ruler_dec_ticks_);
+    WriteProfileInt("Options", "RulerHexNums", ruler_hex_nums_);
+    WriteProfileInt("Options", "RulerDecNums", ruler_dec_nums_);
+    WriteProfileInt("Options", "ShowCursorInRuler", hl_caret_ ? 1 : 0);
+    WriteProfileInt("Options", "ShowMouseInRuler", hl_mouse_ ? 1 : 0);
+
     WriteProfileInt("Options", "CreateBackup", backup_);
     WriteProfileInt("Options", "BackupIfSpace", int(backup_space_));
     WriteProfileInt("Options", "BackupIfLess", backup_size_);
@@ -2786,6 +2821,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     CFiltersPage filtersPage;
     CPrintPage printerPage;
     CMacroPage macroPage;
+    CWorkspaceLayoutPage workspacelayoutPage;
     CWorkspaceDisplayPage workspacedisplayPage;
     CWorkspacePage workspacePage;
 	CTipsPage tipsPage;
@@ -2817,7 +2853,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 	}
 
 	// Allow pages to activate each other
-	workspacedisplayPage.SetStartupPage(&sysgeneralPage);
+	workspacelayoutPage.SetStartupPage(&sysgeneralPage);
     windisplayPage.SetGlobalDisplayPage(&workspacedisplayPage);
     wineditPage.SetGlobalEditPage(&workspacePage);
 
@@ -2832,6 +2868,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     optSheet.AddPageToTree(pCatSys, &macroPage, -1, 2);
 
 	CBCGPropSheetCategory * pCatWS  = optSheet.AddTreeCategory("Workspace", 0, 1);
+    optSheet.AddPageToTree(pCatWS, &workspacelayoutPage, -1, 2);
     optSheet.AddPageToTree(pCatWS, &workspacedisplayPage, -1, 2);
     optSheet.AddPageToTree(pCatWS, &workspacePage, -1, 2);
     optSheet.AddPageToTree(pCatWS, &tipsPage, -1, 2);
@@ -2843,6 +2880,9 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
         optSheet.AddPageToTree(pCatDoc, &windisplayPage, -1, 2);
         optSheet.AddPageToTree(pCatDoc, &wineditPage, -1, 2);
 	    optSheet.AddPageToTree(pCatDoc, &coloursPage, -1, 2);
+
+        // Allow global display page to jump to doc display page
+        workspacedisplayPage.SetDocDisplayPage(&windisplayPage);
     }
 	else
 	{
@@ -2919,10 +2959,24 @@ void CHexEditApp::get_options(struct OptValues &val)
     val.mditabs_ = mditabs_;
     val.tabsbottom_ = tabsbottom_;
     val.tabicons_ = tabicons_;
+    val.dlg_dock_ = dlg_dock_;
+    val.dlg_move_ = dlg_move_;
     val.hex_ucase_ = hex_ucase_;
+    val.k_abbrev_ = min(k_abbrev_, 3);  // may need to increase this if we add more options (eg Tera, etc)
     val.large_cursor_ = large_cursor_;
     val.show_other_ = show_other_;
 	val.nice_addr_ = nice_addr_;
+    val.sel_len_tip_ = sel_len_tip_;
+    val.sel_len_div2_ = sel_len_div2_;
+    val.ruler_ = ruler_;
+    val.ruler_dec_ticks_ = ruler_dec_ticks_;
+    val.ruler_dec_nums_ = ruler_dec_nums_;
+    val.ruler_hex_ticks_ = ruler_hex_ticks_;
+    val.ruler_hex_nums_ = ruler_hex_nums_;
+    val.scroll_past_ends_ = scroll_past_ends_;
+    val.autoscroll_accel_ = autoscroll_accel_;
+    val.hl_caret_ = hl_caret_;
+    val.hl_mouse_ = hl_mouse_;
 
     // Workspace
     val.bg_search_ = bg_search_;
@@ -3153,6 +3207,15 @@ void CHexEditApp::set_options(struct OptValues &val)
         if (mm->m_wndCalc.m_hWnd != 0)
             mm->m_wndCalc.Redisplay();
     }
+    if (k_abbrev_ != val.k_abbrev_)
+    {
+        k_abbrev_ = val.k_abbrev_;
+        mm->m_wndProp.m_pSheet->Update(GetView());  // may need to update file sizes
+    }
+
+    if (dlg_dock_ != val.dlg_dock_)
+        mm->OnDockableToggle();
+    dlg_move_ = val.dlg_move_;
 
     if (large_cursor_ != val.large_cursor_)
     {
@@ -3188,6 +3251,56 @@ void CHexEditApp::set_options(struct OptValues &val)
     {
         nice_addr_ = val.nice_addr_;
         invalidate_views = true;
+    }
+    sel_len_tip_  = val.sel_len_tip_;
+    sel_len_div2_ = val.sel_len_div2_;
+
+    if (ruler_ != val.ruler_)
+    {
+        ruler_ = val.ruler_;
+        invalidate_views = true;
+    }
+    if (ruler_dec_ticks_ != val.ruler_dec_ticks_)
+    {
+        ruler_dec_ticks_ = val.ruler_dec_ticks_;
+        invalidate_views = true;
+    }
+    if (ruler_dec_nums_ != val.ruler_dec_nums_)
+    {
+        ruler_dec_nums_ = val.ruler_dec_nums_;
+        invalidate_views = true;
+    }
+    if (ruler_hex_ticks_ != val.ruler_hex_ticks_)
+    {
+        ruler_hex_ticks_ = val.ruler_hex_ticks_;
+        invalidate_views = true;
+    }
+    if (ruler_hex_nums_ != val.ruler_hex_nums_)
+    {
+        ruler_hex_nums_ = val.ruler_hex_nums_;
+        invalidate_views = true;
+    }
+
+    if (hl_caret_ != val.hl_caret_)
+    {
+        hl_caret_ = val.hl_caret_;
+        invalidate_views = true;
+    }
+    if (hl_mouse_ != val.hl_mouse_)
+    {
+        hl_mouse_ = val.hl_mouse_;
+        invalidate_views = true;
+    }
+
+    if (scroll_past_ends_ != val.scroll_past_ends_)
+    {
+        scroll_past_ends_ = val.scroll_past_ends_;
+        invalidate_views = true;
+    }
+    if (autoscroll_accel_ != val.autoscroll_accel_)
+    {
+        autoscroll_accel_ = val.autoscroll_accel_;
+        invalidate_views = true;        // causes recalc_display which sets accel
     }
 
     // global template options

@@ -1,6 +1,6 @@
 // Options.cpp : implements the Options tabbed dialog box
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2008 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -37,6 +37,8 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+// xxx check save as default set scheme
 
 extern CHexEditApp theApp;
 
@@ -82,9 +84,20 @@ void COptSheet::init()
 	val_.tabsbottom_ = FALSE;
     val_.tabicons_ = TRUE;
 	val_.large_cursor_ = FALSE;
+    val_.dlg_dock_ = FALSE;
+    val_.dlg_move_ = TRUE;
 	val_.hex_ucase_ = FALSE;
+    val_.k_abbrev_ = 1;
 	val_.show_other_ = FALSE;
     val_.nice_addr_ = TRUE;
+    val_.sel_len_tip_ = val_.sel_len_div2_ = TRUE;
+    val_.scroll_past_ends_ = TRUE;
+    val_.autoscroll_accel_ = 10;
+	val_.ruler_ = TRUE;
+    val_.ruler_dec_ticks_ = 5; val_.ruler_dec_nums_ = 10;
+    val_.ruler_hex_ticks_ = val_.ruler_hex_nums_ = 1;
+	val_.hl_caret_ = TRUE;
+	val_.hl_mouse_ = TRUE;
 
 	val_.dffd_view_ = -1;
 	val_.max_fix_for_elts_ = 0;
@@ -127,7 +140,6 @@ void COptSheet::init()
 	val_.autofit_ = FALSE;
 	val_.maximize_ = FALSE;
     val_.borders_ = FALSE;
-	val_.ruler_ = FALSE;
     val_.addr_hex_ = TRUE;
     val_.addr_dec_ = FALSE;
     val_.line_nums_ = FALSE;
@@ -141,7 +153,6 @@ void COptSheet::init()
 	val_.insert_ = -1;
 	val_.modify_ = -1;
 	val_.big_endian_ = FALSE;
-    val_.scroll_past_ends_ = TRUE;
     //val_.change_tracking_ = 0;
     val_.ct_modifications_ = val_.ct_insertions_ = val_.ct_deletions_ = val_.ct_delcount_ = FALSE;
     val_.show_bookmarks_ = val_.show_highlights_ = TRUE;
@@ -489,24 +500,24 @@ void CWorkspacePage::OnBackupIfSize()
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
-// CWorkspaceDisplayPage property page
+// CWorkspaceLayoutPage property page
 
-IMPLEMENT_DYNCREATE(CWorkspaceDisplayPage, COptPage)
+IMPLEMENT_DYNCREATE(CWorkspaceLayoutPage, COptPage)
 
-void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
+void CWorkspaceLayoutPage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
 	DDX_Check(pDX, IDC_RESTORE, pParent->val_.open_restore_);
 	DDX_Check(pDX, IDC_MDITABS, pParent->val_.mditabs_);
 	DDX_Check(pDX, IDC_TABSBOTTOM, pParent->val_.tabsbottom_);
 	DDX_Check(pDX, IDC_TABICONS, pParent->val_.tabicons_);
-	DDX_Check(pDX, IDC_LARGE_CURSOR, pParent->val_.large_cursor_);
+	DDX_Check(pDX, IDC_DLG_DOCK, pParent->val_.dlg_dock_);
+    DDX_Check(pDX, IDC_DLG_MOVE, pParent->val_.dlg_move_);
 	DDX_Check(pDX, IDC_HEX_UCASE, pParent->val_.hex_ucase_);
-	DDX_Check(pDX, IDC_SHOW_OTHER, pParent->val_.show_other_);
-	DDX_Check(pDX, IDC_NICE_ADDR, pParent->val_.nice_addr_);
+	DDX_CBIndex(pDX, IDC_INT_ABBREV, pParent->val_.k_abbrev_);
 }
 
-void CWorkspaceDisplayPage::fix_controls()
+void CWorkspaceLayoutPage::fix_controls()
 {
     ASSERT(GetDlgItem(IDC_TABSBOTTOM) != NULL);
     GetDlgItem(IDC_TABSBOTTOM)->EnableWindow(pParent->val_.mditabs_);
@@ -514,25 +525,25 @@ void CWorkspaceDisplayPage::fix_controls()
     GetDlgItem(IDC_TABICONS)->EnableWindow(pParent->val_.mditabs_);
 }
 
-BEGIN_MESSAGE_MAP(CWorkspaceDisplayPage, COptPage)
+BEGIN_MESSAGE_MAP(CWorkspaceLayoutPage, COptPage)
 	ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
-	ON_BN_CLICKED(IDC_HEX_UCASE, OnChange)
-	ON_BN_CLICKED(IDC_MDITABS, OnChangeMditabs)
-	ON_BN_CLICKED(IDC_VISUALIZATIONS, OnVisualizations)
 	ON_BN_CLICKED(IDC_RESTORE, OnChange)
-	ON_BN_CLICKED(IDC_LARGE_CURSOR, OnChange)
+	ON_BN_CLICKED(IDC_MDITABS, OnChangeMditabs)
 	ON_BN_CLICKED(IDC_TABSBOTTOM, OnChange)
 	ON_BN_CLICKED(IDC_TABICONS, OnChange)
-	ON_BN_CLICKED(IDC_SHOW_OTHER, OnChange)
-	ON_BN_CLICKED(IDC_NICE_ADDR, OnChange)
+	ON_BN_CLICKED(IDC_DLG_DOCK, OnChange)
+	ON_BN_CLICKED(IDC_DLG_MOVE, OnChange)
+	ON_BN_CLICKED(IDC_HEX_UCASE, OnChange)
+	ON_CBN_SELCHANGE(IDC_INT_ABBREV, OnChange)
 	ON_BN_CLICKED(IDC_STARTUP_PAGE, OnStartupPage)
+	// ON_BN_CLICKED(IDC_VISUALIZATIONS, OnVisualizations)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CWorkspaceDisplayPage message handlers
+// CWorkspaceLayoutPage message handlers
 
-BOOL CWorkspaceDisplayPage::OnInitDialog() 
+BOOL CWorkspaceLayoutPage::OnInitDialog() 
 {
 	COptPage::OnInitDialog();
 
@@ -541,27 +552,167 @@ BOOL CWorkspaceDisplayPage::OnInitDialog()
 	return TRUE;
 }
 
-void CWorkspaceDisplayPage::OnChange() 
+void CWorkspaceLayoutPage::OnChange() 
 {
     SetModified(TRUE);
 }
 
-void CWorkspaceDisplayPage::OnStartupPage()
+void CWorkspaceLayoutPage::OnChangeMditabs() 
+{
+    UpdateData();
+    fix_controls();
+    SetModified(TRUE);
+}
+
+void CWorkspaceLayoutPage::OnStartupPage()
 {
 	if (pStartupPage != NULL)
 		pParent->SetActivePage(pStartupPage);
 }
 
-void CWorkspaceDisplayPage::OnVisualizations() 
+void CWorkspaceLayoutPage::OnVisualizations() 
 {
     theApp.GetSkinManager()->ShowSelectSkinDlg();
 }
 
-void CWorkspaceDisplayPage::OnChangeMditabs() 
+void CWorkspaceLayoutPage::OnOK() 
+{
+	theApp.set_options(pParent->val_);
+    COptPage::OnOK();
+}
+
+static DWORD id_pairs_workspace_layout[] = {
+    IDC_RESTORE, HIDC_RESTORE,
+    IDC_MDITABS, HIDC_MDITABS,
+    IDC_TABSBOTTOM, HIDC_TABSBOTTOM,
+    IDC_TABICONS, HIDC_TABICONS,
+    IDC_DLG_DOCK, HIDC_DLG_DOCK,
+    IDC_DLG_MOVE, HIDC_DLG_MOVE,
+    IDC_HEX_UCASE, HIDC_HEX_UCASE,
+    IDC_INT_ABBREV, HIDC_INT_ABBREV,
+	IDC_STARTUP_PAGE, HIDC_STARTUP_PAGE,
+//        IDC_VISUALIZATIONS, 0x41000+IDC_BCGBARRES_SKINS,
+    0,0
+};
+
+BOOL CWorkspaceLayoutPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_workspace_layout);
+    return TRUE;
+}
+
+void CWorkspaceLayoutPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_workspace_layout);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspaceDisplayPage property page
+
+IMPLEMENT_DYNCREATE(CWorkspaceDisplayPage, COptPage)
+
+void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+	DDX_Check(pDX, IDC_LARGE_CURSOR, pParent->val_.large_cursor_);
+	DDX_Check(pDX, IDC_SHOW_OTHER, pParent->val_.show_other_);
+	DDX_Check(pDX, IDC_NICE_ADDR, pParent->val_.nice_addr_);
+	DDX_Check(pDX, IDC_SEL_LEN_TIP, pParent->val_.sel_len_tip_);
+	DDX_Check(pDX, IDC_SEL_LEN_DIV2, pParent->val_.sel_len_div2_);
+	DDX_Check(pDX, IDC_RULER, pParent->val_.ruler_);
+	DDX_Text(pDX, IDC_RULER_DEC_TICKS, pParent->val_.ruler_dec_ticks_);
+	DDV_MinMaxUInt(pDX, pParent->val_.ruler_dec_ticks_, 1, 9999);
+	DDX_Text(pDX, IDC_RULER_DEC_NUMS, pParent->val_.ruler_dec_nums_);
+	DDV_MinMaxUInt(pDX, pParent->val_.ruler_dec_nums_, 1, 9999);
+	DDX_Text(pDX, IDC_RULER_HEX_TICKS, pParent->val_.ruler_hex_ticks_);
+	DDV_MinMaxUInt(pDX, pParent->val_.ruler_hex_ticks_, 1, 9999);
+	DDX_Text(pDX, IDC_RULER_HEX_NUMS, pParent->val_.ruler_hex_nums_);
+	DDV_MinMaxUInt(pDX, pParent->val_.ruler_hex_nums_, 1, 9999);
+    DDX_Check(pDX, IDC_HL_CARET, pParent->val_.hl_caret_);
+    DDX_Check(pDX, IDC_HL_MOUSE, pParent->val_.hl_mouse_);
+    DDX_Check(pDX, IDC_SCROLL_PAST_ENDS, pParent->val_.scroll_past_ends_);
+    DDX_Slider(pDX, IDC_SLIDER_AUTOSCROLL, pParent->val_.autoscroll_accel_);
+}
+
+void CWorkspaceDisplayPage::fix_controls()
+{
+    GetDlgItem(IDC_SEL_LEN_DIV2)->EnableWindow(pParent->val_.sel_len_tip_);
+    GetDlgItem(IDC_RULER_DEC_TICKS)->EnableWindow(pParent->val_.ruler_);
+    GetDlgItem(IDC_SPIN_RULER_DEC_TICKS)->EnableWindow(pParent->val_.ruler_);
+    GetDlgItem(IDC_RULER_DEC_NUMS)->EnableWindow(pParent->val_.ruler_);
+    GetDlgItem(IDC_SPIN_RULER_DEC_NUMS)->EnableWindow(pParent->val_.ruler_);
+    GetDlgItem(IDC_RULER_HEX_TICKS)->EnableWindow(pParent->val_.ruler_);
+    GetDlgItem(IDC_SPIN_RULER_HEX_TICKS)->EnableWindow(pParent->val_.ruler_);
+    GetDlgItem(IDC_RULER_HEX_NUMS)->EnableWindow(pParent->val_.ruler_);
+    GetDlgItem(IDC_SPIN_RULER_HEX_NUMS)->EnableWindow(pParent->val_.ruler_);
+}
+
+BEGIN_MESSAGE_MAP(CWorkspaceDisplayPage, COptPage)
+	ON_WM_HELPINFO()
+    ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_LARGE_CURSOR, OnChange)
+	ON_BN_CLICKED(IDC_SHOW_OTHER, OnChange)
+	ON_BN_CLICKED(IDC_NICE_ADDR, OnChange)
+	ON_BN_CLICKED(IDC_SEL_LEN_TIP, OnChangeUpdate)
+	ON_BN_CLICKED(IDC_SEL_LEN_DIV2, OnChange)
+	ON_BN_CLICKED(IDC_RULER, OnChangeUpdate)
+	ON_EN_CHANGE(IDC_RULER_DEC_TICKS, OnChange)
+	ON_EN_CHANGE(IDC_RULER_DEC_NUMS, OnChange)
+	ON_EN_CHANGE(IDC_RULER_HEX_TICKS, OnChange)
+	ON_EN_CHANGE(IDC_RULER_HEX_NUMS, OnChange)
+	ON_BN_CLICKED(IDC_HL_CARET, OnChange)
+	ON_BN_CLICKED(IDC_HL_MOUSE, OnChange)
+	ON_BN_CLICKED(IDC_SCROLL_PAST_ENDS, OnChange)
+    ON_WM_HSCROLL()     // for slider
+	ON_BN_CLICKED(IDC_DOC_PAGE, OnDocPage)
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspaceDisplayPage message handlers
+
+BOOL CWorkspaceDisplayPage::OnInitDialog() 
+{
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_DEC_TICKS))->SetRange(1, 9999);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_DEC_NUMS)) ->SetRange(1, 9999);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_HEX_TICKS))->SetRange(1, 9999);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_HEX_NUMS)) ->SetRange(1, 9999);
+    ((CSliderCtrl *)GetDlgItem(IDC_SLIDER_AUTOSCROLL))->SetRange(0, 50);
+    GetDlgItem(IDC_DOC_PAGE)->EnableWindow(pDocPage != NULL);
+
+	COptPage::OnInitDialog();
+
+    fix_controls();
+	return TRUE;
+}
+
+LRESULT CWorkspaceDisplayPage::OnIdle(long lCount)
+{
+	fix_controls();
+    return FALSE;
+}
+
+void CWorkspaceDisplayPage::OnChange() 
+{
+    SetModified(TRUE);
+}
+
+void CWorkspaceDisplayPage::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+    // Slider position has changed
+    SetModified(TRUE);
+}
+
+void CWorkspaceDisplayPage::OnChangeUpdate()
 {
     UpdateData();
-    fix_controls();
     SetModified(TRUE);
+}
+
+void CWorkspaceDisplayPage::OnDocPage()
+{
+	if (pDocPage != NULL)
+		pParent->SetActivePage(pDocPage);
 }
 
 void CWorkspaceDisplayPage::OnOK() 
@@ -571,16 +722,25 @@ void CWorkspaceDisplayPage::OnOK()
 }
 
 static DWORD id_pairs_workspace_display[] = {
-    IDC_RESTORE, HIDC_RESTORE,
-	IDC_STARTUP_PAGE, HIDC_STARTUP_PAGE,
-    IDC_HEX_UCASE, HIDC_HEX_UCASE,
-    IDC_MDITABS, HIDC_MDITABS,
-    IDC_TABSBOTTOM, HIDC_TABSBOTTOM,
-    IDC_TABICONS, HIDC_TABICONS,
-    IDC_NICE_ADDR, HIDC_NICE_ADDR,
     IDC_LARGE_CURSOR, HIDC_LARGE_CURSOR,
     IDC_SHOW_OTHER, HIDC_SHOW_OTHER,
-//        IDC_VISUALIZATIONS, 0x41000+IDC_BCGBARRES_SKINS,
+    IDC_NICE_ADDR, HIDC_NICE_ADDR,
+    IDC_SEL_LEN_TIP, HIDC_SEL_LEN_TIP,
+    IDC_SEL_LEN_DIV2, HIDC_SEL_LEN_DIV2,
+	IDC_RULER, HIDC_RULER,
+    IDC_RULER_DEC_TICKS, HIDC_RULER_DEC_TICKS,
+    IDC_SPIN_RULER_DEC_TICKS, HIDC_RULER_DEC_TICKS,
+    IDC_RULER_DEC_NUMS, HIDC_RULER_DEC_NUMS,
+    IDC_SPIN_RULER_DEC_NUMS, HIDC_RULER_DEC_NUMS,
+    IDC_RULER_HEX_TICKS, HIDC_RULER_HEX_TICKS,
+    IDC_SPIN_RULER_HEX_TICKS, HIDC_RULER_HEX_TICKS,
+    IDC_RULER_HEX_NUMS, HIDC_RULER_HEX_NUMS,
+    IDC_SPIN_RULER_HEX_NUMS, HIDC_RULER_HEX_NUMS,
+    IDC_HL_CARET, HIDC_HL_CARET,
+    IDC_HL_MOUSE, HIDC_HL_MOUSE,
+    IDC_SCROLL_PAST_ENDS, HIDC_SCROLL_PAST_ENDS,
+    IDC_SLIDER_AUTOSCROLL, HIDC_SLIDER_AUTOSCROLL,
+    IDC_DOC_PAGE, HIDC_DOC_PAGE,
     0,0
 };
 
@@ -2465,7 +2625,6 @@ static DWORD id_pairs3[] = {
     IDC_FOOTER_OPTS, HIDC_FOOTER_OPTS,
     IDC_PRINT_BORDER, HIDC_PRINT_BORDER,
     IDC_PRINT_HEADINGS, HIDC_PRINT_HEADINGS,
-
     IDC_PRINT_UNITS, HIDC_PRINT_UNITS,
     IDC_PRINT_SPACE1, HIDC_PRINT_SPACE1,
     IDC_PRINT_SPACE1HALF, HIDC_PRINT_SPACE1HALF,
@@ -3099,7 +3258,6 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 
         pParent->val_.autofit_ = pParent->val_.display_.autofit;
         pParent->val_.borders_ = pParent->val_.display_.borders;
-		pParent->val_.ruler_ = pParent->val_.display_.ruler;
         pParent->val_.addr_hex_ = pParent->val_.display_.hex_addr;
 		pParent->val_.addr_dec_ = pParent->val_.display_.decimal_addr;
 		pParent->val_.line_nums_ = pParent->val_.display_.line_nums;
@@ -3115,7 +3273,6 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_GROUPING, pParent->val_.grouping_);
 	DDX_Check(pDX, IDC_AUTOFIT, pParent->val_.autofit_);
 	DDX_Check(pDX, IDC_BORDERS, pParent->val_.borders_);
-	DDX_Check(pDX, IDC_RULER, pParent->val_.ruler_);
 	DDX_Check(pDX, IDC_ADDR_HEX, pParent->val_.addr_hex_);
 	DDX_Check(pDX, IDC_ADDR_DEC, pParent->val_.addr_dec_);
 	DDX_Check(pDX, IDC_LINENOS, pParent->val_.line_nums_);
@@ -3174,7 +3331,6 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 
         pParent->val_.display_.autofit = pParent->val_.autofit_;
         pParent->val_.display_.borders = pParent->val_.borders_;
-		pParent->val_.display_.ruler = pParent->val_.ruler_;
 		pParent->val_.display_.decimal_addr = pParent->val_.addr_dec_;
 		pParent->val_.display_.hex_addr = pParent->val_.addr_hex_;
 		pParent->val_.display_.line_nums = pParent->val_.line_nums_;
@@ -3196,7 +3352,6 @@ BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
 	ON_BN_CLICKED(IDC_AUTOFIT, OnChangeUpdate)
 	ON_BN_CLICKED(IDC_MAX, OnChange)
 	ON_BN_CLICKED(IDC_BORDERS, OnChange)
-	ON_BN_CLICKED(IDC_RULER, OnChange)
 	ON_BN_CLICKED(IDC_ADDR_HEX, OnChangeAddrHex)
 	ON_BN_CLICKED(IDC_ADDR_DEC, OnChangeAddrDec)
 	ON_BN_CLICKED(IDC_LINENOS, OnChangeLineNos)
@@ -3321,7 +3476,6 @@ static DWORD id_pairs_windisplay[] = {
     IDC_SPIN_GROUPING, HIDC_GROUPING,
     IDC_AUTOFIT, HIDC_AUTOFIT,
     IDC_BORDERS, HIDC_BORDERS,
-	IDC_RULER, HIDC_RULER,
     IDC_ADDR_HEX, HIDC_ADDR_HEX,
     IDC_ADDR_DEC, HIDC_ADDR_DEC,
 	IDC_LINENOS, HIDC_LINENOS,
@@ -3517,7 +3671,6 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.modify_           = !pParent->val_.display_.readonly;
         pParent->val_.insert_           = !pParent->val_.display_.overtype;
 		pParent->val_.big_endian_       = pParent->val_.display_.big_endian;
-        pParent->val_.scroll_past_ends_ = !pParent->val_.display_.strict_scroll;
         pParent->val_.ct_insertions_    = !pParent->val_.display_.hide_insert;
         pParent->val_.ct_modifications_ = !pParent->val_.display_.hide_replace;
         pParent->val_.ct_deletions_     = !pParent->val_.display_.hide_delete;
@@ -3529,7 +3682,6 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_MODIFY,         pParent->val_.modify_);
 	DDX_CBIndex(pDX, IDC_INSERT,         pParent->val_.insert_);
 	DDX_Check(pDX, IDC_BIG_ENDIAN,       pParent->val_.big_endian_);
-    DDX_Check(pDX, IDC_SCROLL_PAST_ENDS, pParent->val_.scroll_past_ends_);
 	DDX_Check(pDX, IDC_CT_INSERTIONS,    pParent->val_.ct_insertions_);
 	DDX_Check(pDX, IDC_CT_MODIFICATIONS, pParent->val_.ct_modifications_);
 	DDX_Check(pDX, IDC_CT_DELETIONS,     pParent->val_.ct_deletions_);
@@ -3543,7 +3695,6 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.display_.overtype       = !pParent->val_.insert_;
         pParent->val_.display_.readonly       = !pParent->val_.modify_;
 		pParent->val_.display_.big_endian     = pParent->val_.big_endian_;
-        pParent->val_.display_.strict_scroll = !pParent->val_.scroll_past_ends_;
         pParent->val_.display_.hide_insert    = !pParent->val_.ct_insertions_;
         pParent->val_.display_.hide_replace   = !pParent->val_.ct_modifications_;
         pParent->val_.display_.hide_delete    = !pParent->val_.ct_deletions_;
@@ -3560,7 +3711,6 @@ BEGIN_MESSAGE_MAP(CWindowEditPage, COptPage)
 	ON_CBN_SELCHANGE(IDC_MODIFY, OnSelchangeModify)
 	ON_CBN_SELCHANGE(IDC_INSERT, OnSelchangeInsert)
 	ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChange)
-	ON_BN_CLICKED(IDC_SCROLL_PAST_ENDS, OnChange)
 	ON_BN_CLICKED(IDC_CT_INSERTIONS, OnChange)
 	ON_BN_CLICKED(IDC_CT_MODIFICATIONS, OnChange)
 	ON_BN_CLICKED(IDC_CT_DELETIONS, OnChangeUpdate)     // state affects whether IDC_CT_DELCOUNT is enabled
@@ -3616,7 +3766,6 @@ static DWORD id_pairs_winedit[] = {
     IDC_INSERT, HIDC_INSERT,
     IDC_INSERT_DESC, HIDC_INSERT,
     IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-    IDC_SCROLL_PAST_ENDS, HIDC_SCROLL_PAST_ENDS,
     IDC_CT_MODIFICATIONS, HIDC_CT_MODIFICATIONS,
     IDC_CT_INSERTIONS, HIDC_CT_INSERTIONS,
     IDC_CT_DELETIONS, HIDC_CT_DELETIONS,

@@ -146,8 +146,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGMDIFrameWnd)
         ON_UPDATE_COMMAND_UI(ID_VIEW_BOOKMARKS, OnUpdateViewBookmarks)
         ON_COMMAND(ID_VIEW_FIND, OnViewFind)
         ON_UPDATE_COMMAND_UI(ID_VIEW_FIND, OnUpdateViewFind)
+#if 1 //#ifdef EXPLORER_WND
         ON_COMMAND(ID_VIEW_EXPL, OnViewExpl)
         ON_UPDATE_COMMAND_UI(ID_VIEW_EXPL, OnUpdateViewExpl)
+#endif
         ON_COMMAND(ID_VIEW_PROPERTIES, OnViewProperties)
         ON_UPDATE_COMMAND_UI(ID_VIEW_PROPERTIES, OnUpdateViewProperties)
 
@@ -368,8 +370,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 //        m_wndBar1.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
 //        m_wndBar1.EnableTextLabels();
 
-		dockable_ = (BOOL)theApp.GetProfileInt("MainFrame", "DockableDialogs", 0) > 0 ? TRUE : FALSE;
-
         if (!m_wndCalc.Create(this) ||
 			!m_wndBookmarks.Create(this) ||
 			!m_wndFind.Create(this) ||
@@ -386,7 +386,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
         m_wndCalc.SetWindowText("Calculator");
         m_wndCalc.EnableRollUp();
-        m_wndCalc.EnableDocking(dockable_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
+        m_wndCalc.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndCalc.SetCaptionStyle(TRUE);
         tmp_size = m_wndCalc.m_sizeInitial;
 		ASSERT(tmp_size.cx > -1 && tmp_size.cy > -1);
@@ -398,7 +398,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
         m_wndBookmarks.SetWindowText("Bookmarks");
         m_wndBookmarks.EnableRollUp();
-        m_wndBookmarks.EnableDocking(dockable_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
+        m_wndBookmarks.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndBookmarks.SetCaptionStyle(TRUE);
 
         tmp_size = m_wndBookmarks.m_sizeInitial;
@@ -408,20 +408,20 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
         m_wndFind.SetWindowText("Find");
         m_wndFind.EnableRollUp();
-        m_wndFind.EnableDocking(dockable_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
+        m_wndFind.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndFind.SetCaptionStyle(TRUE);
 
 #ifdef EXPLORER_WND
         // Set up the window
         m_wndExpl.SetWindowText("HexEdit Explorer");
         m_wndExpl.EnableRollUp();
-        m_wndExpl.EnableDocking(dockable_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
+        m_wndExpl.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndExpl.SetCaptionStyle(TRUE);
 #endif
 
         m_wndProp.SetWindowText("Properties");
         m_wndProp.EnableRollUp();
-        m_wndProp.EnableDocking(dockable_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
+        m_wndProp.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndProp.SetCaptionStyle(TRUE);
 
         DockControlBar(&m_wndBar1);
@@ -974,8 +974,6 @@ void CMainFrame::SaveFrameOptions()
 #ifndef DIALOG_BAR
     aa->WriteProfileInt("MainFrame", "ShowFindDlg", int(m_wndFind.visible_));
     aa->WriteProfileInt("MainFrame", "ShowPropDlg", int(m_wndProp.visible_));
-#else
-    aa->WriteProfileInt("MainFrame", "DockableDialogs", int(dockable_));
 #endif
 }
 
@@ -1199,9 +1197,9 @@ void CMainFrame::OnNavForw(UINT nID)
 
 void CMainFrame::OnDockableToggle()
 {
-    dockable_ = !dockable_;
+    theApp.dlg_dock_ = !theApp.dlg_dock_;
 
-    if (!dockable_)
+    if (!theApp.dlg_dock_)
     {
         // Make sure the windows aren't docked
         if (!m_wndCalc.IsFloating())
@@ -1240,7 +1238,7 @@ void CMainFrame::OnDockableToggle()
 
 void CMainFrame::OnUpdateDockableToggle(CCmdUI* pCmdUI)
 {
-    pCmdUI->SetCheck(dockable_);
+    pCmdUI->SetCheck(theApp.dlg_dock_);
 }
 
 void CMainFrame::OnWindowNew()

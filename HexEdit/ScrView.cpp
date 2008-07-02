@@ -51,7 +51,8 @@ CScrView::CScrView()
 
     horz_buffer_zone_ = 1;              // At least one char from caret to right edge of screen
     vert_buffer_zone_ = 2;
-    strict_scroll_ = FALSE;
+    scroll_past_ends_ = TRUE;
+    autoscroll_accel_ = 10;
 
     mouse_down_ = FALSE;
 
@@ -436,7 +437,7 @@ BOOL CScrView::CaretDisplayed(CSizeAp win_size)
 // Typically overridden in derived class (but this base class should still be called).
 void CScrView::ValidateScroll(CPointAp &pos, BOOL strict /* =FALSE */)
 {
-    if (strict_scroll_) strict = TRUE;  // Disallow scroll past ends according to this setting
+    if (!scroll_past_ends_) strict = TRUE;  // Disallow scroll past ends according to this setting
     TEXTMETRIC tm;
     {
         CClientDC dc(this);
@@ -1384,7 +1385,7 @@ void CScrView::OnSelUpdate(CPoint point)
             // Scroll speed depends on distance mouse is above window
 //            int diff_pixel = ((disp.top - pp.y)*(disp.top - pp.y))/10;
             int diff_pixel = int(disp.top - pp.y);
-            if (diff_pixel > 100) diff_pixel = 100; // Limit to 100 lines at a time
+            int autoscroll = (int)pow((double)diff_pixel, autoscroll_accel_/10.0);
 
             __int64 to_move = 0;                        // How much to scroll up
 
@@ -1392,10 +1393,10 @@ void CScrView::OnSelUpdate(CPoint point)
             if (disp.top < rr.top) to_move = line_.cy - (rr.top - disp.top);
 
             // If enough time has passed or mouse is far enough above the window...
-            if (disp.top > pp.y && diff_clock * diff_pixel >= CLOCKS_PER_SEC)
+            if (disp.top > pp.y && diff_clock * autoscroll >= CLOCKS_PER_SEC)
             {
                 // Scroll according to time and distance
-                to_move += line_.cy*((diff_clock * diff_pixel)/CLOCKS_PER_SEC);
+                to_move += line_.cy*((diff_clock * autoscroll)/CLOCKS_PER_SEC);
                 last_clock = curr_clock;
             }
             newpos.y = scrollpos_.y - to_move;
@@ -1407,18 +1408,20 @@ void CScrView::OnSelUpdate(CPoint point)
             clock_t diff_clock = curr_clock - last_clock;
             if (diff_clock > CLOCKS_PER_SEC) diff_clock = CLOCKS_PER_SEC;
             int diff_pixel = int(pp.y - disp.bottom);
-            if (diff_pixel > 100) diff_pixel = 100;
+            int autoscroll = (int)pow((double)diff_pixel, autoscroll_accel_/10.0);
 
             __int64 to_move = 0;
             if (disp.bottom > rr.bottom) to_move = line_.cy - (disp.bottom - rr.bottom);
-            if (disp.bottom < pp.y && diff_clock * diff_pixel >= CLOCKS_PER_SEC)
+            if (disp.bottom < pp.y && diff_clock * autoscroll >= CLOCKS_PER_SEC)
             {
-                to_move += line_.cy*((diff_clock * diff_pixel)/CLOCKS_PER_SEC);
+                to_move += line_.cy*((diff_clock * autoscroll)/CLOCKS_PER_SEC);
                 last_clock = curr_clock;
             }
             newpos.y = scrollpos_.y + to_move;
         }
 
+        if (newpos.y < 0)
+            newpos.y = 0;
         SetScroll(newpos, TRUE);
     }
     

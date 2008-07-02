@@ -160,7 +160,8 @@ static char THIS_FILE[] = __FILE__;
 
 //-----------------------------------------------------------------------------
 // Routines for loading/saving history lists in the registry
-// Loads a list of history strings from the registry
+
+// LoadHist reads a list of history strings from the registry
 void LoadHist(std::vector<CString> & hh, LPCSTR name, size_t smax)
 {
     CString ss, entry;
@@ -176,21 +177,33 @@ void LoadHist(std::vector<CString> & hh, LPCSTR name, size_t smax)
     }
 }
 
+// SaveHist writes history strings to the registry for later reading by LoadHist
 void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax)
 {
     CString entry;
     CString fmt = CString(name) + "%d";
 
-    int last = hh.size();
-    for (int ii = 1; ii <= smax; ++ii)
+    int ii, num = min(hh.size(), smax);
+
+    // Write th new entries
+    for (ii = 1; ii <= num; ++ii)
+    {
+        // Check that we don't write any empty strings as this will cause problems
+        ASSERT(!hh[hh.size()-ii].IsEmpty());
+
+        entry.Format(fmt, ii);
+        theApp.WriteProfileString("History", entry, hh[hh.size()-ii]);
+    }
+    // Wipe out any old entries past the new end
+    for ( ; ; ++ii)
     {
         entry.Format(fmt, ii);
 
-        // Note this clears any trailing entries OR
-        // it clears all entries we are clearing the search history on exit
-        theApp.WriteProfileString("History", 
-                                  entry, 
-                                  last < ii ? (LPCTSTR)NULL : (LPCTSTR)hh[last-ii]);
+        // Stop when there are no more entries in the registry to be blanked out.
+        if (theApp.GetProfileString("History", entry).IsEmpty())
+            break;
+
+        theApp.WriteProfileString("History", entry, NULL);
     }
 }
 
@@ -585,12 +598,12 @@ CString NumScale(double val)
 }
 #endif
 
-CString NumScale(double val, double one_k /* = 1000.0 */)
+CString NumScale(double val)
 {
 	double dd = val;
     CString retval;
 	bool negative = false;
-	static const char *unit_str = " KMGTPE";  // kilo, mega, giga, tera, peta, exa
+	static const char *unit_str = " KMGTPE";  // (unit), kilo, mega, giga, tera, peta, exa
 
     // Allow for negative values (may give "-0")
     if (dd < 0.0)
@@ -600,8 +613,8 @@ CString NumScale(double val, double one_k /* = 1000.0 */)
     }
 
 	size_t idx;
-	for (idx = 0; dd + 0.5 >= one_k; ++idx)
-        dd = dd / one_k;
+	for (idx = 0; dd + 0.5 >= (idx >= theApp.k_abbrev_ ? 1000.0 : 1024.0); ++idx)
+        dd = dd / (idx >= theApp.k_abbrev_ ? 1000.0 : 1024.0);
 
     // If too big just print in scientific notation
     if (idx >= strlen(unit_str))

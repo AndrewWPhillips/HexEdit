@@ -41,7 +41,7 @@ DATE FromTime_t_80(long v);
 DATE FromTime_t_mins(long v);
 DATE FromTime_t_1899(long v);
 
-CString NumScale(double val, double one_k = 1000.0);
+CString NumScale(double val);
 CString	bin_str(__int64 val,int bits);
 void AddCommas(CString &str);
 void AddSpaces(CString &str);

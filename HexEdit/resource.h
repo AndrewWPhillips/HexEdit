@@ -396,6 +396,8 @@
 #define IDD_GETINT                      407
 #define IDD_GETSTR                      408
 #define IDD_GETBOOL                     409
+#define IDD_OPT_WORKLAYOUT              410
+#define IDD_OPT_HISTORY                 411
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -471,17 +473,21 @@
 #define IDC_NICE_ADDR                   1048
 #define IDC_MEM_ADD                     1048
 #define IDC_ONE_ONLY                    1048
+#define IDC_DLG_DOCK                    1048
 #define IDC_OPEN_EBCDIC                 1049
 #define IDC_FILE_NAME                   1049
 #define IDC_MEM_SUBTRACT                1049
-#define IDC_LARGE_CURSOR                1049
 #define IDC_BG_SEARCH                   1049
 #define IDC_NO_RECENT                   1049
+#define IDC_HEX_UCASE3                  1049
+#define IDC_DLG_MOVE                    1049
+#define IDC_SEL_LEN_TIP                 1049
 #define IDC_OPEN_OVERTYPE               1050
 #define IDC_FILE_TYPE                   1050
 #define IDC_SHELLOPEN                   1050
 #define IDC_MARK_STORE                  1050
 #define IDC_TABICONS                    1050
+#define IDC_SEL_LEN_DIV2                1050
 #define IDC_OPEN_INSERT                 1051
 #define IDC_MARK_CLEAR                  1051
 #define IDC_CLEAR_HIST                  1051
@@ -604,14 +610,20 @@
 #define IDC_SPIN_RECENT_FILES           1096
 #define IDC_SPIN_UNDO_MERGE             1096
 #define IDC_SPIN_GROUPING               1097
+#define IDC_SPIN_FIND_LIST_SIZE         1097
 #define IDC_COLS_DESC                   1098
 #define IDC_SPIN_KEYS                   1098
+#define IDC_SPIN_REPLACE_LIST_SIZE      1098
 #define IDC_SPIN_PLAYS                  1099
 #define IDC_DISPLAY_HEX                 1099
 #define IDC_SPIN_VERTBUFFER             1099
+#define IDC_SPIN_GOTO_LIST_SIZE         1099
 #define IDC_NAMES                       1100
+#define IDC_SPIN_GOTO_LIST_SIZE2        1100
 #define IDC_ADD                         1101
+#define IDC_SPIN_GOTO_LIST_SIZE3        1101
 #define IDC_REMOVE                      1102
+#define IDC_SPIN_GOTO_LIST_SIZE4        1102
 #define IDC_RESET                       1103
 #define IDC_VALIDATE                    1103
 #define IDC_SCHEMES                     1104
@@ -766,11 +778,17 @@
 #define IDC_RECENT_FILES                1222
 #define IDC_UNDO_MERGE                  1222
 #define IDC_GRID_RFL                    1223
+#define IDC_FIND_LIST_SIZE              1223
 #define IDC_REMOVE_FILES                1224
+#define IDC_REPLACE_LIST_SIZE           1224
 #define IDC_BOOKMARK_GOTO               1225
+#define IDC_GOTO_LIST_SIZE              1225
 #define IDC_BOOKMARK_REMOVE             1226
+#define IDC_GOTO_LIST_SIZE2             1226
 #define IDC_BOOKMARK_ADD                1227
+#define IDC_GOTO_LIST_SIZE3             1227
 #define IDC_BOOKMARKS_VALIDATE          1228
+#define IDC_GOTO_LIST_SIZE4             1228
 #define IDC_GRID_BL                     1229
 #define IDC_BOOKMARK_NAME               1231
 #define IDC_NET_RETAIN_DESC             1232
@@ -1089,8 +1107,22 @@
 #define IDC_PROMPT                      1555
 #define IDC_RULER                       1556
 #define IDC_LINENOS                     1557
+#define IDC_HL_CARET                    1557
 #define IDC_ADDRBASE1                   1558
+#define IDC_HL_MOUSE                    1558
 #define IDC_TEMPLATEDIR                 1559
+#define IDC_LARGE_CURSOR                1560
+#define IDC_RULER_DEC_TICKS             1561
+#define IDC_SPIN_RULER_DEC_TICKS        1562
+#define IDC_RULER_DEC_NUMS              1563
+#define IDC_SPIN_RULER_DEC_NUMS         1564
+#define IDC_RULER_HEX_TICKS             1565
+#define IDC_SPIN_RULER_HEX_TICKS        1566
+#define IDC_RULER_HEX_NUMS              1567
+#define IDC_SPIN_RULER_HEX_NUMS         1568
+#define IDC_DOC_PAGE                    1570
+#define IDC_INT_ABBREV                  1571
+#define IDC_SLIDER_AUTOSCROLL           1572
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1451,15 +1483,18 @@
 #define ID_DFFD_OPEN_10TH               38009
 #define ID_HIDDEN_SHOW                  39001
 #define ID_HIDDEN_HIDE                  39002
+#define ID_VIEW_RULER                   39003
+#define ID_VIEW_HL_CURSOR               39004
+#define ID_VIEW_HL_MOUSE                39005
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        410
-#define _APS_NEXT_COMMAND_VALUE         39003
-#define _APS_NEXT_CONTROL_VALUE         1560
+#define _APS_NEXT_RESOURCE_VALUE        412
+#define _APS_NEXT_COMMAND_VALUE         39006
+#define _APS_NEXT_CONTROL_VALUE         1573
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

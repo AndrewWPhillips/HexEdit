@@ -322,6 +322,7 @@ BEGIN
             MENUITEM "",                            ID_VIEW_TOOLBARS
         END
         MENUITEM "&Status Bar          ",       ID_VIEW_STATUS_BAR
+        MENUITEM "&Ruler",                      ID_VIEW_RULER
     END
     POPUP "&Tools"
     BEGIN
@@ -468,6 +469,7 @@ BEGIN
             MENUITEM "",                            ID_VIEW_TOOLBARS
         END
         MENUITEM "&Status Bar          ",       ID_VIEW_STATUS_BAR
+        MENUITEM "&Ruler",                      ID_VIEW_RULER
         MENUITEM SEPARATOR
         MENUITEM "&Auto Fit",                   ID_AUTOFIT
         MENUITEM "Fo&nt...",                    ID_FONT
@@ -878,14 +880,14 @@ BEGIN
         MENUITEM "Fo&nt...",                    ID_FONT
         MENUITEM "&Auto Fit",                   ID_AUTOFIT
         MENUITEM SEPARATOR
-        MENUITEM "&Allow Changes",              32796
-        MENUITEM "&Insert",                     32800
-        MENUITEM "&Mark Position",              32781
+        MENUITEM "&Allow Changes",              ID_ALLOW_MODS
+        MENUITEM "&Insert",                     ID_INSERT
+        MENUITEM "&Mark Position",              ID_MARK
         MENUITEM "&Bookmarks...",               ID_BOOKMARKS_EDIT
         MENUITEM SEPARATOR
         MENUITEM "Customize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
-        MENUITEM "&Properties...",              32806
+        MENUITEM "&Properties...",              ID_PROPERTIES
     END
 END
 
@@ -914,14 +916,14 @@ BEGIN
             MENUITEM "&C/C++",                      ID_CONTROL_C
         END
         MENUITEM SEPARATOR
-        MENUITEM "&Allow Changes",              32796
-        MENUITEM "&Insert",                     32800
+        MENUITEM "&Allow Changes",              ID_ALLOW_MODS
+        MENUITEM "&Insert",                     ID_INSERT
         MENUITEM "&Mark Position",              ID_MARK
         MENUITEM "&Bookmarks...",               ID_BOOKMARKS_EDIT
         MENUITEM SEPARATOR
         MENUITEM "Customize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
-        MENUITEM "&Properties...",              32806
+        MENUITEM "&Properties...",              ID_PROPERTIES
     END
 END
 
@@ -968,7 +970,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Allow Changes",              ID_ALLOW_MODS
         MENUITEM "&Insert\tIns",                ID_INSERT
-        MENUITEM "&Mark Position",              32781
+        MENUITEM "&Mark Position",              ID_MARK
         MENUITEM SEPARATOR
         MENUITEM "&Bookmarks...",               ID_BOOKMARKS_EDIT
         MENUITEM "&Go To...\tCtrl+G",           ID_EDIT_GOTO
@@ -977,7 +979,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Customize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
-        MENUITEM "&Properties...",              32806
+        MENUITEM "&Properties...",              ID_PROPERTIES
     END
 END
 
@@ -1004,7 +1006,7 @@ BEGIN
         MENUITEM "Next Highlight",              ID_HIGHLIGHT_NEXT
         MENUITEM "Hide Highlights",             ID_HIGHLIGHT_HIDE
         MENUITEM "Clear Highlights",            ID_HIGHLIGHT_CLEAR
-        MENUITEM "Select Highlight",            32861
+        MENUITEM "Select Highlight",            ID_HIGHLIGHT_SELECT
     END
     POPUP "Navigation commands"
     BEGIN
@@ -1056,7 +1058,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Customize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
-        MENUITEM "&Properties...",              32806
+        MENUITEM "&Properties...",              ID_PROPERTIES
     END
 END
 
@@ -1064,9 +1066,9 @@ IDR_CONTEXT_SELECTION MENU
 BEGIN
     POPUP "Selection"
     BEGIN
-        MENUITEM "Cu&t",                        57635
-        MENUITEM "&Copy",                       57634
-        MENUITEM "&Paste (Replace)",            57637
+        MENUITEM "Cu&t",                        ID_EDIT_CUT
+        MENUITEM "&Copy",                       ID_EDIT_COPY
+        MENUITEM "&Paste (Replace)",            ID_EDIT_PASTE
         MENUITEM SEPARATOR
         MENUITEM "&Write Selection...",         ID_EDIT_WRITEFILE
         MENUITEM "Append &Selection...",        ID_EDIT_APPENDFILE
@@ -1079,7 +1081,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Customize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
-        MENUITEM "&Properties...",              32806
+        MENUITEM "&Properties...",              ID_PROPERTIES
     END
 END
 
@@ -1096,7 +1098,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Customize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
-        MENUITEM "&Properties...",              32806
+        MENUITEM "&Properties...",              ID_PROPERTIES
     END
 END
 
@@ -1297,9 +1299,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "General"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_COGS,IDC_PAGE_ICON,0,0,21,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,41,9,
-                    214,1
+    ICON            IDI_COGS,IDC_PAGE_ICON,0,0,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,62,8,
+                    193,1
     LTEXT           "Global settings",IDC_STATIC,20,4,47,8
     CONTROL         "Save settings on e&xit",IDC_SAVE_EXIT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,22,17,95,10,0,
@@ -1321,7 +1323,7 @@ BEGIN
     CONTROL         "Run AutoExec macro",IDC_AUTOEXEC,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,152,56,102,10,0,
                     HIDC_AUTOEXEC
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,76,
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,75,
                     219,1
     LTEXT           "History lists",IDC_STATIC,12,71,36,8
     LTEXT           "Recently used file list entries:",IDC_STATIC,22,84,59,
@@ -1445,8 +1447,8 @@ CAPTION "Keystroke Macros"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     ICON            IDI_MACRO,IDC_PAGE_ICON,3,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,88,10,
-                    167,1
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,86,10,
+                    169,1
     LTEXT           "Keystroke Macros",IDC_STATIC,28,6,58,8
     GROUPBOX        "Refresh Display",IDC_STATIC,11,20,126,108,WS_GROUP
     CONTROL         "&Never",IDC_REFRESH_NEVER,"Button",BS_AUTORADIOBUTTON | 
@@ -1503,39 +1505,73 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Display"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_DISPLAY,IDC_PAGE_ICON,0,0,20,20
+    ICON            IDI_WINDOW,IDC_PAGE_ICON,0,0,20,20
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,8,
-                    219,1
-    LTEXT           "Layout",IDC_STATIC,20,4,22,8
-    CONTROL         "&Restore main window on startup",IDC_RESTORE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,20,17,117,10,0,HIDC_RESTORE
-    PUSHBUTTON      "More Startup Options >>",IDC_STARTUP_PAGE,154,15,94,14,
-                    0,0,HIDC_STARTUP_PAGE
-    CONTROL         "Display Window &Tabs",IDC_MDITABS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,20,29,87,10,0,HIDC_MDITABS
-    CONTROL         "Window Tabs at &Bottom",IDC_TABSBOTTOM,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,32,41,100,10,0,
-                    HIDC_TABSBOTTOM
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,70,
-                    219,1
-    LTEXT           "Global formatting",IDC_STATIC,9,66,54,8
-    CONTROL         "Display &hex in uppercase",IDC_HEX_UCASE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,20,78,104,10,0,
-                    HIDC_HEX_UCASE
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,96,
-                    219,1
-    LTEXT           "Document",IDC_STATIC,11,92,34,8
+                    116,1
+    LTEXT           "Display",IDC_STATIC,20,4,24,8
     CONTROL         "&Large (block) cursor",IDC_LARGE_CURSOR,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,20,104,104,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,20,16,104,10,0,
                     HIDC_LARGE_CURSOR
+    CONTROL         "Show selection length",IDC_SEL_LEN_TIP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,20,28,104,10,0,
+                    HIDC_SEL_LEN_TIP
+    CONTROL         "Divisibility by largest power of 2",IDC_SEL_LEN_DIV2,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,32,40,111,10,0,
+                    HIDC_SEL_LEN_DIV2
     CONTROL         "&Nice addresses",IDC_NICE_ADDR,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,137,104,104,10,0,HIDC_NICE_ADDR
-    CONTROL         "Display ""shadow"" &cursor in other (hex/char) area",
-                    IDC_SHOW_OTHER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,
-                    116,169,10,0,HIDC_SHOW_OTHER
-    CONTROL         "Show Icons in Tabs",IDC_TABICONS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,32,52,100,10,0,
-                    HIDC_TABICONS
+                    WS_TABSTOP,153,24,104,10,0,HIDC_NICE_ADDR
+    CONTROL         "Display ""shadow"" &cursor in",IDC_SHOW_OTHER,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,153,36,104,10,0,
+                    HIDC_SHOW_OTHER
+    LTEXT           " other (hex/char) area",IDC_STATIC,163,45,70,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,57,
+                    219,1
+    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
+                    WS_TABSTOP,12,52,30,10,0,HIDC_RULER
+    LTEXT           "Decimal:",IDC_STATIC,20,66,28,8
+    LTEXT           "Large ticks every:",IDC_STATIC,52,66,57,8
+    EDITTEXT        IDC_RULER_DEC_TICKS,109,64,28,12,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_RULER_DEC_TICKS
+    CONTROL         "",IDC_SPIN_RULER_DEC_TICKS,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,134,61,11,12
+    LTEXT           "Numbers every:",IDC_STATIC,153,66,50,8
+    EDITTEXT        IDC_RULER_DEC_NUMS,206,64,28,12,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_RULER_DEC_NUMS
+    CONTROL         "",IDC_SPIN_RULER_DEC_NUMS,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,230,61,11,12
+    LTEXT           "Hex:",IDC_STATIC,20,80,16,8
+    LTEXT           "Large ticks every:",IDC_STATIC,52,80,57,8
+    EDITTEXT        IDC_RULER_HEX_TICKS,109,78,28,12,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_RULER_HEX_TICKS
+    CONTROL         "",IDC_SPIN_RULER_HEX_TICKS,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,134,77,11,12
+    LTEXT           "Numbers every:",IDC_STATIC,153,80,50,8
+    EDITTEXT        IDC_RULER_HEX_NUMS,206,78,28,12,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_RULER_HEX_NUMS
+    CONTROL         "",IDC_SPIN_RULER_HEX_NUMS,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,230,77,11,12
+    CONTROL         "Indicate cursor position",IDC_HL_CARET,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,52,94,90,10,0,
+                    HIDC_HL_CARET
+    CONTROL         "Indicate mouse location",IDC_HL_MOUSE,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,153,94,99,10,0,
+                    HIDC_HL_MOUSE
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,109,
+                    219,1
+    LTEXT           "Scrolling",IDC_STATIC,11,105,28,8
+    CONTROL         "Allow scroll past ends",IDC_SCROLL_PAST_ENDS,"Button",
+                    BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,20,116,55,16,
+                    0,HIDC_SCROLL_PAST_ENDS
+    LTEXT           "Autoscroll acceleration:",IDC_STATIC,109,116,42,16
+    CONTROL         "",IDC_SLIDER_AUTOSCROLL,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,153,117,99,15,WS_EX_TRANSPARENT,
+                    HIDC_SLIDER_AUTOSCROLL
+    PUSHBUTTON      "Document Display Options >>",IDC_DOC_PAGE,153,5,103,14,
+                    0,0,HIDC_DOC_PAGE
 END
 
 IDD_PASSWORD DIALOGEX 0, 0, 255, 118
@@ -1627,8 +1663,8 @@ CAPTION "Printing"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     ICON            IDI_PRINTER,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,43,8,
-                    216,1
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,41,8,
+                    218,1
     LTEXT           "Layout",IDC_STATIC,20,4,22,8
     CONTROL         "Dr&aw border",IDC_PRINT_BORDER,"Button",BS_AUTOCHECKBOX | 
                     WS_GROUP | WS_TABSTOP,21,17,55,10,0,HIDC_PRINT_BORDER
@@ -1708,8 +1744,8 @@ CAPTION "Display"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     ICON            IDI_DOCDISPLAY,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,42,8,
-                    119,1
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,40,8,
+                    123,1
     LTEXT           "Layout",IDC_STATIC,20,4,22,8
     LTEXT           "S&how Area(s):",IDC_STATIC,19,18,48,8
     COMBOBOX        IDC_SHOW_AREA,69,17,61,53,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -1736,8 +1772,6 @@ BEGIN
                     WS_TABSTOP,121,49,59,10,0,HIDC_MAX
     CONTROL         "Sector &bounds",IDC_BORDERS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,121,62,59,10,0,HIDC_BORDERS
-    CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
-                    WS_TABSTOP,184,25,75,10,0,HIDC_RULER
     CONTROL         "&Hex Address",IDC_ADDR_HEX,"Button",BS_AUTOCHECKBOX | 
                     BS_MULTILINE | WS_TABSTOP,184,37,75,10,0,HIDC_ADDR_HEX
     CONTROL         "&Decimal Address",IDC_ADDR_DEC,"Button",BS_AUTOCHECKBOX | 
@@ -1757,7 +1791,7 @@ BEGIN
     LTEXT           "C&ontrol Chars:",IDC_CONTROL_DESC,19,119,48,8
     COMBOBOX        IDC_CONTROL,69,117,94,58,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_CONTROL
-    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,7,91,14,
+    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,5,91,14,
                     0,0,HIDC_GLOBAL_PAGE
 END
 
@@ -2193,7 +2227,7 @@ FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     ICON            IDI_DOCEDIT,IDC_PAGE_ICON,0,0,20,20
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,40,8,
-                    120,1
+                    124,1
     LTEXT           "Editing",IDC_STATIC,20,4,22,8
     LTEXT           "Modifiability",IDC_STATIC,21,20,39,8
     COMBOBOX        IDC_MODIFY,63,18,64,47,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -2213,9 +2247,6 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_VERTBUFFER,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,97,59,11,12
-    CONTROL         "Allow scroll past ends",IDC_SCROLL_PAST_ENDS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,135,60,115,10,0,
-                    HIDC_SCROLL_PAST_ENDS
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,65,79,
                     191,1
     LTEXT           "Change Tracking",IDC_STATIC,12,75,56,8
@@ -2240,7 +2271,7 @@ BEGIN
     CONTROL         "Show highlights",IDC_SHOW_HIGHLIGHTS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,135,120,115,10,0,
                     HIDC_SHOW_HIGHLIGHTS
-    PUSHBUTTON      "Global Editing Options >>",IDC_GLOBAL_PAGE,165,7,91,14
+    PUSHBUTTON      "Global Editing Options >>",IDC_GLOBAL_PAGE,165,5,91,14
 END
 
 IDD_OPT_WINGENERAL DIALOGEX 0, 0, 260, 140
@@ -2297,7 +2328,7 @@ BEGIN
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,132,58,11,14
     PUSHBUTTON      "Change Templates &Folder...",IDC_TEMPLATEDIR,156,62,94,
                     14,0,0,HIDC_TEMPLATEDIR
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,84,
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,85,
                     219,1
     LTEXT           "Default format strings",IDC_STATIC,10,81,67,8
     RTEXT           "Character:",IDC_DESC_DFFD_FORMAT_CHAR,8,97,41,8
@@ -2339,10 +2370,17 @@ BEGIN
     CONTROL         "Intelligent undo",IDC_INTELLIGENT_UNDO,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,24,39,70,10,0,
                     HIDC_INTELLIGENT_UNDO
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,38,57,
+    RTEXT           "Number of consecutive byte changes to merge:",
+                    IDC_STATIC,128,36,76,17
+    EDITTEXT        IDC_UNDO_MERGE,206,38,37,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_UNDO_MERGE
+    CONTROL         "",IDC_SPIN_UNDO_MERGE,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
+                    UDS_NOTHOUSANDS,239,38,11,12
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,38,58,
                     219,1
     CONTROL         "&Create backup files",IDC_BACKUP,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,13,53,74,10,0,HIDC_BACKUP
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,53,73,10,0,HIDC_BACKUP
     CONTROL         "Only if sufficient disk space",IDC_BACKUP_SPACE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,24,66,98,10,0,
                     HIDC_BACKUP_SPACE
@@ -2371,13 +2409,124 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_EXPORT_LINELEN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,239,120,11,12
-    RTEXT           "Number of consecutive byte changes to merge:",
-                    IDC_STATIC,128,36,76,17
-    EDITTEXT        IDC_UNDO_MERGE,206,38,37,14,ES_RIGHT | ES_NUMBER,0,
-                    HIDC_UNDO_MERGE
-    CONTROL         "",IDC_SPIN_UNDO_MERGE,"msctls_updown32",UDS_SETBUDDYINT | 
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
-                    UDS_NOTHOUSANDS,239,38,11,12
+END
+
+IDD_OPT_WORKLAYOUT DIALOGEX 0, 0, 260, 140
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Global"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    ICON            IDI_DISPLAY,IDC_PAGE_ICON,0,0,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,50,8,
+                    205,1
+    LTEXT           "Main Window",IDC_STATIC,20,4,44,8
+    CONTROL         "&Restore main window on startup",IDC_RESTORE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,20,17,117,10,0,HIDC_RESTORE
+    PUSHBUTTON      "More Startup Options >>",IDC_STARTUP_PAGE,161,15,94,14,
+                    NOT WS_TABSTOP,0,HIDC_STARTUP_PAGE
+    CONTROL         "Display Window &Tabs",IDC_MDITABS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,20,29,87,10,0,HIDC_MDITABS
+    CONTROL         "Window Tabs at &Bottom",IDC_TABSBOTTOM,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,32,41,100,10,0,
+                    HIDC_TABSBOTTOM
+    CONTROL         "Show Icons in Tabs",IDC_TABICONS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,32,52,100,10,0,
+                    HIDC_TABICONS
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,55,71,
+                    200,1
+    LTEXT           "Modeless dialogs",IDC_STATIC,9,67,55,8
+    CONTROL         "Allow to dock",IDC_DLG_DOCK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,20,80,76,10,0,HIDC_DLG_DOCK
+    CONTROL         "Undocked dialogs move out of the way",IDC_DLG_MOVE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,107,80,137,10,0,
+                    HIDC_DLG_MOVE
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,99,
+                    220,1
+    LTEXT           "Global formatting",IDC_STATIC,9,95,54,8
+    CONTROL         "&Hex in uppercase",IDC_HEX_UCASE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,20,108,76,10,0,
+                    HIDC_HEX_UCASE
+    LTEXT           "Numeric abbreviations:",IDC_STATIC,106,106,46,15
+    COMBOBOX        IDC_INT_ABBREV,151,109,104,87,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP,0,HIDC_INT_ABBREV
+END
+
+IDD_OPT_HISTORY DIALOGEX 0, 0, 260, 140
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "History Lists"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    ICON            IDI_COGS,IDC_PAGE_ICON,0,1,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,41,8,
+                    214,1
+    LTEXT           "Windows",IDC_STATIC,20,4,30,8
+    CONTROL         "Never add files opened to the ""My Recent Documents"" list.",
+                    IDC_NO_RECENT,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | 
+                    WS_TABSTOP,22,16,113,16,0,HIDC_NO_RECENT
+    LTEXT           "Recently used file list entries:",IDC_STATIC,169,16,49,
+                    16
+    EDITTEXT        IDC_RECENT_FILES,219,17,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_RECENT_FILES
+    CONTROL         "Spin1",IDC_SPIN_RECENT_FILES,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,248,16,11,12
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,42,
+                    226,1
+    LTEXT           "Saved list sizes",IDC_STATIC,12,38,49,8
+    LTEXT           "Find:",IDC_STATIC,24,54,18,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_FIND_LIST_SIZE,43,51,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_FIND_LIST_SIZE
+    CONTROL         "",IDC_SPIN_FIND_LIST_SIZE,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,75,50,11,12
+    LTEXT           "Replace:",IDC_STATIC,11,70,31,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_REPLACE_LIST_SIZE,43,67,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_REPLACE_LIST_SIZE
+    CONTROL         "",IDC_SPIN_REPLACE_LIST_SIZE,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,75,65,11,12
+    LTEXT           "Decimal jumps:",IDC_STATIC,81,54,47,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_GOTO_LIST_SIZE,129,51,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_GOTO_LIST_SIZE
+    CONTROL         "",IDC_SPIN_GOTO_LIST_SIZE,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,159,46,11,12
+    LTEXT           "Hex jumps:",IDC_STATIC,81,70,47,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_GOTO_LIST_SIZE3,129,67,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_GOTO_LIST_SIZE3
+    CONTROL         "",IDC_SPIN_GOTO_LIST_SIZE3,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,159,64,11,12
+    LTEXT           "Explorer filters:",IDC_STATIC,168,54,50,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_GOTO_LIST_SIZE2,219,51,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_GOTO_LIST_SIZE2
+    CONTROL         "",IDC_SPIN_GOTO_LIST_SIZE2,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,249,46,11,12
+    LTEXT           "Explorer folders:",IDC_STATIC,168,70,50,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_GOTO_LIST_SIZE4,219,67,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_GOTO_LIST_SIZE4
+    CONTROL         "",IDC_SPIN_GOTO_LIST_SIZE4,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,248,63,11,12
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,90,
+                    226,1
+    LTEXT           "Clear history lists",IDC_STATIC,12,86,52,8
+    CONTROL         "Clear recent file list",IDC_CLEAR_RECENT_FILE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,22,99,114,10,0,
+                    HIDC_CLEAR_RECENT_FILE
+    CONTROL         "Clear all bookmarks",IDC_CLEAR_BOOKMARKS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,22,110,114,10,0,
+                    HIDC_CLEAR_BOOKMARKS
+    LTEXT           "NOTE: To clear find etc lists on exit set the above saved list sizes to zero.",
+                    IDC_STATIC,22,121,120,18
+    CONTROL         "Clear selected lists on exit",IDC_CLEAR_ON_EXIT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,153,99,99,10,0,
+                    HIDC_CLEAR_ON_EXIT
+    PUSHBUTTON      "&Clear Selected Lists Now",IDC_CLEAR_HIST,153,112,99,13,
+                    WS_GROUP,0,HIDC_CLEAR_HIST
 END
 
 
@@ -2387,8 +2536,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,40,1,445
- PRODUCTVERSION 3,40,1,445
+ FILEVERSION 3,30,2,132
+ PRODUCTVERSION 3,30,2,132
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2405,12 +2554,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "3, 40, 1, 445"
+            VALUE "FileVersion", "3, 30, 2, 132"
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2008  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "3, 40, 1, 445"
+            VALUE "ProductVersion", "3, 30, 2, 132"
         END
     END
     BLOCK "VarFileInfo"
@@ -2543,6 +2692,23 @@ BEGIN
     0
 END
 
+IDD_OPT_WORKLAYOUT DLGINIT
+BEGIN
+    IDC_INT_ABBREV, 0x403, 26, 0
+0x3d4b, 0x3031, 0x3030, 0x202c, 0x3d4d, 0x3031, 0x3030, 0x2c4b, 0x4720, 
+0x313d, 0x3030, 0x4d30, 0x0020, 
+    IDC_INT_ABBREV, 0x403, 26, 0
+0x3d4b, 0x3031, 0x3432, 0x202c, 0x3d4d, 0x3031, 0x3030, 0x2c4b, 0x4720, 
+0x313d, 0x3030, 0x4d30, 0x0020, 
+    IDC_INT_ABBREV, 0x403, 26, 0
+0x3d4b, 0x3031, 0x3432, 0x202c, 0x3d4d, 0x3031, 0x3432, 0x2c4b, 0x4720, 
+0x313d, 0x3030, 0x4d30, 0x0020, 
+    IDC_INT_ABBREV, 0x403, 25, 0
+0x3d4b, 0x3031, 0x3432, 0x202c, 0x3d4d, 0x3031, 0x3432, 0x2c4b, 0x4720, 
+0x313d, 0x3230, 0x4d34, "\000" 
+    0
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2566,6 +2732,11 @@ BEGIN
     BEGIN
         RIGHTMARGIN, 255
         BOTTOMMARGIN, 127
+    END
+
+    IDD_OPT_HISTORY, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 116
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -3190,6 +3361,13 @@ BEGIN
     ID_DFFD_SPLIT           "Show template in a split window\nTemplate Split"
     ID_DFFD_TAB             "Show templates in a tabbed window\nTemplate Tab"
     ID_DFFD_NEW             "Create a new ""default"" template\nNew Template"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_RULER           "Show or hide the ruler\nToggle Ruler"
+    ID_VIEW_HL_CURSOR       "Highlight cursor location in ruler and address area\nHighlight Cursor"
+    ID_VIEW_HL_MOUSE        "Show mouse location in ruler and address area\nShow Mouse"
 END
 
 #endif    // English (U.S.) resources
@@ -4828,18 +5006,6 @@ BEGIN
     EDITTEXT        IDC_VALUE,45,57,40,14,ES_AUTOHSCROLL
 END
 
-IDD_GETSTR DIALOGEX 0, 0, 200, 110
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
-    WS_SYSMENU
-CAPTION "Enter a string"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,35,86,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,115,87,50,14
-    LTEXT           "",IDC_PROMPT,10,12,180,39
-    EDITTEXT        IDC_VALUE,10,53,180,14,ES_AUTOHSCROLL
-END
-
 IDD_GETBOOL DIALOGEX 0, 0, 186, 68
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
@@ -4850,6 +5016,18 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,8,47,80,14
     PUSHBUTTON      "Cancel",IDCANCEL,98,47,80,14
     LTEXT           "",IDC_PROMPT,6,7,175,37
+END
+
+IDD_GETSTR DIALOGEX 0, 0, 186, 92
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Enter a number"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,30,73,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,114,72,50,14
+    LTEXT           "",IDC_PROMPT,6,7,173,35
+    EDITTEXT        IDC_VALUE,6,53,173,14,ES_AUTOHSCROLL
 END
 
 
