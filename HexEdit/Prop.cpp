@@ -1,6 +1,6 @@
 // Prop.cpp : implements the Properties tabbed dialog box
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2008 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -962,26 +962,33 @@ BOOL CPropInfoPage::PreTranslateMessage(MSG* pMsg)
 
 		CHexFileList *pfl = theApp.GetFileList();
 		int ii = -1;
+        CString filename;
 		if (pview != NULL && pview->GetDocument()->pfile1_ != NULL)
-			ii = pfl->GetIndex(pview->GetDocument()->pfile1_->GetFilePath());
+        {
+            filename = pview->GetDocument()->pfile1_->GetFilePath();
+			ii = pfl->GetIndex(filename);
+        }
 
         if (pMsg->hwnd == GetDlgItem(IDC_INFO_CATEGORY)->m_hWnd && ii != -1)
         {
 			pfl->SetData(ii, CHexFileList::CATEGORY, category_);
             ((CEdit*)GetDlgItem(IDC_INFO_CATEGORY))->SetSel(0, -1);
 			category_changed_ = false;
+            ((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
         }
         else if (pMsg->hwnd == GetDlgItem(IDC_INFO_KEYWORDS)->m_hWnd && ii != -1)
         {
 			pfl->SetData(ii, CHexFileList::KEYWORDS, keywords_);
             ((CEdit*)GetDlgItem(IDC_INFO_KEYWORDS))->SetSel(0, -1);
 			keywords_changed_ = false;
+            ((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
         }
         else if (pMsg->hwnd == GetDlgItem(IDC_INFO_COMMENTS)->m_hWnd && ii != -1)
         {
 			pfl->SetData(ii, CHexFileList::COMMENTS, comments_);
             ((CEdit*)GetDlgItem(IDC_INFO_COMMENTS))->SetSel(0, -1);
 			comments_changed_ = false;
+            ((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
         }
 
         return 1;
@@ -1174,13 +1181,16 @@ void CPropInfoPage::OnKillFocusCategory()
 	if (category_changed_ && pview != NULL && pview->GetDocument()->pfile1_ != NULL)
 	{
 		CHexFileList *pfl = theApp.GetFileList();
-		int ii = pfl->GetIndex(pview->GetDocument()->pfile1_->GetFilePath());
+        CString filename = pview->GetDocument()->pfile1_->GetFilePath();
+        ASSERT(!filename.IsEmpty());
+		int ii = pfl->GetIndex(filename);
 		ASSERT(ii != -1);
 
 		UpdateData();
 		pfl->SetData(ii, CHexFileList::CATEGORY, category_);
 		//((CEdit*)GetDlgItem(IDC_INFO_CATEGORY))->SetSel(0, -1);
 		category_changed_ = false;
+        ((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
 	}
 }
 
@@ -1190,12 +1200,15 @@ void CPropInfoPage::OnKillFocusKeywords()
 	if (keywords_changed_ && pview != NULL && pview->GetDocument()->pfile1_ != NULL)
 	{
 		CHexFileList *pfl = theApp.GetFileList();
-		int ii = pfl->GetIndex(pview->GetDocument()->pfile1_->GetFilePath());
+        CString filename = pview->GetDocument()->pfile1_->GetFilePath();
+        ASSERT(!filename.IsEmpty());
+		int ii = pfl->GetIndex(filename);
 		ASSERT(ii != -1);
 
 		UpdateData();
 		pfl->SetData(ii, CHexFileList::KEYWORDS, keywords_);
 		keywords_changed_ = false;
+        ((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
 	}
 }
 
@@ -1205,12 +1218,15 @@ void CPropInfoPage::OnKillFocusComments()
 	if (comments_changed_ && pview != NULL && pview->GetDocument()->pfile1_ != NULL)
 	{
 		CHexFileList *pfl = theApp.GetFileList();
-		int ii = pfl->GetIndex(pview->GetDocument()->pfile1_->GetFilePath());
+        CString filename = pview->GetDocument()->pfile1_->GetFilePath();
+        ASSERT(!filename.IsEmpty());
+		int ii = pfl->GetIndex(filename);
 		ASSERT(ii != -1);
 
 		UpdateData();
 		pfl->SetData(ii, CHexFileList::COMMENTS, comments_);
 		comments_changed_ = false;
+        ((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
 	}
 }
 
@@ -2600,7 +2616,6 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 		long double mantissa;
 		int exponent;
 
-		// Calc the value, format the mantissa
 		switch (format_)
 		{
 		case FMT_IEEE32:
@@ -2629,10 +2644,8 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 			ASSERT(0);
 		}
 
-		// Format the exponent
+		// Work out what to display
 		exp_.Format("%d", (int)exponent);
-
-		// Format the value
 		switch (_fpclass(value))
 		{
 		case _FPCLASS_SNAN:
