@@ -611,6 +611,10 @@ CHexEditView::CHexEditView() : expr_(this)
     undo_.reserve(1024);
 #endif
 
+#ifdef RULER_ADJUST
+    adjusting_offset_ = adjusting_group_by_ = -1;
+#endif
+
 	errors_mentioned_ = false;
 }
 
@@ -1913,6 +1917,7 @@ void CHexEditView::OnDraw(CDC* pDC)
     if (first_addr < first_virt) first_addr = first_virt;
     if (last_addr > last_virt) last_addr = last_virt;
 
+    // These are for drawing things on the screen
 	CPoint pt;   // moved this here to avoid a spurious compiler error C2362
     CPen pen1(PS_SOLID, 0, same_hue(sector_col_, 100, 30));    // dark sector_col_
     CPen pen2(PS_SOLID, 0, same_hue(addr_bg_col_, 100, 30));   // dark addr_bg_col_
@@ -1943,61 +1948,100 @@ void CHexEditView::OnDraw(CDC* pDC)
     else
         psaved_pen = pDC->SelectObject(&pen2);
 
+    // Column related screen stuff (ruler, vertical lines etc)
     if (!pDC->IsPrinting())
     {
+        ASSERT(!neg_y && !neg_x);       // This should be true when drawing on screen (uses MM_TEXT)
         // Vert. line between address and hex areas
 		pt.y = bdr_top_ - 2;
-        if (neg_y) pt.y = -pt.y;
 		pt.x = addr_width_*char_width - char_width - doc_rect.left + bdr_left_;
-		if (neg_x) pt.x = - pt.x;
 		pDC->MoveTo(pt);
 		pt.y = 30000;
-		if (neg_y) pt.y = -30000;
 		pDC->LineTo(pt);
         if (!display_.vert_display && display_.hex_area)
         {
 			// Vert line to right of hex area
             pt.y = bdr_top_ - 2;
-			if (neg_y) pt.y = -pt.y;
             pt.x = char_pos(0, char_width) - char_width_w/2 - doc_rect.left + bdr_left_;
-            if (neg_x) pt.x = - pt.x;
             pDC->MoveTo(pt);
             pt.y = 30000;
-            if (neg_y) pt.y = -30000;
             pDC->LineTo(pt);
         }
         if (display_.vert_display || display_.char_area)
         {
 			// Vert line to right of char area
             pt.y = bdr_top_ - 2;
-			if (neg_y) pt.y = -pt.y;
             pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + 
                    (3*char_width_w)/2 - doc_rect.left + bdr_left_;
-            if (neg_x) pt.x = - pt.x;
             pDC->MoveTo(pt);
             pt.y = 30000;
-            if (neg_y) pt.y = -30000;
             pDC->LineTo(pt);
         }
 		if (theApp.ruler_)
 		{
+			int horz = bdr_left_ - GetScroll().x;       // Horiz. offset to window posn of left side
+
 			ASSERT(bdr_top_ > 0);
-			// Horiz line under ruler
+			// Draw horiz line under ruler
 			pt.y = bdr_top_ - 3;
-			if (neg_y) pt.y = -pt.y;
 			pt.x = addr_width_*char_width - char_width - doc_rect.left + bdr_left_;
-			if (neg_x) pt.x = - pt.x;
 			pDC->MoveTo(pt);
 			pt.x = 30000;
-			if (neg_x) pt.x = -30000;
 			pDC->LineTo(pt);
 
-			// Draw the ruler
-			int vert = 0;                           // Screen row to display the text at
-			int horz = bdr_left_ - GetScroll().x;
-			int hicol = -1;                         // Column with cursor is to be highlighted
+            // Draw ticks using hex offsets for major ticks (if using hex addresses) or
+            // decimal offsets (if using decimal addresses/line numbers and/or hex addresses)
+            int major = 1;
+			if (display_.decimal_addr || display_.line_nums)
+                major = theApp.ruler_dec_ticks_;        // decimal ruler or both hex and decimal
+            else
+                major = theApp.ruler_hex_ticks_;        // only showing hex ruler
+            // Hex area ticks
+			if (!display_.vert_display && display_.hex_area)
+				for (int column = 1; column < rowsize_; ++column)
+                {
+                    if ((!display_.decimal_addr && !display_.line_nums && theApp.ruler_hex_nums_ > 1 && column%theApp.ruler_hex_nums_ == 0) ||
+                        ((display_.decimal_addr || display_.line_nums) && theApp.ruler_dec_nums_ > 1 && column%theApp.ruler_dec_nums_ == 0) )
+                        continue;       // skip when displaying a number at this posn
+        			pt.y = bdr_top_ - 4;
+					pt.x = hex_pos(column) - char_width/2 + horz;
+                    if (column%group_by_ == 0)
+                        pt.x -= char_width/2;
+        			pDC->MoveTo(pt);
+                    pt.y -= (column%major) ? 3 : 7;
+			        pDC->LineTo(pt);
+                }
+            // Char area or stacked display ticks
+    		if (display_.vert_display || display_.char_area)
+				for (int column = 0; column <= rowsize_; ++column)
+                {
+                    if ((!display_.decimal_addr && !display_.line_nums && theApp.ruler_hex_nums_ > 1 && column%theApp.ruler_hex_nums_ == 0) ||
+                        ((display_.decimal_addr || display_.line_nums) && theApp.ruler_dec_nums_ > 1 && column%theApp.ruler_dec_nums_ == 0) )
+                        continue;       // skip when displaying a number at this posn
+        			pt.y = bdr_top_ - 4;
+					pt.x = char_pos(column) + horz;
+                    if (display_.vert_display && column%group_by_ == 0)
+                        if (column == rowsize_)    // skip last one
+                            break;
+                        else
+                            pt.x -= char_width/2;
+        			pDC->MoveTo(pt);
+                    pt.y -= (column%major) ? 2 : 5;
+			        pDC->LineTo(pt);
+                }
 
-            if (theApp.hl_caret_ && !mouse_down_)
+			// Draw numbers in the ruler area
+            // Note that if we are displaying hex and decimal addresses we show 2 rows
+            //      - hex offsets at top (then after moving vert down) decimal offsets
+			int vert = 0;                       // Screen y pixel to the row of nos at
+			int hicol = -1;                     // Column with cursor is to be highlighted
+
+            bool hl_ruler = true;               // Can we highlight mouse/cursor in the ruler?
+            if (display_.hex_addr && theApp.ruler_hex_nums_ > 1) hl_ruler = false;
+			if ((display_.decimal_addr || display_.line_nums) && theApp.ruler_dec_nums_ > 1) hl_ruler = false;
+
+            // Current caret position shown in the ruler
+            if (hl_ruler && theApp.hl_caret_ && !mouse_down_)
 			{
 				// Do highlighting with a background rectangle in ruler/address area
                 hicol = int(start_addr%rowsize_);
@@ -2019,7 +2063,8 @@ void CHexEditView::OnDraw(CDC* pDC)
 				(void)pDC->SelectObject(psaved_pen);
 				(void)pDC->SelectObject(psaved_brush);
 			}
-            if (theApp.hl_mouse_ && mouse_addr_ > -1)
+            // Current mouse position in the ruler
+            if (hl_ruler && theApp.hl_mouse_ && mouse_addr_ > -1)
 			{
 				int mousecol = int(mouse_addr_%rowsize_);   // Mouse column to be highlighted
 				CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
@@ -2046,113 +2091,189 @@ void CHexEditView::OnDraw(CDC* pDC)
 			CRect cli;
 			GetDisplayRect(&cli);
 
-			// Show offsets in the top border (ruler)
+			// Show hex offsets in the top border (ruler)
 			if (display_.hex_addr)
 			{
-                // Do hex ruler
-				CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_ + 1);
+                bool between = theApp.ruler_hex_nums_ > 1;      // Only display numbers above cols if displaying for every column
+
+                // Do hex numbers in ruler
+                CRect rect(-1, vert, -1, vert + text_height_ + 1);
 				CString ss;
 				pDC->SetTextColor(GetHexAddrCol());   // Colour of hex addresses
-				if (!display_.vert_display && display_.hex_area)
-					for (int column = 0; column < rowsize_; ++column)
-					{
-						rect.left  = rect.right;
-						rect.right = hex_pos(column + 1) + horz;
-						if (rect.left < cli.left)
-                            continue;
-                        if (rect.left > cli.right)
-                            break;
-						if (theApp.hex_ucase_)
-							ss.Format("%02X", (column + display_.addrbase1)%256);
-						else
-							ss.Format("%02x", (column + display_.addrbase1)%256);
-						pDC->DrawText(ss, &rect, DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-					}
-				rect.right = char_pos(0) + horz;
-				if (display_.vert_display || display_.char_area)
-					for (int column = 0; column < rowsize_; ++column)
-					{
-						rect.left  = rect.right;
-						rect.right = char_pos(column + 1) + horz;
-						if (rect.left < cli.left)
-                            continue;
-                        if (rect.left > cli.right)
-                            break;
 
-                        UINT fmt = DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE;
-                        if (column == hicol || (column+1)%theApp.ruler_hex_nums_ == 0)
+                // Show hex offsets above hex area
+				if (!display_.vert_display && display_.hex_area)
+                    for (int column = 0; column < rowsize_; ++column)
+					{
+                        if (between && display_.addrbase1 && column == 0)
+                            continue;           // usee doesn't like seeing zero
+                        if (column%theApp.ruler_hex_nums_ != 0)
+                            continue;
+                        rect.left = hex_pos(column) + horz;
+                        if (between)
                         {
-                            int ii;
-                            if (display_.addrbase1 && (column+1)%theApp.ruler_hex_nums_ == 0 &&
-                                (column+1)%16 == 0 && theApp.ruler_hex_nums_%4 == 0)
-                            {
-                                fmt &= ~DT_BOTTOM;      // == DT_TOP
-						        ii = column/16 + 1;     // show "16's" not units
-                            }
-                            else
-                                ii = (column + display_.addrbase1)%16;
-						    if (theApp.hex_ucase_)
-							    ss.Format("%1X", ii);
-						    else
-							    ss.Format("%1x", ii);
-							pDC->DrawText(ss, &rect, fmt);
+                            rect.left -= char_width;
+                            if (column > 0 && column%group_by_ == 0)
+                                rect.left -= char_width/2;
                         }
-                        else if ((column+1)%theApp.ruler_hex_ticks_ == 0)
-							pDC->DrawText("|", &rect, fmt);
+                        if (rect.left < cli.left)
+                            continue;
+                        if (rect.left > cli.right)
+                            break;
+						rect.right = rect.left + text_width_ + text_width_;
+                        if (!between)
+                        {
+                            // Draw 2 digit number above every column
+                            ss.Format(theApp.hex_ucase_ ? "%02X" : "%02x", (column + display_.addrbase1)%256);
+						    pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
+                        else if (column%16 == 0 && theApp.ruler_hex_nums_ > 3)
+                        {
+                            // Draw 2 digit numbers to mark end of 16 columns
+                            rect.left -= (char_width+1)/2;
+                            ss.Format(theApp.hex_ucase_ ? "%02X" : "%02x", column%256);
+						    pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
                         else
-							pDC->DrawText(".", &rect, fmt);
+                        {
+                            // Draw single digit number in between columns
+                            ss.Format(theApp.hex_ucase_ ? "%1X" : "%1x", column%16);
+						    pDC->DrawText(ss, &rect, DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
+					}
+                // Show hex offsets above char area or stacked display
+				if (display_.vert_display || display_.char_area)
+                    for (int column = 0; column < rowsize_; ++column)
+					{
+                        if (between && display_.addrbase1 && column == 0)
+                            continue;           // user doesn't like seeing zero
+                        if (column%theApp.ruler_hex_nums_ != 0)
+                            continue;
+						rect.left = char_pos(column) + horz;
+                        if (between)
+                        {
+                            if (display_.vert_display && column > 0 && column%group_by_ == 0)
+                                rect.left -= char_width;
+                            else
+                                rect.left -= char_width/2;
+                        }
+						if (rect.left < cli.left)
+                            continue;
+                        if (rect.left > cli.right)
+                            break;
+						rect.right = rect.left + text_width_ + text_width_;
+
+                        if (!between)
+                        {
+						    ss.Format(theApp.hex_ucase_ ? "%1X" : "%1x", (column + display_.addrbase1)%16);
+						    pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
+                        else if (column%16 == 0 && theApp.ruler_hex_nums_ > 3)
+                        {
+                            rect.left -= (char_width+1)/2;
+						    ss.Format(theApp.hex_ucase_ ? "%02X" : "%02x", column%256);
+						    pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
+                        else
+                        {
+						    ss.Format(theApp.hex_ucase_ ? "%1X" : "%1x", column%16);
+						    pDC->DrawText(ss, &rect, DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
 					}
 				vert += text_height_;  // Move down for anything to be drawn underneath
 			}
+            // Show decimal offsets in the ruler
 			if (display_.decimal_addr || display_.line_nums)
 			{
-                // Do decimal ruler
-				CRect rect(-1, vert, hex_pos(0) + horz, vert + text_height_ + 1);
+                bool between = theApp.ruler_dec_nums_ > 1;      // Only display numbers above cols if displaying for every column
+
+				CRect rect(-1, vert, -1, vert + text_height_ + 1);
 				CString ss;
 				pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
+
+                // Decimal offsets above hex area
 				if (!display_.vert_display && display_.hex_area)
 					for (int column = 0; column < rowsize_; ++column)
 					{
-						rect.left  = rect.right;
-						rect.right = hex_pos(column + 1) + horz;
+                        if (between && display_.addrbase1 && column == 0)
+                            continue;           // user doesn't like seeing zero
+                        if (column%theApp.ruler_dec_nums_ != 0)
+                            continue;
+						rect.left  = hex_pos(column) + horz;
+                        if (between)
+                        {
+                            rect.left -= char_width;
+                            if (column > 0 && column%group_by_ == 0)
+                                rect.left -= char_width/2;
+                        }
 						if (rect.left < cli.left)
                             continue;
                         if (rect.left > cli.right)
                             break;
-						ss.Format("%02d", (column + display_.addrbase1)%100);
-						pDC->DrawText(ss, &rect, DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+						rect.right = rect.left + text_width_ + text_width_;
+                        if (!between)
+                        {
+						    ss.Format("%02d", (column + display_.addrbase1)%100);
+    						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
+                        else if (column%10 == 0 && theApp.ruler_dec_nums_ > 4)
+                        {
+                            rect.left -= (char_width+1)/2;
+						    ss.Format("%02d", column%100);
+    						pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
+                        else
+                        {
+						    ss.Format("%1d", column%10);
+						    pDC->DrawText(ss, &rect, DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
 					}
-				rect.right = char_pos(0) + horz;
+                // Decimal offsets above char area or stacked display
 				if (display_.vert_display || display_.char_area)
 					for (int column = 0; column < rowsize_; ++column)
 					{
-						rect.left  = rect.right;
-						rect.right = char_pos(column + 1) + horz;
+                        if (between && display_.addrbase1 && column == 0)
+                            continue;           // user doesn't like seeing zero
+                        if (column%theApp.ruler_dec_nums_ != 0)
+                            continue;
+						rect.left = char_pos(column) + horz;
+                        if (between)
+                        {
+                            if (display_.vert_display && column > 0 && column%group_by_ == 0)
+                                rect.left -= char_width;
+                            else
+                                rect.left -= char_width/2;
+                        }
 						if (rect.left < cli.left)
                             continue;
                         if (rect.left > cli.right)
                             break;
+						rect.right = rect.left + text_width_ + text_width_;
 
-                        UINT fmt = DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE;
-                        if (column == hicol || (column+1)%theApp.ruler_dec_nums_ == 0)
+                        if (!between)
                         {
-                            if (display_.addrbase1 && (column+1)%theApp.ruler_dec_nums_ == 0 &&
-                                (column+1)%10 == 0 && theApp.ruler_dec_nums_%5 == 0)
-                            {
-                                fmt &= ~DT_BOTTOM;                  // == DT_TOP
-						        ss.Format("%1d", column/10 + 1);    // show tens not units
-                            }
-                            else
-						        ss.Format("%1d", (column + display_.addrbase1)%10);
-							pDC->DrawText(ss, &rect, fmt);
+						    ss.Format("%1d", (column + display_.addrbase1)%10);
+						    pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
                         }
-                        else if ((column+1)%theApp.ruler_dec_ticks_ == 0)
-							pDC->DrawText("|", &rect, fmt);
+                        else if (column%10 == 0 && theApp.ruler_dec_nums_ > 4)
+                        {
+                            // If displaying nums every 5 or 10 then display 2 digits fo tens column
+                            rect.left -= (char_width+1)/2;
+						    ss.Format("%02d", column%100);
+						    pDC->DrawText(ss, &rect, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
                         else
-							pDC->DrawText(".", &rect, fmt);
-					}
-				vert += text_height_;  // Move down for anything to be drawn underneath (currently nothing)
+                        {
+                            // Display single dit between columns
+						    ss.Format("%1d", column%10);
+						    pDC->DrawText(ss, &rect, DT_BOTTOM | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                        }
+                    }
+				vert += text_height_;   // Move down for anything to be drawn underneath (currently nothing)
 			}
+#ifdef RULER_ADJUST
+            draw_adjusters(pDC);           // Draw adjustment controls in the ruler
+#endif
 		} // end ruler drawing
     }
 
@@ -2732,7 +2853,7 @@ end_of_background_drawing:
 					addr_rect.bottom = addr_rect.top - text_height_;
 				else
 					addr_rect.bottom = addr_rect.top + text_height_;
-			// Not highlighting  when the mouse is down avoids a problem with invalidation of
+			// Not highlighting when the mouse is down avoids a problem with invalidation of
 			// the address area when autoscrolling (old highlights sometimes left behind).
 			if (theApp.hl_caret_ && !pDC->IsPrinting() && !mouse_down_ && start_addr >= line*rowsize_ - offset_ && start_addr < (line+1)*rowsize_ - offset_)
             {
@@ -3108,6 +3229,122 @@ end_of_background_drawing:
     }
 //    move_dlgs();
 }
+
+#ifdef RULER_ADJUST
+// Draws adjuster handles in the ruler
+void CHexEditView::draw_adjusters(CDC* pDC)
+{
+    int xpos;
+
+    // Set up pen and brush colours (all adjusters are the same colour)
+    CPen pen(PS_SOLID, 0, RGB(0,0,0));          // black pen
+    CPen pdash(PS_DOT, 0, RGB(0,0,0));          // for dashed black line
+    CBrush brush(RGB(255,255,255));             // white brush
+    CPen * psp = pDC->SelectObject(&pen);       // ptr to saved pen
+    CBrush * psb = pDC->SelectObject(&brush);   // ptr to saved brush
+
+    // Show position of "offset_" in the ruler
+    ASSERT(offset_ < rowsize_);
+	if (!display_.vert_display && display_.hex_area)
+    {
+        if (adjusting_offset_ > -1)
+            xpos = hex_pos(adjusting_offset_);
+        else
+            xpos = hex_pos(offset_);
+        draw_offset(pDC, xpos-1);
+        if (adjusting_offset_ > -1)
+        {
+            (void)pDC->SelectObject(pdash);
+            pDC->MoveTo(xpos-1, bdr_top_);
+            pDC->LineTo(xpos-1, 30000);
+            (void)pDC->SelectObject(pen);
+        }
+    }
+    if (display_.vert_display || display_.char_area)
+    {
+        if (adjusting_offset_ > -1)
+            xpos = char_pos(adjusting_offset_);
+        else
+            xpos = char_pos(offset_);
+        draw_offset(pDC, xpos-1);
+        if (adjusting_offset_ > -1)
+        {
+            (void)pDC->SelectObject(pdash);
+            pDC->MoveTo(xpos-1, bdr_top_);
+            pDC->LineTo(xpos-1, 30000);
+            (void)pDC->SelectObject(pen);
+        }
+    }
+
+    if (group_by_ < rowsize_ && display_.vert_display)
+    {
+        if (adjusting_group_by_ > -1)
+            xpos = char_pos(adjusting_group_by_);
+        else
+            xpos = char_pos(group_by_);
+        if (display_.vert_display && 
+            (adjusting_group_by_ == -1 || adjusting_group_by_%group_by_ == 0))
+            xpos -= text_width_w_/2;
+        draw_group_by(pDC, xpos);
+        if (adjusting_group_by_ > -1)
+        {
+            (void)pDC->SelectObject(pdash);
+            pDC->MoveTo(xpos, bdr_top_);
+            pDC->LineTo(xpos, 30000);
+            (void)pDC->SelectObject(pen);
+        }
+    }
+    else if (group_by_ < rowsize_ && display_.hex_area)
+    {
+        if (adjusting_group_by_ > -1)
+            xpos = hex_pos(adjusting_group_by_);
+        else
+            xpos = hex_pos(group_by_);
+        if (adjusting_group_by_ == -1 || adjusting_group_by_%group_by_ == 0)
+            xpos -= (text_width_ - 1);
+        draw_group_by(pDC, xpos);
+        if (adjusting_group_by_ > -1)
+        {
+            (void)pDC->SelectObject(pdash);
+            pDC->MoveTo(xpos, bdr_top_);
+            pDC->LineTo(xpos, 30000);
+            (void)pDC->SelectObject(pen);
+        }
+    }
+
+    (void)pDC->SelectObject(psp);
+    (void)pDC->SelectObject(psb);
+}
+
+// Draws offset handle in the ruler
+void CHexEditView::draw_offset(CDC* pDC, int xpos)
+{
+    pDC->BeginPath();
+    pDC->MoveTo(xpos - 3, bdr_top_ - 7);
+    pDC->LineTo(xpos - 3, bdr_top_ - 4);
+    pDC->LineTo(xpos,     bdr_top_ - 1);
+    pDC->LineTo(xpos + 3, bdr_top_ - 4);
+    pDC->LineTo(xpos + 3, bdr_top_ - 7);
+    pDC->LineTo(xpos - 3, bdr_top_ - 7);
+    pDC->EndPath();
+    pDC->StrokeAndFillPath();
+}
+
+// Draws offset handle in the ruler
+void CHexEditView::draw_group_by(CDC* pDC, int xpos)
+{
+    pDC->BeginPath();
+    pDC->MoveTo(xpos,     bdr_top_ - 12);
+    pDC->LineTo(xpos - 2, bdr_top_ - 10);
+    pDC->LineTo(xpos - 2, bdr_top_ - 3);
+    pDC->LineTo(xpos ,    bdr_top_ - 1);
+    pDC->LineTo(xpos + 2, bdr_top_ - 3);
+    pDC->LineTo(xpos + 2, bdr_top_ - 10);
+    pDC->LineTo(xpos,     bdr_top_ - 12);
+    pDC->EndPath();
+    pDC->StrokeAndFillPath();
+}
+#endif
 
 #define USE_ROP2  1
 
@@ -3626,7 +3863,7 @@ int CHexEditView::pos_hex(int pos, BOOL inside) const
 // Return display position given a char area column number
 // int CHexEditView::char_pos(int column, int width /* = 0 */) const;
 
-// Return closest char area column given display (Y) coord
+// Return closest char area column given display (X) coord
 // If inside==TRUE then will return a value from 0 to rowsize_ - 1
 // else may return rowsize_ to indicate being past the last column.
 int CHexEditView::pos_char(int pos, BOOL inside) const
@@ -4413,6 +4650,33 @@ void CHexEditView::invalidate_ruler(FILE_ADDRESS addr)
 		DoInvalidateRect(&rct);
 	}
 }
+
+#ifdef RULER_ADJUST
+// Invalidate part of ruler related to an address
+void CHexEditView::invalidate_adjuster(int col)
+{
+    ASSERT(col >= 0 && col <= rowsize_);
+    CRect rct(-1, 0, -1, 30000);
+	if (!display_.vert_display && display_.hex_area)
+    {
+        rct.left = hex_pos(col);
+        rct.right = rct.left + 3;
+        rct.left -= 3;
+        if (col%group_by_ == 0)
+            rct.left -= text_width_;
+        InvalidateRect(&rct);   // DoInvalidateRect not nec. as we can't be in a macro??
+    }
+    if (display_.vert_display || display_.char_area)
+    {
+        rct.left = char_pos(col);
+        rct.right = rct.left + 3;
+        rct.left -= 3;
+        if (display_.vert_display && col%group_by_ == 0)
+            rct.left -= text_width_w_/2;
+        InvalidateRect(&rct);
+    }
+}
+#endif
 
 // Invalidate address area based on an address
 void CHexEditView::invalidate_addr(FILE_ADDRESS addr)
@@ -5565,6 +5829,56 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
         return;
     }
 
+    if (point.y < bdr_top_)       // above top (ie in ruler)
+    {
+#ifdef RULER_ADJUST
+        // Ruler area - check if over any of the adjusters
+        int xpos;
+
+        // Check if the offset adjuster has been clicked
+        adjusting_offset_ = -1;
+	    if (!display_.vert_display && display_.hex_area)
+        {
+            xpos = hex_pos(offset_);
+            if (pp.x > xpos - 5 && pp.x < xpos + 5)
+                adjusting_offset_ = offset_;
+        }
+        if (display_.vert_display || display_.char_area)
+        {
+            xpos = char_pos(offset_);
+            if (pp.x > xpos - 5 && pp.x < xpos + 5)
+                adjusting_offset_ = offset_;
+        }
+        if (adjusting_offset_ > -1)
+        {
+            invalidate_adjuster(adjusting_offset_);
+            return;
+        }
+
+        adjusting_group_by_ = -1;
+        if (display_.vert_display)
+        {
+            xpos = char_pos(group_by_) - text_width_w_/2;
+            if (pp.x > xpos - 5 && pp.x < xpos + 5)
+                adjusting_group_by_ = group_by_;
+        }
+        else if (display_.hex_area)
+        {
+            xpos = hex_pos(group_by_) - text_width_;
+            if (pp.x > xpos - 5 && pp.x < xpos + 5)
+                adjusting_group_by_ = group_by_;
+        }
+        if (adjusting_group_by_ > -1)
+        {
+            invalidate_adjuster(adjusting_group_by_);
+            return;
+        }
+
+        // xxx TODO check other adjusters here
+#endif
+        return;         // Don't allow select when click in ruler
+    }
+
     saved_state_ = disp_state_;                 // Keep the current state for saving in undo stack
 
     // Save some info that may be needed for macro recording
@@ -5615,6 +5929,31 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point) 
 {
+#ifdef RULER_ADJUST
+    if (adjusting_offset_ > -1)
+    {
+        undo_.push_back(view_undo(undo_offset));
+        undo_.back().rowsize = real_offset_;        // Save previous offset for undo
+        real_offset_ = offset_ = adjusting_offset_;
+        recalc_display();
+        DoInvalidate();
+        adjusting_offset_ = -1;
+
+        return;
+    }
+
+    if (adjusting_group_by_ > -1)
+    {
+        undo_.push_back(view_undo(undo_group_by));
+        undo_.back().rowsize = group_by_;              // Save previous group_by for undo
+        group_by_ = adjusting_group_by_;
+        recalc_display();
+        DoInvalidate();
+        adjusting_group_by_ = -1;
+
+        return;
+    }
+#endif
     if (mouse_down_)
     {
         num_entered_ = num_del_ = num_bs_ = 0;  // Can't be editing while mousing
@@ -5682,6 +6021,77 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CHexEditView::OnMouseMove(UINT nFlags, CPoint point) 
 {
+#ifdef RULER_ADJUST
+    if (adjusting_offset_ > -1)
+    {
+        int old = adjusting_offset_;    // save current so we can "undraw" it
+    	CPointAp doc_pt = ConvertFromDP(point);
+
+        // Work out new offset from current dragged mouse posn
+        if (display_.vert_display)
+        {
+            if (doc_pt.x < char_pos(0) || doc_pt.x >= char_pos(rowsize_))
+                adjusting_offset_ = offset_;    // Set back to current if dragged into invalid area
+            else
+                adjusting_offset_ = pos_char(doc_pt.x, TRUE);
+        }
+        else if (display_.char_area && display_.hex_area && doc_pt.x < char_pos(0))
+        {
+            if (doc_pt.x < hex_pos(0) || doc_pt.x >= hex_pos(rowsize_))
+                adjusting_offset_ = offset_;
+            else
+                adjusting_offset_ = pos_hex(doc_pt.x, TRUE);
+        }
+        else if (display_.char_area)
+        {
+            if (doc_pt.x < char_pos(0) || doc_pt.x >= char_pos(rowsize_))
+                adjusting_offset_ = offset_;
+            else
+                adjusting_offset_ = pos_char(doc_pt.x, TRUE);
+        }
+        else
+        {
+            if (doc_pt.x < hex_pos(0) || doc_pt.x >= hex_pos(rowsize_))
+                adjusting_offset_ = offset_;
+            else
+                adjusting_offset_ = pos_hex(doc_pt.x, TRUE);
+        }
+        if (adjusting_offset_ != old)
+        {
+            invalidate_adjuster(old);
+            invalidate_adjuster(adjusting_offset_);
+        }
+        return;
+    }
+    if (adjusting_group_by_ > -1)
+    {
+        int old = adjusting_group_by_;    // save current so we can "undraw" it
+    	CPointAp doc_pt = ConvertFromDP(point);
+
+        // Work out new group_by_ from current dragged mouse posn
+        if (display_.vert_display)
+        {
+            if (doc_pt.x < char_pos(2) || doc_pt.x >= char_pos(rowsize_))
+                adjusting_group_by_ = group_by_;    // Set back to current if dragged into invalid area
+            else
+                adjusting_group_by_ = pos_char(doc_pt.x, TRUE);
+        }
+        else if (display_.hex_area)
+        {
+            if (doc_pt.x < hex_pos(2) || doc_pt.x >= hex_pos(rowsize_))
+                adjusting_group_by_ = group_by_;
+            else
+                adjusting_group_by_ = pos_hex(doc_pt.x, TRUE);
+        }
+        if (adjusting_group_by_ != old)
+        {
+            invalidate_adjuster(old);
+            invalidate_adjuster(adjusting_group_by_);
+        }
+        return;
+    }
+#endif
+
     FILE_ADDRESS old_addr, end_addr, new_addr;
     if (mouse_down_)
 	    GetSelAddr(old_addr, end_addr);             // Get current caret before moved
@@ -5915,6 +6325,9 @@ void CHexEditView::track_mouse(unsigned long flag)
 
 FILE_ADDRESS CHexEditView::address_at(CPoint pt)
 {
+    if (pt.y < bdr_top_)
+        return -1;                           // Above top border (ie in ruler)
+
     CPointAp doc_pt = ConvertFromDP(pt);     // Mouse position (doc coords)
 
     if (doc_pt.x < hex_pos(0) || doc_pt.x > char_pos(rowsize_)+text_width_)
@@ -6706,11 +7119,20 @@ BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
     // Only respond if in client area
     if (nHitTest == HTCLIENT)
     {
-        // Work out location of cursor in window and make sure it's
-        // not over address area (on left) or past last chars (on right)
+        // Get mouse location in window coords
         CPoint point;
         ::GetCursorPos(&point);
         ScreenToClient(&point);
+
+        // Check if in the ruler
+        if (point.y <= bdr_top_)
+        {
+            //::SetCursor(theApp.LoadStandardCursor(IDC_SIZEWE));
+            return CScrView::OnSetCursor(pWnd, nHitTest, message);
+        }
+
+        // Work out location of cursor in window and make sure it's
+        // not over address area (on left) or past last chars (on right)
         CPointAp pt = ConvertFromDP(point);
         if (pt.x > (addr_width_ - 1)*text_width_ &&
             (display_.vert_display && pt.x < char_pos(rowsize_)+text_width_w_ ||

@@ -901,6 +901,16 @@ private:
 	FILE_ADDRESS nav_start_, nav_end_; // Last nav point in this view
 	FILE_ADDRESS nav_scroll_;   // Window scroll position at nav pt
 
+#define RULER_ADJUST 1
+#ifdef RULER_ADJUST
+    void draw_adjusters(CDC* pDC);
+    void draw_offset(CDC* pDC, int xpos);
+    void draw_group_by(CDC* pDC, int xpos);
+    void invalidate_adjuster(int col);
+    int adjusting_group_by_;    // current column for moving column grouping adjuster, or -1
+    int adjusting_offset_;      // start offset adjuster, -1 if not adjusting
+#endif
+
     // Printing info
     CString create_header(const char *fmt, long pagenum);
     CFont *print_font_;         // Font used when printing (= screen font scaled for printer)
