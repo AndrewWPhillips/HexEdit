@@ -312,9 +312,6 @@
 				RelativePath=".\ChildFrm.cpp">
 			</File>
 			<File
-				RelativePath=".\ClearHistDlg.cpp">
-			</File>
-			<File
 				RelativePath=".\CompressDlg.cpp">
 			</File>
 			<File
@@ -640,9 +637,6 @@
 			</File>
 			<File
 				RelativePath=".\ChildFrm.h">
-			</File>
-			<File
-				RelativePath=".\ClearHistDlg.h">
 			</File>
 			<File
 				RelativePath=".\CompressDlg.h">
@@ -1145,10 +1139,10 @@
 				RelativePath=".\Install\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\Install\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

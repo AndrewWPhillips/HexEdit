@@ -101,6 +101,7 @@
 #define HIDC_DEC_32BIT                  0x80a3042d    // IDD_PROP_DECIMAL [English (U.S.)]
 #define HIDC_DEC_64BIT                  0x80a3042e    // IDD_PROP_DECIMAL [English (U.S.)]
 #define HIDC_DEC_8BIT                   0x80a3042b    // IDD_PROP_DECIMAL [English (U.S.)]
+#define HIDC_DEC_LIST_SIZE              0x819b04c9    // IDD_OPT_HISTORY [English (U.S.)]
 #define HIDC_DEC_SIGN_MAG               0x80a30445    // IDD_PROP_DECIMAL [English (U.S.)]
 #define HIDC_DEC_UNSIGNED               0x80a30442    // IDD_PROP_DECIMAL [English (U.S.)]
 #define HIDC_DEL                        0x80f10478    // IDD_OPT_FILTERS [English (U.S.)]
@@ -218,6 +219,7 @@
 #define HIDC_FILL_STRING                0x811c054e    // IDD_NEW_FILE
 #define HIDC_FILL_STRING_CHARSET        0x811c0555    // IDD_NEW_FILE
 #define HIDC_FILL_STRING_VALUE          0x811c0552    // IDD_NEW_FILE
+#define HIDC_FILTER_LIST_SIZE           0x819b04ca    // IDD_OPT_HISTORY [English (U.S.)]
 #define HIDC_FILTER_OPTS                0x81280599    // IDD_EXPLORER
 #define HIDC_FIND_ALLOW_WILDCARD        0x80fb0505    // IDD_FIND_TEXT [English (U.S.)]
 #define HIDC_FIND_BIG_ENDIAN            0x80980510    // IDD_FIND_NUMBER [English (U.S.)]
@@ -254,6 +256,7 @@
 #define HIDC_FOLDER_FLIP                0x81280596    // IDD_EXPLORER
 #define HIDC_FOLDER_FORW                0x81280591    // IDD_EXPLORER
 #define HIDC_FOLDER_HIDDEN              0x8128059a    // IDD_EXPLORER
+#define HIDC_FOLDER_LIST_SIZE           0x819b04cc    // IDD_OPT_HISTORY [English (U.S.)]
 #define HIDC_FOLDER_NAME                0x81280593    // IDD_EXPLORER
 #define HIDC_FOLDER_PARENT              0x81280592    // IDD_EXPLORER
 #define HIDC_FOLDER_REFRESH             0x81280595    // IDD_EXPLORER
@@ -266,10 +269,6 @@
 #define HIDC_FP_VAL                     0x81350432    // IDD_PROP_REAL [English (U.S.)]
 #define HIDC_GLOBAL_PAGE                0x810c0612    // IDD_OPT_WINDISPLAY [English (U.S.)]
 #define HIDC_GO                         0x80750413    // IDD_CALC
-#define HIDC_GOTO_LIST_SIZE             0x819b04c9    // IDD_OPT_HISTORY [English (U.S.)]
-#define HIDC_GOTO_LIST_SIZE2            0x819b04ca    // IDD_OPT_HISTORY [English (U.S.)]
-#define HIDC_GOTO_LIST_SIZE3            0x819b04cb    // IDD_OPT_HISTORY [English (U.S.)]
-#define HIDC_GOTO_LIST_SIZE4            0x819b04cc    // IDD_OPT_HISTORY [English (U.S.)]
 #define HIDC_GRID_BL                    0x810f04cd    // IDD_BOOKMARKS
 #define HIDC_GRID_FILTERS               0x80f10601    // IDD_OPT_FILTERS [English (U.S.)]
 #define HIDC_GRID_RFL                   0x810e04c7    // IDD_RECENT_FILES
@@ -281,6 +280,7 @@
 #define HIDC_HALT2                      0x80a9045f    // IDD_OPT_MACRO [English (U.S.)]
 #define HIDC_HEADER_OPTS                0x80f004a5    // IDD_OPT_PRINT [English (U.S.)]
 #define HIDC_HEX                        0x807503e9    // IDD_CALC
+#define HIDC_HEX_LIST_SIZE              0x819b04cb    // IDD_OPT_HISTORY [English (U.S.)]
 #define HIDC_HEX_SIZE                   0x811c054c    // IDD_NEW_FILE
 #define HIDC_HEX_UCASE                  0x819a0415    // IDD_OPT_WORKLAYOUT [English (U.S.)]
 #define HIDC_HL_CARET                   0x80eb0615    // IDD_OPT_WORKDISPLAY [English (U.S.)]

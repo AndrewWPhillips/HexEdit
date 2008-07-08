@@ -445,10 +445,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ClearHistDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CompressDlg.cpp"
 				>
 			</File>
@@ -879,10 +875,6 @@
 			</File>
 			<File
 				RelativePath=".\ChildFrm.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ClearHistDlg.h"
 				>
 			</File>
 			<File
@@ -1534,6 +1526,10 @@
 			</File>
 			<File
 				RelativePath=".\TestData\email3.txt"
+				>
+			</File>
+			<File
+				RelativePath=".\TestData\HeadLine.txt"
 				>
 			</File>
 			<File

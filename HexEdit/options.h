@@ -53,8 +53,18 @@ struct OptValues
 	BOOL	one_only_;
     BOOL    run_autoexec_;
 	BOOL	save_exit_;
+
 	UINT	recent_files_;
 	BOOL    no_recent_add_;
+    UINT	max_search_hist_;
+    UINT	max_replace_hist_;
+    UINT	max_hex_jump_hist_;
+    UINT	max_dec_jump_hist_;
+    UINT	max_expl_dir_hist_;
+    UINT	max_expl_filt_hist_;
+    BOOL    clear_recent_file_list_;
+    BOOL    clear_bookmarks_;
+    BOOL    clear_on_exit_;
 
     // Workspace
 	BOOL	bg_search_;
@@ -236,10 +246,12 @@ class CSystemGeneralPage : public COptPage
 
 // Construction
 public:
-    CSystemGeneralPage() : COptPage(IDD) { }
+    CSystemGeneralPage() : COptPage(IDD), pHistPage(NULL) { }
 
 // Dialog Data
 	enum { IDD = IDD_OPT_SYSTEM };
+
+	void SetHistPage(COptPage * pPage) { pHistPage = pPage; }
 
 // Overrides
 public:
@@ -254,7 +266,40 @@ protected:
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnSaveNow();
 	afx_msg void OnShellopen();
-	afx_msg void OnClearHist();
+	afx_msg void OnHistPage();
+	afx_msg void OnChange();
+	DECLARE_MESSAGE_MAP()
+
+private:
+	COptPage * pHistPage;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CHistoryPage dialog
+
+class CHistoryPage : public COptPage
+{
+	DECLARE_DYNCREATE(CHistoryPage)
+
+// Construction
+public:
+    CHistoryPage() : COptPage(IDD) { }
+
+// Dialog Data
+	enum { IDD = IDD_OPT_HISTORY };
+
+// Overrides
+public:
+	virtual void OnOK();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+	virtual BOOL OnInitDialog();
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnClearNow();
 	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 };

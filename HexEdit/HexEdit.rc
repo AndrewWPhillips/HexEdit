@@ -1333,8 +1333,8 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_RECENT_FILES,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,107,83,11,12
-    PUSHBUTTON      "&Clear History Lists...",IDC_CLEAR_HIST,152,85,94,13,
-                    WS_GROUP,0,HIDC_CLEAR_HIST
+    PUSHBUTTON      "History Options >>",IDC_HIST_PAGE,152,85,94,13,
+                    WS_GROUP,0
     CONTROL         "Never add files opened to the ""My Recent Documents"" list.",
                     IDC_NO_RECENT,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | 
                     WS_TABSTOP,22,104,109,16,0,HIDC_NO_RECENT
@@ -2472,61 +2472,61 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_RECENT_FILES,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,248,16,11,12
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,42,
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,39,
                     226,1
-    LTEXT           "Saved list sizes",IDC_STATIC,12,38,49,8
-    LTEXT           "Find:",IDC_STATIC,24,54,18,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_FIND_LIST_SIZE,43,51,33,14,ES_RIGHT | ES_NUMBER,0,
+    LTEXT           "Saved list sizes",IDC_STATIC,12,35,49,8
+    LTEXT           "Find:",IDC_STATIC,24,50,18,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_FIND_LIST_SIZE,43,47,33,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_FIND_LIST_SIZE
     CONTROL         "",IDC_SPIN_FIND_LIST_SIZE,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,75,50,11,12
-    LTEXT           "Replace:",IDC_STATIC,11,70,31,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_REPLACE_LIST_SIZE,43,67,33,14,ES_RIGHT | ES_NUMBER,0,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,75,46,11,12
+    LTEXT           "Replace:",IDC_STATIC,11,66,31,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_REPLACE_LIST_SIZE,43,63,33,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_REPLACE_LIST_SIZE
     CONTROL         "",IDC_SPIN_REPLACE_LIST_SIZE,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,75,65,11,12
-    LTEXT           "Decimal jumps:",IDC_STATIC,81,54,47,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_GOTO_LIST_SIZE,129,51,33,14,ES_RIGHT | ES_NUMBER,0,
-                    HIDC_GOTO_LIST_SIZE
-    CONTROL         "",IDC_SPIN_GOTO_LIST_SIZE,"msctls_updown32",
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,75,61,11,12
+    LTEXT           "Decimal jumps:",IDC_STATIC,81,50,47,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_DEC_LIST_SIZE,129,47,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_DEC_LIST_SIZE
+    CONTROL         "",IDC_SPIN_DEC_LIST_SIZE,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,159,46,11,12
-    LTEXT           "Hex jumps:",IDC_STATIC,81,70,47,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_GOTO_LIST_SIZE3,129,67,33,14,ES_RIGHT | ES_NUMBER,0,
-                    HIDC_GOTO_LIST_SIZE3
-    CONTROL         "",IDC_SPIN_GOTO_LIST_SIZE3,"msctls_updown32",
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,159,42,11,12
+    LTEXT           "Hex jumps:",IDC_STATIC,81,66,47,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_HEX_LIST_SIZE,129,63,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_HEX_LIST_SIZE
+    CONTROL         "",IDC_SPIN_HEX_LIST_SIZE,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,159,64,11,12
-    LTEXT           "Explorer filters:",IDC_STATIC,168,54,50,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_GOTO_LIST_SIZE2,219,51,33,14,ES_RIGHT | ES_NUMBER,0,
-                    HIDC_GOTO_LIST_SIZE2
-    CONTROL         "",IDC_SPIN_GOTO_LIST_SIZE2,"msctls_updown32",
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,159,60,11,12
+    LTEXT           "Explorer filters:",IDC_STATIC,168,50,50,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_FILTER_LIST_SIZE,219,47,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_FILTER_LIST_SIZE
+    CONTROL         "",IDC_SPIN_FILTER_LIST_SIZE,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,249,46,11,12
-    LTEXT           "Explorer folders:",IDC_STATIC,168,70,50,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_GOTO_LIST_SIZE4,219,67,33,14,ES_RIGHT | ES_NUMBER,0,
-                    HIDC_GOTO_LIST_SIZE4
-    CONTROL         "",IDC_SPIN_GOTO_LIST_SIZE4,"msctls_updown32",
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,249,44,11,12
+    LTEXT           "Explorer folders:",IDC_STATIC,168,66,50,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_FOLDER_LIST_SIZE,219,63,33,14,ES_RIGHT | ES_NUMBER,0,
+                    HIDC_FOLDER_LIST_SIZE
+    CONTROL         "",IDC_SPIN_FOLDER_LIST_SIZE,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,248,63,11,12
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,90,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,248,61,11,12
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,86,
                     226,1
-    LTEXT           "Clear history lists",IDC_STATIC,12,86,52,8
+    LTEXT           "Clear history lists",IDC_STATIC,12,82,52,8
     CONTROL         "Clear recent file list",IDC_CLEAR_RECENT_FILE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,22,99,114,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,22,94,114,10,0,
                     HIDC_CLEAR_RECENT_FILE
     CONTROL         "Clear all bookmarks",IDC_CLEAR_BOOKMARKS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,22,110,114,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,22,105,114,10,0,
                     HIDC_CLEAR_BOOKMARKS
     LTEXT           "NOTE: To clear find etc lists on exit set the above saved list sizes to zero.",
-                    IDC_STATIC,22,121,120,18
+                    IDC_STATIC,22,116,120,18
     CONTROL         "Clear selected lists on exit",IDC_CLEAR_ON_EXIT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,153,99,99,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,154,96,96,10,0,
                     HIDC_CLEAR_ON_EXIT
-    PUSHBUTTON      "&Clear Selected Lists Now",IDC_CLEAR_HIST,153,112,99,13,
-                    WS_GROUP,0,HIDC_CLEAR_HIST
+    PUSHBUTTON      "&Clear Selected Lists Now",IDC_CLEAR_HIST,146,110,108,
+                    13,WS_GROUP,0,HIDC_CLEAR_HIST
 END
 
 

@@ -23,8 +23,8 @@
 #include "HexEditDoc.h"
 #include "Dialog.h"             // For Macro Save dialog etc
 #include "DirDialog.h"          // For directory selection dialog
-#include "ClearHistDlg.h"
 #include "HexFileList.h"
+#include "Bookmark.h"
 #include "NewScheme.h"
 #include "NewCellTypes/GridCellCombo.h"     // For CGridCellCombo
 #include "resource.hm"          // For control help IDs
@@ -67,6 +67,10 @@ void COptSheet::init()
     val_.save_exit_ = FALSE;
 	val_.recent_files_ = 0;
     val_.no_recent_add_ = FALSE;
+    val_.max_search_hist_ = val_.max_replace_hist_ = 
+    val_.max_hex_jump_hist_ = val_.max_dec_jump_hist_ = 
+    val_.max_expl_dir_hist_ = val_.max_expl_filt_hist_ = 10;
+    val_.clear_recent_file_list_ = val_.clear_bookmarks_ = val_.clear_on_exit_ = FALSE;
 
 	val_.bg_search_ = FALSE;
     val_.undo_limit_ = 4;
@@ -246,9 +250,9 @@ BEGIN_MESSAGE_MAP(CSystemGeneralPage, COptPage)
 	ON_BN_CLICKED(IDC_RESTORE, OnChange)
     //ON_BN_CLICKED(IDC_BG_SEARCH, OnChange)
 	ON_EN_CHANGE(IDC_RECENT_FILES, OnChange)
-	ON_BN_CLICKED(IDC_CLEAR_HIST, OnClearHist)
     ON_BN_CLICKED(IDC_SAVE_EXIT, OnChange)
     ON_BN_CLICKED(IDC_SAVE_NOW, OnSaveNow)
+	ON_BN_CLICKED(IDC_HIST_PAGE, OnHistPage)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -277,7 +281,6 @@ static DWORD id_pairs_sys[] = {
     IDC_RESTORE, HIDC_RESTORE,
     //IDC_BG_SEARCH, HIDC_BG_SEARCH,
     IDC_RECENT_FILES, HIDC_RECENT_FILES,
-    IDC_CLEAR_HIST, HIDC_CLEAR_HIST,
     IDC_SPIN_RECENT_FILES, HIDC_RECENT_FILES,
     IDC_SAVE_EXIT, HIDC_SAVE_EXIT,
     IDC_SAVE_NOW, HIDC_SAVE_NOW,
@@ -317,10 +320,10 @@ void CSystemGeneralPage::OnShellopen()
     SetModified(TRUE);
 }
 
-void CSystemGeneralPage::OnClearHist() 
+void CSystemGeneralPage::OnHistPage()
 {
-    CClearHistDlg dlg;
-    dlg.DoModal();
+	if (pHistPage != NULL)
+		pParent->SetActivePage(pHistPage);
 }
 
 void CSystemGeneralPage::OnSaveNow() 
@@ -328,6 +331,135 @@ void CSystemGeneralPage::OnSaveNow()
     // PressButton() always returns zero - so ignore return value
     (void)pParent->PressButton(PSBTN_APPLYNOW);
     theApp.SaveOptions();
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CHistoryPage property page
+
+IMPLEMENT_DYNCREATE(CHistoryPage, COptPage)
+
+void CHistoryPage::DoDataExchange(CDataExchange* pDX)
+{
+    COptPage::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_RECENT_FILES, pParent->val_.recent_files_);
+	DDV_MinMaxUInt(pDX, pParent->val_.recent_files_, 1, 16);
+    DDX_Check(pDX, IDC_NO_RECENT, pParent->val_.no_recent_add_);
+
+	DDX_Text(pDX, IDC_FIND_LIST_SIZE, pParent->val_.max_search_hist_);
+	DDV_MinMaxUInt(pDX, pParent->val_.max_search_hist_, 0, 48);
+	DDX_Text(pDX, IDC_REPLACE_LIST_SIZE, pParent->val_.max_replace_hist_);
+	DDV_MinMaxUInt(pDX, pParent->val_.max_replace_hist_, 0, 16);
+	DDX_Text(pDX, IDC_DEC_LIST_SIZE, pParent->val_.max_dec_jump_hist_);
+	DDV_MinMaxUInt(pDX, pParent->val_.max_dec_jump_hist_, 0, 16);
+	DDX_Text(pDX, IDC_HEX_LIST_SIZE, pParent->val_.max_hex_jump_hist_);
+	DDV_MinMaxUInt(pDX, pParent->val_.max_hex_jump_hist_, 0, 16);
+	DDX_Text(pDX, IDC_FILTER_LIST_SIZE, pParent->val_.max_expl_filt_hist_);
+	DDV_MinMaxUInt(pDX, pParent->val_.max_expl_filt_hist_, 0, 16);
+	DDX_Text(pDX, IDC_FOLDER_LIST_SIZE, pParent->val_.max_expl_dir_hist_);
+	DDV_MinMaxUInt(pDX, pParent->val_.max_expl_dir_hist_, 0, 32);
+
+    DDX_Check(pDX, IDC_CLEAR_RECENT_FILE, pParent->val_.clear_recent_file_list_);
+    DDX_Check(pDX, IDC_CLEAR_BOOKMARKS,   pParent->val_.clear_bookmarks_);
+    DDX_Check(pDX, IDC_CLEAR_ON_EXIT,     pParent->val_.clear_on_exit_);
+}
+
+BEGIN_MESSAGE_MAP(CHistoryPage, COptPage)
+    ON_WM_HELPINFO()
+    ON_WM_CONTEXTMENU()
+    ON_BN_CLICKED(IDC_NO_RECENT,         OnChange)
+	ON_EN_CHANGE (IDC_RECENT_FILES,      OnChange)
+	ON_EN_CHANGE (IDC_FIND_LIST_SIZE,    OnChange)
+	ON_EN_CHANGE (IDC_REPLACE_LIST_SIZE, OnChange)
+	ON_EN_CHANGE (IDC_DEC_LIST_SIZE,     OnChange)
+	ON_EN_CHANGE (IDC_HEX_LIST_SIZE,     OnChange)
+	ON_EN_CHANGE (IDC_FILTER_LIST_SIZE,  OnChange)
+	ON_EN_CHANGE (IDC_FOLDER_LIST_SIZE,  OnChange)
+    ON_BN_CLICKED(IDC_CLEAR_RECENT_FILE, OnChange)
+    ON_BN_CLICKED(IDC_CLEAR_BOOKMARKS,   OnChange)
+    ON_BN_CLICKED(IDC_CLEAR_ON_EXIT,     OnChange)
+	ON_BN_CLICKED(IDC_CLEAR_HIST,        OnClearNow)
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CHistoryPage message handlers
+
+BOOL CHistoryPage::OnInitDialog() 
+{
+    COptPage::OnInitDialog();
+
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RECENT_FILES))     ->SetRange(1, 16);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_FIND_LIST_SIZE))   ->SetRange(0, 48);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_REPLACE_LIST_SIZE))->SetRange(0, 16);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_DEC_LIST_SIZE))    ->SetRange(0, 16);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_HEX_LIST_SIZE))    ->SetRange(0, 16);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_FILTER_LIST_SIZE)) ->SetRange(0, 16);
+    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_FOLDER_LIST_SIZE)) ->SetRange(0, 32);
+
+    return TRUE;
+}
+
+void CHistoryPage::OnOK() 
+{
+	theApp.set_options(pParent->val_);
+    COptPage::OnOK();
+}
+
+static DWORD id_pairs_hist[] = {
+    IDC_NO_RECENT, HIDC_NO_RECENT,
+    IDC_RECENT_FILES, HIDC_RECENT_FILES,
+    IDC_SPIN_RECENT_FILES, HIDC_RECENT_FILES,
+    IDC_RECENT_FILES, HIDC_RECENT_FILES,
+    IDC_SPIN_RECENT_FILES, HIDC_RECENT_FILES,
+    IDC_FIND_LIST_SIZE, HIDC_FIND_LIST_SIZE,
+    IDC_SPIN_FIND_LIST_SIZE, HIDC_FIND_LIST_SIZE,
+    IDC_REPLACE_LIST_SIZE, HIDC_REPLACE_LIST_SIZE,
+    IDC_SPIN_REPLACE_LIST_SIZE, HIDC_REPLACE_LIST_SIZE,
+    IDC_DEC_LIST_SIZE, HIDC_DEC_LIST_SIZE,
+    IDC_SPIN_DEC_LIST_SIZE, HIDC_DEC_LIST_SIZE,
+    IDC_HEX_LIST_SIZE, HIDC_HEX_LIST_SIZE,
+    IDC_SPIN_HEX_LIST_SIZE, HIDC_HEX_LIST_SIZE,
+    IDC_FILTER_LIST_SIZE, HIDC_FILTER_LIST_SIZE,
+    IDC_SPIN_FILTER_LIST_SIZE, HIDC_FILTER_LIST_SIZE,
+    IDC_FOLDER_LIST_SIZE, HIDC_FOLDER_LIST_SIZE,
+    IDC_SPIN_FOLDER_LIST_SIZE, HIDC_FOLDER_LIST_SIZE,
+    IDC_CLEAR_RECENT_FILE, HIDC_CLEAR_RECENT_FILE,
+    IDC_CLEAR_BOOKMARKS, HIDC_CLEAR_BOOKMARKS,
+    IDC_CLEAR_ON_EXIT, HIDC_CLEAR_ON_EXIT,
+	IDC_CLEAR_HIST, HIDC_CLEAR_HIST,
+    0,0 
+}; 
+
+BOOL CHistoryPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_hist);
+    return TRUE;
+}
+
+void CHistoryPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_hist);
+}
+
+void CHistoryPage::OnClearNow() 
+{
+    CHexFileList *pfl = theApp.GetFileList();
+    if (pfl != NULL && pParent->val_.clear_recent_file_list_)
+    {
+        // xxx warning needed here and when checkbox turned on
+        pfl->ClearAll();
+    }
+
+    CBookmarkList *pbl = theApp.GetBookmarkList();
+    if (pbl != NULL && pParent->val_.clear_bookmarks_)
+    {
+        pbl->ClearAll();
+    }
+}
+
+void CHistoryPage::OnChange() 
+{
+    SetModified(TRUE);
 }
 
 //===========================================================================

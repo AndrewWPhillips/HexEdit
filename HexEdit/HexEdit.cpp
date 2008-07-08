@@ -47,8 +47,6 @@
 #include "RecentFileDlg.h"
 #include "BookmarkDlg.h"
 #include "Bookmark.h"
-#include "BookmarkDlg.h"
-#include "ClearHistDlg.h"
 #include "boyer.h"
 #include "SystemSound.h"
 
@@ -1905,18 +1903,18 @@ void CHexEditApp::LoadOptions()
     large_cursor_ = GetProfileInt("Options", "LargeCursor", 0) ? TRUE : FALSE;
     show_other_ = GetProfileInt("Options", "OtherAreaCursor", 1) ? TRUE : FALSE;
 
-    max_search_hist_ = GetProfileInt("History", "MaxSearch", 48);
-    max_replace_hist_ = GetProfileInt("History", "MaxReplace", 16);
-    max_hex_jump_hist_ = GetProfileInt("History", "MaxHexJump", 16);
-    max_dec_jump_hist_ = GetProfileInt("History", "MaxDecJump", 16);
-    max_expl_dir_hist_ = GetProfileInt("History", "MaxExplorerFolders", 32);
-    max_expl_filt_hist_ = GetProfileInt("History", "MaxExplorerFilters", 16);
+	no_recent_add_ = GetProfileInt("Options", "DontAddToRecent", 1) ? TRUE : FALSE;
+    bool clear = GetProfileInt("Options", "ClearHist", 1) ? TRUE : FALSE;  // if old reg entry true then default new list sizes to zero
+    max_search_hist_ = GetProfileInt("History", "MaxSearch", clear ? 0 : 48);
+    max_replace_hist_ = GetProfileInt("History", "MaxReplace", clear ? 0 : 16);
+    max_hex_jump_hist_ = GetProfileInt("History", "MaxHexJump", clear ? 0 : 16);
+    max_dec_jump_hist_ = GetProfileInt("History", "MaxDecJump", clear ? 0 : 16);
+    max_expl_dir_hist_ = GetProfileInt("History", "MaxExplorerFolders", clear ? 0 : 32);
+    max_expl_filt_hist_ = GetProfileInt("History", "MaxExplorerFilters", clear ? 0 : 16);
 
-    clear_hist_ = GetProfileInt("Options", "ClearHist", 1) ? TRUE : FALSE;
     clear_recent_file_list_ = GetProfileInt("Options", "ClearRecentFileList", 1) ? TRUE : FALSE;
     clear_bookmarks_ = GetProfileInt("Options", "ClearBookmarks", 0) ? TRUE : FALSE;
     clear_on_exit_ = GetProfileInt("Options", "ClearOnExit", 0) ? TRUE : FALSE;
-	no_recent_add_ = GetProfileInt("Options", "DontAddToRecent", 1) ? TRUE : FALSE;
 
     hex_ucase_ = GetProfileInt("Options", "UpperCaseHex", 1) ? TRUE : FALSE;
     k_abbrev_ = GetProfileInt("Options", "KAbbrev", 1);
@@ -2363,19 +2361,19 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "BackgroundSearch", bg_search_ ? 1 : 0);
     WriteProfileInt("Options", "LargeCursor", large_cursor_ ? 1 : 0);
     WriteProfileInt("Options", "OtherAreaCursor", show_other_ ? 1 : 0);
+
+    WriteProfileInt("Options", "DontAddToRecent", no_recent_add_ ? 1 : 0);
     WriteProfileInt("History", "MaxSearch", max_search_hist_);
     WriteProfileInt("History", "MaxReplace", max_replace_hist_);
     WriteProfileInt("History", "MaxHexJump", max_hex_jump_hist_);
     WriteProfileInt("History", "MaxDecJump", max_dec_jump_hist_);
     WriteProfileInt("History", "MaxExplorerFolders", max_expl_dir_hist_);
     WriteProfileInt("History", "MaxExplorerFilters", max_expl_filt_hist_);
-    // xxx NOTE: ClearHist, ClearOnExit are to be phased out
-    WriteProfileInt("Options", "ClearHist", clear_hist_ ? 1 : 0);
-    WriteProfileInt("Options", "ClearOnExit", clear_on_exit_ ? 1 : 0);
-
-    WriteProfileInt("Options", "DontAddToRecent", no_recent_add_ ? 1 : 0);
     WriteProfileInt("Options", "ClearRecentFileList", clear_recent_file_list_ ? 1 : 0);
     WriteProfileInt("Options", "ClearBookmarks", clear_bookmarks_ ? 1 : 0);
+    // ClearHist has been replaced by MaxSearch etc being set to zero
+    //WriteProfileInt("Options", "ClearHist", clear_hist_ ? 1 : 0);
+    WriteProfileInt("Options", "ClearOnExit", clear_on_exit_ ? 1 : 0);
 
     WriteProfileInt("Options", "UndoIntelligent", intelligent_undo_ ? 1 : 0);
     WriteProfileInt("Options", "UndoMerge", undo_limit_);
@@ -2550,31 +2548,6 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "InfoTipTransparency", tip_transparency_);
     WriteProfileInt("Options", "InfoTipFlags", hard);
 	WriteProfileString("Options", "InfoTipUser", soft);
-}
-
-// Clears the various histories and lists (see also SaveSearchHistory)
-void CHexEditApp::ClearHist(BOOL clear_search_hist, BOOL clear_recent_file_list, BOOL clear_bookmarks)
-{
-    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    CHexFileList *pfl = GetFileList();
-    CBookmarkList *pbl = GetBookmarkList();
-    ASSERT(mm != NULL && pfl != NULL && pbl != NULL);
-
-    if (clear_search_hist && mm != NULL)
-    {
-		mm->hex_hist_.clear();
-		mm->dec_hist_.clear();
-        mm->search_hist_.clear();
-        mm->replace_hist_.clear();
-
-		mm->hex_hist_changed_ = mm->dec_hist_changed_ = clock();
-    }
-
-    if (clear_recent_file_list)
-        pfl->ClearAll();
-
-    if (clear_bookmarks)
-        pbl->ClearAll();
 }
 
 void CHexEditApp::LoadSchemes()
@@ -2822,6 +2795,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     // Construct property sheet + its pages
     COptSheet optSheet(_T("HexEdit Options"));
     CSystemGeneralPage sysgeneralPage;
+	CHistoryPage histPage;
     CFiltersPage filtersPage;
     CPrintPage printerPage;
     CMacroPage macroPage;
@@ -2857,6 +2831,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 	}
 
 	// Allow pages to activate each other
+	sysgeneralPage.SetHistPage(&histPage);
 	workspacelayoutPage.SetStartupPage(&sysgeneralPage);
     windisplayPage.SetGlobalDisplayPage(&workspacedisplayPage);
     wineditPage.SetGlobalEditPage(&workspacePage);
@@ -2867,6 +2842,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     // Add categories to the tree and pages under the categories
 	CBCGPropSheetCategory * pCatSys = optSheet.AddTreeCategory("System", 0, 1);
     optSheet.AddPageToTree(pCatSys, &sysgeneralPage, -1, 2);
+    optSheet.AddPageToTree(pCatSys, &histPage, -1, 2);
     optSheet.AddPageToTree(pCatSys, &filtersPage, -1, 2);
     optSheet.AddPageToTree(pCatSys, &printerPage, -1, 2);
     optSheet.AddPageToTree(pCatSys, &macroPage, -1, 2);
@@ -2932,8 +2908,19 @@ void CHexEditApp::get_options(struct OptValues &val)
     val.one_only_ = one_only_;
     val.run_autoexec_ = run_autoexec_;
     val.save_exit_ = save_exit_;
+
+    // History
     val.recent_files_ = recent_files_;
     val.no_recent_add_ = no_recent_add_;
+    val.max_search_hist_ = max_search_hist_;
+    val.max_replace_hist_ = max_replace_hist_;
+    val.max_hex_jump_hist_ = max_hex_jump_hist_;
+    val.max_dec_jump_hist_ = max_dec_jump_hist_;
+    val.max_expl_dir_hist_ = max_expl_dir_hist_;
+    val.max_expl_filt_hist_ = max_expl_filt_hist_;
+    val.clear_recent_file_list_ = clear_recent_file_list_;
+    val.clear_bookmarks_ = clear_bookmarks_;
+    val.clear_on_exit_ = clear_on_exit_;
 
     // Macros
     val.refresh_ = refresh_;
@@ -3097,6 +3084,15 @@ void CHexEditApp::set_options(struct OptValues &val)
         GetFileList()->ChangeSize(recent_files_);
     }
     no_recent_add_ = val.no_recent_add_;
+    max_search_hist_ = val.max_search_hist_;
+    max_replace_hist_ = val.max_replace_hist_;
+    max_hex_jump_hist_ = val.max_hex_jump_hist_;
+    max_dec_jump_hist_ = val.max_dec_jump_hist_;
+    max_expl_dir_hist_ = val.max_expl_dir_hist_;
+    max_expl_filt_hist_ = val.max_expl_filt_hist_;
+    clear_recent_file_list_ = val.clear_recent_file_list_;
+    clear_bookmarks_ = val.clear_bookmarks_;
+    clear_on_exit_ = val.clear_on_exit_;
 
     if (bg_search_ != val.bg_search_)
     {

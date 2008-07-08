@@ -30,6 +30,7 @@
 #include "Bookmark.h"
 #include "BookmarkDlg.h"
 #include "BookmarkFind.h"
+#include "HexFileList.h"
 #include "Boyer.h"
 #include "SystemSound.h"
 #include "Misc.h"
@@ -661,12 +662,24 @@ void CMainFrame::OnClose()
     if (aa->save_exit_)
         SaveFrameOptions();
 
-	// The following were move here from HexEditApp:ExitInstance as they require
+	// The following were moved here from HexEditApp::ExitInstance as they require
 	// access to the main windows (AfxGetMainWnd() returns NULL in ExitInstance)
 
     // Clear histories if the option to clear on exit is on
-    if (aa->clear_on_exit_)
-        aa->ClearHist(aa->clear_hist_, aa->clear_recent_file_list_, aa->clear_bookmarks_);
+    if (theApp.clear_on_exit_)
+    {
+        CHexFileList *pfl = theApp.GetFileList();
+        if (pfl != NULL && theApp.clear_recent_file_list_)
+        {
+            pfl->ClearAll();
+        }
+
+        CBookmarkList *pbl = theApp.GetBookmarkList();
+        if (pbl != NULL && theApp.clear_bookmarks_)
+        {
+            pbl->ClearAll();
+        }
+    }
 
 	if (aa->delete_all_settings_)
 		remove(m_strImagesFileName);
@@ -2089,11 +2102,6 @@ void CMainFrame::LoadJumpHistory(CHexEditApp *aa)
 // Save hex/dec histories to registry
 void CMainFrame::SaveJumpHistory(CHexEditApp *aa)
 {
-    if (theApp.clear_on_exit_ && theApp.clear_hist_)
-    {
-        hex_hist_.clear();
-        dec_hist_.clear();
-    }
     ::SaveHist(hex_hist_, "HexJump", theApp.max_hex_jump_hist_);
     ::SaveHist(dec_hist_, "DecJump", theApp.max_dec_jump_hist_);
 }
@@ -2171,11 +2179,6 @@ void CMainFrame::LoadSearchHistory(CHexEditApp *aa)
 // Save search/replace histories to registry
 void CMainFrame::SaveSearchHistory(CHexEditApp *aa)
 {
-    if (theApp.clear_on_exit_ && theApp.clear_hist_)
-    {
-        search_hist_.clear();
-        replace_hist_.clear();
-    }
     ::SaveHist(search_hist_,  "Search",  theApp.max_search_hist_);
     ::SaveHist(replace_hist_, "Replace", theApp.max_replace_hist_);
 }
