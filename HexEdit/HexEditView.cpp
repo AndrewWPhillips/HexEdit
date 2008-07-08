@@ -2044,7 +2044,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (hl_ruler && theApp.hl_caret_ && !mouse_down_)
 			{
 				// Do highlighting with a background rectangle in ruler/address area
-                hicol = int(start_addr%rowsize_);
+                hicol = int((start_addr + offset_)%rowsize_);
 				CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
 				CBrush * psaved_brush = pDC->SelectObject(&brush);
 				CPen * psaved_pen = pDC->SelectObject(&pen1);
@@ -2066,7 +2066,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             // Current mouse position in the ruler
             if (hl_ruler && theApp.hl_mouse_ && mouse_addr_ > -1)
 			{
-				int mousecol = int(mouse_addr_%rowsize_);   // Mouse column to be highlighted
+				int mousecol = int((mouse_addr_ + offset_)%rowsize_);   // Mouse column to be highlighted
 				CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
 				CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
 				CPen * psaved_pen = pDC->SelectObject(&pen1);
@@ -4639,14 +4639,14 @@ void CHexEditView::invalidate_ruler(FILE_ADDRESS addr)
 	rct.bottom = bdr_top_;
 	if (!display_.vert_display && display_.hex_area)
 	{
-		rct.left  = hex_pos(int(addr%rowsize_)) + horz;
-		rct.right = hex_pos(int(addr%rowsize_)+1) + horz;
+		rct.left  = hex_pos(int((addr+offset_)%rowsize_)) + horz;
+		rct.right = hex_pos(int((addr+offset_)%rowsize_)+1) + horz;
 		DoInvalidateRect(&rct);
 	}
 	if (display_.vert_display || display_.char_area)
 	{
-		rct.left  = char_pos(int(addr%rowsize_)) + horz;
-		rct.right = char_pos(int(addr%rowsize_)+1) + horz + 1;
+		rct.left  = char_pos(int((addr+offset_)%rowsize_)) + horz;
+		rct.right = char_pos(int((addr+offset_)%rowsize_)+1) + horz + 1;
 		DoInvalidateRect(&rct);
 	}
 }
