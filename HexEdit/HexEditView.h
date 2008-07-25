@@ -730,14 +730,11 @@ private:
 #endif
     int hex_pos(int column, int width=0) const // get X coord of hex display column
     {
-        ASSERT(column <= rowsize_);
-        //ASSERT(!display_.vert_display || column == 0);
         if (width == 0) width = text_width_;
         return (addr_width_ + column*3 + column/group_by_)*width;
     }
     int char_pos(int column, int widthd=0, int widthw=0) const // get X coord of ASCII/EBCDIC display column
     {
-        ASSERT(column <= rowsize_);
         if (widthd == 0) widthd = text_width_;
         if (widthw == 0) widthw = text_width_w_;
         if (display_.vert_display)
@@ -751,8 +748,8 @@ private:
             return addr_width_*widthd +
                    column*widthw;
     }
-    int pos_hex(int, BOOL inside = FALSE) const;  // Closest hex display col given X
-    int pos_char(int, BOOL inside = FALSE) const; // Closest char area col given X
+    int pos_hex(int, int inside = FALSE) const;  // Closest hex display col given X
+    int pos_char(int, int inside = FALSE) const; // Closest char area col given X
     FILE_ADDRESS pos2addr(CPointAp pos, BOOL inside = TRUE) const; // Convert a display position to closest address
     int pos2row(CPointAp pos);                    // Find vert_display row (0, 1, or 2) of display position
 
@@ -904,11 +901,13 @@ private:
 #define RULER_ADJUST 1
 #ifdef RULER_ADJUST
     void draw_adjusters(CDC* pDC);
+    void draw_rowsize(CDC* pDC, int xpos);
     void draw_offset(CDC* pDC, int xpos);
     void draw_group_by(CDC* pDC, int xpos);
     void invalidate_adjuster(int col);
-    int adjusting_group_by_;    // current column for moving column grouping adjuster, or -1
-    int adjusting_offset_;      // start offset adjuster, -1 if not adjusting
+    int adjusting_group_by_;    // current column for moving column grouping adjuster: 0 to rowsize_-1, 9999=no grouping, -1=not adjusting
+    int adjusting_offset_;      // adjuster for offset from start of file: 0 to rowsize_-1 OR -1 if not adjusting
+	int adjusting_rowsize_;     // adjuster for rowsize_: 4 or more OR -1 if not adjusting
 #endif
 
     // Printing info

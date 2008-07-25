@@ -1,6 +1,6 @@
 // HexEditView.cpp : implementation of the CHexEditView class
 //
-// Copyright (c) 2003 by Andrew W. Phillips. 
+// Copyright (c) 2008 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -612,7 +612,7 @@ CHexEditView::CHexEditView() : expr_(this)
 #endif
 
 #ifdef RULER_ADJUST
-    adjusting_offset_ = adjusting_group_by_ = -1;
+    adjusting_rowsize_ = adjusting_offset_ = adjusting_group_by_ = -1;
 #endif
 
 	errors_mentioned_ = false;
@@ -3239,18 +3239,63 @@ void CHexEditView::draw_adjusters(CDC* pDC)
     // Set up pen and brush colours (all adjusters are the same colour)
     CPen pen(PS_SOLID, 0, RGB(0,0,0));          // black pen
     CPen pdash(PS_DOT, 0, RGB(0,0,0));          // for dashed black line
-    CBrush brush(RGB(255,255,255));             // white brush
+    CBrush bwhite(RGB(255,255,255));            // white brush
+    CBrush bred(RGB(192,0,0));                  // red brush
     CPen * psp = pDC->SelectObject(&pen);       // ptr to saved pen
-    CBrush * psb = pDC->SelectObject(&brush);   // ptr to saved brush
+    CBrush * psb = pDC->SelectObject(&bwhite);  // ptr to saved brush
 
-    // Show position of "offset_" in the ruler
+	// Show rowsize_ in the ruler
+	ASSERT(rowsize_ > 3);
+    //if (adjusting_rowsize_ <= rowsize_)
+	{
+		if (!display_.vert_display && display_.hex_area)
+		{
+			if (adjusting_rowsize_ == -1 || adjusting_rowsize_ == rowsize_)
+				xpos = char_pos(0) - text_width_w_/2 - scrollpos_.x;
+			else
+				xpos = hex_pos(adjusting_rowsize_) - scrollpos_.x;
+			if (display_.autofit)
+				pDC->SelectObject(&bred);
+			draw_rowsize(pDC, xpos-1);
+			if (display_.autofit)
+				pDC->SelectObject(&bwhite);
+			if (adjusting_rowsize_ > -1)
+			{
+				(void)pDC->SelectObject(pdash);
+				pDC->MoveTo(xpos-1, bdr_top_);
+				pDC->LineTo(xpos-1, 30000);
+				(void)pDC->SelectObject(pen);
+			}
+		}
+		else if (display_.vert_display || display_.char_area)
+		{
+			if (adjusting_rowsize_ == -1 || adjusting_rowsize_ == rowsize_)
+				xpos = char_pos(rowsize_ - 1) + (3*text_width_w_)/2 - scrollpos_.x;
+			else
+				xpos = char_pos(adjusting_rowsize_) - scrollpos_.x;
+			if (display_.autofit)
+				pDC->SelectObject(&bred);
+			draw_rowsize(pDC, xpos-1);
+			if (display_.autofit)
+				pDC->SelectObject(&bwhite);
+			if (adjusting_rowsize_ > -1)
+			{
+				(void)pDC->SelectObject(pdash);
+				pDC->MoveTo(xpos-1, bdr_top_);
+				pDC->LineTo(xpos-1, 30000);
+				(void)pDC->SelectObject(pen);
+			}
+		}
+	}
+
+    // Show position of "offset_" in the ruler (in hex and/or char areas)
     ASSERT(offset_ < rowsize_);
 	if (!display_.vert_display && display_.hex_area)
     {
         if (adjusting_offset_ > -1)
-            xpos = hex_pos(adjusting_offset_);
+            xpos = hex_pos(adjusting_offset_) - scrollpos_.x;
         else
-            xpos = hex_pos(offset_);
+            xpos = hex_pos(offset_) - scrollpos_.x;
         draw_offset(pDC, xpos-1);
         if (adjusting_offset_ > -1)
         {
@@ -3263,10 +3308,11 @@ void CHexEditView::draw_adjusters(CDC* pDC)
     if (display_.vert_display || display_.char_area)
     {
         if (adjusting_offset_ > -1)
-            xpos = char_pos(adjusting_offset_);
+            xpos = char_pos(adjusting_offset_) - scrollpos_.x;
         else
-            xpos = char_pos(offset_);
-        draw_offset(pDC, xpos-1);
+            xpos = char_pos(offset_) - scrollpos_.x;
+		if (display_.vert_display || !display_.hex_area)
+			draw_offset(pDC, xpos-1);
         if (adjusting_offset_ > -1)
         {
             (void)pDC->SelectObject(pdash);
@@ -3276,71 +3322,88 @@ void CHexEditView::draw_adjusters(CDC* pDC)
         }
     }
 
-    if (group_by_ < rowsize_ && display_.vert_display)
-    {
-        if (adjusting_group_by_ > -1)
-            xpos = char_pos(adjusting_group_by_);
-        else
-            xpos = char_pos(group_by_);
-        if (display_.vert_display && 
-            (adjusting_group_by_ == -1 || adjusting_group_by_%group_by_ == 0))
-            xpos -= text_width_w_/2;
-        draw_group_by(pDC, xpos);
-        if (adjusting_group_by_ > -1)
-        {
-            (void)pDC->SelectObject(pdash);
-            pDC->MoveTo(xpos, bdr_top_);
-            pDC->LineTo(xpos, 30000);
-            (void)pDC->SelectObject(pen);
-        }
-    }
-    else if (group_by_ < rowsize_ && display_.hex_area)
-    {
-        if (adjusting_group_by_ > -1)
-            xpos = hex_pos(adjusting_group_by_);
-        else
-            xpos = hex_pos(group_by_);
-        if (adjusting_group_by_ == -1 || adjusting_group_by_%group_by_ == 0)
-            xpos -= (text_width_ - 1);
-        draw_group_by(pDC, xpos);
-        if (adjusting_group_by_ > -1)
-        {
-            (void)pDC->SelectObject(pdash);
-            pDC->MoveTo(xpos, bdr_top_);
-            pDC->LineTo(xpos, 30000);
-            (void)pDC->SelectObject(pen);
-        }
-    }
+	// Show current grouping if not adjusting (adjusting_group_by_ == -1) OR
+	// current adjust column if not dragged past the edge (adjusting_group_by_ < 9999)
+	if (adjusting_group_by_ == -1 && group_by_ < rowsize_ ||
+		adjusting_group_by_ > -1 && adjusting_group_by_ < rowsize_)
+	{
+		if (display_.vert_display)
+		{
+			if (adjusting_group_by_ > -1)
+				xpos = char_pos(adjusting_group_by_) - scrollpos_.x;
+			else
+				xpos = char_pos(group_by_) - scrollpos_.x;
+			if (display_.vert_display && 
+				(adjusting_group_by_ == -1 || adjusting_group_by_%group_by_ == 0))
+				xpos -= text_width_w_/2;
+			draw_group_by(pDC, xpos);
+			if (adjusting_group_by_ > -1)
+			{
+				// Draw vertical dashed line
+				(void)pDC->SelectObject(pdash);
+				pDC->MoveTo(xpos, bdr_top_);
+				pDC->LineTo(xpos, 30000);
+				(void)pDC->SelectObject(pen);
+			}
+		}
+		else if (display_.hex_area)
+		{
+			if (adjusting_group_by_ > -1)
+				xpos = hex_pos(adjusting_group_by_) - 2 - scrollpos_.x;
+			else
+				xpos = hex_pos(group_by_) - 2 - scrollpos_.x;
+			if (adjusting_group_by_ == -1 || adjusting_group_by_%group_by_ == 0)
+				xpos -= (text_width_ - 1);
+			draw_group_by(pDC, xpos);
+			if (adjusting_group_by_ > -1)
+			{
+				(void)pDC->SelectObject(pdash);
+				pDC->MoveTo(xpos, bdr_top_);
+				pDC->LineTo(xpos, 30000);
+				(void)pDC->SelectObject(pen);
+			}
+		}
+	}
 
     (void)pDC->SelectObject(psp);
     (void)pDC->SelectObject(psb);
+}
+
+// Draws row size adjsument handle in the ruler
+void CHexEditView::draw_rowsize(CDC* pDC, int xpos)
+{
+    pDC->BeginPath();
+    pDC->MoveTo(xpos + 2, bdr_top_ - 6);
+    pDC->LineTo(xpos,     bdr_top_ - 6);
+    pDC->LineTo(xpos - 3, bdr_top_ - 3);
+    pDC->LineTo(xpos,     bdr_top_);
+    pDC->LineTo(xpos + 2, bdr_top_);
+    pDC->EndPath();
+    pDC->StrokeAndFillPath();
 }
 
 // Draws offset handle in the ruler
 void CHexEditView::draw_offset(CDC* pDC, int xpos)
 {
     pDC->BeginPath();
-    pDC->MoveTo(xpos - 3, bdr_top_ - 7);
-    pDC->LineTo(xpos - 3, bdr_top_ - 4);
-    pDC->LineTo(xpos,     bdr_top_ - 1);
-    pDC->LineTo(xpos + 3, bdr_top_ - 4);
-    pDC->LineTo(xpos + 3, bdr_top_ - 7);
-    pDC->LineTo(xpos - 3, bdr_top_ - 7);
+    pDC->MoveTo(xpos - 1, bdr_top_ - 5);
+    pDC->LineTo(xpos - 1, bdr_top_ - 1);
+    pDC->LineTo(xpos,     bdr_top_);
+    pDC->LineTo(xpos + 3, bdr_top_ - 3);
+    pDC->LineTo(xpos,     bdr_top_ - 6);
     pDC->EndPath();
     pDC->StrokeAndFillPath();
 }
 
-// Draws offset handle in the ruler
+// Draws group by handle in the ruler
 void CHexEditView::draw_group_by(CDC* pDC, int xpos)
 {
     pDC->BeginPath();
-    pDC->MoveTo(xpos,     bdr_top_ - 12);
-    pDC->LineTo(xpos - 2, bdr_top_ - 10);
-    pDC->LineTo(xpos - 2, bdr_top_ - 3);
-    pDC->LineTo(xpos ,    bdr_top_ - 1);
-    pDC->LineTo(xpos + 2, bdr_top_ - 3);
-    pDC->LineTo(xpos + 2, bdr_top_ - 10);
-    pDC->LineTo(xpos,     bdr_top_ - 12);
+    pDC->MoveTo(xpos - 3, bdr_top_ - 6);
+    pDC->LineTo(xpos - 3, bdr_top_ - 4);
+    pDC->LineTo(xpos,     bdr_top_ - 1);
+    pDC->LineTo(xpos + 3, bdr_top_ - 4);
+    pDC->LineTo(xpos + 3, bdr_top_ - 6);
     pDC->EndPath();
     pDC->StrokeAndFillPath();
 }
@@ -3844,9 +3907,11 @@ void CHexEditView::calc_autofit()
 // int CHexEditView::hex_pos(int column, int width) const;
 
 // Return closest hex area column given x display position
-// If inside==TRUE then will return a value from 0 to rowsize_ - 1
-// else may return rowsize to indicate being past last column.
-int CHexEditView::pos_hex(int pos, BOOL inside) const
+// Inside determines the numbers returned for columns above rowsize_
+//  1 (TRUE) will return a value from 0 to rowsize_ - 1
+//  0 (FALSE) will return a value from 0 to rowsize_
+//  -1 will return value possibly greater than rowsize_
+int CHexEditView::pos_hex(int pos, int inside) const
 {
     int col = pos - addr_width_*text_width_;
     col -= (col/(text_width_*(group_by_*3+1)))*text_width_;
@@ -3854,8 +3919,8 @@ int CHexEditView::pos_hex(int pos, BOOL inside) const
 
     // Make sure col is within valid range
     if (col < 0) col = 0;
-    else if (inside && col >= rowsize_) col = rowsize_ - 1;
-    else if (col > rowsize_) col = rowsize_;
+    else if (inside == 1 && col >= rowsize_) col = rowsize_ - 1;
+    else if (inside == 0 && col > rowsize_) col = rowsize_;
 
     return col;
 }
@@ -3864,9 +3929,11 @@ int CHexEditView::pos_hex(int pos, BOOL inside) const
 // int CHexEditView::char_pos(int column, int width /* = 0 */) const;
 
 // Return closest char area column given display (X) coord
-// If inside==TRUE then will return a value from 0 to rowsize_ - 1
-// else may return rowsize_ to indicate being past the last column.
-int CHexEditView::pos_char(int pos, BOOL inside) const
+// Inside determines the numbers returned for columns above rowsize_
+//  1 (TRUE) will return a value from 0 to rowsize_ - 1
+//  0 (FALSE) will return a value from 0 to rowsize_
+//  -1 will return value possibly greater than rowsize_
+int CHexEditView::pos_char(int pos, int inside) const
 {
     int col;
     if (display_.vert_display)
@@ -3882,8 +3949,8 @@ int CHexEditView::pos_char(int pos, BOOL inside) const
 
     // Make sure col is within valid range
     if (col < 0) col = 0;
-    else if (inside && col >= rowsize_) col = rowsize_ - 1;
-    else if (col > rowsize_) col = rowsize_;
+    else if (inside == 1 && col >= rowsize_) col = rowsize_ - 1;
+    else if (inside == 0 && col > rowsize_) col = rowsize_;
 
     return col;
 }
@@ -4655,22 +4722,23 @@ void CHexEditView::invalidate_ruler(FILE_ADDRESS addr)
 // Invalidate part of ruler related to an address
 void CHexEditView::invalidate_adjuster(int col)
 {
-    ASSERT(col >= 0 && col <= rowsize_);
+    if (col < 0)
+		return;
     CRect rct(-1, 0, -1, 30000);
 	if (!display_.vert_display && display_.hex_area)
     {
-        rct.left = hex_pos(col);
-        rct.right = rct.left + 3;
-        rct.left -= 3;
+        rct.left = hex_pos(col) - scrollpos_.x;
+        rct.right = rct.left + 4;
+        rct.left -= 7;
         if (col%group_by_ == 0)
             rct.left -= text_width_;
         InvalidateRect(&rct);   // DoInvalidateRect not nec. as we can't be in a macro??
     }
     if (display_.vert_display || display_.char_area)
     {
-        rct.left = char_pos(col);
-        rct.right = rct.left + 3;
-        rct.left -= 3;
+        rct.left = char_pos(col) - scrollpos_.x;
+        rct.right = rct.left + 4;
+        rct.left -= 7;
         if (display_.vert_display && col%group_by_ == 0)
             rct.left -= text_width_w_/2;
         InvalidateRect(&rct);
@@ -5829,11 +5897,37 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
         return;
     }
 
+    GetSelAddr(prev_start_, prev_end_);
+    prev_row_ = 0;
+    if (prev_start_ == prev_end_ && display_.vert_display)
+        prev_row_ = pos2row(GetCaret());
+
     if (point.y < bdr_top_)       // above top (ie in ruler)
     {
 #ifdef RULER_ADJUST
         // Ruler area - check if over any of the adjusters
         int xpos;
+
+		// Check if mouse down on row size adjuster
+		adjusting_rowsize_ = -1;
+	    if (!display_.vert_display && display_.hex_area)
+        {
+			xpos = char_pos(0) - text_width_w_/2;
+            if (pp.x > xpos - 5 && pp.x < xpos + 5)
+                adjusting_rowsize_ = rowsize_;
+        }
+        else if (display_.vert_display || (display_.char_area && !display_.hex_area))
+        {
+			xpos = char_pos(rowsize_ - 1) + (3*text_width_w_)/2;
+            if (pp.x > xpos - 5 && pp.x < xpos + 5)
+                adjusting_rowsize_ = rowsize_;
+        }
+        if (adjusting_rowsize_ > -1)
+        {
+            invalidate_adjuster(adjusting_rowsize_);
+		    SetCapture();
+            return;
+        }
 
         // Check if the offset adjuster has been clicked
         adjusting_offset_ = -1;
@@ -5852,6 +5946,7 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
         if (adjusting_offset_ > -1)
         {
             invalidate_adjuster(adjusting_offset_);
+		    SetCapture();
             return;
         }
 
@@ -5871,10 +5966,9 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
         if (adjusting_group_by_ > -1)
         {
             invalidate_adjuster(adjusting_group_by_);
+		    SetCapture();
             return;
         }
-
-        // xxx TODO check other adjusters here
 #endif
         return;         // Don't allow select when click in ruler
     }
@@ -5885,11 +5979,6 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
     dev_down_ = point;                          // Mouse down posn (device coords)
     doc_down_ = pp;                             // Mouse down posn (doc coords)
     shift_down_ = shift_down();
-
-    GetSelAddr(prev_start_, prev_end_);
-    prev_row_ = 0;
-    if (prev_start_ == prev_end_ && display_.vert_display)
-        prev_row_ = pos2row(GetCaret());
 
     FILE_ADDRESS swap_addr = -1;                // caret addr before swap (or -1 if no swap)
 	if (!shift_down_)
@@ -5930,6 +6019,24 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point) 
 {
 #ifdef RULER_ADJUST
+    if (adjusting_rowsize_ > -1)
+    {
+        undo_.push_back(view_undo(undo_rowsize));
+        undo_.back().rowsize = rowsize_;
+		if (display_.autofit)
+		{
+			undo_.push_back(view_undo(undo_autofit, TRUE));
+			display_.autofit = 0;
+		}
+        rowsize_ = adjusting_rowsize_;;
+        recalc_display();
+        DoInvalidate();
+        ReleaseCapture();
+        adjusting_rowsize_ = -1;
+		SetSel(addr2pos(prev_start_), addr2pos(prev_end_)); 
+        return;
+    }
+
     if (adjusting_offset_ > -1)
     {
         undo_.push_back(view_undo(undo_offset));
@@ -5937,8 +6044,9 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
         real_offset_ = offset_ = adjusting_offset_;
         recalc_display();
         DoInvalidate();
+        ReleaseCapture();
         adjusting_offset_ = -1;
-
+		SetSel(addr2pos(prev_start_), addr2pos(prev_end_)); 
         return;
     }
 
@@ -5949,8 +6057,9 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
         group_by_ = adjusting_group_by_;
         recalc_display();
         DoInvalidate();
+        ReleaseCapture();
         adjusting_group_by_ = -1;
-
+		SetSel(addr2pos(prev_start_), addr2pos(prev_end_)); 
         return;
     }
 #endif
@@ -6022,6 +6131,32 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 void CHexEditView::OnMouseMove(UINT nFlags, CPoint point) 
 {
 #ifdef RULER_ADJUST
+	if (adjusting_rowsize_ > -1)
+	{
+        int old = adjusting_rowsize_;    // save current so we can "undraw" it
+    	CPointAp doc_pt = ConvertFromDP(point);
+
+	    if (!display_.vert_display && display_.hex_area)
+        {
+            if (doc_pt.x < hex_pos(4))
+                adjusting_rowsize_ = rowsize_;
+            else
+                adjusting_rowsize_ = pos_hex(doc_pt.x, -1);
+        }
+        else if (display_.vert_display || display_.char_area)
+        {
+            if (doc_pt.x < char_pos(4))
+                adjusting_rowsize_ = rowsize_;
+            else
+                adjusting_rowsize_ = pos_char(doc_pt.x, -1);
+        }
+        if (adjusting_rowsize_ != old)
+        {
+            invalidate_adjuster(old);
+            invalidate_adjuster(adjusting_rowsize_);
+        }
+        return;
+	}
     if (adjusting_offset_ > -1)
     {
         int old = adjusting_offset_;    // save current so we can "undraw" it
@@ -6063,6 +6198,7 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
         }
         return;
     }
+
     if (adjusting_group_by_ > -1)
     {
         int old = adjusting_group_by_;    // save current so we can "undraw" it
@@ -6071,15 +6207,19 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
         // Work out new group_by_ from current dragged mouse posn
         if (display_.vert_display)
         {
-            if (doc_pt.x < char_pos(2) || doc_pt.x >= char_pos(rowsize_))
+            if (doc_pt.x < char_pos(2))
                 adjusting_group_by_ = group_by_;    // Set back to current if dragged into invalid area
+			else if (doc_pt.x >= char_pos(rowsize_))
+                adjusting_group_by_ = 9999;
             else
                 adjusting_group_by_ = pos_char(doc_pt.x, TRUE);
         }
         else if (display_.hex_area)
         {
-            if (doc_pt.x < hex_pos(2) || doc_pt.x >= hex_pos(rowsize_))
+            if (doc_pt.x < hex_pos(2))
                 adjusting_group_by_ = group_by_;
+            else if (doc_pt.x >= hex_pos(rowsize_))
+                adjusting_group_by_ = 9999;
             else
                 adjusting_group_by_ = pos_hex(doc_pt.x, TRUE);
         }
@@ -7127,7 +7267,55 @@ BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
         // Check if in the ruler
         if (point.y <= bdr_top_)
         {
-            //::SetCursor(theApp.LoadStandardCursor(IDC_SIZEWE));
+#ifdef RULER_ADJUST
+		    CPointAp pp = ConvertFromDP(point);          // Point in our coord system
+			bool over_adjuster = false;
+		    int xpos;
+
+			if (!display_.vert_display && display_.hex_area)
+			{
+				xpos = char_pos(0) - text_width_w_/2;
+				if (pp.x > xpos - 5 && pp.x < xpos + 5)
+					over_adjuster = true;
+			}
+			else if (display_.vert_display || (display_.char_area && !display_.hex_area))
+			{
+				xpos = char_pos(rowsize_ - 1) + (3*text_width_w_)/2;
+				if (pp.x > xpos - 5 && pp.x < xpos + 5)
+					over_adjuster = true;
+			}
+
+			if (!display_.vert_display && display_.hex_area)
+			{
+				xpos = hex_pos(offset_);
+				if (pp.x > xpos - 5 && pp.x < xpos + 5)
+					over_adjuster = true;
+			}
+			if (display_.vert_display || display_.char_area)
+			{
+				xpos = char_pos(offset_);
+				if (pp.x > xpos - 5 && pp.x < xpos + 5)
+					over_adjuster = true;
+			}
+
+			if (display_.vert_display)
+			{
+				xpos = char_pos(group_by_) - text_width_w_/2;
+				if (pp.x > xpos - 5 && pp.x < xpos + 5)
+					over_adjuster = true;
+			}
+			else if (display_.hex_area)
+			{
+				xpos = hex_pos(group_by_) - text_width_;
+				if (pp.x > xpos - 5 && pp.x < xpos + 5)
+					over_adjuster = true;
+			}
+			if (point.y > bdr_top_ - 6 && over_adjuster)
+			{
+				::SetCursor(theApp.LoadStandardCursor(IDC_SIZEWE));
+				return TRUE;
+			}
+#endif
             return CScrView::OnSetCursor(pWnd, nHitTest, message);
         }
 

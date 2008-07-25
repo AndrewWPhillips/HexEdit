@@ -173,6 +173,14 @@ protected:
 
     int bdr_top_, bdr_left_, bdr_bottom_, bdr_right_; // Borders reserved for ruler etc
 
+protected:
+    // The following determine the current position in the doc of the top left
+    // of the display, the caret and the selection.  caretpos_ is the start of
+    // the selection, selpos_ is the end.  caretpos_ == selpos_ if there is
+    // nothing selected.  basepos_ is used as the base position when a mouse
+    // selection is in progress.
+    CPointAp scrollpos_, caretpos_, selpos_, basepos_;
+
 private:
     // The following are in logical units for the window.
     // They determine the total size of the document, the size
@@ -188,13 +196,6 @@ private:
     // Windows supports only 32768 scrollbar positions so this
     // is necessary if total_.cx/cy is greater than this.
     CSizeAp maxbar_;
-
-    // The following determine the current position in the doc of the top left
-    // of the display, the caret and the selection.  caretpos_ is the start of
-    // the selection, selpos_ is the end.  caretpos_ == selpos_ if there is
-    // nothing selected.  basepos_ is used as the base position when a mouse
-    // selection is in progress.
-    CPointAp scrollpos_, caretpos_, selpos_, basepos_;
 
     // The following are attributes of the device context
     CPen *pen_;
