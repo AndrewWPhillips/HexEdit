@@ -811,6 +811,7 @@ expr_eval::tok_t expr_eval::prec_mul(value_t &val, CString &vname)
 expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 {
     vname.Empty();
+	std::map<CString, value_t>::const_iterator pv;
     tok_t next_tok = get_next();
     value_t tmp;
     __int64 sym_size, sym_address;
@@ -2593,15 +2594,23 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             sprintf(error_buf_, "\"%s\" is a reserved symbol", psymbol_);
             return TOK_NONE;
         }
-        val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address, sym_str);
-        if (val.typ == TYPE_NONE)
-        {
-            // Not a symbol referring to a file field so assume it is an internal variable
-            vname = psymbol_;
-
-            // Get any array indices (if any)
+		// First do a quick check for a global var not array (or a string which can aslo be indexed)
+		// then check the file (template), then finally check globals again but include arrays
+		// Note that this could possibly be even faster if var_ was a hash table instead of a std::map (RB tree)
+		vname = psymbol_;
+		vname.MakeUpper();
+		if ((pv = var_.find(vname)) != var_.end() && pv->second.typ != TYPE_STRING)
+		{
+			// Found the global var
             next_tok = get_next();
-            while (next_tok == TOK_LBRA)
+			val = pv->second;
+		}
+		else if (val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address, sym_str),
+			     val.typ == TYPE_NONE)
+        {
+            // Symbol not a file (template) field so check if it is a global array
+            next_tok = get_next();
+            while (next_tok == TOK_LBRA)   // for each index [1][2]...
             {
                 if (error(next_tok = prec_lowest(tmp), "Expected array index"))
                     return TOK_NONE;
@@ -2618,7 +2627,6 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
                 }
 
 				// Check if using index on a string
-				std::map<CString, value_t>::const_iterator pv;
 				vname.MakeUpper();
 				if ((pv = var_.find(vname)) != var_.end() && pv->second.typ == TYPE_STRING)
 				{
@@ -2648,6 +2656,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
         }
         else
         {
+			// The symbol was a field from the file (template)
             next_tok = get_next();
             while (next_tok == TOK_DOT || next_tok == TOK_LBRA)
             {
