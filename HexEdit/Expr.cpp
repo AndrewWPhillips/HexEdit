@@ -2948,59 +2948,71 @@ struct
     expr_eval::tok_t tok;
 } func_list[] =
 {
-    {"SIZEOF",    expr_eval::TOK_SIZEOF},
-    {"ADDRESSOF", expr_eval::TOK_ADDRESSOF},
     {"ABS",       expr_eval::TOK_ABS},
-    {"MIN",       expr_eval::TOK_MIN},
-    {"MAX",       expr_eval::TOK_MAX},
-    {"POW",       expr_eval::TOK_POW},
-    {"STRING",    expr_eval::TOK_STR},
-    {"INT",       expr_eval::TOK_INT},
+    {"ACOS",      expr_eval::TOK_ACOS},
+    {"ADDRESSOF", expr_eval::TOK_ADDRESSOF},
+    {"ASC2EBC",   expr_eval::TOK_A2E},
+    {"ASIN",      expr_eval::TOK_ASIN},
+    {"ATAN",      expr_eval::TOK_ATAN},
     {"ATOI",      expr_eval::TOK_ATOI},
     {"ATOF",      expr_eval::TOK_ATOF},
+    {"COS",       expr_eval::TOK_COS},
     {"DATE",      expr_eval::TOK_DATE},
-    {"TIME",      expr_eval::TOK_TIME},
-    {"YEAR",      expr_eval::TOK_YEAR},
-    {"MONTH",     expr_eval::TOK_MONTH},
     {"DAY",       expr_eval::TOK_DAY},
-    {"HOUR",      expr_eval::TOK_HOUR},
-    {"MINUTE",    expr_eval::TOK_MINUTE},
-    {"SECOND",    expr_eval::TOK_SECOND},
-    {"NOW",       expr_eval::TOK_NOW},
-    {"RAND",      expr_eval::TOK_RAND},
-    {"STRLEN",    expr_eval::TOK_STRLEN},
-    {"LEFT",      expr_eval::TOK_LEFT},
-    {"RIGHT",     expr_eval::TOK_RIGHT},
-    {"MID",       expr_eval::TOK_MID},
-    {"LTRIM",     expr_eval::TOK_LTRIM},
-    {"RTRIM",     expr_eval::TOK_RTRIM},
-    {"STRCHR",    expr_eval::TOK_STRCHR},
-    {"STRSTR",    expr_eval::TOK_STRSTR},
-    {"STRICMP",   expr_eval::TOK_STRICMP},
-    {"ASC2EBC",   expr_eval::TOK_A2E},
+    {"DEFINED",   expr_eval::TOK_DEFINED},
     {"EBC2ASC",   expr_eval::TOK_E2A},
+    {"EXP",       expr_eval::TOK_EXP},
+    {"GETBOOL",   expr_eval::TOK_GETBOOL},
     {"GETINT",    expr_eval::TOK_GETINT},
     {"GETSTRING", expr_eval::TOK_GETSTR},
-    {"GETBOOL",   expr_eval::TOK_GETBOOL},
-    {"SQRT",      expr_eval::TOK_SQRT},
-    {"SIN",       expr_eval::TOK_SIN},
-    {"COS",       expr_eval::TOK_COS},
-    {"TAN",       expr_eval::TOK_TAN},
-    {"ASIN",      expr_eval::TOK_ASIN},
-    {"ACOS",      expr_eval::TOK_ACOS},
-    {"ATAN",      expr_eval::TOK_ATAN},
-    {"EXP",       expr_eval::TOK_EXP},
+    {"HOUR",      expr_eval::TOK_HOUR},
+    {"INT",       expr_eval::TOK_INT},
+    {"LEFT",      expr_eval::TOK_LEFT},
     {"LOG",       expr_eval::TOK_LOG},
-    {"DEFINED",   expr_eval::TOK_DEFINED},
+    {"LTRIM",     expr_eval::TOK_LTRIM},
+    {"MAX",       expr_eval::TOK_MAX},
+    {"MID",       expr_eval::TOK_MID},
+    {"MIN",       expr_eval::TOK_MIN},
+    {"MINUTE",    expr_eval::TOK_MINUTE},
+    {"MONTH",     expr_eval::TOK_MONTH},
+    {"NOW",       expr_eval::TOK_NOW},
+    {"POW",       expr_eval::TOK_POW},
+    {"RAND",      expr_eval::TOK_RAND},
+    {"RIGHT",     expr_eval::TOK_RIGHT},
+    {"RTRIM",     expr_eval::TOK_RTRIM},
+    {"SECOND",    expr_eval::TOK_SECOND},
+    {"SIN",       expr_eval::TOK_SIN},
+    {"SIZEOF",    expr_eval::TOK_SIZEOF},
+    {"SQRT",      expr_eval::TOK_SQRT},
+    {"STRCHR",    expr_eval::TOK_STRCHR},
+    {"STRICMP",   expr_eval::TOK_STRICMP},
+    {"STRING",    expr_eval::TOK_STR},
+    {"STRLEN",    expr_eval::TOK_STRLEN},
+    {"STRSTR",    expr_eval::TOK_STRSTR},
+    {"TAN",       expr_eval::TOK_TAN},
+    {"TIME",      expr_eval::TOK_TIME},
+    {"YEAR",      expr_eval::TOK_YEAR},
 
     {NULL,        expr_eval::TOK_NONE}  // marks end of list
 };
 
+// TBD This could be sped up using a binary search.
+// (Most of the time no match is found as it is a var name.)
 expr_eval::tok_t expr_eval::func_token(const char *buf)
 {
 	int ii;
+#ifdef _DEBUG
+	// Make sure it is uppercase
+	char tmp[256];
+	strcpy(tmp, buf);
+	strupr(tmp);
+	ASSERT(strcmp(tmp, buf) == 0);
+	// Make sure they are sorted
+    for (ii = 1; func_list[ii].name != NULL; ++ii)
+		ASSERT(strcmp(func_list[ii-1].name, func_list[ii].name) < 0);
+#endif
     for (ii = 0; func_list[ii].name != NULL; ++ii)
-        if (_stricmp(buf, func_list[ii].name) == 0)
+        if (strcmp(buf, func_list[ii].name) == 0)
             break;
 
     return func_list[ii].tok;
@@ -3056,26 +3068,28 @@ expr_eval::tok_t expr_eval::get_next()
         else
         {
             // Either a predefined symbol (bool const or function) or a variable
-            char buf[1024];
+            char buf[256], bufu[256];
             size_t len = p_ - saved_;
             if (len > sizeof(buf)-1) len = sizeof(buf)-1;
             strncpy(buf, saved_, len);
             buf[len] = '\0';
-            tok_t token;
+			strcpy(bufu, buf);
+			strupr(bufu);              // make uppercase so we can use strcmp instead of _stricmp
 
-            if (_stricmp(buf, "true") == 0)
+            tok_t token;
+            if ((token = func_token(bufu)) != TOK_NONE)
+            {
+                return token;
+            }
+            else if (strcmp(bufu, "TRUE") == 0)
             {
                 last_val_ = value_t(true);
                 return TOK_CONST;
             }
-            else if (_stricmp(buf, "false") == 0)
+            else if (strcmp(bufu, "FALSE") == 0)
             {
                 last_val_ = value_t(false);
                 return TOK_CONST;
-            }
-            else if ((token = func_token(buf)) != TOK_NONE)
-            {
-                return token;
             }
             else
             {
