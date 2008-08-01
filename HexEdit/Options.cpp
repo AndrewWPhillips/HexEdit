@@ -162,7 +162,7 @@ void COptSheet::init()
     val_.show_bookmarks_ = val_.show_highlights_ = TRUE;
 
 	// Set up page navigation
-	SetLook(PropSheetLook_Tree, 150);
+	SetLook(PropSheetLook_Tree, 160);
 	SetIconsList (IDB_OPTIONSIMAGES, 16 /* Image width */);
 }
 
