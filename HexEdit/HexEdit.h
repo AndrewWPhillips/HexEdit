@@ -68,6 +68,8 @@ typedef __int64 FILE_ADDRESS;
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
 #define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
 #define EXPLORER_WND    1   // Modeless dialog like Windows Explorer - works well but need to fix hidden files button image
+#define CALCULATOR_IMPROVEMENTS 1
+#define CALC_EXPR       1   // CALCULATOR_IMPROVEMENTS also requires this
 
 #define DIALOG_BAR  1       // Put modeless dialogs into dockable/rollable dialog bars
 // Note: You also need to change dialog style (hexedit.rc) to WS_CHILD for dockable bars
@@ -76,7 +78,6 @@ typedef __int64 FILE_ADDRESS;
 
 // Flags for stuff in development
 //#define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project
-//#define CALC_EXPR       1   // Allow expressions in calculator - needs testing
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
 //#define REFRESH_OFF     1   // Turn off display refresh when replacing all - doesn't seem to save much time so leave off for now
 

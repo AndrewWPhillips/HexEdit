@@ -34,7 +34,6 @@
 #define IDS_WEB_UPGRADE                 122
 #define IDS_WEB_FORUMS                  123
 #define IDS_WEB_FAQ                     124
-#define IDD_CALC_OLD                    125
 #define IDD_CALC_NEW                    126
 #define IDR_MAINFRAME                   128
 #define IDR_NOTUSED                     128

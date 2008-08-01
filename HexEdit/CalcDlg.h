@@ -63,7 +63,7 @@ public:
     unsigned __int64 GetValue() const { return current_ & mask_; }
 
 // Dialog Data
-    enum { IDD = IDD_CALC };
+    enum { IDD = IDD_CALC_NEW };
     int     bits_index_;
     int     base_index_;
 
