@@ -299,86 +299,28 @@ Help
   > read/write Intel and Motorola binary file formats [Jim Seton]
   > add extra colour selection (highlight, background, address, etc) [Roland Glenn McIntosh]
 
-V3.2
- - New commands
-   - reload?
- > new Motorolas S option to export highlighted areas only
-   - move S1/S2/S3 items to drop-list in the File Save dialog
- - info tips
-   - show tip of template data at that location ???
-
- - allow enter expressions (incl assign to vars) in hex/dec jump tools
- > add select current highlight command and make default for dclick on highlight?
- - templates
-  > string in switch
-  - function to parse hex number (see forum)
-  > template menu
-   > new, open, open type
-   - parser setup
-   > save, save as
-   > split/tab/none
-   > sync, auto sync, refresh
-   > allow editing, options
- - unicode strings in templates
- > updated BMP and IFF templates
- > switch can use a string, not just int
- > update BCG 6.2 with my code and rebuild
- - make all selection work with blocks > 4GB
-   > conversions (x 4)
-   > encrypt/decrypt
-   > import/export hex text
-   - clipboard?
- > properties fields
-   > summary page
-     > auto save (no Return required) but allow Esc before lose focus
-   > merge fp pages
-   > add C# decimal
-   > code page support in char page
- > upgrade to Visual Studio 2003
- > draw image in background
- > MD5 + uppercase/lowercase conversions
- > general alignment and offset options for find
- > zlib compression/decompression + dialog
- > merge float properties pages into one and add Decimal (C#) capability
- > background search for drive info (BG_DEVICE_SEARCH)
- > recent file dlg and bookmark dlg can only handle file sizes/positions up to 2^31 (sorting)
- > show category, keywords, comments in recent file dialog
-   - allow search for keyword in RFD
- - check new cracker codes and find workaround
- - update help
-   > move "what's this" help from .HLP to .CHM
-   > new commands
-   > new dialog controls - what's this
-   > cust tutorial
-   - update template tutorial to demo bit-fields, parser, switch
-
-Free version
-  - remove security
-  - change version
-    - get revision from .rc not SVN
-    - update email dialog revision nos
-
-V3.3
-  - new icons
- - enable explorer window
-   - fix show hidden files icon (use drop list?)
+V 3.4
+ - reload command
+ - show selection problems
  - enable navigation points
    - don't save nav pt when flipping between files
-  - calculator
-    - new look calculator
-    - Goto history(s) in calculator
-    - bookmarks list
-    - expressions in calculator
+ - calculator
+   - new look calculator
+   - Goto history(s) in calculator
+   - bookmarks list
+   - expressions in calculator
+  - icon not shown for 2nd and subsequent windows
+    - need to call show_icon() after opening a new window
+ 
+V3.5
+ - new icons
  - more acknowledgements in help
 	SmartFTP
-	FrontPage
+	Expression Web 2
 	IkonBoard
 	FireFox
 	Parcom
   - wait cursor for any long operation (search for EnablePaneProgressBar(0))
-  - icon not shown for 2nd and subsequent windows
-    - need to call show_icon() after opening a new window
-  - font size in format toolbar flashes under Vista
   - options in dialogs that ask repetitive questions
     - also add options page where you can turn these on again
     - paste in overtype mode
@@ -390,20 +332,14 @@ V3.3
           REINSTALLMODE_FILEVERIFY | REINSTALLMODE_FILEMISSING |
           REINSTALLMODE_FILEOLDERVERSION | REINSTALLMODE_REPAIR);
   - extra CRC types
-  - fix options dialog to use BCG prop sheet with tree (see below for layout)
-   - add ability to select which prop pages are displayed (and order?)???\
   - restrict hist drop down list width
   - instead of ::HMessageBox check view in idle event to see if bg search finished
   - Convert to use FileErrorMessage() ???
   > clear histories (search/jump tools, recent file list, bookmarks?)
     - bookmarks does not remove from the lists of open files
-  - check new cracker codes and find workaround
   - option for mouse wheel units
   ? allow editing read-only files
   - insert file option should read a file even if it's in use
-  - use FindFirstFile for file size
-
-V3.4
  - aerial view
  - new installer
    - get MFC merge module (.msm file) to include used MFC in installation (.msi)
@@ -443,7 +379,17 @@ V3.4
 	- get number (using calc?)
 	- help: to store number in macro, enter in calculator and click '='
 
-V3.5
+V3.6
+ - new Intel hex formats
+ - move S1/S2/S3 items to drop-list in the File Save dialog
+ - info tips
+   - show tip of template data at that location ???
+ - allow search for keyword in RFD
+ - template tutorial to demo bit-fields, parser, switch
+ - font size in format toolbar flashes under Vista
+ - add ability to select which prop pages are displayed (and order?)???\
+
+V4.0
   - new MFC/BCG?
   - when doing masked search and file stats available search for most common non-masked char first
   - Implement Base64 import/export
@@ -451,8 +397,6 @@ V3.5
   - checksums page [Dave Ewen]?
   - CRC page
   - stats page
-  - show selection: move to middle if not currently visible
-
 
 Bugs
  Unfixable bugs
