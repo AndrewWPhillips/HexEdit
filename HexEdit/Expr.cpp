@@ -84,7 +84,8 @@ expr_eval::expr_eval(int mr /*=10*/, bool csa /*=false*/)
 
 // Note: expr is single byte (ANSI) string so cannot include any Unicode string
 // literals, however string expressions can include Unicode strings.
-expr_eval::value_t expr_eval::evaluate(const char *expr, int reference, int &ref_ac, int radix /* = 10 */)
+expr_eval::value_t expr_eval::evaluate(const char *expr, int reference, int &ref_ac,
+                                       int radix /* = 10 */, bool side_effects /* = true */)
 {
     value_t retval;                     // Returned value of the expression
     tok_t next_tok;                     // Last token found (TOK_EOL if no error)
@@ -93,7 +94,7 @@ expr_eval::value_t expr_eval::evaluate(const char *expr, int reference, int &ref
     p_ = expr;
     ref_ = reference;
     pac_ = &ref_ac;
-	changes_on_ = true;
+	changes_on_ = side_effects;
 
     ASSERT(radix > 1 && radix <= max_radix_);  // Ensure we don't erroneously allow hex consts
 
@@ -1051,6 +1052,11 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             strcpy(error_buf_, "Expected closing parenthesis after STRING");
             return TOK_NONE;
         }
+        if (val.typ == TYPE_NONE)
+        {
+            sprintf(error_buf_, "Unknown symbol \"%.200s\"", psymbol_);
+            return TOK_NONE;
+        }
 
         val.typ = TYPE_STRING;
         val.error = false;      // don't care about errors - just need size
@@ -1151,15 +1157,22 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		if (pGetIntDlg->value_ > pGetIntDlg->max_)
 			pGetIntDlg->value_ = pGetIntDlg->max_;
 
-		if (pGetIntDlg->DoModal() != IDOK)
-		{
-			delete pGetIntDlg;
-			return TOK_NONE;
-		}
 		ASSERT(val.typ == TYPE_STRING);   // make sure its has a string before freeing the memory
 		delete val.pstr;
-		val.int64 = pGetIntDlg->value_;
         val.typ = TYPE_INT;
+		if (changes_on_)
+        {
+		    if (pGetIntDlg->DoModal() != IDOK)
+		    {
+			    delete pGetIntDlg;
+			    return TOK_NONE;
+		    }
+		    val.int64 = pGetIntDlg->value_;
+        }
+        else
+        {
+		    val.int64 = 0;
+        }
 		delete pGetIntDlg;
         return get_next();
 
@@ -1213,13 +1226,20 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 			return TOK_NONE;
 		}
 
-		if (pGetStrDlg->DoModal() != IDOK)
-		{
-			delete pGetStrDlg;
-			return TOK_NONE;
-		}
 		ASSERT(val.typ == TYPE_STRING);   // make sure its has a string before freeing the memory
-		*val.pstr = pGetStrDlg->value_;
+		if (changes_on_)
+        {
+		    if (pGetStrDlg->DoModal() != IDOK)
+		    {
+			    delete pGetStrDlg;
+			    return TOK_NONE;
+		    }
+		    *val.pstr = pGetStrDlg->value_;
+        }
+        else
+        {
+            *val.pstr = ExprStringType();
+        }
 		delete pGetStrDlg;
         return get_next();
 
@@ -1290,7 +1310,11 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		ASSERT(val.typ == TYPE_STRING);   // make sure its has a string before freeing the memory
 		delete val.pstr;
 		val.typ = TYPE_BOOLEAN;
-		val.boolean = pGetBoolDlg->DoModal() == IDOK;
+		if (changes_on_)
+		    val.boolean = pGetBoolDlg->DoModal() == IDOK;
+        else
+            val.boolean = false;
+
 		delete pGetBoolDlg;
         return get_next();
 	case TOK_ADDRESSOF:
@@ -1381,6 +1405,12 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
         if (next_tok != TOK_RPAR)
         {
             strcpy(error_buf_, "Expected closing parenthesis after ADDRESSOF");
+            return TOK_NONE;
+        }
+
+        if (val.typ == TYPE_NONE)
+        {
+            sprintf(error_buf_, "Unknown symbol \"%.200s\"", psymbol_);
             return TOK_NONE;
         }
         if (sym_address < 0)
@@ -2472,6 +2502,46 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             val.typ = TYPE_INT;
         }
         return get_next();
+    case TOK_STRCMP:
+        if ((next_tok = get_next()) != TOK_LPAR)
+        {
+            strcpy(error_buf_, "Opening parenthesis expected after \"strcmp\"");
+            return TOK_NONE;
+        }
+        if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"strcmp\""))
+            return TOK_NONE;
+        if (val.typ != TYPE_STRING)
+        {
+            strcpy(error_buf_, "First parameter for \"strcmp\" must be a string");
+            return TOK_NONE;
+        }
+
+        if (next_tok != TOK_COMMA)
+        {
+            strcpy(error_buf_, "Expected comma and 2nd parameter for \"strcmp\"");
+            return TOK_NONE;
+        }
+        if (error(next_tok = prec_assign(tmp), "Expected 2nd parameter to \"strcmp\""))
+            return TOK_NONE;
+        if (tmp.typ != TYPE_STRING)
+        {
+            strcpy(error_buf_, "Second parameter for \"strcmp\" must be an string");
+            return TOK_NONE;
+        }
+
+        if (next_tok != TOK_RPAR)
+        {
+            strcpy(error_buf_, "Closing parenthesis expected for \"strcmp\"");
+            return TOK_NONE;
+        }
+        else
+        {
+            __int64 retval = val.pstr->Compare(*(tmp.pstr));
+            delete val.pstr;
+            val.int64 = retval;
+            val.typ = TYPE_INT;
+        }
+        return get_next();
     case TOK_STRICMP:
         if ((next_tok = get_next()) != TOK_LPAR)
         {
@@ -2594,12 +2664,14 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             sprintf(error_buf_, "\"%s\" is a reserved symbol", psymbol_);
             return TOK_NONE;
         }
-		// First do a quick check for a global var not array (or a string which can aslo be indexed)
+		// First do a quick check for a global var not array (or a string which can also be indexed)
 		// then check the file (template), then finally check globals again but include arrays
 		// Note that this could possibly be even faster if var_ was a hash table instead of a std::map (RB tree)
 		vname = psymbol_;
 		vname.MakeUpper();
-		if ((pv = var_.find(vname)) != var_.end() && pv->second.typ != TYPE_STRING)
+		if ((pv = var_.find(vname)) != var_.end() &&
+            pv->second.typ != TYPE_STRING &&            // ignore string in case we have to index into it
+            pv->second.typ != TYPE_NONE)                // ignore bogus vars (should not happen?)
 		{
 			// Found the global var
             next_tok = get_next();
@@ -2652,7 +2724,8 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 
             // Check if it already has a value
             vname.MakeUpper();
-            val = var_[vname];
+		    if ((pv = var_.find(vname)) != var_.end())
+                val = pv->second;
         }
         else
         {
@@ -2985,6 +3058,7 @@ struct
     {"SIZEOF",    expr_eval::TOK_SIZEOF},
     {"SQRT",      expr_eval::TOK_SQRT},
     {"STRCHR",    expr_eval::TOK_STRCHR},
+    {"STRCMP",    expr_eval::TOK_STRCMP},
     {"STRICMP",   expr_eval::TOK_STRICMP},
     {"STRING",    expr_eval::TOK_STR},
     {"STRLEN",    expr_eval::TOK_STRLEN},
@@ -3089,6 +3163,11 @@ expr_eval::tok_t expr_eval::get_next()
             else if (strcmp(bufu, "FALSE") == 0)
             {
                 last_val_ = value_t(false);
+                return TOK_CONST;
+            }
+            else if (strcmp(bufu, "PI") == 0)
+            {
+                last_val_ = value_t((double)3.14159265358979323846);
                 return TOK_CONST;
             }
             else

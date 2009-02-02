@@ -300,7 +300,6 @@
 #define IDB_REFRESH1                    315
 #define ID_INTEGER_STRSTR               315
 #define IDB_REFRESH_HOT                 316
-#define ID_INTEGER_SRTCMP               316
 #define IDB_FLIP                        317
 #define IDB_HORZ                        317
 #define ID_Menu                         317
@@ -481,6 +480,7 @@
 #define IDC_HEX_UCASE3                  1049
 #define IDC_DLG_MOVE                    1049
 #define IDC_SEL_LEN_TIP                 1049
+#define IDC_SPLASH                      1049
 #define IDC_OPEN_OVERTYPE               1050
 #define IDC_FILE_TYPE                   1050
 #define IDC_SHELLOPEN                   1050
@@ -492,6 +492,7 @@
 #define IDC_CLEAR_HIST                  1051
 #define IDC_INFO_COMMENTS               1051
 #define IDC_NICE_ADDRESSES              1051
+#define IDC_RESTORE2                    1051
 #define IDC_OPEN_READONLY               1052
 #define IDC_MARK_ADD                    1052
 #define IDC_BACKUP_IF_SIZE              1052
@@ -1083,6 +1084,7 @@
 #define IDC_DFFD_NONE                   1545
 #define IDC_PRINT_SPACE2                1546
 #define IDC_SHOW_OTHER                  1547
+#define IDC_TOD                         1548
 #define IDC_PAGE_ICON                   1549
 #define IDC_FILE_ICON                   1550
 #define IDC_PAGE_ICON2                  1551
@@ -1105,6 +1107,7 @@
 #define IDC_SPIN_RULER_HEX_TICKS        1566
 #define IDC_RULER_HEX_NUMS              1567
 #define IDC_SPIN_RULER_HEX_NUMS         1568
+#define IDC_SCAN                        1569
 #define IDC_DOC_PAGE                    1570
 #define IDC_INT_ABBREV                  1571
 #define IDC_SLIDER_AUTOSCROLL           1572
@@ -1123,6 +1126,7 @@
 #define IDC_SPIN_FILTER_LIST_SIZE       1585
 #define IDC_SPIN_FOLDER_LIST_SIZE       1586
 #define IDC_HIST_PAGE                   1587
+#define IDC_MAIN                        1588
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1486,6 +1490,20 @@
 #define ID_VIEW_RULER                   39003
 #define ID_VIEW_HL_CURSOR               39004
 #define ID_VIEW_HL_MOUSE                39005
+#define ID_STRING_ASC2EBC               39006
+#define ID_STRING_EBC2ASC               39007
+#define ID_REAL_PI                      39010
+#define ID_INTEGER_STRCMP               39011
+#define ID_INTEGER_STRICMP              39012
+#define ID_BOOLEAN_NE                   39014
+#define ID_BOOLEAN_LT                   39015
+#define ID_BOOLEAN_EQ                   39016
+#define ID_BOOLEAN_LE                   39017
+#define ID_BOOLEAN_GT                   39018
+#define ID_BOOLEAN_GE                   39019
+#define ID_BOOLEAN_GETBOOL              39020
+#define ID_INTEGER_GETINT               39021
+#define ID_STRING_GETSTRING             39024
 
 // Next default values for new objects
 // 
@@ -1493,8 +1511,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        412
-#define _APS_NEXT_COMMAND_VALUE         39006
-#define _APS_NEXT_CONTROL_VALUE         1588
+#define _APS_NEXT_COMMAND_VALUE         39025
+#define _APS_NEXT_CONTROL_VALUE         1589
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

@@ -67,11 +67,12 @@ public:
     int     bits_index_;
     int     base_index_;
 
-    CCalcEdit edit_;                // Subclassed edit control
+    CComboBox ctl_edit_combo_;      // Combo box with main edit controls
+    CCalcEdit edit_;                // Subclassed edit control (child of above combo)
 
 	// Calculator buttons
 #ifdef CALCULATOR_IMPROVEMENTS
-#if 0
+#if 1
 	// These are black so we don't have to do anything special
     CBCGButton ctl_digit_0_;
     CBCGButton ctl_digit_1_;
@@ -313,7 +314,7 @@ protected:
 
     // The following is used to keep track of what binary operator is in use.  For example,
     // if the user does 123 + 456 then it has value km_add.  If no binary operation is currently
-    // active then is has value km_unknown.
+    // active then is has value binop_none.
     binop_type op_;
 
     // xxx instead of the following perhaps we should just select all after "=" pressed

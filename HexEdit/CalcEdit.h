@@ -28,12 +28,13 @@ public:
 public:
     void Put();                         // Set edit text from pp_->current_
 //    void Get();                         // Store edit text as number in pp_->current_
-	bool update_value();
+	bool update_value(bool side_effects = true);
 
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CCalcEdit)
 	//}}AFX_VIRTUAL
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 // Implementation
 public:
@@ -45,6 +46,7 @@ protected:
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	//}}AFX_MSG
+    afx_msg void OnSetFocus(CWnd* pOldWnd);
 
 	DECLARE_MESSAGE_MAP()
 

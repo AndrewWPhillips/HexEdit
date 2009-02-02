@@ -36,6 +36,7 @@
 #define NAV_RESERVED  2000   // Max number of commands on nav forward and backward menus (both separate)
 
 // This is used by the hex and decimal address tools to evaluate expressions to jump to.
+// (find_symbol is overridden to scan the list of bookmarks for the active file.)
 class CJumpExpr : public expr_eval
 {
 public:

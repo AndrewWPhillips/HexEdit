@@ -49,8 +49,8 @@ static char THIS_FILE[] = __FILE__;
 // then current_const_ is FALSE and current_type_ contains the type of the
 // result of the expression (which is TYPE_INT for a simple integer).
 // If it is not a valid expression current_type_ contains TYPE_NONE.
-// Note that for invlaid expressions no error is indicated (beep, message etc)
-// since the user has not finished it, but the error is stored in
+// Note that for invalid expressions no error is indicated (beep, message etc)
+// since the user may not have finished it, but the error is stored in
 // current_str_ so it can be displayed if the user tries to use it.
 
 /////////////////////////////////////////////////////////////////////////////
@@ -71,6 +71,7 @@ BEGIN_MESSAGE_MAP(CCalcEdit, CEdit)
 	ON_WM_CHAR()
 	ON_WM_KEYDOWN()
 	//}}AFX_MSG_MAP
+    ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 // Put current calculator value (pp_->current_) into edit control nicely formatted
@@ -140,9 +141,11 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 		if (last_sep)
 			continue;                    // Skip separator
 
-		// Check if valid digit
+		// Check if/get valid digit
         unsigned int digval;
-        if (isdigit(*ps))
+        if (*ps < 0)
+            return false;
+        else if (isdigit(*ps))
             digval = *ps - '0';
         else if (isalpha(*ps))
             digval = toupper(*ps) - 'A' + 10;
@@ -159,7 +162,7 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 	return digit_seen && !last_sep;     // OK if we saw a digit and did not end on a separator
 }
 
-bool CCalcEdit::update_value()
+bool CCalcEdit::update_value(bool side_effects /* = true */)
 {
     ASSERT(pp_ != NULL);
     ASSERT(pp_->IsVisible());
@@ -176,7 +179,7 @@ bool CCalcEdit::update_value()
 
 	// evaluate the expression
     int ac;
-    CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(ss, 0 /*unused*/, ac /*unused*/, pp_->radix_);
+    CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(ss, 0 /*unused*/, ac /*unused*/, pp_->radix_, side_effects);
 	switch((expr_eval::type_t)vv.typ)
 	{
 	case CHexExpr::TYPE_NONE:
@@ -495,6 +498,12 @@ void CCalcEdit::add_sep()
 /////////////////////////////////////////////////////////////////////////////
 // CCalcEdit message handlers
 
+void CCalcEdit::OnSetFocus(CWnd* pOldWnd)
+{
+    pp_->in_edit_ = TRUE;
+    CEdit::OnSetFocus(pOldWnd);
+}
+
 void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
     ASSERT(pp_ != NULL);
@@ -543,7 +552,7 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
     CEdit::OnChar(nChar, nRepCnt, nFlags);
 
-	if (!update_value())
+	if (!update_value(false))
 	{
         SetWindowText(ss);
         SetSel(start, end, FALSE);
@@ -603,7 +612,23 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     }
 
     if (nChar == VK_DELETE)
-		(void)update_value();   // should always return true for Del key
+		(void)update_value(false);   // should always return true for Del key
 
     pp_->source_ = pp_->aa_->recording_ ? km_user : km_result;
+}
+
+BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg) 
+{
+    CString ss;
+
+    if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+    {
+        if (pp_->ctl_go_.IsWindowEnabled())
+            pp_->OnGo();
+        else
+            pp_->OnEquals();
+        return TRUE;
+    }
+
+    return CEdit::PreTranslateMessage(pMsg);
 }

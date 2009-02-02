@@ -3661,10 +3661,10 @@ CHexEditDoc::enum_t &CHexEditDoc::get_enum(CXmlTree::CElt &ee)
 }
 
 // Return the string representation of the value, including enum string for int values (if any)
-CString CHexEditDoc::get_str(CHexExpr::value_t val, int ii)
+ExprStringType CHexEditDoc::get_str(CHexExpr::value_t val, int ii)
 {
-	if (val.typ == CHexExpr::TYPE_INT)
-	{
+    if (val.typ == CHexExpr::TYPE_INT)
+    {
 		std::map<MSXML::IXMLDOMElementPtr::Interface *, enum_t>::const_iterator pev =
 			df_enum_.find((MSXML::IXMLDOMElementPtr::Interface *)df_elt_[ii].m_pelt);
 		if (pev != df_enum_.end())
@@ -3672,12 +3672,12 @@ CString CHexEditDoc::get_str(CHexExpr::value_t val, int ii)
 			enum_t::const_iterator pe = pev->second.find(val.int64);
             if (pe != pev->second.end())
 			{
-                return pe->second;
+                return ExprStringType(pe->second);
 			}
 		}
 	}
 
-	return CString();
+    return GetDataString(val, "");
 }
 
 #ifdef _DEBUG
@@ -3940,7 +3940,13 @@ ExprStringType CHexEditDoc::GetDataString(expr_eval::value_t val, CString strFor
 // whose sub-elements are to be searched.  If sym is NULL then parent must refer to a
 // "for" element and index is the sub-element to access.  If sym is not NULL then parent
 // is a "struct" or "binary_file_format" element.  If sym is "this" just return parent.
-// pac returns the number of the latest symbol (sequentially within the file) accessed.
+// Returned values:
+//   returns value of the symbol which may be TYPE_NONE if it was not found
+//   pac = number of the latest symbol (sequentially within the file) accessed
+//   sym_size = numbers of bytes occupied by the value
+//   sym_address = address within the file of the value (0 if not part of file)
+//   sym_str = string representation (currently just does enum string substitution)
+// Note: variables (var_ collection) are not considered.
 CHexExpr::value_t CHexExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,
                                         __int64 &sym_size, __int64 &sym_address, CString &sym_str)
 {

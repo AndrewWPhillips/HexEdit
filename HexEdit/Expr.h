@@ -56,7 +56,7 @@ public:
         TOK_RAND, TOK_STRLEN,
 		TOK_LEFT, TOK_RIGHT, TOK_MID,   // Sub string
 		TOK_STRCHR, TOK_STRSTR,
-		TOK_STRICMP,                    // String compare: 0, -1, +1
+		TOK_STRCMP, TOK_STRICMP,        // String compare: 0, -1, +1
         TOK_LTRIM, TOK_RTRIM,           // Trim leading/trailing spaces
 		TOK_CHAR,                       // Get single char from string (or -1)
 		TOK_A2E, TOK_E2A,               // Convert between ASCII and EBCDIC
@@ -138,7 +138,7 @@ public:
     ~expr_eval() { free(psymbol_); }
 
     // Operations
-    value_t evaluate(const char *expr, int reference, int &ref_ac, int radix = 10);
+    value_t evaluate(const char *expr, int reference, int &ref_ac, int radix = 10, bool side_effects = true);
     const char *get_error_message() { return error_buf_; }
     int get_error_pos() { return error_pos_; }
 
@@ -151,7 +151,7 @@ public:
 
 protected:
     // This stores any variables assigned to
-    std::map<CString, value_t> var_;  // xxx still need to chnage this to store Unicode strings
+    std::map<CString, value_t> var_;
 	clock_t var_changed_;
 
 private:

@@ -395,12 +395,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         m_wndCalc.EnableRollUp();
         m_wndCalc.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndCalc.SetCaptionStyle(TRUE);
-        tmp_size = m_wndCalc.m_sizeInitial;
-		ASSERT(tmp_size.cx > -1 && tmp_size.cy > -1);
-		tmp_size.cx = tmp_size.cx*3/2; tmp_size.cy = tmp_size.cy*3/2;
+		ASSERT(m_wndCalc.m_sizeInitial.cx > -1 && m_wndCalc.m_sizeInitial.cy > -1);
+		tmp_size.cx = m_wndCalc.m_sizeInitial.cx*3/2 + 20;
+        tmp_size.cy = m_wndCalc.m_sizeInitial.cy*3/2 + 15;
         m_wndCalc.SetMaxSize(tmp_size);
-		tmp_size.cx = tmp_size.cx*2/3;
-		tmp_size.cy = tmp_size.cy/2;
+		tmp_size.cx = m_wndCalc.m_sizeInitial.cx;
+		tmp_size.cy = m_wndCalc.m_sizeInitial.cy*3/4;
         m_wndCalc.SetMinSize(tmp_size);
 
         m_wndBookmarks.SetWindowText("Bookmarks");
@@ -639,6 +639,7 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
         (pwnd->IsKindOf(RUNTIME_CLASS(CSearchEditControl)) ||
          pwnd->IsKindOf(RUNTIME_CLASS(CHexEditControl)) ||
          pwnd->IsKindOf(RUNTIME_CLASS(CDecEditControl)) ||
+         pwnd->IsKindOf(RUNTIME_CLASS(CCalcEdit)) ||
 		 pwnd->IsKindOf(RUNTIME_CLASS(CInPlaceEdit))  ) )
 	{
         return FALSE;
@@ -5109,6 +5110,8 @@ CJumpExpr::value_t CJumpExpr::find_symbol(const char *sym, value_t parent, size_
 
 bool CJumpExpr::LoadVars()
 {
+    bool retval = true;
+
     CString vars = theApp.GetProfileString("Calculator", "Vars");
     CString ss;
 
@@ -5120,15 +5123,24 @@ bool CJumpExpr::LoadVars()
 		pp2 = strchr(pp, '=');
 		if (pp2 == NULL)
 		{
-			return false;
+			retval = false;
+            if ((pp = strchr(pp, ';')) != NULL)
+                continue;
+            else
+				return false;
 		}
 		CString name(pp, pp2 - pp);
 		if (pp2 - pp >
 			strspn(name, "abcdefghijklmonpqrstuvwxyz"
                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                         "0123456789_$"))
+                         "0123456789_$[]"))             // [] are used in "array element" names
 		{
-			return false;  // not a valid variable name
+            // Invalid var name
+			retval = false;
+            if ((pp = strchr(pp, ';')) != NULL)
+                continue;
+            else
+				return false;
 		}
 		name.MakeUpper();
 		pp = pp2 + 1;      // Move pp after '='
@@ -5186,29 +5198,49 @@ bool CJumpExpr::LoadVars()
 
 		case 'T':
 			if (strncmp(pp, "TRUE", 4) != 0)
-				return false;
+            {
+			    retval = false;
+                if ((pp = strchr(pp, ';')) != NULL)
+                    continue;
+                else
+				    return false;
+            }
             tmp = value_t(true);
 			pp2 = pp + 4;
 			break;
 		case 'F':
 			if (strncmp(pp, "FALSE", 5) != 0)
-				return false;
+            {
+			    retval = false;
+                if ((pp = strchr(pp, ';')) != NULL)
+                    continue;
+                else
+				    return false;
+            }
             tmp = value_t(false);
 			pp2 = pp + 5;
 			break;
 
 		default:
-			return false;
+			retval = false;
+            if ((pp = strchr(pp, ';')) != NULL)
+                continue;
+            else
+				return false;
 		}
         var_[name] = tmp;
 		var_changed_ = clock();
 
 		// Make sure we see terminator (;)
 		if (*pp2 != ';')
-			return false;
+        {
+			retval = false;
+            if ((pp2 = strchr(pp2, ';')) == NULL)
+				return false;
+        }
 		pp = pp2;
 	}
-	return true;
+	return retval;
 }
 
 // xxx need to use Unicode string since a string var is Unicode (if UNICODE_TYPE_STRING defined)

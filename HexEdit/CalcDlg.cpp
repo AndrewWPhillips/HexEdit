@@ -108,15 +108,15 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	// Settings controls don't move/size horizontally but move vert. and size slightly too
     resizer_.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);
     resizer_.Add(IDC_BASE_GROUP, 0, 13, 0, 8);
-    resizer_.Add(IDC_HEX, 0, 13, 0, 8);
-    resizer_.Add(IDC_DECIMAL, 0, 13, 0, 8);
-    resizer_.Add(IDC_OCTAL, 0, 13, 0, 8);
-    resizer_.Add(IDC_BINARY, 0, 13, 0, 8);
+    resizer_.Add(IDC_HEX, 0, 13, 0, 5);
+    resizer_.Add(IDC_DECIMAL, 0, 13, 0, 5);
+    resizer_.Add(IDC_OCTAL, 0, 13, 0, 5);
+    resizer_.Add(IDC_BINARY, 0, 13, 0, 5);
     resizer_.Add(IDC_BITS_GROUP, 0, 13, 0, 8);
-    resizer_.Add(IDC_64BIT, 0, 13, 0, 8);
-    resizer_.Add(IDC_32BIT, 0, 13, 0, 8);
-    resizer_.Add(IDC_16BIT, 0, 13, 0, 8);
-    resizer_.Add(IDC_8BIT, 0, 13, 0, 8);
+    resizer_.Add(IDC_64BIT, 0, 13, 0, 5);
+    resizer_.Add(IDC_32BIT, 0, 13, 0, 5);
+    resizer_.Add(IDC_16BIT, 0, 13, 0, 5);
+    resizer_.Add(IDC_8BIT, 0, 13, 0, 5);
 
 	// First row of buttons
     resizer_.Add(IDC_MEM_GET, 1, 27, 12, 10);
@@ -211,12 +211,11 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 
 BOOL CCalcDlg::OnInitDialog()
 {
-    ASSERT(GetDlgItem(IDC_EDIT) != NULL);
-    if (!edit_.SubclassDlgItem(IDC_EDIT, this))
-    {
-        ::HMessageBox("Could not subclass edit control.");
-        return FALSE;
-    }
+    CWnd *pwnd = ctl_edit_combo_.GetWindow(GW_CHILD);
+	ASSERT(pwnd != NULL);
+    VERIFY(edit_.SubclassWindow(pwnd->m_hWnd));
+    LONG style = ::GetWindowLong(edit_.m_hWnd, GWL_STYLE);
+    ::SetWindowLong(edit_.m_hWnd, GWL_STYLE, style | ES_RIGHT | ES_WANTRETURN);
 
 	// Make sure radio buttons are up to date
     change_base(radix_);
@@ -538,8 +537,10 @@ BOOL CCalcDlg::OnInitDialog()
 void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CHexDialogBar::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT,  ctl_edit_combo_);
+
 #ifdef CALCULATOR_IMPROVEMENTS
-#if 0
+#if 1
     DDX_Control(pDX, IDC_DIGIT_0, ctl_digit_0_);
     DDX_Control(pDX, IDC_DIGIT_1, ctl_digit_1_);
     DDX_Control(pDX, IDC_DIGIT_2, ctl_digit_2_);
@@ -873,6 +874,8 @@ void CCalcDlg::FinishMacro()
 // Check if the current expression in the edit box is a valid expression returning an integer
 bool CCalcDlg::invalid_expression()
 {
+    CString ss = "Calculator buttons only operate on integer \r\n"
+                 "values, but the current value is ";
 	switch (current_type_)
 	{
 	case CJumpExpr::TYPE_INT:
@@ -885,19 +888,19 @@ bool CCalcDlg::invalid_expression()
 		return true;
 
 	case CHexExpr::TYPE_REAL:
-        ::HMessageBox((LPCTSTR)"Current calculator value is real - must be integer");
+        ::HMessageBox((LPCTSTR)(ss + "real."));
 		return true;
 
 	case CHexExpr::TYPE_BOOLEAN:
-        ::HMessageBox((LPCTSTR)"Current calculator value is boolean - must be integer");
+        ::HMessageBox((LPCTSTR)(ss + "boolean."));
 		return true;
 
 	case CHexExpr::TYPE_STRING:
-        ::HMessageBox((LPCTSTR)"Current calculator value is a string - must be integer");
+        ::HMessageBox((LPCTSTR)(ss + "a string."));
 		return true;
 
 	case CHexExpr::TYPE_DATE:
-        ::HMessageBox((LPCTSTR)"Current calculator value is a date - must be integer");
+        ::HMessageBox((LPCTSTR)(ss + "a date."));
 		return true;
 
 	default:
@@ -930,15 +933,14 @@ void CCalcDlg::do_binop(binop_type binop)
     }
     aa_->SaveToMacro(km_binop, long(binop));
     op_ = binop;
-    in_edit_ = FALSE;
 
     if (!aa_->refresh_off_ && IsVisible())
     {
-        edit_.SetFocus();
         FixFileButtons();
         if (!overflow_ && !error_)
             ShowBinop(binop);
     }
+    in_edit_ = FALSE;
 }
 
 void CCalcDlg::ShowStatus()
@@ -984,16 +986,16 @@ void CCalcDlg::ShowBinop(int ii /*=-1*/)
     switch (binop)
     {
     case binop_add:
-        op_disp = " +";
+        op_disp = "+";
         break;
     case binop_subtract:
-        op_disp = " -";
+        op_disp = "-";
         break;
     case binop_multiply:
-        op_disp = " *";
+        op_disp = "*";
         break;
     case binop_divide:
-        op_disp = " /";
+        op_disp = "/";
         break;
     case binop_mod:
         op_disp = "%";
@@ -1024,13 +1026,13 @@ void CCalcDlg::ShowBinop(int ii /*=-1*/)
         break;
 
     case binop_and:
-        op_disp = " &&";
+        op_disp = "&&";  // displays as a single &
         break;
     case binop_or:
-        op_disp = " |";
+        op_disp = "|";
         break;
     case binop_xor:
-        op_disp = " ^";
+        op_disp = "^";
         break;
     }
 
@@ -1294,7 +1296,6 @@ void CCalcDlg::do_unary(unary_type unary)
 
     if (!aa_->refresh_off_ && IsVisible())
     {
-        edit_.SetFocus();
         edit_.Put();
         FixFileButtons();
     }
@@ -1311,7 +1312,7 @@ void CCalcDlg::do_digit(char digit)
 {
     if (!aa_->refresh_off_ && IsVisible())  // Always true but left in for consistency
     {
-        edit_.SetFocus();
+        //edit_.SetFocus();
         if (!in_edit_)
         {
             edit_.SetWindowText("");
@@ -1601,9 +1602,10 @@ void CCalcDlg::change_base(int base)
         ASSERT(0);
     }
 
+    // check that it's an integer expression
 	if (invalid_expression())
 	{
-		edit_.update_value();
+		edit_.update_value(false);
 		return;
 	}
 
@@ -1646,7 +1648,7 @@ void CCalcDlg::change_bits(int bits)
 
 	if (invalid_expression())
 	{
-		edit_.update_value();
+		edit_.update_value(false);
 		return;
 	}
 
@@ -1904,13 +1906,6 @@ int CCalcDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
     return 0;
 }
 
-void CCalcDlg::OnSize(UINT nType, int cx, int cy) 
-{
-	if (cx > 0 && m_sizeInitial.cx == -1)
-		m_sizeInitial = CSize(cx, cy);
-	CHexDialogBar::OnSize(nType, cx, cy);
-}
-
 void CCalcDlg::OnDestroy() 
 {
     CHexDialogBar::OnDestroy();
@@ -1926,6 +1921,39 @@ void CCalcDlg::OnDestroy()
 		calc_previous();
     _i64toa((current_&mask_), buf, 10);
     aa_->WriteProfileString("Calculator", "Current", buf);
+}
+
+void CCalcDlg::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
+{
+    if (cy < m_sizeInitial.cy*7/8)
+    {
+        SetDlgItemText(IDC_BASE_GROUP, "");
+        SetDlgItemText(IDC_BITS_GROUP, "");
+    }
+    else
+    {
+        SetDlgItemText(IDC_BASE_GROUP, "Base");
+        SetDlgItemText(IDC_BITS_GROUP, "Bits");
+    }
+
+	if (cx > 0 && m_sizeInitial.cx == -1)
+		m_sizeInitial = CSize(cx, cy);
+	CHexDialogBar::OnSize(nType, cx, cy);
+}
+
+BOOL CCalcDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
+	// and then disappear when mouse up event is seen.  The only soln I could
+	// find after a lot of experimenetation is to do it later (in OnKickIdle).
+//	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
+	help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+    return TRUE;
+}
+
+void CCalcDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
 LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
@@ -2208,7 +2236,6 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 
     if (!aa_->refresh_off_ && IsVisible())
     {
-        edit_.SetFocus();
         edit_.Put();
         FixFileButtons();
         if (!overflow_ && !error_)
@@ -2294,6 +2321,8 @@ void CCalcDlg::OnBackspace()            // Delete back one digit
     edit_.SetFocus();
 
     edit_.SendMessage(WM_CHAR, '\b', 1);
+
+    ShowBinop();
     in_edit_ = TRUE;                    // Allow edit of current value
     source_ = aa_->recording_ ? km_user : km_result;
 }
@@ -2311,6 +2340,7 @@ void CCalcDlg::OnClearEntry()           // Zero current value
         FixFileButtons();
     }
 
+    ShowBinop();
     in_edit_ = FALSE;                   // Necessary?
     source_ = aa_->recording_ ? km_user : km_result;
     aa_->SaveToMacro(km_clear_entry);
@@ -2338,6 +2368,8 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 
 void CCalcDlg::OnEquals()               // Calculate result
 {
+	edit_.update_value(true);           // eval the epsression allowing side-effects now
+
 	if (current_type_ == CJumpExpr::TYPE_NONE)
 	{
 		(void)invalid_expression();
@@ -2350,6 +2382,24 @@ void CCalcDlg::OnEquals()               // Calculate result
 		::CallWindowProcW(*edit_.GetSuperWndProcAddr(), edit_.m_hWnd, WM_SETTEXT, 0, (LPARAM)(LPCWSTR)current_str_);
 #else
 		edit_.SetWindowText(current_str_);
+#endif
+#ifdef CALCULATOR_IMPROVEMENTS
+        switch (current_type_)
+        {
+        case CJumpExpr::TYPE_REAL:
+            SetDlgItemText(IDC_OP_DISPLAY, "R");
+            break;
+        case CJumpExpr::TYPE_STRING:
+            SetDlgItemText(IDC_OP_DISPLAY, "S");
+            break;
+        case CJumpExpr::TYPE_BOOLEAN:
+            SetDlgItemText(IDC_OP_DISPLAY, "B");
+            break;
+        case CJumpExpr::TYPE_DATE:
+            SetDlgItemText(IDC_OP_DISPLAY, "D");
+            break;
+        }
+        in_edit_ = FALSE;
 #endif
 		return;
 	}
@@ -2365,7 +2415,6 @@ void CCalcDlg::OnEquals()               // Calculate result
     op_ = binop_none;
     if (!aa_->refresh_off_ && IsVisible())
     {
-        edit_.SetFocus();
         edit_.Put();
         FixFileButtons();
         if (!overflow_ && !error_)
@@ -2389,55 +2438,59 @@ void CCalcDlg::build_menus()
 
 	if (last_hex_hist_build < mm_->hex_hist_changed_)
 	{
-		// Hex jump tool history
+		// Hex jump tool history menu
+		mm.CreatePopupMenu();
 		if (mm_->hex_hist_.size() == 0)
 		{
-			ctl_hex_hist_.EnableWindow(FALSE);
+            // Display a single disabled menu item, since
+            // disabling the button itself looks ugly
+			mm.AppendMenu(MF_STRING | MF_GRAYED, 0, "(none)");
 		}
 		else
 		{
-			ctl_hex_hist_.EnableWindow(TRUE);
-			mm.CreatePopupMenu();
 			for (size_t ii = 0; ii < mm_->hex_hist_.size(); ++ii)
 			{
 				// Store filter and use index as menu item ID (but add 1 since 0 means no ID used).
 				mm.AppendMenu(MF_STRING, ii + 1, mm_->hex_hist_[ii]);
 			}
-			if (ctl_hex_hist_.m_hMenu != (HMENU)0)
-			{
-				::DestroyMenu(ctl_hex_hist_.m_hMenu);
-				ctl_hex_hist_.m_hMenu = (HMENU)0;
-			}
-			ctl_hex_hist_.m_hMenu = mm.GetSafeHmenu();
-			mm.Detach();
 		}
+		if (ctl_hex_hist_.m_hMenu != (HMENU)0)
+		{
+			::DestroyMenu(ctl_hex_hist_.m_hMenu);
+			ctl_hex_hist_.m_hMenu = (HMENU)0;
+		}
+		ctl_hex_hist_.m_hMenu = mm.GetSafeHmenu();
+		mm.Detach();
+
 		last_hex_hist_build = mm_->hex_hist_changed_;
 	}
 
 	if (last_dec_hist_build < mm_->dec_hist_changed_)
 	{
 		// Decimal jump tool history
+		mm.CreatePopupMenu();
 		if (mm_->dec_hist_.size() == 0)
 		{
-			ctl_dec_hist_.EnableWindow(FALSE);
+            // Display a single disabled menu item, since
+            // disabling the button itself looks ugly
+			mm.AppendMenu(MF_STRING | MF_GRAYED, 0, "(none)");
 		}
 		else
 		{
-			ctl_dec_hist_.EnableWindow(TRUE);
-			mm.CreatePopupMenu();
 			for (size_t ii = 0; ii < mm_->dec_hist_.size(); ++ii)
 			{
 				// Store filter and use index as menu item ID (but add 1 since 0 means no ID used).
 				mm.AppendMenu(MF_STRING, ii + 1, mm_->dec_hist_[ii]);
 			}
-			if (ctl_dec_hist_.m_hMenu != (HMENU)0)
-			{
-				::DestroyMenu(ctl_dec_hist_.m_hMenu);
-				ctl_dec_hist_.m_hMenu = (HMENU)0;
-			}
-			ctl_dec_hist_.m_hMenu = mm.GetSafeHmenu();
-			mm.Detach();
 		}
+		if (ctl_dec_hist_.m_hMenu != (HMENU)0)
+		{
+			::DestroyMenu(ctl_dec_hist_.m_hMenu);
+			ctl_dec_hist_.m_hMenu = (HMENU)0;
+		}
+		ctl_dec_hist_.m_hMenu = mm.GetSafeHmenu();
+		mm.Detach();
+
 		last_dec_hist_build = mm_->dec_hist_changed_;
 	}
 
@@ -2514,20 +2567,17 @@ void CCalcDlg::build_menus()
 
 		if (mm.GetMenuItemCount() == 0)
 		{
-			ctl_vars_.EnableWindow(FALSE);
-			mm.DestroyMenu();
+            // If there are no vars then display a single disabled
+            // menu item, since disabling the button itself looks ugly.
+			mm.AppendMenu(MF_STRING | MF_GRAYED, 0, "(none)");
 		}
-		else
+		if (ctl_vars_.m_hMenu != (HMENU)0)
 		{
-			ctl_vars_.EnableWindow(TRUE);
-			if (ctl_vars_.m_hMenu != (HMENU)0)
-			{
-				::DestroyMenu(ctl_vars_.m_hMenu);
-				ctl_vars_.m_hMenu = (HMENU)0;
-			}
-			ctl_vars_.m_hMenu = mm.GetSafeHmenu();
-			mm.Detach();
+			::DestroyMenu(ctl_vars_.m_hMenu);
+			ctl_vars_.m_hMenu = (HMENU)0;
 		}
+		ctl_vars_.m_hMenu = mm.GetSafeHmenu();
+		mm.Detach();
 
 		last_var_build = mm_->expr_.VarChanged();
 	}
@@ -2537,22 +2587,31 @@ void CCalcDlg::OnGetHexHist()
 {
     if (ctl_hex_hist_.m_nMenuResult != 0)
 	{
-		// If current type is not TYPE_INT then change_base will display an error even though we don't care about the current value
-		current_ = 0;
-		current_const_ = TRUE;
-		current_type_ = CJumpExpr::TYPE_INT;
-        change_base(16);                // Change to radix of the number/expression
-
+        // Get the text of the menu item selected
 		CMenu menu;
 		menu.Attach(ctl_hex_hist_.m_hMenu);
         CString ss = get_menu_text(&menu, ctl_hex_hist_.m_nMenuResult);
 		menu.Detach();
+
+        // If just calculated a result then clear it
+		if (!in_edit_)
+			edit_.SetWindowText("");
 	    in_edit_ = FALSE;
-		edit_.SetWindowText("");
+
+        if (radix_ != 16)
+        {
+            // We need to convert the hex digits to digits in the current radix
+            __int64 ii = ::_strtoui64(ss, NULL, 16);
+            char buf[72];
+            ::_i64toa(ii, buf, radix_);
+            ss = buf;
+        }
 
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
         edit_.SetFocus();
+
+        SetDlgItemText(IDC_OP_DISPLAY, "");
 		in_edit_ = TRUE;
 		source_ = aa_->recording_ ? km_user : km_result;
 	}
@@ -2562,22 +2621,28 @@ void CCalcDlg::OnGetDecHist()
 {
     if (ctl_dec_hist_.m_nMenuResult != 0)
 	{
-		// If current type is not TYPE_INT then change_base will display an error even though we don't care about the current value
-		current_ = 0;
-		current_const_ = TRUE;
-		current_type_ = CJumpExpr::TYPE_INT;
-        change_base(10);                // Change to radix of the number/expression
-
 		CMenu menu;
 		menu.Attach(ctl_dec_hist_.m_hMenu);
         CString ss = get_menu_text(&menu, ctl_dec_hist_.m_nMenuResult);
 		menu.Detach();
+		if (!in_edit_)
+			edit_.SetWindowText("");
 	    in_edit_ = FALSE;
-		edit_.SetWindowText("");
+
+        if (radix_ != 10)
+        {
+            // We need to convert decimal to the current radix
+            __int64 ii = ::_strtoi64(ss, NULL, 10);
+            char buf[72];
+            ::_i64toa(ii, buf, radix_);
+            ss = buf;
+        }
 
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
         edit_.SetFocus();
+
+        SetDlgItemText(IDC_OP_DISPLAY, "");
 		in_edit_ = TRUE;
 		source_ = aa_->recording_ ? km_user : km_result;
 	}
@@ -2591,12 +2656,15 @@ void CCalcDlg::OnGetVar()
 		menu.Attach(ctl_vars_.m_hMenu);
         CString ss = get_menu_text(&menu, ctl_vars_.m_nMenuResult);
 		menu.Detach();
+		if (!in_edit_)
+			edit_.SetWindowText("");
 	    in_edit_ = FALSE;
-		edit_.SetWindowText("");
 
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
         edit_.SetFocus();
+
+        SetDlgItemText(IDC_OP_DISPLAY, "");
 		in_edit_ = TRUE;
 		source_ = aa_->recording_ ? km_user : km_result;
 	}
@@ -2610,9 +2678,9 @@ void CCalcDlg::OnGetFunc()
 		menu.Attach(ctl_func_.m_hMenu);
         CString ss = get_menu_text(&menu, ctl_func_.m_nMenuResult);
 		menu.Detach();
+		if (!in_edit_)
+			edit_.SetWindowText("");
 	    in_edit_ = FALSE;
-		if (current_const_ == TRUE && current_type_ == CJumpExpr::TYPE_INT)
-			edit_.SetWindowText("");       // This gets rid of the "0" in the edit box
 
 		int start, end;
 		edit_.GetSel(start, end);
@@ -2629,8 +2697,9 @@ void CCalcDlg::OnGetFunc()
 		end = start + ss.Find(')') + 1;
 		start += ss.Find('(') + 2;
 		edit_.SetSel(start, end);
-
         edit_.SetFocus();
+
+        SetDlgItemText(IDC_OP_DISPLAY, "");
 		in_edit_ = TRUE;
 		source_ = aa_->recording_ ? km_user : km_result;
 	}
@@ -3618,19 +3687,4 @@ void CCalcDlg::OnSelLenStore()
         aa_->SaveToMacro(source_, current_&mask_);
     source_ = km_result;
     aa_->SaveToMacro(km_sellenstore);
-}
-
-BOOL CCalcDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
-	// and then disappear when mouse up evenet is seen.  The only soln I could
-	// find after a lot of experimenetation is to do it later (in OnKickIdle).
-//	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
-	help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
-    return TRUE;
-}
-
-void CCalcDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
-{
-	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }

@@ -347,8 +347,8 @@ struct adjustment
     FILE_ADDRESS adjust_;
 };
 
-// Class derived from expr_eval so we can supply our own symbols (by
-// overriding find_symbol) in the owning CHexEditDoc class.
+// Class derived from expr_eval so we can supply our own symbols (by overriding find_symbol)
+// in the owning CHexEditDoc class.  Used for template expressions.
 class CHexExpr : public expr_eval
 {
 public:
@@ -771,7 +771,7 @@ private:
     std::map<MSXML::IXMLDOMElementPtr::Interface *, enum_t> df_enum_; // Stores all enums: maps an element to its enum
 	bool add_enum(CXmlTree::CElt &ee, LPCTSTR estr); // Returns false if error parsing enum string
 	enum_t &get_enum(CXmlTree::CElt &ee);   // Returns ref. to enum for an element
-	CString get_str(CHexExpr::value_t val, int ii);
+	ExprStringType get_str(CHexExpr::value_t val, int ii);
 
 #ifdef _DEBUG
     void dump_tree();
