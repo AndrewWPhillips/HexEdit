@@ -64,7 +64,6 @@
 #include "CompressDlg.h" // For compression settings dialog
 #include "Password.h"   // For encryption password dialog
 #include "Misc.h"
-#include "SpecialList.h"    // For volume/device list (Open Special etc)
 #include "Splasher.h"       // For splash window
 
 // The following is not in a public header
@@ -300,8 +299,18 @@ UINT CHexEditApp::wm_hexedit = ::RegisterWindowMessage("HexEditOpenMessage");
 
 BOOL CHexEditApp::InitInstance()
 {
+		// Note: if this is changed you also need to change the registry string
+		// at the end of ExitInstance (see delete_reg_settings_).
+        SetRegistryKey("ECSoftware");           // Required before registry use (and prevents use of .INI file)
+        LoadOptions();
+
 		//Bring up the splash screen in a secondary UI thread
-		CSplashThread* pSplashThread = (CSplashThread*) AfxBeginThread(RUNTIME_CLASS(CSplashThread), THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
+		CSplashThread* pSplashThread = NULL;
+
+        // Note the splash setting is read again in LoadOptions (below), but we don't
+        // call LoadOptions here to make sure that the splash screen is shown ASAP.
+        if (splash_)
+            pSplashThread = (CSplashThread*) AfxBeginThread(RUNTIME_CLASS(CSplashThread), THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
 		if (pSplashThread != NULL)
 		{
 			ASSERT(pSplashThread->IsKindOf(RUNTIME_CLASS(CSplashThread)));
@@ -384,9 +393,6 @@ BOOL CHexEditApp::InitInstance()
                  osvi.dwMajorVersion >= 5) && ::GetSystemMetrics(SM_CMONITORS) > 1;
 //        mult_monitor_ = osvi.dwMajorVersion >= 5;
 
-        // We must do this after getting version info as it relies on is_nt_
-        m_pspecial_list = new CSpecialList();
-
         // Check for hexedit.chm file  (USE_HTML_HELP)
         htmlhelp_file_ = m_pszHelpFilePath;
         htmlhelp_file_.MakeUpper();
@@ -399,35 +405,31 @@ BOOL CHexEditApp::InitInstance()
 
         // Work out if there is a previous instance running
         hwnd_1st_ = ::FindWindow(szHexEditClassName, NULL);
+        if (hwnd_1st_ != (HWND)0 && one_only_)
+        {
+            // Make sure it's on top and not minimised before opening files in it
+            ::BringWindowToTop(hwnd_1st_);
+            WINDOWPLACEMENT wp;
+            wp.length = sizeof(wp);
+            if (::GetWindowPlacement(hwnd_1st_, &wp) &&
+                (wp.showCmd == SW_MINIMIZE || wp.showCmd == SW_SHOWMINIMIZED))
+            {
+                ::ShowWindow(hwnd_1st_, SW_RESTORE);
+            }
+
+            // Now use command line parser (CCommandLineParser::ParseParam) to open
+            // any files specified on the command line in running instance
+            CCommandLineParser cmdInfo;
+            ParseCommandLine(cmdInfo);
+
+            // Terminate this instance
+            return FALSE;
+        }
+
+        // We must do this after getting version info as it relies on is_nt_
+        m_pspecial_list = special_list_scan_ ? new CSpecialList() : NULL;
 
         InitConversions();                   // Read EBCDIC conversion table etc and validate conversions
-
-        // Work out if there is a HEXEDIT.INI file in the windows directory
-        char ininame[MAX_PATH + 13];
-        if (GetWindowsDirectory(ininame, MAX_PATH) != 0)
-        {
-            size_t len = strlen(ininame);
-            if (ininame[len-1] != '\\')
-                strcat(ininame, "\\");
-            strcat(ininame, "HexEdit.INI");
-        }
-        else
-            ininame[0] = '\0';
-
-        if (_access(ininame, 0) == 0)
-        {
-            if (AfxMessageBox("HexEdit.INI is no longer used.\n"
-                              "Settings are stored in the registry.\n\n"
-                              "Do you want to remove the file to\n"
-                              "avoid seeing this message again?", MB_YESNO) == IDYES)
-            {
-                remove(ininame);
-            }
-        }
-
-		// Note: if this is changed you also need to change the registry string
-		// at the end of ExitInstance (see delete_reg_settings_).
-        SetRegistryKey("ECSoftware");      // Always use registry
 
         // Set the locale to the native environment -- hopefully the MSC run-time
         // code does something suitable.  (This is currently just for thousands sep.)
@@ -615,8 +617,6 @@ BOOL CHexEditApp::InitInstance()
         CSystemSound::Add(_T("Background Search Finished"));
 #endif
 
-        LoadOptions();
-
         LoadStdProfileSettings(0);  // Load standard INI file options (including MRU)
 
         GetXMLFileList();
@@ -653,19 +653,6 @@ BOOL CHexEditApp::InitInstance()
         m_pRecentFileList = new CHexFileList(0, FILENAME_RECENTFILES, recent_files_);
         m_pRecentFileList->ReadList();
 
-        // Make sure previous instance is not minimised before opening files in it
-        if (hwnd_1st_ != 0 && one_only_)
-        {
-            ::BringWindowToTop(hwnd_1st_);
-            WINDOWPLACEMENT wp;
-            wp.length = sizeof(wp);
-            if (::GetWindowPlacement(hwnd_1st_, &wp) &&
-                (wp.showCmd == SW_MINIMIZE || wp.showCmd == SW_SHOWMINIMIZED))
-            {
-                ::ShowWindow(hwnd_1st_, SW_RESTORE);
-            }
-        }
-
         // This used to be after the command line parsing but was moved here so that
         // when files are opened the size of the main window is known so that they
         // are opened in sensible sizes and positions.
@@ -689,10 +676,6 @@ BOOL CHexEditApp::InitInstance()
         // Dispatch commands specified on the command line
         if (!ProcessShellCommand(cmdInfo))
                 return FALSE;
-
-        // If only one copy allowed terminate now
-        if (hwnd_1st_ != 0 && one_only_)
-            return FALSE;
 
 #ifdef _DEBUG
         // This avoids all sorts of confusion when testing/debugging
@@ -1891,8 +1874,11 @@ void CHexEditApp::LoadOptions()
         orig_save_exit_ = save_exit_ = TRUE;
     }
     one_only_ = GetProfileInt("Options", "OneInstanceOnly", 1) ? TRUE : FALSE;
-    run_autoexec_ = GetProfileInt("Options", "RunAutoExec", 1) ? TRUE : FALSE;
     open_restore_ = GetProfileInt("MainFrame", "Restore", 1) ? TRUE : FALSE;
+    special_list_scan_ = GetProfileInt("Options", "DeviceScan", 0) ? TRUE : FALSE;
+    splash_ = GetProfileInt("Options", "Splash", 1) ? TRUE : FALSE;
+    tipofday_ = GetProfileInt("Tip", "StartUp", 0) ? FALSE : TRUE;      // inverted
+    run_autoexec_ = GetProfileInt("Options", "RunAutoExec", 1) ? TRUE : FALSE;
 
     backup_        = (BOOL)GetProfileInt("Options", "CreateBackup",  0);
 	backup_space_  = (BOOL)GetProfileInt("Options", "BackupIfSpace", 1);
@@ -1904,7 +1890,7 @@ void CHexEditApp::LoadOptions()
     show_other_ = GetProfileInt("Options", "OtherAreaCursor", 1) ? TRUE : FALSE;
 
 	no_recent_add_ = GetProfileInt("Options", "DontAddToRecent", 1) ? TRUE : FALSE;
-    bool clear = GetProfileInt("Options", "ClearHist", 1) ? TRUE : FALSE;  // if old reg entry true then default new list sizes to zero
+    bool clear = GetProfileInt("Options", "ClearHist", 0) ? TRUE : FALSE;  // if old reg entry true then default new list sizes to zero
     max_search_hist_ = GetProfileInt("History", "MaxSearch", clear ? 0 : 48);
     max_replace_hist_ = GetProfileInt("History", "MaxReplace", clear ? 0 : 16);
     max_hex_jump_hist_ = GetProfileInt("History", "MaxHexJump", clear ? 0 : 16);
@@ -2332,9 +2318,13 @@ void CHexEditApp::SaveOptions()
     CHECK_SECURITY(111);
 
     // Save general options
-    WriteProfileInt("Options", "OneInstanceOnly", one_only_ ? 1 : 0);
-    WriteProfileInt("Options", "RunAutoExec", run_autoexec_ ? 1 : 0);
     WriteProfileInt("Options", "SaveExit", save_exit_ ? 1 : 0);
+    WriteProfileInt("Options", "OneInstanceOnly", one_only_ ? 1 : 0);
+    WriteProfileInt("Options", "DeviceScan", special_list_scan_ ? 1 : 0);
+    WriteProfileInt("Options", "Splash", splash_ ? 1 : 0);
+    WriteProfileInt("Tip", "StartUp", tipofday_ ? 0 : 1);   // inverted
+    WriteProfileInt("Options", "RunAutoExec", run_autoexec_ ? 1 : 0);
+
     WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
     WriteProfileInt("MainFrame", "FloatDialogsMove", dlg_move_ ? 1 : 0);
     WriteProfileInt("Options", "UpperCaseHex", hex_ucase_ ? 1 : 0);
@@ -2904,10 +2894,13 @@ void CHexEditApp::get_options(struct OptValues &val)
     long buf_size = sizeof(buf);        // Size of buffer and returned key value
 
     // System
+    val.save_exit_ = save_exit_;
     val.shell_open_ = RegQueryValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, buf, &buf_size) == ERROR_SUCCESS;
     val.one_only_ = one_only_;
+    val.special_list_scan_ = special_list_scan_;
+    val.splash_ = splash_;
+    val.tipofday_ = tipofday_;
     val.run_autoexec_ = run_autoexec_;
-    val.save_exit_ = save_exit_;
 
     // History
     val.recent_files_ = recent_files_;
@@ -3075,9 +3068,12 @@ void CHexEditApp::set_options(struct OptValues &val)
         }
     }
 
-    one_only_ = val.one_only_;
-    run_autoexec_ = val.run_autoexec_;
     save_exit_ = val.save_exit_;
+    one_only_ = val.one_only_;
+    special_list_scan_ = val.special_list_scan_;
+    splash_ = val.splash_;
+    tipofday_ = val.tipofday_;
+    run_autoexec_ = val.run_autoexec_;
     if (recent_files_ != val.recent_files_)
     {
         recent_files_ = val.recent_files_;
@@ -3756,7 +3752,7 @@ void CCommandLineParser::ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLas
             CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 		    ASSERT(aa->open_current_readonly_ == -1);
 
-            if (aa->hwnd_1st_ != 0 && aa->one_only_)
+            if (aa->hwnd_1st_ != (HWND)0 && aa->one_only_)
             {
                 // Get full path name as other instance may have different current directory
                 char fullname[_MAX_PATH];

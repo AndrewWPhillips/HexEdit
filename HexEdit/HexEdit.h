@@ -67,7 +67,7 @@ typedef __int64 FILE_ADDRESS;
 #define SHOW_CODE_PAGE  1
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
 #define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
-#define EXPLORER_WND    1   // Modeless dialog like Windows Explorer - works well but need to fix hidden files button image
+#define EXPLORER_WND    1   // Modeless dialog like Windows Explorer
 #define CALCULATOR_IMPROVEMENTS 1
 #define CALC_EXPR       1   // CALCULATOR_IMPROVEMENTS also requires this
 
@@ -177,10 +177,11 @@ struct display_bits
 };
 
 #include "crypto.h"
-#include "Options.h"        // For C*Page classes used below
 #include "HexEditMacro.h"
-#include "Scheme.h"         // For colour schemes
 #include "NavManager.h"     // For CNavManager that handles nav points
+#include "Options.h"        // For C*Page classes used below
+#include "Scheme.h"         // For colour schemes
+#include "SpecialList.h"    // For volume/device list (Open Special etc)
 #include "timer.h"
 
 enum { COLOUR_OPTIONS_PAGE, MACRO_OPTIONS_PAGE, PRINTER_OPTIONS_PAGE, FILTER_OPTIONS_PAGE, WIN_OPTIONS_PAGE };
@@ -255,7 +256,12 @@ public:
 	CBookmarkList *GetBookmarkList() const { return m_pbookmark_list; }
 
     CSpecialList *m_pspecial_list;
-    CSpecialList *GetSpecialList() const { return m_pspecial_list; }
+    CSpecialList *GetSpecialList()
+    {
+        if (m_pspecial_list == NULL)
+            m_pspecial_list = new CSpecialList(0);
+        return m_pspecial_list;
+    }
 
     void display_options(int display_page = -1, BOOL must_show_page = FALSE);
     void LoadOptions();
@@ -600,11 +606,14 @@ public:
     BOOL open_current_readonly_;
 
     // Startup options
-    BOOL one_only_;                     // Only allow one instance of app to run
-    BOOL run_autoexec_;                 // Run AutoExec.HEM at startup if it exists
-    BOOL open_restore_;                 // Restore main frame window on startup?
     BOOL save_exit_;                    // Save settings on exit?
     BOOL orig_save_exit_;               // Original value of save_exit_
+    BOOL one_only_;                     // Only allow one instance of app to run
+    BOOL open_restore_;                 // Restore main frame window on startup?
+    BOOL special_list_scan_;            // Scan devices/volumes at startup
+    BOOL splash_;                       // Display splash screen?
+    BOOL tipofday_;                     // Show tip of the day at startup?
+    BOOL run_autoexec_;                 // Run AutoExec.HEM at startup if it exists
 
     // History list options
 	BOOL no_recent_add_;                // When a file is opened it is not added to "My Recent Documents" (OFN_DONTADDTORECENT)
