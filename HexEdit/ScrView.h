@@ -60,6 +60,7 @@ public:
 	{
         GetClientRect(rct);
         rct->DeflateRect(bdr_left_, bdr_top_, bdr_right_, bdr_bottom_);
+        if (rct->bottom < rct->top) rct->bottom = rct->top;     // make sure deflate does not invert rect
     }
 
     void SetScroll(CPointAp, BOOL strict=FALSE);

@@ -905,6 +905,12 @@ private:
     void draw_offset(CDC* pDC, int xpos);
     void draw_group_by(CDC* pDC, int xpos);
     void invalidate_adjuster(int col);
+    bool over_rowsize_adjuster(CPointAp pp);
+    bool over_offset_adjuster(CPointAp pp);
+    bool over_group_by_adjuster(CPointAp pp);
+    void add_ruler_tip(CPoint pt, CString ss, COLORREF colour);
+
+	CTipWnd ruler_tip_;         // Shows tip windows for adjusters
     int adjusting_group_by_;    // current column for moving column grouping adjuster: 0 to rowsize_-1, 9999=no grouping, -1=not adjusting
     int adjusting_offset_;      // adjuster for offset from start of file: 0 to rowsize_-1 OR -1 if not adjusting
 	int adjusting_rowsize_;     // adjuster for rowsize_: 4 or more OR -1 if not adjusting
