@@ -49,10 +49,14 @@
 struct OptValues
 {
     // System options
+	BOOL	save_exit_;
 	BOOL	shell_open_;
 	BOOL	one_only_;
+	BOOL	open_restore_;
+    BOOL    special_list_scan_;
+    BOOL    splash_;
+    BOOL    tipofday_;
     BOOL    run_autoexec_;
-	BOOL	save_exit_;
 
 	UINT	recent_files_;
 	BOOL    no_recent_add_;
@@ -84,7 +88,6 @@ struct OptValues
 	UINT	export_line_len_;
 
     // System layout
-	BOOL	open_restore_;
 	BOOL	mditabs_;
 	BOOL	tabsbottom_;
     BOOL    tabicons_;

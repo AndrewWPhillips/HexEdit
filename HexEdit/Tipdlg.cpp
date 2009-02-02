@@ -18,6 +18,7 @@
 //
 
 #include "stdafx.h"
+#include "hexedit.h"
 #include "misc.h"
 #include "resource.h"
 // CG: This file added by 'Tip of the Day' component.
@@ -40,7 +41,7 @@ static char THIS_FILE[] = __FILE__;
 static const TCHAR szSection[] = _T("Tip");
 static const TCHAR szIntFilePos[] = _T("FilePos");
 static const TCHAR szTimeStamp[] = _T("TimeStamp");
-static const TCHAR szIntStartup[] = _T("StartUp");
+//static const TCHAR szIntStartup[] = _T("StartUp");
 
 CTipDlg::CTipDlg(CWnd* pParent /*=NULL*/)
     : CDialog(IDD_TIP, pParent)
@@ -51,9 +52,9 @@ CTipDlg::CTipDlg(CWnd* pParent /*=NULL*/)
 
     // We need to find out what the startup and file position parameters are
     // If startup does not exist, we assume that the Tips on startup is checked TRUE.
-    CWinApp* pApp = AfxGetApp();
-    m_bStartup = !pApp->GetProfileInt(szSection, szIntStartup, 0);
-    UINT iFilePos = pApp->GetProfileInt(szSection, szIntFilePos, 0);
+    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+    m_bStartup = aa->tipofday_;
+    UINT iFilePos = aa->GetProfileInt(szSection, szIntFilePos, 0);
 
     const char *tip_name = "HexEdit.tip";
 
@@ -80,11 +81,11 @@ CTipDlg::CTipDlg(CWnd* pParent /*=NULL*/)
     CString strCurrentTime = ctime(&buf.st_ctime);
     strCurrentTime.TrimRight();
     CString strStoredTime = 
-        pApp->GetProfileString(szSection, szTimeStamp, NULL);
+        aa->GetProfileString(szSection, szTimeStamp, NULL);
     if (strCurrentTime != strStoredTime) 
     {
         iFilePos = 0;
-        pApp->WriteProfileString(szSection, szTimeStamp, strCurrentTime);
+        aa->WriteProfileString(szSection, szTimeStamp, strCurrentTime);
     }
 
     if (fseek(m_pStream, iFilePos, SEEK_SET) != 0) 
@@ -184,8 +185,8 @@ void CTipDlg::OnOK()
     CDialog::OnOK();
     
     // Update the startup information stored in the INI file
-    CWinApp* pApp = AfxGetApp();
-    pApp->WriteProfileInt(szSection, szIntStartup, !m_bStartup);
+    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+    aa->tipofday_ = m_bStartup;
 }
 
 BOOL CTipDlg::OnInitDialog()

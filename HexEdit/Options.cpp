@@ -229,29 +229,28 @@ IMPLEMENT_DYNCREATE(CSystemGeneralPage, COptPage)
 void CSystemGeneralPage::DoDataExchange(CDataExchange* pDX)
 {
     COptPage::DoDataExchange(pDX);
+    DDX_Check(pDX, IDC_SAVE_EXIT, pParent->val_.save_exit_);
     DDX_Check(pDX, IDC_SHELLOPEN, pParent->val_.shell_open_);
     DDX_Check(pDX, IDC_ONE_ONLY, pParent->val_.one_only_);
-    DDX_Check(pDX, IDC_AUTOEXEC, pParent->val_.run_autoexec_);
 	DDX_Check(pDX, IDC_RESTORE, pParent->val_.open_restore_);
-    //DDX_Check(pDX, IDC_BG_SEARCH, pParent->val_.bg_search_);
-	DDX_Text(pDX, IDC_RECENT_FILES, pParent->val_.recent_files_);
-	DDV_MinMaxUInt(pDX, pParent->val_.recent_files_, 1, 16);
-    DDX_Check(pDX, IDC_NO_RECENT, pParent->val_.no_recent_add_);
-    DDX_Check(pDX, IDC_SAVE_EXIT, pParent->val_.save_exit_);
+    DDX_Check(pDX, IDC_SCAN, pParent->val_.special_list_scan_);
+    DDX_Check(pDX, IDC_SPLASH, pParent->val_.splash_);
+    DDX_Check(pDX, IDC_TOD, pParent->val_.tipofday_);
+    DDX_Check(pDX, IDC_AUTOEXEC, pParent->val_.run_autoexec_);
 }
 
 BEGIN_MESSAGE_MAP(CSystemGeneralPage, COptPage)
     ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
-    ON_BN_CLICKED(IDC_SHELLOPEN, OnShellopen)
-    ON_BN_CLICKED(IDC_ONE_ONLY, OnChange)
-    ON_BN_CLICKED(IDC_NO_RECENT, OnChange)
-    ON_BN_CLICKED(IDC_AUTOEXEC, OnChange)
-	ON_BN_CLICKED(IDC_RESTORE, OnChange)
-    //ON_BN_CLICKED(IDC_BG_SEARCH, OnChange)
-	ON_EN_CHANGE(IDC_RECENT_FILES, OnChange)
     ON_BN_CLICKED(IDC_SAVE_EXIT, OnChange)
     ON_BN_CLICKED(IDC_SAVE_NOW, OnSaveNow)
+    ON_BN_CLICKED(IDC_SHELLOPEN, OnShellopen)
+    ON_BN_CLICKED(IDC_ONE_ONLY, OnChange)
+	ON_BN_CLICKED(IDC_RESTORE, OnChange)
+    ON_BN_CLICKED(IDC_SCAN, OnChange)
+    ON_BN_CLICKED(IDC_SPLASH, OnChange)
+    ON_BN_CLICKED(IDC_TOD, OnChange)
+    ON_BN_CLICKED(IDC_AUTOEXEC, OnChange)
 	ON_BN_CLICKED(IDC_HIST_PAGE, OnHistPage)
 END_MESSAGE_MAP()
 
@@ -261,8 +260,6 @@ END_MESSAGE_MAP()
 BOOL CSystemGeneralPage::OnInitDialog() 
 {
     COptPage::OnInitDialog();
-
-    ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RECENT_FILES))->SetRange(1, 16);
 
     return TRUE;
 }
@@ -274,18 +271,18 @@ void CSystemGeneralPage::OnOK()
 }
 
 static DWORD id_pairs_sys[] = {
-    IDC_SHELLOPEN, HIDC_SHELLOPEN,
-    IDC_ONE_ONLY, HIDC_ONE_ONLY,
-    IDC_NO_RECENT, HIDC_NO_RECENT,
-    IDC_AUTOEXEC, HIDC_AUTOEXEC,
-    IDC_RESTORE, HIDC_RESTORE,
-    //IDC_BG_SEARCH, HIDC_BG_SEARCH,
-    IDC_RECENT_FILES, HIDC_RECENT_FILES,
-    IDC_SPIN_RECENT_FILES, HIDC_RECENT_FILES,
     IDC_SAVE_EXIT, HIDC_SAVE_EXIT,
     IDC_SAVE_NOW, HIDC_SAVE_NOW,
+    IDC_SHELLOPEN, HIDC_SHELLOPEN,
+    IDC_ONE_ONLY, HIDC_ONE_ONLY,
+    IDC_RESTORE, HIDC_RESTORE,
+    IDC_SCAN, HIDC_SCAN,
+    IDC_SPLASH, HIDC_SPLASH,
+    IDC_TOD, HIDC_TOD,
+    IDC_AUTOEXEC, HIDC_AUTOEXEC,
+//    IDC_HIST_PAGE, HIDC_HIST_PAGE,
     0,0 
-}; 
+};
 
 BOOL CSystemGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
@@ -407,8 +404,6 @@ void CHistoryPage::OnOK()
 
 static DWORD id_pairs_hist[] = {
     IDC_NO_RECENT, HIDC_NO_RECENT,
-    IDC_RECENT_FILES, HIDC_RECENT_FILES,
-    IDC_SPIN_RECENT_FILES, HIDC_RECENT_FILES,
     IDC_RECENT_FILES, HIDC_RECENT_FILES,
     IDC_SPIN_RECENT_FILES, HIDC_RECENT_FILES,
     IDC_FIND_LIST_SIZE, HIDC_FIND_LIST_SIZE,

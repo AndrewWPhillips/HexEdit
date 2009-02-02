@@ -32,12 +32,12 @@ static UINT bg_func(LPVOID pParam)
     return ((CSpecialList *)pParam)->background();
 }
 
-CSpecialList::CSpecialList() : m_hwnd(0), m_pthread(NULL)
+CSpecialList::CSpecialList(int sleep /* = 5 */) : m_hwnd(0), m_pthread(NULL)
 {
 	GetNTAPIFuncs();   // Make sure we have function addresses from ntdll.dll (if NT/2K/XP)
 
     m_refresh_id = -1;  // Force complete rebuild ...
-    m_sleep = 5;        // but wait a few seconds on startup
+    m_sleep = sleep;    // wait on starting background scan thread
 	build();
 }
 

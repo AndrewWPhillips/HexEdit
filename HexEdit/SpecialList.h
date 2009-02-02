@@ -39,7 +39,7 @@
 class CSpecialList
 {
 public:
-	CSpecialList();                      // Constructor
+	CSpecialList(int sleep = 5);     // Constructor
 
 	int size() { return m_type.size(); }
 	int find(short id);              // find entry given unique id (or -1 if not found)
