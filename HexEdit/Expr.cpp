@@ -1,7 +1,7 @@
 // expr.cpp : Handles C-like expression evaluation
 //
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2009 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -1164,6 +1164,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
         {
 		    if (pGetIntDlg->DoModal() != IDOK)
 		    {
+			    strcpy(error_buf_, "GETINT cancelled");
 			    delete pGetIntDlg;
 			    return TOK_NONE;
 		    }
@@ -1231,6 +1232,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
         {
 		    if (pGetStrDlg->DoModal() != IDOK)
 		    {
+			    strcpy(error_buf_, "GETSTRING cancelled");
 			    delete pGetStrDlg;
 			    return TOK_NONE;
 		    }
@@ -3102,10 +3104,18 @@ expr_eval::tok_t expr_eval::get_next()
     {
         return TOK_EOL;
     }
-    else if (isalpha(*p_) || *p_ == '$' || *p_ == '_')
+    else if (*p_ == '@' || isalpha(*p_) || *p_ == '$' || *p_ == '_')
     {
-        bool is_int = true;       // Used to check whether this is a valid number
+        bool is_int = true;     // Used to check whether this is a valid number
         int max_digit = 0;
+
+        if (*p_ == '@')
+        {
+            // @ escapes anything to make it an identifier
+            is_int = false;
+            ++p_;
+            ++saved_;
+        }
 
         // Check whether this appears to be a valid int even in max_radix_
         while (isalpha(*p_) || *p_ == '$' || *p_ == '_' || isdigit(*p_))
@@ -3141,7 +3151,7 @@ expr_eval::tok_t expr_eval::get_next()
         }
         else
         {
-            // Either a predefined symbol (bool const or function) or a variable
+            // Either a predefined symbol (const or function name) or a variable
             char buf[256], bufu[256];
             size_t len = p_ - saved_;
             if (len > sizeof(buf)-1) len = sizeof(buf)-1;
