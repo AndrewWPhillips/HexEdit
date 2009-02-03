@@ -1127,6 +1127,7 @@
 #define IDC_SPIN_FOLDER_LIST_SIZE       1586
 #define IDC_HIST_PAGE                   1587
 #define IDC_MAIN                        1588
+#define IDC_SPIN                        1589
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1513,7 +1514,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        412
 #define _APS_NEXT_COMMAND_VALUE         39025
-#define _APS_NEXT_CONTROL_VALUE         1589
+#define _APS_NEXT_CONTROL_VALUE         1590
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

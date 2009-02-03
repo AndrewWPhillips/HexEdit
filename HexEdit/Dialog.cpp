@@ -1872,7 +1872,14 @@ BOOL GetInt::OnInitDialog()
 
     GetDlgItem(IDC_VALUE)->SetFocus();                  // put user straight into control
     ((CEdit*)GetDlgItem(IDC_VALUE))->SetSel(0, -1);     // select all so they can overwrite the default
-    return FALSE;                                       // FALSE indicates we set focus
+    if (min_ < SHRT_MIN || max_ > SHRT_MAX)
+    {
+        ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN))->SetRange((short)-32768, (short)32767);
+        GetDlgItem(IDC_SPIN)->ShowWindow(FALSE);
+    }
+    else
+        ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN))->SetRange((short)min_, (short)max_);
+    return FALSE;
 }
 
 /////////////////////////////////////////////////////////////////////////////
