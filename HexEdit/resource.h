@@ -1264,6 +1264,7 @@
 #define ID_EXPORT_S2                    32945
 #define ID_EXPORT_S3                    32946
 #define ID_EXPORT_INTEL                 32947
+#define ID_VARS_CLEAR                   32949
 #define ID_BOOKMARKS_EDIT               32950
 #define ID_BOOKMARKS_CLEAR              32951
 #define ID_BOOKMARKS_PREV               32952

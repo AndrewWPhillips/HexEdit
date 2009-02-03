@@ -883,8 +883,8 @@ bool CCalcDlg::invalid_expression()
 
 	case CJumpExpr::TYPE_NONE:
         ::HMessageBox((LPCTSTR)CString(current_str_));
-		edit_.SetSel(mm_->expr_.get_error_pos(), mm_->expr_.get_error_pos());
         edit_.SetFocus();
+		edit_.SetSel(mm_->expr_.get_error_pos(), mm_->expr_.get_error_pos());
 		return true;
 
 	case CHexExpr::TYPE_REAL:
@@ -2221,8 +2221,15 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 // after the current cursor position has been moved.
 void CCalcDlg::OnGo()                   // Move cursor to current value
 {
-	if (invalid_expression())
+	edit_.update_value(true);           // eval the epsression allowing side-effects now
+
+	if (current_type_ != CJumpExpr::TYPE_INT)
+	{
+		(void)invalid_expression();
 		return;
+	}
+
+    add_hist();
 
     unsigned __int64 temp = current_;
     calc_previous();
@@ -2253,6 +2260,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
         aa_->mac_error_ = 10;
         return;
     }
+
 	CString ss;
 	edit_.GetWindowText(ss);
 	if (radix_ == 16)
@@ -2375,7 +2383,10 @@ void CCalcDlg::OnEquals()               // Calculate result
 		(void)invalid_expression();
 		return;
 	}
-	else if (current_type_ != CJumpExpr::TYPE_INT)
+
+    add_hist();
+
+	if (current_type_ != CJumpExpr::TYPE_INT)
 	{
 #ifdef UNICODE_TYPE_STRING
 		// This is the way to put Unicode text into control with ANSI window procedure
@@ -2401,6 +2412,7 @@ void CCalcDlg::OnEquals()               // Calculate result
         }
         in_edit_ = FALSE;
 #endif
+        edit_.SetFocus();
 		return;
 	}
 
@@ -2422,12 +2434,37 @@ void CCalcDlg::OnEquals()               // Calculate result
     }
 
     in_edit_ = FALSE;
+    edit_.SetFocus();
     //source_ = aa_->recording_ ? km_user : km_result;
     source_ = km_result;
     aa_->SaveToMacro(km_equals);
 }
 
 #ifdef CALCULATOR_IMPROVEMENTS
+void CCalcDlg::add_hist()
+{
+    // We don't add to the history if there is an active calculator button, but
+    // only if there is an expression in the calculator text box to be evaluated.
+    if (op_ == binop_none)
+    {
+        // Get the current value or expression
+        CString toadd;
+        edit_.GetWindowText(toadd);
+
+        for (int ii = 0; ii < ctl_edit_combo_.GetCount(); ++ii)
+        {
+            CString ss;
+            ctl_edit_combo_.GetLBText(ii, ss);
+            if (ss == toadd)                            // should we compare ignoring case?
+            {
+                ctl_edit_combo_.DeleteString(ii);       // remove existing entry with same text
+                break;
+            }
+        }
+        ctl_edit_combo_.InsertString(0, toadd);
+    }
+}
+
 // ---------- Menu button handlers ---------
 void CCalcDlg::build_menus()
 {
@@ -2509,7 +2546,7 @@ void CCalcDlg::build_menus()
 				msub.AppendMenu(MF_STRING, ii++, *ps);
 			}
 			if (msub.GetMenuItemCount() > 0)
-				mm.AppendMenu(MF_POPUP, (UINT)msub.m_hMenu, "Integer");
+				mm.AppendMenu(MF_POPUP, (UINT)msub.m_hMenu, "&Integer");
 			msub.DestroyMenu();
 		}
 
@@ -2522,7 +2559,7 @@ void CCalcDlg::build_menus()
 				msub.AppendMenu(MF_STRING, ii++, *ps);
 			}
 			if (msub.GetMenuItemCount() > 0)
-				mm.AppendMenu(MF_POPUP, (UINT)msub.m_hMenu, "Real");
+				mm.AppendMenu(MF_POPUP, (UINT)msub.m_hMenu, "&Real");
 			msub.DestroyMenu();
 		}
 
@@ -2535,7 +2572,7 @@ void CCalcDlg::build_menus()
 				msub.AppendMenu(MF_STRING, ii++, *ps);
 			}
 			if (msub.GetMenuItemCount() > 0)
-				mm.AppendMenu(MF_POPUP, (UINT)msub.m_hMenu, "String");
+				mm.AppendMenu(MF_POPUP, (UINT)msub.m_hMenu, "&String");
 			msub.DestroyMenu();
 		}
 
@@ -2548,7 +2585,7 @@ void CCalcDlg::build_menus()
 				msub.AppendMenu(MF_STRING, ii++, *ps);
 			}
 			if (msub.GetMenuItemCount() > 0)
-				mm.AppendMenu(MF_POPUP, (UINT)msub.m_hMenu, "Boolean");
+				mm.AppendMenu(MF_POPUP, (UINT)msub.m_hMenu, "&Boolean");
 			msub.DestroyMenu();
 		}
 
@@ -2561,7 +2598,7 @@ void CCalcDlg::build_menus()
 				msub.AppendMenu(MF_STRING, ii++, *ps);
 			}
 			if (msub.GetMenuItemCount() > 0)
-				mm.AppendMenu(MF_POPUP, (UINT)msub.m_hMenu, "Date");
+				mm.AppendMenu(MF_POPUP, (UINT)msub.m_hMenu, "&Date");
 			msub.DestroyMenu();
 		}
 
@@ -2571,6 +2608,11 @@ void CCalcDlg::build_menus()
             // menu item, since disabling the button itself looks ugly.
 			mm.AppendMenu(MF_STRING | MF_GRAYED, 0, "(none)");
 		}
+        else
+        {
+            // Add menu item to allow all varibales to be deleted
+			mm.AppendMenu(MF_STRING, ID_VARS_CLEAR, "&Clear variables...");
+        }
 		if (ctl_vars_.m_hMenu != (HMENU)0)
 		{
 			::DestroyMenu(ctl_vars_.m_hMenu);
@@ -2650,7 +2692,12 @@ void CCalcDlg::OnGetDecHist()
 
 void CCalcDlg::OnGetVar()
 {
-    if (ctl_vars_.m_nMenuResult != 0)
+    if (ctl_vars_.m_nMenuResult == ID_VARS_CLEAR)
+    {
+        if (AfxMessageBox("Are you sure you want to delete all variables?", MB_YESNO|MB_ICONSTOP) == IDYES)
+            mm_->expr_.DeleteVars();
+    }
+    else if (ctl_vars_.m_nMenuResult != 0)
 	{
 		CMenu menu;
 		menu.Attach(ctl_vars_.m_hMenu);
@@ -2660,6 +2707,8 @@ void CCalcDlg::OnGetVar()
 			edit_.SetWindowText("");
 	    in_edit_ = FALSE;
 
+        if (!ss.IsEmpty() && isalpha(ss[0]) && toupper(ss[0]) - 'A' + 10 < radix_)
+            edit_.SendMessage(WM_CHAR, (TCHAR)'@');     // Prefix ID with @ so it's not treated as an integer literal
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
         edit_.SetFocus();
@@ -2677,6 +2726,7 @@ void CCalcDlg::OnGetFunc()
 		CMenu menu;
 		menu.Attach(ctl_func_.m_hMenu);
         CString ss = get_menu_text(&menu, ctl_func_.m_nMenuResult);
+        ss.Replace("&&", "&");  // Double-ampersand is needed in menus to show one &, but now we need to reverse that
 		menu.Detach();
 		if (!in_edit_)
 			edit_.SetWindowText("");
@@ -2696,8 +2746,8 @@ void CCalcDlg::OnGetFunc()
 		// Select everything between brackets
 		end = start + ss.Find(')') + 1;
 		start += ss.Find('(') + 2;
-		edit_.SetSel(start, end);
         edit_.SetFocus();
+		edit_.SetSel(start, end);
 
         SetDlgItemText(IDC_OP_DISPLAY, "");
 		in_edit_ = TRUE;

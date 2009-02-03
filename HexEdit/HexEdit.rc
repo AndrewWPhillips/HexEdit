@@ -1122,7 +1122,7 @@ IDR_FUNCTION MENU
 BEGIN
     POPUP "Functions"
     BEGIN
-        POPUP "Integer"
+        POPUP "&Integer"
         BEGIN
             MENUITEM "abs (int)",                   ID_INTEGER_ABS
             MENUITEM "min (int, int)",              ID_INTEGER_MIN
@@ -1145,7 +1145,7 @@ BEGIN
             MENUITEM "getint (""prompt"" [,  default,  min,  max] )", 
                                                     ID_INTEGER_GETINT
         END
-        POPUP "Real"
+        POPUP "&Real"
         BEGIN
             MENUITEM "abs (real)",                  ID_REAL_ABS
             MENUITEM "min (real, real)",            ID_REAL_MIN
@@ -1168,7 +1168,7 @@ BEGIN
             MENUITEM "log (real)",                  ID_REAL_LOG
             MENUITEM "PI",                          ID_REAL_PI
         END
-        POPUP "String"
+        POPUP "&String"
         BEGIN
             MENUITEM "left (string, int)",          ID_STRING_LEFT
             MENUITEM "right (string, int)",         ID_STRING_RIGHT
@@ -1184,9 +1184,9 @@ BEGIN
             MENUITEM "getstring (""prompt"", ""default"")", 
                                                     ID_STRING_GETSTRING
         END
-        POPUP "Boolean"
+        POPUP "&Boolean"
         BEGIN
-            MENUITEM "getbool (""prompt"", ""Yes"", ""No"")", 
+            MENUITEM "getbool (""OK?"", ""&&Yes"", ""&&No"")", 
                                                     ID_BOOLEAN_GETBOOL
             MENUITEM SEPARATOR
             MENUITEM "value == value",              ID_BOOLEAN_EQ
@@ -1196,7 +1196,7 @@ BEGIN
             MENUITEM "value > value",               ID_BOOLEAN_GT
             MENUITEM "value >= value",              ID_BOOLEAN_GE
         END
-        POPUP "Date"
+        POPUP "&Date"
         BEGIN
             MENUITEM "now ( )",                     ID_DATE_NOW
             MENUITEM "date (string)",               ID_DATE_DATE

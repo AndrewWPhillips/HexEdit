@@ -147,6 +147,7 @@ public:
 
     static tok_t func_token(const char *buf);// Check if a func name and return corresp. token (or TOK_NONE)
 
+    void DeleteVars() { var_.clear(); var_changed_ = clock(); }
 	clock_t VarChanged() { return var_changed_; } // Return when last change was made to any variable
 
 protected:

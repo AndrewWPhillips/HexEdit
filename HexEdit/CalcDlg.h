@@ -284,6 +284,7 @@ protected:
 	afx_msg void OnTooltipsShow(NMHDR* pNMHDR, LRESULT* pResult);
     DECLARE_MESSAGE_MAP()
 
+private:
 	CResizeCtrl resizer_;                   // Used to move controls around when the window is resized
 
     CToolTipCtrl ttc_;                      // For button tooltips
@@ -298,6 +299,7 @@ protected:
     void do_unary(unary_type unary);        // Handle unary operators
     void do_digit(char digit);              // Handle "digit" button on calculator
     void calc_previous();                   // Do binary operation using previous_ and current_
+    void add_hist();                        // Add to drop-down history list
 
     CHexEditApp *aa_;                       // Ptr to the app (mainly for macro handling)
     CMainFrame *mm_;                        // Ptr to the main window
