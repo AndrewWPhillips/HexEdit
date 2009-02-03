@@ -299,8 +299,6 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		break;
 	}
 
-	pp_->FixFileButtons();
-
     if (pp_->overflow_)
 	{
 		// Note: Since we are ignoring the typed character (returning false)
@@ -310,11 +308,13 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 #else
         ::Beep(5000,200);
 #endif
+	    pp_->FixFileButtons();
         return false;
     }
 	else
 	{
 		pp_->current_type_ = (expr_eval::type_t)vv.typ;
+	    pp_->FixFileButtons();  // must be called after settings current type
         return true;
 	}
 }
@@ -623,7 +623,7 @@ BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg)
 
     if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
     {
-        if (pp_->ctl_go_.IsWindowEnabled())
+        if (pp_->ctl_go_.IsWindowEnabled() && pp_->current_type_ == CJumpExpr::TYPE_INT)
             pp_->OnGo();
         else
             pp_->OnEquals();
