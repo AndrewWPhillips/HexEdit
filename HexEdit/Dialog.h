@@ -489,9 +489,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
 // GetInt dialog - used byt getint() function of expressions to ask the user for an integer value
 class GetInt : public CDialog
 {
@@ -499,7 +496,6 @@ class GetInt : public CDialog
 
 public:
 	GetInt(CWnd* pParent = NULL);   // standard constructor
-	virtual ~GetInt();
 
 // Dialog Data
 	enum { IDD = IDD_GETINT };
@@ -510,6 +506,7 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -531,6 +528,7 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -543,7 +541,6 @@ class GetBool : public CDialog
 
 public:
 	GetBool(CWnd* pParent = NULL);   // standard constructor
-	virtual ~GetBool();
 
 // Dialog Data
 	enum { IDD = IDD_GETBOOL };
@@ -557,5 +554,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 };
+
+//{{AFX_INSERT_LOCATION}}
+// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_DIALOG_H__55A0CEE1_3245_11D2_B012_0020AFDC3196__INCLUDED_)

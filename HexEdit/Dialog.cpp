@@ -1854,10 +1854,6 @@ GetInt::GetInt(CWnd* pParent /*=NULL*/)
 {
 }
 
-GetInt::~GetInt()
-{
-}
-
 void GetInt::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -1868,6 +1864,16 @@ void GetInt::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(GetInt, CDialog)
 END_MESSAGE_MAP()
+
+BOOL GetInt::OnInitDialog() 
+{
+    if (min_ > max_) min_ = max_;
+    CDialog::OnInitDialog();
+
+    GetDlgItem(IDC_VALUE)->SetFocus();                  // put user straight into control
+    ((CEdit*)GetDlgItem(IDC_VALUE))->SetSel(0, -1);     // select all so they can overwrite the default
+    return FALSE;                                       // FALSE indicates we set focus
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // GetStr dialog
@@ -1889,6 +1895,14 @@ void GetStr::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(GetStr, CDialog)
 END_MESSAGE_MAP()
 
+BOOL GetStr::OnInitDialog() 
+{
+    CDialog::OnInitDialog();
+
+    GetDlgItem(IDC_VALUE)->SetFocus();                  // put user straight into control
+    ((CEdit*)GetDlgItem(IDC_VALUE))->SetSel(0, -1);     // select all so they can overwrite the default
+    return FALSE;                                       // FALSE indicates we set focus
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // GetBool dialog
@@ -1898,12 +1912,8 @@ IMPLEMENT_DYNAMIC(GetBool, CDialog)
 GetBool::GetBool(CWnd* pParent /*=NULL*/)
 	: CDialog(GetBool::IDD, pParent)
 {
-	yes_ = "YES";
-	no_ = "NO";
-}
-
-GetBool::~GetBool()
-{
+	yes_ = "&YES";
+	no_ = "&NO";
 }
 
 void GetBool::DoDataExchange(CDataExchange* pDX)
