@@ -209,12 +209,31 @@ void CHistoryShellList::do_move(int ii)
 	pos_ = ii;
 }
 
+// Column names that appear in the column header
+static const TCHAR * colnames[] = 
+{
+	_T("Name"),             // COLNAME
+	_T("Size"),             // COLSIZE
+	_T("Type"),             // COLTYPE
+	_T("Modified"),         // COLMOD
+	_T("Attributes"),       // COLATTR
+	_T("Last Opened"),      // COLOPENED
+    _T("Category"),         // COLCATEGORY
+    _T("Keywords"),         // COLKEYWORDS
+    _T("Comments"),         // COLCOMMENTS
+    // always add to the end of this list as existing registry strings may rely on this order
+    NULL
+};
+
+char * CHistoryShellList::defaultWidths = "150|60|150|150|60|150|60|100|200";  // name,size,type,mod-time,attr,last-opened-timecat,kw,comments
+
 void CHistoryShellList::OnSetColumns()
 {
     int col;            // loops through columns
     CString ss;         // temp string
 
-	ModifyStyle(LVS_TYPEMASK, LVS_REPORT);  // Need to set details mode before setting up columns
+	ModifyStyle(LVS_TYPEMASK, LVS_REPORT);      // Need to set details mode before setting up columns
+    SetExtendedStyle(LVS_EX_HEADERDRAGDROP);    // Allow column reordering
 
     // As we still rely on the BCG base class to handle a few things we just need
     // to check that BCG has not pulled the rug by reordering the columns.
@@ -223,24 +242,9 @@ void CHistoryShellList::OnSetColumns()
            BCGShellList_ColumnType     == COLTYPE &&
            BCGShellList_ColumnModified == COLMOD);
 
-    // Column names that appear in the column header
-	static const TCHAR * name[] = 
-	{
-		_T("Name"),             // COLNAME
-		_T("Size"),             // COLSIZE
-		_T("Type"),             // COLTYPE
-		_T("Modified"),         // COLMOD
-		_T("Attributes"),       // COLATTR
-		_T("Last Opened"),      // COLOPENED
-        _T("Category"),         // COLCATEGORY
-        _T("Keywords"),         // COLKEYWORDS
-        _T("Comments"),         // COLCOMMENTS
+    ASSERT(colnames[COLLAST] == NULL);      // check numbering consistency
 
-        NULL
-	};
-    ASSERT(name[COLLAST] == NULL);      // check numbering consistency
-
-    CString widths = theApp.GetProfileString("File-Settings", "ExplorerColWidths", _T("150|60|150|150|60|150|60|100|200"));  // name,size,type,mod-time,attr,last-opened-timecat,kw,comments
+    CString widths = theApp.GetProfileString("File-Settings", "ExplorerColWidths", defaultWidths);
 
     // First work out the order and widths of the columns
 	for (col = 0; col < COLLAST; ++col)
@@ -250,10 +254,11 @@ void CHistoryShellList::OnSetColumns()
         AfxExtractSubString(ss, widths, col, '|');
         int width = atoi(ss);
 
-		InsertColumn(col, name[col], fmt, width, col);
+		InsertColumn(col, colnames[col], fmt, width, col);
     }
 
-    // xxx add HDS_DRAGDROP to the header style to allow the user to reorder the columns
+    // This (in combination with LVS_EX_HEADERDRAGDROP style) allows the
+    // columns to be reordered by dragging, and the order saved and restored.
     CString orders = theApp.GetProfileString("File-Settings", "ExplorerColOrder");
     int order[COLLAST];
 	for (col = 0; col < COLLAST; ++col)
@@ -305,7 +310,7 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 
 	TCHAR path[MAX_PATH];
 
-	// Handle size column since BCG base class can't handle file sizes > 2Gbytes
+	// Handle size column ourselves since BCG base class can't handle file sizes > 2Gbytes
 	if (iColumn == COLSIZE)
 	{
         CFileStatus fs;
@@ -342,7 +347,7 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 		{
 			// We get the index for this file from the recent file list here to save time repeating the
 			// procedure (get path and then look up index) for the other columns.
-			// IMPOTANT: This assumes that CBCGShellList::OnGetItemText calls process the list box items
+			// IMPORTANT: This assumes that CBCGShellList::OnGetItemText calls process the list box items
 			// a row at a time, from left to right - if this assumption changes this will stuff up.
 			ASSERT(fl_idx_ == -2);
 			if (pfl != NULL)
@@ -594,8 +599,45 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 
 BEGIN_MESSAGE_MAP(CHistoryShellList, CBCGShellList)
 	ON_NOTIFY_REFLECT(NM_DBLCLK, OnDblclk)
-	//}}AFX_MSG_MAP
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
+
+void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point) 
+{
+    CPoint pt(point);
+    ScreenToClient(&pt);
+    CRect rct;
+    GetHeaderCtrl().GetWindowRect(&rct);
+    if (pt.y < rct.Height())
+    {
+        // Right click on header - display menu of available columns
+        CMenu mm;
+        mm.CreatePopupMenu();
+
+        for (int col = 0; col < COLLAST; ++col)
+            mm.AppendMenu(MF_ENABLED|(GetColumnWidth(col)>0?MF_CHECKED:0), col+1, colnames[col]);
+
+        int item = mm.TrackPopupMenu(
+                TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD,
+                point.x, point.y, this);
+        if (item != 0)
+        {
+            if (GetColumnWidth(item-1) == 0)
+            {
+                // Set to default column width
+                CString ss;
+                AfxExtractSubString(ss, defaultWidths, item-1, '|');
+                int width = max(strtol(ss, NULL, 10), 20);
+                SetColumnWidth(item-1, width);
+            }
+            else
+                SetColumnWidth(item-1, 0);      // set to width to zero to hide it
+        }
+        return;
+    }
+
+    CBCGShellList::OnContextMenu(pWnd, point);
+}
 
 void CHistoryShellList::OnDblclk(NMHDR * pNMHDR, LRESULT * pResult) 
 {

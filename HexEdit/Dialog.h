@@ -88,6 +88,7 @@ class CHistoryShellList : public CBCGShellList
 		COLCATEGORY, COLKEYWORDS, COLCOMMENTS,	// Extra info on file entered by user (Summary page)
 		COLLAST         // Leave this one at the end (to be one past last used value)
 	};
+
 public:
     CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true) { }
 	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
@@ -113,6 +114,7 @@ public:
 
 protected:
 	afx_msg void OnDblclk(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -126,6 +128,7 @@ private:
     bool add_to_hist_;           // Used to prevent adding to dop-down list in sme circumstances (default to true)
     int normal_count_;           // No of columns added in base class (CBCGSHellList)
 	int fl_idx_;                 // This is saved index into recent file list (cached for list box row while processing fields)
+    static char * defaultWidths;
 };
 
 /////////////////////////////////////////////////////////////////////////////
