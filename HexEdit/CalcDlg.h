@@ -71,7 +71,6 @@ public:
     CCalcEdit edit_;                // Subclassed edit control (child of above combo)
 
 	// Calculator buttons
-#ifdef CALCULATOR_IMPROVEMENTS
 #if 1
 	// These are black so we don't have to do anything special
     CBCGButton ctl_digit_0_;
@@ -155,7 +154,6 @@ public:
     CBCGMenuButton ctl_func_;
 
 	CMenu func_menu_;
-#endif
 
 	// We need to know if there is an expression or a simple integer constant currently
 	// in the edit box.  This is necessary for backward compatibility (when expression
@@ -271,12 +269,10 @@ protected:
     afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
     afx_msg void OnBigEndian();
     //}}AFX_MSG
-#ifdef CALCULATOR_IMPROVEMENTS
     afx_msg void OnGetHexHist();
     afx_msg void OnGetDecHist();
     afx_msg void OnGetVar();
     afx_msg void OnGetFunc();
-#endif
 
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -291,9 +287,7 @@ private:
 	HWND help_hwnd_;                        // HWND of window for which context help is pending (usually 0)
 
 	bool invalid_expression();              // Check if current expression is valid and show error message if not
-#ifdef CALCULATOR_IMPROVEMENTS
 	void build_menus();                     // Build menus for menu buttons
-#endif
     void toggle_endian();
     void do_binop(binop_type binop);        // Handle binary operators
     void do_unary(unary_type unary);        // Handle unary operators

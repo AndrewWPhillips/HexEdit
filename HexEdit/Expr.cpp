@@ -80,7 +80,7 @@ expr_eval::expr_eval(int mr /*=10*/, bool csa /*=false*/)
 // expr is the expression to evaluate, possibly including names (symbols)
 // reference is used as a starting reference point in the resolution of symbols
 // ref_ac returns the most recent symbol accessed (used for checking for var/fixed arrays)
-// radix is the used to interpret integer literals, the default (0) means decimal
+// radix is the used to interpret integer literals, the default (10) means decimal
 
 // Note: expr is single byte (ANSI) string so cannot include any Unicode string
 // literals, however string expressions can include Unicode strings.
@@ -3107,7 +3107,6 @@ expr_eval::tok_t expr_eval::get_next()
     else if (*p_ == '@' || isalpha(*p_) || *p_ == '$' || *p_ == '_')
     {
         bool is_int = true;     // Used to check whether this is a valid number
-        int max_digit = 0;
 
         if (*p_ == '@')
         {
@@ -3117,39 +3116,22 @@ expr_eval::tok_t expr_eval::get_next()
             ++saved_;
         }
 
-        // Check whether this appears to be a valid int even in max_radix_
+        // Check whether this appears to be a valid int
         while (isalpha(*p_) || *p_ == '$' || *p_ == '_' || isdigit(*p_))
         {
             if (isalpha(*p_))
             {
-                int dig = toupper(*p_) - 'A' + 10;
-
-                if (dig > max_digit) max_digit = dig;
-                if (dig >= max_radix_) is_int = false;   // Definitely not an int due to alphas
+                if (toupper(*p_) - 'A' + 10 >= const_radix_)
+                    is_int = false;                     // Greater than max digit for consts
             }
             else if (*p_ == '$' || *p_ == '_')
             {
-                is_int = false;                          // Ints can't contain $ or _
+                is_int = false;                         // Ints can't contain $ or _
             }
             ++p_;
         }
 
-        if (is_int)
-        {
-            if (max_digit >= const_radix_)
-            {
-                // Not a valid int in current radix. (Although we could use this as a variable name 
-                // disallow to avoid confusion in other expressions where it may be an int literal.)
-                sprintf(error_buf_, "Variable name (%.*s) ambiguous with integer literal",
-                        p_ - saved_, saved_);
-                return TOK_NONE;
-            }
-
-            // This appears to be a int literal so restore p_ to
-            // start of token and continue (below) to get number
-            p_ = saved_;
-        }
-        else
+        if (!is_int)
         {
             // Either a predefined symbol (const or function name) or a variable
             char buf[256], bufu[256];
@@ -3216,7 +3198,11 @@ expr_eval::tok_t expr_eval::get_next()
                 psymbol_ = _strdup(buf);
                 return TOK_SYMBOL;
             }
+            ASSERT(0);
         }
+        // This appears to be a int literal so restore p_ to
+        // start of token and continue (below) to get number
+        p_ = saved_;
     }
 
     // Now check for numeric literals

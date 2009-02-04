@@ -405,7 +405,6 @@ BOOL CCalcDlg::OnInitDialog()
     GetClientRect(&cli);
     PostMessage(WM_SIZE, SIZE_RESTORED, MAKELONG(cli.Width(), cli.Height()));
 
-#ifdef CALCULATOR_IMPROVEMENTS
 #if 0
 	// Things that set current operand are black
     ctl_digit_0_ .SetTextColor(RGB(0x0, 0x0, 0x0));
@@ -529,7 +528,6 @@ BOOL CCalcDlg::OnInitDialog()
 	// Since functions menu doesn't change we only need to set it up once (load from resources)
     VERIFY(func_menu_.LoadMenu(IDR_FUNCTION));
     ctl_func_.m_hMenu = func_menu_.GetSubMenu(0)->GetSafeHmenu();
-#endif
 
     return TRUE;
 } // OnInitDialog
@@ -539,7 +537,6 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 	CHexDialogBar::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT,  ctl_edit_combo_);
 
-#ifdef CALCULATOR_IMPROVEMENTS
 #if 1
     DDX_Control(pDX, IDC_DIGIT_0, ctl_digit_0_);
     DDX_Control(pDX, IDC_DIGIT_1, ctl_digit_1_);
@@ -619,7 +616,6 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_DEC_HIST, ctl_dec_hist_);
     DDX_Control(pDX, IDC_VARS, ctl_vars_);
     DDX_Control(pDX, IDC_FUNC, ctl_func_);
-#endif
 } // DoDataExchange
 
 BEGIN_MESSAGE_MAP(CCalcDlg, CHexDialogBar)
@@ -749,12 +745,10 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CHexDialogBar)
     ON_BN_DOUBLECLICKED(IDC_UNARY_SQUARE_ROOT, OnUnarySquareRoot)
 	ON_BN_CLICKED(IDC_BIG_ENDIAN_FILE_ACCESS, OnBigEndian)
 	//}}AFX_MSG_MAP
-#ifdef CALCULATOR_IMPROVEMENTS
     ON_BN_CLICKED(IDC_HEX_HIST, OnGetHexHist)
     ON_BN_CLICKED(IDC_DEC_HIST, OnGetDecHist)
     ON_BN_CLICKED(IDC_VARS, OnGetVar)
     ON_BN_CLICKED(IDC_FUNC, OnGetFunc)
-#endif
 	ON_WM_SIZE()
 	ON_NOTIFY(TTN_SHOW, 0, OnTooltipsShow)
     ON_WM_CONTEXTMENU()
@@ -1958,9 +1952,7 @@ void CCalcDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 
 LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 {
-#ifdef CALCULATOR_IMPROVEMENTS
     build_menus();
-#endif
 	// Display context help for ctrl set up in OnHelpInfo
 	if (help_hwnd_ != (HWND)0)
 	{
@@ -2105,7 +2097,6 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 
 void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) 
 {
-#ifndef CALCULATOR_IMPROVEMENTS
     if (!IsVisible()) return;
     ASSERT(lpDrawItemStruct->CtlType == ODT_BUTTON);
 
@@ -2212,7 +2203,7 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 
     // Restore text colour
     ::SetTextColor(lpDrawItemStruct->hDC, cr);
-#endif
+
     CHexDialogBar::OnDrawItem(nIDCtl, lpDrawItemStruct);
 }
 
@@ -2394,7 +2385,6 @@ void CCalcDlg::OnEquals()               // Calculate result
 #else
 		edit_.SetWindowText(current_str_);
 #endif
-#ifdef CALCULATOR_IMPROVEMENTS
         switch (current_type_)
         {
         case CJumpExpr::TYPE_REAL:
@@ -2411,7 +2401,6 @@ void CCalcDlg::OnEquals()               // Calculate result
             break;
         }
         in_edit_ = FALSE;
-#endif
         edit_.SetFocus();
 		return;
 	}
@@ -2440,7 +2429,6 @@ void CCalcDlg::OnEquals()               // Calculate result
     aa_->SaveToMacro(km_equals);
 }
 
-#ifdef CALCULATOR_IMPROVEMENTS
 void CCalcDlg::add_hist()
 {
     // We don't add to the history if there is an active calculator button, but
@@ -2754,7 +2742,6 @@ void CCalcDlg::OnGetFunc()
 		source_ = aa_->recording_ ? km_user : km_result;
 	}
 }
-#endif
 
 // ---------- Digits for entering numbers ----------
 void CCalcDlg::OnDigit0() 
