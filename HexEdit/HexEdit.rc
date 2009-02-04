@@ -1179,7 +1179,7 @@ BEGIN
             MENUITEM "Rtrim (string)",              ID_STRING_RTRIM
             MENUITEM SEPARATOR
             MENUITEM "EBC2ASC (string)",            ID_STRING_EBC2ASC
-            MENUITEM "ASC2EBC (string)",            39006
+            MENUITEM "ASC2EBC (string)",            ID_STRING_ASC2EBC
             MENUITEM SEPARATOR
             MENUITEM "getstring (""prompt"", ""default"")", 
                                                     ID_STRING_GETSTRING
@@ -1342,7 +1342,7 @@ BEGIN
                     HIDC_ONE_ONLY
     CONTROL         "&Restore main window position",IDC_RESTORE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,22,68,126,10,0,HIDC_RESTORE
-    CONTROL         "Scan for &Devices and Volumes",IDC_SCAN,"Button",
+    CONTROL         "Background Scan for &Devices",IDC_SCAN,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,22,81,126,10,0,HIDC_SCAN
     CONTROL         "Show S&plash screen",IDC_SPLASH,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,152,55,102,10,0,HIDC_SPLASH
@@ -2434,9 +2434,10 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,50,8,
                     205,1
     LTEXT           "Main Window",IDC_STATIC,20,4,44,8
-    CONTROL         "&Restore main window on startup",IDC_RESTORE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,20,17,117,10,0,HIDC_RESTORE
-    PUSHBUTTON      "More Startup Options >>",IDC_STARTUP_PAGE,161,15,94,14,
+    CONTROL         "&Restore main window position on startup",IDC_RESTORE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,17,140,10,0,
+                    HIDC_RESTORE
+    PUSHBUTTON      "More Startup Options >>",IDC_STARTUP_PAGE,167,15,88,14,
                     NOT WS_TABSTOP,0,HIDC_STARTUP_PAGE
     CONTROL         "Display Window &Tabs",IDC_MDITABS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,20,29,87,10,0,HIDC_MDITABS
@@ -3442,16 +3443,11 @@ IDB_FORW                BITMAP                  "res\\forw.bmp"
 IDB_REFRESH             BITMAP                  "res\\refresh.bmp"
 IDB_PARENT              BITMAP                  "res\\parent.bmp"
 IDB_VIEW                BITMAP                  "res\\view.bmp"
-IDB_BACK1               BITMAP                  "res\\back1.bmp"
-IDB_FORW1               BITMAP                  "res\\forw1.bmp"
-IDB_PARENT1             BITMAP                  "res\\parent1.bmp"
 IDB_BACK_HOT            BITMAP                  "res\\back_hot.bmp"
 IDB_FORW_HOT            BITMAP                  "res\\forw_hot.bmp"
-IDB_PARENT_HOT          BITMAP                  "res\\parent2.bmp"
-IDB_VIEW1               BITMAP                  "res\\view1.bmp"
+IDB_PARENT_HOT          BITMAP                  "res\\parent_hot.bmp"
 IDB_VIEW_HOT            BITMAP                  "res\\view_hot.bmp"
-IDB_REFRESH1            BITMAP                  "res\\refresh1.bmp"
-IDB_REFRESH_HOT         BITMAP                  "res\\refresh_.bmp"
+IDB_REFRESH_HOT         BITMAP                  "res\\refresh_hot.bmp"
 IDB_HORZ                BITMAP                  "res\\flip.bmp"
 IDB_HORZ_HOT            BITMAP                  "res\\flip_hot.bmp"
 IDB_FLIP1               BITMAP                  "res\\flip1.bmp"
@@ -3681,9 +3677,7 @@ BEGIN
         MENUITEM "&Small Icons",                ID_VIEW_SMALLICON
         MENUITEM "L&ist",                       ID_VIEW_LIST
         MENUITEM "&Details",                    ID_VIEW_DETAILS
-    END
-    POPUP "Hidden Files"
-    BEGIN
+        MENUITEM SEPARATOR
         MENUITEM "&Don't show hidden files",    ID_HIDDEN_HIDE
         MENUITEM "&Show hidden files",          ID_HIDDEN_SHOW
     END
@@ -4825,14 +4819,13 @@ BEGIN
     PUSHBUTTON      "",IDC_FOLDER_FORW,24,3,22,20,0,0,HIDC_FOLDER_FORW
     PUSHBUTTON      "",IDC_FOLDER_PARENT,46,3,22,20,0,0,HIDC_FOLDER_PARENT
     LTEXT           "Filter:",IDC_STATIC,71,2,18,8
-    COMBOBOX        IDC_FOLDER_FILTER,71,10,64,200,CBS_DROPDOWN | WS_VSCROLL | 
+    COMBOBOX        IDC_FOLDER_FILTER,71,10,88,200,CBS_DROPDOWN | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_FOLDER_FILTER
-    PUSHBUTTON      "",IDC_FILTER_OPTS,135,9,14,14,0,0,HIDC_FILTER_OPTS
-    PUSHBUTTON      "",IDC_FOLDER_VIEW,152,3,28,20,0,0,HIDC_FOLDER_VIEW
-    PUSHBUTTON      "",IDC_FOLDER_HIDDEN,180,3,28,20,0,0,HIDC_FOLDER_HIDDEN
+    PUSHBUTTON      "",IDC_FILTER_OPTS,160,9,14,14,0,0,HIDC_FILTER_OPTS
+    PUSHBUTTON      "",IDC_FOLDER_VIEW,174,3,34,20,0,0,HIDC_FOLDER_VIEW
     PUSHBUTTON      "",IDC_FOLDER_FLIP,2,24,14,14,0,0,HIDC_FOLDER_FLIP
     LTEXT           "Address:",IDC_STATIC,18,26,28,8
-    COMBOBOX        IDC_FOLDER_NAME,46,24,148,200,CBS_DROPDOWN | WS_VSCROLL | 
+    COMBOBOX        IDC_FOLDER_NAME,46,24,147,200,CBS_DROPDOWN | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_FOLDER_NAME
     PUSHBUTTON      "",IDC_FOLDER_REFRESH,194,24,14,14,0,0,
                     HIDC_FOLDER_REFRESH
