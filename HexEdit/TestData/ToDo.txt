@@ -1,6 +1,48 @@
  
 3.4 Version
+ > calculator
+   > fix resize problems
+   > new look calculator
+   > expressions in calculator
+      > history
+   > Goto history(s) in calculator
+   > variables list
+      > clear variables
+   > functions list
+ - Explorer
+    > new modern icons
+    > move hidden file icons to views menu
+    - fix column selection
+    - allow column reorder
+ - Options
+    > new ruler options: ticks/numbers for hex/decimal
+    > display: indicate cursor/mouse position
+       > formatting of numbers
+       > autoscroll accel, scroll past ends
+    > history options page: set size of 6 history lists, clear bookmarks etc on exit
+    > new startup options: splash, tod, scan for devices
+    - new tree look
+ - fix show selection problems
+ - enable navigation points
+   - don't save nav pt when flipping between files
+ - icon not shown for 2nd and subsequent windows
+    - need to call show_icon() after opening a new window
+ - more acknowledgements in help
+	SmartFTP
+	Expression Web 2
+	IkonBoard
+	FireFox
+	Parcom
+  - wait cursor for any long operation (search for EnablePaneProgressBar(0))
+  - disk editor
+    - new option to scan for devices in background at startup
+  - instead of ::HMessageBox check view in idle event to see if bg search finished
+  > expressions
+    > Improve GetInt, GetString, GetBool
+    > test in calculator
+    > @ prefix for ambiguous identifiers
  - make columns in filter and infotips pages fit across (too narrow for 120 DPI)
+
  - check new cracker codes and find workaround
  - update security_version_ (hexedit.h)
  - update range and default value for ver_ (RegisterDlg.cpp)
@@ -300,27 +342,12 @@ Help
   > add extra colour selection (highlight, background, address, etc) [Roland Glenn McIntosh]
 
 V 3.4
- - reload command
- - show selection problems
- - enable navigation points
-   - don't save nav pt when flipping between files
- - calculator
-   - new look calculator
-   - Goto history(s) in calculator
-   - bookmarks list
-   - expressions in calculator
-  - icon not shown for 2nd and subsequent windows
-    - need to call show_icon() after opening a new window
- 
+
 V3.5
+ - calculator
+   - bookmarks (active file) drop-list
+ - reload command
  - new icons
- - more acknowledgements in help
-	SmartFTP
-	Expression Web 2
-	IkonBoard
-	FireFox
-	Parcom
-  - wait cursor for any long operation (search for EnablePaneProgressBar(0))
   - options in dialogs that ask repetitive questions
     - also add options page where you can turn these on again
     - paste in overtype mode
@@ -333,7 +360,6 @@ V3.5
           REINSTALLMODE_FILEOLDERVERSION | REINSTALLMODE_REPAIR);
   - extra CRC types
   - restrict hist drop down list width
-  - instead of ::HMessageBox check view in idle event to see if bg search finished
   - Convert to use FileErrorMessage() ???
   > clear histories (search/jump tools, recent file list, bookmarks?)
     - bookmarks does not remove from the lists of open files

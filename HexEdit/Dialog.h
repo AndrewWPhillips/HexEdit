@@ -190,8 +190,6 @@ public:
 	CBCGButton ctl_up_;             // up to parent folder
 	CBCGButton ctl_refresh_;        // redraws the list
     CBCGMenuButton ctl_view_;       // shows menu of 4 items allowing user to say how the view is to be displayed
-    //CBCGButton ctl_show_all_;       // Show hidden/system files
-    CBCGMenuButton ctl_show_all_;   // shows menu for hiding/showing hidden files
     CBCGButton ctl_flip_;           // determines orientation of tree/list in splitter window
 
     CBCGMenuButton ctl_filter_opts_;// Shows menu with filter list
@@ -201,7 +199,7 @@ public:
     CComboBox ctl_name_;            // user can enter folder name here or select from history list
 	CFolderEdit ctl_name_edit_;     // The edit control within the combo
 
-	CMenu m_menu_;                  // menus for ctl_view_ and ctl_show_all_
+	CMenu m_menu_;                  // menus for explorer button(s) (ctl_view_)
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
@@ -214,7 +212,6 @@ protected:
 	afx_msg void OnFilterOpts();
 	afx_msg void OnFolderRefresh();
 	afx_msg void OnFolderView();
-	afx_msg void OnFolderHidden();
 	afx_msg void OnFolderFlip();
 	afx_msg void OnSelchangeFolderName();
 	afx_msg void OnSelchangeFilter();

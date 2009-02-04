@@ -101,6 +101,7 @@ LRESULT CHexDialogBar::InitDialogBarHandler(WPARAM, LPARAM)
 }
 
 #ifdef EXPLORER_WND
+
 /* Here we have CExplorerWnd and related classes */
 
 /////////////////////////////////////////////////////////////////////////////
@@ -776,7 +777,6 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
     resizer_.Add(IDC_FOLDER_REFRESH, 100, 0,   0,   0);  // stick to right side
     resizer_.Add(IDC_FILTER_OPTS,    100, 0,   0,   0);
     resizer_.Add(IDC_FOLDER_VIEW,    100, 0,   0,   0);
-    resizer_.Add(IDC_FOLDER_HIDDEN,  100, 0,   0,   0);
     resizer_.Add(IDC_FOLDER_NAME,      0, 0, 100,   0);
     resizer_.Add(IDC_EXPLORER,         0, 0, 100, 100);  // move right & bottom edges
 
@@ -794,7 +794,6 @@ void CExplorerWnd::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_FILTER_OPTS,    ctl_filter_opts_);
 	DDX_Control(pDX, IDC_FOLDER_REFRESH, ctl_refresh_);
 	DDX_Control(pDX, IDC_FOLDER_VIEW,    ctl_view_);
-	DDX_Control(pDX, IDC_FOLDER_HIDDEN,  ctl_show_all_);
 	DDX_Control(pDX, IDC_FOLDER_FLIP,    ctl_flip_);
 
 	DDX_Control(pDX, IDC_FOLDER_FILTER,  ctl_filter_);
@@ -903,12 +902,6 @@ BOOL CExplorerWnd::OnInitDialog()
     ctl_refresh_.SetTooltip(_T("Refresh"));
 	ctl_refresh_.Invalidate();
 
-#if 0
-	ctl_show_all_.m_bTransparent = TRUE;
-    ctl_show_all_.m_nFlatStyle = CBCGButton::BUTTONSTYLE_FLAT;
-	ctl_show_all_.Invalidate();
-#endif
-
     if (splitter_.Orientation() == SSP_VERT)
         ctl_flip_.SetImage(IDB_VERT, IDB_VERT_HOT);
     else
@@ -929,15 +922,6 @@ BOOL CExplorerWnd::OnInitDialog()
     //ctl_view_.SizeToContent();
     ctl_view_.SetTooltip(_T("Change Folder View"));
 	ctl_view_.Invalidate();
-    // Hide/show hidden files menu
-	ctl_show_all_.m_hMenu = m_menu_.GetSubMenu(1)->GetSafeHmenu();
-	ctl_show_all_.m_bOSMenu = FALSE;
-    ctl_show_all_.SetImage(IDB_HIDE, IDB_HIDE_HOT);
-	ctl_show_all_.m_bTransparent = TRUE;
-    ctl_show_all_.m_nFlatStyle = CBCGButton::BUTTONSTYLE_FLAT;
-    //ctl_show_all_.SizeToContent();
-    ctl_show_all_.SetTooltip(_T("Show/hide hidden files"));
-	ctl_show_all_.Invalidate();
 
     return TRUE;
 }
@@ -1088,7 +1072,6 @@ BEGIN_MESSAGE_MAP(CExplorerWnd, CHexDialogBar)
 	ON_BN_CLICKED(IDC_FILTER_OPTS, OnFilterOpts)
 	ON_BN_CLICKED(IDC_FOLDER_REFRESH, OnFolderRefresh)
 	ON_BN_CLICKED(IDC_FOLDER_VIEW, OnFolderView)
-	ON_BN_CLICKED(IDC_FOLDER_HIDDEN, OnFolderHidden)
 	ON_BN_CLICKED(IDC_FOLDER_FLIP, OnFolderFlip)
 	ON_CBN_SELCHANGE(IDC_FOLDER_NAME, OnSelchangeFolderName)
 	ON_CBN_SELCHANGE(IDC_FOLDER_FILTER, OnSelchangeFilter)
@@ -1174,6 +1157,9 @@ void CExplorerWnd::OnDestroy()
 // changes to the folder will not cause lots of calls to Refresh().
 void CExplorerWnd::Update(LPCTSTR file_name /* = NULL */)
 {
+    if (update_required_)
+        return;                 // Update already flagged
+
 	if (file_name == NULL)
 		update_required_ = true;
 	else
@@ -1196,7 +1182,6 @@ static DWORD id_pairs_explorer[] = {
 	IDC_FOLDER_FILTER, HIDC_FOLDER_FILTER,
 	IDC_FILTER_OPTS, HIDC_FILTER_OPTS,
 	IDC_FOLDER_VIEW, HIDC_FOLDER_VIEW,
-	IDC_FOLDER_HIDDEN, HIDC_FOLDER_HIDDEN,
 	IDC_FOLDER_FLIP, HIDC_FOLDER_FLIP,
 	IDC_FOLDER_NAME, HIDC_FOLDER_NAME,
 	IDC_FOLDER_REFRESH, HIDC_FOLDER_REFRESH,
@@ -1223,14 +1208,14 @@ LRESULT CExplorerWnd::OnKickIdle(WPARAM, LPARAM lCount)
 
 	// Update view check of menu items to reflect current view type
 	DWORD lvs = (list_.GetStyle () & LVS_TYPEMASK);
-	m_menu_.GetSubMenu(0)->CheckMenuItem(0, MF_BYPOSITION | (lvs == LVS_ICON      ? MF_CHECKED : MF_UNCHECKED));
-	m_menu_.GetSubMenu(0)->CheckMenuItem(1, MF_BYPOSITION | (lvs == LVS_SMALLICON ? MF_CHECKED : MF_UNCHECKED));
-	m_menu_.GetSubMenu(0)->CheckMenuItem(2, MF_BYPOSITION | (lvs == LVS_LIST      ? MF_CHECKED : MF_UNCHECKED));
-	m_menu_.GetSubMenu(0)->CheckMenuItem(3, MF_BYPOSITION | (lvs == LVS_REPORT    ? MF_CHECKED : MF_UNCHECKED));
+	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_VIEW_LARGEICON, (lvs == LVS_ICON      ? MF_CHECKED : MF_UNCHECKED));
+	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_VIEW_SMALLICON, (lvs == LVS_SMALLICON ? MF_CHECKED : MF_UNCHECKED));
+	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_VIEW_LIST,      (lvs == LVS_LIST      ? MF_CHECKED : MF_UNCHECKED));
+	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_VIEW_DETAILS,   (lvs == LVS_REPORT    ? MF_CHECKED : MF_UNCHECKED));
 
     bool show = (list_.GetItemTypes() & SHCONTF_INCLUDEHIDDEN) != 0;
-	m_menu_.GetSubMenu(1)->CheckMenuItem(0, MF_BYPOSITION | (!show ? MF_CHECKED : MF_UNCHECKED));
-	m_menu_.GetSubMenu(1)->CheckMenuItem(1, MF_BYPOSITION | (show ? MF_CHECKED : MF_UNCHECKED));
+	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_HIDDEN_HIDE, !show ? MF_CHECKED : MF_UNCHECKED);
+	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_HIDDEN_SHOW, show ? MF_CHECKED : MF_UNCHECKED);
 
     build_filter_menu();
 
@@ -1313,38 +1298,6 @@ void CExplorerWnd::OnFolderRefresh()
 	Refresh();
 }
 
-void CExplorerWnd::OnFolderHidden()
-{
-#if 0
-    if ((list_.GetItemTypes() & SHCONTF_INCLUDEHIDDEN) == 0)
-    {
-        list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS | SHCONTF_INCLUDEHIDDEN));
-        ctl_show_all_.SetImage(IDB_HIDE, IDB_HIDE_HOT);
-        ctl_show_all_.SetTooltip(_T("Don't show hidden files"));
-    }
-    else
-    {
-        list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS));
-        ctl_show_all_.SetImage(IDB_SHOW, IDB_SHOW_HOT);
-        ctl_show_all_.SetTooltip(_T("Show hidden files"));
-    }
-#endif
-	switch (ctl_show_all_.m_nMenuResult)
-	{
-	case ID_HIDDEN_HIDE:
-        list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS));
-		break;
-
-    case ID_HIDDEN_SHOW:
-        list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS | SHCONTF_INCLUDEHIDDEN));
-		break;
-
-	default:
-		ASSERT(0);
-		return;
-	}
-}
-
 void CExplorerWnd::OnFolderFlip()
 {
     splitter_.Flip();
@@ -1378,6 +1331,15 @@ void CExplorerWnd::OnFolderView()
 
 	case ID_VIEW_DETAILS:
 		list_.ModifyStyle(LVS_TYPEMASK, LVS_REPORT);
+		break;
+
+    // Show/hide hidden files
+	case ID_HIDDEN_HIDE:
+        list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS));
+		break;
+
+    case ID_HIDDEN_SHOW:
+        list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS | SHCONTF_INCLUDEHIDDEN));
 		break;
 
 	default:
