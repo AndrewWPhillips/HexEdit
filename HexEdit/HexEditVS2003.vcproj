@@ -864,9 +864,6 @@
 				RelativePath="RES\back.bmp">
 			</File>
 			<File
-				RelativePath="RES\back1.bmp">
-			</File>
-			<File
 				RelativePath="RES\back_hot.bmp">
 			</File>
 			<File
@@ -934,9 +931,6 @@
 			</File>
 			<File
 				RelativePath="RES\forw.bmp">
-			</File>
-			<File
-				RelativePath="RES\forw1.bmp">
 			</File>
 			<File
 				RelativePath="RES\forw_hot.bmp">
@@ -1011,10 +1005,7 @@
 				RelativePath="RES\parent.bmp">
 			</File>
 			<File
-				RelativePath="RES\parent1.bmp">
-			</File>
-			<File
-				RelativePath="RES\parent2.bmp">
+				RelativePath="RES\parent_hot.bmp">
 			</File>
 			<File
 				RelativePath=".\Res\printer.ico">
@@ -1023,10 +1014,7 @@
 				RelativePath="RES\refresh.bmp">
 			</File>
 			<File
-				RelativePath="RES\refresh1.bmp">
-			</File>
-			<File
-				RelativePath="RES\refresh_.bmp">
+				RelativePath="RES\refresh_hot.bmp">
 			</File>
 			<File
 				RelativePath="RES\search.bmp">
