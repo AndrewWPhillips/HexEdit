@@ -272,9 +272,6 @@ void CHexEditView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
     pDC->SelectObject(pfont_);
     delete print_font_;
     print_font_ = NULL;
-
-    // BG search finished message may be lost if modeless dlg running
-    ((CHexEditApp *)AfxGetApp())->CheckBGSearchFinished();
 }
 
 void CHexEditView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo) 

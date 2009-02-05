@@ -213,7 +213,7 @@ void CDlgWnd::OnOpen()
 
     if (len == 2 && ss[0] == '\\' && ss[1] == '\\')
     {
-        ::HMessageBox(ss + _T("\nThis is not a valid folder."));
+        AfxMessageBox(ss + _T("\nThis is not a valid folder."));
         pEdit->SetFocus();
         return;
     }
@@ -230,7 +230,7 @@ void CDlgWnd::OnOpen()
 
         if (GetDriveType(rootdir) <= DRIVE_NO_ROOT_DIR)
         {
-            ::HMessageBox(ss + _T("\nThe drive is invalid."));
+            AfxMessageBox(ss + _T("\nThe drive is invalid."));
             pEdit->SetFocus();
             return;
         }
@@ -251,14 +251,14 @@ void CDlgWnd::OnOpen()
 
             if (len > 1 && ss[1] == ':' && GetDriveType(rootdir) <= DRIVE_NO_ROOT_DIR)
             {
-                ::HMessageBox(ss + _T("\nThe drive is invalid."));
+                AfxMessageBox(ss + _T("\nThe drive is invalid."));
                 pEdit->SetFocus();
                 return;
             }
             else if (len >= 2 && ss[0] == '\\' && ss[1] == '\\' && 
                      ( (ss2 = strchr((const char *)ss+2, '\\')) == NULL || strchr(ss2+1, '\\') == NULL) )
             {
-                ::HMessageBox(ss + _T("\nThis is not a valid folder."));
+                AfxMessageBox(ss + _T("\nThis is not a valid folder."));
                 pEdit->SetFocus();
                 return;
             }
@@ -268,7 +268,7 @@ void CDlgWnd::OnOpen()
                 CString mess(ss);
                 mess += _T("\nThis folder does not exist.\n\n"
                       "Do you want to create it?");
-                if (::HMessageBox(mess, MB_YESNO) == IDYES)
+                if (AfxMessageBox(mess, MB_YESNO) == IDYES)
                 {
                     // MakeSureDirectoryPathExists is not part of Windows but is
                     // in the IMAGHLP.DLL which is always present.  This call
@@ -278,19 +278,19 @@ void CDlgWnd::OnOpen()
                         switch (GetDriveType(rootdir))
                         {
                         case DRIVE_CDROM:
-                            ::HMessageBox(_T("You cannot create this folder\n"
+                            AfxMessageBox(_T("You cannot create this folder\n"
                                           "as the CD ROM medium is read-only."));
                             break;
                         case DRIVE_REMOVABLE:
-                            ::HMessageBox(_T("You cannot create this folder.\n"
+                            AfxMessageBox(_T("You cannot create this folder.\n"
                                           "The medium may be write-protected."));
                             break;
                         case DRIVE_REMOTE:
-                            ::HMessageBox(_T("You do not have permission to create\n"
+                            AfxMessageBox(_T("You do not have permission to create\n"
                                           "this folder on the network."));
                             break;
                         default:
-                            ::HMessageBox(_T("You do not have permission\n"
+                            AfxMessageBox(_T("You do not have permission\n"
                                           "to create this folder."));
                             break;
                         }
@@ -308,7 +308,7 @@ void CDlgWnd::OnOpen()
         }
         else if ((attr & FILE_ATTRIBUTE_DIRECTORY) == 0)
         {
-            ::HMessageBox(ss + _T("\nThis is a file not a directory."));
+            AfxMessageBox(ss + _T("\nThis is a file not a directory."));
             pEdit->SetFocus();
             return;
         }
@@ -442,26 +442,26 @@ void CDirEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
                     CString mess(ss);
                     mess += _T("\nThis folder does not exist.\n\n"
                           "Do you want to create it?");
-                    if (::HMessageBox(mess, MB_YESNO) == IDYES)
+                    if (AfxMessageBox(mess, MB_YESNO) == IDYES)
                     {
                         if (!::MakeSureDirectoryPathExists(ss + _T("\\")))
                         {
                             switch (GetDriveType(rootdir))
                             {
                             case DRIVE_CDROM:
-                                ::HMessageBox(_T("You cannot create this folder\n"
+                                AfxMessageBox(_T("You cannot create this folder\n"
                                               "as the CD ROM medium is read-only."));
                                 break;
                             case DRIVE_REMOVABLE:
-                                ::HMessageBox(_T("You cannot create this folder.\n"
+                                AfxMessageBox(_T("You cannot create this folder.\n"
                                               "The medium may be write-protected."));
                                 break;
                             case DRIVE_REMOTE:
-                                ::HMessageBox(_T("You do not have permission to create\n"
+                                AfxMessageBox(_T("You do not have permission to create\n"
                                               "this folder on the network."));
                                 break;
                             default:
-                                ::HMessageBox(_T("You do not have permission or\n"
+                                AfxMessageBox(_T("You do not have permission or\n"
                                               "otherwise cannot create this folder."));
                                 break;
                             }

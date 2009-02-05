@@ -1663,7 +1663,7 @@ void CMultiplay::OnHelp()
 {
     // Display help for this page
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_MULTIPLAY_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 static DWORD id_pairs_play[] = { 
@@ -1762,7 +1762,7 @@ void CSaveMacro::OnOK()
 
     if (name_.IsEmpty())
     {
-        ::HMessageBox("Please enter a macro name");
+        AfxMessageBox("Please enter a macro name");
         ASSERT(GetDlgItem(IDC_MACRO_NAME) != NULL);
         GetDlgItem(IDC_MACRO_NAME)->SetFocus();
         return;
@@ -1802,7 +1802,7 @@ void CSaveMacro::OnMacroHelp()
 {
     // Display help for the dialog
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_MACRO_SAVE_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 /////////////////////////////////////////////////////////////////////////////

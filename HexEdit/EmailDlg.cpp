@@ -117,28 +117,28 @@ void CEmailDlg::OnOK()
 
     if (subject_.IsEmpty())
     {
-        ::HMessageBox("Please enter a brief description as the subject");
+        AfxMessageBox("Please enter a brief description as the subject");
         ASSERT(GetDlgItem(IDC_SUBJECT) != NULL);
         GetDlgItem(IDC_SUBJECT)->SetFocus();
         return;
     }
     if (text_.IsEmpty())
     {
-        ::HMessageBox("Please enter a detailed description");
+        AfxMessageBox("Please enter a detailed description");
         ASSERT(GetDlgItem(IDC_TEXT) != NULL);
         GetDlgItem(IDC_TEXT)->SetFocus();
         return;
     }
     if (attach_ && attachment_.IsEmpty())
     {
-        ::HMessageBox("Please enter the attachment file name");
+        AfxMessageBox("Please enter the attachment file name");
         ASSERT(GetDlgItem(IDC_ATTACHMENT) != NULL);
         GetDlgItem(IDC_ATTACHMENT)->SetFocus();
         return;
     }
     if (attach_ && _access(attachment_, 0) == -1)
     {
-        ::HMessageBox("File to be attached not found");
+        AfxMessageBox("File to be attached not found");
         ASSERT(GetDlgItem(IDC_ATTACHMENT) != NULL);
         GetDlgItem(IDC_ATTACHMENT)->SetFocus();
         return;
@@ -182,7 +182,7 @@ void CEmailDlg::OnEmailHelp()
 {
     // Display help for the dialog
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_EMAIL_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CEmailDlg::OnAttach() 

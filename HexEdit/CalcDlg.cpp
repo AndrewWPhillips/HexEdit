@@ -876,25 +876,25 @@ bool CCalcDlg::invalid_expression()
 		return false;           // This is OK!
 
 	case CJumpExpr::TYPE_NONE:
-        ::HMessageBox((LPCTSTR)CString(current_str_));
+        AfxMessageBox((LPCTSTR)CString(current_str_));
         edit_.SetFocus();
 		edit_.SetSel(mm_->expr_.get_error_pos(), mm_->expr_.get_error_pos());
 		return true;
 
 	case CHexExpr::TYPE_REAL:
-        ::HMessageBox((LPCTSTR)(ss + "real."));
+        AfxMessageBox((LPCTSTR)(ss + "real."));
 		return true;
 
 	case CHexExpr::TYPE_BOOLEAN:
-        ::HMessageBox((LPCTSTR)(ss + "boolean."));
+        AfxMessageBox((LPCTSTR)(ss + "boolean."));
 		return true;
 
 	case CHexExpr::TYPE_STRING:
-        ::HMessageBox((LPCTSTR)(ss + "a string."));
+        AfxMessageBox((LPCTSTR)(ss + "a string."));
 		return true;
 
 	case CHexExpr::TYPE_DATE:
-        ::HMessageBox((LPCTSTR)(ss + "a date."));
+        AfxMessageBox((LPCTSTR)(ss + "a date."));
 		return true;
 
 	default:

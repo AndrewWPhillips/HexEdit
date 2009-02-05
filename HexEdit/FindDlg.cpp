@@ -1666,7 +1666,7 @@ void CSimplePage::OnHelp()
 {
     // Display help for this page
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_SIMPLE_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CSimplePage::OnChangeString() 
@@ -1971,7 +1971,7 @@ void CHexPage::OnHelp()
 {
     // Display help for this page
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_HEX_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CHexPage::OnChangeString()
@@ -2245,7 +2245,7 @@ void CTextPage::OnHelp()
 {
     // Display help for this page
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_TEXT_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CTextPage::OnChangeString() 
@@ -2635,7 +2635,7 @@ void CNumberPage::OnHelp()
 {
     // Display help for this page
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_NUMBER_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CNumberPage::OnChangeDirn() 
@@ -2907,7 +2907,7 @@ void CReplacePage::OnHelp()
 {
     // Display help for this page
    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_REPLACE_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CReplacePage::OnReplace() 

@@ -242,6 +242,7 @@ int CNavManager::pos_offset()
 		return -1;
 }
 
+// Is the specified doc/view still around
 bool CNavManager::is_open_view(CHexEditDoc *pdoc, CHexEditView *pview)
 {
 	// First try to find the doc
@@ -323,7 +324,7 @@ void CNavManager::do_move(int ii)
 			ss.Format("%s\rcould not be found/opened.", v_[ii].fname_);
 		else
 			ss = "The location/file could not found";
-        ::HMessageBox(ss);
+        AfxMessageBox(ss);
 		in_move_ = false;
 		return;
     }

@@ -546,9 +546,6 @@ void CHexEditDoc::OnFileClose()
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_close);
 
     CHECK_SECURITY(196);
-
-    // BG search finished message may be lost if modeless dlg running
-    ((CHexEditApp *)AfxGetApp())->CheckBGSearchFinished();
 }
 
 BOOL CHexEditDoc::SaveModified() 
@@ -608,7 +605,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
     if (aa->recording_)
     {
-        if (::HMessageBox("Saving file to disk will lose all \r"
+        if (AfxMessageBox("Saving file to disk will lose all \r"
                           "undo information during playback.\r\r"
                           "Do you want to continue?", MB_OKCANCEL) != IDOK)
         {
@@ -721,7 +718,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
                     CString mess;
                     mess.Format("Creating backup file\r \"%s\"",
                         (const char *)backup_name);
-                    if (::HMessageBox(mess, MB_OKCANCEL) == IDCANCEL)
+                    if (AfxMessageBox(mess, MB_OKCANCEL) == IDCANCEL)
                     {
                         // User doesn't want to wipe out .BAC
                         (void)remove(temp_name);
@@ -743,7 +740,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
                         CString mess;
                         mess.Format("Could not remove previous backup file\r \"%s\"",
                             (const char *)backup_name);
-                        ::HMessageBox(mess);
+                        AfxMessageBox(mess);
                         aa->mac_error_ = 10;
                         return FALSE;
                     }
@@ -757,7 +754,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
                     CString mess;
                     mess.Format("Could not create backup file\r \"%s\"",
                         (const char *)backup_name);
-                    ::HMessageBox(mess);
+                    AfxMessageBox(mess);
                     aa->mac_error_ = 10;
                     return FALSE;
                 }
@@ -774,7 +771,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
                     CString mess;
                     mess.Format("Old file \"%s\" could not be removed", lpszPathName);
-                    ::HMessageBox(mess);
+                    AfxMessageBox(mess);
                     aa->mac_error_ = 10;
                     return FALSE;
                 }
@@ -823,7 +820,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
             CString mess;
             mess.Format("File \"%s\" could not be renamed\r"
                         "  to \"%s\"", temp_name, lpszPathName);
-            ::HMessageBox(mess);
+            AfxMessageBox(mess);
             aa->mac_error_ = 10;
             return FALSE;
         }
@@ -893,9 +890,6 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
     }
 
     SetModifiedFlag(FALSE);
-
-    // BG search finished message may be lost if modeless dlg running
-    ((CHexEditApp *)AfxGetApp())->CheckBGSearchFinished();
 
     return TRUE;
 }
@@ -1040,7 +1034,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
             CString mess;
             mess.Format("%s could not be opened for exclusive access.\r\r"
                 "It is opened shared (file contents may change).", lpszPathName);
-            ::HMessageBox(mess);
+            AfxMessageBox(mess);
             CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
             aa->mac_error_ = 1;
 			shared_ = TRUE;
@@ -1058,7 +1052,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
             CString mess;
             mess.Format("%s is in use or is a read only file.\r\r"
                 "It is opened for read only (no changes possible).", lpszPathName);
-            ::HMessageBox(mess);
+            AfxMessageBox(mess);
             CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
             aa->mac_error_ = 1;
             readonly_ = TRUE;
@@ -1078,7 +1072,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
             mess.Format("%s is in use or is a read only file.\r\r"
                 "It is opened for read only (no changes possible)\r"
 				"with shared access (file contents can change).", lpszPathName);
-            ::HMessageBox(mess);
+            AfxMessageBox(mess);
             CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
             aa->mac_error_ = 1;
 		}
@@ -1134,7 +1128,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
             mess += "\rcould not be opened (reason unknown)";
             break;
         }
-        ::HMessageBox(mess);
+        AfxMessageBox(mess);
 
         CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
         aa->mac_error_ = 10;
@@ -1612,7 +1606,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
         CFileException fe;
         if (!pfile->Open(file_name, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary, &fe))
         {
-            ::HMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
+            AfxMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
             theApp.mac_error_ = 10;
             return -1;
         }
@@ -1672,7 +1666,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
             int idx = AddDataFile(file_name, TRUE);
             if (idx == -1)
             {
-                ::HMessageBox("Too many temporary files\n"
+                AfxMessageBox("Too many temporary files\n"
                               "Try saving the file then try again.");
                 theApp.mac_error_ = 10;
                 return -1;

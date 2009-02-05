@@ -114,7 +114,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 
                 //if (msg.wParam != 'y' &&
                 if ((msg.wParam == '\x1B' || msg.wParam == ' ') && 
-                    ::HMessageBox("Abort macro?", MB_YESNO) == IDYES)
+                    AfxMessageBox("Abort macro?", MB_YESNO) == IDYES)
                 {
                     ((CMainFrame *)AfxGetMainWnd())->StatusBarText("Macro aborted");
                     mac_error_ = 10;
@@ -124,7 +124,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 
             if ((*pk).ktype > km_view && pv_ == NULL)
             {
-                ::HMessageBox("There is no active window - macro terminated");
+                AfxMessageBox("There is no active window - macro terminated");
                 mac_error_ = 10;
                 goto exit_play;
             }
@@ -216,7 +216,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 ShowTipOfTheDay();
                 break;
             case km_macro_message:
-                if (::HMessageBox(*(*pk).pss, MB_OKCANCEL) != IDOK)
+                if (AfxMessageBox(*(*pk).pss, MB_OKCANCEL) != IDOK)
                     mac_error_ = 5;
                 break;
             case km_macro_play:
@@ -356,7 +356,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                     {
                         CString ss;
                         ss.Format("Window \"%s\" no longer exists", (const char *)*(*pk).pss);
-                        ::HMessageBox(ss);
+                        AfxMessageBox(ss);
                         mac_error_ = 10;
                     }
                     else
@@ -382,7 +382,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 pc = (CChildFrame *)((CMainFrame *)AfxGetMainWnd())->MDIGetActive();
                 if (pc == NULL)
                 {
-                    ::HMessageBox("There is no active window - macro terminated");
+                    AfxMessageBox("There is no active window - macro terminated");
                     mac_error_ = 10;
                     goto exit_play;
                 }
@@ -752,7 +752,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 
                     if (pp == NULL)
                     {
-                        ::HMessageBox("Warning: no other non-minimized windows found");
+                        AfxMessageBox("Warning: no other non-minimized windows found");
                         mac_error_ = 2;
                     }
                     else
@@ -1572,16 +1572,16 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 #endif
                 // Display an appropriate error
                 if (mac_error_ > 10)
-                    ::HMessageBox("System error encountered during macro execution");
+                    AfxMessageBox("System error encountered during macro execution");
                 else if (mac_error_  > 2)
                 {
                     // Just display mess in status bar as dlg box has already been seen
-                    ::HMessageBox("Error encountered during macro execution");
+                    AfxMessageBox("Error encountered during macro execution");
                 }
                 else if (mac_error_ > 1)
-                    ::HMessageBox("Minor error encountered during macro execution");
+                    AfxMessageBox("Minor error encountered during macro execution");
                 else if (mac_error_ > 0)
-                    ::HMessageBox("Warning encountered during macro execution");
+                    AfxMessageBox("Warning encountered during macro execution");
 
                 goto exit_play;
             }
@@ -1637,9 +1637,9 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
     if (mac_error_ > 1)
 //        ((CMainFrame *)AfxGetMainWnd())->
 //                StatusBarText("Minor error encountered during macro execution");
-        ::HMessageBox("Minor error encountered during macro execution");
+        AfxMessageBox("Minor error encountered during macro execution");
     else if (mac_error_ > 0)
-        ::HMessageBox("Warning encountered during macro execution");
+        AfxMessageBox("Warning encountered during macro execution");
 
 exit_play:
     // If finished playing and display refresh was off refresh the display
@@ -1653,7 +1653,6 @@ exit_play:
 		refresh_display(true);
         refresh_off_ = bb;
         enable_carets();
-        CheckBGSearchFinished();
     }
 
     // Keep track of play nesting
@@ -1873,7 +1872,7 @@ BOOL CHexEditApp::macro_save(const char *filename, const std::vector<key_macro> 
     }
     catch (CFileException *pfe)
     {
-        ::HMessageBox(FileErrorMessage(pfe, CFile::modeWrite));
+        AfxMessageBox(FileErrorMessage(pfe, CFile::modeWrite));
         pfe->Delete();
         mac_error_ = 10;
         delete[] pp;
@@ -1905,7 +1904,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
         if (ff.Read(&magic, sizeof(magic)) < sizeof(magic)) throw pfe;
         if (magic != 0xCDAB)
         {
-            ::HMessageBox("This is not a valid HexEdit macro file");
+            AfxMessageBox("This is not a valid HexEdit macro file");
             pfe->Delete();
             mac_error_ = 10;
             return FALSE;
@@ -2022,7 +2021,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
     }
     catch (CFileException *pfe)
     {
-        ::HMessageBox(FileErrorMessage(pfe, CFile::modeRead));
+        AfxMessageBox(FileErrorMessage(pfe, CFile::modeRead));
         pfe->Delete();
         mac_error_ = 10;
         return FALSE;

@@ -158,7 +158,7 @@ void CDFFDGlobal::OnContextMenu(CWnd* pWnd, CPoint point)
 void CDFFDGlobal::OnHelp() 
 {
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_DFFD_GLOBAL))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CDFFDGlobal::OnOK() 

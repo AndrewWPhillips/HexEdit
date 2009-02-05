@@ -147,7 +147,7 @@ void CAlgorithm::OnAlgorithmHelp()
 {
     // Display help for the dialog
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_ALGORITHM_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 static DWORD id_pairs[] = { 

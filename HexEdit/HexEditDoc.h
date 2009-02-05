@@ -702,6 +702,7 @@ private:
 
     // Data for background searches
     CWinThread *pthread_;       // Ptr to background search thread or NULL if bg searches are off
+    int priority_;              // Priority level to do bg search at
 
     CEvent start_event_;        // Signal to bg thread to start a new search, or check for termination
     CEvent stopped_event_;      // Signal from bg thread that finished/aborted the search

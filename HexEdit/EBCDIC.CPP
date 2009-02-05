@@ -154,7 +154,7 @@ void CHexEditApp::InitConversions()
             err_mess = "ECBDIC.TAB is too short";
 
         if (!err_mess.IsEmpty())
-            ::HMessageBox(err_mess);
+            AfxMessageBox(err_mess);
     }
 
 #ifdef _DEBUG

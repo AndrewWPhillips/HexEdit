@@ -2583,7 +2583,7 @@ void CMacroPage::OnLoadmacro()
 
             // Display the comment for this macro
             if (!comment.IsEmpty())
-                ::HMessageBox(comment);
+                AfxMessageBox(comment);
         }
 	}
 }
@@ -3530,25 +3530,25 @@ BOOL CWindowPage::validated()
 {
     if (pParent->val_.cols_ < 4)
     {
-        ::HMessageBox("You must have at least 4 columns");
+        AfxMessageBox("You must have at least 4 columns");
         GetDlgItem(IDC_COLS)->SetFocus();
         return FALSE;
     }
     if (pParent->val_.cols_ > CHexEditView::max_buf)
     {
-        ::HMessageBox("Too many columns");
+        AfxMessageBox("Too many columns");
         GetDlgItem(IDC_COLS)->SetFocus();
         return FALSE;
     }
     if (pParent->val_.offset_ >= pParent->val_.cols_)
     {
-        ::HMessageBox("Offset must be less than the number of columns");
+        AfxMessageBox("Offset must be less than the number of columns");
         GetDlgItem(IDC_OFFSET)->SetFocus();
         return FALSE;
     }
     if (pParent->val_.display_.hex_area && pParent->val_.grouping_ < 2)
     {
-        ::HMessageBox("There must be at least 2 columns per group");
+        AfxMessageBox("There must be at least 2 columns per group");
         GetDlgItem(IDC_GROUPING)->SetFocus();
         return FALSE;
     }

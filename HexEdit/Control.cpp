@@ -873,7 +873,7 @@ LRESULT CSearchEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
 {
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_,
                      HH_HELP_CONTEXT, 0x10000 + ID_SEARCH_COMBO))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
     return 1;                           // Indicate help launched
 }
 
@@ -1270,7 +1270,7 @@ LRESULT CHexEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
     // Since there is only one control of this type just call help with its help ID
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_,
                      HH_HELP_CONTEXT, 0x10000 + ID_JUMP_HEX_COMBO))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
     return 1;                           // Indicate help launched
 }
 
@@ -1595,7 +1595,7 @@ LRESULT CDecEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
     // Since there is only one control of this type just call help with its help ID
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT,
                      0x10000 + ID_JUMP_DEC_COMBO))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
     return 1;                           // Indicate help launched
 }
 

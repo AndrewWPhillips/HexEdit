@@ -518,7 +518,7 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
             undo_.back().utype == mod_insert_file  ? "insertion" :
             undo_.back().utype == mod_replace      ? "change"    :
             undo_.back().utype == mod_repback      ? "backspace" : "deletion");
-        if (::HMessageBox(mess, MB_OKCANCEL) == IDCANCEL)
+        if (AfxMessageBox(mess, MB_OKCANCEL) == IDCANCEL)
             return FALSE;
     }
 
@@ -979,7 +979,7 @@ void CHexEditDoc::WriteInPlace()
     }
     catch (CFileException *pfe)
     {
-        ::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+        AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
         pfe->Delete();
 
 #ifdef INPLACE_MOVE
@@ -1054,9 +1054,9 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
             mess += "\rcould not be opened (reason unknown)";
             break;
         }
-        ::HMessageBox(mess);
+        AfxMessageBox(mess);
 #else
-        ::HMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
+        AfxMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
 #endif
 
         theApp.mac_error_ = 10;
@@ -1095,7 +1095,7 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
     }
     catch (CFileException *pfe)
     {
-        ::HMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+        AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
         pfe->Delete();
 
         mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar

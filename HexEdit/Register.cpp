@@ -355,7 +355,7 @@ void CAbout::OnEmail()
 void CAbout::OnAckMore() 
 {
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HID_ABOUT_ACK))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CAbout::OnDblclkAck()
@@ -593,7 +593,7 @@ void CRegister::OnOK()
         }
         else if (_strnicmp(install_code_, reg_code(0), 11) != 0)
         {
-            ::HMessageBox("The activation code is invalid for this machine.\n"
+            AfxMessageBox("The activation code is invalid for this machine.\n"
                           "Please make sure you typed it correctly.");
             return;
         }
@@ -621,33 +621,33 @@ void CRegister::OnOK()
         if (flags >= 256)
         {
             ASSERT(flags == 256);
-            ::HMessageBox("The activation code is incorrect.\n"
+            AfxMessageBox("The activation code is incorrect.\n"
                           "Please make sure you entered your name\n"
                           "and/or the activation code correctly.");
             return;
         }
 //        else if (theApp.security_type_ < 4 || (flags >> 1) < theApp.security_version_ - 5)
 //        {
-//            ::HMessageBox("The activation code is for an older version.\n"
+//            AfxMessageBox("The activation code is for an older version.\n"
 //                          "Please make sure you entered it correctly.");
 //            return;
 //        }
         else if (code_type == 14 && theApp.security_licensed_version_ + UPGRADE_DIFF < (flags >> 1))
         {
-            ::HMessageBox("This is an upgrade activation code.\n"
+            AfxMessageBox("This is an upgrade activation code.\n"
                           "Please make sure you entered it correctly.");
             return;
         }
         else if (code_type == 14 && (flags >> 1) < theApp.security_version_ - 1)
         {
-            ::HMessageBox("This is an upgrade activation code for an earlier version.\n"
+            AfxMessageBox("This is an upgrade activation code for an earlier version.\n"
                           "You need to further upgrade your license or install\n"
                           "the correct (earlier) licensed version of the software.");
             // Allow the licence to be updated but we are still note licensed.
         }
         else if ((flags >> 1) < theApp.security_version_ - 1)
         {
-            ::HMessageBox("The activation code is for an older version.\n"
+            AfxMessageBox("The activation code is for an older version.\n"
                           "You need to upgrade your license or install the\n"
                           "correct (earlier) licensed version of the software.");
         }
@@ -732,7 +732,7 @@ void CRegister::OnRegHelp()
 {
     // Display help for the dialog
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REGISTER_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CRegister::OnEmail() 
@@ -914,8 +914,6 @@ void CReg::OnOK()
         aa->WriteProfileString("Reg", "User", NULL);
     else
         aa->WriteProfileString("Reg", "User", user_name_);
-
-    aa->CheckBGSearchFinished();
 }
 
 void CReg::OnClose() 
@@ -929,8 +927,6 @@ void CReg::OnClose()
         aa->WriteProfileString("Reg", "User", user_name_);
 
     CDialog::OnClose();
-
-    aa->CheckBGSearchFinished();
 }
 
 static DWORD id_pairs1[] = { 
@@ -962,7 +958,7 @@ void CReg::OnRegHelp()
 {
     // Display help for the dialog
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REG_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CReg::OnUser() 
@@ -1044,7 +1040,7 @@ void CReg::OnRegEmail()
     }
     if (SendEmail(2, ss, name))
     {
-        ::HMessageBox("To pay for the software, click on the \"Order Form\"\n"
+        AfxMessageBox("To pay for the software, click on the \"Order Form\"\n"
                       "button in the Registration dialog.  Print the form and\n"
                       "fill it out and send with your payment to:\n"
                       "Expert Commercial Software Pty Ltd\n"
@@ -1060,7 +1056,7 @@ void CReg::OnRegForm()
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_+CString(">form"), 
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 #endif  // end CReg removal
@@ -1125,7 +1121,7 @@ void CStartup::OnRegEmail()
 {
     if (SendEmail(2, "", "Type your name here"))
     {
-        ::HMessageBox("To pay for the software, click on the \"Order Form\"\n"
+        AfxMessageBox("To pay for the software, click on the \"Order Form\"\n"
                       "button in the Registration dialog.  Print the form and\n"
                       "fill it out and send with your payment to:\n"
                       "Expert Commercial Software Pty Ltd\n"
@@ -1142,12 +1138,12 @@ void CStartup::OnRegForm()
 
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_+CString(">form"), 
                     HH_HELP_CONTEXT, aa->is_us_ ? HID_REG_FORM_US : HID_REG_FORM))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CStartup::OnRegHelp() 
 {
     // Display help for the dialog
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REG_HELP))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }

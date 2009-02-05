@@ -304,7 +304,7 @@ int CBookmarkList::AddBookmark(LPCTSTR nn)
 	CHexEditView *pview = GetView();
     if (pview == NULL)
     {
-        ::HMessageBox("There is no file open to add the bookmark to.");
+        AfxMessageBox("There is no file open to add the bookmark to.");
         theApp.mac_error_ = 2;
         return -1;
     }
@@ -387,7 +387,7 @@ BOOL CBookmarkList::GoTo(LPCTSTR name)
     {
         CString ss;
         ss.Format("Bookmark %s was not found", name);
-        ::HMessageBox(ss);
+        AfxMessageBox(ss);
         theApp.mac_error_ = 2;
         return FALSE;
     }
@@ -437,7 +437,7 @@ BOOL CBookmarkList::GoTo(int index)
                   "%s\rcould not be found/opened.\r\r"
                   "Do you want to remove bookmark \"%s\"?",
                   file_[index], name_[index]);
-        if (::HMessageBox(ss, MB_YESNO) == IDYES)
+        if (AfxMessageBox(ss, MB_YESNO) == IDYES)
         {
             RemoveBookmark(index);
             return FALSE;

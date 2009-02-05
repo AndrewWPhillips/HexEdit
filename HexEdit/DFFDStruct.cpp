@@ -628,7 +628,7 @@ void CDFFDStruct::OnHelp()
     if (pelt_->GetName() == "define_struct")
         hid = HIDD_DFFD_STRUCT_DEFN;
    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, hid))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CDFFDStruct::OnCancel() 
