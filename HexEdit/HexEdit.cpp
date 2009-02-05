@@ -802,7 +802,7 @@ BOOL CHexEditApp::InitInstance()
             ASSERT(0);
             /* fall through */
         case 0:
-            ::HMessageBox("HexEdit has not been installed on this machine");
+            AfxMessageBox("HexEdit has not been installed on this machine");
             return FALSE;
         case 1:
             ss = "Unfortunately, your trial period has expired.";
@@ -962,9 +962,6 @@ void CHexEditApp::OnFileOpen()
         else
             mac_error_ = 20;
     }
-
-    // BG search finished message may be lost if modeless dlg running
-    CheckBGSearchFinished();
 }
 
 CDocument* CHexEditApp::OpenDocumentFile(LPCTSTR lpszFileName) 
@@ -1040,9 +1037,6 @@ void CHexEditApp::OnFilePrintSetup()
     CPrintDialog pd(TRUE);
     DoPrintDialog(&pd);
     SaveToMacro(km_print_setup);
-
-    // BG search finished message may be lost if modeless dlg running
-    CheckBGSearchFinished();
 }
 
 void CHexEditApp::OnFileSaveAll() 
@@ -1208,20 +1202,6 @@ void CHexEditApp::OnBGSearchFinished(WPARAM wParam, LPARAM lParam)
     }
 }
 
-// Call BGSearchFinished for all documents to make sure all views have been updated
-void CHexEditApp::CheckBGSearchFinished()
-{
-    if (!bg_search_) return;
-
-    POSITION posn = m_pDocTemplate->GetFirstDocPosition();
-    while (posn != NULL)
-    {
-        CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
-        ASSERT(pdoc != NULL);
-        pdoc->BGSearchFinished();
-    }
-}
-
 void CHexEditApp::OnMacroRecord() 
 {
     // Allow calculator to tidy up any pending macro ops
@@ -1318,9 +1298,6 @@ void CHexEditApp::OnMultiPlay()
             play_macro_file(dlg.macro_name_, dlg.plays_);
         }
     }
-
-    // BG search finished message may be lost if modeless dlg running
-    CheckBGSearchFinished();
 
     // Set focus to currently active view
     CHexEditView *pview = GetView();    // The active view (or NULL if none)
@@ -1616,7 +1593,7 @@ void CHexEditApp::WinHelp(DWORD dwData, UINT nCmd)
         break;
     }
 	ASSERT(0);
-    ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+    AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CHexEditApp::OnAppContextHelp (CWnd* pWndControl, const DWORD dwHelpIDArray [])
@@ -1628,19 +1605,21 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
 {
     ASSERT(AfxGetMainWnd() != NULL);
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-//    BOOL need_more = mm->UpdateBGSearchProgress();
-    mm->m_wndFind.m_pSheet->SendMessage(WM_KICKIDLE);    // causes problem that we need to track down
+    mm->m_wndFind.m_pSheet->SendMessage(WM_KICKIDLE);
     mm->m_wndBookmarks.SendMessage(WM_KICKIDLE);
 	mm->m_wndCalc.SendMessage(WM_KICKIDLE);
 	mm->m_wndProp.SendMessage(WM_KICKIDLE);
 #ifdef EXPLORER_WND
 	mm->m_wndExpl.SendMessage(WM_KICKIDLE);
 #endif
-    mm->UpdateBGSearchProgress();
 
-	CHexEditView *pv;
-	if (lCount == 1 && (pv = GetView()) != NULL)
-		pv->check_error();
+	CHexEditView *pview = GetView();
+	if (lCount == 1 && pview != NULL)
+    {
+        // Check things for the active view
+		pview->check_error();                           // check if read error
+        pview->GetDocument()->BGSearchFinished();       // check if bg search finished
+    }
 
 #ifndef NO_SECURITY
     if (lCount == 1 && !QuickCheck())
@@ -1649,6 +1628,11 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
         AfxAbort();
     }
 #endif
+    if (mm->UpdateBGSearchProgress())
+    {
+        (void)CWinApp::OnIdle(lCount);
+        return TRUE;                    // we want more processing
+    }
 
     return CWinApp::OnIdle(lCount);
 }
@@ -1691,6 +1675,18 @@ void CHexEditApp::StartSearches(CHexEditDoc *pp)
 			pdoc->base_addr_ = theApp.align_rel_ ? pview->GetSearchBase() : 0;
             pdoc->StartSearch();
 		}
+    }
+}
+
+// Starts bg searches in all documents except the active doc (passed in pp)
+void CHexEditApp::StopSearches()
+{
+    POSITION posn = m_pDocTemplate->GetFirstDocPosition();
+    while (posn != NULL)
+    {
+        CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
+        ASSERT(pdoc != NULL);
+        pdoc->StopSearch();
     }
 }
 
@@ -2880,9 +2876,6 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     optSheet.DoModal();
 	// Note: updating the options in response to DoModal returning IDOK is
 	// not a good idea as then the Apply button does nothing.
-
-    // BG search finished message may be lost if modeless dlg running
-    CheckBGSearchFinished();
 }
 
 // Get current options into member variables for most pages.
@@ -3538,9 +3531,6 @@ void CHexEditApp::ShowTipOfTheDay(void)
         CTipDlg dlg;
         dlg.DoModal();
 
-        // BG search finished message may be lost if modeless dlg running
-        CheckBGSearchFinished();
-
         // This bit not added by the automatic "Tip of the Day" component
         SaveToMacro(km_tips);
 }
@@ -3631,7 +3621,7 @@ BOOL CHexEditApp::backup(LPCTSTR filename, FILE_ADDRESS file_len) const
 		// If still backing up and prompt the user (if required)
 		if (retval &&
 			backup_prompt_ &&
-			::HMessageBox("Do you want to create a backup file?", MB_YESNO) != IDYES)
+			AfxMessageBox("Do you want to create a backup file?", MB_YESNO) != IDYES)
 		{
 			retval = FALSE;
 		}
@@ -3722,11 +3712,7 @@ void CHexEditApp::OnUpdateHelpWeb(CCmdUI* pCmdUI)
 void CHexEditApp::OnAppAbout()
 {
         CAbout aboutDlg;
-
         aboutDlg.DoModal();
-
-        // BG search finished message may be lost if modeless dlg running
-        CheckBGSearchFinished();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3852,26 +3838,6 @@ COLORREF GetSearchCol()
         return pv->GetSearchCol();
 }
 
-int HMessageBox(LPCTSTR lpszText, UINT nType /*=MB_OK*/, UINT nIDHelp /*=0*/)
-{
-    int retval = AfxMessageBox(lpszText, nType, nIDHelp);
-
-    // BG search finished message may be lost while modeless dlg running
-    ((CHexEditApp *)AfxGetApp())->CheckBGSearchFinished();
-
-    return retval;
-}
-
-int HMessageBox(UINT nIDPrompt, UINT nType /*=MB_OK*/, UINT nIDHelp /*=-1*/)
-{
-    int retval = AfxMessageBox(nIDPrompt, nType, nIDHelp);
-
-    // BG search finished message may be lost while modeless dlg running
-    ((CHexEditApp *)AfxGetApp())->CheckBGSearchFinished();
-
-    return retval;
-}
-
 BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *def_name)
 {
     BOOL retval = FALSE;
@@ -3879,21 +3845,21 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 
     if (::GetProfileInt("MAIL", "MAPI", 0) != 1)
     {
-        ::HMessageBox("MAPI not supported on this machine");
+        AfxMessageBox("MAPI not supported on this machine");
         return FALSE;                                 // MAPI mail not supported
     }
 
     HINSTANCE hmapi = ::LoadLibrary("MAPI32.DLL");
     if (hmapi == (HINSTANCE)0)
     {
-        ::HMessageBox("MAPI32.DLL not found");
+        AfxMessageBox("MAPI32.DLL not found");
         return FALSE;
     }
 
     LPMAPISENDMAIL pf = (LPMAPISENDMAIL)GetProcAddress(hmapi, "MAPISendMail");
     if (pf == (LPMAPISENDMAIL)0)
     {
-        ::HMessageBox("MAPI32.DLL failure");
+        AfxMessageBox("MAPI32.DLL failure");
         ::FreeLibrary(hmapi);
         return FALSE;
     }
@@ -4050,12 +4016,13 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 
                 // First make sure there are no unsaved changes
                 if (pv->GetDocument()->IsModified() &&
-                    ::HMessageBox("Attached file has unsaved changes.\r"
+                    AfxMessageBox("Attached file has unsaved changes.\r"
                           "Save it now?", MB_YESNO) == IDYES)
                 {
                     pv->GetDocument()->DoFileSave();
                 }
 
+                // Kill any background search in progress before closing the file
                 if (pv->GetDocument()->SearchOccurrences() == -2)
                 {
                     pv->GetDocument()->StopSearch();
@@ -4089,13 +4056,13 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
         if ((result == 2 ||
              result == MAPI_E_ATTACHMENT_NOT_FOUND ||
              result == MAPI_E_ATTACHMENT_OPEN_FAILURE) &&
-            ::HMessageBox("Error opening attachment.\r"
+            AfxMessageBox("Error opening attachment.\r"
                           "Try again?", MB_YESNO) != IDYES)
         {
             break;
         }
 
-        if (::HMessageBox("Error encountered creating email session\r"
+        if (AfxMessageBox("Error encountered creating email session\r"
                           "Try again?", MB_YESNO) != IDYES)
         {
             break;
@@ -4103,9 +4070,6 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
     }
 
     ::FreeLibrary(hmapi);
-
-    // BG search finished message may be lost if modeless dlg running
-    aa->CheckBGSearchFinished();
 
     return retval;
 }

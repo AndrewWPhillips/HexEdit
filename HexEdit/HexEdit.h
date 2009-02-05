@@ -302,6 +302,7 @@ public:
     bool align_rel_;            // Force alignment relative to current mark posn
 
     void StartSearches(CHexEditDoc *pp);
+    void StopSearches();
     void NewSearch(const unsigned char *pat, const unsigned char *mask, size_t len,
                    BOOL icase, int tt, BOOL ww, int aa, int offset, bool align_rel);
 
@@ -832,8 +833,6 @@ extern COLORREF GetDecAddrCol();
 extern COLORREF GetHexAddrCol();
 extern COLORREF GetSearchCol();
 
-extern int HMessageBox(LPCTSTR lpszText, UINT nType = MB_OK, UINT nIDHelp = 0);
-extern int HMessageBox(UINT nIDPrompt, UINT nType = MB_OK, UINT nIDHelp = (UINT) -1);
 extern BOOL SendEmail(int def_type = 0, const char *def_text = NULL, const char *def_name = NULL);
 extern CString reg_code(int send, int flags = 0);
 extern CString user_reg_code(int send, const char *name, int type = 6, int flags = 0, time_t tt = 0);
