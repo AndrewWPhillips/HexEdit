@@ -3452,13 +3452,9 @@ IDB_HORZ                BITMAP                  "res\\flip.bmp"
 IDB_HORZ_HOT            BITMAP                  "res\\flip_hot.bmp"
 IDB_FLIP1               BITMAP                  "res\\flip1.bmp"
 IDB_FLIP1_HOT           BITMAP                  "res\\flip1_ho.bmp"
-IDB_SHOW_HOT            BITMAP                  "res\\show_hid.bmp"
 IDB_TMP                 BITMAP                  "res\\tmp.bmp"
 IDB_VERT                BITMAP                  "res\\vert.bmp"
 IDB_VERT_HOT            BITMAP                  "res\\vert_hot.bmp"
-IDB_HIDE_HOT            BITMAP                  "res\\hide_hot.bmp"
-IDB_SHOW                BITMAP                  "res\\show.bmp"
-IDB_HIDE                BITMAP                  "res\\hide.bmp"
 IDB_OPTIONSIMAGES       BITMAP                  "RES\\optionsimages.bmp"
 
 /////////////////////////////////////////////////////////////////////////////

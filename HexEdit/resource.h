@@ -310,7 +310,6 @@
 #define ID_REAL_MIN                     319
 #define IDB_FLIP1_HOT                   320
 #define ID_REAL_MAX                     320
-#define IDB_SHOW_HOT                    321
 #define ID_REAL_ATOF                    321
 #define IDB_TMP                         322
 #define ID_REAL_POW                     322
@@ -318,11 +317,8 @@
 #define ID_INTEGER_POW                  323
 #define IDB_VERT_HOT                    324
 #define ID_REAL_POW324                  324
-#define IDB_HIDE_HOT                    325
 #define ID_REAL_SQRT                    325
-#define IDB_SHOW                        326
 #define ID_REAL_SIN                     326
-#define IDB_HIDE                        327
 #define ID_REAL_COS                     327
 #define ID_REAL_TAN                     328
 #define ID_REAL_ASIN                    329

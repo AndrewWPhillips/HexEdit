@@ -1176,10 +1176,6 @@
 				>
 			</File>
 			<File
-				RelativePath="RES\back1.bmp"
-				>
-			</File>
-			<File
 				RelativePath="RES\back_hot.bmp"
 				>
 			</File>
@@ -1276,10 +1272,6 @@
 				>
 			</File>
 			<File
-				RelativePath="RES\forw1.bmp"
-				>
-			</File>
-			<File
 				RelativePath="RES\forw_hot.bmp"
 				>
 			</File>
@@ -1289,14 +1281,6 @@
 			</File>
 			<File
 				RelativePath=".\res\HexEditDoc.ico"
-				>
-			</File>
-			<File
-				RelativePath="RES\hide.bmp"
-				>
-			</File>
-			<File
-				RelativePath="RES\hide_hot.bmp"
 				>
 			</File>
 			<File
@@ -1376,11 +1360,7 @@
 				>
 			</File>
 			<File
-				RelativePath="RES\parent1.bmp"
-				>
-			</File>
-			<File
-				RelativePath="RES\parent2.bmp"
+				RelativePath="RES\parent_hot.bmp"
 				>
 			</File>
 			<File
@@ -1392,23 +1372,11 @@
 				>
 			</File>
 			<File
-				RelativePath="RES\refresh1.bmp"
-				>
-			</File>
-			<File
-				RelativePath="RES\refresh_.bmp"
+				RelativePath="RES\refresh_hot.bmp"
 				>
 			</File>
 			<File
 				RelativePath="RES\search.bmp"
-				>
-			</File>
-			<File
-				RelativePath="RES\show.bmp"
-				>
-			</File>
-			<File
-				RelativePath="RES\show_hid.bmp"
 				>
 			</File>
 			<File
@@ -1461,10 +1429,6 @@
 			</File>
 			<File
 				RelativePath="RES\view.bmp"
-				>
-			</File>
-			<File
-				RelativePath="RES\view1.bmp"
 				>
 			</File>
 			<File
@@ -1549,11 +1513,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
