@@ -1142,7 +1142,7 @@ void CMainFrame::OnHelpTute(UINT nID)
 {
     // Display help for this page
     if (!::HtmlHelp(m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, 0x10000+nID))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 void CMainFrame::OnHelp()
@@ -2232,7 +2232,7 @@ void CMainFrame::OnSearchSel()
     CHexEditView *pview = GetView();
     if (pview == NULL)
     {
-        ::HMessageBox("There is no file open to search.");
+        AfxMessageBox("There is no file open to search.");
         theApp.mac_error_ = 10;
         return;
     }
@@ -2245,7 +2245,7 @@ void CMainFrame::OnSearchSel()
     {
         // Nothing selected, presumably in macro playback
         ASSERT(theApp.playing_);
-        ::HMessageBox("Nothing selected to search for!");
+        AfxMessageBox("Nothing selected to search for!");
         theApp.mac_error_ = 10;
         return;
     }
@@ -2385,7 +2385,7 @@ BOOL CMainFrame::DoFind()
 
     if (pview == NULL)
     {
-        ::HMessageBox("There is no file open to search.");
+        AfxMessageBox("There is no file open to search.");
         theApp.mac_error_ = 10;
         return FALSE;
     }
@@ -2513,7 +2513,7 @@ BOOL CMainFrame::DoFind()
                 {
                     // Display not found message
                     pview->show_pos();                         // Restore display of orig address
-                    ::HMessageBox(not_found_mess(FALSE, icase, tt, wholeword, alignment));
+                    AfxMessageBox(not_found_mess(FALSE, icase, tt, wholeword, alignment));
                 }
                 else
                 {
@@ -2534,7 +2534,7 @@ BOOL CMainFrame::DoFind()
                 theApp.OnIdle(0);             // Force display of updated address
 
                 // Give the user the option to search the top bit of the file that has not been searched
-                if (::HMessageBox(mess, MB_YESNO) == IDYES)
+                if (AfxMessageBox(mess, MB_YESNO) == IDYES)
                 {
                     if ((found_addr = search_back(pdoc,
                                                   end - (length-1) < 0 ? 0 : end - (length-1),
@@ -2551,7 +2551,7 @@ BOOL CMainFrame::DoFind()
                     {
                         // Display not found message
                         pview->show_pos();                         // Restore display of orig address
-                        ::HMessageBox(not_found_mess(FALSE, icase, tt, wholeword, alignment));
+                        AfxMessageBox(not_found_mess(FALSE, icase, tt, wholeword, alignment));
                     }
                     else
                     {
@@ -2572,7 +2572,7 @@ BOOL CMainFrame::DoFind()
                 // Display not found message
                 SetAddress(start);
                 theApp.OnIdle(0);             // Force display of updated address
-                ::HMessageBox(not_found_mess(FALSE, icase, tt, wholeword, alignment));
+                AfxMessageBox(not_found_mess(FALSE, icase, tt, wholeword, alignment));
                 pview->show_pos();                         // Restore display of orig address
             }
         }
@@ -2702,7 +2702,7 @@ BOOL CMainFrame::DoFind()
                 {
                     // Display not found message
                     pview->show_pos();                         // Restore display of orig address
-                    ::HMessageBox(not_found_mess(TRUE, icase, tt, wholeword, alignment));
+                    AfxMessageBox(not_found_mess(TRUE, icase, tt, wholeword, alignment));
                 }
                 else
                 {
@@ -2723,7 +2723,7 @@ BOOL CMainFrame::DoFind()
                 theApp.OnIdle(0);             // Force display of updated address
 
                 // Give the user the option to search the top bit of the file that has not been searched
-                if (::HMessageBox(mess, MB_YESNO) == IDYES)
+                if (AfxMessageBox(mess, MB_YESNO) == IDYES)
                 {
                     if ((found_addr = search_forw(pdoc, 0,
                                                   start+length-1 > pdoc->length() ? pdoc->length() : start+length-1,
@@ -2739,7 +2739,7 @@ BOOL CMainFrame::DoFind()
                     {
                         // Display not found message
                         pview->show_pos();                         // Restore display of orig address
-                        ::HMessageBox(not_found_mess(TRUE, icase, tt, wholeword, alignment));
+                        AfxMessageBox(not_found_mess(TRUE, icase, tt, wholeword, alignment));
                     }
                     else
                     {
@@ -2760,7 +2760,7 @@ BOOL CMainFrame::DoFind()
                 // Display not found message
                 SetAddress(end);
                 theApp.OnIdle(0);             // Force display of updated address
-                ::HMessageBox(not_found_mess(TRUE, icase, tt, wholeword, alignment));
+                AfxMessageBox(not_found_mess(TRUE, icase, tt, wholeword, alignment));
                 pview->show_pos();                         // Restore display of orig address
             }
         }
@@ -2790,7 +2790,7 @@ void CMainFrame::OnReplace()
 
     if (pview == NULL)
     {
-        ::HMessageBox("There is no file open to replace in.");
+        AfxMessageBox("There is no file open to replace in.");
         theApp.mac_error_ = 2;
         return;
     }
@@ -2895,7 +2895,7 @@ void CMainFrame::OnReplaceAll()
 
     if (pview == NULL)
     {
-        ::HMessageBox("There is no file open to search.");
+        AfxMessageBox("There is no file open to search.");
         theApp.mac_error_ = 2;
         return;
     }
@@ -3008,7 +3008,6 @@ void CMainFrame::OnReplaceAll()
                 theApp.refresh_display(true);
                 theApp.refresh_off_ = false;
                 theApp.enable_carets();
-                theApp.CheckBGSearchFinished();
             }
 #endif
             // Message already displayed so just restore original display pos
@@ -3039,7 +3038,7 @@ void CMainFrame::OnReplaceAll()
                 // Give the user the option to search the top bit of the file that has not been searched
                 SetAddress(end);
                 theApp.OnIdle(0);             // Force display of updated address
-                if (::HMessageBox(mess, MB_YESNO) == IDYES)
+                if (AfxMessageBox(mess, MB_YESNO) == IDYES)
                 {
                     wc.Restore();
                     curr = 0;
@@ -3105,14 +3104,14 @@ void CMainFrame::OnReplaceAll()
         mess += ss;
     }
 
-    ::HMessageBox(mess);
+    AfxMessageBox(mess);
 }
 
 void CMainFrame::OnBookmarkAll()
 {
     if (m_wndFind.m_pSheet->bookmark_prefix_.IsEmpty())
     {
-        ::HMessageBox("Bookmark All requires a bookmark prefix.");
+        AfxMessageBox("Bookmark All requires a bookmark prefix.");
         theApp.mac_error_ = 2;
         return;
     }
@@ -3121,7 +3120,7 @@ void CMainFrame::OnBookmarkAll()
 
     if (pview == NULL)
     {
-        ::HMessageBox("There is no file open to search.");
+        AfxMessageBox("There is no file open to search.");
         theApp.mac_error_ = 2;
         return;
     }
@@ -3275,7 +3274,7 @@ void CMainFrame::OnBookmarkAll()
                 SetAddress(end);
                 theApp.OnIdle(0);             // Force display of updated address
 
-                if (::HMessageBox(mess, MB_YESNO) == IDYES)
+                if (AfxMessageBox(mess, MB_YESNO) == IDYES)
                 {
                     wc.Restore();
                     curr = 0;
@@ -3356,7 +3355,7 @@ void CMainFrame::OnBookmarkAll()
                   (const char *)m_wndFind.m_pSheet->bookmark_prefix_, (long)next_number-1);
         mess += ss;
     }
-    ::HMessageBox(mess);
+    AfxMessageBox(mess);
 }
 
 // search_forw returns the address if the search text was found or
@@ -3394,7 +3393,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
         {
             VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
             if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
+                AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
             {
                 StatusBarText("Search aborted");
                 theApp.mac_error_ = 10;
@@ -3413,15 +3412,12 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
     // Warn of simple problems
     if (length == 0)
     {
-        ::HMessageBox("Empty search sequence");
+        AfxMessageBox("Empty search sequence");
         return -2;
     }
 
     if (bg_next == -3)
-    {
-        // New search so signal to stop any current bg search
-        pdoc->StopSearch();
-    }
+        theApp.StopSearches();  // we must abort all bg searches here otherwise we'll later try to start on threads where bg search has not been stopped
 
 	// We have to do our own search since either:
 	// background searches are off (bg_next == -4)
@@ -3474,7 +3470,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                         ;
 
                     if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
+                        AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
                     {
                         delete[] buf;
                         // Start bg search anyway
@@ -3579,7 +3575,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 {
                     VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
                     if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
+                        AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
                     {
                         delete[] buf;
                         // Start bg search anyway
@@ -3688,7 +3684,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
         {
             VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
             if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
+                AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
             {
                 StatusBarText("Search aborted");
                 theApp.mac_error_ = 10;
@@ -3707,15 +3703,12 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
     // Warn of simple problems
     if (length == 0)
     {
-        ::HMessageBox("Empty search sequence");
+        AfxMessageBox("Empty search sequence");
         return -2;
     }
 
     if (bg_next == -3)
-    {
-        // New search so signal to stop any current bg search
-        pdoc->StopSearch();
-    }
+        theApp.StopSearches();  // we must abort all bg searches here otherwise we'll later try to start on threads where bg search has not been stopped
 
     unsigned char *buf = new unsigned char[buf_len];
     boyer bb(ss, length, mask);         // Boyer-Moore searcher
@@ -3754,7 +3747,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 {
                     VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
                     if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
+                        AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
                     {
                         delete[] buf;
                         // Start bg search anyway
@@ -3908,7 +3901,7 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 {
                     VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
                     if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        ::HMessageBox("Abort search?", MB_YESNO) == IDYES)
+                        AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
                     {
                         delete[] buf;
                         // Start bg search anyway
@@ -4161,7 +4154,7 @@ void CMainFrame::OnCalcSel()
         if (end_addr - start_addr > 8 || got < size_t())
         {
             ASSERT(0);
-            ::HMessageBox("Selection too big for calculator!");
+            AfxMessageBox("Selection too big for calculator!");
             theApp.mac_error_ = 10;
         }
         else if (end_addr - start_addr > 4)
@@ -4528,7 +4521,7 @@ LRESULT CMainFrame::OnHelpCustomizeToolbars(WPARAM wp, LPARAM lp)
     };
 
     if (!::HtmlHelp(m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, help_id[(int)wp]))
-        ::HMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 
     return 0;
 }
