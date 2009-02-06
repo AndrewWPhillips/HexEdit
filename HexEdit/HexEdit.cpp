@@ -2825,27 +2825,49 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     // Load current settings into the property sheet
     get_options(optSheet.val_);
 
-    // Add categories to the tree and pages under the categories
-	CBCGPropSheetCategory * pCatSys = optSheet.AddTreeCategory("System", 0, 1);
-    optSheet.AddPageToTree(pCatSys, &sysgeneralPage, -1, 2);
-    optSheet.AddPageToTree(pCatSys, &histPage, -1, 2);
-    optSheet.AddPageToTree(pCatSys, &filtersPage, -1, 2);
-    optSheet.AddPageToTree(pCatSys, &printerPage, -1, 2);
-    optSheet.AddPageToTree(pCatSys, &macroPage, -1, 2);
+    enum
+    {
+        IMG_FOLDER,
+        IMG_FOLDER_SEL,
+        IMG_CURRENT,
+        IMG_SYSGENERAL,
+        IMG_HIST,
+        IMG_FILTERS,
+        IMG_PRINTER,
+        IMG_MACRO,
+        IMG_WORKSPACELAYOUT,
+        IMG_WORKSPACEDISPLAY,
+        IMG_WORKSPACEEDIT,
+        IMG_TIP,
+        IMG_TEMPLATE,
+        IMG_DOCGENERAL,
+        IMG_DOCDISPLAY,
+        IMG_DOCEDIT,
+        IMG_COLOURS,
+    };
+    optSheet.SetIconsList(IDB_OPTIONSIMAGES, 16 /* Image width */);
 
-	CBCGPropSheetCategory * pCatWS  = optSheet.AddTreeCategory("Workspace", 0, 1);
-    optSheet.AddPageToTree(pCatWS, &workspacelayoutPage, -1, 2);
-    optSheet.AddPageToTree(pCatWS, &workspacedisplayPage, -1, 2);
-    optSheet.AddPageToTree(pCatWS, &workspacePage, -1, 2);
-    optSheet.AddPageToTree(pCatWS, &tipsPage, -1, 2);
-    optSheet.AddPageToTree(pCatWS, &templatePage, -1, 2);
+    // Add categories to the tree and pages under the categories
+	CBCGPropSheetCategory * pCatSys = optSheet.AddTreeCategory("System", IMG_FOLDER, IMG_FOLDER_SEL);
+    optSheet.AddPageToTree(pCatSys, &sysgeneralPage, IMG_SYSGENERAL, IMG_SYSGENERAL);
+    optSheet.AddPageToTree(pCatSys, &histPage, IMG_HIST, IMG_HIST);
+    optSheet.AddPageToTree(pCatSys, &filtersPage, IMG_FILTERS, IMG_FILTERS);
+    optSheet.AddPageToTree(pCatSys, &printerPage, IMG_PRINTER, IMG_PRINTER);
+    optSheet.AddPageToTree(pCatSys, &macroPage, IMG_MACRO, IMG_MACRO);
+
+	CBCGPropSheetCategory * pCatWS  = optSheet.AddTreeCategory("Workspace", IMG_FOLDER, IMG_FOLDER_SEL);
+    optSheet.AddPageToTree(pCatWS, &workspacelayoutPage, IMG_WORKSPACELAYOUT, IMG_WORKSPACELAYOUT);
+    optSheet.AddPageToTree(pCatWS, &workspacedisplayPage, IMG_WORKSPACEDISPLAY, IMG_WORKSPACEDISPLAY);
+    optSheet.AddPageToTree(pCatWS, &workspacePage, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
+    optSheet.AddPageToTree(pCatWS, &tipsPage, IMG_TIP, IMG_TIP);
+    optSheet.AddPageToTree(pCatWS, &templatePage, IMG_TEMPLATE, IMG_TEMPLATE);
 	if (pview != NULL)
     {
-		CBCGPropSheetCategory * pCatDoc = optSheet.AddTreeCategory("Document", 0, 1);
-        optSheet.AddPageToTree(pCatDoc, &wingeneralPage, -1, 2);
-        optSheet.AddPageToTree(pCatDoc, &windisplayPage, -1, 2);
-        optSheet.AddPageToTree(pCatDoc, &wineditPage, -1, 2);
-	    optSheet.AddPageToTree(pCatDoc, &coloursPage, -1, 2);
+		CBCGPropSheetCategory * pCatDoc = optSheet.AddTreeCategory("Document", IMG_FOLDER, IMG_FOLDER_SEL);
+        optSheet.AddPageToTree(pCatDoc, &wingeneralPage, IMG_DOCGENERAL, IMG_DOCGENERAL);
+        optSheet.AddPageToTree(pCatDoc, &windisplayPage, IMG_DOCDISPLAY, IMG_DOCDISPLAY);
+        optSheet.AddPageToTree(pCatDoc, &wineditPage, IMG_DOCEDIT, IMG_DOCEDIT);
+	    optSheet.AddPageToTree(pCatDoc, &coloursPage, IMG_COLOURS, IMG_COLOURS);
 
         // Allow global display page to jump to doc display page
         workspacedisplayPage.SetDocDisplayPage(&windisplayPage);
@@ -2853,7 +2875,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 	else
 	{
         // Add colour page to workspace - user can still change the schemes, just can't select one to use
-	    optSheet.AddPageToTree(pCatWS, &coloursPage, -1, 2);
+	    optSheet.AddPageToTree(pCatWS, &coloursPage, IMG_COLOURS, IMG_COLOURS);
 	}
 
 	// Set initial active page

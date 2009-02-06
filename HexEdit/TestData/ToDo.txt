@@ -9,11 +9,11 @@
    > variables list
       > clear variables
    > functions list
- - Explorer
+ > Explorer
     > new modern icons
     > move hidden file icons to views menu
-    - fix column selection
-    - allow column reorder
+    > fix column selection
+    > allow column reorder
  - Options
     > new ruler options: ticks/numbers for hex/decimal
     > display: indicate cursor/mouse position
@@ -22,13 +22,15 @@
     > history options page: set size of 6 history lists, clear bookmarks etc on exit
     > new startup options: splash, tod, scan for devices
     - new tree look
+      > add lines, +/- buttons (change to BCG DLL)
+      > icons in tree (just change SetIconsList, AddPageToTree)
  - fix show selection problems
  - enable navigation points
    - don't save nav pt when flipping between files
  - icon not shown for 2nd and subsequent windows
     - need to call show_icon() after opening a new window
  - more acknowledgements in help
-	SmartFTP
+	FileZilla
 	Expression Web 2
 	IkonBoard
 	FireFox

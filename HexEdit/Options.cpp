@@ -163,7 +163,6 @@ void COptSheet::init()
 
 	// Set up page navigation
 	SetLook(PropSheetLook_Tree, 160);
-	SetIconsList (IDB_OPTIONSIMAGES, 16 /* Image width */);
 }
 
 COptSheet::~COptSheet()
