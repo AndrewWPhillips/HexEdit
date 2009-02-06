@@ -1167,11 +1167,14 @@ BOOL CTipsPage::OnInitDialog()
     grid_.SetRowCount(header_rows);
     grid_.SetFixedRowCount(header_rows);
 
-    // Set up the grid sizes
-    grid_.SetColumnWidth(column_check, 22);
-    grid_.SetColumnWidth(column_name,  95);
-    grid_.SetColumnWidth(column_expr, 160);
-    grid_.SetColumnWidth(column_format,65);
+    // Set up the widths of the grid columns.  Note that the dialog was
+    // designed at default 96DPI whch gives a client rect width 0f 362 pixels.
+    CRect rct;
+    grid_.GetClientRect(&rct);
+    grid_.SetColumnWidth(column_check, (22 * rct.right) / 362); // col width adjusted for current DPI
+    grid_.SetColumnWidth(column_name,  (95 * rct.right) / 362);
+    grid_.SetColumnWidth(column_expr, (160 * rct.right) / 362);
+    grid_.SetColumnWidth(column_format,(65 * rct.right) / 362);
 
     // Set up the grid cells
     for (int ii = 0; ii < theApp.tip_name_.size(); ++ii)
@@ -2877,11 +2880,13 @@ BOOL CFiltersPage::OnInitDialog()
     grid_.SetRowCount(header_rows);
     grid_.SetFixedRowCount(header_rows);
 
-    // Set up the grid sizes
-//    grid_.SetColumnWidth(column_number, 28);
-    grid_.SetColumnWidth(column_check, 22);
-    grid_.SetColumnWidth(column_files, 185);
-    grid_.SetColumnWidth(column_filter, 146);
+    // Set up the widths of the grid columns.  Note that the dialog was
+    // designed at default 96DPI whch gives a client rect width of xxx pixels.
+    CRect rct;
+    grid_.GetClientRect(&rct);
+    grid_.SetColumnWidth(column_check,  (22 * rct.right) / 374);
+    grid_.SetColumnWidth(column_files, (185 * rct.right) / 374);
+    grid_.SetColumnWidth(column_filter,(146 * rct.right) / 374);
 
     // Set up column headers
 //    grid_.SetItemText(0, column_files, "Filter Name");
