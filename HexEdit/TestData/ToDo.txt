@@ -1,6 +1,7 @@
  
 3.4 Version
  > calculator
+   - drop list is too small when built with VS2005
    > fix resize problems
    > new look calculator
    > expressions in calculator
@@ -15,13 +16,18 @@
     > fix column selection
     > allow column reorder
  - Options
+    - fix images
+    - remove icons in top left of pages
+    - add Hist >> button on General page
+    - add doc edit>> button on global edit page
+    - add icons to >> buttons (CBCGButton::SetImage)
     > new ruler options: ticks/numbers for hex/decimal
     > display: indicate cursor/mouse position
        > formatting of numbers
        > autoscroll accel, scroll past ends
     > history options page: set size of 6 history lists, clear bookmarks etc on exit
     > new startup options: splash, tod, scan for devices
-    - new tree look
+    > new tree look
       > add lines, +/- buttons (change to BCG DLL)
       > icons in tree (just change SetIconsList, AddPageToTree)
  - fix show selection problems

@@ -255,7 +255,6 @@
 #define HIDC_FOLDER_FILTER              0x81280594    // IDD_EXPLORER
 #define HIDC_FOLDER_FLIP                0x81280596    // IDD_EXPLORER
 #define HIDC_FOLDER_FORW                0x81280591    // IDD_EXPLORER
-#define HIDC_FOLDER_HIDDEN              0x8128059a    // IDD_EXPLORER
 #define HIDC_FOLDER_LIST_SIZE           0x819b04cc    // IDD_OPT_HISTORY [English (U.S.)]
 #define HIDC_FOLDER_NAME                0x81280593    // IDD_EXPLORER
 #define HIDC_FOLDER_PARENT              0x81280592    // IDD_EXPLORER
@@ -283,6 +282,7 @@
 #define HIDC_HEX_LIST_SIZE              0x819b04cb    // IDD_OPT_HISTORY [English (U.S.)]
 #define HIDC_HEX_SIZE                   0x811c054c    // IDD_NEW_FILE
 #define HIDC_HEX_UCASE                  0x819a0415    // IDD_OPT_WORKLAYOUT [English (U.S.)]
+#define HIDC_HIST_PAGE                  0x809e0633    // IDD_OPT_SYSTEM [English (U.S.)]
 #define HIDC_HL_CARET                   0x80eb0615    // IDD_OPT_WORKDISPLAY [English (U.S.)]
 #define HIDC_HL_MOUSE                   0x80eb0616    // IDD_OPT_WORKDISPLAY [English (U.S.)]
 #define HIDC_INFO_CATEGORY              0x81270588    // IDD_PROP_INFO [English (U.S.)]
@@ -403,7 +403,7 @@
 #define HIDC_SAVE_DEFAULT               0x813704b6    // IDD_OPT_WINGENERAL [English (U.S.)]
 #define HIDC_SAVE_EXIT                  0x809e0416    // IDD_OPT_SYSTEM [English (U.S.)]
 #define HIDC_SAVE_NOW                   0x809e0417    // IDD_OPT_SYSTEM [English (U.S.)]
-#define HIDC_SCAN                       0x809e041b    // IDD_OPT_SYSTEM [English (U.S.)]
+#define HIDC_SCAN                       0x809e0621    // IDD_OPT_SYSTEM [English (U.S.)]
 #define HIDC_SCHEMES                    0x80e60450    // IDD_OPT_COLOURS [English (U.S.)]
 #define HIDC_SCHEME_LIST                0x810704be    // IDD_NEW_SCHEME
 #define HIDC_SCHEME_NAME                0x810704bd    // IDD_NEW_SCHEME
@@ -437,7 +437,7 @@
 #define HIDC_TEMPLATEDIR                0x81380617    // IDD_OPT_WORKTEMPLATE [English (U.S.)]
 #define HIDC_TEXT                       0x80e50477    // IDD_EMAIL
 #define HIDC_TO                         0x80e50473    // IDD_EMAIL
-#define HIDC_TOD                        0x809e041c    // IDD_OPT_SYSTEM [English (U.S.)]
+#define HIDC_TOD                        0x809e060c    // IDD_OPT_SYSTEM [English (U.S.)]
 #define HIDC_TYPES_COMMON               0x813005ab    // IDD_TPARSE
 #define HIDC_TYPES_CUSTOM               0x813005ad    // IDD_TPARSE
 #define HIDC_TYPES_SAVE                 0x813005ae    // IDD_TPARSE
