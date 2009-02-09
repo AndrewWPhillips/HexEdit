@@ -275,6 +275,7 @@ protected:
 
 private:
 	COptPage * pHistPage;
+	CBCGButton ctl_hist_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -303,43 +304,6 @@ protected:
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnClearNow();
-	afx_msg void OnChange();
-	DECLARE_MESSAGE_MAP()
-};
-
-/////////////////////////////////////////////////////////////////////////////
-// CWorkspacePage - general workspace options
-
-class CWorkspacePage : public COptPage
-{
-	DECLARE_DYNCREATE(CWorkspacePage)
-
-// Construction
-public:
-    CWorkspacePage() : COptPage(IDD) { }
-
-	enum { IDD = IDD_OPT_WORKSPACE };
-	CButton	ctl_backup_space_;
-	CEdit	ctl_backup_size_;
-	CButton	ctl_backup_prompt_;
-	CButton	ctl_backup_if_size_;
-	CHexEditControl	address_ctl_;
-
-// Overrides
-public:
-	virtual void OnOK();
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-// Implementation
-protected:
-	virtual BOOL OnInitDialog();
-	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg void OnBackup();
-	afx_msg void OnBackupIfSize();
-	afx_msg void OnAddressSpecified();
-	afx_msg void OnAddressFile();
 	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 };
@@ -466,6 +430,49 @@ protected:
 private:
     void fix_controls();
 	COptPage * pDocPage;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspacePage - workspace editing options
+
+class CWorkspacePage : public COptPage
+{
+	DECLARE_DYNCREATE(CWorkspacePage)
+
+// Construction
+public:
+    CWorkspacePage() : COptPage(IDD), pDocPage(NULL) { }
+
+	enum { IDD = IDD_OPT_WORKSPACE };
+	CButton	ctl_backup_space_;
+	CEdit	ctl_backup_size_;
+	CButton	ctl_backup_prompt_;
+	CButton	ctl_backup_if_size_;
+	CHexEditControl	address_ctl_;
+
+	void SetDocEditPage(COptPage * pPage) { pDocPage = pPage; }
+
+// Overrides
+public:
+	virtual void OnOK();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+	virtual BOOL OnInitDialog();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnBackup();
+	afx_msg void OnBackupIfSize();
+	afx_msg void OnAddressSpecified();
+	afx_msg void OnAddressFile();
+	afx_msg void OnChange();
+	afx_msg void OnDocPage();
+	DECLARE_MESSAGE_MAP()
+
+private:
+	COptPage * pDocPage;        // corresp, document (edit) page
 };
 
 /////////////////////////////////////////////////////////////////////////////

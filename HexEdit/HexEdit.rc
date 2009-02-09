@@ -1322,10 +1322,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "General"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_COGS,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,62,8,
-                    193,1
-    LTEXT           "Global settings",IDC_STATIC,20,4,47,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,58,8,
+                    197,1
+    LTEXT           "Global settings",IDC_STATIC,12,4,47,8
     CONTROL         "Save settings on e&xit",IDC_SAVE_EXIT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,22,17,95,10,0,
                     HIDC_SAVE_EXIT
@@ -1351,6 +1350,8 @@ BEGIN
     CONTROL         "Run AutoExec &Macro",IDC_AUTOEXEC,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,152,81,102,10,0,
                     HIDC_AUTOEXEC
+    PUSHBUTTON      "History List Options >>",IDC_HIST_PAGE,152,118,94,13,0,
+                    0,HIDC_HIST_PAGE
 END
 
 IDD_PROP_INFO DIALOGEX 0, 0, 223, 79
@@ -1459,10 +1460,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Keystroke Macros"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_MACRO,IDC_PAGE_ICON,3,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,86,10,
-                    169,1
-    LTEXT           "Keystroke Macros",IDC_STATIC,28,6,58,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,64,10,
+                    186,1
+    LTEXT           "Keystroke Macros",IDC_STATIC,10,6,58,8
     GROUPBOX        "Refresh Display",IDC_STATIC,11,20,126,108,WS_GROUP
     CONTROL         "&Never",IDC_REFRESH_NEVER,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP | WS_TABSTOP,18,31,35,10,0,HIDC_REFRESH_NEVER
@@ -1518,10 +1518,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Display"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_WINDOW,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,8,
-                    116,1
-    LTEXT           "Display",IDC_STATIC,20,4,24,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,33,8,
+                    118,1
+    LTEXT           "Display",IDC_STATIC,10,4,24,8
     CONTROL         "&Large (block) cursor",IDC_LARGE_CURSOR,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,20,16,104,10,0,
                     HIDC_LARGE_CURSOR
@@ -1540,7 +1539,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,57,
                     219,1
     CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
-                    WS_TABSTOP,12,52,30,10,0,HIDC_RULER
+                    WS_TABSTOP,11,52,30,10,0,HIDC_RULER
     LTEXT           "Hex:",IDC_STATIC,20,66,16,8
     LTEXT           "Large ticks every:",IDC_STATIC,52,66,57,8
     EDITTEXT        IDC_RULER_HEX_TICKS,109,64,28,12,ES_RIGHT | ES_NUMBER,0,
@@ -1575,7 +1574,7 @@ BEGIN
                     HIDC_HL_MOUSE
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,109,
                     219,1
-    LTEXT           "Scrolling",IDC_STATIC,11,105,28,8
+    LTEXT           "Scrolling",IDC_STATIC,10,105,28,8
     CONTROL         "Allow scroll past ends",IDC_SCROLL_PAST_ENDS,"Button",
                     BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,20,116,55,16,
                     0,HIDC_SCROLL_PAST_ENDS
@@ -1675,10 +1674,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Printing"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_PRINTER,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,41,8,
-                    218,1
-    LTEXT           "Layout",IDC_STATIC,20,4,22,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,31,8,
+                    224,1
+    LTEXT           "Layout",IDC_STATIC,11,4,22,8
     CONTROL         "Dr&aw border",IDC_PRINT_BORDER,"Button",BS_AUTOCHECKBOX | 
                     WS_GROUP | WS_TABSTOP,21,17,55,10,0,HIDC_PRINT_BORDER
     CONTROL         "&Column headings",IDC_PRINT_HEADINGS,"Button",
@@ -1715,7 +1713,7 @@ BEGIN
     EDITTEXT        IDC_PRINT_FOOTER_EDGE,219,62,24,14,ES_AUTOHSCROLL,0,
                     HIDC_PRINT_FOOTER_EDGE
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,59,94,
-                    200,1
+                    196,1
     LTEXT           "Header/Footer",IDC_STATIC,12,90,48,8
     RTEXT           "&Header:",IDC_STATIC,19,104,26,8
     EDITTEXT        IDC_PRINT_HEADER,49,101,189,14,ES_AUTOHSCROLL,0,
@@ -1733,10 +1731,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "File Type Filters"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_FILTER,IDC_PAGE_ICON,0,0,20,20
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,33,8,
                     151,1
-    LTEXT           "File Type Filters",IDC_STATIC,20,4,50,8
+    LTEXT           "File Type Filters",IDC_STATIC,7,4,50,8
     PUSHBUTTON      "New",IDC_NEW,190,8,14,14,BS_ICON | BS_CENTER | 
                     BS_VCENTER,0,HIDC_NEW
     PUSHBUTTON      "Del",IDC_DEL,207,8,14,14,BS_ICON | BS_CENTER | 
@@ -1756,10 +1753,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Display"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_DOCDISPLAY,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,40,8,
-                    123,1
-    LTEXT           "Layout",IDC_STATIC,20,4,22,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,30,8,
+                    133,1
+    LTEXT           "Layout",IDC_STATIC,10,4,22,8
     LTEXT           "S&how Area(s):",IDC_STATIC,19,18,48,8
     COMBOBOX        IDC_SHOW_AREA,69,17,61,53,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_SHOW_AREA
@@ -1796,7 +1792,7 @@ BEGIN
                     HIDC_ADDRBASE1
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,57,92,
                     199,1
-    LTEXT           "Character Area",IDC_STATIC,12,88,48,8
+    LTEXT           "Character Area",IDC_STATIC,10,88,48,8
     LTEXT           "&Character Set:",IDC_CHARSET_DESC,19,102,48,8
     COMBOBOX        IDC_CHARSET,69,100,94,60,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_CHARSET
@@ -1814,10 +1810,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Colour Schemes"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_COLOUR,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,50,7,52,
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,34,7,68,
                     1
-    RTEXT           "Schemes",IDC_STATIC,20,3,30,8
+    RTEXT           "Schemes",IDC_STATIC,4,3,30,8
     PUSHBUTTON      "Add ",IDC_ADD_SCHEME,21,15,14,14,BS_ICON,0,
                     HIDC_ADD_SCHEME
     PUSHBUTTON      "Remove ",IDC_REMOVE_SCHEME,40,15,14,14,BS_ICON | 
@@ -2158,10 +2153,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Info Tips"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_TIPS,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,46,10,
-                    75,1
-    LTEXT           "Info Tips",IDC_STATIC,21,6,28,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,30,10,
+                    91,1
+    LTEXT           "Info Tips",IDC_STATIC,5,6,28,8
     LTEXT           "Transparency:",IDC_STATIC,126,6,46,8
     CONTROL         "",IDC_SLIDER_TIP,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,176,3,83,15,WS_EX_TRANSPARENT,
@@ -2238,10 +2232,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Editing"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_DOCEDIT,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,40,8,
-                    124,1
-    LTEXT           "Editing",IDC_STATIC,20,4,22,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,32,8,
+                    131,1
+    LTEXT           "Editing",IDC_STATIC,10,4,22,8
     LTEXT           "Modifiability",IDC_STATIC,21,20,39,8
     COMBOBOX        IDC_MODIFY,63,18,64,47,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_MODIFY
@@ -2253,7 +2246,7 @@ BEGIN
                     WS_TABSTOP,135,28,86,18
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,37,52,
                     219,1
-    LTEXT           "Scrolling",IDC_STATIC,12,48,28,8
+    LTEXT           "Scrolling",IDC_STATIC,10,48,28,8
     LTEXT           "Scroll &Zone:",IDC_VERTBUFFER_DESC,21,61,40,8
     EDITTEXT        IDC_VERTBUFFER,63,59,36,12,ES_NUMBER,WS_EX_RIGHT,
                     HIDC_VERTBUFFER
@@ -2262,7 +2255,7 @@ BEGIN
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,97,59,11,12
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,65,79,
                     191,1
-    LTEXT           "Change Tracking",IDC_STATIC,12,75,56,8
+    LTEXT           "Change Tracking",IDC_STATIC,10,75,56,8
     CONTROL         "Show inserted bytes",IDC_CT_INSERTIONS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,21,86,100,10,0,
                     HIDC_CT_INSERTIONS
@@ -2277,7 +2270,7 @@ BEGIN
                     HIDC_CT_DELCOUNT
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,113,
                     227,1
-    LTEXT           "Other",IDC_STATIC,12,109,18,8
+    LTEXT           "Other",IDC_STATIC,10,109,18,8
     CONTROL         "Show bookmarks",IDC_SHOW_BOOKMARKS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,21,120,100,10,0,
                     HIDC_SHOW_BOOKMARKS
@@ -2293,10 +2286,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "General"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_WINDOW,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,74,8,
-                    181,1
-    LTEXT           "Document Settings",IDC_STATIC,20,4,61,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,70,8,
+                    183,1
+    LTEXT           "Document Settings",IDC_STATIC,10,4,61,8
     ICON            "",IDC_FILE_ICON,20,16,20,20,0,0,HIDC_FILE_ICON
     LTEXT           "",IDC_FILENAME,45,21,210,12,0,0,HIDC_FILENAME
     PUSHBUTTON      "Use &Default Settings",IDC_DISP_RESET,20,42,228,15,
@@ -2316,10 +2308,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Templates"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_TEMPLATES,IDC_PAGE_ICON,0,0,20,20
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,46,9,
                     209,1
-    LTEXT           "Default template display",IDC_STATIC,20,5,76,8
+    LTEXT           "Default template display",IDC_STATIC,10,5,76,8
     CONTROL         "No template view",IDC_DFFD_NONE,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,20,17,71,10,0,
                     HIDC_DFFD_NONE
@@ -2370,16 +2361,15 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Editing"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_EDIT,IDC_PAGE_ICON,0,0,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,47,8,
-                    210,1
-    LTEXT           "General",IDC_STATIC,20,4,26,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,33,8,
+                    118,1
+    LTEXT           "General",IDC_STATIC,10,4,26,8
     CONTROL         "Allow &background searching",IDC_BG_SEARCH,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,24,16,105,10,0,
                     HIDC_BG_SEARCH
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,25,32,
                     232,1
-    LTEXT           "Undo",IDC_STATIC,12,28,18,8
+    LTEXT           "Undo",IDC_STATIC,11,28,18,8
     CONTROL         "Intelligent undo",IDC_INTELLIGENT_UNDO,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,24,39,70,10,0,
                     HIDC_INTELLIGENT_UNDO
@@ -2393,7 +2383,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,38,58,
                     219,1
     CONTROL         "&Create backup files",IDC_BACKUP,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,13,53,73,10,0,HIDC_BACKUP
+                    BS_AUTOCHECKBOX | WS_TABSTOP,12,53,73,10,0,HIDC_BACKUP
     CONTROL         "Only if sufficient disk space",IDC_BACKUP_SPACE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,24,66,98,10,0,
                     HIDC_BACKUP_SPACE
@@ -2408,7 +2398,7 @@ BEGIN
                     24,88,170,10,0,HIDC_BACKUP_PROMPT
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,34,104,
                     223,1
-    LTEXT           "Export",IDC_STATIC,12,100,21,8
+    LTEXT           "Export",IDC_STATIC,10,100,21,8
     CONTROL         "Use &file addresses",IDC_ADDRESS_FILE,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,23,110,73,10,
                     0,HIDC_ADDRESS_FILE
@@ -2422,6 +2412,8 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_EXPORT_LINELEN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,239,120,11,12
+    PUSHBUTTON      "Document Edit Options >>",IDC_DOC_PAGE,153,5,103,14,0,0,
+                    HIDC_DOC_PAGE
 END
 
 IDD_OPT_WORKLAYOUT DIALOGEX 0, 0, 260, 140
@@ -2430,10 +2422,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Global"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_DISPLAY,IDC_PAGE_ICON,0,0,20,20
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,50,8,
                     205,1
-    LTEXT           "Main Window",IDC_STATIC,20,4,44,8
+    LTEXT           "Main Window",IDC_STATIC,9,4,44,8
     CONTROL         "&Restore main window position on startup",IDC_RESTORE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,17,140,10,0,
                     HIDC_RESTORE
@@ -2472,10 +2463,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "History Lists"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    ICON            IDI_COGS,IDC_PAGE_ICON,0,1,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,41,8,
-                    214,1
-    LTEXT           "Windows",IDC_STATIC,20,4,30,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,31,8,
+                    224,1
+    LTEXT           "System",IDC_STATIC,10,4,24,8
     CONTROL         "Never add files opened to the ""My Recent Documents"" list.",
                     IDC_NO_RECENT,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | 
                     WS_TABSTOP,22,16,113,16,0,HIDC_NO_RECENT
@@ -2488,31 +2478,31 @@ BEGIN
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,248,16,11,12
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,39,
                     226,1
-    LTEXT           "Saved list sizes",IDC_STATIC,12,35,49,8
-    LTEXT           "Find:",IDC_STATIC,24,50,18,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_FIND_LIST_SIZE,43,47,33,14,ES_RIGHT | ES_NUMBER,0,
+    LTEXT           "Saved list sizes",IDC_STATIC,10,35,49,8
+    LTEXT           "Find:",IDC_STATIC,26,50,18,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_FIND_LIST_SIZE,45,47,33,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_FIND_LIST_SIZE
     CONTROL         "",IDC_SPIN_FIND_LIST_SIZE,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,75,46,11,12
-    LTEXT           "Replace:",IDC_STATIC,11,66,31,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_REPLACE_LIST_SIZE,43,63,33,14,ES_RIGHT | ES_NUMBER,0,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,77,46,11,12
+    LTEXT           "Replace:",IDC_STATIC,13,66,31,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_REPLACE_LIST_SIZE,45,63,33,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_REPLACE_LIST_SIZE
     CONTROL         "",IDC_SPIN_REPLACE_LIST_SIZE,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,75,61,11,12
-    LTEXT           "Decimal jumps:",IDC_STATIC,81,50,47,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_DEC_LIST_SIZE,129,47,33,14,ES_RIGHT | ES_NUMBER,0,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,77,61,11,12
+    LTEXT           "Decimal jumps:",IDC_STATIC,82,50,47,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_DEC_LIST_SIZE,130,47,33,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_DEC_LIST_SIZE
     CONTROL         "",IDC_SPIN_DEC_LIST_SIZE,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,159,42,11,12
-    LTEXT           "Hex jumps:",IDC_STATIC,81,66,47,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_HEX_LIST_SIZE,129,63,33,14,ES_RIGHT | ES_NUMBER,0,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,160,42,11,12
+    LTEXT           "Hex jumps:",IDC_STATIC,82,66,47,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_HEX_LIST_SIZE,130,63,33,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_HEX_LIST_SIZE
     CONTROL         "",IDC_SPIN_HEX_LIST_SIZE,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,159,60,11,12
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,160,60,11,12
     LTEXT           "Explorer filters:",IDC_STATIC,168,50,50,8,0,WS_EX_RIGHT
     EDITTEXT        IDC_FILTER_LIST_SIZE,219,47,33,14,ES_RIGHT | ES_NUMBER,0,
                     HIDC_FILTER_LIST_SIZE
@@ -2527,7 +2517,7 @@ BEGIN
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,248,61,11,12
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,86,
                     226,1
-    LTEXT           "Clear history lists",IDC_STATIC,12,82,52,8
+    LTEXT           "Clear history lists",IDC_STATIC,10,82,52,8
     CONTROL         "Clear recent file list",IDC_CLEAR_RECENT_FILE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,22,94,114,10,0,
                     HIDC_CLEAR_RECENT_FILE

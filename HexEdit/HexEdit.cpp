@@ -2781,19 +2781,21 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     // Construct property sheet + its pages
     COptSheet optSheet(_T("HexEdit Options"));
     CSystemGeneralPage sysgeneralPage;
-	CHistoryPage histPage;
     CFiltersPage filtersPage;
     CPrintPage printerPage;
     CMacroPage macroPage;
+	CHistoryPage histPage;
+
     CWorkspaceLayoutPage workspacelayoutPage;
     CWorkspaceDisplayPage workspacedisplayPage;
     CWorkspacePage workspacePage;
 	CTipsPage tipsPage;
     CTemplatePage templatePage;
-    CColourSchemes coloursPage;
+
     CWindowGeneralPage wingeneralPage;
     CWindowPage windisplayPage;
     CWindowEditPage wineditPage;
+    CColourSchemes coloursPage;
 
 	// Set up initial page
 	CPropertyPage *pPage = NULL;
@@ -2850,10 +2852,10 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     // Add categories to the tree and pages under the categories
 	CBCGPropSheetCategory * pCatSys = optSheet.AddTreeCategory("System", IMG_FOLDER, IMG_FOLDER_SEL);
     optSheet.AddPageToTree(pCatSys, &sysgeneralPage, IMG_SYSGENERAL, IMG_SYSGENERAL);
-    optSheet.AddPageToTree(pCatSys, &histPage, IMG_HIST, IMG_HIST);
     optSheet.AddPageToTree(pCatSys, &filtersPage, IMG_FILTERS, IMG_FILTERS);
     optSheet.AddPageToTree(pCatSys, &printerPage, IMG_PRINTER, IMG_PRINTER);
     optSheet.AddPageToTree(pCatSys, &macroPage, IMG_MACRO, IMG_MACRO);
+    optSheet.AddPageToTree(pCatSys, &histPage, IMG_HIST, IMG_HIST);
 
 	CBCGPropSheetCategory * pCatWS  = optSheet.AddTreeCategory("Workspace", IMG_FOLDER, IMG_FOLDER_SEL);
     optSheet.AddPageToTree(pCatWS, &workspacelayoutPage, IMG_WORKSPACELAYOUT, IMG_WORKSPACELAYOUT);
@@ -2871,6 +2873,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 
         // Allow global display page to jump to doc display page
         workspacedisplayPage.SetDocDisplayPage(&windisplayPage);
+        workspacePage.SetDocEditPage(&wineditPage);
     }
 	else
 	{

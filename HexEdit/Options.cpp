@@ -162,7 +162,7 @@ void COptSheet::init()
     val_.show_bookmarks_ = val_.show_highlights_ = TRUE;
 
 	// Set up page navigation
-	SetLook(PropSheetLook_Tree, 160);
+	SetLook(PropSheetLook_Tree, 202);   // tree pane width
 }
 
 COptSheet::~COptSheet()
@@ -236,6 +236,7 @@ void CSystemGeneralPage::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_SPLASH, pParent->val_.splash_);
     DDX_Check(pDX, IDC_TOD, pParent->val_.tipofday_);
     DDX_Check(pDX, IDC_AUTOEXEC, pParent->val_.run_autoexec_);
+    DDX_Control(pDX, IDC_HIST_PAGE, ctl_hist_butn_);
 }
 
 BEGIN_MESSAGE_MAP(CSystemGeneralPage, COptPage)
@@ -259,6 +260,7 @@ END_MESSAGE_MAP()
 BOOL CSystemGeneralPage::OnInitDialog() 
 {
     COptPage::OnInitDialog();
+    GetDlgItem(IDC_HIST_PAGE)->EnableWindow(pHistPage != NULL);
 
     return TRUE;
 }
@@ -279,7 +281,7 @@ static DWORD id_pairs_sys[] = {
     IDC_SPLASH, HIDC_SPLASH,
     IDC_TOD, HIDC_TOD,
     IDC_AUTOEXEC, HIDC_AUTOEXEC,
-//    IDC_HIST_PAGE, HIDC_HIST_PAGE,
+    IDC_HIST_PAGE, HIDC_HIST_PAGE,
     0,0 
 };
 
@@ -525,6 +527,7 @@ BEGIN_MESSAGE_MAP(CWorkspacePage, COptPage)
 	ON_BN_CLICKED(IDC_ADDRESS_FILE, OnAddressFile)
 	ON_EN_CHANGE(IDC_EXPORT_LINELEN, OnChange)
 	ON_EN_CHANGE(IDC_EXPORT_ADDRESS, OnChange)
+	ON_BN_CLICKED(IDC_DOC_PAGE, OnDocPage)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -541,8 +544,15 @@ BOOL CWorkspacePage::OnInitDialog()
     ctl_backup_if_size_.EnableWindow(pParent->val_.backup_);
     ctl_backup_size_.EnableWindow(pParent->val_.backup_ && pParent->val_.backup_if_size_);
     ctl_backup_prompt_.EnableWindow(pParent->val_.backup_);
+    GetDlgItem(IDC_DOC_PAGE)->EnableWindow(pDocPage != NULL);
 
     return TRUE;
+}
+
+void CWorkspacePage::OnDocPage()
+{
+	if (pDocPage != NULL)
+		pParent->SetActivePage(pDocPage);
 }
 
 void CWorkspacePage::OnOK() 
@@ -566,6 +576,7 @@ static DWORD id_pairs_ws[] = {
     IDC_INTELLIGENT_UNDO, HIDC_INTELLIGENT_UNDO,
     IDC_UNDO_MERGE, HIDC_UNDO_MERGE,
     IDC_SPIN_UNDO_MERGE, HIDC_UNDO_MERGE,
+    IDC_DOC_PAGE, HIDC_DOC_PAGE,
     0,0 
 }; 
 
@@ -3231,7 +3242,7 @@ BOOL CWindowGeneralPage::OnSetActive()
     // The problem is that there is no "OnExit" member (the complement of OnInitDialog).
     // Although either OnOK or OnCancel are called when the property sheet is closed
     // (and the page has been entered) they can't be used as OnOK is also called when
-    // theuser clicks the Apply button.
+    // the user clicks the Apply button.
     ASSERT(GetView() != NULL && GetView()->GetDocument() != NULL);
     CHexEditView *pview;
     CHexEditDoc * pdoc;
