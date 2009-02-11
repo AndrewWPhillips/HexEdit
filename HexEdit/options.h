@@ -387,8 +387,10 @@ protected:
 	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 private:
-	COptPage * pStartupPage;
     void fix_controls();
+
+	COptPage * pStartupPage;
+	CBCGButton ctl_startup_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -429,7 +431,9 @@ protected:
 
 private:
     void fix_controls();
+
 	COptPage * pDocPage;
+	CBCGButton ctl_doc_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -473,6 +477,7 @@ protected:
 
 private:
 	COptPage * pDocPage;        // corresp, document (edit) page
+	CBCGButton ctl_doc_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -757,6 +762,7 @@ private:
 
 	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
 	COptPage * pGlobalPage;
+	CBCGButton ctl_global_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -800,6 +806,7 @@ private:
     void fix_controls();        // Disable/enable controls depending on value/state of other controls
 
 	COptPage * pGlobalPage;
+	CBCGButton ctl_global_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////

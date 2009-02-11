@@ -208,13 +208,7 @@
 #define IDR_CONTEXT_SELECTION           253
 #define IDR_MENUBUTTON                  254
 #define IDR_CONTEXT_BOOKMARKS           255
-#define IDI_DISPLAY                     256
-#define IDI_COGS                        257
 #define IDI_MACRO                       258
-#define IDI_PRINTER                     259
-#define IDI_WINDOW                      260
-#define IDI_COLOUR                      261
-#define IDI_FILTER                      262
 #define IDD_NEW_SCHEME                  263
 #define IDI_STRUCT                      263
 #define IDD_MULTIPLAY1                  264
@@ -344,9 +338,6 @@
 #define ID_BOOLEAN_TRUE                 349
 #define ID_STRING_LTRIM                 350
 #define ID_STRING_RTRIM                 351
-#define IDI_ICON3                       354
-#define IDI_TIPS                        355
-#define IDI_EDIT                        356
 #define ID_CHECKSUM_MD5                 357
 #define ID_CONVERT_UPPERCASE            358
 #define ID_CONVERT_LOWERCASE            359
@@ -382,16 +373,19 @@
 #define IDB_MISCBAR                     393
 #define IDB_MISCBAR_C                   394
 #define IDB_MISCBAR_D                   395
-#define IDI_LAYOUT                      399
-#define IDI_DOCEDIT                     400
-#define IDI_DOCDISPLAY                  401
-#define IDI_TEMPLATES                   402
 #define IDB_BITMAP2                     405
 #define IDD_GETINT                      407
 #define IDD_GETSTR                      408
 #define IDD_GETBOOL                     409
 #define IDD_OPT_WORKLAYOUT              410
 #define IDD_OPT_HISTORY                 411
+#define IDB_BITMAP4                     414
+#define IDB_HIST                        414
+#define IDB_DOCDISPLAY                  416
+#define IDB_DOCEDIT                     417
+#define IDB_DISPLAY                     418
+#define IDB_EDIT                        419
+#define IDB_SYSTEM                      420
 #define IDC_BULB                        1000
 #define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -1501,16 +1495,16 @@
 #define ID_BOOLEAN_GE                   39019
 #define ID_BOOLEAN_GETBOOL              39020
 #define ID_INTEGER_GETINT               39021
-#define ID_STRING_GETSTRING             39024
+#define ID_STRING_GETSTRING             39022
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        412
-#define _APS_NEXT_COMMAND_VALUE         39025
-#define _APS_NEXT_CONTROL_VALUE         1590
+#define _APS_NEXT_RESOURCE_VALUE        421
+#define _APS_NEXT_COMMAND_VALUE         39023
+#define _APS_NEXT_CONTROL_VALUE         1591
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

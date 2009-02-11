@@ -1329,7 +1329,7 @@ BEGIN
     CONTROL         "Save settings on e&xit",IDC_SAVE_EXIT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,22,17,95,10,0,
                     HIDC_SAVE_EXIT
-    PUSHBUTTON      "&Save Settings Now",IDC_SAVE_NOW,152,14,94,13,WS_GROUP,
+    PUSHBUTTON      "&Save Settings Now",IDC_SAVE_NOW,152,13,94,15,WS_GROUP,
                     0,HIDC_SAVE_NOW
     CONTROL         "&Add ""Open with HexEdit"" to Windows Explorer context menus",
                     IDC_SHELLOPEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,
@@ -1464,7 +1464,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,64,10,
                     186,1
     LTEXT           "Keystroke Macros",IDC_STATIC,10,6,58,8
-    GROUPBOX        "Refresh Display",IDC_STATIC,11,20,126,108,WS_GROUP
+    GROUPBOX        "Refresh Display",IDC_STATIC,11,20,126,109,WS_GROUP
     CONTROL         "&Never",IDC_REFRESH_NEVER,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP | WS_TABSTOP,18,31,35,10,0,HIDC_REFRESH_NEVER
     CONTROL         "Every",IDC_REFRESH_SECS,"Button",BS_AUTORADIOBUTTON,18,
@@ -1505,11 +1505,11 @@ BEGIN
                     156,44,53,10,0,HIDC_HALT1
     CONTROL         "&Major errors only",IDC_HALT2,"Button",
                     BS_AUTORADIOBUTTON,156,55,67,10,0,HIDC_HALT2
-    PUSHBUTTON      "Save Current Macro...",IDC_SAVEMACRO,149,77,97,14,
+    PUSHBUTTON      "Save Current Macro...",IDC_SAVEMACRO,149,77,97,15,
                     WS_DISABLED | WS_GROUP,0,HIDC_SAVEMACRO
-    PUSHBUTTON      "&Load Macro...",IDC_LOADMACRO,149,95,97,14,0,0,
+    PUSHBUTTON      "&Load Macro...",IDC_LOADMACRO,149,96,97,15,0,0,
                     HIDC_LOADMACRO
-    PUSHBUTTON      "Change Macro &Folder...",IDC_MACRODIR,149,114,97,14,0,0,
+    PUSHBUTTON      "Change Macro &Folder...",IDC_MACRODIR,149,115,97,15,0,0,
                     HIDC_MACRODIR
 END
 
@@ -1520,7 +1520,7 @@ CAPTION "Display"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,33,8,
-                    118,1
+                    102,1
     LTEXT           "Display",IDC_STATIC,10,4,24,8
     CONTROL         "&Large (block) cursor",IDC_LARGE_CURSOR,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,20,16,104,10,0,
@@ -1583,7 +1583,7 @@ BEGIN
     CONTROL         "",IDC_SLIDER_AUTOSCROLL,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,153,117,99,15,WS_EX_TRANSPARENT,
                     HIDC_SLIDER_AUTOSCROLL
-    PUSHBUTTON      "Document Display Options >>",IDC_DOC_PAGE,153,4,103,16,
+    PUSHBUTTON      "Document Display Options >>",IDC_DOC_PAGE,137,3,119,17,
                     0,0,HIDC_DOC_PAGE
 END
 
@@ -1754,8 +1754,8 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Display"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,30,8,
-                    133,1
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,32,8,
+                    111,1
     LTEXT           "Layout",IDC_STATIC,10,4,22,8
     LTEXT           "S&how Area(s):",IDC_STATIC,19,18,48,8
     COMBOBOX        IDC_SHOW_AREA,69,17,61,53,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -1801,7 +1801,7 @@ BEGIN
     LTEXT           "C&ontrol Chars:",IDC_CONTROL_DESC,19,119,48,8
     COMBOBOX        IDC_CONTROL,69,117,94,58,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_CONTROL
-    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,5,91,16,
+    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,145,5,111,16,
                     0,0,HIDC_GLOBAL_PAGE
 END
 
@@ -2234,7 +2234,7 @@ CAPTION "Editing"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,32,8,
-                    131,1
+                    111,1
     LTEXT           "Editing",IDC_STATIC,10,4,22,8
     LTEXT           "Modifiability",IDC_STATIC,21,20,39,8
     COMBOBOX        IDC_MODIFY,63,18,64,47,CBS_DROPDOWNLIST | WS_VSCROLL | 
@@ -2278,7 +2278,7 @@ BEGIN
     CONTROL         "Show highlights",IDC_SHOW_HIGHLIGHTS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,135,120,115,10,0,
                     HIDC_SHOW_HIGHLIGHTS
-    PUSHBUTTON      "Global Editing Options >>",IDC_GLOBAL_PAGE,165,5,91,16
+    PUSHBUTTON      "Global Editing Options >>",IDC_GLOBAL_PAGE,145,5,111,16
 END
 
 IDD_OPT_WINGENERAL DIALOGEX 0, 0, 260, 140
@@ -2331,8 +2331,8 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_DFFD_ARRAY_MAX,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,132,58,11,14
-    PUSHBUTTON      "Change Templates &Folder...",IDC_TEMPLATEDIR,156,62,94,
-                    14,0,0,HIDC_TEMPLATEDIR
+    PUSHBUTTON      "Change Templates &Folder...",IDC_TEMPLATEDIR,156,61,94,
+                    16,0,0,HIDC_TEMPLATEDIR
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,85,
                     219,1
     LTEXT           "Default format strings",IDC_STATIC,10,81,67,8
@@ -2363,7 +2363,7 @@ CAPTION "Editing"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,33,8,
-                    118,1
+                    102,1
     LTEXT           "General",IDC_STATIC,10,4,26,8
     CONTROL         "Allow &background searching",IDC_BG_SEARCH,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,24,16,105,10,0,
@@ -2413,7 +2413,7 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_EXPORT_LINELEN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,239,120,11,12
-    PUSHBUTTON      "Document Edit Options >>",IDC_DOC_PAGE,153,4,103,16,0,0,
+    PUSHBUTTON      "Document Edit Options >>",IDC_DOC_PAGE,137,3,119,17,0,0,
                     HIDC_DOC_PAGE
 END
 
@@ -2424,34 +2424,34 @@ CAPTION "Global"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,50,8,
-                    205,1
+                    206,1
     LTEXT           "Main Window",IDC_STATIC,9,4,44,8
     CONTROL         "&Restore main window position on startup",IDC_RESTORE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,17,140,10,0,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,17,140,10,0,
                     HIDC_RESTORE
-    PUSHBUTTON      "More Startup Options >>",IDC_STARTUP_PAGE,167,14,88,16,
-                    NOT WS_TABSTOP,0,HIDC_STARTUP_PAGE
+    PUSHBUTTON      "More Startup Options >>",IDC_STARTUP_PAGE,158,14,98,16,
+                    0,0,HIDC_STARTUP_PAGE
     CONTROL         "Display Window &Tabs",IDC_MDITABS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,20,29,87,10,0,HIDC_MDITABS
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,29,87,10,0,HIDC_MDITABS
     CONTROL         "Window Tabs at &Bottom",IDC_TABSBOTTOM,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,32,41,100,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,28,41,100,10,0,
                     HIDC_TABSBOTTOM
     CONTROL         "Show Icons in Tabs",IDC_TABICONS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,32,52,100,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,28,52,100,10,0,
                     HIDC_TABICONS
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,55,71,
-                    200,1
+                    201,1
     LTEXT           "Modeless dialogs",IDC_STATIC,9,67,55,8
     CONTROL         "Allow to dock",IDC_DLG_DOCK,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,20,80,76,10,0,HIDC_DLG_DOCK
+                    WS_TABSTOP,16,80,76,10,0,HIDC_DLG_DOCK
     CONTROL         "Undocked dialogs move out of the way",IDC_DLG_MOVE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,107,80,137,10,0,
                     HIDC_DLG_MOVE
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,99,
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,99,
                     220,1
     LTEXT           "Global formatting",IDC_STATIC,9,95,54,8
     CONTROL         "&Hex in uppercase",IDC_HEX_UCASE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,20,108,76,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,108,76,10,0,
                     HIDC_HEX_UCASE
     LTEXT           "Numeric abbreviations:",IDC_STATIC,106,106,46,15
     COMBOBOX        IDC_INT_ABBREV,151,109,104,87,CBS_DROPDOWNLIST | 
@@ -2531,7 +2531,7 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,154,96,96,10,0,
                     HIDC_CLEAR_ON_EXIT
     PUSHBUTTON      "&Clear Selected Lists Now",IDC_CLEAR_HIST,146,110,108,
-                    13,WS_GROUP,0,HIDC_CLEAR_HIST
+                    15,WS_GROUP,0,HIDC_CLEAR_HIST
 END
 
 
@@ -3397,13 +3397,7 @@ IDI_DOWN                ICON                    "res\\down.ico"
 IDI_NEW                 ICON                    "res\\new.ico"
 IDI_DEL                 ICON                    "res\\del.ico"
 IDR_MAINFRAME4          ICON                    "res\\ico00002.ico"
-IDI_DISPLAY             ICON                    "res\\display.ico"
-IDI_COGS                ICON                    "res\\cogs.ico"
 IDI_MACRO               ICON                    "res\\macro.ico"
-IDI_PRINTER             ICON                    "res\\printer.ico"
-IDI_WINDOW              ICON                    "res\\window.ico"
-IDI_COLOUR              ICON                    "res\\colour.ico"
-IDI_FILTER              ICON                    "res\\filter.ico"
 IDI_STRUCT              ICON                    "res\\struct.ico"
 IDI_IF                  ICON                    "res\\if.ico"
 IDI_FOR                 ICON                    "res\\for.ico"
@@ -3411,15 +3405,6 @@ IDI_DATA                ICON                    "res\\data.ico"
 IDI_EVAL                ICON                    "res\\eval.ico"
 IDI_JUMP                ICON                    "res\\jump.ico"
 IDI_SWITCH              ICON                    "res\\switch.ico"
-IDI_ICON2               ICON                    "res\\icon2.ico"
-IDI_ICON3               ICON                    "res\\icon3.ico"
-IDI_TIPS                ICON                    "res\\tips.ico"
-IDI_EDIT                ICON                    "res\\edit.ico"
-IDI_LAYOUT              ICON                    "res\\layout.ico"
-IDI_DOCEDIT             ICON                    "res\\docedit.ico"
-IDI_DOCDISPLAY          ICON                    "res\\docdisp.ico"
-IDI_TEMPLATES           ICON                    "res\\templates.ico"
-IDI_HISTORY             ICON                    "res\\history.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3448,7 +3433,12 @@ IDB_TMP                 BITMAP                  "res\\tmp.bmp"
 IDB_VERT                BITMAP                  "res\\vert.bmp"
 IDB_VERT_HOT            BITMAP                  "res\\vert_hot.bmp"
 IDB_OPTIONSIMAGES       BITMAP                  "RES\\optionsimages.bmp"
-IDB_HIST                BITMAP                  "res\\kist.bmp"
+IDB_HIST                BITMAP                  "res\\hist.bmp"
+IDB_DOCDISPLAY          BITMAP                  "res\\docdisplay.bmp"
+IDB_DOCEDIT             BITMAP                  "res\\docedit.bmp"
+IDB_DISPLAY             BITMAP                  "res\\display.bmp"
+IDB_EDIT                BITMAP                  "res\\edit.bmp"
+IDB_SYSTEM              BITMAP                  "res\\system.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

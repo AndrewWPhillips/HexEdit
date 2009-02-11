@@ -261,6 +261,7 @@ BOOL CSystemGeneralPage::OnInitDialog()
 {
     COptPage::OnInitDialog();
     GetDlgItem(IDC_HIST_PAGE)->EnableWindow(pHistPage != NULL);
+    ctl_hist_butn_.SetImage(IDB_HIST);
 
     return TRUE;
 }
@@ -510,6 +511,7 @@ void CWorkspacePage::DoDataExchange(CDataExchange* pDX)
             address_ctl_.add_spaces();
         }
     }
+    DDX_Control(pDX, IDC_DOC_PAGE, ctl_doc_butn_);
 }
 
 BEGIN_MESSAGE_MAP(CWorkspacePage, COptPage)
@@ -544,7 +546,9 @@ BOOL CWorkspacePage::OnInitDialog()
     ctl_backup_if_size_.EnableWindow(pParent->val_.backup_);
     ctl_backup_size_.EnableWindow(pParent->val_.backup_ && pParent->val_.backup_if_size_);
     ctl_backup_prompt_.EnableWindow(pParent->val_.backup_);
+
     GetDlgItem(IDC_DOC_PAGE)->EnableWindow(pDocPage != NULL);
+    ctl_doc_butn_.SetImage(IDB_DOCEDIT);
 
     return TRUE;
 }
@@ -652,6 +656,7 @@ void CWorkspaceLayoutPage::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_DLG_MOVE, pParent->val_.dlg_move_);
 	DDX_Check(pDX, IDC_HEX_UCASE, pParent->val_.hex_ucase_);
 	DDX_CBIndex(pDX, IDC_INT_ABBREV, pParent->val_.k_abbrev_);
+    DDX_Control(pDX, IDC_STARTUP_PAGE, ctl_startup_butn_);
 }
 
 void CWorkspaceLayoutPage::fix_controls()
@@ -686,6 +691,9 @@ BOOL CWorkspaceLayoutPage::OnInitDialog()
 
     fix_controls();
 	
+    GetDlgItem(IDC_STARTUP_PAGE)->EnableWindow(pStartupPage != NULL);
+    ctl_startup_butn_.SetImage(IDB_SYSTEM);
+
 	return TRUE;
 }
 
@@ -770,6 +778,7 @@ void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_HL_MOUSE, pParent->val_.hl_mouse_);
     DDX_Check(pDX, IDC_SCROLL_PAST_ENDS, pParent->val_.scroll_past_ends_);
     DDX_Slider(pDX, IDC_SLIDER_AUTOSCROLL, pParent->val_.autoscroll_accel_);
+    DDX_Control(pDX, IDC_DOC_PAGE, ctl_doc_butn_);
 }
 
 void CWorkspaceDisplayPage::fix_controls()
@@ -815,11 +824,14 @@ BOOL CWorkspaceDisplayPage::OnInitDialog()
     ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_HEX_TICKS))->SetRange(1, 9999);
     ((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_HEX_NUMS)) ->SetRange(1, 9999);
     ((CSliderCtrl *)GetDlgItem(IDC_SLIDER_AUTOSCROLL))->SetRange(0, 50);
-    GetDlgItem(IDC_DOC_PAGE)->EnableWindow(pDocPage != NULL);
 
 	COptPage::OnInitDialog();
 
     fix_controls();
+
+    GetDlgItem(IDC_DOC_PAGE)->EnableWindow(pDocPage != NULL);
+    ctl_doc_butn_.SetImage(IDB_DOCDISPLAY);
+
 	return TRUE;
 }
 
@@ -3360,7 +3372,7 @@ void CWindowGeneralPage::OnDispReset()
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
-// CWindowPage property page
+// CWindowPage - window display options page
 
 IMPLEMENT_DYNCREATE(CWindowPage, COptPage)
 
@@ -3478,12 +3490,12 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 		pParent->val_.display_.line_nums = pParent->val_.line_nums_;
 		pParent->val_.display_.addrbase1 = pParent->val_.addrbase1_;
     }
+    DDX_Control(pDX, IDC_GLOBAL_PAGE, ctl_global_butn_);
 }
 
 BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
 	ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
-	ON_BN_CLICKED(IDC_GLOBAL_PAGE, OnGlobalPage)
 	ON_CBN_SELCHANGE(IDC_SHOW_AREA, OnSelchangeShowArea)
 	ON_CBN_SELCHANGE(IDC_CHARSET, OnSelchangeCharset)
 	ON_CBN_SELCHANGE(IDC_CONTROL, OnSelchangeControl)
@@ -3498,6 +3510,7 @@ BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
 	ON_BN_CLICKED(IDC_ADDR_DEC, OnChangeAddrDec)
 	ON_BN_CLICKED(IDC_LINENOS, OnChangeLineNos)
 	ON_BN_CLICKED(IDC_ADDRBASE1, OnChange)
+	ON_BN_CLICKED(IDC_GLOBAL_PAGE, OnGlobalPage)
 END_MESSAGE_MAP()
 
 void CWindowPage::OnGlobalPage()
@@ -3590,6 +3603,9 @@ BOOL CWindowPage::OnInitDialog()
     pspin->SetRange(2, CHexEditView::max_buf);
 
     fix_controls();
+
+    GetDlgItem(IDC_GLOBAL_PAGE)->EnableWindow(pGlobalPage != NULL);
+    ctl_global_butn_.SetImage(IDB_DISPLAY);
 
 	return TRUE;
 }
@@ -3844,12 +3860,12 @@ void CWindowEditPage::DoDataExchange(CDataExchange* pDX)
         pParent->val_.display_.hide_bookmarks = !pParent->val_.show_bookmarks_;
         pParent->val_.display_.hide_highlight = !pParent->val_.show_highlights_;
     }
+    DDX_Control(pDX, IDC_GLOBAL_PAGE, ctl_global_butn_);
 }
 
 BEGIN_MESSAGE_MAP(CWindowEditPage, COptPage)
 	ON_WM_HELPINFO()
     ON_WM_CONTEXTMENU()
-	ON_BN_CLICKED(IDC_GLOBAL_PAGE, OnGlobalPage)
 	ON_CBN_SELCHANGE(IDC_MODIFY, OnSelchangeModify)
 	ON_CBN_SELCHANGE(IDC_INSERT, OnSelchangeInsert)
 	ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChange)
@@ -3860,6 +3876,7 @@ BEGIN_MESSAGE_MAP(CWindowEditPage, COptPage)
 	ON_EN_CHANGE(IDC_VERTBUFFER, OnChange)
 	ON_BN_CLICKED(IDC_SHOW_BOOKMARKS, OnChange)
 	ON_BN_CLICKED(IDC_SHOW_HIGHLIGHTS, OnChange)
+	ON_BN_CLICKED(IDC_GLOBAL_PAGE, OnGlobalPage)
 END_MESSAGE_MAP()
 
 void CWindowEditPage::OnGlobalPage()
@@ -3893,6 +3910,9 @@ BOOL CWindowEditPage::OnInitDialog()
     pspin->SetRange(0, 999);
 
     fix_controls();
+
+    GetDlgItem(IDC_GLOBAL_PAGE)->EnableWindow(pGlobalPage != NULL);
+    ctl_global_butn_.SetImage(IDB_EDIT);
 
 	return TRUE;
 }
