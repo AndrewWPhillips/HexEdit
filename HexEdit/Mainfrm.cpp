@@ -1394,20 +1394,13 @@ void CMainFrame::OnViewExpl()
 
 void CMainFrame::OnUpdateViewRuler(CCmdUI* pCmdUI) 
 {
-    //CHexEditView *pview = GetView();
-    //pCmdUI->Enable(pview != NULL);
     pCmdUI->SetCheck(theApp.ruler_);
 }
 
 void CMainFrame::OnViewRuler() 
 {
-    CHexEditView *pview = GetView();
-    if (pview != NULL)
-    {
-        theApp.ruler_ = !theApp.ruler_;
-        pview->recalc_display();        // need to adjust border
-        pview->DoInvalidate();
-    }
+    theApp.ruler_ = !theApp.ruler_;
+    theApp.UpdateAllViews();
     theApp.SaveToMacro(km_toolbar, 15);
 }
 

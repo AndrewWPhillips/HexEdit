@@ -246,6 +246,8 @@ protected:
 
 public:
 // Implementation
+    void UpdateAllViews();      // just redraw all views
+
     static const char *szHexEditClassName; // Class name of mainframe
     static UINT wm_hexedit;     // Message for communicating between different HexEdit instances (to open files)
     HWND hwnd_1st_;             // Handle of previous instance mainfarm window or NULL if no previous instance

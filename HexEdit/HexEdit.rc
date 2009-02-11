@@ -267,6 +267,7 @@ END
 
 IDR_FORMATBAR TOOLBAR  16, 15
 BEGIN
+    BUTTON      ID_VIEW_RULER
     BUTTON      ID_AUTOFIT
     BUTTON      ID_COLUMN_DEC
     BUTTON      ID_COLUMN_INC
@@ -1350,7 +1351,7 @@ BEGIN
     CONTROL         "Run AutoExec &Macro",IDC_AUTOEXEC,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,152,81,102,10,0,
                     HIDC_AUTOEXEC
-    PUSHBUTTON      "History List Options >>",IDC_HIST_PAGE,152,118,94,13,0,
+    PUSHBUTTON      "History List Options >>",IDC_HIST_PAGE,152,116,94,16,0,
                     0,HIDC_HIST_PAGE
 END
 
@@ -1582,7 +1583,7 @@ BEGIN
     CONTROL         "",IDC_SLIDER_AUTOSCROLL,"msctls_trackbar32",TBS_BOTH | 
                     TBS_NOTICKS | WS_TABSTOP,153,117,99,15,WS_EX_TRANSPARENT,
                     HIDC_SLIDER_AUTOSCROLL
-    PUSHBUTTON      "Document Display Options >>",IDC_DOC_PAGE,153,5,103,14,
+    PUSHBUTTON      "Document Display Options >>",IDC_DOC_PAGE,153,4,103,16,
                     0,0,HIDC_DOC_PAGE
 END
 
@@ -1800,7 +1801,7 @@ BEGIN
     LTEXT           "C&ontrol Chars:",IDC_CONTROL_DESC,19,119,48,8
     COMBOBOX        IDC_CONTROL,69,117,94,58,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP,0,HIDC_CONTROL
-    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,5,91,14,
+    PUSHBUTTON      "Global Display Options >>",IDC_GLOBAL_PAGE,165,5,91,16,
                     0,0,HIDC_GLOBAL_PAGE
 END
 
@@ -2277,7 +2278,7 @@ BEGIN
     CONTROL         "Show highlights",IDC_SHOW_HIGHLIGHTS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,135,120,115,10,0,
                     HIDC_SHOW_HIGHLIGHTS
-    PUSHBUTTON      "Global Editing Options >>",IDC_GLOBAL_PAGE,165,5,91,14
+    PUSHBUTTON      "Global Editing Options >>",IDC_GLOBAL_PAGE,165,5,91,16
 END
 
 IDD_OPT_WINGENERAL DIALOGEX 0, 0, 260, 140
@@ -2412,7 +2413,7 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN_EXPORT_LINELEN,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
                     UDS_ARROWKEYS | UDS_NOTHOUSANDS,239,120,11,12
-    PUSHBUTTON      "Document Edit Options >>",IDC_DOC_PAGE,153,5,103,14,0,0,
+    PUSHBUTTON      "Document Edit Options >>",IDC_DOC_PAGE,153,4,103,16,0,0,
                     HIDC_DOC_PAGE
 END
 
@@ -2428,7 +2429,7 @@ BEGIN
     CONTROL         "&Restore main window position on startup",IDC_RESTORE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,17,140,10,0,
                     HIDC_RESTORE
-    PUSHBUTTON      "More Startup Options >>",IDC_STARTUP_PAGE,167,15,88,14,
+    PUSHBUTTON      "More Startup Options >>",IDC_STARTUP_PAGE,167,14,88,16,
                     NOT WS_TABSTOP,0,HIDC_STARTUP_PAGE
     CONTROL         "Display Window &Tabs",IDC_MDITABS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,20,29,87,10,0,HIDC_MDITABS
@@ -3418,6 +3419,7 @@ IDI_LAYOUT              ICON                    "res\\layout.ico"
 IDI_DOCEDIT             ICON                    "res\\docedit.ico"
 IDI_DOCDISPLAY          ICON                    "res\\docdisp.ico"
 IDI_TEMPLATES           ICON                    "res\\templates.ico"
+IDI_HISTORY             ICON                    "res\\history.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3446,6 +3448,7 @@ IDB_TMP                 BITMAP                  "res\\tmp.bmp"
 IDB_VERT                BITMAP                  "res\\vert.bmp"
 IDB_VERT_HOT            BITMAP                  "res\\vert_hot.bmp"
 IDB_OPTIONSIMAGES       BITMAP                  "RES\\optionsimages.bmp"
+IDB_HIST                BITMAP                  "res\\kist.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
