@@ -774,7 +774,8 @@ private:
     void change_offset(int offset);
     void redo_font();
 
-    CSizeAp win_size_;          // Current window dimensions (doc coords)
+    FILE_ADDRESS resize_start_addr_;
+    __int64 resize_curr_scroll_;
     CFont *pfont_;              // Current display font
     CBrush *pbrush_;            // Current brush (used with PatBlt)
     LOGFONT lf_, oem_lf_;       // Normal font and font for IBM/OEM graphics chars

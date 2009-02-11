@@ -555,9 +555,8 @@ CHexEditView::CHexEditView() : expr_(this)
 
     disp_state_ = previous_state_ = 0;
 
-    // We have to calculate these here since messages such as OnSize depend
-    // on them and can be received before \() is called.
-    win_size_ = null_size;
+    resize_start_addr_ = resize_curr_scroll_ = -1;
+
     pfont_ = NULL;
     pbrush_ = NULL;
     print_font_ = NULL;
@@ -4778,7 +4777,7 @@ void CHexEditView::nav_save(FILE_ADDRESS astart, FILE_ADDRESS aend, LPCTSTR desc
 
 	// The number of rows to move before adding a new nav pt (for significant and insignificant events)
 	FILE_ADDRESS significant_rows = 2;
-	FILE_ADDRESS insignificant_rows = win_size_.cy / line_height_ / 2;
+	FILE_ADDRESS insignificant_rows = 20; //insignificant_rows = win_size_.cy / line_height_ / 2;
 
 	// Note: The below checks if the caret has moved more than half a page AND the display has
 	// scrolled.  BUT if desc is not NULL (a description was supplied) then this is some sort of
@@ -5153,6 +5152,7 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
     return TRUE;
 }
 
+#if 0
 void CHexEditView::OnSize(UINT nType, int cx, int cy) 
 {
     if (cx == 0 && cy == 0)
@@ -5165,7 +5165,7 @@ void CHexEditView::OnSize(UINT nType, int cx, int cy)
 
     BOOL caret_displayed = CaretDisplayed(win_size_);
 
-    if (text_height_ > 0)
+    if (display_.autofit && text_height_ > 0)
     {
         // New code that keeps caret at same line in autofit mode when resizing
         FILE_ADDRESS keep_address;                  // Address we want to keep in the display
@@ -5218,12 +5218,62 @@ void CHexEditView::OnSize(UINT nType, int cx, int cy)
 
     CScrView::OnSize(nType, cx, cy);
 
-    // Make sure we have all the search occurrences for the new window size
+    // Make sure we show all visible search occurrences for the new window size
     ValidateScroll(GetScroll());
 
     // Keep track of current display area size
     win_size_ = ConvertFromDP(CSize(cx - bdr_left_ - bdr_right_, cy - bdr_top_ - bdr_bottom_));
 }
+#else
+void CHexEditView::OnSize(UINT nType, int cx, int cy) 
+{
+    if (cx == 0 && cy == 0)
+    {
+        // Not a "real" resize event
+        CScrView::OnSize(nType, cx, cy);
+        return;
+    }
+    num_entered_ = num_del_ = num_bs_ = 0;      // Can't be editing while mousing
+
+    if (display_.autofit && text_height_ > 0)
+    {
+        // This is to try to stay at the same part of the file when in
+        // autofit mode and we get multiple consecutive resize events
+        if (resize_start_addr_ == -1 || resize_curr_scroll_ != GetScroll().y)
+        {
+            resize_start_addr_ = pos2addr(GetScroll());
+        }
+
+        FILE_ADDRESS start_addr, end_addr;
+        BOOL end_base = GetSelAddr(start_addr, end_addr);
+        int row = 0;
+        if (start_addr == end_addr && display_.vert_display)
+            row = pos2row(GetCaret());
+
+        recalc_display();
+        CPointAp pt = addr2pos(resize_start_addr_);
+        pt.x = 0;
+        SetScroll(pt);
+
+        if (end_base)
+            SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
+        else
+            SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
+    }
+    else
+    {
+        resize_start_addr_ = -1;
+        recalc_display();
+    }
+
+    CScrView::OnSize(nType, cx, cy);
+
+    // Make sure we show all visible search occurrences for the new window size
+    ValidateScroll(GetScroll());
+
+    resize_curr_scroll_ = GetScroll().y;   // Save current pos so we can check if we are at the same place later
+}
+#endif
 
 void CHexEditView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
