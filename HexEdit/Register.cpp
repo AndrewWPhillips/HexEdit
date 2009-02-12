@@ -103,6 +103,8 @@ static const char *ack_name[] =
 	"SVN source control - Jim Blandy et al",
 	"TortoiseSVN SVN client - Stefan Küng et al",
 	"WIX installer toolkit - Rob Mensching et al",
+	"FileZilla ftp client - Tim Kosse",
+	"Ikonboard web forum software - Level 6",
 	NULL
 };
 
@@ -129,6 +131,8 @@ static const char *ack_url[] =
 	"http://subversion.tigris.org/",
 	"http://tortoisesvn.sourceforge.net/",
 	"http://wix.sourceforge.net/",
+	"http://filezilla-project.org/",
+	"http://www.ikonboard.com/",
 	NULL
 };
 

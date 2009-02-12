@@ -1,7 +1,6 @@
  
-3.4 Version
- > calculator
-   - drop list is too small when built with VS2005
+3.4 Version - build (HE + BCG) with VS2003
+ - calculator
    > fix resize problems
    > new look calculator
    > expressions in calculator
@@ -10,17 +9,18 @@
    > variables list
       > clear variables
    > functions list
+   - problems with edit box selection range (seem to be caused by it being in a drop-list)
  > Explorer
     > new modern icons
     > move hidden file icons to views menu
     > fix column selection
     > allow column reorder
- - Options
-    - fix images
-    - remove icons in top left of pages
-    - add Hist >> button on General page
-    - add doc edit>> button on global edit page
-    - add icons to >> buttons (CBCGButton::SetImage)
+ > Options
+    > fix images
+    > remove icons in top left of pages
+    > add Hist >> button on General page
+    > add doc edit>> button on global edit page
+    > add icons to >> buttons (CBCGButton::SetImage)
     > new ruler options: ticks/numbers for hex/decimal
     > display: indicate cursor/mouse position
        > formatting of numbers
@@ -31,26 +31,31 @@
       > add lines, +/- buttons (change to BCG DLL)
       > icons in tree (just change SetIconsList, AddPageToTree)
  - fix show selection problems
+   > window resize
+   - inc/dec cols
+   - rowsize adjuster in ruler
  - enable navigation points
    - don't save nav pt when flipping between files
  - icon not shown for 2nd and subsequent windows
     - need to call show_icon() after opening a new window
- - more acknowledgements in help
-	FileZilla
-	Expression Web 2
-	IkonBoard
-	FireFox
-	Parcom
   - wait cursor for any long operation (search for EnablePaneProgressBar(0))
   - disk editor
     - new option to scan for devices in background at startup
-  - instead of ::HMessageBox check view in idle event to see if bg search finished
+      > options dialog
+      - open dialog?
+  > instead of ::HMessageBox check view in idle event to see if bg search finished
   > expressions
     > Improve GetInt, GetString, GetBool
     > test in calculator
     > @ prefix for ambiguous identifiers
- - make columns in filter and infotips pages fit across (too narrow for 120 DPI)
+ > make columns in filter and infotips pages fit across (too narrow for 120 DPI)
 
+ - update help
+ - more acknowledgements in help
+	FileZilla
+	IkonBoard
+	FireFox
+	Parcom
  - check new cracker codes and find workaround
  - update security_version_ (hexedit.h)
  - update range and default value for ver_ (RegisterDlg.cpp)
