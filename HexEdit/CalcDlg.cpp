@@ -844,17 +844,26 @@ static DWORD id_pairs[] = {
 
 void CCalcDlg::Redisplay()
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    CString ss;
+    if (radix_  == 16 && current_type_ == CJumpExpr::TYPE_INT)
+    {
+        CString ss;
 
-    DWORD sel = edit_.GetSel();
-    edit_.GetWindowText(ss);
-    if (aa->hex_ucase_)
-        ss.MakeUpper();
-    else
-        ss.MakeLower();
-    edit_.SetWindowText(ss);
-    edit_.SetSel(sel);
+        DWORD sel = edit_.GetSel();
+        edit_.GetWindowText(ss);
+        if (theApp.hex_ucase_)
+            ss.MakeUpper();
+        else
+            ss.MakeLower();
+        edit_.SetWindowText(ss);
+        edit_.SetSel(sel);
+    }
+}
+
+// Set focus to text control and move caret to end
+void CCalcDlg::StartEdit()
+{
+    edit_.SetFocus();
+    edit_.SetSel(edit_.GetWindowTextLength(), -1);      // caret to end
 }
 
 // Tidy up any pending ops if macro is finishing
@@ -878,7 +887,7 @@ bool CCalcDlg::invalid_expression()
 	case CJumpExpr::TYPE_NONE:
         AfxMessageBox((LPCTSTR)CString(current_str_));
         edit_.SetFocus();
-		edit_.SetSel(mm_->expr_.get_error_pos(), mm_->expr_.get_error_pos());
+		edit_.SetSel(mm_->expr_.get_error_pos(), mm_->expr_.get_error_pos());   // caret to posn of error
 		return true;
 
 	case CHexExpr::TYPE_REAL:
@@ -1314,8 +1323,7 @@ void CCalcDlg::do_digit(char digit)
         }
     }
     edit_.SendMessage(WM_CHAR, digit, 1);
-    in_edit_ = TRUE;
-    source_ = aa_->recording_ ? km_user : km_result;
+    inedit(km_user);
 }
 
 void CCalcDlg::calc_previous()
@@ -2322,8 +2330,7 @@ void CCalcDlg::OnBackspace()            // Delete back one digit
     edit_.SendMessage(WM_CHAR, '\b', 1);
 
     ShowBinop();
-    in_edit_ = TRUE;                    // Allow edit of current value
-    source_ = aa_->recording_ ? km_user : km_result;
+    inedit(km_user);                    // Allow edit of current value
 }
 
 void CCalcDlg::OnClearEntry()           // Zero current value
@@ -2622,6 +2629,7 @@ void CCalcDlg::OnGetHexHist()
 		menu.Attach(ctl_hex_hist_.m_hMenu);
         CString ss = get_menu_text(&menu, ctl_hex_hist_.m_nMenuResult);
 		menu.Detach();
+        ss.Replace(" ", "");    // get rid of padding
 
         // If just calculated a result then clear it
 		if (!in_edit_)
@@ -2637,13 +2645,14 @@ void CCalcDlg::OnGetHexHist()
             ss = buf;
         }
 
+        edit_.SetFocus();
+        //edit_.SetSel(edit_.GetWindowTextLength(), -1);   // Sel is mucked up so move it to the end (kludge)
+
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
-        edit_.SetFocus();
 
         SetDlgItemText(IDC_OP_DISPLAY, "");
-		in_edit_ = TRUE;
-		source_ = aa_->recording_ ? km_user : km_result;
+        inedit(km_user);
 	}
 }
 
@@ -2655,6 +2664,9 @@ void CCalcDlg::OnGetDecHist()
 		menu.Attach(ctl_dec_hist_.m_hMenu);
         CString ss = get_menu_text(&menu, ctl_dec_hist_.m_nMenuResult);
 		menu.Detach();
+
+        ss.Replace(",", "");ss.Replace(".", ""); ss.Replace(" ", "");    // get rid of padding
+
 		if (!in_edit_)
 			edit_.SetWindowText("");
 	    in_edit_ = FALSE;
@@ -2668,13 +2680,14 @@ void CCalcDlg::OnGetDecHist()
             ss = buf;
         }
 
+        edit_.SetFocus();
+        //edit_.SetSel(edit_.GetWindowTextLength(), -1);
+
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
-        edit_.SetFocus();
 
         SetDlgItemText(IDC_OP_DISPLAY, "");
-		in_edit_ = TRUE;
-		source_ = aa_->recording_ ? km_user : km_result;
+        inedit(km_user);
 	}
 }
 
@@ -2695,15 +2708,16 @@ void CCalcDlg::OnGetVar()
 			edit_.SetWindowText("");
 	    in_edit_ = FALSE;
 
+        edit_.SetFocus();
+        //edit_.SetSel(edit_.GetWindowTextLength(), -1);  
+
         if (!ss.IsEmpty() && isalpha(ss[0]) && toupper(ss[0]) - 'A' + 10 < radix_)
             edit_.SendMessage(WM_CHAR, (TCHAR)'@');     // Prefix ID with @ so it's not treated as an integer literal
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
-        edit_.SetFocus();
 
         SetDlgItemText(IDC_OP_DISPLAY, "");
-		in_edit_ = TRUE;
-		source_ = aa_->recording_ ? km_user : km_result;
+        inedit(km_user);
 	}
 }
 
@@ -2720,6 +2734,10 @@ void CCalcDlg::OnGetFunc()
 			edit_.SetWindowText("");
 	    in_edit_ = FALSE;
 
+        edit_.SetFocus();
+        //edit_.SetSel(edit_.GetWindowTextLength(), -1);  
+
+        // Remember current location so we can later wipe out the #
 		int start, end;
 		edit_.GetSel(start, end);
 
@@ -2727,6 +2745,7 @@ void CCalcDlg::OnGetFunc()
 		edit_.SendMessage(WM_CHAR, (TCHAR)'#');
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
+
 		// Now replace the above non-numeric char (#) with a space ( )
 		edit_.SetSel(start, start + 1);
         edit_.SendMessage(WM_CHAR, (TCHAR)' ');
@@ -2734,12 +2753,10 @@ void CCalcDlg::OnGetFunc()
 		// Select everything between brackets
 		end = start + ss.Find(')') + 1;
 		start += ss.Find('(') + 2;
-        edit_.SetFocus();
 		edit_.SetSel(start, end);
 
         SetDlgItemText(IDC_OP_DISPLAY, "");
-		in_edit_ = TRUE;
-		source_ = aa_->recording_ ? km_user : km_result;
+        inedit(km_user);
 	}
 }
 
@@ -3010,8 +3027,7 @@ void CCalcDlg::OnMemGet()
         FixFileButtons();
     }
 
-    in_edit_ = TRUE;                    // The user can edit the value edit control
-    source_ = aa_->recording_ ? km_memget : km_result;
+    inedit(km_memget);
 }
 
 void CCalcDlg::OnMemStore() 
@@ -3126,8 +3142,7 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
         FixFileButtons();
     }
 
-    in_edit_ = TRUE;                    // The user can edit the new value in edit control
-    source_ = aa_->recording_ ? km_markget : km_result;
+    inedit(km_markget);
 }
 
 void CCalcDlg::OnMarkStore() 
@@ -3369,8 +3384,7 @@ void CCalcDlg::OnMarkAt()               // Get value from file at mark
         FixFileButtons();
     }
     
-    in_edit_ = TRUE;                    // The user can edit the new value in edit control
-    source_ = aa_->recording_ ? km_markat : km_result;
+    inedit(km_markat);
 }
 
 void CCalcDlg::OnSelGet()              // Position of cursor (or start of selection)
@@ -3404,8 +3418,7 @@ void CCalcDlg::OnSelGet()              // Position of cursor (or start of select
         FixFileButtons();
     }
 
-    in_edit_ = TRUE;                    // The user can edit the new value in edit control
-    source_ = aa_->recording_ ? km_selget : km_result;
+    inedit(km_selget);
 }
 
 void CCalcDlg::OnSelAt()                // Value in file at cursor
@@ -3469,8 +3482,7 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
         FixFileButtons();
     }
 
-    in_edit_ = TRUE;                    // The user can edit the new value in edit control
-    source_ = aa_->recording_ ? km_selat : km_result;
+    inedit(km_selat);
 }
 
 void CCalcDlg::OnSelLen() 
@@ -3496,8 +3508,7 @@ void CCalcDlg::OnSelLen()
         FixFileButtons();
     }
 
-    in_edit_ = TRUE;                    // The user can edit the new value in edit control
-    source_ = aa_->recording_ ? km_sellen : km_result;
+    inedit(km_sellen);
 }
 
 void CCalcDlg::OnEofGet()               // Length of file
@@ -3520,8 +3531,7 @@ void CCalcDlg::OnEofGet()               // Length of file
         FixFileButtons();
     }
 
-    in_edit_ = TRUE;                    // The user can edit the new value in edit control
-    source_ = aa_->recording_ ? km_eofget : km_result;
+    inedit(km_eofget);
 }
 
 // ----------- File change funcs -------------

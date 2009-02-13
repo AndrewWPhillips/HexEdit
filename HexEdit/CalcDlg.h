@@ -55,6 +55,7 @@ public:
     void ShowStatus();
     void ShowBinop(int ii = -1);
     void FixFileButtons();
+    void StartEdit();           // Set focus to text control and move caret to end
 	void update_controls();
     void Set(unsigned __int64 v) { current_ = v; if (IsVisible()) edit_.Put(); }
     void change_base(int);
@@ -313,9 +314,13 @@ private:
     // active then is has value binop_none.
     binop_type op_;
 
-    // xxx instead of the following perhaps we should just select all after "=" pressed
-    // xxx eg. if !playback || update && visible
-    BOOL in_edit_;                  // Can we edit the numbers in the edit box or should next edit clear it (eg. after "=" used)
+    BOOL in_edit_;                      // Can we edit the numbers in the edit box or should next edit clear it (eg. after "=" used)
+    void inedit(km_type kk)
+    {
+		in_edit_ = TRUE;                // signal that we are editing
+		source_ = theApp.recording_ ? kk : km_result;   // where to get value from in playback
+        edit_.sel_ = (DWORD)-1;         // prevent selection being changed now
+    }
 
     // Calculator values: current displayed value, 2nd value (for binop) and calc memory value
     unsigned __int64 current_;      // Current value in the edit control (used by edit_)

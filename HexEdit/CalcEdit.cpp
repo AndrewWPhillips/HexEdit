@@ -59,6 +59,7 @@ static char THIS_FILE[] = __FILE__;
 CCalcEdit::CCalcEdit()
 {
     pp_ = NULL;
+    sel_ = (DWORD)-1;
 }
 
 CCalcEdit::~CCalcEdit()
@@ -72,6 +73,7 @@ BEGIN_MESSAGE_MAP(CCalcEdit, CEdit)
 	ON_WM_KEYDOWN()
 	//}}AFX_MSG_MAP
     ON_WM_SETFOCUS()
+    ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 // Put current calculator value (pp_->current_) into edit control nicely formatted
@@ -116,7 +118,7 @@ void CCalcEdit::Put()
 	pp_->current_type_ = CJumpExpr::TYPE_INT;
 
     SetWindowText(buf);
-    SetSel(strlen(buf), strlen(buf), FALSE);
+    SetSel(strlen(buf), -1, FALSE);     // move caret to end
 
     add_sep();
 }
@@ -502,7 +504,19 @@ void CCalcEdit::OnSetFocus(CWnd* pOldWnd)
 {
     pp_->in_edit_ = TRUE;
     CEdit::OnSetFocus(pOldWnd);
+    if (sel_ != (DWORD)-1)
+    {
+        SetSel(sel_);
+        sel_ = (DWORD)-1;
+    }
 }
+
+void CCalcEdit::OnKillFocus(CWnd* pNewWnd) 
+{
+    sel_ = GetSel();
+    CEdit::OnKillFocus(pNewWnd);
+}
+
 
 void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {

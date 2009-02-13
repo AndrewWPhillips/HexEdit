@@ -439,6 +439,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
         // Get extra command images (without creating a toolbar)
         CBCGToolBar::AddToolBarForImageCollection(IDR_MISC);
+        CBCGToolBar::AddToolBarForImageCollection(IDR_OPER);
 
 #if 0
         // Find user toolbar images file -  check old locn 1st (mac dir)
@@ -4109,6 +4110,7 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
         //m_wndCalc.FixFileButtons();
 
         m_wndCalc.SetFocus();
+        m_wndCalc.StartEdit();
 
         ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_goto);
     }
