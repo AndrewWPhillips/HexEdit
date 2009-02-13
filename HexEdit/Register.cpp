@@ -104,7 +104,7 @@ static const char *ack_name[] =
 	"TortoiseSVN SVN client - Stefan Küng et al",
 	"WIX installer toolkit - Rob Mensching et al",
 	"FileZilla ftp client - Tim Kosse",
-	"Ikonboard web forum software - Level 6",
+	"Ikonboard web forum software - Level 6 Studios",
 	NULL
 };
 

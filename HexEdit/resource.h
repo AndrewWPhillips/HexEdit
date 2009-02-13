@@ -167,7 +167,6 @@
 #define IDD_REGISTER                    231
 #define IDR_EDITBAR                     232
 #define IDD_ABOUT                       233
-#define IDR_MISC                        233
 #define IDI_ICON1                       233
 #define IDB_DOWND                       234
 #define IDD_MACROSAVE                   234
@@ -208,6 +207,8 @@
 #define IDR_CONTEXT_SELECTION           253
 #define IDR_MENUBUTTON                  254
 #define IDR_CONTEXT_BOOKMARKS           255
+#define IDR_MISC                        256
+#define IDR_OPER                        257
 #define IDI_MACRO                       258
 #define IDD_NEW_SCHEME                  263
 #define IDI_STRUCT                      263

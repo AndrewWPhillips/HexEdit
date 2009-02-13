@@ -43,10 +43,11 @@ IDR_HEXEDTYPE           ICON                    "res\\HexEditDoc.ico"
 IDR_MAINFRAME           BITMAP                  "res\\Mainbar.bmp"
 IDR_UNUSED              BITMAP                  "res\\mainfram.bmp"
 IDR_EDITBAR             BITMAP                  "res\\editbar.bmp"
-IDR_MISC                BITMAP                  "res\\misc.bmp"
 IDR_STDBAR              BITMAP                  "res\\toolbar.bmp"
 IDR_NAVBAR              BITMAP                  "res\\navbar.bmp"
 IDR_FORMATBAR           BITMAP                  "res\\formtbar.bmp"
+IDR_MISC                BITMAP                  "res\\misc.bmp"
+IDR_OPER                BITMAP                  "res\\operations.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -151,10 +152,32 @@ BEGIN
     BUTTON      ID_CONTROL_ALPHA
     BUTTON      ID_CONTROL_C
     BUTTON      ID_PROPERTIES
+    BUTTON      ID_DFFD_TOGGLE_EDIT
+    BUTTON      ID_EDIT_COMPARE
     BUTTON      ID_CALCULATOR
+    BUTTON      ID_MULTI_PLAY
+    BUTTON      ID_WINDOW_NEW
+    BUTTON      ID_WINDOW_NEXT
+    BUTTON      ID_WINDOW_CASCADE
+    BUTTON      ID_WINDOW_TILE_HORZ
+    BUTTON      ID_WINDOW_TILE_VERT
+    BUTTON      ID_WINDOW_MANAGER
+    BUTTON      ID_HELP_FINDER
+    BUTTON      ID_CONTEXT_HELP
+    BUTTON      ID_APP_ABOUT
+    BUTTON      ID_HELP_WEB
+    BUTTON      ID_HELP_EMAIL
+END
+
+IDR_OPER TOOLBAR  16, 15
+BEGIN
     BUTTON      ID_ENCRYPT_ENCRYPT
     BUTTON      ID_ENCRYPT_DECRYPT
     BUTTON      ID_ENCRYPT_PASSWORD
+    BUTTON      ID_ZLIB_COMPRESS
+    BUTTON      ID_ZLIB_DECOMPRESS
+    BUTTON      ID_LITTLE_ENDIAN
+    BUTTON      ID_BIG_ENDIAN
     BUTTON      ID_ASSIGN_BYTE
     BUTTON      ID_ASSIGN_16BIT
     BUTTON      ID_ASSIGN_32BIT
@@ -197,24 +220,6 @@ BEGIN
     BUTTON      ID_OR_16BIT
     BUTTON      ID_OR_32BIT
     BUTTON      ID_OR_64BIT
-    BUTTON      ID_MULTI_PLAY
-    BUTTON      ID_EDIT_COMPARE
-    BUTTON      ID_WINDOW_NEW
-    BUTTON      ID_WINDOW_NEXT
-    BUTTON      ID_WINDOW_CASCADE
-    BUTTON      ID_WINDOW_TILE_HORZ
-    BUTTON      ID_WINDOW_TILE_VERT
-    BUTTON      ID_WINDOW_MANAGER
-    BUTTON      ID_HELP_FINDER
-    BUTTON      ID_CONTEXT_HELP
-    BUTTON      ID_APP_ABOUT
-    BUTTON      ID_HELP_WEB
-    BUTTON      ID_HELP_EMAIL
-    BUTTON      ID_LITTLE_ENDIAN
-    BUTTON      ID_BIG_ENDIAN
-    BUTTON      ID_ZLIB_COMPRESS
-    BUTTON      ID_ZLIB_DECOMPRESS
-    BUTTON      ID_DFFD_TOGGLE_EDIT
 END
 
 IDR_STDBAR TOOLBAR  16, 15
