@@ -76,6 +76,7 @@ typedef __int64 FILE_ADDRESS;
 #define EXPLORER_WND    1   // Modeless dialog like Windows Explorer
 
 // Flags for stuff in development
+//#define SHADED_TOOLBARS 1  // When this is enabled we need to get rid of "Old Tool Bar" menu items
 //#define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
 //#define REFRESH_OFF     1   // Turn off display refresh when replacing all - doesn't seem to save much time so leave off for now

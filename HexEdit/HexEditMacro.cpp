@@ -304,8 +304,10 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                     ((CMainFrame *)AfxGetMainWnd())->OnViewFormatbar();
                 else if ((*pk).vv == 5)
                     ((CMainFrame *)AfxGetMainWnd())->OnViewNavbar();
+#ifndef SHADED_TOOLBARS
                 else if ((*pk).vv == 3)
                     ((CMainFrame *)AfxGetMainWnd())->OnViewToolbar();
+#endif
                 else if ((*pk).vv == 10)
                     ((CMainFrame *)AfxGetMainWnd())->OnViewCalculator();
                 else if ((*pk).vv == 11)
