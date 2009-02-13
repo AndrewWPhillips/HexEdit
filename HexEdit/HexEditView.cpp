@@ -5240,9 +5240,7 @@ void CHexEditView::OnSize(UINT nType, int cx, int cy)
         // This is to try to stay at the same part of the file when in
         // autofit mode and we get multiple consecutive resize events
         if (resize_start_addr_ == -1 || resize_curr_scroll_ != GetScroll().y)
-        {
             resize_start_addr_ = pos2addr(GetScroll());
-        }
 
         FILE_ADDRESS start_addr, end_addr;
         BOOL end_base = GetSelAddr(start_addr, end_addr);
@@ -5261,10 +5259,7 @@ void CHexEditView::OnSize(UINT nType, int cx, int cy)
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
     }
     else
-    {
-        resize_start_addr_ = -1;
         recalc_display();
-    }
 
     CScrView::OnSize(nType, cx, cy);
 
@@ -6112,6 +6107,8 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 #ifdef RULER_ADJUST
     if (adjusting_rowsize_ > -1)
     {
+        FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
+
         undo_.push_back(view_undo(undo_rowsize));
         undo_.back().rowsize = rowsize_;
 		if (display_.autofit)
@@ -6125,6 +6122,12 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 		else
             offset_ = rowsize_ - 1;
         recalc_display();
+
+        // Fix scroll place so it's about the same even though the row length has changed
+        CPointAp pt = addr2pos(scroll_addr);
+        pt.x = 0;
+        SetScroll(pt);
+
         DoInvalidate();
         ReleaseCapture();
         adjusting_rowsize_ = -1;
@@ -12165,16 +12168,27 @@ void CHexEditView::OnColumnDec()
         if (start_addr == end_addr && display_.vert_display)
             row = pos2row(GetCaret());
 
+        // Try to stay at the same place when multiple column adjustments are made
+        if (resize_start_addr_ == -1 || resize_curr_scroll_ != GetScroll().y)
+            resize_start_addr_ = pos2addr(GetScroll());
+
         undo_.push_back(view_undo(undo_rowsize));
         undo_.back().rowsize = rowsize_;            // Save previous rowsize for undo
         rowsize_ = rowsize_ - 1;
         recalc_display();
+
+        // Adjust scroll so that about the same row is visible
+        CPointAp pt = addr2pos(resize_start_addr_);
+        pt.x = 0;
+        SetScroll(pt);
 
         if (end_base)
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
         DoInvalidate();
+
+        resize_curr_scroll_ = GetScroll().y;   // Save current pos so we can check if we are at the same place later
     }
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_rowsize, -1);
 }
@@ -12194,16 +12208,27 @@ void CHexEditView::OnColumnInc()
         if (start_addr == end_addr && display_.vert_display)
             row = pos2row(GetCaret());
 
+        // Try to stay at the same place when multiple column adjustments are made
+        if (resize_start_addr_ == -1 || resize_curr_scroll_ != GetScroll().y)
+            resize_start_addr_ = pos2addr(GetScroll());
+
         undo_.push_back(view_undo(undo_rowsize));
         undo_.back().rowsize = rowsize_;            // Save previous rowsize for undo
         rowsize_ = rowsize_ + 1;
         recalc_display();
+
+        // Adjust scroll so that about the same row is visible
+        CPointAp pt = addr2pos(resize_start_addr_);
+        pt.x = 0;
+        SetScroll(pt);
 
         if (end_base)
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
         DoInvalidate();
+
+        resize_curr_scroll_ = GetScroll().y;   // Save current pos so we can check if we are at the same place later
     }
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_rowsize, -2);
 }

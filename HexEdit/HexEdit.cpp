@@ -500,7 +500,8 @@ BOOL CHexEditApp::InitInstance()
         GetSkinManager ()->EnableSkinsDownload (_T("http://www.bcgsoft.com/Skins"));
 		//CBCGPopupMenu::EnableMenuSound(FALSE);
 
-		// These are commands that do not appear on a toolbar but have an icon
+		// These are commands that are always shown in menus (not to be confused
+        // with commands no on toolbars - see AddToolBarForImageCollection)
         static int dv_id[] =
         {
             ID_FILE_NEW,
