@@ -3232,7 +3232,11 @@ expr_eval::tok_t expr_eval::get_next()
 
             char *endp;
             last_val_ = value_t(strtod(saved_, &endp));
-            ASSERT(endp == p_);                    // Check that our scan of f.p. is OK
+            if (endp != p_)
+            {
+                sprintf(error_buf_, "Invalid number: %.*s", p_ - saved_, saved_);
+				return TOK_NONE;
+            }
         }
         else if ((*p_ == 'x' || *p_ == 'X') && *saved_ == '0' && p_ == saved_+1)
         {
