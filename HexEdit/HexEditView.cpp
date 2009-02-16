@@ -5152,79 +5152,6 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
     return TRUE;
 }
 
-#if 0
-void CHexEditView::OnSize(UINT nType, int cx, int cy) 
-{
-    if (cx == 0 && cy == 0)
-    {
-        // Not a "real" resize event
-        CScrView::OnSize(nType, cx, cy);
-        return;
-    }
-    num_entered_ = num_del_ = num_bs_ = 0;      // Can't be editing while mousing
-
-    BOOL caret_displayed = CaretDisplayed(win_size_);
-
-    if (display_.autofit && text_height_ > 0)
-    {
-        // New code that keeps caret at same line in autofit mode when resizing
-        FILE_ADDRESS keep_address;                  // Address we want to keep in the display
-        int keep_row = 0;                           // Row within line if vert_display mode
-        CPoint keep_point;                          // Point in client rect where we want to keep the point
-
-        // Use caret as address to keep on same display line else use middle address of window
-        if (caret_displayed)
-        {
-            // keep_address = GetPos();
-            FILE_ADDRESS end_addr;
-            GetSelAddr(keep_address, end_addr);
-            if (keep_address == end_addr && display_.vert_display)
-                keep_row = pos2row(GetCaret());
-        }
-        else
-        {
-            // Get rectangle of display area within document
-            CRectAp doc_rect = CRectAp(GetScroll(), win_size_);
-
-            // Get average address of top and bottom of window
-            FILE_ADDRESS first_virt = (doc_rect.top/line_height_) * rowsize_ - offset_;
-            FILE_ADDRESS last_virt = (doc_rect.bottom/line_height_ + 1) * rowsize_ - offset_;
-            keep_address = (first_virt + last_virt)/2;
-
-            // Make sure address is within the file.  Note that top can be before the
-            // start of file (if offset_ > 0) and bottom can be past the end of file.
-            if (keep_address < 0) keep_address = 0;
-            else if (keep_address > GetDocument()->length()) keep_address = GetDocument()->length();
-        }
-
-        // Get current display position of point
-        keep_point = ConvertToDP(addr2pos(keep_address, keep_row));
-
-        // Recalc display based on new window size
-        recalc_display();
-
-        CPointAp newpos = addr2pos(keep_address, keep_row);  // Move caret to same byte as before resize
-
-        // Now try to adjust scroll position to keep caret (or center line) in the window
-        newpos.x = GetScroll().x;
-        newpos.y -= keep_point.y;
-        if (newpos.y < 0) newpos.y = 0;
-        SetScroll(newpos);
-    }
-    else
-        recalc_display();
-
-    if (caret_displayed) DisplayCaret(); // Keep caret within display
-
-    CScrView::OnSize(nType, cx, cy);
-
-    // Make sure we show all visible search occurrences for the new window size
-    ValidateScroll(GetScroll());
-
-    // Keep track of current display area size
-    win_size_ = ConvertFromDP(CSize(cx - bdr_left_ - bdr_right_, cy - bdr_top_ - bdr_bottom_));
-}
-#else
 void CHexEditView::OnSize(UINT nType, int cx, int cy) 
 {
     if (cx == 0 && cy == 0)
@@ -5268,7 +5195,6 @@ void CHexEditView::OnSize(UINT nType, int cx, int cy)
 
     resize_curr_scroll_ = GetScroll().y;   // Save current pos so we can check if we are at the same place later
 }
-#endif
 
 void CHexEditView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
@@ -11256,6 +11182,9 @@ BOOL CHexEditView::do_undo()
         break;
 
     case undo_rowsize:
+    {
+        FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
+
         rowsize_ = undo_.back().rowsize;
 		offset_ = real_offset_;
         if (offset_ >= rowsize_)
@@ -11265,10 +11194,17 @@ BOOL CHexEditView::do_undo()
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
+
+        // Fix scroll place so it's about the same even though the row length has changed
+        CPointAp pt = addr2pos(scroll_addr);
+        pt.x = 0;
+        SetScroll(pt);
+
         if (caret_displayed)
             DisplayCaret();     // Keep caret within display
         DoInvalidate();
-        break;
+    }
+    break;
 
     case undo_group_by:
         group_by_ = undo_.back().rowsize;
@@ -11297,9 +11233,10 @@ BOOL CHexEditView::do_undo()
         break;
 
     case undo_autofit:
+    {
+        FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
         // If rowsize has been specified then autofit is now off (undo turn on)
         display_.autofit = undo_.back().rowsize == 0;
-//      display_.autofit = !display_.autofit;
         if (!display_.autofit)
         {
             mess += "Undo: auto fit now OFF ";
@@ -11309,6 +11246,12 @@ BOOL CHexEditView::do_undo()
                 offset_ = rowsize_ - 1;
         }
         recalc_display();
+
+        // Fix scroll place so it's about the same even though the row length has changed
+        CPointAp pt = addr2pos(scroll_addr);
+        pt.x = 0;
+        SetScroll(pt);
+
         if (end_base)
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
@@ -11316,7 +11259,8 @@ BOOL CHexEditView::do_undo()
         if (caret_displayed)
             DisplayCaret();     // Keep caret within display
         DoInvalidate();
-        break;
+    }
+    break;
 
     case undo_setmark:
         invalidate_addr_range(mark_, mark_ + 1);
@@ -12031,6 +11975,8 @@ void CHexEditView::change_rowsize(int rowsize)
 {
     if (rowsize != rowsize_)
     {
+        FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
+
         FILE_ADDRESS start_addr, end_addr;
         BOOL end_base = GetSelAddr(start_addr, end_addr);
         int row = 0;
@@ -12042,6 +11988,12 @@ void CHexEditView::change_rowsize(int rowsize)
         rowsize_ = rowsize;
         recalc_display();
 
+        // Fix scroll place so it's about the same even though the row length has changed
+        CPointAp pt = addr2pos(scroll_addr);
+        pt.x = 0;
+        SetScroll(pt);
+
+        // Fix selection
         if (end_base)
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
@@ -12114,6 +12066,8 @@ void CHexEditView::do_autofit(int state /*=-1*/)
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
     BOOL caret_displayed = CaretDisplayed();
+    FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
+
 //    FILE_ADDRESS address = pos2addr(GetCaret());
     FILE_ADDRESS start_addr, end_addr;
     BOOL end_base = GetSelAddr(start_addr, end_addr);
@@ -12139,7 +12093,10 @@ void CHexEditView::do_autofit(int state /*=-1*/)
         undo_.back().rowsize = real_offset_;    // Save previous offset for undo
     }
     recalc_display();
-//    SetCaret(addr2pos(address));
+    // Fix scroll place so it's about the same even though the row length has changed
+    CPointAp pt = addr2pos(scroll_addr);
+    pt.x = 0;
+    SetScroll(pt);
     if (end_base)
         SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
     else
