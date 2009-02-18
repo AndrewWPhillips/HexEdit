@@ -42,12 +42,12 @@ static char THIS_FILE[] = __FILE__;
 //
 // 2. An overflow sets overflow_ in the CCalcDlg class (ie, via pp_).
 //
-// 3. With the ability to evaluate expressions in the edit control the type of 
+// 3. With the ability to evaluate expressions of 5 types, the type of 
 // the contents of the edit control are stored in current_type_ in CalcDlg. If
 // the value is a simple integer constant then current_const_ is TRUE.
 // If the contents of the edit box contains something more complex (not an int)
 // then current_const_ is FALSE and current_type_ contains the type of the
-// result of the expression (which is TYPE_INT for a simple integer).
+// result of the expression (which can still be TYPE_INT for an integer).
 // If it is not a valid expression current_type_ contains TYPE_NONE.
 // Note that for invalid expressions no error is indicated (beep, message etc)
 // since the user may not have finished it, but the error is stored in
