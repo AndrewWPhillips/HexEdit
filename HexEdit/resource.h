@@ -391,7 +391,6 @@
 #define IDB_EDIT                        419
 #define IDB_SYSTEM                      420
 #define IDC_BULB                        1000
-#define IDC_EDIT                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
 #define IDC_HEX                         1001
@@ -971,6 +970,7 @@
 #define IDC_ATTACHMENT_BROWSE           1435
 #define IDC_EDIT1                       1436
 #define IDC_VALUE                       1436
+#define IDC_CALC_COMBO                  1436
 #define IDC_PTR_SIZE2                   1437
 #define IDC_EDIT2                       1437
 #define IDC_ACK                         1437
@@ -1122,6 +1122,7 @@
 #define IDC_HIST_PAGE                   1587
 #define IDC_MAIN                        1588
 #define IDC_SPIN                        1589
+#define IDC_EDIT                        1590
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773

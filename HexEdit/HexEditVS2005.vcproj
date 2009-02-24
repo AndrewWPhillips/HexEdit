@@ -1212,6 +1212,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\display.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\display.ico"
 				>
 			</File>
@@ -1220,11 +1224,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\docdisplay.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\docedit.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\docedit.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\RES\down.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\edit.bmp"
 				>
 			</File>
 			<File
@@ -1285,6 +1301,10 @@
 			</File>
 			<File
 				RelativePath=".\RES\highligh.cur"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\hist.bmp"
 				>
 			</File>
 			<File
@@ -1352,6 +1372,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\operations.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\RES\optionsimages.bmp"
 				>
 			</File>
@@ -1388,6 +1412,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\system.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\RES\templates.ico"
 				>
 			</File>
@@ -1413,6 +1441,18 @@
 			</File>
 			<File
 				RelativePath=".\RES\toolbar24_disabled.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\toolbarCold.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\toolbarDisabled.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\toolbarHot.bmp"
 				>
 			</File>
 			<File
@@ -1502,6 +1542,10 @@
 			</File>
 			<File
 				RelativePath=".\TestData\License.txt"
+				>
+			</File>
+			<File
+				RelativePath=".\TestData\NewWebSite.txt"
 				>
 			</File>
 			<File

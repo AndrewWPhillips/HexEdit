@@ -1,6 +1,7 @@
  
 3.4 Version - build (HE + BCG) with VS2003
- - calculator
+ > calculator
+   *** expressions support precedence
    > fix resize problems
    > new look calculator
    > expressions in calculator
@@ -9,13 +10,16 @@
    > variables list
       > clear variables
    > functions list
-   - problems with edit box selection range (seem to be caused by it being in a drop-list)
+   > problems with edit box selection range (seem to be caused by it being in a drop-list)
  > Explorer
+    *** column select/reorder
     > new modern icons
     > move hidden file icons to views menu
-    > fix column selection
+    > column selection menu
+    > Show/hide columns
     > allow column reorder
  > Options
+    *** hide splash screen, ruler, floating windows move out of the way toggle
     > fix images
     > remove icons in top left of pages
     > add Hist >> button on General page
@@ -30,10 +34,10 @@
     > new tree look
       > add lines, +/- buttons (change to BCG DLL)
       > icons in tree (just change SetIconsList, AddPageToTree)
- - fix show selection problems
+ > fix show selection problems
    > window resize
-   - inc/dec cols
-   - rowsize adjuster in ruler
+   > inc/dec cols
+   > rowsize adjuster in ruler
  - enable navigation points
    - don't save nav pt when flipping between files
  - icon not shown for 2nd and subsequent windows
