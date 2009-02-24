@@ -6,10 +6,22 @@
 #include "MainFrm.h"
 #include "navmanager.h"
 
-void CNavManager::Add(LPCTSTR desc, LPCTSTR info, CHexEditView *pv, FILE_ADDRESS aa, FILE_ADDRESS ee, FILE_ADDRESS as)
+void CNavManager::Add(LPCTSTR desc, LPCTSTR info, CHexEditView * pv, FILE_ADDRESS aa, FILE_ADDRESS ee, FILE_ADDRESS as)
 {
 	if (in_move_)
 		return;           // Disallow store of moves caused by messages created while moving to a nav pt
+
+    if (v_.size() > 0 && pos_ == v_.size() - 1)
+    {
+        // If we swapped to a new view and the previous view had no nav moves then remove
+        // the nav point from the end of the stack.  This avoids lots of nav pts when just
+        // swapping between files.
+        CHexEditView * pOldView =  v_.back().pview_;
+        if (pOldView != pv && pOldView->NoNavMovesDone())
+        {
+            pos_--;
+        }
+    }
 
 	ASSERT(pos_ >= -1 && pos_ < int(v_.size()));
 
@@ -24,6 +36,13 @@ void CNavManager::Add(LPCTSTR desc, LPCTSTR info, CHexEditView *pv, FILE_ADDRESS
 		fname = pdoc->pfile1_->GetFilePath();
 
 	v_.push_back(nav(desc, info, pv, pdoc, fname, pdoc->read_only() == TRUE, aa, ee, as));
+    TRACE("xxx ADDED %s\r\n", desc);
+	if (v_.size() >= NAV_RESERVED)
+	{
+		// We have too many so delete the first few
+		v_.erase(v_.begin(), v_.begin() + 10);
+	    TRACE("xxx NAV STACK FULL!!!\r\n");
+	}
 	pos_ = v_.size() - 1;               // Point to the last entry
 }
 
@@ -340,4 +359,5 @@ void CNavManager::do_move(int ii)
     pview->MoveToAddress(v_[ii].start_addr_, v_[ii].end_addr_);
 	pos_ = ii;                          // Set current point to where we just moved to
 	in_move_ = false;
+    TRACE("xxx MOVE\r\n");
 }

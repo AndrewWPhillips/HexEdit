@@ -55,12 +55,12 @@ private:
 		CString fname_;         // Name of file (so we can reopen it)
 		bool read_only_;        // Was the file open read only?
 
-		FILE_ADDRESS start_addr_;     // Location of nav point in the above file
-		FILE_ADDRESS end_addr_;     // Location of nav point in the above file
+		FILE_ADDRESS start_addr_;   // Location of nav point (start) in the above file
+		FILE_ADDRESS end_addr_;     // Location of nav point (end) in the above file
 		FILE_ADDRESS scroll_;   // Address of top left of window (so we can try to restore scroll posn)
 	};
 
 	std::vector<nav> v_;        // Stores all the nav points in a stack
-	int pos_;                   // Current pos in the stack (usually v_.size() unless user nav'd backwards)
+	int pos_;                   // Current pos in the stack (usually v_.size()-1 unless user nav'd backwards)
 	bool in_move_;              // Disallow adding to nav pt stack if we are currently moving
 };

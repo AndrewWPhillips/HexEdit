@@ -1018,6 +1018,7 @@ void CHexEditView::OnInitialUpdate()
     nav_end_    = end_addr;
     nav_scroll_ = (GetScroll().y/line_height_)*rowsize_ - offset_;
     theApp.navman_.Add("Opened", get_info(), this, nav_start_, nav_end_, nav_scroll_);
+    nav_moves_ = 0;
 }
 
 // Update our options to the CHexFileList 
@@ -4774,6 +4775,7 @@ void CHexEditView::nav_save(FILE_ADDRESS astart, FILE_ADDRESS aend, LPCTSTR desc
 	// Check if we have moved enough to store a nav pt
 	bool save_nav = false;      // Is this a significant enough move to record in nav stack?
 	bool significant = desc != NULL && desc[strlen(desc)-1] == ' ';  // Important nav pts have space at end of desc
+    ++nav_moves_;
 
 	// The number of rows to move before adding a new nav pt (for significant and insignificant events)
 	FILE_ADDRESS significant_rows = 2;
@@ -5718,6 +5720,7 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
         nav_end_    = end_addr;
 		nav_scroll_ = (GetScroll().y/line_height_)*rowsize_ - offset_;
         theApp.navman_.Add("Change window", get_info(), this, nav_start_, nav_end_, nav_scroll_);
+        nav_moves_ = 0;
 	}
 
     // km_new now seems to get recorded before km_focus - so check if km_new_str is there
@@ -6138,7 +6141,7 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
             if (aa->highlight_)
                 add_highlight(start_addr, end_addr, TRUE);
 
-			nav_save(start_addr, end_addr, "Mouse Click");
+			nav_save(start_addr, end_addr, "Mouse Click ");
         }
 
         show_prop();
@@ -6618,7 +6621,7 @@ void CHexEditView::OnHighlightSelect()
                         segment_compare());
         if (pp != hl_set_.range_.begin())
             pp--;
-        MoveWithDesc("Select Highlight", pp->sfirst, pp->slast);
+        MoveWithDesc("Select Highlight ", pp->sfirst, pp->slast);
         theApp. SaveToMacro(km_highlight, (unsigned __int64)5);
     }
 }
@@ -6650,7 +6653,7 @@ void CHexEditView::OnHighlightPrev()
                         segment_compare());
         ASSERT(pp != hl_set_.range_.begin());
         pp--;           // Get the previous elt
-        MoveWithDesc("Previous Highlight", pp->sfirst, pp->slast);
+        MoveWithDesc("Previous Highlight ", pp->sfirst, pp->slast);
         aa->SaveToMacro(km_highlight, (unsigned __int64)2);
     }
 }
@@ -6688,7 +6691,7 @@ void CHexEditView::OnHighlightNext()
                         range_set<FILE_ADDRESS>::segment(start_addr+1, end_addr+1),
                         segment_compare());
         ASSERT(pp != hl_set_.range_.end());
-        MoveWithDesc("Next Highlight", pp->sfirst, pp->slast);
+        MoveWithDesc("Next Highlight ", pp->sfirst, pp->slast);
         aa->SaveToMacro(km_highlight, (unsigned __int64)3);
     }
 }
@@ -6802,7 +6805,7 @@ void CHexEditView::OnBookmarksPrev()
         return;
     }
 
-    MoveWithDesc("Previous Bookmark", *prev_bm, *prev_bm);
+    MoveWithDesc("Previous Bookmark ", *prev_bm, *prev_bm);
     theApp.SaveToMacro(km_bookmarks, (unsigned __int64)2);
 }
 
@@ -6853,7 +6856,7 @@ void CHexEditView::OnBookmarksNext()
         return;
     }
 
-    MoveWithDesc("Next Bookmark", *next_bm, *next_bm);
+    MoveWithDesc("Next Bookmark ", *next_bm, *next_bm);
     theApp.SaveToMacro(km_bookmarks, (unsigned __int64)3);
 }
 
@@ -7154,7 +7157,7 @@ void CHexEditView::do_mouse(CPoint dev_down, CSizeAp doc_dist)
     if (aa->highlight_)
         add_highlight(start_addr, end_addr, TRUE);
 
-	nav_save(start_addr, end_addr, "Mouse Click (Play)");
+	nav_save(start_addr, end_addr, "Mouse Click (Play) ");
 }
 
 // This is here to implement the macro command km_shift_mouse
@@ -7194,7 +7197,7 @@ void CHexEditView::do_shift_mouse(CPoint dev_down, CSizeAp doc_dist)
         if (aa->highlight_)
             add_highlight(start_addr, end_addr, TRUE);
     }
-	nav_save(start_addr, end_addr, "Mouse Click (Play)");
+	nav_save(start_addr, end_addr, "Mouse Click (Play) ");
 }
 
 void CHexEditView::OnRButtonDown(UINT nFlags, CPoint point) 
@@ -7278,7 +7281,7 @@ void CHexEditView::OnRButtonDown(UINT nFlags, CPoint point)
             SetSel(addr2pos(start_addr), addr2pos(end_addr));
         DisplayCaret();
 
-		nav_save(start_addr, end_addr, "Right Mouse Click");
+		nav_save(start_addr, end_addr, "Right Mouse Click ");
     }
 
     // Update properties etc for new position
@@ -7713,7 +7716,7 @@ void CHexEditView::OnSelectLine()
             undo_.push_back(view_undo(undo_sel));
             undo_.back().address = prev_end_;
         }
-		nav_save(new_start, new_end, "Select Line");
+		nav_save(new_start, new_end, "Select Line ");
     }
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_sel_line);
 }
@@ -12938,13 +12941,13 @@ void CHexEditView::OnSwapMark()
         // We need to specify the previous address since otherwise MoveToAddress
         // will use the current selection which is now in the wrong area since
         // display_.edit_char has changed.
-        MoveWithDesc("Swap Cursor with Mark", mark_, mark_, start_addr, end_addr, TRUE);
+        MoveWithDesc("Swap Cursor with Mark ", mark_, mark_, start_addr, end_addr, TRUE);
 
         // Need to call SetSel in case MoveToAddress did not due to no move (only area swap)
         SetSel(addr2pos(mark_), addr2pos(mark_), true);
     }
     else
-        MoveWithDesc("Swap Cursor with Mark", mark_, -1, -1, -1, FALSE, FALSE, row);
+        MoveWithDesc("Swap Cursor with Mark ", mark_, -1, -1, -1, FALSE, FALSE, row);
 
     // Move the mark
     undo_.push_back(view_undo(undo_setmark, TRUE));     // save undo for move mark

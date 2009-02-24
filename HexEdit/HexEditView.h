@@ -720,6 +720,8 @@ public:
 	void check_error();          // Check for read errors and mention them to the user
     BOOL set_colours();         // Set colours from app schemes using current scheme_name_
 
+    bool NoNavMovesDone() const { return nav_moves_ == 0; }  // any moves done since swappping to this view?
+
 private:
     enum { max_font_size = 100 };
 #ifdef _DEBUG
@@ -898,6 +900,7 @@ private:
 	void nav_save(FILE_ADDRESS astart, FILE_ADDRESS aend, LPCTSTR desc);
 	FILE_ADDRESS nav_start_, nav_end_; // Last nav point in this view
 	FILE_ADDRESS nav_scroll_;   // Window scroll position at nav pt
+    int nav_moves_;             // Home many moves since swapping to this view?
 
 #define RULER_ADJUST 1
 #ifdef RULER_ADJUST
