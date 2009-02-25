@@ -1442,7 +1442,7 @@ void CImportDialog::OnInitDone()
     pp->GetDlgItem(cmb1)->GetWindowRect(rct); // Get button rectangle
     pp->ScreenToClient(rct);
     rct.InflateRect(0, 4, -rct.Width()/3, 4);   // Make 2/3 width, + make higher for 2 lines of text
-    rct.OffsetRect(0, 26);
+    rct.OffsetRect(0, 30);
 
     m_discon.Create(_T("Use import addresses\r\n(for non-adjoining records)"),
                     WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, rct, pp, IDC_DISCON);
@@ -1484,7 +1484,7 @@ void CExportDialog::OnInitDone()
     pp->GetDlgItem(cmb1)->GetWindowRect(rct); // Get button rectangle
     pp->ScreenToClient(rct);
     rct.InflateRect(0, 4, -(rct.Width()/2), 4);   // make higher for 2 lines of text and half the width
-    rct.OffsetRect(0, 26);
+    rct.OffsetRect(0, 30);
 
     m_discon_hl.Create(_T("Export (non-adjoining)\r\nhighlighted areas only"),
                     WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, rct, pp, IDC_DISCON);
