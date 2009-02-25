@@ -968,6 +968,8 @@ void CHexEditApp::OnFileOpen()
 CDocument* CHexEditApp::OpenDocumentFile(LPCTSTR lpszFileName) 
 {
     CDocument *retval = CWinApp::OpenDocumentFile(lpszFileName);
+	if (retval == NULL)
+		return NULL;
 
     // Get file extension and change "." to "_" and make macro filename
     ASSERT(mac_dir_.Right(1) == "\\");
