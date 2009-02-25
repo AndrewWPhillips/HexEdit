@@ -720,7 +720,7 @@ public:
 	void check_error();          // Check for read errors and mention them to the user
     BOOL set_colours();         // Set colours from app schemes using current scheme_name_
 
-    bool NoNavMovesDone() const { return nav_moves_ == 0; }  // any moves done since swappping to this view?
+    bool NoNavMovesDone() const { return nav_moves_ == 0; }  // any moves done since swapping to this view?
 
 private:
     enum { max_font_size = 100 };

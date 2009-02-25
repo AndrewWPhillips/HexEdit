@@ -37,12 +37,6 @@ void CNavManager::Add(LPCTSTR desc, LPCTSTR info, CHexEditView * pv, FILE_ADDRES
 
 	v_.push_back(nav(desc, info, pv, pdoc, fname, pdoc->read_only() == TRUE, aa, ee, as));
     TRACE("xxx ADDED %s\r\n", desc);
-	if (v_.size() >= NAV_RESERVED)
-	{
-		// We have too many so delete the first few
-		v_.erase(v_.begin(), v_.begin() + 10);
-	    TRACE("xxx NAV STACK FULL!!!\r\n");
-	}
 	pos_ = v_.size() - 1;               // Point to the last entry
 }
 

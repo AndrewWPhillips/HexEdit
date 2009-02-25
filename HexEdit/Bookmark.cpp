@@ -413,7 +413,6 @@ BOOL CBookmarkList::GoTo(int index)
             CView *pview = pdoc->GetNextView(pos);
             if (pview->IsKindOf(RUNTIME_CLASS(CHexEditView)))
             {
-//                ((CHexEditView *)pview)->MoveToAddress(filepos_[index]);
 				CString ss;
 				ss.Format("Jump to bookmark \"%s\" ", name_[index]);  // space at end means significant nav pt
                 ((CHexEditView *)pview)->MoveWithDesc(ss, pdoc->GetBookmarkPos(index));

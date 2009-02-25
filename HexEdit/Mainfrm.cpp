@@ -2573,7 +2573,7 @@ BOOL CMainFrame::DoFind()
                     }
                     else
                     {
-                        pview->MoveToAddress(found_addr, found_addr + length);
+                        pview->MoveToAddress(found_addr, found_addr + length); // xxx should this add to nav pts??
 #ifdef SYS_SOUNDS
                         CSystemSound::Play("Search Text Found");
 #endif
