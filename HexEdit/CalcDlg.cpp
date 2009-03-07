@@ -933,6 +933,7 @@ void CCalcDlg::do_binop(binop_type binop)
         previous_ = current_;
         current_ = 0;
         source_ = km_result;
+        TRACE(" xxx BINOP previous = %d\r\n", (int)previous_);
     }
     aa_->SaveToMacro(km_binop, long(binop));
     op_ = binop;
@@ -1353,6 +1354,7 @@ void CCalcDlg::calc_previous()
             same_sign = (current_ & sign_mask_) == (previous_ & sign_mask_);
         else if ((previous_&mask_) > mask_ - (current_&mask_))
             overflow_ = TRUE;
+        TRACE(" xxx ADD %d %d\r\n", (int)current_, (int)previous_);
         current_ += previous_;
 
         // For signed numbers overflow if operands have same sign which is diff to sign of result
@@ -2200,10 +2202,10 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
                       DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
     }
 
-    TRACE3("Draw button %ld, action %d, state %d\n",
-           long(nIDCtl), 
-           lpDrawItemStruct->itemAction, 
-           lpDrawItemStruct->itemState);
+    //TRACE3("Draw button %ld, action %d, state %d\n",
+    //       long(nIDCtl), 
+    //       lpDrawItemStruct->itemAction, 
+    //       lpDrawItemStruct->itemState);
 
     rcButton = lpDrawItemStruct->rcItem;
     ::Draw3DButtonFrame(pDC, rcButton,
@@ -2230,13 +2232,12 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 
     add_hist();
 
-    unsigned __int64 temp = current_;
-    calc_previous();
-
     // If the value in current_ is not there as a result of a calculation then
     // save it before it is lost.
     if (source_ != km_result)
-        aa_->SaveToMacro(source_, temp);
+        aa_->SaveToMacro(source_, current_);
+
+    calc_previous();
 
     op_ = binop_none;
 
@@ -2248,7 +2249,6 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
             ShowBinop(binop_none);
     }
     in_edit_ = FALSE;
-    //source_ = aa_->recording_ ? km_user : km_result;
     source_ = km_result;
 
     // Make sure we can go to the address
@@ -2374,11 +2374,12 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 
 void CCalcDlg::OnEquals()               // Calculate result
 {
-	edit_.update_value(true);           // eval the epsression allowing side-effects now
+	if (current_type_ != CJumpExpr::TYPE_INT || !current_const_)
+		edit_.update_value(true);           // re-eval the expression allowing side-effects now
 
 	if (current_type_ == CJumpExpr::TYPE_NONE)
 	{
-		(void)invalid_expression();
+		(void)invalid_expression();     // show error message
 		return;
 	}
 
@@ -2412,13 +2413,17 @@ void CCalcDlg::OnEquals()               // Calculate result
 		return;
 	}
 
-    unsigned __int64 temp = current_;
+    unsigned __int64 saved_val = current_;
+    CString saved_str = current_str_;
+
     calc_previous();
 
-    // If the value in current_ is not there as a result of a calculation then
+    // If current value is not there as a result of a calculation then
     // save it before it is lost.
-    if (source_ != km_result)
-        aa_->SaveToMacro(source_, temp);
+    if (source_ == km_user && (current_type_ != CJumpExpr::TYPE_INT || !current_const_))
+        aa_->SaveToMacro(km_expression, saved_str);
+    else if (source_ != km_result)
+        aa_->SaveToMacro(source_, saved_val);
 
     op_ = binop_none;
     if (!aa_->refresh_off_ && IsVisible())
@@ -2431,7 +2436,6 @@ void CCalcDlg::OnEquals()               // Calculate result
 
     in_edit_ = FALSE;
     edit_.SetFocus();
-    //source_ = aa_->recording_ ? km_user : km_result;
     source_ = km_result;
     aa_->SaveToMacro(km_equals);
 }
@@ -3623,7 +3627,7 @@ void CCalcDlg::OnSelStore()
     {
         edit_.SetFocus();
         edit_.Put();
-        // FixFileButtons(); // done indirectly through MoveToAddress
+        // FixFileButtons(); // done indirectly through MoveToAddress via MoveWithDesc
     }
 
     if (source_ != km_result)

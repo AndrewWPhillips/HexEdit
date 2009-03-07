@@ -478,7 +478,7 @@ public:
                k != km_import_motorola && k != km_import_intel && k != km_import_text &&
                k != km_macro_message && k != km_macro_play &&
                k != km_address_hex && k != km_address_dec &&
-               k != km_scheme && k != km_font &&
+               k != km_scheme && k != km_expression && k != km_font &&
                k != km_encrypt_alg && k != km_encrypt_password &&
                k != km_bookmarks_add && k != km_bookmarks_goto &&
                k != km_new_str && k != km_insert_str &&
@@ -509,7 +509,7 @@ public:
                k != km_import_motorola && k != km_import_intel && k != km_import_text &&
                k != km_macro_message && k != km_macro_play &&
                k != km_address_hex && k != km_address_dec &&
-               k != km_scheme && k != km_font &&
+               k != km_scheme && k != km_expression && k != km_font &&
                k != km_encrypt_alg && k != km_encrypt_password &&
                k != km_bookmarks_add && k != km_bookmarks_goto &&
                k != km_new_str && k != km_insert_str &&
@@ -539,7 +539,7 @@ public:
                k == km_import_intel || k == km_import_text ||
                k == km_bookmarks_add || k == km_bookmarks_goto ||
                k == km_new_str || k == km_insert_str ||
-               k == km_focus || k == km_scheme);
+               k == km_focus || k == km_scheme || k == km_expression);
         if (recording_)
         {
             if (no_keys_)

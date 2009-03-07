@@ -42,12 +42,12 @@ static char THIS_FILE[] = __FILE__;
 //
 // 2. An overflow sets overflow_ in the CCalcDlg class (ie, via pp_).
 //
-// 3. With the ability to evaluate expressions of 5 types, the type of 
+// 3. With the ability to evaluate expressions in the edit control the type of 
 // the contents of the edit control are stored in current_type_ in CalcDlg. If
 // the value is a simple integer constant then current_const_ is TRUE.
 // If the contents of the edit box contains something more complex (not an int)
 // then current_const_ is FALSE and current_type_ contains the type of the
-// result of the expression (which can still be TYPE_INT for an integer).
+// result of the expression (which is TYPE_INT for a simple integer).
 // If it is not a valid expression current_type_ contains TYPE_NONE.
 // Note that for invalid expressions no error is indicated (beep, message etc)
 // since the user may not have finished it, but the error is stored in
@@ -163,6 +163,36 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 
 	return digit_seen && !last_sep;     // OK if we saw a digit and did not end on a separator
 }
+
+// Takes the value in the edit control and works out things about it.
+// The side_effects parameters says whether side effects in an expression
+// have any effect.  For example, in the expression "q ? a=1 : b=2" the values
+// of the variables 'a' and 'b' will not be changed if side_effects is false
+// but when side_effects is true then 'a' or 'b' will be changed depending
+// on the value of 'q'.
+//
+// This function is used
+//  1. while the user is editing the text (typing in a number or expression)
+//  2. when the result is to be displayed (Go or = button used)
+//
+// The following CalcDlg members are set accordingly:
+// current_
+//   int64 value of the text if current_type_ == TYPE_INT
+//   for other type it may be set to zero or somethings else (eg rounded floating point value) but I am not sure if this "feature" is used
+// current_type_
+//   TYPE_NONE if the current text is not a valid expression (including not a valid number in the current radix)
+//   TYPE_INT if the text represents an integer expression including a valid literal number in the current radix
+//   TYPE_REAL if the text represents a floating point expression (eg "pi/2.0")
+//   TYPE_BOOL if the text represents a boolean expression (eg "a == b"
+//   TYPE_DATE if the text represents a date expression
+// current_const_
+//   this is only true if the string is a valid literal number in the current radix (also current_type_ will be TYPE_INT)
+// current_str_
+//   if current_type_ != TYPE_NONE this is the result of the expression as a string
+//   if current_type_ == TYPE_NONE this is an error message describing why the expression is invalid
+// overflow_
+//   if current_type_ == TYPE_NONE this indicates some sort of domain error in the expression
+//   if current_type_ == TYPE_INT indicates the result is too big for the current number of bits
 
 bool CCalcEdit::update_value(bool side_effects /* = true */)
 {
@@ -628,7 +658,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     if (nChar == VK_DELETE)
 		(void)update_value(false);   // should always return true for Del key
 
-    pp_->source_ = pp_->aa_->recording_ ? km_user : km_result;
+    pp_->source_ = theApp.recording_ ? km_user : km_result;
 }
 
 BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg) 

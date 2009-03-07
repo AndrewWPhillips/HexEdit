@@ -129,6 +129,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 goto exit_play;
             }
 
+            TRACE(" xxx %d %d\r\n", (int)(*pk).ktype, (int)(*pk).v64);
             ASSERT(sizeof(*pk) == 9);
             switch ((*pk).ktype)
             {
@@ -1847,8 +1848,9 @@ BOOL CHexEditApp::macro_save(const char *filename, const std::vector<key_macro> 
             case km_bookmarks_goto:
             case km_new_str:
             case km_insert_str:
-            case km_scheme:
             case km_focus:
+            case km_scheme:
+            case km_expression:
                 // Write the string length
                 str_len = (*(*pk).pss).GetLength();
                 ff.Write(&str_len, sizeof(str_len));
@@ -1968,8 +1970,9 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
             case km_bookmarks_goto:
             case km_new_str:
             case km_insert_str:
-            case km_scheme:
             case km_focus:
+            case km_scheme:
+            case km_expression:
                 // Get the string length and allocate memory for the string
                 if (ff.Read(&str_len, sizeof(str_len)) < sizeof(str_len)) throw pfe;
                 buf = new char[str_len+1];
