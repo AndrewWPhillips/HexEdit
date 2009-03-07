@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=2397>
-<meta name=layout-width content=1208>
+<meta name=layout-height content=2843>
+<meta name=layout-width content=1311>
 
 
 <!--(Links)=========================================================-->
@@ -52,26 +52,127 @@
 	align=center>&nbsp;</p>
 
 <p style="text-align: center;"
-	align=center><img src="calc.gif" alt="image\calc.gif" style="width: 452px;
+	align=center><img src="calc.gif"
+						alt="image\calc.gif"
+						style="width: 452px;
 								height: 306px;
-								border-style: none;" width="452" height="306" border="0"></p>
+								border-style: none;"
+						width=452
+						height=306
+						border=0></p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p>HexEdit includes a built-in calculator similar to the Windows calculator 
  but with some enhancements and integration with the rest of HexEdit that 
- make it very powerful. However, unlike the Windows calculator it only 
- supports integer operations (although it does support 64 bit integers), 
- and it does not use operator precedence or brackets.</p>
+ make it very powerful. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ calculator can be used in two ways:</p>
+
+<p>&nbsp;</p>
+
+<p>1. As an integer calculator supporting up to 64 bit integers in different 
+ bases (hex, decimal etc) and with many operations available through the 
+ calculator buttons.</p>
+
+<p>2. As an expression evaluator supporting C-like expressions with brackets 
+ and precedence, 5 data types (integer, real, string, boolean and date), 
+ variables etc.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Expressions</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Expression evaluation is very 
+ convenient for entering an expression then pressing enter (or the '=' 
+ button) to get the result. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Expressions 
+ are used throughout HexEdit such as the jump tools and templates. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Using 
+ the calculator is convenient for testing the results especially as it 
+ has a convenient drop-down list that allows you to recall and modify previous 
+ expressions.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Unlike when using the calculator 
+ buttons expressions supports precedence, saving values to variables (using 
+ '=' operator), as well as floating point numbers, date calculations, functions 
+ etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are drop-down menus allowing you to select any of the available variables 
+ or predefined functions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Variables 
+ also support arrays. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->An 
+ example of an expression you could use is:</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">R[N] = rand()/0x10000 + min(P, Q, R)</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Most of the calculator buttons 
+ are designed to work with integers, and you can use integer expressions 
+ and combine these with calculations using the buttons. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ if you evaluate an expression that gives a result of another type the 
+ result is displayed but cannot be combined with the integer (button) operations. 
+ To remind you of this a character is displayed next to the result of non-integer 
+ expressions:</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">R = real or floating point value</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">S = string</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">B = boolean </p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">D = date</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;"><span style="font-weight: bold;">Integer 
+ Operations</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>Most of the buttons are designed to support integer operations, because 
+ the calculator in HexEdit is primarily used with integers such as file 
+ addresses. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ rest of the discussion focuses on these integer operations.</p>
+
+<p>&nbsp;</p>
 
 <p>The layout of the buttons is reminiscent of the Windows calculator but 
  a little better organised. All binary operators are to the right of the 
  numeric buttons, with unary operators to the left, and file access buttons 
  to the far left.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p>&nbsp;</p>
+
+<p>Note that you can combine the use of integer expressions with using 
+ the buttons. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ fact it is often more convenient to use an expression than to use the 
+ buttons as expressions support precedence and all operations of the buttons 
+ can be performed with an expression - for example, the &amp; operator 
+ duplicates the &quot;AND&quot; button (see <a HREF="../overviewadvanced/Expressions.htm">Expressions</a> 
+ or a C reference manual for information on all operands).</p>
+
+<p>&nbsp;</p>
 
 <p><span style="font-weight: bold;">Binary Operators</span></p>
 
@@ -749,6 +850,11 @@
 
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="macros.htm">Macros</a>&nbsp;to 
  find out how to use keystroke macros</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="../overviewadvanced/Expressions.htm">Expressions</a> 
+ for information on operations and operand types for expressions</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;">&nbsp;</p>
 
 </body>
 

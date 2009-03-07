@@ -306,17 +306,18 @@ XOR Quad Word command | cmd_operations\XOR_Quad_Word_command.htm
 
 [Options Dialog]
 System General Options page | dlg_options\HIDD_OPT_SYSTEM.htm
-Clear Histories Dialog | dlg_options\Clear_Histories_Dialog.htm
 Filters page | dlg_options\Filters.htm
 Printer Options | dlg_options\Printer_Options.htm
 Macro Options page | dlg_options\HIDD_OPT_MACRO.htm
-Workspace Display Options page | dlg_options\HIDD_OPT_SYSDISPLAY.htm
+Workspace Global Options page | dlg_options\Clear_Histories_Dialog.htm
+Workspace Global Options page | dlg_options\HIDD_OPT_SYSDISPLAY.htm
+Workspace Display Options | dlg_options\HIDD_OPT_WORKDISPLAY.htm
 Workspace Editing Options | dlg_options\HIDD_OPT_WORKSPACE.htm
 Info Tips Page | dlg_options\HIDD_OPT_TIPS.htm
 Template Options | dlg_options\HIDD_OPT_TEMPLATE.htm
 Document General Options | dlg_options\Document_General_Options.htm
-Document Edit Options | dlg_options\HIDD_OPT_WINEDIT.htm
 Document Display Options page | dlg_options\HIDD_OPT_WINDOW.htm
+Document Edit Options | dlg_options\HIDD_OPT_WINEDIT.htm
 Color Options page | dlg_options\HIDD_OPT_PARTITIONS.htm
 New Scheme Dialog | dlg_options\New_Scheme_Dialog.htm
 

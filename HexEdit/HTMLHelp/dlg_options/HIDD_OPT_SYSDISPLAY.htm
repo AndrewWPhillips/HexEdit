@@ -8,7 +8,7 @@
 
 <head>
 
-<title>Workspace Display Options page</title>
+<title>Workspace Global Options page</title>
 
 <!--(Meta)==========================================================-->
 
@@ -21,7 +21,7 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=810>
+<meta name=layout-height content=702>
 <meta name=layout-width content=1311>
 
 
@@ -39,7 +39,7 @@
 <body>
 
 <h2><font style="font-family: Arial;"
-			face=Arial>Workspace Display Options Page</font></h2>
+			face=Arial>Workspace Global Options Page</font></h2>
 
 <p style="text-align: center;"
 	align=center>&nbsp;</p>
@@ -47,14 +47,12 @@
 <p style="margin-top: 0;
 			margin-bottom: 0;
 			text-align: center;"
-	align=center><img src="OptWorkspaceDisplay.gif" style="border: none;
-								width: 560px;
-								height: 289px;" width="560" height="289" border="0"></p>
+	align=center>&nbsp;</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>The Display options page allows you to change some global options related 
- to the display.</p>
+<p>This page allows you to change some global options not specific to the 
+ document windows.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -89,7 +87,41 @@
 
 <p>&nbsp;</p>
 
-<p style="margin-top: 3.00pt; font-weight: bold;">Display hex in uppercase</p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Allow 
+ modeless dialogs to dock</span></p>
+
+<p style="margin-left: 18.00pt;">The modeless dialogs (Calculator, Find 
+ dialog, Bookmarks, Properties and Explorer Window) can remain open while 
+ working in HexEdit for quick access. Normally they float in front of the 
+ main HexEdit window, but can be allowed to &quot;dock&quot; with the sides 
+ of the main window so they do not obscure any other parts of the display. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If this 
+ option is on, when you move the dialog (by clicking and dragging on the 
+ title bar) over the left or right side of the main screen it will be docked 
+ where you drop it.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">This option is initially off as some people 
+ can become confused when a window is dragged and docks unintentionally. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(However, 
+ you can prevent a floating window from being docked unintentionally by 
+ holding down the Ctrl key while dragging.)</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Undocked 
+ dialogs to move out of the way</span></p>
+
+<p style="margin-left: 18.00pt;">Modeless dialogs when floating can obscure 
+ parts of the main window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Normally, 
+ if you move the cursor in the active window under a modeless dialog then 
+ HexEdit will move the dialog out of the way so you can see what you are 
+ doing. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Most 
+ people find this extremely covenient but one person requested that this 
+ could be turned off..</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Hex in uppercase</p>
 
 <p style="margin-left: 18.00pt;">When this option is selected the digits 
  A to F in all hex numbers are displayed in uppercase. This affects all 
@@ -98,33 +130,28 @@
  as &quot;6” and lowercase “b”), depending somewhat on the font you are 
  using.</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Large (block) 
- cursor</span></p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Numeric 
+ abbreviations</span></p>
 
-<p style="margin-left: 18.00pt;">A more easily visible cursor (or “caret”) 
- is used to show the current edit position in the active window. When off, 
- the cursor is a thin flashing line to the left of the current edit position. 
- When on the cursor changes to be a much wider block covering the character 
- at the edit position. This is useful for people using a small monitor 
- at high resolution or for people with poor eyesight.</p>
+<p style="margin-left: 18.00pt;">HexEdit creates abbreviations for large 
+ integers in many places -- for example, for files sizes in the Recent 
+ File List. (TBD where else?) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ measuring sizes of memory (or anything that comes in sizes of multiples 
+ of powers of 2) the letter K can be used as an abbreviation for 1024 (2^10) 
+ rather than the more common use of K (for kilo) meaning 1000. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Similarly 
+ M can mean 1000K or 1024K. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ is no common practice for these abbreviations (in fact even the programs 
+ that come with MSWindows are inconsistent) so HexEdit allows you to select 
+ your preference.</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Nice Addresses</span></p>
+<p style="margin-left: 18.00pt;">&nbsp;</p>
 
-<p style="margin-left: 18.00pt;">Displays addresses in a nicer format. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For hex 
- addresses the means digits are grouped into fours. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- decimal addresses numbers are formatted to local specification (eg with 
- thousands separators) as specified in the Window Control Panel.</p>
+<p style="margin-left: 18.00pt;">[Personally I use the 2nd option (K=1024, 
+ M=1000K, G=1000M) as 1024 only differs from 1000 by 2.4% (and this is 
+ a common convention) but 1024*1024 differs from 1,000,000 by 4.8% and 
+ this is getting a bit too big.]</p>
 
-<p style="margin-top: 3.00pt; font-weight: bold;">Display &quot;shadow&quot; 
- cursor in Hex/char Area</p>
-
-<p style="margin-left: 18.00pt;">When you are editing you current edit 
- position is marked with a flashing cursor. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- can edit in the hex or character area but it is handy sometimes to see 
- what the corresponding value in the other (character or hex) area is. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When this 
- option is on the current value in the other area is indicated also.</p>
+<p>&nbsp;</p>
 
 </body>
 

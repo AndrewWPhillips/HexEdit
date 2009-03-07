@@ -1376,6 +1376,8 @@
     <param name="Name" value="hex address tool">
     <param name="Name" value="Hex Jump Tool command">
     <param name="Local" value="cmd_misc\HID_JUMP_HEX_ADDR.htm">
+    <param name="Name" value="History Lists Page">
+    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="hex addresses">
@@ -3664,6 +3666,8 @@
     <param name="Local" value="overviewadvanced\Template_Files.htm">
     <param name="Name" value="HIDD_OPT_TIPS">
     <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
+    <param name="Name" value="Calculator">
+    <param name="Local" value="overviewtools\calc.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="variables">
@@ -4251,6 +4255,8 @@
     <param name="Name" value="Explorer window">
     <param name="Name" value="Explorer Dialog">
     <param name="Local" value="dlg_file\Explorer_Dialog.htm">
+    <param name="Name" value="History Lists Page">
+    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="ruler">
@@ -4286,6 +4292,16 @@
     <param name="Name" value="user input">
     <param name="Name" value="Expressions">
     <param name="Local" value="overviewadvanced\Expressions.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="clearing history lists on exit">
+    <param name="Name" value="History Lists Page">
+    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="My Recent Documents">
+    <param name="Name" value="History Lists Page">
+    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
   </object>
 </ul>
 </html>

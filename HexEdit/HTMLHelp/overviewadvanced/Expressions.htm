@@ -19,7 +19,7 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=2897>
+<meta name=layout-height content=2964>
 <meta name=layout-width content=1311>
 
 
@@ -44,8 +44,8 @@
 <p style="margin-top: 0; margin-bottom: 0;">Evaluation of C-like expressions 
  was added to HexEdit to assist in the processing of templates. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
  expressions can also be used in other areas -- for example, you can type 
- an expression into the hex and decimal jump tools to jump to a calculated 
- address.</p>
+ an expression into the hex and decimal jump tools or the calculator to 
+ jump to a calculated address.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -225,7 +225,7 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=80.6%>
-<p>struct member access</td></tr>
+<p>struct member access (templates only)</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -963,6 +963,53 @@
 			padding-left: 10px;"
 	width=29.174%>
 <p>any file element</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 9.831%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=9.831%>
+<p>defined</td>
+<td colspan=1
+	rowspan=1
+	style="width: 60.995%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=60.995%>
+<p>is a template element defined</td>
+<td colspan=1
+	rowspan=1
+	style="width: 29.174%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=29.174%>
+<p>name of the element</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -2841,9 +2888,28 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
+												style="border-style: none;
+														border: none;
+														width: 31px;
+														height: 12px;"
+												width=31
+												height=12
+												border=0>When hex constants 
+ are allowed (see <span style="font-weight: bold;">Constants</span> below) 
+ it can be ambiguous whether letters refer to a variable identifier or 
+ a hex constant. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ can happen in the hex jump tool or the calculator in Hex base mode. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->An 
+ example is the expression &quot;A = A &amp; FF&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ this case a variable name can be prefixed with '@' to avoid the ambiguity 
+ (eg &quot;@A = @A &amp; FF&quot;);</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
 <p style="margin-top: 0; margin-bottom: 0;">When expressions are used in 
- a template (see below) there are facilities for accessing any value of 
- the file encountered up to that point. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Note 
+ a template (see <a HREF="Template_Files.htm">Template Files</a>) there 
+ are facilities for accessing any value of the file encountered up to that 
+ point. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Note 
  that you can use but not assign to these &quot;variables&quot;.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  syntax is identical to accessing structure members and array elements 
  in C/C++. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Members 
@@ -2954,7 +3020,7 @@
 												border=0>An integer constant 
  consisting of only decimal digits will be interpreted as a <span style="font-weight: bold;">hex</span> 
  number even when not preceded by the usual &quot;0x&quot; when used in 
- the hex address tool. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ the hex address tool or the calculator in Hex mode. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  same number will be interpreted as decimal in the decimal address tool.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
@@ -2989,11 +3055,13 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">You cannot use &quot;variables&quot; 
- created in a template in the jump tools, but you can use bookmarks of 
- the current file. <!--kadov_tag{{<spaces>}}-->&nbsp;<span style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{</spaces>}}-->Note 
- that the sizeof, addressof and dot-operator (for access to structure members) 
- are only useful in template expressions and will generate an error.</span></p>
+<p style="margin-top: 0; margin-bottom: 0;">Although you can use &quot;global&quot; 
+ variables you cannot use &quot;variables&quot; created in a template in 
+ the jump tools, but you can use bookmarks of the current file. <!--kadov_tag{{<spaces>}}-->&nbsp;<span 
+ style="margin-top: 0; margin-bottom: 0;"><!--kadov_tag{{</spaces>}}-->Note 
+ that the sizeof, addressof, defined and dot-operator (for access to structure 
+ members) are only useful in template expressions and will generate an 
+ error.</span></p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 

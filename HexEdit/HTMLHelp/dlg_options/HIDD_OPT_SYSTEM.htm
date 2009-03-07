@@ -21,7 +21,7 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=986>
+<meta name=layout-height content=958>
 <meta name=layout-width content=1311>
 
 
@@ -69,15 +69,6 @@
  want them and then use the <span style="font-weight: bold;">Save settings 
  now</span> button (see below).</p>
 
-<p style="margin-left: 18px;">&nbsp;</p>
-
-<p style="margin-left: 18px;"><font style="font-family: Arial;"
-									face=Arial>The storage for these options 
- is in the file “HexEdit.ini” in the main Windows directory (usually C:\WINDOWS). 
- A few options stored there cannot be changed from within HexEdit such 
- as the default number of columns and column grouping in a window – you 
- might like to modify these with a text editor.</font></p>
-
 <p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;"><span 
  style="font-weight: bold;">S</span>ave settings now</span></p>
 
@@ -85,18 +76,8 @@
  options to be saved immediately (even if the <span style="font-weight: bold;">Save 
  settings on exit</span> option is not selected).</p>
 
-<p>&nbsp;</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Only permit 
- one instance of HexEdit to run</span></p>
-
-<p style="margin-left: 18.00pt;">If you run HexEdit but HexEdit is already 
- running then the new instance does not run, rather the original instance 
- is brought to the front. Any files specified on the command line or via 
- the shell are added to the files already open in the original instance.</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">Add “Open with HexEdit” 
- to Shell shortcut menus</p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Add 
+ “Open with HexEdit” to Shell shortcut menus</span></p>
 
 <p style="margin-left: 18.00pt;">This allows any file to be opened with 
  HexEdit using the shell shortcut menus which you see when you right-click 
@@ -109,8 +90,18 @@
  for some ill-behaved program launchers such as the Office 97 shortcut 
  bar. If you use these then you will have to disable this option in HexEdit.</p>
 
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Only permit 
+ one instance of HexEdit to run</span></p>
+
+<p style="margin-left: 18.00pt;">If you run HexEdit but HexEdit is already 
+ running then the new instance does not run, rather the original instance 
+ is brought to the front. Any files specified on the command line or via 
+ the shell are added to the files already open in the original instance.</p>
+
 <p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Restore 
- main window</span></p>
+ main window position</span></p>
 
 <p style="margin-left: 18.00pt;">The main HexEdit window is restored to 
  its position when you last ran the program. For this option to have any 
@@ -118,8 +109,29 @@
  settings</span> options above) since it is only effective when the HexEdit 
  starts up.</p>
 
-<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Run 
- AutoExec Macro</span></p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Background 
+ Scan for Devices</span></p>
+
+<p style="margin-left: 18.00pt;">When on HexEdit scans for hardware devices 
+ in a low-priority background thread just after startup. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ allows the &quot;Open Special&quot; dialog to open much more quickly.<span 
+ style="margin-left: 18.00pt;"> <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Turn 
+ this option off to get rid of the annoying floppy access when HexEdit 
+ starts.</span></p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Show 
+ Splash Screen</span></p>
+
+<p style="margin-left: 18.00pt;">Turn this option off if you don't want 
+ to see the splash screen when HexEdit starts.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Show 
+ Tip of the Day</span></p>
+
+<p style="margin-left: 18.00pt;">Turn this option off if you don't want 
+ to see the &quot;tip of the day&quot; when HexEdit starts.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Run AutoExec Macro</p>
 
 <p style="margin-left: 18.00pt;">If you create a keystroke macro and save 
  it with the name &quot;AutoExec.HEM&quot; then it is run whenever you 
@@ -129,35 +141,14 @@
 
 <p>&nbsp;</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Recent 
- File Entries</span></p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">History 
+ List Options</span></p>
 
-<p style="margin-left: 18.00pt;">This sets the number of recently opened 
- file entries displayed in the <a href="../menus/menu_file.htm">File menu</a>. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You can 
- enter any value between 1 and 16 inclusive. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- you want to open a file the you opened in the past but less recently than 
- the last entry in the list then you can used the <a href="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent 
- Files Dialog</a>.</p>
+<p style="margin-left: 18.00pt;">Before HexEdit 3.4 history options were 
+ on this page. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Clicking 
+ this button conveninently takes you to the new History Lists page.</p>
 
-<p style="margin-top: 3.00pt; font-weight: bold;">Clear History Lists</p>
-
-<p style="margin-left: 18.00pt;">Invokes the <a HREF="Clear_Histories_Dialog.htm">Clear 
- Histories Dialog</a> to delete search histories, bookmarks and the recently 
- open file list, and have these automatically deleted each time you run 
- HexEdit.</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Never 
- add file to the &quot;My Recent Documents&quot; list</span></p>
-
-<p style="margin-left: 18.00pt;">Most of the time when you open or read 
- a file in any program Windows remembers that you have opened it and adds 
- it to the &quot;My Recent Documents&quot; folder which can be accessed 
- using the Start Menu. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- probably doesn't make sense for HexEdit since you can open any type of 
- file</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 

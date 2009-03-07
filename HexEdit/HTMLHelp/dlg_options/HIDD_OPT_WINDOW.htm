@@ -21,7 +21,7 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1860>
+<meta name=layout-height content=1368>
 <meta name=layout-width content=1311>
 
 
@@ -64,20 +64,13 @@
 
 <p>&nbsp;</p>
 
-<p><span style="font-weight: bold;">Font</span></p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span>Global Display 
+ Options</span></p>
 
-<p style="margin-left: 40px;">Click the Font button to select the font 
- used in the active window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- brings up the same <a HREF="..\dlg_other\AFX_HIDD_FONT.htm">Choose Font 
- Dialog</a> as the <a HREF="..\cmd_view\HID_FONT.htm">Font command</a>. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note that 
- if you select the <span style="font-weight: bold;">Display ASCII+IBM/OEM</span> 
- character set from the <span style="font-weight: bold;">Character Set</span> 
- list (see below) then you will see a completely different set of fonts. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You may 
- like to set both default fonts (the normal one and the IBM/OEM one).</p>
+<p style="margin-left: 18.00pt;">This button jumps to the page for more 
+ display options.</p>
 
-<p>&nbsp;</p>
+<p style="margin-left: 0px;">&nbsp;</p>
 
 <p style="font-weight: bold;">Show Area(s)</p>
 
@@ -100,7 +93,89 @@
 <p style="margin-left: 40px;">Note that there is no way to turn off the 
  address area on the left side of the display.</p>
 
-<p><span style="font-weight: bold;">Character Set</span></p>
+<p style="font-weight: bold;"><span style="font-weight: bold;"><span style="font-weight: bold;">C</span>olumns</span></p>
+
+<p style="margin-left: 40px;">This field is the number of display columns 
+ in the active window. This field is disabled if the <span style="font-weight: bold;">Adjust 
+ number of columns to fit the display</span> (Autofit) option is selected.</p>
+
+<p><span style="font-weight: bold;"><span style="font-weight: bold;">G</span>rouping</span></p>
+
+<p style="margin-left: 40px;">This field changes the grouping of columns 
+ in the hex display area. This also sets the number of columns by which 
+ the Ctrl+Left Arrow and Ctrl+Right Arrow keys move. The default value 
+ is 4 columns.</p>
+
+<p style="font-weight: bold;">Offset</p>
+
+<p style="margin-left: 40px;">This field is the column number of the first 
+ byte of the file. The value must be between zero and one less than the 
+ <span style="font-weight: bold;">Number of columns</span> field.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">This field is normally left at zero but it 
+ is sometimes useful to shift the columns around so that patterns in the 
+ data are more obvious. The starting offset is also changed by the <a href="../cmd_misc/HID_START_LINE.htm">Left 
+ Side command</a>.</p>
+
+<p><span style="font-weight: bold;">Autofit</span></p>
+
+<p style="margin-left: 40px;">This is the same as the <a href="../cmd_view/HID_AUTOFIT.htm">Autofit 
+ command</a>. When selected the number of columns is adjusted (whenever 
+ the window is resized) to fit the width of the window.</p>
+
+<p><span style="font-weight: bold;">Maximize</span></p>
+
+<p style="margin-left: 40px;">This says whether the window is maximized. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This is 
+ the same as hitting the maximize button at the right end of the window's 
+ title bar or using the <a href="../cmd_control/HID_SC_MAXIMIZE.htm">Maximize 
+ command</a> on the window control menu.</p>
+
+<p><span style="font-weight: bold;">Sector bounds</span></p>
+
+<p style="margin-left: 40px;">Says whether the sector boundaries are displayed. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The sector 
+ size depends on the disk but is often 512 bytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ color for displaying sectors can be set for the current color scheme in 
+ the C<a href="HIDD_OPT_PARTITIONS.htm">olor Options page</a>.</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-weight: bold;">Hex Address</span></p>
+
+<p style="margin-left: 40px;">Display hex addresses on the left.</p>
+
+<p style="font-weight: bold;">Decimal Address</p>
+
+<p style="margin-left: 40px;">Display decimal addresses in the address 
+ area on the left. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ see <a href="../cmd_view/HID_ADDR_TOGGLE.htm">Decimal Addresses command</a>.</p>
+
+<p><span style="font-weight: bold;">Line numbers</span></p>
+
+<p style="margin-left: 40px;">Display line numbers in the address area 
+ on the left..</p>
+
+<p><span style="font-weight: bold;">Addresses start at 1</span></p>
+
+<p style="margin-left: 40px;">This allows addresses in the address area 
+ and offsets (in the ruler) to be shown starting from one (1) instead of 
+ zero (0). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By 
+ convention and to facilitate address calculations they usually start at 
+ zero, but some people prefer this option on.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">Note that this only affects the display of 
+ addresses and line numbers in the address area and offsets in the ruler. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Other address 
+ display and calculation strictly uses zero-based addresses</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Character Set</p>
 
 <p style="margin-left: 40px;">This list controls which character set is 
  used for the display of characters. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
@@ -164,184 +239,18 @@
  characters without an escape sequence are displayed as a dot except for 
  character zero which is displayed as a red &quot;0&quot;.</p>
 
-<p>&nbsp;</p>
+<p style="font-weight: bold;"><span style="font-weight: bold;">Font</span></p>
 
-<p style="font-weight: bold;">Columns</p>
-
-<p style="margin-left: 40px;">This field is the number of display columns 
- in the active window. This field is disabled if the <span style="font-weight: bold;">Adjust 
- number of columns to fit the display</span> (Autofit) option is selected.</p>
-
-<p><span style="font-weight: bold;">Offset</span></p>
-
-<p style="margin-left: 40px;">This field is the column number of the first 
- byte of the file. The value must be between zero and one less than the 
- <span style="font-weight: bold;">Number of columns</span> field.</p>
-
-<p style="margin-left: 40px;">&nbsp;</p>
-
-<p style="margin-left: 40px;">This field is normally left at zero but it 
- is sometimes useful to shift the columns around so that patterns in the 
- data are more obvious. The starting offset is also changed by the <a HREF="..\cmd_misc\HID_START_LINE.htm">Left 
- Side command</a>.</p>
-
-<p><span style="font-weight: bold;">Grouping</span></p>
-
-<p style="margin-left: 40px;">This field changes the grouping of columns 
- in the hex display area. This also sets the number of columns by which 
- the Ctrl+Left Arrow and Ctrl+Right Arrow keys move. The default value 
- is 4 columns.</p>
-
-<p><span style="font-weight: bold;">Scroll Zone</span></p>
-
-<p style="margin-left: 40px;">Says how close to the top or bottom of the 
- window the cursor must be before scrolling is performed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- the value is zero you can move right to the edge. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- the value is large (eg, 999) then the current cursor position will remain 
- in the (vertical) middle of the window and using the up and down arrow 
- keys just causes the window to scroll. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
- Stacked mode (see <span style="font-weight: bold;">Show Areas</span> above) 
- the scroll zone is automatically increased to 2, so you can see all of 
- the information about the current byte.</p>
-
-<p>&nbsp;</p>
-
-<p><span style="font-weight: bold;">Autofit</span></p>
-
-<p style="margin-left: 40px;">This is the same as the <a href="..\cmd_view\HID_AUTOFIT.htm">Autofit 
- command</a>. When selected the number of columns is adjusted (whenever 
- the window is resized) to fit the width of the window.</p>
-
-<p><span style="font-weight: bold;">Maximize</span></p>
-
-<p style="margin-left: 40px;">This says whether the window is maximized. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This is 
- the same as hitting the maximize button at the right end of the window's 
- title bar or using the <a HREF="..\cmd_control\HID_SC_MAXIMIZE.htm">Maximize 
- command</a> on the window control menu.</p>
-
-<p><span style="font-weight: bold;">Sector bounds</span></p>
-
-<p style="margin-left: 40px;">Says whether the sector boundaries are displayed. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The sector 
- size depends on the disk but is often 512 bytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- color for displaying sectors can be set for the current color scheme in 
- the C<a HREF="HIDD_OPT_PARTITIONS.htm">olor Options page</a>.</p>
-
-<p>&nbsp;</p>
-
-<p><span style="font-weight: bold;">Ruler</span></p>
-
-<p style="margin-left: 40px;">Display a ruler at the top of the window. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This display 
- hex and/or decimal offset depending on whether decimal and/or hex addresses 
- are show (see below).</p>
-
-<p><span style="font-weight: bold;">Hex Addresses</span></p>
-
-<p style="margin-left: 40px;">Display hex addresses on the left.</p>
-
-<p style="font-weight: bold;">Decimal Addresses</p>
-
-<p style="margin-left: 40px;">Display decimal addresses in the address 
- area on the left. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
- see <a href="../cmd_view/HID_ADDR_TOGGLE.htm">Decimal Addresses command</a>.</p>
-
-<p><span style="font-weight: bold;">Line numbers</span></p>
-
-<p style="margin-left: 40px;">Display line numbers in the address area 
- on the left..</p>
-
-<p><span style="font-weight: bold;">Addresses start at 1</span></p>
-
-<p style="margin-left: 40px;">This allows addresses in the address area 
- and offsets (in the ruler) to be shown starting from one (1) instead of 
- zero (0). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By 
- convention and to facilitate address calculations they usually start at 
- zero, but some people prefer this option on.</p>
-
-<p style="margin-left: 40px;">&nbsp;</p>
-
-<p style="margin-left: 40px;">Note that this only affects the display of 
- addresses and line numbers in the address area and offsets in the ruler. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Other address 
- display and calculation only uses zero-based addresses</p>
-
-<p>&nbsp;</p>
-
-<p style="font-weight: bold;">Modifiability - Read only</p>
-
-<p style="margin-left: 40px;">The active window is read only. The file 
- cannot be modified through this window unless read-only mode is turned 
- off. Note that if the file was opened read only then you cannot turn off 
- read-only mode.</p>
-
-<p><span style="font-weight: bold;">Modifiability - Read/Write</span></p>
-
-<p style="margin-left: 40px;">The opposite of read-only mode. The file 
- can be modified through this window.</p>
-
-<p>&nbsp;</p>
-
-<p><span style="font-weight: bold;">Mode - Overtype</span></p>
-
-<p style="margin-left: 40px;">Any data added to the file overwrites existing 
- data. Backspace does not delete bytes but changes them to null bytes (in 
- the hex area) or space (in the character area).</p>
-
-<p style="margin-left: 40px;">&nbsp;</p>
-
-<p style="margin-left: 40px;">For most types of binary files this is the 
- safe option, since nothing can be inserted into or deleted from the file. 
- Many types of binary files (such as .EXE files) rely on the position of 
- bytes within the file not changing. Further, if you insert or delete bytes 
- from a large file the disk file cannot be modified in place and must be 
- copied to a temporary file before the original is deleted and it is renamed. 
- This can be slow and increases the chances of running out of disk space.</p>
-
-<p><span style="font-weight: bold;">Mode - Insert</span></p>
-
-<p style="margin-left: 40px;">The opposite of overtype mode. Bytes can 
- be inserted into or deleted from the file.</p>
-
-<p><span style="font-weight: bold;">Big-endian</span></p>
-
-<p style="margin-left: 40px;">This affects the byte order used for commands 
- on the Operations menu. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
- is also the same as the <span style="font-weight: bold;">Big-endian</span> 
- checkbox in the <a HREF="../overviewtools/calc.htm">calculator</a>, which 
- is used with certain calculator buttons which read and write to the active 
- file.</p>
-
-<p><span style="font-weight: bold;">Change Tracking</span></p>
-
-<p style="margin-left: 40px;">Says whether changes to the file are highlighted. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->That is, 
- the difference between the edited file and the file on disk is shown, 
- in particular where bytes are inserted, deleted or replaced. <!--kadov_tag{{<spaces>}}-->&nbsp;<span 
- style="margin-left: 40px;"><!--kadov_tag{{</spaces>}}-->Inserted bytes 
- have a red (in the default color scheme) background, while replaced bytes 
- are underlined in red. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Deleted 
- bytes are marked with a red rectangle (and a count in the hex area if 
- less than 10 bytes have been deleted at that spot).</span></p>
-
-<p>&nbsp;</p>
-
-<p><span style="font-weight: bold;">Reset to Default</span></p>
-
-<p style="margin-left: 40px;">This button resets all the options to the 
- current default settings (see <span style="font-weight: bold;">Save As 
- Default</span> below).</p>
-
-<p><span style="font-weight: bold;">Save As Default</span></p>
-
-<p style="margin-left: 40px;">This button saves the current options as 
- the default settings. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- defaults settings are used when a new file is created or if you open a 
- file that you have not opened before or one that is not on the recently 
- opened file list on the File menu. If you open a file on the recently 
- opened list HexEdit restores the settings in effect when that file was 
- last used.</p>
+<p style="margin-left: 40px;">Click the Font button to select the font 
+ used in the active window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ brings up the same <a href="../dlg_other/AFX_HIDD_FONT.htm">Choose Font 
+ Dialog</a> as the <a href="../cmd_view/HID_FONT.htm">Font command</a>. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note that 
+ if you select the <span style="font-weight: bold;">Display ASCII+IBM/OEM</span> 
+ character set from the <span style="font-weight: bold;">Character Set</span> 
+ list (see below) then you will see a completely different set of fonts. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You may 
+ like to set both default fonts (the normal one and the IBM/OEM one).</p>
 
 <p>&nbsp;</p>
 

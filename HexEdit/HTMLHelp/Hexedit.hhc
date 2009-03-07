@@ -582,10 +582,6 @@
         <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Clear Histories Dialog">
-        <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
-      </object>
-      <li><object type="text/sitemap">
         <param name="Name" value="File Type Filters">
         <param name="Local" value="dlg_options\Filters.htm">
       </object>
@@ -598,8 +594,16 @@
         <param name="Local" value="dlg_options\HIDD_OPT_MACRO.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Workspace Display Options">
+        <param name="Name" value="History List Options">
+        <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Workspace Global Options">
         <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Workspace Display Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_WORKDISPLAY.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Workspace Editing Options">
