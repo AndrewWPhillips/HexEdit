@@ -1,0 +1,150 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Template Options</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=908>
+<meta name=layout-width content=1311>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Template Options Page</font></h2>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			text-align: center;"
+	align=center><img src="OptTemplate.gif" style="border-style: none;
+								border: none;
+								width: 560px;
+								height: 289px;" width="560" height="289" border="0"></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>This page allows you to change some options for templates that apply 
+ to all files.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">No Template View</p>
+
+<p style="margin-left: 18.00pt;">When you create a new file or open a file 
+ that you have not opened in HexEdit before this option says to not show 
+ the template view. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that even with this option on it is a simple matter (since HexEdit 3.2) 
+ to open the template view using the <a href="..\cmd_template\HID_DFFD_SPLIT.htm">Split 
+ Window</a> command or the <a href="..\cmd_template\HID_DFFD_TAB.htm">Tabbed 
+ Window</a> command on the <a href="..\menus\menu_template.htm">Template 
+ Menu</a>.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Split Window</p>
+
+<p style="margin-left: 18.00pt;">When creating or opening a new file the 
+ template is displayed to the left of the normal view in a split window. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This allows 
+ you to see the template view and the data view at the same time and even 
+ adjust their relative sizes by dragging the splitter. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ template used is that associated with the file extension of the file or 
+ the &quot;default&quot; template if there is none.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Tab Window</p>
+
+<p style="margin-left: 18.00pt;">When creating or opening a new file the 
+ template is the tree view is displayed in a separate tabbed window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can only see one of the normal view or the tree view at a time but can 
+ easily switch between them by clicking on the appropriate tab. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ template used is that associated with the file extension of the file or 
+ the &quot;default&quot; template if there is none.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">No of fixed array elements</p>
+
+<p style="margin-left: 18.00pt;">For large arrays (with constant element 
+ size) it may be faster to display only the first few elements of arrays. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This setting 
+ allows you to change how many elements are displayed.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Change 
+ Templates Folder</span></p>
+
+<p style="margin-left: 18.00pt;">Click this button to change the location 
+ that HexEdit uses to load and save templates <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By 
+ default this is under your Application data area. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example in Windows XP this is something like:</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 64px;">C:\Documents and Settings\&lt;login&gt;\Application 
+ Data\ECSoftware\HexEdit</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">Under Vista it is something like:</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="color: #400000; margin-left: 64px;"><span id=postcolor>C:\Users\&lt;login&gt;\AppData\Roaming\ECSoftware\HexEdit</span></p>
+
+<p style="margin-left: 18.00pt; color: #400000;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt; color: #400000;">Note that if you move 
+ the location of the folder you need to copy several required template 
+ files into it (as well as any other templates that you want to use). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can copy them from the previous templates folder, but they are also present 
+ in the folder where HexEdit is installed (usually C:\Program Files\HexEdit).</p>
+
+<p style="margin-left: 18.00pt; color: #400000;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt; color: #400000;">The files you need are 
+ BinaryFileFormat.DTD and Default.XML. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you use the C/C++ source parser you also need _standard_types.XML, _common_types.XML, 
+ _windows_types.XML, and _windows_constants.TXT (all these file names start 
+ with an underscore). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you have saved constants and/or types from earlier parses you can copy 
+ these in the files _custom_types.XML and _custom_constants.TXT.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Default format strings</p>
+
+<p style="margin-left: 18.00pt;">These strings determine how data elements 
+ of a template are displayed if the template file does not explicitly specify 
+ the format. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, you may want to see unsigned integers displayed in hex (%x) rather 
+ than decimal (%u). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Refer 
+ to C language printf format specifications for more information, and strftime 
+ for date formats.</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

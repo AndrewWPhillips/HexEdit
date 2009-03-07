@@ -1,0 +1,182 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Document Edit Options</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1060>
+<meta name=layout-width content=1311>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial><span style="font-family: Arial;">Document Editing</span> 
+ Options Page</font></h2>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="OptDocumentEdit.gif"
+						style="border-style: none;
+								border: none;
+								width: 560px;
+								height: 289px;"
+						width=560
+						height=289
+						border=0></p>
+
+<p>&nbsp;</p>
+
+<p>This page allows you to change options to do with editing of the file 
+ open in the active window.</p>
+
+<p>&nbsp;</p>
+
+<p><span style="font-weight: bold;">Modifiability - Read only</span></p>
+
+<p style="margin-left: 40px;">The active window is read only. The file 
+ cannot be modified through this window unless read-only mode is turned 
+ off. Note that if the file was opened read only then you cannot turn off 
+ read-only mode.</p>
+
+<p><span style="font-weight: bold;">Modifiability - Read/Write</span></p>
+
+<p style="margin-left: 40px;">The opposite of read-only mode. The file 
+ can be modified through this window.</p>
+
+<p><span style="font-weight: bold;">Mode - Overtype</span></p>
+
+<p style="margin-left: 40px;">Any data added to the file overwrites existing 
+ data. Backspace does not delete bytes but changes them to null bytes (in 
+ the hex area) or space (in the character area).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">For most types of binary files this is the 
+ safe option, since nothing can be inserted into or deleted from the file. 
+ Many types of binary files (such as .EXE files) rely on the position of 
+ bytes within the file not changing. Further, if you insert or delete bytes 
+ from a large file the disk file cannot be modified in place and must be 
+ copied to a temporary file before the original is deleted and it is renamed. 
+ This can be slow and increases the chances of running out of disk space.</p>
+
+<p><span style="font-weight: bold;">Mode - Insert</span></p>
+
+<p style="margin-left: 40px;">The opposite of overtype mode. Bytes can 
+ be inserted into or deleted from the file.</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Use </span>Big-endian 
+ byte order for operations</p>
+
+<p style="margin-left: 40px;">This affects the byte order used for commands 
+ on the Operations menu. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ is also the same as the <span style="font-weight: bold;">Big-endian</span> 
+ checkbox in the <a href="..\overviewtools\calc.htm">calculator</a>, which 
+ is used with certain calculator buttons which read and write to the active 
+ file.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p><span style="font-weight: bold;"><span style="font-weight: bold;">S</span>croll 
+ Zone</span></p>
+
+<p style="margin-left: 40px;">Says how close to the top or bottom of the 
+ window the cursor must be before scrolling is performed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the value is zero you can move right to the edge. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the value is large (eg, 999) then the current cursor position will remain 
+ in the (vertical) middle of the window and using the up and down arrow 
+ keys just causes the window to scroll. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ Stacked mode (see <span style="font-weight: bold;">Show Areas</span> above) 
+ the scroll zone is automatically increased to 2, so you can see all of 
+ the information about the current byte.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Show inserted bytes</p>
+
+<p style="margin-left: 40px;">This is the first of the four change tracking 
+ options. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ particular options highlights which bytes have been inserted in the file 
+ by using a light shade of the change tracking background colour. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is red by default in most color schemes but can be changed by modifying 
+ the active color scheme.</p>
+
+<p><span style="font-weight: bold;">Show modified bytes</span></p>
+
+<p style="margin-left: 40px;">This shows which bytes have been changed 
+ by underlining them in red (in the default color scheme). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that this reflects the current changes to the file when compared to what 
+ is on disk - for example, if you delete 10 bytes then insert 10 bytes 
+ (in INS mode) this just shows that 10 bytes have been modified, the same 
+ as if you had just overwritten the bytes (in OVR mode).</p>
+
+<p><span style="font-weight: bold;">Show deleted bytes</span></p>
+
+<p style="margin-left: 40px;">This shows where bytes have been deleted 
+ using a small red rectangle (in the default color scheme). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ the hex area this is a large rectangle containing a single digit count 
+ of the number of bytes that have been deleted or an asterisk (*) - see 
+ below. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ the hex area, and in stacked display mode this is just a thin red line 
+ between the bytes.</p>
+
+<p><span style="font-weight: bold;">Deletion count</span></p>
+
+<p style="margin-left: 40px;">This is a change tracking option that is 
+ a only available if the &quot;show deleted bytes&quot; option is on. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ only applies to the hex area where there is enough room between bytes 
+ to indicate how many bytes have been deleted. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the option is on it displays a single digit byte count (1 to 9) between 
+ the bytes where the deleted bytes were, or an asterisk if more than 9 
+ bytes were deleted. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the option is off it always displays an asterisk.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p><span style="font-weight: bold;">Show bookmarks</span></p>
+
+<p style="margin-left: 40px;">Turning this option off hides the bookmarks 
+ without actually deleting them. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ on, bookmarks are shown using a background color taken from the current 
+ color scheme (often a light blue).</p>
+
+<p><span style="font-weight: bold;">Show highlights</span></p>
+
+<p style="margin-left: 40px;">Turning this option off hides all highlights 
+ in the active file without actually deleting them. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ on highlights are shown with a background color taken from the current 
+ color scheme (often yellow).</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>
