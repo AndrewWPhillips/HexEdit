@@ -752,19 +752,16 @@ CRect CMainFrame::item_rect(CBCGPopupMenu *pm, UINT id)
 
 void CMainFrame::show_tip(UINT id /* = -1 */)
 {
+    menu_tip_.Hide();
     if (id == -1)
         id = last_id_;
     else
         last_id_ = id;
     if (popup_menu_.empty())
-    {
-        menu_tip_.Hide();
         return;
-    }
 
 	CHexEditView *pview = GetView();
 
-    menu_tip_.Hide();
 	menu_tip_.Clear();
 	menu_tip_.SetBgCol(::GetSysColor(COLOR_INFOBK));
 	menu_tip_.SetStockFont(ANSI_VAR_FONT);
@@ -4554,7 +4551,7 @@ void CMainFrame::OnClosePopupMenu(CBCGPopupMenu *pMenuPopup)
         popup_menu_.pop_back();
     }
     CBCGMDIFrameWnd::OnClosePopupMenu(pMenuPopup);
-    show_tip();
+    menu_tip_.Hide();
 }
 
 BOOL CMainFrame::OnShowPopupMenu (CBCGPopupMenu *pMenuPopup)

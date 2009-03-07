@@ -38,8 +38,8 @@
    > window resize
    > inc/dec cols
    > rowsize adjuster in ruler
- - enable navigation points
-   - don't save nav pt when flipping between files
+ > enable navigation points
+   > don't save nav pt when flipping between files
  - icon not shown for 2nd and subsequent windows
     - need to call show_icon() after opening a new window
   - wait cursor for any long operation (search for EnablePaneProgressBar(0))
