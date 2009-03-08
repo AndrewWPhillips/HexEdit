@@ -995,7 +995,7 @@
     <param name="Name" value="File Exit command">
     <param name="Local" value="cmd_file\HID_APP_EXIT.htm">
     <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="exponent">
@@ -1377,7 +1377,7 @@
     <param name="Name" value="Hex Jump Tool command">
     <param name="Local" value="cmd_misc\HID_JUMP_HEX_ADDR.htm">
     <param name="Name" value="History Lists Page">
-    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="hex addresses">
@@ -2058,7 +2058,7 @@
     <param name="Name" value="Recently Opened Files">
     <param name="Local" value="cmd_file\HID_FILE_MRU_FILE1.htm">
     <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
     <param name="Name" value="Recently Opened Files Dialog">
     <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
     <param name="Name" value="All Recent Files">
@@ -2113,7 +2113,7 @@
     <li><object type="text/sitemap">
       <param name="Name" value="histories etc">
       <param name="Name" value="Clear Histories Dialog">
-      <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+      <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -2244,7 +2244,7 @@
     <li><object type="text/sitemap">
       <param name="Name" value="history">
       <param name="Name" value="Clear Histories Dialog">
-      <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+      <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
       <param name="Name" value="Find Tool">
       <param name="Local" value="tools\HIDC_SEARCH.htm">
       <param name="Name" value="Simple Find page">
@@ -2890,7 +2890,7 @@
     <param name="Name" value="Registration Dialog">
     <param name="Local" value="dlg_other\HIDD_REG_HELP.htm">
     <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="large files">
@@ -3051,6 +3051,8 @@
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="stacked (vertical) display">
+      <param name="Name" value="Display Stacked command (View menu)">
+      <param name="Local" value="cmd_view\HID_DISPLAY_STACKED.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3338,6 +3340,8 @@
       <param name="Name" value="binary">
       <param name="Name" value="Numbers">
       <param name="Local" value="binary_files\Numbers.htm">
+      <param name="Name" value="Calculator">
+      <param name="Local" value="overviewtools\calc.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3446,7 +3450,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="paranoia">
     <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="bookmarks">
@@ -3463,7 +3467,7 @@
     <param name="Name" value="Bookmarks dialog">
     <param name="Local" value="dlg_tools\Bookmarks_dialog.htm">
     <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
     <param name="Name" value="Toggle Bookmark command">
     <param name="Local" value="cmd_misc\HID_BOOKMARK_TOGGLE.htm">
     <param name="Name" value="Bookmark_tool">
@@ -3596,7 +3600,7 @@
     <li><object type="text/sitemap">
       <param name="Name" value="histories">
       <param name="Name" value="Clear Histories Dialog">
-      <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+      <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3998,6 +4002,8 @@
       <param name="Name" value="conversion to">
       <param name="Name" value="Convert to Uppercase">
       <param name="Local" value="cmd_operations\HID_CONVERT_UPPERCASE.htm">
+      <param name="Name" value="Expressions">
+      <param name="Local" value="overviewadvanced\Expressions.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -4008,6 +4014,8 @@
       <param name="Name" value="conversion to">
       <param name="Name" value="Convert to Lowercase">
       <param name="Local" value="cmd_operations\HID_CONVERT_LOWERCASE.htm">
+      <param name="Name" value="Expressions">
+      <param name="Local" value="overviewadvanced\Expressions.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -4256,7 +4264,7 @@
     <param name="Name" value="Explorer Dialog">
     <param name="Local" value="dlg_file\Explorer_Dialog.htm">
     <param name="Name" value="History Lists Page">
-    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="ruler">
@@ -4296,12 +4304,12 @@
   <li><object type="text/sitemap">
     <param name="Name" value="clearing history lists on exit">
     <param name="Name" value="History Lists Page">
-    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="My Recent Documents">
     <param name="Name" value="History Lists Page">
-    <param name="Local" value="dlg_options\Clear_Histories_Dialog.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
 </ul>
 </html>
