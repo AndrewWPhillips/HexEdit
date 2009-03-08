@@ -2548,8 +2548,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,30,2,132
- PRODUCTVERSION 3,30,2,132
+ FILEVERSION 3,40,0,132
+ PRODUCTVERSION 3,40,0,132
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2566,12 +2566,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "3, 40, 1, 450"
+            VALUE "FileVersion", "3, 40, 0, 132"
             VALUE "InternalName", "HexEdit"
-            VALUE "LegalCopyright", "Copyright © 1999-2008  Expert Commercial Software"
+            VALUE "LegalCopyright", "Copyright © 1999-2009  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "3, 40, 1, 450"
+            VALUE "ProductVersion", "3, 40, 0, 132"
         END
     END
     BLOCK "VarFileInfo"
@@ -5055,6 +5055,8 @@ BEGIN
 0x6957, 0x646e, 0x776f, 0x2073, 0x5058, "\000" 
     IDC_SYSTYPE, 0x403, 6, 0
 0x6956, 0x7473, 0x0061, 
+    IDC_SYSTYPE, 0x403, 10, 0
+0x6957, 0x646e, 0x776f, 0x2073, 0x0037, 
     IDC_SYSTYPE, 0x403, 6, 0
 0x744f, 0x6568, 0x0072, 
     IDC_VERSION, 0x403, 12, 0
@@ -5081,6 +5083,8 @@ BEGIN
 0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0032, 
     IDC_VERSION, 0x403, 12, 0
 0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0033, 
+    IDC_VERSION, 0x403, 12, 0
+0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0034, 
     0
 END
 
