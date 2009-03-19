@@ -4412,6 +4412,13 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
             {
                 grid_.SetColumnWidth(item, 1);
                 grid_.AutoSizeColumn(item, GVS_BOTH);
+
+				// Make sure the new width is not greater than the window
+				int width = grid_.GetColumnWidth(item);
+				CRect rct;
+				grid_.GetClientRect(&rct);
+				if (width >= rct.Width())
+					grid_.SetColumnWidth(item, rct.Width() - 1);
             }
             grid_.ExpandColsNice(FALSE);
         }
