@@ -1410,11 +1410,6 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             return TOK_NONE;
         }
 
-        if (val.typ == TYPE_NONE)
-        {
-            sprintf(error_buf_, "Unknown symbol \"%.200s\"", psymbol_);
-            return TOK_NONE;
-        }
         if (sym_address < 0)
         {
             sprintf(error_buf_, "Symbol \"%.200s\" not in file", psymbol_);
