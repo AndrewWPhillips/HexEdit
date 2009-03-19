@@ -672,6 +672,7 @@ protected:
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
     afx_msg void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
     afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	DECLARE_MESSAGE_MAP()
 };
 

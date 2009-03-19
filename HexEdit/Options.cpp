@@ -1054,6 +1054,7 @@ BEGIN_MESSAGE_MAP(CTipsPage, COptPage)
     ON_WM_CONTEXTMENU()
     ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID_TIP, OnGridEndEdit)
     ON_NOTIFY(NM_CLICK, IDC_GRID_TIP, OnGridClick)
+    ON_WM_HSCROLL()     // for slider
 END_MESSAGE_MAP()
 
 void CTipsPage::add_row(int row, BOOL is_checked /*=TRUE*/, CString s1/*=""*/, CString s2 /*=""*/, CString s3 /*=""*/)
@@ -1288,6 +1289,12 @@ BOOL CTipsPage::OnHelpInfo(HELPINFO* pHelpInfo)
 void CTipsPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs8);
+}
+
+void CTipsPage::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+    // Slider position has changed
+    SetModified(TRUE);
 }
 
 void CTipsPage::OnNew() 
