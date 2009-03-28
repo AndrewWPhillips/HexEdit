@@ -104,7 +104,8 @@ void CTransparentListBox::SetColor(COLORREF Color,COLORREF SelColor,COLORREF Sha
 
 void CTransparentListBox::ResetContent(BOOL bInvalidate)
 {
-   Default();
+	CListBox::ResetContent();
+//   Default();
 	if ( bInvalidate ) 
 	{
 		Invalidate();

@@ -201,7 +201,8 @@ void CSplashWnd::CreatePaletteFromBitmap()
 BOOL CSplashWnd::Create()
 {                   
   //Load up the bitmap from file or from resource
-  VERIFY(LoadBitmap());
+  if (!LoadBitmap())
+	  return FALSE;
 
   //Modify the owner window of the splash screen to be an invisible WS_POPUP 
   //window so that the splash screen does not appear in the task bar

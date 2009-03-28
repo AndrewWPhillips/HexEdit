@@ -14416,12 +14416,11 @@ void CHexEditView::OnEncrypt()
 			if (end_addr - start_addr > UINT_MAX)
 				throw std::bad_alloc();
 			len = size_t(end_addr - start_addr);
-			//buf = new unsigned char[len];
-			buf = new unsigned char[2000000000];
+			buf = new unsigned char[len];
 		}
 		catch (std::bad_alloc)
 		{
-			AfxMessageBox("Insufficient memory");
+			AfxMessageBox("Insufficient memory - selection too large");
 			aa->mac_error_ = 10;
 			return;
 		}
