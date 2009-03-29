@@ -3077,7 +3077,7 @@ expr_eval::tok_t expr_eval::func_token(const char *buf)
 	char tmp[256];
 	strcpy(tmp, buf);
 	strupr(tmp);
-	ASSERT(strcmp(tmp, buf) == 0);
+
 	// Make sure they are sorted
     for (ii = 1; func_list[ii].name != NULL; ++ii)
 		ASSERT(strcmp(func_list[ii-1].name, func_list[ii].name) < 0);
