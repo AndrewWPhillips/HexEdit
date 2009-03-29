@@ -65,7 +65,7 @@ END_MESSAGE_MAP()
 // Start drag n drop
 void CGridCtrl2::OnBeginDrag()
 {
-    if (!m_bAllowDragAndDrop)
+    if (!m_bAllowDragAndDrop || !pdoc_->DffdEditMode())
         return;
 
     CCellRange sel = GetSelectedCellRange();
