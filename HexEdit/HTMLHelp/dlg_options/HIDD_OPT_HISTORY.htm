@@ -20,8 +20,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=933>
-<meta name=layout-width content=730>
+<meta name=layout-height content=957>
+<meta name=layout-width content=1311>
 
 
 <!--(Links)=========================================================-->
@@ -53,12 +53,12 @@
 
 <p>&nbsp;</p>
 
-<p>This page allows you to control history lists use (for convenience) 
+<p>This page allows you to control history lists used (for convenience) 
  throughout HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
  also allows for clearing of other remembered information for privacy reasons. 
  If other people have access to the same computer you may want to keep 
  this information private. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
- that when files (bookmarks files etc) are cleared they are first overwritten 
+ that when files (bookmarks file, etc) are cleared they are first overwritten 
  with zeroes before being deleted, so that they cannot be recovered using 
  an &quot;undelete&quot; utility.</p>
 
@@ -67,36 +67,89 @@
 <p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Never add 
  files opened to &quot;My Recent Documents List&quot;</span></p>
 
-<p style="margin-left: 18.00pt;">.</p>
+<p style="margin-left: 18.00pt;">Whenever you open a file in a program 
+ Windows usually remembers the name of the file and adds it to its recently 
+ opened files list, which is available through the start menu as a sub-menu 
+ under &quot;My Recent Documents&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is a useful capability for most applications but may not be appropriate 
+ for files you open in HexEdit.</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">s</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Recently 
+ used file list entries</span></p>
 
-<p style="margin-left: 18.00pt;">.</p>
+<p style="margin-left: 18.00pt;">HexEdit remembers all the files that you 
+ open. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ option says how many of the most recently opened files to show on the 
+ File menu. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can use any value from 1 to 16.</p>
 
-<p style="margin-top: 3.00pt;"><span><span style="font-weight: bold;">s</span></span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;"><span style="font-weight: bold;">F</span>ind 
+ list size</span></p>
 
-<p style="margin-left: 18.00pt;">.</p>
+<p style="margin-left: 18.00pt;">This is the size of the history list which 
+ stores recent searches. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is used for the history list for the Find tool (see <a HREF="../misc/ToolbarTools.htm">Toolbar 
+ Tools</a>) and also for the history list in the Find dialog.</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">s</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Replace 
+ list size</span></p>
 
-<p style="margin-left: 18.00pt;">.</p>
+<p style="margin-left: 18.00pt;">This is the size of the history list for 
+ replacements in search and replace operations (see <a HREF="../dlg_find/Replace.htm">Replace 
+ page</a>).</p>
 
-<p style="margin-top: 3.00pt;"><span><span style="font-weight: bold;">s</span></span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Decimal 
+ jumps list size</span></p>
 
-<p style="margin-left: 18.00pt;">.</p>
+<p style="margin-left: 18.00pt;">This is the size of the history list used 
+ in the decimal jump tool (see <a href="../misc/ToolbarTools.htm">Toolbar 
+ Tools</a>). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ list is also available in the <a HREF="../overviewtools/calc.htm">Calculator</a>.</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">s</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Hex jumps 
+ list size</span></p>
 
-<p style="margin-left: 18.00pt;">.</p>
+<p style="margin-left: 18.00pt;">This is the size of the history list used 
+ in the hex jump tool (see <a href="../misc/ToolbarTools.htm">Toolbar Tools</a>). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The list 
+ is also available in the <a href="../overviewtools/calc.htm">Calculator</a>.</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Explorer 
+ filters list size</span></p>
+
+<p style="margin-left: 18.00pt;">This is the size of the history list used 
+ for filters used to filter the files seen in the Explorer window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ list contains both filters types in and those selected from the predefined 
+ filters list..</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Explorer 
+ folders list size</span></p>
+
+<p style="margin-left: 18.00pt;">This is the size of the history list used 
+ for folders visited in the Explorer window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ contains the names of folders typed in and also those moved to by navigating 
+ around the folder hierarchy.</p>
+
+<p style="margin-left: 0px;"><img src="../tip.gif"
+									style="border-style: none;
+											border: none;
+											width: 31px;
+											height: 12px;"
+									width=31
+									height=12
+									border=0>List sizes are the number 
+ of entries saved when you exit HexEdit, not the size of the list when 
+ HexEdit is running. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ clear the list set the size to zero.</p>
 
 <p style="margin-top: 3.00pt; font-weight: bold;">Clear recent file list</p>
 
-<p style="margin-left: 18.00pt;">This completely clears the file containing 
+<p style="margin-left: 18.00pt;">This will completely clear the file containing 
  the list of recently opened files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  recent files on the <a HREF="..\menus\menu_file.htm">File menu</a> are 
- removed and all entries that appear in the <a HREF="..\dlg_file\Recently_Opened_Files_Dialog.htm">Recently 
+ also removed and all entries that appear in the <a HREF="..\dlg_file\Recently_Opened_Files_Dialog.htm">Recently 
  Opened Files dialog</a> disappear. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
- that formating information (character set, font, etc) and highlighting 
+ that formatting information (character set, font, etc) and highlighting 
  are also deleted when the recent file list is deleted as this information 
  is stored in the same file.</p>
 
@@ -117,8 +170,7 @@
 <p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Clear Selected 
  Lists Now</span></p>
 
-<p style="margin-left: 18.00pt;">Clears all of the selected lists and exits 
- the dialog..</p>
+<p style="margin-left: 18.00pt;">Clears the selected lists immediately.</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
