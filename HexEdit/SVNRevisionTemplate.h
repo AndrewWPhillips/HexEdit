@@ -1,6 +1,6 @@
 #pragma once
 
-char *SVNRevision = "$WCREV$";
+#define SVNRevision $WCREV$
 char *SVNDate     = "$WCDATE$";
 
 // This prevents the build unless all files are checked in

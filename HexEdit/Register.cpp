@@ -213,7 +213,10 @@ void CAbout::fix_controls()
 #ifndef _DEBUG   // revision string is only updated for release builds so don't show for debugs to avoid confusion
 	// Display the revision (if beta or if shift held down)
     if (theApp.beta_ > 0 || ::GetKeyState(VK_SHIFT) < 0)
-		text1_ += CString(" Revision ") + SVNRevision;
+	{
+		ss.Format(" Revision %d", SVNRevision);
+		text1_ += ss;
+	}
 #endif
 
     // Licence info

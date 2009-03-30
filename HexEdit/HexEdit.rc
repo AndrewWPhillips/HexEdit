@@ -13,6 +13,7 @@
 // Generated from the TEXTINCLUDE 2 resource.
 //
 #include "afxres.h"
+#include "SVNRevision.h"
 //#include "secres.h"
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -1196,13 +1197,6 @@ BEGIN
         BEGIN
             MENUITEM "getbool (""OK?"", ""&&Yes"", ""&&No"")", 
                                                     ID_BOOLEAN_GETBOOL
-            MENUITEM SEPARATOR
-            MENUITEM "value == value",              ID_BOOLEAN_EQ
-            MENUITEM "value != value",              ID_BOOLEAN_NE
-            MENUITEM "value < value",               ID_BOOLEAN_LT
-            MENUITEM "value <= value",              ID_BOOLEAN_LE
-            MENUITEM "value > value",               ID_BOOLEAN_GT
-            MENUITEM "value >= value",              ID_BOOLEAN_GE
         END
         POPUP "&Date"
         BEGIN
@@ -2548,8 +2542,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,40,0,530
- PRODUCTVERSION 3,40,0,530
+ FILEVERSION 3,40,0, SVNRevision
+ PRODUCTVERSION 3,40,0, SVNRevision
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2566,12 +2560,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "3, 40, 0, 530"
+            VALUE "FileVersion", "3, 40, 0, " SVNRevision
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2009  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "3, 40, 0, 530"
+            VALUE "ProductVersion", "3, 40, 0, " SVNRevision
         END
     END
     BLOCK "VarFileInfo"
@@ -5442,6 +5436,7 @@ END
 2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
+	"#include ""SVNRevision.h""\r\n"
     "//#include ""secres.h""\0"
 END
 
