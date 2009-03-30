@@ -594,12 +594,12 @@
         <param name="Local" value="dlg_options\HIDD_OPT_MACRO.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="History Options">
+        <param name="Name" value="History List Options">
         <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Workspace Global Options">
-        <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+        <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Workspace Display Options">

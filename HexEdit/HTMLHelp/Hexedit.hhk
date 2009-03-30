@@ -382,7 +382,7 @@
     <param name="Name" value="Decimal Addresses command">
     <param name="Local" value="cmd_view\HID_ADDR_TOGGLE.htm">
     <param name="Name" value="Display Options">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
     <param name="Name" value="Moving Around">
     <param name="Local" value="overviewbasics\move.htm">
     <param name="Name" value="Calculator">
@@ -532,7 +532,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="block cursor">
     <param name="Name" value="Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="buttons">
@@ -879,7 +879,7 @@
     <li><object type="text/sitemap">
       <param name="Name" value="addresses">
       <param name="Name" value="Display Options page">
-      <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+      <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
       <param name="Name" value="Decimal Addresses command">
       <param name="Local" value="cmd_view\HID_ADDR_TOGGLE.htm">
     </object>
@@ -898,7 +898,7 @@
     <param name="Name" value="Window Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
     <param name="Name" value="Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
     <param name="Name" value="Reset To Defaults">
     <param name="Local" value="cmd_view\HID_DISPLAY_RESET.htm">
     <param name="Name" value="How Do I Change the Default Window Display">
@@ -994,8 +994,6 @@
     <param name="Name" value="exit">
     <param name="Name" value="File Exit command">
     <param name="Local" value="cmd_file\HID_APP_EXIT.htm">
-    <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="exponent">
@@ -1306,7 +1304,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="global settings">
     <param name="Name" value="Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
     <param name="Name" value="System Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
   </object>
@@ -1376,15 +1374,13 @@
     <param name="Name" value="hex address tool">
     <param name="Name" value="Hex Jump Tool command">
     <param name="Local" value="cmd_misc\HID_JUMP_HEX_ADDR.htm">
-    <param name="Name" value="History Lists Page">
-    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="hex addresses">
     <param name="Name" value="Decimal Addresses command">
     <param name="Local" value="cmd_view\HID_ADDR_TOGGLE.htm">
     <param name="Name" value="Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="hex area">
@@ -1421,7 +1417,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="HexEdit window">
     <param name="Name" value="Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
     <param name="Name" value="Changing the Window Display">
     <param name="Local" value="overviewbasics\display.htm">
   </object>
@@ -1618,7 +1614,7 @@
   <li><object type="text/sitemap">
     <param name="Name" value="large cursor">
     <param name="Name" value="Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="large icons">
@@ -1899,7 +1895,7 @@
     <param name="Name" value="Display Options command">
     <param name="Local" value="cmd_tools\HID_OPTIONS.htm">
     <param name="Name" value="General Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
     <param name="Name" value="Macro Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_MACRO.htm">
     <param name="Name" value="Window Display Options page">
@@ -2057,8 +2053,6 @@
     <param name="Name" value="recently opened files">
     <param name="Name" value="Recently Opened Files">
     <param name="Local" value="cmd_file\HID_FILE_MRU_FILE1.htm">
-    <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
     <param name="Name" value="Recently Opened Files Dialog">
     <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
     <param name="Name" value="All Recent Files">
@@ -2112,8 +2106,6 @@
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="histories etc">
-      <param name="Name" value="Clear Histories Dialog">
-      <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -2243,8 +2235,6 @@
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="history">
-      <param name="Name" value="Clear Histories Dialog">
-      <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
       <param name="Name" value="Find Tool">
       <param name="Local" value="tools\HIDC_SEARCH.htm">
       <param name="Name" value="Simple Find page">
@@ -2276,7 +2266,7 @@
     <param name="Name" value="Window Manager Dialog">
     <param name="Local" value="dlg_other\HIDD_WINDOW_MANAGER.htm">
     <param name="Name" value="Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="selection">
@@ -2325,7 +2315,7 @@
     <param name="Name" value="Macro Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_MACRO.htm">
     <param name="Name" value="Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
     <param name="Name" value="Printer Options">
     <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Filters page">
@@ -2889,8 +2879,6 @@
     <param name="Name" value="privacy">
     <param name="Name" value="Registration Dialog">
     <param name="Local" value="dlg_other\HIDD_REG_HELP.htm">
-    <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="large files">
@@ -3449,8 +3437,6 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="paranoia">
-    <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="bookmarks">
@@ -3466,8 +3452,6 @@
     <param name="Local" value="cmd_edit\Edit_Bookmarks.htm">
     <param name="Name" value="Bookmarks dialog">
     <param name="Local" value="dlg_tools\Bookmarks_dialog.htm">
-    <param name="Name" value="Clear Histories Dialog">
-    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
     <param name="Name" value="Toggle Bookmark command">
     <param name="Local" value="cmd_misc\HID_BOOKMARK_TOGGLE.htm">
     <param name="Name" value="Bookmark_tool">
@@ -3599,8 +3583,6 @@
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="histories">
-      <param name="Name" value="Clear Histories Dialog">
-      <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -4211,7 +4193,7 @@
     <param name="Name" value="Template Options">
     <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
     <param name="Name" value="Workspace Display Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSDISPLAY.htm">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="split window">
@@ -4263,8 +4245,6 @@
     <param name="Name" value="Explorer window">
     <param name="Name" value="Explorer Dialog">
     <param name="Local" value="dlg_file\Explorer_Dialog.htm">
-    <param name="Name" value="History Lists Page">
-    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="ruler">
@@ -4303,13 +4283,9 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="clearing history lists on exit">
-    <param name="Name" value="History Lists Page">
-    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="My Recent Documents">
-    <param name="Name" value="History Lists Page">
-    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
 </ul>
 </html>

@@ -308,12 +308,11 @@ XOR Quad Word command | cmd_operations\XOR_Quad_Word_command.htm
 System General Options page | dlg_options\HIDD_OPT_SYSTEM.htm
 Filters page | dlg_options\Filters.htm
 Printer Options | dlg_options\Printer_Options.htm
-Color Options page | dlg_options\HIDD_OPT_MACRO.htm
-History Options | dlg_options\HIDD_OPT_HISTORY.htm
-Workspace Global Options page | dlg_options\HIDD_OPT_SYSDISPLAY.htm
+Macro Options page | dlg_options\HIDD_OPT_MACRO.htm
+Workspace Global Options page | dlg_options\HIDD_OPT_WORKLAYOUT.htm
 Workspace Display Options | dlg_options\HIDD_OPT_WORKDISPLAY.htm
 Workspace Editing Options | dlg_options\HIDD_OPT_WORKSPACE.htm
-Document Edit Options | dlg_options\HIDD_OPT_TIPS.htm
+Info Tips Page | dlg_options\HIDD_OPT_TIPS.htm
 Template Options | dlg_options\HIDD_OPT_TEMPLATE.htm
 Document General Options | dlg_options\Document_General_Options.htm
 Document Display Options page | dlg_options\HIDD_OPT_WINDOW.htm
@@ -493,6 +492,7 @@ View Navigation Bar command | cmd_view\HID_VIEW_NAVBAR.htm
 View Toolbar command | cmd_view\HID_VIEW_TOOLBAR.htm
 View Custom Toolbar command | cmd_view\HID_VIEW_TOOLBARS.htm
 View Status Bar Command | cmd_view\HID_VIEW_STATUS_BAR.htm
+View Ruler Command | cmd_view\HID_VIEW_RULER.htm
 Auto Fit command | cmd_view\HID_AUTOFIT.htm
 Font command | cmd_view\HID_FONT.htm
 Decimal Addresses command | cmd_view\HID_ADDR_TOGGLE.htm
