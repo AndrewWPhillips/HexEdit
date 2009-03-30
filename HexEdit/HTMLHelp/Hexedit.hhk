@@ -3987,6 +3987,11 @@
       <param name="Name" value="Expressions">
       <param name="Local" value="overviewadvanced\Expressions.htm">
     </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="display hex in uppercase">
+      <param name="Name" value="Workspace Global Options page">
+      <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
+    </object>
     </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="lowercase">
@@ -3998,6 +4003,11 @@
       <param name="Local" value="cmd_operations\HID_CONVERT_LOWERCASE.htm">
       <param name="Name" value="Expressions">
       <param name="Local" value="overviewadvanced\Expressions.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="display hex in">
+      <param name="Name" value="Workspace Global Options page">
+      <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
