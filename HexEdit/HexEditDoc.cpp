@@ -3634,7 +3634,7 @@ bool CHexEditDoc::add_enum(CXmlTree::CElt &ee, LPCTSTR pp)
 		}
 
         to_add[enum_val] = entry;
-        TRACE2("ENUM: %s=%ld\n", entry, long(enum_val));
+        //TRACE2("ENUM: %s=%ld\n", entry, long(enum_val));
     }
 
     df_enum_[(MSXML::IXMLDOMElementPtr::Interface *)ee.m_pelt] = to_add;

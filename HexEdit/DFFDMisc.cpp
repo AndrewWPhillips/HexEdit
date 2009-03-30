@@ -615,7 +615,7 @@ bool get_enum(LPCTSTR pp, std::vector<enum_entry> &retval)
 
         ee.value = enum_val;
         retval.push_back(ee);
-        TRACE2("ENUM: %s=%ld\n", ee.name, long(enum_val));
+        //TRACE2("ENUM: %s=%ld\n", ee.name, long(enum_val));
 
         ++enum_val;
     }
