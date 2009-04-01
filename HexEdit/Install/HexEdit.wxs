@@ -140,10 +140,10 @@
           </Component>
 
           <Component Id='BackgroundImage' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7035'>
-            <File Id='BackgroundImageFile' Name='Backgrnd.BMP' DiskId='1' src='..\backgrnd.BMP' />
+            <File Id='BackgroundImageFile' Name='Backgrnd.BMP' DiskId='1' src='..\Graphics\backgrnd.BMP' />
           </Component>
           <Component Id='AboutBoxImage' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7036'>
-            <File Id='AboutBoxImageFile' Name='About.BMP' DiskId='1' src='..\About.BMP' />
+            <File Id='AboutBoxImageFile' Name='About.BMP' DiskId='1' src='..\Graphics\About.BMP' />
           </Component>
 
         </Directory>
