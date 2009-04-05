@@ -38,7 +38,7 @@ The controls in the About box are transparent.  The background image is called A
 
 - Created About.PDN used as source for About.BMP
   - has text of left side
-  - right side is left for controls
+  - right side is left blankish for controls
 - Used above PliersShaded.png (from pliers.CDR) to create Pliers layer
   - resized (IMage/Resize) PliersShaded.png from height 2100 to 180 pixels (best quality)
   - selected all and pasted into a new layer into About.PDN
@@ -50,12 +50,16 @@ The controls in the About box are transparent.  The background image is called A
 - Added version layer
   - added "3.4" at bottom of left side
 - Added background layer and filled with (192,192,192)
-  - this may be changed from a plain background later
-- Added layer for drop-shadow
+  - this may be changed to embossed or hextile background later
+- Added layer for drop-shadow above background
   - duplicated all layers to have shadows (pliers. text, version)
   - changed their colour to black using fill
   - made into shadow using Guassian blur (Effects/Blurs/Guassian) (Radius = 4)
   - offset the shadow down and to right using Move Selected Pixels tool
+- Added another layer above background layer and below drop-shadow layer
+  - paste hextile into it then pasted again next to it to fill up the whole image size
+  - used gradient fill tool (transprency mode) so background shows through towards bottom right
+  - the combined effect is a slightly more interesting background
 - Saved as .BMP (best size and quality via Photoshop Elements)
   - save as 1 24-bit .BMP from Paint.Net
   - load into Photoshop Elements and convert to 8-bit (Image/Mode/Indexed color)
