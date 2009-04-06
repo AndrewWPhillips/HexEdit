@@ -66,6 +66,28 @@ The controls in the About box are transparent.  The background image is called A
   - save as 8-bit Windows .BMP file with RLE compression
 
 
+Splash
+------
+
+- created Splash.PDN as source for Splash.BMP at size 400x200
+- created white background layer (actually very light shading using gradient tool)
+- created pliers layer by simply copying pliers from About.PDN (above)
+- created text layer with "he" to left of the pliers and "edit" to the right
+  - Used font Swis721 Blk Rnd BT again with size 72
+  - letters were to be shaded so used shade halfway between when creating the text
+  - make sure that anti-aliasing is on
+  - selected letters using magic wand (tolerance of 30%) before shading
+    - less tolerance means that edge pixels near top and bottom had noticeably wrong shade
+    - more tolerance and too many edge pixels were being made opaque
+  - shaded the letters using gradient tool
+- created version layer with "3.4" in the bottom right corner
+  - using light grey and Swis721 Blk Rnd BT size 24 (anti-aliased)
+
+
+
+- reduced size to 33% and saved as Splash.bmp (about 10Kb)
+- opened in PhotoShop and resaved with RLE (about 5Kb)
+
 Installer
 ---------
 
