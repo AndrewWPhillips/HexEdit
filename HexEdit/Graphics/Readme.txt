@@ -7,6 +7,7 @@ Pliers
 Pliers.cdr is a Corel Draw file containing the source image for the HexEdit icon/logo.  It is used as the source of several .BMP files as described below.
 
 - created a high-resolution bitmap (PliersBlack.png) of 1400x2100 pixels
+  - make white areas transparent before resizing to get edges antialiased with background
 - shaded handles blue (using Gradient tool in Paint.Net)
 - shaded rest red (background is transparent)
 - saved as PliersShaded.png (1400x2100)
@@ -45,6 +46,7 @@ The controls in the About box are transparent.  The background image is called A
   - note: get the size right using Image/Resize since resize after paste has artifacts
 - Added text layer
   - Used font Swis721 Blk Rnd BT (from Corel X4 CD)
+  - remember to make it antialiased
   - added "he" above the pliers at size 48 and shaded blue
   - added "edit" below the pliers at size 36 and shaded red
 - Added version layer
@@ -82,9 +84,6 @@ Splash
   - shaded the letters using gradient tool
 - created version layer with "3.4" in the bottom right corner
   - using light grey and Swis721 Blk Rnd BT size 24 (anti-aliased)
-
-
-
 - reduced size to 33% and saved as Splash.bmp (about 10Kb)
 - opened in PhotoShop and resaved with RLE (about 5Kb)
 
@@ -92,5 +91,6 @@ Installer
 ---------
 
 The installer requires two images...
+
 
 
