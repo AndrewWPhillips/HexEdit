@@ -314,7 +314,7 @@ BOOL CHexEditApp::InitInstance()
 		if (pSplashThread != NULL)
 		{
 			ASSERT(pSplashThread->IsKindOf(RUNTIME_CLASS(CSplashThread)));
-			pSplashThread->SetBitmapToUse(::GetExePath() + FILENAME_ABOUTBG); 
+			pSplashThread->SetBitmapToUse(::GetExePath() + FILENAME_SPLASH); 
 			pSplashThread->ResumeThread();  //Resume the thread now that we have set it up 
 		}
 

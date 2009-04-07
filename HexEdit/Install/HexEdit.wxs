@@ -145,6 +145,9 @@
           <Component Id='AboutBoxImage' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7036'>
             <File Id='AboutBoxImageFile' Name='About.BMP' DiskId='1' src='..\Graphics\About.BMP' />
           </Component>
+          <Component Id='SplashImage' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7037'>
+            <File Id='SplashImageFile' Name='Splash.BMP' DiskId='1' src='..\Graphics\Splash.BMP' />
+          </Component>
 
         </Directory>
       </Directory>
@@ -287,6 +290,7 @@
         <ComponentRef Id='ToolbarImages' />
         <ComponentRef Id='BackgroundImage' />
         <ComponentRef Id='AboutBoxImage' />
+        <ComponentRef Id='SplashImage' />
         <ComponentRef Id='TemplateSupport' />
         <ComponentRef Id='DemoMacro' />
         <ComponentRef Id='TipHelp' />
