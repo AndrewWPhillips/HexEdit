@@ -17,9 +17,7 @@
 #include "resource.hm"
 #include "HelpID.hm"            // User defined help IDs
 
-#ifndef _DEBUG
 #include "SVNRevision.h"
-#endif
 
 #include <HtmlHelp.h>
 
@@ -210,14 +208,12 @@ void CAbout::fix_controls()
 		text1_ += ss;
 	}
 
-#ifndef _DEBUG   // revision string is only updated for release builds so don't show for debugs to avoid confusion
 	// Display the revision (if beta or if shift held down)
     if (theApp.beta_ > 0 || ::GetKeyState(VK_SHIFT) < 0)
 	{
 		ss.Format(" Revision %d", SVNRevision);
 		text1_ += ss;
 	}
-#endif
 
     // Licence info
     ctl_licence_.ResetContent();

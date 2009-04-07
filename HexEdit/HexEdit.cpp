@@ -305,17 +305,22 @@ BOOL CHexEditApp::InitInstance()
         LoadOptions();
 
 		//Bring up the splash screen in a secondary UI thread
-		CSplashThread* pSplashThread = NULL;
+		CSplashThread * pSplashThread = NULL;
 
         // Note the splash setting is read again in LoadOptions (below), but we don't
         // call LoadOptions here to make sure that the splash screen is shown ASAP.
         if (splash_)
-            pSplashThread = (CSplashThread*) AfxBeginThread(RUNTIME_CLASS(CSplashThread), THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
-		if (pSplashThread != NULL)
 		{
-			ASSERT(pSplashThread->IsKindOf(RUNTIME_CLASS(CSplashThread)));
-			pSplashThread->SetBitmapToUse(::GetExePath() + FILENAME_SPLASH); 
-			pSplashThread->ResumeThread();  //Resume the thread now that we have set it up 
+			CString sFileName = ::GetExePath() + FILENAME_SPLASH;
+			if (_access(sFileName, 0) != -1)
+				pSplashThread = (CSplashThread*) AfxBeginThread(RUNTIME_CLASS(CSplashThread), THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
+
+			if (pSplashThread != NULL)
+			{
+				ASSERT(pSplashThread->IsKindOf(RUNTIME_CLASS(CSplashThread)));
+				pSplashThread->SetBitmapToUse(sFileName); 
+				pSplashThread->ResumeThread();  //Resume the thread now that we have set it up 
+			}
 		}
 
         if (!AfxOleInit())              // For BCG and COM (calls CoInitialize())
@@ -342,8 +347,14 @@ BOOL CHexEditApp::InitInstance()
             ::VerQueryValue(buf, "\\StringFileInfo\\040904B0\\ProductVersion",
                             &p_version, &len) )
         {
-            char *endptr;
-            version_ = short(strtol((char *)p_version, &endptr, 10) * 100);
+			CString strVer;
+			if (*((char *)p_version + 1) == 0)
+				strVer = CString((wchar_t *)p_version);
+			else
+				strVer = CString((char *)p_version);
+
+			char *endptr = strVer.GetBuffer();
+            version_ = short(strtol(endptr, &endptr, 10) * 100);
             if (*endptr != '\0')
             {
                 ++endptr;
