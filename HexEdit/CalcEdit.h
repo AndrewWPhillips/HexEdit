@@ -48,6 +48,7 @@ protected:
 	//}}AFX_MSG
     afx_msg void OnSetFocus(CWnd* pOldWnd);
     afx_msg void OnKillFocus(CWnd* pNewWnd);
+    afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 

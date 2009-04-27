@@ -74,6 +74,7 @@ BEGIN_MESSAGE_MAP(CCalcEdit, CEdit)
 	//}}AFX_MSG_MAP
     ON_WM_SETFOCUS()
     ON_WM_KILLFOCUS()
+    ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 // Put current calculator value (pp_->current_) into edit control nicely formatted
@@ -533,6 +534,7 @@ void CCalcEdit::add_sep()
 void CCalcEdit::OnSetFocus(CWnd* pOldWnd)
 {
     pp_->in_edit_ = TRUE;
+
     CEdit::OnSetFocus(pOldWnd);
     if (sel_ != (DWORD)-1)
     {
@@ -545,6 +547,12 @@ void CCalcEdit::OnKillFocus(CWnd* pNewWnd)
 {
     sel_ = GetSel();
     CEdit::OnKillFocus(pNewWnd);
+}
+
+void CCalcEdit::OnLButtonUp(UINT nFlags, CPoint point) 
+{
+    pp_->in_edit_ = TRUE;
+    CEdit::OnLButtonDown(nFlags, point);
 }
 
 
@@ -616,7 +624,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     if (!pp_->in_edit_)
     {
         // Clear control ready for new number unless (arrow, Del etc key pressed)
-        if (isprint(nChar))
+        if ((nFlags & 0x100) == 0 && isprint(nChar))
             SetWindowText("");
         pp_->in_edit_ = TRUE;           // and go into edit mode
     }
