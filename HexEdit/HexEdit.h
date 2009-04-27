@@ -745,6 +745,7 @@ public:
     BOOL import_discon_;                // Allow discontiguous addresses when importing (and exporting too now)
     BOOL import_highlight_;             // Highlight changed bytes for import
     int recent_files_;                  // Number of recent files to put on menus
+	bool m_keepEntry;
 
 #ifndef DIALOG_BAR
     int find_x_, find_y_;               // Last screen posn of the find (modeless) dialog

@@ -174,8 +174,7 @@ BUGS
  - some printer drivers (eg text only) return GetDeviceCaps(VERTRES)=66
  
 EXPLORER
-  > fix hidden files icon
-  - chnage background when filter is not *.*
+  - change background colour when filter is not *.*
   - update list after drag and drop
   > fix for 64 bit file sizes
   - drag and drop into tree (BCGShellTree.cpp changes)
@@ -185,7 +184,18 @@ EXPLORER
   - new folder button
   - find active file button
   - undo/redo drop downs??
-  - wipe file menu option???
+  - wipe file menu option
+    - WARNING message
+    - how file is wiped - zeroes only, etc
+    - wipe last cluster past EOF
+    - delete after wipe
+  - set modified date
+    - now (touch)
+    - from calculator
+    - last used
+    - specified ...
+  - set create date
+  - set access date
   - email file menu option???
   - rename file menu option???
 
@@ -231,6 +241,8 @@ DISK EDIT
 
 
 TODO
+ - use JPG for about box background
+ - check for updates
  - allow editing of NTFS ADS (alternate data streams)
  - find in files
  - replace in files
@@ -358,9 +370,10 @@ Help
   > read/write Intel and Motorola binary file formats [Jim Seton]
   > add extra colour selection (highlight, background, address, etc) [Roland Glenn McIntosh]
 
-V 3.4
-
 V3.5
+ - convert to use FreeImage (USE_FREE_IMAGE)
+   - use jpg for About box background
+ - check for updates
  - calculator
    - bookmarks (active file) drop-list
  - reload command
