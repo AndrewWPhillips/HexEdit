@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
-<binary_file_format name="Floppy" expr="rtrim(this.BootSector.fileSystem)" type_name="" comment="Template for an MSDOS (FAT12) floppy.  Allows viewing of root dir and sub-dirs (to any depth) and clusters of individual files.">
+<binary_file_format name="Floppy" expr="rtrim(this.BootSector.fileSystem)" type_name="" comment="Template for an MSDOS (FAT12) floppy.  Allows viewing of root dir and sub-dirs (to any depth) and clusters of individual files." allow_editing="false">
 	<define_struct type_name="dirEntry" comment="One entry in a directory.  Use for root directory.  It also recursively uses itself for sub-directories." expr="this.status != 0 &amp;&amp; this.status != 0xE5 ? rtrim(this.name)+&quot;.&quot;+rtrim(this.ext) : &quot;---&quot;">
 		<jump offset="0" origin="current" comment="Look ahead at first byte of file name so we can check if it is an empty (0) or deleted (-27) entry.">
 			<data type="int" name="status" format="unsigned" comment="Indicates the status of the directory entry. 00 = unassigned, E5 = empty, otherwsie it is the first character of the file name." len="1" display="hex"/>

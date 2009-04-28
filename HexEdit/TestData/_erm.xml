@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
-<binary_file_format name="PCOT Error Map File">
+<binary_file_format name="PCOT Error Map File" allow_editing="false">
    <struct name="MapHeader">
       <data name="nVersion" type="int" len="4" display="%X"/>
       <data name="nCount" type="int" len="4"/>
