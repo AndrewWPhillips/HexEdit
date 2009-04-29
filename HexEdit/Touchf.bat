@@ -1,7 +1,7 @@
-touch 04160340 release\hexedit.exe
-touch 04160340 HTMLHelp\HexEdit.CHM
-touch 04160340 hexedit.tip
-touch 04160340 install\relnotes.txt
-touch 04160340 install\order.txt
-touch 04160340 install\readme.txt
-touch 04160340 HexEdit.xml
+touch 04290340 release\hexedit.exe
+touch 04290340 HTMLHelp\HexEdit.CHM
+touch 04290340 hexedit.tip
+touch 04290340 install\relnotes.txt
+touch 04290340 install\order.txt
+touch 04290340 install\readme.txt
+touch 04290340 HexEdit.xml

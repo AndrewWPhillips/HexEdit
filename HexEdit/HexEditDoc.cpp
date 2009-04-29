@@ -2442,7 +2442,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                      // Process next element of array (FOR)
                     ASSERT(addr != -1);
                     (void)add_branch(elt, addr + array_size, ind+1, ee, elt_size, -1, true);
-                    ASSERT(elt_size > 0 || bits_used_ > 0);
+                    //ASSERT(elt_size > 0 || bits_used_ > 0);
                     array_size += elt_size;
                 }
 

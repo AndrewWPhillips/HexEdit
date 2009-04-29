@@ -110,7 +110,7 @@ public:
 const char *CHexEditApp::szHexEditClassName = "HexEditMDIFrame";
 
 #ifdef _DEBUG
-const int CHexEditApp::security_version_ = 6; // This is changed for testing of handling of versions (registration etc)
+const int CHexEditApp::security_version_ = 10; // This is changed for testing of handling of versions (registration etc)
 #else
 const int CHexEditApp::security_version_ = INTERNAL_VERSION;
 #endif

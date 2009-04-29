@@ -660,7 +660,6 @@ New Version
  - update code generation on web site
  - check new cracker codes and find workaround
  - update security_version_ (hexedit.h)
- - update range and default value for ver_ (RegisterDlg.cpp)
  - add new version to email dlg drop list
  x Add encrypted list of existing users
  - update X.Y ver # in version resource and rebuild HexEdit.exe
