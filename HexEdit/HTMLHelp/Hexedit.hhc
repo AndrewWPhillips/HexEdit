@@ -24,7 +24,7 @@
       <param name="Local" value="intro\intro.htm">
     </object>
     <li><object type="text/sitemap">
-      <param name="Name" value="What's New">
+      <param name="Name" value="What's New?">
       <param name="Local" value="intro\whatsnew.htm">
     </object>
     <li><object type="text/sitemap">
