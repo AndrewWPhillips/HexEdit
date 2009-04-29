@@ -1,0 +1,240 @@
+<?xml version="1.0" ?>
+<XML_DIZ_INFO>
+	<MASTER_PAD_VERSION_INFO>
+		<MASTER_PAD_VERSION>3.01</MASTER_PAD_VERSION>
+		<MASTER_PAD_EDITOR>PADGen 3.0.1.37 http://www.padgen.org</MASTER_PAD_EDITOR>
+		<MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware authors to disseminate information to anyone interested in their software products. To find out more go to http://www.asp-shareware.org/pad</MASTER_PAD_INFO>
+	</MASTER_PAD_VERSION_INFO>
+	<Company_Info>
+		<Company_Name>Expert Commercial Software</Company_Name>
+		<Address_1>PO Box 2117</Address_1>
+		<Address_2 />
+		<City_Town>Normanhurst</City_Town>
+		<State_Province>NSW</State_Province>
+		<Zip_Postal_Code>2076</Zip_Postal_Code>
+		<Country>Australia</Country>
+		<Company_WebSite_URL>http://www.hexedit.com</Company_WebSite_URL>
+		<Contact_Info>
+			<Author_First_Name>Andrew</Author_First_Name>
+			<Author_Last_Name>Phillips</Author_Last_Name>
+			<Author_Email>aphillips@hexedit.com</Author_Email>
+			<Contact_First_Name>Annette</Contact_First_Name>
+			<Contact_Last_Name>Phillips</Contact_Last_Name>
+			<Contact_Email>support@hexedit.com</Contact_Email>
+		</Contact_Info>
+		<Support_Info>
+			<Sales_Email>aphillips@hexedit.com</Sales_Email>
+			<Support_Email>support@hexedit.com</Support_Email>
+			<General_Email>aphillips@hexedit.com</General_Email>
+			<Sales_Phone />
+			<Support_Phone />
+			<General_Phone>+61 2 9487 3267</General_Phone>
+			<Fax_Phone />
+		</Support_Info>
+	</Company_Info>
+	<Program_Info>
+		<Program_Name>Hex Edit</Program_Name>
+		<Program_Version>3.3</Program_Version>
+		<Program_Release_Month>07</Program_Release_Month>
+		<Program_Release_Day>16</Program_Release_Day>
+		<Program_Release_Year>2008</Program_Release_Year>
+		<Program_Cost_Dollars>40</Program_Cost_Dollars>
+		<Program_Cost_Other_Code />
+		<Program_Cost_Other />
+		<Program_Type>Shareware</Program_Type>
+		<Program_Release_Status>Major Update</Program_Release_Status>
+		<Program_Install_Support>Install and Uninstall</Program_Install_Support>
+		<Program_OS_Support>Win95,Win98,WinME,WinNT 4.x,Windows2000,WinXP,Windows2003,Windows Vista Starter,Windows Vista Home Basic,Windows Vista Home Premium,Windows Vista Business,Windows Vista Enterprise,Windows Vista Ultimate</Program_OS_Support>
+		<Program_Language>English</Program_Language>
+		<Program_Change_Info>Explorer window, new options dialog and many new options, etc</Program_Change_Info>
+		<Program_Specific_Category>Development Tools</Program_Specific_Category>
+		<Program_Category_Class>Development::Other</Program_Category_Class>
+		<Program_System_Requirements>Requires Internet Explorer 5 or later</Program_System_Requirements>
+		<File_Info>
+			<File_Size_Bytes>4300000</File_Size_Bytes>
+			<File_Size_K>4199</File_Size_K>
+			<File_Size_MB>4.10</File_Size_MB>
+		</File_Info>
+		<Expire_Info>
+			<Has_Expire_Info>Y</Has_Expire_Info>
+			<Expire_Count>30</Expire_Count>
+			<Expire_Based_On>Days</Expire_Based_On>
+			<Expire_Other_Info>After 30 days it still works with reminders</Expire_Other_Info>
+			<Expire_Month />
+			<Expire_Day />
+			<Expire_Year />
+		</Expire_Info>
+	</Program_Info>
+	<Program_Descriptions>
+		<English>
+			<Keywords>hex editor, binary file editor, hex, binary file, EBCDIC, file, editor, editing, data,  binary, byte, tool, utility, exe, ascii, bin, decimal, hexedit</Keywords>
+			<Char_Desc_45>Easy to use and reliable binary file editor.</Char_Desc_45>
+			<Char_Desc_80>Easy to use, reliable hex editor.  Many features for editing huge binary files.</Char_Desc_80>
+			<Char_Desc_250>Easy to use, reliable hex editor. Many features:find, compare, clipboard, EBCDIC. Display/edit over 60 values (int, float, date ...). Disk edit, change tracking, background searches, macros, bookmarks, highlight,calculator, templates, >4 Gbyte files.</Char_Desc_250>
+			<Char_Desc_450>Easy to use and reliable binary file editor. Many options such as: autofit, INS/OVR modes, fast search/compare, highlighter, bookmarks, change tracking, EBCDIC, colour schemes. Display/change over 70 properties: integers, floats (new: C# Decimal), dates (new:time64_t) etc.  Advanced features like disk editor, background searches, keystroke macros, templates, calculator, > 4 Gbyte files, full customization, customizable info tips.</Char_Desc_450>
+			<Char_Desc_2000>HexEdit is hex editor that is renowned for its intuitive interface and ability to quickly and reliably edit files of any size.
+
+It has many options like: hex/char/both/stacked display modes, autofit, hex/dec addresses, RO/RW, INS/OVR modes, fully customizable "info tips", scroll/zoom using mouse-wheel, print selection (coalescing duplicate lines), margin/line-spacing, print preview, fast searches, comparison, highlighter, clipboard, bookmarks, color schemes.
+
+It can continuously display over 70 properties in a pinable dialog: including decimal 4 sizes of integer, bit values, IEEE/IBM floats (new C# Decimal), dates (new time64_t) etc.  You can also edit properties, eg. change a date.  You can see characters as ASCII/ANSI, IBM/OEM (MSDOS), EBCDIC using the char set drop-down list.
+
+Our advanced template system allows you to easily describe and display any sort of file structure (IF, FOR, BIT-FIELDS, SWITCH etc).
+
+Time-saving features include the Find tool (with drop-down history list) that allows quick searches for hex digits or strings, and hex/decimal jump tools.  The status bar displays number of occurrences of current search string, distance from the cursor to the "mark", RO/RW, INS/OVR, REC, CAPS etc.  The length of the selection is available while selecting or by pressing the SHIFT key.
+
+Advanced features include raw disk and volume editor, change tracking, unlimited file/window undo, background searches, keystroke macros, unlimited recent file list, ZLIB compression, fill block, CRCs, MD5, Motorola-S/Intel-hex files.  A powerful calculator is included that allows file manipulation and is tightly integrated with macros making it simple to create and repeat complex operations.
+
+You can completely customize menus, keyboard &amp; toolbars (even edit button images), 7 different context menus, 3 different double-click events, user tools etc.  All user-defined keys appear in menus and tooltips.
+
+On-line help is 2nd to none including several tutorials.</Char_Desc_2000>
+		</English>
+	</Program_Descriptions>
+	<Web_Info>
+		<Application_URLs>
+			<Application_Info_URL>http://www.hexedit.com/hexedit/info.htm</Application_Info_URL>
+			<Application_Order_URL>http://www.hexedit.com/register.htm</Application_Order_URL>
+			<Application_Screenshot_URL>http://www.hexedit.com/images/shot4.gif</Application_Screenshot_URL>
+			<Application_Icon_URL>http://www.hexedit.com/images/icon.gif</Application_Icon_URL>
+			<Application_XML_File_URL>http://www.hexedit.com/hexedit.xml</Application_XML_File_URL>
+		</Application_URLs>
+		<Download_URLs>
+			<Primary_Download_URL>http://www.expertcomsoft.com/Downloads/hexed3_3.zip</Primary_Download_URL>
+			<Secondary_Download_URL>http://www.expertcomsoft.com/Downloads/hexed.zip</Secondary_Download_URL>
+			<Additional_Download_URL_1 />
+			<Additional_Download_URL_2 />
+		</Download_URLs>
+	</Web_Info>
+	<Permissions>
+		<Distribution_Permissions>You may reproduce and distribute copies of the unregistered version of the product provided each copy is a complete and exact copy, including all copyright notices, and is accompanied by a copy of the End User License Agreement.  You may not reproduce or distribute registered copies of the product.  You may not sell, loan, borrow, lease, rent, or transfer a registered copy of the product or your license to use the product.</Distribution_Permissions>
+		<EULA>By installing HexEdit 3.3 (the product) you agree to be bound by the terms of this license agreement.  If you do not understand or agree to these terms, or your local regulations prohibit this form of license agreement, then do not install the product.
+
+HexEdit 3.3 is copyright 2008 by Expert Commercial Software Pty Ltd.
+
+All the brands or products referred to in the documentation are trademarks or registered trademarks of their respective holders.
+
+Unregistered license: You have the non-exclusive right to use the product for 30 days for the purpose of evaluation, after which you must purchase a registered version, or discontinue using the product by removing it completely from your computer.
+
+Registered single-user license: You have the non-exclusive right to use the product only by a single person (the registered user).  You may install and run the software on more than one computer, provided that it is only ever used by the registered user.  If any person, other than the registered user, uses the registered product, then your license to use the software will terminate.
+
+Registered site license: You have the non-exclusive right to use the product only by the licensed number of users.  If at any time, more than the licensed number of users use the product, then your license to use the software will terminate.
+
+You may reproduce and distribute copies of the unregistered version of the product provided each copy is a complete and exact copy, including all copyright notices, and is accompanied by a copy of this License Agreement.  You may not reproduce or distribute registered copies of the product.  You may not sell, loan, borrow, lease, rent, or transfer a registered copy of the product or your license to use the product.
+
+You may not attempt to modify, disassemble or in any way reverse-engineer any version of the product.  You may not attempt to circumvent any copy-protection system used by the product.  You may not modify or remove any copyright notice or modify the method by which the copyright notice is invoked.
+
+Any warranty of the suitability of the product for any purpose whatsoever, is expressly disclaimed.  The files installed are provided "as is" with no expressed or implied warranty.  The author accepts no liability for any damage or loss of business that this product may cause.
+
+Your license to use the software will terminate if you fail to comply with any terms or conditions of this agreement.  Your license to use the software may be withdrawn at the discretion of the copyright holder at any time.</EULA>
+	</Permissions>
+	<Affiliates>
+		<Affiliates_FORM>Y</Affiliates_FORM>
+		<Affiliates_VERSION>1.4</Affiliates_VERSION>
+		<Affiliates_URL>http://www.asp-shareware.org/pad/extensions/Affiliates.htm</Affiliates_URL>
+		<Affiliates_Information_Page />
+		<Affiliates_Avangate_Order_Page />
+		<Affiliates_Avangate_Vendor_ID />
+		<Affiliates_Avangate_Product_ID />
+		<Affiliates_Avangate_Maximum_Commission_Rate />
+		<Affiliates_BMTMicro_Order_Page />
+		<Affiliates_BMTMicro_Vendor_ID />
+		<Affiliates_BMTMicro_Product_ID />
+		<Affiliates_BMTMicro_Maximum_Commission_Rate />
+		<Affiliates_Cleverbridge_Order_Page />
+		<Affiliates_Cleverbridge_Vendor_ID />
+		<Affiliates_Cleverbridge_Product_ID />
+		<Affiliates_Cleverbridge_Maximum_Commission_Rate />
+		<Affiliates_clixGalore_Order_Page />
+		<Affiliates_clixGalore_Vendor_ID />
+		<Affiliates_clixGalore_Product_ID />
+		<Affiliates_clixGalore_Maximum_Commission_Rate />
+		<Affiliates_CommissionJunction_Order_Page />
+		<Affiliates_CommissionJunction_Vendor_ID />
+		<Affiliates_CommissionJunction_Product_ID />
+		<Affiliates_CommissionJunction_Maximum_Commission_Rate />
+		<Affiliates_DigiBuy_Order_Page />
+		<Affiliates_DigiBuy_Vendor_ID />
+		<Affiliates_DigiBuy_Product_ID />
+		<Affiliates_DigiBuy_Maximum_Commission_Rate />
+		<Affiliates_DigitalCandle_Order_Page />
+		<Affiliates_DigitalCandle_Vendor_ID />
+		<Affiliates_DigitalCandle_Product_ID />
+		<Affiliates_DigitalCandle_Maximum_Commission_Rate />
+		<Affiliates_Emetrix_Order_Page />
+		<Affiliates_Emetrix_Vendor_ID />
+		<Affiliates_Emetrix_Product_ID />
+		<Affiliates_Emetrix_Maximum_Commission_Rate />
+		<Affiliates_eSellerate_Order_Page />
+		<Affiliates_eSellerate_Vendor_ID />
+		<Affiliates_eSellerate_Product_ID />
+		<Affiliates_eSellerate_Maximum_Commission_Rate />
+		<Affiliates_Kagi_Order_Page />
+		<Affiliates_Kagi_Vendor_ID />
+		<Affiliates_Kagi_Product_ID />
+		<Affiliates_Kagi_Maximum_Commission_Rate />
+		<Affiliates_LinkShare_Order_Page />
+		<Affiliates_LinkShare_Vendor_ID />
+		<Affiliates_LinkShare_Product_ID />
+		<Affiliates_LinkShare_Maximum_Commission_Rate />
+		<Affiliates_NorthStarSol_Order_Page />
+		<Affiliates_NorthStarSol_Vendor_ID />
+		<Affiliates_NorthStarSol_Product_ID />
+		<Affiliates_NorthStarSol_Maximum_Commission_Rate />
+		<Affiliates_OneNetworkDirect_Order_Page />
+		<Affiliates_OneNetworkDirect_Vendor_ID />
+		<Affiliates_OneNetworkDirect_Product_ID />
+		<Affiliates_OneNetworkDirect_Maximum_Commission_Rate />
+		<Affiliates_Order1_Order_Page />
+		<Affiliates_Order1_Vendor_ID />
+		<Affiliates_Order1_Product_ID />
+		<Affiliates_Order1_Maximum_Commission_Rate />
+		<Affiliates_Osolis_Order_Page />
+		<Affiliates_Osolis_Vendor_ID />
+		<Affiliates_Osolis_Product_ID />
+		<Affiliates_Osolis_Maximum_Commission_Rate />
+		<Affiliates_Plimus_Order_Page />
+		<Affiliates_Plimus_Vendor_ID />
+		<Affiliates_Plimus_Product_ID />
+		<Affiliates_Plimus_Maximum_Commission_Rate />
+		<Affiliates_Regnet_Order_Page />
+		<Affiliates_Regnet_Vendor_ID />
+		<Affiliates_Regnet_Product_ID />
+		<Affiliates_Regnet_Maximum_Commission_Rate />
+		<Affiliates_Regnow_Order_Page />
+		<Affiliates_Regnow_Vendor_ID />
+		<Affiliates_Regnow_Product_ID />
+		<Affiliates_Regnow_Maximum_Commission_Rate />
+		<Affiliates_Regsoft_Order_Page />
+		<Affiliates_Regsoft_Vendor_ID />
+		<Affiliates_Regsoft_Product_ID />
+		<Affiliates_Regsoft_Maximum_Commission_Rate />
+		<Affiliates_ShareIt_Order_Page />
+		<Affiliates_ShareIt_Vendor_ID />
+		<Affiliates_ShareIt_Product_ID />
+		<Affiliates_ShareIt_Maximum_Commission_Rate />
+		<Affiliates_Shareasale_Order_Page />
+		<Affiliates_Shareasale_Vendor_ID />
+		<Affiliates_Shareasale_Product_ID />
+		<Affiliates_Shareasale_Maximum_Commission_Rate />
+		<Affiliates_SWReg_Order_Page />
+		<Affiliates_SWReg_Vendor_ID />
+		<Affiliates_SWReg_Product_ID />
+		<Affiliates_SWReg_Maximum_Commission_Rate />
+		<Affiliates_V-Share_Order_Page />
+		<Affiliates_V-Share_Vendor_ID />
+		<Affiliates_V-Share_Product_ID />
+		<Affiliates_V-Share_Maximum_Commission_Rate />
+		<Affiliates_VFree_Order_Page />
+		<Affiliates_VFree_Vendor_ID />
+		<Affiliates_VFree_Product_ID />
+		<Affiliates_VFree_Maximum_Commission_Rate />
+		<Affiliates_Yaskifo_Order_Page />
+		<Affiliates_Yaskifo_Vendor_ID />
+		<Affiliates_Yaskifo_Product_ID />
+		<Affiliates_Yaskifo_Maximum_Commission_Rate />
+	</Affiliates>
+	<ASP>
+		<ASP_FORM>Y</ASP_FORM>
+		<ASP_Member>N</ASP_Member>
+		<ASP_Member_Number />
+	</ASP>
+</XML_DIZ_INFO>
