@@ -313,7 +313,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         // Create Tool bar
         if (!m_wndBar1.Create(this, dwDefaultToolbarStyle, IDR_STDBAR) || 
 #if SHADED_TOOLBARS
-            !m_wndBar1.LoadToolBar(IDR_STDBAR, IDB_STDBAR_C, 0, FALSE, IDB_STDBAR_D, 0, IDB_STDBAR_H))
+            !m_wndBar1.LoadToolBar(IDR_STDBAR, IDB_STDBAR_C, 0, FALSE, 0, 0, IDB_STDBAR_H))
 #else
             !m_wndBar1.LoadToolBar(IDR_STDBAR))
 #endif
@@ -331,7 +331,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         // Create "edit" bar
         if (!m_wndBar2.Create(this, dwDefaultToolbarStyle, IDR_EDITBAR) ||
 #if SHADED_TOOLBARS
-            !m_wndBar2.LoadToolBar(IDR_EDITBAR, IDB_EDITBAR_C, 0, FALSE, IDB_EDITBAR_D, 0, IDB_EDITBAR_H))
+            !m_wndBar2.LoadToolBar(IDR_EDITBAR, IDB_EDITBAR_C, 0, FALSE, 0, 0, IDB_EDITBAR_H))
 #else
             !m_wndBar2.LoadToolBar(IDR_EDITBAR))
 #endif
@@ -347,7 +347,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         // Create Format bar
         if (!m_wndBar3.Create(this, dwDefaultToolbarStyle, IDR_FORMATBAR) ||
 #if SHADED_TOOLBARS
-            !m_wndBar3.LoadToolBar(IDR_FORMATBAR, IDB_FMTBAR_C, 0, FALSE, IDB_FMTBAR_D, 0, IDB_FMTBAR_H))
+            !m_wndBar3.LoadToolBar(IDR_FORMATBAR, IDB_FMTBAR_C, 0, FALSE, 0, 0, IDB_FMTBAR_H))
 #else
             !m_wndBar3.LoadToolBar(IDR_FORMATBAR))
 #endif
@@ -364,7 +364,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         // Create Navigation bar
         if (!m_wndBar4.Create(this, dwDefaultToolbarStyle, IDR_NAVBAR) ||
 #if SHADED_TOOLBARS
-            !m_wndBar4.LoadToolBar(IDR_NAVBAR, IDB_NAVBAR_C, 0, FALSE, IDB_NAVBAR_D, 0, IDB_NAVBAR_H))
+            !m_wndBar4.LoadToolBar(IDR_NAVBAR, IDB_NAVBAR_C, 0, FALSE, 0, 0, IDB_NAVBAR_H))
 #else
             !m_wndBar4.LoadToolBar(IDR_NAVBAR))
 #endif
@@ -457,8 +457,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
         // Get extra command images (without creating a toolbar)
 #if SHADED_TOOLBARS
-        CBCGToolBar::AddToolBarForImageCollection(IDR_MISC, IDB_MISCBAR_H, IDB_MISCBAR_C, 0, IDB_MISCBAR_D);
-        CBCGToolBar::AddToolBarForImageCollection(IDR_OPER, IDB_OPERBAR_H, IDB_OPERBAR_C, 0, IDB_OPERBAR_D);
+        CBCGToolBar::AddToolBarForImageCollection(IDR_MISC, IDB_MISCBAR_H, IDB_MISCBAR_C, 0, 0);
+        CBCGToolBar::AddToolBarForImageCollection(IDR_OPER, IDB_OPERBAR_H, IDB_OPERBAR_C, 0, 0);
 #else
         CBCGToolBar::AddToolBarForImageCollection(IDR_MISC);
         CBCGToolBar::AddToolBarForImageCollection(IDR_OPER);

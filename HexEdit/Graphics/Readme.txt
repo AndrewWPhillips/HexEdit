@@ -109,25 +109,33 @@ Toolbars
 
 HexEdit 3.5 moved to shaded toolbars (see #define SHADED_TOOLBARS) with separate cold/hot/disabled images. There are 4 toolbars (toolbar, editbar, nacbar and formtbar), plus 2 extra toolbars (operations and misc).  Note that the "old toolbar" (mainbar.bmp) has finally been retired.
 
-Resource IDs and filenames are of the form (using editbar as an example):
+The shaded images are used using the new overload to CBCGToolbar::LoadToolbar (and AddToolBarForImageCollection), which has the following idiosynchrasies:
+
+- there are 3 toolbars allowed for cold (normal), hot (hovered) and disabled
+  - if not specified the disabled images are generated automatically but you must do the same for each toolbar
+  - if not specified the hot image is the same as the cold one
+- the bitmaps passed to the first call to LoadToolbar determine the quality of the images
+  - I think all toolbar images are stored in the same bitmap so the first call determines this bitmaps format
+  - the hot, cold and disabled images seem to be independent
+  - we need to pass 24-bit .BMP images for (at least) the first toolbar (IDR_STDBAR)
+- the background colour can be specified but we use the default - light grey (192,192,192) or 0xC0C0C0
+
+The naming conventions for resource IDs and filenames are of the form (using editbar as an example):
 
 IDB_EDITBAR_C  editbarCold.bmp
 IDB_EDITBAR_D  editbarDisabled.bmp
 IDB_EDITBAR_H  editbarHot.bmp
 
-BCG shaded toolbars assume the transparent (background) colour is light grey 192,192,192 (0xC0C0C0), so all images must have this background.
-
-The 3 images are created from a Paint.Net file (eg Graphics\editbar.pdn) in this way:
+The 3 images for each toolbar can be created from there corresponding Paint.Net file (eg Graphics\editbar.pdn) in this way:
 
 - make the "hot" image
-  - changed colour of background layer to XP toolbar background colour (239,236,221)
-  - increased saturation of images layer to 140
+  - change colour of background layer to XP toolbar background colour (239,236,221)
+  - increase saturation of images layer to 140
     - note that background colour is in diff layer and retains its colour
     - if more than one layer has images then merge them down to one layer
-  - merged  images layer with background layer (merge down)
-  - fill background (exact fill) with (192,192,192)
-  - saved the .PDN file as the "hot" .BMP (eg editbarHot.BMP)
-
+  - merge images layer with background layer (merge down)
+  - fill background (tol 40%) with (192,192,192)
+  - save as 24-bit .BMP with "hot" suffix (eg editbarHot.BMP)
 - make the "cold" (normal) image
   - reopen the .PDN file (eg editbar.PDN)
   - changed colour of background layer to XP toolbar background colour (239,236,221)
@@ -135,16 +143,18 @@ The 3 images are created from a Paint.Net file (eg Graphics\editbar.pdn) in this
   - open Hue + Saturation dialog (Adjustment/ Hue + Saturation)
   - reduce saturation from 100 down to 80
     - note that background colour is in diff layer and stays the same
-  - merged  images layer with background layer (merge down)
-  - fill background (exact fill) with (192,192,192)
-  - save file (eg editbarCold.BMP)
-- make the disabled image
+  - merge images layer with background layer (merge down)
+  - fill background (tol 40%) with (192,192,192)
+  - save as 24-bit .BMP file (eg editbarCold.BMP)
+- make the disabled image [not currently done]
   - reopen the .PDN file (eg editbar.PDN)
   - select layer with toolbar images
   - open Hue + Saturation dialog and reduce saturation to 0
   - open Brightness + Contrast dialog (Adjustment/Brightness+Contrast)
   - reduce contrast to -60, increase brightness to 50
-  - save file (eg editbarDisabled.BMP)
+  - merge images layer with background layer (merge down)
+  - fill background (tol 40%) with (192,192,192)
+  - save as .BMP file (eg editbarDisabled.BMP)
 - reduce size of all .BMP files by making them 8-bit with RLE compression
   - load each .BMP into Photoshop Elements
   - convert to 8-bit if necessary (Image/Mode/Indexed Color) using Palette: Local (perceptual)

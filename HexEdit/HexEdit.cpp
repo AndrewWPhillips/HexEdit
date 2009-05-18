@@ -502,6 +502,7 @@ BOOL CHexEditApp::InitInstance()
         // The following are for BCG init
         SetRegistryBase(_T("Settings"));
         CBCGVisualManager::SetDefaultManager(RUNTIME_CLASS(CBCGWinXPVisualManager));
+		CBCGVisualManager::GetInstance()->SetFadeInactiveImage(FALSE);
         CBCGButton::EnableWinXPTheme();
         VERIFY(InitMouseManager());
         VERIFY(InitContextMenuManager());
