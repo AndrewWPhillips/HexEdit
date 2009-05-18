@@ -1,5 +1,13 @@
 This directory contains the files used to create the graphics used in HexEdit and the installer.  There are "source" files (checked in to the repository) and working files.  Following are some notes on creating working files from source files as the process cannot always be automated.
 
+Currently there are 3 images distributed with HexEdit:
+
+About.bmp - background to about dialog
+Backgrnd.bmp - background to main window
+Splash.bmp - displayed breifly at startup
+
+If these have a plain background (as currently backgrnd.bmp and splash.bmp do) then they should be saved as 8-bit BMP files with RLE on.  PDN 3.36 supports 8-bit BMP files but does not use RLE so use something like Photoshop Elements to get the RLE option.
+
 
 Pliers
 ------
@@ -11,11 +19,6 @@ Pliers.cdr is a Corel Draw file containing the source image for the HexEdit icon
 - shaded handles blue (using Gradient tool in Paint.Net)
 - shaded rest red (background is transparent)
 - saved as PliersShaded.png (1400x2100)
-
-Icon
-----
-
-- TBD
 
 
 Background
@@ -30,6 +33,7 @@ The background of the main HexEdit window must be a .BMP file called Backgrnd.BM
   - with PDN 1.36 a brightness value of 64 seems to do this
 - resize the image (Image/Resize) to something appropriate such as a height of 200
 - save as an 8-bit .BMP files called Backgrnd.BMP
+- load into Photoshop Elements and resave with RLE
 
 
 About box
@@ -87,10 +91,63 @@ Splash
 - reduced size to 33% and saved as Splash.bmp (about 10Kb)
 - opened in PhotoShop and resaved with RLE (about 5Kb)
 
+
 Installer
 ---------
 
 The installer requires two images...
 
+
+Icon
+----
+
+- TBD
+
+
+Toolbars
+--------
+
+HexEdit 3.5 moved to shaded toolbars (see #define SHADED_TOOLBARS) with separate cold/hot/disabled images. There are 4 toolbars (toolbar, editbar, nacbar and formtbar), plus 2 extra toolbars (operations and misc).  Note that the "old toolbar" (mainbar.bmp) has finally been retired.
+
+Resource IDs and filenames are of the form (using editbar as an example):
+
+IDB_EDITBAR_C  editbarCold.bmp
+IDB_EDITBAR_D  editbarDisabled.bmp
+IDB_EDITBAR_H  editbarHot.bmp
+
+BCG shaded toolbars assume the transparent (background) colour is light grey 192,192,192 (0xC0C0C0), so all images must have this background.
+
+The 3 images are created from a Paint.Net file (eg Graphics\editbar.pdn) in this way:
+
+- make the "hot" image
+  - changed colour of background layer to XP toolbar background colour (239,236,221)
+  - increased saturation of images layer to 140
+    - note that background colour is in diff layer and retains its colour
+    - if more than one layer has images then merge them down to one layer
+  - merged  images layer with background layer (merge down)
+  - fill background (exact fill) with (192,192,192)
+  - saved the .PDN file as the "hot" .BMP (eg editbarHot.BMP)
+
+- make the "cold" (normal) image
+  - reopen the .PDN file (eg editbar.PDN)
+  - changed colour of background layer to XP toolbar background colour (239,236,221)
+  - select layer with toolbar images
+  - open Hue + Saturation dialog (Adjustment/ Hue + Saturation)
+  - reduce saturation from 100 down to 80
+    - note that background colour is in diff layer and stays the same
+  - merged  images layer with background layer (merge down)
+  - fill background (exact fill) with (192,192,192)
+  - save file (eg editbarCold.BMP)
+- make the disabled image
+  - reopen the .PDN file (eg editbar.PDN)
+  - select layer with toolbar images
+  - open Hue + Saturation dialog and reduce saturation to 0
+  - open Brightness + Contrast dialog (Adjustment/Brightness+Contrast)
+  - reduce contrast to -60, increase brightness to 50
+  - save file (eg editbarDisabled.BMP)
+- reduce size of all .BMP files by making them 8-bit with RLE compression
+  - load each .BMP into Photoshop Elements
+  - convert to 8-bit if necessary (Image/Mode/Indexed Color) using Palette: Local (perceptual)
+  - save to .BMP in RES directory with RLE option on (eg RES\editbarHot.bmp)
 
 

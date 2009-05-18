@@ -42,7 +42,7 @@
 //#define INTERNAL_VERSION 12             // version 4.0
 
 // may need to adjust this depending on how many versions there were in last 2 years
-#define UPGRADE_DIFF 3   // diff between current version and version before which an upgrade is invalid
+#define UPGRADE_DIFF 4   // diff between current version and version before which an upgrade is invalid
 
 typedef __int64 FILE_ADDRESS;
 
@@ -76,9 +76,9 @@ typedef __int64 FILE_ADDRESS;
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
 #define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
 #define EXPLORER_WND    1   // Modeless dialog like Windows Explorer
+#define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
 
 // Flags for stuff in development
-//#define SHADED_TOOLBARS 1  // When this is enabled we need to get rid of "Old Tool Bar" menu items
 //#define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
 //#define REFRESH_OFF     1   // Turn off display refresh when replacing all - doesn't seem to save much time so leave off for now
