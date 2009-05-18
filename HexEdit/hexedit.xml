@@ -2,7 +2,7 @@
 <XML_DIZ_INFO>
 	<MASTER_PAD_VERSION_INFO>
 		<MASTER_PAD_VERSION>3.01</MASTER_PAD_VERSION>
-		<MASTER_PAD_EDITOR>PADGen 3.0.1.37 http://www.padgen.org</MASTER_PAD_EDITOR>
+		<MASTER_PAD_EDITOR>PADGen 3.0.1.38 http://www.padgen.org</MASTER_PAD_EDITOR>
 		<MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware authors to disseminate information to anyone interested in their software products. To find out more go to http://www.asp-shareware.org/pad</MASTER_PAD_INFO>
 	</MASTER_PAD_VERSION_INFO>
 	<Company_Info>
@@ -34,10 +34,10 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>Hex Edit</Program_Name>
-		<Program_Version>3.3</Program_Version>
-		<Program_Release_Month>07</Program_Release_Month>
-		<Program_Release_Day>16</Program_Release_Day>
-		<Program_Release_Year>2008</Program_Release_Year>
+		<Program_Version>3.4</Program_Version>
+		<Program_Release_Month>04</Program_Release_Month>
+		<Program_Release_Day>29</Program_Release_Day>
+		<Program_Release_Year>2009</Program_Release_Year>
 		<Program_Cost_Dollars>40</Program_Cost_Dollars>
 		<Program_Cost_Other_Code />
 		<Program_Cost_Other />
@@ -46,14 +46,14 @@
 		<Program_Install_Support>Install and Uninstall</Program_Install_Support>
 		<Program_OS_Support>Win95,Win98,WinME,WinNT 4.x,Windows2000,WinXP,Windows2003,Windows Vista Starter,Windows Vista Home Basic,Windows Vista Home Premium,Windows Vista Business,Windows Vista Enterprise,Windows Vista Ultimate</Program_OS_Support>
 		<Program_Language>English</Program_Language>
-		<Program_Change_Info>Explorer window, new options dialog and many new options, etc</Program_Change_Info>
+		<Program_Change_Info>Navigation Points, Ruler, Calculator</Program_Change_Info>
 		<Program_Specific_Category>Development Tools</Program_Specific_Category>
 		<Program_Category_Class>Development::Other</Program_Category_Class>
 		<Program_System_Requirements>Requires Internet Explorer 5 or later</Program_System_Requirements>
 		<File_Info>
-			<File_Size_Bytes>4300000</File_Size_Bytes>
-			<File_Size_K>4199</File_Size_K>
-			<File_Size_MB>4.10</File_Size_MB>
+			<File_Size_Bytes>5011000</File_Size_Bytes>
+			<File_Size_K>5011</File_Size_K>
+			<File_Size_MB>5</File_Size_MB>
 		</File_Info>
 		<Expire_Info>
 			<Has_Expire_Info>Y</Has_Expire_Info>
@@ -98,7 +98,7 @@ On-line help is 2nd to none including several tutorials.</Char_Desc_2000>
 			<Application_XML_File_URL>http://www.hexedit.com/hexedit.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
-			<Primary_Download_URL>http://www.expertcomsoft.com/Downloads/hexed3_3.zip</Primary_Download_URL>
+			<Primary_Download_URL>http://www.expertcomsoft.com/Downloads/hexed3_4.zip</Primary_Download_URL>
 			<Secondary_Download_URL>http://www.expertcomsoft.com/Downloads/hexed.zip</Secondary_Download_URL>
 			<Additional_Download_URL_1 />
 			<Additional_Download_URL_2 />
@@ -106,9 +106,9 @@ On-line help is 2nd to none including several tutorials.</Char_Desc_2000>
 	</Web_Info>
 	<Permissions>
 		<Distribution_Permissions>You may reproduce and distribute copies of the unregistered version of the product provided each copy is a complete and exact copy, including all copyright notices, and is accompanied by a copy of the End User License Agreement.  You may not reproduce or distribute registered copies of the product.  You may not sell, loan, borrow, lease, rent, or transfer a registered copy of the product or your license to use the product.</Distribution_Permissions>
-		<EULA>By installing HexEdit 3.3 (the product) you agree to be bound by the terms of this license agreement.  If you do not understand or agree to these terms, or your local regulations prohibit this form of license agreement, then do not install the product.
+		<EULA>By installing HexEdit 3.4 (the product) you agree to be bound by the terms of this license agreement.  If you do not understand or agree to these terms, or your local regulations prohibit this form of license agreement, then do not install the product.
 
-HexEdit 3.3 is copyright 2008 by Expert Commercial Software Pty Ltd.
+HexEdit 3.4 is copyright 2009 by Expert Commercial Software Pty Ltd.
 
 All the brands or products referred to in the documentation are trademarks or registered trademarks of their respective holders.
 
@@ -232,9 +232,4 @@ Your license to use the software will terminate if you fail to comply with any t
 		<Affiliates_Yaskifo_Product_ID />
 		<Affiliates_Yaskifo_Maximum_Commission_Rate />
 	</Affiliates>
-	<ASP>
-		<ASP_FORM>Y</ASP_FORM>
-		<ASP_Member>N</ASP_Member>
-		<ASP_Member_Number />
-	</ASP>
 </XML_DIZ_INFO>
