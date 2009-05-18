@@ -5,3 +5,4 @@ touch 04290340 install\relnotes.txt
 touch 04290340 install\order.txt
 touch 04290340 install\readme.txt
 touch 04290340 HexEdit.xml
+pause

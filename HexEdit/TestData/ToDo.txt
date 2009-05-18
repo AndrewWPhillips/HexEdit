@@ -61,22 +61,20 @@
 	FireFox
 	Parcom
  - check new cracker codes and find workaround
- - update security_version_ (hexedit.h)
- - update range and default value for ver_ (RegisterDlg.cpp)
- - update X.Y version number, and add to email dlg drop list
- - change version number in readme.txt, order.txt
- - update help for new features, what's new, installation, order form etc
+ > update security_version_ (hexedit.h)
+ > update X.Y version number, and add to email dlg drop list
+ > change version number in readme.txt, order.txt
+ > update help for new features, what's new, installation, order form etc
  - add new tips of the day
- - create new release notes
- - create new bitmap for install
- - update licence agreement text (version no, year etc)
- - update PAD file (hexedit.xml)
-   - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
- - change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
- - create installation (add any new files, templates etc)
- - change times of install files using touch2.bat (*.cab etc)
- - create HexEd3_4.zip file containing HexEdX_X.MSI file along with readme.txt, hexedit.xml
- - change time of zip file using touch3.bat
+ > create new release notes
+ > create new bitmap for install
+ > update licence agreement text (version no, year etc)
+ > update PAD file (hexedit.xml)
+ > change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
+ > create installation (add any new files, templates etc)
+ > change times of install files using touch2.bat (.MSI)
+ > create HexEd3_4.zip file containing HexEdX_X.MSI file along with readme.txt, hexedit.xml
+ > change time of zip file using touch3.bat
  - test install on 95, 98, ME, NT4, W2K, XP
  - submit to Simtel and change web links to new Simtel page
  - web site: add ver to bug report form drop list, update what's new, gifs etc
