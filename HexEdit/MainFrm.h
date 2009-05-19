@@ -105,9 +105,6 @@ public:
     CBCGMenuBar m_wndMenuBar;
     CBCGToolBar m_wndBar1, m_wndBar2;   // Tool bar and Edit bar
     CBCGToolBar m_wndBar3, m_wndBar4;   // Format bar and Navigation bar
-#ifndef SHADED_TOOLBARS
-    CBCGToolBar m_wndBarOld;            // Old Tool bar
-#endif
 
 	// Modeless dialogs OR dialog bars
 	CCalcDlg m_wndCalc;                 // Calculator dialog/bar
@@ -171,10 +168,6 @@ public:
     afx_msg BOOL OnBarCheck(UINT nID);
     afx_msg void OnUpdateViewViewbar(CCmdUI* pCmdUI);
     afx_msg void OnViewViewbar();
-#ifndef SHADED_TOOLBARS
-    afx_msg void OnUpdateViewToolbar(CCmdUI* pCmdUI);
-    afx_msg void OnViewToolbar();
-#endif
     afx_msg void OnUpdateViewEditbar(CCmdUI* pCmdUI);
     afx_msg void OnViewEditbar();
     afx_msg void OnUpdateViewFormatbar(CCmdUI* pCmdUI);
