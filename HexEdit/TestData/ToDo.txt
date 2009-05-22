@@ -1,92 +1,138 @@
- 
-3.4 Version - build (HE + BCG) with VS2003
- > calculator
-   *** expressions support precedence
-   > fix resize problems
-   > new look calculator
-   > expressions in calculator
-      > history
-   > Goto history(s) in calculator
-   > variables list
-      > clear variables
-   > functions list
-   > problems with edit box selection range (seem to be caused by it being in a drop-list)
- > Explorer
-    *** column select/reorder
-    > new modern icons
-    > move hidden file icons to views menu
-    > column selection menu
-    > Show/hide columns
-    > allow column reorder
- > Options
-    *** hide splash screen, ruler, floating windows move out of the way toggle
-    > fix images
-    > remove icons in top left of pages
-    > add Hist >> button on General page
-    > add doc edit>> button on global edit page
-    > add icons to >> buttons (CBCGButton::SetImage)
-    > new ruler options: ticks/numbers for hex/decimal
-    > display: indicate cursor/mouse position
-       > formatting of numbers
-       > autoscroll accel, scroll past ends
-    > history options page: set size of 6 history lists, clear bookmarks etc on exit
-    > new startup options: splash, tod, scan for devices
-    > new tree look
-      > add lines, +/- buttons (change to BCG DLL)
-      > icons in tree (just change SetIconsList, AddPageToTree)
- > fix show selection problems
-   > window resize
-   > inc/dec cols
-   > rowsize adjuster in ruler
- > enable navigation points
-   > don't save nav pt when flipping between files
- - icon not shown for 2nd and subsequent windows
-    - need to call show_icon() after opening a new window
-  - wait cursor for any long operation (search for EnablePaneProgressBar(0))
-  - disk editor
-    - new option to scan for devices in background at startup
-      > options dialog
-      - open dialog?
-  > instead of ::HMessageBox check view in idle event to see if bg search finished
-  > expressions
-    > Improve GetInt, GetString, GetBool
-    > test in calculator
-    > @ prefix for ambiguous identifiers
- > make columns in filter and infotips pages fit across (too narrow for 120 DPI)
-
- - update help
- - more acknowledgements in help
-	> FileZilla
-	> IkonBoard
-	FireFox
-	Parcom
- - check new cracker codes and find workaround
- > update security_version_ (hexedit.h)
- > update X.Y version number, and add to email dlg drop list
- > change version number in readme.txt, order.txt
- > update help for new features, what's new, installation, order form etc
- - add new tips of the day
- > create new release notes
- > create new bitmap for install
- > update licence agreement text (version no, year etc)
- > update PAD file (hexedit.xml)
- > change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
- > create installation (add any new files, templates etc)
- > change times of install files using touch2.bat (.MSI)
- > create HexEd3_4.zip file containing HexEdX_X.MSI file along with readme.txt, hexedit.xml
- > change time of zip file using touch3.bat
- - test install on 95, 98, ME, NT4, W2K, XP
+3.4
+===
  - submit to Simtel and change web links to new Simtel page
- - web site: add ver to bug report form drop list, update what's new, gifs etc
- - make announcement in forums
  - update to shareware download sites
  - email reg users about new release (staggered)
  - email others about new release
  - change normal activation code email template
  - send out press release
 
+3.5
+===
+
+- check for updates
+- use JPG for about box background
+- show new shaded icons in toolbars
+  - new screenshots under Windows 7
+- aerial view
+  > ants: selection, mark, highlights, search occ, bookmarks
+    - double-buffer to prevent flicker
+  > border: selection, mark, highlights, search occ, bookmarks
+  - recalc bitmap when colour scheme changes
+    - warn if large file (> 1GB?)
+  - update help
+- new options
+  > clear histories (search/jump tools, recent file list, bookmarks?)
+    - bookmarks does not remove from the lists of open files
+  - option for mouse wheel units
+  - split print page into 2
+    - add watermark and other options
+  - new page(s) for aerial view?
+  - options in dialogs that ask repetitive questions
+    - also add options page where you can turn these on again
+    - paste in overtype mode
+    - turn off insert mode
+    - turn off read-only mode
+- ADS
+  - open them in new view
+- calculator
+  - cf Windows 7 Calculator
+    - 64 check boxes
+    - radio buttons on the left
+  - bookmarks (active file) drop-list
+  - handle > 64 bit numbers
+
+3.6
+===
+- fix pliers and update graphics
+- Convert to use FileErrorMessage() ???
+? allow editing read-only files
+- insert file option should read a file even if it's in use
+- welcome screen that has a tutorial option?
+- smaller font for numbers in ruler
+- new installler
+   - get MFC merge module (.msm file) to include used MFC in installation (.msi)
+     - use MFC 7.1 (same as UBCD4Win - Ultimate boot CD for Windows) - MFC71.DLL, MSVCRT71.DLL
+   - is it possible to have install modules (eg MFC) come from web only when needed?
+   - add backgrnd.BMP and About.BMP to exe directory
+- repair (http://www.codeproject.com/KB/cpp/installer.aspx)
+  MsiSetInternalUI(INSTALLUILEVEL_NONE,NULL);
+  MsiReinstallProduct("{A5A0D1C0-DF1A-11D3-99DC-00A0CCFFFAA1}",
+      REINSTALLMODE_FILEVERIFY | REINSTALLMODE_FILEMISSING |
+      REINSTALLMODE_FILEOLDERVERSION | REINSTALLMODE_REPAIR);
+- icon not shown for 2nd and subsequent windows
+    - need to call show_icon() after opening a new window
+  - wait cursor for any long operation (search for EnablePaneProgressBar(0))
+  - disk editor
+    - new option to scan for devices in background at startup
+      > options dialog
+      - open dialog?
+- reload command
+- expressions
+  - add ++, --, += etc
+- bookmarks
+ - move text buttons on right to icon buttons at top
+   - need way to change name
+ - add categories columns
+ - add new toolbar buttons next/prev in file, next/prev in category, next/prev global
+
+3.7
+===
+  - extra CRC types
+  - if file open for write elsewhere warn when it changes
+  - if file opened in shareDenyNone mode monitor it and warn when it changes.
+    (if caret at EOF and file extended keep it at EOF)
+  ? no need to bring up find dlg when replaying
+  - tools disabled in kill focus and destroy - both not necessary
+  - allow enter key and tabs key to be reassigned
+  - encryption toolbar
+    - encryption algorithm picker
+  - Fix Date Properties page [L. David Matheny]
+    - handle local/UTC time option
+    - fix local time problems where it uses current DST not that in effect at the time
+    - test date page code in different time zones
+    - fix MSDOS date/time problems (eg. last value)
+  - bookmarks option
+    - each open doc (not view) keeps track of its bookmarks
+      - bookmarks added to a new file (no disk file) have a filename of HexEdit1 etc
+      - when new file saved update with real file name
+      - if new file not saved then bookmark deleted
+      - when adding a bookmark to an already modified file write to master list where
+        it would appear the bookmark would be in on-disk copy (opened or saved)
+  - incorporate Structured Storage Explorer???
+  - encrypt using number not password
+  - better printing
+    - work out numbers of pages at start (use aa->GetPrinterDeviceDefaults(); then aa->CreatePrinterDC())
+  - facility to split and merge files (default to ext .001, .002, size 1.44 Mbytes)
+  - macro
+	- look at speeding macro playback
+	- macro toolbar: rec, clear, play, options, message, multiplay, select macro from drop list
+	- get number (using calc?)
+	- help: to store number in macro, enter in calculator and click '='
+ - new Intel hex formats
+ - move S1/S2/S3 items to drop-list in the File Save dialog
+ - info tips
+   - show tip of template data at that location ???
+ - allow search for keyword in RFD
+ - template tutorial to demo bit-fields, parser, switch
+ - font size in format toolbar flashes under Vista
+ - add ability to select which prop pages are displayed (and order?)???\
+
+V4.0
+  - plugin system?
+  - new MFC/BCG?
+  - ribbon?
+  - support for Windows 7 taskbar?
+  - when doing masked search and file stats available search for most common non-masked char first
+  - Implement Base64 import/export
+  - add keep time command to macros
+  - checksums page [Dave Ewen]?
+  - CRC page
+  - stats page
 
 WEB SITE
+========
+
  - Redesign using Expression Web
  - 3 main buttons: Download, Support, Purchase wih menu of extras
    - Download: Download free ver, Download templates,  Download ver with MS DLLs, Downloads page
@@ -112,12 +158,10 @@ WEB SITE
 
 
 INSTALLER
-
-RULER
- - smaller font for numbers in ruler
- - change font size, change display mode etc cause scroll posn to move strangely
+=========
  
 TEST
+====
   - display/editing of all types in tree view
   - display/validation of enums
   - drag and drop of new elements
@@ -174,7 +218,6 @@ BUGS
 EXPLORER
   - change background colour when filter is not *.*
   - update list after drag and drop
-  > fix for 64 bit file sizes
   - drag and drop into tree (BCGShellTree.cpp changes)
   - in place editing for rename
   > attributes column in details view (OnSetColumns, OnGetItemText)
@@ -196,12 +239,6 @@ EXPLORER
   - set access date
   - email file menu option???
   - rename file menu option???
-
-BOOKMARKS
- - move text buttons on right to icon buttons at top
-   - need way to change name
- - add categories columns
- - add new toolbar buttons next/prev in category, next/prev global
 
 SECURE WIPE OPTIONS
  - file or disk
@@ -237,10 +274,7 @@ DISK EDIT
   - add separate control of change display (rep/ins/del/del-count) in new opt dlg
 
 
-
 TODO
- - use JPG for about box background
- - check for updates
  - allow editing of NTFS ADS (alternate data streams)
  - find in files
  - replace in files
@@ -297,6 +331,7 @@ DFFD Editing
  > locn of XML template files
  - allow for current FOR name in expression menus
  - allow root (FILE) element in expression menus???
+
 DFFD
  - bug in entry of 64 sign+mag numbers
  ? del key in data column edit box causes del in psis_ view
@@ -368,89 +403,6 @@ Help
   > read/write Intel and Motorola binary file formats [Jim Seton]
   > add extra colour selection (highlight, background, address, etc) [Roland Glenn McIntosh]
 
-V3.5
- - convert to use FreeImage (USE_FREE_IMAGE)
-   - use jpg for About box background
- - check for updates
- - calculator
-   - bookmarks (active file) drop-list
- - reload command
- - new icons
-  - options in dialogs that ask repetitive questions
-    - also add options page where you can turn these on again
-    - paste in overtype mode
-    - turn off insert mode
-    - turn off read-only mode
-  - repair (http://www.codeproject.com/KB/cpp/installer.aspx)
-      MsiSetInternalUI(INSTALLUILEVEL_NONE,NULL);
-      MsiReinstallProduct("{A5A0D1C0-DF1A-11D3-99DC-00A0CCFFFAA1}",
-          REINSTALLMODE_FILEVERIFY | REINSTALLMODE_FILEMISSING |
-          REINSTALLMODE_FILEOLDERVERSION | REINSTALLMODE_REPAIR);
-  - extra CRC types
-  - restrict hist drop down list width
-  - Convert to use FileErrorMessage() ???
-  > clear histories (search/jump tools, recent file list, bookmarks?)
-    - bookmarks does not remove from the lists of open files
-  - option for mouse wheel units
-  ? allow editing read-only files
-  - insert file option should read a file even if it's in use
- - aerial view
- - new installer
-   - get MFC merge module (.msm file) to include used MFC in installation (.msi)
-     - use MFC 7.1 (same as UBCD4Win - Ultimate boot CD for Windows) - MFC71.DLL, MSVCRT71.DLL
-   - is it possible to have install modules (eg MFC) come from web only when needed?
-   - add backgrnd.BMP and About.BMP to exe directory
-  - welcome screen that has a tutorial option?
-  - if file open for write elsewhere warn when it changes
-  - if file opened in shareDenyNone mode monitor it and warn when it changes.
-    (if caret at EOF and file extended keep it at EOF)
-  ? no need to bring up find dlg when replaying
-  - tools disabled in kill focus and destroy - both not necessary
-  - allow enter key and tabs key to be reassigned
-  - encryption toolbar
-    - encryption algorithm picker
-  - Fix Date Properties page [L. David Matheny]
-    - handle local/UTC time option
-    - fix local time problems where it uses current DST not that in effect at the time
-    - test date page code in different time zones
-    - fix MSDOS date/time problems (eg. last value)
-  - bookmarks option
-    - each open doc (not view) keeps track of its bookmarks
-      - bookmarks added to a new file (no disk file) have a filename of HexEdit1 etc
-      - when new file saved update with real file name
-      - if new file not saved then bookmark deleted
-      - when adding a bookmark to an already modified file write to master list where
-        it would appear the bookmark would be in on-disk copy (opened or saved)
-  - incorporate Structured Storage Explorer???
-  - calc to handle 128 (and greater?) bit numbers
-  - encrypt using number not password
-  - better printing
-    - work out numbers of pages at start (use aa->GetPrinterDeviceDefaults(); then aa->CreatePrinterDC())
-  - facility to split and merge files (default to ext .001, .002, size 1.44 Mbytes)
-  - macro
-	- look at speeding macro playback
-	- macro toolbar: rec, clear, play, options, message, multiplay, select macro from drop list
-	- get number (using calc?)
-	- help: to store number in macro, enter in calculator and click '='
-
-V3.6
- - new Intel hex formats
- - move S1/S2/S3 items to drop-list in the File Save dialog
- - info tips
-   - show tip of template data at that location ???
- - allow search for keyword in RFD
- - template tutorial to demo bit-fields, parser, switch
- - font size in format toolbar flashes under Vista
- - add ability to select which prop pages are displayed (and order?)???\
-
-V4.0
-  - new MFC/BCG?
-  - when doing masked search and file stats available search for most common non-masked char first
-  - Implement Base64 import/export
-  - add keep time command to macros
-  - checksums page [Dave Ewen]?
-  - CRC page
-  - stats page
 
 Bugs
  Unfixable bugs
@@ -495,9 +447,6 @@ Possible Features
 		- count of current find string?
 	- character frequency counts? (read whole file in background?)
  - new options
-	- Option to allow scroll past ends (default off) in CScrView
-      - fix scroll bar down/right arrows to handle this option
-	  - fix key down/right to handle this
 	- bits on/off mask (byte,16-bit,32-bit,64-bit?)
 	- check box for property pages to display
 		- File Properties
@@ -509,27 +458,11 @@ Possible Features
 		- Statistics (enables background processing)
 	- general options
 		- ASCII/insensitive escape chars
-		- # of saved search strings, # in recent file list
-	- save last goto addresses etc
   - add-In DLLs to handle certain types of files
 	- associate file extension with DLL
 	- some sort of standard DLL calls: next, previous, summarize
 	- next/previous to have mutliple (unlimited?) levels of records
   - section break option (allows diff rowsize_, offset_, grouping_ etc)
-  - aerial view? - one pixel (colour coded) for each byte;
-    - colour coding according to ranges (below)
-    - zoom level buttons (1/9,1/4,1,4,9,16,25 bytes -> 1 pixel)
-    - current search text (all locations) appears as special colour
-    - valid bytes (ASCII or EBCDIC) darker than others
-    - nul bytes blank
-    - click on pixel to move to that location
-    - display in dockable control bar or separate view??
-    - bitmap: highest zoom is 1 stored pixel == 32x32 characters
-      - files above 1 Gbyte only allow 32x32 (needs 1000th of storage)
-      - files 256K to 1 Gb allow 16x16 and 32x32 (1Gb file needs 4Mb)
-      - files 64-256K have 8x8, 16x16, 32x32 (256K needs 4Mb) etc
-      - files less than 4 Mbyte store all pixels (needs up to 4Mbytes) allows: 1x1, 2x2, 4x4, 8x8, 16x16, 32x32
-    - in display width is always 32 bits (+ 2 for other info) so at highest zoom 32x32 1 stored bit maps to a whole row of 32 bits
 
   - Ruler allowing changes to rowsize_, offset_ and group_by_, char_display_
     - double click ruler brings up View Options
@@ -550,46 +483,24 @@ System
      + -> button to invoke control panel sounds
     Startup
      + reload open files??
-     + tips at startup
      + Startup options: nothing, new file, open file, startup window
     
-  Privacy page (LOCK or PERSON)
-    History Lists
-    - recently use file list size
-    + hist list sizes: search, replace, goto,
-      -> button for privacy page
-    + dont add to recently used folder (Start Menu)
-    - clear lists: rfl, bm, search (replace, goto?)
-      - always clear on exit
 
 Workspace
   Document page (MONITOR)
     Display
      + show selection length "tip"
        - show base-2 divisibility
-    Ruler/Addresses
-     + Show ruler
-     + Highlight cursor position
-     + Addresses start at 1
     Scroll
      + mouse wheel units?
-     + scroll past ends
-    Global
-     - ucase hex
-     + K = 1024/1000 (M=1024*1024/1e6 etc)
 
   Layout page (RULER/PROTRACTOR/ETC)
     Main window
      - restore main window on startup(2)
        -> Startup page
-     - tabs
-       - tabs at top
-       - icons
      + background image
     Modeless dialogs
      + show checkboxes for each
-     + allow docking dlgs
-     + undocked dlgs move out of the way
 
   Edit page (PENCIL)
     Paste
@@ -629,11 +540,6 @@ Workspace
     + max bitmap
 
 Document
-  Display page (SPECS)
-    + hex addresses
-    + dec addresses
-    + line numbers
-    + addresses start at 1
 
   Template Display page (COOKIE CUTTER)
     - use
@@ -683,3 +589,5 @@ New Version
  - email others about new release
  - change normal activation code email template
  - send out press release
+
+

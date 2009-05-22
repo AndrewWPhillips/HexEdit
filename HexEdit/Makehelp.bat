@@ -30,7 +30,8 @@ REM Control IDs (for What's This help)
 copy /y helpid.hm+resource.hm  HTMLHelp\CtlIdMap.h
 
 REM BCG Control IDs
-rem copy /y D:\bcg590\BCGControlBar\help\BCGControlBar.hm  BcgIdMap.tmp
+rem One or the other of the following calls to COPY should work
+copy /y "D:\Util\BCG\BCGControlBar\Help\BCGControlBar.hm" BcgIdMap.tmp
 copy /y "I:\Devel\BCG6_2\BCGControlBar\Help\BCGControlBar.hm" BcgIdMap.tmp
 sed "s/^HID/#define HID/"  <BcgIdMap.tmp >"HTMLHELP\BcgIdMap.h"
 del BcgIdMap.tmp
