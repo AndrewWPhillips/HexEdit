@@ -235,6 +235,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="D:\Devel\Libraries\FreeImage"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_SECDLL;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
@@ -264,10 +265,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="version.lib setargv.obj imagehlp.lib htmlhelp.lib Winmm.lib"
+				AdditionalDependencies="version.lib setargv.obj imagehlp.lib htmlhelp.lib Winmm.lib FreeImage.lib"
 				OutputFile="$(OutDir)\HexEdit.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="D:\Devel\Libraries\FreeImage"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)\HexEdit.pdb"
 				SubSystem="2"
@@ -401,7 +403,15 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
+				RelativePath=".\AerialView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Algorithm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BGAerial.cpp"
 				>
 			</File>
 			<File
@@ -833,6 +843,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath=".\AerialView.h"
+				>
+			</File>
 			<File
 				RelativePath=".\Algorithm.h"
 				>
