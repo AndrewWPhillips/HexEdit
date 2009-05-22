@@ -64,7 +64,6 @@ typedef __int64 FILE_ADDRESS;
 // Conditional compilation flags - always to be used
 #define USE_OWN_PRINTDLG 1  // Replace the standard print dialog with our own derived dialog
 #define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
-#define CHANGE_TRACKING 1   // Allow change tracking code
 #define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
 #define CALC_EXPR       1   // allow any expression in calculator (prob bugs if this turned off now)
 #define DIALOG_BAR      1   // Put modeless dialogs into dockable/rollable dialog bars
@@ -78,8 +77,9 @@ typedef __int64 FILE_ADDRESS;
 #define EXPLORER_WND    1   // Modeless dialog like Windows Explorer
 #define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
 
+#define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project
+
 // Flags for stuff in development
-//#define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
 //#define REFRESH_OFF     1   // Turn off display refresh when replacing all - doesn't seem to save much time so leave off for now
 
@@ -153,7 +153,7 @@ struct display_bits
     unsigned int hide_highlight: 1; // Hide display of highlights
     unsigned int hide_bookmarks: 1; // Hide display of bookmarks
     // --- 16
-    unsigned int auto_sync: 1;      // Automatically sync DFFD view and main view selections
+    unsigned int auto_sync_dffd: 1;     // Automatically sync DFFD view and main view selections
 
     unsigned int hide_replace: 1;   // Hide replacements (change tracking)
     unsigned int hide_insert: 1;    // Hide insertions (change tracking)
@@ -173,7 +173,7 @@ struct display_bits
 	unsigned int decimal_addr: 1;   // Show decimal addresses?
 	unsigned int addrbase1: 1;      // Addresses start at 1 not zero
 
-    unsigned int unused2: 1;        // Was strict_scroll - made into global option
+    unsigned int auto_sync_aerial: 1;   // Automatically sync aerial view and main view selections
 
 	// Returns font required for display: currently ANSI unless displaying char area and OEM char set selected
 	font_t FontRequired() { return char_area && char_set == CHARSET_OEM ? FONT_OEM : FONT_ANSI; }
@@ -239,7 +239,6 @@ protected:
     afx_msg void OnFileOpen();
     afx_msg BOOL OnOpenRecentFile(UINT nID);
     afx_msg void OnFilePrintSetup();
-	afx_msg void OnBGSearchFinished(WPARAM wParam, LPARAM lParam);
     afx_msg void OnAppExit();
 //    void LoadStdProfileSettings(UINT nMaxMRU = _AFX_MRU_COUNT);
 
@@ -296,7 +295,6 @@ public:
     CMultiDocTemplate* m_pDocTemplate;
 
     // Current search info
-    void CheckBGSearchFinished();
     CCriticalSection appdata_;  // Protects access to following data
     boyer *pboyer_;             // Ptr to current search pattern (NULL if none)
                                 // (Also stores search bytes and their length.)

@@ -23,6 +23,7 @@
 #include "MainFrm.h"
 #include "HexEditView.h"
 #include "DataFormatView.h"
+#include "AerialView.h"
 
 #include "ChildFrm.h"
 #include <afxpriv.h>            // for WM_HELPHITTEST
@@ -116,6 +117,8 @@ CHexEditView *CChildFrame::GetHexEditView() const
             return (CHexEditView *)pv;
         else if (pv->IsKindOf(RUNTIME_CLASS(CDataFormatView)))
             return ((CDataFormatView *)pv)->phev_;
+        else if (pv->IsKindOf(RUNTIME_CLASS(CAerialView)))
+            return ((CAerialView *)pv)->phev_;
         else if (pv->IsKindOf(RUNTIME_CLASS(CTabView)))
         {
 			// Find the hex view (left-most tab)

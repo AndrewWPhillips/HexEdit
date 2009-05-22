@@ -57,8 +57,8 @@ extern CHexEditApp theApp;
 IMPLEMENT_SERIAL(CHexEditFontCombo, CBCGToolbarFontCombo, 1)  // see BCGMisc.h
 IMPLEMENT_SERIAL(CHexEditFontSizeCombo, CBCGToolbarFontSizeCombo, 1)  // see BCGMisc.h
 
-// We need to derive our own class from BCG cuctomize class so we can handle
-// What's This help properly using Html Help.
+// We need to derive our own class from BCG customize class so we can 
+// handle What's This help properly using Html Help.
 class CHexEditCustomize : public CBCGToolbarCustomize
 {
 public:
@@ -789,7 +789,7 @@ void CMainFrame::show_tip(UINT id /* = -1 */)
 		case ID_DISPLAY_STACKED:
 			menu_tip_.AddString("200: ", addr_col);
 			rct = menu_tip_.GetRect(0);
-			menu_tip_.AddString("#hqb S*hn bxy .", text_col, &CPoint(rct.Width(), rct.top));
+			menu_tip_.AddString("#hqb S*hn bxy.", text_col, &CPoint(rct.Width(), rct.top));
 			rct = menu_tip_.GetRect(1);
 			menu_tip_.AddString("2676 5266 6770", text_col, &CPoint(rct.left, rct.bottom));
 			rct = menu_tip_.GetRect(2);
@@ -4247,6 +4247,7 @@ void CMainFrame::OnCustomize()
     pdlg->AddMenuCommands(menu.GetSubMenu(0), FALSE, "Format commands");
     pdlg->AddMenuCommands(menu.GetSubMenu(1), FALSE, "Navigation commands");
     pdlg->AddMenuCommands(menu.GetSubMenu(2), FALSE, "Find commands");
+    pdlg->AddMenuCommands(menu.GetSubMenu(3), FALSE, "Aerial view commands");
     menu.DestroyMenu();
 
     pdlg->ReplaceButton(ID_JUMP_HEX, CHexComboButton ());

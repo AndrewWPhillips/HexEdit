@@ -27,7 +27,7 @@ END_MESSAGE_MAP()
 //    CSplitterWnd::OnSize(nType, cx, cy);
 //}
 
-BOOL CHexEditSplitter::InsColumn(int new_col, int width, CRuntimeClass *pViewClass /*=NULL*/,
+BOOL CHexEditSplitter::InsColumn(int new_col, int width, int min_width, CRuntimeClass *pViewClass /*=NULL*/,
 								 CCreateContext* pContext /*=NULL*/)
 {
 	// Make sure insert pos is a valid column and we don't already have max columns
@@ -47,7 +47,12 @@ BOOL CHexEditSplitter::InsColumn(int new_col, int width, CRuntimeClass *pViewCla
 
 	if (pViewClass != NULL)
         for (row = 0; row < m_nRows; ++row)
-			VERIFY(CreateView(row, new_col, pViewClass, CSize(width, 0), pContext));
+        {
+            int cur, min;
+            this->GetRowInfo(row, cur, min);
+			VERIFY(CreateView(row, new_col, pViewClass, CSize(width, cur), pContext));
+		}
+	//SetColumnInfo(new_col, width, min_width);   // this does not seem to do anything useful
 
 	ASSERT(m_nCols <= m_nMaxCols);
 

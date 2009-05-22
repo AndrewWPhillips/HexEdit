@@ -1097,13 +1097,20 @@ BEGIN_MESSAGE_MAP(CDataFormatView, CView)
     ON_UPDATE_COMMAND_UI(ID_UPPERCASE, OnUpdateConvert)
     ON_COMMAND(ID_LOWERCASE, OnLowercase)
     ON_UPDATE_COMMAND_UI(ID_LOWERCASE, OnUpdateConvert)
-
+    // Handle template view (DFFD)
     ON_COMMAND(ID_DFFD_HIDE, OnDffdHide)
     ON_UPDATE_COMMAND_UI(ID_DFFD_HIDE, OnUpdateDffdHide)
     ON_COMMAND(ID_DFFD_SPLIT, OnDffdSplit)
     ON_UPDATE_COMMAND_UI(ID_DFFD_SPLIT, OnUpdateDffdSplit)
     ON_COMMAND(ID_DFFD_TAB, OnDffdTab)
     ON_UPDATE_COMMAND_UI(ID_DFFD_TAB, OnUpdateDffdTab)
+    // Handle bitmap (Aerial) view    
+    ON_COMMAND(ID_AERIAL_HIDE, OnAerialHide)
+    ON_UPDATE_COMMAND_UI(ID_AERIAL_HIDE, OnUpdateAerialHide)
+    ON_COMMAND(ID_AERIAL_SPLIT, OnAerialSplit)
+    ON_UPDATE_COMMAND_UI(ID_AERIAL_SPLIT, OnUpdateAerialSplit)
+    ON_COMMAND(ID_AERIAL_TAB, OnAerialTab)
+    ON_UPDATE_COMMAND_UI(ID_AERIAL_TAB, OnUpdateAerialTab)
 END_MESSAGE_MAP()
 
 void CDataFormatView::InitTree()
@@ -3515,11 +3522,11 @@ void CDataFormatView::SelectAt(FILE_ADDRESS addr)
 
     // Make sure the line is visible and select it
     show_row(elt);
-    BOOL bb = phev_->AutoSync();
-    phev_->SetAutoSync(FALSE);
+    BOOL bb = phev_->AutoSyncDffd();
+    phev_->SetAutoSyncDffd(FALSE);
     grid_.SetSelectedRange(elt + grid_.GetFixedRowCount(), grid_.GetFixedColumnCount(),
                            elt + grid_.GetFixedRowCount(), grid_.GetColumnCount()-1);
-    phev_->SetAutoSync(bb);
+    phev_->SetAutoSyncDffd(bb);
 }
 
 //Says whether an address is read-only according to the template
@@ -4015,8 +4022,7 @@ CString CDataFormatView::get_name(int ii)
 
 void CDataFormatView::OnDraw(CDC* pDC)
 {
-    CDocument* pDoc = GetDocument();
-    // TODO: add draw code here
+    // nothing here
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -4245,9 +4251,8 @@ void CDataFormatView::OnDffdSync()
 
 void CDataFormatView::OnUpdateDffdSync(CCmdUI* pCmdUI) 
 {
-    pCmdUI->Enable(!phev_->AutoSync());
+    pCmdUI->Enable(!phev_->AutoSyncDffd());
 }
-
 
 void CDataFormatView::OnDffdWeb() 
 {
@@ -4305,7 +4310,7 @@ void CDataFormatView::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 //            end = pdoc->length();
 //            ((CMainFrame *)AfxGetMainWnd())->StatusBarText("End of data is past EOF");
 //        }
-//        if (phev_->AutoSync())
+//        if (phev_->AutoSyncDffd())
 //            phev_->MoveToAddress(start, end, -1, -1, FALSE, TRUE);
 //    }
 }
@@ -4802,7 +4807,7 @@ void CDataFormatView::OnGridEndSelChange(NMHDR *pNotifyStruct, LRESULT* /*pResul
             end = pdoc->length();
             ((CMainFrame *)AfxGetMainWnd())->StatusBarText("End of data is past EOF");
         }
-        if (phev_->AutoSync())
+        if (phev_->AutoSyncDffd())
             phev_->MoveWithDesc("Template Auto-sync", start, end, -1, -1, FALSE, TRUE);
     }
 }

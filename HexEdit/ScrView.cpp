@@ -254,8 +254,12 @@ void CScrView::SetSel(CPointAp p1, CPointAp p2, bool base1)
     // Cause prev. selection to be redrawn (unselected) and new selection drawn (selected)
     if (start != caretpos_ || end != selpos_)
     {
+        // We invalidate everything - xxx this should be optimised to only do the changed bit
         InvalidateRange(start, end);
         InvalidateRange(caretpos_, selpos_);
+        // Alternative (whole selection range) invalidation
+        InvalidateRange(start, end, true);
+        InvalidateRange(caretpos_, selpos_, true);
     }
 
     caret_show();
@@ -1281,7 +1285,7 @@ void CScrView::OnLButtonUp(UINT nFlags, CPoint point)
 {
     if (mouse_down_)
     {
-        // Update slection to where we finished
+        // Update selection to where we finished
         OnSelUpdate(point);
 
         // Release pointer now that drag has finished
@@ -1438,6 +1442,7 @@ void CScrView::OnSelUpdate(CPoint point)
     // Work out new selection
     pp = ConvertFromDP(ptmp);
     ValidateCaret(pp, FALSE);
+
     if (pp.y < basepos_.y || (pp.y == basepos_.y && pp.x < basepos_.x))
     {
         caretpos_ = pp;
@@ -1448,6 +1453,10 @@ void CScrView::OnSelUpdate(CPoint point)
         caretpos_ = basepos_;
         selpos_ = pp;
     }
+
+	// Allow derived class to invalidate the whole selection
+    if (pp.y != last.y || pp.x != last.x)
+        InvalidateRange(caretpos_, selpos_, true);
 
     // Invalidate everything that's changed
     if (pp.y < last.y || (pp.y == last.y && pp.x < last.x))
@@ -1462,7 +1471,7 @@ void CScrView::OnSelUpdate(CPoint point)
 // The default behaviour invalidates the lines (whole width of document) from
 // the top of start to the bottom of end (using the current character height),
 // unless start == end in which case nothing invalidated.
-void CScrView::InvalidateRange(CPointAp start, CPointAp end)
+void CScrView::InvalidateRange(CPointAp start, CPointAp end, bool f /*=false*/)
 {
     if (start == end ||
         start.y > scrollpos_.y + win_height_ || start.x > scrollpos_.x + win_width_ ||

@@ -54,6 +54,7 @@ IMPLEMENT_DYNAMIC(CHexHint, CObject)        // document has changed
 IMPLEMENT_DYNAMIC(CUndoHint, CObject)       // undo display changes (no doc change)
 IMPLEMENT_DYNAMIC(CRemoveHint, CObject)     // remove from undo stack (no doc changes)
 IMPLEMENT_DYNAMIC(CBGSearchHint, CObject)   // background search has finished (no doc changes)
+IMPLEMENT_DYNAMIC(CBGAerialHint, CObject)   // background scan has finished (bitmap has changed)
 //IMPLEMENT_DYNAMIC(CRefreshHint, CObject)    // delayed tree view update when doc has changed
 IMPLEMENT_DYNAMIC(CSaveStateHint, CObject)  // save tree state (typically before redraw)
 IMPLEMENT_DYNAMIC(CRestoreStateHint, CObject) // restore tree state (typically after redraw)
@@ -61,17 +62,25 @@ IMPLEMENT_DYNAMIC(CDFFDHint, CObject)       // redraw required due to changed do
 IMPLEMENT_DYNAMIC(CBookmarkHint, CObject)   // A bookmark has been added/removed
 IMPLEMENT_DYNAMIC(CTrackHint, CObject)      // Need to invalidate extra things for change tracking
 
-size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address, bool use_bg /*=false*/)
+size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address, int use_bg /*= -1*/)
 {
+    ASSERT(use_bg == -1 || use_bg == 2 || use_bg == 3);   // 0 and 1 are no longer used
     ASSERT(address >= 0);
     FILE_ADDRESS pos;           // Tracks file position of current location record
     ploc_t pl;                  // Current location record
 
 	CFile64 *pfile;
-	if (use_bg)
+	switch (use_bg)
+	{
+	case 2:
 		pfile = pfile2_;        // Background search file
-	else
+		break;
+	case 3:
+	    pfile = pfile3_;        // Aerial scan thread file
+		break;
+	default:
 		pfile = pfile1_;		// Normal file
+	}
 
 
 //    CSingleLock sl(&docdata_, TRUE);
@@ -120,17 +129,23 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 			FILE_ADDRESS fileaddr = pl->fileaddr&doc_loc::fmask;
 			int idx = int((pl->fileaddr>>62)&0x3);   // must change when fmask/max_data_files changes
 
-			if (use_bg)
+			switch (use_bg)
 			{
+			case 2:
 				ASSERT(data_file2_[idx] != NULL);
 				data_file2_[idx]->Seek(fileaddr + start, CFile::begin);
 				actual = data_file2_[idx]->Read((void *)buf, (UINT)tocopy);
-			}
-			else
-			{
+				break;
+			case 3:
+				ASSERT(data_file3_[idx] != NULL);
+				data_file3_[idx]->Seek(fileaddr + start, CFile::begin);
+				actual = data_file3_[idx]->Read((void *)buf, (UINT)tocopy);
+				break;
+			default:
 				ASSERT(data_file_[idx] != NULL);
 				data_file_[idx]->Seek(fileaddr + start, CFile::begin);
 				actual = data_file_[idx]->Read((void *)buf, (UINT)tocopy);
+				break;
 			}
             if (actual != tocopy)
             {
@@ -170,10 +185,16 @@ int CHexEditDoc::AddDataFile(LPCTSTR name, BOOL temp /*=FALSE*/)
 			data_file_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 
 			// If background searching on also open 2nd copy of the file
-		    if (pthread_ != NULL)
+		    if (pthread2_ != NULL)
 			{
 				ASSERT(data_file2_[ii] == NULL);
 				data_file2_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
+			}
+			// If aerial scan is on also open 3rd copy of the file
+		    if (pthread3_ != NULL)
+			{
+				ASSERT(data_file3_[ii] == NULL);
+				data_file3_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 			}
 
 			temp_file_[ii] = temp;
@@ -194,12 +215,19 @@ void CHexEditDoc::RemoveDataFile(int idx)
         data_file_[idx]->Close();
         delete data_file_[idx];
         data_file_[idx] = NULL;
-        if (pthread_ != NULL)
+        if (pthread2_ != NULL)
         {
             ASSERT(data_file2_[idx] != NULL);
             data_file2_[idx]->Close();
             delete data_file2_[idx];
             data_file2_[idx] = NULL;
+        }
+        if (pthread3_ != NULL)
+        {
+            ASSERT(data_file3_[idx] != NULL);
+            data_file3_[idx]->Close();
+            delete data_file3_[idx];
+            data_file3_[idx] = NULL;
         }
         // If the data file was a temp file remove it now it is closed
         if (temp_file_[idx])
@@ -309,7 +337,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
     // If there is a current search string and background searches are on
-    if (aa->pboyer_ != NULL && pthread_ != NULL)
+    if (aa->pboyer_ != NULL && pthread2_ != NULL)
     {
         ASSERT(aa->bg_search_);
         FILE_ADDRESS adjust;
@@ -369,7 +397,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 			if (!to_search_.empty())
 			{
 				// Ask bg thread to do it so that changes are kept consistent
-				ASSERT(!view_update_);
+				ASSERT(!search_fin_);
 				to_adjust_.push_back(adjustment(address - (aa->pboyer_->length() - 1),
 												(utype == mod_insert || utype == mod_insert_file) ? address : address + clen,
 												address,
@@ -437,9 +465,9 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
         }
 
         // Restart bg search thread in case it is waiting
-        view_update_ = FALSE;
+        search_fin_ = FALSE;
         TRACE1("Restarting bg search (change) for %p\n", this);
-        start_event_.SetEvent();
+        start_search_event_.SetEvent();
     }
 
     // Adjust file length according to bytes added or removed
@@ -476,6 +504,8 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 
     // Rebuild the location list
     regenerate();
+
+    AerialChange();     // tell aeriel view thread to update
 
     update_needed_ = true;
     send_change_hint(address);
@@ -546,7 +576,7 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
         CSingleLock sl(&docdata_, TRUE);
 
         // If there is a current search string and background searches are on
-        if (aa->pboyer_ != NULL && pthread_ != NULL)
+        if (aa->pboyer_ != NULL && pthread2_ != NULL)
         {
             ASSERT(aa->bg_search_);
 
@@ -607,7 +637,7 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
 				if (!to_search_.empty())
 				{
 					// Ask bg thread to do it so that changes are kept consistent
-					ASSERT(!view_update_);
+					ASSERT(!search_fin_);
 					to_adjust_.push_back(adjustment(undo_.back().address - (aa->pboyer_->length() - 1),
 													undo_.back().utype == mod_delforw || undo_.back().utype == mod_delback ?
 														undo_.back().address : undo_.back().address + undo_.back().len,
@@ -683,9 +713,9 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
             }
 
             // Restart bg search thread in case it is waiting
-            view_update_ = FALSE;
+            search_fin_ = FALSE;
             TRACE1("Restarting bg search (undo) for %p\n", this);
-            start_event_.SetEvent();
+            start_search_event_.SetEvent();
         }
 
         // Recalc doc size if nec.
@@ -730,6 +760,8 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
         regenerate();
     }
 
+    AerialChange();     // tell aeriel view thread to update
+
     update_needed_ = true;
     send_change_hint(change_address);
 
@@ -749,7 +781,7 @@ void CHexEditDoc::fix_address(FILE_ADDRESS start, FILE_ADDRESS end,
     if (!to_search_.empty())
     {
         // Ask bg thread to do it so that changes are kept consistent
-        ASSERT(!view_update_);
+        ASSERT(!search_fin_);
         to_adjust_.push_back(adjustment(start, end, address, adjust));
     }
     else

@@ -37,6 +37,7 @@ using namespace std;
 class CHexEditDoc;
 class CChildFrame;
 class CDataFormatView;
+class CAerialView;
 
 // Different types of undo's handled by the view
 enum undo_type
@@ -189,6 +190,7 @@ class CHexEditView : public CScrView
 {
     friend class CHexEditApp;
     friend class CDataFormatView;
+    friend class CAerialView;
 	friend class CTipExpr;
 
 protected: // create from serialization only
@@ -199,7 +201,9 @@ protected: // create from serialization only
 public:
 	// Add "sub" view ptrs here, which points to the view in the tab or splitter (or NULL if not visible)
     CDataFormatView *pdfv_;           // template (tree) view
-	int split_width_;                 // width of tree view when last in split window
+    CAerialView *pav_;
+	int split_width_d_;                 // width of dffd view when last in split window
+	int split_width_a_;                 // width of aerial view when last in split window
 
     enum { max_buf = 32767 };
     CHexEditDoc *GetDocument();
@@ -249,8 +253,8 @@ public:
 #endif
     BOOL MouseDown() const { return BOOL(mouse_down_); }
 	BOOL DecAddresses() const { return !display_.hex_addr; }  // Now that user can show both addresses at once this is probably the best return value
-    BOOL AutoSync() const { return display_.auto_sync; }
-    void SetAutoSync(BOOL b) { display_.auto_sync = b; }
+    BOOL AutoSyncDffd() const { return display_.auto_sync_dffd; }
+    void SetAutoSyncDffd(BOOL b) { display_.auto_sync_dffd = b; }
     BOOL BigEndian() const { return display_.big_endian; }
     void SetBigEndian(BOOL b) { display_.big_endian = b; }
 
@@ -312,6 +316,9 @@ public:
     COLORREF GetDecAddrCol() { return dec_addr_col_; }
     COLORREF GetHexAddrCol() { return hex_addr_col_; }
     COLORREF GetSearchCol() { return search_col_; }
+    COLORREF GetHighlightCol() { return hi_col_; }
+    COLORREF GetMarkCol() { return mark_col_; }
+    COLORREF GetBookmarkCol() { return bm_col_; }
     CString GetSchemeName() { return scheme_name_; }
     void SetScheme(const char *name);
     int ClosestBookmark(FILE_ADDRESS &diff);
@@ -356,7 +363,7 @@ public:
 protected:
     virtual void ValidateCaret(CPointAp &pos, BOOL inside=TRUE);
     virtual void ValidateScroll(CPointAp &pos, BOOL strict=FALSE);
-    virtual void InvalidateRange(CPointAp start, CPointAp end);
+    virtual void InvalidateRange(CPointAp start, CPointAp end, bool f = false);
     virtual void DoInvalidateRect(LPCRECT lpRect);
     virtual void DoInvalidateRgn(CRgn* pRgn);
     virtual void DoScrollWindow(int xx, int yy);
@@ -701,14 +708,20 @@ public:
     afx_msg void OnMd5();
     afx_msg void OnUppercase();
     afx_msg void OnLowercase();
+    afx_msg void OnHighlightSelect();
+
     afx_msg void OnDffdHide();
     afx_msg void OnDffdSplit();
     afx_msg void OnDffdTab();
     afx_msg void OnUpdateDffdHide(CCmdUI* pCmdUI);
     afx_msg void OnUpdateDffdSplit(CCmdUI* pCmdUI);
     afx_msg void OnUpdateDffdTab(CCmdUI* pCmdUI);
-    afx_msg void OnHighlightSelect();
-
+    afx_msg void OnAerialHide();
+    afx_msg void OnAerialSplit();
+    afx_msg void OnAerialTab();
+    afx_msg void OnUpdateAerialHide(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateAerialSplit(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateAerialTab(CCmdUI* pCmdUI);
     DECLARE_MESSAGE_MAP()
 
 public:
@@ -719,6 +732,7 @@ public:
 
 	void check_error();          // Check for read errors and mention them to the user
     BOOL set_colours();         // Set colours from app schemes using current scheme_name_
+    void get_colours(COLORREF *k) { for (int ii = 0; ii < 256; ++ii) k[ii] = kala[ii]; }
 
     bool NoNavMovesDone() const { return nav_moves_ == 0; }  // any moves done since swapping to this view?
 
@@ -761,7 +775,8 @@ private:
     void update_sel_tip(int delay = 0);
 
     void add_highlight(FILE_ADDRESS start, FILE_ADDRESS end, BOOL ptoo=FALSE);
-    void invalidate_addr_range(FILE_ADDRESS, FILE_ADDRESS); // Invalidate display for address range
+    void invalidate_addr_range(FILE_ADDRESS, FILE_ADDRESS); // Invalidate hex/aerial display for address range
+	void invalidate_hex_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS end_addr);  // Invalidate hex view only
     BOOL is_last_change();      // Is top op on undo stack a file change
     BOOL do_undo();             // Undo one from top of undo stack
 //    void load_bitmaps();        // Redraw buttons for this view
@@ -864,7 +879,7 @@ private:
     // bool and add typecasts where necessary.
 
     // These are used to display tips (eg for bookmarks)
-	CTipWnd tip_;               // Tip when mouse hovers (just bookmark name for now)
+	CTipWnd tip_;               // Info Tip when mouse hovers (bookmark and user def tips)
 	FILE_ADDRESS tip_addr_;     // The address we display info for in the tip window
 	bool tip_show_bookmark_;    // Show bookmark name if over bookmark
 	bool tip_show_error_;       // Show error message if current sector had a read error
@@ -945,6 +960,12 @@ private:
     static const char *bin_format_name; // Name of our custom clipboard format
 
 	bool errors_mentioned_;    // If there are errors have we mentioned it to the user?
+
+    bool DoDffdTab();
+    bool DoDffdSplit();
+    bool DoAerialTab();
+    bool DoAerialSplit();
+    void AdjustColumns();
 };
 
 #ifndef _DEBUG  // debug version in HexEditView.cpp

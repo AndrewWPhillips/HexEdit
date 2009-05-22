@@ -24,6 +24,7 @@
 #include "HexEditDoc.h"
 #include "HexEditView.h"
 #include "DataFormatView.h"
+#include "AerialView.h"
 #include "MainFrm.h"
 #include "ChildFrm.h"
 #include "Dialog.h"
@@ -534,6 +535,13 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
     ON_UPDATE_COMMAND_UI(ID_DFFD_SPLIT, OnUpdateDffdSplit)
     ON_COMMAND(ID_DFFD_TAB, OnDffdTab)
     ON_UPDATE_COMMAND_UI(ID_DFFD_TAB, OnUpdateDffdTab)
+    
+    ON_COMMAND(ID_AERIAL_HIDE, OnAerialHide)
+    ON_UPDATE_COMMAND_UI(ID_AERIAL_HIDE, OnUpdateAerialHide)
+    ON_COMMAND(ID_AERIAL_SPLIT, OnAerialSplit)
+    ON_UPDATE_COMMAND_UI(ID_AERIAL_SPLIT, OnUpdateAerialSplit)
+    ON_COMMAND(ID_AERIAL_TAB, OnAerialTab)
+    ON_UPDATE_COMMAND_UI(ID_AERIAL_TAB, OnUpdateAerialTab)
 
     ON_COMMAND(ID_HIGHLIGHT_SELECT, OnHighlightSelect)
     //ON_WM_TIMER()
@@ -550,6 +558,7 @@ CHexEditView::CHexEditView() : expr_(this)
 {
     text_height_ = 0;     // While text_height_ == 0 none of the display settings have been calculated
     pdfv_ = NULL;
+    pav_ = NULL;
 
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -633,7 +642,6 @@ BOOL CHexEditView::PreCreateWindow(CREATESTRUCT& cs)
     // being created via Window/New and the frame/view it's cloned from
     CCreateContext *pContext = (CCreateContext *)cs.lpCreateParams;
 
-    // xxx when using CBGCTabView pContext is not passed through
     if (pContext != NULL && pContext->m_pCurrentFrame != NULL)
     {
         // Must have been created via Window/New (ID_WINDOW_NEW)
@@ -666,14 +674,13 @@ void CHexEditView::OnInitialUpdate()
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
     print_map_mode_ = MM_HIENGLISH;
-	split_width_ = -1;
+	split_width_d_ = split_width_a_ = -1;
 
     // Get options for the window from file settings in CHexFileList
     CHexFileList *pfl = aa->GetFileList();
     int recent_file_index = -1;
     if (pDoc->pfile1_ != NULL)
         recent_file_index = pfl->GetIndex(pDoc->pfile1_->GetFilePath());
-	int swidth;      // = width of split tree view or 0 (no tree view) or 2 (tree in tab view)
 
 #ifdef TEST_CLIPPING
     bdr_top_ = bdr_bottom_ = 80;
@@ -685,9 +692,14 @@ void CHexEditView::OnInitialUpdate()
     {
         CString ss = pfl->GetData(recent_file_index, CHexFileList::DFFDVIEW);
         if (ss.IsEmpty())
-		    swidth = theApp.tree_view_;
+		    split_width_d_ = theApp.tree_view_;
         else
-		    swidth = atoi(ss);
+		    split_width_d_ = atoi(ss);
+        ss = pfl->GetData(recent_file_index, CHexFileList::AERIALVIEW);
+        if (ss.IsEmpty())
+		    split_width_a_ = 16;
+        else
+		    split_width_a_ = atoi(ss);
 
         disp_state_ = atoi(pfl->GetData(recent_file_index, CHexFileList::DISPLAY));
         SetVertBufferZone(atoi(pfl->GetData(recent_file_index, CHexFileList::VERT_BUFFER_ZONE)));
@@ -845,7 +857,8 @@ void CHexEditView::OnInitialUpdate()
     else
     {
         ASSERT(pDoc->pfile1_ == NULL);   // we should only get here (now) if not yet saved to disk
-		swidth = theApp.tree_view_;
+		split_width_d_ = theApp.tree_view_;
+		split_width_a_ = 16;
 
         // Force colour scheme based on char set (not file extension as we don't have one)
         scheme_name_ = "";
@@ -879,52 +892,36 @@ void CHexEditView::OnInitialUpdate()
 		display_.hex_addr = !display_.dec_addr;
 	}
 
-	switch (swidth)
+    // Reopen template view
+	ASSERT(pdfv_ == NULL);
+	switch (split_width_d_)
 	{
 	case 0:        // When last open template view was hidden so do nothing
+	    split_width_d_ = -1;
 		break;
 	case 2:        // Last opened in tab view
-		{
-			CTabView *ptv = GetFrame()->ptv_;
-			ptv->AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
-			
-			ptv->SetActiveView(1);
-			pdfv_ = (CDataFormatView *)ptv->GetActiveView();
-			ASSERT_KINDOF(CDataFormatView, pdfv_);
-
-			ptv->SetActiveView(0);
-
-			// Make sure dataformat view knows which hex view it is assoc. with
-			pdfv_->phev_ = this;
-		}
+	    split_width_d_ = -1;
+		DoDffdTab();
 		break;
 	default:       // Last opened in splitter
-		{
-			CCreateContext ctxt;
-			ctxt.m_pNewViewClass = RUNTIME_CLASS(CDataFormatView);
-			ctxt.m_pCurrentDoc = GetDocument();
-			ctxt.m_pLastView = this;
-			ctxt.m_pCurrentFrame = GetFrame();
-
-			CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
-			ASSERT(psplitter->m_hWnd != 0);
-
-			if (swidth < 10) swidth = 10;
-
-			// Add left column for DFFD (template) view
-			VERIFY(psplitter->InsColumn(0, swidth, RUNTIME_CLASS(CDataFormatView), &ctxt));
-			split_width_ = swidth;
-
-			psplitter->SetActivePane(0, 1);   // make hex view active
-
-			pdfv_ = (CDataFormatView *)psplitter->GetPane(0, 0);
-			ASSERT_KINDOF(CDataFormatView, pdfv_);
-
-			// Make sure dataformat view knows which hex view it is assoc. with
-			pdfv_->phev_ = this;
-			psplitter->RecalcLayout();
-		}
+	    DoDffdSplit();
 		break;
+	}
+
+	// Reopen aerial view
+	ASSERT(pav_ == NULL);
+	switch (split_width_a_)
+	{
+	case 0:        // When last open template view was hidden so do nothing
+	    split_width_a_ = -1;
+		break;
+	case 2:        // Last opened in tab view
+	    split_width_a_ = -1;
+		DoAerialTab();
+		break;
+	default:       // Last opened in splitter
+	    DoAerialSplit();
+	    break;
 	}
 
 	// if (pfl->GetVersion() < 3)  // this is not really sufficient if the file is not actually opened since the recent file list gets written back with same DISPLAY value (but new version number)
@@ -1090,16 +1087,36 @@ void CHexEditView::StoreOptions()
 		{
 			int width = 2;         // assume tab view used
 			ASSERT(GetFrame()->splitter_.m_hWnd != 0);
-			int idx = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
+			int snum_d = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
 			int dummy;        // ignored since we don't care about the height
-			if (idx > -1)
+			if (snum_d > -1)
 			{
-				GetFrame()->splitter_.GetColumnInfo(idx, width, dummy);
+				GetFrame()->splitter_.GetColumnInfo(snum_d, width, dummy);
 				if (width < 10) width = 10;    // Make sure it is not too narrow and reserve values 0-9 (2 = tab view)
 			}
 	        pfl->SetData(ii, CHexFileList::DFFDVIEW, __int64(width));
 			pfl->SetData(ii, CHexFileList::DFFDWIDTHS, pdfv_->GetColWidths());
 		}
+		if (pav_ == NULL)
+		{
+			pfl->SetData(ii, CHexFileList::AERIALVIEW, "");
+		}
+		else
+		{
+			int width = 2;         // assume tab view used
+			ASSERT(GetFrame()->splitter_.m_hWnd != 0);
+			int snum_a = GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd());
+			int dummy;        // ignored since we don't care about the height
+			if (snum_a > -1)
+			{
+				GetFrame()->splitter_.GetColumnInfo(snum_a, width, dummy);
+				if (width < 10) width = 10;    // Make sure it is not too narrow and reserve values 0-9 (2 = tab view)
+			}
+	        pfl->SetData(ii, CHexFileList::AERIALVIEW, __int64(width));
+		}
+
+        if (pav_ != NULL)
+            pav_->StoreOptions(pfl, ii);
     }
 }
 
@@ -1588,9 +1605,9 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 void CHexEditView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
 {
     if (bActivate)
-        GetDocument()->BGThreadPriority(THREAD_PRIORITY_LOWEST);
+        GetDocument()->SearchThreadPriority(THREAD_PRIORITY_LOWEST);
     else
-        GetDocument()->BGThreadPriority(THREAD_PRIORITY_IDLE);
+        GetDocument()->SearchThreadPriority(THREAD_PRIORITY_IDLE);
 
     CScrView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
@@ -1864,7 +1881,7 @@ void CHexEditView::OnDraw(CDC* pDC)
         norm_rect.left -= doc_rect.left;
 
         doc_rect.top = first_line * line_height - margin_size_.cy;
-        doc_rect.bottom = doc_rect.top + lines_per_page_*print_text_height_; // xxx this right???
+        doc_rect.bottom = doc_rect.top + lines_per_page_*print_text_height_;
     }
     else if (pDC->IsPrinting())
     {
@@ -1933,6 +1950,102 @@ void CHexEditView::OnDraw(CDC* pDC)
     // as they are always drawn from the top of screen (or page) downwards.  This
     // is so the user is less likely to notice the wrong direction.
 
+    if (!display_.hide_bookmarks)
+    {
+        // Draw bookmarks
+        for (std::vector<FILE_ADDRESS>::const_iterator pbm = pDoc->bm_posn_.begin();
+             pbm != pDoc->bm_posn_.end(); ++pbm)
+        {
+            if (*pbm >= first_addr && *pbm <= last_addr)
+            {
+                CRect mark_rect;
+
+                mark_rect.top = int(((*pbm + offset_)/rowsize_) * line_height - doc_rect.top + 1);
+//                mark_rect.bottom = mark_rect.top + line_height - 3;
+                mark_rect.bottom = mark_rect.top + line_height - 1;
+                if (neg_y)
+                {
+                    mark_rect.top = -mark_rect.top;
+                    mark_rect.bottom = -mark_rect.bottom;
+                }
+
+                if (!display_.vert_display && display_.hex_area)
+                {
+                    mark_rect.left = hex_pos(int((*pbm + offset_)%rowsize_), char_width) - 
+                                    doc_rect.left;
+//                        mark_rect.right = mark_rect.left + 2*char_width;
+                    mark_rect.right = mark_rect.left + 2*char_width + 2;
+                    if (neg_x)
+                    {
+                        mark_rect.left = -mark_rect.left;
+                        mark_rect.right = -mark_rect.right;
+                    }
+
+                    pDC->FillSolidRect(&mark_rect, bm_col_);
+                }
+
+                if (display_.vert_display || display_.char_area)
+                {
+                    mark_rect.left = char_pos(int((*pbm + offset_)%rowsize_), char_width, char_width_w) - 
+                                    doc_rect.left + 1;
+//                        mark_rect.right = mark_rect.left + char_width_w - 2;
+                    mark_rect.right = mark_rect.left + char_width_w;
+                    if (neg_x)
+                    {
+                        mark_rect.left = -mark_rect.left;
+                        mark_rect.right = -mark_rect.right;
+                    }
+                    pDC->FillSolidRect(&mark_rect, bm_col_);
+                }
+            }
+        }
+    }
+
+    // Draw mark if within display area
+    if (!pDC->IsPrinting() && mark_ >= first_virt && mark_ < last_virt || 
+         pDC->IsPrinting() && mark_ >= first_addr && mark_ < last_addr )
+    {
+        CRect mark_rect;                // Where mark is drawn in logical coords
+
+        mark_rect.top = int(((mark_ + offset_)/rowsize_) * line_height - doc_rect.top + 1);
+//        mark_rect.bottom = mark_rect.top + line_height - 3;
+        mark_rect.bottom = mark_rect.top + line_height - 1;
+        if (neg_y)
+        {
+            mark_rect.top = -mark_rect.top;
+            mark_rect.bottom = -mark_rect.bottom;
+        }
+
+        if (!display_.vert_display && display_.hex_area)
+        {
+            mark_rect.left = hex_pos(int((mark_ + offset_)%rowsize_), char_width) - 
+                             doc_rect.left;
+//            mark_rect.right = mark_rect.left + 2*char_width;
+            mark_rect.right = mark_rect.left + 2*char_width + 2;
+            if (neg_x)
+            {
+                mark_rect.left = -mark_rect.left;
+                mark_rect.right = -mark_rect.right;
+            }
+
+            pDC->FillSolidRect(&mark_rect, mark_col_);
+        }
+
+        if (display_.vert_display || display_.char_area)
+        {
+            mark_rect.left = char_pos(int((mark_ + offset_)%rowsize_), char_width, char_width_w) - 
+                             doc_rect.left + 1;
+//            mark_rect.right = mark_rect.left + char_width_w - 2;
+            mark_rect.right = mark_rect.left + char_width_w;
+            if (neg_x)
+            {
+                mark_rect.left = -mark_rect.left;
+                mark_rect.right = -mark_rect.right;
+            }
+            pDC->FillSolidRect(&mark_rect, mark_col_);
+        }
+    }
+
     // Preread device blocks so we know if there are bad sectors
 	if (GetDocument()->IsDevice())
     {
@@ -1940,6 +2053,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 		// distance from start of top line to end of bottom line) then this should read all
 		// sectors to be dipslayed.
         unsigned char cc;
+		TRACE("---- Display size is %ld\n", long(last_addr - first_addr));
         pDoc->GetData(&cc, 1, (first_addr + last_addr)/2);
     }
 
@@ -3957,9 +4071,15 @@ void CHexEditView::DoInvalidate()
     if (((CHexEditApp *)AfxGetApp())->refresh_off_)
         needs_refresh_ = true;
     else
+    {
+        if (pav_ != NULL)
+            pav_->Invalidate();
         CScrView::DoInvalidate();
+    }
 }
 
+// Always call this virtual wrapper of CWnd::InvalidateRect
+// necessary since InvalidateRect is not virtual.
 void CHexEditView::DoInvalidateRect(LPCRECT lpRect)
 {
     if (((CHexEditApp *)AfxGetApp())->refresh_off_)
@@ -4061,6 +4181,8 @@ void CHexEditView::DoUpdate()
     if (needs_refresh_)
     {
         CScrView::DoInvalidate();
+        if (pav_ != NULL)
+            pav_->Invalidate();
         needs_refresh_ = false;
         CScrView::DoUpdateWindow();
     }
@@ -4078,7 +4200,12 @@ void CHexEditView::DoUpdate()
     }
 }
 
-void CHexEditView::InvalidateRange(CPointAp start, CPointAp end)
+// InvalidateRange - virtual function called from base class (CScrView) to cause redrawing of
+// the selection when it is chnaged due to mouse dragging or Shift+arrow keys.
+// When dragging with the mouse this function is called twice:
+// - once with f flag true and passing the whole selection
+// - once with f flag false and passing only the change in the selection
+void CHexEditView::InvalidateRange(CPointAp start, CPointAp end, bool f /*=false*/)
 {
     BOOL saved_edit_char = display_.edit_char;          // Saved value of display_.edit_char
     FILE_ADDRESS start_addr, end_addr;          // Range of addresses to invalidate
@@ -4103,25 +4230,59 @@ void CHexEditView::InvalidateRange(CPointAp start, CPointAp end)
     else if (start_addr == end_addr)
         return;
 
-    // Note: We need to invalidate an extra char backwards because in the hex
-    // display area the white space to the right of the last byte selected is
-    // not shown in reverse video.  When the selection is extended towards the
-    // end of file (causing InvalidateRange to be called) not only the newly
-    // selected bytes need to be invalidated but also the previous one so that
-    // the white area after the character is then drawn in reverse video.
-    invalidate_addr_range(start_addr-1, end_addr);
+	if (f)
+	{
+		// When dragging with the mouse the selected area in the hex view is only
+		// invalidated in the part of the selection that actually changes - this
+		// avoids the flickering which still occurs with kb (Shift+arrow) selection.
+		// However, as the selectiop for the aerial view is drawn with a boundary
+		// (marching ants) this leaves bits of the old boundary behind when increasing
+		// the selection size by dragging the mouse.  The f flag signals that the
+		// whole of the selection (start_addr to end_addr) should be invalidated
+		// in the aerial view.
+		if (pav_ != NULL)
+			pav_->InvalidateRange(start_addr, end_addr);
+	}
+	else
+	{
+		// Note: We need to invalidate an extra char backwards because in the hex
+		// display area the white space to the right of the last byte selected is
+		// not shown in reverse video.  When the selection is extended towards the
+		// end of file (causing InvalidateRange to be called) not only the newly
+		// selected bytes need to be invalidated but also the previous one so that
+		// the white area after the character is then drawn in reverse video.
+		invalidate_hex_addr_range(start_addr-1, end_addr);
+
+        // Also invalidate in aerial view so it can "undraw" the selection if it is smaller
+		if (pav_ != NULL)
+			pav_->InvalidateRange(start_addr, end_addr);
+	}
 }
 
+// invalidate_addr_range is called when a part of the display may need redrawing:
+// - selection changed -> called from InvalidateRange
+// - focus lost/gained - so that selection can be drawn differently
+// - replacement of bytes in the document, perhaps in a different view
+// - insertion/deletion of bytes -> the changed bytes and those following need updating
+// - undo of changes
+// - background search finished -> occurrences need updating
+// - bookmark added or deleted, or bookmarks hidden/shown
+// - highlight added or highlights hidden/shown
+// - mark moved (including swap with cursor) -> old and new address
+// - undo of mark move, highlight etc
+
+// Invalidate all addresses in the range that are displayed in the hex view
+// and aerial view (if there is one).
 void CHexEditView::invalidate_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS end_addr)
 {
-#if 0 // not needed since handled by DoInvalidateRect calls below
-    if (((CHexEditApp *)AfxGetApp())->refresh_off_)
-    {
-        needs_refresh_ = true;
-        return;
-    }
-#endif
+    if (pav_ != NULL)
+        pav_->InvalidateRange(start_addr, end_addr);
+    invalidate_hex_addr_range(start_addr, end_addr);
+}
 
+// Invalidate all of displayed addresses in hex view only
+void CHexEditView::invalidate_hex_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS end_addr)
+{
     CRect cli;                          // Client rectangle in device coords
     CRectAp inv;                        // The rectangle to actually invalidate (doc coords)
     CRectAp disp_rect;                  // Rectangle of display in our coords
@@ -5006,8 +5167,10 @@ void CHexEditView::show_pos(FILE_ADDRESS address /*=-1*/, BOOL no_dffd /*=FALSE*
     ((CMainFrame *)AfxGetMainWnd())->SetAddress(address);  // for ON_UPDATE_COMMAND_UI to fix displayed addresses
 #endif
     // Move to correspoding element in DFFD view
-    if (pdfv_ != NULL && !no_dffd && display_.auto_sync)
+    if (pdfv_ != NULL && !no_dffd && display_.auto_sync_dffd)
         pdfv_->SelectAt(address);
+    if (pav_ != NULL && display_.auto_sync_aerial)
+        pav_->ShowPos(address);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -5665,6 +5828,8 @@ void CHexEditView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CHexEditView::OnKillFocus(CWnd* pNewWnd) 
 {
+	if (pav_ != NULL && IsWindow(pav_->m_hWnd)) pav_->StopTimer();       // Turn off any animation in aerial view
+
     CScrView::OnKillFocus(pNewWnd);
     if (text_height_ == 0)
         return;
@@ -5685,15 +5850,16 @@ void CHexEditView::OnKillFocus(CWnd* pNewWnd)
     FILE_ADDRESS start_addr, end_addr;
     GetSelAddr(start_addr, end_addr);
     if (start_addr != end_addr)
-        invalidate_addr_range(start_addr, end_addr);
+        invalidate_hex_addr_range(start_addr, end_addr);
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 }
 
 void CHexEditView::OnSetFocus(CWnd* pOldWnd) 
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
+
+	if (pav_ != NULL && IsWindow(pav_->m_hWnd)) pav_->StartTimer();       // Turn on any animation in aerial view
+
     CScrView::OnSetFocus(pOldWnd);
 
     if (text_height_ < 1)
@@ -5710,7 +5876,7 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
     GetSelAddr(start_addr, end_addr);
     if (start_addr != end_addr)
     {
-        invalidate_addr_range(start_addr, end_addr);
+        invalidate_hex_addr_range(start_addr, end_addr);
     }
 
     // Save nav info in case we need to create a nav pt here
@@ -5725,8 +5891,8 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
 
     // km_new now seems to get recorded before km_focus - so check if km_new_str is there
     // (which always follows km_new) and don't store km_focus
-    if (!(aa->recording_ && aa->mac_.size() > 0 && (aa->mac_.back()).ktype == km_new_str) &&
-        aa->pview_ != this)
+    if (!(theApp.recording_ && theApp.mac_.size() > 0 && (theApp.mac_.back()).ktype == km_new_str) &&
+        theApp.pview_ != this)
     {
         // We only want to store focus change in a macro, if the last CHexEditView that
         // got focus is different to this one.  This allows us to ignore focus changes
@@ -5743,9 +5909,9 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
 
         // Ignore setfocus before frame has name
         if (ss.GetLength() > 0)
-            aa->SaveToMacro(km_focus, ss);
+            theApp.SaveToMacro(km_focus, ss);
     }
-    aa->pview_ = this;
+    theApp.pview_ = this;
 }
 
 void CHexEditView::OnDestroy() 
@@ -13255,12 +13421,12 @@ void CHexEditView::OnDffdAutoSync()
         return;
     }
     begin_change();
-    display_.auto_sync = !display_.auto_sync;
+    display_.auto_sync_dffd = !display_.auto_sync_dffd;
     make_change();
     end_change();
 
     // If has been turned on then sync now
-    if (display_.auto_sync)
+    if (display_.auto_sync_dffd)
     {
         FILE_ADDRESS start_addr, end_addr;
         GetSelAddr(start_addr, end_addr);
@@ -13273,7 +13439,7 @@ void CHexEditView::OnDffdAutoSync()
 void CHexEditView::OnUpdateDffdAutoSync(CCmdUI* pCmdUI) 
 {
     pCmdUI->Enable(pdfv_ != NULL);
-    pCmdUI->SetCheck(display_.auto_sync);
+    pCmdUI->SetCheck(display_.auto_sync_dffd);
 }
 
 void CHexEditView::OnDffdSync() 
@@ -13295,7 +13461,7 @@ void CHexEditView::OnDffdSync()
 void CHexEditView::OnUpdateDffdSync(CCmdUI* pCmdUI) 
 {
     // Don't allow manual sync if auto sync is on
-    pCmdUI->Enable(pdfv_ != NULL && !display_.auto_sync);
+    pCmdUI->Enable(pdfv_ != NULL && !display_.auto_sync_dffd);
 }
 
 void CHexEditView::OnSearchHex()        // Alt-L, F6
@@ -17109,6 +17275,30 @@ void CHexEditView::OnRandFast()
     ::OnOperateUnary<char>(this, unary_rand_fast, "fast randomize bytes", char(0));
 }
 
+// The display of views in tabs and split windows is complicated, mainly because the BCG tab view class
+// behaves very differently from a splitter (eg is derived from CView).
+// Currently we need to show 3 types of views: CHexEditView (normal hex view), CDataFormatView (template),
+// and CAerialView (bitmap overview).  There is also a CTabView that just contains one or more other views.
+// * The child frame has a splitter called "splitter_"
+//   - there is always at least one pane so at least one view
+//   - if there is only one pane then it contains the tab view
+// * One of the splits is always a tab view called "ptv_" in the child frame
+//   - if the window has not been split this is the only view
+//   - this may be the 2nd split (since the first one can be template view)
+// * The tab view always contains the hex view but may also have tabs for the other views
+//   - the left most tab is always the hex view
+//   - the tabs are not shown if there is just one view (the hex view)
+// * The template and aerial views are either not shown, in a pane of the splitter or in a tab view
+//
+// In the code below we often store the index of a view in the splitter or in the tab view using this convention:
+//  snum_t = index of tab view in the splitter (currently only 0 or 1)
+//  snum_d = index of DFFD (template) view in the left splitter (currently only 0 or -1)
+//  snum_a = index of aerial view in the right splitter (currently only 1, 2 or -1)
+//  tnum_d = index of DFFD (template) view in the tab view (currently -1, 1 or 2)
+//  tnum_a = index of aerial view in the tab view (currently -1, 1 or 2)
+//  where -1 indicates the view is not present
+//  Note tnum_h is not required as the hex view is always the left (0) view in the tab view
+
 void CHexEditView::ShowDffd()
 {
     if (pdfv_ == NULL)
@@ -17120,22 +17310,22 @@ void CHexEditView::OnDffdHide()
     if (pdfv_ == NULL)
 		return;   // already hidden
 
-	int idx1 = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
-	int idx2 = GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd());
+	int snum_d = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
+	int tnum_d = GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd());
 
-	ASSERT(idx1 > -1 || idx2 > -1);  // It must be open in tab or splitter
+	ASSERT(snum_d > -1 || tnum_d > -1);  // It must be open in tab or splitter
 
-	if (idx1 > -1)  // splitter?
+	if (snum_d > -1)  // splitter?
 	{
 		int dummy;
-		GetFrame()->splitter_.GetColumnInfo(idx1, split_width_, dummy);  // save split window width in case it is reopened
-		VERIFY(GetFrame()->splitter_.DelColumn(idx1, TRUE));
+		GetFrame()->splitter_.GetColumnInfo(snum_d, split_width_d_, dummy);  // save split window width in case it is reopened
+		VERIFY(GetFrame()->splitter_.DelColumn(snum_d, TRUE));
 		GetFrame()->splitter_.RecalcLayout();
 	}
-	else if (idx2 > -1)  // tab?
+	else if (tnum_d > -1)  // tab?
 	{
 		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing tree view
-		VERIFY(GetFrame()->ptv_->RemoveView(idx2));
+		VERIFY(GetFrame()->ptv_->RemoveView(tnum_d));
 	}
 
 	pdfv_ = NULL;
@@ -17148,18 +17338,23 @@ void CHexEditView::OnUpdateDffdHide(CCmdUI* pCmdUI)
 
 void CHexEditView::OnDffdSplit()
 {
+    if (DoDffdSplit())
+	    pdfv_->SendMessage(WM_INITIALUPDATE);
+}
+bool CHexEditView::DoDffdSplit()
+{
 	//if (pdfv_ == GetFrame()->splitter_.GetPane(0, 0))
 	if (pdfv_ != NULL && GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd()) > -1)
-		return;   // already open in splitter
+		return false;   // already open in splitter
 
 	// If open then it is open in a tab - close it
 	if (pdfv_ != NULL)
 	{
-		int idx2 = GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd());
-		ASSERT(idx2 > -1);
+		int tnum_d = GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd());
+		ASSERT(tnum_d > -1);
 		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing tree view
-		if (idx2 > -1)
-			VERIFY(GetFrame()->ptv_->RemoveView(idx2));
+		if (tnum_d > -1)
+			VERIFY(GetFrame()->ptv_->RemoveView(tnum_d));
 		pdfv_ = NULL;
 	}
 
@@ -17175,26 +17370,26 @@ void CHexEditView::OnDffdSplit()
 
     // Make sure width of splitter window is OK
 	CRect rr;
-	GetClientRect(&rr);
-	if (split_width_ < 10 || split_width_ > rr.Width())
+	GetFrame()->GetClientRect(&rr);
+	if (split_width_d_ < 10 || split_width_d_ > rr.Width())
 	{
-		split_width_ = rr.Width()/3;
-		if (split_width_ < 10)
-			split_width_ = 10;
+		split_width_d_ = rr.Width()/3;
+		if (split_width_d_ < 10)
+			split_width_d_ = 10;
 	}
 
 	// Add tree view in left splitter column
-	VERIFY(psplitter->InsColumn(0, split_width_, RUNTIME_CLASS(CDataFormatView), &ctxt));
-
-	psplitter->SetActivePane(0, 1);   // make hex view active
+	VERIFY(psplitter->InsColumn(0, split_width_d_, 10, RUNTIME_CLASS(CDataFormatView), &ctxt));
+	psplitter->SetActivePane(0, 1);   // make hex (tab) view active = now in col 1
 
 	pdfv_ = (CDataFormatView *)psplitter->GetPane(0, 0);
 	ASSERT_KINDOF(CDataFormatView, pdfv_);
+	psplitter->RecalcLayout();
+	AdjustColumns();
 
 	// Make sure dataformat view knows which hex view it is assoc. with
 	pdfv_->phev_ = this;
-	pdfv_->SendMessage(WM_INITIALUPDATE);
-	psplitter->RecalcLayout();
+	return true;
 }
 void CHexEditView::OnUpdateDffdSplit(CCmdUI* pCmdUI) 
 {
@@ -17204,19 +17399,24 @@ void CHexEditView::OnUpdateDffdSplit(CCmdUI* pCmdUI)
 
 void CHexEditView::OnDffdTab()
 {
+    if (DoDffdTab())
+        pdfv_->SendMessage(WM_INITIALUPDATE);
+}
+bool CHexEditView::DoDffdTab()
+{
 	if (pdfv_ != NULL && GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd()) > -1)
-		return;
+		return false;
 
 	// Close DFFD view in split window if there is one
 	if (pdfv_ != NULL)
 	{
-		int idx1 = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
-		ASSERT(idx1 > -1);
-		if (idx1 > -1)
+		int snum_d = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
+		ASSERT(snum_d > -1);
+		if (snum_d > -1)
 		{
 			int dummy;
-			GetFrame()->splitter_.GetColumnInfo(idx1, split_width_, dummy);  // save split window width in case it is reopened
-		    VERIFY(GetFrame()->splitter_.DelColumn(idx1, TRUE));
+			GetFrame()->splitter_.GetColumnInfo(snum_d, split_width_d_, dummy);  // save split window width in case it is reopened
+		    VERIFY(GetFrame()->splitter_.DelColumn(snum_d, TRUE));
 			GetFrame()->splitter_.RecalcLayout();
 		}
 		pdfv_ = NULL;
@@ -17224,9 +17424,9 @@ void CHexEditView::OnDffdTab()
 
 	// Reopen in the tab
 	CTabView *ptv = GetFrame()->ptv_;
-	ptv->AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
+	int tnum_d = ptv->AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
 	
-	ptv->SetActiveView(1);
+	ptv->SetActiveView(tnum_d);
 	pdfv_ = (CDataFormatView *)ptv->GetActiveView();
 	ASSERT_KINDOF(CDataFormatView, pdfv_);
 
@@ -17234,12 +17434,185 @@ void CHexEditView::OnDffdTab()
 
 	// Make sure dataformat view knows which hex view it is assoc. with
 	pdfv_->phev_ = this;
-	pdfv_->SendMessage(WM_INITIALUPDATE);
+	return true;
 }
 void CHexEditView::OnUpdateDffdTab(CCmdUI* pCmdUI) 
 {
     pCmdUI->SetCheck(pdfv_ != NULL && GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd()) > -1);
     pCmdUI->Enable(GetDocument()->ptree_ != NULL);
+}
+
+void CHexEditView::OnAerialHide()
+{
+    if (pav_ == NULL)
+		return;   // already hidden
+
+	int snum_a = GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd());
+	int tnum_a = GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd());
+
+	ASSERT(snum_a > -1 || tnum_a > -1);  // It must be open in tab or splitter
+
+	if (snum_a > -1)  // splitter?
+	{
+		int dummy;
+		GetFrame()->splitter_.GetColumnInfo(snum_a, split_width_a_, dummy);  // save split window width in case it is reopened
+		VERIFY(GetFrame()->splitter_.DelColumn(snum_a, TRUE));
+		GetFrame()->splitter_.RecalcLayout();
+	}
+	else if (tnum_a > -1)  // tab?
+	{
+		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing aerial view
+		VERIFY(GetFrame()->ptv_->RemoveView(tnum_a));
+	}
+
+	pav_ = NULL;
+}
+void CHexEditView::OnUpdateAerialHide(CCmdUI* pCmdUI) 
+{
+    pCmdUI->Enable(TRUE);
+    pCmdUI->SetCheck(pav_ == NULL);
+}
+
+void CHexEditView::OnAerialSplit()
+{
+    if (DoAerialSplit())
+	    pav_->SendMessage(WM_INITIALUPDATE);
+}
+bool CHexEditView::DoAerialSplit()
+{
+    int snum_a;
+	if (pav_ != NULL && (snum_a = GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd())) > -1)
+	{
+	    if (GetFrame()->splitter_.ColWidth(snum_a) < 8) AdjustColumns();
+		return false;   // already open in splitter
+	}
+
+	// If open then it is open in a tab - close it
+	if (pav_ != NULL)
+	{
+		int tnum_a = GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd());
+		ASSERT(tnum_a > -1);
+		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing aerial view
+		if (tnum_a > -1)
+			VERIFY(GetFrame()->ptv_->RemoveView(tnum_a));
+		pav_ = NULL;
+	}
+
+	// Reopen in the splitter
+	CCreateContext ctxt;
+	ctxt.m_pNewViewClass = RUNTIME_CLASS(CAerialView);
+	ctxt.m_pCurrentDoc = GetDocument();
+	ctxt.m_pLastView = this;
+	ctxt.m_pCurrentFrame = GetFrame();
+
+	CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
+	ASSERT(psplitter->m_hWnd != 0);
+
+    // Make sure width of splitter window is OK
+	CRect rr;
+	GetFrame()->GetClientRect(&rr);
+	if (split_width_a_ < 8 || split_width_a_ > rr.Width())
+	{
+		split_width_a_ = rr.Width()/3;
+		if (split_width_a_ < 8)
+			split_width_a_ = 8;
+	}
+
+	// Add aerial view column to the right of hex (tab) view column
+	int snum_t = GetFrame()->splitter_.FindViewColumn(GetFrame()->ptv_->GetSafeHwnd());
+	VERIFY(psplitter->InsColumn(snum_t + 1, split_width_a_, 8, RUNTIME_CLASS(CAerialView), &ctxt));
+	psplitter->SetActivePane(0, snum_t);   // make hex view active
+
+	pav_ = (CAerialView *)psplitter->GetPane(0, snum_t + 1);
+	ASSERT_KINDOF(CAerialView, pav_);
+	psplitter->SetColumnInfo(snum_t, rr.Width() - split_width_a_, 10);
+	psplitter->RecalcLayout();
+	AdjustColumns();
+
+	// Make sure dataformat view knows which hex view it is assoc. with
+	pav_->phev_ = this;
+	return true;
+}
+void CHexEditView::OnUpdateAerialSplit(CCmdUI* pCmdUI) 
+{
+    pCmdUI->SetCheck(pav_ != NULL && GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd()) > -1);
+}
+
+void CHexEditView::OnAerialTab()
+{
+    if (DoAerialTab())
+	    pav_->SendMessage(WM_INITIALUPDATE);
+}
+bool CHexEditView::DoAerialTab()
+{
+	if (pav_ != NULL && GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd()) > -1)
+		return false;
+
+	// Close Aerial view in split window if there is one
+	if (pav_ != NULL)
+	{
+		int snum_a = GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd());
+		ASSERT(snum_a > 0);       // Should be there (not -1) and not the left one (not 0)
+		if (snum_a > -1)
+		{
+			int dummy;
+			GetFrame()->splitter_.GetColumnInfo(snum_a, split_width_a_, dummy);  // save split window width in case it is reopened
+		    VERIFY(GetFrame()->splitter_.DelColumn(snum_a, TRUE));
+			GetFrame()->splitter_.RecalcLayout();
+		}
+		pav_ = NULL;
+	}
+
+	// Reopen in the tab
+	CTabView *ptv = GetFrame()->ptv_;
+	int tnum_a = ptv->AddView(RUNTIME_CLASS (CAerialView), _T("Aerial View"));
+	ASSERT(tnum_a > 0);
+	if (tnum_a == -1)
+	    return false;
+	    
+	ptv->SetActiveView(tnum_a);
+	pav_ = (CAerialView *)ptv->GetActiveView();
+	ASSERT_KINDOF(CAerialView, pav_);
+	
+	// Make sure dataformat view knows which hex view it is assoc. with
+	pav_->phev_ = this;
+	ptv->SetActiveView(0);
+	return true;
+}
+void CHexEditView::OnUpdateAerialTab(CCmdUI* pCmdUI) 
+{
+    pCmdUI->SetCheck(pav_ != NULL && GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd()) > -1);
+}
+
+// private function which hopefully makes sure all the splitter columns are obvious (ie a min width)
+void CHexEditView::AdjustColumns()
+{
+    int d, t, a, min;        // Current width of dffd, tab and aerial columns
+    d = t = a = -1;
+    int snum_d, snum_t, snum_a;
+    snum_d = snum_t = snum_a = -1;
+
+    // Get current column widths    
+	CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
+	if (pdfv_ != NULL) snum_d = psplitter->FindViewColumn(pdfv_->GetSafeHwnd());
+	snum_t = psplitter->FindViewColumn(GetFrame()->ptv_->GetSafeHwnd());
+	if (pav_ != NULL) snum_a = psplitter->FindViewColumn(pav_->GetSafeHwnd());
+    if (snum_d > -1) psplitter->GetColumnInfo(snum_d, d, min);
+    if (snum_t > -1) psplitter->GetColumnInfo(snum_t, t, min);
+    if (snum_a > -1) psplitter->GetColumnInfo(snum_a, a, min);
+    
+    // Make ideal widths slightly smaller but not less than a minimum
+    bool adjust = false;
+    d -= 20; if (snum_d > -1 && d < 20) { d = 20; adjust = true; }
+    t -= 30; if (snum_t > -1 && t < 30) { t = 30; adjust = true; }
+    a -= 10; if (snum_a > -1 && a < 10) { a = 10; adjust = true; }
+    if (adjust)
+    {
+        if (snum_d > -1) psplitter->SetColumnInfo(snum_d, d, 10);
+        if (snum_t > -1) psplitter->SetColumnInfo(snum_t, t, 10);
+        if (snum_a > -1) psplitter->SetColumnInfo(snum_a, a, 8);
+        psplitter->RecalcLayout();
+    }
 }
 
 // This is connected to Ctrl+T and is used for testing new dialogs etc

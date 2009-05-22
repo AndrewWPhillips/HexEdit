@@ -46,7 +46,6 @@ CHexFileList::CHexFileList(UINT nStart, LPCTSTR lpszSection, int nSize, int nMax
     // Also note that some values are set in the default string here just to show the fields
     // and are overwritten with the current default value from the registry below.
     default_data_ = "1|-30000|-30000|-30000|-30000|0|0|0|0||||0|16|4|0|Courier|16|Terminal|18|default";
-
 	SetDefaults();
 
     ASSERT(AfxGetMainWnd() != NULL);
@@ -100,8 +99,9 @@ void CHexFileList::SetDefaults()
     SetDV(OFFSET, theApp.open_offset_);
     SetDV(VERT_BUFFER_ZONE, theApp.open_vertbuffer_);
 
-    ASSERT(theApp.open_disp_state_ != -1);    // Ensures we have read default values
+    ASSERT(theApp.open_disp_state_ != -1);      // Ensures we have read default values
     SetDV(DISPLAY, theApp.open_disp_state_);
+    SetDV(AERIALDISPLAY, 0x000010B1F);          // xxx allow user to set default values later
 }
 
 #ifdef _DEBUG
@@ -568,12 +568,15 @@ bool CHexFileList::SetData(int index, param_num param, LPCTSTR vv)
     return true;
 }
 
+// Get current setting for a file or the default settings if not yet set
+// This now handles an index of -1 to get the default setting
 CString CHexFileList::GetData(int index, param_num param) const
 {
     ASSERT(index < name_.size());
 
     CString retval;
-    AfxExtractSubString(retval, data_[index], param, '|');
+    if (index > - 1)
+        AfxExtractSubString(retval, data_[index], param, '|');
     if (retval.IsEmpty())
         AfxExtractSubString(retval, default_data_, param, '|');
     return retval;

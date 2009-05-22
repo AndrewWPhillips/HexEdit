@@ -38,6 +38,7 @@
 #include "Dialog.h"
 #include "DFFDMisc.h"
 #include "SpecialList.h"
+#include "SystemSound.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -87,14 +88,16 @@ END_MESSAGE_MAP()
 // CHexEditDoc construction/destruction
 
 CHexEditDoc::CHexEditDoc()
- : start_event_(FALSE, TRUE), stopped_event_(FALSE, TRUE)
+ : start_search_event_(FALSE, TRUE), stopped_event_(FALSE, TRUE),
+   start_aerial_event_(FALSE, TRUE)
 {
-    pfile1_ = pfile2_ = NULL;
+    pfile1_ = pfile2_ = pfile3_ = NULL;
 
     for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
     {
         data_file_[ii] = NULL;
         data_file2_[ii] = NULL;
+        data_file3_[ii] = NULL;
         temp_file_[ii] = FALSE;
     }
 
@@ -103,7 +106,14 @@ CHexEditDoc::CHexEditDoc()
 
 	dffd_edit_mode_ = 0;
 
-    pthread_ = NULL;
+    // BG search tthread
+    pthread2_ = NULL;
+
+    // Aerial view thread
+    pthread3_ = NULL;
+    av_count_ = 0;
+    dib_ = NULL;
+    bpe_ = -1;
 
     ptree_ = NULL;         // XML tree wrapper for data format view
     df_init_ = FALSE;
@@ -111,7 +121,8 @@ CHexEditDoc::CHexEditDoc()
 
     hicon_ = HICON(0);
 
-    view_update_ = FALSE;
+    search_fin_ = FALSE;
+    aerial_fin_ = FALSE;
 #ifndef NDEBUG
     // Make default capacity for undo_ vector small to force reallocation sooner.
     // This increases likelihood of catching bugs related to reallocation.
@@ -248,8 +259,8 @@ BOOL CHexEditDoc::OnNewDocument()
 			return FALSE;       // Some error
 	}
 
-    if (aa->bg_search_ && pthread_ == NULL)
-        CreateThread();
+    if (aa->bg_search_ && pthread2_ == NULL)
+        CreateSearchThread();
 
     OpenDataFormatFile("default");
 
@@ -272,7 +283,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 #ifdef _DEBUG
     // Make sure no data files are open yet
     for (ii = 0; ii < doc_loc::max_data_files; ++ii)
-        ASSERT(data_file_[ii] == NULL && data_file2_[ii] == NULL);
+        ASSERT(data_file_[ii] == NULL && data_file2_[ii] == NULL && data_file3_[ii] == NULL);
 #endif
 
     // Get read-only flag from app (this was the only way to pass it here)
@@ -295,7 +306,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
     last_view_ = NULL;
 
     // Init locations list with all of original file as only loc record
-    ASSERT(pthread_ == NULL);       // Must modify loc_ before creating thread (else docdata_ needs to be locked)
+    ASSERT(pthread2_ == NULL);       // Must modify loc_ before creating thread (else docdata_ needs to be locked)
     loc_.push_back(doc_loc(FILE_ADDRESS(0), pfile1_->GetLength()));
 
     CHECK_SECURITY(195);
@@ -317,7 +328,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
     if (aa->bg_search_)
     {
-        CreateThread();
+        CreateSearchThread();
         if (theApp.pboyer_ != NULL)        // If a search has already been done do bg search on newly opened file
 		{
 			if (theApp.align_rel_ && recent_file_index != -1)
@@ -462,7 +473,7 @@ void CHexEditDoc::OnCloseDocument()
     }
 
     DeleteContents();
-    ASSERT(pthread_ == NULL);
+    ASSERT(pthread2_ == NULL && pthread3_ == NULL);
 
     if (hicon_ != HICON(0))
     {
@@ -692,11 +703,17 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
             pfile1_->Close();
             delete pfile1_;
             pfile1_ = NULL;
-            if (pthread_ != NULL && pfile2_ != NULL)
+            if (pthread2_ != NULL && pfile2_ != NULL)
             {
                 pfile2_->Close();
                 delete pfile2_;
                 pfile2_ = NULL;
+            }
+            if (pthread3_ != NULL && pfile3_ != NULL)
+            {
+                pfile3_->Close();
+                delete pfile3_;
+                pfile3_ = NULL;
             }
         }
         // If file we are writing exists (Save or SaveAs overwriting another file)
@@ -856,12 +873,19 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
             data_file_[ii]->Close();
             delete data_file_[ii];
             data_file_[ii] = NULL;
-            if (pthread_ != NULL)
+            if (pthread2_ != NULL)
             {
                 ASSERT(data_file2_[ii] != NULL);
                 data_file2_[ii]->Close();
                 delete data_file2_[ii];
                 data_file2_[ii] = NULL;
+            }
+            if (pthread3_ != NULL)
+            {
+                ASSERT(data_file3_[ii] != NULL);
+                data_file3_[ii]->Close();
+                delete data_file3_[ii];
+                data_file3_[ii] = NULL;
             }
             // If the data file was a temp file remove it now it is closed
             if (temp_file_[ii])
@@ -989,11 +1013,17 @@ void CHexEditDoc::close_file()
         pfile1_ = NULL;
     }
 
-    if (theApp.bg_search_ && pthread_ != NULL && pfile2_ != NULL)
+    if (theApp.bg_search_ && pthread2_ != NULL && pfile2_ != NULL)
     {
         pfile2_->Close();
         delete pfile2_;
         pfile2_ = NULL;
+    }
+    if (pthread3_ != NULL && pfile3_ != NULL)
+    {
+        pfile3_->Close();
+        delete pfile3_;
+        pfile3_ = NULL;
     }
 }
 
@@ -1137,7 +1167,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 
     // If doing background searches and the newly opened file is not the same
     // as pfile2_ then close pfile2_ and open it as the new file.
-    if (pthread_ != NULL && 
+    if (pthread2_ != NULL && 
         (pfile2_ == NULL || pfile1_->GetFilePath() != pfile2_->GetFilePath()) )
     {
         if (pfile2_ != NULL)
@@ -1154,7 +1184,28 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
         if (!pfile2_->Open(pfile1_->GetFilePath(),
                     CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
         {
-            TRACE1("File2 open failed for %p\n", this);
+            TRACE1("BG search file open failed for %p\n", this);
+            return FALSE;
+        }
+    }
+    if (pthread3_ != NULL && 
+        (pfile3_ == NULL || pfile1_->GetFilePath() != pfile3_->GetFilePath()) )
+    {
+        if (pfile3_ != NULL)
+        {
+            pfile3_->Close();
+            delete pfile3_;
+            pfile3_ = NULL;
+        }
+
+        if (IsDevice())
+            pfile3_ = new CFileNC();
+        else
+            pfile3_ = new CFile64();
+        if (!pfile3_->Open(pfile1_->GetFilePath(),
+                    CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
+        {
+            TRACE1("BG aerial scan file open failed for %p\n", this);
             return FALSE;
         }
     }
@@ -1176,8 +1227,11 @@ void CHexEditDoc::DeleteContents()
         pfile1_ = NULL;
     }
 
-    if (aa->bg_search_ && pthread_ != NULL)
-        KillThread();
+    if (aa->bg_search_ && pthread2_ != NULL)
+        KillSearchThread();
+
+    if (pthread3_ != NULL)
+        KillAerialThread();
 
     undo_.clear();
     loc_.clear();               // Done after thread killed so no docdata_ lock needed
@@ -1195,7 +1249,8 @@ void CHexEditDoc::DeleteContents()
             if (temp_file_[ii])
                 remove(ss);
         }
-        ASSERT(data_file2_[ii] == NULL);  // should have been closed in KillThread() call above
+        ASSERT(data_file2_[ii] == NULL);  // should have been closed in KillSearchThread() call above
+        ASSERT(data_file3_[ii] == NULL);  // should have been closed in KillAerialThread() call above
     }
 
     // Reset change tracking
@@ -1210,7 +1265,7 @@ void CHexEditDoc::DeleteContents()
     // m_atime does not seem to be chnaged under NTFS (unless you change m_mtime??!)
     //if (!strPath.IsEmpty() && keep_times_ && !IsDevice())
     //{
-    //    ASSERT(pfile1_ == NULL && pfile2_ == NULL);     // no point in setting access time if the file is still open
+    //    ASSERT(pfile1_ == NULL && pfile2_ == NULL && pfile3_ == NULL);  // no point in setting access time if the file is still open
     //    CFile::SetStatus(strPath, saved_status_);
     //}
 }
@@ -1239,6 +1294,33 @@ void CHexEditDoc::SetModifiedFlag(BOOL bMod /*=TRUE*/)
         }
         UpdateFrameCounts();
         CDocument::SetModifiedFlag(bMod);
+    }
+}
+
+void CHexEditDoc::CheckBGProcessing()
+{
+    // Protect access to shared data
+    CSingleLock sl(&docdata_, TRUE);
+
+    if (search_fin_)
+    {
+        search_fin_ = FALSE;              // Stop further updates
+#ifdef SYS_SOUNDS
+        CSystemSound::Play("Background Search Finished");
+#endif
+        find_total_ = 0;
+        CBGSearchHint bgsh(TRUE);
+        UpdateAllViews(NULL, 0, &bgsh);
+    }
+
+    if (aerial_fin_)
+    {
+        aerial_fin_ = FALSE;              // Stop further updates
+#ifdef SYS_SOUNDS
+        CSystemSound::Play("Background Scan Finished");
+#endif
+        CBGAerialHint bgah;
+        UpdateAllViews(NULL, 0, &bgah);
     }
 }
 
@@ -1645,7 +1727,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
                 return -1;              // open_file has already set mac_error_ = 10
 
             length_ = file_len;
-            ASSERT(pthread_ == NULL);   // Must modify loc_ before creating thread (else docdata_ needs to be locked)
+            ASSERT(pthread2_ == NULL && pthread3_ == NULL);   // Must modify loc_ before creating threads (else docdata_ needs to be locked)
             loc_.push_back(doc_loc(FILE_ADDRESS(0), file_len));
 
             // Save original status

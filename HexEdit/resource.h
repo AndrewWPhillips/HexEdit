@@ -268,6 +268,7 @@
 #define ID_INTEGER_ABS                  306
 #define IDD_PROP_CHAR1                  306
 #define IDD_PROP_CHAR                   306
+#define IDR_CONTEXT_AERIAL              306
 #define IDB_BACK1                       307
 #define ID_INTEGER_MIN                  307
 #define IDD_DFFD_SWITCH                 307
@@ -359,6 +360,9 @@
 #define ID_DFFD_OPEN_TYPE_DUMMY         374
 #define ID_DFFD_OPTIONS                 375
 #define IDB_OPTIONSIMAGES               376
+#define ID_AERIAL_HIDE                  377
+#define ID_AERIAL_SPLIT                 378
+#define ID_AERIAL_TAB                   379
 #define IDB_STDBAR_H                    380
 #define IDB_STDBAR_C                    381
 #define IDB_STDBAR_D                    382
@@ -1489,6 +1493,8 @@
 #define ID_VIEW_HL_MOUSE                39005
 #define ID_STRING_ASC2EBC               39006
 #define ID_STRING_EBC2ASC               39007
+#define ID_INTEGER_GETINT               39008
+#define ID_STRING_GETSTRING             39009
 #define ID_REAL_PI                      39010
 #define ID_INTEGER_STRCMP               39011
 #define ID_INTEGER_STRICMP              39012
@@ -1499,8 +1505,49 @@
 #define ID_BOOLEAN_GT                   39018
 #define ID_BOOLEAN_GE                   39019
 #define ID_BOOLEAN_GETBOOL              39020
-#define ID_INTEGER_GETINT               39021
-#define ID_STRING_GETSTRING             39022
+#define ID_AERIAL_ZOOM1                 39021
+#define ID_AERIAL_ZOOM2                 39022
+#define ID_AERIAL_ZOOM3                 39023
+#define ID_AERIAL_ZOOM4                 39024
+#define ID_AERIAL_ZOOM5                 39025
+#define ID_AERIAL_ZOOM6                 39026
+#define ID_AERIAL_ZOOM7                 39027
+#define ID_AERIAL_ZOOM8                 39028
+#define ID_AERIAL_ZOOM9                 39029
+#define ID_AERIAL_ZOOM10                39030
+#define ID_AERIAL_ZOOM11                39031
+#define ID_AERIAL_ZOOM12                39032
+#define ID_AERIAL_ZOOM13                39033
+#define ID_AERIAL_ZOOM14                39034
+#define ID_AERIAL_ZOOM15                39035
+#define ID_AERIAL_ZOOM16                39036
+#define ID_AERIAL_ZOOM17                39037
+#define ID_AERIAL_ZOOM18                39038
+#define ID_AERIAL_ZOOM19                39039
+#define ID_AERIAL_ZOOM20                39040
+#define ID_AERIAL_ZOOM21                39041
+#define ID_AERIAL_ZOOM22                39042
+#define ID_AERIAL_ZOOM23                39043
+#define ID_AERIAL_ZOOM24                39044
+#define ID_AERIAL_ZOOM25                39045
+#define ID_AERIAL_ZOOM26                39046
+#define ID_AERIAL_ZOOM27                39047
+#define ID_AERIAL_ZOOM28                39048
+#define ID_AERIAL_ZOOM29                39049
+#define ID_AERIAL_ZOOM30                39050
+#define ID_AERIAL_ZOOM31                39051
+#define ID_AERIAL_ZOOM32                39052
+#define ID_VIEW_AERIALVIEW              39111
+#define ID_IND_SEL                      39112
+#define ID_IND_MARK                     39113
+#define ID_IND_HL                       39114
+#define ID_IND_SEARCH                   39115
+#define ID_IND_BM                       39116
+#define ID_ANT_SEL                      39120
+#define ID_ANT_MARK                     39121
+#define ID_ANT_HL                       39122
+#define ID_ANT_SEARCH                   39123
+#define ID_ANT_BM                       39124
 
 // Next default values for new objects
 // 
@@ -1508,7 +1555,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        421
-#define _APS_NEXT_COMMAND_VALUE         39023
+#define _APS_NEXT_COMMAND_VALUE         39125
 #define _APS_NEXT_CONTROL_VALUE         1591
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

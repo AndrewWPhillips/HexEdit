@@ -29,6 +29,7 @@
 #include <afxmt.h>              // For MFC IPC (CEvent etc)
 
 #include "CFile64.h"
+#include <FreeImage.h>
 #include "xmltree.h"
 #include "expr.h"
 #include "timer.h"
@@ -126,6 +127,16 @@ public:
 
 protected:
     DECLARE_DYNAMIC(CBGSearchHint)        // Required for MFC run-time type info.
+};
+
+// This object is passed to view OnUpdate() functions as the (3rd) hint parameter
+// to say that the bg scan has finished.  CAerialView uses it to refresh its display.
+class CBGAerialHint : public CObject
+{
+public:
+
+protected:
+    DECLARE_DYNAMIC(CBGAerialHint)        // Required for MFC run-time type info.
 };
 
 //// This object is passed to view OnUpdate() functions as the (3rd) hint
@@ -336,8 +347,6 @@ struct doc_undo
 //    operator<(const doc_undo &) const { return false; }
 };
 
-UINT bg_func(LPVOID pParam);            // Entry function for background search
-
 struct adjustment
 {
     adjustment(FILE_ADDRESS ss, FILE_ADDRESS ee, FILE_ADDRESS address, FILE_ADDRESS aa)
@@ -368,6 +377,7 @@ class CHexEditDoc : public CDocument
 {
     friend class CGridCtrl2;
     friend class CDataFormatView;
+    friend class CAerialView;
     friend class CHexExpr;
 
 protected: // create from serialization only
@@ -443,7 +453,7 @@ public:
     int xml_file_num_;                      // Index into theApp.xml_file_name_ of current XML file or -1
 
 // Operations
-    size_t GetData(unsigned char *buf, size_t len, FILE_ADDRESS loc, bool use_bg = false);
+    size_t GetData(unsigned char *buf, size_t len, FILE_ADDRESS loc, int use_bg = -1);
     BOOL WriteData(const CString fname, FILE_ADDRESS start, FILE_ADDRESS end, BOOL append = FALSE);
     void WriteInPlace();
     void Change(enum mod_type, FILE_ADDRESS address, FILE_ADDRESS len,
@@ -542,6 +552,7 @@ private:
 	// We allow up to 4 external files to hold some of the file data (if too big for memory)
 	CFile64 *data_file_[4 /*doc_loc::max_data_files*/];     // Ptrs to files or NULL if nt (yet) used
 	CFile64 *data_file2_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background search thread
+	CFile64 *data_file3_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background aerial thread
 	BOOL temp_file_[4 /*doc_loc::max_data_files*/];         // Says if the file is temporary (should be deleted when doc closed)
 
     // The following are used for change tracking
@@ -578,14 +589,15 @@ private:
     std::list <doc_loc> loc_;
 
 public:
-    void CreateThread();        // Createn background thread
-    void KillThread();          // Kill background thread ASAP
-    UINT RunBGThread();         // Main func in bg thread
-    void BGThreadPriority(int ii); // Set bg thread priority
+    void CheckBGProcessing();   // check if bg searching or bg scan has finished
+
+    // Background search
+    void CreateSearchThread();  // Create background search thread
+    void KillSearchThread();    // Kill background thread ASAP
+    UINT RunSearchThread();     // Main func in bg thread
+    void SearchThreadPriority(int ii); // Set bg thread priority
     void StartSearch(FILE_ADDRESS start = -1, FILE_ADDRESS end = -1);
-    void StopSearch();          // Stops any current search (via stop_event_), thread waits for start_event_
-    void BGSearchFinished();    // Called when BG thread signals that the search is complete
-                                // - allows views to be updated with new found strings
+    void StopSearch();          // Stops any current search (via stop_event_), thread waits for start_search_event_
     int SearchOccurrences();    // No of search occurrences (-ve if disabled/not finished)
     FILE_ADDRESS GetNextFound(const unsigned char *pat, const unsigned char *mask, size_t len, 
                               BOOL icase, int tt, BOOL wholeword,
@@ -600,6 +612,17 @@ public:
 
     FILE_ADDRESS base_addr_;    // Base address for alignment tests. It is not stored in app (with alignment_ et al as it is per doc - set from mark or SOF in active view)
 
+    // Background scan (for aerial views etc)
+    void CreateAerialThread();  // Create background thread which fills in the aerial view bitmap
+    void KillAerialThread();    // Kill background thread ASAP
+    void AerialChange();        // Signal bg thread that doc has changed
+    UINT RunAerialThread();     // Main func in bg thread
+    bool AerialScanning();      // Are we currently scanning
+
+    void AddAerialView(CHexEditView *pview);
+    void RemoveAerialView();
+ 
+    // DFFD stuff
     enum
     {
         DF_FILE,            // The whole file (only one at indent 1)
@@ -692,6 +715,9 @@ public:
 
 	// xxx this probably should be in expr_eval class
     static ExprStringType GetDataString(expr_eval::value_t val, CString strFormat, int size = -1, bool unsgned = false);
+    
+    int GetBpe() { return bpe_; }
+    int NumElts() { return int((length_ - 1)/bpe_) + 1; }    // Number of elts required for the whole file
 
 private:
     void HandleError(const char *mess);
@@ -701,21 +727,20 @@ private:
     CHexExpr::value_t Evaluate(CString ss, CHexExpr &ee, int ref, int &ref_ac);
 
     // Data for background searches
-    CWinThread *pthread_;       // Ptr to background search thread or NULL if bg searches are off
+    CWinThread *pthread2_;      // Ptr to background search thread or NULL if bg searches are off
     int priority_;              // Priority level to do bg search at
 
-    CEvent start_event_;        // Signal to bg thread to start a new search, or check for termination
+    CEvent start_search_event_;        // Signal to bg thread to start a new search, or check for termination
     CEvent stopped_event_;      // Signal from bg thread that finished/aborted the search
 
-    CCriticalSection docdata_;  // Protects access from main/bg threads to document data (loc_) the file
-                                // and find data below.
+    CCriticalSection docdata_;  // Protects access in threads to document data (loc_) file and find data below.
                                 // Note that this is used for read access of the document from the bg
-                                // thread or write (but not read) access from the primary thread. This
+                                // threads or write (but not read) access from the primary thread. This
                                 // stops the bg thread accessing the data while it is being updated.
     CFile64 *pfile2_;           // We need a copy of file_ so we can access the same file for searching
     int thread_flag_;           // Signals thread to stop search (1) or even kill itself (-1)
 
-    BOOL view_update_;          // Flags that the bg search is finished and the view need updating
+    BOOL search_fin_;           // Flags that the bg search is finished and the view need updating
 
     // List of ranges to search in background (first = start, second = byte past end)
     std::list<pair<FILE_ADDRESS, FILE_ADDRESS> > to_search_;
@@ -726,6 +751,25 @@ private:
     FILE_ADDRESS find_total_;   // Total number of bytes for background search (so that progress bar is drawn properly)
     double find_done_;          // This is how far the bg search has progressed in searching the top entry of to_search_ list
 
+    // Data for aerial views
+    CWinThread *pthread3_;      // Ptr to thread or NULL
+    CEvent start_aerial_event_; // Starts the thread going
+    enum { WAITING, SCANNING, DYING } aerial_state_;
+    enum { NONE, RESTART, STOP, DIE } aerial_command_;
+    // NOTE: kala must not be modified while the bg thread is running!
+    COLORREF kala_[256];        // Colours from the first hex view to open the aerial view
+
+    CFile64 *pfile3_;           // Using a copy of the file avoids synchronising access problems
+    int av_count_;              // Number of aerial views of this document
+    int bpe_;                   // Bytes per bitmap pixel (1 to 65536)
+    FIBITMAP *dib_;             // The FreeImage bitmap
+    int dib_size_;              // Actual number of bytes allocated
+    BOOL aerial_fin_;           // Flags that the bg scan is finished and the view needs updating
+
+    // MAX_WIDTH = widest we can "reshape" the bitmap to.  Like any width used for the bitmap it must
+    // be a multiple of 8 (so there are never "pad" bytes on the end of scan lines).
+    enum { MAX_WIDTH = 2048 };
+    enum { MAX_BMP  = 256*1024*1024 };      // Biggest bitmap size in bytes - should be made a user option sometime
     // Stuff for handling data format (XML) files
     // Each df_size_ gives the size of a data field or whole array/structure.  If -ve take abs value.
     // Each df_address_ gives the location within the file.  If -1, all or part is not present.
@@ -777,8 +821,6 @@ private:
 #ifdef _DEBUG
     void dump_tree();
 #endif
-
-    DWORD main_thread_id_;      // Thread ID of main thread so bg thread can send it a message
 };
 
 /////////////////////////////////////////////////////////////////////////////

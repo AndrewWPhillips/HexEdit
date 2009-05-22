@@ -413,6 +413,12 @@ public:
 		afx_msg void OnUpdateDffdHide(CCmdUI* pCmdUI) { phev_->OnUpdateDffdHide(pCmdUI); }
 		afx_msg void OnUpdateDffdSplit(CCmdUI* pCmdUI) { phev_->OnUpdateDffdSplit(pCmdUI); }
 		afx_msg void OnUpdateDffdTab(CCmdUI* pCmdUI) { phev_->OnUpdateDffdTab(pCmdUI); }
+		afx_msg void OnAerialHide() { phev_->OnAerialHide(); }
+		afx_msg void OnAerialSplit() { phev_->OnAerialSplit(); }
+		afx_msg void OnAerialTab() { phev_->OnAerialTab(); }
+		afx_msg void OnUpdateAerialHide(CCmdUI* pCmdUI) { phev_->OnUpdateAerialHide(pCmdUI); }
+		afx_msg void OnUpdateAerialSplit(CCmdUI* pCmdUI) { phev_->OnUpdateAerialSplit(pCmdUI); }
+		afx_msg void OnUpdateAerialTab(CCmdUI* pCmdUI) { phev_->OnUpdateAerialTab(pCmdUI); }
 
 // Implementation
 protected:
@@ -466,8 +472,8 @@ protected:
 
     CHexEditDoc *GetDocument()
     {
-            ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CHexEditDoc)));
-            return (CHexEditDoc*)m_pDocument;
+        ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CHexEditDoc)));
+        return (CHexEditDoc*)m_pDocument;
     }
 };
 

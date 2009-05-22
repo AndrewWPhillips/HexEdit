@@ -339,7 +339,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Tools Place Holder",          ID_TOOLS_ENTRY
         MENUITEM SEPARATOR
-        MENUITEM "Customize...",                ID_CUSTOMIZE
+        MENUITEM "C&ustomize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS
         MENUITEM SEPARATOR
         MENUITEM "&Record Macro\tF7",           ID_RECORD
@@ -469,7 +469,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Find...\tCtrl+F",            ID_EDIT_FIND
         MENUITEM "&Replace...\tCtrl+H",         ID_EDIT_REPLACE
-        MENUITEM "&Go To...\tCtrl+G",           ID_EDIT_GOTO
+        MENUITEM "Go &To...\tCtrl+G",           ID_EDIT_GOTO
     END
     POPUP "&View"
     BEGIN
@@ -504,6 +504,13 @@ BEGIN
             MENUITEM "&C/C++",                      ID_CONTROL_C
         END
         MENUITEM "&Reset To Defaults",          ID_DISPLAY_RESET
+        MENUITEM SEPARATOR
+        POPUP "Aerial View"
+        BEGIN
+            MENUITEM "Hide Aerial View",            ID_AERIAL_HIDE
+            MENUITEM "Split Aerial View",           ID_AERIAL_SPLIT
+            MENUITEM "Tabbed Aerial View",          ID_AERIAL_TAB
+        END
         MENUITEM SEPARATOR
         MENUITEM "&Properties...",              ID_PROPERTIES
     END
@@ -741,7 +748,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Tools Place Holder",          ID_TOOLS_ENTRY
         MENUITEM SEPARATOR
-        MENUITEM "&Customize...",               ID_CUSTOMIZE
+        MENUITEM "C&ustomize...",               ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS
         MENUITEM SEPARATOR
         MENUITEM "&Record Macro\tF7",           ID_RECORD
@@ -810,7 +817,7 @@ BEGIN
     BEGIN
         MENUITEM "&Decimal Addresses",          ID_ADDR_TOGGLE
         MENUITEM SEPARATOR
-        MENUITEM "&Go To...\tCtrl+G",           ID_EDIT_GOTO
+        MENUITEM "Go &To...\tCtrl+G",           ID_EDIT_GOTO
         MENUITEM "&Find...\tCtrl+F",            ID_EDIT_FIND
         MENUITEM SEPARATOR
         MENUITEM "&Mark Position",              ID_MARK
@@ -831,7 +838,7 @@ BEGIN
         MENUITEM "&Graphic Characters",         ID_GRAPHIC_TOGGLE
         MENUITEM "IBM/OEM Graphics",            ID_OEM_TOGGLE
         MENUITEM SEPARATOR
-        MENUITEM "&Allow Changes",              ID_ALLOW_MODS
+        MENUITEM "Allow &Changes",              ID_ALLOW_MODS
         MENUITEM "&Insert",                     ID_INSERT
         MENUITEM SEPARATOR
         MENUITEM "&Options...",                 ID_OPTIONS2
@@ -848,7 +855,7 @@ BEGIN
         MENUITEM "&Auto Fit",                   ID_AUTOFIT
         MENUITEM SEPARATOR
         MENUITEM "&Mark Position",              ID_MARK
-        MENUITEM "&Allow Changes",              ID_ALLOW_MODS
+        MENUITEM "Allow &Changes",              ID_ALLOW_MODS
         MENUITEM "&Insert",                     ID_INSERT
         MENUITEM SEPARATOR
         MENUITEM "&Options...",                 ID_OPTIONS2
@@ -866,10 +873,10 @@ BEGIN
         MENUITEM "&Go To Mark\tCtrl+F9",        ID_GOTO_MARK
         MENUITEM SEPARATOR
         MENUITEM "&Bookmarks...",               ID_BOOKMARKS_EDIT
-        MENUITEM "&Go To...\tCtrl+G",           ID_EDIT_GOTO
+        MENUITEM "Go &To...\tCtrl+G",           ID_EDIT_GOTO
         MENUITEM "&Find...\tCtrl+F",            ID_EDIT_FIND
         MENUITEM SEPARATOR
-        MENUITEM "Customize...",                ID_CUSTOMIZE
+        MENUITEM "C&ustomize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
         MENUITEM "&Properties...",              32806
     END
@@ -889,12 +896,12 @@ BEGIN
         MENUITEM "Fo&nt...",                    ID_FONT
         MENUITEM "&Auto Fit",                   ID_AUTOFIT
         MENUITEM SEPARATOR
-        MENUITEM "&Allow Changes",              ID_ALLOW_MODS
+        MENUITEM "Allow &Changes",              ID_ALLOW_MODS
         MENUITEM "&Insert",                     ID_INSERT
         MENUITEM "&Mark Position",              ID_MARK
         MENUITEM "&Bookmarks...",               ID_BOOKMARKS_EDIT
         MENUITEM SEPARATOR
-        MENUITEM "Customize...",                ID_CUSTOMIZE
+        MENUITEM "C&ustomize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
         MENUITEM "&Properties...",              ID_PROPERTIES
     END
@@ -925,12 +932,12 @@ BEGIN
             MENUITEM "&C/C++",                      ID_CONTROL_C
         END
         MENUITEM SEPARATOR
-        MENUITEM "&Allow Changes",              ID_ALLOW_MODS
+        MENUITEM "Allow &Changes",              ID_ALLOW_MODS
         MENUITEM "&Insert",                     ID_INSERT
         MENUITEM "&Mark Position",              ID_MARK
         MENUITEM "&Bookmarks...",               ID_BOOKMARKS_EDIT
         MENUITEM SEPARATOR
-        MENUITEM "Customize...",                ID_CUSTOMIZE
+        MENUITEM "C&ustomize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
         MENUITEM "&Properties...",              ID_PROPERTIES
     END
@@ -967,7 +974,7 @@ BEGIN
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR9
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR10
         MENUITEM SEPARATOR
-        MENUITEM "&Customize...",               ID_CUSTOMIZE
+        MENUITEM "C&ustomize...",               ID_CUSTOMIZE
     END
 END
 
@@ -977,16 +984,16 @@ BEGIN
     BEGIN
         MENUITEM "&Status Bar          ",       ID_VIEW_STATUS_BAR
         MENUITEM SEPARATOR
-        MENUITEM "&Allow Changes",              ID_ALLOW_MODS
+        MENUITEM "Allow &Changes",              ID_ALLOW_MODS
         MENUITEM "&Insert\tIns",                ID_INSERT
         MENUITEM "&Mark Position",              ID_MARK
         MENUITEM SEPARATOR
         MENUITEM "&Bookmarks...",               ID_BOOKMARKS_EDIT
-        MENUITEM "&Go To...\tCtrl+G",           ID_EDIT_GOTO
+        MENUITEM "Go &To...\tCtrl+G",           ID_EDIT_GOTO
         MENUITEM "&Find...\tCtrl+F",            ID_EDIT_FIND
         MENUITEM "&Record Macro\tF7",           ID_RECORD
         MENUITEM SEPARATOR
-        MENUITEM "Customize...",                ID_CUSTOMIZE
+        MENUITEM "C&ustomize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
         MENUITEM "&Properties...",              ID_PROPERTIES
     END
@@ -997,7 +1004,7 @@ BEGIN
     POPUP "Format commands"
     BEGIN
         MENUITEM "Insert Mode",                 ID_INSERT
-        MENUITEM "Allow Changes",               ID_ALLOW_MODS
+        MENUITEM "Allow &Changes",              ID_ALLOW_MODS
         MENUITEM "Keep Same File Times",        ID_KEEP_TIMES
         MENUITEM "Color scheme",                ID_SCHEME
         MENUITEM "Font tool",                   IDC_FONTNAME
@@ -1022,7 +1029,7 @@ BEGIN
         MENUITEM "Jump hexadecimal tool",       ID_JUMP_HEX
         MENUITEM "Jump decimal tool",           ID_JUMP_DEC
         MENUITEM "Jump to Hex Address",         ID_JUMP_HEX_ADDR
-        MENUITEM "Go To",                       ID_EDIT_GOTO
+        MENUITEM "Go &To...",                   ID_EDIT_GOTO
         MENUITEM "Calculate Using Selection...", ID_CALC_SEL
         MENUITEM "Mark Position",               ID_MARK
         MENUITEM "Mark menu",                   ID_MARK_MENU
@@ -1052,6 +1059,35 @@ BEGIN
         MENUITEM "Find Backward",               ID_SEARCH_BACK
         MENUITEM "Find Selection",              ID_SEARCH_SEL
     END
+    POPUP "Aerial commands"
+    BEGIN
+        MENUITEM "Indicate &Selection",         ID_IND_SEL
+        MENUITEM "Indicate &Mark",              ID_IND_MARK
+        MENUITEM "Indicate &Highlights",        ID_IND_HL
+        MENUITEM "Indicate Search &Occurrences", ID_IND_SEARCH
+        MENUITEM "Indicate &Bookmarks",         ID_IND_BM
+        MENUITEM "Boundary of &Selection",      ID_ANT_SEL
+        MENUITEM "Boundary of &Mark",           ID_ANT_MARK
+        MENUITEM "Boundary of &Highlights",     ID_ANT_HL
+        MENUITEM "Boundary of Search &Occurrences", ID_ANT_SEARCH
+        MENUITEM "Boundary of &Bookmarks",      ID_ANT_BM
+        MENUITEM "Zoom X &1",                   ID_AERIAL_ZOOM1
+        MENUITEM "Zoom X &2",                   ID_AERIAL_ZOOM2
+        MENUITEM "Zoom X &3",                   ID_AERIAL_ZOOM3
+        MENUITEM "Zoom X &4",                   ID_AERIAL_ZOOM4
+        MENUITEM "Zoom X &5",                   ID_AERIAL_ZOOM5
+        MENUITEM "Zoom X &6",                   ID_AERIAL_ZOOM6
+        MENUITEM "Zoom X &7",                   ID_AERIAL_ZOOM7
+        MENUITEM "Zoom X &8",                   ID_AERIAL_ZOOM8
+        MENUITEM "Zoom X &9",                   ID_AERIAL_ZOOM9
+        MENUITEM "Zoom X 1&0",                  ID_AERIAL_ZOOM10
+        MENUITEM "Zoom X 11",                   ID_AERIAL_ZOOM11
+        MENUITEM "Zoom X 12",                   ID_AERIAL_ZOOM12
+        MENUITEM "Zoom X 13",                   ID_AERIAL_ZOOM13
+        MENUITEM "Zoom X 14",                   ID_AERIAL_ZOOM14
+        MENUITEM "Zoom X 15",                   ID_AERIAL_ZOOM15
+        MENUITEM "Zoom X 16",                   ID_AERIAL_ZOOM16
+    END
 END
 
 IDR_CONTEXT_HIGHLIGHT MENU 
@@ -1065,7 +1101,7 @@ BEGIN
         MENUITEM "&Next Highlight",             ID_HIGHLIGHT_NEXT
         MENUITEM "H&ide Highlights",            ID_HIGHLIGHT_HIDE
         MENUITEM SEPARATOR
-        MENUITEM "Customize...",                ID_CUSTOMIZE
+        MENUITEM "C&ustomize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
         MENUITEM "&Properties...",              ID_PROPERTIES
     END
@@ -1088,7 +1124,7 @@ BEGIN
         MENUITEM "&Find &Selection\tCtrl+F3",   ID_SEARCH_SEL
         MENUITEM "&Highlight\tCtrl+H",          ID_HIGHLIGHT
         MENUITEM SEPARATOR
-        MENUITEM "Customize...",                ID_CUSTOMIZE
+        MENUITEM "C&ustomize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
         MENUITEM "&Properties...",              ID_PROPERTIES
     END
@@ -1105,7 +1141,7 @@ BEGIN
         MENUITEM "&Next Bookmark",              ID_BOOKMARKS_NEXT
         MENUITEM "&Hide Bookmarks",             ID_BOOKMARKS_HIDE
         MENUITEM SEPARATOR
-        MENUITEM "Customize...",                ID_CUSTOMIZE
+        MENUITEM "C&ustomize...",                ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
         MENUITEM "&Properties...",              ID_PROPERTIES
     END
@@ -1212,6 +1248,42 @@ BEGIN
             MENUITEM "minute (int)",                ID_DATE_MONUTE
             MENUITEM "second (int)",                ID_DATE_SECOND
         END
+    END
+END
+
+IDR_CONTEXT_AERIAL MENU 
+BEGIN
+    POPUP "Aerial View Context"
+    BEGIN
+        POPUP "In &Border"
+        BEGIN
+            MENUITEM "Indicate &Selection",         ID_IND_SEL
+            MENUITEM "Indicate &Mark",              ID_IND_MARK
+            MENUITEM "Indicate &Highlights",        ID_IND_HL
+            MENUITEM "Indicate Search &Occurrences", ID_IND_SEARCH
+            MENUITEM "Indicate &Bookmarks",         ID_IND_BM
+        END
+        POPUP "Marching &Ants"
+        BEGIN
+            MENUITEM "Boundary of &Selection",      ID_ANT_SEL
+            MENUITEM "Boundary of &Mark",           ID_ANT_MARK
+            MENUITEM "Boundary of &Highlights",     ID_ANT_HL
+            MENUITEM "Boundary of Search &Occurrences", ID_ANT_SEARCH
+            MENUITEM "Boundary of &Bookmarks",      ID_ANT_BM
+        END
+        MENUITEM "Zoo&m Out",                   ID_AERIAL_ZOOM1
+        POPUP "&Zoom"
+        BEGIN
+            MENUITEM "Zoom X &2",                   ID_AERIAL_ZOOM2
+            MENUITEM "Zoom X &4",                   ID_AERIAL_ZOOM4
+            MENUITEM "Zoom X &8",                   ID_AERIAL_ZOOM8
+            MENUITEM "Zoom X &12",                  ID_AERIAL_ZOOM12
+            MENUITEM "Zoom X 1&6",                  ID_AERIAL_ZOOM16
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "C&ustomize...",               ID_CUSTOMIZE
+        MENUITEM "&Options...",                 ID_OPTIONS2
+        MENUITEM "&Properties...",              ID_PROPERTIES
     END
 END
 
@@ -3369,6 +3441,39 @@ BEGIN
     ID_VIEW_RULER           "Show or hide the ruler\nToggle Ruler"
     ID_VIEW_HL_CURSOR       "Highlight cursor location in ruler and address area\nHighlight Cursor"
     ID_VIEW_HL_MOUSE        "Show mouse location in ruler and address area\nShow Mouse"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_IND_SEL              "Indicate cursor/selection in the left and top borders"
+    ID_IND_MARK             "Indicate the row containing the mark in the left border"
+    ID_IND_HL               "Indicate rows with highlights in the left border"
+    ID_IND_SEARCH           "Indicate rows containing the current search text in the left border"
+    ID_IND_BM               "Indicate rows containing bookmarks in the left border"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_AERIAL_ZOOM1         "Display file bytes/elements each as a single pixel"
+    ID_AERIAL_ZOOM2         "Display file bytes/elements as 2 x 2 pixels"
+    ID_AERIAL_ZOOM3         "Display file bytes/elements as 3 x 3 pixels"
+    ID_AERIAL_ZOOM4         "Display file bytes/elements as 4 x 4 pixels"
+    ID_AERIAL_ZOOM5         "Display file bytes/elements as 5 x 5 pixels"
+    ID_AERIAL_ZOOM6         "Display file bytes/elements as 6 x 6 pixels"
+    ID_AERIAL_ZOOM7         "Display file bytes/elements as 7 x 7 pixels"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_AERIAL_ZOOM8         "Display file bytes/elements as 8 x 8 pixels"
+    ID_AERIAL_ZOOM9         "Display file bytes/elements as 9 X 9  pixels"
+    ID_AERIAL_ZOOM10        "Display file bytes/elements as 10 X 10 pixels"
+    ID_AERIAL_ZOOM11        "Display file bytes/elements as 11 X 11 pixels"
+    ID_AERIAL_ZOOM12        "Display file bytes/elements as 12 X 12 pixels"
+    ID_AERIAL_ZOOM13        "Display file bytes/elements as 13 X 13 pixels"
+    ID_AERIAL_ZOOM14        "Display file bytes/elements as 14 X 14 pixels"
+    ID_AERIAL_ZOOM15        "Display file bytes/elements as 15 X 15 pixels"
+    ID_AERIAL_ZOOM16        "Display file bytes/elements as 16 X 16 pixels"
 END
 
 #endif    // English (U.S.) resources

@@ -32,7 +32,7 @@ Other documents have a thread with priority IDLE.
 
 Several document data members are used by the background thread:
 
-start_event_: signal from main thread to background thread to start searching
+start_search_event_: signal from main thread to background thread to start searching
 stopped_event_: signal from background thread to main thread to indicate searching finished/aborted
 docdata_: is a critical section used to protect access to the other shared data members below
 
@@ -57,19 +57,16 @@ view_update_: because PostThreadMessage doesn't work if the main thread is displ
               document need updating
 
     
-Background thread (see BGThread.cpp)
+Background thread
 -----------------
 
-The thread (see bg_func) waits for a signal to start searching (start_event_).
+The thread (see bg_func) waits for a signal to start searching (start_search_event_).
 It then gets the next area to search from the list to_search_
 and adds any occurrences found to the set found_.
 
-When to_search_ becomes empty it signals the main thread that it has finished
-searching (see CHexEditApp::OnBGSearchFinished) which is passed on to
-the document which then updates all its views to show the new occurrences.
-Note that if a modal dialog is active when the ::PostThreadMessage is called
-to send the message to the main thread then the message is lost -- so
-we also call CHexEditDoc::BGSearchFinished during idle processing.
+When to_search_ becomes empty it signals by settings search_fin_ to TRUE
+When the doc sees this it then updates all its views to show the new occurrences
+and sets search_fin_ to FALSE.so it doesn't do it again.
 
 While searching the bg search also continually checks thread_flag_ to see
 if the current search has been cancelled (if a new search string has been
@@ -94,9 +91,6 @@ text_type_: characters set used (ASCII, EBCDIC, Unicode) for case-insensitive se
 The app also has a few routines for background searches
 StartSearches: starts background searches in the other (inactive) documents
 NewSearch: changes pboyer_, icase_, text_type_
-OnBGSearchFinished: receives a message from bg threads that they have finished their
-                    search and the view of the document can be updated
-
 
 Searches (See CMainFrame::search_forw and CMainFrame::search_back)
 --------
@@ -169,18 +163,26 @@ the current search string changes.  This saves recalc in every OnDraw.
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static UINT bg_func(LPVOID pParam)
+{
+    CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
+
+    TRACE1("Search thread started for doc %p\n", pDoc);
+
+    return pDoc->RunSearchThread();
+}
+
 // Kill background task and wait until it is dead
-void CHexEditDoc::CreateThread()
+void CHexEditDoc::CreateSearchThread()
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     ASSERT(aa->bg_search_);
-    ASSERT(pthread_ == NULL);
+    ASSERT(pthread2_ == NULL);
     ASSERT(pfile2_ == NULL);
 
     // Init some things
     thread_flag_ = 0;
-    main_thread_id_ = aa->m_nThreadID;
-    view_update_ = FALSE;
+    search_fin_ = FALSE;
 
     // Open copy of file to be used by background thread
     if (pfile1_ != NULL)
@@ -209,25 +211,25 @@ void CHexEditDoc::CreateThread()
     // Create new thread
     TRACE1("Creating thread for %p\n", this);
     priority_ = THREAD_PRIORITY_LOWEST;
-    pthread_ = AfxBeginThread(&bg_func, this, priority_);
-    ASSERT(pthread_ != NULL);
+    pthread2_ = AfxBeginThread(&bg_func, this, priority_);
+    ASSERT(pthread2_ != NULL);
 }
 
-void CHexEditDoc::BGThreadPriority(int ii)
+void CHexEditDoc::SearchThreadPriority(int ii)
 {
     ASSERT(ii == THREAD_PRIORITY_IDLE || ii == THREAD_PRIORITY_LOWEST || ii == THREAD_PRIORITY_BELOW_NORMAL);
     priority_ = ii;
-    if (pthread_ != NULL)
-        SetThreadPriority(pthread_->m_hThread, priority_);
+    if (pthread2_ != NULL)
+        SetThreadPriority(pthread2_->m_hThread, priority_);
 }
 
-void CHexEditDoc::KillThread()
+void CHexEditDoc::KillSearchThread()
 {
     ASSERT(((CHexEditApp *)AfxGetApp())->bg_search_);
-    ASSERT(pthread_ != NULL);
-    if (pthread_ == NULL) return;
+    ASSERT(pthread2_ != NULL);
+    if (pthread2_ == NULL) return;
 
-    HANDLE hh = pthread_->m_hThread;    // Save handle since it will be lost when thread is killed and object is destroyed
+    HANDLE hh = pthread2_->m_hThread;    // Save handle since it will be lost when thread is killed and object is destroyed
     TRACE1("FG: Killing thread for %p\n", this);
 
     // Signal thread to kill itself
@@ -235,14 +237,14 @@ void CHexEditDoc::KillThread()
     thread_flag_ = -1;
     docdata_.Unlock();
 
-    SetThreadPriority(pthread_->m_hThread, THREAD_PRIORITY_NORMAL); // Make it a quick and painless death
+    SetThreadPriority(pthread2_->m_hThread, THREAD_PRIORITY_NORMAL); // Make it a quick and painless death
 
     // Send start message in case it is on hold
-    start_event_.SetEvent();
+    start_search_event_.SetEvent();
 
     DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
     ASSERT(wait_status == WAIT_OBJECT_0);
-    pthread_ = NULL;
+    pthread2_ = NULL;
 
     // Free resources that are only needed during bg searches
     if (pfile2_ != NULL)
@@ -284,8 +286,8 @@ void CHexEditDoc::StartSearch(FILE_ADDRESS start /*=-1*/, FILE_ADDRESS end /*=-1
 
     {
         // Note that we would not expect to have to lock the data here as the bg thread should
-        // be waiting for start_event_ as it has just signaled that it has stopped.  It is
-        // possible however, that StopSearch() has just signalled start_event_ but the bg
+        // be waiting for start_search_event_ as it has just signaled that it has stopped.  It is
+        // possible however, that StopSearch() has just signalled start_search_event_ but the bg
         // thread has yet to get control and reset stopped_event_.  This is why we lock
         // docdata_ here and also why we wait again on stopped_event_ below.
         CSingleLock sl(&docdata_, TRUE);
@@ -299,7 +301,7 @@ void CHexEditDoc::StartSearch(FILE_ADDRESS start /*=-1*/, FILE_ADDRESS end /*=-1
 
         to_search_.clear();
         to_adjust_.clear();
-        view_update_ = FALSE;
+        search_fin_ = FALSE;
         find_total_ = 0;
         find_done_ = 0.0;
 
@@ -350,26 +352,8 @@ void CHexEditDoc::StartSearch(FILE_ADDRESS start /*=-1*/, FILE_ADDRESS end /*=-1
     UpdateAllViews(NULL, 0, &bgsh);
 
     TRACE1("FG: Starting bg search for %p\n", this);
-    SetThreadPriority(pthread_->m_hThread, priority_);
-    start_event_.SetEvent();
-}
-
-// Tell all views to display new found strings (in found_)
-void CHexEditDoc::BGSearchFinished()
-{
-    // Protect access to shared data
-    CSingleLock sl(&docdata_, TRUE);
-
-    if (to_search_.empty() && view_update_)
-    {
-#ifdef SYS_SOUNDS
-        CSystemSound::Play("Background Search Finished");
-#endif
-        find_total_ = 0;
-        CBGSearchHint bgsh(TRUE);
-        UpdateAllViews(NULL, 0, &bgsh);
-        view_update_ = FALSE;           // Stop further updates
-    }
+    SetThreadPriority(pthread2_->m_hThread, priority_);
+    start_search_event_.SetEvent();
 }
 
 void CHexEditDoc::StopSearch()
@@ -382,11 +366,11 @@ void CHexEditDoc::StopSearch()
     thread_flag_ = 1;
     docdata_.Unlock();
 
-    // Allow the bg thread to get control in case it is waiting for start_event_,
+    // Allow the bg thread to get control in case it is waiting for start_search_event_,
     // so that it can check thread_flag_ and set it to zero.
-    SetThreadPriority(pthread_->m_hThread, THREAD_PRIORITY_NORMAL); // Make sure it stops quickly
+    SetThreadPriority(pthread2_->m_hThread, THREAD_PRIORITY_NORMAL); // Make sure it stops quickly
     TRACE1("FG: Stopping bg search for %p\n", this);
-    start_event_.SetEvent();
+    start_search_event_.SetEvent();
 }
 
 // Returns the number of search string occurrences found OR
@@ -396,7 +380,7 @@ int CHexEditDoc::SearchOccurrences()
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-    if (pthread_ == NULL)
+    if (pthread2_ == NULL)
     {
         ASSERT(!aa->bg_search_);
         return -4;
@@ -422,7 +406,7 @@ int CHexEditDoc::SearchProgress(int &occurrences)
     FILE_ADDRESS file_len = length_;
     docdata_.Unlock();
 
-    ASSERT(pthread_ != NULL && theApp.bg_search_);
+    ASSERT(pthread2_ != NULL && theApp.bg_search_);
 
     FILE_ADDRESS curr;
 
@@ -477,7 +461,7 @@ FILE_ADDRESS CHexEditDoc::GetNextFound(const unsigned char *pat, const unsigned 
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-    if (pthread_ == NULL)
+    if (pthread2_ == NULL)
     {
         ASSERT(!aa->bg_search_);
         return -4;
@@ -535,7 +519,7 @@ FILE_ADDRESS CHexEditDoc::GetPrevFound(const unsigned char *pat, const unsigned 
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-    if (pthread_ == NULL)
+    if (pthread2_ == NULL)
     {
         ASSERT(!aa->bg_search_);
         return -4;
@@ -598,7 +582,7 @@ std::vector<FILE_ADDRESS> CHexEditDoc::SearchAddresses(FILE_ADDRESS start,
     if (!to_search_.empty())
         return retval;
 
-#if 0 // Can't get this to compile
+#if 0 // this won't compile - needs inserter?
     retval.insert(retval.end(),
                   found_.lower_bound(start),
                   found_.lower_bound(end));
@@ -694,16 +678,7 @@ void CHexEditDoc::OnDocTest()
     }
 }
 
-UINT bg_func(LPVOID pParam)
-{
-    CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
-
-    TRACE1("Thread started for doc %p\n", pDoc);
-
-    return pDoc->RunBGThread();
-}
-
-UINT CHexEditDoc::RunBGThread()
+UINT CHexEditDoc::RunSearchThread()
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -722,10 +697,10 @@ UINT CHexEditDoc::RunBGThread()
                 thread_flag_ = 0;
             }
         }
-        start_event_.ResetEvent();      // Force ourselves to wait
+        start_search_event_.ResetEvent();      // Force ourselves to wait
         stopped_event_.SetEvent();      // Signal that we are waiting
         TRACE1("BG: set stopped event for %p\n", this);
-        DWORD wait_status = ::WaitForSingleObject(HANDLE(start_event_), INFINITE);
+        DWORD wait_status = ::WaitForSingleObject(HANDLE(start_search_event_), INFINITE);
         stopped_event_.ResetEvent();    // Signal that we are no longer waiting
         ASSERT(wait_status == WAIT_OBJECT_0);
         TRACE1("BG: got signal for %p\n", this);
@@ -770,7 +745,7 @@ UINT CHexEditDoc::RunBGThread()
             to_search_.clear();
             found_.clear();
             find_total_ = 0;
-            view_update_ = TRUE;
+            search_fin_ = TRUE;
             continue;
         }
 
@@ -806,8 +781,7 @@ UINT CHexEditDoc::RunBGThread()
                 if (to_search_.empty())
                 {
                     find_total_ = 0;
-                    VERIFY(::PostThreadMessage(main_thread_id_, WM_USER+12, count, long(this)));
-                    view_update_ = TRUE;
+                    search_fin_ = TRUE;
                     break;
                 }
                 start = to_search_.front().first;
@@ -879,7 +853,7 @@ UINT CHexEditDoc::RunBGThread()
                     file_len = length_;   // file length may have changed
 
                     // Get a buffer full (plus an extra char for wholeword test at end of buffer)
-                    got = GetData(buf, size_t(min(FILE_ADDRESS(buf_len), end - addr_buf)) + 1, addr_buf, true);
+                    got = GetData(buf, size_t(min(FILE_ADDRESS(buf_len), end - addr_buf)) + 1, addr_buf, 2);
                     ASSERT(got == min(buf_len, end - addr_buf) || got == min(buf_len, end - addr_buf) + 1);
 
                     // xxx step through this whole word code!
@@ -890,7 +864,7 @@ UINT CHexEditDoc::RunBGThread()
                         {
                             // Check if alphabetic ASCII
                             unsigned char cc;
-                            VERIFY(GetData(&cc, 1, addr_buf-1, true) == 1);
+                            VERIFY(GetData(&cc, 1, addr_buf-1, 2) == 1);
 
                             alpha_before = isalnum(cc) != 0;
                         }
@@ -898,7 +872,7 @@ UINT CHexEditDoc::RunBGThread()
                         {
                             // Check if alphabetic Unicode
                             unsigned char cc[2];
-                            VERIFY(GetData(cc, 2, addr_buf-2, true) == 2);
+                            VERIFY(GetData(cc, 2, addr_buf-2, 2) == 2);
 
                             alpha_before = isalnum(cc[0]) != 0;  // Check if low byte has ASCII alpha
                         }
@@ -906,7 +880,7 @@ UINT CHexEditDoc::RunBGThread()
                         {
                             // Check if alphabetic EBCDIC
                             unsigned char cc;
-                            VERIFY(GetData(&cc, 1, addr_buf-1, true) == 1);
+                            VERIFY(GetData(&cc, 1, addr_buf-1, 2) == 1);
 
                             alpha_before = isalnum(e2a_tab[cc]) != 0;
                         }
@@ -925,12 +899,12 @@ UINT CHexEditDoc::RunBGThread()
                     if (got == min(buf_len, end - addr_buf) + 1)
                         got--;
                 }
-#ifdef _DEBUG
-                // For testing we allow 5 seconds for some changes to be made to the first
+#ifdef TESTING1
+                // For testing we allow 2 seconds for some changes to be made to the first
                 // search block so that we can check that found_ is updated correctly
                 if (addr_buf == 0)
                 {
-                    ::Sleep(5000);
+                    ::Sleep(2000);
                     TRACE1("BG: Finished sleep in %p\n", this);
                 }
 #endif

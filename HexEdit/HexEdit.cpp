@@ -55,6 +55,7 @@
 #include "HexEditDoc.h"
 #include "HexEditView.h"
 #include "DataFormatView.h"
+#include "AerialView.h"
 #include "TabView.h"
 #include "UserTool.h"   // For CHexEditUserTool
 #include "Dialog.h"
@@ -175,8 +176,6 @@ BEGIN_MESSAGE_MAP(CHexEditApp, CWinApp)
         ON_COMMAND(ID_APP_EXIT, OnAppExit)
         // Standard print setup command
         ON_COMMAND(ID_FILE_PRINT_SETUP, OnFilePrintSetup)
-        // Message sent to mainthread
-        ON_THREAD_MESSAGE(WM_USER+12, OnBGSearchFinished)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -628,6 +627,7 @@ BOOL CHexEditApp::InitInstance()
         CSystemSound::Add(_T("Search Text Not Found"),
                           CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
         CSystemSound::Add(_T("Background Search Finished"));
+        CSystemSound::Add(_T("Background Scan Finished"));
 #endif
 
         LoadStdProfileSettings(0);  // Load standard INI file options (including MRU)
@@ -1210,24 +1210,6 @@ void CHexEditApp::OnRepairAll()
     CWinApp::OnAppExit();
 }
 
-void CHexEditApp::OnBGSearchFinished(WPARAM wParam, LPARAM lParam)
-{
-    ASSERT(bg_search_);
-
-    // Make sure doc is valid (may have been closed before we got the message)
-    POSITION posn = m_pDocTemplate->GetFirstDocPosition();
-    while (posn != NULL)
-    {
-        CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
-        ASSERT(pdoc != NULL);
-        if (pdoc == (void *)lParam)
-        {
-            pdoc->BGSearchFinished();
-            return;
-        }
-    }
-}
-
 void CHexEditApp::OnMacroRecord() 
 {
     // Allow calculator to tidy up any pending macro ops
@@ -1638,13 +1620,21 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
 #ifdef EXPLORER_WND
 	mm->m_wndExpl.SendMessage(WM_KICKIDLE);
 #endif
+    // Allow docs to check if their background processing has completed
+    POSITION posn = m_pDocTemplate->GetFirstDocPosition();
+    while (posn != NULL)
+    {
+        CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
+        ASSERT(pdoc != NULL);
+        if (pdoc != NULL)
+            pdoc->CheckBGProcessing();
+    }
 
 	CHexEditView *pview = GetView();
 	if (lCount == 1 && pview != NULL)
     {
         // Check things for the active view
 		pview->check_error();                           // check if read error
-        pview->GetDocument()->BGSearchFinished();       // check if bg search finished
     }
 
 #ifndef NO_SECURITY
@@ -1679,6 +1669,7 @@ void CHexEditApp::PreLoadState()
     GetContextMenuManager()->AddMenu(_T("Address Area"), IDR_CONTEXT_ADDRESS);
     GetContextMenuManager()->AddMenu(_T("Hex Area"), IDR_CONTEXT_HEX);
     GetContextMenuManager()->AddMenu(_T("Character Area"), IDR_CONTEXT_CHAR);
+    GetContextMenuManager()->AddMenu(_T("Aerial View"), IDR_CONTEXT_AERIAL);
     GetContextMenuManager()->AddMenu(_T("Highlight"), IDR_CONTEXT_HIGHLIGHT);
     GetContextMenuManager()->AddMenu(_T("Bookmarks"), IDR_CONTEXT_BOOKMARKS);
     GetContextMenuManager()->AddMenu(_T("Selection"), IDR_CONTEXT_SELECTION);
@@ -3146,7 +3137,7 @@ void CHexEditApp::set_options(struct OptValues &val)
             {
                 CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
                 ASSERT(pdoc != NULL);
-                pdoc->CreateThread();
+                pdoc->CreateSearchThread();
                 if (pboyer_ != NULL)        // If a search has already been done do bg search this file
                     pdoc->StartSearch();
             }
@@ -3164,7 +3155,7 @@ void CHexEditApp::set_options(struct OptValues &val)
                 ASSERT(pdoc != NULL);
 
                 // Kill bg thread (and clean up data structures)
-                pdoc->KillThread();
+                pdoc->KillSearchThread();
 
                 // Signal all views to remove display of search strings
                 CBGSearchHint bgsh(FALSE);
@@ -3860,6 +3851,8 @@ CHexEditView *GetView()
                     return (CHexEditView *)pv;
                 else if (pv->IsKindOf(RUNTIME_CLASS(CDataFormatView)))
                     return ((CDataFormatView *)pv)->phev_;
+                else if (pv->IsKindOf(RUNTIME_CLASS(CAerialView)))
+                    return ((CAerialView *)pv)->phev_;
                 else if (pv->IsKindOf(RUNTIME_CLASS(CTabView)))
                 {
 					// Find the hex view (left-most tab)

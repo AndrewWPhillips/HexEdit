@@ -143,7 +143,7 @@ protected:
     void OnSelUpdate(CPoint);
     virtual void ValidateCaret(CPointAp &pos, BOOL inside=TRUE);
     virtual void ValidateScroll(CPointAp &pos, BOOL strict=FALSE);
-    virtual void InvalidateRange(CPointAp start, CPointAp end);
+    virtual void InvalidateRange(CPointAp start, CPointAp end, bool f = false);
 
     // We need to add these as virtual functions so that we can override them
     // in derived classes.  (For example, to allow turning off refresh in
