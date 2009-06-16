@@ -21,6 +21,8 @@ typedef struct _GET_LENGTH_INFORMATION {
 #define IOCTL_STORAGE_QUERY_PROPERTY   CTL_CODE(IOCTL_STORAGE_BASE, 0x0500, METHOD_BUFFERED, FILE_ANY_ACCESS)
 #define IOCTL_CDROM_GET_DRIVE_GEOMETRY  CTL_CODE(FILE_DEVICE_CD_ROM, 0x0013, METHOD_BUFFERED, FILE_READ_ACCESS)
 
+#if _MSC_VER < 1500
+
 typedef enum _STORAGE_PROPERTY_ID {
   StorageDeviceProperty = 0,
   StorageAdapterProperty,
@@ -70,6 +72,8 @@ typedef struct _STORAGE_DEVICE_DESCRIPTOR {
   ULONG  RawPropertiesLength;
   UCHAR  RawDeviceProperties[1];
 } STORAGE_DEVICE_DESCRIPTOR, *PSTORAGE_DEVICE_DESCRIPTOR;
+
+#endif // _MSC_VER < 1500
 
 typedef unsigned long ULONG_PTR, *PULONG_PTR;
 typedef struct _IO_STATUS_BLOCK {
@@ -208,7 +212,6 @@ typedef struct _FILE_FS_SIZE_INFORMATION {
   ULONG                   BytesPerSector;
 } FILE_FS_SIZE_INFORMATION, *PFILE_FS_SIZE_INFORMATION;
 
-
 #ifdef  __cplusplus
 extern "C" {
 #endif
@@ -314,6 +317,7 @@ long
 #ifdef  __cplusplus
 }  // extern "C" {
 #endif
+
 
 // NT API funcs (ntdll.dll) - defined in misc.cpp
 extern HINSTANCE hNTDLL;        // Handle to NTDLL.DLL

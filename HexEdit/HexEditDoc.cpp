@@ -2315,7 +2315,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 df_type_.push_back(DF_DEFINE_STRUCT);
 
                 FILE_ADDRESS size_tmp;              // Ignored since we stay at the same address after return
-                last_ac = _MAX(last_ac, add_branch(elt, -1, ind+1, ee, size_tmp));
+                last_ac = max(last_ac, add_branch(elt, -1, ind+1, ee, size_tmp));
                 df_size_[ii] = size_tmp;            // Store size of struct
             }
             else
@@ -2352,7 +2352,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             {
                 // Add sub-elements of the STRUCT (only if present else we get inf. recursion)
                 FILE_ADDRESS size_tmp;
-                last_ac = _MAX(last_ac, add_branch(def_elt, addr, ind+1, ee, size_tmp));
+                last_ac = max(last_ac, add_branch(def_elt, addr, ind+1, ee, size_tmp));
                 df_size_[ii] = size_tmp;            // size of struct is size of all contained elements
                 returned_size += size_tmp;          // keep track of size of elts for our parent
                 addr += size_tmp;                   // keep track of where we are now in the file
@@ -2381,7 +2381,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 
             // Add sub-elements of the STRUCT
             FILE_ADDRESS size_tmp;
-            last_ac = _MAX(last_ac, add_branch(elt, addr, ind+1, ee, size_tmp));
+            last_ac = max(last_ac, add_branch(elt, addr, ind+1, ee, size_tmp));
             df_size_[ii] = size_tmp;            // size of struct is size of all contained elements
             returned_size += size_tmp;          // keep track of size of elts for our parent
 
@@ -2742,7 +2742,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 				if (is_valid || DffdEditMode())  // only show the taken case unless we are in edit mode
 				{
 					unsigned jj = df_address_.size();  // remember where we are up to
-					last_ac = _MAX(last_ac, add_branch(case_elt, is_valid ? addr : -1, new_ind, ee, size_tmp));
+					last_ac = max(last_ac, add_branch(case_elt, is_valid ? addr : -1, new_ind, ee, size_tmp));
 					if (is_valid)
 					{
 						if (show_parent_row)
@@ -2827,7 +2827,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             if (addr != -1 && expr_ok && if_val.boolean)
             {
                 // Now get the branch for true part
-                last_ac = _MAX(last_ac, add_branch(elt, addr, new_ind, ee, size_tmp, 0));
+                last_ac = max(last_ac, add_branch(elt, addr, new_ind, ee, size_tmp, 0));
                 if (show_parent_row)
                     df_size_[ii] = size_tmp;   // update size for IF (if present)
 
@@ -2842,7 +2842,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                     ++curr_ii;                  // Don't grey parent node if ELSE part is valid
 
                 // Get the branch for if so that it can be displayed and edited
-                last_ac = _MAX(last_ac, add_branch(elt, -1, new_ind, ee, size_tmp, 0));
+                last_ac = max(last_ac, add_branch(elt, -1, new_ind, ee, size_tmp, 0));
 
                 for (unsigned jj = curr_ii; jj < df_address_.size(); ++jj)
                 {
@@ -2857,7 +2857,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 				ASSERT(elt.GetNumChildren() == 3);
 
                 // Now get the branch for false part
-                last_ac = _MAX(last_ac, add_branch(elt, addr, new_ind, ee, size_tmp, 2));
+                last_ac = max(last_ac, add_branch(elt, addr, new_ind, ee, size_tmp, 2));
                 if (show_parent_row)
                     df_size_[ii] = size_tmp;   // update size for containing IF (if present)
 
@@ -2869,7 +2869,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 unsigned curr_ii = df_address_.size();  // remember where we were up to
 
                 // Get the branch for IF so that it can be displayed and edited
-                last_ac = _MAX(last_ac, add_branch(elt, -1, new_ind, ee, size_tmp, 2));
+                last_ac = max(last_ac, add_branch(elt, -1, new_ind, ee, size_tmp, 2));
 
                 // Mark all these sub-elements as not present (greyed)
                 for (unsigned jj = curr_ii; jj < df_address_.size(); ++jj)
@@ -2952,7 +2952,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 ++in_jump_;                     // Turn off progress in JUMP since it's based on file address
                 // Add sub-element
                 FILE_ADDRESS size_tmp;          // Ignored since we stay at the same address after return
-                last_ac = _MAX(last_ac, add_branch(elt, jump_addr, new_ind, ee, size_tmp));
+                last_ac = max(last_ac, add_branch(elt, jump_addr, new_ind, ee, size_tmp));
                 in_jump_--;
 
                 if (show_parent_row)

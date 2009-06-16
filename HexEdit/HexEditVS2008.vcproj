@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
-	Name="HexEditVS2005"
-	ProjectGUID="{C4CC0564-D6ED-4341-8C04-3AA9F8D571F3}"
+	Version="9.00"
+	Name="HexEditVS2008"
+	ProjectGUID="{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}"
 	RootNamespace="HexEdit"
 	Keyword="MFCProj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -17,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="C:\Andrew\cpp_out\HexEdit\ReleaseVS2005"
-			IntermediateDirectory="C:\Andrew\cpp_out\HexEdit\ReleaseVS2005"
+			OutputDirectory="C:\Andrew\cpp_out\HexEdit\ReleaseVS2008"
+			IntermediateDirectory="C:\Andrew\cpp_out\HexEdit\ReleaseVS2008"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
@@ -47,7 +48,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="D:\Devel\BCG6_2\BCGControlBar;D:\Devel\Libraries\FreeImage"
+				AdditionalIncludeDirectories="D:\Devel\Libraries\FreeImage"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -81,9 +82,10 @@
 				OutputFile="$(OutDir)\HexEdit.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="D:\Devel\Libraries\FreeImage;D:\Devel\BCG6_2\Bin8"
 				ProgramDatabaseFile="$(IntDir)\HexEdit.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -102,9 +104,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -144,7 +143,6 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="D:\Devel\BCG6_2\BCGControlBar;D:\Devel\Libraries\FreeImage"
 				PreprocessorDefinitions="_USE_32BIT_TIME_T"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -178,9 +176,10 @@
 				OutputFile=".\TrueTime/HexEdit.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="D:\Devel\Libraries\FreeImage;D:\Devel\BCG6_2\Bin8"
 				ProgramDatabaseFile=".\TrueTime/HexEdit.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -201,16 +200,13 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="C:\Andrew\cpp_out\HexEdit\DebugVS2005"
-			IntermediateDirectory="C:\Andrew\cpp_out\HexEdit\DebugVS2005"
+			OutputDirectory="C:\Andrew\cpp_out\HexEdit\DebugVS2008"
+			IntermediateDirectory="C:\Andrew\cpp_out\HexEdit\DebugVS2008"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
@@ -239,7 +235,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="D:\Devel\BCG6_2\BCGControlBar;D:\Devel\Libraries\FreeImage"
+				AdditionalIncludeDirectories="D:\Devel\Libraries\FreeImage"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_SECDLL;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
@@ -273,10 +269,12 @@
 				OutputFile="$(OutDir)\HexEdit.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="D:\Devel\Libraries\FreeImage;D:\Devel\BCG6_2\Bin8"
+				AdditionalLibraryDirectories="D:\Devel\Libraries\FreeImage"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)\HexEdit.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -295,9 +293,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -337,7 +332,6 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="D:\Devel\BCG6_2\BCGControlBar;D:\Devel\Libraries\FreeImage"
 				PreprocessorDefinitions="_USE_32BIT_TIME_T"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
@@ -370,10 +364,11 @@
 				OutputFile=".\FinalCheck/HexEdit.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="D:\Devel\Libraries\FreeImage;D:\Devel\BCG6_2\Bin8"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\FinalCheck/HexEdit.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -392,9 +387,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -1637,11 +1629,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File

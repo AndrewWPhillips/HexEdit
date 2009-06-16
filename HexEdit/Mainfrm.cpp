@@ -718,7 +718,11 @@ CRect CMainFrame::item_rect(CBCGPopupMenu *pm, UINT id)
     {
         CRect item_rct;
         pm->GetMenuItem(ii)->GetImageRect(item_rct);
+#if _MSC_VER < 1400
         if (::GetMenuItemID(pm->GetMenu(), ii) == id)
+#else
+		if (::GetMenuItemID(pm->GetMenu()->m_hMenu, ii) == id)
+#endif
         {
 			rct.bottom = rct.top + item_rct.Height();
             return rct;

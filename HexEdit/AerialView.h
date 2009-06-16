@@ -389,13 +389,14 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-#ifdef _DEBUG
-    CHexEditDoc *GetDocument()
+#ifndef _DEBUG
+	inline
+#endif
+	CHexEditDoc *GetDocument()
     {
         ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CHexEditDoc)));
         return (CHexEditDoc*)m_pDocument;
     }
-#endif
 
 private:
     void invalidate_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS end_addr, bool no_border = false);
