@@ -68,7 +68,7 @@ public:
                                                                 // column for base implementation
 
 #if _MSC_VER >= 1300
-    virtual LPCWSTR     GetText() const             { return (m_strText.IsEmpty())? _T("") : m_strText; }
+    virtual LPCWSTR     GetText() const             { return (m_strText.IsEmpty())? L"" : m_strText; }
 #else
     virtual LPCTSTR     GetText() const             { return (m_strText.IsEmpty())? _T("") : m_strText; }
 #endif

@@ -30,7 +30,7 @@ public:
     virtual void SetText(LPCTSTR szText)    { m_strText = szText; }
 #if _MSC_VER >= 1300
     virtual void SetText(LPCWSTR szTextW)    { m_strText = szTextW; }
-    virtual LPCWSTR  GetText() const        { return (m_strText.IsEmpty())? _T("") : m_strText; }
+    virtual LPCWSTR  GetText() const        { return (m_strText.IsEmpty())? L"" : m_strText; }
 #else
     virtual LPCTSTR  GetText() const        { return (m_strText.IsEmpty())? _T("") : m_strText; }
 #endif
