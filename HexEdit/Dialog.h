@@ -270,11 +270,15 @@ public:
 	virtual BOOL OnFileNameOK()
     {
         CRect rr;
-        GetParent()->GetWindowRect(&rr);
-        theApp.WriteProfileInt("Window-Settings", strName+"X1", rr.left);
-        theApp.WriteProfileInt("Window-Settings", strName+"Y1", rr.top);
-        theApp.WriteProfileInt("Window-Settings", strName+"X2", rr.right);
-        theApp.WriteProfileInt("Window-Settings", strName+"Y2", rr.bottom);
+		ASSERT(GetParent() != NULL);
+		if (GetParent() != NULL)
+		{
+			GetParent()->GetWindowRect(&rr);
+			theApp.WriteProfileInt("Window-Settings", strName+"X1", rr.left);
+			theApp.WriteProfileInt("Window-Settings", strName+"Y1", rr.top);
+			theApp.WriteProfileInt("Window-Settings", strName+"X2", rr.right);
+			theApp.WriteProfileInt("Window-Settings", strName+"Y2", rr.bottom);
+		}
 
         return CFileDialog::OnFileNameOK();
     }
@@ -289,7 +293,7 @@ public:
                      theApp.GetProfileInt("Window-Settings", strName+"Y1", -30000),
                      theApp.GetProfileInt("Window-Settings", strName+"X2", -30000),
                      theApp.GetProfileInt("Window-Settings", strName+"Y2", -30000));
-            if (rr.top != -30000)
+            if (rr.top != -30000 && GetParent() != NULL)
                 GetParent()->MoveWindow(&rr);
 
             first_time = false;

@@ -912,8 +912,8 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 	// Create background brush using top left pixel of bitmap
 	{
 #ifdef USE_FREE_IMAGE
-        RGBQUAD px;
-        FreeImage_GetPixelColor(m_dib, 0, 0, &px);  // get colour from (0,0) pixel
+		RGBQUAD px = { 192, 192, 192, 0};  // default to grey in case GetPixelColor fails
+        VERIFY(FreeImage_GetPixelColor(m_dib, 0, 0, &px));  // get colour from (0,0) pixel
 		backBrush.CreateSolidBrush(RGB(px.rgbRed, px.rgbGreen, px.rgbRed));
 #else
 		CDC dcTmp;
