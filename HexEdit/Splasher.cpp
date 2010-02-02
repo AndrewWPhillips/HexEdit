@@ -187,7 +187,7 @@ void CSplashWnd::CreatePaletteFromBitmap()
     VERIFY(m_Palette.CreatePalette(pLogPal));
     
     //Clean up
-    delete pLogPal;
+    delete[] pLogPal;
     memDC.SelectObject(pOldBitmap);
   }
   else  //It has no color table, so use a halftone palette     

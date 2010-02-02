@@ -275,7 +275,7 @@ RGBX* CEnBitmap::GetDIBits32()
 
 	if (!GetDIBits(hdc, (HBITMAP)GetSafeHandle(), 0, nHeight, pBits, &bi, DIB_RGB_COLORS))
 	{
-		delete pBits;
+		delete[] pBits;
 		pBits = NULL;
 	}
 

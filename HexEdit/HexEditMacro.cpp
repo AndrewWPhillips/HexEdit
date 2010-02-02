@@ -1980,7 +1980,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
                 pmac->push_back(key_macro(km_type(kk), CString(buf)));
 
                 // Free the memory
-                delete buf;
+                delete[] buf;
                 buf = NULL;
                 break;
             case km_mouse:
