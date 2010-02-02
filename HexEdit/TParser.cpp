@@ -1322,7 +1322,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 	bool is_virtual = false;            // Used to work out if we need to add a vtable ptr
 	bool is_class = false;              // True if in class/struct, false if just parsing var declarations
 	int bits_used = 0;                  // Number of bits in immediately preceding bit-fields
-	int bitfield_size;                  // Size of preceding bit-field or zero if not a bit-field
+	int bitfield_size = 0;              // Size of preceding bit-field or zero if not a bit-field
 	int last_size = 0;					// Size of storage unit of preceding bit-field
 
 	CXmlTree::CElt root;                // These are dummy params to find_elt that are not used
@@ -1421,8 +1421,8 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 
 		if (ss == "struct" || ss == "class" || ss == "enum" || ss == "union")
 		{
-			bool is_enum  = ss == "enum";
-			bool is_union = ss == "union";
+			bool is_enum   = ss == "enum";
+			bool is_union  = ss == "union";
 
 			if (peek_next() == "{")     // eg struct { ... } var;
 				ss = anon_type_name;    // since no name given store using a temp name
@@ -1579,7 +1579,11 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 		curr_size = get_size(ss);
 		curr_pack = get_pack(ss);
 
-		ss = get_next();
+		// Allow for anonymous struct or union (except at outer level)
+		if (outer_name != "" && peek_next() == ';')
+			ss = "anonymous";
+		else
+			ss = get_next();
 		while (!ss.IsEmpty() && ss != ";" && ss != "}")
 		{
 			// We need to distinguish size of base type from size of variables in declarators. Consider:
@@ -1823,8 +1827,8 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 			}
 			else if (is_unknown)
 			{
-                // CString ss(next_.back());
-                throw "Unknown type \"" + type_name + "\"";
+                if (!is_ignored)
+					throw "Unknown type \"" + type_name + "\"";
 			}
 			else if (!var_name.IsEmpty())
 			{
@@ -1949,7 +1953,8 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
         if (type_name == anon_type_name)
         {
 		    CXmlTree::CElt ee = find_elt(anon_type_name, root, node_num);
-            root.DeleteChild(ee);
+			if (!ee.IsEmpty())
+				root.DeleteChild(ee);
         }
 
 		if (ss == ";")

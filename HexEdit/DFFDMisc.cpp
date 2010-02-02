@@ -314,6 +314,11 @@ long get_size(const CXmlTree::CElt &ee, int first /*=0*/, int last /*=999999999*
             ;  // zero size so just do nothing to retval
 		else if (elt_type == "for")
 		{
+            // Get the size of the FOR elt's (only) child and multiply by the number of array elts
+            long child_size = get_size(child);
+            if (child_size <= -1)
+                return -1L;             // Child size is indeterminate, therefore so is our size
+
 			// Handle FOR that contains a constant integer in count
             CString ss = child.GetAttr("count");
             char *endp;
@@ -324,7 +329,7 @@ long get_size(const CXmlTree::CElt &ee, int first /*=0*/, int last /*=999999999*
             long count = strtoul(ss, &endp, 10);
 			// Make sure the string was not empty and there was nothing after the number (eg not "10*n")
             if (endp > (const char *)ss && endp - (const char *)ss == ss.GetLength())
-                retval += count;
+                retval += count * child_size;
             else
                 return -1L;             // Does not appear to be a simple number so assume it is an expression
 		}
