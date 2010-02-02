@@ -80,7 +80,7 @@ END_MESSAGE_MAP()
 // Acknowledged software used in HexEdit and associated web addresses
 static const char *ack_name[] =
 {
-	"BCG Control Bar - BCGSoft Ltd",
+	"BCG Control Bar (now part of MFC 9)",
 	"MFC Grid Control - Chris Maunder",
 	"Tree control for MFC Grid - Ken Bertelson",
 	"Dialog Resize class (MFC) - Herbert Menke",

@@ -60,18 +60,18 @@ public:
     CString condition_;
     //}}AFX_DATA
     CEdit ctl_condition_;
-    CBCGMenuButton ctl_condition_var_;
+    CMFCMenuButton ctl_condition_var_;
 
     CString if_elt_name_;       // "name" of contained IF elt
     CButton ctl_if_edit_;
-    CBCGMenuButton  ctl_if_replace_;
+    CMFCMenuButton  ctl_if_replace_;
 
     int else_;                  // 0 = IF has no ELSE, 1 = has ELSE
     CButton ctl_else_;
     CString else_elt_name_;     // "name" of contained ELSE elt
     CEdit ctl_else_elt_name_;
     CButton ctl_else_edit_;
-    CBCGMenuButton  ctl_else_replace_;
+    CMFCMenuButton  ctl_else_replace_;
 
 // Overrides
     // ClassWizard generated virtual function overrides

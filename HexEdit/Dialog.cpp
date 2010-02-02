@@ -49,9 +49,9 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CHexDialogBar - dialog bar that supports DDX and OnInitDialog
 
-IMPLEMENT_DYNAMIC(CHexDialogBar, CBCGDialogBar)
+IMPLEMENT_DYNAMIC(CHexDialogBar, CDialogBar)
 
-BEGIN_MESSAGE_MAP(CHexDialogBar, CBCGDialogBar)
+BEGIN_MESSAGE_MAP(CHexDialogBar, CDialogBar)
 	ON_WM_CREATE()
 	//ON_MESSAGE_VOID(WM_INITIALUPDATE, OnInitialUpdate)
 	ON_MESSAGE(WM_USER+1, InitDialogBarHandler)
@@ -59,7 +59,7 @@ END_MESSAGE_MAP()
 
 int CHexDialogBar::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
-	if (CBCGDialogBar::OnCreate(lpCreateStruct) == -1)
+	if (CDialogBar::OnCreate(lpCreateStruct) == -1)
 		return -1;
 	PostMessage(WM_USER+1, 0, 0);
 	return 0;
@@ -67,6 +67,7 @@ int CHexDialogBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CHexDialogBar::Unroll()
 {
+#if 0 // xxx
     if (IsFloating())
     {
 	    // To programatically unrol we need to turn on dynamic unroll, which does
@@ -79,6 +80,7 @@ void CHexDialogBar::Unroll()
         EnableRollUp(BCG_ROLLUP_NORMAL);
         m_pDockContext = tmp;
     }
+#endif
 }
 
 void CHexDialogBar::FixAndFloat(BOOL show /*=FALSE*/)
@@ -108,9 +110,9 @@ LRESULT CHexDialogBar::InitDialogBarHandler(WPARAM, LPARAM)
 // CHistoryShellList - keeps history of folders that have been shown
 
 // This is a virtual function that is called whenever the current folder is to change
-HRESULT CHistoryShellList::DisplayFolder(LPBCGCBITEMINFO lpItemInfo)
+HRESULT CHistoryShellList::DisplayFolder(LPAFX_SHELLITEMINFO lpItemInfo)
 {
-    HRESULT retval = CBCGShellList::DisplayFolder(lpItemInfo);
+    HRESULT retval = CMFCShellListCtrl::DisplayFolder(lpItemInfo);
 
     if (retval == S_OK && pExpl_ != NULL && !in_move_)
 	{
@@ -200,7 +202,7 @@ void CHistoryShellList::do_move(int ii)
 
 	// Now move to the folder
 	in_move_ = true;
-    CBCGShellList::DisplayFolder(name_[ii]);
+    CMFCShellListCtrl::DisplayFolder(name_[ii]);
 	in_move_ = false;
 
 	ASSERT(pExpl_ != NULL);
@@ -237,10 +239,10 @@ void CHistoryShellList::OnSetColumns()
 
     // As we still rely on the BCG base class to handle a few things we just need
     // to check that BCG has not pulled the rug by reordering the columns.
-    ASSERT(BCGShellList_ColumnName     == COLNAME &&
-           BCGShellList_ColumnSize     == COLSIZE &&
-           BCGShellList_ColumnType     == COLTYPE &&
-           BCGShellList_ColumnModified == COLMOD);
+    ASSERT(AFX_ShellList_ColumnName     == COLNAME &&
+           AFX_ShellList_ColumnSize     == COLSIZE &&
+           AFX_ShellList_ColumnType     == COLTYPE &&
+           AFX_ShellList_ColumnModified == COLMOD);
 
     ASSERT(colnames[COLLAST] == NULL);      // check numbering consistency
 
@@ -298,7 +300,7 @@ void CHistoryShellList::SaveLayout()
 }
 
 CString CHistoryShellList::OnGetItemText(int iItem, int iColumn, 
-									     LPBCGCBITEMINFO pItem)
+									     LPAFX_SHELLITEMINFO pItem)
 {
     // We use fl_idx_ to store the index into recent file list (pfl) of the current file,
     // which saves time by avoiding calls to SHGetPathFromIDList for each column.
@@ -329,7 +331,7 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 
 	// Call BCG base class for columns it can handle
     if (iColumn < COLATTR)
-        return CBCGShellList::OnGetItemText(iItem, iColumn, pItem);
+        return CMFCShellListCtrl::OnGetItemText(iItem, iColumn, pItem);
 
     CString retval;
     CHexFileList *pfl = theApp.GetFileList();
@@ -347,7 +349,7 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 		{
 			// We get the index for this file from the recent file list here to save time repeating the
 			// procedure (get path and then look up index) for the other columns.
-			// IMPORTANT: This assumes that CBCGShellList::OnGetItemText calls process the list box items
+			// IMPORTANT: This assumes that CMFCShellListCtrl::OnGetItemText calls process the list box items
 			// a row at a time, from left to right - if this assumption changes this will stuff up.
 			ASSERT(fl_idx_ == -2);
 			if (pfl != NULL)
@@ -411,8 +413,8 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 
 int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColumn)
 {
-	LPBCGCBITEMINFO pItem1 = (LPBCGCBITEMINFO)lParam1;
-	LPBCGCBITEMINFO	pItem2 = (LPBCGCBITEMINFO)lParam2;
+	LPAFX_SHELLITEMINFO pItem1 = (LPAFX_SHELLITEMINFO)lParam1;
+	LPAFX_SHELLITEMINFO	pItem2 = (LPAFX_SHELLITEMINFO)lParam2;
 	ASSERT(pItem1 != NULL);
 	ASSERT(pItem2 != NULL);
 
@@ -594,11 +596,11 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
         break;
 	}
 
-	return CBCGShellList::OnCompareItems(lParam1, lParam2, iColumn);
+	return CMFCShellListCtrl::OnCompareItems(lParam1, lParam2, iColumn);
 }
 
-BEGIN_MESSAGE_MAP(CHistoryShellList, CBCGShellList)
-	ON_NOTIFY_REFLECT(NM_DBLCLK, OnDblclk)
+BEGIN_MESSAGE_MAP(CHistoryShellList, CMFCShellListCtrl)
+	ON_NOTIFY_REFLECT(NM_DBLCLK, OnDblClk)
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
@@ -636,10 +638,10 @@ void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point)
         return;
     }
 
-    CBCGShellList::OnContextMenu(pWnd, point);
+    CMFCShellListCtrl::OnContextMenu(pWnd, point);
 }
 
-void CHistoryShellList::OnDblclk(NMHDR * pNMHDR, LRESULT * pResult) 
+void CHistoryShellList::OnDblClk(NMHDR * pNMHDR, LRESULT * pResult) 
 {
 	*pResult = 0;
 
@@ -654,7 +656,7 @@ void CHistoryShellList::OnDblclk(NMHDR * pNMHDR, LRESULT * pResult)
         return;
     }
 
-	LPBCGCBITEMINFO	pInfo = (LPBCGCBITEMINFO) lvItem.lParam;
+	LPAFX_SHELLITEMINFO	pInfo = (LPAFX_SHELLITEMINFO) lvItem.lParam;
 	if (pInfo == NULL || pInfo->pParentFolder == NULL || pInfo->pidlRel == NULL)
 	{
 		ASSERT (FALSE);
@@ -669,7 +671,7 @@ void CHistoryShellList::OnDblclk(NMHDR * pNMHDR, LRESULT * pResult)
 
 	if (ulAttrs & SFGAO_FOLDER)
     {
-        CBCGShellList::OnDblclk(pNMHDR, pResult);
+		CMFCShellListCtrl::OnDblClk(pNMHDR, pResult);
         return;
     }
 
@@ -679,7 +681,7 @@ void CHistoryShellList::OnDblclk(NMHDR * pNMHDR, LRESULT * pResult)
 	if (!GetCurrentFolder(full_name) ||
         pInfo->pParentFolder->GetDisplayNameOf(pInfo->pidlRel, SHGDN_INFOLDER, &str) == S_FALSE)
     {
-        CBCGShellList::OnDblclk(pNMHDR, pResult);
+        CMFCShellListCtrl::OnDblClk(pNMHDR, pResult);
         return;
     }
     full_name += CString("\\") + CString((LPCWSTR)str.pOleStr);
@@ -822,7 +824,7 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
     resizer_.Add(IDC_FOLDER_NAME,      0, 0, 100,   0);
     resizer_.Add(IDC_EXPLORER,         0, 0, 100, 100);  // move right & bottom edges
 
-    SetMinSize(m_sizeDefault);
+    //SetMinSize(m_sizeDefault);  // xxx fix for MFC9
 
     return TRUE;
 }
@@ -915,19 +917,19 @@ BOOL CExplorerWnd::OnInitDialog()
 
     ctl_back_.SetImage(IDB_BACK, IDB_BACK_HOT);
 	ctl_back_.m_bTransparent = TRUE;
-    ctl_back_.m_nFlatStyle = CBCGButton::BUTTONSTYLE_FLAT;
+    ctl_back_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
     ctl_back_.SetTooltip(_T("Back To Previous Folder"));
 	ctl_back_.Invalidate();
 
     ctl_forw_.SetImage(IDB_FORW, IDB_FORW_HOT);
 	ctl_forw_.m_bTransparent = TRUE;
-    ctl_forw_.m_nFlatStyle = CBCGButton::BUTTONSTYLE_FLAT;
+    ctl_forw_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
     ctl_forw_.SetTooltip(_T("Forward"));
 	ctl_forw_.Invalidate();
 
     ctl_up_.SetImage(IDB_PARENT, IDB_PARENT_HOT);
 	ctl_up_.m_bTransparent = TRUE;
-    ctl_up_.m_nFlatStyle = CBCGButton::BUTTONSTYLE_FLAT;
+    ctl_up_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
     ctl_up_.SetTooltip(_T("Move Up One Level"));
     ctl_up_.Invalidate();
 
@@ -940,7 +942,7 @@ BOOL CExplorerWnd::OnInitDialog()
 
     ctl_refresh_.SetImage(IDB_REFRESH, IDB_REFRESH_HOT);
 	ctl_refresh_.m_bTransparent = TRUE;
-    ctl_refresh_.m_nFlatStyle = CBCGButton::BUTTONSTYLE_FLAT;
+    ctl_refresh_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
     ctl_refresh_.SetTooltip(_T("Refresh"));
 	ctl_refresh_.Invalidate();
 
@@ -950,7 +952,7 @@ BOOL CExplorerWnd::OnInitDialog()
         ctl_flip_.SetImage(IDB_HORZ, IDB_HORZ_HOT);
 
 	ctl_flip_.m_bTransparent = TRUE;
-    ctl_flip_.m_nFlatStyle = CBCGButton::BUTTONSTYLE_FLAT;
+    ctl_flip_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
     ctl_flip_.SetTooltip(_T("Flip vertical/horizontal"));
 	ctl_flip_.Invalidate();
 
@@ -960,7 +962,7 @@ BOOL CExplorerWnd::OnInitDialog()
 	ctl_view_.m_bOSMenu = FALSE;
     ctl_view_.SetImage(IDB_VIEW, IDB_VIEW_HOT);
 	ctl_view_.m_bTransparent = TRUE;
-    ctl_view_.m_nFlatStyle = CBCGButton::BUTTONSTYLE_FLAT;
+    ctl_view_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
     //ctl_view_.SizeToContent();
     ctl_view_.SetTooltip(_T("Change Folder View"));
 	ctl_view_.Invalidate();

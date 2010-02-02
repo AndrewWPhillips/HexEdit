@@ -387,13 +387,22 @@
 #define IDD_GETBOOL                     409
 #define IDD_OPT_WORKLAYOUT              410
 #define IDD_OPT_HISTORY                 411
-#define IDB_BITMAP4                     414
-#define IDB_HIST                        414
+#define IDB_HIST                        412
+#define IDB_SYSTEM                      415
 #define IDB_DOCDISPLAY                  416
 #define IDB_DOCEDIT                     417
 #define IDB_DISPLAY                     418
 #define IDB_EDIT                        419
-#define IDB_SYSTEM                      420
+#define ID_VIEW_APPLOOK_WIN_2000	421
+#define ID_VIEW_APPLOOK_OFF_XP		422
+#define ID_VIEW_APPLOOK_WIN_XP		423
+#define ID_VIEW_APPLOOK_OFF_2003	424
+#define ID_VIEW_APPLOOK_VS_2005		425
+#define ID_VIEW_APPLOOK_OFF_2007_BLUE	426
+#define ID_VIEW_APPLOOK_OFF_2007_BLACK	427
+#define ID_VIEW_APPLOOK_OFF_2007_SILVER	428
+#define ID_VIEW_APPLOOK_OFF_2007_AQUA	429
+
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1554,7 +1563,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        421
+#define _APS_NEXT_RESOURCE_VALUE        431
 #define _APS_NEXT_COMMAND_VALUE         39125
 #define _APS_NEXT_CONTROL_VALUE         1591
 #define _APS_NEXT_SYMED_VALUE           252

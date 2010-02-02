@@ -44,7 +44,7 @@ public:
     CString comments_;
     //}}AFX_DATA
     CEdit ctl_struct_;
-    CBCGMenuButton ctl_struct_var_;
+    CMFCMenuButton ctl_struct_var_;
 
 // Overrides
     // ClassWizard generated virtual function overrides

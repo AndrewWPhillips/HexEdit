@@ -8,13 +8,13 @@
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CTabView view
+// CHexTabView view
 
-class CTabView : public CBCGTabView
+class CHexTabView : public CTabView
 {
 protected:
-	CTabView();           // protected constructor used by dynamic creation
-	DECLARE_DYNCREATE(CTabView)
+	CHexTabView();           // protected constructor used by dynamic creation
+	DECLARE_DYNCREATE(CHexTabView)
 
 // Attributes
 public:
@@ -24,7 +24,7 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CTabView)
+	//{{AFX_VIRTUAL(CHexTabView)
 	protected:
 	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
 	//}}AFX_VIRTUAL
@@ -32,7 +32,7 @@ public:
 
 // Implementation
 protected:
-	virtual ~CTabView();
+	virtual ~CHexTabView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -40,7 +40,7 @@ protected:
 
 	// Generated message map functions
 protected:
-	//{{AFX_MSG(CTabView)
+	//{{AFX_MSG(CHexTabView)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	//}}AFX_MSG

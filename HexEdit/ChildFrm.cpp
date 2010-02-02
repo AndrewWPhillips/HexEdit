@@ -39,9 +39,9 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CChildFrame
 
-IMPLEMENT_DYNCREATE(CChildFrame, CBCGMDIChildWnd)
+IMPLEMENT_DYNCREATE(CChildFrame, CMDIChildWndEx)
 
-BEGIN_MESSAGE_MAP(CChildFrame, CBCGMDIChildWnd)
+BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
         //{{AFX_MSG_MAP(CChildFrame)
 	ON_WM_CLOSE()
 	//}}AFX_MSG_MAP
@@ -67,12 +67,12 @@ CChildFrame::~CChildFrame()
 #ifdef _DEBUG
 void CChildFrame::AssertValid() const
 {
-        CBCGMDIChildWnd::AssertValid();
+        CMDIChildWndEx::AssertValid();
 }
 
 void CChildFrame::Dump(CDumpContext& dc) const
 {
-        CBCGMDIChildWnd::Dump(dc);
+        CMDIChildWndEx::Dump(dc);
 }
 
 #endif //_DEBUG
@@ -96,13 +96,13 @@ BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	splitter_.DelColumn(2);
 	splitter_.DelColumn(1);
 
-    if (!splitter_.CreateView(0, 0, RUNTIME_CLASS(CTabView), CSize(0, 0), pContext))
+    if (!splitter_.CreateView(0, 0, RUNTIME_CLASS(CHexTabView), CSize(0, 0), pContext))
     {
         AfxMessageBox("Failed to create splitter view.");
         return FALSE;
     }
-	ptv_ = (CTabView *)splitter_.GetPane(0, 0);
-	ASSERT_KINDOF(CTabView, ptv_);
+	ptv_ = (CHexTabView *)splitter_.GetPane(0, 0);
+	ASSERT_KINDOF(CHexTabView, ptv_);
 
 	return TRUE;
 }
@@ -119,10 +119,10 @@ CHexEditView *CChildFrame::GetHexEditView() const
             return ((CDataFormatView *)pv)->phev_;
         else if (pv->IsKindOf(RUNTIME_CLASS(CAerialView)))
             return ((CAerialView *)pv)->phev_;
-        else if (pv->IsKindOf(RUNTIME_CLASS(CTabView)))
+        else if (pv->IsKindOf(RUNTIME_CLASS(CHexTabView)))
         {
 			// Find the hex view (left-most tab)
-			CTabView *ptv = (CTabView *)pv;
+			CHexTabView *ptv = (CHexTabView *)pv;
 			ptv->SetActiveView(0);  // hex view is always left-most (index 0)
 			ASSERT_KINDOF(CHexEditView, ptv->GetActiveView());
 			return (CHexEditView *)ptv->GetActiveView();
@@ -133,21 +133,21 @@ CHexEditView *CChildFrame::GetHexEditView() const
 
 BOOL CChildFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
 {
-    // Bypass calling CBCGMDIChildWnd::LoadFrame which loads an icon
-    BOOL bRtn = CBCGMDIChildWnd::LoadFrame( nIDResource, dwDefaultStyle, pParentWnd, pContext );
+    // Bypass calling CMDIChildWndEx::LoadFrame which loads an icon
+    BOOL bRtn = CMDIChildWndEx::LoadFrame( nIDResource, dwDefaultStyle, pParentWnd, pContext );
 
     return bRtn;
 }
 
 BOOL CChildFrame::DestroyWindow() 
 {
-	return CBCGMDIChildWnd::DestroyWindow();
+	return CMDIChildWndEx::DestroyWindow();
 }
 
 // Handles control menu commands and system buttons (Minimize etc)
 void CChildFrame::OnSysCommand(UINT nID, LONG lParam)
 {
-    CBCGMDIChildWnd::OnSysCommand(nID, lParam);
+    CMDIChildWndEx::OnSysCommand(nID, lParam);
 
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     nID &= 0xFFF0;
@@ -172,18 +172,18 @@ void CChildFrame::OnSysCommand(UINT nID, LONG lParam)
 LRESULT CChildFrame::OnHelpHitTest(WPARAM wParam, LPARAM lParam)
 {
     // Intercept call so we can check what happens in debugger xxx
-    LRESULT retval = CBCGMDIChildWnd::OnHelpHitTest(wParam, lParam);
+    LRESULT retval = CMDIChildWndEx::OnHelpHitTest(wParam, lParam);
     return retval;
 }
 
 void CChildFrame::OnClose() 
 {
-    CBCGMDIChildWnd::OnClose();
+    CMDIChildWndEx::OnClose();
 }
 
 void CChildFrame::OnSetFocus(CWnd* pOldWnd) 
 {
-    CBCGMDIChildWnd::OnSetFocus(pOldWnd);
+    CMDIChildWndEx::OnSetFocus(pOldWnd);
 
 	CHexEditView *pv = GetHexEditView();
 	if (pv != NULL)

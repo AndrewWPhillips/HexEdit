@@ -1228,7 +1228,7 @@ void CAerialView::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 void CAerialView::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    CBCGContextMenuManager *pCMM = theApp.GetContextMenuManager();
+    CContextMenuManager *pCMM = theApp.GetContextMenuManager();
     pCMM->ShowPopupMenu(IDR_CONTEXT_AERIAL, point.x, point.y, this);
 }
 

@@ -530,7 +530,7 @@ CString CHexEditView::create_header(const char *fmt, long pagenum)
 void CHexEditView::OnFilePrintPreview()
 {
 //    CScrView::OnFilePrintPreview();
-    BCGPrintPreview(this);
+    AFXPrintPreview(this);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_preview);
 
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();

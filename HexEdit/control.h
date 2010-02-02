@@ -155,15 +155,16 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CHexComboButton
 
-class CHexComboButton : public CBCGToolbarComboBoxButton
+class CHexComboButton : public CMFCToolBarComboBoxButton
 {
     DECLARE_SERIAL(CHexComboButton)
 
 // Construction
 public:
     CHexComboButton() :
-        CBCGToolbarComboBoxButton(ID_JUMP_HEX_COMBO, 
-            CImageHash::GetImageOfCommand(ID_JUMP_HEX, FALSE),
+        CMFCToolBarComboBoxButton(ID_JUMP_HEX_COMBO, 
+            //CImageHash::GetImageOfCommand(ID_JUMP_HEX),
+			afxCommandManager->GetCmdImage(ID_JUMP_HEX),
             CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
             120),
         pedit_(NULL)
@@ -284,15 +285,15 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CDecComboButton
 
-class CDecComboButton : public CBCGToolbarComboBoxButton
+class CDecComboButton : public CMFCToolBarComboBoxButton
 {
     DECLARE_SERIAL(CDecComboButton)
 
 // Construction
 public:
     CDecComboButton() :
-        CBCGToolbarComboBoxButton(ID_JUMP_DEC_COMBO, 
-            CImageHash::GetImageOfCommand(ID_JUMP_DEC, FALSE),
+        CMFCToolBarComboBoxButton(ID_JUMP_DEC_COMBO, 
+            -1 /*CImageHash::GetImageOfCommand(ID_JUMP_DEC, FALSE)*/,
             CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
             142),
         pedit_(NULL)
@@ -433,15 +434,15 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CFindComboButton
 
-class CFindComboButton : public CBCGToolbarComboBoxButton
+class CFindComboButton : public CMFCToolBarComboBoxButton
 {
     DECLARE_SERIAL(CFindComboButton)
 
 // Construction
 public:
     CFindComboButton() :
-        CBCGToolbarComboBoxButton(ID_SEARCH_COMBO, 
-            CImageHash::GetImageOfCommand(ID_SEARCH, FALSE),
+        CMFCToolBarComboBoxButton(ID_SEARCH_COMBO, 
+            -1 /*CImageHash::GetImageOfCommand(ID_SEARCH, FALSE)*/,
             CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
             200),
         pedit_(NULL)
@@ -523,15 +524,15 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CSchemeComboButton
 
-class CSchemeComboButton : public CBCGToolbarComboBoxButton
+class CSchemeComboButton : public CMFCToolBarComboBoxButton
 {
     DECLARE_SERIAL(CSchemeComboButton)
 
 // Construction
 public:
     CSchemeComboButton() :
-    CBCGToolbarComboBoxButton(::IsUs() ? ID_SCHEME_COMBO_US : ID_SCHEME_COMBO, 
-            CImageHash::GetImageOfCommand(ID_SCHEME, FALSE),
+    CMFCToolBarComboBoxButton(::IsUs() ? ID_SCHEME_COMBO_US : ID_SCHEME_COMBO, 
+            -1 /*CImageHash::GetImageOfCommand(ID_SCHEME, FALSE)*/,
             CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
             120)
     {
@@ -597,15 +598,15 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarksComboButton
 
-class CBookmarksComboButton : public CBCGToolbarComboBoxButton
+class CBookmarksComboButton : public CMFCToolBarComboBoxButton
 {
     DECLARE_SERIAL(CBookmarksComboButton)
 
 // Construction
 public:
     CBookmarksComboButton() :
-    CBCGToolbarComboBoxButton(ID_BOOKMARKS_COMBO, 
-            CImageHash::GetImageOfCommand(ID_BOOKMARKS, FALSE),
+    CMFCToolBarComboBoxButton(ID_BOOKMARKS_COMBO, 
+            -1 /*CImageHash::GetImageOfCommand(ID_BOOKMARKS, FALSE)*/,
             CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP,
             150)
     {
@@ -639,7 +640,7 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CStatBar window
 
-class CStatBar : public CBCGStatusBar
+class CStatBar : public CMFCStatusBar
 {
 // Construction
 public:

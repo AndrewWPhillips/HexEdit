@@ -182,7 +182,7 @@ struct OptValues
 /////////////////////////////////////////////////////////////////////////////
 // COptSheet
 
-class COptSheet : public CBCGPropertySheet
+class COptSheet : public CMFCPropertySheet
 {
 	DECLARE_DYNAMIC(COptSheet)
 
@@ -224,11 +224,11 @@ protected:
 
 /////////////////////////////////////////////////////////////////////////////
 // COptPage - base class for all options pages
-class COptPage : public CBCGPropertyPage
+class COptPage : public CMFCPropertyPage
 {
 	DECLARE_DYNAMIC(COptPage)
 public:
-    explicit COptPage(UINT nIDD = 0, UINT nIDCaption = 0) : CBCGPropertyPage(nIDD, nIDCaption), pParent(NULL) { }
+    explicit COptPage(UINT nIDD = 0, UINT nIDCaption = 0) : CMFCPropertyPage(nIDD, nIDCaption), pParent(NULL) { }
     virtual LRESULT OnIdle(long) { return FALSE; }
     COptSheet *pParent;
 protected:
@@ -236,7 +236,7 @@ protected:
     {
         pParent = (COptSheet *)GetParent();
 	    ASSERT(pParent != NULL && pParent->IsKindOf(RUNTIME_CLASS(COptSheet)));
-        return CBCGPropertyPage::OnInitDialog();
+        return CMFCPropertyPage::OnInitDialog();
     }
 };
 
@@ -275,7 +275,7 @@ protected:
 
 private:
 	COptPage * pHistPage;
-	CBCGButton ctl_hist_butn_;
+	CMFCButton ctl_hist_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -383,14 +383,14 @@ protected:
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnStartupPage();
 	afx_msg void OnChangeMditabs();
-	afx_msg void OnVisualizations();
+	//afx_msg void OnVisualizations();
 	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 private:
     void fix_controls();
 
 	COptPage * pStartupPage;
-	CBCGButton ctl_startup_butn_;
+	CMFCButton ctl_startup_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -433,7 +433,7 @@ private:
     void fix_controls();
 
 	COptPage * pDocPage;
-	CBCGButton ctl_doc_butn_;
+	CMFCButton ctl_doc_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -477,7 +477,7 @@ protected:
 
 private:
 	COptPage * pDocPage;        // corresp, document (edit) page
-	CBCGButton ctl_doc_butn_;
+	CMFCButton ctl_doc_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -526,8 +526,8 @@ public:
 	enum { IDD = IDD_OPT_PRINT };
 	CEdit	ctl_footer_;
 	CEdit	ctl_header_;
-	CBCGMenuButton	footer_args_;
-	CBCGMenuButton	header_args_;
+	CMFCMenuButton	footer_args_;
+	CMFCMenuButton	header_args_;
 	//}}AFX_DATA
 
 // Controls
@@ -763,7 +763,7 @@ private:
 
 	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
 	COptPage * pGlobalPage;
-	CBCGButton ctl_global_butn_;
+	CMFCButton ctl_global_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -807,7 +807,7 @@ private:
     void fix_controls();        // Disable/enable controls depending on value/state of other controls
 
 	COptPage * pGlobalPage;
-	CBCGButton ctl_global_butn_;
+	CMFCButton ctl_global_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -839,7 +839,7 @@ public:
         // Dialog Data
 	//{{AFX_DATA(CColourSchemes)
 	enum { IDD = IDD_OPT_COLOURS };
-	CBCGColorButton	m_ColourPicker;
+	CMFCColorButton	m_ColourPicker;
 	int		scheme_no_;
 	int		name_no_;
 	//}}AFX_DATA

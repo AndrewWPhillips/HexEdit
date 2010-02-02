@@ -82,8 +82,8 @@ public:
     int     format_;
     CString length_;
     //}}AFX_DATA
-    CBCGMenuButton ctl_length_var_;
-    CBCGMenuButton ctl_domain_var_;
+    CMFCMenuButton ctl_length_var_;
+    CMFCMenuButton ctl_domain_var_;
     CButton ctl_clone_;
 
     int bitfield_;                  // 1 if this is a bit-field

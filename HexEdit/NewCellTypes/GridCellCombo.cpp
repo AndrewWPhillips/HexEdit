@@ -404,7 +404,7 @@ BOOL CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UI
     
     // CInPlaceList auto-deletes itself
     m_pEditWnd = new CInPlaceList(GetGrid(), rect, GetStyle(), nID, nRow, nCol, 
-                                  GetTextClr(), GetBackClr(), m_Strings, GetText(), nChar);
+                                  GetTextClr(), GetBackClr(), m_Strings, (CString)GetText(), nChar);
 
     return TRUE;
 }
@@ -455,7 +455,7 @@ BOOL CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bErase
         }
     }
 
-    CString strTempText = GetText();
+    CString strTempText = (CString)GetText();
     if (IsEditing())
         SetText(_T(""));
 

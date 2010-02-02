@@ -218,7 +218,7 @@ public:
 	CCommentEditControl category_ctl_;
 	CCommentEditControl keywords_ctl_;
 	CCommentEditControl comments_ctl_;
-	CBCGMenuButton cat_sel_ctl_;
+	CMFCMenuButton cat_sel_ctl_;
 
 	bool category_changed_;
 	bool keywords_changed_;

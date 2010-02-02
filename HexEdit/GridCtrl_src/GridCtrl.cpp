@@ -617,7 +617,7 @@ void CGridCtrl::OnPaint()
 
     if (m_bDoubleBuffer)    // Use a memory DC to remove flicker
     {
-        CMemDC MemDC(&dc);
+        CGridMemDC MemDC(&dc);
         OnDraw(&MemDC);
     }
     else                    // Draw raw - this helps in debugging vis problems.
@@ -2294,7 +2294,7 @@ void CGridCtrl::ValidateAndModifyCellContents(int nRow, int nCol, LPCTSTR strTex
 
     if (SendMessageToParent(nRow, nCol, GVN_BEGINLABELEDIT) >= 0)
     {
-        CString strCurrentText = GetItemText(nRow, nCol);
+        CString strCurrentText = (CString)GetItemText(nRow, nCol);
         if (strCurrentText != strText)
         {
             SetItemText(nRow, nCol, strText);
@@ -7565,9 +7565,19 @@ BOOL CGridCtrl::ValidateEdit(int nRow, int nCol, LPCTSTR str)
 // virtual
 #if _MSC_VER >= 1300
 CStringW CGridCtrl::GetItemText(int nRow, int nCol) const
+{
+    if (nRow < 0 || nRow >= m_nRows || nCol < 0 || nCol >= m_nCols)
+        return L"";
+
+    CGridCellBase* pCell = GetCell(nRow, nCol);
+    ASSERT(pCell);
+    if (!pCell)
+        return L"";
+
+    return pCell->GetText();
+}
 #else
 CString CGridCtrl::GetItemText(int nRow, int nCol) const
-#endif
 {
     if (nRow < 0 || nRow >= m_nRows || nCol < 0 || nCol >= m_nCols)
         return _T("");
@@ -7579,3 +7589,4 @@ CString CGridCtrl::GetItemText(int nRow, int nCol) const
 
     return pCell->GetText();
 }
+#endif

@@ -128,7 +128,7 @@ CString CNavManager::GetInfo(bool back, int ii)
 
 // Adds navigation points to end of passed menu.
 // If forward is true then forward nav pts are added else backward nav pts are used.
-void CNavManager::AddItems(CBCGPopupMenu* pMenuPopup, bool forward, UINT first, int max_items)
+void CNavManager::AddItems(CMFCPopupMenu* pMenuPopup, bool forward, UINT first, int max_items)
 {
 	ASSERT( forward || pos_ /* + pos_offset() */ >= 0);        // Can only show backward pts if there are any
 	ASSERT(!forward || pos_ < int(v_.size()) - 1);          // Can only show forward pts if there are any
@@ -161,7 +161,7 @@ void CNavManager::AddItems(CBCGPopupMenu* pMenuPopup, bool forward, UINT first, 
 					ss = pname;
 				else
 					ss = "Closed file";         // Closed without saving to disk?
-                pMenuPopup->InsertItem(CBCGToolbarMenuButton(-1, submenu->GetSafeHmenu(), -1, ss));
+                pMenuPopup->InsertItem(CMFCToolBarMenuButton(-1, submenu->GetSafeHmenu(), -1, ss));
 				delete submenu;
 				submenu = NULL;
 			}
@@ -214,7 +214,7 @@ void CNavManager::AddItems(CBCGPopupMenu* pMenuPopup, bool forward, UINT first, 
 			ss = pname;
 		else
 			ss = "Closed file";
-        pMenuPopup->InsertItem(CBCGToolbarMenuButton(-1, submenu->GetSafeHmenu(), -1, ss));
+        pMenuPopup->InsertItem(CMFCToolBarMenuButton(-1, submenu->GetSafeHmenu(), -1, ss));
 		delete submenu;
 		submenu = NULL;
 	}

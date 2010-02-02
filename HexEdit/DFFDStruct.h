@@ -57,7 +57,7 @@ public:
     CButton ctl_up_;
     CEdit   ctl_name_;
     CListBox    ctl_elements_;
-    CBCGMenuButton  ctl_insert_;
+    CMFCMenuButton  ctl_insert_;
     CButton ctl_edit_;
     CButton ctl_delete_;
     CButton ctl_prev_;

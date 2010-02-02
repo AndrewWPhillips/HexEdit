@@ -3076,7 +3076,7 @@ expr_eval::tok_t expr_eval::func_token(const char *buf)
 	// Make sure it is uppercase
 	char tmp[256];
 	strcpy(tmp, buf);
-	strupr(tmp);
+	_strupr(tmp);
 
 	// Make sure they are sorted
     for (ii = 1; func_list[ii].name != NULL; ++ii)
@@ -3135,7 +3135,7 @@ expr_eval::tok_t expr_eval::get_next()
             strncpy(buf, saved_, len);
             buf[len] = '\0';
 			strcpy(bufu, buf);
-			strupr(bufu);              // make uppercase so we can use strcmp instead of _stricmp
+			_strupr(bufu);              // make uppercase so we can use strcmp instead of _stricmp
 
             tok_t token;
             if ((token = func_token(bufu)) != TOK_NONE)

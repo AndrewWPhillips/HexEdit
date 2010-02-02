@@ -48,7 +48,7 @@ public:
 	std::vector<CString> GetVarNames(CJumpExpr::type_t typ);
 };
 
-class CMainFrame : public CBCGMDIFrameWnd
+class CMainFrame : public CMDIFrameWndEx
 {
     DECLARE_DYNAMIC(CMainFrame)
 public:
@@ -86,8 +86,8 @@ public:
 	//}}AFX_VIRTUAL
 
     // BCG overrides
-    virtual BOOL OnShowPopupMenu (CBCGPopupMenu* pMenuPopup);
-    virtual void OnClosePopupMenu(CBCGPopupMenu* pMenuPopup);
+    virtual BOOL OnShowPopupMenu (CMFCPopupMenu* pMenuPopup);
+    virtual void OnClosePopupMenu(CMFCPopupMenu* pMenuPopup);
 	virtual BOOL OnEraseMDIClientBackground (CDC* pDC);
 
 // Implementation
@@ -102,9 +102,9 @@ public:
 
 public:
     // BCG menu bar and tool bar
-    CBCGMenuBar m_wndMenuBar;
-    CBCGToolBar m_wndBar1, m_wndBar2;   // Tool bar and Edit bar
-    CBCGToolBar m_wndBar3, m_wndBar4;   // Format bar and Navigation bar
+    CMFCMenuBar m_wndMenuBar;
+    CMFCToolBar m_wndBar1, m_wndBar2;   // Tool bar and Edit bar
+    CMFCToolBar m_wndBar3, m_wndBar4;   // Format bar and Navigation bar
 
 	// Modeless dialogs OR dialog bars
 	CCalcDlg m_wndCalc;                 // Calculator dialog/bar
@@ -119,7 +119,7 @@ public:
 #endif
     CPropWnd m_wndProp;                 // Properties dialog/bar
 
-	CBCGToolBarImages	m_UserImages;
+	CMFCToolBarImages	m_UserImages;
     CString m_strImagesFileName;
 
     std::vector<CString> hex_hist_;     // All hex jump addresses
@@ -155,6 +155,13 @@ public:
     afx_msg void OnSysCommand(UINT nID, LONG lParam);
 	afx_msg void OnMenuSelect(UINT nItemID, UINT nFlags, HMENU hSysMenu);
 	// afx_msg void OnEnterIdle(UINT nWhy, CWnd *pWho);
+
+    afx_msg void OnNavigateBackwards();
+    afx_msg void OnUpdateNavigateBackwards(CCmdUI* pCmdUI);
+    afx_msg void OnNavBack(UINT nID);
+    afx_msg void OnNavigateForwards();
+    afx_msg void OnUpdateNavigateForwards(CCmdUI* pCmdUI);
+    afx_msg void OnNavForw(UINT nID);
 
 	afx_msg void OnEditReplace();
     afx_msg void OnCalcSel();
@@ -243,12 +250,9 @@ public:
     afx_msg void OnUpdateSearchSel(CCmdUI* pCmdUI);
     afx_msg void OnDockableToggle();
     afx_msg void OnUpdateDockableToggle(CCmdUI* pCmdUI);
-    afx_msg void OnNavigateBackwards();
-    afx_msg void OnUpdateNavigateBackwards(CCmdUI* pCmdUI);
-    afx_msg void OnNavBack(UINT nID);
-    afx_msg void OnNavigateForwards();
-    afx_msg void OnUpdateNavigateForwards(CCmdUI* pCmdUI);
-    afx_msg void OnNavForw(UINT nID);
+
+	afx_msg void OnApplicationLook(UINT id);
+	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -308,7 +312,7 @@ private:
     FILE_ADDRESS current_address_;
     CString current_hex_address_, current_dec_address_;
 
-	void move_dlgbar(CBCGDialogBar &bar, const CRect &rct);  // move so it does not intersect with rct
+	void move_dlgbar(CDialogBar &bar, const CRect &rct);  // move so it does not intersect with rct
 
 #ifdef USE_FREE_IMAGE
     FIBITMAP *m_dib;
@@ -320,15 +324,15 @@ private:
     bool bg_progress_enabled_;    // Is progress bar in search occ. pane enabled?
 
 	// Current status bar pane widths - so we only adjust if necessary (to avoid flicker)
-	// Note using CBCGStatusBar::GetPaneWidth won't do as it returns 0 for non-visible panes
+	// Note using CMFCStatusBar::GetPaneWidth won't do as it returns 0 for non-visible panes
 	int OccurrencesWidth, ValuesWidth, AddrHexWidth, AddrDecWidth, FileLengthWidth;
 
 //    UINT timer_id_;             // Timer id for updating bg search progress in the status bar
 
-    CRect item_rect(CBCGPopupMenu *pm, UINT id);
+    CRect item_rect(CMFCPopupMenu *pm, UINT id);
     void show_tip(UINT id = -1);
     CTipWnd menu_tip_;            // Used for displaying a tip when some menu items are hovered
-    std::vector<CBCGPopupMenu*> popup_menu_;    // We are only interested in the last (currently active) menu
+    std::vector<CMFCPopupMenu*> popup_menu_;    // We are only interested in the last (currently active) menu
     UINT last_id_;                // Last menu item mouse was over
 };
 

@@ -35,7 +35,7 @@
 #include "SystemSound.h"
 #include "Misc.h"
 #include "BCGMisc.h"
-#include "BCGHelpIds.h"
+#include <afxribbonres.h>
 #include "HelpID.hm"            // User defined help IDs
 #include "GRIDCTRL_SRC\InPlaceEdit.h"
 #include <HtmlHelp.h>
@@ -54,18 +54,17 @@ static char THIS_FILE[] = __FILE__;
 
 extern CHexEditApp theApp;
 
-IMPLEMENT_SERIAL(CHexEditFontCombo, CBCGToolbarFontCombo, 1)  // see BCGMisc.h
-IMPLEMENT_SERIAL(CHexEditFontSizeCombo, CBCGToolbarFontSizeCombo, 1)  // see BCGMisc.h
+IMPLEMENT_SERIAL(CHexEditFontCombo, CMFCToolBarFontComboBox, 1)  // see BCGMisc.h
+IMPLEMENT_SERIAL(CHexEditFontSizeCombo, CMFCToolBarFontSizeComboBox, 1)  // see BCGMisc.h
 
 // We need to derive our own class from BCG customize class so we can 
 // handle What's This help properly using Html Help.
-class CHexEditCustomize : public CBCGToolbarCustomize
+class CHexEditCustomize : public CMFCToolBarsCustomizeDialog
 {
 public:
-	CHexEditCustomize(CFrameWnd* pParent) : CBCGToolbarCustomize(pParent, TRUE,
-                        BCGCUSTOMIZE_MENU_SHADOWS | BCGCUSTOMIZE_TEXT_LABELS | 
-                        BCGCUSTOMIZE_LOOK_2000 | BCGCUSTOMIZE_MENU_ANIMATIONS |
-                        BCGCUSTOMIZE_CONTEXT_HELP  | BCGCUSTOMIZE_SELECT_SKINS)
+	CHexEditCustomize(CFrameWnd* pParent) : CMFCToolBarsCustomizeDialog(pParent, TRUE,
+                        AFX_CUSTOMIZE_MENU_SHADOWS | AFX_CUSTOMIZE_TEXT_LABELS | 
+                        AFX_CUSTOMIZE_MENU_ANIMATIONS |  AFX_CUSTOMIZE_CONTEXT_HELP)
 	{ }
 //	DECLARE_DYNAMIC(CHexEditCustomize)
 
@@ -74,30 +73,32 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-//IMPLEMENT_DYNAMIC(CHexEditCustomize, CBCGToolbarCustomize)
-BEGIN_MESSAGE_MAP(CHexEditCustomize, CBCGToolbarCustomize)
+//IMPLEMENT_DYNAMIC(CHexEditCustomize, CMFCToolBarsCustomizeDialog)
+BEGIN_MESSAGE_MAP(CHexEditCustomize, CMFCToolBarsCustomizeDialog)
 	ON_WM_HELPINFO()
 END_MESSAGE_MAP()
 
 BOOL CHexEditCustomize::OnHelpInfo(HELPINFO* pHelpInfo)
 {
+#if 0 // needs fix for MFC 9
 	CWaitCursor wait;
 	if (::HtmlHelp((HWND)pHelpInfo->hItemHandle, theApp.htmlhelp_file_+"::BcgIdMap.txt", HH_TP_HELP_WM_HELP, (DWORD)(LPVOID)dwBCGResHelpIDs) == HWND(0))
 	{
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 		return FALSE;
 	}
+#endif
 	return TRUE;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
 
-IMPLEMENT_DYNAMIC(CMainFrame, CBCGMDIFrameWnd)
+IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWndEx)
 
 // static UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
 
-BEGIN_MESSAGE_MAP(CMainFrame, CBCGMDIFrameWnd)
+BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         ON_WM_INITMENU()
         //{{AFX_MSG_MAP(CMainFrame)
         ON_WM_CREATE()
@@ -130,6 +131,29 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGMDIFrameWnd)
         ON_COMMAND_EX(ID_WINDOW_TILE_VERT, OnMDIWindowCmd)
 
         ON_COMMAND(ID_WINDOW_NEW, OnWindowNew)
+
+        // Searching
+        ON_COMMAND(ID_EDIT_REPLACE, OnEditReplace)
+        ON_UPDATE_COMMAND_UI(ID_EDIT_REPLACE, OnUpdateEditFind)
+        ON_COMMAND(ID_FIND_NEXT, OnFindNext)
+        ON_UPDATE_COMMAND_UI(ID_FIND_NEXT, OnUpdateSearch)
+        ON_COMMAND(ID_BOOKMARK_ALL, OnBookmarkAll)
+        ON_UPDATE_COMMAND_UI(ID_BOOKMARK_ALL, OnUpdateSearch)
+        ON_COMMAND(ID_REPLACE, OnReplace)
+        ON_UPDATE_COMMAND_UI(ID_REPLACE, OnUpdateSearch)
+        ON_COMMAND(ID_REPLACE_ALL, OnReplaceAll)
+        ON_UPDATE_COMMAND_UI(ID_REPLACE_ALL, OnUpdateSearch)
+
+        ON_COMMAND(ID_SEARCH_FORW, OnSearchForw)
+        ON_UPDATE_COMMAND_UI(ID_SEARCH_FORW, OnUpdateSearch)
+        ON_COMMAND(ID_SEARCH_BACK, OnSearchBack)
+        ON_UPDATE_COMMAND_UI(ID_SEARCH_BACK, OnUpdateSearch)
+        ON_COMMAND(ID_SEARCH_SEL, OnSearchSel)
+        ON_UPDATE_COMMAND_UI(ID_SEARCH_SEL, OnUpdateSearchSel)
+
+//        ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindDlgMess)
+
+        // Toolbars, ruler, status bar
         ON_COMMAND(ID_VIEW_VIEWBAR, OnViewViewbar)
         ON_UPDATE_COMMAND_UI(ID_VIEW_VIEWBAR, OnUpdateViewViewbar)
         ON_COMMAND(ID_VIEW_EDITBAR, OnViewEditbar)
@@ -157,6 +181,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGMDIFrameWnd)
         ON_COMMAND(ID_VIEW_PROPERTIES, OnViewProperties)
         ON_UPDATE_COMMAND_UI(ID_VIEW_PROPERTIES, OnUpdateViewProperties)
 
+        ON_COMMAND(ID_DIALOGS_DOCKABLE, OnDockableToggle)
+        ON_UPDATE_COMMAND_UI(ID_DIALOGS_DOCKABLE, OnUpdateDockableToggle)
+
         ON_COMMAND_EX(ID_VIEW_STATUS_BAR, OnBarCheck)
         ON_UPDATE_COMMAND_UI(ID_INDICATOR_OCCURRENCES, OnUpdateOccurrences)
         ON_UPDATE_COMMAND_UI(ID_INDICATOR_VALUES, OnUpdateValues)
@@ -169,16 +196,13 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGMDIFrameWnd)
         ON_UPDATE_COMMAND_UI(ID_INDICATOR_REC, OnUpdateRec)
         ON_REGISTERED_MESSAGE(CHexEditApp::wm_hexedit, OnOpenMsg)
 
-//        ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindDlgMess)
-//        ON_MESSAGE(WM_USER, OnReturn)
-
-        // BCG stuff
-        ON_REGISTERED_MESSAGE(BCGM_RESETTOOLBAR, OnToolbarReset)
-        ON_REGISTERED_MESSAGE(BCGM_RESETMENU, OnMenuReset)
-        ON_REGISTERED_MESSAGE(BCGM_TOOLBARMENU, OnToolbarContextMenu)
+        // MFC9 (BCG) stuff
+        ON_REGISTERED_MESSAGE(AFX_WM_RESETTOOLBAR, OnToolbarReset)
+        ON_REGISTERED_MESSAGE(AFX_WM_RESETMENU, OnMenuReset)
+        ON_REGISTERED_MESSAGE(AFX_WM_TOOLBARMENU, OnToolbarContextMenu)
         ON_COMMAND_EX_RANGE(ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10, OnToolsViewUserToolbar)
         ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10, OnUpdateToolsViewUserToolbar)
-        ON_REGISTERED_MESSAGE(BCGM_CUSTOMIZEHELP, OnHelpCustomizeToolbars)
+        ON_REGISTERED_MESSAGE(AFX_WM_CUSTOMIZEHELP, OnHelpCustomizeToolbars)
         ON_COMMAND(ID_WINDOW_MANAGER, ShowWindowsDialog)
 
         // When vertically docked the combobox reverts to a button and sends this command when clicked
@@ -195,32 +219,18 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGMDIFrameWnd)
         ON_COMMAND(ID_BOOKMARKS_COMBO, OnBookmarks)
         ON_UPDATE_COMMAND_UI(ID_BOOKMARKS_COMBO, OnUpdateBookmarksCombo)
 
-        ON_COMMAND(ID_EDIT_REPLACE, OnEditReplace)
-        ON_UPDATE_COMMAND_UI(ID_EDIT_REPLACE, OnUpdateEditFind)
-        ON_COMMAND(ID_FIND_NEXT, OnFindNext)
-        ON_UPDATE_COMMAND_UI(ID_FIND_NEXT, OnUpdateSearch)
-        ON_COMMAND(ID_BOOKMARK_ALL, OnBookmarkAll)
-        ON_UPDATE_COMMAND_UI(ID_BOOKMARK_ALL, OnUpdateSearch)
-        ON_COMMAND(ID_REPLACE, OnReplace)
-        ON_UPDATE_COMMAND_UI(ID_REPLACE, OnUpdateSearch)
-        ON_COMMAND(ID_REPLACE_ALL, OnReplaceAll)
-        ON_UPDATE_COMMAND_UI(ID_REPLACE_ALL, OnUpdateSearch)
+        ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnApplicationLook)
+        ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnUpdateApplicationLook)
 
-        ON_COMMAND(ID_SEARCH_FORW, OnSearchForw)
-        ON_UPDATE_COMMAND_UI(ID_SEARCH_FORW, OnUpdateSearch)
-        ON_COMMAND(ID_SEARCH_BACK, OnSearchBack)
-        ON_UPDATE_COMMAND_UI(ID_SEARCH_BACK, OnUpdateSearch)
-        ON_COMMAND(ID_SEARCH_SEL, OnSearchSel)
-        ON_UPDATE_COMMAND_UI(ID_SEARCH_SEL, OnUpdateSearchSel)
-        ON_COMMAND(ID_DIALOGS_DOCKABLE, OnDockableToggle)
-        ON_UPDATE_COMMAND_UI(ID_DIALOGS_DOCKABLE, OnUpdateDockableToggle)
-
+        // Misc commands
         ON_COMMAND(ID_NAV_BACK, OnNavigateBackwards)
         ON_UPDATE_COMMAND_UI(ID_NAV_BACK, OnUpdateNavigateBackwards)
         ON_COMMAND_RANGE(ID_NAV_BACK_FIRST, ID_NAV_BACK_FIRST+NAV_RESERVED-1, OnNavBack)
         ON_COMMAND(ID_NAV_FORW, OnNavigateForwards)
         ON_UPDATE_COMMAND_UI(ID_NAV_FORW, OnUpdateNavigateForwards)
         ON_COMMAND_RANGE(ID_NAV_FORW_FIRST, ID_NAV_FORW_FIRST+NAV_RESERVED-1, OnNavForw)
+
+//        ON_MESSAGE(WM_USER, OnReturn)
 
         ON_COMMAND(ID_TEST, OnTest)
 END_MESSAGE_MAP()
@@ -254,6 +264,7 @@ CMainFrame::CMainFrame()
 		m_background.LoadImage(GetExePath() + FILENAME_BACKGROUND);
 #endif
 	m_background_pos = theApp.GetProfileInt("MainFrame", "BackgroundPosition", 4); // dv = bottom-right
+	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2005);
 
 	m_search_image.LoadBitmap(IDB_SEARCH);
 	OccurrencesWidth = ValuesWidth = AddrHexWidth = AddrDecWidth = FileLengthWidth = -999;
@@ -287,14 +298,22 @@ static UINT indicators[] =
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-        CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
-        if (CBCGMDIFrameWnd::OnCreate(lpCreateStruct) == -1)
+        if (CMDIFrameWndEx::OnCreate(lpCreateStruct) == -1)
                 return -1;
 
         //menu_tip_.SetParent(this);
+		// set the visual manager and style based on persisted value
+		OnApplicationLook(theApp.m_nAppLook);
 
-        EnableDocking(CBRS_ALIGN_ANY);
+		CMDITabInfo mdiTabParams;
+		mdiTabParams.m_style = CMFCTabCtrl::STYLE_3D_ONENOTE; // other styles available...
+		mdiTabParams.m_bActiveTabCloseButton = TRUE;      // set to FALSE to place close button at right of tab area
+		mdiTabParams.m_bTabIcons = FALSE;    // set to TRUE to enable document icons on MDI taba
+		mdiTabParams.m_bAutoColor = TRUE;    // set to FALSE to disable auto-coloring of MDI tabs
+		mdiTabParams.m_bDocumentMenu = TRUE; // enable the document menu at the right edge of the tab area
+		EnableMDITabbedGroups(TRUE, mdiTabParams);
+
+        //EnableDocking(CBRS_ALIGN_ANY);
 
         // Create BCG menu bar
         if (!m_wndMenuBar.Create(this))
@@ -302,12 +321,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
                 TRACE0("Failed to create a menu bar\n");
                 return -1;      // fail to create
         }
-        m_wndMenuBar.SetBarStyle(m_wndMenuBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndMenuBar.SetPaneStyle(m_wndMenuBar.GetPaneStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_FLYBY);
+        //m_wndMenuBar.SetBarStyle(m_wndMenuBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
         m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY);
-        DockControlBar(&m_wndMenuBar);
+        // DockControlBar(&m_wndMenuBar); // xxx fix for MFC9
 
         // Create Tool bar
-        if (!m_wndBar1.Create(this, dwDefaultToolbarStyle, IDR_STDBAR) || 
+        if (!m_wndBar1.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_STDBAR) || 
 #if SHADED_TOOLBARS
             !m_wndBar1.LoadToolBar(IDR_STDBAR, IDB_STDBAR_C, 0, FALSE, IDB_STDBAR_D, 0, IDB_STDBAR_H))
 #else
@@ -317,15 +337,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             TRACE0("Failed to create Standard Toolbar\n");
             return -1;      // fail to create
         }
-        m_wndBar1.SetBarStyle(m_wndBar1.GetBarStyle() |
-            CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+		m_wndBar1.SetPaneStyle(m_wndBar1.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        //m_wndBar1.SetBarStyle(m_wndBar1.GetBarStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
         m_wndBar1.SetWindowText("Standard Toolbar");
         m_wndBar1.EnableDocking(CBRS_ALIGN_ANY);
 //        m_wndBar1.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
 //        m_wndBar1.EnableTextLabels();
 
         // Create "edit" bar
-        if (!m_wndBar2.Create(this, dwDefaultToolbarStyle, IDR_EDITBAR) ||
+        if (!m_wndBar2.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EDITBAR) ||
 #if SHADED_TOOLBARS
             !m_wndBar2.LoadToolBar(IDR_EDITBAR, IDB_EDITBAR_C, 0, FALSE, IDB_EDITBAR_D, 0, IDB_EDITBAR_H))
 #else
@@ -335,13 +355,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             TRACE0("Failed to create Edit Bar\n");
             return -1;      // fail to create
         }
-        m_wndBar2.SetBarStyle(m_wndBar2.GetBarStyle() |
-            CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+		m_wndBar2.SetPaneStyle(m_wndBar2.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        //m_wndBar2.SetBarStyle(m_wndBar2.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
         m_wndBar2.SetWindowText("Edit Bar");
         m_wndBar2.EnableDocking(CBRS_ALIGN_ANY);
 
         // Create Format bar
-        if (!m_wndBar3.Create(this, dwDefaultToolbarStyle, IDR_FORMATBAR) ||
+        if (!m_wndBar3.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_FORMATBAR) ||
 #if SHADED_TOOLBARS
             !m_wndBar3.LoadToolBar(IDR_FORMATBAR, IDB_FMTBAR_C, 0, FALSE, IDB_FMTBAR_D, 0, IDB_FMTBAR_H))
 #else
@@ -351,14 +371,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             TRACE0("Failed to create Format Bar\n");
             return -1;      // fail to create
         }
-        m_wndBar3.SetBarStyle(m_wndBar3.GetBarStyle() |
-            CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+		m_wndBar3.SetPaneStyle(m_wndBar3.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        //m_wndBar3.SetBarStyle(m_wndBar3.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
         m_wndBar3.SetWindowText("Format Bar");
         m_wndBar3.EnableDocking(CBRS_ALIGN_ANY);
         m_wndBar3.ShowWindow(SW_HIDE);
 
         // Create Navigation bar
-        if (!m_wndBar4.Create(this, dwDefaultToolbarStyle, IDR_NAVBAR) ||
+        if (!m_wndBar4.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_NAVBAR) ||
 #if SHADED_TOOLBARS
             !m_wndBar4.LoadToolBar(IDR_NAVBAR, IDB_NAVBAR_C, 0, FALSE, IDB_NAVBAR_D, 0, IDB_NAVBAR_H))
 #else
@@ -368,8 +388,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             TRACE0("Failed to create Nav Bar\n");
             return -1;      // fail to create
         }
-        m_wndBar4.SetBarStyle(m_wndBar4.GetBarStyle() |
-            CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+		m_wndBar4.SetPaneStyle(m_wndBar4.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        //m_wndBar4.SetBarStyle(m_wndBar4.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
         m_wndBar4.SetWindowText("Navigation Bar");
         m_wndBar4.EnableDocking(CBRS_ALIGN_ANY);
         m_wndBar4.ShowWindow(SW_HIDE);
@@ -386,6 +406,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             return -1;
         }
 
+#if 0  // xxx need to fix this for MFC9
         CSize tmp_size;
 
         m_wndCalc.SetWindowText("Calculator");
@@ -432,14 +453,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         DockControlBar(&m_wndBar2);
         DockControlBar(&m_wndBar3);
         DockControlBar(&m_wndBar4);
+#endif
 
         // Get extra command images (without creating a toolbar)
 #if SHADED_TOOLBARS
-        CBCGToolBar::AddToolBarForImageCollection(IDR_MISC, IDB_MISCBAR_H, IDB_MISCBAR_C, 0, IDB_MISCBAR_D);
-        CBCGToolBar::AddToolBarForImageCollection(IDR_OPER, IDB_OPERBAR_H, IDB_OPERBAR_C, 0, IDB_OPERBAR_D);
+        CMFCToolBar::AddToolBarForImageCollection(IDR_MISC, IDB_MISCBAR_H, IDB_MISCBAR_C, 0, IDB_MISCBAR_D);
+        CMFCToolBar::AddToolBarForImageCollection(IDR_OPER, IDB_OPERBAR_H, IDB_OPERBAR_C, 0, IDB_OPERBAR_D);
 #else
-        CBCGToolBar::AddToolBarForImageCollection(IDR_MISC);
-        CBCGToolBar::AddToolBarForImageCollection(IDR_OPER);
+        CMFCToolBar::AddToolBarForImageCollection(IDR_MISC);
+        CMFCToolBar::AddToolBarForImageCollection(IDR_OPER);
 #endif
 #if 0
         // Find user toolbar images file -  check old locn 1st (mac dir)
@@ -493,10 +515,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         // Open images files and allow user to use/edit toolbar images
         VERIFY(m_UserImages.Load(m_strImagesFileName));
         if (m_UserImages.IsValid())
-            CBCGToolBar::SetUserImages (&m_UserImages);
+            CMFCToolBar::SetUserImages (&m_UserImages);
 
-        CBCGToolBar::EnableQuickCustomization();
-        InitUserToobars(NULL,
+        CMFCToolBar::EnableQuickCustomization();
+        InitUserToolbars(NULL,
                         ID_VIEW_USER_TOOLBAR1,
                         ID_VIEW_USER_TOOLBAR10);
         EnableWindowsDialog (ID_WINDOW_MANAGER, _T("Windows..."), TRUE);
@@ -514,8 +536,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             m_wndStatusBar.SetPaneText(pane, "");   // clear out dummy text
 
         // Load search strings into mainframe edit bar
-        LoadSearchHistory(aa);
-        LoadJumpHistory(aa);
+        LoadSearchHistory(&theApp);
+        LoadJumpHistory(&theApp);
         VERIFY(expr_.LoadVars());
 
 //        VERIFY(timer_id_ = SetTimer(1, 1000, NULL));
@@ -534,7 +556,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     HINSTANCE hInst = AfxGetInstanceHandle();
 
-    BOOL retval = CBCGMDIFrameWnd::PreCreateWindow(cs);
+    BOOL retval = CMDIFrameWndEx::PreCreateWindow(cs);
 
     ::GetClassInfo(hInst, cs.lpszClass, &wndclass);
     wndclass.style &= ~(CS_HREDRAW|CS_VREDRAW);
@@ -623,11 +645,13 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
         }
     }
 
+#if 0 // xxx fix for MFC9
     if (aa->mditabs_)
     {
         EnableMDITabs(TRUE, aa->tabicons_,
-            aa->tabsbottom_ ? CBCGTabWnd::LOCATION_BOTTOM : CBCGTabWnd::LOCATION_TOP);
+            aa->tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP);
     }
+#endif
 
     return retval;
 }
@@ -646,7 +670,7 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
         return FALSE;
 	}
 
-    return CBCGMDIFrameWnd::PreTranslateMessage(pMsg);
+    return CMDIFrameWndEx::PreTranslateMessage(pMsg);
 }
 
 void CMainFrame::OnClose() 
@@ -690,16 +714,17 @@ void CMainFrame::OnClose()
 	{
         if (!m_wndProp.IsFloating())
             m_wndProp.ToggleDocking();
-        ShowControlBar(&m_wndProp, FALSE, FALSE); // hide it otherwise BCG/MFC/Windows gets confused on next open
+		// xxx fix for MFC9??
+        //ShowControlBar(&m_wndProp, FALSE, FALSE); // hide it otherwise BCG/MFC/Windows gets confused on next open
 	}
 
-    CBCGMDIFrameWnd::OnClose();
+    CMDIFrameWndEx::OnClose();
 }
 
 // Handles control menu commands and system buttons (Minimize etc)
 void CMainFrame::OnSysCommand(UINT nID, LONG lParam)
 {
-    CBCGMDIFrameWnd::OnSysCommand(nID, lParam);
+    CMDIFrameWndEx::OnSysCommand(nID, lParam);
 
     nID &= 0xFFF0;
     if (nID == SC_MINIMIZE || nID == SC_RESTORE || nID == SC_MAXIMIZE)
@@ -708,7 +733,7 @@ void CMainFrame::OnSysCommand(UINT nID, LONG lParam)
 
 // Given a popup menu and an ID of an item within the menu return the
 // rectangle of the item in screen coordinates
-CRect CMainFrame::item_rect(CBCGPopupMenu *pm, UINT id)
+CRect CMainFrame::item_rect(CMFCPopupMenu *pm, UINT id)
 {
     CRect rct;
     pm->GetMenuBar()->GetWindowRect(&rct);
@@ -824,7 +849,7 @@ void CMainFrame::OnMenuSelect(UINT nItemID, UINT nFlags, HMENU hMenu)
 	else
         show_tip(nItemID);
 
-    CBCGMDIFrameWnd::OnMenuSelect(nItemID, nFlags, hMenu);
+    CMDIFrameWndEx::OnMenuSelect(nItemID, nFlags, hMenu);
 }
 
 // We could draw into the MDI client area here (eg HexEdit logo).
@@ -914,7 +939,7 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 #ifdef USE_FREE_IMAGE
 		RGBQUAD px = { 192, 192, 192, 0};  // default to grey in case GetPixelColor fails
         VERIFY(FreeImage_GetPixelColor(m_dib, 0, 0, &px));  // get colour from (0,0) pixel
-		backBrush.CreateSolidBrush(RGB(px.rgbRed, px.rgbGreen, px.rgbRed));
+		backBrush.CreateSolidBrush(RGB(px.rgbRed, px.rgbGreen, px.rgbBlue));
 #else
 		CDC dcTmp;
 		dcTmp.CreateCompatibleDC(pDC);
@@ -964,7 +989,7 @@ void CMainFrame::RecalcLayout(BOOL bNotify)
             ppv->SetCurrentPage2(preview_page_, TRUE);
     }
     
-    CBCGMDIFrameWnd::RecalcLayout(bNotify);
+    CMDIFrameWndEx::RecalcLayout(bNotify);
 }
 
 LONG CMainFrame::OnOpenMsg(UINT, LONG lParam)
@@ -1002,7 +1027,7 @@ void CMainFrame::SaveFrameOptions()
 void CMainFrame::show_calc()
 {
     m_wndCalc.SetWindowText("Calculator");
-    ShowControlBar(&m_wndCalc, TRUE, FALSE);
+    //ShowControlBar(&m_wndCalc, TRUE, FALSE); // xxx fix fort MFC9
 	m_wndCalc.Unroll();
 
     // Make sure controls and the displayed calc value are up to date
@@ -1013,7 +1038,7 @@ void CMainFrame::show_calc()
     //m_wndCalc.FixFileButtons();
 }
 
-void CMainFrame::move_dlgbar(CBCGDialogBar &bar, const CRect &rct)
+void CMainFrame::move_dlgbar(CDialogBar &bar, const CRect &rct)
 {
 	// We don't need to move it if hidden or docked
 	if ((bar.GetStyle() & WS_VISIBLE) == 0 || !bar.IsFloating())
@@ -1105,7 +1130,7 @@ void CMainFrame::OnContextMenu(CWnd* pWnd, CPoint point)
 {
     if (pWnd->GetSafeHwnd () == m_wndClientArea.GetMDITabs().GetSafeHwnd())
     {
-        const CBCGTabWnd& wndTab = m_wndClientArea.GetMDITabs();
+        const CMFCTabCtrl & wndTab = m_wndClientArea.GetMDITabs();
         CRect rectTabs;
         wndTab.GetTabsRect (rectTabs);
         CPoint ptTab = point;
@@ -1120,23 +1145,23 @@ void CMainFrame::OnContextMenu(CWnd* pWnd, CPoint point)
 
 BOOL CMainFrame::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-    return CBCGMDIFrameWnd::OnHelpInfo(pHelpInfo);
+    return CMDIFrameWndEx::OnHelpInfo(pHelpInfo);
 }
 
 void CMainFrame::OnContextHelp()
 {
-    CBCGMDIFrameWnd::OnContextHelp();
+    CMDIFrameWndEx::OnContextHelp();
 }
 
 void CMainFrame::OnHelpFinder()
 {
-    CBCGMDIFrameWnd::OnHelpFinder();
+    CMDIFrameWndEx::OnHelpFinder();
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_topics);
 }
 
 void CMainFrame::OnHelpKeyboardMap()
 {
-    CBCGKeyMapDlg dlg(this, TRUE);
+    CMFCKeyMapDialog dlg(this, TRUE);
     dlg.DoModal();
 }
 
@@ -1149,7 +1174,7 @@ void CMainFrame::OnHelpTute(UINT nID)
 
 void CMainFrame::OnHelp()
 {
-    CBCGMDIFrameWnd::OnHelp();
+    CMDIFrameWndEx::OnHelp();
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_help);
 }
 
@@ -1157,13 +1182,13 @@ void CMainFrame::HtmlHelp(DWORD_PTR dwData, UINT nCmd)
 {
 	if (dwData == AFX_HIDD_FILEOPEN || dwData == AFX_HIDD_FILESAVE)
 		dwData = hid_last_file_dialog;
-	CBCGMDIFrameWnd::HtmlHelp(dwData, nCmd);
+	CMDIFrameWndEx::HtmlHelp(dwData, nCmd);
 }
 
 // This is here just so we can intercept calls in the debugger
 LRESULT CMainFrame::OnCommandHelp(WPARAM wParam, LPARAM lParam)
 {
-    return CBCGMDIFrameWnd::OnCommandHelp(wParam, lParam);
+    return CMDIFrameWndEx::OnCommandHelp(wParam, lParam);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1172,12 +1197,12 @@ LRESULT CMainFrame::OnCommandHelp(WPARAM wParam, LPARAM lParam)
 #ifdef _DEBUG
 void CMainFrame::AssertValid() const
 {
-        CBCGMDIFrameWnd::AssertValid();
+        CMDIFrameWndEx::AssertValid();
 }
 
 void CMainFrame::Dump(CDumpContext& dc) const
 {
-        CBCGMDIFrameWnd::Dump(dc);
+        CMDIFrameWndEx::Dump(dc);
 }
 
 #endif //_DEBUG
@@ -1269,7 +1294,7 @@ void CMainFrame::OnWindowNew()
     if (GetView() != NULL)
         GetView()->StoreOptions();
 
-    CBCGMDIFrameWnd::OnWindowNew();
+    CMDIFrameWndEx::OnWindowNew();
 
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     if (aa->recording_ && aa->mac_.size() > 0 && (aa->mac_.back()).ktype == km_focus)
@@ -1283,7 +1308,7 @@ void CMainFrame::OnWindowNew()
 // Handles the window menu commands: cascade, tile, arrange
 BOOL CMainFrame::OnMDIWindowCmd(UINT nID)
 {
-    BOOL retval = CBCGMDIFrameWnd::OnMDIWindowCmd(nID);
+    BOOL retval = CMDIFrameWndEx::OnMDIWindowCmd(nID);
 
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     if (retval)
@@ -1300,7 +1325,8 @@ void CMainFrame::OnUpdateViewViewbar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewViewbar() 
 {
-    ShowControlBar(&m_wndBar1, (m_wndBar1.GetStyle() & WS_VISIBLE) == 0, FALSE);
+	// xxx fix for MFC9
+    // ShowControlBar(&m_wndBar1, (m_wndBar1.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 1);
 }
 
@@ -1311,7 +1337,7 @@ void CMainFrame::OnUpdateViewEditbar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewEditbar() 
 {
-    ShowControlBar(&m_wndBar2, (m_wndBar2.GetStyle() & WS_VISIBLE) == 0, FALSE);
+    //ShowControlBar(&m_wndBar2, (m_wndBar2.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 2);
 }
 
@@ -1322,7 +1348,7 @@ void CMainFrame::OnUpdateViewFormatbar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewFormatbar() 
 {
-    ShowControlBar(&m_wndBar3, (m_wndBar3.GetStyle() & WS_VISIBLE) == 0, FALSE);
+    //ShowControlBar(&m_wndBar3, (m_wndBar3.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 4);
 }
 
@@ -1333,7 +1359,7 @@ void CMainFrame::OnUpdateViewNavbar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewNavbar() 
 {
-    ShowControlBar(&m_wndBar4, (m_wndBar4.GetStyle() & WS_VISIBLE) == 0, FALSE);
+    //ShowControlBar(&m_wndBar4, (m_wndBar4.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 5);
 }
 
@@ -1344,7 +1370,7 @@ void CMainFrame::OnUpdateViewCalculator(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewCalculator() 
 {
-    ShowControlBar(&m_wndCalc, (m_wndCalc.GetStyle() & WS_VISIBLE) == 0, FALSE);
+    //ShowControlBar(&m_wndCalc, (m_wndCalc.GetStyle() & WS_VISIBLE) == 0, FALSE);
     theApp.SaveToMacro(km_toolbar, 10);
 }
 
@@ -1355,7 +1381,7 @@ void CMainFrame::OnUpdateViewBookmarks(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewBookmarks() 
 {
-    ShowControlBar(&m_wndBookmarks, (m_wndBookmarks.GetStyle() & WS_VISIBLE) == 0, FALSE);
+    //ShowControlBar(&m_wndBookmarks, (m_wndBookmarks.GetStyle() & WS_VISIBLE) == 0, FALSE);
     theApp.SaveToMacro(km_toolbar, 11);
 }
 
@@ -1366,7 +1392,7 @@ void CMainFrame::OnUpdateViewFind(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewFind() 
 {
-    ShowControlBar(&m_wndFind, (m_wndFind.GetStyle() & WS_VISIBLE) == 0, FALSE);
+    //ShowControlBar(&m_wndFind, (m_wndFind.GetStyle() & WS_VISIBLE) == 0, FALSE);
     theApp.SaveToMacro(km_toolbar, 12);
 }
 
@@ -1378,7 +1404,7 @@ void CMainFrame::OnUpdateViewExpl(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewExpl() 
 {
-    ShowControlBar(&m_wndExpl, (m_wndExpl.GetStyle() & WS_VISIBLE) == 0, FALSE);
+    //ShowControlBar(&m_wndExpl, (m_wndExpl.GetStyle() & WS_VISIBLE) == 0, FALSE);
     theApp.SaveToMacro(km_toolbar, 14);
 }
 #endif
@@ -1432,7 +1458,7 @@ void CMainFrame::OnUpdateViewProperties(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewProperties() 
 {
-    ShowControlBar(&m_wndProp, (m_wndProp.GetStyle() & WS_VISIBLE) == 0, FALSE);
+    //ShowControlBar(&m_wndProp, (m_wndProp.GetStyle() & WS_VISIBLE) == 0, FALSE);
     theApp.SaveToMacro(km_toolbar, 13);
 }
 
@@ -1513,8 +1539,8 @@ BOOL CMainFrame::UpdateBGSearchProgress()
 
 void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
 {
-    CBCGStatusBar *psb = (CBCGStatusBar *)pCmdUI->m_pOther;
-    ASSERT_KINDOF(CBCGStatusBar, psb);
+    CMFCStatusBar *psb = (CMFCStatusBar *)pCmdUI->m_pOther;
+    ASSERT_KINDOF(CMFCStatusBar, psb);
     ASSERT_VALID(psb);
     int index = psb->CommandToIndex(ID_INDICATOR_OCCURRENCES);
 
@@ -1611,8 +1637,8 @@ void CMainFrame::OnUpdateValues(CCmdUI *pCmdUI)
         }
 
 		// Get status bar control
-        CBCGStatusBar *psb = (CBCGStatusBar *)pCmdUI->m_pOther;
-        ASSERT_KINDOF(CBCGStatusBar, psb);
+        CMFCStatusBar *psb = (CMFCStatusBar *)pCmdUI->m_pOther;
+        ASSERT_KINDOF(CMFCStatusBar, psb);
         ASSERT_VALID(psb);
 		int idx = psb->CommandToIndex(ID_INDICATOR_VALUES);   // index of the byte values pane
 
@@ -1659,7 +1685,7 @@ void CMainFrame::OnUpdateAddrHex(CCmdUI *pCmdUI)
         AddSpaces(ss);
         ss += " ";
 
-#if 0 // Colours now handled by CBCGStatusBar
+#if 0 // Colours now handled by CMFCStatusBar
         // We don't want text drawn since it will write over our own custom text
         pCmdUI->SetText("");
         pCmdUI->Enable();
@@ -1681,8 +1707,8 @@ void CMainFrame::OnUpdateAddrHex(CCmdUI *pCmdUI)
                              DT_NOPREFIX | DT_END_ELLIPSIS);
 #else
 		// Get status bar control
-        CBCGStatusBar *psb = (CBCGStatusBar *)pCmdUI->m_pOther;
-        ASSERT_KINDOF(CBCGStatusBar, psb);
+        CMFCStatusBar *psb = (CMFCStatusBar *)pCmdUI->m_pOther;
+        ASSERT_KINDOF(CMFCStatusBar, psb);
         ASSERT_VALID(psb);
 		int idx = psb->CommandToIndex(ID_INDICATOR_HEX_ADDR);   // index of the hex addr pane
 
@@ -1722,7 +1748,7 @@ void CMainFrame::OnUpdateAddrDec(CCmdUI *pCmdUI)
 			ss = " " + ss;    // Add a space before minus sign for visibility
         ss += " ";
 
-#if 0 // Colours now handled by CBCGStatusBar
+#if 0 // Colours now handled by CMFCStatusBar
         // We don't want text drawn since it will write over our own custom text
         pCmdUI->SetText("");
         pCmdUI->Enable();
@@ -1743,8 +1769,8 @@ void CMainFrame::OnUpdateAddrDec(CCmdUI *pCmdUI)
         dc.DrawText(ss, rct, DT_SINGLELINE | DT_CENTER | DT_VCENTER |
                              DT_NOPREFIX | DT_END_ELLIPSIS);
 #else
-        CBCGStatusBar *psb = (CBCGStatusBar *)pCmdUI->m_pOther;
-        ASSERT_KINDOF(CBCGStatusBar, psb);
+        CMFCStatusBar *psb = (CMFCStatusBar *)pCmdUI->m_pOther;
+        ASSERT_KINDOF(CMFCStatusBar, psb);
         ASSERT_VALID(psb);
 		int idx = psb->CommandToIndex(ID_INDICATOR_DEC_ADDR);
 
@@ -1776,8 +1802,8 @@ void CMainFrame::OnUpdateFileLength(CCmdUI *pCmdUI)
     if (pview != NULL)
     {
 		// Get ptr to status bar and index of file length pane
-        CBCGStatusBar *psb = (CBCGStatusBar *)pCmdUI->m_pOther;
-        ASSERT_KINDOF(CBCGStatusBar, psb);
+        CMFCStatusBar *psb = (CMFCStatusBar *)pCmdUI->m_pOther;
+        ASSERT_KINDOF(CMFCStatusBar, psb);
         ASSERT_VALID(psb);
 		int idx = psb->CommandToIndex(ID_INDICATOR_FILE_LENGTH);
 
@@ -1911,8 +1937,8 @@ void CMainFrame::OnUpdateBigEndian(CCmdUI *pCmdUI)
 	}
 
 	// Get ptr to status bar and index of file length pane
-    CBCGStatusBar *psb = (CBCGStatusBar *)pCmdUI->m_pOther;
-    ASSERT_KINDOF(CBCGStatusBar, psb);
+    CMFCStatusBar *psb = (CMFCStatusBar *)pCmdUI->m_pOther;
+    ASSERT_KINDOF(CMFCStatusBar, psb);
     ASSERT_VALID(psb);
 	int idx = psb->CommandToIndex(ID_INDICATOR_BIG_ENDIAN);
 
@@ -4038,7 +4064,7 @@ void CMainFrame::OnOptionsScheme()
 
 void CMainFrame::OnBookmarks() 
 {
-    ShowControlBar(&m_wndBookmarks, TRUE, FALSE);
+    //ShowControlBar(&m_wndBookmarks, TRUE, FALSE);
 	m_wndBookmarks.Unroll();
 }
 
@@ -4085,7 +4111,7 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
             break;
         }
         m_wndCalc.SetWindowText("Go To");
-        ShowControlBar(&m_wndCalc, TRUE, FALSE);
+        //ShowControlBar(&m_wndCalc, TRUE, FALSE); // xxx fix for MFC9
         m_wndCalc.Unroll();
 
         // Make sure controls are up to date and put current address into it
@@ -4165,7 +4191,7 @@ void CMainFrame::OnCalcSel()
 //            m_wndCalc.change_base(16);
 
         m_wndCalc.SetWindowText("Calculator");
-        ShowControlBar(&m_wndCalc, TRUE, FALSE);
+        //ShowControlBar(&m_wndCalc, TRUE, FALSE); // xxx fix for MFC9
         m_wndCalc.Unroll();
 
         // Make sure controls are up to date and put current address into it
@@ -4210,7 +4236,7 @@ void CMainFrame::bar_context(CPoint point)
     top.DestroyMenu();
 #else
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    CBCGContextMenuManager *pCMM = aa->GetContextMenuManager();
+    CContextMenuManager *pCMM = aa->GetContextMenuManager();
 
     pCMM->ShowPopupMenu(IDR_CONTEXT_STATBAR, point.x, point.y, this);
 #endif
@@ -4219,14 +4245,14 @@ void CMainFrame::bar_context(CPoint point)
 void CMainFrame::OnInitMenu(CMenu* pMenu)
 {
     // Remove this?
-    CBCGMDIFrameWnd::OnInitMenu(pMenu);
+    CMDIFrameWndEx::OnInitMenu(pMenu);
 }
 
 // Toggle display of status bar
 BOOL CMainFrame::OnBarCheck(UINT nID)
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    if (CBCGMDIFrameWnd::OnBarCheck(nID))
+    if (CMDIFrameWndEx::OnBarCheck(nID))
     {
         aa->SaveToMacro(km_bar, nID);
         return TRUE;
@@ -4262,52 +4288,56 @@ void CMainFrame::OnCustomize()
 
     pdlg->ReplaceButton(IDC_FONTNAME,
         CHexEditFontCombo(IDC_FONTNAME, 
-            CImageHash::GetImageOfCommand(IDC_FONTNAME, FALSE),
+            -1 /*CImageHash::GetImageOfCommand(IDC_FONTNAME, FALSE)*/,
             RASTER_FONTTYPE | TRUETYPE_FONTTYPE | DEVICE_FONTTYPE,
             ANSI_CHARSET,
             WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWNLIST |
             CBS_AUTOHSCROLL | CBS_HASSTRINGS | CBS_OWNERDRAWFIXED, 175) );
     pdlg->ReplaceButton(IDC_FONTSIZE,
         CHexEditFontSizeCombo(IDC_FONTSIZE, 
-            CImageHash::GetImageOfCommand(IDC_FONTSIZE, FALSE),
+            -1 /*CImageHash::GetImageOfCommand(IDC_FONTSIZE, FALSE)*/,
             WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN, 50) );
 
 //    pdlg->AddToolBar("Main", IDR_MAINFRAME);
-//    pdlg->AddButton("User", CBCGToolbarButton(ID_MARK, 1, "User Tool 1", TRUE));
-//    pdlg->AddButton("User", CBCGToolbarButton(ID_GOTO_MARK, 2, "User Tool 2", TRUE));
+//    pdlg->AddButton("User", CMFCToolbarButton(ID_MARK, 1, "User Tool 1", TRUE));
+//    pdlg->AddButton("User", CMFCToolbarButton(ID_GOTO_MARK, 2, "User Tool 2", TRUE));
 //    pdlg->SetUserCategory("User");
 
     menu.LoadMenu(IDR_MENUBUTTON);
 
     pdlg->ReplaceButton(ID_DISPLAY_DROPDOWN,
-        CBCGToolbarMenuButton (-1, *menu.GetSubMenu(0), -1, _T("Show Area")));
+        CMFCToolBarMenuButton (-1, *menu.GetSubMenu(0), -1, _T("Show Area")));
     pdlg->ReplaceButton(ID_CHARSET_DROPDOWN,
-        CBCGToolbarMenuButton (-1, *menu.GetSubMenu(1), -1, _T("Char Set")));
+        CMFCToolBarMenuButton (-1, *menu.GetSubMenu(1), -1, _T("Char Set")));
     pdlg->ReplaceButton(ID_CONTROL_DROPDOWN,
-        CBCGToolbarMenuButton (-1, *menu.GetSubMenu(2), -1, _T("Ctrl Chars")));
+        CMFCToolBarMenuButton (-1, *menu.GetSubMenu(2), -1, _T("Ctrl Chars")));
 
     pdlg->ReplaceButton(ID_HIGHLIGHT_MENU,
-        CBCGToolbarMenuButton(ID_HIGHLIGHT, *menu.GetSubMenu(3), CImageHash::GetImageOfCommand(ID_HIGHLIGHT)));
+        CMFCToolBarMenuButton(ID_HIGHLIGHT, *menu.GetSubMenu(3),
+		                                      -1 /*CImageHash::GetImageOfCommand(ID_HIGHLIGHT)*/ ));
     pdlg->ReplaceButton(ID_MARK_MENU,
-        CBCGToolbarMenuButton(ID_GOTO_MARK, *menu.GetSubMenu(4), CImageHash::GetImageOfCommand(ID_GOTO_MARK)));
+        CMFCToolBarMenuButton(ID_GOTO_MARK, *menu.GetSubMenu(4),
+		                                      -1 /*CImageHash::GetImageOfCommand(ID_GOTO_MARK)*/ ));
     pdlg->ReplaceButton(ID_BOOKMARKS_MENU,
-        CBCGToolbarMenuButton(ID_BOOKMARKS_EDIT, *menu.GetSubMenu(5), CImageHash::GetImageOfCommand(ID_BOOKMARKS_EDIT)));
+        CMFCToolBarMenuButton(ID_BOOKMARKS_EDIT, *menu.GetSubMenu(5),
+		                                      -1 /*CImageHash::GetImageOfCommand(ID_BOOKMARKS_EDIT)*/ ));
 
     pdlg->ReplaceButton(ID_NAV_BACK,
-        CBCGToolbarMenuButton (ID_NAV_BACK, *menu.GetSubMenu(6), -1, _T("Navigate Backward")));
+        CMFCToolBarMenuButton (ID_NAV_BACK, *menu.GetSubMenu(6), -1, _T("Navigate Backward")));
     pdlg->ReplaceButton(ID_NAV_FORW,
-        CBCGToolbarMenuButton (ID_NAV_FORW, *menu.GetSubMenu(7), -1, _T("Navigate Forward")));
+        CMFCToolBarMenuButton (ID_NAV_FORW, *menu.GetSubMenu(7), -1, _T("Navigate Forward")));
 
     pdlg->Create();
 }
 
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
 {
-    if (!CBCGMDIFrameWnd::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext))
+    if (!CMDIFrameWndEx::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext))
     {
         return FALSE;
     }
 
+#if 0 // xxx fix for MFC9
     if (m_wndCalc.m_pDockBar == NULL || m_wndCalc.IsHorzDocked())
         m_wndCalc.FixAndFloat();
     if (m_wndBookmarks.m_pDockBar == NULL || m_wndBookmarks.IsHorzDocked())
@@ -4320,13 +4350,14 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 #endif
     if (m_wndProp.m_pDockBar == NULL || m_wndProp.IsHorzDocked())
         m_wndProp.FixAndFloat();
+#endif
 
     // Add some tools for example....
-    CBCGUserToolsManager* pUserToolsManager = theApp.GetUserToolsManager ();
+    CUserToolsManager* pUserToolsManager = theApp.GetUserToolsManager ();
     if (pUserToolsManager != NULL &&
         pUserToolsManager->GetUserTools().IsEmpty ())
     {
-        CBCGUserTool* pTool = pUserToolsManager->CreateNewTool();
+        CUserTool* pTool = pUserToolsManager->CreateNewTool();
         pTool->m_strLabel = _T("Notepad");
         pTool->m_strArguments = _T("$(FilePath)");
         pTool->SetCommand(_T("notepad.exe"));
@@ -4350,7 +4381,7 @@ LRESULT CMainFrame::OnToolbarContextMenu(WPARAM,LPARAM lp)
     
     SetupToolbarMenu(*pPopup, ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10);
     
-    CBCGPopupMenu* pPopupMenu = new CBCGPopupMenu;
+    CMFCPopupMenu* pPopupMenu = new CMFCPopupMenu;
     pPopupMenu->SetAutoDestroy(FALSE);
     pPopupMenu->Create(this, point.x, point.y, pPopup->GetSafeHmenu());
     
@@ -4359,7 +4390,8 @@ LRESULT CMainFrame::OnToolbarContextMenu(WPARAM,LPARAM lp)
 
 BOOL CMainFrame::OnToolsViewUserToolbar(UINT uiId)
 {
-    CBCGToolBar* pUserToolBar = GetUserBarByIndex(uiId - ID_VIEW_USER_TOOLBAR1);
+#if 0 // xxx fix for MFC9
+    CMFCToolBar* pUserToolBar = GetUserBarByIndex(uiId - ID_VIEW_USER_TOOLBAR1);
     if (pUserToolBar == NULL)
     {
         ASSERT(0);
@@ -4367,21 +4399,24 @@ BOOL CMainFrame::OnToolsViewUserToolbar(UINT uiId)
     }
     
     ShowControlBar(pUserToolBar, !(pUserToolBar->GetStyle() & WS_VISIBLE), FALSE);
+#endif
     RecalcLayout();
     return TRUE;
 }
 
 void CMainFrame::OnUpdateToolsViewUserToolbar(CCmdUI* pCmdUI)
 {
-    CBCGToolBar* pUserToolBar = GetUserBarByIndex(pCmdUI->m_nID - ID_VIEW_USER_TOOLBAR1);
+#if 0 // xxx fix for MFC9
+    CMFCToolBar* pUserToolBar = GetUserBarByIndex(pCmdUI->m_nID - ID_VIEW_USER_TOOLBAR1);
     if (pUserToolBar == NULL)
     {
         pCmdUI->Enable(FALSE);
         return;
     }
-    
+
     pCmdUI->Enable();
     pCmdUI->SetCheck(pUserToolBar->GetStyle() & WS_VISIBLE);
+#endif
 }
 
 afx_msg LRESULT CMainFrame::OnMenuReset(WPARAM wp, LPARAM)
@@ -4399,14 +4434,17 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
             menu.LoadMenu(IDR_MENUBUTTON);
         
             m_wndBar1.ReplaceButton(ID_DISPLAY_DROPDOWN,
-                CBCGToolbarMenuButton (-1, *menu.GetSubMenu(0),
-                    CImageHash::GetImageOfCommand(ID_DISPLAY_DROPDOWN), _T("Show Area")));
+                CMFCToolBarMenuButton (-1, *menu.GetSubMenu(0),
+                                                       -1 /*CImageHash::GetImageOfCommand(ID_DISPLAY_DROPDOWN)*/,
+													   _T("Show Area")));
             m_wndBar1.ReplaceButton(ID_CHARSET_DROPDOWN,
-                CBCGToolbarMenuButton (-1, *menu.GetSubMenu(1),
-                    CImageHash::GetImageOfCommand(ID_CHARSET_DROPDOWN), _T("Char Set")));
+                CMFCToolBarMenuButton (-1, *menu.GetSubMenu(1),
+                                                       -1 /*CImageHash::GetImageOfCommand(ID_CHARSET_DROPDOWN)*/,
+													   _T("Char Set")));
             m_wndBar1.ReplaceButton(ID_CONTROL_DROPDOWN,
-                CBCGToolbarMenuButton (-1, *menu.GetSubMenu(2),
-                    CImageHash::GetImageOfCommand(ID_CONTROL_DROPDOWN), _T("Ctrl Chars")));
+                CMFCToolBarMenuButton (-1, *menu.GetSubMenu(2),
+                                                      -1 /*CImageHash::GetImageOfCommand(ID_CONTROL_DROPDOWN)*/,
+													  _T("Ctrl Chars")));
         }
         m_wndBar1.ReplaceButton(ID_SCHEME, CSchemeComboButton());
         break;
@@ -4421,7 +4459,7 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
 
             m_wndBar3.ReplaceButton(IDC_FONTNAME,
                 CHexEditFontCombo(IDC_FONTNAME, 
-                    CImageHash::GetImageOfCommand(IDC_FONTNAME, FALSE),
+                    -1 /*CImageHash::GetImageOfCommand(IDC_FONTNAME, FALSE)*/,
                     RASTER_FONTTYPE | TRUETYPE_FONTTYPE | DEVICE_FONTTYPE,
                     DEFAULT_CHARSET,
                     WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWNLIST |
@@ -4438,7 +4476,7 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
             m_wndBar3.RemoveButton(index);
             m_wndBar3.InsertButton(
                 CHexEditFontSizeCombo(IDC_FONTSIZE, 
-                    CImageHash::GetImageOfCommand(IDC_FONTSIZE, FALSE),
+                    -1 /*CImageHash::GetImageOfCommand(IDC_FONTSIZE, FALSE)*/,
                     WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN, 50),
                 index);
 #endif
@@ -4448,17 +4486,18 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
 
 #if 0  // No longer there (as drop-menus)
             m_wndBar3.ReplaceButton(ID_DISPLAY_DROPDOWN,
-                CBCGToolbarMenuButton (-1, *menu.GetSubMenu(0),
+                CMFCToolBarMenuButton (-1, *menu.GetSubMenu(0),
                     CImageHash::GetImageOfCommand(ID_DISPLAY_DROPDOWN), _T("Show Area")));
             m_wndBar3.ReplaceButton(ID_CHARSET_DROPDOWN,
-                CBCGToolbarMenuButton (-1, *menu.GetSubMenu(1),
+                CMFCToolBarMenuButton (-1, *menu.GetSubMenu(1),
                     CImageHash::GetImageOfCommand(ID_CHARSET_DROPDOWN), _T("Char Set")));
             m_wndBar3.ReplaceButton(ID_CONTROL_DROPDOWN,
-                CBCGToolbarMenuButton (-1, *menu.GetSubMenu(2),
+                CMFCToolBarMenuButton (-1, *menu.GetSubMenu(2),
                     CImageHash::GetImageOfCommand(ID_CONTROL_DROPDOWN), _T("Ctrl Chars")));
 #endif
             m_wndBar3.ReplaceButton(ID_HIGHLIGHT_MENU,
-                CBCGToolbarMenuButton(ID_HIGHLIGHT, *menu.GetSubMenu(3), CImageHash::GetImageOfCommand(ID_HIGHLIGHT)));
+                CMFCToolBarMenuButton(ID_HIGHLIGHT, *menu.GetSubMenu(3),
+				                                      -1 /*CImageHash::GetImageOfCommand(ID_HIGHLIGHT)*/ ));
 
         }
         m_wndBar3.ReplaceButton(ID_SCHEME, CSchemeComboButton());
@@ -4472,13 +4511,17 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
             CMenu menu;
             menu.LoadMenu(IDR_MENUBUTTON);
             m_wndBar4.ReplaceButton(ID_MARK_MENU,
-                CBCGToolbarMenuButton(ID_GOTO_MARK, *menu.GetSubMenu(4), CImageHash::GetImageOfCommand(ID_GOTO_MARK)));
+                CMFCToolBarMenuButton(ID_GOTO_MARK, *menu.GetSubMenu(4),
+				                                      -1 /*CImageHash::GetImageOfCommand(ID_GOTO_MARK)*/ ));
             m_wndBar4.ReplaceButton(ID_BOOKMARKS_MENU,
-                CBCGToolbarMenuButton(ID_BOOKMARKS_EDIT, *menu.GetSubMenu(5), CImageHash::GetImageOfCommand(ID_BOOKMARKS_EDIT)));
+                CMFCToolBarMenuButton(ID_BOOKMARKS_EDIT, *menu.GetSubMenu(5),
+				                                      -1 /*CImageHash::GetImageOfCommand(ID_BOOKMARKS_EDIT)*/ ));
             m_wndBar4.ReplaceButton(ID_NAV_BACK,
-                CBCGToolbarMenuButton(ID_NAV_BACK, *menu.GetSubMenu(6), CImageHash::GetImageOfCommand(ID_NAV_BACK)));
+                CMFCToolBarMenuButton(ID_NAV_BACK, *menu.GetSubMenu(6),
+				                                      -1 /*CImageHash::GetImageOfCommand(ID_NAV_BACK)*/ ));
             m_wndBar4.ReplaceButton(ID_NAV_FORW,
-                CBCGToolbarMenuButton(ID_NAV_FORW, *menu.GetSubMenu(7), CImageHash::GetImageOfCommand(ID_NAV_FORW)));
+                CMFCToolBarMenuButton(ID_NAV_FORW, *menu.GetSubMenu(7),
+				                                      -1 /*CImageHash::GetImageOfCommand(ID_NAV_FORW)*/ ));
         }
         break;
     case IDR_MAINFRAME:
@@ -4493,7 +4536,7 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
 
 LRESULT CMainFrame::OnHelpCustomizeToolbars(WPARAM wp, LPARAM lp)
 {
-//  CBCGToolbarCustomize* pDlg = (CBCGToolbarCustomize*)lp;
+//  CMFCToolBarsCustomizeDialog* pDlg = (CMFCToolBarsCustomizeDialog*)lp;
 //  ASSERT_VALID (pDlg);
     DWORD help_id[] =
     {
@@ -4512,7 +4555,7 @@ LRESULT CMainFrame::OnHelpCustomizeToolbars(WPARAM wp, LPARAM lp)
     return 0;
 }
 
-void CMainFrame::OnClosePopupMenu(CBCGPopupMenu *pMenuPopup)
+void CMainFrame::OnClosePopupMenu(CMFCPopupMenu *pMenuPopup)
 {
     bool found = false;
     while (!popup_menu_.empty() && !found)
@@ -4520,13 +4563,13 @@ void CMainFrame::OnClosePopupMenu(CBCGPopupMenu *pMenuPopup)
         found = popup_menu_.back() == pMenuPopup;
         popup_menu_.pop_back();
     }
-    CBCGMDIFrameWnd::OnClosePopupMenu(pMenuPopup);
+    CMDIFrameWndEx::OnClosePopupMenu(pMenuPopup);
     menu_tip_.Hide();
 }
 
-BOOL CMainFrame::OnShowPopupMenu (CBCGPopupMenu *pMenuPopup)
+BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 {
-    CBCGMDIFrameWnd::OnShowPopupMenu(pMenuPopup);
+    CMDIFrameWndEx::OnShowPopupMenu(pMenuPopup);
 
     if (pMenuPopup == NULL)
     {
@@ -4537,7 +4580,7 @@ BOOL CMainFrame::OnShowPopupMenu (CBCGPopupMenu *pMenuPopup)
     
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_VIEW_TOOLBARS) >= 0)
     {
-        if (CBCGToolBar::IsCustomizeMode())
+        if (CMFCToolBar::IsCustomizeMode())
         {
             return FALSE;
         }
@@ -4556,7 +4599,7 @@ BOOL CMainFrame::OnShowPopupMenu (CBCGPopupMenu *pMenuPopup)
 
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_NAV_BACK_DUMMY) >= 0)
     {
-		if (CBCGToolBar::IsCustomizeMode ())
+		if (CMFCToolBar::IsCustomizeMode ())
 		{
 			return FALSE;
 		}
@@ -4566,7 +4609,7 @@ BOOL CMainFrame::OnShowPopupMenu (CBCGPopupMenu *pMenuPopup)
 	}
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_NAV_FORW_DUMMY) >= 0)
     {
-		if (CBCGToolBar::IsCustomizeMode ())
+		if (CMFCToolBar::IsCustomizeMode ())
 		{
 			return FALSE;
 		}
@@ -4577,7 +4620,7 @@ BOOL CMainFrame::OnShowPopupMenu (CBCGPopupMenu *pMenuPopup)
 
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_DFFD_OPEN_TYPE_DUMMY) >= 0)
     {
-		if (CBCGToolBar::IsCustomizeMode ())
+		if (CMFCToolBar::IsCustomizeMode ())
 		{
 			return FALSE;
 		}
@@ -4601,20 +4644,20 @@ BOOL CMainFrame::OnShowPopupMenu (CBCGPopupMenu *pMenuPopup)
 									SHGFI_USEFILEATTRIBUTES | SHGFI_TYPENAME ));
 				ss = sfi.szTypeName;          // Store file type for display in file page
 
-                pMenuPopup->InsertItem(CBCGToolbarMenuButton(ID_DFFD_OPEN_FIRST + ii, NULL, -1, ss));
+                pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_DFFD_OPEN_FIRST + ii, NULL, -1, ss));
 				++count;
 			}
 		}
 		if (count == 0)
 		{
-			CBCGToolbarMenuButton mb(ID_DFFD_OPEN_TYPE_DUMMY, NULL, -1, "No File Type Templates Found");
+			CMFCToolBarMenuButton mb(ID_DFFD_OPEN_TYPE_DUMMY, NULL, -1, "No File Type Templates Found");
 			mb.SetStyle(mb.m_nStyle | TBBS_DISABLED);
             pMenuPopup->InsertItem(mb);
 		}
 	}
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_DFFD_OPEN_OTHER_DUMMY) >= 0)
     {
-		if (CBCGToolBar::IsCustomizeMode ())
+		if (CMFCToolBar::IsCustomizeMode ())
 		{
 			return FALSE;
 		}
@@ -4627,13 +4670,13 @@ BOOL CMainFrame::OnShowPopupMenu (CBCGPopupMenu *pMenuPopup)
 			if (theApp.xml_file_name_[ii].CompareNoCase("default") != 0 &&
 				theApp.xml_file_name_[ii][0] != '_')
 			{
-                pMenuPopup->InsertItem(CBCGToolbarMenuButton(ID_DFFD_OPEN_FIRST + ii, NULL, -1, theApp.xml_file_name_[ii]));
+                pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_DFFD_OPEN_FIRST + ii, NULL, -1, theApp.xml_file_name_[ii]));
 				++count;
 			}
 		}
 		if (count == 0)
 		{
-			CBCGToolbarMenuButton mb(ID_DFFD_OPEN_TYPE_DUMMY, NULL, -1, "No Other Templates Found");
+			CMFCToolBarMenuButton mb(ID_DFFD_OPEN_TYPE_DUMMY, NULL, -1, "No Other Templates Found");
 			mb.SetStyle(mb.m_nStyle | TBBS_DISABLED);
             pMenuPopup->InsertItem(mb);
 		}
@@ -5037,6 +5080,72 @@ BOOL CMainFrame::ComboNeedsUpdate(const std::vector<CString> &vs, CComboBox *pp)
     // Check if list box is different in any way
     return ii != num_elts;
 }
+
+void CMainFrame::OnApplicationLook(UINT id)
+{
+	CWaitCursor wait;
+
+	theApp.m_nAppLook = id;
+
+	switch (theApp.m_nAppLook)
+	{
+	case ID_VIEW_APPLOOK_WIN_2000:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManager));
+		break;
+
+	case ID_VIEW_APPLOOK_OFF_XP:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOfficeXP));
+		break;
+
+	case ID_VIEW_APPLOOK_WIN_XP:
+		CMFCVisualManagerWindows::m_b3DTabsXPTheme = TRUE;
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
+		break;
+
+	case ID_VIEW_APPLOOK_OFF_2003:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2003));
+		CDockingManager::SetDockingMode(DT_SMART);
+		break;
+
+	case ID_VIEW_APPLOOK_VS_2005:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2005));
+		CDockingManager::SetDockingMode(DT_SMART);
+		break;
+
+	default:
+		switch (theApp.m_nAppLook)
+		{
+		case ID_VIEW_APPLOOK_OFF_2007_BLUE:
+			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
+			break;
+
+		case ID_VIEW_APPLOOK_OFF_2007_BLACK:
+			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
+			break;
+
+		case ID_VIEW_APPLOOK_OFF_2007_SILVER:
+			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
+			break;
+
+		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
+			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
+			break;
+		}
+
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
+		CDockingManager::SetDockingMode(DT_SMART);
+	}
+
+	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
+
+	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
+}
+
+void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
+}
+
 
 // Just for testing things (invoked with Ctrl+Shift+T)
 void CMainFrame::OnTest() 

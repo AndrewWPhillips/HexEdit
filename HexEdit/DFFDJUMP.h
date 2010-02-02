@@ -61,9 +61,9 @@ public:
     CString offset_;
     CString elt_name_;
     //}}AFX_DATA
-    CBCGMenuButton  ctl_replace_;
+    CMFCMenuButton  ctl_replace_;
     CEdit ctl_offset_;
-    CBCGMenuButton ctl_offset_var_;
+    CMFCMenuButton ctl_offset_var_;
     int origin_;    // 0 = start of file, 1 = current, 2 = end of file
 
 // Overrides

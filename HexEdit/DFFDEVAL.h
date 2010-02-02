@@ -62,7 +62,7 @@ public:
     CString comment_;
     //}}AFX_DATA
     CEdit ctl_expr_;
-    CBCGMenuButton ctl_expr_var_;
+    CMFCMenuButton ctl_expr_var_;
 
 // Overrides
     // ClassWizard generated virtual function overrides

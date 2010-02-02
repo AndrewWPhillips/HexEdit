@@ -2155,7 +2155,7 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
                         *po++ = e2a_tab[*ptmp];
                 *po++ = '\0';
 
-                ss.Format(strFormat, buf2 + extra);
+                ss.Format(strFormat, CString(buf2) + extra);
             }
             break;
         case CHexEditDoc::DF_WSTRING:
@@ -5262,7 +5262,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
             domain_str[0] == '{')
         {
             //CGridCellCombo *pcell = (CGridCellCombo*) grid_.GetCell(pItem->iRow, pItem->iColumn);
-            CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+            CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
             ss.TrimLeft();
             if (ss.GetLength() > 0 && isalpha(ss[0]))
             {
@@ -5506,7 +5506,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
         case CHexEditDoc::DF_INT64:
             if (!is_enum)
             {
-                CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+                CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
                 if (ss.GetLength() > 1 && ss[0] == '0' && (ss[1] == 'x' || ss[1] == 'X'))
                     val64 = ::strtoi64((const char *)ss+2, 16);
                 else
@@ -5549,7 +5549,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
         case CHexEditDoc::DF_MINT64:
             if (!is_enum)
             {
-                CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+                CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
                 if (ss.GetLength() > 1 && ss[0] == '0' && (ss[1] == 'x' || ss[1] == 'X'))
                     val64 = ::strtoi64((const char *)ss+2, 16);
                 else
@@ -5588,7 +5588,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
         case CHexEditDoc::DF_UINT64:
             if (!is_enum)
             {
-                CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+                CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
                 if (ss.GetLength() > 1 && ss[0] == '0' && (ss[1] == 'x' || ss[1] == 'X'))
                     val64 = ::strtoi64((const char *)ss+2, 16);
                 else
@@ -5905,7 +5905,7 @@ void CDataFormatView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
 
 void CDataFormatView::OnFilePrintPreview()
 {
-    BCGPrintPreview(this);
+    AFXPrintPreview(this);
 }
 
 void CDataFormatView::OnViewtest() 

@@ -10,7 +10,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditUserTool window
 
-class CHexEditUserTool : public CBCGUserTool
+class CHexEditUserTool : public CUserTool
 {
     // Unless we add serialization we get the run-time error
     // "An unsupported operation was attempted", presumably

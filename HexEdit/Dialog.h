@@ -44,7 +44,7 @@ class CHexEditApp;
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexDialogBar - dialog bar that supports DDX and OnInitDialog
-class CHexDialogBar : public CBCGDialogBar 
+class CHexDialogBar : public CDialogBar 
 {
 	DECLARE_DYNAMIC(CHexDialogBar)
 
@@ -54,7 +54,7 @@ public:
 	virtual ~CHexDialogBar() { }
 	BOOL Create(UINT nID, CWnd* pParentWnd, UINT nStyle = CBRS_LEFT )
 	{
-		return CBCGDialogBar::Create(pParentWnd, nID, nStyle, nID);
+		return CDialogBar::Create(pParentWnd, nID, nStyle, nID);
 	}
 	void Unroll();
     void FixAndFloat(BOOL show = FALSE);
@@ -63,6 +63,7 @@ public:
 	// This stops buttons being disabled because they have no command handler
 	virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler) { }
 
+	void ToggleDocking() {} // xxx fix for MFC9
 protected:
 
 	//afx_msg void OnInitialUpdate();
@@ -76,10 +77,10 @@ class CExplorerWnd;
 
 /////////////////////////////////////////////////////////////////////////////
 // CHistoryShellList - keeps a history of folders displayed
-class CHistoryShellList : public CBCGShellList
+class CHistoryShellList : public CMFCShellListCtrl
 {
     friend class CExplorerWnd;
-	// This replaces BCGShellListColumns
+	// This replaces BCGShellListColumn* (Afx_ShellListColumn*)
 	enum
 	{
 		COLNAME, COLSIZE, COLTYPE, COLMOD,		// Normal columns provided by BCG
@@ -101,10 +102,10 @@ public:
 
     void SaveLayout();                                                          // save layout to registry (on close)
 
-   	virtual HRESULT DisplayFolder(LPBCGCBITEMINFO lpItemInfo);
-	virtual HRESULT DisplayFolder(LPCTSTR lpszPath) { return CBCGShellList::DisplayFolder(lpszPath); }
+   	virtual HRESULT DisplayFolder(LPAFX_SHELLITEMINFO lpItemInfo);
+	virtual HRESULT DisplayFolder(LPCTSTR lpszPath) { return CMFCShellListCtrl::DisplayFolder(lpszPath); }
 	virtual void OnSetColumns();                                                // sets up columns (in detail view mode)
-	virtual CString OnGetItemText(int iItem, int iColumn, LPBCGCBITEMINFO pItem); // used in displaying text in columns
+	virtual CString OnGetItemText(int iItem, int iColumn, LPAFX_SHELLITEMINFO pItem); // used in displaying text in columns
 	virtual int OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColumn);    // used in sorting on a column
 
 	CString Folder() { if (pos_ > -1 && pos_ < int(name_.size())) return name_[pos_]; else return CString(); }
@@ -112,8 +113,12 @@ public:
     virtual void AdjustMenu(HMENU);
     virtual void MenuCommand(HMENU, UINT, LPCTSTR);
 
+	// xxx dummies until we fix for MFC9
+    void SetFilter(LPCTSTR ff) {  }
+    CString GetFilter() { return ""; }
+
 protected:
-	afx_msg void OnDblclk(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDblClk(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
@@ -126,7 +131,7 @@ private:
     int pos_;                    // Index of current folder
     bool in_move_;               // Used to prevent storing moves when just going forward/backward in the list
     bool add_to_hist_;           // Used to prevent adding to dop-down list in sme circumstances (default to true)
-    int normal_count_;           // No of columns added in base class (CBCGSHellList)
+    int normal_count_;           // No of columns added in base class (CMFCShellListCtrl)
 	int fl_idx_;                 // This is saved index into recent file list (cached for list box row while processing fields)
     static char * defaultWidths;
 };
@@ -166,7 +171,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-// CExplorerWnd - modeless dialog bar that contains 2 panes with CBCGShellTree + CBCGShellList
+// CExplorerWnd - modeless dialog bar that contains 2 panes with CMFCShellTreeCtrl + CMFCShellListCtrl
 class CExplorerWnd : public CHexDialogBar
 {
 public:
@@ -188,14 +193,14 @@ public:
 	// overrides
 //	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	CBCGButton ctl_back_;           // back (undo)
-	CBCGButton ctl_forw_;           // forward (redo)
-	CBCGButton ctl_up_;             // up to parent folder
-	CBCGButton ctl_refresh_;        // redraws the list
-    CBCGMenuButton ctl_view_;       // shows menu of 4 items allowing user to say how the view is to be displayed
-    CBCGButton ctl_flip_;           // determines orientation of tree/list in splitter window
+	CMFCButton ctl_back_;           // back (undo)
+	CMFCButton ctl_forw_;           // forward (redo)
+	CMFCButton ctl_up_;             // up to parent folder
+	CMFCButton ctl_refresh_;        // redraws the list
+    CMFCMenuButton ctl_view_;       // shows menu of 4 items allowing user to say how the view is to be displayed
+    CMFCButton ctl_flip_;           // determines orientation of tree/list in splitter window
 
-    CBCGMenuButton ctl_filter_opts_;// Shows menu with filter list
+    CMFCMenuButton ctl_filter_opts_;// Shows menu with filter list
 
     CComboBox ctl_filter_;          // restricts files displayed in list
 	CFilterEdit ctl_filter_edit_;   // The edit control within the combo
@@ -222,8 +227,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	CSimpleSplitter   splitter_;        // Contains the tree and folder view with a splitter in between
-	CBCGShellTree	  tree_;            // Tree view linked to folder view (list_)
-	CHistoryShellList list_;            // Our class derived from CBCGShellFolder
+	CMFCShellTreeCtrl	  tree_;            // Tree view linked to folder view (list_)
+	CHistoryShellList list_;            // Our class derived from CMFCShellListCtrl
 
 	CResizeCtrl resizer_;               // Used to move controls around when the window is resized
 	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)

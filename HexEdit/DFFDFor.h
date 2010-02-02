@@ -57,7 +57,7 @@ public:
     CEdit   ctl_stop_;
     CEdit   ctl_count_;
     CEdit   ctl_name_;
-    CBCGMenuButton  ctl_replace_;
+    CMFCMenuButton  ctl_replace_;
     CButton ctl_edit_;
     CButton ctl_prev_;
     CButton ctl_next_;
@@ -68,8 +68,8 @@ public:
     CString stop_;
     CString type_name_;
     //}}AFX_DATA
-    CBCGMenuButton ctl_count_var_;
-    CBCGMenuButton ctl_stop_var_;
+    CMFCMenuButton ctl_count_var_;
+    CMFCMenuButton ctl_stop_var_;
 
 // Overrides
     // ClassWizard generated virtual function overrides

@@ -110,7 +110,7 @@ BOOL CGridBtnCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint point, UINT 
         // InPlaceList auto-deletes itself
         CGridCtrl* pGrid = GetGrid();
         CInPlaceList* pInPlaceList = new CInPlaceList(  pGrid, rect, m_dwComboStyle, nID, nRow, nCol,
-                                                        GetTextClr(), GetBackClr(), m_StringArrayCombo, GetText(), nChar);
+                                                        GetTextClr(), GetBackClr(), m_StringArrayCombo, (CString)GetText(), nChar);
 
         if( bShowDropDownNow)
         {

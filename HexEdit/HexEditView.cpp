@@ -7576,7 +7576,7 @@ void CHexEditView::view_context(CPoint point)
 
     top.DestroyMenu();
 #else
-    CBCGContextMenuManager *pCMM = theApp.GetContextMenuManager();
+    CContextMenuManager *pCMM = theApp.GetContextMenuManager();
 
     CPoint cli_pt(point);              // The point clicked in doc coords
     ScreenToClient(&cli_pt);
@@ -11896,7 +11896,7 @@ void CHexEditView::OnFontName()
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
     CHexEditFontCombo* pSrcCombo = 
-        (CHexEditFontCombo*)CBCGToolbarComboBoxButton::GetByCmd(IDC_FONTNAME, TRUE);
+        (CHexEditFontCombo*)CMFCToolBarComboBoxButton::GetByCmd(IDC_FONTNAME, TRUE);
     if (pSrcCombo == NULL)
     {
         OnFont();
@@ -11908,7 +11908,7 @@ void CHexEditView::OnFontName()
     CString str = pSrcCombo->GetText();
     if (pSrcCombo->SetFont(str))
     {
-        const CBCGFontDesc *pDesc = pSrcCombo->GetFontDesc();
+        const CMFCFontInfo *pDesc = pSrcCombo->GetFontDesc();
         ASSERT_VALID(pDesc);
         ASSERT(pDesc->m_strName.GetLength() < LF_FACESIZE);
 
@@ -11929,7 +11929,7 @@ void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 
         // Get list of IDC_FONTNAME buttons
         CObList listButtons;
-        if (CBCGToolBar::GetCommandButtons(IDC_FONTNAME, listButtons) > 0)
+        if (CMFCToolBar::GetCommandButtons(IDC_FONTNAME, listButtons) > 0)
         {
             // Search the list until we find the control we are updating
             for (POSITION posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
@@ -11970,7 +11970,7 @@ void CHexEditView::OnFontSize()
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
     CHexEditFontSizeCombo* pSrcCombo = 
-        (CHexEditFontSizeCombo*)CBCGToolbarComboBoxButton::GetByCmd(IDC_FONTSIZE, TRUE);
+        (CHexEditFontSizeCombo*)CMFCToolBarComboBoxButton::GetByCmd(IDC_FONTSIZE, TRUE);
     if (pSrcCombo == NULL)
     {
         OnFont();
@@ -12006,7 +12006,7 @@ void CHexEditView::OnUpdateFontSize(CCmdUI* pCmdUI)
 
         // Get list of IDC_FONTSIZE buttons
         CObList listButtons;
-        if (CBCGToolBar::GetCommandButtons(IDC_FONTSIZE, listButtons) > 0)
+        if (CMFCToolBar::GetCommandButtons(IDC_FONTSIZE, listButtons) > 0)
         {
             POSITION posCombo;
 
@@ -12014,8 +12014,8 @@ void CHexEditView::OnUpdateFontSize(CCmdUI* pCmdUI)
             // of the IDC_FONTSIZE buttons, otherwise they all stuff up
             for (posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
             {
-                CBCGToolbarFontSizeCombo* pCombo = 
-                    DYNAMIC_DOWNCAST(CBCGToolbarFontSizeCombo, listButtons.GetNext(posCombo));
+                CMFCToolBarFontSizeComboBox* pCombo = 
+                    DYNAMIC_DOWNCAST(CMFCToolBarFontSizeComboBox, listButtons.GetNext(posCombo));
 
                 // Get the real (Windows) combo box from the BCG control
                 ASSERT(pCombo != NULL);
@@ -12047,8 +12047,8 @@ void CHexEditView::OnUpdateFontSize(CCmdUI* pCmdUI)
 
                     // Update the list of sizes
                     CHexEditFontCombo *pFontCombo = 
-                        (CHexEditFontCombo*)CBCGToolbarComboBoxButton::GetByCmd(IDC_FONTNAME);
-                    const CBCGFontDesc *pDesc;
+                        (CHexEditFontCombo*)CMFCToolBarComboBoxButton::GetByCmd(IDC_FONTNAME);
+                    const CMFCFontInfo *pDesc;
                     if (pFontCombo != NULL && 
                         pFontCombo->OKToRead() &&
                         int(pDesc = pFontCombo->GetFontDesc()) != -1)
@@ -12056,7 +12056,8 @@ void CHexEditView::OnUpdateFontSize(CCmdUI* pCmdUI)
                         int nSize = atoi(fontsize_)*20;
                         if (nSize == -2 || (nSize >= 0 && nSize < 20) || nSize > 32760)
                         {
-                            nSize = pCombo->GetTwipsLast ();
+                            //nSize = pCombo->GetTwipsLast ();
+							nSize = 20*12;
                         }
 
                         if (pDesc->m_strName != pCombo->font_name_)
@@ -13212,7 +13213,7 @@ void CHexEditView::OnJumpHexAddr()      // Alt-J
     CObList listButtons;
 
     // Search all toolbars and jump to the first visible hex address tool found (can be more than one)
-    if (CBCGToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
+    if (CMFCToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
     {
         for (POSITION posCombo = listButtons.GetHeadPosition(); 
             posCombo != NULL; )
@@ -13469,7 +13470,7 @@ void CHexEditView::OnSearchHex()        // Alt-L, F6
     CObList listButtons;
 
     // Search all toolbars and jump to the first visible search tool found (can be more than one)
-    if (CBCGToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
+    if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
     {
         for (POSITION posCombo = listButtons.GetHeadPosition(); 
             posCombo != NULL; )
@@ -13495,7 +13496,7 @@ void CHexEditView::OnSearchAscii()      // F5
     CObList listButtons;
 
     // Search all toolbars and jump to the first visible search tool found (can be more than one)
-    if (CBCGToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
+    if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
     {
         for (POSITION posCombo = listButtons.GetHeadPosition(); 
             posCombo != NULL; )
@@ -13521,7 +13522,7 @@ void CHexEditView::OnSearchIcase()      // F4
     CObList listButtons;
 
     // Search all toolbars and jump to the first visible search tool found (can be more than one)
-    if (CBCGToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
+    if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
     {
         for (POSITION posCombo = listButtons.GetHeadPosition(); 
             posCombo != NULL; )
@@ -17278,7 +17279,7 @@ void CHexEditView::OnRandFast()
 // The display of views in tabs and split windows is complicated, mainly because the BCG tab view class
 // behaves very differently from a splitter (eg is derived from CView).
 // Currently we need to show 3 types of views: CHexEditView (normal hex view), CDataFormatView (template),
-// and CAerialView (bitmap overview).  There is also a CTabView that just contains one or more other views.
+// and CAerialView (bitmap overview).  There is also a CHexTabView that just contains one or more other views.
 // * The child frame has a splitter called "splitter_"
 //   - there is always at least one pane so at least one view
 //   - if there is only one pane then it contains the tab view
@@ -17423,7 +17424,7 @@ bool CHexEditView::DoDffdTab()
 	}
 
 	// Reopen in the tab
-	CTabView *ptv = GetFrame()->ptv_;
+	CHexTabView *ptv = GetFrame()->ptv_;
 	int tnum_d = ptv->AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
 	
 	ptv->SetActiveView(tnum_d);
@@ -17564,7 +17565,7 @@ bool CHexEditView::DoAerialTab()
 	}
 
 	// Reopen in the tab
-	CTabView *ptv = GetFrame()->ptv_;
+	CHexTabView *ptv = GetFrame()->ptv_;
 	int tnum_a = ptv->AddView(RUNTIME_CLASS (CAerialView), _T("Aerial View"));
 	ASSERT(tnum_a > 0);
 	if (tnum_a == -1)

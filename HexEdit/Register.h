@@ -23,9 +23,9 @@ public:
 	//{{AFX_DATA(CAbout)
 	enum { IDD = IDD_ABOUT };
 	CButton	activate_ctrl_;
-	CBCGURLLinkButton	url_ctl_;
+	CMFCLinkCtrl	url_ctl_;
 	//}}AFX_DATA
-	CBCGURLLinkButton	reg_url_ctl_;
+	CMFCLinkCtrl	reg_url_ctl_;
     CTransparentStatic2 ctl_line1_;
     CTransparentStatic2 ctl_line2_;
     CTransparentStatic2 ctl_line3_;
@@ -161,7 +161,7 @@ public:
 	enum { IDD = IDD_STARTUP };
 	CString	text_;
 	//}}AFX_DATA
-	CBCGURLLinkButton	url_ctl_;
+	CMFCLinkCtrl	url_ctl_;
 
 // Overrides
 	// ClassWizard generated virtual function overrides

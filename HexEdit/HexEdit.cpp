@@ -21,12 +21,14 @@
 //       SetTabIcon(), SetWorkbookMode(), m_hIcon, secall.h, secres.h, secres.rc
 
 #include "stdafx.h"
+#include "afxwinappex.h"
+
 #include <locale.h>
 
 #include <afxadv.h>     // for CRecentFileList
 #include <io.h>         // for _access()
 
-#include <bcghelpids.h>     // For help on customize dlg
+//#include <bcghelpids.h>     // For help on customize dlg
 
 // #include <afxhtml.h>    // for CHtmlView
 
@@ -97,7 +99,7 @@ extern DWORD hid_last_file_dialog = HIDD_FILE_OPEN;
 class CHexEditDocManager : public CDocManager
 {
 public:
-	// We have to do it this way as CWinApp::DoPromptFileName is not virtual for some reason
+	// We have to do it this way as CWinAppEx::DoPromptFileName is not virtual for some reason
 	virtual BOOL DoPromptFileName(CString& fileName, UINT nIDSTitle,
 			DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate* pTemplate)
 	{
@@ -116,7 +118,7 @@ const int CHexEditApp::security_version_ = 10; // This is changed for testing of
 const int CHexEditApp::security_version_ = INTERNAL_VERSION;
 #endif
 
-BEGIN_MESSAGE_MAP(CHexEditApp, CWinApp)
+BEGIN_MESSAGE_MAP(CHexEditApp, CWinAppEx)
         ON_COMMAND(CG_IDS_TIPOFTHEDAY, ShowTipOfTheDay)
         //{{AFX_MSG_MAP(CHexEditApp)
         ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
@@ -208,7 +210,7 @@ END_MESSAGE_MAP()
 }
 #endif
 
-CHexEditApp::CHexEditApp() : CBCGWorkspace(TRUE), default_scheme_(""),
+CHexEditApp::CHexEditApp() : default_scheme_(""),
                              default_ascii_scheme_(ASCII_NAME), default_ansi_scheme_(ANSI_NAME),
                              default_oem_scheme_(OEM_NAME), default_ebcdic_scheme_(EBCDIC_NAME)
 {
@@ -498,18 +500,28 @@ BOOL CHexEditApp::InitInstance()
         // Work out if we appear to be in US for spelling changes
         is_us_ = _strnicmp("English_United States", ::setlocale(LC_COLLATE, NULL), 20) == 0;
 
+
+
         // The following are for BCG init
         SetRegistryBase(_T("Settings"));
-        CBCGVisualManager::SetDefaultManager(RUNTIME_CLASS(CBCGWinXPVisualManager));
-		// CBCGVisualManager::GetInstance()->SetFadeInactiveImage(FALSE);
-        CBCGButton::EnableWinXPTheme();
+        CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
+		// CMFCVisualManager::GetInstance()->SetFadeInactiveImage(FALSE);
+        // CBCGButton::EnableWinXPTheme();
         VERIFY(InitMouseManager());
         VERIFY(InitContextMenuManager());
         VERIFY(InitKeyboardManager());
         VERIFY(InitShellManager());
-        VERIFY(InitSkinManager());
-        GetSkinManager ()->EnableSkinsDownload (_T("http://www.bcgsoft.com/Skins"));
-		//CBCGPopupMenu::EnableMenuSound(FALSE);
+        //VERIFY(InitSkinManager());
+        //GetSkinManager ()->EnableSkinsDownload (_T("http://www.bcgsoft.com/Skins"));
+		//CMFCPopupMenu::EnableMenuSound(FALSE);
+
+		// xxx add this for MFC9??
+		//InitTooltipManager();
+		//CMFCToolTipInfo ttParams;
+		//ttParams.m_bVislManagerTheme = TRUE;
+		//theApp.GetTooltipManager()->
+		//   SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
+		//   RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
 		// These are commands that are always shown in menus (not to be confused
         // with commands no on toolbars - see AddToolBarForImageCollection)
@@ -586,14 +598,12 @@ BOOL CHexEditApp::InitInstance()
             ID_DIALOGS_DOCKABLE,
         };
 
-		CBCGMenuBar::SetRecentlyUsedMenus(FALSE);
+		CMFCMenuBar::SetRecentlyUsedMenus(FALSE);
         for (int ii = 0; ii < sizeof(dv_id)/sizeof(*dv_id); ++ii)
-            CBCGToolBar::AddBasicCommand(dv_id[ii]);
+            CMFCToolBar::AddBasicCommand(dv_id[ii]);
 
+#if 0 // xxx there is no equivalent to CBCGRegistry in MFC 9!!
         // If there is no current skin setting and we have skins then default to the first
-		// NOTE: the following seems to cause HexEdit to crash when built with VS 2003. There
-		// seems to be some incompatibilty with the skin DLLs and BCG 6.2 DLL when built
-		// with VS 2003. The workaround is to delete all skins DLLs.
         CBCGRegistry reg(FALSE, TRUE);
         if (!reg.Open(GetRegSectionPath() + _T("Skin")))
         {
@@ -604,6 +614,7 @@ BOOL CHexEditApp::InitInstance()
                     break;
                 }
         }
+#endif
 
         // Enable BCG tools menu handling
         // (see CMainFrame::LoadFrame for default tools setup)
@@ -678,7 +689,7 @@ BOOL CHexEditApp::InitInstance()
         // Note: CCommandLineInfo class was overridden with the CCommandLineParser
         // class - this can open as many files as specified on the command line
         // but does this in CCommandLineParse::ParseParam rather than storing
-        // the file name for CWinApp::ProcessShellCommands (and sets
+        // the file name for CWinAppEx::ProcessShellCommands (and sets
         // m_nShellCommand to FileNothing).
         CCommandLineParser cmdInfo;
         ParseCommandLine(cmdInfo);
@@ -695,7 +706,7 @@ BOOL CHexEditApp::InitInstance()
         // This avoids all sorts of confusion when testing/debugging
 		// NOTE: we get a very odd crash in here when the skins DLLs are
 		// incompatible - seems to happen when we build with VS 2003.
-        CBCGToolBar::ResetAll();
+        CMFCToolBar::ResetAll();
 #endif
 
 		// It's about time to hide the splash window
@@ -878,7 +889,7 @@ BOOL CHexEditApp::InitInstance()
 void CHexEditApp::OnAppExit()
 {
     SaveToMacro(km_exit);
-    CWinApp::OnAppExit();
+    CWinAppEx::OnAppExit();
 }
 
 // Called on 1st run after upgrade to a new version
@@ -887,7 +898,7 @@ void CHexEditApp::OnNewVersion(int old_ver, int new_ver)
     if (old_ver == 200)
     {
         // Version 2.0 used BCG 5.3 which did not support resource smart update
-        CBCGToolBar::ResetAll();
+        CMFCToolBar::ResetAll();
     }
     else if (old_ver == 210)
     {
@@ -899,7 +910,7 @@ void CHexEditApp::OnNewVersion(int old_ver, int new_ver)
 
 void CHexEditApp::OnFileNew() 
 {
-    CWinApp::OnFileNew();
+    CWinAppEx::OnFileNew();
 }
 
 void CHexEditApp::OnFileOpen() 
@@ -980,7 +991,7 @@ void CHexEditApp::OnFileOpen()
 
 CDocument* CHexEditApp::OpenDocumentFile(LPCTSTR lpszFileName) 
 {
-    CDocument *retval = CWinApp::OpenDocumentFile(lpszFileName);
+    CDocument *retval = CWinAppEx::OpenDocumentFile(lpszFileName);
 	if (retval == NULL)
 	{
 		// This can happen for a volume that has been dismounted (eg "X:f.exe" where drive X: no longer exists)
@@ -1019,7 +1030,7 @@ CDocument* CHexEditApp::OpenDocumentFile(LPCTSTR lpszFileName)
 BOOL CHexEditApp::OnOpenRecentFile(UINT nID)
 {
     // I had to completely override OnOpenRecentFile (copying most of the code from
-    // CWinApp::OnOpenRecentFile) since it does not return FALSE if the file is not
+    // CWinAppEx::OnOpenRecentFile) since it does not return FALSE if the file is not
     // found -- in fact it always returns TRUE.  I'd say this is an MFC bug.
     ASSERT(m_pRecentFileList != NULL);
 
@@ -1119,6 +1130,9 @@ void CHexEditApp::OnUpdateFileOpenSpecial(CCmdUI* pCmdUI)
 
 void CHexEditApp::OnRepairDialogbars()
 {
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+    ASSERT(mm != NULL);
+#if 0 // xxx MFC9
 	if (AfxMessageBox("This restores all modeless dialogs so they are\n"
                       "visible, undocked and unrolled.  They include:\n"
                       "* Calculator\n"
@@ -1133,9 +1147,6 @@ void CHexEditApp::OnRepairDialogbars()
                       MB_YESNO|MB_DEFBUTTON2) != IDYES)
 		return;
 
-    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    ASSERT(mm != NULL);
-
     // Restore initial (nice looking) window size for calculator
     mm->m_wndCalc.m_szFloat = mm->m_wndCalc.m_sizeInitial;
 
@@ -1147,6 +1158,7 @@ void CHexEditApp::OnRepairDialogbars()
 
 #ifdef EXPLORER_WND
 	mm->m_wndExpl.FixAndFloat(TRUE);
+#endif
 #endif
 
 	mm->RecalcLayout();
@@ -1170,7 +1182,7 @@ void CHexEditApp::OnRepairCust()
 
     GetContextMenuManager()->ResetState();
     GetKeyboardManager()->ResetAll();
-    CBCGToolBar::ResetAll();
+    CMFCToolBar::ResetAll();
 }
 
 void CHexEditApp::OnRepairSettings()
@@ -1186,7 +1198,7 @@ void CHexEditApp::OnRepairSettings()
 	// Signal deletion of all registry settings
 	delete_reg_settings_ = TRUE;
 
-    CWinApp::OnAppExit();
+    CWinAppEx::OnAppExit();
 }
 
 void CHexEditApp::OnRepairAll()
@@ -1207,7 +1219,7 @@ void CHexEditApp::OnRepairAll()
 	// Signal deletion of all registry settings and settings files
 	delete_all_settings_ = TRUE;
 
-    CWinApp::OnAppExit();
+    CWinAppEx::OnAppExit();
 }
 
 void CHexEditApp::OnMacroRecord() 
@@ -1407,7 +1419,7 @@ void CHexEditApp::OnTabIcons()
     {
         ASSERT_KINDOF(CMainFrame, mm);
         mm->EnableMDITabs(mditabs_, tabicons_,
-            tabsbottom_ ? CBCGTabWnd::LOCATION_BOTTOM : CBCGTabWnd::LOCATION_TOP);
+            tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP);
     }
 }
 
@@ -1424,7 +1436,7 @@ void CHexEditApp::OnTabsAtBottom()
     {
         ASSERT_KINDOF(CMainFrame, mm);
         mm->EnableMDITabs(mditabs_, tabicons_,
-            tabsbottom_ ? CBCGTabWnd::LOCATION_BOTTOM : CBCGTabWnd::LOCATION_TOP);
+            tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP);
     }
 }
 
@@ -1467,7 +1479,8 @@ int CHexEditApp::ExitInstance()
     if (pboyer_ != NULL)
         delete pboyer_;
 
-    ::BCGCBCleanUp();
+	afxGlobalData.CleanUp();
+    //::BCGCBCleanUp();
 
 #ifndef NO_SECURITY
     // Check that recent activation used the correct code
@@ -1480,7 +1493,7 @@ int CHexEditApp::ExitInstance()
         delete m_pbookmark_list;
     }
 
-    int retval = CWinApp::ExitInstance();
+    int retval = CWinAppEx::ExitInstance();
 
 	if (delete_reg_settings_ || delete_all_settings_)
 		::SHDeleteKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit");  // user settings
@@ -1548,7 +1561,7 @@ BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
          hw == ((CMainFrame*)m_pMainWnd)->m_wndBookmarks) ) 
 	{
 		// Return 0 to allow processing (WM_KEYDOWN) but because we don't call base class version
-		// (CWinApp::PreTranslateMessage) we avoid the key being absorbed by a keyboard accelerator.
+		// (CWinAppEx::PreTranslateMessage) we avoid the key being absorbed by a keyboard accelerator.
 		return FALSE;
 	}
 
@@ -1564,7 +1577,7 @@ BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
 		return FALSE;
 	}
 
-    return CWinApp::PreTranslateMessage(pMsg);
+    return CWinAppEx::PreTranslateMessage(pMsg);
 }
 
 #ifndef NO_SECURITY
@@ -1606,7 +1619,7 @@ void CHexEditApp::WinHelp(DWORD dwData, UINT nCmd)
 
 void CHexEditApp::OnAppContextHelp (CWnd* pWndControl, const DWORD dwHelpIDArray [])
 {
-    CBCGWorkspace::OnAppContextHelp(pWndControl, dwHelpIDArray);
+    CWinAppEx::OnAppContextHelp(pWndControl, dwHelpIDArray);
 }
 
 BOOL CHexEditApp::OnIdle(LONG lCount) 
@@ -1646,25 +1659,25 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
 #endif
     if (mm->UpdateBGSearchProgress())
     {
-        (void)CWinApp::OnIdle(lCount);
+        (void)CWinAppEx::OnIdle(lCount);
         return TRUE;                    // we want more processing
     }
 
-    return CWinApp::OnIdle(lCount);
+    return CWinAppEx::OnIdle(lCount);
 }
 
 void CHexEditApp::PreLoadState()
 {
     GetMouseManager()->AddView(IDR_CONTEXT_ADDRESS, "Address Area");
-    GetMouseManager()->SetCommandForDblClick(IDR_CONTEXT_ADDRESS, ID_SELECT_LINE);
+    GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_ADDRESS, ID_SELECT_LINE);
     GetMouseManager()->AddView(IDR_CONTEXT_HEX, "Hex Area");
-    GetMouseManager()->SetCommandForDblClick(IDR_CONTEXT_HEX, ID_MARK);
+    GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_HEX, ID_MARK);
     GetMouseManager()->AddView(IDR_CONTEXT_CHAR, "Character Area");
-    GetMouseManager()->SetCommandForDblClick(IDR_CONTEXT_CHAR, ID_MARK);
+    GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_CHAR, ID_MARK);
     GetMouseManager()->AddView(IDR_CONTEXT_HIGHLIGHT, "Highlight");
-    GetMouseManager()->SetCommandForDblClick(IDR_CONTEXT_HIGHLIGHT, ID_HIGHLIGHT_SELECT);
+    GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_HIGHLIGHT, ID_HIGHLIGHT_SELECT);
     GetMouseManager()->AddView(IDR_CONTEXT_BOOKMARKS, "Bookmark");
-    GetMouseManager()->SetCommandForDblClick(IDR_CONTEXT_BOOKMARKS, ID_BOOKMARKS_EDIT);
+    GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_BOOKMARKS, ID_BOOKMARKS_EDIT);
 
     GetContextMenuManager()->AddMenu(_T("Address Area"), IDR_CONTEXT_ADDRESS);
     GetContextMenuManager()->AddMenu(_T("Hex Area"), IDR_CONTEXT_HEX);
@@ -2867,14 +2880,14 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     optSheet.SetIconsList(IDB_OPTIONSIMAGES, 16 /* Image width */);
 
     // Add categories to the tree and pages under the categories
-	CBCGPropSheetCategory * pCatSys = optSheet.AddTreeCategory("System", IMG_FOLDER, IMG_FOLDER_SEL);
+	CMFCPropertySheetCategoryInfo * pCatSys = optSheet.AddTreeCategory("System", IMG_FOLDER, IMG_FOLDER_SEL);
     optSheet.AddPageToTree(pCatSys, &sysgeneralPage, IMG_SYSGENERAL, IMG_SYSGENERAL);
     optSheet.AddPageToTree(pCatSys, &filtersPage, IMG_FILTERS, IMG_FILTERS);
     optSheet.AddPageToTree(pCatSys, &printerPage, IMG_PRINTER, IMG_PRINTER);
     optSheet.AddPageToTree(pCatSys, &macroPage, IMG_MACRO, IMG_MACRO);
     optSheet.AddPageToTree(pCatSys, &histPage, IMG_HIST, IMG_HIST);
 
-	CBCGPropSheetCategory * pCatWS  = optSheet.AddTreeCategory("Workspace", IMG_FOLDER, IMG_FOLDER_SEL);
+	CMFCPropertySheetCategoryInfo * pCatWS  = optSheet.AddTreeCategory("Workspace", IMG_FOLDER, IMG_FOLDER_SEL);
     optSheet.AddPageToTree(pCatWS, &workspacelayoutPage, IMG_WORKSPACELAYOUT, IMG_WORKSPACELAYOUT);
     optSheet.AddPageToTree(pCatWS, &workspacedisplayPage, IMG_WORKSPACEDISPLAY, IMG_WORKSPACEDISPLAY);
     optSheet.AddPageToTree(pCatWS, &workspacePage, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
@@ -2882,7 +2895,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     optSheet.AddPageToTree(pCatWS, &templatePage, IMG_TEMPLATE, IMG_TEMPLATE);
 	if (pview != NULL)
     {
-		CBCGPropSheetCategory * pCatDoc = optSheet.AddTreeCategory("Document", IMG_FOLDER, IMG_FOLDER_SEL);
+		CMFCPropertySheetCategoryInfo * pCatDoc = optSheet.AddTreeCategory("Document", IMG_FOLDER, IMG_FOLDER_SEL);
         optSheet.AddPageToTree(pCatDoc, &wingeneralPage, IMG_DOCGENERAL, IMG_DOCGENERAL);
         optSheet.AddPageToTree(pCatDoc, &windisplayPage, IMG_DOCDISPLAY, IMG_DOCDISPLAY);
         optSheet.AddPageToTree(pCatDoc, &wineditPage, IMG_DOCEDIT, IMG_DOCEDIT);
@@ -3190,7 +3203,7 @@ void CHexEditApp::set_options(struct OptValues &val)
         ASSERT_KINDOF(CMainFrame, mm);
         if (mm != NULL)
             mm->EnableMDITabs(mditabs_, tabicons_,
-                tabsbottom_ ? CBCGTabWnd::LOCATION_BOTTOM : CBCGTabWnd::LOCATION_TOP);
+                tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP);
     }
 
     if (hex_ucase_ != val.hex_ucase_)
@@ -3201,7 +3214,7 @@ void CHexEditApp::set_options(struct OptValues &val)
 
         // Fix up case of search strings (find tool, find dlg)
         CObList listButtons;
-        if (CBCGToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
+        if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
         {
             for (POSITION posCombo = listButtons.GetHeadPosition (); 
                 posCombo != NULL; )
@@ -3219,7 +3232,7 @@ void CHexEditApp::set_options(struct OptValues &val)
         mm->m_wndFind.m_pSheet->Redisplay();
 
         // Fix up case of hex addresses in hex jump tool(s)
-        if (CBCGToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
+        if (CMFCToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
         {
             for (POSITION posCombo = listButtons.GetHeadPosition (); 
                 posCombo != NULL; )
@@ -3853,10 +3866,10 @@ CHexEditView *GetView()
                     return ((CDataFormatView *)pv)->phev_;
                 else if (pv->IsKindOf(RUNTIME_CLASS(CAerialView)))
                     return ((CAerialView *)pv)->phev_;
-                else if (pv->IsKindOf(RUNTIME_CLASS(CTabView)))
+                else if (pv->IsKindOf(RUNTIME_CLASS(CHexTabView)))
                 {
 					// Find the hex view (left-most tab)
-					CTabView *ptv = (CTabView *)pv;
+					CHexTabView *ptv = (CHexTabView *)pv;
 					ptv->SetActiveView(0);  // hex view is always left-most (index 0)
 					ASSERT_KINDOF(CHexEditView, ptv->GetActiveView());
 					return (CHexEditView *)ptv->GetActiveView();

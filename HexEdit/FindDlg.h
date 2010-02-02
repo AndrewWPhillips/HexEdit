@@ -218,7 +218,7 @@ public:
 	CEdit	ctl_bookmark_prefix_;
 	CComboBox	ctl_hex_string_;
 	//}}AFX_DATA
-    CBCGMenuButton ctl_align_select_;
+    CMFCMenuButton ctl_align_select_;
 	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
 
 // Overrides

@@ -294,7 +294,7 @@ BOOL CGridCellBase::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseB
         if (pGrid->GetImageList()->GetImageInfo(GetImage(), &Info))
         {
             //  would like to use a clipping region but seems to have issue
-            //  working with CMemDC directly.  Instead, don't display image
+            //  working with CGridMemDC directly.  Instead, don't display image
             //  if any part of it cut-off
             //
             // CRgn rgn;

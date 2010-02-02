@@ -2414,7 +2414,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 	}
 
     unsigned __int64 saved_val = current_;
-    CString saved_str = current_str_;
+    CString saved_str = CString(current_str_);
 
     calc_previous();
 

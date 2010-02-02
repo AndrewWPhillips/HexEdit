@@ -1,22 +1,22 @@
 // BCGMisc.h - for misc classes derived from BCG classes
 //
 
-#include <BCGCB.h>
+//#include <BCGCB.h>
 
 // We just need to access some protected members
-class CHexEditFontCombo : public CBCGToolbarFontCombo
+class CHexEditFontCombo : public CMFCToolBarFontComboBox
 {
 	DECLARE_SERIAL(CHexEditFontCombo)
 protected:
     static BYTE saved_charset;
-    CHexEditFontCombo() : CBCGToolbarFontCombo() {}
+    CHexEditFontCombo() : CMFCToolBarFontComboBox() {}
 public:
     CHexEditFontCombo(UINT uiID, int iImage,
 						int nFontType = DEVICE_FONTTYPE | RASTER_FONTTYPE | TRUETYPE_FONTTYPE,
 						BYTE nCharSet = DEFAULT_CHARSET,
 						DWORD dwStyle = CBS_DROPDOWN, int iWidth = 0,
                         BYTE nPitchAndFamily = DEFAULT_PITCH) :
-        CBCGToolbarFontCombo(uiID, iImage, nFontType, nCharSet, dwStyle, iWidth, nPitchAndFamily)
+        CMFCToolBarFontComboBox(uiID, iImage, nFontType, nCharSet, dwStyle, iWidth, nPitchAndFamily)
     {
     }
 
@@ -28,7 +28,7 @@ public:
         CObList listButtons;
         POSITION posCombo;
 
-        if (CBCGToolBar::GetCommandButtons(ID_FONTNAME, listButtons) > 0 &&
+        if (CMFCToolBar::GetCommandButtons(ID_FONTNAME, listButtons) > 0 &&
             (posCombo = listButtons.GetHeadPosition()) != NULL)
 	    {
 		    CHexEditFontCombo* pCombo = 
@@ -79,7 +79,7 @@ public:
         }
 	    for (pos = m_lstItemData.GetHeadPosition(); pos != NULL;)
         {
-            CBCGFontDesc* pDesc = (CBCGFontDesc*) m_lstItemData.GetNext (pos);
+            CMFCFontInfo* pDesc = (CMFCFontInfo*) m_lstItemData.GetNext (pos);
             TRACE("*** name %s\n", pDesc->m_strName);
         }
     }
@@ -87,14 +87,14 @@ public:
 };
 
 // We just need this to store the last font name used
-class CHexEditFontSizeCombo : public CBCGToolbarFontSizeCombo
+class CHexEditFontSizeCombo : public CMFCToolBarFontSizeComboBox
 {
 	DECLARE_SERIAL(CHexEditFontSizeCombo)
 protected:
-    CHexEditFontSizeCombo() : CBCGToolbarFontSizeCombo() {}
+    CHexEditFontSizeCombo() : CMFCToolBarFontSizeComboBox() {}
 public:
 	CHexEditFontSizeCombo(UINT uiID, int iImage, DWORD dwStyle = CBS_DROPDOWN, int iWidth = 0) :
-        CBCGToolbarFontSizeCombo(uiID, iImage, dwStyle, iWidth)
+        CMFCToolBarFontSizeComboBox(uiID, iImage, dwStyle, iWidth)
     {
     }
 

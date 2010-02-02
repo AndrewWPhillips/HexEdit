@@ -54,12 +54,12 @@ public:
     CString comment_;
 
     CEdit ctl_expr_;
-    CBCGMenuButton ctl_expr_var_;
+    CMFCMenuButton ctl_expr_var_;
     CListBox ctl_cases_;
     CEdit ctl_range_;
 
     CButton ctl_edit_;
-    CBCGMenuButton ctl_insert_;
+    CMFCMenuButton ctl_insert_;
     CButton ctl_delete_;
     CButton ctl_up_;
     CButton ctl_down_;

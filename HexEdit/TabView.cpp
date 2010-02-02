@@ -30,38 +30,38 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CTabView
+// CHexTabView
 
-IMPLEMENT_DYNCREATE(CTabView, CBCGTabView)
+IMPLEMENT_DYNCREATE(CHexTabView, CTabView)
 
-CTabView::CTabView()
+CHexTabView::CHexTabView()
 {
     init_ = false;
 }
 
-CTabView::~CTabView()
+CHexTabView::~CHexTabView()
 {
 }
 
 
-BEGIN_MESSAGE_MAP(CTabView, CBCGTabView)
-	//{{AFX_MSG_MAP(CTabView)
+BEGIN_MESSAGE_MAP(CHexTabView, CTabView)
+	//{{AFX_MSG_MAP(CHexTabView)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	//}}AFX_MSG_MAP
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
-void CTabView::OnSize(UINT nType, int cx, int cy)
+void CHexTabView::OnSize(UINT nType, int cx, int cy)
 {
     // This is necessary since we can get resize events before the tab view
     // is ready (before tab window has been created).
     // This caused crash in 2.6 if Window/New Window is used when window maximized.
     if (init_)
-        CBCGTabView::OnSize(nType, cx, cy);
+        CTabView::OnSize(nType, cx, cy);
 }
 
-void CTabView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
+void CHexTabView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
 {
     if (bActivate)
     {
@@ -81,35 +81,35 @@ void CTabView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeac
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CTabView drawing
+// CHexTabView drawing
 
-void CTabView::OnDraw(CDC* pDC)
+void CHexTabView::OnDraw(CDC* pDC)
 {
 	CDocument* pDoc = GetDocument();
 	// TODO: add draw code here
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CTabView diagnostics
+// CHexTabView diagnostics
 
 #ifdef _DEBUG
-void CTabView::AssertValid() const
+void CHexTabView::AssertValid() const
 {
-	CBCGTabView::AssertValid();
+	CTabView::AssertValid();
 }
 
-void CTabView::Dump(CDumpContext& dc) const
+void CHexTabView::Dump(CDumpContext& dc) const
 {
-	CBCGTabView::Dump(dc);
+	CTabView::Dump(dc);
 }
 #endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
-// CTabView message handlers
+// CHexTabView message handlers
 
-int CTabView::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+int CHexTabView::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
-    if (CBCGTabView::OnCreate(lpCreateStruct) == -1)
+    if (CTabView::OnCreate(lpCreateStruct) == -1)
         return -1;
 
     init_ = true;
@@ -124,7 +124,7 @@ int CTabView::OnCreate(LPCREATESTRUCT lpCreateStruct)
     return 0;
 }
 
-BOOL CTabView::OnEraseBkgnd(CDC* pDC) 
+BOOL CHexTabView::OnEraseBkgnd(CDC* pDC) 
 {
     return TRUE;
 }

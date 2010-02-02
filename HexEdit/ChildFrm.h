@@ -22,7 +22,7 @@
 #include "HexEditSplitter.h"
 #include "TabView.h"
 
-class CChildFrame : public CBCGMDIChildWnd
+class CChildFrame : public CMDIChildWndEx
 {
 	DECLARE_DYNCREATE(CChildFrame)
 public:
@@ -54,7 +54,7 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
         CHexEditSplitter splitter_;       // Allows multiple views (sep. by splitters)
-		CTabView *ptv_;                   // Allows multiple views (using tabs)
+		CHexTabView *ptv_;                   // Allows multiple views (using tabs)
 
 // Generated message map functions
 protected:

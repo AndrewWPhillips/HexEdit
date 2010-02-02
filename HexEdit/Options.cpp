@@ -29,7 +29,7 @@
 #include "NewCellTypes/GridCellCombo.h"     // For CGridCellCombo
 #include "resource.hm"          // For control help IDs
 
-#include <bcgbarres.h>          // For IDC_BCGBARRES_SKINS
+#include <afxribbonres.h>          // For IDC_AFXBARRES_SKINS
 #include "options.h"
 
 #ifdef _DEBUG
@@ -45,15 +45,15 @@ extern CHexEditApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // COptSheet
 
-IMPLEMENT_DYNAMIC(COptSheet, CBCGPropertySheet)
+IMPLEMENT_DYNAMIC(COptSheet, CMFCPropertySheet)
 
 COptSheet::COptSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
-        :CBCGPropertySheet(pszCaption, pParentWnd, iSelectPage)
+        :CMFCPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
 	init();
 }
 COptSheet::COptSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
-        :CBCGPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+        :CMFCPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
 	init();
 }
@@ -169,7 +169,7 @@ COptSheet::~COptSheet()
 {
 }
 
-BEGIN_MESSAGE_MAP(COptSheet, CBCGPropertySheet)
+BEGIN_MESSAGE_MAP(COptSheet, CMFCPropertySheet)
         //{{AFX_MSG_MAP(COptSheet)
         ON_WM_NCCREATE()
 	//}}AFX_MSG_MAP
@@ -182,7 +182,7 @@ END_MESSAGE_MAP()
 
 BOOL COptSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct) 
 {
-        if (!CBCGPropertySheet::OnNcCreate(lpCreateStruct))
+        if (!CMFCPropertySheet::OnNcCreate(lpCreateStruct))
                 return FALSE;
         
         ModifyStyleEx(0, WS_EX_CONTEXTHELP);
@@ -194,7 +194,7 @@ BOOL COptSheet::DestroyWindow()
 {
     theApp.last_opt_page_ = GetActiveIndex();
 	
-    return CBCGPropertySheet::DestroyWindow();
+    return CMFCPropertySheet::DestroyWindow();
 }
 
 int COptSheet::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -202,7 +202,7 @@ int COptSheet::OnCreate(LPCREATESTRUCT lpCreateStruct)
       // Stacked tabs seems to interfere with PropSheetLook_Tree
       EnableStackedTabs(FALSE);
 
-	  if (CBCGPropertySheet::OnCreate(lpCreateStruct) == 1)
+	  if (CMFCPropertySheet::OnCreate(lpCreateStruct) == 1)
             return -1;
       return 0;
 }
@@ -217,7 +217,7 @@ LRESULT COptSheet::OnKickIdle(WPARAM, LPARAM lCount)
 /////////////////////////////////////////////////////////////////////////////
 // COptPage
 
-IMPLEMENT_DYNAMIC(COptPage, CBCGPropertyPage)
+IMPLEMENT_DYNAMIC(COptPage, CMFCPropertyPage)
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
@@ -715,10 +715,12 @@ void CWorkspaceLayoutPage::OnStartupPage()
 		pParent->SetActivePage(pStartupPage);
 }
 
+#if 0 // not supported by MFC 9
 void CWorkspaceLayoutPage::OnVisualizations() 
 {
     theApp.GetSkinManager()->ShowSelectSkinDlg();
 }
+#endif
 
 void CWorkspaceLayoutPage::OnOK() 
 {
@@ -1244,9 +1246,9 @@ void CTipsPage::OnOK()
 			theApp.tip_on_[ii] = (pbtn->GetDrawCtlState(0) & DFCS_CHECKED) != 0;
 			continue;
 		}
-        CString s1 = grid_.GetItemText(ii+header_rows, column_name);
-        CString s2 = grid_.GetItemText(ii+header_rows, column_expr);
-		CString s3 = grid_.GetItemText(ii+header_rows, column_format);
+        CString s1 = (CString)grid_.GetItemText(ii+header_rows, column_name);
+        CString s2 = (CString)grid_.GetItemText(ii+header_rows, column_expr);
+		CString s3 = (CString)grid_.GetItemText(ii+header_rows, column_format);
 
         if (s1.IsEmpty() && s2.IsEmpty())
             continue;
@@ -1351,12 +1353,12 @@ void CTipsPage::OnUp()
     if (sel.IsValid() && (row = sel.GetMinRow()) > header_rows + FIRST_USER_TIP)
     {
         // Save info from the current and above row
-        CString s1 = grid_.GetItemText(row, column_name);
-        CString s2 = grid_.GetItemText(row, column_expr);
-        CString s3 = grid_.GetItemText(row, column_format);
-        CString s1_above = grid_.GetItemText(row-1, column_name);
-        CString s2_above = grid_.GetItemText(row-1, column_expr);
-        CString s3_above = grid_.GetItemText(row-1, column_format);
+        CString s1 = (CString)grid_.GetItemText(row, column_name);
+        CString s2 = (CString)grid_.GetItemText(row, column_expr);
+        CString s3 = (CString)grid_.GetItemText(row, column_format);
+        CString s1_above = (CString)grid_.GetItemText(row-1, column_name);
+        CString s2_above = (CString)grid_.GetItemText(row-1, column_expr);
+        CString s3_above = (CString)grid_.GetItemText(row-1, column_format);
         BOOL is_checked, is_checked_above;
 
         CGridBtnCell *pbtn;
@@ -1403,12 +1405,12 @@ void CTipsPage::OnDown()
     if (sel.IsValid() && (row = sel.GetMinRow()) < grid_.GetRowCount()-1 && row >= header_rows + FIRST_USER_TIP)
     {
         // Save info from current row and row below
-        CString s1 = grid_.GetItemText(row, column_name);
-        CString s2 = grid_.GetItemText(row, column_expr);
-        CString s3 = grid_.GetItemText(row, column_format);
-        CString s1_below = grid_.GetItemText(row+1, column_name);
-        CString s2_below = grid_.GetItemText(row+1, column_expr);
-        CString s3_below = grid_.GetItemText(row+1, column_format);
+        CString s1 = (CString)grid_.GetItemText(row, column_name);
+        CString s2 = (CString)grid_.GetItemText(row, column_expr);
+        CString s3 = (CString)grid_.GetItemText(row, column_format);
+        CString s1_below = (CString)grid_.GetItemText(row+1, column_name);
+        CString s2_below = (CString)grid_.GetItemText(row+1, column_expr);
+        CString s3_below = (CString)grid_.GetItemText(row+1, column_format);
         BOOL is_checked, is_checked_below;
 
         CGridBtnCell *pbtn;
@@ -1474,7 +1476,7 @@ LRESULT CTipsPage::OnIdle(long lCount)
 void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 {
     NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
-    CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+    CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
 	// Make sure any text does not have a semi-colon as that is used as a separator in the registry string
     if (ss.FindOneOf(";") != -1)
     {
@@ -2960,8 +2962,8 @@ void CFiltersPage::OnOK()
 
     for (int ii = 0; ii < max_filt; ++ii)
     {
-        CString s1 = grid_.GetItemText(ii+header_rows, column_files);
-        CString s2 = grid_.GetItemText(ii+header_rows, column_filter);
+        CString s1 = (CString)grid_.GetItemText(ii+header_rows, column_files);
+        CString s2 = (CString)grid_.GetItemText(ii+header_rows, column_filter);
 
         if (s1.IsEmpty() && s2.IsEmpty())
             continue;
@@ -3055,10 +3057,10 @@ void CFiltersPage::OnUp()
     if (sel.IsValid() && (row = sel.GetMinRow()) > header_rows)
     {
         // Save info from the current and above row
-        CString s1 = grid_.GetItemText(row, column_files);
-        CString s2 = grid_.GetItemText(row, column_filter);
-        CString s1_above = grid_.GetItemText(row-1, column_files);
-        CString s2_above = grid_.GetItemText(row-1, column_filter);
+        CString s1 = (CString)grid_.GetItemText(row, column_files);
+        CString s2 = (CString)grid_.GetItemText(row, column_filter);
+        CString s1_above = (CString)grid_.GetItemText(row-1, column_files);
+        CString s2_above = (CString)grid_.GetItemText(row-1, column_filter);
         BOOL is_checked, is_checked_above;
 
         CGridBtnCell *pbtn;
@@ -3103,10 +3105,10 @@ void CFiltersPage::OnDown()
     if (sel.IsValid() && (row = sel.GetMinRow()) < grid_.GetRowCount()-1)
     {
         // Save info from current row and row below
-        CString s1 = grid_.GetItemText(row, column_files);
-        CString s2 = grid_.GetItemText(row, column_filter);
-        CString s1_below = grid_.GetItemText(row+1, column_files);
-        CString s2_below = grid_.GetItemText(row+1, column_filter);
+        CString s1 = (CString)grid_.GetItemText(row, column_files);
+        CString s2 = (CString)grid_.GetItemText(row, column_filter);
+        CString s1_below = (CString)grid_.GetItemText(row+1, column_files);
+        CString s2_below = (CString)grid_.GetItemText(row+1, column_filter);
         BOOL is_checked, is_checked_below;
 
         CGridBtnCell *pbtn;
@@ -3176,7 +3178,7 @@ void CFiltersPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
     TRACE(_T("End Edit on row %d, col %d\n"), pItem->iRow, pItem->iColumn);
     if (pItem->iColumn == column_filter)
     {
-        CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+        CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
         if (ss.FindOneOf(FILTER_DISALLOWED_CHARACTERS) != -1)
         {
             AfxMessageBox("Filters may not contain any of these characters:\n" FILTER_DISALLOWED_CHARACTERS);
@@ -3186,7 +3188,7 @@ void CFiltersPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
     }
     else if (pItem->iColumn == column_files)
     {
-        CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+        CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
         if (ss.FindOneOf("|") != -1)
         {
             AfxMessageBox("Please do not use a vertical bar (|)");

@@ -41,6 +41,10 @@
     - radio buttons on the left
   - bookmarks (active file) drop-list
   - handle > 64 bit numbers
+- file stats (XTAL256)
+- file compare (XTAL256)
+- template "include" facility
+- tip when mouse held over a template line
 
 3.6
 ===

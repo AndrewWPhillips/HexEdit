@@ -37,8 +37,8 @@
 //#define INTERNAL_VERSION 7              // version 3.1
 //#define INTERNAL_VERSION 8              // version 3.2
 //#define INTERNAL_VERSION 9              // version 3.3
-#define INTERNAL_VERSION 10             // version 3.4
-//#define INTERNAL_VERSION 11             // version 3.5
+//#define INTERNAL_VERSION 10             // version 3.4
+#define INTERNAL_VERSION 11             // version 3.5   // keep it at 3.5 until after last beta released
 //#define INTERNAL_VERSION 12             // version 4.0
 
 // may need to adjust this depending on how many versions there were in last 2 years
@@ -77,7 +77,7 @@ typedef __int64 FILE_ADDRESS;
 #define EXPLORER_WND    1   // Modeless dialog like Windows Explorer
 #define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
 
-//#define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project
+#define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project
 
 // Flags for stuff in development
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
@@ -212,8 +212,7 @@ extern int add_security_called;
 extern int new_check_called;
 #endif
 
-class CHexEditApp : public CWinApp
-, public CBCGWorkspace              // For BCG
+class CHexEditApp : public CWinAppEx
 {
 public:
         CHexEditApp();
@@ -229,6 +228,8 @@ public:
 	virtual void WinHelp(DWORD dwData, UINT nCmd = HELP_CONTEXT);
 	virtual CDocument* OpenDocumentFile(LPCTSTR lpszFileName);
 	//}}AFX_VIRTUAL
+
+	UINT  m_nAppLook;
 
     virtual void PreLoadState();
 	virtual void OnAppContextHelp(CWnd* pWndControl, const DWORD dwHelpIDArray[]);

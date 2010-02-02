@@ -969,7 +969,7 @@ void CFindComboBox::SetSearchString()
 /////////////////////////////////////////////////////////////////////////////
 // CFindComboButton
 
-IMPLEMENT_SERIAL(CFindComboButton, CBCGToolbarComboBoxButton, 1)
+IMPLEMENT_SERIAL(CFindComboButton, CMFCToolBarComboBoxButton, 1)
 
 CComboBox *CFindComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
 {
@@ -1019,7 +1019,7 @@ BOOL CFindComboButton::NotifyCommand(int iNotifyCode)
 	if (iNotifyCode == CBN_EDITCHANGE)
 		return TRUE;
     else
-    	return CBCGToolbarComboBoxButton::NotifyCommand(iNotifyCode);
+    	return CMFCToolBarComboBoxButton::NotifyCommand(iNotifyCode);
 }
 
 //===========================================================================
@@ -1348,7 +1348,7 @@ void CHexComboBox::OnSelendok()
 /////////////////////////////////////////////////////////////////////////////
 // CHexComboButton
 
-IMPLEMENT_SERIAL(CHexComboButton, CBCGToolbarComboBoxButton, 1)
+IMPLEMENT_SERIAL(CHexComboButton, CMFCToolBarComboBoxButton, 1)
 
 CComboBox *CHexComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
 {
@@ -1401,7 +1401,7 @@ BOOL CHexComboButton::NotifyCommand(int iNotifyCode)
 	if (iNotifyCode == CBN_EDITCHANGE)
 		return TRUE;
     else
-    	return CBCGToolbarComboBoxButton::NotifyCommand(iNotifyCode);
+    	return CMFCToolBarComboBoxButton::NotifyCommand(iNotifyCode);
 }
 
 //===========================================================================
@@ -1673,7 +1673,7 @@ void CDecComboBox::OnSelendok()
 /////////////////////////////////////////////////////////////////////////////
 // CDecComboButton
 
-IMPLEMENT_SERIAL(CDecComboButton, CBCGToolbarComboBoxButton, 1)
+IMPLEMENT_SERIAL(CDecComboButton, CMFCToolBarComboBoxButton, 1)
 
 CComboBox *CDecComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
 {
@@ -1726,7 +1726,7 @@ BOOL CDecComboButton::NotifyCommand(int iNotifyCode)
 	if (iNotifyCode == CBN_EDITCHANGE)
 		return TRUE;
     else
-    	return CBCGToolbarComboBoxButton::NotifyCommand(iNotifyCode);
+    	return CMFCToolBarComboBoxButton::NotifyCommand(iNotifyCode);
 }
 
 //===========================================================================
@@ -1781,7 +1781,7 @@ void CSchemeComboBox::SetScheme()
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CSchemeComboButton, CBCGToolbarComboBoxButton, 1)
+IMPLEMENT_SERIAL(CSchemeComboButton, CMFCToolBarComboBoxButton, 1)
 
 CComboBox *CSchemeComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
 {
@@ -1850,7 +1850,7 @@ void CBookmarksComboBox::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruc
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CBookmarksComboButton, CBCGToolbarComboBoxButton, 1)
+IMPLEMENT_SERIAL(CBookmarksComboButton, CMFCToolBarComboBoxButton, 1)
 
 CComboBox *CBookmarksComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
 {
@@ -1902,10 +1902,10 @@ BOOL CStatBar::PreTranslateMessage(MSG* pMsg)
     }
 #endif
 
-    return CBCGStatusBar::PreTranslateMessage(pMsg);
+    return CMFCStatusBar::PreTranslateMessage(pMsg);
 }
 
-BEGIN_MESSAGE_MAP(CStatBar, CBCGStatusBar)
+BEGIN_MESSAGE_MAP(CStatBar, CMFCStatusBar)
         //{{AFX_MSG_MAP(CStatBar)
         ON_WM_LBUTTONDBLCLK()
         ON_WM_RBUTTONDOWN()
@@ -1963,7 +1963,7 @@ void CStatBar::SetToolTips()
 
 int CStatBar::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
-    if (CBCGStatusBar::OnCreate(lpCreateStruct) == -1)
+    if (CMFCStatusBar::OnCreate(lpCreateStruct) == -1)
         return -1;
 
     return 0;
@@ -1971,7 +1971,7 @@ int CStatBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CStatBar::OnSize(UINT nType, int cx, int cy) 
 {
-    CBCGStatusBar::OnSize(nType, cx, cy);
+    CMFCStatusBar::OnSize(nType, cx, cy);
 
 #if 0
     if (cx > 0 && cy > 0 && ttip_.m_hWnd == NULL)
@@ -2149,7 +2149,7 @@ void CStatBar::OnLButtonDblClk(UINT nFlags, CPoint point)
 //      return;
 //    }
 
-    CBCGStatusBar::OnLButtonDblClk(nFlags, point);
+    CMFCStatusBar::OnLButtonDblClk(nFlags, point);
 }
 
 void CStatBar::OnRButtonDown(UINT nFlags, CPoint point) 
@@ -2157,7 +2157,7 @@ void CStatBar::OnRButtonDown(UINT nFlags, CPoint point)
     CPoint scr_point(point);
     ClientToScreen(&scr_point);
     ((CMainFrame *)AfxGetMainWnd())->bar_context(scr_point);
-//    CBCGStatusBar::OnRButtonDown(nFlags, point);
+//    CMFCStatusBar::OnRButtonDown(nFlags, point);
 }
 
 void CStatBar::OnContextMenu(CWnd* pWnd, CPoint point) 

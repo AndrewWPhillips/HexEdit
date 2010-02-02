@@ -2,6 +2,7 @@
 
 class CHexEditView;
 class CHexEditDoc;
+class CMFCPopupMenu;
 
 class CNavManager
 {
@@ -15,7 +16,7 @@ public:
 	//bool BackAllowed() { return v_.size() > 0; }
 	bool ForwAllowed() { return pos_ < int(v_.size()) - 1; }
 
-	void AddItems(CBCGPopupMenu* pMenuPopup, bool forward, UINT first, int max_items);
+	void AddItems(CMFCPopupMenu* pMenuPopup, bool forward, UINT first, int max_items);
 	CHexEditView *LastView() { return pos_ >= 0 && size_t(pos_) < v_.size() ? v_[pos_].pview_ : NULL; }
 	bool InMove() { return in_move_; }
 	void Adjust(CHexEditDoc *pdoc, FILE_ADDRESS aa, FILE_ADDRESS diff);

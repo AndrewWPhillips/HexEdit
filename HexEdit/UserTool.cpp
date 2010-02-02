@@ -29,7 +29,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-IMPLEMENT_SERIAL(CHexEditUserTool, CBCGUserTool, 1)
+IMPLEMENT_SERIAL(CHexEditUserTool, CUserTool, 1)
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditUserTool

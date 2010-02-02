@@ -819,7 +819,7 @@ void CBookmarkDlg::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
     if (pItem->iRow < grid_.GetFixedRowCount())
         return;                         // Don't do anything for header rows
 
-	CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+	CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
     GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText(ss);
 }
 
@@ -831,7 +831,7 @@ void CBookmarkDlg::OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
     if (pItem->iRow < grid_.GetFixedRowCount())
         return;                         // Don't do anything for header rows
 
-	CString ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
+	CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
     GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText(ss);
 
     CCellRange sel = grid_.GetSelectedCellRange();
