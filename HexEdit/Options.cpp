@@ -2718,7 +2718,7 @@ void CPrintPage::OnHeaderOpts()
     if (header_args_.m_nMenuResult != 0)
     {
         CString ss;
-        ss.LoadString (header_args_.m_nMenuResult);
+        VERIFY(ss.LoadString(header_args_.m_nMenuResult));
 
         for (int i = 0; i < ss.GetLength (); i++)
         {
@@ -2733,7 +2733,7 @@ void CPrintPage::OnFooterOpts()
     if (footer_args_.m_nMenuResult != 0)
     {
         CString ss;
-        ss.LoadString (footer_args_.m_nMenuResult);
+        VERIFY(ss.LoadString(footer_args_.m_nMenuResult));
 
         for (int i = 0; i < ss.GetLength (); i++)
         {

@@ -572,7 +572,7 @@ bool CHexFileList::SetData(int index, param_num param, LPCTSTR vv)
 // This now handles an index of -1 to get the default setting
 CString CHexFileList::GetData(int index, param_num param) const
 {
-    ASSERT(index < name_.size());
+    ASSERT(index < int(name_.size()));
 
     CString retval;
     if (index > - 1)

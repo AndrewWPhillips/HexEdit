@@ -67,7 +67,7 @@ CTipDlg::CTipDlg(CWnd* pParent /*=NULL*/)
         if ((m_pStream = fopen(GetExePath() + tip_name, "r")) == NULL)
 // ------------------------------------------------------------------------------------
         {
-            m_strTip.LoadString(CG_IDS_FILE_ABSENT);
+            VERIFY(m_strTip.LoadString(CG_IDS_FILE_ABSENT));
             return;
         }
     } 
@@ -232,7 +232,7 @@ void CTipDlg::OnPaint()
 
     // Draw out "Did you know..." message next to the bitmap
     CString strMessage;
-    strMessage.LoadString(CG_IDS_DIDYOUKNOW);
+    VERIFY(strMessage.LoadString(CG_IDS_DIDYOUKNOW));
     rect.left += bmpInfo.bmWidth;
     dc.DrawText(strMessage, rect, DT_VCENTER | DT_SINGLELINE);
 

@@ -311,7 +311,7 @@ void CPropDecEditControl::add_commas()
     BOOL none_yet = TRUE;               // Have we seen any non-zero digits?
 
     for (pp = ss.GetBuffer(0), ndigits = 0; *pp != '\0'; ++pp)
-        if (isdigit(*pp))
+		if (::isdigit(*pp))
             ++ndigits;
 
     for (pp = ss.GetBuffer(0), ii = jj = 0; /*forever*/; ++pp, ++ii)
@@ -331,7 +331,7 @@ void CPropDecEditControl::add_commas()
         }
 
         // Ignore spaces (and anything else)
-        if (!isdigit(*pp))
+		if (!::isdigit(*pp))
             continue;                   // ignore all but digits
 
         if (++jj < ndigits && none_yet && *pp == '0')
@@ -1331,7 +1331,7 @@ void CPropCharPage::DoDataExchange(CDataExchange* pDX)
 }
 
 #ifdef SHOW_CODE_PAGE
-static const int MAX_BYTES = 8;                  // Max bytes to get from files for multibyte char processing (5 is probably enough)
+static const int MAX_BYTES = 16;                 // Max bytes to get from files for multibyte char processing (10 is probably enough)
 static vector<int> page_number;                  // The code page number for all installed code pages
 static vector<CString> page_name;                // Corresponding name of the code page
 static vector<int> page_max_chars;               // Length of longest character of the code page (in bytes).
@@ -2193,7 +2193,7 @@ void CPropDecPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
             pp = buf;
 
         // Note: %I64d does not seem to work with CString::Format() so use sprintf
-        char aa[22];                    // temp buf where we sprintf
+		char aa[22] = {'\0'};                    // temp buf where we sprintf
 
         switch (signed_)
         {
@@ -2642,6 +2642,9 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 			break;
 		default:
 			ASSERT(0);
+			value = 0.0;
+			exponent = 0;
+			break;
 		}
 
 		// Work out what to display

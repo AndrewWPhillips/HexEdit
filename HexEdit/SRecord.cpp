@@ -202,14 +202,14 @@ CReadSRecord::CReadSRecord(const char *filename, BOOL allow_discon /*= FALSE*/)
 // data is a pointer to where the bytes should be stored
 // max is the size of the buffer - no more than that many bytes are returned
 // address is the specified address from the import file
-size_t CReadSRecord::Get(void *data, size_t max, unsigned long &address)
+size_t CReadSRecord::Get(void *data, size_t max_len, unsigned long &address)
 {
     int stype;                          // Record type read, 0, 1, 5 etc
     size_t len;
 //    unsigned long address;
 
     // Get next S1, S2 or S3 record
-    while ((stype = get_rec(data, max, len, address)) != 1 && stype != 2 && stype != 3 &&
+    while ((stype = get_rec(data, max_len, len, address)) != 1 && stype != 2 && stype != 3 &&
             stype != 5 && stype != -1)
     {
         if (!error_.IsEmpty())

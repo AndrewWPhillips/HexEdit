@@ -243,7 +243,7 @@ void CHexEditApp::DeleteSecurityFiles()
 	strcpy(fullname, GetExePath());
 	end = fullname + strlen(fullname);
     strcpy(end, SEC_FILENAME); sub1(end);
-	remove(fullname);
+	(void)remove(fullname);
 
     size_t len;
 
@@ -256,7 +256,7 @@ void CHexEditApp::DeleteSecurityFiles()
     }
     strcpy(fullname + len, SEC_FILENAME2); sub1(fullname + len);
 	if (GetMysteryFile(fullname) == 1)
-		remove(fullname);
+		(void)remove(fullname);
 
 	// Check ver 3.2 myst file name(s)
     ::GetTempPath(sizeof(fullname), fullname);
@@ -266,7 +266,7 @@ void CHexEditApp::DeleteSecurityFiles()
 	ASSERT(fullname[len] == '?');
 	for (fullname[len] = 'X'; fullname[len] > '@'; fullname[len]--)
 		if (GetMysteryFile(fullname) == 1)  // 1 = found & valid
-			remove(fullname);
+			(void)remove(fullname);
 	memset(fullname, '\0', sizeof(fullname));
 }
 
@@ -1191,7 +1191,7 @@ void CHexEditApp::CleanUp()
     CString data_path;
 	::GetDataPath(data_path);
 	if (!data_path.IsEmpty())
-		remove(data_path + FILENAME_BACKGROUND);
+		(void)remove(data_path + FILENAME_BACKGROUND);
 
     ::DummyRegAccess(1);
 

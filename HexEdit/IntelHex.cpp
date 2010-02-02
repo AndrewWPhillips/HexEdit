@@ -170,14 +170,14 @@ CReadIntelHex::CReadIntelHex(const char *filename, BOOL allow_discon /*= FALSE*/
 }
 
 // Returns the length of the data read or zero on error or EOF
-size_t CReadIntelHex::Get(void *data, size_t max, unsigned long &address)
+size_t CReadIntelHex::Get(void *data, size_t max_len, unsigned long &address)
 {
     int stype;
     size_t len;
 //    unsigned long address;
 
     // Get next data (00) record
-    while ((stype = get_rec(data, max, len, address)) != 0 && stype != 1 && stype != -1)
+    while ((stype = get_rec(data, max_len, len, address)) != 0 && stype != 1 && stype != -1)
     {
         if (!error_.IsEmpty())
             return 0;
