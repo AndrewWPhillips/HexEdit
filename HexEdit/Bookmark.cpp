@@ -194,7 +194,7 @@ void CBookmarkList::Remove(int index)
         ((CHexEditDoc *)pdoc)->RemoveBookmark(index);
     }
 
-    // Flag as deleted in the list
+    // Flag as deleted in the lists
     ASSERT(index >= 0 && index < (int)file_.size());
 	name_[index].Empty();
 	file_[index].Empty();

@@ -46,6 +46,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+#ifdef max
+#undef max
+#undef min
+#endif
+
 extern CHexEditApp theApp;
 
 // I can't work out how to get constants into a header file
@@ -960,14 +965,17 @@ void CHexEditDoc::AddBookmark(int index, FILE_ADDRESS pos)
 void CHexEditDoc::RemoveBookmark(int index)
 {
     std::vector<int>::iterator pp = std::find(bm_index_.begin(), bm_index_.end(), index);
-	std::vector<int>::iterator ppc = pp;
     if (pp != bm_index_.end())
     {
-        bm_index_.erase(pp);
-        ASSERT(ppc-bm_index_.begin() < (int)bm_posn_.size());
-        FILE_ADDRESS address = bm_posn_[ppc-bm_index_.begin()];
-        bm_posn_.erase(bm_posn_.begin() + (ppc-bm_index_.begin()));
+		size_t idx = pp-bm_index_.begin();    // index into bm_index_ and bm_posn_ (vectors) of the bookmark to delete
+        FILE_ADDRESS address = bm_posn_[idx]; // keep file address of the bookmark so we can invalidate it
 
+		// Remove from the doc's bookmark vectors
+        ASSERT(bm_index_.size() == bm_posn_.size());
+        bm_index_.erase(bm_index_.begin() + idx);
+        bm_posn_.erase(bm_posn_.begin() + idx);
+
+		// Invalidate bookmark rect in all views of this doc (redraws without the bookmark colour background)
         CBookmarkHint bmh(address);
         UpdateAllViews(NULL, 0, &bmh);
     }
@@ -1509,7 +1517,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
     size_t buf_len;
     if (write_file)
     {
-        buf_len = (size_t)min(file_len, 16384); // Make sure we have a big enough buffer that disk writing is not slow
+		buf_len = (size_t)std::min((int)file_len, 16384); // Make sure we have a big enough buffer that disk writing is not slow
         int num_copies = buf_len/data_len;
         if (num_copies < 1) num_copies = 1;
         buf_len = data_len*num_copies;
@@ -1671,7 +1679,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
             memset(buf, *psrc, buf_len);
         else
             for (pout = buf; pout < buf + buf_len; pout += data_len)
-                memcpy(pout, psrc, min(data_len, buf_len - (pout - buf)));
+                memcpy(pout, psrc, std::min(data_len, buf_len - (pout - buf)));
     }
 
     // Tidy up temp buffers etc
@@ -1704,7 +1712,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
         FILE_ADDRESS towrite;
         for (num_out = 0; num_out < file_len; num_out += towrite)
         {
-            towrite = min(buf_len, file_len - num_out);
+            towrite = std::min((FILE_ADDRESS)buf_len, file_len - num_out);
             if (fill_bits.type == CNewFile::FILL_RANDOM)
                 fill_rand(buf, size_t(towrite), rand_rs);
             pfile->Write(buf, size_t(towrite));
@@ -2315,7 +2323,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 df_type_.push_back(DF_DEFINE_STRUCT);
 
                 FILE_ADDRESS size_tmp;              // Ignored since we stay at the same address after return
-                last_ac = max(last_ac, add_branch(elt, -1, ind+1, ee, size_tmp));
+                last_ac = std::max(last_ac, add_branch(elt, -1, ind+1, ee, size_tmp));
                 df_size_[ii] = size_tmp;            // Store size of struct
             }
             else
@@ -2352,7 +2360,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             {
                 // Add sub-elements of the STRUCT (only if present else we get inf. recursion)
                 FILE_ADDRESS size_tmp;
-                last_ac = max(last_ac, add_branch(def_elt, addr, ind+1, ee, size_tmp));
+                last_ac = std::max(last_ac, add_branch(def_elt, addr, ind+1, ee, size_tmp));
                 df_size_[ii] = size_tmp;            // size of struct is size of all contained elements
                 returned_size += size_tmp;          // keep track of size of elts for our parent
                 addr += size_tmp;                   // keep track of where we are now in the file
@@ -2381,7 +2389,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 
             // Add sub-elements of the STRUCT
             FILE_ADDRESS size_tmp;
-            last_ac = max(last_ac, add_branch(elt, addr, ind+1, ee, size_tmp));
+            last_ac = std::max(last_ac, add_branch(elt, addr, ind+1, ee, size_tmp));
             df_size_[ii] = size_tmp;            // size of struct is size of all contained elements
             returned_size += size_tmp;          // keep track of size of elts for our parent
 
@@ -2469,7 +2477,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 // Note: we do not display all elements for arrays with fixed size elements since
                 // they can often be huge and we know where the array ends since we know the number
                 // of elts and their size.  "display_elts" is the number of elts to show.
-                int display_elts = df_type_[ii] == DF_FORV ? num_elts : min(theApp.max_fix_for_elts_, num_elts);
+                int display_elts = df_type_[ii] == DF_FORV ? num_elts : std::min(theApp.max_fix_for_elts_, num_elts);
                 FILE_ADDRESS array_size;        // Total size of this array
 
                 array_size = elt_size;          // We have already added one elt (above)
@@ -2742,7 +2750,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 				if (is_valid || DffdEditMode())  // only show the taken case unless we are in edit mode
 				{
 					unsigned jj = df_address_.size();  // remember where we are up to
-					last_ac = max(last_ac, add_branch(case_elt, is_valid ? addr : -1, new_ind, ee, size_tmp));
+					last_ac = std::max(last_ac, add_branch(case_elt, is_valid ? addr : -1, new_ind, ee, size_tmp));
 					if (is_valid)
 					{
 						if (show_parent_row)
@@ -2827,7 +2835,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
             if (addr != -1 && expr_ok && if_val.boolean)
             {
                 // Now get the branch for true part
-                last_ac = max(last_ac, add_branch(elt, addr, new_ind, ee, size_tmp, 0));
+                last_ac = std::max(last_ac, add_branch(elt, addr, new_ind, ee, size_tmp, 0));
                 if (show_parent_row)
                     df_size_[ii] = size_tmp;   // update size for IF (if present)
 
@@ -2842,7 +2850,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                     ++curr_ii;                  // Don't grey parent node if ELSE part is valid
 
                 // Get the branch for if so that it can be displayed and edited
-                last_ac = max(last_ac, add_branch(elt, -1, new_ind, ee, size_tmp, 0));
+                last_ac = std::max(last_ac, add_branch(elt, -1, new_ind, ee, size_tmp, 0));
 
                 for (unsigned jj = curr_ii; jj < df_address_.size(); ++jj)
                 {
@@ -2857,7 +2865,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 				ASSERT(elt.GetNumChildren() == 3);
 
                 // Now get the branch for false part
-                last_ac = max(last_ac, add_branch(elt, addr, new_ind, ee, size_tmp, 2));
+                last_ac = std::max(last_ac, add_branch(elt, addr, new_ind, ee, size_tmp, 2));
                 if (show_parent_row)
                     df_size_[ii] = size_tmp;   // update size for containing IF (if present)
 
@@ -2869,7 +2877,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 unsigned curr_ii = df_address_.size();  // remember where we were up to
 
                 // Get the branch for IF so that it can be displayed and edited
-                last_ac = max(last_ac, add_branch(elt, -1, new_ind, ee, size_tmp, 2));
+                last_ac = std::max(last_ac, add_branch(elt, -1, new_ind, ee, size_tmp, 2));
 
                 // Mark all these sub-elements as not present (greyed)
                 for (unsigned jj = curr_ii; jj < df_address_.size(); ++jj)
@@ -2952,7 +2960,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
                 ++in_jump_;                     // Turn off progress in JUMP since it's based on file address
                 // Add sub-element
                 FILE_ADDRESS size_tmp;          // Ignored since we stay at the same address after return
-                last_ac = max(last_ac, add_branch(elt, jump_addr, new_ind, ee, size_tmp));
+                last_ac = std::max(last_ac, add_branch(elt, jump_addr, new_ind, ee, size_tmp));
                 in_jump_--;
 
                 if (show_parent_row)
@@ -4045,7 +4053,34 @@ CHexExpr::value_t CHexExpr::find_symbol(const char *sym, value_t parent, size_t 
     sym_address = -1;
     sym_str.Empty();
 
-    if (parent.typ == TYPE_NONE && _stricmp(sym, "this") == 0)
+	if (_stricmp(sym, "cursor") == 0)
+	{
+		FILE_ADDRESS start, end;
+		CHexEditView *pview = pdoc->GetBestView();
+		assert(pview != NULL);
+		if (pview != NULL)
+		{
+			pview->GetSelAddr(start, end);
+			retval.typ = TYPE_INT;
+			retval.int64 = start;
+		}
+	}
+	else if (_stricmp(sym, "mark") == 0)
+	{
+		CHexEditView *pview = pdoc->GetBestView();
+		assert(pview != NULL);
+		if (pview != NULL)
+		{
+			retval.typ = TYPE_INT;
+			retval.int64 = pview->GetMark();
+		}
+	}
+	else if (_stricmp(sym, "eof") == 0)
+	{
+		retval.typ = TYPE_INT;
+		retval.int64 = pdoc->length();
+	}
+    else if (parent.typ == TYPE_NONE && _stricmp(sym, "this") == 0)
     {
         // Just return the element (parent)
         if (parent.int64 > *pac) *pac = int(parent.int64);
