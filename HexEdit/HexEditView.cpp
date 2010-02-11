@@ -1080,7 +1080,7 @@ void CHexEditView::StoreOptions()
 
 		if (pdfv_ == NULL)
 		{
-			pfl->SetData(ii, CHexFileList::DFFDVIEW, "");
+			pfl->SetData(ii, CHexFileList::DFFDVIEW, "0");
 			pfl->SetData(ii, CHexFileList::DFFDWIDTHS, "");
 		}
 		else
@@ -1099,7 +1099,7 @@ void CHexEditView::StoreOptions()
 		}
 		if (pav_ == NULL)
 		{
-			pfl->SetData(ii, CHexFileList::AERIALVIEW, "");
+			pfl->SetData(ii, CHexFileList::AERIALVIEW, "0");
 		}
 		else
 		{
