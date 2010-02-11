@@ -1130,6 +1130,18 @@
 			Name="Text Files"
 			Filter="txt">
 			<File
+				RelativePath=".\TestData\_common_types.xml">
+			</File>
+			<File
+				RelativePath=".\TestData\_standard_types.xml">
+			</File>
+			<File
+				RelativePath=".\TestData\_windows_constants.txt">
+			</File>
+			<File
+				RelativePath=".\TestData\_windows_types.xml">
+			</File>
+			<File
 				RelativePath=".\TestData\_xxx.xml">
 			</File>
 			<File
@@ -1166,10 +1178,10 @@
 				RelativePath=".\Install\Order.Txt">
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt">
+				RelativePath=".\Install\ReadMe.txt">
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt">
+				RelativePath=".\ReadMe.txt">
 			</File>
 			<File
 				RelativePath=".\TestData\ReadMeTemplate.txt">

@@ -50,6 +50,8 @@
 
 //#include <secall.h>
 
+#include <algorithm>  // For min and max templates
+
 // C header files
 #include <math.h>
 #include <float.h>

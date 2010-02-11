@@ -2443,7 +2443,7 @@ BOOL CGridCtrl::PasteTextToGrid(CCellID cell, COleDataObject* pDataObject)
     // Now store in generic TCHAR form so we no longer have to deal with
     // ANSI/UNICODE problems
     CString strText = szBuffer;
-    delete szBuffer;
+    delete[] szBuffer;
 
     // Parse text data and set in cells...
     strText.LockBuffer();
@@ -5188,8 +5188,7 @@ void CGridCtrl::ExpandColumnsToFit(BOOL bExpandFixed /*=TRUE*/)
     int nFirstColumn = (bExpandFixed)? 0 : GetFixedColumnCount();
 
     int nNumColumnsAffected = 0;
-	int col;
-    for (col = nFirstColumn; col < GetColumnCount(); col++)
+    for (int col = nFirstColumn; col < GetColumnCount(); col++)
     {
         if (m_arColWidths[col] > 0)
             nNumColumnsAffected++;
@@ -5202,7 +5201,7 @@ void CGridCtrl::ExpandColumnsToFit(BOOL bExpandFixed /*=TRUE*/)
     int nDifference = rect.Width() -(int) virtualWidth;
     int nColumnAdjustment = nDifference / nNumColumnsAffected;
 
-    for (col = nFirstColumn; col < GetColumnCount(); col++)
+    for (int col = nFirstColumn; col < GetColumnCount(); col++)
     {
         if (m_arColWidths[col] > 0)
             m_arColWidths[col] += nColumnAdjustment;    

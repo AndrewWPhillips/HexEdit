@@ -40,6 +40,10 @@ extern BOOL AFXAPI AfxComparePath(LPCTSTR lpszPath1, LPCTSTR lpszPath2);
 #define  SFGAO_STREAM     0x00400000L
 #endif
 
+#ifndef SHGFI_ATTR_SPECIFIED
+#define SHGFI_ATTR_SPECIFIED    0x000020000     // get only specified attributes
+#endif
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -381,7 +385,6 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 
 	case COLOPENED:
 		{
-			CString retval;
 			if (pfl != NULL && fl_idx_ > -1)
 				OnFormatFileDate (CTime(pfl->GetOpened(fl_idx_)), retval);
 			return retval;

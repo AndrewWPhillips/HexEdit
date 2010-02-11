@@ -1254,7 +1254,11 @@ CString FileErrorMessage(const CFileException *fe, UINT mode /*=CFile::modeRead|
                 ASSERT(0);                                                      // There should be an error for this function to be called
                 retval += "Apparently there was no error!";
                 break;
+#if _MSC_VER < 1500
         case CFileException::generic:
+#else
+        case CFileException::genericException:
+#endif
                 retval += "The error is not specified.";
                 break;
         case CFileException::fileNotFound:
