@@ -1410,7 +1410,7 @@ BOOL CHexComboButton::NotifyCommand(int iNotifyCode)
 
 IMPLEMENT_DYNAMIC(CDecEditControl, CEdit)
 
-CDecEditControl::CDecEditControl()
+CDecEditControl::CDecEditControl(CMFCToolBarComboBoxButton& combo) : CMFCToolBarComboBoxEdit(combo)
 {
     sep_char_ = theApp.dec_sep_char_;
     group_ = theApp.dec_group_;
@@ -1677,45 +1677,51 @@ IMPLEMENT_SERIAL(CDecComboButton, CMFCToolBarComboBoxButton, 1)
 
 CComboBox *CDecComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
 {
-    CDecComboBox *pcombo = new CDecComboBox;
+	return CMFCToolBarComboBoxButton::CreateCombo(pWndParent, rect);
 
-    if (!pcombo->Create(m_dwStyle, rect, pWndParent, m_nID))
-    {
-        delete pcombo;
-        return NULL;
-    }
-
-    CWnd *pwnd;            // Ptr to edit control of combo box
-
-//    if ((pwnd = pcombo->ChildWindowFromPoint(CPoint(25,5))) != NULL &&
-//        pwnd != pcombo)
-
-    // This code assumes that the combo box edit control is the first child
-    // window.  I don't know if this is valid but using ChildWindowFromPoint
-    // was very error prone, although it seemed safer.
-    if ((pwnd = pcombo->GetWindow(GW_CHILD)) != NULL)
-    {
-        pedit_ = new CDecEditControl;
-
-        if (!pedit_->SubclassWindow(pwnd->m_hWnd))
-        {
-            TRACE0("Failed to subclass edit control in dec combo\n");
-            delete pedit_;
-            pedit_ = NULL;
-        }
-#if 0
-        pedit_->SetLimitText(25);
-#endif
-    }
-    else
-    {
-        TRACE1("Failed to find dec control for %x\n", pcombo->m_hWnd);
-    }
-
-    pcombo->AddString("");  // This stops BCG restoring combo since we do it ourselves in OnUpdate
-    SetDropDownHeight(400);
-
-    return pcombo;
+//	xxx edit ctrl (next child of toolbar) not created yet - perhaps we need to override CMFCToolBarComboBoxButton::OnChangeParentWnd ???
+//    CDecComboBox *pcombo = new CDecComboBox;
+//
+//    if (!pcombo->Create(m_dwStyle, rect, pWndParent, m_nID))
+//    {
+//        delete pcombo;
+//        return NULL;
+//    }
+//
+//    CWnd *pwnd;            // Ptr to edit control of combo box
+//
+////    if ((pwnd = pcombo->ChildWindowFromPoint(CPoint(25,5))) != NULL &&
+////        pwnd != pcombo)
+//
+//    // This code assumes that the combo box edit control is the first child
+//    // window.  I don't know if this is valid but using ChildWindowFromPoint
+//    // was very error prone, although it seemed safer.
+//    //if ((pwnd = pcombo->GetWindow(GW_CHILD)) != NULL)
+//
+//	// New in MFC9 the visible text control is the "next" child of the toolbar not a child of the combo
+//    if ((pwnd = pcombo->GetWindow(GW_HWNDNEXT)) != NULL)
+//	{
+//        pedit_ = new CDecEditControl(*this);
+//
+//        if (!pedit_->SubclassWindow(pwnd->m_hWnd))
+//        {
+//            TRACE0("Failed to subclass edit control in dec combo\n");
+//            delete pedit_;
+//            pedit_ = NULL;
+//        }
+//#if 0
+//        pedit_->SetLimitText(25);
+//#endif
+//    }
+//    else
+//    {
+//        TRACE1("Failed to find dec control for %x\n", pcombo->m_hWnd);
+//    }
+//
+//    pcombo->AddString("");  // This stops BCG restoring combo since we do it ourselves in OnUpdate
+//    SetDropDownHeight(400);
+//
+//    return pcombo;
 }
 
 BOOL CDecComboButton::NotifyCommand(int iNotifyCode)

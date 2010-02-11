@@ -264,7 +264,7 @@ CMainFrame::CMainFrame()
 		m_background.LoadImage(GetExePath() + FILENAME_BACKGROUND);
 #endif
 	m_background_pos = theApp.GetProfileInt("MainFrame", "BackgroundPosition", 4); // dv = bottom-right
-	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2005);
+	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 
 	m_search_image.LoadBitmap(IDB_SEARCH);
 	OccurrencesWidth = ValuesWidth = AddrHexWidth = AddrDecWidth = FileLengthWidth = -999;
@@ -313,7 +313,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		mdiTabParams.m_bDocumentMenu = TRUE; // enable the document menu at the right edge of the tab area
 		EnableMDITabbedGroups(TRUE, mdiTabParams);
 
-        //EnableDocking(CBRS_ALIGN_ANY);
+        EnableDocking(CBRS_ALIGN_ANY);
 
         // Create BCG menu bar
         if (!m_wndMenuBar.Create(this))
@@ -322,12 +322,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
                 return -1;      // fail to create
         }
         m_wndMenuBar.SetPaneStyle(m_wndMenuBar.GetPaneStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_FLYBY);
-        //m_wndMenuBar.SetBarStyle(m_wndMenuBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
         m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY);
-        // DockControlBar(&m_wndMenuBar); // xxx fix for MFC9
+		DockPane(&m_wndMenuBar);
 
-        // Create Tool bar
-        if (!m_wndBar1.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_STDBAR) || 
+        // Create main Tool bar
+		//if (!m_wndBar1.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_STDBAR) || 
+		if (!m_wndBar1.CreateEx(this,
+			                    TBSTYLE_FLAT,
+			                    WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
+			                    CRect(1, 1, 1, 1),
+			                    IDR_STDBAR ) ||
 #if SHADED_TOOLBARS
             !m_wndBar1.LoadToolBar(IDR_STDBAR, IDB_STDBAR_C, 0, FALSE, IDB_STDBAR_D, 0, IDB_STDBAR_H))
 #else
@@ -337,15 +341,20 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             TRACE0("Failed to create Standard Toolbar\n");
             return -1;      // fail to create
         }
-		m_wndBar1.SetPaneStyle(m_wndBar1.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-        //m_wndBar1.SetBarStyle(m_wndBar1.GetBarStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
         m_wndBar1.SetWindowText("Standard Toolbar");
+		//m_wndBar1.SetPaneStyle(m_wndBar1.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndBar1.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
         m_wndBar1.EnableDocking(CBRS_ALIGN_ANY);
-//        m_wndBar1.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
-//        m_wndBar1.EnableTextLabels();
+		//m_wndBar1.EnableTextLabels();
+		DockPane(&m_wndBar1);
 
         // Create "edit" bar
-        if (!m_wndBar2.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EDITBAR) ||
+        //if (!m_wndBar2.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EDITBAR) ||
+		if (!m_wndBar2.CreateEx(this,
+			                    TBSTYLE_FLAT,
+			                    WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
+			                    CRect(1, 1, 1, 1),
+			                    IDR_EDITBAR ) ||
 #if SHADED_TOOLBARS
             !m_wndBar2.LoadToolBar(IDR_EDITBAR, IDB_EDITBAR_C, 0, FALSE, IDB_EDITBAR_D, 0, IDB_EDITBAR_H))
 #else
@@ -355,13 +364,19 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             TRACE0("Failed to create Edit Bar\n");
             return -1;      // fail to create
         }
-		m_wndBar2.SetPaneStyle(m_wndBar2.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-        //m_wndBar2.SetBarStyle(m_wndBar2.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
         m_wndBar2.SetWindowText("Edit Bar");
+		//m_wndBar2.SetPaneStyle(m_wndBar2.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndBar2.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
         m_wndBar2.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_wndBar2);
 
         // Create Format bar
-        if (!m_wndBar3.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_FORMATBAR) ||
+        //if (!m_wndBar3.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_FORMATBAR) ||
+		if (!m_wndBar3.CreateEx(this,
+			                    TBSTYLE_FLAT,
+			                    WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
+			                    CRect(1, 1, 1, 1),
+			                    IDR_FORMATBAR ) ||
 #if SHADED_TOOLBARS
             !m_wndBar3.LoadToolBar(IDR_FORMATBAR, IDB_FMTBAR_C, 0, FALSE, IDB_FMTBAR_D, 0, IDB_FMTBAR_H))
 #else
@@ -371,14 +386,20 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             TRACE0("Failed to create Format Bar\n");
             return -1;      // fail to create
         }
-		m_wndBar3.SetPaneStyle(m_wndBar3.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-        //m_wndBar3.SetBarStyle(m_wndBar3.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
         m_wndBar3.SetWindowText("Format Bar");
+		//m_wndBar3.SetPaneStyle(m_wndBar3.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndBar3.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
         m_wndBar3.EnableDocking(CBRS_ALIGN_ANY);
-        m_wndBar3.ShowWindow(SW_HIDE);
+		DockPane(&m_wndBar3);
+		m_wndBar3.ShowPane(FALSE, FALSE, FALSE);
 
         // Create Navigation bar
-        if (!m_wndBar4.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_NAVBAR) ||
+        //if (!m_wndBar4.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_NAVBAR) ||
+		if (!m_wndBar4.CreateEx(this,
+			                    TBSTYLE_FLAT,
+			                    WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
+			                    CRect(1, 1, 1, 1),
+			                    IDR_NAVBAR ) ||
 #if SHADED_TOOLBARS
             !m_wndBar4.LoadToolBar(IDR_NAVBAR, IDB_NAVBAR_C, 0, FALSE, IDB_NAVBAR_D, 0, IDB_NAVBAR_H))
 #else
@@ -388,11 +409,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             TRACE0("Failed to create Nav Bar\n");
             return -1;      // fail to create
         }
-		m_wndBar4.SetPaneStyle(m_wndBar4.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-        //m_wndBar4.SetBarStyle(m_wndBar4.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
         m_wndBar4.SetWindowText("Navigation Bar");
+		//m_wndBar4.SetPaneStyle(m_wndBar4.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndBar4.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
         m_wndBar4.EnableDocking(CBRS_ALIGN_ANY);
-        m_wndBar4.ShowWindow(SW_HIDE);
+		DockPane(&m_wndBar4);
+		m_wndBar4.ShowPane(FALSE, FALSE, FALSE);
 
         if (!m_wndCalc.Create(this) ||
 			!m_wndBookmarks.Create(this) ||
@@ -658,7 +680,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 
 BOOL CMainFrame::PreTranslateMessage(MSG* pMsg) 
 {
-    CWnd *pwnd = CWnd::FromHandlePermanent(pMsg->hwnd);  // xxx use FromHandle?
+    CWnd *pwnd = CWnd::FromHandlePermanent(pMsg->hwnd);
 
     if (pwnd != NULL && 
         (pwnd->IsKindOf(RUNTIME_CLASS(CSearchEditControl)) ||
@@ -937,8 +959,8 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 	// Create background brush using top left pixel of bitmap
 	{
 #ifdef USE_FREE_IMAGE
-		RGBQUAD px = { 192, 192, 192, 0};  // default to grey in case GetPixelColor fails
-        VERIFY(FreeImage_GetPixelColor(m_dib, 0, 0, &px));  // get colour from (0,0) pixel
+        RGBQUAD px;
+        FreeImage_GetPixelColor(m_dib, 0, 0, &px);  // get colour from (0,0) pixel
 		backBrush.CreateSolidBrush(RGB(px.rgbRed, px.rgbGreen, px.rgbBlue));
 #else
 		CDC dcTmp;
@@ -1325,8 +1347,8 @@ void CMainFrame::OnUpdateViewViewbar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewViewbar() 
 {
-	// xxx fix for MFC9
-    // ShowControlBar(&m_wndBar1, (m_wndBar1.GetStyle() & WS_VISIBLE) == 0, FALSE);
+	m_wndBar1.ShowPane((m_wndBar1.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
+    //ShowControlBar(&m_wndBar1, (m_wndBar1.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 1);
 }
 
@@ -1337,6 +1359,7 @@ void CMainFrame::OnUpdateViewEditbar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewEditbar() 
 {
+	m_wndBar2.ShowPane((m_wndBar2.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
     //ShowControlBar(&m_wndBar2, (m_wndBar2.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 2);
 }
@@ -1348,6 +1371,7 @@ void CMainFrame::OnUpdateViewFormatbar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewFormatbar() 
 {
+	m_wndBar3.ShowPane((m_wndBar3.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
     //ShowControlBar(&m_wndBar3, (m_wndBar3.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 4);
 }
@@ -1359,6 +1383,7 @@ void CMainFrame::OnUpdateViewNavbar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewNavbar() 
 {
+	m_wndBar4.ShowPane((m_wndBar4.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
     //ShowControlBar(&m_wndBar4, (m_wndBar4.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 5);
 }
@@ -4800,7 +4825,7 @@ void CMainFrame::OnUpdateHexCombo(CCmdUI* pCmdUI)
                 vv.typ == CJumpExpr::TYPE_INT && vv.int64 != current_address_)
             {
                 CHexEditControl *pedit = (CHexEditControl *)pp->GetWindow(GW_CHILD);
-
+if (pedit == NULL) return; //xxx debug
                 ASSERT_KINDOF(CHexEditControl, pedit);
 
                 if (pedit->IsKindOf(RUNTIME_CLASS(CHexEditControl)))
@@ -4823,69 +4848,86 @@ void CMainFrame::OnUpdateHexCombo(CCmdUI* pCmdUI)
 void CMainFrame::OnUpdateDecCombo(CCmdUI* pCmdUI)
 {
     if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == ID_JUMP_DEC_COMBO)
-    {
-        CDecComboBox *pp = static_cast<CDecComboBox *>(pCmdUI->m_pOther);
-        ASSERT(::IsWindow(pp->GetSafeHwnd()));
-
+	{
         if (GetView() != NULL)
         {
-            CString strCurr;
-            pp->GetWindowText(strCurr);
+			char buf[10];
+			::GetClassName(pCmdUI->m_pOther->m_hWnd, buf, sizeof(buf));
 
-            pp->EnableWindow(TRUE);
+			pCmdUI->m_pOther->EnableWindow(TRUE);
+			CString strCurr;
+			pCmdUI->m_pOther->GetWindowText(strCurr);
 
-            // Fix up the drop down list
-            if (!pp->GetDroppedState() && ComboNeedsUpdate(dec_hist_, pp))
+            CDecEditControl *pedit = NULL;
+
+			// In MFC9 the control can be the edit control and not the combo
+			if (::strcmp(buf, "Edit") == 0)
+			{
+                //pedit = static_cast<CDecEditControl *>(pCmdUI->m_pOther);
+				pedit = dynamic_cast<CDecEditControl *>(CWnd::FromHandlePermanent(pCmdUI->m_pOther->m_hWnd));
+			}
+			else
+			{
+				CDecComboBox *pcombo = dynamic_cast<CDecComboBox *>(CWnd::FromHandlePermanent(pCmdUI->m_pOther->m_hWnd));
+
+				if (pcombo != NULL)
+				{
+					// Fix up the drop down list
+					if (!pcombo->GetDroppedState() && ComboNeedsUpdate(dec_hist_, pcombo))
+					{
+						DWORD sel = pcombo->GetEditSel();
+						int max_str = 0;                // Max width of all the strings added so far
+
+						CClientDC dc(pcombo);
+						int nSave = dc.SaveDC();
+						dc.SelectObject(pcombo->GetFont());
+
+						pcombo->ResetContent();
+						for (std::vector<CString>::iterator ps = dec_hist_.begin();
+							 ps != dec_hist_.end(); ++ps)
+						{
+							max_str = __max(max_str, dc.GetTextExtent(*ps).cx);
+
+							// Add the string to the list
+							pcombo->InsertString(0, *ps);
+						}
+						pcombo->SetWindowText(strCurr);
+						pcombo->SetEditSel(LOWORD(sel), HIWORD(sel));
+
+						// Add space for margin and possible scrollbar
+						max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
+						pcombo->SetDroppedWidth(__min(max_str, 400));
+
+						dc.RestoreDC(nSave);
+					}
+
+					pedit = dynamic_cast<CDecEditControl *>(CWnd::FromHandlePermanent(pcombo->GetWindow(GW_CHILD)->m_hWnd));
+					pcombo = NULL;
+				}
+			}
+
+            if (pedit != NULL)
             {
-                DWORD sel = pp->GetEditSel();
-                int max_str = 0;                // Max width of all the strings added so far
-//                CDC *pDC = pp->GetDC();         // Drawing context of the combo box
-                CClientDC dc(pp);
-                int nSave = dc.SaveDC();
-                dc.SelectObject(pp->GetFont());
+				int ac;
+				CJumpExpr::value_t vv(-1);
+				if (!strCurr.IsEmpty())
+					vv = expr_.evaluate(strCurr, 0 /*unused*/, ac /*unused*/, 10 /*dec int*/);
 
-                pp->ResetContent();
-                for (std::vector<CString>::iterator ps = dec_hist_.begin();
-                     ps != dec_hist_.end(); ++ps)
-                {
-                    max_str = __max(max_str, dc.GetTextExtent(*ps).cx);
+				if (strCurr != current_dec_address_ &&
+					vv.typ == CJumpExpr::TYPE_INT && vv.int64 != current_address_)
+				{
+					char buf[22];
+					sprintf(buf, "%I64d", __int64(current_address_));
+					pedit->SetWindowText(buf);
+					pedit->add_commas();
+				}
 
-                    // Add the string to the list
-                    pp->InsertString(0, *ps);
-                }
-                pp->SetWindowText(strCurr);
-                pp->SetEditSel(LOWORD(sel), HIWORD(sel));
-
-                // Add space for margin and possible scrollbar
-                max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
-                pp->SetDroppedWidth(__min(max_str, 400));
-
-                dc.RestoreDC(nSave);
+				pedit = NULL;
             }
-            int ac;
-            CJumpExpr::value_t vv(-1);
-            if (!strCurr.IsEmpty())
-                vv = expr_.evaluate(strCurr, 0 /*unused*/, ac /*unused*/, 10 /*dec int*/);
-
-            if (strCurr != current_dec_address_ &&
-                vv.typ == CJumpExpr::TYPE_INT && vv.int64 != current_address_)
-            {
-                CDecEditControl *pedit = (CDecEditControl *)pp->GetWindow(GW_CHILD);
-
-                ASSERT_KINDOF(CDecEditControl, pedit);
-
-                if (pedit->IsKindOf(RUNTIME_CLASS(CDecEditControl)))
-                {
-                    char buf[22];
-                    sprintf(buf, "%I64d", __int64(current_address_));
-                    pedit->SetWindowText(buf);
-                    pedit->add_commas();
-                }
-            }
-        }
-        else
-            pp->EnableWindow(FALSE);
-    }
+		}
+		else
+			pCmdUI->m_pOther->EnableWindow(FALSE);  // no active window so don't let the user use the control
+	}
 }
 
 void CMainFrame::OnUpdateSchemeCombo(CCmdUI* pCmdUI)
@@ -4899,11 +4941,13 @@ void CMainFrame::OnUpdateSchemeCombo(CCmdUI* pCmdUI)
 
     if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == (theApp.is_us_ ? ID_SCHEME_COMBO_US : ID_SCHEME_COMBO))
     {
-        CSchemeComboBox *pp = static_cast<CSchemeComboBox *>(pCmdUI->m_pOther);
-        ASSERT(::IsWindow(pp->GetSafeHwnd()));
+        CSchemeComboBox *pbox = dynamic_cast<CSchemeComboBox *>(CWnd::FromHandle(pCmdUI->m_pOther->m_hWnd));
+		CMFCToolBar *ptb = dynamic_cast<CMFCToolBar *>(CWnd::FromHandle(pbox->GetParent()->m_hWnd));
+		int idx = ptb->CommandToIndex(::IsUs() ? ID_SCHEME_COMBO_US : ID_SCHEME_COMBO);
+		CSchemeComboButton *pbut = dynamic_cast<CSchemeComboButton *>(ptb->GetButton(idx));
+		ASSERT(pview != NULL && pbox != NULL && ptb != NULL && pbut != NULL);
 
-        ASSERT(pview != NULL);
-        pp->EnableWindow(TRUE);
+        pbox->EnableWindow(TRUE);
 
         // Work out current scheme of active view and get vector of scheme names
         std::vector<CString> scheme_names;
@@ -4918,30 +4962,35 @@ void CMainFrame::OnUpdateSchemeCombo(CCmdUI* pCmdUI)
         }
 
         // Fix up the drop down list
-        if (!pp->GetDroppedState() && ComboNeedsUpdate(scheme_names, pp))
+        if (!pbox->GetDroppedState() && ComboNeedsUpdate(scheme_names, pbox))
         {
             int max_str = 0;                // Max width of all the strings added so far
-            CClientDC dc(pp);
+            CClientDC dc(pbox);
             int nSave = dc.SaveDC();
-            dc.SelectObject(pp->GetFont());
+            dc.SelectObject(pbox->GetFont());
 
-            pp->ResetContent();
+            pbox->ResetContent(); pbut->RemoveAllItems();
             for (std::vector<CString>::reverse_iterator ps = scheme_names.rbegin();
                  ps != scheme_names.rend(); ++ps)
             {
                 max_str = __max(max_str, dc.GetTextExtent(*ps).cx);
 
                 // Add the string to the list
-                pp->AddString(*ps);
+                pbox->AddString(*ps); pbut->AddItem(*ps);
             }
             // Add space for margin and possible scrollbar
             max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
-            pp->SetDroppedWidth(__min(max_str, 640));
+            pbox->SetDroppedWidth(__min(max_str, 640));
 
             dc.RestoreDC(nSave);
         }
-        if (!pp->GetDroppedState() && pp->GetCurSel() != current_scheme)
-            pp->SetCurSel(current_scheme);
+
+        if (!pbox->GetDroppedState() && pbut->GetCurSel() != current_scheme)
+		{
+            pbox->SetCurSel(current_scheme);  // not really necessary as it's hidden
+			pbut->SelectItem(current_scheme);
+			ptb->InvalidateButton(idx);
+		}
     }
     pCmdUI->Enable(TRUE);
 }

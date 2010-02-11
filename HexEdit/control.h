@@ -207,13 +207,13 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // CDecEditControl window
 
-class CDecEditControl : public CEdit
+class CDecEditControl : public CMFCToolBarComboBoxEdit
 {
     DECLARE_DYNAMIC(CDecEditControl)
 
 // Construction
 public:
-    CDecEditControl();
+    CDecEditControl(CMFCToolBarComboBoxButton& combo);
 
 // Attributes
 public:
