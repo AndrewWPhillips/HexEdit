@@ -32,6 +32,7 @@
 #define HIDC_BACKUP_PROMPT              0x81390415    // IDD_OPT_WORKSPACE [English (U.S.)]
 #define HIDC_BACKUP_SIZE                0x813904c4    // IDD_OPT_WORKSPACE [English (U.S.)]
 #define HIDC_BACKUP_SPACE               0x81390414    // IDD_OPT_WORKSPACE [English (U.S.)]
+#define HIDC_BASE_STORAGE_UNIT          0x813005af    // IDD_TPARSE
 #define HIDC_BG_SEARCH                  0x81390419    // IDD_OPT_WORKSPACE [English (U.S.)]
 #define HIDC_BIG_ENDIAN                 0x80a30469    // IDD_PROP_DECIMAL [English (U.S.)]
 #define HIDC_BIG_ENDIAN_FILE_ACCESS     0x8075048c    // IDD_CALC

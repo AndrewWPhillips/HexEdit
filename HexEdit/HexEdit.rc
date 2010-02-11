@@ -4933,51 +4933,55 @@ BEGIN
                     HIDC_EXPLORER
 END
 
-IDD_TPARSE DIALOGEX 0, 0, 397, 290
+IDD_TPARSE DIALOGEX 0, 0, 397, 313
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Parse Types from Source Code"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_SOURCE_CODE,7,7,275,276,ES_MULTILINE | 
+    EDITTEXT        IDC_SOURCE_CODE,7,7,275,299,ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL | 
                     WS_GROUP,0,HIDC_SOURCE_CODE
     DEFPUSHBUTTON   "OK",IDOK,315,7,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,315,26,50,14
     GROUPBOX        "Default alignment (packing)",IDC_PACK_GROUP,291,46,99,
-                    76,WS_GROUP
+                    74,WS_GROUP
     CONTROL         "1 byte",IDC_PACK1,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,300,59,35,10,0,HIDC_PACK1
-    CONTROL         "2 bytes",IDC_PACK2,"Button",BS_AUTORADIOBUTTON,300,72,
+                    WS_GROUP | WS_TABSTOP,300,58,35,10,0,HIDC_PACK1
+    CONTROL         "2 bytes",IDC_PACK2,"Button",BS_AUTORADIOBUTTON,300,70,
                     39,10,0,HIDC_PACK2
-    CONTROL         "4 bytes",IDC_PACK4,"Button",BS_AUTORADIOBUTTON,300,83,
+    CONTROL         "4 bytes",IDC_PACK4,"Button",BS_AUTORADIOBUTTON,300,82,
                     39,10,0,HIDC_PACK4
-    CONTROL         "8 bytes",IDC_PACK8,"Button",BS_AUTORADIOBUTTON,300,96,
+    CONTROL         "8 bytes",IDC_PACK8,"Button",BS_AUTORADIOBUTTON,300,94,
                     39,10,0,HIDC_PACK8
     CONTROL         "16 bytes",IDC_PACK16,"Button",BS_AUTORADIOBUTTON,300,
-                    107,43,10,0,HIDC_PACK16
-    GROUPBOX        "Predefined values",IDC_VALUES_GROUP,291,129,99,53,
+                    106,43,10,0,HIDC_PACK16
+    CONTROL         "Use bit-field base type as storage unit size (common extension to standard C)",
+                    IDC_BASE_STORAGE_UNIT,"Button",BS_AUTOCHECKBOX | 
+                    BS_MULTILINE | WS_TABSTOP,290,123,104,30,0,
+                    HIDC_BASE_STORAGE_UNIT
+    GROUPBOX        "Predefined values",IDC_VALUES_GROUP,291,154,99,53,
                     WS_GROUP
     CONTROL         "Windows",IDC_VALUES_WINDOWS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,299,142,45,10,0,HIDC_VALUES_WINDOWS
+                    WS_TABSTOP,299,167,45,10,0,HIDC_VALUES_WINDOWS
     CONTROL         "Custom",IDC_VALUES_CUSTOM,"Button",BS_AUTOCHECKBOX,299,
-                    153,39,10,0,HIDC_VALUES_CUSTOM
+                    178,39,10,0,HIDC_VALUES_CUSTOM
     CONTROL         "Save new values",IDC_VALUES_SAVE,"Button",
-                    BS_AUTOCHECKBOX,315,166,71,10,0,HIDC_VALUES_SAVE
-    GROUPBOX        "Predefined types",IDC_TYPES_GROUP,291,187,99,75,
+                    BS_AUTOCHECKBOX,315,191,71,10,0,HIDC_VALUES_SAVE
+    GROUPBOX        "Predefined types",IDC_TYPES_GROUP,291,212,99,75,
                     WS_GROUP
     CONTROL         "Standard",IDC_TYPES_STD,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,299,201,45,10,0,HIDC_TYPES_STD
+                    WS_TABSTOP,299,226,45,10,0,HIDC_TYPES_STD
     CONTROL         "Common",IDC_TYPES_COMMON,"Button",BS_AUTOCHECKBOX,299,
-                    212,43,10,0,HIDC_TYPES_COMMON
+                    237,43,10,0,HIDC_TYPES_COMMON
     CONTROL         "Windows",IDC_TYPES_WINDOWS,"Button",BS_AUTOCHECKBOX,299,
-                    225,45,10,0,HIDC_TYPES_WINDOWS
+                    250,45,10,0,HIDC_TYPES_WINDOWS
     CONTROL         "Custom",IDC_TYPES_CUSTOM,"Button",BS_AUTOCHECKBOX,299,
-                    236,39,10,0,HIDC_TYPES_CUSTOM
+                    261,39,10,0,HIDC_TYPES_CUSTOM
     CONTROL         "Save new types",IDC_TYPES_SAVE,"Button",BS_AUTOCHECKBOX,
-                    315,249,67,10,0,HIDC_TYPES_SAVE
-    PUSHBUTTON      "Help",ID_DFFD_HELP,315,269,50,14,WS_GROUP
+                    315,274,67,10,0,HIDC_TYPES_SAVE
+    PUSHBUTTON      "Help",ID_DFFD_HELP,315,292,50,14,WS_GROUP
 END
 
 IDD_DFFD_SWITCH DIALOGEX 0, 0, 292, 170
@@ -5522,7 +5526,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 390
         TOPMARGIN, 7
-        BOTTOMMARGIN, 283
+        BOTTOMMARGIN, 306
     END
 
     IDD_DFFD_SWITCH, DIALOG

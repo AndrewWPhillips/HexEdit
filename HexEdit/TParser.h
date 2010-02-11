@@ -53,6 +53,7 @@ public:
 	bool check_std_, check_win_, check_common_, check_custom_; // Type lists to check
 	bool save_custom_;          // Save (to cutsom types file) new types (custom_types_) that were parsed?
 
+	bool base_storage_unit_;    // Use base type size (1,2,4 etc) as bit-field storage unit size
 	bool check_values_win_, check_values_custom_;  // Values list to check
 	bool save_values_custom_;   // Save (to custom list file) parsed values?
 

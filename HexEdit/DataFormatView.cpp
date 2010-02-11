@@ -4695,6 +4695,7 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 					// Get parameters from dialog and parse the text
 					TParser tp;
 					tp.packing_default_ = "\x01\x02\x04\x08\x10"[tpd.m_pack];
+					tp.base_storage_unit_ = tpd.m_base_storage_unit ? true : false;
 					tp.check_values_win_ = tpd.m_values_windows ? true : false;
 					tp.check_values_custom_ = tpd.m_values_custom ? true : false;
 					tp.save_values_custom_ = tpd.m_values_save ? true : false;

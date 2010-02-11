@@ -1004,7 +1004,7 @@
 #define IDC_TYPES_WINDOWS               1452
 #define IDC_TYPES_CUSTOM                1453
 #define IDC_TYPES_SAVE                  1454
-#define IDC_TYPES_SAVE2                 1455
+#define IDC_BASE_STORAGE_UNIT           1455
 #define IDC_SOURCE_CODE                 1458
 #define IDC_VALUES_SAVE                 1459
 #define IDC_PACK_GROUP                  1460

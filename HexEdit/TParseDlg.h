@@ -33,6 +33,7 @@ public:
 	BOOL	m_values_save;
 	BOOL	m_values_windows;
 	//}}AFX_DATA
+	BOOL	m_base_storage_unit;
 
     virtual BOOL PreTranslateMessage(MSG* pMsg);
 

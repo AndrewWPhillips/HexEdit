@@ -113,6 +113,7 @@ TParser::TParser()
 	dec_point_ = theApp.dec_point_;
 	packing_default_ = 4;
 
+	base_storage_unit_ = false;
 	check_values_win_ = check_values_custom_ = save_values_custom_ = false;
 	check_std_ = check_custom_ = check_win_ = check_common_ = save_custom_ = false;
 	search_include_ = false;
@@ -1766,7 +1767,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 				else
 				{
 					// Must be bitfield
-					if (actual.GetAttr("type") != "int")
+					if (actual.GetAttr("type") != "int" && actual.GetAttr("type") != "char")
 						throw CString("Bitfields can only use integer types");
 
 					// Get const expression for size of bit-field
@@ -1781,7 +1782,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 
 					if (val.typ != expr_eval::TYPE_INT)
 						throw CString("Bitfield size must be an integer (or constant integer expression)");
-					bitfield_size = int(val.int64);
+					bitfield_size = int(val.int64);  // number of bits
 					CString tmp;
 					tmp.Format("%ld", long(bitfield_size));
 
@@ -1794,9 +1795,13 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 					// each time we use it, and we don't save back to file this doesn't matter.
 					actual.SetAttr("bits", tmp);
 
+					if (base_storage_unit_)
+						actual.SetAttr("len", base.GetAttr("len"));
 					int bitfield_unit_size = atol(actual.GetAttr("len"));
 					if (bitfield_unit_size != 1 && bitfield_unit_size != 2 && bitfield_unit_size != 4 && bitfield_unit_size != 8)
-						throw CString("Invalid bitfield storage unit length in \"_standard_types.xml\" - ") + bitfield_type_name;
+						throw CString("Invalid bitfield storage unit length");
+					if (bitfield_size > bitfield_unit_size*8)
+						throw CString("Bitfield size exceeds storage unit length");
 					decl_curr_size = decl_curr_pack = bitfield_unit_size;
 					ASSERT(last_size == 0 || last_size == bitfield_unit_size);
 				}

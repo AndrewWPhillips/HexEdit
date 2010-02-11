@@ -2,8 +2,8 @@
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
 <binary_file_format name="StandardTypes" comment="C/C++ standard types as used in MS compiler (VS6). This file is used in parsing C/C++ source code for declarations.">
 	<data type="none"  name="void" len="0" comment='INTERNAL USE ONLY (used during parsing of "void *")'/>
-	<data type="char"  name="char" format="ascii"/>
-	<data type="char"  name="wchar_t" format="unicode" type_name="wchar_t"/>
+	<data type="char"  name="char" format="ascii" len="1"/>
+	<data type="char"  name="wchar_t" format="unicode" len="2" type_name="wchar_t"/>
 	<data type="int"   name="bool" len="1" type_name="bool"/>
 	<data type="int"   name="pointer$"          format="unsigned" len="4" display="hex" type_name="pointer"/>
 	<data type="int"   name="function_pointer$" format="unsigned" len="4" display="hex" type_name="function pointer"/>

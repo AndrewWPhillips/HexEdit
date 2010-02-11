@@ -49,6 +49,7 @@ TParseDlg::TParseDlg(CWnd* pParent /*=NULL*/)
 	m_values_custom = theApp.GetProfileInt("Parse-Settings", "ValuesCustom", TRUE);
 	m_values_save = theApp.GetProfileInt("Parse-Settings", "ValuesSave", FALSE);
 	m_values_windows = theApp.GetProfileInt("Parse-Settings", "ValuesWindows", TRUE);
+	m_base_storage_unit = theApp.GetProfileInt("Parse-Settings", "BaseStorageUnit", TRUE);
 }
 
 void TParseDlg::DoDataExchange(CDataExchange* pDX)
@@ -66,6 +67,7 @@ void TParseDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_VALUES_SAVE, m_values_save);
 	DDX_Check(pDX, IDC_VALUES_WINDOWS, m_values_windows);
 	//}}AFX_DATA_MAP
+	DDX_Check(pDX, IDC_BASE_STORAGE_UNIT, m_base_storage_unit);
 }
 
 
@@ -99,6 +101,7 @@ BOOL TParseDlg::OnInitDialog()
     resizer_.Add(IDC_PACK4, 100, 0, 0, 0);
     resizer_.Add(IDC_PACK8, 100, 0, 0, 0);
     resizer_.Add(IDC_PACK16, 100, 0, 0, 0);
+    resizer_.Add(IDC_BASE_STORAGE_UNIT, 100, 0, 0, 0);
     resizer_.Add(IDC_VALUES_GROUP, 100, 0, 0, 0);
     resizer_.Add(IDC_VALUES_WINDOWS, 100, 0, 0, 0);
     resizer_.Add(IDC_VALUES_CUSTOM, 100, 0, 0, 0);
@@ -197,6 +200,7 @@ void TParseDlg::OnDestroy()
 	theApp.WriteProfileInt("Parse-Settings", "ValuesCustom", m_values_custom);
 	theApp.WriteProfileInt("Parse-Settings", "ValuesSave", m_values_save);
 	theApp.WriteProfileInt("Parse-Settings", "ValuesWindows", m_values_windows);
+	theApp.WriteProfileInt("Parse-Settings", "BaseStorageUnit", m_base_storage_unit);
 }
 
 BOOL TParseDlg::PreTranslateMessage(MSG* pMsg) 
@@ -225,6 +229,7 @@ static DWORD id_pairs[] = {
 	IDC_PACK4, HIDC_PACK4,
 	IDC_PACK8, HIDC_PACK8,
 	IDC_PACK16, HIDC_PACK16,
+	IDC_BASE_STORAGE_UNIT, HIDC_BASE_STORAGE_UNIT,
 	IDC_VALUES_WINDOWS, HIDC_VALUES_WINDOWS,
 	IDC_VALUES_CUSTOM, HIDC_VALUES_CUSTOM,
 	IDC_VALUES_SAVE, HIDC_VALUES_SAVE,
