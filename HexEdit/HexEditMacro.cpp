@@ -312,6 +312,8 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                     ((CMainFrame *)AfxGetMainWnd())->OnViewBookmarks();
                 else if ((*pk).vv == 12)
                     ((CMainFrame *)AfxGetMainWnd())->OnViewFind();
+                else if ((*pk).vv == 13)
+                    ((CMainFrame *)AfxGetMainWnd())->OnViewProperties();
 #ifdef EXPLORER_WND
                 else if ((*pk).vv == 14)
                     ((CMainFrame *)AfxGetMainWnd())->OnViewExpl();
@@ -322,8 +324,6 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                     ((CMainFrame *)AfxGetMainWnd())->OnViewHighlightCaret();
                 else if ((*pk).vv == 17)
                     ((CMainFrame *)AfxGetMainWnd())->OnViewHighlightMouse();
-                else if ((*pk).vv == 13)
-                    ((CMainFrame *)AfxGetMainWnd())->OnViewProperties();
                 else
                     ASSERT(0);
                 break;

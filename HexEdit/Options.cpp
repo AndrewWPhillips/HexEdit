@@ -1579,7 +1579,7 @@ void CTipsPage::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 
 IMPLEMENT_DYNCREATE(CColourSchemes, COptPage)
 
-CColourSchemes::CColourSchemes() : COptPage(CColourSchemes::IDD, theApp.is_us_ ? IDS_COLORS : 0)
+CColourSchemes::CColourSchemes() : COptPage(CColourSchemes::IDD, ::IsUs() ? IDS_COLORS : 0)
 {
 	//{{AFX_DATA_INIT(CColourSchemes)
 	scheme_no_ = -1;
@@ -1651,7 +1651,7 @@ BOOL CColourSchemes::OnInitDialog()
 
     COptPage::OnInitDialog();
 
-    if (theApp.is_us_)
+	if (::IsUs())
     {
         ASSERT(GetDlgItem(IDC_DESC_COLOUR) != NULL);
 #ifdef _DEBUG

@@ -1140,7 +1140,7 @@ void CStartup::OnRegForm()
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
     if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_+CString(">form"), 
-                    HH_HELP_CONTEXT, aa->is_us_ ? HID_REG_FORM_US : HID_REG_FORM))
+		HH_HELP_CONTEXT, ::IsUs() ? HID_REG_FORM_US : HID_REG_FORM))
         AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 

@@ -37,8 +37,8 @@
 //#define INTERNAL_VERSION 7              // version 3.1
 //#define INTERNAL_VERSION 8              // version 3.2
 //#define INTERNAL_VERSION 9              // version 3.3
-//#define INTERNAL_VERSION 10             // version 3.4
-#define INTERNAL_VERSION 11             // version 3.5   // keep it at 3.5 until after last beta released
+#define INTERNAL_VERSION 10             // version 3.4
+//#define INTERNAL_VERSION 11             // version 3.5
 //#define INTERNAL_VERSION 12             // version 4.0
 
 // may need to adjust this depending on how many versions there were in last 2 years
@@ -826,7 +826,7 @@ private:
 };
 
 extern CHexEditApp theApp;
-inline BOOL IsUs() { return theApp.is_us_; }
+inline BOOL IsUs() { return theApp.is_us_; }  // Used for diff spelling
 
 extern unsigned char e2a_tab[256];
 extern unsigned char a2e_tab[128];

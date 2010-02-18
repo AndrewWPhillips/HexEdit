@@ -73,10 +73,8 @@ BOOL CNewScheme::OnInitDialog()
     ASSERT(psvec_ != NULL);
     CDialog::OnInitDialog();
 
-    if (theApp.is_us_)
-    {
+	if (::IsUs())
         SetWindowText("New Color Scheme");
-    }
 
     std::vector<CScheme>::const_iterator ps;
 
