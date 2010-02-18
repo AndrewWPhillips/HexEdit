@@ -722,6 +722,11 @@ public:
     afx_msg void OnUpdateAerialHide(CCmdUI* pCmdUI);
     afx_msg void OnUpdateAerialSplit(CCmdUI* pCmdUI);
     afx_msg void OnUpdateAerialTab(CCmdUI* pCmdUI);
+
+	afx_msg void OnOptScheme();  // color scheme toolbar combo (ID_SCHEME)
+	afx_msg void OnSelScheme();
+	afx_msg void OnUpdateScheme(CCmdUI* pCmdUI);
+
     DECLARE_MESSAGE_MAP()
 
 public:

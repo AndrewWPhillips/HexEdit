@@ -103,6 +103,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         //{{AFX_MSG_MAP(CMainFrame)
         ON_WM_CREATE()
         ON_WM_CLOSE()
+        ON_WM_SIZE()
         ON_COMMAND(ID_EDIT_FIND, OnEditFind)
         ON_UPDATE_COMMAND_UI(ID_EDIT_FIND, OnUpdateEditFind)
         ON_COMMAND(ID_EDIT_FIND2, OnEditFind2)
@@ -212,10 +213,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         ON_UPDATE_COMMAND_UI(ID_JUMP_HEX_COMBO, OnUpdateHexCombo)
         ON_COMMAND(ID_JUMP_DEC_COMBO, OnEditGotoDec)
         ON_UPDATE_COMMAND_UI(ID_JUMP_DEC_COMBO, OnUpdateDecCombo)
-        ON_COMMAND(ID_SCHEME_COMBO, OnOptionsScheme)
-        ON_UPDATE_COMMAND_UI(ID_SCHEME_COMBO, OnUpdateSchemeCombo)
-        ON_COMMAND(ID_SCHEME_COMBO_US, OnOptionsScheme)
-        ON_UPDATE_COMMAND_UI(ID_SCHEME_COMBO_US, OnUpdateSchemeCombo)
         ON_COMMAND(ID_BOOKMARKS_COMBO, OnBookmarks)
         ON_UPDATE_COMMAND_UI(ID_BOOKMARKS_COMBO, OnUpdateBookmarksCombo)
 
@@ -266,9 +263,12 @@ CMainFrame::CMainFrame()
 	m_background_pos = theApp.GetProfileInt("MainFrame", "BackgroundPosition", 4); // dv = bottom-right
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 
+	// Status bar stuff
 	m_search_image.LoadBitmap(IDB_SEARCH);
 	OccurrencesWidth = ValuesWidth = AddrHexWidth = AddrDecWidth = FileLengthWidth = -999;
     bg_progress_enabled_ = false;
+
+	// History lists
 	hex_hist_changed_ = dec_hist_changed_ = clock();
 }
 
@@ -326,98 +326,119 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		DockPane(&m_wndMenuBar);
 
         // Create main Tool bar
-		//if (!m_wndBar1.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_STDBAR) || 
-		if (!m_wndBar1.CreateEx(this,
+		//if (!m_wndStandardBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_STDBAR) || 
+		if (!m_wndStandardBar.CreateEx(this,
 			                    TBSTYLE_FLAT,
 			                    WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
 			                    CRect(1, 1, 1, 1),
 			                    IDR_STDBAR ) ||
 #if SHADED_TOOLBARS
-            !m_wndBar1.LoadToolBar(IDR_STDBAR, IDB_STDBAR_C, 0, FALSE, IDB_STDBAR_D, 0, IDB_STDBAR_H))
+            !m_wndStandardBar.LoadToolBar(IDR_STDBAR, IDB_STDBAR_C, 0, FALSE, IDB_STDBAR_D, 0, IDB_STDBAR_H))
 #else
-            !m_wndBar1.LoadToolBar(IDR_STDBAR))
+            !m_wndStandardBar.LoadToolBar(IDR_STDBAR))
 #endif
         {
             TRACE0("Failed to create Standard Toolbar\n");
             return -1;      // fail to create
         }
-        m_wndBar1.SetWindowText("Standard Toolbar");
-		//m_wndBar1.SetPaneStyle(m_wndBar1.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-        m_wndBar1.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
-        m_wndBar1.EnableDocking(CBRS_ALIGN_ANY);
-		//m_wndBar1.EnableTextLabels();
-		DockPane(&m_wndBar1);
+        m_wndStandardBar.SetWindowText("Standard Toolbar");
+		//m_wndStandardBar.SetPaneStyle(m_wndStandardBar.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndStandardBar.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
+        m_wndStandardBar.EnableDocking(CBRS_ALIGN_ANY);
+		//m_wndStandardBar.EnableTextLabels();
+		DockPane(&m_wndStandardBar);
 
         // Create "edit" bar
-        //if (!m_wndBar2.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EDITBAR) ||
-		if (!m_wndBar2.CreateEx(this,
+        //if (!m_wndEditBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EDITBAR) ||
+		if (!m_wndEditBar.CreateEx(this,
 			                    TBSTYLE_FLAT,
 			                    WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
 			                    CRect(1, 1, 1, 1),
 			                    IDR_EDITBAR ) ||
 #if SHADED_TOOLBARS
-            !m_wndBar2.LoadToolBar(IDR_EDITBAR, IDB_EDITBAR_C, 0, FALSE, IDB_EDITBAR_D, 0, IDB_EDITBAR_H))
+            !m_wndEditBar.LoadToolBar(IDR_EDITBAR, IDB_EDITBAR_C, 0, FALSE, IDB_EDITBAR_D, 0, IDB_EDITBAR_H))
 #else
-            !m_wndBar2.LoadToolBar(IDR_EDITBAR))
+            !m_wndEditBar.LoadToolBar(IDR_EDITBAR))
 #endif
         {
             TRACE0("Failed to create Edit Bar\n");
             return -1;      // fail to create
         }
-        m_wndBar2.SetWindowText("Edit Bar");
-		//m_wndBar2.SetPaneStyle(m_wndBar2.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-        m_wndBar2.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
-        m_wndBar2.EnableDocking(CBRS_ALIGN_ANY);
-		DockPane(&m_wndBar2);
+        m_wndEditBar.SetWindowText("Edit Bar");
+		//m_wndEditBar.SetPaneStyle(m_wndEditBar.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndEditBar.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
+        m_wndEditBar.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_wndEditBar);
 
         // Create Format bar
-        //if (!m_wndBar3.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_FORMATBAR) ||
-		if (!m_wndBar3.CreateEx(this,
+        //if (!m_wndFormatBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_FORMATBAR) ||
+		if (!m_wndFormatBar.CreateEx(this,
 			                    TBSTYLE_FLAT,
 			                    WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
 			                    CRect(1, 1, 1, 1),
 			                    IDR_FORMATBAR ) ||
 #if SHADED_TOOLBARS
-            !m_wndBar3.LoadToolBar(IDR_FORMATBAR, IDB_FMTBAR_C, 0, FALSE, IDB_FMTBAR_D, 0, IDB_FMTBAR_H))
+            !m_wndFormatBar.LoadToolBar(IDR_FORMATBAR, IDB_FMTBAR_C, 0, FALSE, IDB_FMTBAR_D, 0, IDB_FMTBAR_H))
 #else
-            !m_wndBar3.LoadToolBar(IDR_FORMATBAR))
+            !m_wndFormatBar.LoadToolBar(IDR_FORMATBAR))
 #endif
         {
             TRACE0("Failed to create Format Bar\n");
             return -1;      // fail to create
         }
-        m_wndBar3.SetWindowText("Format Bar");
-		//m_wndBar3.SetPaneStyle(m_wndBar3.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-        m_wndBar3.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
-        m_wndBar3.EnableDocking(CBRS_ALIGN_ANY);
-		DockPane(&m_wndBar3);
-		m_wndBar3.ShowPane(FALSE, FALSE, FALSE);
+        m_wndFormatBar.SetWindowText("Format Bar");
+		//m_wndFormatBar.SetPaneStyle(m_wndFormatBar.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndFormatBar.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
+        m_wndFormatBar.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_wndFormatBar);
+		m_wndFormatBar.ShowPane(FALSE, FALSE, FALSE);
 
         // Create Navigation bar
-        //if (!m_wndBar4.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_NAVBAR) ||
-		if (!m_wndBar4.CreateEx(this,
+        //if (!m_wndNavBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_NAVBAR) ||
+		if (!m_wndNavBar.CreateEx(this,
 			                    TBSTYLE_FLAT,
 			                    WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC,
 			                    CRect(1, 1, 1, 1),
 			                    IDR_NAVBAR ) ||
 #if SHADED_TOOLBARS
-            !m_wndBar4.LoadToolBar(IDR_NAVBAR, IDB_NAVBAR_C, 0, FALSE, IDB_NAVBAR_D, 0, IDB_NAVBAR_H))
+            !m_wndNavBar.LoadToolBar(IDR_NAVBAR, IDB_NAVBAR_C, 0, FALSE, IDB_NAVBAR_D, 0, IDB_NAVBAR_H))
 #else
-            !m_wndBar4.LoadToolBar(IDR_NAVBAR))
+            !m_wndNavBar.LoadToolBar(IDR_NAVBAR))
 #endif
         {
             TRACE0("Failed to create Nav Bar\n");
             return -1;      // fail to create
         }
-        m_wndBar4.SetWindowText("Navigation Bar");
-		//m_wndBar4.SetPaneStyle(m_wndBar4.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-        m_wndBar4.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
-        m_wndBar4.EnableDocking(CBRS_ALIGN_ANY);
-		DockPane(&m_wndBar4);
-		m_wndBar4.ShowPane(FALSE, FALSE, FALSE);
+        m_wndNavBar.SetWindowText("Navigation Bar");
+		//m_wndNavBar.SetPaneStyle(m_wndNavBar.GetPaneStyle() |CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndNavBar.EnableCustomizeButton(TRUE, ID_CUSTOMIZE, _T("Customize..."));
+        m_wndNavBar.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_wndNavBar);
+		m_wndNavBar.ShowPane(FALSE, FALSE, FALSE);
+
+		// Enable new docking window  and auto-hide behavior
+		CDockingManager::SetDockingMode(DT_SMART);
+		EnableAutoHidePanes(CBRS_ALIGN_ANY);
+
+		m_wndBookmarksPane.SetDialogBar(&m_wndBookmarks);
+		if (!m_wndBookmarksPane.Create(CString("Bookmarks"), this, CRect(0, 0, 100, 100), TRUE,
+									CBookmarkDlg::IDD,
+									WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI,
+									AFX_CBRS_REGULAR_TABS,
+									AFX_CBRS_FLOAT | AFX_CBRS_CLOSE | AFX_CBRS_RESIZE | AFX_CBRS_AUTOHIDE | AFX_CBRS_AUTO_ROLLUP))
+		m_wndBookmarksPane.Add(IDC_BOOKMARK_NAME, 0, 0, 100, 0);
+		m_wndBookmarksPane.Add(IDC_BOOKMARK_ADD, 100, 0, 0, 0);
+		m_wndBookmarksPane.Add(IDC_GRID_BL, 0, 0, 100, 100);
+		m_wndBookmarksPane.Add(IDOK, 100, 0, 0, 0);
+		m_wndBookmarksPane.Add(IDC_BOOKMARK_GOTO, 100, 0, 0, 0);
+		m_wndBookmarksPane.Add(IDC_BOOKMARK_REMOVE, 100, 0, 0, 0);
+		m_wndBookmarksPane.Add(IDC_BOOKMARKS_VALIDATE, 100, 0, 0, 0);
+		m_wndBookmarksPane.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
+		m_wndBookmarksPane.Add(IDC_BOOKMARKS_HELP, 100, 0, 0, 0);
+		m_wndBookmarksPane.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_wndBookmarksPane);
 
         if (!m_wndCalc.Create(this) ||
-			!m_wndBookmarks.Create(this) ||
 			!m_wndFind.Create(this) ||
 #ifdef EXPLORER_WND
 			!m_wndExpl.Create(this) ||
@@ -471,10 +492,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         m_wndProp.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndProp.SetCaptionStyle(TRUE);
 
-        DockControlBar(&m_wndBar1);
-        DockControlBar(&m_wndBar2);
-        DockControlBar(&m_wndBar3);
-        DockControlBar(&m_wndBar4);
+        DockControlBar(&m_wndStandardBar);
+        DockControlBar(&m_wndEditBar);
+        DockControlBar(&m_wndFormatBar);
+        DockControlBar(&m_wndNavBar);
 #endif
 
         // Get extra command images (without creating a toolbar)
@@ -743,6 +764,13 @@ void CMainFrame::OnClose()
     CMDIFrameWndEx::OnClose();
 }
 
+void CMainFrame::OnSize(UINT nType, int cx, int cy) 
+{
+    CMDIFrameWndEx::OnSize(nType, cx, cy);
+	Invalidate(TRUE);
+}
+
+
 // Handles control menu commands and system buttons (Minimize etc)
 void CMainFrame::OnSysCommand(UINT nID, LONG lParam)
 {
@@ -959,7 +987,7 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 	// Create background brush using top left pixel of bitmap
 	{
 #ifdef USE_FREE_IMAGE
-        RGBQUAD px;
+		RGBQUAD px = {192,192,192,0};
         FreeImage_GetPixelColor(m_dib, 0, 0, &px);  // get colour from (0,0) pixel
 		backBrush.CreateSolidBrush(RGB(px.rgbRed, px.rgbGreen, px.rgbBlue));
 #else
@@ -1342,49 +1370,49 @@ BOOL CMainFrame::OnMDIWindowCmd(UINT nID)
 
 void CMainFrame::OnUpdateViewViewbar(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck((m_wndBar1.GetStyle() & WS_VISIBLE) != 0);
+    pCmdUI->SetCheck((m_wndStandardBar.GetStyle() & WS_VISIBLE) != 0);
 }
 
 void CMainFrame::OnViewViewbar() 
 {
-	m_wndBar1.ShowPane((m_wndBar1.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
-    //ShowControlBar(&m_wndBar1, (m_wndBar1.GetStyle() & WS_VISIBLE) == 0, FALSE);
+	m_wndStandardBar.ShowPane((m_wndStandardBar.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
+    //ShowControlBar(&m_wndStandardBar, (m_wndStandardBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 1);
 }
 
 void CMainFrame::OnUpdateViewEditbar(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck((m_wndBar2.GetStyle() & WS_VISIBLE) != 0);
+    pCmdUI->SetCheck((m_wndEditBar.GetStyle() & WS_VISIBLE) != 0);
 }
 
 void CMainFrame::OnViewEditbar() 
 {
-	m_wndBar2.ShowPane((m_wndBar2.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
-    //ShowControlBar(&m_wndBar2, (m_wndBar2.GetStyle() & WS_VISIBLE) == 0, FALSE);
+	m_wndEditBar.ShowPane((m_wndEditBar.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
+    //ShowControlBar(&m_wndEditBar, (m_wndEditBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 2);
 }
 
 void CMainFrame::OnUpdateViewFormatbar(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck((m_wndBar3.GetStyle() & WS_VISIBLE) != 0);
+    pCmdUI->SetCheck((m_wndFormatBar.GetStyle() & WS_VISIBLE) != 0);
 }
 
 void CMainFrame::OnViewFormatbar() 
 {
-	m_wndBar3.ShowPane((m_wndBar3.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
-    //ShowControlBar(&m_wndBar3, (m_wndBar3.GetStyle() & WS_VISIBLE) == 0, FALSE);
+	m_wndFormatBar.ShowPane((m_wndFormatBar.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
+    //ShowControlBar(&m_wndFormatBar, (m_wndFormatBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 4);
 }
 
 void CMainFrame::OnUpdateViewNavbar(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck((m_wndBar4.GetStyle() & WS_VISIBLE) != 0);
+    pCmdUI->SetCheck((m_wndNavBar.GetStyle() & WS_VISIBLE) != 0);
 }
 
 void CMainFrame::OnViewNavbar() 
 {
-	m_wndBar4.ShowPane((m_wndBar4.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
-    //ShowControlBar(&m_wndBar4, (m_wndBar4.GetStyle() & WS_VISIBLE) == 0, FALSE);
+	m_wndNavBar.ShowPane((m_wndNavBar.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
+    //ShowControlBar(&m_wndNavBar, (m_wndNavBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 5);
 }
 
@@ -4082,10 +4110,12 @@ void CMainFrame::OnCalculator()
     //((CHexEditApp *)AfxGetApp())->SaveToMacro(km_calc_dlg);
 }
 
+/*
 void CMainFrame::OnOptionsScheme() 
 {
     theApp.display_options(COLOUR_OPTIONS_PAGE, TRUE);
 }
+*/
 
 void CMainFrame::OnBookmarks() 
 {
@@ -4308,7 +4338,11 @@ void CMainFrame::OnCustomize()
     pdlg->ReplaceButton(ID_JUMP_HEX, CHexComboButton ());
     pdlg->ReplaceButton(ID_JUMP_DEC, CDecComboButton ());
     pdlg->ReplaceButton(ID_SEARCH, CFindComboButton ());
-    pdlg->ReplaceButton(ID_SCHEME, CSchemeComboButton ());
+    pdlg->ReplaceButton(ID_SCHEME,
+		              CMFCToolBarComboBoxButton(::IsUs() ? ID_SCHEME_US : ID_SCHEME, 
+												-1,
+												CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
+												120));
     pdlg->ReplaceButton(ID_BOOKMARKS, CBookmarksComboButton ());
 
     pdlg->ReplaceButton(IDC_FONTNAME,
@@ -4458,31 +4492,35 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
             CMenu menu;
             menu.LoadMenu(IDR_MENUBUTTON);
         
-            m_wndBar1.ReplaceButton(ID_DISPLAY_DROPDOWN,
+            m_wndStandardBar.ReplaceButton(ID_DISPLAY_DROPDOWN,
                 CMFCToolBarMenuButton (-1, *menu.GetSubMenu(0),
                                                        -1 /*CImageHash::GetImageOfCommand(ID_DISPLAY_DROPDOWN)*/,
 													   _T("Show Area")));
-            m_wndBar1.ReplaceButton(ID_CHARSET_DROPDOWN,
+            m_wndStandardBar.ReplaceButton(ID_CHARSET_DROPDOWN,
                 CMFCToolBarMenuButton (-1, *menu.GetSubMenu(1),
                                                        -1 /*CImageHash::GetImageOfCommand(ID_CHARSET_DROPDOWN)*/,
 													   _T("Char Set")));
-            m_wndBar1.ReplaceButton(ID_CONTROL_DROPDOWN,
+            m_wndStandardBar.ReplaceButton(ID_CONTROL_DROPDOWN,
                 CMFCToolBarMenuButton (-1, *menu.GetSubMenu(2),
                                                       -1 /*CImageHash::GetImageOfCommand(ID_CONTROL_DROPDOWN)*/,
 													  _T("Ctrl Chars")));
         }
-        m_wndBar1.ReplaceButton(ID_SCHEME, CSchemeComboButton());
+        m_wndStandardBar.ReplaceButton(ID_SCHEME,
+		              CMFCToolBarComboBoxButton(::IsUs() ? ID_SCHEME_US : ID_SCHEME, 
+												-1,
+												CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
+												120));
         break;
     case IDR_EDITBAR:
         // Only req. because they're on default edit bar (customisation handled by BCG)
-        m_wndBar2.ReplaceButton(ID_SEARCH, CFindComboButton());
-        m_wndBar2.ReplaceButton(ID_JUMP_HEX, CHexComboButton());
-        m_wndBar2.ReplaceButton(ID_JUMP_DEC, CDecComboButton());
+        m_wndEditBar.ReplaceButton(ID_SEARCH, CFindComboButton());
+        m_wndEditBar.ReplaceButton(ID_JUMP_HEX, CHexComboButton());
+        m_wndEditBar.ReplaceButton(ID_JUMP_DEC, CDecComboButton());
         break;
     case IDR_FORMATBAR:
         {
 
-            m_wndBar3.ReplaceButton(IDC_FONTNAME,
+            m_wndFormatBar.ReplaceButton(IDC_FONTNAME,
                 CHexEditFontCombo(IDC_FONTNAME, 
                     -1 /*CImageHash::GetImageOfCommand(IDC_FONTNAME, FALSE)*/,
                     RASTER_FONTTYPE | TRUETYPE_FONTTYPE | DEVICE_FONTTYPE,
@@ -4491,15 +4529,15 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
                     CBS_AUTOHSCROLL | CBS_HASSTRINGS | CBS_OWNERDRAWFIXED, 175) );
 
 #if 0  // We need to call InsertButton else the size does not get updated properly for some reason
-            m_wndBar3.ReplaceButton(IDC_FONTSIZE,
+            m_wndFormatBar.ReplaceButton(IDC_FONTSIZE,
                 CHexEditFontSizeCombo(IDC_FONTSIZE, 
                     CImageHash::GetImageOfCommand(IDC_FONTSIZE, FALSE),
                     WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN, 50) );
 #else
-            int index = m_wndBar3.CommandToIndex(IDC_FONTSIZE);
-            if (index == -1 || index > m_wndBar3.GetCount()) index = m_wndBar3.GetCount();
-            m_wndBar3.RemoveButton(index);
-            m_wndBar3.InsertButton(
+            int index = m_wndFormatBar.CommandToIndex(IDC_FONTSIZE);
+            if (index == -1 || index > m_wndFormatBar.GetCount()) index = m_wndFormatBar.GetCount();
+            m_wndFormatBar.RemoveButton(index);
+            m_wndFormatBar.InsertButton(
                 CHexEditFontSizeCombo(IDC_FONTSIZE, 
                     -1 /*CImageHash::GetImageOfCommand(IDC_FONTSIZE, FALSE)*/,
                     WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN, 50),
@@ -4510,41 +4548,45 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
             menu.LoadMenu(IDR_MENUBUTTON);
 
 #if 0  // No longer there (as drop-menus)
-            m_wndBar3.ReplaceButton(ID_DISPLAY_DROPDOWN,
+            m_wndFormatBar.ReplaceButton(ID_DISPLAY_DROPDOWN,
                 CMFCToolBarMenuButton (-1, *menu.GetSubMenu(0),
                     CImageHash::GetImageOfCommand(ID_DISPLAY_DROPDOWN), _T("Show Area")));
-            m_wndBar3.ReplaceButton(ID_CHARSET_DROPDOWN,
+            m_wndFormatBar.ReplaceButton(ID_CHARSET_DROPDOWN,
                 CMFCToolBarMenuButton (-1, *menu.GetSubMenu(1),
                     CImageHash::GetImageOfCommand(ID_CHARSET_DROPDOWN), _T("Char Set")));
-            m_wndBar3.ReplaceButton(ID_CONTROL_DROPDOWN,
+            m_wndFormatBar.ReplaceButton(ID_CONTROL_DROPDOWN,
                 CMFCToolBarMenuButton (-1, *menu.GetSubMenu(2),
                     CImageHash::GetImageOfCommand(ID_CONTROL_DROPDOWN), _T("Ctrl Chars")));
 #endif
-            m_wndBar3.ReplaceButton(ID_HIGHLIGHT_MENU,
+            m_wndFormatBar.ReplaceButton(ID_HIGHLIGHT_MENU,
                 CMFCToolBarMenuButton(ID_HIGHLIGHT, *menu.GetSubMenu(3),
 				                                      -1 /*CImageHash::GetImageOfCommand(ID_HIGHLIGHT)*/ ));
 
         }
-        m_wndBar3.ReplaceButton(ID_SCHEME, CSchemeComboButton());
+        m_wndFormatBar.ReplaceButton(ID_SCHEME,
+		              CMFCToolBarComboBoxButton(::IsUs() ? ID_SCHEME_US : ID_SCHEME, 
+												-1,
+												CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
+												120));
         break;
     case IDR_NAVBAR:
         {
-            m_wndBar4.ReplaceButton(ID_JUMP_HEX, CHexComboButton());
-            m_wndBar4.ReplaceButton(ID_JUMP_DEC, CDecComboButton());
-            m_wndBar4.ReplaceButton(ID_BOOKMARKS, CBookmarksComboButton());
+            m_wndNavBar.ReplaceButton(ID_JUMP_HEX, CHexComboButton());
+            m_wndNavBar.ReplaceButton(ID_JUMP_DEC, CDecComboButton());
+            m_wndNavBar.ReplaceButton(ID_BOOKMARKS, CBookmarksComboButton());
 
             CMenu menu;
             menu.LoadMenu(IDR_MENUBUTTON);
-            m_wndBar4.ReplaceButton(ID_MARK_MENU,
+            m_wndNavBar.ReplaceButton(ID_MARK_MENU,
                 CMFCToolBarMenuButton(ID_GOTO_MARK, *menu.GetSubMenu(4),
 				                                      -1 /*CImageHash::GetImageOfCommand(ID_GOTO_MARK)*/ ));
-            m_wndBar4.ReplaceButton(ID_BOOKMARKS_MENU,
+            m_wndNavBar.ReplaceButton(ID_BOOKMARKS_MENU,
                 CMFCToolBarMenuButton(ID_BOOKMARKS_EDIT, *menu.GetSubMenu(5),
 				                                      -1 /*CImageHash::GetImageOfCommand(ID_BOOKMARKS_EDIT)*/ ));
-            m_wndBar4.ReplaceButton(ID_NAV_BACK,
+            m_wndNavBar.ReplaceButton(ID_NAV_BACK,
                 CMFCToolBarMenuButton(ID_NAV_BACK, *menu.GetSubMenu(6),
 				                                      -1 /*CImageHash::GetImageOfCommand(ID_NAV_BACK)*/ ));
-            m_wndBar4.ReplaceButton(ID_NAV_FORW,
+            m_wndNavBar.ReplaceButton(ID_NAV_FORW,
                 CMFCToolBarMenuButton(ID_NAV_FORW, *menu.GetSubMenu(7),
 				                                      -1 /*CImageHash::GetImageOfCommand(ID_NAV_FORW)*/ ));
         }
@@ -4930,6 +4972,7 @@ void CMainFrame::OnUpdateDecCombo(CCmdUI* pCmdUI)
 	}
 }
 
+/* // XXX MOVE TO VIEW (handle CBN_SELCHANGE for ID_SCHEME
 void CMainFrame::OnUpdateSchemeCombo(CCmdUI* pCmdUI)
 {
     CHexEditView *pview = GetView();
@@ -4994,6 +5037,7 @@ void CMainFrame::OnUpdateSchemeCombo(CCmdUI* pCmdUI)
     }
     pCmdUI->Enable(TRUE);
 }
+*/
 
 // We need a case-insensitive search that works the same as CBS_SORT
 struct case_insensitive_greater : binary_function<CString, CString, bool>

@@ -19,6 +19,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
+#include "DialogPane.h"
 #include "Control.h"
 #include "FindDlg.h"
 #include "BookmarkDlg.h"
@@ -103,12 +104,14 @@ public:
 public:
     // BCG menu bar and tool bar
     CMFCMenuBar m_wndMenuBar;
-    CMFCToolBar m_wndBar1, m_wndBar2;   // Tool bar and Edit bar
-    CMFCToolBar m_wndBar3, m_wndBar4;   // Format bar and Navigation bar
+    CMFCToolBar m_wndStandardBar, m_wndEditBar;   // Tool bar and Edit bar
+    CMFCToolBar m_wndFormatBar, m_wndNavBar;   // Format bar and Navigation bar
 
 	// Modeless dialogs OR dialog bars
-	CCalcDlg m_wndCalc;                 // Calculator dialog/bar
+	CDialogPane m_wndBookmarksPane;     // dockable pane for m_wndBookmarks
     CBookmarkDlg m_wndBookmarks;        // Bookmarks dialog/bar
+
+	CCalcDlg m_wndCalc;                 // Calculator dialog/bar
 	CFindWnd m_wndFind;                 // Find property sheet/bar
 #ifdef EXPLORER_WND
     // Should we just have one of these or allow user to create many???
@@ -143,6 +146,8 @@ public:
     //{{AFX_MSG(CMainFrame)
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnClose();
+    afx_msg void OnSize(UINT nType, int cx, int cy);
+
     afx_msg void OnEditFind();
     afx_msg void OnUpdateEditFind(CCmdUI* pCmdUI);
     afx_msg void OnEditFind2();
@@ -165,7 +170,7 @@ public:
 
 	afx_msg void OnEditReplace();
     afx_msg void OnCalcSel();
-    afx_msg void OnOptionsScheme();
+    //afx_msg void OnOptionsScheme();
     afx_msg void OnBookmarks();
     afx_msg void OnEditGotoDec();
     afx_msg void OnEditGotoHex();
@@ -236,7 +241,7 @@ public:
 	afx_msg void OnUpdateSearchCombo(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateHexCombo(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateDecCombo(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateSchemeCombo(CCmdUI* pCmdUI);
+	//afx_msg void OnUpdateSchemeCombo(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateBookmarksCombo(CCmdUI* pCmdUI);
 
     afx_msg void OnFindNext();
@@ -292,7 +297,7 @@ public:
     FILE_ADDRESS GetHexAddress(CString &expr_str, CString &err_str);
     FILE_ADDRESS GetDecAddress(CString &expr_str, CString &err_str);
 
-    int preview_page_;
+    int preview_page_;  // global value which was the only way I could work out how to pass the print preview page to CPreviewView
 
     BOOL ComboNeedsUpdate(const std::vector<CString> &vs, CComboBox *pp);
 

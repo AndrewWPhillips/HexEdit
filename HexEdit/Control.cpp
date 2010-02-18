@@ -1735,6 +1735,7 @@ BOOL CDecComboButton::NotifyCommand(int iNotifyCode)
     	return CMFCToolBarComboBoxButton::NotifyCommand(iNotifyCode);
 }
 
+/*
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CSchemeComboBox
@@ -1804,6 +1805,7 @@ CComboBox *CSchemeComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
 
     return pcombo;
 }
+*/
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////

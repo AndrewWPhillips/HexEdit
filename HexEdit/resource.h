@@ -4,7 +4,6 @@
 //
 #define IDD_ABOUTBOX                    100
 #define IDB_LIGHTBULB                   102
-#define IDD_DIALOGBAR                   103
 #define ID_INDICATOR_BIG_ENDIAN         103
 #define ID_INDICATOR_FILE_LENGTH        104
 #define ID_INDICATOR_HEX_ADDR           105
@@ -402,6 +401,7 @@
 #define ID_VIEW_APPLOOK_OFF_2007_BLACK	427
 #define ID_VIEW_APPLOOK_OFF_2007_SILVER	428
 #define ID_VIEW_APPLOOK_OFF_2007_AQUA	429
+#define IDD_DIALOGBAR                   430
 
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -1226,8 +1226,8 @@
 #define ID_SEARCH_COMBO                 32877
 #define ID_JUMP_HEX_COMBO               32878
 #define ID_JUMP_DEC_COMBO               32879
-#define ID_SCHEME_COMBO                 32880
-#define ID_SCHEME_COMBO_US              32881
+#define ID_SCHEME                       32880
+#define ID_SCHEME_US                    32881
 #define ID_BOOKMARKS_COMBO              32882
 #define ID_HELP_WEB                     32885
 #define ID_HELP_FORUM                   32886
@@ -1310,7 +1310,6 @@
 #define ID_CONTROL_C                    32983
 #define ID_DISPLAY_STACKED              32984
 #define ID_VIEW_VIEWBAR                 32987
-#define ID_SCHEME                       32988
 #define ID_MACRO_MESSAGE                32989
 #define ID_KEEP_TIMES                   32990
 #define ID_CHECKSUM8                    32991

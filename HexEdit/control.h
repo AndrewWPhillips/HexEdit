@@ -482,6 +482,7 @@ private:
     CSearchEditControl *pedit_;
 };
 
+/*
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // CSchemeComboBox window
@@ -532,7 +533,7 @@ class CSchemeComboButton : public CMFCToolBarComboBoxButton
 public:
     CSchemeComboButton() :
     CMFCToolBarComboBoxButton(::IsUs() ? ID_SCHEME_COMBO_US : ID_SCHEME_COMBO, 
-            -1 /*CImageHash::GetImageOfCommand(ID_SCHEME, FALSE)*/,
+            -1,
             CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
             120)
     {
@@ -561,6 +562,7 @@ public:
 protected:
 
 };
+*/
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
