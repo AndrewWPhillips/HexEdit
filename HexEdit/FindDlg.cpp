@@ -3000,7 +3000,7 @@ BOOL CFindWnd::Create(CWnd* pParentWnd /*=NULL*/)
 	if (!CDialog::Create(CFindWnd::IDD, pParentWnd))
         return FALSE;
 #else
-	if (!CHexDialogBar::Create(CFindWnd::IDD, pParentWnd, CBRS_LEFT))
+	if (!CHexDialogBar::Create(pParentWnd, CFindWnd::IDD, CBRS_LEFT, CFindWnd::IDD))
         return FALSE;
 #endif
 

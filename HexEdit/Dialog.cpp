@@ -1,6 +1,6 @@
 // Dialog.cpp : implementation file
 //
-// Copyright (c) 2008 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -57,9 +57,14 @@ IMPLEMENT_DYNAMIC(CHexDialogBar, CDialogBar)
 
 BEGIN_MESSAGE_MAP(CHexDialogBar, CDialogBar)
 	ON_WM_CREATE()
+	ON_WM_ERASEBKGND()
+	ON_WM_CTLCOLOR()
 	//ON_MESSAGE_VOID(WM_INITIALUPDATE, OnInitialUpdate)
 	ON_MESSAGE(WM_USER+1, InitDialogBarHandler)
 END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CHexDialogBar message handlers
 
 int CHexDialogBar::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
@@ -69,9 +74,42 @@ int CHexDialogBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
+BOOL CHexDialogBar::OnEraseBkgnd(CDC *pDC)
+{
+	CRect rct;
+	GetClientRect(&rct);
+
+	// Fill the background with a colour that matches the current BCG theme (and hence sometimes with the Windows Theme)
+	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
+	return TRUE;
+}
+
+HBRUSH CHexDialogBar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	if (nCtlColor == CTLCOLOR_STATIC)
+	{
+		// Draw static controls with transparent background else they look
+		// aweful against the background colour (see OnEraseBkgnd above).
+		pDC->SetBkMode(TRANSPARENT);
+		return(HBRUSH) ::GetStockObject(HOLLOW_BRUSH);
+	}
+	else
+		return CDialogBar::OnCtlColor(pDC, pWnd, nCtlColor);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CHexDialogBar public methods
+
+LRESULT CHexDialogBar::InitDialogBarHandler(WPARAM, LPARAM)
+{
+	UpdateData(FALSE);
+	OnInitDialog();
+    return FALSE;
+}
+
+#if 0 // xxx
 void CHexDialogBar::Unroll()
 {
-#if 0 // xxx
     if (IsFloating())
     {
 	    // To programatically unrol we need to turn on dynamic unroll, which does
@@ -84,7 +122,6 @@ void CHexDialogBar::Unroll()
         EnableRollUp(BCG_ROLLUP_NORMAL);
         m_pDockContext = tmp;
     }
-#endif
 }
 
 void CHexDialogBar::FixAndFloat(BOOL show /*=FALSE*/)
@@ -98,13 +135,7 @@ void CHexDialogBar::FixAndFloat(BOOL show /*=FALSE*/)
     mm->FloatControlBar(this, pt);           // Undock in case it is docked weirdly or in wrong place
     Unroll();                                // Make sure it is not rolled up
 }
-
-LRESULT CHexDialogBar::InitDialogBarHandler(WPARAM, LPARAM)
-{
-	UpdateData(FALSE);
-	OnInitDialog();
-    return FALSE;
-}
+#endif
 
 #ifdef EXPLORER_WND
 
@@ -786,7 +817,7 @@ UINT CFolderEdit::OnGetDlgCode()
 // CExplorerWnd - modeless dialog that looks like Windows Explorer
 BOOL CExplorerWnd::Create(CWnd* pParentWnd) 
 {
-	if (!CHexDialogBar::Create(IDD, pParentWnd, CBRS_LEFT | CBRS_SIZE_DYNAMIC))
+	if (!CHexDialogBar::Create(pParentWnd, IDD, CBRS_LEFT | CBRS_SIZE_DYNAMIC, IDD))
         return FALSE;
 
     // Create contained splitter window and shell windows in the 2 panes

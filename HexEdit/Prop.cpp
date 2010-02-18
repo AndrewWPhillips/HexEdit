@@ -3587,7 +3587,7 @@ BOOL CPropWnd::Create(CWnd* pParentWnd /*=NULL*/)
 	if (!CDialog::Create(CPropWnd::IDD, pParentWnd))
         return FALSE;
 #else
-	if (!CHexDialogBar::Create(CPropWnd::IDD, pParentWnd, CBRS_LEFT))
+	if (!CHexDialogBar::Create(pParentWnd, CPropWnd::IDD, CBRS_LEFT, CPropWnd::IDD))
         return FALSE;
 #endif
 

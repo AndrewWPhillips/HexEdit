@@ -713,6 +713,7 @@ BOOL CHexEditApp::InitInstance()
 		if (pSplashThread != NULL)
 			pSplashThread->HideSplash();
 
+#if 0
         switch (GetProfileInt("MainFrame", "ShowCalcDlg", 0))
 		{
 		case -1:
@@ -818,6 +819,7 @@ BOOL CHexEditApp::InitInstance()
 		}
 
 		pMainFrame->RecalcLayout();
+#endif
 
 #ifndef NO_SECURITY
         CString ss;
@@ -904,7 +906,7 @@ void CHexEditApp::OnNewVersion(int old_ver, int new_ver)
     {
         // We need to reset the Edit Bar otherwise the edit controls (Find/Jump tools) don't work properly
         CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-        mm->m_wndBar2.RestoreOriginalstate();
+        mm->m_wndEditBar.RestoreOriginalstate();
     }
 }
 
@@ -1576,6 +1578,8 @@ BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
 	{
 		return FALSE;
 	}
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == 65)
+		pMsg->message = WM_KEYDOWN;
 
     return CWinAppEx::PreTranslateMessage(pMsg);
 }

@@ -48,7 +48,7 @@ public:
     };
 // Construction
 public:
-	CBookmarkDlg(CWnd* pParent = NULL); // standard constructor
+	CBookmarkDlg(); // standard constructor
 
     void UpdateBookmark(int index, BOOL select = FALSE);
     void RemoveBookmark(int index);
@@ -60,15 +60,14 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CBookmarkDlg)
 	public:
-	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
+	virtual BOOL Create(CWnd* pParentWnd, UINT nIDTemplate,
+			UINT nStyle, UINT nID);
 	//}}AFX_VIRTUAL
 	virtual void DelayShow(BOOL bShow) { theApp.SaveToMacro(km_bookmarks, bShow ? 5 : 6);
                                          CHexDialogBar::DelayShow(bShow); }
 
 public:
-	virtual BOOL Create(CWnd* pParentWnd);
     virtual BOOL PreTranslateMessage(MSG* pMsg);
-	CSize m_sizeInitial;
 
 // Implementation
 protected:

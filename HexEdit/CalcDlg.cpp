@@ -71,7 +71,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 {
     mm_ = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
 
-	if (!CHexDialogBar::Create(CCalcDlg::IDD, pParentWnd, CBRS_LEFT | CBRS_SIZE_DYNAMIC))
+	if (!CHexDialogBar::Create(pParentWnd, CCalcDlg::IDD, CBRS_LEFT | CBRS_SIZE_DYNAMIC, CCalcDlg::IDD))
         return FALSE;
 
     // We need to setup the resizer here to make sure it gets a WM_SIZE message for docked window

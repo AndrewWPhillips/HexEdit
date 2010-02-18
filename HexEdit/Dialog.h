@@ -1,4 +1,4 @@
-// Copyright (c) 1999 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -52,23 +52,23 @@ class CHexDialogBar : public CDialogBar
 public:
     CHexDialogBar() { }
 	virtual ~CHexDialogBar() { }
-	BOOL Create(UINT nID, CWnd* pParentWnd, UINT nStyle = CBRS_LEFT )
-	{
-		return CDialogBar::Create(pParentWnd, nID, nStyle, nID);
-	}
-	void Unroll();
-    void FixAndFloat(BOOL show = FALSE);
 
 	virtual BOOL OnInitDialog() { return FALSE; }
 	// This stops buttons being disabled because they have no command handler
 	virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler) { }
 
 	void ToggleDocking() {} // xxx fix for MFC9
+	void Unroll() {}
+	void FixAndFloat(BOOL show = FALSE) {}
+
 protected:
 
 	//afx_msg void OnInitialUpdate();
 	afx_msg LRESULT InitDialogBarHandler(WPARAM, LPARAM);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -275,15 +275,11 @@ public:
 	virtual BOOL OnFileNameOK()
     {
         CRect rr;
-		ASSERT(GetParent() != NULL);
-		if (GetParent() != NULL)
-		{
-			GetParent()->GetWindowRect(&rr);
-			theApp.WriteProfileInt("Window-Settings", strName+"X1", rr.left);
-			theApp.WriteProfileInt("Window-Settings", strName+"Y1", rr.top);
-			theApp.WriteProfileInt("Window-Settings", strName+"X2", rr.right);
-			theApp.WriteProfileInt("Window-Settings", strName+"Y2", rr.bottom);
-		}
+        GetParent()->GetWindowRect(&rr);
+        theApp.WriteProfileInt("Window-Settings", strName+"X1", rr.left);
+        theApp.WriteProfileInt("Window-Settings", strName+"Y1", rr.top);
+        theApp.WriteProfileInt("Window-Settings", strName+"X2", rr.right);
+        theApp.WriteProfileInt("Window-Settings", strName+"Y2", rr.bottom);
 
         return CFileDialog::OnFileNameOK();
     }
@@ -298,7 +294,7 @@ public:
                      theApp.GetProfileInt("Window-Settings", strName+"Y1", -30000),
                      theApp.GetProfileInt("Window-Settings", strName+"X2", -30000),
                      theApp.GetProfileInt("Window-Settings", strName+"Y2", -30000));
-            if (rr.top != -30000 && GetParent() != NULL)
+            if (rr.top != -30000)
                 GetParent()->MoveWindow(&rr);
 
             first_time = false;

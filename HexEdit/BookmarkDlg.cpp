@@ -125,26 +125,17 @@ static DWORD id_pairs[] = {
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarkDlg dialog
 
-CBookmarkDlg::CBookmarkDlg(CWnd* pParent /*=NULL*/)
+CBookmarkDlg::CBookmarkDlg() : CHexDialogBar()
 {
 	help_hwnd_ = (HWND)0;
 	p_grid = &grid_;
     pdoc_ = NULL;
-
-	m_sizeInitial = CSize(-1, -1);
 }
 
-BOOL CBookmarkDlg::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext) 
+BOOL CBookmarkDlg::Create(CWnd *pParentWnd, UINT nIDTemplate, UINT nStyle, UINT nID)
 {
-    return Create(pParentWnd);
-}
-
-BOOL CBookmarkDlg::Create(CWnd* pParentWnd) 
-{
-	if (!CHexDialogBar::Create(CBookmarkDlg::IDD, pParentWnd, CBRS_LEFT | CBRS_SIZE_DYNAMIC))
+	if (!CHexDialogBar::Create(pParentWnd, nIDTemplate, nStyle, nID))
         return FALSE;
-    // We need to setup the resizer here to make sure it gets a WM_SIZE message for docked window
-	resizer_.Create(GetSafeHwnd(), TRUE, 100, TRUE); // 4th param when dlg = child of resized window
 
 	// Default to retaining network/removaeable drive files when validating
 	ASSERT(GetDlgItem(IDC_NET_RETAIN) != NULL);
@@ -156,33 +147,6 @@ BOOL CBookmarkDlg::Create(CWnd* pParentWnd)
         TRACE0("Failed to subclass grid control\n");
 		return FALSE;
     }
-
-    // Base min size on dialog resource height + half width
-	CSize tmp_size;
-	if (m_sizeInitial.cx == -1)
-	{
-		// Get window size (not client size) from BCGControlBar and adjust for edges + caption
-		tmp_size = m_sizeDefault;
-		tmp_size.cx -= 2*GetSystemMetrics(SM_CXFIXEDFRAME);
-		tmp_size.cy -= 2*GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
-	}
-	else
-	{
-		tmp_size = m_sizeInitial;
-	}
-	resizer_.SetInitialSize(tmp_size);
-	tmp_size.cx /= 2;
-	resizer_.SetMinimumTrackingSize(tmp_size);
-
-    resizer_.Add(IDC_BOOKMARK_NAME, 0, 0, 100, 0);
-    resizer_.Add(IDC_BOOKMARK_ADD, 100, 0, 0, 0);
-    resizer_.Add(IDC_GRID_BL, 0, 0, 100, 100);
-    resizer_.Add(IDOK, 100, 0, 0, 0);
-    resizer_.Add(IDC_BOOKMARK_GOTO, 100, 0, 0, 0);
-    resizer_.Add(IDC_BOOKMARK_REMOVE, 100, 0, 0, 0);
-    resizer_.Add(IDC_BOOKMARKS_VALIDATE, 100, 0, 0, 0);
-    resizer_.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
-    resizer_.Add(IDC_BOOKMARKS_HELP, 100, 0, 0, 0);
 
     // Set up the grid control
     grid_.SetDoubleBuffering();
@@ -208,13 +172,14 @@ BOOL CBookmarkDlg::Create(CWnd* pParentWnd)
     FillGrid();
 
     grid_.ExpandColsNice(FALSE);
-
+/* xxx
     // We need this so that the resizer gets WM_SIZE event after the controls
     // have been added.
     CRect cli;
     GetClientRect(&cli);
     PostMessage(WM_SIZE, SIZE_RESTORED, MAKELONG(cli.Width(), cli.Height()));
-    return TRUE;
+*/
+	return TRUE;
 }
 
 BEGIN_MESSAGE_MAP(CBookmarkDlg, CHexDialogBar)
@@ -482,8 +447,6 @@ void CBookmarkDlg::UpdateRow(int index, int row, BOOL select /*=FALSE*/)
 // CBookmarkDlg message handlers
 void CBookmarkDlg::OnSize(UINT nType, int cx, int cy) 
 {
-	if (cx > 0 && m_sizeInitial.cx == -1)
-		m_sizeInitial = CSize(cx, cy);
 	CHexDialogBar::OnSize(nType, cx, cy);
 }
 
