@@ -2090,106 +2090,6 @@ void CHexEditView::OnDraw(CDC* pDC)
     if (pDC->IsPrinting() && print_sel_ && dup_lines_)
         goto end_of_background_drawing;
 
-    // Note: We draw bad sectors, change-tracking deletions, bookmarks etc first
-    // as they are always drawn from the top of screen (or page) downwards.  This
-    // is so the user is less likely to notice the wrong direction.
-
-    if (!display_.hide_bookmarks)
-    {
-        // Draw bookmarks
-        for (std::vector<FILE_ADDRESS>::const_iterator pbm = pDoc->bm_posn_.begin();
-             pbm != pDoc->bm_posn_.end(); ++pbm)
-        {
-            if (*pbm >= first_addr && *pbm <= last_addr)
-            {
-                CRect mark_rect;
-
-                mark_rect.top = int(((*pbm + offset_)/rowsize_) * line_height - doc_rect.top + 1);
-//                mark_rect.bottom = mark_rect.top + line_height - 3;
-                mark_rect.bottom = mark_rect.top + line_height - 1;
-                if (neg_y)
-                {
-                    mark_rect.top = -mark_rect.top;
-                    mark_rect.bottom = -mark_rect.bottom;
-                }
-
-                if (!display_.vert_display && display_.hex_area)
-                {
-                    mark_rect.left = hex_pos(int((*pbm + offset_)%rowsize_), char_width) - 
-                                    doc_rect.left;
-//                        mark_rect.right = mark_rect.left + 2*char_width;
-                    mark_rect.right = mark_rect.left + 2*char_width + 2;
-                    if (neg_x)
-                    {
-                        mark_rect.left = -mark_rect.left;
-                        mark_rect.right = -mark_rect.right;
-                    }
-
-                    pDC->FillSolidRect(&mark_rect, bm_col_);
-                }
-
-                if (display_.vert_display || display_.char_area)
-                {
-                    mark_rect.left = char_pos(int((*pbm + offset_)%rowsize_), char_width, char_width_w) - 
-                                    doc_rect.left + 1;
-//                        mark_rect.right = mark_rect.left + char_width_w - 2;
-                    mark_rect.right = mark_rect.left + char_width_w;
-                    if (neg_x)
-                    {
-                        mark_rect.left = -mark_rect.left;
-                        mark_rect.right = -mark_rect.right;
-                    }
-                    pDC->FillSolidRect(&mark_rect, bm_col_);
-                }
-            }
-        }
-    }
-
-    // Draw mark if within display area
-    if (!pDC->IsPrinting() && mark_ >= first_virt && mark_ < last_virt || 
-         pDC->IsPrinting() && mark_ >= first_addr && mark_ < last_addr )
-    {
-        CRect mark_rect;                // Where mark is drawn in logical coords
-
-        mark_rect.top = int(((mark_ + offset_)/rowsize_) * line_height - doc_rect.top + 1);
-//        mark_rect.bottom = mark_rect.top + line_height - 3;
-        mark_rect.bottom = mark_rect.top + line_height - 1;
-        if (neg_y)
-        {
-            mark_rect.top = -mark_rect.top;
-            mark_rect.bottom = -mark_rect.bottom;
-        }
-
-        if (!display_.vert_display && display_.hex_area)
-        {
-            mark_rect.left = hex_pos(int((mark_ + offset_)%rowsize_), char_width) - 
-                             doc_rect.left;
-//            mark_rect.right = mark_rect.left + 2*char_width;
-            mark_rect.right = mark_rect.left + 2*char_width + 2;
-            if (neg_x)
-            {
-                mark_rect.left = -mark_rect.left;
-                mark_rect.right = -mark_rect.right;
-            }
-
-            pDC->FillSolidRect(&mark_rect, mark_col_);
-        }
-
-        if (display_.vert_display || display_.char_area)
-        {
-            mark_rect.left = char_pos(int((mark_ + offset_)%rowsize_), char_width, char_width_w) - 
-                             doc_rect.left + 1;
-//            mark_rect.right = mark_rect.left + char_width_w - 2;
-            mark_rect.right = mark_rect.left + char_width_w;
-            if (neg_x)
-            {
-                mark_rect.left = -mark_rect.left;
-                mark_rect.right = -mark_rect.right;
-            }
-            pDC->FillSolidRect(&mark_rect, mark_col_);
-        }
-    }
-
     // Preread device blocks so we know if there are bad sectors
 	if (GetDocument()->IsDevice())
     {
@@ -2553,6 +2453,11 @@ void CHexEditView::OnDraw(CDC* pDC)
 	}
 #endif
 
+    // Note: We draw bad sectors, change-tracking deletions, etc first
+    // as they are always drawn from the top of screen (or page) downwards.
+    // This is so the user is less likely to notice the wrong direction.
+	// (Major things are drawn from the bottom up when scrolling backwards.)
+ 
     int seclen = pDoc->GetSectorSize();
     if (pDoc->pfile1_ != NULL && display_.borders && seclen > 0)
     {
@@ -2707,6 +2612,7 @@ void CHexEditView::OnDraw(CDC* pDC)
         }
         pDC->SetTextColor(prev_col);   // restore text colour
     }
+
     // Now draw other change tracking stuff top down OR bottom up depending on ScrollUp()
     if (!pDC->IsPrinting() && ScrollUp())
     {
