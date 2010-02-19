@@ -1,29 +1,60 @@
-3.4
+3.5
 ===
+
+- help
+  - new colours
+- Open defaulttoolbarimages.bmp
+  - error in _bmp.xml
+  - why is it parsing template anyway when template view is none?
+> context help for file name in Doc/General options page
+- use JPG for about box background
+> show new shaded icons in toolbars
+  - new screenshots under Windows 7
+- options
+  - save as default does not store colour scheme
+  - save as default does not store template/aerial display
+  - rainbow colour scheme has light grey for 00 byte
+- aerial view
+  - dclick sets focus to hex view
+  > ants: selection, mark, highlights, search occ, bookmarks
+  > border: selection, mark, highlights, search occ, bookmarks
+  > recalc bitmap when colour scheme changes
+    - warn if large file (> 1GB?)
+
+ - update code generation on web site
+ - check new cracker codes and find workaround
+ > update security_version_ (hexedit.h)
+ > add new version to email dlg drop list
+ > update X.Y ver # in version resource and rebuild HexEdit.exe
+ > change version number and copyright year in readme.txt, order.txt
+ - update help for new features, what's new, installation, order form etc
+ - add new tips of the day
+ - create new release notes
+ - create new bitmap for install
+ - update licence agreement text (version no, year etc)
+ - update PAD file (hexedit.xml)
+   - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
+ - change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
+ - create installation (add any new files, templates etc)
+ - change times of MSI file using touch2.bat
+ - create HexEdX_X.zip file containing HexEdX_X.MSI file along with readme.txt, hexedit.xml
+ - change time of zip file using touch3.bat
+ - test install on 95, 98, ME, NT4, W2K, XP
  - submit to Simtel and change web links to new Simtel page
+ - web site: add ver to bug report form drop list, update what's new, gifs etc
+ - make announcement in forums
  - update to shareware download sites
  - email reg users about new release (staggered)
  - email others about new release
  - change normal activation code email template
  - send out press release
 
-3.5
-===
 
+
+3.6
+===
 - check for updates
-- use JPG for about box background
-- show new shaded icons in toolbars
-  - new screenshots under Windows 7
-- aerial view
-  > ants: selection, mark, highlights, search occ, bookmarks
-    - double-buffer to prevent flicker
-  > border: selection, mark, highlights, search occ, bookmarks
-  - recalc bitmap when colour scheme changes
-    - warn if large file (> 1GB?)
-  - update help
 - new options
-  > clear histories (search/jump tools, recent file list, bookmarks?)
-    - bookmarks does not remove from the lists of open files
   - option for mouse wheel units
   - split print page into 2
     - add watermark and other options
@@ -33,28 +64,30 @@
     - paste in overtype mode
     - turn off insert mode
     - turn off read-only mode
-- ADS
-  - open them in new view
 - calculator
   - cf Windows 7 Calculator
     - 64 check boxes
     - radio buttons on the left
   - bookmarks (active file) drop-list
   - handle > 64 bit numbers
+DS
+  - open them in new view
+- aerial view fixes
+  - more options
+  - update help (from What's New in 3.5)
+
 - file stats (XTAL256)
 - file compare (XTAL256)
 - template "include" facility
 - tip when mouse held over a template line
 
-3.6
-===
 - fix pliers and update graphics
 - Convert to use FileErrorMessage() ???
 ? allow editing read-only files
 - insert file option should read a file even if it's in use
 - welcome screen that has a tutorial option?
 - smaller font for numbers in ruler
-- new installler
+- new installer
    - get MFC merge module (.msm file) to include used MFC in installation (.msi)
      - use MFC 7.1 (same as UBCD4Win - Ultimate boot CD for Windows) - MFC71.DLL, MSVCRT71.DLL
    - is it possible to have install modules (eg MFC) come from web only when needed?

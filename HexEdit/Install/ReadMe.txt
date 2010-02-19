@@ -9,7 +9,7 @@ are available at a discount on request.  The unregistered version works exactly
 like the registered version for 30 days after which reminders are displayed.
 
 The unregistered version is freely distributable.  All code, images etc 
-are copyright 1999-2009 Expert Commercial Software Pty Ltd.
+are copyright 1999-2010 Expert Commercial Software Pty Ltd.
 
 3.4 is typically distributed as a file called hexed3_4.msi.  This file
 may in turn be stored in a zip file (with this readme) called hexed3_4.zip.
