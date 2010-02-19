@@ -143,6 +143,10 @@ struct OptValues
     // The rest are only used if there is a window open
     CString window_name_;       // Active view's window name
 
+	// How other views are displayed
+	int display_template_;
+	int display_aerial_;
+
     // Window display
 	int		show_area_;
 	int		charset_;

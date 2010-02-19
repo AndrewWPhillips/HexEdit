@@ -70,7 +70,8 @@ void COptSheet::init()
     val_.max_search_hist_ = val_.max_replace_hist_ = 
     val_.max_hex_jump_hist_ = val_.max_dec_jump_hist_ = 
     val_.max_expl_dir_hist_ = val_.max_expl_filt_hist_ = 10;
-    val_.clear_recent_file_list_ = val_.clear_bookmarks_ = val_.clear_on_exit_ = FALSE;
+    val_.clear_recent_file_list_ = val_.clear_bookmarks_ = FALSE;
+	val_.clear_on_exit_ = TRUE;
 
 	val_.bg_search_ = FALSE;
     val_.undo_limit_ = 4;
@@ -3217,6 +3218,8 @@ void CWindowGeneralPage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_FILE_ICON, ctl_icon_);
+	DDX_CBIndex(pDX, IDC_DISPLAY_TEMPLATE, pParent->val_.display_template_);
+	DDX_CBIndex(pDX, IDC_DISPLAY_AERIAL, pParent->val_.display_aerial_);
 }
 
 BEGIN_MESSAGE_MAP(CWindowGeneralPage, COptPage)
@@ -3315,6 +3318,8 @@ static DWORD id_pairs_wingeneral[] = {
 	IDC_FILE_NAME, HIDC_FILE_NAME,
     IDC_DISP_RESET, HIDC_DISP_RESET,
     IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
+	IDC_DISPLAY_TEMPLATE, HIDC_DISPLAY_TEMPLATE,
+	IDC_DISPLAY_AERIAL, HIDC_DISPLAY_AERIAL,
     0,0 
 };
 

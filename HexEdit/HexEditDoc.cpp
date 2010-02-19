@@ -4053,7 +4053,7 @@ CHexExpr::value_t CHexExpr::find_symbol(const char *sym, value_t parent, size_t 
     sym_address = -1;
     sym_str.Empty();
 
-	if (_stricmp(sym, "cursor") == 0)
+	if (parent.typ == TYPE_NONE && _stricmp(sym, "cursor") == 0)
 	{
 		FILE_ADDRESS start, end;
 		CHexEditView *pview = pdoc->GetBestView();
@@ -4065,7 +4065,7 @@ CHexExpr::value_t CHexExpr::find_symbol(const char *sym, value_t parent, size_t 
 			retval.int64 = start;
 		}
 	}
-	else if (_stricmp(sym, "mark") == 0)
+	else if (parent.typ == TYPE_NONE && _stricmp(sym, "mark") == 0)
 	{
 		CHexEditView *pview = pdoc->GetBestView();
 		assert(pview != NULL);
@@ -4075,7 +4075,7 @@ CHexExpr::value_t CHexExpr::find_symbol(const char *sym, value_t parent, size_t 
 			retval.int64 = pview->GetMark();
 		}
 	}
-	else if (_stricmp(sym, "eof") == 0)
+	else if (parent.typ == TYPE_NONE && _stricmp(sym, "eof") == 0)
 	{
 		retval.typ = TYPE_INT;
 		retval.int64 = pdoc->length();
