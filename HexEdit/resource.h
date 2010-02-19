@@ -1136,6 +1136,8 @@
 #define IDC_MAIN                        1588
 #define IDC_SPIN                        1589
 #define IDC_EDIT                        1590
+#define IDC_DISPLAY_TEMPLATE            1591
+#define IDC_DISPLAY_AERIAL              1592
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1564,7 +1566,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        431
 #define _APS_NEXT_COMMAND_VALUE         39125
-#define _APS_NEXT_CONTROL_VALUE         1591
+#define _APS_NEXT_CONTROL_VALUE         1593
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
