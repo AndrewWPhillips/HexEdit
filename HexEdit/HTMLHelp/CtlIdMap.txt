@@ -542,7 +542,7 @@ Says that strings and characters are ASCII unless otherwise specified.
 Click this button to jump to the web site to ensure that the address is correct.
 
 .topic HIDC_SHOW_AREA
-Select whether the hex area, the character area or both areas are displayed.  HexEdit 3.0 allows the 4th option of using Stacked mode.
+Select whether the hex area, the character area or both areas are displayed.  The Stacked mode option displays the text value with the 2 hex nybbles beneath.
 
 .topic HIDC_CONTROL
 Select whether control characters are shown as dots, as their corresponding ASCII character or as their C/C++ escape sequence character.  This option is only available for the ASCII and ANSI character sets.
@@ -606,6 +606,9 @@ Set the minimum password length that is required for your purposes.
 
 .topic HIDC_FILENAME
 The name of the active file.
+
+.topic HIDC_DISPLAY_AERIAL
+Choose how to display the Aerial View, which provides a high-level view of the file as a bitmap.
 
 .topic HIDC_AUTOEXEC
 Runs the AUTOEXEC.HEM macro on startup if it is present in the macros folder.
@@ -821,7 +824,7 @@ Displays "nice" addresses.  That is, hex addresses are displayed in groups of 4 
 Uses a more visible cursor to show the current edit position in the active window.
 
 .topic HIDC_DFFD_FORMAT_REAL
-Determines how floating point numbers (IEEE and IBM) are displayed in the Data column of the tree view.  You can use C-language printf format specs for exact control of the number of significant digits etc, eg "%.5f" for fixed point with 5 decimal places, "%e" for exponent (scientific nottaion) "%.15g" for general numbers with 15 significant digits.
+Determines how floating point numbers (IEEE and IBM) are displayed in the Data column of the tree view.  You can use C-language printf format specs for exact control of the number of significant digits etc, eg "%.5f" for fixed point with 5 decimal places, "%e" for exponent (scientific notation) "%.15g" for general numbers with 15 significant digits.
 
 .topic HIDC_DFFD_TREE_DISPLAY
 A string with embedded expressions enclosed in braces {} with optional format specifications which is displayed in the tree (left most) column in the template view.  This is typically used to show the values of important fields.  Eg "X = {this.x}, Y = {this.y}".
@@ -1431,6 +1434,9 @@ Click this button to email your registration code and other information.  But yo
 
 .topic HIDC_SLIDER_TIP
 Move the slider to adjust the transparency of the tip window.  Hold the mouse over the window to make it fully visible.
+
+.topic HIDC_DISPLAY_TEMPLATE
+Allows you to select how to display the template (tree) view, which given the appropriate template (.XML) file, lets you view and edit the data in a structured format.
 
 .topic HIDC_FOLDER_LIST_SIZE
 How many entries in the folder history (Explorer window) are saved when you exit HexEdit.  For privacy set this size to zero.
