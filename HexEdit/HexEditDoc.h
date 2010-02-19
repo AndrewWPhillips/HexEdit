@@ -615,9 +615,10 @@ public:
     // Background scan (for aerial views etc)
     void CreateAerialThread();  // Create background thread which fills in the aerial view bitmap
     void KillAerialThread();    // Kill background thread ASAP
-    void AerialChange();        // Signal bg thread that doc has changed
+    void AerialChange(CHexEditView *pview = NULL);  // Signal bg thread to re-scan
     UINT RunAerialThread();     // Main func in bg thread
     bool AerialScanning();      // Are we currently scanning
+	void GetAerialBitmap();     // Check if bitmap has been allocated/is big enough and get it if not
 
     void AddAerialView(CHexEditView *pview);
     void RemoveAerialView();

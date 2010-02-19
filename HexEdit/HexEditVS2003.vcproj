@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="version.lib setargv.obj imagehlp.lib htmlhelp.lib Winmm.lib"
+				AdditionalDependencies="version.lib setargv.obj imagehlp.lib htmlhelp.lib Winmm.lib FreeImage.lib"
 				OutputFile=".\Release/HexEdit.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

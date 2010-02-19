@@ -126,73 +126,51 @@ static UINT bg_func(LPVOID pParam)
 
 void CHexEditDoc::AddAerialView(CHexEditView *pview)
 {
-    if (++av_count_ == 1)
-    {
-        pview->get_colours(kala_);
+	if (++av_count_ == 1)
+	{
+		pview->get_colours(kala_);   // get colours for the bitmap pixels
+		GetAerialBitmap();           // get memory for the bitmap
 
-        // xxx we need user options for default bpe and MAX_BMP (min MAX_BMP should be 16MB)
-        bpe_ = 1; 
-        
-        // Keep increasing bpe_ by powers of two until we get a small enough bitmap
-        while (bpe_ <= 65536 && (length_*3)/bpe_ > MAX_BMP)
-            bpe_ = bpe_<<1;
-
-        // Work out the number of bitmap rows we would need at the widest bitmap size
-        int rows = int(length_/bpe_/MAX_WIDTH) + 2;    // Round up to next row plus add one more row to allow for "reshaping"
-        ASSERT((rows-2)*MAX_WIDTH < MAX_BMP);
-
-        dib_ = FreeImage_Allocate(MAX_WIDTH, rows, 24);
-        dib_size_ = MAX_WIDTH*rows*3;           // DIB size in bytes since we have 3 bytes per pixel and no pad bytes at the end of each scan line
-        ASSERT(dib_size_ == FreeImage_GetPitch(dib_) * FreeImage_GetHeight(dib_));
-        memset(FreeImage_GetBits(dib_), 0xC0, dib_size_);       // Clear to light grey
-#ifdef TEST_AERIAL
-        // Fill the bitmap with a known pattern for testing of scrolling etc
-        BYTE *pp = FreeImage_GetBits(dib_);
-        for (int f4 = 0; ; ++f4)
-        {
-            for (int f3 = 0; f3 < 32; ++f3)
-            {
-                for (int f2 = 0; f2 < 32; ++f2)
-                {
-                    for (int f1 = 0; f1 < 32; ++f1)
-                    {
-                        if ((((f4*32 + f3)*32 + f2)*32 + f1)*32 > NumElts())
-                            goto stop_now;
-                        *(pp + ((((f4*32) + f3)*32 + f2)*32 + f1)*32*3) = (BYTE)255;
-                        *(pp + ((((f4*32) + f3)*32 + f2)*32 + f1)*32*3 + 1) = (BYTE)0;
-                        *(pp + ((((f4*32) + f3)*32 + f2)*32 + f1)*32*3 + 2) = (BYTE)0;
-                    }
-                    *(pp + ((f4*32 + f3)*32 + f2)*32*32*3) = (BYTE)0;
-                    *(pp + ((f4*32 + f3)*32 + f2)*32*32*3 + 1) = (BYTE)255;
-                    *(pp + ((f4*32 + f3)*32 + f2)*32*32*3 + 2) = (BYTE)0;
-                    *(pp + ((f4*32 + f3)*32 + f2)*32*32*3 + 3) = (BYTE)0;
-                    *(pp + ((f4*32 + f3)*32 + f2)*32*32*3 + 4) = (BYTE)255;
-                    *(pp + ((f4*32 + f3)*32 + f2)*32*32*3 + 5) = (BYTE)0;
-                }
-                *(pp + (f4*32 + f3)*32*32*32*3) = (BYTE)0;
-                *(pp + (f4*32 + f3)*32*32*32*3 + 1) = (BYTE)0;
-                *(pp + (f4*32 + f3)*32*32*32*3 + 2) = (BYTE)255;
-                *(pp + (f4*32 + f3)*32*32*32*3 + 3) = (BYTE)0;
-                *(pp + (f4*32 + f3)*32*32*32*3 + 4) = (BYTE)0;
-                *(pp + (f4*32 + f3)*32*32*32*3 + 5) = (BYTE)255;
-                *(pp + (f4*32 + f3)*32*32*32*3 + 6) = (BYTE)0;
-                *(pp + (f4*32 + f3)*32*32*32*3 + 7) = (BYTE)0;
-                *(pp + (f4*32 + f3)*32*32*32*3 + 8) = (BYTE)255;
-            }
-            memset(pp + f4*32*32*32*32*3, 255, 30);  // 10 white pixels
-        }
-    stop_now:
-        memset(FreeImage_GetBits(dib_), 0, 6);                    // 2 black pixels at the start
-        memset(FreeImage_GetBits(dib_) + NumElts()*3 - 6, 0, 6);  // 2 black pixels at the end
-#else
-        CreateAerialThread();
-        TRACE("Pulsing aerial event\n");
-        start_aerial_event_.SetEvent();
-#endif
-    }
-#ifndef TEST_AERIAL
+		// Create the background thread and start it scanning
+		CreateAerialThread();
+		TRACE("Pulsing aerial event\n");
+		start_aerial_event_.SetEvent();
+	}
     ASSERT(pthread3_ != NULL);
-#endif
+}
+
+// Gets a new FreeImage bitmap if we haven't got one yet or the current one is too small.
+// On entry the background thread must not be scanning the bitmap - eg waiting.
+void CHexEditDoc::GetAerialBitmap()
+{
+	// If we already have a bitmap make sure it is big enough
+	if (dib_ != NULL)
+	{
+		int dib_size = FreeImage_GetDIBSize(dib_);
+		int dib_rows = int(length_/bpe_/MAX_WIDTH) + 2;
+		if (dib_size > MAX_WIDTH*dib_rows*3)
+			return;
+
+		// Not big enough so free it and reallocate (below)
+        FreeImage_Unload(dib_);
+        dib_ = NULL;
+	}
+
+	// xxx we need user options for default bpe and MAX_BMP (min MAX_BMP should be 16MB)
+	bpe_ = 1; 
+	
+	// Keep increasing bpe_ by powers of two until we get a small enough bitmap
+	while (bpe_ <= 65536 && (length_*3)/bpe_ > MAX_BMP)
+		bpe_ = bpe_<<1;
+
+	// Work out the number of bitmap rows we would need at the widest bitmap size
+	int rows = int(length_/bpe_/MAX_WIDTH) + 2;    // Round up to next row plus add one more row to allow for "reshaping"
+	ASSERT((rows-2)*MAX_WIDTH < MAX_BMP);
+
+	dib_ = FreeImage_Allocate(MAX_WIDTH, rows, 24);
+	dib_size_ = MAX_WIDTH*rows*3;           // DIB size in bytes since we have 3 bytes per pixel and no pad bytes at the end of each scan line
+	ASSERT(dib_size_ == FreeImage_GetPitch(dib_) * FreeImage_GetHeight(dib_));
+	memset(FreeImage_GetBits(dib_), 0xC0, dib_size_);       // Clear to light grey
 }
 
 void CHexEditDoc::RemoveAerialView()
@@ -281,7 +259,7 @@ void CHexEditDoc::KillAerialThread()
     TRACE1("Thread took %g secs to kill\n", double(tt.elapsed()));
     pthread3_ = NULL;
 
-    // Free resources that are only needed during bg searches
+    // Free resources that are only needed during scan
     if (pfile3_ != NULL)
 	{
 		pfile3_->Close();
@@ -301,15 +279,16 @@ void CHexEditDoc::KillAerialThread()
 }
 
 // Doc has changed - restart scan
-void CHexEditDoc::AerialChange()
+void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 {
     if (av_count_ == 0) return;
     ASSERT(pthread3_ != NULL);
     if (pthread3_ == NULL) return;
 
+	// stop background scan (if any)
 	docdata_.Lock();
 	bool waiting = aerial_state_ == WAITING;
-	aerial_command_ = RESTART;
+	aerial_command_ = STOP;
 	aerial_fin_ = FALSE;
 	docdata_.Unlock();
 
@@ -320,12 +299,24 @@ void CHexEditDoc::AerialChange()
 		Sleep(0);
 	    SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_LOWEST);
 		docdata_.Lock();
-		bool waiting = aerial_state_ == WAITING;
+		waiting = aerial_state_ == WAITING;
 		docdata_.Unlock();
 	}
 
-    if (waiting)
-        start_aerial_event_.SetEvent();
+	ASSERT(waiting);
+	GetAerialBitmap();  // make sure the current bitmap is big enough
+	if (pview != NULL)
+        pview->get_colours(kala_);
+
+	// Restart the scan
+	docdata_.Lock();
+	waiting = aerial_state_ == WAITING;
+	aerial_command_ = RESTART;
+	aerial_fin_ = FALSE;
+	docdata_.Unlock();
+
+	start_aerial_event_.SetEvent();
+	TRACE("Pulsing aerial event (restart)\r\n");
 }
 
 bool CHexEditDoc::AerialScanning()
@@ -360,6 +351,7 @@ UINT CHexEditDoc::RunAerialThread()
         int file_bpe = bpe_;
         unsigned char *file_dib = FreeImage_GetBits(dib_);
         ASSERT(aerial_command_ == RESTART || aerial_command_ == DIE);   // we should only be woken up to scan or die
+		unsigned dib_size = FreeImage_GetDIBSize(dib_);
         docdata_.Unlock();
 
         // Get the file buffer

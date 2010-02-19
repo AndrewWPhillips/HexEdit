@@ -740,6 +740,8 @@ public:
     void get_colours(COLORREF *k) { for (int ii = 0; ii < 256; ++ii) k[ii] = kala[ii]; }
 
     bool NoNavMovesDone() const { return nav_moves_ == 0; }  // any moves done since swapping to this view?
+	int TemplateViewType() const;
+	int AerialViewType() const;
 
 private:
     enum { max_font_size = 100 };

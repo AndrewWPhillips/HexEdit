@@ -1327,6 +1327,7 @@ void CHexEditDoc::CheckBGProcessing()
 #ifdef SYS_SOUNDS
         CSystemSound::Play("Background Scan Finished");
 #endif
+		TRACE("Detected aerial scan finished - update\r\n");
         CBGAerialHint bgah;
         UpdateAllViews(NULL, 0, &bgah);
     }

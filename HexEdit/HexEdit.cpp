@@ -1928,7 +1928,7 @@ void CHexEditApp::LoadOptions()
     max_expl_dir_hist_ = GetProfileInt("History", "MaxExplorerFolders", clear ? 0 : 32);
     max_expl_filt_hist_ = GetProfileInt("History", "MaxExplorerFilters", clear ? 0 : 16);
 
-    clear_recent_file_list_ = GetProfileInt("Options", "ClearRecentFileList", 1) ? TRUE : FALSE;
+    clear_recent_file_list_ = GetProfileInt("Options", "ClearRecentFileList", 0) ? TRUE : FALSE;
     clear_bookmarks_ = GetProfileInt("Options", "ClearBookmarks", 0) ? TRUE : FALSE;
     clear_on_exit_ = GetProfileInt("Options", "ClearOnExit", 1) ? TRUE : FALSE;
 
@@ -3049,6 +3049,9 @@ void CHexEditApp::get_options(struct OptValues &val)
         ((CMDIChildWnd *)((CMainFrame *)AfxGetMainWnd())->MDIGetActive())->
             GetWindowText(val.window_name_);
 
+		val.display_template_ = pview->TemplateViewType();
+		val.display_aerial_ = pview->AerialViewType();
+
         val.disp_state_ = pview->disp_state_;
         val.lf_ = pview->lf_;
         val.oem_lf_ = pview->oem_lf_;
@@ -3410,6 +3413,39 @@ void CHexEditApp::set_options(struct OptValues &val)
             wp.showCmd = val.maximize_ ? SW_SHOWMAXIMIZED : SW_SHOWNORMAL;
             cc->SetWindowPlacement(&wp);
         }
+
+		if (val.display_template_ != pview->TemplateViewType())
+		{
+			switch (val.display_template_)
+			{
+			case 0:
+				pview->OnDffdHide();
+				break;
+			case 1:
+				pview->OnDffdSplit();
+				break;
+			case 2:
+				pview->OnDffdTab();
+				break;
+			}
+		}
+
+		if (val.display_aerial_ != pview->AerialViewType())
+		{
+			switch (val.display_aerial_)
+			{
+			case 0:
+				pview->OnAerialHide();
+				break;
+			case 1:
+				pview->OnAerialSplit();
+				break;
+			case 2:
+				pview->OnAerialTab();
+				break;
+			}
+		}
+
 
         // Make other (undoable) changes if any of the options have changed
         bool change_required = (!val.autofit_ && pview->rowsize_ != val.cols_) ||

@@ -1024,7 +1024,7 @@ void CHexEditView::OnInitialUpdate()
     nav_scroll_ = (GetScroll().y/line_height_)*rowsize_ - offset_;
     theApp.navman_.Add("Opened", get_info(), this, nav_start_, nav_end_, nav_scroll_);
     nav_moves_ = 0;
-}
+} // OnInitialUpdate
 
 // Update our options to the CHexFileList 
 void CHexEditView::StoreOptions()
@@ -1130,6 +1130,8 @@ void CHexEditView::StoreOptions()
 
 void CHexEditView::SetScheme(const char *name)
 {
+	if (scheme_name_ == name) return;    // no change to the scheme
+
     CString previous_name = scheme_name_;
     scheme_name_ = name;
     if (set_colours())
@@ -1358,6 +1360,12 @@ BOOL CHexEditView::set_colours()
         ASSERT_KINDOF(CDataFormatView, pdfv_);
         pdfv_->set_colours();
     }
+
+	if (pav_ != NULL)
+	{
+        ASSERT_KINDOF(CAerialView, pav_);
+		GetDocument()->AerialChange(this);
+	}
 
     return retval;
 }
@@ -17470,7 +17478,7 @@ void CHexEditView::OnDffdHide()
 void CHexEditView::OnUpdateDffdHide(CCmdUI* pCmdUI) 
 {
     pCmdUI->Enable(TRUE);
-    pCmdUI->SetCheck(pdfv_ == NULL);
+    pCmdUI->SetCheck(TemplateViewType() == 0);
 }
 
 void CHexEditView::OnDffdSplit()
@@ -17481,7 +17489,7 @@ void CHexEditView::OnDffdSplit()
 bool CHexEditView::DoDffdSplit()
 {
 	//if (pdfv_ == GetFrame()->splitter_.GetPane(0, 0))
-	if (pdfv_ != NULL && GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd()) > -1)
+	if (TemplateViewType() == 1)
 		return false;   // already open in splitter
 
 	// If open then it is open in a tab - close it
@@ -17530,7 +17538,7 @@ bool CHexEditView::DoDffdSplit()
 }
 void CHexEditView::OnUpdateDffdSplit(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck(pdfv_ != NULL && GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd()) > -1);
+    pCmdUI->SetCheck(TemplateViewType() == 1);
     pCmdUI->Enable(GetDocument()->ptree_ != NULL);
 }
 
@@ -17541,8 +17549,8 @@ void CHexEditView::OnDffdTab()
 }
 bool CHexEditView::DoDffdTab()
 {
-	if (pdfv_ != NULL && GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd()) > -1)
-		return false;
+	if (TemplateViewType() == 2)
+		return false;  // already open in tab
 
 	// Close DFFD view in split window if there is one
 	if (pdfv_ != NULL)
@@ -17575,10 +17583,27 @@ bool CHexEditView::DoDffdTab()
 }
 void CHexEditView::OnUpdateDffdTab(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck(pdfv_ != NULL && GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd()) > -1);
+    pCmdUI->SetCheck(TemplateViewType() == 2);
     pCmdUI->Enable(GetDocument()->ptree_ != NULL);
 }
 
+// public function that just says how the template is displayed
+int CHexEditView::TemplateViewType() const
+{
+    if (pdfv_ == NULL)
+		return 0;
+	else if (GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd()) > -1)
+		return 1;
+	else if (GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd()) > -1)
+		return 2;
+	else
+	{
+		ASSERT(FALSE);
+		return 0;
+	}
+}
+
+// Aerial View commands
 void CHexEditView::OnAerialHide()
 {
     if (pav_ == NULL)
@@ -17604,10 +17629,11 @@ void CHexEditView::OnAerialHide()
 
 	pav_ = NULL;
 }
+
 void CHexEditView::OnUpdateAerialHide(CCmdUI* pCmdUI) 
 {
     pCmdUI->Enable(TRUE);
-    pCmdUI->SetCheck(pav_ == NULL);
+    pCmdUI->SetCheck(AerialViewType() == 0);
 }
 
 void CHexEditView::OnAerialSplit()
@@ -17670,9 +17696,10 @@ bool CHexEditView::DoAerialSplit()
 	pav_->phev_ = this;
 	return true;
 }
+
 void CHexEditView::OnUpdateAerialSplit(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck(pav_ != NULL && GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd()) > -1);
+    pCmdUI->SetCheck(AerialViewType() == 1);
 }
 
 void CHexEditView::OnAerialTab()
@@ -17680,6 +17707,7 @@ void CHexEditView::OnAerialTab()
     if (DoAerialTab())
 	    pav_->SendMessage(WM_INITIALUPDATE);
 }
+
 bool CHexEditView::DoAerialTab()
 {
 	if (pav_ != NULL && GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd()) > -1)
@@ -17716,9 +17744,26 @@ bool CHexEditView::DoAerialTab()
 	ptv->SetActiveView(0);
 	return true;
 }
+
 void CHexEditView::OnUpdateAerialTab(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck(pav_ != NULL && GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd()) > -1);
+    pCmdUI->SetCheck(AerialViewType() == 2);
+}
+
+// public functiom that just says how we are displaying the aerial view
+int CHexEditView::AerialViewType() const
+{
+	if (pav_ == NULL)
+		return 0;
+	else if (GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd()) > -1)
+		return 1;
+	else if (GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd()) > -1)
+		return 2;
+	else
+	{
+		ASSERT(FALSE);
+		return 0;
+	}
 }
 
 // private function which hopefully makes sure all the splitter columns are obvious (ie a min width)
