@@ -239,7 +239,7 @@ Select this option to report a bug or defect of the software.
 Displays an icon that Windows associates with this file or type of file.
 
 .topic HIDC_SLIDER_AUTOSCROLL
-When dragging the mouse to make a selection and the mouse is dragged past the end of the window the display will scroll to allow selecting more than will fit on the screen.  The further you drag past the edge of the display the faster the scrolling.  This slider controls the rate of acceleration.  When all the way to the left there is no autoscroll acceleration at all.
+When dragging the mouse to make a selection and the mouse is dragged past the end of the window the display will scroll to allow selecting more than will fit on the screen.  The further you drag past the edge of the display the faster the scrolling.  This slider controls the rate of acceleration.  When all the way to the left there is no autoscroll acceleration at all (ie constant speed).
 
 .topic HIDC_DOC_PAGE
 Jumps to the corresponding Document options page which has related options but which only apply to the active file.
@@ -317,7 +317,7 @@ Enter the name for the new scheme.  You cannot use the name of an existing schem
 Click the Activate button once you have entered your activation code to complete the registration.
 
 .topic HIDC_SEL_LEN_TIP
-When this option is on a smal "tip" window is displayed when making a selection by dragging with the mouse or when the SHIFT key is held down.  The "tip" shows the length of the selection in hex or decimal (depending on how addresses are currently displayed).
+When this option is on a small "tip" window is displayed when making a selection by dragging with the mouse or when the SHIFT key is held down.  The "tip" shows the length of the selection in hex or decimal (depending on how addresses are currently displayed).
 
 .topic HIDC_GRID_TIP
 Use the columns of the tips list to enter a description, an expression  (using predefined identifiers) to be evaluated and a format specification.  The check box on the left can be used to disable a tip without deleting it.
@@ -650,7 +650,7 @@ Checked if the file is a hidden file.
 The binary value (00000000 to 11111111) of the byte at the current cursor position in the active window.  Double-click a bit to flip it.
 
 .topic HIDC_DATE_BIG_ENDIAN
-Select this option to view the date using big-endian numeric format.  Typically this option is off as Windows/Intel systems use little-endian byte order.\highlight7
+Select this option to view the date using big-endian numeric format.  Typically this option is off as Windows/Intel systems use little-endian byte order.
 
 .topic HIDC_FIND_SCOPE_TOMARK
 Used to restrict the search to the area from the current position to the mark within the active file.
@@ -896,7 +896,7 @@ Search (and replace) history lists in the Find Tool and Find dialog are cleared.
 Enter a name and click the add button to add or update a bookmark for the current cursor position of the active file.  Note that you can't add a bookmark if the active file has not yet been saved to disk.
 
 .topic HIDC_DFFD_FORMAT_DATE
-Determines how dates are displayed in the Data column of the tree view, for date fields that have no explicit formatting.  You can use C-language strftime format specs such as "%c" for data and time formatted according to regional conventions, "%y/%m/%d" year/month/day, etc.
+Determines how dates are displayed in the Data column of the tree view, for date fields that have no explicit formatting.  You can use C-language strftime format specs such as "%c" for date and time formatted according to regional conventions, "%y/%m/%d" year/month/day, etc.
 
 .topic HIDC_ELT_SIZE
 Shows the size of the selected element.  If the element is of indeterminate size (eg IF, variable length FOR, STRUCT containing such, etc) then the size is shown as a question mark (?).
@@ -1073,7 +1073,7 @@ Click the "Replay Options" button to change the options for macro playback befor
 Allows you to change the location that templates are saved and loaded from.
 
 .topic HIDC_SCAN
-Allows HexEdit to scan for devices in a background thread when it starts up so that the "Open Special" dialog displays more quickly.  The only disadvantweg to this option is the annoying floppy disk access when HexEdit starts.
+Allows HexEdit to scan for devices in a background thread when it starts up so that the "Open Special" dialog displays more quickly.  The only disadvantage to this option is the annoying floppy disk access when HexEdit starts.
 
 .topic HIDC_SHOW_BOOKMARKS
 Shows bookmarks in the active file.  Note that hiding bookmarks does not remove them.
@@ -1157,7 +1157,7 @@ This is the number of consecutive similar operations (insertions, deletions etc)
 Reveals a ruler at the top of the display.
 
 .topic HIDC_INTELLIGENT_UNDO
-Cursor movements that reverse previous movements are automatically undone.  This saves lots of unnecessary undo operations.
+Cursor movements that reverse previous movements are assumed to simply be an undo.  This saves lots of time when undoing many operations.
 
 .topic HIDC_FOLDER_FILTER
 Enter a wildcard pattern to filter the list of files you see.  Use *.* to see all files.
@@ -1436,7 +1436,7 @@ Move the slider to adjust the transparency of the tip window.  Hold the mouse ov
 How many entries in the folder history (Explorer window) are saved when you exit HexEdit.  For privacy set this size to zero.
 
 .topic HIDC_DLG_MOVE
-When modeles dialog are floating on top of the main window they can sometimes obscure what you are doing  This option means they will always get out of the way of the cursor in the active file's window.
+When modeless dialog are floating on top of the main window they can sometimes obscure what you are doing  This option means they will always get out of the way of the cursor in the active file's window.
 
 .topic HIDC_DLG_DOCK
 This option allows modeless dialog (Properties, Calculator etc) to dock to the sides of the HexEdit window.  Drag floating dialogs to either side of the main window to dock, OR hold down Ctrl key to prevent docking.

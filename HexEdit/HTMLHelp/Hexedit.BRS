@@ -1,3 +1,24 @@
+[Aerial View Commands]
+Hide Aerial View | cmd_aerial\HID_AERIAL_HIDE.htm
+Split Aerial View | cmd_aerial\HID_AERIAL_SPLIT.htm
+Tabbed Aerial View | cmd_aerial\HID_AERIAL_TAB.htm
+Show Selection in Aerial View Border | cmd_aerial\HID_IND_SEL.htm
+Show Mark in Aerial View Border | cmd_aerial\HID_IND_MARK.htm
+Show Highlights in Aerial View Border | cmd_aerial\HID_IND_HL.htm
+Show Search Occurrences in Aerial View Border | cmd_aerial\HID_IND_SEARCH.htm
+Show Bookmarks in Aerial View Border | cmd_aerial\HID_IND_BM.htm
+Marching Ants Selection in Aerial View | cmd_aerial\HID_ANT_SEL.htm
+Marching Ants around Mark in Aerial View | cmd_aerial\HID_ANT_MARK.htm
+Marching Ants around Highlights in Aerial View | cmd_aerial\HID_ANT_HL.htm
+Marching Ants around Search Occurrences in Aerial View | cmd_aerial\HID_ANT_SEARCH.htm
+Marching Ants around Bookmarks in Aerial View | cmd_aerial\HID_ANT_BM.htm
+Zoom Out Aerial View | cmd_aerial\HID_AERIAL_ZOOM1.htm
+Zoom X 2 | cmd_aerial\HID_AERIAL_ZOOM2.htm
+Zoom X 4 | cmd_aerial\HID_AERIAL_ZOOM4.htm
+Zoom X 8 | cmd_aerial\HID_AERIAL_ZOOM8.htm
+Zoom X 12 | cmd_aerial\HID_AERIAL_ZOOM12.htm
+Zoom X 16 | cmd_aerial\HID_AERIAL_ZOOM16.htm
+
 [Binary Files]
 Introduction | binary_files\BinFilesIntro.htm
 Representations | binary_files\Of_Bits_and_Bytes.htm

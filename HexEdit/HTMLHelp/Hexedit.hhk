@@ -339,6 +339,8 @@
     <param name="Local" value="bars\AFX_HIDW_STATUS_BAR.htm">
     <param name="Name" value="Workspace Editing Options">
     <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+    <param name="Name" value="Show Search Occurrences in Aerial View Border">
+    <param name="Local" value="cmd_aerial\HID_IND_SEARCH.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="1s complement">
@@ -1179,6 +1181,8 @@
     <param name="Local" value="cmd_misc\HID_HIGHLIGHT_HIDE.htm">
     <param name="Name" value="Document Edit Options">
     <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
+    <param name="Name" value="Show Highlights in Aerial View Border">
+    <param name="Local" value="cmd_aerial\HID_IND_HL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="find">
@@ -1728,6 +1732,8 @@
     <param name="Local" value="cmd_edit\HID_SWAP_MARK.htm">
     <param name="Name" value="Moving Around">
     <param name="Local" value="overviewbasics\move.htm">
+    <param name="Name" value="Show Mark in Aerial View Border">
+    <param name="Local" value="cmd_aerial\HID_IND_MARK.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="menus">
@@ -2225,6 +2231,8 @@
       <param name="Local" value="howdoi\HowSearchFiles.htm">
       <param name="Name" value="Workspace Editing Options">
       <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+      <param name="Name" value="Show Search Occurrences in Aerial View Border">
+      <param name="Local" value="cmd_aerial\HID_IND_SEARCH.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="replace">
@@ -2272,6 +2280,8 @@
     <param name="Name" value="selection">
     <param name="Name" value="clipboard">
     <param name="Local" value="overviewbasics\clipboard.htm">
+    <param name="Name" value="Show Selection in Aerial View Border">
+    <param name="Local" value="cmd_aerial\HID_IND_SEL.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -3464,6 +3474,8 @@
     <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
     <param name="Name" value="Document Edit Options">
     <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
+    <param name="Name" value="Show Bookmarks in Aerial View Border">
+    <param name="Local" value="cmd_aerial\HID_IND_BM.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="marking file locations">
@@ -4204,6 +4216,8 @@
     <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
     <param name="Name" value="Workspace Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
+    <param name="Name" value="Tabbed Aerial View">
+    <param name="Local" value="cmd_aerial\HID_AERIAL_TAB.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="split window">
@@ -4296,6 +4310,47 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="My Recent Documents">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="aerial view">
+    <param name="Name" value="Hide Aerial View">
+    <param name="Local" value="cmd_aerial\HID_AERIAL_HIDE.htm">
+    <param name="Name" value="Tabbed Aerial View">
+    <param name="Local" value="cmd_aerial\HID_AERIAL_TAB.htm">
+    <param name="Name" value="Split Aerial View">
+    <param name="Local" value="cmd_aerial\HID_AERIAL_SPLIT.htm">
+    <param name="Name" value="Show Selection in Aerial View Border">
+    <param name="Local" value="cmd_aerial\HID_IND_SEL.htm">
+    <param name="Name" value="Show Mark in Aerial View Border">
+    <param name="Local" value="cmd_aerial\HID_IND_MARK.htm">
+    <param name="Name" value="Show Highlights in Aerial View Border">
+    <param name="Local" value="cmd_aerial\HID_IND_HL.htm">
+    <param name="Name" value="Show Search Occurrences in Aerial View Border">
+    <param name="Local" value="cmd_aerial\HID_IND_SEARCH.htm">
+    <param name="Name" value="Show Bookmarks in Aerial View Border">
+    <param name="Local" value="cmd_aerial\HID_IND_BM.htm">
+    <param name="Name" value="Marching Ants Selection in Aerial View">
+    <param name="Local" value="cmd_aerial\HID_ANT_SEL.htm">
+    <param name="Name" value="Marching Ants around Mark in Aerial View">
+    <param name="Local" value="cmd_aerial\HID_ANT_MARK.htm">
+    <param name="Name" value="Marching Ants around Highlights in Aerial View">
+    <param name="Local" value="cmd_aerial\HID_ANT_HL.htm">
+    <param name="Name" value="Marching Ants around Search Occurrences in Aerial View">
+    <param name="Local" value="cmd_aerial\HID_ANT_SEARCH.htm">
+    <param name="Name" value="Marching Ants around Bookmarks in Aerial View">
+    <param name="Local" value="cmd_aerial\HID_ANT_BM.htm">
+    <param name="Name" value="Zoom Out Aerial View">
+    <param name="Local" value="cmd_aerial\HID_AERIAL_ZOOM1.htm">
+    <param name="Name" value="Zoom X 2">
+    <param name="Local" value="cmd_aerial\HID_AERIAL_ZOOM2.htm">
+    <param name="Name" value="Zoom X 4">
+    <param name="Local" value="cmd_aerial\HID_AERIAL_ZOOM4.htm">
+    <param name="Name" value="Zoom X 8">
+    <param name="Local" value="cmd_aerial\HID_AERIAL_ZOOM8.htm">
+    <param name="Name" value="Zoom X 12">
+    <param name="Local" value="cmd_aerial\HID_AERIAL_ZOOM12.htm">
+    <param name="Name" value="Zoom X 16">
+    <param name="Local" value="cmd_aerial\HID_AERIAL_ZOOM16.htm">
   </object>
 </ul>
 </html>
