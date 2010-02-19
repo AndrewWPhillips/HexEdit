@@ -1930,7 +1930,7 @@ void CHexEditApp::LoadOptions()
 
     clear_recent_file_list_ = GetProfileInt("Options", "ClearRecentFileList", 1) ? TRUE : FALSE;
     clear_bookmarks_ = GetProfileInt("Options", "ClearBookmarks", 0) ? TRUE : FALSE;
-    clear_on_exit_ = GetProfileInt("Options", "ClearOnExit", 0) ? TRUE : FALSE;
+    clear_on_exit_ = GetProfileInt("Options", "ClearOnExit", 1) ? TRUE : FALSE;
 
     hex_ucase_ = GetProfileInt("Options", "UpperCaseHex", 1) ? TRUE : FALSE;
     k_abbrev_ = GetProfileInt("Options", "KAbbrev", 1);

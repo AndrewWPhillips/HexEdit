@@ -2371,12 +2371,12 @@ BEGIN
                     125,15,BS_MULTILINE | WS_GROUP,0,HIDC_SAVE_DEFAULT
     LTEXT           "Settings in this page and those following apply to the active window.",
                     IDC_STATIC,20,59,235,12
+    LTEXT           "Template View Display:",IDC_STATIC,20,83,74,8
     COMBOBOX        IDC_DISPLAY_TEMPLATE,125,81,125,60,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_DISPLAY_TEMPLATE
+    LTEXT           "Aerial View Display:",IDC_STATIC,20,110,62,8
     COMBOBOX        IDC_DISPLAY_AERIAL,125,108,125,60,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_DISPLAY_AERIAL
-    LTEXT           "Template View Display:",IDC_STATIC,20,83,74,8
-    LTEXT           "Aerial View Display:",IDC_STATIC,20,110,62,8
 END
 
 IDD_OPT_WORKTEMPLATE DIALOGEX 0, 0, 260, 140

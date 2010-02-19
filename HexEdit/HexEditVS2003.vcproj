@@ -927,6 +927,15 @@
 				RelativePath=".\RES\editbar.bmp">
 			</File>
 			<File
+				RelativePath=".\RES\editbarCold.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\editbarDisabled.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\editbarHot.bmp">
+			</File>
+			<File
 				RelativePath="RES\eval.ico">
 			</File>
 			<File
@@ -949,6 +958,15 @@
 			</File>
 			<File
 				RelativePath=".\RES\formtbar.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\formtbarCold.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\formtbarDisabled.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\formtbarHot.bmp">
 			</File>
 			<File
 				RelativePath="RES\forw.bmp">
@@ -1017,13 +1035,40 @@
 				RelativePath=".\RES\misc.bmp">
 			</File>
 			<File
+				RelativePath=".\RES\miscCold.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\miscDisabled.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\miscHot.bmp">
+			</File>
+			<File
 				RelativePath=".\RES\navbar.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\navbarCold.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\navbarDisabled.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\navbarHot.bmp">
 			</File>
 			<File
 				RelativePath=".\Res\new.ico">
 			</File>
 			<File
 				RelativePath=".\RES\operations.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\operationsCold.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\operationsDisabled.bmp">
+			</File>
+			<File
+				RelativePath=".\RES\operationsHot.bmp">
 			</File>
 			<File
 				RelativePath=".\RES\optionsimages.bmp">
