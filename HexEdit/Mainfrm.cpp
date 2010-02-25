@@ -420,26 +420,134 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CDockingManager::SetDockingMode(DT_SMART);
 		EnableAutoHidePanes(CBRS_ALIGN_ANY);
 
-		m_wndBookmarksPane.SetDialogBar(&m_wndBookmarks);
-		if (!m_wndBookmarksPane.Create(CString("Bookmarks"), this, CRect(0, 0, 100, 100), TRUE,
-									CBookmarkDlg::IDD,
-									WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI,
-									AFX_CBRS_REGULAR_TABS,
-									AFX_CBRS_FLOAT | AFX_CBRS_CLOSE | AFX_CBRS_RESIZE | AFX_CBRS_AUTOHIDE | AFX_CBRS_AUTO_ROLLUP))
-		m_wndBookmarksPane.Add(IDC_BOOKMARK_NAME, 0, 0, 100, 0);
-		m_wndBookmarksPane.Add(IDC_BOOKMARK_ADD, 100, 0, 0, 0);
-		m_wndBookmarksPane.Add(IDC_GRID_BL, 0, 0, 100, 100);
-		m_wndBookmarksPane.Add(IDOK, 100, 0, 0, 0);
-		m_wndBookmarksPane.Add(IDC_BOOKMARK_GOTO, 100, 0, 0, 0);
-		m_wndBookmarksPane.Add(IDC_BOOKMARK_REMOVE, 100, 0, 0, 0);
-		m_wndBookmarksPane.Add(IDC_BOOKMARKS_VALIDATE, 100, 0, 0, 0);
-		m_wndBookmarksPane.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
-		m_wndBookmarksPane.Add(IDC_BOOKMARKS_HELP, 100, 0, 0, 0);
-		m_wndBookmarksPane.EnableDocking(CBRS_ALIGN_ANY);
-		DockPane(&m_wndBookmarksPane);
+		if (!m_wndBookmarks.Create(this))
+			return FALSE; // failed to create
 
-        if (!m_wndCalc.Create(this) ||
-			!m_wndFind.Create(this) ||
+		m_wndBookmarks.Add(IDC_BOOKMARK_NAME, 0, 0, 100, 0);
+		m_wndBookmarks.Add(IDC_BOOKMARK_ADD, 100, 0, 0, 0);
+		m_wndBookmarks.Add(IDC_GRID_BL, 0, 0, 100, 100);
+		m_wndBookmarks.Add(IDOK, 100, 0, 0, 0);
+		m_wndBookmarks.Add(IDC_BOOKMARK_GOTO, 100, 0, 0, 0);
+		m_wndBookmarks.Add(IDC_BOOKMARK_REMOVE, 100, 0, 0, 0);
+		m_wndBookmarks.Add(IDC_BOOKMARKS_VALIDATE, 100, 0, 0, 0);
+		m_wndBookmarks.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
+		m_wndBookmarks.Add(IDC_BOOKMARKS_HELP, 100, 0, 0, 0);
+
+		m_wndBookmarks.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_wndBookmarks);
+
+		if (!m_wndCalc.Create(this))
+			return FALSE; // failed to create
+
+		// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT 
+		m_wndCalc.Add(IDC_EDIT, 0, 8, 100, 3);        // edit control resizes with width (moves/sizes slightly vert.)
+		m_wndCalc.Add(IDC_OP_DISPLAY, 100, 10, 0, 0);  // operator display sticks to right edge (moves vert)
+
+		// Settings controls don't move/size horizontally but move vert. and size slightly too
+		m_wndCalc.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);
+		m_wndCalc.Add(IDC_BASE_GROUP, 0, 13, 0, 8);
+		m_wndCalc.Add(IDC_HEX, 0, 13, 0, 5);
+		m_wndCalc.Add(IDC_DECIMAL, 0, 13, 0, 5);
+		m_wndCalc.Add(IDC_OCTAL, 0, 13, 0, 5);
+		m_wndCalc.Add(IDC_BINARY, 0, 13, 0, 5);
+		m_wndCalc.Add(IDC_BITS_GROUP, 0, 13, 0, 8);
+		m_wndCalc.Add(IDC_64BIT, 0, 13, 0, 5);
+		m_wndCalc.Add(IDC_32BIT, 0, 13, 0, 5);
+		m_wndCalc.Add(IDC_16BIT, 0, 13, 0, 5);
+		m_wndCalc.Add(IDC_8BIT, 0, 13, 0, 5);
+
+		// First row of buttons
+		m_wndCalc.Add(IDC_MEM_GET, 1, 27, 12, 10);
+		m_wndCalc.Add(IDC_MEM_STORE, 14, 27, 9, 10);
+		m_wndCalc.Add(IDC_MEM_CLEAR, 23, 27, 9, 10);
+		m_wndCalc.Add(IDC_MEM_ADD, 32, 27, 9, 10);
+		m_wndCalc.Add(IDC_MEM_SUBTRACT, 41, 27, 8, 10);
+
+		m_wndCalc.Add(IDC_BACKSPACE, 64, 26, 16, 10);
+		m_wndCalc.Add(IDC_CLEAR_ENTRY, 80, 26, 10, 10);
+		m_wndCalc.Add(IDC_CLEAR, 90, 26, 10, 10);
+
+		// 2nd row of buttons
+		m_wndCalc.Add(IDC_MARK_GET, 1, 37, 12, 10);
+		m_wndCalc.Add(IDC_MARK_STORE, 14, 37, 9, 10);
+		m_wndCalc.Add(IDC_MARK_CLEAR, 23, 37, 9, 10);
+		m_wndCalc.Add(IDC_MARK_ADD, 32, 37, 9, 10);
+		m_wndCalc.Add(IDC_MARK_SUBTRACT, 41, 37, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_D, 50, 37, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_E, 58, 37, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_F, 66, 37, 8, 10);
+		m_wndCalc.Add(IDC_POW, 75, 37, 8, 10);
+		m_wndCalc.Add(IDC_GTR, 83, 37, 8, 10);
+		m_wndCalc.Add(IDC_ROL, 91, 37, 8, 10);
+
+		// 3rd row of buttons
+		m_wndCalc.Add(IDC_MARK_AT, 1, 47, 12, 10);
+		m_wndCalc.Add(IDC_MARK_AT_STORE, 14, 47, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_SQUARE, 23, 47, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_ROL, 32, 47, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_REV, 41, 47, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_A, 50, 47, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_B, 58, 47, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_C, 66, 47, 8, 10);
+		m_wndCalc.Add(IDC_MOD, 75, 47, 8, 10);
+		m_wndCalc.Add(IDC_LESS, 83, 47, 8, 10);
+		m_wndCalc.Add(IDC_ROR, 91, 47, 8, 10);
+
+		// 4th row of buttons
+		m_wndCalc.Add(IDC_SEL_GET, 1, 57, 12, 10);
+		m_wndCalc.Add(IDC_SEL_STORE, 14, 57, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_SQUARE_ROOT, 23, 57, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_ROR, 32, 57, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_NOT, 41, 57, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_7, 50, 57, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_8, 58, 57, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_9, 66, 57, 8, 10);
+		m_wndCalc.Add(IDC_DIVIDE, 75, 57, 8, 10);
+		m_wndCalc.Add(IDC_XOR, 83, 57, 8, 10);
+		m_wndCalc.Add(IDC_LSL, 91, 57, 8, 10);
+
+		// 5th row of buttons
+		m_wndCalc.Add(IDC_SEL_AT, 1, 67, 12, 10);
+		m_wndCalc.Add(IDC_SEL_AT_STORE, 14, 67, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_CUBE, 23, 67, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_LSL, 32, 67, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_INC, 41, 67, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_4, 50, 67, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_5, 58, 67, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_6, 66, 67, 8, 10);
+		m_wndCalc.Add(IDC_MULTIPLY, 75, 67, 8, 10);
+		m_wndCalc.Add(IDC_OR, 83, 67, 8, 10);
+		m_wndCalc.Add(IDC_LSR, 91, 67, 8, 10);
+
+		// 6th row of buttons
+		m_wndCalc.Add(IDC_SEL_LEN, 1, 77, 12, 10);
+		m_wndCalc.Add(IDC_SEL_LEN_STORE, 14, 77, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_FACTORIAL, 23, 77, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_LSR, 32, 77, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_DEC, 41, 77, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_1, 50, 77, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_2, 58, 77, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_3, 66, 77, 8, 10);
+		m_wndCalc.Add(IDC_SUBTRACT, 75, 77, 8, 10);
+		m_wndCalc.Add(IDC_AND, 83, 77, 8, 10);
+		m_wndCalc.Add(IDC_ASR, 91, 77, 8, 10);
+
+		// 7th row of buttons
+		m_wndCalc.Add(IDC_EOF_GET, 1, 87, 12, 10);
+
+		m_wndCalc.Add(IDC_UNARY_AT, 23, 87, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_ASR, 32, 87, 9, 10);
+		m_wndCalc.Add(IDC_UNARY_FLIP, 41, 87, 8, 10);
+		m_wndCalc.Add(IDC_DIGIT_0, 50, 87, 8, 10);
+		m_wndCalc.Add(IDC_UNARY_SIGN, 58, 87, 8, 10);
+		m_wndCalc.Add(IDC_EQUALS, 66, 87, 8, 10);
+		m_wndCalc.Add(IDC_ADDOP, 75, 87, 8, 10);
+		m_wndCalc.Add(IDC_GO, 83, 87, 16, 10);
+
+		m_wndCalc.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_wndCalc);
+
+        if (!m_wndFind.Create(this) ||
 #ifdef EXPLORER_WND
 			!m_wndExpl.Create(this) ||
 #endif
@@ -448,31 +556,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
             TRACE0("Failed to create bookmarks/find/calc/prop window\n");
             return -1;
         }
-
 #if 0  // xxx need to fix this for MFC9
+
         CSize tmp_size;
-
-        m_wndCalc.SetWindowText("Calculator");
-        m_wndCalc.EnableRollUp();
-        m_wndCalc.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
-        m_wndCalc.SetCaptionStyle(TRUE);
-		ASSERT(m_wndCalc.m_sizeInitial.cx > -1 && m_wndCalc.m_sizeInitial.cy > -1);
-		tmp_size.cx = m_wndCalc.m_sizeInitial.cx*3/2 + 20;
-        tmp_size.cy = m_wndCalc.m_sizeInitial.cy*3/2 + 15;
-        m_wndCalc.SetMaxSize(tmp_size);
-		tmp_size.cx = m_wndCalc.m_sizeInitial.cx;
-		tmp_size.cy = m_wndCalc.m_sizeInitial.cy*3/4;
-        m_wndCalc.SetMinSize(tmp_size);
-
-        m_wndBookmarks.SetWindowText("Bookmarks");
-        m_wndBookmarks.EnableRollUp();
-        m_wndBookmarks.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
-        m_wndBookmarks.SetCaptionStyle(TRUE);
-
-        tmp_size = m_wndBookmarks.m_sizeInitial;
-		ASSERT(tmp_size.cx > -1 && tmp_size.cy > -1);
-        tmp_size.cx /= 2;
-        m_wndBookmarks.SetMinSize(tmp_size);
 
         m_wndFind.SetWindowText("Find");
         m_wndFind.EnableRollUp();
@@ -752,14 +838,6 @@ void CMainFrame::OnClose()
 
 	if (aa->delete_all_settings_)
 		remove(m_strImagesFileName);
-
-	if (!aa->is_nt_)
-	{
-        if (!m_wndProp.IsFloating())
-            m_wndProp.ToggleDocking();
-		// xxx fix for MFC9??
-        //ShowControlBar(&m_wndProp, FALSE, FALSE); // hide it otherwise BCG/MFC/Windows gets confused on next open
-	}
 
     CMDIFrameWndEx::OnClose();
 }
@@ -1068,40 +1146,42 @@ void CMainFrame::SaveFrameOptions()
         aa->WriteProfileInt("MainFrame", "WindowBottom", wp.rcNormalPosition.bottom);
         aa->WriteProfileInt("MainFrame", "WindowRight",  wp.rcNormalPosition.right);
     }
-#ifndef DIALOG_BAR
-    aa->WriteProfileInt("MainFrame", "ShowFindDlg", int(m_wndFind.visible_));
-    aa->WriteProfileInt("MainFrame", "ShowPropDlg", int(m_wndProp.visible_));
-#endif
 }
 
 void CMainFrame::show_calc()
 {
     m_wndCalc.SetWindowText("Calculator");
-    //ShowControlBar(&m_wndCalc, TRUE, FALSE); // xxx fix fort MFC9
-	m_wndCalc.Unroll();
+	m_wndCalc.ShowAndUnroll();
 
-    // Make sure controls and the displayed calc value are up to date
-    //m_wndCalc.UpdateData(FALSE);
-    //m_wndCalc.edit_.Put();
     m_wndCalc.update_controls();
     m_wndCalc.ShowBinop();
-    //m_wndCalc.FixFileButtons();
 }
 
-void CMainFrame::move_dlgbar(CDialogBar &bar, const CRect &rct)
+void CMainFrame::move_dlgbar(CHexPaneDialog &bar, const CRect &rct)
 {
 	// We don't need to move it if hidden or docked
-	if ((bar.GetStyle() & WS_VISIBLE) == 0 || !bar.IsFloating())
+	if (!bar.IsWindowVisible() || 
+		bar.IsDocked() && !bar.IsInFloatingMultiPaneFrameWnd())
 		return;
 
 	// Get height of screen (needed later)
     int scr_height = GetSystemMetrics(SM_CYSCREEN);
     int scr_width  = GetSystemMetrics(SM_CXSCREEN);
 
-	// Get rect of the window we may have to move
-	CRect wnd_rct;
-    ASSERT(bar.GetParent() != NULL && bar.GetParent()->GetParent() != NULL);
-	bar.GetParent()->GetParent()->GetWindowRect(&wnd_rct);
+	CWnd * pFrm = &bar;   // Window we (may) need to move
+	CRect wnd_rct;        // Rect of the window we need to move
+
+	while ((pFrm = pFrm->GetParent()) != NULL)
+	{
+		if (pFrm->IsKindOf(RUNTIME_CLASS(CMultiPaneFrameWnd)))
+			break;
+	}
+	if (pFrm == NULL)
+	{
+		ASSERT(0);  // We din't find it which should not happen
+		return;
+	}
+	pFrm->GetWindowRect(&wnd_rct);
 
 	CRect intersect_rct;               // Intersection of dialog & selection
     if (!intersect_rct.IntersectRect(&wnd_rct, &rct))
@@ -1159,8 +1239,7 @@ void CMainFrame::move_dlgbar(CDialogBar &bar, const CRect &rct)
         }
 	}
 
-    // Now move it where we (finally) decided
-    bar.GetParent()->GetParent()->MoveWindow(&new_rct);
+	pFrm->MoveWindow(&new_rct);
 
 #if 0 // causes weird things if dragging a selection
     // If the mouse ptr (cursor) was over the dialog move it too
@@ -1298,38 +1377,30 @@ void CMainFrame::OnDockableToggle()
 
     if (!theApp.dlg_dock_)
     {
-        // Make sure the windows aren't docked
-        if (!m_wndCalc.IsFloating())
-            m_wndCalc.ToggleDocking();
-        if (!m_wndBookmarks.IsFloating())
-            m_wndBookmarks.ToggleDocking();
-        if (!m_wndFind.IsFloating())
-            m_wndFind.ToggleDocking();
-        if (!m_wndProp.IsFloating())
-            m_wndProp.ToggleDocking();
-
-        // Prevent dockability
-        m_wndCalc.m_dwDockStyle = 0;
-        m_wndBookmarks.m_dwDockStyle = 0;
-        m_wndFind.m_dwDockStyle = 0;
-        m_wndProp.m_dwDockStyle = 0;
-
+        // Make sure the windows aren't docked and turn off dockability
+        m_wndCalc.Float();
+		m_wndCalc.EnableDocking(0);
+        m_wndBookmarks.Float();
+		m_wndBookmarks.EnableDocking(0);
+        m_wndFind.Float();
+		m_wndFind.EnableDocking(0);
 #ifdef EXPLORER_WND
-        if (!m_wndExpl.IsFloating())
-            m_wndExpl.ToggleDocking();
-        m_wndExpl.m_dwDockStyle = 0;
+        m_wndExpl.Float();
+		m_wndExpl.EnableDocking(0);
 #endif
+        m_wndProp.Float();
+		m_wndProp.EnableDocking(0);
     }
     else
     {
-        // Allow dockability on left or right
-        m_wndCalc.m_dwDockStyle = CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT;
-        m_wndBookmarks.m_dwDockStyle = CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT;
-        m_wndFind.m_dwDockStyle = CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT;
+		// Turn on dockability for all modeless (pane) dialogs
+		m_wndCalc.EnableDocking(CBRS_ALIGN_ANY);
+		m_wndBookmarks.EnableDocking(CBRS_ALIGN_ANY);
+		m_wndFind.EnableDocking(CBRS_ALIGN_ANY);
 #ifdef EXPLORER_WND
-        m_wndExpl.m_dwDockStyle = CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT;
+		m_wndExpl.EnableDocking(CBRS_ALIGN_ANY);
 #endif
-        m_wndProp.m_dwDockStyle = CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT;
+		m_wndProp.EnableDocking(CBRS_ALIGN_ANY);
     }
 }
 
@@ -1423,18 +1494,18 @@ void CMainFrame::OnUpdateViewCalculator(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewCalculator() 
 {
-    //ShowControlBar(&m_wndCalc, (m_wndCalc.GetStyle() & WS_VISIBLE) == 0, FALSE);
+	m_wndCalc.ShowAndUnroll();
     theApp.SaveToMacro(km_toolbar, 10);
 }
 
 void CMainFrame::OnUpdateViewBookmarks(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck((m_wndBookmarks.GetStyle() & WS_VISIBLE) != 0);
+	pCmdUI->SetCheck(m_wndBookmarks.IsWindowVisible());
 }
 
 void CMainFrame::OnViewBookmarks() 
 {
-    //ShowControlBar(&m_wndBookmarks, (m_wndBookmarks.GetStyle() & WS_VISIBLE) == 0, FALSE);
+	m_wndBookmarks.ShowAndUnroll();
     theApp.SaveToMacro(km_toolbar, 11);
 }
 
@@ -3374,8 +3445,6 @@ void CMainFrame::OnBookmarkAll()
             else
             {
                 int ii = pbl->AddBookmark(bm_name, pdoc2->pfile1_->GetFilePath(), found_addr, NULL, pdoc2);
-//                pdoc2->AddBookmark(ii, found_addr);
-//                ((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.UpdateBookmark(ii);
             }
 
             curr = found_addr + 1;              // Continue the search from the next byte
@@ -4105,9 +4174,6 @@ void CMainFrame::OnCalculator()
     show_calc();
 
     m_wndCalc.SetFocus();
-
-    // Macro recording now handled in DelayShow override
-    //((CHexEditApp *)AfxGetApp())->SaveToMacro(km_calc_dlg);
 }
 
 /*
@@ -4119,8 +4185,7 @@ void CMainFrame::OnOptionsScheme()
 
 void CMainFrame::OnBookmarks() 
 {
-    //ShowControlBar(&m_wndBookmarks, TRUE, FALSE);
-	m_wndBookmarks.Unroll();
+	m_wndBookmarks.ShowAndUnroll();
 }
 
 void CMainFrame::OnEditGotoDec() 
@@ -4167,7 +4232,7 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
         }
         m_wndCalc.SetWindowText("Go To");
         //ShowControlBar(&m_wndCalc, TRUE, FALSE); // xxx fix for MFC9
-        m_wndCalc.Unroll();
+        m_wndCalc.ShowAndUnroll();
 
         // Make sure controls are up to date and put current address into it
         //m_wndCalc.UpdateData(FALSE);
@@ -4247,7 +4312,7 @@ void CMainFrame::OnCalcSel()
 
         m_wndCalc.SetWindowText("Calculator");
         //ShowControlBar(&m_wndCalc, TRUE, FALSE); // xxx fix for MFC9
-        m_wndCalc.Unroll();
+        m_wndCalc.ShowAndUnroll();
 
         // Make sure controls are up to date and put current address into it
         //m_wndCalc.UpdateData(FALSE);
@@ -4395,21 +4460,6 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
     {
         return FALSE;
     }
-
-#if 0 // xxx fix for MFC9
-    if (m_wndCalc.m_pDockBar == NULL || m_wndCalc.IsHorzDocked())
-        m_wndCalc.FixAndFloat();
-    if (m_wndBookmarks.m_pDockBar == NULL || m_wndBookmarks.IsHorzDocked())
-        m_wndBookmarks.FixAndFloat();
-    if (m_wndFind.m_pDockBar == NULL || m_wndFind.IsHorzDocked())
-        m_wndFind.FixAndFloat();
-#ifdef EXPLORER_WND
-    if (m_wndExpl.m_pDockBar == NULL || m_wndExpl.IsHorzDocked())
-        m_wndExpl.FixAndFloat();
-#endif
-    if (m_wndProp.m_pDockBar == NULL || m_wndProp.IsHorzDocked())
-        m_wndProp.FixAndFloat();
-#endif
 
     // Add some tools for example....
     CUserToolsManager* pUserToolsManager = theApp.GetUserToolsManager ();

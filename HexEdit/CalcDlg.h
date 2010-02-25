@@ -22,7 +22,7 @@
 
 #include <vector>
 #include "CalcEdit.h"
-#include "Dialog.h"
+#include "HexPaneDialog.h"
 #include "Expr.h"
 #include "optypes.h"
 #include "ResizeCtrl.h"
@@ -37,7 +37,7 @@
 // CCalcDlg dialog
 class CMainFrame;
 
-class CCalcDlg : public CHexDialogBar
+class CCalcDlg : public CHexPaneDialog
 {
     friend class CCalcEdit;
     friend class CHexEditApp;           // Allows macros to call protected members
@@ -47,7 +47,6 @@ public:
     CCalcDlg(CWnd* pParent = NULL);   // standard constructor
 
     virtual BOOL Create(CWnd* pParentWnd = NULL);   // Normal way to create the modeless dialog
-	virtual BOOL OnInitDialog();
 	CSize m_sizeInitial;
 
     void Redisplay();
@@ -172,16 +171,19 @@ public:
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CCalcDlg)
     public:
-    virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
     virtual BOOL PreTranslateMessage(MSG* pMsg);
     //}}AFX_VIRTUAL
-	virtual void DelayShow(BOOL bShow) { theApp.SaveToMacro(km_calc_dlg, bShow ? 0 : -1);
-                                         CHexDialogBar::DelayShow(bShow); }   // xxx update_controls, ShowBinop etc ?
+	virtual void ShowPane(BOOL bShow, BOOL bDelay, BOOL bActivate)
+	{
+		theApp.SaveToMacro(km_calc_dlg, bShow ? 0 : -1);
+		CHexPaneDialog::ShowPane(bShow, bDelay, bActivate);
+	}
 
 // Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
     afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	afx_msg LRESULT HandleInitDialog(WPARAM, LPARAM);
     // Generated message map functions
     //{{AFX_MSG(CCalcDlg)
     afx_msg void OnDigit0();
@@ -282,8 +284,6 @@ protected:
     DECLARE_MESSAGE_MAP()
 
 private:
-	CResizeCtrl resizer_;                   // Used to move controls around when the window is resized
-
     CToolTipCtrl ttc_;                      // For button tooltips
 	HWND help_hwnd_;                        // HWND of window for which context help is pending (usually 0)
 

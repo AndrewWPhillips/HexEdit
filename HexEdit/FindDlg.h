@@ -8,7 +8,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "Dialog.h"    // for ModelessDialogBaseClass
+#include "HexPaneDialog.h"    // for CHexPaneDialog
 
 // Classes that handle each page (derived from CPropertyPage)
 class CSimplePage;
@@ -437,7 +437,7 @@ protected:
 
 // CFindWnd dialog
 
-class CFindWnd : public ModelessDialogBaseClass
+class CFindWnd : public CHexPaneDialog
 {
 	DECLARE_DYNAMIC(CFindWnd)
 
@@ -458,10 +458,6 @@ public:
 	BOOL Create(CWnd* pParentWnd = NULL);
 
     void ShowPage(int page);
-
-#ifndef DIALOG_BAR      // The control bar base class handles this
-    BOOL visible_;
-#endif
 
 	CFindSheet *m_pSheet;
 };

@@ -23,7 +23,7 @@
 #endif // _MSC_VER > 1000
 
 #include <afxdisp.h>
-#include "Dialog.h"     // for ModelessDialogBaseClass
+#include "HexPaneDialog.h"
 
 class CHexEditView;
 
@@ -552,7 +552,7 @@ public:
 
 // CPropWnd dialog
 
-class CPropWnd : public ModelessDialogBaseClass
+class CPropWnd : public CHexPaneDialog
 {
 	DECLARE_DYNAMIC(CPropWnd)
 
@@ -573,9 +573,6 @@ public:
 	BOOL Create(CWnd* pParentWnd = NULL);
 
 	CPropSheet *m_pSheet;
-#ifndef DIALOG_BAR
-    BOOL visible_;
-#endif
 
 	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 };

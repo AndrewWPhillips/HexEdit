@@ -862,27 +862,6 @@ BOOL CHexEditApp::InitInstance()
         // CG: This line inserted by 'Tip of the Day' component.
         ShowTipAtStartup();
 
-#ifndef DIALOG_BAR
-        if (GetProfileInt("MainFrame", "ShowPropDlg", 0) == 1)
-        {
-            ASSERT(pMainFrame->m_wndProp.m_hWnd != 0);
-            // pMainFrame->pprop_ = new CPropSheet(prop_page_);
-            pMainFrame->m_wndProp.ShowWindow(SW_SHOWNORMAL);
-            pMainFrame->m_wndProp.visible_ = TRUE;
-
-            // Set focus back to the active view (if there is a view open)
-            CHexEditView *pview = GetView();    // The active view (or NULL if none)
-            if (pview != NULL)
-                pview->SetFocus();
-        }
-        else
-        {
-            ASSERT(pMainFrame->m_wndProp.m_hWnd != 0);
-            pMainFrame->m_wndProp.ShowWindow(SW_HIDE);
-            pMainFrame->m_wndProp.visible_ = FALSE;
-        }
-#endif
-
         if (run_autoexec_) RunAutoExec();
 
         return TRUE;
@@ -1408,9 +1387,7 @@ void CHexEditApp::OnRecentFiles()
 void CHexEditApp::OnBookmarksEdit() 
 {
     ASSERT(AfxGetMainWnd() != NULL);
-    ((CMainFrame *)AfxGetMainWnd())->ShowControlBar(&((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks, TRUE, FALSE);
-	((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.Unroll();
-    // Save to macros handled in DelayShow override
+    ((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.ShowAndUnroll();
 }
 
 void CHexEditApp::OnTabIcons() 
@@ -2210,14 +2187,6 @@ void CHexEditApp::LoadOptions()
     password_mask_ = GetProfileInt("Options", "PasswordMask", 1) ? TRUE : FALSE;
     password_min_ = GetProfileInt("Options", "PasswordMinLength", 8);
 
-#ifndef DIALOG_BAR
-    // Restore more subtle things such as window placement etc
-    find_x_ = GetProfileInt("Window-Settings", "FindX", -30000);
-    find_y_ = GetProfileInt("Window-Settings", "FindY", -30000);
-    prop_x_ = GetProfileInt("Window-Settings", "PropX", -30000);
-    prop_y_ = GetProfileInt("Window-Settings", "PropY", -30000);
-#endif
-
     // Last settings for property sheet
     prop_page_ = GetProfileInt("Property-Settings", "PropPage", 0);
     prop_dec_signed_ = GetProfileInt("Property-Settings", "DecFormat", 1);
@@ -2505,18 +2474,6 @@ void CHexEditApp::SaveOptions()
     SaveSchemes();
 
     // Save info about modeless dialogs (find and properties)
-#ifndef DIALOG_BAR
-    if (find_y_ != -30000)
-    {
-        WriteProfileInt("Window-Settings", "FindX", find_x_);
-        WriteProfileInt("Window-Settings", "FindY", find_y_);
-    }
-    if (prop_y_ != -30000)
-    {
-        WriteProfileInt("Window-Settings", "PropX", prop_x_);
-        WriteProfileInt("Window-Settings", "PropY", prop_y_);
-    }
-#endif
     WriteProfileInt("Property-Settings", "PropPage", prop_page_);
     WriteProfileInt("Property-Settings", "DecFormat", prop_dec_signed_);
     WriteProfileInt("Property-Settings", "FPFormat", prop_fp_format_);
@@ -2784,13 +2741,7 @@ void CHexEditApp::OnProperties()
     SaveToMacro(km_prop);
     CHECK_SECURITY(203);
 
-#ifndef DIALOG_BAR
-    mm->m_wndProp.ShowWindow(SW_SHOWNORMAL);
-    mm->m_wndProp.visible_ = TRUE;
-#else
-    mm->ShowControlBar(&mm->m_wndProp, TRUE, FALSE);
-    mm->m_wndProp.Unroll();
-#endif
+    mm->m_wndProp.ShowAndUnroll();
     mm->m_wndProp.m_pSheet->SetFocus();
     mm->m_wndProp.m_pSheet->UpdateWindow(); // Needed for when prop dlg opened in a macro
 }

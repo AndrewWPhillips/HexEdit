@@ -209,9 +209,6 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 break;
             case km_prop_close:
                 ((CMainFrame *)AfxGetMainWnd())->m_wndProp.ShowWindow(SW_HIDE);
-#ifndef DIALOG_BAR
-                ((CMainFrame *)AfxGetMainWnd())->m_wndProp.visible_ = FALSE;
-#endif
                 break;
             case km_tips:
                 ShowTipOfTheDay();
@@ -283,9 +280,6 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 if ((*pk).vv == -1)
                 {
                     ((CMainFrame *)AfxGetMainWnd())->m_wndFind.ShowWindow(SW_HIDE);
-#ifndef DIALOG_BAR
-                    ((CMainFrame *)AfxGetMainWnd())->m_wndFind.visible_ = FALSE;
-#endif
                 }
                 else // if (((CMainFrame *)AfxGetMainWnd())->pfind_ != NULL)
                     ((CMainFrame *)AfxGetMainWnd())->m_wndFind.ShowPage((*pk).vv);
@@ -516,7 +510,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 {
 					// Hide it
                     ASSERT(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.m_hWnd != 0);
-                    ((CMainFrame *)AfxGetMainWnd())->ShowControlBar(&((CMainFrame *)AfxGetMainWnd())->m_wndCalc, FALSE, FALSE);
+                    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Hide();
                 }
                 else if ((*pk).vv == 0)
                     ((CMainFrame *)AfxGetMainWnd())->OnCalculator();
@@ -530,9 +524,9 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                     pv_->OnSeedRandom();
                 break;
             case km_calc_close:     // Replaced with km_calc_dlg with param -1 (see above)
-                // No longer generated but handle in case we run an old macro file
+                // No longer generated but handle in case we run a really old macro file
                 ASSERT(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.m_hWnd != 0);
-                ((CMainFrame *)AfxGetMainWnd())->ShowControlBar(&((CMainFrame *)AfxGetMainWnd())->m_wndCalc, FALSE, FALSE);
+                ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Hide();
                 break;
             case km_ro_rw:
                 pv_->OnAllowMods();
@@ -601,12 +595,11 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 case 4:
                     pv_->OnBookmarksHide();
                     break;
-                case 5:
-                    ((CMainFrame *)AfxGetMainWnd())->ShowControlBar(&((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks, TRUE, FALSE);
-					((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.Unroll();
+                case 5:  // show
+					((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.ShowAndUnroll();
                     break;
-                case 6:
-                    ((CMainFrame *)AfxGetMainWnd())->ShowControlBar(&((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks, FALSE, FALSE);
+                case 6: // hide
+                    ((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.Hide();
                     break;
                 case 7:
                     pv_->OnBookmarkToggle();

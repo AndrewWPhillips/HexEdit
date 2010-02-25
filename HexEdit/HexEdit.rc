@@ -3244,8 +3244,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_SCHEME_COMBO         "Select colour scheme\nColour Scheme"
-    ID_SCHEME_COMBO_US      "Select color scheme\nColor Scheme"
+    ID_SCHEME               "Select colour scheme\nColour Scheme"
+    ID_SCHEME_US            "Select color scheme\nColor Scheme"
     ID_BOOKMARKS_COMBO      "Select a bookmark from the active file\nBookmarks"
     ID_HELP_WEB             "Go to the HexEdit web site for help\nHelp via Web"
     ID_HELP_FORUM           "Go to the HexEdit Support Forums\nSupport Forums"

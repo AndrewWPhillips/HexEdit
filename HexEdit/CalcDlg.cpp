@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 // CCalcDlg dialog
 
 CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
-    : CHexDialogBar(), purple_pen(PS_SOLID, 0, RGB(0x80, 0, 0x80))
+    : CHexPaneDialog(), purple_pen(PS_SOLID, 0, RGB(0x80, 0, 0x80))
 {
     aa_ = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -62,155 +62,20 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
     edit_.pp_ = this;                   // Set parent of edit control
 }
 
-BOOL CCalcDlg::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext) 
-{
-    return Create(pParentWnd);
-}
-
 BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/) 
 {
     mm_ = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
 
-	if (!CHexDialogBar::Create(pParentWnd, CCalcDlg::IDD, CBRS_LEFT | CBRS_SIZE_DYNAMIC, CCalcDlg::IDD))
+	if (!CHexPaneDialog::Create(pParentWnd, CCalcDlg::IDD, CBRS_LEFT | CBRS_FLOAT_MULTI, CCalcDlg::IDD))
         return FALSE;
-
-    // We need to setup the resizer here to make sure it gets a WM_SIZE message for docked window
-	resizer_.Create(GetSafeHwnd(), TRUE, 100, TRUE); // 4th param when dlg = child of resized window
-
-    // Base min size on dialog resource width & 3/4 height
-	CSize tmp_size;
-	if (m_sizeInitial.cx == -1)
-	{
-		// Get window size (not client size) from BCGControlBar and adjust for edges + caption
-		tmp_size = m_sizeDefault;
-		tmp_size.cx -= 2*GetSystemMetrics(SM_CXFIXEDFRAME);
-		tmp_size.cy -= 2*GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CYCAPTION);
-	}
-	else
-	{
-		tmp_size = m_sizeInitial;
-	}
-	resizer_.SetInitialSize(tmp_size);
-
-	tmp_size.cy = tmp_size.cy*3/4;
-	resizer_.SetMinimumTrackingSize(tmp_size);
-	//This has no effect for control bars - see m_wndCalc.SetMinSize/SetMaxSize
-	//tmp_size.cx *= 2; tmp_size.cy *= 2;
-	//resizer_.SetMaximumTrackingSize(tmp_size);
-	//tmp_size.cx /= 2;
-	//tmp_size.cy = tmp_size.cy*3/8;
-	//resizer_.SetMinimumTrackingSize(tmp_size);
-
-	// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT 
-    resizer_.Add(IDC_EDIT, 0, 8, 100, 3);        // edit control resizes with width (moves/sizes slightly vert.)
-    resizer_.Add(IDC_OP_DISPLAY, 100, 10, 0, 0);  // operator display sticks to right edge (moves vert)
-
-	// Settings controls don't move/size horizontally but move vert. and size slightly too
-    resizer_.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);
-    resizer_.Add(IDC_BASE_GROUP, 0, 13, 0, 8);
-    resizer_.Add(IDC_HEX, 0, 13, 0, 5);
-    resizer_.Add(IDC_DECIMAL, 0, 13, 0, 5);
-    resizer_.Add(IDC_OCTAL, 0, 13, 0, 5);
-    resizer_.Add(IDC_BINARY, 0, 13, 0, 5);
-    resizer_.Add(IDC_BITS_GROUP, 0, 13, 0, 8);
-    resizer_.Add(IDC_64BIT, 0, 13, 0, 5);
-    resizer_.Add(IDC_32BIT, 0, 13, 0, 5);
-    resizer_.Add(IDC_16BIT, 0, 13, 0, 5);
-    resizer_.Add(IDC_8BIT, 0, 13, 0, 5);
-
-	// First row of buttons
-    resizer_.Add(IDC_MEM_GET, 1, 27, 12, 10);
-    resizer_.Add(IDC_MEM_STORE, 14, 27, 9, 10);
-    resizer_.Add(IDC_MEM_CLEAR, 23, 27, 9, 10);
-    resizer_.Add(IDC_MEM_ADD, 32, 27, 9, 10);
-    resizer_.Add(IDC_MEM_SUBTRACT, 41, 27, 8, 10);
-
-    resizer_.Add(IDC_BACKSPACE, 64, 26, 16, 10);
-    resizer_.Add(IDC_CLEAR_ENTRY, 80, 26, 10, 10);
-    resizer_.Add(IDC_CLEAR, 90, 26, 10, 10);
-
-	// 2nd row of buttons
-    resizer_.Add(IDC_MARK_GET, 1, 37, 12, 10);
-    resizer_.Add(IDC_MARK_STORE, 14, 37, 9, 10);
-    resizer_.Add(IDC_MARK_CLEAR, 23, 37, 9, 10);
-    resizer_.Add(IDC_MARK_ADD, 32, 37, 9, 10);
-    resizer_.Add(IDC_MARK_SUBTRACT, 41, 37, 8, 10);
-	resizer_.Add(IDC_DIGIT_D, 50, 37, 8, 10);
-	resizer_.Add(IDC_DIGIT_E, 58, 37, 8, 10);
-	resizer_.Add(IDC_DIGIT_F, 66, 37, 8, 10);
-    resizer_.Add(IDC_POW, 75, 37, 8, 10);
-    resizer_.Add(IDC_GTR, 83, 37, 8, 10);
-    resizer_.Add(IDC_ROL, 91, 37, 8, 10);
-
-	// 3rd row of buttons
-    resizer_.Add(IDC_MARK_AT, 1, 47, 12, 10);
-    resizer_.Add(IDC_MARK_AT_STORE, 14, 47, 9, 10);
-    resizer_.Add(IDC_UNARY_SQUARE, 23, 47, 9, 10);
-    resizer_.Add(IDC_UNARY_ROL, 32, 47, 9, 10);
-    resizer_.Add(IDC_UNARY_REV, 41, 47, 8, 10);
-	resizer_.Add(IDC_DIGIT_A, 50, 47, 8, 10);
-	resizer_.Add(IDC_DIGIT_B, 58, 47, 8, 10);
-	resizer_.Add(IDC_DIGIT_C, 66, 47, 8, 10);
-    resizer_.Add(IDC_MOD, 75, 47, 8, 10);
-    resizer_.Add(IDC_LESS, 83, 47, 8, 10);
-    resizer_.Add(IDC_ROR, 91, 47, 8, 10);
-
-	// 4th row of buttons
-    resizer_.Add(IDC_SEL_GET, 1, 57, 12, 10);
-    resizer_.Add(IDC_SEL_STORE, 14, 57, 9, 10);
-    resizer_.Add(IDC_UNARY_SQUARE_ROOT, 23, 57, 9, 10);
-    resizer_.Add(IDC_UNARY_ROR, 32, 57, 9, 10);
-    resizer_.Add(IDC_UNARY_NOT, 41, 57, 8, 10);
-	resizer_.Add(IDC_DIGIT_7, 50, 57, 8, 10);
-	resizer_.Add(IDC_DIGIT_8, 58, 57, 8, 10);
-	resizer_.Add(IDC_DIGIT_9, 66, 57, 8, 10);
-    resizer_.Add(IDC_DIVIDE, 75, 57, 8, 10);
-    resizer_.Add(IDC_XOR, 83, 57, 8, 10);
-    resizer_.Add(IDC_LSL, 91, 57, 8, 10);
-
-	// 5th row of buttons
-    resizer_.Add(IDC_SEL_AT, 1, 67, 12, 10);
-    resizer_.Add(IDC_SEL_AT_STORE, 14, 67, 9, 10);
-    resizer_.Add(IDC_UNARY_CUBE, 23, 67, 9, 10);
-    resizer_.Add(IDC_UNARY_LSL, 32, 67, 9, 10);
-    resizer_.Add(IDC_UNARY_INC, 41, 67, 8, 10);
-	resizer_.Add(IDC_DIGIT_4, 50, 67, 8, 10);
-	resizer_.Add(IDC_DIGIT_5, 58, 67, 8, 10);
-	resizer_.Add(IDC_DIGIT_6, 66, 67, 8, 10);
-    resizer_.Add(IDC_MULTIPLY, 75, 67, 8, 10);
-    resizer_.Add(IDC_OR, 83, 67, 8, 10);
-    resizer_.Add(IDC_LSR, 91, 67, 8, 10);
-
-	// 6th row of buttons
-    resizer_.Add(IDC_SEL_LEN, 1, 77, 12, 10);
-    resizer_.Add(IDC_SEL_LEN_STORE, 14, 77, 9, 10);
-    resizer_.Add(IDC_UNARY_FACTORIAL, 23, 77, 9, 10);
-    resizer_.Add(IDC_UNARY_LSR, 32, 77, 9, 10);
-    resizer_.Add(IDC_UNARY_DEC, 41, 77, 8, 10);
-	resizer_.Add(IDC_DIGIT_1, 50, 77, 8, 10);
-	resizer_.Add(IDC_DIGIT_2, 58, 77, 8, 10);
-	resizer_.Add(IDC_DIGIT_3, 66, 77, 8, 10);
-    resizer_.Add(IDC_SUBTRACT, 75, 77, 8, 10);
-    resizer_.Add(IDC_AND, 83, 77, 8, 10);
-    resizer_.Add(IDC_ASR, 91, 77, 8, 10);
-
-	// 7th row of buttons
-    resizer_.Add(IDC_EOF_GET, 1, 87, 12, 10);
-
-    resizer_.Add(IDC_UNARY_AT, 23, 87, 9, 10);
-    resizer_.Add(IDC_UNARY_ASR, 32, 87, 9, 10);
-    resizer_.Add(IDC_UNARY_FLIP, 41, 87, 8, 10);
-	resizer_.Add(IDC_DIGIT_0, 50, 87, 8, 10);
-    resizer_.Add(IDC_UNARY_SIGN, 58, 87, 8, 10);
-	resizer_.Add(IDC_EQUALS, 66, 87, 8, 10);
-    resizer_.Add(IDC_ADDOP, 75, 87, 8, 10);
-    resizer_.Add(IDC_GO, 83, 87, 16, 10);
 
 	return TRUE;
 }
 
-BOOL CCalcDlg::OnInitDialog()
+LRESULT CCalcDlg::HandleInitDialog(WPARAM wParam, LPARAM lParam)
 {
+	CBasePane::HandleInitDialog(wParam, lParam);
+
     CWnd *pwnd = ctl_edit_combo_.GetWindow(GW_CHILD);
 	ASSERT(pwnd != NULL);
     VERIFY(edit_.SubclassWindow(pwnd->m_hWnd));
@@ -530,11 +395,11 @@ BOOL CCalcDlg::OnInitDialog()
     ctl_func_.m_hMenu = func_menu_.GetSubMenu(0)->GetSafeHmenu();
 
     return TRUE;
-} // OnInitDialog
+} // HandleInitDialog
 
 void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CHexDialogBar::DoDataExchange(pDX);
+	CHexPaneDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT,  ctl_edit_combo_);
 
 #if 1
@@ -618,10 +483,10 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_FUNC, ctl_func_);
 } // DoDataExchange
 
-BEGIN_MESSAGE_MAP(CCalcDlg, CHexDialogBar)
+BEGIN_MESSAGE_MAP(CCalcDlg, CHexPaneDialog)
 	ON_WM_CREATE()
     ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
-    //{{AFX_MSG_MAP(CCalcDlg)
+	ON_MESSAGE(WM_INITDIALOG, HandleInitDialog)
     ON_BN_CLICKED(IDC_DIGIT_0, OnDigit0)
     ON_BN_CLICKED(IDC_DIGIT_1, OnDigit1)
     ON_BN_CLICKED(IDC_DIGIT_2, OnDigit2)
@@ -1904,7 +1769,7 @@ static void Draw3DButtonFrame(CDC *pDC, CRect rcButton, BOOL bFocus)
 
 int CCalcDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
-	if (CHexDialogBar::OnCreate(lpCreateStruct) == -1)
+	if (CHexPaneDialog::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
     return 0;
@@ -1912,7 +1777,7 @@ int CCalcDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CCalcDlg::OnDestroy() 
 {
-    CHexDialogBar::OnDestroy();
+    CHexPaneDialog::OnDestroy();
 
     // Save some settings to the in file/registry
     aa_->WriteProfileInt("Calculator", "Base", radix_);
@@ -1942,7 +1807,7 @@ void CCalcDlg::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
 
 	if (cx > 0 && m_sizeInitial.cx == -1)
 		m_sizeInitial = CSize(cx, cy);
-	CHexDialogBar::OnSize(nType, cx, cy);
+	CHexPaneDialog::OnSize(nType, cx, cy);
 }
 
 BOOL CCalcDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
@@ -2097,7 +1962,7 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
         }
     }
 
-    return CHexDialogBar::PreTranslateMessage(pMsg);
+    return CHexPaneDialog::PreTranslateMessage(pMsg);
 }
 
 #define IDC_FIRST_BLUE   IDC_DIGIT_0
@@ -2214,7 +2079,7 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
     // Restore text colour
     ::SetTextColor(lpDrawItemStruct->hDC, cr);
 
-    CHexDialogBar::OnDrawItem(nIDCtl, lpDrawItemStruct);
+    CHexPaneDialog::OnDrawItem(nIDCtl, lpDrawItemStruct);
 }
 
 // This actually goes to a calculated address.  Unlike the "Store Cursor" button,

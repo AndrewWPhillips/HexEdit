@@ -3553,11 +3553,8 @@ void CPropDatePage::OnChangeFormat()
 
 // CPropWnd dialog
 
-IMPLEMENT_DYNAMIC(CPropWnd, ModelessDialogBaseClass)
+IMPLEMENT_DYNAMIC(CPropWnd, CHexPaneDialog)
 CPropWnd::CPropWnd(CWnd* pParent /*=NULL*/)
-#ifndef DIALOG_BAR
-	: CDialog(CPropWnd::IDD, pParent)
-#endif
 {
 	m_pSheet = NULL;
 	help_hwnd_ = (HWND)0;
@@ -3572,10 +3569,10 @@ CPropWnd::~CPropWnd()
 
 void CPropWnd::DoDataExchange(CDataExchange* pDX)
 {
-	ModelessDialogBaseClass::DoDataExchange(pDX);
+	CHexPaneDialog::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CPropWnd, ModelessDialogBaseClass)
+BEGIN_MESSAGE_MAP(CPropWnd, CHexPaneDialog)
         ON_WM_CLOSE()
         ON_WM_DESTROY()
 		ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
@@ -3583,68 +3580,8 @@ END_MESSAGE_MAP()
 
 BOOL CPropWnd::Create(CWnd* pParentWnd /*=NULL*/) 
 {
-#ifndef DIALOG_BAR
-	if (!CDialog::Create(CPropWnd::IDD, pParentWnd))
+	if (!CHexPaneDialog::Create(pParentWnd, CPropWnd::IDD, CBRS_LEFT, CPropWnd::IDD))
         return FALSE;
-#else
-	if (!CHexDialogBar::Create(pParentWnd, CPropWnd::IDD, CBRS_LEFT, CPropWnd::IDD))
-        return FALSE;
-#endif
-
-#ifndef DIALOG_BAR
-	visible_ = TRUE;
-
-    // Move window to previous position (but not completely off screen)
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    if (aa->prop_y_ != -30000)
-    {
-        CRect rr;               // Rectangle where we will put the dialog
-        GetWindowRect(&rr);
-
-        // Move to where it was when it was last closed
-        rr.OffsetRect(aa->prop_x_ - rr.left, aa->prop_y_ - rr.top);
-
-        CRect scr_rect;         // Rectangle that we want to make sure the window is within
-
-        // Get the rectangle that contains the screen work area (excluding system bars etc)
-        if (aa->mult_monitor_)
-        {
-            HMONITOR hh = MonitorFromRect(&rr, MONITOR_DEFAULTTONEAREST);
-            MONITORINFO mi;
-            mi.cbSize = sizeof(mi);
-            if (hh != 0 && GetMonitorInfo(hh, &mi))
-                scr_rect = mi.rcWork;  // work area of nearest monitor
-            else
-            {
-                // Shouldn't happen but if it does use the whole virtual screen
-                ASSERT(0);
-                scr_rect = CRect(::GetSystemMetrics(SM_XVIRTUALSCREEN),
-                    ::GetSystemMetrics(SM_YVIRTUALSCREEN),
-                    ::GetSystemMetrics(SM_XVIRTUALSCREEN) + ::GetSystemMetrics(SM_CXVIRTUALSCREEN),
-                    ::GetSystemMetrics(SM_YVIRTUALSCREEN) + ::GetSystemMetrics(SM_CYVIRTUALSCREEN));
-            }
-        }
-        else if (!::SystemParametersInfo(SPI_GETWORKAREA, 0, &scr_rect, 0))
-        {
-            // I don't know if this will ever happen since the Windows documentation
-            // is pathetic and does not say when or why SystemParametersInfo might fail.
-            scr_rect = CRect(0, 0, ::GetSystemMetrics(SM_CXFULLSCREEN),
-                                   ::GetSystemMetrics(SM_CYFULLSCREEN));
-        }
-
-        if (rr.left > scr_rect.right - 20)              // off right edge?
-            rr.OffsetRect(scr_rect.right - (rr.left+rr.right)/2, 0);
-        if (rr.right < scr_rect.left + 20)              // off left edge?
-            rr.OffsetRect(scr_rect.left - (rr.left+rr.right)/2, 0);
-        if (rr.top > scr_rect.bottom - 20)              // off bottom?
-            rr.OffsetRect(0, scr_rect.bottom - (rr.top+rr.bottom)/2);
-        // This is not analogous to the above since we don't the window off
-        // the top at all, otherwise you can get to the drag bar to move it.
-        if (rr.top < scr_rect.top)                      // off top at all?
-            rr.OffsetRect(0, scr_rect.top - rr.top);
-        MoveWindow(&rr);
-    }
-#endif
 
 	// Create property sheet as a child window
 	m_pSheet = new CPropSheet;
@@ -3665,26 +3602,15 @@ BOOL CPropWnd::Create(CWnd* pParentWnd /*=NULL*/)
 
 void CPropWnd::OnClose() 
 {
-#ifndef DIALOG_BAR
-    ShowWindow(SW_HIDE);
-    visible_ = FALSE;
-#endif
-
     theApp.SaveToMacro(km_prop_close);
 }
 
 void CPropWnd::OnDestroy() 
 {
-    ModelessDialogBaseClass::OnDestroy();
+    CHexPaneDialog::OnDestroy();
         
     // Save current page to restore when reopened
     theApp.prop_page_ = m_pSheet->GetActiveIndex();
-#ifndef DIALOG_BAR
-    CRect rr;
-    GetWindowRect(&rr);
-    theApp.prop_x_ = rr.left;
-    theApp.prop_y_ = rr.top;
-#endif
 }
 
 LRESULT CPropWnd::OnKickIdle(WPARAM, LPARAM lCount)

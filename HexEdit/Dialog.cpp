@@ -817,7 +817,7 @@ UINT CFolderEdit::OnGetDlgCode()
 // CExplorerWnd - modeless dialog that looks like Windows Explorer
 BOOL CExplorerWnd::Create(CWnd* pParentWnd) 
 {
-	if (!CHexDialogBar::Create(pParentWnd, IDD, CBRS_LEFT | CBRS_SIZE_DYNAMIC, IDD))
+	if (!CHexPaneDialog::Create(pParentWnd, IDD, CBRS_LEFT | CBRS_SIZE_DYNAMIC, IDD))
         return FALSE;
 
     // Create contained splitter window and shell windows in the 2 panes
@@ -845,18 +845,18 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 	tree_.EnableShellContextMenu();
     list_.EnableShellContextMenu();
 
-    // Create the resizer that move the controls when dialog is resized
-	resizer_.Create(GetSafeHwnd(), TRUE, 100, TRUE);
-	resizer_.SetInitialSize(m_sizeDefault);
-	resizer_.SetMinimumTrackingSize(m_sizeDefault);
-	resizer_.SetGripEnabled(FALSE);
+ //   // Create the resizer that move the controls when dialog is resized
+	//resizer_.Create(GetSafeHwnd(), TRUE, 100, TRUE);
+	//resizer_.SetInitialSize(m_sizeDefault);
+	//resizer_.SetMinimumTrackingSize(m_sizeDefault);
+	//resizer_.SetGripEnabled(FALSE);
 
-    resizer_.Add(IDC_FOLDER_FILTER,    0, 0, 100,   0);  // move right edge
-    resizer_.Add(IDC_FOLDER_REFRESH, 100, 0,   0,   0);  // stick to right side
-    resizer_.Add(IDC_FILTER_OPTS,    100, 0,   0,   0);
-    resizer_.Add(IDC_FOLDER_VIEW,    100, 0,   0,   0);
-    resizer_.Add(IDC_FOLDER_NAME,      0, 0, 100,   0);
-    resizer_.Add(IDC_EXPLORER,         0, 0, 100, 100);  // move right & bottom edges
+ //   resizer_.Add(IDC_FOLDER_FILTER,    0, 0, 100,   0);  // move right edge
+ //   resizer_.Add(IDC_FOLDER_REFRESH, 100, 0,   0,   0);  // stick to right side
+ //   resizer_.Add(IDC_FILTER_OPTS,    100, 0,   0,   0);
+ //   resizer_.Add(IDC_FOLDER_VIEW,    100, 0,   0,   0);
+ //   resizer_.Add(IDC_FOLDER_NAME,      0, 0, 100,   0);
+ //   resizer_.Add(IDC_EXPLORER,         0, 0, 100, 100);  // move right & bottom edges
 
     //SetMinSize(m_sizeDefault);  // xxx fix for MFC9
 
@@ -865,7 +865,7 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 
 void CExplorerWnd::DoDataExchange(CDataExchange* pDX)
 {
-	CHexDialogBar::DoDataExchange(pDX);
+	CHexPaneDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_FOLDER_BACK,    ctl_back_);
 	DDX_Control(pDX, IDC_FOLDER_FORW,    ctl_forw_);
 	DDX_Control(pDX, IDC_FOLDER_PARENT,  ctl_up_);
@@ -1000,6 +1000,8 @@ BOOL CExplorerWnd::OnInitDialog()
     //ctl_view_.SizeToContent();
     ctl_view_.SetTooltip(_T("Change Folder View"));
 	ctl_view_.Invalidate();
+
+	init_ = true;
 
     return TRUE;
 }
@@ -1139,7 +1141,7 @@ void CExplorerWnd::OldFolder()
 	VERIFY(UpdateData(FALSE));
 }
 
-BEGIN_MESSAGE_MAP(CExplorerWnd, CHexDialogBar)
+BEGIN_MESSAGE_MAP(CExplorerWnd, CHexPaneDialog)
 	//ON_WM_SIZE()
 	ON_WM_DESTROY()
     ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
@@ -1226,7 +1228,7 @@ void CExplorerWnd::OnDestroy()
 		hh_ = 0;
 	}
 
-    CHexDialogBar::OnDestroy();
+    CHexPaneDialog::OnDestroy();
 }
 
 // When something happens to change a file we call this function so that if the file is
@@ -1280,6 +1282,9 @@ BOOL CExplorerWnd::OnHelpInfo(HELPINFO* pHelpInfo)
 
 LRESULT CExplorerWnd::OnKickIdle(WPARAM, LPARAM lCount)
 {
+	if (!init_)
+		return FALSE;
+
 	ctl_back_.EnableWindow(list_.BackAllowed());
 	ctl_forw_.EnableWindow(list_.ForwAllowed());
 	ctl_up_.EnableWindow(!list_.IsDesktop());

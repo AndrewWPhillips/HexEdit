@@ -42,7 +42,7 @@ int CDialogPane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // fail to create
 	}
 
-	resizer_.Create(m_pdlg->GetSafeHwnd(), TRUE, 100);
+	resizer_.Create(m_pdlg->GetSafeHwnd(), TRUE, 100, TRUE);
 	resizer_.SetInitialSize(m_pdlg->m_sizeDefault);
 
 	AdjustLayout();
@@ -51,14 +51,12 @@ int CDialogPane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CDialogPane::OnSize(UINT nType, int cx, int cy)
 {
-	TRACE("xxx AAA dialog pane WM_SIZE event\r\n");
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
 void CDialogPane::OnSetFocus(CWnd* pOldWnd)
 {
-	TRACE("xxx AAA dialog pane WM_SETFOCUS event\r\n");
 	CDockablePane::OnSetFocus(pOldWnd);
 
 	if (m_pdlg == NULL) return;
@@ -76,5 +74,4 @@ void CDialogPane::AdjustLayout()
 	CRect rct;
 	GetClientRect(&rct);
 	m_pdlg->SetWindowPos(NULL, rct.left, rct.top, rct.Width(), rct.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
-	TRACE("xxx AAA dialog pane set window pos\r\n");
 }

@@ -125,17 +125,27 @@ static DWORD id_pairs[] = {
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarkDlg dialog
 
-CBookmarkDlg::CBookmarkDlg() : CHexDialogBar()
+CBookmarkDlg::CBookmarkDlg() : CHexPaneDialog()
 {
 	help_hwnd_ = (HWND)0;
 	p_grid = &grid_;
     pdoc_ = NULL;
 }
 
-BOOL CBookmarkDlg::Create(CWnd *pParentWnd, UINT nIDTemplate, UINT nStyle, UINT nID)
+BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 {
-	if (!CHexDialogBar::Create(pParentWnd, nIDTemplate, nStyle, nID))
-        return FALSE;
+	if (!CHexPaneDialog::Create(_T("Bookmarks"),
+			pParentWnd,								// parent
+			TRUE,									// has gripper
+			MAKEINTRESOURCE(CBookmarkDlg::IDD),		// resource ID
+			WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI,
+			CBookmarkDlg::IDD,						// child window ID
+			AFX_CBRS_REGULAR_TABS,					// dwTabbedStyle
+			AFX_CBRS_FLOAT | AFX_CBRS_CLOSE | AFX_CBRS_RESIZE | AFX_CBRS_AUTOHIDE | AFX_CBRS_AUTO_ROLLUP))
+	{
+		TRACE0("Failed to create bookmarks dialog\n");
+		return FALSE; // failed to create
+	}
 
 	// Default to retaining network/removaeable drive files when validating
 	ASSERT(GetDlgItem(IDC_NET_RETAIN) != NULL);
@@ -182,14 +192,13 @@ BOOL CBookmarkDlg::Create(CWnd *pParentWnd, UINT nIDTemplate, UINT nStyle, UINT 
 	return TRUE;
 }
 
-BEGIN_MESSAGE_MAP(CBookmarkDlg, CHexDialogBar)
+BEGIN_MESSAGE_MAP(CBookmarkDlg, CHexPaneDialog)
 	//{{AFX_MSG_MAP(CBookmarkDlg)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_BOOKMARK_ADD, OnAdd)
 	ON_BN_CLICKED(IDC_BOOKMARK_GOTO, OnGoTo)
 	ON_BN_CLICKED(IDC_BOOKMARK_REMOVE, OnRemove)
 	ON_BN_CLICKED(IDC_BOOKMARKS_VALIDATE, OnValidate)
-	ON_WM_SIZE()
 	ON_WM_HELPINFO()
 	ON_BN_CLICKED(IDC_BOOKMARKS_HELP, OnHelp)
 	//}}AFX_MSG_MAP
@@ -443,17 +452,10 @@ void CBookmarkDlg::UpdateRow(int index, int row, BOOL select /*=FALSE*/)
     grid_.RedrawRow(row);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CBookmarkDlg message handlers
-void CBookmarkDlg::OnSize(UINT nType, int cx, int cy) 
-{
-	CHexDialogBar::OnSize(nType, cx, cy);
-}
-
 void CBookmarkDlg::OnOK() 
 {
     theApp.SaveToMacro(km_bookmarks, 6);
-    ((CMainFrame *)AfxGetMainWnd())->ShowControlBar(this, FALSE, FALSE);
+	Hide();
 }
 
 void CBookmarkDlg::OnDestroy() 
@@ -473,7 +475,7 @@ void CBookmarkDlg::OnDestroy()
         theApp.WriteProfileString("File-Settings", "BookmarkDialogColumns", strWidths);
     }
 
-    CHexDialogBar::OnDestroy();
+    CHexPaneDialog::OnDestroy();
 }
 
 LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
@@ -522,7 +524,7 @@ BOOL CBookmarkDlg::PreTranslateMessage(MSG* pMsg)
         return TRUE;
     }
 
-    return CHexDialogBar::PreTranslateMessage(pMsg);
+    return CHexPaneDialog::PreTranslateMessage(pMsg);
 }
 
 void CBookmarkDlg::OnAdd() 
@@ -630,7 +632,7 @@ void CBookmarkDlg::OnAdd()
 //		grid_.SortItems(sort_col, grid_.GetSortAscending());
 
 //	// Close dialog
-//	CHexDialogBar::OnOK();
+//	CHexPaneDialog::OnOK();
 #endif
 }
 
@@ -646,7 +648,7 @@ void CBookmarkDlg::OnGoTo()
 	pbl->GoTo(index);
 
 //	// Close the dialog
-//	CHexDialogBar::OnOK();
+//	CHexPaneDialog::OnOK();
 }
 
 void CBookmarkDlg::OnRemove() 

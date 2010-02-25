@@ -19,7 +19,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-#include "DialogPane.h"
+#include "Dialog.h"
 #include "Control.h"
 #include "FindDlg.h"
 #include "BookmarkDlg.h"
@@ -107,8 +107,7 @@ public:
     CMFCToolBar m_wndStandardBar, m_wndEditBar;   // Tool bar and Edit bar
     CMFCToolBar m_wndFormatBar, m_wndNavBar;   // Format bar and Navigation bar
 
-	// Modeless dialogs OR dialog bars
-	CDialogPane m_wndBookmarksPane;     // dockable pane for m_wndBookmarks
+	// Modeless dialogs in panes
     CBookmarkDlg m_wndBookmarks;        // Bookmarks dialog/bar
 
 	CCalcDlg m_wndCalc;                 // Calculator dialog/bar
@@ -317,7 +316,7 @@ private:
     FILE_ADDRESS current_address_;
     CString current_hex_address_, current_dec_address_;
 
-	void move_dlgbar(CDialogBar &bar, const CRect &rct);  // move so it does not intersect with rct
+	void move_dlgbar(CHexPaneDialog &bar, const CRect &rct);  // move so it does not intersect with rct
 
 #ifdef USE_FREE_IMAGE
     FIBITMAP *m_dib;

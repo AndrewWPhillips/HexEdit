@@ -971,12 +971,8 @@ CFindSheet::charset_t CFindSheet::GetCharSet() const
     ASSERT(pp != NULL);
     pp->UpdateData();
 
-#ifndef DIALOG_BAR
-    if (!((CMainFrame *)AfxGetMainWnd())->m_wndFind.visible_ || pp != p_page_text_)
-#else
     if ((((CMainFrame *)AfxGetMainWnd())->m_wndFind.GetStyle() & WS_VISIBLE) != 0 || 
 		pp != p_page_text_)
-#endif
     {
         CHexEditView *pview = GetView();
         if (pview == NULL || !pview->EbcdicMode())
@@ -994,12 +990,8 @@ int CFindSheet::GetAlignment()
     ASSERT(pp != NULL);
     pp->UpdateData();
 
-#ifndef DIALOG_BAR
-    if (((CMainFrame *)AfxGetMainWnd())->m_wndFind.visible_ && (pp == p_page_hex_ || pp == p_page_number_))
-#else
     if ((((CMainFrame *)AfxGetMainWnd())->m_wndFind.GetStyle() & WS_VISIBLE) != 0 && 
         (pp == p_page_hex_ || pp == p_page_number_))
-#endif
     {
 		return align_;
     }
@@ -1013,12 +1005,8 @@ int CFindSheet::GetOffset()
     ASSERT(pp != NULL);
     pp->UpdateData();
 
-#ifndef DIALOG_BAR
-    if (((CMainFrame *)AfxGetMainWnd())->m_wndFind.visible_ && (pp == p_page_hex_ || pp == p_page_number_))
-#else
     if ((((CMainFrame *)AfxGetMainWnd())->m_wndFind.GetStyle() & WS_VISIBLE) != 0 && 
         (pp == p_page_hex_ || pp == p_page_number_))
-#endif
     {
 		return offset_;
     }
@@ -2968,12 +2956,9 @@ void CReplacePage::OnChangeMatchCase()
 }
 
 // CFindWnd dialog
-IMPLEMENT_DYNAMIC(CFindWnd, ModelessDialogBaseClass)
+IMPLEMENT_DYNAMIC(CFindWnd, CHexPaneDialog)
 
 CFindWnd::CFindWnd(CWnd* pParent /*=NULL*/)
-#ifndef DIALOG_BAR
-	: CDialog(CFindWnd::IDD, pParent)
-#endif
 {
 	m_pSheet = NULL;
 }
@@ -2986,87 +2971,28 @@ CFindWnd::~CFindWnd()
 
 void CFindWnd::DoDataExchange(CDataExchange* pDX)
 {
-	ModelessDialogBaseClass::DoDataExchange(pDX);
+	CHexPaneDialog::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CFindWnd, ModelessDialogBaseClass)
+BEGIN_MESSAGE_MAP(CFindWnd, CHexPaneDialog)
 	ON_WM_CLOSE()
     ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
-BOOL CFindWnd::Create(CWnd* pParentWnd /*=NULL*/) 
+BOOL CFindWnd::Create(CWnd *pParentWnd)
 {
-#ifndef DIALOG_BAR
-	if (!CDialog::Create(CFindWnd::IDD, pParentWnd))
-        return FALSE;
-#else
-	if (!CHexDialogBar::Create(pParentWnd, CFindWnd::IDD, CBRS_LEFT, CFindWnd::IDD))
-        return FALSE;
-#endif
-
-#ifndef DIALOG_BAR
-    if (theApp.GetProfileInt("MainFrame", "ShowFindDlg", 0) == 0)
-    {
-        ShowWindow(SW_HIDE);
-        visible_ = FALSE;
-    }
-	else
-    {
-        ShowWindow(SW_SHOWNORMAL);
-		visible_ = TRUE;
-    }
-
-    // Restore window position
-    if (theApp.find_y_ != -30000)
-    {
-        CRect rr;               // Rectangle where we will put the dialog
-        GetWindowRect(&rr);
-
-        // Move to where it was when it was last closed
-        rr.OffsetRect(theApp.find_x_ - rr.left, theApp.find_y_ - rr.top);
-
-        CRect scr_rect;         // Rectangle that we want to make sure the window is within
-
-        // Get the rectangle that contains the screen work area (excluding system bars etc)
-        if (theApp.mult_monitor_)
-        {
-            HMONITOR hh = MonitorFromRect(&rr, MONITOR_DEFAULTTONEAREST);
-            MONITORINFO mi;
-            mi.cbSize = sizeof(mi);
-            if (hh != 0 && GetMonitorInfo(hh, &mi))
-                scr_rect = mi.rcWork;  // work area of nearest monitor
-            else
-            {
-                // Shouldn't happen but if it does use the whole virtual screen
-                ASSERT(0);
-                scr_rect = CRect(::GetSystemMetrics(SM_XVIRTUALSCREEN),
-                    ::GetSystemMetrics(SM_YVIRTUALSCREEN),
-                    ::GetSystemMetrics(SM_XVIRTUALSCREEN) + ::GetSystemMetrics(SM_CXVIRTUALSCREEN),
-                    ::GetSystemMetrics(SM_YVIRTUALSCREEN) + ::GetSystemMetrics(SM_CYVIRTUALSCREEN));
-            }
-        }
-        else if (!::SystemParametersInfo(SPI_GETWORKAREA, 0, &scr_rect, 0))
-        {
-            // I don't know if this will ever happen since the Windows documentation
-            // is pathetic and does not say when or why SystemParametersInfo might fail.
-            scr_rect = CRect(0, 0, ::GetSystemMetrics(SM_CXFULLSCREEN),
-                                   ::GetSystemMetrics(SM_CYFULLSCREEN));
-        }
-
-        if (rr.left > scr_rect.right - 20)              // off right edge?
-            rr.OffsetRect(scr_rect.right - (rr.left+rr.right)/2, 0);
-        if (rr.right < scr_rect.left + 20)              // off left edge?
-            rr.OffsetRect(scr_rect.left - (rr.left+rr.right)/2, 0);
-        if (rr.top > scr_rect.bottom - 20)              // off bottom?
-            rr.OffsetRect(0, scr_rect.bottom - (rr.top+rr.bottom)/2);
-        // This is not analogous to the prev. 3 since we don't want the window
-        // off the top at all, otherwise you can get to the drag bar to move it.
-        if (rr.top < scr_rect.top)                      // off top at all?
-            rr.OffsetRect(0, scr_rect.top - rr.top);
-
-        MoveWindow(&rr);
-    }
-#endif
+	if (!CHexPaneDialog::Create(_T("Find"),
+			pParentWnd,								// parent
+			TRUE,									// has gripper
+			MAKEINTRESOURCE(CFindWnd::IDD),		    // resource ID
+			WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI,
+			CFindWnd::IDD,						    // child window ID
+			AFX_CBRS_REGULAR_TABS,					// dwTabbedStyle
+			AFX_CBRS_FLOAT | AFX_CBRS_CLOSE | AFX_CBRS_RESIZE | AFX_CBRS_AUTOHIDE | AFX_CBRS_AUTO_ROLLUP))
+	{
+		TRACE0("Failed to create bookmarks dialog\n");
+		return FALSE; // failed to create
+	}
 
 	m_pSheet = new CFindSheet;
 	if (!m_pSheet->Create(this, WS_CHILD | WS_VISIBLE))
@@ -3086,10 +3012,6 @@ BOOL CFindWnd::Create(CWnd* pParentWnd /*=NULL*/)
 
 void CFindWnd::OnClose() 
 {
-#ifndef DIALOG_BAR
-    ShowWindow(SW_HIDE);
-    visible_ = FALSE;
-#endif
 
     // Allow prefix auto-generation to start again on next open of find dlg
     m_pSheet->prefix_entered_ = FALSE;
@@ -3099,25 +3021,13 @@ void CFindWnd::OnClose()
 
 void CFindWnd::OnDestroy() 
 {
-#ifndef DIALOG_BAR
-    CRect rr;
-    GetWindowRect(&rr);
-    theApp.find_x_ = rr.left;
-    theApp.find_y_ = rr.top;
-#endif
-	ModelessDialogBaseClass::OnDestroy();
+	CHexPaneDialog::OnDestroy();
 }
 
 // Make sure dialog visible and show the specified page
 void CFindWnd::ShowPage(int page)
 {
-#ifndef DIALOG_BAR
-    ShowWindow(SW_SHOWNORMAL);
-    visible_ = TRUE;
-#else
-    ((CMainFrame *)AfxGetMainWnd())->ShowControlBar(this, TRUE, FALSE);
-	Unroll();
-#endif
+	ShowAndUnroll();
     if (page < 0)
         m_pSheet->SetActivePage(m_pSheet->p_page_replace_);
     else

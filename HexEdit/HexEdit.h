@@ -66,10 +66,6 @@ typedef __int64 FILE_ADDRESS;
 #define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
 #define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
 #define CALC_EXPR       1   // allow any expression in calculator (prob bugs if this turned off now)
-#define DIALOG_BAR      1   // Put modeless dialogs into dockable/rollable dialog bars
-// Note: You also need to change dialog style (hexedit.rc) to WS_CHILD for dockable bars
-//STYLE WS_CHILD | DS_CONTEXTHELP
-//STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 
 #define SHOW_CODE_PAGE  1
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
@@ -746,10 +742,6 @@ public:
     int recent_files_;                  // Number of recent files to put on menus
 	bool m_keepEntry;
 
-#ifndef DIALOG_BAR
-    int find_x_, find_y_;               // Last screen posn of the find (modeless) dialog
-    int prop_x_, prop_y_;               // Last screen posn of the prop sheet
-#endif
     int prop_page_;                     // Last active properties page
     UINT prop_dec_signed_;              // Display signed decimal values
     BOOL prop_dec_endian_;              // Display big-endian decimal values

@@ -589,6 +589,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HexPaneDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\HexPrintDialog.cpp"
 				>
 			</File>
@@ -999,6 +1003,10 @@
 			</File>
 			<File
 				RelativePath=".\HexFileList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HexPaneDialog.h"
 				>
 			</File>
 			<File
@@ -1629,11 +1637,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File

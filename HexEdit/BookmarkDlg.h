@@ -26,13 +26,12 @@
 
 #include "range_set.h"
 #include "GridCtrl_src/GridCtrl.h"
-#include "Dialog.h"
-#include "ResizeCtrl.h"
+#include "HexPaneDialog.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarkDlg dialog
 
-class CBookmarkDlg : public CHexDialogBar
+class CBookmarkDlg : public CHexPaneDialog
 {
 public:
     // Number the different types of columns we can display
@@ -60,11 +59,13 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CBookmarkDlg)
 	public:
-	virtual BOOL Create(CWnd* pParentWnd, UINT nIDTemplate,
-			UINT nStyle, UINT nID);
+	virtual BOOL Create(CWnd* pParentWnd);
 	//}}AFX_VIRTUAL
-	virtual void DelayShow(BOOL bShow) { theApp.SaveToMacro(km_bookmarks, bShow ? 5 : 6);
-                                         CHexDialogBar::DelayShow(bShow); }
+	virtual void ShowPane(BOOL bShow, BOOL bDelay, BOOL bActivate)
+	{
+		theApp.SaveToMacro(km_bookmarks, bShow ? 5 : 6);
+		CHexPaneDialog::ShowPane(bShow, bDelay, bActivate);
+	}
 
 public:
     virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -73,17 +74,14 @@ public:
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(CBookmarkDlg)
 	afx_msg void OnDestroy();
 	virtual void OnOK();
 	afx_msg void OnAdd();
 	afx_msg void OnGoTo();
 	afx_msg void OnRemove();
 	afx_msg void OnValidate();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnHelp();
-	//}}AFX_MSG
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
     afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
     afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
@@ -92,7 +90,6 @@ protected:
 	//afx_msg void OnInitialUpdate();
 	DECLARE_MESSAGE_MAP()
 
-	CResizeCtrl resizer_;               // Used to move controls around when the window is resized
 	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 
 	void InitColumnHeadings();

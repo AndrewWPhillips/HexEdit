@@ -21,16 +21,11 @@
 #include "HexEdit.h"
 #include "HelpID.hm"
 #include "HexEditView.h"
+#include "HexPaneDialog.h"
 #include <vector>
 
 #include "SimpleSplitter.h"
 #include "ResizeCtrl.h"
-
-#ifndef DIALOG_BAR // Modeless property sheets are control bars
-#define ModelessDialogBaseClass  CDialog
-#else
-#define ModelessDialogBaseClass  CHexDialogBar
-#endif
 
 #if _MSC_VER >= 1000
 #pragma once
@@ -172,10 +167,10 @@ private:
 
 /////////////////////////////////////////////////////////////////////////////
 // CExplorerWnd - modeless dialog bar that contains 2 panes with CMFCShellTreeCtrl + CMFCShellListCtrl
-class CExplorerWnd : public CHexDialogBar
+class CExplorerWnd : public CHexPaneDialog
 {
 public:
-    CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0) { }
+    CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0), init_(false) { }
 	enum { IDD = IDD_EXPLORER };
 	virtual BOOL Create(CWnd* pParentWnd);
 	virtual BOOL OnInitDialog();
@@ -230,11 +225,12 @@ protected:
 	CMFCShellTreeCtrl	  tree_;            // Tree view linked to folder view (list_)
 	CHistoryShellList list_;            // Our class derived from CMFCShellListCtrl
 
-	CResizeCtrl resizer_;               // Used to move controls around when the window is resized
 	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 
 private:
     void build_filter_menu();
+
+	bool init_;
     CString filters_;                   // Current filter string (from last GetCurrentFilters) as in filter menu
     HICON arrow_icon_;
 	CString curr_name_, curr_filter_;   // Current values in edit boxes of combos (current folder name and filters)
