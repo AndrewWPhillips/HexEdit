@@ -496,7 +496,7 @@ static CMenu *make_menu(const CXmlTree::CElt &current_elt, int &item_no)
 // by an element in an expression.
 // Returns a pointer to a CMenu that must be destroyed and freed, unless NULL
 // is returned in which case no variables were found.
-CMenu *make_var_menu_tree(const CXmlTree::CElt &current_elt, bool this_too /*=false*/)
+CMenu *make_var_menu_tree(const CXmlTree::CElt &current_elt, bool this_too /*=false*/, bool file_too /*=false*/)
 {
     int item_no = 1;
 
@@ -515,6 +515,18 @@ CMenu *make_var_menu_tree(const CXmlTree::CElt &current_elt, bool this_too /*=fa
             retval->AppendMenu(MF_ENABLED, item_no++, _T("this"));
         prev_defined.clear();
     }
+
+	// Added in 3.5 - ability to use file values (cursor, mark, eof) in expressions
+	if (file_too)
+	{
+		CMenu * submenu = new CMenu;
+		submenu->CreatePopupMenu();
+
+        submenu->AppendMenu(MF_ENABLED, item_no++, _T("cursor"));
+        submenu->AppendMenu(MF_ENABLED, item_no++, _T("mark"));
+        submenu->AppendMenu(MF_ENABLED, item_no++, _T("eof"));
+        retval->AppendMenu(MF_POPUP, (UINT)submenu->m_hMenu, _T("From File"));
+	}
 
     // Now check each ancestor in turn and add sub-menu (if not empty)
     CXmlTree::CElt ee;                  // Node of ancestor (starting with parent)
@@ -542,13 +554,10 @@ CMenu *make_var_menu_tree(const CXmlTree::CElt &current_elt, bool this_too /*=fa
         delete submenu;
     }
 
+	// If we added nothing just put a dummy (disabled) menu item in there
     if (retval->GetMenuItemCount() == 0)
-    {
-//        retval->DestroyMenu();
-//        delete retval;
-//        return NULL;
-        retval->AppendMenu(MF_GRAYED, -1, _T("No variables available"));
-    }
+        retval->AppendMenu(MF_GRAYED, -1, _T("No values available"));
+
     return retval;
 }
 

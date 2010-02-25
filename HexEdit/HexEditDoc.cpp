@@ -1996,13 +1996,6 @@ void CHexEditDoc::OpenDataFormatFile(LPCTSTR data_file_name /*=NULL*/)
     int saved_file_num = xml_file_num_;
     xml_file_num_ = -1;  // Default to no file found
 
-    //// Make sure we are displaying a tree view
-    //if (theApp.tree_view_ == 0)
-    //{
-    //    ASSERT(data_file_name == NULL);
-    //    return;
-    //}
-
     CString filename;
 
     if (data_file_name == NULL)
@@ -3714,7 +3707,13 @@ bool CHexEditDoc::add_enum(CXmlTree::CElt &ee, LPCTSTR pp)
         if ((eq_pos = entry.Find('=')) != -1)
         {
             // Separate value from the name
-            enum_val = _atoi64(entry.Mid(eq_pos + 1));
+			CString strVal = entry.Mid(eq_pos + 1);
+			errno = 0;
+			// Try strtol first as it handles a 0x prefix for hex.  Admittedly this
+			// could be confusing as 0x7FFFffff (32 bit) works but 0x100000000 doesn't.
+			enum_val = strtol(strVal, NULL, 10);
+			if (errno == ERANGE)
+				enum_val = _atoi64(strVal); // if too big try to scan as 64 bit
             entry = entry.Left(eq_pos);
             entry.TrimRight();
         }

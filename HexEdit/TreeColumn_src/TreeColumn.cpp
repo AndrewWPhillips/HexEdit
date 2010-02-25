@@ -630,6 +630,7 @@ event
 void CTreeColumn::TreeExpandCollapseToggle( int aiGridRow) // Grid row of node to toggle
 {
     ASSERT( m_pGrid != NULL);
+	m_pGrid->m_bLMouseButtonDown = FALSE;
     ASSERT( aiGridRow >= m_iFixedRowCount
             && aiGridRow < m_iRowCount);
     ASSERT( m_bAllowDraw);

@@ -219,7 +219,7 @@ BOOL CDFFDData::OnInitDialog()
     VERIFY(button_menu_.LoadMenu(IDR_DFFD));
 
     // Set up menu that allows the user to choose any valid variable name
-    plength_menu_ = make_var_menu_tree(*pelt_);
+    plength_menu_ = make_var_menu_tree(*pelt_, false, true);
 
     if (type_ == 0 || type_ == 5)
         ctl_length_var_.m_hMenu = plength_menu_->GetSafeHmenu();

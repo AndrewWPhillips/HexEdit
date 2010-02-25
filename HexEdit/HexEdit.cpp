@@ -2601,10 +2601,11 @@ void CHexEditApp::LoadSchemes()
     if (ii < 3)
         scheme_.push_back(default_oem_scheme_);
     if (ii < 4)
-        scheme_.push_back(default_ebcdic_scheme_);
-    if (ii < 4)
     {
-        // It seems that this is a new installation so add the plain and pretty schemes
+        scheme_.push_back(default_ebcdic_scheme_);
+
+        // At least one standard scheme was missing so it seems that this is
+		// a new installation so should add the plain and pretty schemes.
         CScheme new_scheme(PLAIN_NAME);
         new_scheme.AddRange("ALL", -1, "0:255");
 		// Restore these to "Automatic" values which are mainly greys
@@ -2617,9 +2618,10 @@ void CHexEditApp::LoadSchemes()
         scheme_.push_back(new_scheme);
 
         CScheme new_scheme2(PRETTY_NAME);
-		new_scheme2.AddRange("range1", RGB(200, 0, 0), "0:20");
-		new_scheme2.AddRange("range2", RGB(200, 100, 0), "21:41");
-		new_scheme2.AddRange("range3", RGB(200, 200, 0), "42:63");
+		new_scheme2.AddRange("range0", RGB(184, 184, 184), "0");   // Give nul bytes their own colour (grey)
+		new_scheme2.AddRange("range1", RGB(200, 0, 0), "1:21");
+		new_scheme2.AddRange("range2", RGB(200, 100, 0), "22:42");
+		new_scheme2.AddRange("range3", RGB(200, 200, 0), "43:63");
 		new_scheme2.AddRange("range4", RGB(100, 200, 0), "64:84");
 		new_scheme2.AddRange("range5", RGB(0, 200, 0), "85:105");
 		new_scheme2.AddRange("range6", RGB(0, 200, 100), "106:127");
@@ -2628,8 +2630,8 @@ void CHexEditApp::LoadSchemes()
 		new_scheme2.AddRange("range9", RGB(0, 0, 200), "170:191");
 		new_scheme2.AddRange("range10", RGB(100, 0, 200), "192:212");
 		new_scheme2.AddRange("range11", RGB(200, 0, 200), "213:233");
-		new_scheme2.AddRange("range12", RGB(200, 0, 100), "234:255");
-        new_scheme2.AddRange("ALL", RGB(100, 100, 100), "0:255");
+		new_scheme2.AddRange("range12", RGB(200, 0, 100), "234:254");
+        new_scheme2.AddRange("CATCHALL", RGB(100, 100, 100), "0:255"); // This should only catch 0xFF
         scheme_.push_back(new_scheme2);
     }
 }

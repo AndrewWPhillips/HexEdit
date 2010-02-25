@@ -196,6 +196,7 @@ class CGridCtrl : public CWnd
     DECLARE_DYNCREATE(CGridCtrl)
     friend class CGridCell;
     friend class CGridCellBase;
+	friend class CTreeColumn;
 
 // Construction
 public:
