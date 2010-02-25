@@ -962,7 +962,6 @@ BEGIN
         MENUITEM "&Edit Bar",                   ID_VIEW_EDITBAR
         MENUITEM "For&mat Bar",                 ID_VIEW_FORMATBAR
         MENUITEM "&Navigation Bar",             ID_VIEW_NAVBAR
-        MENUITEM "&Old Tool Bar",               ID_VIEW_TOOLBAR
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR1
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR2
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR3
