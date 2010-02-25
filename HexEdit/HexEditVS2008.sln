@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HexEditVS2008", "HexEditVS2008.vcproj", "{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BCGControlBarVS2008", "D:\Devel\BCG6_2\BCGControlBar\BCGControlBarVS2008.vcproj", "{1278B3AB-A6CF-4DCC-8618-825DAA578949}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestMFC", "..\TestMFC\TestMFC\TestMFC.vcproj", "{BBC2CFA0-BE54-4EE3-B84D-812234140D0C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Unicode Debug|Win32 = Unicode Debug|Win32
+		Unicode Release|Win32 = Unicode Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Debug|Win32.Build.0 = Debug|Win32
+		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Release|Win32.ActiveCfg = Release|Win32
+		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Release|Win32.Build.0 = Release|Win32
+		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Unicode Release|Win32.Build.0 = Release|Win32
+		{1278B3AB-A6CF-4DCC-8618-825DAA578949}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1278B3AB-A6CF-4DCC-8618-825DAA578949}.Debug|Win32.Build.0 = Debug|Win32
+		{1278B3AB-A6CF-4DCC-8618-825DAA578949}.Release|Win32.ActiveCfg = Release|Win32
+		{1278B3AB-A6CF-4DCC-8618-825DAA578949}.Release|Win32.Build.0 = Release|Win32
+		{1278B3AB-A6CF-4DCC-8618-825DAA578949}.Unicode Debug|Win32.ActiveCfg = Unicode Debug|Win32
+		{1278B3AB-A6CF-4DCC-8618-825DAA578949}.Unicode Debug|Win32.Build.0 = Unicode Debug|Win32
+		{1278B3AB-A6CF-4DCC-8618-825DAA578949}.Unicode Release|Win32.ActiveCfg = Unicode Release|Win32
+		{1278B3AB-A6CF-4DCC-8618-825DAA578949}.Unicode Release|Win32.Build.0 = Unicode Release|Win32
+		{BBC2CFA0-BE54-4EE3-B84D-812234140D0C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BBC2CFA0-BE54-4EE3-B84D-812234140D0C}.Debug|Win32.Build.0 = Debug|Win32
+		{BBC2CFA0-BE54-4EE3-B84D-812234140D0C}.Release|Win32.ActiveCfg = Release|Win32
+		{BBC2CFA0-BE54-4EE3-B84D-812234140D0C}.Release|Win32.Build.0 = Release|Win32
+		{BBC2CFA0-BE54-4EE3-B84D-812234140D0C}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{BBC2CFA0-BE54-4EE3-B84D-812234140D0C}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{BBC2CFA0-BE54-4EE3-B84D-812234140D0C}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{BBC2CFA0-BE54-4EE3-B84D-812234140D0C}.Unicode Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
+		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
+	EndGlobalSection
+EndGlobal

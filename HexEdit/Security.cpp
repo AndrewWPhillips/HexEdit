@@ -361,6 +361,7 @@ void CHexEditApp::SaveTo(const char *filename)
 	// - the file is long enough
 	if (bitcount != 24 || width * height <= 512 || filesize <= 14 + hdrsize + 3*512)
 	{
+		TRACE("************ %s is not 24 bit or big enough *****************\r\n", filename);
 		fclose(ff);
 		return;
 	}
