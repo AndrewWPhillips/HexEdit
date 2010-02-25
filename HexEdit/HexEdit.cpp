@@ -1976,10 +1976,10 @@ void CHexEditApp::LoadOptions()
     else
         tabicons_ = FALSE;
 
-    tree_view_ = GetProfileInt("DataFormat", "TreeView", 0);
-	if (tree_view_ > 2) tree_view_ = 0;
-    //tree_edit_ = GetProfileInt("DataFormat", "Edit", 0);
-    //tree_width_ = GetProfileInt("DataFormat", "TreeWidth", 247);
+    aerialview_ = GetProfileInt("Options", "AerialView", 0);
+	aerial_disp_state_ = GetProfileInt("Options", "AerialDisplay", 0x000010B1F);
+
+    dffdview_ = GetProfileInt("DataFormat", "TreeView", 0);
     max_fix_for_elts_ = GetProfileInt("DataFormat", "MaxFixForElts", 20);
     alt_data_bg_cols_ = GetProfileInt("DataFormat", "AltDataBgCols", 1) != 0 ? true : false;
 
@@ -2173,6 +2173,8 @@ void CHexEditApp::LoadOptions()
     if (open_offset_ < 0 || open_offset_ >= open_rowsize_) open_offset_ = 0;
     open_vertbuffer_ = GetProfileInt("Options", "OpenScrollZone", 0);
     if (open_vertbuffer_ < 0) open_vertbuffer_ = 0;
+
+	open_scheme_name_ = GetProfileString("Options", "OpenScheme");
 
     open_keep_times_ = GetProfileInt("Options", "OpenKeepTimes", 0) ? TRUE : FALSE;
 
@@ -2393,10 +2395,11 @@ void CHexEditApp::SaveOptions()
     if (mm != NULL)
         mm->SaveFrameOptions();
 
+    WriteProfileInt("Options", "AerialView", aerialview_);
+    WriteProfileInt("Options", "AerialDisplay", aerial_disp_state_);
+
     // Save data format view options
-    WriteProfileInt("DataFormat", "TreeView", tree_view_);
-    //WriteProfileInt("DataFormat", "Edit", tree_edit_);
-    //WriteProfileInt("DataFormat", "TreeWidth", tree_width_);
+    WriteProfileInt("DataFormat", "TreeView", dffdview_);
     WriteProfileInt("DataFormat", "MaxFixForElts", max_fix_for_elts_);
     WriteProfileInt("DataFormat", "AltDataBgCols", alt_data_bg_cols_ ? 1 : 0);
     ASSERT(xml_dir_.Right(1) == "\\");
@@ -2465,6 +2468,8 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "OpenGrouping", open_group_by_);
     WriteProfileInt("Options", "OpenOffset", open_offset_);
     WriteProfileInt("Options", "OpenScrollZone", open_vertbuffer_);
+
+	WriteProfileString("Options", "OpenScheme", open_scheme_name_);
 
     // Encryption password options
     WriteProfileInt("Options", "PasswordMask", password_mask_ ? 1 : 0);
@@ -2985,7 +2990,6 @@ void CHexEditApp::get_options(struct OptValues &val)
     val.export_line_len_ = export_line_len_;
 
     // Global template
-	val.dffd_view_ = tree_view_;
     val.max_fix_for_elts_ = max_fix_for_elts_;
     val.default_char_format_ = default_char_format_;
     val.default_int_format_ = default_int_format_;
@@ -3308,7 +3312,6 @@ void CHexEditApp::set_options(struct OptValues &val)
     }
 
     // global template options
-	tree_view_ = val.dffd_view_;
     max_fix_for_elts_ = val.max_fix_for_elts_;
     default_char_format_ = val.default_char_format_;
     default_int_format_ = val.default_int_format_;
@@ -3944,7 +3947,7 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
     if (def_type == 0 &&
         (pv = GetView()) != NULL &&
         pv->GetDocument()->pfile1_ != NULL &&
-        pv->GetDocument()->length() < 2000000 &&
+        pv->GetDocument()->length() < 4*1024*1024 &&
         !pv->GetDocument()->IsDevice() )
     {
         dlg.attachment_ = pv->GetDocument()->pfile1_->GetFilePath();

@@ -16,10 +16,40 @@
 // implied warranty. The author accepts no liability for any damage
 // or loss of business that this product may cause.
 //
+// A few notes on saving of default window settings.
+// First the user can set various valaues for the active file in the
+// "Window" pages and can save the current settings as the default
+// settings using the "Save As Default" (IDC_SAVE_DEFAULT) button
+// which calls:
+//  OnSaveDefault
+//  - sets default global settings such as theApp.open_max_ from the Options settings
+//  - may also set options directly from active file if they are not (yet) in
+//    the Options dlg - eg width of split template/aerial views
+//  - calls CHexFileList::SetDefaults which uses the default global settings to set a
+//    default options "string"  that is used for files that have none (never opened before)
+//  CHexEditApp::SaveOptions
+//  - called when program exists
+//  - stores the same global options (above) to the registry
+//  CHexEditApp::LoadOptions
+//  - called when program starts
+//  - loads the default global settings from registry (as well as many other settings)
+//  - sometime after LoadOptions is called CHexFileList::SetDefaults is called (to
+//    set the default window options) in the c'tor of CHexFileList
+//  CHexEditView::OnInitialUpdate
+//  - called when view created
+//  - gets options from CHexFileList - uses the defaults if first time file is opened
+//  CHexFileList::SetDefaults
+//  - called when default option changed (see CWindowGeneralPage::OnSaveDefault above)
+//  - called at program startup (in CHexFileList ctor) after LoadOptions
+//  - sets the default options string used for new or first-open files
+//  CHexFileList::StoreOptions
+//  - called when file closed
+//  - stores options for the current file to the CHexFileList (later saved to disk)
 
 #include "stdafx.h"
 #include "HexEdit.h"
 #include "HexEditView.h"
+#include "AerialView.h"
 #include "HexEditDoc.h"
 #include "Dialog.h"             // For Macro Save dialog etc
 #include "DirDialog.h"          // For directory selection dialog
@@ -104,7 +134,6 @@ void COptSheet::init()
 	val_.hl_caret_ = TRUE;
 	val_.hl_mouse_ = TRUE;
 
-	val_.dffd_view_ = -1;
 	val_.max_fix_for_elts_ = 0;
 	val_.default_char_format_ = _T("");
 	val_.default_int_format_ = _T("");
@@ -916,7 +945,7 @@ IMPLEMENT_DYNCREATE(CTemplatePage, COptPage)
 void CTemplatePage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
-	DDX_Radio(pDX, IDC_DFFD_NONE, pParent->val_.dffd_view_);
+	//DDX_Radio(pDX, IDC_DFFD_NONE, pParent->val_.dffd_view_);
 	DDX_Text(pDX, IDC_DFFD_ARRAY_MAX, pParent->val_.max_fix_for_elts_);
 	DDV_MinMaxUInt(pDX, pParent->val_.max_fix_for_elts_, 2, 999999);
 	DDX_Text(pDX, IDC_DFFD_FORMAT_CHAR, pParent->val_.default_char_format_);
@@ -997,9 +1026,9 @@ void CTemplatePage::OnOK()
 }
 
 static DWORD id_pairs_template[] = { 
-    IDC_DFFD_NONE, HIDC_DFFD_NONE,
-    IDC_DFFD_SPLIT, HIDC_DFFD_SPLIT,
-    IDC_DFFD_TAB, HIDC_DFFD_TAB,
+    //IDC_DFFD_NONE, HIDC_DFFD_NONE,
+    //IDC_DFFD_SPLIT, HIDC_DFFD_SPLIT,
+    //IDC_DFFD_TAB, HIDC_DFFD_TAB,
     IDC_DFFD_ARRAY_MAX, HIDC_DFFD_ARRAY_MAX,
     IDC_DESC_DFFD_ARRAY_MAX, HIDC_DFFD_ARRAY_MAX,
     IDC_SPIN_DFFD_ARRAY_MAX, HIDC_DFFD_ARRAY_MAX,
@@ -1590,14 +1619,38 @@ CColourSchemes::CColourSchemes() : COptPage(CColourSchemes::IDD, ::IsUs() ? IDS_
 
 void CColourSchemes::DoDataExchange(CDataExchange* pDX)
 {
-        ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size());
+	ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size());
 
 	COptPage::DoDataExchange(pDX);
+
+	if (!pDX->m_bSaveAndValidate)
+	{
+	        // Get scheme of currently active view
+        std::vector<CScheme>::const_iterator ps;
+        int ii;
+
+        for (ii = 0, ps = scheme_.begin(); ps != scheme_.end(); ++ii, ++ps)
+        {
+            if (ps->name_ == pParent->val_.scheme_name_)
+            {
+                scheme_no_ = ii;
+                break;
+            }
+        }
+	}
+
+
 	//{{AFX_DATA_MAP(CColourSchemes)
 	DDX_Control(pDX, IDC_COLOUR_PICKER, m_ColourPicker);
 	DDX_LBIndex(pDX, IDC_SCHEMES, scheme_no_);
 	DDX_LBIndex(pDX, IDC_NAMES, name_no_);
 	//}}AFX_DATA_MAP
+
+	ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size());
+	if (pDX->m_bSaveAndValidate && scheme_no_ < scheme_.size())
+	{
+		pParent->val_.scheme_name_ = scheme_[scheme_no_].name_;
+	}
 }
 
 BEGIN_MESSAGE_MAP(CColourSchemes, COptPage)
@@ -3227,6 +3280,8 @@ BEGIN_MESSAGE_MAP(CWindowGeneralPage, COptPage)
     ON_WM_CONTEXTMENU()
 	ON_BN_CLICKED(IDC_SAVE_DEFAULT, OnSaveDefault)
 	ON_BN_CLICKED(IDC_DISP_RESET, OnDispReset)
+	ON_CBN_SELCHANGE(IDC_DISPLAY_TEMPLATE, OnChange)
+	ON_CBN_SELCHANGE(IDC_DISPLAY_AERIAL, OnChange)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3312,6 +3367,10 @@ void CWindowGeneralPage::OnCancel()
 	COptPage::OnCancel();
 }
 
+void CWindowGeneralPage::OnChange()
+{
+    SetModified(TRUE);
+}
 
 static DWORD id_pairs_wingeneral[] = { 
 	IDC_FILE_ICON, HIDC_FILE_ICON,
@@ -3334,7 +3393,7 @@ void CWindowGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point)
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_wingeneral);
 }
 
-void CWindowGeneralPage::OnSaveDefault() 
+void CWindowGeneralPage::OnSaveDefault()
 {
     // It's not really necessary currently to call UpdateData as this page has
     // no editable controls, but it may in the future.
@@ -3346,6 +3405,9 @@ void CWindowGeneralPage::OnSaveDefault()
 
     if (AfxMessageBox("Are you sure you want to use the current settings as the defaults?", MB_OKCANCEL) != IDOK)
         return;
+
+	CHexEditView * pview = GetView();
+	ASSERT(pview != NULL);
 
     theApp.open_disp_state_ = pParent->val_.disp_state_;
     theApp.open_max_ = pParent->val_.maximize_;
@@ -3360,6 +3422,29 @@ void CWindowGeneralPage::OnSaveDefault()
     if (theApp.open_oem_plf_ == NULL)
         theApp.open_oem_plf_ = new LOGFONT;
     *theApp.open_oem_plf_ = pParent->val_.oem_lf_;
+
+	pview->AdjustColumns();  // fix and get split_width_d_/split_width_a_
+	theApp.dffdview_ = pParent->val_.display_template_;
+	if (theApp.dffdview_ == 1)
+	{
+		theApp.dffdview_ = pview->split_width_d_;  // get splitter width
+		if (theApp.dffdview_ < 10)
+			theApp.dffdview_ = 10;
+
+	}
+	theApp.aerialview_ = pParent->val_.display_aerial_;
+	if (theApp.aerialview_ == 1)
+	{
+		theApp.aerialview_ = pview->split_width_a_;  // get splitter width
+		if (theApp.aerialview_ < 10)
+			theApp.aerialview_ = 10;
+	}
+	if (theApp.aerialview_ > 0 && pview->pav_ != NULL)
+	{
+		theApp.aerial_disp_state_ = pview->pav_->DispState();
+	}
+
+	theApp.open_scheme_name_ = pParent->val_.scheme_name_;
 
     theApp.GetFileList()->SetDefaults();
 }
@@ -3379,7 +3464,12 @@ void CWindowGeneralPage::OnDispReset()
         pParent->val_.lf_ = *theApp.open_plf_;
     if (theApp.open_oem_plf_ != NULL)
         pParent->val_.oem_lf_ = *theApp.open_oem_plf_;
-	
+
+	pParent->val_.display_template_ = theApp.dffdview_ > 2 ? 1 : theApp.dffdview_;
+	pParent->val_.display_aerial_ = theApp.aerialview_ > 2 ? 1 : theApp.aerialview_;
+
+	pParent->val_.scheme_name_ = theApp.open_scheme_name_;
+
     UpdateData(FALSE);
     SetModified(TRUE);
 }
@@ -4014,5 +4104,6 @@ void CWindowEditPage::OnSelchangeInsert()
 {
     SetModified(TRUE);
 }
+
 
 

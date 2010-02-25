@@ -674,7 +674,7 @@ BOOL CHexEditView::PreCreateWindow(CREATESTRUCT& cs)
     return retval;
 }
 
-void CHexEditView::OnInitialUpdate() 
+void CHexEditView::OnInitialUpdate()
 {
     FILE_ADDRESS start_addr = 0;
     FILE_ADDRESS end_addr = 0;
@@ -700,12 +700,12 @@ void CHexEditView::OnInitialUpdate()
     {
         CString ss = pfl->GetData(recent_file_index, CHexFileList::DFFDVIEW);
         if (ss.IsEmpty())
-		    split_width_d_ = theApp.tree_view_;
+		    split_width_d_ = theApp.dffdview_;
         else
 		    split_width_d_ = atoi(ss);
         ss = pfl->GetData(recent_file_index, CHexFileList::AERIALVIEW);
         if (ss.IsEmpty())
-		    split_width_a_ = 16;
+			split_width_a_ = theApp.aerialview_;
         else
 		    split_width_a_ = atoi(ss);
 
@@ -865,8 +865,8 @@ void CHexEditView::OnInitialUpdate()
     else
     {
         ASSERT(pDoc->pfile1_ == NULL);   // we should only get here (now) if not yet saved to disk
-		split_width_d_ = theApp.tree_view_;
-		split_width_a_ = 16;
+		split_width_d_ = theApp.dffdview_;
+		split_width_a_ = theApp.aerialview_;
 
         // Force colour scheme based on char set (not file extension as we don't have one)
         scheme_name_ = "";
@@ -1105,6 +1105,8 @@ void CHexEditView::StoreOptions()
 	        pfl->SetData(ii, CHexFileList::DFFDVIEW, __int64(width));
 			pfl->SetData(ii, CHexFileList::DFFDWIDTHS, pdfv_->GetColWidths());
 		}
+		// DFFDVIEW data is now 0 (none), 2 (tab). or 10+ (splitter width)
+
 		if (pav_ == NULL)
 		{
 			pfl->SetData(ii, CHexFileList::AERIALVIEW, "0");
@@ -1122,6 +1124,7 @@ void CHexEditView::StoreOptions()
 			}
 	        pfl->SetData(ii, CHexFileList::AERIALVIEW, __int64(width));
 		}
+		// AERIALVIEW data is now 0 (none), 2 (tab). or 10+ (splitter width)
 
         if (pav_ != NULL)
             pav_->StoreOptions(pfl, ii);
@@ -1287,6 +1290,9 @@ void CHexEditView::OnUpdateScheme(CCmdUI* pCmdUI)
 // For efficiency it builds the "kala" array which contains a COLORREF for every byte value.
 BOOL CHexEditView::set_colours()
 {
+	if (scheme_name_.IsEmpty())
+		scheme_name_ = theApp.open_scheme_name_;  // Use default
+
     BOOL retval = TRUE;
     std::vector<CScheme>::const_iterator ps;
     ASSERT(theApp.scheme_.size() > 3);
@@ -17701,6 +17707,8 @@ void CHexEditView::AdjustColumns()
         if (snum_a > -1) psplitter->SetColumnInfo(snum_a, a, 8);
         psplitter->RecalcLayout();
     }
+    if (snum_d > -1) psplitter->GetColumnInfo(snum_d, split_width_d_, min);
+    if (snum_a > -1) psplitter->GetColumnInfo(snum_a, split_width_a_, min);
 }
 
 // This is connected to Ctrl+T and is used for testing new dialogs etc

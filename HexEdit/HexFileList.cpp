@@ -101,7 +101,12 @@ void CHexFileList::SetDefaults()
 
     ASSERT(theApp.open_disp_state_ != -1);      // Ensures we have read default values
     SetDV(DISPLAY, theApp.open_disp_state_);
-    SetDV(AERIALDISPLAY, 0x000010B1F);          // xxx allow user to set default values later
+
+	SetDV(DFFDVIEW, theApp.dffdview_);
+	SetDV(AERIALVIEW, theApp.aerialview_);
+    SetDV(AERIALDISPLAY, theApp.aerial_disp_state_);
+
+	SetDV(SCHEME, theApp.open_scheme_name_);
 }
 
 #ifdef _DEBUG

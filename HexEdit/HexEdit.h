@@ -40,6 +40,7 @@
 #define INTERNAL_VERSION 10             // version 3.4
 //#define INTERNAL_VERSION 11             // version 3.5
 //#define INTERNAL_VERSION 12             // version 4.0
+//#define INTERNAL_VERSION 12             // version 4.0
 
 // may need to adjust this depending on how many versions there were in last 2 years
 #define UPGRADE_DIFF 4   // diff between current version and version before which an upgrade is invalid
@@ -420,10 +421,12 @@ public:
 
     int last_opt_page_;                 // Index of last active options page
 
+    unsigned int aerialview_;           // 0=none, 2=tabbed views, else splitter view width
+    unsigned long aerial_disp_state_;
+
     // The following are options for the binary file format tree view display
-    unsigned int tree_view_;            // 0=none, 1=splitter views, 2=tabbed views
-    //BOOL tree_edit_;                    // Editing of templates allowed in the tree view?
-    //int tree_width_;                    // If tree_view_ == 1 (splitter) this is the width of left (tree) column
+    unsigned int dffdview_;             // 0=none, 2=tabbed views, else splitter view width
+
     CString xml_dir_;                   // Where XML files (and DTD) are stored
     int max_fix_for_elts_;              // Max no of fixed sized elts in array to display
     bool alt_data_bg_cols_;             // Use alternate background colours for data lines of tree/grid
@@ -717,9 +720,11 @@ public:
     std::vector<CString> xml_file_name_;    // Names of all XML files found
 
     // "factory" defaults for when these special schemes are reset
-    CScheme default_scheme_,
+    CScheme default_scheme_,            // settings used for resetting a scheme
             default_ascii_scheme_, default_ansi_scheme_,
             default_oem_scheme_, default_ebcdic_scheme_;
+
+	CString open_scheme_name_;          // Name of default scheme
  
     int open_rowsize_;                  // Default number of display columns
     int open_group_by_;                 // Default column grouping

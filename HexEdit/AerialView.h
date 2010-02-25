@@ -36,6 +36,7 @@ public:
 
     void StartTimer() { if (!timer_id_) VERIFY(timer_id_ = SetTimer(1, timer_msecs_, NULL)); }
     void StopTimer() { if (timer_id_) KillTimer(timer_id_); timer_id_ = 0; }
+	unsigned long DispState() { return disp_state_; }
 
 protected:
     virtual BOOL OnScroll(UINT nScrollCode, UINT nPos, BOOL bDoScroll = TRUE);

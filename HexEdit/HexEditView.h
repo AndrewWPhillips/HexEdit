@@ -742,6 +742,7 @@ public:
     bool NoNavMovesDone() const { return nav_moves_ == 0; }  // any moves done since swapping to this view?
 	int TemplateViewType() const;
 	int AerialViewType() const;
+    void AdjustColumns();
 
 private:
     enum { max_font_size = 100 };
@@ -972,7 +973,6 @@ private:
     bool DoDffdSplit();
     bool DoAerialTab();
     bool DoAerialSplit();
-    void AdjustColumns();
 };
 
 #ifndef _DEBUG  // debug version in HexEditView.cpp

@@ -108,7 +108,6 @@ struct OptValues
     BOOL    hl_caret_, hl_mouse_;
 
     // Template
-	int		dffd_view_;
 	UINT	max_fix_for_elts_;
 	CString	default_char_format_;
 	CString	default_date_format_;
@@ -181,6 +180,9 @@ struct OptValues
     //int     change_tracking_;
     BOOL    ct_modifications_, ct_insertions_, ct_deletions_, ct_delcount_; // change tracking options
     BOOL    show_bookmarks_, show_highlights_;
+
+	// Colour scheme
+	CString scheme_name_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -713,6 +715,8 @@ protected:
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnSaveDefault();
 	afx_msg void OnDispReset();
+	afx_msg void OnChange();
+
 	DECLARE_MESSAGE_MAP()
 };
 
