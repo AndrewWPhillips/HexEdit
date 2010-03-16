@@ -677,6 +677,8 @@
 #define IDC_OP_DISPLAY                  1147
 #define IDC_SCROLL_PAST_ENDS            1147
 #define IDC_REGISTER                    1148
+#define IDC_SCROLL_PAST_ENDS2           1148
+#define IDC_REVERSE_ZOOM                1148
 #define IDC_LINE1                       1149
 #define IDC_LINE2                       1150
 #define IDC_LINE3                       1151

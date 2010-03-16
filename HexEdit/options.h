@@ -1,10 +1,7 @@
-#ifndef _OPTIONS_H
-#define _OPTIONS_H
-
 // options.h : header file for Options tabbed dialog box
 //
 
-// Copyright (c) 2008 by Andrew W. Phillips.
+// Copyright (c) 2000-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -20,6 +17,9 @@
 // implied warranty. The author accepts no liability for any damage
 // or loss of business that this product may cause.
 //
+
+#ifndef _OPTIONS_H
+#define _OPTIONS_H
 
 #include "GridCtrl_src/GridCtrl.h"
 #include "GridBtnCell_src/GridBtnCell.h"
@@ -102,6 +102,7 @@ struct OptValues
     BOOL    sel_len_tip_, sel_len_div2_;
     BOOL    scroll_past_ends_;
     int     autoscroll_accel_;
+	BOOL    reverse_zoom_;
 	BOOL    ruler_;
     UINT    ruler_dec_ticks_, ruler_dec_nums_;
     UINT    ruler_hex_ticks_, ruler_hex_nums_;

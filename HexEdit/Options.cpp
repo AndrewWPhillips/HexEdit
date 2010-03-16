@@ -1,6 +1,6 @@
 // Options.cpp : implements the Options tabbed dialog box
 //
-// Copyright (c) 2008 by Andrew W. Phillips.
+// Copyright (c) 2000-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -128,6 +128,8 @@ void COptSheet::init()
     val_.sel_len_tip_ = val_.sel_len_div2_ = TRUE;
     val_.scroll_past_ends_ = TRUE;
     val_.autoscroll_accel_ = 10;
+	val_.reverse_zoom_ = TRUE;
+
 	val_.ruler_ = TRUE;
     val_.ruler_dec_ticks_ = 5; val_.ruler_dec_nums_ = 10;
     val_.ruler_hex_ticks_ = val_.ruler_hex_nums_ = 1;
@@ -809,6 +811,7 @@ void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_HL_CARET, pParent->val_.hl_caret_);
     DDX_Check(pDX, IDC_HL_MOUSE, pParent->val_.hl_mouse_);
     DDX_Check(pDX, IDC_SCROLL_PAST_ENDS, pParent->val_.scroll_past_ends_);
+	DDX_Check(pDX, IDC_REVERSE_ZOOM, pParent->val_.reverse_zoom_);
     DDX_Slider(pDX, IDC_SLIDER_AUTOSCROLL, pParent->val_.autoscroll_accel_);
     DDX_Control(pDX, IDC_DOC_PAGE, ctl_doc_butn_);
 }

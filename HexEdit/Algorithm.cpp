@@ -1,6 +1,6 @@
 // Algorithm.cpp : implements dialog that gets encryption algorithm
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the

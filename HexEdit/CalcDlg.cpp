@@ -1,6 +1,6 @@
 // CalcDlg.cpp : implements the Goto/Calculator dialog
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2000-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -2523,13 +2523,18 @@ void CCalcDlg::OnGetHexHist()
             ss = buf;
         }
 
+		CString strCurr;
+		edit_.GetWindowText(strCurr);
+
         edit_.SetFocus();
 		edit_.SetSel(edit_.GetWindowTextLength(), -1);
 
+		if (!strCurr.IsEmpty() && !isspace(strCurr[strCurr.GetLength()-1]))
+            edit_.SendMessage(WM_CHAR, (TCHAR)' ');
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
 
-        SetDlgItemText(IDC_OP_DISPLAY, "");
+		SetDlgItemText(IDC_OP_DISPLAY, "");
         inedit(km_user);
 	}
 }
@@ -2558,9 +2563,14 @@ void CCalcDlg::OnGetDecHist()
             ss = buf;
         }
 
+		CString strCurr;
+		edit_.GetWindowText(strCurr);
+
         edit_.SetFocus();
 		edit_.SetSel(edit_.GetWindowTextLength(), -1);
 
+		if (!strCurr.IsEmpty() && !isspace(strCurr[strCurr.GetLength()-1]))
+            edit_.SendMessage(WM_CHAR, (TCHAR)' ');
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
 

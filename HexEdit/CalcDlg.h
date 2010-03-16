@@ -1,6 +1,6 @@
 // CalcDlg.h : header file for Calculator Dialog
 //
-// Copyright (c) 2004 by Andrew W. Phillips.
+// Copyright (c) 2000-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the

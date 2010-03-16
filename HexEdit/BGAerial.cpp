@@ -1,6 +1,6 @@
 // BGAerial.cpp : background scan of file to create aerial view "bitmap"
 //
-// Copyright (c) 2008 by Andrew W. Phillips.
+// Copyright (c) 2008-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the

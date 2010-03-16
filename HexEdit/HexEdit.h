@@ -1,6 +1,6 @@
 // HexEdit.h : main header file for the HEXEDIT application
 //
-// Copyright (c) 1999 by Andrew W. Phillips. 
+// Copyright (c) 1999-2010 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -660,6 +660,7 @@ public:
     BOOL scroll_past_ends_;             // Scrolling past end of doc allowed?
     int autoscroll_accel_;              // How quickly autoscroll increases as mouse is dragged past edge of window (0 = none, 10 = linear, 20 = squared etc)
     BOOL dlg_dock_, dlg_move_;          // Modeless dialogs: can dock? move out of the way when floating?
+	BOOL reverse_zoom_;                 // Reverse Ctrl+wheel zoom direction
 
     BOOL hex_ucase_;                    // Display hex in upper case?
     int k_abbrev_;                      // How are K/M/G abbreviated (0=1000/1000/1000, 1=1024/1000/1000, 2=1024/1024/1000, 3=1024/1024/1024) 

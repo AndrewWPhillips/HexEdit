@@ -1613,50 +1613,53 @@ BEGIN
                     219,1
     CONTROL         "&Ruler",IDC_RULER,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
                     WS_TABSTOP,11,52,30,10,0,HIDC_RULER
-    LTEXT           "Hex:",IDC_STATIC,20,66,16,8
-    LTEXT           "Large ticks every:",IDC_STATIC,52,66,57,8
-    EDITTEXT        IDC_RULER_HEX_TICKS,109,64,28,12,ES_RIGHT | ES_NUMBER,0,
+    LTEXT           "Hex:",IDC_STATIC,20,65,16,8
+    LTEXT           "Large ticks every:",IDC_STATIC,52,65,57,8
+    EDITTEXT        IDC_RULER_HEX_TICKS,109,63,28,12,ES_RIGHT | ES_NUMBER,0,
                     HIDC_RULER_HEX_TICKS
     CONTROL         "",IDC_SPIN_RULER_HEX_TICKS,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,134,61,11,12
-    LTEXT           "Numbers every:",IDC_STATIC,153,66,50,8
-    EDITTEXT        IDC_RULER_HEX_NUMS,206,64,28,12,ES_RIGHT | ES_NUMBER,0,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,134,60,11,12
+    LTEXT           "Numbers every:",IDC_STATIC,153,65,50,8
+    EDITTEXT        IDC_RULER_HEX_NUMS,206,63,28,12,ES_RIGHT | ES_NUMBER,0,
                     HIDC_RULER_HEX_NUMS
     CONTROL         "",IDC_SPIN_RULER_HEX_NUMS,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,230,61,11,12
-    LTEXT           "Decimal:",IDC_STATIC,20,80,28,8
-    LTEXT           "Large ticks every:",IDC_STATIC,52,80,57,8
-    EDITTEXT        IDC_RULER_DEC_TICKS,109,78,28,12,ES_RIGHT | ES_NUMBER,0,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,230,60,11,12
+    LTEXT           "Decimal:",IDC_STATIC,20,79,28,8
+    LTEXT           "Large ticks every:",IDC_STATIC,52,79,57,8
+    EDITTEXT        IDC_RULER_DEC_TICKS,109,77,28,12,ES_RIGHT | ES_NUMBER,0,
                     HIDC_RULER_DEC_TICKS
     CONTROL         "",IDC_SPIN_RULER_DEC_TICKS,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,134,77,11,12
-    LTEXT           "Numbers every:",IDC_STATIC,153,80,50,8
-    EDITTEXT        IDC_RULER_DEC_NUMS,206,78,28,12,ES_RIGHT | ES_NUMBER,0,
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,134,76,11,12
+    LTEXT           "Numbers every:",IDC_STATIC,153,79,50,8
+    EDITTEXT        IDC_RULER_DEC_NUMS,206,77,28,12,ES_RIGHT | ES_NUMBER,0,
                     HIDC_RULER_DEC_NUMS
     CONTROL         "",IDC_SPIN_RULER_DEC_NUMS,"msctls_updown32",
                     UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
-                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,230,77,11,12
+                    UDS_ARROWKEYS | UDS_NOTHOUSANDS,230,76,11,12
     CONTROL         "Indicate cursor position",IDC_HL_CARET,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,52,94,90,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,52,92,90,10,0,
                     HIDC_HL_CARET
     CONTROL         "Indicate mouse location",IDC_HL_MOUSE,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,153,94,99,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,153,92,99,10,0,
                     HIDC_HL_MOUSE
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,109,
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,35,107,
                     219,1
-    LTEXT           "Scrolling",IDC_STATIC,10,105,28,8
+    LTEXT           "Scroll/Zoom",IDC_STATIC,10,103,40,8
     CONTROL         "Allow scroll past ends",IDC_SCROLL_PAST_ENDS,"Button",
-                    BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,20,116,55,16,
+                    BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,20,114,93,10,
                     0,HIDC_SCROLL_PAST_ENDS
-    LTEXT           "Autoscroll acceleration:",IDC_STATIC,109,116,42,16
+    LTEXT           "Autoscroll acceleration:",IDC_STATIC,119,113,42,16
     CONTROL         "",IDC_SLIDER_AUTOSCROLL,"msctls_trackbar32",TBS_BOTH | 
-                    TBS_NOTICKS | WS_TABSTOP,153,117,99,15,WS_EX_TRANSPARENT,
+                    TBS_NOTICKS | WS_TABSTOP,160,114,92,15,WS_EX_TRANSPARENT,
                     HIDC_SLIDER_AUTOSCROLL
     PUSHBUTTON      "Document Display Options >>",IDC_DOC_PAGE,137,3,119,17,
                     0,0,HIDC_DOC_PAGE
+    CONTROL         "Invert Ctrl+wheel zoom",IDC_REVERSE_ZOOM,"Button",
+                    BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,20,126,93,10,
+                    0,HIDC_REVERSE_ZOOM
 END
 
 IDD_PASSWORD DIALOGEX 0, 0, 255, 118
@@ -2618,8 +2621,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,50,0,SVNRevision
- PRODUCTVERSION 3,50,0,SVNRevision
+ FILEVERSION 3,50,0,654
+ PRODUCTVERSION 3,50,0,654
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2636,12 +2639,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "3, 50, 0, " SVNRevisionStr
+            VALUE "FileVersion", "3, 50, 0, 654"
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2010  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "3, 50, 0, " SVNRevisionStr
+            VALUE "ProductVersion", "3, 50, 0, 654"
         END
     END
     BLOCK "VarFileInfo"

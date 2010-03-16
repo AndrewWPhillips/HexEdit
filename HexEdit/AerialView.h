@@ -1,3 +1,21 @@
+// AerialView.h
+//
+// Copyright (c) 2008-2010 by Andrew W. Phillips.
+//
+// No restrictions are placed on the noncommercial use of this code,
+// as long as this text (from the above copyright notice to the
+// disclaimer below) is preserved.
+//
+// This code may be redistributed as long as it remains unmodified
+// and is not sold for profit without the author's written consent.
+//
+// This code, or any part of it, may not be used in any software that
+// is sold for profit, without the author's written consent.
+//
+// DISCLAIMER: This file is provided "as is" with no expressed or
+// implied warranty. The author accepts no liability for any damage
+// or loss of business that this product may cause.
+
 #ifndef DATAFORMATVIEW_INCLUDED_ 
 #define DATAFORMATVIEW_INCLUDED_  1
 
@@ -197,7 +215,7 @@ protected:
     afx_msg void OnScrollUp() { phev_->OnScrollUp(); }
     afx_msg void OnSwap() { phev_->OnSwap(); }
     afx_msg void OnStartLine() { phev_->OnStartLine(); }
-    afx_msg void OnDel() { phev_->OnDel(); }
+    afx_msg void OnDel() { /* do nothing here */ }
     afx_msg void OnUpdateSwap(CCmdUI *pCmdUI) { phev_->OnUpdateSwap(pCmdUI); }
     afx_msg void OnOemToggle() { phev_->OnOemToggle(); }
     afx_msg void OnUpdateOemToggle(CCmdUI *pCmdUI) { phev_->OnUpdateOemToggle(pCmdUI); }

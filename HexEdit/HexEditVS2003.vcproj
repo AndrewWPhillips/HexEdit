@@ -378,9 +378,6 @@
 				RelativePath=".\EmailDlg.cpp">
 			</File>
 			<File
-				RelativePath=".\EnBitmap.cpp">
-			</File>
-			<File
 				RelativePath=".\Expr.cpp">
 			</File>
 			<File
@@ -703,9 +700,6 @@
 			</File>
 			<File
 				RelativePath=".\EmailDlg.h">
-			</File>
-			<File
-				RelativePath=".\EnBitmap.h">
 			</File>
 			<File
 				RelativePath=".\Expr.h">

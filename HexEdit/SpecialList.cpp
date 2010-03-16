@@ -1,7 +1,7 @@
 // CSpecialList.cpp : CSpecialList class that maintains list of
 //                   special things that can be opened (eg disks)
 //
-// Copyright (c) 2005 by Andrew W. Phillips.
+// Copyright (c) 2005-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the

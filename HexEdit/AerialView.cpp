@@ -11,8 +11,8 @@
 // TODO xxx
 // - file options: hide/split/tab, auto-sync (caret or scroll?)
 // - global options: default dpix?, max bitmap size (range 20 - 200 Mb?)
-// - ability to save default file options
-// - printing
+// > ability to save default file options
+// - printing?
 
 static bool timer_on = true;  // allow turning off of ants for testing things like invalidation
 
@@ -961,7 +961,7 @@ void CAerialView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 BOOL CAerialView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) 
 {
-    if ((nFlags & MK_CONTROL) != 0)
+    if ((nFlags & MK_CONTROL) != 0)  // If Ctrl key down we zoom instead of scroll
     {
         // Get current mouse position in window coords
         CPoint pt;
@@ -973,24 +973,19 @@ BOOL CAerialView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
         int prev_dpix = actual_dpix_;
         if (old_elt != -1)              // Only zoom if over a valid elt
         {
-#if 0
-            if (zDelta < 0 && disp_.dpix < MAX_DPIX)  // zoom out
-                set_zoom(disp_.dpix + 1);
-            else if (zDelta > 0 && disp_.dpix > 1)    // zoom in
-                set_zoom(disp_.dpix - 1, false);
-#else
+			bool zoomIn = zDelta > 0;
+			if (theApp.reverse_zoom_) zoomIn = !zoomIn;
+
             // Zoom by binary multiple (ie double/half size)
-            if (zDelta < 0)
+            if (zoomIn)
 			{
-				// Zoom out
 				if (disp_.dpix*2 <= MAX_DPIX)
 					set_zoom(disp_.dpix*2);
 				else
 					set_zoom(MAX_DPIX);
 			}
-            else if (zDelta > 0 && disp_.dpix/2 > 0)    // zoom in
+            else if (!zoomIn && disp_.dpix/2 > 0)    // zoom in
 				set_zoom(disp_.dpix/2, false);
-#endif
         }
 
         if (actual_dpix_ != prev_dpix)

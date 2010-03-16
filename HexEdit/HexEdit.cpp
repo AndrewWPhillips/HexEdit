@@ -1,6 +1,6 @@
 // HexEdit.cpp : Defines the class behaviors for the application.
 //
-// Copyright (c) 2008 by Andrew W. Phillips. 
+// Copyright (c) 1999-2010 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -330,6 +330,7 @@ BOOL CHexEditApp::InitInstance()
             return FALSE;
         }
         InitCommonControls();
+		CWinApp::InitInstance();
 
 		// Override the document manager so we can make save dialog resizeable
 		if (m_pDocManager != NULL) delete m_pDocManager;
@@ -1921,6 +1922,8 @@ void CHexEditApp::LoadOptions()
     scroll_past_ends_ = GetProfileInt("Options", "ScrollPastEnds", 1) ? TRUE : FALSE;
     autoscroll_accel_ = GetProfileInt("Options", "AutoscrollAcceleration", 10);
     if (autoscroll_accel_ < 0 || autoscroll_accel_ > 50) autoscroll_accel_ = 10;
+    reverse_zoom_ = GetProfileInt("Options", "ReverseMouseWheelZoomDirn", 1) ? TRUE : FALSE;
+
     ruler_ = GetProfileInt("Options", "ShowRuler", 1) ? TRUE : FALSE;
     ruler_hex_ticks_ = GetProfileInt("Options", "RulerHexTicks", 4);
     ruler_dec_ticks_ = GetProfileInt("Options", "RulerDecTicks", 5);
@@ -2336,6 +2339,7 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "SelLenDiv2", sel_len_div2_ ? 1 : 0);
     WriteProfileInt("Options", "ScrollPastEnds", scroll_past_ends_ ? 1 : 0);
     WriteProfileInt("Options", "AutoscrollAcceleration", autoscroll_accel_);
+    WriteProfileInt("Options", "ReverseMouseWheelZoomDirn", reverse_zoom_ ? 1 : 0);
 
     WriteProfileInt("Options", "ShowRuler", ruler_ ? 1 : 0);
     WriteProfileInt("Options", "RulerHexTicks", ruler_hex_ticks_);
@@ -2969,6 +2973,7 @@ void CHexEditApp::get_options(struct OptValues &val)
     val.ruler_hex_nums_ = ruler_hex_nums_;
     val.scroll_past_ends_ = scroll_past_ends_;
     val.autoscroll_accel_ = autoscroll_accel_;
+	val.reverse_zoom_ = reverse_zoom_;
     val.hl_caret_ = hl_caret_;
     val.hl_mouse_ = hl_mouse_;
 
@@ -3310,6 +3315,7 @@ void CHexEditApp::set_options(struct OptValues &val)
         autoscroll_accel_ = val.autoscroll_accel_;
         invalidate_views = true;        // causes recalc_display which sets accel
     }
+	reverse_zoom_ = val.reverse_zoom_;
 
     // global template options
     max_fix_for_elts_ = val.max_fix_for_elts_;

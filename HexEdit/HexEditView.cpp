@@ -1,6 +1,6 @@
 // HexEditView.cpp : implementation of the CHexEditView class
 //
-// Copyright (c) 2008 by Andrew W. Phillips. 
+// Copyright (c) 1999-2010 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -562,8 +562,9 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditView construction/destruction
-CHexEditView::CHexEditView() : expr_(this)
+CHexEditView::CHexEditView()
 {
+	expr_.SetView(this);
     text_height_ = 0;     // While text_height_ == 0 none of the display settings have been calculated
     pdfv_ = NULL;
     pav_ = NULL;
@@ -2204,37 +2205,27 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (display_.hex_addr && theApp.ruler_hex_nums_ > 1) hl_box = false;
 			if ((display_.decimal_addr || display_.line_nums) && theApp.ruler_dec_nums_ > 1) hl_box = false;
 
+			CRect hi_rect(-1, 0, -1, bdr_top_ - 3);
+			if (!hl_box)
+				hi_rect.top = hi_rect.bottom - 2;    // A flat rect just inside the ruler
             // Current caret position shown in the ruler
             if (theApp.hl_caret_ && !mouse_down_)
 			{
-				// Do highlighting with a background rectangle in ruler/address area
+				// Do highlighting with a background rectangle in ruler
                 hicol = int((start_addr + offset_)%rowsize_);
-				CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
 				CBrush * psaved_brush = pDC->SelectObject(&brush);
 				CPen * psaved_pen = pDC->SelectObject(&pen1);
 				if (!display_.vert_display && display_.hex_area)
 				{
 					hi_rect.left  = hex_pos(hicol) + horz;
 					hi_rect.right = hi_rect.left + text_width_*2 + 1;
-					if (hl_box)
-						pDC->Rectangle(&hi_rect);
-					else
-					{
-						pDC->MoveTo(hi_rect.left, hi_rect.bottom);
-						pDC->LineTo(hi_rect.right, hi_rect.bottom);
-					}
+					pDC->Rectangle(&hi_rect);
 				}
 				if (display_.vert_display || display_.char_area)
 				{
 					hi_rect.left  = char_pos(hicol) + horz;
 					hi_rect.right = hi_rect.left + text_width_ + 1;
-					if (hl_box)
-						pDC->Rectangle(&hi_rect);
-					else
-					{
-						pDC->MoveTo(hi_rect.left, hi_rect.bottom);
-						pDC->LineTo(hi_rect.right, hi_rect.bottom);
-					}
+					pDC->Rectangle(&hi_rect);
 				}
 				(void)pDC->SelectObject(psaved_pen);
 				(void)pDC->SelectObject(psaved_brush);
@@ -2243,33 +2234,19 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (theApp.hl_mouse_ && mouse_addr_ > -1)
 			{
 				int mousecol = int((mouse_addr_ + offset_)%rowsize_);   // Mouse column to be highlighted
-				CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
 				CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
 				CPen * psaved_pen = pDC->SelectObject(&pen1);
 				if (!display_.vert_display && display_.hex_area)
 				{
 					hi_rect.left  = hex_pos(mousecol) + horz;
 					hi_rect.right = hi_rect.left + text_width_*2 + 1;
-					if (hl_box)
-						pDC->Rectangle(&hi_rect);
-					else
-					{
-						pDC->MoveTo(hi_rect.left, hi_rect.bottom);
-						pDC->LineTo(hi_rect.right, hi_rect.bottom);
-					}
+					pDC->Rectangle(&hi_rect);
 				}
 				if (display_.vert_display || display_.char_area)
 				{
-					// 
 					hi_rect.left  = char_pos(mousecol) + horz;
 					hi_rect.right = hi_rect.left + text_width_ + 1;
-					if (hl_box)
-						pDC->Rectangle(&hi_rect);
-					else
-					{
-						pDC->MoveTo(hi_rect.left, hi_rect.bottom + 2);
-						pDC->LineTo(hi_rect.right, hi_rect.bottom + 2);
-					}
+					pDC->Rectangle(&hi_rect);
 				}
 				(void)pDC->SelectObject(psaved_pen);
 				(void)pDC->SelectObject(psaved_brush);
@@ -5469,10 +5446,12 @@ BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
     if ((nFlags & MK_CONTROL) != 0)
     {
 		// Ctrl+ mouse wheel zooms in/out
-        if (zDelta < 0)
-            OnFontDec();
-        else if (zDelta > 0)
+		bool zoomIn = zDelta > 0;
+		if (theApp.reverse_zoom_) zoomIn = !zoomIn;
+        if (zoomIn)
             OnFontInc();
+		else
+            OnFontDec();
         retval = TRUE;
     }
     else

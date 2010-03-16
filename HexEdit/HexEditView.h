@@ -1,6 +1,6 @@
 // HexEditView.h : interface of the CHexEditView class
 //
-// Copyright (c) 2004 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -174,7 +174,8 @@ enum undo_type
 class CTipExpr : public expr_eval
 {
 public:
-    CTipExpr::CTipExpr(CHexEditView *pv) : pview_(pv), size_(0), unsigned_(false) {}
+    CTipExpr::CTipExpr() : size_(0), unsigned_(false) {}
+	void CTipExpr::SetView(CHexEditView *pv) { pview_ = pv; }
     virtual value_t find_symbol(const char *sym, value_t parent, size_t index, int *pac,
         __int64 &sym_size, __int64 &sym_address, CString &sym_str);
 	int GetSize() { return size_; }

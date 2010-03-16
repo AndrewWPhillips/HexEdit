@@ -1,6 +1,6 @@
 // MainFrm.cpp : implementation of the CMainFrame class
 //
-// Copyright (c) 2004 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -1065,8 +1065,9 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 	// Create background brush using top left pixel of bitmap
 	{
 #ifdef USE_FREE_IMAGE
-		RGBQUAD px = {192,192,192,0};
-        FreeImage_GetPixelColor(m_dib, 0, 0, &px);  // get colour from (0,0) pixel
+		RGBQUAD px = { 192, 192, 192, 0};  // default to grey in case GetPixelColor fails
+		int height = FreeImage_GetHeight(m_dib);
+        VERIFY(FreeImage_GetPixelColor(m_dib, 0, height - 1, &px));  // get colour from (0,0) pixel (may fail if not 24 bit colours)
 		backBrush.CreateSolidBrush(RGB(px.rgbRed, px.rgbGreen, px.rgbBlue));
 #else
 		CDC dcTmp;
@@ -4759,9 +4760,9 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 			    SHFILEINFO sfi;
 				VERIFY(SHGetFileInfo(ss, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(sfi),
 									SHGFI_USEFILEATTRIBUTES | SHGFI_TYPENAME ));
-				ss = sfi.szTypeName;          // Store file type for display in file page
+				CString sext = sfi.szTypeName + CString(" (") + ss + _T(")");  // Store file type (+ ext) for display in file page
 
-                pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_DFFD_OPEN_FIRST + ii, NULL, -1, ss));
+                pMenuPopup->InsertItem(CBCGToolbarMenuButton(ID_DFFD_OPEN_FIRST + ii, NULL, -1, sext));
 				++count;
 			}
 		}

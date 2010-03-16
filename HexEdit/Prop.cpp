@@ -1,6 +1,6 @@
 // Prop.cpp : implements the Properties tabbed dialog box
 //
-// Copyright (c) 2008 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -1056,26 +1056,22 @@ BOOL CPropInfoPage::OnSetActive()
 			categories.insert(ss);
 	}
 	if (categories.empty())
-	{
-		cat_sel_ctl_.EnableWindow(FALSE);
-	}
-	else
-	{
-		CMenu mm;
-		mm.CreatePopupMenu();
-		int count = 0;
-		for (std::set<CString>::iterator pp = categories.begin(); pp != categories.end(); ++pp)
-			mm.AppendMenu(MF_STRING, ++count, *pp);
-		ASSERT(count > 0);
+		categories.insert(_T("None"));
+	CMenu mm;
+	mm.CreatePopupMenu();
+	int count = 0;
+	for (std::set<CString>::iterator pp = categories.begin(); pp != categories.end(); ++pp)
+		mm.AppendMenu(MF_STRING, ++count, *pp);
+	ASSERT(count > 0);
 
-		cat_sel_ctl_.m_hMenu = mm.GetSafeHmenu();
-		mm.Detach();
+	cat_sel_ctl_.m_hMenu = mm.GetSafeHmenu();
+	mm.Detach();
 
-		int curr = -1;
-		if (pv != NULL && pv->GetDocument()->pfile1_ != NULL) // make sure there is a disk file to interrogate (pfl required disk file name)
-			curr = pfl->GetIndex(pv->GetDocument()->pfile1_->GetFilePath());
-		cat_sel_ctl_.EnableWindow(curr != -1);
-	}
+	// Only enable if there is a disk file name (else CATEGORY can't be written to recent files list)
+	int curr = -1;
+	if (pv != NULL && pv->GetDocument()->pfile1_ != NULL) // make sure there is a disk file to interrogate (pfl required disk file name)
+		curr = pfl->GetIndex(pv->GetDocument()->pfile1_->GetFilePath());
+	cat_sel_ctl_.EnableWindow(curr != -1);
 
 // xxx    ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_file);
     return CPropUpdatePage::OnSetActive();

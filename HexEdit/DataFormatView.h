@@ -218,7 +218,7 @@ public:
         afx_msg void OnScrollUp() { phev_->OnScrollUp(); }
         afx_msg void OnSwap() { phev_->OnSwap(); }
         afx_msg void OnStartLine() { phev_->OnStartLine(); }
-        afx_msg void OnDel() { phev_->OnDel(); }
+        afx_msg void OnDel() { /* do nothing here as it is too confusing */}
         afx_msg void OnUpdateSwap(CCmdUI *pCmdUI) { phev_->OnUpdateSwap(pCmdUI); }
         afx_msg void OnOemToggle() { phev_->OnOemToggle(); }
         afx_msg void OnUpdateOemToggle(CCmdUI *pCmdUI) { phev_->OnUpdateOemToggle(pCmdUI); }
