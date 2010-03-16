@@ -848,8 +848,6 @@
     <param name="Local" value="cmd_view\HID_VIEW_EDITBAR.htm">
     <param name="Name" value="View Status Bar Command">
     <param name="Local" value="cmd_view\HID_VIEW_STATUS_BAR.htm">
-    <param name="Name" value="View Toolbar command">
-    <param name="Local" value="cmd_view\HID_VIEW_TOOLBAR.htm">
     <param name="Name" value="View Standard Toolbar">
     <param name="Local" value="cmd_view\View_Standard_Toolbar.htm">
     <param name="Name" value="Changing the Window Display">
@@ -1442,8 +1440,6 @@
     <param name="Local" value="cmd_view\HID_VIEW_EDITBAR.htm">
     <param name="Name" value="View Status Bar Command">
     <param name="Local" value="cmd_view\HID_VIEW_STATUS_BAR.htm">
-    <param name="Name" value="View Toolbar command">
-    <param name="Local" value="cmd_view\HID_VIEW_TOOLBAR.htm">
     <param name="Name" value="View Standard Toolbar">
     <param name="Local" value="cmd_view\View_Standard_Toolbar.htm">
     <param name="Name" value="View Format Bar command">
@@ -2531,8 +2527,6 @@
     <param name="Local" value="dlg_custom\HIDD_CUST_TOOLBARS.htm">
     <param name="Name" value="Edit Bar">
     <param name="Local" value="bars\HIDW_EBAR.htm">
-    <param name="Name" value="Toolbar">
-    <param name="Local" value="bars\HIDW_TBAR.htm">
     <param name="Name" value="View Custom Toolbar command">
     <param name="Local" value="cmd_view\HID_VIEW_TOOLBARS.htm">
     <param name="Name" value="print preview toolbar">
@@ -4351,6 +4345,8 @@
     <param name="Local" value="cmd_aerial\HID_AERIAL_ZOOM12.htm">
     <param name="Name" value="Zoom X 16">
     <param name="Local" value="cmd_aerial\HID_AERIAL_ZOOM16.htm">
+    <param name="Name" value="Aerial View">
+    <param name="Local" value="overviewtools\AerialView.htm">
   </object>
 </ul>
 </html>

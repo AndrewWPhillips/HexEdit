@@ -371,6 +371,7 @@ C/C++ Parser for Templates | overviewadvanced\Parser.htm
 Properties Dialog | overviewtools\prop.htm
 Searching | overviewtools\Searching.htm
 Bookmarks | overviewtools\Bookmarks.htm
+Aerial View | overviewtools\AerialView.htm
 Using Templates | overviewtools\Templates.htm
 macros | overviewtools\macros.htm
 Calculator | overviewtools\calc.htm
@@ -510,7 +511,6 @@ View Standard Toolbar | cmd_view\View_Standard_Toolbar.htm
 View Edit Bar command | cmd_view\HID_VIEW_EDITBAR.htm
 View Format Bar command | cmd_view\HID_VIEW_FORMATBAR.htm
 View Navigation Bar command | cmd_view\HID_VIEW_NAVBAR.htm
-View Toolbar command | cmd_view\HID_VIEW_TOOLBAR.htm
 View Custom Toolbar command | cmd_view\HID_VIEW_TOOLBARS.htm
 View Status Bar Command | cmd_view\HID_VIEW_STATUS_BAR.htm
 View Ruler Command | cmd_view\HID_VIEW_RULER.htm

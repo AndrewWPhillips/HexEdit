@@ -9,7 +9,7 @@
 /// Section Begin - General and relative topics(JavaScript 1.0)
 
 //{{HH_SYMBOL_SECTION
-var HH_ChmFilename = "D:\\work\\andrew\\cpp\\HexEdit\\HTMLHelp\\HEXEDIT.chm";
+var HH_ChmFilename = "D:\\work\\andrew\\cpp\\HexEdit3.5\\HTMLHelp\\HEXEDIT.chm";
 var HH_WindowName = "NewWindow||main||form";
 var HH_GlossaryFont = ",10,0";
 var HH_Glossary = "0,0,0";

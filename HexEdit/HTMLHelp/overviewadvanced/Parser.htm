@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=5781>
-<meta name=layout-width content=757>
+<meta name=layout-height content=5413>
+<meta name=layout-width content=988>
 
 
 <!--(Links)=========================================================-->
@@ -555,6 +555,42 @@
  that the top 4 bit of the first storage unit and the top 27 bits of the 
  2nd storage unit are not allocated to a bit-field and hence not visible 
  in the template.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>HexEdit 3.5 added the ability to use the size of a bitfield 
+ &quot;type&quot; as the storage unit size. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is non-standard C but a common extension. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
+ for example:</p>
+
+<p>&nbsp;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->struct</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->{</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->char 
+ b: 1;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->char 
+ c: 1;</p>
+
+<p><!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->} 
+ a;</p>
+
+<p>&nbsp;</p>
+
+<p>will use a storage unit of 1 (instead of the normal storage unit which 
+ defaults to 4). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence 
+ the above struct will have a length 1 and not 4 when the new option is 
+ on (as long as alignment is also 1).</p>
 
 <p>&nbsp;</p>
 

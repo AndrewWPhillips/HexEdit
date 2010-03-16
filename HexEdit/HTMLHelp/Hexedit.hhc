@@ -151,6 +151,10 @@
         <param name="Local" value="overviewtools\Bookmarks.htm">
       </object>
       <li><object type="text/sitemap">
+        <param name="Name" value="Aerial View">
+        <param name="Local" value="overviewtools\AerialView.htm">
+      </object>
+      <li><object type="text/sitemap">
         <param name="Name" value="Using Templates">
         <param name="Local" value="overviewtools\Templates.htm">
       </object>
@@ -530,10 +534,6 @@
       <li><object type="text/sitemap">
         <param name="Name" value="Navigation Bar">
         <param name="Local" value="bars\Navigation_Bar.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Old Toolbar">
-        <param name="Local" value="bars\HIDW_TBAR.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Status Bar">

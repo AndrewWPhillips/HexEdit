@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1782>
-<meta name=layout-width content=1311>
+<meta name=layout-height content=1990>
+<meta name=layout-width content=988>
 
 
 <!--(Links)=========================================================-->
@@ -77,6 +77,20 @@
 
 <p>&nbsp;</p>
 
+<p style="font-weight: bold;"><span style="font-weight: bold;"><a title="FreeImage Web Site"
+	href="http://freeimage.sourceforge.net/"
+	target=_blank>FreeImage</a> DLL by <span style="font-weight: bold;">Hervé 
+ Drolon et al</span></span></p>
+
+<p>FreeImage is a brilliant open source project for dealing with image 
+ files and manipulating images in memory. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ made possible the HexEdit Aerial View bit is also used in other places 
+ in HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ has been ported to several platforms but we only use the Win32 DLL that 
+ they provide.</p>
+
+<p>&nbsp;</p>
+
 <p style="font-weight: bold;"><a title="codeproject.com/miscctrl/gridctrl.asp"
 								href="http://codeproject.com/miscctrl/gridctrl.asp"
 								target=_blank
@@ -112,8 +126,8 @@
 <p>When I released the source code for HexEdit 1.0 in 1999, Sam enhanced 
  it to use &quot;64-bit&quot; file access, thereby allowing HexEdit to 
  easily work with files greater than 4 GBytes (2^32) in size. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Windows 
- supports 64 bit file positioning but the MFC CFile class only allows 32-bit 
- file addresses). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Sam's 
+ supports 64 bit file positioning but the MFC CFile class only allowed 
+ 32-bit file addresses). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Sam's 
  CFile64 class (incorporated, with modifications, into HexEdit) is just 
  one of numerous useful (non-UI) classes provided by his WFC library.</p>
 
@@ -126,8 +140,8 @@
 
 <p>A simple, functional class that provides a nice-looking splitter. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Unlike 
  MFC splitters I found it very easy to use and extend for my needs. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- is used for the split between the template &quot;tree&quot; view and the 
- &quot;hex&quot; view of a file.</p>
+ is used for the split between the template &quot;tree&quot; view and/or 
+ &quot;aerial&quot; view and the &quot;hex&quot; view of a file.</p>
 
 <p>&nbsp;</p>
 
@@ -136,7 +150,7 @@
 								target=_blank>Dialog Resize class</a> by 
  Herbert Menke</p>
 
-<p>A simple to use but very effective class that allows automatical move/resize 
+<p>A simple to use but very effective class that allows automatic move/resize 
  of controls in a dialog when it is resized. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
  is used for all resizable dialogs in HexEdit such as the <a HREF="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent 
  File dialog</a>, <a HREF="../dlg_tools/Bookmarks_dialog.htm">Bookmarks 
@@ -210,16 +224,6 @@
  HexEdit it is used to select the folder where macros (see <a HREF="../dlg_options/HIDD_OPT_MACRO.htm">Macro 
  Options page</a>) and templates (see <a HREF="../dlg_options/HIDD_OPT_TEMPLATE.htm">Template 
  Options</a>) are stored.</p>
-
-<p>&nbsp;</p>
-
-<p style="font-weight: bold;"><a title="www.codeproject.com/bitmap/extendedbitmap2.asp"
-								href="http://www.codeproject.com/bitmap/extendedbitmap2.asp"
-								target=_blank>CEnBitmap</a> class by Daniel 
- Godson</p>
-
-<p>Enhanced version of MFC CBitmap class that is used to load the background 
- for the main HexEdit window and the About box.</p>
 
 <p>&nbsp;</p>
 
