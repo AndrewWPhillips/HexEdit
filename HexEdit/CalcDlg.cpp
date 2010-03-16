@@ -2087,7 +2087,7 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 // after the current cursor position has been moved.
 void CCalcDlg::OnGo()                   // Move cursor to current value
 {
-	edit_.update_value(true);           // eval the epsression allowing side-effects now
+	edit_.update_value(true);           // eval the expression allowing side-effects now
 
 	if (current_type_ != CJumpExpr::TYPE_INT)
 	{
@@ -2095,7 +2095,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 		return;
 	}
 
-    add_hist();
+    add_hist();   // add to calc drop hist
 
     // If the value in current_ is not there as a result of a calculation then
     // save it before it is lost.
@@ -2128,9 +2128,19 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	CString ss;
 	edit_.GetWindowText(ss);
 	if (radix_ == 16)
-		ss = "Go To (hex) " + ss;
+	{
+        mm_->AddHexHistory(ss);
+		ss = "Go To (hex) " + ss + " ";
+	}
+	else if (radix_ == 10)
+	{
+        mm_->AddDecHistory(ss);
+		ss = "Go To (decimal) " + ss + " ";
+	}
 	else
-		ss = "Go To " + ss;
+	{
+		ss = "Go To (calc) " + ss + " ";
+	}
 
     pview->MoveWithDesc(ss, current_);
 
@@ -2500,10 +2510,9 @@ void CCalcDlg::OnGetHexHist()
 		menu.Detach();
         ss.Replace(" ", "");    // get rid of padding
 
-        // If just calculated a result then clear it
 		if (!in_edit_)
-			edit_.SetWindowText("");
-	    in_edit_ = FALSE;
+			edit_.SetWindowText("");  // If just calculated a result then clear it
+		in_edit_ = FALSE;
 
         if (radix_ != 16)
         {
@@ -2515,7 +2524,7 @@ void CCalcDlg::OnGetHexHist()
         }
 
         edit_.SetFocus();
-        //edit_.SetSel(edit_.GetWindowTextLength(), -1);   // Sel is mucked up so move it to the end (kludge)
+		edit_.SetSel(edit_.GetWindowTextLength(), -1);
 
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
@@ -2537,7 +2546,7 @@ void CCalcDlg::OnGetDecHist()
         ss.Replace(",", "");ss.Replace(".", ""); ss.Replace(" ", "");    // get rid of padding
 
 		if (!in_edit_)
-			edit_.SetWindowText("");
+			edit_.SetWindowText("");  // If just calculated a result then clear it
 	    in_edit_ = FALSE;
 
         if (radix_ != 10)
@@ -2550,7 +2559,7 @@ void CCalcDlg::OnGetDecHist()
         }
 
         edit_.SetFocus();
-        //edit_.SetSel(edit_.GetWindowTextLength(), -1);
+		edit_.SetSel(edit_.GetWindowTextLength(), -1);
 
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
@@ -2573,12 +2582,13 @@ void CCalcDlg::OnGetVar()
 		menu.Attach(ctl_vars_.m_hMenu);
         CString ss = get_menu_text(&menu, ctl_vars_.m_nMenuResult);
 		menu.Detach();
+
 		if (!in_edit_)
-			edit_.SetWindowText("");
+			edit_.SetWindowText("");  // If just calculated a result then clear it
 	    in_edit_ = FALSE;
 
         edit_.SetFocus();
-        //edit_.SetSel(edit_.GetWindowTextLength(), -1);  
+		edit_.SetSel(edit_.GetWindowTextLength(), -1);
 
         if (!ss.IsEmpty() && isalpha(ss[0]) && toupper(ss[0]) - 'A' + 10 < radix_)
             edit_.SendMessage(WM_CHAR, (TCHAR)'@');     // Prefix ID with @ so it's not treated as an integer literal
@@ -2600,11 +2610,11 @@ void CCalcDlg::OnGetFunc()
         ss.Replace("&&", "&");  // Double-ampersand is needed in menus to show one &, but now we need to reverse that
 		menu.Detach();
 		if (!in_edit_)
-			edit_.SetWindowText("");
+			edit_.SetWindowText("");  // If just calculated a result then clear it
 	    in_edit_ = FALSE;
 
         edit_.SetFocus();
-        //edit_.SetSel(edit_.GetWindowTextLength(), -1);  
+		edit_.SetSel(edit_.GetWindowTextLength(), -1);
 
         // Remember current location so we can later wipe out the #
 		int start, end;

@@ -2200,12 +2200,12 @@ void CHexEditView::OnDraw(CDC* pDC)
 			int vert = 0;                       // Screen y pixel to the row of nos at
 			int hicol = -1;                     // Column with cursor is to be highlighted
 
-            bool hl_ruler = true;               // Can we highlight mouse/cursor in the ruler?
-            if (display_.hex_addr && theApp.ruler_hex_nums_ > 1) hl_ruler = false;
-			if ((display_.decimal_addr || display_.line_nums) && theApp.ruler_dec_nums_ > 1) hl_ruler = false;
+            bool hl_box = true;               // Highlight mouse/cursor in the ruler using box around col number (or just a small line)
+            if (display_.hex_addr && theApp.ruler_hex_nums_ > 1) hl_box = false;
+			if ((display_.decimal_addr || display_.line_nums) && theApp.ruler_dec_nums_ > 1) hl_box = false;
 
             // Current caret position shown in the ruler
-            if (hl_ruler && theApp.hl_caret_ && !mouse_down_)
+            if (theApp.hl_caret_ && !mouse_down_)
 			{
 				// Do highlighting with a background rectangle in ruler/address area
                 hicol = int((start_addr + offset_)%rowsize_);
@@ -2216,19 +2216,31 @@ void CHexEditView::OnDraw(CDC* pDC)
 				{
 					hi_rect.left  = hex_pos(hicol) + horz;
 					hi_rect.right = hi_rect.left + text_width_*2 + 1;
-					pDC->Rectangle(&hi_rect);
+					if (hl_box)
+						pDC->Rectangle(&hi_rect);
+					else
+					{
+						pDC->MoveTo(hi_rect.left, hi_rect.bottom);
+						pDC->LineTo(hi_rect.right, hi_rect.bottom);
+					}
 				}
 				if (display_.vert_display || display_.char_area)
 				{
 					hi_rect.left  = char_pos(hicol) + horz;
 					hi_rect.right = hi_rect.left + text_width_ + 1;
-					pDC->Rectangle(&hi_rect);
+					if (hl_box)
+						pDC->Rectangle(&hi_rect);
+					else
+					{
+						pDC->MoveTo(hi_rect.left, hi_rect.bottom);
+						pDC->LineTo(hi_rect.right, hi_rect.bottom);
+					}
 				}
 				(void)pDC->SelectObject(psaved_pen);
 				(void)pDC->SelectObject(psaved_brush);
 			}
             // Current mouse position in the ruler
-            if (hl_ruler && theApp.hl_mouse_ && mouse_addr_ > -1)
+            if (theApp.hl_mouse_ && mouse_addr_ > -1)
 			{
 				int mousecol = int((mouse_addr_ + offset_)%rowsize_);   // Mouse column to be highlighted
 				CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
@@ -2238,14 +2250,26 @@ void CHexEditView::OnDraw(CDC* pDC)
 				{
 					hi_rect.left  = hex_pos(mousecol) + horz;
 					hi_rect.right = hi_rect.left + text_width_*2 + 1;
-					pDC->Rectangle(&hi_rect);
+					if (hl_box)
+						pDC->Rectangle(&hi_rect);
+					else
+					{
+						pDC->MoveTo(hi_rect.left, hi_rect.bottom);
+						pDC->LineTo(hi_rect.right, hi_rect.bottom);
+					}
 				}
 				if (display_.vert_display || display_.char_area)
 				{
 					// 
 					hi_rect.left  = char_pos(mousecol) + horz;
 					hi_rect.right = hi_rect.left + text_width_ + 1;
-					pDC->Rectangle(&hi_rect);
+					if (hl_box)
+						pDC->Rectangle(&hi_rect);
+					else
+					{
+						pDC->MoveTo(hi_rect.left, hi_rect.bottom + 2);
+						pDC->LineTo(hi_rect.right, hi_rect.bottom + 2);
+					}
 				}
 				(void)pDC->SelectObject(psaved_pen);
 				(void)pDC->SelectObject(psaved_brush);
@@ -6125,7 +6149,7 @@ bool CHexEditView::over_offset_adjuster(CPointAp pp)
         if (pp.x > xpos - 5 && pp.x < xpos + 5)
             return true;
     }
-    if (display_.vert_display || display_.char_area)
+    if (display_.vert_display || display_.char_area && !display_.hex_area)
     {
         xpos = char_pos(offset_);
         if (pp.x > xpos - 5 && pp.x < xpos + 5)
@@ -6420,32 +6444,46 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
         // Work out new offset from current dragged mouse posn
         if (display_.vert_display)
         {
-            if (doc_pt.x < char_pos(0) || doc_pt.x >= char_pos(rowsize_))
-                adjusting_offset_ = 0;    // Left side if dragged into invalid area
+			int left_side = char_pos(0);
+			if (doc_pt.x < left_side - text_width_)
+				adjusting_offset_ = rowsize_ - (left_side-doc_pt.x)/text_width_;
+            else if (doc_pt.x >= char_pos(rowsize_))
+                adjusting_offset_ = 0;    // Use 0 if dragged too far right
             else
                 adjusting_offset_ = pos_char(doc_pt.x + text_width_w_/2, TRUE);
         }
         else if (display_.char_area && display_.hex_area && doc_pt.x < char_pos(0))
         {
-            if (doc_pt.x < hex_pos(0) || doc_pt.x >= hex_pos(rowsize_))
+			int left_side = hex_pos(0);
+			if (doc_pt.x < left_side - text_width_)
+				adjusting_offset_ = rowsize_ - (left_side-doc_pt.x)/text_width_;
+            else if (doc_pt.x >= hex_pos(rowsize_))
                 adjusting_offset_ = 0;
             else
                 adjusting_offset_ = pos_hex(doc_pt.x + text_width_, TRUE);
         }
         else if (display_.char_area)
         {
-            if (doc_pt.x < char_pos(0) || doc_pt.x >= char_pos(rowsize_))
+			int left_side = char_pos(0);
+			if (doc_pt.x < left_side - text_width_)
+				adjusting_offset_ = rowsize_ - (left_side-doc_pt.x)/text_width_;
+            else if (doc_pt.x >= char_pos(rowsize_))
                 adjusting_offset_ = 0;
             else
                 adjusting_offset_ = pos_char(doc_pt.x + text_width_w_/2, TRUE);
         }
         else
         {
-            if (doc_pt.x < hex_pos(0) || doc_pt.x >= hex_pos(rowsize_))
+			int left_side = hex_pos(0);
+			if (doc_pt.x < left_side - text_width_)
+				adjusting_offset_ = rowsize_ - (left_side-doc_pt.x)/text_width_;
+            else if (doc_pt.x >= hex_pos(rowsize_))
                 adjusting_offset_ = 0;
             else
                 adjusting_offset_ = pos_hex(doc_pt.x + text_width_, TRUE);
         }
+		if (adjusting_offset_ < 0)
+			adjusting_offset_ = 0;
         if (adjusting_offset_ != old)
         {
             invalidate_adjuster(old);

@@ -7562,7 +7562,7 @@ BOOL CGridCtrl::ValidateEdit(int nRow, int nCol, LPCTSTR str)
 }
 
 // virtual
-#if _MSC_VER >= 1300
+#if _MSC_VER >= 1300   // MFC now allows Unicode strings (CStringW) even in ANSI builds
 CStringW CGridCtrl::GetItemText(int nRow, int nCol) const
 {
     if (nRow < 0 || nRow >= m_nRows || nCol < 0 || nCol >= m_nCols)
