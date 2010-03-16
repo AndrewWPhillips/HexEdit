@@ -67,12 +67,14 @@ __int64 strtoi64(const char *, int radix = 0);
 __int64 strtoi64(const char *, int radix, const char **endptr);
 void BrowseWeb(UINT id);
 CString GetExePath();
-BOOL GetDataPath(CString &data_path);
+BOOL GetDataPath(CString &data_path, int csidl = CSIDL_APPDATA);
 CString FileErrorMessage(const CFileException *fe, UINT mode = CFile::modeRead|CFile::modeWrite);
 bool OutsideMonitor(CRect);
 CRect MonitorMouse();
 CRect MonitorRect(CRect);
 bool NeedsFix(CRect &rect);
+bool CopyAndConvertImage(const char *src, const char *dest);
+
 
 void DummyRegAccess(unsigned int group = 0);
 

@@ -141,9 +141,13 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include <ctype.h>
 #include <assert.h>
 #include <locale.h>
+#include <sys/stat.h>           // For _stat()
+#include <sys/utime.h>          // For _utime()
 
+#include <imagehlp.h>           // For ::MakeSureDirectoryPathExists()
 #include <winioctl.h>           // For DISK_GEOMETRY, IOCTL_DISK_GET_DRIVE_GEOMETRY etc
 #include <direct.h>             // For _getdrive()
+#include <FreeImage.h>
 
 #include "misc.h"
 #include "Security.h"
@@ -205,6 +209,54 @@ void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax)
 
         theApp.WriteProfileString("History", entry, NULL);
     }
+}
+
+/* Copies an image file from source to dest, converting to a 24-bit .BMP file in the process.
+ *  src  = file name of an existing image file
+ *  dest = created file
+ *         - overwritten if it already exists
+ *         - the path folders are created if necessary
+ */
+bool CopyAndConvertImage(const char *src, const char *dest)
+{
+	FREE_IMAGE_FORMAT fmt = FreeImage_GetFileType(src);  // Try to work out the file type
+	if (fmt == FIF_UNKNOWN)
+	{
+		fmt = FreeImage_GetFIFFromFilename(src);    // That didn't work so try this
+		if (fmt == FIF_UNKNOWN)
+			return false;
+	}
+
+	// Load image letting FreeImage decide what type it is
+    FIBITMAP * dib, * dib24;
+    if ((dib = FreeImage_Load(fmt, src)) == NULL)
+		return false;
+
+	// We always save as a 24-bit BMP - so first convert to 24 bits
+	dib24 = FreeImage_ConvertTo24Bits(dib);
+	FreeImage_Unload(dib);
+
+	// Save image as a BMP
+	bool retval = true;
+	if (dib24 == NULL ||
+		!::MakeSureDirectoryPathExists(dest) ||
+		!FreeImage_Save(FIF_BMP, dib24, dest))
+	{
+		retval = false;
+	}
+
+	FreeImage_Unload(dib24);
+
+	// Make the file times of the copied file the same as the original file
+	struct _stat status;                // used to get file times of source file
+	if (retval && _stat(src, &status) == 0)
+	{
+		struct _utimbuf times;          // Structure used to change file times
+		times.actime = times.modtime = status.st_mtime;
+		_utime(dest, &times);
+	}
+
+	return retval;
 }
 
 //-----------------------------------------------------------------------------
@@ -1183,7 +1235,7 @@ CString GetExePath()
 }
 
 // Get the place to store user data files
-BOOL GetDataPath(CString &data_path)
+BOOL GetDataPath(CString &data_path, int csidl /*=CSIDL_APPDATA*/)
 {
 #ifndef REGISTER_APP
     if (theApp.win95_)
@@ -1198,14 +1250,14 @@ BOOL GetDataPath(CString &data_path)
     LPTSTR pbuf = data_path.GetBuffer(MAX_PATH);
 
 #if 0 // SHGetSpecialFolderPath requires W2K
-    if (SHGetSpecialFolderPath(NULL, pbuf, CSIDL_APPDATA, TRUE) != NOERROR)
+    if (SHGetSpecialFolderPath(NULL, pbuf, csidl, TRUE) != NOERROR)
         retval = TRUE;
 #else
     LPMALLOC pMalloc;
     if (SUCCEEDED(SHGetMalloc(&pMalloc)))
     {
         ITEMIDLIST *itemIDList;
-        if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_APPDATA, &itemIDList)))
+        if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, csidl, &itemIDList)))
         {
             SHGetPathFromIDList(itemIDList, pbuf);
             pMalloc->Free(itemIDList);

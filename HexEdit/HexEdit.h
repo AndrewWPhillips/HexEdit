@@ -800,9 +800,12 @@ private:
     // Security stuff
     void GetMystery();
 	int GetMysteryFile(const char * filename);
+	void SaveMyst(const char * filename);
+	void SaveMyst2(const char * filename);
+	bool GetMyst2FileName(CString & filename);
     int GetSecurity();
-	void SaveTo(const char *filename);
-	bool ReadFrom(const char *filename);
+	void SaveTo(const char *filename, const void *pdata, size_t len);
+	bool ReadFrom(const char *filename, void *pdata, size_t len);
     int QuickCheck();
     void CheckSecurityActivated();
 #endif

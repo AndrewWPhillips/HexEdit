@@ -541,10 +541,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\EnBitmap.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Expr.cpp"
 				>
 			</File>
