@@ -66,7 +66,7 @@ static unsigned long os_date();
 
 // This is the "mystery" info and first run date of HexEdit (put in registry the first time it's run)
 #pragma pack(1)
-static struct
+static struct myst_info_
 {
     short version;                      // HexEdit version that created this info
     unsigned short rand;                // Random value
@@ -211,6 +211,7 @@ void CHexEditApp::GetMystery()
 	// Restore primary copy of myst_info in case 2ndary source was read and was different
 	if (got1)
 		memcpy(&myst_info, buf, sizeof(myst_info));
+	memset(buf, '\0', sizeof(buf));
 
 	// If either source go it it's in myst_info and we can use it
 	if (got1 || got2)
@@ -231,17 +232,17 @@ void CHexEditApp::GetMystery()
 	{
 		// Try the old system (registry)
 		HKEY hkey;
-		char buf[32];
+		char buf2[32];
 
 		// Confuse registry watchers
 		::DummyRegAccess(2);
 		::DummyRegAccess(0);
 
-		ASSERT(sizeof(buf) > sizeof(REG_BMP));
-		strcpy(buf, REG_BMP); sub1(buf);
+		ASSERT(sizeof(buf2) > sizeof(REG_BMP));
+		strcpy(buf2, REG_BMP); sub1(buf2);
 
 		// Make sure .bmp\ShellNew exists (call RegOpenKey first so it looks like other opens as in DummyRegAccess)
-		if (::RegOpenKey(HKEY_CLASSES_ROOT, buf, &hkey) == ERROR_SUCCESS)
+		if (::RegOpenKey(HKEY_CLASSES_ROOT, buf2, &hkey) == ERROR_SUCCESS)
 		{
 			// The parent exists
 			DWORD reg_type;                     // The returned registry entry type
@@ -249,9 +250,9 @@ void CHexEditApp::GetMystery()
 			DWORD reg_size = sizeof(reg_data);
 
 			// Check if .bmp has a "Data" entry
-			ASSERT(sizeof(buf) > sizeof(REG_DATA));
-			strcpy(buf, REG_DATA); sub1(buf);
-			if (::RegQueryValueEx(hkey, buf, NULL, &reg_type, (BYTE *)reg_data, &reg_size) == ERROR_SUCCESS)
+			ASSERT(sizeof(buf2) > sizeof(REG_DATA));
+			strcpy(buf2, REG_DATA); sub1(buf2);
+			if (::RegQueryValueEx(hkey, buf2, NULL, &reg_type, (BYTE *)reg_data, &reg_size) == ERROR_SUCCESS)
 			{
 				// Read reg entry and get the info
 				set_key(STANDARD_KEY, 8);
@@ -269,7 +270,7 @@ void CHexEditApp::GetMystery()
 			}
 			::RegCloseKey(hkey);
 		}
-		memset(buf, '\0', sizeof(buf));
+		memset(buf2, '\0', sizeof(buf2));
 		::DummyRegAccess(1);
 		::DummyRegAccess(2);
 	}
@@ -683,7 +684,7 @@ int CHexEditApp::GetSecurity()
     if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS ||
 		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS ||
 		::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
-        return 0;     // return error if one or both could not be opened
+        return 0;     // return error if any could not be opened
 
     // Try getting security info from the registry.  If that fails try security file.
     // If that fails give up and just create the data (unregistered).
@@ -1018,12 +1019,15 @@ void CHexEditApp::SaveMyst(const char * filename)
 		struct _stat status;
 		if (_stat(filename, &status) == 0)
 		{
-			struct _utimbuf times;          // Structure used to change file times
-			times.actime = times.modtime = status.st_mtime - (30*60*60);  // just over a day ago
+			struct _utimbuf times;          // Structure used to change file modification time
+			times.actime = times.modtime = status.st_mtime - (100*60*60);  // ~ 4 days ago
 			_utime(filename, &times);
+			SetFileCreationTime(filename, times.modtime);
+			SetFileAccessTime(filename, status.st_mtime - (30*60*60));    // ~ 1 day ago
 		}
     }
 }
+
 // Save info to 2nd myst file.
 // Copies splash.bmp (converting to 24 bit) from the exe directory first.
 void CHexEditApp::SaveMyst2(const char * filename)
