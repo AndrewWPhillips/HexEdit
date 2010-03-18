@@ -1,6 +1,6 @@
 // BGSearch.cpp : implements background searches (part of CHexEditDoc)
 //
-// Copyright (c) 2000-2010 by Andrew W. Phillips.
+// Copyright (c) 2003 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -614,17 +614,7 @@ void CHexEditDoc::FixFound(FILE_ADDRESS start, FILE_ADDRESS end,
     if (adjust == 0)
         return;
 
-//    std::set<FILE_ADDRESS> tmp;
-//    std::set<FILE_ADDRESS>::iterator paddr, paddr_end;
-//    for (paddr = found_.begin(), paddr_end = found_.end(); paddr != paddr_end; ++paddr)
-//    {
-//        if (*paddr >= address)
-//            tmp.insert(*paddr + adjust);
-//        else
-//            tmp.insert(*paddr);
-//    }
-//    found_.swap(tmp);  // Quick way to put tmp into found_
-
+#if 0  // Should not modify a set through iterator
     if (adjust < 0)
     {
         // Adjust already found addresses to account for insertion/deletion
@@ -651,6 +641,36 @@ void CHexEditDoc::FixFound(FILE_ADDRESS start, FILE_ADDRESS end,
             }
         }
     }
+#else
+    std::set<FILE_ADDRESS> tmp;
+    if (adjust < 0)
+    {
+        for (std::set<FILE_ADDRESS>::iterator paddr = found_.begin(); paddr != found_.end(); ++paddr)
+        {
+	        if (*paddr >= address)
+			{
+                ASSERT(*paddr + adjust >= address); // Anything in this range should have been deleted by erase above
+	            tmp.insert(*paddr + adjust);
+			}
+	        else
+	            tmp.insert(*paddr);
+        }
+    }
+    else
+    {
+        for (std::set<FILE_ADDRESS>::reverse_iterator paddr = found_.rbegin(); paddr != found_.rend(); ++paddr)
+        {
+	        if (*paddr >= address)
+			{
+                ASSERT(*paddr + adjust >= address); // Anything in this range should have been deleted by erase above
+	            tmp.insert(*paddr + adjust);
+			}
+	        else
+	            tmp.insert(*paddr);
+        }
+    }
+    found_.swap(tmp);  // Quick way to put tmp into found_ (tmp d'tor will destroy old found_)
+#endif
 }
 
 void CHexEditDoc::OnDocTest() 
