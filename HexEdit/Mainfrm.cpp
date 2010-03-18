@@ -434,6 +434,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_wndBookmarks.Add(IDC_BOOKMARKS_HELP, 100, 0, 0, 0);
 
 		m_wndBookmarks.EnableDocking(CBRS_ALIGN_ANY);
+		// Note using DockPane on a CPaneDialog causes problems in MFC9 (fixed in mFC10).  The soln
+		// is to dock to another CDockablePane using something like m_wndCalc.DockToWindow(&m_wndProp ...
+		// which is what I will do when the Properties and Find dialogs have been fixed (TBD xxx).
 		DockPane(&m_wndBookmarks);
 
 		if (!m_wndCalc.Create(this))
@@ -545,6 +548,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_wndCalc.Add(IDC_GO, 83, 87, 16, 10);
 
 		m_wndCalc.EnableDocking(CBRS_ALIGN_ANY);
+		// Note using DockPane on a CPaneDialog causes problems in MFC9 (fixed in mFC10).  The soln
+		// is to dock to another CDockablePane using something like m_wndCalc.DockToWindow(&m_wndProp ...
+		// which is what I will do when the Properties and Find dialogs have been fixed (TBD xxx).
 		DockPane(&m_wndCalc);
 
         if (!m_wndFind.Create(this) ||
@@ -1067,7 +1073,7 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 #ifdef USE_FREE_IMAGE
 		RGBQUAD px = { 192, 192, 192, 0};  // default to grey in case GetPixelColor fails
 		int height = FreeImage_GetHeight(m_dib);
-        VERIFY(FreeImage_GetPixelColor(m_dib, 0, height - 1, &px));  // get colour from (0,0) pixel (may fail if not 24 bit colours)
+        VERIFY(FreeImage_GetPixelColor(m_dib, 0, height - 1, &px));  // get colour from top-left pixel (may fail if not 24 bit colours)
 		backBrush.CreateSolidBrush(RGB(px.rgbRed, px.rgbGreen, px.rgbBlue));
 #else
 		CDC dcTmp;
@@ -4762,7 +4768,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 									SHGFI_USEFILEATTRIBUTES | SHGFI_TYPENAME ));
 				CString sext = sfi.szTypeName + CString(" (") + ss + _T(")");  // Store file type (+ ext) for display in file page
 
-                pMenuPopup->InsertItem(CBCGToolbarMenuButton(ID_DFFD_OPEN_FIRST + ii, NULL, -1, sext));
+                pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_DFFD_OPEN_FIRST + ii, NULL, -1, sext));
 				++count;
 			}
 		}

@@ -66,7 +66,10 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 {
     mm_ = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
 
-	if (!CHexPaneDialog::Create(pParentWnd, CCalcDlg::IDD, CBRS_LEFT | CBRS_FLOAT_MULTI, CCalcDlg::IDD))
+	if (!CHexPaneDialog::Create(_T(""), pParentWnd, TRUE,
+		                        MAKEINTRESOURCE(CCalcDlg::IDD),
+								WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI,
+								ID_VIEW_CALCULATOR))
         return FALSE;
 
 	return TRUE;
@@ -74,7 +77,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 
 LRESULT CCalcDlg::HandleInitDialog(WPARAM wParam, LPARAM lParam)
 {
-	CBasePane::HandleInitDialog(wParam, lParam);
+	CHexPaneDialog::HandleInitDialog(wParam, lParam);
 
     CWnd *pwnd = ctl_edit_combo_.GetWindow(GW_CHILD);
 	ASSERT(pwnd != NULL);
@@ -2264,7 +2267,8 @@ void CCalcDlg::OnEquals()               // Calculate result
 	{
 #ifdef UNICODE_TYPE_STRING
 		// This is the way to put Unicode text into control with ANSI window procedure
-		::CallWindowProcW(*edit_.GetSuperWndProcAddr(), edit_.m_hWnd, WM_SETTEXT, 0, (LPARAM)(LPCWSTR)current_str_);
+		//::CallWindowProcW(*edit_.GetSuperWndProcAddr(), edit_.m_hWnd, WM_SETTEXT, 0, (LPARAM)(LPCWSTR)current_str_);
+		::SetWindowTextW(edit_.m_hWnd, (LPCWSTR)current_str_);
 #else
 		edit_.SetWindowText(current_str_);
 #endif
@@ -2510,6 +2514,7 @@ void CCalcDlg::OnGetHexHist()
 		menu.Detach();
         ss.Replace(" ", "");    // get rid of padding
 
+        // If just calculated a result then clear it
 		if (!in_edit_)
 			edit_.SetWindowText("");  // If just calculated a result then clear it
 		in_edit_ = FALSE;
@@ -2534,7 +2539,7 @@ void CCalcDlg::OnGetHexHist()
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
 
-		SetDlgItemText(IDC_OP_DISPLAY, "");
+        SetDlgItemText(IDC_OP_DISPLAY, "");
         inedit(km_user);
 	}
 }
