@@ -2906,7 +2906,7 @@ DATE expr_eval::get_date(const char * ss)
         ++pp;
 
     // Parse out date part
-    pp = std::use_facet<std::time_get<char> >(loc, (std::time_get<char> *)0, true).get_date(pp, eos, pszGetF, st, &tm);
+    pp = std::use_facet<std::time_get<char> >(loc).get_date(pp, eos, pszGetF, st, &tm);
 
     // If we couldn't even parse out a date part then return an error value
     if (st & std::ios_base::failbit)
@@ -2922,7 +2922,7 @@ DATE expr_eval::get_date(const char * ss)
 
     // If not at end of string also get the time part
     if (pp != eos)
-        pp = std::use_facet<std::time_get<char> >(loc, (std::time_get<char> *)0, true).get_time(pp, eos, pszGetF, st, &tm);
+        pp = std::use_facet<std::time_get<char> >(loc).get_time(pp, eos, pszGetF, st, &tm);
 
     // Convert tm structure to DATE (using COleDateTime constructor)
     COleDateTime odt(tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
@@ -2957,7 +2957,7 @@ DATE expr_eval::get_time(const char * ss)
         ++pp;
 
     // Parse out time part
-    pp = std::use_facet<std::time_get<char> >(loc, (std::time_get<char> *)0, true).get_time(pp, eos, pszGetF, st, &tm);
+    pp = std::use_facet<std::time_get<char> >(loc).get_time(pp, eos, pszGetF, st, &tm);
 
     // Convert tm structure to DATE (using COleDateTime constructor)
     COleDateTime odt(tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
