@@ -559,6 +559,9 @@ COLORREF tone_down(COLORREF col, COLORREF bg_col)
 }
 */
 
+// -------------------------------------------------------------------------
+// Time routines
+
 double TZDiff()
 {
 	static double tz_diff = -1e30;
@@ -588,6 +591,31 @@ DATE FromTime_t_mins(long v)
 DATE FromTime_t_1899(long v)
 {
     return v/(24.0*60.0*60.0) + TZDiff();
+}
+
+// Convert time_t to FILETIME
+bool ConvertToFileTime(time_t tt, FILETIME *ft)
+{
+	assert(ft != NULL);
+	bool retval = false;
+
+	struct tm * ptm = ::localtime(&tt);
+	if (ptm != NULL)
+	{
+		SYSTEMTIME st;
+		st.wYear   = ptm->tm_year + 1900;
+		st.wMonth  = ptm->tm_mon + 1;
+		st.wDay    = ptm->tm_mday;
+		st.wHour   = ptm->tm_hour;
+		st.wMinute = ptm->tm_min;
+		st.wSecond = ptm->tm_sec;
+		st.wMilliseconds = 500;
+
+		FILETIME ftemp;
+		if (::SystemTimeToFileTime(&st, &ftemp) && ::LocalFileTimeToFileTime(&ftemp, ft))
+			retval = true;
+	}
+	return retval;
 }
 
 //-----------------------------------------------------------------------------
@@ -1270,11 +1298,37 @@ BOOL GetDataPath(CString &data_path, int csidl /*=CSIDL_APPDATA*/)
     data_path.ReleaseBuffer();
     if (!retval)
         data_path.Empty();     // Make string empty if we failed just in case
-    else
+    else if (csidl == CSIDL_APPDATA || csidl == CSIDL_COMMON_APPDATA)
         data_path += '\\' + CString(AfxGetApp()->m_pszRegistryKey) + 
                      '\\' + CString(AfxGetApp()->m_pszProfileName) +
                      '\\';
     return retval;
+}
+
+// Change a file's "creation" time
+void SetFileCreationTime(const char *filename, time_t tt)
+{
+	HANDLE hh = ::CreateFile(filename, FILE_WRITE_ATTRIBUTES, FILE_SHARE_WRITE|FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hh == INVALID_HANDLE_VALUE)
+		return;
+
+	FILETIME ft;
+	if (ConvertToFileTime(tt, &ft))
+		::SetFileTime(hh, &ft, NULL, NULL);
+	::CloseHandle(hh);
+}
+
+// Change a file's "access" time
+void SetFileAccessTime(const char *filename, time_t tt)
+{
+	HANDLE hh = ::CreateFile(filename, FILE_WRITE_ATTRIBUTES, FILE_SHARE_WRITE|FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hh == INVALID_HANDLE_VALUE)
+		return;
+
+	FILETIME ft;
+	if (ConvertToFileTime(tt, &ft))
+		::SetFileTime(hh, NULL, &ft, NULL);
+	::CloseHandle(hh);
 }
 
 // FileErrorMessage - generate a meaningful error string from a CFileException
@@ -1425,6 +1479,9 @@ CString FileErrorMessage(const CFileException *fe, UINT mode /*=CFile::modeRead|
 }
 
 #ifndef REGISTER_APP
+//-----------------------------------------------------------------------------
+// Multiple monitor handling
+
 // Gets rect of the monitor which contains the mouse
 CRect MonitorMouse()
 {

@@ -40,6 +40,7 @@ DATE FromTime_t(__int64 v);
 DATE FromTime_t_80(long v);
 DATE FromTime_t_mins(long v);
 DATE FromTime_t_1899(long v);
+bool ConvertToFileTime(time_t tt, FILETIME *ft);
 
 CString NumScale(double val);
 CString	bin_str(__int64 val,int bits);
@@ -68,13 +69,14 @@ __int64 strtoi64(const char *, int radix, const char **endptr);
 void BrowseWeb(UINT id);
 CString GetExePath();
 BOOL GetDataPath(CString &data_path, int csidl = CSIDL_APPDATA);
+void SetFileCreationTime(const char *filename, time_t tt);
+void SetFileAccessTime(const char *filename, time_t tt);
 CString FileErrorMessage(const CFileException *fe, UINT mode = CFile::modeRead|CFile::modeWrite);
 bool OutsideMonitor(CRect);
 CRect MonitorMouse();
 CRect MonitorRect(CRect);
 bool NeedsFix(CRect &rect);
 bool CopyAndConvertImage(const char *src, const char *dest);
-
 
 void DummyRegAccess(unsigned int group = 0);
 
