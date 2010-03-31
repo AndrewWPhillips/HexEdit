@@ -1556,8 +1556,6 @@ BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
 	{
 		return FALSE;
 	}
-	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == 65)
-		pMsg->message = WM_KEYDOWN;
 
     return CWinAppEx::PreTranslateMessage(pMsg);
 }
@@ -2627,7 +2625,7 @@ void CHexEditApp::LoadSchemes()
         scheme_.push_back(new_scheme);
 
         CScheme new_scheme2(PRETTY_NAME);
-		new_scheme2.AddRange("range0", RGB(184, 184, 184), "0");   // Give nul bytes their own colour (grey)
+		new_scheme2.AddRange("NullByte", RGB(224, 224, 224), "0");   // Give nul bytes their own colour (grey)
 		new_scheme2.AddRange("range1", RGB(200, 0, 0), "1:21");
 		new_scheme2.AddRange("range2", RGB(200, 100, 0), "22:42");
 		new_scheme2.AddRange("range3", RGB(200, 200, 0), "43:63");
@@ -2640,7 +2638,7 @@ void CHexEditApp::LoadSchemes()
 		new_scheme2.AddRange("range10", RGB(100, 0, 200), "192:212");
 		new_scheme2.AddRange("range11", RGB(200, 0, 200), "213:233");
 		new_scheme2.AddRange("range12", RGB(200, 0, 100), "234:254");
-        new_scheme2.AddRange("CATCHALL", RGB(100, 100, 100), "0:255"); // This should only catch 0xFF
+        new_scheme2.AddRange("CatchAll", RGB(100, 100, 100), "0:255"); // This should only catch 0xFF
         scheme_.push_back(new_scheme2);
     }
 }

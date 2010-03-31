@@ -286,8 +286,11 @@ void CAbout::fix_controls()
 		case 12:
 			ss += "4.0";
 			break;
+		case 13:
+			ss += "4.1";
+			break;
 		default:
-			ss += "4.1 or later";
+			ss += "4.2 or later";
 			break;
 		}
 		ctl_licence_.AddString(ss);

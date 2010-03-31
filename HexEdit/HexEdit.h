@@ -37,10 +37,10 @@
 //#define INTERNAL_VERSION 7              // version 3.1
 //#define INTERNAL_VERSION 8              // version 3.2
 //#define INTERNAL_VERSION 9              // version 3.3
-#define INTERNAL_VERSION 10             // version 3.4
+//#define INTERNAL_VERSION 10             // version 3.4
 //#define INTERNAL_VERSION 11             // version 3.5
-//#define INTERNAL_VERSION 12             // version 4.0
-//#define INTERNAL_VERSION 12             // version 4.0
+#define INTERNAL_VERSION 12             // version 4.0 (and 3.6?)
+//#define INTERNAL_VERSION 13             // version 4.1
 
 // may need to adjust this depending on how many versions there were in last 2 years
 #define UPGRADE_DIFF 4   // diff between current version and version before which an upgrade is invalid
