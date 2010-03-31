@@ -12,7 +12,16 @@ If these have a plain background (as currently backgrnd.bmp and splash.bmp do) t
 Pliers
 ------
 
-Pliers.cdr is a Corel Draw file containing the source image for the HexEdit icon/logo.  It is used as the source of several .BMP files as described below.
+Pliers.cdr is a Corel Draw file containing the source image for the HexEdit icon/logo.
+
+It was created using Corel Draw's vector editing tools (spline etc).  For example, one handle
+was simply created by drawing a bezier line with 3 bezier points and width of 10 mm.  It was
+then converted to an outline using Arrange/Outline To Object, then one end was made round
+by adding a point and making the lines into curves and rounding the points.  Finally,
+the other handle was created using the Windows/Dockers/Transformations/Scale and reflecting
+about a vertical axis.
+
+Pliers.cdr is used as the source of several .BMP files as described below.
 
 - created a high-resolution bitmap (PliersBlack.png) of 1400x2100 pixels
   - make white areas transparent before resizing to get edges antialiased with background
@@ -30,7 +39,7 @@ The background of the main HexEdit window must be a .BMP file called Backgrnd.BM
 - load the .PNG file into Paint.Net
 - apply the Emboss effect (Effects/Stylize/Emboss) with an angle of -45
 - increase brightness (Adjustments/Brightness+Contrast) so that the background is (192,192,192)
-  - with PDN 1.36 a brightness value of 64 seems to do this
+  - with PDN 1.36 use brightness:44, contrast:32
 - resize the image (Image/Resize) to something appropriate such as a height of 200
 - save as an 8-bit .BMP files called Backgrnd.BMP
 - load into Photoshop Elements and resave with RLE
