@@ -553,6 +553,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		// which is what I will do when the Properties and Find dialogs have been fixed (TBD xxx).
 		DockPane(&m_wndCalc);
 
+		if (!m_wndFind2.Create("Find", this, CSize(500, 250), TRUE, IDD_FIND_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI))
+			return FALSE; // failed to create
+		m_wndFind2.EnableDocking(CBRS_ALIGN_ANY);
+
+		//m_wndFind2.DockToFrameWindow(CBRS_ALIGN_LEFT);
+		DockPane(&m_wndFind2);
+
         if (!m_wndFind.Create(this) ||
 #ifdef EXPLORER_WND
 			!m_wndExpl.Create(this) ||

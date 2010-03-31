@@ -70,14 +70,14 @@ int CHexPaneDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Get min size (bug in CPaneDialog base class)
 	CRect rct;
 	GetWindowRect(&rct);
-	m_sizeDefault = rct.Size();
+	//m_sizeDefault = rct.Size();
 
 	// Just make the minimimum size the size in the dialog editor
 	SetMinSize(rct.Size());
 
 	// Set up resizer control
 	m_resizer.Create(GetSafeHwnd(), TRUE, 100, TRUE);
-	m_resizer.SetInitialSize(m_sizeDefault);
+	m_resizer.SetInitialSize(rct.Size());
 
 	return 0;
 }
