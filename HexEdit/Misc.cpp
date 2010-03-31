@@ -517,6 +517,42 @@ COLORREF tone_down(COLORREF col, COLORREF bg_col, double amt /* = 0.75*/)
     return get_rgb(hue, luminance, saturation);
 }
 
+// Increase contrast (tone up) if necessary.
+// If a colour (col) does not have enough contrast with a background
+// colour (bg_col) then increase the contrast.  This is similar to
+// passing a -ve value  to tone_up (above) but "tones up" conditionally.
+// Returns col with adjusted luminance which may be exactly the
+// colour of col if therre is already enough contrast.
+COLORREF add_contrast(COLORREF col, COLORREF bg_col)
+{
+    int hue, luminance, saturation;
+    get_hls(col, hue, luminance, saturation);
+    
+    int bg_hue, bg_luminance, bg_saturation;
+    get_hls(bg_col, bg_hue, bg_luminance, bg_saturation);
+    
+    int diff = bg_luminance - luminance;
+
+	if (luminance < bg_luminance && luminance > bg_luminance - 25)
+	{
+		// Decrease luminance to increase contrast
+		luminance -= 25;
+	}
+	else if (luminance > bg_luminance && luminance < bg_luminance + 25)
+	{
+		// Increase luminance to increase contrast
+		luminance += 25;
+	}
+	
+    if (luminance > 100)
+        luminance = 100;
+    else if (luminance < 0)
+        luminance = 0;
+    
+    // Make colour the same shade as col but less "bright"
+    return get_rgb(hue, luminance, saturation);
+}
+
 // This gets a colour of the same hue but with adjusted luminance and/or
 // saturation.  This can be used for nice colour effects.
 // Supply values for lum and sat in the range 0 - 100 or
@@ -533,31 +569,6 @@ COLORREF same_hue(COLORREF col, int sat, int lum /* = -1 */)
     
     return get_rgb(hue, luminance, saturation);
 }
-
-/* OLD version
-COLORREF tone_down(COLORREF col, COLORREF bg_col)
-{
-    int hue, luminance, saturation;
-    get_hls(col, hue, luminance, saturation);
-
-    int bg_hue, bg_luminance, bg_saturation;
-    get_hls(bg_col, bg_hue, bg_luminance, bg_saturation);
-
-    // Move the luminance closer to the background colour luminance
-    if (luminance > bg_luminance)
-    {
-        // Make it lighter
-        luminance += ((bg_luminance - luminance)*3)/4;
-    }
-    else
-    {
-        // Make it darker
-        luminance -= ((luminance - bg_luminance)*3)/4;
-    }
-    // Make colour the same shade as col but less "bright"
-    return get_rgb(hue, luminance > 98 ? 98 : luminance, saturation);
-}
-*/
 
 // -------------------------------------------------------------------------
 // Time routines

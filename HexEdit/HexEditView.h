@@ -736,9 +736,9 @@ public:
     BOOL check_ro(const char *); // Check if file is read only when changes attempted
     CPointAp addr2pos(FILE_ADDRESS address, int row = 0) const; // Convert byte address in doc to display position
 
-	void check_error();          // Check for read errors and mention them to the user
-    BOOL set_colours();         // Set colours from app schemes using current scheme_name_
-    void get_colours(COLORREF *k) { for (int ii = 0; ii < 256; ++ii) k[ii] = kala[ii]; }
+	void check_error();             // Check for read errors and mention them to the user
+    BOOL set_colours();             // Set colours from app schemes using current scheme_name_
+    void get_colours(COLORREF *k);  // Get unadjusted colours for aerial view
 
     bool NoNavMovesDone() const { return nav_moves_ == 0; }  // any moves done since swapping to this view?
 	int TemplateViewType() const;
