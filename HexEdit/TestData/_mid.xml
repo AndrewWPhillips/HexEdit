@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="MIDI" allow_editing="false" default_byte_order="big" comment="MIDI file format." web_site="http://www.sonicspot.com/guide/midifiles.html">
+    <define_struct type_name="MIDIFILEHEADER" comment="The file header. Contains information about the entire song including MIDI format type, number of tracks and timing division. Always the first chunk.">
+        <data name="formatType" type="int" format="unsigned" len="2" domain="{SINGLE_TRACK=0,MULTI_TRACK_SYNCHRONOUS=1,MULTI_TRACK_ASYNCHRONOUS=3}"/>
+        <data name="numTracks" type="int" format="unsigned" len="2"/>
+        <data name="timeDivision" type="int" format="unsigned" len="2"/>
+    </define_struct>
+    <define_struct type_name="VARIABLELENGTH" expr="{variableLength}" comment="This is a variable length integer. The lower 7 bits of a byte are for data and the top bit signals a following data byte. If the top bit is set to 1, then another value byte follows.">
+        <eval expr="variableLength = 0"/>
+        <for stop_test="length.byte &amp; 0x80 == 0">
+          <struct name="length">
+            <data name="byte" type="int" format="unsigned" len="1"/>
+            <eval expr="variableLength = (variableLength &lt;&lt; 8) | (byte &amp; 0x7F)"/>
+          </struct>
+        </for>
+    </define_struct>
+    <define_struct type_name="NOTE">
+        <data name="number" type="int" format="unsigned" len="1" domain="{C_0,C_Sharp_0,D_0,D_Sharp_0,E_0,F_0,F_Sharp_0,G_0,G_Sharp_0,A_0,A_Sharp_0,B_0,C_1,C_Sharp_1,D_1,D_Sharp_1,E_1,F_1,F_Sharp_1,G_1,G_Sharp_1,A_1,A_Sharp_1,B_1,C_2,C_Sharp_2,D_2,D_Sharp_2,E_2,F_2,F_Sharp_2,G_2,G_Sharp_2,A_2,A_Sharp_2,B_2,C_3,C_Sharp_3,D_3,D_Sharp_3,E_3,F_3,F_Sharp_3,G_3,G_Sharp_3,A_3,A_Sharp_3,B_3,C_4,C_Sharp_4,D_4,D_Sharp_4,E_4,F_4,F_Sharp_4,G_4,G_Sharp_4,A_4,A_Sharp_4,B_4,C_5,C_Sharp_5,D_5,D_Sharp_5,E_5,F_5,F_Sharp_5,G_5,G_Sharp_5,A_5,A_Sharp_5,B_5,C_6,C_Sharp_6,D_6,D_Sharp_6,E_6,F_6,F_Sharp_6,G_6,G_Sharp_6,A_6,A_Sharp_6,B_6,C_7,C_Sharp_7,D_7,D_Sharp_7,E_7,F_7,F_Sharp_7,G_7,G_Sharp_7,A_7,A_Sharp_7,B_7,C_8,C_Sharp_8,D_8,D_Sharp_8,E_8,F_8,F_Sharp_8,G_8,G_Sharp_8,A_8,A_Sharp_8,B_8,C_9,C_Sharp_9,D_9,D_Sharp_9,E_9,F_9,F_Sharp_9,G_9,G_Sharp_9,A_9,A_Sharp_9,B_9,C_10,C_Sharp_10,D_10,D_Sharp_10,E_10,F_10,F_Sharp_10,G_10}"/>
+        <data name="value" type="int" format="unsigned" len="1"/>
+    </define_struct>
+    <define_struct type_name="MIDITRACK" comment="Contains all of the information for an individual track including, track name and music events.">
+        <eval expr="eventSizeCount = 0"/>
+        <for name="event" stop_test="eventSizeCount &gt;= size">
+            <struct type_name="MIDIEVENT" comment="Used to describe musical content, from tempo changes to sequence and track titles to individual music events">
+                <eval expr="eventOffset = addressof(this)"/>
+                <use_struct name="deltaTime" type_name="VARIABLELENGTH"/>
+                <data name="eventType" type="int" format="unsigned" len="1" bits="4" direction="down"/>
+                <data name="channel" type="int" format="unsigned" len="1" bits="4" direction="down"/>
+                <switch test="eventType">
+                    <case range="8">
+                        <use_struct name="noteOff" type_name="NOTE"/>
+                    </case>
+                    <case range="9">
+                        <use_struct name="noteOn" type_name="NOTE"/>
+                    </case>
+                    <case range="10">
+                        <use_struct name="noteAftertouch" type_name="NOTE"/>
+                    </case>
+                    <case range="11">
+                       <struct name="controller">
+                        <data name="type" type="int" format="unsigned" len="1"/>
+                        <data name="value" type="int" format="unsigned" len="1"/>
+                       </struct>
+                    </case>
+                    <case range="12">
+                       <struct name="programChange" expr="{programNumber}">
+                        <data name="programNumber" type="int" format="unsigned" len="1"/>
+                        <data name="" type="int" format="unsigned" len="1"/>
+                       </struct>
+                    </case>
+                    <case range="13">
+                       <struct name="channelAftertouch" expr="{value}">
+                        <data name="value" type="int" format="unsigned" len="1"/>
+                        <data name="" type="int" format="unsigned" len="1"/>
+                       </struct>
+                    </case>
+                    <case range="14">
+                        <data name="pitchBend" type="int" format="unsigned" len="2"/>
+                    </case>
+                    <case range="15">
+                        <switch test="channel" comment="Second nybble here is also used as type id">
+                           <case range="15">
+                              <struct name="metaEvent">
+                                <data name="type" type="int" format="unsigned" len="1"/>
+                                <use_struct name="length" type_name="VARIABLELENGTH"/>
+                                <switch test="type">
+                                   <case range="0">
+                                      <data name="sequenceNumber" type="int" format="unsigned" len="2" comment="Defines the pattern number of a Type 2 MIDI file or the number of a sequence in a Type 0 or Type 1 MIDI file"/>
+                                   </case>
+                                   <case range="1">
+                                      <data name="textEvent" type="string" format="ascii" len="variableLength" comment="Defines some text which can be used for any reason including track notes, comments, etc"/>
+                                   </case>
+                                   <case range="2">
+                                      <data name="copyrightNotice" type="string" format="ascii" len="variableLength" comment="Defines copyright information including the year and the author"/>
+                                   </case>
+                                   <case range="3">
+                                      <data name="sequenceName" type="string" format="ascii" len="variableLength" comment=""/>
+                                   </case>
+                                   <case range="4">
+                                      <data name="instrumentName" type="string" format="ascii" len="variableLength" comment=""/>
+                                   </case>
+                                   <case range="5">
+                                      <data name="lyrics" type="string" format="ascii" len="variableLength" comment="Defines the lyrics in a song and are usually used to define a syllable or group of works per quarter note"/>
+                                   </case>
+                                   <case range="6">
+                                      <data name="marker" type="string" format="ascii" len="variableLength" comment="Marks a significant point in time for the sequence. It is usually found in the first track chunk, but may appear in any one. This event can be useful for marking the beginning/end of a new verse or chorus"/>
+                                   </case>
+                                   <case range="7">
+                                      <data name="cuePoint" type="string" format="ascii" len="variableLength" comment="Marks the start of some type of new sound or action. It is usually found in the first track chunk, but may appear in any one. This event is sometimes used by sequencers to mark when playback of a sample or video should begin"/>
+                                   </case>
+                                   <case range="32">
+                                      <data name="channelPrefix" type="int" format="unsigned" len="1" comment="Associates a MIDI channel with following meta events. It's effect is terminated by another MIDI Channel Prefix event or any non-Meta event. It is often used before an Instrument Name Event to specify which channel an instrument name represents"/>
+                                   </case>
+                                   <case range="47">
+                                      <data name="endOfTrack" type="none" len="0" comment="Marker to signal the end of a track chunk. Must always appear as the last event in every track chunk"/>
+                                   </case>
+                                   <case range="81">
+                                      <data name="tempo" type="none" len="3" comment="Sets the sequence tempo in terms of microseconds per quarter-note, encoded in three bytes"/>
+                                   </case>
+                                   <case range="84">
+                                      <struct name="SMPTEOffset" comment="Used to specify the SMPTE starting point offset from the beginning of the track">
+                                         <data name="hour" type="int" format="unsigned" len="1"/>
+                                         <data name="minute" type="int" format="unsigned" len="1"/>
+                                         <data name="second" type="int" format="unsigned" len="1"/>
+                                         <data name="frame" type="int" format="unsigned" len="1"/>
+                                         <data name="subFrame" type="int" format="unsigned" len="1"/>
+                                      </struct>
+                                   </case>
+                                   <case range="88">
+                                      <struct name="timeSignature" comment="Used to set a sequences time signature">
+                                         <data name="numerator" type="int" format="unsigned" len="1"/>
+                                         <data name="denominator" type="int" format="unsigned" len="1"/>
+                                         <data name="metronomePulse" type="int" format="unsigned" len="1"/>
+                                         <data name="num32ndNotes" type="int" format="unsigned" len="1"/>
+                                      </struct>
+                                   </case>
+                                   <case range="89">
+                                      <struct name="keySignature" comment="Used to specify the key (number of sharps or flats) and scale (major or minor) of a sequence">
+                                         <data name="key" type="int" format="signed" len="1"/>
+                                         <data name="scale" type="int" format="unsigned" len="1" domain="{MAJOR=0,MINOR=1}"/>
+                                      </struct>
+                                   </case>
+                                   <case range="">
+                                      <data name="unknownEvent" type="none" len="variableLength"/>
+                                   </case>
+                                </switch>
+                              </struct>
+                           </case>
+                        </switch>
+                    </case>
+                </switch>
+                <eval expr="eventSizeCount = eventSizeCount + (addressof(this) - eventOffset)"/>
+            </struct>
+        </for>
+    </define_struct>
+    <for name="chunk">
+        <struct type_name="MIDICHUNK" comment="A data chunk">
+            <data name="id" type="string" format="ascii" len="4" comment="4 byte ID string used to identify the type of chunk"/>
+            <data name="size" type="int" format="unsigned" len="4" comment="Length of chunk"/>
+            <switch test="id">
+                <case range="MThd">
+                    <use_struct name="fileHeader" type_name="MIDIFILEHEADER"/>
+                </case>
+                <case range="MTrk">
+                    <use_struct name="track" type_name="MIDITRACK"/>
+                </case>
+            </switch>
+        </struct>
+    </for>
+</binary_file_format>

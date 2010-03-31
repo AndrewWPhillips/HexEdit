@@ -99,20 +99,30 @@
           </Component>
 
           <!-- DON'T FORGET TemplatesUser TOO! -->
-
           <Component Id='Templates' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7017'>
+            <File Id='AniTemplate' Name='_ani.XML' DiskId='1' src='..\TestData\_ani.XML' />
             <File Id='BmpTemplate' Name='_bmp.XML' DiskId='1' src='..\TestData\_bmp.XML' />
+            <File Id='ClsTemplate' Name='_class.XML' DiskId='1' src='..\TestData\_class.XML' />
             <File Id='DbfTemplate' Name='_dbf.XML' DiskId='1' src='..\TestData\_dbf.XML' />
+            <File Id='DbgTemplate' Name='_dbg.XML' DiskId='1' src='..\TestData\_dbg.XML' />
+            <File Id='DbxTemplate' Name='_dbx.XML' DiskId='1' src='..\TestData\_dbx.XML' />
             <File Id='EmfTemplate' Name='_emf.XML' DiskId='1' src='..\TestData\_emf.XML' />
             <File Id='ExeTemplate' Name='_exe.XML' DiskId='1' src='..\TestData\_exe.XML' />
             <File Id='GifTemplate' Name='_gif.XML' DiskId='1' src='..\TestData\_gif.XML' />
             <File Id='HemTemplate' Name='_hem.XML' DiskId='1' src='..\TestData\_hem.XML' />
+            <File Id='IcoTemplate' Name='_ico.XML' DiskId='1' src='..\TestData\_ico.XML' />
+            <File Id='IffTemplate' Name='_iff.XML' DiskId='1' src='..\TestData\_iff.XML' />
             <File Id='JpgTemplate' Name='_jpg.XML' DiskId='1' src='..\TestData\_jpg.XML' />
+            <File Id='MidTemplate' Name='_mid.XML' DiskId='1' src='..\TestData\_mid.XML' />
+            <File Id='Mp3Template' Name='_mp3.XML' DiskId='1' src='..\TestData\_mp3.XML' />
             <File Id='MpgTemplate' Name='_mpg.XML' DiskId='1' src='..\TestData\_mpg.XML' />
+            <File Id='PngTemplate' Name='_png.XML' DiskId='1' src='..\TestData\_png.XML' />
             <File Id='SgyTemplate' Name='_sgy.XML' DiskId='1' src='..\TestData\_sgy.XML' />
             <File Id='SwfTemplate' Name='_swf.XML' DiskId='1' src='..\TestData\_swf.XML' />
+            <File Id='TgaTemplate' Name='_tga.XML' DiskId='1' src='..\TestData\_tga.XML' />
             <File Id='WavTemplate' Name='_wav.XML' DiskId='1' src='..\TestData\_wav.XML' />
             <File Id='FAT12Template' Name='Floppy.XML' DiskId='1' src='..\TestData\Floppy.XML' />
+            <File Id='Mp3FullTemplate' Name='mp3_full.XML' DiskId='1' src='..\TestData\mp3_full.XML' />
           </Component>
           <Component Id='DemoMacro' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7018'>
             <File Id='AllChars' Name='AllChars.HEM' DiskId='1' src='..\TestData\AllChars.HEM' />
@@ -191,17 +201,28 @@
             <!-- DON'T FORGET Templates TOO! -->
 
             <Component Id='TemplatesUser' Guid='2E096474-CFEB-4C7E-9F29-E916C5FB7057'>
+              <File Id='AniTemplateUser' Name='_ani.XML' DiskId='1' src='..\TestData\_ani.XML' />
               <File Id='BmpTemplateUser' Name='_bmp.XML' DiskId='1' src='..\TestData\_bmp.XML' />
+              <File Id='ClsTemplateUser' Name='_class.XML' DiskId='1' src='..\TestData\_class.XML' />
               <File Id='DbfTemplateUser' Name='_dbf.XML' DiskId='1' src='..\TestData\_dbf.XML' />
+              <File Id='DbgTemplateUser' Name='_dbg.XML' DiskId='1' src='..\TestData\_dbg.XML' />
+              <File Id='DbxTemplateUser' Name='_dbx.XML' DiskId='1' src='..\TestData\_dbx.XML' />
               <File Id='EmfTemplateUser' Name='_emf.XML' DiskId='1' src='..\TestData\_emf.XML' />
               <File Id='ExeTemplateUser' Name='_exe.XML' DiskId='1' src='..\TestData\_exe.XML' />
               <File Id='GifTemplateUser' Name='_gif.XML' DiskId='1' src='..\TestData\_gif.XML' />
               <File Id='HemTemplateUser' Name='_hem.XML' DiskId='1' src='..\TestData\_hem.XML' />
+              <File Id='IcoTemplateUser' Name='_ico.XML' DiskId='1' src='..\TestData\_ico.XML' />
+              <File Id='IffTemplateUser' Name='_iff.XML' DiskId='1' src='..\TestData\_iff.XML' />
               <File Id='JpgTemplateUser' Name='_jpg.XML' DiskId='1' src='..\TestData\_jpg.XML' />
+              <File Id='MidTemplateUser' Name='_mid.XML' DiskId='1' src='..\TestData\_mid.XML' />
+              <File Id='Mp3TemplateUser' Name='_mp3.XML' DiskId='1' src='..\TestData\_mp3.XML' />
               <File Id='MpgTemplateUser' Name='_mpg.XML' DiskId='1' src='..\TestData\_mpg.XML' />
+              <File Id='PngTemplateUser' Name='_png.XML' DiskId='1' src='..\TestData\_png.XML' />
               <File Id='SgyTemplateUser' Name='_sgy.XML' DiskId='1' src='..\TestData\_sgy.XML' />
               <File Id='SwfTemplateUser' Name='_swf.XML' DiskId='1' src='..\TestData\_swf.XML' />
+              <File Id='TgaTemplateUser' Name='_tga.XML' DiskId='1' src='..\TestData\_tga.XML' />
               <File Id='WavTemplateUser' Name='_wav.XML' DiskId='1' src='..\TestData\_wav.XML' />
+              <File Id='Mp3FullTemplateUser' Name='mp3_full.XML' DiskId='1' src='..\TestData\mp3_full.XML' />
               <File Id='FAT12TemplateUser' Name='Floppy.XML' DiskId='1' src='..\TestData\Floppy.XML' />
               <Condition>PERSONALFILES = "1"</Condition>
             </Component>

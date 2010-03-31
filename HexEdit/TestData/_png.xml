@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="PNG" allow_editing="false" default_byte_order="big" comment="Portable Network Graphic (PNG) file format, with support for animated PNGs!" default_char_set="ansi" web_site="http://www.fileformat.info/format/png/corion.htm">
+    <define_struct type_name="CHUNK">
+        <data name="length" type="int" format="unsigned" len="4" display=""/>
+        <data name="type" type="string" format="ascii" len="4" display=""/>
+        <switch test="type">
+            <case range="IHDR">
+                <struct name="header" comment="Image header">
+                    <data name="width" type="int" format="signed" len="4" domain="this &gt; 0" comment="Image width in pixels. Zero is an invalid value. The maximum for each is (2^31)-1 in order to accommodate languages which have difficulty with unsigned 4-byte values."/>
+                    <data name="height" type="int" format="signed" len="4" domain="this &gt; 0" comment="Image height in pixels. Zero is an invalid value. The maximum for each is (2^31)-1 in order to accommodate languages which have difficulty with unsigned 4-byte values."/>
+                    <data name="bitDepth" type="int" format="unsigned" len="1" comment="Number of bits per pixel (for palette images) or per sample (for grayscale and truecolor images)"/>
+                    <data name="colourType" type="int" format="unsigned" len="1" comment=""/>
+                    <data name="compressionType" type="int" format="unsigned" len="1" comment=""/>
+                    <data name="filterType" type="int" format="unsigned" len="1" domain="{ADAPTIVE=0}" comment=""/>
+                    <data name="interlaceType" type="int" format="unsigned" len="1" domain="{NONE=0,ADAM7=1}" comment=""/>
+                </struct>
+            </case>
+            <case range="PLTE">
+                <struct name="palette">
+                    <for name="colour" count="length/3">
+                        <data name="rgb" type="none" len="3"/>
+                    </for>
+                </struct>
+            </case>
+            <case range="IDAT">
+                <data name="imageData" type="none" len="length"/>
+            </case>
+            <case range="IEND">
+                <data name="end" type="none" len="0"/>
+            </case>
+            <case range="bKGD">
+                <data name="backgroundColour" type="none" len="length"/>
+            </case>
+            <case range="cHRM">
+                <struct name="primaryChromaticities" comment="Applications that need precise specification of colors in a PNG file may use this chunk to specify the chromaticities of the red, green, and blue primaries used in the image, and the referenced white point">
+                    <data name="whitePointX" type="int" format="unsigned" len="4"/>
+                    <data name="whitePointY" type="int" format="unsigned" len="4"/>
+                    <data name="redX" type="int" format="unsigned" len="4"/>
+                    <data name="redY" type="int" format="unsigned" len="4"/>
+                    <data name="greenX" type="int" format="unsigned" len="4"/>
+                    <data name="greenY" type="int" format="unsigned" len="4"/>
+                    <data name="blueX" type="int" format="unsigned" len="4"/>
+                    <data name="blueY" type="int" format="unsigned" len="4"/>
+                </struct>
+            </case>
+            <case range="gAMA">
+                <data name="gammaCorrection" type="none" len="length" comment="Divide by 100000.0 to get real value"/>
+            </case>
+            <case range="hIST">
+                <data name="imageHistogram" type="none" len="length" comment="Gives the approximate usage frequency of each color in the color palette. A histogram chunk may appear only when a palette chunk appears"/>
+            </case>
+            <case range="pHYs">
+                <struct name="physicalDimensions" comment="Specifies the intended resolution for display of the image">
+                    <data name="pixelsPerUnitX" type="int" format="unsigned" len="4"/>
+                    <data name="pixelsPerUnitY" type="int" format="unsigned" len="4"/>
+                    <data name="units" type="int" format="unsigned" len="1" domain="{UNKNOWN=0,METERS=1}"/>
+                </struct>
+            </case>
+            <case range="sBIT">
+                <data name="significantBits" type="none" len="length"/>
+            </case>
+            <case range="tEXt">
+                <struct name="textData" comment="Contains any textual information">
+                    <eval expr="startAddr = addressof(this)"/>
+                    <data name="keyword" type="string" comment="Null-terminated string containing the type of text information"/>
+                    <data name="text" type="string" len="length - (addressof(this) - startAddr)" comment="The actual text information"/>
+                </struct>
+            </case>
+            <case range="tIME">
+                <struct name="lastModificationTime">
+                    <data name="year" type="int" format="unsigned" len="2" comment="Full 4-digit year"/>
+                    <data name="month" type="int" format="unsigned" len="1"/>
+                    <data name="day" type="int" format="unsigned" len="1"/>
+                    <data name="hour" type="int" format="unsigned" len="1"/>
+                    <data name="minute" type="int" format="unsigned" len="1"/>
+                    <data name="second" type="int" format="unsigned" len="1"/>
+                </struct>
+            </case>
+            <case range="tRNS">
+                <data name="transparencyData" type="none" len="length" comment="Transparency data for each entry in the palette. Used as an alternative to an alpha channel"/>
+            </case>
+            <case range="zTXt">
+                <struct name="compressedTextData" comment="Contains any textual information in compressed form">
+                    <eval expr="startAddr = addressof(this)"/>
+                    <data name="keyword" type="string" comment="Null-terminated string containing the type of text information"/>
+                    <data name="compressionType" type="int" format="unsigned" len="1"/>
+                    <data name="data" type="none" len="length - (addressof(this) - startAddr)" comment="The compressed text information"/>
+                </struct>
+            </case>
+            <case range="acTL">
+                <struct name="animationControl" comment="Control data for animated PNGs">
+                    <data name="numFrames" type="int" format="unsigned" len="4" comment="Number of frames"/>
+                    <data name="numPlays" type="int" format="unsigned" len="4" comment="Number of times to loop, 0 indicates infinite looping"/>
+                </struct>
+            </case>
+            <case range="fcTL">
+                <struct name="frameControl" comment="">
+                    <data name="sequenceNumber" type="int" format="unsigned" len="4" comment="Sequence number of the animation chunk, starting from 0"/>
+                    <data name="width" type="int" format="unsigned" len="4"/>
+                    <data name="height" type="int" format="unsigned" len="4"/>
+                    <data name="xOffset" type="int" format="unsigned" len="4" comment="X position at which to render the following frame"/>
+                    <data name="yOffset" type="int" format="unsigned" len="4" comment="Y position at which to render the following frame"/>
+                    <data name="delayNumerator" type="int" format="unsigned" len="2"/>
+                    <data name="delayDenominator" type="int" format="unsigned" len="2"/>
+                    <data name="disposeOp" type="int" format="unsigned" len="1" domain="{NONE,BACKGROUND,PREVIOUS}" comment="Type of frame area disposal to be done after rendering this frame"/>
+                    <data name="blendOp" type="int" format="unsigned" len="1" domain="{SOURCE,OVER}" comment="Type of frame area rendering for this frame"/>
+                </struct>
+            </case>
+            <case range="fdAT">
+                <struct name="frameData" comment="">
+                    <data name="sequenceNumber" type="int" format="unsigned" len="4" comment="Sequence number of the animation chunk, starting from 0"/>
+                    <data name="frameData" type="none" len="length-4"/>
+                </struct>
+            </case>
+            <case range="">
+                <data name="unknownData" type="none" len="length"/>
+            </case>
+        </switch>
+        <data name="CRC" type="none" len="4" display=""/>
+    </define_struct>
+    <data name="signature" type="none" len="8"/>
+    <for name="chunk" count="" stop_test="">
+        <use_struct name="chunk" type_name="CHUNK"/>
+    </for>
+</binary_file_format>

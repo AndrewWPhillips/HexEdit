@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="MP3" allow_editing="false" default_byte_order="big" comment="File format for MPEG-1 Audio Layer 3 (MP3)." web_site="http://www.mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm">
+    <define_struct type_name="ID3V1TAG" comment="ID3 v1 tag">
+        <data name="id" type="string" format="ascii" len="3" domain="this == &quot;TAG&quot;"/>
+        <data name="title" type="string" format="ascii" len="30"/>
+        <data name="artist" type="string" format="ascii" len="30"/>
+        <data name="album" type="string" format="ascii" len="30"/>
+        <data name="yearReleased" type="int" format="unsigned" len="4"/>
+        <data name="comment" type="string" format="ascii" len="28"/>
+        <data name="zeroByte" type="int" format="unsigned" len="1" comment="If a track number is stored, this byte contains a binary 0"/>
+        <data name="track" type="int" format="unsigned" len="1" comment="The number of the track on the album, or 0. Invalid, if previous byte is not a binary 0." domain="zeroByte == 0"/>
+        <data name="genre" type="int" format="unsigned" len="1" domain="{Blues,Alternative,AlternRock,Top_40,Classic_Rock,Ska,Bass,Christian_Rap,Country,Death_Metal,Soul,Pop_Funk,Dance,Pranks,Punk,Jungle,Disco,Soundtrack,Space,Native_American,Funk,Euro_Techno,Meditative,Cabaret,Grunge,Ambient,Instrumental_Pop,New_Wave,Hip_Hop,Trip_Hop,Instrumental_Rock,Psychadelic,Jazz,Vocal,Ethnic,Rave,Metal,Jazz_Funk,Gothic,Showtunes,New_Age,Fusion,Darkwave,Trailer,Oldies,Trance,Techno_Industrial,Lo_Fi,Other,Classical,Electronic,Tribal,Pop,Instrumental,Pop_Folk,Acid_Punk,R_and_B,Acid,Eurodance,Acid_Jazz,Rap,House,Dream,Polka,Reggae,Game,Southern_Rock,Retro,Rock,Sound_Clip,Comedy,Musical,Techno,Gospel,Cult,Rock_and_Roll,Industrial,Noise,Gangsta,Hard_Rock,Folk,Progressive_Rock,Chamber_Music,Ballad,Folk_Rock,Psychedelic_Rock,Sonata,Poweer_Ballad,National_Folk,Symphonic_Rock,Symphony,Rhytmic_Soul,Swing,Slow_Rock,Booty_Brass,Freestyle,Fast_Fusion,Big_Band,Primus,Duet,Bebob,Chorus,Porn_Groove,Punk_Rock,Latin,Easy_Listening,Satire,Drum_Solo,Revival,Acoustic,Slow_Jam,A_Capela,Celtic,Humour,Club,Euro_House,Bluegrass,Speech,Tango,Dance_Hall,Avantgarde,Chanson,Samba,Gothic_Rock,Opera,Folklore}"/>
+    </define_struct>
+    <define_struct type_name="TEXTINFOFRAMEDATA" comment="A text frame for an ID3v2 tag">
+        <data name="encoding" type="int" format="unsigned" len="1" display="hex" comment="Text encoding"/>
+        <if test="encoding == 0">
+            <data name="information" type="string" format="ascii" len="properFrameHeaderSize-1" comment="The text data"/>
+        <else/>
+            <data name="information" type="string" format="unicode" len="properFrameHeaderSize-1" comment="The text data"/>
+        </if>
+    </define_struct>
+    <define_struct type_name="ID3V2TAG" comment="ID3 v2.3 and v2.4 tag">
+        <struct name="header" type_name="ID3V2HEADER">
+            <data name="id" type="string" format="ascii" len="3" domain="this == &quot;ID3&quot;"/>
+            <data name="majorVersion" type="int" format="unsigned" len="1"/>
+            <data name="minorVersion" type="int" format="unsigned" len="1"/>
+            <data name="unsynchronisation" type="int" format="unsigned" len="1" bits="1" direction="up" domain="{NO,YES}" comment="Indicates whether or not unsynchronisation is applied on all frames"/>
+            <data name="hasExtendedHeader" type="int" format="unsigned" len="1" bits="1" direction="up" domain="{NO,YES}" comment="Indicates whether or not the header is followed by an extended header"/>
+            <data name="experimentalIndicator" type="int" format="unsigned" len="1" bits="1" direction="up" domain="{NO,YES}" comment="This flag shall always be set when the tag is in an experimental stage"/>
+            <data name="hasFooter" type="int" format="unsigned" len="1" bits="1" direction="up" domain="{NO,YES}" comment="Indicates that a footer is present at the very end of the tag. Not used in v2.3"/>
+            <data name="" type="int" format="unsigned" len="1" bits="4" direction="up" domain="this == 0" hide="true"/>
+            <data name="size" type="int" format="unsigned" len="4" display="hex" comment="NOTE: This is a &quot;synchsafe&quot; integer, meaning that the 7th bit of each byte is always zero. Therefore the number does not translate directly into decimal."/>
+            <eval expr="properHeaderSize = (size &amp; 0x000000FF) | ((size &amp; 0x0000FF00) &gt;&gt; 1) | ((size &amp; 0x00FF0000) &gt;&gt; 2) | ((size &amp; 0xFF000000) &gt;&gt; 3)"/>
+            <eval expr="offsetAddr = addressof(this)" display_error="false" display_result="false" comment="Remember start address so we can calculate how much padding is needed"/>
+        </struct>
+        <if test="header.hasExtendedHeader == 1">
+            <if test="header.majorVersion &gt;= 4">
+                <struct name="extendedHeader" type_name="ID3V2EXTHEADER" comment="Extented (optional) header for version 2.4">
+                    <data name="size" type="int" format="unsigned" len="4" display="hex" comment="NOTE: This is a &quot;synchsafe&quot; integer, meaning that the 7th bit of each byte is always zero. Therefore the number does not translate directly into decimal."/>
+                    <eval expr="properExtHeaderSize = (size &amp; 0x000000FF) | ((size &amp; 0x0000FF00) &gt;&gt; 1) | ((size &amp; 0x00FF0000) &gt;&gt; 2) | ((size &amp; 0xFF000000) &gt;&gt; 3)"/>
+                    <data name="numFlagBytes" type="int" format="unsigned" len="1" comment="Size of the extended flags field"/>
+                    <data name="" type="int" format="unsigned" len="numFlagBytes" bits="1" direction="up" hide="true"/>
+                    <data name="isUpdate" type="int" format="unsigned" len="numFlagBytes" bits="1" direction="up" comment="If this flag is set, the present tag is an update of a tag found earlier in the present file or stream. If frames defined as unique are found in the present tag, they are to override any corresponding ones found in the earlier tag"/>
+                    <data name="hasCRC" type="int" format="unsigned" len="numFlagBytes" bits="1" direction="up" comment="If this flag is set, CRC-32 [ISO-3309] data is included in the extended header"/>
+                    <data name="hasTagRestrictions" type="int" format="unsigned" len="numFlagBytes" bits="1" direction="up"/>
+                    <data name="" type="int" format="unsigned" len="numFlagBytes" bits="numFlagBytes-4" direction="up" hide="true"/>
+                    <if test="isUpdate == 1">
+                        <struct name="update" type_name="ID3V2EXTHEADERDATA">
+                            <data name="length" type="int" format="unsigned" len="1" domain="this == 0" comment="isUpdate flag contains no corresponding data"/>
+                            <data name="data" type="none" len="length"/>
+                        </struct>
+                    </if>
+                    <if test="hasCRC == 1">
+                        <struct name="CRC" type_name="ID3V2EXTHEADERDATA">
+                            <data name="length" type="int" format="unsigned" len="1" domain="this == 5"/>
+                            <data name="data" type="none" len="length"/>
+                        </struct>
+                    </if>
+                    <if test="hasTagRestrictions == 1">
+                        <struct name="tagRestrictions" type_name="ID3V2EXTHEADERDATA">
+                            <data name="length" type="int" format="unsigned" len="1" domain="this == 1"/>
+                            <data name="sizeLimit" type="int" format="unsigned" len="length" bits="2" direction="up" domain="{MAX_128_FRAMES_AND_1MB,MAX_64_FRAMES_AND_128KB,MAX_32_FRAMES_AND_40KB,MAX_32_FRAMES_AND_4KB}"/>
+                            <data name="textEncoding" type="int" format="unsigned" len="length" bits="1" direction="up" domain="{NO_RESTRICTION,UTF_8}"/>
+                            <data name="textSizeLimit" type="int" format="unsigned" len="length" bits="2" direction="up" domain="{NO_RESTRICTION,MAX_1024_CHARS,MAX_128_CHARS,MAX_30_CHARS}"/>
+                            <data name="imageEncoding" type="int" format="unsigned" len="length" bits="1" direction="up" domain="{NO_RESTRICTION,PNG_OR_JPEG}"/>
+                            <data name="imageSizeLimit" type="int" format="unsigned" len="length" bits="2" direction="up" domain="{NO_RESTRICTION,MAX_256x256,MAX_64x64,EXACTLY_64x64}"/>
+                        </struct>
+                    </if>
+                </struct>
+            <else/>
+                <struct name="extendedHeader" type_name="ID3V2EXTHEADER" comment="Extented (optional) header for version 2.3">
+                    <data name="size" type="int" format="unsigned" len="4" display="hex" comment="NOTE: This is a &quot;synchsafe&quot; integer, meaning that the 7th bit of each byte is always zero. Therefore the number does not translate directly into decimal."/>
+                    <eval expr="properExtHeaderSize = (extendedHeader.size &amp; 0x000000FF) | ((size &amp; 0x0000FF00) &gt;&gt; 1) | ((size &amp; 0x00FF0000) &gt;&gt; 2) | ((size &amp; 0xFF000000) &gt;&gt; 3)"/>
+                    <data name="hasCRC" type="int" format="unsigned" len="2" bits="1" comment="If this flag is set, CRC-32 [ISO-3309] data is included in the extended header"/>
+                    <data name="" type="int" format="unsigned" len="2" bits="15" hide="true"/>
+                    <data name="paddingSize" type="int" format="unsigned" len="4"/>
+                    <if test="hasCRC == 1">
+                        <data name="CRC" type="none" len="4"/>
+                    </if>
+                </struct>
+            </if>
+        </if>
+        <for name="frame" stop_test="this.nextByte == 51 || this.nextByte == 0 || this.nextByte == 255" comment="Stop at 0 byte, footer id or mp3 frame">
+          <struct name="" type_name="ID3V2FRAME" comment="" expr="">
+              <if test="header.majorVersion &gt;= 4">
+                  <struct name="frameHeader" type_name="ID3V2FRAMEHEADER" comment="Frame header for version 2.4">
+                      <data name="id" type="string" format="ascii" len="4"/>
+                      <data name="size" type="int" format="unsigned" len="4" display="hex" comment="NOTE: This is a &quot;synchsafe&quot; integer, meaning that the 7th bit of each byte is always zero. Therefore the number does not translate directly into decimal."/>
+                      <eval expr="properFrameHeaderSize = (size &amp; 0x000000FF) | ((size &amp; 0x0000FF00) &gt;&gt; 1) | ((size &amp; 0x00FF0000) &gt;&gt; 2) | ((size &amp; 0xFF000000) &gt;&gt; 3)"/>
+                      <data name="" type="int" format="unsigned" len="2" bits="1" direction="up" hide="true"/>
+                      <data name="tagAlterPreservation" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{PRESERVE,DISCARD}" comment="This flag tells the tag parser what to do with this frame if it is unknown and the tag is altered"/>
+                      <data name="fileAlterPreservation" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{PRESERVE,DISCARD}" comment="This flag tells the tag parser what to do with this frame if it is unknown and the file, excluding the tag, is altered"/>
+                      <data name="isReadOnly" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{NO,YES}" comment=""/>
+                      <data name="" type="int" format="unsigned" len="2" bits="5" direction="up" hide="true"/>
+                      <data name="hasGroupingIdentity" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{NO,YES}" comment="This flag indicates whether or not this frame belongs in a group with other frames"/>
+                      <data name="" type="int" format="unsigned" len="2" bits="2" direction="up" hide="true"/>
+                      <data name="isCompressed" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{NO,YES}" comment="This flag indicates whether or not the frame is compressed (using zlib)"/>
+                      <data name="hasEncryption" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{NO,YES}" comment="This flag indicates whether or not the frame is encrypted"/>
+                      <data name="isUnsynchronised" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{NO,YES}" comment="This flag indicates whether or not unsynchronisation was applied to this frame"/>
+                      <data name="hasDataLengthIndicator" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{NO,YES}" comment="This flag indicates that a data length indicator has been added to the frame"/>
+                      <if test="hasGroupingIdentity == 1">
+                          <data name="groupIdentifier" type="int" format="unsigned" len="1"/>
+                      </if>
+                      <if test="hasEncryption == 1">
+                          <data name="encryptionMethod" type="int" format="unsigned" len="1"/>
+                      </if>
+                      <if test="hasDataLengthIndicator == 1">
+                          <data name="dataLengthIndicator" type="int" format="unsigned" len="4"/>
+                      </if>
+                  </struct>
+              <else/>
+                  <struct name="frameHeader" type_name="ID3V2FRAMEHEADER" comment="Frame header for version 2.3">
+                      <data name="id" type="string" format="ascii" len="4"/>
+                      <data name="size" type="int" format="unsigned" len="4" display="hex" comment=""/>
+                      <eval expr="properFrameHeaderSize = size"/>
+                      <data name="tagAlterPreservation" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{PRESERVE,DISCARD}" comment="This flag tells the tag parser what to do with this frame if it is unknown and the tag is altered"/>
+                      <data name="fileAlterPreservation" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{PRESERVE,DISCARD}" comment="This flag tells the tag parser what to do with this frame if it is unknown and the file, excluding the tag, is altered"/>
+                      <data name="isReadOnly" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{NO,YES}" comment=""/>
+                      <data name="" type="int" format="unsigned" len="2" bits="5" direction="up" hide="true"/>
+                      <data name="isCompressed" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{NO,YES}" comment="This flag indicates whether or not the frame is compressed (using zlib)"/>
+                      <data name="hasEncryption" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{NO,YES}" comment="This flag indicates whether or not the frame is encrypted"/>
+                      <data name="hasGroupingIdentity" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{NO,YES}" comment="This flag indicates whether or not this frame belongs in a group with other frames"/>
+                      <if test="isCompressed == 1">
+                          <data name="decompressedSize" type="int" format="unsigned" len="4"/>
+                      </if>
+                      <if test="hasEncryption == 1">
+                          <data name="encryptionMethod" type="int" format="unsigned" len="1"/>
+                      </if>
+                      <if test="hasGroupingIdentity == 1">
+                          <data name="groupIdentifier" type="int" format="unsigned" len="1"/>
+                      </if>
+                  </struct>
+              </if>
+              <eval expr="frameOffsetAddr = addressof(this)"/>
+              <switch test="frameHeader.id">
+                  <case range="UFID">
+                      <struct name="uniqueFileIdentifier" type_name="ID3V2FRAMEDATA" comment="This frame's purpose is to be able to identify the audio file in a database, that may provide more information relevant to the content">
+                          <data name="ownerId" type="string"/>
+                          <data name="identifier" type="none" len="properFrameHeaderSize - (addressof(this) - frameOffsetAddr)"/>
+                      </struct>
+                  </case>
+                  <case range="TIT1">
+                      <use_struct name="contentGroupDescription" type_name="TEXTINFOFRAMEDATA" comment="Category of sound/music"/>
+                  </case>
+                  <case range="TIT2">
+                      <use_struct name="title" type_name="TEXTINFOFRAMEDATA" comment="The actual name of the piece"/>
+                  </case>
+                  <case range="TIT3">
+                      <use_struct name="subtitle" type_name="TEXTINFOFRAMEDATA" comment="Used for information directly related to the contents title"/>
+                  </case>
+                  <case range="TALB">
+                      <use_struct name="album" type_name="TEXTINFOFRAMEDATA" comment="Title of the recording (or source of sound) from which the audio in the file is taken"/>
+                  </case>
+                  <case range="TPE1">
+                      <use_struct name="leadArtist" type_name="TEXTINFOFRAMEDATA" comment="Lead artist/Lead performer/Soloist/Performing group"/>
+                  </case>
+                  <case range="TPE2">
+                      <use_struct name="band" type_name="TEXTINFOFRAMEDATA" comment="Band/Orchestra/Accompaniment"/>
+                  </case>
+                  <case range="TLEN">
+                      <use_struct name="length" type_name="TEXTINFOFRAMEDATA" comment="Length of the audio file in milliseconds, represented as a numeric string"/>
+                  </case>
+                  <case range="TLAN">
+                      <use_struct name="language" type_name="TEXTINFOFRAMEDATA" comment="Languages of the text or lyrics spoken or sung in the audio"/>
+                  </case>
+                  <case range="TCON">
+                      <use_struct name="contentType" type_name="TEXTINFOFRAMEDATA" comment=""/>
+                  </case>
+                  <case range="APIC">
+                      <struct name="attachedPicture" type_name="ID3V2FRAMEDATA" comment="">
+                          <data name="encoding" type="int" format="unsigned" len="1" display="hex" comment="Text encoding"/>
+                          <data name="mimeType" type="string" format="ascii"/>
+                          <data name="pictureType" type="int" format="unsigned" len="1" domain="{Other,File_Icon,Other_File_Icon,Front_Cover,Back_Cover,Leaflet_Page,Media,Lead_Artist,Performer,Conductor,Band,Composer,Lyricist,Recording_Location,During_Recording,During_Performance,Video_Screen_Capture,Bright_Coloured_Fish,Illustration,Artist_Logotype,Publisher_Logotype,Unspecified}"/>
+                          <if test="encoding == 0">
+                              <data name="description" type="string" format="ascii"/>
+                          <else/>
+                              <data name="description" type="string" format="unicode"/>
+                          </if>
+                          <data name="pictureData" type="none" len="properFrameHeaderSize - (addressof(this) - frameOffsetAddr)"/>
+                      </struct>
+                  </case>
+                  <case range="">
+                      <data name="unknownFrame" type="none" len="properFrameHeaderSize"/>
+                  </case>
+              </switch>
+              <jump offset="0" origin="current" comment="Peek at next frame ID. Due to varying ID lengths and possible data types, only the first byte is read">
+                  <data name="nextByte" type="int" format="unsigned" len="1" hide="true"/>
+              </jump>
+          </struct>
+        </for>
+        <eval expr="properExtHeaderSize = header.hasExtendedHeader == 0 ? 0 : properExtHeaderSize"/>
+        <if test="header.hasFooter == 0" comment="Padding and footer are mutually exclusive">
+            <data name="padding" type="none" len="properHeaderSize - (addressof(this) - offsetAddr)"/>
+        </if>
+        <if test="header.majorVersion &gt;= 4 &amp;&amp; header.hasFooter == 1">
+            <struct name="footer" type_name="ID3V2FOOTER">
+                <data name="id" type="string" format="ascii" len="3" domain="this == &quot;3DI&quot;"/>
+                <data name="majorVersion" type="int" format="unsigned" len="1" domain="this == header.majorVersion"/>
+                <data name="minorVersion" type="int" format="unsigned" len="1" domain="this == header.minorVersion"/>
+                <data name="unsynchronisation" type="int" format="unsigned" len="1" bits="1" direction="up" domain="this == header.unsynchronisation"/>
+                <data name="hasExtendedHeader" type="int" format="unsigned" len="1" bits="1" direction="up" domain="this == header.hasExtendedHeader"/>
+                <data name="experimentalIndicator" type="int" format="unsigned" len="1" bits="1" direction="up" domain="this == header.experimentalIndicator"/>
+                <data name="hasFooter" type="int" format="unsigned" len="1" bits="1" direction="up" domain="this == 1"/>
+                <data name="" type="int" format="unsigned" len="1" bits="4" direction="up" domain="this == 0" hide="true"/>
+                <data name="size" type="int" format="unsigned" len="4" domain="this == header.size"/>
+            </struct>
+        </if>
+    </define_struct>
+    <eval expr="hasID3v1Tag = false"/>
+    <jump offset="0" origin="current" comment="Peek at first 3 bytes to check for ID3v2 tag">
+        <data name="peekStartId" type="string" len="3" hide="true"/>
+    </jump>
+    <jump offset="-128" origin="end" comment="Check end of file for ID3v1 tag">
+        <eval expr="id3v1Offset = addressof(this)"/>
+    </jump>
+    <jump offset="-128" origin="end" comment="Check end of file for ID3v1 tag">
+        <data name="peekEndId" type="string" len="3" hide="true"/>
+    </jump>
+    <if test="peekStartId == &quot;ID3&quot;">
+        <use_struct name="id3v2Tag" type_name="ID3V2TAG" comment=""/>
+    </if>
+    <struct name="mp3Frames" comment="MP3 audio frames">
+        <struct name="header" type_name="MP3FRAMEHEADER">
+            <data name="frameSync" type="int" format="unsigned" len="4" bits="12" direction="down" domain="this == 0xFFF"/>
+            <data name="version" type="int" format="unsigned" len="4" bits="1" direction="down" domain="{VERSION_2,VERSION_1}"/>
+            <data name="layer" type="int" format="unsigned" len="4" bits="2" direction="down" domain="{RESERVED,LAYER_III,LAYER_II,LAYER_I}"/>
+            <data name="protection" type="int" format="unsigned" len="4" bits="1" direction="down" domain="{NO=1,YES=0}" comment="If yes, 16bit CRC follows header"/>
+            <data name="bitRate" type="int" format="unsigned" len="4" bits="4" direction="down" domain="{FREE,RATE_32,RATE_40,RATE_48,RATE_56,RATE_64,RATE_80,RATE_96,RATE_112,RATE_128,RATE_160,RATE_192,RATE_224,RATE_256,RATE_320,INVALID}"/>
+            <data name="sampleRate" type="int" format="unsigned" len="4" bits="2" direction="down" domain="{RATE_44100,RATE_48000,RATE_32000,RESERVED}"/>
+            <data name="padding" type="int" format="unsigned" len="4" bits="1" direction="down" domain="{NO,YES}"/>
+            <data name="private" type="int" format="unsigned" len="4" bits="1" direction="down" domain=""/>
+            <data name="channelMode" type="int" format="unsigned" len="4" bits="2" direction="down" domain="{STEREO,JOINT_STEREO,DUAL_CHANNEL,SINGLE_CHANNEL}"/>
+            <data name="modeExtension" type="int" format="unsigned" len="4" bits="2" direction="down" domain=""/>
+            <data name="copyright" type="int" format="unsigned" len="4" bits="1" direction="down" domain="{NO,YES}"/>
+            <data name="original" type="int" format="unsigned" len="4" bits="1" direction="down" domain="{COPY,ORIGINAL}"/>
+            <data name="emphasis" type="int" format="unsigned" len="4" bits="2" direction="down" domain="{NONE,FIFTY_FIFTEEN,RESERVED,CCIT}"/>
+        </struct>
+        <eval expr="mp3FramesOffset = addressof(this)"/>
+        <if test="peekEndId == &quot;TAG&quot;">
+            <data name="mp3Data" type="none" len="id3v1Offset - mp3FramesOffset" comment="The rest of the MP3 frames"/>
+        <else/>
+            <data name="mp3Data" type="none" comment="The rest of the MP3 frames"/>
+        </if>
+    </struct>
+    <if test="peekEndId == &quot;TAG&quot;">
+        <use_struct name="id3v1Tag" type_name="ID3V1TAG" comment=""/>
+    </if>
+</binary_file_format>

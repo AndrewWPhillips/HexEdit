@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
+<binary_file_format name="Java_Class" allow_editing="false" default_byte_order="big" comment="Java virtual machine class file format" web_site="http://java.sun.com/docs/books/jvms/second_edition/html/ClassFile.doc.html">
+    <define_struct type_name="ConstantPoolInfo">
+	    <data name="tag" type="int" format="unsigned" len="1" domain="{Utf8=1,Integer=3,Float=4,Long=5,Double=6,Class=7,String=8,Fieldref=9,Methodref=10,InterfaceMethodref=11,NameAndType=12}" comment="Indicates the type of entry"/>
+		<switch test="tag">
+		    <case range="1">
+			    <struct name="Uft8" expr="this.data;%s">
+				    <data name="length" type="int" format="unsigned" len="2"/>
+					<data name="data" type="string" format="utf8" len="length"/>
+				</struct>
+			</case>
+		    <case range="3">
+			    <data name="Integer" type="int" format="signed" len="4"/>
+			</case>
+		    <case range="4">
+			    <data name="Float" type="float" len="4"/>
+			</case>
+		    <case range="5">
+			    <data name="Long" type="int" format="signed" len="8"/>
+			</case>
+		    <case range="6">
+			    <data name="Double" type="float" len="8"/>
+			</case>
+		    <case range="7">
+			    <struct name="Class">
+				    <data name="nameIndex" type="int" format="unsigned" len="2"/>
+				</struct>
+			</case>
+		    <case range="8">
+			    <struct name="String">
+				    <data name="stringIndex" type="int" format="unsigned" len="2"/>
+				</struct>
+			</case>
+		    <case range="9">
+			    <struct name="Fieldref">
+				    <data name="classIndex" type="int" format="unsigned" len="2"/>
+				    <data name="nameAndTypeIndex" type="int" format="unsigned" len="2"/>
+				</struct>
+			</case>
+		    <case range="10">
+			    <struct name="Methodref">
+				    <data name="classIndex" type="int" format="unsigned" len="2"/>
+				    <data name="nameAndTypeIndex" type="int" format="unsigned" len="2"/>
+				</struct>
+			</case>
+		    <case range="11">
+			    <struct name="InterfaceMethodref">
+				    <data name="classIndex" type="int" format="unsigned" len="2"/>
+				    <data name="nameAndTypeIndex" type="int" format="unsigned" len="2"/>
+				</struct>
+			</case>
+		    <case range="12">
+			    <struct name="NameAndType">
+				    <data name="nameIndex" type="int" format="unsigned" len="2"/>
+				    <data name="descriptorIndex" type="int" format="unsigned" len="2"/>
+				</struct>
+			</case>
+		</switch>
+	</define_struct>
+	<define_struct type_name="FieldInfo">
+		<struct name="accessFlags" comment="Mask of flags used to denote access permissions to and properties of this field">
+			<data name="public" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared public; may be accessed from outside its package."/>
+			<data name="private" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared private; usable only within the defining class."/>
+			<data name="protected" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared protected; may be accessed within subclasses."/>
+			<data name="static" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared static."/>
+			<data name="final" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared final; no subclasses allowed."/>
+			<data name="volatile" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared volatile; cannot be cached."/>
+			<data name="transient" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared transient; not written or read by a persistent object manager."/>
+	    </struct>
+		<data name="nameIndex" type="int" format="unsigned" len="2"/>
+		<data name="descriptorIndex" type="int" format="unsigned" len="2"/>
+		<data name="attributeCount" type="int" format="unsigned" len="2"/>
+		<for name="attribute" count="attributeCount">
+		    <use_struct type_name="AttributeInfo"/>
+		</for>
+	</define_struct>
+	<define_struct type_name="MethodInfo">
+		<struct name="accessFlags" comment="Mask of flags used to denote access permissions to and properties of this field">
+			<data name="public" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared public; may be accessed from outside its package."/>
+			<data name="private" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared private; usable only within the defining class."/>
+			<data name="protected" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared protected; may be accessed within subclasses."/>
+			<data name="static" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared static."/>
+			<data name="final" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared final; no subclasses allowed."/>
+			<data name="synchronized" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared synchronized; invocation is wrapped in a monitor lock."/>
+			<data name="native" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared native; implemented in a language other than Java."/>
+			<data name="abstract" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared abstract; no implementation is provided."/>
+			<data name="strict" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared strictfp; floating-point mode is FP-strict."/>
+	    </struct>
+		<data name="nameIndex" type="int" format="unsigned" len="2"/>
+		<data name="descriptorIndex" type="int" format="unsigned" len="2"/>
+		<data name="attributeCount" type="int" format="unsigned" len="2"/>
+		<for name="attribute" count="attributeCount">
+		    <use_struct type_name="AttributeInfo"/>
+		</for>
+	</define_struct>
+	<define_struct type_name="AttributeInfo">
+		<data name="nameIndex" type="int" format="unsigned" len="2"/>
+		<data name="length" type="int" format="unsigned" len="4"/>
+		<data name="data" type="none" len="length"/>
+	</define_struct>
+	<struct name="classFile" type_name="ClassFile">
+        <data name="magicNumber" type="int" format="unsigned" len="4" domain="this==0xCAFEBABE" display="hex" comment="Magic number"/>
+        <data name="minorVersion" type="int" format="unsigned" len="2"/>
+        <data name="majorVersion" type="int" format="unsigned" len="2"/>
+        <data name="constantPoolCount" type="int" format="unsigned" len="2" comment="number of entries in the constantPool table"/>
+        <eval expr="constantPoolAddr = addressof(this)"/>
+		<for name="constantPool" count="constantPoolCount-1">
+		    <use_struct type_name="ConstantPoolInfo"/>
+		</for>
+		<struct name="accessFlags" comment="Mask of flags used to denote access permissions to and properties of this class or interface">
+			<data name="public" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared public; may be accessed from outside its package."/>
+			<data name="final" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared final; no subclasses allowed."/>
+			<data name="super" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Treat superclass methods specially when invoked by the &quot;invokespecial&quot; instruction."/>
+			<data name="interface" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Is an interface, not a class."/>
+			<data name="abstract" type="int" format="unsigned" len="2" bits="1" direction="up" domain="{false,true}" comment="Declared abstract; may not be instantiated."/>
+	    </struct>
+        <data name="thisClassIndex" type="int" format="unsigned" len="2" comment="Entry in the constant pool table representing the class or interface defined by this class file"/>
+		<data name="superClassIndex" type="int" format="unsigned" len="2" comment="Entry in the constant pool table representing the direct superclass defined by this class file"/>
+		<data name="interfaceCount" type="int" format="unsigned" len="2"/>
+		<for name="interface" count="interfaceCount">
+		    <data name="index" type="int" format="unsigned" len="2" comment="Entry in the constant pool table representing the direct superclass defined by this class file"/>
+		</for>
+		<data name="fieldCount" type="int" format="unsigned" len="2"/>
+		<for name="field" count="fieldCount">
+		    <use_struct type_name="FieldInfo"/>
+		</for>
+		<data name="methodCount" type="int" format="unsigned" len="2"/>
+		<for name="method" count="methodCount">
+		    <use_struct type_name="MethodInfo"/>
+		</for>
+		<data name="attributeCount" type="int" format="unsigned" len="2"/>
+		<for name="attribute" count="attributeCount">
+		    <use_struct type_name="AttributeInfo"/>
+		</for>
+	</struct>
+</binary_file_format>
