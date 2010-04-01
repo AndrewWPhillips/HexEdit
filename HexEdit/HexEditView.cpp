@@ -17429,8 +17429,9 @@ void CHexEditView::OnDffdHide()
 
 	int snum_d = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
 	int tnum_d = GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd());
-
 	ASSERT(snum_d > -1 || tnum_d > -1);  // It must be open in tab or splitter
+
+	pdfv_ = NULL;
 
 	if (snum_d > -1)  // splitter?
 	{
@@ -17444,9 +17445,8 @@ void CHexEditView::OnDffdHide()
 		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing tree view
 		VERIFY(GetFrame()->ptv_->RemoveView(tnum_d));
 	}
-
-	pdfv_ = NULL;
 }
+
 void CHexEditView::OnUpdateDffdHide(CCmdUI* pCmdUI) 
 {
     pCmdUI->Enable(TRUE);
@@ -17469,10 +17469,11 @@ bool CHexEditView::DoDffdSplit()
 	{
 		int tnum_d = GetFrame()->ptv_->FindTab(pdfv_->GetSafeHwnd());
 		ASSERT(tnum_d > -1);
+		pdfv_ = NULL;
+
 		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing tree view
 		if (tnum_d > -1)
 			VERIFY(GetFrame()->ptv_->RemoveView(tnum_d));
-		pdfv_ = NULL;
 	}
 
 	// Reopen in the splitter
@@ -17529,6 +17530,8 @@ bool CHexEditView::DoDffdTab()
 	{
 		int snum_d = GetFrame()->splitter_.FindViewColumn(pdfv_->GetSafeHwnd());
 		ASSERT(snum_d > -1);
+
+		pdfv_ = NULL;
 		if (snum_d > -1)
 		{
 			int dummy;
@@ -17536,7 +17539,6 @@ bool CHexEditView::DoDffdTab()
 		    VERIFY(GetFrame()->splitter_.DelColumn(snum_d, TRUE));
 			GetFrame()->splitter_.RecalcLayout();
 		}
-		pdfv_ = NULL;
 	}
 
 	// Reopen in the tab
@@ -17583,8 +17585,10 @@ void CHexEditView::OnAerialHide()
 
 	int snum_a = GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd());
 	int tnum_a = GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd());
-
 	ASSERT(snum_a > -1 || tnum_a > -1);  // It must be open in tab or splitter
+
+	// Set pav_ to NULL now to avoid the view getting messages while invalid
+	pav_ = NULL;  
 
 	if (snum_a > -1)  // splitter?
 	{
@@ -17598,8 +17602,6 @@ void CHexEditView::OnAerialHide()
 		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing aerial view
 		VERIFY(GetFrame()->ptv_->RemoveView(tnum_a));
 	}
-
-	pav_ = NULL;
 }
 
 void CHexEditView::OnUpdateAerialHide(CCmdUI* pCmdUI) 
@@ -17627,10 +17629,13 @@ bool CHexEditView::DoAerialSplit()
 	{
 		int tnum_a = GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd());
 		ASSERT(tnum_a > -1);
+
+		// Set pav_ to NULL now to avoid the view getting messages while invalid
+		pav_ = NULL;  
+
 		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing aerial view
 		if (tnum_a > -1)
 			VERIFY(GetFrame()->ptv_->RemoveView(tnum_a));
-		pav_ = NULL;
 	}
 
 	// Reopen in the splitter
@@ -17690,6 +17695,10 @@ bool CHexEditView::DoAerialTab()
 	{
 		int snum_a = GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd());
 		ASSERT(snum_a > 0);       // Should be there (not -1) and not the left one (not 0)
+
+		// Set pav_ to NULL now to avoid the view getting messages while invalid
+		pav_ = NULL;
+
 		if (snum_a > -1)
 		{
 			int dummy;
@@ -17697,7 +17706,6 @@ bool CHexEditView::DoAerialTab()
 		    VERIFY(GetFrame()->splitter_.DelColumn(snum_a, TRUE));
 			GetFrame()->splitter_.RecalcLayout();
 		}
-		pav_ = NULL;
 	}
 
 	// Reopen in the tab
