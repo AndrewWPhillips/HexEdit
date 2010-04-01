@@ -552,7 +552,7 @@ void CCalcEdit::OnKillFocus(CWnd* pNewWnd)
 void CCalcEdit::OnLButtonUp(UINT nFlags, CPoint point) 
 {
     pp_->in_edit_ = TRUE;
-    CEdit::OnLButtonDown(nFlags, point);
+    CEdit::OnLButtonUp(nFlags, point);
 }
 
 
