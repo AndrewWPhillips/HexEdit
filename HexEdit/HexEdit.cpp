@@ -58,6 +58,7 @@
 #include "HexEditView.h"
 #include "DataFormatView.h"
 #include "AerialView.h"
+#include "CompareView.h"
 #include "TabView.h"
 #include "UserTool.h"   // For CHexEditUserTool
 #include "Dialog.h"
@@ -1556,6 +1557,8 @@ BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
 	{
 		return FALSE;
 	}
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == 65)
+		pMsg->message = WM_KEYDOWN;   // xxx just so we can put a breakpoint here
 
     return CWinAppEx::PreTranslateMessage(pMsg);
 }
@@ -1979,6 +1982,7 @@ void CHexEditApp::LoadOptions()
 
     aerialview_ = GetProfileInt("Options", "AerialView", 0);
 	aerial_disp_state_ = GetProfileInt("Options", "AerialDisplay", 0x000010B1F);
+    compview_ = GetProfileInt("Options", "CompareView", 0);
 
     dffdview_ = GetProfileInt("DataFormat", "TreeView", 0);
     max_fix_for_elts_ = GetProfileInt("DataFormat", "MaxFixForElts", 20);
@@ -2399,6 +2403,7 @@ void CHexEditApp::SaveOptions()
 
     WriteProfileInt("Options", "AerialView", aerialview_);
     WriteProfileInt("Options", "AerialDisplay", aerial_disp_state_);
+    WriteProfileInt("Options", "CompareView", compview_);
 
     // Save data format view options
     WriteProfileInt("DataFormat", "TreeView", dffdview_);
@@ -2625,7 +2630,7 @@ void CHexEditApp::LoadSchemes()
         scheme_.push_back(new_scheme);
 
         CScheme new_scheme2(PRETTY_NAME);
-		new_scheme2.AddRange("NullByte", RGB(224, 224, 224), "0");   // Give nul bytes their own colour (grey)
+		new_scheme2.AddRange("NullByte", RGB(254, 254, 254), "0");   // Give nul bytes their own colour (grey)
 		new_scheme2.AddRange("range1", RGB(200, 0, 0), "1:21");
 		new_scheme2.AddRange("range2", RGB(200, 100, 0), "22:42");
 		new_scheme2.AddRange("range3", RGB(200, 200, 0), "43:63");
@@ -2638,7 +2643,7 @@ void CHexEditApp::LoadSchemes()
 		new_scheme2.AddRange("range10", RGB(100, 0, 200), "192:212");
 		new_scheme2.AddRange("range11", RGB(200, 0, 200), "213:233");
 		new_scheme2.AddRange("range12", RGB(200, 0, 100), "234:254");
-        new_scheme2.AddRange("CatchAll", RGB(100, 100, 100), "0:255"); // This should only catch 0xFF
+        new_scheme2.AddRange("CatchAll", -1, "0:255"); // This should only catch 0xFF
         scheme_.push_back(new_scheme2);
     }
 }
@@ -3011,6 +3016,7 @@ void CHexEditApp::get_options(struct OptValues &val)
 
 		val.display_template_ = pview->TemplateViewType();
 		val.display_aerial_ = pview->AerialViewType();
+		val.display_comp_ = pview->CompViewType();
 
         val.disp_state_ = pview->disp_state_;
         val.lf_ = pview->lf_;
@@ -3406,6 +3412,21 @@ void CHexEditApp::set_options(struct OptValues &val)
 			}
 		}
 
+		if (val.display_comp_ != pview->CompViewType())
+		{
+			switch (val.display_comp_)
+			{
+			case 0:
+				pview->OnCompHide();
+				break;
+			case 1:
+				pview->OnCompSplit();
+				break;
+			case 2:
+				pview->OnCompTab();
+				break;
+			}
+		}
 
         // Make other (undoable) changes if any of the options have changed
         bool change_required = (!val.autofit_ && pview->rowsize_ != val.cols_) ||
@@ -3866,6 +3887,8 @@ CHexEditView *GetView()
                     return ((CDataFormatView *)pv)->phev_;
                 else if (pv->IsKindOf(RUNTIME_CLASS(CAerialView)))
                     return ((CAerialView *)pv)->phev_;
+                else if (pv->IsKindOf(RUNTIME_CLASS(CCompareView)))
+                    return ((CCompareView *)pv)->phev_;
                 else if (pv->IsKindOf(RUNTIME_CLASS(CHexTabView)))
                 {
 					// Find the hex view (left-most tab)

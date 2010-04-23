@@ -511,6 +511,12 @@ BEGIN
             MENUITEM "Split Aerial View",           ID_AERIAL_SPLIT
             MENUITEM "Tabbed Aerial View",          ID_AERIAL_TAB
         END
+        POPUP "Compare View"
+        BEGIN
+            MENUITEM "Hide Compare View",            ID_COMP_HIDE
+            MENUITEM "Split Compare View",           ID_COMP_SPLIT
+            MENUITEM "Tabbed Compare View",          ID_COMP_TAB
+        END
         MENUITEM SEPARATOR
         MENUITEM "&Properties...",              ID_PROPERTIES
     END
@@ -2373,12 +2379,15 @@ BEGIN
                     125,15,BS_MULTILINE | WS_GROUP,0,HIDC_SAVE_DEFAULT
     LTEXT           "Settings in this page and those following apply to the active window.",
                     IDC_STATIC,20,59,235,12
-    LTEXT           "Template View Display:",IDC_STATIC,20,83,74,8
-    COMBOBOX        IDC_DISPLAY_TEMPLATE,125,81,125,60,CBS_DROPDOWNLIST | 
+    LTEXT           "Template View Display:",IDC_STATIC,20,82,74,8
+    COMBOBOX        IDC_DISPLAY_TEMPLATE,125,80,125,60,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_DISPLAY_TEMPLATE
-    LTEXT           "Aerial View Display:",IDC_STATIC,20,110,62,8
-    COMBOBOX        IDC_DISPLAY_AERIAL,125,108,125,60,CBS_DROPDOWNLIST | 
+    LTEXT           "Aerial View Display:",IDC_STATIC,20,102,62,8
+    COMBOBOX        IDC_DISPLAY_AERIAL,125,100,125,60,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP,0,HIDC_DISPLAY_AERIAL
+    LTEXT           "Compare View Display:",IDC_STATIC,20,122,62,8
+    COMBOBOX        IDC_DISPLAY_COMP,125,120,125,60,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP,0,HIDC_DISPLAY_COMP
 END
 
 IDD_OPT_WORKTEMPLATE DIALOGEX 0, 0, 260, 140
@@ -2808,6 +2817,12 @@ BEGIN
     IDC_DISPLAY_AERIAL, 0x403, 13, 0
 0x7053, 0x696c, 0x2074, 0x6957, 0x646e, 0x776f, "\000" 
     IDC_DISPLAY_AERIAL, 0x403, 11, 0
+0x6154, 0x2062, 0x6957, 0x646e, 0x776f, "\000" 
+    IDC_DISPLAY_COMP, 0x403, 15, 0
+0x6f4e, 0x4120, 0x7265, 0x6169, 0x206c, 0x6956, 0x7765, "\000" 
+    IDC_DISPLAY_COMP, 0x403, 13, 0
+0x7053, 0x696c, 0x2074, 0x6957, 0x646e, 0x776f, "\000" 
+    IDC_DISPLAY_COMP, 0x403, 11, 0
 0x6154, 0x2062, 0x6957, 0x646e, 0x776f, "\000" 
     0
 END
@@ -3896,6 +3911,7 @@ BEGIN
     PUSHBUTTON      "&Cancel",IDCANCEL,221,216,50,14
 END
 
+
 IDD_CALC_NEW DIALOGEX 0, 0, 309, 172
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | 
     WS_SYSMENU
@@ -3903,11 +3919,11 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Calculator"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    PUSHBUTTON      "Hex Jump History",IDC_HEX_HIST,5,0,75,14,NOT WS_TABSTOP
+    PUSHBUTTON      "Hex Jump History",IDC_HEX_HIST,5,0,75,14,NOT WS_TABSTOP,0,HIDC_HEX_HIST
     PUSHBUTTON      "Dec Jump History",IDC_DEC_HIST,84,0,75,14,NOT 
-                    WS_TABSTOP
-    PUSHBUTTON      "Variables",IDC_VARS,163,0,58,14,NOT WS_TABSTOP
-    PUSHBUTTON      "Functions",IDC_FUNC,225,0,58,14,NOT WS_TABSTOP
+                    WS_TABSTOP,0,HIDC_DEC_HIST
+    PUSHBUTTON      "Variables",IDC_VARS,163,0,58,14,NOT WS_TABSTOP,0,HIDC_VARS
+    PUSHBUTTON      "Functions",IDC_FUNC,225,0,58,14,NOT WS_TABSTOP,0,HIDC_FUNC
     COMBOBOX        IDC_EDIT,5,20,293,153,CBS_DROPDOWN | CBS_AUTOHSCROLL | 
                     WS_VSCROLL | WS_GROUP,0,HIDC_EDIT
     LTEXT           "",IDC_OP_DISPLAY,301,23,8,8,0,0,HIDC_OP_DISPLAY
@@ -5061,6 +5077,8 @@ BEGIN
 0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0033, 
     IDC_VERSION, 0x403, 12, 0
 0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0034, 
+    IDC_VERSION, 0x403, 12, 0
+0x6556, 0x7372, 0x6f69, 0x206e, 0x2e33, 0x0035, 
     0
 END
 

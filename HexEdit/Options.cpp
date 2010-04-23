@@ -3276,6 +3276,7 @@ void CWindowGeneralPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FILE_ICON, ctl_icon_);
 	DDX_CBIndex(pDX, IDC_DISPLAY_TEMPLATE, pParent->val_.display_template_);
 	DDX_CBIndex(pDX, IDC_DISPLAY_AERIAL, pParent->val_.display_aerial_);
+	DDX_CBIndex(pDX, IDC_DISPLAY_COMP, pParent->val_.display_comp_);  // xxx TBD
 }
 
 BEGIN_MESSAGE_MAP(CWindowGeneralPage, COptPage)
@@ -3285,6 +3286,7 @@ BEGIN_MESSAGE_MAP(CWindowGeneralPage, COptPage)
 	ON_BN_CLICKED(IDC_DISP_RESET, OnDispReset)
 	ON_CBN_SELCHANGE(IDC_DISPLAY_TEMPLATE, OnChange)
 	ON_CBN_SELCHANGE(IDC_DISPLAY_AERIAL, OnChange)
+	ON_CBN_SELCHANGE(IDC_DISPLAY_COMP, OnChange)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3382,6 +3384,7 @@ static DWORD id_pairs_wingeneral[] = {
     IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
 	IDC_DISPLAY_TEMPLATE, HIDC_DISPLAY_TEMPLATE,
 	IDC_DISPLAY_AERIAL, HIDC_DISPLAY_AERIAL,
+	IDC_DISPLAY_COMP, HIDC_DISPLAY_COMP,
     0,0 
 };
 
@@ -3426,7 +3429,7 @@ void CWindowGeneralPage::OnSaveDefault()
         theApp.open_oem_plf_ = new LOGFONT;
     *theApp.open_oem_plf_ = pParent->val_.oem_lf_;
 
-	pview->AdjustColumns();  // fix and get split_width_d_/split_width_a_
+	pview->AdjustColumns();  // fix and get split_width_d_/split_width_a_/split_width_c_
 	theApp.dffdview_ = pParent->val_.display_template_;
 	if (theApp.dffdview_ == 1)
 	{
@@ -3435,6 +3438,7 @@ void CWindowGeneralPage::OnSaveDefault()
 			theApp.dffdview_ = 10;
 
 	}
+
 	theApp.aerialview_ = pParent->val_.display_aerial_;
 	if (theApp.aerialview_ == 1)
 	{
@@ -3445,6 +3449,14 @@ void CWindowGeneralPage::OnSaveDefault()
 	if (theApp.aerialview_ > 0 && pview->pav_ != NULL)
 	{
 		theApp.aerial_disp_state_ = pview->pav_->DispState();
+	}
+
+	theApp.compview_ = pParent->val_.display_comp_;
+	if (theApp.compview_ == 1)
+	{
+		theApp.compview_ = pview->split_width_c_;  // get splitter width
+		if (theApp.compview_ < 10)
+			theApp.compview_ = 10;
 	}
 
 	theApp.open_scheme_name_ = pParent->val_.scheme_name_;
@@ -3468,8 +3480,9 @@ void CWindowGeneralPage::OnDispReset()
     if (theApp.open_oem_plf_ != NULL)
         pParent->val_.oem_lf_ = *theApp.open_oem_plf_;
 
-	pParent->val_.display_template_ = theApp.dffdview_ > 2 ? 1 : theApp.dffdview_;
-	pParent->val_.display_aerial_ = theApp.aerialview_ > 2 ? 1 : theApp.aerialview_;
+	pParent->val_.display_template_ = theApp.dffdview_ > 2   ? 1 : theApp.dffdview_;
+	pParent->val_.display_aerial_   = theApp.aerialview_ > 2 ? 1 : theApp.aerialview_;
+	pParent->val_.display_comp_     = theApp.compview_ > 2   ? 1 : theApp.compview_;
 
 	pParent->val_.scheme_name_ = theApp.open_scheme_name_;
 

@@ -380,7 +380,10 @@
 #define IDB_OPERBAR_H                   396
 #define IDB_OPERBAR_C                   397
 #define IDB_OPERBAR_D                   398
-#define IDB_BITMAP2                     405
+#define ID_COMP_OPEN                    399
+#define ID_COMP_HIDE                    400
+#define ID_COMP_SPLIT                   401
+#define ID_COMP_TAB                     402
 #define IDD_GETINT                      407
 #define IDD_GETSTR                      408
 #define IDD_GETBOOL                     409
@@ -578,7 +581,6 @@
 #define ID_FONT_INC                     1087
 #define IDC_REFRESH_SECS                1087
 #define IDC_ENHANCE                     1087
-#define IDC_UNARY_ROR                   1087
 #define IDC_USER                        1087
 #define IDC_PRINT_SPACE1HALF            1087
 #define IDC_ADDRESS_SPECIFIED           1087
@@ -587,7 +589,6 @@
 #define IDC_UNICODE_DESC                1088
 #define IDC_REFRESH_PLAYS               1088
 #define IDC_OTHER                       1088
-#define IDC_UNARY_LSL                   1088
 #define IDC_SITE                        1088
 #define IDC_CHAR                        1089
 #define IDC_UNARY_LSR                   1089
@@ -633,6 +634,8 @@
 #define IDC_CHAR_UNICODE                1109
 #define IDC_FP_64BIT                    1110
 #define IDC_FP_32BIT                    1111
+#define IDC_UNARY_ROR                   1112
+#define IDC_UNARY_LSL                   1113
 #define IDC_REFRESH_PROPS               1115
 #define IDC_REFRESH_BARS                1116
 #define IDC_HALT0                       1117
@@ -677,7 +680,6 @@
 #define IDC_OP_DISPLAY                  1147
 #define IDC_SCROLL_PAST_ENDS            1147
 #define IDC_REGISTER                    1148
-#define IDC_SCROLL_PAST_ENDS2           1148
 #define IDC_REVERSE_ZOOM                1148
 #define IDC_LINE1                       1149
 #define IDC_LINE2                       1150
@@ -1140,6 +1142,7 @@
 #define IDC_EDIT                        1590
 #define IDC_DISPLAY_TEMPLATE            1591
 #define IDC_DISPLAY_AERIAL              1592
+#define IDC_DISPLAY_COMP                1593
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1568,7 +1571,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        431
 #define _APS_NEXT_COMMAND_VALUE         39125
-#define _APS_NEXT_CONTROL_VALUE         1593
+#define _APS_NEXT_CONTROL_VALUE         1594
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

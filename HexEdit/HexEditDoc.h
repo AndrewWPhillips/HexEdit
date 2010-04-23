@@ -378,6 +378,7 @@ class CHexEditDoc : public CDocument
     friend class CGridCtrl2;
     friend class CDataFormatView;
     friend class CAerialView;
+    friend class CCompareView;
     friend class CHexExpr;
 
 protected: // create from serialization only
@@ -550,9 +551,10 @@ private:
     void loc_split(FILE_ADDRESS address, FILE_ADDRESS pos, ploc_t pl);
 
 	// We allow up to 4 external files to hold some of the file data (if too big for memory)
-	CFile64 *data_file_[4 /*doc_loc::max_data_files*/];     // Ptrs to files or NULL if nt (yet) used
+	CFile64 *data_file_[4 /*doc_loc::max_data_files*/];     // Ptrs to files or NULL if not (yet) used
 	CFile64 *data_file2_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background search thread
 	CFile64 *data_file3_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background aerial thread
+	CFile64 *data_file4_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background compare thread
 	BOOL temp_file_[4 /*doc_loc::max_data_files*/];         // Says if the file is temporary (should be deleted when doc closed)
 
     // The following are used for change tracking
@@ -613,16 +615,29 @@ public:
     FILE_ADDRESS base_addr_;    // Base address for alignment tests. It is not stored in app (with alignment_ et al as it is per doc - set from mark or SOF in active view)
 
     // Background scan (for aerial views etc)
+    void AddAerialView(CHexEditView *pview);
+    void RemoveAerialView();
     void CreateAerialThread();  // Create background thread which fills in the aerial view bitmap
     void KillAerialThread();    // Kill background thread ASAP
     void AerialChange(CHexEditView *pview = NULL);  // Signal bg thread to re-scan
     UINT RunAerialThread();     // Main func in bg thread
     bool AerialScanning();      // Are we currently scanning
 	void GetAerialBitmap();     // Check if bitmap has been allocated/is big enough and get it if not
-
-    void AddAerialView(CHexEditView *pview);
-    void RemoveAerialView();
  
+    // Compare stuff
+    void AddCompView(CHexEditView *pview);
+    void RemoveCompView();
+    void CreateCompThread();  // Create background thread which fills in the aerial view bitmap
+    void KillCompThread();    // Kill background thread ASAP
+	void StartComp();
+	__int64 CompareDifferences();
+	int CHexEditDoc::CompareProgress(__int64 &diffs);
+	FILE_ADDRESS CHexEditDoc::GetNextDiff(FILE_ADDRESS from);
+	FILE_ADDRESS CHexEditDoc::GetPrevDiff(FILE_ADDRESS from);
+
+    UINT RunCompThread();     // Main func in bg thread
+
+
     // DFFD stuff
     enum
     {
@@ -723,11 +738,26 @@ public:
 private:
     void HandleError(const char *mess);
     void FixFound(FILE_ADDRESS start, FILE_ADDRESS end, FILE_ADDRESS address, FILE_ADDRESS adjust);
-    int add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned char ind, CHexExpr &ee,
-                   FILE_ADDRESS &returned_size, int child_num = -1, bool ok_bitfield_at_end = false);
-    CHexExpr::value_t Evaluate(CString ss, CHexExpr &ee, int ref, int &ref_ac);
 
-    // Data for background searches
+	// Background (worker) threads are created for several purposes (bg searches, bg scan for aerial view, etc)
+	// When the thread starts up it goes into an initial wait state ready for it's event to be
+	// fired so it can start processing.  Once finished processing it does not terminate but goes
+	// back into a wait state ready to start more processing.
+	// Communication with threads is done by sending them commands (and firing their event when
+	// they are waiting).  Commands are:
+	//   RESTART = start or restart scanning
+	//   STOP = stop scanning and return to wait state
+	//   DIE = tell thread to terminate itself
+	//   NONE = set to this when there is no new command
+	// The thread can be in one of these states:
+	//   STARTING = thread is starting up and is yet to reach initial WAITING state
+	//   WAITING = blocked waiting for event to be triggered
+	//   SCANNING = currently processing (but regularly checking for a new command)
+	//   DYING = terminating after receiving DIE command
+    enum BG_COMMAND { NONE, RESTART, STOP, DIE };           // Commands sent to background thread
+    enum BG_STATE   { STARTING, WAITING, SCANNING, DYING }; // State of background thread
+
+    // -------------- Background searches (see BGsearch.cpp) --------------
     CWinThread *pthread2_;      // Ptr to background search thread or NULL if bg searches are off
     int priority_;              // Priority level to do bg search at
 
@@ -739,6 +769,7 @@ private:
                                 // threads or write (but not read) access from the primary thread. This
                                 // stops the bg thread accessing the data while it is being updated.
     CFile64 *pfile2_;           // We need a copy of file_ so we can access the same file for searching
+	// Also see data_file2_ (above)
     int thread_flag_;           // Signals thread to stop search (1) or even kill itself (-1)
 
     BOOL search_fin_;           // Flags that the bg search is finished and the view need updating
@@ -752,15 +783,16 @@ private:
     FILE_ADDRESS find_total_;   // Total number of bytes for background search (so that progress bar is drawn properly)
     double find_done_;          // This is how far the bg search has progressed in searching the top entry of to_search_ list
 
-    // Data for aerial views
+    // ------------- aerial view (see BGaerial.cpp) -------------------
     CWinThread *pthread3_;      // Ptr to thread or NULL
     CEvent start_aerial_event_; // Starts the thread going
-    enum { WAITING, SCANNING, DYING } aerial_state_;
-    enum { NONE, RESTART, STOP, DIE } aerial_command_;
+    enum BG_STATE   aerial_state_;
+    enum BG_COMMAND aerial_command_;
     // NOTE: kala must not be modified while the bg thread is running!
     COLORREF kala_[256];        // Colours from the first hex view to open the aerial view
 
     CFile64 *pfile3_;           // Using a copy of the file avoids synchronising access problems
+	// Also see data_file3_ (above)
     int av_count_;              // Number of aerial views of this document
     int bpe_;                   // Bytes per bitmap pixel (1 to 65536)
     FIBITMAP *dib_;             // The FreeImage bitmap
@@ -771,7 +803,20 @@ private:
     // be a multiple of 8 (so there are never "pad" bytes on the end of scan lines).
     enum { MAX_WIDTH = 2048 };
     enum { MAX_BMP  = 256*1024*1024 };      // Biggest bitmap size in bytes - should be made a user option sometime
-    // Stuff for handling data format (XML) files
+
+	// -------------- file compare (see BGCompare.cpp) -----------------
+    CWinThread *pthread4_;      // Ptr to thread or NULL
+    CEvent start_comp_event_; // Starts the thread going
+    CFile64 *pfile4_;           // Copy of the original file (avoids synchronising access)
+	// Also see data_file4_ (above)
+	CFile64 *pfile4_compare_;   // The file we are comparing with
+    int cv_count_;              // Number of aerial views of this document
+    BOOL comp_fin_;             // Flags that the bg scan is finished and the view needs updating
+
+    enum BG_STATE   comp_state_;
+    enum BG_COMMAND comp_command_;
+
+    // -------------- template (DFFD) stuff ----------------
     // Each df_size_ gives the size of a data field or whole array/structure.  If -ve take abs value.
     // Each df_address_ gives the location within the file.  If -1, all or part is not present.
     // The following situations are handled specially:
@@ -782,6 +827,10 @@ private:
     //    (sizes are normal except where EOF is used to find the size, in which case they are zero)
     // When displayed any element that has a -ve size or an address of -1 is shown in the tree on open -- this
     //   is used to show errors in the file (domain errors and premature EOF).
+
+    int add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned char ind, CHexExpr &ee,
+                   FILE_ADDRESS &returned_size, int child_num = -1, bool ok_bitfield_at_end = false);
+    CHexExpr::value_t Evaluate(CString ss, CHexExpr &ee, int ref, int &ref_ac);
 
     BOOL df_init_;
     CString df_mess_;                       // Error message

@@ -38,6 +38,7 @@ class CHexEditDoc;
 class CChildFrame;
 class CDataFormatView;
 class CAerialView;
+class CCompareView;
 
 // Different types of undo's handled by the view
 enum undo_type
@@ -192,6 +193,7 @@ class CHexEditView : public CScrView
     friend class CHexEditApp;
     friend class CDataFormatView;
     friend class CAerialView;
+    friend class CCompareView;
 	friend class CTipExpr;
 
 protected: // create from serialization only
@@ -203,8 +205,10 @@ public:
 	// Add "sub" view ptrs here, which points to the view in the tab or splitter (or NULL if not visible)
     CDataFormatView *pdfv_;           // template (tree) view
     CAerialView *pav_;
+	CCompareView *pcv_;
 	int split_width_d_;                 // width of dffd view when last in split window
 	int split_width_a_;                 // width of aerial view when last in split window
+	int split_width_c_;                 // width of compare view when last in split window
 
     enum { max_buf = 32767 };
     CHexEditDoc *GetDocument();
@@ -723,6 +727,12 @@ public:
     afx_msg void OnUpdateAerialHide(CCmdUI* pCmdUI);
     afx_msg void OnUpdateAerialSplit(CCmdUI* pCmdUI);
     afx_msg void OnUpdateAerialTab(CCmdUI* pCmdUI);
+    afx_msg void OnCompHide();
+    afx_msg void OnCompSplit();
+    afx_msg void OnCompTab();
+    afx_msg void OnUpdateCompHide(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateCompSplit(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateCompTab(CCmdUI* pCmdUI);
 
 	afx_msg void OnOptScheme();  // color scheme toolbar combo (ID_SCHEME)
 	afx_msg void OnSelScheme();
@@ -743,6 +753,7 @@ public:
     bool NoNavMovesDone() const { return nav_moves_ == 0; }  // any moves done since swapping to this view?
 	int TemplateViewType() const;
 	int AerialViewType() const;
+	int CompViewType() const;
     void AdjustColumns();
 
 private:
@@ -974,6 +985,8 @@ private:
     bool DoDffdSplit();
     bool DoAerialTab();
     bool DoAerialSplit();
+    bool DoCompTab();
+    bool DoCompSplit();
 };
 
 #ifndef _DEBUG  // debug version in HexEditView.cpp

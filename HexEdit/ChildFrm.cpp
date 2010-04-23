@@ -24,6 +24,7 @@
 #include "HexEditView.h"
 #include "DataFormatView.h"
 #include "AerialView.h"
+#include "CompareView.h"
 
 #include "ChildFrm.h"
 #include <afxpriv.h>            // for WM_HELPHITTEST
@@ -84,15 +85,15 @@ BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
     ASSERT(pContext != NULL && pContext->m_pNewViewClass != NULL);
 
-    if (!splitter_.CreateStatic(this, 1, 3))
+    if (!splitter_.CreateStatic(this, 1, 4))
     {
         AfxMessageBox("Failed to create splitter.");
         return FALSE;
     }
 
-	// We create with 3 columns then delete the last 2 so that max columns is 3.
-	// This allows to dynamically add 2 splits (in static splitter)
-    // The extra 2 split windows are for tree (template) view and aerial view (TBD)
+	// We create with 4 columns then delete all except one, which means only one (for
+	// hex view) is shown but 3 more can be added (template, aerial and compare views).
+	splitter_.DelColumn(3);
 	splitter_.DelColumn(2);
 	splitter_.DelColumn(1);
 
@@ -119,6 +120,8 @@ CHexEditView *CChildFrame::GetHexEditView() const
             return ((CDataFormatView *)pv)->phev_;
         else if (pv->IsKindOf(RUNTIME_CLASS(CAerialView)))
             return ((CAerialView *)pv)->phev_;
+        else if (pv->IsKindOf(RUNTIME_CLASS(CCompareView)))
+            return ((CCompareView *)pv)->phev_;
         else if (pv->IsKindOf(RUNTIME_CLASS(CHexTabView)))
         {
 			// Find the hex view (left-most tab)

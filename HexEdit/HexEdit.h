@@ -424,6 +424,8 @@ public:
     unsigned int aerialview_;           // 0=none, 2=tabbed views, else splitter view width
     unsigned long aerial_disp_state_;
 
+	unsigned int compview_;             // How is compare view window shown: 0=none, 2=tabbed views, else splitter view width
+
     // The following are options for the binary file format tree view display
     unsigned int dffdview_;             // 0=none, 2=tabbed views, else splitter view width
 
