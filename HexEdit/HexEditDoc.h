@@ -622,7 +622,7 @@ public:
     void AerialChange(CHexEditView *pview = NULL);  // Signal bg thread to re-scan
     UINT RunAerialThread();     // Main func in bg thread
     bool AerialScanning();      // Are we currently scanning
-	void GetAerialBitmap();     // Check if bitmap has been allocated/is big enough and get it if not
+	void GetAerialBitmap(int clear = 0xC0);     // Check if bitmap has been allocated/is big enough and get it if not
  
     // Compare stuff
     void AddCompView(CHexEditView *pview);
@@ -636,7 +636,6 @@ public:
 	FILE_ADDRESS CHexEditDoc::GetPrevDiff(FILE_ADDRESS from);
 
     UINT RunCompThread();     // Main func in bg thread
-
 
     // DFFD stuff
     enum

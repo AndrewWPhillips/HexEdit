@@ -505,7 +505,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
     // Rebuild the location list
     regenerate();
 
-    AerialChange();     // tell aeriel view thread to update
+    AerialChange();     // tell aerial view thread to update
 
     update_needed_ = true;
     send_change_hint(address);
@@ -760,7 +760,7 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
         regenerate();
     }
 
-    AerialChange();     // tell aeriel view thread to update
+    AerialChange();     // tell aerial view thread to update
 
     update_needed_ = true;
     send_change_hint(change_address);

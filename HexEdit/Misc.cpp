@@ -531,23 +531,17 @@ COLORREF add_contrast(COLORREF col, COLORREF bg_col)
     int bg_hue, bg_luminance, bg_saturation;
     get_hls(bg_col, bg_hue, bg_luminance, bg_saturation);
     
-    int diff = bg_luminance - luminance;
-
-	if (luminance < bg_luminance && luminance > bg_luminance - 25)
+	if (bg_luminance >= 50 && luminance > bg_luminance - 25)
 	{
 		// Decrease luminance to increase contrast
-		luminance -= 25;
+		luminance = bg_luminance - 25;
 	}
-	else if (luminance > bg_luminance && luminance < bg_luminance + 25)
+	else if (bg_luminance < 50 && luminance < bg_luminance + 25)
 	{
 		// Increase luminance to increase contrast
-		luminance += 25;
+		luminance = bg_luminance + 25;
 	}
-	
-    if (luminance > 100)
-        luminance = 100;
-    else if (luminance < 0)
-        luminance = 0;
+	assert(luminance <= 100 && luminance >= 0);
     
     // Make colour the same shade as col but less "bright"
     return get_rgb(hue, luminance, saturation);
@@ -1371,7 +1365,7 @@ CString FileErrorMessage(const CFileException *fe, UINT mode /*=CFile::modeRead|
                 ASSERT(0);                                                      // There should be an error for this function to be called
                 retval += "Apparently there was no error!";
                 break;
-#if _MSC_VER < 1500
+#if _MSC_VER < 1400  // generic is now a C++ reserved word
         case CFileException::generic:
 #else
         case CFileException::genericException:
