@@ -12,6 +12,10 @@ public:
 	CHexPaneDialog();
 	virtual ~CHexPaneDialog() { }
 
+	// Overrides
+	// This stops buttons being disabled because they have no command handler
+	virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler) { }
+
 	void ShowAndUnroll();
 	void Float();
 	void Hide() { ShowPane(FALSE, FALSE, FALSE); }

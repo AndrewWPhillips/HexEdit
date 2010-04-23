@@ -227,6 +227,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         ON_UPDATE_COMMAND_UI(ID_NAV_FORW, OnUpdateNavigateForwards)
         ON_COMMAND_RANGE(ID_NAV_FORW_FIRST, ID_NAV_FORW_FIRST+NAV_RESERVED-1, OnNavForw)
 
+		ON_REGISTERED_MESSAGE(AFX_WM_ON_GET_TAB_TOOLTIP, OnGetTabToolTip)
 //        ON_MESSAGE(WM_USER, OnReturn)
 
         ON_COMMAND(ID_TEST, OnTest)
@@ -305,13 +306,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		// set the visual manager and style based on persisted value
 		OnApplicationLook(theApp.m_nAppLook);
 
-		CMDITabInfo mdiTabParams;
-		mdiTabParams.m_style = CMFCTabCtrl::STYLE_3D_ONENOTE; // other styles available...
-		mdiTabParams.m_bActiveTabCloseButton = TRUE;      // set to FALSE to place close button at right of tab area
-		mdiTabParams.m_bTabIcons = FALSE;    // set to TRUE to enable document icons on MDI taba
-		mdiTabParams.m_bAutoColor = TRUE;    // set to FALSE to disable auto-coloring of MDI tabs
-		mdiTabParams.m_bDocumentMenu = TRUE; // enable the document menu at the right edge of the tab area
-		EnableMDITabbedGroups(TRUE, mdiTabParams);
+		if (theApp.mditabs_)
+		{
+			EnableMDITabs(TRUE, theApp.tabicons_,
+						  theApp.tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP,
+						  0, CMFCTabCtrl::STYLE_3D_ONENOTE, 1);
+			// TODO - replace with call to EnableMDITabbedGroups? xxx
+		}
 
         EnableDocking(CBRS_ALIGN_ANY);
 
@@ -786,15 +787,6 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
             cs.y = top;
         }
     }
-
-#if 0 // xxx fix for MFC9
-    if (aa->mditabs_)
-    {
-        EnableMDITabs(TRUE, aa->tabicons_,
-            aa->tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP);
-    }
-#endif
-
     return retval;
 }
 
@@ -1383,6 +1375,25 @@ void CMainFrame::OnNavForw(UINT nID)
 {
 	ASSERT(nID - ID_NAV_FORW_FIRST < NAV_RESERVED);
 	theApp.navman_.GoForw(nID - ID_NAV_FORW_FIRST + 1);
+}
+
+LRESULT CMainFrame::OnGetTabToolTip(WPARAM /*wp*/, LPARAM lp)
+{
+	CMFCTabToolTipInfo * pInfo = (CMFCTabToolTipInfo *)lp;
+	CFrameWnd * pFrame;
+	CDocument * pDoc;
+
+	if (pInfo == NULL ||
+		!pInfo->m_pTabWnd->IsMDITab() ||
+		(pFrame = DYNAMIC_DOWNCAST(CFrameWnd, pInfo->m_pTabWnd->GetTabWnd(pInfo->m_nTabIndex))) == NULL ||
+		(pDoc = pFrame->GetActiveDocument()) == NULL
+	   )
+	{
+		return 0;
+	}
+
+	pInfo->m_strText = pDoc->GetPathName();
+	return 0;
 }
 
 void CMainFrame::OnDockableToggle()

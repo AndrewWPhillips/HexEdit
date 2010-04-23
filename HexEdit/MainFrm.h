@@ -21,6 +21,7 @@
 
 #include "Dialog.h"
 #include "Control.h"
+#include "FindPane.h"
 #include "FindDlg.h"
 #include "BookmarkDlg.h"
 #include "Prop.h"
@@ -109,8 +110,9 @@ public:
 
 	// Modeless dialogs in panes
     CBookmarkDlg m_wndBookmarks;        // Bookmarks dialog/bar
-
 	CCalcDlg m_wndCalc;                 // Calculator dialog/bar
+	CFindPane m_wndFind2;
+
 	CFindWnd m_wndFind;                 // Find property sheet/bar
 #ifdef EXPLORER_WND
     // Should we just have one of these or allow user to create many???
@@ -257,6 +259,8 @@ public:
 
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
+
+	afx_msg LRESULT CMainFrame::OnGetTabToolTip(WPARAM, LPARAM lp);
 
 	DECLARE_MESSAGE_MAP()
 
