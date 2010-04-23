@@ -173,6 +173,8 @@ private:
     tok_t prec_mul(value_t &val, CString &vname);
     tok_t prec_prim(value_t &val, CString &vname);
 
+	tok_t get_var(value_t &retval, CString &vname);
+
     bool error(expr_eval::tok_t tt, const char *mess);
     tok_t get_next();           // Get next token
     void skip_ws();             // Skip over white space characters

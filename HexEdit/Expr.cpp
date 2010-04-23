@@ -860,7 +860,36 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             strcpy(error_buf_, "Symbol expected");
             return TOK_NONE;
         }
-        next_tok = get_next();
+		if (val.typ == TYPE_NONE)
+		{
+			// Not found in derived class so check our global vars (var_)
+			CString ss(psymbol_);
+			next_tok = get_var(val, ss);
+			switch (val.typ)
+			{
+			case TYPE_INT:
+				sym_size = sizeof(val.int64);
+				break;
+			case TYPE_BOOLEAN:
+				sym_size = sizeof(val.boolean);
+				break;
+			case TYPE_REAL:
+				sym_size = sizeof(val.real64);
+				break;
+			case TYPE_STRING:
+				sym_size = val.pstr->GetLength() * 2;  // Unicode chars are 2 bytes
+				break;
+			case TYPE_DATE:
+				sym_size = sizeof(val.date);
+				break;
+			default:
+				sym_size = 0;
+				val.typ = TYPE_NONE;
+				break;
+			}
+		}
+		else
+	        next_tok = get_next();
 
         while (next_tok == TOK_DOT || next_tok == TOK_LBRA)
         {
@@ -952,7 +981,15 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             tmp.typ = TYPE_NONE;
             tmp.int64 = ref_;
             val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address, sym_str);
-            next_tok = get_next();
+			if (val.typ == TYPE_NONE)
+			{
+				// Not found in derived class so check our global vars (var_)
+				CString ss(psymbol_);
+				next_tok = get_var(val, ss);
+			}
+			else
+				next_tok = get_next();
+
             val.boolean = val.typ != TYPE_NONE;
             val.typ = TYPE_BOOLEAN;
             val.error = false;      // don't care about errors
@@ -990,7 +1027,37 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
         tmp.typ = TYPE_NONE;
         tmp.int64 = ref_;
         val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address, sym_str);
-        next_tok = get_next();
+		if (val.typ == TYPE_NONE)
+		{
+			// Not found in derived class so check our global vars (var_)
+			char buf[32];
+			CString ss(psymbol_);
+			next_tok = get_var(val, ss);
+
+			switch (val.typ)
+			{
+			case TYPE_INT:
+				sprintf(buf, "%I64d", val.int64);
+				sym_str = buf;
+				break;
+			case TYPE_BOOLEAN:
+				sym_str = val.boolean ? "TRUE" : "FALSE";
+				break;
+			case TYPE_REAL:
+				sym_str.Format("%g", val.real64);
+				break;
+			case TYPE_STRING:
+				sym_str = CString(*(val.pstr));  // xxx sym_str should be Unicode
+				break;
+			// xxx handle TYPE_DATE?
+			default:
+				sym_str.Empty();
+				val.typ = TYPE_NONE;
+				break;
+			}
+		}
+		else
+	        next_tok = get_next();
         while (next_tok == TOK_DOT || next_tok == TOK_LBRA)
         {
             switch (next_tok)
@@ -2675,58 +2742,10 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 			val = pv->second;
 		}
 		else if (val = find_symbol(psymbol_, tmp, 0, pac_, sym_size, sym_address, sym_str),
-			     val.typ == TYPE_NONE)
+			     val.typ != TYPE_NONE)
         {
-            // Symbol not a file (template) field so check if it is a global array
-            next_tok = get_next();
-            while (next_tok == TOK_LBRA)   // for each index [1][2]...
-            {
-                if (error(next_tok = prec_lowest(tmp), "Expected array index"))
-                    return TOK_NONE;
-
-                if (next_tok != TOK_RBRA)
-                {
-                    strcpy(error_buf_, "Closing bracket (]) expected");
-                    return TOK_NONE;
-                }
-                else if (tmp.typ != TYPE_INT)
-                {
-                    strcpy(error_buf_, "Array index must be an integer");
-                    return TOK_NONE;
-                }
-
-				// Check if using index on a string
-				vname.MakeUpper();
-				if ((pv = var_.find(vname)) != var_.end() && pv->second.typ == TYPE_STRING)
-				{
-					if (tmp.int64 < 0 || tmp.int64 >= pv->second.pstr->GetLength())
-					{
-						strcpy(error_buf_, "Index on string out of bounds");
-						return TOK_NONE;
-					}
-					val.int64 = (*pv->second.pstr)[int(tmp.int64)];
-					val.typ = TYPE_INT;
-					return get_next();
-				}
-				else
-				{
-					// Add index to vname
-					char buf[32];
-					sprintf(buf, "%I64d", tmp.int64);
-					vname += CString('[') + buf + CString(']');
-				}
-
-                next_tok = get_next();
-            }
-
-            // Check if it already has a value
-            vname.MakeUpper();
-		    if ((pv = var_.find(vname)) != var_.end())
-                val = pv->second;
-        }
-        else
-        {
-			// The symbol was a field from the file (template)
+			// The symbol was located in derived class (eg a field from the template)
+			// Now check if it is an array [] or struct .
             next_tok = get_next();
             while (next_tok == TOK_DOT || next_tok == TOK_LBRA)
             {
@@ -2819,6 +2838,11 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
                 return TOK_NONE;
             }
         }
+		else
+        {
+			// Check our assignable variables (includes arrays)
+			next_tok = get_var(val, vname);
+        }
         // At this point val.error may be set and we leave it on to
         // propagate through the evaluations
         return next_tok;
@@ -2884,6 +2908,61 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
     }
     ASSERT(0);
     return TOK_NONE;
+}
+
+expr_eval::tok_t expr_eval::get_var(expr_eval::value_t & retval, CString &vname)
+{
+    value_t tmp;
+	std::map<CString, value_t>::const_iterator pv;
+
+	retval.typ = TYPE_NONE;
+    tok_t next_tok = get_next();
+    while (next_tok == TOK_LBRA)   // for each index [1][2]...
+    {
+        if (error(next_tok = prec_lowest(tmp), "Expected array index"))
+			return TOK_NONE;
+
+        if (next_tok != TOK_RBRA)
+        {
+            strcpy(error_buf_, "Closing bracket (]) expected");
+			return TOK_NONE;
+        }
+        else if (tmp.typ != TYPE_INT)
+        {
+            strcpy(error_buf_, "Array index must be an integer");
+			return TOK_NONE;
+        }
+
+		// Check if using index on a string
+		vname.MakeUpper();
+		if ((pv = var_.find(vname)) != var_.end() && pv->second.typ == TYPE_STRING)
+		{
+			if (tmp.int64 < 0 || tmp.int64 >= pv->second.pstr->GetLength())
+			{
+				strcpy(error_buf_, "Index on string out of bounds");
+				return TOK_NONE;
+			}
+			retval.int64 = (*pv->second.pstr)[int(tmp.int64)];
+			retval.typ = TYPE_INT;
+			return get_next();
+		}
+		else
+		{
+			// Add index to vname
+			char buf[32];
+			sprintf(buf, "%I64d", tmp.int64);
+			vname += CString('[') + buf + CString(']');
+		}
+
+        next_tok = get_next();
+    }
+
+    // Check if it already has a value
+    vname.MakeUpper();
+    if ((pv = var_.find(vname)) != var_.end())
+        retval = pv->second;
+
+	return next_tok;
 }
 
 DATE expr_eval::get_date(const char * ss)
