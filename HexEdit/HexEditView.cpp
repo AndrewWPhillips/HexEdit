@@ -2017,6 +2017,7 @@ void CHexEditView::OnDraw(CDC* pDC)
     int line_height, char_width, char_width_w;  // Text sizes
 
     ASSERT(offset_ >= 0 && offset_ < rowsize_);
+	if (offset_ >= rowsize_) offset_ = 0; // xxx kludge - need to track down why offset is wrong
     ASSERT(rowsize_ > 0 && rowsize_ <= max_buf);
     ASSERT(group_by_ > 0);
 
@@ -3681,6 +3682,8 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
                            int draw_height /*=-1*/)
 {
     if (end_addr < start_addr) return;
+
+	if (draw_height > -1 && draw_height < 2) draw_height = 2;  // make it at least 2 pixels (1 does not draw properly)
 
 #ifdef USE_ROP2
     int saved_rop = pDC->SetROP2(R2_NOTXORPEN);
