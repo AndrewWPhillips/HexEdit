@@ -16,7 +16,6 @@
 // implied warranty. The author accepts no liability for any damage
 // or loss of business that this product may cause.
 //
-
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef HEXEDITVIEW_INCLUDED
@@ -757,6 +756,7 @@ public:
     void AdjustColumns();
 
 private:
+
     enum { max_font_size = 100 };
 #ifdef _DEBUG
     // Use smaller buffers to make it more likely to catch certain types of bugs
