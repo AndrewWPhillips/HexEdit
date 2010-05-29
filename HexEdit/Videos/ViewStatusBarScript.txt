@@ -1,0 +1,108 @@
+http://www.youtube.com/watch?v=XoTy4wZ22EE
+
+----------------
+open HexEdit.exe - reset file options
+turn on autofit, ASCII mode
+open edit bar
+turn on background searches
+----------------
+ " This is a quick video on the HexEdit status bar which is this bit at the bottom of
+   the window.  First you can turn off the status bar but I recommend you always
+   leave it visible as it provides a lot of functionality for very little space.
+- toggle it with View/Status Bar
+
+ " On the left side of the status bar are shown information messages and sometimes
+   a progress bar for long operations.  Also as you move the mouse over a menu item
+   or toolbar button a description of the command is displayed.
+- move mouse over menu items and toolbar
+
+ " Next to that are several panels or "panes".  The first pane next to the message area
+   with the binoculars icon displays the number of search occurrences.
+- search for "program"
+- ZOOM on the status bar
+
+ " A background search in a large file may take some time so the pane also shows a 
+   small progress bar when the search is in progress.  It should take a while to search
+   for a single null byte so I'll try that to show the progress bar.
+- search for "00"
+
+ " Finally, if background searches are disabled then this just shows the word "OFF".
+- open options dialog (Workspace/Edit) and turn searches off
+- ZOOM on the status bar
+
+~~~~1
+
+ " To see the other panes in this small area I need to expand the window.
+   Typically you can see all the panes as most screens are more than wide
+   enough.  However for YouTube I have to stick to a video width of 600 pixels.
+- turn on autofit and widen window on left
+
+ " The next pane shows information about the byte at the cursor position.  This changes
+   as you move around the file. It shows the values as hex, decimal, octal and binary and
+   the current character.
+- move the cursor around
+
+ " Control characters like this Ctrl+A are shown like this.
+- move to 01 byte
+
+ " Of course, in EBCDIC mode it shows EBCDIC characters.
+- turn on EBCDIC and move to EBCDIC text character
+
+ " You can see similar information but a lot more of it in the Properties dialog
+   which you can simply bring up by double-clicking this pane.
+
+~~~~2
+
+ " The next 2 panes are the distance to mark panes.  I will explain the mark later but
+   in brief you can place the mark on any byte of the file by double-clicking on it.
+- set the mark
+
+ " Then as you move the cursor around, these panes show the distance to the mark
+   in hex and decimal.
+- move the caret around including before the mark
+
+ " Double-clicking the hex pane bring up the calculator in hex mode so that you
+   calculate a new address to jump to.  This is just like invoking the Edit/Goto command.
+- dclick hex pane
+
+ " Similarly, double-clicking the decimal pane brings up the calculator in decimal mode.
+
+~~~~3
+ " The next pane just shows the file length in hex or decimal depending on how addresses
+   are shown.
+- toggle hex/decimal addresses and ZOOM
+
+ " If you have inserted or deleted bytes in the file this also shows the difference in
+   length of the file in memory with the file that is on disk.
+- insert and then delete some byte
+- ZOOM on the pane
+
+ " These last panes show the status of some on/off settings.
+   You can generally toggle these by double-clicking their pane.
+
+ " This one toggles between big and little-endian byte order.  This is only used when
+   multi-byte values are written to the file, for example using commands on the Operations
+   menu or by using one of the "Store @" buttons in the calculator.
+- toggle BE/LE and ZOOM
+ " Because Windows machines usually use little-endian byte order, the BE for big-endain is
+   displayed in red to be noticeable.
+
+~~~~4
+
+ " The RO/RW panes says whether you can edit the file in the window. RO=readonly RW=read/write
+- dclick a few times - leave in RW mode
+
+ " The OVR/INS says whether the window is in overtype or insert mode.  The default is OVR
+   mode as generally you don't want to insert or delete bytes in binary files.
+   You can toggle this using the INS key or by double-clicking the pane.
+- dclick a few times
+
+ " The REC pane say whether you are recording a keystroke macro.
+
+ " The final CAP and NUM panes say whether caps-lock and num-lock are on.
+   Its probably easier to look at your keyboard lights for this though.
+
+ " One final thing to note is that the status bar has its own context menu.
+   Many parts of the HexEdit display have associated popup menus that appear
+   when you right click them.  You can add commands to the status bar context
+   menu.

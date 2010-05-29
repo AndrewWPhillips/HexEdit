@@ -1,0 +1,151 @@
+Open _ani.xml
+Turn off change tracking
+Turn off Edit bar - make sure chnage tracking button visible at right end.
+Turn off tab icons
+
+-----------------------
+
+ " Eventually you'll probably tire of just viewing binary files and
+   actually want to make some changes.
+
+ " First you need to open a file without "read only" selected
+- open file open dialog
+
+ " You also would normally not open the file shareable unless you need to.
+   That is, only if another program needs to access the file while you are changing it.
+- open _ani.xml
+
+ " Even though we did not open the file read-only we can still disallow editing
+   within the window by turning off allowing changes using this button (std bar).
+- turn off "allow editing"
+
+ " This is a per window setting. We can have more than one window open
+   on the same file each with different settings.
+- open another window and turn on "allow editing"
+- tile vertically and switch between windows
+
+ " If you try to edit in a read-only window HexEdit asks you if you want to allow it
+- show that you can't edit in a read-only window
+- show that you can edit in the other window
+
+~~~~ 1
+
+ " The other important mode when you are editing is insert mode.
+   Most binary files will be completely messed up if you just insert or delete
+   bytes anywhere within the file, so HexEdit defaults to overtype mode.
+   But HexEdit lets you use Insert mode what you are doing.
+   You can toggle between insert and overtype mode using the INS key.
+
+ " In overtype mode any changes you make overwrite the current data.
+   If you backspace the bytes are filled with nulls (or spaces in text area).
+near right side add some bytes, then backspace (00 in hex area)
+switch to char area and backspace (20
+
+ " These modes are always displayed in the status bar using the RO/RW and INS/OVR panes.
+   Because I have made the window small for this demo you can't see the panes
+   but if I make the window wider ...
+   In fact you can toggle these modes by double clicking the pane.
+demo
+
+~~~~ 2
+
+ " There is also a toolbar called the Edit bar which has a few relevant buttons.
+turn on Edit bar
+
+ " I will go into most of these things in more detail in later videos, but we
+   may as well quickly look at the edit bar buttons now.
+
+ " First this is the search tool and to either side of it are buttons to repeat the
+   last search forward or backward.
+
+ " The search tool lets you quickly search for bytes as hex. For example, if I type
+   in 0D 0A I can serach for the next occurrence of Carriage-return followed by Line-feed.
+- search for 0d 0a
+
+ " You can also search for text if you precede the search with an equals sign
+- search for "for
+
+ " If you want a case-insensitive search precede if with a tilde (that
+   squiggly character at the top-left of your keyboard).
+- search for ~for to find "For"
+
+ " There is also a history of your recent searches in the drop list
+
+ " You can see that HexEdit has automatically shown all the occurrences
+   of the search string in the file with a green bg. This toolbar pane in fact shows that there
+   are 73 occurrences in the whole file.
+- show search occ. pane
+
+ " These are a bit distracting at the moment so I will just search for something that will
+   not be found to get rid of them.
+- search for "xxxxx"
+
+~~~~ 3
+
+ " Next on the Edit bar we have the hex and decimal jump tools.  You can just enter 
+   a value into them and press Enter to jump straight to that address.
+- enter "3F" in hex jump tool and press Enter
+
+ " One useful features of the jump tools is that as you move the cursor around they
+   show the current cursor address.
+- move cursor around
+
+ " Another cool feature is that as you enter a value into one tool the corresponding
+   hex or decimal value is shown in the other tool.
+- Enter "FFF" into hex jump tool
+
+ " In fact you can enter any expression as used in the C language including assigning to variables.
+- Enter "Root=1<<3"
+
+ "  So if I assign the value 8 to root I can use that in a calculation
+- enter in decimal jump tool: root*2 + 10
+
+ " Next we have the mark buttons that allow you to mark a position and return to it
+demo mark pos and return
+
+ " You can also simply set the mark by double-clicking or right-clicking in the window
+   and selecting "Mark Position"
+
+ " The mark actually has a lot of other uses which I will talk about in the next video.
+
+ " Next to that we have buttons that allow you to highlight bytes and delete the highlights.
+   I have already talked about the highlighter in an earlier video.
+
+~~~~4
+
+ " Finally this last button turns on change tracking.  As you edit the file this will
+   show you where bytes have been chnaged and even where they have been inserted and deleted.
+   Changed bytes are underlined in the current change-tracking colour (which is red by default).
+turn on change tracking
+make sure INS mode is off and change some bytes
+
+ " It also shows where bytes have been inserted or deleted if insert mode is on.
+turn on INS mode
+insert some bytes
+select some other bytes with the mouse and delete them
+
+ " Note that change tracking does not keep track of how the changes were made.  It just shows how
+   the changes in memory differ from the file in disk.  So if you delete 3 byte then insert 3
+   other bytes at the same location then this is equivalent to replacing the 3 bytes.
+select 3 bytes and delete them then enter 3 new bytes
+
+~~~~ 5
+
+ " A couple more quick things are first this button with the clock (Keep Same Time on std bar)
+   When this is turned on when you save your changes the file modification and access times are
+   restored to the same times as before you edited the file.  This is useful in some situations
+   where you don't want other software or people to know that a file has been changed.
+
+ " Also on the status bar button is the endian status.  This is only important if you use the
+   calculator or commands on the operations menu to modify data.  On Windows machines most
+   things are little endian which is the default.  This is why in big-endian mode the BE letters
+   are in red.
+* widen window, zoom and toggle LE/BE
+
+
+ " There is a lot more to editing files than this.  For example, we have not even talked about
+   selecting with the mouse or keyboard anc copying and pasting to the clipboard which we will
+   cover shortly.
+
+
+

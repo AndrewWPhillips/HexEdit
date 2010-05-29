@@ -1,0 +1,104 @@
+http://www.youtube.com/watch?v=qKAKiXkF6yU
+
+open _bmp.xml
+position cursor/mark at start
+reset display: font, char set, colour scheme ...
+
+---------------------------
+  " In this video we will look at some more display options.
+
+* Font
+  " First you can set the display font.
+- select View/Font
+
+  " I prefer good old Courier but there are
+    advantages to a scaleable font like a TrueType font.
+    You can choose any font you want but its probably best to pick a
+    fixed width or non-proportional font like "Lucida Console"
+- Select Lucida Console 12
+
+  " You can also quickly change the font size using these buttons
+- demo font inc/dec buttons
+  " Or by holding down the control key and using your mouse wheel.
+    The control mouse wheel is used for zoom in many programs nowadays
+    like Word, Internet Explorer, etc but HexEdit has always had this.
+- demo Ctrl+wheel
+
+~~~~ 1
+
+* Character set
+ " This drop down list allows you to select the character set used in the character area.
+- mouse over char set drop down
+   I could spend half an hour explaining characters sets but basically
+   they say the character drawn when you send a byte to the screen or printer.
+- switch to ANSI
+
+ " In brief ASCII is or was just about the only character set used for a
+   long time.  EBCDIC was the character set used on many larger IBM computers
+   and is still used in a lot of old file formats.  Generally in Windows we
+   use an ANSI character set which is an extension to ASCII.
+- switch to EBCDIC
+ " The IBM/OEM option is not so much a character set but refers to the 256
+   graphics symbols used in the original IBM PC and OEM clones.  It's generally
+   only used in MSDOS programs, mainly games.
+- switch to IBM/OEM
+
+~~~~ 2
+
+ " One thing to watch out for is that under Windows there are a separate group
+   of fonts for this character set so HexEdit has to keep track of a separate
+   font for when you are displaying the IBM/OEM character set.
+- Open Font dialog again
+- switch to char mode
+
+ " I guess I should mention that nowadays Unicode is gaining in popularity
+   but Unicode uses 16-bits to store all it characters and since HexEdit is byte
+   oriented it does not display Unicode in the character area, though it is
+   extensively supported in other areas such as searches, template strings etc.
+- switch to ASCII char set
+
+* colour scheme
+ " You also might have noticed that when we changed between character sets
+   the colours of the display changed.  There are 4 automatic colour schemes
+   which are switched between so you can quickly recognise what character
+   set you are using.
+- switch to ANSI, EBCDIC
+- switch back to hex+char areas
+~~~~~ 3
+
+ " You can customize these colour schemes or even create your own.
+   You can even have a different colour scheme for each type of file
+   based on file extension.
+
+ " It is very easy to switch between colour schemes by simply using this drop down list.
+   But to create and modify colour schemes you need to use the Options dialog
+   which I will talk about later.
+- switch to black and white colour scheme
+- switch back to ASCII char set
+~~~~ 4
+
+ " Finally you can also change how control characters are displayed when in ASCII or ANSI mode.
+   Most hex editors display control chars just as dots in the char area.
+- demo control char drop down
+- switch back to ASCII colour scheme
+
+ " Since this is a text file the only control characters are carriage return and line feed.
+   The "alpha" option just says to display an alphabetic character - so carriage return
+   which is control-M is displayed as an M
+
+- red, green in ASCII scheme
+
+ " The C/C++ option displays characters as their escape sequence so
+   carriage return which is backslash R is shown as an 'r'.
+
+ " You can distinguish control charcaters from normal ones by their colour if the colour scheme
+   says to display control characters in a different colour.
+
+ " I'll just add some more control charcaters to the file.  CR and LF are control chars
+   that appear in text files so they are green is this colour scheme.  Other control chars
+   are red
+- add some control chars
+
+ " In the next video we will look how to change the format of the display such as columns.
+
+

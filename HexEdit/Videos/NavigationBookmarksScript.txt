@@ -1,0 +1,134 @@
+Change date and add some old bookmarks.
+Change date back and add bookmark in temp file then delate it.
+Make sure bookmarks dialog is hidden and accessed+modified cols turned off.
+
+
+---------
+
+ " Bookmarks are a simple but very useful way to remember a position to return to later.
+   The quick way to add a bookmark is to press Ctrl+F2 which creates an unnamed bookmark.
+use Ctrl+F2 to add at least 3 bookmarks
+
+ " Actually, this is more of a toggle - if you are already on top of a bookmark then it is deleted.
+Ctrl+F2 a few times to add/delete
+
+ " You can quickly step through all bookmarks in a file using F2 to move forward and SF2 to go backward.
+F2 and SF2
+
+ " There are also several toolbar buttons that are used for bookmarks which appear on the Navigation bar.
+turn on nav bar
+
+ " This drop list has buttons for the next and previous bookmarks that we saw above.
+open drop list
+
+ " This button will remove all bookmarks in the current file while this one will hide bookmarks
+   while not actually deleting them.
+hide bookmarks then show again
+
+~~~~1
+
+ " Next to that is the bookmark tool which displays a drop list of all the bookmarks in the current file.
+   Note that as you move the cursor through the file it shows the nearest bookmark above the cursor posn.
+demo moving caret and bookmark name changing
+
+ " You can also quickly jump to any bookmark in the file by selecting it from the drop list
+demo jump to bookmarks
+
+ " You will have noticed that the unnamed bookmarks we created using Ctrl+F2 actually do have a name 
+   that starts with "unnamed".
+
+ " A more powerful way to work with bookmarks is to use the Bookmarks dialog.
+   For example, you can give any name to a bookmark you create.
+open bookmarks dialog
+
+ " The bookmarks dialog is a modeless dialog so you can leave it open.
+   It moves out of the way of the cursor when floating.
+demo moving out of the way while adding a few more bookmarks
+
+ " Like all modeless dialogs you can also dock it to the side of the HexEdit window or roll it up.
+demo roll up then dock on left
+
+ " To add a named bookmark just enter a name and click the Add button.
+demo adding a few named bookmarks
+
+~~~~2
+
+ " The dialog has several columns which you can turn on and off using the list that appears when
+   you right-click on any column header.
+Turn on/off a few columns
+
+ " The name column is just the name you gave to the bookmark, while the file column has the name of the
+   file and the folder has the location of the file.
+
+ " The Modified column says when you created or moved the bookmark.  The Accessed column says when you last
+   jumped to that bookmark.  You can also sort on any column by clicking its header.
+turn on last-accessed column and resize as column
+
+ " You can also delete one ore more bookmarks using the Delete button.  For example, say you want to delete
+   all bookmarks you haven't used this year.  Just sort by last accessed time and select the old ones
+   and click the Delete button.
+demo deleting
+
+ " Be careful when deleting bookmarks as once they are gone you can't get them back.
+
+ " This reminds that I should explain that bookmarks are kept in a global list.  They are not associated
+   with the file as other information (such as highlights) is.  So when you delete a bookmark you
+   cannot undo the deletion.
+
+ " However, there are advantages to this system.  You can jump to a bookmark even if the file is not open.
+   This bookmark is in a file that is not open.  If I double-click it (which is a shortcut for jumping
+   to a bookmark) then the file is opened automatically bfore the cursor is positioned at the bookmark.
+close file then go to one of its bookmarks
+
+~~~~3
+
+ " Finally I should explain the Validate button.  Since a bookmark is stored separately from the file
+   that it points to it is possible to have bookmarks pointing to files that now longer exist.
+   Or you could have a bookmark pointed past the end of file for a file that has been shortened.
+   The Validate button checks for these and deletes or moves them.
+
+ " You may have bookmarks to files that are on a network or removeable media.  You may not want to remove
+   these bookmarks when you validate the bookmarks since the files may come back later.
+   This checkbox allows you to preserve bookmarks on network or removeable drives.
+
+ " The power of bookmarks also comes from how it is integrated with other parts of HexEdit.
+   For example, when you do a search using the Find dialog you can just ask that all
+   found occurrences be bookmarked for later reference.
+
+~~~~ 4
+
+ " One thing you should watch out for is that you can't add a bookmark to a new file until it
+   has been written to disk. If I create a new file then you can see that the Add button
+   in the bookmarks dialog is disabled.
+demo
+
+ " Bookmarks are stored in a file on disk and every bookmark needs a filename.
+   If you share your computer and are worried about privacy there is an option to delete
+   all bookmarks or automatically delete them when you close the program.
+   All this does is delete the bookmarks file from disk.
+demo
+
+ " Another option is if you hold the mouse over a bookmark you can see a tip window that shows its name.
+   That is, as long as you have the bookmarks checkbox on in the Info Tips options page
+demo
+
+ " There is also a context menu for bookmarks that appears when you right click any bookmark.
+   You can customize this menu just like the other context menus.
+demo
+
+- bm colours (scheme)
+
+~~~~ 5
+
+ " You can also use bookmarks in the jump tools
+demo
+
+- expressions
+  - don't use names that could be hex number
+  - jump tools
+  - calculator
+  - use with macros
+  - same bookmark name in different files
+
+- aerial view
+~~~~6

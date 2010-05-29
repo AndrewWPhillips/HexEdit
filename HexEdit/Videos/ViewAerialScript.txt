@@ -1,0 +1,168 @@
+
+
+
+--------------------------------
+open _exe.xml
+make sure aerial view is off
+clear calculator, set to 32-bit, decimal
+reset rainbow colour scheme - remove nul, adjust range1 and range12, SAVE
+make sure autocroll accel is fast
+turn off highlight for marching ants
+turn off edit bar
+--------------------------------
+ " Aerial View is a new feature in HexEdit 3.5.  It allows you to get
+   a high-level view of a file sort of like an aerial photograph.
+- turn on aerial view in splitter
+
+ " This is the aerial view of _exe.xml which is a text file.
+   Each byte of the file is represented by one pixel in the aerial view.
+- widen the aerial view to see all the file
+ " If I just widen the aerial view a little you can see the whole file at
+   once - this file is about 80,000 bytes which is not exactly small.
+
+ " Each square or pixel of the aerial view represents one byte of the source file.
+   Because the default colour scheme is "ASCII default" you can see that this file
+   just contains text (the black areas) plus some CRs, LFs & tabs (green dots)
+   If we change to a different colour scheme the aerial view changes to match.
+- switch to EBCDIC default colour scheme
+
+ " Typically you would use aerial view to investigate a binary file
+   about which nothing is known.  I'll just create a random file of
+   10 million bytes.
+- create a 10 MByte file with random data, prompt for disk now
+
+~~~~1
+
+ " We'll set the colour scheme first to save time.  For unknown data the 
+   best colour scheme to use is probably "rainbow".
+- switch to rainbow colour scheme
+
+ " For a large file you might want to open the aerial view in a tabbed
+   window to see as much as possible.
+- open aerial view in tabbed window
+
+ " This is the typical look for compressed or encrypted data or any type
+   of seemingly random bytes.
+- switch to hex view tab
+
+ " Say we are interested in finding bytes with all bits on and all bits off
+   I'll add a block of data with all bits off near the start of file.
+- make selection about 10% through the file
+ " I can just use the assign byte command which takes the current calculator
+   value as long as we are in 8-bit mode
+- open calc, switch to 8-bit, CE
+- Operations/Assign/Byte
+
+~~~~2
+
+ " And a block of data with FFs near the end of file
+- make selection near the END of file
+- open calc switch to hex mode, and enter FF
+- Operations/Assign/Byte
+
+ " And just for good measure I'll add a block of text in the middle
+- Edit/Insert - size:20000, string:this is a test, ASCII
+
+ " Now since we are particularly interested in NUL and FF bytes I'll tweak
+   the colour scheme to highlight them.
+- open Options dialog to the colour scheme page
+ " I need to add a range just for nul bytes and move to the top
+   just to keep things neat
+- insert range - name: Nul, colour: white values:0 and move up
+
+ " Also if I change the last range to end at 254 not 255 then any FF
+   bytes will be handled by the catch all at the end and displayed in black
+- change range12 to be 234:254
+
+~~~~3
+
+ " If you see a part of the data that looks to be of interest you can just
+   double-click on it and the byte will be selected in the hex view.
+- dclick part of text area and switch to hex view
+
+ " If you just want to inspect an area more closely you can simply
+   zoom in.  You can do this with the context menu...
+- right-click and select zoom=2
+
+ " ... but a better way is to zoom by holding down the control key while
+   using the mouse wheel.  This not only zooms quickly but the mouse is kept
+   positioned over the current pixel so you don't loose your place.
+- zoom with ctrl+mouse wheel at start of text area
+
+ " The Aerial view is also very useful for getting an overview of other
+   things like where in the file all your bookmarks or found search
+   occurrences are.
+
+ " You can see these in two ways - in the left border of the aerial view,
+   or as marching ants.  To turn on any of these options just use the
+   aerial view context menu by right-clicking.
+- right-click aerial view and show In Border and Marching Ants sub-menus
+
+~~~~4
+
+ " I'll add a few highlights now to demonstrate
+- switch to hex view, add some higlights, switch back to aerial view
+
+ " I'm not sure how well you can see the it since they're yellow.
+- turn on marching ants for highlights and set zoom to 4
+- ZOOM (Ctrl+Alt+Z)
+
+ " When working with large selections I find the selection options
+   particularly useful to make sure that you have selected exactly
+   the area of the file you think you have.
+
+ " Say I wanted to select from the start of the nul bytes block
+   to the end of the FFs
+- switch to hex view and select from 00s to FFs
+
+ " I can see instantly in the aerial view border border that I have
+   roughly selected the right bytes
+- switch back to aerial view and use context menu to zoom out
+
+ " I can even zoom in on the start or end of the selection to make
+   sure it starts or ends on the exact byte
+- zoom in on start to see the ants
+- ZOOM
+
+~~~~5
+
+ " Aerial view works with any size file but for large files there
+   is not enough memory to represent each byte with one pixel.
+   The largest files I have on disk are AVI files, so I'll open
+   one now.
+- go to H:\shared\video\RawVideo and turn on details, sort by size
+- open largest .AVI file (at least 5 Gbytes)
+
+ " Most of this file looks fairly grey which to me means that it
+   is compressed in some way, but there are these regular black
+   and white areas which are probably part of some sort of record header.
+
+ " If I want to look at one of these headers I can double-click it.
+- dclick a header and switch to hex view
+
+ " You can see that 64 bytes are selected so each aerial view pixel
+   corresponds to 64 bytes.  But even then the colour
+   of the pixel is the average colour for all the bytes so there
+   is still a lot of info in each and every pixel.
+- dclick a pixel that has multiple contributing colours
+
+~~~~6
+
+  " HexEdit works like this as some machine do not have a lot of memory.
+    It actually adapts to the amount of system memory available but
+    never creates am aerial view bitmap larger than 1 GBytes currently.
+    However, in the next version of HexEdit there will be an option
+    to set the largest aerial view bitmap size.
+
+
+ " We've looked at 3 different file types here but as you work with
+   others you will begin to recognise various data patterns and what
+   sort of data a type of file should contain.
+
+- xxx perhaps open another file with interesting data
+
+ " Also since the pixels are arranged into lines when the window is
+   resized the pixels an align in different way.  Resizing the window
+   can reveal interesting patterns.
+- resize to see patterns
+

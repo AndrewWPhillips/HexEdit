@@ -1,0 +1,30 @@
+Reset hexedit.exe and _ani.xml
+
+
+--------
+ " Colour schemes are not just for looks but have many uses that I will show you.
+- open hexedit.exe
+
+ " You may have noticed this drop down list on the standard toolbar which allows you to
+   quickly change the colour scheme used inb the open window.
+- change to EBCDIC colour scheme
+
+ " Some dull people have complained about all the flashy colours.  I added the black and white
+   colour scheme to stop their complaints
+- change to BW colour scheme
+
+ " But if you like a bit of colour you can try the rainbow colour scheme
+- switch to rainbow scheme
+ " Actually the rainbow colour scheme has serious uses which we will see later
+
+ " The default colour scheme is the ASCI default one
+-switch to ASCII default
+ " In this one normal ASCII characters are shown in black.
+
+Colour Schemes
+- uses (not just pretty) - see specific bytes
+- colour editing
+- adding ranges
+- use with Aerial View
+- tool
+

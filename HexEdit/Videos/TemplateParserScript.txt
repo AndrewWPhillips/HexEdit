@@ -1,0 +1,158 @@
+http://www.youtube.com/watch?v=snL0_rfBDNo
+
+Preparation
+- add sync, refresh, area, mark buttons to menu bar and hide toolbars
+- make sure VS is open with files.h available
+- position calculator, parse, and file open dialogs
+- turn off mouse in ruler
+- clear parse text, reset options: 8 byte align, etc
+- reset savers.qdx view, including turning off template columns
+- make sure mark is at zero
+- remove savers.xml from templates folder
+- bring up project properties in VS
+
+--------------------------------
+ " This is a short video that demonstrates how to use HexEdit's built-in parser.
+   This is an actual example of how I created a very useful template in just a few minutes.
+
+ " When creating a template you first need to open a small example of the type of file for which
+   you want to create the template.  I am just going to open a file called savers.qdx.
+* Open savers.qdx
+
+ " I am pretty sure that this file has fixed size records of 512 bytes so I will set the
+   numbers of columns to 512 using the Options dialog.
+* Change to 512 cols, switch to char view, scroll across, switch back to hex view
+ " You might have noticed that I have added a few extra buttons to the menu bar.
+   This is just for convenience as I don't have much space to work with for this video.
+ " If I switch to the character view you can see that a record size of 512 bytes seems to be OK
+
+~~~~ 1
+
+ " Now we are ready to create the template
+* Create template, expand root elt
+ " The default template has a single data field of type "none" and because it has a blank
+   length field it eats up all the data to the end of file.  It's useful to leave this field
+   for now but I'll delete it later.
+* Edit "none" node and show type and length/count fields
+
+ " The default template view is in a split window but because we don't have much space in this 
+   demo I will switch to tabbed view
+* switch to tabbed view, turn on cols
+ " I also like to see the hex address, size and most importantly the data column
+* turn on cols and resize them
+
+
+* Insert/Parse
+ " Now we can invoke the parser which we just do by right-clicking the none element and
+   selecting this item from the popup menu.
+
+~~~~ 2
+
+ " Next we need to grab the struct from the .h file which I already have open in Visual Studio
+* Switch to Visual Studio
+ - select promotions_ struct plus those above
+ - move selection up
+ - right click with mouse and select copy
+
+* Switch back to HexEdit 
+ - paste into dialog with context menu
+ " If we just clicked OK now then HexEdit would do nothing.
+   C header files declare types and other things but should not define variables.
+   "PROMO" is a typedef and not a variable so we need to actually create a variable of this struct.
+ - remove typedef
+ - also look at some of the code - char bit-fields
+ " In standard C bit fields must be declared int, and compilers have a bitfield storage unit the same
+   size as int for efficiency (eg MSC = 4 bytes).  But many compiler implement an extension
+   that when you use an non-in bit field then the storage unit is taken from the declared type.
+ - make sure the bit-field base unit storage type checkbox is on
+ - click OK
+
+~~~~ 3
+
+* Check size of PROMO in size column = 308
+ " There are two reasons for the wrong size.  First we are using the short version of the struct
+   which is 256 not 512 bytes.  2nd we are not using the correct field alignment value.
+* Switch back to Visual Studio
+ - right click project and select properties
+ - open Code Generation page and check default alignment
+ " Visual Studio uses a default alignment of 8 bytes for efficiency but this project use 1 (no padding)
+* Switch back to HexEdit
+ - delete current PROMO
+ - reopen parse dialog and find the #ifdef, select and r-click and copy to the clipboard
+ " If this preprocessor symbol is #defined then we will get the 512 byte version that we want
+ - go to top and paste and change #ifdef to #define
+ - also add #pragma pack(1) then remove and use the radio button
+ - click OK
+
+~~~~ 4
+
+* Inspect the correct structure
+ " I think you'll agree that looking at the data like this is much nicer than the hex view.
+ - expand "p" struct at address 3D
+ " This element was a union in the original source.
+   To handle this the HexEdit parser has converted it into JUMPs, which basically means
+   that the same memory is being reused.  As you can see all the JUMPs start at address 3D.
+   Seeing these jump elements is only really relevant when you are designin the template.
+   We can get rid of them and just see the enclosed STRUCT by turning design mode off.
+
+
+In the source code this was a union of structs
+   For unions the parser uses "JUMP" element so that it can go back to the previous file address
+   Seeing the JUMPs is only really relevant when designing a template - when we turn design mode
+   off we won't see them
+ - go to to top
+ - right-click the root node and highlight the Design Mode item
+ " There is a special context menu that you see when you right click the root node
+   This allows you to turn off design mode and house keeping things like saving the template
+ - save the template to saver.qdx
+ - turn off design mode
+
+~~~~~ 5
+
+* Inspect the structure again
+ - expand "p" struct at address 3D
+
+ " With design mode off the user of the template does not see a lot of irrelevant stuff
+   like jumps, untaken IFs, empty arrays and many other things.  This makes it much easier
+   to inspect the data and actually makes the template a lot faster.
+ " Actually if we were to do this properly we would convert this union into a switch.
+   All these structs start at the same file address but only one union is correct for this
+   actual data data but that is handled in the program code
+   We could use a switch based on the above promotion_type_ field the data for correct struct
+   would be displayed based on the data of the file
+   but that is for another tutorial.
+
+~~~~ 6
+
+* enclose in FOR
+ - turn design mode back on
+ " We have added one PROMO struct to the template but the file actually consists of many promo records
+   To handle this we just need to enclose the PROMO in a FOR element which creates an array or PROMOs
+ - enclose in FOR, name="PROMO", count=""
+ " If we leave the count and stop fields empty then the array will continue to end of file
+   and that's exactly what we want.
+ - click OK
+
+ " Notice that the "none" element is now grey which indicates that it has zero length
+   If we turned off design mode we wouldn't even see it but we can delete it now.
+ - delete the "none" element
+* Sync
+ - switch to split window and turn off design mode
+ - demonstrate sync and auto-sync
+
+~~~~ 7
+
+* Conclusion
+ " I think you have seen from this how easy it is to create a HexEdit template using
+   C source code.  The parser built into HexEdit is very powerful and can handle just
+   about any C or C++ code you care to throw at it.
+
+   You can actually do a lot more things with templates than can be handled by C structs
+   such as have variable length data fields, arrays of bit-fields, branches and loops, recursive
+   structures but that will have to wait for another video.
+
+   One problem with this template is that for a large file it would be slow to display.
+   We can address this by using a new feature in HexEdit 3.5 called floating templates,
+   which I will demonstrate in the next video.
+
+

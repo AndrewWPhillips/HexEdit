@@ -1,0 +1,136 @@
+Make sure open dialog, find dialog, calculator are positioned in view
+Clear ani_.xml settings: eg mark at start of file, OVR mode
+Turn off edit bar and nav bar
+Delete info tips for mark
+
+-------------------------
+ " In this video we look in depth at a basic feature of HexEdit called the mark which has many uses
+open _ani.xml
+
+ " First you may have noticed the light blue highlighting of the first byte of any file you open
+   This is the mark which is used to remember a position within each file.
+
+ " You can move the mark by double-clicking or ...
+double-click
+
+ " by using the Mark Position command from the Edit menu or the Edit bar
+use Edit/Mark/Mark Position
+
+ " You can return to the mark at any time by using the Go To Mark command
+use Edit/Mark/Go To Mark
+
+ " There is also a shortcut key for "go to mark" which is Ctrl+F9 in the default keyboard layout
+use Ctrl+F9
+
+~~~~1
+
+ " One simple use for the mark is to measure the distance in a file between two bytes
+   To do this you place the mark at one byte and as you move the cursor there are
+   panes in the status bar that show the distance to the mark.
+
+ " To see these panes I need to first expand this window a little bit
+expand window so that "Length" pane of status bar is visible
+
+ "The distance is shown in decimal and hex
+set the mark and move the cursor around
+
+make window small again
+
+ " There are a couple of other commands that work with the mark that are on the navigation
+   bar which I will just open now
+open nav bar
+
+ " The "extend to mark" command selects all bytes from the current cursor position to the mark
+   This is useful for making large selections which I will demonstrate later in a video on
+   working with large files.
+demo
+
+ " You can also do this with the keyboard by holding down the SHIFt key while pressing Ctrl+F9
+demo
+
+ " The other command is to swap the cursor with the mark.  This is paricularly use in keystroke
+   macros which I will show in a later video on macros.
+demo
+
+~~~~2
+
+ " The mark also has many other uses. For example in the Find dialog ...
+open find dialog
+
+ " you can restrict searches to only the bytes between the cursor and the mark.
+   This can save a lot of time if you want to search only part of a large file.
+demo searching for CR-LF in part of the file
+
+ " The calculator has some special buttons that are used with the mark
+open calculator
+
+ " The 5 mark buttons *here* work with the mark analogously to the way the buttons above them work
+   with the calculator memory.  You can:
+  - load the current mark location into the calculator
+  - move the mark to the address in the calculator
+  - clear the mark - ie just set it back to start of file
+  - add the current calcualtor value to the mark
+  - subtract the value from the mark
+demo the 5 buttons quickly
+
+~~~~3
+
+ " For example, if I wanted to move the mark to be 10 bytes from the end of file I just click
+   the EOF button click the minus button and enter 10 then = and click the "Mark Set" (MkS) button.
+demo
+
+ " The calculator buttons are recorded in keystroke macros.  The ability to perform
+   calculations with the mark is a very powerful feature of macros.
+
+ " There are also two other calculator buttons related to the mark.  These are the "At Mark" (@ Mark)
+   and "Store At Mark" buttons which allow you to load and save to the bytes in the file at the mark.
+
+ " The number of bytes you are working with depends on the "Bits" setting. For example, if I want to get
+   the byte at the mark I set Bits to 8 and click "@ MArk".
+get byte at mark
+
+ " When using the calculator to read and write bytes in a file the byte order is important.
+   I can read the bytes with big- or little-endian order.
+turn on 64-bit mode and get bytes BE and LE
+
+ # Similarly the Store (At Mark) button allows you to write a calculator value to the file
+ " I can't demonstrate the Store At Mark button as I opened the file read-only which is why the button
+   is disabled.
+~~~~4
+
+ " There are also a few recently added features which make use of the mark.
+   Info Tips display a tip window when you hover the mouse over a byte in a file.
+open options dialog to Info Tips page
+
+ " They allow you to enter an expression that displays some information about the byte.
+   The expression can include many predefined values such as "address" which is the byte
+   the mouse is currently over and of course tha address of the mark.
+add tip and select drop down
+
+ " One thing we could add would be a distance to mark tip, but actually this is already
+   conveniently provided.
+turn on distance to mark, make fully opaque
+
+demo distance to mark
+
+~~~~ 5
+
+ " The major new feature in HexEdit 3.5 is the Aerial View.  This provides an overview of the file as a
+   coloured bitmap.  One of the things you can see in the AV is the mark both as marching ants
+   in the border.
+
+ " Finally, also added in 3,5 was floating templates.  This allows you to create a template
+   that can move wherever you want simply by moving the mark.
+
+ " I will just create a simple template now that just displays a 32-bit integer value.
+   For a real template the data fields would be much more complicated of course ...
+
+add new template, add 32-bit data field called DATA, format hex
+add none field of length "mark" and no name
+remove name from end "none" field and turn off design mode
+
+ " Obviously you can do much more powerful thinsg with templates but that is a topic for another
+   video.  You will also see the use of the mark in later videos on templates, expressions, calculator
+   etc
+
+

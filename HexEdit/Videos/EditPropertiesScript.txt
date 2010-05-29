@@ -1,0 +1,173 @@
+http://www.youtube.com/watch?v=TkuTroBMgV8
+
+<object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/TkuTroBMgV8&hl=en&fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/TkuTroBMgV8&hl=en&fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
+
+Open RFL and delete _ani.xml, hide Category column
+Turn off allow docking
+Open file and make RO
+Open Properties dialog ...
+Open _bmp.xml file, add category of "FixThis" change pages, and close file
+adjust Properties dlg posn (left of visible area), turn off BE, reset formats, close dlg
+Open HexEdit Explorer window and reposn, change to HexEdit dir
+Turn on modeless dlgs move out of the way option
+
+----------------------
+ " The Properties dialog has been in HexEdit since version 1.0 and is something
+   that people have always loved as it packs a huge amount of power in a small
+   window.  It allows you to look at and even modify data in a multitude of ways.
+- open Properties dialog (View/Properties)
+
+ " One of the really useful features of the Properties dialog is that it is a
+   so-called "modeless" dialog, which means you can leave it open.
+   It's always right there when you need it.
+- reposition dialog (leave floating)
+
+ " Like all the modeless dialogs in HexEdit its dockable.
+- dock to left side
+
+ " But since I don't have much screen space for this demo I am going to leave it
+   floating. You can just double-click the title bar to dock or undock
+- dclick to undock
+
+ " I'll also turn off the option where floating dialogs move out of the way
+   so we can concentrate on the dialog and not what is happening behind it.
+- open Options dialog to Workspace/Global page and turn off the option
+
+~~~~1
+
+ " Most of the fields in the Properties dialog show information about the bytes
+   following the current cursor posn.
+- switch to Integer page
+
+ " As you move the cursor around the info is automatically updated for the current
+   cursor location.
+- move the cursor to show byte page fields changing
+
+ " You can also edit most of the fields. But you can see that at the moment
+   all the fields are grey indicating they can't be changed.  This is because
+   the window is read-only.
+- widen window on left and toggle allow changes button on toolbar
+
+ " Now you can see that I can enter values in most of the fields.
+- enter 44 into 16-bit integer field
+
+ " If you start to enter a field but change your mind just press Escape.
+- enter 77 into 64-bit field and press Escape
+
+ " OR hit Enter to make the change
+- enter 64 and press Enter
+
+~~~~2
+
+ " You'll note that the changed bytes are selected.  Of course, if you make
+   changes through the Properties dialog by accident you can just undo them.
+- undo changes using Edit/Undo
+
+ " You can view or enter integers in many different formats.  On the other pages
+   there are also many options for different floating point and date formats.
+- switch to floating point page and show formats in drop-down
+
+ " I will discuss all these formats in detail in the next video
+- switch to date page and show formats in the drop-down
+
+ " The byte page allows you to see the current byte in any character set.
+- switch to Byte page
+
+ " On the right you can see the current character in ASCII or Unicode
+   or in virtually any character set if you select the right code page.
+- select code page 500 (EBCDIC)
+
+ " Actually some of the fields relate to more than a byte.  For example,
+   Unicode and some of the Multibyte character set code pages may
+   require more than one byte.  So if you are only one byte from the end
+   of file the Unicode field is blank becuase there are not enough bytes.
+- move cursor to one byte from the end of file
+
+ " You can also change the value of the current byte in decimal, octal or
+   binary.  One cool feature is that you can double-click any of the bits
+   in the binary field to toggle them
+- change value (decimal) to 255
+- dclick all bits until they are mostly zero
+
+~~~~3 FILE PAGE
+
+ " The first 2 pages only relate to the file itself and not the data in
+   the file like the other pages.
+- switch to File page
+
+ " The File page just shows the name of the file and the directory where it is stored
+   along with other filesystem information such as when the file was created,
+   last modified and last accessed. This text gives a description of the type
+   of file which Windows gets from the registry based on the file extension.
+- move mouse over top-right corner (desc field)
+
+ " Like all dialogs in HexEdit you can get more information on a control or field
+   by clicking the question mark button in the top right of the dialog then
+   clicking the control.
+- demo with desc text and Hidden checkbox
+
+~~~~4
+
+ " These flags again are maintained by the Windows filesystem
+- move mouse over checkboxes in bottom-right
+
+ " You can find info on them in lots of places but I'll give you a brief explanation:
+     RO bit says that the file can't be modified
+     hidden bit says that the file is not visible in normal directory listings
+     system bit says that this is a system file and you probably should not change it
+     the archive bit says that the file has been backed up - this bit is normally
+       set by backup software and cleared when the file is modified
+
+ " You can change the Read-only and Hidden bits by right-clicking a file in Explorer
+- open HexEdit Explorer and view properties of a file
+
+ " Remember that all this information relates to the file as it exists on disk.
+   So even if you have changed the bytes of the file in memory the time of last
+   modification won't reflect that until you write the changes to disk.
+ " Actually even then if you have "Keep Same Times" turned on then the file times
+   won't change.
+- show "Keep Same Times" button on standard toolbar
+
+ " You may have noticed that the disk file length is not shown here. It's actually,
+   on the Summary page.
+- switch to Summary page
+
+~~~~5 SUMMARY
+
+ " There are 2 lengths here: the length on disk and the length of the file as it
+   currently exists in the window.  These will be the same unless you have inserted
+   or deleted bytes.
+
+ " The 3 main fields of the Summary page let you enter info about the file for your
+   own use.  Some people find it handy just to store notes here.
+- type a comment
+
+ " The arrow next to the category field lets you select from all existing categories,
+   which avoids typoes and having 2 slightly different names for the same category.
+- open drop down
+
+ " But you can create a new category on the fly just by typing it in
+- enter "Demo" into the category field
+
+ " These fields also have other uses.  For example, you can sort by category
+   in the recently opened files dialog and the HexEdit Explorer window.
+- open recently opened files dialog and turn on category column and sort by it
+
+
+~~~~6
+ " This info is of course retained when I close the file
+- enter a comment close file and reopen it
+
+
+ " You may be wondering where the Category, Comments etc is stored.  Is it in the registry or perhaps
+   in an alternate data stream (like the way Word sometimes stores properties)?
+- close the file
+
+ " Actually it is just stored in the recently used file list file.  This is
+   where HexEdit stores all the information about files that have been opened
+   including formatting, highlights etc.  If you delete the entry for the file
+   in the RFL then this information will be lost.
+- open RFL remove the file and close
+- reopen file to show comments gone in properties dialog
+
+

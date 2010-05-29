@@ -1,0 +1,107 @@
+http://www.youtube.com/watch?v=q66rymaLkAI
+
+<object width="480" height="385"><param name="movie" value="http://www.youtube.com/v/UN64CA0Qllg&hl=en_US&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/UN64CA0Qllg&hl=en_US&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="385"></embed></object>
+----------------
+
+Make sure using the latest version
+Set ruler options - hex:4,1  dec:5,10
+Turn off mouse/cursor in ruler option
+open HexEdit.exe - reset file options: turn off addresses start at 1, group:4
+Turn off Format Bar
+
+----------------
+
+ " The ruler is very useful for working with columns.
+   It's a global option which you can toggle using the View menu ...
+- turn off using View/Ruler
+ " or there's a button on the Format bar which I will open now
+- open Format Bar
+ " This button toggles the ruler for all windows, ...
+- zoom on ruler button on Format Bar
+
+ " but how it looks for a particular file can depend on your 
+   current file's display options. For example, you can have different
+   ruler settings for separate hex and decimal rulers.  The ruler that
+   is displayed depends upon whether addresses are shown in decimal or hex.
+- switch between decimal and hex addresses
+- leave displaying decimal addresses/ruler
+
+ " There are always these small lines called ticks between columns but you can set
+   how often the larger ticks are displayed and how often numbers are displayed
+   in the options dialog.
+- open Options dialog to Workspace/Display page
+
+~~~~ 1
+
+ " I'll just go to the Workspace/Display page
+- change decimal ruler ticks to 3 and click Apply
+
+ " You can also adjust how often numbers are displayed
+- change decimal numbers to 5 click Apply
+
+ " If numbers are displayed for every column then only
+   a single digit is displayed at the top of each column
+- change decimal numbers to 1, click Apply
+
+ " The offsets are all zero-based so you can work out the address
+   of a byte by adding its column number to the address on the left.
+- move mouse over column and address values
+
+ " This is useful for people who are used to working with zero-based
+   systems such as C and assmebler programmers. I don't understand
+   it but some people prefer 1-based addresses.  This is an option you
+   can set in the file options page.
+~~~~ 2
+
+ " I can use this button to quickly jump to the document display options page
+- jump to doc display options page
+- turn on addresses start at 1 option and click Apply
+
+ " While I am here I may as well switch to hex addresses so we
+   can try the hex ruler
+- turn on hex addresses and click Apply
+- turn off "addresses start at 1"
+- switch back to the global display options page
+ " For example, a tidy display for the hex ruler uses column grouping of 4,
+   large ticks every 8 and numbers every 16.
+- set numbers every 16, ticks every 8
+~~~~ 3
+
+ " Another option for the ruler is the display of the current cursor and mouse 
+   position in the ruler.  Actually this option also turns on the
+   same display in the address bar (even if the ruler is off).
+- turn both options on and click OK
+- move the mouse out of the way and move the cursor around
+- move the mouse around
+
+ " Finally the ruler has these handles (which are similar to what I think are called "markers" in
+   Word ruler) which allow you to very easily adjust some of the display settings.
+- zoom in on the grouping marker
+
+ " If you just hold the mouse over the marker a tip window shows the current
+   value.  This is very useful when working with fixed size records
+   to check that the number of columns is correct.
+~~~~ 4
+
+ " The columns handle is red if autofit is on
+- turn on autofit
+- zoom on columns handle
+
+ " but you can still drag it to resize
+- drag handle to reduce columns
+
+
+ " Of course, undo works with all these options as usual
+- undo to get back autofit mode
+
+ " You can drag the offset handle right to increase the offset
+- move to start of file and drag offset right
+
+ " Or you can drag left whence it wraps around to the end of line
+- drag offset handle left
+
+ " One final note is that all the colours used in the ruler are settable
+   in the current colour scheme.  I will explain colour schemes in the next video.
+
+~~~~5
+

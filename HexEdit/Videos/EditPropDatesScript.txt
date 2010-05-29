@@ -1,0 +1,120 @@
+
+ " The Date page allows you to view and enter dates in many different formats.
+- change to date page
+
+ " I'll talk about the different formats in a minute but you should note
+   that the size of these date formats varies from 4 to 16 bytes so the size
+   of the current format is shown here.  Also the byte order can vary between
+   systems so you can choose big- or little-endian
+- move mouse to top-left then top-right
+
+ " You can change the value by entering dates and times using the controls
+   provided with Windows.   Under Windows 7 these controls are very cool.
+- show date and time entry controls
+
+ " There are also 4 buttons to the right of the controls for setting the value
+   to special dates and times. The "Now" button is fairly obvious and the others
+   allow you to generate the earliest and latest valid times for the format as
+   well as an invalid date.  Some of these formats do not precisely define
+   the first and last valid dates so don't rely too heavily on this facility.
+
+~~~~~1
+
+ " Now to the formats.  HexEdit is very C oriented so there is a strong support
+   for various time_t formats, which is the time format provided with the C
+   run-time library.  The C standard does not specify how time_t should be stored
+   internally but the overwhelming majority of C compilers implement them as a 32-bit
+   signed integer representing the number of seconds from the start of 1970.
+   Note that even though the numbers are the same the format may vary from system
+   to system due to byte order.
+
+ " A lot of people have been worrying that this format for times will cause problems
+   as it will run finish some time in 2038.  This is why the other time_t
+   formats were invented.
+
+ " Time64_t is exactly the same as time_t but it uses a 64-bit integer instead.
+   That should be large enough for now.
+
+ " Another approach was just to reduce the resolution in order to obtain a greater
+   range of dates by storing the number of minutes from 1970.  This format
+   was used in some versions of UNIX.
+
+~~~~2
+
+ " The next 2 formats were implemented in 2 particular releases of the Microsoft
+   C compiler.  Technically according to the C standard a compiler vendor could use
+   any internal representation but code was written that depended on the internal
+   format so Microsoft soon reverted back to the defacto standard for time_t.
+
+ " The main problem was that time_t values were written to file and when the code
+   was recompiled with the new compiler the dates were read back completely wrongly
+   much to the consternation of some programmers (yes you Kevin).
+
+ " The variant in MSC 5.1 was simply to add 10 years to the start date.
+   The variant for MSC 7 was to use an unsigned number starting on
+   31 December 1899 - I think this value was chosen for compatiblity with
+   the OLE DATE format discussed next.  It does allow for a greater range of
+   dates including the date of birth of all living people but it had the 
+   porblem that -1 could not be used to indicate an invalid date.
+
+~~~~3
+
+ " The OLE DATE was invented by Microsoft for OLE, later called COM, but pops up
+   in a lot of places such as MS databases.  Its actually quite a clever format
+   which just uses an IEEE floating point value to store the number of days
+   since the start of 31 December 1899.
+
+   Because it uses floating point you can actually represent times around the
+   last few centuries with precision much less than a second but still represent
+   date in the distant past or future but with less precision.  However, there were
+   a few oddities in the implementation and artificial limits placed on the range
+   of valid dates due to inaccuracies for dates in the far past.
+
+ " The SYSTEMTIME is a structure that Windows uses for times.
+
+ " FILETIME is how NTFS stores times for files.
+
+ " The MSDOS date/time is how the MSDOS FAT filesystem stores the date and time
+   that a file was modified.  This actually has separate date and time fields
+   each using 32 bytes.  However, they are only ever used consecutively in
+   FAT filesystems so I combined them into one 4 byte format
+
+   The layout is very specific to FAT filesystems so there is no
+   byte order option.
+
+~~~~4
+
+ " I talked a little about the Byte page in a earlier video but I think
+   I probably should explain about character sets
+- switch to Byte page
+
+ " Apart from ASCII you can also select from any code page installed on your
+   version of Windows, which usually includes many EBCDIC code pages.
+- select EBCDIC code page (500) from list
+
+ " All code pages have ASCII as their base character set but since ASCII is only
+   7 bits they can use the upper 128 charcaters for special purposes.
+
+ " Now some character sets need more than one byte so they reserve some bytes as
+   special bytes, called lead-in bytes, to indicate that there is a following byte
+   for another 256 values.  This is what a DBCS, or double-byte character set, is
+   - each character is represented by 1 or 2 bytes.
+   For example, code page 250 is for Chinese and may require up to 2 bytes.
+- switch to code page 950 (Chinese)
+
+ " Some character sets may use even use more than 2 bytes
+   so they are called an MBCS or multi-byte character set.
+
+~~~~5
+
+ " As you can imagine this makes it a bit difficult to deal with strings
+   of characters as each character can be one, 2 or even up to 5 bytes.
+   This is why Unicode was invented - it uses exactly 2 bytes
+   for every character.
+
+ " That's about all for character sets, but also in this page you can chnage
+   the value of the current byte in decimal, octal or binary.
+
+ " The binary field allows you to see or change the individual bits of the byte.
+   If you want to just toggle one bit you can double click on it.
+

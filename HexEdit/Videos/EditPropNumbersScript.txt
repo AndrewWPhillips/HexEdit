@@ -1,0 +1,156 @@
+Open Properties dialog, adjust dlg posn, turn off BE, reset formats, close dlg
+Turn off modeless dlgs move out of the way option
+Turn off change tracking
+-----------------
+ " In the last video we looked at the Summary and File pages of the Properties dlg.
+   Now we will look at the other pages which allow you to inspect and even
+   modify the data of the file you are editing.
+
+ " First I'll just create a new file so that we can modify the values in it.
+- create new file, 100 bytes long, random filled
+
+ " First we'll look at the Integer page as it is one of the most used pages as well
+   as being fairly simple.
+- open Properties dialog and switch to Integer page
+
+ " On the left of this page are the values for various sized integers in decimal.
+   I'll just enter some values into the file to make it more obvious.
+- enter 01 02 00 00 00 00 00 00 then move cursor back 8 bytes
+
+ " For example, the 16-bit integer field shows the value of the integer
+   in the 2 bytes following the cursor.
+- select the 2 bytes
+
+~~~~1
+
+ " Now there are two common ways of ordering the bytes of an integer.
+   These are colloquially known as big-endian and little-endian byte order & the order
+   used to generate the decimal numbers displayed here is controlled by this checkbox.
+- switch to big-endian
+ " For big-endian the most significant bits are stored in the first byte.  So "01 02"
+   is interpreted as 256 + 2 or 258.
+
+- switch to little-endian
+ " In little-endian the most significant bits are last, so "01 02" is 2*256 + 1.
+
+ " The byte order used in a file generally depends on where the file was created.
+   For example, a binary file created on a Macintosh would probably have BE order.
+   However, some file formats explicitly specify the byte order for data portability.
+- toggle BE checkbox, leave on
+
+ " Generally, if you have a file created on a Windows machine it will have LE order,
+   so this is the default byte order in this dialog.
+- turn BE off
+
+~~~~2
+
+ " Finally, the "format" buttons allows for the bits of an integer to be interpreted
+   as a purely positive integer, or as several variations of signed integers.
+   Generally, signed integers are stored as 2's-complement nowadays but older
+   mainframes and some specialised hardware used other formats so you may still
+   encounter file formats that use the S&M or 1's complement. Actually there are even more
+   obscure signed formats all of which are discussed in the HexEdit help file if you
+   are interested.
+- open Help to All About Binary Files/Numeric Operations, scroll to table
+
+ " You'll notice that as I change the format nothing changes in the fields.
+- try each format
+ " This is because for numbers with the high bit off all these formats
+   have the same (positive) value.
+- change the first byte to $80 and try each format
+- turn on big-endian and try each format
+  
+
+~~~~3  REAL
+
+ " Floating point numbers are handled in this page
+-switch to Real page
+
+ " The value field allows you to see and change the floating point value.
+   The value can be decomposed into a mantissa and exponent but you
+   can't edit these values directly.
+
+ " Note that these fields do not show the exact bit pattern of the number but are
+   shown in a more easily interpreted way.  If you want more information about the
+   internal format of these numbers then you will have to check out the HexEdit help.
+   For example, some formats specify a separate sign bit but I have just incorporated
+   that into the mantissa.
+
+ " The different formats come in various sizes.  For example, the Real48 format uses
+   the six bytes following the cursor.
+- select Real48 and highlight the 6 bytes
+
+ " Like integers the byte order makes a difference
+- toggle BE checkbox
+
+~~~~3
+ " The formats that are supported are explained fully in the help but I will
+   mention a few salient points now.
+
+ " The IEEE format is used on most systems nowadays.  There are 2 common sizes
+   of 4 and 8 bytes.  There is also a 10-byte version but I have never seen data
+   of this format in a file - so it is currently not supported.
+ " There are special bit patterns in this format to represent +/- Infinity
+   and invalid numbers (NaNs), and indeed +/- zero.
+   You can type in "Inf" or "-Inf" to get these values.
+- type in -Inf
+ " Actually you can type in zero or "minus zero" to get zero.  The two versions
+   of zero compare equal but "minus zero" is used in underflow situations
+   to indicate that a number is smaller than the smallest representable value
+   but possibly less than zero.
+- type in "-0"
+ " You will notice that -0 has the same bit pattern as 0 except that the top bit is on
+
+ " There are also many bit patterns in IEEE floats that indicate invalid values
+   You can get one of these bit patterns by typing in NAN which means "not a number"
+- type in "nan"
+
+~~~~4
+ " I would expect numbers written on a Windows machine to be written to file
+   in little-endian IEEE format, but you may encounter some of these other formats.
+
+ " The IBM formats are from larger IBM systems. Unlike IEEE floats these are
+   invariably stored in big-endian format.
+   Also the exponent is base 16 not base 2, and yes there is a difference.
+
+ " The Real48 is a format originally used in Turbo Pascal and still supported in
+   Borland products like Delphi.  It has no hardware support so died (or should have
+   died) 20 years ago when all Intel processors started supporting IEEE
+   numbers.  However, there are still old file formats around that use it.
+
+ " Finally the Decimal type is a format supported by the .Net runtime library.
+   It too has no hardware support so should be avoided.  Its raison d'etre is that
+   it uses a base 10 exponent and hence can represent decimal fractions like 3/10
+   exactly, which is not possible with numbers that use a base 2 exponent.
+
+ " The problem was that programmers would use floating point numbers inappropriately
+   for example for money values and encountered problems such as rounding errors.
+   However, it is better to simply use a scaled integer value.
+- turn on Decimal format and enter 1
+
+~~~~5
+ " You can play around with values to see what bit pattern.  The Decimal uses 
+   128 bits or 16 bytes and has some oddities such as the same number can be
+   stored in several ways.  For example 0.1 can be represented as 1 to the -1
+- enter -1 in value field to get: "01 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 
+
+ " Or as 10 to the -2
+- enter:  "0a 00 00 00 00 00 00 00 00 00 00 00 00 00 02 00
+
+ " Or as 100 to the -3
+- go to integer page and enter "100" into Word filed, chnage exponent to 03 00 to get:
+  "64 00 00 00 00 00 00 00 00 00 00 00 00 00 03 00 
+
+ " Note that the properties dialog always overwrites the current value even in insert mode.
+- move to 15 bytes from EOF
+
+ " One thing that often confuses people is that when they are too close to the end of
+   you can't see or change the value.  Typing into the properties dialog will never allow
+   you to add bytes to the end of file.
+
+ " You are also prevented from entering data into the fields in other situations such
+   as the file being opened rea-only, or if there is an active template and the template
+   field you are editing is marked read-only.
+
+ " I was also going to talk about the date and byte pages but we got a bit side-tracked
+   so I'll have to do that in the next video.

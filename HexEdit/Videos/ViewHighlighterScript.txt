@@ -1,0 +1,119 @@
+Make sure highlight buttons are visible in the edit bar
+Make sure highlighter is visible in the format bar
+Hide format bar
+
+-----------------------------------------------
+- open _bmp.xml
+ " This time we are going to look at the highlighter which was one of the first features I added
+   to HexEdit.  I got the idea when I saw the highlighter in Microsoft Word about 15 years ago.
+   The HexEdit highlighter works very much like the Word one.
+- highlight a few bytes using the menu item
+
+ " The highlighter is available in the Edit menu or on the Edit Bar
+- show edit bar
++ zoom on button
+
+ " Like Word there are 2 ways to highlight - either select what you want to highlight
+   and click the highlighter button
+- select then highlight
+
+ " OR turn on highlight mode whence everything you select is automatically highlighted.
+- turn on highlighter mode and do some selecting
+
+ " You can also SUBTRACT from the higlighted bytes - if everything you selected 
+   is already highlighted then they are unhighlighted.
+- demo subtracting
+ " This can be useful if you want to highlight a large block but with a few holes in it.
+- demo large highlight + some holes
+
+~~~~ 1
+
+- make sure there are at least 3 highlights for following ...
+ " The 2 buttons on the Edit bar are to higlight as we saw and to remove all 
+   highlights from the file.  Undo as always is fully supported.
+- show remove all and undo
+
+   There are more options for the highlighter in the drop-down menu on the Format Bar.
+
+- show format bar
++ zoom on drop down list
+ " You can jump to the next and previous highlighted sections
+
+- go to next and previous highlights using buttons
+ " You can also use the Ctrl+Alt+P and Ctrl+Alt+N to move between them
+- next and previous highlights using keys
+
+ " You can also hide the highlights without actually deleting them.
+   Someone asked for this feature as they sometimes found them visually
+   distracting.  However, it can be very confusing if you have turned them
+   off by accident or forgot that you did so.
+- turn off highlights
+- use menu to go to next highlight
+- turn on again
+
+~~~~ 2
+
+ " I recommend never using the hide feature.  If you find the highlights distracting
+   you can change the colour in the current colour scheme to something less bright.
+
+ " Just open the options dialog to the colour scheme page
+- open options dialog - colour scheme page
+ " You can select any colour you want
+- select "Other" option from drop down and show standard and custom pages
+- select a light yellow
+
+ " The highlighter does more than than just let you mark bytes of a file.
+   It is used in many places as a discontiguous selection.  For example,
+   it is used for discontiguous export to Motorola-S and Intel-Hex files.
+- open Motorola-S export dialog
++ zoom on checkbox
+ " Similarly you can highlight imported parts of a file
+- open Motorola import dialog
++ zoom on highlight checkbox
+
+~~~~ 3
+
+ " The highlighter is also very useful when comparing files
+- Open another .xml file and split horizontally
+ " If you turn the highlighter on then whenever a difference is found
+   the different bytes are highlighted.
+- use tools Compare Windows menu item
+ " If you hold down Alt+C then all the differences are highlighted
+
+
+ " Another useful capability is the highlighter context menu.
+   When you right-click any highlighted byte you will see a context menu
+- demonstrate
+ " If you work a lot with the highlighter you can even customise this menu
+- demonstrate adding select highlight to the menu
+
+ " One thing to watch is that there is also a selection context menu that
+   takes precedence over the highlighter context menu.
+   If you right click a hihglighted byte that is already selected then
+   you see the selection context menu
+- demonstrate
+
+~~~~ 4
+
+ " Of course if you close a file and reopen it your highlights are retained
+- close _bmp.xml and reopen
+ " The highlight information is stored in HexEdit's so called "recent file list"
+   It will be remembered forever, and separately for each user.
+   Of course, if you remove the file from the recent file list you will lose
+   all your highlights along with other formatting information.
+- close _bmp.xml and remove it from the RFL
+
+ " One final, very nice, feature that was added in HexEdit 3.5 in the aerial view.
+   The aerial view gives you an overview of the file.
+- turn on aerial view in a split window
+   Part of that overview might be to see which bytes are highlighted.
+   You can very easily see which parts of the file are highlighted in the aerial
+   view as it is shown in the border and using marching ants
+
+- use context menu to ensure that highlights are shown in border and as ants
++ zoom to show the border and ants
+ " I am not sure if you can see the animated marhcing ants as the frame rate
+   for this video is very low.
+
+- remove highlights
+- close file

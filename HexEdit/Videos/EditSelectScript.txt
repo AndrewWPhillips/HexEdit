@@ -1,0 +1,132 @@
+http://www.youtube.com/watch?v=vQxDmol3TNM
+
+<object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/vQxDmol3TNM&hl=en&fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/vQxDmol3TNM&hl=en&fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
+
+Make sure only standard toolbar is visible
+Turn on sel tip window, turn off sel length. Turn off mouse in ruler.
+Open file and make sure addresses are in hex, line len=16, 
+Position calculator. Turn off modeless dialogs move out of the way option
+
+--------------------
+ " This time we're going to talk about selecting which is a fundamental feature of any editor.
+   You are probably already familiar with selecting so you may think this is a fairly
+   simple topic and it *is*, but there *are* a few things that are not that obvious.
+Open hexedit.exe
+
+ " Many commands in HexEdit make use of the selection.
+   For example if you do a search the found bytes are automatically selected.
+- Type ~program into search tool and press Enter
+ 
+ " You should become familiar with the advanced selection options to get the most out of HexEdit.
+
+ " You probably know how to select a block of bytes using the mouse or keyboard.
+   Just click and drag with the mouse or ...
+demo mouse sel
+ " ... hold down SHIFT while using the cursor keys to select using the kb.
+demo kb sel
+
+~~~~1
+
+ " There are a large number of cursor movement keys which extend the selection if you also hold down
+   the SHIFT key.  For example, just as Ctrl+Home takes you to the start of the file, Ctrl+Shift+Home
+   selects everything from the current position to start of file.
+select to start of file
+
+ " HexEdit like most Windows programs allows you to press Ctrl+A to select everything.
+demo
+
+ " You might also have noticed that as you are making a selection a small yellow "tip" window appears.
+   This shows the length of the selection in either hex or decimal depending on how addresses are currently
+   being shown.  If I switch to decimal addresses you can see that the length is now shown in decimal -
+   it's also in blue as determined by the current colour scheme.
+leave/make large selection and show tip window
+switch to decimal addresses and show tip window
+
+~~~~2
+
+ " You can turn off this tip window if you want to in the the Workspace/Display page of the Options dialog.
+open options dialog - ws/display page
+
+ " There is also an option here to show some extra info about the selection length - that is what power
+   of 2 the selection length is exactly divisible by.  For example, if the length is an odd value then
+   this will just show 1.
+Turn on sel len div by power of 2
+Show sel length when selecting lines
+
+ " This is very useful information as some commands and operations that work on the selection have
+   requirements about the length of the selection.  For example, some block encryption algorithms work
+   on blocks of 64-bits at a time - in this case the selection length must at least be a multiple of 8.
+
+ " Remember that you can show the tip window at any time simply by holding down the SHIFT key
+
+~~~~3
+
+ " There are several features you should be aware of if you need to make large selections.
+   First if you try to select past the edge of the screen then HexEdit will automatically
+   scroll the screen for you.  This is called "autoscroll" in many programs.
+demo with kb
+
+ " If you are selecting with the mouse then the further you drag the mouse past the edge of the screen
+   theh the faster the scrolling becomes.  This is called "autoscroll acceleration".
+demo acceleration
+
+ " You can actually adjust the autoscroll acceleration using the Options dialog.
+open options dialog - ws/display page
+
+ " If you drag the slider to the right you increase the acceleration
+   Drag it all the way to the left for a constant speed.
+demo constant autoscroll
+
+ " If you need to make a large selection then even with a fast autoscroll it can take a long time.
+   A better way is to click the start of the selection then use the scroll bar to move to the end of the
+   selection then SHIFT-click.
+demonstrate
+
+~~~~4
+
+ " Another nice feature is that like everything in HexEdit selections are undoable.  So if you carefully
+   make a selection then accidentally click on the window and lose your selection then you can easily
+   just press Ctrl+Z to get it back.
+demo 
+
+ " Another way to make a selection is to use the "Extend to mark" command.  This is useful if you want to
+   enter the exact start and end address using the calculator or jump tool.  For example, say I want to
+   make a selection that starts at 10000 (hex) - I can use the calculator to move to that address -
+   actually I can click the Mark Set button to set the address
+Open calculator and enter 1 0000 in hex mode - click GOTO and also click Set Mark
+ " And I want the selection to go to 40000 (hex) - I move the current cursor position using the calc GOTO
+Enter 4 0000 in calculator and press GOTO
+ " Now I can selection everything from the mark to the current cursor pos using this command ...
+Select Edit/Mark/Extend To Mark
+
+ " This is also useful in huge files, where the scrollbar becomes pretty much useless for
+   positioning.  If you have a file that is hundreds of GBytes in size then a tiny adjustment of
+   the scrollbar can jump hundreds of MBytes.
+   I will talk about this a bit more in a later video on working with large files.
+
+~~~~5
+ " As I mentioned before, there are a very large number of commands and operations that use the selection.
+   If you find a menu item disabled it may be because there is no selection.  For example, the
+   Export commands are disabled unless there is a selection.
+
+ " Some operations are even more picky requiring the selection to be a certain length.
+   For example, if you want to add the value 5 to all the double word values of a selection,
+   then the selection needs to be a multiple of 4 (the size of a double-word).
+   I can demonstrate this but first we need to put 5 into the calculator
+   and make sure that the size is no more than 32 bits.
+demo
+
+ " Finally, here are a few more tips.  First if you double-click the address area then this
+   will select a single line which is useful if the line length has been set to a fixed record length.
+demo
+ " Actually the double-click commands can be changed in the "Customize" dialog but by default it selects
+   the current line.
+show?
+
+ " Another convenience is that right-clicking on the selection brings up the selection context menu.
+   Again you can configure this menu in the "Customize" dialog by adding new commands.
+show?
+
+ " Probably the most common use of the selection is for copying and cutting to the clipboard.
+   There are also commands for writing and appending to file on the Edit menu.
+   All these things will be discussed in later videos on editing.
