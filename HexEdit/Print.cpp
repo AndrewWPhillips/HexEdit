@@ -534,7 +534,7 @@ void CHexEditView::OnFilePrintPreview()
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_preview);
 
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    mm->m_wndProp.m_pSheet->Update(NULL, -1);                   // Blank out property dlg fields
+    mm->m_wndProp.Update(NULL, -1);                   // Blank out property dlg fields
 }
 
 void CHexEditView::OnEndPrintPreview(CDC* pDC, CPrintInfo* pInfo, POINT point, CPreviewView* pView) 

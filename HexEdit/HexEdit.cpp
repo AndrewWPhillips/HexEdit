@@ -537,33 +537,65 @@ BOOL CHexEditApp::InitInstance()
             ID_EXPORT_HEX_TEXT,
             ID_IMPORT_HEX_TEXT,
             ID_APP_EXIT,
+
             ID_EDIT_UNDO,
+            ID_EDIT_CUT,
             ID_EDIT_COPY,
             ID_EDIT_PASTE,
-            ID_EDIT_CUT,
             ID_COPY_HEX,
+			ID_COPY_CCHAR,
+            ID_PASTE_ASCII,
+            ID_PASTE_UNICODE,
+            ID_PASTE_EBCDIC,
+            ID_MARK,
+			ID_GOTO_MARK,
             ID_BOOKMARKS_EDIT,
             ID_EDIT_FIND,
             ID_EDIT_GOTO,
-            ID_PASTE_ASCII,
-            ID_MARK,
+
+			ID_VIEW_VIEWBAR,
+			ID_VIEW_EDITBAR,
+			ID_VIEW_CALCULATOR,
+			ID_VIEW_BOOKMARKS,
+			ID_VIEW_FIND,
+			ID_VIEW_PROPERTIES,
+			ID_VIEW_EXPL,
+			ID_VIEW_STATUS_BAR,
+			ID_VIEW_RULER,
             ID_AUTOFIT,
             ID_ADDR_TOGGLE,
             ID_DISPLAY_HEX,
             ID_DISPLAY_BOTH,
             ID_CHARSET_ASCII,
+            ID_CHARSET_ANSI,
+            ID_CHARSET_OEM,
+            ID_CHARSET_EBCDIC,
             ID_CONTROL_NONE,
+            ID_CONTROL_ALPHA,
+            ID_CONTROL_C,
+			ID_AERIAL_HIDE,
+			ID_AERIAL_SPLIT,
             ID_PROPERTIES,
+
+			ID_ASC2EBC,
+			ID_EBC2ASC,
+			ID_ANSI2IBM,
+			ID_IBM2ANSI,
             ID_CRC32,
+			ID_MD5,
             ID_ENCRYPT_ENCRYPT,
             ID_ENCRYPT_DECRYPT,
+			ID_ZLIB_COMPRESS,
+			ID_ZLIB_DECOMPRESS,
             ID_RAND_BYTE,
             ID_FLIP_16BIT,
+            ID_REV_BYTE,
             ID_ASSIGN_BYTE,
             ID_NEG_BYTE,
-            ID_REV_BYTE,
             ID_INC_BYTE,
             ID_DEC_BYTE,
+            ID_GTR_BYTE,
+            ID_LESS_BYTE,
             ID_ADD_BYTE,
             ID_SUBTRACT_BYTE,
             ID_SUBTRACT_X_BYTE,
@@ -572,32 +604,53 @@ BOOL CHexEditApp::InitInstance()
             ID_DIV_X_BYTE,
             ID_MOD_BYTE,
             ID_MOD_X_BYTE,
-            ID_GTR_BYTE,
-            ID_LESS_BYTE,
             ID_AND_BYTE,
             ID_OR_BYTE,
+            ID_INVERT,
             ID_XOR_BYTE,
             ID_ROL_BYTE,
             ID_ROR_BYTE,
             ID_LSL_BYTE,
             ID_LSR_BYTE,
             ID_ASR_BYTE,
-            ID_INVERT,
+
+			ID_DFFD_NEW,
+			ID_DFFD_OPEN_FIRST,
+			ID_DFFD_HIDE,
+			ID_DFFD_SPLIT,
+			ID_DFFD_SYNC,
+			ID_DFFD_REFRESH,
+
             ID_CALCULATOR,
             ID_CUSTOMIZE,
             ID_OPTIONS,
             ID_RECORD,
             ID_PLAY,
+
             ID_WINDOW_NEW,
             ID_WINDOW_NEXT,
+
             ID_HELP_FINDER,
             ID_CONTEXT_HELP,
+            ID_HELP_TUTE4,
             ID_HELP_TUTE1,
-            ID_REPAIR_DIALOGBARS,
+            ID_HELP_TUTE2,
+            ID_HELP_TUTE3,
+            ID_HELP_FORUM,
             ID_HELP_HOMEPAGE,
+            ID_HELP_REGISTER,
+            ID_REPAIR_DIALOGBARS,
+            ID_REPAIR_CUST,
             ID_APP_ABOUT,
+
             ID_HIGHLIGHT,
             ID_DIALOGS_DOCKABLE,
+			ID_IND_SEL,
+			ID_ANT_SEL,
+			ID_AERIAL_ZOOM1,
+			ID_AERIAL_ZOOM2,
+			ID_AERIAL_ZOOM4,
+			ID_AERIAL_ZOOM8,
         };
 
 		CMFCMenuBar::SetRecentlyUsedMenus(FALSE);
@@ -788,14 +841,12 @@ BOOL CHexEditApp::InitInstance()
 			break;
 		}
 
-#ifdef EXPLORER_WND
         if (GetProfileInt("MainFrame", "ShowExplorerDlg", 0) != -1)
 		{
 			pMainFrame->FloatControlBar(&pMainFrame->m_wndExpl, CPoint(0,0));
 			pMainFrame->ShowControlBar(&pMainFrame->m_wndExpl, FALSE, FALSE);
             WriteProfileInt("MainFrame", "ShowExplorerDlg", -1);  // only the first time
 		}
-#endif
 
         switch (GetProfileInt("MainFrame", "ShowPropDlg", 0))
 		{
@@ -1113,9 +1164,6 @@ void CHexEditApp::OnUpdateFileOpenSpecial(CCmdUI* pCmdUI)
 
 void CHexEditApp::OnRepairDialogbars()
 {
-    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    ASSERT(mm != NULL);
-#if 0 // xxx MFC9
 	if (AfxMessageBox("This restores all modeless dialogs so they are\n"
                       "visible, undocked and unrolled.  They include:\n"
                       "* Calculator\n"
@@ -1130,21 +1178,21 @@ void CHexEditApp::OnRepairDialogbars()
                       MB_YESNO|MB_DEFBUTTON2) != IDYES)
 		return;
 
+    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+    ASSERT(mm != NULL);
+	mm->m_paneFind.ShowAndUnroll();
+	mm->m_paneBookmarks.ShowAndUnroll();
+	mm->m_paneProp.ShowAndUnroll();
+
+#if 0 // xxx TODO for MFC9
     // Restore initial (nice looking) window size for calculator
     mm->m_wndCalc.m_szFloat = mm->m_wndCalc.m_sizeInitial;
 
 	// Fix and make sure they are visible
     mm->m_wndCalc.FixAndFloat(TRUE);
-	mm->m_wndBookmarks.FixAndFloat(TRUE);
-	mm->m_wndFind.FixAndFloat(TRUE);
-	mm->m_wndProp.FixAndFloat(TRUE);
-
-#ifdef EXPLORER_WND
 	mm->m_wndExpl.FixAndFloat(TRUE);
-#endif
-#endif
-
 	mm->RecalcLayout();
+#endif
 }
 
 void CHexEditApp::OnRepairCust()
@@ -1389,7 +1437,7 @@ void CHexEditApp::OnRecentFiles()
 void CHexEditApp::OnBookmarksEdit() 
 {
     ASSERT(AfxGetMainWnd() != NULL);
-    ((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.ShowAndUnroll();
+    ((CMainFrame *)AfxGetMainWnd())->m_paneBookmarks.ShowAndUnroll();
 }
 
 void CHexEditApp::OnTabIcons() 
@@ -1536,9 +1584,7 @@ BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
 	HWND hw = ::GetParent(pMsg->hwnd);
 	if (m_pMainWnd != NULL && pMsg->message == WM_KEYDOWN &&
 		(hw == ((CMainFrame*)m_pMainWnd)->m_wndCalc || 
-#ifdef EXPLORER_WND
          hw == ((CMainFrame*)m_pMainWnd)->m_wndExpl ||
-#endif
          hw == ((CMainFrame*)m_pMainWnd)->m_wndBookmarks) ) 
 	{
 		// Return 0 to allow processing (WM_KEYDOWN) but because we don't call base class version
@@ -1609,13 +1655,11 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
 {
     ASSERT(AfxGetMainWnd() != NULL);
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    mm->m_wndFind.m_pSheet->SendMessage(WM_KICKIDLE);
+    mm->m_wndFind.SendMessage(WM_KICKIDLE);
     mm->m_wndBookmarks.SendMessage(WM_KICKIDLE);
-	mm->m_wndCalc.SendMessage(WM_KICKIDLE);
 	mm->m_wndProp.SendMessage(WM_KICKIDLE);
-#ifdef EXPLORER_WND
-	mm->m_wndExpl.SendMessage(WM_KICKIDLE);
-#endif
+	//mm->m_wndCalc.SendMessage(WM_KICKIDLE);
+	//mm->m_wndExpl.SendMessage(WM_KICKIDLE);
     // Allow docs to check if their background processing has completed
     POSITION posn = m_pDocTemplate->GetFirstDocPosition();
     while (posn != NULL)
@@ -2755,9 +2799,9 @@ void CHexEditApp::OnProperties()
     SaveToMacro(km_prop);
     CHECK_SECURITY(203);
 
-    mm->m_wndProp.ShowAndUnroll();
-    mm->m_wndProp.m_pSheet->SetFocus();
-    mm->m_wndProp.m_pSheet->UpdateWindow(); // Needed for when prop dlg opened in a macro
+    mm->m_paneProp.ShowAndUnroll();
+    mm->m_wndProp.SetFocus();
+    mm->m_wndProp.UpdateWindow(); // Needed for when prop dlg opened in a macro
 }
 
 void CHexEditApp::OnOptions() 
@@ -3202,7 +3246,7 @@ void CHexEditApp::set_options(struct OptValues &val)
             }
         }
 
-        mm->m_wndFind.m_pSheet->Redisplay();
+        mm->m_wndFind.Redisplay();
 
         // Fix up case of hex addresses in hex jump tool(s)
         if (CMFCToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
@@ -3227,7 +3271,7 @@ void CHexEditApp::set_options(struct OptValues &val)
     if (k_abbrev_ != val.k_abbrev_)
     {
         k_abbrev_ = val.k_abbrev_;
-        mm->m_wndProp.m_pSheet->Update(GetView());  // may need to update file sizes
+        mm->m_wndProp.Update(GetView());  // may need to update file sizes
     }
 
     if (dlg_dock_ != val.dlg_dock_)

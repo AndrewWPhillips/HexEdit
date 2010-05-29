@@ -21,7 +21,7 @@
 
 #include "Dialog.h"
 #include "Control.h"
-#include "FindPane.h"
+#include "GenDockablePane.h"
 #include "FindDlg.h"
 #include "BookmarkDlg.h"
 #include "Prop.h"
@@ -61,7 +61,7 @@ public:
 
 // Operations
 public:
-    void SetSearch(LPCTSTR ss) { m_wndFind.m_pSheet->NewSearch(ss); current_search_string_ = ss; }
+    void SetSearch(LPCTSTR ss) { m_wndFind.NewSearch(ss); current_search_string_ = ss; }
     void AddSearchHistory(const CString &);
     void LoadSearchHistory(CHexEditApp *aa);
     void SaveSearchHistory(CHexEditApp *aa);
@@ -109,19 +109,18 @@ public:
     CMFCToolBar m_wndFormatBar, m_wndNavBar;   // Format bar and Navigation bar
 
 	// Modeless dialogs in panes
+	CFindSheet m_wndFind;               // Find property sheet/bar
+	CGenDockablePane m_paneFind;        // Docking pane that holds m_wndFind
     CBookmarkDlg m_wndBookmarks;        // Bookmarks dialog/bar
-	CCalcDlg m_wndCalc;                 // Calculator dialog/bar
-	CFindPane m_wndFind2;
+	CGenDockablePane m_paneBookmarks;   // Docking pane that holds m_wndBookmarks
+    CPropSheet m_wndProp;               // Properties dialog/bar
+	CGenDockablePane m_paneProp;        // Docking pane that holds m_wndProp
 
-	CFindWnd m_wndFind;                 // Find property sheet/bar
-#ifdef EXPLORER_WND
-    // Should we just have one of these or allow user to create many???
+	CCalcDlg m_wndCalc;                 // Calculator dialog/bar
+	CGenDockablePane m_paneCalc;        // Docking pane that holds m_wndCalc
     CExplorerWnd m_wndExpl;             // Explorer dialog/bar
 	void UpdateExplorer(LPCTSTR ff = NULL) { m_wndExpl.Update(ff); }
-#else
-	void UpdateExplorer(LPCTSTR ff = NULL) { } // do nothing if there is no Explorer window
-#endif
-    CPropWnd m_wndProp;                 // Properties dialog/bar
+	CGenDockablePane m_paneExpl;        // Docking pane that holds m_wndExpl
 
 	CMFCToolBarImages	m_UserImages;
     CString m_strImagesFileName;
@@ -194,10 +193,8 @@ public:
     afx_msg void OnViewBookmarks();
     afx_msg void OnUpdateViewFind(CCmdUI* pCmdUI);
     afx_msg void OnViewFind();
-#ifdef EXPLORER_WND
     afx_msg void OnUpdateViewExpl(CCmdUI* pCmdUI);
     afx_msg void OnViewExpl();
-#endif
     afx_msg void OnViewRuler();
     afx_msg void OnUpdateViewRuler(CCmdUI* pCmdUI);
     afx_msg void OnViewHighlightCaret();
@@ -270,13 +267,11 @@ public:
     void show_calc();  // Make sure the calculator is displayed
 	void move_bars(const CRect &rct)
 	{
-		move_dlgbar(m_wndCalc, rct);
-		move_dlgbar(m_wndBookmarks, rct);
-#ifdef EXPLORER_WND
-		move_dlgbar(m_wndExpl, rct);
-#endif
-		move_dlgbar(m_wndFind, rct);
-		move_dlgbar(m_wndProp, rct);
+		move_dlgbar(m_paneFind, rct);
+		move_dlgbar(m_paneBookmarks, rct);
+		move_dlgbar(m_paneProp, rct);
+		//move_dlgbar(m_wndCalc, rct);
+		//move_dlgbar(m_wndExpl, rct);
 	}
 	void redraw_background() { m_wndClientArea.Invalidate(); }
 
@@ -320,7 +315,7 @@ private:
     FILE_ADDRESS current_address_;
     CString current_hex_address_, current_dec_address_;
 
-	void move_dlgbar(CHexPaneDialog &bar, const CRect &rct);  // move so it does not intersect with rct
+	void move_dlgbar(CGenDockablePane &bar, const CRect &rct);  // move so it does not intersect with rct
 
 #ifdef USE_FREE_IMAGE
     FIBITMAP *m_dib;

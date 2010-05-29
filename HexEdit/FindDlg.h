@@ -54,6 +54,9 @@ protected:
 	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct);
 	//}}AFX_MSG
     afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+
 	DECLARE_MESSAGE_MAP()
 
 public:
@@ -109,6 +112,7 @@ public:
 // Operations
 public:
     static enum string_t { STRING_UNKNOWN, STRING_TEXT, STRING_HEX } StringType(LPCTSTR ss);
+    void ShowPage(int page);
     void Redisplay();
     void AddText(LPCTSTR txt);
     void AddHex(LPCTSTR txt);
@@ -147,6 +151,10 @@ public:
     void GetSearch(const unsigned char **pps, const unsigned char **mask, size_t *plen);
     void GetReplace(unsigned char **pps, size_t *plen);
     bool HexReplace() const;
+
+private:
+	static CBrush * m_pBrush;            // brush used for background
+	static COLORREF m_col;               // colour used for background
 };
 
 /////////////////////////////////////////////////////////////////////////////

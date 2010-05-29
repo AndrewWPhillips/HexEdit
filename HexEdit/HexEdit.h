@@ -71,7 +71,6 @@ typedef __int64 FILE_ADDRESS;
 #define SHOW_CODE_PAGE  1
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
 #define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
-#define EXPLORER_WND    1   // Modeless dialog like Windows Explorer
 #define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
 
 #define USE_FREE_IMAGE 1  // When this is enabled we need to get rid of EnBitmap.cpp from the project

@@ -169,7 +169,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
             case km_prop_file:
                 {
                     OnProperties();
-                    CPropSheet *pp = ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet;
+                    CPropSheet *pp = &((CMainFrame *)AfxGetMainWnd())->m_wndProp;
                     if (pp->SetActivePage(&pp->prop_file))
                         pp->prop_file.UpdateWindow();
                         // xxx else macro error? (page not available)
@@ -178,7 +178,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
             case km_prop_char:
                 {
                     OnProperties();
-                    CPropSheet *pp = ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet;
+                    CPropSheet *pp = &((CMainFrame *)AfxGetMainWnd())->m_wndProp;
                     if (pp->SetActivePage(&pp->prop_char))
                         pp->prop_char.UpdateWindow();
                 }
@@ -186,7 +186,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
             case km_prop_dec:
                 {
                     OnProperties();
-                    CPropSheet *pp = ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet;
+                    CPropSheet *pp = &((CMainFrame *)AfxGetMainWnd())->m_wndProp;
                     if (pp->SetActivePage(&pp->prop_dec))
                         pp->prop_dec.UpdateWindow();
                 }
@@ -194,7 +194,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
             case km_prop_float:
                 {
                     OnProperties();
-                    CPropSheet *pp = ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet;
+                    CPropSheet *pp = &((CMainFrame *)AfxGetMainWnd())->m_wndProp;
                     if (pp->SetActivePage(&pp->prop_real))
                         pp->prop_real.UpdateWindow();
                 }
@@ -202,7 +202,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
             case km_prop_date:
                 {
                     OnProperties();
-                    CPropSheet *pp = ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet;
+                    CPropSheet *pp = &((CMainFrame *)AfxGetMainWnd())->m_wndProp;
                     if (pp->SetActivePage(&pp->prop_date))
                         pp->prop_date.UpdateWindow();
                 }
@@ -231,47 +231,47 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 
             // Handled by the main frame window
             case km_find_text:
-                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.m_pSheet->NewSearch(*(*pk).pss);
+                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.NewSearch(*(*pk).pss);
                 ((CMainFrame *)AfxGetMainWnd())->AddSearchHistory(*(*pk).pss);
                 break;
             case km_replace_text:
-                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.m_pSheet->NewReplace(*(*pk).pss);
+                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.NewReplace(*(*pk).pss);
                 ((CMainFrame *)AfxGetMainWnd())->AddReplaceHistory(*(*pk).pss);
                 break;
             case km_find_next:
-                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.m_pSheet->SetOptions((*pk).vv);
+                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.SetOptions((*pk).vv);
                 ((CMainFrame *)AfxGetMainWnd())->OnFindNext();
                 pv_ = NULL;    // make sure GetView gets real active view
 				plast_view = pv_ = GetView();  // May change active view (if search all open files is on)
                 break;
             case km_bookmark_all:
-                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.m_pSheet->SetOptions((*pk).vv);
+                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.SetOptions((*pk).vv);
                 ((CMainFrame *)AfxGetMainWnd())->OnBookmarkAll(); // xxx needs to restore basename
                 break;
             case km_replace:
-                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.m_pSheet->SetOptions((*pk).vv);
+                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.SetOptions((*pk).vv);
                 ((CMainFrame *)AfxGetMainWnd())->OnReplace();
                 pv_ = NULL;    // make sure GetView gets real active view
 				plast_view = pv_ = GetView();  // May change active view (if search all open files is on)
                 break;
             case km_replace_all:
-                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.m_pSheet->SetOptions((*pk).vv);
+                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.SetOptions((*pk).vv);
                 ((CMainFrame *)AfxGetMainWnd())->OnReplaceAll();
                 break;
             case km_find_forw:
-                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.m_pSheet->SetOptions((*pk).vv);
+                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.SetOptions((*pk).vv);
                 ((CMainFrame *)AfxGetMainWnd())->OnSearchForw();
                 pv_ = NULL;    // make sure GetView gets real active view
 				plast_view = pv_ = GetView();  // May change active view (if search all open files is on)
                 break;
             case km_find_back:
-                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.m_pSheet->SetOptions((*pk).vv);
+                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.SetOptions((*pk).vv);
                 ((CMainFrame *)AfxGetMainWnd())->OnSearchBack();
                 pv_ = NULL;    // make sure GetView gets real active view
 				plast_view = pv_ = GetView();  // May change active view (if search all open files is on)
                 break;
             case km_find_sel:
-                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.m_pSheet->SetOptions((*pk).vv);
+                ((CMainFrame *)AfxGetMainWnd())->m_wndFind.SetOptions((*pk).vv);
                 ((CMainFrame *)AfxGetMainWnd())->OnSearchSel();
                 pv_ = NULL;    // make sure GetView gets real active view
 				plast_view = pv_ = GetView();  // May change active view (if search all open files is on)
@@ -279,15 +279,17 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
             case km_find_dlg:
                 if ((*pk).vv == -1)
                 {
-                    ((CMainFrame *)AfxGetMainWnd())->m_wndFind.ShowWindow(SW_HIDE);
+                    ((CMainFrame *)AfxGetMainWnd())->m_paneFind.Hide();
                 }
-                else // if (((CMainFrame *)AfxGetMainWnd())->pfind_ != NULL)
+                else
+				{
+					((CMainFrame *)AfxGetMainWnd())->m_paneFind.ShowAndUnroll();
                     ((CMainFrame *)AfxGetMainWnd())->m_wndFind.ShowPage((*pk).vv);
+				}
                 break;
             case km_find_close:  // Replaced by km_find_dlg with -1 as param
                 // Keep this for now for backward compatibility with old macro files
-                //if (((CMainFrame *)AfxGetMainWnd())->pfind_ != NULL)
-                    ((CMainFrame *)AfxGetMainWnd())->m_wndFind.SendMessage(WM_CLOSE);
+                ((CMainFrame *)AfxGetMainWnd())->m_paneFind.Hide();
                 break;
 
             case km_toolbar:
@@ -308,10 +310,8 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                     ((CMainFrame *)AfxGetMainWnd())->OnViewFind();
                 else if ((*pk).vv == 13)
                     ((CMainFrame *)AfxGetMainWnd())->OnViewProperties();
-#ifdef EXPLORER_WND
                 else if ((*pk).vv == 14)
                     ((CMainFrame *)AfxGetMainWnd())->OnViewExpl();
-#endif
                 else if ((*pk).vv == 15)
                     ((CMainFrame *)AfxGetMainWnd())->OnViewRuler();
                 else if ((*pk).vv == 16)
@@ -596,10 +596,10 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                     pv_->OnBookmarksHide();
                     break;
                 case 5:  // show
-					((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.ShowAndUnroll();
+					((CMainFrame *)AfxGetMainWnd())->m_paneBookmarks.ShowAndUnroll();
                     break;
                 case 6: // hide
-                    ((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.Hide();
+                    ((CMainFrame *)AfxGetMainWnd())->m_paneBookmarks.Hide();
                     break;
                 case 7:
                     pv_->OnBookmarkToggle();
@@ -1610,8 +1610,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 AfxGetApp()->OnIdle(0);
 
                 // Find dialog
-                //if (mm->pfind_ != NULL)
-                    mm->m_wndFind.UpdateWindow();
+                mm->m_wndFind.UpdateWindow();
             }
 
             // Restore wait cursor if there is any chance a dialog was displayed etc
@@ -1735,8 +1734,7 @@ void CHexEditApp::refresh_display(bool do_all /*=false*/)
             pactive->show_pos(-2);
 
             // Update the find dialog box
-            //if (mm->pfind_ != NULL)
-                mm->m_wndFind.UpdateWindow();
+            mm->m_wndFind.UpdateWindow();
         }
 
         if (do_all)

@@ -388,7 +388,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
     OpenDataFormatFile();
     
     // Make sure file property page is updated
-    ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet->Update(GetBestView(), -1);
+    ((CMainFrame *)AfxGetMainWnd())->m_wndProp.Update(GetBestView(), -1);
 
     return TRUE;
 }
@@ -584,7 +584,7 @@ void CHexEditDoc::OnFileSave()
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_save);
 
     // Make sure file property page is updated
-    ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet->Update(GetBestView(), -1);
+    ((CMainFrame *)AfxGetMainWnd())->m_wndProp.Update(GetBestView(), -1);
 }
 
 // Save As command
@@ -598,7 +598,7 @@ void CHexEditDoc::OnFileSaveAs()
     show_icon();
 
     // Make sure file property page is updated
-    ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet->Update(GetBestView(), -1);
+    ((CMainFrame *)AfxGetMainWnd())->m_wndProp.Update(GetBestView(), -1);
 }
 
 // Called as part of Save and Save As commands
@@ -1749,7 +1749,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
             SetPathName(file_name);
 
             // Make sure file property page is updated
-            ((CMainFrame *)AfxGetMainWnd())->m_wndProp.m_pSheet->Update(GetBestView(), -1);
+            ((CMainFrame *)AfxGetMainWnd())->m_wndProp.Update(GetBestView(), -1);
         }
         else
         {

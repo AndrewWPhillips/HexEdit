@@ -2,8 +2,7 @@
 //  or project specific include files that are used frequently, but
 //      are changed infrequently
 //
-
-// Copyright (c) 1999-2009 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the

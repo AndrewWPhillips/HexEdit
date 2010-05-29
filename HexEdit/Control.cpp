@@ -2026,13 +2026,13 @@ void CStatBar::OnLButtonDblClk(UINT nFlags, CPoint point)
         if (GetView() != NULL)
         {
             CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-			mm->m_wndProp.ShowAndUnroll();
+			mm->m_paneProp.ShowAndUnroll();
             // If prev prop page was 0 (file info) change to 1 (character info)
-            mm->m_wndProp.m_pSheet->SetActivePage(aa->prop_page_ == 0 ? 1 : aa->prop_page_);
+            mm->m_wndProp.SetActivePage(aa->prop_page_ == 0 ? 1 : aa->prop_page_);
         }
         else
 		{
-			mm->m_wndProp.ShowAndUnroll();
+			mm->m_paneProp.ShowAndUnroll();
 		}
         return;
     }

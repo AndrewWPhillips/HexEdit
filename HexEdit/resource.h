@@ -242,8 +242,6 @@
 #define IDD_NEW_FILE                    284
 #define IDD_CSRC                        287
 #define IDD_OPEN_SPECIAL                289
-#define IDD_PROP_PARENT                 290
-#define IDD_FIND_PARENT                 291
 #define IDD_DFFD_EVAL                   292
 #define ID_NODE_EXPANDALL               293
 #define IDD_DFFD_JUMP                   293
@@ -404,7 +402,11 @@
 #define ID_VIEW_APPLOOK_OFF_2007_BLACK	427
 #define ID_VIEW_APPLOOK_OFF_2007_SILVER	428
 #define ID_VIEW_APPLOOK_OFF_2007_AQUA	429
-#define IDD_DIALOGBAR                   430
+#define IDD_FIND_PARENT                 430
+#define IDD_BOOKMARKS_PARENT            431
+#define IDD_CALC_PARENT                 432
+#define IDD_PROP_PARENT                 433
+#define IDD_EXPLORER_PARENT             434
 
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
@@ -1569,7 +1571,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        431
+#define _APS_NEXT_RESOURCE_VALUE        435
 #define _APS_NEXT_COMMAND_VALUE         39125
 #define _APS_NEXT_CONTROL_VALUE         1594
 #define _APS_NEXT_SYMED_VALUE           252

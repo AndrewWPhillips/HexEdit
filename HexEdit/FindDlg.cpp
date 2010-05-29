@@ -99,6 +99,8 @@ BEGIN_MESSAGE_MAP(CFindSheet, CPropertySheet)
 	ON_WM_NCCREATE()
 	//}}AFX_MSG_MAP
     ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
+	ON_WM_ERASEBKGND()
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 // Determine if the simple string search is for a text or hex search
@@ -965,15 +967,17 @@ BOOL CFindSheet::GetWildcardsAllowed() const
     return wildcards_allowed_;
 }
 
+// Use dlg char set (charset_) if text page is active else use active view
 CFindSheet::charset_t CFindSheet::GetCharSet() const
 {
     CPropertyPage *pp = GetActivePage();
     ASSERT(pp != NULL);
     pp->UpdateData();
 
-    if ((((CMainFrame *)AfxGetMainWnd())->m_wndFind.GetStyle() & WS_VISIBLE) != 0 || 
+	if (((CMainFrame *)AfxGetMainWnd())->m_paneFind.IsWindowVisible() || 
 		pp != p_page_text_)
-    {
+	{
+		// use active view's char set
         CHexEditView *pview = GetView();
         if (pview == NULL || !pview->EbcdicMode())
             return RB_CHARSET_ASCII;
@@ -990,7 +994,7 @@ int CFindSheet::GetAlignment()
     ASSERT(pp != NULL);
     pp->UpdateData();
 
-    if ((((CMainFrame *)AfxGetMainWnd())->m_wndFind.GetStyle() & WS_VISIBLE) != 0 && 
+    if (((CMainFrame *)AfxGetMainWnd())->m_paneFind.IsWindowVisible() && 
         (pp == p_page_hex_ || pp == p_page_number_))
     {
 		return align_;
@@ -1005,7 +1009,7 @@ int CFindSheet::GetOffset()
     ASSERT(pp != NULL);
     pp->UpdateData();
 
-    if ((((CMainFrame *)AfxGetMainWnd())->m_wndFind.GetStyle() & WS_VISIBLE) != 0 && 
+    if (((CMainFrame *)AfxGetMainWnd())->m_paneFind.IsWindowVisible() && 
         (pp == p_page_hex_ || pp == p_page_number_))
     {
 		return offset_;
@@ -1021,6 +1025,17 @@ bool CFindSheet::AlignRel()
 		return false;                   // this option is no use if alignment is not in use
 	else
 		return relative_ ? true : false;
+}
+
+// Make sure dialog visible and show the specified page
+void CFindSheet::ShowPage(int page)
+{
+    if (page < 0)
+        SetActivePage(p_page_replace_);
+    else
+        SetActivePage(page);
+
+    theApp.SaveToMacro(km_find_dlg, page);
 }
 
 void CFindSheet::Redisplay()            // Make sure hex digits case OK etc
@@ -1189,6 +1204,40 @@ BOOL CFindSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
     ModifyStyleEx(0, WS_EX_CONTEXTHELP);
 
 	return TRUE;
+}
+
+CBrush * CFindSheet::m_pBrush = NULL;
+COLORREF CFindSheet::m_col = -1;
+
+BOOL CFindSheet::OnEraseBkgnd(CDC *pDC)
+{
+	CRect rct;
+	GetClientRect(&rct);
+
+	// Fill the background with a colour that matches the current BCG theme (and hence sometimes with the Windows Theme)
+	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
+	return TRUE;
+}
+
+HBRUSH CFindSheet::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	if (nCtlColor == CTLCOLOR_STATIC)
+	{
+		pDC->SetBkMode(TRANSPARENT);                            // Make sure text has no background
+//		return(HBRUSH) afxGlobalData.brWindow.GetSafeHandle();  // window colour
+		if (m_pBrush == NULL || m_col != afxGlobalData.clrBarFace)
+		{
+			m_col = afxGlobalData.clrBarFace;
+			if (m_pBrush != NULL)
+				delete m_pBrush;
+			m_pBrush = new CBrush(afxGlobalData.clrBarFace);
+		}
+        return (HBRUSH)*m_pBrush;
+	}
+	else
+	{
+		return CPropertySheet::OnCtlColor(pDC, pWnd, nCtlColor);
+	}
 }
 
 LRESULT CFindSheet::OnKickIdle(WPARAM, LPARAM lCount)
@@ -3012,7 +3061,6 @@ BOOL CFindWnd::Create(CWnd *pParentWnd)
 
 void CFindWnd::OnClose() 
 {
-
     // Allow prefix auto-generation to start again on next open of find dlg
     m_pSheet->prefix_entered_ = FALSE;
 

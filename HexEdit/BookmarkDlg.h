@@ -1,6 +1,6 @@
 // BookmarkDlg.h : header file for Bookmarks Dialog
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2003-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -31,7 +31,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarkDlg dialog
 
-class CBookmarkDlg : public CHexPaneDialog
+class CBookmarkDlg : public CDialog
 {
 public:
     // Number the different types of columns we can display
@@ -61,11 +61,6 @@ public:
 	public:
 	virtual BOOL Create(CWnd* pParentWnd);
 	//}}AFX_VIRTUAL
-	virtual void ShowPane(BOOL bShow, BOOL bDelay, BOOL bActivate)
-	{
-		theApp.SaveToMacro(km_bookmarks, bShow ? 5 : 6);
-		CHexPaneDialog::ShowPane(bShow, bDelay, bActivate);
-	}
 
 public:
     virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -88,6 +83,9 @@ protected:
     afx_msg void OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* pResult);
     afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* pResult);
 	//afx_msg void OnInitialUpdate();
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+
 	DECLARE_MESSAGE_MAP()
 
 	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
@@ -99,6 +97,10 @@ protected:
     CDocument *pdoc_;                   // Ptr to document if last bookmark is for open file (else NULL)
     CString last_file_;                 // Name of the file to which pdoc_ points
 //    BOOL show_;                         // Show bookmarks for the current file
+
+private:
+	static CBrush * m_pBrush;            // brush used for background
+	static COLORREF m_col;               // colour used for background
 };
 
 //{{AFX_INSERT_LOCATION}}

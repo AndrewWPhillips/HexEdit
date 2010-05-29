@@ -125,7 +125,7 @@ static DWORD id_pairs[] = {
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarkDlg dialog
 
-CBookmarkDlg::CBookmarkDlg() : CHexPaneDialog()
+CBookmarkDlg::CBookmarkDlg() : CDialog()
 {
 	help_hwnd_ = (HWND)0;
 	p_grid = &grid_;
@@ -134,14 +134,7 @@ CBookmarkDlg::CBookmarkDlg() : CHexPaneDialog()
 
 BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 {
-	if (!CHexPaneDialog::Create(_T("Bookmarks"),
-			pParentWnd,								// parent
-			TRUE,									// has gripper
-			MAKEINTRESOURCE(CBookmarkDlg::IDD),		// resource ID
-			WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI,
-			CBookmarkDlg::IDD,						// child window ID
-			AFX_CBRS_REGULAR_TABS,					// dwTabbedStyle
-			AFX_CBRS_FLOAT | AFX_CBRS_CLOSE | AFX_CBRS_RESIZE | AFX_CBRS_AUTOHIDE | AFX_CBRS_AUTO_ROLLUP))
+	if (!CDialog::Create(IDD_BOOKMARKS, pParentWnd))
 	{
 		TRACE0("Failed to create bookmarks dialog\n");
 		return FALSE; // failed to create
@@ -192,7 +185,7 @@ BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 	return TRUE;
 }
 
-BEGIN_MESSAGE_MAP(CBookmarkDlg, CHexPaneDialog)
+BEGIN_MESSAGE_MAP(CBookmarkDlg, CDialog)
 	//{{AFX_MSG_MAP(CBookmarkDlg)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_BOOKMARK_ADD, OnAdd)
@@ -209,6 +202,8 @@ BEGIN_MESSAGE_MAP(CBookmarkDlg, CHexPaneDialog)
     ON_NOTIFY(NM_DBLCLK, IDC_GRID_BL, OnGridDoubleClick)
     ON_NOTIFY(NM_RCLICK, IDC_GRID_BL, OnGridRClick)
 	//ON_MESSAGE_VOID(WM_INITIALUPDATE, OnInitialUpdate)
+	ON_WM_ERASEBKGND()
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 void CBookmarkDlg::InitColumnHeadings()
@@ -452,10 +447,12 @@ void CBookmarkDlg::UpdateRow(int index, int row, BOOL select /*=FALSE*/)
     grid_.RedrawRow(row);
 }
 
-void CBookmarkDlg::OnOK() 
+// Message handlers
+
+void CBookmarkDlg::OnOK()
 {
     theApp.SaveToMacro(km_bookmarks, 6);
-	Hide();
+	// xxx TODO Hide();
 }
 
 void CBookmarkDlg::OnDestroy() 
@@ -475,7 +472,7 @@ void CBookmarkDlg::OnDestroy()
         theApp.WriteProfileString("File-Settings", "BookmarkDialogColumns", strWidths);
     }
 
-    CHexPaneDialog::OnDestroy();
+    CDialog::OnDestroy();
 }
 
 LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
@@ -524,7 +521,41 @@ BOOL CBookmarkDlg::PreTranslateMessage(MSG* pMsg)
         return TRUE;
     }
 
-    return CHexPaneDialog::PreTranslateMessage(pMsg);
+    return CDialog::PreTranslateMessage(pMsg);
+}
+
+CBrush * CBookmarkDlg::m_pBrush = NULL;
+COLORREF CBookmarkDlg::m_col = -1;
+
+BOOL CBookmarkDlg::OnEraseBkgnd(CDC *pDC)
+{
+	CRect rct;
+	GetClientRect(&rct);
+
+	// Fill the background with a colour that matches the current BCG theme (and hence sometimes with the Windows Theme)
+	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
+	return TRUE;
+}
+
+HBRUSH CBookmarkDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	if (nCtlColor == CTLCOLOR_STATIC)
+	{
+		pDC->SetBkMode(TRANSPARENT);                            // Make sure text has no background
+//		return(HBRUSH) afxGlobalData.brWindow.GetSafeHandle();  // window colour
+		if (m_pBrush == NULL || m_col != afxGlobalData.clrBarFace)
+		{
+			m_col = afxGlobalData.clrBarFace;
+			if (m_pBrush != NULL)
+				delete m_pBrush;
+			m_pBrush = new CBrush(afxGlobalData.clrBarFace);
+		}
+        return (HBRUSH)*m_pBrush;
+	}
+	else
+	{
+		return CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+	}
 }
 
 void CBookmarkDlg::OnAdd() 
@@ -632,7 +663,7 @@ void CBookmarkDlg::OnAdd()
 //		grid_.SortItems(sort_col, grid_.GetSortAscending());
 
 //	// Close dialog
-//	CHexPaneDialog::OnOK();
+//	CDialog::OnOK();
 #endif
 }
 
@@ -648,7 +679,7 @@ void CBookmarkDlg::OnGoTo()
 	pbl->GoTo(index);
 
 //	// Close the dialog
-//	CHexPaneDialog::OnOK();
+//	CDialog::OnOK();
 }
 
 void CBookmarkDlg::OnRemove() 

@@ -515,6 +515,7 @@ public:
 
 // Attributes
 public:
+	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 
 // Operations
 public:
@@ -524,7 +525,6 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CPropSheet)
 	protected:
-	virtual void PostNcDestroy();
 	//}}AFX_VIRTUAL
 
 public:
@@ -539,6 +539,9 @@ protected:
 	//{{AFX_MSG(CPropSheet)
 	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct);
 	//}}AFX_MSG
+	afx_msg void OnClose();
+    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+
 	DECLARE_MESSAGE_MAP()
 
 public:
@@ -565,16 +568,12 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	DECLARE_MESSAGE_MAP()
 public:
 	BOOL Create(CWnd* pParentWnd = NULL);
 
 	CPropSheet *m_pSheet;
-
-	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 };
 
 /////////////////////////////////////////////////////////////////////////////

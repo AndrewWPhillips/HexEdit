@@ -480,3 +480,8 @@
 #define HID_DFFD_HELP                   0x8119016f    // IDD_DFFD_GLOBAL
 #define HID_DFFD_NEXT                   0x81150532    // IDD_DFFD_DATA
 #define HID_DFFD_PREV                   0x81150531    // IDD_DFFD_DATA
+#define HIDC_HEX_HIST                   0x8075048d
+#define HIDC_DEC_HIST                   0x8075048e
+#define HIDC_VARS                       0x8075048f
+#define HIDC_FUNC                       0x80750480
+

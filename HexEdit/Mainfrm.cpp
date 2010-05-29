@@ -169,10 +169,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         ON_UPDATE_COMMAND_UI(ID_VIEW_BOOKMARKS, OnUpdateViewBookmarks)
         ON_COMMAND(ID_VIEW_FIND, OnViewFind)
         ON_UPDATE_COMMAND_UI(ID_VIEW_FIND, OnUpdateViewFind)
-#if 1 //#ifdef EXPLORER_WND
         ON_COMMAND(ID_VIEW_EXPL, OnViewExpl)
         ON_UPDATE_COMMAND_UI(ID_VIEW_EXPL, OnUpdateViewExpl)
-#endif
         ON_COMMAND(ID_VIEW_RULER, OnViewRuler)
         ON_UPDATE_COMMAND_UI(ID_VIEW_RULER, OnUpdateViewRuler)
         ON_COMMAND(ID_VIEW_HL_CURSOR, OnViewHighlightCaret)
@@ -421,9 +419,40 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CDockingManager::SetDockingMode(DT_SMART);
 		EnableAutoHidePanes(CBRS_ALIGN_ANY);
 
-		if (!m_wndBookmarks.Create(this))
+		// Create the dockable windows
+        if (!m_paneFind.Create("Find", this, CSize(500, 250), TRUE, IDD_FIND_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
+			!m_wndFind.Create(&m_paneFind, WS_CHILD | WS_VISIBLE) )
+		{
 			return FALSE; // failed to create
+		}
+		m_paneFind.InitialUpdate(&m_wndFind);
+		m_paneFind.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_paneFind);
+		//m_paneFind.SetCaptionStyle(TRUE);
 
+        if (!m_paneBookmarks.Create("Bookmarks", this, CSize(500, 250), TRUE, IDD_BOOKMARKS_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
+			!m_wndBookmarks.Create(&m_paneBookmarks) )
+		{
+			return FALSE; // failed to create
+		}
+		m_paneBookmarks.InitialUpdate(&m_wndBookmarks);
+		m_paneBookmarks.EnableDocking(CBRS_ALIGN_ANY);
+		// Note using DockPane on a CPaneDialog causes problems in MFC9 (fixed in mFC10).  The soln
+		// is to dock to another CDockablePane using something like m_wndCalc.DockToWindow(&m_wndProp ...
+		// which is what I will do when the Properties and Find dialogs have been fixed (TBD xxx).
+		DockPane(&m_paneBookmarks);
+
+        if (!m_paneProp.Create("Properties", this, CSize(500, 250), TRUE, IDD_PROP_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
+			!m_wndProp.Create(&m_paneProp, WS_CHILD | WS_VISIBLE) )
+		{
+			return FALSE; // failed to create
+		}
+		m_paneProp.InitialUpdate(&m_wndProp);
+		m_paneProp.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_paneProp);
+
+
+		/*
 		m_wndBookmarks.Add(IDC_BOOKMARK_NAME, 0, 0, 100, 0);
 		m_wndBookmarks.Add(IDC_BOOKMARK_ADD, 100, 0, 0, 0);
 		m_wndBookmarks.Add(IDC_GRID_BL, 0, 0, 100, 100);
@@ -433,12 +462,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_wndBookmarks.Add(IDC_BOOKMARKS_VALIDATE, 100, 0, 0, 0);
 		m_wndBookmarks.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
 		m_wndBookmarks.Add(IDC_BOOKMARKS_HELP, 100, 0, 0, 0);
-
-		m_wndBookmarks.EnableDocking(CBRS_ALIGN_ANY);
-		// Note using DockPane on a CPaneDialog causes problems in MFC9 (fixed in mFC10).  The soln
-		// is to dock to another CDockablePane using something like m_wndCalc.DockToWindow(&m_wndProp ...
-		// which is what I will do when the Properties and Find dialogs have been fixed (TBD xxx).
-		DockPane(&m_wndBookmarks);
+*/
 
 		if (!m_wndCalc.Create(this))
 			return FALSE; // failed to create
@@ -554,38 +578,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		// which is what I will do when the Properties and Find dialogs have been fixed (TBD xxx).
 		DockPane(&m_wndCalc);
 
-		if (!m_wndFind2.Create("Find", this, CSize(500, 250), TRUE, IDD_FIND_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI))
-			return FALSE; // failed to create
-		m_wndFind2.EnableDocking(CBRS_ALIGN_ANY);
-
-		//m_wndFind2.DockToFrameWindow(CBRS_ALIGN_LEFT);
-		DockPane(&m_wndFind2);
-
-        if (!m_wndFind.Create(this) ||
-#ifdef EXPLORER_WND
-			!m_wndExpl.Create(this) ||
-#endif
-            !m_wndProp.Create(this) )
-        {
-            TRACE0("Failed to create bookmarks/find/calc/prop window\n");
-            return -1;
-        }
 #if 0  // xxx need to fix this for MFC9
 
         CSize tmp_size;
 
-        m_wndFind.SetWindowText("Find");
-        m_wndFind.EnableRollUp();
-        m_wndFind.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
-        m_wndFind.SetCaptionStyle(TRUE);
-
-#ifdef EXPLORER_WND
-        // Set up the window
         m_wndExpl.SetWindowText("HexEdit Explorer");
         m_wndExpl.EnableRollUp();
         m_wndExpl.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
         m_wndExpl.SetCaptionStyle(TRUE);
-#endif
 
         m_wndProp.SetWindowText("Properties");
         m_wndProp.EnableRollUp();
@@ -1163,7 +1163,7 @@ void CMainFrame::show_calc()
     m_wndCalc.ShowBinop();
 }
 
-void CMainFrame::move_dlgbar(CHexPaneDialog &bar, const CRect &rct)
+void CMainFrame::move_dlgbar(CGenDockablePane &bar, const CRect &rct)
 {
 	// We don't need to move it if hidden or docked
 	if (!bar.IsWindowVisible() || 
@@ -1403,29 +1403,27 @@ void CMainFrame::OnDockableToggle()
     if (!theApp.dlg_dock_)
     {
         // Make sure the windows aren't docked and turn off dockability
+        m_paneFind.Float();
+		m_paneFind.EnableDocking(0);
+        m_paneBookmarks.Float();
+		m_paneBookmarks.EnableDocking(0);
+        m_paneProp.Float();
+		m_paneProp.EnableDocking(0);
+
         m_wndCalc.Float();
 		m_wndCalc.EnableDocking(0);
-        m_wndBookmarks.Float();
-		m_wndBookmarks.EnableDocking(0);
-        m_wndFind.Float();
-		m_wndFind.EnableDocking(0);
-#ifdef EXPLORER_WND
         m_wndExpl.Float();
 		m_wndExpl.EnableDocking(0);
-#endif
-        m_wndProp.Float();
-		m_wndProp.EnableDocking(0);
     }
     else
     {
 		// Turn on dockability for all modeless (pane) dialogs
+		m_paneFind.EnableDocking(CBRS_ALIGN_ANY);
+		m_paneBookmarks.EnableDocking(CBRS_ALIGN_ANY);
+		m_paneProp.EnableDocking(CBRS_ALIGN_ANY);
+
 		m_wndCalc.EnableDocking(CBRS_ALIGN_ANY);
-		m_wndBookmarks.EnableDocking(CBRS_ALIGN_ANY);
-		m_wndFind.EnableDocking(CBRS_ALIGN_ANY);
-#ifdef EXPLORER_WND
 		m_wndExpl.EnableDocking(CBRS_ALIGN_ANY);
-#endif
-		m_wndProp.EnableDocking(CBRS_ALIGN_ANY);
     }
 }
 
@@ -1514,7 +1512,7 @@ void CMainFrame::OnViewNavbar()
 
 void CMainFrame::OnUpdateViewCalculator(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck((m_wndCalc.GetStyle() & WS_VISIBLE) != 0);
+    //pCmdUI->SetCheck((m_wndCalc.GetStyle() & WS_VISIBLE) != 0);
 }
 
 void CMainFrame::OnViewCalculator() 
@@ -1525,30 +1523,29 @@ void CMainFrame::OnViewCalculator()
 
 void CMainFrame::OnUpdateViewBookmarks(CCmdUI* pCmdUI) 
 {
-	pCmdUI->SetCheck(m_wndBookmarks.IsWindowVisible());
+	pCmdUI->SetCheck(m_paneBookmarks.IsWindowVisible());
 }
 
 void CMainFrame::OnViewBookmarks() 
 {
-	m_wndBookmarks.ShowAndUnroll();
+	m_paneBookmarks.Toggle();
     theApp.SaveToMacro(km_toolbar, 11);
 }
 
 void CMainFrame::OnUpdateViewFind(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck((m_wndFind.GetStyle() & WS_VISIBLE) != 0);
+    pCmdUI->SetCheck(m_paneFind.IsWindowVisible());
 }
 
 void CMainFrame::OnViewFind() 
 {
-    //ShowControlBar(&m_wndFind, (m_wndFind.GetStyle() & WS_VISIBLE) == 0, FALSE);
+	m_paneFind.Toggle();
     theApp.SaveToMacro(km_toolbar, 12);
 }
 
-#ifdef EXPLORER_WND
 void CMainFrame::OnUpdateViewExpl(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck((m_wndExpl.GetStyle() & WS_VISIBLE) != 0);
+    //pCmdUI->SetCheck((m_wndExpl.GetStyle() & WS_VISIBLE) != 0);
 }
 
 void CMainFrame::OnViewExpl() 
@@ -1556,7 +1553,6 @@ void CMainFrame::OnViewExpl()
     //ShowControlBar(&m_wndExpl, (m_wndExpl.GetStyle() & WS_VISIBLE) == 0, FALSE);
     theApp.SaveToMacro(km_toolbar, 14);
 }
-#endif
 
 void CMainFrame::OnUpdateViewRuler(CCmdUI* pCmdUI) 
 {
@@ -1602,7 +1598,7 @@ void CMainFrame::OnViewHighlightMouse()
 
 void CMainFrame::OnUpdateViewProperties(CCmdUI* pCmdUI) 
 {
-    pCmdUI->SetCheck((m_wndProp.GetStyle() & WS_VISIBLE) != 0);
+    //pCmdUI->SetCheck((m_wndProp.GetStyle() & WS_VISIBLE) != 0);
 }
 
 void CMainFrame::OnViewProperties() 
@@ -2348,33 +2344,33 @@ void CMainFrame::OnFindNext()
     AddSearchHistory(current_search_string_);
 
     if (DoFind() && theApp.recording_)
-        theApp.SaveToMacro(km_find_next, m_wndFind.m_pSheet->GetOptions());
+        theApp.SaveToMacro(km_find_next, m_wndFind.GetOptions());
 }
 
 void CMainFrame::OnSearchForw()
 {
-    m_wndFind.m_pSheet->SetDirn(CFindSheet::DIRN_DOWN);
-    CFindSheet::scope_t scope = m_wndFind.m_pSheet->GetScope();
+    m_wndFind.SetDirn(CFindSheet::DIRN_DOWN);
+    CFindSheet::scope_t scope = m_wndFind.GetScope();
     if (scope != CFindSheet::SCOPE_EOF && scope != CFindSheet::SCOPE_ALL)
-        m_wndFind.m_pSheet->SetScope(CFindSheet::SCOPE_EOF);
+        m_wndFind.SetScope(CFindSheet::SCOPE_EOF);
 
     AddSearchHistory(current_search_string_);
 
     if (DoFind() && theApp.recording_)
-        theApp.SaveToMacro(km_find_forw, m_wndFind.m_pSheet->GetOptions());
+        theApp.SaveToMacro(km_find_forw, m_wndFind.GetOptions());
 }
 
 void CMainFrame::OnSearchBack()
 {
-    m_wndFind.m_pSheet->SetDirn(CFindSheet::DIRN_UP);
-    CFindSheet::scope_t scope = m_wndFind.m_pSheet->GetScope();
+    m_wndFind.SetDirn(CFindSheet::DIRN_UP);
+    CFindSheet::scope_t scope = m_wndFind.GetScope();
     if (scope != CFindSheet::SCOPE_EOF && scope != CFindSheet::SCOPE_ALL)
-        m_wndFind.m_pSheet->SetScope(CFindSheet::SCOPE_EOF);
+        m_wndFind.SetScope(CFindSheet::SCOPE_EOF);
 
     AddSearchHistory(current_search_string_);
 
     if (DoFind() && theApp.recording_)
-        theApp.SaveToMacro(km_find_back, m_wndFind.m_pSheet->GetOptions());
+        theApp.SaveToMacro(km_find_back, m_wndFind.GetOptions());
 }
 
 void CMainFrame::OnUpdateSearch(CCmdUI* pCmdUI)
@@ -2430,8 +2426,8 @@ void CMainFrame::OnSearchSel()
             do_hex = false;             // No invalid EBCDIC chars found
         ASSERT(buf[end-start] == '\0'); // Check for buffer overrun
 
-        m_wndFind.m_pSheet->SetCharSet(CFindSheet::RB_CHARSET_EBCDIC);
-        m_wndFind.m_pSheet->NewText((char *)buf);
+        m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_EBCDIC);
+        m_wndFind.NewText((char *)buf);
     }
     else if (pview->CharMode())
     {
@@ -2445,8 +2441,8 @@ void CMainFrame::OnSearchSel()
             do_hex = false;             // No invalid chars found so do text search
         ASSERT(buf[end-start] == '\0'); // Check for buffer overrun
 
-        m_wndFind.m_pSheet->SetCharSet(CFindSheet::RB_CHARSET_ASCII);
-        m_wndFind.m_pSheet->NewText((char *)buf);
+        m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_ASCII);
+        m_wndFind.NewText((char *)buf);
     }
     delete[] buf;
 
@@ -2477,21 +2473,21 @@ void CMainFrame::OnSearchSel()
         ASSERT(pp == tbuf + (end-start)*3);
         ASSERT(address == end);
 
-        m_wndFind.m_pSheet->NewHex((char *)tbuf);
+        m_wndFind.NewHex((char *)tbuf);
 
         delete[] tbuf;
     }
 
     // Must be a forward search and fix scope
-    m_wndFind.m_pSheet->SetDirn(CFindSheet::DIRN_DOWN);
-    CFindSheet::scope_t scope = m_wndFind.m_pSheet->GetScope();
+    m_wndFind.SetDirn(CFindSheet::DIRN_DOWN);
+    CFindSheet::scope_t scope = m_wndFind.GetScope();
     if (scope != CFindSheet::SCOPE_EOF && scope != CFindSheet::SCOPE_ALL)
-        m_wndFind.m_pSheet->SetScope(CFindSheet::SCOPE_EOF);
+        m_wndFind.SetScope(CFindSheet::SCOPE_EOF);
 
     AddSearchHistory(current_search_string_);
 
     if (DoFind() && theApp.recording_)
-        theApp.SaveToMacro(km_find_sel, m_wndFind.m_pSheet->GetOptions());
+        theApp.SaveToMacro(km_find_sel, m_wndFind.GetOptions());
 
     pview->SetFocus();                  // This is nec as focus gets set to Find dialog
 }
@@ -2556,17 +2552,17 @@ BOOL CMainFrame::DoFind()
     const unsigned char *mask = NULL;
     size_t length;
 
-    m_wndFind.m_pSheet->GetSearch(&ss, &mask, &length);
+    m_wndFind.GetSearch(&ss, &mask, &length);
 
-    CFindSheet::dirn_t dirn = m_wndFind.m_pSheet->GetDirn();
-    CFindSheet::scope_t scope = m_wndFind.m_pSheet->GetScope();
-    BOOL wholeword = m_wndFind.m_pSheet->GetWholeWord();
-    BOOL icase = !m_wndFind.m_pSheet->GetMatchCase();
-    int tt = int(m_wndFind.m_pSheet->GetCharSet()) + 1;       // 1 = ASCII, 2 = Unicode, 3 = EBCDIC
+    CFindSheet::dirn_t dirn = m_wndFind.GetDirn();
+    CFindSheet::scope_t scope = m_wndFind.GetScope();
+    BOOL wholeword = m_wndFind.GetWholeWord();
+    BOOL icase = !m_wndFind.GetMatchCase();
+    int tt = int(m_wndFind.GetCharSet()) + 1;       // 1 = ASCII, 2 = Unicode, 3 = EBCDIC
     ASSERT(tt == 1 || tt == 2 || tt == 3);
-    int alignment = m_wndFind.m_pSheet->GetAlignment();
-	int offset    = m_wndFind.m_pSheet->GetOffset();
-	bool align_rel = m_wndFind.m_pSheet->AlignRel();
+    int alignment = m_wndFind.GetAlignment();
+	int offset    = m_wndFind.GetOffset();
+	bool align_rel = m_wndFind.AlignRel();
 	FILE_ADDRESS base_addr;
 	if (align_rel)
 		base_addr = pview->GetSearchBase();
@@ -2742,7 +2738,7 @@ BOOL CMainFrame::DoFind()
             if (scope == CFindSheet::SCOPE_FILE)
             {
                 // Change to SCOPE_EOF so that next search does not find the same thing
-                m_wndFind.m_pSheet->SetScope(CFindSheet::SCOPE_EOF);
+                m_wndFind.SetScope(CFindSheet::SCOPE_EOF);
             }
 #ifdef SYS_SOUNDS
             CSystemSound::Play("Search Text Found");
@@ -2930,7 +2926,7 @@ BOOL CMainFrame::DoFind()
             if (scope == CFindSheet::SCOPE_FILE)
             {
                 // Change to SCOPE_EOF so that next search does not find the same thing
-                m_wndFind.m_pSheet->SetScope(CFindSheet::SCOPE_EOF);
+                m_wndFind.SetScope(CFindSheet::SCOPE_EOF);
             }
 #ifdef SYS_SOUNDS
             CSystemSound::Play("Search Text Found");
@@ -2961,17 +2957,17 @@ void CMainFrame::OnReplace()
     const unsigned char *mask = NULL;
     size_t length;
 
-    m_wndFind.m_pSheet->GetSearch(&ss, &mask, &length);
+    m_wndFind.GetSearch(&ss, &mask, &length);
 
-    CFindSheet::dirn_t dirn = m_wndFind.m_pSheet->GetDirn();
-    CFindSheet::scope_t scope = m_wndFind.m_pSheet->GetScope();
-    BOOL wholeword = m_wndFind.m_pSheet->GetWholeWord();
-    BOOL icase = !m_wndFind.m_pSheet->GetMatchCase();
-    int tt = int(m_wndFind.m_pSheet->GetCharSet()) + 1;       // 1 = ASCII, 2 = Unicode, 3 = EBCDIC
+    CFindSheet::dirn_t dirn = m_wndFind.GetDirn();
+    CFindSheet::scope_t scope = m_wndFind.GetScope();
+    BOOL wholeword = m_wndFind.GetWholeWord();
+    BOOL icase = !m_wndFind.GetMatchCase();
+    int tt = int(m_wndFind.GetCharSet()) + 1;       // 1 = ASCII, 2 = Unicode, 3 = EBCDIC
     ASSERT(tt == 1 || tt == 2 || tt == 3);
-    int alignment = m_wndFind.m_pSheet->GetAlignment();
-	int offset    = m_wndFind.m_pSheet->GetOffset();
-	bool align_rel = m_wndFind.m_pSheet->AlignRel();
+    int alignment = m_wndFind.GetAlignment();
+	int offset    = m_wndFind.GetOffset();
+	bool align_rel = m_wndFind.AlignRel();
 	FILE_ADDRESS base_addr;
     if (align_rel)
 		base_addr = pview->GetSearchBase();
@@ -3033,7 +3029,7 @@ void CMainFrame::OnReplace()
             // The current selection == search text - replace the text
             unsigned char *pp;
             size_t replen;
-            m_wndFind.m_pSheet->GetReplace(&pp, &replen);
+            m_wndFind.GetReplace(&pp, &replen);
             pview->do_replace(start, start+length, pp, replen);
         }
     }
@@ -3044,7 +3040,7 @@ void CMainFrame::OnReplace()
     AddReplaceHistory(current_replace_string_);
 
     if (theApp.recording_)
-        theApp.SaveToMacro(km_replace, m_wndFind.m_pSheet->GetOptions());
+        theApp.SaveToMacro(km_replace, m_wndFind.GetOptions());
 }
 
 void CMainFrame::OnReplaceAll()
@@ -3080,17 +3076,17 @@ void CMainFrame::OnReplaceAll()
     const unsigned char * mask = NULL;
     size_t length;
 
-    m_wndFind.m_pSheet->GetSearch(&ss, &mask, &length);
+    m_wndFind.GetSearch(&ss, &mask, &length);
 
-    CFindSheet::dirn_t dirn = m_wndFind.m_pSheet->GetDirn();
-    CFindSheet::scope_t scope = m_wndFind.m_pSheet->GetScope();
-    BOOL wholeword = m_wndFind.m_pSheet->GetWholeWord();
-    BOOL icase = !m_wndFind.m_pSheet->GetMatchCase();
-    int tt = int(m_wndFind.m_pSheet->GetCharSet()) + 1;       // 1 = ASCII, 2 = Unicode, 3 = EBCDIC
+    CFindSheet::dirn_t dirn = m_wndFind.GetDirn();
+    CFindSheet::scope_t scope = m_wndFind.GetScope();
+    BOOL wholeword = m_wndFind.GetWholeWord();
+    BOOL icase = !m_wndFind.GetMatchCase();
+    int tt = int(m_wndFind.GetCharSet()) + 1;       // 1 = ASCII, 2 = Unicode, 3 = EBCDIC
     ASSERT(tt == 1 || tt == 2 || tt == 3);
-    int alignment = m_wndFind.m_pSheet->GetAlignment();
-	int offset    = m_wndFind.m_pSheet->GetOffset();
-	bool align_rel = m_wndFind.m_pSheet->AlignRel();
+    int alignment = m_wndFind.GetAlignment();
+	int offset    = m_wndFind.GetOffset();
+	bool align_rel = m_wndFind.AlignRel();
 
     FILE_ADDRESS start, end;            // Range of bytes in the current file to search
     FILE_ADDRESS found_addr;            // The address where the search text was found (or -1, -2)
@@ -3143,7 +3139,7 @@ void CMainFrame::OnReplaceAll()
     // Get the replacement text
     unsigned char *pp;
     size_t replen;
-    m_wndFind.m_pSheet->GetReplace(&pp, &replen);
+    m_wndFind.GetReplace(&pp, &replen);
 
     // Init the loop
     FILE_ADDRESS curr = start;          // Current search position in current file
@@ -3240,7 +3236,7 @@ void CMainFrame::OnReplaceAll()
 #endif
 
     if (theApp.recording_)
-        theApp.SaveToMacro(km_replace_all, m_wndFind.m_pSheet->GetOptions());
+        theApp.SaveToMacro(km_replace_all, m_wndFind.GetOptions());
 
     // Get a comma-separated version of bytes searched
     char buf[40];
@@ -3268,7 +3264,7 @@ void CMainFrame::OnReplaceAll()
 
 void CMainFrame::OnBookmarkAll()
 {
-    if (m_wndFind.m_pSheet->bookmark_prefix_.IsEmpty())
+    if (m_wndFind.bookmark_prefix_.IsEmpty())
     {
         AfxMessageBox("Bookmark All requires a bookmark prefix.");
         theApp.mac_error_ = 2;
@@ -3293,19 +3289,19 @@ void CMainFrame::OnBookmarkAll()
     int count;                          // Number of bookmarks already in the set
     long next_number = 0;               // Number to use for next bookmark in the set
 
-    if ((next_number = pbl->GetSetLast(m_wndFind.m_pSheet->bookmark_prefix_, count)) > 0)
+    if ((next_number = pbl->GetSetLast(m_wndFind.bookmark_prefix_, count)) > 0)
     {
         CBookmarkFind dlg;
 
         dlg.mess_.Format("%d bookmarks with the prefix \"%s\"\r"
                          "already exist.  Do you want to overwrite or\r"
                          "append to this set of bookmarks?",
-                         count, (const char *)m_wndFind.m_pSheet->bookmark_prefix_);
+                         count, (const char *)m_wndFind.bookmark_prefix_);
 
         switch (dlg.DoModal())
         {
         case IDC_BM_FIND_OVERWRITE:
-            pbl->RemoveSet(m_wndFind.m_pSheet->bookmark_prefix_);  // xxx does not remove doc bookmarks or dlg entries
+            pbl->RemoveSet(m_wndFind.bookmark_prefix_);  // xxx does not remove doc bookmarks or dlg entries
             next_number = 0;
             break;
         case IDC_BM_FIND_APPEND:
@@ -3327,17 +3323,17 @@ void CMainFrame::OnBookmarkAll()
     const unsigned char *mask = NULL;
     size_t length;
 
-    m_wndFind.m_pSheet->GetSearch(&ss, &mask, &length);
+    m_wndFind.GetSearch(&ss, &mask, &length);
 
-    CFindSheet::dirn_t dirn = m_wndFind.m_pSheet->GetDirn();
-    CFindSheet::scope_t scope = m_wndFind.m_pSheet->GetScope();
-    BOOL wholeword = m_wndFind.m_pSheet->GetWholeWord();
-    BOOL icase = !m_wndFind.m_pSheet->GetMatchCase();
-    int tt = int(m_wndFind.m_pSheet->GetCharSet()) + 1;       // 1 = ASCII, 2 = Unicode, 3 = EBCDIC
+    CFindSheet::dirn_t dirn = m_wndFind.GetDirn();
+    CFindSheet::scope_t scope = m_wndFind.GetScope();
+    BOOL wholeword = m_wndFind.GetWholeWord();
+    BOOL icase = !m_wndFind.GetMatchCase();
+    int tt = int(m_wndFind.GetCharSet()) + 1;       // 1 = ASCII, 2 = Unicode, 3 = EBCDIC
     ASSERT(tt == 1 || tt == 2 || tt == 3);
-    int alignment = m_wndFind.m_pSheet->GetAlignment();
-	int offset    = m_wndFind.m_pSheet->GetOffset();
-	bool align_rel = m_wndFind.m_pSheet->AlignRel();
+    int alignment = m_wndFind.GetAlignment();
+	int offset    = m_wndFind.GetOffset();
+	bool align_rel = m_wndFind.AlignRel();
 
     FILE_ADDRESS start, end;            // Range of bytes in the current file to search
     FILE_ADDRESS found_addr;            // The address where the search text was found (or -1, -2)
@@ -3455,7 +3451,7 @@ void CMainFrame::OnBookmarkAll()
         {
             // Found so add the bookmark
             CString bm_name;
-            bm_name.Format("%s%05ld", (const char *)m_wndFind.m_pSheet->bookmark_prefix_, long(next_number));
+            bm_name.Format("%s%05ld", (const char *)m_wndFind.bookmark_prefix_, long(next_number));
             ++next_number;
 
             if (pdoc2->pfile1_ == NULL)
@@ -3480,7 +3476,7 @@ void CMainFrame::OnBookmarkAll()
     AddSearchHistory(current_search_string_);
 
     if (theApp.recording_)
-        theApp.SaveToMacro(km_bookmark_all, m_wndFind.m_pSheet->GetOptions());
+        theApp.SaveToMacro(km_bookmark_all, m_wndFind.GetOptions());
 
     // Get a comma-separated version of bytes searched
     char buf[40];
@@ -3499,7 +3495,7 @@ void CMainFrame::OnBookmarkAll()
     {
         CString ss;
 
-        ss.Format("Set one bookmark: %s%05ld", (const char *)m_wndFind.m_pSheet->bookmark_prefix_, long(start_number));
+        ss.Format("Set one bookmark: %s%05ld", (const char *)m_wndFind.bookmark_prefix_, long(start_number));
         mess += ss;
     }
     else
@@ -3508,8 +3504,8 @@ void CMainFrame::OnBookmarkAll()
 
         ss.Format("Set %d bookmarks.\n\nFirst bookmark: %s%05ld\nLast bookmark: %s%05ld",
                   next_number - start_number,
-                  (const char *)m_wndFind.m_pSheet->bookmark_prefix_, (long)start_number,
-                  (const char *)m_wndFind.m_pSheet->bookmark_prefix_, (long)next_number-1);
+                  (const char *)m_wndFind.bookmark_prefix_, (long)start_number,
+                  (const char *)m_wndFind.bookmark_prefix_, (long)next_number-1);
         mess += ss;
     }
     AfxMessageBox(mess);
@@ -4173,19 +4169,28 @@ CString CMainFrame::not_found_mess(BOOL forward, BOOL icase, int tt, BOOL ww, in
 void CMainFrame::OnEditFind() 
 {
     if (GetView() != NULL)
+	{
+		m_paneFind.ShowAndUnroll();
         m_wndFind.ShowPage(0);
+	}
 }
 
 void CMainFrame::OnEditFind2() 
 {
     if (GetView() != NULL)
+	{
+		m_paneFind.ShowAndUnroll();
         m_wndFind.ShowPage(1);
+	}
 }
 
 void CMainFrame::OnEditReplace() 
 {
     if (GetView() != NULL)
+	{
+		m_paneFind.ShowAndUnroll();
         m_wndFind.ShowPage(4);
+	}
 }
 
 // We can't do a search unless there is a document open
@@ -4210,7 +4215,7 @@ void CMainFrame::OnOptionsScheme()
 
 void CMainFrame::OnBookmarks() 
 {
-	m_wndBookmarks.ShowAndUnroll();
+	m_paneBookmarks.ShowAndUnroll();
 }
 
 void CMainFrame::OnEditGotoDec() 

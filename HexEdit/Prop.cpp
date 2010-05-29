@@ -371,6 +371,7 @@ CPropSheet::CPropSheet()
         :CPropertySheet(_T("Properties"), AfxGetMainWnd(), 0)
 #endif
 {
+	help_hwnd_ = (HWND)0;
 #ifdef PROP_INFO
 	// Info page is the first but not active page - we need to get category list in
 	// CPropInfoPage::OnSetActive but the recent file list has not been read yet.
@@ -420,6 +421,8 @@ BEGIN_MESSAGE_MAP(CPropSheet, CPropertySheet)
         //{{AFX_MSG_MAP(CPropSheet)
         ON_WM_NCCREATE()
         //}}AFX_MSG_MAP
+        ON_WM_CLOSE()
+		ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -435,9 +438,10 @@ BOOL CPropSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
         return TRUE;
 }
 
-void CPropSheet::PostNcDestroy() 
+void CPropSheet::OnClose() 
 {
-    CPropertySheet::PostNcDestroy();
+    theApp.SaveToMacro(km_prop_close);
+	CPropertySheet::OnClose();
 }
 
 static DWORD id_pairs[] = { 
@@ -510,6 +514,17 @@ static DWORD id_pairs[] = {
     IDC_DATE_NULL, HIDC_DATE_NULL,
     0,0 
 };
+
+LRESULT CPropSheet::OnKickIdle(WPARAM, LPARAM lCount)
+{
+	// Display context help for ctrl set up in call to a page's OnHelpInfo
+	if (help_hwnd_ != (HWND)0)
+	{
+		theApp.HtmlHelpWmHelp(help_hwnd_, id_pairs);
+		help_hwnd_ = (HWND)0;
+	}
+    return FALSE;
+}
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
@@ -3553,7 +3568,6 @@ IMPLEMENT_DYNAMIC(CPropWnd, CHexPaneDialog)
 CPropWnd::CPropWnd(CWnd* pParent /*=NULL*/)
 {
 	m_pSheet = NULL;
-	help_hwnd_ = (HWND)0;
 }
 
 CPropWnd::~CPropWnd()
@@ -3571,7 +3585,6 @@ void CPropWnd::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CPropWnd, CHexPaneDialog)
         ON_WM_CLOSE()
         ON_WM_DESTROY()
-		ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 END_MESSAGE_MAP()
 
 BOOL CPropWnd::Create(CWnd* pParentWnd /*=NULL*/) 
@@ -3596,11 +3609,6 @@ BOOL CPropWnd::Create(CWnd* pParentWnd /*=NULL*/)
 	return TRUE;
 }
 
-void CPropWnd::OnClose() 
-{
-    theApp.SaveToMacro(km_prop_close);
-}
-
 void CPropWnd::OnDestroy() 
 {
     CHexPaneDialog::OnDestroy();
@@ -3608,15 +3616,3 @@ void CPropWnd::OnDestroy()
     // Save current page to restore when reopened
     theApp.prop_page_ = m_pSheet->GetActiveIndex();
 }
-
-LRESULT CPropWnd::OnKickIdle(WPARAM, LPARAM lCount)
-{
-	// Display context help for ctrl set up in call to a page's OnHelpInfo
-	if (help_hwnd_ != (HWND)0)
-	{
-		theApp.HtmlHelpWmHelp(help_hwnd_, id_pairs);
-		help_hwnd_ = (HWND)0;
-	}
-    return FALSE;
-}
-

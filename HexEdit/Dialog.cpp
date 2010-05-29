@@ -137,8 +137,6 @@ void CHexDialogBar::FixAndFloat(BOOL show /*=FALSE*/)
 }
 #endif
 
-#ifdef EXPLORER_WND
-
 /* Here we have CExplorerWnd and related classes */
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1466,7 +1464,6 @@ void CExplorerWnd::OnSelchangeFilter()
 
 	Refresh();
 }
-#endif // EXPLORER_WND
 
 /////////////////////////////////////////////////////////////////////////////
 // CImportDialog - derived from CFileDialog (via CHexFileDialog) for handling extra controls during import
