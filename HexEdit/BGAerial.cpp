@@ -228,7 +228,7 @@ void CHexEditDoc::CreateAerialThread()
 	{
 		ASSERT(data_file3_[ii] == NULL);
 		if (data_file_[ii] != NULL)
-			data_file2_[ii] = new CFile64(data_file_[ii]->GetFilePath(), 
+			data_file3_[ii] = new CFile64(data_file_[ii]->GetFilePath(), 
 										  CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 	}
 
@@ -391,7 +391,7 @@ UINT CHexEditDoc::RunAerialThread()
 
         // Get the file buffer
         size_t buf_len = (size_t)min(file_len, 65536);
-        unsigned char *buf = new unsigned char[buf_len]; // xxx delete[]
+        unsigned char *buf = new unsigned char[buf_len];
 
         for (;;)
         {
