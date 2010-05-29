@@ -764,6 +764,21 @@ private:
 #else
     enum { search_buf_len = 32768, compare_buf_len = 4096, clipboard_buf_len = 1024 };
 #endif
+
+	bool copy2cb_init(FILE_ADDRESS start, FILE_ADDRESS end);    // Setup clipboard and check for errors
+    bool copy2cb_text(FILE_ADDRESS start, FILE_ADDRESS end);    // Copy selection to clipboard as text (unless invalid text characters)
+    bool copy2cb_binary(FILE_ADDRESS start, FILE_ADDRESS end);  // Copy to clipboard in custom "BinaryData" format (same as used in Visual Studio)
+    CString copy2cb_file(FILE_ADDRESS start, FILE_ADDRESS end); // Copy to clipboard using our own custom format "HexEditLargeDataTempFile"
+    bool copy2cb_hextext(FILE_ADDRESS start, FILE_ADDRESS end); // Copy to clipboard as hex text (so each byte is stored as at least 3 chars = space + 2 hex digits)
+	FILE_ADDRESS hex_text_size(FILE_ADDRESS start, FILE_ADDRESS end)
+	{
+		// Amount of memory needed for hex text - see copy2cb_hextext().
+		// Allow 3 chars for every byte (2 hex digits + a space), plus
+		// 2 chars per line (CR+LF), + 1 trailing null byte.
+		return (end-start)*3 + ((end-start)/rowsize_+2)*2 + 1;
+	}
+	bool is_binary(FILE_ADDRESS, FILE_ADDRESS); // Is the data binary (helps say how we copy text data to the clipboard)
+
     int hex_pos(int column, int width=0) const // get X coord of hex display column
     {
         if (width == 0) width = text_width_;
@@ -977,7 +992,6 @@ private:
     BOOL dup_lines_;            // Merge duplicate lines?
     FILE_ADDRESS print_next_line_; // First line of the next page if dup_lines_ is on
 
-    static const char *bin_format_name; // Name of our custom clipboard format
 
 	bool errors_mentioned_;    // If there are errors have we mentioned it to the user?
 

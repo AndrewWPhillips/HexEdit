@@ -9741,286 +9741,418 @@ void CHexEditView::OnUpdateClipboard(CCmdUI* pCmdUI)
         pCmdUI->Enable(start != end);
 }
 
-const char *CHexEditView::bin_format_name = "BinaryData";
+enum cb_text_type      // defines how text data is written to the clipboard
+{
+	cb_text_auto,      // use hex text if it appears to be binary data, else use chars
+	cb_text_chars,     // write bytes as chars depending on active char set (ASCII, EBCDIC)
+	cb_text_hextext,   // convert each byte to 2 hex digits (as well as adding spaces, end of lines)
+};
 
 bool CHexEditView::CopyToClipboard()
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
-    num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
-
     // Get the addresses of the selection
     FILE_ADDRESS start, end;
     GetSelAddr(start, end);
     ASSERT(start >= 0 && start <= end && end <= GetDocument()->length());
-    if (start == end)
-    {
-        ASSERT(aa->playing_);
-        // Copy to clipboard while nothing selected, presumably in macro playback
-        AfxMessageBox("Nothing selected to place on clipboard!");
-        aa->mac_error_ = 10;
-        return false;
-    }
 
-    if (!aa->is_nt_ && end - start > MAX_CLIPBOARD)
-    {
-        AfxMessageBox("Too much for clipboard!");
-        aa->mac_error_ = 2;
-        return false;
-    }
+	// Clipboard setup and error checking
+	if (!copy2cb_init(start, end))
+		return false;
 
-    if (!OpenClipboard())
+	// Work out which format(s) to put on the clipboard.  Generally, we place
+	// both binary data ("BinaryData") and text (either the text chars if valid
+	// characters or binary data as hex digits), but if the data is too big
+	// it may just be stored in a temp binary file ("HexEditLargeDataTempFile").
+	enum cb_text_type cb_text = cb_text_chars; // xxx TODO read from option
+	bool use_file = false;   // Use our own special format if too big for clipboard
+	CString strTemp;         // name of temp file is used
+
+    if (end - start > MAX_CLIPBOARD)
     {
-        AfxMessageBox("The clipboard is in use!");
-        aa->mac_error_ = 10;
-        return false;
+		use_file = true;
     }
-    if (!::EmptyClipboard())
-    {
-        AfxMessageBox("Could not delete previous contents of the clipboard!");
-        ::CloseClipboard();
-        aa->mac_error_ = 10;
-        return false;
-    }
+	else if (cb_text == cb_text_auto)
+	{
+		cb_text = is_binary(start, end) ? cb_text_hextext : cb_text_chars;
+	}
 
     CWaitCursor wait;                           // Turn on wait cursor (hourglass)
 
-    // Copy to the clipboard as text
+	bool some_succeeded = false, some_failed = false;
+	if (!use_file)
+	{
+		// Now put text data onto the clipboard
+		if (cb_text == cb_text_hextext)
+		{
+			// Text is hex text (eg 3 chars "ABC" -> " 61 62 63")
+			if (copy2cb_hextext(start, end))
+				some_succeeded = true;
+			else
+				some_failed = true;
+		}
+		else
+		{
+			// Text as actual chars (if valid) including char set conversion
+			if (copy2cb_text(start, end))
+				some_succeeded = true;
+			else
+				some_failed = true;
+		}
+
+		// And also as binary
+		if (copy2cb_binary(start, end))
+			some_succeeded = true;
+		else
+			use_file = true;   // Possibly too big error - so use temp file format
+	}
+	if (use_file)
+	{
+		// Store all the data as binary in a (semi) temporary file.
+		strTemp = copy2cb_file(start, end);
+		if (!strTemp.IsEmpty())
+			some_succeeded = true;
+		else
+			some_failed = true;
+	}
+
+	ASSERT(some_succeeded || some_failed);
+	if (some_succeeded)
+		theApp.ClipBoardAdd(end - start, strTemp);
+
+	if (!::CloseClipboard() || some_failed)
     {
-        // Get windows memory to allow data to be put on clipboard
-        HANDLE hh;                                      // Windows handle for memory
-        unsigned char *p_cb, *pp;                       // Ptrs to + within the clipboard mem
-        if ((hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, size_t(end-start+1))) == NULL ||
-            (p_cb = reinterpret_cast<unsigned char *>(::GlobalLock(hh))) == NULL)
-        {
-            AfxMessageBox("Insufficient memory for clipboard data");
-            ::CloseClipboard();
-            aa->mac_error_ = 10;
-            return false;
-        }
-
-        // Copy the data from the document to the global memory
-        unsigned char *buf = new unsigned char[clipboard_buf_len];
-        size_t len;
-        pp = p_cb;
-		FILE_ADDRESS curr;
-        for (curr = start; curr < end; curr += len)
-        {
-            len = min(clipboard_buf_len, int(end - curr));
-            VERIFY(GetDocument()->GetData(buf, len, curr) == len);
-            // Copy all characters in buffer to clipboard memory (unless nul)
-            unsigned char *end_buf = buf + len;
-            if (display_.char_set != CHARSET_EBCDIC)
-            {
-                for (unsigned char *ss = buf; ss < end_buf; ++ss)
-                    if (*ss != '\0')
-                        *pp++ = *ss;
-            }
-            else
-            {
-                for (unsigned char *ss = buf; ss < end_buf; ++ss)
-                    if (e2a_tab[*ss] != '\0')
-                        *pp++ = e2a_tab[*ss];
-            }
-        }
-        ASSERT(curr == end);
-
-        // If pp has not been incremented then no valid characters were copied
-        if (pp == p_cb)
-        {
-            aa->mac_error_ = 1;
-            ((CMainFrame *)AfxGetMainWnd())->
-                StatusBarText("Warning: no valid text bytes - no text placed on clipboard");
-        }
-        *pp ='\0';
-
-        if (::SetClipboardData(CF_TEXT, hh) == NULL)
-        {
-            ::GlobalFree(hh);
-            AfxMessageBox("Could not place text data on clipboard");
-            ::CloseClipboard();
-            aa->mac_error_ = 10;
-            return false;
-        }
-        aa->ClipBoardAdd(pp - p_cb);
-        // Note: the clipboard now owns the memory so ::GlobalFree(hh) should not be called
-
-        delete[] buf;
-        ::GlobalUnlock(hh);
-    }
-
-
-    // Create the "BinaryData" clipboard format (or get it if it already exists)
-    UINT bin_format;
-    if ((bin_format = ::RegisterClipboardFormat(bin_format_name)) != 0)
-    {
-        // Get windows memory to allow binary data to be put on clipboard
-        HANDLE hh;                                      // Windows handle for memory
-        unsigned char *pp;                              // Actual pointer to the memory
-        if ((hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, size_t(end-start+4))) == NULL ||
-            (pp = reinterpret_cast<unsigned char *>(::GlobalLock(hh))) == NULL)
-        {
-            AfxMessageBox("Insufficient memory: stored to clipboard as text only");
-            ::CloseClipboard();
-            aa->mac_error_ = 10;
-            return false;
-        }
-
-        // Add the binary data length to first 4 bytes of BinaryData clipboard memory
-        long *pl = reinterpret_cast<long *>(pp);
-        *pl = long(end - start);
-
-        // Copy the data from the document to the global memory
-        VERIFY(GetDocument()->GetData(pp+4, size_t(end - start), start) == end - start);
-
-        ::GlobalUnlock(hh);
-
-        if (::SetClipboardData(bin_format, hh) == NULL)
-        {
-            ::GlobalFree(hh);
-            AfxMessageBox("Could not place binary data on clipboard: stored as text only");
-            ::CloseClipboard();
-            aa->mac_error_ = 10;
-            return false;
-        }
-        // Note: the clipboard now owns the memory so ::GlobalFree(hh) should not be called
-    }
-
-    if (!::CloseClipboard())
-    {
-        aa->mac_error_ = 20;
+        theApp.mac_error_ = 20;
         return false;
     }
+
     return true;
 }
-
 
 // Copy to clipboard as hex text
 void CHexEditView::OnCopyHex() 
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
-    num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
-
-    // Get the addresses of the selection
+	// Get the addresses of the selection
     FILE_ADDRESS start, end;
     GetSelAddr(start, end);
     ASSERT(start >= 0 && start <= end && end <= GetDocument()->length());
+
+	// Clipboard setup and error checking
+	if (!copy2cb_init(start, end))
+		return;
+
+    CWaitCursor wait;                           // Turn on wait cursor (hourglass)
+
+	bool ok = copy2cb_hextext(start, end);
+
+	if (::CloseClipboard() && ok)
+	{
+	    theApp.ClipBoardAdd((end - start)*3);
+        theApp.SaveToMacro(km_copy_hex);
+	}
+	else
+        theApp.mac_error_ = 20;
+}
+
+// Set up clipboard ready for having data added to it.
+// start,end = the part of the file to save (ie the selection)
+// If there is any problem it returns false after
+// displaying an error message and setting macro error level.
+bool CHexEditView::copy2cb_init(FILE_ADDRESS start, FILE_ADDRESS end)
+{
+    num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
+
+	// Check for problems with selection size
     if (start == end)
     {
+        ASSERT(theApp.playing_);  // Macro might have recorded Copy but when played there is no selection
         // Copy to clipboard while nothing selected, presumably in macro playback
-        ASSERT(aa->playing_);
         AfxMessageBox("Nothing selected to place on clipboard!");
-        aa->mac_error_ = 10;
-        return;
+        theApp.mac_error_ = 10;
+        return false;
     }
-
-    // Work out the amount of memory needed (may be slightly more than needed).
-    // Allow 3 chars for every byte (2 hex digits + a space), plus
-    // 2 chars per line (CR+LF), + 1 trailing nul byte.
-    FILE_ADDRESS mem_needed = (end-start)*3+((end-start)/rowsize_+2)*2+1;
-
-    if (!aa->is_nt_ && mem_needed > MAX_CLIPBOARD)
-    {
-        AfxMessageBox("Too much for clipboard!");
-        aa->mac_error_ = 2;
-        return;
-    }
-
-    if (mem_needed > 500000L)
+    if (end-start > 4000000L)
     {
         CString ss;
         ss.Format("Do you really want to put %sbytes on\n"
                   "the clipboard?  This may take some time.",
-                  NumScale(double(mem_needed)));
+                  NumScale(double(end-start)));
         if (AfxMessageBox(ss, MB_YESNO) != IDYES)
         {
-            aa->mac_error_ = 5;
-            return;
+            theApp.mac_error_ = 5;
+            return false;
         }
     }
-
-    if (!OpenClipboard())
+	// Now open and empty the clipboard ready for copying data into
+	if (!OpenClipboard())
     {
-        ASSERT(0);
         AfxMessageBox("The clipboard is in use!");
-        aa->mac_error_ = 10;
-        return;
+        theApp.mac_error_ = 10;
+        return false;
     }
     if (!::EmptyClipboard())
     {
-        ASSERT(0);
         AfxMessageBox("Could not delete previous contents of the clipboard!");
         ::CloseClipboard();
-        aa->mac_error_ = 10;
-        return;
+        theApp.mac_error_ = 10;
+        return false;
+    }
+	return true;
+}
+
+// Copy selection to clipboard as text which can be pasted into a text editor etc.
+// Invalid text characters (eg nul byte) are not copied.
+// If current display mode is EBCDIC then the characters are converted from
+// EBCDIC to ASCII as they are added.
+bool CHexEditView::copy2cb_text(FILE_ADDRESS start, FILE_ADDRESS end)
+{
+    // Get windows memory to allow data to be put on clipboard
+    HANDLE hh;                                      // Windows handle for memory
+    unsigned char *p_cb, *pp;                       // Ptrs to + within the clipboard mem
+    if ((hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, size_t(end-start+1))) == NULL ||
+        (p_cb = reinterpret_cast<unsigned char *>(::GlobalLock(hh))) == NULL)
+    {
+        AfxMessageBox("Not enough memory to add text to clipboard");
+        theApp.mac_error_ = 10;
+        return false;
     }
 
-    CWaitCursor wait;                           // Turn on wait cursor (hourglass)
-
+    // Copy the data from the document to the global memory
+    unsigned char * buf = new unsigned char[clipboard_buf_len];
+    size_t len;
+    pp = p_cb;
+	FILE_ADDRESS curr;
+    for (curr = start; curr < end; curr += len)
     {
-        // Get windows memory to allow data to be put on clipboard
-        HANDLE hh;                              // Windows handle for memory
-        char *p_cb, *pp;                        // Ptr to start and within the clipboard text
-
-        if ((hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, DWORD(mem_needed))) == NULL ||
-            (p_cb = reinterpret_cast<char *>(::GlobalLock(hh))) == NULL)
+        len = min(clipboard_buf_len, int(end - curr));
+        VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+        // Copy all characters in buffer to clipboard memory (unless nul)
+        unsigned char *end_buf = buf + len;
+        if (display_.char_set != CHARSET_EBCDIC)
         {
-            AfxMessageBox("Insufficient memory for clipboard data");
-            ::CloseClipboard();
-            aa->mac_error_ = 10;
-            return;
+            for (unsigned char *ss = buf; ss < end_buf; ++ss)
+                if (*ss != '\0')
+                    *pp++ = *ss;
         }
-
-        unsigned char cc;
-        const char *hex;
-        if (aa->hex_ucase_)
-            hex = "0123456789ABCDEF?";
         else
-            hex = "0123456789abcdef?";
-
-        pp = p_cb;
-
-		FILE_ADDRESS curr;
-        for (curr = start; curr < end; )
         {
-            VERIFY(GetDocument()->GetData(&cc, 1, curr) == 1);
-            *pp++ = hex[(cc>>4)&0xF];
-            *pp++ = hex[cc&0xF];
-            *pp++ = ' ';
-            if ((++curr + offset_)%rowsize_ == 0)
-            {
-                *pp++ = '\r';
-                *pp++ = '\n';
-            }
+            for (unsigned char *ss = buf; ss < end_buf; ++ss)
+                if (e2a_tab[*ss] != '\0')
+                    *pp++ = e2a_tab[*ss];
         }
-        if ((curr + offset_)%rowsize_ != 0)
+    }
+    ASSERT(curr == end);
+    delete[] buf;
+
+    // If pp has not been incremented then no valid characters were copied
+    if (pp == p_cb)
+    {
+        theApp.mac_error_ = 1;
+        ((CMainFrame *)AfxGetMainWnd())->
+            StatusBarText("Warning: no valid text bytes - no text placed on clipboard");
+    }
+    *pp ='\0';
+
+    if (::SetClipboardData(CF_TEXT, hh) == NULL)
+    {
+        ::GlobalFree(hh);
+        AfxMessageBox("Could not place text data on clipboard");
+        theApp.mac_error_ = 10;
+        return false;
+    }
+
+    // Note: the clipboard now owns the memory so ::GlobalFree(hh) should not be called
+    ::GlobalUnlock(hh);
+
+	return true;
+}
+
+// Copy to the clipboard in our own custom format "HexEditLargeDataTempFile".
+// This creates a Windows temporary file with all the data and just
+// puts the file name onto the clipboard.  (The temp file is deleted
+// later when the clipboard changes or when HexEdit exits.)
+// It returns the name of the temp file or an empty string if there is
+// some sort of error, the most likely being a file error.
+CString CHexEditView::copy2cb_file(FILE_ADDRESS start, FILE_ADDRESS end)
+{
+	CString TempFileName;
+
+	// Create a temp file and write the data to it.
+	{
+        char temp_dir[_MAX_PATH];
+        char temp_file[_MAX_PATH];
+        ::GetTempPath(sizeof(temp_dir), temp_dir);
+        ::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
+        TempFileName = temp_file;
+	}
+
+	if (!GetDocument()->WriteData(TempFileName, start, end))
+	{
+        //AfxMessageBox("Error writing clipboard to disk");
+        theApp.mac_error_ = 10;
+		return CString();
+	}
+
+    HANDLE hh;                                      // Windows handle for memory
+    unsigned char *pp;                              // Actual pointer to the memory
+
+    // Create the custom clipboard format (or get it if it already exists)
+    // and get the memory to store the file name.
+    UINT temp_format;
+    if ((temp_format = ::RegisterClipboardFormat(CHexEditApp::temp_format_name)) == 0 ||
+        (hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, size_t(TempFileName.GetLength()+4))) == NULL ||
+        (pp = reinterpret_cast<unsigned char *>(::GlobalLock(hh))) == NULL)
+    {
+        AfxMessageBox("Not enough memory to add binary data to clipboard");
+        theApp.mac_error_ = 10;
+		return CString();
+    }
+
+	// Put the length of the file name
+    long *pl = reinterpret_cast<long *>(pp);
+    *pl = TempFileName.GetLength();
+
+	// Put the filename
+	memcpy(pp+4, TempFileName.GetBuffer(), TempFileName.GetLength());
+
+    if (::SetClipboardData(temp_format, hh) == NULL)
+    {
+        ::GlobalFree(hh);
+        AfxMessageBox("Could not place custom data on clipboard");
+        theApp.mac_error_ = 10;
+		return CString();
+    }
+
+    // Note: the clipboard now owns the memory so ::GlobalFree(hh) should not be called
+    ::GlobalUnlock(hh);
+
+	return TempFileName;
+}
+
+// Copy the selection to the clipboard in custom "BinaryData" format.
+// This is the same format as used by the Visual Studio hex editor,
+// simply consisting of a length (32-bit integer) followed by the bytes.
+// May return false due to errors such as insufficient memory, whence
+// a message has been shown to the user and mac_error_ has been set.
+bool CHexEditView::copy2cb_binary(FILE_ADDRESS start, FILE_ADDRESS end)
+{
+    HANDLE hh;                                      // Windows handle for memory
+    unsigned char *pp;                              // Actual pointer to the memory
+
+    // Create the "BinaryData" clipboard format (or get it if it already exists)
+    // then get windows memory to allow binary data to be put on clipboard
+	// then lock the memory
+    UINT bin_format;
+	if ((bin_format = ::RegisterClipboardFormat(CHexEditApp::bin_format_name)) == 0 ||
+        (hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, size_t(end-start+4))) == NULL ||
+        (pp = reinterpret_cast<unsigned char *>(::GlobalLock(hh))) == NULL)
+    {
+        AfxMessageBox("Not enough memory to add binary data to clipboard");
+        theApp.mac_error_ = 10;
+        return false;
+    }
+
+    // Add the binary data length to first 4 bytes of BinaryData clipboard memory
+    long *pl = reinterpret_cast<long *>(pp);
+    *pl = long(end - start);
+
+    // Copy the data from the document to the global memory
+    VERIFY(GetDocument()->GetData(pp+4, size_t(end - start), start) == end - start);
+
+    if (::SetClipboardData(bin_format, hh) == NULL)
+    {
+        ::GlobalFree(hh);
+        AfxMessageBox("Could not place binary data on clipboard");
+        theApp.mac_error_ = 10;
+        return false;
+    }
+
+    // Note: the clipboard now owns the memory so ::GlobalFree(hh) should not be called
+    ::GlobalUnlock(hh);
+
+	return true;
+}
+
+// Copy to clipboard as hex text, ie, each byte is stored as
+// 2 hex digits + also includes spaces etc.
+bool CHexEditView::copy2cb_hextext(FILE_ADDRESS start, FILE_ADDRESS end)
+{
+    // Work out the amount of memory needed (may be slightly more than needed).
+    FILE_ADDRESS mem_needed = hex_text_size(start, end);
+
+    // Get windows memory to allow data to be put on clipboard
+    HANDLE hh;                              // Windows handle for memory
+    char *p_cb, *pp;                        // Ptr to start and within the clipboard text
+
+    if ((hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, DWORD(mem_needed))) == NULL ||
+        (p_cb = reinterpret_cast<char *>(::GlobalLock(hh))) == NULL)
+    {
+        AfxMessageBox("Not enough memory to add hex text to clipboard");
+        theApp.mac_error_ = 10;
+        return false;
+    }
+
+    unsigned char cc;
+    const char *hex;
+    if (theApp.hex_ucase_)
+        hex = "0123456789ABCDEF?";
+    else
+        hex = "0123456789abcdef?";
+
+    pp = p_cb;
+
+	FILE_ADDRESS curr;
+    for (curr = start; curr < end; )
+    {
+        VERIFY(GetDocument()->GetData(&cc, 1, curr) == 1);
+        *pp++ = hex[(cc>>4)&0xF];
+        *pp++ = hex[cc&0xF];
+        *pp++ = ' ';
+        if ((++curr + offset_)%rowsize_ == 0)
         {
-            // Add line termination at end
             *pp++ = '\r';
             *pp++ = '\n';
         }
-        *pp ='\0';
+    }
+    if ((curr + offset_)%rowsize_ != 0)
+    {
+        // Add line termination at end
+        *pp++ = '\r';
+        *pp++ = '\n';
+    }
+    *pp ='\0';
 
-        if (::SetClipboardData(CF_TEXT, hh) == NULL)
-        {
-            ASSERT(0);
-            ::GlobalFree(hh);
-            AfxMessageBox("Could not place data on clipboard");
-            ::CloseClipboard();
-            aa->mac_error_ = 10;
-            return;
-        }
-        aa->ClipBoardAdd(pp - p_cb);
-        // Note: the clipboard now owns the memory so ::GlobalFree(hh) should not be called
-
-        ::GlobalUnlock(hh);
+    if (::SetClipboardData(CF_TEXT, hh) == NULL)
+    {
+        ::GlobalFree(hh);
+        AfxMessageBox("Could not place hex text data on clipboard");
+        theApp.mac_error_ = 10;
+        return false;
     }
 
-    if (!::CloseClipboard())
-        aa->mac_error_ = 20;
-    else
-        aa->SaveToMacro(km_copy_hex);
+    // Note: the clipboard now owns the memory so ::GlobalFree(hh) should not be called
+    ::GlobalUnlock(hh);
+
+	return true;
+}
+
+bool CHexEditView::is_binary(FILE_ADDRESS start, FILE_ADDRESS end)
+{
+	unsigned char buf[8192];
+	size_t len;
+	for (FILE_ADDRESS curr = start; curr < end; curr += len)
+	{
+		// Get the next buffer full from the document
+		len = size_t(min(sizeof(buf), end - curr));
+	    VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+
+		// For now we only consider data with a null byte to be binary
+		// since the clipboard can actually have any other character
+		// added to it in text format.  However, it may make sense to be
+		// more restrictive later.
+		if (memchr(buf, '\0', len) != NULL)
+			return true;
+	}
+	return false;
 }
 
 // Copy to cipboard as C source (characters stored as hex ints)
@@ -10063,6 +10195,11 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
 {
     FILE_ADDRESS start, end;
     GetSelAddr(start, end);
+    ASSERT(start >= 0 && start <= end && end <= GetDocument()->length());
+
+	// Clipboard setup and error checking
+	if (!copy2cb_init(start, end))
+		return;
 
     //    // Work out the amount of memory needed (may be slightly more than needed).
     //    // Allow 6 chars for every byte ("0x" + 2 hex digits + comma + space), plus
@@ -10085,42 +10222,6 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
         // Max 8 chars per byte + 7 bytes per line (/**/ \r\n) + address per line + terminator
         mem_needed = (end-start)*8 + ((end-start)/rowsize_+2)*(indent+7+addr_width_) + 2;
         break;
-    }
-
-    if (!theApp.is_nt_ && mem_needed > MAX_CLIPBOARD)
-    {
-        AfxMessageBox("Too much for clipboard!");
-        theApp.mac_error_ = 2;
-        return;
-    }
-
-    if (mem_needed > 500000L)
-    {
-        CString ss;
-        ss.Format("Do you really want to put %sbytes on\n"
-                  "the clipboard?  This may take some time.",
-                  NumScale(double(mem_needed)));
-        if (AfxMessageBox(ss, MB_YESNO) != IDYES)
-        {
-            theApp.mac_error_ = 5;
-            return;
-        }
-    }
-
-    if (!OpenClipboard())
-    {
-        ASSERT(0);
-        AfxMessageBox("The clipboard is in use!");
-        theApp.mac_error_ = 10;
-        return;
-    }
-    if (!::EmptyClipboard())
-    {
-        ASSERT(0);
-        AfxMessageBox("Could not delete previous contents of the clipboard!");
-        ::CloseClipboard();
-        theApp.mac_error_ = 10;
-        return;
     }
 
     CWaitCursor wait;                           // Turn on wait cursor (hourglass)
@@ -10611,7 +10712,7 @@ void CHexEditView::OnEditPaste()
         char name[16];
         size_t nlen = ::GetClipboardFormatName(ff, name, 15);
         name[nlen] = '\0';
-        if (strcmp(name, bin_format_name) == 0)
+		if (strcmp(name, CHexEditApp::bin_format_name) == 0)
         {
             // BINARY DATA
             if ((hh = ::GetClipboardData(ff)) != NULL &&
@@ -10635,7 +10736,10 @@ void CHexEditView::OnEditPaste()
                         return;
                     }
 					else if (!do_insert())
+					{
+                        ::CloseClipboard();
 						return;
+					}
                 }
                 else if (display_.overtype && end_addr-start_addr != *pl)
                 {
@@ -10645,12 +10749,16 @@ void CHexEditView::OnEditPaste()
                     {
                     case IDYES:
 						if (!do_insert())
+						{
+							::CloseClipboard();
 							return;
+						}
                         break;
                     case IDNO:
                         break; /* do nothing */
                     default:
                         aa->mac_error_ = 5;
+						::CloseClipboard();
                         return;
                     }
                 }
@@ -10668,11 +10776,107 @@ void CHexEditView::OnEditPaste()
 //                SetSel(addr2pos(start_addr), addr2pos(start_addr+*pl));
                 SetSel(addr2pos(start_addr+*pl, row), addr2pos(start_addr+*pl, row));
                 DisplayCaret();
-                ::CloseClipboard();
                 show_prop();                            // New char - check props
                 show_calc();
                 show_pos();                             // Update tool bar
                 aa->SaveToMacro(km_paste);
+            }
+            else
+                aa->mac_error_ = 20;    // It's there but couldn't get it
+            ::CloseClipboard();
+            return;
+        }
+		else if (strcmp(name, CHexEditApp::temp_format_name) == 0)
+        {
+            // Binary data in temp file
+            if ((hh = ::GetClipboardData(ff)) != NULL &&
+                (pp = reinterpret_cast<unsigned char *>(::GlobalLock(hh))) != NULL)
+            {
+				// Get the temp file name
+				CString strTemp;
+                long *pl = reinterpret_cast<long *>(pp);
+				memcpy(strTemp.GetBuffer(*pl), pp+4, *pl);
+				strTemp.ReleaseBuffer(*pl);  // adds null byte at end
+                ::CloseClipboard();          // We have got everything from the cb memory
+
+				// Make sure there is a temp file handle available. (We are going to
+				// use mod_insert_file to access data directly from the temp file
+				// as we don't want to read the whole (large} file into memory.)
+				int idx = GetDocument()->AddDataFile(strTemp);
+				if (idx == -1)
+				{
+					AfxMessageBox("HexEdit is out of temporary files and\n"
+								  "cannot paste from a temporary clipboard file. \n"
+								  "Please save your file to free \n"
+								  "temporary file handles and try again.\n",
+								  MB_OK);
+                    aa->mac_error_ = 10;
+					return;
+				}
+
+				// Get the file's length so we know how much is being pasted
+				CFileStatus fs;
+				VERIFY(CFile64::GetStatus(strTemp, fs));
+
+				// Get selection so we can replace it (and also to restore caret later)
+                FILE_ADDRESS start_addr, end_addr;
+                GetSelAddr(start_addr, end_addr);
+                int row = 0;
+                if (start_addr == end_addr && display_.vert_display)
+                    row = pos2row(GetCaret());
+
+                // Do some file mode checks and fixes as specified by the user
+                if (display_.overtype && start_addr + fs.m_size > GetDocument()->length())
+                {
+                    if (AfxMessageBox("The paste operation extends past EOF\n"
+                                      "which is illegal in overtype mode.\n"
+                                      "Do you want to turn on insert mode?", MB_OKCANCEL) != IDOK)
+                    {
+                        aa->mac_error_ = 10;
+                        return;
+                    }
+					else if (!do_insert())
+						return;
+                }
+                else if (display_.overtype && end_addr-start_addr != fs.m_size)
+                {
+                    switch (AfxMessageBox("Pasting in overtype mode will overwrite data!\r"
+                                      "Do you want to turn on insert mode?",
+                                      MB_YESNOCANCEL))
+                    {
+                    case IDYES:
+						if (!do_insert())
+							return;
+                        break;
+                    case IDNO:
+                        break; /* do nothing */
+                    default:
+                        aa->mac_error_ = 5;
+                        return;
+                    }
+                }
+
+				// Insert/replace with temp data file
+				if (display_.overtype)
+				{
+					// Effectively replace using the file length
+					GetDocument()->Change(mod_delforw, start_addr, fs.m_size, NULL, 0, this);
+			        GetDocument()->Change(mod_insert_file, start_addr, fs.m_size, NULL, idx, this, TRUE);
+				}
+				else
+				{
+					// Wipe out any current selection then insert the data
+					if (start_addr < end_addr)
+						GetDocument()->Change(mod_delforw, start_addr, end_addr-start_addr, NULL, 0, this);
+			        GetDocument()->Change(mod_insert_file, start_addr, fs.m_size, NULL, idx, this, TRUE);
+				}
+				// Restore caret and update everything due to possible new data at the caret
+				SetSel(addr2pos(start_addr+fs.m_size, row), addr2pos(start_addr+fs.m_size, row));
+				DisplayCaret();
+				show_prop();                            // New current char - check props
+				show_calc();
+				show_pos();                             // Update tool bar
+				aa->SaveToMacro(km_paste);
             }
             else
                 aa->mac_error_ = 20;    // It's there but couldn't get it

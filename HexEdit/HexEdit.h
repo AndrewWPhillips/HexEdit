@@ -466,8 +466,24 @@ public:
     int algorithm_;             // Current encryption algorithm
     CString password_;          // Current encryption password
 
-    size_t last_cb_size_;               // Size of last thing we put on the clipboard
-    void ClipBoardAdd(size_t len) { last_cb_size_ = len; }
+	// Clipboard
+    static const char * bin_format_name; // Name of custom binary clipboard format
+    static const char * temp_format_name; // Name of custom format where data stored to temp file
+    FILE_ADDRESS last_cb_size_; // Size of last thing we put on the clipboard
+	DWORD last_cb_seq_;         // Clipboard seq no for last thing added
+	CString last_cb_temp_file_; // Clipboard data is in temp file here
+    void ClipBoardAdd(FILE_ADDRESS len, LPCTSTR temp_file = NULL)
+	{
+		if (!last_cb_temp_file_.IsEmpty())
+		{
+			CString tt(last_cb_temp_file_);
+			last_cb_temp_file_.Empty();
+			::remove(tt);
+		}
+		last_cb_size_ = len;
+		last_cb_seq_ = ::GetClipboardSequenceNumber();
+		last_cb_temp_file_ = temp_file;
+	}
 
     void play_macro_file(const CString &filename, int pp = -1) ;
 

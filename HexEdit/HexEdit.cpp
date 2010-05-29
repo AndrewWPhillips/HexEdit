@@ -93,6 +93,8 @@ int add_security_called = 0;
 int new_check_called = 0;
 #endif
 extern DWORD hid_last_file_dialog = HIDD_FILE_OPEN;
+const char *CHexEditApp::bin_format_name  = "BinaryData";               // for copy2cb_binary
+const char *CHexEditApp::temp_format_name = "HexEditLargeDataTempFile"; // for copy2cb_file
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditDocManager
@@ -229,7 +231,7 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
     pv_ = pview_ = NULL;
     refresh_off_ = false;
     open_plf_ = open_oem_plf_ = NULL;
-    last_cb_size_ = 0;
+    last_cb_size_ = last_cb_seq_ = 0;
 #ifndef NDEBUG
     // Make default capacity for mac_ vector small to force reallocation sooner.
     // This increases likelihood of catching bugs related to reallocation.
@@ -1487,20 +1489,33 @@ int CHexEditApp::ExitInstance()
     if (save_exit_)
         SaveOptions();
 
-    // If we wrote something big to the clipboard ask the user if they want to delete it
-    if (last_cb_size_ > 100000 && ::OpenClipboard(HWND(0)))
-    {
-        HANDLE hh;                              // Handle to clipboard memory
-        char *pp;                               // Pointer to clipboard text
-        size_t len;                             // Size of text on clipboard
+	// If we have a custom clipboard (large temp file) format
+	// then we need to remove it and the temp file.
+	if (!last_cb_temp_file_.IsEmpty())
+	{
+		// First check if it is still on the clipboard
+		if (last_cb_seq_ == ::GetClipboardSequenceNumber())
+		{
+#ifdef _DEBUG
+			// Ensure that the format is still present (else soemthing is very wrong)
+			UINT fmt = ::RegisterClipboardFormat(temp_format_name);
+			ASSERT(::IsClipboardFormatAvailable(fmt));
+#endif
+			if (::OpenClipboard(HWND(0)))
+				::EmptyClipboard();
+			::CloseClipboard();
+		}
+		::remove(last_cb_temp_file_);
+		last_cb_temp_file_.Empty();
+	}
 
-        if ((hh = ::GetClipboardData(CF_TEXT)) != NULL &&
-            (pp = reinterpret_cast<char *>(::GlobalLock(hh))) != NULL &&
-            (len = strlen(pp)) == last_cb_size_)
-        {
-            if (AfxMessageBox("Leave data on clipboard?", MB_YESNO) != IDYES)
-                ::EmptyClipboard();
-        }
+    // If we wrote something big to the clipboard ask the user if they want to delete it
+    else if (last_cb_size_ > 500000 && 
+		     last_cb_seq_ == ::GetClipboardSequenceNumber() &&
+		     ::OpenClipboard(HWND(0)))
+    {
+        if (AfxMessageBox("Leave data on clipboard?", MB_YESNO) != IDYES)
+            ::EmptyClipboard();
 
         ::CloseClipboard();
     }
@@ -1689,6 +1704,17 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
         (void)CWinAppEx::OnIdle(lCount);
         return TRUE;                    // we want more processing
     }
+
+	if (last_cb_seq_ != ::GetClipboardSequenceNumber())
+	{
+		// clipboard has changed
+		if (!last_cb_temp_file_.IsEmpty())
+		{
+			::remove(last_cb_temp_file_);
+			last_cb_temp_file_.Empty();
+		}
+	}
+
 
     return CWinAppEx::OnIdle(lCount);
 }
