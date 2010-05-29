@@ -322,7 +322,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
         // Add a new elt to undo array
 		if (utype == mod_insert_file)
 		{
-			ASSERT(data_file_[num_done] != NULL);
+			ASSERT(num_done > -1 && data_file_[num_done] != NULL);
             undo_.push_back(doc_undo(utype, address, clen, NULL, num_done));
 		}
         else if (utype == mod_insert || utype == mod_replace || utype == mod_repback)

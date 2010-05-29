@@ -1,6 +1,6 @@
 // HexEditView.cpp : implementation of the CHexEditView class
 //
-// Copyright (c) 1999-2010 by Andrew W. Phillips. 
+// Copyright (c) 1998-2010 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -57,7 +57,7 @@
 // the top and bottom of the display area.
 //#define TEST_CLIPPING  1
 
-#define MAX_CLIPBOARD 16000000L  // Putting more than this on the clipboard (Win 95/98) causes crash
+#define MAX_CLIPBOARD    32000000L  // Just a rough guideline - may make an option later
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -576,9 +576,9 @@ CHexEditView::CHexEditView()
     text_height_ = 0;     // While text_height_ == 0 none of the display settings have been calculated
     pdfv_ = NULL;
     pav_ = NULL;
+	pcv_ = NULL;
 
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
     disp_state_ = previous_state_ = 0;
 
     resize_start_addr_ = resize_curr_scroll_ = -1;
@@ -1422,11 +1422,6 @@ BOOL CHexEditView::set_colours()
 		GetDocument()->AerialChange(this);
 	}
 
-    if (pcv_ != NULL)
-    {
-        ASSERT_KINDOF(CCompareView, pcv_);
-        pcv_->set_colours();
-    }
     return retval;
 }
 
@@ -3964,6 +3959,11 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 // options changed (address display, char display, autofit turned on etc).
 void CHexEditView::recalc_display()
 {
+	// Stop re-entry (can cause inf. recursion)
+	static bool in_recalc_display = false;
+	if (in_recalc_display) return;
+	in_recalc_display = true;
+
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
     if (GetScrollPastEnds() != theApp.scroll_past_ends_)
@@ -4092,6 +4092,11 @@ void CHexEditView::recalc_display()
         display_.hex_area = TRUE; // defensive
         SetSize(CSize(hex_pos(rowsize_-1)+2*text_width_+text_width_/2+1, -1));
     }
+
+	if (pcv_ != NULL)
+		pcv_->recalc_display();
+
+	in_recalc_display = false;
 } /* recalc_display() */
 
 void CHexEditView::calc_addr_width()
@@ -4230,6 +4235,9 @@ void CHexEditView::DoInvalidate()
     {
         if (pav_ != NULL)
             pav_->Invalidate();
+        if (pcv_ != NULL)
+            pcv_->Invalidate();
+
         CScrView::DoInvalidate();
     }
 }
@@ -5278,7 +5286,7 @@ void CHexEditView::show_prop(FILE_ADDRESS address /*=-1*/)
 
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     if (address < 0) address = GetPos();
-    mm->m_wndProp.m_pSheet->Update(this, address);
+    mm->m_wndProp.Update(this, address);
 }
 
 void CHexEditView::show_calc()
@@ -6001,7 +6009,7 @@ void CHexEditView::OnKillFocus(CWnd* pNewWnd)
     {
         CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 
-        mm->m_wndProp.m_pSheet->Update(NULL, -1);
+        mm->m_wndProp.Update(NULL, -1);
     }
 
     // Invalidate the current selection so its drawn lighter in inactive window
@@ -11168,9 +11176,9 @@ void CHexEditView::OnDisplayReset()
 	{
 		// Character set is to be changed - so update find dlg to match
 		if (theApp.open_display_.char_set == CHARSET_EBCDIC)
-			mm->m_wndFind.m_pSheet->SetCharSet(CFindSheet::RB_CHARSET_EBCDIC);
+			mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_EBCDIC);
 		else
-			mm->m_wndFind.m_pSheet->SetCharSet(CFindSheet::RB_CHARSET_ASCII);
+			mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_ASCII);
 	}
 
     begin_change();
@@ -11732,7 +11740,7 @@ void CHexEditView::do_hextoggle(int state /*=-1*/)
 {
     if (display_.vert_display)
     {
-        AfxMessageBox("You can't toggle hex area in xxx mode");
+        AfxMessageBox("You can't toggle hex area in stacked mode");
         theApp.mac_error_ = 2;
         return;
     }
@@ -11799,7 +11807,6 @@ void CHexEditView::OnFontInc()
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
     // Save font for undo
-    // xxx this could be done with a size arg rather than a whole LOGFONT structure
     LOGFONT *plf = new LOGFONT;
     *plf = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;
     for ( ; ; )
@@ -11912,7 +11919,6 @@ void CHexEditView::OnFontDec()
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
     // Save font for undo
-    // xxx this could be done with a size arg rather than a whole LOGFONT structure
     LOGFONT *plf = new LOGFONT;
     *plf = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;
     for ( ; ; )
@@ -12543,6 +12549,8 @@ void CHexEditView::redo_font()
     pfont_ = new CFont;
     pfont_->CreateFontIndirect(display_.FontRequired() == FONT_OEM ? &oem_lf_ : &lf_);
     SetFont(pfont_);
+	if (pcv_ != NULL)
+		pcv_->SetFont(pfont_);
     if (tf != NULL)
         delete tf;                      // Delete old font after it's deselected
 }
@@ -12706,7 +12714,7 @@ void CHexEditView::OnCharsetAscii()
     // Change search type in find modeless dlg
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     if (display_.char_set == CHARSET_EBCDIC)
-        mm->m_wndFind.m_pSheet->SetCharSet(CFindSheet::RB_CHARSET_ASCII);
+        mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_ASCII);
 
     if (scheme_name_ == ANSI_NAME   && display_.char_set == CHARSET_ANSI ||
         scheme_name_ == OEM_NAME    && display_.char_set == CHARSET_OEM  ||
@@ -12763,7 +12771,7 @@ void CHexEditView::OnCharsetAnsi()
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     ASSERT(mm != NULL);
     if (display_.char_set == CHARSET_EBCDIC)
-        mm->m_wndFind.m_pSheet->SetCharSet(CFindSheet::RB_CHARSET_ASCII);
+        mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_ASCII);
 
     if (scheme_name_ == ASCII_NAME  && display_.char_set == CHARSET_ASCII ||
         scheme_name_ == OEM_NAME    && display_.char_set == CHARSET_OEM   ||
@@ -12819,7 +12827,7 @@ void CHexEditView::OnCharsetOem()
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     ASSERT(mm != NULL);
     if (display_.char_set == CHARSET_EBCDIC)
-        mm->m_wndFind.m_pSheet->SetCharSet(CFindSheet::RB_CHARSET_ASCII);
+        mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_ASCII);
 
     if (scheme_name_ == ASCII_NAME  && display_.char_set == CHARSET_ASCII ||
         scheme_name_ == ANSI_NAME   && display_.char_set == CHARSET_ANSI  ||
@@ -12875,7 +12883,7 @@ void CHexEditView::OnCharsetEbcdic()
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     ASSERT(mm != NULL);
     if (display_.char_set != CHARSET_EBCDIC)
-        mm->m_wndFind.m_pSheet->SetCharSet(CFindSheet::RB_CHARSET_EBCDIC);
+        mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_EBCDIC);
 
     if (scheme_name_ == ASCII_NAME && display_.char_set == CHARSET_ASCII ||
         scheme_name_ == ANSI_NAME  && display_.char_set == CHARSET_ANSI  ||
@@ -13043,9 +13051,9 @@ void CHexEditView::OnAscEbc()
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     ASSERT(mm != NULL);
     if (display_.char_set == CHARSET_EBCDIC)
-        mm->m_wndFind.m_pSheet->SetCharSet(CFindSheet::RB_CHARSET_ASCII);
+        mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_ASCII);
     else
-        mm->m_wndFind.m_pSheet->SetCharSet(CFindSheet::RB_CHARSET_EBCDIC);
+        mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_EBCDIC);
 
     begin_change();
 	if (display_.char_set == CHARSET_EBCDIC)
@@ -17811,6 +17819,8 @@ void CHexEditView::OnCompHide()
 	int snum_c = GetFrame()->splitter_.FindViewColumn(pcv_->GetSafeHwnd());
 	int tnum_c = GetFrame()->ptv_->FindTab(pcv_->GetSafeHwnd());
 
+	pcv_ = NULL;  // Clear it now to avoid getting errors by trying to use it when dead
+
 	ASSERT(snum_c > -1 || tnum_c > -1);  // It must be open in tab or splitter
 
 	if (snum_c > -1)  // splitter?
@@ -17825,8 +17835,6 @@ void CHexEditView::OnCompHide()
 		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing aerial view
 		VERIFY(GetFrame()->ptv_->RemoveView(tnum_c));
 	}
-
-	pcv_ = NULL;
 }
 
 void CHexEditView::OnUpdateCompHide(CCmdUI* pCmdUI) 
@@ -17854,10 +17862,12 @@ bool CHexEditView::DoCompSplit()
 	{
 		int tnum_c = GetFrame()->ptv_->FindTab(pcv_->GetSafeHwnd());
 		ASSERT(tnum_c > -1);
+
+		pcv_ = NULL;
+
 		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing aerial view
 		if (tnum_c > -1)
 			VERIFY(GetFrame()->ptv_->RemoveView(tnum_c));
-		pcv_ = NULL;
 	}
 
 	// Reopen in the splitter
@@ -17917,6 +17927,9 @@ bool CHexEditView::DoCompTab()
 	{
 		int snum_c = GetFrame()->splitter_.FindViewColumn(pcv_->GetSafeHwnd());
 		ASSERT(snum_c > 0);       // Should be there (not -1) and not the left one (not 0)
+
+		pcv_ = NULL;
+
 		if (snum_c > -1)
 		{
 			int dummy;
@@ -17924,7 +17937,6 @@ bool CHexEditView::DoCompTab()
 		    VERIFY(GetFrame()->splitter_.DelColumn(snum_c, TRUE));
 			GetFrame()->splitter_.RecalcLayout();
 		}
-		pcv_ = NULL;
 	}
 
 	// Reopen in the tab
