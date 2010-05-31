@@ -553,6 +553,7 @@ public:
     CPropDatePage     prop_date;
 };
 
+/* xxx TBD remove this
 // CPropWnd dialog
 
 class CPropWnd : public CHexPaneDialog
@@ -575,6 +576,7 @@ public:
 
 	CPropSheet *m_pSheet;
 };
+*/
 
 /////////////////////////////////////////////////////////////////////////////
 

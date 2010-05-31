@@ -37,7 +37,7 @@
 // CCalcDlg dialog
 class CMainFrame;
 
-class CCalcDlg : public CHexPaneDialog
+class CCalcDlg : public CDialog
 {
     friend class CCalcEdit;
     friend class CHexEditApp;           // Allows macros to call protected members
@@ -56,6 +56,7 @@ public:
     void FixFileButtons();
     void StartEdit();           // Set focus to text control and move caret to end
 	void update_controls();
+	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
     void Set(unsigned __int64 v) { current_ = v; if (IsVisible()) edit_.Put(); }
     void change_base(int);
     void change_bits(int);
@@ -173,11 +174,11 @@ public:
     public:
     virtual BOOL PreTranslateMessage(MSG* pMsg);
     //}}AFX_VIRTUAL
-	virtual void ShowPane(BOOL bShow, BOOL bDelay, BOOL bActivate)
-	{
-		theApp.SaveToMacro(km_calc_dlg, bShow ? 0 : -1);
-		CHexPaneDialog::ShowPane(bShow, bDelay, bActivate);
-	}
+	//virtual void ShowPane(BOOL bShow, BOOL bDelay, BOOL bActivate)
+	//{
+	//	theApp.SaveToMacro(km_calc_dlg, bShow ? 0 : -1);
+	//	CHexPaneDialog::ShowPane(bShow, bDelay, bActivate);
+	//}
 
 // Implementation
 protected:

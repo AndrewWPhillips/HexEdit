@@ -8,8 +8,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "HexPaneDialog.h"    // for CHexPaneDialog
-
 // Classes that handle each page (derived from CPropertyPage)
 class CSimplePage;
 class CHexPage;
@@ -443,6 +441,7 @@ protected:
     void FixDirn();
 };
 
+/* No longer needed
 // CFindWnd dialog
 
 class CFindWnd : public CHexPaneDialog
@@ -469,7 +468,7 @@ public:
 
 	CFindSheet *m_pSheet;
 };
-
+*/
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 

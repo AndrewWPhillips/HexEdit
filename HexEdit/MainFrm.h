@@ -115,7 +115,6 @@ public:
 	CGenDockablePane m_paneBookmarks;   // Docking pane that holds m_wndBookmarks
     CPropSheet m_wndProp;               // Properties dialog/bar
 	CGenDockablePane m_paneProp;        // Docking pane that holds m_wndProp
-
 	CCalcDlg m_wndCalc;                 // Calculator dialog/bar
 	CGenDockablePane m_paneCalc;        // Docking pane that holds m_wndCalc
     CExplorerWnd m_wndExpl;             // Explorer dialog/bar
@@ -270,8 +269,8 @@ public:
 		move_dlgbar(m_paneFind, rct);
 		move_dlgbar(m_paneBookmarks, rct);
 		move_dlgbar(m_paneProp, rct);
-		//move_dlgbar(m_wndCalc, rct);
-		//move_dlgbar(m_wndExpl, rct);
+		move_dlgbar(m_paneCalc, rct);
+		move_dlgbar(m_paneExpl, rct);
 	}
 	void redraw_background() { m_wndClientArea.Invalidate(); }
 

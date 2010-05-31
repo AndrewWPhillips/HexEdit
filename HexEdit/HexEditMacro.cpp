@@ -509,8 +509,8 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 if ((*pk).vv == -1)
                 {
 					// Hide it
-                    ASSERT(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.m_hWnd != 0);
-                    ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Hide();
+                    ASSERT(((CMainFrame *)AfxGetMainWnd())->m_paneCalc.m_hWnd != 0);
+                    ((CMainFrame *)AfxGetMainWnd())->m_paneCalc.Hide();
                 }
                 else if ((*pk).vv == 0)
                     ((CMainFrame *)AfxGetMainWnd())->OnCalculator();
@@ -525,8 +525,8 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 break;
             case km_calc_close:     // Replaced with km_calc_dlg with param -1 (see above)
                 // No longer generated but handle in case we run a really old macro file
-                ASSERT(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.m_hWnd != 0);
-                ((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Hide();
+                ASSERT(((CMainFrame *)AfxGetMainWnd())->m_paneCalc.m_hWnd != 0);
+                ((CMainFrame *)AfxGetMainWnd())->m_paneCalc.Hide();
                 break;
             case km_ro_rw:
                 pv_->OnAllowMods();
@@ -1707,7 +1707,7 @@ void CHexEditApp::refresh_display(bool do_all /*=false*/)
     }
 
     // Update the calculator
-    if ((do_all || refresh_bars_) && mm->m_wndCalc.IsVisible())
+    if ((do_all || refresh_bars_) && mm->m_paneCalc.IsWindowVisible())
     {
         //mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
         //mm->m_wndCalc.edit_.Put();        // Make sure current calc. value is displayed

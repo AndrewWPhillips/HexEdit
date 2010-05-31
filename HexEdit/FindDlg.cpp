@@ -3004,6 +3004,7 @@ void CReplacePage::OnChangeMatchCase()
     ((CMainFrame *)AfxGetMainWnd())->SetSearchString(temp);
 }
 
+#if 0 // xxx TBD remove this
 // CFindWnd dialog
 IMPLEMENT_DYNAMIC(CFindWnd, CHexPaneDialog)
 
@@ -3084,4 +3085,5 @@ void CFindWnd::ShowPage(int page)
     theApp.SaveToMacro(km_find_dlg, page);
     SetFocus();
 }
+#endif
 

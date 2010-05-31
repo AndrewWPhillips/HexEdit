@@ -3562,6 +3562,8 @@ void CPropDatePage::OnChangeFormat()
     }
 }
 
+#if 0 // xxx TBD remove this (no longer needed)
+
 // CPropWnd dialog
 
 IMPLEMENT_DYNAMIC(CPropWnd, CHexPaneDialog)
@@ -3616,3 +3618,4 @@ void CPropWnd::OnDestroy()
     // Save current page to restore when reopened
     theApp.prop_page_ = m_pSheet->GetActiveIndex();
 }
+#endif

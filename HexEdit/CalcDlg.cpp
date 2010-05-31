@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 // CCalcDlg dialog
 
 CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
-    : CHexPaneDialog(), purple_pen(PS_SOLID, 0, RGB(0x80, 0, 0x80))
+    : CDialog(), purple_pen(PS_SOLID, 0, RGB(0x80, 0, 0x80))
 {
     aa_ = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -66,18 +66,18 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 {
     mm_ = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
 
-	if (!CHexPaneDialog::Create(_T(""), pParentWnd, TRUE,
-		                        MAKEINTRESOURCE(CCalcDlg::IDD),
-								WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI,
-								ID_VIEW_CALCULATOR))
-        return FALSE;
+	if (!CDialog::Create(MAKEINTRESOURCE(IDD), pParentWnd)) // IDD_CALC_NEW
+	{
+		TRACE0("Failed to create Calculator dialog\n");
+		return FALSE; // failed to create
+	}
 
 	return TRUE;
 }
 
 LRESULT CCalcDlg::HandleInitDialog(WPARAM wParam, LPARAM lParam)
 {
-	CHexPaneDialog::HandleInitDialog(wParam, lParam);
+	CDialog::HandleInitDialog(wParam, lParam);
 
     CWnd *pwnd = ctl_edit_combo_.GetWindow(GW_CHILD);
 	ASSERT(pwnd != NULL);
@@ -402,7 +402,7 @@ LRESULT CCalcDlg::HandleInitDialog(WPARAM wParam, LPARAM lParam)
 
 void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CHexPaneDialog::DoDataExchange(pDX);
+	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT,  ctl_edit_combo_);
 
 #if 1
@@ -486,7 +486,7 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_FUNC, ctl_func_);
 } // DoDataExchange
 
-BEGIN_MESSAGE_MAP(CCalcDlg, CHexPaneDialog)
+BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_WM_CREATE()
     ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 	ON_MESSAGE(WM_INITDIALOG, HandleInitDialog)
@@ -1772,7 +1772,7 @@ static void Draw3DButtonFrame(CDC *pDC, CRect rcButton, BOOL bFocus)
 
 int CCalcDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
-	if (CHexPaneDialog::OnCreate(lpCreateStruct) == -1)
+	if (CDialog::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
     return 0;
@@ -1780,7 +1780,7 @@ int CCalcDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CCalcDlg::OnDestroy() 
 {
-    CHexPaneDialog::OnDestroy();
+    CDialog::OnDestroy();
 
     // Save some settings to the in file/registry
     aa_->WriteProfileInt("Calculator", "Base", radix_);
@@ -1810,7 +1810,7 @@ void CCalcDlg::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
 
 	if (cx > 0 && m_sizeInitial.cx == -1)
 		m_sizeInitial = CSize(cx, cy);
-	CHexPaneDialog::OnSize(nType, cx, cy);
+	CDialog::OnSize(nType, cx, cy);
 }
 
 BOOL CCalcDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
@@ -1965,7 +1965,7 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
         }
     }
 
-    return CHexPaneDialog::PreTranslateMessage(pMsg);
+    return CDialog::PreTranslateMessage(pMsg);
 }
 
 #define IDC_FIRST_BLUE   IDC_DIGIT_0
@@ -2082,7 +2082,7 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
     // Restore text colour
     ::SetTextColor(lpDrawItemStruct->hDC, cr);
 
-    CHexPaneDialog::OnDrawItem(nIDCtl, lpDrawItemStruct);
+    CDialog::OnDrawItem(nIDCtl, lpDrawItemStruct);
 }
 
 // This actually goes to a calculated address.  Unlike the "Store Cursor" button,

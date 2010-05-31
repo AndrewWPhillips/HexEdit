@@ -438,7 +438,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_paneBookmarks.InitialUpdate(&m_wndBookmarks);
 		m_paneBookmarks.EnableDocking(CBRS_ALIGN_ANY);
 		// Note using DockPane on a CPaneDialog causes problems in MFC9 (fixed in mFC10).  The soln
-		// is to dock to another CDockablePane using something like m_wndCalc.DockToWindow(&m_wndProp ...
+		// is to dock to another CDockablePane using something like m_paneCalc.DockToWindow(&m_paneProp ...
 		// which is what I will do when the Properties and Find dialogs have been fixed (TBD xxx).
 		DockPane(&m_paneBookmarks);
 
@@ -451,8 +451,25 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_paneProp.EnableDocking(CBRS_ALIGN_ANY);
 		DockPane(&m_paneProp);
 
+        if (!m_paneCalc.Create("Calculator", this, CSize(500, 250), TRUE, IDD_CALC_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
+			!m_wndCalc.Create(&m_paneCalc) )
+		{
+			return FALSE; // failed to create
+		}
+		m_paneCalc.InitialUpdate(&m_wndCalc);
+		m_paneCalc.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_paneCalc);
 
-		/*
+        if (!m_paneExpl.Create("HexEdit Explorer", this, CSize(500, 250), TRUE, IDD_EXPLORER_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
+			!m_wndExpl.Create(&m_paneExpl) )
+		{
+			return FALSE; // failed to create
+		}
+		m_paneExpl.InitialUpdate(&m_wndExpl);
+		m_paneExpl.EnableDocking(CBRS_ALIGN_ANY);
+		DockPane(&m_paneExpl);
+
+/*
 		m_wndBookmarks.Add(IDC_BOOKMARK_NAME, 0, 0, 100, 0);
 		m_wndBookmarks.Add(IDC_BOOKMARK_ADD, 100, 0, 0, 0);
 		m_wndBookmarks.Add(IDC_GRID_BL, 0, 0, 100, 100);
@@ -464,9 +481,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_wndBookmarks.Add(IDC_BOOKMARKS_HELP, 100, 0, 0, 0);
 */
 
-		if (!m_wndCalc.Create(this))
-			return FALSE; // failed to create
-
+/*
 		// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT 
 		m_wndCalc.Add(IDC_EDIT, 0, 8, 100, 3);        // edit control resizes with width (moves/sizes slightly vert.)
 		m_wndCalc.Add(IDC_OP_DISPLAY, 100, 10, 0, 0);  // operator display sticks to right edge (moves vert)
@@ -571,32 +586,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_wndCalc.Add(IDC_EQUALS, 66, 87, 8, 10);
 		m_wndCalc.Add(IDC_ADDOP, 75, 87, 8, 10);
 		m_wndCalc.Add(IDC_GO, 83, 87, 16, 10);
-
-		m_wndCalc.EnableDocking(CBRS_ALIGN_ANY);
-		// Note using DockPane on a CPaneDialog causes problems in MFC9 (fixed in mFC10).  The soln
-		// is to dock to another CDockablePane using something like m_wndCalc.DockToWindow(&m_wndProp ...
-		// which is what I will do when the Properties and Find dialogs have been fixed (TBD xxx).
-		DockPane(&m_wndCalc);
-
-#if 0  // xxx need to fix this for MFC9
-
-        CSize tmp_size;
-
-        m_wndExpl.SetWindowText("HexEdit Explorer");
-        m_wndExpl.EnableRollUp();
-        m_wndExpl.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
-        m_wndExpl.SetCaptionStyle(TRUE);
-
-        m_wndProp.SetWindowText("Properties");
-        m_wndProp.EnableRollUp();
-        m_wndProp.EnableDocking(theApp.dlg_dock_ ? CBRS_ALIGN_LEFT|CBRS_ALIGN_RIGHT : 0);
-        m_wndProp.SetCaptionStyle(TRUE);
-
-        DockControlBar(&m_wndStandardBar);
-        DockControlBar(&m_wndEditBar);
-        DockControlBar(&m_wndFormatBar);
-        DockControlBar(&m_wndNavBar);
-#endif
+*/
 
         // Get extra command images (without creating a toolbar)
 #if SHADED_TOOLBARS
@@ -1157,7 +1147,7 @@ void CMainFrame::SaveFrameOptions()
 void CMainFrame::show_calc()
 {
     m_wndCalc.SetWindowText("Calculator");
-	m_wndCalc.ShowAndUnroll();
+	m_paneCalc.ShowAndUnroll();
 
     m_wndCalc.update_controls();
     m_wndCalc.ShowBinop();
@@ -1409,11 +1399,10 @@ void CMainFrame::OnDockableToggle()
 		m_paneBookmarks.EnableDocking(0);
         m_paneProp.Float();
 		m_paneProp.EnableDocking(0);
-
-        m_wndCalc.Float();
-		m_wndCalc.EnableDocking(0);
-        m_wndExpl.Float();
-		m_wndExpl.EnableDocking(0);
+        m_paneCalc.Float();
+		m_paneCalc.EnableDocking(0);
+        m_paneExpl.Float();
+		m_paneExpl.EnableDocking(0);
     }
     else
     {
@@ -1421,9 +1410,8 @@ void CMainFrame::OnDockableToggle()
 		m_paneFind.EnableDocking(CBRS_ALIGN_ANY);
 		m_paneBookmarks.EnableDocking(CBRS_ALIGN_ANY);
 		m_paneProp.EnableDocking(CBRS_ALIGN_ANY);
-
-		m_wndCalc.EnableDocking(CBRS_ALIGN_ANY);
-		m_wndExpl.EnableDocking(CBRS_ALIGN_ANY);
+		m_paneCalc.EnableDocking(CBRS_ALIGN_ANY);
+		m_paneExpl.EnableDocking(CBRS_ALIGN_ANY);
     }
 }
 
@@ -1512,12 +1500,12 @@ void CMainFrame::OnViewNavbar()
 
 void CMainFrame::OnUpdateViewCalculator(CCmdUI* pCmdUI) 
 {
-    //pCmdUI->SetCheck((m_wndCalc.GetStyle() & WS_VISIBLE) != 0);
+	pCmdUI->SetCheck(m_paneCalc.IsWindowVisible());
 }
 
 void CMainFrame::OnViewCalculator() 
 {
-	m_wndCalc.ShowAndUnroll();
+	m_paneCalc.ShowAndUnroll();
     theApp.SaveToMacro(km_toolbar, 10);
 }
 
@@ -4233,8 +4221,6 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
     CHexEditView *pview = GetView();
     if (pview != NULL)
     {
-        //if (m_wndCalc.m_hWnd == 0)
-        //    m_wndCalc.Create();
         ASSERT(m_wndCalc.m_hWnd != 0);
 
         m_wndCalc.change_bits(64);
@@ -4262,7 +4248,7 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
         }
         m_wndCalc.SetWindowText("Go To");
         //ShowControlBar(&m_wndCalc, TRUE, FALSE); // xxx fix for MFC9
-        m_wndCalc.ShowAndUnroll();
+        m_paneCalc.ShowAndUnroll();
 
         // Make sure controls are up to date and put current address into it
         //m_wndCalc.UpdateData(FALSE);
@@ -4289,8 +4275,6 @@ void CMainFrame::OnCalcSel()
     {
         __int64 sel_val = 0;                    // Value from file to add to the calc
 
-        //if (m_wndCalc.m_hWnd == 0)
-        //    m_wndCalc.Create();
         ASSERT(m_wndCalc.m_hWnd != 0);
 
         FILE_ADDRESS start_addr, end_addr;              // Current selection
@@ -4342,7 +4326,7 @@ void CMainFrame::OnCalcSel()
 
         m_wndCalc.SetWindowText("Calculator");
         //ShowControlBar(&m_wndCalc, TRUE, FALSE); // xxx fix for MFC9
-        m_wndCalc.ShowAndUnroll();
+        m_paneCalc.ShowAndUnroll();
 
         // Make sure controls are up to date and put current address into it
         //m_wndCalc.UpdateData(FALSE);

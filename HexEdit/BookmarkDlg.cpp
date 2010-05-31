@@ -134,7 +134,7 @@ CBookmarkDlg::CBookmarkDlg() : CDialog()
 
 BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 {
-	if (!CDialog::Create(IDD_BOOKMARKS, pParentWnd))
+	if (!CDialog::Create(MAKEINTRESOURCE(IDD), pParentWnd)) // IDD_BOOKMARKS
 	{
 		TRACE0("Failed to create bookmarks dialog\n");
 		return FALSE; // failed to create
