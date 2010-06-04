@@ -114,6 +114,8 @@ void COptSheet::init()
     val_.base_address_ = 0;
 	val_.export_line_len_ = 0;
 
+	val_.cb_text_type_ = cb_text_chars;
+
 	val_.open_restore_ = FALSE;
 	val_.mditabs_ = FALSE;
 	val_.tabsbottom_ = FALSE;
@@ -948,7 +950,6 @@ IMPLEMENT_DYNCREATE(CTemplatePage, COptPage)
 void CTemplatePage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
-	//DDX_Radio(pDX, IDC_DFFD_NONE, pParent->val_.dffd_view_);
 	DDX_Text(pDX, IDC_DFFD_ARRAY_MAX, pParent->val_.max_fix_for_elts_);
 	DDV_MinMaxUInt(pDX, pParent->val_.max_fix_for_elts_, 2, 999999);
 	DDX_Text(pDX, IDC_DFFD_FORMAT_CHAR, pParent->val_.default_char_format_);
@@ -3384,7 +3385,7 @@ static DWORD id_pairs_wingeneral[] = {
     IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
 	IDC_DISPLAY_TEMPLATE, HIDC_DISPLAY_TEMPLATE,
 	IDC_DISPLAY_AERIAL, HIDC_DISPLAY_AERIAL,
-	IDC_DISPLAY_COMP, HIDC_DISPLAY_COMP,
+	//IDC_DISPLAY_COMP, HIDC_DISPLAY_COMP,
     0,0 
 };
 

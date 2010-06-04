@@ -2429,6 +2429,8 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "LargeCursor", large_cursor_ ? 1 : 0);
     WriteProfileInt("Options", "OtherAreaCursor", show_other_ ? 1 : 0);
 
+	WriteProfileInt("Options", "TextToClipboardAs", cb_text_type_);
+
     WriteProfileInt("Options", "DontAddToRecent", no_recent_add_ ? 1 : 0);
     WriteProfileInt("History", "MaxSearch", max_search_hist_);
     WriteProfileInt("History", "MaxReplace", max_replace_hist_);
@@ -3067,6 +3069,9 @@ void CHexEditApp::get_options(struct OptValues &val)
     val.base_address_ = export_base_addr_ != -1 ? export_base_addr_ : 0;
     val.export_line_len_ = export_line_len_;
 
+	// Clipboard
+	val.cb_text_type_ = cb_text_type_;
+
     // Global template
     val.max_fix_for_elts_ = max_fix_for_elts_;
     val.default_char_format_ = default_char_format_;
@@ -3232,6 +3237,8 @@ void CHexEditApp::set_options(struct OptValues &val)
 
     export_base_addr_ = val.address_specified_ ? val.base_address_ : -1;
     export_line_len_ = val.export_line_len_;
+
+	cb_text_type_ = val.cb_text_type_;
 
     /////////////////////////////////////////////////////////
     open_restore_ = val.open_restore_;

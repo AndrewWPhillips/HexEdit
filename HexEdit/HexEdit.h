@@ -97,6 +97,13 @@ typedef __int64 FILE_ADDRESS;
 // Currently supported character sets
 enum { CHARSET_ASCII = 0, CHARSET_ANSI = 1, CHARSET_OEM = 3, CHARSET_EBCDIC = 4, CHARSET_UCODE_EVEN, CHARSET_UCODE_ODD };
 
+enum cb_text_type      // defines how text data is written to the clipboard
+{
+	cb_text_auto,      // use hex text if it appears to be binary data, else use chars
+	cb_text_chars,     // write bytes as chars depending on active char set (ASCII, EBCDIC)
+	cb_text_hextext,   // convert each byte to 2 hex digits (as well as adding spaces, end of lines)
+};
+
 // Fonts required for different char sets
 enum font_t {
 	FONT_ANSI,     // Used for CHARSET_ASCII, ANSI and EBCDIC
@@ -692,6 +699,8 @@ public:
 
 	BOOL intelligent_undo_;             // Do op then reverse op does not change undo stack
 	int undo_limit_;                    // How many bytes of consec. undo info can be merged before starting a new undo
+
+	enum cb_text_type cb_text_type_;    // Says how Edit/Cut+Copy behave
 
 	// Info (tip) window options
 	// Note that the top entried are "hard-coded" and have empty tip_expr_ and tip_format_ values,

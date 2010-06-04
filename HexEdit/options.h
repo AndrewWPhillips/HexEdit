@@ -87,6 +87,9 @@ struct OptValues
     long    base_address_;
 	UINT	export_line_len_;
 
+	// Clipboard
+	enum cb_text_type cb_text_type_;
+
     // System layout
 	BOOL	mditabs_;
 	BOOL	tabsbottom_;

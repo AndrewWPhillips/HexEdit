@@ -9741,12 +9741,7 @@ void CHexEditView::OnUpdateClipboard(CCmdUI* pCmdUI)
         pCmdUI->Enable(start != end);
 }
 
-enum cb_text_type      // defines how text data is written to the clipboard
-{
-	cb_text_auto,      // use hex text if it appears to be binary data, else use chars
-	cb_text_chars,     // write bytes as chars depending on active char set (ASCII, EBCDIC)
-	cb_text_hextext,   // convert each byte to 2 hex digits (as well as adding spaces, end of lines)
-};
+
 
 bool CHexEditView::CopyToClipboard()
 {
@@ -9763,7 +9758,7 @@ bool CHexEditView::CopyToClipboard()
 	// both binary data ("BinaryData") and text (either the text chars if valid
 	// characters or binary data as hex digits), but if the data is too big
 	// it may just be stored in a temp binary file ("HexEditLargeDataTempFile").
-	enum cb_text_type cb_text = cb_text_chars; // xxx TODO read from option
+	cb_text_type cb_text = cb_text_chars;
 	bool use_file = false;   // Use our own special format if too big for clipboard
 	CString strTemp;         // name of temp file is used
 
