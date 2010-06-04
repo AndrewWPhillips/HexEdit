@@ -838,7 +838,9 @@ private:
 
     void ShowTipAtStartup(void);
     void ShowTipOfTheDay(void);
-    void InitConversions();
+	void InitVersionInfo();
+	void InitWorkspace();
+	void InitConversions();
 };
 
 class CCommandLineParser : public CCommandLineInfo

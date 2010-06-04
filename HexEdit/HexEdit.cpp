@@ -301,6 +301,7 @@ UINT CHexEditApp::wm_hexedit = ::RegisterWindowMessage("HexEditOpenMessage");
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditApp initialization
 
+
 BOOL CHexEditApp::InitInstance()
 {
 		// Note: if this is changed you also need to change the registry string
@@ -311,8 +312,6 @@ BOOL CHexEditApp::InitInstance()
 		//Bring up the splash screen in a secondary UI thread
 		CSplashThread * pSplashThread = NULL;
 
-        // Note the splash setting is read again in LoadOptions (below), but we don't
-        // call LoadOptions here to make sure that the splash screen is shown ASAP.
         if (splash_)
 		{
 			CString sFileName = ::GetExePath() + FILENAME_SPLASH;
@@ -332,92 +331,29 @@ BOOL CHexEditApp::InitInstance()
             AfxMessageBox("OLE initialization failed.  Make sure that the OLE libraries are the correct version.");
             return FALSE;
         }
-        InitCommonControls();
-		CWinApp::InitInstance();
+
+		// InitCommonControlsEx() is required on Windows XP if an application
+		// manifest specifies use of ComCtl32.dll version 6 or later to enable
+		// visual styles.  Otherwise, any window creation will fail.
+		INITCOMMONCONTROLSEX InitCtrls;
+		InitCtrls.dwSize = sizeof(InitCtrls);
+		// Set this to include all the common control classes you want to use
+		// in your application.
+		InitCtrls.dwICC = ICC_WIN95_CLASSES;
+		InitCommonControlsEx(&InitCtrls);
+
+		CWinAppEx::InitInstance();
 
 		// Override the document manager so we can make save dialog resizeable
 		if (m_pDocManager != NULL) delete m_pDocManager;
 		m_pDocManager = new CHexEditDocManager;
 
-        // Get HexEdit version info
-        DWORD dummy;                                        // Version functions take parameters that do nothing?!
-        size_t vi_size;                                     // Size of all version info
-        void *buf;                                          // Buffer to hold all version info
-        void *p_version;                                    // Holds ptr to product version string in buffer
-        UINT len;                                           // Length of product version string
-
-        if ((vi_size = ::GetFileVersionInfoSize(__argv[0], &dummy)) > 0 &&
-            (buf = malloc(vi_size+1)) != NULL &&
-            ::GetFileVersionInfo(__argv[0], dummy, vi_size, buf) &&
-            ::VerQueryValue(buf, "\\StringFileInfo\\040904B0\\ProductVersion",
-                            &p_version, &len) )
-        {
-			CString strVer;
-			if (*((char *)p_version + 1) == 0)
-				strVer = CString((wchar_t *)p_version);
-			else
-				strVer = CString((char *)p_version);
-
-			char *endptr = strVer.GetBuffer();
-            version_ = short(strtol(endptr, &endptr, 10) * 100);
-            if (*endptr != '\0')
-            {
-                ++endptr;
-                version_ += short(strtol(endptr, &endptr, 10));
-
-                // Check if a beta version
-				if (*endptr != '\0')
-				{
-					++endptr;
-					beta_ = (short)strtol(endptr, &endptr, 10);
-
-					if (*endptr != '\0')
-					{
-						++endptr;
-						revision_ = (short)strtol(endptr, &endptr, 10);
-					}
-                }
-            }
-        }
-        // Seed the random number generators
-        unsigned int seed = ::GetTickCount();
-        srand(seed);                    // Seed compiler PRNG (simple one)
-        rand_good_seed(seed);           // Seed our own PRNG
-
-        // Getting OS version info
-        OSVERSIONINFO osvi;
-        osvi.dwOSVersionInfoSize = sizeof(osvi);
-        GetVersionEx(&osvi);
-        is_nt_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT;
-        is_xp_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 5 && osvi.dwMinorVersion >= 1;
-        is_vista_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 6;
-
-        //win95_ = !(osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 4) &&   // NT4 and later
-        //         !(osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && osvi.dwMajorVersion == 4 && osvi.dwMinorVersion >= 10);  // Win98 + later
-        win95_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && osvi.dwMajorVersion <= 4 && osvi.dwMinorVersion < 10;
+		InitVersionInfo();
 
 #ifndef NO_SECURITY
 		// This must be done after getting version info since theApp.version_ is written to file
         GetMystery();                   // Get mystery info for later security checks
 #endif
-        // Determine if multiple monitor supported (Win 98 or NT >= 5.0)
-        // Note that Windows 95 is 4.00 and Windows 98 is 4.10
-        mult_monitor_ = 
-            (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS &&
-                 osvi.dwMajorVersion == 4 &&
-                 osvi.dwMinorVersion >= 10  ||
-                 osvi.dwMajorVersion >= 5) && ::GetSystemMetrics(SM_CMONITORS) > 1;
-//        mult_monitor_ = osvi.dwMajorVersion >= 5;
-
-        // Check for hexedit.chm file  (USE_HTML_HELP)
-        htmlhelp_file_ = m_pszHelpFilePath;
-        htmlhelp_file_.MakeUpper();
-        if (htmlhelp_file_.Right(4) == ".HLP")
-        {
-            htmlhelp_file_ = htmlhelp_file_.Left(htmlhelp_file_.GetLength() - 4) + ".CHM";
-            if (_access(htmlhelp_file_, 0) == -1)
-                htmlhelp_file_.Empty();
-        }
 
         // Work out if there is a previous instance running
         hwnd_1st_ = ::FindWindow(szHexEditClassName, NULL);
@@ -442,265 +378,7 @@ BOOL CHexEditApp::InitInstance()
             return FALSE;
         }
 
-        // We must do this after getting version info as it relies on is_nt_
-        m_pspecial_list = special_list_scan_ ? new CSpecialList() : NULL;
-
-        InitConversions();                   // Read EBCDIC conversion table etc and validate conversions
-
-        // Set the locale to the native environment -- hopefully the MSC run-time
-        // code does something suitable.  (This is currently just for thousands sep.)
-        setlocale(LC_ALL, "");      // Set to native locale
-
-		// Get decimal point characters, thousands separator and grouping
-		struct lconv *plconv = localeconv();
-
-		// Set defaults
-		dec_sep_char_ = ','; dec_group_ = 3; dec_point_ = '.';
-
-		// Work out thousands separator
-		if (strlen(plconv->thousands_sep) == 1)
-			dec_sep_char_ = *plconv->thousands_sep;
-
-		// Work out thousands grouping
-		if (strlen(plconv->grouping) != 1)
-		{
-			// Rarely used option of no grouping
-			switch (GetProfileInt("Options", "AllowNoDigitGrouping", -1))
-			{
-			case -1:
-				if (AfxMessageBox("You have digit grouping for large numbers turned\n"
-					              "off or are using an unsupported grouping/format.\n"
-					              "(See Regional Settings in the Control Panel.)\n\n"
-								  "Numbers will be displayed without grouping, eg:\n"
-								  "\n2489754937\n\n"
-								  "Do you want the default digit grouping instead? eg:\n"
-								  "\n2,489,754,937\n\n", MB_YESNO) == IDNO)
-				{
-					WriteProfileInt("Options", "AllowNoDigitGrouping", 1);
-					dec_group_ = 9999;  // a big number so that grouping is not done
-				}
-				else
-				{
-					// Remember for next time so we don't ask every time HexEdit is run
-					WriteProfileInt("Options", "AllowNoDigitGrouping", 0);
-				}
-				break;
-			case 1:
-				dec_group_ = 9999;  // a big number so that grouping is not done
-				break;
-			case 0:
-				break; // Nothing required - just use default settings above
-			default:
-				ASSERT(0);
-			}
-		}
-		else
-			dec_group_ = *plconv->grouping;
-
-		// Work out decimal point
-		if (strlen(plconv->decimal_point) == 1)
-			dec_point_ = *plconv->decimal_point;
-
-        // Work out if we appear to be in US for spelling changes
-        is_us_ = _strnicmp("English_United States", ::setlocale(LC_COLLATE, NULL), 20) == 0;
-
-
-
-        // The following are for BCG init
-        SetRegistryBase(_T("Settings"));
-        CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
-		// CMFCVisualManager::GetInstance()->SetFadeInactiveImage(FALSE);
-        // CBCGButton::EnableWinXPTheme();
-        VERIFY(InitMouseManager());
-        VERIFY(InitContextMenuManager());
-        VERIFY(InitKeyboardManager());
-        VERIFY(InitShellManager());
-        //VERIFY(InitSkinManager());
-        //GetSkinManager ()->EnableSkinsDownload (_T("http://www.bcgsoft.com/Skins"));
-		//CMFCPopupMenu::EnableMenuSound(FALSE);
-
-		// xxx add this for MFC9??
-		//InitTooltipManager();
-		//CMFCToolTipInfo ttParams;
-		//ttParams.m_bVislManagerTheme = TRUE;
-		//theApp.GetTooltipManager()->
-		//   SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
-		//   RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
-
-		// These are commands that are always shown in menus (not to be confused
-        // with commands no on toolbars - see AddToolBarForImageCollection)
-        static int dv_id[] =
-        {
-            ID_FILE_NEW,
-		    ID_FILE_OPEN,
-            ID_FILE_CLOSE,
-            ID_FILE_SAVE,
-            ID_FILE_PRINT,
-            ID_EXPORT_HEX_TEXT,
-            ID_IMPORT_HEX_TEXT,
-            ID_APP_EXIT,
-
-            ID_EDIT_UNDO,
-            ID_EDIT_CUT,
-            ID_EDIT_COPY,
-            ID_EDIT_PASTE,
-            ID_COPY_HEX,
-			ID_COPY_CCHAR,
-            ID_PASTE_ASCII,
-            ID_PASTE_UNICODE,
-            ID_PASTE_EBCDIC,
-            ID_MARK,
-			ID_GOTO_MARK,
-            ID_BOOKMARKS_EDIT,
-            ID_EDIT_FIND,
-            ID_EDIT_GOTO,
-
-			ID_VIEW_VIEWBAR,
-			ID_VIEW_EDITBAR,
-			ID_VIEW_CALCULATOR,
-			ID_VIEW_BOOKMARKS,
-			ID_VIEW_FIND,
-			ID_VIEW_PROPERTIES,
-			ID_VIEW_EXPL,
-			ID_VIEW_STATUS_BAR,
-			ID_VIEW_RULER,
-            ID_AUTOFIT,
-            ID_ADDR_TOGGLE,
-            ID_DISPLAY_HEX,
-            ID_DISPLAY_BOTH,
-            ID_CHARSET_ASCII,
-            ID_CHARSET_ANSI,
-            ID_CHARSET_OEM,
-            ID_CHARSET_EBCDIC,
-            ID_CONTROL_NONE,
-            ID_CONTROL_ALPHA,
-            ID_CONTROL_C,
-			ID_AERIAL_HIDE,
-			ID_AERIAL_SPLIT,
-            ID_PROPERTIES,
-
-			ID_ASC2EBC,
-			ID_EBC2ASC,
-			ID_ANSI2IBM,
-			ID_IBM2ANSI,
-            ID_CRC32,
-			ID_MD5,
-            ID_ENCRYPT_ENCRYPT,
-            ID_ENCRYPT_DECRYPT,
-			ID_ZLIB_COMPRESS,
-			ID_ZLIB_DECOMPRESS,
-            ID_RAND_BYTE,
-            ID_FLIP_16BIT,
-            ID_REV_BYTE,
-            ID_ASSIGN_BYTE,
-            ID_NEG_BYTE,
-            ID_INC_BYTE,
-            ID_DEC_BYTE,
-            ID_GTR_BYTE,
-            ID_LESS_BYTE,
-            ID_ADD_BYTE,
-            ID_SUBTRACT_BYTE,
-            ID_SUBTRACT_X_BYTE,
-            ID_MUL_BYTE,
-            ID_DIV_BYTE,
-            ID_DIV_X_BYTE,
-            ID_MOD_BYTE,
-            ID_MOD_X_BYTE,
-            ID_AND_BYTE,
-            ID_OR_BYTE,
-            ID_INVERT,
-            ID_XOR_BYTE,
-            ID_ROL_BYTE,
-            ID_ROR_BYTE,
-            ID_LSL_BYTE,
-            ID_LSR_BYTE,
-            ID_ASR_BYTE,
-
-			ID_DFFD_NEW,
-			ID_DFFD_OPEN_FIRST,
-			ID_DFFD_HIDE,
-			ID_DFFD_SPLIT,
-			ID_DFFD_SYNC,
-			ID_DFFD_REFRESH,
-
-            ID_CALCULATOR,
-            ID_CUSTOMIZE,
-            ID_OPTIONS,
-            ID_RECORD,
-            ID_PLAY,
-
-            ID_WINDOW_NEW,
-            ID_WINDOW_NEXT,
-
-            ID_HELP_FINDER,
-            ID_CONTEXT_HELP,
-            ID_HELP_TUTE4,
-            ID_HELP_TUTE1,
-            ID_HELP_TUTE2,
-            ID_HELP_TUTE3,
-            ID_HELP_FORUM,
-            ID_HELP_HOMEPAGE,
-            ID_HELP_REGISTER,
-            ID_REPAIR_DIALOGBARS,
-            ID_REPAIR_CUST,
-            ID_APP_ABOUT,
-
-            ID_HIGHLIGHT,
-            ID_DIALOGS_DOCKABLE,
-			ID_IND_SEL,
-			ID_ANT_SEL,
-			ID_AERIAL_ZOOM1,
-			ID_AERIAL_ZOOM2,
-			ID_AERIAL_ZOOM4,
-			ID_AERIAL_ZOOM8,
-        };
-
-		CMFCMenuBar::SetRecentlyUsedMenus(FALSE);
-        for (int ii = 0; ii < sizeof(dv_id)/sizeof(*dv_id); ++ii)
-            CMFCToolBar::AddBasicCommand(dv_id[ii]);
-
-#if 0 // xxx there is no equivalent to CBCGRegistry in MFC 9!!
-        // If there is no current skin setting and we have skins then default to the first
-        CBCGRegistry reg(FALSE, TRUE);
-        if (!reg.Open(GetRegSectionPath() + _T("Skin")))
-        {
-            for (int ii = 0; ii < GetSkinManager()->GetSkinsCount(); ++ii)
-                if (_strnicmp(GetSkinManager()->GetSkinName(ii), "Gradient Bar", 12) == 0)
-                {
-                    GetSkinManager()->SetActiveSkin(ii);
-                    break;
-                }
-        }
-#endif
-
-        // Enable BCG tools menu handling
-        // (see CMainFrame::LoadFrame for default tools setup)
-        EnableUserTools(ID_TOOLS_ENTRY, ID_TOOL1, ID_TOOL9,
-            RUNTIME_CLASS (CHexEditUserTool));
-
-#ifdef SYS_SOUNDS
-        // Make sure sound registry settings are present
-        CSystemSound::Add(_T("Invalid Character"),
-                          CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
-        CSystemSound::Add(_T("Macro Finished"),
-                          CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
-        CSystemSound::Add(_T("Macro Error"),
-                          CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
-        CSystemSound::Add(_T("Calculator Error"),
-                          CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
-        CSystemSound::Add(_T("Comparison Difference Found"));
-        CSystemSound::Add(_T("Comparison Difference Not Found"),
-                          CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
-        CSystemSound::Add(_T("Search Text Found"));
-        CSystemSound::Add(_T("Search Text Not Found"),
-                          CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
-        CSystemSound::Add(_T("Background Search Finished"));
-        CSystemSound::Add(_T("Background Scan Finished"));
-#endif
-
-        LoadStdProfileSettings(0);  // Load standard INI file options (including MRU)
-
-        GetXMLFileList();
+		InitWorkspace();
 
         // Register the application's document templates.  Document templates
         //  serve as the connection between documents, frame windows and views.
@@ -726,6 +404,7 @@ BOOL CHexEditApp::InitInstance()
         {
                 return FALSE;
         }
+		EnableLoadWindowPlacement(FALSE);
         m_pMainWnd->DragAcceptFiles();
 
 //        CHexEditFontCombo::SaveCharSet();
@@ -814,6 +493,330 @@ BOOL CHexEditApp::InitInstance()
         if (run_autoexec_) RunAutoExec();
 
         return TRUE;
+}
+
+void CHexEditApp::InitVersionInfo()
+{
+    // Get HexEdit version info from version resource
+    DWORD dummy;                                        // Version functions take parameters that do nothing?!
+    size_t vi_size;                                     // Size of all version info
+    void *buf;                                          // Buffer to hold all version info
+    void *p_version;                                    // Holds ptr to product version string in buffer
+    UINT len;                                           // Length of product version string
+
+    if ((vi_size = ::GetFileVersionInfoSize(__argv[0], &dummy)) > 0 &&
+        (buf = malloc(vi_size+1)) != NULL &&
+        ::GetFileVersionInfo(__argv[0], dummy, vi_size, buf) &&
+        ::VerQueryValue(buf, "\\StringFileInfo\\040904B0\\ProductVersion",
+                        &p_version, &len) )
+    {
+		CString strVer;
+		if (*((char *)p_version + 1) == 0)
+			strVer = CString((wchar_t *)p_version);
+		else
+			strVer = CString((char *)p_version);
+
+		char *endptr = strVer.GetBuffer();
+        version_ = short(strtol(endptr, &endptr, 10) * 100);
+        if (*endptr != '\0')
+        {
+            ++endptr;
+            version_ += short(strtol(endptr, &endptr, 10));
+
+            // Check if a beta version
+			if (*endptr != '\0')
+			{
+				++endptr;
+				beta_ = (short)strtol(endptr, &endptr, 10);
+
+				if (*endptr != '\0')
+				{
+					++endptr;
+					revision_ = (short)strtol(endptr, &endptr, 10);
+				}
+            }
+        }
+    }
+
+    // Getting OS version info
+    OSVERSIONINFO osvi;
+    osvi.dwOSVersionInfoSize = sizeof(osvi);
+    GetVersionEx(&osvi);
+    is_nt_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT;
+    is_xp_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 5 && osvi.dwMinorVersion >= 1;
+    is_vista_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 6;
+
+    //win95_ = !(osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 4) &&   // NT4 and later
+    //         !(osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && osvi.dwMajorVersion == 4 && osvi.dwMinorVersion >= 10);  // Win98 + later
+    win95_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && osvi.dwMajorVersion <= 4 && osvi.dwMinorVersion < 10;
+
+    // Determine if multiple monitor supported (Win 98 or NT >= 5.0)
+    // Note that Windows 95 is 4.00 and Windows 98 is 4.10
+    mult_monitor_ = 
+        (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS &&
+             osvi.dwMajorVersion == 4 &&
+             osvi.dwMinorVersion >= 10  ||
+             osvi.dwMajorVersion >= 5) && ::GetSystemMetrics(SM_CMONITORS) > 1;
+//        mult_monitor_ = osvi.dwMajorVersion >= 5;
+
+    // Check for hexedit.chm file  (USE_HTML_HELP)
+    htmlhelp_file_ = m_pszHelpFilePath;
+    htmlhelp_file_.MakeUpper();
+    if (htmlhelp_file_.Right(4) == ".HLP")
+    {
+        htmlhelp_file_ = htmlhelp_file_.Left(htmlhelp_file_.GetLength() - 4) + ".CHM";
+        if (_access(htmlhelp_file_, 0) == -1)
+            htmlhelp_file_.Empty();
+    }
+
+    // We must do this after getting version info as it relies on is_nt_
+    m_pspecial_list = special_list_scan_ ? new CSpecialList() : NULL;
+
+    InitConversions();                   // Read EBCDIC conversion table etc and validate conversions
+
+    // Seed the random number generators
+    unsigned int seed = ::GetTickCount();
+    srand(seed);                    // Seed compiler PRNG (simple one)
+	::rand_good_seed(seed);           // Seed our own PRNG
+
+    // Set the locale to the native environment -- hopefully the MSC run-time
+    // code does something suitable.  (This is currently just for thousands sep.)
+    setlocale(LC_ALL, "");      // Set to native locale
+
+	// Get decimal point characters, thousands separator and grouping
+	struct lconv *plconv = localeconv();
+
+	// Set defaults
+	dec_sep_char_ = ','; dec_group_ = 3; dec_point_ = '.';
+
+	// Work out thousands separator
+	if (strlen(plconv->thousands_sep) == 1)
+		dec_sep_char_ = *plconv->thousands_sep;
+
+	// Work out thousands grouping
+	if (strlen(plconv->grouping) != 1)
+	{
+		// Rarely used option of no grouping
+		switch (GetProfileInt("Options", "AllowNoDigitGrouping", -1))
+		{
+		case -1:
+			if (AfxMessageBox("You have digit grouping for large numbers turned\n"
+				              "off or are using an unsupported grouping/format.\n"
+				              "(See Regional Settings in the Control Panel.)\n\n"
+							  "Numbers will be displayed without grouping, eg:\n"
+							  "\n2489754937\n\n"
+							  "Do you want the default digit grouping instead? eg:\n"
+							  "\n2,489,754,937\n\n", MB_YESNO) == IDNO)
+			{
+				WriteProfileInt("Options", "AllowNoDigitGrouping", 1);
+				dec_group_ = 9999;  // a big number so that grouping is not done
+			}
+			else
+			{
+				// Remember for next time so we don't ask every time HexEdit is run
+				WriteProfileInt("Options", "AllowNoDigitGrouping", 0);
+			}
+			break;
+		case 1:
+			dec_group_ = 9999;  // a big number so that grouping is not done
+			break;
+		case 0:
+			break; // Nothing required - just use default settings above
+		default:
+			ASSERT(0);
+		}
+	}
+	else
+		dec_group_ = *plconv->grouping;
+
+	// Work out decimal point
+	if (strlen(plconv->decimal_point) == 1)
+		dec_point_ = *plconv->decimal_point;
+
+    // Work out if we appear to be in US for spelling changes
+    is_us_ = _strnicmp("English_United States", ::setlocale(LC_COLLATE, NULL), 20) == 0;
+}
+
+void CHexEditApp::InitWorkspace()
+{
+    // The following are for MFC9 (BCG) init
+    SetRegistryBase(_T("Settings"));
+    CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
+	// CMFCVisualManager::GetInstance()->SetFadeInactiveImage(FALSE);
+    VERIFY(InitMouseManager());
+    VERIFY(InitContextMenuManager());
+    VERIFY(InitKeyboardManager());
+    VERIFY(InitShellManager());
+	//CMFCPopupMenu::EnableMenuSound(FALSE);
+
+	// xxx add this for MFC9??
+	//InitTooltipManager();
+	//CMFCToolTipInfo ttParams;
+	//ttParams.m_bVislManagerTheme = TRUE;
+	//theApp.GetTooltipManager()->
+	//   SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
+	//   RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
+
+	// These are commands that are always shown in menus (not to be confused
+    // with commands no on toolbars - see AddToolBarForImageCollection)
+    static int dv_id[] =
+    {
+        ID_FILE_NEW,
+	    ID_FILE_OPEN,
+        ID_FILE_CLOSE,
+        ID_FILE_SAVE,
+        ID_FILE_PRINT,
+        ID_EXPORT_HEX_TEXT,
+        ID_IMPORT_HEX_TEXT,
+        ID_APP_EXIT,
+
+        ID_EDIT_UNDO,
+        ID_EDIT_CUT,
+        ID_EDIT_COPY,
+        ID_EDIT_PASTE,
+        ID_COPY_HEX,
+		ID_COPY_CCHAR,
+        ID_PASTE_ASCII,
+        ID_PASTE_UNICODE,
+        ID_PASTE_EBCDIC,
+        ID_MARK,
+		ID_GOTO_MARK,
+        ID_BOOKMARKS_EDIT,
+        ID_EDIT_FIND,
+        ID_EDIT_GOTO,
+
+		ID_VIEW_VIEWBAR,
+		ID_VIEW_EDITBAR,
+		ID_VIEW_CALCULATOR,
+		ID_VIEW_BOOKMARKS,
+		ID_VIEW_FIND,
+		ID_VIEW_PROPERTIES,
+		ID_VIEW_EXPL,
+		ID_VIEW_STATUS_BAR,
+		ID_VIEW_RULER,
+        ID_AUTOFIT,
+        ID_ADDR_TOGGLE,
+        ID_DISPLAY_HEX,
+        ID_DISPLAY_BOTH,
+        ID_CHARSET_ASCII,
+        ID_CHARSET_ANSI,
+        ID_CHARSET_OEM,
+        ID_CHARSET_EBCDIC,
+        ID_CONTROL_NONE,
+        ID_CONTROL_ALPHA,
+        ID_CONTROL_C,
+		ID_AERIAL_HIDE,
+		ID_AERIAL_SPLIT,
+        ID_PROPERTIES,
+
+		ID_ASC2EBC,
+		ID_EBC2ASC,
+		ID_ANSI2IBM,
+		ID_IBM2ANSI,
+        ID_CRC32,
+		ID_MD5,
+        ID_ENCRYPT_ENCRYPT,
+        ID_ENCRYPT_DECRYPT,
+		ID_ZLIB_COMPRESS,
+		ID_ZLIB_DECOMPRESS,
+        ID_RAND_BYTE,
+        ID_FLIP_16BIT,
+        ID_REV_BYTE,
+        ID_ASSIGN_BYTE,
+        ID_NEG_BYTE,
+        ID_INC_BYTE,
+        ID_DEC_BYTE,
+        ID_GTR_BYTE,
+        ID_LESS_BYTE,
+        ID_ADD_BYTE,
+        ID_SUBTRACT_BYTE,
+        ID_SUBTRACT_X_BYTE,
+        ID_MUL_BYTE,
+        ID_DIV_BYTE,
+        ID_DIV_X_BYTE,
+        ID_MOD_BYTE,
+        ID_MOD_X_BYTE,
+        ID_AND_BYTE,
+        ID_OR_BYTE,
+        ID_INVERT,
+        ID_XOR_BYTE,
+        ID_ROL_BYTE,
+        ID_ROR_BYTE,
+        ID_LSL_BYTE,
+        ID_LSR_BYTE,
+        ID_ASR_BYTE,
+
+		ID_DFFD_NEW,
+		ID_DFFD_OPEN_FIRST,
+		ID_DFFD_HIDE,
+		ID_DFFD_SPLIT,
+		ID_DFFD_SYNC,
+		ID_DFFD_REFRESH,
+
+        ID_CALCULATOR,
+        ID_CUSTOMIZE,
+        ID_OPTIONS,
+        ID_RECORD,
+        ID_PLAY,
+
+        ID_WINDOW_NEW,
+        ID_WINDOW_NEXT,
+
+        ID_HELP_FINDER,
+        ID_CONTEXT_HELP,
+        ID_HELP_TUTE4,
+        ID_HELP_TUTE1,
+        ID_HELP_TUTE2,
+        ID_HELP_TUTE3,
+        ID_HELP_FORUM,
+        ID_HELP_HOMEPAGE,
+        ID_HELP_REGISTER,
+        ID_REPAIR_DIALOGBARS,
+        ID_REPAIR_CUST,
+        ID_APP_ABOUT,
+
+        ID_HIGHLIGHT,
+        ID_DIALOGS_DOCKABLE,
+		ID_IND_SEL,
+		ID_ANT_SEL,
+		ID_AERIAL_ZOOM1,
+		ID_AERIAL_ZOOM2,
+		ID_AERIAL_ZOOM4,
+		ID_AERIAL_ZOOM8,
+    };
+
+	CMFCMenuBar::SetRecentlyUsedMenus(FALSE);
+    for (int ii = 0; ii < sizeof(dv_id)/sizeof(*dv_id); ++ii)
+        CMFCToolBar::AddBasicCommand(dv_id[ii]);
+
+    // Enable BCG tools menu handling
+    // (see CMainFrame::LoadFrame for default tools setup)
+    EnableUserTools(ID_TOOLS_ENTRY, ID_TOOL1, ID_TOOL9,
+        RUNTIME_CLASS (CHexEditUserTool));
+
+#ifdef SYS_SOUNDS
+    // Make sure sound registry settings are present
+    CSystemSound::Add(_T("Invalid Character"),
+                      CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
+    CSystemSound::Add(_T("Macro Finished"),
+                      CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
+    CSystemSound::Add(_T("Macro Error"),
+                      CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
+    CSystemSound::Add(_T("Calculator Error"),
+                      CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
+    CSystemSound::Add(_T("Comparison Difference Found"));
+    CSystemSound::Add(_T("Comparison Difference Not Found"),
+                      CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
+    CSystemSound::Add(_T("Search Text Found"));
+    CSystemSound::Add(_T("Search Text Not Found"),
+                      CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
+    CSystemSound::Add(_T("Background Search Finished"));
+    CSystemSound::Add(_T("Background Scan Finished"));
+#endif
+
+    LoadStdProfileSettings(0);  // Load standard INI file options (including MRU)
+
+    GetXMLFileList();
 }
 
 void CHexEditApp::OnAppExit()
