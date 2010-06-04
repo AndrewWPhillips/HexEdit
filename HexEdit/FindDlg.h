@@ -441,34 +441,6 @@ protected:
     void FixDirn();
 };
 
-/* No longer needed
-// CFindWnd dialog
-
-class CFindWnd : public CHexPaneDialog
-{
-	DECLARE_DYNAMIC(CFindWnd)
-
-public:
-	CFindWnd(CWnd* pParent = NULL);   // standard constructor
-	virtual ~CFindWnd();
-
-// Dialog Data
-	enum { IDD = IDD_FIND_PARENT };
-
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	afx_msg void OnClose();
-	afx_msg void OnDestroy();
-
-	DECLARE_MESSAGE_MAP()
-public:
-	BOOL Create(CWnd* pParentWnd = NULL);
-
-    void ShowPage(int page);
-
-	CFindSheet *m_pSheet;
-};
-*/
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 

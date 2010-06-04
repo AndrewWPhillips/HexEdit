@@ -1,3 +1,5 @@
+// Dialog.h - header for misc. dialogs
+//
 // Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
@@ -18,228 +20,19 @@
 #if !defined(AFX_DIALOG_H__55A0CEE1_3245_11D2_B012_0020AFDC3196__INCLUDED_)
 #define AFX_DIALOG_H__55A0CEE1_3245_11D2_B012_0020AFDC3196__INCLUDED_
 
-#include "HexEdit.h"
-#include "HelpID.hm"
-#include "HexEditView.h"
-#include "HexPaneDialog.h"
-#include <vector>
-
-#include "SimpleSplitter.h"
-#include "ResizeCtrl.h"
-
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
-// Dialog.h : header file
-//
 
-#include <Dlgs.h>               // For file dialog control IDs
+#include "HexEdit.h"
+#include "HelpID.hm"
+#include "HexEditView.h"
 
 class CHexEditApp;
 
 /////////////////////////////////////////////////////////////////////////////
-// CHexDialogBar - dialog bar that supports DDX and OnInitDialog
-class CHexDialogBar : public CDialogBar 
-{
-	DECLARE_DYNAMIC(CHexDialogBar)
-
-// Construction
-public:
-    CHexDialogBar() { }
-	virtual ~CHexDialogBar() { }
-
-	virtual BOOL OnInitDialog() { return FALSE; }
-	// This stops buttons being disabled because they have no command handler
-	virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler) { }
-
-	void ToggleDocking() {} // xxx fix for MFC9
-	void Unroll() {}
-	void FixAndFloat(BOOL show = FALSE) {}
-
-protected:
-
-	//afx_msg void OnInitialUpdate();
-	afx_msg LRESULT InitDialogBarHandler(WPARAM, LPARAM);
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-
-	DECLARE_MESSAGE_MAP()
-};
-
-class CExplorerWnd;
-
-/////////////////////////////////////////////////////////////////////////////
-// CHistoryShellList - keeps a history of folders displayed
-class CHistoryShellList : public CMFCShellListCtrl
-{
-    friend class CExplorerWnd;
-	// This replaces BCGShellListColumn* (Afx_ShellListColumn*)
-	enum
-	{
-		COLNAME, COLSIZE, COLTYPE, COLMOD,		// Normal columns provided by BCG
-        COLATTR,								// file attributes
-        COLOPENED,								// time last opened in hexedit
-		COLCATEGORY, COLKEYWORDS, COLCOMMENTS,	// Extra info on file entered by user (Summary page)
-		COLLAST         // Leave this one at the end (to be one past last used value)
-	};
-
-public:
-    CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true) { }
-	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
-
-    // Handles back and forward buttons
-	void Back(int count = 1);
-	void Forw(int count = 1);
-	bool BackAllowed() { return pos_ > 0; }
-	bool ForwAllowed() { return pos_ < int(name_.size()) - 1; }
-
-    void SaveLayout();                                                          // save layout to registry (on close)
-
-   	virtual HRESULT DisplayFolder(LPAFX_SHELLITEMINFO lpItemInfo);
-	virtual HRESULT DisplayFolder(LPCTSTR lpszPath) { return CMFCShellListCtrl::DisplayFolder(lpszPath); }
-	virtual void OnSetColumns();                                                // sets up columns (in detail view mode)
-	virtual CString OnGetItemText(int iItem, int iColumn, LPAFX_SHELLITEMINFO pItem); // used in displaying text in columns
-	virtual int OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColumn);    // used in sorting on a column
-
-	CString Folder() { if (pos_ > -1 && pos_ < int(name_.size())) return name_[pos_]; else return CString(); }
-
-    virtual void AdjustMenu(HMENU);
-    virtual void MenuCommand(HMENU, UINT, LPCTSTR);
-
-	// xxx dummies until we fix for MFC9
-    void SetFilter(LPCTSTR ff) {  }
-    CString GetFilter() { return ""; }
-
-protected:
-	afx_msg void OnDblClk(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-
-	DECLARE_MESSAGE_MAP()
-
-private:
-    void CHistoryShellList::do_move(int ii);
-
-	CExplorerWnd *pExpl_;
-    std::vector<CString> name_;  // Names of folders
-    int pos_;                    // Index of current folder
-    bool in_move_;               // Used to prevent storing moves when just going forward/backward in the list
-    bool add_to_hist_;           // Used to prevent adding to dop-down list in sme circumstances (default to true)
-    int normal_count_;           // No of columns added in base class (CMFCShellListCtrl)
-	int fl_idx_;                 // This is saved index into recent file list (cached for list box row while processing fields)
-    static char * defaultWidths;
-};
-
-/////////////////////////////////////////////////////////////////////////////
-// CFilterEdit
-class CFilterEdit : public CEdit
-{
-public:
-	CFilterEdit() : pExpl_(NULL) { }
-	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
-
-protected:
-    afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-    afx_msg UINT OnGetDlgCode();
-    DECLARE_MESSAGE_MAP()
-
-private:
-	CExplorerWnd *pExpl_;
-};
-
-/////////////////////////////////////////////////////////////////////////////
-// CFolderEdit
-class CFolderEdit : public CEdit
-{
-public:
-	CFolderEdit() : pExpl_(NULL) { }
-	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
-
-protected:
-    afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-    afx_msg UINT OnGetDlgCode();
-    DECLARE_MESSAGE_MAP()
-
-private:
-	CExplorerWnd *pExpl_;
-};
-
-/////////////////////////////////////////////////////////////////////////////
-// CExplorerWnd - modeless dialog bar that contains 2 panes with CMFCShellTreeCtrl + CMFCShellListCtrl
-class CExplorerWnd : public CHexPaneDialog
-{
-public:
-    CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0), init_(false) { }
-	enum { IDD = IDD_EXPLORER };
-	virtual BOOL Create(CWnd* pParentWnd);
-	virtual BOOL OnInitDialog();
-
-	void UpdateFolderInfo(CString folder);   // called when current folder changes
-	void Refresh();                 // Set folder/filter from edit controls and refresh the folder display
-	void Update(LPCTSTR file_name = NULL); // Mark for possible later (idle) refresh
-	void NewFilter();               // New filter name entered
-    void AddFilter();               // Add current filter to the history list
-	void OldFilter();               // Restore old filter name (Esc hit).
-	void NewFolder();               // New folder name entered
-	void OldFolder();               // Restore old folder name (Esc hit).
-    void AddFolder();               // Add current folder to history list
-
-	// overrides
-//	virtual BOOL PreTranslateMessage(MSG* pMsg);
-
-	CMFCButton ctl_back_;           // back (undo)
-	CMFCButton ctl_forw_;           // forward (redo)
-	CMFCButton ctl_up_;             // up to parent folder
-	CMFCButton ctl_refresh_;        // redraws the list
-    CMFCMenuButton ctl_view_;       // shows menu of 4 items allowing user to say how the view is to be displayed
-    CMFCButton ctl_flip_;           // determines orientation of tree/list in splitter window
-
-    CMFCMenuButton ctl_filter_opts_;// Shows menu with filter list
-
-    CComboBox ctl_filter_;          // restricts files displayed in list
-	CFilterEdit ctl_filter_edit_;   // The edit control within the combo
-    CComboBox ctl_name_;            // user can enter folder name here or select from history list
-	CFolderEdit ctl_name_edit_;     // The edit control within the combo
-
-	CMenu m_menu_;                  // menus for explorer button(s) (ctl_view_)
-
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
-    //afx_msg void OnSize(UINT nType,int cx,int cy);
-	afx_msg void OnDestroy();
-    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
-	afx_msg void OnFolderBack();
-	afx_msg void OnFolderForw();
-	afx_msg void OnFolderParent();
-	afx_msg void OnFilterOpts();
-	afx_msg void OnFolderRefresh();
-	afx_msg void OnFolderView();
-	afx_msg void OnFolderFlip();
-	afx_msg void OnSelchangeFolderName();
-	afx_msg void OnSelchangeFilter();
-	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	DECLARE_MESSAGE_MAP()
-
-	CSimpleSplitter   splitter_;        // Contains the tree and folder view with a splitter in between
-	CMFCShellTreeCtrl	  tree_;            // Tree view linked to folder view (list_)
-	CHistoryShellList list_;            // Our class derived from CMFCShellListCtrl
-
-	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
-
-private:
-    void build_filter_menu();
-
-	bool init_;
-    CString filters_;                   // Current filter string (from last GetCurrentFilters) as in filter menu
-    HICON arrow_icon_;
-	CString curr_name_, curr_filter_;   // Current values in edit boxes of combos (current folder name and filters)
-	HANDLE hh_;                         // Used to monitor directory changes (returned from FindFirstChangeNotification)
-	bool update_required_;              // Keeps track of consecutive updates to prevent unnecessary refreshes
-};
-
-/////////////////////////////////////////////////////////////////////////////
 // CHexFileDialog - just adds the facility to CFileDialog for saving and restoring
-// the window size and position.
+// the window size and position.  Used as base class for other file dialogs.
 class CHexFileDialog : public CFileDialog
 {
 public:

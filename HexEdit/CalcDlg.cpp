@@ -60,6 +60,7 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
     memory_ = _atoi64(aa_->GetProfileString("Calculator", "Memory"));
 
     edit_.pp_ = this;                   // Set parent of edit control
+	m_first = true;
 }
 
 BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/) 
@@ -71,13 +72,6 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 		TRACE0("Failed to create Calculator dialog\n");
 		return FALSE; // failed to create
 	}
-
-	return TRUE;
-}
-
-LRESULT CCalcDlg::HandleInitDialog(WPARAM wParam, LPARAM lParam)
-{
-	CDialog::HandleInitDialog(wParam, lParam);
 
     CWnd *pwnd = ctl_edit_combo_.GetWindow(GW_CHILD);
 	ASSERT(pwnd != NULL);
@@ -396,6 +390,24 @@ LRESULT CCalcDlg::HandleInitDialog(WPARAM wParam, LPARAM lParam)
 	// Since functions menu doesn't change we only need to set it up once (load from resources)
     VERIFY(func_menu_.LoadMenu(IDR_FUNCTION));
     ctl_func_.m_hMenu = func_menu_.GetSubMenu(0)->GetSafeHmenu();
+
+	// Set up resizer control
+	// We must set the 4th parameter true else we get a resize border
+	// added to the dialog and this really stuffs things up inside a pane.
+	m_resizer.Create(GetSafeHwnd(), TRUE, 100, TRUE);
+
+	// It needs an initial size for it's calcs
+	CRect rct;
+	GetWindowRect(&rct);
+	m_resizer.SetInitialSize(rct.Size());
+	m_resizer.SetMinimumTrackingSize(rct.Size());
+
+	return TRUE;
+}
+
+LRESULT CCalcDlg::HandleInitDialog(WPARAM wParam, LPARAM lParam)
+{
+	CDialog::HandleInitDialog(wParam, lParam);
 
     return TRUE;
 } // HandleInitDialog
@@ -1830,6 +1842,116 @@ void CCalcDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 
 LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 {
+	if (m_first)
+	{
+		// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT 
+		m_resizer.Add(IDC_EDIT, 0, 8, 100, 3);        // edit control resizes with width (moves/sizes slightly vert.)
+		m_resizer.Add(IDC_OP_DISPLAY, 100, 10, 0, 0);  // operator display sticks to right edge (moves vert)
+
+		// Settings controls don't move/size horizontally but move vert. and size slightly too
+		m_resizer.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);
+		m_resizer.Add(IDC_BASE_GROUP, 0, 13, 0, 8);
+		m_resizer.Add(IDC_HEX, 0, 13, 0, 5);
+		m_resizer.Add(IDC_DECIMAL, 0, 13, 0, 5);
+		m_resizer.Add(IDC_OCTAL, 0, 13, 0, 5);
+		m_resizer.Add(IDC_BINARY, 0, 13, 0, 5);
+		m_resizer.Add(IDC_BITS_GROUP, 0, 13, 0, 8);
+		m_resizer.Add(IDC_64BIT, 0, 13, 0, 5);
+		m_resizer.Add(IDC_32BIT, 0, 13, 0, 5);
+		m_resizer.Add(IDC_16BIT, 0, 13, 0, 5);
+		m_resizer.Add(IDC_8BIT, 0, 13, 0, 5);
+
+		// First row of buttons
+		m_resizer.Add(IDC_MEM_GET, 1, 27, 12, 10);
+		m_resizer.Add(IDC_MEM_STORE, 14, 27, 9, 10);
+		m_resizer.Add(IDC_MEM_CLEAR, 23, 27, 9, 10);
+		m_resizer.Add(IDC_MEM_ADD, 32, 27, 9, 10);
+		m_resizer.Add(IDC_MEM_SUBTRACT, 41, 27, 8, 10);
+
+		m_resizer.Add(IDC_BACKSPACE, 64, 26, 16, 10);
+		m_resizer.Add(IDC_CLEAR_ENTRY, 80, 26, 10, 10);
+		m_resizer.Add(IDC_CLEAR, 90, 26, 10, 10);
+
+		// 2nd row of buttons
+		m_resizer.Add(IDC_MARK_GET, 1, 37, 12, 10);
+		m_resizer.Add(IDC_MARK_STORE, 14, 37, 9, 10);
+		m_resizer.Add(IDC_MARK_CLEAR, 23, 37, 9, 10);
+		m_resizer.Add(IDC_MARK_ADD, 32, 37, 9, 10);
+		m_resizer.Add(IDC_MARK_SUBTRACT, 41, 37, 8, 10);
+		m_resizer.Add(IDC_DIGIT_D, 50, 37, 8, 10);
+		m_resizer.Add(IDC_DIGIT_E, 58, 37, 8, 10);
+		m_resizer.Add(IDC_DIGIT_F, 66, 37, 8, 10);
+		m_resizer.Add(IDC_POW, 75, 37, 8, 10);
+		m_resizer.Add(IDC_GTR, 83, 37, 8, 10);
+		m_resizer.Add(IDC_ROL, 91, 37, 8, 10);
+
+		// 3rd row of buttons
+		m_resizer.Add(IDC_MARK_AT, 1, 47, 12, 10);
+		m_resizer.Add(IDC_MARK_AT_STORE, 14, 47, 9, 10);
+		m_resizer.Add(IDC_UNARY_SQUARE, 23, 47, 9, 10);
+		m_resizer.Add(IDC_UNARY_ROL, 32, 47, 9, 10);
+		m_resizer.Add(IDC_UNARY_REV, 41, 47, 8, 10);
+		m_resizer.Add(IDC_DIGIT_A, 50, 47, 8, 10);
+		m_resizer.Add(IDC_DIGIT_B, 58, 47, 8, 10);
+		m_resizer.Add(IDC_DIGIT_C, 66, 47, 8, 10);
+		m_resizer.Add(IDC_MOD, 75, 47, 8, 10);
+		m_resizer.Add(IDC_LESS, 83, 47, 8, 10);
+		m_resizer.Add(IDC_ROR, 91, 47, 8, 10);
+
+		// 4th row of buttons
+		m_resizer.Add(IDC_SEL_GET, 1, 57, 12, 10);
+		m_resizer.Add(IDC_SEL_STORE, 14, 57, 9, 10);
+		m_resizer.Add(IDC_UNARY_SQUARE_ROOT, 23, 57, 9, 10);
+		m_resizer.Add(IDC_UNARY_ROR, 32, 57, 9, 10);
+		m_resizer.Add(IDC_UNARY_NOT, 41, 57, 8, 10);
+		m_resizer.Add(IDC_DIGIT_7, 50, 57, 8, 10);
+		m_resizer.Add(IDC_DIGIT_8, 58, 57, 8, 10);
+		m_resizer.Add(IDC_DIGIT_9, 66, 57, 8, 10);
+		m_resizer.Add(IDC_DIVIDE, 75, 57, 8, 10);
+		m_resizer.Add(IDC_XOR, 83, 57, 8, 10);
+		m_resizer.Add(IDC_LSL, 91, 57, 8, 10);
+
+		// 5th row of buttons
+		m_resizer.Add(IDC_SEL_AT, 1, 67, 12, 10);
+		m_resizer.Add(IDC_SEL_AT_STORE, 14, 67, 9, 10);
+		m_resizer.Add(IDC_UNARY_CUBE, 23, 67, 9, 10);
+		m_resizer.Add(IDC_UNARY_LSL, 32, 67, 9, 10);
+		m_resizer.Add(IDC_UNARY_INC, 41, 67, 8, 10);
+		m_resizer.Add(IDC_DIGIT_4, 50, 67, 8, 10);
+		m_resizer.Add(IDC_DIGIT_5, 58, 67, 8, 10);
+		m_resizer.Add(IDC_DIGIT_6, 66, 67, 8, 10);
+		m_resizer.Add(IDC_MULTIPLY, 75, 67, 8, 10);
+		m_resizer.Add(IDC_OR, 83, 67, 8, 10);
+		m_resizer.Add(IDC_LSR, 91, 67, 8, 10);
+
+		// 6th row of buttons
+		m_resizer.Add(IDC_SEL_LEN, 1, 77, 12, 10);
+		m_resizer.Add(IDC_SEL_LEN_STORE, 14, 77, 9, 10);
+		m_resizer.Add(IDC_UNARY_FACTORIAL, 23, 77, 9, 10);
+		m_resizer.Add(IDC_UNARY_LSR, 32, 77, 9, 10);
+		m_resizer.Add(IDC_UNARY_DEC, 41, 77, 8, 10);
+		m_resizer.Add(IDC_DIGIT_1, 50, 77, 8, 10);
+		m_resizer.Add(IDC_DIGIT_2, 58, 77, 8, 10);
+		m_resizer.Add(IDC_DIGIT_3, 66, 77, 8, 10);
+		m_resizer.Add(IDC_SUBTRACT, 75, 77, 8, 10);
+		m_resizer.Add(IDC_AND, 83, 77, 8, 10);
+		m_resizer.Add(IDC_ASR, 91, 77, 8, 10);
+
+		// 7th row of buttons
+		m_resizer.Add(IDC_EOF_GET, 1, 87, 12, 10);
+
+		m_resizer.Add(IDC_UNARY_AT, 23, 87, 9, 10);
+		m_resizer.Add(IDC_UNARY_ASR, 32, 87, 9, 10);
+		m_resizer.Add(IDC_UNARY_FLIP, 41, 87, 8, 10);
+		m_resizer.Add(IDC_DIGIT_0, 50, 87, 8, 10);
+		m_resizer.Add(IDC_UNARY_SIGN, 58, 87, 8, 10);
+		m_resizer.Add(IDC_EQUALS, 66, 87, 8, 10);
+		m_resizer.Add(IDC_ADDOP, 75, 87, 8, 10);
+		m_resizer.Add(IDC_GO, 83, 87, 16, 10);
+
+		m_first = false;
+	}
+
     build_menus();
 	// Display context help for ctrl set up in OnHelpInfo
 	if (help_hwnd_ != (HWND)0)

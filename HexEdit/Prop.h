@@ -23,7 +23,6 @@
 #endif // _MSC_VER > 1000
 
 #include <afxdisp.h>
-#include "HexPaneDialog.h"
 
 class CHexEditView;
 
@@ -541,6 +540,8 @@ protected:
 	//}}AFX_MSG
 	afx_msg void OnClose();
     afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -551,33 +552,9 @@ public:
     CPropDecPage      prop_dec;
     CPropRealPage     prop_real;
     CPropDatePage     prop_date;
+
+private:
+	static CBrush * m_pBrush;            // brush used for background
+	static COLORREF m_col;               // colour used for background
 };
-
-/* xxx TBD remove this
-// CPropWnd dialog
-
-class CPropWnd : public CHexPaneDialog
-{
-	DECLARE_DYNAMIC(CPropWnd)
-
-public:
-	CPropWnd(CWnd* pParent = NULL);   // standard constructor
-	virtual ~CPropWnd();
-
-// Dialog Data
-	enum { IDD = IDD_PROP_PARENT };
-
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	afx_msg void OnDestroy();
-	DECLARE_MESSAGE_MAP()
-public:
-	BOOL Create(CWnd* pParentWnd = NULL);
-
-	CPropSheet *m_pSheet;
-};
-*/
-
-/////////////////////////////////////////////////////////////////////////////
-
 

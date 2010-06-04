@@ -130,6 +130,7 @@ CBookmarkDlg::CBookmarkDlg() : CDialog()
 	help_hwnd_ = (HWND)0;
 	p_grid = &grid_;
     pdoc_ = NULL;
+	m_first = true;
 }
 
 BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
@@ -140,7 +141,7 @@ BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 		return FALSE; // failed to create
 	}
 
-	// Default to retaining network/removaeable drive files when validating
+	// Default to retaining network/removeable drive files when validating
 	ASSERT(GetDlgItem(IDC_NET_RETAIN) != NULL);
 	((CButton *)GetDlgItem(IDC_NET_RETAIN))->SetCheck(BST_CHECKED);
 
@@ -175,6 +176,18 @@ BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
     FillGrid();
 
     grid_.ExpandColsNice(FALSE);
+
+	// Set up resizer control
+	// We must set the 4th parameter true else we get a resize border
+	// added to the dialog and this really stuffs things up inside a pane.
+	m_resizer.Create(GetSafeHwnd(), TRUE, 100, TRUE);
+
+	// It needs an initial size for it's calcs
+	CRect rct;
+	GetWindowRect(&rct);
+	m_resizer.SetInitialSize(rct.Size());
+	m_resizer.SetMinimumTrackingSize(rct.Size());
+
 /* xxx
     // We need this so that the resizer gets WM_SIZE event after the controls
     // have been added.
@@ -480,9 +493,26 @@ LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	ASSERT(GetDlgItem(IDOK) != NULL);
 	ASSERT(GetDlgItem(IDC_BOOKMARK_NAME) != NULL);
 	ASSERT(GetDlgItem(IDC_BOOKMARK_ADD) != NULL);
+	ASSERT(GetDlgItem(IDC_GRID_BL) != NULL);
 	ASSERT(GetDlgItem(IDC_BOOKMARK_GOTO) != NULL);
 	ASSERT(GetDlgItem(IDC_BOOKMARK_REMOVE) != NULL);
+	ASSERT(GetDlgItem(IDC_BOOKMARKS_VALIDATE) != NULL);
+	ASSERT(GetDlgItem(IDC_NET_RETAIN) != NULL);
+	ASSERT(GetDlgItem(IDC_BOOKMARKS_HELP) != NULL);
 
+	if (m_first)
+	{
+		m_resizer.Add(IDOK, 100, 0, 0, 0);
+		m_resizer.Add(IDC_BOOKMARK_NAME, 0, 0, 100, 0);
+		m_resizer.Add(IDC_BOOKMARK_ADD, 100, 0, 0, 0);
+		m_resizer.Add(IDC_GRID_BL, 0, 0, 100, 100);
+		m_resizer.Add(IDC_BOOKMARK_GOTO, 100, 0, 0, 0);
+		m_resizer.Add(IDC_BOOKMARK_REMOVE, 100, 0, 0, 0);
+		m_resizer.Add(IDC_BOOKMARKS_VALIDATE, 100, 0, 0, 0);
+		m_resizer.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
+		m_resizer.Add(IDC_BOOKMARKS_HELP, 100, 0, 0, 0);
+		m_first = false;
+	}
     // If there are no views or no associated file disallow adding of bookmarks
     CHexEditView *pview = GetView();
 	if (pview == NULL || pview->GetDocument()->pfile1_ == NULL)

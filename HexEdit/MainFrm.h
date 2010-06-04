@@ -19,13 +19,14 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-#include "Dialog.h"
 #include "Control.h"
 #include "GenDockablePane.h"
 #include "FindDlg.h"
 #include "BookmarkDlg.h"
 #include "Prop.h"
 #include "CalcDlg.h"
+#include "Explorer.h"
+
 #include "TipWnd.h"
 #include "expr.h"
 #ifdef USE_FREE_IMAGE

@@ -423,6 +423,8 @@ BEGIN_MESSAGE_MAP(CPropSheet, CPropertySheet)
         //}}AFX_MSG_MAP
         ON_WM_CLOSE()
 		ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
+		ON_WM_ERASEBKGND()
+		ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -514,6 +516,40 @@ static DWORD id_pairs[] = {
     IDC_DATE_NULL, HIDC_DATE_NULL,
     0,0 
 };
+
+CBrush * CPropSheet::m_pBrush = NULL;
+COLORREF CPropSheet::m_col = -1;
+
+BOOL CPropSheet::OnEraseBkgnd(CDC *pDC)
+{
+	CRect rct;
+	GetClientRect(&rct);
+
+	// Fill the background with a colour that matches the current BCG theme (and hence sometimes with the Windows Theme)
+	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
+	return TRUE;
+}
+
+HBRUSH CPropSheet::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	if (nCtlColor == CTLCOLOR_STATIC)
+	{
+		pDC->SetBkMode(TRANSPARENT);                            // Make sure text has no background
+//		return(HBRUSH) afxGlobalData.brWindow.GetSafeHandle();  // window colour
+		if (m_pBrush == NULL || m_col != afxGlobalData.clrBarFace)
+		{
+			m_col = afxGlobalData.clrBarFace;
+			if (m_pBrush != NULL)
+				delete m_pBrush;
+			m_pBrush = new CBrush(afxGlobalData.clrBarFace);
+		}
+        return (HBRUSH)*m_pBrush;
+	}
+	else
+	{
+		return CPropertySheet::OnCtlColor(pDC, pWnd, nCtlColor);
+	}
+}
 
 LRESULT CPropSheet::OnKickIdle(WPARAM, LPARAM lCount)
 {
@@ -3561,61 +3597,3 @@ void CPropDatePage::OnChangeFormat()
         Update(GetView());      // Recalc values based on new format
     }
 }
-
-#if 0 // xxx TBD remove this (no longer needed)
-
-// CPropWnd dialog
-
-IMPLEMENT_DYNAMIC(CPropWnd, CHexPaneDialog)
-CPropWnd::CPropWnd(CWnd* pParent /*=NULL*/)
-{
-	m_pSheet = NULL;
-}
-
-CPropWnd::~CPropWnd()
-{
-	if (m_pSheet != NULL)
-		delete m_pSheet;
-}
-
-
-void CPropWnd::DoDataExchange(CDataExchange* pDX)
-{
-	CHexPaneDialog::DoDataExchange(pDX);
-}
-
-BEGIN_MESSAGE_MAP(CPropWnd, CHexPaneDialog)
-        ON_WM_CLOSE()
-        ON_WM_DESTROY()
-END_MESSAGE_MAP()
-
-BOOL CPropWnd::Create(CWnd* pParentWnd /*=NULL*/) 
-{
-	if (!CHexPaneDialog::Create(pParentWnd, CPropWnd::IDD, CBRS_LEFT, CPropWnd::IDD))
-        return FALSE;
-
-	// Create property sheet as a child window
-	m_pSheet = new CPropSheet;
-	if (!m_pSheet->Create(this, WS_CHILD | WS_VISIBLE))
-	{
-		TRACE("Could not create property sheet\n");
-		delete m_pSheet;
-		m_pSheet = NULL;
-		return FALSE;
-	}
-	CRect rct;	
-	GetWindowRect(&rct);
-	m_pSheet->SetWindowPos(NULL, 0, 0, rct.Width(), rct.Height(),
-	                       SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
-
-	return TRUE;
-}
-
-void CPropWnd::OnDestroy() 
-{
-    CHexPaneDialog::OnDestroy();
-        
-    // Save current page to restore when reopened
-    theApp.prop_page_ = m_pSheet->GetActiveIndex();
-}
-#endif

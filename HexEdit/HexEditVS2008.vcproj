@@ -270,6 +270,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="D:\Devel\Libraries\FreeImage"
+				GenerateManifest="true"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)\HexEdit.pdb"
 				SubSystem="2"
@@ -541,15 +542,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Explorer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Expr.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\FindDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\FindPane.cpp"
 				>
 			</File>
 			<File
@@ -598,10 +599,6 @@
 			</File>
 			<File
 				RelativePath=".\HexFileList.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\HexPaneDialog.cpp"
 				>
 			</File>
 			<File
@@ -986,15 +983,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Explorer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Expr.h"
 				>
 			</File>
 			<File
 				RelativePath=".\FindDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FindPane.h"
 				>
 			</File>
 			<File
@@ -1023,10 +1020,6 @@
 			</File>
 			<File
 				RelativePath=".\HexFileList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\HexPaneDialog.h"
 				>
 			</File>
 			<File
@@ -1657,11 +1650,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File

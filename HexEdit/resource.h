@@ -193,7 +193,6 @@
 #define IDR_STDBAR                      245
 #define IDI_DOWN                        246
 #define IDR_NAVBAR                      246
-#define IDI_ARROW                       247
 #define IDI_DEL                         247
 #define IDR_FORMATBAR                   247
 #define IDC_HIGHLIGHT                   248

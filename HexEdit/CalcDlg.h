@@ -22,7 +22,6 @@
 
 #include <vector>
 #include "CalcEdit.h"
-#include "HexPaneDialog.h"
 #include "Expr.h"
 #include "optypes.h"
 #include "ResizeCtrl.h"
@@ -32,7 +31,6 @@
 #endif // _MSC_VER > 1000
 // CalcDlg.h : header file
 //
-
 /////////////////////////////////////////////////////////////////////////////
 // CCalcDlg dialog
 class CMainFrame;
@@ -174,11 +172,6 @@ public:
     public:
     virtual BOOL PreTranslateMessage(MSG* pMsg);
     //}}AFX_VIRTUAL
-	//virtual void ShowPane(BOOL bShow, BOOL bDelay, BOOL bActivate)
-	//{
-	//	theApp.SaveToMacro(km_calc_dlg, bShow ? 0 : -1);
-	//	CHexPaneDialog::ShowPane(bShow, bDelay, bActivate);
-	//}
 
 // Implementation
 protected:
@@ -334,6 +327,11 @@ private:
     int bits_;                      // Numbers of bits in use: 8, 16, 32 or 64
     unsigned __int64 mask_;         // Mask for current value of bits_: 0xFF, 0xFFFF, 0xffffFFFF or 0xffffFFFFffffFFFF
     unsigned __int64 sign_mask_;    // Mask to check sign bit of bits_: 0x80, 0x8000, 0x80000000 or 0x8000000000000000
+
+	bool m_first;                   // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
+	CResizeCtrl m_resizer;          // Used to move controls around when the window is resized
+	static CBrush * m_pBrush;       // brush used for background
+	static COLORREF m_col;          // colour used for background
 };
 
 //{{AFX_INSERT_LOCATION}}

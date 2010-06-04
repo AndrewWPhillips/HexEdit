@@ -26,7 +26,6 @@
 
 #include "range_set.h"
 #include "GridCtrl_src/GridCtrl.h"
-#include "HexPaneDialog.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarkDlg dialog
@@ -96,11 +95,13 @@ protected:
 
     CDocument *pdoc_;                   // Ptr to document if last bookmark is for open file (else NULL)
     CString last_file_;                 // Name of the file to which pdoc_ points
-//    BOOL show_;                         // Show bookmarks for the current file
+//    BOOL show_;                       // Show bookmarks for the current file
 
 private:
-	static CBrush * m_pBrush;            // brush used for background
-	static COLORREF m_col;               // colour used for background
+	bool m_first;                       // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
+	CResizeCtrl m_resizer;              // Used to move controls around when the window is resized
+	static CBrush * m_pBrush;           // brush used for background
+	static COLORREF m_col;              // colour used for background
 };
 
 //{{AFX_INSERT_LOCATION}}

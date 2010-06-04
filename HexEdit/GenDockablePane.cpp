@@ -100,7 +100,7 @@ void CGenDockablePane::InitialUpdate(CWnd *pWnd)
 	CRect rct;
 	m_pNestedWnd->GetWindowRect(&rct);
 	SetMinSize(rct.Size());
-	//m_recentDockInfo.m_recentSliderInfo.m_rectDockedRect = rct;
+	m_recentDockInfo.m_recentSliderInfo.m_rectDockedRect = rct;
 
 	AdjustLayout();
 }

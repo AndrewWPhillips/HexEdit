@@ -761,120 +761,14 @@ BOOL CHexEditApp::InitInstance()
 
 #ifdef _DEBUG
         // This avoids all sorts of confusion when testing/debugging
-		// NOTE: we get a very odd crash in here when the skins DLLs are
-		// incompatible - seems to happen when we build with VS 2003.
+		// due to toolbars being restored to a previous state.
+		// (Another way would be to just remove all registry settings.)
         CMFCToolBar::ResetAll();
 #endif
 
 		// It's about time to hide the splash window
 		if (pSplashThread != NULL)
 			pSplashThread->HideSplash();
-
-#if 0
-        switch (GetProfileInt("MainFrame", "ShowCalcDlg", 0))
-		{
-		case -1:
-			// nothing here - it's now up to BCG control bar stuff to hide or show the calc
-			break;
-		case 0:
-			// First run or hidden in pre-3.0 release: hide calc
-            pMainFrame->FloatControlBar(&pMainFrame->m_wndCalc,
-				CPoint(GetProfileInt("Window-Settings", "CalcX", 0), GetProfileInt("Window-Settings", "CalcY", 0)));
-            pMainFrame->ShowControlBar(&pMainFrame->m_wndCalc, FALSE, FALSE);
-			goto fix_reg_calc;
-		case 1:
-			// Shown in pre-3.0 release: show calc
-            pMainFrame->FloatControlBar(&pMainFrame->m_wndCalc,
-				CPoint(GetProfileInt("Window-Settings", "CalcX", 0), GetProfileInt("Window-Settings", "CalcY", 0)));
-            pMainFrame->ShowControlBar(&pMainFrame->m_wndCalc, TRUE, FALSE);
-		fix_reg_calc:
-            WriteProfileInt("MainFrame", "ShowCalcDlg", -1);  // bypass this code next time
-			WriteProfileString("Window-Settings", "CalcX", NULL);
-			WriteProfileString("Window-Settings", "CalcY", NULL);
-			break;
-		}
-
-        switch (GetProfileInt("MainFrame", "ShowBookmarkDlg", 0))
-		{
-		case -1:
-			// nothing here - it's now up to BCG control bar stuff to hide or show the dlg
-			break;
-		case 0:
-			// First run or hidden in pre-3.0 release: hide dlg
-            pMainFrame->FloatControlBar(&pMainFrame->m_wndBookmarks,
-				CPoint(GetProfileInt("Window-Settings", "BookmarksDlgX", 0), GetProfileInt("Window-Settings", "BookmarksDlgY", 0)));
-            pMainFrame->ShowControlBar(&pMainFrame->m_wndBookmarks, FALSE, FALSE);
-			goto fix_reg_bookmarks;
-		case 1:
-			// Shown in pre-3.0 release: show dlg
-            pMainFrame->FloatControlBar(&pMainFrame->m_wndBookmarks,
-				CPoint(GetProfileInt("Window-Settings", "BookmarksDlgX", 0), GetProfileInt("Window-Settings", "BookmarksDlgY", 0)));
-            pMainFrame->ShowControlBar(&pMainFrame->m_wndBookmarks, TRUE, FALSE);
-		fix_reg_bookmarks:
-            WriteProfileInt("MainFrame", "ShowBookmarkDlg", -1);  // signal to bypass this code next time
-			// Remove old reg settings (now handled by control bar reg settings)
-			WriteProfileString("Window-Settings", "BookmarksDlgX", NULL);
-			WriteProfileString("Window-Settings", "BookmarksDlgY", NULL);
-			WriteProfileString("Window-Settings", "BookmarksDlgWidth", NULL);
-			WriteProfileString("Window-Settings", "BookmarksDlgHeight", NULL);
-			break;
-		}
-
-        switch (GetProfileInt("MainFrame", "ShowFindDlg", 0))
-		{
-		case -1:
-			// nothing here - it's now up to BCG control bar stuff to hide or show the find dlg
-			break;
-		case 0:
-			// First run or hidden in pre-3.0 release: hide find dlg
-            pMainFrame->FloatControlBar(&pMainFrame->m_wndFind,
-				CPoint(GetProfileInt("Window-Settings", "FindX", 0), GetProfileInt("Window-Settings", "FindY", 0)));
-            pMainFrame->ShowControlBar(&pMainFrame->m_wndFind, FALSE, FALSE);
-			goto fix_reg_find;
-		case 1:
-			// Shown in pre-3.0 release: show find dlg
-            pMainFrame->FloatControlBar(&pMainFrame->m_wndFind,
-				CPoint(GetProfileInt("Window-Settings", "FindX", 0), GetProfileInt("Window-Settings", "FindY", 0)));
-            pMainFrame->ShowControlBar(&pMainFrame->m_wndFind, TRUE, FALSE);
-		fix_reg_find:
-            WriteProfileInt("MainFrame", "ShowFindDlg", -1);  // bypass this code next time
-			WriteProfileString("Window-Settings", "FindX", NULL);
-			WriteProfileString("Window-Settings", "FindY", NULL);
-			break;
-		}
-
-        if (GetProfileInt("MainFrame", "ShowExplorerDlg", 0) != -1)
-		{
-			pMainFrame->FloatControlBar(&pMainFrame->m_wndExpl, CPoint(0,0));
-			pMainFrame->ShowControlBar(&pMainFrame->m_wndExpl, FALSE, FALSE);
-            WriteProfileInt("MainFrame", "ShowExplorerDlg", -1);  // only the first time
-		}
-
-        switch (GetProfileInt("MainFrame", "ShowPropDlg", 0))
-		{
-		case -1:
-			// nothing here - it's now up to BCG control bar stuff to hide or show the prop dlg
-			break;
-		case 0:
-			// First run or hidden in pre-3.0 release: hide prop dlg
-            pMainFrame->FloatControlBar(&pMainFrame->m_wndProp,
-				CPoint(GetProfileInt("Window-Settings", "PropX", 0), GetProfileInt("Window-Settings", "PropY", 0)));
-            pMainFrame->ShowControlBar(&pMainFrame->m_wndProp, FALSE, FALSE);
-			goto fix_reg_prop;
-		case 1:
-			// Shown in pre-3.0 release: show prop dlg
-            pMainFrame->FloatControlBar(&pMainFrame->m_wndProp,
-				CPoint(GetProfileInt("Window-Settings", "PropX", 0), GetProfileInt("Window-Settings", "PropY", 0)));
-            pMainFrame->ShowControlBar(&pMainFrame->m_wndProp, TRUE, FALSE);
-		fix_reg_prop:
-            WriteProfileInt("MainFrame", "ShowPropDlg", -1);  // bypass this code next time
-			WriteProfileString("Window-Settings", "PropX", NULL);
-			WriteProfileString("Window-Settings", "PropY", NULL);
-			break;
-		}
-
-		pMainFrame->RecalcLayout();
-#endif
 
 #ifndef NO_SECURITY
         CString ss;
