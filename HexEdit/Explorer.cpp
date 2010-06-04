@@ -874,12 +874,12 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 	m_resizer.SetInitialSize(rct.Size());
 	m_resizer.SetMinimumTrackingSize(rct.Size());
 
-    m_resizer.Add(IDC_FOLDER_FILTER,    0, 0, 100,   0);  // move right edge
-    m_resizer.Add(IDC_FOLDER_REFRESH, 100, 0,   0,   0);  // stick to right side
-    m_resizer.Add(IDC_FILTER_OPTS,    100, 0,   0,   0);
-    m_resizer.Add(IDC_FOLDER_VIEW,    100, 0,   0,   0);
-    m_resizer.Add(IDC_FOLDER_NAME,      0, 0, 100,   0);
-    m_resizer.Add(IDC_EXPLORER,         0, 0, 100, 100);  // move right & bottom edges
+	m_resizer.Add(IDC_FOLDER_FILTER,    0, 0, 100,   0);  // move right edge
+	m_resizer.Add(IDC_FOLDER_REFRESH, 100, 0,   0,   0);  // stick to right side
+	m_resizer.Add(IDC_FILTER_OPTS,    100, 0,   0,   0);
+	m_resizer.Add(IDC_FOLDER_VIEW,    100, 0,   0,   0);
+	m_resizer.Add(IDC_FOLDER_NAME,      0, 0, 100,   0);
+	m_resizer.Add(IDC_EXPLORER,         0, 0, 100, 100);  // move right & bottom edges
 
 	init_ = true;
     return TRUE;
@@ -1052,6 +1052,8 @@ BEGIN_MESSAGE_MAP(CExplorerWnd, CDialog)
 	ON_BN_CLICKED(IDC_FOLDER_FLIP, OnFolderFlip)
 	ON_CBN_SELCHANGE(IDC_FOLDER_NAME, OnSelchangeFolderName)
 	ON_CBN_SELCHANGE(IDC_FOLDER_FILTER, OnSelchangeFilter)
+	ON_WM_ERASEBKGND()
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 void CExplorerWnd::OnDestroy() 
@@ -1176,6 +1178,42 @@ BOOL CExplorerWnd::OnHelpInfo(HELPINFO* pHelpInfo)
 	help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
     return TRUE;
 }
+
+CBrush * CExplorerWnd::m_pBrush = NULL;
+COLORREF CExplorerWnd::m_col = -1;
+
+BOOL CExplorerWnd::OnEraseBkgnd(CDC *pDC)
+{
+	CRect rct;
+	GetClientRect(&rct);
+
+	// Fill the background with a colour that matches the current BCG theme (and hence sometimes with the Windows Theme)
+	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
+	return TRUE;
+}
+
+HBRUSH CExplorerWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	if (nCtlColor == CTLCOLOR_STATIC)
+	{
+		pDC->SetBkMode(TRANSPARENT);                            // Make sure text has no background
+//		return(HBRUSH) afxGlobalData.brWindow.GetSafeHandle();  // window colour
+		if (m_pBrush == NULL || m_col != afxGlobalData.clrBarFace)
+		{
+			m_col = afxGlobalData.clrBarFace;
+			if (m_pBrush != NULL)
+				delete m_pBrush;
+			m_pBrush = new CBrush(afxGlobalData.clrBarFace);
+		}
+        return (HBRUSH)*m_pBrush;
+	}
+	else
+	{
+		return CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+	}
+}
+
+
 
 LRESULT CExplorerWnd::OnKickIdle(WPARAM, LPARAM lCount)
 {

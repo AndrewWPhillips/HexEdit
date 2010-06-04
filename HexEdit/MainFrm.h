@@ -300,6 +300,8 @@ public:
     BOOL ComboNeedsUpdate(const std::vector<CString> &vs, CComboBox *pp);
 
 private:
+	void InitDockWindows();
+
     CHexEditDoc *GetPrevDoc(CHexEditDoc *pdoc);
 #ifdef _DEBUG
     // Use smaller buffers to make it more likely to catch certain types of bugs

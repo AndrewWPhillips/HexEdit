@@ -632,6 +632,8 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_WM_SIZE()
 	ON_NOTIFY(TTN_SHOW, 0, OnTooltipsShow)
     ON_WM_CONTEXTMENU()
+	ON_WM_ERASEBKGND()
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 // Control ID and corresp help ID - used for popup context help
@@ -1839,6 +1841,42 @@ void CCalcDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
+
+CBrush * CCalcDlg::m_pBrush = NULL;
+COLORREF CCalcDlg::m_col = -1;
+
+BOOL CCalcDlg::OnEraseBkgnd(CDC *pDC)
+{
+	CRect rct;
+	GetClientRect(&rct);
+
+	// Fill the background with a colour that matches the current BCG theme (and hence sometimes with the Windows Theme)
+	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
+	return TRUE;
+}
+
+HBRUSH CCalcDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	if (nCtlColor == CTLCOLOR_STATIC)
+	{
+		pDC->SetBkMode(TRANSPARENT);                            // Make sure text has no background
+//		return(HBRUSH) afxGlobalData.brWindow.GetSafeHandle();  // window colour
+		if (m_pBrush == NULL || m_col != afxGlobalData.clrBarFace)
+		{
+			m_col = afxGlobalData.clrBarFace;
+			if (m_pBrush != NULL)
+				delete m_pBrush;
+			m_pBrush = new CBrush(afxGlobalData.clrBarFace);
+		}
+        return (HBRUSH)*m_pBrush;
+	}
+	else
+	{
+		return CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+	}
+}
+
+
 
 LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 {

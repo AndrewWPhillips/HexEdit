@@ -84,6 +84,15 @@ void CGenDockablePane::Float()
 	FloatPane(rct);
 }
 
+CSize CGenDockablePane::GetDefaultSize()
+{
+	CSize sz;
+	GetMinSize(sz);
+	sz.cx += 8;
+	sz.cy += GetCaptionHeight() + 8;
+	return sz;
+}
+
 // Message handlers
 
 int CGenDockablePane::OnCreate(LPCREATESTRUCT lpCreateStruct)

@@ -275,6 +275,10 @@ protected:
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnTooltipsShow(NMHDR* pNMHDR, LRESULT* pResult);
+
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+
     DECLARE_MESSAGE_MAP()
 
 private:

@@ -24,6 +24,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "ResizeCtrl.h"
 #include "range_set.h"
 #include "GridCtrl_src/GridCtrl.h"
 

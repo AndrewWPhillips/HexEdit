@@ -25,6 +25,8 @@ public:
 	void Hide() { ShowPane(FALSE, FALSE, FALSE); }
 	void Toggle() { if (IsWindowVisible()) Hide(); else ShowAndUnroll(); }
 
+	CSize GetDefaultSize();
+
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);

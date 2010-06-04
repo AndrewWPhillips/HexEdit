@@ -294,6 +294,73 @@ static UINT indicators[] =
 //      ID_INDICATOR_SCRL,
 };
 
+// Set the default positions of all docking windows
+void CMainFrame::InitDockWindows()
+{
+	CSize sz;
+	CRect mainRect, rct;
+	GetWindowRect(&mainRect);   // get main window in order to set float positions
+	//HDWP hdwp = BeginDeferWindowPos(5);
+
+	// Position bookmarks in middle of left side
+	sz = m_paneBookmarks.GetDefaultSize();
+	rct.left = mainRect.left;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2;
+	rct.bottom = rct.top + sz.cy;
+	//m_paneBookmarks.MovePane(rct, FALSE, hdwp);
+	ScreenToClient(rct);
+	m_paneBookmarks.MoveWindow(rct);
+
+	// Position Find dialog at bottom left
+	sz = m_paneFind.GetDefaultSize();
+	rct.left = mainRect.left;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.bottom - sz.cy;
+	rct.bottom = rct.top + sz.cy;
+	//m_paneFind.MovePane(rct, FALSE, hdwp);
+	ScreenToClient(rct);
+	m_paneFind.MoveWindow(rct);
+
+	sz = m_paneProp.GetDefaultSize();
+	rct.left = mainRect.left + mainRect.Size().cx/2 - sz.cx/2;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.bottom - sz.cy;
+	rct.bottom = rct.top + sz.cy;
+	//m_paneProp.MovePane(rct, FALSE, hdwp);
+	ScreenToClient(rct);
+	m_paneProp.MoveWindow(rct);
+
+	sz = m_paneCalc.GetDefaultSize();
+	rct.left = mainRect.right - sz.cx;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.bottom - sz.cy;
+	rct.bottom = rct.top + sz.cy;
+	//m_paneCalc.MovePane(rct, FALSE, hdwp);
+	ScreenToClient(rct);
+	m_paneCalc.MoveWindow(rct);
+
+	sz = m_paneExpl.GetDefaultSize();
+	rct.left = mainRect.right - sz.cx;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.top;
+	rct.bottom = rct.top + sz.cy;
+	//m_paneExpl.MovePane(rct, FALSE, hdwp);
+	ScreenToClient(rct);
+	m_paneExpl.MoveWindow(rct);
+
+	//EndDeferWindowPos(hdwp);
+
+	// Now dock/float the windows in default locations
+	m_paneFind.Float();
+	m_paneProp.Float();
+	//m_paneBookmarks.DockToFrameWindow(CBRS_ALIGN_LEFT);
+	//m_paneCalc.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_BOTTOM);
+	//m_paneExpl.DockToFrameWindow(CBRS_ALIGN_BOTTOM);
+	m_paneBookmarks.Float();
+	m_paneCalc.Float();
+	m_paneExpl.Float();
+}
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -431,7 +498,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         for (int pane = 1; pane < sizeof(indicators)/sizeof(*indicators)-3; ++pane)
             m_wndStatusBar.SetPaneText(pane, "");   // clear out dummy text
 
-
 		// Create the dockable windows
         if (!m_paneBookmarks.Create("Bookmarks", this, CSize(500, 250), TRUE, IDD_BOOKMARKS_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
 			!m_wndBookmarks.Create(&m_paneBookmarks) )
@@ -472,6 +538,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 		m_paneExpl.InitialUpdate(&m_wndExpl);
 		m_paneExpl.EnableDocking(CBRS_ALIGN_ANY);
+
+		// Set initial positions and docking/floating status but then hide all the windows
+		InitDockWindows();
+		m_paneBookmarks.Hide();
+		m_paneFind.Hide();
+		m_paneProp.Hide();
+		m_paneCalc.Hide();
+		m_paneExpl.Hide();
 
         // Get extra command images (without creating a toolbar)
 #if SHADED_TOOLBARS
@@ -526,20 +600,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
                         ID_VIEW_USER_TOOLBAR1,
                         ID_VIEW_USER_TOOLBAR10);
         EnableWindowsDialog (ID_WINDOW_MANAGER, _T("Windows..."), TRUE);
-
-		// Now set up the initial positions. (Do this after status bar is set up.)
-		m_paneBookmarks.DockToFrameWindow(CBRS_ALIGN_LEFT);
-		m_paneCalc.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_BOTTOM);
-		m_paneCalc.Hide();
-
-		m_paneExpl.DockToFrameWindow(CBRS_ALIGN_BOTTOM);
-		//m_paneExpl.Hide();
-
-		m_paneProp.Float();
-		m_paneFind.Float();
-		//m_paneFind.Hide();
-
-		//m_paneFind.SetCaptionStyle(TRUE);
 
         // Load search strings into mainframe edit bar
         LoadSearchHistory(&theApp);

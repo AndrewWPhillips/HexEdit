@@ -133,7 +133,7 @@ private:
 class CExplorerWnd : public CDialog
 {
 public:
-    CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0), init_(false) { }
+    CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0), init_(false), m_first(true) { }
 	enum { IDD = IDD_EXPLORER };
 	virtual BOOL Create(CWnd* pParentWnd);
 
@@ -181,6 +181,10 @@ protected:
 	afx_msg void OnSelchangeFolderName();
 	afx_msg void OnSelchangeFilter();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+
+	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+
 	DECLARE_MESSAGE_MAP()
 
 	CSimpleSplitter   splitter_;        // Contains the tree and folder view with a splitter in between
