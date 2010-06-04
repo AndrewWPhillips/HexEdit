@@ -154,7 +154,7 @@ struct OptValues
 	int		charset_;
 	int		control_;
 
-    // xxx check if these can be stored in the page (only used temporailly I think)
+    // xxx check if these can be stored in the page (only used temporarilly I think)
     LOGFONT lf_;                 // Default logical font (normal ASCII, ANSI, EBCDIC)
     LOGFONT oem_lf_;             // Logical font if displaying IBM/OEM character set
 
@@ -540,7 +540,7 @@ public:
 	//}}AFX_DATA
 
 // Controls
-        HICON arrow_icon_;
+    //HICON arrow_icon_;
 	CMenu args_menu_;
 
 // Overrides

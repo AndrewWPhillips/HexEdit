@@ -772,7 +772,6 @@ static DWORD id_pairs_workspace_layout[] = {
     IDC_HEX_UCASE, HIDC_HEX_UCASE,
     IDC_INT_ABBREV, HIDC_INT_ABBREV,
 	IDC_STARTUP_PAGE, HIDC_STARTUP_PAGE,
-//        IDC_VISUALIZATIONS, 0x41000+IDC_BCGBARRES_SKINS,
     0,0
 };
 
@@ -950,6 +949,7 @@ IMPLEMENT_DYNCREATE(CTemplatePage, COptPage)
 void CTemplatePage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
+	//DDX_Radio(pDX, IDC_DFFD_NONE, pParent->val_.dffd_view_);
 	DDX_Text(pDX, IDC_DFFD_ARRAY_MAX, pParent->val_.max_fix_for_elts_);
 	DDV_MinMaxUInt(pDX, pParent->val_.max_fix_for_elts_, 2, 999999);
 	DDX_Text(pDX, IDC_DFFD_FORMAT_CHAR, pParent->val_.default_char_format_);
@@ -2749,11 +2749,11 @@ BOOL CPrintPage::OnInitDialog()
 {
     COptPage::OnInitDialog();
 
-    VERIFY(arrow_icon_ = AfxGetApp()->LoadIcon(IDI_ARROW));
-    ASSERT(GetDlgItem(IDC_HEADER_OPTS) != NULL);
-    ((CButton *)GetDlgItem(IDC_HEADER_OPTS))->SetIcon(arrow_icon_);
-    ASSERT(GetDlgItem(IDC_FOOTER_OPTS) != NULL);
-    ((CButton *)GetDlgItem(IDC_FOOTER_OPTS))->SetIcon(arrow_icon_);
+    //VERIFY(arrow_icon_ = AfxGetApp()->LoadIcon(IDI_ARROW));
+    //ASSERT(GetDlgItem(IDC_HEADER_OPTS) != NULL);
+    //((CButton *)GetDlgItem(IDC_HEADER_OPTS))->SetIcon(arrow_icon_);
+    //ASSERT(GetDlgItem(IDC_FOOTER_OPTS) != NULL);
+    //((CButton *)GetDlgItem(IDC_FOOTER_OPTS))->SetIcon(arrow_icon_);
 
     if (args_menu_.m_hMenu == NULL)
         args_menu_.LoadMenu(IDR_PRINT_ARGS);
@@ -3385,7 +3385,7 @@ static DWORD id_pairs_wingeneral[] = {
     IDC_SAVE_DEFAULT, HIDC_SAVE_DEFAULT,
 	IDC_DISPLAY_TEMPLATE, HIDC_DISPLAY_TEMPLATE,
 	IDC_DISPLAY_AERIAL, HIDC_DISPLAY_AERIAL,
-	//IDC_DISPLAY_COMP, HIDC_DISPLAY_COMP,
+	IDC_DISPLAY_COMP, HIDC_DISPLAY_COMP,
     0,0 
 };
 
