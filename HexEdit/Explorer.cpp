@@ -538,9 +538,24 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 }
 
 BEGIN_MESSAGE_MAP(CHistoryShellList, CMFCShellListCtrl)
+	ON_WM_CREATE()
 	ON_NOTIFY_REFLECT(NM_DBLCLK, OnDblClk)
 	ON_WM_CONTEXTMENU()
+    ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnBegindrag)
 END_MESSAGE_MAP()
+
+// CHistoryShellList message handlers
+
+int CHistoryShellList::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CMFCShellListCtrl::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	m_pDropTarget = new CExplorerDropTarget (this);
+	m_pDropTarget->Register (this);
+
+	return 0;
+}
 
 void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point) 
 {
@@ -657,6 +672,340 @@ void CHistoryShellList::OnDblClk(NMHDR * pNMHDR, LRESULT * pResult)
 
 	ASSERT(theApp.open_current_readonly_ == -1);
     theApp.OpenDocumentFile(full_name);
+}
+
+void CHistoryShellList::OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;  // we ignore this and get all selected items
+
+	// Get all selected files/folders
+	std::vector<CString> src;           // List of all the file/folder names
+	size_t total_len = 0;               // Length of all strings including nul terminators
+	for (POSITION pos = GetFirstSelectedItemPosition(); pos != NULL; )
+	{
+		// Get info (item data) about this selected item
+		int iItem = GetNextSelectedItem(pos);
+        LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO) GetItemData (iItem);
+
+		// Get file/folder name of the selected item
+		TCHAR szPath [MAX_PATH];
+		VERIFY(SHGetPathFromIDList(pItem->pidlFQ, szPath));
+		src.push_back(szPath);
+
+		total_len += src.back().GetLength() + 1;
+	}
+
+	// Get global memory for CF_HDROP (DROPFILES structure followed by list of names)
+	HGLOBAL hg = ::GlobalAlloc(GHND | GMEM_SHARE, sizeof(DROPFILES) + sizeof(TCHAR)*(total_len + 1));
+	if (hg == NULL)
+		return;
+
+	DROPFILES * pdf = (DROPFILES *)::GlobalLock(hg);    // Ptr to DROPFILES
+	pdf->pFiles = sizeof(*pdf);                         // Size of DROPFILES
+#ifdef _UNICODE
+	pdf->fWide = TRUE;
+#endif
+	ASSERT(pdf != NULL);
+	TCHAR * pp = (TCHAR *)((char *)pdf + sizeof(*pdf)); // Ptr to where we put the names
+	for (std::vector<CString>::const_iterator psrc = src.begin(); psrc != src.end(); ++psrc)
+	{
+		size_t len = psrc->GetLength();
+		_tcscpy(pp, (LPCTSTR)(*psrc));
+		pp += len;
+		*pp++ = '\0';
+	}
+	*pp = '\0';
+	::GlobalUnlock(hg);
+
+	COleDataSource ods;
+	FORMATETC etc = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+    ods.CacheGlobalData(CF_HDROP, hg, &etc);
+
+	bool success = false;
+
+	switch (ods.DoDragDrop(DROPEFFECT_COPY | DROPEFFECT_MOVE))
+	{
+    case DROPEFFECT_COPY:
+    case DROPEFFECT_MOVE:
+		// The files/folders were copied/moved
+		success = true;
+		break;
+
+    case DROPEFFECT_NONE:
+		if ((::GetVersion() & 0x80000000) == 0)  // NT family (NT4/W2K/XP etc)
+		{
+			// Under NT a move returns DROPEFFECT_NONE so we have to see if
+			// the files are still there before we know if the move went ahead.
+			for (std::vector<CString>::const_iterator psrc = src.begin(); psrc != src.end(); ++psrc)
+			{
+				if (!::PathFileExists(*psrc))
+				{
+					// We found a (at least one) file is gone (presumably moved)
+					success = true;
+					break;
+				}
+			}
+		}
+		break;
+	default:
+		ASSERT(0);
+		success = true;         // Safer to not delete memory in case we don't own it
+		break;
+	}
+	if (success)
+		Refresh();
+	else
+		::GlobalFree(hg);       // We still own memory so free it
+
+	*pResult = 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CExplorerDropTarget
+CExplorerDropTarget::CExplorerDropTarget(CHistoryShellList* pWnd) : m_pParent(pWnd)
+{
+    if (FAILED(CoCreateInstance(CLSID_DragDropHelper,
+                                NULL, 
+                                CLSCTX_INPROC_SERVER,
+                                IID_IDropTargetHelper, 
+                                (void**)&m_pHelper)))
+	{
+		m_pHelper = NULL;
+	}
+}
+
+CExplorerDropTarget::~CExplorerDropTarget()
+{
+    if (m_pHelper != NULL)
+        m_pHelper->Release();
+}
+
+DROPEFFECT CExplorerDropTarget::OnDragEnter(CWnd * pWnd, COleDataObject* pDataObject,
+                            DWORD dwKeyState, CPoint point )
+{
+	DROPEFFECT retval = DragCheck(pDataObject, dwKeyState, point);
+
+    if (m_pHelper != NULL)
+	{
+        IDataObject* piDataObj = pDataObject->GetIDataObject(FALSE); 
+        m_pHelper->DragEnter(pWnd->GetSafeHwnd(), piDataObj, &point, retval);
+	}
+	return retval;
+}
+
+DROPEFFECT CExplorerDropTarget::OnDragOver(CWnd *, COleDataObject* pDataObject,
+                        DWORD dwKeyState, CPoint point)
+{
+	DROPEFFECT retval = DragCheck(pDataObject, dwKeyState, point);
+
+    if (m_pHelper != NULL)
+        m_pHelper->DragOver(&point, retval);
+
+	return retval;
+}
+
+BOOL CExplorerDropTarget::OnDrop(CWnd *, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point)
+{
+	BOOL retval = FALSE;
+
+    if (m_pHelper != NULL)
+	{
+        IDataObject* piDataObj = pDataObject->GetIDataObject(FALSE); 
+        m_pHelper->Drop(piDataObj, &point, dropEffect);
+	}
+
+	// Get destination folder and make sure there are 2 nul terminating bytes (required according to doco)
+	CString dst = GetDst(point);
+	ASSERT(!dst.IsEmpty());                     // target should be able to be dropped on
+	size_t lenDst = dst.GetLength();
+	LPTSTR pDst = dst.GetBuffer(lenDst + 2);    // reserve room for an extra nul byte
+	pDst[lenDst+1] = '\0';
+
+	// Get the source files and put into a list as expected by SHFILEOPSTRUCT
+	std::vector<CString> src;
+	size_t total_len = GetNames(pDataObject, src);
+	TCHAR * buf = new TCHAR[total_len + 1];
+	TCHAR * pp = buf;
+	for (std::vector<CString>::const_iterator psrc = src.begin(); psrc != src.end(); ++psrc)
+	{
+		size_t len = psrc->GetLength();
+		_tcscpy(pp, (LPCTSTR)(*psrc));
+		pp += len;
+		*pp++ = '\0';
+	}
+	ASSERT(pp == buf + total_len);
+	*pp = '\0';
+
+	// Start the copy/move
+	SHFILEOPSTRUCT fos;
+	fos.hwnd = m_pParent->m_hWnd;
+	fos.wFunc = (dropEffect == DROPEFFECT_COPY) ? FO_COPY : FO_MOVE;
+	fos.pFrom = buf;
+	fos.pTo = dst;
+	fos.fFlags = FOF_ALLOWUNDO;
+	//fos.lpszProgressTitle = (dropEffect == DROPEFFECT_COPY) ? _T("Copying") : _T("Moving");
+	retval = (::SHFileOperation(&fos) == 0);
+	m_pParent->Refresh();
+
+	delete buf;
+	return retval;
+}
+
+void CExplorerDropTarget::OnDragLeave(CWnd *)
+{
+    if (m_pHelper != NULL)
+        m_pHelper->DragLeave();
+}
+
+// Get destination - this is a sub-folder of the current folder if the user is dragging
+// over an item in the list that is a folder, otherwise it is just the current folder itself.
+// Returns the folder name or an empty string if the folder cannot be dropped on.
+CString CExplorerDropTarget::GetDst(CPoint point)
+{
+	CString retval;                        // Destination folder for drop
+    int iItem;
+	LPAFX_SHELLITEMINFO pInfo;
+	ULONG ulAttrs = SFGAO_FOLDER | SFGAO_DROPTARGET;  // We need to ask for flags we want (although sometimes GetAttributesOf returns others too - be careful)
+
+	// Find current drag item and see if it is a folder
+	if ((iItem = m_pParent->HitTest(point)) != -1 &&
+		(pInfo = (LPAFX_SHELLITEMINFO)m_pParent->GetItemData(iItem)) != NULL &&
+        pInfo->pParentFolder != NULL &&
+		pInfo->pidlRel != NULL &&
+		pInfo->pParentFolder->GetAttributesOf(1, (const struct _ITEMIDLIST **)&pInfo->pidlRel, &ulAttrs) == S_OK &&
+        (ulAttrs & SFGAO_FOLDER) != 0)
+	{
+		// Check if the folder is a drop target
+		// Note that this flag is wrongly set for some folders like "My Computer" but then SHGetPathFromIDList (below) fails
+		if ((ulAttrs & SFGAO_DROPTARGET) != 0)
+		{
+			// Get the name of the folder to return it
+			TCHAR szPath[MAX_PATH];
+			::SHGetPathFromIDList(pInfo->pidlFQ, szPath);  // This may fail for some folders that should not be drop targets (luckilly szPath remains empty)
+			retval = szPath;
+		}
+	}
+	else
+	{
+		// Check if current folder is a drop target
+		SHFILEINFO	sfi;
+		sfi.dwAttributes = SFGAO_DROPTARGET;
+		VERIFY(SHGetFileInfo((LPCTSTR)m_pParent->m_pidlCurFQ, 0, &sfi, sizeof(sfi),
+			                  SHGFI_PIDL | SHGFI_ATTRIBUTES | SHGFI_ATTR_SPECIFIED));
+        if ((sfi.dwAttributes & SFGAO_DROPTARGET) != 0)
+			m_pParent->GetCurrentFolder(retval);     // Return name of current folder (if drop target)
+	}
+	return retval;
+}
+
+// Get names of files/folders involved in the drag and drop operation.  This just
+// involves decoding the DROPFILES "structure" obtained from CF_HDROP clipboard format.
+size_t CExplorerDropTarget::GetNames(COleDataObject* pDataObject, std::vector<CString> & retval)
+{
+	size_t total_len = 0;
+    HGLOBAL hg;
+	DROPFILES * pdf;
+	if ((hg = pDataObject->GetGlobalData(CF_HDROP)) != HGLOBAL(0) &&
+		(pdf = (DROPFILES *)::GlobalLock(hg)) != NULL)
+	{
+		char *pp = (char *)pdf + pdf->pFiles;  // The string list starts here
+		CString name;                          // Next name from the list
+		for (;;)
+		{
+			if (pdf->fWide)                    // Unicode names
+				name = CString((wchar_t *)pp);
+			else
+				name = CString(pp);
+
+			size_t len = name.GetLength();
+			if (len == 0)
+				break;                  // Empty string signals end of list
+			total_len += len + 1;
+			pp += (len + 1) * (pdf->fWide ? 2 : 1);
+
+			retval.push_back(name);
+		}
+		::GlobalUnlock(hg);
+	}
+
+	return total_len;
+}
+
+// Get destination folder + list of files/folders to move/copy. If any of them cannot
+// be done (eg drag file onto itself or drag folder into descendant) then DROPEFFECT_NONE
+// is returned.  If any cannot be moved without copying and deleting (ie source and
+// dest are on different drives) then DROPEFFECT_COPY is returned, else DROPEFFECT_MOVE.
+// However, if user holds Ctrl key down DROPEFFECT_COPY is forced (even on same drive), OR
+// if they hold Shift key down then DROPEFFECT_MOVE is forced (even across drives).
+DROPEFFECT CExplorerDropTarget::DragCheck (COleDataObject* pDataObject,
+                        DWORD dwKeyState, CPoint point )
+{
+	DROPEFFECT retval = DROPEFFECT_MOVE;
+
+	// Get the destination folder of the move and the folders/files to move
+	CString dst = GetDst(point);
+	if (dst.IsEmpty())
+		return DROPEFFECT_NONE;       // Current drag folder is not a drop target
+	std::vector<CString> src;
+	GetNames(pDataObject, src);
+
+	for (std::vector<CString>::const_iterator psrc = src.begin(); psrc != src.end(); ++psrc)
+	{
+		DROPEFFECT de;
+		if (::PathIsDirectory(*psrc))
+			de = CanMoveFolder(*psrc, dst);
+		else
+			de = CanMove(*psrc, dst);
+
+		if (de == DROPEFFECT_NONE)
+		{
+			retval = DROPEFFECT_NONE;      // if we can't drag any then return NONE
+			break;
+		}
+		else if (de == DROPEFFECT_COPY)
+			retval = DROPEFFECT_COPY;     // if we can't move any then return COPY
+	}
+	if (retval == DROPEFFECT_MOVE && (dwKeyState & MK_CONTROL) != 0)
+		retval = DROPEFFECT_COPY;
+	if (retval == DROPEFFECT_COPY && (dwKeyState & MK_SHIFT) != 0)
+		retval = DROPEFFECT_MOVE;
+	return retval;
+}
+
+// Check if move is allowed - if moving to same folder (ie no move at all) return DROPEFFECT_NONE,
+// else return DROPEFFECT_MOVE or DROPEFFECT_COPY depending on whether moving across drives.
+DROPEFFECT CExplorerDropTarget::CanMove(LPCTSTR file, LPCTSTR dst)
+{
+	TCHAR folder[MAX_PATH];
+	_tcsncpy(folder, file, MAX_PATH);
+	LPTSTR pfn = ::PathFindFileName(folder);
+	pfn--;
+	ASSERT(pfn > folder && pfn < folder + MAX_PATH);        // Make sure it points into the buffer
+	ASSERT(*pfn == '\\');
+	*pfn = '\0';                                            // Truncate at file name to get folder
+	ASSERT(::PathIsDirectory(folder) && ::PathIsDirectory(dst));
+	if (::StrCmpI(folder, dst) == 0)
+		return DROPEFFECT_NONE;
+	else if (::PathIsSameRoot(folder, dst))
+		return DROPEFFECT_MOVE;
+	else
+		return DROPEFFECT_COPY;
+}
+
+// Check if move of a folder is allowed - checks that not moving to parent folder (ie,
+// no move at all) and also that it is not moved inside itself (to itself or descendant).
+DROPEFFECT CExplorerDropTarget::CanMoveFolder(LPCTSTR folder, LPCTSTR dst)
+{
+	DROPEFFECT retval = CanMove(folder, dst);
+	if (retval != DROPEFFECT_NONE)
+	{
+		// Also make sure that we don't move a folder to itself or a descendant
+		TCHAR common[MAX_PATH];
+		size_t len = ::PathCommonPrefix(folder, dst, common);
+		if (len == _tcslen(folder))
+			retval = DROPEFFECT_NONE;
+	}
+	return retval;
 }
 
 /////////////////////////////////////////////////////////////////////////////

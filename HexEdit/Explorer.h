@@ -37,6 +37,7 @@ class CExplorerWnd;             // see below
 // CHistoryShellList - keeps a history of folders displayed
 class CHistoryShellList : public CMFCShellListCtrl
 {
+	friend class CExplorerDropTarget;
     friend class CExplorerWnd;
 	// This replaces BCGShellListColumn* (Afx_ShellListColumn*)
 	enum
@@ -49,7 +50,7 @@ class CHistoryShellList : public CMFCShellListCtrl
 	};
 
 public:
-    CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true) { }
+    CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true), m_pDropTarget (NULL) { }
 	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
 
     // Handles back and forward buttons
@@ -76,8 +77,10 @@ public:
     CString GetFilter() { return ""; }
 
 protected:
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDblClk(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -92,7 +95,39 @@ private:
     int normal_count_;           // No of columns added in base class (CMFCShellListCtrl)
 	int fl_idx_;                 // This is saved index into recent file list (cached for list box row while processing fields)
     static char * defaultWidths;
+
+	CExplorerDropTarget * m_pDropTarget;
 };
+
+/////////////////////////////////////////////////////////////////////////////
+// CExplorerDropTarget
+class CExplorerDropTarget : public COleDropTarget
+{
+public:
+	CExplorerDropTarget(CHistoryShellList* pWnd);
+	virtual ~CExplorerDropTarget();
+
+    DROPEFFECT OnDragEnter ( CWnd* pWnd, COleDataObject* pDataObject,
+                             DWORD dwKeyState, CPoint point );
+
+    DROPEFFECT OnDragOver ( CWnd* pWnd, COleDataObject* pDataObject,
+                            DWORD dwKeyState, CPoint point );
+
+    BOOL OnDrop ( CWnd* pWnd, COleDataObject* pDataObject,
+                  DROPEFFECT dropEffect, CPoint point );
+
+    void OnDragLeave ( CWnd* pWnd );
+
+private:
+	CString GetDst(CPoint point);
+	size_t GetNames(COleDataObject* pDataObject, std::vector<CString> & retval);
+	DROPEFFECT DragCheck(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
+	DROPEFFECT CanMove(LPCTSTR file, LPCTSTR dst);
+	DROPEFFECT CanMoveFolder(LPCTSTR folder, LPCTSTR dst);
+    CHistoryShellList * m_pParent;
+    IDropTargetHelper * m_pHelper;
+};
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CFilterEdit
