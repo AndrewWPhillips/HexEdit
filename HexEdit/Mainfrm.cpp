@@ -294,74 +294,6 @@ static UINT indicators[] =
 //      ID_INDICATOR_SCRL,
 };
 
-// Set the default positions of all docking windows
-void CMainFrame::InitDockWindows()
-{
-	CSize sz;
-	CRect mainRect, rct;
-	GetWindowRect(&mainRect);   // get main window in order to set float positions
-	//HDWP hdwp = BeginDeferWindowPos(5);
-
-	// Position bookmarks in middle of left side
-	sz = m_paneBookmarks.GetDefaultSize();
-	rct.left = mainRect.left;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2;
-	rct.bottom = rct.top + sz.cy;
-	//m_paneBookmarks.MovePane(rct, FALSE, hdwp);
-	ScreenToClient(rct);
-	m_paneBookmarks.MoveWindow(rct);
-
-	// Position Find dialog at bottom left
-	sz = m_paneFind.GetDefaultSize();
-	rct.left = mainRect.left;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.bottom - sz.cy;
-	rct.bottom = rct.top + sz.cy;
-	//m_paneFind.MovePane(rct, FALSE, hdwp);
-	ScreenToClient(rct);
-	m_paneFind.MoveWindow(rct);
-
-	sz = m_paneProp.GetDefaultSize();
-	rct.left = mainRect.left + mainRect.Size().cx/2 - sz.cx/2;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.bottom - sz.cy;
-	rct.bottom = rct.top + sz.cy;
-	//m_paneProp.MovePane(rct, FALSE, hdwp);
-	ScreenToClient(rct);
-	m_paneProp.MoveWindow(rct);
-
-	sz = m_paneCalc.GetDefaultSize();
-	rct.left = mainRect.right - sz.cx;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.bottom - sz.cy;
-	rct.bottom = rct.top + sz.cy;
-	//m_paneCalc.MovePane(rct, FALSE, hdwp);
-	ScreenToClient(rct);
-	m_paneCalc.MoveWindow(rct);
-
-	sz = m_paneExpl.GetDefaultSize();
-	rct.left = mainRect.right - sz.cx;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.top;
-	rct.bottom = rct.top + sz.cy;
-	//m_paneExpl.MovePane(rct, FALSE, hdwp);
-	ScreenToClient(rct);
-	m_paneExpl.MoveWindow(rct);
-
-	//EndDeferWindowPos(hdwp);
-
-	// Now dock/float the windows in default locations
-	m_paneFind.Float();
-	m_paneProp.Float();
-	//m_paneBookmarks.DockToFrameWindow(CBRS_ALIGN_LEFT);
-	//m_paneCalc.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_BOTTOM);
-	//m_paneExpl.DockToFrameWindow(CBRS_ALIGN_BOTTOM);
-	m_paneBookmarks.Float();
-	m_paneCalc.Float();
-	m_paneExpl.Float();
-}
-
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
         if (CMDIFrameWndEx::OnCreate(lpCreateStruct) == -1)
@@ -1077,13 +1009,90 @@ void CMainFrame::SaveFrameOptions()
     }
 }
 
-void CMainFrame::show_calc()
+// Set the default positions of all docking windows
+void CMainFrame::InitDockWindows()
 {
-    m_wndCalc.SetWindowText("Calculator");
-	m_paneCalc.ShowAndUnroll();
+	CSize sz;
+	CRect mainRect, rct;
+	GetWindowRect(&mainRect);   // get main window in order to set float positions
+	//HDWP hdwp = BeginDeferWindowPos(5);
 
-    m_wndCalc.update_controls();
-    m_wndCalc.ShowBinop();
+	// Position bookmarks in middle of left side
+	sz = m_paneBookmarks.GetDefaultSize();
+	rct.left = mainRect.left;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2;
+	rct.bottom = rct.top + sz.cy;
+	//m_paneBookmarks.MovePane(rct, FALSE, hdwp);
+	ScreenToClient(rct);
+	m_paneBookmarks.MoveWindow(rct);
+
+	// Position Find dialog at bottom left
+	sz = m_paneFind.GetDefaultSize();
+	rct.left = mainRect.left;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.bottom - sz.cy;
+	rct.bottom = rct.top + sz.cy;
+	//m_paneFind.MovePane(rct, FALSE, hdwp);
+	ScreenToClient(rct);
+	m_paneFind.MoveWindow(rct);
+
+	sz = m_paneProp.GetDefaultSize();
+	rct.left = mainRect.left + mainRect.Size().cx/2 - sz.cx/2;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.bottom - sz.cy;
+	rct.bottom = rct.top + sz.cy;
+	//m_paneProp.MovePane(rct, FALSE, hdwp);
+	ScreenToClient(rct);
+	m_paneProp.MoveWindow(rct);
+
+	sz = m_paneCalc.GetDefaultSize();
+	rct.left = mainRect.right - sz.cx;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.bottom - sz.cy;
+	rct.bottom = rct.top + sz.cy;
+	//m_paneCalc.MovePane(rct, FALSE, hdwp);
+	ScreenToClient(rct);
+	m_paneCalc.MoveWindow(rct);
+
+	sz = m_paneExpl.GetDefaultSize();
+	rct.left = mainRect.right - sz.cx;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.top;
+	rct.bottom = rct.top + sz.cy;
+	//m_paneExpl.MovePane(rct, FALSE, hdwp);
+	ScreenToClient(rct);
+	m_paneExpl.MoveWindow(rct);
+
+	//EndDeferWindowPos(hdwp);
+
+	// Now dock/float the windows in default locations
+	m_paneFind.Float();
+	m_paneProp.Float();
+	//m_paneBookmarks.DockToFrameWindow(CBRS_ALIGN_LEFT);
+	//m_paneCalc.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_BOTTOM);
+	//m_paneExpl.DockToFrameWindow(CBRS_ALIGN_BOTTOM);
+	m_paneBookmarks.Float();
+	m_paneCalc.Float();
+	m_paneExpl.Float();
+}
+
+void CMainFrame::FixPanes()
+{
+	// Doing this at the strat avoids a problem where panes floating by themself are
+	// not drawn properly when their position is restored on startup.  The disadvantage
+	// to the user is that any window they left floating will not be restored when they
+	// reopen HexEdit (though the position is remembered and restored when they open it).
+	if (m_paneBookmarks.IsFloating())
+		m_paneBookmarks.Hide();
+	if (m_paneFind.IsFloating())
+		m_paneFind.Hide();
+	if (m_paneCalc.IsFloating())
+		m_paneCalc.Hide();
+	if (m_paneProp.IsFloating())
+		m_paneProp.Hide();
+	if (m_paneExpl.IsFloating())
+		m_paneExpl.Hide();
 }
 
 void CMainFrame::move_dlgbar(CGenDockablePane &bar, const CRect &rct)
@@ -1182,6 +1191,15 @@ void CMainFrame::move_dlgbar(CGenDockablePane &bar, const CRect &rct)
         ::SetCursorPos(mouse_pt.x, mouse_pt.y);
     }
 #endif
+}
+
+void CMainFrame::show_calc()
+{
+    m_wndCalc.SetWindowText("Calculator");
+	m_paneCalc.ShowAndUnroll();
+
+    m_wndCalc.update_controls();
+    m_wndCalc.ShowBinop();
 }
 
 void CMainFrame::OnContextMenu(CWnd* pWnd, CPoint point) 

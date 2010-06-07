@@ -25,6 +25,9 @@ public:
 	void Hide() { ShowPane(FALSE, FALSE, FALSE); }
 	void Toggle() { if (IsWindowVisible()) Hide(); else ShowAndUnroll(); }
 
+	// Pane is floating in its own window (buy may not be visible)
+	bool IsFloating() { return !IsDocked() && !IsTabbed(); }
+
 	CSize GetDefaultSize();
 
 protected:

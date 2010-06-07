@@ -397,7 +397,8 @@ BOOL CHexEditApp::InitInstance()
         m_pbookmark_list = new CBookmarkList(FILENAME_BOOKMARKS);
         m_pbookmark_list->ReadList();
 
-        // create main MDI Frame window
+        // create main MDI Frame window.
+		// NOTE: This triggers a lot of other initialization (see CMainFrame::OnCreate)
         CMainFrame* pMainFrame = new CMainFrame;
         m_pMainWnd = pMainFrame;  // Need this before LoadFrame as calc constructor get main window
         if (!pMainFrame->LoadFrame(IDR_MAINFRAME))
@@ -438,6 +439,7 @@ BOOL CHexEditApp::InitInstance()
         if (!ProcessShellCommand(cmdInfo))
                 return FALSE;
 
+		pMainFrame->FixPanes();  // workaround for BCG bug
 #ifdef _DEBUG
         // This avoids all sorts of confusion when testing/debugging
 		// due to toolbars being restored to a previous state.

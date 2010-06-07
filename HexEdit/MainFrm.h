@@ -299,8 +299,10 @@ public:
 
     BOOL ComboNeedsUpdate(const std::vector<CString> &vs, CComboBox *pp);
 
-private:
 	void InitDockWindows();
+	void FixPanes();
+
+private:
 
     CHexEditDoc *GetPrevDoc(CHexEditDoc *pdoc);
 #ifdef _DEBUG
