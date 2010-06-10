@@ -3017,16 +3017,16 @@ void CHexEditApp::set_options(struct OptValues &val)
 {
     // This is a big kludge because of problems with property sheets.
     // First the problem: Each page of a property sheet is an autonomous
-    // dialog with it's own OnOK() etc.  The trouble is that if the user
-    // never goes into a page then nothing in that page is called
+    // dialog with it's own OnOK() etc.  The trouble is if the user never
+    // uses a page it is not even created & nothing in that page is called
     // (ie OnInitDialog() etc) so you can't rely on anything particularly
     // being called when the user click the OK (or Apply) button in the
-    // property sheet; you ca't rely on any particular property page's
+    // property sheet; you can't rely on any particular property page's
     // OnOK() being called and there is no (easy) way to intercept the
     // property sheet's button clicking.
     // We want this so we can update from all pages in this function.
     // This allows easier moving of controls between pages etc.
-    // So we need to make sure that set_options() is called exactly once
+    // But we need to make sure that set_options() is called exactly once
     // when the user clicks OK or Apply.  The solution is to use a timer.
     // If it has been less than half a second since the last call then
     // we can assume this is still for the same click of the OK button.
@@ -3162,39 +3162,11 @@ void CHexEditApp::set_options(struct OptValues &val)
         invalidate_views = true;        // redraw windows as they are probably showing hex digits
 
         // Fix up case of search strings (find tool, find dlg)
-        CObList listButtons;
-        if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
-        {
-            for (POSITION posCombo = listButtons.GetHeadPosition (); 
-                posCombo != NULL; )
-            {
-                CFindComboButton* pCombo = 
-                    DYNAMIC_DOWNCAST(CFindComboButton, listButtons.GetNext(posCombo));
-                ASSERT(pCombo != NULL);
-
-                CSearchEditControl *pedit = pCombo->GetEdit();
-                ASSERT(pedit != NULL);
-                pedit->Redisplay();
-            }
-        }
-
+		CSearchEditControl::RedisplayAll();
         mm->m_wndFind.Redisplay();
 
         // Fix up case of hex addresses in hex jump tool(s)
-        if (CMFCToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
-        {
-            for (POSITION posCombo = listButtons.GetHeadPosition (); 
-                posCombo != NULL; )
-            {
-                CHexComboButton* pCombo = 
-                    DYNAMIC_DOWNCAST(CHexComboButton, listButtons.GetNext(posCombo));
-                ASSERT(pCombo != NULL);
-
-                CHexEditControl *pedit = pCombo->GetEdit();
-                ASSERT(pedit != NULL);
-                pedit->Redisplay();
-            }
-        }
+		CHexEditControl::RedisplayAll();
 
         // Fix up case of calc value (in case it's hex)
         if (mm->m_wndCalc.m_hWnd != 0)

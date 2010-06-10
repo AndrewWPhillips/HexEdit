@@ -94,6 +94,8 @@ public:
 public:
     void Redisplay();            // Make sure hex digits case OK etc
     void add_spaces();
+	static void BeginJump();
+	static void RedisplayAll();  // Find all instances and redisplay
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -357,6 +359,8 @@ public:
 
 // Operations
 public:
+	static void BeginSearch(enum mode_t);
+	static void RedisplayAll();
 
 // Overrides
     // ClassWizard generated virtual function overrides

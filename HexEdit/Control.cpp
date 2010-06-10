@@ -861,12 +861,55 @@ UINT CSearchEditControl::OnGetDlgCode()
 }
 #endif
 
-HBRUSH CHexEditControl::CtlColor(CDC* pDC, UINT nCtlColor) 
-{
-    if (nCtlColor == CTLCOLOR_EDIT)
-        pDC->SetTextColor(::GetHexAddrCol());
+/////////////////////////////////////////////////////////////////////////////
+// CSearchEditControl class (static methods)
 
-    return m_brush;
+// This finds the first visible search tool (in toolbars) and
+// chnages to specified search mode and sets focus to it.
+void CSearchEditControl::BeginSearch(enum mode_t mode)
+{
+    CObList listButtons;
+
+    // Search all toolbars and jump to the first visible search tool found (can be more than one)
+    if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
+    {
+        for (POSITION posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
+        {
+            CFindComboButton* pCombo = 
+                DYNAMIC_DOWNCAST(CFindComboButton, listButtons.GetNext(posCombo));
+            ASSERT(pCombo != NULL);
+
+            CSearchEditControl *pedit = pCombo->GetEdit();
+            ASSERT(pedit != NULL);
+            if (pedit->IsWindowVisible())
+            {
+				// We found (first) one so change its mode and set focus
+                pedit->SetMode(mode);
+                pedit->SetFocus();
+                break;
+            }
+        }
+    }
+}
+
+// Finds all search tools and forces them to redraw
+void CSearchEditControl::RedisplayAll()
+{
+    CObList listButtons;
+    if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
+    {
+        for (POSITION posCombo = listButtons.GetHeadPosition (); 
+            posCombo != NULL; )
+        {
+            CFindComboButton* pCombo = 
+                DYNAMIC_DOWNCAST(CFindComboButton, listButtons.GetNext(posCombo));
+            ASSERT(pCombo != NULL);
+
+            CSearchEditControl *pedit = pCombo->GetEdit();
+            ASSERT(pedit != NULL);
+            pedit->Redisplay();
+        }
+    }
 }
 
 LRESULT CSearchEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
@@ -1265,6 +1308,14 @@ UINT CHexEditControl::OnGetDlgCode()
 }
 #endif
 
+HBRUSH CHexEditControl::CtlColor(CDC* pDC, UINT nCtlColor) 
+{
+    if (nCtlColor == CTLCOLOR_EDIT)
+        pDC->SetTextColor(::GetHexAddrCol());
+
+    return m_brush;
+}
+
 LRESULT CHexEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
 {
     // Since there is only one control of this type just call help with its help ID
@@ -1272,6 +1323,53 @@ LRESULT CHexEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
                      HH_HELP_CONTEXT, 0x10000 + ID_JUMP_HEX_COMBO))
         AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
     return 1;                           // Indicate help launched
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CHexEditControl class (static) methods
+
+void CHexEditControl::BeginJump()
+{
+    CObList listButtons;
+
+    // Search all toolbars and jump to the first visible hex address tool found (can be more than one)
+    if (CMFCToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
+    {
+        for (POSITION posCombo = listButtons.GetHeadPosition(); 
+            posCombo != NULL; )
+        {
+            CHexComboButton* pCombo = 
+                DYNAMIC_DOWNCAST(CHexComboButton, listButtons.GetNext(posCombo));
+            ASSERT(pCombo != NULL);
+
+            CHexEditControl *pedit = pCombo->GetEdit();
+            ASSERT(pedit != NULL);
+            if (pedit->IsWindowVisible())
+            {
+                pedit->SetFocus();
+                break;
+            }
+        }
+    }
+}
+
+void CHexEditControl::RedisplayAll()
+{
+    CObList listButtons;
+    if (CMFCToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
+    {
+        for (POSITION posCombo = listButtons.GetHeadPosition (); 
+            posCombo != NULL; )
+        {
+            CHexComboButton* pCombo = 
+                DYNAMIC_DOWNCAST(CHexComboButton, listButtons.GetNext(posCombo));
+            ASSERT(pCombo != NULL);
+
+            CHexEditControl *pedit = pCombo->GetEdit();
+            ASSERT(pedit != NULL);
+            pedit->Redisplay();
+        }
+    }
 }
 
 //===========================================================================

@@ -13548,7 +13548,6 @@ void CHexEditView::OnJumpDec()           // message from BCG edit bar combo
 
 void CHexEditView::OnJumpHex()           // message from BCG edit bar combo
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 
     CString addr_str, err_str;
@@ -13563,54 +13562,14 @@ void CHexEditView::OnJumpHex()           // message from BCG edit bar combo
     }
 
     // If recording macro indicate jump & store address jumped to
-    aa->SaveToMacro(km_address_hex, addr_str);
-
-#if 0
-    // Try to go to the address requested
-    FILE_ADDRESS actual;
-    if ((actual = GoAddress(address)) != address)
-    {
-        // Could not go to the requested address - tell user
-        AfxMessageBox("Invalid address entered. Address set to EOF");
-    }
-    SaveMove();          // Save prev pos in undo array
-    DisplayCaret();
-#else
+    theApp.SaveToMacro(km_address_hex, addr_str);
     MoveWithDesc("Jump (Hex Jump Tool) ", address);  // space at end means significant nav pt
-#endif
 }
 
 void CHexEditView::OnJumpHexAddr()      // Alt-J
 {
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
-
-#if 0 // BCG toolbar changes
-    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    if ((mm->m_wndEditBar.GetStyle() & WS_VISIBLE) != 0)
-        mm->m_wndEditBar.GetDlgItem(IDC_JUMP_HEX)->SetFocus();
-#else
-    CObList listButtons;
-
-    // Search all toolbars and jump to the first visible hex address tool found (can be more than one)
-    if (CMFCToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
-    {
-        for (POSITION posCombo = listButtons.GetHeadPosition(); 
-            posCombo != NULL; )
-        {
-            CHexComboButton* pCombo = 
-                DYNAMIC_DOWNCAST(CHexComboButton, listButtons.GetNext(posCombo));
-            ASSERT(pCombo != NULL);
-
-            CHexEditControl *pedit = pCombo->GetEdit();
-            ASSERT(pedit != NULL);
-            if (pedit->IsWindowVisible())
-            {
-                pedit->SetFocus();
-                break;
-            }
-        }
-    }
-#endif
+	CHexEditControl::BeginJump();
 }
 
 void CHexEditView::OnInsert()
@@ -13846,80 +13805,17 @@ void CHexEditView::OnUpdateDffdSync(CCmdUI* pCmdUI)
 
 void CHexEditView::OnSearchHex()        // Alt-L, F6
 {
-    CObList listButtons;
-
-    // Search all toolbars and jump to the first visible search tool found (can be more than one)
-    if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
-    {
-        for (POSITION posCombo = listButtons.GetHeadPosition(); 
-            posCombo != NULL; )
-        {
-            CFindComboButton* pCombo = 
-                DYNAMIC_DOWNCAST(CFindComboButton, listButtons.GetNext(posCombo));
-            ASSERT(pCombo != NULL);
-
-            CSearchEditControl *pedit = pCombo->GetEdit();
-            ASSERT(pedit != NULL);
-            if (pedit->IsWindowVisible())
-            {
-                pedit->SetMode(CSearchEditControl::mode_hex);
-                pedit->SetFocus();
-                break;
-            }
-        }
-    }
+	CSearchEditControl::BeginSearch(CSearchEditControl::mode_hex);
 }
 
 void CHexEditView::OnSearchAscii()      // F5
 {
-    CObList listButtons;
-
-    // Search all toolbars and jump to the first visible search tool found (can be more than one)
-    if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
-    {
-        for (POSITION posCombo = listButtons.GetHeadPosition(); 
-            posCombo != NULL; )
-        {
-            CFindComboButton* pCombo = 
-                DYNAMIC_DOWNCAST(CFindComboButton, listButtons.GetNext(posCombo));
-            ASSERT(pCombo != NULL);
-
-            CSearchEditControl *pedit = pCombo->GetEdit();
-            ASSERT(pedit != NULL);
-            if (pedit->IsWindowVisible())
-            {
-                pedit->SetMode(CSearchEditControl::mode_char);
-                pedit->SetFocus();
-                break;
-            }
-        }
-    }
+	CSearchEditControl::BeginSearch(CSearchEditControl::mode_char);
 }
 
 void CHexEditView::OnSearchIcase()      // F4
 {
-    CObList listButtons;
-
-    // Search all toolbars and jump to the first visible search tool found (can be more than one)
-    if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
-    {
-        for (POSITION posCombo = listButtons.GetHeadPosition(); 
-            posCombo != NULL; )
-        {
-            CFindComboButton* pCombo = 
-                DYNAMIC_DOWNCAST(CFindComboButton, listButtons.GetNext(posCombo));
-            ASSERT(pCombo != NULL);
-
-            CSearchEditControl *pedit = pCombo->GetEdit();
-            ASSERT(pedit != NULL);
-            if (pedit->IsWindowVisible())
-            {
-                pedit->SetMode(CSearchEditControl::mode_icase);
-                pedit->SetFocus();
-                break;
-            }
-        }
-    }
+	CSearchEditControl::BeginSearch(CSearchEditControl::mode_icase);
 }
 
 // 
