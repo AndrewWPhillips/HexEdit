@@ -134,11 +134,6 @@ public:
 
     CStatBar m_wndStatusBar;
 
-    // EditBar edit controls (within combo controls)
-//    CHexEditControl hec_hex_addr_;    // Edit for hex address
-//    CDecEditControl dec_dec_addr_;    // Edit for decimal address
-//    CSearchEditControl sec_search_;   // Edit for searches
-
 // Generated message map functions
 // protected:
 public:

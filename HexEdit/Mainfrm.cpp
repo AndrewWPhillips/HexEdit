@@ -857,9 +857,9 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
     CRect rct, clip_rct;
     m_wndClientArea.GetClientRect(rct);
 	pDC->GetClipBox(&clip_rct);
-	if (rct != clip_rct)
+	if (m_background_pos != 1 && rct != clip_rct)
 	{
-		// There is a problem drawing the background image (unless its in the top left corner)
+		// There is a problem drawing the background image (unless it's in the top left corner)
 		// due to clipping rectangle used for the erased area.  (This only started occurring
 		// with MFC9 so I am not sure what had chnaged.)  The simplest solution (kludge) that I
 		// came up with is to invalidate the whole window if the clip rect is smaller than it.
