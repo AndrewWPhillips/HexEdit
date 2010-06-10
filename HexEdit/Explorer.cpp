@@ -1156,11 +1156,11 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 	// Restore last used folder
     if ((GetStyle() & WS_VISIBLE) != 0)
     {
-        CString dir = theApp.GetProfileString("File-Settings", "ExplorerDir", "C:\\");
-        ctl_name_.SetWindowText(dir);
-        tree_.SelectPath(dir);
-	    list_.Start(this);
-	    list_.DisplayFolder((const char *)dir);
+     //   CString dir = theApp.GetProfileString("File-Settings", "ExplorerDir", "C:\\");
+     //   ctl_name_.SetWindowText(dir);
+     //   tree_.SelectPath(dir);
+	    //list_.Start(this);
+	    //list_.DisplayFolder((const char *)dir);
     }
     else
 	    list_.Start(this);                      // Signal that everything is set up
