@@ -403,32 +403,13 @@ class CFindComboBox : public CComboBox
 {
     DECLARE_DYNCREATE(CFindComboBox)
 
-// Construction
-public:
-    CFindComboBox();
-
-// Attributes
-public:
-
 // Operations
 public:
     void SetSearchString();
 
-// Overrides
-    // ClassWizard generated virtual function overrides
-    //{{AFX_VIRTUAL(CFindComboBox)
-    public:
-    virtual BOOL PreTranslateMessage(MSG* pMsg);
-    //}}AFX_VIRTUAL
-
-// Implementation
-public:
-    virtual ~CFindComboBox();
-
     // Generated message map functions
 protected:
     //{{AFX_MSG(CFindComboBox)
-	afx_msg void OnSelendok();
 	afx_msg void OnSelchange();
 	//}}AFX_MSG
 

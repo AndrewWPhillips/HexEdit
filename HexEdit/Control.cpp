@@ -927,75 +927,15 @@ LRESULT CSearchEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
 
 IMPLEMENT_DYNCREATE(CFindComboBox, CComboBox)
 
-CFindComboBox::CFindComboBox()
-{
-}
-
-CFindComboBox::~CFindComboBox()
-{
-}
-
 BEGIN_MESSAGE_MAP(CFindComboBox, CComboBox)
-    //{{AFX_MSG_MAP(CFindComboBox)
-	ON_CONTROL_REFLECT(CBN_SELENDOK, OnSelendok)
 	ON_CONTROL_REFLECT(CBN_SELCHANGE, OnSelchange)
-	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CFindComboBox message handlers
-
-BOOL CFindComboBox::PreTranslateMessage(MSG* pMsg) 
-{
-    CString ss;
-
-//    if (pMsg->message != WM_PAINT && pMsg->message != WM_MOUSEMOVE)
-//        TRACE("CFindComboBox message %x\n", pMsg->message);
-    if (pMsg->message == WM_KEYDOWN)
-    {
-        CMainFrame* pMainFrame = (CMainFrame *)AfxGetMainWnd();
-        if (pMainFrame != NULL)
-        {
-            switch (pMsg->wParam)
-            {
-            case VK_ESCAPE:
-                pMainFrame->SetFocus();
-                return TRUE;
-
-            case VK_RETURN:
-                GetWindowText(ss);
-//                pMainFrame->AddSearchHistory(ss);
-                pMainFrame->SendMessage(WM_COMMAND, ID_FIND_NEXT);
-                pMainFrame->SetFocus();
-                return TRUE;
-            }
-        }
-    }
-
-    return CComboBox::PreTranslateMessage(pMsg);
-}
-
-// CBN_SELCHANGE message reflected back to the control
-void CFindComboBox::OnSelchange() 
-{
-    SetSearchString();
-}
-
-// For some reason CBN_SELCHANGE does not seem to be reflected
-// so also do it for CBN_SELENDOK
-void CFindComboBox::OnSelendok() 
-{
-    SetSearchString();
-}
 
 void CFindComboBox::SetSearchString() 
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     CString ss;
     GetWindowText(ss);
-
-//    CSearchEditControl *pedit = (CSearchEditControl *)GetWindow(GW_CHILD);
-//    ASSERT_KINDOF(CSearchEditControl, pedit);
 
     if (ss.GetLength() > 0 && 
         ss[0] != CSearchEditControl::sflag_char && 
@@ -1007,6 +947,15 @@ void CFindComboBox::SetSearchString()
             ss.MakeLower();
     }
     ((CMainFrame *)AfxGetMainWnd())->SetSearch(ss);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CFindComboBox message handlers
+
+// CBN_SELCHANGE message reflected back to the control
+void CFindComboBox::OnSelchange() 
+{
+    SetSearchString();
 }
 
 //===========================================================================
@@ -1025,7 +974,7 @@ CComboBox *CFindComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
         return NULL;
     }
 
-    pcombo->AddString("");  // This stops BCG restoring combo since we do it ourselves in OnUpdate
+    //pcombo->AddString("");  // This stops BCG restoring combo since we do it ourselves in OnUpdate
     SetDropDownHeight(400);
 
     return pcombo;

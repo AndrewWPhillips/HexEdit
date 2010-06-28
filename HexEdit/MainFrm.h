@@ -231,6 +231,7 @@ public:
 	void OnUpdateToolsViewUserToolbar (CCmdUI* pCmdUI);
 	afx_msg LRESULT OnToolbarContextMenu(WPARAM,LPARAM);
 	afx_msg LRESULT OnHelpCustomizeToolbars(WPARAM wp, LPARAM lp);
+	afx_msg void OnSearchCombo() ;
 	afx_msg void OnUpdateSearchCombo(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateHexCombo(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateDecCombo(CCmdUI* pCmdUI);

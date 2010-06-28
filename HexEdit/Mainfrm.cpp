@@ -205,7 +205,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         ON_COMMAND(ID_WINDOW_MANAGER, ShowWindowsDialog)
 
         // When vertically docked the combobox reverts to a button and sends this command when clicked
-        ON_COMMAND(ID_SEARCH_COMBO, OnEditFind)
+        ON_COMMAND(ID_SEARCH_COMBO, OnSearchCombo)
         ON_UPDATE_COMMAND_UI(ID_SEARCH_COMBO, OnUpdateSearchCombo)
         ON_COMMAND(ID_JUMP_HEX_COMBO, OnEditGotoHex)
         ON_UPDATE_COMMAND_UI(ID_JUMP_HEX_COMBO, OnUpdateHexCombo)
@@ -4115,7 +4115,7 @@ CString CMainFrame::not_found_mess(BOOL forward, BOOL icase, int tt, BOOL ww, in
     return mess;
 }
 
-// Create find modeless property sheet - if already exists then just activate it
+// Open first (simple search) page of Find dialog
 void CMainFrame::OnEditFind() 
 {
     if (GetView() != NULL)
@@ -4125,7 +4125,8 @@ void CMainFrame::OnEditFind()
 	}
 }
 
-void CMainFrame::OnEditFind2() 
+// Open 2nd page of find dialog
+void CMainFrame::OnEditFind2()
 {
     if (GetView() != NULL)
 	{
@@ -4134,6 +4135,7 @@ void CMainFrame::OnEditFind2()
 	}
 }
 
+// Open 4th (replace) page of Find dialog
 void CMainFrame::OnEditReplace() 
 {
     if (GetView() != NULL)
@@ -4778,61 +4780,123 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
     return TRUE;
 }
 
+void CMainFrame::OnSearchCombo() 
+{
+	// We can't search if there is no file open
+    if (GetView() == NULL)
+		return;
+
+	// Find the search combo control that was just activated
+	CMFCToolBarComboBoxButton* pFindCombo = NULL;
+	CObList listButtons;
+	if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
+	{
+		for (POSITION posCombo = listButtons.GetHeadPosition();
+			pFindCombo == NULL && posCombo != NULL;)
+		{
+			CMFCToolBarComboBoxButton* pCombo = DYNAMIC_DOWNCAST(CMFCToolBarComboBoxButton, listButtons.GetNext(posCombo));
+
+			if (pCombo != NULL && pCombo->GetEditCtrl()->GetSafeHwnd() == ::GetFocus())
+			{
+				pFindCombo = pCombo;
+			}
+		}
+	}
+	if (pFindCombo == NULL || !CMFCToolBar::IsLastCommandFromButton(pFindCombo))
+		return;
+
+	CString strFindText = pFindCombo->GetText();
+
+	if (!strFindText.IsEmpty())
+	{
+		// Add to (or move to top of) combo list
+		CComboBox* pCombo = pFindCombo->GetComboBox();
+		const int nCount = pCombo->GetCount();
+		int ind = 0;
+		CString strCmpText;
+
+		while (ind < nCount)
+		{
+			pCombo->GetLBText(ind, strCmpText);
+
+			if (strCmpText.GetLength() == strFindText.GetLength())
+			{
+				if (strCmpText == strFindText)
+					break;
+			}
+
+			ind++;
+		}
+
+		if (ind < nCount)
+			pCombo->DeleteString(ind);
+
+		pCombo->InsertString(0,strFindText);
+		pCombo->SetCurSel(0);
+
+		// Start the search
+		SendMessage(WM_COMMAND, ID_FIND_NEXT);
+		SetFocus();
+	}
+}
+
 void CMainFrame::OnUpdateSearchCombo(CCmdUI* pCmdUI)
 {
-//    if (GetView() == NULL)
-//    {
-//        pCmdUI->Enable(FALSE);
-//        return;
-//    }
-//
-////    TRACE3("OnUpdateSearchCombo ID %d index %d hwnd %x\n", pCmdUI->m_nID, pCmdUI->m_nIndex, pCmdUI->m_pOther->m_hWnd);
-//    if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == ID_SEARCH_COMBO)
-//    {
-//        CFindComboBox *pp = static_cast<CFindComboBox *>(pCmdUI->m_pOther);
-//        ASSERT(::IsWindow(pp->GetSafeHwnd()));
-//
-//        ASSERT(GetView() != NULL);
-//        CString strCurr;
-//        pp->GetWindowText(strCurr);
-//
-//        pp->EnableWindow(TRUE);
-//
-//        // Fix up the drop down list
-//        if (!pp->GetDroppedState() && ComboNeedsUpdate(search_hist_, pp))
-//        {
-//            DWORD sel = pp->GetEditSel();
-//            int max_str = 0;                // Max width of all the strings added so far
-////                CDC *pDC = pp->GetDC();         // Drawing context of the combo box
-////                ASSERT(pDC != NULL);
-//            CClientDC dc(pp);
-//            int nSave = dc.SaveDC();
-//            dc.SelectObject(pp->GetFont());
-//
-//            pp->ResetContent();
-//            for (std::vector<CString>::iterator ps = search_hist_.begin();
-//                 ps != search_hist_.end(); ++ps)
-//            {
-////                    CSize str_size = dc.GetTextExtent(*ps);
-////                    if (str_size.cx > max_str) max_str = str_size.cx;
-//                max_str = __max(max_str, dc.GetTextExtent(*ps).cx);
-//
-//                // Add the string to the list
-//                pp->InsertString(0, *ps);
-//            }
-//            pp->SetWindowText(strCurr);
-//            pp->SetEditSel(LOWORD(sel), HIWORD(sel));
-//
-//            // Add space for margin and possible scrollbar
-//            max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
-//            pp->SetDroppedWidth(__min(max_str, 780));
-//
-//            dc.RestoreDC(nSave);
-//        }
-//
-//        if (strCurr != current_search_string_)
-//            pp->SetWindowText(current_search_string_);
-//    }
+    if (GetView() == NULL)
+    {
+        pCmdUI->Enable(FALSE);
+        return;
+    }
+
+	// xxx There's probably a better/proper way to do this by searching through the list of toolbar buttons with this ID
+
+    TRACE3("OnUpdateSearchCombo ID %d index %d hwnd %x\n", pCmdUI->m_nID, pCmdUI->m_nIndex, pCmdUI->m_pOther->m_hWnd);
+    if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == ID_SEARCH_COMBO)
+    {
+        CFindComboBox *pp = static_cast<CFindComboBox *>(pCmdUI->m_pOther);
+        ASSERT(::IsWindow(pp->GetSafeHwnd()));
+
+        ASSERT(GetView() != NULL);
+        CString strCurr;
+        pp->GetWindowText(strCurr);
+
+        //pp->EnableWindow(TRUE);
+
+        // Fix up the drop down list
+        if (!pp->GetDroppedState() && ComboNeedsUpdate(search_hist_, pp))
+        {
+            DWORD sel = pp->GetEditSel();
+            int max_str = 0;                // Max width of all the strings added so far
+            CClientDC dc(pp);
+            int nSave = dc.SaveDC();
+            dc.SelectObject(pp->GetFont());
+
+            pp->ResetContent();
+            for (std::vector<CString>::iterator ps = search_hist_.begin();
+                 ps != search_hist_.end(); ++ps)
+            {
+                max_str = __max(max_str, dc.GetTextExtent(*ps).cx);
+
+                // Add the string to the list
+                pp->InsertString(0, *ps);
+            }
+            pp->SetWindowText(strCurr);
+            pp->SetEditSel(LOWORD(sel), HIWORD(sel));
+
+            // Add space for margin and possible scrollbar
+            max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
+            pp->SetDroppedWidth(__min(max_str, 780));
+
+            dc.RestoreDC(nSave);
+        }
+
+        if (strCurr != current_search_string_)
+		{
+			CWnd *pedit = pp->GetWindow(GW_HWNDNEXT);
+			if (pedit != NULL)
+				pedit->SetWindowText(current_search_string_);
+		}
+    }
     pCmdUI->Enable(TRUE);
 }
 
