@@ -4780,59 +4780,59 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 
 void CMainFrame::OnUpdateSearchCombo(CCmdUI* pCmdUI)
 {
-    if (GetView() == NULL)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-//    TRACE3("OnUpdateSearchCombo ID %d index %d hwnd %x\n", pCmdUI->m_nID, pCmdUI->m_nIndex, pCmdUI->m_pOther->m_hWnd);
-    if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == ID_SEARCH_COMBO)
-    {
-        CFindComboBox *pp = static_cast<CFindComboBox *>(pCmdUI->m_pOther);
-        ASSERT(::IsWindow(pp->GetSafeHwnd()));
-
-        ASSERT(GetView() != NULL);
-        CString strCurr;
-        pp->GetWindowText(strCurr);
-
-        pp->EnableWindow(TRUE);
-
-        // Fix up the drop down list
-        if (!pp->GetDroppedState() && ComboNeedsUpdate(search_hist_, pp))
-        {
-            DWORD sel = pp->GetEditSel();
-            int max_str = 0;                // Max width of all the strings added so far
-//                CDC *pDC = pp->GetDC();         // Drawing context of the combo box
-//                ASSERT(pDC != NULL);
-            CClientDC dc(pp);
-            int nSave = dc.SaveDC();
-            dc.SelectObject(pp->GetFont());
-
-            pp->ResetContent();
-            for (std::vector<CString>::iterator ps = search_hist_.begin();
-                 ps != search_hist_.end(); ++ps)
-            {
-//                    CSize str_size = dc.GetTextExtent(*ps);
-//                    if (str_size.cx > max_str) max_str = str_size.cx;
-                max_str = __max(max_str, dc.GetTextExtent(*ps).cx);
-
-                // Add the string to the list
-                pp->InsertString(0, *ps);
-            }
-            pp->SetWindowText(strCurr);
-            pp->SetEditSel(LOWORD(sel), HIWORD(sel));
-
-            // Add space for margin and possible scrollbar
-            max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
-            pp->SetDroppedWidth(__min(max_str, 780));
-
-            dc.RestoreDC(nSave);
-        }
-
-        if (strCurr != current_search_string_)
-            pp->SetWindowText(current_search_string_);
-    }
+//    if (GetView() == NULL)
+//    {
+//        pCmdUI->Enable(FALSE);
+//        return;
+//    }
+//
+////    TRACE3("OnUpdateSearchCombo ID %d index %d hwnd %x\n", pCmdUI->m_nID, pCmdUI->m_nIndex, pCmdUI->m_pOther->m_hWnd);
+//    if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == ID_SEARCH_COMBO)
+//    {
+//        CFindComboBox *pp = static_cast<CFindComboBox *>(pCmdUI->m_pOther);
+//        ASSERT(::IsWindow(pp->GetSafeHwnd()));
+//
+//        ASSERT(GetView() != NULL);
+//        CString strCurr;
+//        pp->GetWindowText(strCurr);
+//
+//        pp->EnableWindow(TRUE);
+//
+//        // Fix up the drop down list
+//        if (!pp->GetDroppedState() && ComboNeedsUpdate(search_hist_, pp))
+//        {
+//            DWORD sel = pp->GetEditSel();
+//            int max_str = 0;                // Max width of all the strings added so far
+////                CDC *pDC = pp->GetDC();         // Drawing context of the combo box
+////                ASSERT(pDC != NULL);
+//            CClientDC dc(pp);
+//            int nSave = dc.SaveDC();
+//            dc.SelectObject(pp->GetFont());
+//
+//            pp->ResetContent();
+//            for (std::vector<CString>::iterator ps = search_hist_.begin();
+//                 ps != search_hist_.end(); ++ps)
+//            {
+////                    CSize str_size = dc.GetTextExtent(*ps);
+////                    if (str_size.cx > max_str) max_str = str_size.cx;
+//                max_str = __max(max_str, dc.GetTextExtent(*ps).cx);
+//
+//                // Add the string to the list
+//                pp->InsertString(0, *ps);
+//            }
+//            pp->SetWindowText(strCurr);
+//            pp->SetEditSel(LOWORD(sel), HIWORD(sel));
+//
+//            // Add space for margin and possible scrollbar
+//            max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
+//            pp->SetDroppedWidth(__min(max_str, 780));
+//
+//            dc.RestoreDC(nSave);
+//        }
+//
+//        if (strCurr != current_search_string_)
+//            pp->SetWindowText(current_search_string_);
+//    }
     pCmdUI->Enable(TRUE);
 }
 

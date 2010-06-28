@@ -339,13 +339,13 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // CSearchEditControl window
 
-class CSearchEditControl : public CEdit
+class CSearchEditControl : public CMFCToolBarComboBoxEdit
 {
     DECLARE_DYNAMIC(CSearchEditControl)
 
 // Construction
 public:
-    CSearchEditControl();
+    CSearchEditControl(CMFCToolBarComboBoxButton& combo);
 
 // Attributes
 public:
@@ -377,8 +377,8 @@ public:
 protected:
     //{{AFX_MSG(CSearchEditControl)
     afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-    afx_msg void OnSetFocus(CWnd* pOldWnd);
     afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+    afx_msg void OnSetFocus(CWnd* pOldWnd);
     afx_msg void OnKillFocus(CWnd* pNewWnd);
 	//}}AFX_MSG
     afx_msg LRESULT OnCommandHelp(WPARAM, LPARAM);
@@ -448,42 +448,15 @@ public:
         CMFCToolBarComboBoxButton(ID_SEARCH_COMBO, 
             -1 /*CImageHash::GetImageOfCommand(ID_SEARCH, FALSE)*/,
             CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
-            200),
-        pedit_(NULL)
+            200)
     {
     }
-
-// Attributes
-public:
-
-// Operations
-public:
-    CSearchEditControl *GetEdit() { return pedit_; }
 
 // Overrides
 protected:
-
     virtual CComboBox *CreateCombo(CWnd* pWndParent, const CRect& rect);
+	virtual CSearchEditControl * CreateEdit(CWnd* pWndParent, const CRect& rect, DWORD dwEditStyle);
 	virtual BOOL NotifyCommand(int iNotifyCode);
-
-// Implementation
-public:
-    virtual ~CFindComboButton()
-    {
-        if (pedit_ != NULL)
-        {
-            if (pedit_->m_hWnd != 0)
-                pedit_->UnsubclassWindow();
-            delete pedit_;
-            pedit_ = NULL;
-        }
-    }
-
-    // Generated message map functions
-protected:
-
-private:
-    CSearchEditControl *pedit_;
 };
 
 /*

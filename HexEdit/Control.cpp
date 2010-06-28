@@ -332,9 +332,10 @@ void CDecEdit::add_commas()
 /////////////////////////////////////////////////////////////////////////////
 // CSearchEditControl
 
-IMPLEMENT_DYNAMIC(CSearchEditControl, CEdit)
+IMPLEMENT_DYNAMIC(CSearchEditControl, CMFCToolBarComboBoxEdit)
 
-CSearchEditControl::CSearchEditControl()
+CSearchEditControl::CSearchEditControl(CMFCToolBarComboBoxButton & combo) : 
+	CMFCToolBarComboBoxEdit(combo)
 {
     mode_ = mode_none;
 }
@@ -343,7 +344,7 @@ CSearchEditControl::~CSearchEditControl()
 {
 }
 
-BEGIN_MESSAGE_MAP(CSearchEditControl, CEdit)
+BEGIN_MESSAGE_MAP(CSearchEditControl, CMFCToolBarComboBoxEdit)
         //{{AFX_MSG_MAP(CSearchEditControl)
         ON_WM_CHAR()
         ON_WM_SETFOCUS()
@@ -372,10 +373,10 @@ void CSearchEditControl::Redisplay()            // Make sure hex digits case OK 
 
 BOOL CSearchEditControl::PreTranslateMessage(MSG* pMsg) 
 {
-//    if (pMsg->message != WM_PAINT && pMsg->message != WM_MOUSEMOVE)
-//        TRACE1("CSearchEditControl message %x\n", pMsg->message);
+    //if (pMsg->message != WM_PAINT)
+    //    TRACE("CSearchEditControl message $%x\r\n", pMsg->message);
 	
-	return CEdit::PreTranslateMessage(pMsg);
+	return CMFCToolBarComboBoxEdit::PreTranslateMessage(pMsg);
 }
 
 void CSearchEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
@@ -388,7 +389,7 @@ void CSearchEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
         return;
     }
 
-    CEdit::OnChar(nChar, nRepCnt, nFlags);
+    CMFCToolBarComboBoxEdit::OnChar(nChar, nRepCnt, nFlags);
 
     // If in hex mode make sure it looks neat
     GetWindowText(ss);
@@ -589,7 +590,7 @@ void CSearchEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
                 ss[0] != sflag_char && ss[0] != iflag_char && ss[start-1] == ' ')
         SetSel(start-1, start-1);
 
-    CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
+    CMFCToolBarComboBoxEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 
     // Tidy display if hex and char(s) deleted or caret moved
     GetWindowText(ss);
@@ -607,7 +608,7 @@ void CSearchEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 void CSearchEditControl::OnSetFocus(CWnd* pOldWnd) 
 {
     CString strCurr;
-    CEdit::OnSetFocus(pOldWnd);
+    CMFCToolBarComboBoxEdit::OnSetFocus(pOldWnd);
     char new_text[2] = "?";
         
     GetWindowText(strCurr);
@@ -665,7 +666,7 @@ void CSearchEditControl::OnSetFocus(CWnd* pOldWnd)
 
 void CSearchEditControl::OnKillFocus(CWnd* pNewWnd) 
 {
-    CEdit::OnKillFocus(pNewWnd);
+    CMFCToolBarComboBoxEdit::OnKillFocus(pNewWnd);
 
     mode_ = mode_none;
 }
@@ -857,7 +858,7 @@ void CSearchEditControl::convert2chars(char c1)
 UINT CSearchEditControl::OnGetDlgCode() 
 {
     // Get all keys so that we see CR and Escape
-    return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
+    return CMFCToolBarComboBoxEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
 }
 #endif
 
@@ -879,7 +880,7 @@ void CSearchEditControl::BeginSearch(enum mode_t mode)
                 DYNAMIC_DOWNCAST(CFindComboButton, listButtons.GetNext(posCombo));
             ASSERT(pCombo != NULL);
 
-            CSearchEditControl *pedit = pCombo->GetEdit();
+			CSearchEditControl * pedit = dynamic_cast<CSearchEditControl *>(pCombo->GetEditCtrl());
             ASSERT(pedit != NULL);
             if (pedit->IsWindowVisible())
             {
@@ -905,7 +906,7 @@ void CSearchEditControl::RedisplayAll()
                 DYNAMIC_DOWNCAST(CFindComboButton, listButtons.GetNext(posCombo));
             ASSERT(pCombo != NULL);
 
-            CSearchEditControl *pedit = pCombo->GetEdit();
+			CSearchEditControl * pedit = dynamic_cast<CSearchEditControl *>(pCombo->GetEditCtrl());
             ASSERT(pedit != NULL);
             pedit->Redisplay();
         }
@@ -949,7 +950,7 @@ BOOL CFindComboBox::PreTranslateMessage(MSG* pMsg)
     CString ss;
 
 //    if (pMsg->message != WM_PAINT && pMsg->message != WM_MOUSEMOVE)
-//        TRACE1("CFindComboBox message %x\n", pMsg->message);
+//        TRACE("CFindComboBox message %x\n", pMsg->message);
     if (pMsg->message == WM_KEYDOWN)
     {
         CMainFrame* pMainFrame = (CMainFrame *)AfxGetMainWnd();
@@ -1024,34 +1025,23 @@ CComboBox *CFindComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
         return NULL;
     }
 
-    CWnd *pwnd;            // Ptr to edit control of combo box
-
-//    if ((pwnd = pcombo->ChildWindowFromPoint(CPoint(25,5))) != NULL &&
-//        pwnd != pcombo)
-
-    // This code assumes that the combo box edit control is the first child
-    // window.  I don't know if this is valid but using ChildWindowFromPoint
-    // was very error prone, although it seemed safer.
-    if ((pwnd = pcombo->GetWindow(GW_CHILD)) != NULL)
-    {
-        pedit_ = new CSearchEditControl;
-
-        if (!pedit_->SubclassWindow(pwnd->m_hWnd))
-        {
-            TRACE0("Failed to subclass edit control in search combo\n");
-            delete pedit_;
-            pedit_ = NULL;
-        }
-    }
-    else
-    {
-        TRACE1("Failed to find edit control for %x\n", pcombo->m_hWnd);
-    }
-
     pcombo->AddString("");  // This stops BCG restoring combo since we do it ourselves in OnUpdate
     SetDropDownHeight(400);
 
     return pcombo;
+}
+
+CSearchEditControl * CFindComboButton::CreateEdit(CWnd* pWndParent, const CRect& rect, DWORD dwEditStyle)
+{
+	CSearchEditControl * pWndEdit = new CSearchEditControl(*this);
+
+	if (!pWndEdit->Create(dwEditStyle, rect, pWndParent, m_nID))
+	{
+		delete pWndEdit;
+		return NULL;
+	}
+
+	return pWndEdit;
 }
 
 BOOL CFindComboButton::NotifyCommand(int iNotifyCode)
@@ -1341,8 +1331,11 @@ void CHexEditControl::BeginJump()
             CHexComboButton* pCombo = 
                 DYNAMIC_DOWNCAST(CHexComboButton, listButtons.GetNext(posCombo));
             ASSERT(pCombo != NULL);
-
             CHexEditControl *pedit = pCombo->GetEdit();
+			// In MFC9 the visible edit box is the sibling of the parent combo box!??!
+			CWnd *pwnd = pedit->GetParent();
+            ASSERT(pwnd != NULL);
+			pedit = DYNAMIC_DOWNCAST(CHexEditControl, pwnd->GetWindow(GW_HWNDNEXT));
             ASSERT(pedit != NULL);
             if (pedit->IsWindowVisible())
             {
@@ -1482,7 +1475,7 @@ CComboBox *CHexComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
     }
     else
     {
-        TRACE1("Failed to find hex control for %x\n", pcombo->m_hWnd);
+        TRACE("Failed to find hex control for %x\n", pcombo->m_hWnd);
     }
 
     pcombo->AddString("");  // This stops BCG restoring combo since we do it ourselves in OnUpdate
@@ -1813,7 +1806,7 @@ CComboBox *CDecComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
 //    }
 //    else
 //    {
-//        TRACE1("Failed to find dec control for %x\n", pcombo->m_hWnd);
+//        TRACE("Failed to find dec control for %x\n", pcombo->m_hWnd);
 //    }
 //
 //    pcombo->AddString("");  // This stops BCG restoring combo since we do it ourselves in OnUpdate
@@ -1832,78 +1825,6 @@ BOOL CDecComboButton::NotifyCommand(int iNotifyCode)
     else
     	return CMFCToolBarComboBoxButton::NotifyCommand(iNotifyCode);
 }
-
-/*
-//===========================================================================
-/////////////////////////////////////////////////////////////////////////////
-// CSchemeComboBox
-
-IMPLEMENT_DYNCREATE(CSchemeComboBox, CComboBox)
-
-CSchemeComboBox::CSchemeComboBox()
-{
-}
-
-CSchemeComboBox::~CSchemeComboBox()
-{
-}
-
-
-BEGIN_MESSAGE_MAP(CSchemeComboBox, CComboBox)
-	//{{AFX_MSG_MAP(CSchemeComboBox)
-	ON_CONTROL_REFLECT(CBN_SELCHANGE, OnSelchange)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CSchemeComboBox message handlers
-
-BOOL CSchemeComboBox::PreTranslateMessage(MSG* pMsg) 
-{
-	// xxx need this?
-	
-	return CComboBox::PreTranslateMessage(pMsg);
-}
-
-void CSchemeComboBox::OnSelchange() 
-{
-    SetScheme();
-}
-
-void CSchemeComboBox::SetScheme() 
-{
-    CHexEditView *pview = GetView();
-
-    if (pview != NULL)
-    {
-        int current = GetCurSel();
-
-        ASSERT(current < theApp.scheme_.size());
-
-        pview->SetScheme(theApp.scheme_[current].name_);
-    }
-}
-
-//===========================================================================
-/////////////////////////////////////////////////////////////////////////////
-IMPLEMENT_SERIAL(CSchemeComboButton, CMFCToolBarComboBoxButton, 1)
-
-CComboBox *CSchemeComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
-{
-    CSchemeComboBox *pcombo = new CSchemeComboBox;
-
-    if (!pcombo->Create(m_dwStyle, rect, pWndParent, m_nID))
-    {
-        delete pcombo;
-        return NULL;
-    }
-
-    pcombo->AddString("");  // This stops BCG restoring combo since we do it ourselves in OnUpdate
-    SetDropDownHeight(400);
-
-    return pcombo;
-}
-*/
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
@@ -2230,17 +2151,18 @@ void CStatBar::OnLButtonDblClk(UINT nFlags, CPoint point)
         return;
     }
 
-// This doesn't work under Windows 95 (indicator changes but not light/kb behaviour)
-//    index = CommandToIndex(ID_INDICATOR_NUM);
-//    ASSERT(index > 0);
-//    GetItemRect(index, &pane_rect);
-//    if (pane_rect.PtInRect(point))
-//    {
-//      // Simulate Num Lock key being depressed then released
-//      keybd_event(VK_NUMLOCK, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
-//      keybd_event(VK_NUMLOCK, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
-//      return;
-//    }
+	// This doesn't work under Windows 95 (indicator changes but not light/kb behaviour)
+	// but we no longer support Windows 9X
+    index = CommandToIndex(ID_INDICATOR_NUM);
+    ASSERT(index > 0);
+    GetItemRect(index, &pane_rect);
+    if (pane_rect.PtInRect(point))
+    {
+      // Simulate Num Lock key being depressed then released
+      keybd_event(VK_NUMLOCK, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
+      keybd_event(VK_NUMLOCK, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+      return;
+    }
 
     CMFCStatusBar::OnLButtonDblClk(nFlags, point);
 }
