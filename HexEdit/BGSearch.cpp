@@ -413,6 +413,9 @@ int CHexEditDoc::SearchProgress(int &occurrences)
     // Protect access to shared data
     CSingleLock sl(&docdata_, TRUE);
 
+	if (to_search_.empty())
+		return 100;         // nothing left to search
+
     // First save the number of occurrences found so far
     occurrences = found_.size();
 
