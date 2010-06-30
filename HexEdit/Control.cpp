@@ -116,6 +116,9 @@ void CHexEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// CHexEdit private methods
+
 void CHexEdit::add_spaces()
 {
     CString ss;                         // Current string
@@ -266,6 +269,9 @@ void CDecEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// CDecEdit private methods
+
 void CDecEdit::add_commas()
 {
     CString ss;                         // Current string
@@ -371,14 +377,6 @@ void CSearchEditControl::Redisplay()            // Make sure hex digits case OK 
 /////////////////////////////////////////////////////////////////////////////
 // CSearchEditControl message handlers
 
-BOOL CSearchEditControl::PreTranslateMessage(MSG* pMsg) 
-{
-    //if (pMsg->message != WM_PAINT)
-    //    TRACE("CSearchEditControl message $%x\r\n", pMsg->message);
-	
-	return CMFCToolBarComboBoxEdit::PreTranslateMessage(pMsg);
-}
-
 void CSearchEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
     CString ss;
@@ -469,97 +467,6 @@ void CSearchEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
         }
     }
 #endif
-}
-
-BOOL CSearchEditControl::process_char(UINT nChar)
-{
-    CString ss;
-    GetWindowText(ss);          // Current text in control (before key pressed)
-    int len = ss.GetLength();   // Length of current text
-    int start, end;             // Range of current selection
-    GetSel(start, end);         // (start == end means no selection just caret)
-
-    if (nChar == '\b' &&                                       // Backspace ...
-        (start == 1 && end == 1 || start == 0 && end > 0) &&   // When after 1st char OR they are included in selection
-        (ss[0] == sflag_char || ss[0] == iflag_char))          // And 1st char is '~' or '='
-    {
-        // Convert ASCII chars to equiv. hex digits
-        if (start == 0)
-        {
-            SetSel(1, end);
-            Clear();
-        }
-        convert2hex();
-        return TRUE;
-    }
-    else if (nChar == '\b' && start > 1 && start == end && ss[start-1] == ' ' &&
-             ss[0] != sflag_char && ss[0] != iflag_char)
-    {
-        // If deleting 1st nybble (hex mode) then also delete preceding space
-        SetSel(start-2, end);
-    }
-    else if (nChar == sflag_char && start == 0 && len > 0 &&        // '=' typed when at start
-                (ss[0] == iflag_char || ss[0] == sflag_char))       // and doing char search
-    {
-        // Make search case-sensitive
-        char new_text[2] = "?";
-        new_text[0] = sflag_char;
-        if (end == 0) SetSel(0,1);
-        ReplaceSel(new_text);
-        return TRUE;
-    }
-    else if (nChar == iflag_char && start == 0 && len > 0 &&        // '~' typed when at start
-                (ss[0] == iflag_char || ss[0] == sflag_char))       // and doing char search
-    {
-        // Make search case-insensitive
-        char new_text[2] = "?";
-        new_text[0] = iflag_char;
-        if (end == 0) SetSel(0,1);
-        ReplaceSel(new_text);
-        return TRUE;
-    }
-    else if ((nChar == sflag_char || nChar == iflag_char) &&
-             start == 0 && len > 0 &&
-             ss[0] != sflag_char && ss[0] != iflag_char )
-    {
-        // =/~ at start and not one there already
-        Clear();
-        convert2chars(nChar);
-        SetSel(1,1);
-        return TRUE;
-    }
-    else if (nChar == ' ' && len > 0 &&
-             ss[0] != sflag_char && ss[0] != iflag_char )
-    {
-        // Ignore spaces if in hex mode (tend to type them because of display)
-        return TRUE;
-    }
-    else if (::isprint(nChar))
-    {
-        // Chars allowed in empty edit (ie start of text search or a hex digit)
-        char valid_empty[] = "??0123456789ABCDEFabcdef";
-        valid_empty[0] = sflag_char;
-        valid_empty[1] = iflag_char;
-
-        // Disallow the following (where ASCII mode is where ss[0] == iflag or sflag)
-        // - any char at start (except sflag/iflag/DEL, handled above) if ASCII mode
-        // - any char except sflag/iflag/hex-digit if field empty
-        // - non-hexdigit (except BS) if not ASCII mode
-        if ((start == 0 && len > 0 && (ss[0]==sflag_char||ss[0]==iflag_char)) ||
-            (len == 0 && strchr(valid_empty, nChar) == NULL) ||
-            (len > 0 && ss[0] != sflag_char && ss[0] != iflag_char &&
-                        strchr("\b0123456789ABCDEFabcdef", nChar) == NULL) )
-        {
-#ifdef SYS_SOUNDS
-             CSystemSound::Play("Invalid Character");
-#else
-            ::Beep(5000,200);
-#endif
-            return TRUE;
-        }
-    }
-
-    return FALSE;
 }
 
 void CSearchEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
@@ -669,6 +576,116 @@ void CSearchEditControl::OnKillFocus(CWnd* pNewWnd)
     CMFCToolBarComboBoxEdit::OnKillFocus(pNewWnd);
 
     mode_ = mode_none;
+}
+
+LRESULT CSearchEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
+{
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_,
+                     HH_HELP_CONTEXT, 0x10000 + ID_SEARCH_COMBO))
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+    return 1;                           // Indicate help launched
+}
+
+#if 0 // not needed with BCG
+UINT CSearchEditControl::OnGetDlgCode() 
+{
+    // Get all keys so that we see CR and Escape
+    return CMFCToolBarComboBoxEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
+}
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+// CSearchEditControl private methods
+
+BOOL CSearchEditControl::process_char(UINT nChar)
+{
+    CString ss;
+    GetWindowText(ss);          // Current text in control (before key pressed)
+    int len = ss.GetLength();   // Length of current text
+    int start, end;             // Range of current selection
+    GetSel(start, end);         // (start == end means no selection just caret)
+
+    if (nChar == '\b' &&                                       // Backspace ...
+        (start == 1 && end == 1 || start == 0 && end > 0) &&   // When after 1st char OR they are included in selection
+        (ss[0] == sflag_char || ss[0] == iflag_char))          // And 1st char is '~' or '='
+    {
+        // Convert ASCII chars to equiv. hex digits
+        if (start == 0)
+        {
+            SetSel(1, end);
+            Clear();
+        }
+        convert2hex();
+        return TRUE;
+    }
+    else if (nChar == '\b' && start > 1 && start == end && ss[start-1] == ' ' &&
+             ss[0] != sflag_char && ss[0] != iflag_char)
+    {
+        // If deleting 1st nybble (hex mode) then also delete preceding space
+        SetSel(start-2, end);
+    }
+    else if (nChar == sflag_char && start == 0 && len > 0 &&        // '=' typed when at start
+                (ss[0] == iflag_char || ss[0] == sflag_char))       // and doing char search
+    {
+        // Make search case-sensitive
+        char new_text[2] = "?";
+        new_text[0] = sflag_char;
+        if (end == 0) SetSel(0,1);
+        ReplaceSel(new_text);
+        return TRUE;
+    }
+    else if (nChar == iflag_char && start == 0 && len > 0 &&        // '~' typed when at start
+                (ss[0] == iflag_char || ss[0] == sflag_char))       // and doing char search
+    {
+        // Make search case-insensitive
+        char new_text[2] = "?";
+        new_text[0] = iflag_char;
+        if (end == 0) SetSel(0,1);
+        ReplaceSel(new_text);
+        return TRUE;
+    }
+    else if ((nChar == sflag_char || nChar == iflag_char) &&
+             start == 0 && len > 0 &&
+             ss[0] != sflag_char && ss[0] != iflag_char )
+    {
+        // =/~ at start and not one there already
+        Clear();
+        convert2chars(nChar);
+        SetSel(1,1);
+        return TRUE;
+    }
+    else if (nChar == ' ' && len > 0 &&
+             ss[0] != sflag_char && ss[0] != iflag_char )
+    {
+        // Ignore spaces if in hex mode (tend to type them because of display)
+        return TRUE;
+    }
+    else if (::isprint(nChar))
+    {
+        // Chars allowed in empty edit (ie start of text search or a hex digit)
+        char valid_empty[] = "??0123456789ABCDEFabcdef";
+        valid_empty[0] = sflag_char;
+        valid_empty[1] = iflag_char;
+
+        // Disallow the following (where ASCII mode is where ss[0] == iflag or sflag)
+        // - any char at start (except sflag/iflag/DEL, handled above) if ASCII mode
+        // - any char except sflag/iflag/hex-digit if field empty
+        // - non-hexdigit (except BS) if not ASCII mode
+        if ((start == 0 && len > 0 && (ss[0]==sflag_char||ss[0]==iflag_char)) ||
+            (len == 0 && strchr(valid_empty, nChar) == NULL) ||
+            (len > 0 && ss[0] != sflag_char && ss[0] != iflag_char &&
+                        strchr("\b0123456789ABCDEFabcdef", nChar) == NULL) )
+        {
+#ifdef SYS_SOUNDS
+             CSystemSound::Play("Invalid Character");
+#else
+            ::Beep(5000,200);
+#endif
+            return TRUE;
+        }
+    }
+
+    return FALSE;
 }
 
 void CSearchEditControl::normalize_hex()
@@ -854,19 +871,11 @@ void CSearchEditControl::convert2chars(char c1)
         ((CMainFrame *)AfxGetMainWnd())->StatusBarText("ASCII search: control characters ignored");
 }
 
-#if 0 // not needed with BCG
-UINT CSearchEditControl::OnGetDlgCode() 
-{
-    // Get all keys so that we see CR and Escape
-    return CMFCToolBarComboBoxEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
-}
-#endif
-
 /////////////////////////////////////////////////////////////////////////////
 // CSearchEditControl class (static methods)
 
-// This finds the first visible search tool (in toolbars) and
-// chnages to specified search mode and sets focus to it.
+// This finds the first visible search tool (in toolbars), 
+// changes to specified search mode and sets focus to it.
 void CSearchEditControl::BeginSearch(enum mode_t mode)
 {
     CObList listButtons;
@@ -911,14 +920,6 @@ void CSearchEditControl::RedisplayAll()
             pedit->Redisplay();
         }
     }
-}
-
-LRESULT CSearchEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
-{
-    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_,
-                     HH_HELP_CONTEXT, 0x10000 + ID_SEARCH_COMBO))
-        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-    return 1;                           // Indicate help launched
 }
 
 //===========================================================================
@@ -995,7 +996,7 @@ CSearchEditControl * CFindComboButton::CreateEdit(CWnd* pWndParent, const CRect&
 
 BOOL CFindComboButton::NotifyCommand(int iNotifyCode)
 {
-	if (m_pWndCombo->GetSafeHwnd() == NULL)
+	if (m_pWndCombo->GetSafeHwnd() == 0)
 		return FALSE;
 
 	if (iNotifyCode == CBN_EDITCHANGE)
@@ -1127,60 +1128,21 @@ void CHexEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     ((CMainFrame *)AfxGetMainWnd())->SetHexAddress(ss);
 }
 
-void CHexEditControl::add_spaces()
+HBRUSH CHexEditControl::CtlColor(CDC* pDC, UINT nCtlColor) 
 {
-    CString ss;                         // Current string
-    GetWindowText(ss);
-    int start, end;                     // Current selection (start==end if just caret)
-    GetSel(start, end);
+    if (nCtlColor == CTLCOLOR_EDIT)
+        pDC->SetTextColor(::GetHexAddrCol());
 
-    const char *pp;                     // Ptr into orig. (hex digit) string
-    int newstart, newend;               // New caret position/selection
-    newstart = newend = 0;              // In case of empty string
+    return m_brush;
+}
 
-    // Allocate enough space (allowing for space padding)
-    char *out = new char[(ss.GetLength()*3)/2+1]; // Where chars are stored
-    size_t ii, jj;                      // Number of hex nybbles written/read
-    char *dd = out;                     // Ptr to current output char
-    int ndigits;                        // Numbers of chars that are part of number
-
-    for (pp = ss.GetBuffer(0), ndigits = 0; *pp != '\0'; ++pp)
-        if (isxdigit(*pp))
-            ++ndigits;
-    ss.ReleaseBuffer();
-
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
-    for (pp = ss.GetBuffer(0), ii = jj = 0; /*forever*/; ++pp, ++ii)
-    {
-        if (ii == start)
-            newstart = dd - out;        // save new caret position
-        if (ii == end)
-            newend = dd - out;
-
-        if (*pp == '\0')
-            break;
-
-        // Ignore spaces (and anything else)
-        if (!isxdigit(*pp))
-            continue;                   // ignore all but digits
-
-        if (aa->hex_ucase_)
-            *dd++ = toupper(*pp);       // convert all to upper case
-        else
-            *dd++ = tolower(*pp);       // convert all to lower case
-
-        ++jj;
-        if ((ndigits - jj) % 4 == 0)
-            *dd++ = ' ';                // pad with space after every 4th hex digit
-    }
-    if (dd > out)
-        dd--;                           // Forget last comma if added
-    *dd = '\0';                         // Terminate string
-
-    SetWindowText(out);
-    SetSel(newstart, newend);
-    delete[] out;
+LRESULT CHexEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
+{
+    // Since there is only one control of this type just call help with its help ID
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_,
+                     HH_HELP_CONTEXT, 0x10000 + ID_JUMP_HEX_COMBO))
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+    return 1;                           // Indicate help launched
 }
 
 #if 0  // BCG Toolbar changes
@@ -1247,21 +1209,63 @@ UINT CHexEditControl::OnGetDlgCode()
 }
 #endif
 
-HBRUSH CHexEditControl::CtlColor(CDC* pDC, UINT nCtlColor) 
-{
-    if (nCtlColor == CTLCOLOR_EDIT)
-        pDC->SetTextColor(::GetHexAddrCol());
+/////////////////////////////////////////////////////////////////////////////
+// CHexEditControl private methods
 
-    return m_brush;
-}
-
-LRESULT CHexEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
+void CHexEditControl::add_spaces()
 {
-    // Since there is only one control of this type just call help with its help ID
-    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_,
-                     HH_HELP_CONTEXT, 0x10000 + ID_JUMP_HEX_COMBO))
-        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-    return 1;                           // Indicate help launched
+    CString ss;                         // Current string
+    GetWindowText(ss);
+    int start, end;                     // Current selection (start==end if just caret)
+    GetSel(start, end);
+
+    const char *pp;                     // Ptr into orig. (hex digit) string
+    int newstart, newend;               // New caret position/selection
+    newstart = newend = 0;              // In case of empty string
+
+    // Allocate enough space (allowing for space padding)
+    char *out = new char[(ss.GetLength()*3)/2+1]; // Where chars are stored
+    size_t ii, jj;                      // Number of hex nybbles written/read
+    char *dd = out;                     // Ptr to current output char
+    int ndigits;                        // Numbers of chars that are part of number
+
+    for (pp = ss.GetBuffer(0), ndigits = 0; *pp != '\0'; ++pp)
+        if (isxdigit(*pp))
+            ++ndigits;
+    ss.ReleaseBuffer();
+
+    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+
+    for (pp = ss.GetBuffer(0), ii = jj = 0; /*forever*/; ++pp, ++ii)
+    {
+        if (ii == start)
+            newstart = dd - out;        // save new caret position
+        if (ii == end)
+            newend = dd - out;
+
+        if (*pp == '\0')
+            break;
+
+        // Ignore spaces (and anything else)
+        if (!isxdigit(*pp))
+            continue;                   // ignore all but digits
+
+        if (aa->hex_ucase_)
+            *dd++ = toupper(*pp);       // convert all to upper case
+        else
+            *dd++ = tolower(*pp);       // convert all to lower case
+
+        ++jj;
+        if ((ndigits - jj) % 4 == 0)
+            *dd++ = ' ';                // pad with space after every 4th hex digit
+    }
+    if (dd > out)
+        dd--;                           // Forget last comma if added
+    *dd = '\0';                         // Terminate string
+
+    SetWindowText(out);
+    SetSel(newstart, newend);
+    delete[] out;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1280,7 +1284,7 @@ void CHexEditControl::BeginJump()
             CHexComboButton* pCombo = 
                 DYNAMIC_DOWNCAST(CHexComboButton, listButtons.GetNext(posCombo));
             ASSERT(pCombo != NULL);
-            CHexEditControl *pedit = pCombo->GetEdit();
+            CHexEditControl *pedit = pCombo->GetEdit();  // xxx GetEditCtrl?
 			// In MFC9 the visible edit box is the sibling of the parent combo box!??!
 			CWnd *pwnd = pedit->GetParent();
             ASSERT(pwnd != NULL);
@@ -1307,7 +1311,7 @@ void CHexEditControl::RedisplayAll()
                 DYNAMIC_DOWNCAST(CHexComboButton, listButtons.GetNext(posCombo));
             ASSERT(pCombo != NULL);
 
-            CHexEditControl *pedit = pCombo->GetEdit();
+            CHexEditControl *pedit = pCombo->GetEdit();  // xxx GetEditCtrl?
             ASSERT(pedit != NULL);
             pedit->Redisplay();
         }
@@ -1334,9 +1338,7 @@ BEGIN_MESSAGE_MAP(CHexComboBox, CComboBox)
 	ON_CONTROL_REFLECT(CBN_SELCHANGE, OnSelchange)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CHexComboBox message handlers
-
+/* Now handled in CMainFrame
 BOOL CHexComboBox::PreTranslateMessage(MSG* pMsg) 
 {
     CString ss;
@@ -1366,6 +1368,10 @@ BOOL CHexComboBox::PreTranslateMessage(MSG* pMsg)
 
     return CComboBox::PreTranslateMessage(pMsg);
 }
+*/
+
+/////////////////////////////////////////////////////////////////////////////
+// CHexComboBox message handlers
 
 // CBN_SELCHANGE message reflected back to the control
 void CHexComboBox::OnSelchange() 
@@ -1375,6 +1381,7 @@ void CHexComboBox::OnSelchange()
     ((CMainFrame *)AfxGetMainWnd())->SetHexAddress(ss);
 }
 
+// xxx remove this
 // For some reason CBN_SELCHANGE does not seem to be reflected
 // so also do it for CBN_SELENDOK
 void CHexComboBox::OnSelendok() 
@@ -1561,6 +1568,26 @@ void CDecEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     ((CMainFrame *)AfxGetMainWnd())->SetDecAddress(ss);
 }
 
+HBRUSH CDecEditControl::CtlColor(CDC* pDC, UINT nCtlColor) 
+{
+    if (nCtlColor == CTLCOLOR_EDIT)
+        pDC->SetTextColor(::GetDecAddrCol());
+
+    return m_brush;
+}
+
+LRESULT CDecEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
+{
+    // Since there is only one control of this type just call help with its help ID
+    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT,
+                     0x10000 + ID_JUMP_DEC_COMBO))
+        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+    return 1;                           // Indicate help launched
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CDecEditControl private methods
+
 void CDecEditControl::add_commas()
 {
     CString ss;                         // Current string
@@ -1622,23 +1649,6 @@ void CDecEditControl::add_commas()
     delete[] out;
 }
 
-HBRUSH CDecEditControl::CtlColor(CDC* pDC, UINT nCtlColor) 
-{
-    if (nCtlColor == CTLCOLOR_EDIT)
-        pDC->SetTextColor(::GetDecAddrCol());
-
-    return m_brush;
-}
-
-LRESULT CDecEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
-{
-    // Since there is only one control of this type just call help with its help ID
-    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT,
-                     0x10000 + ID_JUMP_DEC_COMBO))
-        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
-    return 1;                           // Indicate help launched
-}
-
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CDecComboBox
@@ -1659,9 +1669,7 @@ BEGIN_MESSAGE_MAP(CDecComboBox, CComboBox)
 	ON_CONTROL_REFLECT(CBN_SELCHANGE, OnSelchange)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CDecComboBox message handlers
-
+/* Now handled in CMainFrame
 BOOL CDecComboBox::PreTranslateMessage(MSG* pMsg) 
 {
     CString ss;
@@ -1691,6 +1699,10 @@ BOOL CDecComboBox::PreTranslateMessage(MSG* pMsg)
 
     return CComboBox::PreTranslateMessage(pMsg);
 }
+*/
+
+/////////////////////////////////////////////////////////////////////////////
+// CDecComboBox message handlers
 
 // CBN_SELCHANGE message reflected back to the control
 void CDecComboBox::OnSelchange() 
@@ -1700,6 +1712,7 @@ void CDecComboBox::OnSelchange()
     ((CMainFrame *)AfxGetMainWnd())->SetDecAddress(ss);
 }
 
+// xxx remove this?
 // For some reason CBN_SELCHANGE does not seem to be reflected
 // so also do it for CBN_SELENDOK
 void CDecComboBox::OnSelendok() 
@@ -1797,13 +1810,6 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarksComboBox message handlers
 
-BOOL CBookmarksComboBox::PreTranslateMessage(MSG* pMsg) 
-{
-	// xxx need this?
-	
-	return CComboBox::PreTranslateMessage(pMsg);
-}
-
 void CBookmarksComboBox::OnSelchange() 
 {
     CHexEditView *pview = GetView();
@@ -1848,17 +1854,9 @@ CComboBox *CBookmarksComboButton::CreateCombo(CWnd* pWndParent, const CRect& rec
 /////////////////////////////////////////////////////////////////////////////
 // CStatBar
 
-CStatBar::CStatBar()
-{
-}
-
-CStatBar::~CStatBar()
-{
-}
-
+#if 0
 BOOL CStatBar::PreTranslateMessage(MSG* pMsg)
 {
-#if 0
     if (ttip_.m_hWnd != NULL)
     {
         switch(pMsg->message)
@@ -1876,10 +1874,10 @@ BOOL CStatBar::PreTranslateMessage(MSG* pMsg)
             break;
         }
     }
-#endif
 
     return CMFCStatusBar::PreTranslateMessage(pMsg);
 }
+#endif
 
 BEGIN_MESSAGE_MAP(CStatBar, CMFCStatusBar)
         //{{AFX_MSG_MAP(CStatBar)

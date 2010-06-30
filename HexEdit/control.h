@@ -140,7 +140,6 @@ public:
 
 // Overrides
 public:
-    virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 // Implementation
 public:
@@ -270,7 +269,6 @@ public:
 
 // Overrides
 public:
-    virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 // Implementation
 public:
@@ -361,13 +359,6 @@ public:
 public:
 	static void BeginSearch(enum mode_t);
 	static void RedisplayAll();
-
-// Overrides
-    // ClassWizard generated virtual function overrides
-    //{{AFX_VIRTUAL(CSearchEditControl)
-	public:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	//}}AFX_VIRTUAL
 
 // Implementation
 public:
@@ -541,7 +532,6 @@ public:
 public:
 
 // Overrides
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 // Implementation
 public:
@@ -595,7 +585,6 @@ protected:
 
 };
 
-
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // CStatBar window
@@ -604,8 +593,6 @@ class CStatBar : public CMFCStatusBar
 {
 // Construction
 public:
-    CStatBar();
-
 	void SetToolTips();
 
 // Attributes
@@ -615,14 +602,9 @@ public:
 public:
 
 // Overrides
-    // ClassWizard generated virtual function overrides
-    //{{AFX_VIRTUAL(CStatBar)
-    //}}AFX_VIRTUAL
-    virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 // Implementation
 public:
-    virtual ~CStatBar();
 
     //CToolTipCtrl ttip_;
 
