@@ -4791,7 +4791,7 @@ void CMainFrame::OnSearchCombo()
 	CObList listButtons;
 	if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
 	{
-		for (POSITION posCombo = listButtons.GetHeadPosition();	pFindCombo == NULL && posCombo != NULL;  )
+		for (POSITION posCombo = listButtons.GetHeadPosition();	posCombo != NULL;  )
 		{
 			CMFCToolBarComboBoxButton* pCombo = DYNAMIC_DOWNCAST(CMFCToolBarComboBoxButton, listButtons.GetNext(posCombo));
 
@@ -4814,6 +4814,7 @@ void CMainFrame::OnSearchCombo()
 		const int nCount = pCombo->GetCount();
 		CString strCmpText;
 
+		// Check if it's already there and remove it if so, since it is added again at top
 		for (int ind = 0; ind < nCount; ++ind)
 		{
 			pCombo->GetLBText(ind, strCmpText);
@@ -4838,7 +4839,10 @@ void CMainFrame::OnSearchCombo()
 void CMainFrame::OnUpdateSearchCombo(CCmdUI* pCmdUI)
 {
     if (GetView() == NULL || pCmdUI->m_pOther == NULL)
+    {
+        pCmdUI->Enable(FALSE);
         return;
+    }
 
     CObList listButtons;
 
@@ -4959,7 +4963,10 @@ void CMainFrame::OnUpdateHexCombo(CCmdUI* pCmdUI)
 {
 	// We can't do anything without a file open or a control
     if (GetView() == NULL || pCmdUI->m_pOther == NULL)
+    {
+        pCmdUI->Enable(FALSE);
         return;
+    }
 
     CObList listButtons;
 
@@ -5031,159 +5038,132 @@ void CMainFrame::OnUpdateHexCombo(CCmdUI* pCmdUI)
 
 void CMainFrame::OnDecCombo()
 {
+	// We can't search if there is no file open
+    if (GetView() == NULL)
+		return;
+
+	// Find the search combo control that was just activated
+	CMFCToolBarComboBoxButton* pDecCombo = NULL;
+	CObList listButtons;
+	if (CMFCToolBar::GetCommandButtons(ID_JUMP_DEC_COMBO, listButtons) > 0)
+	{
+		for (POSITION posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
+		{
+			CMFCToolBarComboBoxButton* pCombo = DYNAMIC_DOWNCAST(CMFCToolBarComboBoxButton, listButtons.GetNext(posCombo));
+
+			if (pCombo != NULL && pCombo->GetEditCtrl()->GetSafeHwnd() == ::GetFocus())
+			{
+				pDecCombo = pCombo;
+				break;
+			}
+		}
+	}
+	if (pDecCombo == NULL || !CMFCToolBar::IsLastCommandFromButton(pDecCombo))
+		return;
+
+	CString ss = pDecCombo->GetText();
+	if (!ss.IsEmpty())
+	{
+		// Add to (or move to top of) combo list
+		CComboBox* pCombo = pDecCombo->GetComboBox();
+		const int nCount = pCombo->GetCount();
+		CString strCmpText;
+
+		// Check if already there and remove it if so
+		for (int ind = 0; ind < nCount; ++ind)
+		{
+			pCombo->GetLBText(ind, strCmpText);
+
+			if (strCmpText.GetLength() == ss.GetLength() && strCmpText == ss)
+			{
+				pCombo->DeleteString(ind);
+				break;
+			}
+		}
+
+		pCombo->InsertString(0, ss);
+		pCombo->SetCurSel(0);
+
+		// Force the jump
+		AddDecHistory(ss);
+		SendMessage(WM_COMMAND, ID_JUMP_DEC_START);
+		SetFocus();
+	}
 }
 
 void CMainFrame::OnUpdateDecCombo(CCmdUI* pCmdUI)
 {
-    if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == ID_JUMP_DEC_COMBO)
-	{
-        if (GetView() != NULL)
-        {
-			char buf[10];
-			::GetClassName(pCmdUI->m_pOther->m_hWnd, buf, sizeof(buf));
-
-			pCmdUI->m_pOther->EnableWindow(TRUE);
-			CString strCurr;
-			pCmdUI->m_pOther->GetWindowText(strCurr);
-
-            CDecEditControl *pedit = NULL;
-
-			// In MFC9 the control can be the edit control and not the combo
-			if (::strcmp(buf, "Edit") == 0)
-			{
-                //pedit = static_cast<CDecEditControl *>(pCmdUI->m_pOther);
-				pedit = dynamic_cast<CDecEditControl *>(CWnd::FromHandlePermanent(pCmdUI->m_pOther->m_hWnd));
-			}
-			else
-			{
-				CDecComboBox *pcombo = dynamic_cast<CDecComboBox *>(CWnd::FromHandlePermanent(pCmdUI->m_pOther->m_hWnd));
-
-				if (pcombo != NULL)
-				{
-					// Fix up the drop down list
-					if (!pcombo->GetDroppedState() && ComboNeedsUpdate(dec_hist_, pcombo))
-					{
-						DWORD sel = pcombo->GetEditSel();
-						int max_str = 0;                // Max width of all the strings added so far
-
-						CClientDC dc(pcombo);
-						int nSave = dc.SaveDC();
-						dc.SelectObject(pcombo->GetFont());
-
-						pcombo->ResetContent();
-						for (std::vector<CString>::iterator ps = dec_hist_.begin();
-							 ps != dec_hist_.end(); ++ps)
-						{
-							max_str = __max(max_str, dc.GetTextExtent(*ps).cx);
-
-							// Add the string to the list
-							pcombo->InsertString(0, *ps);
-						}
-						pcombo->SetWindowText(strCurr);
-						pcombo->SetEditSel(LOWORD(sel), HIWORD(sel));
-
-						// Add space for margin and possible scrollbar
-						max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
-						pcombo->SetDroppedWidth(__min(max_str, 400));
-
-						dc.RestoreDC(nSave);
-					}
-
-					pedit = dynamic_cast<CDecEditControl *>(CWnd::FromHandlePermanent(pcombo->GetWindow(GW_CHILD)->m_hWnd));
-					pcombo = NULL;
-				}
-			}
-
-            if (pedit != NULL)
-            {
-				int ac;
-				CJumpExpr::value_t vv(-1);
-				if (!strCurr.IsEmpty())
-					vv = expr_.evaluate(strCurr, 0 /*unused*/, ac /*unused*/, 10 /*dec int*/);
-
-				if (strCurr != current_dec_address_ &&
-					vv.typ == CJumpExpr::TYPE_INT && vv.int64 != current_address_)
-				{
-					char buf[22];
-					sprintf(buf, "%I64d", __int64(current_address_));
-					pedit->SetWindowText(buf);
-					pedit->add_commas();
-				}
-
-				pedit = NULL;
-            }
-		}
-		else
-			pCmdUI->m_pOther->EnableWindow(FALSE);  // no active window so don't let the user use the control
-	}
-}
-
-/* // XXX MOVE TO VIEW (handle CBN_SELCHANGE for ID_SCHEME
-void CMainFrame::OnUpdateSchemeCombo(CCmdUI* pCmdUI)
-{
-    CHexEditView *pview = GetView();
-    if (pview == NULL)
+	// We can't do anything without a file open or a control
+    if (GetView() == NULL || pCmdUI->m_pOther == NULL)
     {
         pCmdUI->Enable(FALSE);
         return;
     }
 
-    if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == (theApp.is_us_ ? ID_SCHEME_COMBO_US : ID_SCHEME_COMBO))
+    CObList listButtons;
+
+    // Search all toolbars and jump to the first visible decimal jump tool found (can be more than one)
+    if (CMFCToolBar::GetCommandButtons(ID_JUMP_DEC_COMBO, listButtons) > 0)
     {
-        CSchemeComboBox *pbox = dynamic_cast<CSchemeComboBox *>(CWnd::FromHandle(pCmdUI->m_pOther->m_hWnd));
-		CMFCToolBar *ptb = dynamic_cast<CMFCToolBar *>(CWnd::FromHandle(pbox->GetParent()->m_hWnd));
-		int idx = ptb->CommandToIndex(::IsUs() ? ID_SCHEME_COMBO_US : ID_SCHEME_COMBO);
-		CSchemeComboButton *pbut = dynamic_cast<CSchemeComboButton *>(ptb->GetButton(idx));
-		ASSERT(pview != NULL && pbox != NULL && ptb != NULL && pbut != NULL);
-
-        pbox->EnableWindow(TRUE);
-
-        // Work out current scheme of active view and get vector of scheme names
-        std::vector<CString> scheme_names;
-        int current_scheme = -1;
-
-        // Build list backwards as ComboNeedsUpdate() assumes top of list at bottom of vector
-        for (int ii = theApp.scheme_.size(); ii > 0; ii--)
+        for (POSITION posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
         {
-            scheme_names.push_back(theApp.scheme_[ii-1].name_);
-            if (theApp.scheme_[ii-1].name_ == pview->GetSchemeName())
-                current_scheme = ii - 1;
-        }
+            CDecComboButton* pbut = DYNAMIC_DOWNCAST(CDecComboButton, listButtons.GetNext(posCombo));
+            ASSERT(pbut != NULL);
 
-        // Fix up the drop down list
-        if (!pbox->GetDroppedState() && ComboNeedsUpdate(scheme_names, pbox))
-        {
-            int max_str = 0;                // Max width of all the strings added so far
-            CClientDC dc(pbox);
-            int nSave = dc.SaveDC();
-            dc.SelectObject(pbox->GetFont());
+			CDecComboBox *pdcb = DYNAMIC_DOWNCAST(CDecComboBox, pbut->GetComboBox());
+			ASSERT(pdcb != NULL && ::IsWindow(pdcb->GetSafeHwnd()));
+			if (pdcb != NULL && pCmdUI->m_pOther->m_hWnd == pdcb->GetSafeHwnd())
+			{
+				// If combo is not in drop down state and current combo strings are wrong then ...
+				if (!pdcb->GetDroppedState() && ComboNeedsUpdate(dec_hist_, pdcb))
+				{
+					// ... fix up items in the drop down list (including setting drop list width from longest string)
+					int max_str = 0;                // Max width of all the strings added so far
+					CClientDC dc(pdcb);
+					int nSave = dc.SaveDC();
+					dc.SelectObject(pdcb->GetFont());
 
-            pbox->ResetContent(); pbut->RemoveAllItems();
-            for (std::vector<CString>::reverse_iterator ps = scheme_names.rbegin();
-                 ps != scheme_names.rend(); ++ps)
-            {
-                max_str = __max(max_str, dc.GetTextExtent(*ps).cx);
+					pdcb->ResetContent();
+					for (std::vector<CString>::iterator ps = dec_hist_.begin();
+						 ps != dec_hist_.end(); ++ps)
+					{
+						max_str = __max(max_str, dc.GetTextExtent(*ps).cx);
 
-                // Add the string to the list
-                pbox->AddString(*ps); pbut->AddItem(*ps);
-            }
-            // Add space for margin and possible scrollbar
-            max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
-            pbox->SetDroppedWidth(__min(max_str, 640));
+						// Add the string to the list
+						pdcb->InsertString(0, *ps);
+					}
 
-            dc.RestoreDC(nSave);
-        }
+					// Add space for margin and possible scrollbar
+					max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
+					pdcb->SetDroppedWidth(__min(max_str, 780));
 
-        if (!pbox->GetDroppedState() && pbut->GetCurSel() != current_scheme)
-		{
-            pbox->SetCurSel(current_scheme);  // not really necessary as it's hidden
-			pbut->SelectItem(current_scheme);
-			ptb->InvalidateButton(idx);
-		}
-    }
+					dc.RestoreDC(nSave);
+				}
+
+				// Fix up the edit control text (if needs it)
+				CString strCurr;
+				CDecEditControl * pedit = DYNAMIC_DOWNCAST(CDecEditControl, pbut->GetEditCtrl());
+				ASSERT(pedit != NULL && pedit->IsKindOf(RUNTIME_CLASS(CDecEditControl)));
+				pedit->GetWindowText(strCurr);
+
+				int ac;
+				CJumpExpr::value_t vv(-1);
+				if (!strCurr.IsEmpty())
+					vv = expr_.evaluate(strCurr, 0 /*unused*/, ac /*unused*/, 10 /*decimal int*/);
+
+				if (strCurr != current_dec_address_ && vv.typ == CJumpExpr::TYPE_INT && vv.int64 != current_address_)
+				{
+                    char buf[22];
+					sprintf(buf, "%I64d", __int64(current_address_));
+                    pedit->SetWindowText(buf);
+                    pedit->add_commas();
+				}
+				break;
+			}
+		} // for
+	}
     pCmdUI->Enable(TRUE);
 }
-*/
 
 // We need a case-insensitive search that works the same as CBS_SORT
 struct case_insensitive_greater : binary_function<CString, CString, bool>
@@ -5197,17 +5177,17 @@ struct case_insensitive_greater : binary_function<CString, CString, bool>
 void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
 {
     CHexEditView *pview = GetView();
-    if (pview == NULL)
+    if (pview == NULL || pCmdUI->m_pOther == NULL)
     {
         pCmdUI->Enable(FALSE);
         return;
     }
     CHexEditDoc *pdoc = (CHexEditDoc *)pview->GetDocument();
 
-    if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == ID_BOOKMARKS_COMBO)
+    if (pCmdUI->m_pOther->GetDlgCtrlID() == ID_BOOKMARKS_COMBO)
     {
-        CBookmarksComboBox *pp = static_cast<CBookmarksComboBox *>(pCmdUI->m_pOther);
-        ASSERT(::IsWindow(pp->GetSafeHwnd()));
+        CBookmarksComboBox *pp = DYNAMIC_DOWNCAST(CBookmarksComboBox, pCmdUI->m_pOther);
+        ASSERT(pp != NULL && ::IsWindow(pp->GetSafeHwnd()));
 
         ASSERT(pview != NULL && pdoc != NULL);
         if (pdoc->bm_index_.empty())
@@ -5291,6 +5271,7 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
                     {
                         // Found it so select it
                         pp->SetCurSel(ii);
+						TRACE(">>>>>>>>>>>>>> Set bookmark tool to entry %d\r\n", ii);
                         break;
                     }
                 }

@@ -79,13 +79,13 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditControl window
 
-class CHexEditControl : public CEdit
+class CHexEditControl : public CMFCToolBarComboBoxEdit
 {
     DECLARE_DYNAMIC(CHexEditControl)
 
 // Construction
 public:
-    CHexEditControl();
+    CHexEditControl(CMFCToolBarComboBoxButton & combo);
 
 // Attributes
 public:
@@ -104,7 +104,6 @@ public:
 
 // Implementation
 public:
-    virtual ~CHexEditControl();
 
     // Generated message map functions
 protected:
@@ -128,22 +127,8 @@ class CHexComboBox : public CComboBox
 {
     DECLARE_DYNCREATE(CHexComboBox)
 
-// Construction
-public:
-    CHexComboBox();
-
-// Attributes
-public:
-
-// Operations
-public:
-
-// Overrides
-public:
-
 // Implementation
 public:
-    virtual ~CHexComboBox();
 
     // Generated message map functions
 protected:
@@ -164,11 +149,9 @@ class CHexComboButton : public CMFCToolBarComboBoxButton
 public:
     CHexComboButton() :
         CMFCToolBarComboBoxButton(ID_JUMP_HEX_COMBO, 
-            //CImageHash::GetImageOfCommand(ID_JUMP_HEX),
-			afxCommandManager->GetCmdImage(ID_JUMP_HEX),
+            -1, //CImageHash::GetImageOfCommand(ID_JUMP_HEX),
             CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
-            120),
-        pedit_(NULL)
+            120)
     {
     }
 
@@ -177,32 +160,22 @@ public:
 
 // Operations
 public:
-    CHexEditControl *GetEdit() { return pedit_; }
 
 // Overrides
 protected:
 
     virtual CComboBox *CreateCombo(CWnd* pWndParent, const CRect& rect);
+	virtual CHexEditControl * CreateEdit(CWnd* pWndParent, const CRect& rect, DWORD dwEditStyle);
 	virtual BOOL NotifyCommand(int iNotifyCode);
 
 // Implementation
 public:
-    virtual ~CHexComboButton()
-    {
-        if (pedit_ != NULL)
-        {
-            if (pedit_->m_hWnd != 0)
-                pedit_->UnsubclassWindow();
-            delete pedit_;
-            pedit_ = NULL;
-        }
-    }
 
     // Generated message map functions
 protected:
 
 private:
-    CHexEditControl *pedit_;
+
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -214,7 +187,7 @@ class CDecEditControl : public CMFCToolBarComboBoxEdit
 
 // Construction
 public:
-    CDecEditControl(CMFCToolBarComboBoxButton& combo);
+    CDecEditControl(CMFCToolBarComboBoxButton & combo);
 
 // Attributes
 public:
@@ -233,7 +206,6 @@ public:
 
 // Implementation
 public:
-    virtual ~CDecEditControl();
 
     // Generated message map functions
 protected:
@@ -257,22 +229,8 @@ class CDecComboBox : public CComboBox
 {
     DECLARE_DYNCREATE(CDecComboBox)
 
-// Construction
-public:
-    CDecComboBox();
-
-// Attributes
-public:
-
-// Operations
-public:
-
-// Overrides
-public:
-
 // Implementation
 public:
-    virtual ~CDecComboBox();
 
     // Generated message map functions
 protected:
@@ -295,42 +253,22 @@ public:
         CMFCToolBarComboBoxButton(ID_JUMP_DEC_COMBO, 
             -1 /*CImageHash::GetImageOfCommand(ID_JUMP_DEC, FALSE)*/,
             CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
-            142),
-        pedit_(NULL)
+            142)
     {
     }
 
-// Attributes
-public:
-
-// Operations
-public:
-    CDecEditControl *GetEdit() { return pedit_; }
-
 // Overrides
 protected:
-
     virtual CComboBox *CreateCombo(CWnd* pWndParent, const CRect& rect);
+	virtual CDecEditControl * CreateEdit(CWnd* pWndParent, const CRect& rect, DWORD dwEditStyle);
 	virtual BOOL NotifyCommand(int iNotifyCode);
 
 // Implementation
 public:
-    virtual ~CDecComboButton()
-    {
-        if (pedit_ != NULL)
-        {
-            if (pedit_->m_hWnd != 0)
-                pedit_->UnsubclassWindow();
-            delete pedit_;
-            pedit_ = NULL;
-        }
-    }
 
     // Generated message map functions
 protected:
 
-private:
-    CDecEditControl *pedit_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -343,7 +281,7 @@ class CSearchEditControl : public CMFCToolBarComboBoxEdit
 
 // Construction
 public:
-    CSearchEditControl(CMFCToolBarComboBoxButton& combo);
+    CSearchEditControl(CMFCToolBarComboBoxButton & combo);
 
 // Attributes
 public:
@@ -362,7 +300,6 @@ public:
 
 // Implementation
 public:
-    virtual ~CSearchEditControl();
 
     // Generated message map functions
 protected:
@@ -521,21 +458,8 @@ class CBookmarksComboBox : public CComboBox
 {
     DECLARE_DYNCREATE(CBookmarksComboBox)
 
-// Construction
-public:
-	CBookmarksComboBox();
-
-// Attributes
-public:
-
-// Operations
-public:
-
-// Overrides
-
 // Implementation
 public:
-	virtual ~CBookmarksComboBox();
 
 	// Generated message map functions
 protected:
@@ -555,18 +479,12 @@ class CBookmarksComboButton : public CMFCToolBarComboBoxButton
 // Construction
 public:
     CBookmarksComboButton() :
-    CMFCToolBarComboBoxButton(ID_BOOKMARKS_COMBO, 
+		CMFCToolBarComboBoxButton(ID_BOOKMARKS_COMBO, 
             -1 /*CImageHash::GetImageOfCommand(ID_BOOKMARKS, FALSE)*/,
             CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP,
             150)
     {
     }
-
-// Attributes
-public:
-
-// Operations
-public:
 
 // Overrides
 protected:
@@ -576,9 +494,6 @@ protected:
 
 // Implementation
 public:
-    virtual ~CBookmarksComboButton()
-    {
-    }
 
     // Generated message map functions
 protected:

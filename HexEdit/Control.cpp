@@ -346,10 +346,6 @@ CSearchEditControl::CSearchEditControl(CMFCToolBarComboBoxButton & combo) :
     mode_ = mode_none;
 }
 
-CSearchEditControl::~CSearchEditControl()
-{
-}
-
 BEGIN_MESSAGE_MAP(CSearchEditControl, CMFCToolBarComboBoxEdit)
         //{{AFX_MSG_MAP(CSearchEditControl)
         ON_WM_CHAR()
@@ -1009,18 +1005,15 @@ BOOL CFindComboButton::NotifyCommand(int iNotifyCode)
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditControl
 
-IMPLEMENT_DYNAMIC(CHexEditControl, CEdit)
+IMPLEMENT_DYNAMIC(CHexEditControl, CMFCToolBarComboBoxEdit)
 
-CHexEditControl::CHexEditControl()
+CHexEditControl::CHexEditControl(CMFCToolBarComboBoxButton & combo) : 
+	CMFCToolBarComboBoxEdit(combo)
 {
     m_brush.CreateSolidBrush(RGB(255,255,255)); // xxx use sys colour?
 }
 
-CHexEditControl::~CHexEditControl()
-{
-}
-
-BEGIN_MESSAGE_MAP(CHexEditControl, CEdit)
+BEGIN_MESSAGE_MAP(CHexEditControl, CMFCToolBarComboBoxEdit)
         //{{AFX_MSG_MAP(CHexEditControl)
         ON_WM_CHAR()
         ON_WM_KEYDOWN()
@@ -1082,7 +1075,7 @@ void CHexEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
             return;
         }
     }
-    CEdit::OnChar(nChar, nRepCnt, nFlags);
+    CMFCToolBarComboBoxEdit::OnChar(nChar, nRepCnt, nFlags);
     if (is_num)
         add_spaces();
 
@@ -1113,7 +1106,7 @@ void CHexEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
             SetSel(start-1, start-1);
     }
 
-    CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
+    CMFCToolBarComboBoxEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 
     // Tidy display if char(s) deleted or caret moved
     GetWindowText(ss);
@@ -1144,70 +1137,6 @@ LRESULT CHexEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
         AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
     return 1;                           // Indicate help launched
 }
-
-#if 0  // BCG Toolbar changes
-void CHexEditControl::OnSetFocus(CWnd* pOldWnd) 
-{
-    CEdit::OnSetFocus(pOldWnd);
-    SetSel(0,-1);
-
-    // Save original contents in case Escape pressed or focus leaves
-    // address edit control(s) in some other way
-    if (!address_edit)
-    {
-        CString ss;
-        GetWindowText(ss);
-        const char *pp;                         // Ptr into ss
-        char buf[13];                           // ss without commas (raw digits)
-        char *qq;                               // Ptr into buf
-
-        for (pp = ss.GetBuffer(0), qq = buf; *pp != '\0'; ++pp)
-            if (isxdigit(*pp))
-                *qq++ = *pp;
-        *qq = '\0';
-
-        address_saved = strtoul(buf, NULL, 16);
-        address_edit = TRUE;
-    }
-}
-
-void CHexEditControl::OnKillFocus(CWnd* pNewWnd) 
-{
-    CEdit::OnKillFocus(pNewWnd);
-
-    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-
-    // If not because Enter pressed and not simply flipping between address controls
-    if (address_edit && pNewWnd != NULL &&
-        pNewWnd->m_hWnd != mm->m_wndEditBar.GetDlgItem(IDC_JUMP_DEC)->m_hWnd &&
-        pNewWnd->m_hWnd != mm->dec_dec_addr_.m_hWnd)
-    {
-        CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
-        // User changed focus without hitting Enter so revert to address_saved
-        CString ss;
-        if (aa->hex_ucase_)
-            ss.Format("%lX", address_saved);
-        else
-            ss.Format("%lx", address_saved);
-        SetWindowText(ss);
-        add_spaces();
-
-        // Keep decimal address combo in line with hex
-        ss.Format("%lu", address_saved);
-        mm->dec_dec_addr_.SetWindowText(ss);
-        mm->dec_dec_addr_.add_commas();
-
-        address_edit = FALSE;
-    }
-}
-
-UINT CHexEditControl::OnGetDlgCode() 
-{
-    // Get all keys so that we see CR and Escape
-    return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
-}
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditControl private methods
@@ -1284,7 +1213,7 @@ void CHexEditControl::BeginJump()
             CHexComboButton* pCombo = 
                 DYNAMIC_DOWNCAST(CHexComboButton, listButtons.GetNext(posCombo));
             ASSERT(pCombo != NULL);
-            CHexEditControl *pedit = pCombo->GetEdit();  // xxx GetEditCtrl?
+			CHexEditControl * pedit = dynamic_cast<CHexEditControl *>(pCombo->GetEditCtrl());
 			// In MFC9 the visible edit box is the sibling of the parent combo box!??!
 			CWnd *pwnd = pedit->GetParent();
             ASSERT(pwnd != NULL);
@@ -1311,7 +1240,7 @@ void CHexEditControl::RedisplayAll()
                 DYNAMIC_DOWNCAST(CHexComboButton, listButtons.GetNext(posCombo));
             ASSERT(pCombo != NULL);
 
-            CHexEditControl *pedit = pCombo->GetEdit();  // xxx GetEditCtrl?
+			CHexEditControl * pedit = dynamic_cast<CHexEditControl *>(pCombo->GetEditCtrl());
             ASSERT(pedit != NULL);
             pedit->Redisplay();
         }
@@ -1324,51 +1253,10 @@ void CHexEditControl::RedisplayAll()
 
 IMPLEMENT_DYNCREATE(CHexComboBox, CComboBox)
 
-CHexComboBox::CHexComboBox()
-{
-}
-
-CHexComboBox::~CHexComboBox()
-{
-}
-
-
 BEGIN_MESSAGE_MAP(CHexComboBox, CComboBox)
 	ON_CONTROL_REFLECT(CBN_SELENDOK, OnSelendok)
 	ON_CONTROL_REFLECT(CBN_SELCHANGE, OnSelchange)
 END_MESSAGE_MAP()
-
-/* Now handled in CMainFrame
-BOOL CHexComboBox::PreTranslateMessage(MSG* pMsg) 
-{
-    CString ss;
-
-    if (pMsg->message == WM_KEYDOWN)
-    {
-        CMainFrame* pMainFrame = (CMainFrame *)AfxGetMainWnd();
-        if (pMainFrame != NULL)
-        {
-            switch (pMsg->wParam)
-            {
-            case VK_ESCAPE:
-                pMainFrame->SetFocus();
-                return TRUE;
-
-            case VK_RETURN:
-                GetWindowText(ss);
-                pMainFrame->AddHexHistory(ss);
-                // Don't use PostMessage to make sure address is changed
-                // before view gets focus and tries to display current address
-                pMainFrame->SendMessage(WM_COMMAND, ID_JUMP_HEX_START);
-                pMainFrame->SetFocus();
-                return TRUE;
-            }
-        }
-    }
-
-    return CComboBox::PreTranslateMessage(pMsg);
-}
-*/
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexComboBox message handlers
@@ -1407,37 +1295,22 @@ CComboBox *CHexComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
         return NULL;
     }
 
-    CWnd *pwnd;            // Ptr to edit control of combo box
-
-//    if ((pwnd = pcombo->ChildWindowFromPoint(CPoint(25,5))) != NULL &&
-//        pwnd != pcombo)
-
-    // This code assumes that the combo box edit control is the first child
-    // window.  I don't know if this is valid but using ChildWindowFromPoint
-    // was very error prone, although it seemed safer.
-    if ((pwnd = pcombo->GetWindow(GW_CHILD)) != NULL)
-    {
-        pedit_ = new CHexEditControl;
-
-        if (!pedit_->SubclassWindow(pwnd->m_hWnd))
-        {
-            TRACE0("Failed to subclass edit control in hex combo\n");
-            delete pedit_;
-            pedit_ = NULL;
-        }
-#if 0
-        pedit_->SetLimitText(19);
-#endif
-    }
-    else
-    {
-        TRACE("Failed to find hex control for %x\n", pcombo->m_hWnd);
-    }
-
-    pcombo->AddString("");  // This stops BCG restoring combo since we do it ourselves in OnUpdate
     SetDropDownHeight(400);
 
     return pcombo;
+}
+
+CHexEditControl * CHexComboButton::CreateEdit(CWnd* pWndParent, const CRect& rect, DWORD dwEditStyle)
+{
+	CHexEditControl * pWndEdit = new CHexEditControl(*this);
+
+	if (!pWndEdit->Create(dwEditStyle, rect, pWndParent, m_nID))
+	{
+		delete pWndEdit;
+		return NULL;
+	}
+
+	return pWndEdit;
 }
 
 BOOL CHexComboButton::NotifyCommand(int iNotifyCode)
@@ -1455,9 +1328,10 @@ BOOL CHexComboButton::NotifyCommand(int iNotifyCode)
 /////////////////////////////////////////////////////////////////////////////
 // CDecEditControl - similar to CDecEdit but if the string is not a number it does nothing
 
-IMPLEMENT_DYNAMIC(CDecEditControl, CEdit)
+IMPLEMENT_DYNAMIC(CDecEditControl, CMFCToolBarComboBoxEdit)
 
-CDecEditControl::CDecEditControl(CMFCToolBarComboBoxButton& combo) : CMFCToolBarComboBoxEdit(combo)
+CDecEditControl::CDecEditControl(CMFCToolBarComboBoxButton& combo) :
+	CMFCToolBarComboBoxEdit(combo)
 {
     sep_char_ = theApp.dec_sep_char_;
     group_ = theApp.dec_group_;
@@ -1467,12 +1341,7 @@ CDecEditControl::CDecEditControl(CMFCToolBarComboBoxButton& combo) : CMFCToolBar
     m_brush.CreateSolidBrush(RGB(255,255,255)); // xxx use sys colour?
 }
 
-CDecEditControl::~CDecEditControl()
-{
-}
-
-
-BEGIN_MESSAGE_MAP(CDecEditControl, CEdit)
+BEGIN_MESSAGE_MAP(CDecEditControl, CMFCToolBarComboBoxEdit)
         //{{AFX_MSG_MAP(CDecEditControl)
         ON_WM_CHAR()
         ON_WM_KEYDOWN()
@@ -1524,7 +1393,7 @@ void CDecEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
             return;
         }
     }
-    CEdit::OnChar(nChar, nRepCnt, nFlags);
+    CMFCToolBarComboBoxEdit::OnChar(nChar, nRepCnt, nFlags);
     if (is_num)
         add_commas();
 
@@ -1553,7 +1422,7 @@ void CDecEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
             SetSel(start-1, start-1);
     }
 
-    CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
+    CMFCToolBarComboBoxEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 
     // Tidy display if char(s) deleted or caret moved
     GetWindowText(ss);
@@ -1655,51 +1524,10 @@ void CDecEditControl::add_commas()
 
 IMPLEMENT_DYNCREATE(CDecComboBox, CComboBox)
 
-CDecComboBox::CDecComboBox()
-{
-}
-
-CDecComboBox::~CDecComboBox()
-{
-}
-
-
 BEGIN_MESSAGE_MAP(CDecComboBox, CComboBox)
 	ON_CONTROL_REFLECT(CBN_SELENDOK, OnSelendok)
 	ON_CONTROL_REFLECT(CBN_SELCHANGE, OnSelchange)
 END_MESSAGE_MAP()
-
-/* Now handled in CMainFrame
-BOOL CDecComboBox::PreTranslateMessage(MSG* pMsg) 
-{
-    CString ss;
-
-    if (pMsg->message == WM_KEYDOWN)
-    {
-        CMainFrame* pMainFrame = (CMainFrame *)AfxGetMainWnd();
-        if (pMainFrame != NULL)
-        {
-            switch (pMsg->wParam)
-            {
-            case VK_ESCAPE:
-                pMainFrame->SetFocus();
-                return TRUE;
-
-            case VK_RETURN:
-                GetWindowText(ss);
-                pMainFrame->AddDecHistory(ss);
-                // Don't use PostMessage to make sure address is changed
-                // before view gets focus and tries to display current address
-                pMainFrame->SendMessage(WM_COMMAND, ID_JUMP_DEC_START);
-                pMainFrame->SetFocus();
-                return TRUE;
-            }
-        }
-    }
-
-    return CComboBox::PreTranslateMessage(pMsg);
-}
-*/
 
 /////////////////////////////////////////////////////////////////////////////
 // CDecComboBox message handlers
@@ -1730,51 +1558,30 @@ IMPLEMENT_SERIAL(CDecComboButton, CMFCToolBarComboBoxButton, 1)
 
 CComboBox *CDecComboButton::CreateCombo(CWnd* pWndParent, const CRect& rect)
 {
-	return CMFCToolBarComboBoxButton::CreateCombo(pWndParent, rect);
+    CDecComboBox *pcombo = new CDecComboBox;
 
-//	xxx edit ctrl (next child of toolbar) not created yet - perhaps we need to override CMFCToolBarComboBoxButton::OnChangeParentWnd ???
-//    CDecComboBox *pcombo = new CDecComboBox;
-//
-//    if (!pcombo->Create(m_dwStyle, rect, pWndParent, m_nID))
-//    {
-//        delete pcombo;
-//        return NULL;
-//    }
-//
-//    CWnd *pwnd;            // Ptr to edit control of combo box
-//
-////    if ((pwnd = pcombo->ChildWindowFromPoint(CPoint(25,5))) != NULL &&
-////        pwnd != pcombo)
-//
-//    // This code assumes that the combo box edit control is the first child
-//    // window.  I don't know if this is valid but using ChildWindowFromPoint
-//    // was very error prone, although it seemed safer.
-//    //if ((pwnd = pcombo->GetWindow(GW_CHILD)) != NULL)
-//
-//	// New in MFC9 the visible text control is the "next" child of the toolbar not a child of the combo
-//    if ((pwnd = pcombo->GetWindow(GW_HWNDNEXT)) != NULL)
-//	{
-//        pedit_ = new CDecEditControl(*this);
-//
-//        if (!pedit_->SubclassWindow(pwnd->m_hWnd))
-//        {
-//            TRACE0("Failed to subclass edit control in dec combo\n");
-//            delete pedit_;
-//            pedit_ = NULL;
-//        }
-//#if 0
-//        pedit_->SetLimitText(25);
-//#endif
-//    }
-//    else
-//    {
-//        TRACE("Failed to find dec control for %x\n", pcombo->m_hWnd);
-//    }
-//
+    if (!pcombo->Create(m_dwStyle, rect, pWndParent, m_nID))
+    {
+        delete pcombo;
+        return NULL;
+    }
 //    pcombo->AddString("");  // This stops BCG restoring combo since we do it ourselves in OnUpdate
-//    SetDropDownHeight(400);
-//
-//    return pcombo;
+    SetDropDownHeight(400);
+
+    return pcombo;
+}
+
+CDecEditControl * CDecComboButton::CreateEdit(CWnd* pWndParent, const CRect& rect, DWORD dwEditStyle)
+{
+	CDecEditControl * pWndEdit = new CDecEditControl(*this);
+
+	if (!pWndEdit->Create(dwEditStyle, rect, pWndParent, m_nID))
+	{
+		delete pWndEdit;
+		return NULL;
+	}
+
+	return pWndEdit;
 }
 
 BOOL CDecComboButton::NotifyCommand(int iNotifyCode)
@@ -1793,14 +1600,6 @@ BOOL CDecComboButton::NotifyCommand(int iNotifyCode)
 // CBookmarksComboBox
 
 IMPLEMENT_DYNCREATE(CBookmarksComboBox, CComboBox)
-
-CBookmarksComboBox::CBookmarksComboBox()
-{
-}
-
-CBookmarksComboBox::~CBookmarksComboBox()
-{
-}
 
 BEGIN_MESSAGE_MAP(CBookmarksComboBox, CComboBox)
 	ON_CONTROL_REFLECT(CBN_SELCHANGE, OnSelchange)
