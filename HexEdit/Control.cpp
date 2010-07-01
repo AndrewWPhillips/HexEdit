@@ -1615,9 +1615,24 @@ void CBookmarksComboBox::OnSelchange()
     if (pview == NULL)
         return;
 
-    CBookmarkList *pbl = theApp.GetBookmarkList();
-    pbl->GoTo(GetItemData(GetCurSel()));
-    pview->SetFocus();
+    //pbl->GoTo(GetItemData(GetCurSel()));  // no longer storing bookmark index in the list item data
+
+	// Get the name of the selected bookmark
+	CString ss;
+	GetLBText(GetCurSel(), ss);
+
+	// Now we need to search the bookmarks of the active file to get the absolute bookmark index
+    CHexEditDoc * pdoc = (CHexEditDoc *)pview->GetDocument();
+    CBookmarkList * pbl = theApp.GetBookmarkList();
+	ASSERT(pdoc != NULL && pbl != NULL);
+	for (int ii = 0; ii < (int)pdoc->bm_index_.size(); ++ii)
+		if (pbl->name_[pdoc->bm_index_[ii]] == ss)
+		{
+			// Found - so jump to it
+			pbl->GoTo(pdoc->bm_index_[ii]);
+		    pview->SetFocus();
+			break;
+		}
 }
 
 #if 0

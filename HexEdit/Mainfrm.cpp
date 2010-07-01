@@ -5179,10 +5179,11 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
     CHexEditView *pview = GetView();
     if (pview == NULL || pCmdUI->m_pOther == NULL)
     {
+		// If there is no file open or we don't know the control that we are updating we can't do anything
         pCmdUI->Enable(FALSE);
         return;
     }
-    CHexEditDoc *pdoc = (CHexEditDoc *)pview->GetDocument();
+    CHexEditDoc *pdoc = (CHexEditDoc *)pview->GetDocument();  // we need the current doc later to get its list of bookmarks
 
     CObList listButtons;
 
@@ -5191,39 +5192,52 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
     {
         for (POSITION posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
         {
+			// Get the toolbar "control"
             CBookmarksComboButton * pCombo = 
                 DYNAMIC_DOWNCAST(CBookmarksComboButton, listButtons.GetNext(posCombo));
             ASSERT(pCombo != NULL);
 
+			// Get the associated combo box
 			CBookmarksComboBox * pbcb = DYNAMIC_DOWNCAST(CBookmarksComboBox, pCombo->GetComboBox());
 			ASSERT(pbcb != NULL && ::IsWindow(pbcb->GetSafeHwnd()));
 
+			// Check that the combo box is the one that is being updated
 			if (pbcb != NULL && ::IsWindow(pbcb->GetSafeHwnd()) && pCmdUI->m_pOther->m_hWnd == pbcb->GetSafeHwnd())
 			{
+				// Handle special case of file with no bookmarks
 				ASSERT(pview != NULL && pdoc != NULL);
 				if (pdoc->bm_index_.empty())
 				{
 					CString ss;
-					if (pbcb->GetCount() > 0) pbcb->GetLBText(0, ss);
+					//if (pbcb->GetCount() > 0) pbcb->GetLBText(0, ss);
+					if (pCombo->GetCount() > 0)
+						ss = pCombo->GetText();
 
-					if (pbcb->GetCount() != 1 || ss != CString("No bookmarks"))
+					if (pCombo->GetCount() != 1 || ss != CString("No bookmarks"))
 					{
-						pbcb->ResetContent();
-						pbcb->SetCurSel(pbcb->AddString("No bookmarks"));
-						// xxx set text
+						//pbcb->ResetContent();
+						//pbcb->SetCurSel(pbcb->AddString("No bookmarks"));
+						pCombo->RemoveAllItems();
+						pCombo->AddItem("No bookmarks");
+						pCombo->SelectItem(0, FALSE);
+						pCombo->NotifyCommand(CBN_SELENDOK);  // this is needed text is updated
 					}
-					pbcb->EnableWindow(FALSE);
+					//pbcb->EnableWindow(FALSE);
+			        pCmdUI->Enable(FALSE);
 					return;
 				}
-				pbcb->EnableWindow(TRUE);
 
-				// Get vector of bookmark names
 				CBookmarkList *pbl = theApp.GetBookmarkList();
-				std::vector<CString> bm_names;
-				FILE_ADDRESS diff;
-				int current_bm = pview->ClosestBookmark(diff);  // Get the closest bookmark to the cursor or -1
 
-				// Build list of bookmarks in current doc
+				// Get index of the closest bookmark above the current position in the view
+				FILE_ADDRESS diff;  // unused
+				int current_bm = pview->ClosestBookmark(diff);  // closest bookmark or -1
+				CString strCurrent;                             // name of closest bookmark
+				if (current_bm > -1)
+					strCurrent = pbl->name_[current_bm];
+
+				// Get vector of names of all bookmarks in the current file
+				std::vector<CString> bm_names;
 				for (int ii = 0; ii < (int)pdoc->bm_index_.size(); ++ii)
 				{
 					ASSERT(pdoc->bm_index_[ii] < (int)pbl->name_.size());
@@ -5247,7 +5261,7 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
 					{
 						ASSERT(pdoc->bm_index_[ii] < (int)pbl->name_.size());
 						max_str = __max(max_str, dc.GetTextExtent(pbl->name_[pdoc->bm_index_[ii]]).cx);
-						pCombo->AddItem(pbl->name_[pdoc->bm_index_[ii]], pdoc->bm_index_[ii]);
+						pCombo->AddItem(pbl->name_[pdoc->bm_index_[ii]] /*, pdoc->bm_index_[ii] */);
 					}
 
 					// Add space for margin and possible scrollbar
@@ -5256,141 +5270,37 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
 
 					dc.RestoreDC(nSave);
 				}
-				else
-				{
-					// Even though the strings may be the same a bookmark may have been moved and have a new index in the global list
-					for (int ii = 0; ii < (int)pdoc->bm_index_.size(); ++ii)
-					{
-						int ind = pbcb->FindString(0, pbl->name_[pdoc->bm_index_[ii]]);
-						if (ind != CB_ERR)
-							pbcb->SetItemData(ind, pdoc->bm_index_[ii]);
-					}
-				}
 
-				// If the closest bookmark is wrong (and not in dropped state) ...
-				if (!pbcb->GetDroppedState() && pbcb->GetItemData(pbcb->GetCurSel()) != current_bm)
+				// If the closest bookmark is wrong (and combo is not in dropped state) ...
+				if (!pbcb->GetDroppedState() && pCombo->GetText() != strCurrent)
 				{
-					// Update the text
+					// Update the text with the closest bookmark
 					if (current_bm == -1)
 					{
 						pCombo->SelectItem(-1, FALSE);
-						pCombo->NotifyCommand(CBN_SELENDOK);
+						pCombo->NotifyCommand(CBN_SELENDOK);  // this is needed so the previous text is removed
 					}
 					else
 					{
 						// Search through the sorted combo list to find the associated entry
 						for (int ii = 0; ii < pbcb->GetCount(); ++ii)
 						{
-							if (pbcb->GetItemData(ii) == current_bm)
+							CString ss;
+							pbcb->GetLBText(ii, ss);
+							if (ss == strCurrent)
 							{
-								// Found it so select it
-								pCombo->SelectItem(ii);
+								// Found it so select it and that's all we need to do
+								pCombo->SelectItem(ii, FALSE);
+								pCombo->NotifyCommand(CBN_SELENDOK);
 								break;
 							}
 						}
 					}
 				}
-
 			}
 		}
 	}
 
-#if 0
-    if (pCmdUI->m_pOther->GetDlgCtrlID() == ID_BOOKMARKS_COMBO)
-    {
-        CBookmarksComboBox *pp = DYNAMIC_DOWNCAST(CBookmarksComboBox, pCmdUI->m_pOther);
-        ASSERT(pp != NULL && ::IsWindow(pp->GetSafeHwnd()));
-
-        ASSERT(pview != NULL && pdoc != NULL);
-        if (pdoc->bm_index_.empty())
-        {
-            CString ss;
-            if (pp->GetCount() > 0) pp->GetLBText(0, ss);
-
-            if (pp->GetCount() != 1 || ss != CString("No bookmarks"))
-            {
-                pp->ResetContent();
-                pp->SetCurSel(pp->AddString("No bookmarks"));
-            }
-            pp->EnableWindow(FALSE);
-            return;
-        }
-        pp->EnableWindow(TRUE);
-
-        // Get vector of bookmark names
-        CBookmarkList *pbl = theApp.GetBookmarkList();
-        std::vector<CString> bm_names;
-        FILE_ADDRESS diff;
-        int current_bm = pview->ClosestBookmark(diff);  // Get the closest bookmark to the cursor or -1
-
-        // Build list of bookmarks in current doc
-        for (int ii = 0; ii < (int)pdoc->bm_index_.size(); ++ii)
-        {
-            ASSERT(pdoc->bm_index_[ii] < (int)pbl->name_.size());
-            bm_names.push_back(pbl->name_[pdoc->bm_index_[ii]]);
-        }
-
-        // We must sort since the combo box sorts the bookmarks alphabetically (CBS_SORT)
-        sort(bm_names.begin(), bm_names.end(), case_insensitive_greater());
-
-        // Fix up the drop down list
-        if (!pp->GetDroppedState() && ComboNeedsUpdate(bm_names, pp))
-        {
-            int max_str = 0;                // Max width of all the strings added so far
-            CClientDC dc(pp);
-            int nSave = dc.SaveDC();
-            dc.SelectObject(pp->GetFont());
-
-            // Add all the bookmarks in this document to the list
-            pp->ResetContent();
-            for (int ii = 0; ii < (int)pdoc->bm_index_.size(); ++ii)
-            {
-                ASSERT(pdoc->bm_index_[ii] < (int)pbl->name_.size());
-                max_str = __max(max_str, dc.GetTextExtent(pbl->name_[pdoc->bm_index_[ii]]).cx);
-                int ind = pp->AddString(pbl->name_[pdoc->bm_index_[ii]]);
-                ASSERT(ind != CB_ERR);
-
-                // Store the bookmark list index in the list box too
-                pp->SetItemData(ind, pdoc->bm_index_[ii]);
-            }
-            // Add space for margin and possible scrollbar
-            max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
-            pp->SetDroppedWidth(__min(max_str, 640));
-
-            dc.RestoreDC(nSave);
-        }
-		else
-		{
-		    // Even though the strings may be the same an bookmark may have been moved and have a new index in the global list
-            for (int ii = 0; ii < (int)pdoc->bm_index_.size(); ++ii)
-            {
-				int ind = pp->FindString(0, pbl->name_[pdoc->bm_index_[ii]]);
-                if (ind != CB_ERR)
-                    pp->SetItemData(ind, pdoc->bm_index_[ii]);
-			}
-		}
-
-        if (!pp->GetDroppedState() && pp->GetItemData(pp->GetCurSel()) != current_bm)
-        {
-            if (current_bm == -1)
-                pp->SetCurSel(-1);
-            else
-            {
-                // Search through the sorted combo list to find the associated entry
-                for (int ii = 0; ii < pp->GetCount(); ++ii)
-                {
-                    if (pp->GetItemData(ii) == current_bm)
-                    {
-                        // Found it so select it
-                        pp->SetCurSel(ii);
-						TRACE(">>>>>>>>>>>>>> Set bookmark tool to entry %d\r\n", ii);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-#endif
     pCmdUI->Enable(TRUE);
 }
 
