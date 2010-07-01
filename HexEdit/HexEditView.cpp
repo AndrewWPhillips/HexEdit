@@ -12299,47 +12299,32 @@ void CHexEditView::OnFontName()
 
 void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 {
-    if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == IDC_FONTNAME)
-    {
-        // Get parent of control so that we can find it in the list of IDC_FONTNAME buttons
-        CWnd *pparent = pCmdUI->m_pOther->GetParent();
+	CObList listButtons;
+	if (CMFCToolBar::GetCommandButtons (IDC_FONTNAME, listButtons) > 0)
+	{
+		for (POSITION posCombo = listButtons.GetHeadPosition (); posCombo != NULL; )
+		{
+			CHexEditFontCombo * pCombo = DYNAMIC_DOWNCAST(CHexEditFontCombo, listButtons.GetNext (posCombo));
 
-        // Get list of IDC_FONTNAME buttons
-        CObList listButtons;
-        if (CMFCToolBar::GetCommandButtons(IDC_FONTNAME, listButtons) > 0)
-        {
-            // Search the list until we find the control we are updating
-            for (POSITION posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
-            {
-                CHexEditFontCombo* pCombo = 
-                    DYNAMIC_DOWNCAST(CHexEditFontCombo, listButtons.GetNext(posCombo));
-
-                // Get the real (Windows) combo box from the BCG control
-                ASSERT(pCombo != NULL);
-                CComboBox *pcb = pCombo->GetComboBox();
-                HWND focusWnd = ::GetFocus();
-
-                if (pparent == pcb->GetParent() &&
-                    focusWnd != (HWND)0 &&
-                    !::IsChild(pCombo->GetHwnd(), focusWnd) && 
-                    !pcb->GetDroppedState() )
+			if (pCombo != NULL && !pCombo->HasFocus ())
+			{
+                if (display_.FontRequired() == FONT_OEM)
                 {
-                    // If the control was found and it was not in the dropped state then update the list
-                    if (display_.FontRequired() == FONT_OEM)
-                    {
-                        pCombo->FixFontList(OEM_CHARSET);
-                        pCombo->SetText(oem_lf_.lfFaceName);
-                    }
-                    else
-                    {
-                        pCombo->FixFontList(ANSI_CHARSET);
-                        pCombo->SetText(lf_.lfFaceName);
-                    }
-                    break;
+                    pCombo->FixFontList(OEM_CHARSET);
+					CString ss = pCombo->GetText();
+					if (ss != oem_lf_.lfFaceName)
+						pCombo->SetText(oem_lf_.lfFaceName);
                 }
-            }
-        }
-    }
+                else
+                {
+                    pCombo->FixFontList(ANSI_CHARSET);
+					CString ss = pCombo->GetText();
+					if (ss != lf_.lfFaceName)
+						pCombo->SetText(lf_.lfFaceName);
+                }
+			}
+		}
+	}
 }
 
 void CHexEditView::OnFontSize()
@@ -12376,84 +12361,42 @@ void CHexEditView::OnFontSize()
 
 void CHexEditView::OnUpdateFontSize(CCmdUI* pCmdUI)
 {
-    if (pCmdUI->m_pOther != NULL && pCmdUI->m_pOther->GetDlgCtrlID() == IDC_FONTSIZE)
-    {
-        // Get parent of control so that we can find it in the list of IDC_FONTSIZE buttons
-        CWnd *pparent = pCmdUI->m_pOther->GetParent();
+	CObList listButtons;
+	if (CMFCToolBar::GetCommandButtons (IDC_FONTSIZE, listButtons) > 0)
+	{
+		for (POSITION posCombo = listButtons.GetHeadPosition (); posCombo != NULL;)
+		{
+			CMFCToolBarFontSizeComboBox * pCombo = DYNAMIC_DOWNCAST(CMFCToolBarFontSizeComboBox, listButtons.GetNext (posCombo));
 
-        // Get list of IDC_FONTSIZE buttons
-        CObList listButtons;
-        if (CMFCToolBar::GetCommandButtons(IDC_FONTSIZE, listButtons) > 0)
-        {
-            POSITION posCombo;
+			if (pCombo != NULL && !pCombo->HasFocus ())
+			{
+				static CString savedFontName;
+				CString fontName;
+                if (display_.FontRequired() == FONT_OEM)
+					fontName = oem_lf_.lfFaceName;
+				else
+					fontName = lf_.lfFaceName;
 
-            // Don't update any if in edit control or has list dropped for any 
-            // of the IDC_FONTSIZE buttons, otherwise they all stuff up
-            for (posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
-            {
-                CMFCToolBarFontSizeComboBox* pCombo = 
-                    DYNAMIC_DOWNCAST(CMFCToolBarFontSizeComboBox, listButtons.GetNext(posCombo));
+				if (!fontName.IsEmpty() &&
+					(pCombo->GetCount() == 0 || fontName != savedFontName))
+				{
+					savedFontName = fontName;
+					pCombo->RebuildFontSizes(fontName);
+				}
 
-                // Get the real (Windows) combo box from the BCG control
-                ASSERT(pCombo != NULL);
-                CComboBox *pcb = pCombo->GetComboBox();
+                int nSize = atoi(fontsize_)*20;
+                if (nSize == -2 || (nSize >= 0 && nSize < 20) || nSize > 32760)
+					nSize = 20*12;
+                pCombo->SetTwipSize(nSize);
 
-                if (pcb->GetDroppedState() || ::GetFocus() == ::GetWindow(pcb->m_hWnd, GW_CHILD))
-                {
-                    return;
-                }
-            }
-            // Search the list until we find the control we are updating
-            for (posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
-            {
-                CHexEditFontSizeCombo* pCombo = 
-                    DYNAMIC_DOWNCAST(CHexEditFontSizeCombo, listButtons.GetNext(posCombo));
-
-                // Get the real (Windows) combo box from the BCG control
-                if (pCombo == NULL)
-                    continue;
-                CComboBox *pcb = pCombo->GetComboBox();
-                HWND focusWnd = ::GetFocus();
-
-                if (pparent == pcb->GetParent() &&
-                    focusWnd != (HWND)0 &&
-                    !::IsChild(pCombo->GetHwnd(), focusWnd) && 
-                    !pcb->GetDroppedState() )
-                {
-                    pCombo->SetText(fontsize_);
-
-                    // Update the list of sizes
-                    CHexEditFontCombo *pFontCombo = 
-                        (CHexEditFontCombo*)CMFCToolBarComboBoxButton::GetByCmd(IDC_FONTNAME);
-                    const CMFCFontInfo *pDesc;
-                    if (pFontCombo != NULL && 
-                        pFontCombo->OKToRead() &&
-                        int(pDesc = pFontCombo->GetFontDesc()) != -1)
-                    {
-                        int nSize = atoi(fontsize_)*20;
-                        if (nSize == -2 || (nSize >= 0 && nSize < 20) || nSize > 32760)
-                        {
-                            //nSize = pCombo->GetTwipsLast ();
-							nSize = 20*12;
-                        }
-
-                        if (pDesc->m_strName != pCombo->font_name_)
-                        {
-                            pCombo->RebuildFontSizes(pDesc->m_strName);
-                            pCombo->font_name_ = pDesc->m_strName;
-                            //TRACE1("$$$$$ rebuilt font sizes %s\n", pCombo->font_name_);
-                        }
-                        pcb->SetCurSel(-1);
-                        pCombo->SetTwipSize(nSize);
-
-                        // Store the exact font size (due to rounding probs do_font (SetFont) calc may be slightly off)
-                        fontsize_.Format("%d", nSize/20);
-                    }
-                    break;
-                }
-            }
-        }
-    }
+                // Store the exact font size (due to rounding probs do_font (SetFont) calc may be slightly off)
+                fontsize_.Format("%d", nSize/20);
+				CString ss = pCombo->GetText();
+				if (ss != fontsize_)
+					pCombo->SetText(fontsize_);
+			}
+		}
+	}
 }
 
 void CHexEditView::do_font(LOGFONT *plf)
