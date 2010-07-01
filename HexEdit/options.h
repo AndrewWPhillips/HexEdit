@@ -461,7 +461,7 @@ public:
 	CEdit	ctl_backup_size_;
 	CButton	ctl_backup_prompt_;
 	CButton	ctl_backup_if_size_;
-	CHexEditControl	address_ctl_;
+	CHexEdit	address_ctl_;
 
 	void SetDocEditPage(COptPage * pPage) { pDocPage = pPage; }
 
