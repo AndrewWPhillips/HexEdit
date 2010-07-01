@@ -5215,14 +5215,11 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
 
 					if (pCombo->GetCount() != 1 || ss != CString("No bookmarks"))
 					{
-						//pbcb->ResetContent();
-						//pbcb->SetCurSel(pbcb->AddString("No bookmarks"));
 						pCombo->RemoveAllItems();
 						pCombo->AddItem("No bookmarks");
 						pCombo->SelectItem(0, FALSE);
-						pCombo->NotifyCommand(CBN_SELENDOK);  // this is needed text is updated
+						pCombo->NotifyCommand(CBN_SELENDOK);  // this is needed so text is updated
 					}
-					//pbcb->EnableWindow(FALSE);
 			        pCmdUI->Enable(FALSE);
 					return;
 				}
@@ -5269,6 +5266,12 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
 					pbcb->SetDroppedWidth(__min(max_str, 640));
 
 					dc.RestoreDC(nSave);
+
+					// Set the current text to an invalid bookmark name (a space) - this is necessary as
+					// the current text will be the last name added above but is not displayed in the
+					// toolbar (only in the hidden combo box).  We need to do this so pCombo->GetText()
+					// does not compare equal with strCurrent below and the toolbar text is updated.
+					pCombo->SetText(" ");  
 				}
 
 				// If the closest bookmark is wrong (and combo is not in dropped state) ...
@@ -5277,6 +5280,7 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
 					// Update the text with the closest bookmark
 					if (current_bm == -1)
 					{
+						// Deselect any combo box item (shows blank in toolbar)
 						pCombo->SelectItem(-1, FALSE);
 						pCombo->NotifyCommand(CBN_SELENDOK);  // this is needed so the previous text is removed
 					}
@@ -5289,9 +5293,9 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
 							pbcb->GetLBText(ii, ss);
 							if (ss == strCurrent)
 							{
-								// Found it so select it and that's all we need to do
+								// Found it so show it and that's all we need to do
 								pCombo->SelectItem(ii, FALSE);
-								pCombo->NotifyCommand(CBN_SELENDOK);
+								pCombo->NotifyCommand(CBN_SELENDOK);  // needed to make sure the text is displayed
 								break;
 							}
 						}
