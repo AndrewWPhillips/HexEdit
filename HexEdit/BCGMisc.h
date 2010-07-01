@@ -55,7 +55,7 @@ public:
             ClearFonts();
             m_nCharSet = nCharSet;
             saved_charset = nCharSet;
-            RebuildFonts();
+            RebuildFonts();     // note that this can be slow especially in debug builds and you have lots of fonts
             fix_list = true;
         }
         if (fix_list)
