@@ -4786,7 +4786,7 @@ void CMainFrame::OnSearchCombo()
     if (GetView() == NULL)
 		return;
 
-	// Find the search combo control that was just activated
+	// Find the search combo control that is being used
 	CMFCToolBarComboBoxButton* pFindCombo = NULL;
 	CObList listButtons;
 	if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
@@ -4846,7 +4846,7 @@ void CMainFrame::OnUpdateSearchCombo(CCmdUI* pCmdUI)
 
     CObList listButtons;
 
-    // Search all toolbars and jump to the first visible search tool found (can be more than one)
+    // Find the search tool that is being updated
     if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
     {
         for (POSITION posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
@@ -4911,7 +4911,7 @@ void CMainFrame::OnHexCombo()
     if (GetView() == NULL)
 		return;
 
-	// Find the search combo control that was just activated
+	// Find the hex jump tool that was just activated
 	CMFCToolBarComboBoxButton* pHexCombo = NULL;
 	CObList listButtons;
 	if (CMFCToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
@@ -4970,7 +4970,7 @@ void CMainFrame::OnUpdateHexCombo(CCmdUI* pCmdUI)
 
     CObList listButtons;
 
-    // Search all toolbars and jump to the first visible hex jump tool found (can be more than one)
+    // Find the hex jump tool that is being updated
     if (CMFCToolBar::GetCommandButtons(ID_JUMP_HEX_COMBO, listButtons) > 0)
     {
         for (POSITION posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
@@ -5042,7 +5042,7 @@ void CMainFrame::OnDecCombo()
     if (GetView() == NULL)
 		return;
 
-	// Find the search combo control that was just activated
+	// Find the dec jump combo control that was just activated
 	CMFCToolBarComboBoxButton* pDecCombo = NULL;
 	CObList listButtons;
 	if (CMFCToolBar::GetCommandButtons(ID_JUMP_DEC_COMBO, listButtons) > 0)
@@ -5102,7 +5102,7 @@ void CMainFrame::OnUpdateDecCombo(CCmdUI* pCmdUI)
 
     CObList listButtons;
 
-    // Search all toolbars and jump to the first visible decimal jump tool found (can be more than one)
+    // Find the hex jump tool that is being updated
     if (CMFCToolBar::GetCommandButtons(ID_JUMP_DEC_COMBO, listButtons) > 0)
     {
         for (POSITION posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
@@ -5184,6 +5184,118 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
     }
     CHexEditDoc *pdoc = (CHexEditDoc *)pview->GetDocument();
 
+    CObList listButtons;
+
+    // Find the bookmarks tool that is being updated
+    if (CMFCToolBar::GetCommandButtons(ID_BOOKMARKS_COMBO, listButtons) > 0)
+    {
+        for (POSITION posCombo = listButtons.GetHeadPosition(); posCombo != NULL; )
+        {
+            CBookmarksComboButton * pCombo = 
+                DYNAMIC_DOWNCAST(CBookmarksComboButton, listButtons.GetNext(posCombo));
+            ASSERT(pCombo != NULL);
+
+			CBookmarksComboBox * pbcb = DYNAMIC_DOWNCAST(CBookmarksComboBox, pCombo->GetComboBox());
+			ASSERT(pbcb != NULL && ::IsWindow(pbcb->GetSafeHwnd()));
+
+			if (pbcb != NULL && ::IsWindow(pbcb->GetSafeHwnd()) && pCmdUI->m_pOther->m_hWnd == pbcb->GetSafeHwnd())
+			{
+				ASSERT(pview != NULL && pdoc != NULL);
+				if (pdoc->bm_index_.empty())
+				{
+					CString ss;
+					if (pbcb->GetCount() > 0) pbcb->GetLBText(0, ss);
+
+					if (pbcb->GetCount() != 1 || ss != CString("No bookmarks"))
+					{
+						pbcb->ResetContent();
+						pbcb->SetCurSel(pbcb->AddString("No bookmarks"));
+						// xxx set text
+					}
+					pbcb->EnableWindow(FALSE);
+					return;
+				}
+				pbcb->EnableWindow(TRUE);
+
+				// Get vector of bookmark names
+				CBookmarkList *pbl = theApp.GetBookmarkList();
+				std::vector<CString> bm_names;
+				FILE_ADDRESS diff;
+				int current_bm = pview->ClosestBookmark(diff);  // Get the closest bookmark to the cursor or -1
+
+				// Build list of bookmarks in current doc
+				for (int ii = 0; ii < (int)pdoc->bm_index_.size(); ++ii)
+				{
+					ASSERT(pdoc->bm_index_[ii] < (int)pbl->name_.size());
+					bm_names.push_back(pbl->name_[pdoc->bm_index_[ii]]);
+				}
+
+				// We must sort since the combo box sorts the bookmarks alphabetically (CBS_SORT)
+				sort(bm_names.begin(), bm_names.end(), case_insensitive_greater());
+
+				// Fix up the drop down list
+				if (!pbcb->GetDroppedState() && ComboNeedsUpdate(bm_names, pbcb))
+				{
+					int max_str = 0;                // Max width of all the strings added so far
+					CClientDC dc(pbcb);
+					int nSave = dc.SaveDC();
+					dc.SelectObject(pbcb->GetFont());
+
+					// Add all the bookmarks in this document to the list
+					pCombo->RemoveAllItems();
+					for (int ii = 0; ii < (int)pdoc->bm_index_.size(); ++ii)
+					{
+						ASSERT(pdoc->bm_index_[ii] < (int)pbl->name_.size());
+						max_str = __max(max_str, dc.GetTextExtent(pbl->name_[pdoc->bm_index_[ii]]).cx);
+						pCombo->AddItem(pbl->name_[pdoc->bm_index_[ii]], pdoc->bm_index_[ii]);
+					}
+
+					// Add space for margin and possible scrollbar
+					max_str += dc.GetTextExtent("0").cx + ::GetSystemMetrics(SM_CXVSCROLL);
+					pbcb->SetDroppedWidth(__min(max_str, 640));
+
+					dc.RestoreDC(nSave);
+				}
+				else
+				{
+					// Even though the strings may be the same a bookmark may have been moved and have a new index in the global list
+					for (int ii = 0; ii < (int)pdoc->bm_index_.size(); ++ii)
+					{
+						int ind = pbcb->FindString(0, pbl->name_[pdoc->bm_index_[ii]]);
+						if (ind != CB_ERR)
+							pbcb->SetItemData(ind, pdoc->bm_index_[ii]);
+					}
+				}
+
+				// If the closest bookmark is wrong (and not in dropped state) ...
+				if (!pbcb->GetDroppedState() && pbcb->GetItemData(pbcb->GetCurSel()) != current_bm)
+				{
+					// Update the text
+					if (current_bm == -1)
+					{
+						pCombo->SelectItem(-1, FALSE);
+						pCombo->NotifyCommand(CBN_SELENDOK);
+					}
+					else
+					{
+						// Search through the sorted combo list to find the associated entry
+						for (int ii = 0; ii < pbcb->GetCount(); ++ii)
+						{
+							if (pbcb->GetItemData(ii) == current_bm)
+							{
+								// Found it so select it
+								pCombo->SelectItem(ii);
+								break;
+							}
+						}
+					}
+				}
+
+			}
+		}
+	}
+
+#if 0
     if (pCmdUI->m_pOther->GetDlgCtrlID() == ID_BOOKMARKS_COMBO)
     {
         CBookmarksComboBox *pp = DYNAMIC_DOWNCAST(CBookmarksComboBox, pCmdUI->m_pOther);
@@ -5278,6 +5390,7 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
             }
         }
     }
+#endif
     pCmdUI->Enable(TRUE);
 }
 
