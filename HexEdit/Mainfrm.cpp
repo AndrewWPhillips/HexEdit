@@ -183,7 +183,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         ON_COMMAND(ID_DIALOGS_DOCKABLE, OnDockableToggle)
         ON_UPDATE_COMMAND_UI(ID_DIALOGS_DOCKABLE, OnUpdateDockableToggle)
 
-        ON_COMMAND_EX(ID_VIEW_STATUS_BAR, OnBarCheck)
+        ON_COMMAND_EX(ID_VIEW_STATUS_BAR, OnPaneCheck)
         ON_UPDATE_COMMAND_UI(ID_INDICATOR_OCCURRENCES, OnUpdateOccurrences)
         ON_UPDATE_COMMAND_UI(ID_INDICATOR_VALUES, OnUpdateValues)
         ON_UPDATE_COMMAND_UI(ID_INDICATOR_HEX_ADDR, OnUpdateAddrHex)
@@ -198,7 +198,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         // MFC9 (BCG) stuff
         ON_REGISTERED_MESSAGE(AFX_WM_RESETTOOLBAR, OnToolbarReset)
         ON_REGISTERED_MESSAGE(AFX_WM_RESETMENU, OnMenuReset)
-        ON_REGISTERED_MESSAGE(AFX_WM_TOOLBARMENU, OnToolbarContextMenu)
+        //ON_REGISTERED_MESSAGE(AFX_WM_TOOLBARMENU, OnToolbarContextMenu)
         ON_COMMAND_EX_RANGE(ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10, OnToolsViewUserToolbar)
         ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10, OnUpdateToolsViewUserToolbar)
         ON_REGISTERED_MESSAGE(AFX_WM_CUSTOMIZEHELP, OnHelpCustomizeToolbars)
@@ -532,6 +532,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
                         ID_VIEW_USER_TOOLBAR1,
                         ID_VIEW_USER_TOOLBAR10);
         EnableWindowsDialog (ID_WINDOW_MANAGER, _T("Windows..."), TRUE);
+
+		EnablePaneMenu(TRUE, ID_CUSTOMIZE, _T("Customize..."), ID_VIEW_TOOLBARS, FALSE, FALSE);
 
         // Load search strings into mainframe edit bar
         LoadSearchHistory(&theApp);
@@ -4347,10 +4349,10 @@ void CMainFrame::OnInitMenu(CMenu* pMenu)
 }
 
 // Toggle display of status bar
-BOOL CMainFrame::OnBarCheck(UINT nID)
+BOOL CMainFrame::OnPaneCheck(UINT nID)
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    if (CMDIFrameWndEx::OnBarCheck(nID))
+    if (CMDIFrameWndEx::OnPaneCheck(nID))
     {
         aa->SaveToMacro(km_bar, nID);
         return TRUE;
@@ -4456,6 +4458,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
     return TRUE;
 }
 
+#if 0  // This is now done in MFC9 by CMDIFrameWndEx::EnablePaneMenu
 LRESULT CMainFrame::OnToolbarContextMenu(WPARAM,LPARAM lp)
 {
     CPoint point(LOWORD(lp), HIWORD(lp));
@@ -4474,6 +4477,7 @@ LRESULT CMainFrame::OnToolbarContextMenu(WPARAM,LPARAM lp)
     
     return 0;
 }
+#endif
 
 BOOL CMainFrame::OnToolsViewUserToolbar(UINT uiId)
 {
@@ -4522,15 +4526,15 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
         
             m_wndStandardBar.ReplaceButton(ID_DISPLAY_DROPDOWN,
                 CMFCToolBarMenuButton (-1, *menu.GetSubMenu(0),
-                                                       -1 /*CImageHash::GetImageOfCommand(ID_DISPLAY_DROPDOWN)*/,
+                                                       afxCommandManager->GetCmdImage(ID_DISPLAY_DROPDOWN) /*CImageHash::GetImageOfCommand(ID_DISPLAY_DROPDOWN)*/,
 													   _T("Show Area")));
             m_wndStandardBar.ReplaceButton(ID_CHARSET_DROPDOWN,
                 CMFCToolBarMenuButton (-1, *menu.GetSubMenu(1),
-                                                       -1 /*CImageHash::GetImageOfCommand(ID_CHARSET_DROPDOWN)*/,
+                                                       afxCommandManager->GetCmdImage(ID_CHARSET_DROPDOWN) /*CImageHash::GetImageOfCommand(ID_CHARSET_DROPDOWN)*/,
 													   _T("Char Set")));
             m_wndStandardBar.ReplaceButton(ID_CONTROL_DROPDOWN,
                 CMFCToolBarMenuButton (-1, *menu.GetSubMenu(2),
-                                                      -1 /*CImageHash::GetImageOfCommand(ID_CONTROL_DROPDOWN)*/,
+                                                      afxCommandManager->GetCmdImage(ID_CONTROL_DROPDOWN) /*CImageHash::GetImageOfCommand(ID_CONTROL_DROPDOWN)*/,
 													  _T("Ctrl Chars")));
         }
         m_wndStandardBar.ReplaceButton(ID_SCHEME,
@@ -4672,7 +4676,8 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
     }
     popup_menu_.push_back(pMenuPopup);
     //TRACE("OPEN POPUP %p %x\n", pMenuPopup, pMenuPopup->m_hWnd);
-    
+
+#if 0  // This is now done in MFC9 by CMDIFrameWndEx::EnablePaneMenu
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_VIEW_TOOLBARS) >= 0)
     {
         if (CMFCToolBar::IsCustomizeMode())
@@ -4691,6 +4696,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
         SetupToolbarMenu(*pPopup, ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10);
         pMenuPopup->GetMenuBar()->ImportFromMenu (*pPopup, TRUE);
     }
+#endif
 
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_NAV_BACK_DUMMY) >= 0)
     {

@@ -149,7 +149,7 @@ class CHexComboButton : public CMFCToolBarComboBoxButton
 public:
     CHexComboButton() :
         CMFCToolBarComboBoxButton(ID_JUMP_HEX_COMBO, 
-            -1, //CImageHash::GetImageOfCommand(ID_JUMP_HEX),
+            afxCommandManager->GetCmdImage(ID_JUMP_HEX), //CImageHash::GetImageOfCommand(ID_JUMP_HEX),
             CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
             120)
     {
