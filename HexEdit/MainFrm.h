@@ -228,7 +228,7 @@ public:
 	afx_msg LRESULT OnToolbarReset(WPARAM,LPARAM);
 	afx_msg LRESULT OnMenuReset(WPARAM,LPARAM);
 	//BOOL OnToolsViewUserToolbar (UINT id);
-	void OnUpdateToolsViewUserToolbar (CCmdUI* pCmdUI);
+	//void OnUpdateToolsViewUserToolbar (CCmdUI* pCmdUI);
 	//afx_msg LRESULT OnToolbarContextMenu(WPARAM,LPARAM);
 	afx_msg LRESULT OnHelpCustomizeToolbars(WPARAM wp, LPARAM lp);
 	afx_msg void OnSearchCombo();

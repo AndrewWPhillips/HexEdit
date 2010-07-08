@@ -200,7 +200,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         ON_REGISTERED_MESSAGE(AFX_WM_RESETMENU, OnMenuReset)
         //ON_REGISTERED_MESSAGE(AFX_WM_TOOLBARMENU, OnToolbarContextMenu)
         //ON_COMMAND_EX_RANGE(ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10, OnToolsViewUserToolbar)
-        ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10, OnUpdateToolsViewUserToolbar)
+        //ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10, OnUpdateToolsViewUserToolbar)
         ON_REGISTERED_MESSAGE(AFX_WM_CUSTOMIZEHELP, OnHelpCustomizeToolbars)
         ON_COMMAND(ID_WINDOW_MANAGER, ShowWindowsDialog)
 
@@ -4493,11 +4493,9 @@ BOOL CMainFrame::OnToolsViewUserToolbar(UINT uiId)
     RecalcLayout();
     return TRUE;
 }
-#endif
 
 void CMainFrame::OnUpdateToolsViewUserToolbar(CCmdUI* pCmdUI)
 {
-#if 0 // xxx fix for MFC9
     CMFCToolBar* pUserToolBar = GetUserBarByIndex(pCmdUI->m_nID - ID_VIEW_USER_TOOLBAR1);
     if (pUserToolBar == NULL)
     {
@@ -4507,8 +4505,8 @@ void CMainFrame::OnUpdateToolsViewUserToolbar(CCmdUI* pCmdUI)
 
     pCmdUI->Enable();
     pCmdUI->SetCheck(pUserToolBar->GetStyle() & WS_VISIBLE);
-#endif
 }
+#endif
 
 afx_msg LRESULT CMainFrame::OnMenuReset(WPARAM wp, LPARAM)
 {
