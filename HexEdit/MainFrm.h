@@ -172,7 +172,7 @@ public:
     afx_msg void OnEditGoto(int base_mode = 0);
     afx_msg void OnWindowNew();
     afx_msg BOOL OnMDIWindowCmd(UINT nID);
-    afx_msg BOOL OnBarCheck(UINT nID);
+    afx_msg BOOL OnPaneCheck(UINT nID);
     afx_msg void OnUpdateViewViewbar(CCmdUI* pCmdUI);
     afx_msg void OnViewViewbar();
     afx_msg void OnUpdateViewEditbar(CCmdUI* pCmdUI);
@@ -227,9 +227,9 @@ public:
     // BCG stuff
 	afx_msg LRESULT OnToolbarReset(WPARAM,LPARAM);
 	afx_msg LRESULT OnMenuReset(WPARAM,LPARAM);
-	BOOL OnToolsViewUserToolbar (UINT id);
+	//BOOL OnToolsViewUserToolbar (UINT id);
 	void OnUpdateToolsViewUserToolbar (CCmdUI* pCmdUI);
-	afx_msg LRESULT OnToolbarContextMenu(WPARAM,LPARAM);
+	//afx_msg LRESULT OnToolbarContextMenu(WPARAM,LPARAM);
 	afx_msg LRESULT OnHelpCustomizeToolbars(WPARAM wp, LPARAM lp);
 	afx_msg void OnSearchCombo();
 	afx_msg void OnUpdateSearchCombo(CCmdUI* pCmdUI);

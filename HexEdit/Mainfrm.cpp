@@ -199,7 +199,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         ON_REGISTERED_MESSAGE(AFX_WM_RESETTOOLBAR, OnToolbarReset)
         ON_REGISTERED_MESSAGE(AFX_WM_RESETMENU, OnMenuReset)
         //ON_REGISTERED_MESSAGE(AFX_WM_TOOLBARMENU, OnToolbarContextMenu)
-        ON_COMMAND_EX_RANGE(ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10, OnToolsViewUserToolbar)
+        //ON_COMMAND_EX_RANGE(ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10, OnToolsViewUserToolbar)
         ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10, OnUpdateToolsViewUserToolbar)
         ON_REGISTERED_MESSAGE(AFX_WM_CUSTOMIZEHELP, OnHelpCustomizeToolbars)
         ON_COMMAND(ID_WINDOW_MANAGER, ShowWindowsDialog)
@@ -4479,9 +4479,9 @@ LRESULT CMainFrame::OnToolbarContextMenu(WPARAM,LPARAM lp)
 }
 #endif
 
+#if 0 // This is now handled automatically in MFC9
 BOOL CMainFrame::OnToolsViewUserToolbar(UINT uiId)
 {
-#if 0 // xxx fix for MFC9
     CMFCToolBar* pUserToolBar = GetUserBarByIndex(uiId - ID_VIEW_USER_TOOLBAR1);
     if (pUserToolBar == NULL)
     {
@@ -4490,10 +4490,10 @@ BOOL CMainFrame::OnToolsViewUserToolbar(UINT uiId)
     }
     
     ShowControlBar(pUserToolBar, !(pUserToolBar->GetStyle() & WS_VISIBLE), FALSE);
-#endif
     RecalcLayout();
     return TRUE;
 }
+#endif
 
 void CMainFrame::OnUpdateToolsViewUserToolbar(CCmdUI* pCmdUI)
 {
