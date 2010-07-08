@@ -61,7 +61,7 @@ public:
 
     void SaveLayout();                                                          // save layout to registry (on close)
 
-   	virtual HRESULT DisplayFolder(LPAFX_SHELLITEMINFO lpItemInfo);
+	virtual HRESULT DisplayFolder(LPAFX_SHELLITEMINFO lpItemInfo);
 	virtual HRESULT DisplayFolder(LPCTSTR lpszPath) { return CMFCShellListCtrl::DisplayFolder(lpszPath); }
 	virtual void OnSetColumns();                                                // sets up columns (in detail view mode)
 	virtual CString OnGetItemText(int iItem, int iColumn, LPAFX_SHELLITEMINFO pItem); // used in displaying text in columns
@@ -72,9 +72,8 @@ public:
     virtual void AdjustMenu(HMENU);
     virtual void MenuCommand(HMENU, UINT, LPCTSTR);
 
-	// xxx dummies until we fix for MFC9
-    void SetFilter(LPCTSTR ff) {  }
-    CString GetFilter() { return ""; }
+    void SetFilter(LPCTSTR ff) { m_filter = CString(ff); }
+    CString GetFilter() { return m_filter; }
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -84,8 +83,11 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
+	// Overrides
+	virtual HRESULT EnumObjects(LPSHELLFOLDER pParentFolder, LPITEMIDLIST pidlParent);
+
 private:
-    void CHistoryShellList::do_move(int ii);
+    void do_move(int ii);
 
 	CExplorerWnd *pExpl_;
     std::vector<CString> name_;  // Names of folders
@@ -97,6 +99,8 @@ private:
     static char * defaultWidths;
 
 	CExplorerDropTarget * m_pDropTarget;
+
+    CString m_filter;            // Use for filtering displayed file names
 };
 
 /////////////////////////////////////////////////////////////////////////////
