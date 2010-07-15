@@ -36,6 +36,7 @@ public:
         TOK_LPAR, TOK_RPAR, TOK_LBRA, TOK_RBRA,
         TOK_ASSIGN, TOK_COMMA, 
         TOK_QUESTION, TOK_COLON,
+		TOK_INC, TOK_DEC,   // ++ and --
         // Numeric operations
         TOK_MUL, TOK_DIV, TOK_MOD, TOK_PLUS, TOK_MINUS, 
         TOK_BITNOT, TOK_BITAND, TOK_BITOR, TOK_XOR, TOK_SHL, TOK_SHR, 

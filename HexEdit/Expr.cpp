@@ -2844,6 +2844,44 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
         }
         // At this point val.error may be set and we leave it on to
         // propagate through the evaluations
+
+		// Check for post-increment and post-decrement
+		if (next_tok == TOK_INC)
+		{
+			if (vname.IsEmpty() || val.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "Post-increment (++) requires an integer variable");
+				return TOK_NONE;
+			}
+			// Only change the value if side effects allowed
+			if (changes_on_)
+			{
+				++val.int64;
+				var_[vname] = val;
+				val.int64--;   // restore value as this is *post* increment
+				var_changed_ = clock();
+			}
+			vname.Empty();  // Clear vname since we can't assign after auto-inc
+            next_tok = get_next();
+		}
+		else if (next_tok == TOK_DEC)
+		{
+			if (vname.IsEmpty() || val.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "Post-decrement (++) requires an integer variable");
+				return TOK_NONE;
+			}
+			// Only change the value if side effects allowed
+			if (changes_on_)
+			{
+				val.int64--;
+				var_[vname] = val;
+				++val.int64;   // restore value as this is *post* decrement
+				var_changed_ = clock();
+			}
+			vname.Empty();  // Clear vname since we can't assign after auto-dec
+            next_tok = get_next();
+		}
         return next_tok;
     case TOK_LPAR:
         if (error(next_tok = prec_lowest(val), "Expected expression after opening parenthesis"))
@@ -2855,7 +2893,47 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             return TOK_NONE;
         }
         return get_next();
-    case TOK_PLUS:
+
+	case TOK_INC:  // pre-increment
+		{
+			CString vname2;  // Don't use vname as an incremented var cannot be later assigned to
+			next_tok = prec_prim(val, vname2);
+			vname2.MakeUpper();
+			if (vname2.IsEmpty() || val.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "Pre-increment (++) requires an integer variable");
+				return TOK_NONE;
+			}
+			++val.int64;
+			// Only change the value if side effects allowed
+			if (changes_on_)
+			{
+				var_[vname2] = val;
+				var_changed_ = clock();
+			}
+		}
+		return next_tok;
+	case TOK_DEC:  // pre-decrement
+		{
+			CString vname2;  // Don't use vname as an decremented var cannot be later assigned to
+			next_tok = prec_prim(val, vname2);
+			vname2.MakeUpper();
+			if (vname2.IsEmpty() || val.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "Pre-decrement (--) requires an integer variable");
+				return TOK_NONE;
+			}
+			val.int64--;
+			// Only change the value if side effects allowed
+			if (changes_on_)
+			{
+				var_[vname2] = val;
+				var_changed_ = clock();
+			}
+		}
+		return next_tok;
+
+    case TOK_PLUS:  // unary +
         if (error(next_tok = prec_prim(val, vname), "Expected number after +"))
             return TOK_NONE;
 
@@ -3531,6 +3609,16 @@ expr_eval::tok_t expr_eval::get_next()
         ++p_;
         return TOK_RPAR;
     }
+    else if (strncmp(p_, "++", 2) == 0)
+	{
+		p_ += 2;
+        return TOK_INC;
+	}
+    else if (strncmp(p_, "--", 2) == 0)
+	{
+		p_ += 2;
+        return TOK_DEC;
+	}
     else
     {
         ++p_;
