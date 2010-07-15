@@ -1087,13 +1087,7 @@ void CHexEditApp::OnRepairDialogbars()
     mm->m_paneCalc.ShowAndUnroll();
 	mm->m_paneExpl.ShowAndUnroll();
 
-#if 0 // xxx TODO for MFC9
-    // Restore initial (nice looking) window size for calculator
-    mm->m_wndCalc.m_szFloat = mm->m_wndCalc.m_sizeInitial;
-
-	// Fix and make sure they are visible
-	mm->RecalcLayout();
-#endif
+	mm->InitDockWindows();
 }
 
 void CHexEditApp::OnRepairCust()
