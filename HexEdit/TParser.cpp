@@ -581,6 +581,7 @@ CString TParser::get_pp_line()
 					else
 						while (pp_def_.find(subst) != pp_def_.end())
 						{
+							// This does any simple replacements avoiding the case of get
 							replaced = true;
 							subst = pp_def_[subst];
 							if (subst == id)        // Subst back to original (avoid inf loop)
@@ -591,30 +592,43 @@ CString TParser::get_pp_line()
 					while (::isspace(*pb2))    // Skip to '('
 						++pb2;
 
-					// If macro not found see if it is a "function-like" macro
-					if (!replaced && *pb2 == '(')
+					// Create name + colon to check for function like macros
+					CString ss = CString(subst) + ":";
+					std::map<CString, CString>::const_iterator pp = pp_def_.lower_bound(ss);
+					if (!replaced && *pb2 == '(' &&
+						pp != pp_def_.end() &&
+						strncmp(ss, pp->first, ss.GetLength()) == 0)
 					{
-						std::vector<CString> pvalue;
-						int nesting = 0;
-						bool in_str = false, in_chr = false;
+						// Appears to be a "function-like" macro
 						CString tmp;
+						std::vector<CString> pvalue;  // array of params to macro
+
+						// First work out how many params to expect
+						char *endp;
+						tmp = pp->first;
+						int num_params = strtoul(tmp.GetBuffer() + ss.GetLength(), &endp, 10);  // number of params the macro takes
+						bool is_variadic = *endp == '+';                                        // is it a variadic (...) macro?
+
+						int nesting = 0;                       // keeps track of brackets so we don't finish a parameter inside a nested expression
+						bool in_str = false, in_chr = false;   // Keep track of string and character literals
+						tmp.Empty();
 						for (;;)
 						{
 							++pb2;
 							if (*pb2 == '\0')
 							{
-								// We don't support multi-line macro invocations
+								// We don't support multi-line macro invocations so exit at eoln
 								pvalue.clear();
 								break;
 							}
 							if (in_str)
 							{
-								if (*pb2 == '"')
-									in_str = false;
+								if (*pb2 == '"' && *(pb2-1) != '\\')
+									in_str = false;  // end of string found
 							}
 							else if (in_chr)
 							{
-								if (*pb2 == '\'')
+								if (*pb2 == '\'' && *(pb2-1) != '\\')
 									in_chr = false;
 							}
 							else if (*pb2 == '"')
@@ -625,13 +639,16 @@ CString TParser::get_pp_line()
 							{
 								in_chr = true;
 							}
-							else if ((*pb2 == ',' || *pb2 == ')') && nesting == 0)
+							else if (nesting == 0 &&
+								     (*pb2 == ')' || *pb2 == ',' && (!is_variadic || pvalue.size() < num_params - 1)) )
 							{
+								// This places parameters onto the end of pvalue unless there are variadic parameters
+								// in which they are all stored together in the string for the "last" parameter
 								pvalue.push_back(tmp);
-								tmp.Empty();
 								if (*pb2 == ')')
 									break;
-								continue;            // don't add comma to a substitution
+								tmp.Empty();
+								continue;            // go to start of loop to avoid adding the comma as part of the subst
 							}
 							else if (*pb2 == '(')
 								++nesting;
@@ -644,25 +661,20 @@ CString TParser::get_pp_line()
 						if (*pb2 == ')')
 							++pb2;
 
-						// Generate a name including parameter count
-						CString macro_name;
-						macro_name.Format("%s:%ld", subst, long(pvalue.size()));
-						if (pp_def_.find(macro_name) != pp_def_.end())
+						// Check that we got the right number of parameters
+						if (pvalue.size() == num_params)
 						{
-							// Found it - so get replacement text
-							subst = pp_def_[macro_name];
-
+							subst = pp->second;
 							// Perform substitutions
 							for (std::vector<CString>::const_iterator pv = pvalue.begin(); pv != pvalue.end(); ++pv)
 							{
-								CString tmp;
 								tmp.Format("$%ld$", long(pv - pvalue.begin()));
 								subst.Replace(tmp, *pv);
 							}
 							replaced = true;
 						}
 						else
-							pb2 = saved;        // Not found so go back to '('
+							pb2 = saved;        // Wrong number of params so go back to open bracket
 					}
 					else
 						pb2 = saved;
@@ -871,7 +883,13 @@ CString TParser::get_pp_line()
 			// #define ULONG  unsigned long      => name="ULONG", text="unsigned long"
 			// For macros with parameters we also store the number of parameters in the macro
 			// name, and where they are substituted in the replacement text using $<param_num>$
-			// eg #define ADD(a,b) ((a)+(b))     => name="ADD:2" text="(( $1$ )+( $2$ ))"
+			// eg #define ADD(a,b) ((a)+(b))     => name="ADD:2" text="(( $0$ )+( $1$ ))"
+
+			// For variadic macros we add a plus sign to the param count and use for __VA_ARGS__ the last param
+			// eg #define M(s, ...) f(s,__VA_ARGS__)  => name="M:2+" text="f( $0$ , $1$ )"
+
+			// Note that each parameter in the substitution text has a space before and after
+			// to assist with paste (##) operator (see below).
 			while (::isspace(*pb))
 				++pb;
 
@@ -888,6 +906,7 @@ CString TParser::get_pp_line()
 				//while (::isspace(*pb))    // Don't skip spaces here since '(' must be right after macro name for function-like macro
 				//	++pb;
 				std::vector<CString> param;
+				bool is_variadic = false;
                 if (*pb == '(')
 				{
 					do
@@ -895,6 +914,18 @@ CString TParser::get_pp_line()
 						++pb;
 						while (::isspace(*pb))
 							++pb;
+						// Check for variadic macro
+						if (strncmp(pb, "...", 3) == 0)
+						{
+							is_variadic = true;
+							pb += 3;
+							param.push_back(CString("__VA_ARGS__"));
+							// The ... must be at the end of the parameters so skip any white
+							// space and break from loop (whence closing bracket expected).
+							while (::isspace(*pb))
+								++pb;
+							break;  
+						}
 						// Get parameter name
 						for (pb2 = pb; ::isalnum(*pb2) || *pb2 == '_'; ++pb2)
 							; // nothing here
@@ -914,7 +945,7 @@ CString TParser::get_pp_line()
 				{
 					// Add the number of parameters to the name preceded by a colon
 					CString tmp;
-					tmp.Format(":%ld", long(param.size()));
+					tmp.Format(":%ld%s", long(param.size()), is_variadic ? "+" : "");
 					macro_name += tmp;
 				}
 
