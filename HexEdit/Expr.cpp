@@ -1464,12 +1464,11 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
                 break;
             }
         }
-// Allow taking of address of fields of type "none"
-//        if (val.typ == TYPE_NONE)
-//        {
-//            sprintf(error_buf_, "Unknown symbol \"%.200s\"", psymbol_);
-//            return TOK_NONE;
-//        }
+        if (val.typ == TYPE_NONE)
+        {
+            sprintf(error_buf_, "Address of unknown symbol \"%.200s\"", psymbol_);
+            return TOK_NONE;
+        }
 
         if (next_tok != TOK_RPAR)
         {
