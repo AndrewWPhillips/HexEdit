@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="HexEditVS2008"
+	Name="HexEditVS2010"
 	ProjectGUID="{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}"
 	RootNamespace="HexEdit"
 	Keyword="MFCProj"
@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="C:\Andrew\cpp_out\HexEdit\ReleaseVS2008"
-			IntermediateDirectory="C:\Andrew\cpp_out\HexEdit\ReleaseVS2008"
+			OutputDirectory="C:\Andrew\cpp_out\HexEdit\ReleaseVS2010"
+			IntermediateDirectory="C:\Andrew\cpp_out\HexEdit\ReleaseVS2010"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
@@ -205,8 +205,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="C:\Andrew\cpp_out\HexEdit\DebugVS2008"
-			IntermediateDirectory="C:\Andrew\cpp_out\HexEdit\DebugVS2008"
+			OutputDirectory="C:\Andrew\cpp_out\HexEdit\DebugVS2010"
+			IntermediateDirectory="C:\Andrew\cpp_out\HexEdit\DebugVS2010"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
@@ -1659,11 +1659,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
