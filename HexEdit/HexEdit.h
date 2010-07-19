@@ -642,6 +642,7 @@ public:
     BOOL splash_;                       // Display splash screen?
     BOOL tipofday_;                     // Show tip of the day at startup?
     BOOL run_autoexec_;                 // Run AutoExec.HEM at startup if it exists
+	BOOL update_check_;                 // Check for updates?
 
     // History list options
 	BOOL no_recent_add_;                // When a file is opened it is not added to "My Recent Documents" (OFN_DONTADDTORECENT)

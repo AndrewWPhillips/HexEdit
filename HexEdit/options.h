@@ -57,6 +57,7 @@ struct OptValues
     BOOL    splash_;
     BOOL    tipofday_;
     BOOL    run_autoexec_;
+	BOOL	update_check_;
 
 	UINT	recent_files_;
 	BOOL    no_recent_add_;

@@ -69,6 +69,7 @@
 #include "Password.h"   // For encryption password dialog
 #include "Misc.h"
 #include "Splasher.h"       // For splash window
+#include "UpdateChecker.h"  // For checking for updates
 
 // The following is not in a public header
 extern BOOL AFXAPI AfxFullPath(LPTSTR lpszPathOut, LPCTSTR lpszFileIn);
@@ -354,6 +355,24 @@ BOOL CHexEditApp::InitInstance()
 		// This must be done after getting version info since theApp.version_ is written to file
         GetMystery();                   // Get mystery info for later security checks
 #endif
+		if (update_check_)
+		{
+			time_t now = time(NULL);
+			time_t prev = (time_t)GetProfileInt(_T("Update"), _T("LastCheckDate"), 0);  // last time we checked
+			if (now > prev + (30*24L*60*60L))  // Check about once a month
+			{
+				UpdateChecker checker(_T("http://www.hexedit.com/xxx"));
+				if (checker.Online())
+				{
+					if (checker.UpdateAvailable(version_))
+					{
+						AfxMessageBox(_T("A newer version of HexEdit is available for download."),
+							MB_OK | MB_ICONINFORMATION);
+					}
+					WriteProfileInt(_T("Update"), _T("LastCheckDate"), (int)now);
+				}
+			}
+		}
 
         // Work out if there is a previous instance running
         hwnd_1st_ = ::FindWindow(szHexEditClassName, NULL);
@@ -1851,6 +1870,7 @@ void CHexEditApp::LoadOptions()
     splash_ = GetProfileInt("Options", "Splash", 1) ? TRUE : FALSE;
     tipofday_ = GetProfileInt("Tip", "StartUp", 0) ? FALSE : TRUE;      // inverted
     run_autoexec_ = GetProfileInt("Options", "RunAutoExec", 1) ? TRUE : FALSE;
+	update_check_ = GetProfileInt("Update", "Check", 1) ? TRUE : FALSE;
 
     backup_        = (BOOL)GetProfileInt("Options", "CreateBackup",  0);
 	backup_space_  = (BOOL)GetProfileInt("Options", "BackupIfSpace", 1);
@@ -2293,6 +2313,7 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "Splash", splash_ ? 1 : 0);
     WriteProfileInt("Tip", "StartUp", tipofday_ ? 0 : 1);   // inverted
     WriteProfileInt("Options", "RunAutoExec", run_autoexec_ ? 1 : 0);
+    WriteProfileInt("Update", "Check", update_check_ ? 1 : 0);
 
     WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
     WriteProfileInt("MainFrame", "FloatDialogsMove", dlg_move_ ? 1 : 0);
@@ -2883,6 +2904,7 @@ void CHexEditApp::get_options(struct OptValues &val)
     val.splash_ = splash_;
     val.tipofday_ = tipofday_;
     val.run_autoexec_ = run_autoexec_;
+    val.update_check_ = update_check_;
 
     // History
     val.recent_files_ = recent_files_;
@@ -3063,6 +3085,7 @@ void CHexEditApp::set_options(struct OptValues &val)
     splash_ = val.splash_;
     tipofday_ = val.tipofday_;
     run_autoexec_ = val.run_autoexec_;
+    update_check_ = val.update_check_;
     if (recent_files_ != val.recent_files_)
     {
         recent_files_ = val.recent_files_;

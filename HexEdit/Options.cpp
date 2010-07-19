@@ -270,6 +270,7 @@ void CSystemGeneralPage::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_SPLASH, pParent->val_.splash_);
     DDX_Check(pDX, IDC_TOD, pParent->val_.tipofday_);
     DDX_Check(pDX, IDC_AUTOEXEC, pParent->val_.run_autoexec_);
+    //DDX_Check(pDX, IDC_UPDATE, pParent->val_.update_check_);
     DDX_Control(pDX, IDC_HIST_PAGE, ctl_hist_butn_);
 }
 
