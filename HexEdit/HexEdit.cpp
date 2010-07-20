@@ -1032,7 +1032,21 @@ void CHexEditApp::OnFilePrintSetup()
 
 void CHexEditApp::OnFileSaveAll() 
 {
-	m_pDocManager->SaveAllModified();
+	// SaveAllModified will prompt to save - we want to simply always save
+	//m_pDocManager->SaveAllModified();
+
+    // Get each open document and force save
+    POSITION posn = m_pDocTemplate->GetFirstDocPosition();
+    while (posn != NULL)
+    {
+        CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
+        ASSERT(pdoc != NULL);
+		// Note: We don't display a message if the file name is empty as this was a
+		// file that was not yet written to disk and the user probably cancelled
+		// out of the file save dialog (so they already know the file is not saved).
+		if (pdoc->IsModified() && !pdoc->DoFileSave() && !pdoc->GetFileName().IsEmpty())
+			AfxMessageBox("Could not save " + pdoc->GetFileName());
+    }
 }
 
 void CHexEditApp::OnFileCloseAll() 
