@@ -2893,6 +2893,54 @@ void CHexEditView::OnDraw(CDC* pDC)
         }
     }
 
+	// Draw indicator around byte that is used for info tips
+    if (!pDC->IsPrinting() && last_tip_addr_ >= first_virt && last_tip_addr_ < last_virt)
+    {
+        CRect info_rect;                // Where mark is drawn in logical coords
+
+        info_rect.top = int(((last_tip_addr_ + offset_)/rowsize_) * line_height - 
+                            doc_rect.top + bdr_top_ + 1);
+        info_rect.bottom = info_rect.top + line_height - 1;
+        if (neg_y)
+        {
+            info_rect.top = -info_rect.top;
+            info_rect.bottom = -info_rect.bottom;
+        }
+
+		CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
+		CPen * psaved_pen = pDC->SelectObject(&pen1);
+        if (!display_.vert_display && display_.hex_area)
+        {
+            info_rect.left = hex_pos(int((last_tip_addr_ + offset_)%rowsize_), char_width) - 
+                             doc_rect.left + bdr_left_;
+            info_rect.right = info_rect.left + 2*char_width + 2;
+            if (neg_x)
+            {
+                info_rect.left = -info_rect.left;
+                info_rect.right = -info_rect.right;
+            }
+
+            //pDC->FillSolidRect(&info_rect, sector_col_);
+			pDC->Rectangle(&info_rect);
+        }
+
+        if (display_.vert_display || display_.char_area)
+        {
+            info_rect.left = char_pos(int((last_tip_addr_ + offset_)%rowsize_), char_width, char_width_w) - 
+                             doc_rect.left + bdr_left_ + 1;
+            info_rect.right = info_rect.left + char_width_w;
+            if (neg_x)
+            {
+                info_rect.left = -info_rect.left;
+                info_rect.right = -info_rect.right;
+            }
+            //pDC->FillSolidRect(&info_rect, sector_col_);
+			pDC->Rectangle(&info_rect);
+        }
+		(void)pDC->SelectObject(psaved_pen);
+		(void)pDC->SelectObject(psaved_brush);
+    }
+
     if (!display_.hide_highlight)
     {
         // Draw highlighted areas
@@ -5546,6 +5594,12 @@ BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
     // As the address under the mouse will probably change we need to get
     // rid of the tip window which shows info about the byte under the mouse.
     tip_.Hide(0);
+	if (last_tip_addr_ != -1)
+	{
+		FILE_ADDRESS addr = last_tip_addr_;
+		last_tip_addr_ = -1;
+		invalidate_hex_addr_range(addr, addr+1);
+	}
 #ifdef RULER_ADJUST
     ruler_tip_.Hide(0);
 #endif
@@ -5968,7 +6022,15 @@ void CHexEditView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	// Also make sure info tip is hidden
     if (nChar != VK_SHIFT)
+	{
         tip_.Hide(0);  // hide immediately
+		if (last_tip_addr_ != -1)
+		{
+			FILE_ADDRESS addr = last_tip_addr_;
+			last_tip_addr_ = -1;
+			invalidate_hex_addr_range(addr, addr+1);
+		}
+	}
 #ifdef RULER_ADJUST
     ruler_tip_.Hide(0);
 #endif
@@ -6647,6 +6709,13 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
     {
         // Set a timer so that we can check if we want to display a tip window
         track_mouse(TME_HOVER);
+		if (last_tip_addr_ != -1)
+		{
+			// Hide the box around the tip byte
+			FILE_ADDRESS addr = last_tip_addr_;
+			last_tip_addr_ = -1;
+			invalidate_hex_addr_range(addr, addr+1);
+		}
     }
 	else if (addr != last_tip_addr_ && tip_.IsWindowVisible())
     {
@@ -6704,6 +6773,7 @@ LRESULT CHexEditView::OnMouseHover(WPARAM, LPARAM lp)
 		    CPoint tip_pt;
 		    tip_pt = pt + CSize(text_width_w_, text_height_);
 		    last_tip_addr_ = addr;
+			invalidate_hex_addr_range(addr, addr+1);
 		    ClientToScreen(&tip_pt);
             tip_.Move(tip_pt, false);
             tip_.Show();
