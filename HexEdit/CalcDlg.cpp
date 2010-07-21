@@ -314,8 +314,13 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	ctl_sel_at_store_  .SetTextColor(RGB(0xC0, 0x0, 0x0));
 	ctl_sel_len_store_ .SetTextColor(RGB(0xC0, 0x0, 0x0));
 
-	// Indicates that GO button takes user back to file
-	ctl_go_.SetMouseCursorHand();
+	ctl_go_.SetMouseCursorHand();   	// Indicates that GO button takes user back to file
+	ctl_go_.m_bDefaultClick = TRUE;     // Default click (go address) as well as drop-down menu (sector etc)
+	//ctl_go_.m_bRightArrow = FALSE;
+	ctl_go_.m_bOSMenu = FALSE;
+
+    VERIFY(go_menu_.LoadMenu(IDR_CALC_GO));
+    ctl_go_.m_hMenu = go_menu_.GetSubMenu(0)->GetSafeHmenu();  // Add drop-down menu (handled by checking m_nMenuResult in button click event - see OnGo)
 
 	// Binary operations are blue
 	ctl_addop_.   SetTextColor(RGB(0x0, 0x0, 0xC0));
@@ -1883,7 +1888,7 @@ LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 	if (m_first)
 	{
 		// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT 
-		m_resizer.Add(IDC_EDIT, 0, 8, 100, 3);        // edit control resizes with width (moves/sizes slightly vert.)
+		m_resizer.Add(IDC_EDIT, 0, 0, 100, 0);        // edit control resizes with width (moves/sizes slightly vert.)
 		m_resizer.Add(IDC_OP_DISPLAY, 100, 10, 0, 0);  // operator display sticks to right edge (moves vert)
 
 		// Settings controls don't move/size horizontally but move vert. and size slightly too
@@ -2250,6 +2255,18 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 // after the current cursor position has been moved.
 void CCalcDlg::OnGo()                   // Move cursor to current value
 {
+	// First work out if we arejumping by address or sector
+	bool sector = false;
+	switch (ctl_go_.m_nMenuResult)
+	{
+	case ID_GOADDRESS:
+		sector = false;
+		break;
+	case ID_GOSECTOR:
+		sector = true;
+		break;
+	}
+
 	edit_.update_value(true);           // eval the expression allowing side-effects now
 
 	if (current_type_ != CJumpExpr::TYPE_INT)
@@ -2281,16 +2298,21 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 
     // Make sure we can go to the address
     CHexEditView *pview = GetView();
-    if (pview == NULL || (current_&mask_) > (unsigned __int64)pview->GetDocument()->length())
-    {
-        mm_->StatusBarText("Error: new cursor address past end of file");
-        aa_->mac_error_ = 10;
-        return;
-    }
+	if (pview == NULL)
+	{
+		// This should not happen unless we are playing back a macro
+		mm_->StatusBarText("Error: no file open for jump");
+		aa_->mac_error_ = 10;
+		return;
+	}
 
 	CString ss;
 	edit_.GetWindowText(ss);
-	if (radix_ == 16)
+	if (sector)
+	{
+		ss = "Go To sector " + ss + " ";
+	}
+	else if (radix_ == 16)
 	{
         mm_->AddHexHistory(ss);
 		ss = "Go To (hex) " + ss + " ";
@@ -2305,8 +2327,27 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 		ss = "Go To (calc) " + ss + " ";
 	}
 
-    pview->MoveWithDesc(ss, current_);
-
+	DWORD sector_size = pview->GetDocument()->GetSectorSize();
+	if (sector && sector_size > 0)
+	{
+		if ((current_&mask_)* sector_size > (unsigned __int64)pview->GetDocument()->length())
+		{
+			mm_->StatusBarText("Error: sector address is past end of file");
+			aa_->mac_error_ = 10;
+			return;
+		}
+		pview->MoveWithDesc(ss, (current_&mask_)* sector_size);
+	}
+	else
+	{
+		if ((current_&mask_) > (unsigned __int64)pview->GetDocument()->length())
+		{
+			mm_->StatusBarText("Error: new address is past end of file");
+			aa_->mac_error_ = 10;
+			return;
+		}
+		pview->MoveWithDesc(ss, current_&mask_);
+	}
     // Give view the focus
     if (pview != pview->GetFocus())
         pview->SetFocus();

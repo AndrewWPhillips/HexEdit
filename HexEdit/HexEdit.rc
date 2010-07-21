@@ -411,7 +411,8 @@ BEGIN
         MENUITEM "&Open Special...",            ID_FILE_OPEN_SPECIAL
         MENUITEM SEPARATOR
         MENUITEM "&Close",                      ID_FILE_CLOSE
-        MENUITEM "Close &Others",               ID_FILE_CLOSE_OTHERS        MENUITEM "Close All",                   ID_FILE_CLOSE_ALL
+        MENUITEM "Close &Others",               ID_FILE_CLOSE_OTHERS
+        MENUITEM "Close All",                   ID_FILE_CLOSE_ALL
         MENUITEM SEPARATOR
         MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
         MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
@@ -1186,7 +1187,8 @@ BEGIN
     POPUP "MDI Tabs Context"
     BEGIN
         MENUITEM "&Close",                      ID_FILE_CLOSE
-        MENUITEM "Close &Others",               ID_FILE_CLOSE_OTHERS        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Close &Others",               ID_FILE_CLOSE_OTHERS
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
         MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
         MENUITEM SEPARATOR
         MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
@@ -3047,7 +3049,8 @@ BEGIN
     ID_FILE_OPEN_SPECIAL    "Open a disk or volume\nOpen Special"
     ID_FILE_SAVE_ALL        "Save all modified files\nSave All"
     ID_FILE_CLOSE_ALL       "Close all open files\nClose All"
-    ID_FILE_CLOSE_OTHERS    "Close all files except active one\nClose Others"END
+    ID_FILE_CLOSE_OTHERS    "Close all files except active one\nClose Others"
+END
 
 STRINGTABLE 
 BEGIN
@@ -3387,6 +3390,15 @@ BEGIN
         MENUITEM "&Use Defined Struct...",      ID_DFFD_INSERT_USE_STRUCT
         MENUITEM "&Expression Evaluation...",   ID_DFFD_INSERT_EVAL
         MENUITEM "&Data...",                    ID_DFFD_INSERT_DATA
+    END
+END
+
+IDR_CALC_GO MENU 
+BEGIN
+    POPUP "Go button"
+    BEGIN
+        MENUITEM "Jump To Address",             ID_GOADDRESS
+        MENUITEM "Jump To Sector",              ID_GOSECTOR
     END
 END
 

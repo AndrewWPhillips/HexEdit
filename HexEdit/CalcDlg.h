@@ -144,7 +144,7 @@ public:
 	CMFCButton ctl_unary_square_root_;
 	CMFCButton ctl_sel_len_store_;
 	CMFCButton ctl_addop_;
-	CMFCButton ctl_go_;
+	CMFCMenuButton ctl_go_;
 
 	// Menu buttons
     CMFCMenuButton ctl_hex_hist_;
@@ -152,7 +152,8 @@ public:
     CMFCMenuButton ctl_vars_;
     CMFCMenuButton ctl_func_;
 
-	CMenu func_menu_;
+	CMenu func_menu_;  // For functions
+	CMenu go_menu_;    // Mneu for go button (go address, sector etc)
 
 	// We need to know if there is an expression or a simple integer constant currently
 	// in the edit box.  This is necessary for backward compatibility (when expression

@@ -208,6 +208,7 @@
 #define IDR_MISC                        256
 #define IDR_OPER                        257
 #define IDI_MACRO                       258
+#define IDI_ARROW                       259
 #define IDD_NEW_SCHEME                  263
 #define IDI_STRUCT                      263
 #define IDD_MULTIPLAY1                  264
@@ -406,7 +407,7 @@
 #define IDD_CALC_PARENT                 432
 #define IDD_PROP_PARENT                 433
 #define IDD_EXPLORER_PARENT             434
-
+#define IDR_CALC_GO                     435
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1565,6 +1566,8 @@
 #define ID_ANT_HL                       39122
 #define ID_ANT_SEARCH                   39123
 #define ID_ANT_BM                       39124
+#define ID_GOADDRESS                    39130
+#define ID_GOSECTOR                     39131
 
 // Next default values for new objects
 // 
@@ -1572,7 +1575,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        436
-#define _APS_NEXT_COMMAND_VALUE         39125
+#define _APS_NEXT_COMMAND_VALUE         39134
 #define _APS_NEXT_CONTROL_VALUE         1594
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
