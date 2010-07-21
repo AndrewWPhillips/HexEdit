@@ -352,6 +352,7 @@ public:
     afx_msg void OnCompressionSettings();
 	afx_msg void OnFileSaveAll();
 	afx_msg void OnFileCloseAll();
+	afx_msg void OnFileCloseOthers();
     DECLARE_MESSAGE_MAP()
 
 public:

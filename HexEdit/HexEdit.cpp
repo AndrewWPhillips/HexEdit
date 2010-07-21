@@ -174,6 +174,7 @@ BEGIN_MESSAGE_MAP(CHexEditApp, CWinAppEx)
 
 		ON_COMMAND(ID_FILE_SAVE_ALL, OnFileSaveAll)
 		ON_COMMAND(ID_FILE_CLOSE_ALL, OnFileCloseAll)
+		ON_COMMAND(ID_FILE_CLOSE_OTHERS, OnFileCloseOthers)
 
         // Standard file based document commands
         ON_COMMAND(ID_FILE_NEW, OnFileNew)
@@ -1057,6 +1058,28 @@ void CHexEditApp::OnFileCloseAll()
     {
         CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
         ASSERT(pdoc != NULL);
+        if (!pdoc->SaveModified())      // save/no save return true, cancel/error returns false
+            return;
+        pdoc->OnCloseDocument();
+    }
+}
+
+void CHexEditApp::OnFileCloseOthers()
+{
+	CHexEditDoc *pcurrent = NULL;          // current doc (not to be closed)
+	CHexEditView *pview = GetView();   // get current view
+	if (pview != NULL)
+		pcurrent = pview->GetDocument();
+
+    // For each document, allow the user to save it if modified, then close it
+    POSITION posn = m_pDocTemplate->GetFirstDocPosition();
+    while (posn != NULL)
+    {
+        CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
+        ASSERT(pdoc != NULL);
+		if (pdoc == pcurrent)
+			continue;                   // bypass current document
+
         if (!pdoc->SaveModified())      // save/no save return true, cancel/error returns false
             return;
         pdoc->OnCloseDocument();

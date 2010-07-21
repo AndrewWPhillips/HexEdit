@@ -392,15 +392,15 @@
 #define IDB_DOCEDIT                     417
 #define IDB_DISPLAY                     418
 #define IDB_EDIT                        419
-#define ID_VIEW_APPLOOK_WIN_2000	421
-#define ID_VIEW_APPLOOK_OFF_XP		422
-#define ID_VIEW_APPLOOK_WIN_XP		423
-#define ID_VIEW_APPLOOK_OFF_2003	424
-#define ID_VIEW_APPLOOK_VS_2005		425
-#define ID_VIEW_APPLOOK_OFF_2007_BLUE	426
-#define ID_VIEW_APPLOOK_OFF_2007_BLACK	427
-#define ID_VIEW_APPLOOK_OFF_2007_SILVER	428
-#define ID_VIEW_APPLOOK_OFF_2007_AQUA	429
+#define ID_VIEW_APPLOOK_WIN_2000        421
+#define ID_VIEW_APPLOOK_OFF_XP          422
+#define ID_VIEW_APPLOOK_WIN_XP          423
+#define ID_VIEW_APPLOOK_OFF_2003        424
+#define ID_VIEW_APPLOOK_VS_2005         425
+#define ID_VIEW_APPLOOK_OFF_2007_BLUE   426
+#define ID_VIEW_APPLOOK_OFF_2007_BLACK  427
+#define ID_VIEW_APPLOOK_OFF_2007_SILVER 428
+#define ID_VIEW_APPLOOK_OFF_2007_AQUA   429
 #define IDD_FIND_PARENT                 430
 #define IDD_BOOKMARKS_PARENT            431
 #define IDD_CALC_PARENT                 432
@@ -1490,6 +1490,7 @@
 #define ID_FILE_OPEN_SPECIAL            33992
 #define ID_FILE_SAVE_ALL                33993
 #define ID_FILE_CLOSE_ALL               33994
+#define ID_FILE_CLOSE_OTHERS            33995
 #define ID_NAV_BACK_FIRST               34000
 #define ID_NAV_FORW_FIRST               36000
 #define ID_DFFD_OPEN_FIRST              38000
@@ -1570,7 +1571,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        435
+#define _APS_NEXT_RESOURCE_VALUE        436
 #define _APS_NEXT_COMMAND_VALUE         39125
 #define _APS_NEXT_CONTROL_VALUE         1594
 #define _APS_NEXT_SYMED_VALUE           252
