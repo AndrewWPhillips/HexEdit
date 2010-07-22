@@ -89,7 +89,7 @@ public:
         value_t(const char *s) { error = false; typ = TYPE_STRING; pstr = new ExprStringType(s); }
         value_t(const char *s, int len) { error = false; typ = TYPE_STRING; pstr = new ExprStringType(s, len); }
 #endif
-		value_t(COleDateTime dt) { error = false; typ = TYPE_DATE; date = (dt.m_status == 0 ? dt.m_dt : -1e30); }
+		value_t(COleDateTime dt) { error = false; typ = TYPE_DATE; date = (dt.m_status != -1 ? dt.m_dt : -1e30); }
 
         // copy constructor
         value_t(const value_t &from)

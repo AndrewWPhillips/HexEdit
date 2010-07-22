@@ -654,13 +654,13 @@ expr_eval::tok_t expr_eval::prec_add(value_t &val, CString &vname)
                 val.int64 = val.int64 + op2.int64;
             }
             else if (val.typ == TYPE_DATE &&
-                     (op2.typ == TYPE_INT || op2.typ == TYPE_REAL || op2.typ == TYPE_DATE))
+                     (op2.typ == TYPE_INT || op2.typ == TYPE_REAL))
             {
                 // eg now + 1.0
                 val.date += make_real(op2);
             }
             else if (op2.typ == TYPE_DATE &&
-                     (val.typ == TYPE_INT || val.typ == TYPE_REAL || val.typ == TYPE_DATE))
+                     (val.typ == TYPE_INT || val.typ == TYPE_REAL))
             {
                 // eg 1.0 + now
                 val.date = make_real(val) + op2.date;
@@ -680,7 +680,8 @@ expr_eval::tok_t expr_eval::prec_add(value_t &val, CString &vname)
             {
                 val.real64 -= op2.real64;
             }
-            else if (val.typ == TYPE_REAL || op2.typ == TYPE_REAL)
+            else if (val.typ == TYPE_REAL && op2.typ == TYPE_INT || 
+                     val.typ == TYPE_INT  && op2.typ == TYPE_REAL)
             {
                 val.real64 = make_real(val) - make_real(op2);
                 val.typ = TYPE_REAL;
@@ -2060,13 +2061,15 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             strcpy(error_buf_, "Closing parenthesis expected for \"year\"");
             return TOK_NONE;
         }
-        else if (val.typ == TYPE_INT)
+        else if (val.typ == TYPE_INT || val.typ == TYPE_REAL)
         {
-			val = value_t(COleDateTime((int)val.int64, 0, 0, 0, 0, 0));
+			double tmp = make_real(val);
+			val.typ = TYPE_REAL;
+			val.real64 = (int)(365.25*tmp + 0.5);
         }
         else
         {
-            strcpy(error_buf_, "Parameter for \"year\" must be an integer");
+            strcpy(error_buf_, "Parameter for \"year\" must be a number");
             return TOK_NONE;
         }
         return get_next();
@@ -2084,13 +2087,15 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             strcpy(error_buf_, "Closing parenthesis expected for \"month\"");
             return TOK_NONE;
         }
-        else if (val.typ == TYPE_INT)
+        else if (val.typ == TYPE_INT || val.typ == TYPE_REAL)
         {
-			val = value_t(COleDateTime(0, (int)val.int64, 0, 0, 0, 0));
+			double tmp = make_real(val);
+			val.typ = TYPE_REAL;
+			val.real64 = (int)(365.25/12.0*tmp + 0.5);
         }
         else
         {
-            strcpy(error_buf_, "Parameter for \"month\" must be an integer");
+            strcpy(error_buf_, "Parameter for \"month\" must be a number");
             return TOK_NONE;
         }
         return get_next();
@@ -2108,13 +2113,15 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             strcpy(error_buf_, "Closing parenthesis expected for \"day\"");
             return TOK_NONE;
         }
-        else if (val.typ == TYPE_INT)
+        else if (val.typ == TYPE_INT || val.typ == TYPE_REAL)
         {
-			val = value_t(COleDateTime(0, 0, (int)val.int64, 0, 0, 0));
+			double tmp = make_real(val);
+			val.typ = TYPE_REAL;
+			val.real64 = (int)(tmp + 0.5);
         }
         else
         {
-            strcpy(error_buf_, "Parameter for \"day\" must be an integer");
+            strcpy(error_buf_, "Parameter for \"day\" must be a number");
             return TOK_NONE;
         }
         return get_next();
@@ -2132,13 +2139,15 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             strcpy(error_buf_, "Closing parenthesis expected for \"hour\"");
             return TOK_NONE;
         }
-        else if (val.typ == TYPE_INT)
+        else if (val.typ == TYPE_INT || val.typ == TYPE_REAL)
         {
-			val = value_t(COleDateTime(0, 0, 0, (int)val.int64, 0, 0));
+			double tmp = make_real(val);
+			val.typ = TYPE_REAL;
+			val.real64 = tmp/24;
         }
         else
         {
-            strcpy(error_buf_, "Parameter for \"hour\" must be an integer");
+            strcpy(error_buf_, "Parameter for \"hour\" must be a number");
             return TOK_NONE;
         }
         return get_next();
@@ -2156,13 +2165,15 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             strcpy(error_buf_, "Closing parenthesis expected for \"minute\"");
             return TOK_NONE;
         }
-        else if (val.typ == TYPE_INT)
+        else if (val.typ == TYPE_INT || val.typ == TYPE_REAL)
         {
-			val = value_t(COleDateTime(0, 0, 0, 0, (int)val.int64, 0));
+			double tmp = make_real(val);
+			val.typ = TYPE_REAL;
+			val.real64 = tmp/24/60.0;
         }
         else
         {
-            strcpy(error_buf_, "Parameter for \"minute\" must be an integer");
+            strcpy(error_buf_, "Parameter for \"minute\" must be a number");
             return TOK_NONE;
         }
         return get_next();
@@ -2180,13 +2191,15 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
             strcpy(error_buf_, "Closing parenthesis expected for \"second\"");
             return TOK_NONE;
         }
-        else if (val.typ == TYPE_INT)
+        else if (val.typ == TYPE_INT || val.typ == TYPE_REAL)
         {
-			val = value_t(COleDateTime(0, 0, 0, 0, 0, (int)val.int64));
+			double tmp = make_real(val);
+			val.typ = TYPE_REAL;
+			val.real64 = tmp/24/60.0/60;
         }
         else
         {
-            strcpy(error_buf_, "Parameter for \"second\" must be an integer");
+            strcpy(error_buf_, "Parameter for \"second\" must be a number");
             return TOK_NONE;
         }
         return get_next();
