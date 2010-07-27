@@ -2920,8 +2920,12 @@ void CHexEditView::OnDraw(CDC* pDC)
                 info_rect.right = -info_rect.right;
             }
 
-            //pDC->FillSolidRect(&info_rect, sector_col_);
-			pDC->Rectangle(&info_rect);
+            //pDC->FillSolidRect(&info_rect, sector_bg_col_);
+			//pDC->Rectangle(&info_rect);
+			pDC->MoveTo(info_rect.right, info_rect.bottom-1);
+			pDC->LineTo(info_rect.left, info_rect.bottom-1);
+			pDC->LineTo(info_rect.left, info_rect.top);
+			pDC->LineTo(info_rect.right, info_rect.top);
         }
 
         if (display_.vert_display || display_.char_area)
@@ -2934,8 +2938,12 @@ void CHexEditView::OnDraw(CDC* pDC)
                 info_rect.left = -info_rect.left;
                 info_rect.right = -info_rect.right;
             }
-            //pDC->FillSolidRect(&info_rect, sector_col_);
-			pDC->Rectangle(&info_rect);
+            //pDC->FillSolidRect(&info_rect, sector_bg_col_);
+			//pDC->Rectangle(&info_rect);
+			pDC->MoveTo(info_rect.right, info_rect.bottom-1);
+			pDC->LineTo(info_rect.left, info_rect.bottom-1);
+			pDC->LineTo(info_rect.left, info_rect.top);
+			pDC->LineTo(info_rect.right, info_rect.top);
         }
 		(void)pDC->SelectObject(psaved_pen);
 		(void)pDC->SelectObject(psaved_brush);
