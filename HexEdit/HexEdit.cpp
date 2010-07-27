@@ -863,6 +863,37 @@ void CHexEditApp::OnNewVersion(int old_ver, int new_ver)
     }
 }
 
+// Called when a user runs HexEdit who has never run it before
+void CHexEditApp::OnNewUser()
+{
+	CString srcFolder = ::GetExePath();
+	CString dstFolder;
+    if (srcFolder.IsEmpty() || !::GetDataPath(dstFolder))
+        return;       // no point in continuing if we can't get paths (Win95?)
+
+	if (AfxMessageBox("This is the first time you have run HexEdit.\r\n"
+	                  "Hit OK to copy default templates and macros.\r\n",
+	                  MB_OKCANCEL) == IDCANCEL)
+		return;
+
+	// We need to copy the following files from the HexEdit binary directory
+	// to the user's application data directory:
+	// BinaryFileFormat.DTD    - DTD for templates
+	// *.XML                   - the templates including Default.XML, _standard_types.XML etc
+	// _windows_constants.TXT  - used by C/C++ parser
+	// *.HEM                   - any provided keystroke macros
+
+	CString srcFile, dstFile;
+	srcFile = srcPath + FILENAME_DTD;
+	dstFile = dstFolder + FILENAME_DTD;
+	::CopyFile(srcFile, dstFile);
+
+	srcFile = srcPath + "_windows_constants.txt";
+	dstFile = dstFolder + "_windows_constants.txt";
+	::CopyFile(srcFile, dstFile);
+
+}
+
 void CHexEditApp::OnFileNew() 
 {
     CWinAppEx::OnFileNew();
@@ -1889,13 +1920,17 @@ void CHexEditApp::OnCompressionSettings()
 // Retrieve options from .INI file/registry
 void CHexEditApp::LoadOptions()
 {
-    switch(GetProfileInt("Options", "SaveExit", 2))
+    switch(GetProfileInt("Options", "SaveExit", 99))
     {
     case 0:
         orig_save_exit_ = save_exit_ = FALSE;
         break;
-    case 2:
-        // Option not found so make sure it is saved next time
+    case 99:
+        // Option not found
+		OnNewUser();
+		
+		// Since save_exit_ is only saved when it changes this sets it to
+		// the default (TRUE) and ensure the initial value is saved.
         orig_save_exit_ = !(save_exit_ = TRUE);
         break;
     default:

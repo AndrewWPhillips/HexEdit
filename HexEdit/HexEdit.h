@@ -87,6 +87,8 @@ typedef __int64 FILE_ADDRESS;
 #define FILENAME_BACKGROUND  _T("Backgrnd.BMP")
 #define FILENAME_ABOUTBG     _T("About.bmp")
 #define FILENAME_SPLASH      _T("Splash.bmp")
+#define FILENAME_DTD         _T("BinaryFileFormat.DTD")
+#define FILENAME_DEFTEMPLATE _T("Default.xml")
 
 #include <vector>           // For vector of keys that stores keystroke macro
 #include <afxmt.h>          // For MFC IPC (CCriticalSection)
@@ -837,6 +839,7 @@ private:
     void CheckSecurityActivated();
 #endif
 
+    void OnNewUser();
     void ShowTipAtStartup(void);
     void ShowTipOfTheDay(void);
 	void InitVersionInfo();

@@ -269,7 +269,7 @@ bool TParser::LoadTypeFile(LPCTSTR filename, CXmlTree &types, bool should_exist)
 	// Load minimal required XML if file load failed
 	if (!retval && !types.LoadString("<binary_file_format></binary_file_format>"))
 	{
-		AfxMessageBox("BinaryFileFormat.dtd not found");
+		AfxMessageBox(FILENAME_DTD " not found");
 		types.LoadString("<binary_file_format></binary_file_format>");
 	}
 

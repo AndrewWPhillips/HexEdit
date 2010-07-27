@@ -4604,7 +4604,7 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
             break;
 
         case ID_DFFD_SAVE:
-            if (pdoc->ptree_->GetFileName().Right(11).CompareNoCase("default.xml") != 0)
+            if (pdoc->ptree_->GetFileName().Right(11).CompareNoCase(FILENAME_DEFTEMPLATE) != 0)
             {
                 if (!pdoc->ptree_->Save())
 					AfxMessageBox("There was an error writing to the template file.  It may be read only.");

@@ -409,7 +409,7 @@ void CHexEditDoc::CheckSaveTemplate()
         dlg.message_.Format("The template \"%s\" has been modified.\n\n"
                             "Do you want to save it?", file_name);
 
-        if (file_name.CompareNoCase("default.xml") == 0)
+        if (file_name.CompareNoCase(FILENAME_DEFTEMPLATE) == 0)
         {
             if (AfxMessageBox(dlg.message_, MB_YESNO) != IDNO)
             {
@@ -1853,7 +1853,7 @@ void CHexEditDoc::OnDffdOpen(UINT nID)
 
 void CHexEditDoc::OnDffdSave()
 {
-    if (ptree_->GetFileName().Right(11).CompareNoCase("default.xml") != 0)
+    if (ptree_->GetFileName().Right(11).CompareNoCase(FILENAME_DEFTEMPLATE) != 0)
         ptree_->Save();
 	else
 		OnDffdSaveAs();
