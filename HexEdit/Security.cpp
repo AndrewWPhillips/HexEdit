@@ -681,7 +681,7 @@ int CHexEditApp::GetSecurity()
     HKEY hkey, hkey2, hkey3;
 
     // Open (or create if not there) the place to store the info
-    if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS ||
+    if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS ||  // xxx fails on W7 if not admin
 		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS ||
 		::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
         return 0;     // return error if any could not be opened

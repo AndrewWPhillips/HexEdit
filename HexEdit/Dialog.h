@@ -82,7 +82,7 @@ public:
                      theApp.GetProfileInt("Window-Settings", strName+"X2", -30000),
                      theApp.GetProfileInt("Window-Settings", strName+"Y2", -30000));
             if (rr.top != -30000)
-                GetParent()->MoveWindow(&rr);
+                GetParent()->MoveWindow(&rr);  // xxx crash here on dialog start up???
 
             first_time = false;
         }
