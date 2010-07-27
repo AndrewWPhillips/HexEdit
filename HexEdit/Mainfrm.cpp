@@ -259,7 +259,7 @@ CMainFrame::CMainFrame()
 	if (!m_background.LoadImage(bgfile))
 		m_background.LoadImage(GetExePath() + FILENAME_BACKGROUND);
 #endif
-	m_background_pos = theApp.GetProfileInt("MainFrame", "BackgroundPosition", 4); // dv = bottom-right
+	m_background_pos = theApp.GetProfileInt("MainFrame", "BackgroundPosition", 1); // dv = top-left
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 
 	// Status bar stuff
@@ -301,6 +301,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
         //menu_tip_.SetParent(this);
 		// set the visual manager and style based on persisted value
+		CMFCButton::EnableWindowsTheming();
 		OnApplicationLook(theApp.m_nAppLook);
 
 		if (theApp.mditabs_)
@@ -473,6 +474,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 		// Set initial positions and docking/floating status but then hide all the windows
 		InitDockWindows();
+
+		m_paneBookmarks.DockToFrameWindow(CBRS_ALIGN_LEFT);
+		m_paneCalc.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_BOTTOM);
+		m_paneExpl.DockToFrameWindow(CBRS_ALIGN_BOTTOM);
 		m_paneBookmarks.Hide();
 		m_paneFind.Hide();
 		m_paneProp.Hide();
@@ -861,6 +866,7 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 	pDC->GetClipBox(&clip_rct);
 	if (m_background_pos != 1 && rct != clip_rct)
 	{
+		// xxx this causes problems - find better soln
 		// There is a problem drawing the background image (unless it's in the top left corner)
 		// due to clipping rectangle used for the erased area.  (This only started occurring
 		// with MFC9 so I am not sure what had chnaged.)  The simplest solution (kludge) that I
@@ -1025,69 +1031,58 @@ void CMainFrame::SaveFrameOptions()
 // Set the default positions of all docking windows
 void CMainFrame::InitDockWindows()
 {
+	// Initially all are floating
+	m_paneFind.Float();
+	m_paneBookmarks.Float();
+	m_paneProp.Float();
+    m_paneCalc.Float();
+	m_paneExpl.Float();
+
+	// We get the main window rectangle so we can position the floating
+	// windows around its edges.
 	CSize sz;
 	CRect mainRect, rct;
 	GetWindowRect(&mainRect);   // get main window in order to set float positions
-	//HDWP hdwp = BeginDeferWindowPos(5);
 
 	// Position bookmarks in middle of left side
-	sz = m_paneBookmarks.GetDefaultSize();
+	sz = m_paneBookmarks.GetFrameSize();
 	rct.left = mainRect.left;
 	rct.right = rct.left + sz.cx;
 	rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2;
 	rct.bottom = rct.top + sz.cy;
-	//m_paneBookmarks.MovePane(rct, FALSE, hdwp);
-	ScreenToClient(rct);
-	m_paneBookmarks.MoveWindow(rct);
+	m_paneBookmarks.GetParent()->MoveWindow(rct);
 
 	// Position Find dialog at bottom left
-	sz = m_paneFind.GetDefaultSize();
+	sz = m_paneFind.GetFrameSize();
 	rct.left = mainRect.left;
 	rct.right = rct.left + sz.cx;
 	rct.top = mainRect.bottom - sz.cy;
 	rct.bottom = rct.top + sz.cy;
-	//m_paneFind.MovePane(rct, FALSE, hdwp);
-	ScreenToClient(rct);
-	m_paneFind.MoveWindow(rct);
+	m_paneFind.GetParent()->MoveWindow(rct);
 
-	sz = m_paneProp.GetDefaultSize();
+	// Position Properties dialog at middle of bottom
+	sz = m_paneProp.GetFrameSize();
 	rct.left = mainRect.left + mainRect.Size().cx/2 - sz.cx/2;
 	rct.right = rct.left + sz.cx;
 	rct.top = mainRect.bottom - sz.cy;
 	rct.bottom = rct.top + sz.cy;
-	//m_paneProp.MovePane(rct, FALSE, hdwp);
-	ScreenToClient(rct);
-	m_paneProp.MoveWindow(rct);
+	m_paneProp.GetParent()->MoveWindow(rct);
 
-	sz = m_paneCalc.GetDefaultSize();
+	// Position Calculator at bottom right
+	sz = m_paneCalc.GetFrameSize();
 	rct.left = mainRect.right - sz.cx;
 	rct.right = rct.left + sz.cx;
 	rct.top = mainRect.bottom - sz.cy;
 	rct.bottom = rct.top + sz.cy;
-	//m_paneCalc.MovePane(rct, FALSE, hdwp);
-	ScreenToClient(rct);
-	m_paneCalc.MoveWindow(rct);
+	m_paneCalc.GetParent()->MoveWindow(rct);
 
-	sz = m_paneExpl.GetDefaultSize();
+	// Position Explorer at top right
+	sz = m_paneExpl.GetFrameSize();
 	rct.left = mainRect.right - sz.cx;
 	rct.right = rct.left + sz.cx;
 	rct.top = mainRect.top;
 	rct.bottom = rct.top + sz.cy;
-	//m_paneExpl.MovePane(rct, FALSE, hdwp);
-	ScreenToClient(rct);
-	m_paneExpl.MoveWindow(rct);
-
-	//EndDeferWindowPos(hdwp);
-
-	// Now dock/float the windows in default locations
-	m_paneFind.Float();
-	m_paneProp.Float();
-	//m_paneBookmarks.DockToFrameWindow(CBRS_ALIGN_LEFT);
-	//m_paneCalc.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_BOTTOM);
-	//m_paneExpl.DockToFrameWindow(CBRS_ALIGN_BOTTOM);
-	m_paneBookmarks.Float();
-	m_paneCalc.Float();
-	m_paneExpl.Float();
+	m_paneExpl.GetParent()->MoveWindow(rct);
 }
 
 void CMainFrame::FixPanes()

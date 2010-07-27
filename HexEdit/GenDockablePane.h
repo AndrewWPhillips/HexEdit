@@ -29,6 +29,7 @@ public:
 	bool IsFloating() { return !IsDocked() && !IsTabbed(); }
 
 	CSize GetDefaultSize();
+	CSize GetFrameSize();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

@@ -93,6 +93,25 @@ CSize CGenDockablePane::GetDefaultSize()
 	return sz;
 }
 
+// Return default size of frame window containing the window when floating.
+CSize CGenDockablePane::GetFrameSize()
+{
+	CSize sz = GetDefaultSize();
+	CWnd* pParent = GetParent();
+	ASSERT(pParent != NULL && pParent->IsKindOf(RUNTIME_CLASS(CPaneFrameWnd)));
+	if (pParent != NULL)
+	{
+		// If floating add NC area of parent (frame) window
+		CRect wndRect, cliRect;
+		pParent->GetWindowRect(&wndRect);
+		pParent->GetClientRect(&cliRect);
+		sz.cx += wndRect.Width() - cliRect.Width();
+		sz.cy += wndRect.Height() - cliRect.Height();
+	}
+
+	return sz;
+}
+
 // Message handlers
 
 int CGenDockablePane::OnCreate(LPCREATESTRUCT lpCreateStruct)

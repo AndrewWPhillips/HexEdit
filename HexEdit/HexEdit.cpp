@@ -1137,13 +1137,13 @@ void CHexEditApp::OnRepairDialogbars()
 
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     ASSERT(mm != NULL);
+
+	mm->InitDockWindows();
 	mm->m_paneFind.ShowAndUnroll();
 	mm->m_paneBookmarks.ShowAndUnroll();
 	mm->m_paneProp.ShowAndUnroll();
     mm->m_paneCalc.ShowAndUnroll();
 	mm->m_paneExpl.ShowAndUnroll();
-
-	mm->InitDockWindows();
 }
 
 void CHexEditApp::OnRepairCust()
