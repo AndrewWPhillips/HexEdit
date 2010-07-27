@@ -5666,10 +5666,9 @@ void CHexEditView::do_char(UINT nChar)
         {
             // Non hex digit typed in hex area
 #ifdef SYS_SOUNDS
-             CSystemSound::Play("Invalid Character");
-#else
-            ::Beep(5000,200);
+            if (!CSystemSound::Play("Invalid Character"))
 #endif
+				::Beep(5000,200);
             aa->mac_error_ = 5;
             return;
         }

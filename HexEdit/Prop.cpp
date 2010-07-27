@@ -113,10 +113,9 @@ void CCommentEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
     if (nChar == '|')
     {
 #ifdef SYS_SOUNDS
-         CSystemSound::Play("Invalid Character");
-#else
-        ::Beep(5000,200);
+        if (!CSystemSound::Play("Invalid Character"))
 #endif
+	        ::Beep(5000,200);
         return;
     }
     CEdit::OnChar(nChar, nRepCnt, nFlags);
@@ -258,10 +257,9 @@ void CPropDecEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
     else if (::isprint(nChar) && strchr("0123456789\b", nChar) == NULL)
     {
 #ifdef SYS_SOUNDS
-         CSystemSound::Play("Invalid Character");
-#else
-        ::Beep(5000,200);
+         if (!CSystemSound::Play("Invalid Character"))
 #endif
+	        ::Beep(5000,200);
         return;
     }
     CEdit::OnChar(nChar, nRepCnt, nFlags);

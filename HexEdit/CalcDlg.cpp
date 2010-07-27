@@ -844,20 +844,19 @@ void CCalcDlg::ShowStatus()
             TRACE0("OVERFLOW!!");
             GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("O");
 #ifdef SYS_SOUNDS
-            CSystemSound::Play("Calculator Error");
-#else
-            ::Beep(3000,400);
+            if (!CSystemSound::Play("Calculator Error"))
 #endif
+				::Beep(3000,400);
+
         }
         else if (error_)
         {
             TRACE0("ERROR!!");
             GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("E");
 #ifdef SYS_SOUNDS
-            CSystemSound::Play("Calculator Error");
-#else
-            ::Beep(3000,400);
+            if (!CSystemSound::Play("Calculator Error"))
 #endif
+				::Beep(3000,400);
         }
         else
             GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("");
@@ -2029,45 +2028,6 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
     }
     else if (pMsg->message == WM_CHAR)
     {
-#ifndef CALC_EXPR  // These operators can now be entered in the text box directly
-        static const char *bo_char = "+-*/%&|^";
-        static binop_type bo_op[] =
-        {
-            binop_add,
-            binop_subtract,
-            binop_multiply,
-            binop_divide,
-            binop_mod,
-            binop_and,
-            binop_or,
-            binop_xor,
-        };
-        const char *pbo;                    // Pointer into bo_char string
-
-        if ((pbo = strchr(bo_char, pMsg->wParam)) != NULL)
-        {
-            // Binary operator character typed
-            ASSERT(pbo - bo_char < sizeof(bo_op)/sizeof(*bo_op)); // Bounds check
-            do_binop(bo_op[pbo - bo_char]);
-            return TRUE;
-        }
-        else if (pMsg->wParam == '!')
-        {
-            do_unary(unary_factorial);
-            return TRUE;
-        }
-        else if (pMsg->wParam == '~')
-        {
-            do_unary(unary_not);
-            return TRUE;
-        }
-        else if (pMsg->wParam == '=')
-        {
-            OnEquals();
-            return TRUE;
-        }
-        else
-#endif
 		if (pMsg->wParam == '\r')
         {
             OnEquals();    // Carriage Return

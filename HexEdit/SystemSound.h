@@ -51,7 +51,7 @@ public:
 	static void Set(LPCTSTR name, LPCTSTR value = NULL, LPCTSTR app = NULL, LPCTSTR key_name = NULL);
 
 	// Plays a sound (if there is one) given by sound event name
-	static void Play(LPCTSTR name, LPCTSTR app = NULL, LPCTSTR key_name = NULL);
+	static BOOL Play(LPCTSTR name, LPCTSTR app = NULL, LPCTSTR key_name = NULL);
 
 private:
 	// Since the class only contains static functions we prohibit instantiation

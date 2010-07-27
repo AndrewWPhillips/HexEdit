@@ -130,12 +130,14 @@ void CSystemSound::Set(LPCTSTR name, LPCTSTR value /*=NULL*/, LPCTSTR app /*=NUL
 }
 
 // Plays a sound (if there is one) given by sound event name
-void CSystemSound::Play(LPCTSTR name, LPCTSTR app /*=NULL*/, LPCTSTR key_name /*=NULL*/)
+BOOL CSystemSound::Play(LPCTSTR name, LPCTSTR app /*=NULL*/, LPCTSTR key_name /*=NULL*/)
 {
 	ASSERT(name != NULL);
 	CString fname = Get(name, app, key_name);
-	if (!fname.IsEmpty())
-		VERIFY(::PlaySound(fname, NULL, SND_FILENAME | SND_ASYNC));
+	if (fname.IsEmpty())
+		return TRUE;     // return success as no sound is wanted
+	else
+		return ::PlaySound(fname, NULL, SND_FILENAME | SND_ASYNC);
 }
 
 // Make a key name from a an app name, a sound name and a key name (usually ".current")

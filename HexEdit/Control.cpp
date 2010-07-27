@@ -81,10 +81,9 @@ void CHexEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
     else if (::isprint(nChar) && strchr(test_str, nChar) == NULL)
     {
 #ifdef SYS_SOUNDS
-         CSystemSound::Play("Invalid Character");
-#else
-        ::Beep(5000,200);
+        if (!CSystemSound::Play("Invalid Character"))
 #endif
+			::Beep(5000,200);
         return;
     }
     CEdit::OnChar(nChar, nRepCnt, nFlags);
@@ -234,10 +233,9 @@ void CDecEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
     else if (::isprint(nChar) && strchr(test_str, nChar) == NULL)
     {
 #ifdef SYS_SOUNDS
-         CSystemSound::Play("Invalid Character");
-#else
-        ::Beep(5000,200);
+        if (!CSystemSound::Play("Invalid Character"))
 #endif
+	        ::Beep(5000,200);
         return;
     }
     CEdit::OnChar(nChar, nRepCnt, nFlags);
@@ -673,10 +671,9 @@ BOOL CSearchEditControl::process_char(UINT nChar)
                         strchr("\b0123456789ABCDEFabcdef", nChar) == NULL) )
         {
 #ifdef SYS_SOUNDS
-             CSystemSound::Play("Invalid Character");
-#else
-            ::Beep(5000,200);
+			if (!CSystemSound::Play("Invalid Character"))
 #endif
+				::Beep(5000,200);
             return TRUE;
         }
     }
@@ -1068,10 +1065,9 @@ void CHexEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
         else if (::isprint(nChar) && strchr(test_str, nChar) == NULL)
         {
 #ifdef SYS_SOUNDS
-             CSystemSound::Play("Invalid Character");
-#else
-            ::Beep(5000,200);
+			if (!CSystemSound::Play("Invalid Character"))
 #endif
+				::Beep(5000,200);
             return;
         }
     }
@@ -1386,10 +1382,9 @@ void CDecEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
         else if (::isprint(nChar) && strchr(test_str, nChar) == NULL)
         {
 #ifdef SYS_SOUNDS
-             CSystemSound::Play("Invalid Character");
-#else
-            ::Beep(5000,200);
+	         if (!CSystemSound::Play("Invalid Character"))
 #endif
+				::Beep(5000,200);
             return;
         }
     }

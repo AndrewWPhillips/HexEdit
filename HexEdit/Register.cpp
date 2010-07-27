@@ -425,11 +425,10 @@ void CCodeEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
     }
     else if (::letter_valid(nChar) == '\0')
     {
-#ifdef VER31
-         CSystemSound::Play("Invalid Character");
-#else
-        ::Beep(5000,200);
+#ifdef SYS_SOUNDS
+        if (!CSystemSound::Play("Invalid Character"))
 #endif
+			::Beep(5000,200);
         return;
     }
 
