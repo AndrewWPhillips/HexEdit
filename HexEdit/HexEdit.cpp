@@ -43,6 +43,7 @@
 #include "HexEdit.h"
 
 #include <HtmlHelp.h>
+#include <imagehlp.h>           // For ::MakeSureDirectoryPathExists()
 
 #include "EmailDlg.h"
 #include "HexFileList.h"
@@ -884,14 +885,29 @@ void CHexEditApp::OnNewUser()
 	// *.HEM                   - any provided keystroke macros
 
 	CString srcFile, dstFile;
-	srcFile = srcPath + FILENAME_DTD;
+	srcFile = srcFolder + FILENAME_DTD;
 	dstFile = dstFolder + FILENAME_DTD;
-	::CopyFile(srcFile, dstFile);
+	::MakeSureDirectoryPathExists(dstFile);
+	::CopyFile(srcFile, dstFile, FALSE);
 
-	srcFile = srcPath + "_windows_constants.txt";
+	srcFile = srcFolder + "_windows_constants.txt";
 	dstFile = dstFolder + "_windows_constants.txt";
-	::CopyFile(srcFile, dstFile);
+	::CopyFile(srcFile, dstFile, TRUE);
 
+    CFileFind ff;
+    BOOL bContinue = ff.FindFile(srcFolder + "*.XML");
+    while (bContinue)
+    {
+        bContinue = ff.FindNextFile();
+		::CopyFile(ff.GetFilePath(), dstFolder + ff.GetFileName(), TRUE);
+    }
+
+    bContinue = ff.FindFile(srcFolder + "*.HEM");
+    while (bContinue)
+    {
+        bContinue = ff.FindNextFile();
+		::CopyFile(ff.GetFilePath(), dstFolder + ff.GetFileName(), TRUE);
+    }
 }
 
 void CHexEditApp::OnFileNew() 
@@ -2053,17 +2069,6 @@ void CHexEditApp::LoadOptions()
     xml_dir_ = GetProfileString("DataFormat", "Folder");
     if (xml_dir_.IsEmpty())
     {
-//        char fullname[_MAX_PATH];           // Full name of exe directory
-//        char *end;                          // End of path of exe file
-
-//        strncpy(fullname, __argv[0], sizeof(fullname)-1);
-//        fullname[sizeof(fullname)-1] = '\0';
-//        if ((end = strrchr(fullname, '\\')) == NULL && (end = strrchr(fullname, ':')) == NULL)
-//            end = fullname;
-//        else
-//            ++end;
-//        *end = '\0';
-
 		// If templates in data folder use it else use hexedit .exe directory
 		CString ss; ::GetDataPath(ss);
         CFileFind ff;
@@ -2078,18 +2083,6 @@ void CHexEditApp::LoadOptions()
     mac_dir_ = GetProfileString("MacroOptions", "Folder");
     if (mac_dir_.IsEmpty())
     {
-//        char fullname[_MAX_PATH];           // Full name of exe directory
-//        char *end;                          // End of path of exe file
-
-//        strncpy(fullname, m_pszHelpFilePath, sizeof(fullname)-1);
-//        strncpy(fullname, __argv[0], sizeof(fullname)-1);
-//        fullname[sizeof(fullname)-1] = '\0';
-//        if ((end = strrchr(fullname, '\\')) == NULL && (end = strrchr(fullname, ':')) == NULL)
-//            end = fullname;
-//        else
-//            ++end;
-//        *end = '\0';
-
 		// If macros in data folder use it else use hexedit .exe directory
 		CString ss; ::GetDataPath(ss);
         CFileFind ff;
