@@ -1516,6 +1516,7 @@
 #define ID_REAL_PI                      39010
 #define ID_INTEGER_STRCMP               39011
 #define ID_INTEGER_STRICMP              39012
+#define ID_BOOLEAN_DEFINED              39013
 #define ID_BOOLEAN_NE                   39014
 #define ID_BOOLEAN_LT                   39015
 #define ID_BOOLEAN_EQ                   39016

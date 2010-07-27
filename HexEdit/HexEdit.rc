@@ -1232,6 +1232,16 @@ BEGIN
             MENUITEM "max (real, real)",            ID_REAL_MAX
             MENUITEM SEPARATOR
             MENUITEM "atof (string)",               ID_REAL_ATOF
+            POPUP "&Date Difference"
+            BEGIN
+                MENUITEM "year (int)",                  ID_DATE_YEAR
+                MENUITEM "month (int)",                 ID_DATE_MONTH
+                MENUITEM "day (int)",                   ID_DATE_DAY
+                MENUITEM SEPARATOR
+                MENUITEM "hour (int)",                  ID_DATE_HOUR
+                MENUITEM "minute (int)",                ID_DATE_MONUTE
+                MENUITEM "second (int)",                ID_DATE_SECOND
+            END
             MENUITEM SEPARATOR
             MENUITEM "pow (real, real)",            ID_REAL_POW
             MENUITEM "pow (real, int)",             ID_REAL_POW324
@@ -1265,6 +1275,7 @@ BEGIN
         END
         POPUP "&Boolean"
         BEGIN
+            MENUITEM "defined (var)",               ID_BOOLEAN_DEFINED
             MENUITEM "getbool (""OK?"", ""&&Yes"", ""&&No"")", ID_BOOLEAN_GETBOOL
         END
         POPUP "&Date"
@@ -1272,14 +1283,6 @@ BEGIN
             MENUITEM "now ( )",                     ID_DATE_NOW
             MENUITEM "date (string)",               ID_DATE_DATE
             MENUITEM "time (string)",               ID_DATE_TIME
-            MENUITEM SEPARATOR
-            MENUITEM "year (int)",                  ID_DATE_YEAR
-            MENUITEM "month (int)",                 ID_DATE_MONTH
-            MENUITEM "day (int)",                   ID_DATE_DAY
-            MENUITEM SEPARATOR
-            MENUITEM "hour (int)",                  ID_DATE_HOUR
-            MENUITEM "minute (int)",                ID_DATE_MONUTE
-            MENUITEM "second (int)",                ID_DATE_SECOND
         END
     END
 END

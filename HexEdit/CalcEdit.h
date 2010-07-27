@@ -60,9 +60,7 @@ private:
     // we save the selection in sel_ in OnKillFocus & restore it in OnSetFocus.
     DWORD sel_;
 
-#ifdef CALC_EXPR
 	bool is_number(LPCTSTR ss);
-#endif
 };
 
 /////////////////////////////////////////////////////////////////////////////

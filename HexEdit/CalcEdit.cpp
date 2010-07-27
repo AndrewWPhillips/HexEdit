@@ -124,7 +124,6 @@ void CCalcEdit::Put()
     add_sep();
 }
 
-#ifdef CALC_EXPR
 // Check if string is a simple number (possible with separators) or an expression
 bool CCalcEdit::is_number(LPCTSTR ss)
 {
@@ -337,10 +336,9 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		// Note: Since we are ignoring the typed character (returning false)
 		//       we do not want to change pp_->current_type_.
 #ifdef SYS_SOUNDS
-        CSystemSound::Play("Invalid Character");
-#else
-        ::Beep(5000,200);
+        if (!CSystemSound::Play("Invalid Character"))
 #endif
+			::Beep(5000,200);
 	    pp_->FixFileButtons();
         return false;
     }
@@ -351,73 +349,6 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
         return true;
 	}
 }
-#else
-bool CCalcEdit::update_value()
-{
-    ASSERT(pp_ != NULL);
-    ASSERT(pp_->IsVisible());
-    ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
-
-    CString ss;
-    GetWindowText(ss);
-
-    __int64 newval = 0;
-    BOOL none_yet = TRUE;		        // Have we seen any digits yet?
-    BOOL neg = FALSE;                   // Have we seen a leading minus sign?
-
-    pp_->overflow_ = FALSE;             // Default to no overflow
-
-    for (const char *src = ss.GetBuffer(0); *src != '\0'; ++src)
-    {
-        if (pp_->radix_ == 10 && none_yet && *src == '-')
-        {
-            neg = TRUE;
-            continue;
-        }
-
-        // Ignore anything else except valid digits
-        unsigned int digval;
-        if (isdigit(*src))
-            digval = *src - '0';
-        else if (isalpha(*src))
-            digval = toupper(*src) - 'A' + 10;
-        else
-            continue;                   // Ignore separators (or any other garbage)
-
-        if (digval >= pp_->radix_)
-        {
-            ASSERT(0);                  // How did this happen?
-            continue;                   // Ignore invalid digits
-        }
-
-        none_yet = FALSE;               // We've now seen a valid digit
-
-        if (newval > pp_->mask_ / pp_->radix_ ||
-            (newval == pp_->mask_ / pp_->radix_ && 
-             digval > pp_->mask_ % pp_->radix_) )
-        {
-            pp_->overflow_ = TRUE;
-#ifdef SYS_SOUNDS
-            CSystemSound::Play("Invalid Character");
-#else
-            ::Beep(5000,200);
-#endif
-			return false;
-        }
-        newval = newval * pp_->radix_ + digval;
-    }
-
-    if (neg)
-        newval = -newval;
-
-    pp_->current_ = (pp_->current_ & ~pp_->mask_) | (newval & pp_->mask_);
-	//pp_->expr_type_ = CCalcDlg::VALUE;
-    add_sep();
-	pp_->FixFileButtons();
-
-	return true;
-}
-#endif
 
 void CCalcEdit::add_sep()
 {
@@ -565,43 +496,6 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
     int start, end;
     GetSel(start, end);
 
-#ifndef CALC_EXPR
-    char sep_char = ' ';
-    if (pp_->radix_ == 10) sep_char = theApp.dec_sep_char_;
-
-    if (nChar == sep_char)
-    {
-        // Just ignore separator chars (user has tendency to type them even though not required)
-        return;
-    }
-    else if (nChar == '\b')
-    {
-        // If backspace deletes 1st digit of a group then also delete preceding separator
-        // (If we don't do this the add_sep call below stops the backspace from working.)
-        if (start > 1 && start == end && ss[start-1] == sep_char)
-            SetSel(start-2, end);
-    }
-    else if (isalnum(nChar))
-    {
-        // Calculate digit value and beep if it is invalid for the current radix
-        unsigned int val;
-        if (isdigit(nChar))
-            val = nChar - '0';
-        else
-            val = toupper(nChar) - 'A' + 10;
-
-        if (val >= pp_->radix_)
-        {
-#ifdef SYS_SOUNDS
-            CSystemSound::Play("Invalid Character");
-#else
-            ::Beep(5000,200);
-#endif
-            return;
-        }
-    }
-#endif
-
     CEdit::OnChar(nChar, nRepCnt, nFlags);
 
 	if (!update_value(false))
@@ -655,9 +549,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     // Tidy display if hex and char(s) deleted or caret moved xxx Is this necessary?
     GetWindowText(ss);
     if ((nChar == VK_DELETE || nChar == VK_RIGHT || nChar == VK_LEFT) &&
-#ifdef CALC_EXPR
         is_number(ss) &&
-#endif
         ::GetKeyState(VK_SHIFT) >= 0 && ss.GetLength() > 0)
     {
         add_sep();

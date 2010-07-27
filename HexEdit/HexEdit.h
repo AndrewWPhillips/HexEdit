@@ -66,7 +66,6 @@ typedef __int64 FILE_ADDRESS;
 #define USE_OWN_PRINTDLG 1  // Replace the standard print dialog with our own derived dialog
 #define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
 #define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
-#define CALC_EXPR       1   // allow any expression in calculator (prob bugs if this turned off now)
 
 #define SHOW_CODE_PAGE  1
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
