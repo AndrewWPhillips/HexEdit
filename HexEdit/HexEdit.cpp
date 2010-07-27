@@ -362,7 +362,7 @@ BOOL CHexEditApp::InitInstance()
 			time_t prev = (time_t)GetProfileInt(_T("Update"), _T("LastCheckDate"), 0);  // last time we checked
 			if (now > prev + (30*24L*60*60L))  // Check about once a month
 			{
-				UpdateChecker checker(_T("http://www.hexedit.com/xxx"));
+				UpdateChecker checker(_T("http://www.hexedit.com/version.txt"));
 				if (checker.Online())
 				{
 					if (checker.UpdateAvailable(version_))

@@ -89,16 +89,7 @@ CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 //	if (hw == (HWND)0 || !SubclassWindow(hw))
 //		return;
 //
-//#else
-	//wchar_t xxx[5];
-	//xxx[0] = 0x0809;
-	//xxx[1] = 0x090A;
-	//xxx[2] = 0;
-	//::CallWindowProcW(*GetSuperWndProcAddr(), m_hWnd, WM_SETTEXT, 0, (LPARAM)xxx);
-	//xxx[0] = xxx[1] = 0;
-	//::CallWindowProcW(*GetSuperWndProcAddr(), m_hWnd, WM_GETTEXT, 3, (LPARAM)xxx);
-
-	//::InternalGetWindowTextW(hw, xxx, 3);
+//#endif
 
     SetFont(pParent->GetFont());
 

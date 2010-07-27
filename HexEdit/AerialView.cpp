@@ -32,7 +32,7 @@ CAerialView::CAerialView()
     disp_.dpix = 1;     // set later but make non-zero for safety
     sbfact_ = 1;        // default to normal scrollbar units
 
-    last_tip_elt_ = -1;  // xxx is this necessary?
+    last_tip_elt_ = -1;
 
     // We use a timer to update the "marching ants" border, which is a cycle of 12 pixels: 4 pixels
     // of one ant colour, 2 blanks, 4 pixels of another ant colour, 2 blanks, then repeat

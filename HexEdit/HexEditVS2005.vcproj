@@ -541,6 +541,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Explorer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Expr.cpp"
 				>
 			</File>
@@ -801,6 +805,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\UpdateChecker.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\UserTool.cpp"
 				>
 			</File>
@@ -971,6 +979,10 @@
 			</File>
 			<File
 				RelativePath=".\EnBitmap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Explorer.h"
 				>
 			</File>
 			<File
@@ -1168,6 +1180,10 @@
 			</File>
 			<File
 				RelativePath=".\TransparentStatic2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UpdateChecker.h"
 				>
 			</File>
 			<File
@@ -1633,11 +1649,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File
