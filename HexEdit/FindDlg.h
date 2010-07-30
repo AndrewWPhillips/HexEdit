@@ -53,7 +53,6 @@ protected:
 	//}}AFX_MSG
     afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -151,8 +150,6 @@ public:
     bool HexReplace() const;
 
 private:
-	static CBrush * m_pBrush;            // brush used for background
-	static COLORREF m_col;               // colour used for background
 };
 
 /////////////////////////////////////////////////////////////////////////////

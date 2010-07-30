@@ -388,7 +388,7 @@ CPropSheet::CPropSheet()
 	ASSERT(hue != -1 || saturation == 0);  // grey if saturation == 0 (hue == -1)
 	// Make it lighter than normal button/dialog colour
 	luminance += (100 - luminance)/2;
-	if (luminance > 90) luminance = 90; // ... but not white
+	if (luminance > 85) luminance = 85; // ... but not too bright/white
 	pBrush = new CBrush(get_rgb(hue, luminance, saturation));
 }
 
@@ -422,7 +422,6 @@ BEGIN_MESSAGE_MAP(CPropSheet, CPropertySheet)
         ON_WM_CLOSE()
 		ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 		ON_WM_ERASEBKGND()
-		ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -515,9 +514,6 @@ static DWORD id_pairs[] = {
     0,0 
 };
 
-CBrush * CPropSheet::m_pBrush = NULL;
-COLORREF CPropSheet::m_col = -1;
-
 BOOL CPropSheet::OnEraseBkgnd(CDC *pDC)
 {
 	CRect rct;
@@ -526,27 +522,6 @@ BOOL CPropSheet::OnEraseBkgnd(CDC *pDC)
 	// Fill the background with a colour that matches the current BCG theme (and hence sometimes with the Windows Theme)
 	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
 	return TRUE;
-}
-
-HBRUSH CPropSheet::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	if (nCtlColor == CTLCOLOR_STATIC)
-	{
-		pDC->SetBkMode(TRANSPARENT);                            // Make sure text has no background
-//		return(HBRUSH) afxGlobalData.brWindow.GetSafeHandle();  // window colour
-		if (m_pBrush == NULL || m_col != afxGlobalData.clrBarFace)
-		{
-			m_col = afxGlobalData.clrBarFace;
-			if (m_pBrush != NULL)
-				delete m_pBrush;
-			m_pBrush = new CBrush(afxGlobalData.clrBarFace);
-		}
-        return (HBRUSH)*m_pBrush;
-	}
-	else
-	{
-		return CPropertySheet::OnCtlColor(pDC, pWnd, nCtlColor);
-	}
 }
 
 LRESULT CPropSheet::OnKickIdle(WPARAM, LPARAM lCount)

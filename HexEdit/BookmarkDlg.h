@@ -102,7 +102,6 @@ private:
 	bool m_first;                       // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
 	CResizeCtrl m_resizer;              // Used to move controls around when the window is resized
 	static CBrush * m_pBrush;           // brush used for background
-	static COLORREF m_col;              // colour used for background
 };
 
 //{{AFX_INSERT_LOCATION}}

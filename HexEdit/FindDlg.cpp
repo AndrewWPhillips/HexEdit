@@ -100,7 +100,6 @@ BEGIN_MESSAGE_MAP(CFindSheet, CPropertySheet)
 	//}}AFX_MSG_MAP
     ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 	ON_WM_ERASEBKGND()
-	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 // Determine if the simple string search is for a text or hex search
@@ -1206,38 +1205,24 @@ BOOL CFindSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 	return TRUE;
 }
 
-CBrush * CFindSheet::m_pBrush = NULL;
-COLORREF CFindSheet::m_col = -1;
-
 BOOL CFindSheet::OnEraseBkgnd(CDC *pDC)
 {
+	// We check for changed look in erase background event as it's done
+	// before other drawing.  This is necessary (to update m_pBrush etc) 
+	// because there is no message sent when the look changes.
+	static UINT saved_look = 0;
+	if (theApp.m_nAppLook != saved_look)
+	{
+		// TODO: set background colour of tab area (also in CPropSheet)
+
+		saved_look = theApp.m_nAppLook;
+	}
 	CRect rct;
 	GetClientRect(&rct);
 
 	// Fill the background with a colour that matches the current BCG theme (and hence sometimes with the Windows Theme)
 	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
 	return TRUE;
-}
-
-HBRUSH CFindSheet::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	if (nCtlColor == CTLCOLOR_STATIC)
-	{
-		pDC->SetBkMode(TRANSPARENT);                            // Make sure text has no background
-//		return(HBRUSH) afxGlobalData.brWindow.GetSafeHandle();  // window colour
-		if (m_pBrush == NULL || m_col != afxGlobalData.clrBarFace)
-		{
-			m_col = afxGlobalData.clrBarFace;
-			if (m_pBrush != NULL)
-				delete m_pBrush;
-			m_pBrush = new CBrush(afxGlobalData.clrBarFace);
-		}
-        return (HBRUSH)*m_pBrush;
-	}
-	else
-	{
-		return CPropertySheet::OnCtlColor(pDC, pWnd, nCtlColor);
-	}
 }
 
 LRESULT CFindSheet::OnKickIdle(WPARAM, LPARAM lCount)

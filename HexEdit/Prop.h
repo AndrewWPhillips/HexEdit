@@ -541,7 +541,6 @@ protected:
 	afx_msg void OnClose();
     afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -554,7 +553,5 @@ public:
     CPropDatePage     prop_date;
 
 private:
-	static CBrush * m_pBrush;            // brush used for background
-	static COLORREF m_col;               // colour used for background
 };
 

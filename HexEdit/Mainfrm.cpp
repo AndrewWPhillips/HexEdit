@@ -259,7 +259,7 @@ CMainFrame::CMainFrame()
 	if (!m_background.LoadImage(bgfile))
 		m_background.LoadImage(GetExePath() + FILENAME_BACKGROUND);
 #endif
-	m_background_pos = theApp.GetProfileInt("MainFrame", "BackgroundPosition", 1); // dv = top-left
+	m_background_pos = theApp.GetProfileInt("MainFrame", "BackgroundPosition", 4); // 4 = bottom-right
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 
 	// Status bar stuff
@@ -858,11 +858,11 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 	    return FALSE;  // No bitmap so let Windows draw the background
 #endif
 
-    CBrush backBrush;
-
-	// Get rectangle to be drawn into
-    CRect rct, clip_rct;
+	CRect rct;
     m_wndClientArea.GetClientRect(rct);
+#if 0
+	// Get rectangle to be drawn into
+    CRect clip_rct;
 	pDC->GetClipBox(&clip_rct);
 	if (m_background_pos != 1 && rct != clip_rct)
 	{
@@ -874,7 +874,7 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 		m_wndClientArea.InvalidateRect(&rct, TRUE);
 		return TRUE;  // prevent any other erasure since we will erase everything shortly anyway.
 	}
-
+#endif
     // pDC->FillSolidRect(rct, ::GetSysColor(COLOR_APPWORKSPACE));
 
 	CSize siz;
@@ -889,6 +889,7 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 #endif
 
 	CPoint point;
+    CBrush backBrush;
 	switch (m_background_pos)
 	{
 	case 1:  // top left
@@ -5391,7 +5392,6 @@ void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
 }
-
 
 // Just for testing things (invoked with Ctrl+Shift+T)
 void CMainFrame::OnTest() 

@@ -557,10 +557,26 @@ BOOL CBookmarkDlg::PreTranslateMessage(MSG* pMsg)
 }
 
 CBrush * CBookmarkDlg::m_pBrush = NULL;
-COLORREF CBookmarkDlg::m_col = -1;
 
 BOOL CBookmarkDlg::OnEraseBkgnd(CDC *pDC)
 {
+	// We check for changed look in erase background event as it's done
+	// before other drawing.  This is necessary (to update m_pBrush etc) 
+	// because there is no message sent when the look changes.
+	static UINT saved_look = 0;
+	if (theApp.m_nAppLook != saved_look)
+	{
+		// Create new brush used for background of static controls
+		if (m_pBrush != NULL)
+			delete m_pBrush;
+		m_pBrush = new CBrush(afxGlobalData.clrBarFace);
+
+		// Change background colour of grid headers
+		grid_.SetFixedBackClr(afxGlobalData.clrBarFace);
+
+		saved_look = theApp.m_nAppLook;
+	}
+
 	CRect rct;
 	GetClientRect(&rct);
 
@@ -575,19 +591,11 @@ HBRUSH CBookmarkDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	{
 		pDC->SetBkMode(TRANSPARENT);                            // Make sure text has no background
 //		return(HBRUSH) afxGlobalData.brWindow.GetSafeHandle();  // window colour
-		if (m_pBrush == NULL || m_col != afxGlobalData.clrBarFace)
-		{
-			m_col = afxGlobalData.clrBarFace;
-			if (m_pBrush != NULL)
-				delete m_pBrush;
-			m_pBrush = new CBrush(afxGlobalData.clrBarFace);
-		}
-        return (HBRUSH)*m_pBrush;
+		if (m_pBrush != NULL)
+			return (HBRUSH)*m_pBrush;
 	}
-	else
-	{
-		return CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
-	}
+
+	return CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 }
 
 void CBookmarkDlg::OnAdd() 
