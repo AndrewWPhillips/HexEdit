@@ -610,6 +610,7 @@ CHexEditView::CHexEditView()
     mouse_addr_ = -1;           // Only used when theApp.hl_mouse_ is on
 
     mouse_down_ = false;
+	//drag_bookmark_ = -1;
     needs_refresh_ = false;
     needs_hscroll_ = false;
     needs_vscroll_ = false;
@@ -6337,14 +6338,12 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 {
     CPointAp pp = ConvertFromDP(point);          // Point in our coord system
 
-    // change to allow select in address area (commented out below)
-    // so that line select can be hooked up to BCG double-click in address area
-    if ( /* pp.x <= (addr_width_ - 1)*text_width_ || */
-        ( (display_.vert_display || display_.char_area) && pp.x >= char_pos(rowsize_)+text_width_ ||
-         !(display_.vert_display || display_.char_area) && pp.x >= hex_pos(rowsize_) )  )
+	// Click to right of everything is ignored, but click on address area (left side)
+	// is now allowed to allow double-click in address area event to be handled
+    if ( (display_.vert_display || display_.char_area) && pp.x >= char_pos(rowsize_)+text_width_ ||
+        !(display_.vert_display || display_.char_area) && pp.x >= hex_pos(rowsize_)  )
     {
-        // Don't do anything if /* in address area on left or */ off to right
-        return;
+        return;          // Do nothing if off to right
     }
 
     GetSelAddr(prev_start_, prev_end_);
@@ -6389,12 +6388,17 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
         return;         // Don't allow any other select for click in ruler
     }
 
+    shift_down_ = shift_down();
+
+	//// Check if clicked on a bookmark
+	//if (!shift_down_ && (drag_bookmark_ = bookmark_at(address_at(point))) > -1)
+	//	return;   // no selection wanted when dragging a bookmark
+
     saved_state_ = disp_state_;                 // Keep the current state for saving in undo stack
 
     // Save some info that may be needed for macro recording
     dev_down_ = point;                          // Mouse down posn (device coords)
     doc_down_ = pp;                             // Mouse down posn (doc coords)
-    shift_down_ = shift_down();
 
     FILE_ADDRESS swap_addr = -1;                // caret addr before swap (or -1 if no swap)
 	if (!shift_down_)
@@ -6419,9 +6423,10 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
                 swap_addr = prev_start_;
             }
         }
+
     }
 
-    CScrView::OnLButtonDown(nFlags, point);
+	CScrView::OnLButtonDown(nFlags, point);
 
     if (theApp.hl_caret_ && swap_addr > -1)
         invalidate_ruler(swap_addr);
@@ -6493,7 +6498,12 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
         return;
     }
 #endif
-    if (mouse_down_)
+	//if (mouse_down_ && drag_bookmark_ > -1)
+	//{
+	//	// Move the bookmark
+	//}
+    //else
+	if (mouse_down_)
     {
         num_entered_ = num_del_ = num_bs_ = 0;  // Can't be editing while mousing
 

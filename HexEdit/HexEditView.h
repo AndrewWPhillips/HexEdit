@@ -908,6 +908,7 @@ private:
     FILE_ADDRESS prev_start_, prev_end_; // Previous selection
     int prev_row_;              // Row if in vert_display mode
     bool mouse_down_;           // Left button down seen but not yet up
+	//int drag_bookmark_;         // Can click and drag bookmark (-1 if bookmark not clicked)
 
     // Note some declarations are bool because this is the new C++ standard,
     // others are BOOL to avoid warnings.  One day I'll change them all to
