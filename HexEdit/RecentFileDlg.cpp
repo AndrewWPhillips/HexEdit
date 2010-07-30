@@ -154,6 +154,8 @@ BEGIN_MESSAGE_MAP(CRecentFileDlg, CDialog)
 	//}}AFX_MSG_MAP
     ON_WM_CONTEXTMENU()
     ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
+	//ON_WM_ERASEBKGND()
+	//ON_WM_CTLCOLOR()
     ON_NOTIFY(NM_CLICK, IDC_GRID_RFL, OnGridClick)
     ON_NOTIFY(NM_DBLCLK, IDC_GRID_RFL, OnGridDoubleClick)
     ON_NOTIFY(NM_RCLICK, IDC_GRID_RFL, OnGridRClick)
@@ -692,6 +694,35 @@ LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 
     return FALSE;
 }
+
+#if 0  // This is too hard to get to work - eg:
+       // 1. window size (bottom right) control background colour does not seem to be setable
+       // 2. When AppLook chnages I haven't worked out how to force setting of the current colours and redraw
+CBrush * CRecentFileDlg::m_pBrush = NULL;
+
+HBRUSH CRecentFileDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	if (nCtlColor == CTLCOLOR_STATIC)
+	{
+		pDC->SetBkMode(TRANSPARENT);                            // Make sure text has no background
+		if (m_pBrush == NULL)
+			m_pBrush = new CBrush(afxGlobalData.clrBarFace);
+		return (HBRUSH)*m_pBrush;
+	}
+
+	return CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+}
+
+BOOL CRecentFileDlg::OnEraseBkgnd(CDC *pDC)
+{
+	CRect rct;
+	GetClientRect(&rct);
+
+	// Fill the background with a colour that matches the current MFC theme
+	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
+	return TRUE;
+}
+#endif
 
 void CRecentFileDlg::OnOK() 
 {

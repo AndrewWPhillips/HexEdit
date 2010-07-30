@@ -97,6 +97,8 @@ protected:
 	//}}AFX_MSG
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
     afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	//afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	//afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
     afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
     afx_msg void OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* pResult);
     afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* pResult);
@@ -107,6 +109,7 @@ protected:
 	void DeleteEntries();
 
 	CResizeCtrl resizer_;               // Used to move controls around when the window is resized
+	//static CBrush * m_pBrush;           // brush used for background
 
 	range_set<int> to_delete_;			// Keeps track of files to delete from list when OK clicked
 };
