@@ -265,6 +265,8 @@ public:
 	void	 SetTitleTipTextClr(COLORREF clr = CLR_DEFAULT) { m_crTTipTextClr = clr;  }
 	COLORREF GetTitleTipTextClr()				            { return m_crTTipTextClr; }
 
+	void SetFixedBackClr(COLORREF clr);
+
     // ***************************************************************************** //
     // These have been deprecated. Use GetDefaultCell and then set the colors
     void     SetTextColor(COLORREF clr)      { m_cellDefault.SetTextClr(clr);        }

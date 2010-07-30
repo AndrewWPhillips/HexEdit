@@ -465,6 +465,13 @@ BOOL CGridCtrl::Create(const RECT& rect, CWnd* pParentWnd, UINT nID, DWORD dwSty
     ResetScrollBars(); //- called in OnSize anyway
     return TRUE;
 }
+// Set background colour of the fixed (header) cells
+void CGridCtrl::SetFixedBackClr(COLORREF clr)
+{
+    m_cellFixedColDef.SetBackClr(clr);
+    m_cellFixedRowDef.SetBackClr(clr);
+    m_cellFixedRowColDef.SetBackClr(clr);
+}
 
 void CGridCtrl::SetupDefaultCells()
 {
