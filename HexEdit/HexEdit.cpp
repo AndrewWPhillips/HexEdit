@@ -872,8 +872,15 @@ void CHexEditApp::OnNewUser()
     if (srcFolder.IsEmpty() || !::GetDataPath(dstFolder))
         return;       // no point in continuing if we can't get paths (Win95?)
 
-	if (AfxMessageBox("This is the first time you have run HexEdit.\r\n"
-	                  "Hit OK to copy default templates and macros.\r\n",
+	CString srcFile, dstFile;
+	dstFile = dstFolder + FILENAME_DTD;
+
+	// If DTD file exists, probably just the registry settings were deleted so don't ask
+	// if we want to copy (but copy over files if not already there
+	if (::_access(dstFile, 0) == -1 &&
+	    AfxMessageBox("This is the first time you have run HexEdit.\r\n"
+	                  "Hit OK to set up you own personal copies of \r\n"
+					  "templates and macros.\r\n",
 	                  MB_OKCANCEL) == IDCANCEL)
 		return;
 
@@ -884,10 +891,9 @@ void CHexEditApp::OnNewUser()
 	// _windows_constants.TXT  - used by C/C++ parser
 	// *.HEM                   - any provided keystroke macros
 
-	CString srcFile, dstFile;
 	srcFile = srcFolder + FILENAME_DTD;
-	dstFile = dstFolder + FILENAME_DTD;
-	::MakeSureDirectoryPathExists(dstFile);
+	//dstFile = dstFolder + FILENAME_DTD; // already done above
+	::MakeSureDirectoryPathExists(dstFile);   // this creates any folders if necessary
 	::CopyFile(srcFile, dstFile, FALSE);
 
 	srcFile = srcFolder + "_windows_constants.txt";
@@ -1238,7 +1244,7 @@ void CHexEditApp::OnRepairAll()
                       "* settings made in the Options dialog\n"
                       "* previously opened files settings (columns etc)\n"
                       "* recent file list, bookmarks, highlights etc\n"
-                      "* ALL REGISTRATION INFORMATION WILL BE LOST\n\n"
+                      "* ALL REGISTRATION INFORMATION WILL BE REMOVED\n\n"
                       "When complete you will need to restart HexEdit\n"
                       "and re-enter your activation code.\n"
                       "\nAre you absolutely sure you want to continue?",
