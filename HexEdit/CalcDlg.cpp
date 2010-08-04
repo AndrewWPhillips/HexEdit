@@ -84,13 +84,21 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 		else
 			pDC->SelectObject(&penOff);
 
+		//if (on)
+		//{
+		//	pDC->MoveTo((rct.left + rct.right)/2, rct.bottom);
+		//	pDC->LineTo((rct.left + rct.right)/2, rct.top);
+		//}
+		//else
+		//	pDC->Ellipse(&rct);
+		pDC->Rectangle(&rct);
 		if (on)
 		{
-			pDC->MoveTo((rct.left + rct.right)/2, rct.bottom);
-			pDC->LineTo((rct.left + rct.right)/2, rct.top);
+			pDC->MoveTo(rct.left, rct.top);
+			pDC->LineTo(rct.right, rct.bottom);
+			pDC->MoveTo(rct.left, rct.bottom);
+			pDC->LineTo(rct.right, rct.top);
 		}
-		else
-			pDC->Ellipse(&rct);
 
 		// Move to next position
 		horz += rct.Width() + 1;
@@ -143,7 +151,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 {
     mm_ = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
 
-	if (!CDialog::Create(MAKEINTRESOURCE(IDD), pParentWnd)) // IDD_CALC_NEW
+	if (!CDialog::Create(MAKEINTRESOURCE(IDD), pParentWnd)) // IDD_CALC
 	{
 		TRACE0("Failed to create Calculator dialog\n");
 		return FALSE; // failed to create
