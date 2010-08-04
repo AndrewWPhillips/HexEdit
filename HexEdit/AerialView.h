@@ -406,6 +406,10 @@ protected:
     afx_msg void OnUpdateDffdSplit(CCmdUI* pCmdUI) { phev_->OnUpdateDffdSplit(pCmdUI); }
     afx_msg void OnUpdateDffdTab(CCmdUI* pCmdUI) { phev_->OnUpdateDffdTab(pCmdUI); }
 
+	afx_msg void OnOptScheme() { phev_->OnOptScheme(); }
+	afx_msg void OnSelScheme() { phev_->OnSelScheme(); }
+    afx_msg void OnUpdateScheme(CCmdUI *pCmdUI) { phev_->OnUpdateScheme(pCmdUI); }
+
 	DECLARE_MESSAGE_MAP()
 
 #ifndef _DEBUG
@@ -424,7 +428,7 @@ private:
     void draw_ants(CDC* pDC, FILE_ADDRESS start, FILE_ADDRESS end, COLORREF);
     void draw_bounds(CDC* pDC, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr, COLORREF clr1, COLORREF clr2);
     void draw_lines(CDC* pDC, FILE_ADDRESS start, FILE_ADDRESS end, COLORREF clr1, COLORREF clr2);
-    void draw_pixel(CDC* pDC, int pnum, int x, int y, COLORREF clr1, COLORREF clr2);
+    void draw_pixel(CDC* pDC, int pnum, int x, int y, COLORREF clr1, COLORREF clr2, int horz = 0, int vert = 0);
     void get_colours(COLORREF clr, COLORREF & clr1, COLORREF & clr2);
     void draw_left_border(CDC* pDC, int left, int right, int row, COLORREF clr);
     void draw_top_border(CDC* pDC, int x, int ncols, COLORREF clr);

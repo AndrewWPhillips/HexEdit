@@ -32,7 +32,7 @@ CAerialView::CAerialView()
     disp_.dpix = 1;     // set later but make non-zero for safety
     sbfact_ = 1;        // default to normal scrollbar units
 
-    last_tip_elt_ = -1;
+    last_tip_elt_ = -1;  // xxx is this necessary?
 
     // We use a timer to update the "marching ants" border, which is a cycle of 12 pixels: 4 pixels
     // of one ant colour, 2 blanks, 4 pixels of another ant colour, 2 blanks, then repeat
@@ -511,6 +511,13 @@ BEGIN_MESSAGE_MAP(CAerialView, CView)
     ON_UPDATE_COMMAND_UI(ID_DFFD_SPLIT, OnUpdateDffdSplit)
     ON_COMMAND(ID_DFFD_TAB, OnDffdTab)
     ON_UPDATE_COMMAND_UI(ID_DFFD_TAB, OnUpdateDffdTab)
+
+	ON_COMMAND(ID_SCHEME, OnOptScheme)
+	ON_CBN_SELENDOK(ID_SCHEME, OnSelScheme)
+    ON_UPDATE_COMMAND_UI(ID_SCHEME, OnUpdateScheme)
+	ON_COMMAND(ID_SCHEME_US, OnOptScheme)
+	ON_CBN_SELENDOK(ID_SCHEME_US, OnSelScheme)
+    ON_UPDATE_COMMAND_UI(ID_SCHEME_US, OnUpdateScheme)
 
 END_MESSAGE_MAP()
 
@@ -1575,7 +1582,7 @@ void CAerialView::invalidate_addr_range_boundary(FILE_ADDRESS start_addr, FILE_A
     CHexEditDoc *pDoc = GetDocument();
     int width = GetDocument()->GetBpe() * cols_;
 
-    // Restrict to just what is in the display then convertto window device coords
+    // Restrict to just what is in the display then convert to window device coords
     if (start_addr < scrollpos_) start_addr = scrollpos_;
     if (end_addr > scrollpos_ + width*rows_) end_addr = scrollpos_ + width*rows_;
 
@@ -1603,30 +1610,33 @@ void CAerialView::invalidate_addr_range_boundary(FILE_ADDRESS start_addr, FILE_A
     // Invalidate and draw the four sides.
     // Note that we call UpdateWindow to force an immediate redraw otherwise Windows
     // combines them into one big rect which is slow (like invalidate_addr_range).
+	// Also note that the marching ants can now be up to 4 pixels wide which
+	// explains the offsets of 4 below.
+
     // Top
     rct.left   = bdr_left_;
     rct.right  = bdr_left_ + cols_*actual_dpix_;
     rct.top    = bdr_top_ + start_line*actual_dpix_;
-    rct.bottom = rct.top + actual_dpix_ + 1;
+    rct.bottom = rct.top + actual_dpix_ + 4;
     InvalidateRect(rct, FALSE);
     UpdateWindow();
     // Bottom
     rct.left   = bdr_left_;
     rct.right  = bdr_left_ + cols_*actual_dpix_;
-    rct.top    = bdr_top_ + end_line*actual_dpix_ - 1;
+    rct.top    = bdr_top_ + end_line*actual_dpix_ - 4;
     rct.bottom = bdr_top_ + (end_line+1)*actual_dpix_;
     InvalidateRect(rct, FALSE);
     UpdateWindow();
     // Left
     rct.left   = bdr_left_;
-    rct.right  = rct.left + 1;
+    rct.right  = rct.left + 4;
     rct.top    = bdr_top_ + start_line*actual_dpix_;
     rct.bottom = bdr_top_ + (end_line+1)*actual_dpix_;
     InvalidateRect(rct, FALSE);
     UpdateWindow();
     // Right
     rct.right  = bdr_left_ + cols_*actual_dpix_;
-    rct.left   = rct.right - 1;                         // one less than right
+    rct.left   = rct.right - 4;                         // 4 pixels less than right
     rct.top    = bdr_top_ + start_line*actual_dpix_;
     rct.bottom = bdr_top_ + (end_line+1)*actual_dpix_;
     InvalidateRect(rct, FALSE);
@@ -1780,56 +1790,56 @@ void CAerialView::draw_bounds(CDC* pDC, FILE_ADDRESS start_addr, FILE_ADDRESS en
 
     // Draw top line
     for (int x = left_indent*actual_dpix_; x < rct.right*actual_dpix_; ++x)
-        draw_pixel(pDC, pnum++, x, rct.top*actual_dpix_, clr1, clr2);
+        draw_pixel(pDC, pnum++, x, rct.top*actual_dpix_, clr1, clr2, 0, 1);
 
     // Draw right side
     if (rct.right == right_indent)
     {
         // Draw simple right side
         for (int y = rct.top*actual_dpix_ + 1; y < (rct.bottom+1)*actual_dpix_; ++y)
-            draw_pixel(pDC, pnum++, rct.right*actual_dpix_ - 1, y, clr1, clr2);
+            draw_pixel(pDC, pnum++, rct.right*actual_dpix_ - 1, y, clr1, clr2, -1, 0);
     }
     else
     {
         // Draw right side down to indent part
         int x, y;
         for (y = rct.top*actual_dpix_ + 1; y < rct.bottom*actual_dpix_; ++y)
-            draw_pixel(pDC, pnum++, rct.right*actual_dpix_ - 1, y, clr1, clr2);
+            draw_pixel(pDC, pnum++, rct.right*actual_dpix_ - 1, y, clr1, clr2, -1, 0);
 
         // Draw horizontal line for indent part
         for (x = rct.right*actual_dpix_ - 2; x >= right_indent*actual_dpix_ - 1; x--)
-            draw_pixel(pDC, pnum++, x, y - 1, clr1, clr2);
+            draw_pixel(pDC, pnum++, x, y - 1, clr1, clr2, 0, -1);
 
         // Draw vertical line for indent part
         for ( ; y < (rct.bottom+1)*actual_dpix_; ++y)
-            draw_pixel(pDC, pnum++, right_indent*actual_dpix_ - 1, y, clr1, clr2);
+            draw_pixel(pDC, pnum++, right_indent*actual_dpix_ - 1, y, clr1, clr2, -1, 0);
     }
 
     // Draw bottom line
     for (int x = right_indent*actual_dpix_ - 2; x >= rct.left*actual_dpix_; x--)
-        draw_pixel(pDC, pnum++, x, (rct.bottom+1)*actual_dpix_ - 1, clr1, clr2);
+        draw_pixel(pDC, pnum++, x, (rct.bottom+1)*actual_dpix_ - 1, clr1, clr2, 0, -1);
 
     // Draw left side
     if (rct.left == left_indent)
     {
         // Draw simple left side
         for (int y = (rct.bottom+1)*actual_dpix_ - 2; y > rct.top*actual_dpix_; y--)
-            draw_pixel(pDC, pnum++, rct.left*actual_dpix_, y, clr1, clr2);
+            draw_pixel(pDC, pnum++, rct.left*actual_dpix_, y, clr1, clr2, 1, 0);
     }
     else
     {
         // Draw left side up to indent part
         int x, y;
         for (y = (rct.bottom+1)*actual_dpix_ - 2; y >= (rct.top+1)*actual_dpix_; y--)
-            draw_pixel(pDC, pnum++, rct.left*actual_dpix_, y, clr1, clr2);
+            draw_pixel(pDC, pnum++, rct.left*actual_dpix_, y, clr1, clr2, 1, 0);
 
         // Draw horizontal line for indent part
         for (x = rct.left*actual_dpix_ + 1; x <= left_indent*actual_dpix_; ++x)
-            draw_pixel(pDC, pnum++, x, y + 1, clr1, clr2);
+            draw_pixel(pDC, pnum++, x, y + 1, clr1, clr2, 0, 1);
 
         // Draw vertical line for indent part
         for ( ; y > rct.top*actual_dpix_; y--)
-            draw_pixel(pDC, pnum++, left_indent*actual_dpix_, y, clr1, clr2);
+            draw_pixel(pDC, pnum++, left_indent*actual_dpix_, y, clr1, clr2, 1, 0);
     }
     ASSERT(pnum == blength);
 }
@@ -1838,16 +1848,29 @@ void CAerialView::draw_bounds(CDC* pDC, FILE_ADDRESS start_addr, FILE_ADDRESS en
 // This uses pnum (param 2) and the current value of timer_count_ (see OnTimer)
 // to decide the colour of the pixels.
 // x and y are the coordinates of the pixel (device coords) offset from top/left border.
-void CAerialView::draw_pixel(CDC* pDC, int pnum, int x, int y, COLORREF clr1, COLORREF clr2)
+void CAerialView::draw_pixel(CDC* pDC, int pnum, int x, int y, COLORREF clr1, COLORREF clr2, int horz /*=0*/, int vert)
 {
     // Work out which pixel of the ant we are drawing.
     // Note we add ANT_SIZE below as modulus (%) does not behave as expected for -ve numbers.
     int anum = (int(pnum*bfactor_) + ANT_SIZE - timer_count_)%ANT_SIZE;
-    if (anum < 4)
-        pDC->SetPixel(bdr_left_ + x, bdr_top_ + y, clr1);
-    else if (anum >= 6 && anum < 10)
-        pDC->SetPixel(bdr_left_ + x, bdr_top_ + y, clr2);
-    // else we do not drawn anything (transparent)
+	if (actual_dpix_ < 7)
+	{
+		// When zoomed out quickly draw a single pixel
+		if (anum < 4)
+			pDC->SetPixel(bdr_left_ + x, bdr_top_ + y, clr1);
+		else if (anum >= 6 && anum < 10)
+			pDC->SetPixel(bdr_left_ + x, bdr_top_ + y, clr2);
+		// else we do not drawn anything (transparent)
+	}
+	else
+		for (int ii = 0; ii < actual_dpix_/4; ++ii)
+		{
+			if (anum < 4)
+				pDC->SetPixel(bdr_left_ + x + ii*horz, bdr_top_ + y + ii*vert, clr1);
+			else if (anum >= 6 && anum < 10)
+				pDC->SetPixel(bdr_left_ + x + ii*horz, bdr_top_ + y + ii*vert, clr2);
+			// else we do not drawn anything (transparent)
+		}
 }
 
 // Draw a rectangular block of indicator pixels in the left border
