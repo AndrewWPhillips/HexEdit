@@ -35,10 +35,86 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
+// CCalcBits
+
+IMPLEMENT_DYNAMIC(CCalcBits, CStatic)
+
+BEGIN_MESSAGE_MAP(CCalcBits, CStatic)
+   ON_WM_ERASEBKGND()
+END_MESSAGE_MAP()
+
+BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
+{
+	// Don't show bits if not an int
+	if (!m_pParent->current_const_ ||
+		m_pParent->current_type_ != CJumpExpr::TYPE_INT)
+		return CStatic::OnEraseBkgnd(pDC);
+
+	CRect rct;
+	GetClientRect(&rct);
+	m_ww = rct.Width()/70;                 // width of display for one bit
+	m_hh = rct.Height() - 2;
+	ASSERT(m_ww > 3);
+	m_nn = (rct.Width()-m_ww*64)/24;             // sep between nybbles = half of rest split 16 ways
+	m_bb = (rct.Width()-m_ww*64-m_nn*16)/12;     // sep between bytes = half of rest split 8 way
+	m_cc = (rct.Width()-m_ww*64-m_nn*16-m_bb*8); // centre sep = rest of space
+	ASSERT(m_nn > 0 && m_bb > 0 && m_cc > 0);      // sanity check
+	rct.left = 1;
+	rct.right = rct.left + m_ww - 1;  // leave at least one pixel between each
+	rct.top = 1;
+	rct.bottom = rct.top + m_hh;
+
+	// Draw bits from left to right
+    CPen penOn (PS_SOLID, 0, ::GetSysColor(COLOR_BTNTEXT));
+    CPen penOff(PS_SOLID, 0, ::GetSysColor(COLOR_BTNTEXT));
+    CPen penDis(PS_SOLID, 0, ::GetSysColor(COLOR_GRAYTEXT));
+	CPen * pOldPen = (CPen*) pDC->SelectObject(&penDis);
+	CBrush * pOldBrush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
+
+	int horz = 1;  // horizontal position
+	for (int bnum = 63; bnum >= 0; bnum--)
+	{
+		bool on  = (m_pParent->current_ & ((__int64)1<<bnum)) != 0;
+		bool dis = bnum >= m_pParent->bits_;
+
+		if (dis)
+			pDC->SelectObject(&penDis);
+		else if (on)
+			pDC->SelectObject(&penOn);
+		else
+			pDC->SelectObject(&penOff);
+
+		if (on)
+		{
+			pDC->MoveTo((rct.left + rct.right)/2, rct.bottom);
+			pDC->LineTo((rct.left + rct.right)/2, rct.top);
+		}
+		else
+			pDC->Ellipse(&rct);
+
+		// Move to next position
+		horz += rct.Width() + 1;
+		if (bnum%4 == 0)
+			horz += m_nn;
+		if (bnum%8 == 0)
+			horz += m_bb;
+		if (bnum == 32)
+			horz += m_cc;
+		rct.MoveToX(horz);
+	}
+	pDC->SelectObject(pOldBrush);
+	pDC->SelectObject(pOldPen);
+
+	return TRUE;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 // CCalcDlg dialog
 
 CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
-    : CDialog(), purple_pen(PS_SOLID, 0, RGB(0x80, 0, 0x80))
+    : CDialog(), 
+	  ctl_calc_bits_(this),
+	  purple_pen(PS_SOLID, 0, RGB(0x80, 0, 0x80))
 {
     aa_ = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -421,6 +497,7 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT,  ctl_edit_combo_);
+	DDX_Control(pDX, IDC_CALC_BITS, ctl_calc_bits_);
 
 #if 1
     DDX_Control(pDX, IDC_DIGIT_0, ctl_digit_0_);
@@ -1889,8 +1966,10 @@ LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 	if (m_first)
 	{
 		// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT 
-		m_resizer.Add(IDC_EDIT, 0, 0, 100, 0);        // edit control resizes with width (moves/sizes slightly vert.)
-		m_resizer.Add(IDC_OP_DISPLAY, 100, 10, 0, 0);  // operator display sticks to right edge (moves vert)
+		// NOTE: Don't allow resize vertically of IDC_EDIT as it stuffs up the combo drop down list window size
+		m_resizer.Add(IDC_EDIT, 0, 0, 100, 0);        // edit control resizes with width
+		m_resizer.Add(IDC_OP_DISPLAY, 100, 0, 0, 0);  // operator display sticks to right edge (moves vert)
+		m_resizer.Add(IDC_CALC_BITS, 0, 5, 100, 4);  // where bits are drawn
 
 		// Settings controls don't move/size horizontally but move vert. and size slightly too
 		m_resizer.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);

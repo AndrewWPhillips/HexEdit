@@ -31,6 +31,28 @@
 #endif // _MSC_VER > 1000
 // CalcDlg.h : header file
 //
+
+/////////////////////////////////////////////////////////////////////////////
+// CCalcBits
+
+class CCalcBits : public CStatic
+{
+	DECLARE_DYNAMIC(CCalcBits)
+
+public:
+	CCalcBits(CCalcDlg * pParent) : m_pParent(pParent) { }
+
+protected:
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	DECLARE_MESSAGE_MAP()
+
+private:
+	CCalcDlg * m_pParent;   // owning calc dlg, so we can get bits etc
+
+	int m_ww, m_nn, m_bb, m_cc;  // widths for size/spacing of bit display
+	int m_hh;                    // height of each bit display
+};
+
 /////////////////////////////////////////////////////////////////////////////
 // CCalcDlg dialog
 class CMainFrame;
@@ -38,6 +60,7 @@ class CMainFrame;
 class CCalcDlg : public CDialog
 {
     friend class CCalcEdit;
+	friend class CCalcBits;
     friend class CHexEditApp;           // Allows macros to call protected members
 
 // Construction
@@ -68,6 +91,7 @@ public:
 
     CComboBox ctl_edit_combo_;      // Combo box with main edit controls
     CCalcEdit edit_;                // Subclassed edit control (child of above combo)
+	CCalcBits ctl_calc_bits_;       // Just for drawing the bits
 
 	// Calculator buttons
 #if 1

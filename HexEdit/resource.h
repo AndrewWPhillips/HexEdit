@@ -1145,6 +1145,7 @@
 #define IDC_DISPLAY_TEMPLATE            1591
 #define IDC_DISPLAY_AERIAL              1592
 #define IDC_DISPLAY_COMP                1593
+#define IDC_CALC_BITS                   1594
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1577,7 +1578,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        436
 #define _APS_NEXT_COMMAND_VALUE         39134
-#define _APS_NEXT_CONTROL_VALUE         1594
+#define _APS_NEXT_CONTROL_VALUE         1595
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
