@@ -680,10 +680,10 @@ int CHexEditApp::GetSecurity()
     // Get security info from registry and decrypt
     HKEY hkey, hkey2, hkey3;
 
-    // Open (or create if not there) the place to store the info
-    if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS ||  // xxx fails on W7 if not admin
-		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS ||
-		::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
+    // Open (or create if not there) the place to store the info (hkey and hkey2 are old so it doesn't really matter if they fail)
+    if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS) hkey = 0;
+	if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS) hkey2 = 0;
+    if (::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
         return 0;     // return error if any could not be opened
 
     // Try getting security info from the registry.  If that fails try security file.
@@ -721,8 +721,8 @@ int CHexEditApp::GetSecurity()
 
         // at this point security_info is left encrypted with STANDARD_KEY
     }
-    ::RegCloseKey(hkey);
-    ::RegCloseKey(hkey2);
+    if (hkey) ::RegCloseKey(hkey);
+    if (hkey2) ::RegCloseKey(hkey2);
 
     // Decrypt the security info and check it's OK
     set_key(STANDARD_KEY, 8);
