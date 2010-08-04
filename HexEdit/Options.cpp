@@ -203,6 +203,17 @@ COptSheet::~COptSheet()
 {
 }
 
+BOOL COptSheet::OnInitDialog()
+{
+	BOOL retval = CMFCPropertySheet::OnInitDialog();
+
+	// Turn on lines and +/- buttons etc in the tree control
+	LONG style = ::GetWindowLong(m_wndTree.m_hWnd, GWL_STYLE);
+	::SetWindowLong(m_wndTree.m_hWnd, GWL_STYLE,
+					style | TVS_HASBUTTONS | TVS_HASLINES| TVS_LINESATROOT | TVS_SHOWSELALWAYS | TVS_TRACKSELECT);
+	return retval;
+}
+
 BEGIN_MESSAGE_MAP(COptSheet, CMFCPropertySheet)
         //{{AFX_MSG_MAP(COptSheet)
         ON_WM_NCCREATE()

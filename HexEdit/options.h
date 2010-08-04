@@ -214,6 +214,8 @@ public:
 	virtual BOOL DestroyWindow();
 	//}}AFX_VIRTUAL
 
+	virtual BOOL OnInitDialog();
+
 // Implementation
 public:
 	virtual ~COptSheet();
