@@ -610,7 +610,7 @@ CHexEditView::CHexEditView()
     mouse_addr_ = -1;           // Only used when theApp.hl_mouse_ is on
 
     mouse_down_ = false;
-	//drag_bookmark_ = -1;
+	drag_bookmark_ = -1;
     needs_refresh_ = false;
     needs_hscroll_ = false;
     needs_vscroll_ = false;
@@ -2914,7 +2914,7 @@ void CHexEditView::OnDraw(CDC* pDC)
         {
             info_rect.left = hex_pos(int((last_tip_addr_ + offset_)%rowsize_), char_width) - 
                              doc_rect.left + bdr_left_;
-            info_rect.right = info_rect.left + 2*char_width + 2;
+            info_rect.right = info_rect.left + 2*char_width + 1;
             if (neg_x)
             {
                 info_rect.left = -info_rect.left;
@@ -2922,29 +2922,77 @@ void CHexEditView::OnDraw(CDC* pDC)
             }
 
             //pDC->FillSolidRect(&info_rect, sector_bg_col_);
-			//pDC->Rectangle(&info_rect);
-			pDC->MoveTo(info_rect.right, info_rect.bottom-1);
-			pDC->LineTo(info_rect.left, info_rect.bottom-1);
-			pDC->LineTo(info_rect.left, info_rect.top);
-			pDC->LineTo(info_rect.right, info_rect.top);
+			pDC->Rectangle(&info_rect);
+			//pDC->MoveTo(info_rect.right, info_rect.bottom-1);
+			//pDC->LineTo(info_rect.left, info_rect.bottom-1);
+			//pDC->LineTo(info_rect.left, info_rect.top);
+			//pDC->LineTo(info_rect.right, info_rect.top);
         }
 
         if (display_.vert_display || display_.char_area)
         {
             info_rect.left = char_pos(int((last_tip_addr_ + offset_)%rowsize_), char_width, char_width_w) - 
                              doc_rect.left + bdr_left_ + 1;
-            info_rect.right = info_rect.left + char_width_w;
+            info_rect.right = info_rect.left + char_width_w - 1;
             if (neg_x)
             {
                 info_rect.left = -info_rect.left;
                 info_rect.right = -info_rect.right;
             }
             //pDC->FillSolidRect(&info_rect, sector_bg_col_);
-			//pDC->Rectangle(&info_rect);
-			pDC->MoveTo(info_rect.right, info_rect.bottom-1);
-			pDC->LineTo(info_rect.left, info_rect.bottom-1);
-			pDC->LineTo(info_rect.left, info_rect.top);
-			pDC->LineTo(info_rect.right, info_rect.top);
+			pDC->Rectangle(&info_rect);
+			//pDC->MoveTo(info_rect.right, info_rect.bottom-1);
+			//pDC->LineTo(info_rect.left, info_rect.bottom-1);
+			//pDC->LineTo(info_rect.left, info_rect.top);
+			//pDC->LineTo(info_rect.right, info_rect.top);
+        }
+		(void)pDC->SelectObject(psaved_pen);
+		(void)pDC->SelectObject(psaved_brush);
+    }
+
+	// Draw indicator around byte where bookmark is being moved to
+    if (!pDC->IsPrinting() && mouse_down_ && drag_bookmark_ > -1)
+    {
+        CRect drag_rect;                // Where mark is drawn in logical coords
+
+        drag_rect.top = int(((drag_address_ + offset_)/rowsize_) * line_height - 
+                            doc_rect.top + bdr_top_ + 1);
+        drag_rect.bottom = drag_rect.top + line_height - 2;
+        if (neg_y)
+        {
+            drag_rect.top = -drag_rect.top;
+            drag_rect.bottom = -drag_rect.bottom;
+        }
+
+		CBrush * psaved_brush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
+		CPen * psaved_pen = pDC->SelectObject(&pen1);
+        if (!display_.vert_display && display_.hex_area)
+        {
+            drag_rect.left = hex_pos(int((drag_address_ + offset_)%rowsize_), char_width) - 
+                             doc_rect.left + bdr_left_;
+            drag_rect.right = drag_rect.left + 2*char_width;
+            if (neg_x)
+            {
+                drag_rect.left = -drag_rect.left;
+                drag_rect.right = -drag_rect.right;
+            }
+
+            pDC->FillSolidRect(&drag_rect, bm_col_);
+			pDC->Rectangle(&drag_rect);
+        }
+
+        if (display_.vert_display || display_.char_area)
+        {
+            drag_rect.left = char_pos(int((drag_address_ + offset_)%rowsize_), char_width, char_width_w) - 
+                             doc_rect.left + bdr_left_ + 1;
+            drag_rect.right = drag_rect.left + char_width_w - 1;
+            if (neg_x)
+            {
+                drag_rect.left = -drag_rect.left;
+                drag_rect.right = -drag_rect.right;
+            }
+            pDC->FillSolidRect(&drag_rect, bm_col_);
+			pDC->Rectangle(&drag_rect);
         }
 		(void)pDC->SelectObject(psaved_pen);
 		(void)pDC->SelectObject(psaved_brush);
@@ -4533,8 +4581,8 @@ void CHexEditView::invalidate_hex_addr_range(FILE_ADDRESS start_addr, FILE_ADDRE
         {
             // Note: (23/11/03) go back an extra text_width_ bytes to allow for 
             // deletion mark (tracking changes) before the byte
-            inv = CRectAp(hex_pos(int((start_addr+offset_)%rowsize_))-text_width_, start_line * line_height_,
-                          hex_pos(int((end_addr+offset_)%rowsize_)), (start_line + 1) * line_height_);
+            inv = CRectAp(hex_pos(int((start_addr+offset_)%rowsize_)) - text_width_, start_line * line_height_,
+                          hex_pos(int((end_addr+offset_)%rowsize_)) + 1, (start_line + 1) * line_height_ + 1);
             CRect dev = ConvertToDP(inv);
             DoInvalidateRect(&dev);
         }
@@ -4542,8 +4590,8 @@ void CHexEditView::invalidate_hex_addr_range(FILE_ADDRESS start_addr, FILE_ADDRE
         {
             // Note: (23/11/03) go back an extra 2 pixels to allow for 
             // deletion mark (tracking changes) before the byte
-            inv = CRectAp(char_pos(int((start_addr+offset_)%rowsize_))-2, start_line * line_height_,
-                          char_pos(int((end_addr+offset_)%rowsize_)), (start_line + 1) * line_height_);
+            inv = CRectAp(char_pos(int((start_addr+offset_)%rowsize_)) - 2, start_line * line_height_,
+                          char_pos(int((end_addr+offset_)%rowsize_)) + 1, (start_line + 1) * line_height_ + 1);
             CRect dev = ConvertToDP(inv);
             DoInvalidateRect(&dev);
         }
@@ -4556,12 +4604,12 @@ void CHexEditView::invalidate_hex_addr_range(FILE_ADDRESS start_addr, FILE_ADDRE
     {
         // Hex area
         inv = CRectAp(hex_pos(int((start_addr+offset_)%rowsize_))-text_width_, start_line * line_height_,
-                      hex_pos(int(rowsize_)), (start_line + 1) * line_height_);
+                      hex_pos(int(rowsize_)) + 1, (start_line + 1) * line_height_ + 1);
         CRect dev = ConvertToDP(inv);
         DoInvalidateRect(&dev);
 
         inv = CRectAp(hex_pos(0)-text_width_, end_line * line_height_,
-                      hex_pos(int((end_addr+offset_)%rowsize_)), (end_line + 1) * line_height_);
+                      hex_pos(int((end_addr+offset_)%rowsize_)) + 1, (end_line + 1) * line_height_ + 1);
         dev = ConvertToDP(inv);
         DoInvalidateRect(&dev);
     }
@@ -4586,14 +4634,14 @@ void CHexEditView::invalidate_hex_addr_range(FILE_ADDRESS start_addr, FILE_ADDRE
         if (!display_.vert_display && display_.hex_area)
         {
             inv = CRectAp(hex_pos(0)-text_width_, (start_line + 1) * line_height_,
-                        hex_pos(rowsize_), (end_line) * line_height_);
+                        hex_pos(rowsize_) + 1, (end_line) * line_height_ + 1);
             CRect dev = ConvertToDP(inv);
             DoInvalidateRect(&dev);
         }
         if (display_.vert_display || display_.char_area)
         {
             inv = CRectAp(char_pos(0)-2, (start_line + 1) * line_height_,
-                        char_pos(rowsize_), (end_line) * line_height_);
+                        char_pos(rowsize_) + 1, (end_line) * line_height_ + 1);
             CRect dev = ConvertToDP(inv);
             DoInvalidateRect(&dev);
         }
@@ -5642,7 +5690,14 @@ BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CHexEditView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
-    if ((nFlags & 0x2100) == 0)
+	if (mouse_down_ && drag_bookmark_ > -1 && nChar == 27)
+	{
+		// Escape key aborts bookmark drag
+		drag_bookmark_ = -1;
+		mouse_down_ = false;
+		invalidate_addr_range(drag_address_, drag_address_+1); // remove current drag position
+	}
+    else if ((nFlags & 0x2100) == 0)
     {
         for (UINT ii = 0; ii < nRepCnt; ++ii)
             do_char(nChar);
@@ -6390,9 +6445,20 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 
     shift_down_ = shift_down();
 
-	//// Check if clicked on a bookmark
-	//if (!shift_down_ && (drag_bookmark_ = bookmark_at(address_at(point))) > -1)
-	//	return;   // no selection wanted when dragging a bookmark
+	// Check if clicked on a bookmark
+	if (!shift_down_ && (drag_bookmark_ = bookmark_at(address_at(point))) > -1)
+	{
+		tip_.Hide(0);
+		if (last_tip_addr_ != -1)
+		{
+			FILE_ADDRESS addr = last_tip_addr_;
+			last_tip_addr_ = -1;
+			invalidate_hex_addr_range(addr, addr+1);
+		}
+		drag_address_ = GetDocument()->bm_posn_[drag_bookmark_];  // start at current bookmark addr
+		mouse_down_ = true;
+		return;   // no selection wanted when dragging a bookmark
+	}
 
     saved_state_ = disp_state_;                 // Keep the current state for saving in undo stack
 
@@ -6498,12 +6564,23 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
         return;
     }
 #endif
-	//if (mouse_down_ && drag_bookmark_ > -1)
-	//{
-	//	// Move the bookmark
-	//}
-    //else
-	if (mouse_down_)
+	if (mouse_down_ && drag_bookmark_ > -1)
+	{
+		// Move the bookmark to drag_address_
+		FILE_ADDRESS prev = GetDocument()->bm_posn_[drag_bookmark_];  // Previous bm position
+	    CBookmarkList *pbl = theApp.GetBookmarkList();
+		ASSERT(pbl != NULL);
+		pbl->Move(GetDocument()->bm_index_[drag_bookmark_], int(drag_address_ - prev)); // move bm in global list
+		GetDocument()->bm_posn_[drag_bookmark_] = drag_address_;   // move in doc's bm list
+	    ((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.UpdateBookmark(GetDocument()->bm_index_[drag_bookmark_]);
+
+		drag_bookmark_ = -1;  // signal that we are no longer dragging
+        mouse_down_ = false;
+
+		invalidate_addr_range(prev, prev+1);                     // force redraw to remove bookmark at old position
+		invalidate_addr_range(drag_address_, drag_address_+1);   // redraw bookmark at new position
+	}
+    else if (mouse_down_)
     {
         num_entered_ = num_del_ = num_bs_ = 0;  // Can't be editing while mousing
 
@@ -6708,6 +6785,19 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
         ruler_tip_.Hide(300);       // Not dragging or hovering over so hide it
 #endif
 
+    FILE_ADDRESS addr = address_at(point);      // Address of byte mouse is over (or -1)
+
+	// If dragging a bookmark update the drag location
+	if (mouse_down_ && drag_bookmark_ > -1)
+	{
+		if (addr < 0 || addr > GetDocument()->length()) return; // don't move to invalid pos
+		FILE_ADDRESS prev = drag_address_;
+		drag_address_ = addr;                                  // we must change this before redraw
+		invalidate_addr_range(prev, prev+1);                   // force redraw at previous drag position
+		invalidate_addr_range(drag_address_, drag_address_+1); // redraw at new position
+		return;
+	}
+
     FILE_ADDRESS old_addr, end_addr, new_addr;
     if (mouse_down_)
 	    GetSelAddr(old_addr, end_addr);             // Get current caret before moved
@@ -6715,7 +6805,6 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
     if (mouse_down_)
 		GetSelAddr(new_addr, end_addr);
 
-    FILE_ADDRESS addr = address_at(point);      // Address of byte mouse is over (or -1)
     if (mouse_down_)
     {
 		tip_.Hide(0);                           // Make sure there is no mouse tip while dragging
@@ -6782,7 +6871,7 @@ LRESULT CHexEditView::OnMouseHover(WPARAM, LPARAM lp)
 {
 	CPoint pt(LOWORD(lp), HIWORD(lp));  // client window coords
     // Time to show a tip window if we are in the right place
-    if (!tip_.IsWindowVisible())
+    if (!mouse_down_ && !tip_.IsWindowVisible())
     {
 	    FILE_ADDRESS addr = address_at(pt);
 	    if (addr != -1 && addr < GetDocument()->length() && update_tip(addr))
@@ -7792,7 +7881,9 @@ BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
              !display_.vert_display && !display_.char_area && pt.x < hex_pos(rowsize_) )  )
         {
             // Over hex or char area
-            if (theApp.highlight_)
+			if (drag_bookmark_ > -1 || bookmark_at(address_at(point)) > -1)
+                ::SetCursor(theApp.LoadStandardCursor(IDC_SIZEALL)); // Indicate bookmark can be moved
+            else if (theApp.highlight_)
                 ::SetCursor(theApp.LoadCursor(IDC_HIGHLIGHT));       // Highlighter cursor
             else
                 ::SetCursor(theApp.LoadStandardCursor(IDC_IBEAM));   // Text insertion cursor
