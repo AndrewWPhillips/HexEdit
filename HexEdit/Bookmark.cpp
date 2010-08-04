@@ -373,7 +373,7 @@ int CBookmarkList::AddBookmark(LPCTSTR nn, LPCTSTR filename, __int64 filepos, LP
 // Move a bookmark implicitly (due to file insertion/deletion above it)
 void CBookmarkList::Move(int index, int amount)
 {
-	if (index == -1) return;
+	if (index == -1) return;   // ignore deleted bookmarks
 
     ASSERT(index >= 0 && index < (int)file_.size());
 	filepos_[index] += amount;
