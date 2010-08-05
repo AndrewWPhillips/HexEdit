@@ -330,6 +330,7 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		pp_->current_str_ = "##Unexpected expression type##";
 		break;
 	}
+    pp_->ShowStatus();                       // Indicate overflow etc
 
     if (pp_->overflow_)
 	{
@@ -503,6 +504,9 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
         SetWindowText(ss);
         SetSel(start, end, FALSE);
     }
+
+    pp_->in_edit_ = TRUE;
+	pp_->ctl_calc_bits_.RedrawWindow();
 }
 
 void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
@@ -559,6 +563,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		(void)update_value(false);   // should always return true for Del key
 
     pp_->source_ = theApp.recording_ ? km_user : km_result;
+	pp_->ctl_calc_bits_.RedrawWindow();
 }
 
 BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg) 

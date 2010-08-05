@@ -44,9 +44,14 @@ public:
 
 protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
 private:
+	void calc_widths(CRect & rct);
+	int spacing(int bnum);
+	int pos2bit(CPoint point);
+
 	CCalcDlg * m_pParent;   // owning calc dlg, so we can get bits etc
 
 	int m_ww, m_nn, m_bb, m_cc;  // widths for size/spacing of bit display

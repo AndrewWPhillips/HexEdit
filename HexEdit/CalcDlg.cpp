@@ -41,17 +41,100 @@ IMPLEMENT_DYNAMIC(CCalcBits, CStatic)
 
 BEGIN_MESSAGE_MAP(CCalcBits, CStatic)
    ON_WM_ERASEBKGND()
+   ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
+// Draw the images for the bits in the erase background event
 BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 {
-	// Don't show bits if not an int
-	if (!m_pParent->current_const_ ||
-		m_pParent->current_type_ != CJumpExpr::TYPE_INT)
-		return CStatic::OnEraseBkgnd(pDC);
-
-	CRect rct;
+	CRect rct;    // used for drawing/fills etc and for calculations
 	GetClientRect(&rct);
+	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
+	//pDC->FillRect(&rct, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
+
+	// Don't show anything if it's not a valid constant int
+	if (m_pParent->current_type_ != CJumpExpr::TYPE_INT || !m_pParent->current_const_)
+		return TRUE;
+	//// Don't show after bin op entered since edit control does not reflect current_
+	//if (!m_pParent->in_edit_ && m_pParent->op_ != binop_none)
+	//	return TRUE;
+
+	calc_widths(rct);
+
+	// Set up the graphics objects we need for drawing the bits
+    CPen penDisabled(PS_SOLID, 0, ::GetSysColor(COLOR_GRAYTEXT));
+    CPen penEnabled (PS_SOLID, 0, ::GetSysColor(COLOR_BTNTEXT));
+    CBrush brushDisabled(::GetSysColor(COLOR_INACTIVECAPTION));
+    CBrush brushEnabled(::GetSysColor(COLOR_ACTIVECAPTION));
+	CBrush * pBrush;
+
+	CPen * pOldPen = (CPen*) pDC->SelectObject(&penDisabled);
+	pBrush = &brushDisabled;
+
+	// We need this so Rectangle() does not fill
+	CBrush * pOldBrush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
+
+	// Draw bits from left to right
+	int horz = 1;                        // current horizontal position
+	// Work out the size of one bit's image and the position of the left (most sig.) bit
+	rct.left = horz;
+	rct.right = rct.left + m_ww - 1;  // Subtract 1 to leave (at least) one pixel between each bit
+	rct.top = 1;
+	rct.bottom = rct.top + m_hh;
+
+	unsigned __int64 val = m_pParent->current_;
+
+	for (int bnum = 63; bnum >= 0; bnum--)
+	{
+		// When we hit the first enabled bit switch to the darker pen
+		if (bnum == m_pParent->bits_ - 1)
+		{
+			pDC->SelectObject(&penEnabled);
+			pBrush = &brushEnabled;
+		}
+
+		if ( (val & ((__int64)1<<bnum)) != 0)
+			pDC->FillRect(rct, pBrush);
+		pDC->Rectangle(&rct);
+
+		// Move horizontally to next bit position
+		horz += m_ww + spacing(bnum);
+
+		rct.MoveToX(horz);
+	}
+	pDC->SelectObject(pOldBrush);
+	pDC->SelectObject(pOldPen);
+
+	return TRUE;
+}
+
+void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point) 
+{
+	int bnum;
+	if ((bnum = pos2bit(point)) > -1)
+	{
+		ASSERT(bnum < 64 && bnum >= 0);
+		unsigned __int64 val = m_pParent->current_ ^ ((__int64)1<<bnum);
+		m_pParent->Set(val);
+	}
+	CStatic::OnLButtonDown(nFlags, point);
+}
+
+int CCalcBits::spacing(int bnum)
+{
+	int retval = 0;
+	if (bnum%4 == 0)
+		retval += m_nn;
+	if (bnum%8 == 0)
+		retval += m_bb;
+	if (bnum == 32)
+		retval += m_cc;
+	return retval;
+}
+
+// Work out where the bit images are to be displayed based on the width of the control
+void CCalcBits::calc_widths(CRect & rct)
+{
 	m_ww = rct.Width()/70;                 // width of display for one bit
 	m_hh = rct.Height() - 2;
 	ASSERT(m_ww > 3);
@@ -59,61 +142,26 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	m_bb = (rct.Width()-m_ww*64-m_nn*16)/12;     // sep between bytes = half of rest split 8 way
 	m_cc = (rct.Width()-m_ww*64-m_nn*16-m_bb*8); // centre sep = rest of space
 	ASSERT(m_nn > 0 && m_bb > 0 && m_cc > 0);      // sanity check
-	rct.left = 1;
-	rct.right = rct.left + m_ww - 1;  // leave at least one pixel between each
-	rct.top = 1;
-	rct.bottom = rct.top + m_hh;
+}
 
-	// Draw bits from left to right
-    CPen penOn (PS_SOLID, 0, ::GetSysColor(COLOR_BTNTEXT));
-    CPen penOff(PS_SOLID, 0, ::GetSysColor(COLOR_BTNTEXT));
-    CPen penDis(PS_SOLID, 0, ::GetSysColor(COLOR_GRAYTEXT));
-	CPen * pOldPen = (CPen*) pDC->SelectObject(&penDis);
-	CBrush * pOldBrush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
+int CCalcBits::pos2bit(CPoint point)
+{
+	if (point.y > 0 && point.y < m_hh - 1)
+		return -1;                  // above or below
 
-	int horz = 1;  // horizontal position
+	// We use an iterative algorithm rather than calculate the bit directly,
+	// as it is simpler, more maintainable (re-uses spacing() func as used above)
+	// and should be more than fast enough for a user initiated action.
+	int horz = 1;
 	for (int bnum = 63; bnum >= 0; bnum--)
 	{
-		bool on  = (m_pParent->current_ & ((__int64)1<<bnum)) != 0;
-		bool dis = bnum >= m_pParent->bits_;
-
-		if (dis)
-			pDC->SelectObject(&penDis);
-		else if (on)
-			pDC->SelectObject(&penOn);
-		else
-			pDC->SelectObject(&penOff);
-
-		//if (on)
-		//{
-		//	pDC->MoveTo((rct.left + rct.right)/2, rct.bottom);
-		//	pDC->LineTo((rct.left + rct.right)/2, rct.top);
-		//}
-		//else
-		//	pDC->Ellipse(&rct);
-		pDC->Rectangle(&rct);
-		if (on)
-		{
-			pDC->MoveTo(rct.left, rct.top);
-			pDC->LineTo(rct.right, rct.bottom);
-			pDC->MoveTo(rct.left, rct.bottom);
-			pDC->LineTo(rct.right, rct.top);
-		}
-
-		// Move to next position
-		horz += rct.Width() + 1;
-		if (bnum%4 == 0)
-			horz += m_nn;
-		if (bnum%8 == 0)
-			horz += m_bb;
-		if (bnum == 32)
-			horz += m_cc;
-		rct.MoveToX(horz);
+		if (point.x < horz)
+			return -1;              // must be in a gap between two bits
+		if (point.x < horz + m_ww - 1)
+			return bnum;
+		horz += m_ww + spacing(bnum);
 	}
-	pDC->SelectObject(pOldBrush);
-	pDC->SelectObject(pOldPen);
-
-	return TRUE;
+	return -1;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -675,44 +723,9 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
     ON_BN_CLICKED(IDC_ADDOP, OnAdd)
     ON_WM_DESTROY()
 	ON_WM_HELPINFO()
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_D, OnDigitD)
-    ON_BN_DOUBLECLICKED(IDC_BACKSPACE, OnBackspace)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_0, OnDigit0)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_1, OnDigit1)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_2, OnDigit2)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_3, OnDigit3)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_4, OnDigit4)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_5, OnDigit5)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_6, OnDigit6)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_7, OnDigit7)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_8, OnDigit8)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_9, OnDigit9)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_A, OnDigitA)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_B, OnDigitB)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_C, OnDigitC)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_E, OnDigitE)
-    ON_BN_DOUBLECLICKED(IDC_DIGIT_F, OnDigitF)
-    ON_BN_DOUBLECLICKED(IDC_EQUALS, OnEquals)
-    ON_BN_DOUBLECLICKED(IDC_MARK_ADD, OnMarkAdd)
-    ON_BN_DOUBLECLICKED(IDC_MARK_SUBTRACT, OnMarkSubtract)
-    ON_BN_DOUBLECLICKED(IDC_MEM_ADD, OnMemAdd)
-    ON_BN_DOUBLECLICKED(IDC_MEM_SUBTRACT, OnMemSubtract)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_ASR, OnUnaryAsr)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_AT, OnUnaryAt)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_CUBE, OnUnaryCube)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_DEC, OnUnaryDec)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_FACTORIAL, OnUnaryFactorial)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_FLIP, OnUnaryFlip)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_INC, OnUnaryInc)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_LSL, OnUnaryLsl)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_LSR, OnUnaryLsr)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_NOT, OnUnaryNot)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_REV, OnUnaryRev)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_ROL, OnUnaryRol)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_ROR, OnUnaryRor)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_SIGN, OnUnarySign)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_SQUARE, OnUnarySquare)
-    ON_BN_DOUBLECLICKED(IDC_UNARY_SQUARE_ROOT, OnUnarySquareRoot)
+	// Removed ON_BN_DOUBLECLICKED stuff as d-click now seems to send two
+	// mouse down/up events (as well as a dclick event)
+    //ON_BN_DOUBLECLICKED(IDC_BACKSPACE, OnBackspace) ...
 	ON_BN_CLICKED(IDC_BIG_ENDIAN_FILE_ACCESS, OnBigEndian)
 	//}}AFX_MSG_MAP
     ON_BN_CLICKED(IDC_HEX_HIST, OnGetHexHist)
@@ -905,10 +918,10 @@ void CCalcDlg::do_binop(binop_type binop)
         previous_ = current_;
         current_ = 0;
         source_ = km_result;
-        TRACE(" xxx BINOP previous = %d\r\n", (int)previous_);
     }
     aa_->SaveToMacro(km_binop, long(binop));
     op_ = binop;
+    ShowStatus();
 
     if (!aa_->refresh_off_ && IsVisible())
     {
@@ -944,8 +957,10 @@ void CCalcDlg::ShowStatus()
 				::Beep(3000,400);
         }
         else
-            GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("");
+            //GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("");
+			ShowBinop();
     }
+	ctl_calc_bits_.RedrawWindow();
 }
 
 void CCalcDlg::ShowBinop(int ii /*=-1*/)
@@ -1279,7 +1294,6 @@ void CCalcDlg::do_unary(unary_type unary)
     aa_->SaveToMacro(km_unaryop, long(unary));
 
     // The user can't edit the result of a unary operation by pressing digits
-    in_edit_ = FALSE;
     source_ = km_result;
 }
 
@@ -1325,7 +1339,6 @@ void CCalcDlg::calc_previous()
             same_sign = (current_ & sign_mask_) == (previous_ & sign_mask_);
         else if ((previous_&mask_) > mask_ - (current_&mask_))
             overflow_ = TRUE;
-        TRACE(" xxx ADD %d %d\r\n", (int)current_, (int)previous_);
         current_ += previous_;
 
         // For signed numbers overflow if operands have same sign which is diff to sign of result
@@ -1623,6 +1636,7 @@ void CCalcDlg::change_bits(int bits)
 
 	if (invalid_expression())
 	{
+		// xxx need to redraw ctl_calc_bits_ here???
 		edit_.update_value(false);
 		return;
 	}
@@ -2284,11 +2298,6 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
                       DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
     }
 
-    //TRACE3("Draw button %ld, action %d, state %d\n",
-    //       long(nIDCtl), 
-    //       lpDrawItemStruct->itemAction, 
-    //       lpDrawItemStruct->itemState);
-
     rcButton = lpDrawItemStruct->rcItem;
     ::Draw3DButtonFrame(pDC, rcButton,
                         (lpDrawItemStruct->itemState & ODS_FOCUS) != 0);
@@ -2466,6 +2475,7 @@ void CCalcDlg::OnClearEntry()           // Zero current value
     current_ = 0;
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
+    ShowStatus();
 
     if (!aa_->refresh_off_ && IsVisible())
     {
@@ -2486,6 +2496,7 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
     current_ = 0;
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
+    ShowStatus();
 
     if (!aa_->refresh_off_ && IsVisible())
     {
@@ -2789,7 +2800,7 @@ void CCalcDlg::OnGetHexHist()
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
 
-        SetDlgItemText(IDC_OP_DISPLAY, "");
+        //SetDlgItemText(IDC_OP_DISPLAY, "");
         inedit(km_user);
 	}
 }
@@ -2829,7 +2840,7 @@ void CCalcDlg::OnGetDecHist()
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
 
-        SetDlgItemText(IDC_OP_DISPLAY, "");
+        //SetDlgItemText(IDC_OP_DISPLAY, "");
         inedit(km_user);
 	}
 }
@@ -2860,7 +2871,7 @@ void CCalcDlg::OnGetVar()
         for (int ii = 0; ii < ss.GetLength (); ii++)
             edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
 
-        SetDlgItemText(IDC_OP_DISPLAY, "");
+        //SetDlgItemText(IDC_OP_DISPLAY, "");
         inedit(km_user);
 	}
 }
@@ -2899,7 +2910,7 @@ void CCalcDlg::OnGetFunc()
 		start += ss.Find('(') + 2;
 		edit_.SetSel(start, end);
 
-        SetDlgItemText(IDC_OP_DISPLAY, "");
+        //SetDlgItemText(IDC_OP_DISPLAY, "");
         inedit(km_user);
 	}
 }
@@ -3154,6 +3165,7 @@ void CCalcDlg::OnMemGet()
     current_ = memory_;
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
+    ShowStatus();
 
     overflow_ = error_ = FALSE;
     if ((current_ & ~mask_) != 0)
@@ -3520,6 +3532,7 @@ void CCalcDlg::OnMarkAt()               // Get value from file at mark
     current_ = temp;
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
+    ShowStatus();
 
     if (!aa_->refresh_off_ && IsVisible())
     {
@@ -3618,6 +3631,7 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
     current_ = temp;
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
+    ShowStatus();
 
     if (!aa_->refresh_off_ && IsVisible())
     {
@@ -3644,6 +3658,7 @@ void CCalcDlg::OnSelLen()
     current_ = end - start;
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
+    ShowStatus();
 
     if (!aa_->refresh_off_ && IsVisible())
     {
@@ -3667,6 +3682,7 @@ void CCalcDlg::OnEofGet()               // Length of file
     current_ = pview->GetDocument()->length();
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
+    ShowStatus();
 
     if (!aa_->refresh_off_ && IsVisible())
     {
