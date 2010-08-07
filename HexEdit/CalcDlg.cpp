@@ -37,12 +37,19 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CCalcBits
 
-IMPLEMENT_DYNAMIC(CCalcBits, CStatic)
+IMPLEMENT_DYNAMIC(CCalcBits, CWnd)
 
-BEGIN_MESSAGE_MAP(CCalcBits, CStatic)
-   ON_WM_ERASEBKGND()
-   ON_WM_LBUTTONDOWN()
+BEGIN_MESSAGE_MAP(CCalcBits, CWnd)
+	ON_WM_SIZE()
+	ON_WM_ERASEBKGND()
+	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
+
+void CCalcBits::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
+{
+	CWnd::OnSize(nType, cx, cy);
+	Invalidate();
+}
 
 // Draw the images for the bits in the erase background event
 BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
@@ -111,13 +118,13 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point) 
 {
 	int bnum;
-	if ((bnum = pos2bit(point)) > -1)
+	if ((bnum = pos2bit(point)) > -1 && bnum < m_pParent->bits_)
 	{
 		ASSERT(bnum < 64 && bnum >= 0);
 		unsigned __int64 val = m_pParent->current_ ^ ((__int64)1<<bnum);
 		m_pParent->Set(val);
 	}
-	CStatic::OnLButtonDown(nFlags, point);
+	CWnd::OnLButtonDown(nFlags, point);
 }
 
 int CCalcBits::spacing(int bnum)
@@ -127,7 +134,7 @@ int CCalcBits::spacing(int bnum)
 		retval += m_nn;
 	if (bnum%8 == 0)
 		retval += m_bb;
-	if (bnum == 32)
+	if (bnum%16 == 0)
 		retval += m_cc;
 	return retval;
 }
@@ -138,15 +145,15 @@ void CCalcBits::calc_widths(CRect & rct)
 	m_ww = rct.Width()/70;                 // width of display for one bit
 	m_hh = rct.Height() - 2;
 	ASSERT(m_ww > 3);
-	m_nn = (rct.Width()-m_ww*64)/24;             // sep between nybbles = half of rest split 16 ways
-	m_bb = (rct.Width()-m_ww*64-m_nn*16)/12;     // sep between bytes = half of rest split 8 way
-	m_cc = (rct.Width()-m_ww*64-m_nn*16-m_bb*8); // centre sep = rest of space
+	m_nn = (rct.Width()-m_ww*64)/22;             // sep between nybbles = half of rest split 16 ways
+	m_bb = (rct.Width()-m_ww*64-m_nn*16)/10;     // sep between bytes = half of rest split 8 way
+	m_cc = (rct.Width()-m_ww*64-m_nn*16-m_bb*8)/3; // centre sep = rest of space
 	ASSERT(m_nn > 0 && m_bb > 0 && m_cc > 0);      // sanity check
 }
 
 int CCalcBits::pos2bit(CPoint point)
 {
-	if (point.y > 0 && point.y < m_hh - 1)
+	if (point.y <= 0 && point.y >= m_hh - 1)
 		return -1;                  // above or below
 
 	// We use an iterative algorithm rather than calculate the bit directly,
@@ -528,13 +535,30 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
     VERIFY(func_menu_.LoadMenu(IDR_FUNCTION));
     ctl_func_.m_hMenu = func_menu_.GetSubMenu(0)->GetSafeHmenu();
 
+	// Set up child window where we draw the "bits"
+    static CString bitsClass;
+    if (bitsClass.IsEmpty())
+    {
+        // Register new window class
+        bitsClass = AfxRegisterWndClass(0);
+        ASSERT(!bitsClass.IsEmpty());
+    }
+
+	CRect rct;  // New window location
+	ASSERT(GetDlgItem(IDC_BITS_PLACEHOLDER) != NULL);
+	GetDlgItem(IDC_BITS_PLACEHOLDER)->GetWindowRect(&rct);
+	ScreenToClient(&rct);
+
+	DWORD bitsStyle = WS_CHILD | WS_VISIBLE;
+
+	VERIFY(ctl_calc_bits_.Create(bitsClass, NULL, bitsStyle, rct, this, IDC_CALC_BITS));
+
 	// Set up resizer control
 	// We must set the 4th parameter true else we get a resize border
 	// added to the dialog and this really stuffs things up inside a pane.
 	m_resizer.Create(GetSafeHwnd(), TRUE, 100, TRUE);
 
 	// It needs an initial size for it's calcs
-	CRect rct;
 	GetWindowRect(&rct);
 	m_resizer.SetInitialSize(rct.Size());
 	m_resizer.SetMinimumTrackingSize(rct.Size());
@@ -553,7 +577,7 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT,  ctl_edit_combo_);
-	DDX_Control(pDX, IDC_CALC_BITS, ctl_calc_bits_);
+	//DDX_Control(pDX, IDC_CALC_BITS, ctl_calc_bits_);
 
 #if 1
     DDX_Control(pDX, IDC_DIGIT_0, ctl_digit_0_);
@@ -960,13 +984,14 @@ void CCalcDlg::ShowStatus()
             //GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("");
 			ShowBinop();
     }
-	ctl_calc_bits_.RedrawWindow();
+
+	if (ctl_calc_bits_.m_hWnd != 0)
+		ctl_calc_bits_.RedrawWindow();
 }
 
 void CCalcDlg::ShowBinop(int ii /*=-1*/)
 {
     binop_type binop;
-
     if (ii == -1)
         binop = op_;
     else
@@ -1991,7 +2016,7 @@ LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 		// NOTE: Don't allow resize vertically of IDC_EDIT as it stuffs up the combo drop down list window size
 		m_resizer.Add(IDC_EDIT, 0, 0, 100, 0);        // edit control resizes with width
 		m_resizer.Add(IDC_OP_DISPLAY, 100, 0, 0, 0);  // operator display sticks to right edge (moves vert)
-		m_resizer.Add(IDC_CALC_BITS, 0, 5, 100, 4);  // where bits are drawn
+		m_resizer.Add(IDC_CALC_BITS, 0, 0, 100, 8);  // where "bits" are drawn
 
 		// Settings controls don't move/size horizontally but move vert. and size slightly too
 		m_resizer.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);

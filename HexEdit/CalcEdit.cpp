@@ -122,6 +122,8 @@ void CCalcEdit::Put()
     SetSel(strlen(buf), -1, FALSE);     // move caret to end
 
     add_sep();
+	if (pp_->ctl_calc_bits_.m_hWnd != 0)
+		pp_->ctl_calc_bits_.RedrawWindow();
 }
 
 // Check if string is a simple number (possible with separators) or an expression

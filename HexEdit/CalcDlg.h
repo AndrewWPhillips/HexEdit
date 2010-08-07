@@ -35,7 +35,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CCalcBits
 
-class CCalcBits : public CStatic
+class CCalcBits : public CWnd
 {
 	DECLARE_DYNAMIC(CCalcBits)
 
@@ -43,6 +43,7 @@ public:
 	CCalcBits(CCalcDlg * pParent) : m_pParent(pParent) { }
 
 protected:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
     afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
