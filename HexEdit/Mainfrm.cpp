@@ -454,6 +454,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			return FALSE; // failed to create
 		}
 		m_paneCalc.InitialUpdate(&m_wndCalc);
+		CRect rct;
+		m_wndCalc.GetWindowRect(&rct);
+		m_paneCalc.SetMinSize(rct.Size());
 		m_paneCalc.EnableDocking(CBRS_ALIGN_ANY);
 
         if (!m_paneProp.Create("Properties", this, CSize(500, 250), TRUE, IDD_PROP_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||

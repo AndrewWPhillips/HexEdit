@@ -69,14 +69,12 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	calc_widths(rct);
 
 	// Set up the graphics objects we need for drawing the bits
-    CPen penDisabled(PS_SOLID, 0, ::GetSysColor(COLOR_GRAYTEXT));
+	CPen penDisabled(PS_SOLID, 0, ::tone_down(::GetSysColor(COLOR_BTNTEXT), ::afxGlobalData.clrBarFace, 0.7));
     CPen penEnabled (PS_SOLID, 0, ::GetSysColor(COLOR_BTNTEXT));
-    CBrush brushDisabled(::GetSysColor(COLOR_INACTIVECAPTION));
-    CBrush brushEnabled(::GetSysColor(COLOR_ACTIVECAPTION));
-	CBrush * pBrush;
 
+	// Start off with disabled colours as we draw from left (disabled side first)
+	COLORREF colour = ::tone_down(::afxGlobalData.clrBarDkShadow, ::afxGlobalData.clrBarFace, 0.7);
 	CPen * pOldPen = (CPen*) pDC->SelectObject(&penDisabled);
-	pBrush = &brushDisabled;
 
 	// We need this so Rectangle() does not fill
 	CBrush * pOldBrush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
@@ -97,11 +95,11 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 		if (bnum == m_pParent->bits_ - 1)
 		{
 			pDC->SelectObject(&penEnabled);
-			pBrush = &brushEnabled;
+			colour = ::add_contrast(::afxGlobalData.clrBarDkShadow,  ::afxGlobalData.clrBarFace);
 		}
 
 		if ( (val & ((__int64)1<<bnum)) != 0)
-			pDC->FillRect(rct, pBrush);
+			pDC->FillSolidRect(rct, colour);
 		pDC->Rectangle(&rct);
 
 		// Move horizontally to next bit position
@@ -143,11 +141,17 @@ int CCalcBits::spacing(int bnum)
 void CCalcBits::calc_widths(CRect & rct)
 {
 	m_ww = rct.Width()/70;                 // width of display for one bit
-	m_hh = rct.Height() - 2;
 	ASSERT(m_ww > 3);
-	m_nn = (rct.Width()-m_ww*64)/22;             // sep between nybbles = half of rest split 16 ways
-	m_bb = (rct.Width()-m_ww*64-m_nn*16)/10;     // sep between bytes = half of rest split 8 way
-	m_cc = (rct.Width()-m_ww*64-m_nn*16-m_bb*8)/3; // centre sep = rest of space
+	m_hh = 6 + (rct.Height() - 6)/2;
+	if (m_hh < 7)
+		m_hh = 7;
+	else if (m_hh > 16)
+		m_hh = 16;
+	if (m_hh > rct.Height() - 1)
+		m_hh = rct.Height() - 1;
+	m_nn = (rct.Width()-m_ww*64)/22;             // sep between nybbles = half of rest split ~15 ways
+	m_bb = (rct.Width()-m_ww*64-m_nn*16)/10;     // sep between bytes = half of rest split ~7 ways
+	m_cc = (rct.Width()-m_ww*64-m_nn*16-m_bb*8)/3; // sep between words = rest of space split 3 ways
 	ASSERT(m_nn > 0 && m_bb > 0 && m_cc > 0);      // sanity check
 }
 
@@ -561,6 +565,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	// It needs an initial size for it's calcs
 	GetWindowRect(&rct);
 	m_resizer.SetInitialSize(rct.Size());
+	rct.bottom = rct.top + (rct.bottom - rct.top)*3/4;
 	m_resizer.SetMinimumTrackingSize(rct.Size());
 
 	return TRUE;
@@ -577,7 +582,6 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT,  ctl_edit_combo_);
-	//DDX_Control(pDX, IDC_CALC_BITS, ctl_calc_bits_);
 
 #if 1
     DDX_Control(pDX, IDC_DIGIT_0, ctl_digit_0_);
@@ -981,7 +985,6 @@ void CCalcDlg::ShowStatus()
 				::Beep(3000,400);
         }
         else
-            //GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("");
 			ShowBinop();
     }
 
@@ -2016,7 +2019,7 @@ LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 		// NOTE: Don't allow resize vertically of IDC_EDIT as it stuffs up the combo drop down list window size
 		m_resizer.Add(IDC_EDIT, 0, 0, 100, 0);        // edit control resizes with width
 		m_resizer.Add(IDC_OP_DISPLAY, 100, 0, 0, 0);  // operator display sticks to right edge (moves vert)
-		m_resizer.Add(IDC_CALC_BITS, 0, 0, 100, 8);  // where "bits" are drawn
+		m_resizer.Add(IDC_CALC_BITS, 0, 0, 100, 13);  // where "bits" are drawn
 
 		// Settings controls don't move/size horizontally but move vert. and size slightly too
 		m_resizer.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);
@@ -2255,9 +2258,6 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
         rcButton.InflateRect(-1, -1);
     }
 
-//    CBrush *pBrush = new CBrush(GetSysColor(COLOR_BTNFACE));
-//    pDC->FillRect(&rcButton, pBrush);
-//    delete pBrush;
     pDC->FillSolidRect(&rcButton, GetSysColor(COLOR_BTNFACE));
 
     if (nIDCtl == IDC_UNARY_SQUARE)
