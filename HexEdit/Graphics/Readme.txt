@@ -110,8 +110,12 @@ The installer requires two images...
 Icon
 ----
 
-- TBD
-
+Create an icon at 256x256 and save as PNG.
+Run RW Icon Editor, click "Create New" top icon in side bar.
+Double-click icon from image and create a Vista application icon.
+- creates 4 different sized icons at 3 different colour depths
+Probably turn off "Enhance icon edges by a shadow effect".
+Save the icon.
 
 Toolbars
 --------
