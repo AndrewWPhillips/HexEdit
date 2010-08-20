@@ -54,7 +54,10 @@ CCompareView::~CCompareView()
 
 void CCompareView::OnInitialUpdate()
 {
-    calc_addr_width(GetDocument()->length() + phev_->display_.addrbase1);
+	ASSERT(phev_ != NULL);
+	GetDocument()->AddCompView(phev_);
+
+	calc_addr_width(GetDocument()->CompLength() + phev_->display_.addrbase1);
 
     CScrView::SetMapMode(MM_TEXT);
 
@@ -100,7 +103,7 @@ void CCompareView::OnDraw(CDC* pDC)
     FILE_ADDRESS last_line;                     // One past last line to display
 
     FILE_ADDRESS first_addr = 0;                // First address to actually display
-    FILE_ADDRESS last_addr = GetDocument()->length(); // One past last address actually displayed xxx
+    FILE_ADDRESS last_addr = GetDocument()->CompLength(); // One past last address actually displayed
 
     FILE_ADDRESS line_inc;                      // 1 or -1 depending on draw dirn (up/down)
     CSize rect_inc;                             // How much to move norm_rect each time
@@ -673,7 +676,7 @@ void CCompareView::OnDraw(CDC* pDC)
 
         // No display needed if outside display area or past end of doc
         // Note: we don't break when past end since we may be drawing from bottom
-        if (!pDC->RectVisible(&tt) || line*phev_->rowsize_ - offset > GetDocument()->length())
+        if (!pDC->RectVisible(&tt) || line*phev_->rowsize_ - offset > GetDocument()->CompLength())
             continue;
 
         // Get the bytes to display
@@ -681,14 +684,14 @@ void CCompareView::OnDraw(CDC* pDC)
 
         if (line*phev_->rowsize_ - offset < first_addr)
         {
-            last_col = GetDocument()->GetData(buf + offset, phev_->rowsize_ - offset, line*phev_->rowsize_) +
+            last_col = GetDocument()->GetCompData(buf + offset, phev_->rowsize_ - offset, line*phev_->rowsize_) +
                         offset;
             ii = size_t(first_addr - (line*phev_->rowsize_ - offset));
             ASSERT(int(ii) < phev_->rowsize_);
         }
         else
         {
-            last_col = GetDocument()->GetData(buf, phev_->rowsize_, line*phev_->rowsize_ - offset);
+            last_col = GetDocument()->GetCompData(buf, phev_->rowsize_, line*phev_->rowsize_ - offset);
             ii = 0;
         }
 
@@ -1102,13 +1105,12 @@ void CCompareView::recalc_display()
 	bdr_right_ = phev_->bdr_right_;
 
 	// Calculate width of address area which may be different than hex view's address width
-	// TBD xxx replace GetDocument()->length() with compare file length
-    calc_addr_width(GetDocument()->length() + phev_->display_.addrbase1);
+    calc_addr_width(GetDocument()->CompLength() + phev_->display_.addrbase1);
 
     if (phev_->display_.vert_display)
-        SetTSize(CSizeAp(-1, ((GetDocument()->length() + phev_->offset_)/phev_->rowsize_ + 1)*3));  // 3 rows of text
+        SetTSize(CSizeAp(-1, ((GetDocument()->CompLength() + phev_->offset_)/phev_->rowsize_ + 1)*3));  // 3 rows of text
     else
-        SetTSize(CSizeAp(-1, (GetDocument()->length() + phev_->offset_)/phev_->rowsize_ + 1));
+        SetTSize(CSizeAp(-1, (GetDocument()->CompLength() + phev_->offset_)/phev_->rowsize_ + 1));
 
     // Make sure we know the width of the display area
     if (phev_->display_.vert_display || phev_->display_.char_area)
@@ -1173,8 +1175,8 @@ void CCompareView::ValidateCaret(CPointAp &pos, BOOL inside /*=true*/)
     FILE_ADDRESS address = pos2addr(pos, inside);
     if (address < 0)
         address = 0;
-    else if (address > GetDocument()->length())
-        address = GetDocument()->length();
+    else if (address > GetDocument()->CompLength())
+        address = GetDocument()->CompLength();
     pos = addr2pos(address);
 }
 

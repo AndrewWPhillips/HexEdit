@@ -18027,6 +18027,12 @@ int CHexEditView::AerialViewType() const
 }
 
 // Compare View commands
+void CHexEditView::ShowComp()
+{
+    if (pcv_ == NULL)
+		OnCompSplit();
+}
+
 void CHexEditView::OnCompHide()
 {
     if (pcv_ == NULL)
@@ -18064,6 +18070,7 @@ void CHexEditView::OnCompSplit()
     if (DoCompSplit())
 	    pcv_->SendMessage(WM_INITIALUPDATE);
 }
+
 bool CHexEditView::DoCompSplit()
 {
     int snum_c;

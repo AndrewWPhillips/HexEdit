@@ -1,6 +1,6 @@
 // DocData.cpp : part of implementation of the CHexEditDoc class
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2003-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -59,12 +59,13 @@ IMPLEMENT_DYNAMIC(CBGAerialHint, CObject)   // background scan has finished (bit
 IMPLEMENT_DYNAMIC(CSaveStateHint, CObject)  // save tree state (typically before redraw)
 IMPLEMENT_DYNAMIC(CRestoreStateHint, CObject) // restore tree state (typically after redraw)
 IMPLEMENT_DYNAMIC(CDFFDHint, CObject)       // redraw required due to changed doc, template etc
+IMPLEMENT_DYNAMIC(CCompHint, CObject)       // redraw required due to changes in compare file
 IMPLEMENT_DYNAMIC(CBookmarkHint, CObject)   // A bookmark has been added/removed
 IMPLEMENT_DYNAMIC(CTrackHint, CObject)      // Need to invalidate extra things for change tracking
 
 size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address, int use_bg /*= -1*/)
 {
-    ASSERT(use_bg == -1 || use_bg == 2 || use_bg == 3);   // 0 and 1 are no longer used
+    ASSERT(use_bg == -1 || use_bg == 2 || use_bg == 3 || use_bg == 4);   // 0 and 1 are no longer used
     ASSERT(address >= 0);
     FILE_ADDRESS pos;           // Tracks file position of current location record
     ploc_t pl;                  // Current location record
@@ -77,6 +78,9 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 		break;
 	case 3:
 	    pfile = pfile3_;        // Aerial scan thread file
+		break;
+	case 4:
+	    pfile = pfile4_;        // Background compare thread file
 		break;
 	default:
 		pfile = pfile1_;		// Normal file

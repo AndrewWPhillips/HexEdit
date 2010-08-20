@@ -1,6 +1,9 @@
 // HexEditDoc.h : interface of the CHexEditDoc class
 //
-// Copyright (c) 2004 by Andrew W. Phillips.
+// For the implementation of the CHexEditDoc class see: HexEditDoc.cpp,
+// DocData.cpp, BGSearch.cpp, BGAerial.cpp, BGCompare.cpp, Template.cpp
+//
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -178,6 +181,17 @@ public:
 
 protected:
     DECLARE_DYNAMIC(CRestoreStateHint)          // Required for MFC run-time type info.
+};
+
+// This object is passed to view OnUpdate() functions as the (3rd) hint
+// parameter.  It is used to tell the compare view that the compare
+// file and/or diff info has changed and to update the display.
+class CCompHint : public CObject
+{
+public:
+
+protected:
+    DECLARE_DYNAMIC(CCompHint)          // Required for MFC run-time type info.
 };
 
 // Passed to view OnUpdate() functions when a bookmark is turned on/off.
@@ -525,6 +539,8 @@ protected:
     afx_msg void OnDffdOptions();
     afx_msg void OnUpdateDffdOptions(CCmdUI* pCmdUI);
 
+    afx_msg void OnCompNew();            // Open file to compare against
+
     afx_msg void OnTest();
         DECLARE_MESSAGE_MAP()
 
@@ -804,18 +820,37 @@ private:
     enum { MAX_BMP  = 256*1024*1024 };      // Biggest bitmap size in bytes - should be made a user option sometime
 
 	// -------------- file compare (see BGCompare.cpp) -----------------
-    CWinThread *pthread4_;      // Ptr to thread or NULL
-    CEvent start_comp_event_; // Starts the thread going
     CFile64 *pfile4_;           // Copy of the original file (avoids synchronising access)
 	// Also see data_file4_ (above)
-	CFile64 *pfile4_compare_;   // The file we are comparing with
-    int cv_count_;              // Number of aerial views of this document
-    BOOL comp_fin_;             // Flags that the bg scan is finished and the view needs updating
+	CFile64 *pfile1_compare_, *pfile4_compare_;   // The file we are comparing with
+	FILE_ADDRESS CompLength() const { if (pfile4_compare_ == NULL) return -1; else return pfile4_compare_->GetLength(); }
+    size_t GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc, bool use_bg = false);  // bytes from compare file
 
+    int cv_count_;              // Number of aerial views of this document
+    CWinThread *pthread4_;      // Ptr to thread or NULL
+    CEvent start_comp_event_; // Starts the thread going
+    BOOL comp_fin_;             // Flags that the bg scan is finished and the view needs updating
     enum BG_STATE   comp_state_;
     enum BG_COMMAND comp_command_;
 
-    // -------------- template (DFFD) stuff ----------------
+	class CompResult
+	{
+		friend class CHexEditDoc;
+
+	public:
+		void Reset() { m_addr.clear(); m_len.clear(); }
+
+	private:
+		// These vectors store informations about each difference found.
+		// Each index corresponds to one difference - the vectors must always have the same length.
+		std::vector<__int64> m_addr;
+		std::vector<int> m_len;
+		// TODO: this will later be extended to have a vector of "type" (replace/insert/delete) and keep track of the 2 addresses (m_addrA, m_addrB instead of m_addr)
+	};
+
+	CompResult comp_result_;
+
+    // -------------- template (DFFD) (see Template.cpp) ----------------
     // Each df_size_ gives the size of a data field or whole array/structure.  If -ve take abs value.
     // Each df_address_ gives the location within the file.  If -1, all or part is not present.
     // The following situations are handled specially:

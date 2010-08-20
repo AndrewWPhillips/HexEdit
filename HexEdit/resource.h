@@ -377,10 +377,10 @@
 #define IDB_OPERBAR_H                   396
 #define IDB_OPERBAR_C                   397
 #define IDB_OPERBAR_D                   398
-#define ID_COMP_OPEN                    399
 #define ID_COMP_HIDE                    400
 #define ID_COMP_SPLIT                   401
 #define ID_COMP_TAB                     402
+#define ID_COMP_NEW                     403
 #define IDD_GETINT                      407
 #define IDD_GETSTR                      408
 #define IDD_GETBOOL                     409

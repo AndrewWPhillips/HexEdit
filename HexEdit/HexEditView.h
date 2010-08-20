@@ -327,6 +327,7 @@ public:
     void SetScheme(const char *name);
     int ClosestBookmark(FILE_ADDRESS &diff);
 	void ShowDffd();          // Show template in split window if not visible already
+	void ShowComp();          // Show compare view in split window if not visible already
 
     void show_pos(FILE_ADDRESS address = -1, BOOL no_dffd = FALSE); // Show position (toolbar/DFFD)
     void show_prop(FILE_ADDRESS address = -1); // Show current properties (modeless dlg)

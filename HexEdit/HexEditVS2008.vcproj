@@ -771,6 +771,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Template.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TipDlg.cpp"
 				>
 			</File>
