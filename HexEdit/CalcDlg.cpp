@@ -66,11 +66,20 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	//if (!m_pParent->in_edit_ && m_pParent->op_ != binop_none)
 	//	return TRUE;
 
+	int wndHeight = rct.Height();
 	calc_widths(rct);
 
 	// Set up the graphics objects we need for drawing the bits
 	CPen penDisabled(PS_SOLID, 0, ::tone_down(::GetSysColor(COLOR_BTNTEXT), ::afxGlobalData.clrBarFace, 0.7));
     CPen penEnabled (PS_SOLID, 0, ::GetSysColor(COLOR_BTNTEXT));
+
+	CFont font;
+	LOGFONT lf;
+    memset(&lf, 0, sizeof(LOGFONT));
+    lf.lfHeight = 10;
+    strcpy(lf.lfFaceName, "Terminal");  // Simple font for small digits
+    font.CreateFontIndirect(&lf);
+	CFont *pOldFont = (CFont *)pDC->SelectObject(&font);
 
 	// Start off with disabled colours as we draw from left (disabled side first)
 	COLORREF colour = ::tone_down(::afxGlobalData.clrBarDkShadow, ::afxGlobalData.clrBarFace, 0.7);
@@ -102,6 +111,16 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 			pDC->FillSolidRect(rct, colour);
 		pDC->Rectangle(&rct);
 
+		// Draw numbers underneath some digits
+		if (m_hh < wndHeight - 10 && (bnum%8 == 0 || bnum == 63))
+		{
+			char buf[4];
+			sprintf(buf, "%d", bnum);
+			pDC->SetTextColor(colour);
+			pDC->SetBkColor(afxGlobalData.clrBarFace);
+			pDC->TextOut(horz, m_hh + 1, buf, strlen(buf));
+		}
+
 		// Move horizontally to next bit position
 		horz += m_ww + spacing(bnum);
 
@@ -109,6 +128,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	}
 	pDC->SelectObject(pOldBrush);
 	pDC->SelectObject(pOldPen);
+	pDC->SelectObject(pOldFont);
 
 	return TRUE;
 }
