@@ -172,7 +172,6 @@ static UINT bg_func(LPVOID pParam)
     return pDoc->RunSearchThread();
 }
 
-// Kill background task and wait until it is dead
 void CHexEditDoc::CreateSearchThread()
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
@@ -223,6 +222,7 @@ void CHexEditDoc::SearchThreadPriority(int ii)
         SetThreadPriority(pthread2_->m_hThread, priority_);
 }
 
+// Kill background task and wait until it is dead
 void CHexEditDoc::KillSearchThread()
 {
     ASSERT(((CHexEditApp *)AfxGetApp())->bg_search_);

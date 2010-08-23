@@ -38,6 +38,7 @@ extern CHexEditApp theApp;
 IMPLEMENT_DYNCREATE(CCompareView, CScrView)
 
 BEGIN_MESSAGE_MAP(CCompareView, CScrView)
+    ON_WM_DESTROY()
     ON_WM_SIZE()
     ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
@@ -495,6 +496,24 @@ void CCompareView::OnDraw(CDC* pDC)
 #endif
     pDC->SelectObject(psaved_pen);      // restore pen after drawing borders etc
 
+	for (int ii = 0; ii < GetDocument()->DiffCount(); ++ii)
+	{
+		FILE_ADDRESS addr;
+		int len;
+
+		GetDocument()->GetCompDiff(ii, addr, len);
+
+		if (addr + len < first_virt)
+			continue;         // before top of window
+		else if (addr >= last_virt)
+			break;            // after end of window
+
+		draw_bg(pDC, doc_rect, neg_x, neg_y,
+				line_height, char_width, char_width_w, phev_->trk_col_,
+				max(addr, first_addr), 
+				min(addr+len, last_addr),
+				(pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8);
+	}
 #if 0 // TBD xxx convert to diff-tracking
 	// Draw deletion marks always from top (shouldn't be too visible)
     if (!display_.hide_delete)
@@ -1043,6 +1062,289 @@ void CCompareView::OnDraw(CDC* pDC)
     }
 } // OnDraw
 
+#define USE_ROP2  1
+
+void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
+                           int line_height, int char_width, int char_width_w,
+                           COLORREF clr, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
+                           int draw_height /*=-1*/)
+{
+    if (end_addr < start_addr) return;
+
+	if (draw_height > -1 && draw_height < 2) draw_height = 2;  // make it at least 2 pixels (1 does not draw properly)
+
+#ifdef USE_ROP2
+    int saved_rop = pDC->SetROP2(R2_NOTXORPEN);
+    CPen pen(PS_SOLID, 0, clr);
+    CPen * psaved_pen = pDC->SelectObject(&pen);
+    CBrush brush(clr);
+    CBrush * psaved_brush = pDC->SelectObject(&brush);
+#endif
+
+    FILE_ADDRESS start_line = (start_addr + phev_->offset_)/phev_->rowsize_;
+    FILE_ADDRESS end_line = (end_addr + phev_->offset_)/phev_->rowsize_;
+    int start_in_row = int((start_addr + phev_->offset_)%phev_->rowsize_);
+    int end_in_row = int((end_addr + phev_->offset_)%phev_->rowsize_);
+
+    CRect rct;
+
+    if (start_line == end_line)
+    {
+        // Draw the block (all on one line)
+        rct.bottom = int((start_line+1) * line_height - doc_rect.top + bdr_top_);
+        rct.top = rct.bottom - (draw_height > 0 ? draw_height : line_height);
+        if (neg_y)
+        {
+            rct.top = -rct.top;
+            rct.bottom = -rct.bottom;
+        }
+
+        if (!phev_->display_.vert_display && phev_->display_.hex_area)
+        {
+            rct.left = hex_pos(start_in_row, char_width) - 
+                       doc_rect.left + bdr_left_;
+            rct.right = hex_pos(end_in_row - 1, char_width) +
+                        2*char_width - doc_rect.left + bdr_left_;
+            if (neg_x)
+            {
+                rct.left = -rct.left;
+                rct.right = -rct.right;
+            }
+
+            if (neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right)
+#ifdef USE_ROP2
+                pDC->Rectangle(&rct);
+#else
+                pDC->FillSolidRect(&rct, clr);
+#endif
+        }
+
+        if (phev_->display_.vert_display || phev_->display_.char_area)
+        {
+            // rct.top = start_line * line_height;
+            // rct.bottom = rct.top + line_height;
+            rct.left = char_pos(start_in_row, char_width, char_width_w) -
+                       doc_rect.left + bdr_left_;
+            rct.right = char_pos(end_in_row - 1, char_width, char_width_w) +
+                        char_width_w - doc_rect.left + bdr_left_;
+            if (neg_x)
+            {
+                rct.left = -rct.left;
+                rct.right = -rct.right;
+            }
+#ifdef USE_ROP2
+            pDC->Rectangle(&rct);
+#else
+            pDC->FillSolidRect(&rct, clr);
+#endif
+        }
+
+#ifdef USE_ROP2
+        pDC->SetROP2(saved_rop);
+        pDC->SelectObject(psaved_pen);
+        pDC->SelectObject(psaved_brush);
+#endif
+        return;  // All on one line so that's it
+    }
+
+    // Block extends over (at least) 2 lines so draw the partial lines at each end
+    rct.bottom = int((start_line+1) * line_height - doc_rect.top + bdr_top_);
+    rct.top = rct.bottom - (draw_height > 0 ? draw_height : line_height);
+    if (neg_y)
+    {
+        rct.top = -rct.top;
+        rct.bottom = -rct.bottom;
+    }
+    if (!phev_->display_.vert_display && phev_->display_.hex_area)
+    {
+        rct.left = hex_pos(start_in_row, char_width) -
+                   doc_rect.left + bdr_left_;
+        rct.right = hex_pos(phev_->rowsize_ - 1, char_width) +
+                    2*char_width - doc_rect.left + bdr_left_;
+        if (neg_x)
+        {
+            rct.left = -rct.left;
+            rct.right = -rct.right;
+        }
+        ASSERT(neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right);
+#ifdef USE_ROP2
+        pDC->Rectangle(&rct);
+#else
+        pDC->FillSolidRect(&rct, clr);
+#endif
+    }
+
+    if (phev_->display_.vert_display || phev_->display_.char_area)
+    {
+        rct.left = char_pos(start_in_row, char_width, char_width_w) -
+                   doc_rect.left + bdr_left_;
+        rct.right = char_pos(phev_->rowsize_ - 1, char_width, char_width_w) +
+                    char_width_w - doc_rect.left + bdr_left_;
+        if (neg_x)
+        {
+            rct.left = -rct.left;
+            rct.right = -rct.right;
+        }
+#ifdef USE_ROP2
+        pDC->Rectangle(&rct);
+#else
+        pDC->FillSolidRect(&rct, clr);
+#endif
+    }
+
+    // Last (partial) line
+    rct.bottom = int((end_line+1) * line_height - doc_rect.top + bdr_top_);
+    rct.top = rct.bottom - (draw_height > 0 ? draw_height : line_height);
+    if (neg_y)
+    {
+        rct.top = -rct.top;
+        rct.bottom = -rct.bottom;
+    }
+    if (!phev_->display_.vert_display && phev_->display_.hex_area)
+    {
+        rct.left = hex_pos(0, char_width) -
+                   doc_rect.left + bdr_left_;
+        rct.right = hex_pos(end_in_row - 1, char_width) +
+                    2*char_width - doc_rect.left + bdr_left_;
+        if (neg_x)
+        {
+            rct.left = -rct.left;
+            rct.right = -rct.right;
+        }
+        if (neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right)
+#ifdef USE_ROP2
+            pDC->Rectangle(&rct);
+#else
+            pDC->FillSolidRect(&rct, clr);
+#endif
+    }
+
+    if (phev_->display_.vert_display || phev_->display_.char_area)
+    {
+        rct.left = char_pos(0, char_width, char_width_w) -
+                   doc_rect.left + bdr_left_;
+        rct.right = char_pos(end_in_row - 1, char_width, char_width_w) +
+                    char_width_w - doc_rect.left + bdr_left_;
+        if (neg_x)
+        {
+            rct.left = -rct.left;
+            rct.right = -rct.right;
+        }
+#ifdef USE_ROP2
+        pDC->Rectangle(&rct);
+#else
+        pDC->FillSolidRect(&rct, clr);
+#endif
+    }
+
+    // Now draw all the full lines
+    if (draw_height > 0)
+    {
+        // Since we ar not doing a complete fill of the lines (eg underline)
+        // we have to do each line of text individually
+        for (++start_line; start_line < end_line; ++start_line)
+        {
+            rct.bottom = int((start_line+1) * line_height - doc_rect.top + bdr_top_);
+            rct.top = rct.bottom - draw_height;
+            if (neg_y)
+            {
+                rct.top = -rct.top;
+                rct.bottom = -rct.bottom;
+            }
+            if (!phev_->display_.vert_display && phev_->display_.hex_area)
+            {
+                rct.left = hex_pos(0, char_width) -
+                           doc_rect.left + bdr_left_;
+                rct.right = hex_pos(phev_->rowsize_ - 1, char_width) +
+                            2*char_width - doc_rect.left + bdr_left_;
+                if (neg_x)
+                {
+                    rct.left = -rct.left;
+                    rct.right = -rct.right;
+                }
+                ASSERT(neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right);
+#ifdef USE_ROP2
+                pDC->Rectangle(&rct);
+#else
+                pDC->FillSolidRect(&rct, clr);
+#endif
+            }
+
+            if (phev_->display_.vert_display || phev_->display_.char_area)
+            {
+                rct.left = char_pos(0, char_width, char_width_w) -
+                           doc_rect.left + bdr_left_;
+                rct.right = char_pos(phev_->rowsize_ - 1, char_width, char_width_w) +
+                            char_width_w - doc_rect.left + bdr_left_;
+                if (neg_x)
+                {
+                    rct.left = -rct.left;
+                    rct.right = -rct.right;
+                }
+#ifdef USE_ROP2
+                pDC->Rectangle(&rct);
+#else
+                pDC->FillSolidRect(&rct, clr);
+#endif
+            }
+        }
+    }
+    else if (start_line + 1 < end_line)
+    {
+        // Draw the complete lines as one block
+        rct.top = int((start_line + 1) * line_height - doc_rect.top + bdr_top_);
+        rct.bottom = int(end_line * line_height - doc_rect.top + bdr_top_);
+        if (neg_y)
+        {
+            rct.top = -rct.top;
+            rct.bottom = -rct.bottom;
+        }
+
+        if (!phev_->display_.vert_display && phev_->display_.hex_area)
+        {
+            rct.left = hex_pos(0, char_width) -
+                       doc_rect.left + bdr_left_;
+            rct.right = hex_pos(phev_->rowsize_ - 1, char_width) +
+                        2*char_width - doc_rect.left + bdr_left_;
+            if (neg_x)
+            {
+                rct.left = -rct.left;
+                rct.right = -rct.right;
+            }
+            ASSERT(neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right);
+#ifdef USE_ROP2
+            pDC->Rectangle(&rct);
+#else
+            pDC->FillSolidRect(&rct, clr);
+#endif
+        }
+
+        if (phev_->display_.vert_display || phev_->display_.char_area)
+        {
+            rct.left = char_pos(0, char_width, char_width_w) -
+                       doc_rect.left + bdr_left_;
+            rct.right = char_pos(phev_->rowsize_ - 1, char_width, char_width_w) +
+                        char_width_w - doc_rect.left + bdr_left_;
+            if (neg_x)
+            {
+                rct.left = -rct.left;
+                rct.right = -rct.right;
+            }
+#ifdef USE_ROP2
+            pDC->Rectangle(&rct);
+#else
+            pDC->FillSolidRect(&rct, clr);
+#endif
+        }
+    }
+
+#ifdef USE_ROP2
+    pDC->SetROP2(saved_rop);
+    pDC->SelectObject(psaved_pen);
+    pDC->SelectObject(psaved_brush);
+#endif
+    return;
+}
 
 // These are like the CHexEditView versions (pos_hex and pos_char)
 // but are duplicated here as we have our own addr_width_ member.
@@ -1182,6 +1484,12 @@ void CCompareView::ValidateCaret(CPointAp &pos, BOOL inside /*=true*/)
 
 /////////////////////////////////////////////////////////////////////////////
 // CCompareView message handlers
+
+void CCompareView::OnDestroy() 
+{
+    GetDocument()->RemoveCompView();
+    CView::OnDestroy();
+}
 
 void CCompareView::OnSize(UINT nType, int cx, int cy) 
 {

@@ -839,6 +839,7 @@ private:
 
 	public:
 		void Reset() { m_addr.clear(); m_len.clear(); }
+		void Final(const CTime &tm) { m_compTime = CTime::GetCurrentTime(); m_fileTime = tm; }
 
 	private:
 		// These vectors store informations about each difference found.
@@ -846,9 +847,29 @@ private:
 		std::vector<__int64> m_addr;
 		std::vector<int> m_len;
 		// TODO: this will later be extended to have a vector of "type" (replace/insert/delete) and keep track of the 2 addresses (m_addrA, m_addrB instead of m_addr)
+
+		CTime m_compTime;        // when we did the compare
+		CTime m_fileTime;        // file modification time when we did the compare
 	};
 
 	CompResult comp_result_;
+
+	// Number of differences found
+	int DiffCount() { return comp_result_.m_addr.size(); }
+	// We need to be able to return differences from the point of view of the original file
+	// and the compared file.  For now these are the same but later there will be differences.
+	void GetOrigDiff(int idx, FILE_ADDRESS &addr, int &len)
+	{
+		ASSERT(idx < comp_result_.m_addr.size() && comp_result_.m_addr.size() == comp_result_.m_len.size());
+		addr = comp_result_.m_addr[idx];
+		len = comp_result_.m_len[idx];
+	}
+	void GetCompDiff(int idx, FILE_ADDRESS &addr, int &len)
+	{
+		ASSERT(idx < comp_result_.m_addr.size() && comp_result_.m_addr.size() == comp_result_.m_len.size());
+		addr = comp_result_.m_addr[idx];
+		len = comp_result_.m_len[idx];
+	}
 
     // -------------- template (DFFD) (see Template.cpp) ----------------
     // Each df_size_ gives the size of a data field or whole array/structure.  If -ve take abs value.

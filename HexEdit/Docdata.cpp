@@ -200,6 +200,12 @@ int CHexEditDoc::AddDataFile(LPCTSTR name, BOOL temp /*=FALSE*/)
 				ASSERT(data_file3_[ii] == NULL);
 				data_file3_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 			}
+			// If bg compare is on also open 4th copy of the file
+		    if (pthread4_ != NULL)
+			{
+				ASSERT(data_file4_[ii] == NULL);
+				data_file4_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
+			}
 
 			temp_file_[ii] = temp;
 			return ii;
@@ -232,6 +238,13 @@ void CHexEditDoc::RemoveDataFile(int idx)
             data_file3_[idx]->Close();
             delete data_file3_[idx];
             data_file3_[idx] = NULL;
+        }
+        if (pthread4_ != NULL)
+        {
+            ASSERT(data_file4_[idx] != NULL);
+            data_file4_[idx]->Close();
+            delete data_file4_[idx];
+            data_file4_[idx] = NULL;
         }
         // If the data file was a temp file remove it now it is closed
         if (temp_file_[idx])

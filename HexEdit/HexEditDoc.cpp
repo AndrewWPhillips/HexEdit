@@ -418,7 +418,7 @@ void CHexEditDoc::OnCloseDocument()
     }
 
     DeleteContents();
-    ASSERT(pthread2_ == NULL && pthread3_ == NULL);
+    ASSERT(pthread2_ == NULL && pthread3_ == NULL && pthread4_ == NULL);
 
     if (hicon_ != HICON(0))
     {
@@ -660,6 +660,12 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
                 delete pfile3_;
                 pfile3_ = NULL;
             }
+            if (pthread4_ != NULL && pfile4_ != NULL)
+            {
+                pfile4_->Close();
+                delete pfile4_;
+                pfile4_ = NULL;
+            }
         }
         // If file we are writing exists (Save or SaveAs overwriting another file)
         if (_access(lpszPathName, 0) != -1)
@@ -832,6 +838,13 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
                 delete data_file3_[ii];
                 data_file3_[ii] = NULL;
             }
+            if (pthread4_ != NULL)
+            {
+                ASSERT(data_file4_[ii] != NULL);
+                data_file4_[ii]->Close();
+                delete data_file4_[ii];
+                data_file4_[ii] = NULL;
+            }
             // If the data file was a temp file remove it now it is closed
             if (temp_file_[ii])
                 remove(ss);
@@ -972,6 +985,12 @@ void CHexEditDoc::close_file()
         pfile3_->Close();
         delete pfile3_;
         pfile3_ = NULL;
+    }
+    if (pthread4_ != NULL && pfile4_ != NULL)
+    {
+        pfile4_->Close();
+        delete pfile4_;
+        pfile4_ = NULL;
     }
 }
 
@@ -1157,6 +1176,27 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
             return FALSE;
         }
     }
+    if (pthread4_ != NULL && 
+        (pfile4_ == NULL || pfile1_->GetFilePath() != pfile4_->GetFilePath()) )
+    {
+        if (pfile4_ != NULL)
+        {
+            pfile4_->Close();
+            delete pfile4_;
+            pfile4_ = NULL;
+        }
+
+        if (IsDevice())
+            pfile4_ = new CFileNC();
+        else
+            pfile4_ = new CFile64();
+        if (!pfile4_->Open(pfile1_->GetFilePath(),
+                    CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
+        {
+            TRACE1("BG aerial scan file open failed for %p\n", this);
+            return FALSE;
+        }
+    }
 
     return TRUE;
 }
@@ -1180,6 +1220,9 @@ void CHexEditDoc::DeleteContents()
 
     if (pthread3_ != NULL)
         KillAerialThread();
+
+    if (pthread4_ != NULL)
+        KillCompThread();
 
     undo_.clear();
     loc_.clear();               // Done after thread killed so no docdata_ lock needed
@@ -1676,7 +1719,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
                 return -1;              // open_file has already set mac_error_ = 10
 
             length_ = file_len;
-            ASSERT(pthread2_ == NULL && pthread3_ == NULL);   // Must modify loc_ before creating threads (else docdata_ needs to be locked)
+            ASSERT(pthread2_ == NULL && pthread3_ == NULL && pthread4_ == NULL);   // Must modify loc_ before creating threads (else docdata_ needs to be locked)
             loc_.push_back(doc_loc(FILE_ADDRESS(0), file_len));
 
             // Save original status

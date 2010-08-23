@@ -110,6 +110,7 @@ void CHexEditDoc::RemoveCompView()
     {
         if (pthread4_ != NULL)
             KillCompThread();
+		// xxx close comp files?
     }
 }
 
@@ -183,9 +184,9 @@ void CHexEditDoc::KillCompThread()
     if (waiting)
         start_comp_event_.SetEvent();
 
+    pthread4_ = NULL;
     DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
     ASSERT(wait_status == WAIT_OBJECT_0);
-    pthread4_ = NULL;
 
     // Free resources that are only needed during bg searches
     if (pfile4_ != NULL)
@@ -339,17 +340,17 @@ UINT CHexEditDoc::RunCompThread()
                     comp_state_ = SCANNING;
 					addr = 0;
 					result.Reset();
-                    TRACE1("BGAerial: restart for %p\n", this);
+                    TRACE1("BGCompare: restart for %p\n", this);
                     break;
                 case STOP:                      // stop scan and wait
                     comp_command_ = NONE;
                     comp_state_ = WAITING;
-                    TRACE1("BGAerial: stop for %p\n", this);
+                    TRACE1("BGCompare: stop for %p\n", this);
                     goto end_scan;
                 case DIE:                       // terminate this thread
                     comp_command_ = NONE;
                     comp_state_ = DYING;
-                    TRACE1("BGAerial: killed thread for %p\n", this);
+                    TRACE1("BGCompare: killed thread for %p\n", this);
                     return 1;
                 case NONE:                      // nothing needed here - just continue scanning
                     ASSERT(comp_state_ == SCANNING);
@@ -365,6 +366,11 @@ UINT CHexEditDoc::RunCompThread()
 			if ((gota = GetData    (bufa, buf_size, addr, 4)) <= 0 ||
 			    (gotb = GetCompData(bufb, buf_size, addr, true)) <= 0)
 			{
+				// We store
+				CFileStatus stat;
+				pfile4_compare_->GetStatus(stat);
+				result.Final(stat.m_mtime);
+
                 TRACE("BGCompare: finished scan for %p\n", this);
                 CSingleLock sl(&docdata_, TRUE); // Protect shared data access
 
@@ -401,6 +407,8 @@ UINT CHexEditDoc::RunCompThread()
 				result.m_len.push_back(int(addr + pos - result.m_addr.back()));
 				ASSERT(result.m_addr.size() == result.m_len.size());     // must always be same length
 			}
+
+			addr += std::min(gota, gotb);
         }
     end_scan:
         ;
