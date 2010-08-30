@@ -76,6 +76,7 @@ public:
     void bar_context(CPoint point);
     void SaveFrameOptions();
     BOOL UpdateBGSearchProgress();
+    BOOL UpdateBGCompareProgress();
 
 // Overrides
     // ClassWizard generated virtual function overrides
@@ -210,6 +211,7 @@ public:
     afx_msg void OnSelAddrHex();
     afx_msg void OnChangeAddrDec();
     afx_msg void OnSelAddrDec();
+    afx_msg void OnUpdateCompares(CCmdUI *pCmdUI);
     afx_msg void OnUpdateOccurrences(CCmdUI *pCmdUI);
     afx_msg void OnUpdateValues(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAddrHex(CCmdUI *pCmdUI);
@@ -326,11 +328,12 @@ private:
 #endif
 	int m_background_pos;
 	CBitmap m_search_image;       // Displayed in background search occurrences (status bar) pane
-    COLORREF bg_progress_colour_; // Current progress bar colour or -1 if no progress bar shown
+    COLORREF bg_progress_colour_; // Current search progress bar colour or -1 if no progress bar shown
+    COLORREF bg_compare_colour_;  // Current compare progress bar colour or -1 if no progress bar shown
 
 	// Current status bar pane widths - so we only adjust if necessary (to avoid flicker)
 	// Note using CMFCStatusBar::GetPaneWidth won't do as it returns 0 for non-visible panes
-	int OccurrencesWidth, ValuesWidth, AddrHexWidth, AddrDecWidth, FileLengthWidth;
+	int ComparesWidth, OccurrencesWidth, ValuesWidth, AddrHexWidth, AddrDecWidth, FileLengthWidth;
 
 //    UINT timer_id_;             // Timer id for updating bg search progress in the status bar
 

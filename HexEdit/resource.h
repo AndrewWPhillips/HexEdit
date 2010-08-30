@@ -3,6 +3,7 @@
 // Used by HexEdit.rc
 //
 #define IDD_ABOUTBOX                    100
+#define IDD_TIP                         101
 #define IDB_LIGHTBULB                   102
 #define ID_INDICATOR_BIG_ENDIAN         103
 #define ID_INDICATOR_FILE_LENGTH        104
@@ -11,8 +12,7 @@
 #define ID_INDICATOR_VALUES             107
 #define ID_INDICATOR_READONLY           108
 #define ID_INDICATOR_OCCURRENCES        109
-#define IDD_TIP                         109
-#define ID_JUMP_HEX_ADDR                110
+#define ID_INDICATOR_COMPARES           110
 #define CG_IDS_TIPOFTHEDAY              111
 #define CG_IDS_TIPOFTHEDAYMENU          112
 #define IDS_COLORS                      112
@@ -1159,11 +1159,12 @@
 #define IDC_JUMP_HEX                    32782
 #define ID_VIEW_TOOLBARS                32782
 #define IDC_JUMP_DEC                    32783
+#define ID_JUMP_HEX_ADDR                32785
+#define ID_JUMP_DEC_ADDR                32786
 #define ID_SEARCH_HEX                   32791
 #define ID_SEARCH_ASCII                 32792
 #define ID_SEARCH_ICASE                 32793
 #define ID_VIEW_EDITBAR                 32794
-#define ID_JUMP_DEC_ADDR                32795
 #define ID_ALLOW_MODS                   32796
 #define ID_CONTROL_TOGGLE               32797
 #define ID_OPTIONS                      32798

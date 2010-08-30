@@ -644,8 +644,8 @@ public:
     void CreateCompThread();  // Create background thread which fills in the aerial view bitmap
     void KillCompThread();    // Kill background thread ASAP
 	void StartComp();
-	__int64 CompareDifferences();
-	int CHexEditDoc::CompareProgress(__int64 &diffs);
+	int CompareDifferences();
+	int CHexEditDoc::CompareProgress();
 	FILE_ADDRESS CHexEditDoc::GetNextDiff(FILE_ADDRESS from);
 	FILE_ADDRESS CHexEditDoc::GetPrevDiff(FILE_ADDRESS from);
 	CString GetCompFileName();

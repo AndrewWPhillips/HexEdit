@@ -303,7 +303,7 @@ size_t CHexEditDoc::GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc
 // Returns the number of diffs (in bytes) OR
 // -4 = bg compare not on
 // -2 = bg compare is still in progress
-__int64 CHexEditDoc::CompareDifferences()
+int CHexEditDoc::CompareDifferences()
 {
     if (pthread4_ == NULL)
     {
@@ -312,19 +312,23 @@ __int64 CHexEditDoc::CompareDifferences()
 
     // Protect access to shared data
     CSingleLock sl(&docdata_, TRUE);
+	if (comp_state_ == SCANNING)
+	{
+		return -2;
+	}
 
-	return 0; // xxx TBD 
+	return comp_result_.m_addr.size(); 
 }
 
 // Return how far our background compare has progressed as a percentage (0 to 100).
 // Also return the number of differences found so far (in bytes).
-int CHexEditDoc::CompareProgress(__int64 &diffs)
+int CHexEditDoc::CompareProgress()
 {
     docdata_.Lock();
     FILE_ADDRESS file_len = length_;
     docdata_.Unlock();
 
-	diffs = 0; return 0; // xxx TBD
+	return 0; // xxx TBD
 }
 
 // Returns:

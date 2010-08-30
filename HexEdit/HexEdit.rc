@@ -2622,6 +2622,7 @@ BEGIN
     ID_INDICATOR_VALUES     "DD, 221, 335, 10101010, '^W'"
     ID_INDICATOR_READONLY   "RW"
     ID_INDICATOR_OCCURRENCES "88,888,888"
+    ID_INDICATOR_COMPARES   "8,888"
     ID_JUMP_HEX_ADDR        "Invoke hex jump tool\nJump Hex"
     CG_IDS_TIPOFTHEDAY      "Display a useful ""Tip of the Day""\nTip of the Day"
 END
@@ -2788,7 +2789,7 @@ BEGIN
     ID_UNDO_CHANGES         "Undo the last change made to the file\nUndo Changes"
     ID_ZLIB_SETTINGS        "Adjust ZLIB compression settings\nCompression Settings"
     ID_ZLIB_COMPRESS        "Compresses the selected bytes using the current ZLIB settings\nCompress"
-    ID_ZLIB_DECOMPRESS      "Decompresses the selected bytes using the current ZLIB settings\\Decompress"
+    ID_ZLIB_DECOMPRESS      "Decompresses the selected bytes using the current ZLIB settings\nDecompress"
     ID_IMPORT_HEX_TEXT      "Import from file containing hex text\nImport Hex Text"
     ID_IMPORT_MOTOROLA_S    "Import from Motorola S record file\nImport Motorola S"
     ID_IMPORT_INTEL         "Import from Intel Hex file\nImport Intel Hex"

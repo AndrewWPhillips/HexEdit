@@ -1341,7 +1341,7 @@ BOOL CCompareView::MovePos(UINT nChar, UINT nRepCnt,
 
     if (shift_down && end_base)
     {
-        MoveWithDesc("Shift + " + desc, end_addr, new_address);
+        MoveToAddress(end_addr, new_address);
 
         // Handle this when shift key released now (in OnKeyUp)
 //        if (aa->highlight_)
@@ -1349,16 +1349,41 @@ BOOL CCompareView::MovePos(UINT nChar, UINT nRepCnt,
     }
     else if (shift_down)
     {
-        MoveWithDesc("Shift + " + desc, start_addr, new_address);
+        MoveToAddress(start_addr, new_address);
 
         // Handle this when shift key released now (in OnKeyUp)
 //        if (aa->highlight_)
 //            add_highlight(start_addr, new_address, TRUE);
     }
     else
-        MoveWithDesc(desc, new_address, -1, -1, -1, FALSE, FALSE, row);
+        MoveToAddress(new_address, -1, row);
 
     return TRUE;                // Indicate that keystroke used
+}
+
+void CCompareView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/, int row /*=0*/)
+{
+    ASSERT((astart & ~0x3fffFFFFffffFFFF) == 0); // Make sure top 2 bits not on
+
+    if (astart < 0 || astart > GetDocument()->length())
+        astart = GetDocument()->length();
+    if (aend < 0 || aend > GetDocument()->length())
+        aend = astart;
+
+	FILE_ADDRESS pstart, pend;
+    GetSelAddr(pstart, pend);
+    int prow = 0;   // Row of cursor if vert_display mode
+    if (pstart == pend && phev_->display_.vert_display)
+        prow = pos2row(GetCaret());
+
+    // Is the caret/selection now in a different position
+    if (astart != pstart || aend != pend || row != prow)
+    {
+        // Move the caret/selection (THIS IS THE IMPORTANT BIT)
+		CScrView::SetSel(addr2pos(astart, row), addr2pos(aend, row), true);
+    }
+
+    DisplayCaret();                             // Make sure caret is in the display
 }
 
 int CCompareView::pos2row(CPointAp pos)

@@ -1701,7 +1701,9 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
         AfxAbort();
     }
 #endif
-    if (mm->UpdateBGSearchProgress())
+	BOOL tmp1 = mm->UpdateBGSearchProgress();
+	BOOL tmp2 = mm->UpdateBGCompareProgress();
+    if (tmp1 || tmp2)
     {
         (void)CWinAppEx::OnIdle(lCount);
         return TRUE;                    // we want more processing

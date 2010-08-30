@@ -184,6 +184,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
         ON_UPDATE_COMMAND_UI(ID_DIALOGS_DOCKABLE, OnUpdateDockableToggle)
 
         ON_COMMAND_EX(ID_VIEW_STATUS_BAR, OnPaneCheck)
+        ON_UPDATE_COMMAND_UI(ID_INDICATOR_COMPARES, OnUpdateCompares)
         ON_UPDATE_COMMAND_UI(ID_INDICATOR_OCCURRENCES, OnUpdateOccurrences)
         ON_UPDATE_COMMAND_UI(ID_INDICATOR_VALUES, OnUpdateValues)
         ON_UPDATE_COMMAND_UI(ID_INDICATOR_HEX_ADDR, OnUpdateAddrHex)
@@ -264,8 +265,8 @@ CMainFrame::CMainFrame()
 
 	// Status bar stuff
 	m_search_image.LoadBitmap(IDB_SEARCH);
-	OccurrencesWidth = ValuesWidth = AddrHexWidth = AddrDecWidth = FileLengthWidth = -999;
-    bg_progress_colour_ = -1;
+	ComparesWidth = OccurrencesWidth = ValuesWidth = AddrHexWidth = AddrDecWidth = FileLengthWidth = -999;
+    bg_progress_colour_ = bg_compare_colour_ = -1;
 
 	// History lists
 	hex_hist_changed_ = dec_hist_changed_ = clock();
@@ -280,6 +281,7 @@ CMainFrame::~CMainFrame()
 static UINT indicators[] =
 {
         ID_SEPARATOR,           // status line indicator
+        ID_INDICATOR_COMPARES,
         ID_INDICATOR_OCCURRENCES,
         ID_INDICATOR_VALUES,
         ID_INDICATOR_HEX_ADDR,
@@ -428,7 +430,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_wndStatusBar.SetPaneWidth(0, 340);
 		m_wndStatusBar.SetToolTips();
 		if (HBITMAP(m_search_image) != 0)
-			m_wndStatusBar.SetPaneIcon(1, HBITMAP(m_search_image), RGB(255,255,255));
+			m_wndStatusBar.SetPaneIcon(2, HBITMAP(m_search_image), RGB(255,255,255));
         for (int pane = 1; pane < sizeof(indicators)/sizeof(*indicators)-3; ++pane)
             m_wndStatusBar.SetPaneText(pane, "");   // clear out dummy text
 
@@ -976,12 +978,6 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 no_fill:
     return TRUE;
 }
-
-//void CMainFrame::OnTimer(UINT nIDEvent) 
-//{
-//    if (nIDEvent == timer_id_)
-//        UpdateBGSearchProgress();
-//}
 
 // The following bizare stuff is used to set the current page in print preview
 // mode.  This is necessary due to a bug in MFC.  CPreviewViewKludge is just
@@ -1644,9 +1640,9 @@ void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
     CHexEditView *pview = GetView();
 	int pane_width = 80;
 
-    int ii;
     if (pview != NULL)
     {
+	    int ii;
         if ((ii = pview->GetDocument()->SearchOccurrences()) > -1)
         {
             psb->EnablePaneProgressBar(index, -1);  // turn off progress bar so we can show the text
@@ -1659,7 +1655,7 @@ void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
 		    // Work out pane width
             CClientDC dc(psb);
 		    dc.SelectObject(psb->GetFont());
-            pane_width = max(dc.GetTextExtent(ss, ss.GetLength()).cx + 2, 35) + 20; // allow 20 for icon
+            pane_width = max(dc.GetTextExtent(ss, ss.GetLength()).cx + 2, 35);
             pCmdUI->SetText(ss);
             pCmdUI->Enable();
         }
@@ -1691,6 +1687,94 @@ void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
 	{
 		psb->SetPaneWidth(index, pane_width);
 		OccurrencesWidth = pane_width;
+	}
+}
+
+BOOL CMainFrame::UpdateBGCompareProgress()
+{
+    CHexEditView *pview = GetView();
+
+    if (pview != NULL)
+    {
+	    int ii;
+		if ((ii = pview->GetDocument()->CompareDifferences()) == -2)
+        {
+            int index = m_wndStatusBar.CommandToIndex(ID_INDICATOR_COMPARES);
+			if (bg_progress_colour_ != pview->GetCompareCol())
+            {
+                bg_progress_colour_ = pview->GetCompareCol();
+                m_wndStatusBar.EnablePaneProgressBar(index, 100, TRUE, bg_progress_colour_);
+            }
+			m_wndStatusBar.SetPaneProgress(index, pview->GetDocument()->CompareProgress());
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+void CMainFrame::OnUpdateCompares(CCmdUI *pCmdUI)
+{
+    CMFCStatusBar *psb = (CMFCStatusBar *)pCmdUI->m_pOther;
+    ASSERT_KINDOF(CMFCStatusBar, psb);
+    ASSERT_VALID(psb);
+    int index = psb->CommandToIndex(ID_INDICATOR_COMPARES);
+	ASSERT(index != -1);
+	if (index == -1)
+	{
+		ASSERT(0); // should not happen
+		return;
+	}
+
+    CHexEditView *pview = GetView();
+	int pane_width = 10;
+
+    if (pview != NULL)
+    {
+	    int ii;
+		if ((ii = pview->GetDocument()->CompareDifferences()) > -1)
+        {
+            psb->EnablePaneProgressBar(index, -1);  // turn off progress bar so we can show the text
+            bg_compare_colour_ = -1;
+
+            CString ss;
+            ss.Format("%ld ", long(ii));
+            AddCommas(ss);
+
+		    // Work out pane width
+            CClientDC dc(psb);
+		    dc.SelectObject(psb->GetFont());
+            pane_width = max(dc.GetTextExtent(ss, ss.GetLength()).cx + 2, 35);
+            pCmdUI->SetText(ss);
+            pCmdUI->Enable();
+        }
+        else if (ii == -2)   // compare in progress
+        {
+            UpdateBGCompareProgress();
+			pane_width = 40;
+            pCmdUI->Enable();
+        }
+        else if (ii == -4)  // no comparison
+        {
+            psb->EnablePaneProgressBar(index, -1);  // turn off progress bar so we can show the text
+            bg_compare_colour_ = -1;
+            pCmdUI->SetText("");
+            pCmdUI->Enable();
+        }
+        else
+            pCmdUI->Enable(FALSE);
+    }
+    else
+    {
+        psb->EnablePaneProgressBar(index, -1);      // turn off progress bar so we can show the text
+        bg_compare_colour_ = -1;
+        pCmdUI->SetText("");
+        pCmdUI->Enable(FALSE);
+    }
+
+	if (pane_width != ComparesWidth)
+	{
+		psb->SetPaneWidth(index, pane_width);
+		ComparesWidth = pane_width;
 	}
 }
 

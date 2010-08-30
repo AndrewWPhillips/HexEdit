@@ -1728,6 +1728,7 @@ void CStatBar::move_tooltip(UINT id)
 void CStatBar::SetToolTips()
 {
 	ASSERT(m_hWnd != 0);
+    SetTipText(CommandToIndex(ID_INDICATOR_COMPARES), "Differences found (or compare progress)");
     SetTipText(CommandToIndex(ID_INDICATOR_OCCURRENCES), "Occurrences of search item (or search progress)");
     SetTipText(CommandToIndex(ID_INDICATOR_VALUES), "Hex,Dec,Octal,Binary,Char values of byte at cursor");
     SetTipText(CommandToIndex(ID_INDICATOR_HEX_ADDR), "Distance from mark to cursor (in hex)");

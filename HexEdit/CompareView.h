@@ -72,6 +72,7 @@ public:
     COLORREF GetBookmarkCol() { return phev_->bm_col_; }
     CString GetSchemeName() { return phev_->scheme_name_; }
     virtual BOOL MovePos(UINT nChar, UINT nRepCnt, BOOL, BOOL, BOOL);
+	void MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend = -1, int row = 0);
 
 public:
 
