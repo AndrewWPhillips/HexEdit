@@ -874,7 +874,6 @@ BOOL CAerialView::OnEraseBkgnd(CDC* pDC)
 void CAerialView::OnDestroy() 
 {
     StopTimer();
-    GetDocument()->RemoveAerialView();
     CView::OnDestroy();
 }
 

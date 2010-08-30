@@ -107,17 +107,6 @@ colour schemes.
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// bg_func is the entry point for the thread.
-// It just calls the RunAerialThread member for the doc passed to it.
-static UINT bg_func(LPVOID pParam)
-{
-    CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
-
-    TRACE1("Aerial thread started for doc %p\n", pDoc);
-
-    return pDoc->RunAerialThread();
-}
-
 // Add an aerial view for this doc.  The doc has to remember how many there are so it
 // can free up things when there are no more.  (There can be more than one if a 2nd
 // window has been opened on the same document.)
@@ -126,6 +115,7 @@ static UINT bg_func(LPVOID pParam)
 
 void CHexEditDoc::AddAerialView(CHexEditView *pview)
 {
+	TRACE("************* Aerial +++ %d\n", av_count_);
 	if (++av_count_ == 1)
 	{
 		//get bitmap & clear it to closest grey to hex view's background
@@ -140,53 +130,6 @@ void CHexEditDoc::AddAerialView(CHexEditView *pview)
     ASSERT(pthread3_ != NULL);
 }
 
-// Gets a new FreeImage bitmap if we haven't got one yet or the current one is too small.
-// On entry the background thread must not be scanning the bitmap - eg waiting.
-// The parameter 'clear' is the value to clear the bitmap to - effectively clears to
-// a grey of colour RGB(clear, clear, clear), or -1 to not clear.
-void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
-{
-	// If we already have a bitmap make sure it is big enough
-	if (dib_ != NULL)
-	{
-		int dib_size = FreeImage_GetPitch(dib_) * FreeImage_GetHeight(dib_);
-		int dib_rows = int(length_/bpe_/MAX_WIDTH) + 2;
-		if (dib_size >= MAX_WIDTH*dib_rows*3)
-		{
-			if (clear > -1)
-				memset(FreeImage_GetBits(dib_), clear, dib_size);
-			return;
-		}
-
-		// Not big enough so free it and reallocate (below)
-        FIBITMAP *dib = dib_;
-        dib_ = NULL;
-		TRACE("***********-- FreeImage_Unload(%d)\r\n", dib);
-        FreeImage_Unload(dib);
-		if (clear <= -1)
-			clear = 0xC0;  // if we get a new bitmap we must clear it
-	}
-
-	// xxx we need user options for default bpe and MAX_BMP (min MAX_BMP should be 16MB)
-	bpe_ = 1; 
-	
-	// Keep increasing bpe_ by powers of two until we get a small enough bitmap
-	while (bpe_ <= 65536 && (length_*3)/bpe_ > MAX_BMP)
-		bpe_ = bpe_<<1;
-
-	// Work out the number of bitmap rows we would need at the widest bitmap size
-	int rows = int(length_/bpe_/MAX_WIDTH) + 2;    // Round up to next row plus add one more row to allow for "reshaping"
-	ASSERT((rows-2)*MAX_WIDTH < MAX_BMP);
-
-	dib_ = FreeImage_Allocate(MAX_WIDTH, rows, 24);
-
-	dib_size_ = MAX_WIDTH*rows*3;           // DIB size in bytes since we have 3 bytes per pixel and no pad bytes at the end of each scan line
-	ASSERT(dib_size_ == FreeImage_GetPitch(dib_) * FreeImage_GetHeight(dib_));
-	TRACE("************* FreeImage_Allocate %d at %p end %p\r\n", dib_, FreeImage_GetBits(dib_), FreeImage_GetBits(dib_)+dib_size_);
-	if (clear > -1)
-		memset(FreeImage_GetBits(dib_), clear, dib_size_);       // Clear to a grey
-}
-
 void CHexEditDoc::RemoveAerialView()
 {
     if (--av_count_ == 0)
@@ -198,6 +141,18 @@ void CHexEditDoc::RemoveAerialView()
 		TRACE("************* FreeImage_Unload(%d)\r\n", dib);
         FreeImage_Unload(dib);
     }
+	TRACE("************* Aerial --- %d\n", av_count_);
+}
+
+// bg_func is the entry point for the thread.
+// It just calls the RunAerialThread member for the doc passed to it.
+static UINT bg_func(LPVOID pParam)
+{
+    CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
+
+    TRACE1("Aerial thread started for doc %p\n", pDoc);
+
+    return pDoc->RunAerialThread();
 }
 
 void CHexEditDoc::CreateAerialThread()
@@ -291,7 +246,6 @@ void CHexEditDoc::KillAerialThread()
 			data_file3_[ii] = NULL;
 		}
 	}
-	// xxx reset any other things used by the thread
 }
 
 // Doc or colours have changed - restart scan
@@ -360,6 +314,53 @@ bool CHexEditDoc::AerialScanning()
     docdata_.Unlock();
 
     return !waiting;
+}
+
+// Gets a new FreeImage bitmap if we haven't got one yet or the current one is too small.
+// On entry the background thread must not be scanning the bitmap - eg waiting.
+// The parameter 'clear' is the value to clear the bitmap to - effectively clears to
+// a grey of colour RGB(clear, clear, clear), or -1 to not clear.
+void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
+{
+	// If we already have a bitmap make sure it is big enough
+	if (dib_ != NULL)
+	{
+		int dib_size = FreeImage_GetPitch(dib_) * FreeImage_GetHeight(dib_);
+		int dib_rows = int(length_/bpe_/MAX_WIDTH) + 2;
+		if (dib_size >= MAX_WIDTH*dib_rows*3)
+		{
+			if (clear > -1)
+				memset(FreeImage_GetBits(dib_), clear, dib_size);
+			return;
+		}
+
+		// Not big enough so free it and reallocate (below)
+        FIBITMAP *dib = dib_;
+        dib_ = NULL;
+		TRACE("***********-- FreeImage_Unload(%d)\r\n", dib);
+        FreeImage_Unload(dib);
+		if (clear <= -1)
+			clear = 0xC0;  // if we get a new bitmap we must clear it
+	}
+
+	// xxx we need user options for default bpe and MAX_BMP (min MAX_BMP should be 16MB)
+	bpe_ = 1; 
+	
+	// Keep increasing bpe_ by powers of two until we get a small enough bitmap
+	while (bpe_ <= 65536 && (length_*3)/bpe_ > MAX_BMP)
+		bpe_ = bpe_<<1;
+
+	// Work out the number of bitmap rows we would need at the widest bitmap size
+	int rows = int(length_/bpe_/MAX_WIDTH) + 2;    // Round up to next row plus add one more row to allow for "reshaping"
+	ASSERT((rows-2)*MAX_WIDTH < MAX_BMP);
+
+	dib_ = FreeImage_Allocate(MAX_WIDTH, rows, 24);
+
+	dib_size_ = MAX_WIDTH*rows*3;           // DIB size in bytes since we have 3 bytes per pixel and no pad bytes at the end of each scan line
+	ASSERT(dib_size_ == FreeImage_GetPitch(dib_) * FreeImage_GetHeight(dib_));
+	TRACE("************* FreeImage_Allocate %d at %p end %p\r\n", dib_, FreeImage_GetBits(dib_), FreeImage_GetBits(dib_)+dib_size_);
+	if (clear > -1)
+		memset(FreeImage_GetBits(dib_), clear, dib_size_);       // Clear to a grey
 }
 
 // This is what does the work in the background thread
