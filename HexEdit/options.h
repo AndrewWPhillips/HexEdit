@@ -840,7 +840,7 @@ public:
     {
         INDEX_BG,
 		INDEX_MARK, INDEX_HI, INDEX_BM, INDEX_SEARCH,       // background colours
-		INDEX_TRK,
+		INDEX_TRK, INDEX_COMP,
 		INDEX_ADDR_BG,   // address area background col
 		INDEX_SECTOR,    // sector boundary (and bad sector background)
         INDEX_HEX_ADDR, INDEX_DEC_ADDR,                   // text colours

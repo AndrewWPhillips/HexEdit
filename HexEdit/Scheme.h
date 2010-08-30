@@ -28,7 +28,7 @@ public:
     {
         can_delete_ = !(name_ == ASCII_NAME || name_ == ANSI_NAME ||
                         name_ == OEM_NAME || name_ == EBCDIC_NAME);
-        bg_col_ = mark_col_ = hi_col_ = bm_col_ = search_col_ = trk_col_ = sector_col_ = -1;
+        bg_col_ = mark_col_ = hi_col_ = bm_col_ = search_col_ = trk_col_ = comp_col_ = sector_col_ = -1;
 		addr_bg_col_ = hex_addr_col_ = dec_addr_col_ = -1;  // Init here just in case lines below are removed
 		mark_col_     = RGB(0, 224, 224);    // Cyan (-1 gives grey in default colour scheme)
         hex_addr_col_ = RGB(128, 0, 0);      // Dark red (-1 gives grey)
@@ -49,8 +49,8 @@ public:
 
     CString name_;                      // name of the scheme
     bool can_delete_;                   // is this a special or deleteable scheme
-    COLORREF bg_col_, hi_col_, mark_col_, bm_col_, search_col_, trk_col_, sector_col_;
-    COLORREF addr_bg_col_, dec_addr_col_, hex_addr_col_;
+    COLORREF hi_col_, mark_col_, bm_col_, search_col_, trk_col_, comp_col_;
+    COLORREF bg_col_, sector_col_, addr_bg_col_, dec_addr_col_, hex_addr_col_;
 
     std::vector<CString> range_name_;
     std::vector<COLORREF> range_col_;

@@ -2634,6 +2634,7 @@ void CHexEditApp::LoadSchemes()
 		if (scheme.mark_col_ == -2) scheme.mark_col_ = is_new ? -1 : (scheme.bm_col_ == -1 ? RGB(0, 224, 224) : scheme.bm_col_);
         scheme.search_col_ = GetProfileInt(strKey, "SearchColour", -1);
         scheme.trk_col_ = GetProfileInt(strKey, "ChangeTrackingColour", -1);
+        scheme.comp_col_ = GetProfileInt(strKey, "CompareColour", -1);
         scheme.addr_bg_col_ = GetProfileInt(strKey, "AddressBackgroundColour", -2);
 		// Make address background same as normal background for upgraders.
 		if (scheme.addr_bg_col_ == -2) scheme.addr_bg_col_ = is_new ? -1 : scheme.bg_col_;
@@ -2677,12 +2678,13 @@ void CHexEditApp::LoadSchemes()
 		// a new installation so should add the plain and pretty schemes.
         CScheme new_scheme(PLAIN_NAME);
         new_scheme.AddRange("ALL", -1, "0:255");
-		// Restore these to "Automatic" values which are mainly greys
+		// Restore these to "Automatic" values which are plain greys & pastels
         new_scheme.mark_col_ = new_scheme.hex_addr_col_ = new_scheme.dec_addr_col_ = -1;
         new_scheme.addr_bg_col_  = RGB(240, 240, 240);  // Make sure this is always grey
         new_scheme.hi_col_ = RGB(255, 255, 192);
         new_scheme.sector_col_ = RGB(224, 192, 192);
-        new_scheme.trk_col_ = RGB(255, 128, 128);
+        new_scheme.trk_col_ = RGB(255, 192, 96);
+        new_scheme.comp_col_ = RGB(255, 96, 192);
         // new_scheme.can_delete_ = TRUE;
         scheme_.push_back(new_scheme);
 
@@ -2731,6 +2733,7 @@ void CHexEditApp::SaveSchemes()
         WriteProfileInt(strKey, "MarkColour", ps->mark_col_);
         WriteProfileInt(strKey, "SearchColour", ps->search_col_);
         WriteProfileInt(strKey, "ChangeTrackingColour", ps->trk_col_);
+        WriteProfileInt(strKey, "CompareColour", ps->comp_col_);
         WriteProfileInt(strKey, "AddressBackgroundColour", ps->addr_bg_col_);
         WriteProfileInt(strKey, "SectorColour", ps->sector_col_);
 

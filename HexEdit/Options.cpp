@@ -1804,13 +1804,14 @@ void CColourSchemes::set_scheme()
     ASSERT(plist != NULL);
     plist->ResetContent();
 
-    // Add strings for INDEX_BG, INDEX_HI, INDEX_BM, INDEX_SEARCH, INDEX_HEX_ADDR, INDEX_DEC_ADDR,                   // text colours
+    // Add strings for INDEX_BG, INDEX_HI, etc
     plist->AddString("Background");
 	plist->AddString("Mark");
     plist->AddString("Highlighting");
     plist->AddString("Bookmarks");
     plist->AddString("Search occurrences");
     plist->AddString("Change Tracking");
+    plist->AddString("Compare Tracking");
     plist->AddString("Address/ruler backgrnd");
     plist->AddString("Sector boundary");
     plist->AddString("Hex addresses");
@@ -2253,8 +2254,12 @@ void CColourSchemes::OnSelchangeRange()
             m_ColourPicker.SetColor(scheme_[scheme_no_].search_col_);
             break;
         case INDEX_TRK:
-            m_ColourPicker.EnableAutomaticButton(_T("Automatic"), RGB(255, 0, 0));  // red
+            m_ColourPicker.EnableAutomaticButton(_T("Automatic"), RGB(255, 128, 0));  // orange red
             m_ColourPicker.SetColor(scheme_[scheme_no_].trk_col_);
+            break;
+        case INDEX_COMP:
+            m_ColourPicker.EnableAutomaticButton(_T("Automatic"), RGB(255, 0, 128));  // purple
+            m_ColourPicker.SetColor(scheme_[scheme_no_].comp_col_);
             break;
         case INDEX_ADDR_BG:
             m_ColourPicker.EnableAutomaticButton(_T("Automatic"),
@@ -2347,6 +2352,9 @@ void CColourSchemes::OnColourPicker()
                 break;
             case INDEX_TRK:
                 scheme_[scheme_no_].trk_col_ = m_ColourPicker.GetColor();
+                break;
+            case INDEX_COMP:
+                scheme_[scheme_no_].comp_col_ = m_ColourPicker.GetColor();
                 break;
             case INDEX_ADDR_BG:
                 scheme_[scheme_no_].addr_bg_col_ = m_ColourPicker.GetColor();

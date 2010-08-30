@@ -127,20 +127,20 @@ struct display_bits
     // The following 3 bit flags have been combined into a single 3-bit char set
 	// to allow for more Unicode and byte page char sets in the future.
 	// There were 4 char sets corresponding to these bit patterns in the past:
-	//        graphic     oem    ebcdic
-	// ASCII     0         x        0    - uses current ANSI font only showing chars 32-126
-	// ANSI      1         0        0    - ANSI font showing extra (graphic etc) chars
-	// OEM/IBM   1         1        0    - uses current OEM font showing chars for bytes 0-255
-	// EBCDIC    x         x        1    - basic EBCDIC translation into ASCII (ANSI font)
+	//        graphic     oem    graphic
+	// ASCII     0         0       0    - uses current ANSI font only showing chars 32-126
+	// ANSI      0         0       1    - ANSI font showing extra (graphic etc) chars
+	// OEM/IBM   0         1       x    - uses current OEM font showing chars for bytes 0-255
+	// EBCDIC    1         x       x    - basic EBCDIC translation into ASCII (ANSI font)
 	// When combined the 3 bits give these values:
-	// 0 = ASCII, 4 = ANSI, 2/6 = OEM/IBM, 1/3/5/7 = EBCDIC
+	// 0 = ASCII, 1 = ANSI, 2/3 = OEM/IBM, 4+ = EBCDIC (cf enum above)
 
 #if 0
     unsigned int graphic: 1;    // Are graphic chars displayed?
     unsigned int oem: 1;        // Are we showing OEM graphics?
     unsigned int ebcdic: 1;     // Are we displaying as EBCDIC
 #else
-	unsigned int char_set: 3;  
+	unsigned int char_set: 3;   // refer to enum above (CHARSET_*)
 #endif
 
     unsigned int autofit: 1;    // Autofit mode is on?
