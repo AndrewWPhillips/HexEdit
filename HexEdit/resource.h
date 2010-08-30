@@ -377,6 +377,7 @@
 #define IDB_OPERBAR_H                   396
 #define IDB_OPERBAR_C                   397
 #define IDB_OPERBAR_D                   398
+#define ID_COMP_OPEN                    399
 #define ID_COMP_HIDE                    400
 #define ID_COMP_SPLIT                   401
 #define ID_COMP_TAB                     402
@@ -1577,7 +1578,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        436
-#define _APS_NEXT_COMMAND_VALUE         39134
+#define _APS_NEXT_COMMAND_VALUE         39135
 #define _APS_NEXT_CONTROL_VALUE         1596
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

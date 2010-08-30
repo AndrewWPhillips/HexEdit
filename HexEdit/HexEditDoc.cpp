@@ -83,8 +83,6 @@ BEGIN_MESSAGE_MAP(CHexEditDoc, CDocument)
     ON_COMMAND(ID_DFFD_OPTIONS, OnDffdOptions)
     ON_UPDATE_COMMAND_UI(ID_DFFD_OPTIONS, OnUpdateDffdOptions)
 
-    ON_COMMAND(ID_COMP_NEW, OnCompNew)
-
     ON_COMMAND(ID_TEST2, OnTest)
 END_MESSAGE_MAP()
 
@@ -418,7 +416,6 @@ void CHexEditDoc::OnCloseDocument()
     }
 
     DeleteContents();
-    ASSERT(pthread2_ == NULL && pthread3_ == NULL && pthread4_ == NULL);
 
     if (hicon_ != HICON(0))
     {
@@ -991,6 +988,7 @@ void CHexEditDoc::close_file()
         pfile4_->Close();
         delete pfile4_;
         pfile4_ = NULL;
+		// No need to close pfile1_compare_ and pfile4_compare_ as they are for a different file
     }
 }
 
@@ -1214,15 +1212,6 @@ void CHexEditDoc::DeleteContents()
         delete pfile1_;
         pfile1_ = NULL;
     }
-
-    if (aa->bg_search_ && pthread2_ != NULL)
-        KillSearchThread();
-
-    if (pthread3_ != NULL)
-        KillAerialThread();
-
-    if (pthread4_ != NULL)
-        KillCompThread();
 
     undo_.clear();
     loc_.clear();               // Done after thread killed so no docdata_ lock needed
@@ -1798,7 +1787,6 @@ void CHexEditDoc::OnUpdateKeepTimes(CCmdUI* pCmdUI)
 
 void CHexEditDoc::OnTest() 
 {
-	OnCompNew();
 #if 0
     CXmlTree xt;
 

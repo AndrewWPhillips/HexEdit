@@ -41,7 +41,6 @@ class CCompareView : public CScrView
     friend CHexEditView;
 protected: // create from serialization only
     CCompareView();
-    virtual ~CCompareView();
     DECLARE_DYNCREATE(CCompareView)
 
 public:
@@ -60,11 +59,6 @@ public:
 	BOOL DecAddresses() const { return !phev_->display_.hex_addr; }  // Now that user can show both addresses at once this is probably the best return value
 
 // Operations
-    void calc_addr_width(FILE_ADDRESS);     // Also used by recalc_display
-    void draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
-                 int char_height, int char_width, int char_width_w,
-                 COLORREF, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
-                 int draw_height = -1);
     //virtual void SetSel(CPointAp, CPointAp, bool base1 = false);
 
     bool CopyToClipboard();
@@ -77,6 +71,7 @@ public:
     COLORREF GetMarkCol() { return phev_->mark_col_; }
     COLORREF GetBookmarkCol() { return phev_->bm_col_; }
     CString GetSchemeName() { return phev_->scheme_name_; }
+    virtual BOOL MovePos(UINT nChar, UINT nRepCnt, BOOL, BOOL, BOOL);
 
 public:
 
@@ -113,39 +108,52 @@ protected:
     //void DoUpdate();
 
 protected:
-    afx_msg void OnDestroy();
+    //afx_msg void OnDestroy();
     afx_msg void OnSize(UINT nType, int cx, int cy);
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
     DECLARE_MESSAGE_MAP()
 
 private:
+    void calc_addr_width(FILE_ADDRESS);     // Also used by recalc_display
+    void draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
+                 int char_height, int char_width, int char_width_w,
+                 COLORREF, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
+                 int draw_height = -1);
+
     CPointAp addr2pos(FILE_ADDRESS address, int row = 0) const; // Convert byte address in doc to display position
     int hex_pos(int column, int width=0) const // get X coord of hex display column
     {
-		// TBD xxx fix for this view
         if (width == 0) width = phev_->text_width_;
-        return (phev_->addr_width_ + column*3 + column/phev_->group_by_)*width;
+        return (addr_width_ + column*3 + column/phev_->group_by_)*width;
     }
     int char_pos(int column, int widthd=0, int widthw=0) const // get X coord of ASCII/EBCDIC display column
     {
-		// TBD xxx fix for this view
         if (widthd == 0) widthd = phev_->text_width_;
         if (widthw == 0) widthw = phev_->text_width_w_;
         if (phev_->display_.vert_display)
-            return phev_->addr_width_*widthd +
+            return addr_width_*widthd +
                    (column + column/phev_->group_by_)*widthw;
         else if (phev_->display_.hex_area)
-            return (phev_->addr_width_ + phev_->rowsize_*3)*widthd +
+            return (addr_width_ + phev_->rowsize_*3)*widthd +
                    ((phev_->rowsize_-1)/phev_->group_by_)*widthd +
                    column*widthw;
         else
-            return phev_->addr_width_*widthd +
-                   column*widthw;
+            return addr_width_*widthd +
+			       column*widthw;
     }
     int pos_hex(int, int inside = FALSE) const;  // Closest hex display col given X
     int pos_char(int, int inside = FALSE) const; // Closest char area col given X
     FILE_ADDRESS pos2addr(CPointAp pos, BOOL inside = TRUE) const; // Convert a display position to closest address
     int pos2row(CPointAp pos);                    // Find vert_display row (0, 1, or 2) of display position
+    BOOL GetSelAddr(FILE_ADDRESS &start_addr, FILE_ADDRESS &end_addr)
+    {
+        ASSERT(phev_->line_height_ > 0);
+        CPointAp start, end;
+        BOOL retval = GetSel(start, end);
+        start_addr = pos2addr(start);
+        end_addr   = pos2addr(end);
+        return retval;
+    }
 
 	// Functions for selection tip (sel_tip_)
 //    void show_selection_tip();

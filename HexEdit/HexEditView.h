@@ -224,7 +224,7 @@ public:
     }
     BOOL GetSelAddr(FILE_ADDRESS &start_addr, FILE_ADDRESS &end_addr)
     {
-        ASSERT(text_height_ > 0);
+        ASSERT(line_height_ > 0);
         CPointAp start, end;
         BOOL retval = GetSel(start, end);
         start_addr = pos2addr(start);
@@ -727,6 +727,7 @@ public:
     afx_msg void OnUpdateAerialHide(CCmdUI* pCmdUI);
     afx_msg void OnUpdateAerialSplit(CCmdUI* pCmdUI);
     afx_msg void OnUpdateAerialTab(CCmdUI* pCmdUI);
+    afx_msg void OnCompNew();            // Open file to compare against
     afx_msg void OnCompHide();
     afx_msg void OnCompSplit();
     afx_msg void OnCompTab();
@@ -879,6 +880,7 @@ private:
     // Display colours
     COLORREF bg_col_, mark_col_, hi_col_, bm_col_, search_col_, text_col_;
     COLORREF trk_col_, trk_bg_col_;             // Change tracking colours
+	COLORREF comp_col_, comp_bg_col_;           // Background compare colours
     COLORREF addr_bg_col_, dec_addr_col_, hex_addr_col_; // colour for adresses/ruler
 	COLORREF sector_col_, sector_bg_col_;       // Displays sector bondaries and bad sector background
 
@@ -1000,10 +1002,10 @@ private:
 
     bool DoDffdTab();
     bool DoDffdSplit();
-    bool DoAerialTab();
-    bool DoAerialSplit();
-    bool DoCompTab();
-    bool DoCompSplit();
+    bool DoAerialTab(bool init = true);
+    bool DoAerialSplit(bool init = true);
+    bool DoCompTab(bool init = true);
+    bool DoCompSplit(bool init = true);
 };
 
 #ifndef _DEBUG  // debug version in HexEditView.cpp

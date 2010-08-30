@@ -539,8 +539,6 @@ protected:
     afx_msg void OnDffdOptions();
     afx_msg void OnUpdateDffdOptions(CCmdUI* pCmdUI);
 
-    afx_msg void OnCompNew();            // Open file to compare against
-
     afx_msg void OnTest();
         DECLARE_MESSAGE_MAP()
 
@@ -650,6 +648,8 @@ public:
 	int CHexEditDoc::CompareProgress(__int64 &diffs);
 	FILE_ADDRESS CHexEditDoc::GetNextDiff(FILE_ADDRESS from);
 	FILE_ADDRESS CHexEditDoc::GetPrevDiff(FILE_ADDRESS from);
+	CString GetCompFileName();
+	void SetForcePrompt(bool b) { bForcePrompt = b; }
 
     UINT RunCompThread();     // Main func in bg thread
 
@@ -822,9 +822,12 @@ private:
 	// -------------- file compare (see BGCompare.cpp) -----------------
     CFile64 *pfile4_;           // Copy of the original file (avoids synchronising access)
 	// Also see data_file4_ (above)
-	CFile64 *pfile1_compare_, *pfile4_compare_;   // The file we are comparing with
+	CFile64 *pfile1_compare_, *pfile4_compare_;   // The file we are comparing with (for fg + bg threads)
+	bool OpenComparison();      // Open file to compare
 	FILE_ADDRESS CompLength() const { if (pfile4_compare_ == NULL) return -1; else return pfile4_compare_->GetLength(); }
     size_t GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc, bool use_bg = false);  // bytes from compare file
+	bool bCompSelf;             // says if we are comparing with earlier version of same file
+	bool bForcePrompt;          // says when opening file to prompt for a file name even if we already have one
 
     int cv_count_;              // Number of aerial views of this document
     CWinThread *pthread4_;      // Ptr to thread or NULL

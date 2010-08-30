@@ -44,7 +44,7 @@ public:
 					 CATEGORY, KEYWORDS, COMMENTS,
 					 DFFDVIEW, DFFDWIDTHS,
                      AERIALVIEW, AERIALDISPLAY, AERIALPOS,
-					 COMPVIEW,
+					 COMPVIEW, COMPFILENAME,
 	};
 
 // Attributes

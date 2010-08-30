@@ -265,7 +265,7 @@ CMainFrame::CMainFrame()
 	// Status bar stuff
 	m_search_image.LoadBitmap(IDB_SEARCH);
 	OccurrencesWidth = ValuesWidth = AddrHexWidth = AddrDecWidth = FileLengthWidth = -999;
-    bg_progress_enabled_ = false;
+    bg_progress_colour_ = -1;
 
 	// History lists
 	hex_hist_changed_ = dec_hist_changed_ = clock();
@@ -425,6 +425,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
                 TRACE0("Failed to create status bar\n");
                 return -1;      // fail to create
         }
+		m_wndStatusBar.SetPaneWidth(0, 340);
 		m_wndStatusBar.SetToolTips();
 		if (HBITMAP(m_search_image) != 0)
 			m_wndStatusBar.SetPaneIcon(1, HBITMAP(m_search_image), RGB(255,255,255));
@@ -1612,19 +1613,19 @@ BOOL CMainFrame::UpdateBGSearchProgress()
         if ((ii = pview->GetDocument()->SearchOccurrences()) == -2)
         {
             int index = m_wndStatusBar.CommandToIndex(ID_INDICATOR_OCCURRENCES);
-            COLORREF text_col = RGB(0,0,0);
-            int hue, luminance, saturation;
+            //COLORREF text_col = RGB(0,0,0);
+            //int hue, luminance, saturation;
 
-            get_hls(::GetSearchCol(), hue, luminance, saturation);
-            if (hue != -1)
+            //get_hls(::GetSearchCol(), hue, luminance, saturation);
+            //if (hue != -1)
+            //{
+            //    if (luminance > 50) luminance = 1; else luminance = 99;
+            //    text_col  = get_rgb((hue+50)%100, luminance, 99);
+            //}
+			if (bg_progress_colour_ != pview->GetSearchCol())
             {
-                if (luminance > 50) luminance = 1; else luminance = 99;
-                text_col  = get_rgb((hue+50)%100, luminance, 99);
-            }
-            if (!bg_progress_enabled_)
-            {
-                m_wndStatusBar.EnablePaneProgressBar(index, 100, TRUE, ::GetSearchCol(), -1, text_col);
-                bg_progress_enabled_ = true;
+                bg_progress_colour_ = pview->GetSearchCol();
+                m_wndStatusBar.EnablePaneProgressBar(index, 100, TRUE, bg_progress_colour_);
             }
             m_wndStatusBar.SetPaneProgress(index, pview->GetDocument()->SearchProgress(ii));
             return TRUE;
@@ -1649,7 +1650,7 @@ void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
         if ((ii = pview->GetDocument()->SearchOccurrences()) > -1)
         {
             psb->EnablePaneProgressBar(index, -1);  // turn off progress bar so we can show the text
-            bg_progress_enabled_ = false;
+            bg_progress_colour_ = -1;
 
             CString ss;
             ss.Format("%ld ", long(ii));
@@ -1671,7 +1672,7 @@ void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
         else if (ii == -4)
         {
             psb->EnablePaneProgressBar(index, -1);  // turn off progress bar so we can show the text
-            bg_progress_enabled_ = false;
+            bg_progress_colour_ = -1;
             pCmdUI->SetText("OFF");
             pCmdUI->Enable();
         }
@@ -1681,7 +1682,7 @@ void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
     else
     {
         psb->EnablePaneProgressBar(index, -1);      // turn off progress bar so we can show the text
-        bg_progress_enabled_ = false;
+        bg_progress_colour_ = -1;
         pCmdUI->SetText("");
         pCmdUI->Enable(FALSE);
     }

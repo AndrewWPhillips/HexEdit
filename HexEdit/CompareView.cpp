@@ -38,7 +38,7 @@ extern CHexEditApp theApp;
 IMPLEMENT_DYNCREATE(CCompareView, CScrView)
 
 BEGIN_MESSAGE_MAP(CCompareView, CScrView)
-    ON_WM_DESTROY()
+    //ON_WM_CLOSE()  // doesn't seem to be called due to fiddling with views
     ON_WM_SIZE()
     ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
@@ -46,10 +46,6 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CCompareView construction/destruction
 CCompareView::CCompareView() : phev_(NULL), addr_width_(0)
-{
-}
-
-CCompareView::~CCompareView()
 {
 }
 
@@ -144,8 +140,7 @@ void CCompareView::OnDraw(CDC* pDC)
         norm_rect.bottom = int(doc_rect.bottom - GetScroll().y) + phev_->bdr_top_;
 
         // Get the current selection so that we can display it in reverse video
-        //GetSelAddr(start_addr, end_addr);
-		start_addr = end_addr = 0;  // TBD xxx
+        GetSelAddr(start_addr, end_addr);
 
         line_height = phev_->line_height_;
         char_width = phev_->text_width_;
@@ -509,151 +504,11 @@ void CCompareView::OnDraw(CDC* pDC)
 			break;            // after end of window
 
 		draw_bg(pDC, doc_rect, neg_x, neg_y,
-				line_height, char_width, char_width_w, phev_->trk_col_,
+				line_height, char_width, char_width_w, phev_->comp_col_,
 				max(addr, first_addr), 
 				min(addr+len, last_addr),
 				(pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8);
 	}
-#if 0 // TBD xxx convert to diff-tracking
-	// Draw deletion marks always from top (shouldn't be too visible)
-    if (!display_.hide_delete)
-    {
-        COLORREF prev_col = pDC->SetTextColor(bg_col_);
-
-        std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *ppr =
-            GetDocument()->Deletions();
-        std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator pp;
-        for (pp = ppr->begin(); pp != ppr->end(); ++pp)
-        {
-            // Check if its before or after the display area
-            if (pp->first < first_virt)
-                continue;
-            else if (pp->first > last_virt)
-                break;
-
-            CRect draw_rect;
-
-            draw_rect.top = int(((pp->first + offset_)/rowsize_) * line_height - 
-                                doc_rect.top + bdr_top_);
-            draw_rect.bottom = draw_rect.top + line_height;
-            if (neg_y)
-            {
-                draw_rect.top = -draw_rect.top;
-                draw_rect.bottom = -draw_rect.bottom;
-            }
-
-            if (!display_.vert_display && display_.hex_area)
-            {
-                draw_rect.left = hex_pos(int((pp->first + offset_)%rowsize_), char_width) - 
-                                    char_width - doc_rect.left + bdr_left_;
-                draw_rect.right = draw_rect.left + char_width;
-                if (neg_x)
-                {
-                    draw_rect.left = -draw_rect.left;
-                    draw_rect.right = -draw_rect.right;
-                }
-                pDC->FillSolidRect(&draw_rect, trk_col_);
-                char cc = (pp->second > 9 || !display_.delete_count) ? '*' : '0' + char(pp->second);
-                pDC->DrawText(&cc, 1, &draw_rect, DT_CENTER | DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
-            }
-            if (display_.vert_display || display_.char_area)
-            {
-                draw_rect.left = char_pos(int((pp->first + offset_)%rowsize_), char_width, char_width_w) - 
-                                    doc_rect.left + bdr_left_ - 2;
-                draw_rect.right = draw_rect.left + char_width_w/5+1;
-                if (neg_x)
-                {
-                    draw_rect.left = -draw_rect.left;
-                    draw_rect.right = -draw_rect.right;
-                }
-                pDC->FillSolidRect(&draw_rect, trk_col_);
-            }
-        }
-        pDC->SetTextColor(prev_col);   // restore text colour
-    }
-
-    // Now draw other change tracking stuff top down OR bottom up depending on ScrollUp()
-    if (!pDC->IsPrinting() && ScrollUp())
-    {
-        // Draw change tracking from bottom up
-        if (!display_.hide_replace)
-        {
-            std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *ppr =
-                GetDocument()->Replacements();
-            std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::reverse_iterator pp;
-            for (pp = ppr->rbegin(); pp != ppr->rend(); ++pp)
-                if (pp->first < last_virt)
-                    break;
-            for ( ; pp != ppr->rend(); ++pp)
-            {
-                if (pp->first + pp->second <= first_virt)
-                    break;
-                draw_bg(pDC, doc_rect, neg_x, neg_y,
-                        line_height, char_width, char_width_w, trk_col_,
-                        max(pp->first, first_addr), 
-                        min(pp->first + pp->second, last_addr), (pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
-            }
-        }
-        if (!display_.hide_insert)
-        {
-            std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *ppr =
-                GetDocument()->Insertions();
-            std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::reverse_iterator pp;
-            for (pp = ppr->rbegin(); pp != ppr->rend(); ++pp)
-                if (pp->first < last_virt)
-                    break;
-            for ( ; pp != ppr->rend(); ++pp)
-            {
-                if (pp->first +pp->second <= first_virt)
-                    break;
-                draw_bg(pDC, doc_rect, neg_x, neg_y,
-                        line_height, char_width, char_width_w, trk_bg_col_,
-                        max(pp->first, first_addr), 
-                        min(pp->first + pp->second, last_addr));
-            }
-        }
-    }
-    else
-    {
-        // Draw change tracking from top down
-        if (!display_.hide_replace)
-        {
-            std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *ppr =
-                GetDocument()->Replacements();
-            std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator pp;
-            for (pp = ppr->begin(); pp != ppr->end(); ++pp)
-                if (pp->first + pp->second > first_virt)
-                    break;
-            for ( ; pp != ppr->end(); ++pp)
-            {
-                if (pp->first > last_virt)
-                    break;
-                draw_bg(pDC, doc_rect, neg_x, neg_y,
-                        line_height, char_width, char_width_w, trk_col_,
-                        max(pp->first, first_addr), 
-                        min(pp->first + pp->second, last_addr), (pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
-            }
-        }
-        if (!display_.hide_insert)
-        {
-            std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *ppr =
-                GetDocument()->Insertions();
-            std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator pp;
-            for (pp = ppr->begin(); pp != ppr->end(); ++pp)
-                if (pp->first + pp->second > first_virt)
-                    break;
-            for ( ; pp != ppr->end(); ++pp)
-            {
-                if (pp->first > last_virt)
-                    break;
-                draw_bg(pDC, doc_rect, neg_x, neg_y,
-                        line_height, char_width, char_width_w, trk_bg_col_,
-                        max(pp->first, first_addr), 
-                        min(pp->first + pp->second, last_addr));
-            }
-        }
-    }
-#endif
 
 	unsigned char buf[CHexEditView::max_buf];  // Holds bytes for current line being displayed
     size_t last_col = 0;                     // Number of bytes in buf to display
@@ -1346,6 +1201,172 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
     return;
 }
 
+// Move scroll or caret position in response to a key press.
+// Note that this overrides CScrView::MovePos().
+BOOL CCompareView::MovePos(UINT nChar, UINT nRepCnt,
+                         BOOL control_down, BOOL shift_down, BOOL caret_on)
+{
+    FILE_ADDRESS start_addr, end_addr;
+    BOOL end_base = GetSelAddr(start_addr, end_addr);   // Is selection base at end of selection?
+    int row = 0;
+    if (start_addr == end_addr && phev_->display_.vert_display)
+        row = pos2row(GetCaret());
+    FILE_ADDRESS new_address;
+
+    // Start with start of (or end of, if moving forwards) current selection
+    if (shift_down)
+    {
+        // Work out which end of selection is being extended
+        if (end_base)
+            new_address = start_addr;
+        else
+            new_address = end_addr;
+        //++shift_moves_;
+    }
+    else if (start_addr == end_addr )
+        new_address = start_addr;                       // No current selection
+    else if (nChar == VK_DOWN || nChar == VK_NEXT)
+        new_address = end_addr;                         // Move from char after selection
+    else if (nChar == VK_RIGHT || nChar == VK_END)
+        new_address = end_addr - 1;                     // Move from last char of selection
+    else
+        new_address = start_addr;                       // Move from start of selection
+
+    CSizeAp tt, pp, ll;                   // Size of document total,page,line
+
+    switch (nChar)
+    {
+    case VK_LEFT:
+        if (control_down)
+        {
+            // Work out how many groups there are to start of file
+            long gpr = (phev_->rowsize_ - 1)/phev_->group_by_ + 1;    // groups per row
+            FILE_ADDRESS groups = ((new_address + phev_->offset_)/phev_->rowsize_) * gpr +
+                          ((new_address + phev_->offset_)%phev_->rowsize_ + phev_->group_by_ - 1)/phev_->group_by_;
+            // Calculate the group to move to and address of 1st byte
+            groups -= nRepCnt;
+            new_address = (groups/gpr) * phev_->rowsize_ - phev_->offset_ + (groups%gpr) * phev_->group_by_;
+        }
+        else
+		{
+            new_address -= nRepCnt;
+		}
+        break;
+    case VK_RIGHT:
+        if (control_down)
+        {
+            // First work out how many groups there are to start of file
+            long gpr = (phev_->rowsize_ - 1)/phev_->group_by_ + 1;    // groups per row
+            FILE_ADDRESS groups = ((new_address + phev_->offset_)/phev_->rowsize_) * gpr +
+                          ((new_address + phev_->offset_)%phev_->rowsize_)/phev_->group_by_;
+            // Calculate the group to move to
+            groups += nRepCnt;
+            new_address = (groups/gpr) * phev_->rowsize_ - phev_->offset_ + (groups%gpr) * phev_->group_by_;
+        }
+        else
+		{
+            new_address += nRepCnt;
+		}
+        break;
+    case VK_UP:
+        if (phev_->display_.vert_display && !shift_down)
+        {
+            new_address -= phev_->rowsize_ * ((2 - row + nRepCnt)/3);
+            row = (3333 + row - nRepCnt)%3;   // Add a large number div. by 3 to make sure % operand is +ve
+        }
+        else
+            new_address -= phev_->rowsize_ * nRepCnt;
+        break;
+    case VK_DOWN:
+        if (phev_->display_.vert_display && !shift_down)
+        {
+            new_address += phev_->rowsize_ * ((row + nRepCnt)/3);
+            row = (row + nRepCnt)%3;
+        }
+        else
+            new_address += phev_->rowsize_ * nRepCnt;
+        break;
+    case VK_HOME:
+        if (control_down)
+		{
+            new_address = 0;
+		}
+        else
+		{
+            new_address = ((new_address + phev_->offset_)/phev_->rowsize_) * phev_->rowsize_ - phev_->offset_;
+		}
+        break;
+    case VK_END:
+        if (control_down)
+		{
+            new_address = GetDocument()->CompLength();
+		}
+        else
+		{
+            new_address = ((new_address + phev_->offset_)/phev_->rowsize_ + 1) * phev_->rowsize_ - phev_->offset_ - 
+                                (shift_down ? 0 : 1);
+		}
+        break;
+    case VK_PRIOR:
+        GetSize(tt, pp, ll);
+        new_address -= phev_->rowsize_ * (pp.cy/phev_->line_height_) * nRepCnt;
+        break;
+    case VK_NEXT:
+        GetSize(tt, pp, ll);
+        new_address += phev_->rowsize_ * (pp.cy/phev_->line_height_) * nRepCnt;
+        break;
+    default:
+        return CScrView::MovePos(nChar, nRepCnt, control_down, shift_down, caret_on);
+    }
+
+    if (new_address < 0)
+    {
+        new_address = 0;
+        row = 0;
+    }
+    else if (new_address > GetDocument()->CompLength())
+    {
+        new_address = GetDocument()->CompLength();
+        if (phev_->display_.vert_display && !shift_down)
+            row = 2;
+    }
+
+    // Scroll addresses into view if moved to left column of hex area or 
+    // left column of char area when no hex area displayed
+    if ((new_address + phev_->offset_) % phev_->rowsize_ == 0 &&
+		(phev_->display_.vert_display || !phev_->display_.edit_char || !phev_->display_.hex_area))
+	{
+        SetScroll(CPointAp(0,-1));
+	}
+
+    if (shift_down && end_base)
+    {
+        MoveWithDesc("Shift + " + desc, end_addr, new_address);
+
+        // Handle this when shift key released now (in OnKeyUp)
+//        if (aa->highlight_)
+//            add_highlight(new_address, end_addr, TRUE);
+    }
+    else if (shift_down)
+    {
+        MoveWithDesc("Shift + " + desc, start_addr, new_address);
+
+        // Handle this when shift key released now (in OnKeyUp)
+//        if (aa->highlight_)
+//            add_highlight(start_addr, new_address, TRUE);
+    }
+    else
+        MoveWithDesc(desc, new_address, -1, -1, -1, FALSE, FALSE, row);
+
+    return TRUE;                // Indicate that keystroke used
+}
+
+int CCompareView::pos2row(CPointAp pos)
+{
+    return int((pos.y%phev_->line_height_)/phev_->text_height_);
+}
+
+
 // These are like the CHexEditView versions (pos_hex and pos_char)
 // but are duplicated here as we have our own addr_width_ member.
 int CCompareView::pos_hex(int pos, int inside) const
@@ -1436,11 +1457,11 @@ void CCompareView::calc_addr_width(FILE_ADDRESS length)
     if (theApp.nice_addr_)
         addr_width_ += (hex_width_-1)/4 + (dec_width_-1)/3 + (num_width_-1)/3;
 
-    // Also add 1 for the colon
+    // Also add 1 for the colon after each number
     addr_width_ += hex_width_ > 0 ? 1 : 0;
     addr_width_ += dec_width_ > 0 ? 1 : 0;
     addr_width_ += num_width_ > 0 ? 1 : 0;
-	++addr_width_;
+	++addr_width_;  // Add one for the separator line
 }
 
 FILE_ADDRESS CCompareView::pos2addr(CPointAp pos, BOOL inside /*= TRUE*/) const
@@ -1484,12 +1505,6 @@ void CCompareView::ValidateCaret(CPointAp &pos, BOOL inside /*=true*/)
 
 /////////////////////////////////////////////////////////////////////////////
 // CCompareView message handlers
-
-void CCompareView::OnDestroy() 
-{
-    GetDocument()->RemoveCompView();
-    CView::OnDestroy();
-}
 
 void CCompareView::OnSize(UINT nType, int cx, int cy) 
 {

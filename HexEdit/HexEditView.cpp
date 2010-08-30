@@ -544,6 +544,7 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
     ON_COMMAND(ID_AERIAL_TAB, OnAerialTab)
     ON_UPDATE_COMMAND_UI(ID_AERIAL_TAB, OnUpdateAerialTab)
 
+    ON_COMMAND(ID_COMP_NEW, OnCompNew)
     ON_COMMAND(ID_COMP_HIDE, OnCompHide)
     ON_UPDATE_COMMAND_UI(ID_COMP_HIDE, OnUpdateCompHide)
     ON_COMMAND(ID_COMP_SPLIT, OnCompSplit)
@@ -916,54 +917,6 @@ void CHexEditView::OnInitialUpdate()
 		display_.hex_addr = !display_.dec_addr;
 	}
 
-    // Reopen template view
-	ASSERT(pdfv_ == NULL);
-	switch (split_width_d_)
-	{
-	case 0:        // When last open template view was hidden so do nothing
-	    split_width_d_ = -1;
-		break;
-	case 2:        // Last opened in tab view
-	    split_width_d_ = -1;
-		DoDffdTab();
-		break;
-	default:       // Last opened in splitter
-	    DoDffdSplit();
-		break;
-	}
-
-	// Reopen aerial view
-	ASSERT(pav_ == NULL);
-	switch (split_width_a_)
-	{
-	case 0:        // When last open template view was hidden so do nothing
-	    split_width_a_ = -1;
-		break;
-	case 2:        // Last opened in tab view
-	    split_width_a_ = -1;
-		DoAerialTab();
-		break;
-	default:       // Last opened in splitter
-	    DoAerialSplit();
-	    break;
-	}
-
-	// Reopen aerial view
-	ASSERT(pcv_ == NULL);
-	switch (split_width_c_)
-	{
-	case 0:        // When last open template view was hidden so do nothing
-	    split_width_c_ = -1;
-		break;
-	case 2:        // Last opened in tab view
-	    split_width_c_ = -1;
-		DoCompTab();
-		break;
-	default:       // Last opened in splitter
-	    DoAerialSplit();
-	    break;
-	}
-
 	// if (pfl->GetVersion() < 3)  // this is not really sufficient if the file is not actually opened since the recent file list gets written back with same DISPLAY value (but new version number)
 	{
 		// In version 2 files there were 3 separate flags (eg when EBCDIC flag on other 2 flags ignored).
@@ -1023,6 +976,55 @@ void CHexEditView::OnInitialUpdate()
     // gives a more subtle grey selection) when window does not have focus.)
     pbrush_ = new CBrush(RGB(192, 192, 192));
     SetBrush(pbrush_);
+
+    // Reopen template view
+	ASSERT(pdfv_ == NULL);
+	switch (split_width_d_)
+	{
+	case 0:        // When last open template view was hidden so do nothing
+	    split_width_d_ = -1;
+		break;
+	case 2:        // Last opened in tab view
+	    split_width_d_ = -1;
+		DoDffdTab();
+		break;
+	default:       // Last opened in splitter
+	    DoDffdSplit();
+		break;
+	}
+
+	// Reopen aerial view
+	ASSERT(pav_ == NULL);
+	switch (split_width_a_)
+	{
+	case 0:        // When last open template view was hidden so do nothing
+	    split_width_a_ = -1;
+		break;
+	case 2:        // Last opened in tab view
+	    split_width_a_ = -1;
+		DoAerialTab(false);
+		break;
+	default:       // Last opened in splitter
+	    DoAerialSplit(false);
+	    break;
+	}
+
+	// Reopen compare view
+	ASSERT(pcv_ == NULL);
+	GetDocument()->SetForcePrompt(false);  // don't prompt for a file name if we have one
+	switch (split_width_c_)
+	{
+	case 0:        // When last open template view was hidden so do nothing
+	    split_width_c_ = -1;
+		break;
+	case 2:        // Last opened in tab view
+	    split_width_c_ = -1;
+		DoCompTab(false);
+		break;
+	default:       // Last opened in splitter
+	    DoCompSplit(false);
+	    break;
+	}
 
     CScrView::OnInitialUpdate();
 
@@ -1177,6 +1179,7 @@ void CHexEditView::StoreOptions()
 				if (width < 10) width = 10;    // Make sure it is not too narrow and reserve values 0-9 (2 = tab view)
 			}
 	        pfl->SetData(ii, CHexFileList::COMPVIEW, __int64(width));
+			pfl->SetData(ii, CHexFileList::COMPFILENAME, GetDocument()->GetCompFileName());
 		}
     }
 }
@@ -1379,18 +1382,21 @@ BOOL CHexEditView::set_colours()
     addr_bg_col_   = ps->addr_bg_col_ == -1  ? ::tone_down(::GetSysColor(COLOR_INACTIVEBORDER), bg_col_, 0.5) : ps->addr_bg_col_;
     // Getting change tracking colour and make a version closer to the background colour in luminance
     // trk_col_ is used to underline replacements, trk_bg_col_ is used as background for insertions
-    trk_col_ = ps->trk_col_ == -1 ? RGB(255, 0, 0) : ps->trk_col_;              // red
+    trk_col_ = ps->trk_col_ == -1 ? RGB(255, 128, 0) : ps->trk_col_;              // orange-red
     trk_bg_col_    = ::tone_down(trk_col_, bg_col_);
+    comp_col_ = ps->comp_col_ == -1 ? RGB(255, 0, 128) : ps->comp_col_;           // purple
+    comp_bg_col_   = ::tone_down(comp_col_, bg_col_);
 
     sector_col_    = ps->sector_col_ == -1   ? RGB(255, 160, 128)   : ps->sector_col_;          // pinkish orange
     sector_bg_col_ = ::tone_down(sector_col_, bg_col_);
     hex_addr_col_  = ps->hex_addr_col_ == -1 ? ::GetSysColor(COLOR_WINDOWTEXT) : ps->hex_addr_col_;
     dec_addr_col_  = ps->dec_addr_col_ == -1 ? ::GetSysColor(COLOR_WINDOWTEXT) : ps->dec_addr_col_;
 
+	// Set the default text colour (used for text not specific to a range)
     if (ps->range_col_.size() > CColourSchemes::INDEX_LAST)
         text_col_ = ps->range_col_[CColourSchemes::INDEX_LAST]; // was back()
     else
-        text_col_ = ::GetSysColor(COLOR_WINDOWTEXT);
+        text_col_ = ::GetSysColor(COLOR_WINDOWTEXT);  // no ranges at all so use windows default
 
     int ii;
 
@@ -6208,6 +6214,12 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
 void CHexEditView::OnDestroy() 
 {
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
+
+	if (pav_ != NULL)
+		GetDocument()->RemoveAerialView();
+	if (pcv_ != NULL)
+	    GetDocument()->RemoveCompView();
+
     CScrView::OnDestroy();
 
     // If there are no more views active ...
@@ -17868,7 +17880,8 @@ void CHexEditView::OnAerialHide()
 	ASSERT(snum_a > -1 || tnum_a > -1);  // It must be open in tab or splitter
 
 	// Set pav_ to NULL now to avoid the view getting messages while invalid
-	pav_ = NULL;  
+	pav_ = NULL;
+	GetDocument()->RemoveAerialView();
 
 	if (snum_a > -1)  // splitter?
 	{
@@ -17892,10 +17905,10 @@ void CHexEditView::OnUpdateAerialHide(CCmdUI* pCmdUI)
 
 void CHexEditView::OnAerialSplit()
 {
-    if (DoAerialSplit())
-	    pav_->SendMessage(WM_INITIALUPDATE);
+    DoAerialSplit();
 }
-bool CHexEditView::DoAerialSplit()
+
+bool CHexEditView::DoAerialSplit(bool init /*=true*/)
 {
     int snum_a;
 	if (pav_ != NULL && (snum_a = GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd())) > -1)
@@ -17904,19 +17917,8 @@ bool CHexEditView::DoAerialSplit()
 		return false;   // already open in splitter
 	}
 
-	// If open then it is open in a tab - close it
-	if (pav_ != NULL)
-	{
-		int tnum_a = GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd());
-		ASSERT(tnum_a > -1);
-
-		// Set pav_ to NULL now to avoid the view getting messages while invalid
-		pav_ = NULL;  
-
-		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing aerial view
-		if (tnum_a > -1)
-			VERIFY(GetFrame()->ptv_->RemoveView(tnum_a));
-	}
+	CAerialView * pSaved  = pav_;    // Save this so we can delete tab view after open in split view
+	pav_ = NULL;  
 
 	// Reopen in the splitter
 	CCreateContext ctxt;
@@ -17951,6 +17953,21 @@ bool CHexEditView::DoAerialSplit()
 
 	// Make sure aerial view knows which hex view it is assoc. with
 	pav_->phev_ = this;
+	if (init)
+	    pav_->SendMessage(WM_INITIALUPDATE);
+
+	// If open then it is open in a tab - close it
+	if (pSaved != NULL)
+	{
+		int tnum_a = GetFrame()->ptv_->FindTab(pSaved->GetSafeHwnd());
+		ASSERT(tnum_a > -1);
+
+		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing aerial view
+		if (tnum_a > -1)
+			VERIFY(GetFrame()->ptv_->RemoveView(tnum_a));
+		GetDocument()->RemoveAerialView();
+	}
+
 	return true;
 }
 
@@ -17961,32 +17978,16 @@ void CHexEditView::OnUpdateAerialSplit(CCmdUI* pCmdUI)
 
 void CHexEditView::OnAerialTab()
 {
-    if (DoAerialTab())
-	    pav_->SendMessage(WM_INITIALUPDATE);
+    DoAerialTab();
 }
 
-bool CHexEditView::DoAerialTab()
+bool CHexEditView::DoAerialTab(bool init /*=true*/)
 {
 	if (pav_ != NULL && GetFrame()->ptv_->FindTab(pav_->GetSafeHwnd()) > -1)
 		return false;
 
-	// Close Aerial view in split window if there is one
-	if (pav_ != NULL)
-	{
-		int snum_a = GetFrame()->splitter_.FindViewColumn(pav_->GetSafeHwnd());
-		ASSERT(snum_a > 0);       // Should be there (not -1) and not the left one (not 0)
-
-		// Set pav_ to NULL now to avoid the view getting messages while invalid
-		pav_ = NULL;
-
-		if (snum_a > -1)
-		{
-			int dummy;
-			GetFrame()->splitter_.GetColumnInfo(snum_a, split_width_a_, dummy);  // save split window width in case it is reopened
-		    VERIFY(GetFrame()->splitter_.DelColumn(snum_a, TRUE));
-			GetFrame()->splitter_.RecalcLayout();
-		}
-	}
+	CAerialView *pSaved  = pav_;    // Save this so we can delete the tab view after open in split view
+	pav_ = NULL;  
 
 	// Reopen in the tab
 	CHexTabView *ptv = GetFrame()->ptv_;
@@ -18002,6 +18003,24 @@ bool CHexEditView::DoAerialTab()
 	// Make sure aerial view knows which hex view it is assoc. with
 	pav_->phev_ = this;
 	ptv->SetActiveView(0);
+	if (init)
+	    pav_->SendMessage(WM_INITIALUPDATE);
+
+	// Close Aerial view in split window if there is one
+	if (pSaved != NULL)
+	{
+		int snum_a = GetFrame()->splitter_.FindViewColumn(pSaved->GetSafeHwnd());
+		ASSERT(snum_a > 0);       // Should be there (not -1) and not the left one (not 0)
+
+		if (snum_a > -1)
+		{
+			int dummy;
+			GetFrame()->splitter_.GetColumnInfo(snum_a, split_width_a_, dummy);  // save split window width in case it is reopened
+		    VERIFY(GetFrame()->splitter_.DelColumn(snum_a, TRUE));
+			GetFrame()->splitter_.RecalcLayout();
+			GetDocument()->RemoveAerialView();
+		}
+	}
 	return true;
 }
 
@@ -18025,12 +18044,22 @@ int CHexEditView::AerialViewType() const
 		return 0;
 	}
 }
-
 // Compare View commands
-void CHexEditView::ShowComp()
+void CHexEditView::OnCompNew()
 {
-    if (pcv_ == NULL)
-		OnCompSplit();
+	// This triggers opening of compare file and start of background compare.
+	// Actually I should explain...
+	// It calls DoCompSplit (to create the compare view in a split window)
+	// then sends the new view a WM_INITIALUPDATE message which triggers 
+	// CCompareView::OninitialUpdate.  OninitialUpdate allows the view to 
+	// register itself with its document using CHexEditDoc::AddCompView()
+	// which call CreateCompThread (sets up and starts the compare thread)
+	// then pulses start_comp_event_ to trigger the thread to start comparing.
+	GetDocument()->SetForcePrompt(true);  // make sure user is prompted fof the compare file
+
+	// xxx TODO if pcv_ != NULL then close existing compare before starting new one
+    if (pcv_ == NULL && DoCompSplit())
+	    pcv_->SendMessage(WM_INITIALUPDATE);
 }
 
 void CHexEditView::OnCompHide()
@@ -18042,6 +18071,7 @@ void CHexEditView::OnCompHide()
 	int tnum_c = GetFrame()->ptv_->FindTab(pcv_->GetSafeHwnd());
 
 	pcv_ = NULL;  // Clear it now to avoid getting errors by trying to use it when dead
+    GetDocument()->RemoveCompView();  // compare window is detroyed directly (no WM_CLOSE) so we need this here
 
 	ASSERT(snum_c > -1 || tnum_c > -1);  // It must be open in tab or splitter
 
@@ -18054,7 +18084,7 @@ void CHexEditView::OnCompHide()
 	}
 	else if (tnum_c > -1)  // tab?
 	{
-		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing aerial view
+		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing compare view
 		VERIFY(GetFrame()->ptv_->RemoveView(tnum_c));
 	}
 }
@@ -18067,11 +18097,11 @@ void CHexEditView::OnUpdateCompHide(CCmdUI* pCmdUI)
 
 void CHexEditView::OnCompSplit()
 {
-    if (DoCompSplit())
-	    pcv_->SendMessage(WM_INITIALUPDATE);
+	GetDocument()->SetForcePrompt(false);   // open previous compare file if known
+    DoCompSplit();
 }
 
-bool CHexEditView::DoCompSplit()
+bool CHexEditView::DoCompSplit(bool init /*=true*/)
 {
     int snum_c;
 	if (pcv_ != NULL && (snum_c = GetFrame()->splitter_.FindViewColumn(pcv_->GetSafeHwnd())) > -1)
@@ -18080,18 +18110,9 @@ bool CHexEditView::DoCompSplit()
 		return false;   // already open in splitter
 	}
 
-	// If open then it is open in a tab - close it
-	if (pcv_ != NULL)
-	{
-		int tnum_c = GetFrame()->ptv_->FindTab(pcv_->GetSafeHwnd());
-		ASSERT(tnum_c > -1);
-
-		pcv_ = NULL;
-
-		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing aerial view
-		if (tnum_c > -1)
-			VERIFY(GetFrame()->ptv_->RemoveView(tnum_c));
-	}
+	// Save current view so we can close it later
+	CCompareView * pSaved = pcv_;
+	pcv_ = NULL;
 
 	// Reopen in the splitter
 	CCreateContext ctxt;
@@ -18113,7 +18134,7 @@ bool CHexEditView::DoCompSplit()
 			split_width_c_ = 8;
 	}
 
-	// Add aerial view column to the right of hex (tab) view column
+	// Add compare view column to the right of hex (tab) view column
 	int snum_t = GetFrame()->splitter_.FindViewColumn(GetFrame()->ptv_->GetSafeHwnd());
 	VERIFY(psplitter->InsColumn(snum_t + 1, split_width_c_, 8, RUNTIME_CLASS(CCompareView), &ctxt));
 	psplitter->SetActivePane(0, snum_t);   // make hex view active
@@ -18126,6 +18147,21 @@ bool CHexEditView::DoCompSplit()
 
 	// Make sure compare view knows which hex view it is assoc. with
 	pcv_->phev_ = this;
+	if (init)
+	    pcv_->SendMessage(WM_INITIALUPDATE);
+
+	// If it was open in the tabbed view close that view
+	if (pSaved != NULL)
+	{
+		int tnum_c = GetFrame()->ptv_->FindTab(pSaved->GetSafeHwnd());
+		ASSERT(tnum_c > -1);
+
+		GetFrame()->ptv_->SetActiveView(0);  // Make sure hex view (always view 0) is active before removing compare view
+		if (tnum_c > -1)
+			VERIFY(GetFrame()->ptv_->RemoveView(tnum_c));
+	    GetDocument()->RemoveCompView();    // compare window is detroyed directly (no WM_CLOSE) so we need this here
+	}
+
 	return true;
 }
 
@@ -18136,31 +18172,18 @@ void CHexEditView::OnUpdateCompSplit(CCmdUI* pCmdUI)
 
 void CHexEditView::OnCompTab()
 {
-    if (DoCompTab())
-	    pcv_->SendMessage(WM_INITIALUPDATE);
+	GetDocument()->SetForcePrompt(false);   // open previous compare file if known
+    DoCompTab();
 }
 
-bool CHexEditView::DoCompTab()
+bool CHexEditView::DoCompTab(bool init /*=true*/)
 {
 	if (pcv_ != NULL && GetFrame()->ptv_->FindTab(pcv_->GetSafeHwnd()) > -1)
-		return false;
+		return false;  // already open in tab
 
-	// Close Compare view in split window if there is one
-	if (pcv_ != NULL)
-	{
-		int snum_c = GetFrame()->splitter_.FindViewColumn(pcv_->GetSafeHwnd());
-		ASSERT(snum_c > 0);       // Should be there (not -1) and not the left one (not 0)
-
-		pcv_ = NULL;
-
-		if (snum_c > -1)
-		{
-			int dummy;
-			GetFrame()->splitter_.GetColumnInfo(snum_c, split_width_c_, dummy);  // save split window width in case it is reopened
-		    VERIFY(GetFrame()->splitter_.DelColumn(snum_c, TRUE));
-			GetFrame()->splitter_.RecalcLayout();
-		}
-	}
+	// Save current view so we can close it later
+	CCompareView * pSaved = pcv_;
+	pcv_ = NULL;
 
 	// Reopen in the tab
 	CHexTabView *ptv = GetFrame()->ptv_;
@@ -18176,6 +18199,24 @@ bool CHexEditView::DoCompTab()
 	// Make sure compare view knows which hex view it is assoc. with
 	pcv_->phev_ = this;
 	ptv->SetActiveView(0);
+	if (init)
+	    pcv_->SendMessage(WM_INITIALUPDATE);
+
+	// Close Compare view in split window if there is one
+	if (pSaved != NULL)
+	{
+		int snum_c = GetFrame()->splitter_.FindViewColumn(pSaved->GetSafeHwnd());
+		ASSERT(snum_c > 0);       // Should be there (not -1) and not the left one (not 0)
+
+		if (snum_c > -1)
+		{
+			int dummy;
+			GetFrame()->splitter_.GetColumnInfo(snum_c, split_width_c_, dummy);  // save split window width in case it is reopened
+		    VERIFY(GetFrame()->splitter_.DelColumn(snum_c, TRUE));
+			GetFrame()->splitter_.RecalcLayout();
+		    GetDocument()->RemoveCompView();    // compare window is detroyed directly (no WM_CLOSE) so we need this here
+		}
+	}
 	return true;
 }
 

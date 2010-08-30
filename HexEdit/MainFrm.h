@@ -326,7 +326,7 @@ private:
 #endif
 	int m_background_pos;
 	CBitmap m_search_image;       // Displayed in background search occurrences (status bar) pane
-    bool bg_progress_enabled_;    // Is progress bar in search occ. pane enabled?
+    COLORREF bg_progress_colour_; // Current progress bar colour or -1 if no progress bar shown
 
 	// Current status bar pane widths - so we only adjust if necessary (to avoid flicker)
 	// Note using CMFCStatusBar::GetPaneWidth won't do as it returns 0 for non-visible panes

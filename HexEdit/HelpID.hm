@@ -73,6 +73,7 @@
 #define HIDD_FILE_IMPORT_INTEL        0x01185
 #define HIDD_FILE_MACRO               0x01186
 #define HIDD_FILE_ATTACH              0x01187
+#define HIDD_FILE_COMPARE             0x01188
 
 // These are help ID that distinguish between different file save dialogs
 #define HIDD_FILE_SAVE                0x011A0
