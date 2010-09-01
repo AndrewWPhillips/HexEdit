@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="D:\Devel\Libraries\FreeImage"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T;WINVER=0x0500;_WIN32_IE=0x0500"
+				PreprocessorDefinitions="WINVER=0x0500;_WIN32_WINNT=0x0500;_WIN32_IE=0x0500;WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -143,7 +143,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T;WINVER=0x0500;_WIN32_IE=0x0500"
+				PreprocessorDefinitions="WINVER=0x0500;_WIN32_WINNT=0x0500;_WIN32_IE=0x0500;WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -236,7 +236,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="D:\Devel\Libraries\FreeImage"
-				PreprocessorDefinitions="WINVER=0x0500;WIN32;_DEBUG;_WINDOWS;_SECDLL;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T"
+				PreprocessorDefinitions="WINVER=0x0500;_WIN32_WINNT=0x0500;_WIN32_IE=0x500;WIN32;_DEBUG;_WINDOWS;_SECDLL;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
@@ -334,7 +334,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="_USE_32BIT_TIME_T"
+				PreprocessorDefinitions="WINVER=0x0500;_WIN32_WINNT=0x0500;_WIN32_IE=0x500;WIN32;_DEBUG;_WINDOWS;_SECDLL;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
@@ -1663,11 +1663,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
