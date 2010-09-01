@@ -544,7 +544,6 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
     ON_COMMAND(ID_AERIAL_TAB, OnAerialTab)
     ON_UPDATE_COMMAND_UI(ID_AERIAL_TAB, OnUpdateAerialTab)
 
-    ON_COMMAND(ID_COMP_NEW, OnCompNew)
     ON_COMMAND(ID_COMP_HIDE, OnCompHide)
     ON_UPDATE_COMMAND_UI(ID_COMP_HIDE, OnUpdateCompHide)
     ON_COMMAND(ID_COMP_SPLIT, OnCompSplit)
@@ -1002,10 +1001,10 @@ void CHexEditView::OnInitialUpdate()
 		break;
 	case 2:        // Last opened in tab view
 	    split_width_a_ = -1;
-		DoAerialTab(false);
+		DoAerialTab(false);      // no init as that seems to be done by MFC
 		break;
 	default:       // Last opened in splitter
-	    DoAerialSplit(false);
+	    DoAerialSplit(false);    // no init as that seems to be done by MFC
 	    break;
 	}
 
@@ -1019,10 +1018,10 @@ void CHexEditView::OnInitialUpdate()
 		break;
 	case 2:        // Last opened in tab view
 	    split_width_c_ = -1;
-		DoCompTab(false);
+		DoCompTab(false);      // no WM_INITIALUPDATE needed here (done by MFC)
 		break;
 	default:       // Last opened in splitter
-	    DoCompSplit(false);
+	    DoCompSplit(false);    // no WM_INITIALUPDATE needed here (done by MFC)
 	    break;
 	}
 
@@ -18045,23 +18044,6 @@ int CHexEditView::AerialViewType() const
 	}
 }
 // Compare View commands
-void CHexEditView::OnCompNew()
-{
-	// This triggers opening of compare file and start of background compare.
-	// Actually I should explain...
-	// It calls DoCompSplit (to create the compare view in a split window)
-	// then sends the new view a WM_INITIALUPDATE message which triggers 
-	// CCompareView::OninitialUpdate.  OninitialUpdate allows the view to 
-	// register itself with its document using CHexEditDoc::AddCompView()
-	// which call CreateCompThread (sets up and starts the compare thread)
-	// then pulses start_comp_event_ to trigger the thread to start comparing.
-	GetDocument()->SetForcePrompt(true);  // make sure user is prompted fof the compare file
-
-	// xxx TODO if pcv_ != NULL then close existing compare before starting new one
-    if (pcv_ == NULL && DoCompSplit())
-	    pcv_->SendMessage(WM_INITIALUPDATE);
-}
-
 void CHexEditView::OnCompHide()
 {
     if (pcv_ == NULL)

@@ -539,6 +539,8 @@ protected:
     afx_msg void OnDffdOptions();
     afx_msg void OnUpdateDffdOptions(CCmdUI* pCmdUI);
 
+    afx_msg void OnCompNew();            // Open file to compare against
+
     afx_msg void OnTest();
         DECLARE_MESSAGE_MAP()
 
@@ -649,6 +651,7 @@ public:
 	FILE_ADDRESS CHexEditDoc::GetNextDiff(FILE_ADDRESS from);
 	FILE_ADDRESS CHexEditDoc::GetPrevDiff(FILE_ADDRESS from);
 	CString GetCompFileName();
+	bool CompFileHasChanged();
 	void SetForcePrompt(bool b) { bForcePrompt = b; }
 
     UINT RunCompThread();     // Main func in bg thread
@@ -831,18 +834,19 @@ private:
 
     int cv_count_;              // Number of aerial views of this document
     CWinThread *pthread4_;      // Ptr to thread or NULL
-    CEvent start_comp_event_; // Starts the thread going
+    CEvent start_comp_event_;   // Starts the thread going
     BOOL comp_fin_;             // Flags that the bg scan is finished and the view needs updating
     enum BG_STATE   comp_state_;
     enum BG_COMMAND comp_command_;
+	FILE_ADDRESS comp_progress_; // Distance through the file is used to estimate progress
 
 	class CompResult
 	{
 		friend class CHexEditDoc;
 
 	public:
-		void Reset() { m_addr.clear(); m_len.clear(); }
-		void Final(const CTime &tm) { m_compTime = CTime::GetCurrentTime(); m_fileTime = tm; }
+		void Reset(const CTime &tm) { m_addr.clear(); m_len.clear(); m_fileTime = tm; }
+		void Final() { m_compTime = CTime::GetCurrentTime(); }
 
 	private:
 		// These vectors store informations about each difference found.
@@ -851,8 +855,8 @@ private:
 		std::vector<int> m_len;
 		// TODO: this will later be extended to have a vector of "type" (replace/insert/delete) and keep track of the 2 addresses (m_addrA, m_addrB instead of m_addr)
 
-		CTime m_compTime;        // when we did the compare
-		CTime m_fileTime;        // file modification time when we did the compare
+		CTime m_compTime;        // when we did the compare (used to "age" the diffs when comparing to oneself)
+		CTime m_fileTime;        // file modification time when we did the compare (used to check for file changes)
 	};
 
 	CompResult comp_result_;

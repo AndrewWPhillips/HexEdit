@@ -144,110 +144,6 @@ void CHexEditDoc::RemoveAerialView()
 	TRACE("************* Aerial --- %d\n", av_count_);
 }
 
-// bg_func is the entry point for the thread.
-// It just calls the RunAerialThread member for the doc passed to it.
-static UINT bg_func(LPVOID pParam)
-{
-    CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
-
-    TRACE1("Aerial thread started for doc %p\n", pDoc);
-
-    return pDoc->RunAerialThread();
-}
-
-void CHexEditDoc::CreateAerialThread()
-{
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    ASSERT(pthread3_ == NULL);
-    ASSERT(pfile3_ == NULL);
-
-    aerial_fin_ = FALSE;
-
-    // Open copy of file to be used by background thread
-    if (pfile1_ != NULL)
-	{
-		if (IsDevice())
-			pfile3_ = new CFileNC();
-		else
-			pfile3_ = new CFile64();
-		if (!pfile3_->Open(pfile1_->GetFilePath(),
-					CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
-		{
-			TRACE1("Aerial file open failed for %p\n", this);
-			return;
-		}
-	}
-
-	// Open copy of any data files in use too
-	for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
-	{
-		ASSERT(data_file3_[ii] == NULL);
-		if (data_file_[ii] != NULL)
-			data_file3_[ii] = new CFile64(data_file_[ii]->GetFilePath(), 
-										  CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
-	}
-
-    // Create new thread
-    TRACE1("Creating aerial thread for %p\n", this);
-    aerial_command_ = RESTART;
-	aerial_state_ = STARTING;    // pre start and very beginning
-    pthread3_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
-    ASSERT(pthread3_ != NULL);
-}
-
-void CHexEditDoc::KillAerialThread()
-{
-    ASSERT(pthread3_ != NULL);
-    if (pthread3_ == NULL) return;
-
-    HANDLE hh = pthread3_->m_hThread;    // Save handle since it will be lost when thread is killed and object is destroyed
-    TRACE1("Killing aerial thread for %p\n", this);
-
-    // Signal thread to kill itself
-    docdata_.Lock();
-    bool waiting = aerial_state_ == WAITING;
-    aerial_command_ = DIE;
-    docdata_.Unlock();
-
-    SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_NORMAL); // Make it a quick and painless death
-
-	if (!waiting)
-	{
-		// Wait just a little bit in case the thread was just about to go into wait state
-		Sleep(500);
-		docdata_.Lock();
-		bool waiting = aerial_state_ == WAITING;
-		docdata_.Unlock();
-	}
-
-    timer tt(true);
-    if (waiting)
-        start_aerial_event_.SetEvent();
-
-	pthread3_ = NULL;
-    DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
-    ASSERT(wait_status == WAIT_OBJECT_0);
-    tt.stop();
-    TRACE1("Thread took %g secs to kill\n", double(tt.elapsed()));
-
-    // Free resources that are only needed during scan
-    if (pfile3_ != NULL)
-	{
-		pfile3_->Close();
-		delete pfile3_;
-		pfile3_ = NULL;
-	}
-	for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
-	{
-		if (data_file3_[ii] != NULL)
-		{
-			data_file3_[ii]->Close();
-			delete data_file3_[ii];
-			data_file3_[ii] = NULL;
-		}
-	}
-}
-
 // Doc or colours have changed - restart scan
 void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 {
@@ -361,6 +257,110 @@ void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
 	TRACE("************* FreeImage_Allocate %d at %p end %p\r\n", dib_, FreeImage_GetBits(dib_), FreeImage_GetBits(dib_)+dib_size_);
 	if (clear > -1)
 		memset(FreeImage_GetBits(dib_), clear, dib_size_);       // Clear to a grey
+}
+
+void CHexEditDoc::KillAerialThread()
+{
+    ASSERT(pthread3_ != NULL);
+    if (pthread3_ == NULL) return;
+
+    HANDLE hh = pthread3_->m_hThread;    // Save handle since it will be lost when thread is killed and object is destroyed
+    TRACE1("Killing aerial thread for %p\n", this);
+
+    // Signal thread to kill itself
+    docdata_.Lock();
+    bool waiting = aerial_state_ == WAITING;
+    aerial_command_ = DIE;
+    docdata_.Unlock();
+
+    SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_NORMAL); // Make it a quick and painless death
+
+	if (!waiting)
+	{
+		// Wait just a little bit in case the thread was just about to go into wait state
+		Sleep(500);
+		docdata_.Lock();
+		bool waiting = aerial_state_ == WAITING;
+		docdata_.Unlock();
+	}
+
+    timer tt(true);
+    if (waiting)
+        start_aerial_event_.SetEvent();
+
+	pthread3_ = NULL;
+    DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
+    ASSERT(wait_status == WAIT_OBJECT_0);
+    tt.stop();
+    TRACE1("Thread took %g secs to kill\n", double(tt.elapsed()));
+
+    // Free resources that are only needed during scan
+    if (pfile3_ != NULL)
+	{
+		pfile3_->Close();
+		delete pfile3_;
+		pfile3_ = NULL;
+	}
+	for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
+	{
+		if (data_file3_[ii] != NULL)
+		{
+			data_file3_[ii]->Close();
+			delete data_file3_[ii];
+			data_file3_[ii] = NULL;
+		}
+	}
+}
+
+// bg_func is the entry point for the thread.
+// It just calls the RunAerialThread member for the doc passed to it.
+static UINT bg_func(LPVOID pParam)
+{
+    CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
+
+    TRACE1("Aerial thread started for doc %p\n", pDoc);
+
+    return pDoc->RunAerialThread();
+}
+
+void CHexEditDoc::CreateAerialThread()
+{
+    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+    ASSERT(pthread3_ == NULL);
+    ASSERT(pfile3_ == NULL);
+
+    aerial_fin_ = FALSE;
+
+    // Open copy of file to be used by background thread
+    if (pfile1_ != NULL)
+	{
+		if (IsDevice())
+			pfile3_ = new CFileNC();
+		else
+			pfile3_ = new CFile64();
+		if (!pfile3_->Open(pfile1_->GetFilePath(),
+					CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
+		{
+			TRACE1("Aerial file open failed for %p\n", this);
+			return;
+		}
+	}
+
+	// Open copy of any data files in use too
+	for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
+	{
+		ASSERT(data_file3_[ii] == NULL);
+		if (data_file_[ii] != NULL)
+			data_file3_[ii] = new CFile64(data_file_[ii]->GetFilePath(), 
+										  CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
+	}
+
+    // Create new thread
+    TRACE1("Creating aerial thread for %p\n", this);
+    aerial_command_ = RESTART;
+	aerial_state_ = STARTING;    // pre start and very beginning
+    pthread3_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
+    ASSERT(pthread3_ != NULL);
 }
 
 // This is what does the work in the background thread

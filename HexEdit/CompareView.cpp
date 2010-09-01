@@ -491,6 +491,8 @@ void CCompareView::OnDraw(CDC* pDC)
 #endif
     pDC->SelectObject(psaved_pen);      // restore pen after drawing borders etc
 
+	// xxx TODO TBD since the diffs are in address order we can make this faster by using a binary
+	// compare to find the first chnage that is displayed (this is effetcively a linear search now)
 	for (int ii = 0; ii < GetDocument()->DiffCount(); ++ii)
 	{
 		FILE_ADDRESS addr;

@@ -82,6 +82,7 @@ BEGIN_MESSAGE_MAP(CHexEditDoc, CDocument)
     ON_UPDATE_COMMAND_UI(ID_DFFD_TOGGLE_EDIT, OnUpdateEditMode)
     ON_COMMAND(ID_DFFD_OPTIONS, OnDffdOptions)
     ON_UPDATE_COMMAND_UI(ID_DFFD_OPTIONS, OnUpdateDffdOptions)
+    ON_COMMAND(ID_COMP_NEW, OnCompNew)
 
     ON_COMMAND(ID_TEST2, OnTest)
 END_MESSAGE_MAP()
@@ -131,6 +132,7 @@ CHexEditDoc::CHexEditDoc()
 
     search_fin_ = FALSE;
     aerial_fin_ = FALSE;
+	comp_fin_   = FALSE;
 #ifndef NDEBUG
     // Make default capacity for undo_ vector small to force reallocation sooner.
     // This increases likelihood of catching bugs related to reallocation.
@@ -1282,6 +1284,7 @@ void CHexEditDoc::CheckBGProcessing()
     // Protect access to shared data
     CSingleLock sl(&docdata_, TRUE);
 
+	// Check if bg search has just finished
     if (search_fin_)
     {
         search_fin_ = FALSE;              // Stop further updates
@@ -1293,6 +1296,7 @@ void CHexEditDoc::CheckBGProcessing()
         UpdateAllViews(NULL, 0, &bgsh);
     }
 
+	// Check if aerial view bitmap has just finished being built
     if (aerial_fin_)
     {
         aerial_fin_ = FALSE;              // Stop further updates
@@ -1302,6 +1306,24 @@ void CHexEditDoc::CheckBGProcessing()
 		TRACE("Detected aerial scan finished - update\r\n");
         CBGAerialHint bgah;
         UpdateAllViews(NULL, 0, &bgah);
+    }
+
+	// For bg compares we need to check if the compare file has chnaged since
+	// we last scanned it and if so start a new scan else if we just finished
+	// a scan we have to update the views.
+	if (CompFileHasChanged())
+	{
+		StartComp();
+	}
+    else if (comp_fin_)
+    {
+        comp_fin_ = FALSE;              // Stop further updates
+#ifdef SYS_SOUNDS
+        CSystemSound::Play("Background Compare Finished");
+#endif
+		TRACE("Detected bg compare finished - update\r\n");
+        CCompHint cch;
+        UpdateAllViews(NULL, 0, &cch);
     }
 }
 

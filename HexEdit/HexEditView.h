@@ -728,7 +728,6 @@ public:
     afx_msg void OnUpdateAerialHide(CCmdUI* pCmdUI);
     afx_msg void OnUpdateAerialSplit(CCmdUI* pCmdUI);
     afx_msg void OnUpdateAerialTab(CCmdUI* pCmdUI);
-    afx_msg void OnCompNew();            // Open file to compare against
     afx_msg void OnCompHide();
     afx_msg void OnCompSplit();
     afx_msg void OnCompTab();
@@ -757,6 +756,7 @@ public:
 	int AerialViewType() const;
 	int CompViewType() const;
     void AdjustColumns();
+    bool DoCompSplit(bool init = true);   // must be public to be called from the doc
 
 private:
 
@@ -1006,7 +1006,6 @@ private:
     bool DoAerialTab(bool init = true);
     bool DoAerialSplit(bool init = true);
     bool DoCompTab(bool init = true);
-    bool DoCompSplit(bool init = true);
 };
 
 #ifndef _DEBUG  // debug version in HexEditView.cpp

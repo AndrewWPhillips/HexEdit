@@ -835,6 +835,7 @@ void CHexEditApp::InitWorkspace()
                       CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
     CSystemSound::Add(_T("Background Search Finished"));
     CSystemSound::Add(_T("Background Scan Finished"));
+    CSystemSound::Add(_T("Background Compare Finished"));
 #endif
 
     LoadStdProfileSettings(0);  // Load standard INI file options (including MRU)

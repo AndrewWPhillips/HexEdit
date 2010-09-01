@@ -429,8 +429,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         }
 		m_wndStatusBar.SetPaneWidth(0, 340);
 		m_wndStatusBar.SetToolTips();
+		ASSERT(m_wndStatusBar.CommandToIndex(ID_INDICATOR_OCCURRENCES) > -1);
 		if (HBITMAP(m_search_image) != 0)
-			m_wndStatusBar.SetPaneIcon(2, HBITMAP(m_search_image), RGB(255,255,255));
+			m_wndStatusBar.SetPaneIcon(m_wndStatusBar.CommandToIndex(ID_INDICATOR_OCCURRENCES), HBITMAP(m_search_image), RGB(255,255,255));
         for (int pane = 1; pane < sizeof(indicators)/sizeof(*indicators)-3; ++pane)
             m_wndStatusBar.SetPaneText(pane, "");   // clear out dummy text
 
@@ -1700,10 +1701,10 @@ BOOL CMainFrame::UpdateBGCompareProgress()
 		if ((ii = pview->GetDocument()->CompareDifferences()) == -2)
         {
             int index = m_wndStatusBar.CommandToIndex(ID_INDICATOR_COMPARES);
-			if (bg_progress_colour_ != pview->GetCompareCol())
+			if (bg_compare_colour_ != pview->GetCompareCol())
             {
-                bg_progress_colour_ = pview->GetCompareCol();
-                m_wndStatusBar.EnablePaneProgressBar(index, 100, TRUE, bg_progress_colour_);
+                bg_compare_colour_ = pview->GetCompareCol();
+                m_wndStatusBar.EnablePaneProgressBar(index, 100, TRUE, bg_compare_colour_);
             }
 			m_wndStatusBar.SetPaneProgress(index, pview->GetDocument()->CompareProgress());
             return TRUE;
@@ -1750,7 +1751,7 @@ void CMainFrame::OnUpdateCompares(CCmdUI *pCmdUI)
         else if (ii == -2)   // compare in progress
         {
             UpdateBGCompareProgress();
-			pane_width = 40;
+			pane_width = 64;
             pCmdUI->Enable();
         }
         else if (ii == -4)  // no comparison
