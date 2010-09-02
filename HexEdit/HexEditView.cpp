@@ -1010,7 +1010,6 @@ void CHexEditView::OnInitialUpdate()
 
 	// Reopen compare view
 	ASSERT(pcv_ == NULL);
-	GetDocument()->SetForcePrompt(false);  // don't prompt for a file name if we have one
 	switch (split_width_c_)
 	{
 	case 0:        // When last open template view was hidden so do nothing
@@ -18079,7 +18078,6 @@ void CHexEditView::OnUpdateCompHide(CCmdUI* pCmdUI)
 
 void CHexEditView::OnCompSplit()
 {
-	GetDocument()->SetForcePrompt(false);   // open previous compare file if known
     DoCompSplit();
 }
 
@@ -18091,6 +18089,10 @@ bool CHexEditView::DoCompSplit(bool init /*=true*/)
 	    if (GetFrame()->splitter_.ColWidth(snum_c) < 8) AdjustColumns();
 		return false;   // already open in splitter
 	}
+
+	// Make sure we have the name of the compare file to open
+	if (!GetDocument()->GetCompareFile())
+		return false;
 
 	// Save current view so we can close it later
 	CCompareView * pSaved = pcv_;
@@ -18154,7 +18156,6 @@ void CHexEditView::OnUpdateCompSplit(CCmdUI* pCmdUI)
 
 void CHexEditView::OnCompTab()
 {
-	GetDocument()->SetForcePrompt(false);   // open previous compare file if known
     DoCompTab();
 }
 
@@ -18166,6 +18167,10 @@ bool CHexEditView::DoCompTab(bool init /*=true*/)
 	// Save current view so we can close it later
 	CCompareView * pSaved = pcv_;
 	pcv_ = NULL;
+
+	// Make sure we have the name of the compare file to open
+	if (!GetDocument()->GetCompareFile())
+		return false;
 
 	// Reopen in the tab
 	CHexTabView *ptv = GetFrame()->ptv_;

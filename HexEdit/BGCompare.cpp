@@ -39,6 +39,9 @@ static char THIS_FILE[] = __FILE__;
 // Start background compare, first killing any existing one
 void CHexEditDoc::OnCompNew()
 {
+	if (!GetCompareFile(true))
+		return;
+
 	CHexEditView * phev = NULL;            // remembers the active hex view
     CHexEditView * pactive = ::GetView();  // current active hex view (should be for this doc)
 
@@ -70,8 +73,6 @@ void CHexEditDoc::OnCompNew()
 
 	ASSERT(cv_count_ == 0 && pthread4_ == NULL);  // we should have closed all compare views and hence killed the compare thread
 
-	SetForcePrompt(true);                  // make sure user is prompted for the compare file
-
 	// This triggers opening of compare file and start of background compare.
 	// Actually I should explain...
 	// It calls DoCompSplit (to create the compare view in a split window)
@@ -95,26 +96,18 @@ void CHexEditDoc::AddCompView(CHexEditView *pview)
 		if (!CreateCompThread())
 		{
 			cv_count_ = 0;   // indicate that no compare views are open
-			return false;
+			return;
 		}
 		TRACE("===== Pulsing compare event\n");
 		start_comp_event_.SetEvent();
 	}
     ASSERT(pthread4_ != NULL);
-	return true;
 }
 
 void CHexEditDoc::RemoveCompView()
 {
     if (--cv_count_ == 0)
     {
-		// Save compare file name in case view reopened immediately
-		CHexFileList *pfl = ((CHexEditApp *)AfxGetApp())->GetFileList();
-		int idx;
-		if (pfl != NULL && pfile1_ != NULL && (idx = pfl->GetIndex(pfile1_->GetFilePath())) > -1)
-			pfl->SetData(idx, CHexFileList::COMPFILENAME, GetCompFileName());
-
-		// Tell the thread to kill itself
 		ASSERT(pthread4_ != NULL);
         if (pthread4_ != NULL)
             KillCompThread();
@@ -122,53 +115,32 @@ void CHexEditDoc::RemoveCompView()
 	TRACE("===== Remove Comp View %d\n", cv_count_);
 }
 
-bool CHexEditDoc::OpenComparison()
+bool CHexEditDoc::GetCompareFile(bool bForcePrompt /*=false*/)
 {
-	ASSERT(pfile1_compare_ == NULL && pfile4_compare_ == NULL);
-	bCompSelf = false;  // not handling self-compare yet TBD xxx TODO
-	CString fileName; // = "C:\\tmp\\daily\\xxx.bin";
-
-	// Get last filename used
-	int idx;    // recent file list idx of current document
+	// Get last name of the last compare file used
+	int idx;                 // recent file list idx of current document
     CHexFileList *pfl = theApp.GetFileList();
     if (pfl != NULL &&
 		pfile1_ != NULL &&
 		(idx = pfl->GetIndex(pfile1_->GetFilePath())) != -1)
 	{
-		fileName = pfl->GetData(idx, CHexFileList::COMPFILENAME);
+		compFileName_ = pfl->GetData(idx, CHexFileList::COMPFILENAME);
 	}
 
-	// If the file name is invalid or does not exist or we MUST do it then prompt for the file
-	if (fileName.IsEmpty() || _access(fileName, 0) == -1 || bForcePrompt)
-	{
-		CHexFileDialog dlgFile("CompareFileDlg", HIDD_FILE_COMPARE, TRUE, NULL, fileName,
-							   OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
-							   theApp.GetCurrentFilters(), "Compare", AfxGetMainWnd());
+	if (!bForcePrompt && !compFileName_.IsEmpty() && _access(compFileName_, 0) != -1)
+		return true;         // we can just reopen the same file
 
-		dlgFile.m_ofn.lpstrTitle = "Compare To File";
+	CHexFileDialog dlgFile("CompareFileDlg", HIDD_FILE_COMPARE, TRUE, NULL, compFileName_,
+						   OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
+						   theApp.GetCurrentFilters(), "Compare", AfxGetMainWnd());
 
-		if (dlgFile.DoModal() != IDOK)
-			return false;
+	dlgFile.m_ofn.lpstrTitle = "Compare To File";
 
-		fileName = dlgFile.GetPathName();
-	}
-
-	// Open the file for the background compare
-	// Note: there are two files (the original file and the file comparing against).
-	// We open them both twice so we have a CFile64 instance for foreground and background threads
-	//   pfile1_         = Original file opened for general use in GUI thread
-	//   pfile1_compare_ = Compare file opened for use in the main (GUI) thread (used by CCompareView)
-	//   pfile4_         = Original file opened again to use for comparing in the background thread (see below)
-	//   pfile4_compare_ = Compare file opened again for use in the background thread
-	pfile1_compare_ = new CFile64();
-	pfile4_compare_ = new CFile64();
-	if (!pfile1_compare_->Open(fileName, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) ||
-		!pfile4_compare_->Open(fileName, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary))
-	{
-		TRACE1("Compare file open failed for %p\n", this);
+	if (dlgFile.DoModal() != IDOK)
 		return false;
-	}
 
+	compFileName_ = dlgFile.GetPathName();
+	pfl->SetData(idx, CHexFileList::COMPFILENAME, compFileName_);
 	return true;
 }
 
@@ -187,14 +159,10 @@ bool CHexEditDoc::CompFileHasChanged()
 
 CString CHexEditDoc::GetCompFileName()
 {
-	ASSERT(pthread4_ != NULL && pfile1_compare_ != NULL);
-	if (pthread4_ == NULL || pfile1_compare_ == NULL)
-		return CString();
-
 	if (bCompSelf)
 		return CString("*");
 	else
-		return pfile1_compare_->GetFilePath();
+		return compFileName_;
 }
 
 // Get data from the file we are comparing against
@@ -415,9 +383,21 @@ bool CHexEditDoc::CreateCompThread()
 										  CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 	}
 
-	//// Open the file to compare against
-	//if (!OpenComparison())
-	//	return false;
+	// Open the file to compare against
+	// Note: there are two files (the original file and the file comparing against).
+	// We open them both twice so we have a CFile64 instance for foreground and background threads
+	//   pfile1_         = Original file opened for general use in GUI thread
+	//   pfile1_compare_ = Compare file opened for use in the main (GUI) thread (used by CCompareView)
+	//   pfile4_         = Original file opened again to use for comparing in the background thread (see below)
+	//   pfile4_compare_ = Compare file opened again for use in the background thread
+	pfile1_compare_ = new CFile64();
+	pfile4_compare_ = new CFile64();
+	if (!pfile1_compare_->Open(compFileName_, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) ||
+		!pfile4_compare_->Open(compFileName_, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary))
+	{
+		TRACE1("Compare file open failed for %p\n", this);
+		return false;
+	}
 
     // Create new thread
     TRACE1("===== Creating thread for %p\n", this);
