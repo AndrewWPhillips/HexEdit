@@ -26,6 +26,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <vector>
+#include <deque>
 #include <list>
 #include <set>
 #include <algorithm>
@@ -647,7 +648,8 @@ public:
     void KillCompThread();    // Kill background thread ASAP
 	void StartComp();
 	bool GetCompareFile(bool bForcePrompt = false); // Get name of file to compare with
-	int CompareDifferences();
+	int CompareDifferences(int dd = 0);
+	int FirstDiffAt(FILE_ADDRESS from);             // returns index of first diff at or after address
 	int CHexEditDoc::CompareProgress();
 	FILE_ADDRESS CHexEditDoc::GetNextDiff(FILE_ADDRESS from);
 	FILE_ADDRESS CHexEditDoc::GetPrevDiff(FILE_ADDRESS from);
@@ -858,23 +860,25 @@ private:
 		CTime m_compTime;        // when we did the compare (used to "age" the diffs when comparing to oneself)
 	};
 
-	CompResult comp_result_;
+	std::deque<CompResult> comp_;
 
 	// Number of differences found
-	int DiffCount() { return comp_result_.m_addr.size(); }
+	int DiffCount(int dd) { ASSERT(dd < comp_.size()); return comp_[dd].m_addr.size(); }
 	// We need to be able to return differences from the point of view of the original file
 	// and the compared file.  For now these are the same but later there will be differences.
-	void GetOrigDiff(int idx, FILE_ADDRESS &addr, int &len)
+	void GetOrigDiff(int dd, int idx, FILE_ADDRESS &addr, int &len)
 	{
-		ASSERT(idx < comp_result_.m_addr.size() && comp_result_.m_addr.size() == comp_result_.m_len.size());
-		addr = comp_result_.m_addr[idx];
-		len = comp_result_.m_len[idx];
+		ASSERT(dd < comp_.size() && idx < comp_[dd].m_addr.size());
+		ASSERT(comp_[dd].m_addr.size() == comp_[dd].m_len.size());
+		addr = comp_[dd].m_addr[idx];
+		len = comp_[dd].m_len[idx];
 	}
-	void GetCompDiff(int idx, FILE_ADDRESS &addr, int &len)
+	void GetCompDiff(int dd, int idx, FILE_ADDRESS &addr, int &len)
 	{
-		ASSERT(idx < comp_result_.m_addr.size() && comp_result_.m_addr.size() == comp_result_.m_len.size());
-		addr = comp_result_.m_addr[idx];
-		len = comp_result_.m_len[idx];
+		ASSERT(dd < comp_.size() && idx < comp_[dd].m_addr.size());
+		ASSERT(comp_[dd].m_addr.size() == comp_[dd].m_len.size());
+		addr = comp_[dd].m_addr[idx];
+		len = comp_[dd].m_len[idx];
 	}
 
     // -------------- template (DFFD) (see Template.cpp) ----------------

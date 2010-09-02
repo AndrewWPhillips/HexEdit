@@ -123,7 +123,10 @@ CHexEditDoc::CHexEditDoc()
 	// BG compare thread
 	pthread4_ = NULL;
 	cv_count_ = 0;
+	bCompSelf = false;
+	comp_.push_front(CompResult());  // always has at least one elt = current/last compare results
 
+	// Template
     ptree_ = NULL;         // XML tree wrapper for data format view
     df_init_ = FALSE;
     update_needed_ = false;

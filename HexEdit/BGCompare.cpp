@@ -117,6 +117,8 @@ void CHexEditDoc::RemoveCompView()
 
 bool CHexEditDoc::GetCompareFile(bool bForcePrompt /*=false*/)
 {
+	bCompSelf = false;  // xxx TBD
+
 	// Get last name of the last compare file used
 	int idx;                 // recent file list idx of current document
     CHexFileList *pfl = theApp.GetFileList();
@@ -154,7 +156,7 @@ bool CHexEditDoc::CompFileHasChanged()
 	pfile1_compare_->GetStatus(stat);
 
     CSingleLock sl(&docdata_, TRUE);
-	return stat.m_mtime != comp_result_.m_fileTime;
+	return stat.m_mtime != comp_[0].m_fileTime;
 }
 
 CString CHexEditDoc::GetCompFileName()
@@ -175,10 +177,29 @@ size_t CHexEditDoc::GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc
 	return pf->Read(buf, len);
 }
 
+// Returns index of first diff at or after address 'from', which may be
+// the numbers of diffs if 'from' id past the last one.
+int CHexEditDoc::FirstDiffAt(int dd, FILE_ADDRESS from)
+{
+xxx needs testing
+	int bot = 0;
+	int top = comp_[dd].m_addr.size();
+	while (bot < top)
+	{
+		// Get the element roughly halfway in between (binary search)
+		int curr = (bot+top)/2;
+		if (from < comp_[dd].m_addr[curr] + comp_[dd].m_len[curr])
+			top = curr;
+		else
+			bot = curr;
+	}
+	return bot;
+}
+
 // Returns the number of diffs (in bytes) OR
 // -4 = bg compare not on
 // -2 = bg compare is still in progress
-int CHexEditDoc::CompareDifferences()
+int CHexEditDoc::CompareDifferences(int dd /*=0*/)
 {
     if (pthread4_ == NULL)
     {
@@ -192,7 +213,7 @@ int CHexEditDoc::CompareDifferences()
 		return -2;
 	}
 
-	return comp_result_.m_addr.size(); 
+	return comp_[dd].m_addr.size(); 
 }
 
 // Return how far our background compare has progressed as a percentage (0 to 100).
@@ -264,7 +285,7 @@ void CHexEditDoc::StartComp()
 	// Save current file modification time so we don't keep restarting the compare
 	CFileStatus stat;
 	pfile4_compare_->GetStatus(stat);
-	comp_result_.Reset(stat.m_mtime);
+	comp_[0].Reset(stat.m_mtime);
 
 	docdata_.Unlock();
 
@@ -409,7 +430,7 @@ bool CHexEditDoc::CreateCompThread()
 	// Save current file modification time so we don't keep restarting the compare
 	CFileStatus stat;
 	pfile4_compare_->GetStatus(stat);
-	comp_result_.Reset(stat.m_mtime);
+	comp_[0].Reset(stat.m_mtime);
 
     pthread4_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
     ASSERT(pthread4_ != NULL);
@@ -453,7 +474,7 @@ UINT CHexEditDoc::RunCompThread()
                     comp_command_ = NONE;
                     comp_state_ = SCANNING;
 					comp_progress_ = addr = 0;
-					result = comp_result_;
+					result = comp_[0];
                     TRACE1("BGCompare: restart for %p\n", this);
                     break;
                 case STOP:                      // stop scan and wait
@@ -487,7 +508,7 @@ UINT CHexEditDoc::RunCompThread()
                 TRACE("BGCompare: finished scan for %p\n", this);
                 CSingleLock sl(&docdata_, TRUE); // Protect shared data access
 
-				comp_result_ = result;
+				comp_[0] = result;
                 comp_fin_ = TRUE;
                 break;                          // falls out to end_scan
 			}

@@ -493,12 +493,12 @@ void CCompareView::OnDraw(CDC* pDC)
 
 	// xxx TODO TBD since the diffs are in address order we can make this faster by using a binary
 	// compare to find the first chnage that is displayed (this is effetcively a linear search now)
-	for (int ii = 0; ii < GetDocument()->DiffCount(); ++ii)
+	for (int ii = 0; ii < GetDocument()->DiffCount(0); ++ii)
 	{
 		FILE_ADDRESS addr;
 		int len;
 
-		GetDocument()->GetCompDiff(ii, addr, len);
+		GetDocument()->GetCompDiff(0, ii, addr, len);
 
 		if (addr + len < first_virt)
 			continue;         // before top of window
