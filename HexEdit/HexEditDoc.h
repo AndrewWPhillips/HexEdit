@@ -643,7 +643,7 @@ public:
     // Compare stuff
     void AddCompView(CHexEditView *pview);
     void RemoveCompView();
-    void CreateCompThread();  // Create background thread which fills in the aerial view bitmap
+    bool CreateCompThread();  // Create background thread which fills in the aerial view bitmap
     void KillCompThread();    // Kill background thread ASAP
 	void StartComp();
 	int CompareDifferences();
@@ -845,7 +845,7 @@ private:
 		friend class CHexEditDoc;
 
 	public:
-		void Reset(const CTime &tm) { m_addr.clear(); m_len.clear(); m_fileTime = tm; }
+		void Reset(const CTime &tm) { m_addr.clear(); m_len.clear(); m_fileTime = tm; m_compTime = 0; }
 		void Final() { m_compTime = CTime::GetCurrentTime(); }
 
 	private:
@@ -855,8 +855,8 @@ private:
 		std::vector<int> m_len;
 		// TODO: this will later be extended to have a vector of "type" (replace/insert/delete) and keep track of the 2 addresses (m_addrA, m_addrB instead of m_addr)
 
-		CTime m_compTime;        // when we did the compare (used to "age" the diffs when comparing to oneself)
 		CTime m_fileTime;        // file modification time when we did the compare (used to check for file changes)
+		CTime m_compTime;        // when we did the compare (used to "age" the diffs when comparing to oneself)
 	};
 
 	CompResult comp_result_;

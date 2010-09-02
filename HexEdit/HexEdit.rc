@@ -491,7 +491,7 @@ BEGIN
     BEGIN
         POPUP "&Toolbars"
         BEGIN
-            MENUITEM "",                            ID_VIEW_TOOLBARS
+            MENUITEM "Placeholder",                 ID_VIEW_TOOLBARS
         END
         MENUITEM "&Status Bar          ",       ID_VIEW_STATUS_BAR
         MENUITEM "&Ruler",                      ID_VIEW_RULER
@@ -535,19 +535,6 @@ BEGIN
             MENUITEM "&C/C++",                      ID_CONTROL_C
         END
         MENUITEM "&Reset To Defaults",          ID_DISPLAY_RESET
-        MENUITEM SEPARATOR
-        POPUP "Aerial View"
-        BEGIN
-            MENUITEM "Hide Aerial View",            ID_AERIAL_HIDE
-            MENUITEM "Split Aerial View",           ID_AERIAL_SPLIT
-            MENUITEM "Tabbed Aerial View",          ID_AERIAL_TAB
-        END
-        POPUP "Compare View"
-        BEGIN
-            MENUITEM "Hide Compare View",           ID_COMP_HIDE
-            MENUITEM "Split Compare View",          ID_COMP_SPLIT
-            MENUITEM "Tabbed Compare View",         ID_COMP_TAB
-        END
         MENUITEM SEPARATOR
         MENUITEM "&Properties...",              ID_PROPERTIES
     END
@@ -774,6 +761,20 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "D&esign Mode",                ID_DFFD_TOGGLE_EDIT
         MENUITEM "Settings...",                 ID_DFFD_OPTIONS
+    END
+    POPUP "Aerial"
+    BEGIN
+        MENUITEM "Hide Aerial View",            ID_AERIAL_HIDE
+        MENUITEM "Split Aerial View",           ID_AERIAL_SPLIT
+        MENUITEM "Tabbed Aerial View",          ID_AERIAL_TAB
+    END
+    POPUP "Compare"
+    BEGIN
+        MENUITEM "New Compare",                 ID_COMP_NEW
+        MENUITEM SEPARATOR
+        MENUITEM "Hide Compare View",           ID_COMP_HIDE
+        MENUITEM "Split Compare View",          ID_COMP_SPLIT
+        MENUITEM "Tabbed Compare View",         ID_COMP_TAB
     END
     POPUP "&Tools"
     BEGIN
@@ -2943,6 +2944,9 @@ BEGIN
     ID_DFFD_REFRESH         "Refresh tree to match data\nRefresh Tree"
     ID_DFFD_TOGGLE_EDIT     "Toggle edit mode for this template\nToggle Template Editing"
     ID_DFFD_OPTIONS         "Change global settings for this template\nTemplate Global Settings"
+    ID_AERIAL_HIDE          "Turn off aerial view\nAerial View Off"
+    ID_AERIAL_SPLIT         "Show aerial view in a split window\nAerial Split"
+    ID_AERIAL_TAB           "Show aerial view in a tabbed window\nAerial Tab"
 END
 
 STRINGTABLE 
@@ -3065,7 +3069,7 @@ BEGIN
     ID_DFFD_HIDE            "Turn off use of templates\nTemplate Off"
     ID_DFFD_SPLIT           "Show template in a split window\nTemplate Split"
     ID_DFFD_TAB             "Show templates in a tabbed window\nTemplate Tab"
-    ID_DFFD_NEW             "Create a new ""default"" template\nNew Template"
+    ID_DFFD_NEW             "Create new template (opens default template)\nNew Template"
 END
 
 STRINGTABLE 
@@ -3106,6 +3110,14 @@ BEGIN
     ID_AERIAL_ZOOM14        "Display file bytes/elements as 14 X 14 pixels"
     ID_AERIAL_ZOOM15        "Display file bytes/elements as 15 X 15 pixels"
     ID_AERIAL_ZOOM16        "Display file bytes/elements as 16 X 16 pixels"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_COMP_HIDE            "Turn off compare view\nCompare View Off"
+    ID_COMP_SPLIT           "Show compare view in a split window\nCompare Split"
+    ID_COMP_TAB             "Show compare view in a tabbed window\nCompare Tab"
+    ID_COMP_NEW             "Start new compare (open new compare file)\nNew Compare"
 END
 
 #endif    // English (U.S.) resources

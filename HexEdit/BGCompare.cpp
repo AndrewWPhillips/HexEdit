@@ -36,30 +36,38 @@ static char THIS_FILE[] = __FILE__;
 #undef max
 #endif
 
-void CHexEditDoc::OnDocTest() 
-{
-}
-
 // Start background compare, first killing any existing one
 void CHexEditDoc::OnCompNew()
 {
 	CHexEditView * phev = NULL;            // remembers the active hex view
     CHexEditView * pactive = ::GetView();  // current active hex view (should be for this doc)
 
-	// Find all views of this doc and kill any compare windows
+	// First we need to close all the compare views of this document.  (There
+	// can be more than one if there is more than one hex view open on this doc.)
+	// However, if we close a view while we are iterating through them (using
+	// GetFirstViewPosition/GetNextView) then this really confuses MFC (even if
+	// we just send a hint to the view since UpdateAllViews uses GetNextView).
+	// So we make a list of all hex view, then later close their compare views.
+	std::vector<CHexEditView *> pviews;
+
+	// Find all hex views of this doc
     POSITION pos = GetFirstViewPosition();
     while (pos != NULL)
     {
-        CView *pview = GetNextView(pos);
-        if (pview->IsKindOf(RUNTIME_CLASS(CHexEditView)))
+        CView *pv = GetNextView(pos);
+        if (pv->IsKindOf(RUNTIME_CLASS(CHexEditView)))
         {
-            ((CHexEditView *)pview)->OnCompHide();
-			if (pview == pactive || phev == NULL)
-				phev = (CHexEditView *)pview;
+			pviews.push_back((CHexEditView *)pv);
+			if (pv == pactive || phev == NULL)
+				phev = (CHexEditView *)pv;
         }
     }
-
 	ASSERT(phev != NULL);
+
+	// Kill all compare views (each must be associated with a hex view)
+	for (std::vector<CHexEditView *>::const_iterator ppv = pviews.begin(); ppv != pviews.end(); ++ppv)
+		(*ppv)->OnCompHide();
+
 	ASSERT(cv_count_ == 0 && pthread4_ == NULL);  // we should have closed all compare views and hence killed the compare thread
 
 	SetForcePrompt(true);                  // make sure user is prompted for the compare file
@@ -84,17 +92,29 @@ void CHexEditDoc::AddCompView(CHexEditView *pview)
 		ASSERT(pthread4_ == NULL);
 
 		// Create the background thread and start it scanning
-		CreateCompThread();
+		if (!CreateCompThread())
+		{
+			cv_count_ = 0;   // indicate that no compare views are open
+			return false;
+		}
 		TRACE("===== Pulsing compare event\n");
 		start_comp_event_.SetEvent();
 	}
     ASSERT(pthread4_ != NULL);
+	return true;
 }
 
 void CHexEditDoc::RemoveCompView()
 {
     if (--cv_count_ == 0)
     {
+		// Save compare file name in case view reopened immediately
+		CHexFileList *pfl = ((CHexEditApp *)AfxGetApp())->GetFileList();
+		int idx;
+		if (pfl != NULL && pfile1_ != NULL && (idx = pfl->GetIndex(pfile1_->GetFilePath())) > -1)
+			pfl->SetData(idx, CHexFileList::COMPFILENAME, GetCompFileName());
+
+		// Tell the thread to kill itself
 		ASSERT(pthread4_ != NULL);
         if (pthread4_ != NULL)
             KillCompThread();
@@ -267,11 +287,17 @@ void CHexEditDoc::StartComp()
 
 	// Restart the compare
 	docdata_.Lock();
-	//waiting = comp_state_ == WAITING;
+
 	comp_command_ = RESTART;
+	comp_state_ = STARTING;
 	comp_progress_ = 0;
 	comp_fin_ = FALSE;
-	comp_result_ = CompResult();   // clear results
+
+	// Save current file modification time so we don't keep restarting the compare
+	CFileStatus stat;
+	pfile4_compare_->GetStatus(stat);
+	comp_result_.Reset(stat.m_mtime);
+
 	docdata_.Unlock();
 
 	// Now that the compare is stopped we need to update all views to remove existing compare display
@@ -335,7 +361,6 @@ void CHexEditDoc::KillCompThread()
 			data_file4_[ii] = NULL;
 		}
 	}
-// xxx TBD save file name to COMPFILENAME???
 
 	// Close the compare file (both open instances)
     if (pfile4_compare_ != NULL)
@@ -361,13 +386,10 @@ static UINT bg_func(LPVOID pParam)
     return pDoc->RunCompThread();
 }
 
-void CHexEditDoc::CreateCompThread()
+bool CHexEditDoc::CreateCompThread()
 {
     ASSERT(pthread4_ == NULL);
     ASSERT(pfile4_ == NULL);
-
-    // Init some things
-    comp_fin_ = FALSE;
 
     // Open copy of original file to be used by background thread
     if (pfile1_ != NULL)
@@ -380,7 +402,7 @@ void CHexEditDoc::CreateCompThread()
 					CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
 		{
 			TRACE1("Compare (file4) open failed for %p\n", this);
-			return;
+			return false;
 		}
 	}
 
@@ -393,18 +415,25 @@ void CHexEditDoc::CreateCompThread()
 										  CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 	}
 
-	// Open the file to compare against
-	if (!OpenComparison())
-		return;
+	//// Open the file to compare against
+	//if (!OpenComparison())
+	//	return false;
 
     // Create new thread
     TRACE1("===== Creating thread for %p\n", this);
 	comp_command_ = RESTART;
 	comp_state_ = STARTING;
 	comp_progress_ = 0;
+	comp_fin_ = FALSE;
+
+	// Save current file modification time so we don't keep restarting the compare
+	CFileStatus stat;
+	pfile4_compare_->GetStatus(stat);
+	comp_result_.Reset(stat.m_mtime);
 
     pthread4_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
     ASSERT(pthread4_ != NULL);
+	return true;
 }
 
 // This is what does the work in the background thread
@@ -444,12 +473,7 @@ UINT CHexEditDoc::RunCompThread()
                     comp_command_ = NONE;
                     comp_state_ = SCANNING;
 					comp_progress_ = addr = 0;
-					{
-						CFileStatus stat;
-						pfile4_compare_->GetStatus(stat);
-						result.Reset(stat.m_mtime);
-					}
-
+					result = comp_result_;
                     TRACE1("BGCompare: restart for %p\n", this);
                     break;
                 case STOP:                      // stop scan and wait

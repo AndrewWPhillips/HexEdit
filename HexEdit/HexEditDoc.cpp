@@ -1807,6 +1807,10 @@ void CHexEditDoc::OnUpdateKeepTimes(CCmdUI* pCmdUI)
     pCmdUI->SetCheck(keep_times_);
 }
 
+void CHexEditDoc::OnDocTest() 
+{
+}
+
 void CHexEditDoc::OnTest() 
 {
 #if 0

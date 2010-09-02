@@ -538,6 +538,7 @@ bool CHexFileList::SetData(int index, param_num param, __int64 vv)
 bool CHexFileList::SetData(int index, param_num param, LPCTSTR vv)
 {
     CString value(vv);
+	ASSERT(index > -1);
 
     // If we are setting to the default value make it blank
     if (GetDV(param) == value)
