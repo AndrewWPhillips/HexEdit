@@ -660,7 +660,7 @@ UINT CDirEdit::OnGetDlgCode()
 CDirDialog::CDirDialog(LPCTSTR initial, LPCTSTR filter, CWnd* pParentWnd)
     : CFileDialog(TRUE, NULL, NULL, 
                   OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_ENABLESIZING,
-                  NULL, pParentWnd),
+                  NULL, pParentWnd, 0, FALSE),
       m_strPath(initial)
 {
     // Note: m_strFilter is a member variable so it doesn't disappear because

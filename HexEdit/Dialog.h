@@ -45,7 +45,7 @@ public:
                    LPCTSTR lpszFilter = NULL,
 				   LPCTSTR lpszOKButtonName = NULL,
                    CWnd* pParentWnd = NULL) : 
-      	CFileDialog(bOpenFileDialog, lpszDefExt, lpszFileName, dwFlags | OFN_ENABLESIZING, lpszFilter, pParentWnd),
+      	CFileDialog(bOpenFileDialog, lpszDefExt, lpszFileName, dwFlags | OFN_ENABLESIZING, lpszFilter, pParentWnd, 0, FALSE),
         strName(name), strOKName(lpszOKButtonName)
     {
         first_time = true;
