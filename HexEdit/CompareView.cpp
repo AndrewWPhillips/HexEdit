@@ -491,25 +491,37 @@ void CCompareView::OnDraw(CDC* pDC)
 #endif
     pDC->SelectObject(psaved_pen);      // restore pen after drawing borders etc
 
-	// xxx TODO TBD since the diffs are in address order we can make this faster by using a binary
-	// compare to find the first chnage that is displayed (this is effetcively a linear search now)
-	for (int ii = 0; ii < GetDocument()->DiffCount(0); ++ii)
+	ASSERT(GetDocument()->ResultCount() > 0);
+	CTime tnew = GetDocument()->ResultTime(0);         // time of most recent comparison
+	CTime tearliest = tnew - CTimeSpan(0, 1, 0, 0);    // diffs up to an hour ago are shown in lighter shades
+	for (int rr = 0; rr < GetDocument()->ResultCount(); ++rr)
 	{
-		FILE_ADDRESS addr;
-		int len;
+		COLORREF col, col2;   // colours for replace (underline) + delete, and also for inserts
+		CTime tt = GetDocument()->ResultTime(rr);
+		if (tt < tearliest)
+			continue;
+		col = ::tone_down(phev_->comp_col_, phev_->bg_col_,
+			              double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
+		col2 = ::tone_down(phev_->comp_bg_col_, phev_->bg_col_,
+			               double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
+		for (int dd = GetDocument()->FirstDiffAt(rr, first_virt); dd < GetDocument()->DiffCount(rr); ++dd)
+		{
+			FILE_ADDRESS addr;
+			int len;
 
-		GetDocument()->GetCompDiff(0, ii, addr, len);
+			GetDocument()->GetCompDiff(rr, dd, addr, len);
 
-		if (addr + len < first_virt)
-			continue;         // before top of window
-		else if (addr >= last_virt)
-			break;            // after end of window
+			if (addr + len < first_virt)
+				continue;         // before top of window
+			else if (addr >= last_virt)
+				break;            // after end of window
 
-		draw_bg(pDC, doc_rect, neg_x, neg_y,
-				line_height, char_width, char_width_w, phev_->comp_col_,
-				max(addr, first_addr), 
-				min(addr+len, last_addr),
-				(pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8);
+			draw_bg(pDC, doc_rect, neg_x, neg_y,
+					line_height, char_width, char_width_w, col,
+					max(addr, first_addr), 
+					min(addr+len, last_addr),
+					(pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8);
+		}
 	}
 
 	unsigned char buf[CHexEditView::max_buf];  // Holds bytes for current line being displayed

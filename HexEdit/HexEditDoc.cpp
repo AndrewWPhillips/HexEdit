@@ -284,6 +284,22 @@ BOOL CHexEditDoc::OnNewDocument()
     return TRUE;
 }
 
+void CHexEditDoc::GetFileStatus()
+{
+    ASSERT(pfile1_ != NULL && !IsDevice());
+    VERIFY(pfile1_->GetStatus(saved_status_));
+}
+
+void CHexEditDoc::SetFileStatus(LPCTSTR lpszPathName)
+{
+	// Note: any fields of CFileStatus that are zero are not changed, at least
+	// according to the documentation -- but actually this only applies to the
+	// file times (attributes are always set and size/name are never set).
+    saved_status_.m_size = 0;                   // We don't want to set the file length
+    saved_status_.m_szFullName[0] = '\0';       // We don't want to change the file name
+	CFile::SetStatus(lpszPathName, saved_status_);
+}
+
 // Called indirectly as part of File/Open command
 BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName) 
 {
@@ -309,11 +325,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
     // Save file status (times, attributes) so we can restore them if the "keep times" option is on
     if (!::IsDevice(lpszPathName))
-    {
-        VERIFY(pfile1_->GetStatus(saved_status_));
-        saved_status_.m_size = 0;                   // We don't want to set the file length
-        saved_status_.m_szFullName[0] = '\0';       // We don't want to change the file name
-    }
+		GetFileStatus();
 
     length_ = pfile1_->GetLength();
     last_view_ = NULL;
@@ -597,10 +609,12 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
         {
             // We must close the file so we can set some attributes
             pfile1_->Close();
-            CFile::SetStatus(lpszPathName, saved_status_);
+			SetFileStatus(lpszPathName);
             if (!open_file(lpszPathName))
                 return FALSE;                       // already done: mac_error_ = 10
         }
+		else if (!IsDevice())
+			GetFileStatus();                        // make sure we have current times as on disk
     }
     else
     {
@@ -796,13 +810,17 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
         }
 
 		if (keep_times_ && !::IsDevice(lpszPathName))
-            CFile::SetStatus(lpszPathName, saved_status_);
+			SetFileStatus(lpszPathName);
 
         base_type_ = 0;                         // Use new file as base for change tracking
 
         // Open the new file as the document file (pfile1_).
         if (!open_file(lpszPathName))
             return FALSE;                       // already done: mac_error_ = 10
+
+		// Make sure we have latest file times (unless we have just set them to what they were before)
+		if (!keep_times_ && !::IsDevice(lpszPathName))
+			GetFileStatus();
     }
 
     length_ = pfile1_->GetLength();
@@ -1246,13 +1264,6 @@ void CHexEditDoc::DeleteContents()
 	base_type_ = 0;                        // Now we can use the saved file as base for compare
 
     CDocument::DeleteContents();
-
-    // m_atime does not seem to be chnaged under NTFS (unless you change m_mtime??!)
-    //if (!strPath.IsEmpty() && keep_times_ && !IsDevice())
-    //{
-    //    ASSERT(pfile1_ == NULL && pfile2_ == NULL && pfile3_ == NULL);  // no point in setting access time if the file is still open
-    //    CFile::SetStatus(strPath, saved_status_);
-    //}
 }
 
 void CHexEditDoc::SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU /*=TRUE*/)
@@ -1284,43 +1295,43 @@ void CHexEditDoc::SetModifiedFlag(BOOL bMod /*=TRUE*/)
 
 void CHexEditDoc::CheckBGProcessing()
 {
-    // Protect access to shared data
-    CSingleLock sl(&docdata_, TRUE);
+	bool search_finished = false;
+	bool aerial_finished = false;
+	bool comp_finished = false;
+	docdata_.Lock();
+	search_finished = search_fin_;
+	if (search_finished)
+	{
+		search_fin_ = FALSE;              // Stop further updates
+        find_total_ = 0;
+	}
+	aerial_finished = aerial_fin_;
+	aerial_fin_ = FALSE;
+	comp_finished = comp_fin_;
+	comp_fin_ = FALSE;
+	docdata_.Unlock();
 
-	// Check if bg search has just finished
-    if (search_fin_)
+    if (search_finished)
     {
-        search_fin_ = FALSE;              // Stop further updates
 #ifdef SYS_SOUNDS
         CSystemSound::Play("Background Search Finished");
 #endif
-        find_total_ = 0;
         CBGSearchHint bgsh(TRUE);
         UpdateAllViews(NULL, 0, &bgsh);
     }
 
 	// Check if aerial view bitmap has just finished being built
-    if (aerial_fin_)
+    if (aerial_finished)
     {
-        aerial_fin_ = FALSE;              // Stop further updates
 #ifdef SYS_SOUNDS
         CSystemSound::Play("Background Scan Finished");
 #endif
-		TRACE("Detected aerial scan finished - update\r\n");
         CBGAerialHint bgah;
         UpdateAllViews(NULL, 0, &bgah);
     }
 
-	// For bg compares we need to check if the compare file has chnaged since
-	// we last scanned it and if so start a new scan else if we just finished
-	// a scan we have to update the views.
-	if (CompFileHasChanged())
-	{
-		StartComp();
-	}
-    else if (comp_fin_)
+    if (comp_finished)
     {
-        comp_fin_ = FALSE;              // Stop further updates
 #ifdef SYS_SOUNDS
         CSystemSound::Play("Background Compare Finished");
 #endif
@@ -1328,6 +1339,33 @@ void CHexEditDoc::CheckBGProcessing()
         CCompHint cch;
         UpdateAllViews(NULL, 0, &cch);
     }
+
+	// For bg compares we also need to check if the compare file has changed since
+	// we last scanned it and if so start a new scan else if we just finished a
+	// scan we have to update the views.
+	if (!bCompSelf && CompFileHasChanged())
+	{
+		StartComp();
+	}
+	if (bCompSelf && OrigFileHasChnaged())
+	{
+		if (IsWaiting())
+		{
+			// Previous compare has finished so keep this one and add a new one
+			docdata_.Lock();
+			comp_.push_front(CompResult());
+			docdata_.Unlock();
+		}
+		else
+			StopComp();   // just stop the compare in progress
+
+		// Get new copy of file
+		CloseCompFile();
+		::remove(compFileName_);
+		MakeTempFile();
+		if (OpenCompFile())
+			StartComp();
+	}
 }
 
 BOOL CHexEditDoc::HasSectorErrors() const
@@ -1737,9 +1775,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
             loc_.push_back(doc_loc(FILE_ADDRESS(0), file_len));
 
             // Save original status
-            VERIFY(pfile1_->GetStatus(saved_status_));
-            saved_status_.m_size = 0;                   // We don't want to set the file length
-            saved_status_.m_szFullName[0] = '\0';       // We don't want to change the file name
+			GetFileStatus();
 
             load_icon(file_name);
             show_icon();

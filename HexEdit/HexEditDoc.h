@@ -593,6 +593,8 @@ private:
     HICON hicon_;               // Icon for child frame windows
     CString strTypeName_;       // Type of file (from registry)
 
+	void GetFileStatus();
+	void SetFileStatus(LPCTSTR lpszPathName);
     BOOL keep_times_;           // Do we keep same times & attributes of orig file?
     CFileStatus saved_status_;  // Times and attributes of file when opened
 	int dffd_edit_mode_;        // 0 = false, 1 = true, -1 = unknown
@@ -646,14 +648,17 @@ public:
     void RemoveCompView();
     bool CreateCompThread();  // Create background thread which fills in the aerial view bitmap
     void KillCompThread();    // Kill background thread ASAP
+	bool IsWaiting();
 	void StartComp();
+	void StopComp();
 	bool GetCompareFile(bool bForcePrompt = false); // Get name of file to compare with
-	int CompareDifferences(int dd = 0);
-	int FirstDiffAt(FILE_ADDRESS from);             // returns index of first diff at or after address
-	int CHexEditDoc::CompareProgress();
-	FILE_ADDRESS CHexEditDoc::GetNextDiff(FILE_ADDRESS from);
-	FILE_ADDRESS CHexEditDoc::GetPrevDiff(FILE_ADDRESS from);
+	int CompareDifferences(int rr = 0);
+	int FirstDiffAt(int rr, FILE_ADDRESS from);             // returns index of first diff at or after address
+	int CompareProgress();
+	int GetNextDiff(FILE_ADDRESS from);
+	int GetPrevDiff(FILE_ADDRESS from);
 	CString GetCompFileName();
+	bool OrigFileHasChanged();
 	bool CompFileHasChanged();
 
     UINT RunCompThread();     // Main func in bg thread
@@ -831,6 +836,9 @@ private:
 	CString compFileName_;      // Name of file comparing with (or last compare file)
 	FILE_ADDRESS CompLength() const { if (pfile4_compare_ == NULL) return -1; else return pfile4_compare_->GetLength(); }
     size_t GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc, bool use_bg = false);  // bytes from compare file
+	bool OpenCompFile();
+	void CloseCompFile();
+	void MakeTempFile();
 	bool bCompSelf;             // says if we are comparing with earlier version of same file
 
     int cv_count_;              // Number of aerial views of this document
@@ -862,23 +870,25 @@ private:
 
 	std::deque<CompResult> comp_;
 
-	// Number of differences found
-	int DiffCount(int dd) { ASSERT(dd < comp_.size()); return comp_[dd].m_addr.size(); }
+	// Number of results and number of differences in specified result
+	int ResultCount() const { return comp_.size(); }
+	const CTime & ResultTime(int rr) const { ASSERT(rr < comp_.size()); return comp_[rr].m_compTime; }
+	int DiffCount(int rr) const { ASSERT(rr < comp_.size()); return comp_[rr].m_addr.size(); }
 	// We need to be able to return differences from the point of view of the original file
 	// and the compared file.  For now these are the same but later there will be differences.
-	void GetOrigDiff(int dd, int idx, FILE_ADDRESS &addr, int &len)
+	void GetOrigDiff(int rr, int idx, FILE_ADDRESS &addr, int &len)
 	{
-		ASSERT(dd < comp_.size() && idx < comp_[dd].m_addr.size());
-		ASSERT(comp_[dd].m_addr.size() == comp_[dd].m_len.size());
-		addr = comp_[dd].m_addr[idx];
-		len = comp_[dd].m_len[idx];
+		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addr.size());
+		ASSERT(comp_[rr].m_addr.size() == comp_[rr].m_len.size());
+		addr = comp_[rr].m_addr[idx];
+		len = comp_[rr].m_len[idx];
 	}
-	void GetCompDiff(int dd, int idx, FILE_ADDRESS &addr, int &len)
+	void GetCompDiff(int rr, int idx, FILE_ADDRESS &addr, int &len)
 	{
-		ASSERT(dd < comp_.size() && idx < comp_[dd].m_addr.size());
-		ASSERT(comp_[dd].m_addr.size() == comp_[dd].m_len.size());
-		addr = comp_[dd].m_addr[idx];
-		len = comp_[dd].m_len[idx];
+		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addr.size());
+		ASSERT(comp_[rr].m_addr.size() == comp_[rr].m_len.size());
+		addr = comp_[rr].m_addr[idx];
+		len = comp_[rr].m_len[idx];
 	}
 
     // -------------- template (DFFD) (see Template.cpp) ----------------
