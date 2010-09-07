@@ -421,6 +421,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\BGCompare.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\BGSearch.cpp"
 				>
 			</File>
@@ -1224,14 +1228,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Res\cogs.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Res\colour.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\RES\curSmallArrows.cur"
 				>
 			</File>
@@ -1256,14 +1252,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Res\display.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Res\docdisp.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\RES\docdisplay.bmp"
 				>
 			</File>
@@ -1272,19 +1260,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Res\docedit.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\RES\down.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\RES\edit.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\RES\edit.ico"
 				>
 			</File>
 			<File
@@ -1305,10 +1285,6 @@
 			</File>
 			<File
 				RelativePath="RES\eval.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Res\filter.ico"
 				>
 			</File>
 			<File
@@ -1404,10 +1380,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RES\layout.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\litebulb.bmp"
 				>
 			</File>
@@ -1488,10 +1460,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Res\printer.ico"
-				>
-			</File>
-			<File
 				RelativePath="RES\refresh.bmp"
 				>
 			</File>
@@ -1513,14 +1481,6 @@
 			</File>
 			<File
 				RelativePath=".\RES\system.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\RES\templates.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\RES\tips.ico"
 				>
 			</File>
 			<File
@@ -1573,10 +1533,6 @@
 			</File>
 			<File
 				RelativePath="RES\view_hot.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\Res\window.ico"
 				>
 			</File>
 		</Filter>
@@ -1657,11 +1613,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File

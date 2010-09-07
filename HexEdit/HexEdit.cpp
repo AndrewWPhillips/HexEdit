@@ -2908,6 +2908,8 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
         IMG_DOCDISPLAY,
         IMG_DOCEDIT,
         IMG_COLOURS,
+		IMG_AERIAL,
+		IMG_COMP,
     };
     optSheet.SetIconsList(IDB_OPTIONSIMAGES, 16 /* Image width */);
 
@@ -4177,6 +4179,8 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
             // Restart background search if it was stopped
             if (bg_search)
                 pv->GetDocument()->StartSearch();
+
+			// xxx fix for aerial and compare threads too
         }
 
         if (result == 0)
