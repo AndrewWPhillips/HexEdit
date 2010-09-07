@@ -117,14 +117,15 @@ void CHexEditDoc::RemoveCompView()
 
 bool CHexEditDoc::GetCompareFile(bool bForcePrompt /*=false*/)
 {
+    CHexFileList *pfl = theApp.GetFileList();
+	int idx = -1;                 // recent file list idx of current document
+#ifdef  ONLY_FILE_COMPARE
 	bCompSelf = false;  // xxx TBD
 
 	// Get last name of the last compare file used
-	int idx;                 // recent file list idx of current document
-    CHexFileList *pfl = theApp.GetFileList();
     if (pfl != NULL &&
 		pfile1_ != NULL &&
-		(idx = pfl->GetIndex(pfile1_->GetFilePath())) != -1)
+		(idx = pfl->GetIndex(pfile1_->GetFilePath())) > -1)
 	{
 		compFileName_ = pfl->GetData(idx, CHexFileList::COMPFILENAME);
 	}
@@ -142,10 +143,29 @@ bool CHexEditDoc::GetCompareFile(bool bForcePrompt /*=false*/)
 		return false;
 
 	compFileName_ = dlgFile.GetPathName();
-	pfl->SetData(idx, CHexFileList::COMPFILENAME, compFileName_);
+    if (pfl != NULL && idx > -1)
+		pfl->SetData(idx, CHexFileList::COMPFILENAME, compFileName_);
+#else
+	if (bCompSelf && !compFileName_.IsEmpty())  // move to where pfile1_compare closed? xxx
+		::remove(compFileName_);
+
+	bCompSelf = true;
+
+	// make temp file name
+    char temp_dir[_MAX_PATH];
+    char temp_file[_MAX_PATH];
+    ::GetTempPath(sizeof(temp_dir), temp_dir);
+    ::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
+	::CopyFile(pfile1_->GetFilePath(), temp_file, FALSE);
+    compFileName_ = temp_file;
+
+    if (pfl != NULL && (idx = pfl->GetIndex(pfile1_->GetFilePath())) > -1)
+		pfl->SetData(idx, CHexFileList::COMPFILENAME, "*");   // indicates self-compare
+#endif
 	return true;
 }
 
+// Check if file we are comparing against has chnaged since we last finished comparing
 bool CHexEditDoc::CompFileHasChanged()
 {
 	if (pthread4_ == NULL || pfile1_compare_ == NULL)
@@ -181,7 +201,6 @@ size_t CHexEditDoc::GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc
 // the numbers of diffs if 'from' id past the last one.
 int CHexEditDoc::FirstDiffAt(int dd, FILE_ADDRESS from)
 {
-xxx needs testing
 	int bot = 0;
 	int top = comp_[dd].m_addr.size();
 	while (bot < top)
@@ -191,10 +210,56 @@ xxx needs testing
 		if (from < comp_[dd].m_addr[curr] + comp_[dd].m_len[curr])
 			top = curr;
 		else
-			bot = curr;
+			bot = curr + 1;
 	}
 	return bot;
 }
+
+#ifdef DANIELS
+int CHexEditDoc::FirstDiffAt(int dd, FILE_ADDRESS from)
+{
+	return FirstDiffAtInRange(0, comp_[dd].m_addr.size(), dd, from);
+
+	// for address of diff at index n use: comp_[dd].m_addr[n]
+	// for length of diff at index n use: comp_[dd].m_len[n]
+}
+
+// Returns the index of the first diff at or after address 'from' within a range.
+// Recursive Function
+int CHexEditDoc::FirstDiffAtInRange(int bot, int top, int dd, FILE_ADDRESS from)
+{
+	// If search has been narrowed to a single index
+	if (bot == top)
+	{
+		// If no diff was found
+		// return the length
+		if (top == comp_[dd].m_addr.size())
+		{
+			return comp_[dd].m_addr.size();
+		}
+		// return the index
+		return bot;
+	}
+	
+	// If diff is in the top or bottom half of the bounds
+	if (comp_[dd].m_addr[(bot+top)/2] + comp_[dd].m_len[(bot+top)/2] > from)
+	{
+		// Recurr
+		return FirstDiffAtInRange(bot, (bot+top)/2, dd, from);
+	}
+	else
+	{
+		// Returns if an index has been found,
+		// Without this, the function would continue reccuring.
+		if (top - bot <= 1)
+		{
+			return top;
+		}
+		// Recurr
+		return FirstDiffAtInRange((bot+top)/2, top, dd, from);
+	}
+}
+#endif
 
 // Returns the number of diffs (in bytes) OR
 // -4 = bg compare not on
@@ -224,15 +289,15 @@ int CHexEditDoc::CompareProgress()
  	if (comp_state_ != SCANNING)
 		return 100;
 
-	return int((comp_progress_ * 100)/length_);
+	return 1 + int((comp_progress_ * 99)/length_);  // 1-100 (don't start at zero)
 }
 
 // Returns:
 // -4 = compare not running
 // -2 = still in progress
 // -1 = no more diffs
-// else file address of first byte of difference
-FILE_ADDRESS CHexEditDoc::GetNextDiff(FILE_ADDRESS from)
+// else index of difference
+int CHexEditDoc::GetNextDiff(FILE_ADDRESS from)
 {
     if (pthread4_ == NULL)
         return -4;
@@ -240,7 +305,7 @@ FILE_ADDRESS CHexEditDoc::GetNextDiff(FILE_ADDRESS from)
 	return 0; // xxx TBD
 }
 
-FILE_ADDRESS CHexEditDoc::GetPrevDiff(FILE_ADDRESS from)
+int CHexEditDoc::GetPrevDiff(FILE_ADDRESS from)
 {
     if (pthread4_ == NULL)
         return -4;
@@ -300,7 +365,7 @@ void CHexEditDoc::StartComp()
 	}
 }
 
-// Kill background task and wait until it is dead
+// Sends a message for the thread to kill itself then tidies up shared members 
 void CHexEditDoc::KillCompThread()
 {
     ASSERT(pthread4_ != NULL);
