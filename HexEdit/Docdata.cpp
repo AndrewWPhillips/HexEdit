@@ -482,7 +482,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
         }
 
         // Restart bg search thread in case it is waiting
-        search_fin_ = FALSE;
+        search_fin_ = false;
         TRACE1("Restarting bg search (change) for %p\n", this);
         start_search_event_.SetEvent();
     }
@@ -730,7 +730,7 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
             }
 
             // Restart bg search thread in case it is waiting
-            search_fin_ = FALSE;
+            search_fin_ = false;
             TRACE1("Restarting bg search (undo) for %p\n", this);
             start_search_event_.SetEvent();
         }

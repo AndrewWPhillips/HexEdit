@@ -499,7 +499,7 @@ void CHexEditDoc::StartSearch(FILE_ADDRESS start /*=-1*/, FILE_ADDRESS end /*=-1
 
         to_search_.clear();
         to_adjust_.clear();
-        search_fin_ = FALSE;
+        search_fin_ = false;
         find_total_ = 0;
         find_done_ = 0.0;
 
@@ -643,7 +643,7 @@ void CHexEditDoc::CreateSearchThread()
 
     // Init some things
     thread_flag_ = 0;
-    search_fin_ = FALSE;
+    search_fin_ = false;
 
     // Open copy of file to be used by background thread
     if (pfile1_ != NULL)
@@ -743,7 +743,7 @@ UINT CHexEditDoc::RunSearchThread()
             to_search_.clear();
             found_.clear();
             find_total_ = 0;
-            search_fin_ = TRUE;
+            search_fin_ = true;
             continue;
         }
 
@@ -779,7 +779,7 @@ UINT CHexEditDoc::RunSearchThread()
                 if (to_search_.empty())
                 {
                     find_total_ = 0;
-                    search_fin_ = TRUE;
+                    search_fin_ = true;
                     break;
                 }
                 start = to_search_.front().first;

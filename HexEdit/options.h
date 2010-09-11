@@ -31,7 +31,7 @@
 // To add a new property:
 //   1. Add field to OptValues to hold the value for the dialog
 //   2. Init the field in the COptSheet c'tor (even though it gets overwritten later)
-//   3. Add a control into a page to let the user chnage it
+//   3. Add a control into a page to let the user change it
 //   4. Add DDX (and validation) to the page's class
 //   5. Init field in CHexEditApp::get_options (before dlg called)
 //   6. Save the field in CHexEditApp::put_* method for the page (for OK/Apply)

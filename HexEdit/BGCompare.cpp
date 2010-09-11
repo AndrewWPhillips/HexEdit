@@ -360,6 +360,7 @@ bool CHexEditDoc::OpenCompFile()
 		pfile1_compare_ = pfile4_compare_ = NULL;
 		return false;
 	}
+	return true;
 }
 
 void CHexEditDoc::CloseCompFile()
@@ -368,13 +369,13 @@ void CHexEditDoc::CloseCompFile()
     if (pfile4_compare_ != NULL)
 	{
 		pfile4_compare_->Close();
-		delete pfile4_;
+		delete pfile4_compare_;
 		pfile4_compare_ = NULL;
 	}
     if (pfile1_compare_ != NULL)
 	{
 		pfile1_compare_->Close();
-		delete pfile4_;
+		delete pfile1_compare_;
 		pfile1_compare_ = NULL;
 	}
 }
@@ -408,7 +409,7 @@ void CHexEditDoc::StopComp()
 	docdata_.Lock();
 	bool waiting = comp_state_ == WAITING;
 	comp_command_ = STOP;
-	comp_fin_ = FALSE;
+	comp_fin_ = false;
 	docdata_.Unlock();
 
 	if (!waiting)
@@ -437,7 +438,7 @@ void CHexEditDoc::StartComp()
 	comp_command_ = RESTART;
 	comp_state_ = STARTING;
 	comp_progress_ = 0;
-	comp_fin_ = FALSE;
+	comp_fin_ = false;
 
 	// Save current file modification time so we don't keep restarting the compare
 	CFileStatus stat;
@@ -558,7 +559,7 @@ bool CHexEditDoc::CreateCompThread()
 	comp_command_ = RESTART;
 	comp_state_ = STARTING;
 	comp_progress_ = 0;
-	comp_fin_ = FALSE;
+	comp_fin_ = false;
 
 	// Save current file modification time so we don't keep restarting the compare
 	CFileStatus stat;
@@ -642,7 +643,7 @@ UINT CHexEditDoc::RunCompThread()
                 CSingleLock sl(&docdata_, TRUE); // Protect shared data access
 
 				comp_[0] = result;
-                comp_fin_ = TRUE;
+                comp_fin_ = true;
                 break;                          // falls out to end_scan
 			}
 

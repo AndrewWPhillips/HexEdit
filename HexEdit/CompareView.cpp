@@ -501,9 +501,9 @@ void CCompareView::OnDraw(CDC* pDC)
 		if (tt < tearliest)
 			continue;
 		col = ::tone_down(phev_->comp_col_, phev_->bg_col_,
-			              double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
+			              1 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
 		col2 = ::tone_down(phev_->comp_bg_col_, phev_->bg_col_,
-			               double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
+			               1 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
 		for (int dd = GetDocument()->FirstDiffAt(rr, first_virt); dd < GetDocument()->DiffCount(rr); ++dd)
 		{
 			FILE_ADDRESS addr;

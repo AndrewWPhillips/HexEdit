@@ -133,9 +133,9 @@ CHexEditDoc::CHexEditDoc()
 
     hicon_ = HICON(0);
 
-    search_fin_ = FALSE;
-    aerial_fin_ = FALSE;
-	comp_fin_   = FALSE;
+    search_fin_ = false;
+    aerial_fin_ = false;
+	comp_fin_   = false;
 #ifndef NDEBUG
     // Make default capacity for undo_ vector small to force reallocation sooner.
     // This increases likelihood of catching bugs related to reallocation.
@@ -1302,13 +1302,13 @@ void CHexEditDoc::CheckBGProcessing()
 	search_finished = search_fin_;
 	if (search_finished)
 	{
-		search_fin_ = FALSE;              // Stop further updates
+		search_fin_ = false;              // Stop further updates
         find_total_ = 0;
 	}
 	aerial_finished = aerial_fin_;
-	aerial_fin_ = FALSE;
+	aerial_fin_ = false;
 	comp_finished = comp_fin_;
-	comp_fin_ = FALSE;
+	comp_fin_ = false;
 	docdata_.Unlock();
 
     if (search_finished)
@@ -1345,12 +1345,15 @@ void CHexEditDoc::CheckBGProcessing()
 	// scan we have to update the views.
 	if (!bCompSelf && CompFileHasChanged())
 	{
+		TRACE("oooooooo compare file change detected - start compare\r\n");
 		StartComp();
 	}
-	if (bCompSelf && OrigFileHasChnaged())
+	if (bCompSelf && OrigFileHasChanged())
 	{
+		TRACE("oooooooo extrenal change to file detected\r\n");
 		if (IsWaiting())
 		{
+			TRACE("oooooooo pushing empty compare result\r\n");
 			// Previous compare has finished so keep this one and add a new one
 			docdata_.Lock();
 			comp_.push_front(CompResult());
@@ -1361,10 +1364,12 @@ void CHexEditDoc::CheckBGProcessing()
 
 		// Get new copy of file
 		CloseCompFile();
+		TRACE("oooooooo copying file to temp\r\n");
 		::remove(compFileName_);
 		MakeTempFile();
 		if (OpenCompFile())
 			StartComp();
+		GetFileStatus();
 	}
 }
 

@@ -167,7 +167,7 @@ void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 	docdata_.Lock();
 	bool waiting = aerial_state_ == WAITING;
 	aerial_command_ = STOP;
-	aerial_fin_ = FALSE;
+	aerial_fin_ = false;
 	docdata_.Unlock();
 
 	if (!waiting)
@@ -196,7 +196,7 @@ void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 
 	// Restart the scan
 	aerial_command_ = RESTART;
-	aerial_fin_ = FALSE;
+	aerial_fin_ = false;
 	docdata_.Unlock();
 
 	start_aerial_event_.SetEvent();
@@ -259,6 +259,7 @@ void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
 		memset(FreeImage_GetBits(dib_), clear, dib_size_);       // Clear to a grey
 }
 
+// Sends a message for the thread to kill itself then tides up shared members 
 void CHexEditDoc::KillAerialThread()
 {
     ASSERT(pthread3_ != NULL);
@@ -323,13 +324,14 @@ static UINT bg_func(LPVOID pParam)
     return pDoc->RunAerialThread();
 }
 
+// Sets up shared members and creates the thread using bg_func (above)
 void CHexEditDoc::CreateAerialThread()
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     ASSERT(pthread3_ == NULL);
     ASSERT(pfile3_ == NULL);
 
-    aerial_fin_ = FALSE;
+    aerial_fin_ = false;
 
     // Open copy of file to be used by background thread
     if (pfile1_ != NULL)
@@ -434,7 +436,7 @@ UINT CHexEditDoc::RunAerialThread()
                 TRACE2("BGAerial: finished scan for %p at address %p\n", this, file_dib + 3*size_t(addr/file_bpe));
                 CSingleLock sl(&docdata_, TRUE); // Protect shared data access
 
-                aerial_fin_ = TRUE;
+                aerial_fin_ = true;
                 break;                          // falls out to end_scan
             }
 

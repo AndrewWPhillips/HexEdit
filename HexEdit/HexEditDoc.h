@@ -797,7 +797,7 @@ private:
 	// Also see data_file2_ (above)
     int thread_flag_;           // Signals thread to stop search (1) or even kill itself (-1)
 
-    BOOL search_fin_;           // Flags that the bg search is finished and the view need updating
+    bool search_fin_;           // Flags that the bg search is finished and the view need updating
 
     // List of ranges to search in background (first = start, second = byte past end)
     std::list<pair<FILE_ADDRESS, FILE_ADDRESS> > to_search_;
@@ -822,7 +822,7 @@ private:
     int bpe_;                   // Bytes per bitmap pixel (1 to 65536)
     FIBITMAP *dib_;             // The FreeImage bitmap
     int dib_size_;              // Actual number of bytes allocated
-    BOOL aerial_fin_;           // Flags that the bg scan is finished and the view needs updating
+    bool aerial_fin_;           // Flags that the bg scan is finished and the view needs updating
 
     // MAX_WIDTH = widest we can "reshape" the bitmap to.  Like any width used for the bitmap it must
     // be a multiple of 8 (so there are never "pad" bytes on the end of scan lines).
@@ -844,7 +844,7 @@ private:
     int cv_count_;              // Number of aerial views of this document
     CWinThread *pthread4_;      // Ptr to thread or NULL
     CEvent start_comp_event_;   // Starts the thread going
-    BOOL comp_fin_;             // Flags that the bg scan is finished and the view needs updating
+    bool comp_fin_;             // Flags that the bg scan is finished and the view needs updating
     enum BG_STATE   comp_state_;
     enum BG_COMMAND comp_command_;
 	FILE_ADDRESS comp_progress_; // Distance through the file is used to estimate progress
@@ -854,7 +854,7 @@ private:
 		friend class CHexEditDoc;
 
 	public:
-		void Reset(const CTime &tm) { m_addr.clear(); m_len.clear(); m_fileTime = tm; m_compTime = 0; }
+		void Reset(const CTime &tm) { m_addr.clear(); m_len.clear(); m_fileTime = tm; m_compTime = CTime::GetCurrentTime(); }
 		void Final() { m_compTime = CTime::GetCurrentTime(); }
 
 	private:
