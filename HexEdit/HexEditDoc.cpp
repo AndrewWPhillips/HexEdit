@@ -1348,15 +1348,16 @@ void CHexEditDoc::CheckBGProcessing()
 		TRACE("oooooooo compare file change detected - start compare\r\n");
 		StartComp();
 	}
-	if (bCompSelf && OrigFileHasChanged())
+	else if (bCompSelf && OrigFileHasChanged())
 	{
-		TRACE("oooooooo extrenal change to file detected\r\n");
+		TRACE("oooooooo external change to file detected\r\n");
 		if (IsWaiting())
 		{
 			TRACE("oooooooo pushing empty compare result\r\n");
-			// Previous compare has finished so keep this one and add a new one
+			// Previous compare has finished so keep it (if not empty) and add a new one
 			docdata_.Lock();
-			comp_.push_front(CompResult());
+			if (!comp_[0].m_addr.empty())
+				comp_.push_front(CompResult());
 			docdata_.Unlock();
 		}
 		else
@@ -1365,8 +1366,17 @@ void CHexEditDoc::CheckBGProcessing()
 		// Get new copy of file
 		CloseCompFile();
 		TRACE("oooooooo copying file to temp\r\n");
-		::remove(compFileName_);
-		MakeTempFile();
+		// Remove older temp file since we no longer need it
+		if (!tempFileB_.IsEmpty())
+		{
+			VERIFY(::remove(tempFileB_) == 0);
+			tempFileB_.Empty();
+		}
+		// Move newer temp file to older temp file
+		tempFileB_ = tempFileA_;
+		tempFileA_.Empty();
+		// Make new temp file from current file
+		VERIFY(MakeTempFile());
 		if (OpenCompFile())
 			StartComp();
 		GetFileStatus();

@@ -643,7 +643,7 @@ public:
     bool AerialScanning();      // Are we currently scanning
 	void GetAerialBitmap(int clear = 0xC0);     // Check if bitmap has been allocated/is big enough and get it if not
  
-    // Compare stuff
+    // Compare stuff (implemented in BGCompare.cpp)
     void AddCompView(CHexEditView *pview);
     void RemoveCompView();
     bool CreateCompThread();  // Create background thread which fills in the aerial view bitmap
@@ -838,8 +838,9 @@ private:
     size_t GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc, bool use_bg = false);  // bytes from compare file
 	bool OpenCompFile();
 	void CloseCompFile();
-	void MakeTempFile();
+	bool MakeTempFile();
 	bool bCompSelf;             // says if we are comparing with earlier version of same file
+	CString tempFileA_, tempFileB_; // when doing self-compare we need to make 2 temp copies of the file
 
     int cv_count_;              // Number of aerial views of this document
     CWinThread *pthread4_;      // Ptr to thread or NULL

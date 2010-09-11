@@ -114,12 +114,12 @@ void CHexEditDoc::RemoveCompView()
     }
 	TRACE("===== Remove Comp View %d\n", cv_count_);
 }
-
+// At the start of the compre process we get the name of the file
+// to compare against (or whether it's a self-compare) options etc.
+// If the bForcePrompt parameter is true then we always ask the user
+// for a file name even if we already have one from previous compare.
 bool CHexEditDoc::GetCompareFile(bool bForcePrompt /*=false*/)
 {
-	if (bCompSelf && !compFileName_.IsEmpty())  // move this to where pfile1_compare is closed? xxx
-		::remove(compFileName_);
-
     CHexFileList *pfl = theApp.GetFileList();
 	int idx = -1;                 // recent file list idx of current document
 
@@ -148,16 +148,16 @@ bool CHexEditDoc::GetCompareFile(bool bForcePrompt /*=false*/)
 		return false;
 
 	compFileName_ = dlgFile.GetPathName();
-    if (pfl != NULL && idx > -1)
-		pfl->SetData(idx, CHexFileList::COMPFILENAME, compFileName_);
 #else
 	bCompSelf = true;
 
-	MakeTempFile();
+	VERIFY(MakeTempFile());
 
-    if (pfl != NULL && (idx = pfl->GetIndex(pfile1_->GetFilePath())) > -1)
-		pfl->SetData(idx, CHexFileList::COMPFILENAME, "*");   // indicates self-compare
+	if (pfile1_ != NULL)
+		idx = pfl->GetIndex(pfile1_->GetFilePath());
 #endif
+    if (pfl != NULL && idx > -1)
+		pfl->SetData(idx, CHexFileList::COMPFILENAME, GetCompFileName());
 	return true;
 }
 
@@ -330,7 +330,17 @@ int CHexEditDoc::GetNextDiff(FILE_ADDRESS from)
     if (pthread4_ == NULL)
         return -4;
 
-	return 0; // xxx TBD
+	{
+		CSingleLock sl(&docdata_, TRUE);
+		if (comp_state_ != WAITING)
+			return -2;
+	}
+
+	int ii = FirstDiffAt(0, from);
+	if (ii == comp_[0].m_addr.size())
+		return -1;
+
+	return ii;
 }
 
 int CHexEditDoc::GetPrevDiff(FILE_ADDRESS from)
@@ -338,23 +348,48 @@ int CHexEditDoc::GetPrevDiff(FILE_ADDRESS from)
     if (pthread4_ == NULL)
         return -4;
 
-	return 0; // xxx TBD
+	{
+		CSingleLock sl(&docdata_, TRUE);
+		if (comp_state_ != WAITING)
+			return -2;
+	}
+
+	int ii = FirstDiffAt(0, from);
+	if (ii == 0)
+		return -1;
+
+	return ii - 1;
 }
 
+// Open CompFile just opens the files for comparing.
+// Note when comparing that there are 4 files involved:
+//   pfile1_         = Original file opened for general use in GUI thread
+//   pfile1_compare_ = Compare file opened for use in the main (GUI) thread (used by CCompareView)
+//   pfile4_         = Original file opened again to use for comparing in the background thread (see below)
+//   pfile4_compare_ = Compare file opened again for use in the background thread
+// When comparing different files:
+//   pfile1_ == pfile4_ is original file
+//   pfile1_compare_ == pfile4_compare_ is file to compare with
+// When doing self-compare:
+//   pfile1_ is original file
+//   pfile4_ is newer temp file (tempFileA_)
+//   pfile1_compare_ pfile4_compare_ = older temp file
 bool CHexEditDoc::OpenCompFile()
 {
 	ASSERT(pfile1_compare_ == NULL && pfile4_compare_ == NULL);
-	// Open the file to compare against
-	// Note: there are two files (the original file and the file comparing against).
-	// We open them both twice so we have a CFile64 instance for foreground and background threads
-	//   pfile1_         = Original file opened for general use in GUI thread
-	//   pfile1_compare_ = Compare file opened for use in the main (GUI) thread (used by CCompareView)
-	//   pfile4_         = Original file opened again to use for comparing in the background thread (see below)
-	//   pfile4_compare_ = Compare file opened again for use in the background thread
+
+	CString fileName;
+	if (!bCompSelf)
+		fileName = compFileName_;
+	else if (pfile1_ != NULL)
+		fileName = tempFileB_.IsEmpty() ? pfile1_->GetFilePath() : tempFileB_;
+	else
+		return false;
+
 	pfile1_compare_ = new CFile64();
 	pfile4_compare_ = new CFile64();
-	if (!pfile1_compare_->Open(compFileName_, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) ||
-		!pfile4_compare_->Open(compFileName_, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary))
+	if (!pfile1_compare_->Open(fileName, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) ||
+		!pfile4_compare_->Open(fileName, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary))
 	{
 		TRACE1("Compare file open failed for %p\n", this);
 		pfile1_compare_ = pfile4_compare_ = NULL;
@@ -366,28 +401,34 @@ bool CHexEditDoc::OpenCompFile()
 void CHexEditDoc::CloseCompFile()
 {
 	ASSERT(pfile1_compare_ != NULL && pfile4_compare_ != NULL);
-    if (pfile4_compare_ != NULL)
-	{
-		pfile4_compare_->Close();
-		delete pfile4_compare_;
-		pfile4_compare_ = NULL;
-	}
     if (pfile1_compare_ != NULL)
 	{
 		pfile1_compare_->Close();
 		delete pfile1_compare_;
 		pfile1_compare_ = NULL;
 	}
+    if (pfile4_compare_ != NULL)
+	{
+		pfile4_compare_->Close();
+		delete pfile4_compare_;
+		pfile4_compare_ = NULL;
+	}
 }
 
-void CHexEditDoc::MakeTempFile()
+// Makes a new temp file name and copies the current file to it
+bool CHexEditDoc::MakeTempFile()
 {
     char temp_dir[_MAX_PATH];
     char temp_file[_MAX_PATH];
-    ::GetTempPath(sizeof(temp_dir), temp_dir);
-    ::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
-	::CopyFile(pfile1_->GetFilePath(), temp_file, FALSE);
-    compFileName_ = temp_file;
+	if (pfile1_ == NULL ||
+        !::GetTempPath(sizeof(temp_dir), temp_dir) ||
+        !::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file) ||
+		!::CopyFile(pfile1_->GetFilePath(), temp_file, FALSE))
+	{
+		return false;
+	}
+    tempFileA_ = temp_file;
+	return true;
 }
 
 bool CHexEditDoc::IsWaiting()
@@ -511,6 +552,20 @@ void CHexEditDoc::KillCompThread()
 
 	// Close the compare file (both open instances)
 	CloseCompFile();
+	if (bCompSelf)
+	{
+		if (!tempFileA_.IsEmpty())
+		{
+			VERIFY(::remove(tempFileA_) == 0);
+			tempFileA_.Empty();
+		}
+		if (!tempFileB_.IsEmpty())
+		{
+			VERIFY(::remove(tempFileB_) == 0);
+			tempFileB_.Empty();
+		}
+	}
+	ASSERT(tempFileA_.IsEmpty() && tempFileB_.IsEmpty());
 }
 
 static UINT bg_func(LPVOID pParam)
@@ -527,15 +582,21 @@ bool CHexEditDoc::CreateCompThread()
     ASSERT(pthread4_ == NULL);
     ASSERT(pfile4_ == NULL);
 
-    // Open copy of original file to be used by background thread
+    // Open file to be used by background thread
     if (pfile1_ != NULL)
 	{
+		CString fileName;
+		if (bCompSelf)
+			fileName = tempFileA_;
+		else
+			fileName = pfile1_->GetFilePath();
+		ASSERT(!fileName.IsEmpty());
+
 		if (IsDevice())
 			pfile4_ = new CFileNC();
 		else
 			pfile4_ = new CFile64();
-		if (!pfile4_->Open(pfile1_->GetFilePath(),
-					CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
+		if (!pfile4_->Open(fileName, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
 		{
 			TRACE1("Compare (file4) open failed for %p\n", this);
 			return false;
