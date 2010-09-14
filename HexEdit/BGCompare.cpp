@@ -532,7 +532,7 @@ void CHexEditDoc::KillCompThread()
 
     pthread4_ = NULL;
     DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
-    ASSERT(wait_status == WAIT_OBJECT_0 || wait_status == -1);
+    ASSERT(wait_status == WAIT_OBJECT_0 || wait_status == WAIT_FAILED);
 
     // Free resources that are only needed during bg compares
 	CloseCompFile();

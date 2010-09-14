@@ -291,7 +291,7 @@ void CHexEditDoc::KillAerialThread()
 
 	pthread3_ = NULL;
     DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
-    ASSERT(wait_status == WAIT_OBJECT_0);
+    ASSERT(wait_status == WAIT_OBJECT_0 || wait_status == WAIT_FAILED);
     tt.stop();
     TRACE1("Thread took %g secs to kill\n", double(tt.elapsed()));
 

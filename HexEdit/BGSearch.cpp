@@ -600,7 +600,7 @@ void CHexEditDoc::KillSearchThread()
     start_search_event_.SetEvent();
 
     DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
-    ASSERT(wait_status == WAIT_OBJECT_0);
+    ASSERT(wait_status == WAIT_OBJECT_0 || wait_status == WAIT_FAILED);
     pthread2_ = NULL;
 
     // Free resources that are only needed during bg searches
