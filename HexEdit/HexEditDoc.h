@@ -535,6 +535,7 @@ protected:
     afx_msg void OnDffdOpen(UINT nID);
     afx_msg void OnDffdSave();
     afx_msg void OnDffdSaveAs();
+    afx_msg void OnUpdateDffdSave(CCmdUI* pCmdUI);
     afx_msg void OnEditMode();
     afx_msg void OnUpdateEditMode(CCmdUI* pCmdUI);
     afx_msg void OnDffdOptions();

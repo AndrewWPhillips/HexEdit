@@ -168,6 +168,11 @@ void CHexEditDoc::OnDffdSaveAs()
     }
 }
 
+void CHexEditDoc::OnUpdateDffdSave(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(ptree_ != NULL && !ptree_->Error());
+}
+
 // Is editing of the active template allowed?
 BOOL CHexEditDoc::DffdEditMode() 
 {
