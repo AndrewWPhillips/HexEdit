@@ -78,6 +78,17 @@ public:
 
 // Overrides
     //virtual void DisplayCaret(int char_width = -1);
+	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra,
+		AFX_CMDHANDLERINFO* pHandlerInfo)
+	{
+		// If compare view can't handle it try "owner" hex view
+		if (CScrView::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+			return TRUE;
+		else if (phev_ != NULL)
+			return phev_->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+		else
+			return FALSE;
+	}
 
 public:
     virtual void OnDraw(CDC* pDC);  // overridden to draw this view
@@ -112,6 +123,7 @@ protected:
     //afx_msg void OnDestroy();
     afx_msg void OnSize(UINT nType, int cx, int cy);
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+    afx_msg void OnUpdateDisable(CCmdUI* pCmdUI);
     DECLARE_MESSAGE_MAP()
 
 private:
