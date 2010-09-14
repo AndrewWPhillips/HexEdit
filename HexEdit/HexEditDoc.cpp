@@ -123,7 +123,7 @@ CHexEditDoc::CHexEditDoc()
 	// BG compare thread
 	pthread4_ = NULL;
 	cv_count_ = 0;
-	bCompSelf = false;
+	bCompSelf_ = false;
 	comp_.push_front(CompResult());  // always has at least one elt = current/last compare results
 
 	// Template
@@ -659,30 +659,8 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
             return FALSE;                       // already done: mac_error_ = 10
 
         // If we have a file open then close it
-        if (pfile1_ != NULL)
-        {
-            pfile1_->Close();
-            delete pfile1_;
-            pfile1_ = NULL;
-            if (pthread2_ != NULL && pfile2_ != NULL)
-            {
-                pfile2_->Close();
-                delete pfile2_;
-                pfile2_ = NULL;
-            }
-            if (pthread3_ != NULL && pfile3_ != NULL)
-            {
-                pfile3_->Close();
-                delete pfile3_;
-                pfile3_ = NULL;
-            }
-            if (pthread4_ != NULL && pfile4_ != NULL)
-            {
-                pfile4_->Close();
-                delete pfile4_;
-                pfile4_ = NULL;
-            }
-        }
+		close_file();
+
         // If file we are writing exists (Save or SaveAs overwriting another file)
         if (_access(lpszPathName, 0) != -1)
         {
@@ -1008,10 +986,7 @@ void CHexEditDoc::close_file()
     }
     if (pthread4_ != NULL && pfile4_ != NULL)
     {
-        pfile4_->Close();
-        delete pfile4_;
-        pfile4_ = NULL;
-		// No need to close pfile1_compare_ and pfile4_compare_ as they are for a different file
+		CloseCompFile();
     }
 }
 
@@ -1197,26 +1172,9 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
             return FALSE;
         }
     }
-    if (pthread4_ != NULL && 
-        (pfile4_ == NULL || pfile1_->GetFilePath() != pfile4_->GetFilePath()) )
+    if (pthread4_ != NULL)
     {
-        if (pfile4_ != NULL)
-        {
-            pfile4_->Close();
-            delete pfile4_;
-            pfile4_ = NULL;
-        }
-
-        if (IsDevice())
-            pfile4_ = new CFileNC();
-        else
-            pfile4_ = new CFile64();
-        if (!pfile4_->Open(pfile1_->GetFilePath(),
-                    CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
-        {
-            TRACE1("BG aerial scan file open failed for %p\n", this);
-            return FALSE;
-        }
+		OpenCompFile();
     }
 
     return TRUE;
@@ -1343,15 +1301,15 @@ void CHexEditDoc::CheckBGProcessing()
 	// For bg compares we also need to check if the compare file has changed since
 	// we last scanned it and if so start a new scan else if we just finished a
 	// scan we have to update the views.
-	if (!bCompSelf && CompFileHasChanged())
+	if (!bCompSelf_ && CompFileHasChanged())
 	{
 		TRACE("oooooooo compare file change detected - start compare\r\n");
 		StartComp();
 	}
-	else if (bCompSelf && OrigFileHasChanged())
+	else if (bCompSelf_ && OrigFileHasChanged())
 	{
 		TRACE("oooooooo external change to file detected\r\n");
-		if (IsWaiting())
+		if (IsCompWaiting())
 		{
 			TRACE("oooooooo pushing empty compare result\r\n");
 			// Previous compare has finished so keep it (if not empty) and add a new one
@@ -1362,6 +1320,8 @@ void CHexEditDoc::CheckBGProcessing()
 		}
 		else
 			StopComp();   // just stop the compare in progress
+
+		ASSERT(IsCompWaiting());  // the thread cannot be doing anything while files are closed
 
 		// Get new copy of file
 		CloseCompFile();

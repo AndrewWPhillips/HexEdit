@@ -36,6 +36,12 @@ static char THIS_FILE[] = __FILE__;
 #undef max
 #endif
 
+
+// xxx TBD TODO testing:
+// - new file not saved to disk
+// - new file self-compare
+// - device file self-compare
+
 // Start background compare, first killing any existing one
 void CHexEditDoc::OnCompNew()
 {
@@ -50,7 +56,7 @@ void CHexEditDoc::OnCompNew()
 	// However, if we close a view while we are iterating through them (using
 	// GetFirstViewPosition/GetNextView) then this really confuses MFC (even if
 	// we just send a hint to the view since UpdateAllViews uses GetNextView).
-	// So we make a list of all hex view, then later close their compare views.
+	// So we make a list of all hex views, then later close their compare views.
 	std::vector<CHexEditView *> pviews;
 
 	// Find all hex views of this doc
@@ -67,7 +73,7 @@ void CHexEditDoc::OnCompNew()
     }
 	ASSERT(phev != NULL);
 
-	// Kill all compare views (each must be associated with a hex view)
+	// Kill all compare views (which are always associated with a hex view)
 	for (std::vector<CHexEditView *>::const_iterator ppv = pviews.begin(); ppv != pviews.end(); ++ppv)
 		(*ppv)->OnCompHide();
 
@@ -79,7 +85,7 @@ void CHexEditDoc::OnCompNew()
 	// which sends the new view a WM_INITIALUPDATE message which triggers 
 	// CCompareView::OninitialUpdate.  OninitialUpdate allows the view to 
 	// register itself with its document using CHexEditDoc::AddCompView()
-	// which call CreateCompThread (sets up and starts the compare thread)
+	// which call CreateCompThread (which sets up & starts the compare thread)
 	// then pulses start_comp_event_ to trigger the thread to start comparing.
     if (phev != NULL)
 		phev->DoCompSplit();
@@ -98,8 +104,12 @@ void CHexEditDoc::AddCompView(CHexEditView *pview)
 			cv_count_ = 0;   // indicate that no compare views are open
 			return;
 		}
-		TRACE("===== Pulsing compare event\n");
-		start_comp_event_.SetEvent();
+		// We don't need to start self-compare until we detect a change (see CheckBGProcessing)
+		if (!bCompSelf_)
+		{
+			TRACE("===== Pulsing compare event\n");
+			start_comp_event_.SetEvent();
+		}
 	}
     ASSERT(pthread4_ != NULL);
 }
@@ -125,7 +135,7 @@ bool CHexEditDoc::GetCompareFile(bool bForcePrompt /*=false*/)
 
 // xxx TBD eventually we will add a dialog and combine the file compare and self compare code below
 #ifdef  ONLY_FILE_COMPARE
-	bCompSelf = false;  // xxx TBD
+	bCompSelf_ = false;  // xxx TBD
 
 	// Get last name of the last compare file used
     if (pfl != NULL &&
@@ -149,7 +159,10 @@ bool CHexEditDoc::GetCompareFile(bool bForcePrompt /*=false*/)
 
 	compFileName_ = dlgFile.GetPathName();
 #else
-	bCompSelf = true;
+	bCompSelf_ = true;
+
+	if (!bForcePrompt && !tempFileA_.IsEmpty() && _access(tempFileA_, 0) != -1)
+		return true;         // we can just reopen the same file
 
 	VERIFY(MakeTempFile());
 
@@ -192,7 +205,7 @@ bool CHexEditDoc::CompFileHasChanged()
 // return "*" is we are doing a self compare
 CString CHexEditDoc::GetCompFileName()
 {
-	if (bCompSelf)
+	if (bCompSelf_)
 		return CString("*");
 	else
 		return compFileName_;
@@ -225,69 +238,6 @@ int CHexEditDoc::FirstDiffAt(int rr, FILE_ADDRESS from)
 	}
 	return bot;
 }
-#if 0 // recursive binary search
-int CHexEditDoc::FirstDiffAt(int rr, FILE_ADDRESS from)
-{
-	return DiffBinSearch(rr, from, 0, comp_[rr].m_addr.size());
-}
-
-int DiffBinSearch(int rr, FILE_ADDRESS from, int bot, int top)
-{
-	if (bot == top)
-		return bot;
-
-	int curr = (bot+top)/2;
-	if (from < comp_[rr].m_addr[curr] + comp_[rr].m_len[curr])
-		return DiffBinSearch(rr, from, bot, curr);
-	else
-		return DiffBinSearch(rr, from, curr + 1, top);
-}
-#endif
-#ifdef DANIELS
-int CHexEditDoc::FirstDiffAt(int dd, FILE_ADDRESS from)
-{
-	return FirstDiffAtInRange(0, comp_[dd].m_addr.size(), dd, from);
-
-	// for address of diff at index n use: comp_[dd].m_addr[n]
-	// for length of diff at index n use: comp_[dd].m_len[n]
-}
-
-// Returns the index of the first diff at or after address 'from' within a range.
-// Recursive Function
-int CHexEditDoc::FirstDiffAtInRange(int bot, int top, int dd, FILE_ADDRESS from)
-{
-	// If search has been narrowed to a single index
-	if (bot == top)
-	{
-		// If no diff was found
-		// return the length
-		if (top == comp_[dd].m_addr.size())
-		{
-			return comp_[dd].m_addr.size();
-		}
-		// return the index
-		return bot;
-	}
-	
-	// If diff is in the top or bottom half of the bounds
-	if (comp_[dd].m_addr[(bot+top)/2] + comp_[dd].m_len[(bot+top)/2] > from)
-	{
-		// Recurr
-		return FirstDiffAtInRange(bot, (bot+top)/2, dd, from);
-	}
-	else
-	{
-		// Returns if an index has been found,
-		// Without this, the function would continue reccuring.
-		if (top - bot <= 1)
-		{
-			return top;
-		}
-		// Recurr
-		return FirstDiffAtInRange((bot+top)/2, top, dd, from);
-	}
-}
-#endif
 
 // Returns the number of diffs (in bytes) OR
 // -4 = bg compare not on
@@ -376,10 +326,41 @@ int CHexEditDoc::GetPrevDiff(FILE_ADDRESS from)
 //   pfile1_compare_ pfile4_compare_ = older temp file
 bool CHexEditDoc::OpenCompFile()
 {
+    // Open file to be used by background thread
+    if (pfile1_ != NULL)
+	{
+		CString fileName;
+		if (bCompSelf_)
+			fileName = tempFileA_;
+		else
+			fileName = pfile1_->GetFilePath();
+		ASSERT(!fileName.IsEmpty());
+
+		if (IsDevice() && !bCompSelf_)
+			pfile4_ = new CFileNC();
+		else
+			pfile4_ = new CFile64();
+		if (!pfile4_->Open(fileName, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
+		{
+			TRACE1("Compare (file4) open failed for %p\n", this);
+			return false;
+		}
+	}
+
+	// Open any data files in use too, since we need to compare against the in-memory file
+	for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
+	{
+		ASSERT(data_file4_[ii] == NULL);
+		if (data_file_[ii] != NULL)
+			data_file4_[ii] = new CFile64(data_file_[ii]->GetFilePath(), 
+										  CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
+	}
+
+	// Open file to compare against
 	ASSERT(pfile1_compare_ == NULL && pfile4_compare_ == NULL);
 
 	CString fileName;
-	if (!bCompSelf)
+	if (!bCompSelf_)
 		fileName = compFileName_;
 	else if (pfile1_ != NULL)
 		fileName = tempFileB_.IsEmpty() ? pfile1_->GetFilePath() : tempFileB_;
@@ -400,6 +381,24 @@ bool CHexEditDoc::OpenCompFile()
 
 void CHexEditDoc::CloseCompFile()
 {
+	// Close the file instance used in background thread
+    if (pfile4_ != NULL)
+	{
+		pfile4_->Close();
+		delete pfile4_;
+		pfile4_ = NULL;
+	}
+	for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
+	{
+		if (data_file4_[ii] != NULL)
+		{
+			data_file4_[ii]->Close();
+			delete data_file4_[ii];
+			data_file4_[ii] = NULL;
+		}
+	}
+
+	// Close the compare file (both open instances)
 	ASSERT(pfile1_compare_ != NULL && pfile4_compare_ != NULL);
     if (pfile1_compare_ != NULL)
 	{
@@ -418,8 +417,10 @@ void CHexEditDoc::CloseCompFile()
 // Makes a new temp file name and copies the current file to it
 bool CHexEditDoc::MakeTempFile()
 {
+	ASSERT(tempFileA_.IsEmpty());
     char temp_dir[_MAX_PATH];
     char temp_file[_MAX_PATH];
+	CWaitCursor wc;     // displays Hour glass until destroyed on function exit
 	if (pfile1_ == NULL ||
         !::GetTempPath(sizeof(temp_dir), temp_dir) ||
         !::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file) ||
@@ -431,7 +432,7 @@ bool CHexEditDoc::MakeTempFile()
 	return true;
 }
 
-bool CHexEditDoc::IsWaiting()
+bool CHexEditDoc::IsCompWaiting()
 {
 	docdata_.Lock();
 	bool waiting = comp_state_ == WAITING;
@@ -531,28 +532,11 @@ void CHexEditDoc::KillCompThread()
 
     pthread4_ = NULL;
     DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
-    ASSERT(wait_status == WAIT_OBJECT_0);
+    ASSERT(wait_status == WAIT_OBJECT_0 || wait_status == -1);
 
-    // Free resources that are only needed during bg searches
-    if (pfile4_ != NULL)
-	{
-		pfile4_->Close();
-		delete pfile4_;
-		pfile4_ = NULL;
-	}
-	for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
-	{
-		if (data_file4_[ii] != NULL)
-		{
-			data_file4_[ii]->Close();
-			delete data_file4_[ii];
-			data_file4_[ii] = NULL;
-		}
-	}
-
-	// Close the compare file (both open instances)
+    // Free resources that are only needed during bg compares
 	CloseCompFile();
-	if (bCompSelf)
+	if (bCompSelf_)
 	{
 		if (!tempFileA_.IsEmpty())
 		{
@@ -582,41 +566,10 @@ bool CHexEditDoc::CreateCompThread()
     ASSERT(pthread4_ == NULL);
     ASSERT(pfile4_ == NULL);
 
-    // Open file to be used by background thread
-    if (pfile1_ != NULL)
-	{
-		CString fileName;
-		if (bCompSelf)
-			fileName = tempFileA_;
-		else
-			fileName = pfile1_->GetFilePath();
-		ASSERT(!fileName.IsEmpty());
-
-		if (IsDevice())
-			pfile4_ = new CFileNC();
-		else
-			pfile4_ = new CFile64();
-		if (!pfile4_->Open(fileName, CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
-		{
-			TRACE1("Compare (file4) open failed for %p\n", this);
-			return false;
-		}
-	}
-
-	// Open any data files in use too, since we need to compare against the in-memory file
-	for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
-	{
-		ASSERT(data_file4_[ii] == NULL);
-		if (data_file_[ii] != NULL)
-			data_file4_[ii] = new CFile64(data_file_[ii]->GetFilePath(), 
-										  CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
-	}
-
 	if (!OpenCompFile())
 		return false;
 
     // Create new thread
-    TRACE1("===== Creating thread for %p\n", this);
 	comp_command_ = RESTART;
 	comp_state_ = STARTING;
 	comp_progress_ = 0;
@@ -627,6 +580,7 @@ bool CHexEditDoc::CreateCompThread()
 	pfile4_compare_->GetStatus(stat);
 	comp_[0].Reset(stat.m_mtime);
 
+    TRACE1("===== Creating thread for %p\n", this);
     pthread4_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
     ASSERT(pthread4_ != NULL);
 	return true;

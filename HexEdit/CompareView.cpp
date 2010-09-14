@@ -493,7 +493,8 @@ void CCompareView::OnDraw(CDC* pDC)
 
 	ASSERT(GetDocument()->ResultCount() > 0);
 	CTime tnew = GetDocument()->ResultTime(0);         // time of most recent comparison
-	CTime tearliest = tnew - CTimeSpan(0, 1, 0, 0);    // diffs up to an hour ago are shown in lighter shades
+	// xxx TBD make number of minutes before it completely disappears into a parameter
+	CTime tearliest = tnew - CTimeSpan(0, 0, 15, 0);   // older diffs are shown in lighter shades
 	for (int rr = 0; rr < GetDocument()->ResultCount(); ++rr)
 	{
 		COLORREF col, col2;   // colours for replace (underline) + delete, and also for inserts

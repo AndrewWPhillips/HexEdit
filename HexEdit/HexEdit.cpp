@@ -4137,6 +4137,7 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 
         bool file_closed = false;       // Did we have to close the active file (in order to attach it)?
         bool bg_search = false;         // Did we have to stop bg search before closing the file?
+		bool bg_comp = false;
         if (dlg.attach_)
         {
             mm.nFileCount = 1;
@@ -4164,6 +4165,11 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
                     pv->GetDocument()->StopSearch();
                     bg_search = true;
                 }
+				if (pv->GetDocument()->CompareDifferences() == -2)
+                {
+                    pv->GetDocument()->StopComp();
+                    bg_comp = true;
+                }
                 pv->GetDocument()->close_file();
                 file_closed = true;
             }
@@ -4179,8 +4185,10 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
             // Restart background search if it was stopped
             if (bg_search)
                 pv->GetDocument()->StartSearch();
+			if (bg_comp)
+				pv->GetDocument()->StartComp();
 
-			// xxx fix for aerial and compare threads too
+			// xxx TBD fix for aerial thread too
         }
 
         if (result == 0)

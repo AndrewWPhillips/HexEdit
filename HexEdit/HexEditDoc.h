@@ -648,7 +648,7 @@ public:
     void RemoveCompView();
     bool CreateCompThread();  // Create background thread which fills in the aerial view bitmap
     void KillCompThread();    // Kill background thread ASAP
-	bool IsWaiting();
+	bool IsCompWaiting();     // is compare thread in wait state?
 	void StartComp();
 	void StopComp();
 	bool GetCompareFile(bool bForcePrompt = false); // Get name of file to compare with
@@ -839,7 +839,7 @@ private:
 	bool OpenCompFile();
 	void CloseCompFile();
 	bool MakeTempFile();
-	bool bCompSelf;             // says if we are comparing with earlier version of same file
+	bool bCompSelf_;             // says if we are comparing with earlier version of same file
 	CString tempFileA_, tempFileB_; // when doing self-compare we need to make 2 temp copies of the file
 
     int cv_count_;              // Number of aerial views of this document
@@ -855,7 +855,7 @@ private:
 		friend class CHexEditDoc;
 
 	public:
-		void Reset(const CTime &tm) { m_addr.clear(); m_len.clear(); m_fileTime = tm; m_compTime = CTime::GetCurrentTime(); }
+		void Reset(const CTime &tm) { m_addr.clear(); m_len.clear(); m_fileTime = tm; }
 		void Final() { m_compTime = CTime::GetCurrentTime(); }
 
 	private:
