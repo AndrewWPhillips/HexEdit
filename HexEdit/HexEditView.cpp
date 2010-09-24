@@ -2300,7 +2300,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 
 			ASSERT(bdr_top_ > 0);
 			// Draw horiz line under ruler
-			pt.y = bdr_top_ - 3;
+			pt.y = bdr_top_ - 4;
 			pt.x = addr_width_*char_width - char_width - doc_rect.left + bdr_left_;
 			pDC->MoveTo(pt);
 			pt.x = 30000;
@@ -2320,7 +2320,7 @@ void CHexEditView::OnDraw(CDC* pDC)
                     if ((!display_.decimal_addr && !display_.line_nums && theApp.ruler_hex_nums_ > 1 && column%theApp.ruler_hex_nums_ == 0) ||
                         ((display_.decimal_addr || display_.line_nums) && theApp.ruler_dec_nums_ > 1 && column%theApp.ruler_dec_nums_ == 0) )
                         continue;       // skip when displaying a number at this posn
-        			pt.y = bdr_top_ - 4;
+        			pt.y = bdr_top_ - 5;
 					pt.x = hex_pos(column) - char_width/2 + horz;
                     if (column%group_by_ == 0)
                         pt.x -= char_width/2;
@@ -2335,7 +2335,7 @@ void CHexEditView::OnDraw(CDC* pDC)
                     if ((!display_.decimal_addr && !display_.line_nums && theApp.ruler_hex_nums_ > 1 && column%theApp.ruler_hex_nums_ == 0) ||
                         ((display_.decimal_addr || display_.line_nums) && theApp.ruler_dec_nums_ > 1 && column%theApp.ruler_dec_nums_ == 0) )
                         continue;       // skip when displaying a number at this posn
-        			pt.y = bdr_top_ - 4;
+        			pt.y = bdr_top_ - 5;
 					pt.x = char_pos(column) + horz;
                     if (display_.vert_display && column%group_by_ == 0)
                         if (column == rowsize_)    // skip last one
@@ -2357,7 +2357,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             if (display_.hex_addr && theApp.ruler_hex_nums_ > 1) hl_box = false;
 			if ((display_.decimal_addr || display_.line_nums) && theApp.ruler_dec_nums_ > 1) hl_box = false;
 
-			CRect hi_rect(-1, 0, -1, bdr_top_ - 3);
+			CRect hi_rect(-1, 0, -1, bdr_top_ - 4);
 			if (!hl_box)
 				hi_rect.top = hi_rect.bottom - 2;    // A flat rect just inside the ruler
             // Current caret position shown in the ruler
@@ -3836,15 +3836,15 @@ void CHexEditView::draw_adjusters(CDC* pDC)
     (void)pDC->SelectObject(psb);
 }
 
-// Draws row size adjsument handle in the ruler
+// Draws row size adjustment handle in the ruler
 void CHexEditView::draw_rowsize(CDC* pDC, int xpos)
 {
     pDC->BeginPath();
-    pDC->MoveTo(xpos + 2, bdr_top_ - 6);
-    pDC->LineTo(xpos,     bdr_top_ - 6);
-    pDC->LineTo(xpos - 3, bdr_top_ - 3);
-    pDC->LineTo(xpos,     bdr_top_);
-    pDC->LineTo(xpos + 2, bdr_top_);
+    pDC->MoveTo(xpos + 2, bdr_top_ - 7);
+    pDC->LineTo(xpos,     bdr_top_ - 7);
+    pDC->LineTo(xpos - 3, bdr_top_ - 4);
+    pDC->LineTo(xpos,     bdr_top_ - 1);
+    pDC->LineTo(xpos + 2, bdr_top_ - 1);
     pDC->EndPath();
     pDC->StrokeAndFillPath();
 }
@@ -3853,11 +3853,11 @@ void CHexEditView::draw_rowsize(CDC* pDC, int xpos)
 void CHexEditView::draw_offset(CDC* pDC, int xpos)
 {
     pDC->BeginPath();
-    pDC->MoveTo(xpos - 1, bdr_top_ - 5);
-    pDC->LineTo(xpos - 1, bdr_top_ - 1);
-    pDC->LineTo(xpos,     bdr_top_);
-    pDC->LineTo(xpos + 3, bdr_top_ - 3);
-    pDC->LineTo(xpos,     bdr_top_ - 6);
+    pDC->MoveTo(xpos - 1, bdr_top_ - 6);
+    pDC->LineTo(xpos - 1, bdr_top_ - 2);
+    pDC->LineTo(xpos,     bdr_top_ - 1);
+    pDC->LineTo(xpos + 3, bdr_top_ - 4);
+    pDC->LineTo(xpos,     bdr_top_ - 7);
     pDC->EndPath();
     pDC->StrokeAndFillPath();
 }
@@ -3866,11 +3866,11 @@ void CHexEditView::draw_offset(CDC* pDC, int xpos)
 void CHexEditView::draw_group_by(CDC* pDC, int xpos)
 {
     pDC->BeginPath();
-    pDC->MoveTo(xpos - 3, bdr_top_ - 6);
-    pDC->LineTo(xpos - 3, bdr_top_ - 4);
-    pDC->LineTo(xpos,     bdr_top_ - 1);
-    pDC->LineTo(xpos + 3, bdr_top_ - 4);
-    pDC->LineTo(xpos + 3, bdr_top_ - 6);
+    pDC->MoveTo(xpos - 3, bdr_top_ - 7);
+    pDC->LineTo(xpos - 3, bdr_top_ - 5);
+    pDC->LineTo(xpos,     bdr_top_ - 2);
+    pDC->LineTo(xpos + 3, bdr_top_ - 5);
+    pDC->LineTo(xpos + 3, bdr_top_ - 7);
     pDC->EndPath();
     pDC->StrokeAndFillPath();
 }
@@ -4202,7 +4202,7 @@ void CHexEditView::recalc_display()
 			bdr_top_ += text_height_;  // one row of text for hex offsets
 		if (display_.decimal_addr || display_.line_nums)
 			bdr_top_ += text_height_;  // one row of text for dec offsets
-		bdr_top_ += 4;                 // allow room for a thin line
+		bdr_top_ += 5;                 // allow room for a thin line
 	}
 #ifdef TEST_CLIPPING
 	bdr_top_ += 40;
@@ -4558,7 +4558,7 @@ void CHexEditView::DoUpdate()
 }
 
 // InvalidateRange - virtual function called from base class (CScrView) to cause redrawing of
-// the selection when it is chnaged due to mouse dragging or Shift+arrow keys.
+// the selection when it is changed due to mouse dragging or Shift+arrow keys.
 // When dragging with the mouse this function is called twice:
 // - once with f flag true and passing the whole selection
 // - once with f flag false and passing only the change in the selection
@@ -5652,7 +5652,7 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
     {
 		// Ruler background
 	    GetClientRect(rct);
-		rct.bottom = bdr_top_ - 2;
+		rct.bottom = bdr_top_ - 4;
         CBrush addrBrush;
         addrBrush.CreateSolidBrush(addr_bg_col_);
         addrBrush.UnrealizeObject();
@@ -7957,10 +7957,10 @@ BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
         ScreenToClient(&point);
 
 #ifdef RULER_ADJUST
-        if (point.y <= bdr_top_)
+        if (point.y < bdr_top_)
         {
 		    CPointAp pp = ConvertFromDP(point);          // Point in our coord system
-			if (point.y > bdr_top_ - 6 &&
+			if (point.y > bdr_top_ - 7 &&
                 (over_rowsize_adjuster(pp) || 
                  over_offset_adjuster(pp) || 
                  over_group_by_adjuster(pp)) )
