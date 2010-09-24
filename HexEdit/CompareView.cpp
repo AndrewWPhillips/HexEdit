@@ -693,7 +693,7 @@ void CCompareView::OnDraw(CDC* pDC)
 			              1 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
 		col2 = ::tone_down(phev_->comp_bg_col_, phev_->bg_col_,
 			               1 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
-		for (int dd = GetDocument()->FirstDiffAt(rr, first_virt); dd < GetDocument()->DiffCount(rr); ++dd)
+		for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->DiffCount(rr); ++dd)
 		{
 			FILE_ADDRESS addr;
 			int len;
@@ -1119,8 +1119,6 @@ void CCompareView::OnDraw(CDC* pDC)
         ShowCaret();
     }
 } // OnDraw
-
-#define USE_ROP2  1
 
 void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
                            int line_height, int char_width, int char_width_w,
@@ -1575,7 +1573,7 @@ void CCompareView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
     if (astart != pstart || aend != pend || row != prow)
     {
         // Move the caret/selection (THIS IS THE IMPORTANT BIT)
-		CScrView::SetSel(addr2pos(astart, row), addr2pos(aend, row), true);
+		SetSel(addr2pos(astart, row), addr2pos(aend, row), true);
     }
 
     DisplayCaret();                             // Make sure caret is in the display

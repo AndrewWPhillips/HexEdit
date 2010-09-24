@@ -655,15 +655,15 @@ public:
 	void StopComp();
 	bool GetCompareFile(bool bForcePrompt = false); // Get name of file to compare with
 	int CompareDifferences(int rr = 0);
-	int FirstDiffAt(int rr, FILE_ADDRESS from);     // returns index of first diff at or after address
+	int FirstDiffAt(bool other, int rr, FILE_ADDRESS from);     // returns index of first diff at or after address
 	int CompareProgress();
 	// The following look through all results (not just the latest)
 	void GetFirstDiffAll(FILE_ADDRESS &addr, int &len);
 	void GetPrevDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len);
 	void GetNextDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len);
 	void GetLastDiffAll(FILE_ADDRESS &addr, int &len);
-	int GetNextDiff(FILE_ADDRESS from, int rr = 0);
-	int GetPrevDiff(FILE_ADDRESS from, int rr = 0);
+	int GetNextDiff(bool other, FILE_ADDRESS from, int rr = 0);
+	int GetPrevDiff(bool other, FILE_ADDRESS from, int rr = 0);
 	CString GetCompFileName();
 	bool OrigFileHasChanged();
 	bool CompFileHasChanged();
@@ -862,15 +862,17 @@ private:
 		friend class CHexEditDoc;
 
 	public:
-		void Reset(const CTime &tm) { m_addr.clear(); m_len.clear(); m_fileTime = tm; }
+		enum Type { Deletion = -1, Replacement = 0, Insertion = 1, };
+		void Reset(const CTime &tm) { m_addrA.clear(); m_addrB.clear(); m_len.clear(); m_fileTime = tm; }
 		void Final() { m_compTime = CTime::GetCurrentTime(); }
 
 	private:
 		// These vectors store informations about each difference found.
 		// Each index corresponds to one difference - the vectors must always have the same length.
-		std::vector<__int64> m_addr;
-		std::vector<int> m_len;
-		// TODO: this will later be extended to have a vector of "type" (replace/insert/delete) and keep track of the 2 addresses (m_addrA, m_addrB instead of m_addr)
+		std::vector<__int64> m_addrA;  // address of difference in "original" file
+		std::vector<__int64> m_addrB;  // address of difference in "compare" file
+		std::vector<int> m_len;        // length of difference = bytes inserted/deleted/replaced
+		std::vector<Type> m_type;      // type of diff for file A (= opposite for file B)
 
 		CTime m_fileTime;        // file modification time when we did the compare (used to check for file changes)
 		CTime m_compTime;        // when we did the compare (used to "age" the diffs when comparing to oneself)
@@ -881,23 +883,23 @@ private:
 	// Number of results and number of differences in specified result
 	int ResultCount() const { CSingleLock sl(&docdata_, TRUE); return comp_.size(); }
 	const CTime & ResultTime(int rr) const { CSingleLock sl(&docdata_, TRUE); ASSERT(rr < comp_.size()); return comp_[rr].m_compTime; }
-	int DiffCount(int rr = 0) const { CSingleLock sl(&docdata_, TRUE); ASSERT(rr < comp_.size()); return comp_[rr].m_addr.size(); }
+	int DiffCount(int rr = 0) const { CSingleLock sl(&docdata_, TRUE); ASSERT(rr < comp_.size()); return comp_[rr].m_addrA.size(); }
 	// We need to be able to return differences from the point of view of the original file
 	// and the compared file.  For now these are the same but later there will be differences.
 	void GetOrigDiff(int rr, int idx, FILE_ADDRESS &addr, int &len)
 	{
 		CSingleLock sl(&docdata_, TRUE);
-		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addr.size());
-		ASSERT(comp_[rr].m_addr.size() == comp_[rr].m_len.size());
-		addr = comp_[rr].m_addr[idx];
+		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addrA.size());
+		ASSERT(comp_[rr].m_addrA.size() == comp_[rr].m_len.size());
+		addr = comp_[rr].m_addrA[idx];
 		len = comp_[rr].m_len[idx];
 	}
 	void GetCompDiff(int rr, int idx, FILE_ADDRESS &addr, int &len)
 	{
 		CSingleLock sl(&docdata_, TRUE);
-		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addr.size());
-		ASSERT(comp_[rr].m_addr.size() == comp_[rr].m_len.size());
-		addr = comp_[rr].m_addr[idx];
+		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addrB.size());
+		ASSERT(comp_[rr].m_addrB.size() == comp_[rr].m_len.size());
+		addr = comp_[rr].m_addrB[idx];
 		len = comp_[rr].m_len[idx];
 	}
 

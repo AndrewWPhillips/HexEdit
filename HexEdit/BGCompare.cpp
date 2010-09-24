@@ -223,16 +223,23 @@ size_t CHexEditDoc::GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc
 
 // Returns index of first diff at or after address 'from', which may be
 // the numbers of diffs if 'from' is past the last one.
-int CHexEditDoc::FirstDiffAt(int rr, FILE_ADDRESS from)
+// If we have a list of "historical" results then rr is the desired one, but a value
+// of zero for rr is always valid - gives the recent diffs (could be empty).
+// We can look through the diffs from the perspective of the original file (other==false)
+// or the comare file (other==true), since the addresses may be different between
+// them if there have been insertions/deletions.
+int CHexEditDoc::FirstDiffAt(bool other, int rr, FILE_ADDRESS from)
 {
+	std::vector<__int64> & addr = other ? comp_[rr].m_addrB : comp_[rr].m_addrA;
+
 	CSingleLock sl(&docdata_, TRUE);
 	int bot = 0;
-	int top = comp_[rr].m_addr.size();
+	int top = addr.size();
 	while (bot < top)
 	{
 		// Get the element roughly halfway in between (binary search)
 		int curr = (bot+top)/2;
-		if (from < comp_[rr].m_addr[curr])
+		if (from < addr[curr])
 			top = curr;         // now check bottom half
 		else
 			bot = curr + 1;     // check top half
@@ -257,8 +264,9 @@ int CHexEditDoc::CompareDifferences(int rr /*=0*/)
 		return -2;
 	}
 
-	ASSERT(rr >= 0 && rr < comp_.size());  // also ensures comp_ is not empty
-	return comp_[rr].m_addr.size(); 
+	ASSERT(rr >= 0 && rr < comp_.size());  // also ensures
+	ASSERT(comp_[rr].m_addrA.size() == comp_[rr].m_addrB.size());
+	return comp_[rr].m_addrA.size();
 }
 
 // Return how far our background compare has progressed as a percentage (0 to 100).
@@ -283,12 +291,12 @@ void CHexEditDoc::GetFirstDiffAll(FILE_ADDRESS &addr, int &len)
 
 	for (int rr = 0; rr < ResultCount(); ++rr)
 	{
-		if (comp_[rr].m_addr.size() == 0)
+		if (comp_[rr].m_addrA.size() == 0)
 			continue;    // no diffs at all in this result set
 
-		if (addr < 0 || comp_[rr].m_addr[0] < addr)
+		if (addr < 0 || comp_[rr].m_addrA[0] < addr)
 		{
-			addr = comp_[rr].m_addr[0];
+			addr = comp_[rr].m_addrA[0];
 			len  = comp_[rr].m_len[0];
 		}
 	}
@@ -301,7 +309,7 @@ void CHexEditDoc::GetPrevDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len
 
 	for (int rr = 0; rr < ResultCount(); ++rr)
 	{
-		int idx = FirstDiffAt(rr, from);
+		int idx = FirstDiffAt(false, rr, from);
 
 		CSingleLock sl(&docdata_, TRUE);
 		if (idx == 0)
@@ -309,10 +317,10 @@ void CHexEditDoc::GetPrevDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len
 
 		idx--;           // goto previous one
 
-		ASSERT(idx > -1 && idx < comp_[rr].m_addr.size());
-		if (addr < 0 || comp_[rr].m_addr[idx] + comp_[rr].m_len[idx] > addr + len)
+		ASSERT(idx > -1 && idx < comp_[rr].m_addrA.size());
+		if (addr < 0 || comp_[rr].m_addrA[idx] + comp_[rr].m_len[idx] > addr + len)
 		{
-			addr = comp_[rr].m_addr[idx];
+			addr = comp_[rr].m_addrA[idx];
 			len  = comp_[rr].m_len[idx];
 		}
 	}
@@ -325,16 +333,16 @@ void CHexEditDoc::GetNextDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len
 
 	for (int rr = 0; rr < ResultCount(); ++rr)
 	{
-		int idx = FirstDiffAt(rr, from);
+		int idx = FirstDiffAt(false, rr, from);
 
 		CSingleLock sl(&docdata_, TRUE);
-		if (idx == comp_[rr].m_addr.size())
+		if (idx == comp_[rr].m_addrA.size())
 			continue;     // past last diff in this result
 
-		ASSERT(idx > -1 && idx < comp_[rr].m_addr.size());
-		if (addr < 0 || comp_[rr].m_addr[idx] < addr)
+		ASSERT(idx > -1 && idx < comp_[rr].m_addrA.size());
+		if (addr < 0 || comp_[rr].m_addrA[idx] < addr)
 		{
-			addr = comp_[rr].m_addr[idx];
+			addr = comp_[rr].m_addrA[idx];
 			len  = comp_[rr].m_len[idx];
 		}
 	}
@@ -351,13 +359,13 @@ void CHexEditDoc::GetLastDiffAll(FILE_ADDRESS &addr, int &len)
 
 	for (int rr = 0; rr < ResultCount(); ++rr)
 	{
-		if (comp_[rr].m_addr.size() == 0)
+		if (comp_[rr].m_addrA.size() == 0)
 			continue;    // no diffs in this result set
 
-		int last = comp_[rr].m_addr.size() - 1;
-		if (addr < 0 || comp_[rr].m_addr[last] > addr)
+		int last = comp_[rr].m_addrA.size() - 1;
+		if (addr < 0 || comp_[rr].m_addrA[last] > addr)
 		{
-			addr = comp_[rr].m_addr[last];
+			addr = comp_[rr].m_addrA[last];
 			len  = comp_[rr].m_len[last];
 		}
 	}
@@ -368,7 +376,7 @@ void CHexEditDoc::GetLastDiffAll(FILE_ADDRESS &addr, int &len)
 // -2 = still in progress
 // -1 = no more diffs
 // else index of difference
-int CHexEditDoc::GetNextDiff(FILE_ADDRESS from, int rr /*=0*/)
+int CHexEditDoc::GetNextDiff(bool other, FILE_ADDRESS from, int rr /*=0*/)
 {
     if (pthread4_ == NULL)
         return -4;
@@ -379,14 +387,15 @@ int CHexEditDoc::GetNextDiff(FILE_ADDRESS from, int rr /*=0*/)
 			return -2;
 	}
 
-	int ii = FirstDiffAt(rr, from);
-	if (ii == comp_[rr].m_addr.size())
+	int ii = FirstDiffAt(other, rr, from);
+	ASSERT(comp_[rr].m_addrA.size() == comp_[rr].m_addrB.size());
+	if (ii == comp_[rr].m_addrA.size())
 		return -1;
 
 	return ii;
 }
 
-int CHexEditDoc::GetPrevDiff(FILE_ADDRESS from, int rr /*=0*/)
+int CHexEditDoc::GetPrevDiff(bool other, FILE_ADDRESS from, int rr /*=0*/)
 {
     if (pthread4_ == NULL)
         return -4;
@@ -397,13 +406,12 @@ int CHexEditDoc::GetPrevDiff(FILE_ADDRESS from, int rr /*=0*/)
 			return -2;
 	}
 
-	int ii = FirstDiffAt(rr, from);
+	int ii = FirstDiffAt(other, rr, from);
 	if (ii == 0)
 		return -1;
 
 	return ii - 1;
 }
-#endif
 
 // Open CompFile just opens the files for comparing.
 // Note when comparing that there are 4 files involved:
@@ -777,15 +785,18 @@ UINT CHexEditDoc::RunCompThread()
 				for ( ; pos < endpos; ++pos)
 					if (bufa[pos] != bufb[pos])
 						break;
-				result.m_addr.push_back(addr + pos);
+				// xxx for now addresses are alwasy the same
+				result.m_addrA.push_back(addr + pos);
+				result.m_addrB.push_back(addr + pos);
 
 				ASSERT(pos < endpos);   // must have found a difference
 				for ( ; pos < endpos; ++pos)
 					if (bufa[pos] == bufb[pos])
 						break;
 
-				result.m_len.push_back(int(addr + pos - result.m_addr.back()));
-				ASSERT(result.m_addr.size() == result.m_len.size());     // must always be same length
+				result.m_len.push_back(int(addr + pos - result.m_addrA.back()));
+				ASSERT(result.m_addrA.size() == result.m_len.size());     // must always be same length
+				ASSERT(result.m_addrA.size() == result.m_addrB.size());
 			}
 
 			addr += std::min(gota, gotb);

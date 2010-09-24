@@ -3134,6 +3134,10 @@ BEGIN
     ID_ANT_HL               "Indicate rows with highlights with marching ants\nHighlight Ants"
     ID_ANT_SEARCH           "Indicate rows containing the current search text with marching ants\nSearch Occurrences Ants"
     ID_ANT_BM               "Indicate rows containing bookmarks with marching ants\nBookmarks Ants"
+    ID_COMP_FIRST           "Jump to first recent difference\nFirst Diff"
+    ID_COMP_PREV            "Jump to previous recent difference\nPrev Diff"
+    ID_COMP_NEXT            "Jump to next recent difference\nNext Diff"
+    ID_COMP_LAST            "Jump to last recent difference\nLast Diff"
 END
 
 STRINGTABLE 
@@ -3170,10 +3174,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_COMP_FIRST           "Jump to first recent difference\nFirst Diff"
-    ID_COMP_PREV            "Jump to previous recent difference\nPrev Diff"
-    ID_COMP_NEXT            "Jump to next recent difference\nNext Diff"
-    ID_COMP_LAST            "Jump to last recent difference\nLast Diff"
     ID_COMP_ALL_FIRST       "Jump to first of all differences\nAll First Diff"
     ID_COMP_ALL_PREV        "Jump to previous of all differences\nAll Prev Diff"
     ID_COMP_ALL_NEXT        "Jump to next of all differences\nAll Next Diff"

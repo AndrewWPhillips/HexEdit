@@ -53,9 +53,39 @@
 // of byte values to the right and/or left of the display area.  It does this by
 // moving the borders in and turning off the clipping rectangle use in OnDraw
 // (see GetDisplayRect) and also drawing red border lines in OnEraseBkgnd.
-// Also note that when in vert_display mode that up to 3 lines can be drawn past
-// the top and bottom of the display area.
+// Also note that when in vert_display (stacked) mode that up to 3 lines can be
+// drawn past the top and bottom of the display area.
 //#define TEST_CLIPPING  1
+
+// A note on the selection:
+// 1. The selection is a contiguous set of bytes with a start address and a length.
+//    When a discontiguous "selection" is required we use the highlighter.
+// 2. The actual selection is kept track of in the base class (ScrView) members
+//    caretpos_ and selpos_.  SetCaret is used to set the caret with no selection
+//    (ie selection length s zero) so caretpos_ == selpos_.  There is also basepos_
+//    which is the start of the selection (ie either == caretpos_ or selpos_).
+// 3. At the basic level the selection is set/got using CSrcView::GetSel and SetSel,
+//    which are pixel based.  Since CScrView and its selection are text oriented there
+//    is also GetTSel and SetTSel which are character based.
+// 4. CScrView allows the caret to be at the start or end of the selection, which is
+//    why SetSel takes start/end positions plus a bool to says which end has the caret.
+// 5. SetSel calls ValidateCaret to find the closest valid caret position for the
+//    start and end positions.
+// 6. CHexEditView::GetSelAddr/SetSelAddr get/set the selection in terms of file
+//    addresses, by using addr2pos/pos2addr to convert between pixels and file addresses
+//    before calling CScrView::GetSel/SetSel.
+//    Similarly GetPos is the equivalent of GetCaret but returns a file address.
+// 7. To handle stacked mode addr2pos takes a row as well as an address.  The row
+//    can be a value of 0, 1, or 2 for the 3 rows when in stacked mode.
+// 8. At a higher level GoAddress will set the selection first making sure
+//    its parameters are a valid range.
+// 9. At an even higher level MoveToAddress allows setting the selection while
+//    updating everything else for consistency including:
+//   - scrolling the display to show the selection
+//   - storing undo information so the move can be undone
+//   - keeping track of nav points
+//   - updating jump tools with new address
+//   - updating properties dialog with value at caret, etc
 
 #define MAX_CLIPBOARD    32000000L  // Just a rough guideline - may make an option later
 
@@ -2700,7 +2730,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 			double amt = 0.8 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds());
 			col = ::tone_down(comp_col_, bg_col_, amt);
 			col2 = ::tone_down(comp_bg_col_, bg_col_, amt);
-			for (int dd = GetDocument()->FirstDiffAt(rr, first_virt); dd < GetDocument()->DiffCount(rr); ++dd)
+			for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->DiffCount(rr); ++dd)
 			{
 				FILE_ADDRESS addr;
 				int len;
@@ -9980,8 +10010,6 @@ void CHexEditView::OnUpdateClipboard(CCmdUI* pCmdUI)
     else
         pCmdUI->Enable(start != end);
 }
-
-
 
 bool CHexEditView::CopyToClipboard()
 {
@@ -18321,15 +18349,18 @@ void CHexEditView::AdjustColumns()
 // Command to go to first recent difference in compare view
 void CHexEditView::OnCompFirst()
 {
-	FILE_ADDRESS addr = -1;
-	int len;
-	// xxx
-	if (addr > -1)
+	if (GetDocument()->DiffCount(0) > 0)
+	{
+		FILE_ADDRESS addr;
+		int len;
+		GetDocument()->GetOrigDiff(0, 0, addr, len);
 		MoveToAddress(addr, addr+len);
+	}
 }
 
 void CHexEditView::OnUpdateCompFirst(CCmdUI* pCmdUI)
 {
+	pCmdUI->Enable(GetDocument()->DiffCount(0) > 0);
 }
 
 void CHexEditView::OnCompPrev()
@@ -18337,15 +18368,23 @@ void CHexEditView::OnCompPrev()
 	FILE_ADDRESS start, end;  // current selection
     GetSelAddr(start, end);
 
-	FILE_ADDRESS addr = -1;
-	int len;
-	// xxx
-	if (addr > -1)
+	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
+	if (idx < GetDocument()->DiffCount(0))
+	{
+		FILE_ADDRESS addr;
+		int len;
+		GetDocument()->GetOrigDiff(0, idx, addr, len);
 		MoveToAddress(addr, addr+len);
+	}
 }
 
 void CHexEditView::OnUpdateCompPrev(CCmdUI* pCmdUI)
 {
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+
+	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
+	pCmdUI->Enable(idx < GetDocument()->DiffCount(0));
 }
 
 void CHexEditView::OnCompNext()
@@ -18353,28 +18392,40 @@ void CHexEditView::OnCompNext()
 	FILE_ADDRESS start, end;  // current selection
     GetSelAddr(start, end);
 
-	FILE_ADDRESS addr = -1;
-	int len;
-	// xxx
-	if (addr > -1)
+	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
+	if (idx > 0)
+	{
+		FILE_ADDRESS addr;
+		int len;
+		GetDocument()->GetOrigDiff(0, idx, addr, len);
 		MoveToAddress(addr, addr+len);
+	}
 }
 
 void CHexEditView::OnUpdateCompNext(CCmdUI* pCmdUI)
 {
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+
+	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
+	pCmdUI->Enable(idx > 0);
 }
 
 void CHexEditView::OnCompLast()
 {
-	FILE_ADDRESS addr = -1;
-	int len;
-	// xxx
-	if (addr > -1)
+	int count = GetDocument()->DiffCount(0);
+	if (count > 0)
+	{
+		FILE_ADDRESS addr;
+		int len;
+		GetDocument()->GetOrigDiff(0, count - 1, addr, len);
 		MoveToAddress(addr, addr+len);
+	}
 }
 
 void CHexEditView::OnUpdateCompLast(CCmdUI* pCmdUI)
 {
+	pCmdUI->Enable(GetDocument()->DiffCount(0) > 0);
 }
 
 // Command to go to first of all differences (not just recent) in compare view
@@ -18382,7 +18433,7 @@ void CHexEditView::OnCompAllFirst()
 {
 	FILE_ADDRESS addr;
 	int len;
-	GetDocument()->GetFirstDiff(addr, len);
+	GetDocument()->GetFirstDiffAll(addr, len);
 	if (addr > -1)
 		MoveToAddress(addr, addr+len);
 }
@@ -18391,7 +18442,7 @@ void CHexEditView::OnUpdateCompAllFirst(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS addr;
 	int len;
-	GetDocument()->GetFirstDiff(addr, len);
+	GetDocument()->GetFirstDiffAll(addr, len);
 	pCmdUI->Enable(addr > -1);
 }
 
@@ -18402,7 +18453,7 @@ void CHexEditView::OnCompAllPrev()
 
 	FILE_ADDRESS addr;
 	int len;
-	GetDocument()->GetPrevDiff(start - 1, addr, len);
+	GetDocument()->GetPrevDiffAll(start - 1, addr, len);
 	if (addr > -1)
 		MoveToAddress(addr, addr+len);
 }
@@ -18414,7 +18465,7 @@ void CHexEditView::OnUpdateCompAllPrev(CCmdUI* pCmdUI)
 
 	FILE_ADDRESS addr;
 	int len;
-	GetDocument()->GetPrevDiff(start - 1, addr, len);
+	GetDocument()->GetPrevDiffAll(start - 1, addr, len);
 	pCmdUI->Enable(addr > -1);
 }
 
@@ -18425,7 +18476,7 @@ void CHexEditView::OnCompAllNext()
 
 	FILE_ADDRESS addr;
 	int len;
-	GetDocument()->GetNextDiff(end, addr, len);
+	GetDocument()->GetNextDiffAll(end, addr, len);
 	if (addr > -1)
 		MoveToAddress(addr, addr+len);
 }
@@ -18437,7 +18488,7 @@ void CHexEditView::OnUpdateCompAllNext(CCmdUI* pCmdUI)
 
 	FILE_ADDRESS addr;
 	int len;
-	GetDocument()->GetNextDiff(end, addr, len);
+	GetDocument()->GetNextDiffAll(end, addr, len);
 	pCmdUI->Enable(addr > -1);
 }
 
@@ -18445,7 +18496,7 @@ void CHexEditView::OnCompAllLast()
 {
 	FILE_ADDRESS addr;
 	int len;
-	GetDocument()->GetLastDiff(addr, len);
+	GetDocument()->GetLastDiffAll(addr, len);
 	if (addr > -1)
 		MoveToAddress(addr, addr+len);
 }
@@ -18454,7 +18505,7 @@ void CHexEditView::OnUpdateCompAllLast(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS addr;
 	int len;
-	GetDocument()->GetLastDiff(addr, len);
+	GetDocument()->GetLastDiffAll(addr, len);
 	pCmdUI->Enable(addr > -1);
 }
 

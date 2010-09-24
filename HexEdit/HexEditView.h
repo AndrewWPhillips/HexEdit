@@ -749,7 +749,7 @@ public:
     afx_msg void OnCompAllFirst();
 	afx_msg void OnUpdateCompAllFirst(CCmdUI* pCmdUI);
     afx_msg void OnCompAllPrev();
-	afx_msg void OnUpdateAllCompPrev(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateCompAllPrev(CCmdUI* pCmdUI);
     afx_msg void OnCompAllNext();
 	afx_msg void OnUpdateCompAllNext(CCmdUI* pCmdUI);
     afx_msg void OnCompAllLast();
