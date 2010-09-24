@@ -97,8 +97,9 @@ static char THIS_FILE[] = __FILE__;
 
 extern CHexEditApp theApp;
 
-BYTE CHexEditFontCombo::saved_charset = 147;  // (see BCGMisc.h) initially 147 to no match 
+BYTE CHexEditFontCombo::saved_charset = 147;  // (see BCGMisc.h) initially 147 to not match 
                                               // anything -> force initial rebuild of the font list
+static bool in_recalc_display = false;
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditView
@@ -4203,7 +4204,6 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 void CHexEditView::recalc_display()
 {
 	// Stop re-entry (can cause inf. recursion)
-	static bool in_recalc_display = false;
 	if (in_recalc_display) return;
 	in_recalc_display = true;
 
@@ -4357,6 +4357,7 @@ void CHexEditView::calc_addr_width()
 	++addr_width_;
 }
 
+// This is just called from recalc_display
 void CHexEditView::calc_autofit()
 {
     CRect cli;
@@ -5732,9 +5733,8 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
 
 void CHexEditView::OnSize(UINT nType, int cx, int cy) 
 {
-    if (cx == 0 && cy == 0)
+    if (cx == 0 && cy == 0 || in_recalc_display)
     {
-        // Not a "real" resize event
         CScrView::OnSize(nType, cx, cy);
         return;
     }
@@ -5742,6 +5742,9 @@ void CHexEditView::OnSize(UINT nType, int cx, int cy)
 
     if (display_.autofit && text_height_ > 0)
     {
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         // This is to try to stay at the same part of the file when in
         // autofit mode and we get multiple consecutive resize events
         if (resize_start_addr_ == -1 || resize_curr_scroll_ != GetScroll().y)
@@ -5762,6 +5765,9 @@ void CHexEditView::OnSize(UINT nType, int cx, int cy)
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
+
+		if (pcv_ != NULL)
+			pcv_->end_change();
     }
     else
         recalc_display();
@@ -6565,6 +6571,8 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 		adjusting_rowsize_ = -1;
         if (over_rowsize_adjuster(pp))
         {
+			if (pcv_ != NULL)
+				pcv_->begin_change();
             adjusting_rowsize_ = rowsize_;
             invalidate_adjuster(adjusting_rowsize_);
 		    SetCapture();
@@ -6575,6 +6583,8 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
         adjusting_offset_ = -1;
         if (over_offset_adjuster(pp))
         {
+			if (pcv_ != NULL)
+				pcv_->begin_change();
             adjusting_offset_ = offset_;
             invalidate_adjuster(adjusting_offset_);
 		    SetCapture();
@@ -6584,6 +6594,8 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
         adjusting_group_by_ = -1;
         if (over_group_by_adjuster(pp))
         {
+			if (pcv_ != NULL)
+				pcv_->begin_change();
             adjusting_group_by_ = group_by_;
             invalidate_adjuster(adjusting_group_by_);
 		    SetCapture();
@@ -6679,6 +6691,8 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
         pt.x = 0;
         SetScroll(pt);
 
+		if (pcv_ != NULL)
+			pcv_->end_change();
         DoInvalidate();
         ReleaseCapture();
         adjusting_rowsize_ = -1;
@@ -6694,6 +6708,9 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
         if (real_offset_ >= rowsize_)
             offset_ = rowsize_ - 1;
         recalc_display();
+
+		if (pcv_ != NULL)
+			pcv_->end_change();
         DoInvalidate();
         ReleaseCapture();
         adjusting_offset_ = -1;
@@ -6707,6 +6724,9 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
         undo_.back().rowsize = group_by_;              // Save previous group_by for undo
         group_by_ = adjusting_group_by_;
         recalc_display();
+
+		if (pcv_ != NULL)
+			pcv_->end_change();
         DoInvalidate();
         ReleaseCapture();
         adjusting_group_by_ = -1;
@@ -12024,6 +12044,9 @@ BOOL CHexEditView::do_undo()
         else
             lf_ = *(undo_.back().plf);
 
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         redo_font();
 
         // Calculate new position based on new font size
@@ -12034,6 +12057,10 @@ BOOL CHexEditView::do_undo()
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
         if (caret_displayed)
             DisplayCaret();                     // Keep caret within display
+
+		if (pcv_ != NULL)
+			pcv_->end_change();
+
         DoInvalidate();
         mess += "Undo: font restored ";
         break;
@@ -12059,6 +12086,9 @@ BOOL CHexEditView::do_undo()
     {
         FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
 
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         rowsize_ = undo_.back().rowsize;
 		offset_ = real_offset_;
         if (offset_ >= rowsize_)
@@ -12076,11 +12106,17 @@ BOOL CHexEditView::do_undo()
 
         if (caret_displayed)
             DisplayCaret();     // Keep caret within display
+		if (pcv_ != NULL)
+			pcv_->end_change();
+
         DoInvalidate();
     }
     break;
 
     case undo_group_by:
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         group_by_ = undo_.back().rowsize;
         recalc_display();
         if (end_base)
@@ -12089,10 +12125,16 @@ BOOL CHexEditView::do_undo()
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
         if (caret_displayed)
             DisplayCaret();     // Keep caret within display
+		if (pcv_ != NULL)
+			pcv_->end_change();
+
         DoInvalidate();
         break;
 
     case undo_offset:
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         real_offset_ = offset_ = undo_.back().rowsize;
         if (real_offset_ >= rowsize_)
             offset_ = rowsize_ - 1;
@@ -12103,12 +12145,18 @@ BOOL CHexEditView::do_undo()
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
         if (caret_displayed)
             DisplayCaret();     // Keep caret within display
+		if (pcv_ != NULL)
+			pcv_->end_change();
+
         DoInvalidate();
         break;
 
     case undo_autofit:
     {
         FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         // If rowsize has been specified then autofit is now off (undo turn on)
         display_.autofit = undo_.back().rowsize == 0;
         if (!display_.autofit)
@@ -12132,6 +12180,9 @@ BOOL CHexEditView::do_undo()
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
         if (caret_displayed)
             DisplayCaret();     // Keep caret within display
+		if (pcv_ != NULL)
+			pcv_->end_change();
+
         DoInvalidate();
     }
     break;
@@ -12331,6 +12382,9 @@ void CHexEditView::OnFontInc()
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
+	if (pcv_ != NULL)
+		pcv_->begin_change();
+
     // Save font for undo
     LOGFONT *plf = new LOGFONT;
     *plf = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;
@@ -12401,6 +12455,9 @@ void CHexEditView::OnFontInc()
         SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
     if (caret_displayed)
         DisplayCaret();                 // Keep caret within display
+	if (pcv_ != NULL)
+		pcv_->end_change();
+
     DoInvalidate();
     undo_.push_back(view_undo(undo_font));      // Allow undo of font change
     undo_.back().plf = plf;
@@ -12442,6 +12499,9 @@ void CHexEditView::OnFontDec()
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
+
+	if (pcv_ != NULL)
+		pcv_->begin_change();
 
     // Save font for undo
     LOGFONT *plf = new LOGFONT;
@@ -12513,6 +12573,9 @@ void CHexEditView::OnFontDec()
         SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
     if (caret_displayed)
         DisplayCaret();                 // Keep caret within display
+	if (pcv_ != NULL)
+		pcv_->end_change();
+
     DoInvalidate();
     undo_.push_back(view_undo(undo_font));      // Allow undo of font change
     undo_.back().plf = plf;
@@ -12730,6 +12793,9 @@ void CHexEditView::do_font(LOGFONT *plf)
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 
+	if (pcv_ != NULL)
+		pcv_->begin_change();
+
     // Save current LOGFONT for undo
     LOGFONT *prev_lf = new LOGFONT;
     if (display_.FontRequired() == FONT_OEM)
@@ -12779,6 +12845,9 @@ void CHexEditView::do_font(LOGFONT *plf)
         SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
     if (caret_displayed)
         DisplayCaret();                 // Keep caret within display
+	if (pcv_ != NULL)
+		pcv_->end_change();
+
     DoInvalidate();
     undo_.push_back(view_undo(undo_font));      // Allow undo of font change
     undo_.back().plf = prev_lf;
@@ -12791,6 +12860,9 @@ void CHexEditView::change_rowsize(int rowsize)
 {
     if (rowsize != rowsize_)
     {
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
 
         FILE_ADDRESS start_addr, end_addr;
@@ -12814,6 +12886,9 @@ void CHexEditView::change_rowsize(int rowsize)
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
+		if (pcv_ != NULL)
+			pcv_->end_change();
+
         DoInvalidate();
     }
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_rowsize, rowsize);
@@ -12823,6 +12898,9 @@ void CHexEditView::change_group_by(int group_by)
 {
     if (group_by != group_by_)
     {
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         FILE_ADDRESS start_addr, end_addr;
         BOOL end_base = GetSelAddr(start_addr, end_addr);
         int row = 0;
@@ -12838,6 +12916,9 @@ void CHexEditView::change_group_by(int group_by)
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
+		if (pcv_ != NULL)
+			pcv_->end_change();
+
         DoInvalidate();
     }
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_group_by, group_by);
@@ -12847,6 +12928,9 @@ void CHexEditView::change_offset(int offset)
 {
     if (offset != real_offset_)
     {
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         FILE_ADDRESS start_addr, end_addr;
         BOOL end_base = GetSelAddr(start_addr, end_addr);
         int row = 0;
@@ -12862,6 +12946,9 @@ void CHexEditView::change_offset(int offset)
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
+		if (pcv_ != NULL)
+			pcv_->end_change();
+
         DoInvalidate();
     }
     ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_offset, offset);
@@ -12877,6 +12964,9 @@ void CHexEditView::do_autofit(int state /*=-1*/)
 {
     CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+
+	if (pcv_ != NULL)
+		pcv_->begin_change();
 
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
@@ -12919,6 +13009,9 @@ void CHexEditView::do_autofit(int state /*=-1*/)
         SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
     if (caret_displayed)
         DisplayCaret(); // Keep caret within display
+	if (pcv_ != NULL)
+		pcv_->end_change();
+
     DoInvalidate();
 
     aa->SaveToMacro(km_autofit, state);
@@ -12935,6 +13028,9 @@ void CHexEditView::OnColumnDec()
 {
     if (rowsize_ > 4)
     {
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         FILE_ADDRESS start_addr, end_addr;
         BOOL end_base = GetSelAddr(start_addr, end_addr);
         int row = 0;
@@ -12959,6 +13055,9 @@ void CHexEditView::OnColumnDec()
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
+		if (pcv_ != NULL)
+			pcv_->end_change();
+
         DoInvalidate();
 
         resize_curr_scroll_ = GetScroll().y;   // Save current pos so we can check if we are at the same place later
@@ -12975,6 +13074,9 @@ void CHexEditView::OnColumnInc()
 {
     if (rowsize_ < max_buf)
     {
+		if (pcv_ != NULL)
+			pcv_->begin_change();
+
         FILE_ADDRESS start_addr, end_addr;
         BOOL end_base = GetSelAddr(start_addr, end_addr);
         int row = 0;
@@ -12999,6 +13101,9 @@ void CHexEditView::OnColumnInc()
             SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
         else
             SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
+		if (pcv_ != NULL)
+			pcv_->end_change();
+
         DoInvalidate();
 
         resize_curr_scroll_ = GetScroll().y;   // Save current pos so we can check if we are at the same place later
@@ -13036,6 +13141,9 @@ void CHexEditView::begin_change()
     CHECK_SECURITY(21);
 
     previous_state_ = disp_state_;
+
+	if (pcv_ != NULL)
+		pcv_->begin_change();
 }
 
 // Return ptoo or TRUE if it added to the undo stack
@@ -13075,6 +13183,9 @@ void CHexEditView::end_change()
     if (previous_caret_displayed_)
         DisplayCaret();                 // Keep caret within display
     DoInvalidate();
+
+	if (pcv_ != NULL)
+		pcv_->end_change();
 
     // Make sure calculator big-endian checkbox is correct
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -17930,11 +18041,12 @@ bool CHexEditView::DoDffdSplit()
 
 	pdfv_ = (CDataFormatView *)psplitter->GetPane(0, 0);
 	ASSERT_KINDOF(CDataFormatView, pdfv_);
-	psplitter->RecalcLayout();
-	AdjustColumns();
 
 	// Make sure dataformat view knows which hex view it is assoc. with
 	pdfv_->phev_ = this;
+
+	psplitter->RecalcLayout();
+	AdjustColumns();
 	return true;
 }
 void CHexEditView::OnUpdateDffdSplit(CCmdUI* pCmdUI) 
@@ -17977,10 +18089,10 @@ bool CHexEditView::DoDffdTab()
 	pdfv_ = (CDataFormatView *)ptv->GetActiveView();
 	ASSERT_KINDOF(CDataFormatView, pdfv_);
 
-	ptv->SetActiveView(0);
-
 	// Make sure dataformat view knows which hex view it is assoc. with
 	pdfv_->phev_ = this;
+
+	ptv->SetActiveView(0);
 	return true;
 }
 void CHexEditView::OnUpdateDffdTab(CCmdUI* pCmdUI) 
@@ -18083,12 +18195,14 @@ bool CHexEditView::DoAerialSplit(bool init /*=true*/)
 
 	pav_ = (CAerialView *)psplitter->GetPane(0, snum_t + 1);
 	ASSERT_KINDOF(CAerialView, pav_);
+
+	// Make sure aerial view knows which hex view it is assoc. with
+	pav_->phev_ = this;
+
 	psplitter->SetColumnInfo(snum_t, rr.Width() - split_width_a_, 10);
 	psplitter->RecalcLayout();
 	AdjustColumns();
 
-	// Make sure aerial view knows which hex view it is assoc. with
-	pav_->phev_ = this;
 	if (init)
 	    pav_->SendMessage(WM_INITIALUPDATE);
 
@@ -18138,6 +18252,7 @@ bool CHexEditView::DoAerialTab(bool init /*=true*/)
 	
 	// Make sure aerial view knows which hex view it is assoc. with
 	pav_->phev_ = this;
+
 	ptv->SetActiveView(0);
 	if (init)
 	    pav_->SendMessage(WM_INITIALUPDATE);
@@ -18263,12 +18378,13 @@ bool CHexEditView::DoCompSplit(bool init /*=true*/)
 
 	pcv_ = (CCompareView *)psplitter->GetPane(0, snum_t + 1);
 	ASSERT_KINDOF(CCompareView, pcv_);
+	pcv_->phev_ = this;
+
 	psplitter->SetColumnInfo(snum_t, rr.Width() - split_width_c_, 10);
 	psplitter->RecalcLayout();
 	AdjustColumns();
 
 	// Make sure compare view knows which hex view it is assoc. with
-	pcv_->phev_ = this;
 	if (init)
 	    pcv_->SendMessage(WM_INITIALUPDATE);
 
@@ -18323,6 +18439,7 @@ bool CHexEditView::DoCompTab(bool init /*=true*/)
 	
 	// Make sure compare view knows which hex view it is assoc. with
 	pcv_->phev_ = this;
+
 	ptv->SetActiveView(0);
 	if (init)
 	    pcv_->SendMessage(WM_INITIALUPDATE);

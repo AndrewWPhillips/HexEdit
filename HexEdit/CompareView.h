@@ -180,6 +180,13 @@ private:
 	void recalc_display();
     int addr_width_;            // How much room in display does address area take?
     int hex_width_, dec_width_, num_width_; // Components of addr_width_
+
+    void begin_change();                        // Store current state etc
+    void end_change();                          // Fix display etc
+    BOOL previous_caret_displayed_;
+    FILE_ADDRESS previous_start_addr_, previous_end_addr_; // selection
+    BOOL previous_end_base_;
+    int previous_row_;                          // row (0-2) if vert_display
 };
 
 #endif // COMPAREVIEW_INCLUDED

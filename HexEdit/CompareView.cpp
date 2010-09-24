@@ -269,7 +269,11 @@ void CCompareView::OnInitialUpdate()
 
 void CCompareView::OnDraw(CDC* pDC)
 {
-    if (phev_ == NULL || phev_->pfont_ == NULL) return;
+    if (phev_ == NULL || phev_->pfont_ == NULL ||
+		GetDocument()->CompareDifferences() == -4)
+	{
+		return;   // We're not yet ready to draw anything
+	}
 
     pDC->SetBkMode(TRANSPARENT);
 
@@ -683,37 +687,27 @@ void CCompareView::OnDraw(CDC* pDC)
     pDC->SelectObject(psaved_pen);      // restore pen after drawing borders etc
 
 	ASSERT(GetDocument()->ResultCount() > 0);
-	CTime tnew = GetDocument()->ResultTime(0);         // time of most recent comparison
-	// xxx TBD make number of minutes before it completely disappears into a parameter
-	CTime tearliest = tnew - CTimeSpan(0, 0, 15, 0);   // older diffs are shown in lighter shades
-	for (int rr = 0; rr < GetDocument()->ResultCount(); ++rr)
+
+	// Just display most recent diffs (0) which is how this file differs from the original
+	for (int dd = GetDocument()->FirstDiffAt(false, 0, first_virt); dd < GetDocument()->CompareDifferences(0); ++dd)
 	{
-		COLORREF col, col2;   // colours for replace (underline) + delete, and also for inserts
-		CTime tt = GetDocument()->ResultTime(rr);
-		if (tt < tearliest)
-			continue;
-		col = ::tone_down(phev_->comp_col_, phev_->bg_col_,
-			              1 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
-		col2 = ::tone_down(phev_->comp_bg_col_, phev_->bg_col_,
-			               1 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
-		for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->CompareDifferences(rr); ++dd)
-		{
-			FILE_ADDRESS addr;
-			int len;
+		FILE_ADDRESS addr;
+		int len;
 
-			GetDocument()->GetCompDiff(rr, dd, addr, len);
+		GetDocument()->GetCompDiff(0, dd, addr, len);
 
-			if (addr + len < first_virt)
-				continue;         // before top of window
-			else if (addr >= last_virt)
-				break;            // after end of window
+		if (addr + len < first_virt)
+			continue;         // before top of window
+		else if (addr >= last_virt)
+			break;            // after end of window
 
-			draw_bg(pDC, doc_rect, neg_x, neg_y,
-					line_height, char_width, char_width_w, col,
-					max(addr, first_addr), 
-					min(addr+len, last_addr),
-					(pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8);
-		}
+		// TBD xxx need to handle inserts/deletes here one day
+		draw_bg(pDC, doc_rect, neg_x, neg_y,
+				line_height, char_width, char_width_w,
+				phev_->comp_col_,
+				max(addr, first_addr), 
+				min(addr+len, last_addr),
+				(pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8);
 	}
 
 	unsigned char buf[CHexEditView::max_buf];  // Holds bytes for current line being displayed
@@ -861,13 +855,16 @@ void CCompareView::OnDraw(CDC* pDC)
         // Keep track of the current colour so we only set it when it changes
         COLORREF current_colour = phev_->kala[buf[ii]];
         pDC->SetTextColor(current_colour);
+
+		// Display hex values or stacked
         if (phev_->display_.vert_display || phev_->display_.hex_area)
         {
             int posx = tt.left + hex_pos(0, char_width);                 // Horiz pos of 1st hex column
 
-            // Display each byte as hex (and char if nec.)
+            // Display each byte in the row as hex (and char if nec.)
             for (size_t jj = ii ; jj < last_col; ++jj)
             {
+				// First eliminate anything to left or right of the display area
                 if (phev_->display_.vert_display)
                 {
                     if (posx + int(jj + 1 + jj/phev_->group_by_)*char_width_w < 0)
@@ -883,6 +880,7 @@ void CCompareView::OnDraw(CDC* pDC)
                         break;
                 }
 
+				// Change colour if byte range has changed
                 if (current_colour != phev_->kala[buf[jj]])
                 {
                     current_colour = phev_->kala[buf[jj]];
@@ -956,6 +954,7 @@ void CCompareView::OnDraw(CDC* pDC)
             }
         }
 
+		// Display char values (for char and hex+char modes but not stacked mode)
         if (!phev_->display_.vert_display && phev_->display_.char_area)
         {
             // Keep track of the current colour so we only set it when it changes
@@ -1721,6 +1720,30 @@ void CCompareView::recalc_display()
         SetSize(CSize(hex_pos(phev_->rowsize_-1)+2*phev_->text_width_+phev_->text_width_/2+1, -1));
     }
 } /* recalc_display() */
+
+// This allows the compre view to keep track of it's current selection before
+// a display change that may invalidate the CScrView (displayed) selection
+void CCompareView::begin_change()
+{
+    previous_caret_displayed_ = CaretDisplayed();
+    previous_end_base_ = GetSelAddr(previous_start_addr_, previous_end_addr_);
+    previous_row_ = 0;
+    if (previous_start_addr_ == previous_end_addr_ && phev_->display_.vert_display)
+        previous_row_ = pos2row(GetCaret());
+}
+
+void CCompareView::end_change()
+{
+    //recalc_display();
+    if (!phev_->display_.vert_display) previous_row_ = 0;  // If vert mode turned off make sure row is zero
+    if (previous_end_base_)
+        SetSel(addr2pos(previous_end_addr_, previous_row_), addr2pos(previous_start_addr_, previous_row_), true);
+    else
+        SetSel(addr2pos(previous_start_addr_, previous_row_), addr2pos(previous_end_addr_, previous_row_));
+    if (previous_caret_displayed_)
+        DisplayCaret();                 // Keep caret within display
+    DoInvalidate();
+}
 
 void CCompareView::calc_addr_width(FILE_ADDRESS length)
 {
