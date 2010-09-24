@@ -3128,7 +3128,7 @@ void CDataFormatView::SelectAt(FILE_ADDRESS addr)
 
     // Make sure the line is visible and select it
     show_row(elt);
-    BOOL bb = phev_->AutoSyncDffd();
+    bool bb = phev_->AutoSyncDffd();
     phev_->SetAutoSyncDffd(FALSE);
     grid_.SetSelectedRange(elt + grid_.GetFixedRowCount(), grid_.GetFixedColumnCount(),
                            elt + grid_.GetFixedRowCount(), grid_.GetColumnCount()-1);

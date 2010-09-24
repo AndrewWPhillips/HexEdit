@@ -883,7 +883,6 @@ private:
 	// Number of results and number of differences in specified result
 	int ResultCount() const { CSingleLock sl(&docdata_, TRUE); return comp_.size(); }
 	const CTime & ResultTime(int rr) const { CSingleLock sl(&docdata_, TRUE); ASSERT(rr < comp_.size()); return comp_[rr].m_compTime; }
-	int DiffCount(int rr = 0) const { CSingleLock sl(&docdata_, TRUE); ASSERT(rr < comp_.size()); return comp_[rr].m_addrA.size(); }
 	// We need to be able to return differences from the point of view of the original file
 	// and the compared file.  For now these are the same but later there will be differences.
 	void GetOrigDiff(int rr, int idx, FILE_ADDRESS &addr, int &len)

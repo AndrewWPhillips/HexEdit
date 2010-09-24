@@ -1570,6 +1570,7 @@
 #define ID_ANT_HL                       39122
 #define ID_ANT_SEARCH                   39123
 #define ID_ANT_BM                       39124
+#define ID_COMP_AUTO_SYNC               39130
 #define ID_COMP_ALL_DUMMY               39131
 #define ID_COMP_FIRST                   39132
 #define ID_COMP_PREV                    39133
@@ -1588,7 +1589,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        436
-#define _APS_NEXT_COMMAND_VALUE         39151
+#define _APS_NEXT_COMMAND_VALUE         39150
 #define _APS_NEXT_CONTROL_VALUE         1596
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

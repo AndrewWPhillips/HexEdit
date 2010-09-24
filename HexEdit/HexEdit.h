@@ -178,6 +178,7 @@ struct display_bits
 	unsigned int addrbase1: 1;      // Addresses start at 1 not zero
 
     unsigned int auto_sync_aerial: 1;   // Automatically sync aerial view and main view selections
+    unsigned int auto_sync_comp: 1;     // Automatically sync compare and hex view selections
 
 	// Returns font required for display: currently ANSI unless displaying char area and OEM char set selected
 	font_t FontRequired() { return char_area && char_set == CHARSET_OEM ? FONT_OEM : FONT_ANSI; }

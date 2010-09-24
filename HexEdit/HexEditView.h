@@ -257,8 +257,12 @@ public:
 #endif
     BOOL MouseDown() const { return BOOL(mouse_down_); }
 	BOOL DecAddresses() const { return !display_.hex_addr; }  // Now that user can show both addresses at once this is probably the best return value
-    BOOL AutoSyncDffd() const { return display_.auto_sync_dffd; }
-    void SetAutoSyncDffd(BOOL b) { display_.auto_sync_dffd = b; }
+    bool AutoSyncDffd() const { return display_.auto_sync_dffd; }
+    void SetAutoSyncDffd(bool b = true) { display_.auto_sync_dffd = b; }
+
+    BOOL AutoSyncCompare() const { return display_.auto_sync_comp; }
+    void SetAutoSyncCompare(bool b = true) { display_.auto_sync_comp = b; }
+
     BOOL BigEndian() const { return display_.big_endian; }
     void SetBigEndian(BOOL b) { display_.big_endian = b; }
 
@@ -738,6 +742,9 @@ public:
 	afx_msg void OnSelScheme();
 	afx_msg void OnUpdateScheme(CCmdUI* pCmdUI);
 
+	// Added in 4.0
+    afx_msg void OnCompAutoSync();
+    afx_msg void OnUpdateCompAutoSync(CCmdUI* pCmdUI);
     afx_msg void OnCompFirst();
 	afx_msg void OnUpdateCompFirst(CCmdUI* pCmdUI);
     afx_msg void OnCompPrev();

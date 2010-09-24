@@ -693,7 +693,7 @@ void CCompareView::OnDraw(CDC* pDC)
 			              1 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
 		col2 = ::tone_down(phev_->comp_bg_col_, phev_->bg_col_,
 			               1 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds()));
-		for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->DiffCount(rr); ++dd)
+		for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->CompareDifferences(rr); ++dd)
 		{
 			FILE_ADDRESS addr;
 			int len;
@@ -1574,6 +1574,13 @@ void CCompareView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
     {
         // Move the caret/selection (THIS IS THE IMPORTANT BIT)
 		SetSel(addr2pos(astart, row), addr2pos(aend, row), true);
+
+		if (phev_->AutoSyncCompare())
+		{
+			phev_->SetAutoSyncCompare(false);  // avoid inf. recursion
+			phev_->MoveWithDesc("Compare Auto-sync", astart, aend, -1, -1, FALSE, FALSE, row);
+			phev_->SetAutoSyncCompare(true);
+		}
     }
 
     DisplayCaret();                             // Make sure caret is in the display

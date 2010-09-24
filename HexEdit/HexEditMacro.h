@@ -298,7 +298,10 @@ enum km_type
 
 	// Added in 3.2
 	km_compress,                // 1 = compress, 2 = decompress, 0 = settings dlg
-    km_last // = 241?           // Keep at end
+
+	// Added in 4.0
+    km_comp_sync,               // 255 = sync now, 2 = toggle auto sync
+    km_last // = 242?           // Keep at end
 };
 
 // If/when we reach 255 we can recycle km_unused, km_invert, km_neg/km_inc/km_flip* etc

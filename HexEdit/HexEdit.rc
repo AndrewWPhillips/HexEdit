@@ -812,6 +812,7 @@ BEGIN
         MENUITEM "All Previous Difference",     ID_COMP_ALL_PREV
         MENUITEM "All Next Difference",         ID_COMP_ALL_NEXT
         MENUITEM "All Last Difference",         ID_COMP_ALL_LAST
+        MENUITEM "&Auto Sync",                  ID_COMP_AUTO_SYNC
     END
     POPUP "&Tools"
     BEGIN

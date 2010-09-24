@@ -596,6 +596,8 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_CBN_SELENDOK(ID_SCHEME_US, OnSelScheme)
     ON_UPDATE_COMMAND_UI(ID_SCHEME_US, OnUpdateScheme)
 
+    ON_COMMAND(ID_COMP_AUTO_SYNC, OnCompAutoSync)
+    ON_UPDATE_COMMAND_UI(ID_COMP_AUTO_SYNC, OnUpdateCompAutoSync)
     ON_COMMAND(ID_COMP_FIRST, OnCompFirst)
     ON_COMMAND(ID_COMP_PREV, OnCompPrev)
     ON_COMMAND(ID_COMP_NEXT, OnCompNext)
@@ -2730,7 +2732,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 			double amt = 0.8 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds());
 			col = ::tone_down(comp_col_, bg_col_, amt);
 			col2 = ::tone_down(comp_bg_col_, bg_col_, amt);
-			for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->DiffCount(rr); ++dd)
+			for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->CompareDifferences(rr); ++dd)
 			{
 				FILE_ADDRESS addr;
 				int len;
@@ -5500,7 +5502,11 @@ void CHexEditView::show_pos(FILE_ADDRESS address /*=-1*/, BOOL no_dffd /*=FALSE*
     CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
     CString ss;         // String to hold text of edit box
 
-    if (address < 0) address = GetPos();
+	FILE_ADDRESS end;
+    if (address < 0)
+		GetSelAddr(address, end);
+	else
+		end = address;
 
 #if 0 // BCG (this is handled by calls to AfxGetApp()->OnIdle(0) in searches/compares)
     // Set the hex address edit box
@@ -5521,11 +5527,13 @@ void CHexEditView::show_pos(FILE_ADDRESS address /*=-1*/, BOOL no_dffd /*=FALSE*
 //    TRACE1("---- Address set to %ld\n", long(address));
     ((CMainFrame *)AfxGetMainWnd())->SetAddress(address);  // for ON_UPDATE_COMMAND_UI to fix displayed addresses
 #endif
-    // Move to correspoding element in DFFD view
+    // Move to corresponding place in other views if sync on
     if (pdfv_ != NULL && !no_dffd && display_.auto_sync_dffd)
         pdfv_->SelectAt(address);
     if (pav_ != NULL && display_.auto_sync_aerial)
         pav_->ShowPos(address);
+	if (pcv_ != NULL && display_.auto_sync_comp)
+		pcv_->MoveToAddress(address, end);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -13962,7 +13970,7 @@ void CHexEditView::OnUpdateTrackChanges(CCmdUI* pCmdUI)
     pCmdUI->SetCheck(!(display_.hide_replace && display_.hide_insert && display_.hide_delete));
 }
 
-void CHexEditView::OnDffdAutoSync() 
+void CHexEditView::OnDffdAutoSync()
 {
     if (pdfv_ == NULL)
     {
@@ -17819,7 +17827,7 @@ void CHexEditView::OnDffdHide()
 }
 void CHexEditView::OnUpdateDffdHide(CCmdUI* pCmdUI) 
 {
-    pCmdUI->Enable(TRUE);
+    //pCmdUI->Enable(TRUE);
     pCmdUI->SetCheck(TemplateViewType() == 0);
 }
 
@@ -17977,7 +17985,7 @@ void CHexEditView::OnAerialHide()
 
 void CHexEditView::OnUpdateAerialHide(CCmdUI* pCmdUI) 
 {
-    pCmdUI->Enable(TRUE);
+    //pCmdUI->Enable(TRUE);
     pCmdUI->SetCheck(AerialViewType() == 0);
 }
 
@@ -18152,7 +18160,7 @@ void CHexEditView::OnCompHide()
 
 void CHexEditView::OnUpdateCompHide(CCmdUI* pCmdUI) 
 {
-    pCmdUI->Enable(TRUE);
+    //pCmdUI->Enable(TRUE);
     pCmdUI->SetCheck(CompViewType() == 0);
 }
 
@@ -18349,7 +18357,7 @@ void CHexEditView::AdjustColumns()
 // Command to go to first recent difference in compare view
 void CHexEditView::OnCompFirst()
 {
-	if (GetDocument()->DiffCount(0) > 0)
+	if (GetDocument()->CompareDifferences() > 0)
 	{
 		FILE_ADDRESS addr;
 		int len;
@@ -18360,7 +18368,7 @@ void CHexEditView::OnCompFirst()
 
 void CHexEditView::OnUpdateCompFirst(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(GetDocument()->DiffCount(0) > 0);
+	pCmdUI->Enable(GetDocument()->CompareDifferences() > 0);
 }
 
 void CHexEditView::OnCompPrev()
@@ -18369,11 +18377,11 @@ void CHexEditView::OnCompPrev()
     GetSelAddr(start, end);
 
 	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
-	if (idx < GetDocument()->DiffCount(0))
+	if (idx > 0)
 	{
 		FILE_ADDRESS addr;
 		int len;
-		GetDocument()->GetOrigDiff(0, idx, addr, len);
+		GetDocument()->GetOrigDiff(0, idx - 1, addr, len);
 		MoveToAddress(addr, addr+len);
 	}
 }
@@ -18382,9 +18390,8 @@ void CHexEditView::OnUpdateCompPrev(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start, end;  // current selection
     GetSelAddr(start, end);
-
-	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
-	pCmdUI->Enable(idx < GetDocument()->DiffCount(0));
+	pCmdUI->Enable(GetDocument()->CompareDifferences() >= 0 &&
+		           GetDocument()->FirstDiffAt(false, 0, start - 1) > 0);
 }
 
 void CHexEditView::OnCompNext()
@@ -18392,8 +18399,8 @@ void CHexEditView::OnCompNext()
 	FILE_ADDRESS start, end;  // current selection
     GetSelAddr(start, end);
 
-	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
-	if (idx > 0)
+	int idx = GetDocument()->FirstDiffAt(false, 0, start);
+	if (idx < GetDocument()->CompareDifferences(0))
 	{
 		FILE_ADDRESS addr;
 		int len;
@@ -18406,14 +18413,14 @@ void CHexEditView::OnUpdateCompNext(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start, end;  // current selection
     GetSelAddr(start, end);
-
-	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
-	pCmdUI->Enable(idx > 0);
+	pCmdUI->Enable(GetDocument()->CompareDifferences() >= 0 &&
+				   GetDocument()->FirstDiffAt(false, 0, start) < 
+				               GetDocument()->CompareDifferences());
 }
 
 void CHexEditView::OnCompLast()
 {
-	int count = GetDocument()->DiffCount(0);
+	int count = GetDocument()->CompareDifferences();
 	if (count > 0)
 	{
 		FILE_ADDRESS addr;
@@ -18425,7 +18432,7 @@ void CHexEditView::OnCompLast()
 
 void CHexEditView::OnUpdateCompLast(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(GetDocument()->DiffCount(0) > 0);
+	pCmdUI->Enable(GetDocument()->CompareDifferences() > 0);
 }
 
 // Command to go to first of all differences (not just recent) in compare view
@@ -18508,6 +18515,39 @@ void CHexEditView::OnUpdateCompAllLast(CCmdUI* pCmdUI)
 	GetDocument()->GetLastDiffAll(addr, len);
 	pCmdUI->Enable(addr > -1);
 }
+
+void CHexEditView::OnCompAutoSync()
+{
+    if (pcv_ == NULL)
+    {
+        AfxMessageBox("No Compare is available");
+        theApp.mac_error_ = 10;
+        return;
+    }
+    begin_change();
+    display_.auto_sync_comp = !display_.auto_sync_comp;
+    make_change();
+    end_change();
+
+    // If has been turned on then sync now
+    if (display_.auto_sync_comp)
+    {
+        FILE_ADDRESS start_addr, end_addr;
+        GetSelAddr(start_addr, end_addr);
+        pcv_->MoveToAddress(start_addr, end_addr);
+    }
+
+    theApp.SaveToMacro(km_dffd_sync, 2);
+}
+
+void CHexEditView::OnUpdateCompAutoSync(CCmdUI* pCmdUI) 
+{
+    pCmdUI->Enable(pcv_ != NULL);
+    pCmdUI->SetCheck(display_.auto_sync_comp);
+}
+
+
+
 
 // This is connected to Ctrl+T and is used for testing new dialogs etc
 void CHexEditView::OnViewtest() 
