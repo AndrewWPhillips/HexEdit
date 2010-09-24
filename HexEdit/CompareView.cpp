@@ -41,6 +41,8 @@ BEGIN_MESSAGE_MAP(CCompareView, CScrView)
     //ON_WM_CLOSE()  // doesn't seem to be called due to fiddling with views
     ON_WM_SIZE()
     ON_WM_ERASEBKGND()
+    ON_WM_LBUTTONUP()
+    ON_WM_SETFOCUS()
     ON_WM_KILLFOCUS()
 
     //ON_COMMAND(ID_COMP_FIRST, OnCompFirst)
@@ -1843,6 +1845,20 @@ void CCompareView::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
+void CCompareView::OnSetFocus(CWnd* pNewWnd) 
+{
+    CScrView::OnSetFocus(pNewWnd);
+    if (phev_->text_height_ == 0)
+        return;
+
+    // Invalidate the current selection so its drawn lighter in inactive window
+    FILE_ADDRESS start_addr, end_addr;
+    GetSelAddr(start_addr, end_addr);
+    if (start_addr == end_addr)
+		++end_addr;   // if no selection invalidate current byte
+	InvalidateRange(addr2pos(start_addr), addr2pos(end_addr));
+}
+
 void CCompareView::OnKillFocus(CWnd* pNewWnd) 
 {
     CScrView::OnKillFocus(pNewWnd);
@@ -1853,7 +1869,7 @@ void CCompareView::OnKillFocus(CWnd* pNewWnd)
     FILE_ADDRESS start_addr, end_addr;
     GetSelAddr(start_addr, end_addr);
     if (start_addr == end_addr)
-		++end_addr;   // if no selection invlidate current byte
+		++end_addr;   // if no selection invalidate current byte
 	InvalidateRange(addr2pos(start_addr), addr2pos(end_addr));
 }
 

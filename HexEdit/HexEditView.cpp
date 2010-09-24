@@ -2720,7 +2720,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 	{
 		// Draw differences with compare file
 		CTime tnew = GetDocument()->ResultTime(0);         // time of most recent comparison
-		// xxx TBD make number of minutes before it completely disappears into a parameter
+		// xxx TBD make "number of minutes before it completely disappears" into a parameter
 		CTime tearliest = tnew - CTimeSpan(0, 0, 15, 0);   // older diffs are shown in lighter shades
 		for (int rr = GetDocument()->ResultCount() - 1; rr >= 0; rr--)
 		{
@@ -6285,12 +6285,12 @@ void CHexEditView::OnKillFocus(CWnd* pNewWnd)
     FILE_ADDRESS start_addr, end_addr;
     GetSelAddr(start_addr, end_addr);
     if (start_addr == end_addr)
-		++end_addr;   // if no selection invlidate current byte
+		++end_addr;   // if no selection invalidate current byte
     invalidate_hex_addr_range(start_addr, end_addr);
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 }
 
-void CHexEditView::OnSetFocus(CWnd* pOldWnd) 
+void CHexEditView::OnSetFocus(CWnd* pOldWnd)
 {
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -6310,10 +6310,9 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
 
     FILE_ADDRESS start_addr, end_addr;
     GetSelAddr(start_addr, end_addr);
-    if (start_addr != end_addr)
-    {
-        invalidate_hex_addr_range(start_addr, end_addr);
-    }
+    if (start_addr == end_addr)
+		++end_addr;   // if no selection invalidate the current byte
+    invalidate_hex_addr_range(start_addr, end_addr);
 
     // Save nav info in case we need to create a nav pt here
 	if (theApp.navman_.LastView() != this && !theApp.navman_.InMove())
