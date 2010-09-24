@@ -3625,7 +3625,7 @@ end_of_background_drawing:
                                 PATINVERT);
             }
         }
-        else if (theApp.show_other_ && /* has_focus && */
+        else if (theApp.show_other_ && has_focus &&
                  !display_.vert_display &&
                  display_.char_area && display_.hex_area &&  // we can only display in the other area if both exist
                  !pDC->IsPrinting() &&
@@ -3662,6 +3662,56 @@ end_of_background_drawing:
             }
             pDC->PatBlt(rev.left, rev.top, rev.right-rev.left, rev.bottom-rev.top, PATINVERT);
         }
+		else if (!has_focus &&
+		         !pDC->IsPrinting() &&
+                 start_addr == end_addr &&
+                 start_addr >= line*rowsize_ - offset_ && 
+                 start_addr < (line+1)*rowsize_ - offset_)
+        {
+			// Draw "shadow" for current byte when lost focus
+			if (!display_.vert_display && display_.hex_area)
+			{
+				// Get rect for hex area
+				FILE_ADDRESS start = max(start_addr, line*rowsize_ - offset_);
+				FILE_ADDRESS end = min(end_addr, (line+1)*rowsize_ - offset_);
+
+	            CRect rev(norm_rect);
+                rev.right = rev.left + hex_pos(int(end - (line*rowsize_ - offset_))) + 2*text_width_;
+                rev.left += hex_pos(int(start - (line*rowsize_ - offset_)));
+				if (neg_x)
+				{
+					rev.left = -rev.left;
+					rev.right = -rev.right;
+				}
+				if (neg_y)
+				{
+					rev.top = -rev.top;
+					rev.bottom = -rev.bottom;
+				}
+				pDC->PatBlt(rev.left, rev.top, rev.right-rev.left, rev.bottom-rev.top, PATINVERT);
+			}
+	        if (display_.vert_display || display_.char_area)
+			{
+				// Get rect for char area or stacked mode
+				FILE_ADDRESS start = max(start_addr, line*rowsize_ - offset_);
+				FILE_ADDRESS   end = min(end_addr, (line+1)*rowsize_ - offset_);
+
+				CRect rev(norm_rect);
+				rev.right = rev.left + char_pos(int(end - (line*rowsize_ - offset_))) + text_width_w_;
+				rev.left += char_pos(int(start - (line*rowsize_ - offset_)));
+				if (neg_x)
+				{
+					rev.left = -rev.left;
+					rev.right = -rev.right;
+				}
+				if (neg_y)
+				{
+					rev.top = -rev.top;
+					rev.bottom = -rev.bottom;
+				}
+				pDC->PatBlt(rev.left, rev.top, rev.right-rev.left, rev.bottom-rev.top, PATINVERT);
+			}
+		}
     } // for each display (text) line
 
     if (pDC->IsPrinting() && print_sel_ && dup_lines_)
@@ -6234,8 +6284,9 @@ void CHexEditView::OnKillFocus(CWnd* pNewWnd)
     // Invalidate the current selection so its drawn lighter in inactive window
     FILE_ADDRESS start_addr, end_addr;
     GetSelAddr(start_addr, end_addr);
-    if (start_addr != end_addr)
-        invalidate_hex_addr_range(start_addr, end_addr);
+    if (start_addr == end_addr)
+		++end_addr;   // if no selection invlidate current byte
+    invalidate_hex_addr_range(start_addr, end_addr);
     num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 }
 

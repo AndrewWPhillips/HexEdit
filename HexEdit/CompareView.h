@@ -62,15 +62,15 @@ public:
     //virtual void SetSel(CPointAp, CPointAp, bool base1 = false);
 
     bool CopyToClipboard();
-    COLORREF GetDefaultTextCol() { return phev_->text_col_; }
-    COLORREF GetBackgroundCol() { return phev_->bg_col_; }
-    COLORREF GetDecAddrCol() { return phev_->dec_addr_col_; }
-    COLORREF GetHexAddrCol() { return phev_->hex_addr_col_; }
-    COLORREF GetSearchCol() { return phev_->search_col_; }
-    COLORREF GetHighlightCol() { return phev_->hi_col_; }
-    COLORREF GetMarkCol() { return phev_->mark_col_; }
-    COLORREF GetBookmarkCol() { return phev_->bm_col_; }
-    CString GetSchemeName() { return phev_->scheme_name_; }
+    //COLORREF GetDefaultTextCol() { return phev_->text_col_; }
+    //COLORREF GetBackgroundCol() { return phev_->bg_col_; }
+    //COLORREF GetDecAddrCol() { return phev_->dec_addr_col_; }
+    //COLORREF GetHexAddrCol() { return phev_->hex_addr_col_; }
+    //COLORREF GetSearchCol() { return phev_->search_col_; }
+    //COLORREF GetHighlightCol() { return phev_->hi_col_; }
+    //COLORREF GetMarkCol() { return phev_->mark_col_; }
+    //COLORREF GetBookmarkCol() { return phev_->bm_col_; }
+    //CString GetSchemeName() { return phev_->scheme_name_; }
     virtual BOOL MovePos(UINT nChar, UINT nRepCnt, BOOL, BOOL, BOOL);
 	void MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend = -1, int row = 0);
 
@@ -123,6 +123,8 @@ protected:
     //afx_msg void OnDestroy();
     afx_msg void OnSize(UINT nType, int cx, int cy);
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+    afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+    afx_msg void OnKillFocus(CWnd* pNewWnd);
 
 	afx_msg void OnUpdateDisable(CCmdUI* pCmdUI) { pCmdUI->Enable(FALSE); }
     DECLARE_MESSAGE_MAP()

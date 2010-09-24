@@ -41,6 +41,7 @@ BEGIN_MESSAGE_MAP(CCompareView, CScrView)
     //ON_WM_CLOSE()  // doesn't seem to be called due to fiddling with views
     ON_WM_SIZE()
     ON_WM_ERASEBKGND()
+    ON_WM_KILLFOCUS()
 
     //ON_COMMAND(ID_COMP_FIRST, OnCompFirst)
     //ON_COMMAND(ID_COMP_PREV, OnCompPrev)
@@ -1075,7 +1076,7 @@ void CCompareView::OnDraw(CDC* pDC)
                                 PATINVERT);
             }
         }
-        else if (theApp.show_other_ && /* has_focus && */
+        else if (theApp.show_other_ && has_focus &&
                  !phev_->display_.vert_display &&
                  phev_->display_.char_area && phev_->display_.hex_area &&  // we can only display in the other area if both exist
                  !pDC->IsPrinting() &&
@@ -1100,19 +1101,69 @@ void CCompareView::OnDraw(CDC* pDC)
                 rev.right = rev.left + char_pos(int(end - (line*phev_->rowsize_ - offset))) + phev_->text_width_w_;
                 rev.left += char_pos(int(start - (line*phev_->rowsize_ - offset)));
             }
-            if (neg_x)
-            {
-                rev.left = -rev.left;
-                rev.right = -rev.right;
-            }
-            if (neg_y)
-            {
-                rev.top = -rev.top;
-                rev.bottom = -rev.bottom;
-            }
-            pDC->PatBlt(rev.left, rev.top, rev.right-rev.left, rev.bottom-rev.top, PATINVERT);
+			if (neg_x)
+			{
+				rev.left = -rev.left;
+				rev.right = -rev.right;
+			}
+			if (neg_y)
+			{
+				rev.top = -rev.top;
+				rev.bottom = -rev.bottom;
+			}
+			pDC->PatBlt(rev.left, rev.top, rev.right-rev.left, rev.bottom-rev.top, PATINVERT);
         }
-    } // for each display (text) line
+		else if (!has_focus &&
+		         !pDC->IsPrinting() &&
+                 start_addr == end_addr &&
+                 start_addr >= line*phev_->rowsize_ - offset && 
+                 start_addr < (line+1)*phev_->rowsize_ - offset)
+        {
+			// Draw "shadow" for current byte when lost focus
+			if (!phev_->display_.vert_display && phev_->display_.hex_area)
+			{
+				// Get rect for hex area or stacked mode
+				FILE_ADDRESS start = max(start_addr, line*phev_->rowsize_ - offset);
+				FILE_ADDRESS end = min(end_addr, (line+1)*phev_->rowsize_ - offset);
+
+	            CRect rev(norm_rect);
+                rev.right = rev.left + hex_pos(int(end - (line*phev_->rowsize_ - offset))) + 2*phev_->text_width_;
+                rev.left += hex_pos(int(start - (line*phev_->rowsize_ - offset)));
+				if (neg_x)
+				{
+					rev.left = -rev.left;
+					rev.right = -rev.right;
+				}
+				if (neg_y)
+				{
+					rev.top = -rev.top;
+					rev.bottom = -rev.bottom;
+				}
+				pDC->PatBlt(rev.left, rev.top, rev.right-rev.left, rev.bottom-rev.top, PATINVERT);
+			}
+	        if (phev_->display_.vert_display || phev_->display_.char_area)
+			{
+				// Get rect for char area
+				FILE_ADDRESS start = max(start_addr, line*phev_->rowsize_ - offset);
+				FILE_ADDRESS   end = min(end_addr, (line+1)*phev_->rowsize_ - offset);
+
+				CRect rev(norm_rect);
+				rev.right = rev.left + char_pos(int(end - (line*phev_->rowsize_ - offset))) + phev_->text_width_w_;
+				rev.left += char_pos(int(start - (line*phev_->rowsize_ - offset)));
+				if (neg_x)
+				{
+					rev.left = -rev.left;
+					rev.right = -rev.right;
+				}
+				if (neg_y)
+				{
+					rev.top = -rev.top;
+					rev.bottom = -rev.bottom;
+				}
+				pDC->PatBlt(rev.left, rev.top, rev.right-rev.left, rev.bottom-rev.top, PATINVERT);
+			}
+		}
+	} // for each display (text) line
 
     if (!pDC->IsPrinting())
     {
@@ -1776,5 +1827,33 @@ BOOL CCompareView::OnEraseBkgnd(CDC* pDC)
     }
 
     return TRUE;
+}
+
+void CCompareView::OnLButtonUp(UINT nFlags, CPoint point) 
+{
+	// We just need to handle a change in the selection
+    CScrView::OnLButtonUp(nFlags, point);
+	if (phev_->AutoSyncCompare())
+	{
+		FILE_ADDRESS start_addr, end_addr;
+		GetSelAddr(start_addr, end_addr);
+		phev_->SetAutoSyncCompare(false);  // avoid inf. recursion
+		phev_->MoveWithDesc("Compare Auto-sync", start_addr, end_addr);
+		phev_->SetAutoSyncCompare(true);
+	}
+}
+
+void CCompareView::OnKillFocus(CWnd* pNewWnd) 
+{
+    CScrView::OnKillFocus(pNewWnd);
+    if (phev_->text_height_ == 0)
+        return;
+
+    // Invalidate the current selection so its drawn lighter in inactive window
+    FILE_ADDRESS start_addr, end_addr;
+    GetSelAddr(start_addr, end_addr);
+    if (start_addr == end_addr)
+		++end_addr;   // if no selection invlidate current byte
+	InvalidateRange(addr2pos(start_addr), addr2pos(end_addr));
 }
 
