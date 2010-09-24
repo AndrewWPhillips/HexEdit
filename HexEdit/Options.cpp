@@ -1858,7 +1858,7 @@ void CColourSchemes::set_scheme()
 
 void CColourSchemes::OnOK()
 {
-    // Save any chnages to schemes
+    // Save any changes to schemes
     theApp.scheme_ = scheme_;
 
     // Update the colours for the current view

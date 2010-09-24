@@ -41,6 +41,7 @@ static char THIS_FILE[] = __FILE__;
 // - new file not saved to disk
 // - new file self-compare
 // - device file self-compare
+// - stacked mode auto-sync
 
 // Start background compare, first killing any existing one
 void CHexEditDoc::OnCompNew()

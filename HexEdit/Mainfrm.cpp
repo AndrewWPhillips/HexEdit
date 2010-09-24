@@ -876,7 +876,7 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 		// xxx this causes problems - find better soln
 		// There is a problem drawing the background image (unless it's in the top left corner)
 		// due to clipping rectangle used for the erased area.  (This only started occurring
-		// with MFC9 so I am not sure what had chnaged.)  The simplest solution (kludge) that I
+		// with MFC9 so I am not sure what had changed.)  The simplest solution (kludge) that I
 		// came up with is to invalidate the whole window if the clip rect is smaller than it.
 		m_wndClientArea.InvalidateRect(&rct, TRUE);
 		return TRUE;  // prevent any other erasure since we will erase everything shortly anyway.
@@ -2355,7 +2355,7 @@ void CMainFrame::AddReplaceHistory(const CString &ss)
 }
 
 // xxx changes required here (3.4?):
-// 1. Make max_search_hist_ etc options the user can chnage
+// 1. Make max_search_hist_ etc options the user can change
 // 1a. Add individual "Clear Now" buttons for all lists
 // 2. On load - load all entries (ignore max_search_hist_ etc)
 // 3. On Save - set size of list to max_search_hist_ etc, then save all entries in the list

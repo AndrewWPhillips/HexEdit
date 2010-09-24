@@ -697,7 +697,7 @@ LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 
 #if 0  // This is too hard to get to work - eg:
        // 1. window size (bottom right) control background colour does not seem to be setable
-       // 2. When AppLook chnages I haven't worked out how to force setting of the current colours and redraw
+       // 2. When AppLook changes I haven't worked out how to force setting of the current colours and redraw
 CBrush * CRecentFileDlg::m_pBrush = NULL;
 
 HBRUSH CRecentFileDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
