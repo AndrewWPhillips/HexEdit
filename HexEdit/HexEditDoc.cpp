@@ -125,7 +125,6 @@ CHexEditDoc::CHexEditDoc()
 	pthread4_ = NULL;
 	cv_count_ = 0;
 	bCompSelf_ = false;
-	comp_.push_front(CompResult());  // always has at least one elt = current/last compare results
 
 	// Template
     ptree_ = NULL;         // XML tree wrapper for data format view

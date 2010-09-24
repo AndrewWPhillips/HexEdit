@@ -42,6 +42,15 @@ BEGIN_MESSAGE_MAP(CCompareView, CScrView)
     ON_WM_SIZE()
     ON_WM_ERASEBKGND()
 
+    //ON_COMMAND(ID_COMP_FIRST, OnCompFirst)
+    //ON_COMMAND(ID_COMP_PREV, OnCompPrev)
+    //ON_COMMAND(ID_COMP_NEXT, OnCompNext)
+    //ON_COMMAND(ID_COMP_LAST, OnCompLast)
+    //ON_UPDATE_COMMAND_UI(ID_COMP_FIRST, OnUpdateCompFirst)
+    //ON_UPDATE_COMMAND_UI(ID_COMP_PREV, OnUpdateCompPrev)
+    //ON_UPDATE_COMMAND_UI(ID_COMP_NEXT, OnUpdateCompNext)
+    //ON_UPDATE_COMMAND_UI(ID_COMP_LAST, OnUpdateCompLast)
+
 	// These are here to simply disable inappropriate commands to prevent them
 	// being passed on to the "owner" hex view (see OnCmdMsg).
 
@@ -226,11 +235,6 @@ END_MESSAGE_MAP()
 // CCompareView construction/destruction
 CCompareView::CCompareView() : phev_(NULL), addr_width_(0)
 {
-}
-
-void CCompareView::OnUpdateDisable(CCmdUI* pCmdUI) 
-{
-    pCmdUI->Enable(FALSE);
 }
 
 void CCompareView::OnInitialUpdate()
@@ -1541,18 +1545,10 @@ BOOL CCompareView::MovePos(UINT nChar, UINT nRepCnt,
     if (shift_down && end_base)
     {
         MoveToAddress(end_addr, new_address);
-
-        // Handle this when shift key released now (in OnKeyUp)
-//        if (aa->highlight_)
-//            add_highlight(new_address, end_addr, TRUE);
     }
     else if (shift_down)
     {
         MoveToAddress(start_addr, new_address);
-
-        // Handle this when shift key released now (in OnKeyUp)
-//        if (aa->highlight_)
-//            add_highlight(start_addr, new_address, TRUE);
     }
     else
         MoveToAddress(new_address, -1, row);
@@ -1589,7 +1585,6 @@ int CCompareView::pos2row(CPointAp pos)
 {
     return int((pos.y%phev_->line_height_)/phev_->text_height_);
 }
-
 
 // These are like the CHexEditView versions (pos_hex and pos_char)
 // but are duplicated here as we have our own addr_width_ member.
@@ -1777,3 +1772,4 @@ BOOL CCompareView::OnEraseBkgnd(CDC* pDC)
 
     return TRUE;
 }
+

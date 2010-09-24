@@ -269,8 +269,7 @@ public:
     void draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
                  int char_height, int char_width, int char_width_w,
                  COLORREF, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
-                 int draw_height = -1);
-//    void draw_bg(CDC* pDC, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr, CBrush &bb);
+                 bool merge = true, int draw_height = -1);
     void do_mouse(CPoint dev_down, CSizeAp doc_dist) ;
     void do_shift_mouse(CPoint dev_down, CSizeAp doc_dist) ;
     void do_autofit(int state = -1);
@@ -738,6 +737,23 @@ public:
 	afx_msg void OnOptScheme();  // color scheme toolbar combo (ID_SCHEME)
 	afx_msg void OnSelScheme();
 	afx_msg void OnUpdateScheme(CCmdUI* pCmdUI);
+
+    afx_msg void OnCompFirst();
+	afx_msg void OnUpdateCompFirst(CCmdUI* pCmdUI);
+    afx_msg void OnCompPrev();
+	afx_msg void OnUpdateCompPrev(CCmdUI* pCmdUI);
+    afx_msg void OnCompNext();
+	afx_msg void OnUpdateCompNext(CCmdUI* pCmdUI);
+    afx_msg void OnCompLast();
+	afx_msg void OnUpdateCompLast(CCmdUI* pCmdUI);
+    afx_msg void OnCompAllFirst();
+	afx_msg void OnUpdateCompAllFirst(CCmdUI* pCmdUI);
+    afx_msg void OnCompAllPrev();
+	afx_msg void OnUpdateAllCompPrev(CCmdUI* pCmdUI);
+    afx_msg void OnCompAllNext();
+	afx_msg void OnUpdateCompAllNext(CCmdUI* pCmdUI);
+    afx_msg void OnCompAllLast();
+	afx_msg void OnUpdateCompAllLast(CCmdUI* pCmdUI);
 
     DECLARE_MESSAGE_MAP()
 

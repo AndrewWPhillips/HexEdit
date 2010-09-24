@@ -566,7 +566,24 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_CBN_SELENDOK(ID_SCHEME_US, OnSelScheme)
     ON_UPDATE_COMMAND_UI(ID_SCHEME_US, OnUpdateScheme)
 
-    END_MESSAGE_MAP()
+    ON_COMMAND(ID_COMP_FIRST, OnCompFirst)
+    ON_COMMAND(ID_COMP_PREV, OnCompPrev)
+    ON_COMMAND(ID_COMP_NEXT, OnCompNext)
+    ON_COMMAND(ID_COMP_LAST, OnCompLast)
+    ON_UPDATE_COMMAND_UI(ID_COMP_FIRST, OnUpdateCompFirst)
+    ON_UPDATE_COMMAND_UI(ID_COMP_PREV, OnUpdateCompPrev)
+    ON_UPDATE_COMMAND_UI(ID_COMP_NEXT, OnUpdateCompNext)
+    ON_UPDATE_COMMAND_UI(ID_COMP_LAST, OnUpdateCompLast)
+    ON_COMMAND(ID_COMP_ALL_FIRST, OnCompAllFirst)
+    ON_COMMAND(ID_COMP_ALL_PREV, OnCompAllPrev)
+    ON_COMMAND(ID_COMP_ALL_NEXT, OnCompAllNext)
+    ON_COMMAND(ID_COMP_ALL_LAST, OnCompAllLast)
+    ON_UPDATE_COMMAND_UI(ID_COMP_ALL_FIRST, OnUpdateCompAllFirst)
+    ON_UPDATE_COMMAND_UI(ID_COMP_ALL_PREV, OnUpdateCompAllPrev)
+    ON_UPDATE_COMMAND_UI(ID_COMP_ALL_NEXT, OnUpdateCompAllNext)
+    ON_UPDATE_COMMAND_UI(ID_COMP_ALL_LAST, OnUpdateCompAllLast)
+
+	END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditView construction/destruction
@@ -667,6 +684,12 @@ BOOL CHexEditView::PreCreateWindow(CREATESTRUCT& cs)
 
         // We have the frame so get the view within it
         CHexEditView *pView = (CHexEditView *)pContext->m_pCurrentFrame->GetActiveView();
+		if (pView->IsKindOf(RUNTIME_CLASS(CCompareView)))
+			pView = ((CCompareView *)pView)->phev_;
+		else if (pView->IsKindOf(RUNTIME_CLASS(CAerialView)))
+			pView = ((CAerialView *)pView)->phev_;
+		else if (pView->IsKindOf(RUNTIME_CLASS(CDataFormatView)))
+			pView = ((CDataFormatView *)pView)->phev_;
         ASSERT_KINDOF(CHexEditView, pView);
 
         // Make this view's undo stack the same as clone view
@@ -2660,6 +2683,45 @@ void CHexEditView::OnDraw(CDC* pDC)
     }
     pDC->SelectObject(psaved_pen);      // restore pen after drawing borders etc
 
+	// If background compare is on and finished
+	if (GetDocument()->CompareDifferences() >= 0)
+	{
+		// Draw differences with compare file
+		CTime tnew = GetDocument()->ResultTime(0);         // time of most recent comparison
+		// xxx TBD make number of minutes before it completely disappears into a parameter
+		CTime tearliest = tnew - CTimeSpan(0, 0, 15, 0);   // older diffs are shown in lighter shades
+		for (int rr = GetDocument()->ResultCount() - 1; rr >= 0; rr--)
+		{
+			COLORREF col, col2;   // colours for replace (underline) + delete, and also for inserts
+			CTime tt = GetDocument()->ResultTime(rr);
+			if (tt < tearliest)
+				continue;
+			// Tone down based on how long agoo the change was made (up to 0.8 since toning down more is not that visible)
+			double amt = 0.8 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds());
+			col = ::tone_down(comp_col_, bg_col_, amt);
+			col2 = ::tone_down(comp_bg_col_, bg_col_, amt);
+			for (int dd = GetDocument()->FirstDiffAt(rr, first_virt); dd < GetDocument()->DiffCount(rr); ++dd)
+			{
+				FILE_ADDRESS addr;
+				int len;
+
+				GetDocument()->GetOrigDiff(rr, dd, addr, len);
+
+				if (addr + len < first_virt)
+					continue;         // before top of window
+				else if (addr >= last_virt)
+					break;            // after end of window
+
+				draw_bg(pDC, doc_rect, neg_x, neg_y,
+						line_height, char_width, char_width_w, col,
+						max(addr, first_addr), 
+						min(addr+len, last_addr),
+						false,  // overwrite (not merge) since mutiple changes at the same address really mess up the colours
+						(pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
+			}
+		}
+	}
+
     // Draw deletion marks always from top (shouldn't be too visible)
     if (!display_.hide_delete)
     {
@@ -2736,7 +2798,9 @@ void CHexEditView::OnDraw(CDC* pDC)
                 draw_bg(pDC, doc_rect, neg_x, neg_y,
                         line_height, char_width, char_width_w, trk_col_,
                         max(pp->first, first_addr), 
-                        min(pp->first + pp->second, last_addr), (pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
+                        min(pp->first + pp->second, last_addr),
+						true,
+						(pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
             }
         }
         if (!display_.hide_insert)
@@ -2776,7 +2840,9 @@ void CHexEditView::OnDraw(CDC* pDC)
                 draw_bg(pDC, doc_rect, neg_x, neg_y,
                         line_height, char_width, char_width_w, trk_col_,
                         max(pp->first, first_addr), 
-                        min(pp->first + pp->second, last_addr), (pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
+                        min(pp->first + pp->second, last_addr),
+						true,
+						(pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
             }
         }
         if (!display_.hide_insert)
@@ -3778,24 +3844,20 @@ void CHexEditView::draw_group_by(CDC* pDC, int xpos)
 }
 #endif
 
-#define USE_ROP2  1
-
 void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
                            int line_height, int char_width, int char_width_w,
                            COLORREF clr, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
-                           int draw_height /*=-1*/)
+                           bool merge /*=true*/, int draw_height /*=-1*/)
 {
     if (end_addr < start_addr) return;
 
 	if (draw_height > -1 && draw_height < 2) draw_height = 2;  // make it at least 2 pixels (1 does not draw properly)
 
-#ifdef USE_ROP2
     int saved_rop = pDC->SetROP2(R2_NOTXORPEN);
     CPen pen(PS_SOLID, 0, clr);
     CPen * psaved_pen = pDC->SelectObject(&pen);
     CBrush brush(clr);
     CBrush * psaved_brush = pDC->SelectObject(&brush);
-#endif
 
     FILE_ADDRESS start_line = (start_addr + offset_)/rowsize_;
     FILE_ADDRESS end_line = (end_addr + offset_)/rowsize_;
@@ -3828,11 +3890,12 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
             }
 
             if (neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right)
-#ifdef USE_ROP2
-                pDC->Rectangle(&rct);
-#else
-                pDC->FillSolidRect(&rct, clr);
-#endif
+			{
+				if (merge)
+					pDC->Rectangle(&rct);
+				else
+					pDC->FillSolidRect(&rct, clr);
+			}
         }
 
         if (display_.vert_display || display_.char_area)
@@ -3848,18 +3911,15 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
                 rct.left = -rct.left;
                 rct.right = -rct.right;
             }
-#ifdef USE_ROP2
-            pDC->Rectangle(&rct);
-#else
-            pDC->FillSolidRect(&rct, clr);
-#endif
+			if (merge)
+				pDC->Rectangle(&rct);
+			else
+				pDC->FillSolidRect(&rct, clr);
         }
 
-#ifdef USE_ROP2
         pDC->SetROP2(saved_rop);
         pDC->SelectObject(psaved_pen);
         pDC->SelectObject(psaved_brush);
-#endif
         return;  // All on one line so that's it
     }
 
@@ -3883,11 +3943,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
             rct.right = -rct.right;
         }
         ASSERT(neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right);
-#ifdef USE_ROP2
-        pDC->Rectangle(&rct);
-#else
-        pDC->FillSolidRect(&rct, clr);
-#endif
+		if (merge)
+			pDC->Rectangle(&rct);
+		else
+			pDC->FillSolidRect(&rct, clr);
     }
 
     if (display_.vert_display || display_.char_area)
@@ -3901,11 +3960,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
             rct.left = -rct.left;
             rct.right = -rct.right;
         }
-#ifdef USE_ROP2
-        pDC->Rectangle(&rct);
-#else
-        pDC->FillSolidRect(&rct, clr);
-#endif
+		if (merge)
+			pDC->Rectangle(&rct);
+		else
+			pDC->FillSolidRect(&rct, clr);
     }
 
     // Last (partial) line
@@ -3928,11 +3986,12 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
             rct.right = -rct.right;
         }
         if (neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right)
-#ifdef USE_ROP2
-            pDC->Rectangle(&rct);
-#else
-            pDC->FillSolidRect(&rct, clr);
-#endif
+		{
+			if (merge)
+				pDC->Rectangle(&rct);
+			else
+				pDC->FillSolidRect(&rct, clr);
+		}
     }
 
     if (display_.vert_display || display_.char_area)
@@ -3946,11 +4005,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
             rct.left = -rct.left;
             rct.right = -rct.right;
         }
-#ifdef USE_ROP2
-        pDC->Rectangle(&rct);
-#else
-        pDC->FillSolidRect(&rct, clr);
-#endif
+		if (merge)
+			pDC->Rectangle(&rct);
+		else
+			pDC->FillSolidRect(&rct, clr);
     }
 
     // Now draw all the full lines
@@ -3979,11 +4037,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
                     rct.right = -rct.right;
                 }
                 ASSERT(neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right);
-#ifdef USE_ROP2
-                pDC->Rectangle(&rct);
-#else
-                pDC->FillSolidRect(&rct, clr);
-#endif
+				if (merge)
+					pDC->Rectangle(&rct);
+				else
+					pDC->FillSolidRect(&rct, clr);
             }
 
             if (display_.vert_display || display_.char_area)
@@ -3997,11 +4054,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
                     rct.left = -rct.left;
                     rct.right = -rct.right;
                 }
-#ifdef USE_ROP2
-                pDC->Rectangle(&rct);
-#else
-                pDC->FillSolidRect(&rct, clr);
-#endif
+				if (merge)
+					pDC->Rectangle(&rct);
+				else
+					pDC->FillSolidRect(&rct, clr);
             }
         }
     }
@@ -4028,11 +4084,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
                 rct.right = -rct.right;
             }
             ASSERT(neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right);
-#ifdef USE_ROP2
-            pDC->Rectangle(&rct);
-#else
-            pDC->FillSolidRect(&rct, clr);
-#endif
+			if (merge)
+				pDC->Rectangle(&rct);
+			else
+				pDC->FillSolidRect(&rct, clr);
         }
 
         if (display_.vert_display || display_.char_area)
@@ -4046,19 +4101,16 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
                 rct.left = -rct.left;
                 rct.right = -rct.right;
             }
-#ifdef USE_ROP2
-            pDC->Rectangle(&rct);
-#else
-            pDC->FillSolidRect(&rct, clr);
-#endif
+			if (merge)
+				pDC->Rectangle(&rct);
+			else
+				pDC->FillSolidRect(&rct, clr);
         }
     }
 
-#ifdef USE_ROP2
     pDC->SetROP2(saved_rop);
     pDC->SelectObject(psaved_pen);
     pDC->SelectObject(psaved_brush);
-#endif
     return;
 }
 
@@ -18264,6 +18316,146 @@ void CHexEditView::AdjustColumns()
     if (snum_d > -1) psplitter->GetColumnInfo(snum_d, split_width_d_, min);
     if (snum_a > -1) psplitter->GetColumnInfo(snum_a, split_width_a_, min);
     if (snum_c > -1) psplitter->GetColumnInfo(snum_c, split_width_c_, min);
+}
+
+// Command to go to first recent difference in compare view
+void CHexEditView::OnCompFirst()
+{
+	FILE_ADDRESS addr = -1;
+	int len;
+	// xxx
+	if (addr > -1)
+		MoveToAddress(addr, addr+len);
+}
+
+void CHexEditView::OnUpdateCompFirst(CCmdUI* pCmdUI)
+{
+}
+
+void CHexEditView::OnCompPrev()
+{
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+
+	FILE_ADDRESS addr = -1;
+	int len;
+	// xxx
+	if (addr > -1)
+		MoveToAddress(addr, addr+len);
+}
+
+void CHexEditView::OnUpdateCompPrev(CCmdUI* pCmdUI)
+{
+}
+
+void CHexEditView::OnCompNext()
+{
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+
+	FILE_ADDRESS addr = -1;
+	int len;
+	// xxx
+	if (addr > -1)
+		MoveToAddress(addr, addr+len);
+}
+
+void CHexEditView::OnUpdateCompNext(CCmdUI* pCmdUI)
+{
+}
+
+void CHexEditView::OnCompLast()
+{
+	FILE_ADDRESS addr = -1;
+	int len;
+	// xxx
+	if (addr > -1)
+		MoveToAddress(addr, addr+len);
+}
+
+void CHexEditView::OnUpdateCompLast(CCmdUI* pCmdUI)
+{
+}
+
+// Command to go to first of all differences (not just recent) in compare view
+void CHexEditView::OnCompAllFirst()
+{
+	FILE_ADDRESS addr;
+	int len;
+	GetDocument()->GetFirstDiff(addr, len);
+	if (addr > -1)
+		MoveToAddress(addr, addr+len);
+}
+
+void CHexEditView::OnUpdateCompAllFirst(CCmdUI* pCmdUI)
+{
+	FILE_ADDRESS addr;
+	int len;
+	GetDocument()->GetFirstDiff(addr, len);
+	pCmdUI->Enable(addr > -1);
+}
+
+void CHexEditView::OnCompAllPrev()
+{
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+
+	FILE_ADDRESS addr;
+	int len;
+	GetDocument()->GetPrevDiff(start - 1, addr, len);
+	if (addr > -1)
+		MoveToAddress(addr, addr+len);
+}
+
+void CHexEditView::OnUpdateCompAllPrev(CCmdUI* pCmdUI)
+{
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+
+	FILE_ADDRESS addr;
+	int len;
+	GetDocument()->GetPrevDiff(start - 1, addr, len);
+	pCmdUI->Enable(addr > -1);
+}
+
+void CHexEditView::OnCompAllNext()
+{
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+
+	FILE_ADDRESS addr;
+	int len;
+	GetDocument()->GetNextDiff(end, addr, len);
+	if (addr > -1)
+		MoveToAddress(addr, addr+len);
+}
+
+void CHexEditView::OnUpdateCompAllNext(CCmdUI* pCmdUI)
+{
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+
+	FILE_ADDRESS addr;
+	int len;
+	GetDocument()->GetNextDiff(end, addr, len);
+	pCmdUI->Enable(addr > -1);
+}
+
+void CHexEditView::OnCompAllLast()
+{
+	FILE_ADDRESS addr;
+	int len;
+	GetDocument()->GetLastDiff(addr, len);
+	if (addr > -1)
+		MoveToAddress(addr, addr+len);
+}
+
+void CHexEditView::OnUpdateCompAllLast(CCmdUI* pCmdUI)
+{
+	FILE_ADDRESS addr;
+	int len;
+	GetDocument()->GetLastDiff(addr, len);
+	pCmdUI->Enable(addr > -1);
 }
 
 // This is connected to Ctrl+T and is used for testing new dialogs etc

@@ -1157,8 +1157,8 @@
 #define ID_GOTO_MARK                    32780
 #define ID_MARK                         32781
 #define IDC_JUMP_HEX                    32782
-#define ID_VIEW_TOOLBARS                32782
 #define IDC_JUMP_DEC                    32783
+#define ID_VIEW_TOOLBARS                32784
 #define ID_JUMP_HEX_ADDR                32785
 #define ID_JUMP_DEC_ADDR                32786
 #define ID_SEARCH_HEX                   32791
@@ -1570,8 +1570,17 @@
 #define ID_ANT_HL                       39122
 #define ID_ANT_SEARCH                   39123
 #define ID_ANT_BM                       39124
-#define ID_GOADDRESS                    39130
-#define ID_GOSECTOR                     39131
+#define ID_COMP_ALL_DUMMY               39131
+#define ID_COMP_FIRST                   39132
+#define ID_COMP_PREV                    39133
+#define ID_COMP_NEXT                    39134
+#define ID_COMP_LAST                    39135
+#define ID_COMP_ALL_FIRST               39136
+#define ID_COMP_ALL_PREV                39137
+#define ID_COMP_ALL_NEXT                39138
+#define ID_COMP_ALL_LAST                39139
+#define ID_GOADDRESS                    39148
+#define ID_GOSECTOR                     39149
 
 // Next default values for new objects
 // 
@@ -1579,7 +1588,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        436
-#define _APS_NEXT_COMMAND_VALUE         39135
+#define _APS_NEXT_COMMAND_VALUE         39151
 #define _APS_NEXT_CONTROL_VALUE         1596
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

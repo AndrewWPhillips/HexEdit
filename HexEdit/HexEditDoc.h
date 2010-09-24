@@ -391,6 +391,7 @@ private:
 class CHexEditDoc : public CDocument
 {
     friend class CGridCtrl2;
+	friend class CHexEditView;
     friend class CDataFormatView;
     friend class CAerialView;
     friend class CCompareView;
@@ -654,10 +655,15 @@ public:
 	void StopComp();
 	bool GetCompareFile(bool bForcePrompt = false); // Get name of file to compare with
 	int CompareDifferences(int rr = 0);
-	int FirstDiffAt(int rr, FILE_ADDRESS from);             // returns index of first diff at or after address
+	int FirstDiffAt(int rr, FILE_ADDRESS from);     // returns index of first diff at or after address
 	int CompareProgress();
-	int GetNextDiff(FILE_ADDRESS from);
-	int GetPrevDiff(FILE_ADDRESS from);
+	// The following look through all results (not just the latest)
+	void GetFirstDiffAll(FILE_ADDRESS &addr, int &len);
+	void GetPrevDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len);
+	void GetNextDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len);
+	void GetLastDiffAll(FILE_ADDRESS &addr, int &len);
+	int GetNextDiff(FILE_ADDRESS from, int rr = 0);
+	int GetPrevDiff(FILE_ADDRESS from, int rr = 0);
 	CString GetCompFileName();
 	bool OrigFileHasChanged();
 	bool CompFileHasChanged();
@@ -790,7 +796,7 @@ private:
     CEvent start_search_event_;        // Signal to bg thread to start a new search, or check for termination
     CEvent stopped_event_;      // Signal from bg thread that finished/aborted the search
 
-    CCriticalSection docdata_;  // Protects access in threads to document data (loc_) file and find data below.
+    mutable CCriticalSection docdata_;  // Protects access in threads to document data (loc_) file and find data below.
                                 // Note that this is used for read access of the document from the bg
                                 // threads or write (but not read) access from the primary thread. This
                                 // stops the bg thread accessing the data while it is being updated.
@@ -873,13 +879,14 @@ private:
 	std::deque<CompResult> comp_;
 
 	// Number of results and number of differences in specified result
-	int ResultCount() const { return comp_.size(); }
-	const CTime & ResultTime(int rr) const { ASSERT(rr < comp_.size()); return comp_[rr].m_compTime; }
-	int DiffCount(int rr) const { ASSERT(rr < comp_.size()); return comp_[rr].m_addr.size(); }
+	int ResultCount() const { CSingleLock sl(&docdata_, TRUE); return comp_.size(); }
+	const CTime & ResultTime(int rr) const { CSingleLock sl(&docdata_, TRUE); ASSERT(rr < comp_.size()); return comp_[rr].m_compTime; }
+	int DiffCount(int rr = 0) const { CSingleLock sl(&docdata_, TRUE); ASSERT(rr < comp_.size()); return comp_[rr].m_addr.size(); }
 	// We need to be able to return differences from the point of view of the original file
 	// and the compared file.  For now these are the same but later there will be differences.
 	void GetOrigDiff(int rr, int idx, FILE_ADDRESS &addr, int &len)
 	{
+		CSingleLock sl(&docdata_, TRUE);
 		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addr.size());
 		ASSERT(comp_[rr].m_addr.size() == comp_[rr].m_len.size());
 		addr = comp_[rr].m_addr[idx];
@@ -887,6 +894,7 @@ private:
 	}
 	void GetCompDiff(int rr, int idx, FILE_ADDRESS &addr, int &len)
 	{
+		CSingleLock sl(&docdata_, TRUE);
 		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addr.size());
 		ASSERT(comp_[rr].m_addr.size() == comp_[rr].m_len.size());
 		addr = comp_[rr].m_addr[idx];

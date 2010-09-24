@@ -222,19 +222,20 @@ size_t CHexEditDoc::GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc
 }
 
 // Returns index of first diff at or after address 'from', which may be
-// the numbers of diffs if 'from' id past the last one.
+// the numbers of diffs if 'from' is past the last one.
 int CHexEditDoc::FirstDiffAt(int rr, FILE_ADDRESS from)
 {
+	CSingleLock sl(&docdata_, TRUE);
 	int bot = 0;
 	int top = comp_[rr].m_addr.size();
 	while (bot < top)
 	{
 		// Get the element roughly halfway in between (binary search)
 		int curr = (bot+top)/2;
-		if (from < comp_[rr].m_addr[curr] + comp_[rr].m_len[curr])
-			top = curr;
+		if (from < comp_[rr].m_addr[curr])
+			top = curr;         // now check bottom half
 		else
-			bot = curr + 1;
+			bot = curr + 1;     // check top half
 	}
 	return bot;
 }
@@ -256,6 +257,7 @@ int CHexEditDoc::CompareDifferences(int rr /*=0*/)
 		return -2;
 	}
 
+	ASSERT(rr >= 0 && rr < comp_.size());  // also ensures comp_ is not empty
 	return comp_[rr].m_addr.size(); 
 }
 
@@ -270,12 +272,103 @@ int CHexEditDoc::CompareProgress()
 	return 1 + int((comp_progress_ * 99)/length_);  // 1-100 (don't start at zero)
 }
 
+// Returns the address and length of the first difference or
+// -1 if there are no differences.
+void CHexEditDoc::GetFirstDiffAll(FILE_ADDRESS &addr, int &len)
+{
+	addr = -1;
+    if (pthread4_ == NULL) return;
+
+	CSingleLock sl(&docdata_, TRUE);
+
+	for (int rr = 0; rr < ResultCount(); ++rr)
+	{
+		if (comp_[rr].m_addr.size() == 0)
+			continue;    // no diffs at all in this result set
+
+		if (addr < 0 || comp_[rr].m_addr[0] < addr)
+		{
+			addr = comp_[rr].m_addr[0];
+			len  = comp_[rr].m_len[0];
+		}
+	}
+}
+
+void CHexEditDoc::GetPrevDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len)
+{
+	addr = -1;
+    if (pthread4_ == NULL) return;
+
+	for (int rr = 0; rr < ResultCount(); ++rr)
+	{
+		int idx = FirstDiffAt(rr, from);
+
+		CSingleLock sl(&docdata_, TRUE);
+		if (idx == 0)
+			continue;     // before first diff
+
+		idx--;           // goto previous one
+
+		ASSERT(idx > -1 && idx < comp_[rr].m_addr.size());
+		if (addr < 0 || comp_[rr].m_addr[idx] + comp_[rr].m_len[idx] > addr + len)
+		{
+			addr = comp_[rr].m_addr[idx];
+			len  = comp_[rr].m_len[idx];
+		}
+	}
+}
+
+void CHexEditDoc::GetNextDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len)
+{
+	addr = -1;
+    if (pthread4_ == NULL) return;
+
+	for (int rr = 0; rr < ResultCount(); ++rr)
+	{
+		int idx = FirstDiffAt(rr, from);
+
+		CSingleLock sl(&docdata_, TRUE);
+		if (idx == comp_[rr].m_addr.size())
+			continue;     // past last diff in this result
+
+		ASSERT(idx > -1 && idx < comp_[rr].m_addr.size());
+		if (addr < 0 || comp_[rr].m_addr[idx] < addr)
+		{
+			addr = comp_[rr].m_addr[idx];
+			len  = comp_[rr].m_len[idx];
+		}
+	}
+}
+
+// Returns the address and length of the last difference or
+// -1 for the address if there are no differences.
+void CHexEditDoc::GetLastDiffAll(FILE_ADDRESS &addr, int &len)
+{
+	addr = -1;
+    if (pthread4_ == NULL) return;
+
+	CSingleLock sl(&docdata_, TRUE);
+
+	for (int rr = 0; rr < ResultCount(); ++rr)
+	{
+		if (comp_[rr].m_addr.size() == 0)
+			continue;    // no diffs in this result set
+
+		int last = comp_[rr].m_addr.size() - 1;
+		if (addr < 0 || comp_[rr].m_addr[last] > addr)
+		{
+			addr = comp_[rr].m_addr[last];
+			len  = comp_[rr].m_len[last];
+		}
+	}
+}
+
 // Returns:
 // -4 = compare not running
 // -2 = still in progress
 // -1 = no more diffs
 // else index of difference
-int CHexEditDoc::GetNextDiff(FILE_ADDRESS from)
+int CHexEditDoc::GetNextDiff(FILE_ADDRESS from, int rr /*=0*/)
 {
     if (pthread4_ == NULL)
         return -4;
@@ -286,14 +379,14 @@ int CHexEditDoc::GetNextDiff(FILE_ADDRESS from)
 			return -2;
 	}
 
-	int ii = FirstDiffAt(0, from);
-	if (ii == comp_[0].m_addr.size())
+	int ii = FirstDiffAt(rr, from);
+	if (ii == comp_[rr].m_addr.size())
 		return -1;
 
 	return ii;
 }
 
-int CHexEditDoc::GetPrevDiff(FILE_ADDRESS from)
+int CHexEditDoc::GetPrevDiff(FILE_ADDRESS from, int rr /*=0*/)
 {
     if (pthread4_ == NULL)
         return -4;
@@ -304,12 +397,13 @@ int CHexEditDoc::GetPrevDiff(FILE_ADDRESS from)
 			return -2;
 	}
 
-	int ii = FirstDiffAt(0, from);
+	int ii = FirstDiffAt(rr, from);
 	if (ii == 0)
 		return -1;
 
 	return ii - 1;
 }
+#endif
 
 // Open CompFile just opens the files for comparing.
 // Note when comparing that there are 4 files involved:
@@ -568,6 +662,9 @@ bool CHexEditDoc::CreateCompThread()
 
 	if (!OpenCompFile())
 		return false;
+
+	comp_.clear();
+	comp_.push_front(CompResult());  // always has at least one elt = current/last compare results
 
     // Create new thread
 	comp_command_ = RESTART;

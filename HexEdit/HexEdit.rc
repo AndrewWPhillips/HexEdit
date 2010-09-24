@@ -767,6 +767,33 @@ BEGIN
         MENUITEM "Hide Aerial View",            ID_AERIAL_HIDE
         MENUITEM "Split Aerial View",           ID_AERIAL_SPLIT
         MENUITEM "Tabbed Aerial View",          ID_AERIAL_TAB
+        MENUITEM SEPARATOR
+        POPUP "In &Border"
+        BEGIN
+            MENUITEM "Indicate &Selection",         ID_IND_SEL
+            MENUITEM "Indicate &Mark",              ID_IND_MARK
+            MENUITEM "Indicate &Highlights",        ID_IND_HL
+            MENUITEM "Indicate Search &Occurrences", ID_IND_SEARCH
+            MENUITEM "Indicate &Bookmarks",         ID_IND_BM
+        END
+        POPUP "Marching &Ants"
+        BEGIN
+            MENUITEM "Boundary of &Selection",      ID_ANT_SEL
+            MENUITEM "Boundary of &Mark",           ID_ANT_MARK
+            MENUITEM "Boundary of &Highlights",     ID_ANT_HL
+            MENUITEM "Boundary of Search &Occurrences", ID_ANT_SEARCH
+            MENUITEM "Boundary of &Bookmarks",      ID_ANT_BM
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Zoo&m Out",                   ID_AERIAL_ZOOM1
+        POPUP "&Zoom"
+        BEGIN
+            MENUITEM "Zoom X &2",                   ID_AERIAL_ZOOM2
+            MENUITEM "Zoom X &4",                   ID_AERIAL_ZOOM4
+            MENUITEM "Zoom X &8",                   ID_AERIAL_ZOOM8
+            MENUITEM "Zoom X &12",                  ID_AERIAL_ZOOM12
+            MENUITEM "Zoom X 1&6",                  ID_AERIAL_ZOOM16
+        END
     END
     POPUP "Compare"
     BEGIN
@@ -775,6 +802,16 @@ BEGIN
         MENUITEM "Hide Compare View",           ID_COMP_HIDE
         MENUITEM "Split Compare View",          ID_COMP_SPLIT
         MENUITEM "Tabbed Compare View",         ID_COMP_TAB
+        MENUITEM SEPARATOR
+        MENUITEM "Recent First Difference",     ID_COMP_FIRST
+        MENUITEM "Recent Previous Difference",  ID_COMP_PREV
+        MENUITEM "Recent Next Difference",      ID_COMP_NEXT
+        MENUITEM "Recent Last Difference",      ID_COMP_LAST
+        MENUITEM SEPARATOR
+        MENUITEM "All First Difference",        ID_COMP_ALL_FIRST
+        MENUITEM "All Previous Difference",     ID_COMP_ALL_PREV
+        MENUITEM "All Next Difference",         ID_COMP_ALL_NEXT
+        MENUITEM "All Last Difference",         ID_COMP_ALL_LAST
     END
     POPUP "&Tools"
     BEGIN
@@ -1307,6 +1344,7 @@ BEGIN
             MENUITEM "Boundary of Search &Occurrences", ID_ANT_SEARCH
             MENUITEM "Boundary of &Bookmarks",      ID_ANT_BM
         END
+        MENUITEM SEPARATOR
         MENUITEM "Zoo&m Out",                   ID_AERIAL_ZOOM1
         POPUP "&Zoom"
         BEGIN
@@ -2616,6 +2654,19 @@ END
 
 STRINGTABLE 
 BEGIN
+    ID_VIEW_TOOLBARS        "Show or hide this toolbar\nToggle Toolbar"
+    ID_JUMP_HEX_ADDR        "Invoke hex jump tool\nJump Hex"
+    ID_SEARCH_HEX           "Jump to find tool for hex search\nHex Find"
+    ID_SEARCH_ASCII         "Jump to find tool for case-sensitive text search\nText Find"
+    ID_SEARCH_ICASE         "Jump to find tool for case-insensitive search\nCase Insensitive Find"
+    ID_VIEW_EDITBAR         "Show or hide the edit bar\nToggle Edit Bar"
+    ID_ALLOW_MODS           "Turn off/on read only mode\nRead Only/Allow Changes"
+    ID_CONTROL_TOGGLE       "Toggle display of control characters"
+    ID_OPTIONS              "Change global options\nOptions"
+END
+
+STRINGTABLE 
+BEGIN
     ID_INDICATOR_BIG_ENDIAN " BE "
     ID_INDICATOR_FILE_LENGTH "9,999+1"
     ID_INDICATOR_HEX_ADDR   "XXXX XXXX"
@@ -2624,19 +2675,7 @@ BEGIN
     ID_INDICATOR_READONLY   "RW"
     ID_INDICATOR_OCCURRENCES "88,888,888"
     ID_INDICATOR_COMPARES   "8,888"
-    ID_JUMP_HEX_ADDR        "Invoke hex jump tool\nJump Hex"
     CG_IDS_TIPOFTHEDAY      "Display a useful ""Tip of the Day""\nTip of the Day"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_SEARCH_HEX           "Jump to find tool for hex search\nHex Find"
-    ID_SEARCH_ASCII         "Jump to find tool for case-sensitive text search\nText Find"
-    ID_SEARCH_ICASE         "Jump to find tool for case-insensitive search\nCase Insensitive Find"
-    ID_VIEW_EDITBAR         "Show or hide the edit bar\nToggle Edit Bar"
-    ID_ALLOW_MODS           "Turn off/on read only mode\nRead Only/Allow Changes"
-    ID_CONTROL_TOGGLE       "Toggle display of control characters"
-    ID_OPTIONS              "Change global options\nOptions"
 END
 
 STRINGTABLE 
@@ -3081,35 +3120,44 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_IND_SEL              "Indicate cursor/selection in the left and top borders"
-    ID_IND_MARK             "Indicate the row containing the mark in the left border"
-    ID_IND_HL               "Indicate rows with highlights in the left border"
-    ID_IND_SEARCH           "Indicate rows containing the current search text in the left border"
-    ID_IND_BM               "Indicate rows containing bookmarks in the left border"
+    ID_IND_SEL              "Indicate cursor/selection in the left and top borders\nSelection in Border"
+    ID_IND_MARK             "Indicate the row containing the mark in the left border\nMark in Border"
+    ID_IND_HL               "Indicate rows with highlights in the left border\nHighlights in Border"
+    ID_IND_SEARCH           "Indicate rows containing the current search text in the left border\nSearch Occurrences in Border"
+    ID_IND_BM               "Indicate rows containing bookmarks in the left border\nBookmarks in Border"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_AERIAL_ZOOM1         "Display file bytes/elements each as a single pixel"
-    ID_AERIAL_ZOOM2         "Display file bytes/elements as 2 x 2 pixels"
+    ID_ANT_SEL              "Indicate cursor/selection with marching ants\nSelection Ants"
+    ID_ANT_MARK             "Indicate the row containing the mark with marching ants\nMark Ants"
+    ID_ANT_HL               "Indicate rows with highlights with marching ants\nHighlight Ants"
+    ID_ANT_SEARCH           "Indicate rows containing the current search text with marching ants\nSearch Occurrences Ants"
+    ID_ANT_BM               "Indicate rows containing bookmarks with marching ants\nBookmarks Ants"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_AERIAL_ZOOM1         "Display file bytes/elements each as a single pixel\nAerial Zoom Out"
+    ID_AERIAL_ZOOM2         "Display file bytes/elements as 2 x 2 pixels\nAerial Zoom X 2"
     ID_AERIAL_ZOOM3         "Display file bytes/elements as 3 x 3 pixels"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_AERIAL_ZOOM4         "Display file bytes/elements as 4 x 4 pixels"
+    ID_AERIAL_ZOOM4         "Display file bytes/elements as 4 x 4 pixels\nAerial Zoom X 4"
     ID_AERIAL_ZOOM5         "Display file bytes/elements as 5 x 5 pixels"
     ID_AERIAL_ZOOM6         "Display file bytes/elements as 6 x 6 pixels"
     ID_AERIAL_ZOOM7         "Display file bytes/elements as 7 x 7 pixels"
-    ID_AERIAL_ZOOM8         "Display file bytes/elements as 8 x 8 pixels"
+    ID_AERIAL_ZOOM8         "Display file bytes/elements as 8 x 8 pixels\nAerial Zoom X 8"
     ID_AERIAL_ZOOM9         "Display file bytes/elements as 9 X 9  pixels"
     ID_AERIAL_ZOOM10        "Display file bytes/elements as 10 X 10 pixels"
     ID_AERIAL_ZOOM11        "Display file bytes/elements as 11 X 11 pixels"
-    ID_AERIAL_ZOOM12        "Display file bytes/elements as 12 X 12 pixels"
+    ID_AERIAL_ZOOM12        "Display file bytes/elements as 12 X 12 pixels\nAerial Zoom X 12"
     ID_AERIAL_ZOOM13        "Display file bytes/elements as 13 X 13 pixels"
     ID_AERIAL_ZOOM14        "Display file bytes/elements as 14 X 14 pixels"
     ID_AERIAL_ZOOM15        "Display file bytes/elements as 15 X 15 pixels"
-    ID_AERIAL_ZOOM16        "Display file bytes/elements as 16 X 16 pixels"
+    ID_AERIAL_ZOOM16        "Display file bytes/elements as 16 X 16 pixels\nAerial Zoom X 16"
 END
 
 STRINGTABLE 
@@ -3118,6 +3166,18 @@ BEGIN
     ID_COMP_SPLIT           "Show compare view in a split window\nCompare Split"
     ID_COMP_TAB             "Show compare view in a tabbed window\nCompare Tab"
     ID_COMP_NEW             "Start new compare (open new compare file)\nNew Compare"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_COMP_FIRST           "Jump to first recent difference\nFirst Diff"
+    ID_COMP_PREV            "Jump to previous recent difference\nPrev Diff"
+    ID_COMP_NEXT            "Jump to next recent difference\nNext Diff"
+    ID_COMP_LAST            "Jump to last recent difference\nLast Diff"
+    ID_COMP_ALL_FIRST       "Jump to first of all differences\nAll First Diff"
+    ID_COMP_ALL_PREV        "Jump to previous of all differences\nAll Prev Diff"
+    ID_COMP_ALL_NEXT        "Jump to next of all differences\nAll Next Diff"
+    ID_COMP_ALL_LAST        "Jump to last of all differences\nAll Last Diff"
 END
 
 #endif    // English (U.S.) resources
