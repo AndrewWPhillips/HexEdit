@@ -19010,6 +19010,14 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 			sym_size = sizeof(val);
 		}
 	}
+	else if (sym_str.CompareNoCase("astring") == 0)
+	{
+		char buf[256];
+		size_t len = pview_->GetDocument()->GetData((unsigned char *)buf, sizeof(buf)-1, sym_address);
+		buf[len] = '\0';
+        retval.typ = TYPE_STRING;
+	    retval.pstr = new ExprStringType((LPCTSTR)buf);
+	}
 
 	size_ = int(sym_size);  // Remember size of the symbol we encountered
 	return retval;

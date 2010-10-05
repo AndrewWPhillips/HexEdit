@@ -672,14 +672,6 @@ void CHexEditApp::InitWorkspace()
     VERIFY(InitShellManager());
 	//CMFCPopupMenu::EnableMenuSound(FALSE);
 
-	// xxx add this for MFC9??
-	//InitTooltipManager();
-	//CMFCToolTipInfo ttParams;
-	//ttParams.m_bVislManagerTheme = TRUE;
-	//theApp.GetTooltipManager()->
-	//   SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
-	//   RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
-
 	// These are commands that are always shown in menus (not to be confused
     // with commands no on toolbars - see AddToolBarForImageCollection)
     static int dv_id[] =
@@ -728,8 +720,6 @@ void CHexEditApp::InitWorkspace()
         ID_CONTROL_NONE,
         ID_CONTROL_ALPHA,
         ID_CONTROL_C,
-		ID_AERIAL_HIDE,
-		ID_AERIAL_SPLIT,
         ID_PROPERTIES,
 
 		ID_ASC2EBC,
@@ -775,6 +765,11 @@ void CHexEditApp::InitWorkspace()
 		ID_DFFD_SPLIT,
 		ID_DFFD_SYNC,
 		ID_DFFD_REFRESH,
+		ID_AERIAL_HIDE,
+		ID_AERIAL_SPLIT,
+		ID_COMP_NEW,
+		ID_COMP_HIDE,
+		ID_COMP_SPLIT,
 
         ID_CALCULATOR,
         ID_CUSTOMIZE,
@@ -1621,8 +1616,10 @@ BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
 	{
 		return FALSE;
 	}
+#ifdef _DEBUG
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == 65)
-		pMsg->message = WM_KEYDOWN;   // xxx just so we can put a breakpoint here
+		pMsg->message = WM_KEYDOWN;   // This is just so we can put a breakpoint here
+#endif
 
     return CWinAppEx::PreTranslateMessage(pMsg);
 }
@@ -2184,7 +2181,7 @@ void CHexEditApp::LoadOptions()
 	if (!open_display_.hex_area) open_display_.edit_char = open_display_.mark_char = TRUE;
 
 	// Make sure char_set values are valid
-	// xxx this will be removed later when we support more char sets (Unicode and code page char sets)
+	// Note: this will be removed later when we support more char sets (Unicode and code page char sets)
 	if (open_display_.char_set == 2)
 		open_display_.char_set = CHARSET_ASCII;       // ASCII:  0/2 -> 0
 	else if (open_display_.char_set > 4)
@@ -2318,8 +2315,7 @@ void CHexEditApp::LoadOptions()
 	// Symbols: address, sector, offset, byte, sbyte, word, uword, dword, udword, qword, uqword,
 	//          ieee32, ieee64, ibm32, ibm64, time_t, time_t_80, time_t_1899, time_t_mins, time64_t
     CString ss = GetProfileString("Options", "InfoTipUser",
-                    _T(
-					">Address;address;;;"
+ 					">Address;address;;;"
 					">Hex Address;address;hex;;"
 					">Dec Address;address;dec;;"
 					">From Mark;address - mark;;;"
@@ -2346,12 +2342,16 @@ void CHexEditApp::LoadOptions()
 					">32 bit IBM float;ibm32;%.7g;;"
 					">64 bit IBM float;ibm64;%.16g;;"
 					">Date/time;time_t;%c;;"
-//					">time_t MSC 5.1;time_t_80;%c;;"
-//					">time_t MSC 7;time_t_1899;%c;;"
-//					">time_t MINS;time_t_mins;%c;;"
-// xxx TBD                       ">String;string;%s;;"
+#ifdef TIME64_T
+					">64 bit date/time;time64_t;%c;;"
+#endif
+					">time_t MSC 5.1;time_t_80;%c;;"
+					">time_t MSC 7;time_t_1899;%c;;"
+					">time_t MINS;time_t_mins;%c;;"
+                    ">ANSI string;astring;%s;;"
+					// TODO - also handle EBCDIC and Unicode strings
 					">To EOF;eof - address;dec;;"
-                    ";;"));
+                    ";;");
 
 
 	for (int ii = 0; ; ii += 4)

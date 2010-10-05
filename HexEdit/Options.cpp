@@ -1156,12 +1156,13 @@ BOOL CTipsPage::OnInitDialog()
 		var_list.Add("ibm64");
 		var_list.Add("real48");
 		var_list.Add("time_t");
-		var_list.Add("time_t_80");
-		var_list.Add("time_t_1899");
-		var_list.Add("time_t_mins");
 #ifdef TIME64_T
 		var_list.Add("time64_t");
 #endif
+		var_list.Add("time_t_80");
+		var_list.Add("time_t_1899");
+		var_list.Add("time_t_mins");
+		var_list.Add("astring");
 		//var_list.Add("char_ascii");
 		//var_list.Add("char_ebcdic");
 		//var_list.Add("char_unicode");
@@ -1570,7 +1571,7 @@ void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 		else if (ss.Find("char") != -1)
 			tt = tchar;
 		else if (ss.Find("string") != -1)
-			tt = tchar;
+			tt = tstring;
 
 		if (tt > tnone)
 		{
