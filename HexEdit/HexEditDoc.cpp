@@ -1032,8 +1032,6 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
             aa->mac_error_ = 1;
 			shared_ = TRUE;
 		}
-
-		// xxx ask for notification if file changes xxx
     }
     else if (!shared_ && pfile1_->Open(lpszPathName,
                 CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary, &fe) )
@@ -1071,8 +1069,6 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 		}
 		readonly_ = TRUE;
         shared_ = TRUE;
-
-        // xxx ask for notification if file changes xxx
     }
     else
     {

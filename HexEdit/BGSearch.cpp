@@ -854,7 +854,6 @@ UINT CHexEditDoc::RunSearchThread()
                     got = GetData(buf, size_t(min(FILE_ADDRESS(buf_len), end - addr_buf)) + 1, addr_buf, 2);
                     ASSERT(got == min(buf_len, end - addr_buf) || got == min(buf_len, end - addr_buf) + 1);
 
-                    // xxx step through this whole word code!
                     if (wholeword)
                     {
                         // Work out whether the character before the buf is alphabetic

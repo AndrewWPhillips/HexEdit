@@ -129,7 +129,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
                 goto exit_play;
             }
 
-            TRACE(" xxx %d %d\r\n", (int)(*pk).ktype, (int)(*pk).v64);
+            TRACE("=== MACRO PLAY %d %d\r\n", (int)(*pk).ktype, (int)(*pk).v64);
             ASSERT(sizeof(*pk) == 9);
             switch ((*pk).ktype)
             {

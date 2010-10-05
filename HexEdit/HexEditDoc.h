@@ -761,9 +761,6 @@ public:
     BOOL ScanFile();
     void CheckUpdate();
 
-	// xxx this probably should be in expr_eval class
-//    static ExprStringType GetDataString(expr_eval::value_t val, CString strFormat, int size = -1, bool unsgned = false);
-    
     int GetBpe() { return bpe_; }
     int NumElts() { return int((length_ - 1)/bpe_) + 1; }    // Number of elts required for the whole file
 
