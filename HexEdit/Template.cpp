@@ -2019,7 +2019,7 @@ ExprStringType CHexEditDoc::get_str(CHexExpr::value_t val, int ii)
 		}
 	}
 
-    return GetDataString(val, "");
+    return val.GetDataString("");
 }
 
 #ifdef _DEBUG
@@ -2078,7 +2078,7 @@ CHexExpr::value_t CHexEditDoc::Evaluate(CString ss, CHexExpr &ee, int ref, int &
             if (val.typ == CHexExpr::TYPE_NONE)
                 retval += CString("##") + ee.get_error_message();
             else
-                retval += GetDataString(val, formatStr);
+                retval += val.GetDataString(formatStr);
             if (expr_ac > ref_ac) ref_ac = expr_ac;
 
             ss = ss.Mid(end+1);         // Continue on the next bit of the input string
@@ -2088,194 +2088,6 @@ CHexExpr::value_t CHexEditDoc::Evaluate(CString ss, CHexExpr &ee, int ref, int &
 
         return CHexExpr::value_t(retval);
     }
-}
-
-// Formats a value as a string
-// - val is the value
-// - strFormat is the format string that determines formating depending on the type of val
-// - size indicates 
-ExprStringType CHexEditDoc::GetDataString(expr_eval::value_t val, CString strFormat, int size /* = -1 */, bool unsgned /* = false */)
-{
-    // Get default format string if none given
-    if (strFormat.IsEmpty())
-    {
-        switch (val.typ)
-        {
-        case CHexExpr::TYPE_INT:
-            strFormat = theApp.default_int_format_;
-            break;
-        case CHexExpr::TYPE_DATE:
-            strFormat = theApp.default_date_format_;
-            break;
-        case CHexExpr::TYPE_REAL:
-            strFormat = theApp.default_real_format_;
-            break;
-        case CHexExpr::TYPE_STRING:
-            strFormat = theApp.default_string_format_;
-            break;
-        }
-    }
-
-    CString ss;
-#ifdef UNICODE_TYPE_STRING
-	CStringW sw;
-#endif
-    char disp[128];     // Holds output of sprintf for %I64 (CString::Format can't handle it)
-
-    switch (val.typ)
-    {
-    case CHexExpr::TYPE_BOOLEAN:
-        if (strFormat == "f")
-            ss = val.boolean ? "t" : "f";
-        else if (strFormat == "F")
-            ss = val.boolean ? "T" : "F";
-        else if (strFormat == "false")
-            ss = val.boolean ? "true" : "false";
-        else if (strFormat == "n")
-            ss = val.boolean ? "y" : "n";
-        else if (strFormat == "N")
-            ss = val.boolean ? "Y" : "N";
-        else if (strFormat == "no")
-            ss = val.boolean ? "yes" : "no";
-        else if (strFormat == "NO")
-            ss = val.boolean ? "YES" : "NO";
-        else if (strFormat == "off")
-            ss = val.boolean ? "on" : "off";
-        else if (strFormat == "OFF")
-            ss = val.boolean ? "ON" : "OFF";
-        else if (strFormat == "0")
-            ss = val.boolean ? "1" : "0";
-        else
-            ss = val.boolean ? "TRUE" : "FALSE";
-        break;
-
-    case CHexExpr::TYPE_INT:
-		if (size == -1) size = 2;
-
-		// We want to make sure we display the number of digits appropriate to the actual size of
-		// the value (size of operands in expression?) but not lose bits if there was overflow.
-		// So for each size make sure all unused bits are the same as the top-most used bit for
-		// signed types OR unused bits are all zero for unsigned types.
-		if (size == 1)
-		{
-			if (!unsgned && (val.int64 & ~0x7Fi64) != ~0x7Fi64 && (val.int64 & ~0x7Fi64) != 0 ||
-			     unsgned && (val.int64 & ~0xFFi64) != 0)
-			{
-				size = 2;
-			}
-		}
-		if (size == 2)
-		{
-			if (!unsgned && (val.int64 & ~0x7FFFi64) != ~0x7FFFi64 && (val.int64 & ~0x7FFFi64) != 0 ||
-			     unsgned && (val.int64 & ~0xFFFFi64) != 0)
-			{
-				size = 4;
-			}
-		}
-		if (size == 4)
-		{
-			if (!unsgned && (val.int64 & ~0x7fffFFFFi64) != ~0x7fffFFFFi64 && (val.int64 & ~0x7fffFFFFi64) != 0 ||
-			     unsgned && (val.int64 & ~0xffffFFFFi64) != 0)
-			{
-				size = 8;
-			}
-		}
-
-		ASSERT(size == 1 || size == 2 || size == 4 || size == 8);
-        if (strFormat.Left(3).CompareNoCase("hex") == 0)
-        {
-            if (theApp.hex_ucase_)
-                sprintf(disp, "%*.*I64X", size*2, size*2, val.int64);  // pass number of digits (4-bit nybbles) to sprintf
-            else
-                sprintf(disp, "%*.*I64x", size*2, size*2, val.int64);
-            ss = disp;
-            AddSpaces(ss);
-        }
-        else if (strFormat.Left(3).CompareNoCase("bin") == 0)
-        {
-            ss = bin_str(val.int64, size*8);                           // pass the number of bits to bin_str
-        }
-        else if (strFormat.Left(3).CompareNoCase("oct") == 0)
-        {
-            sprintf(disp, "%I64o", val.int64);
-            ss = disp;
-        }
-        else if (strFormat.Find('%') == -1)
-        {
-            sprintf(disp, "%I64d", val.int64);
-            ss = disp;
-            AddCommas(ss);
-        }
-        else
-        {
-            if (strchr("diouxX", *(const char *)strFormat.Right(1)) != NULL)
-                strFormat.Insert(strFormat.GetLength()-1, "I64");
-            sprintf(disp, strFormat, val.int64, val.int64, val.int64, val.int64);  // Add 4 times in case strFormat contains multiple format strings
-            ss = disp;
-        }
-        break;
-    case CHexExpr::TYPE_DATE:
-        if (val.date > -1e30)
-        {
-            COleDateTime odt;
-            odt.m_dt = val.date;
-            odt.m_status = COleDateTime::valid;
-            ss = odt.Format(strFormat);
-        }
-        else
-            ss = "##Invalid date##";
-        break;
-
-    case CHexExpr::TYPE_REAL:
-        switch (_fpclass(val.real64))
-        {
-        case _FPCLASS_SNAN:
-        case _FPCLASS_QNAN:
-            ss = "NaN";
-            break;
-        case _FPCLASS_NINF:
-            ss = "-Inf";
-            break;
-        case _FPCLASS_PINF:
-            ss = "+Inf";
-            break;
-        default:
-            if (strFormat.Find('%') != -1)
-                ss.Format(strFormat, val.real64, val.real64, val.real64);
-			else if (size == 8)
-                ss.Format("%.15g", val.real64);
-            else
-                ss.Format("%.7g", val.real64);
-            break;
-        }
-        break;
-
-    case CHexExpr::TYPE_STRING:
-#ifdef UNICODE_TYPE_STRING
-        if (strFormat.Find('%') == -1)
-            sw.Format(L"%s", *val.pstr);
-        else
-            sw.Format(CStringW(strFormat), *val.pstr, *val.pstr);
-#else
-        if (strFormat.Find('%') == -1)
-            ss.Format("%s", *val.pstr);
-        else
-            ss.Format(strFormat, *val.pstr, *val.pstr);
-#endif
-        break;
-    }
-
-#ifdef UNICODE_TYPE_STRING
-	if (!ss.IsEmpty())
-	{
-		ASSERT(sw.IsEmpty());
-		sw = CStringW(ss);
-	}
-	return sw;
-#else
-    ASSERT(!ss.IsEmpty());
-    return ss;
-#endif
 }
 
 // Get symbol type/value.  sym is the name of the symbol to find, parent is the element

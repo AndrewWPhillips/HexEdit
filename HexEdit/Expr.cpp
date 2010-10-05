@@ -3716,3 +3716,190 @@ void expr_eval::skip_ws()
     while(isspace(*p_))
         ++p_;
 }
+
+// Formats a value as a string
+// - strFormat is the format string that determines formating depending on the type of val
+// - size/unsgned indicate expected size and type for integers
+ExprStringType expr_eval::value_t::GetDataString(CString strFormat, int size /* = -1 */, bool unsgned /* = false */)
+{
+    // Get default format string if none given
+    if (strFormat.IsEmpty())
+    {
+        switch (typ)
+        {
+        case TYPE_INT:
+            strFormat = theApp.default_int_format_;
+            break;
+        case TYPE_DATE:
+            strFormat = theApp.default_date_format_;
+            break;
+        case TYPE_REAL:
+            strFormat = theApp.default_real_format_;
+            break;
+        case TYPE_STRING:
+            strFormat = theApp.default_string_format_;
+            break;
+        }
+    }
+
+    CString ss;
+#ifdef UNICODE_TYPE_STRING
+	CStringW sw;
+#endif
+    char disp[128];     // Holds output of sprintf for %I64 (CString::Format can't handle it)
+
+    switch (typ)
+    {
+    case TYPE_BOOLEAN:
+        if (strFormat == "f")
+            ss = boolean ? "t" : "f";
+        else if (strFormat == "F")
+            ss = boolean ? "T" : "F";
+        else if (strFormat == "false")
+            ss = boolean ? "true" : "false";
+        else if (strFormat == "n")
+            ss = boolean ? "y" : "n";
+        else if (strFormat == "N")
+            ss = boolean ? "Y" : "N";
+        else if (strFormat == "no")
+            ss = boolean ? "yes" : "no";
+        else if (strFormat == "NO")
+            ss = boolean ? "YES" : "NO";
+        else if (strFormat == "off")
+            ss = boolean ? "on" : "off";
+        else if (strFormat == "OFF")
+            ss = boolean ? "ON" : "OFF";
+        else if (strFormat == "0")
+            ss = boolean ? "1" : "0";
+        else
+            ss = boolean ? "TRUE" : "FALSE";
+        break;
+
+    case TYPE_INT:
+		if (size == -1) size = 2;
+
+		// We want to make sure we display the number of digits appropriate to the actual size of
+		// the value (size of operands in expression?) but not lose bits if there was overflow.
+		// So for each size make sure all unused bits are the same as the top-most used bit for
+		// signed types OR unused bits are all zero for unsigned types.
+		if (size == 1)
+		{
+			if (!unsgned && (int64 & ~0x7Fi64) != ~0x7Fi64 && (int64 & ~0x7Fi64) != 0 ||
+			     unsgned && (int64 & ~0xFFi64) != 0)
+			{
+				size = 2;
+			}
+		}
+		if (size == 2)
+		{
+			if (!unsgned && (int64 & ~0x7FFFi64) != ~0x7FFFi64 && (int64 & ~0x7FFFi64) != 0 ||
+			     unsgned && (int64 & ~0xFFFFi64) != 0)
+			{
+				size = 4;
+			}
+		}
+		if (size == 4)
+		{
+			if (!unsgned && (int64 & ~0x7fffFFFFi64) != ~0x7fffFFFFi64 && (int64 & ~0x7fffFFFFi64) != 0 ||
+			     unsgned && (int64 & ~0xffffFFFFi64) != 0)
+			{
+				size = 8;
+			}
+		}
+
+		ASSERT(size == 1 || size == 2 || size == 4 || size == 8);
+        if (strFormat.Left(3).CompareNoCase("hex") == 0)
+        {
+            if (theApp.hex_ucase_)
+                sprintf(disp, "%*.*I64X", size*2, size*2, int64);  // pass number of digits (4-bit nybbles) to sprintf
+            else
+                sprintf(disp, "%*.*I64x", size*2, size*2, int64);
+            ss = disp;
+            AddSpaces(ss);
+        }
+        else if (strFormat.Left(3).CompareNoCase("bin") == 0)
+        {
+            ss = bin_str(int64, size*8);                           // pass the number of bits to bin_str
+        }
+        else if (strFormat.Left(3).CompareNoCase("oct") == 0)
+        {
+            sprintf(disp, "%I64o", int64);
+            ss = disp;
+        }
+        else if (strFormat.Find('%') == -1)
+        {
+            sprintf(disp, "%I64d", int64);
+            ss = disp;
+            AddCommas(ss);
+        }
+        else
+        {
+            if (strchr("diouxX", *(const char *)strFormat.Right(1)) != NULL)
+                strFormat.Insert(strFormat.GetLength()-1, "I64");
+            sprintf(disp, strFormat, int64, int64, int64, int64);  // Add 4 times in case strFormat contains multiple format strings
+            ss = disp;
+        }
+        break;
+    case TYPE_DATE:
+        if (date > -1e30)
+        {
+            COleDateTime odt;
+            odt.m_dt = date;
+            odt.m_status = COleDateTime::valid;
+            ss = odt.Format(strFormat);
+        }
+        else
+            ss = "##Invalid date##";
+        break;
+
+    case TYPE_REAL:
+        switch (_fpclass(real64))
+        {
+        case _FPCLASS_SNAN:
+        case _FPCLASS_QNAN:
+            ss = "NaN";
+            break;
+        case _FPCLASS_NINF:
+            ss = "-Inf";
+            break;
+        case _FPCLASS_PINF:
+            ss = "+Inf";
+            break;
+        default:
+            if (strFormat.Find('%') != -1)
+                ss.Format(strFormat, real64, real64, real64);
+			else if (size == 8)
+                ss.Format("%.15g", real64);
+            else
+                ss.Format("%.7g", real64);
+            break;
+        }
+        break;
+
+    case TYPE_STRING:
+#ifdef UNICODE_TYPE_STRING
+        if (strFormat.Find('%') == -1)
+            sw.Format(L"%s", *pstr);
+        else
+            sw.Format(CStringW(strFormat), *pstr, *pstr);
+#else
+        if (strFormat.Find('%') == -1)
+            ss.Format("%s", *pstr);
+        else
+            ss.Format(strFormat, *pstr, *pstr);
+#endif
+        break;
+    }
+
+#ifdef UNICODE_TYPE_STRING
+	if (!ss.IsEmpty())
+	{
+		ASSERT(sw.IsEmpty());
+		sw = CStringW(ss);
+	}
+	return sw;
+#else
+    ASSERT(!ss.IsEmpty());
+    return ss;
+#endif
+}

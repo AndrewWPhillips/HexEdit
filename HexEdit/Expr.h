@@ -122,6 +122,8 @@ public:
 
         ~value_t() { if (typ == TYPE_STRING) delete pstr; }
 
+		ExprStringType GetDataString(CString strFormat, int size = -1, bool unsgned = false);
+
         unsigned char typ;      // type of data or TYPE_NONE (eg unknown variable name)
         bool error;             // allows us to propagate an error but continue parsing
         union

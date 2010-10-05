@@ -249,7 +249,7 @@ struct doc_loc
         dlen = n | (unsigned __int64(2) << 62); // 2 = memory
         memaddr = m;
     }
-	doc_loc(FILE_ADDRESS f, unsigned __int64 n, int idx) // xxx do we really need 1st param (always zero?)
+	doc_loc(FILE_ADDRESS f, unsigned __int64 n, int idx)
 	{
         ASSERT(FILE_ADDRESS(n) <= mask);
         ASSERT(FILE_ADDRESS(f) <= fmask);
@@ -762,7 +762,7 @@ public:
     void CheckUpdate();
 
 	// xxx this probably should be in expr_eval class
-    static ExprStringType GetDataString(expr_eval::value_t val, CString strFormat, int size = -1, bool unsgned = false);
+//    static ExprStringType GetDataString(expr_eval::value_t val, CString strFormat, int size = -1, bool unsgned = false);
     
     int GetBpe() { return bpe_; }
     int NumElts() { return int((length_ - 1)/bpe_) + 1; }    // Number of elts required for the whole file

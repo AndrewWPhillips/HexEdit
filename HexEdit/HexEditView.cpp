@@ -7181,7 +7181,7 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 
 				int dummy;
 				expr_eval::value_t val = expr_.evaluate(theApp.tip_expr_[ii], 0, dummy);
-				tip_.AddString(GetDocument()->GetDataString(val, format, expr_.GetSize(), expr_.GetUnsigned()),
+				tip_.AddString(val.GetDataString(format, expr_.GetSize(), expr_.GetUnsigned()),
 							   col,
 							   &pt);
 				++idx;
