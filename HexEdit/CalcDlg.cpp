@@ -1684,7 +1684,6 @@ void CCalcDlg::change_bits(int bits)
 
 	if (invalid_expression())
 	{
-		// xxx need to redraw ctl_calc_bits_ here???
 		edit_.update_value(false);
 		return;
 	}
@@ -3244,7 +3243,7 @@ void CCalcDlg::OnMemStore()
         FixFileButtons();
         GetDlgItem(IDC_MEM_GET)->EnableWindow(TRUE);
 
-		// xxx This works great but we have to also update tooltip after MC, M+, M- buttons
+		// TODO This works but we have to also update tooltip after MC, M+, M- buttons, and perhaps also after radix changes
 		// which means we can't just use the current text from the edit box.
 		// Plus we should also display using the current radix and bits AND update after macros with refresh off.
 		//// Update tooltip

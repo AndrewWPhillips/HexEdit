@@ -169,7 +169,10 @@ expr_eval::tok_t expr_eval::prec_assign(value_t &val)
     {
         if (error_buf_[0] == '\0')
         {
-            sprintf(error_buf_, "Unknown variable \"%.200s\"", vname);
+			if (vname.IsEmpty())
+				sprintf(error_buf_, "Invalid expression");
+			else
+				sprintf(error_buf_, "Unknown variable \"%.200s\"", vname);
         }
         return TOK_NONE;
     }

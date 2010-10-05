@@ -224,8 +224,9 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		if (pp_->current_str_.Left(8).CompareNoCase("Overflow") == 0)
 #endif
 		{
+			ASSERT(0);  // should not happen since update_value should not be called when we have a valid integer expression - hence Overflow should not occur
             pp_->overflow_ = TRUE;
-			pp_->current_type_ = CHexExpr::TYPE_INT;  // xxx restore previous type since we are ignoring the change
+			pp_->current_type_ = CHexExpr::TYPE_INT;
 		}
 		else
 		{
@@ -552,14 +553,14 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
     CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 
-    // Tidy display if hex and char(s) deleted or caret moved xxx Is this necessary?
-    GetWindowText(ss);
-    if ((nChar == VK_DELETE || nChar == VK_RIGHT || nChar == VK_LEFT) &&
-        is_number(ss) &&
-        ::GetKeyState(VK_SHIFT) >= 0 && ss.GetLength() > 0)
-    {
-        add_sep();
-    }
+    //// Tidy display if hex and char(s) deleted or caret moved
+    //GetWindowText(ss);
+    //if ((nChar == VK_DELETE || nChar == VK_RIGHT || nChar == VK_LEFT) &&
+    //    is_number(ss) &&
+    //    ::GetKeyState(VK_SHIFT) >= 0 && ss.GetLength() > 0)
+    //{
+    //    add_sep();
+    //}
 
     if (nChar == VK_DELETE)
 		(void)update_value(false);   // should always return true for Del key
