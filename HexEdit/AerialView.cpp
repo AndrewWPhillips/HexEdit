@@ -8,11 +8,10 @@
 #include "Misc.h"
 #include "Boyer.h"
 
-// TODO xxx
-// - file options: hide/split/tab, auto-sync (caret or scroll?)
-// - global options: default dpix?, max bitmap size (range 20 - 200 Mb?)
-// > ability to save default file options
-// - printing?
+// TODO for aerial view
+// - autosync/scroll?
+// - global options: default dpix?, max bitmap size (range 16 Mb to size of physical memory?)
+// - ability to print the bitmap
 
 static bool timer_on = true;  // allow turning off of ants for testing things like invalidation
 
@@ -32,7 +31,7 @@ CAerialView::CAerialView()
     disp_.dpix = 1;     // set later but make non-zero for safety
     sbfact_ = 1;        // default to normal scrollbar units
 
-    last_tip_elt_ = -1;  // xxx is this necessary?
+    last_tip_elt_ = -1;
 
     // We use a timer to update the "marching ants" border, which is a cycle of 12 pixels: 4 pixels
     // of one ant colour, 2 blanks, 4 pixels of another ant colour, 2 blanks, then repeat
@@ -274,7 +273,7 @@ void CAerialView::OnDraw(CDC* pDC)
         pDC->FillRect(&rct, &brush);
     }
 
-	// xxx When printing (pDC->IsPrinting()) use bigger value for actual_dpix_ scaled for printer DPI
+	// TODO When printing (pDC->IsPrinting()) use bigger value for actual_dpix_ scaled for printer DPI
 
     // Set up for finding what lines bookmarks, search occurrences etc are on
     COLORREF clr_sel, clr_mark, clr_hl, clr_search, clr_bm, dummy;
@@ -403,9 +402,9 @@ void CAerialView::OnDraw(CDC* pDC)
     rct.bottom = rct.top + rows_ * actual_dpix_;
     pDC->IntersectClipRect(&rct);
 
-    tb_.restart();
+    t0_.restart();
     draw_bitmap(pDC);
-    tb_.stop();
+    t0_.stop();
 
     if (disp_.draw_ants_sel)
     {
@@ -673,7 +672,6 @@ void CAerialView::OnTimer(UINT nIDEvent)
         int width = GetDocument()->GetBpe() * cols_;
 		if (disp_.draw_ants_sel)
 		{
-            t1_.restart();
 			// Invalidate selection range
 			FILE_ADDRESS start_addr, end_addr;
 			phev_->GetSelAddr(start_addr, end_addr);
@@ -687,7 +685,6 @@ void CAerialView::OnTimer(UINT nIDEvent)
 				prev_end_addr_ = end_addr;
 			}
 			invalidate_addr_range_boundary(start_addr, end_addr);
-            t1_.stop();
 		}
         if (disp_.draw_ants_mark)
         {
@@ -703,11 +700,9 @@ void CAerialView::OnTimer(UINT nIDEvent)
         }
         if (disp_.draw_ants_search && theApp.pboyer_ != NULL && search_pair_.size() < 4096)  // if we have 1000's of ants marching everthing stops
         {
-            t4_.restart();
             std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator psp;
             for (psp = search_pair_.begin(); psp != search_pair_.end(); ++psp)
 	            invalidate_addr_range_boundary(psp->first, psp->second);
-            t4_.stop();
         }
         if (disp_.draw_ants_bm)
         {
@@ -810,7 +805,6 @@ void CAerialView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	tip_.Hide(300);
     mouse_down_ = true;
-    // xxx select the elt clicked
     CView::OnLButtonDown(nFlags, point);
 }
 
@@ -850,39 +844,14 @@ void CAerialView::OnContextMenu(CWnd* pWnd, CPoint point)
     pCMM->ShowPopupMenu(IDR_CONTEXT_AERIAL, point.x, point.y, this);
 }
 
-void CAerialView::OnViewTest() 
+// For testing
+void CAerialView::OnViewTest()
 {
-	// for testing new commands etc
-    TRACE("xxx t0 %g\n", t0_.elapsed());
-    TRACE("xxx t1 %g\n", t1_.elapsed());
-    TRACE("xxx t2 %g\n", t2_.elapsed());
-    TRACE("xxx t3 %g\n", t3_.elapsed());
-    TRACE("xxx t4 %g\n", t4_.elapsed());
-    TRACE("xxx t5 %g\n", t5_.elapsed());
-    TRACE("xxx t6 %g\n", t6_.elapsed());
-    TRACE("xxx t7 %g\n", t7_.elapsed());
-    TRACE("xxx t8 %g\n", t8_.elapsed());
-    TRACE("xxx t9 %g\n", t9_.elapsed());
-    TRACE("xxx ta %g\n", ta_.elapsed());
-    TRACE("xxx tb %g\n", tb_.elapsed());
-    TRACE("xxx tc %g\n", tc_.elapsed());
-    TRACE("xxx td %g\n", td_.elapsed());
-    TRACE("xxx te %g\n", te_.elapsed());
+    // Show performance info
+    TRACE("=== t0 %g\n", t0_.elapsed());
+    TRACE("=== t1 %g\n", t1_.elapsed());
     t0_.reset(false);
     t1_.reset(false);
-    t2_.reset(false);
-    t3_.reset(false);
-    t4_.reset(false);
-    t5_.reset(false);
-    t6_.reset(false);
-    t7_.reset(false);
-    t8_.reset(false);
-    t9_.reset(false);
-    ta_.reset(false);
-    tb_.reset(false);
-    tc_.reset(false);
-    td_.reset(false);
-    te_.reset(false);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -900,7 +869,7 @@ void CAerialView::ShowPos(FILE_ADDRESS addr)
     {
         SetScroll(int(addr/width) - zone);
     }
-    else if (addr >= scrollpos_ + width*(rows_ - zone))   // xxx test if should be >= (when cursor at start of bitmap row)
+    else if (addr >= scrollpos_ + width*(rows_ - zone))
     {
         SetScroll(int(addr/width) - rows_ + zone + 1);
     }
@@ -1112,7 +1081,6 @@ void CAerialView::invalidate_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS en
     if (start_elt >= end_elt)
         return;                         // Nothing to invalidate or all outside display
 
-    t6_.restart();
     // Work out line range that needs invalidating
     int start_line = int(start_elt/cols_);
     int end_line   = int(end_elt/cols_);
@@ -1132,7 +1100,6 @@ void CAerialView::invalidate_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS en
             rct.left = 0; rct.right = bdr_left_;    // Do left border too
             InvalidateRect(rct);
         }
-        t6_.stop();
         return;
     }
     // Invalidate partial lines at each end
@@ -1172,7 +1139,6 @@ void CAerialView::invalidate_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS en
             InvalidateRect(rct);
         }
     }
-    t6_.stop();
 }
 
 // Similar to invalidate_addr_range but only used for marching ants.
@@ -1221,7 +1187,6 @@ void CAerialView::invalidate_addr_range_boundary(FILE_ADDRESS start_addr, FILE_A
         return;
     }
 
-    t5_.restart();
     // Invalidate and draw the four sides.
     // Note that we call UpdateWindow to force an immediate redraw otherwise Windows
     // combines them into one big rect which is slow (like invalidate_addr_range).
@@ -1256,7 +1221,6 @@ void CAerialView::invalidate_addr_range_boundary(FILE_ADDRESS start_addr, FILE_A
     rct.bottom = bdr_top_ + (end_line+1)*actual_dpix_;
     InvalidateRect(rct, FALSE);
     UpdateWindow();
-    t5_.stop();
 }
 
 // Redraws the part of the bitmap that need to be shown in the window.
@@ -1338,12 +1302,12 @@ void CAerialView::draw_ants(CDC* pDC, FILE_ADDRESS start_addr, FILE_ADDRESS end_
     if (start_addr < scrollpos_ - width) start_addr = scrollpos_ - width;
     if (end_addr > scrollpos_ + width*(rows_+1)) end_addr = scrollpos_ + width*(rows_+1);
 
-    ta_.restart();
+    t1_.restart();
     if (actual_dpix_ == 1 && end_addr - start_addr < 2*width)
         draw_lines(pDC, start_addr, end_addr, clr1, clr2);       // Just draw a row of ants as there's not even 2 rows of pixels
     else
         draw_bounds(pDC, start_addr, end_addr, clr1, clr2);
-    ta_.stop();
+    t1_.stop();
 }
 
 void CAerialView::draw_lines(CDC* pDC, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr, COLORREF clr1, COLORREF clr2)

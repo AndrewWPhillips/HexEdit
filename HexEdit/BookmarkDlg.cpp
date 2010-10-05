@@ -198,13 +198,7 @@ BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 	m_resizer.Add(IDC_BOOKMARKS_VALIDATE, 100, 0, 0, 0);
 	m_resizer.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
 	m_resizer.Add(IDC_BOOKMARKS_HELP, 100, 0, 0, 0);
-/* xxx
-    // We need this so that the resizer gets WM_SIZE event after the controls
-    // have been added.
-    CRect cli;
-    GetClientRect(&cli);
-    PostMessage(WM_SIZE, SIZE_RESTORED, MAKELONG(cli.Width(), cli.Height()));
-*/
+
 	return TRUE;
 }
 

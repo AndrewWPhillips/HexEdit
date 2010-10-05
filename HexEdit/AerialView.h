@@ -26,7 +26,7 @@
 // CAerialView view
 #include "HexEditDoc.h"
 #include "HexEditView.h"
-#include "timer.h"  // xxx for testing
+#include "timer.h"  // A timer is used to dynamically adjust ant speed
 
 class CAerialView : public CView
 {
@@ -223,7 +223,6 @@ private:
     //    User can choose from between 1 and 65536, (restricted to the 16 values that are powers of 2?)
     //    For large files there is a limit on the smallest BPE allowed,
     //    otherwise a 1 TByte file would require 3 TBytes of memory at a BPE of 1.
-    //    xxx need user option to specify largest amount of memory to use (min 16Mb = 1 TByte file @ BPE 65536)
     //    BPE says how big the FreeImage bitmap is so (like the bitmap) it is part of the 
     //    document and when it changes the FreeImage bitmap needs to be completely recalculated.
     // 2. DPIX = number of screen pixels required to display one "elt".
@@ -246,6 +245,6 @@ private:
     void update_bars();         // Make sure scroll bars reflect the part of the bitmap displayed
     void update_display();      // Recalc display params when it changes to speed OnDraw
 
-    timer t0_, t1_, t2_, t3_, t4_, t5_, t6_, t7_, t8_, t9_, ta_, tb_, tc_, td_, te_;  // xxx for timing tests
+    timer t0_, t1_;     // Used in performance tests
 };
 #endif  // DATAFORMATVIEW_INCLUDED_

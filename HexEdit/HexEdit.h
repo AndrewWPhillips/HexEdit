@@ -524,7 +524,7 @@ public:
                 mac_.clear();
             }
             mac_.push_back(key_macro(k, v64));
-			TRACE("XXX MACRO %d %d\n", int(k), int(v64));
+			TRACE("=== MACRO RECORD: %d %d\n", int(k), int(v64));
         }
     }
 #if 0 // Remove this (replaced by above) due to ambiguous calls problems

@@ -82,7 +82,8 @@ public:
                      theApp.GetProfileInt("Window-Settings", strName+"X2", -30000),
                      theApp.GetProfileInt("Window-Settings", strName+"Y2", -30000));
             if (rr.top != -30000)
-                GetParent()->MoveWindow(&rr);  // xxx crash here on dialog start up???
+                GetParent()->MoveWindow(&rr);  // Note: there was a crash here until we set 8th
+			                                   // param of CFileDialog (bVistaStyle) c'tor to FALSE.
 
             first_time = false;
         }
