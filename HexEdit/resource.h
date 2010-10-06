@@ -1570,7 +1570,6 @@
 #define ID_ANT_HL                       39122
 #define ID_ANT_SEARCH                   39123
 #define ID_ANT_BM                       39124
-#define ID_COMP_AUTO_SYNC               39130
 #define ID_COMP_ALL_DUMMY               39131
 #define ID_COMP_FIRST                   39132
 #define ID_COMP_PREV                    39133
@@ -1580,6 +1579,8 @@
 #define ID_COMP_ALL_PREV                39137
 #define ID_COMP_ALL_NEXT                39138
 #define ID_COMP_ALL_LAST                39139
+#define ID_COMP_AUTO_SYNC               39140
+#define ID_COMP_AUTO_SCROLL             39141
 #define ID_GOADDRESS                    39148
 #define ID_GOSECTOR                     39149
 

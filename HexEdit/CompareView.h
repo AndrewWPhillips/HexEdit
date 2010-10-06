@@ -118,6 +118,11 @@ protected:
     //virtual void DoHScroll(int total, int page, int pos);
     //virtual void DoVScroll(int total, int page, int pos);
     //void DoUpdate();
+	virtual void AfterScroll(CPointAp newpos)
+	{
+		if (phev_ != NULL && phev_->display_.auto_scroll_comp)
+			phev_->SetScroll(newpos);
+	}
 
 protected:
     //afx_msg void OnDestroy();

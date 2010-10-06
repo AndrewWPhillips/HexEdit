@@ -597,8 +597,6 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_CBN_SELENDOK(ID_SCHEME_US, OnSelScheme)
     ON_UPDATE_COMMAND_UI(ID_SCHEME_US, OnUpdateScheme)
 
-    ON_COMMAND(ID_COMP_AUTO_SYNC, OnCompAutoSync)
-    ON_UPDATE_COMMAND_UI(ID_COMP_AUTO_SYNC, OnUpdateCompAutoSync)
     ON_COMMAND(ID_COMP_FIRST, OnCompFirst)
     ON_COMMAND(ID_COMP_PREV, OnCompPrev)
     ON_COMMAND(ID_COMP_NEXT, OnCompNext)
@@ -615,6 +613,10 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
     ON_UPDATE_COMMAND_UI(ID_COMP_ALL_PREV, OnUpdateCompAllPrev)
     ON_UPDATE_COMMAND_UI(ID_COMP_ALL_NEXT, OnUpdateCompAllNext)
     ON_UPDATE_COMMAND_UI(ID_COMP_ALL_LAST, OnUpdateCompAllLast)
+    ON_COMMAND(ID_COMP_AUTO_SYNC, OnCompAutoSync)
+    ON_UPDATE_COMMAND_UI(ID_COMP_AUTO_SYNC, OnUpdateCompAutoSync)
+    ON_COMMAND(ID_COMP_AUTO_SCROLL, OnCompAutoScroll)
+    ON_UPDATE_COMMAND_UI(ID_COMP_AUTO_SCROLL, OnUpdateCompAutoScroll)
 
 	END_MESSAGE_MAP()
 
@@ -4550,6 +4552,13 @@ void CHexEditView::DoScrollWindow(int xx, int yy)
 			DoInvalidateRect(&rct);
 		}
 	}
+}
+
+void CHexEditView::AfterScroll(CPointAp newpos)
+{
+	// If we have a compare view and we have synchronised scrolling then scroll to match
+	if (pcv_ != NULL && display_.auto_scroll_comp)
+		pcv_->SetScroll(newpos);
 }
 
 void CHexEditView::DoUpdateWindow()
@@ -18704,7 +18713,7 @@ void CHexEditView::OnCompAutoSync()
         pcv_->MoveToAddress(start_addr, end_addr);
     }
 
-    theApp.SaveToMacro(km_dffd_sync, 2);
+    theApp.SaveToMacro(km_comp_sync, 2);
 }
 
 void CHexEditView::OnUpdateCompAutoSync(CCmdUI* pCmdUI) 
@@ -18713,8 +18722,31 @@ void CHexEditView::OnUpdateCompAutoSync(CCmdUI* pCmdUI)
     pCmdUI->SetCheck(display_.auto_sync_comp);
 }
 
+void CHexEditView::OnCompAutoScroll()
+{
+    if (pcv_ == NULL)
+    {
+        AfxMessageBox("No Compare is available");
+        theApp.mac_error_ = 10;
+        return;
+    }
+    begin_change();
+    display_.auto_scroll_comp = !display_.auto_scroll_comp;
+    make_change();
+    end_change();
 
+    // If has been turned on then scroll now
+    if (display_.auto_scroll_comp)
+		pcv_->SetScroll(GetScroll());
 
+    theApp.SaveToMacro(km_comp_sync, 3);
+}
+
+void CHexEditView::OnUpdateCompAutoScroll(CCmdUI* pCmdUI) 
+{
+    pCmdUI->Enable(pcv_ != NULL);
+    pCmdUI->SetCheck(display_.auto_scroll_comp);
+}
 
 // This is connected to Ctrl+T and is used for testing new dialogs etc
 void CHexEditView::OnViewtest() 

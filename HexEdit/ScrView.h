@@ -161,6 +161,7 @@ protected:
         GetDisplayRect(&rct);
         ScrollWindow(xx, yy, &rct, &rct);
     }
+	virtual void AfterScroll(CPointAp newpos) { }
     virtual void DoUpdateWindow() { UpdateWindow(); }
     virtual void DoHScroll(int total, int page, int pos);
     virtual void DoVScroll(int total, int page, int pos);

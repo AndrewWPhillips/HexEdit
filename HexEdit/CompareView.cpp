@@ -1871,7 +1871,7 @@ void CCompareView::OnLButtonUp(UINT nFlags, CPoint point)
 void CCompareView::OnSetFocus(CWnd* pNewWnd) 
 {
     CScrView::OnSetFocus(pNewWnd);
-    if (phev_->text_height_ == 0)
+    if (phev_ == NULL || phev_->text_height_ == 0)
         return;
 
     // Invalidate the current selection so its drawn lighter in inactive window
@@ -1885,7 +1885,7 @@ void CCompareView::OnSetFocus(CWnd* pNewWnd)
 void CCompareView::OnKillFocus(CWnd* pNewWnd) 
 {
     CScrView::OnKillFocus(pNewWnd);
-    if (phev_->text_height_ == 0)
+    if (phev_ == NULL || phev_->text_height_ == 0)
         return;
 
     // Invalidate the current selection so its drawn lighter in inactive window

@@ -262,6 +262,8 @@ public:
 
     BOOL AutoSyncCompare() const { return display_.auto_sync_comp; }
     void SetAutoSyncCompare(bool b = true) { display_.auto_sync_comp = b; }
+    BOOL AutoScrollCompare() const { return display_.auto_scroll_comp; }
+    void SetAutoScrollCompare(bool b = true) { display_.auto_scroll_comp = b; }
 
     BOOL BigEndian() const { return display_.big_endian; }
     void SetBigEndian(BOOL b) { display_.big_endian = b; }
@@ -376,6 +378,7 @@ protected:
     virtual void DoInvalidateRect(LPCRECT lpRect);
     virtual void DoInvalidateRgn(CRgn* pRgn);
     virtual void DoScrollWindow(int xx, int yy);
+	virtual void AfterScroll(CPointAp newpos);
     virtual void DoUpdateWindow();
     virtual void DoHScroll(int total, int page, int pos);
     virtual void DoVScroll(int total, int page, int pos);
@@ -743,8 +746,6 @@ public:
 	afx_msg void OnUpdateScheme(CCmdUI* pCmdUI);
 
 	// Added in 4.0
-    afx_msg void OnCompAutoSync();
-    afx_msg void OnUpdateCompAutoSync(CCmdUI* pCmdUI);
     afx_msg void OnCompFirst();
 	afx_msg void OnUpdateCompFirst(CCmdUI* pCmdUI);
     afx_msg void OnCompPrev();
@@ -761,6 +762,10 @@ public:
 	afx_msg void OnUpdateCompAllNext(CCmdUI* pCmdUI);
     afx_msg void OnCompAllLast();
 	afx_msg void OnUpdateCompAllLast(CCmdUI* pCmdUI);
+    afx_msg void OnCompAutoSync();
+    afx_msg void OnUpdateCompAutoSync(CCmdUI* pCmdUI);
+    afx_msg void OnCompAutoScroll();
+    afx_msg void OnUpdateCompAutoScroll(CCmdUI* pCmdUI);
 
     DECLARE_MESSAGE_MAP()
 

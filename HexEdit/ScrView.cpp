@@ -781,6 +781,8 @@ void CScrView::update_bars(CPointAp newpos)
 
     win_height_ = doc_rect.bottom - doc_rect.top;
     win_width_ = doc_rect.right - doc_rect.left;
+
+	AfterScroll(newpos);
     in_update_ = FALSE;
 }
 

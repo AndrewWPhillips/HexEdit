@@ -300,7 +300,7 @@ enum km_type
 	km_compress,                // 1 = compress, 2 = decompress, 0 = settings dlg
 
 	// Added in 4.0
-    km_comp_sync,               // 255 = sync now, 2 = toggle auto sync
+    km_comp_sync,               // 255 = sync now, 2 = toggle auto sync, 3 = toggle auto scroll
     km_last // = 242?           // Keep at end
 };
 

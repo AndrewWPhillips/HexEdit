@@ -764,9 +764,9 @@ BEGIN
     END
     POPUP "Aerial"
     BEGIN
-        MENUITEM "Hide Aerial View",            ID_AERIAL_HIDE
-        MENUITEM "Split Aerial View",           ID_AERIAL_SPLIT
-        MENUITEM "Tabbed Aerial View",          ID_AERIAL_TAB
+        MENUITEM "&Hide Aerial View",            ID_AERIAL_HIDE
+        MENUITEM "&Split Aerial View",           ID_AERIAL_SPLIT
+        MENUITEM "&Tabbed Aerial View",          ID_AERIAL_TAB
         MENUITEM SEPARATOR
         POPUP "In &Border"
         BEGIN
@@ -797,11 +797,11 @@ BEGIN
     END
     POPUP "Compare"
     BEGIN
-        MENUITEM "New Compare",                 ID_COMP_NEW
+        MENUITEM "&New Compare",                 ID_COMP_NEW
         MENUITEM SEPARATOR
-        MENUITEM "Hide Compare View",           ID_COMP_HIDE
-        MENUITEM "Split Compare View",          ID_COMP_SPLIT
-        MENUITEM "Tabbed Compare View",         ID_COMP_TAB
+        MENUITEM "&Hide Compare View",           ID_COMP_HIDE
+        MENUITEM "&Split Compare View",          ID_COMP_SPLIT
+        MENUITEM "&Tabbed Compare View",         ID_COMP_TAB
         MENUITEM SEPARATOR
         MENUITEM "Recent First Difference",     ID_COMP_FIRST
         MENUITEM "Recent Previous Difference",  ID_COMP_PREV
@@ -813,6 +813,7 @@ BEGIN
         MENUITEM "All Next Difference",         ID_COMP_ALL_NEXT
         MENUITEM "All Last Difference",         ID_COMP_ALL_LAST
         MENUITEM "&Auto Sync",                  ID_COMP_AUTO_SYNC
+        MENUITEM "A&uto Scroll",                ID_COMP_AUTO_SCROLL
     END
     POPUP "&Tools"
     BEGIN
