@@ -212,7 +212,7 @@ BOOL CBinEditControl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 /////////////////////////////////////////////////////////////////////////////
 // CPropDecEditControl - used for edit control where decimal are entered
 
-// xxx merge this with CDecEdit
+// TODO Perhaps merge this with CDecEdit
 
 CPropDecEditControl::CPropDecEditControl()
 {
@@ -682,7 +682,7 @@ void CPropFilePage::Update(CHexEditView *pv, FILE_ADDRESS address)
 			}
 			else
 				file_created_ += " (" + psl->FileSystem(idx) + ")";
-			// xxx It would be nice to show current cluster as used by filesystem but we
+			// It also would be nice to show current cluster as used by filesystem but we
 			// would need to know how many reserved sectors there were before 1st cluster.
 			ss.Format("%ld", (long)psl->TotalClusters(idx));
 			AddCommas(ss);
@@ -1097,7 +1097,6 @@ BOOL CPropInfoPage::OnSetActive()
 		curr = pfl->GetIndex(pv->GetDocument()->pfile1_->GetFilePath());
 	cat_sel_ctl_.EnableWindow(curr != -1);
 
-// xxx    ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_file);
     return CPropUpdatePage::OnSetActive();
 }
 
@@ -3084,8 +3083,6 @@ void CPropDatePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_DATE_LOCAL_TIME, local_time_);
 	//}}AFX_DATA_MAP
 }
-
-// xxx local and UTC time???
 
 void CPropDatePage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 {

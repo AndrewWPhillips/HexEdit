@@ -316,7 +316,6 @@ BOOL CSimpleSplitter::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
     if (pWnd != this || nHitTest != HTCLIENT)
         return FALSE;
-    //TRACE("xxx cursor hit test %d xxx\n", nHitTest);
 
     SetCursor(AfxGetApp()->LoadStandardCursor(m_nOrientation == SSP_HORZ ? IDC_SIZEWE : IDC_SIZENS));
     return TRUE;

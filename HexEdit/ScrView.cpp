@@ -254,7 +254,7 @@ void CScrView::SetSel(CPointAp p1, CPointAp p2, bool base1)
     // Cause prev. selection to be redrawn (unselected) and new selection drawn (selected)
     if (start != caretpos_ || end != selpos_)
     {
-        // We invalidate everything - xxx this should be optimised to only do the changed bit
+        // We invalidate everything - TODO this should be optimised to only do the changed bit
         InvalidateRange(start, end);
         InvalidateRange(caretpos_, selpos_);
         // Alternative (whole selection range) invalidation
@@ -404,12 +404,6 @@ void CScrView::DisplayCaret(int char_width /*=-1*/)
 }
 #endif
 
-// Is the caret or selection displayed? Returns 0 if the caret/selection is
-// outside the currently displayed area.  Returns 3 if the caret/selection
-// is wholly within the display.  Returns 1 if the start of the selection
-// (only) is displayed and 2 if the end (only) is displayed.
-// xxx - implement as described above?
-
 // Is the caret currently within the display window?
 BOOL CScrView::CaretDisplayed(CSizeAp win_size)
 {
@@ -465,7 +459,7 @@ void CScrView::ValidateScroll(CPointAp &pos, BOOL strict /* =FALSE */)
 
 // This just checks that a caret position is valid and changes it to the
 // closest/best valid position if not.  Typically overridden in derived
-// class.
+// class to make sure it's at a valid character position.
 void CScrView::ValidateCaret(CPointAp &pos, BOOL inside /*=true*/)
 {
     TEXTMETRIC tm;
@@ -476,7 +470,6 @@ void CScrView::ValidateCaret(CPointAp &pos, BOOL inside /*=true*/)
     }
 
     // Move caret if outside of valid range
-    // xxx Make sure it's at a valid character position?
     if (pos.x > total_.cx - tm.tmAveCharWidth)
         pos.x = total_.cx - tm.tmAveCharWidth;
     if (pos.x < 0)
@@ -976,7 +969,6 @@ CSizeAp CScrView::caret_size()
 // Turn on the display of the caret (see caret_hide)
 void CScrView::caret_show()
 {
-//    TRACE3("xxx caret_show %d %d %d\n", caret_level_, caret_mode_, caret_changes_);
     // Is the caret enabled?
     if (--caret_level_ == 0 && caret_mode_ && caret_changes_)
     {
@@ -1021,12 +1013,10 @@ void CScrView::caret_show()
 // Hide and destroy the caret (probably due to losing focus).
 void CScrView::caret_hide()
 {
-//    TRACE3("xxx caret_hide %d %d %d\n", caret_level_, caret_mode_, caret_changes_);
     // Is the caret currently displayed?
     if (caret_level_++ == 0 && caret_mode_ && caret_changes_ && caret_seen_)
     {
         // Hide and destroy it
-//        caret_seen_ = FALSE;
         HideCaret();
         ::DestroyCaret();
     }

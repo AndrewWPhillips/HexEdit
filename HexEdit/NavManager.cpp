@@ -36,7 +36,7 @@ void CNavManager::Add(LPCTSTR desc, LPCTSTR info, CHexEditView * pv, FILE_ADDRES
 		fname = pdoc->pfile1_->GetFilePath();
 
 	v_.push_back(nav(desc, info, pv, pdoc, fname, pdoc->read_only() == TRUE, aa, ee, as));
-    TRACE("xxx ADDED %s\r\n", desc);
+    TRACE("=== added nav pt <%s>\r\n", desc);
 	pos_ = v_.size() - 1;               // Point to the last entry
 }
 
@@ -353,5 +353,4 @@ void CNavManager::do_move(int ii)
     pview->MoveToAddress(v_[ii].start_addr_, v_[ii].end_addr_);
 	pos_ = ii;                          // Set current point to where we just moved to
 	in_move_ = false;
-    TRACE("xxx MOVE\r\n");
 }

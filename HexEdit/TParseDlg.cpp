@@ -17,7 +17,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// xxx add checkbox for "use INCLUDE env var" and button for include directories (use CBCGEditListBox?)
+// xxx add checkbox for "use INCLUDE env var" and button for include directories (use CVSListBox?)
 // xxx see TParser::search_include_ and GetProfileString("DataFormat", "IncludeFolders")
 
 /////////////////////////////////////////////////////////////////////////////

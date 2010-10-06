@@ -68,8 +68,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// xxx check save as default set scheme
-
 extern CHexEditApp theApp;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2991,8 +2989,7 @@ BOOL CFiltersPage::OnInitDialog()
     grid_.SetRowCount(header_rows);
     grid_.SetFixedRowCount(header_rows);
 
-    // Set up the widths of the grid columns.  Note that the dialog was
-    // designed at default 96DPI whch gives a client rect width of xxx pixels.
+    // Set up the widths of the grid columns irrespective of DPI setting.
     CRect rct;
     grid_.GetClientRect(&rct);
     grid_.SetColumnWidth(column_check,  (22 * rct.right) / 374);
@@ -3952,8 +3949,6 @@ void CWindowPage::OnChangeCols()
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CWindowEditPage property page
-
-// xxx make RO/RW and OVR/INS into radio buttons
 
 IMPLEMENT_DYNCREATE(CWindowEditPage, COptPage)
 
