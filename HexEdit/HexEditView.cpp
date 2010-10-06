@@ -9535,7 +9535,6 @@ void CHexEditView::do_hex_text(CString file_name)
 	// Set up handling of a large input hex file by writing result to one of our temp files
 	CFile64 fout;                      // output file (only used if input file is big)
 	char temp_file[_MAX_PATH]; temp_file[0] = '\0';
-    MSG msg;                           // use to update screen and check for abort key press
 
 	// Test if the file is very big
 	if (file_len > (3*16*1024*1024) && GetDocument()->DataFileSlotFree())  // assuming 3 chars/byte ~= 16 Mb
@@ -9675,34 +9674,12 @@ void CHexEditView::do_hex_text(CString file_name)
 					goto error_return;
 				}
 
-				// Do any redrawing, but nothing else
-				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
-				{
-					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-					{
-						::TranslateMessage(&msg);
-						::DispatchMessage(&msg);
-					}
-				}
-
-                // Check if a key has been pressed
-                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+				if (AbortKeyPress() &&
+					AfxMessageBox("Abort hex import?", MB_YESNO) == IDYES)
                 {
-                    // Windows does not like to miss key down events (need to match key up events)
-                    ::TranslateMessage(&msg);
-                    ::DispatchMessage(&msg);
-
-                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                        ;
-
-                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        AfxMessageBox("Abort hex import?", MB_YESNO) == IDYES)
-                    {
-						fout.Close();
-						remove(temp_file);
-						goto error_return;
-                    }
+					fout.Close();
+					remove(temp_file);
+					goto error_return;
                 }
 
 				mm->m_wndStatusBar.SetPaneProgress(0, long((file_done*100)/file_len));
@@ -9899,7 +9876,6 @@ void CHexEditView::OnExportHexText()
 
     clock_t last_checked = clock();
     mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
-    MSG msg;                                           // use to check for abort key press
 
     for (curr = start_addr; curr < end_addr; curr += len)
     {
@@ -9932,33 +9908,11 @@ void CHexEditView::OnExportHexText()
             goto func_return;
         }
 
-		// Do any redrawing, but nothing else
-		while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
-		{
-			if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-			}
-		}
-
-        // Check if a key has been pressed
-        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+		if (AbortKeyPress() &&
+			AfxMessageBox("Abort exporting as hex?", MB_YESNO) == IDYES)
         {
-            // Windows does not like to miss key down events (need to match key up events)
-            ::TranslateMessage(&msg);
-            ::DispatchMessage(&msg);
-
-            // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-            while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                ;
-
-            if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                AfxMessageBox("Abort exporting as hex?", MB_YESNO) == IDYES)
-            {
-				theApp.mac_error_ = 10;
-				goto func_return;
-            }
+			theApp.mac_error_ = 10;
+			goto func_return;
         }
 
         if (double(clock() - last_checked)/CLOCKS_PER_SEC > 3) // update every 3 secs
@@ -14358,42 +14312,18 @@ void CHexEditView::OnEditCompare()
     {
         if (orig_addr > next_show)
         {
-            MSG msg;
-
-            // Do any redrawing, but nothing else
-            while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+			if (AbortKeyPress() &&
+                AfxMessageBox("Abort comparison?", MB_YESNO) == IDYES)
             {
-                if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-                {
-                    ::TranslateMessage(&msg);
-                    ::DispatchMessage(&msg);
-                }
-            }
-
-            // Check if a key has been pressed
-            if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-            {
-                // Windows does not like to miss key down events (need to match key up events)
-                ::TranslateMessage(&msg);
-                ::DispatchMessage(&msg);
-
-                // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-                while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                    ;
-
-                if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                    AfxMessageBox("Abort comparison?", MB_YESNO) == IDYES)
-                {
-                    delete[] orig_buf;
-                    delete[] comp_buf;
-                    if (progress_on)
-                        mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);
-                    ((CMainFrame *)AfxGetMainWnd())
-                        ->StatusBarText("Comparison aborted");
-                    aa->mac_error_ = 10;
-                    show_pos();
-                    return;
-                }
+                delete[] orig_buf;
+                delete[] comp_buf;
+                if (progress_on)
+                    mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);
+                ((CMainFrame *)AfxGetMainWnd())
+                    ->StatusBarText("Comparison aborted");
+                aa->mac_error_ = 10;
+                show_pos();
+                return;
             }
 
             show_pos(next_show);
@@ -14817,7 +14747,6 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
             goto func_return;
         }
         mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
-        MSG msg;                                           // use to check for abort key press
 
 		try
 		{
@@ -14834,31 +14763,11 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 
 				ff.Write(buf, len);
 
-				// Do any redrawing, but nothing else
-				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				if (AbortKeyPress())
 				{
-					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-					{
-						::TranslateMessage(&msg);
-						::DispatchMessage(&msg);
-					}
-				}
-
-                // Check if a key has been pressed
-                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-                {
-                    // Windows does not like to miss key down events (need to match key up events)
-                    ::TranslateMessage(&msg);
-                    ::DispatchMessage(&msg);
-
-                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                        ;
-
 					CString mess;
 					mess.Format("Abort %s?", desc);
-                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        AfxMessageBox(mess, MB_YESNO) == IDYES)
+                    if (AfxMessageBox(mess, MB_YESNO) == IDYES)
                     {
 						ff.Close();
 						remove(temp_file);
@@ -15058,8 +14967,6 @@ void CHexEditView::OnEncrypt()
 			::GetTempPath(sizeof(temp_dir), temp_dir);
 			::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
 
-			MSG msg;                                           // use to check for abort key press
-
 			try
 			{
 				CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
@@ -15076,35 +14983,13 @@ void CHexEditView::OnEncrypt()
 					ff.Write(buf, outlen);
 					total_out += outlen;
 
-					// Do any redrawing, but nothing else
-					while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+					if (AbortKeyPress() &&
+						AfxMessageBox("Abort encryption?", MB_YESNO) == IDYES)
 					{
-						if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-						{
-							::TranslateMessage(&msg);
-							::DispatchMessage(&msg);
-						}
-					}
-
-					// Check if a key has been pressed
-					if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-					{
-						// Windows does not like to miss key down events (need to match key up events)
-						::TranslateMessage(&msg);
-						::DispatchMessage(&msg);
-
-						// Remove any characters resulting from keypresses (so they are not inserted into the active file)
-						while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-							;
-
-						if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-							AfxMessageBox("Abort encryption?", MB_YESNO) == IDYES)
-						{
-							ff.Close();
-							remove(temp_file);
-							theApp.mac_error_ = 10;
-							goto func_return;
-						}
+						ff.Close();
+						remove(temp_file);
+						theApp.mac_error_ = 10;
+						goto func_return;
 					}
 
 					mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
@@ -15387,8 +15272,6 @@ void CHexEditView::OnDecrypt()
 			::GetTempPath(sizeof(temp_dir), temp_dir);
 			::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
 
-			MSG msg;                                           // use to check for abort key press
-
 			try
 			{
 				CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
@@ -15413,35 +15296,13 @@ void CHexEditView::OnDecrypt()
 					ff.Write(buf, outlen);
 					total_out += outlen;
 
-					// Do any redrawing, but nothing else
-					while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+					if (AbortKeyPress() &&
+						AfxMessageBox("Abort decryption?", MB_YESNO) == IDYES)
 					{
-						if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-						{
-							::TranslateMessage(&msg);
-							::DispatchMessage(&msg);
-						}
-					}
-
-					// Check if a key has been pressed
-					if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-					{
-						// Windows does not like to miss key down events (need to match key up events)
-						::TranslateMessage(&msg);
-						::DispatchMessage(&msg);
-
-						// Remove any characters resulting from keypresses (so they are not inserted into the active file)
-						while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-							;
-
-						if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-							AfxMessageBox("Abort decryption?", MB_YESNO) == IDYES)
-						{
-							ff.Close();
-							remove(temp_file);
-							theApp.mac_error_ = 10;
-							goto func_return;
-						}
+						ff.Close();
+						remove(temp_file);
+						theApp.mac_error_ = 10;
+						goto func_return;
 					}
 
 					mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
@@ -15741,8 +15602,6 @@ void CHexEditView::OnCompress()
             goto func_return;
         }
 
-        MSG msg;                                           // use to check for abort key press
-
 		try
 		{
 		    CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
@@ -15776,35 +15635,13 @@ void CHexEditView::OnCompress()
 				} while (zs.avail_out == 0);
 				ASSERT(zs.avail_in == 0);
 
-				// Do any redrawing, but nothing else
-				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
-				{
-					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-					{
-						::TranslateMessage(&msg);
-						::DispatchMessage(&msg);
-					}
-				}
-
-                // Check if a key has been pressed
-                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+				if (AbortKeyPress() &&
+					AfxMessageBox("Abort compression?", MB_YESNO) == IDYES)
                 {
-                    // Windows does not like to miss key down events (need to match key up events)
-                    ::TranslateMessage(&msg);
-                    ::DispatchMessage(&msg);
-
-                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                        ;
-
-                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        AfxMessageBox("Abort compression?", MB_YESNO) == IDYES)
-                    {
-						ff.Close();
-						remove(temp_file);
-						theApp.mac_error_ = 10;
-						goto func_return;
-                    }
+					ff.Close();
+					remove(temp_file);
+					theApp.mac_error_ = 10;
+					goto func_return;
                 }
 
 				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
@@ -16050,8 +15887,6 @@ void CHexEditView::OnDecompress()
             goto func_return;
         }
 
-        MSG msg;                                           // use to check for abort key press
-
 		try
 		{
 		    CFile64 ff(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
@@ -16104,35 +15939,12 @@ void CHexEditView::OnDecompress()
 					}
 				} while (zs.avail_out == 0 || zs.avail_in != 0);  // if output buffer is full there may be more
 
-				// Do any redrawing, but nothing else
-				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
-				{
-					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-					{
-						::TranslateMessage(&msg);
-						::DispatchMessage(&msg);
-					}
-				}
-
-                // Check if a key has been pressed
-                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+				if (AbortKeyPress() && AfxMessageBox("Abort decompression?", MB_YESNO) == IDYES)
                 {
-                    // Windows does not like to miss key down events (need to match key up events)
-                    ::TranslateMessage(&msg);
-                    ::DispatchMessage(&msg);
-
-                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                        ;
-
-					if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-						AfxMessageBox("Abort decompression?", MB_YESNO) == IDYES)
-                    {
-						ff.Close();
-                        remove(temp_file);
-						theApp.mac_error_ = 10;
-						goto func_return;
-                    }
+					ff.Close();
+                    remove(temp_file);
+					theApp.mac_error_ = 10;
+					goto func_return;
                 }
 
 				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
@@ -16451,7 +16263,6 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
     }
 	ASSERT(buf != NULL);
     mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
-    MSG msg;                                           // use to check for abort key press
 
 	T val;
 	switch (op)
@@ -16498,33 +16309,11 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 			break;
 		}
 
-		// Do any redrawing, but nothing else
-		while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
-		{
-			if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-			}
-		}
-
-        // Check if a key has been pressed
-        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+		if (AbortKeyPress() &&
+            AfxMessageBox("Abort calculation?", MB_YESNO) == IDYES)
         {
-            // Windows does not like to miss key down events (need to match key up events)
-            ::TranslateMessage(&msg);
-            ::DispatchMessage(&msg);
-
-            // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-            while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                ;
-
-            if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                AfxMessageBox("Abort calculation?", MB_YESNO) == IDYES)
-            {
-				theApp.mac_error_ = 10;
-				goto func_return;
-            }
+			theApp.mac_error_ = 10;
+			goto func_return;
         }
 
 		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
@@ -16617,7 +16406,6 @@ void CHexEditView::OnMd5()
     }
 	ASSERT(buf != NULL);
     mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
-    MSG msg;                                           // use to check for abort key press
 
 	struct MD5Context ctx;
 	MD5Init(&ctx);
@@ -16629,33 +16417,11 @@ void CHexEditView::OnMd5()
 
 		MD5Update(&ctx, buf, len);
 
-		// Do any redrawing, but nothing else
-		while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
-		{
-			if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-			}
-		}
-
-        // Check if a key has been pressed
-        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+		if (AbortKeyPress() &&
+            AfxMessageBox("Abort MD5 calculation?", MB_YESNO) == IDYES)
         {
-            // Windows does not like to miss key down events (need to match key up events)
-            ::TranslateMessage(&msg);
-            ::DispatchMessage(&msg);
-
-            // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-            while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                ;
-
-            if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                AfxMessageBox("Abort MD5 calculation?", MB_YESNO) == IDYES)
-            {
-				theApp.mac_error_ = 10;
-				goto func_return;
-            }
+			theApp.mac_error_ = 10;
+			goto func_return;
         }
 
 		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
@@ -16942,7 +16708,6 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
             goto func_return;
         }
         mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
-        MSG msg;                                           // use to check for abort key press
 
 		try
 		{
@@ -16958,31 +16723,11 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 
 				ff.Write(buf, len);
 
-				// Do any redrawing, but nothing else
-				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				if (AbortKeyPress())
 				{
-					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-					{
-						::TranslateMessage(&msg);
-						::DispatchMessage(&msg);
-					}
-				}
-
-                // Check if a key has been pressed
-                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-                {
-                    // Windows does not like to miss key down events (need to match key up events)
-                    ::TranslateMessage(&msg);
-                    ::DispatchMessage(&msg);
-
-                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                        ;
-
 					CString mess;
 					mess.Format("Abort %s operation?", desc);
-                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        AfxMessageBox(mess, MB_YESNO) == IDYES)
+                    if (AfxMessageBox(mess, MB_YESNO) == IDYES)
                     {
 						ff.Close();
 						remove(temp_file);
@@ -17648,7 +17393,6 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
             goto func_return;
         }
         mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
-        MSG msg;                                           // use to check for abort key press
 
 		try
 		{
@@ -17665,31 +17409,11 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 
 				ff.Write(buf, len);
 
-				// Do any redrawing, but nothing else
-				while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				if (AbortKeyPress())
 				{
-					if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-					{
-						::TranslateMessage(&msg);
-						::DispatchMessage(&msg);
-					}
-				}
-
-                // Check if a key has been pressed
-                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-                {
-                    // Windows does not like to miss key down events (need to match key up events)
-                    ::TranslateMessage(&msg);
-                    ::DispatchMessage(&msg);
-
-                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                        ;
-
 					CString mess;
 					mess.Format("Abort %s operation?", desc);
-                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        AfxMessageBox(mess, MB_YESNO) == IDYES)
+                    if (AfxMessageBox(mess, MB_YESNO) == IDYES)
                     {
 						ff.Close();
 						remove(temp_file);

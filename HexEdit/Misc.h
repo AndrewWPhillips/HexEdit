@@ -78,6 +78,7 @@ CRect MonitorMouse();
 CRect MonitorRect(CRect);
 bool NeedsFix(CRect &rect);
 bool CopyAndConvertImage(const char *src, const char *dest);
+bool AbortKeyPress();
 
 void DummyRegAccess(unsigned int group = 0);
 

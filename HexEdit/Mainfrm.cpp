@@ -1656,7 +1656,7 @@ void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
 		    // Work out pane width
             CClientDC dc(psb);
 		    dc.SelectObject(psb->GetFont());
-            pane_width = max(dc.GetTextExtent(ss, ss.GetLength()).cx + 2, 35);
+            pane_width = max(dc.GetTextExtent(ss, ss.GetLength()).cx + 20, 35);
             pCmdUI->SetText(ss);
             pCmdUI->Enable();
         }
@@ -3566,30 +3566,12 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
     else if (bg_next > -1)
     {
         // Found
-        MSG msg;
-
-        // Do any redrawing, but nothing else
-        while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+		if (AbortKeyPress() && AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
         {
-            if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-            {
-                ::TranslateMessage(&msg);
-                ::DispatchMessage(&msg);
-            }
-        }
-
-        // Check if key has been pressed
-        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
-        {
-            VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-            if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
-            {
-                StatusBarText("Search aborted");
-                theApp.mac_error_ = 10;
-//                        pview->show_pos();
-                return -2;
-            }
+            StatusBarText("Search aborted");
+            theApp.mac_error_ = 10;
+//                pview->show_pos();
+            return -2;
         }
 
         return bg_next;
@@ -3636,48 +3618,23 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
 
             if (addr_buf > next_show)
             {
-                MSG msg;
-
-                // Do any redrawing, but nothing else
-                while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_REMOVE)) // xxx fix others like this
+				if (AbortKeyPress() && AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
                 {
-                    if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+                    delete[] buf;
+                    // Start bg search anyway
+                    theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_rel);
+                    if (bg_next == -3)
                     {
-                        ::TranslateMessage(&msg);
-                        ::DispatchMessage(&msg);
+					    pdoc->base_addr_ = base_addr;
+                        pdoc->StartSearch(start_addr, addr_buf);
+                        theApp.StartSearches(pdoc);
                     }
-                }
-
-                // Check if Escape has been pressed
-                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-                {
-                    // Windows does not like to miss key down events (need to match key up events)
-                    ::TranslateMessage(&msg);
-                    ::DispatchMessage(&msg);
-
-                    // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-                    while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                        ;
-
-                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
-                    {
-                        delete[] buf;
-                        // Start bg search anyway
-                        theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_rel);
-                        if (bg_next == -3)
-                        {
-						    pdoc->base_addr_ = base_addr;
-                            pdoc->StartSearch(start_addr, addr_buf);
-                            theApp.StartSearches(pdoc);
-                        }
-                        if (progress_on)
-                            m_wndStatusBar.EnablePaneProgressBar(0, -1);
-                        StatusBarText("Search aborted");
-                        theApp.mac_error_ = 10;
-//                        pview->show_pos();
-                        return -2;
-                    }
+                    if (progress_on)
+                        m_wndStatusBar.EnablePaneProgressBar(0, -1);
+                    StatusBarText("Search aborted");
+                    theApp.mac_error_ = 10;
+//                    pview->show_pos();
+                    return -2;
                 }
 
                 // Show search progress
@@ -3696,7 +3653,6 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 next_show += show_inc;
             }
 
-            // xxx step through this whole word code!
             bool alpha_before = false;
             bool alpha_after = false;
 
@@ -3748,41 +3704,23 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
             {
                 // If we find lots of occurrences then the Esc key check in 
                 // above is never done so do it here too.
-                MSG msg;
-
-                // Do any redrawing, but nothing else
-                while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				if (AbortKeyPress() && AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
                 {
-                    if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+                    delete[] buf;
+                    // Start bg search anyway
+                    theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_rel);
+                    if (bg_next == -3)
                     {
-                        ::TranslateMessage(&msg);
-                        ::DispatchMessage(&msg);
+						pdoc->base_addr_ = base_addr;
+                        pdoc->StartSearch(start_addr, addr_buf);
+                        theApp.StartSearches(pdoc);
                     }
-                }
-
-                // Check if Escape has been pressed
-                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
-                {
-                    VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
-                    {
-                        delete[] buf;
-                        // Start bg search anyway
-                        theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_rel);
-                        if (bg_next == -3)
-                        {
-							pdoc->base_addr_ = base_addr;
-                            pdoc->StartSearch(start_addr, addr_buf);
-                            theApp.StartSearches(pdoc);
-                        }
-                        if (progress_on)
-                            m_wndStatusBar.EnablePaneProgressBar(0, -1);
-                        StatusBarText("Search aborted");
-                        theApp.mac_error_ = 10;
-//                        pview->show_pos();
-                        return -2;
-                    }
+                    if (progress_on)
+                        m_wndStatusBar.EnablePaneProgressBar(0, -1);
+                    StatusBarText("Search aborted");
+                    theApp.mac_error_ = 10;
+//                    pview->show_pos();
+                    return -2;
                 }
 
                 // Start bg search to search the rest of the file
@@ -3855,34 +3793,6 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
     }
     else if (bg_next > -1)
     {
-#if 0 // This is not nec since search_back is not called from ReplaceAll or BookmarkAll
-        // Found
-        MSG msg;
-
-        // Do any redrawing, but nothing else
-        while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
-        {
-            if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-            {
-                ::TranslateMessage(&msg);
-                ::DispatchMessage(&msg);
-            }
-        }
-
-        // Check if Escape has been pressed
-        if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
-        {
-            VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-            if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
-            {
-                StatusBarText("Search aborted");
-                theApp.mac_error_ = 10;
-//                        pview->show_pos();
-                return -2;
-            }
-        }
-#endif
         return bg_next;
     }
 
@@ -3920,39 +3830,21 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
 
             if (addr_buf < next_show)
             {
-                MSG msg;
-
-                // Do any redrawing, but nothing else
-                while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+				if (AbortKeyPress() && AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
                 {
-                    if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
+                    delete[] buf;
+                    // Start bg search anyway
+                    theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_rel);
+                    if (bg_next == -3)
                     {
-                        ::TranslateMessage(&msg);
-                        ::DispatchMessage(&msg);
+						pdoc->base_addr_ = base_addr;
+                        pdoc->StartSearch(addr_buf, end_addr - (length-1));
+                        theApp.StartSearches(pdoc);
                     }
-                }
-
-                // Check if Escape has been pressed
-                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
-                {
-                    VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
-                    {
-                        delete[] buf;
-                        // Start bg search anyway
-                        theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_rel);
-                        if (bg_next == -3)
-                        {
-							pdoc->base_addr_ = base_addr;
-                            pdoc->StartSearch(addr_buf, end_addr - (length-1));
-                            theApp.StartSearches(pdoc);
-                        }
-                        StatusBarText("Search aborted");
-                        theApp.mac_error_ = 10;
-//                        pview->show_pos();
-                        return -2;
-                    }
+                    StatusBarText("Search aborted");
+                    theApp.mac_error_ = 10;
+//                    pview->show_pos();
+                    return -2;
                 }
 
                 // Show search progress
@@ -3974,7 +3866,6 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 got = pdoc->GetData(buf, size_t(addr_buf - start_addr), start_addr);
                 ASSERT(got == addr_buf - start_addr);
 
-                // xxx step through this whole word code!
                 bool alpha_before = false;
                 bool alpha_after = false;
                 if (ww)
@@ -4024,7 +3915,6 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 got = pdoc->GetData(buf, buf_len, addr_buf - buf_len);
                 ASSERT(got == buf_len);
 
-                // xxx step through this whole word code!
                 bool alpha_before = false;
                 bool alpha_after = false;
                 if (ww)
@@ -4071,45 +3961,6 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
             }
             if (pp != NULL)
             {
-#if 0 // This is not nec since search_back is not called from ReplaceAll or BookmarkAll
-                // If we find lots of occurrences then the Esc key check in 
-                // above is never done so do it here too.
-                MSG msg;
-
-                // Do any redrawing, but nothing else
-                while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_NOREMOVE))
-                {
-                    if (::GetMessage(&msg, NULL, WM_PAINT, WM_PAINT))
-                    {
-                        ::TranslateMessage(&msg);
-                        ::DispatchMessage(&msg);
-                    }
-                }
-
-                // Check if Escape has been pressed
-                if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_NOREMOVE))
-                {
-                    VERIFY(GetMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN) > 0);
-                    if ((msg.wParam == '\x1B' || msg.wParam == ' ') && // Escape or space bar
-                        AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
-                    {
-                        delete[] buf;
-                        // Start bg search anyway
-                        theApp.NewSearch(ss, mask, length, icase, tt, ww, aa, offset, align_rel);
-                        if (bg_next == -3)
-                        {
-							pdoc->base_addr_ = base_addr;
-                            pdoc->StartSearch(addr_buf, end_addr - (length-1));
-                            theApp.StartSearches(pdoc);
-                        }
-                        StatusBarText("Search aborted");
-                        theApp.mac_error_ = 10;
-//                        pview->show_pos();
-                        return -2;
-                    }
-                }
-#endif 
-
 //                MoveToAddress(addr_buf - got + (pp - buf), addr_buf - got + (pp - buf) + length);
                 FILE_ADDRESS retval = addr_buf - got + (pp - buf);
 

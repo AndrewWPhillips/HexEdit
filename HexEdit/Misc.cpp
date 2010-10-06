@@ -1572,6 +1572,40 @@ bool NeedsFix(CRect &rect)
 		return false;  // its OK
 }
 
+// Check if a lengthy operation should be aborted.
+// Updates display and checks for user pressing Escape key.
+bool AbortKeyPress()
+{
+	bool retval = false;
+	MSG msg;
+
+    // Do any redrawing, but nothing else
+    while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_REMOVE))
+    {
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+    }
+
+    // Check if any key has been pressed
+    if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
+    {
+		int cc = msg.wParam;
+
+        // Windows does not like to miss key down events (needed to match key up events)
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+
+        // Remove any characters resulting from keypresses (so they are not inserted into the active file)
+        while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
+            ;
+
+		// Abort is signalled with Escape key or SPACE bar
+		retval = cc == VK_ESCAPE || cc == VK_SPACE;
+	}
+
+	return retval;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // Windows NT native API functions
 HINSTANCE hNTDLL;        // Handle to NTDLL.DLL
@@ -1687,7 +1721,7 @@ int DeviceVolume(LPCTSTR filename)
 }
 
 // Get display name for device file name
-CString DeviceName(CString name) // xxx get rid of this (use SpecialList::name() instead)
+CString DeviceName(CString name) // TODO get rid of this (use SpecialList::name() instead)
 {
 	CString retval;
 	if (name.Left(17) == _T("\\\\.\\PhysicalDrive"))

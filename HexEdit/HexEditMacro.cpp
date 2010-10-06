@@ -94,32 +94,12 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
             MSG msg;
             int operand_size;           // Size of operands for operations (0,1,2, or 3)
 
-            // Do any redrawing, but nothing else
-            while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_REMOVE))
+			if (AbortKeyPress() &&
+				AfxMessageBox("Abort macro?", MB_YESNO) == IDYES)
             {
-                ::TranslateMessage(&msg);
-                ::DispatchMessage(&msg);
-            }
-
-            // Check if any key has been pressed
-            if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-            {
-                // Windows does not like to miss key down events (need to match key up events)
-                ::TranslateMessage(&msg);
-                ::DispatchMessage(&msg);
-
-                // Remove any characters resulting from keypresses (so they are not inserted into the active file)
-                while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-                    ;
-
-                //if (msg.wParam != 'y' &&
-                if ((msg.wParam == '\x1B' || msg.wParam == ' ') && 
-                    AfxMessageBox("Abort macro?", MB_YESNO) == IDYES)
-                {
-                    ((CMainFrame *)AfxGetMainWnd())->StatusBarText("Macro aborted");
-                    mac_error_ = 10;
-                    goto exit_play;
-                }
+                ((CMainFrame *)AfxGetMainWnd())->StatusBarText("Macro aborted");
+                mac_error_ = 10;
+                goto exit_play;
             }
 
             if ((*pk).ktype > km_view && pv_ == NULL)
