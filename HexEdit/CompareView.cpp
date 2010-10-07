@@ -45,17 +45,23 @@ BEGIN_MESSAGE_MAP(CCompareView, CScrView)
     ON_WM_SETFOCUS()
     ON_WM_KILLFOCUS()
 
-    //ON_COMMAND(ID_COMP_FIRST, OnCompFirst)
-    //ON_COMMAND(ID_COMP_PREV, OnCompPrev)
-    //ON_COMMAND(ID_COMP_NEXT, OnCompNext)
-    //ON_COMMAND(ID_COMP_LAST, OnCompLast)
-    //ON_UPDATE_COMMAND_UI(ID_COMP_FIRST, OnUpdateCompFirst)
-    //ON_UPDATE_COMMAND_UI(ID_COMP_PREV, OnUpdateCompPrev)
-    //ON_UPDATE_COMMAND_UI(ID_COMP_NEXT, OnUpdateCompNext)
-    //ON_UPDATE_COMMAND_UI(ID_COMP_LAST, OnUpdateCompLast)
+    ON_COMMAND(ID_COMP_FIRST, OnCompFirst)
+    ON_COMMAND(ID_COMP_PREV, OnCompPrev)
+    ON_COMMAND(ID_COMP_NEXT, OnCompNext)
+    ON_COMMAND(ID_COMP_LAST, OnCompLast)
+    ON_UPDATE_COMMAND_UI(ID_COMP_FIRST, OnUpdateCompFirst)
+    ON_UPDATE_COMMAND_UI(ID_COMP_PREV, OnUpdateCompPrev)
+    ON_UPDATE_COMMAND_UI(ID_COMP_NEXT, OnUpdateCompNext)
+    ON_UPDATE_COMMAND_UI(ID_COMP_LAST, OnUpdateCompLast)
 
 	// These are here to simply disable inappropriate commands to prevent them
 	// being passed on to the "owner" hex view (see OnCmdMsg).
+
+	    // The compare view only shows the most recent diffs so makes no sense to show all diffs
+		ON_UPDATE_COMMAND_UI(ID_COMP_ALL_FIRST, OnUpdateDisable)
+		ON_UPDATE_COMMAND_UI(ID_COMP_ALL_PREV, OnUpdateDisable)
+		ON_UPDATE_COMMAND_UI(ID_COMP_ALL_NEXT, OnUpdateDisable)
+		ON_UPDATE_COMMAND_UI(ID_COMP_ALL_LAST, OnUpdateDisable)
 
 		// Display stuff that would be confusing
 		ON_UPDATE_COMMAND_UI(ID_AUTOFIT, OnUpdateDisable)
@@ -1894,5 +1900,92 @@ void CCompareView::OnKillFocus(CWnd* pNewWnd)
     if (start_addr == end_addr)
 		++end_addr;   // if no selection invalidate current byte
 	InvalidateRange(addr2pos(start_addr), addr2pos(end_addr));
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CCompareView command handlers
+
+// Command to go to first recent difference in compare view
+void CCompareView::OnCompFirst()
+{
+	if (GetDocument()->CompareDifferences(0) > 0)
+	{
+		FILE_ADDRESS addr;
+		int len;
+		GetDocument()->GetCompDiff(0, 0, addr, len);
+		MoveToAddress(addr, addr+len);
+	}
+}
+
+void CCompareView::OnUpdateCompFirst(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(GetDocument()->CompareDifferences(0) > 0);
+}
+
+// Command to go to previous recent difference in compare view
+void CCompareView::OnCompPrev()
+{
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+
+	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
+	if (idx > 0)
+	{
+		FILE_ADDRESS addr;
+		int len;
+		GetDocument()->GetCompDiff(0, idx - 1, addr, len);
+		MoveToAddress(addr, addr+len);
+	}
+}
+
+void CCompareView::OnUpdateCompPrev(CCmdUI* pCmdUI)
+{
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+	pCmdUI->Enable(GetDocument()->CompareDifferences(0) >= 0 &&
+		           GetDocument()->FirstDiffAt(false, 0, start - 1) > 0);
+}
+
+// Command to go to next recent difference in compare view
+void CCompareView::OnCompNext()
+{
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+
+	int idx = GetDocument()->FirstDiffAt(false, 0, start);
+	if (idx < GetDocument()->CompareDifferences(0))
+	{
+		FILE_ADDRESS addr;
+		int len;
+		GetDocument()->GetCompDiff(0, idx, addr, len);
+		MoveToAddress(addr, addr+len);
+	}
+}
+
+void CCompareView::OnUpdateCompNext(CCmdUI* pCmdUI)
+{
+	FILE_ADDRESS start, end;  // current selection
+    GetSelAddr(start, end);
+	pCmdUI->Enable(GetDocument()->CompareDifferences(0) >= 0 &&
+				   GetDocument()->FirstDiffAt(false, 0, start) < 
+				               GetDocument()->CompareDifferences(0));
+}
+
+// Command to go to last recent difference in compare view
+void CCompareView::OnCompLast()
+{
+	int count = GetDocument()->CompareDifferences(0);
+	if (count > 0)
+	{
+		FILE_ADDRESS addr;
+		int len;
+		GetDocument()->GetCompDiff(0, count - 1, addr, len);
+		MoveToAddress(addr, addr+len);
+	}
+}
+
+void CCompareView::OnUpdateCompLast(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(GetDocument()->CompareDifferences(0) > 0);
 }
 

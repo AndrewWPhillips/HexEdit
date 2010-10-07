@@ -133,6 +133,16 @@ protected:
     afx_msg void OnKillFocus(CWnd* pNewWnd);
 
 	afx_msg void OnUpdateDisable(CCmdUI* pCmdUI) { pCmdUI->Enable(FALSE); }
+
+    afx_msg void OnCompFirst();
+	afx_msg void OnUpdateCompFirst(CCmdUI* pCmdUI);
+    afx_msg void OnCompPrev();
+	afx_msg void OnUpdateCompPrev(CCmdUI* pCmdUI);
+    afx_msg void OnCompNext();
+	afx_msg void OnUpdateCompNext(CCmdUI* pCmdUI);
+    afx_msg void OnCompLast();
+	afx_msg void OnUpdateCompLast(CCmdUI* pCmdUI);
+
     DECLARE_MESSAGE_MAP()
 
 private:

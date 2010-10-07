@@ -91,7 +91,6 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
     {
         for (pk = pmac->begin(); pk != pmac->end(); ++pk, ++keys_done)
         {
-            MSG msg;
             int operand_size;           // Size of operands for operations (0,1,2, or 3)
 
 			if (AbortKeyPress() &&

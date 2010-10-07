@@ -4605,39 +4605,41 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
     CMDIFrameWndEx::OnShowPopupMenu(pMenuPopup);
 
     if (pMenuPopup == NULL)
-    {
         return TRUE;
-    }
-    popup_menu_.push_back(pMenuPopup);
-    //TRACE("OPEN POPUP %p %x\n", pMenuPopup, pMenuPopup->m_hWnd);
 
-#if 0  // This is now done in MFC9 by CMDIFrameWndEx::EnablePaneMenu
-    if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_VIEW_TOOLBARS) >= 0)
-    {
-        if (CMFCToolBar::IsCustomizeMode())
-        {
-            return FALSE;
-        }
-        
-        pMenuPopup->RemoveAllItems();
-        
-        CMenu menu;
-        VERIFY(menu.LoadMenu(IDR_CONTEXT_BARS));
-        
-        CMenu* pPopup = menu.GetSubMenu(0);
-        ASSERT(pPopup != NULL);
-        
-        SetupToolbarMenu(*pPopup, ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10);
-        pMenuPopup->GetMenuBar()->ImportFromMenu (*pPopup, TRUE);
-    }
-#endif
+    popup_menu_.push_back(pMenuPopup);      // used for displaying menu item tips
 
+	// Now we scan the menu for any "dummy" items that are placeholders for dynamic menu changes
+
+	// All compare diffs navigation - only shown for hex view when there is a history of diffs
+	int idx = pMenuPopup->GetMenuBar()->CommandToIndex(ID_COMP_ALL_DUMMY);
+	if (idx >=0)
+	{
+		// Get active view and check if it is hex view
+		ASSERT(AfxGetMainWnd() != NULL);
+        CMDIChildWnd * pwind;
+		CView * pview;
+
+        if ((pwind = ((CMainFrame *)AfxGetMainWnd())->MDIGetActive()) != NULL &&
+			(pview = pwind->GetActiveView()) != NULL &&
+			pview->IsKindOf(RUNTIME_CLASS(CHexEditView)) )
+		{
+			// Add the 4 "all diffs" commands to the menu
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_FIRST, NULL, -1, "All First Difference"), idx+1);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_PREV,  NULL, -1, "All Previous Difference"), idx+2);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_NEXT,  NULL, -1, "All Next Difference"), idx+3);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_LAST,  NULL, -1, "All Last Difference"), idx+4);
+		}
+
+		// Remove the dummy command from the menu
+		pMenuPopup->RemoveItem(idx);
+	}
+
+    // Nav point lists forward/backward
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_NAV_BACK_DUMMY) >= 0)
     {
 		if (CMFCToolBar::IsCustomizeMode ())
-		{
 			return FALSE;
-		}
 
 		pMenuPopup->RemoveAllItems ();
 		theApp.navman_.AddItems(pMenuPopup, false, ID_NAV_BACK_FIRST, NAV_RESERVED);
@@ -4645,20 +4647,17 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_NAV_FORW_DUMMY) >= 0)
     {
 		if (CMFCToolBar::IsCustomizeMode ())
-		{
 			return FALSE;
-		}
 
 		pMenuPopup->RemoveAllItems ();
 		theApp.navman_.AddItems(pMenuPopup, true, ID_NAV_FORW_FIRST, NAV_RESERVED);
 	}
 
+	// 2 lists of templates - according to Windows extension (preceded by underscore) and others
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_DFFD_OPEN_TYPE_DUMMY) >= 0)
     {
 		if (CMFCToolBar::IsCustomizeMode ())
-		{
 			return FALSE;
-		}
 
 		pMenuPopup->RemoveAllItems ();
 
@@ -4693,9 +4692,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_DFFD_OPEN_OTHER_DUMMY) >= 0)
     {
 		if (CMFCToolBar::IsCustomizeMode ())
-		{
 			return FALSE;
-		}
 
 		pMenuPopup->RemoveAllItems ();
 
