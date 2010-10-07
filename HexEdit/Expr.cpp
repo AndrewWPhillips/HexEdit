@@ -3428,7 +3428,7 @@ expr_eval::tok_t expr_eval::get_next()
             if (const_sep_allowed_ && *p_ == dec_sep_char_ && isdigit(*(p_+1)))
             {
                 // Find the end of the integer including separators
-                while (isdigit(*p_) || *p_ == dec_sep_char_)
+                while (*p_ == dec_sep_char_ || isdigit(*p_))
                     ++p_;
 
                 // Remove the separator characters from the text number
