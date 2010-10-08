@@ -138,7 +138,7 @@ void CHexEditDoc::RemoveAerialView()
             KillAerialThread();
         FIBITMAP *dib = dib_;
         dib_ = NULL;
-		TRACE("************* FreeImage_Unload(%d)\r\n", dib);
+		TRACE("************* FreeImage_Unload(%d)\n", dib);
         FreeImage_Unload(dib);
     }
 	TRACE("************* Aerial --- %d\n", av_count_);
@@ -156,7 +156,7 @@ void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 	docdata_.Unlock();
 	if (starting)
 	{
-		TRACE("AerialChange - thread not yet started\r\n");
+		TRACE("AerialChange - thread not yet started\n");
 		// Wait just a little bit in case the thread was just about to go into wait state
 	    SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_NORMAL);
 		Sleep(1);
@@ -172,7 +172,7 @@ void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 
 	if (!waiting)
 	{
-		TRACE("AerialChange - thread not waiting (yet)\r\n");
+		TRACE("AerialChange - thread not waiting (yet)\n");
 		// Wait just a little bit in case the thread was just about to go into wait state
 	    SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_NORMAL);
 		Sleep(1);
@@ -200,7 +200,7 @@ void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 	docdata_.Unlock();
 
 	start_aerial_event_.SetEvent();
-	TRACE("Pulsing aerial event (restart)\r\n");
+	TRACE("Pulsing aerial event (restart)\n");
 }
 
 bool CHexEditDoc::AerialScanning()
@@ -233,7 +233,7 @@ void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
 		// Not big enough so free it and reallocate (below)
         FIBITMAP *dib = dib_;
         dib_ = NULL;
-		TRACE("***********-- FreeImage_Unload(%d)\r\n", dib);
+		TRACE("***********-- FreeImage_Unload(%d)\n", dib);
         FreeImage_Unload(dib);
 		if (clear <= -1)
 			clear = 0xC0;  // if we get a new bitmap we must clear it
@@ -254,7 +254,7 @@ void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
 
 	dib_size_ = MAX_WIDTH*rows*3;           // DIB size in bytes since we have 3 bytes per pixel and no pad bytes at the end of each scan line
 	ASSERT(dib_size_ == FreeImage_GetPitch(dib_) * FreeImage_GetHeight(dib_));
-	TRACE("************* FreeImage_Allocate %d at %p end %p\r\n", dib_, FreeImage_GetBits(dib_), FreeImage_GetBits(dib_)+dib_size_);
+	TRACE("************* FreeImage_Allocate %d at %p end %p\n", dib_, FreeImage_GetBits(dib_), FreeImage_GetBits(dib_)+dib_size_);
 	if (clear > -1)
 		memset(FreeImage_GetBits(dib_), clear, dib_size_);       // Clear to a grey
 }
@@ -390,7 +390,7 @@ UINT CHexEditDoc::RunAerialThread()
         ASSERT(aerial_command_ == RESTART || aerial_command_ == DIE);   // we should only be woken up to scan or die
 		unsigned dib_size = FreeImage_GetDIBSize(dib_);
         docdata_.Unlock();
-		TRACE("BGAerial: using bitmap at %p\r\n", file_dib);
+		TRACE("BGAerial: using bitmap at %p\n", file_dib);
 
         // Get the file buffer
         size_t buf_len = (size_t)min(file_len, 65536);

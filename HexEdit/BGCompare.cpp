@@ -686,7 +686,7 @@ bool CHexEditDoc::CreateCompThread()
 	pfile4_compare_->GetStatus(stat);
 	comp_[0].Reset(stat.m_mtime);
 
-    TRACE1("===== Creating thread for %p\n", this);
+    TRACE1("===== Creating compare thread for %p\n", this);
     pthread4_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
     ASSERT(pthread4_ != NULL);
 	return true;

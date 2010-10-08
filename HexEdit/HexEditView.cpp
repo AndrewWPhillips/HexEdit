@@ -18271,6 +18271,7 @@ void CHexEditView::OnUpdateCompFirst(CCmdUI* pCmdUI)
 	pCmdUI->Enable(GetDocument()->CompareDifferences() > 0);
 }
 
+// Command to go to previous recent difference in compare view
 void CHexEditView::OnCompPrev()
 {
 	FILE_ADDRESS start, end;  // current selection
@@ -18294,6 +18295,7 @@ void CHexEditView::OnUpdateCompPrev(CCmdUI* pCmdUI)
 		           GetDocument()->FirstDiffAt(false, 0, start - 1) > 0);
 }
 
+// Command to go to next recent difference in compare view
 void CHexEditView::OnCompNext()
 {
 	FILE_ADDRESS start, end;  // current selection
@@ -18318,6 +18320,7 @@ void CHexEditView::OnUpdateCompNext(CCmdUI* pCmdUI)
 				               GetDocument()->CompareDifferences());
 }
 
+// Command to go to last recent difference in compare view
 void CHexEditView::OnCompLast()
 {
 	int count = GetDocument()->CompareDifferences();
