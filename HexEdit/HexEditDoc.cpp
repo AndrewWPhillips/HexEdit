@@ -93,7 +93,8 @@ END_MESSAGE_MAP()
 
 CHexEditDoc::CHexEditDoc()
  : start_search_event_(FALSE, TRUE), stopped_event_(FALSE, TRUE),
-   start_aerial_event_(FALSE, TRUE)
+   start_aerial_event_(FALSE, TRUE),
+   start_comp_event_(FALSE, TRUE)
 {
     pfile1_ = pfile2_ = pfile3_ = NULL;
 	pfile1_compare_ = pfile4_ = pfile4_compare_ = NULL;  // Files used for compares
