@@ -1191,6 +1191,15 @@ void CHexEditDoc::DeleteContents()
         pfile1_ = NULL;
     }
 
+    if (theApp.bg_search_ && pthread2_ != NULL)
+        KillSearchThread();
+
+    if (pthread3_ != NULL)
+        KillAerialThread();
+
+    if (pthread4_ != NULL)
+        KillCompThread();
+
     undo_.clear();
     loc_.clear();               // Done after thread killed so no docdata_ lock needed
 	base_type_ = 0;
@@ -1207,8 +1216,9 @@ void CHexEditDoc::DeleteContents()
             if (temp_file_[ii])
                 remove(ss);
         }
-        ASSERT(data_file2_[ii] == NULL);  // should have been closed in KillSearchThread() call above
-        ASSERT(data_file3_[ii] == NULL);  // should have been closed in KillAerialThread() call above
+        ASSERT(data_file2_[ii] == NULL);  // should have been closed in KillSearchThread() call
+        ASSERT(data_file3_[ii] == NULL);  // should have been closed in KillAerialThread() call
+        ASSERT(data_file4_[ii] == NULL);  // should have been closed in KillCompThread() call
     }
 
     // Reset change tracking
