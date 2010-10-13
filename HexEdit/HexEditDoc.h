@@ -643,12 +643,11 @@ public:
     void AerialChange(CHexEditView *pview = NULL);  // Signal bg thread to re-scan
     UINT RunAerialThread();     // Main func in bg thread
     bool AerialScanning();      // Are we currently scanning
-	void GetAerialBitmap(int clear = 0xC0);     // Check if bitmap has been allocated/is big enough and get it if not
- 
+
     // Compare stuff (implemented in BGCompare.cpp)
     void AddCompView(CHexEditView *pview);
     void RemoveCompView();
-    bool CreateCompThread();  // Create background thread which fills in the aerial view bitmap
+    bool CreateCompThread();  // Create background thread which does the compare
     void KillCompThread();    // Kill background thread ASAP
 	bool IsCompWaiting();     // is compare thread in wait state?
 	void StartComp();
@@ -766,7 +765,6 @@ public:
 
 private:
     void HandleError(const char *mess);
-    void FixFound(FILE_ADDRESS start, FILE_ADDRESS end, FILE_ADDRESS address, FILE_ADDRESS adjust);
 
 	// Background (worker) threads are created for several purposes (bg searches, bg scan for aerial view, etc)
 	// When the thread starts up it goes into an initial wait state ready for it's event to be
@@ -783,15 +781,14 @@ private:
 	//   WAITING = blocked waiting for event to be triggered
 	//   SCANNING = currently processing (but regularly checking for a new command)
 	//   DYING = terminating after receiving DIE command
-    enum BG_COMMAND { NONE, RESTART, STOP, DIE };           // Commands sent to background thread
+    enum BG_COMMAND { NONE, STOP, DIE };           // Commands sent to background thread
     enum BG_STATE   { STARTING, WAITING, SCANNING, DYING }; // State of background thread
 
     // -------------- Background searches (see BGsearch.cpp) --------------
     CWinThread *pthread2_;      // Ptr to background search thread or NULL if bg searches are off
-    int priority_;              // Priority level to do bg search at
+    int search_priority_;       // Priority level to do bg search at
 
-    CEvent start_search_event_;        // Signal to bg thread to start a new search, or check for termination
-    CEvent stopped_event_;      // Signal from bg thread that finished/aborted the search
+    CEvent start_search_event_; // Signal to bg thread to start a new search, or check for termination
 
     mutable CCriticalSection docdata_;  // Protects access in threads to document data (loc_) file and find data below.
                                 // Note that this is used for read access of the document from the bg
@@ -799,8 +796,8 @@ private:
                                 // stops the bg thread accessing the data while it is being updated.
     CFile64 *pfile2_;           // We need a copy of file_ so we can access the same file for searching
 	// Also see data_file2_ (above)
-    int thread_flag_;           // Signals thread to stop search (1) or even kill itself (-1)
-
+    enum BG_COMMAND search_command_; // signals search thread to do something
+    enum BG_STATE   search_state_;   // indicates what the search thread is doing
     bool search_fin_;           // Flags that the bg search is finished and the view need updating
 
     // List of ranges to search in background (first = start, second = byte past end)
@@ -811,12 +808,15 @@ private:
 
     FILE_ADDRESS find_total_;   // Total number of bytes for background search (so that progress bar is drawn properly)
     double find_done_;          // This is how far the bg search has progressed in searching the top entry of to_search_ list
+    void FixFound(FILE_ADDRESS start, FILE_ADDRESS end, FILE_ADDRESS address, FILE_ADDRESS adjust);
+	bool SearchProcessStop();   // Check if the scanning should stop
 
     // ------------- aerial view (see BGaerial.cpp) -------------------
     CWinThread *pthread3_;      // Ptr to thread or NULL
     CEvent start_aerial_event_; // Starts the thread going
-    enum BG_STATE   aerial_state_;
     enum BG_COMMAND aerial_command_;
+    enum BG_STATE   aerial_state_;
+    bool aerial_fin_;           // Flags that the bg scan is finished and the view needs updating
     // NOTE: kala must not be modified while the bg thread is running!
     COLORREF kala_[256];        // Colours from the first hex view to open the aerial view
 
@@ -826,12 +826,15 @@ private:
     int bpe_;                   // Bytes per bitmap pixel (1 to 65536)
     FIBITMAP *dib_;             // The FreeImage bitmap
     int dib_size_;              // Actual number of bytes allocated
-    bool aerial_fin_;           // Flags that the bg scan is finished and the view needs updating
+	unsigned char *aerial_buf_; // Buffer used for holding file data for scan
 
     // MAX_WIDTH = widest we can "reshape" the bitmap to.  Like any width used for the bitmap it must
     // be a multiple of 8 (so there are never "pad" bytes on the end of scan lines).
     enum { MAX_WIDTH = 2048 };
     enum { MAX_BMP  = 256*1024*1024 };      // Biggest bitmap size in bytes - should be made a user option sometime
+
+	void GetAerialBitmap(int clear = 0xC0); // Check if bitmap has been allocated/is big enough and get it if not
+	bool AerialProcessStop();   // Check if the scanning should stop
 
 	// -------------- file compare (see BGCompare.cpp) -----------------
     CFile64 *pfile4_;           // Copy of the original file (avoids synchronising access)
@@ -843,7 +846,8 @@ private:
 	bool OpenCompFile();
 	void CloseCompFile();
 	bool MakeTempFile();
-	bool bCompSelf_;             // says if we are comparing with earlier version of same file
+	bool CompProcessStop();     // Check if the scanning should stop
+	bool bCompSelf_;            // says if we are comparing with earlier version of same file
 	CString tempFileA_, tempFileB_; // when doing self-compare we need to make 2 temp copies of the file
 
     int cv_count_;              // Number of aerial views of this document

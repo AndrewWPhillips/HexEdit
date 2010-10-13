@@ -33,7 +33,13 @@ Other documents have a thread with priority IDLE.
 Several document data members are used by the background thread:
 
 start_search_event_: signal from main thread to background thread to start searching
-stopped_event_: signal from background thread to main thread to indicate searching finished/aborted
+search_state_: what the thread is currently doing
+  STARTING: thread has just started and not yet blocked at start_search_event_
+  WAITING: thread is blocked at start_search_event_
+  SCANNING: thread is doing what it is supposed to
+  DYING: thread received message to kill itself and is doing so
+search_command_: what we want the thread to do now
+search_fin_: indicates that background search was finished succcesfully (not running or aborted)
 docdata_: is a critical section used to protect access to the other shared data members below
 
 pfile2_: is a ptr to file open the same as pfile1_.  Using a separate file allows the main thread
@@ -47,34 +53,28 @@ to_search_: list of areas of the file to search
 found_: addresses where occurences were found
 main_thread_id: used by background thread to signal the main thread (PostThreadMessage)
 
-thread_flag_: used to signal the bg thread to stop searching (1) or terminate (-1)
 to_adjust_: list of adjustments to be done by bg thread when a file change is made
             allows bg thread to fix found_ to allow for file changes and the bg thread
             to fix its internal addresses to allow for insertions/deletions
-
-view_update_: because PostThreadMessage doesn't work if the main thread is displaying
-              a modal dialog this flag is also set to indicate that the view(s) of the
-              document need updating
-
     
 Background thread
 -----------------
 
 The thread (see bg_func) waits for a signal to start searching (start_search_event_).
-It then gets the next area to search from the list to_search_
-and adds any occurrences found to the set found_.
+It then gets the next area to search from the list to_search_.  While searching
+it adds any occurrences found to the set found_.
 
-When to_search_ becomes empty it signals by settings search_fin_ to TRUE
-When the doc sees this it then updates all its views to show the new occurrences
-and sets search_fin_ to FALSE.so it doesn't do it again.
+When to_search_ becomes empty it sets search_fin_ and goes back to the wait state.
+When the doc sees that search_fin_ is true it updates all its views to show the new
+occurrences and sets search_fin_ to false, so it doesn't do it again.
 
-While searching the bg search also continually checks thread_flag_ to see
-if the current search has been cancelled (if a new search string has been
-entered) or if the thread has been killed (eg. if background searches are
+While searching the bg search also continually checks search_command_ to see
+if the current search has been cancelled (eg, if a new search string has been
+entered) or if the thread has been killed (eg, if background searches are
 turned off).
 
 When the search is finished or after it is cancelled the bg thread signals
-that it is ready to start a new background search using stopped_event_.
+that it is ready to start a new search by setting search_state_ to WAITING.
 
 Application
 -----------
@@ -87,6 +87,7 @@ appdata_: is a critical section used to protect access to the application data b
 pboyer_: determines the bytes to be searched for
 icase_: determines if the search is case-insensitive
 text_type_: characters set used (ASCII, EBCDIC, Unicode) for case-insensitive searches
+wholeword_, alignment_, offset_, align_rel_, base_addr_: other search options
 
 The app also has a few routines for background searches
 StartSearches: starts background searches in the other (inactive) documents
@@ -97,15 +98,15 @@ Searches (See CMainFrame::search_forw and CMainFrame::search_back)
 
 When a search is requested it is first checked if this is a new search or
 a repeat of the last search.  If it is a new search any background search
-is cancelled by setting thread_flag_ = 1, then the search is performed as
-normal in the main thread, and the background search is started after this
+is cancelled by setting search_command_ to STOP, then the search is performed 
+as normal in the main thread, and the new background search is started after this
 search is finished.  (We also wait on the background thread to signal that it
-has aborted the current background search and is ready to start a new search.)
+has aborted the current background search and is waiting to start a new search.)
 
 When the background search is started some of the current file has already
 been searched by the main thread.  The to_search_ list allows for this by
 having only the area(s) not yet searched added to it.  If the first (main
-thread) search was found something (ie. was not aborted or hit EOF) then
+thread) search has found something (ie. was not aborted or hit EOF) then
 the to_search_ list is extended by one byte so that this occurrence is also
 detected by the bg thread.
 
@@ -150,6 +151,8 @@ the current search string changes.  This saves recalc in every OnDraw.
 
 */
 
+// xxx search for aerial and comp
+
 #include "stdafx.h"
 #include "HexEdit.h"
 
@@ -168,11 +171,9 @@ static char THIS_FILE[] = __FILE__;
 // -2 = bg search still in progress
 int CHexEditDoc::SearchOccurrences()
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
     if (pthread2_ == NULL)
     {
-        ASSERT(!aa->bg_search_);
+        ASSERT(!theApp.bg_search_);
         return -4;
     }
 
@@ -206,7 +207,7 @@ int CHexEditDoc::SearchProgress(int &occurrences)
 	if (to_search_.empty())
 		return 100;         // nothing left to search
 
-    // First save the number of occurrences found so far
+    // First save the number of occurrences found so far (returned)
     occurrences = found_.size();
 
     FILE_ADDRESS start, end;
@@ -252,33 +253,31 @@ FILE_ADDRESS CHexEditDoc::GetNextFound(const unsigned char *pat, const unsigned 
 									   int alignment, int offset, bool align_rel, FILE_ADDRESS base_addr,
                                        FILE_ADDRESS from)
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
     if (pthread2_ == NULL)
     {
-        ASSERT(!aa->bg_search_);
+        ASSERT(!theApp.bg_search_);
         return -4;
     }
 
     {
-        CSingleLock s2(&aa->appdata_, TRUE);
+        CSingleLock s2(&theApp.appdata_, TRUE);
 
-        if (aa->pboyer_ == NULL ||
-            icase != aa->icase_ ||
-            tt != aa->text_type_ ||
-            wholeword != aa->wholeword_ ||
-            alignment != aa->alignment_ ||
-			offset != aa->offset_ ||
-			align_rel != aa->align_rel_ ||
-			(aa->align_rel_ && base_addr != base_addr_))
+        if (theApp.pboyer_ == NULL ||
+            icase != theApp.icase_ ||
+            tt != theApp.text_type_ ||
+            wholeword != theApp.wholeword_ ||
+            alignment != theApp.alignment_ ||
+			offset != theApp.offset_ ||
+			align_rel != theApp.align_rel_ ||
+			(theApp.align_rel_ && base_addr != base_addr_))
         {
             // Search params are different to last bg search (or no bg search done yet)
             return -3;
         }
 
-        const unsigned char *curr_mask = aa->pboyer_->mask();
-        if (len != aa->pboyer_->length() ||
-            ::memcmp(pat, aa->pboyer_->pattern(), len) != 0 ||
+        const unsigned char *curr_mask = theApp.pboyer_->mask();
+        if (len != theApp.pboyer_->length() ||
+            ::memcmp(pat, theApp.pboyer_->pattern(), len) != 0 ||
             !(mask==NULL && curr_mask==NULL || mask!=NULL && curr_mask!=NULL && ::memcmp(mask, curr_mask, len)==0) )
         {
             // Search text (or mask) is different to last bg search
@@ -310,33 +309,31 @@ FILE_ADDRESS CHexEditDoc::GetPrevFound(const unsigned char *pat, const unsigned 
 									   int alignment, int offset, bool align_rel, FILE_ADDRESS base_addr,
                                        FILE_ADDRESS from)
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
     if (pthread2_ == NULL)
     {
-        ASSERT(!aa->bg_search_);
+        ASSERT(!theApp.bg_search_);
         return -4;
     }
 
     {
-        CSingleLock s2(&aa->appdata_, TRUE);
+        CSingleLock s2(&theApp.appdata_, TRUE);
 
-        if (aa->pboyer_ == NULL ||
-            icase != aa->icase_ ||
-            tt != aa->text_type_ ||
-            wholeword != aa->wholeword_ ||
-            alignment != aa->alignment_ ||
-			offset != aa->offset_ ||
-			align_rel != aa->align_rel_ ||
-			(aa->align_rel_ && base_addr != base_addr_))
+        if (theApp.pboyer_ == NULL ||
+            icase != theApp.icase_ ||
+            tt != theApp.text_type_ ||
+            wholeword != theApp.wholeword_ ||
+            alignment != theApp.alignment_ ||
+			offset != theApp.offset_ ||
+			align_rel != theApp.align_rel_ ||
+			(theApp.align_rel_ && base_addr != base_addr_))
         {
             // Search params are different to last bg search (or no bg search done yet)
             return -3;
         }
 
-        const unsigned char *curr_mask = aa->pboyer_->mask();
-        if (len != aa->pboyer_->length() ||
-            ::memcmp(pat, aa->pboyer_->pattern(), len) != 0 ||
+        const unsigned char *curr_mask = theApp.pboyer_->mask();
+        if (len != theApp.pboyer_->length() ||
+            ::memcmp(pat, theApp.pboyer_->pattern(), len) != 0 ||
             !(mask==NULL && curr_mask==NULL || mask!=NULL && curr_mask!=NULL && ::memcmp(mask, curr_mask, len) == 0) )
         {
             // Search text (or mask) is different to last bg search
@@ -466,142 +463,138 @@ void CHexEditDoc::FixFound(FILE_ADDRESS start, FILE_ADDRESS end,
 #endif
 }
 
+// Stops the current background search (if any).  It does not return 
+// until the search is aborted and the thread is waiting again.
+void CHexEditDoc::StopSearch()
+{
+    ASSERT(pthread2_ != NULL);
+    if (pthread2_ == NULL) return;
+
+	bool waiting;
+	docdata_.Lock();
+	search_command_ = STOP;
+	docdata_.Unlock();
+    SetThreadPriority(pthread2_->m_hThread, THREAD_PRIORITY_NORMAL);
+	for (int ii = 0; ii < 100; ++ii)
+	{
+		// Wait just a little bit in case the thread was just about to go into wait state
+		docdata_.Lock();
+		waiting = search_state_ == WAITING;
+		docdata_.Unlock();
+		if (waiting)
+			break;
+		TRACE("+++ StopSearch - thread not waiting (yet)\n");
+		Sleep(1);
+	}
+    SetThreadPriority(pthread2_->m_hThread, search_priority_);
+	ASSERT(waiting);
+}
+
 // Start a new background search.  The start and end parameters say what part of
 // the file does not need to be searched (if any).
 void CHexEditDoc::StartSearch(FILE_ADDRESS start /*=-1*/, FILE_ADDRESS end /*=-1*/)
 {
-    BOOL was_stopped = FALSE;
+	StopSearch();
 
     // -1 for end means EOF (unless both start and end are -1)
     if (start != -1 && end == -1) end = length_;
 
-    // Wait for bg thread to signal that it is stopped
-    TRACE1("FG: wait for stopped event %p\n", this);
-
-    DWORD wait_status = ::WaitForSingleObject(HANDLE(stopped_event_), INFINITE);
-    ASSERT(wait_status == WAIT_OBJECT_0);
-    TRACE1("FG: received stopped event %p\n", this);
-
-    {
-        // Note that we would not expect to have to lock the data here as the bg thread should
-        // be waiting for start_search_event_ as it has just signaled that it has stopped.  It is
-        // possible however, that StopSearch() has just signalled start_search_event_ but the bg
-        // thread has yet to get control and reset stopped_event_.  This is why we lock
-        // docdata_ here and also why we wait again on stopped_event_ below.
-        CSingleLock sl(&docdata_, TRUE);
-
-        // Make sure search is not aborted before it starts (if StopSearch has just been called)
-        if (thread_flag_ == 1)
-        {
-            was_stopped = TRUE;
-            thread_flag_ = 0;
-        }
-
-        to_search_.clear();
-        to_adjust_.clear();
-        search_fin_ = false;
-        find_total_ = 0;
-        find_done_ = 0.0;
-
-        if (start == -1)
-        {
-            // Search whole file
-            ASSERT(end == -1);
-            to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(0,-1));
-            find_total_ += length_;
-            TRACE("StartSearch: 0 to -1\n");
-        }
-        else
-        {
-            // Only search the part of the file not already searched
-            ASSERT(start <= end);
-
-            // Search end of file first
-            if (end < length_)
-            {
-                to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(end, -1));
-                find_total_ += length_ - end;
-            }
-            if (start > 0)
-            {
-                to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(0, start));
-                find_total_ += start;
-            }
-        }
-
-        found_.clear();                     // Clear set of found addresses
-    }
-
-    TRACE1("FG: Wait for bg thread for %p\n", this);
-
-    if (!was_stopped)
-    {
-        // Make sure bg thread is waiting (for reasons mentioned above)
-        wait_status = ::WaitForSingleObject(HANDLE(stopped_event_), INFINITE);
-        ASSERT(wait_status == WAIT_OBJECT_0);
-        TRACE1("FG: Wait for bg thread finished for %p\n", this);
-    }
-
     // This is not done until we know the bg thread has stopped searching
-    // (due to wait for stopped_event_ above).  If we do not do this then
-    // the bg thread may add more entries to found that apply to the old
+    // else the bg thread may add more entries to found that apply to the old
     // search string which would be wrongly displayed.
     CBGSearchHint bgsh(FALSE);
     UpdateAllViews(NULL, 0, &bgsh);
 
-    TRACE1("FG: Starting bg search for %p\n", this);
-    SetThreadPriority(pthread2_->m_hThread, priority_);
-    start_search_event_.SetEvent();
+	// Setup up the info for the new search
+	docdata_.Lock();
+
+    to_search_.clear();
+    to_adjust_.clear();
+    find_total_ = 0;
+    find_done_ = 0.0;
+
+    if (start == -1)
+    {
+        // Search whole file
+        ASSERT(end == -1);
+        to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(0,-1));
+        find_total_ += length_;
+        TRACE("+++ StartSearch: 0 to -1\n");
+    }
+    else
+    {
+        // Only search the part of the file not already searched
+        ASSERT(start <= end);
+
+        // Search end of file first
+        if (end < length_)
+        {
+            to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(end, -1));
+            find_total_ += length_ - end;
+        }
+        if (start > 0)
+        {
+            to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(0, start));
+            find_total_ += start;
+        }
+    }
+
+    found_.clear();                     // Clear set of found addresses
+
+	// Restart the search
+	search_command_ = NONE;
+	search_fin_ = false;
+	docdata_.Unlock();
+
+	TRACE("+++ Pulsing search event for %p\n", this);
+	start_search_event_.SetEvent();
 }
 
-void CHexEditDoc::StopSearch()
+void CHexEditDoc::SearchThreadPriority(int pri)
 {
-    if (SearchOccurrences() != -2)
-        return;                         // no search in progress
-
-    // Signal thread to stop searching
-    docdata_.Lock();
-    thread_flag_ = 1;
-    docdata_.Unlock();
-
-    // Allow the bg thread to get control in case it is waiting for start_search_event_,
-    // so that it can check thread_flag_ and set it to zero.
-    SetThreadPriority(pthread2_->m_hThread, THREAD_PRIORITY_NORMAL); // Make sure it stops quickly
-    TRACE1("FG: Stopping bg search for %p\n", this);
-    start_search_event_.SetEvent();
-}
-
-void CHexEditDoc::SearchThreadPriority(int ii)
-{
-    ASSERT(ii == THREAD_PRIORITY_IDLE || ii == THREAD_PRIORITY_LOWEST || ii == THREAD_PRIORITY_BELOW_NORMAL);
-    priority_ = ii;
+    ASSERT(pri == THREAD_PRIORITY_IDLE || pri == THREAD_PRIORITY_LOWEST || pri == THREAD_PRIORITY_BELOW_NORMAL);
+    search_priority_ = pri;
     if (pthread2_ != NULL)
-        SetThreadPriority(pthread2_->m_hThread, priority_);
+        SetThreadPriority(pthread2_->m_hThread, search_priority_);
 }
 
 // Kill background task and wait until it is dead
 void CHexEditDoc::KillSearchThread()
 {
-    ASSERT(((CHexEditApp *)AfxGetApp())->bg_search_);
+    ASSERT(theApp.bg_search_);
     ASSERT(pthread2_ != NULL);
     if (pthread2_ == NULL) return;
 
     HANDLE hh = pthread2_->m_hThread;    // Save handle since it will be lost when thread is killed and object is destroyed
-    TRACE1("FG: Killing thread for %p\n", this);
+    TRACE1("+++ Killing search thread for %p\n", this);
 
     // Signal thread to kill itself
     docdata_.Lock();
-    thread_flag_ = -1;
+	search_command_ = DIE;
     docdata_.Unlock();
 
     SetThreadPriority(pthread2_->m_hThread, THREAD_PRIORITY_NORMAL); // Make it a quick and painless death
+	bool waiting, dying;
+	for (int ii = 0; ii < 100; ++ii)
+	{
+		// Wait just a little bit in case the thread was just about to go into wait state
+		docdata_.Lock();
+		waiting = search_state_ == WAITING;
+		dying   = search_state_ == DYING;
+		docdata_.Unlock();
+		if (waiting || dying)
+			break;
+		Sleep(1);
+	}
+	ASSERT(waiting || dying);
 
-    // Send start message in case it is on hold
-    start_search_event_.SetEvent();
+    // Send start message if it is on hold
+	if (waiting)
+		start_search_event_.SetEvent();
 
+    pthread2_ = NULL;
     DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
     ASSERT(wait_status == WAIT_OBJECT_0 || wait_status == WAIT_FAILED);
-    pthread2_ = NULL;
 
     // Free resources that are only needed during bg searches
     if (pfile2_ != NULL)
@@ -629,21 +622,16 @@ static UINT bg_func(LPVOID pParam)
 {
     CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
 
-    TRACE1("Search thread started for doc %p\n", pDoc);
+    TRACE1("+++ Search thread started for doc %p\n", pDoc);
 
     return pDoc->RunSearchThread();
 }
 
 void CHexEditDoc::CreateSearchThread()
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    ASSERT(aa->bg_search_);
+    ASSERT(theApp.bg_search_);
     ASSERT(pthread2_ == NULL);
     ASSERT(pfile2_ == NULL);
-
-    // Init some things
-    thread_flag_ = 0;
-    search_fin_ = false;
 
     // Open copy of file to be used by background thread
     if (pfile1_ != NULL)
@@ -655,7 +643,7 @@ void CHexEditDoc::CreateSearchThread()
 		if (!pfile2_->Open(pfile1_->GetFilePath(),
 					CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
 		{
-			TRACE1("File2 open failed for %p\n", this);
+			TRACE1("+++ File2 open failed for %p\n", this);
 			return;
 		}
 	}
@@ -670,65 +658,51 @@ void CHexEditDoc::CreateSearchThread()
 	}
 
     // Create new thread
-    TRACE1("Creating thread for %p\n", this);
-    priority_ = THREAD_PRIORITY_LOWEST;
-    pthread2_ = AfxBeginThread(&bg_func, this, priority_);
+    search_command_ = NONE;
+	search_state_ = STARTING;
+    search_fin_ = false;
+    TRACE1("+++ Creating search thread for %p\n", this);
+    search_priority_ = THREAD_PRIORITY_LOWEST;
+    pthread2_ = AfxBeginThread(&bg_func, this, search_priority_);
     ASSERT(pthread2_ != NULL);
 }
 
+// This is the main loop for the worker thread
 UINT CHexEditDoc::RunSearchThread()
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
     // Keep looping until we get the kill signal
     for (;;)
     {
-        size_t buf_len;
-
         {
             CSingleLock sl(&docdata_, TRUE);
-            if (thread_flag_ != 0)
-            {
-                if (thread_flag_ == -1)
-                    return 1;               // Kill thread
-                ASSERT(thread_flag_ == 1);  // Stop search
-                thread_flag_ = 0;
-            }
+			search_state_ = WAITING;
         }
-        start_search_event_.ResetEvent();      // Force ourselves to wait
-        stopped_event_.SetEvent();      // Signal that we are waiting
-        TRACE1("BG: set stopped event for %p\n", this);
         DWORD wait_status = ::WaitForSingleObject(HANDLE(start_search_event_), INFINITE);
-        stopped_event_.ResetEvent();    // Signal that we are no longer waiting
+        docdata_.Lock();
+		search_state_ = SCANNING;
+        docdata_.Unlock();
+        start_search_event_.ResetEvent();      // Force ourselves to wait
         ASSERT(wait_status == WAIT_OBJECT_0);
-        TRACE1("BG: got signal for %p\n", this);
+        TRACE1("+++ BGSearch: got event for %p\n", this);
 
-        // Check for stop/kill, and get info about the search to be done
-        {
-            CSingleLock sl(&docdata_, TRUE);
-            if (thread_flag_ != 0)
-            {
-                if (thread_flag_ == -1)
-                    return 1;               // Kill thread
-                ASSERT(thread_flag_ == 1);  // Stop search
-                thread_flag_ = 0;
-                continue;
-            }
-        }
+		if (SearchProcessStop())
+			continue;
 
+        size_t buf_len;
         int count = 0;
 
-        aa->appdata_.Lock();
-        ASSERT(aa->pboyer_ != NULL);
-        boyer bb(*aa->pboyer_);             // Take a copy of needed info
-        BOOL ignorecase = aa->icase_;
-        int tt = aa->text_type_;
-        BOOL wholeword = aa->wholeword_;
-        int alignment = aa->alignment_;
-		int offset = aa->offset_;
-        aa->appdata_.Unlock();
+        theApp.appdata_.Lock();
+        ASSERT(theApp.pboyer_ != NULL);
+        boyer bb(*theApp.pboyer_);             // Take a copy of needed info
+        BOOL ignorecase = theApp.icase_;
+        int tt = theApp.text_type_;
+        BOOL wholeword = theApp.wholeword_;
+        int alignment = theApp.alignment_;
+		int offset = theApp.offset_;
+        theApp.appdata_.Unlock();
 
         docdata_.Lock();
+		search_fin_ = false;
         FILE_ADDRESS file_len = length_;
 		FILE_ADDRESS base_addr = base_addr_;
         docdata_.Unlock();
@@ -748,19 +722,19 @@ UINT CHexEditDoc::RunSearchThread()
         }
 
         buf_len = (size_t)min(file_len, 32768 + bb.length() - 1);
-        unsigned char *buf = new unsigned char[buf_len + 1];
+        unsigned char *buf = new unsigned char[buf_len + 1];  // xxx use search_buf_ member
 
         // Search all to_search_ blocks
         for (;;)
         {
+			if (SearchProcessStop())
+				break;
+
             FILE_ADDRESS start, end;    // Current part of file to search
 
             // Get the next block to search
             {
                 CSingleLock sl(&docdata_, TRUE); // Protect shared data access
-
-                if (thread_flag_ != 0)
-                    goto stop_search;
 
                 // Check if there has been a file insertion/deletion
                 while (!to_adjust_.empty())
@@ -815,18 +789,18 @@ UINT CHexEditDoc::RunSearchThread()
                     CSingleLock sl(&docdata_, TRUE);   // For accessing file data
 
                     // Check if search cancelled or thread killed
-                    if (thread_flag_ != 0)
+                    if (search_command_ != NONE)
                         goto stop_search;
 
                     // Check for any file insertions/deletions
                     while (!to_adjust_.empty())
                     {
-                        TRACE("---------------- Fixing\n");
+                        TRACE("+++ Adjusting already found\n");
                         FixFound(to_adjust_.front().start_, 
                                  to_adjust_.front().end_,
                                  to_adjust_.front().address_,
                                  to_adjust_.front().adjust_);
-                        TRACE("---------------- Finished fixing\n");
+                        TRACE("+++ Finished adjusting\n");
 
                         if (start >= to_adjust_.front().address_)
                         {
@@ -902,7 +876,7 @@ UINT CHexEditDoc::RunSearchThread()
                 if (addr_buf == 0)
                 {
                     ::Sleep(2000);
-                    TRACE1("BG: Finished sleep in %p\n", this);
+                    TRACE1("+++ Finished sleep in %p\n", this);
                 }
 #endif
 
@@ -916,7 +890,7 @@ UINT CHexEditDoc::RunSearchThread()
 
                     CSingleLock sl(&docdata_, TRUE);
 
-                    if (thread_flag_ != 0)
+                    if (search_command_ != NONE)
                         goto stop_search;
 
                     found_.insert(addr_buf + (pp - buf));
@@ -939,9 +913,6 @@ UINT CHexEditDoc::RunSearchThread()
             {
                 CSingleLock sl(&docdata_, TRUE);
 
-                if (thread_flag_ != 0)
-                    goto stop_search;
-
                 // Check for any file insertions/deletions
                 while (!to_adjust_.empty())
                 {
@@ -957,9 +928,36 @@ UINT CHexEditDoc::RunSearchThread()
                 // Remove the block just searched from to_search_
                 to_search_.pop_front();
             }
+		stop_search:
+			;
         } // for
-stop_search:
         delete[] buf;
-        TRACE1("BG: Finished/aborted background search for %p\n", this);
     }
+}
+
+bool CHexEditDoc::SearchProcessStop()
+{
+	bool retval = false;
+
+    CSingleLock sl(&docdata_, TRUE);
+    switch (search_command_)
+    {
+    case STOP:                      // stop scan and wait
+        TRACE1("+++ BGSearch: stop for %p\n", this);
+        retval = true;
+		break;
+    case DIE:                       // terminate this thread
+        TRACE1("+++ BGSearch: killed thread for %p\n", this);
+        search_state_ = DYING;
+		//xxx tidy up
+		AfxEndThread(1);
+		break;
+    case NONE:                      // nothing needed here - just continue scanning
+        break;
+    default:                        // should not happen
+        ASSERT(0);
+    }
+
+	search_command_ = NONE;
+	return retval;
 }
