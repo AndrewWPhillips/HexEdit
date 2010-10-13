@@ -151,8 +151,6 @@ the current search string changes.  This saves recalc in every OnDraw.
 
 */
 
-// xxx search for aerial and comp
-
 #include "stdafx.h"
 #include "HexEdit.h"
 
@@ -677,6 +675,7 @@ UINT CHexEditDoc::RunSearchThread()
             CSingleLock sl(&docdata_, TRUE);
 			search_state_ = WAITING;
         }
+        TRACE1("+++ BGSearch: waiting %p\n", this);
         DWORD wait_status = ::WaitForSingleObject(HANDLE(start_search_event_), INFINITE);
         docdata_.Lock();
 		search_state_ = SCANNING;
@@ -722,7 +721,8 @@ UINT CHexEditDoc::RunSearchThread()
         }
 
         buf_len = (size_t)min(file_len, 32768 + bb.length() - 1);
-        unsigned char *buf = new unsigned char[buf_len + 1];  // xxx use search_buf_ member
+		ASSERT(search_buf_ == NULL);
+        search_buf_ = new unsigned char[buf_len + 1];
 
         // Search all to_search_ blocks
         for (;;)
@@ -754,6 +754,7 @@ UINT CHexEditDoc::RunSearchThread()
                 {
                     find_total_ = 0;
                     search_fin_ = true;
+					TRACE1("+++ BGSearch: finished search of %p\n", this);
                     break;
                 }
                 start = to_search_.front().first;
@@ -772,7 +773,7 @@ UINT CHexEditDoc::RunSearchThread()
                 ++end;                  // No test needed here since "end" is adjusted below if past EOF
             }
 
-            FILE_ADDRESS addr_buf = start;  // Current location in doc of start of buf
+            FILE_ADDRESS addr_buf = start;  // Current location in doc of start of search_buf_
             // Make sure we get extra bytes past end for length of search string
             end = min(end + bb.length() - 1, file_len);
 
@@ -825,7 +826,7 @@ UINT CHexEditDoc::RunSearchThread()
                     file_len = length_;   // file length may have changed
 
                     // Get a buffer full (plus an extra char for wholeword test at end of buffer)
-                    got = GetData(buf, size_t(min(FILE_ADDRESS(buf_len), end - addr_buf)) + 1, addr_buf, 2);
+                    got = GetData(search_buf_, size_t(min(FILE_ADDRESS(buf_len), end - addr_buf)) + 1, addr_buf, 2);
                     ASSERT(got == min(buf_len, end - addr_buf) || got == min(buf_len, end - addr_buf) + 1);
 
                     if (wholeword)
@@ -860,9 +861,9 @@ UINT CHexEditDoc::RunSearchThread()
                         if (got == min(buf_len, end - addr_buf) + 1)
                         {
                             if (tt == 3)
-                                alpha_after = isalnum(e2a_tab[buf[got-1]]) != 0;
+                                alpha_after = isalnum(e2a_tab[search_buf_[got-1]]) != 0;
                             else
-                                alpha_after = isalnum(buf[got-1]) != 0;
+                                alpha_after = isalnum(search_buf_[got-1]) != 0;
                         }
                     }
 
@@ -880,9 +881,9 @@ UINT CHexEditDoc::RunSearchThread()
                 }
 #endif
 
-                for (unsigned char *pp = buf;
-                     (pp = bb.findforw(pp, got - (pp-buf), ignorecase, tt, wholeword,
-                          alpha_before, alpha_after, alignment, offset, base_addr, addr_buf + (pp-buf))) != NULL;
+                for (unsigned char *pp = search_buf_;
+                     (pp = bb.findforw(pp, got - (pp-search_buf_), ignorecase, tt, wholeword,
+                          alpha_before, alpha_after, alignment, offset, base_addr, addr_buf + (pp-search_buf_))) != NULL;
                      ++pp)
                 {
                     // Found one
@@ -893,13 +894,13 @@ UINT CHexEditDoc::RunSearchThread()
                     if (search_command_ != NONE)
                         goto stop_search;
 
-                    found_.insert(addr_buf + (pp - buf));
+                    found_.insert(addr_buf + (pp - search_buf_));
 
                     if (tt == 1)
                         alpha_before = isalnum(*pp) != 0;
                     else if (tt == 3)
                         alpha_before = isalnum(e2a_tab[*pp]) != 0;
-                    else if (pp > buf)
+                    else if (pp > search_buf_)
                         alpha_before = isalnum(*(pp-1)) != 0;   // Check low byte of Unicode
                     else
                         alpha_before = false;                   // Only one byte before - we need 2 for Unicode
@@ -931,7 +932,8 @@ UINT CHexEditDoc::RunSearchThread()
 		stop_search:
 			;
         } // for
-        delete[] buf;
+		delete[] search_buf_;
+		search_buf_ = NULL;
     }
 }
 
@@ -949,8 +951,9 @@ bool CHexEditDoc::SearchProcessStop()
     case DIE:                       // terminate this thread
         TRACE1("+++ BGSearch: killed thread for %p\n", this);
         search_state_ = DYING;
-		//xxx tidy up
-		sl.Unlock();
+		sl.Unlock();                // we need this here as AfxEndThread() never returns so d'tor is not called
+		delete[] search_buf_;
+		search_buf_ = NULL;
 		AfxEndThread(1);            // kills thread (no return)
 		break;                      // Avoid warning
     case NONE:                      // nothing needed here - just continue scanning

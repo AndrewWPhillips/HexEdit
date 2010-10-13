@@ -445,9 +445,9 @@ bool CHexEditDoc::AerialProcessStop()
     case DIE:                       // terminate this thread
         TRACE1("+++ BGAerial: killed thread for %p\n", this);
         aerial_state_ = DYING;
+		sl.Unlock();                // we need this here as AfxEndThread() never returns so d'tor is not called
 		delete[] aerial_buf_;
 		aerial_buf_ = NULL;
-		sl.Unlock();
 		AfxEndThread(1);            // kills thread (no return)
 		break;                      // Avoid warning
     case NONE:                      // nothing needed here - just continue scanning

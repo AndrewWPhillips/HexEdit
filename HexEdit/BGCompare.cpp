@@ -718,8 +718,9 @@ UINT CHexEditDoc::RunCompThread()
 
 		// Get buffers for each source
 		const int buf_size = 8192;   // xxx may need to be dynamic later (based on sync length)
-		unsigned char *bufa = new unsigned char[buf_size];
-		unsigned char *bufb = new unsigned char[buf_size];
+		ASSERT(comp_bufa_ == NULL && comp_bufb_ == NULL);
+		comp_bufa_ = new unsigned char[buf_size];
+		comp_bufb_ = new unsigned char[buf_size];
 
 		// Keep looping until we are finished processing blocks or we receive a command to stop etc
         for (;;)
@@ -731,8 +732,8 @@ UINT CHexEditDoc::RunCompThread()
 			int gota, gotb;  // Amount of data obtained from each file
 
 			// Get the next chunks
-			if ((gota = GetData    (bufa, buf_size, addr, 4)) <= 0 ||
-			    (gotb = GetCompData(bufb, buf_size, addr, true)) <= 0)
+			if ((gota = GetData    (comp_bufa_, buf_size, addr, 4)) <= 0 ||
+			    (gotb = GetCompData(comp_bufb_, buf_size, addr, true)) <= 0)
 			{
 				// We save the results of the compare along with when it was done
 				result.Final();
@@ -745,7 +746,7 @@ UINT CHexEditDoc::RunCompThread()
                 break;                          // falls out to wait state
 			}
 
-			int pos = 0, endpos = std::min(gota, gotb);   // The bytes of bufa/bufb to compare
+			int pos = 0, endpos = std::min(gota, gotb);   // The bytes of comp_bufa_/comp_bufb_ to compare
 
 			// Process this block into same/different sections
 			while (pos < endpos)
@@ -753,7 +754,7 @@ UINT CHexEditDoc::RunCompThread()
 				// TODO xxx get rid of memcmp and byte compares - we can do 32-bit compares
 				// for speed and so we know where the scan stopped (even REPE/REPNE + CMPSD)
 				// First see if the (rest of the) block is the same
-				if (memcmp(bufa+pos, bufb+pos, endpos-pos) == 0)
+				if (memcmp(comp_bufa_ + pos, comp_bufb_ + pos, endpos-pos) == 0)
 				{
 					// The rest of the block is the same
 					pos = endpos;
@@ -761,7 +762,7 @@ UINT CHexEditDoc::RunCompThread()
 				}
 				// Find out where the difference starts
 				for ( ; pos < endpos; ++pos)
-					if (bufa[pos] != bufb[pos])
+					if (comp_bufa_[pos] != comp_bufb_[pos])
 						break;
 				// xxx for now addresses are always the same
 				result.m_addrA.push_back(addr + pos);
@@ -769,7 +770,7 @@ UINT CHexEditDoc::RunCompThread()
 
 				ASSERT(pos < endpos);   // must have found a difference
 				for ( ; pos < endpos; ++pos)
-					if (bufa[pos] == bufb[pos])
+					if (comp_bufa_[pos] == comp_bufb_[pos])
 						break;
 
 				result.m_len.push_back(int(addr + pos - result.m_addrA.back()));
@@ -779,6 +780,8 @@ UINT CHexEditDoc::RunCompThread()
 
 			addr += std::min(gota, gotb);
         }
+		delete[] comp_bufa_; comp_bufa_ = NULL;
+		delete[] comp_bufb_; comp_bufb_ = NULL;
     }
     return 0;  // never reached
 }
@@ -798,7 +801,9 @@ bool CHexEditDoc::CompProcessStop()
     case DIE:                       // terminate this thread
         TRACE1("+++ BGCompare: killed thread for %p\n", this);
         comp_state_ = DYING;
-		sl.Unlock();
+		sl.Unlock();                // we need this here as AfxEndThread() never returns so d'tor is not called
+		delete[] comp_bufa_; comp_bufa_ = NULL;
+		delete[] comp_bufb_; comp_bufb_ = NULL;
 		AfxEndThread(1);            // kills thread (no return)
 		break;                      // Avoid warning
     case NONE:                      // nothing needed here - just continue scanning

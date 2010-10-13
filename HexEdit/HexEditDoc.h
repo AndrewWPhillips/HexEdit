@@ -799,6 +799,7 @@ private:
     enum BG_COMMAND search_command_; // signals search thread to do something
     enum BG_STATE   search_state_;   // indicates what the search thread is doing
     bool search_fin_;           // Flags that the bg search is finished and the view need updating
+	unsigned char *search_buf_; // Buffer for holding file data to search
 
     // List of ranges to search in background (first = start, second = byte past end)
     std::list<pair<FILE_ADDRESS, FILE_ADDRESS> > to_search_;
@@ -817,6 +818,8 @@ private:
     enum BG_COMMAND aerial_command_;
     enum BG_STATE   aerial_state_;
     bool aerial_fin_;           // Flags that the bg scan is finished and the view needs updating
+	unsigned char *aerial_buf_; // Buffer used for holding file data for scan
+
     // NOTE: kala must not be modified while the bg thread is running!
     COLORREF kala_[256];        // Colours from the first hex view to open the aerial view
 
@@ -826,7 +829,6 @@ private:
     int bpe_;                   // Bytes per bitmap pixel (1 to 65536)
     FIBITMAP *dib_;             // The FreeImage bitmap
     int dib_size_;              // Actual number of bytes allocated
-	unsigned char *aerial_buf_; // Buffer used for holding file data for scan
 
     // MAX_WIDTH = widest we can "reshape" the bitmap to.  Like any width used for the bitmap it must
     // be a multiple of 8 (so there are never "pad" bytes on the end of scan lines).
@@ -853,9 +855,11 @@ private:
     int cv_count_;              // Number of aerial views of this document
     CWinThread *pthread4_;      // Ptr to thread or NULL
     CEvent start_comp_event_;   // Starts the thread going
-    bool comp_fin_;             // Flags that the bg scan is finished and the view needs updating
     enum BG_STATE   comp_state_;
     enum BG_COMMAND comp_command_;
+    bool comp_fin_;             // Flags that the bg scan is finished and the view needs updating
+	unsigned char *comp_bufa_, *comp_bufb_; // Buffers used for holding data from both files
+
 	FILE_ADDRESS comp_progress_; // Distance through the file is used to estimate progress
 
 	class CompResult
