@@ -447,8 +447,9 @@ bool CHexEditDoc::AerialProcessStop()
         aerial_state_ = DYING;
 		delete[] aerial_buf_;
 		aerial_buf_ = NULL;
-		AfxEndThread(1);
-		break;
+		sl.Unlock();
+		AfxEndThread(1);            // kills thread (no return)
+		break;                      // Avoid warning
     case NONE:                      // nothing needed here - just continue scanning
         break;
     default:                        // should not happen

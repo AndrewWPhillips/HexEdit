@@ -798,8 +798,9 @@ bool CHexEditDoc::CompProcessStop()
     case DIE:                       // terminate this thread
         TRACE1("+++ BGCompare: killed thread for %p\n", this);
         comp_state_ = DYING;
-		AfxEndThread(1);
-		break;
+		sl.Unlock();
+		AfxEndThread(1);            // kills thread (no return)
+		break;                      // Avoid warning
     case NONE:                      // nothing needed here - just continue scanning
         break;
     default:                        // should not happen

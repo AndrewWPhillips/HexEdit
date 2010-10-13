@@ -950,8 +950,9 @@ bool CHexEditDoc::SearchProcessStop()
         TRACE1("+++ BGSearch: killed thread for %p\n", this);
         search_state_ = DYING;
 		//xxx tidy up
-		AfxEndThread(1);
-		break;
+		sl.Unlock();
+		AfxEndThread(1);            // kills thread (no return)
+		break;                      // Avoid warning
     case NONE:                      // nothing needed here - just continue scanning
         break;
     default:                        // should not happen
