@@ -1194,11 +1194,7 @@ void CHexEditDoc::DeleteContents()
     if (theApp.bg_search_ && pthread2_ != NULL)
         KillSearchThread();
 
-    if (pthread3_ != NULL)
-        KillAerialThread();
-
-    if (pthread4_ != NULL)
-        KillCompThread();
+    // KillAerialThread() and KillCompThread() not required here as they are killed when the last view is closed
 
     undo_.clear();
     loc_.clear();               // Done after thread killed so no docdata_ lock needed
