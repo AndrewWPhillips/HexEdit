@@ -113,7 +113,7 @@ protected:
     //virtual void InvalidateRange(CPointAp start, CPointAp end, bool f = false);
     //virtual void DoInvalidateRect(LPCRECT lpRect);
     //virtual void DoInvalidateRgn(CRgn* pRgn);
-    //virtual void DoScrollWindow(int xx, int yy);
+    virtual void DoScrollWindow(int xx, int yy);
     //virtual void DoUpdateWindow();
     //virtual void DoHScroll(int total, int page, int pos);
     //virtual void DoVScroll(int total, int page, int pos);

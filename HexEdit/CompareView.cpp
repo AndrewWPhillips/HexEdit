@@ -1809,6 +1809,49 @@ void CCompareView::ValidateCaret(CPointAp &pos, BOOL inside /*=true*/)
     pos = addr2pos(address);
 }
 
+void CCompareView::DoScrollWindow(int xx, int yy)
+{
+	if (theApp.ruler_ && xx != 0)
+	{
+		// We need to scroll the ruler (as it's outside the scroll region)
+		CRect rct;
+		GetDisplayRect(&rct);
+		rct.top = 0;
+		rct.bottom = bdr_top_;
+		ScrollWindow(xx, 0, &rct, &rct);
+		// Also since we do not draw partial numbers at either end
+		// we have to invalidate a bit more at either end than
+		// is invalidated by ScrollWindow.
+		if (xx > 0)
+			rct.right = rct.left + xx + phev_->text_width_*3;
+		else
+			rct.left = rct.right + xx - phev_->text_width_*3;
+		DoInvalidateRect(&rct);
+	}
+    CScrView::DoScrollWindow(xx, yy);
+	if (yy < 0)
+	{
+		// We need to invalidate a bit of the address area near the top so that partial addresses are not drawn
+		CRect rct;
+		GetDisplayRect(&rct);
+		rct.bottom = rct.top + phev_->line_height_;
+		rct.top -= phev_->line_height_/4;
+		rct.right = rct.left + addr_width_*phev_->text_width_;
+		DoInvalidateRect(&rct);
+	}
+	else if (yy > 0)
+	{
+		// We need to invalidate a bit below the scrolled bit in the address area since
+		// it may be blank when scrolling up (blank area avoids drawing partial address)
+		CRect rct;
+		GetDisplayRect(&rct);
+		rct.top += yy;
+		rct.bottom = rct.top + phev_->line_height_;
+		rct.right = rct.left + addr_width_*phev_->text_width_;
+		DoInvalidateRect(&rct);
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CCompareView message handlers
 
