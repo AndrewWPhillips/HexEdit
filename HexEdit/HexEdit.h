@@ -722,9 +722,12 @@ public:
     // Printing options
 	enum prn_unit_t {PRN_INCHES, PRN_CM } print_units_; // Units for margins/distances
     double left_margin_, right_margin_, top_margin_, bottom_margin_;
-    CString footer_, header_;
+    CString watermark_, header_, first_header_, footer_;
+	bool print_watermark_;              // Print light "watermark" behind the text
+	bool diff_first_page_;              // Print different header on the first page
     double header_edge_, footer_edge_;  // How far the header/footer are from the top/bottom edge of the page
     bool print_box_, print_hdr_;        // Print a border around the text and column headings
+	bool print_mark_, print_bookmarks_, print_highlights_, print_search_, print_change_, print_compare_, print_sectors_;
     int spacing_;                       // 0 = 1 line, 1 = 1.5 lines 2 = 2 lines
 
     // Encryption password settings

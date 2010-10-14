@@ -2028,13 +2028,24 @@ void CHexEditApp::LoadOptions()
     right_margin_ = atof(GetProfileString("Printer", "RightMargin",   print_units_ ? "0.3" : "0.1"));
     top_margin_ = atof(GetProfileString("Printer", "TopMargin",       print_units_ ? "1.1" : "0.4"));
     bottom_margin_ = atof(GetProfileString("Printer", "BottomMargin", print_units_ ? "0.8" : "0.3"));
-    header_ = GetProfileString("Printer", "Header", "&A | | &N");
+	print_watermark_ = GetProfileInt("Printer", "PrintWatermark", 0) != 0 ? true : false;
+    watermark_ = GetProfileString("Printer", "Watermark", "CONFIDENTIAL");
+    header_ = GetProfileString("Printer", "Header", "&A | | &N");     // dv = filename + date
+	diff_first_page_ = GetProfileInt("Printer", "DiffFirstPage", 0) != 0 ? true : false;
+    first_header_ = GetProfileString("Printer", "FirstHeader", "");
     footer_ = GetProfileString("Printer", "Footer", " | - &P - | ");
     header_edge_ = atof(GetProfileString("Printer", "HeaderEdge",     print_units_ ? "0.5" : "0.2"));
     footer_edge_ = atof(GetProfileString("Printer", "FooterEdge",     print_units_ ? "0.3" : "0.1"));
     print_box_ = GetProfileInt("Printer", "Border", 1) != 0 ? true : false;
     print_hdr_ = GetProfileInt("Printer", "Headings", 0) != 0 ? true : false;
     spacing_ = GetProfileInt("Printer", "LineSpacing", 0);
+	print_mark_ = GetProfileInt("Printer", "PrintMark", 1) != 0 ? true : false;
+	print_bookmarks_ = GetProfileInt("Printer", "PrintBookmarks", 1) != 0 ? true : false;
+	print_highlights_ = GetProfileInt("Printer", "PrintHighlights", 1) != 0 ? true : false;
+	print_search_ = GetProfileInt("Printer", "PrintSearchOccurrences", 1) != 0 ? true : false;
+	print_change_ = GetProfileInt("Printer", "PrintChangeTracking", 1) != 0 ? true : false;
+	print_compare_ = GetProfileInt("Printer", "PrintCompareTracking", 1) != 0 ? true : false;
+	print_sectors_ = GetProfileInt("Printer", "PrintSectors", 0) != 0 ? true : false;
 
     int wt_flags = GetProfileInt("Options", "WindowTabs", 1);
     switch (wt_flags & 0x3)
@@ -2435,6 +2446,15 @@ void CHexEditApp::SaveOptions()
     WriteProfileInt("Options", "UndoIntelligent", intelligent_undo_ ? 1 : 0);
     WriteProfileInt("Options", "UndoMerge", undo_limit_);
 
+    WriteProfileInt("Printer", "Border", print_box_ ? 1 : 0);
+    WriteProfileInt("Printer", "Headings", print_hdr_ ? 1 : 0);
+	WriteProfileInt("Printer", "PrintMark", print_mark_ ? 1 : 0);
+	WriteProfileInt("Printer", "PrintBookmarks", print_bookmarks_ ? 1 : 0);
+	WriteProfileInt("Printer", "PrintHighlights", print_highlights_ ? 1 : 0);
+	WriteProfileInt("Printer", "PrintSearchOccurrences", print_search_ ? 1 : 0);
+	WriteProfileInt("Printer", "PrintChangeTracking", print_change_ ? 1 : 0);
+	WriteProfileInt("Printer", "PrintCompareTracking", print_compare_ ? 1 : 0);
+	WriteProfileInt("Printer", "PrintSectors", print_sectors_ ? 1 : 0);
     WriteProfileInt("Printer", "Units", int(print_units_));
     CString ss;
     ss.Format("%g", left_margin_);
@@ -2445,15 +2465,18 @@ void CHexEditApp::SaveOptions()
     WriteProfileString("Printer", "TopMargin", ss);
     ss.Format("%g", bottom_margin_);
     WriteProfileString("Printer", "BottomMargin", ss);
+    WriteProfileInt("Printer", "LineSpacing", spacing_);
+
+	WriteProfileInt("Printer", "PrintWatermark", print_watermark_ ? 1 : 0);
+    WriteProfileString("Printer", "Watermark", watermark_);
     WriteProfileString("Printer", "Header", header_);
+	WriteProfileInt("Printer", "DiffFirstPage", diff_first_page_ ? 1 : 0);
+    WriteProfileString("Printer", "FirstHeader", first_header_);
     WriteProfileString("Printer", "Footer", footer_);
     ss.Format("%g", header_edge_);
     WriteProfileString("Printer", "HeaderEdge", ss);
     ss.Format("%g", footer_edge_);
     WriteProfileString("Printer", "FooterEdge", ss);
-    WriteProfileInt("Printer", "Border", print_box_ ? 1 : 0);
-    WriteProfileInt("Printer", "Headings", print_hdr_ ? 1 : 0);
-    WriteProfileInt("Printer", "LineSpacing", spacing_);
 
     WriteProfileInt("Options", "WindowTabs", !mditabs_ ? 0 : 
                     (tabsbottom_ ? 2 : 1) | (!tabicons_ ? 4 : 0));
@@ -2844,7 +2867,9 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
     COptSheet optSheet(_T("HexEdit Options"));
     CSystemGeneralPage sysgeneralPage;
     CFiltersPage filtersPage;
-    CPrintPage printerPage;
+    //CPrintPage printerPage;
+	CPrintGeneralPage printGeneralPage;
+	CPrintDecorationsPage printDecorationsPage;
     CMacroPage macroPage;
 	CHistoryPage histPage;
 
@@ -2870,7 +2895,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 		pPage = &macroPage;
 		break;
 	case PRINTER_OPTIONS_PAGE:
-		pPage = &printerPage;
+		pPage = &printGeneralPage;
 		break;
 	case FILTER_OPTIONS_PAGE:
 		pPage = &filtersPage;
@@ -2917,9 +2942,12 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 	CMFCPropertySheetCategoryInfo * pCatSys = optSheet.AddTreeCategory("System", IMG_FOLDER, IMG_FOLDER_SEL);
     optSheet.AddPageToTree(pCatSys, &sysgeneralPage, IMG_SYSGENERAL, IMG_SYSGENERAL);
     optSheet.AddPageToTree(pCatSys, &filtersPage, IMG_FILTERS, IMG_FILTERS);
-    optSheet.AddPageToTree(pCatSys, &printerPage, IMG_PRINTER, IMG_PRINTER);
     optSheet.AddPageToTree(pCatSys, &macroPage, IMG_MACRO, IMG_MACRO);
     optSheet.AddPageToTree(pCatSys, &histPage, IMG_HIST, IMG_HIST);
+
+	CMFCPropertySheetCategoryInfo * pCatPrn = optSheet.AddTreeCategory("Printer", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys);
+    optSheet.AddPageToTree(pCatPrn, &printGeneralPage, IMG_PRINTER, IMG_PRINTER);
+    optSheet.AddPageToTree(pCatPrn, &printDecorationsPage, IMG_PRINTER, IMG_PRINTER);   // xxx layout image needed 
 
 	CMFCPropertySheetCategoryInfo * pCatWS  = optSheet.AddTreeCategory("Workspace", IMG_FOLDER, IMG_FOLDER_SEL);
     optSheet.AddPageToTree(pCatWS, &workspacelayoutPage, IMG_WORKSPACELAYOUT, IMG_WORKSPACELAYOUT);
@@ -3007,12 +3035,23 @@ void CHexEditApp::get_options(struct OptValues &val)
     val.refresh_bars_ = refresh_bars_;
     val.halt_level_ = halt_level_;
 
-    // Printer page
-    val.units_ = int(print_units_);
-    val.footer_ = footer_;
-    val.header_ = header_;
+    // Printer pages
     val.border_ = print_box_;
     val.headings_ = print_hdr_;
+	val.print_mark_ = print_mark_;
+	val.print_bookmarks_ = print_bookmarks_;
+	val.print_highlights_ = print_highlights_;
+	val.print_search_ = print_search_;
+	val.print_change_ = print_change_;
+	val.print_compare_ = print_compare_;
+	val.print_sectors_ = print_sectors_;
+    val.units_ = int(print_units_);
+	val.print_watermark_ = print_watermark_;
+    val.watermark_ = watermark_;
+    val.header_ = header_;
+	val.diff_first_page_ = diff_first_page_;
+    val.first_header_ = first_header_;
+    val.footer_ = footer_;
     val.left_ = left_margin_;
     val.right_ = right_margin_;
     val.top_ = top_margin_;
@@ -3384,11 +3423,22 @@ void CHexEditApp::set_options(struct OptValues &val)
     halt_level_ = val.halt_level_;
 
     /////////////////////////////////////////////////////////
-    print_units_ = prn_unit_t(val.units_);
-    footer_ = val.footer_;
-    header_ = val.header_;
     print_box_ = val.border_ ? true : false;
     print_hdr_ = val.headings_ ? true : false;
+	print_mark_ = val.print_mark_ ? true : false;
+	print_bookmarks_ = val.print_bookmarks_ ? true : false;
+	print_highlights_ = val.print_highlights_ ? true : false;
+	print_search_ = val.print_search_ ? true : false;
+	print_change_ = val.print_change_ ? true : false;
+	print_compare_ = val.print_compare_ ? true : false;
+	print_sectors_ = val.print_sectors_ ? true : false;
+    print_units_ = prn_unit_t(val.units_);
+	print_watermark_ = val.print_watermark_ ? true : false;
+    watermark_ = val.watermark_;
+    header_ = val.header_;
+	diff_first_page_ = val.diff_first_page_ ? true : false;
+    first_header_ = val.first_header_;
+    footer_ = val.footer_;
     left_margin_ = val.left_;
     right_margin_ = val.right_;
     top_margin_ = val.top_;

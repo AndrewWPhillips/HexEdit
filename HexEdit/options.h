@@ -131,10 +131,15 @@ struct OptValues
 	int		halt_level_;
 
     // Printer
-	CString	header_;
-	CString	footer_;
 	BOOL	border_;
 	BOOL	headings_;
+	BOOL    print_mark_, print_bookmarks_, print_highlights_, print_search_, print_change_, print_compare_, print_sectors_;
+	BOOL	print_watermark_;
+	CString	watermark_;
+	CString	header_;
+	BOOL	diff_first_page_;
+	CString	first_header_;
+	CString	footer_;
 	int     units_;  // 0 = inches, 1 = cm
 	int		spacing_;
 	double	left_;
@@ -569,6 +574,77 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 };
+
+/////////////////////////////////////////////////////////////////////////////
+// CPrintGeneralPage dialog
+
+class CPrintGeneralPage : public COptPage
+{
+	DECLARE_DYNCREATE(CPrintGeneralPage)
+
+// Construction
+public:
+	CPrintGeneralPage() : COptPage(IDD_OPT_PRINT_GENERAL) { }
+
+public:
+	virtual void OnOK();
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnChange();
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnChangeUnits();
+	DECLARE_MESSAGE_MAP()
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CPrintDecorationsPage dialog
+
+class CPrintDecorationsPage : public COptPage
+{
+	DECLARE_DYNCREATE(CPrintDecorationsPage)
+
+public:
+	CPrintDecorationsPage() : COptPage(IDD_OPT_PRINT_DECORATIONS) { }
+
+// Dialog Data
+	CEdit	ctl_watermark_;
+	CEdit	ctl_header_;
+	CEdit	ctl_first_header_;
+	CEdit	ctl_footer_;
+	CMFCMenuButton	watermark_args_;
+	CMFCMenuButton	header_args_;
+	CMFCMenuButton	first_header_args_;
+	CMFCMenuButton	footer_args_;
+
+	CMenu args_menu_;
+
+public:
+	virtual void OnOK();
+    LRESULT OnIdle(long);
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnChange();
+	afx_msg void OnChangeUpdate();
+	afx_msg void OnWatermarkOpts();
+	afx_msg void OnHeaderOpts();
+	afx_msg void OnFirstHeaderOpts();
+	afx_msg void OnFooterOpts();
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnChangeUnits();
+	DECLARE_MESSAGE_MAP()
+
+private:
+    void fix_controls();        // Disable/enable controls depending on value/state of other controls
+};
+
 /////////////////////////////////////////////////////////////////////////////
 // CFiltersPage dialog
 

@@ -154,10 +154,21 @@ void COptSheet::init()
     val_.halt_level_ = -1;
 
     // Printing
-	val_.header_ = _T("");
-	val_.footer_ = _T("");
 	val_.border_ = FALSE;
 	val_.headings_ = FALSE;
+	val_.print_mark_ = TRUE;
+	val_.print_bookmarks_ = TRUE;
+	val_.print_highlights_ = TRUE;
+	val_.print_search_ = TRUE;
+	val_.print_change_ = TRUE;
+	val_.print_compare_ = TRUE;
+	val_.print_sectors_ = FALSE;
+	val_.print_watermark_ = FALSE;
+	val_.watermark_ = _T("");
+	val_.header_ = _T("");
+	val_.diff_first_page_ = FALSE;
+	val_.first_header_ = _T("");
+	val_.footer_ = _T("");
 	val_.units_ = 0;   // default to inches
 	val_.spacing_ = -1;
 	val_.left_ = 0.0;
@@ -2722,14 +2733,12 @@ IMPLEMENT_DYNCREATE(CPrintPage, COptPage)
 void CPrintPage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CPrintPage)
-	DDX_Control(pDX, IDC_PRINT_FOOTER, ctl_footer_);
-	DDX_Control(pDX, IDC_PRINT_HEADER, ctl_header_);
-	DDX_Control(pDX, IDC_FOOTER_OPTS, footer_args_);
+	DDX_Control(pDX, IDC_HEADER, ctl_header_);
 	DDX_Control(pDX, IDC_HEADER_OPTS, header_args_);
-	//}}AFX_DATA_MAP
-	DDX_Text(pDX, IDC_PRINT_HEADER, pParent->val_.header_);
-	DDX_Text(pDX, IDC_PRINT_FOOTER, pParent->val_.footer_);
+	DDX_Control(pDX, IDC_FOOTER, ctl_footer_);
+	DDX_Control(pDX, IDC_FOOTER_OPTS, footer_args_);
+	DDX_Text(pDX, IDC_HEADER, pParent->val_.header_);
+	DDX_Text(pDX, IDC_FOOTER, pParent->val_.footer_);
 	DDX_Check(pDX, IDC_PRINT_BORDER, pParent->val_.border_);
 	DDX_Check(pDX, IDC_PRINT_HEADINGS, pParent->val_.headings_);
 	DDX_CBIndex(pDX, IDC_PRINT_UNITS, pParent->val_.units_);
@@ -2745,12 +2754,14 @@ void CPrintPage::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CPrintPage, COptPage)
 	//{{AFX_MSG_MAP(CPrintPage)
 	ON_WM_HELPINFO()
-	ON_EN_CHANGE(IDC_PRINT_BOTTOM, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_FOOTER, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_HEADER, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_BORDER, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_HEADINGS, OnChange)
+	ON_EN_CHANGE(IDC_HEADER, OnChange)
+	ON_EN_CHANGE(IDC_FOOTER, OnChange)
 	ON_EN_CHANGE(IDC_PRINT_LEFT, OnChange)
 	ON_EN_CHANGE(IDC_PRINT_RIGHT, OnChange)
 	ON_EN_CHANGE(IDC_PRINT_TOP, OnChange)
+	ON_EN_CHANGE(IDC_PRINT_BOTTOM, OnChange)
 	ON_BN_CLICKED(IDC_PRINT_SPACE1, OnChange)
 	ON_BN_CLICKED(IDC_PRINT_SPACE1HALF, OnChange)
 	ON_BN_CLICKED(IDC_PRINT_SPACE2, OnChange)
@@ -2857,9 +2868,9 @@ void CPrintPage::OnChange()
 }
 
 static DWORD id_pairs3[] = { 
-    IDC_PRINT_HEADER, HIDC_PRINT_HEADER,
+    IDC_HEADER, HIDC_HEADER,
     IDC_HEADER_OPTS, HIDC_HEADER_OPTS,
-    IDC_PRINT_FOOTER, HIDC_PRINT_FOOTER,
+    IDC_FOOTER, HIDC_FOOTER,
     IDC_FOOTER_OPTS, HIDC_FOOTER_OPTS,
     IDC_PRINT_BORDER, HIDC_PRINT_BORDER,
     IDC_PRINT_HEADINGS, HIDC_PRINT_HEADINGS,
@@ -2885,6 +2896,355 @@ BOOL CPrintPage::OnHelpInfo(HELPINFO* pHelpInfo)
 void CPrintPage::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs3);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CPrintGeneralPage property page
+
+IMPLEMENT_DYNCREATE(CPrintGeneralPage, COptPage)
+
+void CPrintGeneralPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+	DDX_Check(pDX, IDC_PRINT_BORDER, pParent->val_.border_);
+	DDX_Check(pDX, IDC_PRINT_HEADINGS, pParent->val_.headings_);
+	DDX_Check(pDX, IDC_PRINT_MARK, pParent->val_.print_mark_);
+	DDX_Check(pDX, IDC_PRINT_BOOKMARKS, pParent->val_.print_bookmarks_);
+	DDX_Check(pDX, IDC_PRINT_HIGHLIGHTS, pParent->val_.print_highlights_);
+	DDX_Check(pDX, IDC_PRINT_SEARCH, pParent->val_.print_search_);
+	DDX_Check(pDX, IDC_PRINT_CHANGE, pParent->val_.print_change_);
+	DDX_Check(pDX, IDC_PRINT_COMPARE, pParent->val_.print_compare_);
+	DDX_CBIndex(pDX, IDC_PRINT_UNITS, pParent->val_.units_);
+	DDX_Radio(pDX, IDC_PRINT_SPACE1, pParent->val_.spacing_);
+	DDX_Text(pDX, IDC_PRINT_LEFT, pParent->val_.left_);
+	DDX_Text(pDX, IDC_PRINT_TOP, pParent->val_.top_);
+	DDX_Text(pDX, IDC_PRINT_RIGHT, pParent->val_.right_);
+	DDX_Text(pDX, IDC_PRINT_BOTTOM, pParent->val_.bottom_);
+}
+
+BEGIN_MESSAGE_MAP(CPrintGeneralPage, COptPage)
+	ON_WM_HELPINFO()
+	ON_BN_CLICKED(IDC_PRINT_BORDER, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_HEADINGS, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_MARK, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_BOOKMARKS, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_HIGHLIGHTS, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_SEARCH, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_CHANGE, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_COMPARE, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_SPACE1, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_SPACE1HALF, OnChange)
+	ON_BN_CLICKED(IDC_PRINT_SPACE2, OnChange)
+	ON_CBN_SELCHANGE(IDC_PRINT_UNITS, OnChangeUnits)
+	ON_EN_CHANGE(IDC_PRINT_LEFT, OnChange)
+	ON_EN_CHANGE(IDC_PRINT_RIGHT, OnChange)
+	ON_EN_CHANGE(IDC_PRINT_TOP, OnChange)
+	ON_EN_CHANGE(IDC_PRINT_BOTTOM, OnChange)
+    ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CPrintGeneralPage message handlers
+
+BOOL CPrintGeneralPage::OnInitDialog() 
+{
+    COptPage::OnInitDialog();
+
+    return TRUE;
+}
+
+void CPrintGeneralPage::OnOK() 
+{
+	theApp.set_options(pParent->val_);
+    COptPage::OnOK();
+}
+
+void CPrintGeneralPage::OnChangeUnits()
+{
+	// Get factor for units converting from
+	double factor = 1.0;
+	switch (pParent->val_.units_)
+	{
+	case 1:
+		factor = 2.54;
+		break;
+	}
+	UpdateData();
+	// Modify factor for units converting to
+	switch (pParent->val_.units_)
+	{
+	case 1:
+		factor /= 2.54;
+		break;
+	}
+	// Fix all distance values according to new units
+	pParent->val_.bottom_      = floor(1000.0*pParent->val_.bottom_     /factor + 0.5)/1000.0;
+	pParent->val_.top_         = floor(1000.0*pParent->val_.top_        /factor + 0.5)/1000.0;
+	pParent->val_.left_        = floor(1000.0*pParent->val_.left_       /factor + 0.5)/1000.0;
+	pParent->val_.right_       = floor(1000.0*pParent->val_.right_      /factor + 0.5)/1000.0;
+	pParent->val_.header_edge_ = floor(1000.0*pParent->val_.header_edge_/factor + 0.5)/1000.0;
+	pParent->val_.footer_edge_ = floor(1000.0*pParent->val_.footer_edge_/factor + 0.5)/1000.0;
+
+	UpdateData(FALSE);    // Put new values back into the controls
+
+    SetModified(TRUE);
+}
+
+void CPrintGeneralPage::OnChange() 
+{
+    SetModified(TRUE);
+}
+
+static DWORD id_pairs_prn_gen[] = { 
+    IDC_PRINT_BORDER, HIDC_PRINT_BORDER,
+    IDC_PRINT_HEADINGS, HIDC_PRINT_HEADINGS,
+	IDC_PRINT_MARK, HIDC_PRINT_MARK,
+	IDC_PRINT_BOOKMARKS, HIDC_PRINT_BOOKMARKS,
+	IDC_PRINT_HIGHLIGHTS, HIDC_PRINT_HIGHLIGHTS,
+	IDC_PRINT_SEARCH, HIDC_PRINT_SEARCH,
+	IDC_PRINT_CHANGE, HIDC_PRINT_CHANGE,
+	IDC_PRINT_COMPARE, HIDC_PRINT_COMPARE,
+    IDC_PRINT_UNITS, HIDC_PRINT_UNITS,
+    IDC_PRINT_SPACE1, HIDC_PRINT_SPACE1,
+    IDC_PRINT_SPACE1HALF, HIDC_PRINT_SPACE1HALF,
+    IDC_PRINT_SPACE2, HIDC_PRINT_SPACE2,
+    IDC_PRINT_LEFT, HIDC_PRINT_LEFT,
+    IDC_PRINT_RIGHT, HIDC_PRINT_RIGHT,
+    IDC_PRINT_TOP, HIDC_PRINT_TOP,
+    IDC_PRINT_BOTTOM, HIDC_PRINT_BOTTOM,
+    0,0 
+};
+
+BOOL CPrintGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_prn_gen);
+    return TRUE;
+}
+
+void CPrintGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_prn_gen);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CPrintDecorationsPage property page
+
+IMPLEMENT_DYNCREATE(CPrintDecorationsPage, COptPage)
+
+void CPrintDecorationsPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+	DDX_Check(pDX, IDC_PRINT_WATERMARK, pParent->val_.print_watermark_);
+	DDX_Control(pDX, IDC_WATERMARK, ctl_watermark_);
+	DDX_Control(pDX, IDC_WATERMARK_OPTS, watermark_args_);
+	DDX_Control(pDX, IDC_HEADER, ctl_header_);
+	DDX_Control(pDX, IDC_HEADER_OPTS, header_args_);
+	DDX_Check(pDX, IDC_FIRST_HEADER_DIFF, pParent->val_.diff_first_page_);
+	DDX_Control(pDX, IDC_FIRST_HEADER, ctl_first_header_);
+	DDX_Control(pDX, IDC_FIRST_HEADER_OPTS, first_header_args_);
+	DDX_Control(pDX, IDC_FOOTER, ctl_footer_);
+	DDX_Control(pDX, IDC_FOOTER_OPTS, footer_args_);
+	DDX_Text(pDX, IDC_WATERMARK, pParent->val_.watermark_);
+	DDX_Text(pDX, IDC_HEADER, pParent->val_.header_);
+	DDX_Text(pDX, IDC_FIRST_HEADER, pParent->val_.first_header_);
+	DDX_Text(pDX, IDC_FOOTER, pParent->val_.footer_);
+	DDX_CBIndex(pDX, IDC_PRINT_UNITS, pParent->val_.units_);
+	DDX_Text(pDX, IDC_PRINT_HEADER_EDGE, pParent->val_.header_edge_);
+	DDX_Text(pDX, IDC_PRINT_FOOTER_EDGE, pParent->val_.footer_edge_);
+}
+
+BEGIN_MESSAGE_MAP(CPrintDecorationsPage, COptPage)
+	ON_WM_HELPINFO()
+	ON_BN_CLICKED(IDC_PRINT_WATERMARK, OnChangeUpdate)
+	ON_EN_CHANGE(IDC_WATERMARK, OnChange)
+	ON_BN_CLICKED(IDC_WATERMARK_OPTS, OnWatermarkOpts)
+
+	ON_EN_CHANGE(IDC_PRINT_HEADER_EDGE, OnChange)
+	ON_EN_CHANGE(IDC_HEADER, OnChange)
+	ON_BN_CLICKED(IDC_HEADER_OPTS, OnHeaderOpts)
+	ON_BN_CLICKED(IDC_FIRST_HEADER_DIFF, OnChangeUpdate)
+	ON_EN_CHANGE(IDC_FIRST_HEADER, OnChange)
+	ON_BN_CLICKED(IDC_FIRST_HEADER_OPTS, OnFirstHeaderOpts)
+
+	ON_EN_CHANGE(IDC_PRINT_FOOTER_EDGE, OnChange)
+	ON_EN_CHANGE(IDC_FOOTER, OnChange)
+	ON_BN_CLICKED(IDC_FOOTER_OPTS, OnFooterOpts)
+	ON_CBN_SELCHANGE(IDC_PRINT_UNITS, OnChangeUnits)
+    ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+void CPrintDecorationsPage::fix_controls()
+{
+    // Check that all the control we need are available
+    ASSERT(GetDlgItem(IDC_WATERMARK) != NULL);
+    ASSERT(GetDlgItem(IDC_WATERMARK_OPTS) != NULL);
+    ASSERT(GetDlgItem(IDC_FIRST_HEADER) != NULL);
+    ASSERT(GetDlgItem(IDC_FIRST_HEADER_OPTS) != NULL);
+
+	GetDlgItem(IDC_WATERMARK)->EnableWindow(pParent->val_.print_watermark_);
+	GetDlgItem(IDC_WATERMARK_OPTS)->EnableWindow(pParent->val_.print_watermark_);
+	GetDlgItem(IDC_FIRST_HEADER)->EnableWindow(pParent->val_.diff_first_page_);
+    GetDlgItem(IDC_FIRST_HEADER_OPTS)->EnableWindow(pParent->val_.diff_first_page_);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CPrintDecorationsPage message handlers
+
+BOOL CPrintDecorationsPage::OnInitDialog() 
+{
+    COptPage::OnInitDialog();
+
+    if (args_menu_.m_hMenu == NULL)
+        args_menu_.LoadMenu(IDR_PRINT_ARGS);
+    watermark_args_.m_hMenu = args_menu_.GetSubMenu(0)->GetSafeHmenu();
+    watermark_args_.m_bRightArrow = TRUE;
+    header_args_.m_hMenu = args_menu_.GetSubMenu(0)->GetSafeHmenu();
+    header_args_.m_bRightArrow = TRUE;
+    first_header_args_.m_hMenu = args_menu_.GetSubMenu(0)->GetSafeHmenu();
+    first_header_args_.m_bRightArrow = TRUE;
+    footer_args_.m_hMenu = args_menu_.GetSubMenu(0)->GetSafeHmenu();
+    footer_args_.m_bRightArrow = TRUE;
+
+	fix_controls();
+
+    return TRUE;
+}
+
+void CPrintDecorationsPage::OnOK() 
+{
+	theApp.set_options(pParent->val_);
+    COptPage::OnOK();
+}
+
+LRESULT CPrintDecorationsPage::OnIdle(long lCount)
+{
+	fix_controls();
+    return FALSE;
+}
+
+void CPrintDecorationsPage::OnWatermarkOpts() 
+{
+    if (watermark_args_.m_nMenuResult != 0)
+    {
+        CString ss;
+        VERIFY(ss.LoadString(watermark_args_.m_nMenuResult));
+
+		ctl_watermark_.SetWindowText("");
+        for (int i = 0; i < ss.GetLength (); i++)
+            ctl_watermark_.SendMessage(WM_CHAR, (TCHAR) ss [i]);
+        SetModified(TRUE);
+    }
+}
+
+void CPrintDecorationsPage::OnHeaderOpts() 
+{
+    if (header_args_.m_nMenuResult != 0)
+    {
+        CString ss;
+        VERIFY(ss.LoadString(header_args_.m_nMenuResult));
+
+        for (int i = 0; i < ss.GetLength (); i++)
+            ctl_header_.SendMessage(WM_CHAR, (TCHAR) ss [i]);
+        SetModified(TRUE);
+    }
+}
+
+void CPrintDecorationsPage::OnFirstHeaderOpts() 
+{
+    if (first_header_args_.m_nMenuResult != 0)
+    {
+        CString ss;
+        VERIFY(ss.LoadString(first_header_args_.m_nMenuResult));
+
+        for (int i = 0; i < ss.GetLength (); i++)
+            ctl_first_header_.SendMessage(WM_CHAR, (TCHAR) ss [i]);
+        SetModified(TRUE);
+    }
+}
+
+void CPrintDecorationsPage::OnFooterOpts() 
+{
+    if (footer_args_.m_nMenuResult != 0)
+    {
+        CString ss;
+        VERIFY(ss.LoadString(footer_args_.m_nMenuResult));
+
+        for (int i = 0; i < ss.GetLength (); i++)
+            ctl_footer_.SendMessage(WM_CHAR, (TCHAR) ss [i]);
+        SetModified(TRUE);
+    }
+}
+
+void CPrintDecorationsPage::OnChangeUnits()
+{
+	// Get factor for units converting from
+	double factor = 1.0;
+	switch (pParent->val_.units_)
+	{
+	case 1:
+		factor = 2.54;
+		break;
+	}
+	UpdateData();
+	// Modify factor for units converting to
+	switch (pParent->val_.units_)
+	{
+	case 1:
+		factor /= 2.54;
+		break;
+	}
+	// Fix all distance values according to new units
+	pParent->val_.bottom_      = floor(1000.0*pParent->val_.bottom_     /factor + 0.5)/1000.0;
+	pParent->val_.top_         = floor(1000.0*pParent->val_.top_        /factor + 0.5)/1000.0;
+	pParent->val_.left_        = floor(1000.0*pParent->val_.left_       /factor + 0.5)/1000.0;
+	pParent->val_.right_       = floor(1000.0*pParent->val_.right_      /factor + 0.5)/1000.0;
+	pParent->val_.header_edge_ = floor(1000.0*pParent->val_.header_edge_/factor + 0.5)/1000.0;
+	pParent->val_.footer_edge_ = floor(1000.0*pParent->val_.footer_edge_/factor + 0.5)/1000.0;
+
+	UpdateData(FALSE);    // Put new values back into the controls
+
+    SetModified(TRUE);
+}
+
+void CPrintDecorationsPage::OnChange() 
+{
+    SetModified(TRUE);
+}
+
+void CPrintDecorationsPage::OnChangeUpdate() 
+{
+    UpdateData();
+    SetModified(TRUE);
+}
+
+static DWORD id_pairs_prn_dec[] = {
+	IDC_PRINT_WATERMARK, HIDC_PRINT_WATERMARK,
+    IDC_WATERMARK, HIDC_WATERMARK,
+    IDC_WATERMARK_OPTS, HIDC_WATERMARK_OPTS,
+	IDC_FIRST_HEADER_DIFF, HIDC_FIRST_HEADER_DIFF,
+    IDC_HEADER, HIDC_HEADER,
+    IDC_HEADER_OPTS, HIDC_HEADER_OPTS,
+    IDC_FIRST_HEADER, HIDC_FIRST_HEADER,
+    IDC_FIRST_HEADER_OPTS, HIDC_FIRST_HEADER_OPTS,
+    IDC_FOOTER, HIDC_FOOTER,
+    IDC_FOOTER_OPTS, HIDC_FOOTER_OPTS,
+    IDC_PRINT_UNITS, HIDC_PRINT_UNITS,
+    IDC_PRINT_HEADER_EDGE, HIDC_PRINT_HEADER_EDGE,
+    IDC_PRINT_FOOTER_EDGE, HIDC_PRINT_FOOTER_EDGE,
+    0,0 
+};
+
+BOOL CPrintDecorationsPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_prn_dec);
+    return TRUE;
+}
+
+void CPrintDecorationsPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_prn_dec);
 }
 
 //===========================================================================

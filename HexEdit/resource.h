@@ -408,6 +408,8 @@
 #define IDD_PROP_PARENT                 433
 #define IDD_EXPLORER_PARENT             434
 #define IDR_CALC_GO                     435
+#define IDD_OPT_PRINT_GENERAL           436
+#define IDD_OPT_PRINT_DECORATIONS       437
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -753,6 +755,7 @@
 #define IDC_CLEAR_ON_EXIT               1193
 #define IDC_PASSWORD_HELP               1194
 #define IDC_ALGORITHM_HELP              1195
+#define IDC_WATERMARK_OPTS              1195
 #define IDC_OPEN_FILES                  1196
 #define IDC_OPEN_RO                     1197
 #define IDC_DISPLAY_RESET               1198
@@ -810,10 +813,16 @@
 #define IDC_PRINT_BORDER                1252
 #define IDC_PRINT_HEADINGS              1253
 #define IDC_PRINT_OPTIONS               1253
+#define IDC_PRINT_MARK                  1254
 #define IDC_PRINT_DUP_LINES             1255
+#define IDC_PRINT_SEARCH                1255
+#define IDC_PRINT_HIGHLIGHTS            1256
 #define IDC_FIND_NEXT                   1257
+#define IDC_PRINT_BOOKMARKS             1257
 #define IDC_FIND_REPLACE                1258
+#define IDC_PRINT_CHANGE                1258
 #define IDC_FIND_REPLACE_ALL            1259
+#define IDC_PRINT_COMPARE               1259
 #define IDC_FIND_COMBINED_STRING        1260
 #define IDC_FIND_TEXT_STRING            1261
 #define IDC_FIND_HEX_STRING             1262
@@ -1147,6 +1156,13 @@
 #define IDC_DISPLAY_COMP                1593
 #define IDC_CALC_BITS                   1594
 #define IDC_BITS_PLACEHOLDER            1595
+#define IDC_FIRST_HEADER_DIFF           1596
+#define IDC_PRINT_WATERMARK             1597
+#define IDC_HEADER                      1598
+#define IDC_FOOTER                      1599
+#define IDC_FIRST_HEADER_OPTS           1600
+#define IDC_FIRST_HEADER                1601
+#define IDC_WATERMARK                   1602
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1589,9 +1605,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        436
+#define _APS_NEXT_RESOURCE_VALUE        440
 #define _APS_NEXT_COMMAND_VALUE         39150
-#define _APS_NEXT_CONTROL_VALUE         1596
+#define _APS_NEXT_CONTROL_VALUE         1610
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
