@@ -329,29 +329,49 @@ void CHexEditView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
     // Note we can't use ConvertFromDP here as this is for printer not screen
     pDC->DPtoLP(&rct);
 
+	int left, mid=1, right;
+	if (theApp.even_reverse_ && pInfo->m_nCurPage%2 == 1)
+		left = 0, right = 2;
+	else
+		left = 2, right = 0;
+
     if (rct.top - text_height > margin_rct.top)  // Note y values are -ve down
     {
-        // Print header
-        AfxExtractSubString(ss, theApp.header_, 0, '|');
+		// Get normal header unless using diff header for 1st page and its the first page
+		CString strHeader;
+		if (theApp.diff_first_header_ && pInfo->m_nCurPage == 1)
+			strHeader = theApp.first_header_;
+		else
+			strHeader = theApp.header_;
+
+        // Print the 3 parts of the header
+        AfxExtractSubString(ss, strHeader, left, '|');
         pDC->DrawText(create_header(ss, pInfo->m_nCurPage), &rct, DT_LEFT | DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
 
-        AfxExtractSubString(ss, theApp.header_, 1, '|');
+        AfxExtractSubString(ss, strHeader, mid, '|');
         pDC->DrawText(create_header(ss, pInfo->m_nCurPage), &rct, DT_CENTER | DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
 
-        AfxExtractSubString(ss, theApp.header_, 2, '|');
+        AfxExtractSubString(ss, strHeader, right, '|');
         pDC->DrawText(create_header(ss, pInfo->m_nCurPage), &rct, DT_RIGHT | DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
     }
 
     if (rct.bottom + text_height < margin_rct.bottom)  // Note y values are -ve down
     {
-        // Print footer
-        AfxExtractSubString(ss, theApp.footer_, 0, '|');
+		// Get normal footer unless using diff footer for 1st page and it's the first page
+		CString strFooter;
+		if (theApp.diff_first_footer_ && pInfo->m_nCurPage == 1)
+			strFooter = theApp.first_footer_;
+		else
+			strFooter = theApp.footer_;
+
+        // Print the 3 parts of the footer
+        AfxExtractSubString(ss, strFooter, left, '|');
         pDC->DrawText(create_header(ss, pInfo->m_nCurPage), &rct, DT_LEFT | DT_BOTTOM | DT_NOPREFIX | DT_SINGLELINE);
 
-        AfxExtractSubString(ss, theApp.footer_, 1, '|');
+        AfxExtractSubString(ss, strFooter, mid, '|');
         pDC->DrawText(create_header(ss, pInfo->m_nCurPage), &rct, DT_CENTER | DT_BOTTOM | DT_NOPREFIX | DT_SINGLELINE);
 
-        AfxExtractSubString(ss, theApp.footer_, 2, '|');
+        AfxExtractSubString(ss, strFooter, right, '|');
         pDC->DrawText(create_header(ss, pInfo->m_nCurPage), &rct, DT_RIGHT | DT_BOTTOM | DT_NOPREFIX | DT_SINGLELINE);
     }
 
