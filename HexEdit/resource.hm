@@ -190,6 +190,7 @@
 #define HIDC_ENHANCE                    0x80e5043f    // IDD_EMAIL
 #define HIDC_EOF_GET                    0x8075040b    // IDD_CALC
 #define HIDC_EQUALS                     0x80750412    // IDD_CALC
+#define HIDC_EVEN_REVERSE               0x81b30642    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_EXPLORER                   0x81280598    // IDD_EXPLORER
 #define HIDC_EXPORT_ADDRESS             0x813904c2    // IDD_OPT_WORKSPACE [English (United States)]
 #define HIDC_EXPORT_LINELEN             0x813904c5    // IDD_OPT_WORKSPACE [English (United States)]
@@ -256,6 +257,12 @@
 #define HIDC_FIND_USE_MASK              0x80960507    // IDD_FIND_HEX [English (United States)]
 #define HIDC_FIND_WHOLE_WORD            0x80fa04ff    // IDD_FIND_SIMPLE [English (United States)]
 #define HIDC_FIND_WILDCARD_CHAR         0x80fb0506    // IDD_FIND_TEXT [English (United States)]
+#define HIDC_FIRST_FOOTER               0x81b30438    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
+#define HIDC_FIRST_FOOTER_DIFF          0x81b30640    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
+#define HIDC_FIRST_FOOTER_OPTS          0x81b304aa    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
+#define HIDC_FIRST_HEADER               0x81b30437    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
+#define HIDC_FIRST_HEADER_DIFF          0x81b3063c    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
+#define HIDC_FIRST_HEADER_OPTS          0x81b304a9    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_FOLDER_BACK                0x81280590    // IDD_EXPLORER
 #define HIDC_FOLDER_FILTER              0x81280594    // IDD_EXPLORER
 #define HIDC_FOLDER_FLIP                0x81280596    // IDD_EXPLORER
@@ -266,6 +273,7 @@
 #define HIDC_FOLDER_REFRESH             0x81280595    // IDD_EXPLORER
 #define HIDC_FOLDER_VIEW                0x81280597    // IDD_EXPLORER
 #define HIDC_FONT                       0x810c04b5    // IDD_OPT_WINDISPLAY [English (United States)]
+#define HIDC_FOOTER                     0x81b3063f    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_FOOTER_OPTS                0x80f004a6    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_FP_EXP                     0x81350434    // IDD_PROP_REAL [English (United States)]
 #define HIDC_FP_FORMAT                  0x813505f9    // IDD_PROP_REAL [English (United States)]
@@ -283,6 +291,7 @@
 #define HIDC_HALT0                      0x80a9045d    // IDD_OPT_MACRO [English (United States)]
 #define HIDC_HALT1                      0x80a9045e    // IDD_OPT_MACRO [English (United States)]
 #define HIDC_HALT2                      0x80a9045f    // IDD_OPT_MACRO [English (United States)]
+#define HIDC_HEADER                     0x81b3063e    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_HEADER_OPTS                0x80f004a5    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_HEX                        0x807503e9    // IDD_CALC
 #define HIDC_HEX_HIST                   0x8075048d    // IDD_CALC
@@ -366,20 +375,27 @@
 #define HIDC_PLAY_NAME                  0x80a604c0    // IDD_MULTIPLAY
 #define HIDC_PLAY_OPTIONS               0x80a60466    // IDD_MULTIPLAY
 #define HIDC_POW                        0x80750424    // IDD_CALC
+#define HIDC_PRINT_BOOKMARKS            0x81b204e9    // IDD_OPT_PRINT_GENERAL [English (United States)]
 #define HIDC_PRINT_BORDER               0x80f004e4    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_BOTTOM               0x80f004a3    // IDD_OPT_PRINT [English (United States)]
+#define HIDC_PRINT_CHANGE               0x81b204ea    // IDD_OPT_PRINT_GENERAL [English (United States)]
+#define HIDC_PRINT_COMPARE              0x81b204eb    // IDD_OPT_PRINT_GENERAL [English (United States)]
 #define HIDC_PRINT_FOOTER               0x80f00436    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_FOOTER_EDGE          0x80f004a8    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_HEADER               0x80f00435    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_HEADER_EDGE          0x80f004a7    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_HEADINGS             0x80f004e5    // IDD_OPT_PRINT [English (United States)]
+#define HIDC_PRINT_HIGHLIGHTS           0x81b204e8    // IDD_OPT_PRINT_GENERAL [English (United States)]
 #define HIDC_PRINT_LEFT                 0x80f004a1    // IDD_OPT_PRINT [English (United States)]
+#define HIDC_PRINT_MARK                 0x81b204e6    // IDD_OPT_PRINT_GENERAL [English (United States)]
 #define HIDC_PRINT_RIGHT                0x80f004a4    // IDD_OPT_PRINT [English (United States)]
+#define HIDC_PRINT_SEARCH               0x81b204e7    // IDD_OPT_PRINT_GENERAL [English (United States)]
 #define HIDC_PRINT_SPACE1               0x80f0043e    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_SPACE1HALF           0x80f0043f    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_SPACE2               0x80f0060a    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_TOP                  0x80f004a2    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_UNITS                0x80f0056c    // IDD_OPT_PRINT [English (United States)]
+#define HIDC_PRINT_WATERMARK            0x81b3063d    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_RANGES                     0x80e60451    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_RECENT_FILES               0x819b04c6    // IDD_OPT_HISTORY [English (United States)]
 #define HIDC_REFRESH_BARS               0x80a9045c    // IDD_OPT_MACRO [English (United States)]
@@ -478,6 +494,8 @@
 #define HIDC_VARS                       0x8075048f    // IDD_CALC
 #define HIDC_VERSION                    0x80e50478    // IDD_EMAIL
 #define HIDC_VERTBUFFER                 0x81360446    // IDD_OPT_WINEDIT [English (United States)]
+#define HIDC_WATERMARK                  0x81b30439    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
+#define HIDC_WATERMARK_OPTS             0x81b304ab    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_WEB_ADDRESS                0x8119053d    // IDD_DFFD_GLOBAL
 #define HIDC_WEB_CHECK                  0x8119053e    // IDD_DFFD_GLOBAL
 #define HIDC_XOR                        0x8075042c    // IDD_CALC

@@ -137,9 +137,12 @@ struct OptValues
 	BOOL	print_watermark_;
 	CString	watermark_;
 	CString	header_;
-	BOOL	diff_first_page_;
+	BOOL	diff_first_header_;
 	CString	first_header_;
 	CString	footer_;
+	BOOL	diff_first_footer_;
+	CString	first_footer_;
+	BOOL	even_reverse_;
 	int     units_;  // 0 = inches, 1 = cm
 	int		spacing_;
 	double	left_;
@@ -611,14 +614,16 @@ public:
 	CPrintDecorationsPage() : COptPage(IDD_OPT_PRINT_DECORATIONS) { }
 
 // Dialog Data
-	CEdit	ctl_watermark_;
 	CEdit	ctl_header_;
 	CEdit	ctl_first_header_;
 	CEdit	ctl_footer_;
-	CMFCMenuButton	watermark_args_;
+	CEdit	ctl_first_footer_;
+	CEdit	ctl_watermark_;
 	CMFCMenuButton	header_args_;
 	CMFCMenuButton	first_header_args_;
 	CMFCMenuButton	footer_args_;
+	CMFCMenuButton	first_footer_args_;
+	CMFCMenuButton	watermark_args_;
 
 	CMenu args_menu_;
 
@@ -631,14 +636,14 @@ protected:
 	virtual BOOL OnInitDialog();
 
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnChange();
 	afx_msg void OnChangeUpdate();
-	afx_msg void OnWatermarkOpts();
 	afx_msg void OnHeaderOpts();
 	afx_msg void OnFirstHeaderOpts();
 	afx_msg void OnFooterOpts();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg void OnChangeUnits();
+	afx_msg void OnFirstFooterOpts();
+	afx_msg void OnWatermarkOpts();
 	DECLARE_MESSAGE_MAP()
 
 private:

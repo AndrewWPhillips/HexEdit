@@ -1163,6 +1163,8 @@
 #define IDC_FIRST_HEADER_OPTS           1600
 #define IDC_FIRST_HEADER                1601
 #define IDC_WATERMARK                   1602
+#define IDC_FIRST_FOOTER_DIFF           1603
+#define IDC_EVEN_REVERSE                1604
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1599,6 +1601,8 @@
 #define ID_COMP_AUTO_SCROLL             39141
 #define ID_GOADDRESS                    39148
 #define ID_GOSECTOR                     39149
+#define ID_WATERMARK_CONFIDENTIAL       39150
+#define ID_WATERMARK_SAMPLE             39151
 
 // Next default values for new objects
 // 
@@ -1606,7 +1610,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        440
-#define _APS_NEXT_COMMAND_VALUE         39150
+#define _APS_NEXT_COMMAND_VALUE         39152
 #define _APS_NEXT_CONTROL_VALUE         1610
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

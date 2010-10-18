@@ -2031,9 +2031,13 @@ void CHexEditApp::LoadOptions()
 	print_watermark_ = GetProfileInt("Printer", "PrintWatermark", 0) != 0 ? true : false;
     watermark_ = GetProfileString("Printer", "Watermark", "CONFIDENTIAL");
     header_ = GetProfileString("Printer", "Header", "&A | | &N");     // dv = filename + date
-	diff_first_page_ = GetProfileInt("Printer", "DiffFirstPage", 0) != 0 ? true : false;
+	diff_first_header_ = GetProfileInt("Printer", "DiffFirstHeader", 0) != 0 ? true : false;
     first_header_ = GetProfileString("Printer", "FirstHeader", "");
     footer_ = GetProfileString("Printer", "Footer", " | - &P - | ");
+	diff_first_footer_ = GetProfileInt("Printer", "DiffFirstFooter", 0) != 0 ? true : false;
+    first_footer_ = GetProfileString("Printer", "FirstFooter", "");
+	even_reverse_ = GetProfileInt("Printer", "ReverseHeaderFooterOnEvenPages", 0) != 0 ? true : false;
+
     header_edge_ = atof(GetProfileString("Printer", "HeaderEdge",     print_units_ ? "0.5" : "0.2"));
     footer_edge_ = atof(GetProfileString("Printer", "FooterEdge",     print_units_ ? "0.3" : "0.1"));
     print_box_ = GetProfileInt("Printer", "Border", 1) != 0 ? true : false;
@@ -2470,9 +2474,12 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Printer", "PrintWatermark", print_watermark_ ? 1 : 0);
     WriteProfileString("Printer", "Watermark", watermark_);
     WriteProfileString("Printer", "Header", header_);
-	WriteProfileInt("Printer", "DiffFirstPage", diff_first_page_ ? 1 : 0);
+	WriteProfileInt("Printer", "DiffFirstHeader", diff_first_header_ ? 1 : 0);
     WriteProfileString("Printer", "FirstHeader", first_header_);
     WriteProfileString("Printer", "Footer", footer_);
+	WriteProfileInt("Printer", "DiffFirstFooter", diff_first_footer_ ? 1 : 0);
+    WriteProfileString("Printer", "FirstFooter", first_footer_);
+	WriteProfileInt("Printer", "ReverseHeaderFooterOnEvenPages", even_reverse_ ? 1 : 0);
     ss.Format("%g", header_edge_);
     WriteProfileString("Printer", "HeaderEdge", ss);
     ss.Format("%g", footer_edge_);
@@ -2935,6 +2942,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
         IMG_COLOURS,
 		IMG_AERIAL,
 		IMG_COMP,
+		IMG_PRINTER_DECO,
     };
     optSheet.SetIconsList(IDB_OPTIONSIMAGES, 16 /* Image width */);
 
@@ -2947,7 +2955,7 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 
 	CMFCPropertySheetCategoryInfo * pCatPrn = optSheet.AddTreeCategory("Printer", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys);
     optSheet.AddPageToTree(pCatPrn, &printGeneralPage, IMG_PRINTER, IMG_PRINTER);
-    optSheet.AddPageToTree(pCatPrn, &printDecorationsPage, IMG_PRINTER, IMG_PRINTER);   // xxx layout image needed 
+    optSheet.AddPageToTree(pCatPrn, &printDecorationsPage, IMG_PRINTER_DECO, IMG_PRINTER_DECO);
 
 	CMFCPropertySheetCategoryInfo * pCatWS  = optSheet.AddTreeCategory("Workspace", IMG_FOLDER, IMG_FOLDER_SEL);
     optSheet.AddPageToTree(pCatWS, &workspacelayoutPage, IMG_WORKSPACELAYOUT, IMG_WORKSPACELAYOUT);
@@ -3049,9 +3057,12 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.print_watermark_ = print_watermark_;
     val.watermark_ = watermark_;
     val.header_ = header_;
-	val.diff_first_page_ = diff_first_page_;
+	val.diff_first_header_ = diff_first_header_;
     val.first_header_ = first_header_;
     val.footer_ = footer_;
+	val.diff_first_footer_ = diff_first_footer_;
+	val.first_footer_ = first_footer_;
+	val.even_reverse_ = even_reverse_;
     val.left_ = left_margin_;
     val.right_ = right_margin_;
     val.top_ = top_margin_;
@@ -3436,9 +3447,12 @@ void CHexEditApp::set_options(struct OptValues &val)
 	print_watermark_ = val.print_watermark_ ? true : false;
     watermark_ = val.watermark_;
     header_ = val.header_;
-	diff_first_page_ = val.diff_first_page_ ? true : false;
+	diff_first_header_ = val.diff_first_header_ ? true : false;
     first_header_ = val.first_header_;
     footer_ = val.footer_;
+	diff_first_footer_ = val.diff_first_footer_ ? true : false;
+	first_footer_ = val.first_footer_;
+	even_reverse_ = val.even_reverse_ ? true : false;
     left_margin_ = val.left_;
     right_margin_ = val.right_;
     top_margin_ = val.top_;
