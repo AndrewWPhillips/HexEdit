@@ -429,8 +429,6 @@ public:
 
     BOOL highlight_;                    // Is highlighting on?
 
-    int last_opt_page_;                 // Index of last active options page
-
     unsigned int aerialview_;           // 0=none, 2=tabbed views, else splitter view width
     unsigned long aerial_disp_state_;
 

@@ -281,8 +281,6 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 
     algorithm_ = 0;   // Default to built-in encryption
 
-    last_opt_page_ = -1;
-
     m_pbookmark_list = NULL;
     open_file_shared_ = FALSE;
     open_current_readonly_ = -1;
@@ -2868,136 +2866,15 @@ void CHexEditApp::OnOptions2()
 // Param "must_show_page" means to force showing of the page
 void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_page /*=FALSE*/)
 {
-    CHexEditView *pview = GetView();
-
     // Construct property sheet + its pages
-    COptSheet optSheet(_T("HexEdit Options"));
-    CSystemGeneralPage sysgeneralPage;
-    CFiltersPage filtersPage;
-    //CPrintPage printerPage;
-	CPrintGeneralPage printGeneralPage;
-	CPrintDecorationsPage printDecorationsPage;
-    CMacroPage macroPage;
-	CHistoryPage histPage;
-
-    CWorkspaceLayoutPage workspacelayoutPage;
-    CWorkspaceDisplayPage workspacedisplayPage;
-    CWorkspacePage workspacePage;
-	CTipsPage tipsPage;
-    CTemplatePage templatePage;
-
-    CWindowGeneralPage wingeneralPage;
-    CWindowPage windisplayPage;
-    CWindowEditPage wineditPage;
-    CColourSchemes coloursPage;
-
-	// Set up initial page
-	CPropertyPage *pPage = NULL;
-	switch (display_page)
-	{
-	case COLOUR_OPTIONS_PAGE:
-		pPage = &coloursPage;
-		break;
-	case MACRO_OPTIONS_PAGE:
-		pPage = &macroPage;
-		break;
-	case PRINTER_OPTIONS_PAGE:
-		pPage = &printGeneralPage;
-		break;
-	case FILTER_OPTIONS_PAGE:
-		pPage = &filtersPage;
-		break;
-    case WIN_OPTIONS_PAGE:
-	    if (pview != NULL) pPage = &windisplayPage;
-        break;
-	}
-
-	// Allow pages to activate each other
-	sysgeneralPage.SetHistPage(&histPage);
-	workspacelayoutPage.SetStartupPage(&sysgeneralPage);
-    windisplayPage.SetGlobalDisplayPage(&workspacedisplayPage);
-    wineditPage.SetGlobalEditPage(&workspacePage);
+    COptSheet optSheet(_T("HexEdit Options"), display_page, must_show_page);
 
     // Load current settings into the property sheet
     get_options(optSheet.val_);
 
-    enum
-    {
-        IMG_FOLDER,
-        IMG_FOLDER_SEL,
-        IMG_CURRENT,
-        IMG_SYSGENERAL,
-        IMG_HIST,
-        IMG_FILTERS,
-        IMG_PRINTER,
-        IMG_MACRO,
-        IMG_WORKSPACELAYOUT,
-        IMG_WORKSPACEDISPLAY,
-        IMG_WORKSPACEEDIT,
-        IMG_TIP,
-        IMG_TEMPLATE,
-        IMG_DOCGENERAL,
-        IMG_DOCDISPLAY,
-        IMG_DOCEDIT,
-        IMG_COLOURS,
-		IMG_AERIAL,
-		IMG_COMP,
-		IMG_PRINTER_DECO,
-    };
-    optSheet.SetIconsList(IDB_OPTIONSIMAGES, 16 /* Image width */);
-
-    // Add categories to the tree and pages under the categories
-	CMFCPropertySheetCategoryInfo * pCatSys = optSheet.AddTreeCategory("System", IMG_FOLDER, IMG_FOLDER_SEL);
-    optSheet.AddPageToTree(pCatSys, &sysgeneralPage, IMG_SYSGENERAL, IMG_SYSGENERAL);
-    optSheet.AddPageToTree(pCatSys, &filtersPage, IMG_FILTERS, IMG_FILTERS);
-    optSheet.AddPageToTree(pCatSys, &macroPage, IMG_MACRO, IMG_MACRO);
-    optSheet.AddPageToTree(pCatSys, &histPage, IMG_HIST, IMG_HIST);
-
-	CMFCPropertySheetCategoryInfo * pCatPrn = optSheet.AddTreeCategory("Printer", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys);
-    optSheet.AddPageToTree(pCatPrn, &printGeneralPage, IMG_PRINTER, IMG_PRINTER);
-    optSheet.AddPageToTree(pCatPrn, &printDecorationsPage, IMG_PRINTER_DECO, IMG_PRINTER_DECO);
-
-	CMFCPropertySheetCategoryInfo * pCatWS  = optSheet.AddTreeCategory("Workspace", IMG_FOLDER, IMG_FOLDER_SEL);
-    optSheet.AddPageToTree(pCatWS, &workspacelayoutPage, IMG_WORKSPACELAYOUT, IMG_WORKSPACELAYOUT);
-    optSheet.AddPageToTree(pCatWS, &workspacedisplayPage, IMG_WORKSPACEDISPLAY, IMG_WORKSPACEDISPLAY);
-    optSheet.AddPageToTree(pCatWS, &workspacePage, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
-    optSheet.AddPageToTree(pCatWS, &tipsPage, IMG_TIP, IMG_TIP);
-    optSheet.AddPageToTree(pCatWS, &templatePage, IMG_TEMPLATE, IMG_TEMPLATE);
-	if (pview != NULL)
-    {
-		CMFCPropertySheetCategoryInfo * pCatDoc = optSheet.AddTreeCategory("Document", IMG_FOLDER, IMG_FOLDER_SEL);
-        optSheet.AddPageToTree(pCatDoc, &wingeneralPage, IMG_DOCGENERAL, IMG_DOCGENERAL);
-        optSheet.AddPageToTree(pCatDoc, &windisplayPage, IMG_DOCDISPLAY, IMG_DOCDISPLAY);
-        optSheet.AddPageToTree(pCatDoc, &wineditPage, IMG_DOCEDIT, IMG_DOCEDIT);
-	    optSheet.AddPageToTree(pCatDoc, &coloursPage, IMG_COLOURS, IMG_COLOURS);
-
-        // Allow global display page to jump to doc display page
-        workspacedisplayPage.SetDocDisplayPage(&windisplayPage);
-        workspacePage.SetDocEditPage(&wineditPage);
-    }
-	else
-	{
-        // Add colour page to workspace - user can still change the schemes, just can't select one to use
-	    optSheet.AddPageToTree(pCatWS, &coloursPage, IMG_COLOURS, IMG_COLOURS);
-	}
-
-	// Set initial active page
-    if (must_show_page && pPage != NULL)
-    {
-        optSheet.SetActivePage(pPage);
-    }
-    else if (last_opt_page_ != -1 && last_opt_page_ < optSheet.GetPageCount())
-    {
-        optSheet.SetActivePage(last_opt_page_);
-    }
-    else if (pPage != NULL)
-    {
-        optSheet.SetActivePage(pPage);
-    }
+    CHECK_SECURITY(201);
 
     optSheet.m_psh.dwFlags &= ~(PSH_HASHELP);      // Turn off help button
-
-    CHECK_SECURITY(201);
     optSheet.DoModal();
 	// Note: updating the options in response to DoModal returning IDOK is
 	// not a good idea as then the Apply button does nothing.

@@ -196,50 +196,7 @@ struct OptValues
 	CString scheme_name_;
 };
 
-/////////////////////////////////////////////////////////////////////////////
-// COptSheet
-
-class COptSheet : public CMFCPropertySheet
-{
-	DECLARE_DYNAMIC(COptSheet)
-
-// Construction
-public:
-	COptSheet(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	COptSheet(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-
-// Attributes
-public:
-
-// Operations
-public:
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(COptSheet)
-	public:
-	virtual BOOL DestroyWindow();
-	//}}AFX_VIRTUAL
-
-	virtual BOOL OnInitDialog();
-
-// Implementation
-public:
-	virtual ~COptSheet();
-
-    struct OptValues val_;      // Property values that the user can change
-
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(COptSheet)
-	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct);
-	//}}AFX_MSG
-    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
-    afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	DECLARE_MESSAGE_MAP()
-
-	void init();
-};
+class COptSheet;
 
 /////////////////////////////////////////////////////////////////////////////
 // COptPage - base class for all options pages
@@ -251,12 +208,7 @@ public:
     virtual LRESULT OnIdle(long) { return FALSE; }
     COptSheet *pParent;
 protected:
-	virtual BOOL OnInitDialog()
-    {
-        pParent = (COptSheet *)GetParent();
-	    ASSERT(pParent != NULL && pParent->IsKindOf(RUNTIME_CLASS(COptSheet)));
-        return CMFCPropertyPage::OnInitDialog();
-    }
+	virtual BOOL OnInitDialog();
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -975,4 +927,79 @@ protected:
     bool change_name_;              // Is the change to the current name not done by user?
     bool change_range_;             // Is change to range not done by user?
 };
+
+/////////////////////////////////////////////////////////////////////////////
+// COptSheet
+
+class COptSheet : public CMFCPropertySheet
+{
+	DECLARE_DYNAMIC(COptSheet)
+
+// Construction
+public:
+	COptSheet(UINT nIDCaption, int display_page, BOOL must_show_page, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	COptSheet(LPCTSTR pszCaption, int display_page, BOOL must_show_page, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+
+// Attributes
+public:
+
+// Operations
+public:
+
+// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(COptSheet)
+	public:
+	virtual BOOL DestroyWindow();
+	//}}AFX_VIRTUAL
+
+	virtual BOOL OnInitDialog();
+
+// Implementation
+public:
+	virtual ~COptSheet();
+
+    struct OptValues val_;      // Property values that the user can change
+
+	// Generated message map functions
+protected:
+	// These are the pages of the "property sheet"
+    CSystemGeneralPage sysgeneralPage_;
+    CFiltersPage filtersPage_;
+    //CPrintPage printerPage_;
+	CPrintGeneralPage printGeneralPage_;
+	CPrintDecorationsPage printDecorationsPage_;
+    CMacroPage macroPage_;
+	CHistoryPage histPage_;
+
+    CWorkspaceLayoutPage workspacelayoutPage_;
+    CWorkspaceDisplayPage workspacedisplayPage_;
+    CWorkspacePage workspacePage_;
+	CTipsPage tipsPage_;
+    CTemplatePage templatePage_;
+
+    CWindowGeneralPage wingeneralPage_;
+    CWindowPage windisplayPage_;
+    CWindowEditPage wineditPage_;
+    CColourSchemes coloursPage_;
+
+	//{{AFX_MSG(COptSheet)
+	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct);
+	//}}AFX_MSG
+    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+    afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	DECLARE_MESSAGE_MAP()
+
+private:
+	CMFCPropertySheetCategoryInfo * pCatSys_;
+
+    int last_opt_page_;                 // Index of last active options page
+
+	int display_page_;                  // Page to display
+	BOOL must_show_page_;               // Show display_page_ even if last_opt_page_ is valid
+
+	void init(int display_page, BOOL must_show_page);
+	void page_init();
+};
+
 #endif

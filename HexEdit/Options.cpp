@@ -73,20 +73,45 @@ extern CHexEditApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // COptSheet
 
+// Option pages images for navigation tree
+enum
+{
+    IMG_FOLDER,
+    IMG_FOLDER_SEL,
+    IMG_CURRENT,
+    IMG_SYSGENERAL,
+    IMG_HIST,
+    IMG_FILTERS,
+    IMG_PRINTER,
+    IMG_MACRO,
+    IMG_WORKSPACELAYOUT,
+    IMG_WORKSPACEDISPLAY,
+    IMG_WORKSPACEEDIT,
+    IMG_TIP,
+    IMG_TEMPLATE,
+    IMG_DOCGENERAL,
+    IMG_DOCDISPLAY,
+    IMG_DOCEDIT,
+    IMG_COLOURS,
+	IMG_AERIAL,
+	IMG_COMP,
+	IMG_PRN_DECO,
+};
+
 IMPLEMENT_DYNAMIC(COptSheet, CMFCPropertySheet)
 
-COptSheet::COptSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
+COptSheet::COptSheet(LPCTSTR pszCaption, int display_page, BOOL must_show_page, CWnd* pParentWnd, UINT iSelectPage)
         :CMFCPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
-	init();
+	init(display_page, must_show_page);
 }
-COptSheet::COptSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
+COptSheet::COptSheet(UINT nIDCaption, int display_page, BOOL must_show_page, CWnd* pParentWnd, UINT iSelectPage)
         :CMFCPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
-	init();
+	init(display_page, must_show_page);
 }
 
-void COptSheet::init()
+void COptSheet::init(int display_page, BOOL must_show_page)
 {
     // Set up default values (these should be overwritten later)
 	val_.shell_open_ = FALSE;
@@ -207,8 +232,99 @@ void COptSheet::init()
     val_.ct_modifications_ = val_.ct_insertions_ = val_.ct_deletions_ = val_.ct_delcount_ = FALSE;
     val_.show_bookmarks_ = val_.show_highlights_ = TRUE;
 
-	// Set up page navigation
-	SetLook(PropSheetLook_Tree, 202);   // tree pane width
+	// Set up page stuff
+	last_opt_page_= -1;
+	display_page_ = display_page;
+	must_show_page_ = must_show_page;
+
+	// Set up tree stuff
+	SetLook(PropSheetLook_Tree, 202 /* tree pane width */);
+    SetIconsList(IDB_OPTIONSIMAGES, 16 /* Image width */);
+
+	// We have to add at least one page before OnInitDialog is called else the dialog creation fails, but
+	// if we create the categories before OnInitDialog then sub-categories get placed at the top of their category.
+	pCatSys_ = AddTreeCategory("System", IMG_FOLDER, IMG_FOLDER_SEL);
+    AddPageToTree(pCatSys_, &sysgeneralPage_, IMG_SYSGENERAL, IMG_SYSGENERAL);
+}
+
+void COptSheet::page_init()
+{
+    CHexEditView *pview = GetView();
+
+	// Allow pages to activate each other
+	sysgeneralPage_.SetHistPage(&histPage_);
+	workspacelayoutPage_.SetStartupPage(&sysgeneralPage_);
+    windisplayPage_.SetGlobalDisplayPage(&workspacedisplayPage_);
+    wineditPage_.SetGlobalEditPage(&workspacePage_);
+
+    // Add the rest of the pages and categories (System/General already added in init() above).
+    AddPageToTree(pCatSys_, &filtersPage_, IMG_FILTERS, IMG_FILTERS);
+
+	CMFCPropertySheetCategoryInfo * pCatPrn = AddTreeCategory("Printer", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
+    AddPageToTree(pCatPrn, &printGeneralPage_, IMG_PRINTER, IMG_PRINTER);
+    AddPageToTree(pCatPrn, &printDecorationsPage_, IMG_PRINTER, IMG_PRINTER);   // xxx decorations image needed here
+
+    AddPageToTree(pCatSys_, &macroPage_, IMG_MACRO, IMG_MACRO);
+    AddPageToTree(pCatSys_, &histPage_, IMG_HIST, IMG_HIST);
+
+	CMFCPropertySheetCategoryInfo * pCatWS  = AddTreeCategory("Workspace", IMG_FOLDER, IMG_FOLDER_SEL);
+    AddPageToTree(pCatWS, &workspacelayoutPage_, IMG_WORKSPACELAYOUT, IMG_WORKSPACELAYOUT);
+    AddPageToTree(pCatWS, &workspacedisplayPage_, IMG_WORKSPACEDISPLAY, IMG_WORKSPACEDISPLAY);
+    AddPageToTree(pCatWS, &workspacePage_, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
+    AddPageToTree(pCatWS, &tipsPage_, IMG_TIP, IMG_TIP);
+    AddPageToTree(pCatWS, &templatePage_, IMG_TEMPLATE, IMG_TEMPLATE);
+	if (pview != NULL)
+    {
+		CMFCPropertySheetCategoryInfo * pCatDoc = AddTreeCategory("Document", IMG_FOLDER, IMG_FOLDER_SEL);
+        AddPageToTree(pCatDoc, &wingeneralPage_, IMG_DOCGENERAL, IMG_DOCGENERAL);
+        AddPageToTree(pCatDoc, &windisplayPage_, IMG_DOCDISPLAY, IMG_DOCDISPLAY);
+        AddPageToTree(pCatDoc, &wineditPage_, IMG_DOCEDIT, IMG_DOCEDIT);
+	    AddPageToTree(pCatDoc, &coloursPage_, IMG_COLOURS, IMG_COLOURS);
+
+        // Allow global display page to jump to doc display page
+        workspacedisplayPage_.SetDocDisplayPage(&windisplayPage_);
+        workspacePage_.SetDocEditPage(&wineditPage_);
+    }
+	else
+	{
+        // Add colour page to workspace - user can still change the schemes, just can't select one to use
+	    AddPageToTree(pCatWS, &coloursPage_, IMG_COLOURS, IMG_COLOURS);
+	}
+
+	// Get ptr to requested page
+	CPropertyPage *pPage = NULL;
+	switch (display_page_)
+	{
+	case COLOUR_OPTIONS_PAGE:
+		pPage = &coloursPage_;
+		break;
+	case MACRO_OPTIONS_PAGE:
+		pPage = &macroPage_;
+		break;
+	case PRINTER_OPTIONS_PAGE:
+		pPage = &printGeneralPage_;
+		break;
+	case FILTER_OPTIONS_PAGE:
+		pPage = &filtersPage_;
+		break;
+    case WIN_OPTIONS_PAGE:
+	    if (pview != NULL) pPage = &windisplayPage_;
+        break;
+	}
+
+	// Set initial active page
+    if (must_show_page_ && pPage != NULL)
+    {
+        SetActivePage(pPage);
+    }
+    else if (last_opt_page_ != -1 && last_opt_page_ < GetPageCount())
+    {
+        SetActivePage(last_opt_page_);  // restore last page open (if any)
+    }
+    else if (pPage != NULL)
+    {
+        SetActivePage(pPage);
+    }
 }
 
 COptSheet::~COptSheet()
@@ -219,10 +335,15 @@ BOOL COptSheet::OnInitDialog()
 {
 	BOOL retval = CMFCPropertySheet::OnInitDialog();
 
+	// Note we must add the pages after base class OnInitDialog has been called so that categories within
+	// categories (eg Printer within System) are not put at the top of their category.
+	page_init();
+
 	// Turn on lines and +/- buttons etc in the tree control
 	LONG style = ::GetWindowLong(m_wndTree.m_hWnd, GWL_STYLE);
 	::SetWindowLong(m_wndTree.m_hWnd, GWL_STYLE,
 					style | TVS_HASBUTTONS | TVS_HASLINES| TVS_LINESATROOT | TVS_SHOWSELALWAYS | TVS_TRACKSELECT);
+
 	return retval;
 }
 
@@ -249,7 +370,7 @@ BOOL COptSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 
 BOOL COptSheet::DestroyWindow() 
 {
-    theApp.last_opt_page_ = GetActiveIndex();
+    last_opt_page_ = GetActiveIndex();
 	
     return CMFCPropertySheet::DestroyWindow();
 }
@@ -275,6 +396,14 @@ LRESULT COptSheet::OnKickIdle(WPARAM, LPARAM lCount)
 // COptPage
 
 IMPLEMENT_DYNAMIC(COptPage, CMFCPropertyPage)
+
+BOOL COptPage::OnInitDialog()
+{
+    pParent = (COptSheet *)GetParent();
+    ASSERT(pParent != NULL && pParent->IsKindOf(RUNTIME_CLASS(COptSheet)));
+    return CMFCPropertyPage::OnInitDialog();
+}
+
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
