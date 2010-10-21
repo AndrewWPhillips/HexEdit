@@ -1,6 +1,6 @@
 // Print.cpp : part of implementation of the CHexEditView class
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2003-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -297,12 +297,12 @@ void CHexEditView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
     if (theApp.print_units_ == CHexEditApp::PRN_CM)
         u_scale = int(u_scale/2.54);
 
-    CRect rct, margin_rct;
+    CRect rct;                              // Encloses all incl. header/footer - ie nothing is printed outside this box
+	CRect margin_rct;                       // Smaller box based on margins - does not include header/footer
     CString ss;                             // String to display at top of page
 
     // Work out text height of the (printer) font
     pDC->SelectObject(print_font_);
-    pDC->SetTextColor(RGB(0,0,0));          // Display headers/footers in black
     TEXTMETRIC tm;
     pDC->GetTextMetrics(&tm);
     int text_height = tm.tmHeight + tm.tmExternalLeading;
@@ -329,13 +329,48 @@ void CHexEditView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
     // Note we can't use ConvertFromDP here as this is for printer not screen
     pDC->DPtoLP(&rct);
 
-	int left, mid=1, right;
-	if (theApp.even_reverse_ && pInfo->m_nCurPage%2 == 1)
-		left = 0, right = 2;
-	else
-		left = 2, right = 0;
+	pDC->SetBkMode(TRANSPARENT);
+	if (theApp.print_watermark_)
+	{
+		// Work out angle of diagonal from bottom left to top right
+		ASSERT(rct.Height() != 0 && rct.Width() != 0);  // else we get divide by zero error
+		double diag = (int)sqrt((double)(rct.Height()*rct.Height()) + rct.Width()*rct.Width());
+		double angle = asin(rct.Height()/diag);
 
-    if (rct.top - text_height > margin_rct.top)  // Note y values are -ve down
+		// Create a large font at the angle of the diagonal
+		int fangle = int(angle * 1800 / 3.141592 /*M_PI*/);   // convert diag angle to tenth of degrees from X-axis
+		CFont fontWatermark;
+		fontWatermark.CreateFont(rct.Height()/10, 0, fangle, fangle, FW_BOLD, 0, 0, 0,
+								 ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+								 DEFAULT_PITCH | FF_SWISS, _T("Arial"));
+		CFont * pSaved = pDC->SelectObject(&fontWatermark);
+
+		// Create the text
+		CString str = create_header(theApp.watermark_, pInfo->m_nCurPage);
+
+		// Get length of text then work out how far from the bottom page of the corner should the text start
+		double d = (diag - pDC->GetTextExtent(str).cx)/2;  // distance along diag of start of text
+		int x = int(d * cos(angle));
+		int y = int(d * sin(angle));
+
+		pDC->SetTextColor(RGB(208, 208, 208));          // light grey
+		pDC->SetTextAlign(TA_BASELINE);
+		pDC->TextOut(x, rct.Height() - y, str);
+
+		pDC->SetTextAlign(TA_TOP);
+		(void)pDC->SelectObject(pSaved);
+		fontWatermark.DeleteObject();
+	}
+
+    pDC->SetTextColor(RGB(0,0,0));          // Display headers/footers in black
+
+	int left, mid=1, right;
+	if (theApp.even_reverse_ && pInfo->m_nCurPage%2 == 0)
+		left = 2, right = 0;
+	else
+		left = 0, right = 2;
+
+    if (rct.top - text_height > margin_rct.top)  // Note y values are always -ve down in printer map mode
     {
 		// Get normal header unless using diff header for 1st page and its the first page
 		CString strHeader;

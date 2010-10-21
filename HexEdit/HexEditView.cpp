@@ -2620,8 +2620,13 @@ void CHexEditView::OnDraw(CDC* pDC)
     // This is so the user is less likely to notice the wrong direction.
 	// (Major things are drawn from the bottom up when scrolling backwards.)
  
+	// First decide is we need to draw sector borders
     int seclen = pDoc->GetSectorSize();
-    if (pDoc->pfile1_ != NULL && display_.borders && seclen > 0)
+	bool draw_borders = pDoc->pfile1_ != NULL && display_.borders && seclen > 0;
+	if (pDC->IsPrinting() && !theApp.print_sectors_)
+		draw_borders = false;
+
+    if (draw_borders)
     {
         ASSERT(seclen > 0);
         bool prev_bad = first_addr == 0;                  // don't display sector separator above top of file
@@ -2718,8 +2723,8 @@ void CHexEditView::OnDraw(CDC* pDC)
     }
     pDC->SelectObject(psaved_pen);      // restore pen after drawing borders etc
 
-	// If background compare is on and finished
-	if (GetDocument()->CompareDifferences() >= 0)
+	// Make sure background compare is on and finished and also print_compare_ is on (if printing)
+	if (!((GetDocument()->CompareDifferences() <= 0) || pDC->IsPrinting() && !theApp.print_compare_))
 	{
 		// Draw differences with compare file
 		CTime tnew = GetDocument()->ResultTime(0);         // time of most recent comparison
@@ -2758,7 +2763,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 	}
 
     // Draw deletion marks always from top (shouldn't be too visible)
-    if (!display_.hide_delete)
+	if (!(display_.hide_delete || pDC->IsPrinting() && !theApp.print_change_))
     {
         COLORREF prev_col = pDC->SetTextColor(bg_col_);
 
@@ -2857,7 +2862,7 @@ void CHexEditView::OnDraw(CDC* pDC)
             }
         }
     }
-    else
+	else if (!pDC->IsPrinting() || theApp.print_change_)
     {
         // Draw change tracking from top down
         if (!display_.hide_replace)
@@ -2900,7 +2905,8 @@ void CHexEditView::OnDraw(CDC* pDC)
         }
     }
 
-    if (!display_.hide_bookmarks)
+	// Don't print bookmarks if hide_bookmarks is on OR printing and print_bookmarks_ is off
+	if (!(display_.hide_bookmarks || pDC->IsPrinting() && !theApp.print_bookmarks_))
     {
         // Draw bookmarks
         for (std::vector<FILE_ADDRESS>::const_iterator pbm = pDoc->bm_posn_.begin();
@@ -2952,10 +2958,13 @@ void CHexEditView::OnDraw(CDC* pDC)
         }
     }
 
-    // Draw mark if within display area
-    // xxx if (mark >= first_addr && mark < last_virst && mark <= last_addr) ???
-    if (!pDC->IsPrinting() && mark_ >= first_virt && mark_ < last_virt || 
-         pDC->IsPrinting() && mark_ >= first_addr && mark_ < last_addr )
+	// First work out if we draw the mark - in display and not turned off for printing
+	bool draw_mark;
+	if (pDC->IsPrinting())
+		draw_mark = theApp.print_mark_ && mark_ >= first_virt && mark_ < last_virt;
+	else
+		draw_mark = mark_ >= first_addr && mark_ < last_addr;
+    if (draw_mark)
     {
         CRect mark_rect;                // Where mark is drawn in logical coords
 
@@ -3103,11 +3112,12 @@ void CHexEditView::OnDraw(CDC* pDC)
 		(void)pDC->SelectObject(psaved_brush);
     }
 
-    if (!display_.hide_highlight)
+	// Don't print highlights if hide_highlight is on OR printing and print_highlights_ is off
+	if (!(display_.hide_highlight || pDC->IsPrinting() && !theApp.print_highlights_))
     {
-        // Draw highlighted areas
         if (!pDC->IsPrinting() && ScrollUp())
         {
+			// Draw highlighted areas bottom up
             range_set<FILE_ADDRESS>::range_t::reverse_iterator pr;
             for (pr = hl_set_.range_.rbegin(); pr != hl_set_.range_.rend(); ++pr)
                 if (pr->sfirst < last_addr)
@@ -3124,7 +3134,7 @@ void CHexEditView::OnDraw(CDC* pDC)
         }
         else
         {
-            // Draw highlighted areas
+            // Draw highlighted areas top down
             range_set<FILE_ADDRESS>::range_t::const_iterator pr;
             for (pr = hl_set_.range_.begin(); pr != hl_set_.range_.end(); ++pr)
                 if (pr->slast > first_addr)
@@ -3143,19 +3153,23 @@ void CHexEditView::OnDraw(CDC* pDC)
 
     if (pDC->IsPrinting())
     {
-        // Draw search string occurrences
-        // Note this goes through all search occurrences (since search_pair_ is
-        // calculated for the current window) which may be slow but then so is printing.
-        std::vector<FILE_ADDRESS> sf = GetDocument()->SearchAddresses(first_addr-search_length_, last_addr+search_length_);
-        std::vector<FILE_ADDRESS>::const_iterator pp;
+		// Only print search occurrences if print_search_ is on
+		if (theApp.print_search_)
+		{
+			// Draw search string occurrences
+			// Note this goes through all search occurrences (since search_pair_ is
+			// calculated for the current window) which may be slow but then so is printing.
+			std::vector<FILE_ADDRESS> sf = GetDocument()->SearchAddresses(first_addr-search_length_, last_addr+search_length_);
+			std::vector<FILE_ADDRESS>::const_iterator pp;
 
-        for (pp = sf.begin(); pp != sf.end(); ++pp)
-        {
-            draw_bg(pDC, doc_rect, neg_x, neg_y,
-                    line_height, char_width, char_width_w, search_col_,
-                    max(*pp, first_addr), 
-                    min(*pp + search_length_, last_addr));
-        }
+			for (pp = sf.begin(); pp != sf.end(); ++pp)
+			{
+				draw_bg(pDC, doc_rect, neg_x, neg_y,
+						line_height, char_width, char_width_w, search_col_,
+						max(*pp, first_addr), 
+						min(*pp + search_length_, last_addr));
+			}
+		}
     }
     else if (ScrollUp())
     {
