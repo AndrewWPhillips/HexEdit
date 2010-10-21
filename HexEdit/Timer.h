@@ -2,7 +2,7 @@
 #define TIMER_H_
 // timer.h
 
-// Copyright (c) 1999 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the use of this code apart from
 // those described below, as long as this text (from the above 

@@ -1,7 +1,7 @@
 // Security.h : contains encryption keys for registration
 //
 
-// Copyright (c) 1999 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -27,8 +27,8 @@
 // Note: Don't put anything in here that changes as this will cause the code to change
 struct send_info_t
 {
-    unsigned short crc;                 // CRC of machine_info (machine reg), or user name (user reg)
-    unsigned char flags;                // bit 0 = temp reg flag, other bits indicate version
-    char type;                          // 5 = machine, 6 = user
-    long init_date;                     // Date when HexEdit was first run
+	unsigned short crc;                 // CRC of machine_info (machine reg), or user name (user reg)
+	unsigned char flags;                // bit 0 = temp reg flag, other bits indicate version
+	char type;                          // 5 = machine, 6 = user
+	long init_date;                     // Date when HexEdit was first run
 };

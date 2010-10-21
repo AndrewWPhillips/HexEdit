@@ -1,6 +1,6 @@
 // UserTool.cpp : subclass BCG user tools class to do command line substitutions
 //
-// Copyright (c) 1999-2000 by Andrew W. Phillips.
+// Copyright (c) 2000-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -50,36 +50,36 @@ BOOL CHexEditUserTool::Invoke()
 		return FALSE;
 	}
 
-    // Added by AWPhillips - translate parameters in command line args
-    CString strOut, strArgs = m_strArguments;
-    int pos;
+	// Added by AWPhillips - translate parameters in command line args
+	CString strOut, strArgs = m_strArguments;
+	int pos;
 
-    while ((pos = strArgs.Find("$(")) != -1)
-    {
-        strOut += strArgs.Left(pos);
-        strArgs = strArgs.Mid(pos+2);
-        if ((pos = strArgs.Find(")")) == -1)
-        {
-            strOut += "$(";
-            break;
-        }
-        CString strParam = strArgs.Left(pos);
+	while ((pos = strArgs.Find("$(")) != -1)
+	{
+		strOut += strArgs.Left(pos);
+		strArgs = strArgs.Mid(pos+2);
+		if ((pos = strArgs.Find(")")) == -1)
+		{
+			strOut += "$(";
+			break;
+		}
+		CString strParam = strArgs.Left(pos);
 
-        if (strParam == "FilePath")
-        {
-            CHexEditView *pView = GetView();
-            if (pView != NULL)
-            {
-                CHexEditDoc *pDoc = (CHexEditDoc *)(pView->GetDocument());
-                if (pDoc != NULL && pDoc->pfile1_ != NULL)
-                    strOut += pDoc->pfile1_->GetFilePath();
-            }
-        }
-        /* Add other subst. parameters here */
+		if (strParam == "FilePath")
+		{
+			CHexEditView *pView = GetView();
+			if (pView != NULL)
+			{
+				CHexEditDoc *pDoc = (CHexEditDoc *)(pView->GetDocument());
+				if (pDoc != NULL && pDoc->pfile1_ != NULL)
+					strOut += pDoc->pfile1_->GetFilePath();
+			}
+		}
+		/* Add other subst. parameters here */
 
-        strArgs = strArgs.Mid(pos+1);
-    }
-    strOut += strArgs;
+		strArgs = strArgs.Mid(pos+1);
+	}
+	strOut += strArgs;
 
 	if (::ShellExecute (AfxGetMainWnd()->GetSafeHwnd (), NULL, m_strCommand,
 		strOut, m_strInitialDirectory, 

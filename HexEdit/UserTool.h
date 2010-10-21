@@ -12,9 +12,9 @@
 
 class CHexEditUserTool : public CUserTool
 {
-    // Unless we add serialization we get the run-time error
-    // "An unsupported operation was attempted", presumably
-    // because BCG serializes objects of this class to the registry.
+	// Unless we add serialization we get the run-time error
+	// "An unsupported operation was attempted", presumably
+	// because BCG serializes objects of this class to the registry.
 	DECLARE_SERIAL(CHexEditUserTool)
 
 // Construction

@@ -3,7 +3,7 @@
 
 // Misc.h
 
-// Copyright (c) 2008 by Andrew W. Phillips.
+// Copyright (c) 2008-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -61,9 +61,9 @@ double real48(const unsigned char *pp, int *pexp = NULL, long double *pmant = NU
 bool make_ibm_fp32(unsigned char pp[4], double val, bool little_endian = false);
 bool make_ibm_fp64(unsigned char pp[8], double val, bool little_endian = false);
 long double ibm_fp32(const unsigned char *pp, int *pexp = NULL,
-		     long double *pmant = NULL, bool little_endian = false);
+			 long double *pmant = NULL, bool little_endian = false);
 long double ibm_fp64(const unsigned char *pp, int *pexp = NULL,
-		     long double *pmant = NULL, bool little_endian = false);
+			 long double *pmant = NULL, bool little_endian = false);
 
 __int64 strtoi64(const char *, int radix = 0);
 __int64 strtoi64(const char *, int radix, const char **endptr);
@@ -119,15 +119,15 @@ void letter_encode(const void *buf, size_t len, char *result);
 // works with any number of bytes (including an odd number whence middle byte not moved)
 inline void flip_bytes(unsigned char *pp, size_t count)
 {
-    unsigned char cc;                   // Temp byte used for swap
-    unsigned char *end = pp + count - 1;
+	unsigned char cc;                   // Temp byte used for swap
+	unsigned char *end = pp + count - 1;
 
-    while (pp < end)
-    {
-        cc = *end;
-        *(end--) = *pp;
-        *(pp++) = cc;
-    }
+	while (pp < end)
+	{
+		cc = *end;
+		*(end--) = *pp;
+		*(pp++) = cc;
+	}
 }
 
 // flip bytes in each consecutive word
@@ -135,7 +135,7 @@ inline void flip_bytes(unsigned char *pp, size_t count)
 inline void flip_each_word(unsigned char *pp, size_t count)
 {
 	ASSERT(count%2 == 0);               // There should be an even number of bytes
-    unsigned char cc;                   // Temp byte used for swap
+	unsigned char cc;                   // Temp byte used for swap
 	for (unsigned char *end = pp + count; pp < end; pp += 2)
 	{
 		cc = *pp;
@@ -158,32 +158,32 @@ inline int SigDigits(__int64 val, int base = 10)
 // This is needed since std streams don't support __int64
 inline std::istream &operator>>(std::istream &ss, __int64 &ii)
 {
-    char buf[22];
-    for (char *pp = buf; pp < buf + sizeof(buf) - 1; ++pp)
-    {
-        if (!(ss >> *pp) || !isdigit(*pp))
-        {
-            if (ss && *pp != '\0')
-                ss.putback(*pp);
-            break;
-        }
-    }
-    *pp = '\0';
-    ii = ::strtoi64(buf);
+	char buf[22];
+	for (char *pp = buf; pp < buf + sizeof(buf) - 1; ++pp)
+	{
+		if (!(ss >> *pp) || !isdigit(*pp))
+		{
+			if (ss && *pp != '\0')
+				ss.putback(*pp);
+			break;
+		}
+	}
+	*pp = '\0';
+	ii = ::strtoi64(buf);
 //    sscanf(buf, "%I64d", &ii);
-    if (!ss && pp > buf)
-        ss.clear(ss.rdstate() & ~std::ios_base::failbit); // We actually read something so clear failbit
-    else if (ss && pp == buf)
-        ss.setstate(std::ios_base::failbit);              // We failed to read so set failbit
+	if (!ss && pp > buf)
+		ss.clear(ss.rdstate() & ~std::ios_base::failbit); // We actually read something so clear failbit
+	else if (ss && pp == buf)
+		ss.setstate(std::ios_base::failbit);              // We failed to read so set failbit
 
-    return ss;
+	return ss;
 }
 
 inline std::ostream &operator<<(std::ostream &ss, const __int64 &ii)
 {
-    char buf[22];
-    sprintf(buf, "%I64d", ii);
-    return ss << buf;
+	char buf[22];
+	sprintf(buf, "%I64d", ii);
+	return ss << buf;
 }
 #endif // ndef _LONGLONG
 

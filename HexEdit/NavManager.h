@@ -25,19 +25,19 @@ public:
 
 private:
 	void do_move(int);
-    bool is_open_view(CHexEditDoc *pdoc, CHexEditView *pview);
+	bool is_open_view(CHexEditDoc *pdoc, CHexEditView *pview);
 	int pos_offset();
 
 	// This is one entry in the nav stack
 	struct nav
 	{
 		nav(LPCTSTR desc, LPCTSTR info,
-            CHexEditView *pv, CHexEditDoc *pd,
-            LPCTSTR fn, bool ro,
+			CHexEditView *pv, CHexEditDoc *pd,
+			LPCTSTR fn, bool ro,
 			FILE_ADDRESS aa, FILE_ADDRESS ee, FILE_ADDRESS as)
 		:
 			desc_(desc),
-            info_(info),
+			info_(info),
 			pview_(pv),
 			pdoc_(pd),
 			fname_(fn),
@@ -49,7 +49,7 @@ private:
 		}
 
 		CString desc_;          // Something that describes the nav point or how we got to it
-        CString info_;          // More info: bytes from the address
+		CString info_;          // More info: bytes from the address
 
 		CHexEditView *pview_;   // Ptr to the view where nav point added (if still open)
 		CHexEditDoc *pdoc_;     // Ptr to the doc (if still open)

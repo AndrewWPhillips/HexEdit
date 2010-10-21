@@ -1,6 +1,6 @@
 // SpecialList.h : Maintains list of special things that can be opened (eg disks)
 //
-// Copyright (c) 2005 by Andrew W. Phillips.
+// Copyright (c) 2005-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -47,13 +47,13 @@ public:
 	void refresh(HWND, short id = -1);  // refresh complete list or one entry
 
 	// Information on particular entries
-    int type(int idx) {return m_type[idx];} // 0 = volume, 1 = phys device
-    short id(int idx)  {return m_id[idx];} // uniquely id: 0=\\.\A:, 100=\\.\Floppy0, 200=\\.\PhysicalDrive0, 300=\\.\CdRom0, etc
+	int type(int idx) {return m_type[idx];} // 0 = volume, 1 = phys device
+	short id(int idx)  {return m_id[idx];} // uniquely id: 0=\\.\A:, 100=\\.\Floppy0, 200=\\.\PhysicalDrive0, 300=\\.\CdRom0, etc
 	CString filename(int idx) {return m_filename[idx];} // eg \\.\Floppy1
 	CString name(int idx) {return m_name[idx];} // eg Floppy Drive 1
 
 	CString nicename(int idx);           // Volume name, Vendor/Model etc (or name() if no other info. avail.)
-    DWORD error(int idx);            // if medium present but can't be read this is the error code
+	DWORD error(int idx);            // if medium present but can't be read this is the error code
 	bool medium_present(int);        // false if removeable media device and no medium present
 	bool read_only(int);             // true if device is read-only or medium is write-protected
 	bool removeable(int);            // device is removeable physical drive (zip, flash disk etc)
@@ -63,28 +63,28 @@ public:
 	// The following only apply for volumes (type() returns 0)
 	CString DriveType(int);
 	CString FileSystem(int);
-    CString VolumeName(int);
+	CString VolumeName(int);
 	int SectorsPerCluster(int);
-    int FreeClusters(int);
-    int TotalClusters(int);
+	int FreeClusters(int);
+	int TotalClusters(int);
 
 	// The following only apply for phys devices (type() returns 1)
-    CString Vendor(int);
-    CString Product(int);
-    CString Revision(int);
-    int SectorsPerTrack(int);
-    int TracksPerCylinder(int);
-    int Cylinders(int);
+	CString Vendor(int);
+	CString Product(int);
+	CString Revision(int);
+	int SectorsPerTrack(int);
+	int TracksPerCylinder(int);
+	int Cylinders(int);
 
-    BOOL busy();                        // Is the background thread still working?
-    // Note: background() is public only because it's called from a non-member function (thread start up function)
-    UINT background();                  // called in background thread to fill in the details
+	BOOL busy();                        // Is the background thread still working?
+	// Note: background() is public only because it's called from a non-member function (thread start up function)
+	UINT background();                  // called in background thread to fill in the details
 
 private:
-    CWinThread *m_pthread;              // Background thread that fills in the details
+	CWinThread *m_pthread;              // Background thread that fills in the details
 	HWND m_hwnd;                        // Where message is sent when background thread is finished
-    short m_refresh_id;                 // Unique id of entry to update or -1 for all
-    int m_sleep;
+	short m_refresh_id;                 // Unique id of entry to update or -1 for all
+	int m_sleep;
 
 	// m_mutex protects mosts of the data members from being accessed from the main thread while they are
 	// being changed in the background thread.  Note that this does not include m_type, m_id, m_filename
@@ -93,9 +93,9 @@ private:
 
 	void build();
 #ifdef _DEBUG
-    void DEBUG_CHECK(int idx);
+	void DEBUG_CHECK(int idx);
 #endif
-    void bg_update(int ii);             // Update one entry (part of background thread)
+	void bg_update(int ii);             // Update one entry (part of background thread)
 
 	std::vector<char> m_type;           // 0 = logical volume, 1 = physical device, 
 	std::vector<short> m_id;

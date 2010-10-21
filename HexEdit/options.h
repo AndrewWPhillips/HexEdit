@@ -48,71 +48,71 @@
 // OptValues - stores all option values in one place
 struct OptValues
 {
-    // System options
+	// System options
 	BOOL	save_exit_;
 	BOOL	shell_open_;
 	BOOL	one_only_;
 	BOOL	open_restore_;
-    BOOL    special_list_scan_;
-    BOOL    splash_;
-    BOOL    tipofday_;
-    BOOL    run_autoexec_;
+	BOOL    special_list_scan_;
+	BOOL    splash_;
+	BOOL    tipofday_;
+	BOOL    run_autoexec_;
 	BOOL	update_check_;
 
 	UINT	recent_files_;
 	BOOL    no_recent_add_;
-    UINT	max_search_hist_;
-    UINT	max_replace_hist_;
-    UINT	max_hex_jump_hist_;
-    UINT	max_dec_jump_hist_;
-    UINT	max_expl_dir_hist_;
-    UINT	max_expl_filt_hist_;
-    BOOL    clear_recent_file_list_;
-    BOOL    clear_bookmarks_;
-    BOOL    clear_on_exit_;
+	UINT	max_search_hist_;
+	UINT	max_replace_hist_;
+	UINT	max_hex_jump_hist_;
+	UINT	max_dec_jump_hist_;
+	UINT	max_expl_dir_hist_;
+	UINT	max_expl_filt_hist_;
+	BOOL    clear_recent_file_list_;
+	BOOL    clear_bookmarks_;
+	BOOL    clear_on_exit_;
 
-    // Workspace
+	// Workspace
 	BOOL	bg_search_;
 	BOOL    intelligent_undo_;
-    UINT    undo_limit_;
+	UINT    undo_limit_;
 
-    // Backup options
+	// Backup options
 	int		backup_;
 	BOOL	backup_space_;
 	BOOL	backup_if_size_;
 	UINT	backup_size_;
 	BOOL	backup_prompt_;
 
-    // Export options
+	// Export options
 	int		address_specified_;
-    long    base_address_;
+	long    base_address_;
 	UINT	export_line_len_;
 
 	// Clipboard
 	enum cb_text_type cb_text_type_;
 
-    // System layout
+	// System layout
 	BOOL	mditabs_;
 	BOOL	tabsbottom_;
-    BOOL    tabicons_;
-    BOOL    dlg_dock_, dlg_move_;
+	BOOL    tabicons_;
+	BOOL    dlg_dock_, dlg_move_;
 	BOOL	hex_ucase_;
-    int     k_abbrev_;
+	int     k_abbrev_;
 
-    // Global document options
+	// Global document options
 	BOOL	large_cursor_;
 	BOOL	show_other_;
-    BOOL    nice_addr_;
-    BOOL    sel_len_tip_, sel_len_div2_;
-    BOOL    scroll_past_ends_;
-    int     autoscroll_accel_;
+	BOOL    nice_addr_;
+	BOOL    sel_len_tip_, sel_len_div2_;
+	BOOL    scroll_past_ends_;
+	int     autoscroll_accel_;
 	BOOL    reverse_zoom_;
 	BOOL    ruler_;
-    UINT    ruler_dec_ticks_, ruler_dec_nums_;
-    UINT    ruler_hex_ticks_, ruler_hex_nums_;
-    BOOL    hl_caret_, hl_mouse_;
+	UINT    ruler_dec_ticks_, ruler_dec_nums_;
+	UINT    ruler_hex_ticks_, ruler_hex_nums_;
+	BOOL    hl_caret_, hl_mouse_;
 
-    // Template
+	// Template
 	UINT	max_fix_for_elts_;
 	CString	default_char_format_;
 	CString	default_date_format_;
@@ -121,7 +121,7 @@ struct OptValues
 	CString	default_string_format_;
 	CString	default_unsigned_format_;
 
-    // Macros
+	// Macros
 	int		refresh_;
 	long	num_secs_;
 	long	num_keys_;
@@ -130,7 +130,7 @@ struct OptValues
 	BOOL	refresh_bars_;
 	int		halt_level_;
 
-    // Printer
+	// Printer
 	BOOL	border_;
 	BOOL	headings_;
 	BOOL    print_mark_, print_bookmarks_, print_highlights_, print_search_, print_change_, print_compare_, print_sectors_;
@@ -152,45 +152,45 @@ struct OptValues
 	double	header_edge_;
 	double	footer_edge_;
 
-    // The rest are only used if there is a window open
-    CString window_name_;       // Active view's window name
+	// The rest are only used if there is a window open
+	CString window_name_;       // Active view's window name
 
 	// How other views are displayed
 	int display_template_, display_aerial_, display_comp_;
 
-    // Window display
+	// Window display
 	int		show_area_;
 	int		charset_;
 	int		control_;
 
-    LOGFONT lf_;                 // Default logical font (normal ASCII, ANSI, EBCDIC)
-    LOGFONT oem_lf_;             // Logical font if displaying IBM/OEM character set
+	LOGFONT lf_;                 // Default logical font (normal ASCII, ANSI, EBCDIC)
+	LOGFONT oem_lf_;             // Logical font if displaying IBM/OEM character set
 
 	UINT	cols_;
 	UINT	offset_;
 	UINT	grouping_;
-    UINT    vertbuffer_;
+	UINT    vertbuffer_;
 	BOOL	autofit_;
 	BOOL	maximize_;
-    BOOL    borders_;
+	BOOL    borders_;
 	BOOL	addr_dec_, addr_hex_;
-    BOOL    line_nums_;
+	BOOL    line_nums_;
 	BOOL	addrbase1_;
 
-    // Display state stored in a DWORD (as in view)
-    union
-    {
-        DWORD disp_state_;
-        struct display_bits display_;
-    };
+	// Display state stored in a DWORD (as in view)
+	union
+	{
+		DWORD disp_state_;
+		struct display_bits display_;
+	};
 
-    // Window edit
+	// Window edit
 	int		modify_;
 	int		insert_;
 	BOOL    big_endian_;
-    //int     change_tracking_;
-    BOOL    ct_modifications_, ct_insertions_, ct_deletions_, ct_delcount_; // change tracking options
-    BOOL    show_bookmarks_, show_highlights_;
+	//int     change_tracking_;
+	BOOL    ct_modifications_, ct_insertions_, ct_deletions_, ct_delcount_; // change tracking options
+	BOOL    show_bookmarks_, show_highlights_;
 
 	// Colour scheme
 	CString scheme_name_;
@@ -204,9 +204,9 @@ class COptPage : public CMFCPropertyPage
 {
 	DECLARE_DYNAMIC(COptPage)
 public:
-    explicit COptPage(UINT nIDD = 0, UINT nIDCaption = 0) : CMFCPropertyPage(nIDD, nIDCaption), pParent(NULL) { }
-    virtual LRESULT OnIdle(long) { return FALSE; }
-    COptSheet *pParent;
+	explicit COptPage(UINT nIDD = 0, UINT nIDCaption = 0) : CMFCPropertyPage(nIDD, nIDCaption), pParent(NULL) { }
+	virtual LRESULT OnIdle(long) { return FALSE; }
+	COptSheet *pParent;
 protected:
 	virtual BOOL OnInitDialog();
 };
@@ -220,7 +220,7 @@ class CSystemGeneralPage : public COptPage
 
 // Construction
 public:
-    CSystemGeneralPage() : COptPage(IDD), pHistPage(NULL) { }
+	CSystemGeneralPage() : COptPage(IDD), pHistPage(NULL) { }
 
 // Dialog Data
 	enum { IDD = IDD_OPT_SYSTEM };
@@ -236,7 +236,7 @@ protected:
 // Implementation
 protected:
 	virtual BOOL OnInitDialog();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnSaveNow();
 	afx_msg void OnShellopen();
@@ -258,7 +258,7 @@ class CHistoryPage : public COptPage
 
 // Construction
 public:
-    CHistoryPage() : COptPage(IDD) { }
+	CHistoryPage() : COptPage(IDD) { }
 
 // Dialog Data
 	enum { IDD = IDD_OPT_HISTORY };
@@ -272,7 +272,7 @@ protected:
 // Implementation
 protected:
 	virtual BOOL OnInitDialog();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnClearNow();
 	afx_msg void OnChange();
@@ -288,7 +288,7 @@ class CMacroPage : public COptPage
 
 // Construction
 public:
-    CMacroPage() : COptPage(CMacroPage::IDD) { }
+	CMacroPage() : COptPage(CMacroPage::IDD) { }
 
 // Dialog Data
 	//{{AFX_DATA(CMacroPage)
@@ -320,7 +320,7 @@ protected:
 	afx_msg void OnLoadmacro();
 	afx_msg void OnMacrodir();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
 };
@@ -334,7 +334,7 @@ class CWorkspaceLayoutPage : public COptPage
 
 // Construction
 public:
-    CWorkspaceLayoutPage() : COptPage(IDD), pStartupPage(NULL) { }
+	CWorkspaceLayoutPage() : COptPage(IDD), pStartupPage(NULL) { }
 
 // Dialog Data
 	enum { IDD = IDD_OPT_WORKLAYOUT };
@@ -350,7 +350,7 @@ protected:
 // Implementation
 protected:
 	virtual BOOL OnInitDialog();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnStartupPage();
 	afx_msg void OnChangeMditabs();
@@ -358,7 +358,7 @@ protected:
 	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 private:
-    void fix_controls();
+	void fix_controls();
 
 	COptPage * pStartupPage;
 	CMFCButton ctl_startup_butn_;
@@ -379,7 +379,7 @@ public:
 	enum { IDD = IDD_OPT_WORKDISPLAY };
 	//CSliderCtrl ctl_slider_autoscroll_;
 
-    LRESULT OnIdle(long);
+	LRESULT OnIdle(long);
 
 	void SetDocDisplayPage(COptPage * pPage) { pDocPage = pPage; }
 
@@ -392,7 +392,7 @@ protected:
 // Implementation
 protected:
 	virtual BOOL OnInitDialog();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnChange();
 	afx_msg void OnChangeUpdate();
@@ -401,7 +401,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-    void fix_controls();
+	void fix_controls();
 
 	COptPage * pDocPage;
 	CMFCButton ctl_doc_butn_;
@@ -416,7 +416,7 @@ class CWorkspacePage : public COptPage
 
 // Construction
 public:
-    CWorkspacePage() : COptPage(IDD), pDocPage(NULL) { }
+	CWorkspacePage() : COptPage(IDD), pDocPage(NULL) { }
 
 	enum { IDD = IDD_OPT_WORKSPACE };
 	CButton	ctl_backup_space_;
@@ -437,7 +437,7 @@ protected:
 protected:
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnBackup();
 	afx_msg void OnBackupIfSize();
 	afx_msg void OnAddressSpecified();
@@ -474,10 +474,10 @@ protected:
 // Implementation
 protected:
 	virtual BOOL OnInitDialog();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnChange();
-    afx_msg void OnTemplatedir();
+	afx_msg void OnTemplatedir();
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -502,7 +502,7 @@ public:
 	//}}AFX_DATA
 
 // Controls
-    //HICON arrow_icon_;
+	//HICON arrow_icon_;
 	CMenu args_menu_;
 
 // Overrides
@@ -524,7 +524,7 @@ protected:
 	afx_msg void OnFooterOpts();
 	afx_msg void OnHeaderOpts();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnChangeUnits();
 	DECLARE_MESSAGE_MAP()
 
@@ -550,7 +550,7 @@ protected:
 
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnChange();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnChangeUnits();
 	DECLARE_MESSAGE_MAP()
 };
@@ -581,14 +581,14 @@ public:
 
 public:
 	virtual void OnOK();
-    LRESULT OnIdle(long);
+	LRESULT OnIdle(long);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual BOOL OnInitDialog();
 
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnChange();
 	afx_msg void OnChangeUpdate();
 	afx_msg void OnHeaderOpts();
@@ -599,7 +599,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-    void fix_controls();        // Disable/enable controls depending on value/state of other controls
+	void fix_controls();        // Disable/enable controls depending on value/state of other controls
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -622,7 +622,7 @@ public:
 	CButton	ctl_del_;
 	//}}AFX_DATA
 
-    LRESULT OnIdle(long);
+	LRESULT OnIdle(long);
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -636,16 +636,16 @@ public:
 
 // Implementation
 protected:
-    enum { /*column_number,*/ column_check, column_files, column_filter,
-           /* leave this one at end*/ column_count };
-    enum { header_rows = 0 };
+	enum { /*column_number,*/ column_check, column_files, column_filter,
+		   /* leave this one at end*/ column_count };
+	enum { header_rows = 0 };
 
-    CGridCtrl grid_;                       // MFC grid control
-    CBtnDataBase btn_db_;                  // Needed for button cells (check box)
+	CGridCtrl grid_;                       // MFC grid control
+	CBtnDataBase btn_db_;                  // Needed for button cells (check box)
 
-    CToolTipCtrl m_cToolTip;
-    void add_row(int row, BOOL is_checked = TRUE, CString s1 = "", CString s2 = "");
-    HICON icon_new_, icon_del_, icon_up_, icon_down_;
+	CToolTipCtrl m_cToolTip;
+	void add_row(int row, BOOL is_checked = TRUE, CString s1 = "", CString s2 = "");
+	HICON icon_new_, icon_del_, icon_up_, icon_down_;
 
 	// Generated message map functions
 	//{{AFX_MSG(CFiltersPage)
@@ -656,9 +656,9 @@ protected:
 	afx_msg void OnUp();
 	afx_msg void OnDown();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-    afx_msg void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
-    afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
 };
@@ -682,7 +682,7 @@ public:
 	CButton	ctl_down_;
 	CButton	ctl_del_;
 
-    LRESULT OnIdle(long);
+	LRESULT OnIdle(long);
 
 // Overrides
 public:
@@ -693,19 +693,19 @@ protected:
 
 // Implementation
 protected:
-    enum { column_check, column_name, column_expr, column_format,
-           /* leave this one at end*/ column_count };
-    enum { header_rows = 0 };
+	enum { column_check, column_name, column_expr, column_format,
+		   /* leave this one at end*/ column_count };
+	enum { header_rows = 0 };
 
-    CGridCtrl grid_;                       // MFC grid control
-    CBtnDataBase btn_db_;                  // Needed for button cells (check box)
+	CGridCtrl grid_;                       // MFC grid control
+	CBtnDataBase btn_db_;                  // Needed for button cells (check box)
 
-    CStringArray var_list;                 // Stores all "variable" names that can be used in an expression used for column_expr drop list
+	CStringArray var_list;                 // Stores all "variable" names that can be used in an expression used for column_expr drop list
 	CStringArray int_list,uint_list,real32_list,real64_list,real48_list,date_list,char_list,string_list;
 
-    CToolTipCtrl m_cToolTip;
-    void add_row(int row, BOOL is_checked = TRUE, CString s1 = "", CString s2 = "", CString s3 = "");
-    HICON icon_new_, icon_del_, icon_up_, icon_down_;
+	CToolTipCtrl m_cToolTip;
+	void add_row(int row, BOOL is_checked = TRUE, CString s1 = "", CString s2 = "", CString s3 = "");
+	HICON icon_new_, icon_del_, icon_up_, icon_down_;
 
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
@@ -713,9 +713,9 @@ protected:
 	afx_msg void OnNew();
 	afx_msg void OnUp();
 	afx_msg void OnDown();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-    afx_msg void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
-    afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	DECLARE_MESSAGE_MAP()
 };
@@ -733,8 +733,8 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_OPT_WINGENERAL };
-    HICON hicon_;               // Large icon for the file type
-    CStatic ctl_icon_;
+	HICON hicon_;               // Large icon for the file type
+	CStatic ctl_icon_;
 
 // Overrides
 public:
@@ -750,7 +750,7 @@ protected:
 	// Message map functions
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnSaveDefault();
 	afx_msg void OnDispReset();
 	afx_msg void OnChange();
@@ -773,7 +773,7 @@ public:
 
 	void SetGlobalDisplayPage(COptPage * pPage) { pGlobalPage = pPage; }
 
-    LRESULT OnIdle(long);
+	LRESULT OnIdle(long);
 
 // Overrides
 public:
@@ -789,7 +789,7 @@ protected:
 	// Message map functions
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnGlobalPage();
 	afx_msg void OnFont();
 	afx_msg void OnChangeCols();
@@ -804,8 +804,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-    void fix_controls();        // Disable/enable controls depending on value/state of other controls
-    BOOL validated();           // Check if control state is valid
+	void fix_controls();        // Disable/enable controls depending on value/state of other controls
+	BOOL validated();           // Check if control state is valid
 
 	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
 	COptPage * pGlobalPage;
@@ -827,7 +827,7 @@ public:
 
 	void SetGlobalEditPage(COptPage * pPage) { pGlobalPage = pPage; }
 
-    LRESULT OnIdle(long);
+	LRESULT OnIdle(long);
 
 // Overrides
 public:
@@ -840,7 +840,7 @@ protected:
 	// Message map functions
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnGlobalPage();
 	afx_msg void OnSelchangeModify();
 	afx_msg void OnSelchangeInsert();
@@ -850,7 +850,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-    void fix_controls();        // Disable/enable controls depending on value/state of other controls
+	void fix_controls();        // Disable/enable controls depending on value/state of other controls
 
 	COptPage * pGlobalPage;
 	CMFCButton ctl_global_butn_;
@@ -867,22 +867,22 @@ class CColourSchemes : public COptPage
 public:
 	CColourSchemes();
 
-    // These enums give the order of the fixed colours in the list box
-    enum
-    {
-        INDEX_BG,
+	// These enums give the order of the fixed colours in the list box
+	enum
+	{
+		INDEX_BG,
 		INDEX_MARK, INDEX_HI, INDEX_BM, INDEX_SEARCH,       // background colours
 		INDEX_TRK, INDEX_COMP,
 		INDEX_ADDR_BG,   // address area background col
 		INDEX_SECTOR,    // sector boundary (and bad sector background)
-        INDEX_HEX_ADDR, INDEX_DEC_ADDR,                   // text colours
-        INDEX_LAST                                        // count of colours (keep at end)
-    };
+		INDEX_HEX_ADDR, INDEX_DEC_ADDR,                   // text colours
+		INDEX_LAST                                        // count of colours (keep at end)
+	};
 
-    HICON icon_new_, icon_del_, icon_up_, icon_down_;
-    std::vector<CScheme> scheme_;
+	HICON icon_new_, icon_del_, icon_up_, icon_down_;
+	std::vector<CScheme> scheme_;
 
-        // Dialog Data
+		// Dialog Data
 	//{{AFX_DATA(CColourSchemes)
 	enum { IDD = IDD_OPT_COLOURS };
 	CMFCColorButton	m_ColourPicker;
@@ -890,8 +890,8 @@ public:
 	int		name_no_;
 	//}}AFX_DATA
 
-    LRESULT OnIdle(long);
-    void set_scheme();
+	LRESULT OnIdle(long);
+	void set_scheme();
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -921,11 +921,11 @@ protected:
 	afx_msg void OnChangeRange();
 	afx_msg void OnColourPicker();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
-    bool change_name_;              // Is the change to the current name not done by user?
-    bool change_range_;             // Is change to range not done by user?
+	bool change_name_;              // Is the change to the current name not done by user?
+	bool change_range_;             // Is change to range not done by user?
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -959,41 +959,41 @@ public:
 public:
 	virtual ~COptSheet();
 
-    struct OptValues val_;      // Property values that the user can change
+	struct OptValues val_;      // Property values that the user can change
 
 	// Generated message map functions
 protected:
 	// These are the pages of the "property sheet"
-    CSystemGeneralPage sysgeneralPage_;
-    CFiltersPage filtersPage_;
-    //CPrintPage printerPage_;
+	CSystemGeneralPage sysgeneralPage_;
+	CFiltersPage filtersPage_;
+	//CPrintPage printerPage_;
 	CPrintGeneralPage printGeneralPage_;
 	CPrintDecorationsPage printDecorationsPage_;
-    CMacroPage macroPage_;
+	CMacroPage macroPage_;
 	CHistoryPage histPage_;
 
-    CWorkspaceLayoutPage workspacelayoutPage_;
-    CWorkspaceDisplayPage workspacedisplayPage_;
-    CWorkspacePage workspacePage_;
+	CWorkspaceLayoutPage workspacelayoutPage_;
+	CWorkspaceDisplayPage workspacedisplayPage_;
+	CWorkspacePage workspacePage_;
 	CTipsPage tipsPage_;
-    CTemplatePage templatePage_;
+	CTemplatePage templatePage_;
 
-    CWindowGeneralPage wingeneralPage_;
-    CWindowPage windisplayPage_;
-    CWindowEditPage wineditPage_;
-    CColourSchemes coloursPage_;
+	CWindowGeneralPage wingeneralPage_;
+	CWindowPage windisplayPage_;
+	CWindowEditPage wineditPage_;
+	CColourSchemes coloursPage_;
 
 	//{{AFX_MSG(COptSheet)
 	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct);
 	//}}AFX_MSG
-    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
-    afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
 
 private:
 	CMFCPropertySheetCategoryInfo * pCatSys_;
 
-    int last_opt_page_;                 // Index of last active options page
+	int last_opt_page_;                 // Index of last active options page
 
 	int display_page_;                  // Page to display
 	BOOL must_show_page_;               // Show display_page_ even if last_opt_page_ is valid

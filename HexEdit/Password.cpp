@@ -1,6 +1,6 @@
 // Password.cpp : implements dialog that gets password used for encryption
 //
-// Copyright (c) 1999-2000 by Andrew W. Phillips.
+// Copyright (c) 2000-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -47,13 +47,13 @@ CPassword::CPassword(CWnd* pParent /*=NULL*/)
 	m_min = 0;
 	//}}AFX_DATA_INIT
 
-    m_note = "Notes:\n"
-             "1. Do not lose this password, as any data excrypted with it can only be\n"
-             "    recovered by decrypting with the same password (and algorithm).\n"
-             "2. Passwords are case-sensitive.\n"
-             "3. Entering the masked password twice is used to catch typos.\n"
-             "4. A good password is at least 8 characters long, does not use common \n"
-             "    words or names, and contains some non-alphabetic characters.";
+	m_note = "Notes:\n"
+			 "1. Do not lose this password, as any data excrypted with it can only be\n"
+			 "    recovered by decrypting with the same password (and algorithm).\n"
+			 "2. Passwords are case-sensitive.\n"
+			 "3. Entering the masked password twice is used to catch typos.\n"
+			 "4. A good password is at least 8 characters long, does not use common \n"
+			 "    words or names, and contains some non-alphabetic characters.";
 }
 
 void CPassword::DoDataExchange(CDataExchange* pDX)
@@ -75,7 +75,7 @@ BEGIN_MESSAGE_MAP(CPassword, CDialog)
 	ON_WM_HELPINFO()
 	ON_BN_CLICKED(IDC_PASSWORD_HELP, OnPasswordHelp)
 	//}}AFX_MSG_MAP
-    ON_WM_CONTEXTMENU()
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -83,142 +83,142 @@ END_MESSAGE_MAP()
 
 BOOL CPassword::OnInitDialog() 
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-    m_mask = aa->password_mask_;
-    m_min = aa->password_min_;
+	m_mask = aa->password_mask_;
+	m_min = aa->password_min_;
 
-    m_reentered = m_password;
+	m_reentered = m_password;
 
 	CDialog::OnInitDialog();
 	
-    ASSERT(GetDlgItem(IDC_PASSWORD_SPIN) != NULL);
+	ASSERT(GetDlgItem(IDC_PASSWORD_SPIN) != NULL);
 	((CSpinButtonCtrl *)GetDlgItem(IDC_PASSWORD_SPIN))->SetRange(1, 9999);
 	
-    if (m_mask)
-    {
-        ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_ENTER)->SendMessage(EM_SETPASSWORDCHAR, '*');
-        GetDlgItem(IDC_PASSWORD_ENTER)->Invalidate();
-        ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_REENTER)->EnableWindow(TRUE);
-        ASSERT(GetDlgItem(IDC_PASSWORD_DESC) != NULL);
-        GetDlgItem(IDC_PASSWORD_DESC)->EnableWindow(TRUE);
+	if (m_mask)
+	{
+		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_ENTER)->SendMessage(EM_SETPASSWORDCHAR, '*');
+		GetDlgItem(IDC_PASSWORD_ENTER)->Invalidate();
+		ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_REENTER)->EnableWindow(TRUE);
+		ASSERT(GetDlgItem(IDC_PASSWORD_DESC) != NULL);
+		GetDlgItem(IDC_PASSWORD_DESC)->EnableWindow(TRUE);
 //        GetDlgItem(IDC_PASSWORD_REENTER)->SendMessage(EM_SETPASSWORDCHAR, '*');
 //        GetDlgItem(IDC_PASSWORD_REENTER)->Invalidate();
-    }
-    else
-    {
-        ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_ENTER)->SendMessage(EM_SETPASSWORDCHAR, 0);
-        GetDlgItem(IDC_PASSWORD_ENTER)->Invalidate();
-        ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_REENTER)->EnableWindow(FALSE);
-        ASSERT(GetDlgItem(IDC_PASSWORD_DESC) != NULL);
-        GetDlgItem(IDC_PASSWORD_DESC)->EnableWindow(FALSE);
+	}
+	else
+	{
+		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_ENTER)->SendMessage(EM_SETPASSWORDCHAR, 0);
+		GetDlgItem(IDC_PASSWORD_ENTER)->Invalidate();
+		ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_REENTER)->EnableWindow(FALSE);
+		ASSERT(GetDlgItem(IDC_PASSWORD_DESC) != NULL);
+		GetDlgItem(IDC_PASSWORD_DESC)->EnableWindow(FALSE);
 //        GetDlgItem(IDC_PASSWORD_REENTER)->SendMessage(EM_SETPASSWORDCHAR, 0);
 //        GetDlgItem(IDC_PASSWORD_REENTER)->Invalidate();
-    }
+	}
 
 	return TRUE;
 }
 
 void CPassword::OnOK() 
 {
-    if (!UpdateData())
-        return;
+	if (!UpdateData())
+		return;
 
-    // Check that the password is the minimum size
-    if (m_password.IsEmpty())
-    {
-        AfxMessageBox("Please enter the password");
-        ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_ENTER)->SetFocus();
-        return;
-    }
-    else if (m_mask && m_reentered.IsEmpty())
-    {
-        AfxMessageBox("Please re-enter the password");
-        ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_REENTER)->SetFocus();
-        return;
-    }
-    else if (m_mask && m_password != m_reentered)
-    {
-        AfxMessageBox("The passwords are not the same");
-        ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_ENTER)->SetFocus();
-        return;
-    }
-    else if (m_password.GetLength() < m_min)
-    {
-        AfxMessageBox("The password is too short");
-        ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_ENTER)->SetFocus();
-        return;
-    }
+	// Check that the password is the minimum size
+	if (m_password.IsEmpty())
+	{
+		AfxMessageBox("Please enter the password");
+		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_ENTER)->SetFocus();
+		return;
+	}
+	else if (m_mask && m_reentered.IsEmpty())
+	{
+		AfxMessageBox("Please re-enter the password");
+		ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_REENTER)->SetFocus();
+		return;
+	}
+	else if (m_mask && m_password != m_reentered)
+	{
+		AfxMessageBox("The passwords are not the same");
+		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_ENTER)->SetFocus();
+		return;
+	}
+	else if (m_password.GetLength() < m_min)
+	{
+		AfxMessageBox("The password is too short");
+		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_ENTER)->SetFocus();
+		return;
+	}
 
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    aa->password_mask_ = m_mask;
-    aa->password_min_ = m_min;
+	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+	aa->password_mask_ = m_mask;
+	aa->password_min_ = m_min;
 
 	CDialog::OnOK();
 }
 
 void CPassword::OnCancel() 
 {
-    if (UpdateData())
-    {
-        CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-        aa->password_mask_ = m_mask;
-        aa->password_min_ = m_min;
-    }
+	if (UpdateData())
+	{
+		CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+		aa->password_mask_ = m_mask;
+		aa->password_min_ = m_min;
+	}
 
 	CDialog::OnCancel();
 }
 
 void CPassword::OnPasswordMask() 
 {
-    UpdateData();
+	UpdateData();
 
-    if (m_mask)
-    {
-        ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_ENTER)->SendMessage(EM_SETPASSWORDCHAR, '*');
-        GetDlgItem(IDC_PASSWORD_ENTER)->Invalidate();
-        ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_REENTER)->EnableWindow(TRUE);
-        ASSERT(GetDlgItem(IDC_PASSWORD_DESC) != NULL);
-        GetDlgItem(IDC_PASSWORD_DESC)->EnableWindow(TRUE);
+	if (m_mask)
+	{
+		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_ENTER)->SendMessage(EM_SETPASSWORDCHAR, '*');
+		GetDlgItem(IDC_PASSWORD_ENTER)->Invalidate();
+		ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_REENTER)->EnableWindow(TRUE);
+		ASSERT(GetDlgItem(IDC_PASSWORD_DESC) != NULL);
+		GetDlgItem(IDC_PASSWORD_DESC)->EnableWindow(TRUE);
 //        GetDlgItem(IDC_PASSWORD_REENTER)->SendMessage(EM_SETPASSWORDCHAR, '*');
 //        GetDlgItem(IDC_PASSWORD_REENTER)->Invalidate();
-    }
-    else
-    {
-        ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_ENTER)->SendMessage(EM_SETPASSWORDCHAR, 0);
-        GetDlgItem(IDC_PASSWORD_ENTER)->Invalidate();
-        ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
-        GetDlgItem(IDC_PASSWORD_REENTER)->EnableWindow(FALSE);
-        ASSERT(GetDlgItem(IDC_PASSWORD_DESC) != NULL);
-        GetDlgItem(IDC_PASSWORD_DESC)->EnableWindow(FALSE);
+	}
+	else
+	{
+		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_ENTER)->SendMessage(EM_SETPASSWORDCHAR, 0);
+		GetDlgItem(IDC_PASSWORD_ENTER)->Invalidate();
+		ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
+		GetDlgItem(IDC_PASSWORD_REENTER)->EnableWindow(FALSE);
+		ASSERT(GetDlgItem(IDC_PASSWORD_DESC) != NULL);
+		GetDlgItem(IDC_PASSWORD_DESC)->EnableWindow(FALSE);
 //        GetDlgItem(IDC_PASSWORD_REENTER)->SendMessage(EM_SETPASSWORDCHAR, 0);
 //        GetDlgItem(IDC_PASSWORD_REENTER)->Invalidate();
-    }
+	}
 }
 
 static DWORD id_pairs[] = { 
-    IDC_PASSWORD_ENTER, HIDC_PASSWORD_ENTER,
-    IDC_PASSWORD_REENTER, HIDC_PASSWORD_REENTER,
-    IDC_PASSWORD_MIN, HIDC_PASSWORD_MIN,
-    IDC_PASSWORD_MASK, HIDC_PASSWORD_MASK,
-    0,0 
+	IDC_PASSWORD_ENTER, HIDC_PASSWORD_ENTER,
+	IDC_PASSWORD_REENTER, HIDC_PASSWORD_REENTER,
+	IDC_PASSWORD_MIN, HIDC_PASSWORD_MIN,
+	IDC_PASSWORD_MASK, HIDC_PASSWORD_MASK,
+	0,0 
 };
 
 BOOL CPassword::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
-    return TRUE;
+	return TRUE;
 }
 
 void CPassword::OnContextMenu(CWnd* pWnd, CPoint point) 
@@ -228,7 +228,7 @@ void CPassword::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void CPassword::OnPasswordHelp() 
 {
-    // Display help for the dialog
-    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_PASSWORD_HELP))
-        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	// Display help for the dialog
+	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_PASSWORD_HELP))
+		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }

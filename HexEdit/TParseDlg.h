@@ -35,7 +35,7 @@ public:
 	//}}AFX_DATA
 	BOOL	m_base_storage_unit;
 
-    virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -56,7 +56,7 @@ protected:
 	afx_msg void OnDestroy();
 	//}}AFX_MSG
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnHelp();
 	DECLARE_MESSAGE_MAP()
 

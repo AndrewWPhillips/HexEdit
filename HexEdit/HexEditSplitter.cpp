@@ -31,41 +31,41 @@ BOOL CHexEditSplitter::InsColumn(int new_col, int width, int min_width, CRuntime
 								 CCreateContext* pContext /*=NULL*/)
 {
 	// Make sure insert pos is a valid column and we don't already have max columns
-    if (new_col < 0 || new_col > m_nCols || m_nCols >= m_nMaxCols)
-        return FALSE;
+	if (new_col < 0 || new_col > m_nCols || m_nCols >= m_nMaxCols)
+		return FALSE;
 
 	int col, row;
 
-    ++m_nCols;
-    for (col = m_nCols - 2; col >= new_col; col--)
+	++m_nCols;
+	for (col = m_nCols - 2; col >= new_col; col--)
 	{
-        for (row = 0; row < m_nRows; ++row)
+		for (row = 0; row < m_nRows; ++row)
 			if (GetDlgItem(IdFromRowCol(row, col)) != NULL)
-                GetPane(row, col)->SetDlgCtrlID(IdFromRowCol(row, col+1));
+				GetPane(row, col)->SetDlgCtrlID(IdFromRowCol(row, col+1));
 		m_pColInfo[col+1] = m_pColInfo[col];
 	}
 
 	if (pViewClass != NULL)
-        for (row = 0; row < m_nRows; ++row)
-        {
-            int cur, min;
-            this->GetRowInfo(row, cur, min);
+		for (row = 0; row < m_nRows; ++row)
+		{
+			int cur, min;
+			this->GetRowInfo(row, cur, min);
 			VERIFY(CreateView(row, new_col, pViewClass, CSize(width, cur), pContext));
 		}
 	//SetColumnInfo(new_col, width, min_width);   // this does not seem to do anything useful
 
 	ASSERT(m_nCols <= m_nMaxCols);
 
-    return TRUE;
+	return TRUE;
 }
 
 BOOL CHexEditSplitter::DelColumn(int del_col, BOOL del_views /*=FALSE*/)
 {
 	// Make sure it is a valid column and we have at least 2 columns
-    if (m_nCols < 2 || del_col < 0 || del_col >= m_nCols)
-        return FALSE;
+	if (m_nCols < 2 || del_col < 0 || del_col >= m_nCols)
+		return FALSE;
 
-    // Make sure no deleted views are active
+	// Make sure no deleted views are active
 	int rowActive, colActive;
 	if (GetActivePane(&rowActive, &colActive) != NULL && colActive == del_col)
 	{
@@ -77,7 +77,7 @@ BOOL CHexEditSplitter::DelColumn(int del_col, BOOL del_views /*=FALSE*/)
 	int col, row;
 
 	if (del_views)
-        for (row = 0; row < m_nRows; ++row)
+		for (row = 0; row < m_nRows; ++row)
 		{
 			CWnd *pw = GetDlgItem(IdFromRowCol(row, del_col));
 			if (pw != NULL)
@@ -85,23 +85,23 @@ BOOL CHexEditSplitter::DelColumn(int del_col, BOOL del_views /*=FALSE*/)
 		}
 #ifdef _DEBUG
 	else
-        for (row = 0; row < m_nRows; ++row)
+		for (row = 0; row < m_nRows; ++row)
 			ASSERT(GetDlgItem(IdFromRowCol(row, del_col)) == NULL);  // Make sure there is no view
 #endif
 
-    for (col = del_col+1; col < m_nCols; ++col)
+	for (col = del_col+1; col < m_nCols; ++col)
 	{
 		for (row = 0; row < m_nRows; ++row)
 			if (GetDlgItem(IdFromRowCol(row, col)) != NULL)
-                GetPane(row, col)->SetDlgCtrlID(IdFromRowCol(row, col-1));
+				GetPane(row, col)->SetDlgCtrlID(IdFromRowCol(row, col-1));
 		m_pColInfo[col-1] = m_pColInfo[col];
 	}
 	m_pColInfo[col-1].nCurSize = -1; // Mark as not present
 
-    m_nCols--;
+	m_nCols--;
 	ASSERT(m_nCols < m_nMaxCols);
 
-    return TRUE;
+	return TRUE;
 }
 
 int CHexEditSplitter::FindViewColumn(HWND hWndView) const

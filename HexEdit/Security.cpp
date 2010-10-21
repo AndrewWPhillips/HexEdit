@@ -1,6 +1,6 @@
 // security.cpp : some protection routines
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2003-2010 by Andrew W. Phillips.
 
 // Notes:
 // A. Mystery info is stored in 2 places
@@ -68,49 +68,49 @@ static unsigned long os_date();
 #pragma pack(1)
 static struct myst_info_
 {
-    short version;                      // HexEdit version that created this info
-    unsigned short rand;                // Random value
-    time_t date;                        // Date HexEdit first run
+	short version;                      // HexEdit version that created this info
+	unsigned short rand;                // Random value
+	time_t date;                        // Date HexEdit first run
 } myst_info;
 #pragma pack()
 
 #pragma pack(1)
 static struct
 {
-    unsigned short crc;                 // CRC for rest of the structure
-    char type;                          // 2 = unregistered, 3 = temp reg, 4,5 = old, 6 = user, 7 = fake reg
-    char fake_count;                    // Count for type == 7 before we stop running
+	unsigned short crc;                 // CRC for rest of the structure
+	char type;                          // 2 = unregistered, 3 = temp reg, 4,5 = old, 6 = user, 7 = fake reg
+	char fake_count;                    // Count for type == 7 before we stop running
 
-    unsigned long serial;               // Volume serial number from first fixed disk
-    unsigned long os_install_date;      // Date Windows was installed (from registry)
+	unsigned long serial;               // Volume serial number from first fixed disk
+	unsigned long os_install_date;      // Date Windows was installed (from registry)
 
-    union
-    {
-        // Info for unregistered copy
-        struct
-        {
-            time_t expires;                     // Date it expires
-            time_t last_run;                    // Date HexEdit was last run
-            long runs;                          // Number of times HexEdit has been run
-            long expired_runs;                  // Number of times run since it expired
-        } unreg;
+	union
+	{
+		// Info for unregistered copy
+		struct
+		{
+			time_t expires;                     // Date it expires
+			time_t last_run;                    // Date HexEdit was last run
+			long runs;                          // Number of times HexEdit has been run
+			long expired_runs;                  // Number of times run since it expired
+		} unreg;
 
-        // Info for machine licence
-        struct
-        {
-            unsigned short processor, revision;              // Processor for this machine
-            char computer_name[MAX_COMPUTERNAME_LENGTH + 1]; // Name of computer from registry
-        } machine;
+		// Info for machine licence
+		struct
+		{
+			unsigned short processor, revision;              // Processor for this machine
+			char computer_name[MAX_COMPUTERNAME_LENGTH + 1]; // Name of computer from registry
+		} machine;
 
-        // Info for user licence
-        struct
-        {
-            char name[49];
-            unsigned char flags;
-        } user;
-    };
+		// Info for user licence
+		struct
+		{
+			char name[49];
+			unsigned char flags;
+		} user;
+	};
 
-    short rand;                         // Should be the same value as in myst_info
+	short rand;                         // Should be the same value as in myst_info
 } security_info;
 #pragma pack()
 
@@ -120,12 +120,12 @@ int sec_type = 0;
 // We do a CRC on this stuff to put in send_info below (machine reg only)
 static struct                           // Info for machine reg number
 {
-    unsigned long serial;               // Volume serial number from first fixed disk
-    unsigned long os_install_date;      // Date Windows was installed (from registry)
-    unsigned short processor, revision;
-    short security_rand;                // Random number used for checks
-    short dummy2;                       // not used
-    char computer_name[MAX_COMPUTERNAME_LENGTH+1];
+	unsigned long serial;               // Volume serial number from first fixed disk
+	unsigned long os_install_date;      // Date Windows was installed (from registry)
+	unsigned short processor, revision;
+	short security_rand;                // Random number used for checks
+	short dummy2;                       // not used
+	char computer_name[MAX_COMPUTERNAME_LENGTH+1];
 } machine_info;
 
 static struct send_info_t send_info;
@@ -133,8 +133,8 @@ static struct send_info_t send_info;
 // This just subtracts 1 from each char in a string
 static void sub1(char *ss)
 {
-    for ( ; *ss != '\0'; ++ss)
-        *ss = *ss - 1;
+	for ( ; *ss != '\0'; ++ss)
+		*ss = *ss - 1;
 }
 
 // Read mystery file and return:
@@ -143,26 +143,26 @@ static void sub1(char *ss)
 // -1 if it was found but is apparently invalid
 int CHexEditApp::GetMysteryFile(const char * filename)
 {
-    FILE *ff = NULL;
-    if ((ff = fopen(filename, "rb")) != NULL &&
-        fread((void *)&myst_info, 1, sizeof(myst_info)+1, ff) == sizeof(myst_info))
-    {
-        fclose(ff);
+	FILE *ff = NULL;
+	if ((ff = fopen(filename, "rb")) != NULL &&
+		fread((void *)&myst_info, 1, sizeof(myst_info)+1, ff) == sizeof(myst_info))
+	{
+		fclose(ff);
 
 		int retval = 1;
 
-        set_key(STANDARD_KEY, 8);
-        decrypt(&myst_info, sizeof(myst_info));
+		set_key(STANDARD_KEY, 8);
+		decrypt(&myst_info, sizeof(myst_info));
 
-        security_rand_ = myst_info.rand;
-        init_date_ = myst_info.date;
+		security_rand_ = myst_info.rand;
+		init_date_ = myst_info.date;
 		// Version 1.0 and earlier and after ver 10.0 are invalid (at least for a long time)
 		if (myst_info.version <= 100 || myst_info.version > 1000)
 			retval = -1;
 
-        // Rescramble the data so it can't be searched for in memory
-        encrypt(&myst_info, sizeof(myst_info));
-        set_key(DUMMY_KEY, 8);
+		// Rescramble the data so it can't be searched for in memory
+		encrypt(&myst_info, sizeof(myst_info));
+		set_key(DUMMY_KEY, 8);
 
 		return retval;
 	}
@@ -216,15 +216,15 @@ void CHexEditApp::GetMystery()
 	// If either source go it it's in myst_info and we can use it
 	if (got1 || got2)
 	{
-        set_key(STANDARD_KEY, 8);
-        decrypt(&myst_info, sizeof(myst_info));
+		set_key(STANDARD_KEY, 8);
+		decrypt(&myst_info, sizeof(myst_info));
 
-        security_rand_ = myst_info.rand;
-        init_date_ = myst_info.date;
+		security_rand_ = myst_info.rand;
+		init_date_ = myst_info.date;
 
-        // Rescramble the data ready to be saved to file
-        encrypt(&myst_info, sizeof(myst_info));
-        set_key(DUMMY_KEY, 8);
+		// Rescramble the data ready to be saved to file
+		encrypt(&myst_info, sizeof(myst_info));
+		set_key(DUMMY_KEY, 8);
 
 		create = false;  // signal that we got the data and don't need to create it anew
 	}
@@ -262,9 +262,9 @@ void CHexEditApp::GetMystery()
 				security_rand_ = myst_info.rand;
 				init_date_ = myst_info.date;
 
-	            // Rescramble the data ready to save to file
-		        encrypt(&myst_info, sizeof(myst_info));
-			    set_key(DUMMY_KEY, 8);
+				// Rescramble the data ready to save to file
+				encrypt(&myst_info, sizeof(myst_info));
+				set_key(DUMMY_KEY, 8);
 
 				create = false;
 			}
@@ -280,19 +280,19 @@ void CHexEditApp::GetMystery()
 		assert(!got1 && !got2);
 
 		// Create the myst info
-        myst_info.version = version_;
-        myst_info.date = time(NULL);
-        if ((myst_info.rand = (unsigned short)::GetTickCount()) == 0)
-            myst_info.rand = (unsigned short)myst_info.date;
+		myst_info.version = version_;
+		myst_info.date = time(NULL);
+		if ((myst_info.rand = (unsigned short)::GetTickCount()) == 0)
+			myst_info.rand = (unsigned short)myst_info.date;
 
-        security_rand_ = myst_info.rand;
-        init_date_ = myst_info.date;
-        TRACE2("Mystery set: %ld %ld\n", long(security_rand_), long(init_date_));
+		security_rand_ = myst_info.rand;
+		init_date_ = myst_info.date;
+		TRACE2("Mystery set: %ld %ld\n", long(security_rand_), long(init_date_));
 
-        // Encrypt it ready to write to file
-        set_key(STANDARD_KEY, 8);
-        encrypt(&myst_info, sizeof(myst_info));
-	    set_key(DUMMY_KEY, 8);
+		// Encrypt it ready to write to file
+		set_key(STANDARD_KEY, 8);
+		encrypt(&myst_info, sizeof(myst_info));
+		set_key(DUMMY_KEY, 8);
 	}
 
 	// Save the data to either or both sources if nec.
@@ -316,24 +316,24 @@ void CHexEditApp::GetMystery()
 // Sets static variables: sec_init (if security inited OK), sec_type (same as value returned)
 void CHexEditApp::AddSecurity(const char *name)
 {
-    ASSERT(sizeof(security_info) == 64);
+	ASSERT(sizeof(security_info) == 64);
 
-    // Get security info from registry and decrypt
-    HKEY hkey, hkey2, hkey3;   // hkey and hkey2 are for older systems but will still need to try to read them if hkey3 is not found
+	// Get security info from registry and decrypt
+	HKEY hkey, hkey2, hkey3;   // hkey and hkey2 are for older systems but will still need to try to read them if hkey3 is not found
 
-    // Open (or create if not there) the place to store the info
-    if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS ||
+	// Open (or create if not there) the place to store the info
+	if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS ||
 		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS ||
 		::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
-        return;
+		return;
 
-    // Create the info
-    memset(&security_info, '\0', sizeof(security_info));
-    security_info.rand = security_rand_;
-    security_info.serial = disk_serial();
-    security_info.os_install_date = os_date();
-    security_name_ = name;
-    sec_init = 0;
+	// Create the info
+	memset(&security_info, '\0', sizeof(security_info));
+	security_info.rand = security_rand_;
+	security_info.serial = disk_serial();
+	security_info.os_install_date = os_date();
+	security_name_ = name;
+	sec_init = 0;
 
 //    if (name == NULL)
 //    {
@@ -351,15 +351,15 @@ void CHexEditApp::AddSecurity(const char *name)
 //        ::GetComputerName(security_info.machine.computer_name, &siz);
 //    }
 //    else
-    if (strlen(name) == 0)
-    {
-        // Try to read current record
-        DWORD reg_type;                     // The returned registry entry type
-        DWORD reg_size = sizeof(security_info);
-        if (::RegQueryValueEx(hkey3, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) ||
+	if (strlen(name) == 0)
+	{
+		// Try to read current record
+		DWORD reg_type;                     // The returned registry entry type
+		DWORD reg_size = sizeof(security_info);
+		if (::RegQueryValueEx(hkey3, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) ||
 			::RegQueryValueEx(hkey2, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) ||
 			::RegQueryValueEx(hkey, "Data", NULL, &reg_type, (BYTE *)&security_info, &reg_size) ||
-            GetSecurityFile())
+			GetSecurityFile())
 		{
 			// Decrypt the security info we just got
 			set_key(STANDARD_KEY, 8);
@@ -368,87 +368,87 @@ void CHexEditApp::AddSecurity(const char *name)
 		}
 		// else use defaults set above
 
-        if (security_info.type == 2) // xxx or 3?
-        {
-            sec_type = security_type_ = security_info.type = 3;
-            time_t now = time(NULL);
+		if (security_info.type == 2) // xxx or 3?
+		{
+			sec_type = security_type_ = security_info.type = 3;
+			time_t now = time(NULL);
 
-            // If expired make it 30 days from now else add 30 days to expiry date
-            if (now > security_info.unreg.expires)
-                security_info.unreg.expires = now + 30 * 24L * 60L * 60L;
-            else
-                security_info.unreg.expires += 30 * 24L * 60L * 60L;
-        }
-    }
-    else
-    {
-        ASSERT(sizeof(security_info.user.name) == 49);
+			// If expired make it 30 days from now else add 30 days to expiry date
+			if (now > security_info.unreg.expires)
+				security_info.unreg.expires = now + 30 * 24L * 60L * 60L;
+			else
+				security_info.unreg.expires += 30 * 24L * 60L * 60L;
+		}
+	}
+	else
+	{
+		ASSERT(sizeof(security_info.user.name) == 49);
 		security_licensed_version_ = (send_info.flags >> 1);
-        if (security_licensed_version_ < security_version_ - UPGRADE_DIFF)
-            sec_type = security_type_ = security_info.type = 4; // old licence (too old to upgrade)
-        else if ((send_info.flags >> 1) < security_version_ - 1)
-            sec_type = security_type_ = security_info.type = 5; // old licence (upgradeable)
-        else
-            sec_type = security_type_ = security_info.type = 6; // licensed
-        memset(security_info.user.name, '\0', 49);
-        strncpy(security_info.user.name, name, 48);
-        security_info.user.flags = send_info.flags;
-    }
+		if (security_licensed_version_ < security_version_ - UPGRADE_DIFF)
+			sec_type = security_type_ = security_info.type = 4; // old licence (too old to upgrade)
+		else if ((send_info.flags >> 1) < security_version_ - 1)
+			sec_type = security_type_ = security_info.type = 5; // old licence (upgradeable)
+		else
+			sec_type = security_type_ = security_info.type = 6; // licensed
+		memset(security_info.user.name, '\0', 49);
+		strncpy(security_info.user.name, name, 48);
+		security_info.user.flags = send_info.flags;
+	}
 
-    ++add_security_called;
+	++add_security_called;
 
-    // Calc CRC, encrypt and write to HKLM\Software\ECSoftware\HexEdit\Global
-    security_info.crc = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2);
-    SaveSecurityFile();
-    set_key(STANDARD_KEY, 8);
-    encrypt(&security_info, sizeof(security_info));
-    set_key(DUMMY_KEY, 8);
-    ::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
+	// Calc CRC, encrypt and write to HKLM\Software\ECSoftware\HexEdit\Global
+	security_info.crc = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2);
+	SaveSecurityFile();
+	set_key(STANDARD_KEY, 8);
+	encrypt(&security_info, sizeof(security_info));
+	set_key(DUMMY_KEY, 8);
+	::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
 
-    // Erase the data so it can't be searched for in memory
-    memset(&security_info, '\0', sizeof(security_info));
-    ::RegCloseKey(hkey);
-    ::RegCloseKey(hkey2);
-    ::RegCloseKey(hkey3);
+	// Erase the data so it can't be searched for in memory
+	memset(&security_info, '\0', sizeof(security_info));
+	::RegCloseKey(hkey);
+	::RegCloseKey(hkey2);
+	::RegCloseKey(hkey3);
 
 	// Encrypt this now (later decrypted again in CheckSecurityActivated)
-    ASSERT(strlen(REG_RECV_KEY) == 8);
-    set_key(REG_RECV_KEY, 8);
-    encrypt(&send_info, sizeof(send_info));
+	ASSERT(strlen(REG_RECV_KEY) == 8);
+	set_key(REG_RECV_KEY, 8);
+	encrypt(&send_info, sizeof(send_info));
 }
 
 void CHexEditApp::DeleteSecurityFiles()
 {
-    // Work out the name of the exe file and get its modification time
-    char fullname[_MAX_PATH];       // Full name of security file
-    size_t len;
+	// Work out the name of the exe file and get its modification time
+	char fullname[_MAX_PATH];       // Full name of security file
+	size_t len;
 
 #if 1    // This can be phased out soon
-    char *end;                      // End of path of help file
+	char *end;                      // End of path of help file
 
 	// Remove Hexedit.cfd (old system) from .exe directory (if possible)
 	strcpy(fullname, GetExePath());
 	end = fullname + strlen(fullname);
-    strcpy(end, SEC_FILENAME); sub1(end);
+	strcpy(end, SEC_FILENAME); sub1(end);
 	(void)remove(fullname);
 #endif
 
 	// Remove hexedit.ind from Windows directory - also phase out one day
-    VERIFY(::GetWindowsDirectory(fullname, sizeof(fullname)) > 0);
-    len = strlen(fullname);
-    if (len == 0 || fullname[len-1] != '\\')
-    {
-        ++len;
-        strcat(fullname, "\\");
-    }
-    strcpy(fullname + len, SEC_FILENAME2); sub1(fullname + len);
+	VERIFY(::GetWindowsDirectory(fullname, sizeof(fullname)) > 0);
+	len = strlen(fullname);
+	if (len == 0 || fullname[len-1] != '\\')
+	{
+		++len;
+		strcat(fullname, "\\");
+	}
+	strcpy(fullname + len, SEC_FILENAME2); sub1(fullname + len);
 	if (GetMysteryFile(fullname) == 1)
 		(void)remove(fullname);
 
 	// Remove 1st myst file (added in ver 3.2) by checking for all possible myst file name(s) in temp dir
-    ::GetTempPath(sizeof(fullname), fullname);
-    len = strlen(fullname);
-    strcpy(fullname + len, SEC_FILENAME3); sub1(fullname + len);
+	::GetTempPath(sizeof(fullname), fullname);
+	len = strlen(fullname);
+	strcpy(fullname + len, SEC_FILENAME3); sub1(fullname + len);
 	len += 6;
 	ASSERT(fullname[len] == '?');
 	for (fullname[len] = 'X'; fullname[len] > '@'; fullname[len]--)
@@ -466,38 +466,38 @@ void CHexEditApp::DeleteSecurityFiles()
 // Encrypts (using own key) the info in security_info which is clear text on entry/exit
 void CHexEditApp::SaveSecurityFile()
 {
-    // Encrypt the security info
-    set_key(FILE_KEY, 8);
-    encrypt(&security_info, sizeof(security_info));
-    set_key(DUMMY_KEY, 8);
+	// Encrypt the security info
+	set_key(FILE_KEY, 8);
+	encrypt(&security_info, sizeof(security_info));
+	set_key(DUMMY_KEY, 8);
 
 #if 0
-    // Work out the name of the exe file and get its modification time
-    char fullname[_MAX_PATH];       // Full name of security file
-    char *end;                      // End of path of help file
-    struct _stat exe_stat;          // Info about exe (modification time etc)
-    struct _utimbuf times;          // Structure used to change file times
+	// Work out the name of the exe file and get its modification time
+	char fullname[_MAX_PATH];       // Full name of security file
+	char *end;                      // End of path of help file
+	struct _stat exe_stat;          // Info about exe (modification time etc)
+	struct _utimbuf times;          // Structure used to change file times
 
 	strcpy(fullname, GetExePath());
 	end = fullname + strlen(fullname);
-    strcpy(end, "HexEdit.exe");
-    if (_stat(fullname, &exe_stat) == -1) return;
+	strcpy(end, "HexEdit.exe");
+	if (_stat(fullname, &exe_stat) == -1) return;
 
-    // Work out the name of the security file and open it
-    strcpy(end, SEC_FILENAME); sub1(end);
-    FILE *ff = fopen(fullname, "wb");
+	// Work out the name of the security file and open it
+	strcpy(end, SEC_FILENAME); sub1(end);
+	FILE *ff = fopen(fullname, "wb");
 
-    // Write the file
-    if (ff != NULL)
-    {
-        fwrite(&security_info, sizeof(security_info), 1, ff);
-        fclose(ff);
+	// Write the file
+	if (ff != NULL)
+	{
+		fwrite(&security_info, sizeof(security_info), 1, ff);
+		fclose(ff);
 
-        // Change the date and time of the file
-        times.actime = exe_stat.st_mtime;
-        times.modtime = exe_stat.st_mtime;
-        _utime(fullname, &times);
-    }
+		// Change the date and time of the file
+		times.actime = exe_stat.st_mtime;
+		times.modtime = exe_stat.st_mtime;
+		_utime(fullname, &times);
+	}
 #endif
 	CString filename;
 	if (::GetDataPath(filename))
@@ -516,10 +516,10 @@ void CHexEditApp::SaveSecurityFile()
 		SaveTo(filename, &security_info, sizeof(security_info));
 	}
 
-    // Decrypt the data again so it is left as it was found
-    set_key(FILE_KEY, 8);
-    decrypt(&security_info, sizeof(security_info));
-    set_key(DUMMY_KEY, 8);
+	// Decrypt the data again so it is left as it was found
+	set_key(FILE_KEY, 8);
+	decrypt(&security_info, sizeof(security_info));
+	set_key(DUMMY_KEY, 8);
 }
 
 void CHexEditApp::SaveTo(const char *filename, const void *pdata, size_t len)
@@ -532,7 +532,7 @@ void CHexEditApp::SaveTo(const char *filename, const void *pdata, size_t len)
 	unsigned long filesize, hdrsize, width, height;
 	unsigned short bitcount = -1;
 
-    FILE *ff = fopen(filename, "r+b");
+	FILE *ff = fopen(filename, "r+b");
 	if (ff == NULL) return;
 	VERIFY(fseek(ff, 2L, SEEK_SET) == 0);
 	VERIFY(fread(&filesize, sizeof(filesize), 1, ff) == 1);
@@ -588,37 +588,37 @@ void CHexEditApp::SaveTo(const char *filename, const void *pdata, size_t len)
 BOOL CHexEditApp::GetSecurityFile()
 {
 #if 0
-    // Work out the name of the security file and open it
-    char fullname[_MAX_PATH];       // Full name of security file
-    char *end;                      // End of path of help file
+	// Work out the name of the security file and open it
+	char fullname[_MAX_PATH];       // Full name of security file
+	char *end;                      // End of path of help file
 
 	strcpy(fullname, GetExePath());
 	end = fullname + strlen(fullname);
-    strcpy(end, SEC_FILENAME); sub1(end);
+	strcpy(end, SEC_FILENAME); sub1(end);
 
-    FILE *ff = fopen(fullname, "rb");
+	FILE *ff = fopen(fullname, "rb");
 
-    // Read the security file
-    if (ff == NULL || fread(&security_info, sizeof(security_info), 1, ff) != 1)
-        return FALSE;
-    fclose(ff);
+	// Read the security file
+	if (ff == NULL || fread(&security_info, sizeof(security_info), 1, ff) != 1)
+		return FALSE;
+	fclose(ff);
 #endif
 	CString filename;
 	if (!::GetDataPath(filename) || !ReadFrom(filename + FILENAME_BACKGROUND, &security_info, sizeof(security_info)))
 		return FALSE;
 
-    // Decrypt the data & check CRC
-    set_key(FILE_KEY, 8);
-    decrypt(&security_info, sizeof(security_info));
+	// Decrypt the data & check CRC
+	set_key(FILE_KEY, 8);
+	decrypt(&security_info, sizeof(security_info));
 
 	BOOL retval = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2) == security_info.crc;
 
-    // Encrypt with STANDARD_KEY
-    set_key(STANDARD_KEY, 8);
-    encrypt(&security_info, sizeof(security_info));
-    set_key(DUMMY_KEY, 8);
+	// Encrypt with STANDARD_KEY
+	set_key(STANDARD_KEY, 8);
+	encrypt(&security_info, sizeof(security_info));
+	set_key(DUMMY_KEY, 8);
 
-    return retval;
+	return retval;
 }
 
 bool CHexEditApp::ReadFrom(const char *filename, void *pdata, size_t len)
@@ -626,7 +626,7 @@ bool CHexEditApp::ReadFrom(const char *filename, void *pdata, size_t len)
 	unsigned long filesize, hdrsize, width, height;
 	unsigned short bitcount = -1;
 
-    FILE *ff = fopen(filename, "rb");
+	FILE *ff = fopen(filename, "rb");
 	if (ff == NULL)
 		return false;
 	VERIFY(fseek(ff, 2L, SEEK_SET) == 0);
@@ -664,7 +664,7 @@ bool CHexEditApp::ReadFrom(const char *filename, void *pdata, size_t len)
 		}
 
 	fclose(ff);
-    return true; 
+	return true;
 }
 
 // Returns: 0 = error, 1 = expired, 2 = unregistered but not expired, 3 = temp licence
@@ -673,164 +673,164 @@ bool CHexEditApp::ReadFrom(const char *filename, void *pdata, size_t len)
 // Sets static variables: sec_init (if security inited OK), sec_type (same as value returned)
 int CHexEditApp::GetSecurity()
 {
-    ASSERT(sizeof(security_info) == 64);
+	ASSERT(sizeof(security_info) == 64);
 
-    security_type_ = 0;
+	security_type_ = 0;
 
-    // Get security info from registry and decrypt
-    HKEY hkey, hkey2, hkey3;
+	// Get security info from registry and decrypt
+	HKEY hkey, hkey2, hkey3;
 
-    // Open (or create if not there) the place to store the info (hkey and hkey2 are old so it doesn't really matter if they fail)
-    if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS) hkey = 0;
+	// Open (or create if not there) the place to store the info (hkey and hkey2 are old so it doesn't really matter if they fail)
+	if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS) hkey = 0;
 	if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS) hkey2 = 0;
-    if (::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
-        return 0;     // return error if any could not be opened
+	if (::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
+		return 0;     // return error if any could not be opened
 
-    // Try getting security info from the registry.  If that fails try security file.
-    // If that fails give up and just create the data (unregistered).
-    DWORD reg_type;                     // The returned registry entry type
-    DWORD reg_size = sizeof(security_info);
+	// Try getting security info from the registry.  If that fails try security file.
+	// If that fails give up and just create the data (unregistered).
+	DWORD reg_type;                     // The returned registry entry type
+	DWORD reg_size = sizeof(security_info);
 	bool from_new_file = ::RegQueryValueEx(hkey3, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) ==
-		                    ERROR_SUCCESS;
-    if ( !from_new_file &&
+							ERROR_SUCCESS;
+	if ( !from_new_file &&
 		::RegQueryValueEx(hkey2, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS &&
 		::RegQueryValueEx(hkey, "Data", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS)
-    {
-        // Not found in (old or new) registry entry so check for security file
-        if (!GetSecurityFile())
-        {
-            // Not found (reg or file) so create the info making it unregistered (2)
-            memset(&security_info, '\0', sizeof(security_info));
-            security_info.type = 2;
-            security_info.unreg.runs = 1;
-            security_info.unreg.expired_runs = 0;
-            security_info.unreg.expires = init_date_ + 
-                                          EXPIRY_DAYS * 24L * 60L * 60L;
-            security_info.rand = security_rand_;
-            security_info.serial = disk_serial();
-            security_info.os_install_date = os_date();
+	{
+		// Not found in (old or new) registry entry so check for security file
+		if (!GetSecurityFile())
+		{
+			// Not found (reg or file) so create the info making it unregistered (2)
+			memset(&security_info, '\0', sizeof(security_info));
+			security_info.type = 2;
+			security_info.unreg.runs = 1;
+			security_info.unreg.expired_runs = 0;
+			security_info.unreg.expires = init_date_ + 
+										  EXPIRY_DAYS * 24L * 60L * 60L;
+			security_info.rand = security_rand_;
+			security_info.serial = disk_serial();
+			security_info.os_install_date = os_date();
 
-            // Calc CRC, encrypt and write to HKLM\Software\ECSoftware\Data
-            security_info.crc = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2);
-            SaveSecurityFile();
-            set_key(STANDARD_KEY, 8);
-            encrypt(&security_info, sizeof(security_info));
-		    // set_key(DUMMY_KEY, 8);
-        }
-        ::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
+			// Calc CRC, encrypt and write to HKLM\Software\ECSoftware\Data
+			security_info.crc = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2);
+			SaveSecurityFile();
+			set_key(STANDARD_KEY, 8);
+			encrypt(&security_info, sizeof(security_info));
+			// set_key(DUMMY_KEY, 8);
+		}
+		::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
 
-        // at this point security_info is left encrypted with STANDARD_KEY
-    }
-    if (hkey) ::RegCloseKey(hkey);
-    if (hkey2) ::RegCloseKey(hkey2);
+		// at this point security_info is left encrypted with STANDARD_KEY
+	}
+	if (hkey) ::RegCloseKey(hkey);
+	if (hkey2) ::RegCloseKey(hkey2);
 
-    // Decrypt the security info and check it's OK
-    set_key(STANDARD_KEY, 8);
-    decrypt(&security_info, sizeof(security_info));
-    set_key(DUMMY_KEY, 8);
+	// Decrypt the security info and check it's OK
+	set_key(STANDARD_KEY, 8);
+	decrypt(&security_info, sizeof(security_info));
+	set_key(DUMMY_KEY, 8);
 
-    ++get_security_called;              // Remember how many times it has been called
+	++get_security_called;              // Remember how many times it has been called
 
-    BOOL bWriteBack = FALSE;            // Has security info changed, therefore needs to be written?
+	BOOL bWriteBack = FALSE;            // Has security info changed, therefore needs to be written?
 
 	// If the myst rand # does not match but it came from an older file type then it is possible
 	// that we are running as a different user under Vista and things have become confused.
 	// In this case we just update the security rand to match myst.  This probably weakens our security
 	// but Vista's had a lot of "HexEdit has not been installed on this machine" problems from this.
-    if (security_info.rand != security_rand_ && !from_new_file)
+	if (security_info.rand != security_rand_ && !from_new_file)
 	{
 		security_info.rand = security_rand_;
-        bWriteBack = TRUE;
+		bWriteBack = TRUE;
 	}
 
-    if (security_info.rand != security_rand_ ||
-        (security_info.serial != disk_serial() && security_info.os_install_date != os_date()))
-    {
-        // Erase the data so it can't be searched for in memory
-        memset(&security_info, '\0', sizeof(security_info));
-        return 0;
-    }
+	if (security_info.rand != security_rand_ ||
+		(security_info.serial != disk_serial() && security_info.os_install_date != os_date()))
+	{
+		// Erase the data so it can't be searched for in memory
+		memset(&security_info, '\0', sizeof(security_info));
+		return 0;
+	}
 
 
-    // Allow one (but not both) of disk serial no and OS date to change
-    if (security_info.serial != disk_serial())
-    {
-        security_info.serial = disk_serial();
-        bWriteBack = TRUE;
-    }
+	// Allow one (but not both) of disk serial no and OS date to change
+	if (security_info.serial != disk_serial())
+	{
+		security_info.serial = disk_serial();
+		bWriteBack = TRUE;
+	}
 
-    if (security_info.os_install_date != os_date())
-    {
-        security_info.os_install_date = os_date();
-        bWriteBack = TRUE;
-    }
+	if (security_info.os_install_date != os_date())
+	{
+		security_info.os_install_date = os_date();
+		bWriteBack = TRUE;
+	}
 
 //    char computer_name[MAX_COMPUTERNAME_LENGTH+1];
-    char buf[49];
+	char buf[49];
 //    DWORD siz = sizeof(computer_name);
-    SYSTEM_INFO si;                     // Used to find out processor type etc
-    memset(&si, '\0', sizeof(si));
+	SYSTEM_INFO si;                     // Used to find out processor type etc
+	memset(&si, '\0', sizeof(si));
 
-    sec_init = 0;
-    time_t now = time(NULL);
+	sec_init = 0;
+	time_t now = time(NULL);
 
-    switch(sec_type = security_info.type)
-    {
-    case 2:  // Unregistered - may be in initial trial period or expired
-        // Check if expired
-        days_left_ = (security_info.unreg.expires - now) / (24L * 60L * 60L);
-        if (security_info.unreg.last_run > now || days_left_ > EXPIRY_DAYS)
-            days_left_ = -300;
-        else
-            security_info.unreg.last_run = now;
-        if (days_left_ < 1)
-        {
-            // Increase grace period to 500 runs AND 300 days after expiry
-            if (++security_info.unreg.expired_runs > 500 && days_left_ < -300)
-                return 0;           // Completely stop working at this point
-            sec_type = 1;           // Expired (or current date is before last used date)
-            security_type_ = 1;
-        }
-        else
-            security_type_ = 2;
+	switch(sec_type = security_info.type)
+	{
+	case 2:  // Unregistered - may be in initial trial period or expired
+		// Check if expired
+		days_left_ = (security_info.unreg.expires - now) / (24L * 60L * 60L);
+		if (security_info.unreg.last_run > now || days_left_ > EXPIRY_DAYS)
+			days_left_ = -300;
+		else
+			security_info.unreg.last_run = now;
+		if (days_left_ < 1)
+		{
+			// Increase grace period to 500 runs AND 300 days after expiry
+			if (++security_info.unreg.expired_runs > 500 && days_left_ < -300)
+				return 0;           // Completely stop working at this point
+			sec_type = 1;           // Expired (or current date is before last used date)
+			security_type_ = 1;
+		}
+		else
+			security_type_ = 2;
 
-        // Update runs
-        ++security_info.unreg.runs;
-        bWriteBack = TRUE;
-        break;
+		// Update runs
+		++security_info.unreg.runs;
+		bWriteBack = TRUE;
+		break;
 	case 5:  // Recent version was registered - check if still upgradeable
-        if ((security_info.user.flags >> 1) < security_version_ - UPGRADE_DIFF)
-        {
-            sec_type = security_info.type = 4;
-            bWriteBack = TRUE;
-        }
-        // fall through
+		if ((security_info.user.flags >> 1) < security_version_ - UPGRADE_DIFF)
+		{
+			sec_type = security_info.type = 4;
+			bWriteBack = TRUE;
+		}
+		// fall through
 	case 4:  // Earlier version was registered - not upgradeable
 		security_type_ = sec_type;
-        security_licensed_version_ = security_info.user.flags >> 1;
-        // Update runs
-        ++security_info.unreg.runs;
-        bWriteBack = TRUE;
-        break;
-    case 3:  // Temp registration
-        // Check if expired
-        days_left_ = (security_info.unreg.expires - now) / (24L * 60L * 60L);
-        if (security_info.unreg.last_run > now || days_left_ > EXPIRY_DAYS+30)
-            days_left_ = -300;
-        else
-            security_info.unreg.last_run = now;
-        if (days_left_ < 1)
-        {
-            sec_type = 1;           // Expired (or current date is before last used date)
-            security_type_ = 1;
-        }
-        else
-            security_type_ = 3;
+		security_licensed_version_ = security_info.user.flags >> 1;
+		// Update runs
+		++security_info.unreg.runs;
+		bWriteBack = TRUE;
+		break;
+	case 3:  // Temp registration
+		// Check if expired
+		days_left_ = (security_info.unreg.expires - now) / (24L * 60L * 60L);
+		if (security_info.unreg.last_run > now || days_left_ > EXPIRY_DAYS+30)
+			days_left_ = -300;
+		else
+			security_info.unreg.last_run = now;
+		if (days_left_ < 1)
+		{
+			sec_type = 1;           // Expired (or current date is before last used date)
+			security_type_ = 1;
+		}
+		else
+			security_type_ = 3;
 
-        // Update runs
-        ++security_info.unreg.runs;
-        bWriteBack = TRUE;
-        break;
+		// Update runs
+		++security_info.unreg.runs;
+		bWriteBack = TRUE;
+		break;
 //    case 5:        // Machine registration
 //        // Check if computer name and processor type have both changed
 //        ::GetComputerName(computer_name, &siz);
@@ -842,158 +842,158 @@ int CHexEditApp::GetSecurity()
 //            security_type_ = 5;
 //        }
 //        break;
-    case 7:
-        bWriteBack = TRUE;
-        if (security_info.fake_count-- == 0)
-        {
-            // Reset security info so we are unregistered
-            security_info.type = 2;
-            security_info.unreg.runs = 1;
-            // Change settings to be almost at point of completely not working (see above)
-            security_info.unreg.expired_runs = 500-5;   
-            security_info.unreg.expires  = time(NULL) - 300*(24L * 60L * 60L);
-            security_info.unreg.last_run = time(NULL);
+	case 7:
+		bWriteBack = TRUE;
+		if (security_info.fake_count-- == 0)
+		{
+			// Reset security info so we are unregistered
+			security_info.type = 2;
+			security_info.unreg.runs = 1;
+			// Change settings to be almost at point of completely not working (see above)
+			security_info.unreg.expired_runs = 500-5;
+			security_info.unreg.expires  = time(NULL) - 300*(24L * 60L * 60L);
+			security_info.unreg.last_run = time(NULL);
 
-            sec_type = 1;           // Set to be expired
-            security_type_ = 1;
-            break;
-        }
-        sec_type = 6;
-        /* fall through */
-    case 6:        // User registration
+			sec_type = 1;           // Set to be expired
+			security_type_ = 1;
+			break;
+		}
+		sec_type = 6;
+		/* fall through */
+	case 6:        // User registration
 //                  "TEAM DISTINCT"
-        strcpy(buf, "UFBN!EJTUJODU");
-        sub1(buf);
-        if (_stricmp(buf, security_info.user.name) == 0)
-            return 0;
+		strcpy(buf, "UFBN!EJTUJODU");
+		sub1(buf);
+		if (_stricmp(buf, security_info.user.name) == 0)
+			return 0;
 
-        if ((security_info.user.flags >> 1) < security_version_ - UPGRADE_DIFF)
-            security_type_ = 4;   // really old version - not upgradeable
-        else if ((security_info.user.flags >> 1) < security_version_ - 1)
-            security_type_ = 5;   // recent version but not current or previous
-        else
-            security_type_ = 6;   // fully licensed
-        security_licensed_version_ = security_info.user.flags >> 1;
-        sec_type = security_type_;
-        security_name_ = CString(security_info.user.name, 50);
+		if ((security_info.user.flags >> 1) < security_version_ - UPGRADE_DIFF)
+			security_type_ = 4;   // really old version - not upgradeable
+		else if ((security_info.user.flags >> 1) < security_version_ - 1)
+			security_type_ = 5;   // recent version but not current or previous
+		else
+			security_type_ = 6;   // fully licensed
+		security_licensed_version_ = security_info.user.flags >> 1;
+		sec_type = security_type_;
+		security_name_ = CString(security_info.user.name, 50);
 
-        break;
-    default:
-        security_type_ = -1;
-    }
+		break;
+	default:
+		security_type_ = -1;
+	}
 
-    // Decrypt myst info (already in memory from GetMystery()) and see if this is the first run of a new version
-    set_key(STANDARD_KEY, 8);
-    decrypt(&myst_info, sizeof(myst_info));
-    if (myst_info.version < version_)
-    {
-        OnNewVersion(myst_info.version, version_);
-        if (!CheckNewVersion())  // re-encrypts
-        {
-            ASSERT(sizeof(security_info.user.name) == 50);
-            memset(security_info.user.name, '\0', 50);  // remove name
+	// Decrypt myst info (already in memory from GetMystery()) and see if this is the first run of a new version
+	set_key(STANDARD_KEY, 8);
+	decrypt(&myst_info, sizeof(myst_info));
+	if (myst_info.version < version_)
+	{
+		OnNewVersion(myst_info.version, version_);
+		if (!CheckNewVersion())  // re-encrypts
+		{
+			ASSERT(sizeof(security_info.user.name) == 50);
+			memset(security_info.user.name, '\0', 50);  // remove name
 
-            security_info.type = 2;
-            security_info.unreg.runs = 1;
-            security_info.unreg.expired_runs = 0;
-            security_info.unreg.expires  = time(NULL);
-            security_info.unreg.last_run = time(NULL);
-            bWriteBack = TRUE;
-        }
-    }
-    else
-        encrypt(&myst_info, sizeof(myst_info));
+			security_info.type = 2;
+			security_info.unreg.runs = 1;
+			security_info.unreg.expired_runs = 0;
+			security_info.unreg.expires  = time(NULL);
+			security_info.unreg.last_run = time(NULL);
+			bWriteBack = TRUE;
+		}
+	}
+	else
+		encrypt(&myst_info, sizeof(myst_info));
 
 	CString filename;
 	CFileFind ff;
 
-    if (bWriteBack)
-    {
-        // Encrypt and write back to HKLM\Software\ECSoftware\Data
-        security_info.crc = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2);
-        SaveSecurityFile();
-        set_key(STANDARD_KEY, 8);
-        encrypt(&security_info, sizeof(security_info));
-        ::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
-        set_key(DUMMY_KEY, 8);
-    }
+	if (bWriteBack)
+	{
+		// Encrypt and write back to HKLM\Software\ECSoftware\Data
+		security_info.crc = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2);
+		SaveSecurityFile();
+		set_key(STANDARD_KEY, 8);
+		encrypt(&security_info, sizeof(security_info));
+		::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
+		set_key(DUMMY_KEY, 8);
+	}
 	else if (::GetDataPath(filename) && !ff.FindFile(filename + FILENAME_BACKGROUND))
-        SaveSecurityFile();     // backup file not found (just write out info read from registry to the file)
+		SaveSecurityFile();     // backup file not found (just write out info read from registry to the file)
 
-    // Erase the data so it can't be searched for in memory
-    memset(&security_info, '\0', sizeof(security_info));
-    ::RegCloseKey(hkey3);
-    return sec_type;
+	// Erase the data so it can't be searched for in memory
+	memset(&security_info, '\0', sizeof(security_info));
+	::RegCloseKey(hkey3);
+	return sec_type;
 } // GetSecurity
 
 bool CHexEditApp::CheckNewVersion()
 {
-    bool retval = true;
+	bool retval = true;
 
 #if 0
-    if (security_type_ == 6)
-    {
-        // Registered to a user - check that name is in list of existing users
-        bool found = false;
-        char *pp;
-        CString upper_name = security_name_;
+	if (security_type_ == 6)
+	{
+		// Registered to a user - check that name is in list of existing users
+		bool found = false;
+		char *pp;
+		CString upper_name = security_name_;
 
-        ASSERT(sizeof(user_list) % 8 == 2);  // Remainder is 2 for 2 extra nul bytes at the end
+		ASSERT(sizeof(user_list) % 8 == 2);  // Remainder is 2 for 2 extra nul bytes at the end
 
-        // Make sure we compare ignoring case and extraneous characters
-        upper_name.MakeUpper();
-        upper_name.Remove(' ');
-        upper_name.Remove('\t');
-        upper_name.Remove('.');
+		// Make sure we compare ignoring case and extraneous characters
+		upper_name.MakeUpper();
+		upper_name.Remove(' ');
+		upper_name.Remove('\t');
+		upper_name.Remove('.');
 
-        // Decrypt list of existing users and check if current user is there
-        set_key(USERLIST_KEY, 8);
-        decrypt(user_list, sizeof(user_list)-2);
+		// Decrypt list of existing users and check if current user is there
+		set_key(USERLIST_KEY, 8);
+		decrypt(user_list, sizeof(user_list)-2);
 
-        for (pp = &user_list[0]; *pp != '\0'; pp += strlen(pp)+1)
-        {
-            CString ss = pp;
-            ss.MakeUpper();
-            ss.Remove(' ');
-            ss.Remove('\t');
-            ss.Remove('.');
-            if (ss == upper_name)
-            {
-                found = true;
-                break;
-            }
-        }
-        encrypt(user_list, sizeof(user_list)-2);
-        set_key(DUMMY_KEY, 8);
+		for (pp = &user_list[0]; *pp != '\0'; pp += strlen(pp)+1)
+		{
+			CString ss = pp;
+			ss.MakeUpper();
+			ss.Remove(' ');
+			ss.Remove('\t');
+			ss.Remove('.');
+			if (ss == upper_name)
+			{
+				found = true;
+				break;
+			}
+		}
+		encrypt(user_list, sizeof(user_list)-2);
+		set_key(DUMMY_KEY, 8);
 
-        if (!found)
-            retval = false;  // Force deregistration
-    }
+		if (!found)
+			retval = false;  // Force deregistration
+	}
 #endif
 
-    // Create backup data file name
-    char fullname[_MAX_PATH];       // Full name of security file
-    size_t len;
+	// Create backup data file name
+	char fullname[_MAX_PATH];       // Full name of security file
+	size_t len;
 
 	// Get name for mystery file
-    ::GetTempPath(sizeof(fullname), fullname);
-    len = strlen(fullname);
-    strcpy(fullname + len, SEC_FILENAME3); sub1(fullname + len);
+	::GetTempPath(sizeof(fullname), fullname);
+	len = strlen(fullname);
+	strcpy(fullname + len, SEC_FILENAME3); sub1(fullname + len);
 	len += 6;
 	ASSERT(fullname[len] == '?');
 	for (fullname[len] = 'X'; fullname[len] > '@'; fullname[len]--)
 		if (GetMysteryFile(fullname) != -1)  // stop when we find the valid existing file or no file
 			break;
 
-    // Update to current version of the software so that this check is not done again
-    set_key(STANDARD_KEY, 8);
-    decrypt(&myst_info, sizeof(myst_info));
-    myst_info.version = version_;
-    encrypt(&myst_info, sizeof(myst_info));
+	// Update to current version of the software so that this check is not done again
+	set_key(STANDARD_KEY, 8);
+	decrypt(&myst_info, sizeof(myst_info));
+	myst_info.version = version_;
+	encrypt(&myst_info, sizeof(myst_info));
 
 	// Save to 1ary myst file
 	SaveMyst(fullname);
-    set_key(DUMMY_KEY, 8);
+	set_key(DUMMY_KEY, 8);
 
 	// Save to 2ary myst file
 	CString ss;
@@ -1002,17 +1002,17 @@ bool CHexEditApp::CheckNewVersion()
 	memset(fullname, '\0', sizeof(fullname));
 	memset(ss.GetBuffer(), '?', ss.GetLength());
 
-    return retval;
+	return retval;
 }
 
 void CHexEditApp::SaveMyst(const char * filename)
 {
 	FILE *ff;
 
-    if ((ff = fopen(filename, "wb")) != NULL)
-    {
-        fwrite((void *)&myst_info, sizeof(myst_info), 1, ff);
-        fclose(ff);
+	if ((ff = fopen(filename, "wb")) != NULL)
+	{
+		fwrite((void *)&myst_info, sizeof(myst_info), 1, ff);
+		fclose(ff);
 
 		// Set the file time back to avoid a search easily finding it but having
 		// a really old file in the temp dir may be suspicious so just make it a day old
@@ -1025,7 +1025,7 @@ void CHexEditApp::SaveMyst(const char * filename)
 			SetFileCreationTime(filename, times.modtime);
 			SetFileAccessTime(filename, status.st_mtime - (30*60*60));    // ~ 1 day ago
 		}
-    }
+	}
 }
 
 // Save info to 2nd myst file.
@@ -1058,57 +1058,57 @@ bool CHexEditApp::GetMyst2FileName(CString & filename)
 
 int CHexEditApp::QuickCheck()
 {
-    ASSERT(sizeof(security_info) == 64);
-    static int no_check = 0;
+	ASSERT(sizeof(security_info) == 64);
+	static int no_check = 0;
 
-    if (sec_init != 0 || sec_type < 1 || sec_type > 10 || security_type_ < 1)
-    {
+	if (sec_init != 0 || sec_type < 1 || sec_type > 10 || security_type_ < 1)
+	{
 #ifdef _DEBUG
-        if (!no_check && AfxMessageBox("Sec error.  Keep checking?", MB_YESNO) != IDYES)
-            no_check = 1;
-        return 1;
+		if (!no_check && AfxMessageBox("Sec error.  Keep checking?", MB_YESNO) != IDYES)
+			no_check = 1;
+		return 1;
 #else
-        AfxMessageBox("HexEdit has not been properly installed");
-        return 0;
+		AfxMessageBox("HexEdit has not been properly installed");
+		return 0;
 #endif
-    }
+	}
 
-    time_t now = time(NULL);
+	time_t now = time(NULL);
 
-    // If 10 days past init date check for "CRACKED" user name
-    if (security_type_ == 6 && (now - init_date_ > 10 * 24L * 60L * 60L))
-    {
-        char bad_user[16];
-        ASSERT(sizeof(bad_user) > sizeof(BAD_USER));
-        strcpy(bad_user, BAD_USER); sub1(bad_user);
-        if (security_name_ == bad_user)
-        {
-            sec_type = 1;           // Expired (or current date is before last used date)
-            security_type_ = 1;
-        }
-    }
+	// If 10 days past init date check for "CRACKED" user name
+	if (security_type_ == 6 && (now - init_date_ > 10 * 24L * 60L * 60L))
+	{
+		char bad_user[16];
+		ASSERT(sizeof(bad_user) > sizeof(BAD_USER));
+		strcpy(bad_user, BAD_USER); sub1(bad_user);
+		if (security_name_ == bad_user)
+		{
+			sec_type = 1;           // Expired (or current date is before last used date)
+			security_type_ = 1;
+		}
+	}
 
-    ++quick_check_called;           // Remember how many times it has been called
+	++quick_check_called;           // Remember how many times it has been called
 
-    if (security_type_ > 1)
-        return 1;
+	if (security_type_ > 1)
+		return 1;
 
-    CHexEditView *pview = GetView();
-    if (pview != NULL && !pview->MouseDown() &&
-        (::GetTickCount()>>10)%(max(600 + days_left_*20, 1) + 20) == 0)
-    {
+	CHexEditView *pview = GetView();
+	if (pview != NULL && !pview->MouseDown() &&
+		(::GetTickCount()>>10)%(max(600 + days_left_*20, 1) + 20) == 0)
+	{
 #ifdef _DEBUG
-        if (no_check)
-            return 1;
-        else if (AfxMessageBox("Trial expired.  Keep checking?", MB_YESNO) != IDYES)
-            no_check = 1;
+		if (no_check)
+			return 1;
+		else if (AfxMessageBox("Trial expired.  Keep checking?", MB_YESNO) != IDYES)
+			no_check = 1;
 #endif
-        CStartup dlg;
-        dlg.text_ = "Your trial period has expired.";
-        dlg.DoModal();
-    }
+		CStartup dlg;
+		dlg.text_ = "Your trial period has expired.";
+		dlg.DoModal();
+	}
 
-    return 1;
+	return 1;
 }
 
 // This is run in response to the /Clean command line option and cleans out all traces
@@ -1128,17 +1128,17 @@ void CHexEditApp::CleanUp()
 {
 	DeleteSecurityFiles();
 
-    CString data_path;
+	CString data_path;
 	::GetDataPath(data_path);
 	if (!data_path.IsEmpty())
 		(void)remove(data_path + FILENAME_BACKGROUND);
 
-    ::DummyRegAccess(1);
+	::DummyRegAccess(1);
 
-    HKEY hkey;
+	HKEY hkey;
 	bool admin = true;           // are we an admin?
 
-    if (::RegOpenKey(HKEY_CLASSES_ROOT, ".bmp\\ShellNew\\", &hkey) == ERROR_SUCCESS)
+	if (::RegOpenKey(HKEY_CLASSES_ROOT, ".bmp\\ShellNew\\", &hkey) == ERROR_SUCCESS)
 	{
 		if (::RegDeleteValue(hkey, "Data") == ERROR_ACCESS_DENIED)
 			admin = false;
@@ -1148,20 +1148,20 @@ void CHexEditApp::CleanUp()
 		admin = false;
 
 	// Remove reg entries ignoring errors since they may not all be there
-    if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
+	if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
 	{
 		::RegDeleteValue(hkey, "Data");
-        ::RegCloseKey(hkey);
+		::RegCloseKey(hkey);
 	}
-    if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
+	if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
 	{
 		::RegDeleteValue(hkey, "Global");
-        ::RegCloseKey(hkey);
+		::RegCloseKey(hkey);
 	}
-    if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
+	if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
 	{
 		::RegDeleteValue(hkey,  "Global");
-        ::RegCloseKey(hkey);
+		::RegCloseKey(hkey);
 	}
 	if (theApp.is_vista_)
 	{
@@ -1191,12 +1191,12 @@ void CHexEditApp::CleanUp()
 
 static CString create_reg_code(int send)
 {
-    if (send)
-    {
-        // Encrypt with send key
-        ASSERT(strlen(REG_SEND_KEY) == 8);
-        set_key(REG_SEND_KEY, 8);
-    }
+	if (send)
+	{
+		// Encrypt with send key
+		ASSERT(strlen(REG_SEND_KEY) == 8);
+		set_key(REG_SEND_KEY, 8);
+	}
 //#ifdef _DEBUG
 //    else if (1)
 //    {
@@ -1205,26 +1205,26 @@ static CString create_reg_code(int send)
 //        set_key(REG_SEND_KEY, 8);
 //    }
 //#endif
-    else
-    {
-        // Encrypt with receive key
-        ASSERT(strlen(REG_RECV_KEY) == 8);
-        set_key(REG_RECV_KEY, 8);
-    }
-    ASSERT(sizeof(send_info) == 8);
-    encrypt(&send_info, sizeof(send_info));
+	else
+	{
+		// Encrypt with receive key
+		ASSERT(strlen(REG_RECV_KEY) == 8);
+		set_key(REG_RECV_KEY, 8);
+	}
+	ASSERT(sizeof(send_info) == 8);
+	encrypt(&send_info, sizeof(send_info));
 
-    // Convert the encrypted info (8 binary bytes) to 13 alphanumeric characters
-    // Note that 8 bytes = 64 bits, 64/5 => 13 characters required
-    char buf[16]; buf[14] = '\xCD';
-    letter_encode(&send_info, sizeof(send_info), buf);
-    ASSERT(buf[13] == '\0' && buf[14] == '\xCD'); // Make sure we didn't overrun the buffer
+	// Convert the encrypted info (8 binary bytes) to 13 alphanumeric characters
+	// Note that 8 bytes = 64 bits, 64/5 => 13 characters required
+	char buf[16]; buf[14] = '\xCD';
+	letter_encode(&send_info, sizeof(send_info), buf);
+	ASSERT(buf[13] == '\0' && buf[14] == '\xCD'); // Make sure we didn't overrun the buffer
 
-    // decrypt again so that we later have access to flags member to save to registry
-    decrypt(&send_info, sizeof(send_info));
+	// decrypt again so that we later have access to flags member to save to registry
+	decrypt(&send_info, sizeof(send_info));
 
-    CString ss(buf);
-    return ss.Left(3) + " " + ss.Mid(3, 3) + " " + ss.Mid(6,3) + " " + ss.Right(4);
+	CString ss(buf);
+	return ss.Left(3) + " " + ss.Mid(3, 3) + " " + ss.Mid(6,3) + " " + ss.Right(4);
 }
 
 // Return the registration code for this machine. If send is 1 it generates
@@ -1233,34 +1233,34 @@ static CString create_reg_code(int send)
 // The flags sets the flags field before the code is generated.
 CString reg_code(int send, int flags /*=0*/)
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-    // Build machine info and generate CRC of it
-    memset(&machine_info, '\0', sizeof(machine_info));
+	// Build machine info and generate CRC of it
+	memset(&machine_info, '\0', sizeof(machine_info));
 
-    machine_info.serial = disk_serial();
-    machine_info.os_install_date = os_date();
+	machine_info.serial = disk_serial();
+	machine_info.os_install_date = os_date();
 
-    ASSERT(sizeof(machine_info.computer_name) > 8);
-    DWORD siz = sizeof(machine_info.computer_name);
-    ::GetComputerName(machine_info.computer_name, &siz);
+	ASSERT(sizeof(machine_info.computer_name) > 8);
+	DWORD siz = sizeof(machine_info.computer_name);
+	::GetComputerName(machine_info.computer_name, &siz);
 
-    SYSTEM_INFO si;                     // Used to find out processor type etc
-    memset(&si, '\0', sizeof(si));
-    ::GetSystemInfo(&si);
-    machine_info.processor = (short)si.dwProcessorType;
-    machine_info.revision  = si.wProcessorRevision;
+	SYSTEM_INFO si;                     // Used to find out processor type etc
+	memset(&si, '\0', sizeof(si));
+	::GetSystemInfo(&si);
+	machine_info.processor = (short)si.dwProcessorType;
+	machine_info.revision  = si.wProcessorRevision;
 
-    machine_info.security_rand = aa->security_rand_;
+	machine_info.security_rand = aa->security_rand_;
 
-    // Build send_info and encrypt it
-    memset(&send_info, '\0', sizeof(send_info));
-    send_info.crc = crc16(&machine_info, sizeof(machine_info));
-    send_info.flags = (unsigned char)flags;
-    send_info.type = 5;
-    send_info.init_date = aa->init_date_;
+	// Build send_info and encrypt it
+	memset(&send_info, '\0', sizeof(send_info));
+	send_info.crc = crc16(&machine_info, sizeof(machine_info));
+	send_info.flags = (unsigned char)flags;
+	send_info.type = 5;
+	send_info.init_date = aa->init_date_;
 
-    return create_reg_code(send);
+	return create_reg_code(send);
 }
 
 // Return the registration code for the user name given.
@@ -1269,28 +1269,28 @@ CString reg_code(int send, int flags /*=0*/)
 // The flags sets the flags field before the code is generated.
 CString user_reg_code(int send, const char *name, int type /*=6*/, int flags /*=0*/, time_t tt /*=0*/)
 {
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    CString upper_name(name);
+	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+	CString upper_name(name);
 
-    // ignore case, whitespace and punct in generating the code
-    upper_name.MakeUpper();
-    upper_name.Remove(' ');
-    upper_name.Remove('\t');
-    upper_name.Remove('.');
-    if (upper_name.GetLength() <= 5)
-        return CString("");
+	// ignore case, whitespace and punct in generating the code
+	upper_name.MakeUpper();
+	upper_name.Remove(' ');
+	upper_name.Remove('\t');
+	upper_name.Remove('.');
+	if (upper_name.GetLength() <= 5)
+		return CString("");
 
-    // Build send_info and encrypt it
-    memset(&send_info, '\0', sizeof(send_info));
-    send_info.crc = crc16(upper_name, upper_name.GetLength());
-    send_info.flags = (unsigned char)flags;
-    send_info.type = type;
-    if (tt == 0)
-        send_info.init_date = aa->init_date_;
-    else
-        send_info.init_date = tt;
+	// Build send_info and encrypt it
+	memset(&send_info, '\0', sizeof(send_info));
+	send_info.crc = crc16(upper_name, upper_name.GetLength());
+	send_info.flags = (unsigned char)flags;
+	send_info.type = type;
+	if (tt == 0)
+		send_info.init_date = aa->init_date_;
+	else
+		send_info.init_date = tt;
 
-    return create_reg_code(send);
+	return create_reg_code(send);
 }
 
 // If the crackers activation code utility has been used to generate HexEdit activation codes
@@ -1303,130 +1303,130 @@ void CHexEditApp::CheckSecurityActivated()
 	if (!add_security_called)
 		return;
 
-    // Restore send_info as it was when create_reg_code was called during activation
-    ASSERT(strlen(REG_RECV_KEY) == 8);
-    set_key(REG_RECV_KEY, 8);
-    decrypt(&send_info, sizeof(send_info));
+	// Restore send_info as it was when create_reg_code was called during activation
+	ASSERT(strlen(REG_RECV_KEY) == 8);
+	set_key(REG_RECV_KEY, 8);
+	decrypt(&send_info, sizeof(send_info));
 
-    // Check if the user activation code was invalid
-    // Generated reg codes have flags >= 4 and init_date == -1
-    // CRACKS:
-    // 1. cracking program generates code where init_date != -1
-    // 2. name+crack in newsgroup where flags was 0
-    if (send_info.type >= 4 && send_info.type <= 7 &&
+	// Check if the user activation code was invalid
+	// Generated reg codes have flags >= 4 and init_date == -1
+	// CRACKS:
+	// 1. cracking program generates code where init_date != -1
+	// 2. name+crack in newsgroup where flags was 0
+	if (send_info.type >= 4 && send_info.type <= 7 &&
 		(send_info.flags < 3 || send_info.init_date != -1))
-    {
-        // Change the security type from 6 to 7
-        ASSERT(sizeof(security_info) == 64);
+	{
+		// Change the security type from 6 to 7
+		ASSERT(sizeof(security_info) == 64);
 
-        // Get security info from registry and decrypt
-        HKEY hkey3;
+		// Get security info from registry and decrypt
+		HKEY hkey3;
 
-        // Open (or create if not there) the place to store the info
-        if (::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
-            return;
+		// Open (or create if not there) the place to store the info
+		if (::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
+			return;
 
-        // Try getting security info from the registry.
-        DWORD reg_type;                     // The returned registry entry type
-        DWORD reg_size = sizeof(security_info);
-        if (::RegQueryValueEx(hkey3, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS)
-        {
-            return;
-        }
+		// Try getting security info from the registry.
+		DWORD reg_type;                     // The returned registry entry type
+		DWORD reg_size = sizeof(security_info);
+		if (::RegQueryValueEx(hkey3, "Global", NULL, &reg_type, (BYTE *)&security_info, &reg_size) != ERROR_SUCCESS)
+		{
+			return;
+		}
 
-        // Decrypt the security info and check it's OK
-        set_key(STANDARD_KEY, 8);
-        decrypt(&security_info, sizeof(security_info));
-        ASSERT(security_info.type == 6);
+		// Decrypt the security info and check it's OK
+		set_key(STANDARD_KEY, 8);
+		decrypt(&security_info, sizeof(security_info));
+		ASSERT(security_info.type == 6);
 
-        security_info.type = 7;
-        if (send_info.flags == 0)
-            security_info.fake_count = 17;
-        else
-            security_info.fake_count = 33;
-        security_info.crc = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2);
-        encrypt(&security_info, sizeof(security_info));
-        set_key(DUMMY_KEY, 8);
-        ::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
+		security_info.type = 7;
+		if (send_info.flags == 0)
+			security_info.fake_count = 17;
+		else
+			security_info.fake_count = 33;
+		security_info.crc = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2);
+		encrypt(&security_info, sizeof(security_info));
+		set_key(DUMMY_KEY, 8);
+		::RegSetValueEx(hkey3, "Global", 0, REG_BINARY, (BYTE *)&security_info, sizeof(security_info));
 
-        // Erase the data so it can't be searched for in memory
-        memset(&security_info, '\0', sizeof(security_info));
-        ::RegCloseKey(hkey3);
-    }
-    set_key(REG_RECV_KEY, 8);
-    encrypt(&send_info, sizeof(send_info));
+		// Erase the data so it can't be searched for in memory
+		memset(&security_info, '\0', sizeof(security_info));
+		::RegCloseKey(hkey3);
+	}
+	set_key(REG_RECV_KEY, 8);
+	encrypt(&send_info, sizeof(send_info));
 }
 
 static unsigned long disk_serial()
 {
-    char rootdir[4] = "?:\\";
+	char rootdir[4] = "?:\\";
 
-    /* Find the first local, fixed disk with a vol serial number */
+	/* Find the first local, fixed disk with a vol serial number */
 
-    for (rootdir[0] = 'A'; rootdir[0] <= 'Z'; ++rootdir[0])
-    {
-        if (GetDriveType(rootdir) == DRIVE_FIXED)
-        {
-            /* Found a local non-removeable drive */
-            char volume_name[256];
-            unsigned long serial_no, max_len, flags;
-            serial_no = 0;
-            GetVolumeInformation(rootdir, volume_name, sizeof(volume_name), 
-                                 &serial_no, &max_len, &flags, NULL, 0);
-            if (serial_no > 4096)
-                return serial_no;
-        }
-    }
+	for (rootdir[0] = 'A'; rootdir[0] <= 'Z'; ++rootdir[0])
+	{
+		if (GetDriveType(rootdir) == DRIVE_FIXED)
+		{
+			/* Found a local non-removeable drive */
+			char volume_name[256];
+			unsigned long serial_no, max_len, flags;
+			serial_no = 0;
+			GetVolumeInformation(rootdir, volume_name, sizeof(volume_name), 
+								 &serial_no, &max_len, &flags, NULL, 0);
+			if (serial_no > 4096)
+				return serial_no;
+		}
+	}
 
-    return 0;
+	return 0;
 }
 
 static unsigned long os_date()
 {
-    char key_date[64];                  /* The key name under which the OS install date is kept */
-    char value_date[32];                /* The value name for OS install date */
-    OSVERSIONINFO osvi;                 /* Used in determing the OS we are using */
-    HKEY key;                           /* The correspondng key handle */
-    unsigned long retval = 0;           /* The date/time encoded as a long */
-    DWORD reg_type;                     /* The returned registry entry type */
-    DWORD reg_size = 4;                 /* The length of the buffer for the entry */
+	char key_date[64];                  /* The key name under which the OS install date is kept */
+	char value_date[32];                /* The value name for OS install date */
+	OSVERSIONINFO osvi;                 /* Used in determing the OS we are using */
+	HKEY key;                           /* The correspondng key handle */
+	unsigned long retval = 0;           /* The date/time encoded as a long */
+	DWORD reg_type;                     /* The returned registry entry type */
+	DWORD reg_size = 4;                 /* The length of the buffer for the entry */
 
-    /* Work out which os we are running under */
-    osvi.dwOSVersionInfoSize = sizeof(osvi);
-    GetVersionEx(&osvi);
+	/* Work out which os we are running under */
+	osvi.dwOSVersionInfoSize = sizeof(osvi);
+	GetVersionEx(&osvi);
 
-    if (osvi.dwPlatformId != VER_PLATFORM_WIN32_NT)
-        /* Win95          SOFTWARE\Microsoft\Windows\CurrentVersion */
-        strcpy(key_date, "TPGUXBSF]Njdsptpgu]Xjoepxt]DvssfouWfstjpo");
-    else if(osvi.dwMajorVersion < 5)
-        /* NT             SOFTWARE\Microsoft\WindowsNT\CurrentVersion */
-        strcpy(key_date, "TPGUXBSF]Njdsptpgu]XjoepxtOU]DvssfouWfstjpo");
-    else
-        /* W2K            SOFTWARE\Microsoft\Windows NT\CurrentVersion */
-        strcpy(key_date, "TPGUXBSF]Njdsptpgu]Xjoepxt!OU]DvssfouWfstjpo");
+	if (osvi.dwPlatformId != VER_PLATFORM_WIN32_NT)
+		/* Win95          SOFTWARE\Microsoft\Windows\CurrentVersion */
+		strcpy(key_date, "TPGUXBSF]Njdsptpgu]Xjoepxt]DvssfouWfstjpo");
+	else if(osvi.dwMajorVersion < 5)
+		/* NT             SOFTWARE\Microsoft\WindowsNT\CurrentVersion */
+		strcpy(key_date, "TPGUXBSF]Njdsptpgu]XjoepxtOU]DvssfouWfstjpo");
+	else
+		/* W2K            SOFTWARE\Microsoft\Windows NT\CurrentVersion */
+		strcpy(key_date, "TPGUXBSF]Njdsptpgu]Xjoepxt!OU]DvssfouWfstjpo");
 
-    /* As a simple method of frustrating people who search in the .EXE file
-     * for strings that are used for registry entries we just add 1 to
-     * each char in the key_date and then restore it at run-time. */
-    sub1(key_date);
+	/* As a simple method of frustrating people who search in the .EXE file
+	 * for strings that are used for registry entries we just add 1 to
+	 * each char in the key_date and then restore it at run-time. */
+	sub1(key_date);
 
-    if (::RegOpenKey(HKEY_LOCAL_MACHINE, key_date, &key) == ERROR_SUCCESS)
-    {
-        LONG rr;
+	if (::RegOpenKey(HKEY_LOCAL_MACHINE, key_date, &key) == ERROR_SUCCESS)
+	{
+		LONG rr;
 
-        if (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT)
-            /*                 "InstallDate" */
-            strcpy(value_date, "JotubmmEbuf");
-        else
-            /*                 "FirstInstallDateTime" */
-            strcpy(value_date, "GjstuJotubmmEbufUjnf");
-        sub1(value_date);
-        rr = ::RegQueryValueEx(key, value_date, NULL, &reg_type, (LPBYTE)&retval, &reg_size);
-        ::RegCloseKey(key);
+		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT)
+			/*                 "InstallDate" */
+			strcpy(value_date, "JotubmmEbuf");
+		else
+			/*                 "FirstInstallDateTime" */
+			strcpy(value_date, "GjstuJotubmmEbufUjnf");
+		sub1(value_date);
+		rr = ::RegQueryValueEx(key, value_date, NULL, &reg_type, (LPBYTE)&retval, &reg_size);
+		::RegCloseKey(key);
 
-        if (rr == ERROR_SUCCESS && reg_size == 4)
-            return retval;
-    }
+		if (rr == ERROR_SUCCESS && reg_size == 4)
+			return retval;
+	}
 
-    return 0;
+	return 0;
 }

@@ -26,11 +26,11 @@ public:
 	CMFCLinkCtrl	url_ctl_;
 	//}}AFX_DATA
 	CMFCLinkCtrl	reg_url_ctl_;
-    CTransparentStatic2 ctl_line1_;
-    CTransparentStatic2 ctl_line2_;
-    CTransparentStatic2 ctl_line3_;
-    CTransparentStatic2 ctl_line4_;
-    CTransparentStatic2 ctl_line5_;
+	CTransparentStatic2 ctl_line1_;
+	CTransparentStatic2 ctl_line2_;
+	CTransparentStatic2 ctl_line3_;
+	CTransparentStatic2 ctl_line4_;
+	CTransparentStatic2 ctl_line5_;
 	CTransparentListBox ctl_licence_;
 	CTransparentListBox ctl_ack_;
 	CString	text1_;
@@ -55,7 +55,7 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnActivate();
 	//}}AFX_MSG
-    afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnEmail();
 	afx_msg void OnAckMore();
 	afx_msg void OnDblclkAck();
@@ -96,7 +96,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-    void add_spaces();
+	void add_spaces();
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -141,10 +141,10 @@ protected:
 	afx_msg void OnClose();
 	virtual void OnCancel();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
-    CCodeEdit edit_;
+	CCodeEdit edit_;
 };
 
 /////////////////////////////////////////////////////////////////////////////

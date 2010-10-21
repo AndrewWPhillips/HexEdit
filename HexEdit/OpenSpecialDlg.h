@@ -1,6 +1,6 @@
 // OpenSpecialDlg.h : header file for Open Special Dialog
 //
-// Copyright (c) 2005 by Andrew W. Phillips.
+// Copyright (c) 2005-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -36,7 +36,7 @@ class COpenSpecialDlg : public CDialog
 public:
 	COpenSpecialDlg(CWnd* pParent = NULL);   // standard constructor
 
-    CString SelectedDevice()
+	CString SelectedDevice()
 	{
 		int idx;
 
@@ -47,7 +47,7 @@ public:
 		else
 			return theApp.GetSpecialList()->filename(idx);
 	}
-    BOOL ReadOnly() { return m_readonly; }
+	BOOL ReadOnly() { return m_readonly; }
 
 // Dialog Data
 	//{{AFX_DATA(COpenSpecialDlg)
@@ -72,11 +72,11 @@ protected:
 	afx_msg void OnDblclkOpenTree(NMHDR* pNMHDR, LRESULT* pResult);
 	//}}AFX_MSG
 	afx_msg void OnSelchangingOpenTree(NMHDR* pNMHDR, LRESULT* pResult);
-    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	afx_msg BOOL OnDeviceChange(UINT, DWORD);
-    afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg LRESULT OnWmUser1(WPARAM, LPARAM);
 	afx_msg LRESULT OnWmUser2(WPARAM, LPARAM);
 	afx_msg void OnBnClickedAlgorithmHelp();
@@ -89,11 +89,11 @@ public:
 
 private:
 	void Rebuild();
-    void Update();
+	void Update();
 
 	bool m_do_rebuild;                  // Flags when to completely rebuild the list (devices added/removed)
 
-    short m_selected;                   // id of device selected when OK clicked
+	short m_selected;                   // id of device selected when OK clicked
 	CTreeCtrl m_ctl_tree;               // tree control containing device names
 	HTREEITEM m_hVol, m_hPhys;          // root level nodes
 
@@ -103,26 +103,26 @@ private:
 	CButton m_ctl_ok;					// OK button
 	BOOL m_readonly;                    // is the device to be opened read only?
 
-    CImageList m_imagelist;             // Needed for tree icons
-    enum
-    {
-        IMG_PHYS_DRIVE,
-        IMG_PHYS_FLOPPY,
-        IMG_PHYS_DRIVES,
-        IMG_PHYS_REMOVE,
-        IMG_PHYS_CD,
-        IMG_MEDIA,
-        IMG_MEDIUM,
-        IMG_SCSI,
-        IMG_DRIVE,
-        IMG_FLOPPY,
-        IMG_OPT_DRIVE,
-        IMG_DRIVES,
-        IMG_REMOVE,
-        IMG_SHARE,
-        IMG_NET,
-        IMG_NET_BAD,
-    };
+	CImageList m_imagelist;             // Needed for tree icons
+	enum
+	{
+		IMG_PHYS_DRIVE,
+		IMG_PHYS_FLOPPY,
+		IMG_PHYS_DRIVES,
+		IMG_PHYS_REMOVE,
+		IMG_PHYS_CD,
+		IMG_MEDIA,
+		IMG_MEDIUM,
+		IMG_SCSI,
+		IMG_DRIVE,
+		IMG_FLOPPY,
+		IMG_OPT_DRIVE,
+		IMG_DRIVES,
+		IMG_REMOVE,
+		IMG_SHARE,
+		IMG_NET,
+		IMG_NET_BAD,
+	};
 protected:
 	virtual void OnOK();
 public:

@@ -1,7 +1,7 @@
 // Parses C/C++ source code to extract variable declarations
 // TParser.h : wrapper for MS XML (DOM) objects
 //
-// Copyright (c) 2005 by Andrew W. Phillips.
+// Copyright (c) 2005-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -31,9 +31,9 @@ class TParser;
 class TExpr : public expr_eval
 {
 public:
-    TExpr(TParser * ptp) : expr_eval(10, false), ptp_(ptp) {}
-    virtual value_t find_symbol(const char *sym, value_t parent, size_t index, int *pac,
-        __int64 &sym_size, __int64 &sym_address, CString &sym_str);
+	TExpr(TParser * ptp) : expr_eval(10, false), ptp_(ptp) {}
+	virtual value_t find_symbol(const char *sym, value_t parent, size_t index, int *pac,
+		__int64 &sym_size, __int64 &sym_address, CString &sym_str);
 
 private:
 	TParser * ptp_;
@@ -47,7 +47,7 @@ public:
 
 	CXmlTree::CFrag Parse(CXmlTree *ptree, LPCTSTR str);
 
-    // These are options set from the dialog
+	// These are options set from the dialog
 	int packing_default_;       // default packing (1,2,4,8 or 16)
 
 	bool check_std_, check_win_, check_common_, check_custom_; // Type lists to check
@@ -68,19 +68,19 @@ private:
 	CString get_pp_line();      // Get a line of preprocessed text (handles simple #defines and their substitutions)
 	CString get_next();         // get next "token"
 	CString peek_next();        // return next token without moving
-    CString skip_modifiers(CString ss, bool &, bool &, bool &, bool &, bool);
+	CString skip_modifiers(CString ss, bool &, bool &, bool &, bool &, bool);
 
 	CString search_path(LPCTSTR inc, LPCTSTR name);
 
 	static char * ctokens[];
-    char dec_point_;            // Character used for decimal point (usually full-stop)
+	char dec_point_;            // Character used for decimal point (usually full-stop)
 
 	//const char * next_;         // Start of next line (NULL if none)
 	std::vector<CString> text_;      // text_[0] is text passed in, above that is complete text from nested #include files
 	std::vector<const char *> next_; // Ptrs into corresponding text_ of start of current parse line
 	std::vector<int> pp_nesting_;    // Tracks conditional compilation (#if/#ifdef ... #endif) nesting in each file
-    std::vector<CString> filename_;  // Name of #included file (empty string for passed in text at index of zero)
-    std::vector<int> line_no_;       // Current line number in include file
+	std::vector<CString> filename_;  // Name of #included file (empty string for passed in text at index of zero)
+	std::vector<int> line_no_;       // Current line number in include file
 
 	CString str_;               // Current input line after preprocessing
 	const char * pp_;           // Ptr into (already preprocessed) line being parsed

@@ -1,7 +1,7 @@
 // HexFileList.h : header file for CHexFileList overrride of MFC CRecentFileList class
 //
 
-// Copyright (c) 1999 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -29,68 +29,68 @@
 
 class CHexFileList : public CRecentFileList
 {
-    friend class CRecentFileDlg;
+	friend class CRecentFileDlg;
 
 // Construction
 public:
-    CHexFileList(UINT nStart, LPCTSTR lpszSection,
-                 int nSize, int nMaxDispLen = AFX_ABBREV_FILENAME_LEN);
+	CHexFileList(UINT nStart, LPCTSTR lpszSection,
+				 int nSize, int nMaxDispLen = AFX_ABBREV_FILENAME_LEN);
 
-    enum param_num { CMD, TOP, LEFT, BOTTOM, RIGHT, 
-                     SELSTART, SELEND, POS, MARK, SCHEME, HIGHLIGHTS,
-                     DISPLAY, DOC_FLAGS, COLUMNS, GROUPING, OFFSET,
-                     FONT, HEIGHT, OEMFONT, OEMHEIGHT, FORMAT,
+	enum param_num { CMD, TOP, LEFT, BOTTOM, RIGHT, 
+					 SELSTART, SELEND, POS, MARK, SCHEME, HIGHLIGHTS,
+					 DISPLAY, DOC_FLAGS, COLUMNS, GROUPING, OFFSET,
+					 FONT, HEIGHT, OEMFONT, OEMHEIGHT, FORMAT,
 					 EDIT_TIME, VIEW_TIME, VERT_BUFFER_ZONE,
 					 CATEGORY, KEYWORDS, COMMENTS,
 					 DFFDVIEW, DFFDWIDTHS,
-                     AERIALVIEW, AERIALDISPLAY, AERIALPOS,
+					 AERIALVIEW, AERIALDISPLAY, AERIALPOS,
 					 COMPVIEW, COMPFILENAME,
 	};
 
 // Attributes
 public:
-    int GetIndex(LPCTSTR lpszPathName) const;
+	int GetIndex(LPCTSTR lpszPathName) const;
 
 // Operations
 public:
-    virtual void ClearAll();
-    virtual void Remove(int nIndex);
-    virtual void Add(LPCTSTR lpszPathName);
-    virtual void ReadList();    // reads recent file list from user's file (or registry)
-    virtual void WriteList();   // writes recent file list to user-specific file
+	virtual void ClearAll();
+	virtual void Remove(int nIndex);
+	virtual void Add(LPCTSTR lpszPathName);
+	virtual void ReadList();    // reads recent file list from user's file (or registry)
+	virtual void WriteList();   // writes recent file list to user-specific file
 	virtual BOOL GetDisplayName(CString& strName, int nIndex,
 		LPCTSTR lpszCurDir, int nCurDir, BOOL bAtLeastName = TRUE) const;
 	virtual int GetVersion() { return ver_; }
 
 	time_t GetOpened(int nIndex) { ASSERT(nIndex > -1 && nIndex < int(opened_.size())); return opened_[nIndex]; }
 	void SetDefaults();
-    bool SetDV(param_num param, LPCTSTR value);
-    bool SetDV(param_num param, __int64 vv);
-    CString GetDV(param_num param) const;
-    bool SetData(int index, param_num param, LPCTSTR value);
-    bool SetData(int index, param_num param, __int64 vv);
-    CString GetData(int index, param_num param) const;
-    void ChangeSize(int nSize);
+	bool SetDV(param_num param, LPCTSTR value);
+	bool SetDV(param_num param, __int64 vv);
+	CString GetDV(param_num param) const;
+	bool SetData(int index, param_num param, LPCTSTR value);
+	bool SetData(int index, param_num param, __int64 vv);
+	CString GetData(int index, param_num param) const;
+	void ChangeSize(int nSize);
 
 	size_t GetCount() { return name_.size(); }
 
 // Implementation
 public:
-    virtual ~CHexFileList() {}
+	virtual ~CHexFileList() {}
 
 protected:
-    bool ReadFile();
-    bool WriteFile();
+	bool ReadFile();
+	bool WriteFile();
 #ifdef _DEBUG
-    bool Check();
+	bool Check();
 #endif
 
-    std::vector<CString> name_;         // Name of file
+	std::vector<CString> name_;         // Name of file
 	std::vector<unsigned short> crc_;   // CRC of file name for fast searches
-    std::vector<time_t> opened_;        // When the file was last opened
-    std::vector<CString> data_;         // Extra data associated with the file
-    CString default_data_;              // Default values for data
-    CString filename_;                  // Name of file where recent file list is written
+	std::vector<time_t> opened_;        // When the file was last opened
+	std::vector<CString> data_;         // Extra data associated with the file
+	CString default_data_;              // Default values for data
+	CString filename_;                  // Name of file where recent file list is written
 
 	int ver_;
 };

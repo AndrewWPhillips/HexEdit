@@ -28,7 +28,7 @@ public:
 	protected:
 	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
 	//}}AFX_VIRTUAL
-    virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
+	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 
 // Implementation
 protected:
@@ -48,7 +48,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-    bool init_;       // Has OnCreate been called yet?
+	bool init_;       // Has OnCreate been called yet?
 };
 
 /////////////////////////////////////////////////////////////////////////////

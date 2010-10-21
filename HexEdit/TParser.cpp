@@ -1,6 +1,6 @@
 // TParser.cpp - parse C/C++/C# code for data declarations
 //
-// Copyright (c) 2005 by Andrew W. Phillips.
+// Copyright (c) 2005-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -31,7 +31,7 @@
 // This function is the sole reason we derived a new class from TExpr - it allows
 // the user to use symbols (with constant values) in a constant expression.
 expr_eval::value_t TExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,
-    __int64 &sym_size, __int64 &sym_address, CString &sym_str)
+	__int64 &sym_size, __int64 &sym_address, CString &sym_str)
 {
 	// We can ignore index, pac, sym_address and just check that parent is TYPE_NONE
 	// We only return a valid sym_size if "sym" is in the type list which is
@@ -44,7 +44,7 @@ expr_eval::value_t TExpr::find_symbol(const char *sym, value_t parent, size_t in
 
 	sym_address = 0;                    // Put something here
 
-    // Do macro (#define) substitutions first
+	// Do macro (#define) substitutions first
 	CString subst = sym;
 	bool replaced = false;
 	while (ptp_->pp_def_.find(subst) != ptp_->pp_def_.end())
@@ -54,18 +54,18 @@ expr_eval::value_t TExpr::find_symbol(const char *sym, value_t parent, size_t in
 		if (subst == sym)        // Subst back to original (avoid inf loop)
 			break;
 	}
-    sym = subst;
+	sym = subst;
 
 	std::map<CString, __int64>::const_iterator pval;
 
-    if (replaced)
-    {
-        // We end up with a number after #define substitutions
+	if (replaced)
+	{
+		// We end up with a number after #define substitutions
 		sym_size = 8;
 		retval.typ = TYPE_INT;
-        retval.int64 = _atoi64(sym);
-    }
-    else if ((pval = ptp_->custom_consts_.find(sym)) != ptp_->custom_consts_.end())
+		retval.int64 = _atoi64(sym);
+	}
+	else if ((pval = ptp_->custom_consts_.find(sym)) != ptp_->custom_consts_.end())
 	{
 		// Found the value in list of constants
 		sym_size = 8;
@@ -130,16 +130,16 @@ CXmlTree::CFrag TParser::Parse(CXmlTree *ptree, LPCTSTR str)
 	ptree_ = ptree;
 	pexpr_ = new TExpr(this);
 
-    text_.clear();
-    next_.clear();
-    pp_nesting_.clear();
-    filename_.clear();
-    line_no_.clear();
+	text_.clear();
+	next_.clear();
+	pp_nesting_.clear();
+	filename_.clear();
+	line_no_.clear();
 	text_.push_back(CString(str));
 	next_.push_back(text_.back().GetBuffer(0));
 	pp_nesting_.push_back(0);
-    filename_.push_back(CString());
-    line_no_.push_back(0);
+	filename_.push_back(CString());
+	line_no_.push_back(0);
 
 	pp_ = "";
 
@@ -200,9 +200,9 @@ CXmlTree::CFrag TParser::Parse(CXmlTree *ptree, LPCTSTR str)
 
 	// We always load custom types if present - but file will not be present is user has never saved it (save_custom_)
 	CString cust_types_filename = "_custom_types.xml";
-    if (check_custom_)
-	    LoadTypeFile(cust_types_filename, custom_types_, false);
-    else
+	if (check_custom_)
+		LoadTypeFile(cust_types_filename, custom_types_, false);
+	else
 		custom_types_.LoadString("<binary_file_format></binary_file_format>");
 
 	CXmlTree::CFrag retval;
@@ -212,12 +212,12 @@ CXmlTree::CFrag TParser::Parse(CXmlTree *ptree, LPCTSTR str)
 		retval = parse_all("", dummy);
 	}
 	catch (CString ss)
-    {
-        CString tmp;
-        if (filename_.size() > 1)
-            tmp.Format("\r\n\r\nat line %ld of \"%s\".", long(line_no_.back()), filename_.back());
-        AfxMessageBox(ss + tmp);
-    }
+	{
+		CString tmp;
+		if (filename_.size() > 1)
+			tmp.Format("\r\n\r\nat line %ld of \"%s\".", long(line_no_.back()), filename_.back());
+		AfxMessageBox(ss + tmp);
+	}
 
 	//CString debug_string = custom_types_.DumpXML();
 	delete pexpr_;	pexpr_ = NULL;
@@ -225,14 +225,14 @@ CXmlTree::CFrag TParser::Parse(CXmlTree *ptree, LPCTSTR str)
 	if (save_values_custom_ && !SaveValuesFile(cust_values_filename, custom_consts_))
 	{
 		CString ss;
-        ss.Format("Could not save new values to\n\"%s\"", cust_values_filename);
+		ss.Format("Could not save new values to\n\"%s\"", cust_values_filename);
 		AfxMessageBox(ss);
 	}
 
 	if (save_custom_ && !custom_types_.Save(theApp.xml_dir_ + cust_types_filename))
 	{
 		CString ss;
-        ss.Format("Could not save new types to\n\"%s\"", cust_types_filename);
+		ss.Format("Could not save new types to\n\"%s\"", cust_types_filename);
 		AfxMessageBox(ss);
 	}
 
@@ -258,11 +258,11 @@ bool TParser::LoadTypeFile(LPCTSTR filename, CXmlTree &types, bool should_exist)
 	else if (!types.LoadFile(pathname))
 	{
 		CString ss;
-        ss.Format("Error reading types file\n\"%s\"\n\n"
+		ss.Format("Error reading types file\n\"%s\"\n\n"
 				  "XML parse error at line %ld:%s\n%s", 
-                  pathname, long(ptree_->ErrorLine()),
-                  ptree_->ErrorLineText(), ptree_->ErrorMessage());
-        AfxMessageBox(ss);
+				  pathname, long(ptree_->ErrorLine()),
+				  ptree_->ErrorLineText(), ptree_->ErrorMessage());
+		AfxMessageBox(ss);
 		retval = false;
 	}
 
@@ -367,8 +367,8 @@ CString TParser::get_line()
 
 	while (*pb != '\0')
 	{
-        if (*pb == '\n')
-            line_no_.back()++;
+		if (*pb == '\n')
+			line_no_.back()++;
 
 		if (in_comment)
 		{
@@ -434,8 +434,8 @@ CString TParser::get_line()
 				++pb;
 			last_comment_ = CString(start, int(pb-start));
 			start = pb;
-            if (*pb == '\n')
-                line_no_.back()++;
+			if (*pb == '\n')
+				line_no_.back()++;
 			break;
 		}
 		else if (*pb == '"')
@@ -451,11 +451,11 @@ CString TParser::get_line()
 
 	retval += CString(start, int(pb-start));
 	while (*pb == '\r' || *pb == '\n')
-    {
-        if (*pb == '\n')
-            line_no_.back()++;
+	{
+		if (*pb == '\n')
+			line_no_.back()++;
 		++pb;
-    }
+	}
 	next_.back() = pb;
 	return retval;
 }
@@ -481,7 +481,7 @@ CString TParser::get_pp_line()
 					AfxMessageBox("Warning: Missing #endif");
 			}
 			if (next_.size() == 1)
-			    return "";              // That's it - end of string in input string (original text being parsed)
+				return "";              // That's it - end of string in input string (original text being parsed)
 			text_.pop_back();
 			next_.pop_back();
 			pp_nesting_.pop_back();
@@ -500,15 +500,15 @@ CString TParser::get_pp_line()
 		{
 			CString tmp = str.Mid(1);
 			tmp.TrimLeft();
-            if (strncmp(tmp, "define", 6) == 0 ||
-                strncmp(tmp, "undef",  5) == 0 ||
+			if (strncmp(tmp, "define", 6) == 0 ||
+				strncmp(tmp, "undef",  5) == 0 ||
 //                strncmp(tmp, "if",     2) == 0 ||  // we did this so #if defined(MACRO) worked but it causes other problems
 //                strncmp(tmp, "elif",   4) == 0 ||
-                strncmp(tmp, "ifdef",  5) == 0 ||
-                strncmp(tmp, "ifndef", 6) == 0 )
-            {
+				strncmp(tmp, "ifdef",  5) == 0 ||
+				strncmp(tmp, "ifndef", 6) == 0 )
+			{
 				no_subst = true;
-            }
+			}
 		}
 		else if (skipping)
 			continue;                           // This line is conditionally excluded
@@ -576,7 +576,7 @@ CString TParser::get_pp_line()
 					else if (subst == "__LINE__")
 					{
 						replaced = true;
-						subst.Format("%d", line_no_.back()); 
+						subst.Format("%d", line_no_.back());
 					}
 					else
 						while (pp_def_.find(subst) != pp_def_.end())
@@ -640,7 +640,7 @@ CString TParser::get_pp_line()
 								in_chr = true;
 							}
 							else if (nesting == 0 &&
-								     (*pb2 == ')' || *pb2 == ',' && (!is_variadic || pvalue.size() < num_params - 1)) )
+									 (*pb2 == ')' || *pb2 == ',' && (!is_variadic || pvalue.size() < num_params - 1)) )
 							{
 								// This places parameters onto the end of pvalue unless there are variadic parameters
 								// in which they are all stored together in the string for the "last" parameter
@@ -818,7 +818,7 @@ CString TParser::get_pp_line()
 			while (::isspace(*pb))
 				++pb;
 			char stop_ch;
-            if (*pb == '<')
+			if (*pb == '<')
 				stop_ch = '>';
 			else if (*pb == '"')
 				stop_ch = '"';
@@ -832,9 +832,9 @@ CString TParser::get_pp_line()
 
 			// If include is of the form #include <name> then only search in "standard" include directories
 			// If include is of the form #include "name" then search current directory first, then include directories
-	        WIN32_FIND_DATA wfd;
-	        if (stop_ch == '>' || ::FindFirstFile(inc_name, &wfd) == INVALID_HANDLE_VALUE)
-	        {
+			WIN32_FIND_DATA wfd;
+			if (stop_ch == '>' || ::FindFirstFile(inc_name, &wfd) == INVALID_HANDLE_VALUE)
+			{
 				// Search in our list of include directories
 				CString ss = search_path(theApp.GetProfileString("DataFormat", "IncludeFolders"), inc_name);
 				// If not found also check %INCLUDE% environment variable
@@ -845,7 +845,7 @@ CString TParser::get_pp_line()
 					inc_name = ss;
 				else
 					throw "Could not find include file \"" + inc_name + "\".";
-            }
+			}
 
 			try
 			{
@@ -861,14 +861,14 @@ CString TParser::get_pp_line()
 				text_.push_back(CString(pp));
 				next_.push_back(text_.back().GetBuffer(0));
 				pp_nesting_.push_back(0);
-                filename_.push_back(inc_name);
-                line_no_.push_back(0);
+				filename_.push_back(inc_name);
+				line_no_.push_back(0);
 				delete[] pp;
 			}
 			catch (CFileException *pfe)
 			{
 				CString err = ::FileErrorMessage(pfe, CFile::modeRead);
-		        pfe->Delete();
+				pfe->Delete();
 				throw err;
 			}
 			catch (std::bad_alloc)
@@ -907,7 +907,7 @@ CString TParser::get_pp_line()
 				//	++pb;
 				std::vector<CString> param;
 				bool is_variadic = false;
-                if (*pb == '(')
+				if (*pb == '(')
 				{
 					do
 					{
@@ -924,7 +924,7 @@ CString TParser::get_pp_line()
 							// space and break from loop (whence closing bracket expected).
 							while (::isspace(*pb))
 								++pb;
-							break;  
+							break;
 						}
 						// Get parameter name
 						for (pb2 = pb; ::isalnum(*pb2) || *pb2 == '_'; ++pb2)
@@ -979,7 +979,7 @@ CString TParser::get_pp_line()
 				txt.Replace("## $", "##$");
 
 				txt.TrimLeft();                     // C std says leading/trailing space is removed
-                txt.TrimRight();
+				txt.TrimRight();
 
 				// Save the macro
 				pp_def_[macro_name] = txt;
@@ -1000,7 +1000,7 @@ CString TParser::get_pp_line()
 				ASSERT(pb2 > pb);           // There must be at least one letter
 
 				CString macro_name = CString(pb, int(pb2-pb));
-                pp_def_.erase(macro_name);
+				pp_def_.erase(macro_name);
 			}
 			else
 				throw CString("Expected macro name after #undef");
@@ -1024,7 +1024,7 @@ CString TParser::get_pp_line()
 					while (::isspace(*pb))
 						++pb;
 					if (*pb != '(')
-                        throw CString("Expected #pragma pack parameters");
+						throw CString("Expected #pragma pack parameters");
 
 					++pb;
 					while (::isspace(*pb))
@@ -1054,7 +1054,7 @@ CString TParser::get_pp_line()
 						if (*pb == ')')
 							continue;
 						else if (*pb != ',')
-				            throw CString("Error in #pragma pack parameters");
+							throw CString("Error in #pragma pack parameters");
 						++pb;
 						while (::isspace(*pb))
 							++pb;
@@ -1069,8 +1069,7 @@ CString TParser::get_pp_line()
 						pack_.back() = val;
 					}
 					else
-				        throw CString("Invalid pack value in #pragma pack");
-					
+						throw CString("Invalid pack value in #pragma pack");
 				}
 				// else - ignore unhandled pragmas
 			}
@@ -1096,20 +1095,20 @@ CString TParser::get_pp_line()
 // name = the name of the include file to look for
 CString TParser::search_path(LPCTSTR inc, LPCTSTR name)
 {
-    CString str_include(inc);
-    std::vector<CString> tmp;                   // array of the dir names
-    std::vector<LPCTSTR> dirs;                  // array of pointers into tmp
-    tmp.push_back(CString());
-    for (int ii = 0; AfxExtractSubString(tmp.back(), str_include, ii, ';'); ++ii)
-    {
-        dirs.push_back((LPCTSTR)tmp.back());
-        tmp.push_back(CString());
-    }
-    dirs.push_back((LPCTSTR)0);                 // terminate 
+	CString str_include(inc);
+	std::vector<CString> tmp;                   // array of the dir names
+	std::vector<LPCTSTR> dirs;                  // array of pointers into tmp
+	tmp.push_back(CString());
+	for (int ii = 0; AfxExtractSubString(tmp.back(), str_include, ii, ';'); ++ii)
+	{
+		dirs.push_back((LPCTSTR)tmp.back());
+		tmp.push_back(CString());
+	}
+	dirs.push_back((LPCTSTR)0);                 // terminate 
 
-    char inc_path[_MAX_PATH];
-    strcpy(inc_path, name);
-    if (::PathFindOnPath(inc_path, &dirs[0]))
+	char inc_path[_MAX_PATH];
+	strcpy(inc_path, name);
+	if (::PathFindOnPath(inc_path, &dirs[0]))
 		return CString(inc_path);
 	else
 		return CString();
@@ -1301,7 +1300,7 @@ CString TParser::get_next()
 			last_int_ = ::_strtoi64(pp_, &end, 0 /*is_hex ? 16 : (*pp_ == '0') ? 8 : 10*/);
 			ASSERT(end == pb);
 #else
-            last_int_ = _atoi64(pp_);    // does not handle "0x"
+			last_int_ = _atoi64(pp_);    // does not handle "0x"
 #endif
 
 			// Skip suffix
@@ -1390,7 +1389,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 
 				CXmlTree::CElt base = find_elt(ss, root, node_num);
 				if (base.IsEmpty())
-				    throw CString("Unknown base class type - ") + ss;
+					throw CString("Unknown base class type - ") + ss;
 				base = CXmlTree::CElt(base.m_pelt, ptree_);    // Same node but with diff assoc. parent
 
 				// We need to handle padding for multiple inheritance
@@ -1409,7 +1408,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 					CString tmp;
 					// Add padding
 					CXmlTree::CElt pad_ee("data", ptree_);
-                    // Leave name attribute empty so field is not visible in view mode
+					// Leave name attribute empty so field is not visible in view mode
 					//tmp.Format("Fill$%d", int(pad_count_++));
 					//pad_ee.SetAttr("name", tmp);
 					pad_ee.SetAttr("type", "none");
@@ -1448,8 +1447,8 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 		long curr_size = -1;            // The number of bytes for current base type
 		long curr_pack = -1;            // Padding requirements for current base type
 
-        // Check and skip modifiers
-        ss = skip_modifiers(ss, is_typedef, is_ignored, is_virtual, is_const, is_class);
+		// Check and skip modifiers
+		ss = skip_modifiers(ss, is_typedef, is_ignored, is_virtual, is_const, is_class);
 
 		if (ss == "struct" || ss == "class" || ss == "enum" || ss == "union")
 		{
@@ -1496,7 +1495,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 							expr_eval::value_t val = pexpr_->evaluate(expr, 0, ac);
 
 							if (val.typ != expr_eval::TYPE_INT)
-				                throw CString("Invalid enum constant - ") + expr;
+								throw CString("Invalid enum constant - ") + expr;
 							value = (long)val.int64;
 
 							CString value_str;
@@ -1518,7 +1517,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 					// Add enum to custom types
 					CXmlTree::CElt new_ee = find_elt(enum_type_name, root, node_num); // Get default enum (mainly for "len" attrib)
 					if (new_ee.IsEmpty())
-				        throw CString("Enum type missing from standard type list - \"_standard_types.xml\"");
+						throw CString("Enum type missing from standard type list - \"_standard_types.xml\"");
 
 					// Move node from std types to custom types and insert clone of it
 					new_ee = custom_types_.GetRoot().InsertClone(CXmlTree::CElt(new_ee.m_pelt, &custom_types_));
@@ -1594,14 +1593,14 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 			}
 		}
 
-        ss = skip_modifiers(ss, is_typedef, is_ignored, is_virtual, is_const, is_class);
+		ss = skip_modifiers(ss, is_typedef, is_ignored, is_virtual, is_const, is_class);
 
 		bool is_func = false;       // Is it a function?
-        if (ss == outer_name && peek_next() == "(" || ss == "~" && (ss=get_next()) == outer_name)
-            is_func = true;         // c'tor or d'tor
+		if (ss == outer_name && peek_next() == "(" || ss == "~" && (ss=get_next()) == outer_name)
+			is_func = true;         // c'tor or d'tor
 
 		// At this point ss contains the base type name (eg "int", std::vector<int>, class/struct/union/enum name etc)
-        CString type_name = ss;
+		CString type_name = ss;
 
 		CXmlTree::CElt base = find_elt(ss, root, node_num);
 		if (base.IsEmpty())
@@ -1631,8 +1630,8 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 			int nest_level = 0;         // Current level of brackets ()
 			int ptr_level = -1;         // Level at which * found or -1 if not found
 			CString var_name;           // Actual variable name
-            if (is_func)
-                var_name = type_name;   // c'tor or d'tor so force parse of params
+			if (is_func)
+				var_name = type_name;   // c'tor or d'tor so force parse of params
 
 			// Get each declarator (incl var name) for this type (eg f(int), a[4], (*f())() etc)
 			// Stop at the end of the declarator:
@@ -1649,7 +1648,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 					// Type to be stored is a ptr (but may be array of ptrs, or func ptr - handled later)
 					actual = find_elt(ptr_type_name, root, node_num);
 					if (actual.IsEmpty())
-				        throw CString("Pointer type missing from standard type list - \"_standard_types.xml\"");
+						throw CString("Pointer type missing from standard type list - \"_standard_types.xml\"");
 					actual = CXmlTree::CElt(actual.m_pelt, ptree_);    // Same node but with diff assoc. parent
 					long pointer_len = atol(actual.GetAttr("len"));
 					if (pointer_len != 2 && pointer_len != 4 && pointer_len != 8)
@@ -1668,16 +1667,16 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 				{
 					// Here it is - the actual variable name
 					var_name = ss;
-                    while (peek_next() == "::" || peek_next() == ".")
-                    {
-                        var_name += get_next();
-                        var_name += get_next();
-                    }
-                    if (var_name == "operator")
-                        var_name += get_next();
+					while (peek_next() == "::" || peek_next() == ".")
+					{
+						var_name += get_next();
+						var_name += get_next();
+					}
+					if (var_name == "operator")
+						var_name += get_next();
 				}
 				else if (!var_name.IsEmpty() && (ss == "(" || ss == "<"))
-                {
+				{
 					// Function or function ptr (or array of func ptrs)
 					if (ptr_level <= nest_level)
 					{
@@ -1752,7 +1751,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 							val_str.Format("%ld", long(val.int64));
 						}
 
-						// xxx this gives reversed index order (left to right not right to left)
+						// TBD: check if this gives same index order as C (right to left)
 						CXmlTree::CElt new_ee("for", ptree_);
 						new_ee.SetAttr("count", val_str);
 						CXmlTree::CElt child = new_ee.InsertClone(actual);
@@ -1859,17 +1858,17 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 						ss = get_next();
 					}
 				}
-                break;   // There is only one decl if its a function
+				break;   // There is only one decl if its a function
 			}
 			else if (is_unknown)
 			{
-                if (!is_ignored)
+				if (!is_ignored)
 					throw "Unknown type \"" + type_name + "\"";
 			}
 			else if (!var_name.IsEmpty())
 			{
-			    ASSERT(decl_curr_size > 0);
-			    ASSERT(decl_curr_pack == 1 || decl_curr_pack == 2 || decl_curr_pack == 4 || decl_curr_pack == 8);
+				ASSERT(decl_curr_size > 0);
+				ASSERT(decl_curr_pack == 1 || decl_curr_pack == 2 || decl_curr_pack == 4 || decl_curr_pack == 8);
 
 				if (is_typedef)
 				{
@@ -1878,8 +1877,8 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 					ee = custom_types_.GetRoot().InsertClone(ee);
 					CString type_str = ee.GetName();
 					CString name_str = ee.GetAttr("name");
-                    ee.SetAttr("name", var_name);
-                    ee.SetAttr("type_name", var_name);
+					ee.SetAttr("name", var_name);
+					ee.SetAttr("type_name", var_name);
 					if (type_str == "data" && name_str != ptr_type_name && name_str != func_ptr_type_name && name_str != enum_type_name)
 						ee.SetAttr("comment", "typedef " + type_name);
 				}
@@ -1906,7 +1905,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 							CString tmp;
 							// Add padding
 							CXmlTree::CElt pad_ee("data", ptree_);
-                            // Leave name attribute empty so field is not visible in view mode
+							// Leave name attribute empty so field is not visible in view mode
 							//tmp.Format("Fill$%d", int(pad_count_++));
 							//pad_ee.SetAttr("name", tmp);
 							pad_ee.SetAttr("type", "none");
@@ -1978,20 +1977,20 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 					}
 					else
 						AfxMessageBox("Definition of constant \"" + var_name + "\" was ignored.\r\n"
-						              "(Only integer constants are allowed.)");
+									  "(Only integer constants are allowed.)");
 				}
 			}
 			if (ss == ',')
 				ss = get_next();
 		}
 
-        // If unnamed type remove it again from custom_types_
-        if (type_name == anon_type_name)
-        {
-		    CXmlTree::CElt ee = find_elt(anon_type_name, root, node_num);
+		// If unnamed type remove it again from custom_types_
+		if (type_name == anon_type_name)
+		{
+			CXmlTree::CElt ee = find_elt(anon_type_name, root, node_num);
 			if (!ee.IsEmpty())
 				root.DeleteChild(ee);
-        }
+		}
 
 		if (ss == ";")
 			ss = get_next();
@@ -2017,7 +2016,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 		{
 			CString ss;
 			ss.Format("Sorry, size of pointer for vtable (%ld) must not be less than current packing (%ld)",
-				      long(pointer_len), long(pack_.back()));
+					  long(pointer_len), long(pack_.back()));
 			throw ss;
 		}
 
@@ -2040,7 +2039,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 		// Add padding equal to size of largest element
 		CString tmp;
 		CXmlTree::CElt pad_ee("data", ptree_);
-        // Leave name attribute empty so field is not visible in view mode
+		// Leave name attribute empty so field is not visible in view mode
 		//tmp.Format("Fill$%d", int(pad_count_++));
 		//pad_ee.SetAttr("name", tmp);
 		pad_ee.SetAttr("type", "none");
@@ -2055,7 +2054,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 		CString tmp;
 		// Add padding
 		CXmlTree::CElt pad_ee("data", ptree_);
-        // Leave name attribute empty so field is not visible in view mode
+		// Leave name attribute empty so field is not visible in view mode
 		//tmp.Format("Fill$%d", int(pad_count_++));
 		//pad_ee.SetAttr("name", tmp);
 		pad_ee.SetAttr("type", "none");
@@ -2072,8 +2071,8 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 
 // Skip any modifiers, noting anything special
 CString TParser::skip_modifiers(CString ss, 
-                                bool &is_typedef, bool &is_ignored, bool &is_virtual, bool &is_const,
-                                bool is_class)
+								bool &is_typedef, bool &is_ignored, bool &is_virtual, bool &is_const,
+								bool is_class)
 {
 	while (ss == "typedef" || ss == "static" || ss == "extern" || ss == "register" || ss == "auto" || 
 			ss == "__cdecl" || ss == "__stdcall" || ss == "__fastcall" ||
@@ -2132,7 +2131,7 @@ CString TParser::skip_modifiers(CString ss,
 			ss = get_next();
 		}
 	}
-    return ss;
+	return ss;
 }
 
 // Find a type by searching all the (enabled) type files.
@@ -2152,7 +2151,7 @@ CXmlTree::CElt TParser::find_elt(LPCTSTR name, CXmlTree::CElt &root, int &node_n
 		}
 	}
 
-    // Always chekc custom since that is where newly parsed types are placed
+	// Always chekc custom since that is where newly parsed types are placed
 	root = custom_types_.GetRoot();
 	for (node_num = 0, ee = root.GetFirstChild(); !ee.IsEmpty(); ++node_num, ++ee)
 	{
@@ -2213,7 +2212,7 @@ long TParser::get_pack(LPCTSTR name)
 	ee = find_elt(name, parent, child_num);
 	if (!ee.IsEmpty())
 	{
-        CString elt_type = ee.GetName();
+		CString elt_type = ee.GetName();
 		// Find the contained element of any IF or FOR elements
 		while (elt_type == "if" || elt_type == "for")
 		{
@@ -2223,7 +2222,7 @@ long TParser::get_pack(LPCTSTR name)
 			elt_type = ee.GetName();
 		}
 
-        if (elt_type == "data")
+		if (elt_type == "data")
 		{
 			CString data_type = ee.GetAttr("type");
 			if (data_type == "none" || data_type == "string")
@@ -2238,8 +2237,8 @@ long TParser::get_pack(LPCTSTR name)
 			long pack = atol(ee.GetAttr("pack"));
 			if (pack > 0)
 				return pack;
-            else
-                return 1;           // use no padding by default for structs
+			else
+				return 1;           // use no padding by default for structs
 		}
 	}
 	return -1;                      // not found

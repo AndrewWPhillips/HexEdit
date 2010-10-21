@@ -23,7 +23,7 @@ public:
 	CString	scheme_name_;
 	int		copy_from_;
 	//}}AFX_DATA
-    std::vector<CScheme> *psvec_;
+	std::vector<CScheme> *psvec_;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -41,7 +41,7 @@ protected:
 	virtual void OnOK();
 	afx_msg void OnHelp();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

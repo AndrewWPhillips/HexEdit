@@ -1,7 +1,7 @@
 // Prop.h : header file for Properties tabbed dialog box
 //
 
-// Copyright (c) 1999 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -36,7 +36,7 @@ class CUnicodeControl : public CEdit
 {
 protected:
 	afx_msg void OnPaint();
-    afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	DECLARE_MESSAGE_MAP()
 };
 #endif
@@ -109,10 +109,10 @@ public:
 	CPropDecEditControl();
 
 public:
-    void add_commas();
-    char sep_char_;		// Char to use as "thousands" separator
-    int group_;			// Number of digits in "thousands" group
-    bool allow_neg_;    // Leading minus sign allowed
+	void add_commas();
+	char sep_char_;		// Char to use as "thousands" separator
+	int group_;			// Number of digits in "thousands" group
+	bool allow_neg_;    // Leading minus sign allowed
 
 protected:
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -133,10 +133,10 @@ protected:
 class CPropUpdatePage : public CPropertyPage
 {
 protected:
-    CPropUpdatePage(int id) : CPropertyPage(id) { }
-    DECLARE_DYNAMIC(CPropUpdatePage)
+	CPropUpdatePage(int id) : CPropertyPage(id) { }
+	DECLARE_DYNAMIC(CPropUpdatePage)
 public:
-    virtual void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1) =0;
+	virtual void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1) =0;
 protected:
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	DECLARE_MESSAGE_MAP()
@@ -187,7 +187,7 @@ protected:
 	//{{AFX_MSG(CPropFilePage)
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -237,17 +237,17 @@ protected:
 	virtual BOOL OnInitDialog();
 
 protected:
-    // Message map functions
-    afx_msg void OnChangeCategory();
-    afx_msg void OnChangeKeywords();
-    afx_msg void OnChangeComments();
-    afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	// Message map functions
+	afx_msg void OnChangeCategory();
+	afx_msg void OnChangeKeywords();
+	afx_msg void OnChangeComments();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnKillFocusCategory();
 	afx_msg void OnKillFocusKeywords();
 	afx_msg void OnKillFocusComments();
-    afx_msg void OnSelCategory();
-    DECLARE_MESSAGE_MAP()
+	afx_msg void OnSelCategory();
+	DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -279,14 +279,14 @@ public:
 	int code_page_;             // Current code page used to display multibyte characters
 #endif
 
-    // Stuff for displaying a Unicode character
-    HFONT ufont_, nfont_;       // Font to display Unicode char & font to display info
+	// Stuff for displaying a Unicode character
+	HFONT ufont_, nfont_;       // Font to display Unicode char & font to display info
 	LOGFONT lf_;                // Used for creating and selecting a Unicode font
 
-    // Subclassed controls so we can see CR/Esc keys when user changes values
-    CPropEditControl edit_dec_;
-    CPropEditControl edit_octal_;
-    CBinEditControl edit_binary_;
+	// Subclassed controls so we can see CR/Esc keys when user changes values
+	CPropEditControl edit_dec_;
+	CPropEditControl edit_octal_;
+	CBinEditControl edit_binary_;
 
 #ifdef SUBCLASS_UNICODE_CONTROL
 	CUnicodeControl ctl_unicode_;
@@ -312,7 +312,7 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnClose();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 #ifdef SHOW_CODE_PAGE
 	afx_msg void OnSelchangeCodePage();
 #endif
@@ -347,10 +347,10 @@ public:
 	BOOL	big_endian_;
 	//}}AFX_DATA
 
-    CPropEditControl edit_8bit_;
-    CPropDecEditControl edit_16bit_;
-    CPropDecEditControl edit_32bit_;
-    CPropDecEditControl edit_64bit_;
+	CPropEditControl edit_8bit_;
+	CPropDecEditControl edit_16bit_;
+	CPropDecEditControl edit_32bit_;
+	CPropDecEditControl edit_64bit_;
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -372,7 +372,7 @@ protected:
 	afx_msg void OnChangeFormat();
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -398,7 +398,7 @@ public:
 	int		format_;
 
 	// Controls
-    CPropEditControl ctl_val_;   // edit box
+	CPropEditControl ctl_val_;   // edit box
 	CWnd ctl_group_;             // group box
 
 // Overrides
@@ -415,7 +415,7 @@ protected:
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnChangeFormat();
 	virtual BOOL OnInitDialog();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
 	// This relates format types to Combo Box elements
@@ -448,22 +448,22 @@ public:
 	BOOL	local_time_;
 	//}}AFX_DATA
 
-    // These enum values need to be kept in sync with the entries in the 
-    // IDC_DATE_FORMAT drop list combo and the date_size array.
-    enum {
-        FORMAT_TIME_T,          // Most common time_t (secs since 1/1/70)
-        FORMAT_TIME64_T,        // Common (64-bit) time64_t (secs since 1/1/70)
-        FORMAT_TIME_T_80,       // Seconds since 1/1/80 as 32 bit int
-        FORMAT_TIME_T_1899,     // Seconds since 31/12/1899 as unsigned 32 bit int
-        FORMAT_TIME_T_MINS,     // Minutes since 1/1/70
-        FORMAT_OLE,             // DATE = days since 31/12/1899 as double
-        FORMAT_SYSTEMTIME,      // structure wYear -> wMilliseconds
-        FORMAT_FILETIME,        // nanoseconds since 1/1/1601 as 64 bit int
-        FORMAT_MSDOS,           // two 16 bit values with encoded bits: hhhhhmmmmmmsssss yyyyyyymmmmddddd
-                                // yyyyyyy is years from 1980, sssss is in 2 second increments
+	// These enum values need to be kept in sync with the entries in the 
+	// IDC_DATE_FORMAT drop list combo and the date_size array.
+	enum {
+		FORMAT_TIME_T,          // Most common time_t (secs since 1/1/70)
+		FORMAT_TIME64_T,        // Common (64-bit) time64_t (secs since 1/1/70)
+		FORMAT_TIME_T_80,       // Seconds since 1/1/80 as 32 bit int
+		FORMAT_TIME_T_1899,     // Seconds since 31/12/1899 as unsigned 32 bit int
+		FORMAT_TIME_T_MINS,     // Minutes since 1/1/70
+		FORMAT_OLE,             // DATE = days since 31/12/1899 as double
+		FORMAT_SYSTEMTIME,      // structure wYear -> wMilliseconds
+		FORMAT_FILETIME,        // nanoseconds since 1/1/1601 as 64 bit int
+		FORMAT_MSDOS,           // two 16 bit values with encoded bits: hhhhhmmmmmmsssss yyyyyyymmmmddddd
+								// yyyyyyy is years from 1980, sssss is in 2 second increments
 
-        FORMAT_LAST
-    };
+		FORMAT_LAST
+	};
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -490,15 +490,15 @@ protected:
 	afx_msg void OnTimeChange(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnChangeFormat();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
 private:
-    void save_date();
-    size_t date_size_[FORMAT_LAST];
-    COleDateTime date_first_[FORMAT_LAST];
-    COleDateTime date_last_[FORMAT_LAST];
-    bool stop_update_;
+	void save_date();
+	size_t date_size_[FORMAT_LAST];
+	COleDateTime date_first_[FORMAT_LAST];
+	COleDateTime date_last_[FORMAT_LAST];
+	bool stop_update_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -518,7 +518,7 @@ public:
 
 // Operations
 public:
-    void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1); // Update active page
+	void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1); // Update active page
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -539,18 +539,18 @@ protected:
 	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct);
 	//}}AFX_MSG
 	afx_msg void OnClose();
-    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 
 	DECLARE_MESSAGE_MAP()
 
 public:
 	CPropInfoPage     prop_info;
-    CPropFilePage     prop_file;
-    CPropCharPage     prop_char;
-    CPropDecPage      prop_dec;
-    CPropRealPage     prop_real;
-    CPropDatePage     prop_date;
+	CPropFilePage     prop_file;
+	CPropCharPage     prop_char;
+	CPropDecPage      prop_dec;
+	CPropRealPage     prop_real;
+	CPropDatePage     prop_date;
 
 private:
 };

@@ -16,8 +16,8 @@ class CHexEditSplitter : public CSplitterWnd
 
 // Operations
 public:
-    BOOL InsColumn(int col, int width, int min_width, CRuntimeClass *pViewClass = NULL, CCreateContext *pContext = NULL);
-    BOOL DelColumn(int col, BOOL del_views = FALSE);
+	BOOL InsColumn(int col, int width, int min_width, CRuntimeClass *pViewClass = NULL, CCreateContext *pContext = NULL);
+	BOOL DelColumn(int col, BOOL del_views = FALSE);
 
 	// Search all columns (row 0) for a view - returns the column number or -1 if not found
 	int FindViewColumn(HWND) const;
@@ -27,18 +27,18 @@ public:
 	
 	int ColWidth(int col)
 	{
-	    int cur, min;
-	    GetColumnInfo(col, cur, min);
-	    return cur;
+		int cur, min;
+		GetColumnInfo(col, cur, min);
+		return cur;
 	}
 	int RowHeight(int row)
 	{
-	    int cur, min;
-	    GetRowInfo(row, cur, min);
-	    return cur;
+		int cur, min;
+		GetRowInfo(row, cur, min);
+		return cur;
 	}
 
-    // Can do rows similarly but not yet needed
+	// Can do rows similarly but not yet needed
 
 // Overrides
 	// ClassWizard generated virtual function overrides

@@ -18,7 +18,7 @@ class CNewFile : public CDialog
 public:
 	CNewFile(CWnd* pParent = NULL, bool ibmode = false);     // standard constructor
 
-    enum { FILL_HEX, FILL_STRING, FILL_CLIPBOARD, FILL_RANDOM, FILL_NUMBER };  // Reflects the order of radio buttons
+	enum { FILL_HEX, FILL_STRING, FILL_CLIPBOARD, FILL_RANDOM, FILL_NUMBER };  // Reflects the order of radio buttons
 
 // Dialog Data
 	CDecEdit    ctl_size_factor_;
@@ -43,10 +43,10 @@ public:
 	//}}AFX_DATA
 	CEdit	ctl_fill_clipboard_sample_;
 	CEdit	ctl_fill_clipboard_length_;
-    CStatic ctl_desc_fill_clipboard_length_;
+	CStatic ctl_desc_fill_clipboard_length_;
 
 	bool insert_block_mode_;			// Is dialog used for insert block? (rather than new file)
-    bool first_time_;                   // First time we have fixed controls?
+	bool first_time_;                   // First time we have fixed controls?
 
 	__int64 fill_size_;                 // New file size when size_src == 0 (later stored in fill_.size_high/low)
 	__int64 fill_repeat_;               // Repeat count when size_src == 1 (later stored in fill_.size_high/low)
@@ -59,7 +59,7 @@ public:
 
 		// Size of file to be created (if size_src == 0), or repetitions of data (size_src == 1)
 		unsigned long size_low;			// Low/high size combine to make 40 bits (Terabyte) - enough?
-        unsigned int size_high: 8;
+		unsigned int size_high: 8;
 
 		// General options
 		unsigned int type: 4;           // What fill option was selected? 0=hex, etc (see enum above)
@@ -76,11 +76,11 @@ public:
 
 		// Total bits cannot exceed 64 so we can save all options in a macro field
 	};
-    union
-    {
-        __int64 fill_state_;			// 64 bit value that contains the options
-        struct fill_bits fill_;
-    };
+	union
+	{
+		__int64 fill_state_;			// 64 bit value that contains the options
+		struct fill_bits fill_;
+	};
 
 	int clipboard_format_;      // -1 = nothing, 0 = unrecognised, 1 = binary, 2 = text
 	long clipboard_length_;     // Length of the data on the clipboard
@@ -99,7 +99,7 @@ protected:
 	void fix_controls();
 	void calc_length();
 	void check_clipboard();
-    BOOL in_update_;
+	BOOL in_update_;
 
 	// Generated message map functions
 	//{{AFX_MSG(CNewFile)
@@ -119,7 +119,7 @@ protected:
 	afx_msg void OnChangeCbChain(HWND hWndRemove, HWND hWndAfter);
 	afx_msg void OnChangeSizeFactor();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnHelp();
 	DECLARE_MESSAGE_MAP()
 };

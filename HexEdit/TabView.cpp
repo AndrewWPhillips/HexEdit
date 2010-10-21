@@ -1,6 +1,6 @@
 // TabView.cpp : allows nested (tabbed) views: CHexEditView,CDataFormatView,CAerialView
 //
-// Copyright (c) 1999-2000 by Andrew W. Phillips.
+// Copyright (c) 2002-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -36,7 +36,7 @@ IMPLEMENT_DYNCREATE(CHexTabView, CTabView)
 
 CHexTabView::CHexTabView()
 {
-    init_ = false;
+	init_ = false;
 }
 
 CHexTabView::~CHexTabView()
@@ -54,30 +54,30 @@ END_MESSAGE_MAP()
 
 void CHexTabView::OnSize(UINT nType, int cx, int cy)
 {
-    // This is necessary since we can get resize events before the tab view
-    // is ready (before tab window has been created).
-    // This caused crash in 2.6 if Window/New Window is used when window maximized.
-    if (init_)
-        CTabView::OnSize(nType, cx, cy);
+	// This is necessary since we can get resize events before the tab view
+	// is ready (before tab window has been created).
+	// This caused crash in 2.6 if Window/New Window is used when window maximized.
+	if (init_)
+		CTabView::OnSize(nType, cx, cy);
 }
 
 void CHexTabView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
 {
-    if (bActivate)
-    {
-        // Make sure hex view is active
-        SetActiveView(0);
+	if (bActivate)
+	{
+		// Make sure hex view is active
+		SetActiveView(0);
 
-        // Get child frame
-        CWnd *pp = GetParent();
-        while (pp != NULL && !pp->IsKindOf(RUNTIME_CLASS(CChildFrame)))
-            pp = pp->GetParent();
-        ASSERT_KINDOF(CChildFrame, pp);
+		// Get child frame
+		CWnd *pp = GetParent();
+		while (pp != NULL && !pp->IsKindOf(RUNTIME_CLASS(CChildFrame)))
+			pp = pp->GetParent();
+		ASSERT_KINDOF(CChildFrame, pp);
 
-        //((CChildFrame *)pp)->MDIActivate();
-        ((CChildFrame *)pp)->SetActiveView(GetActiveView());
-        //GetActiveView()->SetFocus();
-    }
+		//((CChildFrame *)pp)->MDIActivate();
+		((CChildFrame *)pp)->SetActiveView(GetActiveView());
+		//GetActiveView()->SetFocus();
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -109,22 +109,22 @@ void CHexTabView::Dump(CDumpContext& dc) const
 
 int CHexTabView::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
-    if (CTabView::OnCreate(lpCreateStruct) == -1)
-        return -1;
+	if (CTabView::OnCreate(lpCreateStruct) == -1)
+		return -1;
 
-    init_ = true;
+	init_ = true;
 
 	// If there is only one tab (ie, hex view only) hide the tabs
 	GetTabControl().HideSingleTab();
 	GetTabControl().AutoDestroyWindow();        // otherwise windows are not detroyed
 
-    //AddView(RUNTIME_CLASS (CHexEditView), _T("Raw Data (Hex) View"));
-    AddView(RUNTIME_CLASS(CHexEditView), _T("Raw Data (Hex) View"), -1, (CCreateContext *)lpCreateStruct->lpCreateParams);
+	//AddView(RUNTIME_CLASS (CHexEditView), _T("Raw Data (Hex) View"));
+	AddView(RUNTIME_CLASS(CHexEditView), _T("Raw Data (Hex) View"), -1, (CCreateContext *)lpCreateStruct->lpCreateParams);
 
-    return 0;
+	return 0;
 }
 
 BOOL CHexTabView::OnEraseBkgnd(CDC* pDC) 
 {
-    return TRUE;
+	return TRUE;
 }

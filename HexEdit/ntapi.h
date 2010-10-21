@@ -14,7 +14,7 @@
 #ifndef IOCTL_DISK_GET_LENGTH_INFO
 #define IOCTL_DISK_GET_LENGTH_INFO  CTL_CODE(IOCTL_DISK_BASE, 0x0017, METHOD_BUFFERED, FILE_READ_ACCESS)
 typedef struct _GET_LENGTH_INFORMATION {
-    LARGE_INTEGER   Length;
+	LARGE_INTEGER   Length;
 } GET_LENGTH_INFORMATION, *PGET_LENGTH_INFORMATION;
 #endif
 
@@ -44,16 +44,16 @@ typedef struct _STORAGE_PROPERTY_QUERY {
 
 #if _MSC_VER < 1300
 typedef enum _STORAGE_BUS_TYPE {
-    BusTypeUnknown = 0x00,
-    BusTypeScsi,
-    BusTypeAtapi,
-    BusTypeAta,
-    BusType1394,
-    BusTypeSsa,
-    BusTypeFibre,
-    BusTypeUsb,
-    BusTypeRAID,
-    BusTypeMaxReserved = 0x7F
+	BusTypeUnknown = 0x00,
+	BusTypeScsi,
+	BusTypeAtapi,
+	BusTypeAta,
+	BusType1394,
+	BusTypeSsa,
+	BusTypeFibre,
+	BusTypeUsb,
+	BusTypeRAID,
+	BusTypeMaxReserved = 0x7F
 } STORAGE_BUS_TYPE, *PSTORAGE_BUS_TYPE;
 #endif
 
@@ -77,12 +77,12 @@ typedef struct _STORAGE_DEVICE_DESCRIPTOR {
 
 typedef unsigned long ULONG_PTR, *PULONG_PTR;
 typedef struct _IO_STATUS_BLOCK {
-    union {
-        NTSTATUS Status;
-        PVOID Pointer;
-    };
+	union {
+		NTSTATUS Status;
+		PVOID Pointer;
+	};
 
-    ULONG_PTR Information;
+	ULONG_PTR Information;
 } IO_STATUS_BLOCK, *PIO_STATUS_BLOCK;
 
 #define FILE_SYNCHRONOUS_IO_ALERT               0x00000010
@@ -91,47 +91,47 @@ typedef struct _IO_STATUS_BLOCK {
 
 typedef enum _FILE_INFORMATION_CLASS {
 // end_wdm
-    FileDirectoryInformation         = 1,
-    FileFullDirectoryInformation,   // 2
-    FileBothDirectoryInformation,   // 3
-    FileBasicInformation,           // 4  wdm
-    FileStandardInformation,        // 5  wdm
-    FileInternalInformation,        // 6
-    FileEaInformation,              // 7
-    FileAccessInformation,          // 8
-    FileNameInformation,            // 9
-    FileRenameInformation,          // 10
-    FileLinkInformation,            // 11
-    FileNamesInformation,           // 12
-    FileDispositionInformation,     // 13
-    FilePositionInformation,        // 14 wdm
-    FileFullEaInformation,          // 15
-    FileModeInformation,            // 16
-    FileAlignmentInformation,       // 17
-    FileAllInformation,             // 18
-    FileAllocationInformation,      // 19
-    FileEndOfFileInformation,       // 20 wdm
-    FileAlternateNameInformation,   // 21
-    FileStreamInformation,          // 22
-    FilePipeInformation,            // 23
-    FilePipeLocalInformation,       // 24
-    FilePipeRemoteInformation,      // 25
-    FileMailslotQueryInformation,   // 26
-    FileMailslotSetInformation,     // 27
-    FileCompressionInformation,     // 28
-    FileObjectIdInformation,        // 29
-    FileCompletionInformation,      // 30
-    FileMoveClusterInformation,     // 31
-    FileQuotaInformation,           // 32
-    FileReparsePointInformation,    // 33
-    FileNetworkOpenInformation,     // 34
-    FileAttributeTagInformation,    // 35
-    FileTrackingInformation,        // 36
-    FileIdBothDirectoryInformation, // 37
-    FileIdFullDirectoryInformation, // 38
-    FileValidDataLengthInformation, // 39
-    FileShortNameInformation,       // 40
-    FileMaximumInformation
+	FileDirectoryInformation         = 1,
+	FileFullDirectoryInformation,   // 2
+	FileBothDirectoryInformation,   // 3
+	FileBasicInformation,           // 4  wdm
+	FileStandardInformation,        // 5  wdm
+	FileInternalInformation,        // 6
+	FileEaInformation,              // 7
+	FileAccessInformation,          // 8
+	FileNameInformation,            // 9
+	FileRenameInformation,          // 10
+	FileLinkInformation,            // 11
+	FileNamesInformation,           // 12
+	FileDispositionInformation,     // 13
+	FilePositionInformation,        // 14 wdm
+	FileFullEaInformation,          // 15
+	FileModeInformation,            // 16
+	FileAlignmentInformation,       // 17
+	FileAllInformation,             // 18
+	FileAllocationInformation,      // 19
+	FileEndOfFileInformation,       // 20 wdm
+	FileAlternateNameInformation,   // 21
+	FileStreamInformation,          // 22
+	FilePipeInformation,            // 23
+	FilePipeLocalInformation,       // 24
+	FilePipeRemoteInformation,      // 25
+	FileMailslotQueryInformation,   // 26
+	FileMailslotSetInformation,     // 27
+	FileCompressionInformation,     // 28
+	FileObjectIdInformation,        // 29
+	FileCompletionInformation,      // 30
+	FileMoveClusterInformation,     // 31
+	FileQuotaInformation,           // 32
+	FileReparsePointInformation,    // 33
+	FileNetworkOpenInformation,     // 34
+	FileAttributeTagInformation,    // 35
+	FileTrackingInformation,        // 36
+	FileIdBothDirectoryInformation, // 37
+	FileIdFullDirectoryInformation, // 38
+	FileValidDataLengthInformation, // 39
+	FileShortNameInformation,       // 40
+	FileMaximumInformation
 // begin_wdm
 } FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
 
@@ -170,15 +170,15 @@ typedef struct _FILE_END_OF_FILE_INFORMATION {
 
 
 typedef enum _FS_INFORMATION_CLASS {
-    FileFsVolumeInformation=1,
-    FileFsLabelInformation,
-    FileFsSizeInformation,
-    FileFsDeviceInformation,
-    FileFsAttributeInformation,
-    FileFsControlInformation,
-    FileFsFullSizeInformation,
-    FileFsObjectIdInformation,
-    FileFsMaximumInformation
+	FileFsVolumeInformation=1,
+	FileFsLabelInformation,
+	FileFsSizeInformation,
+	FileFsDeviceInformation,
+	FileFsAttributeInformation,
+	FileFsControlInformation,
+	FileFsFullSizeInformation,
+	FileFsObjectIdInformation,
+	FileFsMaximumInformation
 } FS_INFORMATION_CLASS, *PFS_INFORMATION_CLASS;
 
 typedef struct _FILE_FS_VOLUME_INFORMATION {
@@ -219,99 +219,99 @@ extern "C" {
 typedef
 long  
 (__stdcall * PFNtOpenFile) (
-    OUT PHANDLE             FileHandle,
-    IN ACCESS_MASK          DesiredAccess,
-    IN POBJECT_ATTRIBUTES   ObjectAttributes,
-    OUT PIO_STATUS_BLOCK    IoStatusBlock,
-    IN ULONG                ShareAccess,
-    IN ULONG                OpenOptions
+	OUT PHANDLE             FileHandle,
+	IN ACCESS_MASK          DesiredAccess,
+	IN POBJECT_ATTRIBUTES   ObjectAttributes,
+	OUT PIO_STATUS_BLOCK    IoStatusBlock,
+	IN ULONG                ShareAccess,
+	IN ULONG                OpenOptions
 );
 
 typedef
 long
 (__stdcall * PFNtClose) (
-    IN HANDLE  Handle
+	IN HANDLE  Handle
 );
 
 
 typedef
 long
 (__stdcall * PFNtReadFile) (
-    IN HANDLE  FileHandle,
-    IN HANDLE  Event  OPTIONAL,
-    void (*pApcRoutine)(),
-    IN PVOID  ApcContext  OPTIONAL,
-    OUT PIO_STATUS_BLOCK  IoStatusBlock,
-    OUT PVOID  Buffer,
-    IN ULONG  Length,
-    IN PLARGE_INTEGER  ByteOffset  OPTIONAL,
-    IN PULONG  Key  OPTIONAL
+	IN HANDLE  FileHandle,
+	IN HANDLE  Event  OPTIONAL,
+	void (*pApcRoutine)(),
+	IN PVOID  ApcContext  OPTIONAL,
+	OUT PIO_STATUS_BLOCK  IoStatusBlock,
+	OUT PVOID  Buffer,
+	IN ULONG  Length,
+	IN PLARGE_INTEGER  ByteOffset  OPTIONAL,
+	IN PULONG  Key  OPTIONAL
 );
 
 typedef
 long
 (__stdcall * PFNtWriteFile) (
-    IN HANDLE  FileHandle,
-    IN HANDLE  Event  OPTIONAL,
-    void (*pApcRoutine)(),
-    IN PVOID  ApcContext  OPTIONAL,
-    OUT PIO_STATUS_BLOCK  IoStatusBlock,
-    IN PVOID  Buffer,
-    IN ULONG  Length,
-    IN PLARGE_INTEGER  ByteOffset  OPTIONAL,
-    IN PULONG  Key  OPTIONAL
+	IN HANDLE  FileHandle,
+	IN HANDLE  Event  OPTIONAL,
+	void (*pApcRoutine)(),
+	IN PVOID  ApcContext  OPTIONAL,
+	OUT PIO_STATUS_BLOCK  IoStatusBlock,
+	IN PVOID  Buffer,
+	IN ULONG  Length,
+	IN PLARGE_INTEGER  ByteOffset  OPTIONAL,
+	IN PULONG  Key  OPTIONAL
 );
 
 typedef
 long
 (__stdcall * PFNtQueryInformationFile) (
-    IN HANDLE  FileHandle,
-    OUT PIO_STATUS_BLOCK  IoStatusBlock,
-    OUT PVOID  FileInformation,
-    IN ULONG  Length,
-    IN FILE_INFORMATION_CLASS  FileInformationClass
+	IN HANDLE  FileHandle,
+	OUT PIO_STATUS_BLOCK  IoStatusBlock,
+	OUT PVOID  FileInformation,
+	IN ULONG  Length,
+	IN FILE_INFORMATION_CLASS  FileInformationClass
 );
 
 typedef
 long
 (__stdcall * PFNtSetInformationFile) (
-    IN HANDLE  FileHandle,
-    OUT PIO_STATUS_BLOCK  IoStatusBlock,
-    IN PVOID  FileInformation,
-    IN ULONG  Length,
-    IN FILE_INFORMATION_CLASS  FileInformationClass
+	IN HANDLE  FileHandle,
+	OUT PIO_STATUS_BLOCK  IoStatusBlock,
+	IN PVOID  FileInformation,
+	IN ULONG  Length,
+	IN FILE_INFORMATION_CLASS  FileInformationClass
 );
 
 typedef
 long
 (__stdcall * PFNtQueryVolumeInformationFile) (
-    IN HANDLE  FileHandle,
-    OUT PIO_STATUS_BLOCK  IoStatusBlock,
-    OUT PVOID  FileSystemInformation,
-    IN ULONG  Length,
-    IN FS_INFORMATION_CLASS FileSystemInformationClass
+	IN HANDLE  FileHandle,
+	OUT PIO_STATUS_BLOCK  IoStatusBlock,
+	OUT PVOID  FileSystemInformation,
+	IN ULONG  Length,
+	IN FS_INFORMATION_CLASS FileSystemInformationClass
 );
  
 typedef
 VOID
 (__stdcall * PFRtlInitUnicodeString) (
-    IN OUT PUNICODE_STRING  DestinationString,
-    IN PCWSTR  SourceString
+	IN OUT PUNICODE_STRING  DestinationString,
+	IN PCWSTR  SourceString
 );
 
 typedef
 long
 (__stdcall * PFNtDeviceIoControlFile) (
 	HANDLE FileHandle,
-    HANDLE Event,
-    void (*pApcRoutine)(),
-    PVOID ApcContext,
-    PIO_STATUS_BLOCK IoStatusBlock,
-    ULONG IoControlCode,
-    PVOID InputBuffer,
-    ULONG InputBufferLength,
-    PVOID OutputBuffer,
-    ULONG OutputBufferLength
+	HANDLE Event,
+	void (*pApcRoutine)(),
+	PVOID ApcContext,
+	PIO_STATUS_BLOCK IoStatusBlock,
+	ULONG IoControlCode,
+	PVOID InputBuffer,
+	ULONG InputBufferLength,
+	PVOID OutputBuffer,
+	ULONG OutputBufferLength
 );
 
 #ifdef  __cplusplus

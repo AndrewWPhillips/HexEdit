@@ -1,7 +1,7 @@
 // RecentFileDlg.h : header file for Recent File List Dialog
 //
 
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2003-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -38,25 +38,25 @@
 class CRecentFileDlg : public CDialog
 {
 public:
-    // Number the different types of columns we can display
-    enum
-    {
-        COL_NAME,                           // Name of the recent file
-        COL_LOCN,                           // Location (path)
-        COL_USED,                           // Date/time the file was last opened in HexEdit
-        COL_SIZE,                           // Size of the file on disk
-        COL_TYPE,                           // Type of the file (from extension)
-        COL_MODIFIED,                       // Time the file was last modified
-        COL_ATTR,                           // File attributes
-        COL_CREATED,                        // Time the file was created
-        COL_ACCESSED,                       // Time the file was last accessed
+	// Number the different types of columns we can display
+	enum
+	{
+		COL_NAME,                           // Name of the recent file
+		COL_LOCN,                           // Location (path)
+		COL_USED,                           // Date/time the file was last opened in HexEdit
+		COL_SIZE,                           // Size of the file on disk
+		COL_TYPE,                           // Type of the file (from extension)
+		COL_MODIFIED,                       // Time the file was last modified
+		COL_ATTR,                           // File attributes
+		COL_CREATED,                        // Time the file was created
+		COL_ACCESSED,                       // Time the file was last accessed
 #ifdef PROP_INFO
 		COL_CATEGORY,                       // Category entered by user
 		COL_KEYWORDS,                       // Keywords entered by user
 		COL_COMMENTS,                       // Comments entered by user
 #endif
-        COL_LAST                            // leave at end (signals end of list)
-    };
+		COL_LAST                            // leave at end (signals end of list)
+	};
 
 // Construction
 public:
@@ -71,7 +71,7 @@ public:
 	BOOL	net_retain_;
 	//}}AFX_DATA
 
-    CGridCtrl grid_;                       // MFC grid control
+	CGridCtrl grid_;                       // MFC grid control
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -95,17 +95,17 @@ protected:
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnHelp();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	//afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	//afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-    afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
-    afx_msg void OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* pResult);
-    afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-    void InitColumnHeadings();
-    void FillGrid();
+	void InitColumnHeadings();
+	void FillGrid();
 	void DeleteEntries();
 
 	CResizeCtrl resizer_;               // Used to move controls around when the window is resized

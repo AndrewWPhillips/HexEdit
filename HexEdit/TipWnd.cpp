@@ -23,19 +23,19 @@ IMPLEMENT_DYNAMIC(CTipWnd, CWnd)
 
 CTipWnd::CTipWnd(UINT fmt /* = DT_NOCLIP | DT_NOPREFIX | DT_EXPANDTABS */)
 {
-    static CString strClass;
-    if (strClass.IsEmpty())
-    {
-        // Register window class
-        strClass = AfxRegisterWndClass(0);
-        ASSERT(!strClass.IsEmpty());
-    }
+	static CString strClass;
+	if (strClass.IsEmpty())
+	{
+		// Register window class
+		strClass = AfxRegisterWndClass(0);
+		ASSERT(!strClass.IsEmpty());
+	}
 
 	m_hovering = m_visible = m_down = false;
 	m_fmt = fmt;
 	m_margins = CSize(2, 2);
-    m_bg_colour = ::GetSysColor(COLOR_INFOBK);
-    m_text_colour = ::GetSysColor(COLOR_INFOTEXT);
+	m_bg_colour = ::GetSysColor(COLOR_INFOBK);
+	m_text_colour = ::GetSysColor(COLOR_INFOTEXT);
 	m_stock_font = ANSI_VAR_FONT;
 	m_alpha = 255;
 
@@ -44,17 +44,17 @@ CTipWnd::CTipWnd(UINT fmt /* = DT_NOCLIP | DT_NOPREFIX | DT_EXPANDTABS */)
 	// Check if we can do transparent window
 	if (m_2k == -1)
 	{
-        OSVERSIONINFO osvi;
-        osvi.dwOSVersionInfoSize = sizeof(osvi);
-        GetVersionEx(&osvi);
+		OSVERSIONINFO osvi;
+		osvi.dwOSVersionInfoSize = sizeof(osvi);
+		GetVersionEx(&osvi);
 
-        // Work out if this is Windows 200 or better
+		// Work out if this is Windows 200 or better
 		m_2k = (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 5);
 
-        // If W2K then get pointer to SetLayeredWindowAttributes
-        HINSTANCE hh;
-        if (m_2k && (hh = ::LoadLibrary("USER32.DLL")) != HINSTANCE(0))
-            m_pSLWAfunc = (PFSetLayeredWindowAttributes)::GetProcAddress(hh, "SetLayeredWindowAttributes");
+		// If W2K then get pointer to SetLayeredWindowAttributes
+		HINSTANCE hh;
+		if (m_2k && (hh = ::LoadLibrary("USER32.DLL")) != HINSTANCE(0))
+			m_pSLWAfunc = (PFSetLayeredWindowAttributes)::GetProcAddress(hh, "SetLayeredWindowAttributes");
 	}
 
 	DWORD exStyle = WS_EX_TOOLWINDOW;
@@ -62,21 +62,21 @@ CTipWnd::CTipWnd(UINT fmt /* = DT_NOCLIP | DT_NOPREFIX | DT_EXPANDTABS */)
 		exStyle |= WS_EX_LAYERED;  // This allows a transparent window
 
 	VERIFY(CreateEx(exStyle,
-                    strClass, NULL,
+					strClass, NULL,
 					WS_POPUP | WS_BORDER,
 					0, 0, 0, 0,
-                    NULL, (HMENU)0));
+					NULL, (HMENU)0));
 
-    ASSERT(m_hWnd != (HWND)0);
+	ASSERT(m_hWnd != (HWND)0);
 }
 
 BEGIN_MESSAGE_MAP(CTipWnd, CWnd)
 	ON_WM_PAINT()
 	ON_MESSAGE(WM_SETTEXT, OnSetText)
 	ON_WM_TIMER()
-    ON_WM_LBUTTONDOWN()
-    ON_WM_LBUTTONUP()
-    ON_WM_MOUSEMOVE()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
 	ON_WM_SETCURSOR()
 	ON_MESSAGE(WM_MOUSEHOVER, OnMouseHover)
 	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
@@ -124,8 +124,8 @@ void CTipWnd::Show(int delay /* = 0 */, int fade)
 
 void CTipWnd::Hide(int fade /* = 200 */)
 {
-    if (m_visible)
-    {
+	if (m_visible)
+	{
 		KillTimer(1);                   // Kill any delayed display
 		KillTimer(2); m_in = false;     // Kill any fade in
 		if (fade > 0)
@@ -142,7 +142,7 @@ void CTipWnd::Hide(int fade /* = 200 */)
 			m_fade = m_fade_inc = 0;                 // Instant fade out
 			OnTimer(3);
 		}
-    }
+	}
 }
 
 void CTipWnd::Move(CPoint pt, bool centre /* = true */)
@@ -173,7 +173,7 @@ void CTipWnd::SetAlpha(int alpha)
 	if (m_alpha > 255 || m_alpha < 0)
 		m_alpha = 255;
 
-    (*m_pSLWAfunc)(m_hWnd, -1, (BYTE)m_alpha, LWA_ALPHA);
+	(*m_pSLWAfunc)(m_hWnd, -1, (BYTE)m_alpha, LWA_ALPHA);
 }
 
 void CTipWnd::track_mouse(unsigned long flag)
@@ -181,13 +181,13 @@ void CTipWnd::track_mouse(unsigned long flag)
 	if (m_pSLWAfunc == 0)
 		return;
 
-    TRACKMOUSEEVENT tme;
-    tme.cbSize = sizeof(tme);
-    tme.dwFlags = flag;
-    tme.dwHoverTime = 0;
-    tme.hwndTrack = m_hWnd;
+	TRACKMOUSEEVENT tme;
+	tme.cbSize = sizeof(tme);
+	tme.dwFlags = flag;
+	tme.dwHoverTime = 0;
+	tme.hwndTrack = m_hWnd;
 
-    VERIFY(::_TrackMouseEvent(&tme));
+	VERIFY(::_TrackMouseEvent(&tme));
 }
 
 
@@ -218,8 +218,8 @@ void CTipWnd::AddString(LPCTSTR ss, COLORREF col /*= -1*/, CPoint * ppt /*= NULL
 
 	// Work out how big the text is
 	CClientDC dc(this);
-    CFont *pOldFont = (CFont*)dc.SelectStockObject(m_stock_font);
-    ASSERT(pOldFont != NULL);
+	CFont *pOldFont = (CFont*)dc.SelectStockObject(m_stock_font);
+	ASSERT(pOldFont != NULL);
 #if _MSC_VER >= 1300
 	::DrawTextW(dc.m_hDC, (LPCWSTR)str_.back(), str_.back().GetLength(), &rct, DT_CALCRECT | fmt_.back());
 #else
@@ -257,8 +257,8 @@ LRESULT CTipWnd::OnSetText(WPARAM, LPARAM lp)
 	//CClientDC dc(this);
 	//CRect rct;
 
-    //CFont *pOldFont = (CFont*)dc.SelectStockObject(m_stock_font);
-    //ASSERT(pOldFont != NULL);
+	//CFont *pOldFont = (CFont*)dc.SelectStockObject(m_stock_font);
+	//ASSERT(pOldFont != NULL);
 	//dc.DrawText((LPCTSTR)lp, &rct, DT_CALCRECT | m_fmt);
 	//dc.SelectObject(pOldFont);
 
@@ -282,13 +282,13 @@ void CTipWnd::OnPaint()
 	//GetWindowText(ss);
 
 	// Fill background and set text colour
-    dc.FillSolidRect(&rct, m_bg_colour);
+	dc.FillSolidRect(&rct, m_bg_colour);
 	dc.SetBkMode(TRANSPARENT);
-    //dc.SetTextColor(m_text_colour);
+	//dc.SetTextColor(m_text_colour);
 
 	// Set font and draw the text
-    CFont *pOldFont = (CFont*)dc.SelectStockObject(m_stock_font);
-    ASSERT(pOldFont != NULL);
+	CFont *pOldFont = (CFont*)dc.SelectStockObject(m_stock_font);
+	ASSERT(pOldFont != NULL);
 	//rct.DeflateRect(m_margins);
 	for (int ii = 0; ii < str_.size(); ++ii)
 	{
@@ -341,7 +341,7 @@ void CTipWnd::OnTimer(UINT nIDEvent)
 		m_fade -= m_fade_inc;
 		if (m_hovering)
 		{
-		    (*m_pSLWAfunc)(m_hWnd, -1, (BYTE)255, LWA_ALPHA);
+			(*m_pSLWAfunc)(m_hWnd, -1, (BYTE)255, LWA_ALPHA);
 			m_fade = m_alpha;               // Don't fade away while hovering
 		}
 		else if (m_fade <= 0)
@@ -354,7 +354,7 @@ void CTipWnd::OnTimer(UINT nIDEvent)
 		}
 		else if (m_pSLWAfunc != 0)
 		{
-		    (*m_pSLWAfunc)(m_hWnd, -1, (BYTE)m_fade, LWA_ALPHA);
+			(*m_pSLWAfunc)(m_hWnd, -1, (BYTE)m_fade, LWA_ALPHA);
 		}
 		break;
 	default:
@@ -371,10 +371,10 @@ void CTipWnd::OnMouseMove(UINT nFlags, CPoint point)
 		pt -= m_down_pt;
 		SetWindowPos(NULL, pt.x, pt.y, -1, -1, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
 	}
-    else if (m_pSLWAfunc != 0)
+	else if (m_pSLWAfunc != 0)
 	{
 		m_hovering = true;
-        track_mouse(TME_LEAVE);
+		track_mouse(TME_LEAVE);
 	}
 }
 
@@ -382,7 +382,7 @@ void CTipWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (GetCursorPos(&m_down_pt))
 	{
-        ScreenToClient(&m_down_pt);
+		ScreenToClient(&m_down_pt);
 		m_down = true;
 		SetCapture();
 	}
@@ -401,24 +401,24 @@ void CTipWnd::OnLButtonUp(UINT nFlags, CPoint point)
 
 BOOL CTipWnd::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
-    if (nHitTest == HTCLIENT)
-    {
-        ::SetCursor(theApp.LoadCursor(IDC_SMALLARROWS));
-        //::SetCursor(theApp.LoadStandardCursor(IDC_SIZEALL));
-        return TRUE;
+	if (nHitTest == HTCLIENT)
+	{
+		::SetCursor(theApp.LoadCursor(IDC_SMALLARROWS));
+		//::SetCursor(theApp.LoadStandardCursor(IDC_SIZEALL));
+		return TRUE;
 	}
-    return CWnd::OnSetCursor(pWnd, nHitTest, message);
+	return CWnd::OnSetCursor(pWnd, nHitTest, message);
 }
 
 LRESULT CTipWnd::OnMouseHover(WPARAM, LPARAM lp)
 {
-    return 0;
+	return 0;
 }
 
 LRESULT CTipWnd::OnMouseLeave(WPARAM, LPARAM lp)
 {
-    ASSERT(m_pSLWAfunc != 0 && m_hWnd != 0);
+	ASSERT(m_pSLWAfunc != 0 && m_hWnd != 0);
 	m_hovering = false;
-    (*m_pSLWAfunc)(m_hWnd, -1, (BYTE)m_alpha, LWA_ALPHA);
-    return 0;
+	(*m_pSLWAfunc)(m_hWnd, -1, (BYTE)m_alpha, LWA_ALPHA);
+	return 0;
 }

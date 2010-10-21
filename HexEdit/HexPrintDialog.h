@@ -21,7 +21,7 @@ public:
 			| PD_HIDEPRINTTOFILE | PD_NOSELECTION,
 		CWnd* pParentWnd = NULL);
 
-    BOOL dup_lines_;            // Merge duplicates lines (print selection only)
+	BOOL dup_lines_;            // Merge duplicates lines (print selection only)
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

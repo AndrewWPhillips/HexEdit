@@ -11,17 +11,17 @@ void CNavManager::Add(LPCTSTR desc, LPCTSTR info, CHexEditView * pv, FILE_ADDRES
 	if (in_move_)
 		return;           // Disallow store of moves caused by messages created while moving to a nav pt
 
-    if (v_.size() > 0 && pos_ == v_.size() - 1)
-    {
-        // If we swapped to a new view and the previous view had no nav moves then remove
-        // the nav point from the end of the stack.  This avoids lots of nav pts when just
-        // swapping between files.
-        CHexEditView * pOldView =  v_.back().pview_;
-        if (pOldView != pv && pOldView->NoNavMovesDone())
-        {
-            pos_--;
-        }
-    }
+	if (v_.size() > 0 && pos_ == v_.size() - 1)
+	{
+		// If we swapped to a new view and the previous view had no nav moves then remove
+		// the nav point from the end of the stack.  This avoids lots of nav pts when just
+		// swapping between files.
+		CHexEditView * pOldView =  v_.back().pview_;
+		if (pOldView != pv && pOldView->NoNavMovesDone())
+		{
+			pos_--;
+		}
+	}
 
 	ASSERT(pos_ >= -1 && pos_ < int(v_.size()));
 
@@ -36,7 +36,7 @@ void CNavManager::Add(LPCTSTR desc, LPCTSTR info, CHexEditView * pv, FILE_ADDRES
 		fname = pdoc->pfile1_->GetFilePath();
 
 	v_.push_back(nav(desc, info, pv, pdoc, fname, pdoc->read_only() == TRUE, aa, ee, as));
-    TRACE("=== added nav pt <%s>\r\n", desc);
+	TRACE("=== added nav pt <%s>\r\n", desc);
 	pos_ = v_.size() - 1;               // Point to the last entry
 }
 
@@ -47,12 +47,12 @@ void CNavManager::GoBack(int count /*= -1*/)
 		// Go back to pos_ if not at it ELSE before it
 		count = - pos_offset();
 	}
-    do_move(pos_ - count);
+	do_move(pos_ - count);
 }
 
 void CNavManager::GoForw(int count /*= 1*/)
 {
-    do_move(pos_ + count);
+	do_move(pos_ + count);
 }
 
 CString CNavManager::GetDesc(bool back, int ii)
@@ -143,7 +143,7 @@ void CNavManager::AddItems(CMFCPopupMenu* pMenuPopup, bool forward, UINT first, 
 	CString pname;                // Previous file name
 
 	for (int ii = 0, curr = (forward ? pos_ + 1 : pos_ /* + pos_offset() */);
-	     ii < max_items && ((forward && curr < int(v_.size())) || (!forward && curr >= 0));
+		 ii < max_items && ((forward && curr < int(v_.size())) || (!forward && curr >= 0));
 		 ++ii, (forward ? ++curr : curr--) )
 	{
 		// Check if we need to start a new sub-menu
@@ -161,7 +161,7 @@ void CNavManager::AddItems(CMFCPopupMenu* pMenuPopup, bool forward, UINT first, 
 					ss = pname;
 				else
 					ss = "Closed file";         // Closed without saving to disk?
-                pMenuPopup->InsertItem(CMFCToolBarMenuButton(-1, submenu->GetSafeHmenu(), -1, ss));
+				pMenuPopup->InsertItem(CMFCToolBarMenuButton(-1, submenu->GetSafeHmenu(), -1, ss));
 				delete submenu;
 				submenu = NULL;
 			}
@@ -214,7 +214,7 @@ void CNavManager::AddItems(CMFCPopupMenu* pMenuPopup, bool forward, UINT first, 
 			ss = pname;
 		else
 			ss = "Closed file";
-        pMenuPopup->InsertItem(CMFCToolBarMenuButton(-1, submenu->GetSafeHmenu(), -1, ss));
+		pMenuPopup->InsertItem(CMFCToolBarMenuButton(-1, submenu->GetSafeHmenu(), -1, ss));
 		delete submenu;
 		submenu = NULL;
 	}
@@ -292,8 +292,8 @@ void CNavManager::do_move(int ii)
 	else if (ii >= int(v_.size()))
 		ii = v_.size() - 1;
 
-    CHexEditView *pview = NULL;
-    CHexEditDoc *pdoc = NULL;
+	CHexEditView *pview = NULL;
+	CHexEditDoc *pdoc = NULL;
 
 	if (is_open_view(v_[ii].pdoc_, v_[ii].pview_))
 	{
@@ -301,19 +301,19 @@ void CNavManager::do_move(int ii)
 		pview = v_[ii].pview_;
 	}
 	else if (!v_[ii].fname_.IsEmpty() &&
-		     (pdoc = (CHexEditDoc*)(theApp.OpenDocumentFile(v_[ii].fname_))) != NULL)  // reopen the file
-    {
-        // Use the first view of the correct type
-        POSITION pos = pdoc->GetFirstViewPosition();
-        while (pos != NULL)
-        {
-            CView *pv2 = pdoc->GetNextView(pos);
-            if (pv2->IsKindOf(RUNTIME_CLASS(CHexEditView)))
-            {
+			 (pdoc = (CHexEditDoc*)(theApp.OpenDocumentFile(v_[ii].fname_))) != NULL)  // reopen the file
+	{
+		// Use the first view of the correct type
+		POSITION pos = pdoc->GetFirstViewPosition();
+		while (pos != NULL)
+		{
+			CView *pv2 = pdoc->GetNextView(pos);
+			if (pv2->IsKindOf(RUNTIME_CLASS(CHexEditView)))
+			{
 				pview = (CHexEditView *)pv2;
-                break;
-            }
-        }
+				break;
+			}
+		}
 		// Update all list entries for this file with the newly open doc/view
 		CHexEditDoc *pclosed = v_[ii].pdoc_;  // Remember ptr to (now closed) document
 		for (std::vector<nav>::iterator pd = v_.begin(); pd != v_.end(); ++pd)
@@ -325,32 +325,32 @@ void CNavManager::do_move(int ii)
 				pd->pview_ = pview;
 			}
 		}
-    }
+	}
 
 	// Can't find it so display an error
 	if (pview == NULL)
 	{
-        theApp.mac_error_ = 2;
+		theApp.mac_error_ = 2;
 
-        CString ss;ss = "The location/file could not found";
+		CString ss;ss = "The location/file could not found";
 		if (!v_[ii].fname_.IsEmpty())
 			ss.Format("%s\rcould not be found/opened.", v_[ii].fname_);
 		else
 			ss = "The location/file could not found";
-        AfxMessageBox(ss);
+		AfxMessageBox(ss);
 		in_move_ = false;
 		return;
-    }
+	}
 
 	// Now activate the view and move to the location
-    CChildFrame *pf = pview->GetFrame();
-    if (pf->IsIconic())
-        pf->MDIRestore();
-    ((CMainFrame *)AfxGetMainWnd())->MDIActivate(pf);
+	CChildFrame *pf = pview->GetFrame();
+	if (pf->IsIconic())
+		pf->MDIRestore();
+	((CMainFrame *)AfxGetMainWnd())->MDIActivate(pf);
 	CPointAp scroll = pview->addr2pos(v_[ii].scroll_);
 	scroll.x = 0;
 	pview->SetScroll(scroll);
-    pview->MoveToAddress(v_[ii].start_addr_, v_[ii].end_addr_);
+	pview->MoveToAddress(v_[ii].start_addr_, v_[ii].end_addr_);
 	pos_ = ii;                          // Set current point to where we just moved to
 	in_move_ = false;
 }
