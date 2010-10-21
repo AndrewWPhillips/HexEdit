@@ -485,6 +485,7 @@
 #define HIDC_UNARY_SQUARE_ROOT          0x80750446    // IDD_CALC
 #define HIDC_UNDO_MERGE                 0x813904c6    // IDD_OPT_WORKSPACE [English (United States)]
 #define HIDC_UP                         0x80e60479    // IDD_OPT_COLOURS [English (United States)]
+#define HIDC_UPDATE                     0x809e0622    // IDD_OPT_SYSTEM [English (United States)]
 #define HIDC_USER                       0x80e7043f    // IDD_REGISTER
 #define HIDC_USER_NAME                  0x80e70488    // IDD_REGISTER
 #define HIDC_VALIDATE                   0x810e044f    // IDD_RECENT_FILES

@@ -117,6 +117,7 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.shell_open_ = FALSE;
 	val_.one_only_ = FALSE;
     val_.run_autoexec_ = TRUE;
+    val_.update_check_ = TRUE;
     val_.save_exit_ = FALSE;
 	val_.recent_files_ = 0;
     val_.no_recent_add_ = FALSE;
@@ -422,7 +423,7 @@ void CSystemGeneralPage::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_SPLASH, pParent->val_.splash_);
     DDX_Check(pDX, IDC_TOD, pParent->val_.tipofday_);
     DDX_Check(pDX, IDC_AUTOEXEC, pParent->val_.run_autoexec_);
-    //DDX_Check(pDX, IDC_UPDATE, pParent->val_.update_check_);
+    DDX_Check(pDX, IDC_UPDATE, pParent->val_.update_check_);
     DDX_Control(pDX, IDC_HIST_PAGE, ctl_hist_butn_);
 }
 
@@ -438,6 +439,7 @@ BEGIN_MESSAGE_MAP(CSystemGeneralPage, COptPage)
     ON_BN_CLICKED(IDC_SPLASH, OnChange)
     ON_BN_CLICKED(IDC_TOD, OnChange)
     ON_BN_CLICKED(IDC_AUTOEXEC, OnChange)
+    ON_BN_CLICKED(IDC_UPDATE, OnChange)
 	ON_BN_CLICKED(IDC_HIST_PAGE, OnHistPage)
 END_MESSAGE_MAP()
 
@@ -469,6 +471,7 @@ static DWORD id_pairs_sys[] = {
     IDC_SPLASH, HIDC_SPLASH,
     IDC_TOD, HIDC_TOD,
     IDC_AUTOEXEC, HIDC_AUTOEXEC,
+    IDC_UPDATE, HIDC_UPDATE,
     IDC_HIST_PAGE, HIDC_HIST_PAGE,
     0,0 
 };

@@ -1131,6 +1131,7 @@
 #define IDC_SPIN_RULER_HEX_NUMS         1568
 #define IDC_SCAN                        1569
 #define IDC_DOC_PAGE                    1570
+#define IDC_UPDATE                      1570
 #define IDC_INT_ABBREV                  1571
 #define IDC_SLIDER_AUTOSCROLL           1572
 #define IDC_RECENT_FILES                1573
