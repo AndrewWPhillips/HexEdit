@@ -2273,7 +2273,7 @@ void CHexEditView::OnDraw(CDC* pDC)
     {
         ASSERT(!neg_y && !neg_x);       // This should be true when drawing on screen (uses MM_TEXT)
         // Vert. line between address and hex areas
-		pt.y = bdr_top_ - 2;
+		pt.y = bdr_top_ - 4;
 		pt.x = addr_width_*char_width - char_width - doc_rect.left + bdr_left_;
 		pDC->MoveTo(pt);
 		pt.y = 30000;
@@ -2281,7 +2281,7 @@ void CHexEditView::OnDraw(CDC* pDC)
         if (!display_.vert_display && display_.hex_area)
         {
 			// Vert line to right of hex area
-            pt.y = bdr_top_ - 2;
+            pt.y = bdr_top_ - 4;
             pt.x = char_pos(0, char_width) - char_width_w/2 - doc_rect.left + bdr_left_;
             pDC->MoveTo(pt);
             pt.y = 30000;
@@ -2290,7 +2290,7 @@ void CHexEditView::OnDraw(CDC* pDC)
         if (display_.vert_display || display_.char_area)
         {
 			// Vert line to right of char area
-            pt.y = bdr_top_ - 2;
+            pt.y = bdr_top_ - 4;
             pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + 
                    (3*char_width_w)/2 - doc_rect.left + bdr_left_;
             pDC->MoveTo(pt);
@@ -2633,8 +2633,10 @@ void CHexEditView::OnDraw(CDC* pDC)
 
         for (FILE_ADDRESS sector = (first_addr/seclen)*seclen; sector < last_addr; sector += seclen)
         {
+			// Note that "sector" is the address of the start of the sector
             if (pDoc->HasSectorErrors() && pDoc->SectorError(sector/seclen) != NO_ERROR)
             {
+				// Draw colour behind the bytes to indicate there is a problem with this sector
                 draw_bg(pDC, doc_rect, neg_x, neg_y,
                         line_height, char_width, char_width_w, sector_bg_col_,
                         max(sector, first_addr),
@@ -2648,15 +2650,15 @@ void CHexEditView::OnDraw(CDC* pDC)
                 {
                     // Hex area
                     pt.y = int(((sector + offset_)/rowsize_) * line_height -
-                               doc_rect.top + bdr_top_ - 1);
+                               doc_rect.top + bdr_top_);     // This is just above the first byte of the sector
                     if (neg_y) pt.y = -pt.y;
 
                     //pt.x = hex_pos(rowsize_ - 1, char_width) + 2*char_width - doc_rect.left + bdr_left_;
-                    pt.x = char_pos(0, char_width) - char_width/2 - doc_rect.left + bdr_left_;
+                    pt.x = char_pos(0, char_width) - char_width/2 - doc_rect.left + bdr_left_;  // Right side of hex area
                     if (neg_x) pt.x = - pt.x;
                     pDC->MoveTo(pt);
                     pt.x = hex_pos(int((sector + offset_)%rowsize_), char_width) - 
-                           char_width/2 - doc_rect.left + bdr_left_;
+                           char_width/2 - doc_rect.left + bdr_left_;  // This is just to left of first byte of sector
                     if (neg_x) pt.x = - pt.x;
                     pDC->LineTo(pt);
 
@@ -2664,19 +2666,21 @@ void CHexEditView::OnDraw(CDC* pDC)
                     {
                         // Draw on line below and vertical bit too
                         pt.y = int(((sector + offset_)/rowsize_ + 1) * line_height - 
-                                   doc_rect.top + bdr_top_ - 1);
+                                   doc_rect.top + bdr_top_);
                         if (neg_y) pt.y = -pt.y;
                         pDC->LineTo(pt);
                         pt.x = hex_pos(0, char_width) - doc_rect.left + bdr_left_;
                         if (neg_x) pt.x = - pt.x;
                         pDC->LineTo(pt);
                     }
+					pt.x = addr_width_*char_width - char_width - doc_rect.left + bdr_left_;
+                    pDC->LineTo(pt);
                 }
                 if (display_.vert_display || display_.char_area)
                 {
                     // Do char area (or stacked mode)
                     pt.y = int(((sector + offset_)/rowsize_) * line_height -
-                               doc_rect.top + bdr_top_ - 1);
+                               doc_rect.top + bdr_top_);
                     if (neg_y) pt.y = -pt.y;
 
                     //pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + char_width_w - doc_rect.left + bdr_left_;
@@ -2693,16 +2697,19 @@ void CHexEditView::OnDraw(CDC* pDC)
                     {
                         // Draw on line below and vertical bit too
                         pt.y = int(((sector + offset_)/rowsize_ + 1) * line_height -
-                                   doc_rect.top + bdr_top_ - 1);
+                                   doc_rect.top + bdr_top_);
                         if (neg_y) pt.y = -pt.y;
                         pDC->LineTo(pt);
                         pt.x = char_pos(0, char_width, char_width_w) - doc_rect.left + bdr_left_;
                         if (neg_x) pt.x = - pt.x;
                         pDC->LineTo(pt);
                     }
-                    // This fills in a little bit between hex/char areas
-                    pt.x = char_pos(0, char_width, char_width_w) -
-                           char_width_w/2 - doc_rect.left + bdr_left_;
+                    // Fill in a little bit to join with the vertical line on the left
+	                if (display_.vert_display || !display_.hex_area)
+						pt.x = addr_width_*char_width - char_width - doc_rect.left + bdr_left_;
+					else
+						pt.x = char_pos(0, char_width, char_width_w) -
+							   char_width_w/2 - doc_rect.left + bdr_left_;
                     if (neg_x) pt.x = - pt.x;
                     pDC->LineTo(pt);
                 }
