@@ -45,7 +45,7 @@ static CGridCtrl *p_grid;
 // The sorting callback function can't be a member function
 static int CALLBACK bl_compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
-    int retval;
+	int retval;
 
 	(void)lParamSort;
 
@@ -53,50 +53,50 @@ static int CALLBACK bl_compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort
 	CGridCellBase* pCell2 = (CGridCellBase*) lParam2;
 	if (!pCell1 || !pCell2) return 0;
 
-    ASSERT(p_grid->GetSortColumn() < p_grid->GetColumnCount());
+	ASSERT(p_grid->GetSortColumn() < p_grid->GetColumnCount());
 	switch (p_grid->GetSortColumn() - p_grid->GetFixedColumnCount())
 	{
-    case CBookmarkDlg::COL_NAME:
-    case CBookmarkDlg::COL_LOCN:
+	case CBookmarkDlg::COL_NAME:
+	case CBookmarkDlg::COL_LOCN:
 		// Do text compare (ignore case)
 #if _MSC_VER >= 1300
 		return _wcsicmp(pCell1->GetText(), pCell2->GetText());
 #else
 		return _stricmp(pCell1->GetText(), pCell2->GetText());
 #endif
-    case CBookmarkDlg::COL_FILE:
+	case CBookmarkDlg::COL_FILE:
 #if _MSC_VER >= 1300
-        retval = _wcsicmp(pCell1->GetText(), pCell2->GetText());
-        if (retval != 0)
-            return retval;
-        // Now compare based on file directory
-        pCell1 = (CGridCellBase*)pCell1->GetData();
-        pCell2 = (CGridCellBase*)pCell2->GetData();
-        retval = _wcsicmp(pCell1->GetText(), pCell2->GetText());
+		retval = _wcsicmp(pCell1->GetText(), pCell2->GetText());
+		if (retval != 0)
+			return retval;
+		// Now compare based on file directory
+		pCell1 = (CGridCellBase*)pCell1->GetData();
+		pCell2 = (CGridCellBase*)pCell2->GetData();
+		retval = _wcsicmp(pCell1->GetText(), pCell2->GetText());
 #else
-        retval = _stricmp(pCell1->GetText(), pCell2->GetText());
-        if (retval != 0)
-            return retval;
-        // Now compare based on file directory
-        pCell1 = (CGridCellBase*)pCell1->GetData();
-        pCell2 = (CGridCellBase*)pCell2->GetData();
-        retval = _stricmp(pCell1->GetText(), pCell2->GetText());
+		retval = _stricmp(pCell1->GetText(), pCell2->GetText());
+		if (retval != 0)
+			return retval;
+		// Now compare based on file directory
+		pCell1 = (CGridCellBase*)pCell1->GetData();
+		pCell2 = (CGridCellBase*)pCell2->GetData();
+		retval = _stricmp(pCell1->GetText(), pCell2->GetText());
 #endif
-        if (retval != 0)
-            return retval;
-        // Now compare based on file position
-        pCell1 = (CGridCellBase*)pCell1->GetData();
-        pCell2 = (CGridCellBase*)pCell2->GetData();
+		if (retval != 0)
+			return retval;
+		// Now compare based on file position
+		pCell1 = (CGridCellBase*)pCell1->GetData();
+		pCell2 = (CGridCellBase*)pCell2->GetData();
 		if (pCell1->GetData() < pCell2->GetData())
 			return -1;
 		else if (pCell1->GetData() == pCell2->GetData())
 			return 0;
 		else
 			return 1;
-        break;
-    case CBookmarkDlg::COL_POS:
-    case CBookmarkDlg::COL_MODIFIED:
-    case CBookmarkDlg::COL_ACCESSED:
+		break;
+	case CBookmarkDlg::COL_POS:
+	case CBookmarkDlg::COL_MODIFIED:
+	case CBookmarkDlg::COL_ACCESSED:
 		// Do date compare
 		if (pCell1->GetData() < pCell2->GetData())
 			return -1;
@@ -104,23 +104,23 @@ static int CALLBACK bl_compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort
 			return 0;
 		else
 			return 1;
-        break;
+		break;
 	}
 	ASSERT(0);
 	return 0;
 }
 
 static DWORD id_pairs[] = { 
-    IDC_BOOKMARK_NAME_DESC, HIDC_BOOKMARK_NAME,
-    IDC_BOOKMARK_NAME, HIDC_BOOKMARK_NAME,
-    IDC_BOOKMARK_ADD, HIDC_BOOKMARK_ADD,
-    IDC_GRID_BL, HIDC_GRID_BL,
-    IDC_BOOKMARK_REMOVE, HIDC_BOOKMARK_REMOVE,
-    IDC_BOOKMARK_GOTO, HIDC_BOOKMARK_GOTO,
-    IDC_BOOKMARKS_VALIDATE, HIDC_BOOKMARKS_VALIDATE,
-    IDC_NET_RETAIN, HIDC_NET_RETAIN,
-    0,0 
-}; 
+	IDC_BOOKMARK_NAME_DESC, HIDC_BOOKMARK_NAME,
+	IDC_BOOKMARK_NAME, HIDC_BOOKMARK_NAME,
+	IDC_BOOKMARK_ADD, HIDC_BOOKMARK_ADD,
+	IDC_GRID_BL, HIDC_GRID_BL,
+	IDC_BOOKMARK_REMOVE, HIDC_BOOKMARK_REMOVE,
+	IDC_BOOKMARK_GOTO, HIDC_BOOKMARK_GOTO,
+	IDC_BOOKMARKS_VALIDATE, HIDC_BOOKMARKS_VALIDATE,
+	IDC_NET_RETAIN, HIDC_NET_RETAIN,
+	0,0 
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarkDlg dialog
@@ -129,7 +129,7 @@ CBookmarkDlg::CBookmarkDlg() : CDialog()
 {
 	help_hwnd_ = (HWND)0;
 	p_grid = &grid_;
-    pdoc_ = NULL;
+	pdoc_ = NULL;
 	m_first = true;
 }
 
@@ -146,36 +146,36 @@ BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 	((CButton *)GetDlgItem(IDC_NET_RETAIN))->SetCheck(BST_CHECKED);
 
 	ASSERT(GetDlgItem(IDC_GRID_BL) != NULL);
-    if (!grid_.SubclassWindow(GetDlgItem(IDC_GRID_BL)->m_hWnd))
-    {
-        TRACE0("Failed to subclass grid control\n");
+	if (!grid_.SubclassWindow(GetDlgItem(IDC_GRID_BL)->m_hWnd))
+	{
+		TRACE0("Failed to subclass grid control\n");
 		return FALSE;
-    }
+	}
 
-    // Set up the grid control
-    grid_.SetDoubleBuffering();
-    grid_.SetAutoFit();
+	// Set up the grid control
+	grid_.SetDoubleBuffering();
+	grid_.SetAutoFit();
 	grid_.SetCompareFunction(&bl_compare);
-    grid_.SetGridLines(GVL_BOTH); // GVL_HORZ | GVL_VERT
-    grid_.SetTrackFocusCell(FALSE);
-    grid_.SetFrameFocusCell(FALSE);
-    grid_.SetListMode(TRUE);
-    grid_.SetSingleRowSelection(FALSE);
-    grid_.SetHeaderSort(TRUE);
+	grid_.SetGridLines(GVL_BOTH); // GVL_HORZ | GVL_VERT
+	grid_.SetTrackFocusCell(FALSE);
+	grid_.SetFrameFocusCell(FALSE);
+	grid_.SetListMode(TRUE);
+	grid_.SetSingleRowSelection(FALSE);
+	grid_.SetHeaderSort(TRUE);
 
-    grid_.SetFixedRowCount(1);
+	grid_.SetFixedRowCount(1);
 
-    InitColumnHeadings();
-    grid_.SetColumnResize();
+	InitColumnHeadings();
+	grid_.SetColumnResize();
 
-    grid_.EnableRowHide(FALSE);
-    grid_.EnableColumnHide(FALSE);
-    grid_.EnableHiddenRowUnhide(FALSE);
-    grid_.EnableHiddenColUnhide(FALSE);
+	grid_.EnableRowHide(FALSE);
+	grid_.EnableColumnHide(FALSE);
+	grid_.EnableHiddenRowUnhide(FALSE);
+	grid_.EnableHiddenColUnhide(FALSE);
 
-    FillGrid();
+	FillGrid();
 
-    grid_.ExpandColsNice(FALSE);
+	grid_.ExpandColsNice(FALSE);
 
 	// Set up resizer control
 	// We must set the 4th parameter true else we get a resize border
@@ -213,11 +213,11 @@ BEGIN_MESSAGE_MAP(CBookmarkDlg, CDialog)
 	ON_BN_CLICKED(IDC_BOOKMARKS_HELP, OnHelp)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDOK, OnOK)
-    ON_WM_CONTEXTMENU()
-    ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
-    ON_NOTIFY(NM_CLICK, IDC_GRID_BL, OnGridClick)
-    ON_NOTIFY(NM_DBLCLK, IDC_GRID_BL, OnGridDoubleClick)
-    ON_NOTIFY(NM_RCLICK, IDC_GRID_BL, OnGridRClick)
+	ON_WM_CONTEXTMENU()
+	ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
+	ON_NOTIFY(NM_CLICK, IDC_GRID_BL, OnGridClick)
+	ON_NOTIFY(NM_DBLCLK, IDC_GRID_BL, OnGridDoubleClick)
+	ON_NOTIFY(NM_RCLICK, IDC_GRID_BL, OnGridRClick)
 	//ON_MESSAGE_VOID(WM_INITIALUPDATE, OnInitialUpdate)
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
@@ -225,100 +225,100 @@ END_MESSAGE_MAP()
 
 void CBookmarkDlg::InitColumnHeadings()
 {
-    static char *heading[] =
-    {
-        "Name",
-        "File",
-        "Folder",
-        "Byte No",
-        "Modified",
-        "Accessed",
-        NULL
-    };
+	static char *heading[] =
+	{
+		"Name",
+		"File",
+		"Folder",
+		"Byte No",
+		"Modified",
+		"Accessed",
+		NULL
+	};
 
-    ASSERT(sizeof(heading)/sizeof(*heading) == COL_LAST + 1);
+	ASSERT(sizeof(heading)/sizeof(*heading) == COL_LAST + 1);
 
-    CString strWidths = theApp.GetProfileString("File-Settings", 
-		                                        "BookmarkDialogColumns",
+	CString strWidths = theApp.GetProfileString("File-Settings", 
+												"BookmarkDialogColumns",
 												"80,80,,60,,138");
-    int curr_col = grid_.GetFixedColumnCount();
-    bool all_hidden = true;
+	int curr_col = grid_.GetFixedColumnCount();
+	bool all_hidden = true;
 
-    for (int ii = 0; ii < COL_LAST; ++ii)
-    {
-        CString ss;
+	for (int ii = 0; ii < COL_LAST; ++ii)
+	{
+		CString ss;
 
-        AfxExtractSubString(ss, strWidths, ii, ',');
-        int width = atoi(ss);
-        if (width != 0) all_hidden = false;                  // we found a visible column
+		AfxExtractSubString(ss, strWidths, ii, ',');
+		int width = atoi(ss);
+		if (width != 0) all_hidden = false;                  // we found a visible column
 
-        ASSERT(heading[ii] != NULL);
-        grid_.SetColumnCount(curr_col + 1);
-        if (width == 0)
-            grid_.SetColumnWidth(curr_col, 0);              // make column hidden
-        else
-            grid_.SetUserColumnWidth(curr_col, width);      // set user specified size (or -1 to indicate fit to cells)
+		ASSERT(heading[ii] != NULL);
+		grid_.SetColumnCount(curr_col + 1);
+		if (width == 0)
+			grid_.SetColumnWidth(curr_col, 0);              // make column hidden
+		else
+			grid_.SetUserColumnWidth(curr_col, width);      // set user specified size (or -1 to indicate fit to cells)
 
-        // Set column heading text (centred).  Also set item data so we know what goes in this column
-        GV_ITEM item;
-        item.row = 0;                                       // top row is header
-        item.col = curr_col;                                // column we are changing
-        item.mask = GVIF_PARAM|GVIF_FORMAT|GVIF_TEXT;       // change data+centered+text
-        item.lParam = ii;                                   // data that says what's in this column
-        item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;  // centre the heading
-        item.strText = heading[ii];                         // text of the heading
-        grid_.SetItem(&item);
+		// Set column heading text (centred).  Also set item data so we know what goes in this column
+		GV_ITEM item;
+		item.row = 0;                                       // top row is header
+		item.col = curr_col;                                // column we are changing
+		item.mask = GVIF_PARAM|GVIF_FORMAT|GVIF_TEXT;       // change data+centered+text
+		item.lParam = ii;                                   // data that says what's in this column
+		item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;  // centre the heading
+		item.strText = heading[ii];                         // text of the heading
+		grid_.SetItem(&item);
 
-        ++curr_col;
-    }
+		++curr_col;
+	}
 
-    // Show at least one column
-    if (all_hidden)
-    {
-        grid_.SetColumnWidth(grid_.GetFixedColumnCount(), 1);
-        grid_.AutoSizeColumn(grid_.GetFixedColumnCount(), GVS_BOTH);
-    }
+	// Show at least one column
+	if (all_hidden)
+	{
+		grid_.SetColumnWidth(grid_.GetFixedColumnCount(), 1);
+		grid_.AutoSizeColumn(grid_.GetFixedColumnCount(), GVS_BOTH);
+	}
 }
 
 void CBookmarkDlg::FillGrid()
 {
-    CHexEditView *pview;                // Active view
-    CHexEditDoc *pdoc = NULL;           // Active document (doc of the active view)
-    int first_sel_row = -1;             // Row of first bookmark found in the active document
+	CHexEditView *pview;                // Active view
+	CHexEditDoc *pdoc = NULL;           // Active document (doc of the active view)
+	int first_sel_row = -1;             // Row of first bookmark found in the active document
 
-    if (FALSE && (pview = GetView()) != NULL)
-        pdoc = pview->GetDocument();
+	if (FALSE && (pview = GetView()) != NULL)
+		pdoc = pview->GetDocument();
 
-    // Load all the bookmarks into the grid control
-    CBookmarkList *pbl = theApp.GetBookmarkList();
-    ASSERT(pbl->name_.size() == pbl->file_.size());
+	// Load all the bookmarks into the grid control
+	CBookmarkList *pbl = theApp.GetBookmarkList();
+	ASSERT(pbl->name_.size() == pbl->file_.size());
 
-    int index, row;
-    for (index = pbl->name_.size()-1, row = grid_.GetFixedRowCount(); index >= 0; index--)
+	int index, row;
+	for (index = pbl->name_.size()-1, row = grid_.GetFixedRowCount(); index >= 0; index--)
 	{
-        // Don't show empty (deleted) names or those starting with an underscore (internal use)
+		// Don't show empty (deleted) names or those starting with an underscore (internal use)
 		if (!pbl->name_[index].IsEmpty() && pbl->name_[index][0] != '_')
 		{
-		    grid_.SetRowCount(row + 1);
-            // If this bookmark is in the currently active document then select it
-            if (pdoc != NULL && std::find(pdoc->bm_index_.begin(), pdoc->bm_index_.end(), index) != pdoc->bm_index_.end())
-            {
-                if (first_sel_row == -1) first_sel_row = row;
-                UpdateRow(index, row, TRUE);
-            }
-            else
-                UpdateRow(index, row);
+			grid_.SetRowCount(row + 1);
+			// If this bookmark is in the currently active document then select it
+			if (pdoc != NULL && std::find(pdoc->bm_index_.begin(), pdoc->bm_index_.end(), index) != pdoc->bm_index_.end())
+			{
+				if (first_sel_row == -1) first_sel_row = row;
+				UpdateRow(index, row, TRUE);
+			}
+			else
+				UpdateRow(index, row);
 			++row;
 		}
 	}
-    if (first_sel_row != -1)
-        grid_.EnsureVisible(first_sel_row, 0);
+	if (first_sel_row != -1)
+		grid_.EnsureVisible(first_sel_row, 0);
 }
 
 void CBookmarkDlg::RemoveBookmark(int index)
 {
-    // First find the bookmark in the list
-    int row;
+	// First find the bookmark in the list
+	int row;
 	int col = COL_NAME + grid_.GetFixedColumnCount();
 	for (row = grid_.GetFixedRowCount(); row < grid_.GetRowCount(); ++row)
 	{
@@ -326,18 +326,18 @@ void CBookmarkDlg::RemoveBookmark(int index)
 			break;
 	}
 	if (row < grid_.GetRowCount())
-    {
-        grid_.DeleteRow(row);
-        grid_.Refresh();
-    }
+	{
+		grid_.DeleteRow(row);
+		grid_.Refresh();
+	}
 }
 
 // Given a bookmark it updates the row in the dialog.  First it finds the
 // row or appends a row if the bookmark is not found then calls UpdateRow
 void CBookmarkDlg::UpdateBookmark(int index, BOOL select /*=FALSE*/)
 {
-    // First find the bookmark in the list
-    int row;
+	// First find the bookmark in the list
+	int row;
 	int col = COL_NAME + grid_.GetFixedColumnCount();
 	for (row = grid_.GetFixedRowCount(); row < grid_.GetRowCount(); ++row)
 	{
@@ -345,151 +345,151 @@ void CBookmarkDlg::UpdateBookmark(int index, BOOL select /*=FALSE*/)
 			break;
 	}
 	if (row == grid_.GetRowCount())
-    {
-        // Not found so append a row and update that
+	{
+		// Not found so append a row and update that
 		grid_.SetRowCount(row + 1);
-    }
+	}
 
-    UpdateRow(index, row, select);
+	UpdateRow(index, row, select);
 }
 
 // Given a bookmark (index) and a row in the grid control (row) update
 // the row with the bookmark info and (optionally) select the row
 void CBookmarkDlg::UpdateRow(int index, int row, BOOL select /*=FALSE*/)
 {
-    CBookmarkList *pbl = theApp.GetBookmarkList();
+	CBookmarkList *pbl = theApp.GetBookmarkList();
 
-    int fcc = grid_.GetFixedColumnCount();
+	int fcc = grid_.GetFixedColumnCount();
 
 #if 0
-    // If the file is already open we have to check the document to get the latest position
-    if (last_file_ != pbl->file_[index])
-    {
-        if (theApp.m_pDocTemplate->MatchDocType(pbl->file_[index], pdoc_) != 
-            CDocTemplate::yesAlreadyOpen)
-        {
-            pdoc_ = NULL;
-        }
-        last_file_ = pbl->file_[index];
-    }
+	// If the file is already open we have to check the document to get the latest position
+	if (last_file_ != pbl->file_[index])
+	{
+		if (theApp.m_pDocTemplate->MatchDocType(pbl->file_[index], pdoc_) != 
+			CDocTemplate::yesAlreadyOpen)
+		{
+			pdoc_ = NULL;
+		}
+		last_file_ = pbl->file_[index];
+	}
 #endif
 
-    GV_ITEM item;
+	GV_ITEM item;
 	item.row = row;
-    item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_PARAM;
-    item.nState = GVIS_READONLY;
-    if (select) item.nState |= GVIS_SELECTED;
+	item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_PARAM;
+	item.nState = GVIS_READONLY;
+	if (select) item.nState |= GVIS_SELECTED;
 
-    struct tm *timeptr;             // Used in displaying dates
-    char disp[128];
+	struct tm *timeptr;             // Used in displaying dates
+	char disp[128];
 
-    // Split filename into name and path
-    int path_len;                   // Length of path (full name without filename)
-    path_len = pbl->file_[index].ReverseFind('\\');
-    if (path_len == -1) path_len = pbl->file_[index].ReverseFind('/');
-    if (path_len == -1) path_len = pbl->file_[index].ReverseFind(':');
-    if (path_len == -1)
-        path_len = 0;
-    else
-        ++path_len;
+	// Split filename into name and path
+	int path_len;                   // Length of path (full name without filename)
+	path_len = pbl->file_[index].ReverseFind('\\');
+	if (path_len == -1) path_len = pbl->file_[index].ReverseFind('/');
+	if (path_len == -1) path_len = pbl->file_[index].ReverseFind(':');
+	if (path_len == -1)
+		path_len = 0;
+	else
+		++path_len;
 
-    int ext_pos = pbl->file_[index].ReverseFind('.');
-    if (ext_pos < path_len) ext_pos = -1;              // '.' in a sub-directory name
+	int ext_pos = pbl->file_[index].ReverseFind('.');
+	if (ext_pos < path_len) ext_pos = -1;              // '.' in a sub-directory name
 
-    for (int column = 0; column < COL_LAST; ++column)
-    {
-        item.col = column + fcc;
+	for (int column = 0; column < COL_LAST; ++column)
+	{
+		item.col = column + fcc;
 
-        switch (column)
-        {
-        case COL_NAME:
+		switch (column)
+		{
+		case COL_NAME:
 			item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-            item.strText = pbl->name_[index];
+			item.strText = pbl->name_[index];
 			item.lParam = index;
-            break;
-        case COL_FILE:
+			break;
+		case COL_FILE:
 			item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-            item.strText = pbl->file_[index].Mid(path_len);
+			item.strText = pbl->file_[index].Mid(path_len);
 			item.lParam = (LONGLONG)grid_.GetCell(item.row, fcc + COL_LOCN);
-            break;
-        case COL_LOCN:
+			break;
+		case COL_LOCN:
 			item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-            item.strText = pbl->file_[index].Left(path_len);
+			item.strText = pbl->file_[index].Left(path_len);
 			item.lParam = (LONGLONG)grid_.GetCell(item.row, fcc + COL_POS);
-            break;
-        case COL_POS:
+			break;
+		case COL_POS:
 			item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-            FILE_ADDRESS addr;
-            if (pdoc_ != NULL)
-                addr = __int64(((CHexEditDoc *)pdoc_)->GetBookmarkPos(index));
-            else
-                addr = __int64(pbl->filepos_[index]);
-            sprintf(disp, "%I64d", addr);
-            item.strText = disp;
-            ::AddCommas(item.strText);
-    		item.lParam = addr;          // lParam is now 64 bit
-            break;
-        case COL_MODIFIED:
+			FILE_ADDRESS addr;
+			if (pdoc_ != NULL)
+				addr = __int64(((CHexEditDoc *)pdoc_)->GetBookmarkPos(index));
+			else
+				addr = __int64(pbl->filepos_[index]);
+			sprintf(disp, "%I64d", addr);
+			item.strText = disp;
+			::AddCommas(item.strText);
+			item.lParam = addr;          // lParam is now 64 bit
+			break;
+		case COL_MODIFIED:
 			item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-            if ((timeptr = localtime(&pbl->modified_[index])) == NULL)
-                item.strText = "Invalid";
-            else
-            {
-                strftime(disp, sizeof(disp), "%c", timeptr);
-                item.strText = disp;
-            }
+			if ((timeptr = localtime(&pbl->modified_[index])) == NULL)
+				item.strText = "Invalid";
+			else
+			{
+				strftime(disp, sizeof(disp), "%c", timeptr);
+				item.strText = disp;
+			}
 			item.lParam = pbl->modified_[index];
-            break;
-        case COL_ACCESSED:
+			break;
+		case COL_ACCESSED:
 			item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-            if ((timeptr = localtime(&pbl->accessed_[index])) == NULL)
-                item.strText = "Invalid";
-            else
-            {
-                strftime(disp, sizeof(disp), "%c", timeptr);
-                item.strText = disp;
-            }
+			if ((timeptr = localtime(&pbl->accessed_[index])) == NULL)
+				item.strText = "Invalid";
+			else
+			{
+				strftime(disp, sizeof(disp), "%c", timeptr);
+				item.strText = disp;
+			}
 			item.lParam = pbl->accessed_[index];
-            break;
+			break;
 		default:
 			ASSERT(0);
-        }
+		}
 
-        // Make sure we don't deselect a row that was already selected
-        if (column == 0 && !select && (grid_.GetItemState(row, 0) & GVIS_SELECTED) != 0)
-            item.nState |= GVIS_SELECTED; 
+		// Make sure we don't deselect a row that was already selected
+		if (column == 0 && !select && (grid_.GetItemState(row, 0) & GVIS_SELECTED) != 0)
+			item.nState |= GVIS_SELECTED;
 
-        grid_.SetItem(&item);
-    }
-    grid_.RedrawRow(row);
+		grid_.SetItem(&item);
+	}
+	grid_.RedrawRow(row);
 }
 
 // Message handlers
 
 void CBookmarkDlg::OnOK()
 {
-    theApp.SaveToMacro(km_bookmarks, 6);
-	// xxx TODO Hide();
+	theApp.SaveToMacro(km_bookmarks, 6);
+	// TBD: TODO Hide();
 }
 
 void CBookmarkDlg::OnDestroy() 
 {
-    if (grid_.m_hWnd != 0)
-    {
-        // Save column widths
-        CString strWidths;
+	if (grid_.m_hWnd != 0)
+	{
+		// Save column widths
+		CString strWidths;
 
-        for (int ii = grid_.GetFixedColumnCount(); ii < grid_.GetColumnCount(); ++ii)
-        {
-            CString ss;
-            ss.Format("%ld,", long(grid_.GetUserColumnWidth(ii)));
-            strWidths += ss;
-        }
+		for (int ii = grid_.GetFixedColumnCount(); ii < grid_.GetColumnCount(); ++ii)
+		{
+			CString ss;
+			ss.Format("%ld,", long(grid_.GetUserColumnWidth(ii)));
+			strWidths += ss;
+		}
 
-        theApp.WriteProfileString("File-Settings", "BookmarkDialogColumns", strWidths);
-    }
+		theApp.WriteProfileString("File-Settings", "BookmarkDialogColumns", strWidths);
+	}
 
-    CDialog::OnDestroy();
+	CDialog::OnDestroy();
 }
 
 LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
@@ -509,23 +509,23 @@ LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
 		m_first = false;
 	}
 
-    // If there are no views or no associated files disallow adding of bookmarks
-    CHexEditView *pview = GetView();
+	// If there are no views or no associated files disallow adding of bookmarks
+	CHexEditView *pview = GetView();
 	if (pview == NULL || pview->GetDocument()->pfile1_ == NULL)
-    {
-	    GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText("");
-	    GetDlgItem(IDC_BOOKMARK_NAME)->EnableWindow(FALSE);
-    }
-    else
-    {
-	    GetDlgItem(IDC_BOOKMARK_NAME)->EnableWindow(TRUE);
-    }
+	{
+		GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText("");
+		GetDlgItem(IDC_BOOKMARK_NAME)->EnableWindow(FALSE);
+	}
+	else
+	{
+		GetDlgItem(IDC_BOOKMARK_NAME)->EnableWindow(TRUE);
+	}
 
 	CString ss;
 	GetDlgItem(IDC_BOOKMARK_NAME)->GetWindowText(ss);
 	GetDlgItem(IDC_BOOKMARK_ADD)->EnableWindow(!ss.IsEmpty());
 
-    CCellRange sel = grid_.GetSelectedCellRange();
+	CCellRange sel = grid_.GetSelectedCellRange();
 	GetDlgItem(IDC_BOOKMARK_GOTO)->EnableWindow(sel.IsValid() && sel.GetMinRow() == sel.GetMaxRow());
 	GetDlgItem(IDC_BOOKMARK_REMOVE)->EnableWindow(sel.IsValid());
 
@@ -535,19 +535,19 @@ LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
 		theApp.HtmlHelpWmHelp(help_hwnd_, id_pairs);
 		help_hwnd_ = (HWND)0;
 	}
-    return FALSE;
+	return FALSE;
 }
 
 BOOL CBookmarkDlg::PreTranslateMessage(MSG* pMsg) 
 {
 
-    if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
-    {
+	if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
+	{
 		OnAdd();
-        return TRUE;
-    }
+		return TRUE;
+	}
 
-    return CDialog::PreTranslateMessage(pMsg);
+	return CDialog::PreTranslateMessage(pMsg);
 }
 
 CBrush * CBookmarkDlg::m_pBrush = NULL;
@@ -594,24 +594,24 @@ HBRUSH CBookmarkDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 void CBookmarkDlg::OnAdd() 
 {
-    int index;                          // bookmark index of an existing bookmark of same name (or -1)
+	int index;                          // bookmark index of an existing bookmark of same name (or -1)
 	CHexEditView *pview = GetView();
 	ASSERT(pview != NULL);
 	if (pview == NULL) return;
 
-    CBookmarkList *pbl = theApp.GetBookmarkList();
+	CBookmarkList *pbl = theApp.GetBookmarkList();
 
 	ASSERT(GetDlgItem(IDC_BOOKMARK_NAME) != NULL);
 	CString name;
 	GetDlgItem(IDC_BOOKMARK_NAME)->GetWindowText(name);
-    if (name.GetLength() == 0) return;
+	if (name.GetLength() == 0) return;
 
-    if (name[0] == '_')
+	if (name[0] == '_')
 	{
 		AfxMessageBox("Names beginning with an underscore\r"
-                      "are reserved for internal use.");
+					  "are reserved for internal use.");
 		return;
-    }
+	}
 
 	if (name.FindOneOf("|") != -1)
 	{
@@ -626,26 +626,26 @@ void CBookmarkDlg::OnAdd()
 		CString ss;
 		ss.Format("Bookmark \"%s\" already exists\r"
 				  "in \"%s\".\r"
-			      "Do you want to move it?", name, file_name);
+				  "Do you want to move it?", name, file_name);
 		if (AfxMessageBox(ss, MB_YESNO) != IDYES)
 			return;
 
 #if 0 // moved to CBookmark
-        // Remove overwritten bookmark from doc where it currently is
-        CDocument *pdoc2;
-        if (theApp.m_pDocTemplate->MatchDocType(pbl->file_[index], pdoc2) == 
-            CDocTemplate::yesAlreadyOpen)
-        {
-            ((CHexEditDoc *)pdoc2)->RemoveBookmark(index);
-        }
+		// Remove overwritten bookmark from doc where it currently is
+		CDocument *pdoc2;
+		if (theApp.m_pDocTemplate->MatchDocType(pbl->file_[index], pdoc2) == 
+			CDocTemplate::yesAlreadyOpen)
+		{
+			((CHexEditDoc *)pdoc2)->RemoveBookmark(index);
+		}
 #endif
 	}
 
-    // Add the bookmark to the list (overwrites existing bookmark of same name)
+	// Add the bookmark to the list (overwrites existing bookmark of same name)
 	int ii = pbl->AddBookmark(name, file_name,
-                              pview->GetPos(), NULL, pview->GetDocument());
+							  pview->GetPos(), NULL, pview->GetDocument());
 
-    theApp.SaveToMacro(km_bookmarks_add, name);
+	theApp.SaveToMacro(km_bookmarks_add, name);
 
 	// Find the new/replaced bookmark and select 
 	int row, col = COL_NAME + grid_.GetFixedColumnCount();
@@ -684,8 +684,8 @@ void CBookmarkDlg::OnAdd()
 		ASSERT(row < grid_.GetRowCount());  // We should have found it
 	}
 
-    // Add bookmark to doc
-    pview->GetDocument()->AddBookmark(ii, pos);
+	// Add bookmark to doc
+	pview->GetDocument()->AddBookmark(ii, pos);
 
 	// Update the row found or added and select it
 	UpdateRow(ii, row);
@@ -703,13 +703,13 @@ void CBookmarkDlg::OnAdd()
 
 void CBookmarkDlg::OnGoTo() 
 {
-    CCellRange sel = grid_.GetSelectedCellRange();
+	CCellRange sel = grid_.GetSelectedCellRange();
 	ASSERT(sel.IsValid() && sel.GetMinRow() == sel.GetMaxRow());
 
 	int row = sel.GetMinRow();
 	int index = grid_.GetItemData(row, COL_NAME + grid_.GetFixedColumnCount());
 
-    CBookmarkList *pbl = theApp.GetBookmarkList();
+	CBookmarkList *pbl = theApp.GetBookmarkList();
 	pbl->GoTo(index);
 
 //	// Close the dialog
@@ -718,32 +718,32 @@ void CBookmarkDlg::OnGoTo()
 
 void CBookmarkDlg::OnRemove() 
 {
-    CBookmarkList *pbl = theApp.GetBookmarkList();
-    int fcc = grid_.GetFixedColumnCount();
+	CBookmarkList *pbl = theApp.GetBookmarkList();
+	int fcc = grid_.GetFixedColumnCount();
 	range_set<int> tt;                  // the grid rows to be removed
-    CCellRange sel = grid_.GetSelectedCellRange();
+	CCellRange sel = grid_.GetSelectedCellRange();
 	ASSERT(sel.IsValid());
 
 	// Mark all selected rows for deletion
 	for (int row = sel.GetMinRow(); row <= sel.GetMaxRow(); ++row)
 		if (grid_.IsCellSelected(row, fcc))
 		{
-            int index = grid_.GetItemData(row, fcc + COL_NAME);
+			int index = grid_.GetItemData(row, fcc + COL_NAME);
 
 #if 0 // moved to pbl->RemoveBookmark()
-            // Check for open document and remove from the local (doc) bookmarks as well
-            CDocument *pdoc;
-            if (theApp.m_pDocTemplate->MatchDocType(pbl->file_[index], pdoc) == 
-                CDocTemplate::yesAlreadyOpen)
-            {
-                ((CHexEditDoc *)pdoc)->RemoveBookmark(index);
-            }
+			// Check for open document and remove from the local (doc) bookmarks as well
+			CDocument *pdoc;
+			if (theApp.m_pDocTemplate->MatchDocType(pbl->file_[index], pdoc) == 
+				CDocTemplate::yesAlreadyOpen)
+			{
+				((CHexEditDoc *)pdoc)->RemoveBookmark(index);
+			}
 #endif
 
-            // Remove from the bookmark list
+			// Remove from the bookmark list
 			pbl->Remove(index);
 
-            // Mark for deletion from the grid (see below)
+			// Mark for deletion from the grid (see below)
 			tt.insert(row);
 		}
 
@@ -752,41 +752,41 @@ void CBookmarkDlg::OnRemove()
 
 	// Remove elements from the grid starting at end so that we don't muck up the row order
 	for (pp = tt.end(); pp != tt.begin(); )
-        grid_.DeleteRow(*(--pp));
-    grid_.Refresh();
+		grid_.DeleteRow(*(--pp));
+	grid_.Refresh();
 }
 
 void CBookmarkDlg::OnValidate() 
 {
-    int move_count = 0;      // Number of bookmarks moved due to being past EOF
+	int move_count = 0;      // Number of bookmarks moved due to being past EOF
 
 	CWaitCursor wc;
-    CBookmarkList *pbl = theApp.GetBookmarkList();
-    int fcc = grid_.GetFixedColumnCount();
+	CBookmarkList *pbl = theApp.GetBookmarkList();
+	int fcc = grid_.GetFixedColumnCount();
 	range_set<int> tt;                  // the grid rows to be removed
 
 	for (int row = grid_.GetFixedRowCount(); row < grid_.GetRowCount(); ++row)
 	{
 		int index = grid_.GetItemData(row, fcc + COL_NAME);
-        CDocument *pdoc;
+		CDocument *pdoc;
 		ASSERT(index > -1 && index < int(pbl->file_.size()));
 
-        if (theApp.m_pDocTemplate->MatchDocType(pbl->file_[index], pdoc) == 
-            CDocTemplate::yesAlreadyOpen)
-        {
-            // Bookmarks are checked when we open the document so we don't need to validate again here
-            // (Ie this bookmark was checked when the file was opened.)
+		if (theApp.m_pDocTemplate->MatchDocType(pbl->file_[index], pdoc) == 
+			CDocTemplate::yesAlreadyOpen)
+		{
+			// Bookmarks are checked when we open the document so we don't need to validate again here
+			// (Ie this bookmark was checked when the file was opened.)
 #if 0
-            // The file is open so we need to check that the bookmark is <= the
-            // in-memory file length which may be different to the on-disk length.
-            if (pbl->filepos_[index] > ((CHexEditDoc *)pdoc)->length())
-            {
+			// The file is open so we need to check that the bookmark is <= the
+			// in-memory file length which may be different to the on-disk length.
+			if (pbl->filepos_[index] > ((CHexEditDoc *)pdoc)->length())
+			{
 				TRACE2("Validate: removing %s, file %s (loaded) is too short\n", pbl->name_[index], pbl->file_[index]);
 				pbl->Remove(index);
 				tt.insert(row);
-            }
+			}
 #endif
-        }
+		}
 		else if (_access(pbl->file_[index], 0) != -1)
 		{
 			// File found but make sure the bookmark is <= file length
@@ -796,14 +796,14 @@ void CBookmarkDlg::OnValidate()
 				pbl->filepos_[index] > __int64(fs.m_size))
 			{
 				TRACE2("Validate: moving %s, file %s is too short\n", pbl->name_[index], pbl->file_[index]);
-                pbl->filepos_[index] = fs.m_size;
-                UpdateRow(index, row);
-                ++move_count;
+				pbl->filepos_[index] = fs.m_size;
+				UpdateRow(index, row);
+				++move_count;
 				// pbl->RemoveBookmark(index);
 				// tt.insert(row);
 			}
 		}
-        else
+		else
 		{
 			ASSERT(pbl->file_[index].Mid(1, 2) == ":\\"); // GetDriveType expects "D:\" under win9x
 
@@ -824,96 +824,96 @@ void CBookmarkDlg::OnValidate()
 
 	// Remove elements starting at end so that we don't muck up the row order
 	for (pp = tt.end(); pp != tt.begin(); )
-        grid_.DeleteRow(*(--pp));
-    grid_.Refresh();
+		grid_.DeleteRow(*(--pp));
+	grid_.Refresh();
 
-    if (move_count > 0 || tt.size() > 0)
-    {
-        CString mess;
+	if (move_count > 0 || tt.size() > 0)
+	{
+		CString mess;
 
-        mess.Format("%ld bookmarks were deleted (files missing)\n"
-                    "%ld bookmarks were moved (past EOF)",
-                    long(tt.size()), long(move_count));
-        AfxMessageBox(mess);
-    }
-    else
-        AfxMessageBox("No bookmarks were deleted or moved.");
+		mess.Format("%ld bookmarks were deleted (files missing)\n"
+					"%ld bookmarks were moved (past EOF)",
+					long(tt.size()), long(move_count));
+		AfxMessageBox(mess);
+	}
+	else
+		AfxMessageBox("No bookmarks were deleted or moved.");
 }
 
 // Handlers for messages from grid control (IDC_GRID_BL)
 void CBookmarkDlg::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
-    NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
-    TRACE("Left button click on row %d, col %d\n", pItem->iRow, pItem->iColumn);
+	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
+	TRACE("Left button click on row %d, col %d\n", pItem->iRow, pItem->iColumn);
 
-    if (pItem->iRow < grid_.GetFixedRowCount())
-        return;                         // Don't do anything for header rows
+	if (pItem->iRow < grid_.GetFixedRowCount())
+		return;                         // Don't do anything for header rows
 
 	CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
-    GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText(ss);
+	GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText(ss);
 }
 
 void CBookmarkDlg::OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
-    NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
-    TRACE("Left button click on row %d, col %d\n", pItem->iRow, pItem->iColumn);
+	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
+	TRACE("Left button click on row %d, col %d\n", pItem->iRow, pItem->iColumn);
 
-    if (pItem->iRow < grid_.GetFixedRowCount())
-        return;                         // Don't do anything for header rows
+	if (pItem->iRow < grid_.GetFixedRowCount())
+		return;                         // Don't do anything for header rows
 
 	CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
-    GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText(ss);
+	GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText(ss);
 
-    CCellRange sel = grid_.GetSelectedCellRange();
+	CCellRange sel = grid_.GetSelectedCellRange();
 	if (sel.IsValid() && sel.GetMinRow() == sel.GetMaxRow())
-        OnGoTo();
+		OnGoTo();
 }
 
 void CBookmarkDlg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
-    NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
-    TRACE("Right button click on row %d, col %d\n", pItem->iRow, pItem->iColumn);
-    int fcc = grid_.GetFixedColumnCount();
+	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
+	TRACE("Right button click on row %d, col %d\n", pItem->iRow, pItem->iColumn);
+	int fcc = grid_.GetFixedColumnCount();
 
-    if (pItem->iRow < grid_.GetFixedRowCount() && pItem->iColumn >= fcc)
-    {
-        // Right click on column headings - create menu of columns available
-        CMenu mm;
-        mm.CreatePopupMenu();
+	if (pItem->iRow < grid_.GetFixedRowCount() && pItem->iColumn >= fcc)
+	{
+		// Right click on column headings - create menu of columns available
+		CMenu mm;
+		mm.CreatePopupMenu();
 
-        mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+0)>0?MF_CHECKED:0), 1, "Name");
-        mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+1)>0?MF_CHECKED:0), 2, "File");
-        mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+2)>0?MF_CHECKED:0), 3, "Folder");
-        mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+3)>0?MF_CHECKED:0), 4, "Byte No");
-        mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+4)>0?MF_CHECKED:0), 5, "Modified");
-        mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+5)>0?MF_CHECKED:0), 6, "Accessed");
+		mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+0)>0?MF_CHECKED:0), 1, "Name");
+		mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+1)>0?MF_CHECKED:0), 2, "File");
+		mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+2)>0?MF_CHECKED:0), 3, "Folder");
+		mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+3)>0?MF_CHECKED:0), 4, "Byte No");
+		mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+4)>0?MF_CHECKED:0), 5, "Modified");
+		mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(fcc+5)>0?MF_CHECKED:0), 6, "Accessed");
 
-        // Work out where to display the popup menu
-        CRect rct;
-        grid_.GetCellRect(pItem->iRow, pItem->iColumn, &rct);
-        grid_.ClientToScreen(&rct);
-        int item = mm.TrackPopupMenu(
-                TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD,
-                (rct.left+rct.right)/2, (rct.top+rct.bottom)/2, this);
-        if (item != 0)
-        {
-            item += fcc-1;
-            if (grid_.GetColumnWidth(item) > 0)
-                grid_.SetColumnWidth(item, 0);
-            else
-            {
-                grid_.SetColumnWidth(item, 1);
-                grid_.AutoSizeColumn(item, GVS_BOTH);
-            }
-            grid_.ExpandColsNice(FALSE);
-        }
-    }
+		// Work out where to display the popup menu
+		CRect rct;
+		grid_.GetCellRect(pItem->iRow, pItem->iColumn, &rct);
+		grid_.ClientToScreen(&rct);
+		int item = mm.TrackPopupMenu(
+				TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD,
+				(rct.left+rct.right)/2, (rct.top+rct.bottom)/2, this);
+		if (item != 0)
+		{
+			item += fcc-1;
+			if (grid_.GetColumnWidth(item) > 0)
+				grid_.SetColumnWidth(item, 0);
+			else
+			{
+				grid_.SetColumnWidth(item, 1);
+				grid_.AutoSizeColumn(item, GVS_BOTH);
+			}
+			grid_.ExpandColsNice(FALSE);
+		}
+	}
 }
 
 void CBookmarkDlg::OnHelp() 
 {
-    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_BOOKMARKS_HELP))
-        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_BOOKMARKS_HELP))
+		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 BOOL CBookmarkDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
@@ -922,27 +922,27 @@ BOOL CBookmarkDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 	// and then disappear when mouse up evenet is seen.  The only soln I could
 	// find after a lot of experimenetation is to do it later (in OnKickIdle).
 	help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
-    return TRUE;
+	return TRUE;
 }
 
 void CBookmarkDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
 {
-    // Don't show context menu if right-click on grid top row (used to display column menu)
-    if (pWnd->IsKindOf(RUNTIME_CLASS(CGridCtrl)))
-    {
-        grid_.ScreenToClient(&point);
-        CCellID cell = grid_.GetCellFromPt(point);
-        if (cell.row == 0)
-            return;
-    }
+	// Don't show context menu if right-click on grid top row (used to display column menu)
+	if (pWnd->IsKindOf(RUNTIME_CLASS(CGridCtrl)))
+	{
+		grid_.ScreenToClient(&point);
+		CCellID cell = grid_.GetCellFromPt(point);
+		if (cell.row == 0)
+			return;
+	}
 
-    // NOTE: IMPORTANT For this to work with static text controls the control
-    // must have the "Notify" (SS_NOTIFY) checkbox set.  Windows appears to
-    // see that the right click was on a static text control and just pass
-    // the message to the parent, which simply causes the control bars
-    // context menu (IDR_CONTEXT_BARS) to be shown.
-    // It took me days to work out how right click of the "Name:" static
-    // text should show the "What's This" context menu.
+	// NOTE: IMPORTANT For this to work with static text controls the control
+	// must have the "Notify" (SS_NOTIFY) checkbox set.  Windows appears to
+	// see that the right click was on a static text control and just pass
+	// the message to the parent, which simply causes the control bars
+	// context menu (IDR_CONTEXT_BARS) to be shown.
+	// It took me days to work out how right click of the "Name:" static
+	// text should show the "What's This" context menu.
 
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }

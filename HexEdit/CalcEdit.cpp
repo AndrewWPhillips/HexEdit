@@ -1,6 +1,6 @@
 // CalcEdit.cpp : implements the subclassed edit control for the calculator
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 2000-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -58,8 +58,8 @@ static char THIS_FILE[] = __FILE__;
 
 CCalcEdit::CCalcEdit()
 {
-    pp_ = NULL;
-    sel_ = (DWORD)-1;
+	pp_ = NULL;
+	sel_ = (DWORD)-1;
 }
 
 CCalcEdit::~CCalcEdit()
@@ -72,56 +72,56 @@ BEGIN_MESSAGE_MAP(CCalcEdit, CEdit)
 	ON_WM_CHAR()
 	ON_WM_KEYDOWN()
 	//}}AFX_MSG_MAP
-    ON_WM_SETFOCUS()
-    ON_WM_KILLFOCUS()
-    ON_WM_LBUTTONUP()
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
+	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 // Put current calculator value (pp_->current_) into edit control nicely formatted
 void CCalcEdit::Put()
 {
-    ASSERT(pp_ != NULL);
-    ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
-    ASSERT(pp_->IsVisible());
+	ASSERT(pp_ != NULL);
+	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
+	ASSERT(pp_->IsVisible());
 
-    char buf[72];
+	char buf[72];
 
-    if (pp_->radix_ == 10)
-    {
-        signed char s8;
-        signed short s16;
-        signed long s32;
+	if (pp_->radix_ == 10)
+	{
+		signed char s8;
+		signed short s16;
+		signed long s32;
 
-        switch (pp_->bits_)
-        {
-        case 8:
-            s8 = (signed char)pp_->current_;
-            _itoa((int)s8, buf, pp_->radix_);
-            break;
-        case 16:
-            s16 = (signed short)pp_->current_;
-            _itoa((int)s16, buf, pp_->radix_);
-            break;
-        case 32:
-            s32 = (signed long)pp_->current_;
-            _i64toa((__int64)s32, buf, pp_->radix_);
-            break;
-        case 64:
-            _i64toa(pp_->current_, buf, pp_->radix_);
-            break;
-        default:
-            ASSERT(0);
-        }
-    }
-    else
-        _ui64toa(pp_->current_ & pp_->mask_, buf, pp_->radix_);
+		switch (pp_->bits_)
+		{
+		case 8:
+			s8 = (signed char)pp_->current_;
+			_itoa((int)s8, buf, pp_->radix_);
+			break;
+		case 16:
+			s16 = (signed short)pp_->current_;
+			_itoa((int)s16, buf, pp_->radix_);
+			break;
+		case 32:
+			s32 = (signed long)pp_->current_;
+			_i64toa((__int64)s32, buf, pp_->radix_);
+			break;
+		case 64:
+			_i64toa(pp_->current_, buf, pp_->radix_);
+			break;
+		default:
+			ASSERT(0);
+		}
+	}
+	else
+		_ui64toa(pp_->current_ & pp_->mask_, buf, pp_->radix_);
 	pp_->current_const_ = TRUE;
 	pp_->current_type_ = CJumpExpr::TYPE_INT;
 
-    SetWindowText(buf);
-    SetSel(strlen(buf), -1, FALSE);     // move caret to end
+	SetWindowText(buf);
+	SetSel(strlen(buf), -1, FALSE);     // move caret to end
 
-    add_sep();
+	add_sep();
 	if (pp_->ctl_calc_bits_.m_hWnd != 0)
 		pp_->ctl_calc_bits_.RedrawWindow();
 }
@@ -129,39 +129,39 @@ void CCalcEdit::Put()
 // Check if string is a simple number (possible with separators) or an expression
 bool CCalcEdit::is_number(LPCTSTR ss)
 {
-    char sep_char = ' ';
-    if (pp_->radix_ == 10)
+	char sep_char = ' ';
+	if (pp_->radix_ == 10)
 		sep_char = theApp.dec_sep_char_;
 
 	bool digit_seen = false;
 	bool last_sep = false;
 
-    for (const char *ps = ss; *ps != '\0'; ++ps)
-    {
-        if (pp_->radix_ == 10 && !digit_seen && *ps == '-')
-            continue;   // skip leading minus sign for decimal numbers
+	for (const char *ps = ss; *ps != '\0'; ++ps)
+	{
+		if (pp_->radix_ == 10 && !digit_seen && *ps == '-')
+			continue;   // skip leading minus sign for decimal numbers
 
 		last_sep = *ps == sep_char;
 		if (last_sep)
 			continue;                    // Skip separator
 
 		// Check if/get valid digit
-        unsigned int digval;
-        if (*ps < 0)
-            return false;
-        else if (isdigit(*ps))
-            digval = *ps - '0';
-        else if (isalpha(*ps))
-            digval = toupper(*ps) - 'A' + 10;
+		unsigned int digval;
+		if (*ps < 0)
+			return false;
+		else if (isdigit(*ps))
+			digval = *ps - '0';
+		else if (isalpha(*ps))
+			digval = toupper(*ps) - 'A' + 10;
 		else
 			return false;                // Not number character
 
 		// Check if digit is in range of radix
-        if (digval >= pp_->radix_)
+		if (digval >= pp_->radix_)
 			return false;               // Invalid digit for radix
 
-        digit_seen = true;              // We've now seen a valid digit
-    }
+		digit_seen = true;              // We've now seen a valid digit
+	}
 
 	return digit_seen && !last_sep;     // OK if we saw a digit and did not end on a separator
 }
@@ -198,22 +198,22 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 
 bool CCalcEdit::update_value(bool side_effects /* = true */)
 {
-    ASSERT(pp_ != NULL);
-    ASSERT(pp_->IsVisible());
-    ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
+	ASSERT(pp_ != NULL);
+	ASSERT(pp_->IsVisible());
+	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
 
-    CString ss;
-    GetWindowText(ss);
+	CString ss;
+	GetWindowText(ss);
 	if (ss.IsEmpty())
 		ss = "0";
-    pp_->overflow_ = FALSE;
+	pp_->overflow_ = FALSE;
 
 	// check if it is a simple numeric value
 	pp_->current_const_ = is_number(ss);
 
 	// evaluate the expression
-    int ac;
-    CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(ss, 0 /*unused*/, ac /*unused*/, pp_->radix_, side_effects);
+	int ac;
+	CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(ss, 0 /*unused*/, ac /*unused*/, pp_->radix_, side_effects);
 	switch((expr_eval::type_t)vv.typ)
 	{
 	case CHexExpr::TYPE_NONE:
@@ -225,7 +225,7 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 #endif
 		{
 			ASSERT(0);  // should not happen since update_value should not be called when we have a valid integer expression - hence Overflow should not occur
-            pp_->overflow_ = TRUE;
+			pp_->overflow_ = TRUE;
 			pp_->current_type_ = CHexExpr::TYPE_INT;
 		}
 		else
@@ -236,23 +236,23 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		break;
 
 	case CHexExpr::TYPE_INT:
-        // If we are using decimals check if the value is -ve (has high bit set)
-        if (pp_->radix_ == 10 && (vv.int64 & ((pp_->mask_ + 1)>>1)) != 0)
-        {
-            // Make sure all the high bits are on
-            if (~(vv.int64 | pp_->mask_) != 0)
-                pp_->overflow_ = TRUE;
-        }
-        else
-        {
-            // Make sure all the high bits are off
-            if ((vv.int64 & ~pp_->mask_) != 0)
-                pp_->overflow_ = TRUE;
-        }
+		// If we are using decimals check if the value is -ve (has high bit set)
+		if (pp_->radix_ == 10 && (vv.int64 & ((pp_->mask_ + 1)>>1)) != 0)
+		{
+			// Make sure all the high bits are on
+			if (~(vv.int64 | pp_->mask_) != 0)
+				pp_->overflow_ = TRUE;
+		}
+		else
+		{
+			// Make sure all the high bits are off
+			if ((vv.int64 & ~pp_->mask_) != 0)
+				pp_->overflow_ = TRUE;
+		}
 		if (!pp_->overflow_)
 		{
-            //pp_->current_ = (pp_->current_ & ~pp_->mask_) | (vv.int64 & pp_->mask_);
-            pp_->current_ = vv.int64;
+			//pp_->current_ = (pp_->current_ & ~pp_->mask_) | (vv.int64 & pp_->mask_);
+			pp_->current_ = vv.int64;
 			if (pp_->current_const_)
 				add_sep();
 		}
@@ -306,10 +306,10 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 
 	case CHexExpr::TYPE_DATE:
 		ASSERT(!pp_->current_const_);
-        if (vv.date <= -1e30)
+		if (vv.date <= -1e30)
 		{
 			pp_->current_ = 0;
-            pp_->current_str_ = "##Invalid date##";
+			pp_->current_str_ = "##Invalid date##";
 		}
 		else
 		{
@@ -333,134 +333,134 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		pp_->current_str_ = "##Unexpected expression type##";
 		break;
 	}
-    pp_->ShowStatus();                       // Indicate overflow etc
+	pp_->ShowStatus();                       // Indicate overflow etc
 
-    if (pp_->overflow_)
+	if (pp_->overflow_)
 	{
 		// Note: Since we are ignoring the typed character (returning false)
 		//       we do not want to change pp_->current_type_.
 #ifdef SYS_SOUNDS
-        if (!CSystemSound::Play("Invalid Character"))
+		if (!CSystemSound::Play("Invalid Character"))
 #endif
 			::Beep(5000,200);
-	    pp_->FixFileButtons();
-        return false;
-    }
+		pp_->FixFileButtons();
+		return false;
+	}
 	else
 	{
 		pp_->current_type_ = (expr_eval::type_t)vv.typ;
-	    pp_->FixFileButtons();  // must be called after settings current type
-        return true;
+		pp_->FixFileButtons();  // must be called after settings current type
+		return true;
 	}
 }
 
 void CCalcEdit::add_sep()
 {
-    ASSERT(pp_ != NULL);
-    ASSERT(pp_->IsVisible());
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+	ASSERT(pp_ != NULL);
+	ASSERT(pp_->IsVisible());
+	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-    // Work out how to group the digits
-    int group;
-    if (pp_->radix_ == 10)
-        group = theApp.dec_group_;             // Use decimal grouping from locale
-    else if (pp_->radix_ == 16)
-        group = 4;                      // For hex make groups of 4 nybbles (2 bytes)
-    else
-        group = 8;                      // Group = whole number of bytes (1 byte for binary, 3 for octal)
+	// Work out how to group the digits
+	int group;
+	if (pp_->radix_ == 10)
+		group = theApp.dec_group_;             // Use decimal grouping from locale
+	else if (pp_->radix_ == 16)
+		group = 4;                      // For hex make groups of 4 nybbles (2 bytes)
+	else
+		group = 8;                      // Group = whole number of bytes (1 byte for binary, 3 for octal)
 
-    char sep_char = ' ';
-    if (pp_->radix_ == 10) sep_char = theApp.dec_sep_char_;
+	char sep_char = ' ';
+	if (pp_->radix_ == 10) sep_char = theApp.dec_sep_char_;
 
-    CString ss;                         // Current string
-    GetWindowText(ss);
-    int start, end;                     // Current selection (start==end if just caret)
-    GetSel(start, end);
+	CString ss;                         // Current string
+	GetWindowText(ss);
+	int start, end;                     // Current selection (start==end if just caret)
+	GetSel(start, end);
 
-    const char *src;                    // Ptr into orig. string
-    int newstart, newend;               // New caret position/selection
-    newstart = newend = 0;              // In case of empty string
+	const char *src;                    // Ptr into orig. string
+	int newstart, newend;               // New caret position/selection
+	newstart = newend = 0;              // In case of empty string
 
-    char out[72];                       // Largest output is 64 bit binary (64 bits + 7 spaces + nul)
+	char out[72];                       // Largest output is 64 bit binary (64 bits + 7 spaces + nul)
 
-    size_t ii, jj;                      // Number of digits written/read
-    char *dst = out;                    // Ptr to current output char
-    int ndigits;                        // Numbers of chars that are part of number
+	size_t ii, jj;                      // Number of digits written/read
+	char *dst = out;                    // Ptr to current output char
+	int ndigits;                        // Numbers of chars that are part of number
 
-    BOOL none_yet = TRUE;		        // Have we seen any non-zero digits yet?
+	BOOL none_yet = TRUE;		        // Have we seen any non-zero digits yet?
 
-    // Work out how many digits we have
-    for (src = ss.GetBuffer(0), ndigits = 0; *src != '\0'; ++src)
-    {
-        unsigned int val;
-        if (isdigit(*src))
-            val = *src - '0';
-        else if (isalpha(*src))
-            val = toupper(*src) - 'A' + 10;
-        else
-            continue;
+	// Work out how many digits we have
+	for (src = ss.GetBuffer(0), ndigits = 0; *src != '\0'; ++src)
+	{
+		unsigned int val;
+		if (isdigit(*src))
+			val = *src - '0';
+		else if (isalpha(*src))
+			val = toupper(*src) - 'A' + 10;
+		else
+			continue;
 
-        // Check for valid digits according to current radix
-        if (val < pp_->radix_)
-            ++ndigits;
-    }
+		// Check for valid digits according to current radix
+		if (val < pp_->radix_)
+			++ndigits;
+	}
 
-    for (src = ss.GetBuffer(0), ii = jj = 0; /*forever*/; ++src, ++ii)
-    {
-        if (ii == start)
-            newstart = dst - out;       // save new caret position
-        if (ii == end)
-            newend = dst - out;
+	for (src = ss.GetBuffer(0), ii = jj = 0; /*forever*/; ++src, ++ii)
+	{
+		if (ii == start)
+			newstart = dst - out;       // save new caret position
+		if (ii == end)
+			newend = dst - out;
 
-        if (*src == '\0')
-            break;
+		if (*src == '\0')
+			break;
 
-        // Copy -ve sign
-        if (jj < ndigits && pp_->radix_ == 10 && none_yet && *src == '-')
-        {
-            *dst++ = '-';
-            continue;
-        }
+		// Copy -ve sign
+		if (jj < ndigits && pp_->radix_ == 10 && none_yet && *src == '-')
+		{
+			*dst++ = '-';
+			continue;
+		}
 
-        // Ignore anything else except valid digits
-        unsigned int val;
-        if (isdigit(*src))
-            val = *src - '0';
-        else if (isalpha(*src))
-            val = toupper(*src) - 'A' + 10;
-        else
-            continue;
+		// Ignore anything else except valid digits
+		unsigned int val;
+		if (isdigit(*src))
+			val = *src - '0';
+		else if (isalpha(*src))
+			val = toupper(*src) - 'A' + 10;
+		else
+			continue;
 
-        if (val >= pp_->radix_)
-        {
-            ASSERT(0);                  // Digits invalid for this base should never have got in there!
-            continue;
-        }
+		if (val >= pp_->radix_)
+		{
+			ASSERT(0);                  // Digits invalid for this base should never have got in there!
+			continue;
+		}
 
-        ++jj;
+		++jj;
 
-        // Ignore leading zeroes
-        if (jj < ndigits && none_yet && *src == '0')
-            continue;
+		// Ignore leading zeroes
+		if (jj < ndigits && none_yet && *src == '0')
+			continue;
 
-        none_yet = FALSE;
+		none_yet = FALSE;
 
-        if (aa->hex_ucase_)
-            *dst++ = toupper(*src);     // convert all to upper case
-        else
-            *dst++ = tolower(*src);     // convert all to lower case
+		if (aa->hex_ucase_)
+			*dst++ = toupper(*src);     // convert all to upper case
+		else
+			*dst++ = tolower(*src);     // convert all to lower case
 
 
-        // If at end of group insert pad char
-        if ((ndigits - jj) % group == 0)
-            *dst++ = sep_char;
-    }
-    if (dst > out)
-        dst--;                          // Forget last sep_char if added
-    *dst = '\0';                        // Terminate string
+		// If at end of group insert pad char
+		if ((ndigits - jj) % group == 0)
+			*dst++ = sep_char;
+	}
+	if (dst > out)
+		dst--;                          // Forget last sep_char if added
+	*dst = '\0';                        // Terminate string
 
-    SetWindowText(out);
-    SetSel(newstart, newend);
+	SetWindowText(out);
+	SetSel(newstart, newend);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -468,119 +468,119 @@ void CCalcEdit::add_sep()
 
 void CCalcEdit::OnSetFocus(CWnd* pOldWnd)
 {
-    pp_->in_edit_ = TRUE;
+	pp_->in_edit_ = TRUE;
 
-    CEdit::OnSetFocus(pOldWnd);
-    if (sel_ != (DWORD)-1)
-    {
-        SetSel(sel_);
-        sel_ = (DWORD)-1;
-    }
+	CEdit::OnSetFocus(pOldWnd);
+	if (sel_ != (DWORD)-1)
+	{
+		SetSel(sel_);
+		sel_ = (DWORD)-1;
+	}
 }
 
 void CCalcEdit::OnKillFocus(CWnd* pNewWnd) 
 {
-    sel_ = GetSel();
-    CEdit::OnKillFocus(pNewWnd);
+	sel_ = GetSel();
+	CEdit::OnKillFocus(pNewWnd);
 }
 
 void CCalcEdit::OnLButtonUp(UINT nFlags, CPoint point) 
 {
-    pp_->in_edit_ = TRUE;
-    CEdit::OnLButtonUp(nFlags, point);
+	pp_->in_edit_ = TRUE;
+	CEdit::OnLButtonUp(nFlags, point);
 }
 
 
 void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
-    ASSERT(pp_ != NULL);
-    ASSERT(pp_->IsVisible());
-    CString ss;
-    GetWindowText(ss);
-    int start, end;
-    GetSel(start, end);
+	ASSERT(pp_ != NULL);
+	ASSERT(pp_->IsVisible());
+	CString ss;
+	GetWindowText(ss);
+	int start, end;
+	GetSel(start, end);
 
-    CEdit::OnChar(nChar, nRepCnt, nFlags);
+	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
 	if (!update_value(false))
 	{
-        SetWindowText(ss);
-        SetSel(start, end, FALSE);
-    }
+		SetWindowText(ss);
+		SetSel(start, end, FALSE);
+	}
 
-    pp_->in_edit_ = TRUE;
+	pp_->in_edit_ = TRUE;
 	pp_->ctl_calc_bits_.RedrawWindow();
 }
 
 void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
-    ASSERT(pp_ != NULL);
-    ASSERT(pp_->IsVisible());
-    CString ss;                         // Text from the window (edit control)
-    int start, end;                     // Current selection in the edit control
+	ASSERT(pp_ != NULL);
+	ASSERT(pp_->IsVisible());
+	CString ss;                         // Text from the window (edit control)
+	int start, end;                     // Current selection in the edit control
 
-    pp_->ShowBinop(pp_->op_);           // Show current binop (if any) and clear overflow/error status
+	pp_->ShowBinop(pp_->op_);           // Show current binop (if any) and clear overflow/error status
 
-    // If we need to clear edit control (eg. binary op just entered) ...
-    if (!pp_->in_edit_)
-    {
-        // Clear control ready for new number unless (arrow, Del etc key pressed)
-        if ((nFlags & 0x100) == 0 && isprint(nChar))
-            SetWindowText("");
-        pp_->in_edit_ = TRUE;           // and go into edit mode
-    }
-    else
-    {
-        // Fiddle with the selection so that arrows/Del work OK in presence of separator chars
-        GetWindowText(ss);
-        GetSel(start, end);
+	// If we need to clear edit control (eg. binary op just entered) ...
+	if (!pp_->in_edit_)
+	{
+		// Clear control ready for new number unless (arrow, Del etc key pressed)
+		if ((nFlags & 0x100) == 0 && isprint(nChar))
+			SetWindowText("");
+		pp_->in_edit_ = TRUE;           // and go into edit mode
+	}
+	else
+	{
+		// Fiddle with the selection so that arrows/Del work OK in presence of separator chars
+		GetWindowText(ss);
+		GetSel(start, end);
 
-        char sep_char = ' ';
-        if (pp_->radix_ == 10) sep_char = theApp.dec_sep_char_;
+		char sep_char = ' ';
+		if (pp_->radix_ == 10) sep_char = theApp.dec_sep_char_;
 
-        // If no selection and character to delete is separator ...
-        if (nChar == VK_DELETE && start == end && ss.GetLength() > start+1 && ss[start+1] == sep_char)
-        {
-            // Set selection so that the separator and following digit is deleted
-            SetSel(start, start+2);
-        }
-        else if (nChar == VK_LEFT && start == end && start > 0 && ss[start-1] == sep_char)
-        {
-            // Move cursor back one so we skip over the separator (else add_sep below makes the caret stuck)
-            SetSel(start-1, start-1);
-        }
-    }
+		// If no selection and character to delete is separator ...
+		if (nChar == VK_DELETE && start == end && ss.GetLength() > start+1 && ss[start+1] == sep_char)
+		{
+			// Set selection so that the separator and following digit is deleted
+			SetSel(start, start+2);
+		}
+		else if (nChar == VK_LEFT && start == end && start > 0 && ss[start-1] == sep_char)
+		{
+			// Move cursor back one so we skip over the separator (else add_sep below makes the caret stuck)
+			SetSel(start-1, start-1);
+		}
+	}
 
-    CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
+	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 
-    //// Tidy display if hex and char(s) deleted or caret moved
-    //GetWindowText(ss);
-    //if ((nChar == VK_DELETE || nChar == VK_RIGHT || nChar == VK_LEFT) &&
-    //    is_number(ss) &&
-    //    ::GetKeyState(VK_SHIFT) >= 0 && ss.GetLength() > 0)
-    //{
-    //    add_sep();
-    //}
+	//// Tidy display if hex and char(s) deleted or caret moved
+	//GetWindowText(ss);
+	//if ((nChar == VK_DELETE || nChar == VK_RIGHT || nChar == VK_LEFT) &&
+	//    is_number(ss) &&
+	//    ::GetKeyState(VK_SHIFT) >= 0 && ss.GetLength() > 0)
+	//{
+	//    add_sep();
+	//}
 
-    if (nChar == VK_DELETE)
+	if (nChar == VK_DELETE)
 		(void)update_value(false);   // should always return true for Del key
 
-    pp_->source_ = theApp.recording_ ? km_user : km_result;
+	pp_->source_ = theApp.recording_ ? km_user : km_result;
 	pp_->ctl_calc_bits_.RedrawWindow();
 }
 
 BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg) 
 {
-    CString ss;
+	CString ss;
 
-    if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
-    {
-        if (pp_->ctl_go_.IsWindowEnabled() && pp_->current_type_ == CJumpExpr::TYPE_INT)
-            pp_->OnGo();
-        else
-            pp_->OnEquals();
-        return TRUE;
-    }
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+	{
+		if (pp_->ctl_go_.IsWindowEnabled() && pp_->current_type_ == CJumpExpr::TYPE_INT)
+			pp_->OnGo();
+		else
+			pp_->OnEquals();
+		return TRUE;
+	}
 
-    return CEdit::PreTranslateMessage(pMsg);
+	return CEdit::PreTranslateMessage(pMsg);
 }

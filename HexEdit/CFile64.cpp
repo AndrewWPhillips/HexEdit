@@ -1571,7 +1571,7 @@ CFileNC::CFileNC( LPCTSTR filename, UINT open_flags )
 //    gives a smaller size for floppy and flash drives.  Possibilities:
 //    - scan for end (currently done and seems to work)
 //    - use physical device size as above (1) biut how to get it and what happens for mult. partn drives?
-//    xxx check removeable drive with multiple partitions xxx
+//    TBD: TODO more testing - removeable drive with multiple partitions
 
 #if ! defined( WFC_STL )
 BOOL CFileNC::Open( LPCTSTR filename, UINT open_flags, CFileException * exception_p )
@@ -1743,8 +1743,6 @@ BOOL CFileNC::Open( LPCTSTR filename, UINT open_flags )
 		ASSERT(_tcslen(filename) == 6);
         Close();
 
-		// xxx Handle open flags
-
         // Open the VXD which gives access to the disk sectors under Windows 9X
 		m_FileHandle = ::CreateFile("\\\\.\\vwin32", 0, 0, NULL, 0, FILE_FLAG_DELETE_ON_CLOSE, NULL);
         if (m_FileHandle == INVALID_HANDLE_VALUE)
@@ -1774,7 +1772,7 @@ BOOL CFileNC::Open( LPCTSTR filename, UINT open_flags )
 
 		m_PathName = filename;
 
-		// Do we need to scan_for_end for volumes? xxx
+		// TBD: We may need to scan (scan_for_end) for volumes?
     }
 	else if (theApp.is_nt_ && ::IsDevice(filename))
 	{
@@ -1828,7 +1826,7 @@ BOOL CFileNC::Open( LPCTSTR filename, UINT open_flags )
 		if (bytes_total.QuadPart == 0)
 			m_Length = (LONGLONG)m_SectorSize * SectorsPerCluster * (LONGLONG)TotalNumberOfClusters;
 		else
-			m_Length = bytes_total.QuadPart; // xxx wrong for \\.\A: and flash disk under XP, OK for CD
+			m_Length = bytes_total.QuadPart; // TBD: TODO fix as it is wrong for \\.\A: and flash disk under XP, OK for CD
 
 		scan_for_end = true;
 	}
@@ -2030,7 +2028,7 @@ void CFileNC::get_current()
 	{
 		if (m_dirty) make_clean();  // Write out current buffer if necessary.
 
-		TRACE("xxx READ non-cached %ld\r\n", long(m_FilePos));
+		TRACE("Device READ non-cached %ld\r\n", long(m_FilePos));
 
 		// Work out which bit of the file we need to read
 		m_start = (m_FilePos/m_SectorSize) * m_SectorSize - m_BufferSize/2;
@@ -2107,7 +2105,7 @@ void CFileNC::get_current()
 					for (int retry = 0; ; ++retry)
 					{
 						status = (*pfReadFile)(m_FileHandle, 0, 0, 0, &iosb, (char *)m_Buffer + done, m_SectorSize, &pos, 0);
-						ok = NT_SUCCESS(status);   // xxx do we need to track errors/warnings separately?
+						ok = NT_SUCCESS(status);   // TBD: TODO track errors/warnings separately?
 						num_read = ok ? m_SectorSize : 0;
 						if (ok || retry >= m_retries)
 							break;
@@ -2123,7 +2121,7 @@ void CFileNC::get_current()
 
 					// Flag this sector as bad and move on to the next one
 					__int64 sec = (m_start + done)/m_SectorSize;
-					m_bad[sec] = status;  // xxx does this need translating to Windows error?
+					m_bad[sec] = status;  // TBD: TODO translate to Windows error?
 
 					if (m_retries < 0)
 						pos.LowPart = ::SetFilePointer(m_FileHandle, pos.LowPart, &pos.HighPart, FILE_CURRENT);
@@ -2137,7 +2135,7 @@ void CFileNC::get_current()
 // Write out the "dirty" buffer
 void CFileNC::make_clean()
 {
-	TRACE("xxx WRITE non-cached\r\n");
+	TRACE("Device WRITE non-cached\r\n");
 	ASSERT(m_dirty && m_start < m_end && (m_end-m_start)%m_SectorSize == 0);
 
     if (IsDevice(m_FileName) && !theApp.is_nt_)
@@ -2165,7 +2163,7 @@ void CFileNC::make_clean()
 							   (LPOVERLAPPED) NULL));
 		ASSERT(sizeof(dioc_reg) == junk);
 
-		// if ((dioc_reg.reg_Flags & 0x0001) != 0) xxx;
+		// if ((dioc_reg.reg_Flags & 0x0001) != 0) TBD: TODO handle this?
 	}
 	else
 	{
@@ -2231,8 +2229,8 @@ void CFileNC::Close()
 	}
 }
 
-// xxx checks/fixes:
+// TBD: TODO checks/fixes:
 // Flush allowed on FILE_FLAG_NO_BUFFERING files?
 // Make sure GetFileTitle, GetFileName, GetInformation, 
 // GetStatus, GetFileSize, SetEndOfFile, SetStatus not called for device file?
-// Test works on normal file
+// Test they still work on normal file

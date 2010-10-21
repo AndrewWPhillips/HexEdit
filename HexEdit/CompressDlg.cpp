@@ -52,31 +52,31 @@ BEGIN_MESSAGE_MAP(CCompressDlg, CDialog)
 	ON_BN_CLICKED(IDC_COMPRESSION_MEMORY_USAGE_DEFAULT, OnBnClickedCompressionMemoryUsageDefault)
 	ON_BN_CLICKED(IDC_COMPRESS_HELP, OnBnClickedCompressHelp)
 	ON_WM_HELPINFO()
-    ON_WM_CONTEXTMENU()
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 BOOL CCompressDlg::OnInitDialog() 
 {
-    CDialog::OnInitDialog();
+	CDialog::OnInitDialog();
 
 	SetWindowText(CString("ZLIB (version ") + ZLIB_VERSION + CString(") Settings"));
 
 	FixControls();
 
-    return TRUE;
+	return TRUE;
 }
 
 void CCompressDlg::FixControls()
 {
-    m_ctlLevel.EnableWindow(!m_defaultLevel);
-    m_ctlLevelSpin.EnableWindow(!m_defaultLevel);
-    m_ctlLevelSpin.SetRange(1, 9);
-    m_ctlWindow.EnableWindow(!m_defaultWindow);
-    m_ctlWindowSpin.EnableWindow(!m_defaultWindow);
-    m_ctlWindowSpin.SetRange(8, 15);
-    m_ctlMemory.EnableWindow(!m_defaultMemory);
-    m_ctlMemorySpin.EnableWindow(!m_defaultMemory);
-    m_ctlMemorySpin.SetRange(1, 9);
+	m_ctlLevel.EnableWindow(!m_defaultLevel);
+	m_ctlLevelSpin.EnableWindow(!m_defaultLevel);
+	m_ctlLevelSpin.SetRange(1, 9);
+	m_ctlWindow.EnableWindow(!m_defaultWindow);
+	m_ctlWindowSpin.EnableWindow(!m_defaultWindow);
+	m_ctlWindowSpin.SetRange(8, 15);
+	m_ctlMemory.EnableWindow(!m_defaultMemory);
+	m_ctlMemorySpin.EnableWindow(!m_defaultMemory);
+	m_ctlMemorySpin.SetRange(1, 9);
 }
 
 // CCompressDlg message handlers
@@ -106,7 +106,7 @@ void CCompressDlg::OnBnClickedCompressionMemoryUsageDefault()
 
 static DWORD id_pairs[] = { 
 	IDC_COMPRESSION_LEVEL_DEFAULT, HIDC_COMPRESSION_LEVEL,
-    IDC_COMPRESSION_LEVEL, HIDC_COMPRESSION_LEVEL,
+	IDC_COMPRESSION_LEVEL, HIDC_COMPRESSION_LEVEL,
 	IDC_COMPRESSION_LEVEL_SPIN, HIDC_COMPRESSION_LEVEL,
 	IDC_COMPRESSION_WINDOW_SIZE_DEFAULT, HIDC_COMPRESSION_WINDOW_SIZE,
 	IDC_COMPRESSION_WINDOW_SIZE, HIDC_COMPRESSION_WINDOW_SIZE,
@@ -123,13 +123,13 @@ static DWORD id_pairs[] = {
 	IDC_COMPRESSION_STRATEGY_HUFFMAN, HIDC_COMPRESSION_STRATEGY_DEF, 
 	IDC_COMPRESSION_STRATEGY_RLE, HIDC_COMPRESSION_STRATEGY_DEF, 
 	IDC_COMPRESSION_STRATEGY_FIXED, HIDC_COMPRESSION_STRATEGY_DEF, 
-    0,0 
-}; 
+	0,0 
+};
 
 BOOL CCompressDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
-    return TRUE;
+	return TRUE;
 }
 
 void CCompressDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
@@ -139,7 +139,7 @@ void CCompressDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void CCompressDlg::OnBnClickedCompressHelp()
 {
-    // Display help for the dialog
-    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_ZLIB_HELP))
-        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	// Display help for the dialog
+	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_ZLIB_HELP))
+		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }

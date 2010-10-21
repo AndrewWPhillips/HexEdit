@@ -56,7 +56,7 @@
 //          Note that an extra entry is always added that allows the user to hide the
 //          display of all files.  If NULL is used (the default) then only the
 //          "no files" entry and an "all files" entry are provided.
-//    
+//
 //      pParentWnd
 //          A pointer to the dialog parent window.
 //
@@ -154,170 +154,170 @@ static char THIS_FILE[] = __FILE__;
 
 // Class CDlgWnd
 BEGIN_MESSAGE_MAP(CDlgWnd, CWnd)
-        ON_WM_SIZE()
-        ON_BN_CLICKED(IDC_OPEN, OnOpen)
+		ON_WM_SIZE()
+		ON_BN_CLICKED(IDC_OPEN, OnOpen)
 END_MESSAGE_MAP()
 
 void CDlgWnd::GetSize()
 {
-    CRect cli, rct;
-    GetClientRect(&cli);
+	CRect cli, rct;
+	GetClientRect(&cli);
 
-    ASSERT(GetDlgItem(IDC_DIR) != NULL);
-    ASSERT(GetDlgItem(IDC_OPEN) != NULL);
+	ASSERT(GetDlgItem(IDC_DIR) != NULL);
+	ASSERT(GetDlgItem(IDC_OPEN) != NULL);
 
-    // Find the difference between the width of the dialog (client rectangle)
-    // and the width of the new edit control (IDC_DIR) so we can later use
-    // this to adjust the width of the control when the dialog is resized.
-    GetDlgItem(IDC_DIR)->GetWindowRect(&rct);
-    ScreenToClient(rct);
-    m_dir_width = cli.right - (rct.right - rct.left);
+	// Find the difference between the width of the dialog (client rectangle)
+	// and the width of the new edit control (IDC_DIR) so we can later use
+	// this to adjust the width of the control when the dialog is resized.
+	GetDlgItem(IDC_DIR)->GetWindowRect(&rct);
+	ScreenToClient(rct);
+	m_dir_width = cli.right - (rct.right - rct.left);
 
-    // Find the difference between the width of the dialog (client rectangle)
-    // and the horizontal position of the new "Open" button (IDC_OPEN) so we
-    // can later move the button when the dialog is resized.
-    GetDlgItem(IDC_OPEN)->GetWindowRect(&rct);
-    ScreenToClient(rct);
-    m_open_pos = cli.right - rct.left;
+	// Find the difference between the width of the dialog (client rectangle)
+	// and the horizontal position of the new "Open" button (IDC_OPEN) so we
+	// can later move the button when the dialog is resized.
+	GetDlgItem(IDC_OPEN)->GetWindowRect(&rct);
+	ScreenToClient(rct);
+	m_open_pos = cli.right - rct.left;
 }
 
 void CDlgWnd::OnSize(UINT nType, int cx, int cy)
 {
-    CWnd::OnSize(nType, cx, cy);
+	CWnd::OnSize(nType, cx, cy);
 
-    ASSERT(GetDlgItem(IDC_DIR) != NULL);
-    ASSERT(GetDlgItem(IDC_OPEN) != NULL);
-    ASSERT(GetDlgItem(stc3) != NULL);
+	ASSERT(GetDlgItem(IDC_DIR) != NULL);
+	ASSERT(GetDlgItem(IDC_OPEN) != NULL);
+	ASSERT(GetDlgItem(stc3) != NULL);
 
-    CRect rct;
+	CRect rct;
 
-    GetDlgItem(IDC_DIR)->GetWindowRect(&rct);
-    ScreenToClient(rct);
-    GetDlgItem(IDC_DIR)->SetWindowPos(GetDlgItem(stc3), 0, 0,
-                                      cx - m_dir_width, rct.Height(), SWP_NOMOVE);
+	GetDlgItem(IDC_DIR)->GetWindowRect(&rct);
+	ScreenToClient(rct);
+	GetDlgItem(IDC_DIR)->SetWindowPos(GetDlgItem(stc3), 0, 0,
+									  cx - m_dir_width, rct.Height(), SWP_NOMOVE);
 
-    GetDlgItem(IDC_OPEN)->GetWindowRect(&rct);
-    ScreenToClient(rct);
-    GetDlgItem(IDC_OPEN)->SetWindowPos(GetDlgItem(IDC_DIR), cx - m_open_pos, rct.top,
-                                       0, 0, SWP_NOSIZE);
+	GetDlgItem(IDC_OPEN)->GetWindowRect(&rct);
+	ScreenToClient(rct);
+	GetDlgItem(IDC_OPEN)->SetWindowPos(GetDlgItem(IDC_DIR), cx - m_open_pos, rct.top,
+									   0, 0, SWP_NOSIZE);
 } 
 
 void CDlgWnd::OnOpen()
 {
-    // Get the text and check whether it is a valid directory
-    CString ss;
-    CEdit *pEdit = (CEdit *)GetDlgItem(IDC_DIR);
-    ASSERT(pEdit != NULL);
-    pEdit->GetWindowText(ss);
-    int len = ss.GetLength();
+	// Get the text and check whether it is a valid directory
+	CString ss;
+	CEdit *pEdit = (CEdit *)GetDlgItem(IDC_DIR);
+	ASSERT(pEdit != NULL);
+	pEdit->GetWindowText(ss);
+	int len = ss.GetLength();
 
-    if (len == 2 && ss[0] == '\\' && ss[1] == '\\')
-    {
-        AfxMessageBox(ss + _T("\nThis is not a valid folder."));
-        pEdit->SetFocus();
-        return;
-    }
-    else if (len == 0 || len == 1 && ss[0] == '\\')
-    {
-        // Current directory or root of the current drive (therefore must be valid)
-        ;
-    }
-    else if ((len == 2 && ss[1] == ':') ||
-             (len == 3 && ss[1] == ':' && ss[2] == '\\') )
-    {
-        _TCHAR rootdir[4] = _T("?:\\");
-        rootdir[0] = ss[0];
+	if (len == 2 && ss[0] == '\\' && ss[1] == '\\')
+	{
+		AfxMessageBox(ss + _T("\nThis is not a valid folder."));
+		pEdit->SetFocus();
+		return;
+	}
+	else if (len == 0 || len == 1 && ss[0] == '\\')
+	{
+		// Current directory or root of the current drive (therefore must be valid)
+		;
+	}
+	else if ((len == 2 && ss[1] == ':') ||
+			 (len == 3 && ss[1] == ':' && ss[2] == '\\') )
+	{
+		_TCHAR rootdir[4] = _T("?:\\");
+		rootdir[0] = ss[0];
 
-        if (GetDriveType(rootdir) <= DRIVE_NO_ROOT_DIR)
-        {
-            AfxMessageBox(ss + _T("\nThe drive is invalid."));
-            pEdit->SetFocus();
-            return;
-        }
-    }
-    else
-    {
-        // Check that it's a valid directory
-        if (ss[len-1] == '\\')
-            ss = ss.Left(--len);
-        DWORD attr = GetFileAttributes(ss);
-        if (attr == 0xffffFFFF)
-        {
-            const char *ss2;
+		if (GetDriveType(rootdir) <= DRIVE_NO_ROOT_DIR)
+		{
+			AfxMessageBox(ss + _T("\nThe drive is invalid."));
+			pEdit->SetFocus();
+			return;
+		}
+	}
+	else
+	{
+		// Check that it's a valid directory
+		if (ss[len-1] == '\\')
+			ss = ss.Left(--len);
+		DWORD attr = GetFileAttributes(ss);
+		if (attr == 0xffffFFFF)
+		{
+			const char *ss2;
 
-            // Directory not found but maybe it's an invalid drive
-            _TCHAR rootdir[4] = _T("?:\\");
-            rootdir[0] = ss[0];
+			// Directory not found but maybe it's an invalid drive
+			_TCHAR rootdir[4] = _T("?:\\");
+			rootdir[0] = ss[0];
 
-            if (len > 1 && ss[1] == ':' && GetDriveType(rootdir) <= DRIVE_NO_ROOT_DIR)
-            {
-                AfxMessageBox(ss + _T("\nThe drive is invalid."));
-                pEdit->SetFocus();
-                return;
-            }
-            else if (len >= 2 && ss[0] == '\\' && ss[1] == '\\' && 
-                     ( (ss2 = strchr((const char *)ss+2, '\\')) == NULL || strchr(ss2+1, '\\') == NULL) )
-            {
-                AfxMessageBox(ss + _T("\nThis is not a valid folder."));
-                pEdit->SetFocus();
-                return;
-            }
-            else
-            {
-                // Appears to be a valid drive (or relative path)
-                CString mess(ss);
-                mess += _T("\nThis folder does not exist.\n\n"
-                      "Do you want to create it?");
-                if (AfxMessageBox(mess, MB_YESNO) == IDYES)
-                {
-                    // MakeSureDirectoryPathExists is not part of Windows but is
-                    // in the IMAGHLP.DLL which is always present.  This call
-                    // requires linking with IMAGHLP.LIB.
-                    if (!::MakeSureDirectoryPathExists(ss + _T("\\")))
-                    {
-                        switch (GetDriveType(rootdir))
-                        {
-                        case DRIVE_CDROM:
-                            AfxMessageBox(_T("You cannot create this folder\n"
-                                          "as the CD ROM medium is read-only."));
-                            break;
-                        case DRIVE_REMOVABLE:
-                            AfxMessageBox(_T("You cannot create this folder.\n"
-                                          "The medium may be write-protected."));
-                            break;
-                        case DRIVE_REMOTE:
-                            AfxMessageBox(_T("You do not have permission to create\n"
-                                          "this folder on the network."));
-                            break;
-                        default:
-                            AfxMessageBox(_T("You do not have permission\n"
-                                          "to create this folder."));
-                            break;
-                        }
-                        pEdit->SetFocus();
-                        return;         // Directory could not be created
-                    }
-                    // directory was created, so continue
-                }
-                else
-                {
-                    pEdit->SetFocus();
-                    return;             // User did not want to create directory
-                }
-            }
-        }
-        else if ((attr & FILE_ATTRIBUTE_DIRECTORY) == 0)
-        {
-            AfxMessageBox(ss + _T("\nThis is a file not a directory."));
-            pEdit->SetFocus();
-            return;
-        }
-    }
+			if (len > 1 && ss[1] == ':' && GetDriveType(rootdir) <= DRIVE_NO_ROOT_DIR)
+			{
+				AfxMessageBox(ss + _T("\nThe drive is invalid."));
+				pEdit->SetFocus();
+				return;
+			}
+			else if (len >= 2 && ss[0] == '\\' && ss[1] == '\\' && 
+					 ( (ss2 = strchr((const char *)ss+2, '\\')) == NULL || strchr(ss2+1, '\\') == NULL) )
+			{
+				AfxMessageBox(ss + _T("\nThis is not a valid folder."));
+				pEdit->SetFocus();
+				return;
+			}
+			else
+			{
+				// Appears to be a valid drive (or relative path)
+				CString mess(ss);
+				mess += _T("\nThis folder does not exist.\n\n"
+					  "Do you want to create it?");
+				if (AfxMessageBox(mess, MB_YESNO) == IDYES)
+				{
+					// MakeSureDirectoryPathExists is not part of Windows but is
+					// in the IMAGHLP.DLL which is always present.  This call
+					// requires linking with IMAGHLP.LIB.
+					if (!::MakeSureDirectoryPathExists(ss + _T("\\")))
+					{
+						switch (GetDriveType(rootdir))
+						{
+						case DRIVE_CDROM:
+							AfxMessageBox(_T("You cannot create this folder\n"
+										  "as the CD ROM medium is read-only."));
+							break;
+						case DRIVE_REMOVABLE:
+							AfxMessageBox(_T("You cannot create this folder.\n"
+										  "The medium may be write-protected."));
+							break;
+						case DRIVE_REMOTE:
+							AfxMessageBox(_T("You do not have permission to create\n"
+										  "this folder on the network."));
+							break;
+						default:
+							AfxMessageBox(_T("You do not have permission\n"
+										  "to create this folder."));
+							break;
+						}
+						pEdit->SetFocus();
+						return;         // Directory could not be created
+					}
+					// directory was created, so continue
+				}
+				else
+				{
+					pEdit->SetFocus();
+					return;             // User did not want to create directory
+				}
+			}
+		}
+		else if ((attr & FILE_ATTRIBUTE_DIRECTORY) == 0)
+		{
+			AfxMessageBox(ss + _T("\nThis is a file not a directory."));
+			pEdit->SetFocus();
+			return;
+		}
+	}
 
-    // We have now selected a directory and will return from the dialog
-    CheckDir(ss);
+	// We have now selected a directory and will return from the dialog
+	CheckDir(ss);
 
-    ::EndDialog(m_hWnd, IDOK);
+	::EndDialog(m_hWnd, IDOK);
 }
 
 // This routine updates the directory/file list display using the directory
@@ -327,464 +327,464 @@ void CDlgWnd::OnOpen()
 // some sort of error message may be displayed.
 void CDlgWnd::CheckDir(const CString &ss)
 {
-    // Put the new directory into the old (hidden) edit box
+	// Put the new directory into the old (hidden) edit box
 	CWnd *pOld = GetDlgItem(edt1);
 	if (pOld == NULL)
 		pOld = GetDlgItem(cmb13);    // edit control replaced with combo in newer Windows versions
 	ASSERT(pOld != NULL);
 	pOld->SetWindowText(ss);
 
-    // Save the current text/selection in the edit control
-    CString strSaved;                       // Current text in edit box
-    int start, end;                         // Current selection in edit box
-    CEdit *pEdit = (CEdit *)GetDlgItem(IDC_DIR);
-    ASSERT(pEdit != NULL);
-    pEdit->GetWindowText(strSaved);
-    pEdit->GetSel(start, end);
+	// Save the current text/selection in the edit control
+	CString strSaved;                       // Current text in edit box
+	int start, end;                         // Current selection in edit box
+	CEdit *pEdit = (CEdit *)GetDlgItem(IDC_DIR);
+	ASSERT(pEdit != NULL);
+	pEdit->GetWindowText(strSaved);
+	pEdit->GetSel(start, end);
 
-    CWnd *pOK = GetDlgItem(IDOK);
-    ASSERT(pOK != NULL);
-    pOK->SendMessage(WM_LBUTTONDOWN);
-    pOK->SendMessage(WM_LBUTTONUP);
+	CWnd *pOK = GetDlgItem(IDOK);
+	ASSERT(pOK != NULL);
+	pOK->SendMessage(WM_LBUTTONDOWN);
+	pOK->SendMessage(WM_LBUTTONUP);
 
-    CString strNew;
-    pEdit->GetWindowText(strNew);
+	CString strNew;
+	pEdit->GetWindowText(strNew);
 
-    if (strSaved.GetLength() >= 1 && strSaved[0] == '\\' ||
-         strSaved.GetLength() >= 3 && strSaved[1] == ':' && strSaved[2] == '\\')
-    {
-        // Keep the text the way the user typed it if we can
-        pEdit->SetWindowText(strSaved);
-        pEdit->SetSel(start, end);
-    }
-    else
-    {
-        // Move cursor to the end
-        pEdit->SetSel(strNew.GetLength(), -1);
-    }
+	if (strSaved.GetLength() >= 1 && strSaved[0] == '\\' ||
+		 strSaved.GetLength() >= 3 && strSaved[1] == ':' && strSaved[2] == '\\')
+	{
+		// Keep the text the way the user typed it if we can
+		pEdit->SetWindowText(strSaved);
+		pEdit->SetSel(start, end);
+	}
+	else
+	{
+		// Move cursor to the end
+		pEdit->SetSel(strNew.GetLength(), -1);
+	}
 }
 // --- class CDlgWnd ---
 
 // CDirEdit control class
 BEGIN_MESSAGE_MAP(CDirEdit, CEdit)
-    ON_WM_CHAR()
-    ON_WM_KEYDOWN()
-    ON_WM_GETDLGCODE()
+	ON_WM_CHAR()
+	ON_WM_KEYDOWN()
+	ON_WM_GETDLGCODE()
 END_MESSAGE_MAP()
 
 void CDirEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
-    CDlgWnd *pp;                           // Parent = the dialog itself
-    VERIFY(pp = (CDlgWnd *)GetParent());
+	CDlgWnd *pp;                           // Parent = the dialog itself
+	VERIFY(pp = (CDlgWnd *)GetParent());
 
-    if (nChar == '\t')
-    {
-        // Because we are getting all keys (see OnGetDlgCode()) so that we can get the Return key,
-        // we also get the tab key as a side-effect.  This means that the tabbing between controls
-        // in the dialog will stop at the edit control unless we force it to go to the next control.
-        CWnd *pWnd = pp->GetDlgItem(IDC_OPEN);
-        ASSERT(pWnd != NULL);
-        pWnd->SetFocus();                       // Set focus to Open button
-    }
-    else if (nChar == '\033')
-    {
-        CWnd *pCancel = pp->GetDlgItem(IDCANCEL);
-        ASSERT(pCancel != NULL);
-        pCancel->SendMessage(WM_LBUTTONDOWN);
-        pCancel->SendMessage(WM_LBUTTONUP);
-    }
-    else if (nChar == '\r' || nChar == '\n')
-    {
-        // If return key is pressed we change to the directory specified OR
-        // if the directory name appears valid but does not exist we ask the
-        // user if they want to create it.  Note that the string is not
-        // validated (although some validation may be done by Windows
-        // through the CheckDir() call).  The name is only checked to see if
-        // it is possible that a directory needs to be created.
-        // Full validation is deferred till the "Open" button is clicked.
+	if (nChar == '\t')
+	{
+		// Because we are getting all keys (see OnGetDlgCode()) so that we can get the Return key,
+		// we also get the tab key as a side-effect.  This means that the tabbing between controls
+		// in the dialog will stop at the edit control unless we force it to go to the next control.
+		CWnd *pWnd = pp->GetDlgItem(IDC_OPEN);
+		ASSERT(pWnd != NULL);
+		pWnd->SetFocus();                       // Set focus to Open button
+	}
+	else if (nChar == '\033')
+	{
+		CWnd *pCancel = pp->GetDlgItem(IDCANCEL);
+		ASSERT(pCancel != NULL);
+		pCancel->SendMessage(WM_LBUTTONDOWN);
+		pCancel->SendMessage(WM_LBUTTONUP);
+	}
+	else if (nChar == '\r' || nChar == '\n')
+	{
+		// If return key is pressed we change to the directory specified OR
+		// if the directory name appears valid but does not exist we ask the
+		// user if they want to create it.  Note that the string is not
+		// validated (although some validation may be done by Windows
+		// through the CheckDir() call).  The name is only checked to see if
+		// it is possible that a directory needs to be created.
+		// Full validation is deferred till the "Open" button is clicked.
 
-        CString ss;
-        GetWindowText(ss);
-        int len = ss.GetLength();
+		CString ss;
+		GetWindowText(ss);
+		int len = ss.GetLength();
 
-        // Remove trailing backslash unless root directory or network root
-        if (strcmp(ss,"\\") != 0 && strcmp(ss,"\\\\") != 0 && strcmp((const char *)ss+1,":\\") != 0 &&
-            len > 0 && ss[len-1] == '\\' )
-        {
-            ss = ss.Left(--len);
-        }
+		// Remove trailing backslash unless root directory or network root
+		if (strcmp(ss,"\\") != 0 && strcmp(ss,"\\\\") != 0 && strcmp((const char *)ss+1,":\\") != 0 &&
+			len > 0 && ss[len-1] == '\\' )
+		{
+			ss = ss.Left(--len);
+		}
 
-        if (len == 0 || 
-            len == 1 && ss[0] == '\\' ||
-            len >= 2 && ss[0] == '\\' && ss[1] == '\\' && strchr((const char *)ss+2, '\\') == NULL ||
-            len == 2 && ss[1] == ':' ||
-            len == 3 && ss[1] == ':' && ss[2] == '\\' )
-        {
-            // Definitely not a createable directory
-            pp->CheckDir(ss);
-        }
-        else
-        {
-            // Check if it's an existing directory
-            CFileStatus fs;
+		if (len == 0 || 
+			len == 1 && ss[0] == '\\' ||
+			len >= 2 && ss[0] == '\\' && ss[1] == '\\' && strchr((const char *)ss+2, '\\') == NULL ||
+			len == 2 && ss[1] == ':' ||
+			len == 3 && ss[1] == ':' && ss[2] == '\\' )
+		{
+			// Definitely not a createable directory
+			pp->CheckDir(ss);
+		}
+		else
+		{
+			// Check if it's an existing directory
+			CFileStatus fs;
 
-            DWORD attr = GetFileAttributes(ss);
-            if (attr == 0xffffFFFF)
-            {
-                // Directory not found but maybe it's an invalid drive
-                _TCHAR rootdir[4] = _T("?:\\");
-                rootdir[0] = ss[0];
+			DWORD attr = GetFileAttributes(ss);
+			if (attr == 0xffffFFFF)
+			{
+				// Directory not found but maybe it's an invalid drive
+				_TCHAR rootdir[4] = _T("?:\\");
+				rootdir[0] = ss[0];
 
-                if (len == 1 || (len > 1 && ss[1] != ':') ||
-                    GetDriveType(rootdir) > DRIVE_NO_ROOT_DIR)
-                {
-                    // Appears to be a valid drive (or relative path)
-                    CString mess(ss);
-                    mess += _T("\nThis folder does not exist.\n\n"
-                          "Do you want to create it?");
-                    if (AfxMessageBox(mess, MB_YESNO) == IDYES)
-                    {
-                        if (!::MakeSureDirectoryPathExists(ss + _T("\\")))
-                        {
-                            switch (GetDriveType(rootdir))
-                            {
-                            case DRIVE_CDROM:
-                                AfxMessageBox(_T("You cannot create this folder\n"
-                                              "as the CD ROM medium is read-only."));
-                                break;
-                            case DRIVE_REMOVABLE:
-                                AfxMessageBox(_T("You cannot create this folder.\n"
-                                              "The medium may be write-protected."));
-                                break;
-                            case DRIVE_REMOTE:
-                                AfxMessageBox(_T("You do not have permission to create\n"
-                                              "this folder on the network."));
-                                break;
-                            default:
-                                AfxMessageBox(_T("You do not have permission or\n"
-                                              "otherwise cannot create this folder."));
-                                break;
-                            }
-                            return;
-                        }
-                    }
-                    else
-                        return;
-                }
-            }
-            pp->CheckDir(ss);
-            // Make sure the directory name ends with backslash so user can type sub-drectory name
-            GetWindowText(ss);
-            if (ss[ss.GetLength()-1] != '\\')
-            {
-                ss += "\\";
-                SetWindowText(ss);
-            }
-            SetSel(ss.GetLength(), -1);
-        }
-        SetFocus();                         // Make sure caret stays in this edit control
-    }
-    else
-    {
-        CEdit::OnChar(nChar, nRepCnt, nFlags);
+				if (len == 1 || (len > 1 && ss[1] != ':') ||
+					GetDriveType(rootdir) > DRIVE_NO_ROOT_DIR)
+				{
+					// Appears to be a valid drive (or relative path)
+					CString mess(ss);
+					mess += _T("\nThis folder does not exist.\n\n"
+						  "Do you want to create it?");
+					if (AfxMessageBox(mess, MB_YESNO) == IDYES)
+					{
+						if (!::MakeSureDirectoryPathExists(ss + _T("\\")))
+						{
+							switch (GetDriveType(rootdir))
+							{
+							case DRIVE_CDROM:
+								AfxMessageBox(_T("You cannot create this folder\n"
+											  "as the CD ROM medium is read-only."));
+								break;
+							case DRIVE_REMOVABLE:
+								AfxMessageBox(_T("You cannot create this folder.\n"
+											  "The medium may be write-protected."));
+								break;
+							case DRIVE_REMOTE:
+								AfxMessageBox(_T("You do not have permission to create\n"
+											  "this folder on the network."));
+								break;
+							default:
+								AfxMessageBox(_T("You do not have permission or\n"
+											  "otherwise cannot create this folder."));
+								break;
+							}
+							return;
+						}
+					}
+					else
+						return;
+				}
+			}
+			pp->CheckDir(ss);
+			// Make sure the directory name ends with backslash so user can type sub-drectory name
+			GetWindowText(ss);
+			if (ss[ss.GetLength()-1] != '\\')
+			{
+				ss += "\\";
+				SetWindowText(ss);
+			}
+			SetSel(ss.GetLength(), -1);
+		}
+		SetFocus();                         // Make sure caret stays in this edit control
+	}
+	else
+	{
+		CEdit::OnChar(nChar, nRepCnt, nFlags);
 
-        // Get the text and check whether it is a valid directory
-        CString ss;                         // Current text in the edit control
-        GetWindowText(ss);
+		// Get the text and check whether it is a valid directory
+		CString ss;                         // Current text in the edit control
+		GetWindowText(ss);
 
-        int len = ss.GetLength();
-        int start, end;                     // Current selection
-        GetSel(start, end);
+		int len = ss.GetLength();
+		int start, end;                     // Current selection
+		GetSel(start, end);
 
-        if (ss.Compare(_T("\\\\")) == 0)
-        {
-            // Don't check \\ else we get a message about "\\" being an invalid filename
-            ;
-        }
-        else if (ss.Compare(_T("\\")) == 0)
-        {
-            // Show root directory
-            pp->CheckDir(ss);
-        }
-        else if (len == 3 && ss[1] == ':' && ss[2] == '\\')
-        {
-            // Check that it's a valid drive
-            if (GetDriveType(ss) > DRIVE_NO_ROOT_DIR)
-            {
-                pp->CheckDir(ss);
-            }
-        }
-        else if (len > 0 && ss[len-1] == '\\')
-        {
-            // Check that it's a valid directory
-            // xxx does not handle "\\anwar\"
-            DWORD attr = GetFileAttributes(ss);
-            if (attr != 0xffffFFFF && (attr & FILE_ATTRIBUTE_DIRECTORY) != 0)
-            {
-                pp->CheckDir(ss);
-            }
-        }
-        else if (start == len && nChar != '\b')
-        {
-            // Try to do completion of the directory name
-            CFileFind ff;                   // Used to find directory names that start with ss
-            int count = 0;                  // Number of matching directory names
-            CString strMatch;               // The last directory found that matches
+		if (ss.Compare(_T("\\\\")) == 0)
+		{
+			// Don't check \\ else we get a message about "\\" being an invalid filename
+			;
+		}
+		else if (ss.Compare(_T("\\")) == 0)
+		{
+			// Show root directory
+			pp->CheckDir(ss);
+		}
+		else if (len == 3 && ss[1] == ':' && ss[2] == '\\')
+		{
+			// Check that it's a valid drive
+			if (GetDriveType(ss) > DRIVE_NO_ROOT_DIR)
+			{
+				pp->CheckDir(ss);
+			}
+		}
+		else if (len > 0 && ss[len-1] == '\\')
+		{
+			// Check that it's a valid directory
+			// xxx does not handle "\\anwar\"
+			DWORD attr = GetFileAttributes(ss);
+			if (attr != 0xffffFFFF && (attr & FILE_ATTRIBUTE_DIRECTORY) != 0)
+			{
+				pp->CheckDir(ss);
+			}
+		}
+		else if (start == len && nChar != '\b')
+		{
+			// Try to do completion of the directory name
+			CFileFind ff;                   // Used to find directory names that start with ss
+			int count = 0;                  // Number of matching directory names
+			CString strMatch;               // The last directory found that matches
 
-            BOOL bContinue = ff.FindFile(ss + "*");
+			BOOL bContinue = ff.FindFile(ss + "*");
 
-            while (bContinue)
-            {
-                // At least one match - check them all
-                bContinue = ff.FindNextFile();
+			while (bContinue)
+			{
+				// At least one match - check them all
+				bContinue = ff.FindNextFile();
 
-                if (ff.IsDirectory())
-                {
-                    // Found a matching directory
-                    ++count;
-                    strMatch = ff.GetFileName();
-                }
-            }
+				if (ff.IsDirectory())
+				{
+					// Found a matching directory
+					++count;
+					strMatch = ff.GetFileName();
+				}
+			}
 
-            // If there was exactly one matching directory use it
-            if (count >= 1)
-            {
-                int ii;
-                // The file open dialog changes all uppercase names to lower case with an initial
-                // capital (eg WINDOWS displays as Windows).  We do the same so things look nicer.
-                for (ii = 0; ii < strMatch.GetLength(); ++ii)
-                {
-                    // Don't change if it contains spaces or lowercase letters
-                    if (isspace(strMatch[ii]) || islower(strMatch[ii]))
-                        break;
-                }
+			// If there was exactly one matching directory use it
+			if (count >= 1)
+			{
+				int ii;
+				// The file open dialog changes all uppercase names to lower case with an initial
+				// capital (eg WINDOWS displays as Windows).  We do the same so things look nicer.
+				for (ii = 0; ii < strMatch.GetLength(); ++ii)
+				{
+					// Don't change if it contains spaces or lowercase letters
+					if (isspace(strMatch[ii]) || islower(strMatch[ii]))
+						break;
+				}
 
-                ASSERT(ii <= strMatch.GetLength());
-                if (!strMatch.IsEmpty() && ii == strMatch.GetLength())
-                {
-                    CString temp = strMatch.Mid(1);
-                    temp.MakeLower();
-                    strMatch = strMatch.Left(1) + temp;
-                }
+				ASSERT(ii <= strMatch.GetLength());
+				if (!strMatch.IsEmpty() && ii == strMatch.GetLength())
+				{
+					CString temp = strMatch.Mid(1);
+					temp.MakeLower();
+					strMatch = strMatch.Left(1) + temp;
+				}
 
 
-                // Get the bit of the directory name that the user has not yet typed
-                int lb_len;             // Length of last bit (after \ or :)
-                lb_len = ss.ReverseFind('\\');
-                if (lb_len == -1) lb_len = ss.ReverseFind('/');
-                if (lb_len == -1) lb_len = ss.ReverseFind(':');
-                if (lb_len == -1)
-                    lb_len = ss.GetLength();
-                else
-                    lb_len = ss.GetLength() - (lb_len+1);
+				// Get the bit of the directory name that the user has not yet typed
+				int lb_len;             // Length of last bit (after \ or :)
+				lb_len = ss.ReverseFind('\\');
+				if (lb_len == -1) lb_len = ss.ReverseFind('/');
+				if (lb_len == -1) lb_len = ss.ReverseFind(':');
+				if (lb_len == -1)
+					lb_len = ss.GetLength();
+				else
+					lb_len = ss.GetLength() - (lb_len+1);
 
-                // Check if the last char is the same case as the same char in the matched name
-                if (!ss.IsEmpty() && lb_len > 0 && strMatch[lb_len-1] != ss[ss.GetLength()-1])
-                {
-                    // The user used different case to that of the corresponding character in
-                    // the matched directory so change the matched name to be the user's case.
-                    if (isupper(ss[ss.GetLength()-1]))
-                        strMatch.MakeUpper();
-                    else
-                        strMatch.MakeLower();
-                }
+				// Check if the last char is the same case as the same char in the matched name
+				if (!ss.IsEmpty() && lb_len > 0 && strMatch[lb_len-1] != ss[ss.GetLength()-1])
+				{
+					// The user used different case to that of the corresponding character in
+					// the matched directory so change the matched name to be the user's case.
+					if (isupper(ss[ss.GetLength()-1]))
+						strMatch.MakeUpper();
+					else
+						strMatch.MakeLower();
+				}
 
 #ifdef _DEBUG
-                CString temp = strMatch.Left(lb_len);
-                ASSERT(temp.CompareNoCase(ss.Right(lb_len)) == 0);
+				CString temp = strMatch.Left(lb_len);
+				ASSERT(temp.CompareNoCase(ss.Right(lb_len)) == 0);
 #endif
-                end += strMatch.GetLength() - lb_len;
-                SetWindowText(ss + strMatch.Mid(lb_len));
-                SetSel(start, end);
-            }
+				end += strMatch.GetLength() - lb_len;
+				SetWindowText(ss + strMatch.Mid(lb_len));
+				SetSel(start, end);
+			}
 
-            // else if (count > 1) pop-up some sort of selection list???
-        }
-        SetFocus();                         // Make sure caret stays in this edit control
-    }
+			// else if (count > 1) pop-up some sort of selection list???
+		}
+		SetFocus();                         // Make sure caret stays in this edit control
+	}
 }
 
 void CDirEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
-    CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
+	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 
-    if (nChar != VK_DELETE)
-        return;
+	if (nChar != VK_DELETE)
+		return;
 
-    CDlgWnd *pp;                           // Parent = the dialog itself
-    VERIFY(pp = (CDlgWnd *)GetParent());
+	CDlgWnd *pp;                           // Parent = the dialog itself
+	VERIFY(pp = (CDlgWnd *)GetParent());
 
-    // Get the current text and check whether it is a valid directory
-    CString ss;
-    GetWindowText(ss);
-    int len = ss.GetLength();
+	// Get the current text and check whether it is a valid directory
+	CString ss;
+	GetWindowText(ss);
+	int len = ss.GetLength();
 
-    if (ss.Compare(_T("\\\\")) == 0)
-    {
-        // Don't check \\ else we get a message about "\\" being an invalid filename
-        ;
-    }
-    else if (ss.Compare(_T("\\")) == 0)
-    {
-        // Show root directory
-        pp->CheckDir(ss);
-    }
-    else if (len == 3 && ss[1] == ':' && ss[2] == '\\')
-    {
-        // Check that it's a valid drive
-        if (GetDriveType(ss) > DRIVE_NO_ROOT_DIR)
-        {
-            pp->CheckDir(ss);
-        }
-    }
-    else if (len > 0 && ss[len-1] == '\\')
-    {
-        // Check that it's a valid directory
-        DWORD attr = GetFileAttributes(ss);
-        if (attr != 0xffffFFFF && (attr & FILE_ATTRIBUTE_DIRECTORY) != 0)
-        {
-            pp->CheckDir(ss);
-        }
-    }
-    SetFocus();                         // Make sure caret stays in this edit control
+	if (ss.Compare(_T("\\\\")) == 0)
+	{
+		// Don't check \\ else we get a message about "\\" being an invalid filename
+		;
+	}
+	else if (ss.Compare(_T("\\")) == 0)
+	{
+		// Show root directory
+		pp->CheckDir(ss);
+	}
+	else if (len == 3 && ss[1] == ':' && ss[2] == '\\')
+	{
+		// Check that it's a valid drive
+		if (GetDriveType(ss) > DRIVE_NO_ROOT_DIR)
+		{
+			pp->CheckDir(ss);
+		}
+	}
+	else if (len > 0 && ss[len-1] == '\\')
+	{
+		// Check that it's a valid directory
+		DWORD attr = GetFileAttributes(ss);
+		if (attr != 0xffffFFFF && (attr & FILE_ATTRIBUTE_DIRECTORY) != 0)
+		{
+			pp->CheckDir(ss);
+		}
+	}
+	SetFocus();                         // Make sure caret stays in this edit control
 }
 
 UINT CDirEdit::OnGetDlgCode() 
 {
-    // Get all keys so that we see CR
-    return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
+	// Get all keys so that we see CR
+	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
 }
 // --- class CDirEdit ---
 
 // class CDirDialog
 CDirDialog::CDirDialog(LPCTSTR initial, LPCTSTR filter, CWnd* pParentWnd)
-    : CFileDialog(TRUE, NULL, NULL, 
-                  OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_ENABLESIZING,
-                  NULL, pParentWnd, 0, FALSE),
-      m_strPath(initial)
+	: CFileDialog(TRUE, NULL, NULL, 
+				  OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_ENABLESIZING,
+				  NULL, pParentWnd, 0, FALSE),
+	  m_strPath(initial)
 {
-    // Note: m_strFilter is a member variable so it doesn't disappear because
-    // it is used later internally by the file open dialog (via m_ofn.lpstrFilter).
-    if (filter != NULL)
-        m_strFilter = CString(_T("Show Folders Only|.|")) + filter;
-    else
-        m_strFilter = _T("Show Folders Only|.|All Files (*.*)|*.*||");
-    m_strFilter.Replace('|', '\0');
-    m_ofn.lpstrFilter = m_strFilter;
+	// Note: m_strFilter is a member variable so it doesn't disappear because
+	// it is used later internally by the file open dialog (via m_ofn.lpstrFilter).
+	if (filter != NULL)
+		m_strFilter = CString(_T("Show Folders Only|.|")) + filter;
+	else
+		m_strFilter = _T("Show Folders Only|.|All Files (*.*)|*.*||");
+	m_strFilter.Replace('|', '\0');
+	m_ofn.lpstrFilter = m_strFilter;
 
-    m_ofn.lpstrInitialDir = initial;
+	m_ofn.lpstrInitialDir = initial;
 
-    m_ofn.lpstrTitle = _T("Select Folder");
+	m_ofn.lpstrTitle = _T("Select Folder");
 
-    m_first_time = TRUE;
+	m_first_time = TRUE;
 }
 
 void CDirDialog::OnInitDone()
 {
-    CRect rct;                          // Used to move/resize controls
-    CWnd *pp;                           // Parent = the dialog window itself
-    VERIFY(pp = GetParent());
+	CRect rct;                          // Used to move/resize controls
+	CWnd *pp;                           // Parent = the dialog window itself
+	VERIFY(pp = GetParent());
 
 #ifdef DIRDIALOG_TESTING
-    // Increase size of dialog so we can show the hidden controls at the bottom (for testing)
-    pp->GetWindowRect(rct);
-    pp->SetWindowPos(NULL, 0, 0, rct.Width(), rct.Height() + 70, SWP_NOZORDER | SWP_NOMOVE);
+	// Increase size of dialog so we can show the hidden controls at the bottom (for testing)
+	pp->GetWindowRect(rct);
+	pp->SetWindowPos(NULL, 0, 0, rct.Width(), rct.Height() + 70, SWP_NOZORDER | SWP_NOMOVE);
 #endif
 
-    ASSERT(pp->GetDlgItem(stc3) != NULL);
-    pp->GetDlgItem(stc3)->SetWindowText(_T("Folder:"));  // static text
+	ASSERT(pp->GetDlgItem(stc3) != NULL);
+	pp->GetDlgItem(stc3)->SetWindowText(_T("Folder:"));  // static text
 
-    // Create a new CDlgWnd so we can catch dialog control notifications
-    VERIFY(m_DlgWnd.SubclassWindow(pp->m_hWnd));
+	// Create a new CDlgWnd so we can catch dialog control notifications
+	VERIFY(m_DlgWnd.SubclassWindow(pp->m_hWnd));
 
-    // Create a new edit control where edt1 now is
+	// Create a new edit control where edt1 now is
 	CWnd *filename_wnd = pp->GetDlgItem(edt1);       // edit box
 	if (filename_wnd == NULL)
 	{
 		filename_wnd = pp->GetDlgItem(cmb13);        // edit box replaced with combo
 		ASSERT(filename_wnd != NULL);
 	}
-    filename_wnd->GetWindowRect(rct); // Get edt1/cmb13 rectangle
-    pp->ScreenToClient(rct);
+	filename_wnd->GetWindowRect(rct); // Get edt1/cmb13 rectangle
+	pp->ScreenToClient(rct);
 
 	// Create our new edit box
-    VERIFY(m_Edit.Create(WS_TABSTOP | WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | ES_OEMCONVERT,
-                           rct, pp, IDC_DIR));
-    if (m_ofn.lpstrInitialDir  != NULL)
-        m_Edit.SetWindowText(m_ofn.lpstrInitialDir);
-    m_Edit.SetFont(filename_wnd->GetFont());
-    m_Edit.ModifyStyleEx(0, WS_EX_CLIENTEDGE, SWP_DRAWFRAME);
-    m_Edit.SetWindowPos(pp->GetDlgItem(stc3), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);  // place in tab order
+	VERIFY(m_Edit.Create(WS_TABSTOP | WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | ES_OEMCONVERT,
+						   rct, pp, IDC_DIR));
+	if (m_ofn.lpstrInitialDir  != NULL)
+		m_Edit.SetWindowText(m_ofn.lpstrInitialDir);
+	m_Edit.SetFont(filename_wnd->GetFont());
+	m_Edit.ModifyStyleEx(0, WS_EX_CLIENTEDGE, SWP_DRAWFRAME);
+	m_Edit.SetWindowPos(pp->GetDlgItem(stc3), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);  // place in tab order
 //  m_Edit.SetSel(0, strlen(m_ofn.lpstrInitialDir));
 
-    CWnd *pCancel = pp->GetDlgItem(IDCANCEL);
-    ASSERT(pCancel != NULL);
+	CWnd *pCancel = pp->GetDlgItem(IDCANCEL);
+	ASSERT(pCancel != NULL);
 
-    // Create a new button where the OK button now is
-    ASSERT(pp->GetDlgItem(IDOK) != NULL);
-    pp->GetDlgItem(IDOK)->GetWindowRect(rct); //Get OK button rectangle
-    pp->ScreenToClient(rct);
+	// Create a new button where the OK button now is
+	ASSERT(pp->GetDlgItem(IDOK) != NULL);
+	pp->GetDlgItem(IDOK)->GetWindowRect(rct); //Get OK button rectangle
+	pp->ScreenToClient(rct);
 
-    m_Open.Create(_T("Open"), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-                    rct, pp, IDC_OPEN);
-    m_Open.SetFont(pp->GetDlgItem(IDOK)->GetFont());
-    m_Open.SetWindowPos(&m_Edit, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);   // tab order
+	m_Open.Create(_T("Open"), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+					rct, pp, IDC_OPEN);
+	m_Open.SetFont(pp->GetDlgItem(IDOK)->GetFont());
+	m_Open.SetWindowPos(&m_Edit, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);   // tab order
 
-    pCancel->SetWindowPos(&m_Open, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); // place Cancel button after it in tab order
+	pCancel->SetWindowPos(&m_Open, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); // place Cancel button after it in tab order
 
-    // Change default push button to be our new "Open" button
-    pp->GetDlgItem(IDOK)->ModifyStyle(BS_DEFPUSHBUTTON, 0);
-    pp->SendMessage(DM_SETDEFID, IDC_OPEN);
+	// Change default push button to be our new "Open" button
+	pp->GetDlgItem(IDOK)->ModifyStyle(BS_DEFPUSHBUTTON, 0);
+	pp->SendMessage(DM_SETDEFID, IDC_OPEN);
 
 #ifdef DIRDIALOG_TESTING
-    // Move the replaced controls down (rather than hide them) for testing
-    ASSERT(pp->GetDlgItem(IDOK) != NULL);
-    pp->GetDlgItem(IDOK)->GetWindowRect(rct);
-    pp->ScreenToClient(rct);
-    pp->GetDlgItem(IDOK)->SetWindowPos(NULL, rct.left, rct.top+70,
-                   0, 0, SWP_NOZORDER | SWP_NOSIZE);
+	// Move the replaced controls down (rather than hide them) for testing
+	ASSERT(pp->GetDlgItem(IDOK) != NULL);
+	pp->GetDlgItem(IDOK)->GetWindowRect(rct);
+	pp->ScreenToClient(rct);
+	pp->GetDlgItem(IDOK)->SetWindowPos(NULL, rct.left, rct.top+70,
+				   0, 0, SWP_NOZORDER | SWP_NOSIZE);
 
-    filename_wnd->GetWindowRect(rct);
-    pp->ScreenToClient(rct);
-    filename_wnd->SetWindowPos(NULL, rct.left, rct.top+70,
-                   0, 0, SWP_NOZORDER | SWP_NOSIZE);
+	filename_wnd->GetWindowRect(rct);
+	pp->ScreenToClient(rct);
+	filename_wnd->SetWindowPos(NULL, rct.left, rct.top+70,
+				   0, 0, SWP_NOZORDER | SWP_NOSIZE);
 #else
-    // Hide the controls we don't want the user to use
-    HideControl(IDOK);
-    HideControl(edt1);
-    HideControl(cmb13);
+	// Hide the controls we don't want the user to use
+	HideControl(IDOK);
+	HideControl(edt1);
+	HideControl(cmb13);
 #endif
 
-    CFileDialog::OnInitDone();
+	CFileDialog::OnInitDone();
 
-    m_DlgWnd.GetSize();
+	m_DlgWnd.GetSize();
 }
 
 void CDirDialog::OnFolderChange()
 {
-    CWnd *pp;                           // Parent window = the dialog itself
-    VERIFY(pp = GetParent());
-    ASSERT(::IsWindow(pp->m_hWnd));
+	CWnd *pp;                           // Parent window = the dialog itself
+	VERIFY(pp = GetParent());
+	ASSERT(::IsWindow(pp->m_hWnd));
 
-    ASSERT(pp->GetDlgItem(IDC_DIR) != NULL);
-    m_strPath = GetFolderPath();
-    int len = m_strPath.GetLength();
-    if (len > 0 && m_strPath[len-1] != '\\')
-    {
-        m_strPath += "\\";
-        ++len;
-    }
-    pp->GetDlgItem(IDC_DIR)->SetWindowText(m_strPath);
-    if (m_first_time)
-    {
-        // Initially select whole name so user can remove by just typing
-        m_Edit.SetSel(0, -1);
-        m_first_time = FALSE;
-    }
-    else
-        m_Edit.SetSel(len, len);    // Move caret to end of name
+	ASSERT(pp->GetDlgItem(IDC_DIR) != NULL);
+	m_strPath = GetFolderPath();
+	int len = m_strPath.GetLength();
+	if (len > 0 && m_strPath[len-1] != '\\')
+	{
+		m_strPath += "\\";
+		++len;
+	}
+	pp->GetDlgItem(IDC_DIR)->SetWindowText(m_strPath);
+	if (m_first_time)
+	{
+		// Initially select whole name so user can remove by just typing
+		m_Edit.SetSel(0, -1);
+		m_first_time = FALSE;
+	}
+	else
+		m_Edit.SetSel(len, len);    // Move caret to end of name
 
-    CFileDialog::OnFolderChange();
+	CFileDialog::OnFolderChange();
 
-    m_Edit.SetFocus();
+	m_Edit.SetFocus();
 }

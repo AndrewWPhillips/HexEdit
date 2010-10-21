@@ -45,7 +45,7 @@ protected:
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnAlgorithmHelp();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 };
 

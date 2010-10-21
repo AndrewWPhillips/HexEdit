@@ -1,6 +1,6 @@
 // ChildFrm.h : interface of the CChildFrame class
 //
-// Copyright (c) 1999 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -30,7 +30,7 @@ public:
 
 // Attributes
 public:
-    CHexEditView *GetHexEditView() const;  // Returns this frame hex view (or NULL)
+	CHexEditView *GetHexEditView() const;  // Returns this frame hex view (or NULL)
 
 // Operations
 public:
@@ -44,7 +44,7 @@ public:
 	protected:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 	//}}AFX_VIRTUAL
-    afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 
 // Implementation
 public:
@@ -53,7 +53,7 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-        CHexEditSplitter splitter_;       // Allows multiple views (sep. by splitters)
+		CHexEditSplitter splitter_;       // Allows multiple views (sep. by splitters)
 		CHexTabView *ptv_;                   // Allows multiple views (using tabs)
 
 // Generated message map functions

@@ -42,9 +42,9 @@ aerial_fin_: true if last scan finished OK, false if none done yet or last stopp
 docdata_: a critical section to protect access to shared document members
 
 pfile3_: is a ptr to file open the same as pfile1_.  Using a separate file allows the main thread
-         to read from the file without having to lock docdata_.  Locking is only required
-         when the background thread accesses the file or the main thread changes it.
-         This means that file display should never be slowed by the background thread.
+		 to read from the file without having to lock docdata_.  Locking is only required
+		 when the background thread accesses the file or the main thread changes it.
+		 This means that file display should never be slowed by the background thread.
 loc_: accessed (via GetData) in main/search/aerial threads to get data from the file
 undo_: loc_ uses data stored in undo array
 
@@ -79,7 +79,7 @@ For small insertions only a memove may be required but it may be that
 the bitmap has to be resized, which may be handled by realloc or
 just a complete re-scan.
 
-   
+
 Views (see CBGSearchHint used by CHexEditView::OnUpdate)
 -----
 
@@ -124,36 +124,36 @@ void CHexEditDoc::AddAerialView(CHexEditView *pview)
 		TRACE("+++ Pulsing aerial event\n");
 		start_aerial_event_.SetEvent();
 	}
-    ASSERT(pthread3_ != NULL);
+	ASSERT(pthread3_ != NULL);
 }
 
 void CHexEditDoc::RemoveAerialView()
 {
-    if (--av_count_ == 0)
-    {
-        if (pthread3_ != NULL)
-            KillAerialThread();
-        FIBITMAP *dib = dib_;
-        dib_ = NULL;
+	if (--av_count_ == 0)
+	{
+		if (pthread3_ != NULL)
+			KillAerialThread();
+		FIBITMAP *dib = dib_;
+		dib_ = NULL;
 		TRACE("+++  FreeImage_Unload(%d)\n", dib);
-        FreeImage_Unload(dib);
-    }
+		FreeImage_Unload(dib);
+	}
 	TRACE("+++  Aerial --- %d\n", av_count_);
 }
 
 // Doc or colours have changed - signal current scan to stop then start new scan
 void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 {
-    if (av_count_ == 0) return;
-    ASSERT(pthread3_ != NULL);
-    if (pthread3_ == NULL) return;
+	if (av_count_ == 0) return;
+	ASSERT(pthread3_ != NULL);
+	if (pthread3_ == NULL) return;
 
 	// Wait for thread to stop if necessary
 	bool waiting;
 	docdata_.Lock();
 	aerial_command_ = STOP;
 	docdata_.Unlock();
-    SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_NORMAL);
+	SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_NORMAL);
 	for (int ii = 0; ii < 100; ++ii)
 	{
 		// Wait just a little bit in case the thread was just about to go into wait state
@@ -165,7 +165,7 @@ void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 		TRACE("+++ AerialChange - thread not waiting (yet)\n");
 		Sleep(1);
 	}
-    SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_LOWEST);
+	SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_LOWEST);
 	ASSERT(waiting);
 
 	// Make sure we have a big enough bitmap and the right colours
@@ -174,7 +174,7 @@ void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 	{
 		// ensure bitmap is big enough & clear it to closest grey to hex view's background
 		GetAerialBitmap(GetRValue(same_hue(pview->GetBackgroundCol(), 0 /*saturation*/)));
-        pview->get_colours(kala_);     // get colour ranges in case they have changed
+		pview->get_colours(kala_);     // get colour ranges in case they have changed
 	}
 	else
 		GetAerialBitmap(-1);
@@ -213,16 +213,16 @@ void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
 		}
 
 		// Not big enough so free it and reallocate (below)
-        FIBITMAP *dib = dib_;
-        dib_ = NULL;
+		FIBITMAP *dib = dib_;
+		dib_ = NULL;
 		TRACE("+++ FreeImage_Unload(%d)\n", dib);
-        FreeImage_Unload(dib);
+		FreeImage_Unload(dib);
 		if (clear <= -1)
 			clear = 0xC0;  // if we get a new bitmap we must clear it
 	}
 
-	// xxx we need user options for default bpe and MAX_BMP (min 16Mb = 1 TByte file @ BPE 65536)
-	bpe_ = 1; 
+	// TBD: TODO we need user options for default bpe and MAX_BMP (min 16Mb = 1 TByte file @ BPE 65536)
+	bpe_ = 1;
 	
 	// Keep increasing bpe_ by powers of two until we get a small enough bitmap
 	while (bpe_ <= 65536 && (length_*3)/bpe_ > MAX_BMP)
@@ -244,17 +244,17 @@ void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
 // Sends a message for the thread to kill itself then tides up shared members 
 void CHexEditDoc::KillAerialThread()
 {
-    ASSERT(pthread3_ != NULL);
-    if (pthread3_ == NULL) return;
+	ASSERT(pthread3_ != NULL);
+	if (pthread3_ == NULL) return;
 
-    HANDLE hh = pthread3_->m_hThread;    // Save handle since it will be lost when thread is killed and object is destroyed
-    TRACE1("+++ Killing aerial thread for %p\n", this);
+	HANDLE hh = pthread3_->m_hThread;    // Save handle since it will be lost when thread is killed and object is destroyed
+	TRACE1("+++ Killing aerial thread for %p\n", this);
 
 	bool waiting, dying;
 	docdata_.Lock();
 	aerial_command_ = DIE;
 	docdata_.Unlock();
-    SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_NORMAL); // Make it a quick and painless death
+	SetThreadPriority(pthread3_->m_hThread, THREAD_PRIORITY_NORMAL); // Make it a quick and painless death
 	for (int ii = 0; ii < 100; ++ii)
 	{
 		// Wait just a little bit in case the thread was just about to go into wait state
@@ -268,18 +268,18 @@ void CHexEditDoc::KillAerialThread()
 	}
 	ASSERT(waiting || dying);
 
-    timer tt(true);
-    if (waiting)
-        start_aerial_event_.SetEvent();
+	timer tt(true);
+	if (waiting)
+		start_aerial_event_.SetEvent();
 
 	pthread3_ = NULL;
-    DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
-    ASSERT(wait_status == WAIT_OBJECT_0 || wait_status == WAIT_FAILED);
-    tt.stop();
-    TRACE1("+++ Thread took %g secs to kill\n", double(tt.elapsed()));
+	DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
+	ASSERT(wait_status == WAIT_OBJECT_0 || wait_status == WAIT_FAILED);
+	tt.stop();
+	TRACE1("+++ Thread took %g secs to kill\n", double(tt.elapsed()));
 
-    // Free resources that are only needed during scan
-    if (pfile3_ != NULL)
+	// Free resources that are only needed during scan
+	if (pfile3_ != NULL)
 	{
 		pfile3_->Close();
 		delete pfile3_;
@@ -300,21 +300,21 @@ void CHexEditDoc::KillAerialThread()
 // It just calls the RunAerialThread member for the doc passed to it.
 static UINT bg_func(LPVOID pParam)
 {
-    CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
+	CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
 
-    TRACE1("+++ Aerial thread started for doc %p\n", pDoc);
+	TRACE1("+++ Aerial thread started for doc %p\n", pDoc);
 
-    return pDoc->RunAerialThread();
+	return pDoc->RunAerialThread();
 }
 
 // Sets up shared members and creates the thread using bg_func (above)
 void CHexEditDoc::CreateAerialThread()
 {
-    ASSERT(pthread3_ == NULL);
-    ASSERT(pfile3_ == NULL);
+	ASSERT(pthread3_ == NULL);
+	ASSERT(pfile3_ == NULL);
 
-    // Open copy of file to be used by background thread
-    if (pfile1_ != NULL)
+	// Open copy of file to be used by background thread
+	if (pfile1_ != NULL)
 	{
 		if (IsDevice())
 			pfile3_ = new CFileNC();
@@ -337,97 +337,97 @@ void CHexEditDoc::CreateAerialThread()
 										  CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 	}
 
-    // Create new thread
-    aerial_command_ = NONE;
+	// Create new thread
+	aerial_command_ = NONE;
 	aerial_state_ = STARTING;    // pre start and very beginning
 	aerial_fin_ = false;
-    TRACE1("+++ Creating aerial thread for %p\n", this);
-    pthread3_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
-    ASSERT(pthread3_ != NULL);
+	TRACE1("+++ Creating aerial thread for %p\n", this);
+	pthread3_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
+	ASSERT(pthread3_ != NULL);
 }
 
 // This is what does the work in the background thread
 UINT CHexEditDoc::RunAerialThread()
 {
-    // Keep looping until we are told to die
-    for (;;)
-    {
-        // Signal that we are waiting then wait for start_aerial_event_ to be pulsed
-        {
-            CSingleLock sl(&docdata_, TRUE);
-            aerial_state_ = WAITING;
-        }
-        TRACE1("+++ BGAerial: waiting for %p\n", this);
-        DWORD wait_status = ::WaitForSingleObject(HANDLE(start_aerial_event_), INFINITE);
-        docdata_.Lock();
+	// Keep looping until we are told to die
+	for (;;)
+	{
+		// Signal that we are waiting then wait for start_aerial_event_ to be pulsed
+		{
+			CSingleLock sl(&docdata_, TRUE);
+			aerial_state_ = WAITING;
+		}
+		TRACE1("+++ BGAerial: waiting for %p\n", this);
+		DWORD wait_status = ::WaitForSingleObject(HANDLE(start_aerial_event_), INFINITE);
+		docdata_.Lock();
 		aerial_state_ = SCANNING;
-        docdata_.Unlock();
-        start_aerial_event_.ResetEvent();
-        ASSERT(wait_status == WAIT_OBJECT_0);
-        TRACE1("+++ BGAerial: got event for %p\n", this);
+		docdata_.Unlock();
+		start_aerial_event_.ResetEvent();
+		ASSERT(wait_status == WAIT_OBJECT_0);
+		TRACE1("+++ BGAerial: got event for %p\n", this);
 
 		if (AerialProcessStop())
 			continue;
 
 		// Reset for new scan
-        docdata_.Lock();
+		docdata_.Lock();
 		aerial_fin_ = false;
-        FILE_ADDRESS addr = 0;
-        FILE_ADDRESS file_len = length_;
-        int file_bpe = bpe_;
-        unsigned char *file_dib = FreeImage_GetBits(dib_);
+		FILE_ADDRESS addr = 0;
+		FILE_ADDRESS file_len = length_;
+		int file_bpe = bpe_;
+		unsigned char *file_dib = FreeImage_GetBits(dib_);
 		unsigned dib_size = FreeImage_GetDIBSize(dib_);
-        docdata_.Unlock();
+		docdata_.Unlock();
 		TRACE("+++ BGAerial: using bitmap at %p\n", file_dib);
 
-        // Get the file buffer
-        size_t buf_len = (size_t)min(file_len, 65536);
+		// Get the file buffer
+		size_t buf_len = (size_t)min(file_len, 65536);
 		ASSERT(aerial_buf_ == NULL);
-        aerial_buf_ = new unsigned char[buf_len];
+		aerial_buf_ = new unsigned char[buf_len];
 
-        for (;;)
-        {
-            // First check if we need to stop
+		for (;;)
+		{
+			// First check if we need to stop
 			if (AerialProcessStop())
 				break;   // stop processing and go back to WAITING state
 
-            // Check if we have finished scanning the file
-            if (addr >= file_len)
-            {
-                TRACE2("+++ BGAerial: finished scan for %p at address %p\n", this, file_dib + 3*size_t(addr/file_bpe));
-                CSingleLock sl(&docdata_, TRUE); // Protect shared data access
+			// Check if we have finished scanning the file
+			if (addr >= file_len)
+			{
+				TRACE2("+++ BGAerial: finished scan for %p at address %p\n", this, file_dib + 3*size_t(addr/file_bpe));
+				CSingleLock sl(&docdata_, TRUE); // Protect shared data access
 
-                aerial_fin_ = true;
-                break;                          // falls out to end_scan
-            }
+				aerial_fin_ = true;
+				break;                          // falls out to end_scan
+			}
 
-            // Get the next buffer full from the file and scan it
-            size_t got = GetData(aerial_buf_, buf_len, addr, 3);
-            ASSERT(got <= buf_len);
+			// Get the next buffer full from the file and scan it
+			size_t got = GetData(aerial_buf_, buf_len, addr, 3);
+			ASSERT(got <= buf_len);
 
-            unsigned char *pbm = file_dib + 3*size_t(addr/file_bpe);    // where we write to bitmap
-            unsigned char *pbuf;                                        // where we read from the file buffer
-            for (pbuf = aerial_buf_; pbuf < aerial_buf_ + got; pbuf += file_bpe, pbm += 3)
-            {
-                int r, g, b;
-                r = g = b = 0;
-                for (unsigned char *pp = pbuf; pp < pbuf + file_bpe; ++pp)
-                {
-                    r += GetRValue(kala_[*pp]);
-                    g += GetGValue(kala_[*pp]);
-                    b += GetBValue(kala_[*pp]);
-                }
-                *pbm     = unsigned char(b/file_bpe);
-                *(pbm+1) = unsigned char(g/file_bpe);
-                *(pbm+2) = unsigned char(r/file_bpe);
-            }
-            addr += got;
-        }
+			unsigned char *pbm = file_dib + 3*size_t(addr/file_bpe);    // where we write to bitmap
+			unsigned char *pbuf;                                        // where we read from the file buffer
+			for (pbuf = aerial_buf_; pbuf < aerial_buf_ + got; pbuf += file_bpe, pbm += 3)
+			{
+				int r, g, b;
+				r = g = b = 0;
+				for (unsigned char *pp = pbuf; pp < pbuf + file_bpe; ++pp)
+				{
+					r += GetRValue(kala_[*pp]);
+					g += GetGValue(kala_[*pp]);
+					b += GetBValue(kala_[*pp]);
+				}
+				*pbm     = unsigned char(b/file_bpe);
+				*(pbm+1) = unsigned char(g/file_bpe);
+				*(pbm+2) = unsigned char(r/file_bpe);
+			}
+			addr += got;
+		}
 
 		delete[] aerial_buf_;
 		aerial_buf_ = NULL;
-    }
-    return 0;   // never reached
+	}
+	return 0;   // never reached
 }
 
 // Check for a stop scanning (or kill) of the background thread
@@ -435,28 +435,28 @@ bool CHexEditDoc::AerialProcessStop()
 {
 	bool retval = false;
 
-    CSingleLock sl(&docdata_, TRUE);
-    switch(aerial_command_)
-    {
-    case STOP:                      // stop scan and wait
-        TRACE1("+++ BGAerial: stop for %p\n", this);
+	CSingleLock sl(&docdata_, TRUE);
+	switch(aerial_command_)
+	{
+	case STOP:                      // stop scan and wait
+		TRACE1("+++ BGAerial: stop for %p\n", this);
 		retval = true;
 		break;
-    case DIE:                       // terminate this thread
-        TRACE1("+++ BGAerial: killed thread for %p\n", this);
-        aerial_state_ = DYING;
+	case DIE:                       // terminate this thread
+		TRACE1("+++ BGAerial: killed thread for %p\n", this);
+		aerial_state_ = DYING;
 		sl.Unlock();                // we need this here as AfxEndThread() never returns so d'tor is not called
 		delete[] aerial_buf_;
 		aerial_buf_ = NULL;
 		AfxEndThread(1);            // kills thread (no return)
 		break;                      // Avoid warning
-    case NONE:                      // nothing needed here - just continue scanning
-        break;
-    default:                        // should not happen
-        ASSERT(0);
-    }
+	case NONE:                      // nothing needed here - just continue scanning
+		break;
+	default:                        // should not happen
+		ASSERT(0);
+	}
 
 	// Prevent reprocessing of the same command
-    aerial_command_ = NONE;
+	aerial_command_ = NONE;
 	return retval;
 }

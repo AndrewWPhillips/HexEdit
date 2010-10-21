@@ -1,7 +1,7 @@
 #if !defined(AFX_EMAILDLG_H__C0AA8EC1_8393_11D2_B02B_0020AFDC3196__INCLUDED_)
 #define AFX_EMAILDLG_H__C0AA8EC1_8393_11D2_B02B_0020AFDC3196__INCLUDED_
 
-// Copyright (c) 1999 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -46,8 +46,8 @@ public:
 	CString	version_;
 	//}}AFX_DATA
 
-    BOOL attach_;
-    CString attachment_;
+	BOOL attach_;
+	CString attachment_;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -68,7 +68,7 @@ protected:
 	afx_msg void OnAttach();
 	afx_msg void OnAttachmentBrowse();
 	//}}AFX_MSG
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 };
 

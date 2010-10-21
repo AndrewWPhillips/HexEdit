@@ -31,13 +31,13 @@ CCopyCSrc::CCopyCSrc(CWnd* pParent /*=NULL*/)
 	indent_ = 0;
 	//}}AFX_DATA_INIT
 
-    type_        = theApp.GetProfileInt("CopySource", "Type", STRING);
-    int_type_    = theApp.GetProfileInt("CopySource", "IntType", INT_HEX);
-    int_size_    = theApp.GetProfileInt("CopySource", "IntSize", INT_32);
-    float_size_  = theApp.GetProfileInt("CopySource", "FloatSize", FLOAT_64);
-    big_endian_  = theApp.GetProfileInt("CopySource", "BigEndian", FALSE);
-    show_address_= theApp.GetProfileInt("CopySource", "ShowAddress", FALSE);
-    indent_      = theApp.GetProfileInt("CopySource", "Indent", 8);
+	type_        = theApp.GetProfileInt("CopySource", "Type", STRING);
+	int_type_    = theApp.GetProfileInt("CopySource", "IntType", INT_HEX);
+	int_size_    = theApp.GetProfileInt("CopySource", "IntSize", INT_32);
+	float_size_  = theApp.GetProfileInt("CopySource", "FloatSize", FLOAT_64);
+	big_endian_  = theApp.GetProfileInt("CopySource", "BigEndian", FALSE);
+	show_address_= theApp.GetProfileInt("CopySource", "ShowAddress", FALSE);
+	indent_      = theApp.GetProfileInt("CopySource", "Indent", 8);
 }
 
 void CCopyCSrc::DoDataExchange(CDataExchange* pDX)
@@ -69,7 +69,7 @@ BEGIN_MESSAGE_MAP(CCopyCSrc, CDialog)
 	ON_BN_CLICKED(IDC_CSRC_HELP, OnCsrcHelp)
 	//}}AFX_MSG_MAP
 	ON_WM_HELPINFO()
-    ON_WM_CONTEXTMENU()
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 
@@ -89,60 +89,60 @@ BOOL CCopyCSrc::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-    ctl_indent_spin_.SetRange(0, 127);
-    fix_controls();
+	ctl_indent_spin_.SetRange(0, 127);
+	fix_controls();
 
 	return TRUE;
 }
 
 void CCopyCSrc::OnChangeType() 
 {
-    UpdateData();
+	UpdateData();
 
-    fix_controls();
+	fix_controls();
 }
 
 void CCopyCSrc::OnOK() 
 {
-    UpdateData();
+	UpdateData();
 
-    theApp.WriteProfileInt("CopySource", "Type",      type_);
-    theApp.WriteProfileInt("CopySource", "IntType",   int_type_);
-    theApp.WriteProfileInt("CopySource", "IntSize",   int_size_);
-    theApp.WriteProfileInt("CopySource", "FloatSize", float_size_);
-    theApp.WriteProfileInt("CopySource", "BigEndian", big_endian_);
-    theApp.WriteProfileInt("CopySource", "ShowAddress", show_address_);
-    theApp.WriteProfileInt("CopySource", "Indent",    indent_);
+	theApp.WriteProfileInt("CopySource", "Type",      type_);
+	theApp.WriteProfileInt("CopySource", "IntType",   int_type_);
+	theApp.WriteProfileInt("CopySource", "IntSize",   int_size_);
+	theApp.WriteProfileInt("CopySource", "FloatSize", float_size_);
+	theApp.WriteProfileInt("CopySource", "BigEndian", big_endian_);
+	theApp.WriteProfileInt("CopySource", "ShowAddress", show_address_);
+	theApp.WriteProfileInt("CopySource", "Indent",    indent_);
 
 	CDialog::OnOK();
 }
 
 void CCopyCSrc::OnCsrcHelp() 
 {
-    // Display help for this page
-    if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_CSRC_HELP))
-        AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+	// Display help for this page
+	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_CSRC_HELP))
+		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
 static DWORD id_pairs[] = { 
-    IDC_CSRC_INDENT, HIDC_CSRC_INDENT,
-    IDC_CSRC_INDENT_SPIN, HIDC_CSRC_INDENT,
-    IDC_CSRC_ADDRESS, HIDC_CSRC_ADDRESS,
-    IDC_CSRC_STRING, HIDC_CSRC_STRING,
-    IDC_CSRC_CHAR, HIDC_CSRC_CHAR,
-    IDC_CSRC_INT, HIDC_CSRC_INT,
-    IDC_CSRC_INT_TYPE, HIDC_CSRC_INT_TYPE,
-    IDC_CSRC_INT_SIZE, HIDC_CSRC_INT_SIZE,
-    IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-    IDC_CSRC_FLOAT, HIDC_CSRC_FLOAT,
-    IDC_CSRC_FLOAT_SIZE, HIDC_CSRC_FLOAT_SIZE,
-    0,0 
-}; 
+	IDC_CSRC_INDENT, HIDC_CSRC_INDENT,
+	IDC_CSRC_INDENT_SPIN, HIDC_CSRC_INDENT,
+	IDC_CSRC_ADDRESS, HIDC_CSRC_ADDRESS,
+	IDC_CSRC_STRING, HIDC_CSRC_STRING,
+	IDC_CSRC_CHAR, HIDC_CSRC_CHAR,
+	IDC_CSRC_INT, HIDC_CSRC_INT,
+	IDC_CSRC_INT_TYPE, HIDC_CSRC_INT_TYPE,
+	IDC_CSRC_INT_SIZE, HIDC_CSRC_INT_SIZE,
+	IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
+	IDC_CSRC_FLOAT, HIDC_CSRC_FLOAT,
+	IDC_CSRC_FLOAT_SIZE, HIDC_CSRC_FLOAT_SIZE,
+	0,0 
+};
 
 BOOL CCopyCSrc::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
-    return TRUE;
+	return TRUE;
 }
 
 void CCopyCSrc::OnContextMenu(CWnd* pWnd, CPoint point) 

@@ -1,6 +1,6 @@
 // DFFDMisc.h - various global functions used by templates and tree view
 //
-// Copyright (c) 2004 by Andrew W. Phillips.
+// Copyright (c) 2004-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -27,8 +27,8 @@
 
 struct enum_entry
 {
-    CString name;
-    __int64 value;
+	CString name;
+	__int64 value;
 };
 
 CPoint	get_posn(CWnd *pw, CPoint &orig);

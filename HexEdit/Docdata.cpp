@@ -1,6 +1,6 @@
 // DocData.cpp : part of implementation of the CHexEditDoc class
 //
-// Copyright (c) 2003-2010 by Andrew W. Phillips.
+// Copyright (c) 2000-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -65,10 +65,10 @@ IMPLEMENT_DYNAMIC(CTrackHint, CObject)      // Need to invalidate extra things f
 
 size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address, int use_bg /*= -1*/)
 {
-    ASSERT(use_bg == -1 || use_bg == 2 || use_bg == 3 || use_bg == 4);   // 0 and 1 are no longer used
-    ASSERT(address >= 0);
-    FILE_ADDRESS pos;           // Tracks file position of current location record
-    ploc_t pl;                  // Current location record
+	ASSERT(use_bg == -1 || use_bg == 2 || use_bg == 3 || use_bg == 4);   // 0 and 1 are no longer used
+	ASSERT(address >= 0);
+	FILE_ADDRESS pos;           // Tracks file position of current location record
+	ploc_t pl;                  // Current location record
 
 	CFile64 *pfile;
 	switch (use_bg)
@@ -77,10 +77,10 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 		pfile = pfile2_;        // Background search file
 		break;
 	case 3:
-	    pfile = pfile3_;        // Aerial scan thread file
+		pfile = pfile3_;        // Aerial scan thread file
 		break;
 	case 4:
-	    pfile = pfile4_;        // Background compare thread file
+		pfile = pfile4_;        // Background compare thread file
 		break;
 	default:
 		pfile = pfile1_;		// Normal file
@@ -89,46 +89,46 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 
 //    CSingleLock sl(&docdata_, TRUE);
 
-    // Find the 1st loc record that has (some of) the data
-    for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
-    {
-        ASSERT((pl->dlen >> 62) != 0);
-        if (address < pos + FILE_ADDRESS(pl->dlen&doc_loc::mask))
-            break;
-    }
+	// Find the 1st loc record that has (some of) the data
+	for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
+	{
+		ASSERT((pl->dlen >> 62) != 0);
+		if (address < pos + FILE_ADDRESS(pl->dlen&doc_loc::mask))
+			break;
+	}
 
-    // Get the data from each loc record until buf is full
-    size_t left;                        // How much is left to copy
-    FILE_ADDRESS start = address - pos; // Where to start copy in this block
-    size_t tocopy;                      // How much to copy in this block
-    for (left = len; left > 0 && pl != loc_.end(); left -= tocopy, buf += tocopy)
-    {
-        tocopy = size_t(min(FILE_ADDRESS(left), FILE_ADDRESS(pl->dlen&doc_loc::mask) - start));
-        ASSERT(tocopy < 0x10000000);
-        if ((pl->dlen >> 62) == 1)
-        {
-            // Read data from the original file
-            UINT actual;                // Number of bytes actually read from file
+	// Get the data from each loc record until buf is full
+	size_t left;                        // How much is left to copy
+	FILE_ADDRESS start = address - pos; // Where to start copy in this block
+	size_t tocopy;                      // How much to copy in this block
+	for (left = len; left > 0 && pl != loc_.end(); left -= tocopy, buf += tocopy)
+	{
+		tocopy = size_t(min(FILE_ADDRESS(left), FILE_ADDRESS(pl->dlen&doc_loc::mask) - start));
+		ASSERT(tocopy < 0x10000000);
+		if ((pl->dlen >> 62) == 1)
+		{
+			// Read data from the original file
+			UINT actual;                // Number of bytes actually read from file
 
-            pfile->Seek(pl->fileaddr + start, CFile::begin);
-            if ((actual = pfile->Read((void *)buf, (UINT)tocopy)) != tocopy)
-            {
-                // If we run out of file there is something wrong with our data
-                ASSERT(0);
-                left -= actual;
-                break;
-            }
-        }
-        else if ((pl->dlen >> 62) == 2)
-        {
-            memcpy(buf, pl->memaddr + start, tocopy);
-        }
+			pfile->Seek(pl->fileaddr + start, CFile::begin);
+			if ((actual = pfile->Read((void *)buf, (UINT)tocopy)) != tocopy)
+			{
+				// If we run out of file there is something wrong with our data
+				ASSERT(0);
+				left -= actual;
+				break;
+			}
+		}
+		else if ((pl->dlen >> 62) == 2)
+		{
+			memcpy(buf, pl->memaddr + start, tocopy);
+		}
 		else
 		{
-            ASSERT((pl->dlen >> 62) == 3);
+			ASSERT((pl->dlen >> 62) == 3);
 
-            // Read data from the data file
-            UINT actual;                // Number of bytes actually read from file
+			// Read data from the data file
+			UINT actual;                // Number of bytes actually read from file
 
 			FILE_ADDRESS fileaddr = pl->fileaddr&doc_loc::fmask;
 			int idx = int((pl->fileaddr>>62)&0x3);   // must change when fmask/max_data_files changes
@@ -151,23 +151,23 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 				actual = data_file_[idx]->Read((void *)buf, (UINT)tocopy);
 				break;
 			}
-            if (actual != tocopy)
-            {
-                // If we run out of file there is something wrong with our data
-                ASSERT(0);
-                left -= actual;
-                break;
-            }
+			if (actual != tocopy)
+			{
+				// If we run out of file there is something wrong with our data
+				ASSERT(0);
+				left -= actual;
+				break;
+			}
 		}
 
-        // Move to start of next loc record
-        start = 0;
-        pos += (pl->dlen&doc_loc::mask);
-        ++pl;
-    }
+		// Move to start of next loc record
+		start = 0;
+		pos += (pl->dlen&doc_loc::mask);
+		++pl;
+	}
 
-    // Return the actual number of bytes written to buf
-    return len - left;
+	// Return the actual number of bytes written to buf
+	return len - left;
 }
 
 // Create a new temp data file so that we can save to disk rather than using lots of memory
@@ -189,19 +189,19 @@ int CHexEditDoc::AddDataFile(LPCTSTR name, BOOL temp /*=FALSE*/)
 			data_file_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 
 			// If background searching on also open 2nd copy of the file
-		    if (pthread2_ != NULL)
+			if (pthread2_ != NULL)
 			{
 				ASSERT(data_file2_[ii] == NULL);
 				data_file2_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 			}
 			// If aerial scan is on also open 3rd copy of the file
-		    if (pthread3_ != NULL)
+			if (pthread3_ != NULL)
 			{
 				ASSERT(data_file3_[ii] == NULL);
 				data_file3_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 			}
 			// If bg compare is on also open 4th copy of the file
-		    if (pthread4_ != NULL)
+			if (pthread4_ != NULL)
 			{
 				ASSERT(data_file4_[ii] == NULL);
 				data_file4_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
@@ -211,45 +211,45 @@ int CHexEditDoc::AddDataFile(LPCTSTR name, BOOL temp /*=FALSE*/)
 			return ii;
 		}
 
-    return -1;  // no empty slots
+	return -1;  // no empty slots
 }
 
 void CHexEditDoc::RemoveDataFile(int idx)
 {
 	ASSERT(idx >= 0 && idx < doc_loc::max_data_files);
-    if (data_file_[idx] != NULL)
-    {
-        CString ss;
-        if (temp_file_[idx])
-            ss = data_file_[idx]->CFile64::GetFilePath();  // save the file name so we can delete it
-        data_file_[idx]->Close();
-        delete data_file_[idx];
-        data_file_[idx] = NULL;
-        if (pthread2_ != NULL)
-        {
-            ASSERT(data_file2_[idx] != NULL);
-            data_file2_[idx]->Close();
-            delete data_file2_[idx];
-            data_file2_[idx] = NULL;
-        }
-        if (pthread3_ != NULL)
-        {
-            ASSERT(data_file3_[idx] != NULL);
-            data_file3_[idx]->Close();
-            delete data_file3_[idx];
-            data_file3_[idx] = NULL;
-        }
-        if (pthread4_ != NULL)
-        {
-            ASSERT(data_file4_[idx] != NULL);
-            data_file4_[idx]->Close();
-            delete data_file4_[idx];
-            data_file4_[idx] = NULL;
-        }
-        // If the data file was a temp file remove it now it is closed
-        if (temp_file_[idx])
-            remove(ss);
-    }
+	if (data_file_[idx] != NULL)
+	{
+		CString ss;
+		if (temp_file_[idx])
+			ss = data_file_[idx]->CFile64::GetFilePath();  // save the file name so we can delete it
+		data_file_[idx]->Close();
+		delete data_file_[idx];
+		data_file_[idx] = NULL;
+		if (pthread2_ != NULL)
+		{
+			ASSERT(data_file2_[idx] != NULL);
+			data_file2_[idx]->Close();
+			delete data_file2_[idx];
+			data_file2_[idx] = NULL;
+		}
+		if (pthread3_ != NULL)
+		{
+			ASSERT(data_file3_[idx] != NULL);
+			data_file3_[idx]->Close();
+			delete data_file3_[idx];
+			data_file3_[idx] = NULL;
+		}
+		if (pthread4_ != NULL)
+		{
+			ASSERT(data_file4_[idx] != NULL);
+			data_file4_[idx]->Close();
+			delete data_file4_[idx];
+			data_file4_[idx] = NULL;
+		}
+		// If the data file was a temp file remove it now it is closed
+		if (temp_file_[idx])
+			remove(ss);
+	}
 }
 
 // Change allows the document to be modified.  After adding it to the undo
@@ -264,105 +264,105 @@ void CHexEditDoc::RemoveDataFile(int idx)
 //            BUT if utype == mod_insert_file num_done = idx into data_file_[]
 //   pview is a pointer to the view that is making the change (or NULL)
 void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS clen,
-                         unsigned char *buf, 
-                         int num_done, CView *pview, BOOL ptoo /*=FALSE*/)
+						 unsigned char *buf, 
+						 int num_done, CView *pview, BOOL ptoo /*=FALSE*/)
 {
-    // Lock the doc data (automatically releases the lock when it goes out of scope)
-    CSingleLock sl(&docdata_, TRUE);
+	// Lock the doc data (automatically releases the lock when it goes out of scope)
+	CSingleLock sl(&docdata_, TRUE);
 
-    int index;          // index into undo array
-    ASSERT(utype == mod_insert  || utype == mod_insert_file || utype == mod_replace ||
-           utype == mod_delforw || utype == mod_delback     || utype == mod_repback);
-    ASSERT(address <= length_);
-    ASSERT(clen > 0);
+	int index;          // index into undo array
+	ASSERT(utype == mod_insert  || utype == mod_insert_file || utype == mod_replace ||
+		   utype == mod_delforw || utype == mod_delback     || utype == mod_repback);
+	ASSERT(address <= length_);
+	ASSERT(clen > 0);
 
-    // Can this change be merged with the previous change?
-    // Note: if num_done is odd then we must merge this change
-    // since it is the 2nd nybble of a hex edit change
-    if (utype != mod_insert_file &&
+	// Can this change be merged with the previous change?
+	// Note: if num_done is odd then we must merge this change
+	// since it is the 2nd nybble of a hex edit change
+	if (utype != mod_insert_file &&
 		(((num_done % 2) == 1 && clen == 1) ||
-         (num_done > 0 && clen + undo_.back().len < theApp.undo_limit_)))
-    {
-        // Join this undo to the previous one (end of undo array).
-        // This allows (up to 8) multiple consecutive changes in the same
-        // view of the same type to be merged together.
-        ASSERT(pview == last_view_ || num_done == 1);  // num_done may be 1 for first bottom nybble in vert_display mode 
-        ASSERT(utype == undo_.back().utype);
+		 (num_done > 0 && clen + undo_.back().len < theApp.undo_limit_)))
+	{
+		// Join this undo to the previous one (end of undo array).
+		// This allows (up to 8) multiple consecutive changes in the same
+		// view of the same type to be merged together.
+		ASSERT(pview == last_view_ || num_done == 1);  // num_done may be 1 for first bottom nybble in vert_display mode 
+		ASSERT(utype == undo_.back().utype);
 
-        if (utype == mod_delforw)
-        {
-            // More deletes forward
-            ASSERT(buf == NULL);
-            ASSERT(undo_.back().address == address);
-            ASSERT(address + clen <= length_);
-            undo_.back().len += clen;
-        }
-        else if (utype == mod_delback)
-        {
-            // More deletes backward
-            ASSERT(buf == NULL);
-            ASSERT(undo_.back().address == address + clen);
-            undo_.back().address = address;
-            undo_.back().len += clen;
-        }
-        else if (utype == mod_repback)
-        {
-            ASSERT(buf != NULL);
-            ASSERT(undo_.back().address == address + clen);
-            ASSERT(clen < 0x100000000);
-            memmove(undo_.back().ptr + size_t(clen),
-                    undo_.back().ptr, size_t(undo_.back().len));
-            memcpy(undo_.back().ptr, buf, size_t(clen));
-            undo_.back().address = address;
-            undo_.back().len += clen;
-        }
-        else if (undo_.back().address + undo_.back().len == address)
-        {
-            // mod_insert/mod_replace - add to end of current insert/replace
-            ASSERT(buf != NULL);
-            memcpy(undo_.back().ptr + size_t(undo_.back().len), buf, size_t(clen));
-            undo_.back().len += clen;
-        }
-        else
-        {
-            // mod_insert/mod_replace but last byte of previous undo changed.
-            // This happens in hex edit mode when 2nd nybble entered
-            ASSERT(undo_.back().address + undo_.back().len - 1 == address);
-            memcpy(undo_.back().ptr+undo_.back().len - 1, buf, size_t(clen));
-            clen -= 1;                   // Fix for later calcs of length_
-            undo_.back().len += clen;
-        }
-        index = -1;             // Signal that this is not a new undo
-    }
-    else
-    {
-        // Add a new elt to undo array
+		if (utype == mod_delforw)
+		{
+			// More deletes forward
+			ASSERT(buf == NULL);
+			ASSERT(undo_.back().address == address);
+			ASSERT(address + clen <= length_);
+			undo_.back().len += clen;
+		}
+		else if (utype == mod_delback)
+		{
+			// More deletes backward
+			ASSERT(buf == NULL);
+			ASSERT(undo_.back().address == address + clen);
+			undo_.back().address = address;
+			undo_.back().len += clen;
+		}
+		else if (utype == mod_repback)
+		{
+			ASSERT(buf != NULL);
+			ASSERT(undo_.back().address == address + clen);
+			ASSERT(clen < 0x100000000);
+			memmove(undo_.back().ptr + size_t(clen),
+					undo_.back().ptr, size_t(undo_.back().len));
+			memcpy(undo_.back().ptr, buf, size_t(clen));
+			undo_.back().address = address;
+			undo_.back().len += clen;
+		}
+		else if (undo_.back().address + undo_.back().len == address)
+		{
+			// mod_insert/mod_replace - add to end of current insert/replace
+			ASSERT(buf != NULL);
+			memcpy(undo_.back().ptr + size_t(undo_.back().len), buf, size_t(clen));
+			undo_.back().len += clen;
+		}
+		else
+		{
+			// mod_insert/mod_replace but last byte of previous undo changed.
+			// This happens in hex edit mode when 2nd nybble entered
+			ASSERT(undo_.back().address + undo_.back().len - 1 == address);
+			memcpy(undo_.back().ptr+undo_.back().len - 1, buf, size_t(clen));
+			clen -= 1;                   // Fix for later calcs of length_
+			undo_.back().len += clen;
+		}
+		index = -1;             // Signal that this is not a new undo
+	}
+	else
+	{
+		// Add a new elt to undo array
 		if (utype == mod_insert_file)
 		{
 			ASSERT(num_done > -1 && data_file_[num_done] != NULL);
-            undo_.push_back(doc_undo(utype, address, clen, NULL, num_done));
+			undo_.push_back(doc_undo(utype, address, clen, NULL, num_done));
 		}
-        else if (utype == mod_insert || utype == mod_replace || utype == mod_repback)
-            undo_.push_back(doc_undo(utype, address, clen, buf));
-        else
-            undo_.push_back(doc_undo(utype, address, clen));
-        index = undo_.size() - 1;
-    }
+		else if (utype == mod_insert || utype == mod_replace || utype == mod_repback)
+			undo_.push_back(doc_undo(utype, address, clen, buf));
+		else
+			undo_.push_back(doc_undo(utype, address, clen));
+		index = undo_.size() - 1;
+	}
 
-    last_view_ = pview;
+	last_view_ = pview;
 
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-    // If there is a current search string and background searches are on
-    if (aa->pboyer_ != NULL && pthread2_ != NULL)
-    {
-        ASSERT(aa->bg_search_);
-        FILE_ADDRESS adjust;
+	// If there is a current search string and background searches are on
+	if (aa->pboyer_ != NULL && pthread2_ != NULL)
+	{
+		ASSERT(aa->bg_search_);
+		FILE_ADDRESS adjust;
 
-        if (aa->alignment_ > 1 && (utype == mod_delforw ||
-		                           utype == mod_delback ||
-		                           utype == mod_insert  ||
-		                           utype == mod_insert_file) )
+		if (aa->alignment_ > 1 && (utype == mod_delforw ||
+								   utype == mod_delback ||
+								   utype == mod_insert  ||
+								   utype == mod_insert_file) )
 		{
 			// Remove pending searches after current address (to avoid double search)
 			std::list<pair<FILE_ADDRESS, FILE_ADDRESS> >::iterator pcurr, pend;
@@ -375,7 +375,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 			}
 
 			// Remove all found occurrences to EOF
-		    found_.erase(found_.lower_bound(address), found_.lower_bound(length_));
+			found_.erase(found_.lower_bound(address), found_.lower_bound(length_));
 
 			// Invalidate area of change (rest towards EOF is invalidated below)
 			CBGSearchHint bgsh(address - aa->pboyer_->length() + 1, address + clen);
@@ -458,88 +458,88 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 			}
 		}
 
-        if (to_search_.empty())
-            find_done_ = 0.0;           // Clear amount searched before adding a new search
+		if (to_search_.empty())
+			find_done_ = 0.0;           // Clear amount searched before adding a new search
 
-        // Add new area to be searched
-        if (aa->alignment_ > 1 && (utype == mod_delforw ||
-		                           utype == mod_delback ||
-		                           utype == mod_insert  ||
-		                           utype == mod_insert_file) )
+		// Add new area to be searched
+		if (aa->alignment_ > 1 && (utype == mod_delforw ||
+								   utype == mod_delback ||
+								   utype == mod_insert  ||
+								   utype == mod_insert_file) )
 		{
-            to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(address - (aa->pboyer_->length() - 1), length_));
-            find_total_ += length_ - (address - (aa->pboyer_->length() - 1));
+			to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(address - (aa->pboyer_->length() - 1), length_));
+			find_total_ += length_ - (address - (aa->pboyer_->length() - 1));
 		}
-        else if (utype == mod_delforw || utype == mod_delback)
-        {
-            to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(address - (aa->pboyer_->length() - 1), address));
-            find_total_ += aa->pboyer_->length() - 1;
-        }
-        else
-        {
-            to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(address - (aa->pboyer_->length() - 1), address + clen));
-            find_total_ += clen + aa->pboyer_->length() - 1;
-        }
+		else if (utype == mod_delforw || utype == mod_delback)
+		{
+			to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(address - (aa->pboyer_->length() - 1), address));
+			find_total_ += aa->pboyer_->length() - 1;
+		}
+		else
+		{
+			to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(address - (aa->pboyer_->length() - 1), address + clen));
+			find_total_ += clen + aa->pboyer_->length() - 1;
+		}
 
-        // Restart bg search thread in case it is waiting
-        search_fin_ = false;
-        TRACE1("Restarting bg search (change) for %p\n", this);
-        start_search_event_.SetEvent();
-    }
+		// Restart bg search thread in case it is waiting
+		search_fin_ = false;
+		TRACE1("Restarting bg search (change) for %p\n", this);
+		start_search_event_.SetEvent();
+	}
 
-    // Adjust file length according to bytes added or removed
-    if (utype == mod_delforw || utype == mod_delback)
-        length_ -= clen;
-    else if (utype == mod_insert || utype == mod_insert_file)
-        length_ += clen;
-    else if (utype == mod_replace && address + clen > length_)
-        length_ = address + clen;
-    else
-        ASSERT(utype == mod_replace || utype == mod_repback);
+	// Adjust file length according to bytes added or removed
+	if (utype == mod_delforw || utype == mod_delback)
+		length_ -= clen;
+	else if (utype == mod_insert || utype == mod_insert_file)
+		length_ += clen;
+	else if (utype == mod_replace && address + clen > length_)
+		length_ = address + clen;
+	else
+		ASSERT(utype == mod_replace || utype == mod_repback);
 
-    // Update bookmarks
-    if (utype == mod_delforw || utype == mod_delback)
-    {
-        for (std::vector<FILE_ADDRESS>::iterator pp = bm_posn_.begin();
-             pp != bm_posn_.end(); ++pp)
-        {
-            if (*pp > address + clen)
-                *pp -= clen;
-            else if (*pp > address)
-                *pp = address;
-        }
-    }
-    else if (utype == mod_insert || utype == mod_insert_file)
-    {
-        for (std::vector<FILE_ADDRESS>::iterator pp = bm_posn_.begin();
-             pp != bm_posn_.end(); ++pp)
-        {
-            if (*pp >= address)
-                *pp += clen;
-        }
-    }
+	// Update bookmarks
+	if (utype == mod_delforw || utype == mod_delback)
+	{
+		for (std::vector<FILE_ADDRESS>::iterator pp = bm_posn_.begin();
+			 pp != bm_posn_.end(); ++pp)
+		{
+			if (*pp > address + clen)
+				*pp -= clen;
+			else if (*pp > address)
+				*pp = address;
+		}
+	}
+	else if (utype == mod_insert || utype == mod_insert_file)
+	{
+		for (std::vector<FILE_ADDRESS>::iterator pp = bm_posn_.begin();
+			 pp != bm_posn_.end(); ++pp)
+		{
+			if (*pp >= address)
+				*pp += clen;
+		}
+	}
 
-    // Rebuild the location list
-    regenerate();
+	// Rebuild the location list
+	regenerate();
 
-    AerialChange();     // tell aerial view thread to update
+	AerialChange();     // tell aerial view thread to update
 
-    update_needed_ = true;
-    send_change_hint(address);
+	update_needed_ = true;
+	send_change_hint(address);
 
 	// xxx I *think* this is OK - ie nothing below is protected by the docdata_ xxx
 	sl.Unlock();
 
-    // Update views to show changed doc
-    CHexHint hh(utype, clen, address, pview, index, FALSE, ptoo);
-    if (utype == mod_insert && clen == 0)
-    {
-        // Insert hex changed low nybble without inserting
-        hh.utype = mod_replace;
-        hh.len = 1;
-    }
-    SetModifiedFlag(TRUE);
-    UpdateAllViews(NULL, 0, &hh);
+	// Update views to show changed doc
+	CHexHint hh(utype, clen, address, pview, index, FALSE, ptoo);
+	if (utype == mod_insert && clen == 0)
+	{
+		// Insert hex changed low nybble without inserting
+		hh.utype = mod_replace;
+		hh.len = 1;
+	}
+	SetModifiedFlag(TRUE);
+	UpdateAllViews(NULL, 0, &hh);
 }
 
 // Undo removes the last change made by calling Change() [above]
@@ -548,54 +548,54 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 //   same_view is true if the view undo change originally made the change
 BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
 {
-    ASSERT(index == undo_.size() - 1);
-    ASSERT(undo_.back().utype == mod_insert  ||
+	ASSERT(index == undo_.size() - 1);
+	ASSERT(undo_.back().utype == mod_insert  ||
 		   undo_.back().utype == mod_insert_file  ||
-           undo_.back().utype == mod_replace ||
-           undo_.back().utype == mod_delforw ||
-           undo_.back().utype == mod_delback ||
-           undo_.back().utype == mod_repback );
+		   undo_.back().utype == mod_replace ||
+		   undo_.back().utype == mod_delforw ||
+		   undo_.back().utype == mod_delback ||
+		   undo_.back().utype == mod_repback );
 
-    // If undoing change made in different view ask the user to confirm
-    if (!same_view)
-    {
-        CString mess;
-        mess.Format("Undo %s made in different window?",
-            undo_.back().utype == mod_insert       ? "insertion" :
-            undo_.back().utype == mod_insert_file  ? "insertion" :
-            undo_.back().utype == mod_replace      ? "change"    :
-            undo_.back().utype == mod_repback      ? "backspace" : "deletion");
-        if (AfxMessageBox(mess, MB_OKCANCEL) == IDCANCEL)
-            return FALSE;
-    }
+	// If undoing change made in different view ask the user to confirm
+	if (!same_view)
+	{
+		CString mess;
+		mess.Format("Undo %s made in different window?",
+			undo_.back().utype == mod_insert       ? "insertion" :
+			undo_.back().utype == mod_insert_file  ? "insertion" :
+			undo_.back().utype == mod_replace      ? "change"    :
+			undo_.back().utype == mod_repback      ? "backspace" : "deletion");
+		if (AfxMessageBox(mess, MB_OKCANCEL) == IDCANCEL)
+			return FALSE;
+	}
 
-    // Inform views to undo everything up to last doc change
-    // before changing the document.  This ensures that any view changes
-    // that rely on the document as it was are undone before the document
-    // is change is undone.
-    CUndoHint uh(pview, index);
-    UpdateAllViews(NULL, 0, &uh);
+	// Inform views to undo everything up to last doc change
+	// before changing the document.  This ensures that any view changes
+	// that rely on the document as it was are undone before the document
+	// is change is undone.
+	CUndoHint uh(pview, index);
+	UpdateAllViews(NULL, 0, &uh);
 
-    // Work out the hint which says where and how the document
-    // has changed.  Note that undoing an insert is equivalent
-    // to deleting bytes, undoing a delete == insert etc.
-    CHexHint hh(undo_.back().utype == mod_insert      ? mod_delforw :
-                undo_.back().utype == mod_insert_file ? mod_delforw :
-                undo_.back().utype == mod_replace     ? mod_replace :
-                undo_.back().utype == mod_repback     ? mod_replace : mod_insert,
-                undo_.back().len, undo_.back().address, pview, index, TRUE);
-    FILE_ADDRESS change_address;
+	// Work out the hint which says where and how the document
+	// has changed.  Note that undoing an insert is equivalent
+	// to deleting bytes, undoing a delete == insert etc.
+	CHexHint hh(undo_.back().utype == mod_insert      ? mod_delforw :
+				undo_.back().utype == mod_insert_file ? mod_delforw :
+				undo_.back().utype == mod_replace     ? mod_replace :
+				undo_.back().utype == mod_repback     ? mod_replace : mod_insert,
+				undo_.back().len, undo_.back().address, pview, index, TRUE);
+	FILE_ADDRESS change_address;
 
-    {
-        CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+	{
+		CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-        // Lock the doc data (automatically releases the lock when it goes out of scope)
-        CSingleLock sl(&docdata_, TRUE);
+		// Lock the doc data (automatically releases the lock when it goes out of scope)
+		CSingleLock sl(&docdata_, TRUE);
 
-        // If there is a current search string and background searches are on
-        if (aa->pboyer_ != NULL && pthread2_ != NULL)
-        {
-            ASSERT(aa->bg_search_);
+		// If there is a current search string and background searches are on
+		if (aa->pboyer_ != NULL && pthread2_ != NULL)
+		{
+			ASSERT(aa->bg_search_);
 
 			if (aa->alignment_ > 1 && (undo_.back().utype == mod_delforw ||
 									undo_.back().utype == mod_delback ||
@@ -701,10 +701,10 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
 				}
 			}
 
-            if (to_search_.empty())
-                find_done_ = 0.0;           // Clear amount searched before adding a new search
+			if (to_search_.empty())
+				find_done_ = 0.0;           // Clear amount searched before adding a new search
 
-            // Add new area to be searched
+			// Add new area to be searched
 			if (aa->alignment_ > 1 && (undo_.back().utype == mod_delforw ||
 									   undo_.back().utype == mod_delback ||
 									   undo_.back().utype == mod_insert  ||
@@ -714,77 +714,77 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
 				to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(undo_.back().address - (aa->pboyer_->length() - 1), length_));
 				find_total_ += length_ - (undo_.back().address - (aa->pboyer_->length() - 1));
 			}
-            else if (undo_.back().utype == mod_insert || undo_.back().utype == mod_insert_file)
-            {
-                to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>
-                                         (undo_.back().address - aa->pboyer_->length() + 1,
-                                          undo_.back().address));
-                find_total_ += aa->pboyer_->length() - 1;
-            }
-            else
-            {
-                to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>
-                                         (undo_.back().address - aa->pboyer_->length() + 1,
-                                          undo_.back().address + undo_.back().len));
-                find_total_ += undo_.back().len + aa->pboyer_->length() - 1;
-            }
+			else if (undo_.back().utype == mod_insert || undo_.back().utype == mod_insert_file)
+			{
+				to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>
+										 (undo_.back().address - aa->pboyer_->length() + 1,
+										  undo_.back().address));
+				find_total_ += aa->pboyer_->length() - 1;
+			}
+			else
+			{
+				to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>
+										 (undo_.back().address - aa->pboyer_->length() + 1,
+										  undo_.back().address + undo_.back().len));
+				find_total_ += undo_.back().len + aa->pboyer_->length() - 1;
+			}
 
-            // Restart bg search thread in case it is waiting
-            search_fin_ = false;
-            TRACE1("Restarting bg search (undo) for %p\n", this);
-            start_search_event_.SetEvent();
-        }
+			// Restart bg search thread in case it is waiting
+			search_fin_ = false;
+			TRACE1("Restarting bg search (undo) for %p\n", this);
+			start_search_event_.SetEvent();
+		}
 
-        // Recalc doc size if nec.
-        if (undo_.back().utype == mod_delforw || undo_.back().utype == mod_delback)
-            length_ += undo_.back().len;
-        else if (undo_.back().utype == mod_insert || undo_.back().utype == mod_insert_file)
-            length_ -= undo_.back().len;
-        else if (undo_.back().utype == mod_replace &&
-                 undo_.back().address + undo_.back().len > length_)
-            length_ = undo_.back().address + undo_.back().len;
+		// Recalc doc size if nec.
+		if (undo_.back().utype == mod_delforw || undo_.back().utype == mod_delback)
+			length_ += undo_.back().len;
+		else if (undo_.back().utype == mod_insert || undo_.back().utype == mod_insert_file)
+			length_ -= undo_.back().len;
+		else if (undo_.back().utype == mod_replace &&
+				 undo_.back().address + undo_.back().len > length_)
+			length_ = undo_.back().address + undo_.back().len;
 
-        // Update bookmarks
-        if (undo_.back().utype == mod_delforw || undo_.back().utype == mod_delback)
-        {
-            for (std::vector<FILE_ADDRESS>::iterator pp = bm_posn_.begin();
-                 pp != bm_posn_.end(); ++pp)
-            {
-                if (*pp > undo_.back().address)
-                    *pp += undo_.back().len;
-            }
-        }
-        else if (undo_.back().utype == mod_insert || undo_.back().utype == mod_insert_file)
-        {
-            for (std::vector<FILE_ADDRESS>::iterator pp = bm_posn_.begin();
-                 pp != bm_posn_.end(); ++pp)
-            {
-                if (*pp > undo_.back().address + undo_.back().len)
-                    *pp -= undo_.back().len;
-                else if (*pp > undo_.back().address)
-                    *pp = undo_.back().address;
-            }
-        }
+		// Update bookmarks
+		if (undo_.back().utype == mod_delforw || undo_.back().utype == mod_delback)
+		{
+			for (std::vector<FILE_ADDRESS>::iterator pp = bm_posn_.begin();
+				 pp != bm_posn_.end(); ++pp)
+			{
+				if (*pp > undo_.back().address)
+					*pp += undo_.back().len;
+			}
+		}
+		else if (undo_.back().utype == mod_insert || undo_.back().utype == mod_insert_file)
+		{
+			for (std::vector<FILE_ADDRESS>::iterator pp = bm_posn_.begin();
+				 pp != bm_posn_.end(); ++pp)
+			{
+				if (*pp > undo_.back().address + undo_.back().len)
+					*pp -= undo_.back().len;
+				else if (*pp > undo_.back().address)
+					*pp = undo_.back().address;
+			}
+		}
 
-        change_address = undo_.back().address;
+		change_address = undo_.back().address;
 
-        // Remove the change from the undo array since it has now been undone
-        undo_.pop_back();
-        if (undo_.size() == 0)
-            SetModifiedFlag(FALSE);     // Undid everything so clear changed flag
+		// Remove the change from the undo array since it has now been undone
+		undo_.pop_back();
+		if (undo_.size() == 0)
+			SetModifiedFlag(FALSE);     // Undid everything so clear changed flag
 
-        // Rebuild locations list as undo array has changed
-        regenerate();
-    }
+		// Rebuild locations list as undo array has changed
+		regenerate();
+	}
 
-    AerialChange();     // tell aerial view thread to update
+	AerialChange();     // tell aerial view thread to update
 
-    update_needed_ = true;
-    send_change_hint(change_address);
+	update_needed_ = true;
+	send_change_hint(change_address);
 
-    // Update views because doc contents have changed
-    UpdateAllViews(NULL, 0, &hh);
-    return TRUE;
+	// Update views because doc contents have changed
+	UpdateAllViews(NULL, 0, &hh);
+	return TRUE;
 }
 
 #if 0
@@ -792,35 +792,35 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
 // start, end = the range of found addresses to remove
 // address = where address adjustments start, adjust = amount to adjust
 void CHexEditDoc::fix_address(FILE_ADDRESS start, FILE_ADDRESS end,
-                              FILE_ADDRESS address, FILE_ADDRESS adjust)
+							  FILE_ADDRESS address, FILE_ADDRESS adjust)
 {
-    // Remove invalidated found_ occurrences and adjust those for insertiosn deletions
-    if (!to_search_.empty())
-    {
-        // Ask bg thread to do it so that changes are kept consistent
-        ASSERT(!search_fin_);
-        to_adjust_.push_back(adjustment(start, end, address, adjust));
-    }
-    else
-        FixFound(start, end, address, adjust);
+	// Remove invalidated found_ occurrences and adjust those for insertiosn deletions
+	if (!to_search_.empty())
+	{
+		// Ask bg thread to do it so that changes are kept consistent
+		ASSERT(!search_fin_);
+		to_adjust_.push_back(adjustment(start, end, address, adjust));
+	}
+	else
+		FixFound(start, end, address, adjust);
 
-    // Adjust pending search addresses
-    std::list<pair<FILE_ADDRESS, FILE_ADDRESS> >::iterator pcurr, pend;
-    for (pcurr = to_search_.begin(), pend = to_search_.end(); pcurr != pend; ++pcurr)
-    {
-        if (pcurr->first >= address)
-        {
-            pcurr->first += adjust;
-            if (pcurr->first < address)  // Make sure it doesn't go too far backwards
-                pcurr->first = address;
-        }
-        if (pcurr->second >= address)
-        {
-            pcurr->second += adjust;
-            if (pcurr->second < address)  // Make sure it doesn't go too far backwards
-                pcurr->second = address;
-        }
-    }
+	// Adjust pending search addresses
+	std::list<pair<FILE_ADDRESS, FILE_ADDRESS> >::iterator pcurr, pend;
+	for (pcurr = to_search_.begin(), pend = to_search_.end(); pcurr != pend; ++pcurr)
+	{
+		if (pcurr->first >= address)
+		{
+			pcurr->first += adjust;
+			if (pcurr->first < address)  // Make sure it doesn't go too far backwards
+				pcurr->first = address;
+		}
+		if (pcurr->second >= address)
+		{
+			pcurr->second += adjust;
+			if (pcurr->second < address)  // Make sure it doesn't go too far backwards
+				pcurr->second = address;
+		}
+	}
 }
 #endif
 
@@ -830,122 +830,86 @@ void CHexEditDoc::fix_address(FILE_ADDRESS start, FILE_ADDRESS end,
 // (ie2, all changes = replaces or inserts with matching deletes).
 BOOL CHexEditDoc::only_over()
 {
-    FILE_ADDRESS pos;
-    ploc_t pl;          // Current location record
+	FILE_ADDRESS pos;
+	ploc_t pl;          // Current location record
 
-    // Check that each file record is at right place in file
-    for (pos = 0L, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
-    {
-        ASSERT((pl->dlen >> 62) != 0);
-        if ((pl->dlen >> 62) == 1 && pl->fileaddr != pos)
-            return FALSE;
-    }
-    // Make sure file length not changed
-    if (pfile1_ == NULL || pos != pfile1_->GetLength())
-        return FALSE;
+	// Check that each file record is at right place in file
+	for (pos = 0L, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
+	{
+		ASSERT((pl->dlen >> 62) != 0);
+		if ((pl->dlen >> 62) == 1 && pl->fileaddr != pos)
+			return FALSE;
+	}
+	// Make sure file length not changed
+	if (pfile1_ == NULL || pos != pfile1_->GetLength())
+		return FALSE;
 
-    return TRUE;
+	return TRUE;
 }
 
 // Write changes from memory to file (all mods must be 'in place')
 void CHexEditDoc::WriteInPlace()
 {
-    ASSERT(pfile1_ != NULL);
+	ASSERT(pfile1_ != NULL);
 
-    FILE_ADDRESS pos;
-    ploc_t pl;          // Current location record
-    ploc_t plprev;      // Record before this one
+	FILE_ADDRESS pos;
+	ploc_t pl;          // Current location record
+	ploc_t plprev;      // Record before this one
 
-    // Lock the doc data (automatically releases the lock when it goes out of scope)
-    CSingleLock sl(&docdata_, TRUE);
+	// Lock the doc data (automatically releases the lock when it goes out of scope)
+	CSingleLock sl(&docdata_, TRUE);
 
-    const size_t copy_buf_len = 16384;
-    unsigned char *buf = new unsigned char[copy_buf_len];   // Where we store data
+	const size_t copy_buf_len = 16384;
+	unsigned char *buf = new unsigned char[copy_buf_len];   // Where we store data
 #ifdef INPLACE_MOVE
-    FILE_ADDRESS previous_length = pfile1_->GetLength();
+	FILE_ADDRESS previous_length = pfile1_->GetLength();
 	FILE_ADDRESS total_todo = 0;                            // Number of bytes to be moved in file or copied in
 	FILE_ADDRESS total_done = 0;                            // Number of bytes done so far
-    for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
+	for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
 	{
-        if ((pl->dlen >> 62) > 1 || pos != pl->fileaddr)
+		if ((pl->dlen >> 62) > 1 || pos != pl->fileaddr)
 			total_todo += (pl->dlen&doc_loc::mask);
 	}
 
-    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    mm->m_wndStatusBar.EnablePaneProgressBar(0);
-    clock_t last_checked = clock();
+	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	mm->m_wndStatusBar.EnablePaneProgressBar(0);
+	clock_t last_checked = clock();
 #endif
 
-    try
-    {
+	try
+	{
 #ifdef INPLACE_MOVE
-        // Bits of file from the original file can be moved forward or backward in the "new" file,
-        // BUT they never overlap, so we can move them all within the file. We just need to:
-        // 1. move blocks that have moved forward starting from the end of the file
-        // 2. move blocks that have moved backward starting from the beginning of the file
-        // 3. do nothing for blocks that have not moved
-        // 4. write memory blocks to the file (as before)
-        for (pos = length_, pl = loc_.end(); pl != loc_.begin(); pos -= (plprev->dlen&doc_loc::mask), pl--)
-        {
-            plprev = pl;
-            plprev--;
+		// Bits of file from the original file can be moved forward or backward in the "new" file,
+		// BUT they never overlap, so we can move them all within the file. We just need to:
+		// 1. move blocks that have moved forward starting from the end of the file
+		// 2. move blocks that have moved backward starting from the beginning of the file
+		// 3. do nothing for blocks that have not moved
+		// 4. write memory blocks to the file (as before)
+		for (pos = length_, pl = loc_.end(); pl != loc_.begin(); pos -= (plprev->dlen&doc_loc::mask), pl--)
+		{
+			plprev = pl;
+			plprev--;
 
-            if ((plprev->dlen >> 62) == 1 && pos - FILE_ADDRESS(plprev->dlen&doc_loc::mask) > plprev->fileaddr)
-            {
-                // Copy the block in chunks (copy_buf_len) starting at the end
-                FILE_ADDRESS src = plprev->fileaddr + (plprev->dlen&doc_loc::mask);
-                FILE_ADDRESS dst = pos;
+			if ((plprev->dlen >> 62) == 1 && pos - FILE_ADDRESS(plprev->dlen&doc_loc::mask) > plprev->fileaddr)
+			{
+				// Copy the block in chunks (copy_buf_len) starting at the end
+				FILE_ADDRESS src = plprev->fileaddr + (plprev->dlen&doc_loc::mask);
+				FILE_ADDRESS dst = pos;
 
-                while (src > plprev->fileaddr)
-                {
-                    UINT count;
-                    if (src - copy_buf_len > plprev->fileaddr)
-                        count = copy_buf_len;
-                    else
-                        count = UINT(src - plprev->fileaddr);
-                    src -= count;
-                    dst -= count;
+				while (src > plprev->fileaddr)
+				{
+					UINT count;
+					if (src - copy_buf_len > plprev->fileaddr)
+						count = copy_buf_len;
+					else
+						count = UINT(src - plprev->fileaddr);
+					src -= count;
+					dst -= count;
 
-                    VERIFY(pfile1_->Seek(src, CFile::begin) == src);
-                    VERIFY(pfile1_->Read(buf, count) == count);
-                    VERIFY(pfile1_->Seek(dst, CFile::begin) == dst);
-                    pfile1_->Write(buf, count);
-
-					// Update progress
-					total_done += count;
-					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
-					{
-						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
-						last_checked = clock();
-						AfxGetApp()->OnIdle(0);
-					}
-                }
-                ASSERT(src == plprev->fileaddr);
-                ASSERT(dst == pos - (plprev->dlen&doc_loc::mask));
-            }
-        }
-        for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
-        {
-            if ((pl->dlen >> 62) == 1 && pos < pl->fileaddr)
-            {
-                FILE_ADDRESS src = pl->fileaddr;
-                FILE_ADDRESS dst = pos;
-
-                while (src < pl->fileaddr + FILE_ADDRESS(pl->dlen&doc_loc::mask))
-                {
-                    UINT count;
-                    if (src + copy_buf_len <= pl->fileaddr + FILE_ADDRESS(pl->dlen&doc_loc::mask))
-                        count = copy_buf_len;
-                    else
-                        count = UINT(pl->fileaddr + (pl->dlen&doc_loc::mask) - src);
-
-                    VERIFY(pfile1_->Seek(src, CFile::begin) == src);
-                    VERIFY(pfile1_->Read(buf, count) == count);
-                    VERIFY(pfile1_->Seek(dst, CFile::begin) == dst);
-                    pfile1_->Write(buf, count);
-
-                    src += count;
-                    dst += count;
+					VERIFY(pfile1_->Seek(src, CFile::begin) == src);
+					VERIFY(pfile1_->Read(buf, count) == count);
+					VERIFY(pfile1_->Seek(dst, CFile::begin) == dst);
+					pfile1_->Write(buf, count);
 
 					// Update progress
 					total_done += count;
@@ -955,20 +919,56 @@ void CHexEditDoc::WriteInPlace()
 						last_checked = clock();
 						AfxGetApp()->OnIdle(0);
 					}
-                }
-                ASSERT(src == pl->fileaddr + (pl->dlen&doc_loc::mask));
-                ASSERT(dst == pos + (pl->dlen&doc_loc::mask));
+				}
+				ASSERT(src == plprev->fileaddr);
+				ASSERT(dst == pos - (plprev->dlen&doc_loc::mask));
+			}
+		}
+		for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
+		{
+			if ((pl->dlen >> 62) == 1 && pos < pl->fileaddr)
+			{
+				FILE_ADDRESS src = pl->fileaddr;
+				FILE_ADDRESS dst = pos;
 
-            }
-        }
+				while (src < pl->fileaddr + FILE_ADDRESS(pl->dlen&doc_loc::mask))
+				{
+					UINT count;
+					if (src + copy_buf_len <= pl->fileaddr + FILE_ADDRESS(pl->dlen&doc_loc::mask))
+						count = copy_buf_len;
+					else
+						count = UINT(pl->fileaddr + (pl->dlen&doc_loc::mask) - src);
+
+					VERIFY(pfile1_->Seek(src, CFile::begin) == src);
+					VERIFY(pfile1_->Read(buf, count) == count);
+					VERIFY(pfile1_->Seek(dst, CFile::begin) == dst);
+					pfile1_->Write(buf, count);
+
+					src += count;
+					dst += count;
+
+					// Update progress
+					total_done += count;
+					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+					{
+						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
+						last_checked = clock();
+						AfxGetApp()->OnIdle(0);
+					}
+				}
+				ASSERT(src == pl->fileaddr + (pl->dlen&doc_loc::mask));
+				ASSERT(dst == pos + (pl->dlen&doc_loc::mask));
+
+			}
+		}
 #endif
-        for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
-        {
-            if ((pl->dlen >> 62) == 2)
-            {
-                // Write in memory bits at appropriate places in file
-                VERIFY(pfile1_->Seek(pos, CFile::begin) == pos);
-                pfile1_->Write(pl->memaddr, DWORD(pl->dlen&doc_loc::mask));
+		for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
+		{
+			if ((pl->dlen >> 62) == 2)
+			{
+				// Write in memory bits at appropriate places in file
+				VERIFY(pfile1_->Seek(pos, CFile::begin) == pos);
+				pfile1_->Write(pl->memaddr, DWORD(pl->dlen&doc_loc::mask));
 #ifdef INPLACE_MOVE
 				// Update progress bar
 				total_done += (pl->dlen&doc_loc::mask);
@@ -979,8 +979,8 @@ void CHexEditDoc::WriteInPlace()
 					AfxGetApp()->OnIdle(0);
 				}
 #endif
-            }
-            else if ((pl->dlen >> 62) == 3)
+			}
+			else if ((pl->dlen >> 62) == 3)
 			{
 				// Copy data file into original file
 				ASSERT((pl->dlen >> 62) == 3);
@@ -991,15 +991,15 @@ void CHexEditDoc::WriteInPlace()
 				ASSERT(data_file_[idx] != NULL);
 				data_file_[idx]->Seek(fileaddr, CFile::begin);
 
-                // Move to position to copy to
-                VERIFY(pfile1_->Seek(pos, CFile::begin) == pos);
+				// Move to position to copy to
+				VERIFY(pfile1_->Seek(pos, CFile::begin) == pos);
 				UINT tocopy;                      // How much to copy in this block
 				for (FILE_ADDRESS left = FILE_ADDRESS(pl->dlen&doc_loc::mask); left > 0; left -= tocopy)
 				{
 					tocopy = size_t(min(left, FILE_ADDRESS(copy_buf_len)));
 					UINT actual = data_file_[idx]->Read((void *)buf, tocopy);
 					ASSERT(actual == tocopy);
-                    pfile1_->Write(buf, tocopy);
+					pfile1_->Write(buf, tocopy);
 #ifdef INPLACE_MOVE
 					// Update progress bar
 					total_done += tocopy;
@@ -1014,35 +1014,35 @@ void CHexEditDoc::WriteInPlace()
 
 			}
 
-        }
+		}
 #ifdef INPLACE_MOVE
 		ASSERT(total_done == total_todo);
-        // Truncate the file if it is now shorter
-        if (length_ < previous_length)
-        {
-            ASSERT(!IsDevice());
-            pfile1_->SetLength(length_);
-        }
+		// Truncate the file if it is now shorter
+		if (length_ < previous_length)
+		{
+			ASSERT(!IsDevice());
+			pfile1_->SetLength(length_);
+		}
 #endif
-        pfile1_->Flush();
-    }
-    catch (CFileException *pfe)
-    {
-        AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
-        pfe->Delete();
+		pfile1_->Flush();
+	}
+	catch (CFileException *pfe)
+	{
+		AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+		pfe->Delete();
 
 #ifdef INPLACE_MOVE
-        delete[] buf;
-        mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+		delete[] buf;
+		mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
 #endif
 
-        theApp.mac_error_ = 10;
-        return;
-    }
+		theApp.mac_error_ = 10;
+		return;
+	}
 
 #ifdef INPLACE_MOVE
-    delete[] buf;
-    mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	delete[] buf;
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
 #endif
 }
 
@@ -1050,178 +1050,178 @@ void CHexEditDoc::WriteInPlace()
 // The range to write is given by 'start' and 'end'.
 BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADDRESS end, BOOL append /*=FALSE*/)
 {
-    const size_t copy_buf_len = 16384;
-    CFile64 ff;
-    CFileException fe;
-    UINT flags = CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary;
-    if (append)
-        flags = CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary;
+	const size_t copy_buf_len = 16384;
+	CFile64 ff;
+	CFileException fe;
+	UINT flags = CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary;
+	if (append)
+		flags = CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary;
 
-    // Open the file to write to
-    if (!ff.Open(filename, flags, &fe))
-    {
+	// Open the file to write to
+	if (!ff.Open(filename, flags, &fe))
+	{
 #if 0
-        // Display info about why the open failed
-        CString mess;
-        mess.Format("File \"%s\"",filename);
-        CFileStatus fs;
+		// Display info about why the open failed
+		CString mess;
+		mess.Format("File \"%s\"",filename);
+		CFileStatus fs;
 
-        switch (fe.m_cause)
-        {
-        case CFileException::badPath:
-            mess += "\ris an invalid file name";
-            break;
-        case CFileException::tooManyOpenFiles:
-            mess += "\r- too many files already open";
-            break;
-        case CFileException::directoryFull:
-            mess += "\r- directory is full";
-            break;
-        case CFileException::accessDenied:
-            if (!CFile::GetStatus(filename, fs))
-                mess += "\rcannot be created";
-            else
-            {
-                if (fs.m_attribute & CFile::directory)
-                    mess += "\ris a directory";
-                else if (fs.m_attribute & (CFile::volume|CFile::hidden|CFile::system))
-                    mess += "\ris a special file";
-                else if (fs.m_attribute & CFile::readOnly)
-                    mess += "\ris a read only file";
-                else
-                    mess += "\rcannot be used (reason unknown)";
-            }
-            break;
-        case CFileException::sharingViolation:
-        case CFileException::lockViolation:
-            mess += "\ris in use";
-            break;
-        case CFileException::hardIO:
-            mess += "\r- hardware error";
-            break;
-        default:
-            mess += "\rcould not be opened (reason unknown)";
-            break;
-        }
-        AfxMessageBox(mess);
+		switch (fe.m_cause)
+		{
+		case CFileException::badPath:
+			mess += "\ris an invalid file name";
+			break;
+		case CFileException::tooManyOpenFiles:
+			mess += "\r- too many files already open";
+			break;
+		case CFileException::directoryFull:
+			mess += "\r- directory is full";
+			break;
+		case CFileException::accessDenied:
+			if (!CFile::GetStatus(filename, fs))
+				mess += "\rcannot be created";
+			else
+			{
+				if (fs.m_attribute & CFile::directory)
+					mess += "\ris a directory";
+				else if (fs.m_attribute & (CFile::volume|CFile::hidden|CFile::system))
+					mess += "\ris a special file";
+				else if (fs.m_attribute & CFile::readOnly)
+					mess += "\ris a read only file";
+				else
+					mess += "\rcannot be used (reason unknown)";
+			}
+			break;
+		case CFileException::sharingViolation:
+		case CFileException::lockViolation:
+			mess += "\ris in use";
+			break;
+		case CFileException::hardIO:
+			mess += "\r- hardware error";
+			break;
+		default:
+			mess += "\rcould not be opened (reason unknown)";
+			break;
+		}
+		AfxMessageBox(mess);
 #else
-        AfxMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
+		AfxMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
 #endif
 
-        theApp.mac_error_ = 10;
-        return FALSE;
-    }
+		theApp.mac_error_ = 10;
+		return FALSE;
+	}
 
-    // Get memory for a buffer
-    unsigned char *buf = new unsigned char[copy_buf_len];   // Where we store data
-    size_t got;                                 // How much we got from GetData
+	// Get memory for a buffer
+	unsigned char *buf = new unsigned char[copy_buf_len];   // Where we store data
+	size_t got;                                 // How much we got from GetData
 
-    // Copy the range to file catching exceptions (probably disk full)
-    CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-    mm->m_wndStatusBar.EnablePaneProgressBar(0);
-    clock_t last_checked = clock();
-    try
-    {
-        if (append)
-            ff.SeekToEnd();
+	// Copy the range to file catching exceptions (probably disk full)
+	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	mm->m_wndStatusBar.EnablePaneProgressBar(0);
+	clock_t last_checked = clock();
+	try
+	{
+		if (append)
+			ff.SeekToEnd();
 
 		FILE_ADDRESS address;
-        for (address = start; address < end; address += FILE_ADDRESS(got))
-        {
-            got = GetData(buf, size_t(min(end-address, FILE_ADDRESS(copy_buf_len))), address);
-            ASSERT(got > 0);
+		for (address = start; address < end; address += FILE_ADDRESS(got))
+		{
+			got = GetData(buf, size_t(min(end-address, FILE_ADDRESS(copy_buf_len))), address);
+			ASSERT(got > 0);
 
-            ff.Write(buf, got);
-            // Update scan progress no more than once every 1 seconds
-            if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
-            {
-                mm->m_wndStatusBar.SetPaneProgress(0, long(((address-start)*98)/(end-start) + 1));
-                last_checked = clock();
-                AfxGetApp()->OnIdle(0);
-            }
-        }
-        ASSERT(address == end);
-    }
-    catch (CFileException *pfe)
-    {
-        AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
-        pfe->Delete();
+			ff.Write(buf, got);
+			// Update scan progress no more than once every 1 seconds
+			if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+			{
+				mm->m_wndStatusBar.SetPaneProgress(0, long(((address-start)*98)/(end-start) + 1));
+				last_checked = clock();
+				AfxGetApp()->OnIdle(0);
+			}
+		}
+		ASSERT(address == end);
+	}
+	catch (CFileException *pfe)
+	{
+		AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+		pfe->Delete();
 
-        mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+		mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
 
-        // Close and delete the (probably incomplete) file
-        ff.Close();
-        remove(filename);
-        delete[] buf;
+		// Close and delete the (probably incomplete) file
+		ff.Close();
+		remove(filename);
+		delete[] buf;
 
-        theApp.mac_error_ = 10;
-        return FALSE;
-    }
+		theApp.mac_error_ = 10;
+		return FALSE;
+	}
 
-    mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
 
-    ff.Close();
-    delete[] buf;
-    return TRUE;
+	ff.Close();
+	delete[] buf;
+	return TRUE;
 }
 
 void CHexEditDoc::regenerate()
 {
-    pundo_t pu;         // Current modification (undo record) being checked
-    FILE_ADDRESS pos;   // Tracks file position of current location record
-    ploc_t pl;          // Current location record
+	pundo_t pu;         // Current modification (undo record) being checked
+	FILE_ADDRESS pos;   // Tracks file position of current location record
+	ploc_t pl;          // Current location record
 
 	// This is used to track which data files are still in use - so we can release them when no longer needed
 	std::vector<bool> file_used(doc_loc::max_data_files);
 
-    // Rebuild locations list starting with original file as only loc record
-    loc_.clear();
-    if (pfile1_ != NULL && pfile1_->GetLength() > 0)
-        loc_.push_back(doc_loc(FILE_ADDRESS(0), pfile1_->GetLength()));
+	// Rebuild locations list starting with original file as only loc record
+	loc_.clear();
+	if (pfile1_ != NULL && pfile1_->GetLength() > 0)
+		loc_.push_back(doc_loc(FILE_ADDRESS(0), pfile1_->GetLength()));
 
-    // Now check each modification in order to build up location list
-    for (pu = undo_.begin(); pu != undo_.end(); ++pu)
-    {
-        // Find loc record where this modification starts
-        for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
-            if (pu->address < pos + FILE_ADDRESS(pl->dlen&doc_loc::mask))
-                break;
+	// Now check each modification in order to build up location list
+	for (pu = undo_.begin(); pu != undo_.end(); ++pu)
+	{
+		// Find loc record where this modification starts
+		for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
+			if (pu->address < pos + FILE_ADDRESS(pl->dlen&doc_loc::mask))
+				break;
 
-        // Modify locations list here (according to type of mod)
-        // Note: loc_add & loc_del may modify pos and pl (passed by reference)
-        switch (pu->utype)
-        {
-        case mod_insert_file:
+		// Modify locations list here (according to type of mod)
+		// Note: loc_add & loc_del may modify pos and pl (passed by reference)
+		switch (pu->utype)
+		{
+		case mod_insert_file:
 			ASSERT(pu->idx < doc_loc::max_data_files);
 			file_used[pu->idx] = true;  // remember that this data file is still in use
 			// fall through
-        case mod_insert:
-            loc_add(pu, pos, pl);       // Insert record into list
-            break;
-        case mod_replace:
-        case mod_repback:
-            loc_del(pu->address, pu->len, pos, pl); // Delete what's replaced
-            loc_add(pu, pos, pl);       // Add replacement before next record
-            break;
-        case mod_delforw:
-        case mod_delback:
-            loc_del(pu->address, pu->len, pos, pl); // Just delete them
-            break;
-        default:
-            ASSERT(0);
-        }
-    } /* for */
+		case mod_insert:
+			loc_add(pu, pos, pl);       // Insert record into list
+			break;
+		case mod_replace:
+		case mod_repback:
+			loc_del(pu->address, pu->len, pos, pl); // Delete what's replaced
+			loc_add(pu, pos, pl);       // Add replacement before next record
+			break;
+		case mod_delforw:
+		case mod_delback:
+			loc_del(pu->address, pu->len, pos, pl); // Just delete them
+			break;
+		default:
+			ASSERT(0);
+		}
+	} /* for */
 
-    // Signal that change tracking structures need rebuilding
-    need_change_track_ = true;
+	// Signal that change tracking structures need rebuilding
+	need_change_track_ = true;
 
 #ifndef NDEBUG
-    FILE_ADDRESS debug_tmp;
-    // Check that the length of all the records gels with stored doc length
-    for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
-        debug_tmp = (pl->dlen&doc_loc::mask);
+	FILE_ADDRESS debug_tmp;
+	// Check that the length of all the records gels with stored doc length
+	for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
+		debug_tmp = (pl->dlen&doc_loc::mask);
 
-    ASSERT(pos == length_);
+	ASSERT(pos == length_);
 #endif
 
 	// Release any data files that are no longer used (presumably after an undo)
@@ -1239,18 +1239,18 @@ void CHexEditDoc::regenerate()
 // (if pl is the end of the list then we just append)
 void CHexEditDoc::loc_add(pundo_t pu, FILE_ADDRESS &pos, ploc_t &pl)
 {
-    if (pu->address != pos)
-    {
-        // We need to split a block into 2 to insert between the two pieces
-        loc_split(pu->address, pos, pl);
-        pos += (pl->dlen&doc_loc::mask);
-        ++pl;
-    }
-    if (pu->utype == mod_insert_file)
+	if (pu->address != pos)
+	{
+		// We need to split a block into 2 to insert between the two pieces
+		loc_split(pu->address, pos, pl);
+		pos += (pl->dlen&doc_loc::mask);
+		++pl;
+	}
+	if (pu->utype == mod_insert_file)
 		loc_.insert(pl, doc_loc(0, pu->len, pu->idx));
 	else
-        loc_.insert(pl, doc_loc(pu->ptr, pu->len));
-    pos += pu->len;
+		loc_.insert(pl, doc_loc(pu->ptr, pu->len));
+	pos += pu->len;
 }
 
 // loc_del deletes record(s) or part(s) thereof from the location list
@@ -1265,38 +1265,38 @@ void CHexEditDoc::loc_add(pundo_t pu, FILE_ADDRESS &pos, ploc_t &pl)
 // can go past EOF so deleting past EOF is also required to be handled here.
 void CHexEditDoc::loc_del(FILE_ADDRESS address, FILE_ADDRESS len, FILE_ADDRESS &pos, ploc_t &pl)
 {
-    ploc_t byebye;              // Saved current record to be deleted
+	ploc_t byebye;              // Saved current record to be deleted
 
-    if (address != pos)
-    {
-        ASSERT(pl != loc_.end());
+	if (address != pos)
+	{
+		ASSERT(pl != loc_.end());
 
-        // We need to split this block so we can erase just the 2nd bit of it
-        loc_split(address, pos, pl);
-        pos += (pl->dlen&doc_loc::mask);
-        ++pl;
-    }
+		// We need to split this block so we can erase just the 2nd bit of it
+		loc_split(address, pos, pl);
+		pos += (pl->dlen&doc_loc::mask);
+		++pl;
+	}
 
-    // Erase all the blocks until we get a block or part thereof to keep
-    // or we hit end of document location list (EOF)
-    FILE_ADDRESS deleted = 0;
-    while (pl != loc_.end() && len >= deleted + FILE_ADDRESS(pl->dlen&doc_loc::mask))
-    {
-        byebye = pl;            // Save current record to delete later
-        deleted += (pl->dlen&doc_loc::mask);   // Keep track of how much we've seen
-        ++pl;                   // Advance to next rec before deleting current
-        loc_.erase(byebye);
-    }
+	// Erase all the blocks until we get a block or part thereof to keep
+	// or we hit end of document location list (EOF)
+	FILE_ADDRESS deleted = 0;
+	while (pl != loc_.end() && len >= deleted + FILE_ADDRESS(pl->dlen&doc_loc::mask))
+	{
+		byebye = pl;            // Save current record to delete later
+		deleted += (pl->dlen&doc_loc::mask);   // Keep track of how much we've seen
+		++pl;                   // Advance to next rec before deleting current
+		loc_.erase(byebye);
+	}
 
-    if (pl != loc_.end() && len > deleted)
-    {
-        // We need to split this block and erase the 1st bit
-        loc_split(address + len, address + deleted, pl);
-        byebye = pl;
-        deleted += (pl->dlen&doc_loc::mask);
-        ++pl;
-        loc_.erase(byebye);
-    }
+	if (pl != loc_.end() && len > deleted)
+	{
+		// We need to split this block and erase the 1st bit
+		loc_split(address + len, address + deleted, pl);
+		byebye = pl;
+		deleted += (pl->dlen&doc_loc::mask);
+		++pl;
+		loc_.erase(byebye);
+	}
 //    ASSERT(deleted == len);
 }
 
@@ -1305,31 +1305,31 @@ void CHexEditDoc::loc_del(FILE_ADDRESS address, FILE_ADDRESS len, FILE_ADDRESS &
 // pl is a ptr to the doc_loc that needs to be split
 void CHexEditDoc::loc_split(FILE_ADDRESS address, FILE_ADDRESS pos, ploc_t pl)
 {
-    ASSERT(pl != loc_.end());
-    ASSERT(address > pos && address < pos + FILE_ADDRESS(pl->dlen&doc_loc::mask));
+	ASSERT(pl != loc_.end());
+	ASSERT(address > pos && address < pos + FILE_ADDRESS(pl->dlen&doc_loc::mask));
 
-    // Work out exactly where to split the record
-    FILE_ADDRESS split = pos + (pl->dlen&doc_loc::mask) - address;
+	// Work out exactly where to split the record
+	FILE_ADDRESS split = pos + (pl->dlen&doc_loc::mask) - address;
 
-    // Insert a new record before the next one and store location and length
-    ploc_t plnext = pl; ++plnext;
-    if ((pl->dlen >> 62) == 1)
-    {
-        loc_.insert(plnext, doc_loc(pl->fileaddr + (pl->dlen&doc_loc::mask) - split, split));
-        pl->dlen = ((pl->dlen&doc_loc::mask) - split) | (unsigned __int64(1) << 62);
-    }
-    else if ((pl->dlen >> 62) == 2)
-    {
-        loc_.insert(plnext, doc_loc(pl->memaddr + (pl->dlen&doc_loc::mask) - split, split));
-        pl->dlen = ((pl->dlen&doc_loc::mask) - split) | (unsigned __int64(2) << 62);
-    }
-    else
-    {
-        ASSERT((pl->dlen >> 62) == 3);
+	// Insert a new record before the next one and store location and length
+	ploc_t plnext = pl; ++plnext;
+	if ((pl->dlen >> 62) == 1)
+	{
+		loc_.insert(plnext, doc_loc(pl->fileaddr + (pl->dlen&doc_loc::mask) - split, split));
+		pl->dlen = ((pl->dlen&doc_loc::mask) - split) | (unsigned __int64(1) << 62);
+	}
+	else if ((pl->dlen >> 62) == 2)
+	{
+		loc_.insert(plnext, doc_loc(pl->memaddr + (pl->dlen&doc_loc::mask) - split, split));
+		pl->dlen = ((pl->dlen&doc_loc::mask) - split) | (unsigned __int64(2) << 62);
+	}
+	else
+	{
+		ASSERT((pl->dlen >> 62) == 3);
 		FILE_ADDRESS fileaddr = pl->fileaddr&doc_loc::fmask;
 		int idx = int((pl->fileaddr>>62)&0x3);   // 62 must change when fmask/max_data_files changes
-        loc_.insert(plnext, doc_loc(fileaddr + (pl->dlen&doc_loc::mask) - split, split, idx));
-        pl->dlen = ((pl->dlen&doc_loc::mask) - split) | (unsigned __int64(3) << 62);
+		loc_.insert(plnext, doc_loc(fileaddr + (pl->dlen&doc_loc::mask) - split, split, idx));
+		pl->dlen = ((pl->dlen&doc_loc::mask) - split) | (unsigned __int64(3) << 62);
 	}
 }
 
@@ -1343,25 +1343,25 @@ void CHexEditDoc::loc_split(FILE_ADDRESS address, FILE_ADDRESS pos, ploc_t pl)
 
 void CHexEditDoc::rebuild_change_tracking()
 {
-    // Clear the info before rebuild
-    replace_pair_.clear();
-    insert_pair_.clear();
-    delete_pair_.clear();
+	// Clear the info before rebuild
+	replace_pair_.clear();
+	insert_pair_.clear();
+	delete_pair_.clear();
 
-    FILE_ADDRESS pos = 0;       // Tracks position in current (displayed file)
-    FILE_ADDRESS last_fileaddr = 0; // Tracks last byte used from orig file
-    ploc_t pl = loc_.begin();   // Current location record
-    FILE_ADDRESS nf_bytes = 0;  // Number of non-file bytes since last file record
+	FILE_ADDRESS pos = 0;       // Tracks position in current (displayed file)
+	FILE_ADDRESS last_fileaddr = 0; // Tracks last byte used from orig file
+	ploc_t pl = loc_.begin();   // Current location record
+	FILE_ADDRESS nf_bytes = 0;  // Number of non-file bytes since last file record
 
-    FILE_ADDRESS diff;          // Amt of orig file skipped since last file record
-    FILE_ADDRESS repl;          // How many bytes are replaced
-    FILE_ADDRESS orig_length = 0; // Length of file on which changes are based
+	FILE_ADDRESS diff;          // Amt of orig file skipped since last file record
+	FILE_ADDRESS repl;          // How many bytes are replaced
+	FILE_ADDRESS orig_length = 0; // Length of file on which changes are based
 
-    switch (base_type_)
+	switch (base_type_)
 	{
 	case 0:
 		if (pfile1_ != NULL)
-            orig_length = pfile1_->GetLength();
+			orig_length = pfile1_->GetLength();
 		break;
 	case 1:
 	case 2:
@@ -1371,47 +1371,47 @@ void CHexEditDoc::rebuild_change_tracking()
 		ASSERT(0);
 	}
 
-    while (pl != loc_.end())
-    {
-        // Check if file record
-        if ((pl->dlen >> 62) == 1)  // orig file data
-        {
+	while (pl != loc_.end())
+	{
+		// Check if file record
+		if ((pl->dlen >> 62) == 1)  // orig file data
+		{
 			ASSERT(base_type_ == 0);
 
-            // Next orig file record found
-            diff = pl->fileaddr - last_fileaddr;
-            repl = min(diff, nf_bytes);
-            if (repl > 0)
-                replace_pair_.push_back(make_pair(pos, repl));
-            if (diff < nf_bytes)
-                insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
-            else if (diff > nf_bytes)
-                delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
+			// Next orig file record found
+			diff = pl->fileaddr - last_fileaddr;
+			repl = min(diff, nf_bytes);
+			if (repl > 0)
+				replace_pair_.push_back(make_pair(pos, repl));
+			if (diff < nf_bytes)
+				insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
+			else if (diff > nf_bytes)
+				delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
 
-            // Work out curr address by adding length of non-file recs skipped + current file rec
-            pos += nf_bytes + (pl->dlen&doc_loc::mask);
-            last_fileaddr = pl->fileaddr + (pl->dlen&doc_loc::mask); // remember last orig file addr
-            nf_bytes = 0;
-        }
+			// Work out curr address by adding length of non-file recs skipped + current file rec
+			pos += nf_bytes + (pl->dlen&doc_loc::mask);
+			last_fileaddr = pl->fileaddr + (pl->dlen&doc_loc::mask); // remember last orig file addr
+			nf_bytes = 0;
+		}
 		else if (base_type_ == 1 && (pl->dlen >> 62) == 2 &&
 				 pl->memaddr >= undo_[0].ptr &&
 				 pl->memaddr < undo_[0].ptr + size_t(undo_[0].len) )
 		{
 			// Record of the first memory block insertion with no orig file
 			// (If no orig file we treat the first memory record as the base for comparison)
-            diff = (pl->memaddr - undo_[0].ptr) - last_fileaddr;
-            repl = min(diff, nf_bytes);
-            if (repl > 0)
-                replace_pair_.push_back(make_pair(pos, repl));
-            if (diff < nf_bytes)
-                insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
-            else if (diff > nf_bytes)
-                delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
+			diff = (pl->memaddr - undo_[0].ptr) - last_fileaddr;
+			repl = min(diff, nf_bytes);
+			if (repl > 0)
+				replace_pair_.push_back(make_pair(pos, repl));
+			if (diff < nf_bytes)
+				insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
+			else if (diff > nf_bytes)
+				delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
 
-            // Work out curr address by adding length of non-file recs skipped + current file rec
-            pos += nf_bytes + (pl->dlen&doc_loc::mask);
-            last_fileaddr = (pl->memaddr - undo_[0].ptr) + (pl->dlen&doc_loc::mask); // remember last mem addr
-            nf_bytes = 0;
+			// Work out curr address by adding length of non-file recs skipped + current file rec
+			pos += nf_bytes + (pl->dlen&doc_loc::mask);
+			last_fileaddr = (pl->memaddr - undo_[0].ptr) + (pl->dlen&doc_loc::mask); // remember last mem addr
+			nf_bytes = 0;
 		}
 		else if (base_type_ == 2 && (pl->dlen >> 62) == 3 &&
 				 pl->memaddr >= undo_[0].ptr &&
@@ -1419,58 +1419,58 @@ void CHexEditDoc::rebuild_change_tracking()
 		{
 			// Record of the first temp file block insertion with no orig file
 			// (If no orig file we treat the first temp file record as the base for comparison)
-            diff = pl->fileaddr - last_fileaddr;
-            repl = min(diff, nf_bytes);
-            if (repl > 0)
-                replace_pair_.push_back(make_pair(pos, repl));
-            if (diff < nf_bytes)
-                insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
-            else if (diff > nf_bytes)
-                delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
+			diff = pl->fileaddr - last_fileaddr;
+			repl = min(diff, nf_bytes);
+			if (repl > 0)
+				replace_pair_.push_back(make_pair(pos, repl));
+			if (diff < nf_bytes)
+				insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
+			else if (diff > nf_bytes)
+				delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
 
-            // Work out curr address by adding length of non-file recs skipped + current file rec
-            pos += nf_bytes + (pl->dlen&doc_loc::mask);
-            last_fileaddr = pl->fileaddr + (pl->dlen&doc_loc::mask); // remember last mem addr
-            nf_bytes = 0;
+			// Work out curr address by adding length of non-file recs skipped + current file rec
+			pos += nf_bytes + (pl->dlen&doc_loc::mask);
+			last_fileaddr = pl->fileaddr + (pl->dlen&doc_loc::mask); // remember last mem addr
+			nf_bytes = 0;
 		}
 		else
-        {
-            ASSERT((pl->dlen >> 62) == 2 || (pl->dlen >> 62) == 3);  // make sure not "unknown" type
-            // Non-file record - just track no of consec. bytes in nf_bytes
-            nf_bytes += (pl->dlen&doc_loc::mask);
-        }
-        ++pl;
-    }
-    // Handle any unfinished business
-    diff = orig_length - last_fileaddr;
-    repl = min(diff, nf_bytes);
-    if (repl > 0)
-        replace_pair_.push_back(make_pair(pos, repl));
-    if (diff < nf_bytes)
-        insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
-    else if (diff > nf_bytes)
-        delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
-    pos += nf_bytes;
+		{
+			ASSERT((pl->dlen >> 62) == 2 || (pl->dlen >> 62) == 3);  // make sure not "unknown" type
+			// Non-file record - just track no of consec. bytes in nf_bytes
+			nf_bytes += (pl->dlen&doc_loc::mask);
+		}
+		++pl;
+	}
+	// Handle any unfinished business
+	diff = orig_length - last_fileaddr;
+	repl = min(diff, nf_bytes);
+	if (repl > 0)
+		replace_pair_.push_back(make_pair(pos, repl));
+	if (diff < nf_bytes)
+		insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
+	else if (diff > nf_bytes)
+		delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
+	pos += nf_bytes;
 
-    ASSERT(pos == length_);
-    need_change_track_ = false;            // Signal that they have been rebuilt
+	ASSERT(pos == length_);
+	need_change_track_ = false;            // Signal that they have been rebuilt
 }
 
 void CHexEditDoc::send_change_hint(FILE_ADDRESS address)
 {
-    FILE_ADDRESS pos = 0;         // Tracks position in current (displayed file)
-    FILE_ADDRESS prev_change = 0; // Address of previous change in the file
-    for (ploc_t pl = loc_.begin(); pl != loc_.end(); ++pl)
-    {
-        pos += (pl->dlen&doc_loc::mask);
-        if (pos > address)
-            break;
-        if ((pl->dlen >> 62) == 1)
-        {
-            prev_change = pos;
-        }
-    }
-    // Everything from start of previous change to current change needs invalidating
-    CTrackHint th(prev_change, address);
-    UpdateAllViews(NULL, 0, &th);
+	FILE_ADDRESS pos = 0;         // Tracks position in current (displayed file)
+	FILE_ADDRESS prev_change = 0; // Address of previous change in the file
+	for (ploc_t pl = loc_.begin(); pl != loc_.end(); ++pl)
+	{
+		pos += (pl->dlen&doc_loc::mask);
+		if (pos > address)
+			break;
+		if ((pl->dlen >> 62) == 1)
+		{
+			prev_change = pos;
+		}
+	}
+	// Everything from start of previous change to current change needs invalidating
+	CTrackHint th(prev_change, address);
+	UpdateAllViews(NULL, 0, &th);
 }

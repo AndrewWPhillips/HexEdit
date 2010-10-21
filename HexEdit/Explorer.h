@@ -38,28 +38,28 @@ class CExplorerWnd;             // see below
 class CHistoryShellList : public CMFCShellListCtrl
 {
 	friend class CExplorerDropTarget;
-    friend class CExplorerWnd;
+	friend class CExplorerWnd;
 	// This replaces BCGShellListColumn* (Afx_ShellListColumn*)
 	enum
 	{
 		COLNAME, COLSIZE, COLTYPE, COLMOD,		// Normal columns provided by BCG
-        COLATTR,								// file attributes
-        COLOPENED,								// time last opened in hexedit
+		COLATTR,								// file attributes
+		COLOPENED,								// time last opened in hexedit
 		COLCATEGORY, COLKEYWORDS, COLCOMMENTS,	// Extra info on file entered by user (Summary page)
 		COLLAST         // Leave this one at the end (to be one past last used value)
 	};
 
 public:
-    CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true), m_pDropTarget (NULL) { }
+	CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true), m_pDropTarget (NULL) { }
 	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
 
-    // Handles back and forward buttons
+	// Handles back and forward buttons
 	void Back(int count = 1);
 	void Forw(int count = 1);
 	bool BackAllowed() { return pos_ > 0; }
 	bool ForwAllowed() { return pos_ < int(name_.size()) - 1; }
 
-    void SaveLayout();                                                          // save layout to registry (on close)
+	void SaveLayout();                                                          // save layout to registry (on close)
 
 	virtual HRESULT DisplayFolder(LPAFX_SHELLITEMINFO lpItemInfo);
 	virtual HRESULT DisplayFolder(LPCTSTR lpszPath) { return CMFCShellListCtrl::DisplayFolder(lpszPath); }
@@ -69,11 +69,11 @@ public:
 
 	CString Folder() { if (pos_ > -1 && pos_ < int(name_.size())) return name_[pos_]; else return CString(); }
 
-    virtual void AdjustMenu(HMENU);
-    virtual void MenuCommand(HMENU, UINT, LPCTSTR);
+	virtual void AdjustMenu(HMENU);
+	virtual void MenuCommand(HMENU, UINT, LPCTSTR);
 
-    void SetFilter(LPCTSTR ff) { m_filter = CString(ff); }
-    CString GetFilter() { return m_filter; }
+	void SetFilter(LPCTSTR ff) { m_filter = CString(ff); }
+	CString GetFilter() { return m_filter; }
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -87,20 +87,20 @@ protected:
 	virtual HRESULT EnumObjects(LPSHELLFOLDER pParentFolder, LPITEMIDLIST pidlParent);
 
 private:
-    void do_move(int ii);
+	void do_move(int ii);
 
 	CExplorerWnd *pExpl_;
-    std::vector<CString> name_;  // Names of folders
-    int pos_;                    // Index of current folder
-    bool in_move_;               // Used to prevent storing moves when just going forward/backward in the list
-    bool add_to_hist_;           // Used to prevent adding to dop-down list in sme circumstances (default to true)
-    int normal_count_;           // No of columns added in base class (CMFCShellListCtrl)
+	std::vector<CString> name_;  // Names of folders
+	int pos_;                    // Index of current folder
+	bool in_move_;               // Used to prevent storing moves when just going forward/backward in the list
+	bool add_to_hist_;           // Used to prevent adding to dop-down list in sme circumstances (default to true)
+	int normal_count_;           // No of columns added in base class (CMFCShellListCtrl)
 	int fl_idx_;                 // This is saved index into recent file list (cached for list box row while processing fields)
-    static char * defaultWidths;
+	static char * defaultWidths;
 
 	CExplorerDropTarget * m_pDropTarget;
 
-    CString m_filter;            // Use for filtering displayed file names
+	CString m_filter;            // Use for filtering displayed file names
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -111,16 +111,16 @@ public:
 	CExplorerDropTarget(CHistoryShellList* pWnd);
 	virtual ~CExplorerDropTarget();
 
-    DROPEFFECT OnDragEnter ( CWnd* pWnd, COleDataObject* pDataObject,
-                             DWORD dwKeyState, CPoint point );
+	DROPEFFECT OnDragEnter ( CWnd* pWnd, COleDataObject* pDataObject,
+							 DWORD dwKeyState, CPoint point );
 
-    DROPEFFECT OnDragOver ( CWnd* pWnd, COleDataObject* pDataObject,
-                            DWORD dwKeyState, CPoint point );
+	DROPEFFECT OnDragOver ( CWnd* pWnd, COleDataObject* pDataObject,
+							DWORD dwKeyState, CPoint point );
 
-    BOOL OnDrop ( CWnd* pWnd, COleDataObject* pDataObject,
-                  DROPEFFECT dropEffect, CPoint point );
+	BOOL OnDrop ( CWnd* pWnd, COleDataObject* pDataObject,
+				  DROPEFFECT dropEffect, CPoint point );
 
-    void OnDragLeave ( CWnd* pWnd );
+	void OnDragLeave ( CWnd* pWnd );
 
 private:
 	CString GetDst(CPoint point);
@@ -128,8 +128,8 @@ private:
 	DROPEFFECT DragCheck(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
 	DROPEFFECT CanMove(LPCTSTR file, LPCTSTR dst);
 	DROPEFFECT CanMoveFolder(LPCTSTR folder, LPCTSTR dst);
-    CHistoryShellList * m_pParent;
-    IDropTargetHelper * m_pHelper;
+	CHistoryShellList * m_pParent;
+	IDropTargetHelper * m_pHelper;
 };
 
 
@@ -142,9 +142,9 @@ public:
 	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
 
 protected:
-    afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-    afx_msg UINT OnGetDlgCode();
-    DECLARE_MESSAGE_MAP()
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg UINT OnGetDlgCode();
+	DECLARE_MESSAGE_MAP()
 
 private:
 	CExplorerWnd *pExpl_;
@@ -159,9 +159,9 @@ public:
 	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
 
 protected:
-    afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-    afx_msg UINT OnGetDlgCode();
-    DECLARE_MESSAGE_MAP()
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg UINT OnGetDlgCode();
+	DECLARE_MESSAGE_MAP()
 
 private:
 	CExplorerWnd *pExpl_;
@@ -172,7 +172,7 @@ private:
 class CExplorerWnd : public CDialog
 {
 public:
-    CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0), init_(false), m_first(true) { }
+	CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0), init_(false), m_first(true) { }
 	enum { IDD = IDD_EXPLORER };
 	virtual BOOL Create(CWnd* pParentWnd);
 
@@ -180,11 +180,11 @@ public:
 	void Refresh();                 // Set folder/filter from edit controls and refresh the folder display
 	void Update(LPCTSTR file_name = NULL); // Mark for possible later (idle) refresh
 	void NewFilter();               // New filter name entered
-    void AddFilter();               // Add current filter to the history list
+	void AddFilter();               // Add current filter to the history list
 	void OldFilter();               // Restore old filter name (Esc hit).
 	void NewFolder();               // New folder name entered
 	void OldFolder();               // Restore old folder name (Esc hit).
-    void AddFolder();               // Add current folder to history list
+	void AddFolder();               // Add current folder to history list
 
 	// overrides
 //	virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -193,23 +193,23 @@ public:
 	CMFCButton ctl_forw_;           // forward (redo)
 	CMFCButton ctl_up_;             // up to parent folder
 	CMFCButton ctl_refresh_;        // redraws the list
-    CMFCMenuButton ctl_view_;       // shows menu of 4 items allowing user to say how the view is to be displayed
-    CMFCButton ctl_flip_;           // determines orientation of tree/list in splitter window
+	CMFCMenuButton ctl_view_;       // shows menu of 4 items allowing user to say how the view is to be displayed
+	CMFCButton ctl_flip_;           // determines orientation of tree/list in splitter window
 
-    CMFCMenuButton ctl_filter_opts_;// Shows menu with filter list
+	CMFCMenuButton ctl_filter_opts_;// Shows menu with filter list
 
-    CComboBox ctl_filter_;          // restricts files displayed in list
+	CComboBox ctl_filter_;          // restricts files displayed in list
 	CFilterEdit ctl_filter_edit_;   // The edit control within the combo
-    CComboBox ctl_name_;            // user can enter folder name here or select from history list
+	CComboBox ctl_name_;            // user can enter folder name here or select from history list
 	CFolderEdit ctl_name_edit_;     // The edit control within the combo
 
 	CMenu m_menu_;                  // menus for explorer button(s) (ctl_view_)
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
-    //afx_msg void OnSize(UINT nType,int cx,int cy);
+	//afx_msg void OnSize(UINT nType,int cx,int cy);
 	afx_msg void OnDestroy();
-    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	afx_msg void OnFolderBack();
 	afx_msg void OnFolderForw();
 	afx_msg void OnFolderParent();
@@ -233,11 +233,11 @@ protected:
 	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 
 private:
-    void build_filter_menu();
+	void build_filter_menu();
 
 	bool init_;
-    CString filters_;                   // Current filter string (from last GetCurrentFilters) as in filter menu
-    //HICON arrow_icon_;
+	CString filters_;                   // Current filter string (from last GetCurrentFilters) as in filter menu
+	//HICON arrow_icon_;
 	CString curr_name_, curr_filter_;   // Current values in edit boxes of combos (current folder name and filters)
 	HANDLE hh_;                         // Used to monitor directory changes (returned from FindFirstChangeNotification)
 	bool update_required_;              // Keeps track of consecutive updates to prevent unnecessary refreshes

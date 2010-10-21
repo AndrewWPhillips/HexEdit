@@ -1,6 +1,6 @@
 // ChildFrm.cpp : implementation of the CChildFrame class
 //
-// Copyright (c) 2003 by Andrew W. Phillips.
+// Copyright (c) 1999-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -43,12 +43,12 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CChildFrame, CMDIChildWndEx)
 
 BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
-        //{{AFX_MSG_MAP(CChildFrame)
+		//{{AFX_MSG_MAP(CChildFrame)
 	ON_WM_CLOSE()
 	//}}AFX_MSG_MAP
-        ON_WM_SYSCOMMAND()
-        ON_MESSAGE(WM_HELPHITTEST, OnHelpHitTest)
-        ON_WM_SETFOCUS()
+		ON_WM_SYSCOMMAND()
+		ON_MESSAGE(WM_HELPHITTEST, OnHelpHitTest)
+		ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -68,12 +68,12 @@ CChildFrame::~CChildFrame()
 #ifdef _DEBUG
 void CChildFrame::AssertValid() const
 {
-        CMDIChildWndEx::AssertValid();
+		CMDIChildWndEx::AssertValid();
 }
 
 void CChildFrame::Dump(CDumpContext& dc) const
 {
-        CMDIChildWndEx::Dump(dc);
+		CMDIChildWndEx::Dump(dc);
 }
 
 #endif //_DEBUG
@@ -83,13 +83,13 @@ void CChildFrame::Dump(CDumpContext& dc) const
 
 BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext) 
 {
-    ASSERT(pContext != NULL && pContext->m_pNewViewClass != NULL);
+	ASSERT(pContext != NULL && pContext->m_pNewViewClass != NULL);
 
-    if (!splitter_.CreateStatic(this, 1, 4))
-    {
-        AfxMessageBox("Failed to create splitter.");
-        return FALSE;
-    }
+	if (!splitter_.CreateStatic(this, 1, 4))
+	{
+		AfxMessageBox("Failed to create splitter.");
+		return FALSE;
+	}
 
 	// We create with 4 columns then delete all except one, which means only one (for
 	// hex view) is shown but 3 more can be added (template, aerial and compare views).
@@ -97,11 +97,11 @@ BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	splitter_.DelColumn(2);
 	splitter_.DelColumn(1);
 
-    if (!splitter_.CreateView(0, 0, RUNTIME_CLASS(CHexTabView), CSize(0, 0), pContext))
-    {
-        AfxMessageBox("Failed to create splitter view.");
-        return FALSE;
-    }
+	if (!splitter_.CreateView(0, 0, RUNTIME_CLASS(CHexTabView), CSize(0, 0), pContext))
+	{
+		AfxMessageBox("Failed to create splitter view.");
+		return FALSE;
+	}
 	ptv_ = (CHexTabView *)splitter_.GetPane(0, 0);
 	ASSERT_KINDOF(CHexTabView, ptv_);
 
@@ -111,35 +111,35 @@ BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 // All child frame's will have exactly one CHexEditView (unless in print preview?).  This returns it.
 CHexEditView *CChildFrame::GetHexEditView() const
 {
-    CView *pv = GetActiveView();
-    if (pv != NULL)                         // May be NULL if print preview
-    {
-        if (pv->IsKindOf(RUNTIME_CLASS(CHexEditView)))
-            return (CHexEditView *)pv;
-        else if (pv->IsKindOf(RUNTIME_CLASS(CDataFormatView)))
-            return ((CDataFormatView *)pv)->phev_;
-        else if (pv->IsKindOf(RUNTIME_CLASS(CAerialView)))
-            return ((CAerialView *)pv)->phev_;
-        else if (pv->IsKindOf(RUNTIME_CLASS(CCompareView)))
-            return ((CCompareView *)pv)->phev_;
-        else if (pv->IsKindOf(RUNTIME_CLASS(CHexTabView)))
-        {
+	CView *pv = GetActiveView();
+	if (pv != NULL)                         // May be NULL if print preview
+	{
+		if (pv->IsKindOf(RUNTIME_CLASS(CHexEditView)))
+			return (CHexEditView *)pv;
+		else if (pv->IsKindOf(RUNTIME_CLASS(CDataFormatView)))
+			return ((CDataFormatView *)pv)->phev_;
+		else if (pv->IsKindOf(RUNTIME_CLASS(CAerialView)))
+			return ((CAerialView *)pv)->phev_;
+		else if (pv->IsKindOf(RUNTIME_CLASS(CCompareView)))
+			return ((CCompareView *)pv)->phev_;
+		else if (pv->IsKindOf(RUNTIME_CLASS(CHexTabView)))
+		{
 			// Find the hex view (left-most tab)
 			CHexTabView *ptv = (CHexTabView *)pv;
 			ptv->SetActiveView(0);  // hex view is always left-most (index 0)
 			ASSERT_KINDOF(CHexEditView, ptv->GetActiveView());
 			return (CHexEditView *)ptv->GetActiveView();
-        }
-    }
-    return NULL;
+		}
+	}
+	return NULL;
 }
 
 BOOL CChildFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
 {
-    // Bypass calling CMDIChildWndEx::LoadFrame which loads an icon
-    BOOL bRtn = CMDIChildWndEx::LoadFrame( nIDResource, dwDefaultStyle, pParentWnd, pContext );
+	// Bypass calling CMDIChildWndEx::LoadFrame which loads an icon
+	BOOL bRtn = CMDIChildWndEx::LoadFrame( nIDResource, dwDefaultStyle, pParentWnd, pContext );
 
-    return bRtn;
+	return bRtn;
 }
 
 BOOL CChildFrame::DestroyWindow() 
@@ -150,23 +150,23 @@ BOOL CChildFrame::DestroyWindow()
 // Handles control menu commands and system buttons (Minimize etc)
 void CChildFrame::OnSysCommand(UINT nID, LONG lParam)
 {
-    CMDIChildWndEx::OnSysCommand(nID, lParam);
+	CMDIChildWndEx::OnSysCommand(nID, lParam);
 
-    CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-    nID &= 0xFFF0;
-    if (nID == SC_MINIMIZE || nID == SC_RESTORE || nID == SC_MAXIMIZE ||
-        nID == SC_NEXTWINDOW || nID == SC_PREVWINDOW || nID == SC_CLOSE)
-    {
-        if ((nID == SC_NEXTWINDOW || nID == SC_PREVWINDOW || nID == SC_CLOSE) &&
-            aa->recording_ && aa->mac_.size() > 0 && (aa->mac_.back()).ktype == km_focus)
-        {
-            // Next win, prev. win, close win cause focus change which causes a km_focus
-            // for a particular window to be stored.  On replay, we don't want to
-            // change to this window before executing this command.
-            aa->mac_.pop_back();
-        }
-        aa->SaveToMacro(km_childsys, nID);
-    }
+	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+	nID &= 0xFFF0;
+	if (nID == SC_MINIMIZE || nID == SC_RESTORE || nID == SC_MAXIMIZE ||
+		nID == SC_NEXTWINDOW || nID == SC_PREVWINDOW || nID == SC_CLOSE)
+	{
+		if ((nID == SC_NEXTWINDOW || nID == SC_PREVWINDOW || nID == SC_CLOSE) &&
+			aa->recording_ && aa->mac_.size() > 0 && (aa->mac_.back()).ktype == km_focus)
+		{
+			// Next win, prev. win, close win cause focus change which causes a km_focus
+			// for a particular window to be stored.  On replay, we don't want to
+			// change to this window before executing this command.
+			aa->mac_.pop_back();
+		}
+		aa->SaveToMacro(km_childsys, nID);
+	}
 }
 
 // Handles Shift-F1 help when clicked within the window (lParam contains
@@ -174,19 +174,19 @@ void CChildFrame::OnSysCommand(UINT nID, LONG lParam)
 // help goes to the same place (HIDR_HEXEDTYPE).
 LRESULT CChildFrame::OnHelpHitTest(WPARAM wParam, LPARAM lParam)
 {
-    // Intercept call so we can check what happens in debugger xxx
-    LRESULT retval = CMDIChildWndEx::OnHelpHitTest(wParam, lParam);
-    return retval;
+	// DEBUG: This is just here so we can intercept in debugger
+	LRESULT retval = CMDIChildWndEx::OnHelpHitTest(wParam, lParam);
+	return retval;
 }
 
 void CChildFrame::OnClose() 
 {
-    CMDIChildWndEx::OnClose();
+	CMDIChildWndEx::OnClose();
 }
 
 void CChildFrame::OnSetFocus(CWnd* pOldWnd) 
 {
-    CMDIChildWndEx::OnSetFocus(pOldWnd);
+	CMDIChildWndEx::OnSetFocus(pOldWnd);
 
 	CHexEditView *pv = GetHexEditView();
 	if (pv != NULL)

@@ -55,10 +55,10 @@ BOOL CBookmarkFind::OnInitDialog()
 
 void CBookmarkFind::OnAppend() 
 {
-    EndDialog(IDC_BM_FIND_APPEND);
+	EndDialog(IDC_BM_FIND_APPEND);
 }
 
 void CBookmarkFind::OnOverwrite() 
 {
-    EndDialog(IDC_BM_FIND_OVERWRITE);
+	EndDialog(IDC_BM_FIND_OVERWRITE);
 }

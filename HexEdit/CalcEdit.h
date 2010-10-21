@@ -22,11 +22,11 @@ public:
 
 // Attributes
 public:
-    CCalcDlg *pp_;
+	CCalcDlg *pp_;
 
 // Operations
 public:
-    void Put();                         // Set edit text from pp_->current_
+	void Put();                         // Set edit text from pp_->current_
 //    void Get();                         // Store edit text as number in pp_->current_
 	bool update_value(bool side_effects = true);
 
@@ -34,7 +34,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CCalcEdit)
 	//}}AFX_VIRTUAL
-    virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 // Implementation
 public:
@@ -46,19 +46,19 @@ protected:
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	//}}AFX_MSG
-    afx_msg void OnSetFocus(CWnd* pOldWnd);
-    afx_msg void OnKillFocus(CWnd* pNewWnd);
-    afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 
 private:
-    void add_sep();
+	void add_sep();
 
-    // This edit box is now used in a drop list, which seems to fiddle with the
-    // current selected chars in its text box when focus changes.  To cope with this
-    // we save the selection in sel_ in OnKillFocus & restore it in OnSetFocus.
-    DWORD sel_;
+	// This edit box is now used in a drop list, which seems to fiddle with the
+	// current selected chars in its text box when focus changes.  To cope with this
+	// we save the selection in sel_ in OnKillFocus & restore it in OnSetFocus.
+	DWORD sel_;
 
 	bool is_number(LPCTSTR ss);
 };

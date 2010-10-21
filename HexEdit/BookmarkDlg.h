@@ -34,26 +34,26 @@
 class CBookmarkDlg : public CDialog
 {
 public:
-    // Number the different types of columns we can display
-    enum
-    {
-        COL_NAME,                           // Name of the bookmark
-        COL_FILE,                           // File name
-        COL_LOCN,                           // Location (path)
-        COL_POS,                            // Byte position within the file
-        COL_MODIFIED,                       // Time the bookmark was last modified
-        COL_ACCESSED,                       // Time the bookmark was last jumped to
-        COL_LAST                            // leave at end (signals end of list)
-    };
+	// Number the different types of columns we can display
+	enum
+	{
+		COL_NAME,                           // Name of the bookmark
+		COL_FILE,                           // File name
+		COL_LOCN,                           // Location (path)
+		COL_POS,                            // Byte position within the file
+		COL_MODIFIED,                       // Time the bookmark was last modified
+		COL_ACCESSED,                       // Time the bookmark was last jumped to
+		COL_LAST                            // leave at end (signals end of list)
+	};
 // Construction
 public:
 	CBookmarkDlg(); // standard constructor
 
-    void UpdateBookmark(int index, BOOL select = FALSE);
-    void RemoveBookmark(int index);
+	void UpdateBookmark(int index, BOOL select = FALSE);
+	void RemoveBookmark(int index);
 
 	enum { IDD = IDD_BOOKMARKS };
-    CGridCtrl grid_;                       // MFC grid control
+	CGridCtrl grid_;                       // MFC grid control
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -63,7 +63,7 @@ public:
 	//}}AFX_VIRTUAL
 
 public:
-    virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 // Implementation
 protected:
@@ -77,11 +77,11 @@ protected:
 	afx_msg void OnValidate();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnHelp();
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-    afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
-    afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
-    afx_msg void OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* pResult);
-    afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* pResult);
 	//afx_msg void OnInitialUpdate();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
@@ -91,11 +91,11 @@ protected:
 	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 
 	void InitColumnHeadings();
-    void FillGrid();
+	void FillGrid();
 	void UpdateRow(int index, int row, BOOL select = FALSE);
 
-    CDocument *pdoc_;                   // Ptr to document if last bookmark is for open file (else NULL)
-    CString last_file_;                 // Name of the file to which pdoc_ points
+	CDocument *pdoc_;                   // Ptr to document if last bookmark is for open file (else NULL)
+	CString last_file_;                 // Name of the file to which pdoc_ points
 //    BOOL show_;                       // Show bookmarks for the current file
 
 private:

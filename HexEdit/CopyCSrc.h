@@ -13,10 +13,10 @@
 class CCopyCSrc : public CDialog
 {
 public:
-    enum { STRING, CHAR, INT, FLOAT };  // Matches type_ (which radio button is selected)
-    enum { INT_UNSIGNED, INT_SIGNED, INT_OCTAL, INT_HEX };  // Matches order in IDC_CSRC_INT_TYPE
-    enum { INT_8, INT_16, INT_32, INT_64 };                 // Matches order IDC_CSRC_INT_SIZE
-    enum { FLOAT_32, FLOAT_64, REAL_48 };                   // Matches order IDC_CSRC_FLOAT_SIZE
+	enum { STRING, CHAR, INT, FLOAT };  // Matches type_ (which radio button is selected)
+	enum { INT_UNSIGNED, INT_SIGNED, INT_OCTAL, INT_HEX };  // Matches order in IDC_CSRC_INT_TYPE
+	enum { INT_8, INT_16, INT_32, INT_64 };                 // Matches order IDC_CSRC_INT_SIZE
+	enum { FLOAT_32, FLOAT_64, REAL_48 };                   // Matches order IDC_CSRC_FLOAT_SIZE
 
 // Construction
 public:
@@ -58,7 +58,7 @@ protected:
 	afx_msg void OnCsrcHelp();
 	//}}AFX_MSG
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
 	void		 fix_controls();

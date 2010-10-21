@@ -50,7 +50,7 @@ void CHexEditDoc::OnCompNew()
 		return;
 
 	CHexEditView * phev = NULL;            // remembers the active hex view
-    CHexEditView * pactive = ::GetView();  // current active hex view (should be for this doc)
+	CHexEditView * pactive = ::GetView();  // current active hex view (should be for this doc)
 
 	// First we need to close all the compare views of this document.  (There
 	// can be more than one if there is more than one hex view open on this doc.)
@@ -61,17 +61,17 @@ void CHexEditDoc::OnCompNew()
 	std::vector<CHexEditView *> pviews;
 
 	// Find all hex views of this doc
-    POSITION pos = GetFirstViewPosition();
-    while (pos != NULL)
-    {
-        CView *pv = GetNextView(pos);
-        if (pv->IsKindOf(RUNTIME_CLASS(CHexEditView)))
-        {
+	POSITION pos = GetFirstViewPosition();
+	while (pos != NULL)
+	{
+		CView *pv = GetNextView(pos);
+		if (pv->IsKindOf(RUNTIME_CLASS(CHexEditView)))
+		{
 			pviews.push_back((CHexEditView *)pv);
 			if (pv == pactive || phev == NULL)
 				phev = (CHexEditView *)pv;
-        }
-    }
+		}
+	}
 	ASSERT(phev != NULL);
 
 	// Kill all compare views (which are always associated with a hex view)
@@ -88,7 +88,7 @@ void CHexEditDoc::OnCompNew()
 	// register itself with its document using CHexEditDoc::AddCompView()
 	// which call CreateCompThread (which sets up & starts the compare thread)
 	// then pulses start_comp_event_ to trigger the thread to start comparing.
-    if (phev != NULL)
+	if (phev != NULL)
 		phev->DoCompSplit();
 }
 
@@ -112,17 +112,17 @@ void CHexEditDoc::AddCompView(CHexEditView *pview)
 			start_comp_event_.SetEvent();
 		}
 	}
-    ASSERT(pthread4_ != NULL);
+	ASSERT(pthread4_ != NULL);
 }
 
 void CHexEditDoc::RemoveCompView()
 {
-    if (--cv_count_ == 0)
-    {
+	if (--cv_count_ == 0)
+	{
 		ASSERT(pthread4_ != NULL);
-        if (pthread4_ != NULL)
-            KillCompThread();
-    }
+		if (pthread4_ != NULL)
+			KillCompThread();
+	}
 	TRACE("+++ Remove Comp View %d\n", cv_count_);
 }
 // At the start of the compre process we get the name of the file
@@ -131,15 +131,15 @@ void CHexEditDoc::RemoveCompView()
 // for a file name even if we already have one from previous compare.
 bool CHexEditDoc::GetCompareFile(bool bForcePrompt /*=false*/)
 {
-    CHexFileList *pfl = theApp.GetFileList();
+	CHexFileList *pfl = theApp.GetFileList();
 	int idx = -1;                 // recent file list idx of current document
 
-// xxx TBD eventually we will add a dialog and combine the file compare and self compare code below
+// xxx TBD eventually we will add a dialog(s) and combine the file compare and self compare code below
 #ifdef  ONLY_FILE_COMPARE
-	bCompSelf_ = false;  // xxx TBD
+	bCompSelf_ = false;
 
 	// Get last name of the last compare file used
-    if (pfl != NULL &&
+	if (pfl != NULL &&
 		pfile1_ != NULL &&
 		(idx = pfl->GetIndex(pfile1_->GetFilePath())) > -1)
 	{
@@ -170,7 +170,7 @@ bool CHexEditDoc::GetCompareFile(bool bForcePrompt /*=false*/)
 	if (pfile1_ != NULL)
 		idx = pfl->GetIndex(pfile1_->GetFilePath());
 #endif
-    if (pfl != NULL && idx > -1)
+	if (pfl != NULL && idx > -1)
 		pfl->SetData(idx, CHexFileList::COMPFILENAME, GetCompFileName());
 	return true;
 }
@@ -198,7 +198,7 @@ bool CHexEditDoc::CompFileHasChanged()
 	CFileStatus stat;
 	pfile1_compare_->GetStatus(stat);
 
-    CSingleLock sl(&docdata_, TRUE);
+	CSingleLock sl(&docdata_, TRUE);
 	return stat.m_mtime != comp_[0].m_fileTime;
 }
 
@@ -253,13 +253,13 @@ int CHexEditDoc::FirstDiffAt(bool other, int rr, FILE_ADDRESS from)
 // -2 = bg compare is still in progress
 int CHexEditDoc::CompareDifferences(int rr /*=0*/)
 {
-    if (pthread4_ == NULL)
-    {
-        return -4;
-    }
+	if (pthread4_ == NULL)
+	{
+		return -4;
+	}
 
-    // Protect access to shared data
-    CSingleLock sl(&docdata_, TRUE);
+	// Protect access to shared data
+	CSingleLock sl(&docdata_, TRUE);
 	if (comp_state_ == SCANNING)
 	{
 		return -2;
@@ -274,8 +274,8 @@ int CHexEditDoc::CompareDifferences(int rr /*=0*/)
 // Also return the number of differences found so far (in bytes).
 int CHexEditDoc::CompareProgress()
 {
-    CSingleLock sl(&docdata_, TRUE);
- 	if (comp_state_ != SCANNING)
+	CSingleLock sl(&docdata_, TRUE);
+	if (comp_state_ != SCANNING)
 		return 100;
 
 	return 1 + int((comp_progress_ * 99)/length_);  // 1-100 (don't start at zero)
@@ -286,7 +286,7 @@ int CHexEditDoc::CompareProgress()
 void CHexEditDoc::GetFirstDiffAll(FILE_ADDRESS &addr, int &len)
 {
 	addr = -1;
-    if (pthread4_ == NULL) return;
+	if (pthread4_ == NULL) return;
 
 	CSingleLock sl(&docdata_, TRUE);
 
@@ -306,7 +306,7 @@ void CHexEditDoc::GetFirstDiffAll(FILE_ADDRESS &addr, int &len)
 void CHexEditDoc::GetPrevDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len)
 {
 	addr = -1;
-    if (pthread4_ == NULL) return;
+	if (pthread4_ == NULL) return;
 
 	for (int rr = 0; rr < ResultCount(); ++rr)
 	{
@@ -330,7 +330,7 @@ void CHexEditDoc::GetPrevDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len
 void CHexEditDoc::GetNextDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len)
 {
 	addr = -1;
-    if (pthread4_ == NULL) return;
+	if (pthread4_ == NULL) return;
 
 	for (int rr = 0; rr < ResultCount(); ++rr)
 	{
@@ -354,7 +354,7 @@ void CHexEditDoc::GetNextDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len
 void CHexEditDoc::GetLastDiffAll(FILE_ADDRESS &addr, int &len)
 {
 	addr = -1;
-    if (pthread4_ == NULL) return;
+	if (pthread4_ == NULL) return;
 
 	CSingleLock sl(&docdata_, TRUE);
 
@@ -379,8 +379,8 @@ void CHexEditDoc::GetLastDiffAll(FILE_ADDRESS &addr, int &len)
 // else index of difference
 int CHexEditDoc::GetNextDiff(bool other, FILE_ADDRESS from, int rr /*=0*/)
 {
-    if (pthread4_ == NULL)
-        return -4;
+	if (pthread4_ == NULL)
+		return -4;
 
 	{
 		CSingleLock sl(&docdata_, TRUE);
@@ -398,8 +398,8 @@ int CHexEditDoc::GetNextDiff(bool other, FILE_ADDRESS from, int rr /*=0*/)
 
 int CHexEditDoc::GetPrevDiff(bool other, FILE_ADDRESS from, int rr /*=0*/)
 {
-    if (pthread4_ == NULL)
-        return -4;
+	if (pthread4_ == NULL)
+		return -4;
 
 	{
 		CSingleLock sl(&docdata_, TRUE);
@@ -429,8 +429,8 @@ int CHexEditDoc::GetPrevDiff(bool other, FILE_ADDRESS from, int rr /*=0*/)
 //   pfile1_compare_ pfile4_compare_ = older temp file
 bool CHexEditDoc::OpenCompFile()
 {
-    // Open file to be used by background thread
-    if (pfile1_ != NULL)
+	// Open file to be used by background thread
+	if (pfile1_ != NULL)
 	{
 		CString fileName;
 		if (bCompSelf_)
@@ -485,7 +485,7 @@ bool CHexEditDoc::OpenCompFile()
 void CHexEditDoc::CloseCompFile()
 {
 	// Close the file instance used in background thread
-    if (pfile4_ != NULL)
+	if (pfile4_ != NULL)
 	{
 		pfile4_->Close();
 		delete pfile4_;
@@ -503,13 +503,13 @@ void CHexEditDoc::CloseCompFile()
 
 	// Close the compare file (both open instances)
 	ASSERT(pfile1_compare_ != NULL && pfile4_compare_ != NULL);
-    if (pfile1_compare_ != NULL)
+	if (pfile1_compare_ != NULL)
 	{
 		pfile1_compare_->Close();
 		delete pfile1_compare_;
 		pfile1_compare_ = NULL;
 	}
-    if (pfile4_compare_ != NULL)
+	if (pfile4_compare_ != NULL)
 	{
 		pfile4_compare_->Close();
 		delete pfile4_compare_;
@@ -521,17 +521,17 @@ void CHexEditDoc::CloseCompFile()
 bool CHexEditDoc::MakeTempFile()
 {
 	ASSERT(tempFileA_.IsEmpty());
-    char temp_dir[_MAX_PATH];
-    char temp_file[_MAX_PATH];
+	char temp_dir[_MAX_PATH];
+	char temp_file[_MAX_PATH];
 	CWaitCursor wc;     // displays Hour glass until destroyed on function exit
 	if (pfile1_ == NULL ||
-        !::GetTempPath(sizeof(temp_dir), temp_dir) ||
-        !::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file) ||
+		!::GetTempPath(sizeof(temp_dir), temp_dir) ||
+		!::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file) ||
 		!::CopyFile(pfile1_->GetFilePath(), temp_file, FALSE))
 	{
 		return false;
 	}
-    tempFileA_ = temp_file;
+	tempFileA_ = temp_file;
 	return true;
 }
 
@@ -544,16 +544,16 @@ bool CHexEditDoc::IsCompWaiting()
 // Stop any running comparison
 void CHexEditDoc::StopComp()
 {
-    if (cv_count_ == 0) return;
-    ASSERT(pthread4_ != NULL);
-    if (pthread4_ == NULL) return;
+	if (cv_count_ == 0) return;
+	ASSERT(pthread4_ != NULL);
+	if (pthread4_ == NULL) return;
 
 	// stop background compare (if any)
 	bool waiting;
 	docdata_.Lock();
 	comp_command_ = STOP;
 	docdata_.Unlock();
-    SetThreadPriority(pthread4_->m_hThread, THREAD_PRIORITY_NORMAL);
+	SetThreadPriority(pthread4_->m_hThread, THREAD_PRIORITY_NORMAL);
 	for (int ii = 0; ii < 100; ++ii)
 	{
 		// Wait just a little bit in case the thread was just about to go into wait state
@@ -565,7 +565,7 @@ void CHexEditDoc::StopComp()
 		TRACE("+++ Stop Compare - thread not waiting (yet)\n");
 		Sleep(1);
 	}
-    SetThreadPriority(pthread4_->m_hThread, THREAD_PRIORITY_LOWEST);
+	SetThreadPriority(pthread4_->m_hThread, THREAD_PRIORITY_LOWEST);
 	ASSERT(waiting);
 }
 
@@ -589,8 +589,8 @@ void CHexEditDoc::StartComp()
 	docdata_.Unlock();
 
 	// Now that the compare is stopped we need to update all views to remove existing compare display
-    CCompHint comph;
-    UpdateAllViews(NULL, 0, &comph);
+	CCompHint comph;
+	UpdateAllViews(NULL, 0, &comph);
 
 	TRACE("+++ Pulsing compare event (restart)\r\n");
 	start_comp_event_.SetEvent();
@@ -599,18 +599,18 @@ void CHexEditDoc::StartComp()
 // Sends a message for the thread to kill itself then tidies up shared members 
 void CHexEditDoc::KillCompThread()
 {
-    ASSERT(pthread4_ != NULL);
-    if (pthread4_ == NULL) return;
+	ASSERT(pthread4_ != NULL);
+	if (pthread4_ == NULL) return;
 
-    HANDLE hh = pthread4_->m_hThread;    // Save handle since it will be lost when thread is killed and object is destroyed
-    TRACE1("+++ Killing compare thread for %p\n", this);
+	HANDLE hh = pthread4_->m_hThread;    // Save handle since it will be lost when thread is killed and object is destroyed
+	TRACE1("+++ Killing compare thread for %p\n", this);
 
-    // Signal thread to kill itself
-    docdata_.Lock();
-    comp_command_ = DIE;
-    docdata_.Unlock();
+	// Signal thread to kill itself
+	docdata_.Lock();
+	comp_command_ = DIE;
+	docdata_.Unlock();
 
-    SetThreadPriority(pthread4_->m_hThread, THREAD_PRIORITY_NORMAL); // Make it a quick and painless death
+	SetThreadPriority(pthread4_->m_hThread, THREAD_PRIORITY_NORMAL); // Make it a quick and painless death
 	bool waiting, dying;
 	for (int ii = 0; ii < 100; ++ii)
 	{
@@ -625,15 +625,15 @@ void CHexEditDoc::KillCompThread()
 	}
 	ASSERT(waiting || dying);
 
-    // Send start message in case it is on hold
-    if (waiting)
-        start_comp_event_.SetEvent();
+	// Send start message in case it is on hold
+	if (waiting)
+		start_comp_event_.SetEvent();
 
-    pthread4_ = NULL;
-    DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
-    ASSERT(wait_status == WAIT_OBJECT_0 || wait_status == WAIT_FAILED);
+	pthread4_ = NULL;
+	DWORD wait_status = ::WaitForSingleObject(hh, INFINITE);
+	ASSERT(wait_status == WAIT_OBJECT_0 || wait_status == WAIT_FAILED);
 
-    // Free resources that are only needed during bg compares
+	// Free resources that are only needed during bg compares
 	CloseCompFile();
 	if (bCompSelf_)
 	{
@@ -653,17 +653,17 @@ void CHexEditDoc::KillCompThread()
 
 static UINT bg_func(LPVOID pParam)
 {
-    CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
+	CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
 
-    TRACE1("+++ Compare thread started for doc %p\n", pDoc);
+	TRACE1("+++ Compare thread started for doc %p\n", pDoc);
 
-    return pDoc->RunCompThread();
+	return pDoc->RunCompThread();
 }
 
 bool CHexEditDoc::CreateCompThread()
 {
-    ASSERT(pthread4_ == NULL);
-    ASSERT(pfile4_ == NULL);
+	ASSERT(pthread4_ == NULL);
+	ASSERT(pfile4_ == NULL);
 
 	if (!OpenCompFile())
 		return false;
@@ -677,36 +677,36 @@ bool CHexEditDoc::CreateCompThread()
 	pfile4_compare_->GetStatus(stat);
 	comp_[0].Reset(stat.m_mtime);
 
-    // Create new thread
+	// Create new thread
 	comp_command_ = NONE;
 	comp_state_ = STARTING;
 	comp_fin_ = false;
-    TRACE1("+++ Creating compare thread for %p\n", this);
-    pthread4_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
-    ASSERT(pthread4_ != NULL);
+	TRACE1("+++ Creating compare thread for %p\n", this);
+	pthread4_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
+	ASSERT(pthread4_ != NULL);
 	return true;
 }
 
 // This is what does the work in the background thread
 UINT CHexEditDoc::RunCompThread()
 {
-    // Keep looping until we are told to die
-    for (;;)
-    {
-        // Signal that we are waiting then wait for start_comp_event_ to be pulsed
-        {
-            CSingleLock sl(&docdata_, TRUE);
-            comp_state_ = WAITING;
-        }
-        TRACE1("+++ BGCompare: waiting for %p\n", this);
-        DWORD wait_status = ::WaitForSingleObject(HANDLE(start_comp_event_), INFINITE);
-        docdata_.Lock();
+	// Keep looping until we are told to die
+	for (;;)
+	{
+		// Signal that we are waiting then wait for start_comp_event_ to be pulsed
+		{
+			CSingleLock sl(&docdata_, TRUE);
+			comp_state_ = WAITING;
+		}
+		TRACE1("+++ BGCompare: waiting for %p\n", this);
+		DWORD wait_status = ::WaitForSingleObject(HANDLE(start_comp_event_), INFINITE);
+		docdata_.Lock();
 		comp_state_ = SCANNING;
 		comp_fin_ = false;
-        docdata_.Unlock();
-        start_comp_event_.ResetEvent();
-        ASSERT(wait_status == WAIT_OBJECT_0);
-        TRACE1("+++ BGCompare: got event for %p\n", this);
+		docdata_.Unlock();
+		start_comp_event_.ResetEvent();
+		ASSERT(wait_status == WAIT_OBJECT_0);
+		TRACE1("+++ BGCompare: got event for %p\n", this);
 
 		if (CompProcessStop())
 			continue;
@@ -723,9 +723,9 @@ UINT CHexEditDoc::RunCompThread()
 		comp_bufb_ = new unsigned char[buf_size];
 
 		// Keep looping until we are finished processing blocks or we receive a command to stop etc
-        for (;;)
-        {
-            // First check if we need to stop
+		for (;;)
+		{
+			// First check if we need to stop
 			if (CompProcessStop())
 				break;   // stop processing and go back to WAITING state
 
@@ -733,17 +733,17 @@ UINT CHexEditDoc::RunCompThread()
 
 			// Get the next chunks
 			if ((gota = GetData    (comp_bufa_, buf_size, addr, 4)) <= 0 ||
-			    (gotb = GetCompData(comp_bufb_, buf_size, addr, true)) <= 0)
+				(gotb = GetCompData(comp_bufb_, buf_size, addr, true)) <= 0)
 			{
 				// We save the results of the compare along with when it was done
 				result.Final();
 
-                TRACE("+++ BGCompare: finished scan for %p\n", this);
-                CSingleLock sl(&docdata_, TRUE); // Protect shared data access
+				TRACE("+++ BGCompare: finished scan for %p\n", this);
+				CSingleLock sl(&docdata_, TRUE); // Protect shared data access
 
 				comp_[0] = result;
-                comp_fin_ = true;
-                break;                          // falls out to wait state
+				comp_fin_ = true;
+				break;                          // falls out to wait state
 			}
 
 			int pos = 0, endpos = std::min(gota, gotb);   // The bytes of comp_bufa_/comp_bufb_ to compare
@@ -779,11 +779,11 @@ UINT CHexEditDoc::RunCompThread()
 			}
 
 			addr += std::min(gota, gotb);
-        }
+		}
 		delete[] comp_bufa_; comp_bufa_ = NULL;
 		delete[] comp_bufb_; comp_bufb_ = NULL;
-    }
-    return 0;  // never reached
+	}
+	return 0;  // never reached
 }
 
 // Check for a stop scanning (or kill) of the background thread
@@ -791,28 +791,28 @@ bool CHexEditDoc::CompProcessStop()
 {
 	bool retval = false;
 
-    CSingleLock sl(&docdata_, TRUE);
-    switch(comp_command_)
-    {
-    case STOP:                      // stop scan and wait
-        TRACE1("+++ BGCompare: stop for %p\n", this);
+	CSingleLock sl(&docdata_, TRUE);
+	switch(comp_command_)
+	{
+	case STOP:                      // stop scan and wait
+		TRACE1("+++ BGCompare: stop for %p\n", this);
 		retval = true;
 		break;
-    case DIE:                       // terminate this thread
-        TRACE1("+++ BGCompare: killed thread for %p\n", this);
-        comp_state_ = DYING;
+	case DIE:                       // terminate this thread
+		TRACE1("+++ BGCompare: killed thread for %p\n", this);
+		comp_state_ = DYING;
 		sl.Unlock();                // we need this here as AfxEndThread() never returns so d'tor is not called
 		delete[] comp_bufa_; comp_bufa_ = NULL;
 		delete[] comp_bufb_; comp_bufb_ = NULL;
 		AfxEndThread(1);            // kills thread (no return)
 		break;                      // Avoid warning
-    case NONE:                      // nothing needed here - just continue scanning
-        break;
-    default:                        // should not happen
-        ASSERT(0);
-    }
+	case NONE:                      // nothing needed here - just continue scanning
+		break;
+	default:                        // should not happen
+		ASSERT(0);
+	}
 
 	// Prevent reprocessing of the same command
-    comp_command_ = NONE;
+	comp_command_ = NONE;
 	return retval;
 }
