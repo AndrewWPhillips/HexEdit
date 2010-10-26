@@ -30,12 +30,15 @@
 
 // Declarations
 BOOL IsUs();
+
+// Colour manipulation
 void get_hls(COLORREF rgb, int &hue, int &lightness, int &saturation);
 COLORREF get_rgb(int hue, int luminance, int saturation);
 COLORREF tone_down(COLORREF col, COLORREF bg_col, double amt = 0.75);
 COLORREF same_hue(COLORREF col, int sat, int lum = -1);
 COLORREF add_contrast(COLORREF col, COLORREF bg_col);
 
+// Date/time
 double TZDiff();
 DATE FromTime_t(__int64 v);
 DATE FromTime_t_80(long v);
@@ -43,10 +46,12 @@ DATE FromTime_t_mins(long v);
 DATE FromTime_t_1899(long v);
 bool ConvertToFileTime(time_t tt, FILETIME *ft);
 
+// Number conversion
 CString NumScale(double val);
 CString	bin_str(__int64 val,int bits);
 void AddCommas(CString &str);
 void AddSpaces(CString &str);
+
 CString get_menu_text(CMenu *pmenu,int id);
 
 #ifndef REGISTER_APP
@@ -86,6 +91,9 @@ unsigned long rand1();
 unsigned long rand2();
 void rand_good_seed(unsigned long seed);
 unsigned long rand_good();
+
+int next_diff(const void * buf1, const void * buf2, size_t len);
+
 #endif
 
 unsigned short crc16(const void *buffer, size_t len);  // NOTE: also see RegisterDlg.cpp

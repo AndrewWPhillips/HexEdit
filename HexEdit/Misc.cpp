@@ -2282,6 +2282,74 @@ unsigned long rand_good()
 }
 
 //-----------------------------------------------------------------------------
+// Memory
+
+// Compare two blocks of memory to find the first different byte.  (This is 
+// similar to memcmp but returns the number of bytes the same.)
+// Parameters:
+//   pp, qq = pointers to the blocks of memory to compare
+//   len = max number of bytes to compare
+// Returns:
+//   the number of bytes up to the difference OR
+//   -1 if all bytes are the same
+// Notes:
+//   The code is optimized to do 8-byte compares for a 64-bit processor.
+//   Best performance is when both pp and qq have the same 8-byte alignment.
+//   However, even if pp and qq have different alignements better performance 
+//   is obtained if 8-byte reads are done from one of the buffers - this is the 
+//   reason for skipping up to 7 bytes at the start of the comparison.
+//   Under MS C++ version 15 (VS2008) this gives comparable speed to memcmp()
+//   when both buffers start on a 4-byte boundary but much better performance
+//   in all other situations.  (The other problem is that memcmp does not say 
+//   where in the buffers the difference was found.)
+//   This code would be even faster compiled for a 64-bit processor since a
+//   comparison between two __int64 values would be a single instruction, etc.
+int next_diff(const void * buf1, const void * buf2, size_t len)
+{
+	const unsigned char * pp = (const unsigned char *)buf1;
+	const unsigned char * qq = (const unsigned char *)buf2;
+
+	// Check up to 7 initial bytes (until pp and/or qq is aligned on a 8-byte boundary)
+	while (((int)pp % 8) != 0 && len > 0)
+	{
+		if (*pp != *qq)
+			return pp - (const unsigned char *)buf1;
+		++pp, ++qq;
+		len--;
+	}
+
+	// Check most of the buffers 8 bytes at a time (best if qq is also 8 byte aligned)
+	div_t len8 = div(len, 8);
+	const unsigned __int64 * pend = (const unsigned __int64 *)pp + len8.quot;
+
+	while ((const unsigned __int64 *)pp < pend)
+	{
+		if (*((const unsigned __int64 *)pp) != *((const unsigned __int64 *)qq))
+		{
+			// This 8-byte value is different - work out which byte it was
+			while (*pp == *qq)
+				++pp, ++qq;
+
+			return pp - (const unsigned char *)buf1;
+		}
+
+		pp += 8;
+		qq += 8;
+	}
+
+	// Check up to 7 bytes at the end
+	while (len8.rem--)
+	{
+		if (*pp != *qq)
+			return pp - (const unsigned char *)buf1;
+		++pp, ++qq;
+	}
+
+	return -1;
+}
+
+
+//-----------------------------------------------------------------------------
 // CRCs
 
 unsigned short crc16(const void *buffer, size_t len)
