@@ -4824,9 +4824,8 @@ void CHexEditView::ValidateScroll(CPointAp &pos, BOOL strict /* =FALSE */)
 
 	// Get search occurrences currently in display area whenever we change the scroll posn -
 	// this saves checking all addresses (could be millions) in OnDraw
-	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	search_pair_.clear();
-	if (aa->bg_search_ && aa->pboyer_ != NULL)
+	if (GetDocument()->CanDoSearch() && theApp.pboyer_ != NULL)
 	{
 		CHexEditDoc *pdoc = GetDocument();
 		CRect cli;
@@ -4838,12 +4837,12 @@ void CHexEditView::ValidateScroll(CPointAp &pos, BOOL strict /* =FALSE */)
 		// Get all occurrences that are within the display - this includes those
 		// that have an address before the start of display but extend into it.
 		start = (pos.y/line_height_)*rowsize_ - offset_     // First addr in display
-				- (aa->pboyer_->length() - 1);              // Length of current search string - 1
+				- (theApp.pboyer_->length() - 1);              // Length of current search string - 1
 		if (start < 0) start = 0;                           // Just in case (prob not nec.)
 		end = ((pos.y+rct.Height())/line_height_ + 1)*rowsize_ - offset_;
 
 		std::vector<FILE_ADDRESS> sf = pdoc->SearchAddresses(start, end);
-		search_length_ = aa->pboyer_->length();
+		search_length_ = theApp.pboyer_->length();
 		std::vector<FILE_ADDRESS>::const_iterator pp = sf.begin();
 		std::vector<FILE_ADDRESS>::const_iterator pend = sf.end();
 		pair<FILE_ADDRESS, FILE_ADDRESS> good_pair;

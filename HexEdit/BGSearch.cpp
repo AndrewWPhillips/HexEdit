@@ -155,6 +155,7 @@ the current search string changes.  This saves recalc in every OnDraw.
 #include "HexEdit.h"
 
 #include "HexEditDoc.h"
+#include "HexEditView.h"
 #include "boyer.h"
 #include "SystemSound.h"
 
@@ -164,6 +165,61 @@ the current search string changes.  This saves recalc in every OnDraw.
 static char THIS_FILE[] = __FILE__;
 #endif
 
+// Returns true if global options says we can do background searches on this file
+bool CHexEditDoc::CanDoSearch()
+{
+	bool retval = false;
+	if (theApp.bg_search_)
+	{
+		retval = true;
+		if (pfile1_ != NULL)
+		{
+			CString ss = pfile1_->GetFilePath();
+			if (IsDevice())
+				retval = !theApp.bg_exclude_device_;
+			else
+				switch (::GetDriveType(ss))
+				{
+				case DRIVE_REMOVABLE:
+					retval = !theApp.bg_exclude_removeable_;
+					break;
+				case DRIVE_REMOTE:
+					retval = !theApp.bg_exclude_network_;
+					break;
+				case DRIVE_CDROM:
+					retval = !theApp.bg_exclude_optical_;
+					break;
+				}
+		}
+	}
+	return retval;
+}
+
+void CHexEditDoc::UpdateSearch()
+{
+	if (pthread2_ == NULL && CanDoSearch())
+	{
+		// create the search thread
+		CreateSearchThread();
+
+		// if there's an active search then start the thread searching
+		if (theApp.pboyer_ != NULL)
+		{
+			if (GetBestView() != NULL)
+				base_addr_ = GetBestView()->GetSearchBase();
+			StartSearch();
+		}
+	}
+	else if (pthread2_ != NULL && !CanDoSearch())
+	{
+		KillSearchThread();
+
+		// Remove all search occurrences as bg search is now off
+		CBGSearchHint bgsh(FALSE);
+		UpdateAllViews(NULL, 0, &bgsh);
+	}
+}
+
 // Returns the number of search string occurrences found OR
 // -4 = background searches are disabled
 // -2 = bg search still in progress
@@ -171,7 +227,7 @@ int CHexEditDoc::SearchOccurrences()
 {
 	if (pthread2_ == NULL)
 	{
-		ASSERT(!theApp.bg_search_);
+		ASSERT(!CanDoSearch());
 		return -4;
 	}
 
@@ -195,7 +251,7 @@ int CHexEditDoc::SearchProgress(int &occurrences)
 	FILE_ADDRESS file_len = length_;
 	docdata_.Unlock();
 
-	ASSERT(pthread2_ != NULL && theApp.bg_search_);
+	ASSERT(CanDoSearch() && pthread2_ != NULL);
 
 	FILE_ADDRESS curr;
 
@@ -253,7 +309,7 @@ FILE_ADDRESS CHexEditDoc::GetNextFound(const unsigned char *pat, const unsigned 
 {
 	if (pthread2_ == NULL)
 	{
-		ASSERT(!theApp.bg_search_);
+		ASSERT(!CanDoSearch());
 		return -4;
 	}
 
@@ -309,7 +365,7 @@ FILE_ADDRESS CHexEditDoc::GetPrevFound(const unsigned char *pat, const unsigned 
 {
 	if (pthread2_ == NULL)
 	{
-		ASSERT(!theApp.bg_search_);
+		ASSERT(!CanDoSearch());
 		return -4;
 	}
 
@@ -559,7 +615,6 @@ void CHexEditDoc::SearchThreadPriority(int pri)
 // Kill background task and wait until it is dead
 void CHexEditDoc::KillSearchThread()
 {
-	ASSERT(theApp.bg_search_);
 	ASSERT(pthread2_ != NULL);
 	if (pthread2_ == NULL) return;
 
@@ -627,7 +682,7 @@ static UINT bg_func(LPVOID pParam)
 
 void CHexEditDoc::CreateSearchThread()
 {
-	ASSERT(theApp.bg_search_);
+	ASSERT(CanDoSearch());
 	ASSERT(pthread2_ == NULL);
 	ASSERT(pfile2_ == NULL);
 

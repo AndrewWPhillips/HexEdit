@@ -1023,7 +1023,7 @@ void CAerialView::update_display()
 {
 	// Find all search occurrences within the display
 	search_pair_.clear();
-	if (theApp.bg_search_ && theApp.pboyer_ != NULL)
+	if (GetDocument()->CanDoSearch() && theApp.pboyer_ != NULL)
 	{
 		// Cache search occurrences found in the display area
 		FILE_ADDRESS end = scrollpos_ + rows_*cols_*GetDocument()->GetBpe();

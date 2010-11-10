@@ -1970,6 +1970,12 @@ void CHexEditApp::LoadOptions()
 	backup_prompt_ = (BOOL)GetProfileInt("Options", "BackupPrompt",  1);
 
 	bg_search_ = GetProfileInt("Options", "BackgroundSearch", 1) ? TRUE : FALSE;
+	bg_stats_ = GetProfileInt("Options", "BackgroundStats", 0) ? TRUE : FALSE;
+	bg_exclude_network_ = GetProfileInt("Options", "BackgroundExcludeNetwork", 1) ? TRUE : FALSE;
+	bg_exclude_removeable_ = GetProfileInt("Options", "BackgroundExcludeRemoveable", 0) ? TRUE : FALSE;
+	bg_exclude_optical_ = GetProfileInt("Options", "BackgroundExcludeOptical", 1) ? TRUE : FALSE;
+	bg_exclude_device_ = GetProfileInt("Options", "BackgroundExcludeDevice", 1) ? TRUE : FALSE;
+
 	large_cursor_ = GetProfileInt("Options", "LargeCursor", 0) ? TRUE : FALSE;
 	show_other_ = GetProfileInt("Options", "OtherAreaCursor", 1) ? TRUE : FALSE;
 
@@ -2427,6 +2433,12 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Options", "BackupIfLess", backup_size_);
 	WriteProfileInt("Options", "BackupPrompt", int(backup_prompt_));
 	WriteProfileInt("Options", "BackgroundSearch", bg_search_ ? 1 : 0);
+	WriteProfileInt("Options", "BackgroundStats", bg_stats_ ? 1 : 0);
+	WriteProfileInt("Options", "BackgroundExcludeNetwork", bg_exclude_network_ ? 1 : 0);
+	WriteProfileInt("Options", "BackgroundExcludeRemoveable", bg_exclude_removeable_ ? 1 : 0);
+	WriteProfileInt("Options", "BackgroundExcludeOptical", bg_exclude_optical_ ? 1 : 0);
+	WriteProfileInt("Options", "BackgroundExcludeDevice", bg_exclude_device_ ? 1 : 0);
+
 	WriteProfileInt("Options", "LargeCursor", large_cursor_ ? 1 : 0);
 	WriteProfileInt("Options", "OtherAreaCursor", show_other_ ? 1 : 0);
 
@@ -2974,9 +2986,14 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.hl_mouse_ = hl_mouse_;
 
 	// Workspace
-	val.bg_search_ = bg_search_;
 	val.intelligent_undo_ = intelligent_undo_;
 	val.undo_limit_ = undo_limit_ - 1;
+	val.bg_search_ = bg_search_;
+	val.bg_stats_ = bg_stats_;
+	val.bg_exclude_network_ = bg_exclude_network_;
+	val.bg_exclude_removeable_ = bg_exclude_removeable_;
+	val.bg_exclude_optical_ = bg_exclude_optical_;
+	val.bg_exclude_device_ = bg_exclude_device_;
 
 	// Backup
 	val.backup_ = backup_;
@@ -3108,49 +3125,48 @@ void CHexEditApp::set_options(struct OptValues &val)
 	clear_bookmarks_ = val.clear_bookmarks_;
 	clear_on_exit_ = val.clear_on_exit_;
 
-	if (bg_search_ != val.bg_search_)
-	{
-		if (val.bg_search_)
-		{
-			bg_search_ = TRUE;
-
-			// Create bg search thread for all docs
-			POSITION posn = m_pDocTemplate->GetFirstDocPosition();
-			while (posn != NULL)
-			{
-				CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
-				ASSERT(pdoc != NULL);
-				pdoc->CreateSearchThread();
-				if (pboyer_ != NULL)        // If a search has already been done do bg search this file
-					pdoc->StartSearch();
-			}
-
-			// We don't need change thread priority for active doc here since
-			// when active view regains focus this is done automatically.
-		}
-		else
-		{
-			// Kill bg searches for all docs
-			POSITION posn = m_pDocTemplate->GetFirstDocPosition();
-			while (posn != NULL)
-			{
-				CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
-				ASSERT(pdoc != NULL);
-
-				// Kill bg thread (and clean up data structures)
-				pdoc->KillSearchThread();
-
-				// Signal all views to remove display of search strings
-				CBGSearchHint bgsh(FALSE);
-				pdoc->UpdateAllViews(NULL, 0, &bgsh);
-			}
-
-			// Change this after killing threads to avoid assertions
-			bg_search_ = FALSE;
-		}
-	}
 	intelligent_undo_ = val.intelligent_undo_;
 	undo_limit_ = val.undo_limit_ + 1;
+
+	// Remember what has changed before starting/stopping background processing
+	bool search_changed = bg_search_ != val.bg_search_ ||
+	                      bg_exclude_device_ != val.bg_exclude_device_ ||
+	                      bg_exclude_network_ != val.bg_exclude_network_ ||
+	                      bg_exclude_removeable_ != val.bg_exclude_removeable_ ||
+	                      bg_exclude_optical_ != val.bg_exclude_optical_;
+	bool stats_changed = bg_stats_ != val.bg_stats_ || 
+	                     bg_exclude_device_ != val.bg_exclude_device_ ||
+	                     bg_exclude_network_ != val.bg_exclude_network_ ||
+	                     bg_exclude_removeable_ != val.bg_exclude_removeable_ ||
+	                     bg_exclude_optical_ != val.bg_exclude_optical_;
+
+	bg_search_ = val.bg_search_;
+	bg_stats_ = val.bg_stats_;
+	bg_exclude_network_ = val.bg_exclude_network_;
+	bg_exclude_removeable_ = val.bg_exclude_removeable_;
+	bg_exclude_optical_ = val.bg_exclude_optical_;
+	bg_exclude_device_ = val.bg_exclude_device_;
+
+	if (search_changed)
+	{
+		POSITION posn = m_pDocTemplate->GetFirstDocPosition();
+		while (posn != NULL)
+		{
+			CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
+			ASSERT(pdoc != NULL);
+			pdoc->UpdateSearch();  // will create/kill search thread as appropriate
+		}
+	}
+	if (stats_changed)
+	{
+		POSITION posn = m_pDocTemplate->GetFirstDocPosition();
+		while (posn != NULL)
+		{
+			CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
+			ASSERT(pdoc != NULL);
+			// xxx TBD TODO
+		}
+	}
 
 	backup_ = val.backup_;
 	backup_space_ = val.backup_space_;

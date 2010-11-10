@@ -615,9 +615,9 @@ public:
 	void CheckBGProcessing();   // check if bg searching or bg scan has finished
 
 	// Background search
-	void CreateSearchThread();  // Create background search thread
-	void KillSearchThread();    // Kill background thread ASAP
-	UINT RunSearchThread();     // Main func in bg thread
+	void UpdateSearch();        // create/kill search thread as appropriate
+	bool CanDoSearch();         // Check several conditions to decide if we can do a background search
+	UINT RunSearchThread();     // Main func in bg thread (needs to be public so it can be called from bg_func)
 	void SearchThreadPriority(int ii); // Set bg thread priority
 	void StartSearch(FILE_ADDRESS start = -1, FILE_ADDRESS end = -1);
 	void StopSearch();          // Stops any current search (via stop_event_), thread waits for start_search_event_
@@ -638,8 +638,6 @@ public:
 	// Background scan (for aerial views etc)
 	void AddAerialView(CHexEditView *pview);
 	void RemoveAerialView();
-	void CreateAerialThread();  // Create background thread which fills in the aerial view bitmap
-	void KillAerialThread();    // Kill background thread ASAP
 	void AerialChange(CHexEditView *pview = NULL);  // Signal bg thread to re-scan
 	UINT RunAerialThread();     // Main func in bg thread
 	bool AerialScanning();      // Are we currently scanning
@@ -647,8 +645,6 @@ public:
 	// Compare stuff (implemented in BGCompare.cpp)
 	void AddCompView(CHexEditView *pview);
 	void RemoveCompView();
-	bool CreateCompThread();  // Create background thread which does the compare
-	void KillCompThread();    // Kill background thread ASAP
 	bool IsCompWaiting();     // is compare thread in wait state?
 	void StartComp();
 	void StopComp();
@@ -809,6 +805,8 @@ private:
 
 	FILE_ADDRESS find_total_;   // Total number of bytes for background search (so that progress bar is drawn properly)
 	double find_done_;          // This is how far the bg search has progressed in searching the top entry of to_search_ list
+	void CreateSearchThread();  // Create background search thread
+	void KillSearchThread();    // Kill background thread ASAP
 	void FixFound(FILE_ADDRESS start, FILE_ADDRESS end, FILE_ADDRESS address, FILE_ADDRESS adjust);
 	bool SearchProcessStop();   // Check if the scanning should stop
 
@@ -835,6 +833,8 @@ private:
 	enum { MAX_WIDTH = 2048 };
 	enum { MAX_BMP  = 256*1024*1024 };      // Biggest bitmap size in bytes - should be made a user option sometime
 
+	void CreateAerialThread();  // Create background thread which fills in the aerial view bitmap
+	void KillAerialThread();    // Kill background thread ASAP
 	void GetAerialBitmap(int clear = 0xC0); // Check if bitmap has been allocated/is big enough and get it if not
 	bool AerialProcessStop();   // Check if the scanning should stop
 
@@ -845,6 +845,8 @@ private:
 	CString compFileName_;      // Name of file comparing with (or last compare file)
 	FILE_ADDRESS CompLength() const { if (pfile4_compare_ == NULL) return -1; else return pfile4_compare_->GetLength(); }
 	size_t GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc, bool use_bg = false);  // bytes from compare file
+	bool CreateCompThread();  // Create background thread which does the compare
+	void KillCompThread();    // Kill background thread ASAP
 	bool OpenCompFile();
 	void CloseCompFile();
 	bool MakeTempFile();

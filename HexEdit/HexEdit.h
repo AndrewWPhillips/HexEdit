@@ -675,6 +675,11 @@ public:
 	long plays_;                        // Default number of plays in Multiplay dlg
 
 	BOOL bg_search_;                    // Do background searches?
+	BOOL bg_stats_;                     // Calc file stats in background thread?
+	BOOL bg_exclude_network_;           // Don't do background search/stats for files on network drives
+	BOOL bg_exclude_removeable_;        // Don't do background search/stats for files on removeable media
+	BOOL bg_exclude_optical_;           // Don't do background search/stats for files on CD, DVD
+	BOOL bg_exclude_device_;            // Don't do background search/stats for files on raw devices and volumes
 
 	// Global display options
 	BOOL mditabs_;                      // Show MDI tabs

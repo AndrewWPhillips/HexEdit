@@ -71,10 +71,15 @@ struct OptValues
 	BOOL    clear_bookmarks_;
 	BOOL    clear_on_exit_;
 
-	// Workspace
-	BOOL	bg_search_;
+	// Workspace - editing
 	BOOL    intelligent_undo_;
 	UINT    undo_limit_;
+	BOOL	bg_search_;
+	BOOL	bg_stats_;
+	BOOL    bg_exclude_network_;
+	BOOL    bg_exclude_removeable_;
+	BOOL    bg_exclude_optical_;
+	BOOL    bg_exclude_device_;
 
 	// Backup options
 	int		backup_;

@@ -273,7 +273,7 @@ BOOL CHexEditDoc::OnNewDocument()
 			return FALSE;       // Some error
 	}
 
-	if (aa->bg_search_ && pthread2_ == NULL)
+	if (pthread2_ == NULL && CanDoSearch())
 		CreateSearchThread();
 
 	OpenDataFormatFile("default");
@@ -352,10 +352,10 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		edit_time_ = timer(atof(pfl->GetData(recent_file_index, CHexFileList::EDIT_TIME)));
 	}
 
-	if (aa->bg_search_)
+	if (CanDoSearch())
 	{
 		CreateSearchThread();
-		if (theApp.pboyer_ != NULL)        // If a search has already been done do bg search on newly opened file
+		if (theApp.pboyer_ != NULL)        // If a search is active start a bg search on the newly opened file
 		{
 			if (theApp.align_rel_ && recent_file_index != -1)
 			{
@@ -973,7 +973,7 @@ void CHexEditDoc::close_file()
 		pfile1_ = NULL;
 	}
 
-	if (theApp.bg_search_ && pthread2_ != NULL && pfile2_ != NULL)
+	if (pthread2_ != NULL && pfile2_ != NULL)
 	{
 		pfile2_->Close();
 		delete pfile2_;
@@ -1191,7 +1191,7 @@ void CHexEditDoc::DeleteContents()
 		pfile1_ = NULL;
 	}
 
-	if (theApp.bg_search_ && pthread2_ != NULL)
+	if (pthread2_ != NULL)
 		KillSearchThread();
 
 	// KillAerialThread() and KillCompThread() not required here as they are killed when the last view is closed

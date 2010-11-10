@@ -356,7 +356,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 	// If there is a current search string and background searches are on
 	if (aa->pboyer_ != NULL && pthread2_ != NULL)
 	{
-		ASSERT(aa->bg_search_);
+		ASSERT(CanDoSearch());
 		FILE_ADDRESS adjust;
 
 		if (aa->alignment_ > 1 && (utype == mod_delforw ||
@@ -595,7 +595,7 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
 		// If there is a current search string and background searches are on
 		if (aa->pboyer_ != NULL && pthread2_ != NULL)
 		{
-			ASSERT(aa->bg_search_);
+			ASSERT(CanDoSearch());
 
 			if (aa->alignment_ > 1 && (undo_.back().utype == mod_delforw ||
 									undo_.back().utype == mod_delback ||

@@ -95,7 +95,7 @@ enum
 	IMG_COLOURS,
 	IMG_AERIAL,
 	IMG_COMP,
-	IMG_PRN_DECO,
+	IMG_PRINTER_DECO,
 };
 
 IMPLEMENT_DYNAMIC(COptSheet, CMFCPropertySheet)
@@ -127,8 +127,15 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.clear_recent_file_list_ = val_.clear_bookmarks_ = FALSE;
 	val_.clear_on_exit_ = TRUE;
 
-	val_.bg_search_ = FALSE;
+	val_.intelligent_undo_ = FALSE;
 	val_.undo_limit_ = 4;
+	val_.bg_search_ = TRUE;
+	val_.bg_stats_ = FALSE;
+	val_.bg_exclude_network_ = TRUE;
+	val_.bg_exclude_removeable_ = FALSE;
+	val_.bg_exclude_optical_ = TRUE;
+	val_.bg_exclude_device_ = TRUE;
+
 	val_.backup_ = FALSE;
 	val_.backup_space_ = FALSE;
 	val_.backup_size_ = 0;
@@ -263,7 +270,7 @@ void COptSheet::page_init()
 
 	CMFCPropertySheetCategoryInfo * pCatPrn = AddTreeCategory("Printer", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
 	AddPageToTree(pCatPrn, &printGeneralPage_, IMG_PRINTER, IMG_PRINTER);
-	AddPageToTree(pCatPrn, &printDecorationsPage_, IMG_PRINTER, IMG_PRN_DECO);
+	AddPageToTree(pCatPrn, &printDecorationsPage_, IMG_PRINTER, IMG_PRINTER_DECO);
 	AddPageToTree(pCatSys_, &macroPage_, IMG_MACRO, IMG_MACRO);
 	AddPageToTree(pCatSys_, &histPage_, IMG_HIST, IMG_HIST);
 
