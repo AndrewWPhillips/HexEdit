@@ -149,7 +149,7 @@ class CHexComboButton : public CMFCToolBarComboBoxButton
 public:
 	CHexComboButton() :
 		CMFCToolBarComboBoxButton(ID_JUMP_HEX_COMBO, 
-			afxCommandManager->GetCmdImage(ID_JUMP_HEX), //CImageHash::GetImageOfCommand(ID_JUMP_HEX),
+			afxCommandManager->GetCmdImage(ID_JUMP_HEX),
 			CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
 			120)
 	{
@@ -251,7 +251,7 @@ class CDecComboButton : public CMFCToolBarComboBoxButton
 public:
 	CDecComboButton() :
 		CMFCToolBarComboBoxButton(ID_JUMP_DEC_COMBO, 
-			-1 /*CImageHash::GetImageOfCommand(ID_JUMP_DEC, FALSE)*/,
+			afxCommandManager->GetCmdImage(ID_JUMP_DEC),
 			CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
 			142)
 	{
@@ -355,7 +355,7 @@ class CFindComboButton : public CMFCToolBarComboBoxButton
 public:
 	CFindComboButton() :
 		CMFCToolBarComboBoxButton(ID_SEARCH_COMBO, 
-			-1 /*CImageHash::GetImageOfCommand(ID_SEARCH, FALSE)*/,
+			afxCommandManager->GetCmdImage(ID_SEARCH),
 			CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,
 			200)
 	{
@@ -480,7 +480,7 @@ class CBookmarksComboButton : public CMFCToolBarComboBoxButton
 public:
 	CBookmarksComboButton() :
 		CMFCToolBarComboBoxButton(ID_BOOKMARKS_COMBO, 
-			-1 /*CImageHash::GetImageOfCommand(ID_BOOKMARKS, FALSE)*/,
+			afxCommandManager->GetCmdImage(ID_BOOKMARKS),
 			CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP,
 			150)
 	{

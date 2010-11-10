@@ -128,8 +128,6 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 				than commas to a decimal number.
 
 */
-#endif
-
 
 #include "stdafx.h"
 #include <MultiMon.h>
@@ -388,7 +386,7 @@ CString DecimalToString(const void *pdecimal, CString &sMantissa, CString &sExpo
 	else
 		return ss.Left(len - exp) + CString(".") + ss.Right(exp);
 }
-#endif
+#endif  // #ifndef REGISTER_APP
 
 // -------------------------------------------------------------------------
 // Colour routines
@@ -1158,7 +1156,7 @@ long double ibm_fp64(const unsigned char *pp, int *pexp /*=NULL*/,
 	else
 		return -(mantissa / two_pow56) * powl(2, exponent);
 }
-#endif
+#endif  // #ifndef REGISTER_APP
 
 // The compiler does not provide a function for reading a 64 bit int from a string?!!
 __int64 strtoi64(const char *ss, int radix /*=0*/)
@@ -3081,3 +3079,4 @@ static void decipher(unsigned long *pl, unsigned long *pr)
 	*pl = right;
 	*pr = left;
 }
+#endif  // #ifndef REGISTER_APP
