@@ -2113,7 +2113,7 @@ static void sub1(char *ss)
 	for ( ; *ss != '\0'; ++ss)
 		*ss = *ss - 1;
 }
-#endif
+#endif  // #ifndef REGISTER_APP
 
 //-----------------------------------------------------------------------------
 // PRNGs
@@ -3079,4 +3079,3 @@ static void decipher(unsigned long *pl, unsigned long *pr)
 	*pl = right;
 	*pr = left;
 }
-#endif  // #ifndef REGISTER_APP

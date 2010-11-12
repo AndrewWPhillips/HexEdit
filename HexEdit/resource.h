@@ -1166,6 +1166,8 @@
 #define IDC_WATERMARK                   1602
 #define IDC_FIRST_FOOTER_DIFF           1603
 #define IDC_EVEN_REVERSE                1604
+#define IDC_FIRST_FOOTER_OPTS           1605
+#define IDC_FIRST_FOOTER                1606
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773

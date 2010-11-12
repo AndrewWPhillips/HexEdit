@@ -1,6 +1,6 @@
 // HexEdit.h : main header file for the HEXEDIT application
 //
-// Copyright (c) 1999-2010 by Andrew W. Phillips. 
+// Copyright (c) 1998-2010 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
