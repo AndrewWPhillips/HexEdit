@@ -3154,7 +3154,7 @@ void CHexEditApp::set_options(struct OptValues &val)
 		{
 			CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
 			ASSERT(pdoc != NULL);
-			pdoc->UpdateSearch();  // will create/kill search thread as appropriate
+			pdoc->AlohaSearch();  // say hello or goodbye to the bg search thread
 		}
 	}
 	if (stats_changed)
@@ -3164,7 +3164,7 @@ void CHexEditApp::set_options(struct OptValues &val)
 		{
 			CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
 			ASSERT(pdoc != NULL);
-			// xxx TBD TODO
+			pdoc->AlohaStats();  // say hello or goodbye to the bg stats thread
 		}
 	}
 

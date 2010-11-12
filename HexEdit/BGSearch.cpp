@@ -174,7 +174,7 @@ bool CHexEditDoc::CanDoSearch()
 		retval = true;
 		if (pfile1_ != NULL)
 		{
-			CString ss = pfile1_->GetFilePath();
+			CString ss = pfile1_->GetFilePath().Left(3);
 			if (IsDevice())
 				retval = !theApp.bg_exclude_device_;
 			else
@@ -195,9 +195,10 @@ bool CHexEditDoc::CanDoSearch()
 	return retval;
 }
 
-void CHexEditDoc::UpdateSearch()
+// Create/kill background thread as appropriate depending on current options
+void CHexEditDoc::AlohaSearch()
 {
-	if (pthread2_ == NULL && CanDoSearch())
+	if (pthread2_ == NULL && CanDoSearch())  // no thread but we should have one
 	{
 		// create the search thread
 		CreateSearchThread();
@@ -206,15 +207,15 @@ void CHexEditDoc::UpdateSearch()
 		if (theApp.pboyer_ != NULL)
 		{
 			if (GetBestView() != NULL)
-				base_addr_ = GetBestView()->GetSearchBase();
+				base_addr_ = GetBestView()->GetSearchBase(); // get base address for mark-relative searches
 			StartSearch();
 		}
 	}
-	else if (pthread2_ != NULL && !CanDoSearch())
+	else if (pthread2_ != NULL && !CanDoSearch())  // have thread but we shouldn't
 	{
 		KillSearchThread();
 
-		// Remove all search occurrences as bg search is now off
+		// Remove all search occurrences from views as bg search is now off
 		CBGSearchHint bgsh(FALSE);
 		UpdateAllViews(NULL, 0, &bgsh);
 	}
@@ -521,7 +522,6 @@ void CHexEditDoc::FixFound(FILE_ADDRESS start, FILE_ADDRESS end,
 // until the search is aborted and the thread is waiting again.
 void CHexEditDoc::StopSearch()
 {
-	ASSERT(pthread2_ != NULL);
 	if (pthread2_ == NULL) return;
 
 	bool waiting;
