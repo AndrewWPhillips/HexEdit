@@ -53,7 +53,8 @@
 
 3.6
 ===
-- check for updates
+- post-build (release) - copy to install dir
+> check for updates
 - new options
   - option for mouse wheel units
   - split print page into 2
@@ -66,11 +67,11 @@
     - turn off read-only mode
 - calculator
   - cf Windows 7 Calculator
-    - 64 check boxes
+    > 64 check boxes
     - radio buttons on the left
   - bookmarks (active file) drop-list
   - handle > 64 bit numbers
-DS
+ADS
   - open them in new view
 - aerial view fixes
   - more options
@@ -81,13 +82,13 @@ DS
 - template "include" facility
 - tip when mouse held over a template line
 
-- fix pliers and update graphics
+> fix pliers and update graphics
 - Convert to use FileErrorMessage() ???
 ? allow editing read-only files
 - insert file option should read a file even if it's in use
 - welcome screen that has a tutorial option?
 - smaller font for numbers in ruler
-- new installer
+> new installer
    - get MFC merge module (.msm file) to include used MFC in installation (.msi)
      - use MFC 7.1 (same as UBCD4Win - Ultimate boot CD for Windows) - MFC71.DLL, MSVCRT71.DLL
    - is it possible to have install modules (eg MFC) come from web only when needed?
@@ -106,7 +107,8 @@ DS
       - open dialog?
 - reload command
 - expressions
-  - add ++, --, += etc
+  > add ++, --
+  - add assignment operators: += etc
 - bookmarks
  - move text buttons on right to icon buttons at top
    - need way to change name
@@ -150,14 +152,14 @@ DS
  - move S1/S2/S3 items to drop-list in the File Save dialog
  - info tips
    - show tip of template data at that location ???
- - allow search for keyword in RFD
+ - allow search for keyword in recent file dialog
  - template tutorial to demo bit-fields, parser, switch
- - font size in format toolbar flashes under Vista
+ > font size in format toolbar flashes under Vista
  - add ability to select which prop pages are displayed (and order?)???\
 
 V4.0
   - plugin system?
-  - new MFC/BCG?
+  > new MFC/BCG?
   - ribbon?
   - support for Windows 7 taskbar?
   - when doing masked search and file stats available search for most common non-masked char first

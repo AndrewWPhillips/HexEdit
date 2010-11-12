@@ -1,9 +1,9 @@
 // HexEditDoc.h : interface of the CHexEditDoc class
 //
-// For the implementation of the CHexEditDoc class see: HexEditDoc.cpp,
-// DocData.cpp, BGSearch.cpp, BGAerial.cpp, BGCompare.cpp, Template.cpp
+// For implementation of the CHexEditDoc class see: HexEditDoc.cpp, DocData.cpp, 
+// BGSearch.cpp, BGAerial.cpp, BGCompare.cpp, BGstats.cpp, Template.cpp
 //
-// Copyright (c) 1999-2010 by Andrew W. Phillips.
+// Copyright (c) 1998-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -574,6 +574,7 @@ private:
 	CFile64 *data_file2_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background search thread
 	CFile64 *data_file3_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background aerial thread
 	CFile64 *data_file4_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background compare thread
+	CFile64 *data_file5_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background compare thread
 	BOOL temp_file_[4 /*doc_loc::max_data_files*/];         // Says if the file is temporary (should be deleted when doc closed)
 
 	// The following are used for change tracking
@@ -615,7 +616,7 @@ public:
 	void CheckBGProcessing();   // check if bg searching or bg scan has finished
 
 	// Background search
-	void UpdateSearch();        // create/kill search thread as appropriate
+	void AlohaSearch();         // create/kill search thread as appropriate
 	bool CanDoSearch();         // Check several conditions to decide if we can do a background search
 	UINT RunSearchThread();     // Main func in bg thread (needs to be public so it can be called from bg_func)
 	void SearchThreadPriority(int ii); // Set bg thread priority
@@ -664,6 +665,14 @@ public:
 	bool CompFileHasChanged();
 
 	UINT RunCompThread();     // Main func in bg thread
+
+	// Background stats thread (BGstats.cpp)
+	void AlohaStats();        // create/kill stats thread as appropriate
+	bool CanDoStats();        // Check several conditions to decide if we can do background stats scan
+	UINT RunStatsThread();    // Main func in bg thread (needs to be public so it can be called from bg_func)
+	void StartStats();
+	void StopStats();
+	int StatsProgress();      // How far are we through the file (0 to 100)
 
 	// DFFD stuff
 	enum
@@ -850,7 +859,7 @@ private:
 	bool OpenCompFile();
 	void CloseCompFile();
 	bool MakeTempFile();
-	bool CompProcessStop();     // Check if the scanning should stop
+	bool CompProcessStop();     // Check if the scanning should stop (called in the thread)
 	bool bCompSelf_;            // says if we are comparing with earlier version of same file
 	CString tempFileA_, tempFileB_; // when doing self-compare we need to make 2 temp copies of the file
 
@@ -908,6 +917,25 @@ private:
 		addr = comp_[rr].m_addrB[idx];
 		len = comp_[rr].m_len[idx];
 	}
+
+	// ------- To calculate file statistics in background thread (see BGstats.cpp) ----------
+	CWinThread *pthread5_;      // Ptr to background stats thread or NULL
+	CEvent start_stats_event_;  // Signal to bg thread to start scan, or check for termination
+	enum BG_COMMAND stats_command_; // signals thread to do something
+	enum BG_STATE   stats_state_;   // indicates what the thread is doing
+	bool stats_fin_;            // Flags that the scan is finished
+	unsigned char * stats_buf_; // Buffer for holding file data to search (only used in bg thread)
+	long * c32_;                // Keeps stats when using 32-bit numbers (only used in bg thread)
+	__int64 * c64_;             // Keeps stats when using 64-bit numbers (only used in bg thread)
+
+	CFile64 *pfile5_;           // We need a copy of file_ so we can access the same file for scanning
+	// Also see data_file5_ (above)
+
+	void CreateStatsThread();   // Create background thread which scans the file
+	void KillStatsThread();     // Kill background thread ASAP
+	bool StatsProcessStop();    // Check if the scanning should stop (called in the thread)
+
+	__int64 count_[256];        // What we are calcualting - how many times each byte value appears in the file
 
 	// -------------- template (DFFD) (see Template.cpp) ----------------
 	// Each df_size_ gives the size of a data field or whole array/structure.  If -ve take abs value.
