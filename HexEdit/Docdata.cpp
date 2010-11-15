@@ -65,7 +65,7 @@ IMPLEMENT_DYNAMIC(CTrackHint, CObject)      // Need to invalidate extra things f
 
 size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address, int use_bg /*= -1*/)
 {
-	ASSERT(use_bg == -1 || use_bg == 2 || use_bg == 3 || use_bg == 4);   // 0 and 1 are no longer used
+	ASSERT(use_bg == -1 || use_bg == 2 || use_bg == 3 || use_bg == 4 || use_bg == 5);   // 0 and 1 are no longer used
 	ASSERT(address >= 0);
 	FILE_ADDRESS pos;           // Tracks file position of current location record
 	ploc_t pl;                  // Current location record
@@ -82,7 +82,13 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 	case 4:
 		pfile = pfile4_;        // Background compare thread file
 		break;
+	case 5:
+		pfile = pfile5_;        // Stats thread file
+		break;
 	default:
+		ASSERT(0);
+		// fall through
+	case -1:
 		pfile = pfile1_;		// Normal file
 	}
 
@@ -145,7 +151,20 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 				data_file3_[idx]->Seek(fileaddr + start, CFile::begin);
 				actual = data_file3_[idx]->Read((void *)buf, (UINT)tocopy);
 				break;
+			case 4:
+				ASSERT(data_file4_[idx] != NULL);
+				data_file4_[idx]->Seek(fileaddr + start, CFile::begin);
+				actual = data_file4_[idx]->Read((void *)buf, (UINT)tocopy);
+				break;
+			case 5:
+				ASSERT(data_file5_[idx] != NULL);
+				data_file5_[idx]->Seek(fileaddr + start, CFile::begin);
+				actual = data_file5_[idx]->Read((void *)buf, (UINT)tocopy);
+				break;
 			default:
+				ASSERT(0);
+				// fall through
+			case -1:
 				ASSERT(data_file_[idx] != NULL);
 				data_file_[idx]->Seek(fileaddr + start, CFile::begin);
 				actual = data_file_[idx]->Read((void *)buf, (UINT)tocopy);
@@ -206,6 +225,12 @@ int CHexEditDoc::AddDataFile(LPCTSTR name, BOOL temp /*=FALSE*/)
 				ASSERT(data_file4_[ii] == NULL);
 				data_file4_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 			}
+			// If background stats are on also open 5th copy of the file
+			if (pthread5_ != NULL)
+			{
+				ASSERT(data_file5_[ii] == NULL);
+				data_file5_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
+			}
 
 			temp_file_[ii] = temp;
 			return ii;
@@ -245,6 +270,13 @@ void CHexEditDoc::RemoveDataFile(int idx)
 			data_file4_[idx]->Close();
 			delete data_file4_[idx];
 			data_file4_[idx] = NULL;
+		}
+		if (pthread5_ != NULL)
+		{
+			ASSERT(data_file5_[idx] != NULL);
+			data_file5_[idx]->Close();
+			delete data_file5_[idx];
+			data_file5_[idx] = NULL;
 		}
 		// If the data file was a temp file remove it now it is closed
 		if (temp_file_[idx])

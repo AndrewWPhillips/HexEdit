@@ -94,9 +94,10 @@ END_MESSAGE_MAP()
 CHexEditDoc::CHexEditDoc()
  : start_search_event_(FALSE, TRUE), search_buf_(NULL),
    start_aerial_event_(FALSE, TRUE), aerial_buf_(NULL),
-   start_comp_event_  (FALSE, TRUE), comp_bufa_(NULL), comp_bufb_(NULL)
+   start_comp_event_  (FALSE, TRUE), comp_bufa_(NULL), comp_bufb_(NULL),
+   stats_buf_(NULL), c32_(NULL), c64_(NULL)
 {
-	pfile1_ = pfile2_ = pfile3_ = NULL;
+	pfile1_ = pfile2_ = pfile3_ = pfile5_ = NULL;
 	pfile1_compare_ = pfile4_ = pfile4_compare_ = NULL;  // Files used for compares
 
 	for (int ii = 0; ii < doc_loc::max_data_files; ++ii)
@@ -105,6 +106,7 @@ CHexEditDoc::CHexEditDoc()
 		data_file2_[ii] = NULL;
 		data_file3_[ii] = NULL;
 		data_file4_[ii] = NULL;
+		data_file5_[ii] = NULL;
 		temp_file_[ii] = FALSE;
 	}
 
@@ -126,6 +128,9 @@ CHexEditDoc::CHexEditDoc()
 	pthread4_ = NULL;
 	cv_count_ = 0;
 	bCompSelf_ = false;
+
+	// BG stats thread
+	pthread5_ = NULL;
 
 	// Template
 	ptree_ = NULL;         // XML tree wrapper for data format view
@@ -275,6 +280,8 @@ BOOL CHexEditDoc::OnNewDocument()
 
 	if (pthread2_ == NULL && CanDoSearch())
 		CreateSearchThread();
+	if (pthread5_ == NULL && CanDoStats())
+		CreateStatsThread();
 
 	OpenDataFormatFile("default");
 
@@ -313,7 +320,11 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 #ifdef _DEBUG
 	// Make sure no data files are open yet
 	for (ii = 0; ii < doc_loc::max_data_files; ++ii)
-		ASSERT(data_file_[ii] == NULL && data_file2_[ii] == NULL && data_file3_[ii] == NULL);
+		ASSERT(data_file2_[ii] == NULL &&
+		       data_file3_[ii] == NULL &&
+		       data_file4_[ii] == NULL &&
+			   data_file5_[ii] == NULL &&
+			   data_file_[ii] == NULL );
 #endif
 
 	// Get read-only flag from app (this was the only way to pass it here)
@@ -365,6 +376,11 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 			}
 			StartSearch();
 		}
+	}
+	if (CanDoStats())
+	{
+		CreateStatsThread();
+		StartStats();
 	}
 
 	// Keep track of time viewing/editing the file
@@ -844,6 +860,14 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 				delete data_file4_[ii];
 				data_file4_[ii] = NULL;
 			}
+			if (pthread5_ != NULL)
+			{
+				ASSERT(data_file5_[ii] != NULL);
+				data_file5_[ii]->Close();
+				delete data_file5_[ii];
+				data_file5_[ii] = NULL;
+			}
+
 			// If the data file was a temp file remove it now it is closed
 			if (temp_file_[ii])
 				remove(ss);
@@ -988,6 +1012,12 @@ void CHexEditDoc::close_file()
 	if (pthread4_ != NULL && pfile4_ != NULL)
 	{
 		CloseCompFile();
+	}
+	if (pthread5_ != NULL && pfile5_ != NULL)
+	{
+		pfile5_->Close();
+		delete pfile5_;
+		pfile5_ = NULL;
 	}
 }
 
@@ -1173,6 +1203,27 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 	{
 		OpenCompFile();
 	}
+	if (pthread5_ != NULL && 
+		(pfile5_ == NULL || pfile1_->GetFilePath() != pfile5_->GetFilePath()) )
+	{
+		if (pfile5_ != NULL)
+		{
+			pfile5_->Close();
+			delete pfile5_;
+			pfile5_ = NULL;
+		}
+
+		if (IsDevice())
+			pfile5_ = new CFileNC();
+		else
+			pfile5_ = new CFile64();
+		if (!pfile5_->Open(pfile1_->GetFilePath(),
+					CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
+		{
+			TRACE1("BG Stats file open failed for %p\n", this);
+			return FALSE;
+		}
+	}
 
 	return TRUE;
 }
@@ -1196,6 +1247,9 @@ void CHexEditDoc::DeleteContents()
 
 	// KillAerialThread() and KillCompThread() not required here as they are killed when the last view is closed
 
+	if (pthread5_ != NULL)
+		KillStatsThread();
+
 	undo_.clear();
 	loc_.clear();               // Done after thread killed so no docdata_ lock needed
 	base_type_ = 0;
@@ -1215,6 +1269,7 @@ void CHexEditDoc::DeleteContents()
 		ASSERT(data_file2_[ii] == NULL);  // should have been closed in KillSearchThread() call
 		ASSERT(data_file3_[ii] == NULL);  // should have been closed in KillAerialThread() call
 		ASSERT(data_file4_[ii] == NULL);  // should have been closed in KillCompThread() call
+		ASSERT(data_file5_[ii] == NULL);  // should have been closed in KillStatsThread() call
 	}
 
 	// Reset change tracking
@@ -1749,7 +1804,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 				return -1;              // open_file has already set mac_error_ = 10
 
 			length_ = file_len;
-			ASSERT(pthread2_ == NULL && pthread3_ == NULL && pthread4_ == NULL);   // Must modify loc_ before creating threads (else docdata_ needs to be locked)
+			ASSERT(pthread2_ == NULL && pthread3_ == NULL && pthread4_ == NULL && pthread5_ == NULL);   // Must modify loc_ before creating threads (else docdata_ needs to be locked)
 			loc_.push_back(doc_loc(FILE_ADDRESS(0), file_len));
 
 			// Save original status
