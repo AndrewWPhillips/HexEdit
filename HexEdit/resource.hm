@@ -9,8 +9,8 @@
 #define HIDC_ADDOP                      0x80750429    // IDD_CALC
 #define HIDC_ADDRBASE1                  0x810c0616    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_ADDRESS                    0x80e50437    // IDD_EMAIL
-#define HIDC_ADDRESS_FILE               0x8139043e    // IDD_OPT_WORKSPACE [English (United States)]
-#define HIDC_ADDRESS_SPECIFIED          0x8139043f    // IDD_OPT_WORKSPACE [English (United States)]
+#define HIDC_ADDRESS_FILE               0x81b6043e    // IDD_OPT_BACKUP [English (United States)]
+#define HIDC_ADDRESS_SPECIFIED          0x81b6043f    // IDD_OPT_BACKUP [English (United States)]
 #define HIDC_ADDR_DEC                   0x810c04b4    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_ADDR_HEX                   0x810c04b3    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_ADD_SCHEME                 0x80e60453    // IDD_OPT_COLOURS [English (United States)]
@@ -27,13 +27,19 @@
 #define HIDC_AUTOEXEC                   0x809e0415    // IDD_OPT_SYSTEM [English (United States)]
 #define HIDC_AUTOFIT                    0x810c0442    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_BACKSPACE                  0x8075040f    // IDD_CALC
-#define HIDC_BACKUP                     0x81390413    // IDD_OPT_WORKSPACE [English (United States)]
-#define HIDC_BACKUP_IF_SIZE             0x8139041c    // IDD_OPT_WORKSPACE [English (United States)]
-#define HIDC_BACKUP_PROMPT              0x81390415    // IDD_OPT_WORKSPACE [English (United States)]
-#define HIDC_BACKUP_SIZE                0x813904c4    // IDD_OPT_WORKSPACE [English (United States)]
-#define HIDC_BACKUP_SPACE               0x81390414    // IDD_OPT_WORKSPACE [English (United States)]
+#define HIDC_BACKUP                     0x81b60413    // IDD_OPT_BACKUP [English (United States)]
+#define HIDC_BACKUP_IF_SIZE             0x81b6041c    // IDD_OPT_BACKUP [English (United States)]
+#define HIDC_BACKUP_PAGE                0x8139064a    // IDD_OPT_WORKEDIT [English (United States)]
+#define HIDC_BACKUP_PROMPT              0x81b60415    // IDD_OPT_BACKUP [English (United States)]
+#define HIDC_BACKUP_SIZE                0x81b604c4    // IDD_OPT_BACKUP [English (United States)]
+#define HIDC_BACKUP_SPACE               0x81b60414    // IDD_OPT_BACKUP [English (United States)]
 #define HIDC_BASE_STORAGE_UNIT          0x813005af    // IDD_TPARSE
-#define HIDC_BG_SEARCH                  0x81390419    // IDD_OPT_WORKSPACE [English (United States)]
+#define HIDC_BG_DEVICE                  0x8139041e    // IDD_OPT_WORKEDIT [English (United States)]
+#define HIDC_BG_NETWORK                 0x8139041b    // IDD_OPT_WORKEDIT [English (United States)]
+#define HIDC_BG_OPTICAL                 0x8139041d    // IDD_OPT_WORKEDIT [English (United States)]
+#define HIDC_BG_REMOVEABLE              0x8139041c    // IDD_OPT_WORKEDIT [English (United States)]
+#define HIDC_BG_SEARCH                  0x81390419    // IDD_OPT_WORKEDIT [English (United States)]
+#define HIDC_BG_STATS                   0x8139041a    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_BIG_ENDIAN                 0x80a30469    // IDD_PROP_DECIMAL [English (United States)]
 #define HIDC_BIG_ENDIAN_FILE_ACCESS     0x8075048c    // IDD_CALC
 #define HIDC_BINARY                     0x807503ec    // IDD_CALC
@@ -192,8 +198,8 @@
 #define HIDC_EQUALS                     0x80750412    // IDD_CALC
 #define HIDC_EVEN_REVERSE               0x81b30642    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_EXPLORER                   0x81280598    // IDD_EXPLORER
-#define HIDC_EXPORT_ADDRESS             0x813904c2    // IDD_OPT_WORKSPACE [English (United States)]
-#define HIDC_EXPORT_LINELEN             0x813904c5    // IDD_OPT_WORKSPACE [English (United States)]
+#define HIDC_EXPORT_ADDRESS             0x81b604c2    // IDD_OPT_BACKUP [English (United States)]
+#define HIDC_EXPORT_LINELEN             0x81b604c5    // IDD_OPT_BACKUP [English (United States)]
 #define HIDC_FILENAME                   0x81370610    // IDD_OPT_WINGENERAL [English (United States)]
 #define HIDC_FILES_SELECTED             0x810e04d1    // IDD_RECENT_FILES
 #define HIDC_FILE_ACCESSED              0x80970430    // IDD_PROP_FILE [English (United States)]
@@ -311,7 +317,7 @@
 #define HIDC_INFO_VIEW_TIME             0x81270606    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INSERT                     0x813604b2    // IDD_OPT_WINEDIT [English (United States)]
 #define HIDC_INSTALL_CODE               0x80e70437    // IDD_REGISTER
-#define HIDC_INTELLIGENT_UNDO           0x81390416    // IDD_OPT_WORKSPACE [English (United States)]
+#define HIDC_INTELLIGENT_UNDO           0x81390416    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_INT_ABBREV                 0x819a0623    // IDD_OPT_WORKLAYOUT [English (United States)]
 #define HIDC_LARGE_CURSOR               0x80eb0618    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_LESS                       0x8075042b    // IDD_CALC
@@ -483,7 +489,7 @@
 #define HIDC_UNARY_SIGN                 0x80750438    // IDD_CALC
 #define HIDC_UNARY_SQUARE               0x80750444    // IDD_CALC
 #define HIDC_UNARY_SQUARE_ROOT          0x80750446    // IDD_CALC
-#define HIDC_UNDO_MERGE                 0x813904c6    // IDD_OPT_WORKSPACE [English (United States)]
+#define HIDC_UNDO_MERGE                 0x813904c6    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_UP                         0x80e60479    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_UPDATE                     0x809e0622    // IDD_OPT_SYSTEM [English (United States)]
 #define HIDC_USER                       0x80e7043f    // IDD_REGISTER

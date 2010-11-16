@@ -2434,12 +2434,13 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Options", "BackupIfLess", backup_size_);
 	WriteProfileInt("Options", "BackupPrompt", int(backup_prompt_));
 	WriteProfileInt("Options", "BackgroundSearch", bg_search_ ? 1 : 0);
+#ifdef BG_STATS  // only save new options if the new values can be used to avoid confusion
 	WriteProfileInt("Options", "BackgroundStats", bg_stats_ ? 1 : 0);
 	WriteProfileInt("Options", "BackgroundExcludeNetwork", bg_exclude_network_ ? 1 : 0);
 	WriteProfileInt("Options", "BackgroundExcludeRemoveable", bg_exclude_removeable_ ? 1 : 0);
 	WriteProfileInt("Options", "BackgroundExcludeOptical", bg_exclude_optical_ ? 1 : 0);
 	WriteProfileInt("Options", "BackgroundExcludeDevice", bg_exclude_device_ ? 1 : 0);
-
+#endif
 	WriteProfileInt("Options", "LargeCursor", large_cursor_ ? 1 : 0);
 	WriteProfileInt("Options", "OtherAreaCursor", show_other_ ? 1 : 0);
 

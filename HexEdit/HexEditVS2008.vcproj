@@ -423,6 +423,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\BGstats.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\BigInteger.cpp"
 				>
 			</File>

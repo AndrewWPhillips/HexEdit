@@ -412,8 +412,52 @@ private:
 	CMFCButton ctl_doc_butn_;
 };
 
+#ifdef BG_STATS  // CWorkspaceEditPage replaces CWorkspacePage, new CBackupsPage
+
 /////////////////////////////////////////////////////////////////////////////
-// CWorkspacePage - workspace editing options
+// CWorkspaceEditPage - workspace editing options
+
+class CWorkspaceEditPage : public COptPage
+{
+	DECLARE_DYNCREATE(CWorkspaceEditPage)
+
+// Construction
+public:
+	CWorkspaceEditPage() : COptPage(IDD), pDocPage(NULL), pBackupPage(NULL) { }
+
+	enum { IDD = IDD_OPT_WORKEDIT };
+
+	void SetDocEditPage(COptPage * pPage) { pDocPage = pPage; }
+	void SetBackupPage(COptPage * pPage)  { pBackupPage = pPage; }
+
+// Overrides
+public:
+	virtual void OnOK();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+	virtual BOOL OnInitDialog();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnChange();
+	afx_msg void OnChangeBackground();
+	afx_msg void OnDocPage();
+	afx_msg void OnBackupPage();
+	DECLARE_MESSAGE_MAP()
+
+private:
+	void fix_controls();
+
+	COptPage * pDocPage;        // corresp, document (edit) page
+	CMFCButton ctl_doc_butn_;
+	COptPage * pBackupPage;     // contains backup/export options that used to be on this page
+	CMFCButton ctl_backup_butn_;
+};
+#else
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspacePage - OLD workspace editing options
 
 class CWorkspacePage : public COptPage
 {
@@ -455,6 +499,7 @@ private:
 	COptPage * pDocPage;        // corresp, document (edit) page
 	CMFCButton ctl_doc_butn_;
 };
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CTemplatePage dialog - global template options
@@ -979,7 +1024,11 @@ protected:
 
 	CWorkspaceLayoutPage workspacelayoutPage_;
 	CWorkspaceDisplayPage workspacedisplayPage_;
+#ifdef BG_STATS
+	CWorkspaceEditPage workspaceeditPage_;
+#else
 	CWorkspacePage workspacePage_;
+#endif
 	CTipsPage tipsPage_;
 	CTemplatePage templatePage_;
 

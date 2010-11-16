@@ -287,6 +287,7 @@
 #define IDB_VIEW1                       313
 #define ID_INTEGER_STRLEN               313
 #define IDD_OPT_WORKSPACE               313
+#define IDD_OPT_WORKEDIT                313
 #define IDB_VIEW_HOT                    314
 #define ID_INTEGER_STRCHR               314
 #define IDB_REFRESH1                    315
@@ -410,6 +411,7 @@
 #define IDR_CALC_GO                     435
 #define IDD_OPT_PRINT_GENERAL           436
 #define IDD_OPT_PRINT_DECORATIONS       437
+#define IDD_OPT_BACKUP                  438
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -500,19 +502,24 @@
 #define IDC_MARK_STORE                  1050
 #define IDC_TABICONS                    1050
 #define IDC_SEL_LEN_DIV2                1050
+#define IDC_BG_STATS                    1050
 #define IDC_OPEN_INSERT                 1051
 #define IDC_MARK_CLEAR                  1051
 #define IDC_CLEAR_HIST                  1051
 #define IDC_INFO_COMMENTS               1051
 #define IDC_NICE_ADDRESSES              1051
 #define IDC_RESTORE2                    1051
+#define IDC_BG_NETWORK                  1051
 #define IDC_OPEN_READONLY               1052
 #define IDC_MARK_ADD                    1052
 #define IDC_BACKUP_IF_SIZE              1052
+#define IDC_BG_REMOVEABLE               1052
 #define IDC_OPEN_ALLOW_MODS             1053
 #define IDC_MARK_SUBTRACT               1053
+#define IDC_BG_OPTICAL                  1053
 #define IDC_OPEN_MAX                    1054
 #define IDC_MARK_AT_STORE               1054
+#define IDC_BG_DEVICE                   1054
 #define IDC_OPEN_OEM                    1055
 #define IDC_SEL_STORE                   1055
 #define IDC_DEC_64BIT                   1056
@@ -1168,6 +1175,7 @@
 #define IDC_EVEN_REVERSE                1604
 #define IDC_FIRST_FOOTER_OPTS           1605
 #define IDC_FIRST_FOOTER                1606
+#define IDC_BACKUP_PAGE                 1610
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1615,7 +1623,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        440
 #define _APS_NEXT_COMMAND_VALUE         39152
-#define _APS_NEXT_CONTROL_VALUE         1610
+#define _APS_NEXT_CONTROL_VALUE         1611
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

@@ -263,7 +263,7 @@ void COptSheet::page_init()
 	sysgeneralPage_.SetHistPage(&histPage_);
 	workspacelayoutPage_.SetStartupPage(&sysgeneralPage_);
 	windisplayPage_.SetGlobalDisplayPage(&workspacedisplayPage_);
-	wineditPage_.SetGlobalEditPage(&workspacePage_);
+	wineditPage_.SetGlobalEditPage(&workspaceeditPage_);
 
 	// Add the rest of the pages and categories (System/General already added in init() above).
 	AddPageToTree(pCatSys_, &filtersPage_, IMG_FILTERS, IMG_FILTERS);
@@ -277,7 +277,7 @@ void COptSheet::page_init()
 	CMFCPropertySheetCategoryInfo * pCatWS  = AddTreeCategory("Workspace", IMG_FOLDER, IMG_FOLDER_SEL);
 	AddPageToTree(pCatWS, &workspacelayoutPage_, IMG_WORKSPACELAYOUT, IMG_WORKSPACELAYOUT);
 	AddPageToTree(pCatWS, &workspacedisplayPage_, IMG_WORKSPACEDISPLAY, IMG_WORKSPACEDISPLAY);
-	AddPageToTree(pCatWS, &workspacePage_, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
+	AddPageToTree(pCatWS, &workspaceeditPage_, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
 	AddPageToTree(pCatWS, &tipsPage_, IMG_TIP, IMG_TIP);
 	AddPageToTree(pCatWS, &templatePage_, IMG_TEMPLATE, IMG_TEMPLATE);
 	if (pview != NULL)
@@ -290,7 +290,7 @@ void COptSheet::page_init()
 
 		// Allow global display page to jump to doc display page
 		workspacedisplayPage_.SetDocDisplayPage(&windisplayPage_);
-		workspacePage_.SetDocEditPage(&wineditPage_);
+		workspaceeditPage_.SetDocEditPage(&wineditPage_);
 	}
 	else
 	{
@@ -655,6 +655,138 @@ void CHistoryPage::OnChange()
 	SetModified(TRUE);
 }
 
+#ifdef BG_STATS  // CWorkspaceEditPage replaces CWorkspacePage, new CBackupsPage
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspaceEditPage property page
+
+IMPLEMENT_DYNCREATE(CWorkspaceEditPage, COptPage)
+
+void CWorkspaceEditPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+	DDX_Check(pDX, IDC_BG_SEARCH, pParent->val_.bg_search_);
+	DDX_Check(pDX, IDC_BG_STATS, pParent->val_.bg_stats_);
+	DDX_Check(pDX, IDC_BG_NETWORK, pParent->val_.bg_exclude_network_);
+	DDX_Check(pDX, IDC_BG_OPTICAL, pParent->val_.bg_exclude_optical_);
+	DDX_Check(pDX, IDC_BG_REMOVEABLE, pParent->val_.bg_exclude_removeable_);
+	DDX_Check(pDX, IDC_BG_DEVICE, pParent->val_.bg_exclude_device_);
+
+	DDX_Check(pDX, IDC_INTELLIGENT_UNDO, pParent->val_.intelligent_undo_);
+	DDX_Text(pDX, IDC_UNDO_MERGE, pParent->val_.undo_limit_);
+	DDV_MinMaxUInt(pDX, pParent->val_.undo_limit_, 1, 16);
+
+	DDX_Control(pDX, IDC_DOC_PAGE, ctl_doc_butn_);
+	DDX_Control(pDX, IDC_BACKUP_PAGE, ctl_backup_butn_);
+}
+
+BEGIN_MESSAGE_MAP(CWorkspaceEditPage, COptPage)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_BG_SEARCH, OnChangeBackground)
+	ON_BN_CLICKED(IDC_BG_STATS, OnChangeBackground)
+	ON_BN_CLICKED(IDC_BG_NETWORK, OnChange)
+	ON_BN_CLICKED(IDC_BG_OPTICAL, OnChange)
+	ON_BN_CLICKED(IDC_BG_REMOVEABLE, OnChange)
+	ON_BN_CLICKED(IDC_BG_DEVICE, OnChange)
+	ON_BN_CLICKED(IDC_INTELLIGENT_UNDO, OnChange)
+	ON_EN_CHANGE(IDC_UNDO_MERGE, OnChange)
+
+	ON_BN_CLICKED(IDC_DOC_PAGE, OnDocPage)
+	ON_BN_CLICKED(IDC_BACKUP_PAGE, OnBackupPage)
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspaceEditPage message handlers
+
+BOOL CWorkspaceEditPage::OnInitDialog() 
+{
+	COptPage::OnInitDialog();
+
+	// Fix control stuff that does not vary
+	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_UNDO_MERGE))->SetRange(1, 16);
+	GetDlgItem(IDC_DOC_PAGE)->EnableWindow(pDocPage != NULL);
+	ctl_doc_butn_.SetImage(IDB_DOCEDIT);
+	ctl_backup_butn_.SetImage(IDB_DOCEDIT);
+
+	// fix controls where their state depends on other controls
+	fix_controls();
+
+	return TRUE;
+}
+
+void CWorkspaceEditPage::fix_controls()
+{
+	// If either bg search or stats are on then we can enable all the "exclude" check boxes
+	bool enable = pParent->val_.bg_search_ || pParent->val_.bg_stats_;
+
+	ASSERT(GetDlgItem(IDC_BG_NETWORK) != NULL);
+	GetDlgItem(IDC_BG_NETWORK)->EnableWindow(enable);
+	ASSERT(GetDlgItem(IDC_BG_OPTICAL) != NULL);
+	GetDlgItem(IDC_BG_OPTICAL)->EnableWindow(enable);
+	ASSERT(GetDlgItem(IDC_BG_REMOVEABLE) != NULL);
+	GetDlgItem(IDC_BG_REMOVEABLE)->EnableWindow(enable);
+	ASSERT(GetDlgItem(IDC_BG_DEVICE) != NULL);
+	GetDlgItem(IDC_BG_DEVICE)->EnableWindow(enable);
+}
+
+void CWorkspaceEditPage::OnDocPage()
+{
+	if (pDocPage != NULL)
+		pParent->SetActivePage(pDocPage);
+}
+
+void CWorkspaceEditPage::OnBackupPage()
+{
+	if (pBackupPage != NULL)
+		pParent->SetActivePage(pBackupPage);
+}
+
+void CWorkspaceEditPage::OnOK() 
+{
+	theApp.set_options(pParent->val_);
+	COptPage::OnOK();
+}
+
+static DWORD id_pairs_we[] = { 
+	IDC_BG_SEARCH, HIDC_BG_SEARCH,
+	IDC_BG_STATS, HIDC_BG_STATS,
+	IDC_BG_NETWORK, HIDC_BG_NETWORK,
+	IDC_BG_OPTICAL, HIDC_BG_OPTICAL,
+	IDC_BG_REMOVEABLE, HIDC_BG_REMOVEABLE,
+	IDC_BG_DEVICE, HIDC_BG_DEVICE,
+	IDC_INTELLIGENT_UNDO, HIDC_INTELLIGENT_UNDO,
+	IDC_UNDO_MERGE, HIDC_UNDO_MERGE,
+	IDC_SPIN_UNDO_MERGE, HIDC_UNDO_MERGE,
+	IDC_DOC_PAGE, HIDC_DOC_PAGE,
+	IDC_BACKUP_PAGE, HIDC_BACKUP_PAGE,
+	0,0 
+};
+
+BOOL CWorkspaceEditPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_we);
+	return TRUE;
+}
+
+void CWorkspaceEditPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_we);
+}
+
+void CWorkspaceEditPage::OnChange() 
+{
+	SetModified(TRUE);
+}
+
+void CWorkspaceEditPage::OnChangeBackground() 
+{
+	UpdateData();
+	fix_controls();
+	SetModified(TRUE);
+}
+
+#else
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspacePage property page
@@ -834,6 +966,7 @@ void CWorkspacePage::OnBackupIfSize()
 	
 	SetModified(TRUE);
 }
+#endif
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
@@ -4642,6 +4775,3 @@ void CWindowEditPage::OnSelchangeInsert()
 {
 	SetModified(TRUE);
 }
-
-
-
