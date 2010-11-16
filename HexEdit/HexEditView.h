@@ -718,6 +718,7 @@ public:
 	afx_msg void OnCompress();
 	afx_msg void OnDecompress();
 	afx_msg void OnMd5();
+	afx_msg void OnSha1();
 	afx_msg void OnUppercase();
 	afx_msg void OnLowercase();
 	afx_msg void OnHighlightSelect();

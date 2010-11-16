@@ -562,6 +562,7 @@ BEGIN
             MENUITEM "&CRC 32",                     ID_CRC32
             MENUITEM SEPARATOR
             MENUITEM "&MD5",                        ID_MD5
+            MENUITEM "&SHA1",                       ID_SHA1
         END
         POPUP "Encryption"
         BEGIN

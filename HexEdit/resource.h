@@ -1353,6 +1353,7 @@
 #define ID_CRC32                        32996
 #define ID_CRC_CCITT                    32997
 #define ID_MD5                          32998
+#define ID_SHA1                         32999
 #define ID_XOR_BYTE                     33001
 #define ID_XOR_16BIT                    33002
 #define ID_XOR_32BIT                    33003

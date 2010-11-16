@@ -42,6 +42,7 @@
 #include "CopyCSrc.h"     // For Copy as C Source dialog
 #include "zlib/zlib.h"    // For compression
 #include "md5.h"          // For MD5 hash
+#include "sha1.h"         // For SHA1 hash
 #include "HelpID.hm"
 
 #ifdef _DEBUG
@@ -555,6 +556,8 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_ZLIB_DECOMPRESS, OnUpdateSelNZ)
 	ON_COMMAND(ID_MD5, OnMd5)
 	ON_UPDATE_COMMAND_UI(ID_MD5, OnUpdateByteNZ)
+	ON_COMMAND(ID_SHA1, OnSha1)
+	ON_UPDATE_COMMAND_UI(ID_SHA1, OnUpdateByteNZ)
 
 	ON_COMMAND(ID_UPPERCASE, OnUppercase)
 	ON_UPDATE_COMMAND_UI(ID_UPPERCASE, OnUpdateConvert)
@@ -16467,6 +16470,89 @@ void CHexEditView::OnMd5()
 
 	// Record in macro since we did it successfully
 	theApp.SaveToMacro(km_checksum, CHECKSUM_MD5);
+
+func_return:
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+
+	if (buf != NULL)
+		delete[] buf;
+}
+
+void CHexEditView::OnSha1()
+{
+	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	unsigned char *buf = NULL;
+
+	// Get current address or selection
+	FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
+	GetSelAddr(start_addr, end_addr);
+
+	if (start_addr >= end_addr)
+	{
+		// No selection, presumably in macro playback
+		ASSERT(theApp.playing_);
+		AfxMessageBox("There is no selection to calculate SHA1 on");
+		theApp.mac_error_ = 10;
+		return;
+	}
+	ASSERT(start_addr < GetDocument()->length());
+
+	// Get a buffer - fairly large for efficiency
+	size_t len, buflen = size_t(min(4096, end_addr - start_addr));
+	try
+	{
+		buf = new unsigned char[buflen];
+	}
+	catch (std::bad_alloc)
+	{
+		AfxMessageBox("Insufficient memory");
+		theApp.mac_error_ = 10;
+		return;
+	}
+	ASSERT(buf != NULL);
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
+
+	sha1_context ctx;
+	sha1_starts(&ctx);
+	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+	{
+		// Get the next buffer full from the document
+		len = size_t(min(buflen, end_addr - curr));
+		VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+
+		sha1_update(&ctx, buf, len);
+
+		if (AbortKeyPress() &&
+			AfxMessageBox("Abort SHA1 calculation?", MB_YESNO) == IDYES)
+		{
+			theApp.mac_error_ = 10;
+			goto func_return;
+		}
+
+		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+	}
+
+	unsigned char digest[20];
+	sha1_finish(&ctx, digest);
+
+	{
+		// Display SHA1 value (when calculator can handle 128 bits we will put it there instead)
+		CString ss, fmt;
+		if (theApp.hex_ucase_)
+			fmt = "SHA1: %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X";
+		else
+			fmt = "SHA1: %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x";
+		ss.Format(fmt,
+				digest[0],  digest[1],  digest[2],  digest[3],
+				digest[4],  digest[5],  digest[6],  digest[7],
+				digest[8],  digest[9],  digest[10], digest[11],
+				digest[12], digest[13], digest[14], digest[15],
+				digest[16], digest[17], digest[18], digest[19]);
+		AfxMessageBox(ss);
+	}
+
+	// Record in macro since we did it successfully
+	theApp.SaveToMacro(km_checksum, CHECKSUM_SHA1);
 
 func_return:
 	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar

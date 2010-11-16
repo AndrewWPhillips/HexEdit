@@ -1318,6 +1318,9 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				case CHECKSUM_MD5:
 					pv_->OnMd5();
 					break;
+				case CHECKSUM_SHA1:
+					pv_->OnSha1();
+					break;
 				default:
 					ASSERT(0);
 				}

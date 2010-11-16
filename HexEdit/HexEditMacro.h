@@ -337,6 +337,7 @@ enum checksum_type  // used with km_checksum
 
 	// Cryptographic checksums (hash codes)
 	CHECKSUM_MD5 = 21,
+	CHECKSUM_SHA1,
 };
 
 struct mouse_sel

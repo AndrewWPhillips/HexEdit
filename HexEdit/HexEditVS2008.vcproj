@@ -711,6 +711,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\sha1.c"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="SimpleSplitter.cpp"
 				>
 			</File>
@@ -1125,6 +1137,10 @@
 			</File>
 			<File
 				RelativePath=".\Security.h"
+				>
+			</File>
+			<File
+				RelativePath=".\sha1.h"
 				>
 			</File>
 			<File
