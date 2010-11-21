@@ -100,19 +100,19 @@ unsigned short crc16(const void *buffer, size_t len);  // NOTE: also see Registe
 
 unsigned long crc_32(const void *buffer, size_t len);
 // Use the following for CRC 32 which is too big for a single buffer
-void crc_32_init();
-void crc_32_update(const void *buf, size_t len);
-DWORD crc_32_final();
+void * crc_32_init();
+void crc_32_update(void * handle, const void *buf, size_t len);
+DWORD crc_32_final(void * handle);
 
 unsigned short crc_ccitt(const void *buf, size_t len);  // all in one CRC CCITT
-void crc_ccitt_init();
-void crc_ccitt_update(const void *buf, size_t len);
-unsigned short crc_ccitt_final();
+void * crc_ccitt_init_b();
+void crc_ccitt_b_update(void * handle, const void *buf, size_t len);
+unsigned short crc_ccitt_b_final(void * handle);
 
 unsigned short crc_ccitt2(const void *buf, size_t len);  // all in one CRC CCITT
-void crc_ccitt2_init(int init = -1);
-void crc_ccitt2_update(const void *buf, size_t len);
-unsigned short crc_ccitt2_final();
+void * crc_ccitt2_init();
+void crc_ccitt2_update(void *, const void *buf, size_t len);
+unsigned short crc_ccitt2_final(void *);
 
 // Encryption routines NOTE: also see RegisterDlg.cpp
 void set_key(const char *pp, size_t len);

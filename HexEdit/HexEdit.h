@@ -63,6 +63,7 @@ typedef __int64 FILE_ADDRESS;
 #endif
 
 // Conditional compilation flags - always to be used
+#define BOOST_CRC    1
 #define BG_STATS         1  // calc bg stats (including chnages to options pages and BGstats.cpp)
 #define USE_OWN_PRINTDLG 1  // Replace the standard print dialog with our own derived dialog
 #define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)

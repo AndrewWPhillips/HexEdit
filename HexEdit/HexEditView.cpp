@@ -16288,13 +16288,14 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 	T val;
+	void * hh;
 	switch (op)
 	{
 	case CHECKSUM_CRC_CCITT:
-		crc_ccitt_init();
+		hh = crc_ccitt2_init();
 		break;
 	case CHECKSUM_CRC32:
-		crc_32_init();
+		hh = crc_32_init();
 		break;
 	case CHECKSUM_8:
 	case CHECKSUM_16:
@@ -16325,10 +16326,10 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 			}
 			break;
 		case CHECKSUM_CRC_CCITT:
-			crc_ccitt_update(buf, len);
+			crc_ccitt2_update(hh, buf, len);
 			break;
 		case CHECKSUM_CRC32:
-			crc_32_update(buf, len);
+			crc_32_update(hh, buf, len);
 			break;
 		}
 
@@ -16344,10 +16345,10 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	switch (op)
 	{
 	case CHECKSUM_CRC_CCITT:
-		val = T(crc_ccitt_final());
+		val = T(crc_ccitt2_final(hh));
 		break;
 	case CHECKSUM_CRC32:
-		val = T(crc_32_final());
+		val = T(crc_32_final(hh));
 		break;
 	}
 
