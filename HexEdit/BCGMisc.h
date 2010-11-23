@@ -27,6 +27,7 @@ protected:
 	static BYTE saved_charset;
 	CHexEditFontCombo() : CMFCToolBarFontComboBox() {}
 public:
+#if 0 // This causes problems due to unavoidable call to RebuildFonts which includes printer fonts (can be very slow)
 	CHexEditFontCombo(UINT uiID, int iImage,
 						int nFontType = DEVICE_FONTTYPE | RASTER_FONTTYPE | TRUETYPE_FONTTYPE,
 						BYTE nCharSet = DEFAULT_CHARSET,
@@ -35,6 +36,23 @@ public:
 		CMFCToolBarFontComboBox(uiID, iImage, nFontType, nCharSet, dwStyle, iWidth, nPitchAndFamily)
 	{
 	}
+#else
+	CHexEditFontCombo(UINT uiID, int iImage,
+						int nFontType = DEVICE_FONTTYPE | RASTER_FONTTYPE | TRUETYPE_FONTTYPE,
+						BYTE nCharSet = DEFAULT_CHARSET,
+						DWORD dwStyle = CBS_DROPDOWN, int iWidth = 0,
+						BYTE nPitchAndFamily = DEFAULT_PITCH) :
+		CMFCToolBarFontComboBox()
+	{
+		// The defaults for nFontType, nCharSet, nPitchAndFamily are OK so do nothing with those
+		m_nID = uiID;
+		SetImage(iImage);
+		m_dwStyle = dwStyle | WS_CHILD | WS_VISIBLE | WS_VSCROLL;
+		m_iWidth = iWidth;
+		RebuildFonts();
+		SetContext();
+	}
+#endif
 
 #if 0  // This is not necessary as the first time OnUpdateFont is called the charset will be fixed
 	// This is needed when the base class changes the charset (eg after deserializing) and we have to keep
@@ -53,11 +71,12 @@ public:
 		}
 	}
 #endif
-	// We override this to avoid taking printer fonts (can cause major pauses)
+	// We use this instead of the base class CMFCToolBarFontComboBox::RebuildFonts
+	// which can be very slow due to enumerating printer fonts
 	void RebuildFonts()
 	{
 		CObList& lstFonts = m_pLstFontsExternal != NULL ? *m_pLstFontsExternal : m_lstFonts;
-		ASSERT(lstFonts.IsEmpty());
+		lstFonts.RemoveAll();
 
 		// First, take the screen fonts:
 		CWindowDC dc(NULL);
