@@ -98,7 +98,7 @@ static char THIS_FILE[] = __FILE__;
 
 extern CHexEditApp theApp;
 
-BYTE CHexEditFontCombo::saved_charset = 147;  // (see BCGMisc.h) initially 147 to not match 
+//BYTE CHexEditFontCombo::saved_charset = 147;  // (see BCGMisc.h) initially 147 to not match 
 											  // anything -> force initial rebuild of the font list
 static bool in_recalc_display = false;
 
@@ -12675,6 +12675,8 @@ void CHexEditView::OnFontName()
 void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 {
 	CObList listButtons;
+	static int last_font_required = -1;
+	bool font_list_chnaged = last_font_required != display_.FontRequired();
 	if (CMFCToolBar::GetCommandButtons (IDC_FONTNAME, listButtons) > 0)
 	{
 		for (POSITION posCombo = listButtons.GetHeadPosition (); posCombo != NULL; )
@@ -12685,6 +12687,7 @@ void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 			{
 				if (display_.FontRequired() == FONT_OEM)
 				{
+					if (font_list_chnaged)
 					pCombo->FixFontList(OEM_CHARSET);
 					CString ss = pCombo->GetText();
 					if (ss != oem_lf_.lfFaceName)
@@ -12692,6 +12695,7 @@ void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 				}
 				else
 				{
+					if (font_list_chnaged)
 					pCombo->FixFontList(ANSI_CHARSET);
 					CString ss = pCombo->GetText();
 					if (ss != lf_.lfFaceName)
@@ -12700,6 +12704,7 @@ void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 			}
 		}
 	}
+	last_font_required = display_.FontRequired();  // remeber the font set we are now using
 }
 
 void CHexEditView::OnFontSize()

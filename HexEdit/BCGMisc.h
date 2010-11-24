@@ -24,7 +24,7 @@ class CHexEditFontCombo : public CMFCToolBarFontComboBox
 {
 	DECLARE_SERIAL(CHexEditFontCombo)
 protected:
-	static BYTE saved_charset;
+	//static BYTE saved_charset;
 	CHexEditFontCombo() : CMFCToolBarFontComboBox() {}
 public:
 #if 0 // This causes problems due to unavoidable call to RebuildFonts which includes printer fonts (can be very slow)
@@ -88,11 +88,13 @@ public:
 		::EnumFontFamiliesEx(dc.GetSafeHdc(), &lf, (FONTENUMPROC) EnumFamScreenCallBackEx, (LPARAM) this, NULL);
 	}
 
+#if 0
 	// Is this control consistent with the static font list
 	bool OKToRead()
 	{
 		return m_nCharSet == saved_charset;
 	}
+
 
 	// Required when we change between ANSI and OEM fonts
 	void FixFontList(BYTE nCharSet)
@@ -115,6 +117,19 @@ public:
 			SetContext();
 		}
 	}
+#else
+	void FixFontList(BYTE nCharSet)
+	{
+		// rebuild the font list
+		ClearFonts();
+		m_nCharSet = nCharSet;
+		RebuildFonts();
+
+		// Fill in the combo with the new list
+		RemoveAllItems();
+		SetContext();
+	}
+#endif
 #ifdef _DEBUG
 	void Check()
 	{
