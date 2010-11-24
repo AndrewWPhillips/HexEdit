@@ -144,6 +144,9 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #ifdef BOOST_CRC
 #include <boost/crc.hpp>
 #endif
+#ifdef BOOST_RAND
+#include <boost/random/mersenne_twister.hpp>
+#endif
 #include <imagehlp.h>           // For ::MakeSureDirectoryPathExists()
 #include <winioctl.h>           // For DISK_GEOMETRY, IOCTL_DISK_GET_DRIVE_GEOMETRY etc
 #include <direct.h>             // For _getdrive()
@@ -2120,6 +2123,7 @@ static void sub1(char *ss)
 //-----------------------------------------------------------------------------
 // PRNGs
 
+#ifndef BOOST_RAND
 // Mersenne Twist PRNG
 #if 1
 // constants for MT11213A:
@@ -2153,7 +2157,7 @@ static unsigned long rand1_state[MERS_N];       // State vector
 static bool rand1_init = false;
 #endif
 
-void rand1_seed(unsigned long seed)
+static void rand1_seed(unsigned long seed)
 {
 	for (rand1_ind = 0; rand1_ind < MERS_N; rand1_ind++)
 	{
@@ -2165,7 +2169,7 @@ void rand1_seed(unsigned long seed)
 #endif
 }
 
-unsigned long rand1()
+static unsigned long rand1()
 {
 	ASSERT(rand1_init);
 
@@ -2210,7 +2214,7 @@ static unsigned long randbuffer[RANROT_KK];
 static unsigned long randbufcopy[RANROT_KK*2];
 #endif
 
-void rand2_seed(unsigned long seed)
+static void rand2_seed(unsigned long seed)
 {
 	for (int ii = 0; ii < RANROT_KK; ++ii)
 	{
@@ -2227,7 +2231,7 @@ void rand2_seed(unsigned long seed)
 #endif
 }
 
-unsigned long rand2()
+static unsigned long rand2()
 {
 	unsigned long retval = randbuffer[rand2_p1] = _lrotl(randbuffer[rand2_p2], RANROT_R1) +
 												  _lrotl(randbuffer[rand2_p1], RANROT_R2);
@@ -2280,6 +2284,20 @@ unsigned long rand_good()
 	rand_good_val[ind] = rand2();               // Get the next value
 	return retval;
 }
+#else // BOOST_RAND
+static boost::mt19937 rng;
+
+void rand_good_seed(unsigned long seed)
+{
+	rng.seed(boost::mt19937::result_type(seed));
+}
+
+unsigned long rand_good()
+{
+	return rng();
+}
+                          
+#endif // BOOST_RAND
 
 //-----------------------------------------------------------------------------
 // Memory
@@ -2359,10 +2377,10 @@ void * crc_16_init()
 }
 
 void crc_16_update(void *hh, const void *buf, size_t len)
-		{
+{
 	boost::crc_16_type *pcrc = (boost::crc_16_type *)hh;
 	pcrc->process_bytes(buf, len);
-		}
+}
 
 unsigned short crc_16_final(void *hh)
 {

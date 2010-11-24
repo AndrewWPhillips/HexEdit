@@ -87,8 +87,6 @@ bool AbortKeyPress();
 
 void DummyRegAccess(unsigned int group = 0);
 
-unsigned long rand1();
-unsigned long rand2();
 void rand_good_seed(unsigned long seed);
 unsigned long rand_good();
 

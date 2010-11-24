@@ -5517,22 +5517,4 @@ void CDataFormatView::OnFilePrintPreview()
 
 void CDataFormatView::OnViewtest() 
 {
-	CWaitCursor wc;
-	int first = rand1();
-	int second = rand1();
-	__int64 ii;
-
-	for (ii = 0; ii < 0xFffffFFFF; ++ii)
-	{
-		if (rand1() == first && rand1() == second)
-			break;
-	}
-	if (ii == 0xFffffFFFF)
-		AfxMessageBox("Cycle > 2^36");
-	else
-	{
-		char buf[64];
-		sprintf(buf, "Cycle = %I64d", ii);
-		AfxMessageBox(buf);
-	}
 }
