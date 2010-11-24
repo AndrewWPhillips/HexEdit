@@ -176,7 +176,7 @@ void CHexFileList::Add(LPCTSTR lpszPathName)
 	CString ss(szTemp);
 	name_.push_back(ss);
 	ss.MakeUpper();
-	crc_.push_back(crc16(ss, ss.GetLength()));
+	crc_.push_back(crc_16(ss, ss.GetLength()));
 	opened_.push_back(time(NULL));
 	data_.push_back(saved_data);
 
@@ -268,7 +268,7 @@ bool CHexFileList::ReadFile()
 		if (ss.IsEmpty()) continue;
 		name_.push_back(ss);
 		ss.MakeUpper();
-		crc_.push_back(crc16(ss, ss.GetLength()));
+		crc_.push_back(crc_16(ss, ss.GetLength()));
 
 		// Get the last opened date
 		AfxExtractSubString(ss, strLine, 1, '|');
@@ -344,7 +344,7 @@ void CHexFileList::ReadList()
 			ss = m_arrNames[ii];
 			name_.push_back(ss);
 			ss.MakeUpper();
-			crc_.push_back(crc16(ss, ss.GetLength()));
+			crc_.push_back(crc_16(ss, ss.GetLength()));
 			opened_.push_back(time(NULL));
 			data_.push_back("");
 
@@ -466,7 +466,6 @@ BOOL CHexFileList::GetDisplayName(CString& strName, int nIndex,
 // deemed too hard for the benfit - maybe one day.)  Test show that the CRC
 // speeds up search about 10-fold, while loading of the file at startup is
 // only slowed down about 10% (< 100 msecs for 20000 files on fast machine).
-// Also crc16 and crc_32 have almost identical speeds on P4.
 
 int CHexFileList::GetIndex(LPCTSTR lpszPathName) const
 {
@@ -475,7 +474,7 @@ int CHexFileList::GetIndex(LPCTSTR lpszPathName) const
 
 	CString ss(lpszPathName);
 	ss.MakeUpper();
-	unsigned short crc = crc16(ss, ss.GetLength());
+	unsigned short crc = crc_16(ss, ss.GetLength());
 	for (int ii = 0; ii < name_.size(); ++ii)
 	{
 //		if (AfxComparePath(name_[ii], lpszPathName))

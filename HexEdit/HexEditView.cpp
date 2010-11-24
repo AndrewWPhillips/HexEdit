@@ -241,8 +241,11 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_IMPORT_HEX_TEXT, OnUpdateImportHexText)
 	ON_COMMAND(ID_EXPORT_HEX_TEXT, OnExportHexText)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_HEX_TEXT, OnUpdateExportHexText)
+	ON_COMMAND(ID_CRC16, OnCrc16)
 	ON_COMMAND(ID_CRC32, OnCrc32)
 	ON_COMMAND(ID_CRC_CCITT, OnCrcCcitt)
+	ON_COMMAND(ID_CRC_CCITT_B, OnCrcCcittB)
+	ON_COMMAND(ID_CRC_XMODEM, OnCrcXmodem)
 	ON_COMMAND(ID_BOOKMARKS_HIDE, OnBookmarksHide)
 	ON_UPDATE_COMMAND_UI(ID_BOOKMARKS_HIDE, OnUpdateBookmarksHide)
 	ON_COMMAND(ID_HIGHLIGHT_HIDE, OnHighlightHide)
@@ -287,8 +290,11 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_IBM2ANSI, OnUpdateConvert)
 	ON_UPDATE_COMMAND_UI(ID_ENCRYPT_DECRYPT, OnUpdateEncrypt)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_APPENDFILE, OnUpdateClipboard)
+	ON_UPDATE_COMMAND_UI(ID_CRC16, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC32, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT, OnUpdateByteNZ)
+	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT_B, OnUpdateByteNZ)
+	ON_UPDATE_COMMAND_UI(ID_CRC_XMODEM, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_COPY_CCHAR, OnUpdateClipboard)
 	ON_UPDATE_COMMAND_UI(ID_COPY_HEX, OnUpdateClipboard)
 	ON_COMMAND(ID_TRACK_CHANGES, OnTrackChanges)
@@ -16296,8 +16302,17 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	void * hh;
 	switch (op)
 	{
+	case CHECKSUM_CRC16:
+		hh = crc_16_init();
+		break;
 	case CHECKSUM_CRC_CCITT:
-		hh = crc_ccitt2_init();
+		hh = crc_ccitt_init();
+		break;
+	case CHECKSUM_CRC_CCITT_B:
+		hh = crc_ccitt_b_init();
+		break;
+	case CHECKSUM_CRC_XMODEM:
+		hh = crc_xmodem_init();
 		break;
 	case CHECKSUM_CRC32:
 		hh = crc_32_init();
@@ -16330,8 +16345,17 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 					val += *pp;
 			}
 			break;
+		case CHECKSUM_CRC16:
+			crc_16_update(hh, buf, len);
+			break;
 		case CHECKSUM_CRC_CCITT:
-			crc_ccitt2_update(hh, buf, len);
+			crc_ccitt_update(hh, buf, len);
+			break;
+		case CHECKSUM_CRC_CCITT_B:
+			crc_ccitt_b_update(hh, buf, len);
+			break;
+		case CHECKSUM_CRC_XMODEM:
+			crc_xmodem_update(hh, buf, len);
 			break;
 		case CHECKSUM_CRC32:
 			crc_32_update(hh, buf, len);
@@ -16349,8 +16373,17 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	}
 	switch (op)
 	{
+	case CHECKSUM_CRC16:
+		val = T(crc_16_final(hh));
+		break;
 	case CHECKSUM_CRC_CCITT:
-		val = T(crc_ccitt2_final(hh));
+		val = T(crc_ccitt_final(hh));
+		break;
+	case CHECKSUM_CRC_CCITT_B:
+		val = T(crc_ccitt_b_final(hh));
+		break;
+	case CHECKSUM_CRC_XMODEM:
+		val = T(crc_xmodem_final(hh));
 		break;
 	case CHECKSUM_CRC32:
 		val = T(crc_32_final(hh));
@@ -16392,9 +16425,24 @@ void CHexEditView::OnChecksum64()
 	DoChecksum<unsigned __int64>(this, CHECKSUM_64, "64 bit Checksum");
 }
 
+void CHexEditView::OnCrc16()
+{
+	DoChecksum<unsigned short>(this, CHECKSUM_CRC16, "CRC 16");
+}
+
 void CHexEditView::OnCrcCcitt() 
 {
 	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT, "CRC CCITT");
+}
+
+void CHexEditView::OnCrcCcittB() 
+{
+	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT_B, "CRC CCITT B");
+}
+
+void CHexEditView::OnCrcXmodem() 
+{
+	DoChecksum<unsigned short>(this, CHECKSUM_CRC_XMODEM, "CRC XMODEM");
 }
 
 void CHexEditView::OnCrc32()

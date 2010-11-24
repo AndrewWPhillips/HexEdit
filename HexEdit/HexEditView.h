@@ -520,8 +520,11 @@ public:
 	afx_msg void OnUpdateImportHexText(CCmdUI* pCmdUI);
 	afx_msg void OnExportHexText();
 	afx_msg void OnUpdateExportHexText(CCmdUI* pCmdUI);
+	afx_msg void OnCrc16();
 	afx_msg void OnCrc32();
 	afx_msg void OnCrcCcitt();
+	afx_msg void OnCrcCcittB();
+	afx_msg void OnCrcXmodem();
 	afx_msg void OnBookmarksHide();
 	afx_msg void OnUpdateBookmarksHide(CCmdUI* pCmdUI);
 	afx_msg void OnHighlightHide();

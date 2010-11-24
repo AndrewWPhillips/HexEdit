@@ -137,6 +137,35 @@ static void sub1(char *ss)
 		*ss = *ss - 1;
 }
 
+// For internal use only - not the same as crc_16 (misc.h)
+static unsigned short crc16(const void *buffer, size_t len)
+{
+	static const unsigned int poly = 0x8408;
+	unsigned char *pdata = (unsigned char *)buffer;
+	unsigned char ii;
+	unsigned int data;
+	unsigned int crc = 0xffff;
+
+	if (len == 0)
+		return 0;
+
+	do
+	{
+		for (ii = 0, data = *pdata++; ii < 8; ii++, data >>= 1)
+		{
+			if ((crc & 0x0001) ^ (data & 0x0001))
+				crc = (crc >> 1) ^ poly;
+			else  crc >>= 1;
+		}
+	} while (--len);
+
+	crc = ~crc;
+	data = crc;
+	crc = (crc << 8) | (data >> 8 & 0xff);
+
+	return (crc);
+}
+
 // Read mystery file and return:
 // 1 if it was read and was the right length
 // 0 if it was not found

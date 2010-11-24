@@ -96,23 +96,35 @@ int next_diff(const void * buf1, const void * buf2, size_t len);
 
 #endif
 
-unsigned short crc16(const void *buffer, size_t len);  // NOTE: also see RegisterDlg.cpp
-
+// All in one CRCs
+unsigned short crc_ccitt(const void *buf, size_t len);
 unsigned long crc_32(const void *buffer, size_t len);
-// Use the following for CRC 32 which is too big for a single buffer
+
+#ifdef BOOST_CRC
+unsigned short crc_16(const void *buffer, size_t len);  // Boost crc 16
+void * crc_16_init();
+void crc_16_update(void * handle, const void *buf, size_t len);
+unsigned short crc_16_final(void * handle);
+
+unsigned short crc_xmodem(const void *buf, size_t len);
+void * crc_xmodem_init();
+void crc_xmodem_update(void * handle, const void *buf, size_t len);
+unsigned short crc_xmodem_final(void * handle);
+#endif
+
+// Use the following for CRC calcs that are too big to do all at once
 void * crc_32_init();
 void crc_32_update(void * handle, const void *buf, size_t len);
-DWORD crc_32_final(void * handle);
+unsigned long crc_32_final(void * handle);
 
-unsigned short crc_ccitt(const void *buf, size_t len);  // all in one CRC CCITT
-void * crc_ccitt_init_b();
+void * crc_ccitt_init();
+void crc_ccitt_update(void *, const void *buf, size_t len);
+unsigned short crc_ccitt_final(void *);
+
+unsigned short crc_ccitt_b(const void *buf, size_t len);  // not the real CRC CCITT
+void * crc_ccitt_b_init();
 void crc_ccitt_b_update(void * handle, const void *buf, size_t len);
 unsigned short crc_ccitt_b_final(void * handle);
-
-unsigned short crc_ccitt2(const void *buf, size_t len);  // all in one CRC CCITT
-void * crc_ccitt2_init();
-void crc_ccitt2_update(void *, const void *buf, size_t len);
-unsigned short crc_ccitt2_final(void *);
 
 // Encryption routines NOTE: also see RegisterDlg.cpp
 void set_key(const char *pp, size_t len);

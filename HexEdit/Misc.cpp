@@ -2352,33 +2352,33 @@ int next_diff(const void * buf1, const void * buf2, size_t len)
 //-----------------------------------------------------------------------------
 // CRCs
 
-unsigned short crc16(const void *buffer, size_t len)
+#ifdef BOOST_CRC  // Use Boost for CRC 16
+void * crc_16_init()
 {
-	static const unsigned int poly = 0x8408;
-	unsigned char *pdata = (unsigned char *)buffer;
-	unsigned char ii;
-	unsigned int data;
-	unsigned int crc = 0xffff;
-
-	if (len == 0)
-		return 0;
-
-	do
-	{
-		for (ii = 0, data = *pdata++; ii < 8; ii++, data >>= 1)
-		{
-			if ((crc & 0x0001) ^ (data & 0x0001))
-				crc = (crc >> 1) ^ poly;
-			else  crc >>= 1;
-		}
-	} while (--len);
-
-	crc = ~crc;
-	data = crc;
-	crc = (crc << 8) | (data >> 8 & 0xff);
-
-	return (crc);
+	return new boost::crc_16_type;
 }
+
+void crc_16_update(void *hh, const void *buf, size_t len)
+		{
+	boost::crc_16_type *pcrc = (boost::crc_16_type *)hh;
+	pcrc->process_bytes(buf, len);
+		}
+
+unsigned short crc_16_final(void *hh)
+{
+	boost::crc_16_type *pcrc = (boost::crc_16_type *)hh;
+	unsigned short retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
+
+unsigned short crc_16(const void *buf, size_t len)
+{
+	void * hh = crc_16_init();
+	crc_16_update(hh, buf, len);
+	return crc_16_final(hh);
+}
+#endif
 
 #ifdef BOOST_CRC  // Use Boost for CRC32
 
@@ -2484,18 +2484,18 @@ DWORD crc_32(const void *buf, size_t len)
 
 #ifdef BOOST_CRC  // Use Boost for CRC CCITT
 
-void * crc_ccitt2_init()
+void * crc_ccitt_init()
 {
 	return new boost::crc_ccitt_type;
 }
 
-void crc_ccitt2_update(void *hh, const void *buf, size_t len)
+void crc_ccitt_update(void *hh, const void *buf, size_t len)
 {
 	boost::crc_ccitt_type *pcrc = (boost::crc_ccitt_type *)hh;
 	pcrc->process_bytes(buf, len);
 }
 
-unsigned short crc_ccitt2_final(void *hh)
+unsigned short crc_ccitt_final(void *hh)
 {
 	boost::crc_ccitt_type *pcrc = (boost::crc_ccitt_type *)hh;
 	unsigned short retval = pcrc->checksum();
@@ -2546,16 +2546,16 @@ static WORD crctab[256] = { /* as calculated by initcrctab() */
 	0x6e17,  0x7e36,  0x4e55,  0x5e74,  0x2e93,  0x3eb2,  0x0ed1,  0x1ef0
 	};
 
-//static unsigned short crc_ccitt2_value;
+//static unsigned short crc_ccitt_value;
 
-void * crc_ccitt2_init()
+void * crc_ccitt_init()
 {
 	unsigned short * hh = new unsigned short;
 	*hh = -1;
 	return hh;
 }
 
-void crc_ccitt2_update(void * hh, const void *buf, size_t len)
+void crc_ccitt_update(void * hh, const void *buf, size_t len)
 {
 	const unsigned char *cp = (const unsigned char *)buf;
 
@@ -2563,7 +2563,7 @@ void crc_ccitt2_update(void * hh, const void *buf, size_t len)
 		*(unsigned short *)hh = (*(unsigned short *)hh<<8) ^ crctab[(*(unsigned short *)hh>>(16-8)) ^ *cp++];
 }
 
-unsigned short crc_ccitt2_final(void * hh)
+unsigned short crc_ccitt_final(void * hh)
 {
     unsigned short retval = *(unsigned short *)hh;
 	delete (unsigned short *)hh;
@@ -2572,12 +2572,39 @@ unsigned short crc_ccitt2_final(void * hh)
 
 #endif  // BOOST_CRC
 
-unsigned short crc_ccitt2(const void *buf, size_t len)
+unsigned short crc_ccitt(const void *buf, size_t len)
 {
-	void * hh = crc_ccitt2_init();
-	crc_ccitt2_update(hh, buf, len);
-	return crc_ccitt2_final(hh);
+	void * hh = crc_ccitt_init();
+	crc_ccitt_update(hh, buf, len);
+	return crc_ccitt_final(hh);
 }
+
+#ifdef BOOST_CRC  // Use Boost for XMODEM CRC
+void * crc_xmodem_init()
+{
+	return new boost::crc_xmodem_type;
+}
+
+void crc_xmodem_update(void *hh, const void *buf, size_t len)
+{
+	boost::crc_xmodem_type *pcrc = (boost::crc_xmodem_type *)hh;
+	pcrc->process_bytes(buf, len);
+}
+
+unsigned short crc_xmodem_final(void *hh)
+{
+	boost::crc_xmodem_type *pcrc = (boost::crc_xmodem_type *)hh;
+	unsigned short retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
+unsigned short crc_xmodem(const void *buf, size_t len)
+{
+	void * hh = crc_xmodem_init();
+	crc_xmodem_update(hh, buf, len);
+	return crc_xmodem_final(hh);
+}
+#endif
 
 // Apparently the following is the common but incorrect implementation
 #define           poly     0x1021          /* crc-ccitt mask */ 

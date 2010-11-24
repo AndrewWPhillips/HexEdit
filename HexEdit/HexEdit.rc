@@ -558,7 +558,9 @@ BEGIN
             MENUITEM "&32 Bit Checksum",            ID_CHECKSUM32
             MENUITEM "&64 Bit Checksum",            ID_CHECKSUM64
             MENUITEM SEPARATOR
+            MENUITEM "C&RC 16",                     ID_CRC16
             MENUITEM "CRC CCIT&T",                  ID_CRC_CCITT
+            MENUITEM "CRC CCITT &B",                ID_CRC_CCITT_B
             MENUITEM "&CRC 32",                     ID_CRC32
             MENUITEM SEPARATOR
             MENUITEM "&MD5",                        ID_MD5
@@ -3006,6 +3008,8 @@ BEGIN
     ID_CRC16                "Stores CRC 16 of selection in the calculator\nCRC 16"
     ID_CRC32                "Stores CRC 32 of selection in the calculator\nCRC 32"
     ID_CRC_CCITT            "Stores standard CCITT (16 bit) CRC in the calculator\nCRC CCITT"
+    ID_CRC_CCITT_B          "Stores alternative CCITT (16 bit) CRC in the calculator\nCRC CCITT B"
+    ID_CRC_XMODEM           "Stores XMODEM (16 bit) CRC in the calculator\nCRC XMODEM"
     ID_XOR_BYTE             "XOR calculator value with current byte or selected bytes\nXOR Byte"
     ID_XOR_16BIT            "XOR calculator value with word(s) (16 bit)\nXOR Word"
     ID_XOR_32BIT            "XOR calculator value with double word(s) (32 bit)\nXOR Double Word"

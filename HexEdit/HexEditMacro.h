@@ -321,6 +321,8 @@ enum convert_type  // used with km_convert
 	CONVERT_LAST                // Keep at end
 };
 
+// Note: Don't change these values as they may be stored on disk in macro files
+//       You can, of course, add new values.
 enum checksum_type  // used with km_checksum
 {
 	CHECKSUM_ERROR,
@@ -334,6 +336,9 @@ enum checksum_type  // used with km_checksum
 	// CRCs
 	CHECKSUM_CRC_CCITT = 11,
 	CHECKSUM_CRC32,
+	CHECKSUM_CRC16,
+	CHECKSUM_CRC_CCITT_B,
+	CHECKSUM_CRC_XMODEM,
 
 	// Cryptographic checksums (hash codes)
 	CHECKSUM_MD5 = 21,
