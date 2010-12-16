@@ -87,8 +87,8 @@ typedef __int64 FILE_ADDRESS;
 
 #define FILENAME_BOOKMARKS   _T("Bookmarks")
 #define FILENAME_RECENTFILES _T("RecentFiles")
-#define FILENAME_BACKGROUND  _T("Backgrnd.BMP")
-#define FILENAME_ABOUTBG     _T("About.bmp")
+#define FILENAME_BACKGROUND  _T("Backgrnd.bmp")
+#define FILENAME_ABOUTBG     _T("About.jpg")
 #define FILENAME_SPLASH      _T("Splash.bmp")
 #define FILENAME_DTD         _T("BinaryFileFormat.DTD")
 #define FILENAME_DEFTEMPLATE _T("Default.xml")
