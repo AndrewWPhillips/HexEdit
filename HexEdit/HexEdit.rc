@@ -2343,8 +2343,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,1,656
- PRODUCTVERSION 4,0,1,656
+ FILEVERSION 4,0,1,SVNRevision
+ PRODUCTVERSION 4,0,1,SVNRevision
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2361,12 +2361,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "4, 0, 1, 656"
+            VALUE "FileVersion", "4, 0, 1, " SVNRevisionStr
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2010  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "4, 0, 1, 656"
+            VALUE "ProductVersion", "4, 0, 1, " SVNRevisionStr
         END
     END
     BLOCK "VarFileInfo"
