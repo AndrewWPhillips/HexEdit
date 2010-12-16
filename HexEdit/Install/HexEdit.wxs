@@ -2,7 +2,7 @@
 <Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'>
 
 	<Product Id='5961e919-1156-480e-b408-8937895f438A' UpgradeCode='91ca90bc-a9ad-4461-9f5c-5a4e149a689e'
-           Name='HexEdit' Version='3.5.0'
+           Name='HexEdit' Version='4.0.0'
            Language='1033' Codepage='1252'
            Manufacturer='Expert Commercial Software Pty Ltd'>
 
