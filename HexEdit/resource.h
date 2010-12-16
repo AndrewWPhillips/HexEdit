@@ -439,7 +439,7 @@
 #define IDC_DIGIT_6                     1016
 #define IDC_BUTTON_URL                  1016
 #define IDC_DIGIT_7                     1017
-#define IDC_BUTTON_REG_URL              1017
+#define IDC_BUTTON_DONATE_URL           1017
 #define IDC_DIGIT_8                     1018
 #define IDC_DIGIT_9                     1019
 #define IDC_DIGIT_A                     1020
@@ -450,6 +450,7 @@
 #define IDC_SEARCH                      1025
 #define IDC_DIGIT_F                     1025
 #define ID_SEARCH_FORW                  1026
+#define IDC_BUTTON_REG_URL              1027
 #define ID_SEARCH_BACK                  1028
 #define IDC_MEM_GET                     1028
 #define IDC_MARK_GET                    1029
@@ -716,6 +717,7 @@
 #define IDC_REG_FORM                    1164
 #define IDC_COLOUR_SELECT               1164
 #define IDC_BIG_ENDIAN_FILE_ACCESS      1164
+#define IDC_DONATE                      1165
 #define IDC_ALG                         1166
 #define IDC_ALG_BLOCKLEN                1167
 #define IDC_ALG_KEYLEN                  1168
