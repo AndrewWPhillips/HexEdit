@@ -37,6 +37,7 @@ IMPLEMENT_DYNCREATE(CAerialView, CView)
 CAerialView::CAerialView()
 {
 	phev_ = NULL;
+	scrollpos_ = -1;
 	actual_dpix_ = -1;
 	mouse_down_ = false;
 	rows_ = cols_ = -1;
@@ -54,7 +55,7 @@ CAerialView::CAerialView()
 	// (****  ====  ****  ====  ...). Updating at 3 times the caret blink rate means when there
 	// is no selection the pixel for the current cursor posn will blink at the caret blink rate.
 	timer_id_ = 0;
-	timer_msecs_ = ::GetCaretBlinkTime()/3;
+	timer_msecs_ = ::GetCaretBlinkTime()/10;   // increased ant speed after double-buffering added
 	bfactor_ = 1.0;
 }
 
@@ -220,7 +221,7 @@ void CAerialView::OnInitialUpdate()
 
 	// Calculate initial scroll position and display parameters
 	get_disp_params(rows_, cols_, actual_dpix_);
-	scrollpos_ = 0;
+	//scrollpos_ = 0;
 	update_bars();
 	update_display();
 
@@ -418,50 +419,55 @@ void CAerialView::OnDraw(CDC* pDC)
 	rct.bottom = rct.top + rows_ * actual_dpix_;
 	pDC->IntersectClipRect(&rct);
 
-	t0_.restart();
-	draw_bitmap(pDC);
-	t0_.stop();
+	{
+		// Use memory DC for double buffering.  (Will render to pDC when destructed.)
+		CMemDC bufDC(*pDC, this);
 
-	if (disp_.draw_ants_sel)
-	{
-		// Draw marching ants for selection
-		FILE_ADDRESS start_addr, end_addr;
-		phev_->GetSelAddr(start_addr, end_addr);
-		if (end_addr == start_addr) ++end_addr;    // Make sure we draw something at the caret position
-		draw_ants(pDC, start_addr, end_addr, RGB(0,0,0));  // black ants
-	}
-	if (disp_.draw_ants_mark)
-	{
-		// Draw ants around mark (this just regularly changes the pixel when actual_dpix_ == 1)
-		draw_ants(pDC, phev_->GetMark(), phev_->GetMark() + 1, phev_->GetMarkCol());
-	}
-	if (disp_.draw_ants_hl)
-	{
-		// Draw ants for highlights
-		range_set<FILE_ADDRESS>::range_t::const_iterator pr;
-		for (pr = phev_->hl_set_.range_.begin(); pr != phev_->hl_set_.range_.end(); ++pr)
-			draw_ants(pDC, pr->sfirst, pr->slast, phev_->GetHighlightCol());  // highlight colour ants (yellow?)
-	}
-	if (disp_.draw_ants_search && theApp.pboyer_ != NULL)
-	{
-		std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator psp; // iter into search_pair_
-		for (psp = search_pair_.begin(); psp != search_pair_.end(); ++psp)
-			draw_ants(pDC, psp->first, psp->second, phev_->GetSearchCol());
-	}
-	if (disp_.draw_ants_bm)
-	{
-		for (std::vector<FILE_ADDRESS>::const_iterator pbm = GetDocument()->bm_posn_.begin();
-			 pbm != GetDocument()->bm_posn_.end(); ++pbm)
+		t0_.restart();
+		draw_bitmap(&(bufDC.GetDC()));
+		t0_.stop();
+
+		if (disp_.draw_ants_sel)
 		{
-			if (*pbm >= scrollpos_ && *pbm <= scrollpos_ + width*rows_)
-				draw_ants(pDC, *pbm, *pbm + 1, phev_->GetBookmarkCol());
+			// Draw marching ants for selection
+			FILE_ADDRESS start_addr, end_addr;
+			phev_->GetSelAddr(start_addr, end_addr);
+			if (end_addr == start_addr) ++end_addr;    // Make sure we draw something at the caret position
+			draw_ants(&(bufDC.GetDC()), start_addr, end_addr, RGB(0,0,0));  // black ants
+		}
+		if (disp_.draw_ants_mark)
+		{
+			// Draw ants around mark (this just regularly changes the pixel when actual_dpix_ == 1)
+			draw_ants(&(bufDC.GetDC()), phev_->GetMark(), phev_->GetMark() + 1, phev_->GetMarkCol());
+		}
+		if (disp_.draw_ants_hl)
+		{
+			// Draw ants for highlights
+			range_set<FILE_ADDRESS>::range_t::const_iterator pr;
+			for (pr = phev_->hl_set_.range_.begin(); pr != phev_->hl_set_.range_.end(); ++pr)
+				draw_ants(&(bufDC.GetDC()), pr->sfirst, pr->slast, phev_->GetHighlightCol());  // highlight colour ants (yellow?)
+		}
+		if (disp_.draw_ants_search && theApp.pboyer_ != NULL)
+		{
+			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator psp; // iter into search_pair_
+			for (psp = search_pair_.begin(); psp != search_pair_.end(); ++psp)
+				draw_ants(&(bufDC.GetDC()), psp->first, psp->second, phev_->GetSearchCol());
+		}
+		if (disp_.draw_ants_bm)
+		{
+			for (std::vector<FILE_ADDRESS>::const_iterator pbm = GetDocument()->bm_posn_.begin();
+				 pbm != GetDocument()->bm_posn_.end(); ++pbm)
+			{
+				if (*pbm >= scrollpos_ && *pbm <= scrollpos_ + width*rows_)
+					draw_ants(&(bufDC.GetDC()), *pbm, *pbm + 1, phev_->GetBookmarkCol());
+			}
 		}
 	}
 }
 
 BOOL CAerialView::OnEraseBkgnd(CDC* pDC)
 {
-	if (phev_ == NULL) return FALSE;          // Seems to happen at startup
+	if (phev_ == NULL || scrollpos_ < 0) return FALSE;          // Seems to happen at startup
 
 	// Fill with the background colour
 	COLORREF bg_col;
@@ -657,7 +663,7 @@ BOOL CAerialView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CAerialView::OnSize(UINT nType, int cx, int cy) 
 {
-	if (phev_ == NULL) return;
+	if (phev_ == NULL || scrollpos_ < 0) return;
 	if (cx > 0 && cy > 0 && GetDocument()->GetBpe() > -1)
 	{
 		int width = GetDocument()->GetBpe() * cols_;        // old row width in bytes
@@ -744,7 +750,7 @@ void CAerialView::OnTimer(UINT nIDEvent)
 		else
 		{
 			// Look to see if we can speed up again
-			UINT t = max((UINT)(t00_.elapsed()*1000*3), ::GetCaretBlinkTime()/3);
+			UINT t = max((UINT)(t00_.elapsed()*1000*3), ::GetCaretBlinkTime()/10);
 			if (t < timer_msecs_)
 			{
 				TRACE("timer decreased from %d to %d\n", timer_msecs_, t);
@@ -947,7 +953,7 @@ void CAerialView::InvalidateRange(FILE_ADDRESS start_addr, FILE_ADDRESS end_addr
 	rct.right = bdr_left_ + cols_*actual_dpix_;
 	rct.top = 0;
 	rct.bottom = bdr_top_;
-	InvalidateRect(rct);
+	InvalidateRect(&rct);
 
 	invalidate_addr_range(start_addr, end_addr);
 }
@@ -1110,11 +1116,11 @@ void CAerialView::invalidate_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS en
 		rct.right  = bdr_left_ + (end_elt%cols_)*actual_dpix_;
 		rct.top    = bdr_top_ + start_line*actual_dpix_;
 		rct.bottom = rct.top + actual_dpix_;
-		InvalidateRect(rct);
+		InvalidateRect(&rct);
 		if (!no_border)
 		{
 			rct.left = 0; rct.right = bdr_left_;    // Do left border too
-			InvalidateRect(rct);
+			InvalidateRect(&rct);
 		}
 		return;
 	}
@@ -1123,22 +1129,22 @@ void CAerialView::invalidate_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS en
 	rct.right  = bdr_left_ + cols_*actual_dpix_;
 	rct.top    = bdr_top_ + start_line*actual_dpix_;
 	rct.bottom = rct.top + actual_dpix_;
-	InvalidateRect(rct);
+	InvalidateRect(&rct);
 	if (!no_border)
 	{
 		rct.left = 0; rct.right = bdr_left_;        // Do left border too
-		InvalidateRect(rct);
+		InvalidateRect(&rct);
 	}
 
 	rct.left   = bdr_left_;
 	rct.right  = bdr_left_ + (end_elt%cols_)*actual_dpix_;
 	rct.top    = bdr_top_ + end_line*actual_dpix_;
 	rct.bottom = rct.top + actual_dpix_;
-	InvalidateRect(rct);
+	InvalidateRect(&rct);
 	if (!no_border)
 	{
 		rct.left = 0; rct.right = bdr_left_;  // Do left border too
-		InvalidateRect(rct);
+		InvalidateRect(&rct);
 	}
 
 	// If more than one line between start and end then invalidate that block too
@@ -1148,11 +1154,11 @@ void CAerialView::invalidate_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS en
 		rct.right  = bdr_left_ + cols_*actual_dpix_;
 		rct.top    = bdr_top_ + start_line*actual_dpix_;
 		rct.bottom = bdr_top_ + end_line*actual_dpix_;
-		InvalidateRect(rct);
+		InvalidateRect(&rct);
 		if (!no_border)
 		{
 			rct.left = 0; rct.right = bdr_left_;
-			InvalidateRect(rct);
+			InvalidateRect(&rct);
 		}
 	}
 }
@@ -1214,28 +1220,28 @@ void CAerialView::invalidate_addr_range_boundary(FILE_ADDRESS start_addr, FILE_A
 	rct.right  = bdr_left_ + cols_*actual_dpix_;
 	rct.top    = bdr_top_ + start_line*actual_dpix_;
 	rct.bottom = rct.top + actual_dpix_ + 4;
-	InvalidateRect(rct, FALSE);
+	InvalidateRect(&rct, FALSE);
 	UpdateWindow();
 	// Bottom
 	rct.left   = bdr_left_;
 	rct.right  = bdr_left_ + cols_*actual_dpix_;
 	rct.top    = bdr_top_ + end_line*actual_dpix_ - 4;
 	rct.bottom = bdr_top_ + (end_line+1)*actual_dpix_;
-	InvalidateRect(rct, FALSE);
+	InvalidateRect(&rct, FALSE);
 	UpdateWindow();
 	// Left
 	rct.left   = bdr_left_;
 	rct.right  = rct.left + 4;
 	rct.top    = bdr_top_ + start_line*actual_dpix_;
 	rct.bottom = bdr_top_ + (end_line+1)*actual_dpix_;
-	InvalidateRect(rct, FALSE);
+	InvalidateRect(&rct, FALSE);
 	UpdateWindow();
 	// Right
 	rct.right  = bdr_left_ + cols_*actual_dpix_;
 	rct.left   = rct.right - 4;                         // 4 pixels less than right
 	rct.top    = bdr_top_ + start_line*actual_dpix_;
 	rct.bottom = bdr_top_ + (end_line+1)*actual_dpix_;
-	InvalidateRect(rct, FALSE);
+	InvalidateRect(&rct, FALSE);
 	UpdateWindow();
 }
 
