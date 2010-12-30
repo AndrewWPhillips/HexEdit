@@ -9572,7 +9572,6 @@ void CHexEditView::do_hex_text(CString file_name)
 		char temp_dir[_MAX_PATH];
 		::GetTempPath(sizeof(temp_dir), temp_dir);
 		::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
-		mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 		if (!fout.Open(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary, &fe))
 		{
@@ -9711,7 +9710,7 @@ void CHexEditView::do_hex_text(CString file_name)
 					goto error_return;
 				}
 
-				mm->m_wndStatusBar.SetPaneProgress(0, long((file_done*100)/file_len));
+				mm->Progress(int((file_done*100)/file_len));
 			}
 			else if (first)
 			{
@@ -9806,7 +9805,7 @@ end_file:
 	}
 
 	delete[] file_data;
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 	SetSel(addr2pos(start_addr), addr2pos(curr_addr));
 	DisplayCaret();
 
@@ -9815,7 +9814,7 @@ end_file:
 
 error_return:
 	delete[] file_data;
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 	theApp.mac_error_ = 10;
 }
 
@@ -9904,7 +9903,6 @@ void CHexEditView::OnExportHexText()
 		hex = "0123456789abcdef?";
 
 	clock_t last_checked = clock();
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 	for (curr = start_addr; curr < end_addr; curr += len)
 	{
@@ -9946,7 +9944,7 @@ void CHexEditView::OnExportHexText()
 
 		if (double(clock() - last_checked)/CLOCKS_PER_SEC > 3) // update every 3 secs
 		{
-			mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+			mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 			last_checked = clock();
 		}
 	}
@@ -9954,7 +9952,7 @@ void CHexEditView::OnExportHexText()
 
 func_return:
 	ff.Close();
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (buf != NULL)
 		delete[] buf;
@@ -14333,7 +14331,6 @@ void CHexEditView::OnEditCompare()
 	FILE_ADDRESS next_show = (orig_addr/show_inc + 1)*show_inc; // Next address to show
 	FILE_ADDRESS slow_show = ((orig_addr+0x800000)/0x800000 + 1)*0x800000;      // When we slow showing
 	FILE_ADDRESS comp_length = min(origd->length() - orig_addr, compd->length() - comp_addr);
-	bool progress_on = false;           // Are we showing progress in the status bar?
 
 	// Get memory for compare buffers
 	unsigned char *orig_buf = new unsigned char[compare_buf_len];
@@ -14351,8 +14348,7 @@ void CHexEditView::OnEditCompare()
 			{
 				delete[] orig_buf;
 				delete[] comp_buf;
-				if (progress_on)
-					mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);
+				mm->Progress(-1);
 				((CMainFrame *)AfxGetMainWnd())
 					->StatusBarText("Comparison aborted");
 				aa->mac_error_ = 10;
@@ -14366,12 +14362,7 @@ void CHexEditView::OnEditCompare()
 			// less often (and show progress) to avoid slowing down the actual compare
 			if (next_show >= slow_show)
 			{
-				if (!progress_on)
-				{
-					progress_on = true;
-					mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);
-				}
-				mm->m_wndStatusBar.SetPaneProgress(0, long(((next_show-start_addr)*100)/comp_length));
+				mm->Progress(int(((next_show-start_addr)*100)/comp_length));
 				show_inc = 0x800000;
 			}
 			AfxGetApp()->OnIdle(0);         // Force display of updated address
@@ -14404,8 +14395,7 @@ void CHexEditView::OnEditCompare()
 //                      orig_title, __int64(orig_addr + pos), __int64(orig_addr + pos),
 //                      comp_title, __int64(comp_addr + pos), __int64(comp_addr + pos));
 //          AfxMessageBox(mess);
-			if (progress_on)
-				mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);
+			mm->Progress(-1);
 			char buf[32];
 			sprintf(buf, "%I64d", __int64(orig_addr + pos - start_addr));
 			mess = CString("Difference found after ") + buf + CString(" bytes");
@@ -14434,8 +14424,7 @@ void CHexEditView::OnEditCompare()
 		comp_addr += comp_got;
 	}
 
-	if (progress_on)
-		mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);
+	mm->Progress(-1);
 
 	// If we got here then we hit EOF on one or both files
 	if (orig_got == comp_got && orig_addr + orig_got - start_addr == 0)
@@ -14780,7 +14769,6 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 			theApp.mac_error_ = 10;
 			goto func_return;
 		}
-		mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 		try
 		{
@@ -14810,7 +14798,7 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 					}
 				}
 
-				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+				mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 			}
 		}
 		catch (CFileException *pfe)
@@ -14887,7 +14875,7 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 	theApp.SaveToMacro(km_convert, op);
 
 func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (buf != NULL)
 		delete[] buf;
@@ -14976,7 +14964,6 @@ void CHexEditView::OnEncrypt()
 		if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
 		{
 			CWaitCursor wait;                                  // Turn on wait cursor (hourglass)
-			mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 			// Get input and output buffers
 			size_t inbuflen = 32768;
@@ -15026,7 +15013,7 @@ void CHexEditView::OnEncrypt()
 						goto func_return;
 					}
 
-					mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+				mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 				}
 			}
 			catch (CFileException *pfe)
@@ -15185,7 +15172,7 @@ void CHexEditView::OnEncrypt()
 	aa->SaveToMacro(km_encrypt, 1);  // 1 == encrypt (2 == decrypt)
 
 func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (buf != NULL)
 		delete[] buf;
@@ -15282,7 +15269,6 @@ void CHexEditView::OnDecrypt()
 		if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
 		{
 			CWaitCursor wait;                           // Turn on wait cursor (hourglass)
-			mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 			size_t len, buflen = 32768;
 			ASSERT(buflen % blen == 0);    // buffer length must be multiple of cipher block length
@@ -15339,7 +15325,7 @@ void CHexEditView::OnDecrypt()
 						goto func_return;
 					}
 
-					mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+				mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 				}
 			}
 			catch (CFileException *pfe)
@@ -15496,7 +15482,7 @@ void CHexEditView::OnDecrypt()
 	aa->SaveToMacro(km_encrypt, 2);  // 2 == decrypt (1 == encrypt)
 
 func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (buf != NULL)
 		delete[] buf;
@@ -15606,7 +15592,6 @@ void CHexEditView::OnCompress()
 	if (end_addr - start_addr > (16*1024*1024) && GetDocument()->DataFileSlotFree())
 	{
 		CWaitCursor wait;                           // Turn on wait cursor (hourglass)
-		mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 		int idx = -1;                       // Index into docs data_file_ array (or -1 if no slots avail.)
 
@@ -15678,7 +15663,7 @@ void CHexEditView::OnCompress()
 					goto func_return;
 				}
 
-				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+				mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 			}
 
 			// Process any residual data
@@ -15815,7 +15800,7 @@ void CHexEditView::OnCompress()
 	theApp.SaveToMacro(km_compress, 1);  // 1 = compress (2 = decompress)
 
 func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (in_data != NULL)
 		delete[] in_data;
@@ -15894,7 +15879,6 @@ void CHexEditView::OnDecompress()
 	if (end_addr - start_addr > (2*1024*1024) && GetDocument()->DataFileSlotFree())
 	{
 		CWaitCursor wait;                           // Turn on wait cursor (hourglass)
-		mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 		int idx = -1;                       // Index into docs data_file_ array (or -1 if no slots avail.)
 
@@ -15981,7 +15965,7 @@ void CHexEditView::OnDecompress()
 					goto func_return;
 				}
 
-				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+				mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 			}
 
 			ASSERT(err == Z_STREAM_END || err == Z_DATA_ERROR);
@@ -16146,7 +16130,7 @@ void CHexEditView::OnDecompress()
 	theApp.SaveToMacro(km_compress, 2);  // 2 = decompress (1 = compress)
 
 func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (in_data != NULL)
 		delete[] in_data;
@@ -16296,7 +16280,6 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		return;
 	}
 	ASSERT(buf != NULL);
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 	T val;
 	void * hh;
@@ -16369,7 +16352,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 			goto func_return;
 		}
 
-		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+		mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 	}
 	switch (op)
 	{
@@ -16399,7 +16382,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	theApp.SaveToMacro(km_checksum, op);
 
 func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (buf != NULL)
 		delete[] buf;
@@ -16482,7 +16465,6 @@ void CHexEditView::OnMd5()
 		return;
 	}
 	ASSERT(buf != NULL);
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 	struct MD5Context ctx;
 	MD5Init(&ctx);
@@ -16501,7 +16483,7 @@ void CHexEditView::OnMd5()
 			goto func_return;
 		}
 
-		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+		mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 	}
 
 	unsigned char digest[16];
@@ -16526,7 +16508,7 @@ void CHexEditView::OnMd5()
 	theApp.SaveToMacro(km_checksum, CHECKSUM_MD5);
 
 func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (buf != NULL)
 		delete[] buf;
@@ -16564,7 +16546,6 @@ void CHexEditView::OnSha1()
 		return;
 	}
 	ASSERT(buf != NULL);
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 	sha1_context ctx;
 	sha1_starts(&ctx);
@@ -16583,7 +16564,7 @@ void CHexEditView::OnSha1()
 			goto func_return;
 		}
 
-		mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+		mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 	}
 
 	unsigned char digest[20];
@@ -16609,7 +16590,7 @@ void CHexEditView::OnSha1()
 	theApp.SaveToMacro(km_checksum, CHECKSUM_SHA1);
 
 func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (buf != NULL)
 		delete[] buf;
@@ -16867,7 +16848,6 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 			theApp.mac_error_ = 10;
 			goto func_return;
 		}
-		mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 		try
 		{
@@ -16896,7 +16876,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 					}
 				}
 
-				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+				mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 			}
 		}
 		catch (CFileException *pfe)
@@ -16987,7 +16967,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 	}
 
 func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (buf != NULL)
 		delete[] buf;
@@ -17552,7 +17532,6 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 			theApp.mac_error_ = 10;
 			goto func_return;
 		}
-		mm->m_wndStatusBar.EnablePaneProgressBar(0, 100);  // turn on progress display
 
 		try
 		{
@@ -17582,7 +17561,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 					}
 				}
 
-				mm->m_wndStatusBar.SetPaneProgress(0, long(((curr - start_addr)*100)/(end_addr - start_addr)));
+				mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 			}
 		}
 		catch (CFileException *pfe)
@@ -17670,7 +17649,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 	}
 
 func_return:
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);  // disable progress bar
 
 	if (buf != NULL)
 		delete[] buf;

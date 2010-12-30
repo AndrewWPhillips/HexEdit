@@ -402,7 +402,6 @@ BOOL CHexEditDoc::ScanFile()
 
 	// Init progress bar
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	mm->m_wndStatusBar.EnablePaneProgressBar(0);
 	m_last_checked = clock();
 
 	df_mess_.Empty();
@@ -486,7 +485,7 @@ BOOL CHexEditDoc::ScanFile()
 		TRACE1("Caught %s in ScanFile\n", mess);
 	}
 
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // Turn off progress now
+	mm->Progress(-1);  // Turn off progress now
 	update_needed_ = false;
 	return TRUE;
 }
@@ -1863,7 +1862,7 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 			// Update scan progress no more than once a second
 			if (length_ > 0 && addr > 0 && (clock() - m_last_checked)/CLOCKS_PER_SEC > 1 && !in_jump_)
 			{
-				((CMainFrame *)AfxGetMainWnd())->m_wndStatusBar.SetPaneProgress(0, addr < length_ ? long((addr*100)/length_) : 100);
+				((CMainFrame *)AfxGetMainWnd())->Progress(addr < length_ ? int((addr*100)/length_) : 100);
 				m_last_checked = clock();
 			}
 		} // end of "data" processing

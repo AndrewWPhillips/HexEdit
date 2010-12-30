@@ -238,6 +238,7 @@ END_MESSAGE_MAP()
 CMainFrame::CMainFrame()
 {
     preview_page_ = -1;
+	progress_on_ = false;
 //    timer_id_ = 0;
     // Load background image
 	CString filename;
@@ -3608,7 +3609,6 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
     FILE_ADDRESS show_inc = 0x100000;    // How far between showing addresses
     FILE_ADDRESS next_show;             // Next address to show to user
     FILE_ADDRESS slow_show;             // Slow show update rate when we get here
-    bool progress_on = false;           // Are we showing progress in the status bar?
     size_t got;                 // How many bytes just read
 
     // Are there enough bytes for a search?
@@ -3635,8 +3635,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                         pdoc->StartSearch(start_addr, addr_buf);
                         theApp.StartSearches(pdoc);
                     }
-                    if (progress_on)
-                        m_wndStatusBar.EnablePaneProgressBar(0, -1);
+					Progress(-1);
                     StatusBarText("Search aborted");
                     theApp.mac_error_ = 10;
 //                    pview->show_pos();
@@ -3647,12 +3646,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                 SetAddress(next_show);
                 if (next_show >= slow_show)
                 {
-                    if (!progress_on)
-                    {
-                        progress_on = true;
-                        m_wndStatusBar.EnablePaneProgressBar(0, 100);
-                    }
-                    m_wndStatusBar.SetPaneProgress(0, long(((next_show-start_addr)*100)/(end_addr-start_addr)));
+					Progress(int(((next_show-start_addr)*100)/(end_addr-start_addr)));
                     show_inc = 0x1000000;
                 }
                 theApp.OnIdle(0);         // Force display of updated address
@@ -3721,8 +3715,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
                         pdoc->StartSearch(start_addr, addr_buf);
                         theApp.StartSearches(pdoc);
                     }
-                    if (progress_on)
-                        m_wndStatusBar.EnablePaneProgressBar(0, -1);
+					Progress(-1);
                     StatusBarText("Search aborted");
                     theApp.mac_error_ = 10;
 //                    pview->show_pos();
@@ -3743,8 +3736,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
 //                MoveToAddress(addr_buf + (pp - buf), addr_buf + (pp - buf) + length);
                 FILE_ADDRESS retval = addr_buf + (pp - buf);
 
-                if (progress_on)
-                    m_wndStatusBar.EnablePaneProgressBar(0, -1);
+				Progress(-1);
                 delete[] buf;
                 if (retval + length > end_addr)
                     return -1;              // found but after end of search area
@@ -3764,8 +3756,7 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
             memmove(buf, buf + buf_len - (length - 1), length - 1);
         }
     }
-    if (progress_on)
-        m_wndStatusBar.EnablePaneProgressBar(0, -1);
+	Progress(-1);
     delete[] buf;
 
     // Start bg search to search the rest of the file
@@ -5344,6 +5335,32 @@ void CMainFrame::OnApplicationLook(UINT id)
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
+}
+
+// Pass -1 to turn off progress, or a value from 0 to 100 to update the progress.
+void CMainFrame::Progress(int value)
+{
+	if (value < 0)
+	{
+		if (progress_on_)
+		{
+			// Turn of progress
+			m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar (pane 0)
+			progress_on_ = false;
+		}
+	}
+	else
+	{
+		if (!progress_on_)
+		{
+			// Turn on progress
+			m_wndStatusBar.EnablePaneProgressBar(0);  // Turn on progress in left pane (pane 0)
+			progress_on_ = true;
+		}
+
+		// Update progress
+		m_wndStatusBar.SetPaneProgress(0, value < 100 ? value : 100);
+	}
 }
 
 // Just for testing things (invoked with Ctrl+Shift+T)

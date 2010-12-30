@@ -1773,7 +1773,6 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 
 		// Init progress bar
 		CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-		mm->m_wndStatusBar.EnablePaneProgressBar(0);
 		clock_t last_checked = clock();
 
 		// Write out the file
@@ -1789,12 +1788,12 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 			// Update scan progress no more than once a second
 			if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
 			{
-				mm->m_wndStatusBar.SetPaneProgress(0, long((num_out*100)/file_len));
+				mm->Progress(int((num_out*100)/file_len));
 				last_checked = clock();
 			}
 		}
 
-		mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);
+		mm->Progress(-1);
 		delete pfile;
 
 		if (fill_bits.create_on_disk)

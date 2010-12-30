@@ -135,6 +135,9 @@ public:
 
 	CStatBar m_wndStatusBar;
 
+	// Progress (for long foreground processes)
+	void Progress(int value);  // pass 0 to 100 or -1 to disable progress
+
 // Generated message map functions
 // protected:
 public:
@@ -342,6 +345,7 @@ private:
 	CTipWnd menu_tip_;            // Used for displaying a tip when some menu items are hovered
 	std::vector<CMFCPopupMenu*> popup_menu_;    // We are only interested in the last (currently active) menu
 	UINT last_id_;                // Last menu item mouse was over
+	bool progress_on_;            // Used by Progress() method to say if we are currently displaying progress
 };
 
 /////////////////////////////////////////////////////////////////////////////
