@@ -24,7 +24,7 @@ CXmlTree::CXmlTree(const LPCTSTR filename /*=NULL*/)
 {
 	m_modified = false;
 
-	m_pdoc.CreateInstance(MSXML::CLSID_DOMDocument);
+	m_pdoc.CreateInstance(MSXML2::CLSID_DOMDocument);
 	if (filename != NULL)
 	{
 		m_filename = filename;
@@ -101,7 +101,7 @@ long CXmlTree::CElt::GetNumChildren() const
 
 	long count;
 
-	MSXML::IXMLDOMNodePtr pnode = m_pelt->firstChild;
+	MSXML2::IXMLDOMNodePtr pnode = m_pelt->firstChild;
 
 	for (count = 0; pnode != NULL; ++count)
 	{
@@ -123,13 +123,13 @@ CXmlTree::CElt CXmlTree::CElt::GetChild(long num) const
 	ASSERT(num >= 0);
 	ASSERT(m_powner != NULL && m_pelt != NULL);
 
-	MSXML::IXMLDOMNodePtr pnode = m_pelt->firstChild;
+	MSXML2::IXMLDOMNodePtr pnode = m_pelt->firstChild;
 
 	long count = 0;
 
 	while (pnode != NULL)
 	{
-		if (pnode->nodeType == MSXML::NODE_ELEMENT)
+		if (pnode->nodeType == MSXML2::NODE_ELEMENT)
 		{
 			if (count++ == num)
 				return CElt(pnode, m_powner);
@@ -137,18 +137,18 @@ CXmlTree::CElt CXmlTree::CElt::GetChild(long num) const
 		pnode = pnode->nextSibling;
 	}
 
-	return CElt(MSXML::IXMLDOMNodePtr(0), m_powner);
+	return CElt(MSXML2::IXMLDOMNodePtr(0), m_powner);
 }
 
 CXmlTree::CElt CXmlTree::CElt::GetChild(const LPCTSTR name) const
 {
 	ASSERT(m_powner != NULL && m_pelt != NULL);
 
-	MSXML::IXMLDOMNodePtr pnode = m_pelt->firstChild;
+	MSXML2::IXMLDOMNodePtr pnode = m_pelt->firstChild;
 
 	while (pnode != NULL)
 	{
-		if (pnode->nodeType == MSXML::NODE_ELEMENT)
+		if (pnode->nodeType == MSXML2::NODE_ELEMENT)
 		{
 			if (CString(LPCWSTR(pnode->nodeName)) == name)
 			{
@@ -158,7 +158,7 @@ CXmlTree::CElt CXmlTree::CElt::GetChild(const LPCTSTR name) const
 		pnode = pnode->nextSibling;
 	}
 
-	return CElt(MSXML::IXMLDOMNodePtr(0), m_powner);
+	return CElt(MSXML2::IXMLDOMNodePtr(0), m_powner);
 }
 
 CXmlTree::CElt CXmlTree::CElt::InsertNewChild(const LPCTSTR name, const CElt *before /*= NULL*/)
@@ -166,7 +166,7 @@ CXmlTree::CElt CXmlTree::CElt::InsertNewChild(const LPCTSTR name, const CElt *be
 	ASSERT(m_powner != NULL && m_pelt != NULL);
 	ASSERT(before == NULL || before->m_powner == m_powner);
 
-	MSXML::IXMLDOMElementPtr pnew = m_powner->m_pdoc->createElement(_bstr_t(name));
+	MSXML2::IXMLDOMElementPtr pnew = m_powner->m_pdoc->createElement(_bstr_t(name));
 
 	m_powner->SetModified(true);
 	if (before != NULL)
@@ -194,7 +194,7 @@ CXmlTree::CElt CXmlTree::CElt::InsertClone(CElt elt, const CElt *before /*=NULL*
 	ASSERT(before == NULL || before->m_powner == m_powner);
 	ASSERT(elt.m_powner == m_powner);
 
-	MSXML::IXMLDOMElementPtr ee = elt.m_pelt->cloneNode(VARIANT_TRUE);   // TRUE = 0xFFFF not 1 !?!?!?
+	MSXML2::IXMLDOMElementPtr ee = elt.m_pelt->cloneNode(VARIANT_TRUE);   // TRUE = 0xFFFF not 1 !?!?!?
 
 	m_powner->SetModified(true);
 	if (before != NULL)
@@ -215,7 +215,7 @@ CXmlTree::CElt CXmlTree::CElt::DeleteChild(CElt elt)
 {
 	ASSERT(m_powner != NULL && m_pelt != NULL);
 	ASSERT(elt.m_powner == m_powner);
-	MSXML::IXMLDOMElementPtr pdel = m_pelt->removeChild(elt.m_pelt);
+	MSXML2::IXMLDOMElementPtr pdel = m_pelt->removeChild(elt.m_pelt);
 	m_powner->SetModified(true);
 	return CElt(pdel, m_powner);
 }
@@ -282,7 +282,7 @@ void CXmlTree::CFrag::SaveKids(CElt *pelt)
 		m_pfrag->appendChild(child.m_pelt);
 
 	// Now clone all the moved nodes and add them back
-	MSXML::IXMLDOMNodePtr pnode;
+	MSXML2::IXMLDOMNodePtr pnode;
 
 	for (pnode = m_pfrag->firstChild; pnode != NULL; pnode = pnode->nextSibling)
 		pelt->m_pelt->appendChild(pnode->cloneNode(VARIANT_TRUE));
@@ -312,7 +312,7 @@ CXmlTree::CElt CXmlTree::CFrag::AppendClone(CXmlTree::CElt elt)
 {
 	ASSERT(m_powner != NULL && m_pfrag != NULL);
 	ASSERT(elt.m_powner == m_powner);
-	MSXML::IXMLDOMElementPtr ee = elt.m_pelt->cloneNode(VARIANT_TRUE);   // TRUE = 0xFFFF not 1 !?!?!?
+	MSXML2::IXMLDOMElementPtr ee = elt.m_pelt->cloneNode(VARIANT_TRUE);   // TRUE = 0xFFFF not 1 !?!?!?
 	return CXmlTree::CElt(m_pfrag->insertBefore(ee, _variant_t()), m_powner);
 }
 
@@ -322,7 +322,7 @@ CXmlTree::CElt CXmlTree::CFrag::InsertClone(CElt elt, const CElt *before /*=NULL
 	ASSERT(before == NULL || before->m_powner == m_powner);
 	ASSERT(elt.m_powner == m_powner);
 
-	MSXML::IXMLDOMElementPtr ee = elt.m_pelt->cloneNode(VARIANT_TRUE);   // TRUE = 0xFFFF not 1 !?!?!?
+	MSXML2::IXMLDOMElementPtr ee = elt.m_pelt->cloneNode(VARIANT_TRUE);   // TRUE = 0xFFFF not 1 !?!?!?
 	if (before != NULL)
 		return CElt(m_pfrag->insertBefore(ee, _variant_t((IDispatch *)(before->m_pelt))), m_powner);
 	else

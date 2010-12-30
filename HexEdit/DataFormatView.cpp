@@ -99,17 +99,17 @@ void CGridCtrl2::OnBeginDrag()
 		m_bLMouseButtonDown = FALSE;
 
 		// Get global memory for data passed to drop target and store the elt ptr to the drag source in the memory
-		HANDLE hdata = ::GlobalAlloc(GMEM_MOVEABLE, sizeof(MSXML::IXMLDOMElementPtr) + sizeof(CDataFormatView *));
+		HANDLE hdata = ::GlobalAlloc(GMEM_MOVEABLE, sizeof(MSXML2::IXMLDOMElementPtr) + sizeof(CDataFormatView *));
 		char *pp = (char *)::GlobalLock(hdata);
 
 		// TBD: TODO This should be fixed to use placement new and placement delete (so there are no COM ptr leaks)
 #if 0 // Placement new does not seem to be supported
-		::new (pp) MSXML::IXMLDOMElementPtr(pdoc_->df_elt_[row-frc].m_pelt);
+		::new (pp) MSXML2::IXMLDOMElementPtr(pdoc_->df_elt_[row-frc].m_pelt);
 #else
-		memset(pp, '\0', sizeof(MSXML::IXMLDOMElementPtr));
-		*(MSXML::IXMLDOMElementPtr*)pp = pdoc_->df_elt_[row-frc].m_pelt;
+		memset(pp, '\0', sizeof(MSXML2::IXMLDOMElementPtr));
+		*(MSXML2::IXMLDOMElementPtr*)pp = pdoc_->df_elt_[row-frc].m_pelt;
 #endif
-		memcpy(pp+sizeof(MSXML::IXMLDOMElementPtr), &pview_, sizeof(CDataFormatView *));
+		memcpy(pp+sizeof(MSXML2::IXMLDOMElementPtr), &pview_, sizeof(CDataFormatView *));
 		::GlobalUnlock(hdata);
 
 		COleDataSource ods;
@@ -245,8 +245,8 @@ DROPEFFECT CGridCtrl2::OnDragOver(COleDataObject* pDataObject, DWORD dwKeyState,
 		if (hdata != NULL)
 		{
 			char *pp = (char *)::GlobalLock(hdata);
-			src_elt = CXmlTree::CElt(*(MSXML::IXMLDOMElementPtr*)pp, pdoc_->ptree_);
-			psrcview = *(CDataFormatView **)(pp+sizeof(MSXML::IXMLDOMElementPtr));
+			src_elt = CXmlTree::CElt(*(MSXML2::IXMLDOMElementPtr*)pp, pdoc_->ptree_);
+			psrcview = *(CDataFormatView **)(pp+sizeof(MSXML2::IXMLDOMElementPtr));
 			::GlobalUnlock(hdata);
 			::GlobalFree(hdata);
 		}
@@ -322,8 +322,8 @@ DROPEFFECT CGridCtrl2::OnDragEnter(COleDataObject* pDataObject, DWORD dwKeyState
 		if (hdata != NULL)
 		{
 			char *pp = (char *)::GlobalLock(hdata);
-			src_elt = CXmlTree::CElt(*(MSXML::IXMLDOMElementPtr*)pp, pdoc_->ptree_);
-			psrcview = *(CDataFormatView **)(pp+sizeof(MSXML::IXMLDOMElementPtr));
+			src_elt = CXmlTree::CElt(*(MSXML2::IXMLDOMElementPtr*)pp, pdoc_->ptree_);
+			psrcview = *(CDataFormatView **)(pp+sizeof(MSXML2::IXMLDOMElementPtr));
 			::GlobalUnlock(hdata);
 			::GlobalFree(hdata);
 		}
@@ -394,8 +394,8 @@ BOOL CGridCtrl2::OnDrop(COleDataObject* pDataObject, DROPEFFECT de, CPoint point
 		if (hdata != NULL)
 		{
 			char *pp = (char *)::GlobalLock(hdata);
-			CXmlTree::CElt src_elt(*(MSXML::IXMLDOMElementPtr*)pp, pdoc_->ptree_);
-			CDataFormatView *psrcview = *(CDataFormatView **)(pp+sizeof(MSXML::IXMLDOMElementPtr));
+			CXmlTree::CElt src_elt(*(MSXML2::IXMLDOMElementPtr*)pp, pdoc_->ptree_);
+			CDataFormatView *psrcview = *(CDataFormatView **)(pp+sizeof(MSXML2::IXMLDOMElementPtr));
 			::GlobalUnlock(hdata);
 			::GlobalFree(hdata);
 

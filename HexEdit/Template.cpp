@@ -1923,7 +1923,7 @@ bool CHexEditDoc::add_enum(CXmlTree::CElt &ee, LPCTSTR pp)
 	ASSERT(ee.GetAttr("type") == "char" || ee.GetAttr("type") == "int");
 	ASSERT(ee.GetAttr("domain") == pp);
 
-	if (df_enum_.find((MSXML::IXMLDOMElementPtr::Interface *)ee.m_pelt) != df_enum_.end())
+	if (df_enum_.find((MSXML2::IXMLDOMElementPtr::Interface *)ee.m_pelt) != df_enum_.end())
 		return true;                          // already added
 
 	enum_t to_add;
@@ -1932,7 +1932,7 @@ bool CHexEditDoc::add_enum(CXmlTree::CElt &ee, LPCTSTR pp)
 	if (pp[0] != '{')
 	{
 		// Add empty enum list so we don't get run-time errors
-		df_enum_[(MSXML::IXMLDOMElementPtr::Interface *)ee.m_pelt] = to_add;
+		df_enum_[(MSXML2::IXMLDOMElementPtr::Interface *)ee.m_pelt] = to_add;
 		return false;
 	}
 
@@ -1982,7 +1982,7 @@ bool CHexEditDoc::add_enum(CXmlTree::CElt &ee, LPCTSTR pp)
 		//TRACE2("ENUM: %s=%ld\n", entry, long(enum_val));
 	}
 
-	df_enum_[(MSXML::IXMLDOMElementPtr::Interface *)ee.m_pelt] = to_add;
+	df_enum_[(MSXML2::IXMLDOMElementPtr::Interface *)ee.m_pelt] = to_add;
 	return retval;
 }
 
@@ -1993,9 +1993,9 @@ CHexEditDoc::enum_t &CHexEditDoc::get_enum(CXmlTree::CElt &ee)
 {
 	ASSERT(ee.GetName() == "data");
 	ASSERT(ee.GetAttr("type") == "char" || ee.GetAttr("type") == "int");
-	ASSERT(df_enum_.find((MSXML::IXMLDOMElementPtr::Interface *)ee.m_pelt) != df_enum_.end());
+	ASSERT(df_enum_.find((MSXML2::IXMLDOMElementPtr::Interface *)ee.m_pelt) != df_enum_.end());
 
-	enum_t &retval = df_enum_.find((MSXML::IXMLDOMElementPtr::Interface *)ee.m_pelt)->second;
+	enum_t &retval = df_enum_.find((MSXML2::IXMLDOMElementPtr::Interface *)ee.m_pelt)->second;
 	return retval;
 }
 
@@ -2004,8 +2004,8 @@ ExprStringType CHexEditDoc::get_str(CHexExpr::value_t val, int ii)
 {
 	if (val.typ == CHexExpr::TYPE_INT)
 	{
-		std::map<MSXML::IXMLDOMElementPtr::Interface *, enum_t>::const_iterator pev =
-			df_enum_.find((MSXML::IXMLDOMElementPtr::Interface *)df_elt_[ii].m_pelt);
+		std::map<MSXML2::IXMLDOMElementPtr::Interface *, enum_t>::const_iterator pev =
+			df_enum_.find((MSXML2::IXMLDOMElementPtr::Interface *)df_elt_[ii].m_pelt);
 		if (pev != df_enum_.end())
 		{
 			enum_t::const_iterator pe = pev->second.find(val.int64);

@@ -37,7 +37,7 @@ public:
 	virtual DROPEFFECT OnDragEnter(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
 	virtual DROPEFFECT OnDragOver(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
 	virtual BOOL OnDrop(COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
-	CLIPFORMAT m_cf_ours;               // Custom Clip format to hold COM ptr (MSXML::IXMLDOMElementPtr)
+	CLIPFORMAT m_cf_ours;               // Custom Clip format to hold COM ptr (MSXML2::IXMLDOMElementPtr)
 #endif
 
 protected:

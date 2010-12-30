@@ -984,7 +984,7 @@ private:
 
 	// Storage for enums
 	typedef std::map<__int64, CString> enum_t; // One enum: maps values to names
-	std::map<MSXML::IXMLDOMElementPtr::Interface *, enum_t> df_enum_; // Stores all enums: maps an element to its enum
+	std::map<MSXML2::IXMLDOMElementPtr::Interface *, enum_t> df_enum_; // Stores all enums: maps an element to its enum
 	bool add_enum(CXmlTree::CElt &ee, LPCTSTR estr); // Returns false if error parsing enum string
 	enum_t &get_enum(CXmlTree::CElt &ee);   // Returns ref. to enum for an element
 	ExprStringType get_str(CHexExpr::value_t val, int ii);

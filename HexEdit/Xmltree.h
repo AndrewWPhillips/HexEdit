@@ -22,7 +22,7 @@
 #define XMLTREE_INCLUDED
 
 #include <afx.h>
-#import <msxml.dll> named_guids
+#import <msxml3.dll> named_guids   // Moved to new XML SDK (uses MSXML2 namespace)
 
 class CXmlTree
 {
@@ -31,7 +31,7 @@ class CXmlTree
 
 public:
 	CXmlTree(const LPCTSTR filename = NULL);
-	MSXML::IXMLDOMDocumentPtr m_pdoc;   // COM Interface ptr to doc itself
+	MSXML2::IXMLDOMDocumentPtr m_pdoc;   // COM Interface ptr to doc itself
 
 	bool LoadFile(LPCTSTR filename);
 	bool LoadString(LPCTSTR ss);
@@ -53,7 +53,7 @@ public:
 		friend class CFrag;
 	public:
 		CElt() : m_pelt(NULL), m_powner(NULL) { }
-		CElt(MSXML::IXMLDOMNodePtr pelt, CXmlTree *powner) : m_powner(powner), m_pelt(pelt)  { }
+		CElt(MSXML2::IXMLDOMNodePtr pelt, CXmlTree *powner) : m_powner(powner), m_pelt(pelt)  { }
 		CElt(const LPCTSTR name, CXmlTree *powner) : m_powner(powner)
 		{
 			m_pelt = m_powner->m_pdoc->createElement(_bstr_t(name));
@@ -104,9 +104,9 @@ public:
 
 	public:
 // Using this operator causes compile error so make m_pelt public for direct access
-//        operator MSXML::IXMLDOMElementPtr() { return m_pelt; }
-		MSXML::IXMLDOMElementPtr m_pelt;        // Interface ptr to the element node
-//    	MSXML::IXMLDOMNodePtr m_pelt;           // Interface ptr to the element node
+//        operator MSXML2::IXMLDOMElementPtr() { return m_pelt; }
+		MSXML2::IXMLDOMElementPtr m_pelt;        // Interface ptr to the element node
+//    	MSXML2::IXMLDOMNodePtr m_pelt;           // Interface ptr to the element node
 	};
 
 	class CFrag
@@ -132,7 +132,7 @@ public:
 
 	protected:
 		CXmlTree *m_powner;                     // CXmlTree class that this fragment is associated with
-		MSXML::IXMLDOMDocumentFragmentPtr m_pfrag;
+		MSXML2::IXMLDOMDocumentFragmentPtr m_pfrag;
 	};
 
 	CString DumpXML() const { return CString(LPCWSTR(m_pdoc->xml)); }

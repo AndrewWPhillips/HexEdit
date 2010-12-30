@@ -1903,7 +1903,7 @@ void CHexEditDoc::OnTest()
 	}
 	else
 	{
-		MSXML::IXMLDOMElementPtr pnew = xt.m_pdoc->createElement(_bstr_t("Elem1"));
+		MSXML2::IXMLDOMElementPtr pnew = xt.m_pdoc->createElement(_bstr_t("Elem1"));
 		pnew->insertBefore(xt.m_pdoc->createElement(_bstr_t("Elem2")), _variant_t());
 		CXmlTree::CElt root = xt.GetRoot();
 		CXmlTree::CElt ee = root.GetChild("s");
