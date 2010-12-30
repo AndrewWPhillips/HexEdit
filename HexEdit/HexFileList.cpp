@@ -76,6 +76,7 @@ CHexFileList::CHexFileList(UINT nStart, LPCTSTR lpszSection, int nSize, int nMax
 	name_.reserve(capacity);
 	hash_.reserve(capacity);
 	opened_.reserve(capacity);
+	open_count_.reserve(capacity);
 	data_.reserve(capacity);
 
 	ver_ = -1;
@@ -157,36 +158,48 @@ void CHexFileList::Add(LPCTSTR lpszPathName)
 
 	ASSERT(hash_.size() == name_.size());
 	ASSERT(opened_.size() == name_.size());
+	ASSERT(open_count_.size() == name_.size());
 	ASSERT(data_.size() == name_.size());
 
 	CString saved_data;
+
+	// Get hash to speed search of the list
+	CString ss(szTemp);
+	ss.MakeUpper();
+	unsigned long hash = str_hash(ss);
+
+	int open_count = 1;
 
 	// Find and remove any existing entry(s) for this file
 	// Note: we use an index rather than iterator since an iterator is invalid after erase() is called
 	for (int ii = name_.size()-1; ii >= 0; ii--)
 	{
-//        if (_stricmp(name_[ii], szTemp) == 0)
-		if (AfxComparePath(name_[ii], szTemp))     // Handle DBCS case-insensitive comparisons etc
+		// Using AfxComparePath is more reliable as it handles DBCS case-insensitive comparisons etc
+		if (hash == hash_[ii] && AfxComparePath(name_[ii], szTemp))
 		{
 			// Remove the existing entry for the file
 			name_.erase(name_.begin() + ii);
 			hash_.erase(hash_.begin() + ii);
 			opened_.erase(opened_.begin() + ii);
+			open_count = open_count_[ii];          // save open count
+			open_count_.erase(open_count_.begin() + ii);
 			saved_data = data_[ii];                //  save data_ for when file read (below)
 			data_.erase(data_.begin() + ii);
+
+			break;   // A file should only appear in the list once (but we should have a way to remove duplicates?)
 		}
 	}
 
-	// Add to the end of the vectors (most recent files at end)
-	CString ss(szTemp);
-	name_.push_back(ss);
-	ss.MakeUpper();
-	hash_.push_back(str_hash(ss));
+	// Add to the end of the vectors (so most recent files are at the end)
+	name_.push_back(szTemp);
+	hash_.push_back(hash);
 	opened_.push_back(time(NULL));
+	open_count_.push_back(open_count);
 	data_.push_back(saved_data);
 
 	ASSERT(hash_.size() == name_.size());
 	ASSERT(opened_.size() == name_.size());
+	ASSERT(open_count_.size() == name_.size());
 	ASSERT(data_.size() == name_.size());
 
 	// Let base class also keep its silly little list
@@ -201,6 +214,7 @@ void CHexFileList::ClearAll()
 	name_.clear();
 	hash_.clear();
 	opened_.clear();
+	open_count_.clear();
 	data_.clear();
 
 	// Remove from the base class list starting at the end
@@ -216,6 +230,7 @@ void CHexFileList::Remove(int nIndex)
 	ASSERT(nIndex < name_.size());
 	ASSERT(hash_.size() == name_.size());
 	ASSERT(opened_.size() == name_.size());
+	ASSERT(open_count_.size() == name_.size());
 	ASSERT(data_.size() == name_.size());
 
 	((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(name_[nIndex]);  // Let explorer update (last opened time is now gone)
@@ -223,10 +238,12 @@ void CHexFileList::Remove(int nIndex)
 	name_  .erase(name_  .begin() + (name_  .size() - nIndex - 1));
 	hash_  .erase(hash_  .begin() + (hash_  .size() - nIndex - 1));
 	opened_.erase(opened_.begin() + (opened_.size() - nIndex - 1));
+	open_count_.erase(open_count_.begin() + (open_count_.size() - nIndex - 1));
 	data_  .erase(data_  .begin() + (data_  .size() - nIndex - 1));
 
 	ASSERT(hash_.size() == name_.size());
 	ASSERT(opened_.size() == name_.size());
+	ASSERT(open_count_.size() == name_.size());
 	ASSERT(data_.size() == name_.size());
 
 	// Let base class also update its list
@@ -280,12 +297,31 @@ bool CHexFileList::ReadFile()
 		time_t tt = strtol(ss, NULL, 10);
 		opened_.push_back(tt);
 
+		if (ver_ > 3)
+		{
+			AfxExtractSubString(ss, strLine, 2, '|');
+			open_count_.push_back(strtol(ss, NULL, 10));
+		}
+		else
+			open_count_.push_back(1);   // it must have been opened at least once before
+
 		// Get the data string
 		int curr;                           // Where in the input string the extra data is stored
 
 		ss.Empty();                         // Default data
-		if ((curr = strLine.Find('|')) && (curr = strLine.Find('|', curr+1)) != -1)
-			ss = strLine.Mid(curr+1);
+		if (ver_ > 3)
+		{
+			// Skip 1st three vertical bars (|)
+			if ((curr = strLine.Find('|')) != -1  && (curr = strLine.Find('|', curr+1)) != -1 && (curr = strLine.Find('|', curr+1)) != -1)
+				ss = strLine.Mid(curr+1);
+		}
+		else
+		{
+			// Skip 1st two vertical bars (|)
+			if ((curr = strLine.Find('|')) != -1  && (curr = strLine.Find('|', curr+1)) != -1)
+				ss = strLine.Mid(curr+1);
+		}
+
 
 		data_.push_back(ss);
 	}
@@ -301,11 +337,13 @@ bool CHexFileList::ReadFile()
 		name_.erase(name_.begin(), name_.begin() + (name_.size() - max_keep));
 		hash_.erase(hash_.begin(), hash_.begin() + (hash_.size() - max_keep));
 		opened_.erase(opened_.begin(), opened_.begin() + (opened_.size() - max_keep));
+		open_count_.erase(open_count_.begin(), open_count_.begin() + (open_count_.size() - max_keep));
 		data_.erase(data_.begin(), data_.begin() + (data_.size() - max_keep));
 	}
 
 	ASSERT(hash_.size() == name_.size());
 	ASSERT(opened_.size() == name_.size());
+	ASSERT(open_count_.size() == name_.size());
 	ASSERT(data_.size() == name_.size());
 
 	return true;
@@ -351,6 +389,7 @@ void CHexFileList::ReadList()
 			ss.MakeUpper();
 			hash_.push_back(str_hash(ss));
 			opened_.push_back(time(NULL));
+			open_count_.push_back(1);
 			data_.push_back("");
 
 			fnum.Format("File%d", ii+1);
@@ -429,11 +468,12 @@ bool CHexFileList::WriteFile()
 	if (!ff.Open(filename_, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeText, &fe))
 		return false;
 
-	ff.WriteString("; version 3\n");
+	ff.WriteString("; version 4\n");
 	for (int ii = 0; ii < name_.size(); ++ii)
 	{
 		CString ss;
-		ss.Format("|%ld|", opened_[ii]);
+		// ss.Format("|%ld|", opened_[ii]);  // Version 3 files used this
+		ss.Format("|%ld|%ld|", (long)opened_[ii], (long)open_count_[ii]);  // Version 4 added open count
 		ff.WriteString(name_[ii] + ss + data_[ii] + '\n');
 	}
 
@@ -481,7 +521,6 @@ int CHexFileList::GetIndex(LPCTSTR lpszPathName) const
 	unsigned long hash = str_hash(ss);
 	for (int ii = 0; ii < name_.size(); ++ii)
 	{
-//		if (AfxComparePath(name_[ii], lpszPathName))
 		if (hash == hash_[ii] && AfxComparePath(name_[ii], lpszPathName))
 			return ii;
 	}
@@ -589,4 +628,10 @@ CString CHexFileList::GetData(int index, param_num param) const
 	if (retval.IsEmpty())
 		AfxExtractSubString(retval, default_data_, param, '|');
 	return retval;
+}
+
+void CHexFileList::IncOpenCount(int index)
+{
+	ASSERT(index > -1 && index < int(open_count_.size()));
+	++open_count_[index];
 }

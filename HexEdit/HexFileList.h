@@ -70,6 +70,7 @@ public:
 	bool SetData(int index, param_num param, LPCTSTR value);
 	bool SetData(int index, param_num param, __int64 vv);
 	CString GetData(int index, param_num param) const;
+	void IncOpenCount(int index);
 	void ChangeSize(int nSize);
 
 	size_t GetCount() { return name_.size(); }
@@ -86,8 +87,9 @@ protected:
 #endif
 
 	std::vector<CString> name_;         // Name of file
-	std::vector<unsigned long> hash_;   // hash of file name for fast searches
+	std::vector<unsigned long> hash_;   // hash of (uppercased) file name for fast searches
 	std::vector<time_t> opened_;        // When the file was last opened
+	std::vector<int> open_count_;       // How many times the file has been opened
 	std::vector<CString> data_;         // Extra data associated with the file
 	CString default_data_;              // Default values for data
 	CString filename_;                  // Name of file where recent file list is written
