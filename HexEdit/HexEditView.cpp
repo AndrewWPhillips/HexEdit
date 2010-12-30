@@ -12680,7 +12680,7 @@ void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 {
 	CObList listButtons;
 	static int last_font_required = -1;
-	bool font_list_chnaged = last_font_required != display_.FontRequired();
+	bool font_list_changed = last_font_required != display_.FontRequired();
 	if (CMFCToolBar::GetCommandButtons (IDC_FONTNAME, listButtons) > 0)
 	{
 		for (POSITION posCombo = listButtons.GetHeadPosition (); posCombo != NULL; )
@@ -12691,7 +12691,7 @@ void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 			{
 				if (display_.FontRequired() == FONT_OEM)
 				{
-					if (font_list_chnaged)
+					if (font_list_changed)
 					pCombo->FixFontList(OEM_CHARSET);
 					CString ss = pCombo->GetText();
 					if (ss != oem_lf_.lfFaceName)
@@ -12699,7 +12699,7 @@ void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 				}
 				else
 				{
-					if (font_list_chnaged)
+					if (font_list_changed)
 					pCombo->FixFontList(ANSI_CHARSET);
 					CString ss = pCombo->GetText();
 					if (ss != lf_.lfFaceName)

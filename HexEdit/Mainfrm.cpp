@@ -880,11 +880,7 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 	pDC->GetClipBox(&clip_rct);
 	if (m_background_pos != 1 && rct != clip_rct)
 	{
-		// xxx this causes problems - find better soln
-		// There is a problem drawing the background image (unless it's in the top left corner)
-		// due to clipping rectangle used for the erased area.  (This only started occurring
-		// with MFC9 so I am not sure what had changed.)  The simplest solution (kludge) that I
-		// came up with is to invalidate the whole window if the clip rect is smaller than it.
+		// The kludgey solution was to invalidate the whole window if the clip rect is smaller than it.
 		m_wndClientArea.InvalidateRect(&rct, TRUE);
 		return TRUE;  // prevent any other erasure since we will erase everything shortly anyway.
 	}
@@ -4638,9 +4634,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_NAV_BACK_DUMMY) >= 0)
     {
 		if (CMFCToolBar::IsCustomizeMode ())
-		{
 			return FALSE;
-		}
 
 		pMenuPopup->RemoveAllItems ();
 		theApp.navman_.AddItems(pMenuPopup, false, ID_NAV_BACK_FIRST, NAV_RESERVED);
@@ -4648,9 +4642,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_NAV_FORW_DUMMY) >= 0)
     {
 		if (CMFCToolBar::IsCustomizeMode ())
-		{
 			return FALSE;
-		}
 
 		pMenuPopup->RemoveAllItems ();
 		theApp.navman_.AddItems(pMenuPopup, true, ID_NAV_FORW_FIRST, NAV_RESERVED);
@@ -4660,9 +4652,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_DFFD_OPEN_TYPE_DUMMY) >= 0)
     {
 		if (CMFCToolBar::IsCustomizeMode ())
-		{
 			return FALSE;
-		}
 
 		pMenuPopup->RemoveAllItems ();
 
@@ -4697,9 +4687,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
     if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_DFFD_OPEN_OTHER_DUMMY) >= 0)
     {
 		if (CMFCToolBar::IsCustomizeMode ())
-		{
 			return FALSE;
-		}
 
 		pMenuPopup->RemoveAllItems ();
 
