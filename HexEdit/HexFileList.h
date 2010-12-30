@@ -86,7 +86,7 @@ protected:
 #endif
 
 	std::vector<CString> name_;         // Name of file
-	std::vector<unsigned short> crc_;   // CRC of file name for fast searches
+	std::vector<unsigned long> hash_;   // hash of file name for fast searches
 	std::vector<time_t> opened_;        // When the file was last opened
 	std::vector<CString> data_;         // Extra data associated with the file
 	CString default_data_;              // Default values for data

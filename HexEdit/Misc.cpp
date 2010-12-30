@@ -2366,6 +2366,18 @@ int next_diff(const void * buf1, const void * buf2, size_t len)
 	return -1;
 }
 
+// Returns a 32-bit hash value given a string.  Fast with a good
+// distribution (except for very short strings of course).
+unsigned long str_hash(const char *str)
+{
+    unsigned long hash = 5381;
+    int c;
+
+    while ((c = *(const unsigned char *)str++) != '\0')
+        hash = ((hash << 5) + hash) + c;  // h = h*33 + c
+
+    return hash;
+}
 
 //-----------------------------------------------------------------------------
 // CRCs

@@ -18,6 +18,7 @@
 //
 
 #include "stdafx.h"
+#include <sys/stat.h>       // Use stat() for file size by name
 #include <imagehlp.h>       // For ::MakeSureDirectoryPathExists()
 
 #include "HexEdit.h"
@@ -54,25 +55,29 @@ CHexFileList::CHexFileList(UINT nStart, LPCTSTR lpszSection, int nSize, int nMax
 	if (!::GetDataPath(filename_))
 		return;
 
+	filename_ += CString(lpszSection);   // append file name
+
 	// Create HexEdit folder within that
-	filename_ += CString(lpszSection);
 	if (!MakeSureDirectoryPathExists(filename_))
 	{
 		filename_.Empty();
 		return;
 	}
 
-#ifdef _DEBUG  // Force reallocation sooner in debug to catch bad iterator bugs
-	name_.reserve(2);
-	crc_.reserve(2);
-	opened_.reserve(2);
-	data_.reserve(2);
+	size_t capacity = 256;    // Initial vector capacities
+#ifdef _DEBUG
+	capacity = 1;     // Force reallocation sooner in debug to catch bad iterator bugs
 #else
-	name_.reserve(1024);
-	crc_.reserve(1024);
-	opened_.reserve(1024);
-	data_.reserve(1024);
+	// Work out roughly how many recent files we have from the recent file list's file size
+	struct _stat stat;
+	if (::_stat(filename_, &stat) != -1)
+		capacity = stat.st_size / 100;  // Most lines of the text file are longer than 100 chars
 #endif
+	name_.reserve(capacity);
+	hash_.reserve(capacity);
+	opened_.reserve(capacity);
+	data_.reserve(capacity);
+
 	ver_ = -1;
 }
 
@@ -150,7 +155,7 @@ void CHexFileList::Add(LPCTSTR lpszPathName)
 	TCHAR szTemp[_MAX_PATH];
 	AfxFullPath(szTemp, lpszPathName);
 
-	ASSERT(crc_.size() == name_.size());
+	ASSERT(hash_.size() == name_.size());
 	ASSERT(opened_.size() == name_.size());
 	ASSERT(data_.size() == name_.size());
 
@@ -165,7 +170,7 @@ void CHexFileList::Add(LPCTSTR lpszPathName)
 		{
 			// Remove the existing entry for the file
 			name_.erase(name_.begin() + ii);
-			crc_.erase(crc_.begin() + ii);
+			hash_.erase(hash_.begin() + ii);
 			opened_.erase(opened_.begin() + ii);
 			saved_data = data_[ii];                //  save data_ for when file read (below)
 			data_.erase(data_.begin() + ii);
@@ -176,11 +181,11 @@ void CHexFileList::Add(LPCTSTR lpszPathName)
 	CString ss(szTemp);
 	name_.push_back(ss);
 	ss.MakeUpper();
-	crc_.push_back(crc_16(ss, ss.GetLength()));
+	hash_.push_back(str_hash(ss));
 	opened_.push_back(time(NULL));
 	data_.push_back(saved_data);
 
-	ASSERT(crc_.size() == name_.size());
+	ASSERT(hash_.size() == name_.size());
 	ASSERT(opened_.size() == name_.size());
 	ASSERT(data_.size() == name_.size());
 
@@ -194,7 +199,7 @@ void CHexFileList::Add(LPCTSTR lpszPathName)
 void CHexFileList::ClearAll()
 {
 	name_.clear();
-	crc_.clear();
+	hash_.clear();
 	opened_.clear();
 	data_.clear();
 
@@ -209,18 +214,18 @@ void CHexFileList::ClearAll()
 void CHexFileList::Remove(int nIndex)
 {
 	ASSERT(nIndex < name_.size());
-	ASSERT(crc_.size() == name_.size());
+	ASSERT(hash_.size() == name_.size());
 	ASSERT(opened_.size() == name_.size());
 	ASSERT(data_.size() == name_.size());
 
 	((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(name_[nIndex]);  // Let explorer update (last opened time is now gone)
 
 	name_  .erase(name_  .begin() + (name_  .size() - nIndex - 1));
-	crc_   .erase(crc_   .begin() + (crc_   .size() - nIndex - 1));
+	hash_  .erase(hash_  .begin() + (hash_  .size() - nIndex - 1));
 	opened_.erase(opened_.begin() + (opened_.size() - nIndex - 1));
 	data_  .erase(data_  .begin() + (data_  .size() - nIndex - 1));
 
-	ASSERT(crc_.size() == name_.size());
+	ASSERT(hash_.size() == name_.size());
 	ASSERT(opened_.size() == name_.size());
 	ASSERT(data_.size() == name_.size());
 
@@ -268,7 +273,7 @@ bool CHexFileList::ReadFile()
 		if (ss.IsEmpty()) continue;
 		name_.push_back(ss);
 		ss.MakeUpper();
-		crc_.push_back(crc_16(ss, ss.GetLength()));
+		hash_.push_back(str_hash(ss));
 
 		// Get the last opened date
 		AfxExtractSubString(ss, strLine, 1, '|');
@@ -294,12 +299,12 @@ bool CHexFileList::ReadFile()
 		CString ss;
 		ss.Format("Truncated recent file list to most recent %d files", max_keep);
 		name_.erase(name_.begin(), name_.begin() + (name_.size() - max_keep));
-		crc_.erase(crc_.begin(), crc_.begin() + (crc_.size() - max_keep));
+		hash_.erase(hash_.begin(), hash_.begin() + (hash_.size() - max_keep));
 		opened_.erase(opened_.begin(), opened_.begin() + (opened_.size() - max_keep));
 		data_.erase(data_.begin(), data_.begin() + (data_.size() - max_keep));
 	}
 
-	ASSERT(crc_.size() == name_.size());
+	ASSERT(hash_.size() == name_.size());
 	ASSERT(opened_.size() == name_.size());
 	ASSERT(data_.size() == name_.size());
 
@@ -344,7 +349,7 @@ void CHexFileList::ReadList()
 			ss = m_arrNames[ii];
 			name_.push_back(ss);
 			ss.MakeUpper();
-			crc_.push_back(crc_16(ss, ss.GetLength()));
+			hash_.push_back(str_hash(ss));
 			opened_.push_back(time(NULL));
 			data_.push_back("");
 
@@ -461,11 +466,10 @@ BOOL CHexFileList::GetDisplayName(CString& strName, int nIndex,
 
 // GetIndex returns index into list given a file name or -1 if not found.
 
-// Note: We use a CRC of the filename to speed up searching.  (We could
-// have done even better by creating an index or something, but that was
-// deemed too hard for the benfit - maybe one day.)  Test show that the CRC
-// speeds up search about 10-fold, while loading of the file at startup is
-// only slowed down about 10% (< 100 msecs for 20000 files on fast machine).
+// Note: We use a hash of the filename to speed up searching.  (We could
+// have done even better by creating an index or something, but that was deemed
+// too hard for the benfit - maybe one day.)  Testing shows this speeds up 
+// searches a lot but only slows down file read (at startup) a tiny bit.
 
 int CHexFileList::GetIndex(LPCTSTR lpszPathName) const
 {
@@ -474,11 +478,11 @@ int CHexFileList::GetIndex(LPCTSTR lpszPathName) const
 
 	CString ss(lpszPathName);
 	ss.MakeUpper();
-	unsigned short crc = crc_16(ss, ss.GetLength());
+	unsigned long hash = str_hash(ss);
 	for (int ii = 0; ii < name_.size(); ++ii)
 	{
 //		if (AfxComparePath(name_[ii], lpszPathName))
-		if (crc == crc_[ii] && AfxComparePath(name_[ii], lpszPathName))
+		if (hash == hash_[ii] && AfxComparePath(name_[ii], lpszPathName))
 			return ii;
 	}
 

@@ -86,6 +86,7 @@ bool CopyAndConvertImage(const char *src, const char *dest);
 bool AbortKeyPress();
 
 void DummyRegAccess(unsigned int group = 0);
+unsigned long str_hash(const char *str);   // hash value from string
 
 void rand_good_seed(unsigned long seed);
 unsigned long rand_good();
