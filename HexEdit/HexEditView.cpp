@@ -12692,7 +12692,7 @@ void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 				if (display_.FontRequired() == FONT_OEM)
 				{
 					if (font_list_changed)
-					pCombo->FixFontList(OEM_CHARSET);
+						pCombo->FixFontList(OEM_CHARSET);
 					CString ss = pCombo->GetText();
 					if (ss != oem_lf_.lfFaceName)
 						pCombo->SetText(oem_lf_.lfFaceName);
@@ -12700,7 +12700,7 @@ void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 				else
 				{
 					if (font_list_changed)
-					pCombo->FixFontList(ANSI_CHARSET);
+						pCombo->FixFontList(ANSI_CHARSET);
 					CString ss = pCombo->GetText();
 					if (ss != lf_.lfFaceName)
 						pCombo->SetText(lf_.lfFaceName);
@@ -15182,7 +15182,7 @@ void CHexEditView::OnDecrypt()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	if (check_ro("decrypt"))
+	if (aa->algorithm_ < 0 || check_ro("decrypt"))
 		return;
 
 	// Get current address or selection

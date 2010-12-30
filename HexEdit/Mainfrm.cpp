@@ -312,7 +312,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			EnableMDITabs(TRUE, theApp.tabicons_,
 						  theApp.tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP,
 						  0, CMFCTabCtrl::STYLE_3D_ONENOTE, 1);
-			// TODO - replace with call to EnableMDITabbedGroups? xxx
+			// TBD: TODO - replace with call to EnableMDITabbedGroups?
 		}
 
 		EnableDocking(CBRS_ALIGN_ANY);
@@ -874,6 +874,21 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 
 	CRect rct;
 	m_wndClientArea.GetClientRect(rct);
+
+	// TBD: TODO check the problem below still occurs with MFC10
+
+	// Before MFC9 drawing the background was simple - even if drawing relative to bottom
+	// or right side it was a simple matter to redraw the background whenever this event was
+	// generated - even when things were docked to the sides of the window.
+	// With MFC9, if the user docks (toolbar or tool window) to the sides of the window then
+	// the background is not refreshed properly unless drawing relative to top-left.  Ie:
+	//  - if drawing relative to top-left (m_background_pos == 1) drawing is always OK
+	//  - if resizing the window drawing is always OK
+	//  - when docking/undocking (and m_background_pos != 1) some parts of the background are not redrawn
+
+	// Solutions tried that did not work:
+	//  - ignore clipping rect and redraw the whole window - somehow Windows prevents this working
+	//  - if clip rect smaller than whole window invalidate the whole window (see code below) - causes weird side effects
 #if 0
 	// Get rectangle to be drawn into
 	CRect clip_rct;
@@ -5535,7 +5550,7 @@ bool CJumpExpr::LoadVars()
 	return retval;
 }
 
-// xxx need to use Unicode string since a string var is Unicode (if UNICODE_TYPE_STRING defined)
+// TBD: TODO save in a Unicode string since a string var is Unicode (if UNICODE_TYPE_STRING defined)
 void CJumpExpr::SaveVars()
 {
 	CString vars;               // All vars as text, separated by semicolon
