@@ -767,7 +767,7 @@ public:
 			default_oem_scheme_, default_ebcdic_scheme_;
 
 	CString open_scheme_name_;          // Name of default scheme
- 
+
 	int open_rowsize_;                  // Default number of display columns
 	int open_group_by_;                 // Default column grouping
 	int open_offset_;                   // Display offset on open

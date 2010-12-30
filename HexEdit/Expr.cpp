@@ -208,7 +208,7 @@ expr_eval::tok_t expr_eval::prec_ternary(value_t &val, CString &vname)
 				return TOK_NONE;        // we needed a valid expression
 			else
 				next_tok = get_next();  // we didn't need it as we are only using the other (else) part
- 
+
 		if (!val.boolean)
 			changes_on_ = saved_changes_on;     // restore old value
 

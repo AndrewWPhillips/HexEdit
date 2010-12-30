@@ -486,8 +486,8 @@ COLORREF get_rgb(int hue,int luminance, int saturation)
 		blue =  (hue2rgb(magic1, magic2, hue - hlsmax/3)*rgbmax + hlsmax/2)/hlsmax;
 	}
 
-   return RGB(red, green, blue);
-} 
+	return RGB(red, green, blue);
+}
 
 // Make a colour (col) closer in tone (ie brightness or luminance) to another
 // colour (bg_col) but the otherwise keep the same colour (hue/saturation).
@@ -2296,7 +2296,7 @@ unsigned long rand_good()
 {
 	return rng();
 }
-                          
+						  
 #endif // BOOST_RAND
 
 //-----------------------------------------------------------------------------
@@ -2370,13 +2370,13 @@ int next_diff(const void * buf1, const void * buf2, size_t len)
 // distribution (except for very short strings of course).
 unsigned long str_hash(const char *str)
 {
-    unsigned long hash = 5381;
-    int c;
+	unsigned long hash = 5381;
+	int c;
 
-    while ((c = *(const unsigned char *)str++) != '\0')
-        hash = ((hash << 5) + hash) + c;  // h = h*33 + c
+	while ((c = *(const unsigned char *)str++) != '\0')
+		hash = ((hash << 5) + hash) + c;  // h = h*33 + c
 
-    return hash;
+	return hash;
 }
 
 //-----------------------------------------------------------------------------
@@ -2484,22 +2484,22 @@ static DWORD crc_32_tab[] = { /* CRC polynomial 0xedb88320 */
 void * crc_32_init()
 {
 	DWORD * hh = new DWORD;
-    *hh = 0xffffFFFF;
+	*hh = 0xffffFFFF;
 	return hh;
 }
 
 void crc_32_update(void *hh, const void *buf, size_t len)
 {
-    const char *pp = (const char *)buf;
-    for ( ; len; --len, ++pp)
-        *(DWORD *)hh = UPDC32(*pp, *(DWORD *)hh);
+	const char *pp = (const char *)buf;
+	for ( ; len; --len, ++pp)
+		*(DWORD *)hh = UPDC32(*pp, *(DWORD *)hh);
 }
 
 DWORD crc_32_final(void *hh)
 {
 	DWORD retval = ~(*(DWORD *)hh);
 	delete (DWORD *)hh;
-    return retval;
+	return retval;
 }
 
 #endif  // BOOST_CRC
@@ -2595,7 +2595,7 @@ void crc_ccitt_update(void * hh, const void *buf, size_t len)
 
 unsigned short crc_ccitt_final(void * hh)
 {
-    unsigned short retval = *(unsigned short *)hh;
+	unsigned short retval = *(unsigned short *)hh;
 	delete (unsigned short *)hh;
 	return retval;
 }
@@ -2648,65 +2648,65 @@ void * crc_ccitt_b_init()
 
 void crc_ccitt_b_update(void * hh, const void *buf, size_t len)
 {
-    const unsigned char *cp = (const unsigned char *)buf;
-    const unsigned char *end = cp + len;
+	const unsigned char *cp = (const unsigned char *)buf;
+	const unsigned char *end = cp + len;
 
-    unsigned short ii, vv, xor_flag; 
+	unsigned short ii, vv, xor_flag; 
 
-    for ( ; cp < end; ++cp)
-    {
-        /* 
-        Align test bit with leftmost bit of the message byte. 
-        */ 
-        vv = 0x80; 
+	for ( ; cp < end; ++cp)
+	{
+		/* 
+		Align test bit with leftmost bit of the message byte. 
+		*/ 
+		vv = 0x80; 
 
-        for (ii = 0; ii < 8; ++ii) 
-        { 
-            if (*(unsigned short *)hh & 0x8000) 
-                xor_flag= 1; 
-            else 
-                xor_flag= 0; 
-            *(unsigned short *)hh = *(unsigned short *)hh << 1; 
+		for (ii = 0; ii < 8; ++ii) 
+		{ 
+			if (*(unsigned short *)hh & 0x8000) 
+				xor_flag= 1; 
+			else 
+				xor_flag= 0; 
+			*(unsigned short *)hh = *(unsigned short *)hh << 1; 
 
-            if (*cp & vv) 
-            { 
-                /* 
-                Append next bit of message to end of CRC if it is not zero. 
-                The zero bit placed there by the shift above need not be 
-                changed if the next bit of the message is zero. 
-                */ 
-                *(unsigned short *)hh = *(unsigned short *)hh + 1; 
-            } 
+			if (*cp & vv) 
+			{ 
+				/* 
+				Append next bit of message to end of CRC if it is not zero. 
+				The zero bit placed there by the shift above need not be 
+				changed if the next bit of the message is zero. 
+				*/ 
+				*(unsigned short *)hh = *(unsigned short *)hh + 1; 
+			} 
 
-            if (xor_flag) 
-                *(unsigned short *)hh = *(unsigned short *)hh ^ poly; 
+			if (xor_flag) 
+				*(unsigned short *)hh = *(unsigned short *)hh ^ poly; 
 
-            /* 
-            Align test bit with next bit of the message byte. 
-            */ 
-            vv = vv >> 1; 
-        } 
-    }
+			/* 
+			Align test bit with next bit of the message byte. 
+			*/ 
+			vv = vv >> 1; 
+		} 
+	}
 }
 
 unsigned short crc_ccitt_b_final(void *hh)
 {
-    unsigned short ii, xor_flag; 
+	unsigned short ii, xor_flag; 
 
-    // Augment message
-    for (ii = 0; ii < 16; ++ii) 
-    { 
-        if (*(unsigned short *)hh & 0x8000) 
-            xor_flag= 1; 
-        else 
-            xor_flag= 0; 
-        *(unsigned short *)hh = *(unsigned short *)hh << 1; 
+	// Augment message
+	for (ii = 0; ii < 16; ++ii) 
+	{ 
+		if (*(unsigned short *)hh & 0x8000) 
+			xor_flag= 1; 
+		else 
+			xor_flag= 0; 
+		*(unsigned short *)hh = *(unsigned short *)hh << 1; 
 
-        if (xor_flag) 
-            *(unsigned short *)hh = *(unsigned short *)hh ^ poly; 
-    }
+		if (xor_flag) 
+			*(unsigned short *)hh = *(unsigned short *)hh ^ poly; 
+	}
 
-    unsigned short retval = *(unsigned short *)hh;
+	unsigned short retval = *(unsigned short *)hh;
 	delete (unsigned short *)hh;
 	return retval;
 }

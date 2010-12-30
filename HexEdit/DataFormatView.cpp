@@ -726,7 +726,7 @@ void CDataFormatView::InitTree()
 
 	COLORREF bg1, bg2, bg3;
 	calc_colours(bg1, bg2, bg3);
- 
+
 	// Set background colours
 	grid_.SetGridBkColor(bg1);          // Area of grid past end and past right (defaults to ugly grey)
 	grid_.SetTextBkColor(bg1);          // This is the only way to set the background of the tree
@@ -1795,7 +1795,7 @@ void CDataFormatView::InitDataCol(int ii, GV_ITEM & item)
 			item.strText.Format("%S", *((short *)buf));
 #endif
 			break;
- 
+
 		case CHexEditDoc::DF_INT8:
 			if (strFormat.Left(3).CompareNoCase("hex") == 0)
 			{

@@ -30,7 +30,7 @@ public:
 #endif
 
 #ifndef GRIDCONTROL_NO_DRAGDROP
- public:
+public:
 	 CGridCtrl2() { pdoc_=NULL; pview_=NULL; VERIFY(m_cf_ours = (CLIPFORMAT)::RegisterClipboardFormat(_T("HexEdit.DFFD.DragAndDrop"))); }
 
 	virtual void OnBeginDrag();
