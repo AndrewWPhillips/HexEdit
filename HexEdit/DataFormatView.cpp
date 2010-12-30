@@ -740,7 +740,6 @@ void CDataFormatView::InitTree()
 
 	// Init progress bar
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	mm->m_wndStatusBar.EnablePaneProgressBar(0);
 	clock_t last_checked = clock();
 
 	// Make the default cell height zero while the tree is built, otherwise TreeDisplayOutline(1)
@@ -1208,12 +1207,12 @@ void CDataFormatView::InitTree()
 		// Update scan progress no more than once a second
 		if (double(clock() - last_checked)/CLOCKS_PER_SEC > 1)
 		{
-			mm->m_wndStatusBar.SetPaneProgress(0, long((ii*100)/pdoc->df_type_.size()));
+			mm->Progress(int((ii*100)/pdoc->df_type_.size()));
 			last_checked = clock();
 		}
 	}
 
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);
+	mm->Progress(-1);
 
 	// Set default cell height back to what it was before we set it to zero (above).
 	pdefault_cell->SetHeight(default_height_);
