@@ -1,6 +1,6 @@
 // HexEdit.h : main header file for the HEXEDIT application
 //
-// Copyright (c) 1998-2010 by Andrew W. Phillips. 
+// Copyright (c) 1998-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -698,7 +698,7 @@ public:
 	BOOL reverse_zoom_;                 // Reverse Ctrl+wheel zoom direction
 
 	BOOL hex_ucase_;                    // Display hex in upper case?
-	int k_abbrev_;                      // How are K/M/G abbreviated (0=1000/1000/1000, 1=1024/1000/1000, 2=1024/1024/1000, 3=1024/1024/1024) 
+	int k_abbrev_;                      // How are K/M/G abbreviated (0=1000/1000/1000, 1=1024/1000/1000, 2=1024/1024/1000, 3=1024/1024/1024)
 
 	BOOL ruler_;                        // Show (hex and/or decimal) ruler?
 	UINT ruler_hex_ticks_, ruler_dec_ticks_; // How often to show major ticks in the ruler(s)
@@ -828,7 +828,7 @@ public:
 	short security_rand_;                // Random number used for checks
 
 	// UPDATE THIS FOR EACH NEW VERSION
-	static const int security_version_; // An incremented version number for the current release 
+	static const int security_version_; // An incremented version number for the current release
 	int security_licensed_version_;     // Version that current licence is for (may be < security_version_)
 #endif
 

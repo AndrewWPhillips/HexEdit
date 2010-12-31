@@ -54,7 +54,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CHexEdit message handlers
 
-void CHexEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CHexEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;                     // Current text in control
 	GetWindowText(ss);
@@ -90,7 +90,7 @@ void CHexEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	add_spaces();
 }
 
-void CHexEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CHexEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;                     // Current text in control
 	GetWindowText(ss);
@@ -206,7 +206,7 @@ CDecEdit::CDecEdit() : allow_neg_(false)
 /////////////////////////////////////////////////////////////////////////////
 // CDecEdit message handlers
 
-void CDecEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CDecEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;                     // Current text in control
 	GetWindowText(ss);
@@ -242,7 +242,7 @@ void CDecEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	add_commas();
 }
 
-void CDecEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CDecEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;                     // Current text in control
 	GetWindowText(ss);
@@ -371,7 +371,7 @@ void CSearchEditControl::Redisplay()            // Make sure hex digits case OK 
 /////////////////////////////////////////////////////////////////////////////
 // CSearchEditControl message handlers
 
-void CSearchEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CSearchEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;
 	if (process_char(nChar))
@@ -463,7 +463,7 @@ void CSearchEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 #endif
 }
 
-void CSearchEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CSearchEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;
 	GetWindowText(ss);
@@ -506,12 +506,12 @@ void CSearchEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // TBD: xxx OnSet/KillFocus could perhaps be removed and mode changes done more effectively elsewhere
-void CSearchEditControl::OnSetFocus(CWnd* pOldWnd) 
+void CSearchEditControl::OnSetFocus(CWnd* pOldWnd)
 {
 	CString strCurr;
 	CMFCToolBarComboBoxEdit::OnSetFocus(pOldWnd);
 	char new_text[2] = "?";
-		
+
 	GetWindowText(strCurr);
 
 	if (strCurr.GetLength() > 0)
@@ -565,7 +565,7 @@ void CSearchEditControl::OnSetFocus(CWnd* pOldWnd)
 		SetSel(1,-1);                   // select all but ' so string can easily be overtyped
 }
 
-void CSearchEditControl::OnKillFocus(CWnd* pNewWnd) 
+void CSearchEditControl::OnKillFocus(CWnd* pNewWnd)
 {
 	CMFCToolBarComboBoxEdit::OnKillFocus(pNewWnd);
 
@@ -581,7 +581,7 @@ LRESULT CSearchEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
 }
 
 #if 0 // not needed with BCG
-UINT CSearchEditControl::OnGetDlgCode() 
+UINT CSearchEditControl::OnGetDlgCode()
 {
 	// Get all keys so that we see CR and Escape
 	return CMFCToolBarComboBoxEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
@@ -901,7 +901,7 @@ void CSearchEditControl::RedisplayAll()
 	CObList listButtons;
 	if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
 	{
-		for (POSITION posCombo = listButtons.GetHeadPosition (); 
+		for (POSITION posCombo = listButtons.GetHeadPosition ();
 			posCombo != NULL; )
 		{
 			CFindComboButton* pCombo = 
@@ -925,7 +925,7 @@ BEGIN_MESSAGE_MAP(CFindComboBox, CComboBox)
 	ON_CONTROL_REFLECT(CBN_SELCHANGE, OnSelchange)
 END_MESSAGE_MAP()
 
-void CFindComboBox::SetSearchString() 
+void CFindComboBox::SetSearchString()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	CString ss;
@@ -947,7 +947,7 @@ void CFindComboBox::SetSearchString()
 // CFindComboBox message handlers
 
 // CBN_SELCHANGE message reflected back to the control
-void CFindComboBox::OnSelchange() 
+void CFindComboBox::OnSelchange()
 {
 	SetSearchString();
 }
@@ -1036,7 +1036,7 @@ void CHexEditControl::Redisplay()            // Make sure hex digits case OK etc
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditControl message handlers
 
-void CHexEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CHexEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;                     // Current text in control
 	GetWindowText(ss);
@@ -1079,7 +1079,7 @@ void CHexEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	((CMainFrame *)AfxGetMainWnd())->SetHexAddress(ss);
 }
 
-void CHexEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CHexEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;                     // Current text in control
 	GetWindowText(ss);
@@ -1117,7 +1117,7 @@ void CHexEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	((CMainFrame *)AfxGetMainWnd())->SetHexAddress(ss);
 }
 
-HBRUSH CHexEditControl::CtlColor(CDC* pDC, UINT nCtlColor) 
+HBRUSH CHexEditControl::CtlColor(CDC* pDC, UINT nCtlColor)
 {
 	if (nCtlColor == CTLCOLOR_EDIT)
 		pDC->SetTextColor(::GetHexAddrCol());
@@ -1258,7 +1258,7 @@ END_MESSAGE_MAP()
 // CHexComboBox message handlers
 
 // CBN_SELCHANGE message reflected back to the control
-void CHexComboBox::OnSelchange() 
+void CHexComboBox::OnSelchange()
 {
 	CString ss;
 	GetWindowText(ss);
@@ -1268,7 +1268,7 @@ void CHexComboBox::OnSelchange()
 // xxx remove this?
 // For some reason CBN_SELCHANGE does not seem to be reflected
 // so also do it for CBN_SELENDOK
-void CHexComboBox::OnSelendok() 
+void CHexComboBox::OnSelendok()
 {
 	CString ss;
 	GetWindowText(ss);
@@ -1349,7 +1349,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CDecEditControl message handlers
 
-void CDecEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CDecEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;                     // Current text in control
 	GetWindowText(ss);
@@ -1396,7 +1396,7 @@ void CDecEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	((CMainFrame *)AfxGetMainWnd())->SetDecAddress(ss);
 }
 
-void CDecEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CDecEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;                     // Current text in control
 	GetWindowText(ss);
@@ -1432,7 +1432,7 @@ void CDecEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	((CMainFrame *)AfxGetMainWnd())->SetDecAddress(ss);
 }
 
-HBRUSH CDecEditControl::CtlColor(CDC* pDC, UINT nCtlColor) 
+HBRUSH CDecEditControl::CtlColor(CDC* pDC, UINT nCtlColor)
 {
 	if (nCtlColor == CTLCOLOR_EDIT)
 		pDC->SetTextColor(::GetDecAddrCol());
@@ -1528,7 +1528,7 @@ END_MESSAGE_MAP()
 // CDecComboBox message handlers
 
 // CBN_SELCHANGE message reflected back to the control
-void CDecComboBox::OnSelchange() 
+void CDecComboBox::OnSelchange()
 {
 	CString ss;
 	GetWindowText(ss);
@@ -1538,7 +1538,7 @@ void CDecComboBox::OnSelchange()
 // xxx remove this?
 // For some reason CBN_SELCHANGE does not seem to be reflected
 // so also do it for CBN_SELENDOK
-void CDecComboBox::OnSelendok() 
+void CDecComboBox::OnSelendok()
 {
 	CString ss;
 	GetWindowText(ss);
@@ -1604,7 +1604,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarksComboBox message handlers
 
-void CBookmarksComboBox::OnSelchange() 
+void CBookmarksComboBox::OnSelchange()
 {
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
@@ -1631,10 +1631,10 @@ void CBookmarksComboBox::OnSelchange()
 }
 
 #if 0
-void CBookmarksComboBox::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) 
+void CBookmarksComboBox::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 {
 	// TODO: Add your message handler code here and/or call default
-	
+
 	CComboBox::OnDrawItem(nIDCtl, lpDrawItemStruct);
 }
 #endif
@@ -1745,7 +1745,7 @@ void CStatBar::SetToolTips()
 /////////////////////////////////////////////////////////////////////////////
 // CStatBar message handlers
 
-int CStatBar::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+int CStatBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CMFCStatusBar::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -1753,7 +1753,7 @@ int CStatBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CStatBar::OnSize(UINT nType, int cx, int cy) 
+void CStatBar::OnSize(UINT nType, int cx, int cy)
 {
 	CMFCStatusBar::OnSize(nType, cx, cy);
 
@@ -1786,7 +1786,7 @@ void CStatBar::OnSize(UINT nType, int cx, int cy)
 #endif
 }
 
-void CStatBar::OnLButtonDblClk(UINT nFlags, CPoint point) 
+void CStatBar::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	int index;                   // Index (0 based) of current pane we're checking
 	CRect pane_rect;             // Bounds (device coords) of pane
@@ -1885,7 +1885,7 @@ void CStatBar::OnLButtonDblClk(UINT nFlags, CPoint point)
 			pview->ToggleInsert();
 		return;
 	}
-		
+
 	// Check if mouse clicked on OVR pane
 	index = CommandToIndex(ID_INDICATOR_REC);
 	ASSERT(index > 0);
@@ -1924,15 +1924,15 @@ void CStatBar::OnLButtonDblClk(UINT nFlags, CPoint point)
 	CMFCStatusBar::OnLButtonDblClk(nFlags, point);
 }
 
-void CStatBar::OnRButtonDown(UINT nFlags, CPoint point) 
+void CStatBar::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	CPoint scr_point(point);
 	ClientToScreen(&scr_point);
 	((CMainFrame *)AfxGetMainWnd())->bar_context(scr_point);
-//    CMFCStatusBar::OnRButtonDown(nFlags, point);
+//	CMFCStatusBar::OnRButtonDown(nFlags, point);
 }
 
-void CStatBar::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CStatBar::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	((CMainFrame *)AfxGetMainWnd())->bar_context(point);
 }

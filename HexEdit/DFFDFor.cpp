@@ -139,7 +139,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CDFFDFor message handlers
 
-BOOL CDFFDFor::OnInitDialog() 
+BOOL CDFFDFor::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetIcon(AfxGetApp()->LoadIcon(IDI_FOR), TRUE);
@@ -227,24 +227,24 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CDFFDFor::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CDFFDFor::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CDFFDFor::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CDFFDFor::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CDFFDFor::OnHelp() 
+void CDFFDFor::OnHelp()
 {
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_DFFD_FOR))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CDFFDFor::OnCancel() 
+void CDFFDFor::OnCancel()
 {
 	pelt_->DeleteAllChildren();
 	saved_.InsertKids(pelt_);
@@ -253,7 +253,7 @@ void CDFFDFor::OnCancel()
 	CDialog::OnCancel();
 }
 
-void CDFFDFor::OnOK() 
+void CDFFDFor::OnOK()
 {
 	if (modified_)
 	{
@@ -266,7 +266,7 @@ void CDFFDFor::OnOK()
 	CDialog::OnOK();
 }
 
-void CDFFDFor::OnNext() 
+void CDFFDFor::OnNext()
 {
 	// Does the same as OnOK but returns ID_DFFD_NEXT to indicate
 	// that the next sibling should now be edited
@@ -284,7 +284,7 @@ void CDFFDFor::OnNext()
 	CDialog::EndDialog(ID_DFFD_NEXT);
 }
 
-void CDFFDFor::OnPrev() 
+void CDFFDFor::OnPrev()
 {
 	// Does the same as OnOK but returns ID_DFFD_PREV to indicate
 	// that the previous sibling should now be edited
@@ -324,13 +324,13 @@ LRESULT CDFFDFor::OnKickIdle(WPARAM, LPARAM lCount)
 	return FALSE;
 }
 
-void CDFFDFor::OnChange() 
+void CDFFDFor::OnChange()
 {
 	modified_ = true;
 }
 
 // Edit current child element (Edit button)
-void CDFFDFor::OnEdit() 
+void CDFFDFor::OnEdit()
 {
 	bool new_change = false;            // Were changes made during the edit?
 	CXmlTree::CElt ee(pelt_->GetFirstChild());
@@ -428,7 +428,7 @@ void CDFFDFor::OnEdit()
 	}
 }
 
-void CDFFDFor::OnReplace() 
+void CDFFDFor::OnReplace()
 {
 	if (ctl_replace_.m_nMenuResult == 0)
 		return;
@@ -571,7 +571,7 @@ void CDFFDFor::OnReplace()
 	ctl_stop_var_.m_hMenu = pstop_menu_->GetSafeHmenu();
 }
 
-void CDFFDFor::OnGetCountVar() 
+void CDFFDFor::OnGetCountVar()
 {
 	if (ctl_count_var_.m_nMenuResult != 0)
 	{
@@ -596,7 +596,7 @@ void CDFFDFor::OnGetCountVar()
 	}
 }
 
-void CDFFDFor::OnGetStopVar() 
+void CDFFDFor::OnGetStopVar()
 {
 	if (ctl_stop_var_.m_nMenuResult != 0)
 	{

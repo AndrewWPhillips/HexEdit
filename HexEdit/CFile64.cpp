@@ -652,7 +652,7 @@ void CFile64::Dump( CDumpContext& dump_context ) const
       _ultot( large_integer.LowPart, temp_string, 16 );
 
       dump_context << TEXT( " (0x" ) << temp_string << TEXT( "), " ) << large_integer.HighPart << TEXT( " (0x" );
-      
+
       _ultot( large_integer.HighPart, temp_string, 16 );
 
       dump_context << temp_string << TEXT( ") )\n" );

@@ -97,7 +97,7 @@ private:
 #endif
 	void bg_update(int ii);             // Update one entry (part of background thread)
 
-	std::vector<char> m_type;           // 0 = logical volume, 1 = physical device, 
+	std::vector<char> m_type;           // 0 = logical volume, 1 = physical device
 	std::vector<short> m_id;
 	std::vector<CString> m_filename;
 	std::vector<CString> m_name;

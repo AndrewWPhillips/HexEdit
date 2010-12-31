@@ -46,19 +46,19 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarkFind message handlers
 
-BOOL CBookmarkFind::OnInitDialog() 
+BOOL CBookmarkFind::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 	return TRUE;
 }
 
-void CBookmarkFind::OnAppend() 
+void CBookmarkFind::OnAppend()
 {
 	EndDialog(IDC_BM_FIND_APPEND);
 }
 
-void CBookmarkFind::OnOverwrite() 
+void CBookmarkFind::OnOverwrite()
 {
 	EndDialog(IDC_BM_FIND_OVERWRITE);
 }

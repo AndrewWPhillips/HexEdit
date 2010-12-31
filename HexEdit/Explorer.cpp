@@ -457,7 +457,7 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 			}
 		}
 		break;
-		
+
 	case COLOPENED:
 		{
 			if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
@@ -557,7 +557,7 @@ int CHistoryShellList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point) 
+void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point)
 {
 	CPoint pt(point);
 	ScreenToClient(&pt);
@@ -594,7 +594,7 @@ void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point)
 	CMFCShellListCtrl::OnContextMenu(pWnd, point);
 }
 
-void CHistoryShellList::OnDblClk(NMHDR * pNMHDR, LRESULT * pResult) 
+void CHistoryShellList::OnDblClk(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	*pResult = 0;
 
@@ -1101,7 +1101,7 @@ BEGIN_MESSAGE_MAP(CFilterEdit, CEdit)
 	ON_WM_GETDLGCODE()
 END_MESSAGE_MAP()
 
-void CFilterEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CFilterEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 	if (nChar == '\r' || nChar == '\n')
@@ -1117,7 +1117,7 @@ void CFilterEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-UINT CFilterEdit::OnGetDlgCode() 
+UINT CFilterEdit::OnGetDlgCode()
 {
 	// Get all keys so that we see CR
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
@@ -1130,7 +1130,7 @@ BEGIN_MESSAGE_MAP(CFolderEdit, CEdit)
 	ON_WM_GETDLGCODE()
 END_MESSAGE_MAP()
 
-void CFolderEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CFolderEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 	if (nChar == '\r' || nChar == '\n')
@@ -1146,7 +1146,7 @@ void CFolderEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-UINT CFolderEdit::OnGetDlgCode() 
+UINT CFolderEdit::OnGetDlgCode()
 {
 	// Get all keys so that we see CR
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
@@ -1154,7 +1154,7 @@ UINT CFolderEdit::OnGetDlgCode()
 
 /////////////////////////////////////////////////////////////////////////////
 // CExplorerWnd - modeless dialog that looks like Windows Explorer
-BOOL CExplorerWnd::Create(CWnd* pParentWnd) 
+BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 {
 	if (!CDialog::Create(MAKEINTRESOURCE(IDD), pParentWnd))
 		return FALSE;
@@ -1364,7 +1364,7 @@ void CExplorerWnd::build_filter_menu()
 }
 
 // Called after the currently displayed folder has changed
-void CExplorerWnd::UpdateFolderInfo(CString folder) 
+void CExplorerWnd::UpdateFolderInfo(CString folder)
 {
 	ctl_name_.SetWindowText(folder);
 
@@ -1379,12 +1379,12 @@ void CExplorerWnd::UpdateFolderInfo(CString folder)
 										FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION);
 }
 
-void CExplorerWnd::Refresh() 
+void CExplorerWnd::Refresh()
 {
 	list_.Refresh();
 }
 
-void CExplorerWnd::NewFilter() 
+void CExplorerWnd::NewFilter()
 {
 	VERIFY(UpdateData());
 
@@ -1402,7 +1402,7 @@ void CExplorerWnd::NewFilter()
 }
 
 // Add current filter to the drop down list or move to top if already there
-void CExplorerWnd::AddFilter() 
+void CExplorerWnd::AddFilter()
 {
 	int ii, count = ctl_filter_.GetCount();
 	CString tmp = curr_filter_;
@@ -1424,7 +1424,7 @@ void CExplorerWnd::AddFilter()
 	ctl_filter_.InsertString(0, curr_filter_);
 }
 
-void CExplorerWnd::OldFilter() 
+void CExplorerWnd::OldFilter()
 {
 	VERIFY(UpdateData(FALSE));
 }
@@ -1468,7 +1468,7 @@ void CExplorerWnd::AddFolder()
 	ctl_name_.InsertString(0, list_.Folder());  // Add original string (with case)
 }
 
-void CExplorerWnd::OldFolder() 
+void CExplorerWnd::OldFolder()
 {
 	VERIFY(UpdateData(FALSE));
 }
@@ -1491,7 +1491,7 @@ BEGIN_MESSAGE_MAP(CExplorerWnd, CDialog)
 	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
-void CExplorerWnd::OnDestroy() 
+void CExplorerWnd::OnDestroy()
 {
 	theApp.WriteProfileInt("File-Settings", "ExplorerOrientation", splitter_.Orientation());
 	theApp.WriteProfileInt("File-Settings", "ExplorerTreeSize", splitter_.GetPaneSize(0));
@@ -1605,7 +1605,7 @@ static DWORD id_pairs_explorer[] = {
 	0,0 
 };
 
-BOOL CExplorerWnd::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CExplorerWnd::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
 	// and then disappear when mouse up evenet is seen.  The only soln I could
@@ -1619,7 +1619,7 @@ CBrush * CExplorerWnd::m_pBrush = NULL;
 BOOL CExplorerWnd::OnEraseBkgnd(CDC *pDC)
 {
 	// We check for changed look in erase background event as it's done
-	// before other drawing.  This is necessary (to update m_pBrush etc) 
+	// before other drawing.  This is necessary (to update m_pBrush etc)
 	// because there is no message sent when the look changes.
 	static UINT saved_look = 0;
 	if (theApp.m_nAppLook != saved_look)
@@ -1767,7 +1767,7 @@ void CExplorerWnd::OnFolderFlip()
 	list_.ModifyStyle(LVS_TYPEMASK, style);
 }
 
-void CExplorerWnd::OnFolderView() 
+void CExplorerWnd::OnFolderView()
 {
 	// Change folder list view depending on menu item selected
 	switch (ctl_view_.m_nMenuResult)

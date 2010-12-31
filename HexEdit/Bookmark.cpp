@@ -147,7 +147,7 @@ long CBookmarkList::GetSetLast(LPCTSTR basename, int &count)
 	long retval = 0;
 	size_t len = strlen(basename);
 	std::vector<CString>::const_iterator pn;
-	
+
 	for (count = 0, pn = name_.begin(); pn != name_.end(); ++pn)
 	{
 		if (strncmp(basename, *pn, len) == 0)
@@ -203,7 +203,7 @@ int CBookmarkList::RemoveSet(LPCTSTR basename)
 	int count = 0;
 	size_t len = strlen(basename);
 	std::vector<CString>::const_iterator pn;
-	
+
 	for (pn = name_.begin(); pn != name_.end(); ++pn)
 	{
 		if (strncmp(basename, *pn, len) == 0)

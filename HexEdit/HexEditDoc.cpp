@@ -309,7 +309,7 @@ void CHexEditDoc::SetFileStatus(LPCTSTR lpszPathName)
 }
 
 // Called indirectly as part of File/Open command
-BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName) 
+BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
 	int ii;
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
@@ -423,7 +423,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	// - may slow down file opening for no purpose if template is not used
 	// - user might get XML parse error messages even if not using templates
 	OpenDataFormatFile();
-	
+
 	// Make sure file property page is updated
 	((CMainFrame *)AfxGetMainWnd())->m_wndProp.Update(GetBestView(), -1);
 
@@ -431,7 +431,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 }
 
 // Called when document closed probably as part of file closing command
-void CHexEditDoc::OnCloseDocument() 
+void CHexEditDoc::OnCloseDocument()
 {
 	CheckSaveTemplate();
 
@@ -535,7 +535,7 @@ void CHexEditDoc::OnFileClose()
 	CHECK_SECURITY(196);
 }
 
-BOOL CHexEditDoc::SaveModified() 
+BOOL CHexEditDoc::SaveModified()
 {
 	BOOL retval = CDocument::SaveModified();
 
@@ -585,7 +585,7 @@ BOOL CHexEditDoc::DoSave(LPCTSTR lpszPathName, BOOL bReplace)
 }
 
 // Called as part of Save and Save As commands
-BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName) 
+BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
 	last_view_ = NULL;
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
@@ -1228,7 +1228,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 	return TRUE;
 }
 
-void CHexEditDoc::DeleteContents() 
+void CHexEditDoc::DeleteContents()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	CString strPath;
@@ -1867,22 +1867,22 @@ void CHexEditDoc::fill_rand(char *buf, size_t len, range_set<int> &rr)
 	}
 }
 
-void CHexEditDoc::OnKeepTimes() 
+void CHexEditDoc::OnKeepTimes()
 {
 	keep_times_ = !keep_times_;
 }
 
-void CHexEditDoc::OnUpdateKeepTimes(CCmdUI* pCmdUI) 
+void CHexEditDoc::OnUpdateKeepTimes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(pfile1_ != NULL && !IsDevice() && !readonly_);
 	pCmdUI->SetCheck(keep_times_);
 }
 
-void CHexEditDoc::OnDocTest() 
+void CHexEditDoc::OnDocTest()
 {
 }
 
-void CHexEditDoc::OnTest() 
+void CHexEditDoc::OnTest()
 {
 #if 0
 	CXmlTree xt;

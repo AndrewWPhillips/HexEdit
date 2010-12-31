@@ -68,7 +68,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CNewScheme message handlers
 
-BOOL CNewScheme::OnInitDialog() 
+BOOL CNewScheme::OnInitDialog()
 {
 	ASSERT(psvec_ != NULL);
 	CDialog::OnInitDialog();
@@ -88,7 +88,7 @@ BOOL CNewScheme::OnInitDialog()
 	return TRUE;
 }
 
-void CNewScheme::OnHelp() 
+void CNewScheme::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_NEW_SCHEME_HELP))
@@ -102,18 +102,18 @@ static DWORD id_pairs[] = {
 	0,0
 };
 
-BOOL CNewScheme::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CNewScheme::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CNewScheme::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CNewScheme::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CNewScheme::OnOK() 
+void CNewScheme::OnOK()
 {
 	UpdateData();
 
@@ -144,7 +144,6 @@ void CNewScheme::OnOK()
 			GetDlgItem(IDC_SCHEME_NAME)->SetFocus();
 			return;
 		}
-	
+
 	CDialog::OnOK();
 }
-

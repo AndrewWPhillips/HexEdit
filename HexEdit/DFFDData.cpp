@@ -170,7 +170,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CDFFDData message handlers
 
-BOOL CDFFDData::OnInitDialog() 
+BOOL CDFFDData::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetIcon(AfxGetApp()->LoadIcon(IDI_DATA), TRUE);
@@ -260,7 +260,7 @@ BOOL CDFFDData::OnInitDialog()
 }
 
 
-void CDFFDData::OnCancel() 
+void CDFFDData::OnCancel()
 {
 	pelt_->DeleteAllChildren();
 	saved_.InsertKids(pelt_);
@@ -282,7 +282,7 @@ void CDFFDData::OnOK()
 	CDialog::OnOK();
 }
 
-void CDFFDData::OnClone() 
+void CDFFDData::OnClone()
 {
 	// Does the same as OnOK but returns ID_DFFD_CLONE to indicate
 	// that a sibling should be created that is a clone of this one
@@ -300,7 +300,7 @@ void CDFFDData::OnClone()
 	CDialog::EndDialog(ID_DFFD_CLONE);
 }
 
-void CDFFDData::OnNext() 
+void CDFFDData::OnNext()
 {
 	// Does the same as OnOK but returns ID_DFFD_NEXT to indicate
 	// that the next sibling should now be edited
@@ -318,7 +318,7 @@ void CDFFDData::OnNext()
 	CDialog::EndDialog(ID_DFFD_NEXT);
 }
 
-void CDFFDData::OnPrev() 
+void CDFFDData::OnPrev()
 {
 	// Does the same as OnOK but returns ID_DFFD_PREV to indicate
 	// that the previous sibling should now be edited
@@ -361,7 +361,7 @@ void CDFFDData::OnSelchangeType()
 	modified_ = true;
 }
 
-void CDFFDData::OnSelchangeFormat() 
+void CDFFDData::OnSelchangeFormat()
 {
 	if (format_ != ctl_format_.GetCurSel())
 	{
@@ -371,7 +371,7 @@ void CDFFDData::OnSelchangeFormat()
 	modified_ = true;
 }
 
-void CDFFDData::OnChangeLength() 
+void CDFFDData::OnChangeLength()
 {
 	UpdateData();         // get length from control
 	fix_controls();       // update spin control range
@@ -385,7 +385,7 @@ void CDFFDData::OnBitfield()
 	modified_ = true;
 }
 
-void CDFFDData::OnChange() 
+void CDFFDData::OnChange()
 {
 	modified_ = true;
 }
@@ -464,7 +464,7 @@ void CDFFDData::fix_controls()
 
 void CDFFDData::fix_big_endian()
 {
-	ctl_big_endian_.EnableWindow(type_ == 2 || type_ == 3 ||       // numeric 
+	ctl_big_endian_.EnableWindow(type_ == 2 || type_ == 3 ||       // numeric
 								 type_ == 4 ||                     // date
 								 (type_ == 1 && format_ == 5) ||   // unicode char
 								 (type_ == 5 && format_ == 5));    // unicode string
@@ -1079,21 +1079,21 @@ static DWORD id_pairs[] = {
 	IDC_SPIN_BITFIELD_BITS, HIDC_DFFD_BITFIELD_BITS,
 	IDC_DFFD_BITFIELD_DIRN, HIDC_DFFD_BITFIELD_DIRN,
 	IDC_DFFD_BITFIELD_DIRN_DESC, HIDC_DFFD_BITFIELD_DIRN,
-	0,0 
+	0,0
 };
 
-BOOL CDFFDData::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CDFFDData::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CDFFDData::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CDFFDData::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CDFFDData::OnHelp() 
+void CDFFDData::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_DFFD_DATA))

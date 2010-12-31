@@ -114,7 +114,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CDFFDEval message handlers
 
-BOOL CDFFDEval::OnInitDialog() 
+BOOL CDFFDEval::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetIcon(AfxGetApp()->LoadIcon(IDI_EVAL), TRUE);
@@ -168,7 +168,7 @@ BOOL CDFFDEval::OnInitDialog()
 	return TRUE;
 }
 
-void CDFFDEval::OnCancel() 
+void CDFFDEval::OnCancel()
 {
 	pelt_->DeleteAllChildren();
 	saved_.InsertKids(pelt_);
@@ -190,7 +190,7 @@ void CDFFDEval::OnOK()
 	CDialog::OnOK();
 }
 
-void CDFFDEval::OnNext() 
+void CDFFDEval::OnNext()
 {
 	// Does the same as OnOK but returns ID_DFFD_NEXT to indicate
 	// that the next sibling should now be edited
@@ -208,7 +208,7 @@ void CDFFDEval::OnNext()
 	CDialog::EndDialog(ID_DFFD_NEXT);
 }
 
-void CDFFDEval::OnPrev() 
+void CDFFDEval::OnPrev()
 {
 	// Does the same as OnOK but returns ID_DFFD_PREV to indicate
 	// that the previous sibling should now be edited
@@ -231,7 +231,7 @@ LRESULT CDFFDEval::OnKickIdle(WPARAM, LPARAM lCount)
 	return FALSE;
 }
 
-void CDFFDEval::OnChange() 
+void CDFFDEval::OnChange()
 {
 	modified_ = true;
 }
@@ -285,7 +285,7 @@ void CDFFDEval::save_data()
 	pelt_->SetAttr("comment", comment_);
 }
 
-void CDFFDEval::OnHelp() 
+void CDFFDEval::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_DFFD_EVAL))
@@ -300,16 +300,16 @@ static DWORD id_pairs[] = {
 	IDC_DFFD_COMMENTS, HIDC_DFFD_COMMENTS,
 	ID_DFFD_PREV, HID_DFFD_PREV,
 	ID_DFFD_NEXT, HID_DFFD_NEXT,
-	0,0 
+	0,0
 };
 
-BOOL CDFFDEval::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CDFFDEval::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CDFFDEval::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CDFFDEval::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }

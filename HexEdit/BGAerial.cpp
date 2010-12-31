@@ -223,7 +223,7 @@ void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
 
 	// TBD: TODO we need user options for default bpe and MAX_BMP (min 16Mb = 1 TByte file @ BPE 65536)
 	bpe_ = 1;
-	
+
 	// Keep increasing bpe_ by powers of two until we get a small enough bitmap
 	while (bpe_ <= 65536 && (length_*3)/bpe_ > MAX_BMP)
 		bpe_ = bpe_<<1;

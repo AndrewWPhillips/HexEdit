@@ -119,7 +119,7 @@ static DWORD id_pairs[] = {
 	IDC_BOOKMARK_GOTO, HIDC_BOOKMARK_GOTO,
 	IDC_BOOKMARKS_VALIDATE, HIDC_BOOKMARKS_VALIDATE,
 	IDC_NET_RETAIN, HIDC_NET_RETAIN,
-	0,0 
+	0,0
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -472,7 +472,7 @@ void CBookmarkDlg::OnOK()
 	// TBD: TODO Hide();
 }
 
-void CBookmarkDlg::OnDestroy() 
+void CBookmarkDlg::OnDestroy()
 {
 	if (grid_.m_hWnd != 0)
 	{
@@ -538,7 +538,7 @@ LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	return FALSE;
 }
 
-BOOL CBookmarkDlg::PreTranslateMessage(MSG* pMsg) 
+BOOL CBookmarkDlg::PreTranslateMessage(MSG* pMsg)
 {
 
 	if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
@@ -592,7 +592,7 @@ HBRUSH CBookmarkDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 }
 
-void CBookmarkDlg::OnAdd() 
+void CBookmarkDlg::OnAdd()
 {
 	int index;                          // bookmark index of an existing bookmark of same name (or -1)
 	CHexEditView *pview = GetView();
@@ -647,7 +647,7 @@ void CBookmarkDlg::OnAdd()
 
 	theApp.SaveToMacro(km_bookmarks_add, name);
 
-	// Find the new/replaced bookmark and select 
+	// Find the new/replaced bookmark and select
 	int row, col = COL_NAME + grid_.GetFixedColumnCount();
 	for (row = grid_.GetFixedRowCount(); row < grid_.GetRowCount(); ++row)
 	{
@@ -701,7 +701,7 @@ void CBookmarkDlg::OnAdd()
 #endif
 }
 
-void CBookmarkDlg::OnGoTo() 
+void CBookmarkDlg::OnGoTo()
 {
 	CCellRange sel = grid_.GetSelectedCellRange();
 	ASSERT(sel.IsValid() && sel.GetMinRow() == sel.GetMaxRow());
@@ -716,7 +716,7 @@ void CBookmarkDlg::OnGoTo()
 //	CDialog::OnOK();
 }
 
-void CBookmarkDlg::OnRemove() 
+void CBookmarkDlg::OnRemove()
 {
 	CBookmarkList *pbl = theApp.GetBookmarkList();
 	int fcc = grid_.GetFixedColumnCount();
@@ -756,7 +756,7 @@ void CBookmarkDlg::OnRemove()
 	grid_.Refresh();
 }
 
-void CBookmarkDlg::OnValidate() 
+void CBookmarkDlg::OnValidate()
 {
 	int move_count = 0;      // Number of bookmarks moved due to being past EOF
 
@@ -910,13 +910,13 @@ void CBookmarkDlg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 	}
 }
 
-void CBookmarkDlg::OnHelp() 
+void CBookmarkDlg::OnHelp()
 {
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_BOOKMARKS_HELP))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-BOOL CBookmarkDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CBookmarkDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
 	// and then disappear when mouse up evenet is seen.  The only soln I could
@@ -925,7 +925,7 @@ BOOL CBookmarkDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 	return TRUE;
 }
 
-void CBookmarkDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CBookmarkDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	// Don't show context menu if right-click on grid top row (used to display column menu)
 	if (pWnd->IsKindOf(RUNTIME_CLASS(CGridCtrl)))

@@ -92,7 +92,6 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 		pfile = pfile1_;		// Normal file
 	}
 
-
 //    CSingleLock sl(&docdata_, TRUE);
 
 	// Find the 1st loc record that has (some of) the data
@@ -461,7 +460,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 						(utype == mod_insert || utype == mod_insert_file) ? address : address + clen,
 						address,
 						adjust);
-	 
+
 #if 0
 				// Signal views to update display for changed search string occurrences
 				if (utype == mod_replace || utype == mod_repback)
@@ -904,6 +903,7 @@ void CHexEditDoc::WriteInPlace()
 	}
 
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	mm->m_wndStatusBar.EnablePaneProgressBar(0);
 	clock_t last_checked = clock();
 #endif
 
@@ -946,7 +946,7 @@ void CHexEditDoc::WriteInPlace()
 					total_done += count;
 					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
 					{
-						mm->Progress(int(total_done*100/total_todo));
+						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 						last_checked = clock();
 						AfxGetApp()->OnIdle(0);
 					}
@@ -982,7 +982,7 @@ void CHexEditDoc::WriteInPlace()
 					total_done += count;
 					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
 					{
-						mm->Progress(int(total_done*100/total_todo));
+						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 						last_checked = clock();
 						AfxGetApp()->OnIdle(0);
 					}
@@ -1005,7 +1005,7 @@ void CHexEditDoc::WriteInPlace()
 				total_done += (pl->dlen&doc_loc::mask);
 				if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
 				{
-					mm->Progress(int(total_done*100/total_todo));
+					mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 					last_checked = clock();
 					AfxGetApp()->OnIdle(0);
 				}
@@ -1036,7 +1036,7 @@ void CHexEditDoc::WriteInPlace()
 					total_done += tocopy;
 					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
 					{
-						mm->Progress(int(total_done*100/total_todo));
+						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 						last_checked = clock();
 						AfxGetApp()->OnIdle(0);
 					}
@@ -1064,7 +1064,7 @@ void CHexEditDoc::WriteInPlace()
 
 #ifdef INPLACE_MOVE
 		delete[] buf;
-		mm->Progress(-1);  // disable progress bar
+		mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
 #endif
 
 		theApp.mac_error_ = 10;
@@ -1073,7 +1073,7 @@ void CHexEditDoc::WriteInPlace()
 
 #ifdef INPLACE_MOVE
 	delete[] buf;
-	mm->Progress(0);  // disable progress bar
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
 #endif
 }
 
@@ -1149,6 +1149,7 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 
 	// Copy the range to file catching exceptions (probably disk full)
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	mm->m_wndStatusBar.EnablePaneProgressBar(0);
 	clock_t last_checked = clock();
 	try
 	{
@@ -1165,7 +1166,7 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 			// Update scan progress no more than once every 1 seconds
 			if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
 			{
-				mm->Progress(int(((address-start)*98)/(end-start) + 1));
+				mm->m_wndStatusBar.SetPaneProgress(0, long(((address-start)*98)/(end-start) + 1));
 				last_checked = clock();
 				AfxGetApp()->OnIdle(0);
 			}
@@ -1177,7 +1178,7 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 		AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
 		pfe->Delete();
 
-		mm->Progress(-1);  // disable progress bar
+		mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
 
 		// Close and delete the (probably incomplete) file
 		ff.Close();
@@ -1188,7 +1189,7 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 		return FALSE;
 	}
 
-	mm->Progress(-1);  // disable progress bar
+	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
 
 	ff.Close();
 	delete[] buf;

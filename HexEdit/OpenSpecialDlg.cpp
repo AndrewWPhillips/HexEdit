@@ -427,13 +427,13 @@ static DWORD id_pairs[] = {
 	0,0
 };
 
-BOOL COpenSpecialDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL COpenSpecialDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void COpenSpecialDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
+void COpenSpecialDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
@@ -525,7 +525,7 @@ LRESULT COpenSpecialDlg::OnWmUser2(WPARAM, LPARAM)
 	return FALSE;
 }
 
-void COpenSpecialDlg::OnSelchangedOpenTree(NMHDR* pNMHDR, LRESULT* pResult) 
+void COpenSpecialDlg::OnSelchangedOpenTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
@@ -534,7 +534,7 @@ void COpenSpecialDlg::OnSelchangedOpenTree(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void COpenSpecialDlg::OnSelchangingOpenTree(NMHDR* pNMHDR, LRESULT* pResult) 
+void COpenSpecialDlg::OnSelchangingOpenTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
@@ -544,7 +544,7 @@ void COpenSpecialDlg::OnSelchangingOpenTree(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void COpenSpecialDlg::OnDblclkOpenTree(NMHDR* pNMHDR, LRESULT* pResult) 
+void COpenSpecialDlg::OnDblclkOpenTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// Check if there is a valid selection and close the dialog
 	OnOK();

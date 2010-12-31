@@ -72,11 +72,7 @@ void TParseDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(TParseDlg, CDialog)
-	//{{AFX_MSG_MAP(TParseDlg)
-	ON_BN_CLICKED(IDC_VALUES_CUSTOM, OnValuesCustom)
-	ON_BN_CLICKED(IDC_TYPES_CUSTOM, OnTypesCustom)
 	ON_WM_DESTROY()
-	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(ID_DFFD_HELP, OnHelp)
 	ON_WM_HELPINFO()
 	ON_WM_CONTEXTMENU()
@@ -85,10 +81,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // TParseDlg message handlers
 
-BOOL TParseDlg::OnInitDialog() 
+BOOL TParseDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	resizer_.Create(this);
 	CRect rct;
 	GetWindowRect(&rct);
@@ -178,7 +174,7 @@ BOOL TParseDlg::OnInitDialog()
 	return TRUE;
 }
 
-void TParseDlg::OnDestroy() 
+void TParseDlg::OnDestroy()
 {
 	// Save window position so t can be restored when dialog is reopened
 	CRect rr;
@@ -203,7 +199,7 @@ void TParseDlg::OnDestroy()
 	theApp.WriteProfileInt("Parse-Settings", "BaseStorageUnit", m_base_storage_unit);
 }
 
-BOOL TParseDlg::PreTranslateMessage(MSG* pMsg) 
+BOOL TParseDlg::PreTranslateMessage(MSG* pMsg)
 {
 	CWnd *pw = GetDlgItem(IDC_SOURCE_CODE);   // Get ptr to edit box window
 	if (pMsg->message == WM_CHAR && 
@@ -241,37 +237,25 @@ static DWORD id_pairs[] = {
 	0,0
 };
 
-BOOL TParseDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL TParseDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void TParseDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
+void TParseDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void TParseDlg::OnHelp() 
+void TParseDlg::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_TPARSE))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void TParseDlg::OnOK() 
+void TParseDlg::OnOK()
 {
 	CDialog::OnOK();
-}
-
-void TParseDlg::OnValuesCustom() 
-{
-	// TODO: Add your control notification handler code here
-	
-}
-
-void TParseDlg::OnTypesCustom() 
-{
-	// TODO: Add your control notification handler code here
-	
 }

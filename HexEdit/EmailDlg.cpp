@@ -95,7 +95,7 @@ END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CEmailDlg message handlers
-BOOL CEmailDlg::OnInitDialog() 
+BOOL CEmailDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -110,7 +110,7 @@ BOOL CEmailDlg::OnInitDialog()
 	return FALSE;
 }
 
-void CEmailDlg::OnOK() 
+void CEmailDlg::OnOK()
 {
 	if (!UpdateData(TRUE))
 		return;
@@ -167,28 +167,28 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CEmailDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CEmailDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CEmailDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CEmailDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CEmailDlg::OnEmailHelp() 
+void CEmailDlg::OnEmailHelp()
 {
 	// Display help for the dialog
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_EMAIL_HELP))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CEmailDlg::OnAttach() 
+void CEmailDlg::OnAttach()
 {
 	UpdateData();
-	
+
 	ASSERT(GetDlgItem(IDC_ATTACHMENT) != NULL);
 	ASSERT(GetDlgItem(IDC_ATTACHMENT_BROWSE) != NULL);
 
@@ -198,7 +198,7 @@ void CEmailDlg::OnAttach()
 		GetDlgItem(IDC_ATTACHMENT)->SetFocus();
 }
 
-void CEmailDlg::OnAttachmentBrowse() 
+void CEmailDlg::OnAttachmentBrowse()
 {
 	UpdateData();
 

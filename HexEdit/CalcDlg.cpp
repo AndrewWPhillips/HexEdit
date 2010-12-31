@@ -133,7 +133,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 
-void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point) 
+void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	int bnum;
 	if ((bnum = pos2bit(point)) > -1 && bnum < m_pParent->bits_)
@@ -226,7 +226,7 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 	m_first = true;
 }
 
-BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/) 
+BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 {
 	mm_ = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
 
@@ -872,7 +872,7 @@ static DWORD id_pairs[] = {
 	IDC_DIGIT_D, HIDC_DIGIT_0,
 	IDC_DIGIT_E, HIDC_DIGIT_0,
 	IDC_DIGIT_F, HIDC_DIGIT_0,
-	0,0 
+	0,0
 };
 
 void CCalcDlg::Redisplay()
@@ -1934,7 +1934,7 @@ static void Draw3DButtonFrame(CDC *pDC, CRect rcButton, BOOL bFocus)
 /////////////////////////////////////////////////////////////////////////////
 // CCalcDlg message handlers
 
-int CCalcDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+int CCalcDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -1942,7 +1942,7 @@ int CCalcDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CCalcDlg::OnDestroy() 
+void CCalcDlg::OnDestroy()
 {
 	CDialog::OnDestroy();
 
@@ -1977,7 +1977,7 @@ void CCalcDlg::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
 	CDialog::OnSize(nType, cx, cy);
 }
 
-BOOL CCalcDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CCalcDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
 	// and then disappear when mouse up event is seen.  The only soln I could
@@ -1987,7 +1987,7 @@ BOOL CCalcDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 	return TRUE;
 }
 
-void CCalcDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CCalcDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
@@ -1997,7 +1997,7 @@ CBrush * CCalcDlg::m_pBrush = NULL;
 BOOL CCalcDlg::OnEraseBkgnd(CDC *pDC)
 {
 	// We check for changed look in erase background event as it's done
-	// before other drawing.  This is necessary (to update m_pBrush etc) 
+	// before other drawing.  This is necessary (to update m_pBrush etc)
 	// because there is no message sent when the look changes.
 	static UINT saved_look = 0;
 	if (theApp.m_nAppLook != saved_look)
@@ -2162,7 +2162,7 @@ void CCalcDlg::OnTooltipsShow(NMHDR* pNMHDR, LRESULT* pResult)
 	return;
 }
 
-BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg) 
+BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 {
 	if (ttc_.m_hWnd != 0)
 	{
@@ -2248,7 +2248,7 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 #define IDC_FIRST_BLACK  IDC_MARK_STORE
 #define IDC_FIRST_PURPLE IDC_POW
 
-void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) 
+void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 {
 	if (!IsVisible()) return;
 	ASSERT(lpDrawItemStruct->CtlType == ODT_BUTTON);
@@ -2457,48 +2457,48 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	aa_->SaveToMacro(km_go);
 }
 
-void CCalcDlg::OnBigEndian() 
+void CCalcDlg::OnBigEndian()
 {
 	toggle_endian();
 	aa_->SaveToMacro(km_big_endian, (__int64)-1);
 }
 
-void CCalcDlg::On8bit() 
+void CCalcDlg::On8bit()
 {
 	change_bits(8);
 }
 
-void CCalcDlg::On16bit() 
+void CCalcDlg::On16bit()
 {
 	change_bits(16);
 }
 
-void CCalcDlg::On32bit() 
+void CCalcDlg::On32bit()
 {
 	change_bits(32);
 }
 
-void CCalcDlg::On64bit() 
+void CCalcDlg::On64bit()
 {
 	change_bits(64);
 }
 
-void CCalcDlg::OnBinary() 
+void CCalcDlg::OnBinary()
 {
 	change_base(2);
 }
 
-void CCalcDlg::OnOctal() 
+void CCalcDlg::OnOctal()
 {
 	change_base(8);
 }
 
-void CCalcDlg::OnDecimal() 
+void CCalcDlg::OnDecimal()
 {
 	change_base(10);
 }
 
-void CCalcDlg::OnHex() 
+void CCalcDlg::OnHex()
 {
 	change_base(16);
 }
@@ -2960,153 +2960,153 @@ void CCalcDlg::OnGetFunc()
 }
 
 // ---------- Digits for entering numbers ----------
-void CCalcDlg::OnDigit0() 
+void CCalcDlg::OnDigit0()
 {
 	do_digit('0');
 }
 
-void CCalcDlg::OnDigit1() 
+void CCalcDlg::OnDigit1()
 {
 	do_digit('1');
 }
 
-void CCalcDlg::OnDigit2() 
+void CCalcDlg::OnDigit2()
 {
 	do_digit('2');
 }
 
-void CCalcDlg::OnDigit3() 
+void CCalcDlg::OnDigit3()
 {
 	do_digit('3');
 }
 
-void CCalcDlg::OnDigit4() 
+void CCalcDlg::OnDigit4()
 {
 	do_digit('4');
 }
 
-void CCalcDlg::OnDigit5() 
+void CCalcDlg::OnDigit5()
 {
 	do_digit('5');
 }
 
-void CCalcDlg::OnDigit6() 
+void CCalcDlg::OnDigit6()
 {
 	do_digit('6');
 }
 
-void CCalcDlg::OnDigit7() 
+void CCalcDlg::OnDigit7()
 {
 	do_digit('7');
 }
 
-void CCalcDlg::OnDigit8() 
+void CCalcDlg::OnDigit8()
 {
 	do_digit('8');
 }
 
-void CCalcDlg::OnDigit9() 
+void CCalcDlg::OnDigit9()
 {
 	do_digit('9');
 }
 
-void CCalcDlg::OnDigitA() 
+void CCalcDlg::OnDigitA()
 {
 	do_digit('A');
 }
 
-void CCalcDlg::OnDigitB() 
+void CCalcDlg::OnDigitB()
 {
 	do_digit('B');
 }
 
-void CCalcDlg::OnDigitC() 
+void CCalcDlg::OnDigitC()
 {
 	do_digit('C');
 }
 
-void CCalcDlg::OnDigitD() 
+void CCalcDlg::OnDigitD()
 {
 	do_digit('D');
 }
 
-void CCalcDlg::OnDigitE() 
+void CCalcDlg::OnDigitE()
 {
 	do_digit('E');
 }
 
-void CCalcDlg::OnDigitF() 
+void CCalcDlg::OnDigitF()
 {
 	do_digit('F');
 }
 
 // ----- Binary operators ----------
-void CCalcDlg::OnAdd() 
+void CCalcDlg::OnAdd()
 {
 	do_binop(binop_add);
 }
 
-void CCalcDlg::OnSubtract() 
+void CCalcDlg::OnSubtract()
 {
 	do_binop(binop_subtract);
 }
 
-void CCalcDlg::OnMultiply() 
+void CCalcDlg::OnMultiply()
 {
 	do_binop(binop_multiply);
 }
 
-void CCalcDlg::OnDivide() 
+void CCalcDlg::OnDivide()
 {
 	do_binop(binop_divide);
 }
 
-void CCalcDlg::OnMod() 
+void CCalcDlg::OnMod()
 {
 	do_binop(binop_mod);
 }
 
-void CCalcDlg::OnPow() 
+void CCalcDlg::OnPow()
 {
 	do_binop(binop_pow);
 }
 
-void CCalcDlg::OnAnd() 
+void CCalcDlg::OnAnd()
 {
 	do_binop(binop_and);
 }
 
-void CCalcDlg::OnOr() 
+void CCalcDlg::OnOr()
 {
 	do_binop(binop_or);
 }
 
-void CCalcDlg::OnXor() 
+void CCalcDlg::OnXor()
 {
 	do_binop(binop_xor);
 }
 
-void CCalcDlg::OnLsl() 
+void CCalcDlg::OnLsl()
 {
 	do_binop(binop_lsl);
 }
 
-void CCalcDlg::OnLsr() 
+void CCalcDlg::OnLsr()
 {
 	do_binop(binop_lsr);
 }
 
-void CCalcDlg::OnAsr() 
+void CCalcDlg::OnAsr()
 {
 	do_binop(binop_asr);
 }
 
-void CCalcDlg::OnRol() 
+void CCalcDlg::OnRol()
 {
 	do_binop(binop_rol);
 }
 
-void CCalcDlg::OnRor() 
+void CCalcDlg::OnRor()
 {
 	do_binop(binop_ror);
 }
@@ -3123,37 +3123,37 @@ void CCalcDlg::OnLess()                 // Returns the smaller of it's 2 operand
 
 // --------- Unary operators -----------
 
-void CCalcDlg::OnUnaryAt() 
+void CCalcDlg::OnUnaryAt()
 {
 	do_unary(unary_at);
 }
 
-void CCalcDlg::OnUnaryRol() 
+void CCalcDlg::OnUnaryRol()
 {
 	do_unary(unary_rol);
 }
 
-void CCalcDlg::OnUnaryRor() 
+void CCalcDlg::OnUnaryRor()
 {
 	do_unary(unary_ror);
 }
 
-void CCalcDlg::OnUnaryLsl() 
+void CCalcDlg::OnUnaryLsl()
 {
 	do_unary(unary_lsl);
 }
 
-void CCalcDlg::OnUnaryLsr() 
+void CCalcDlg::OnUnaryLsr()
 {
 	do_unary(unary_lsr);
 }
 
-void CCalcDlg::OnUnaryAsr() 
+void CCalcDlg::OnUnaryAsr()
 {
 	do_unary(unary_asr);
 }
 
-void CCalcDlg::OnUnaryNot() 
+void CCalcDlg::OnUnaryNot()
 {
 	do_unary(unary_not);
 }
@@ -3168,37 +3168,37 @@ void CCalcDlg::OnUnaryRev()             // Reverse bits
 	do_unary(unary_rev);
 }
 
-void CCalcDlg::OnUnarySign() 
+void CCalcDlg::OnUnarySign()
 {
 	do_unary(unary_sign);
 }
 
-void CCalcDlg::OnUnaryInc() 
+void CCalcDlg::OnUnaryInc()
 {
 	do_unary(unary_inc);
 }
 
-void CCalcDlg::OnUnaryDec() 
+void CCalcDlg::OnUnaryDec()
 {
 	do_unary(unary_dec);
 }
 
-void CCalcDlg::OnUnarySquare() 
+void CCalcDlg::OnUnarySquare()
 {
 	do_unary(unary_square);
 }
 
-void CCalcDlg::OnUnarySquareRoot() 
+void CCalcDlg::OnUnarySquareRoot()
 {
 	do_unary(unary_squareroot);
 }
 
-void CCalcDlg::OnUnaryCube() 
+void CCalcDlg::OnUnaryCube()
 {
 	do_unary(unary_cube);
 }
 
-void CCalcDlg::OnUnaryFactorial() 
+void CCalcDlg::OnUnaryFactorial()
 {
 	do_unary(unary_factorial);
 }
@@ -3230,7 +3230,7 @@ void CCalcDlg::OnMemGet()
 	inedit(km_memget);
 }
 
-void CCalcDlg::OnMemStore() 
+void CCalcDlg::OnMemStore()
 {
 	if (invalid_expression())
 		return;
@@ -3259,7 +3259,7 @@ void CCalcDlg::OnMemStore()
 
 }
 
-void CCalcDlg::OnMemClear() 
+void CCalcDlg::OnMemClear()
 {
 	memory_ = 0;
 	if (!aa_->refresh_off_ && IsVisible())
@@ -3271,7 +3271,7 @@ void CCalcDlg::OnMemClear()
 	aa_->SaveToMacro(km_memclear);
 }
 
-void CCalcDlg::OnMemAdd() 
+void CCalcDlg::OnMemAdd()
 {
 	if (invalid_expression())
 		return;
@@ -3291,7 +3291,7 @@ void CCalcDlg::OnMemAdd()
 	aa_->SaveToMacro(km_memadd);
 }
 
-void CCalcDlg::OnMemSubtract() 
+void CCalcDlg::OnMemSubtract()
 {
 	if (invalid_expression())
 		return;
@@ -3345,7 +3345,7 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 	inedit(km_markget);
 }
 
-void CCalcDlg::OnMarkStore() 
+void CCalcDlg::OnMarkStore()
 {
 	if (invalid_expression())
 		return;
@@ -3373,7 +3373,7 @@ void CCalcDlg::OnMarkStore()
 	aa_->SaveToMacro(km_markstore);
 }
 
-void CCalcDlg::OnMarkClear() 
+void CCalcDlg::OnMarkClear()
 {
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
@@ -3459,7 +3459,7 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	aa_->SaveToMacro(km_markadd);
 }
 
-void CCalcDlg::OnMarkSubtract() 
+void CCalcDlg::OnMarkSubtract()
 {
 	if (invalid_expression())
 		return;
@@ -3584,7 +3584,7 @@ void CCalcDlg::OnMarkAt()               // Get value from file at mark
 		edit_.Put();
 		FixFileButtons();
 	}
-	
+
 	inedit(km_markat);
 }
 
@@ -3687,7 +3687,7 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
 	inedit(km_selat);
 }
 
-void CCalcDlg::OnSelLen() 
+void CCalcDlg::OnSelLen()
 {
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
@@ -3740,7 +3740,7 @@ void CCalcDlg::OnEofGet()               // Length of file
 
 // ----------- File change funcs -------------
 
-void CCalcDlg::OnMarkAtStore() 
+void CCalcDlg::OnMarkAtStore()
 {
 	if (invalid_expression())
 		return;
@@ -3810,7 +3810,7 @@ void CCalcDlg::OnMarkAtStore()
 	aa_->SaveToMacro(km_markatstore);
 }
 
-void CCalcDlg::OnSelStore() 
+void CCalcDlg::OnSelStore()
 {
 	if (invalid_expression())
 		return;
@@ -3836,7 +3836,7 @@ void CCalcDlg::OnSelStore()
 	aa_->SaveToMacro(km_selstore);
 }
 
-void CCalcDlg::OnSelAtStore() 
+void CCalcDlg::OnSelAtStore()
 {
 	if (invalid_expression())
 		return;
@@ -3904,7 +3904,7 @@ void CCalcDlg::OnSelAtStore()
 	aa_->SaveToMacro(km_selatstore);
 }
 
-void CCalcDlg::OnSelLenStore() 
+void CCalcDlg::OnSelLenStore()
 {
 	if (invalid_expression())
 		return;

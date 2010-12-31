@@ -24,7 +24,7 @@ public:
 
 	int GetMaxRows() { return m_nMaxRows; }
 	int GetMaxCols() { return m_nMaxCols; }
-	
+
 	int ColWidth(int col)
 	{
 		int cur, min;

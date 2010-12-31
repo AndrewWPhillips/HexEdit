@@ -226,7 +226,7 @@ void CMultiplay::FixControls()
 /////////////////////////////////////////////////////////////////////////////
 // CMultiplay message handlers
 
-BOOL CMultiplay::OnInitDialog() 
+BOOL CMultiplay::OnInitDialog()
 {
 		CDialog::OnInitDialog();
 
@@ -266,14 +266,14 @@ BOOL CMultiplay::OnInitDialog()
 		return TRUE;
 }
 
-void CMultiplay::OnOK() 
+void CMultiplay::OnOK()
 {
 	name_ctrl_.GetLBText(name_ctrl_.GetCurSel(), macro_name_);
-	
+
 	CDialog::OnOK();
 }
 
-void CMultiplay::OnHelp() 
+void CMultiplay::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_MULTIPLAY_HELP))
@@ -291,13 +291,13 @@ static DWORD id_pairs_play[] = {
 	0,0 
 };
 
-BOOL CMultiplay::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CMultiplay::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_play);
 	return TRUE;
 }
 
-void CMultiplay::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CMultiplay::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_play);
 }
@@ -307,7 +307,7 @@ void CMultiplay::OnSelchangePlayName()
 	FixControls();
 }
 
-void CMultiplay::OnPlayOptions() 
+void CMultiplay::OnPlayOptions()
 {
 	// Invoke the Options dlg with the macro page displayed
 	theApp.display_options(MACRO_OPTIONS_PAGE, TRUE);
@@ -353,7 +353,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSaveMacro message handlers
 
-BOOL CSaveMacro::OnInitDialog() 
+BOOL CSaveMacro::OnInitDialog()
 {
 	aa_ = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	name_ = aa_->mac_filename_;
@@ -369,7 +369,7 @@ BOOL CSaveMacro::OnInitDialog()
 	return TRUE;
 }
 
-void CSaveMacro::OnOK() 
+void CSaveMacro::OnOK()
 {
 	if (!UpdateData(TRUE))
 		return;                         // DDV failed
@@ -401,18 +401,18 @@ static DWORD id_pairs_save[] = {
 	0,0 
 };
 
-BOOL CSaveMacro::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CSaveMacro::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_save);
 	return TRUE;
 }
 
-void CSaveMacro::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CSaveMacro::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_save);
 }
 
-void CSaveMacro::OnMacroHelp() 
+void CSaveMacro::OnMacroHelp()
 {
 	// Display help for the dialog
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_MACRO_SAVE_HELP))
@@ -447,7 +447,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMacroMessage message handlers
 
-void CMacroMessage::OnOK() 
+void CMacroMessage::OnOK()
 {
 	UpdateData();
 
@@ -490,7 +490,7 @@ void GetInt::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(GetInt, CDialog)
 END_MESSAGE_MAP()
 
-BOOL GetInt::OnInitDialog() 
+BOOL GetInt::OnInitDialog()
 {
 	if (min_ > max_) min_ = max_;
 	CDialog::OnInitDialog();
@@ -527,7 +527,7 @@ void GetStr::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(GetStr, CDialog)
 END_MESSAGE_MAP()
 
-BOOL GetStr::OnInitDialog() 
+BOOL GetStr::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 

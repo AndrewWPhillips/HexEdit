@@ -137,7 +137,7 @@ static const char *ack_url[] =
 /////////////////////////////////////////////////////////////////////////////
 // CAbout message handlers
 
-BOOL CAbout::OnInitDialog() 
+BOOL CAbout::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -154,7 +154,7 @@ BOOL CAbout::OnInitDialog()
 #ifdef USE_FREE_IMAGE
 BOOL CAbout::OnEraseBkgnd(CDC* pDC)
 {
-	FIBITMAP *dib = FreeImage_Load(FIF_JPEG, ::GetExePath() + FILENAME_ABOUTBG);
+	FIBITMAP *dib = FreeImage_Load(FIF_BMP, ::GetExePath() + FILENAME_ABOUTBG);
 	if (dib == NULL)
 		return CDialog::OnEraseBkgnd(pDC);
 
@@ -336,7 +336,7 @@ void CAbout::fix_controls()
 	UpdateData(FALSE);
 }
 
-BOOL CAbout::PreTranslateMessage(MSG* pMsg) 
+BOOL CAbout::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == 'R')
 	{
@@ -350,7 +350,7 @@ BOOL CAbout::PreTranslateMessage(MSG* pMsg)
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
-void CAbout::OnActivate() 
+void CAbout::OnActivate()
 {
 	CRegister dlg;
 	if (dlg.DoModal() == IDOK)
@@ -359,12 +359,12 @@ void CAbout::OnActivate()
 	}
 }
 
-void CAbout::OnEmail() 
+void CAbout::OnEmail()
 {
 	::SendEmail();
 }
 
-void CAbout::OnAckMore() 
+void CAbout::OnAckMore()
 {
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HID_ABOUT_ACK))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
@@ -398,7 +398,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CCodeEdit message handlers
 
-void CCodeEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CCodeEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// Get the current text from the edit control
 	CString ss;
@@ -436,7 +436,7 @@ void CCodeEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	add_spaces();
 }
 
-void CCodeEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CCodeEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// Get the current text from the edit control
 	CString ss;
@@ -457,7 +457,7 @@ void CCodeEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		// Left at start of group - skip space too
 		SetSel(start-1, start-1);
 	}
-		
+
 	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 
 	// Tidy display if char(s) deleted or caret moved
@@ -559,7 +559,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CRegister message handlers
 
-BOOL CRegister::OnInitDialog() 
+BOOL CRegister::OnInitDialog()
 {
 	// Get stored user name and type (if any)
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
@@ -567,7 +567,7 @@ BOOL CRegister::OnInitDialog()
 //    type_ = user_name_.IsEmpty() ? 0 : 1;
 
 	CDialog::OnInitDialog();
-	
+
 	VERIFY(edit_.SubclassDlgItem(IDC_INSTALL_CODE, this));
 
 	ASSERT(GetDlgItem(IDC_REG_CODE) != NULL);
@@ -589,7 +589,7 @@ BOOL CRegister::OnInitDialog()
 	return TRUE;
 }
 
-void CRegister::OnOK() 
+void CRegister::OnOK()
 {
 	BOOL bTempReg = FALSE;
 
@@ -688,7 +688,7 @@ void CRegister::OnOK()
 	}
 }
 
-void CRegister::OnCancel() 
+void CRegister::OnCancel()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -697,11 +697,11 @@ void CRegister::OnCancel()
 		aa->WriteProfileString("Reg", "User", NULL);
 	else
 		aa->WriteProfileString("Reg", "User", user_name_);
-	
+
 	CDialog::OnCancel();
 }
 
-void CRegister::OnClose() 
+void CRegister::OnClose()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -728,31 +728,31 @@ static DWORD id_pairs2[] = {
 	0,0 
 };
 
-BOOL CRegister::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CRegister::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
 	return TRUE;
 }
 
-void CRegister::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CRegister::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs2);
 }
 
-void CRegister::OnRegHelp() 
+void CRegister::OnRegHelp()
 {
 	// Display help for the dialog
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REGISTER_HELP))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CRegister::OnEmail() 
+void CRegister::OnEmail()
 {
 	AfxMessageBox("Not implemented");
 }
 
 // The following will no longer get called now that the controls are not visible
-void CRegister::OnMachine() 
+void CRegister::OnMachine()
 {
 	AfxMessageBox("Not implemented");
 //    // Disable the name field
@@ -766,7 +766,7 @@ void CRegister::OnMachine()
 //    GetDlgItem(IDC_REG_CODE)->SetWindowText(reg_code(1));
 }
 
-void CRegister::OnUser() 
+void CRegister::OnUser()
 {
 	AfxMessageBox("Not implemented");
 //    // Enable the name field
@@ -779,7 +779,7 @@ void CRegister::OnUser()
 //    OnChangeUserName();
 }
 
-void CRegister::OnChangeInstallCode() 
+void CRegister::OnChangeInstallCode()
 {
 	// When the correct number of characters have been entered enable the Install button
 	UpdateData();
@@ -788,7 +788,7 @@ void CRegister::OnChangeInstallCode()
 	GetDlgItem(IDOK)->EnableWindow(install_code_.GetLength() > 10);
 }
 
-void CRegister::OnChangeUserName() 
+void CRegister::OnChangeUserName()
 {
 	// Update the registration code based on the new name
 	UpdateData();
@@ -853,7 +853,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CReg message handlers
 
-BOOL CReg::OnInitDialog() 
+BOOL CReg::OnInitDialog()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	user_name_ = aa->GetProfileString("Reg", "User", "Type your name here");
@@ -916,7 +916,7 @@ BOOL CReg::OnInitDialog()
 	return TRUE;
 }
 
-void CReg::OnOK() 
+void CReg::OnOK()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	CDialog::OnOK();
@@ -927,7 +927,7 @@ void CReg::OnOK()
 		aa->WriteProfileString("Reg", "User", user_name_);
 }
 
-void CReg::OnClose() 
+void CReg::OnClose()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -954,25 +954,25 @@ static DWORD id_pairs1[] = {
 	0,0
 };
 
-BOOL CReg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CReg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs1);
 	return TRUE;
 }
 
-void CReg::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CReg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs1);
 }
 
-void CReg::OnRegHelp() 
+void CReg::OnRegHelp()
 {
 	// Display help for the dialog
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REG_HELP))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CReg::OnUser() 
+void CReg::OnUser()
 {
 	// Enable the name field
 	ASSERT(GetDlgItem(IDC_USER_NAME) != NULL);
@@ -984,7 +984,7 @@ void CReg::OnUser()
 	OnChangeUserName();
 }
 
-void CReg::OnMachine() 
+void CReg::OnMachine()
 {
 	// Disable the name field
 	ASSERT(GetDlgItem(IDC_USER_NAME) != NULL);
@@ -999,7 +999,7 @@ void CReg::OnMachine()
 //    GetDlgItem(IDC_REG_EMAIL)->EnableWindow(TRUE);
 }
 
-void CReg::OnChangeUserName() 
+void CReg::OnChangeUserName()
 {
 	// Update the registration code based on the new name
 	UpdateData();
@@ -1024,7 +1024,7 @@ void CReg::OnChangeUserName()
 #endif
 }
 
-void CReg::OnRegWeb() 
+void CReg::OnRegWeb()
 {
 	UpdateData();
 //    if (type_ == 0)
@@ -1033,7 +1033,7 @@ void CReg::OnRegWeb()
 		::BrowseWeb(IDS_WEB_REG_USER);
 }
 
-void CReg::OnRegEmail() 
+void CReg::OnRegEmail()
 {
 	CString ss;                         // default email text
 	const char *name;                   // default name field
@@ -1062,7 +1062,7 @@ void CReg::OnRegEmail()
 	}
 }
 
-void CReg::OnRegForm() 
+void CReg::OnRegForm()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -1107,7 +1107,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CStartup message handlers
 
-BOOL CStartup::OnInitDialog() 
+BOOL CStartup::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -1118,17 +1118,17 @@ BOOL CStartup::OnInitDialog()
 	url_ctl_.SetWindowText("  HexEdit registration web site ");
 	url_ctl_.SetURL(ss);
 	url_ctl_.SizeToContent(TRUE, TRUE);
-	
+
 	return TRUE;
 }
 
-void CStartup::OnMore() 
+void CStartup::OnMore()
 {
 //    CReg dlg;
 //    dlg.DoModal();
 }
 
-void CStartup::OnRegEmail() 
+void CStartup::OnRegEmail()
 {
 	if (SendEmail(2, "", "Type your name here"))
 	{
@@ -1143,7 +1143,7 @@ void CStartup::OnRegEmail()
 	}
 }
 
-void CStartup::OnRegForm() 
+void CStartup::OnRegForm()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -1152,7 +1152,7 @@ void CStartup::OnRegForm()
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CStartup::OnRegHelp() 
+void CStartup::OnRegHelp()
 {
 	// Display help for the dialog
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_REG_HELP))

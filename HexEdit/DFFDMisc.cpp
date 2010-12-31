@@ -647,6 +647,6 @@ std::vector<enum_entry>::const_iterator find_enum(__int64 val, const std::vector
 		if (retval->value == val)
 			break;
 	}
-	
+
 	return retval;
 }

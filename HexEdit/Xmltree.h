@@ -114,7 +114,7 @@ public:
 		friend class CXmlTree;
 	public:
 		CFrag() : m_pfrag(NULL), m_powner(NULL) { }
-		CFrag(CXmlTree *powner) : m_powner(powner) 
+		CFrag(CXmlTree *powner) : m_powner(powner)
 		{
 			m_pfrag = m_powner->m_pdoc->createDocumentFragment();
 		}

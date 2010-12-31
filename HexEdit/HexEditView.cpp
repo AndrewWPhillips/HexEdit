@@ -576,7 +576,7 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_DFFD_SPLIT, OnUpdateDffdSplit)
 	ON_COMMAND(ID_DFFD_TAB, OnDffdTab)
 	ON_UPDATE_COMMAND_UI(ID_DFFD_TAB, OnUpdateDffdTab)
-	
+
 	ON_COMMAND(ID_AERIAL_HIDE, OnAerialHide)
 	ON_UPDATE_COMMAND_UI(ID_AERIAL_HIDE, OnUpdateAerialHide)
 	ON_COMMAND(ID_AERIAL_SPLIT, OnAerialSplit)
@@ -713,7 +713,7 @@ CHexEditView::~CHexEditView()
 		delete pbrush_;
 } 
 
-BOOL CHexEditView::PreCreateWindow(CREATESTRUCT& cs) 
+BOOL CHexEditView::PreCreateWindow(CREATESTRUCT& cs)
 {
 	BOOL retval = CScrView::PreCreateWindow(cs);
 
@@ -1575,7 +1575,7 @@ struct segment_compare
 // CHexHint: indicates the document has changed (including as a result of doc undo)
 // CBGSearchHint: indicates a background search on the doc has finished
 
-void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	// Check if this is a change caused by a view
 	if (pHint != NULL && pHint->IsKindOf(RUNTIME_CLASS(CRemoveHint)))
@@ -1916,7 +1916,7 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void CHexEditView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
+void CHexEditView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 		GetDocument()->SearchThreadPriority(THREAD_PRIORITY_LOWEST);
@@ -2628,7 +2628,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 	// as they are always drawn from the top of screen (or page) downwards.
 	// This is so the user is less likely to notice the wrong direction.
 	// (Major things are drawn from the bottom up when scrolling backwards.)
- 
+
 	// First decide is we need to draw sector borders
 	int seclen = pDoc->GetSectorSize();
 	bool draw_borders = pDoc->pfile1_ != NULL && display_.borders && seclen > 0;
@@ -4400,7 +4400,7 @@ void CHexEditView::calc_autofit()
 
 	// Work out how many columns we can display across the window
 	// NOTE: These calcs are directly related to the calcs in hex_pos and char_pos
-	
+
 	// Work out width of display area (total minus address area width)
 	int daw = rect.right - addr_width_*text_width_ - text_width_/2 - 1;
 	if (display_.vert_display)
@@ -5769,7 +5769,7 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 
-void CHexEditView::OnSize(UINT nType, int cx, int cy) 
+void CHexEditView::OnSize(UINT nType, int cx, int cy)
 {
 	if (cx == 0 && cy == 0 || in_recalc_display)
 	{
@@ -5818,21 +5818,21 @@ void CHexEditView::OnSize(UINT nType, int cx, int cy)
 	resize_curr_scroll_ = GetScroll().y;   // Save current pos so we can check if we are at the same place later
 }
 
-void CHexEditView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CHexEditView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CScrView::OnHScroll(nSBCode, nPos, pScrollBar);
 	if (nSBCode != SB_THUMBTRACK)
 		((CHexEditApp *)AfxGetApp())->SaveToMacro(km_hscroll, (nSBCode << 16) | nPos);
 }
 
-void CHexEditView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CHexEditView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CScrView::OnVScroll(nSBCode, nPos, pScrollBar);
 	if (nSBCode != SB_THUMBTRACK)
 		((CHexEditApp *)AfxGetApp())->SaveToMacro(km_vscroll, (nSBCode << 16) | nPos);
 }
 
-BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) 
+BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	BOOL retval;
 
@@ -5876,7 +5876,7 @@ BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	return retval;
 }
 
-void CHexEditView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CHexEditView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (mouse_down_ && drag_bookmark_ > -1 && nChar == 27)
 	{
@@ -6247,7 +6247,7 @@ void CHexEditView::do_char(UINT nChar)
 	aa->SaveToMacro(km_char, nChar);
 }
 
-void CHexEditView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CHexEditView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (nChar >= VK_PRIOR && nChar <= VK_DELETE)
 	{
@@ -6287,7 +6287,7 @@ void CHexEditView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 #endif
 }
 
-void CHexEditView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CHexEditView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CScrView::OnKeyUp(nChar, nRepCnt, nFlags);
 
@@ -6305,7 +6305,7 @@ void CHexEditView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-void CHexEditView::OnKillFocus(CWnd* pNewWnd) 
+void CHexEditView::OnKillFocus(CWnd* pNewWnd)
 {
 	if (pav_ != NULL && IsWindow(pav_->m_hWnd)) pav_->StopTimer();       // Turn off any animation in aerial view
 
@@ -6393,7 +6393,7 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
 	theApp.pview_ = this;
 }
 
-void CHexEditView::OnDestroy() 
+void CHexEditView::OnDestroy()
 {
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -6415,7 +6415,7 @@ void CHexEditView::OnDestroy()
 }
 
 // Point is in window coordinates
-void CHexEditView::OnLButtonDblClk(UINT nFlags, CPoint point) 
+void CHexEditView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 #if 0
 	if (point.x < hex_pos(0))
@@ -6583,7 +6583,7 @@ bool CHexEditView::over_group_by_adjuster(CPointAp pp)
 }
 #endif
 
-void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point) 
+void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	CPointAp pp = ConvertFromDP(point);          // Point in our coord system
 
@@ -6703,7 +6703,7 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 	mouse_down_ = true;                         // We saw left button down event
 }
 
-void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point) 
+void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 #ifdef RULER_ADJUST
 	if (adjusting_rowsize_ > -1)
@@ -6853,7 +6853,7 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-void CHexEditView::OnMouseMove(UINT nFlags, CPoint point) 
+void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
 {
 #ifdef RULER_ADJUST
 	CPointAp doc_pt = ConvertFromDP(point);
@@ -7294,7 +7294,7 @@ int CHexEditView::bookmark_at(FILE_ADDRESS addr)
 		return -1;
 }
 
-void CHexEditView::OnHighlight() 
+void CHexEditView::OnHighlight()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -7310,12 +7310,12 @@ void CHexEditView::OnHighlight()
 	aa->SaveToMacro(km_highlight, (unsigned __int64)1);
 }
 
-void CHexEditView::OnUpdateHighlight(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateHighlight(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(dynamic_cast<CHexEditApp *>(AfxGetApp())->highlight_);
 }
 
-void CHexEditView::OnHighlightClear() 
+void CHexEditView::OnHighlightClear()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	aa->highlight_ = FALSE;
@@ -7331,7 +7331,7 @@ void CHexEditView::OnHighlightClear()
 
 // Select the current highlight.
 // This is designed for associating with double-click on a highlight event.
-void CHexEditView::OnHighlightSelect() 
+void CHexEditView::OnHighlightSelect()
 {
 	FILE_ADDRESS start_addr, end_addr;
 
@@ -7356,7 +7356,7 @@ void CHexEditView::OnHighlightSelect()
 	}
 }
 
-void CHexEditView::OnHighlightPrev() 
+void CHexEditView::OnHighlightPrev()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	FILE_ADDRESS start_addr, end_addr;
@@ -7388,14 +7388,14 @@ void CHexEditView::OnHighlightPrev()
 	}
 }
 
-void CHexEditView::OnUpdateHighlightPrev(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateHighlightPrev(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start_addr, end_addr;
 	GetSelAddr(start_addr, end_addr);
 	pCmdUI->Enable(!hl_set_.range_.empty() && hl_set_.range_.front().sfirst < start_addr);
 }
 
-void CHexEditView::OnHighlightNext() 
+void CHexEditView::OnHighlightNext()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	FILE_ADDRESS start_addr, end_addr;
@@ -7426,7 +7426,7 @@ void CHexEditView::OnHighlightNext()
 	}
 }
 
-void CHexEditView::OnUpdateHighlightNext(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateHighlightNext(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start_addr, end_addr;
 	GetSelAddr(start_addr, end_addr);
@@ -7459,7 +7459,7 @@ void CHexEditView::add_highlight(FILE_ADDRESS start, FILE_ADDRESS end, BOOL ptoo
 #endif
 }
 
-void CHexEditView::OnHighlightHide() 
+void CHexEditView::OnHighlightHide()
 {
 	begin_change();
 	display_.hide_highlight = !display_.hide_highlight;
@@ -7468,7 +7468,7 @@ void CHexEditView::OnHighlightHide()
 	theApp.SaveToMacro(km_highlight, (unsigned __int64)4);
 }
 
-void CHexEditView::OnUpdateHighlightHide(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateHighlightHide(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(display_.hide_highlight);
 }
@@ -7498,18 +7498,18 @@ int CHexEditView::ClosestBookmark(FILE_ADDRESS &diff)
 		return GetDocument()->bm_index_[prev_bm - GetDocument()->bm_posn_.begin()];
 }
 
-void CHexEditView::OnBookmarksClear() 
+void CHexEditView::OnBookmarksClear()
 {
 	GetDocument()->ClearBookmarks();
 	theApp.SaveToMacro(km_bookmarks);
 }
 
-void CHexEditView::OnUpdateBookmarksClear(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateBookmarksClear(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!GetDocument()->bm_posn_.empty());
 }
 
-void CHexEditView::OnBookmarksPrev() 
+void CHexEditView::OnBookmarksPrev()
 {
 	std::vector<FILE_ADDRESS>::const_iterator prev_bm = GetDocument()->bm_posn_.end();
 	FILE_ADDRESS diff = GetDocument()->length()+1;  // Bigger than any possible difference between current & bookmark
@@ -7539,7 +7539,7 @@ void CHexEditView::OnBookmarksPrev()
 	theApp.SaveToMacro(km_bookmarks, (unsigned __int64)2);
 }
 
-void CHexEditView::OnUpdateBookmarksPrev(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateBookmarksPrev(CCmdUI* pCmdUI)
 {
 	std::vector<FILE_ADDRESS>::const_iterator prev_bm = GetDocument()->bm_posn_.end();
 	FILE_ADDRESS diff = GetDocument()->length()+1;  // Bigger than any possible difference between current & bookmark
@@ -7560,7 +7560,7 @@ void CHexEditView::OnUpdateBookmarksPrev(CCmdUI* pCmdUI)
 	pCmdUI->Enable(prev_bm != GetDocument()->bm_posn_.end());
 }
 
-void CHexEditView::OnBookmarksNext() 
+void CHexEditView::OnBookmarksNext()
 {
 	std::vector<FILE_ADDRESS>::const_iterator next_bm = GetDocument()->bm_posn_.end();
 	FILE_ADDRESS diff = GetDocument()->length()+1;  // Bigger than any possible difference between current & bookmark
@@ -7590,7 +7590,7 @@ void CHexEditView::OnBookmarksNext()
 	theApp.SaveToMacro(km_bookmarks, (unsigned __int64)3);
 }
 
-void CHexEditView::OnUpdateBookmarksNext(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateBookmarksNext(CCmdUI* pCmdUI)
 {
 	std::vector<FILE_ADDRESS>::const_iterator next_bm = GetDocument()->bm_posn_.end();
 	FILE_ADDRESS diff = GetDocument()->length()+1;  // Bigger than any possible difference between current & bookmark
@@ -7611,7 +7611,7 @@ void CHexEditView::OnUpdateBookmarksNext(CCmdUI* pCmdUI)
 	pCmdUI->Enable(next_bm != GetDocument()->bm_posn_.end());
 }
 
-void CHexEditView::OnBookmarksHide() 
+void CHexEditView::OnBookmarksHide()
 {
 	begin_change();
 	display_.hide_bookmarks = !display_.hide_bookmarks;
@@ -7620,12 +7620,12 @@ void CHexEditView::OnBookmarksHide()
 	theApp.SaveToMacro(km_bookmarks, (unsigned __int64)4);
 }
 
-void CHexEditView::OnUpdateBookmarksHide(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateBookmarksHide(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(display_.hide_bookmarks);
 }
 
-void CHexEditView::OnBookmarkToggle() 
+void CHexEditView::OnBookmarkToggle()
 {
 	if (GetDocument()->pfile1_ == NULL)
 	{
@@ -7891,7 +7891,7 @@ void CHexEditView::do_mouse(CPoint dev_down, CSizeAp doc_dist)
 }
 
 // This is here to implement the macro command km_shift_mouse
-void CHexEditView::do_shift_mouse(CPoint dev_down, CSizeAp doc_dist) 
+void CHexEditView::do_shift_mouse(CPoint dev_down, CSizeAp doc_dist)
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -7930,7 +7930,7 @@ void CHexEditView::do_shift_mouse(CPoint dev_down, CSizeAp doc_dist)
 	nav_save(start_addr, end_addr, "Mouse Click (Play) ");
 }
 
-void CHexEditView::OnRButtonDown(UINT nFlags, CPoint point) 
+void CHexEditView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	// Move the caret to where the user clicked so that context menu items
 	// that depend on the current address use the address that was clicked on
@@ -8049,12 +8049,12 @@ void CHexEditView::OnRButtonDown(UINT nFlags, CPoint point)
 	CScrView::OnRButtonDown(nFlags, point);
 }
 
-void CHexEditView::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CHexEditView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	view_context(point);
 }
 
-BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
+BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
 	// Only respond if in client area
 	if (nHitTest == HTCLIENT)
@@ -8104,7 +8104,7 @@ BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 // Display views context menu
 // point is in screen coords
-void CHexEditView::view_context(CPoint point) 
+void CHexEditView::view_context(CPoint point)
 {
 #if 0 // Changes for BCG context menus
 	// Get the top level menu that contains the submenus used as popup menus
@@ -8225,7 +8225,7 @@ void CHexEditView::view_context(CPoint point)
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditView command handlers
 
-void CHexEditView::OnRedraw() 
+void CHexEditView::OnRedraw()
 {
 	CRect cli;
 
@@ -8246,7 +8246,7 @@ void CHexEditView::OnRedraw()
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_redraw);
 }
 
-void CHexEditView::OnScrollDown() 
+void CHexEditView::OnScrollDown()
 {
 	CPointAp pp = GetScroll();
 	pp.y += text_height_;
@@ -8254,7 +8254,7 @@ void CHexEditView::OnScrollDown()
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_scroll_down);
 }
 
-void CHexEditView::OnScrollUp() 
+void CHexEditView::OnScrollUp()
 {
 	CPointAp pp = GetScroll();
 	pp.y -= text_height_;
@@ -8263,7 +8263,7 @@ void CHexEditView::OnScrollUp()
 }
 
 // Move current position to start of display line
-void CHexEditView::OnStartLine() 
+void CHexEditView::OnStartLine()
 {
 	num_entered_ = num_del_ = num_bs_ = 0;  // Turn off any consec edits
 	FILE_ADDRESS start_addr, end_addr;
@@ -8290,7 +8290,7 @@ void CHexEditView::OnStartLine()
 	}
 }
 
-void CHexEditView::OnSwap() 
+void CHexEditView::OnSwap()
 {
 	if (display_.vert_display)
 		return;
@@ -8326,12 +8326,12 @@ void CHexEditView::OnSwap()
 	}
 }
 
-void CHexEditView::OnUpdateSwap(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateSwap(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(display_.char_area && display_.hex_area);      // disallow swap if both areas not displayed
 }
 
-void CHexEditView::OnDel() 
+void CHexEditView::OnDel()
 {
 	num_entered_ = 0;           // Not entering but deleting
 
@@ -8390,7 +8390,7 @@ void CHexEditView::OnDel()
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_del);
 }
 
-void CHexEditView::OnSelectAll() 
+void CHexEditView::OnSelectAll()
 {
 	num_entered_ = num_del_ = num_bs_ = 0;      // Can't be editing while mousing
 	GetSelAddr(prev_start_, prev_end_);
@@ -8520,13 +8520,13 @@ void CHexEditView::do_insert_block(_int64 params, const char *data_str)
 	}
 }
 
-void CHexEditView::OnUpdateInsertBlock(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateInsertBlock(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!GetDocument()->read_only()); // disallow insert if file is read only
 }
 
 // Get file name, insert into document and select inserted bytes
-void CHexEditView::OnReadFile() 
+void CHexEditView::OnReadFile()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -8698,12 +8698,12 @@ void CHexEditView::do_read(CString file_name)
 	aa->SaveToMacro(km_read_file, file_name);
 }
 
-void CHexEditView::OnUpdateReadFile(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateReadFile(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!GetDocument()->read_only()); // disallow insert if file is read only
 }
 
-void CHexEditView::OnEditWriteFile() 
+void CHexEditView::OnEditWriteFile()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
@@ -8750,7 +8750,7 @@ void CHexEditView::OnEditWriteFile()
 		aa->current_write_.Empty();
 }
 
-void CHexEditView::OnEditAppendFile() 
+void CHexEditView::OnEditAppendFile()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
@@ -8794,7 +8794,7 @@ void CHexEditView::OnEditAppendFile()
 		aa->current_write_.Empty();
 }
 
-void CHexEditView::OnEditAppendSameFile() 
+void CHexEditView::OnEditAppendSameFile()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
@@ -8822,7 +8822,7 @@ void CHexEditView::OnEditAppendSameFile()
 		aa->current_write_.Empty();
 }
 
-void CHexEditView::OnUpdateEditAppendSameFile(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateEditAppendSameFile(CCmdUI* pCmdUI)
 {
 	if (theApp.current_write_.IsEmpty())
 		pCmdUI->Enable(FALSE);
@@ -8830,7 +8830,7 @@ void CHexEditView::OnUpdateEditAppendSameFile(CCmdUI* pCmdUI)
 		OnUpdateClipboard(pCmdUI);
 }
 
-void CHexEditView::OnExportSRecord(UINT nID) 
+void CHexEditView::OnExportSRecord(UINT nID)
 {
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -8995,7 +8995,7 @@ export_end:
 		theApp.SaveToMacro(km_write_file, stype);  // stype == 1,2, or 3
 }
 
-void CHexEditView::OnUpdateExportSRecord(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateExportSRecord(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start, end;
 	GetSelAddr(start, end);
@@ -9217,7 +9217,7 @@ void CHexEditView::OnUpdateImportMotorolaS(CCmdUI* pCmdUI)
 	pCmdUI->Enable(!GetDocument()->read_only()); // disallow insert if file is read only
 }
 
-void CHexEditView::OnImportIntel() 
+void CHexEditView::OnImportIntel()
 {
 	// Get name of file to import
 //    CFileDialog dlgFile(TRUE, NULL, theApp.current_import_,
@@ -9390,12 +9390,12 @@ void CHexEditView::do_intel(CString file_name)
 	}
 }
 
-void CHexEditView::OnUpdateImportIntel(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateImportIntel(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!GetDocument()->read_only()); // disallow insert if file is read only
 }
 
-void CHexEditView::OnExportIntel() 
+void CHexEditView::OnExportIntel()
 {
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -9485,7 +9485,7 @@ void CHexEditView::OnExportIntel()
 	}
 }
 
-void CHexEditView::OnUpdateExportIntel(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateExportIntel(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start, end;
 	GetSelAddr(start, end);
@@ -9506,7 +9506,7 @@ void CHexEditView::OnUpdateExportIntel(CCmdUI* pCmdUI)
 	pCmdUI->Enable(end <= 0x10000);
 }
 
-void CHexEditView::OnImportHexText() 
+void CHexEditView::OnImportHexText()
 {
 	// Get name of file to import
 	CHexFileDialog dlgFile("ImportFileDlg", HIDD_FILE_IMPORT_HEX, TRUE, NULL, theApp.current_import_,
@@ -9818,12 +9818,12 @@ error_return:
 	theApp.mac_error_ = 10;
 }
 
-void CHexEditView::OnUpdateImportHexText(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateImportHexText(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!GetDocument()->read_only()); // disallow insert if file is read only
 }
 
-void CHexEditView::OnExportHexText() 
+void CHexEditView::OnExportHexText()
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
@@ -9963,7 +9963,7 @@ func_return:
 		theApp.SaveToMacro(km_write_file, 10);
 }
 
-void CHexEditView::OnUpdateExportHexText(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateExportHexText(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start, end;
 	GetSelAddr(start, end);
@@ -9973,36 +9973,36 @@ void CHexEditView::OnUpdateExportHexText(CCmdUI* pCmdUI)
 }
 
 // This is here only so we can put it in context menu for view
-void CHexEditView::OnEditFind() 
+void CHexEditView::OnEditFind()
 {
 	((CMainFrame *)AfxGetMainWnd())->OnEditFind();
 }
 
 // This is here only so we can put it in context menu for view
-void CHexEditView::OnEditReplace() 
+void CHexEditView::OnEditReplace()
 {
 	((CMainFrame *)AfxGetMainWnd())->OnEditReplace();
 }
 
 // This is here only so we can put it in context menu for view
-void CHexEditView::OnEditGoto() 
+void CHexEditView::OnEditGoto()
 {
 	((CMainFrame *)AfxGetMainWnd())->OnEditGoto();
 }
 
-void CHexEditView::OnCalcSel() 
+void CHexEditView::OnCalcSel()
 {
 	((CMainFrame *)AfxGetMainWnd())->OnCalcSel();
 }
 
-void CHexEditView::OnUpdateCalcSel(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateCalcSel(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
 	GetSelAddr(start_addr, end_addr);
 	pCmdUI->Enable(end_addr - start_addr < 9);
 }
 
-void CHexEditView::OnEditCut() 
+void CHexEditView::OnEditCut()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
@@ -10045,7 +10045,7 @@ void CHexEditView::OnEditCut()
 	aa->SaveToMacro(km_cut);
 }
 
-void CHexEditView::OnUpdateEditCut(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateEditCut(CCmdUI* pCmdUI)
 {
 	if (GetDocument()->read_only())
 		pCmdUI->Enable(FALSE);          // disallow cut if file is read only
@@ -10064,7 +10064,7 @@ void CHexEditView::OnEditCopy()
 
 // Update handler that turns on certain user interface options (Copy etc) if there
 // is a selection -- ie. there is something available to be placed on the clipboard
-void CHexEditView::OnUpdateClipboard(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateClipboard(CCmdUI* pCmdUI)
 {
 	// Is there any text selected?
 	CPointAp start, end;
@@ -10160,7 +10160,7 @@ bool CHexEditView::CopyToClipboard()
 }
 
 // Copy to clipboard as hex text
-void CHexEditView::OnCopyHex() 
+void CHexEditView::OnCopyHex()
 {
 	// Get the addresses of the selection
 	FILE_ADDRESS start, end;
@@ -10487,7 +10487,7 @@ bool CHexEditView::is_binary(FILE_ADDRESS start, FILE_ADDRESS end)
 }
 
 // Copy to cipboard as C source (characters stored as hex ints)
-void CHexEditView::OnCopyCchar() 
+void CHexEditView::OnCopyCchar()
 {
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -11011,7 +11011,7 @@ void CHexEditView::do_replace(FILE_ADDRESS start, FILE_ADDRESS end, unsigned cha
 	show_pos();                             // Update tool bar
 }
 
-void CHexEditView::OnEditPaste() 
+void CHexEditView::OnEditPaste()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
@@ -11367,7 +11367,7 @@ void CHexEditView::OnEditPaste()
 	aa->SaveToMacro(km_paste);
 }
 
-void CHexEditView::OnPasteAscii() 
+void CHexEditView::OnPasteAscii()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -11462,7 +11462,7 @@ void CHexEditView::OnPasteAscii()
 	aa->SaveToMacro(km_paste_ascii);
 }
 
-void CHexEditView::OnPasteEbcdic() 
+void CHexEditView::OnPasteEbcdic()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -11569,7 +11569,7 @@ void CHexEditView::OnPasteEbcdic()
 
 // Update handler that turns on user interface options (Paste etc) if there is
 // text on the clipboard -- ie. there is text that can be pasted into the document
-void CHexEditView::OnUpdateTextPaste(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateTextPaste(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = !GetDocument()->read_only() && ::IsClipboardFormatAvailable(CF_TEXT);
 
@@ -11588,7 +11588,7 @@ void CHexEditView::OnUpdateTextPaste(CCmdUI* pCmdUI)
 //        pCmdUI->Enable(::IsClipboardFormatAvailable(CF_TEXT));
 }
 
-void CHexEditView::OnPasteUnicode() 
+void CHexEditView::OnPasteUnicode()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -11683,7 +11683,7 @@ void CHexEditView::OnPasteUnicode()
 	aa->SaveToMacro(km_paste_unicode);
 }
 
-void CHexEditView::OnUpdateUnicodePaste(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateUnicodePaste(CCmdUI* pCmdUI)
 {
 	BOOL bEnable = !GetDocument()->read_only() && ::IsClipboardFormatAvailable(CF_UNICODETEXT);
 
@@ -11703,7 +11703,7 @@ void CHexEditView::OnUpdateUnicodePaste(CCmdUI* pCmdUI)
 }
 
 // Reset all options to the current defaults
-void CHexEditView::OnDisplayReset() 
+void CHexEditView::OnDisplayReset()
 {
 	// Change search type in find modeless dlg if open
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -11825,7 +11825,7 @@ void CHexEditView::OnDisplayReset()
 	theApp.SaveToMacro(km_display_reset, unsigned __int64(0));  // Store zero to allow for future additions
 }
 
-void CHexEditView::OnEditUndo() 
+void CHexEditView::OnEditUndo()
 {
 	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
@@ -11848,12 +11848,12 @@ void CHexEditView::OnEditUndo()
 	theApp.SaveToMacro(km_undo);
 }
 
-void CHexEditView::OnUpdateEditUndo(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateEditUndo(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(undo_.size() > 0);
 }
 
-void CHexEditView::OnUndoChanges() 
+void CHexEditView::OnUndoChanges()
 {
 	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
@@ -11903,7 +11903,7 @@ BOOL CHexEditView::is_last_change()
 	return FALSE;
 }
 
-void CHexEditView::OnUpdateUndoChanges(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateUndoChanges(CCmdUI* pCmdUI)
 {
 	BOOL change_present = FALSE;
 
@@ -12215,12 +12215,12 @@ void CHexEditView::OnAddrToggle()
 	theApp.SaveToMacro(km_addr);
 }
 
-void CHexEditView::OnUpdateAddrToggle(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateAddrToggle(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(!display_.hex_addr);
 }
 
-void CHexEditView::OnGraphicToggle() 
+void CHexEditView::OnGraphicToggle()
 {
 	if (!display_.char_area || display_.char_set == CHARSET_EBCDIC)
 	{
@@ -12248,18 +12248,18 @@ void CHexEditView::OnGraphicToggle()
 	theApp.SaveToMacro(km_graphic);
 }
 
-void CHexEditView::OnUpdateGraphicToggle(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateGraphicToggle(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(display_.char_area && display_.char_set != CHARSET_EBCDIC);
 	pCmdUI->SetCheck(display_.char_set == CHARSET_ANSI || display_.char_set == CHARSET_OEM);
 }
 
-void CHexEditView::OnCharToggle() 
+void CHexEditView::OnCharToggle()
 {
 	do_chartoggle();
 }
 
-void CHexEditView::do_chartoggle(int state /*=-1*/) 
+void CHexEditView::do_chartoggle(int state /*=-1*/)
 {
 	if (display_.vert_display)
 	{
@@ -12296,13 +12296,13 @@ void CHexEditView::do_chartoggle(int state /*=-1*/)
 	aa->SaveToMacro(km_char_area, state);
 }
 
-void CHexEditView::OnUpdateCharToggle(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateCharToggle(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!display_.vert_display);
 	pCmdUI->SetCheck(display_.char_area);
 }
 
-void CHexEditView::do_hextoggle(int state /*=-1*/) 
+void CHexEditView::do_hextoggle(int state /*=-1*/)
 {
 	if (display_.vert_display)
 	{
@@ -12335,7 +12335,7 @@ void CHexEditView::do_hextoggle(int state /*=-1*/)
 	theApp.SaveToMacro(km_hex_area, state);
 }
 
-void CHexEditView::OnOemToggle() 
+void CHexEditView::OnOemToggle()
 {
 	if (!(display_.vert_display || display_.char_area) || display_.char_set == CHARSET_EBCDIC)
 	{
@@ -12360,13 +12360,13 @@ void CHexEditView::OnOemToggle()
 	theApp.SaveToMacro(km_oem);
 }
 
-void CHexEditView::OnUpdateOemToggle(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateOemToggle(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((display_.vert_display || display_.char_area) && display_.char_set != CHARSET_EBCDIC);
 	pCmdUI->SetCheck(display_.char_set == CHARSET_OEM);
 }
 
-void CHexEditView::OnFontInc() 
+void CHexEditView::OnFontInc()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
@@ -12454,7 +12454,7 @@ void CHexEditView::OnFontInc()
 	aa->SaveToMacro(km_inc_font);
 }
 
-void CHexEditView::OnUpdateFontInc(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateFontInc(CCmdUI* pCmdUI)
 {
 	// Create a large (max_font_size) font and see if the current font is
 	// displayed at the same size on screen.  If so we can't increase the size
@@ -12484,7 +12484,7 @@ void CHexEditView::OnUpdateFontInc(CCmdUI* pCmdUI)
 	}
 }
 
-void CHexEditView::OnFontDec() 
+void CHexEditView::OnFontDec()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
@@ -12572,7 +12572,7 @@ void CHexEditView::OnFontDec()
 	aa->SaveToMacro(km_dec_font);
 }
 
-void CHexEditView::OnUpdateFontDec(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateFontDec(CCmdUI* pCmdUI)
 {
 	// If we create a very small font then see what the text height is when that
 	// font is used.  If this height is the same as the current text height then the
@@ -12603,7 +12603,7 @@ void CHexEditView::OnUpdateFontDec(CCmdUI* pCmdUI)
 	}
 }
 
-void CHexEditView::OnFont() 
+void CHexEditView::OnFont()
 {
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -12647,7 +12647,7 @@ void CHexEditView::OnFont()
 	}
 }
 
-void CHexEditView::OnFontName() 
+void CHexEditView::OnFontName()
 {
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -12949,13 +12949,13 @@ void CHexEditView::change_offset(int offset)
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_offset, offset);
 }
 
-void CHexEditView::OnAutoFit() 
+void CHexEditView::OnAutoFit()
 {
 	do_autofit();
 }
 
 // Change autofit mode to state (0 or 1).  If state is -1 then toggle autofit.
-void CHexEditView::do_autofit(int state /*=-1*/) 
+void CHexEditView::do_autofit(int state /*=-1*/)
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -13014,12 +13014,12 @@ void CHexEditView::do_autofit(int state /*=-1*/)
 	CHECK_SECURITY(19);
 }
 
-void CHexEditView::OnUpdateAutofit(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateAutofit(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(display_.autofit);
 }
 
-void CHexEditView::OnColumnDec() 
+void CHexEditView::OnColumnDec()
 {
 	if (rowsize_ > 4)
 	{
@@ -13060,12 +13060,12 @@ void CHexEditView::OnColumnDec()
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_rowsize, -1);
 }
 
-void CHexEditView::OnUpdateColumnDec(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateColumnDec(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!display_.autofit && rowsize_ > 4);
 }
 
-void CHexEditView::OnColumnInc() 
+void CHexEditView::OnColumnInc()
 {
 	if (rowsize_ < max_buf)
 	{
@@ -13106,7 +13106,7 @@ void CHexEditView::OnColumnInc()
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_rowsize, -2);
 }
 
-void CHexEditView::OnUpdateColumnInc(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateColumnInc(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!display_.autofit && rowsize_ < max_buf);
 }
@@ -13610,7 +13610,7 @@ void CHexEditView::OnUpdateControlC(CCmdUI *pCmdUI)
 	}
 }
 
-void CHexEditView::OnAscEbc() 
+void CHexEditView::OnAscEbc()
 {
 	if (!(display_.vert_display || display_.char_area))
 	{
@@ -13640,13 +13640,13 @@ void CHexEditView::OnAscEbc()
 	theApp.SaveToMacro(km_ebcdic);
 }
 
-void CHexEditView::OnUpdateAscEbc(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateAscEbc(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((display_.vert_display || display_.char_area));
 	pCmdUI->SetCheck(display_.char_set == CHARSET_EBCDIC);
 }
 
-void CHexEditView::OnControl() 
+void CHexEditView::OnControl()
 {
 	CHECK_SECURITY(18);
 
@@ -13672,7 +13672,7 @@ void CHexEditView::OnControl()
 	aa->SaveToMacro(km_control, unsigned __int64(0));
 }
 
-void CHexEditView::OnControlToggle() 
+void CHexEditView::OnControlToggle()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	if (!(display_.vert_display || display_.char_area) || display_.char_set == CHARSET_EBCDIC)
@@ -13700,13 +13700,13 @@ void CHexEditView::OnControlToggle()
 	aa->SaveToMacro(km_control, 99);
 }
 
-void CHexEditView::OnUpdateControl(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateControl(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((display_.vert_display || display_.char_area) && display_.char_set != CHARSET_EBCDIC);
 	pCmdUI->SetCheck(display_.control != 0);
 }
 
-void CHexEditView::OnMark() 
+void CHexEditView::OnMark()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
@@ -13760,7 +13760,7 @@ void CHexEditView::SetMark(FILE_ADDRESS new_mark)
 	show_calc();                        // Some button enablement depends on mark_ position (eg. @ Mark)
 }
 
-void CHexEditView::OnGotoMark() 
+void CHexEditView::OnGotoMark()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
@@ -13798,7 +13798,7 @@ void CHexEditView::OnGotoMark()
 	aa->SaveToMacro(km_goto_mark);
 }
 
-void CHexEditView::OnExtendToMark() 
+void CHexEditView::OnExtendToMark()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
@@ -13824,7 +13824,7 @@ void CHexEditView::OnExtendToMark()
 }
 
 // Swap the current caret position with the mark
-void CHexEditView::OnSwapMark() 
+void CHexEditView::OnSwapMark()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
@@ -13992,13 +13992,13 @@ bool CHexEditView::do_insert()
 	return true;
 }
 
-void CHexEditView::OnUpdateInsert(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateInsert(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!display_.readonly && !GetDocument()->IsDevice());
 	pCmdUI->SetCheck(!display_.overtype);
 }
 
-void CHexEditView::OnAllowMods() 
+void CHexEditView::OnAllowMods()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
@@ -14021,7 +14021,7 @@ void CHexEditView::OnAllowMods()
 	aa->SaveToMacro(km_ro_rw);
 }
 
-void CHexEditView::allow_mods() 
+void CHexEditView::allow_mods()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -14037,13 +14037,13 @@ void CHexEditView::allow_mods()
 	show_prop();  // things may be changeable now
 }
 
-void CHexEditView::OnUpdateAllowMods(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateAllowMods(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!GetDocument()->read_only());
 	pCmdUI->SetCheck(!display_.readonly);
 }
 
-void CHexEditView::OnToggleEndian() 
+void CHexEditView::OnToggleEndian()
 {
 	begin_change();
 	display_.big_endian = !display_.big_endian;
@@ -14058,12 +14058,12 @@ void CHexEditView::OnToggleEndian()
 	theApp.SaveToMacro(km_big_endian, (__int64)-1);  // -1 = toggle
 }
 
-void CHexEditView::OnUpdateToggleEndian(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateToggleEndian(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(display_.big_endian);
 }
 
-void CHexEditView::OnBigEndian() 
+void CHexEditView::OnBigEndian()
 {
 	begin_change();
 	display_.big_endian = 1;
@@ -14078,12 +14078,12 @@ void CHexEditView::OnBigEndian()
 	theApp.SaveToMacro(km_big_endian, (__int64)1);  // 1 = big endian on
 }
 
-void CHexEditView::OnUpdateBigEndian(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateBigEndian(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(display_.big_endian);
 }
 
-void CHexEditView::OnLittleEndian() 
+void CHexEditView::OnLittleEndian()
 {
 	begin_change();
 	display_.big_endian = 0;
@@ -14098,12 +14098,12 @@ void CHexEditView::OnLittleEndian()
 	theApp.SaveToMacro(km_big_endian, unsigned __int64(0));  // 0 = big endian off (ie little-endian)
 }
 
-void CHexEditView::OnUpdateLittleEndian(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateLittleEndian(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(!display_.big_endian);
 }
 
-void CHexEditView::OnTrackChanges() 
+void CHexEditView::OnTrackChanges()
 {
 	begin_change();
 	if (display_.hide_replace && display_.hide_insert && display_.hide_delete)
@@ -14121,7 +14121,7 @@ void CHexEditView::OnTrackChanges()
 	theApp.SaveToMacro(km_track_changes, (__int64)-1);  // -1 = toggle
 }
 
-void CHexEditView::OnUpdateTrackChanges(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateTrackChanges(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(!(display_.hide_replace && display_.hide_insert && display_.hide_delete));
 }
@@ -14150,13 +14150,13 @@ void CHexEditView::OnDffdAutoSync()
 	theApp.SaveToMacro(km_dffd_sync, 2);
 }
 
-void CHexEditView::OnUpdateDffdAutoSync(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateDffdAutoSync(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(pdfv_ != NULL);
 	pCmdUI->SetCheck(display_.auto_sync_dffd);
 }
 
-void CHexEditView::OnDffdSync() 
+void CHexEditView::OnDffdSync()
 {
 	if (pdfv_ == NULL)
 	{
@@ -14172,7 +14172,7 @@ void CHexEditView::OnDffdSync()
 	theApp.SaveToMacro(km_dffd_sync, 255);
 }
 
-void CHexEditView::OnUpdateDffdSync(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateDffdSync(CCmdUI* pCmdUI)
 {
 	// Don't allow manual sync if auto sync is on
 	pCmdUI->Enable(pdfv_ != NULL && !display_.auto_sync_dffd);
@@ -14250,7 +14250,7 @@ CChildFrame *CHexEditView::comp_window()
 	return compc;
 }
 
-void CHexEditView::OnEditCompare() 
+void CHexEditView::OnEditCompare()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	CMainFrame *mm = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
@@ -14528,7 +14528,7 @@ void CHexEditView::OnEditCompare()
 	delete[] comp_buf;
 }
 
-void CHexEditView::OnUpdateEditCompare(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateEditCompare(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(comp_window() != NULL);
 }
@@ -14629,32 +14629,32 @@ CHexEditView * CHexEditView::NextView() const
 		return nextc->GetHexEditView();
 }
 
-void CHexEditView::OnAscii2Ebcdic() 
+void CHexEditView::OnAscii2Ebcdic()
 {
 	DoConversion(CONVERT_ASC2EBC, "convert ASCII to EBCDIC");
 }
 
-void CHexEditView::OnEbcdic2Ascii() 
+void CHexEditView::OnEbcdic2Ascii()
 {
 	DoConversion(CONVERT_EBC2ASC, "convert EBCDIC to ASCII");
 }
 
-void CHexEditView::OnAnsi2Ibm() 
+void CHexEditView::OnAnsi2Ibm()
 {
 	DoConversion(CONVERT_ANSI2IBM, "convert ANSI to IBM/OEM");
 }
 
-void CHexEditView::OnIbm2Ansi() 
+void CHexEditView::OnIbm2Ansi()
 {
 	DoConversion(CONVERT_IBM2ANSI, "convert IBM/OEM to ANSI");
 }
 
-void CHexEditView::OnUppercase() 
+void CHexEditView::OnUppercase()
 {
 	DoConversion(CONVERT_UPPER, "convert to upper case");
 }
 
-void CHexEditView::OnLowercase() 
+void CHexEditView::OnLowercase()
 {
 	DoConversion(CONVERT_LOWER, "convert to lower case");
 }
@@ -14882,7 +14882,7 @@ func_return:
 }
 
 // Make sure there is a selection before doing conversion
-void CHexEditView::OnUpdateConvert(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateConvert(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
 	GetSelAddr(start_addr, end_addr);
@@ -14897,7 +14897,7 @@ void CHexEditView::OnUpdateConvert(CCmdUI* pCmdUI)
 		pCmdUI->Enable(start_addr < end_addr);
 }
 
-void CHexEditView::OnEncrypt() 
+void CHexEditView::OnEncrypt()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -15488,7 +15488,7 @@ func_return:
 		delete[] buf;
 }
 
-void CHexEditView::OnUpdateEncrypt(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateEncrypt(CCmdUI* pCmdUI)
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
@@ -15502,7 +15502,7 @@ void CHexEditView::OnUpdateEncrypt(CCmdUI* pCmdUI)
 	}
 }
 
-void CHexEditView::OnCompress() 
+void CHexEditView::OnCompress()
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 	unsigned char *in_data = NULL;
@@ -15808,7 +15808,7 @@ func_return:
 		delete[] out_data;
 }
 
-void CHexEditView::OnDecompress() 
+void CHexEditView::OnDecompress()
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 	unsigned char *in_data = NULL;
@@ -16139,7 +16139,7 @@ func_return:
 }
 
 // Enable commands that depend simply on a non-zero selection
-void CHexEditView::OnUpdateSelNZ(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateSelNZ(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
 	GetSelAddr(start_addr, end_addr);
@@ -16149,12 +16149,12 @@ void CHexEditView::OnUpdateSelNZ(CCmdUI* pCmdUI)
 // The following functions are used as update handlers
 // They enable their corresponding UI handlers if there are
 // enough bytes between the current address and the end of file
-void CHexEditView::OnUpdateByte(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateByte(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(GetPos() < GetDocument()->length());
 }
 
-void CHexEditView::OnUpdate16bit(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdate16bit(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
 	GetSelAddr(start_addr, end_addr);
@@ -16166,7 +16166,7 @@ void CHexEditView::OnUpdate16bit(CCmdUI* pCmdUI)
 		pCmdUI->Enable((end_addr - start_addr)%2 == 0);
 }
 
-void CHexEditView::OnUpdate32bit(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdate32bit(CCmdUI* pCmdUI)
 {
 //    pCmdUI->Enable(GetPos() + 3 < GetDocument()->length());
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
@@ -16179,7 +16179,7 @@ void CHexEditView::OnUpdate32bit(CCmdUI* pCmdUI)
 		pCmdUI->Enable((end_addr - start_addr)%4 == 0);
 }
 
-void CHexEditView::OnUpdate64bit(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdate64bit(CCmdUI* pCmdUI)
 {
 //    pCmdUI->Enable(GetPos() + 7 < GetDocument()->length());
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
@@ -16195,7 +16195,7 @@ void CHexEditView::OnUpdate64bit(CCmdUI* pCmdUI)
 // These update handlers are similar to the above but for binary operations
 // As binary operations use the current value from the calculator we also need
 // to ensure that the current operand size in the calculator is not too big.
-void CHexEditView::OnUpdateByteBinary(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateByteBinary(CCmdUI* pCmdUI)
 {
 	if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() > 1)
 	{
@@ -16205,7 +16205,7 @@ void CHexEditView::OnUpdateByteBinary(CCmdUI* pCmdUI)
 	OnUpdateByte(pCmdUI);
 }
 
-void CHexEditView::OnUpdate16bitBinary(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdate16bitBinary(CCmdUI* pCmdUI)
 {
 	if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() > 2)
 	{
@@ -16215,7 +16215,7 @@ void CHexEditView::OnUpdate16bitBinary(CCmdUI* pCmdUI)
 	OnUpdate16bit(pCmdUI);
 }
 
-void CHexEditView::OnUpdate32bitBinary(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdate32bitBinary(CCmdUI* pCmdUI)
 {
 	if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() > 4)
 	{
@@ -16225,7 +16225,7 @@ void CHexEditView::OnUpdate32bitBinary(CCmdUI* pCmdUI)
 	OnUpdate32bit(pCmdUI);
 }
 
-void CHexEditView::OnUpdate64bitBinary(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdate64bitBinary(CCmdUI* pCmdUI)
 {
 	if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() > 8)
 	{
@@ -16413,17 +16413,17 @@ void CHexEditView::OnCrc16()
 	DoChecksum<unsigned short>(this, CHECKSUM_CRC16, "CRC 16");
 }
 
-void CHexEditView::OnCrcCcitt() 
+void CHexEditView::OnCrcCcitt()
 {
 	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT, "CRC CCITT");
 }
 
-void CHexEditView::OnCrcCcittB() 
+void CHexEditView::OnCrcCcittB()
 {
 	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT_B, "CRC CCITT B");
 }
 
-void CHexEditView::OnCrcXmodem() 
+void CHexEditView::OnCrcXmodem()
 {
 	DoChecksum<unsigned short>(this, CHECKSUM_CRC_XMODEM, "CRC XMODEM");
 }
@@ -16596,7 +16596,7 @@ func_return:
 		delete[] buf;
 }
 
-void CHexEditView::OnUpdateByteNZ(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateByteNZ(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
 	GetSelAddr(start_addr, end_addr);
@@ -16612,7 +16612,7 @@ void CHexEditView::OnUpdateByteNZ(CCmdUI* pCmdUI)
 		pCmdUI->Enable(start_addr < end_addr && GetPos() < GetDocument()->length());
 }
 
-void CHexEditView::OnUpdate16bitNZ(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdate16bitNZ(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
 	GetSelAddr(start_addr, end_addr);
@@ -16627,7 +16627,7 @@ void CHexEditView::OnUpdate16bitNZ(CCmdUI* pCmdUI)
 		pCmdUI->Enable(end_addr > start_addr && (end_addr - start_addr)%2 == 0);
 }
 
-void CHexEditView::OnUpdate32bitNZ(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdate32bitNZ(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
 	GetSelAddr(start_addr, end_addr);
@@ -16642,7 +16642,7 @@ void CHexEditView::OnUpdate32bitNZ(CCmdUI* pCmdUI)
 		pCmdUI->Enable(end_addr > start_addr && (end_addr - start_addr)%4 == 0);
 }
 
-void CHexEditView::OnUpdate64bitNZ(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdate64bitNZ(CCmdUI* pCmdUI)
 {
 	FILE_ADDRESS start_addr, end_addr;              // Current selection
 	GetSelAddr(start_addr, end_addr);
@@ -16756,7 +16756,7 @@ template<class T> void ProcBinary(CHexEditView *pv, T val, T *buf, size_t count,
 // op = operation to perform
 // desc = describes the operations and operand size for use in error messages
 // dummy = determines template operand type (should not be nec. except for VC6 template bugs)
-template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR desc, T dummy) 
+template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR desc, T dummy)
 {
 	(void)dummy;  // The dummy param. makes sure we get the right template (VC++ 6 bug)
 
@@ -16973,402 +16973,402 @@ func_return:
 		delete[] buf;
 }
 
-void CHexEditView::OnAddByte() 
+void CHexEditView::OnAddByte()
 {
 	::OnOperateBinary<char>(this, binop_add, "Add bytes", char(0));
 }
 
-void CHexEditView::OnAdd16bit() 
+void CHexEditView::OnAdd16bit()
 {
 	::OnOperateBinary<short>(this, binop_add, "Add words", short(0));
 }
 
-void CHexEditView::OnAdd32bit() 
+void CHexEditView::OnAdd32bit()
 {
 	::OnOperateBinary<long>(this, binop_add, "Add double words", long(0));
 }
 
-void CHexEditView::OnAdd64bit() 
+void CHexEditView::OnAdd64bit()
 {
 	::OnOperateBinary<__int64>(this, binop_add, "Add quad words", __int64(0));
 }
 
-void CHexEditView::OnSubtractByte() 
+void CHexEditView::OnSubtractByte()
 {
 	::OnOperateBinary<char>(this, binop_subtract, "Subtract bytes", char(0));
 }
 
-void CHexEditView::OnSubtract16bit() 
+void CHexEditView::OnSubtract16bit()
 {
 	::OnOperateBinary<short>(this, binop_subtract, "Subtract words", short(0));
 }
 
-void CHexEditView::OnSubtract32bit() 
+void CHexEditView::OnSubtract32bit()
 {
 	::OnOperateBinary<long>(this, binop_subtract, "Subtract double words", long(0));
 }
 
-void CHexEditView::OnSubtract64bit() 
+void CHexEditView::OnSubtract64bit()
 {
 	::OnOperateBinary<__int64>(this, binop_subtract, "Subtract quad words", __int64(0));
 }
 
-void CHexEditView::OnAndByte() 
+void CHexEditView::OnAndByte()
 {
 	::OnOperateBinary<char>(this, binop_and, "AND bytes", char(0));
 }
 
-void CHexEditView::OnAnd16bit() 
+void CHexEditView::OnAnd16bit()
 {
 	::OnOperateBinary<short>(this, binop_and, "AND words", short(0));
 }
 
-void CHexEditView::OnAnd32bit() 
+void CHexEditView::OnAnd32bit()
 {
 	::OnOperateBinary<long>(this, binop_and, "AND double words", long(0));
 }
 
-void CHexEditView::OnAnd64bit() 
+void CHexEditView::OnAnd64bit()
 {
 	::OnOperateBinary<__int64>(this, binop_and, "AND quad words", __int64(0));
 }
 
-void CHexEditView::OnOrByte() 
+void CHexEditView::OnOrByte()
 {
 	::OnOperateBinary<char>(this, binop_or, "OR bytes", char(0));
 }
 
-void CHexEditView::OnOr16bit() 
+void CHexEditView::OnOr16bit()
 {
 	::OnOperateBinary<short>(this, binop_or, "OR words", short(0));
 }
 
-void CHexEditView::OnOr32bit() 
+void CHexEditView::OnOr32bit()
 {
 	::OnOperateBinary<long>(this, binop_or, "OR double words", long(0));
 }
 
-void CHexEditView::OnOr64bit() 
+void CHexEditView::OnOr64bit()
 {
 	::OnOperateBinary<__int64>(this, binop_or, "OR quad words", __int64(0));
 }
 
-void CHexEditView::OnXorByte() 
+void CHexEditView::OnXorByte()
 {
 	::OnOperateBinary<char>(this, binop_xor, "XOR bytes", char(0));
 }
 
-void CHexEditView::OnXor16bit() 
+void CHexEditView::OnXor16bit()
 {
 	::OnOperateBinary<short>(this, binop_xor, "XOR words", short(0));
 }
 
-void CHexEditView::OnXor32bit() 
+void CHexEditView::OnXor32bit()
 {
 	::OnOperateBinary<long>(this, binop_xor, "XOR double words", long(0));
 }
 
-void CHexEditView::OnXor64bit() 
+void CHexEditView::OnXor64bit()
 {
 	::OnOperateBinary<__int64>(this, binop_xor, "XOR quad words", __int64(0));
 }
 
-void CHexEditView::OnMulByte() 
+void CHexEditView::OnMulByte()
 {
 	::OnOperateBinary<unsigned char>(this, binop_multiply, "multiply bytes", unsigned char(0));
 }
 
-void CHexEditView::OnMul16bit() 
+void CHexEditView::OnMul16bit()
 {
 	::OnOperateBinary<unsigned short>(this, binop_multiply, "multiply words", unsigned short(0));
 }
 
-void CHexEditView::OnMul32bit() 
+void CHexEditView::OnMul32bit()
 {
 	::OnOperateBinary<unsigned long>(this, binop_multiply, "multiply double words", unsigned long(0));
 }
 
-void CHexEditView::OnMul64bit() 
+void CHexEditView::OnMul64bit()
 {
 	::OnOperateBinary<unsigned __int64>(this, binop_multiply, "multiply quad words", unsigned __int64(0));
 }
 
-void CHexEditView::OnDivByte() 
+void CHexEditView::OnDivByte()
 {
 	::OnOperateBinary<unsigned char>(this, binop_divide, "divide bytes", unsigned char(0));
 }
 
-void CHexEditView::OnDiv16bit() 
+void CHexEditView::OnDiv16bit()
 {
 	::OnOperateBinary<unsigned short>(this, binop_divide, "divide words", unsigned short(0));
 }
 
-void CHexEditView::OnDiv32bit() 
+void CHexEditView::OnDiv32bit()
 {
 	::OnOperateBinary<unsigned long>(this, binop_divide, "divide double words", unsigned long(0));
 }
 
-void CHexEditView::OnDiv64bit() 
+void CHexEditView::OnDiv64bit()
 {
 	::OnOperateBinary<unsigned __int64>(this, binop_divide, "divide quad words", unsigned __int64(0));
 }
 
-void CHexEditView::OnModByte() 
+void CHexEditView::OnModByte()
 {
 	::OnOperateBinary<unsigned char>(this, binop_mod, "modulus bytes", unsigned char(0));
 }
 
-void CHexEditView::OnMod16bit() 
+void CHexEditView::OnMod16bit()
 {
 	::OnOperateBinary<unsigned short>(this, binop_mod, "modulus words", unsigned short(0));
 }
 
-void CHexEditView::OnMod32bit() 
+void CHexEditView::OnMod32bit()
 {
 	::OnOperateBinary<unsigned long>(this, binop_mod, "modulus double words", unsigned long(0));
 }
 
-void CHexEditView::OnMod64bit() 
+void CHexEditView::OnMod64bit()
 {
 	::OnOperateBinary<unsigned __int64>(this, binop_mod, "modulus quad words", unsigned __int64(0));
 }
 
-void CHexEditView::OnSubtractXByte() 
+void CHexEditView::OnSubtractXByte()
 {
 	::OnOperateBinary<char>(this, binop_subtract_x, "Subtract bytes", char(0));
 }
 
-void CHexEditView::OnSubtractX16bit() 
+void CHexEditView::OnSubtractX16bit()
 {
 	::OnOperateBinary<short>(this, binop_subtract_x, "Subtract words", short(0));
 }
 
-void CHexEditView::OnSubtractX32bit() 
+void CHexEditView::OnSubtractX32bit()
 {
 	::OnOperateBinary<long>(this, binop_subtract_x, "Subtract double words", long(0));
 }
 
-void CHexEditView::OnSubtractX64bit() 
+void CHexEditView::OnSubtractX64bit()
 {
 	::OnOperateBinary<__int64>(this, binop_subtract_x, "Subtract quad words", __int64(0));
 }
 
-void CHexEditView::OnDivXByte() 
+void CHexEditView::OnDivXByte()
 {
 	::OnOperateBinary<unsigned char>(this, binop_divide_x, "divide bytes", unsigned char(0));
 }
 
-void CHexEditView::OnDivX16bit() 
+void CHexEditView::OnDivX16bit()
 {
 	::OnOperateBinary<unsigned short>(this, binop_divide_x, "divide words", unsigned short(0));
 }
 
-void CHexEditView::OnDivX32bit() 
+void CHexEditView::OnDivX32bit()
 {
 	::OnOperateBinary<unsigned long>(this, binop_divide_x, "divide double words", unsigned long(0));
 }
 
-void CHexEditView::OnDivX64bit() 
+void CHexEditView::OnDivX64bit()
 {
 	::OnOperateBinary<unsigned __int64>(this, binop_divide_x, "divide quad words", unsigned __int64(0));
 }
 
-void CHexEditView::OnModXByte() 
+void CHexEditView::OnModXByte()
 {
 	::OnOperateBinary<unsigned char>(this, binop_mod_x, "modulus bytes", unsigned char(0));
 }
 
-void CHexEditView::OnModX16bit() 
+void CHexEditView::OnModX16bit()
 {
 	::OnOperateBinary<unsigned short>(this, binop_mod_x, "modulus words", unsigned short(0));
 }
 
-void CHexEditView::OnModX32bit() 
+void CHexEditView::OnModX32bit()
 {
 	::OnOperateBinary<unsigned long>(this, binop_mod_x, "modulus double words", unsigned long(0));
 }
 
-void CHexEditView::OnModX64bit() 
+void CHexEditView::OnModX64bit()
 {
 	::OnOperateBinary<unsigned __int64>(this, binop_mod_x, "modulus quad words", unsigned __int64(0));
 }
 
-void CHexEditView::OnGtrByte() 
+void CHexEditView::OnGtrByte()
 {
 	::OnOperateBinary<signed char>(this, binop_gtr, "finding greater of bytes", signed char(0));
 }
 
-void CHexEditView::OnGtr16bit() 
+void CHexEditView::OnGtr16bit()
 {
 	::OnOperateBinary<short>(this, binop_gtr, "finding greater of words", short(0));
 }
 
-void CHexEditView::OnGtr32bit() 
+void CHexEditView::OnGtr32bit()
 {
 	::OnOperateBinary<long>(this, binop_gtr, "finding greater of double words", long(0));
 }
 
-void CHexEditView::OnGtr64bit() 
+void CHexEditView::OnGtr64bit()
 {
 	::OnOperateBinary<__int64>(this, binop_gtr, "finding greater of quad words", __int64(0));
 }
 
-void CHexEditView::OnLessByte() 
+void CHexEditView::OnLessByte()
 {
 	::OnOperateBinary<signed char>(this, binop_less, "finding lesser of bytes", signed char(0));
 }
 
-void CHexEditView::OnLess16bit() 
+void CHexEditView::OnLess16bit()
 {
 	::OnOperateBinary<short>(this, binop_less, "finding lesser of words", short(0));
 }
 
-void CHexEditView::OnLess32bit() 
+void CHexEditView::OnLess32bit()
 {
 	::OnOperateBinary<long>(this, binop_less, "finding lesser of double words", long(0));
 }
 
-void CHexEditView::OnLess64bit() 
+void CHexEditView::OnLess64bit()
 {
 	::OnOperateBinary<__int64>(this, binop_less, "finding lesser of quad words", __int64(0));
 }
 
-void CHexEditView::OnGtrUByte() 
+void CHexEditView::OnGtrUByte()
 {
 	::OnOperateBinary<unsigned char>(this, binop_gtr_unsigned, "finding unsigned greater of bytes", unsigned char(0));
 }
 
-void CHexEditView::OnGtrU16bit() 
+void CHexEditView::OnGtrU16bit()
 {
 	::OnOperateBinary<unsigned short>(this, binop_gtr_unsigned, "finding unsigned greater of words", unsigned short(0));
 }
 
-void CHexEditView::OnGtrU32bit() 
+void CHexEditView::OnGtrU32bit()
 {
 	::OnOperateBinary<unsigned long>(this, binop_gtr_unsigned, "finding unsigned greater of double words", unsigned long(0));
 }
 
-void CHexEditView::OnGtrU64bit() 
+void CHexEditView::OnGtrU64bit()
 {
 	::OnOperateBinary<unsigned __int64>(this, binop_gtr_unsigned, "finding unsigned greater of quad words", unsigned __int64(0));
 }
 
-void CHexEditView::OnLessUByte() 
+void CHexEditView::OnLessUByte()
 {
 	::OnOperateBinary<unsigned char>(this, binop_less_unsigned, "finding unsigned lesser of bytes", unsigned char(0));
 }
 
-void CHexEditView::OnLessU16bit() 
+void CHexEditView::OnLessU16bit()
 {
 	::OnOperateBinary<unsigned short>(this, binop_less_unsigned, "finding unsigned lesser of words", unsigned short(0));
 }
 
-void CHexEditView::OnLessU32bit() 
+void CHexEditView::OnLessU32bit()
 {
 	::OnOperateBinary<unsigned long>(this, binop_less_unsigned, "finding unsigned lesser of double words", unsigned long(0));
 }
 
-void CHexEditView::OnLessU64bit() 
+void CHexEditView::OnLessU64bit()
 {
 	::OnOperateBinary<unsigned __int64>(this, binop_less_unsigned, "finding unsigned lesser of quad words", unsigned __int64(0));
 }
 
-void CHexEditView::OnRolByte() 
+void CHexEditView::OnRolByte()
 {
 	::OnOperateBinary<unsigned char>(this, binop_rol, "rotate left bytes", unsigned char(0));
 }
 
-void CHexEditView::OnRol16bit() 
+void CHexEditView::OnRol16bit()
 {
 	::OnOperateBinary<unsigned short>(this, binop_rol, "rotate left words", unsigned short(0));
 }
 
-void CHexEditView::OnRol32bit() 
+void CHexEditView::OnRol32bit()
 {
 	::OnOperateBinary<unsigned long>(this, binop_rol, "rotate left double words", unsigned long(0));
 }
 
-void CHexEditView::OnRol64bit() 
+void CHexEditView::OnRol64bit()
 {
 	::OnOperateBinary<unsigned __int64>(this, binop_rol, "rotate left quad words", unsigned __int64(0));
 }
 
-void CHexEditView::OnRorByte() 
+void CHexEditView::OnRorByte()
 {
 	::OnOperateBinary<unsigned char>(this, binop_ror, "rotate right bytes", unsigned char(0));
 }
 
-void CHexEditView::OnRor16bit() 
+void CHexEditView::OnRor16bit()
 {
 	::OnOperateBinary<unsigned short>(this, binop_ror, "rotate right words", unsigned short(0));
 }
 
-void CHexEditView::OnRor32bit() 
+void CHexEditView::OnRor32bit()
 {
 	::OnOperateBinary<unsigned long>(this, binop_ror, "rotate right double words", unsigned long(0));
 }
 
-void CHexEditView::OnRor64bit() 
+void CHexEditView::OnRor64bit()
 {
 	::OnOperateBinary<unsigned __int64>(this, binop_ror, "rotate right quad words", unsigned __int64(0));
 }
 
-void CHexEditView::OnLslByte() 
+void CHexEditView::OnLslByte()
 {
 	::OnOperateBinary<char>(this, binop_lsl, "shift left bytes", char(0));
 }
 
-void CHexEditView::OnLsl16bit() 
+void CHexEditView::OnLsl16bit()
 {
 	::OnOperateBinary<short>(this, binop_lsl, "shift left words", short(0));
 }
 
-void CHexEditView::OnLsl32bit() 
+void CHexEditView::OnLsl32bit()
 {
 	::OnOperateBinary<long>(this, binop_lsl, "shift left double words", long(0));
 }
 
-void CHexEditView::OnLsl64bit() 
+void CHexEditView::OnLsl64bit()
 {
 	::OnOperateBinary<__int64>(this, binop_lsl, "shift left quad words", __int64(0));
 }
 
-void CHexEditView::OnLsrByte() 
+void CHexEditView::OnLsrByte()
 {
 	::OnOperateBinary<unsigned char>(this, binop_lsr, "shift right bytes", unsigned char(0));
 }
 
-void CHexEditView::OnLsr16bit() 
+void CHexEditView::OnLsr16bit()
 {
 	::OnOperateBinary<unsigned short>(this, binop_lsr, "shift right words", unsigned short(0));
 }
 
-void CHexEditView::OnLsr32bit() 
+void CHexEditView::OnLsr32bit()
 {
 	::OnOperateBinary<unsigned long>(this, binop_lsr, "shift right double words", unsigned long(0));
 }
 
-void CHexEditView::OnLsr64bit() 
+void CHexEditView::OnLsr64bit()
 {
 	::OnOperateBinary<unsigned __int64>(this, binop_lsr, "shift right quad words", unsigned __int64(0));
 }
 
-void CHexEditView::OnAsrByte() 
+void CHexEditView::OnAsrByte()
 {
 	::OnOperateBinary<signed char>(this, binop_asr, "arithmetic shift right bytes", signed char(0));
 }
 
-void CHexEditView::OnAsr16bit() 
+void CHexEditView::OnAsr16bit()
 {
 	::OnOperateBinary<short>(this, binop_asr, "arithmetic shift right words", short(0));
 }
 
-void CHexEditView::OnAsr32bit() 
+void CHexEditView::OnAsr32bit()
 {
 	::OnOperateBinary<long>(this, binop_asr, "arithmetic shift right double words", long(0));
 }
 
-void CHexEditView::OnAsr64bit() 
+void CHexEditView::OnAsr64bit()
 {
 	::OnOperateBinary<__int64>(this, binop_asr, "arithmetic shift right quad words", __int64(0));
 }
@@ -17655,129 +17655,129 @@ func_return:
 		delete[] buf;
 }
 
-void CHexEditView::OnIncByte() 
+void CHexEditView::OnIncByte()
 {
 	::OnOperateUnary<char>(this, unary_inc, "increment bytes", char(0));
 }
 
-void CHexEditView::OnInc16bit() 
+void CHexEditView::OnInc16bit()
 {
 	::OnOperateUnary<short>(this, unary_inc, "increment words", short(0));
 }
 
-void CHexEditView::OnInc32bit() 
+void CHexEditView::OnInc32bit()
 {
 	::OnOperateUnary<long>(this, unary_inc, "increment double words", long(0));
 }
 
-void CHexEditView::OnInc64bit() 
+void CHexEditView::OnInc64bit()
 {
 	::OnOperateUnary<__int64>(this, unary_inc, "increment quad words", __int64(0));
 }
 
-void CHexEditView::OnDecByte() 
+void CHexEditView::OnDecByte()
 {
 	::OnOperateUnary<char>(this, unary_dec, "decrement bytes", char(0));
 }
 
-void CHexEditView::OnDec16bit() 
+void CHexEditView::OnDec16bit()
 {
 	::OnOperateUnary<short>(this, unary_dec, "decrement words", short(0));
 }
 
-void CHexEditView::OnDec32bit() 
+void CHexEditView::OnDec32bit()
 {
 	::OnOperateUnary<long>(this, unary_dec, "decrement double words", long(0));
 }
 
-void CHexEditView::OnDec64bit() 
+void CHexEditView::OnDec64bit()
 {
 	::OnOperateUnary<__int64>(this, unary_dec, "decrement quad words", __int64(0));
 }
 
-void CHexEditView::OnRevByte() 
+void CHexEditView::OnRevByte()
 {
 	::OnOperateUnary<char>(this, unary_rev, "reverse bits of bytes", char(0));
 }
 
-void CHexEditView::OnRev16bit() 
+void CHexEditView::OnRev16bit()
 {
 	::OnOperateUnary<short>(this, unary_rev, "reverse bits of words", short(0));
 }
 
-void CHexEditView::OnRev32bit() 
+void CHexEditView::OnRev32bit()
 {
 	::OnOperateUnary<long>(this, unary_rev, "reverse bits of double words", long(0));
 }
 
-void CHexEditView::OnRev64bit() 
+void CHexEditView::OnRev64bit()
 {
 	::OnOperateUnary<__int64>(this, unary_rev, "reverse bits of quad words", __int64(0));
 }
 
 // There is NO OnFlipByte (since it would not do anything)
 
-void CHexEditView::OnFlip16bit() 
+void CHexEditView::OnFlip16bit()
 {
 	::OnOperateUnary<short>(this, unary_flip, "flip bytes of words", short(0));
 }
 
-void CHexEditView::OnFlip32bit() 
+void CHexEditView::OnFlip32bit()
 {
 	::OnOperateUnary<long>(this, unary_flip, "flip bytes of double words", long(0));
 }
 
-void CHexEditView::OnFlip64bit() 
+void CHexEditView::OnFlip64bit()
 {
 	::OnOperateUnary<__int64>(this, unary_flip, "flip bytes of quad words", __int64(0));
 }
 
-void CHexEditView::OnInvert() 
+void CHexEditView::OnInvert()
 {
 	::OnOperateUnary<char>(this, unary_not, "invert bits", char(0));
 }
 
-void CHexEditView::OnNegByte() 
+void CHexEditView::OnNegByte()
 {
 	::OnOperateUnary<signed char>(this, unary_sign, "negate bytes", signed char(0));
 }
 
-void CHexEditView::OnNeg16bit() 
+void CHexEditView::OnNeg16bit()
 {
 	::OnOperateUnary<short>(this, unary_sign, "negate words", short(0));
 }
 
-void CHexEditView::OnNeg32bit() 
+void CHexEditView::OnNeg32bit()
 {
 	::OnOperateUnary<long>(this, unary_sign, "negate double words", long(0));
 }
 
-void CHexEditView::OnNeg64bit() 
+void CHexEditView::OnNeg64bit()
 {
 	::OnOperateUnary<__int64>(this, unary_sign, "negate quad words", __int64(0));
 }
 
-void CHexEditView::OnAssignByte() 
+void CHexEditView::OnAssignByte()
 {
 	::OnOperateUnary<char>(this, unary_at, "assign bytes", char(0));
 }
 
-void CHexEditView::OnAssign16bit() 
+void CHexEditView::OnAssign16bit()
 {
 	::OnOperateUnary<short>(this, unary_at, "assign words", short(0));
 }
 
-void CHexEditView::OnAssign32bit() 
+void CHexEditView::OnAssign32bit()
 {
 	::OnOperateUnary<long>(this, unary_at, "assign double words", long(0));
 }
 
-void CHexEditView::OnAssign64bit() 
+void CHexEditView::OnAssign64bit()
 {
 	::OnOperateUnary<__int64>(this, unary_at, "assign quad words", __int64(0));
 }
 
-void CHexEditView::OnSeedCalc() 
+void CHexEditView::OnSeedCalc()
 {
 	unsigned long seed = unsigned long(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.GetValue());
 	srand(seed);                        // Seed compiler PRNG (simple one)
@@ -17785,7 +17785,7 @@ void CHexEditView::OnSeedCalc()
 	theApp.SaveToMacro(km_seed, 1);
 }
 
-void CHexEditView::OnSeedRandom() 
+void CHexEditView::OnSeedRandom()
 {
 	unsigned long seed = ::GetTickCount();
 	srand(seed);                        // Seed compiler PRNG (simple fast one)
@@ -17793,12 +17793,12 @@ void CHexEditView::OnSeedRandom()
 	theApp.SaveToMacro(km_seed);
 }
 
-void CHexEditView::OnRandByte() 
+void CHexEditView::OnRandByte()
 {
 	::OnOperateUnary<char>(this, unary_rand, "randomize bytes", char(0));
 }
 
-void CHexEditView::OnRandFast() 
+void CHexEditView::OnRandFast()
 {
 	::OnOperateUnary<char>(this, unary_rand_fast, "fast randomize bytes", char(0));
 }
@@ -17858,7 +17858,7 @@ void CHexEditView::OnDffdHide()
 		VERIFY(GetFrame()->ptv_->RemoveView(tnum_d));
 	}
 }
-void CHexEditView::OnUpdateDffdHide(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateDffdHide(CCmdUI* pCmdUI)
 {
 	//pCmdUI->Enable(TRUE);
 	pCmdUI->SetCheck(TemplateViewType() == 0);
@@ -17921,7 +17921,7 @@ bool CHexEditView::DoDffdSplit()
 	AdjustColumns();
 	return true;
 }
-void CHexEditView::OnUpdateDffdSplit(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateDffdSplit(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(TemplateViewType() == 1);
 	pCmdUI->Enable(GetDocument()->ptree_ != NULL);
@@ -17956,7 +17956,7 @@ bool CHexEditView::DoDffdTab()
 	// Reopen in the tab
 	CHexTabView *ptv = GetFrame()->ptv_;
 	int tnum_d = ptv->AddView(RUNTIME_CLASS (CDataFormatView), _T("Template (Tree) View"));
-	
+
 	ptv->SetActiveView(tnum_d);
 	pdfv_ = (CDataFormatView *)ptv->GetActiveView();
 	ASSERT_KINDOF(CDataFormatView, pdfv_);
@@ -17967,7 +17967,7 @@ bool CHexEditView::DoDffdTab()
 	ptv->SetActiveView(0);
 	return true;
 }
-void CHexEditView::OnUpdateDffdTab(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateDffdTab(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(TemplateViewType() == 2);
 	pCmdUI->Enable(GetDocument()->ptree_ != NULL);
@@ -18017,7 +18017,7 @@ void CHexEditView::OnAerialHide()
 	}
 }
 
-void CHexEditView::OnUpdateAerialHide(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateAerialHide(CCmdUI* pCmdUI)
 {
 	//pCmdUI->Enable(TRUE);
 	pCmdUI->SetCheck(AerialViewType() == 0);
@@ -18093,7 +18093,7 @@ bool CHexEditView::DoAerialSplit(bool init /*=true*/)
 	return true;
 }
 
-void CHexEditView::OnUpdateAerialSplit(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateAerialSplit(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(AerialViewType() == 1);
 }
@@ -18117,11 +18117,11 @@ bool CHexEditView::DoAerialTab(bool init /*=true*/)
 	ASSERT(tnum_a > 0);
 	if (tnum_a == -1)
 		return false;
-		
+
 	ptv->SetActiveView(tnum_a);
 	pav_ = (CAerialView *)ptv->GetActiveView();
 	ASSERT_KINDOF(CAerialView, pav_);
-	
+
 	// Make sure aerial view knows which hex view it is assoc. with
 	pav_->phev_ = this;
 
@@ -18147,7 +18147,7 @@ bool CHexEditView::DoAerialTab(bool init /*=true*/)
 	return true;
 }
 
-void CHexEditView::OnUpdateAerialTab(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateAerialTab(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(AerialViewType() == 2);
 }
@@ -18195,7 +18195,7 @@ void CHexEditView::OnCompHide()
 	}
 }
 
-void CHexEditView::OnUpdateCompHide(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateCompHide(CCmdUI* pCmdUI)
 {
 	//pCmdUI->Enable(TRUE);
 	pCmdUI->SetCheck(CompViewType() == 0);
@@ -18275,7 +18275,7 @@ bool CHexEditView::DoCompSplit(bool init /*=true*/)
 	return true;
 }
 
-void CHexEditView::OnUpdateCompSplit(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateCompSplit(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(CompViewType() == 1);
 }
@@ -18308,7 +18308,7 @@ bool CHexEditView::DoCompTab(bool init /*=true*/)
 	ptv->SetActiveView(tnum_c);
 	pcv_ = (CCompareView *)ptv->GetActiveView();
 	ASSERT_KINDOF(CCompareView, pcv_);
-	
+
 	// Make sure compare view knows which hex view it is assoc. with
 	pcv_->phev_ = this;
 
@@ -18334,7 +18334,7 @@ bool CHexEditView::DoCompTab(bool init /*=true*/)
 	return true;
 }
 
-void CHexEditView::OnUpdateCompTab(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateCompTab(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(CompViewType() == 2);
 }
@@ -18373,7 +18373,7 @@ void CHexEditView::AdjustColumns()
 	if (snum_t > -1) psplitter->GetColumnInfo(snum_t, t, min);
 	if (snum_a > -1) psplitter->GetColumnInfo(snum_a, a, min);
 	if (snum_c > -1) psplitter->GetColumnInfo(snum_c, c, min);
-	
+
 	// Make ideal widths slightly smaller but not less than a minimum
 	bool adjust = false;
 	d -= 20; if (snum_d > -1 && d < 20) { d = 20; adjust = true; }
@@ -18582,7 +18582,7 @@ void CHexEditView::OnCompAutoSync()
 	theApp.SaveToMacro(km_comp_sync, 2);
 }
 
-void CHexEditView::OnUpdateCompAutoSync(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateCompAutoSync(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(pcv_ != NULL);
 	pCmdUI->SetCheck(display_.auto_sync_comp);
@@ -18608,14 +18608,14 @@ void CHexEditView::OnCompAutoScroll()
 	theApp.SaveToMacro(km_comp_sync, 3);
 }
 
-void CHexEditView::OnUpdateCompAutoScroll(CCmdUI* pCmdUI) 
+void CHexEditView::OnUpdateCompAutoScroll(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(pcv_ != NULL);
 	pCmdUI->SetCheck(display_.auto_scroll_comp);
 }
 
 // This is connected to Ctrl+T and is used for testing new dialogs etc
-void CHexEditView::OnViewtest() 
+void CHexEditView::OnViewtest()
 {
 	// for testing new commands
 	double dd = 65535.0;

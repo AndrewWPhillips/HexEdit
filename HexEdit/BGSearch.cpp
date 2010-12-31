@@ -56,7 +56,7 @@ main_thread_id: used by background thread to signal the main thread (PostThreadM
 to_adjust_: list of adjustments to be done by bg thread when a file change is made
 			allows bg thread to fix found_ to allow for file changes and the bg thread
 			to fix its internal addresses to allow for insertions/deletions
-	
+
 Background thread
 -----------------
 
@@ -133,7 +133,7 @@ to to_search_ so that any new occurrences are found.
 
 In the bg thread whenever the document data is accessed the to_adjust_ list
 of address adjustments is checked and internal variables adjusted first.
-	
+
 Views (see CBGSearchHint used by CHexEditView::OnUpdate)
 -----
 

@@ -3603,7 +3603,7 @@ CString CDataFormatView::get_full_name(std::vector<int> &curr_state, bool use_co
 }
 
 #ifdef _DEBUG
-CString CDataFormatView::get_name(int ii) 
+CString CDataFormatView::get_name(int ii)
 {
 	CHexEditDoc *pdoc = GetDocument();
 	CString retval = pdoc->df_elt_[ii].GetAttr("name");
@@ -3648,7 +3648,7 @@ void CDataFormatView::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CDataFormatView message handlers
 
-void CDataFormatView::OnInitialUpdate() 
+void CDataFormatView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate();
 	CHexEditDoc *pdoc = GetDocument();
@@ -3730,7 +3730,7 @@ void CDataFormatView::OnInitialUpdate()
 //    grid_.ExpandColumnsToFit();
 }
 
-void CDataFormatView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CDataFormatView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (GetDocument()->ptree_ == NULL) return;
 
@@ -3797,7 +3797,7 @@ CString CDataFormatView::GetColWidths()
 	return strWidths;
 }
 
-void CDataFormatView::OnDestroy() 
+void CDataFormatView::OnDestroy()
 {
 	if (grid_.m_hWnd != 0)
 		theApp.WriteProfileString("DataFormat", "ColumnWidths", GetColWidths());
@@ -3805,10 +3805,10 @@ void CDataFormatView::OnDestroy()
 	CView::OnDestroy();
 }
 
-void CDataFormatView::OnSize(UINT nType, int cx, int cy) 
+void CDataFormatView::OnSize(UINT nType, int cx, int cy)
 {
 	CView::OnSize(nType, cx, cy);
-	
+
 	if (grid_.GetSafeHwnd())
 	{
 		CRect rect;
@@ -3817,13 +3817,13 @@ void CDataFormatView::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-BOOL CDataFormatView::OnEraseBkgnd(CDC* pDC) 
+BOOL CDataFormatView::OnEraseBkgnd(CDC* pDC)
 {
 	return TRUE;
 //  return CView::OnEraseBkgnd(pDC);
 }
 
-void CDataFormatView::OnDffdSync() 
+void CDataFormatView::OnDffdSync()
 {
 	CHexEditDoc *pdoc = GetDocument();
 	int frc = grid_.GetFixedRowCount();
@@ -3854,18 +3854,18 @@ void CDataFormatView::OnDffdSync()
 	phev_->SetFocus();
 }
 
-void CDataFormatView::OnUpdateDffdSync(CCmdUI* pCmdUI) 
+void CDataFormatView::OnUpdateDffdSync(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!phev_->AutoSyncDffd());
 }
 
-void CDataFormatView::OnDffdWeb() 
+void CDataFormatView::OnDffdWeb()
 {
 	CHexEditDoc *pdoc = GetDocument();
 
 	if (pdoc == NULL || pdoc->df_elt_.size() < 1)
 		return;
-	
+
 	CString ss = pdoc->df_elt_[0].GetAttr("web_site");
 	if (ss.IsEmpty())
 		return;
@@ -3875,7 +3875,7 @@ void CDataFormatView::OnDffdWeb()
 	::ShellExecute(AfxGetMainWnd()->m_hWnd, _T("open"), ss, NULL, NULL, SW_SHOWNORMAL);
 }
 
-void CDataFormatView::OnUpdateDffdWeb(CCmdUI* pCmdUI) 
+void CDataFormatView::OnUpdateDffdWeb(CCmdUI* pCmdUI)
 {
 	CHexEditDoc *pdoc = GetDocument();
 
@@ -4432,7 +4432,7 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
 	ASSERT(ii < (int)pdoc->df_type_.size());
 
 	// Check for editable field
-	if (ii < 1 ||                                                           // < 0 means grid header row, 0 means DF_FILE 
+	if (ii < 1 ||                                                           // < 0 means grid header row, 0 means DF_FILE
 		ii >= (int)pdoc->df_type_.size() ||                                 // past end (should not happen - bug in setting grid length?)
 		pItem->iColumn != grid_.GetFixedColumnCount() + COL_DATA ||         // grid column is not the data column (only edit column)
 		(df_type = mac_abs(pdoc->df_type_[ii])) < CHexEditDoc::DF_DATA ||   // row is not for data elt
@@ -4753,7 +4753,7 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
 	  item.mask = GVIF_BKCLR;
 	  item.crBkClr = bg_edited;
 	  grid_.GetItem(&item);
-		
+
 	CString domain_str = pdoc->df_elt_[ii].GetAttr("domain");
 
 	if (df_type >= CHexEditDoc::DF_CHAR &&
@@ -5478,33 +5478,33 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 	}
 }
 
-void CDataFormatView::OnEditCopy() 
+void CDataFormatView::OnEditCopy()
 {
 	grid_.OnEditCopy();
 }
 
-void CDataFormatView::OnUpdateEditCopyOrCut(CCmdUI* pCmdUI) 
+void CDataFormatView::OnUpdateEditCopyOrCut(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(grid_.GetSelectedCount() > 0);
 }
 
 // Printing
-BOOL CDataFormatView::OnPreparePrinting(CPrintInfo* pInfo) 
+BOOL CDataFormatView::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	return DoPreparePrinting(pInfo);
 }
 
-void CDataFormatView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo) 
+void CDataFormatView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 {
 	grid_.OnBeginPrinting(pDC, pInfo);
 }
 
-void CDataFormatView::OnPrint(CDC* pDC, CPrintInfo* pInfo) 
+void CDataFormatView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 {
 	grid_.OnPrint(pDC, pInfo);
 }
 
-void CDataFormatView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo) 
+void CDataFormatView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
 {
 	grid_.OnEndPrinting(pDC, pInfo);
 }
@@ -5514,6 +5514,6 @@ void CDataFormatView::OnFilePrintPreview()
 	AFXPrintPreview(this);
 }
 
-void CDataFormatView::OnViewtest() 
+void CDataFormatView::OnViewtest()
 {
 }

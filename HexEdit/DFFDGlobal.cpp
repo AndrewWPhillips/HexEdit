@@ -83,7 +83,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CDFFDGlobal message handlers
 
-BOOL CDFFDGlobal::OnInitDialog() 
+BOOL CDFFDGlobal::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -144,24 +144,24 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CDFFDGlobal::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CDFFDGlobal::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CDFFDGlobal::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CDFFDGlobal::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CDFFDGlobal::OnHelp() 
+void CDFFDGlobal::OnHelp()
 {
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_DFFD_GLOBAL))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CDFFDGlobal::OnOK() 
+void CDFFDGlobal::OnOK()
 {
 	if (modified_)
 	{
@@ -203,18 +203,18 @@ void CDFFDGlobal::OnOK()
 	CDialog::OnOK();
 }
 
-void CDFFDGlobal::OnChange() 
+void CDFFDGlobal::OnChange()
 {
 	modified_ = true;
 }
 
-void CDFFDGlobal::OnChangeWebAddress() 
+void CDFFDGlobal::OnChangeWebAddress()
 {
 	modified_ = true;
 	web_changed_ = true;
 }
 
-void CDFFDGlobal::OnWebCheck() 
+void CDFFDGlobal::OnWebCheck()
 {
 	UpdateData();
 

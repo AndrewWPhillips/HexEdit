@@ -135,7 +135,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CDFFDIf message handlers
 
-BOOL CDFFDIf::OnInitDialog() 
+BOOL CDFFDIf::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetIcon(AfxGetApp()->LoadIcon(IDI_IF), TRUE);
@@ -221,18 +221,18 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CDFFDIf::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CDFFDIf::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CDFFDIf::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CDFFDIf::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CDFFDIf::OnHelp() 
+void CDFFDIf::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_DFFD_IF))
@@ -261,7 +261,7 @@ void CDFFDIf::OnOK()
 	CDialog::OnOK();
 }
 
-void CDFFDIf::OnNext() 
+void CDFFDIf::OnNext()
 {
 	// Does the same as OnOK but returns ID_DFFD_NEXT to indicate
 	// that the next sibling should now be edited
@@ -279,7 +279,7 @@ void CDFFDIf::OnNext()
 	CDialog::EndDialog(ID_DFFD_NEXT);
 }
 
-void CDFFDIf::OnPrev() 
+void CDFFDIf::OnPrev()
 {
 	// Does the same as OnOK but returns ID_DFFD_PREV to indicate
 	// that the previous sibling should now be edited
@@ -354,12 +354,12 @@ LRESULT CDFFDIf::OnKickIdle(WPARAM, LPARAM lCount)
 	return FALSE;
 }
 
-void CDFFDIf::OnChange() 
+void CDFFDIf::OnChange()
 {
 	modified_ = true;
 }
 
-void CDFFDIf::OnElse() 
+void CDFFDIf::OnElse()
 {
 	UpdateData();
 	if (!else_ && valid_else_element_)
@@ -397,7 +397,7 @@ void CDFFDIf::OnElse()
 	modified_ = true;
 }
 
-void CDFFDIf::OnIfEdit() 
+void CDFFDIf::OnIfEdit()
 {
 	CXmlTree::CElt ee(pelt_->GetFirstChild());
 	ASSERT(valid_if_element_ && !ee.IsEmpty());
@@ -645,7 +645,7 @@ void CDFFDIf::OnIfReplace()
 	UpdateData(FALSE);
 }
 
-void CDFFDIf::OnElseEdit() 
+void CDFFDIf::OnElseEdit()
 {
 	CXmlTree::CElt ee(pelt_->GetFirstChild());
 	ASSERT(!ee.IsEmpty());
@@ -743,7 +743,7 @@ void CDFFDIf::OnElseEdit()
 }
 
 // Insert sub-element (if !valid_else_element_) or replace current one
-void CDFFDIf::OnElseReplace() 
+void CDFFDIf::OnElseReplace()
 {
 	ASSERT(else_ == 1);                 // Make sure check box is checked
 	CXmlTree::CElt curr_elt(pelt_->GetFirstChild());

@@ -437,7 +437,7 @@ void get_hls(COLORREF rgb, int &hue, int &luminance, int &saturation)
 			ASSERT(blue == cmax);
 			hue = ((2*hlsmax)/3) + Gdelta - Rdelta;
 		}
-		
+
 		if (hue < 0)
 			hue += hlsmax;
 		if (hue > hlsmax)
@@ -501,12 +501,12 @@ COLORREF tone_down(COLORREF col, COLORREF bg_col, double amt /* = 0.75*/)
 {
 	int hue, luminance, saturation;
 	get_hls(col, hue, luminance, saturation);
-	
+
 	int bg_hue, bg_luminance, bg_saturation;
 	get_hls(bg_col, bg_hue, bg_luminance, bg_saturation);
-	
+
 	int diff = bg_luminance - luminance;
-	
+
 	// If toning "up" make sure that there is some change in the colour
 	if (diff == 0 && amt < 0.0)
 		diff = luminance > 50 ? 1 : -1;
@@ -515,7 +515,7 @@ COLORREF tone_down(COLORREF col, COLORREF bg_col, double amt /* = 0.75*/)
 		luminance = 100;
 	else if (luminance < 0)
 		luminance = 0;
-	
+
 	// Make colour the same shade as col but less "bright"
 	return get_rgb(hue, luminance, saturation);
 }
@@ -530,10 +530,10 @@ COLORREF add_contrast(COLORREF col, COLORREF bg_col)
 {
 	int hue, luminance, saturation;
 	get_hls(col, hue, luminance, saturation);
-	
+
 	int bg_hue, bg_luminance, bg_saturation;
 	get_hls(bg_col, bg_hue, bg_luminance, bg_saturation);
-	
+
 	if (bg_luminance >= 50 && luminance > bg_luminance - 25)
 	{
 		// Decrease luminance to increase contrast
@@ -545,7 +545,7 @@ COLORREF add_contrast(COLORREF col, COLORREF bg_col)
 		luminance = bg_luminance + 25;
 	}
 	assert(luminance <= 100 && luminance >= 0);
-	
+
 	// Make colour the same shade as col but less "bright"
 	return get_rgb(hue, luminance, saturation);
 }
@@ -563,7 +563,7 @@ COLORREF same_hue(COLORREF col, int sat, int lum /* = -1 */)
 		luminance = lum;
 	if (sat > -1)
 		saturation = sat;
-	
+
 	return get_rgb(hue, luminance, saturation);
 }
 
@@ -925,7 +925,7 @@ double real48(const unsigned char *pp, int *pexp, long double *pmant, bool big_e
 		else
 			*pmant = -(mantissa / (two_pow40 / 2));
 	}
-	
+
 	// Check sign bit and return appropriate result
 	if (buf[0] == 0 && mantissa < two_pow40/4)
 		return 0.0;                            // underflow
@@ -941,7 +941,7 @@ static const long double two_pow56 = 72057594037927936.0L;
 bool make_ibm_fp32(unsigned char pp[4], double val, bool little_endian /*=false*/)
 {
 	int exp;                    // Base 2 exponent of val
-	
+
 	val = frexp(val, &exp);
 
 	if (val == 0.0 || exp < -279)
@@ -999,7 +999,7 @@ bool make_ibm_fp32(unsigned char pp[4], double val, bool little_endian /*=false*
 bool make_ibm_fp64(unsigned char pp[8], double val, bool little_endian /*=false*/)
 {
 	int exp;                    // Base 2 exponent of val
-	
+
 	val = frexp(val, &exp);
 
 	if (val == 0.0 || exp < -279)
@@ -1101,7 +1101,7 @@ long double ibm_fp32(const unsigned char *pp, int *pexp /*=NULL*/,
 		else
 			*pmant = -(mantissa / two_pow24);
 	}
-	
+
 	// Check sign bit and return appropriate result
 	if ((pp[0] & 0x80) == 0)
 		return (mantissa / two_pow24) * powl(2, exponent);
@@ -2083,7 +2083,7 @@ void DummyRegAccess(unsigned int group /*=0*/)
 			NULL
 		}
 	};
-	
+
 	HKEY hkey;
 	const char * const *pre;
 
@@ -2099,7 +2099,7 @@ void DummyRegAccess(unsigned int group /*=0*/)
 		strncpy(reg_data, *pre, pp - *pre);
 		reg_data[pp-*pre] = '\0';
 		++pp;                                                   // Point to sub-key name
-		
+
 		// Open the key
 		if (::RegOpenKey(HKEY_CLASSES_ROOT, reg_data, &hkey) == ERROR_SUCCESS)
 		{
@@ -2174,7 +2174,7 @@ static unsigned long rand1()
 	ASSERT(rand1_init);
 
 	unsigned long retval;
-	
+
 	if (rand1_ind >= MERS_N)
 	{
 		const unsigned long LOWER_MASK = (1LU << MERS_R) - 1;
@@ -2296,7 +2296,7 @@ unsigned long rand_good()
 {
 	return rng();
 }
-						  
+
 #endif // BOOST_RAND
 
 //-----------------------------------------------------------------------------
@@ -2660,15 +2660,15 @@ void crc_ccitt_b_update(void * hh, const void *buf, size_t len)
 		*/ 
 		vv = 0x80; 
 
-		for (ii = 0; ii < 8; ++ii) 
+		for (ii = 0; ii < 8; ++ii)
 		{ 
-			if (*(unsigned short *)hh & 0x8000) 
+			if (*(unsigned short *)hh & 0x8000)
 				xor_flag= 1; 
 			else 
 				xor_flag= 0; 
 			*(unsigned short *)hh = *(unsigned short *)hh << 1; 
 
-			if (*cp & vv) 
+			if (*cp & vv)
 			{ 
 				/* 
 				Append next bit of message to end of CRC if it is not zero. 
@@ -2678,7 +2678,7 @@ void crc_ccitt_b_update(void * hh, const void *buf, size_t len)
 				*(unsigned short *)hh = *(unsigned short *)hh + 1; 
 			} 
 
-			if (xor_flag) 
+			if (xor_flag)
 				*(unsigned short *)hh = *(unsigned short *)hh ^ poly; 
 
 			/* 
@@ -2694,15 +2694,15 @@ unsigned short crc_ccitt_b_final(void *hh)
 	unsigned short ii, xor_flag; 
 
 	// Augment message
-	for (ii = 0; ii < 16; ++ii) 
+	for (ii = 0; ii < 16; ++ii)
 	{ 
-		if (*(unsigned short *)hh & 0x8000) 
+		if (*(unsigned short *)hh & 0x8000)
 			xor_flag= 1; 
 		else 
 			xor_flag= 0; 
 		*(unsigned short *)hh = *(unsigned short *)hh << 1; 
 
-		if (xor_flag) 
+		if (xor_flag)
 			*(unsigned short *)hh = *(unsigned short *)hh ^ poly; 
 	}
 

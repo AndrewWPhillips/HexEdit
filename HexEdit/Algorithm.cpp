@@ -81,7 +81,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CAlgorithm message handlers
 
-BOOL CAlgorithm::OnInitDialog() 
+BOOL CAlgorithm::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -115,12 +115,12 @@ BOOL CAlgorithm::OnInitDialog()
 	return TRUE;
 }
 
-void CAlgorithm::OnOK() 
+void CAlgorithm::OnOK()
 {
 	CDialog::OnOK();
 }
 
-void CAlgorithm::OnSelchangeAlg() 
+void CAlgorithm::OnSelchangeAlg()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -143,7 +143,7 @@ void CAlgorithm::OnSelchangeAlg()
 	UpdateData(FALSE);
 }
 
-void CAlgorithm::OnAlgorithmHelp() 
+void CAlgorithm::OnAlgorithmHelp()
 {
 	// Display help for the dialog
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_ALGORITHM_HELP))
@@ -154,16 +154,16 @@ static DWORD id_pairs[] = {
 	IDC_ALG, HIDC_ALG,
 	IDC_ALG_BLOCKLEN, HIDC_ALG_BLOCKLEN,
 	IDC_ALG_KEYLEN, HIDC_ALG_KEYLEN,
-	0,0 
+	0,0
 };
 
-BOOL CAlgorithm::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CAlgorithm::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CAlgorithm::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CAlgorithm::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }

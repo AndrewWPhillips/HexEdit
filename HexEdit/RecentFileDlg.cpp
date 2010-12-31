@@ -160,7 +160,7 @@ BEGIN_MESSAGE_MAP(CRecentFileDlg, CDialog)
 	ON_NOTIFY(NM_DBLCLK, IDC_GRID_RFL, OnGridDoubleClick)
 	ON_NOTIFY(NM_RCLICK, IDC_GRID_RFL, OnGridRClick)
 END_MESSAGE_MAP()
-	
+
 void CRecentFileDlg::InitColumnHeadings()
 {
 	static char *heading[] =
@@ -492,7 +492,7 @@ void CRecentFileDlg::FillGrid()
 }
 
 // Delete all files in the to_delete_ list when dialog is closing
-void CRecentFileDlg::DeleteEntries() 
+void CRecentFileDlg::DeleteEntries()
 {
 	CHexFileList *pfl = theApp.GetFileList();
 //	range_set<int>::const_reverse_iterator pp;
@@ -508,7 +508,7 @@ void CRecentFileDlg::DeleteEntries()
 /////////////////////////////////////////////////////////////////////////////
 // CRecentFileDlg message handlers
 
-BOOL CRecentFileDlg::OnInitDialog() 
+BOOL CRecentFileDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -617,7 +617,7 @@ BOOL CRecentFileDlg::OnInitDialog()
 	return TRUE;
 }
 
-void CRecentFileDlg::OnHelp() 
+void CRecentFileDlg::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_RECENT_FILES_HELP))
@@ -636,13 +636,13 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CRecentFileDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CRecentFileDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CRecentFileDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CRecentFileDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	// Don't show context menu if right-click on grid top row (used to display column menu)
 	if (pWnd->IsKindOf(RUNTIME_CLASS(CGridCtrl)))
@@ -685,7 +685,7 @@ LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	GetDlgItem(IDC_OPEN_RO)->EnableWindow(rows_selected > 0);
 	GetDlgItem(IDC_REMOVE_FILES)->EnableWindow(rows_selected > 0);
 	GetDlgItem(IDC_OPEN_FILES)->EnableWindow(rows_selected > 0 && !ro);
-	
+
 	CString ss;
 	ss.Format("%d", rows_selected);
 	AddCommas(ss);
@@ -724,14 +724,14 @@ BOOL CRecentFileDlg::OnEraseBkgnd(CDC *pDC)
 }
 #endif
 
-void CRecentFileDlg::OnOK() 
+void CRecentFileDlg::OnOK()
 {
 	CDialog::OnOK();
 
 	DeleteEntries();
 }
 
-void CRecentFileDlg::OnOpen() 
+void CRecentFileDlg::OnOpen()
 {
 	CHexFileList *pfl = theApp.GetFileList();
 	int fcc = grid_.GetFixedColumnCount();
@@ -762,7 +762,7 @@ void CRecentFileDlg::OnOpen()
 	DeleteEntries();
 }
 
-void CRecentFileDlg::OnOpenRO() 
+void CRecentFileDlg::OnOpenRO()
 {
 	CHexFileList *pfl = theApp.GetFileList();
 	int fcc = grid_.GetFixedColumnCount();
@@ -793,7 +793,7 @@ void CRecentFileDlg::OnOpenRO()
 	DeleteEntries();
 }
 
-void CRecentFileDlg::OnRemove() 
+void CRecentFileDlg::OnRemove()
 {
 	int fcc = grid_.GetFixedColumnCount();
 	range_set<int> tt;                  // the grid rows to be removed
@@ -817,7 +817,7 @@ void CRecentFileDlg::OnRemove()
 	grid_.Refresh();
 }
 
-void CRecentFileDlg::OnValidate() 
+void CRecentFileDlg::OnValidate()
 {
 	UpdateData();            // Make sure we know the current state of the keep network files check box
 
@@ -868,7 +868,7 @@ void CRecentFileDlg::OnValidate()
 	AfxMessageBox(ss);
 }
 
-void CRecentFileDlg::OnDestroy() 
+void CRecentFileDlg::OnDestroy()
 {
 	if (grid_.m_hWnd != 0)
 	{

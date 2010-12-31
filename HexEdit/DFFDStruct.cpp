@@ -502,7 +502,7 @@ void CDFFDStruct::do_edit(bool delete_on_cancel /*=false*/)
 /////////////////////////////////////////////////////////////////////////////
 // CDFFDStruct message handlers
 
-BOOL CDFFDStruct::OnInitDialog() 
+BOOL CDFFDStruct::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetIcon(AfxGetApp()->LoadIcon(IDI_STRUCT), TRUE);
@@ -610,18 +610,18 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CDFFDStruct::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CDFFDStruct::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CDFFDStruct::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CDFFDStruct::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CDFFDStruct::OnHelp() 
+void CDFFDStruct::OnHelp()
 {
 	// Display help for this page
 	DWORD_PTR hid = HIDD_DFFD_STRUCT;
@@ -631,16 +631,16 @@ void CDFFDStruct::OnHelp()
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CDFFDStruct::OnCancel() 
+void CDFFDStruct::OnCancel()
 {
 	pelt_->DeleteAllChildren();
 	saved_.InsertKids(pelt_);
 	pelt_->GetOwner()->SetModified(saved_mod_flag_);
-	
+
 	CDialog::OnCancel();
 }
 
-void CDFFDStruct::OnOK() 
+void CDFFDStruct::OnOK()
 {
 	if (modified_)
 	{
@@ -653,7 +653,7 @@ void CDFFDStruct::OnOK()
 	CDialog::OnOK();
 }
 
-void CDFFDStruct::OnNext() 
+void CDFFDStruct::OnNext()
 {
 	// Does the same as OnOK but returns ID_DFFD_NEXT to indicate
 	// that the next sibling should now be edited
@@ -671,7 +671,7 @@ void CDFFDStruct::OnNext()
 	CDialog::EndDialog(ID_DFFD_NEXT);
 }
 
-void CDFFDStruct::OnPrev() 
+void CDFFDStruct::OnPrev()
 {
 	// Does the same as OnOK but returns ID_DFFD_PREV to indicate
 	// that the previous sibling should now be edited
@@ -743,7 +743,7 @@ LRESULT CDFFDStruct::OnKickIdle(WPARAM, LPARAM lCount)
 	return FALSE;
 }
 
-void CDFFDStruct::OnChange() 
+void CDFFDStruct::OnChange()
 {
 	modified_ = true;
 }
@@ -760,7 +760,7 @@ void CDFFDStruct::OnEdit()
 	do_edit();
 }
 
-void CDFFDStruct::OnInsert() 
+void CDFFDStruct::OnInsert()
 {
 	// Find out which child we are inserting before
 	int item = ctl_elements_.GetCurSel();
@@ -852,7 +852,7 @@ void CDFFDStruct::OnInsert()
 	do_edit(true);
 }
 
-void CDFFDStruct::OnDelete() 
+void CDFFDStruct::OnDelete()
 {
 	// Find out which child we are deleting
 	int item = ctl_elements_.GetCurSel();
@@ -873,7 +873,7 @@ void CDFFDStruct::OnDelete()
 	modified_ = true;
 }
 
-void CDFFDStruct::OnUp() 
+void CDFFDStruct::OnUp()
 {
 	// Find out which child to move
 	int item = ctl_elements_.GetCurSel();
@@ -894,7 +894,7 @@ void CDFFDStruct::OnUp()
 	modified_ = true;
 }
 
-void CDFFDStruct::OnDown() 
+void CDFFDStruct::OnDown()
 {
 	// Find out which child to move
 	int item = ctl_elements_.GetCurSel();

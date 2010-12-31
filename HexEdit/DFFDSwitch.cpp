@@ -132,7 +132,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CDFFDSwitch message handlers
 
-BOOL CDFFDSwitch::OnInitDialog() 
+BOOL CDFFDSwitch::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetIcon(AfxGetApp()->LoadIcon(IDI_SWITCH), TRUE);
@@ -222,18 +222,18 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CDFFDSwitch::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CDFFDSwitch::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CDFFDSwitch::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CDFFDSwitch::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CDFFDSwitch::OnHelp() 
+void CDFFDSwitch::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_DFFD_SWITCH))
@@ -262,7 +262,7 @@ void CDFFDSwitch::OnOK()
 	CDialog::OnOK();
 }
 
-void CDFFDSwitch::OnNext() 
+void CDFFDSwitch::OnNext()
 {
 	// Does the same as OnOK but returns ID_DFFD_NEXT to indicate
 	// that the next sibling should now be edited
@@ -280,7 +280,7 @@ void CDFFDSwitch::OnNext()
 	CDialog::EndDialog(ID_DFFD_NEXT);
 }
 
-void CDFFDSwitch::OnPrev() 
+void CDFFDSwitch::OnPrev()
 {
 	// Does the same as OnOK but returns ID_DFFD_PREV to indicate
 	// that the previous sibling should now be edited
@@ -326,12 +326,12 @@ LRESULT CDFFDSwitch::OnKickIdle(WPARAM, LPARAM lCount)
 	return FALSE;
 }
 
-void CDFFDSwitch::OnChange() 
+void CDFFDSwitch::OnChange()
 {
 	modified_ = true;
 }
 
-void CDFFDSwitch::OnChangeRange() 
+void CDFFDSwitch::OnChangeRange()
 {
 	// Find item for which the range was changed
 	int item = ctl_cases_.GetCurSel();
@@ -358,7 +358,7 @@ void CDFFDSwitch::OnEdit()
 	do_edit();
 }
 
-void CDFFDSwitch::OnInsert() 
+void CDFFDSwitch::OnInsert()
 {
 	// Find out which child we are inserting before
 	int item = ctl_cases_.GetCurSel();
@@ -434,7 +434,7 @@ void CDFFDSwitch::OnInsert()
 	do_edit(true);
 }
 
-void CDFFDSwitch::OnDelete() 
+void CDFFDSwitch::OnDelete()
 {
 	// Find out which child we are deleting
 	int item = ctl_cases_.GetCurSel();
@@ -455,7 +455,7 @@ void CDFFDSwitch::OnDelete()
 	modified_ = true;
 }
 
-void CDFFDSwitch::OnUp() 
+void CDFFDSwitch::OnUp()
 {
 	// Find out which child to move
 	int item = ctl_cases_.GetCurSel();
@@ -476,7 +476,7 @@ void CDFFDSwitch::OnUp()
 	modified_ = true;
 }
 
-void CDFFDSwitch::OnDown() 
+void CDFFDSwitch::OnDown()
 {
 	// Find out which child to move
 	int item = ctl_cases_.GetCurSel();

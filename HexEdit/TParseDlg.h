@@ -50,8 +50,6 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(TParseDlg)
 	virtual void OnOK();
-	afx_msg void OnValuesCustom();
-	afx_msg void OnTypesCustom();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	//}}AFX_MSG

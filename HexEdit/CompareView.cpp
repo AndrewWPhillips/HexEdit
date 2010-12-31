@@ -1,6 +1,6 @@
 // CompareView.cpp : implementation of the CCompareView class
 //
-// Copyright (c) 2010 by Andrew W. Phillips. 
+// Copyright (c) 2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -1855,7 +1855,7 @@ void CCompareView::DoScrollWindow(int xx, int yy)
 /////////////////////////////////////////////////////////////////////////////
 // CCompareView message handlers
 
-void CCompareView::OnSize(UINT nType, int cx, int cy) 
+void CCompareView::OnSize(UINT nType, int cx, int cy)
 {
 	if (phev_ != NULL && (cx != 0 || cy != 0))
 		phev_->recalc_display();     // this may result in it being called twice when using a splitter (unfortunate)
@@ -1903,7 +1903,7 @@ BOOL CCompareView::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 
-void CCompareView::OnLButtonUp(UINT nFlags, CPoint point) 
+void CCompareView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	// We just need to handle a change in the selection
 	CScrView::OnLButtonUp(nFlags, point);
@@ -1917,7 +1917,7 @@ void CCompareView::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-void CCompareView::OnSetFocus(CWnd* pNewWnd) 
+void CCompareView::OnSetFocus(CWnd* pNewWnd)
 {
 	CScrView::OnSetFocus(pNewWnd);
 	if (phev_ == NULL || phev_->text_height_ == 0)
@@ -1931,7 +1931,7 @@ void CCompareView::OnSetFocus(CWnd* pNewWnd)
 	InvalidateRange(addr2pos(start_addr), addr2pos(end_addr));
 }
 
-void CCompareView::OnKillFocus(CWnd* pNewWnd) 
+void CCompareView::OnKillFocus(CWnd* pNewWnd)
 {
 	CScrView::OnKillFocus(pNewWnd);
 	if (phev_ == NULL || phev_->text_height_ == 0)

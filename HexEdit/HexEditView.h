@@ -293,7 +293,7 @@ public:
 	void do_replace(FILE_ADDRESS start, FILE_ADDRESS end, unsigned char *pp, size_t len);
 	void do_insert_block(_int64 params, const char *data_str);
 
-	void DoConversion(convert_type op, LPCSTR desc);  // byte-size conversions 
+	void DoConversion(convert_type op, LPCSTR desc);  // byte-size conversions
 	void ProcConversion(unsigned char *buf, size_t count, convert_type op); // convert buffer full
 
 //    BOOL Search(const char *ss, int tt = 1, BOOL forward = TRUE);

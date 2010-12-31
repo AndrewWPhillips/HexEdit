@@ -85,7 +85,7 @@ void CCopyCSrc::fix_controls()
 /////////////////////////////////////////////////////////////////////////////
 // CCopyCSrc message handlers
 
-BOOL CCopyCSrc::OnInitDialog() 
+BOOL CCopyCSrc::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -95,14 +95,14 @@ BOOL CCopyCSrc::OnInitDialog()
 	return TRUE;
 }
 
-void CCopyCSrc::OnChangeType() 
+void CCopyCSrc::OnChangeType()
 {
 	UpdateData();
 
 	fix_controls();
 }
 
-void CCopyCSrc::OnOK() 
+void CCopyCSrc::OnOK()
 {
 	UpdateData();
 
@@ -117,7 +117,7 @@ void CCopyCSrc::OnOK()
 	CDialog::OnOK();
 }
 
-void CCopyCSrc::OnCsrcHelp() 
+void CCopyCSrc::OnCsrcHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_CSRC_HELP))
@@ -136,16 +136,16 @@ static DWORD id_pairs[] = {
 	IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
 	IDC_CSRC_FLOAT, HIDC_CSRC_FLOAT,
 	IDC_CSRC_FLOAT_SIZE, HIDC_CSRC_FLOAT_SIZE,
-	0,0 
+	0,0
 };
 
-BOOL CCopyCSrc::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CCopyCSrc::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CCopyCSrc::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CCopyCSrc::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }

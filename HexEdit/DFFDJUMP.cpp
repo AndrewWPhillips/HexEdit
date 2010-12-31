@@ -122,7 +122,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CDFFDJump message handlers
 
-BOOL CDFFDJump::OnInitDialog() 
+BOOL CDFFDJump::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetIcon(AfxGetApp()->LoadIcon(IDI_JUMP), TRUE);
@@ -203,25 +203,25 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CDFFDJump::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CDFFDJump::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CDFFDJump::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CDFFDJump::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CDFFDJump::OnHelp() 
+void CDFFDJump::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_DFFD_JUMP))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CDFFDJump::OnCancel() 
+void CDFFDJump::OnCancel()
 {
 	pelt_->DeleteAllChildren();
 	saved_.InsertKids(pelt_);
@@ -243,7 +243,7 @@ void CDFFDJump::OnOK()
 	CDialog::OnOK();
 }
 
-void CDFFDJump::OnNext() 
+void CDFFDJump::OnNext()
 {
 	// Does the same as OnOK but returns ID_DFFD_NEXT to indicate
 	// that the next sibling should now be edited
@@ -261,7 +261,7 @@ void CDFFDJump::OnNext()
 	CDialog::EndDialog(ID_DFFD_NEXT);
 }
 
-void CDFFDJump::OnPrev() 
+void CDFFDJump::OnPrev()
 {
 	// Does the same as OnOK but returns ID_DFFD_PREV to indicate
 	// that the previous sibling should now be edited
@@ -301,12 +301,12 @@ LRESULT CDFFDJump::OnKickIdle(WPARAM, LPARAM lCount)
 	return FALSE;
 }
 
-void CDFFDJump::OnChange() 
+void CDFFDJump::OnChange()
 {
 	modified_ = true;
 }
 
-void CDFFDJump::OnEdit() 
+void CDFFDJump::OnEdit()
 {
 	CXmlTree::CElt ee(pelt_->GetFirstChild());
 	ASSERT(valid_element_ && !ee.IsEmpty());
@@ -382,7 +382,7 @@ void CDFFDJump::OnEdit()
 	UpdateData(FALSE);
 }
 
-void CDFFDJump::OnReplace() 
+void CDFFDJump::OnReplace()
 {
 	// See if we have a subelement to replace (otherwise we just insert)
 	CXmlTree::CElt curr_elt(pelt_->GetFirstChild());

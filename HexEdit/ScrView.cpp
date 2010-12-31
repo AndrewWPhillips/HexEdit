@@ -1052,18 +1052,18 @@ void CScrView::DoVScroll(int total, int page, int pos)
 /////////////////////////////////////////////////////////////////////////////
 // CScrView message handlers
 
-void CScrView::OnSize(UINT nType, int cx, int cy) 
+void CScrView::OnSize(UINT nType, int cx, int cy)
 {
 		CView::OnSize(nType, cx, cy);
 		update_bars();
 }
 
-void CScrView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CScrView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 		OnScroll(MAKEWORD(nSBCode, -1), nPos);
 }
 
-void CScrView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CScrView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 		OnScroll(MAKEWORD(-1, nSBCode), nPos);
 }
@@ -1180,13 +1180,13 @@ BOOL CScrView::OnScrollBy(CSize sizeScroll, BOOL bDoScroll)
 	return TRUE;
 }
 
-void CScrView::OnInitialUpdate() 
+void CScrView::OnInitialUpdate()
 {
 	check_coords();
 	CView::OnInitialUpdate();
 }
 
-BOOL CScrView::PreCreateWindow(CREATESTRUCT& cs) 
+BOOL CScrView::PreCreateWindow(CREATESTRUCT& cs)
 {
 #ifdef USE_OWNDC
 	BOOL retval = CView::PreCreateWindow(cs);
@@ -1205,7 +1205,7 @@ BOOL CScrView::PreCreateWindow(CREATESTRUCT& cs)
 #endif
 }
 
-void CScrView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CScrView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	switch(nChar)
 	{
@@ -1227,19 +1227,19 @@ void CScrView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-void CScrView::OnKillFocus(CWnd* pNewWnd) 
+void CScrView::OnKillFocus(CWnd* pNewWnd)
 {
 	caret_hide();
 	CView::OnKillFocus(pNewWnd);
 }
 
-void CScrView::OnSetFocus(CWnd* pOldWnd) 
+void CScrView::OnSetFocus(CWnd* pOldWnd)
 {
 	CView::OnSetFocus(pOldWnd);
 	caret_show();
 }
 
-void CScrView::OnLButtonDown(UINT nFlags, CPoint point) 
+void CScrView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (mouse_down_) return;    // Happens sometimes while debugging
 
@@ -1273,7 +1273,7 @@ void CScrView::OnLButtonDown(UINT nFlags, CPoint point)
 	CView::OnLButtonDown(nFlags, point);
 }
 
-void CScrView::OnLButtonUp(UINT nFlags, CPoint point) 
+void CScrView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (mouse_down_)
 	{
@@ -1293,18 +1293,18 @@ void CScrView::OnLButtonUp(UINT nFlags, CPoint point)
 	CView::OnLButtonUp(nFlags, point);
 }
 
-void CScrView::OnMouseMove(UINT nFlags, CPoint point) 
+void CScrView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (mouse_down_)
 	{
 		// Drag: update display based on new position
 		OnSelUpdate(point);
 	}
-		
+
 	CView::OnMouseMove(nFlags, point);
 }
 
-BOOL CScrView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) 
+BOOL CScrView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	CPointAp pp = GetScroll();
 	if (abs(zDelta) > line_.cy)
@@ -1317,7 +1317,7 @@ BOOL CScrView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 //	return CView::OnMouseWheel(nFlags, zDelta, pt);
 }
 
-void CScrView::OnTimer(UINT nIDEvent) 
+void CScrView::OnTimer(UINT nIDEvent)
 {
 	if (nIDEvent == timer_id_)
 	{
@@ -1420,7 +1420,7 @@ void CScrView::OnSelUpdate(CPoint point)
 			newpos.y = 0;
 		SetScroll(newpos, TRUE);
 	}
-	
+
 	// Set end of selection based on this point
 	CPoint ptmp = point;                         // Get pp based on new value of "point"
 
@@ -1498,7 +1498,7 @@ void CScrView::InvalidateRange(CPointAp start, CPointAp end, bool f /*=false*/)
 		DoInvalidateRect(&norm_rect);
 }
 
-void CScrView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo) 
+void CScrView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
 {
 	CView::OnPrepareDC(pDC, pInfo);
 

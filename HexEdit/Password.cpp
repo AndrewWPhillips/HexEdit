@@ -81,7 +81,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPassword message handlers
 
-BOOL CPassword::OnInitDialog() 
+BOOL CPassword::OnInitDialog()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
@@ -91,10 +91,10 @@ BOOL CPassword::OnInitDialog()
 	m_reentered = m_password;
 
 	CDialog::OnInitDialog();
-	
+
 	ASSERT(GetDlgItem(IDC_PASSWORD_SPIN) != NULL);
 	((CSpinButtonCtrl *)GetDlgItem(IDC_PASSWORD_SPIN))->SetRange(1, 9999);
-	
+
 	if (m_mask)
 	{
 		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
@@ -123,7 +123,7 @@ BOOL CPassword::OnInitDialog()
 	return TRUE;
 }
 
-void CPassword::OnOK() 
+void CPassword::OnOK()
 {
 	if (!UpdateData())
 		return;
@@ -165,7 +165,7 @@ void CPassword::OnOK()
 	CDialog::OnOK();
 }
 
-void CPassword::OnCancel() 
+void CPassword::OnCancel()
 {
 	if (UpdateData())
 	{
@@ -177,7 +177,7 @@ void CPassword::OnCancel()
 	CDialog::OnCancel();
 }
 
-void CPassword::OnPasswordMask() 
+void CPassword::OnPasswordMask()
 {
 	UpdateData();
 
@@ -215,18 +215,18 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CPassword::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CPassword::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CPassword::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPassword::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CPassword::OnPasswordHelp() 
+void CPassword::OnPasswordHelp()
 {
 	// Display help for the dialog
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_PASSWORD_HELP))

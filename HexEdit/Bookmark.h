@@ -36,7 +36,7 @@ public:
 
 // Attributes
 public:
-	int GetIndex(LPCTSTR name) const;						// Get bookmark idx by name (-1 if not found)
+	int GetIndex(LPCTSTR name) const;                       // Get bookmark idx by name (-1 if not found)
 	int GetIndex(LPCTSTR nn, LPCTSTR fn) const;             // Get bookmark idx from name + filename
 
 	int GetIndex(LPCTSTR filename, __int64 filepos) const;  // Find closest bookmark to this location or -1
@@ -49,7 +49,7 @@ public:
 	virtual void ClearAll();
 	CString GetFileName(int index) const { return file_[index]; }
 	// Get all bookmarks for a file
-	virtual void GetAll(LPCTSTR filename, std::vector<int> &bookmark, std::vector<__int64> &posn); 
+	virtual void GetAll(LPCTSTR filename, std::vector<int> &bookmark, std::vector<__int64> &posn);
 	virtual  int AddBookmark(LPCTSTR name); // Add a bookmark at the current position of the active file
 	virtual  int AddBookmark(LPCTSTR name, LPCTSTR filename, __int64 filepos, LPCTSTR data = NULL, CHexEditDoc *pdoc = NULL);
 	virtual bool ReadList();                // Reads bookmark list from user's file (or registry)

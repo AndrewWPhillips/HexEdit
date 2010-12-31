@@ -478,20 +478,20 @@ void CCalcEdit::OnSetFocus(CWnd* pOldWnd)
 	}
 }
 
-void CCalcEdit::OnKillFocus(CWnd* pNewWnd) 
+void CCalcEdit::OnKillFocus(CWnd* pNewWnd)
 {
 	sel_ = GetSel();
 	CEdit::OnKillFocus(pNewWnd);
 }
 
-void CCalcEdit::OnLButtonUp(UINT nFlags, CPoint point) 
+void CCalcEdit::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	pp_->in_edit_ = TRUE;
 	CEdit::OnLButtonUp(nFlags, point);
 }
 
 
-void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->IsVisible());
@@ -512,7 +512,7 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	pp_->ctl_calc_bits_.RedrawWindow();
 }
 
-void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->IsVisible());
@@ -569,7 +569,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	pp_->ctl_calc_bits_.RedrawWindow();
 }
 
-BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg) 
+BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg)
 {
 	CString ss;
 

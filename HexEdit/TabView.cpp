@@ -61,7 +61,7 @@ void CHexTabView::OnSize(UINT nType, int cx, int cy)
 		CTabView::OnSize(nType, cx, cy);
 }
 
-void CHexTabView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) 
+void CHexTabView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 	{
@@ -107,7 +107,7 @@ void CHexTabView::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CHexTabView message handlers
 
-int CHexTabView::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+int CHexTabView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CTabView::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -124,7 +124,7 @@ int CHexTabView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-BOOL CHexTabView::OnEraseBkgnd(CDC* pDC) 
+BOOL CHexTabView::OnEraseBkgnd(CDC* pDC)
 {
 	return TRUE;
 }

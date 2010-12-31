@@ -60,7 +60,7 @@ CTipDlg::CTipDlg(CWnd* pParent /*=NULL*/)
 
 	// Now try to open the tips file in the current directory
 	m_pStream = fopen(tip_name, "r");
-	if (m_pStream == NULL) 
+	if (m_pStream == NULL)
 	{
 // AP: This bit added by me -----------------------------------------------------------
 		// Not found so try to open from the .exe dir
@@ -82,13 +82,13 @@ CTipDlg::CTipDlg(CWnd* pParent /*=NULL*/)
 	strCurrentTime.TrimRight();
 	CString strStoredTime = 
 		aa->GetProfileString(szSection, szTimeStamp, NULL);
-	if (strCurrentTime != strStoredTime) 
+	if (strCurrentTime != strStoredTime)
 	{
 		iFilePos = 0;
 		aa->WriteProfileString(szSection, szTimeStamp, strCurrentTime);
 	}
 
-	if (fseek(m_pStream, iFilePos, SEEK_SET) != 0) 
+	if (fseek(m_pStream, iFilePos, SEEK_SET) != 0)
 	{
 		AfxMessageBox(CG_IDP_FILE_CORRUPT);
 	}
@@ -104,16 +104,16 @@ CTipDlg::~CTipDlg()
 	// or clicked on the close button. If the user had pressed the escape key,
 	// it is still required to update the filepos in the ini file with the 
 	// latest position so that we don't repeat the tips! 
-	
+
 	// But make sure the tips file existed in the first place....
-	if (m_pStream != NULL) 
+	if (m_pStream != NULL)
 	{
 		CWinApp* pApp = AfxGetApp();
 		pApp->WriteProfileInt(szSection, szIntFilePos, ftell(m_pStream));
 		fclose(m_pStream);
 	}
 }
-		
+
 void CTipDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -147,20 +147,20 @@ void CTipDlg::GetNextTipString(CString& strNext)
 	// This routine identifies the next string that needs to be
 	// read from the tips file
 	BOOL bStop = FALSE;
-	while (!bStop) 
+	while (!bStop)
 	{
-		if (_fgetts(lpsz, MAX_BUFLEN, m_pStream) == NULL) 
+		if (_fgetts(lpsz, MAX_BUFLEN, m_pStream) == NULL)
 		{
 			// We have either reached EOF or enocuntered some problem
 			// In both cases reset the pointer to the beginning of the file
 			// This behavior is same as VC++ Tips file
-			if (fseek(m_pStream, 0, SEEK_SET) != 0) 
+			if (fseek(m_pStream, 0, SEEK_SET) != 0)
 				AfxMessageBox(CG_IDP_FILE_CORRUPT);
 		} 
 		else 
 		{
 			if (*lpsz != ' ' && *lpsz != '\t' && 
-				*lpsz != '\n' && *lpsz != ';') 
+				*lpsz != '\n' && *lpsz != ';')
 			{
 				// There should be no space at the beginning of the tip
 				// This behavior is same as VC++ Tips file
@@ -183,7 +183,7 @@ HBRUSH CTipDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 void CTipDlg::OnOK()
 {
 	CDialog::OnOK();
-	
+
 	// Update the startup information stored in the INI file
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	aa->tipofday_ = m_bStartup;

@@ -365,20 +365,20 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // COptSheet message handlers
 
-BOOL COptSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct) 
+BOOL COptSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 {
 		if (!CMFCPropertySheet::OnNcCreate(lpCreateStruct))
 				return FALSE;
-		
+
 		ModifyStyleEx(0, WS_EX_CONTEXTHELP);
-		
+
 		return TRUE;
 }
 
-BOOL COptSheet::DestroyWindow() 
+BOOL COptSheet::DestroyWindow()
 {
 	last_opt_page_ = GetActiveIndex();
-	
+
 	return CMFCPropertySheet::DestroyWindow();
 }
 
@@ -452,7 +452,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSystemGeneralPage message handlers
 
-BOOL CSystemGeneralPage::OnInitDialog() 
+BOOL CSystemGeneralPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
 	GetDlgItem(IDC_HIST_PAGE)->EnableWindow(pHistPage != NULL);
@@ -461,7 +461,7 @@ BOOL CSystemGeneralPage::OnInitDialog()
 	return TRUE;
 }
 
-void CSystemGeneralPage::OnOK() 
+void CSystemGeneralPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -482,23 +482,23 @@ static DWORD id_pairs_sys[] = {
 	0,0 
 };
 
-BOOL CSystemGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CSystemGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_sys);
 	return TRUE;
 }
 
-void CSystemGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CSystemGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_sys);
 }
 
-void CSystemGeneralPage::OnChange() 
+void CSystemGeneralPage::OnChange()
 {
 	SetModified(TRUE);
 }
 
-void CSystemGeneralPage::OnShellopen() 
+void CSystemGeneralPage::OnShellopen()
 {
 	UpdateData();
 	if (pParent->val_.shell_open_)
@@ -521,7 +521,7 @@ void CSystemGeneralPage::OnHistPage()
 		pParent->SetActivePage(pHistPage);
 }
 
-void CSystemGeneralPage::OnSaveNow() 
+void CSystemGeneralPage::OnSaveNow()
 {
 	// PressButton() always returns zero - so ignore return value
 	(void)pParent->PressButton(PSBTN_APPLYNOW);
@@ -579,7 +579,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CHistoryPage message handlers
 
-BOOL CHistoryPage::OnInitDialog() 
+BOOL CHistoryPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
 
@@ -594,7 +594,7 @@ BOOL CHistoryPage::OnInitDialog()
 	return TRUE;
 }
 
-void CHistoryPage::OnOK() 
+void CHistoryPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -623,18 +623,18 @@ static DWORD id_pairs_hist[] = {
 	0,0 
 };
 
-BOOL CHistoryPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CHistoryPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_hist);
 	return TRUE;
 }
 
-void CHistoryPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CHistoryPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_hist);
 }
 
-void CHistoryPage::OnClearNow() 
+void CHistoryPage::OnClearNow()
 {
 	CHexFileList *pfl = theApp.GetFileList();
 	if (pfl != NULL && pParent->val_.clear_recent_file_list_)
@@ -650,7 +650,7 @@ void CHistoryPage::OnClearNow()
 	}
 }
 
-void CHistoryPage::OnChange() 
+void CHistoryPage::OnChange()
 {
 	SetModified(TRUE);
 }
@@ -699,7 +699,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceEditPage message handlers
 
-BOOL CWorkspaceEditPage::OnInitDialog() 
+BOOL CWorkspaceEditPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
 
@@ -742,7 +742,7 @@ void CWorkspaceEditPage::OnBackupPage()
 		pParent->SetActivePage(pBackupPage);
 }
 
-void CWorkspaceEditPage::OnOK() 
+void CWorkspaceEditPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -763,23 +763,23 @@ static DWORD id_pairs_we[] = {
 	0,0 
 };
 
-BOOL CWorkspaceEditPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CWorkspaceEditPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_we);
 	return TRUE;
 }
 
-void CWorkspaceEditPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CWorkspaceEditPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_we);
 }
 
-void CWorkspaceEditPage::OnChange() 
+void CWorkspaceEditPage::OnChange()
 {
 	SetModified(TRUE);
 }
 
-void CWorkspaceEditPage::OnChangeBackground() 
+void CWorkspaceEditPage::OnChangeBackground()
 {
 	UpdateData();
 	fix_controls();
@@ -863,7 +863,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspacePage message handlers
 
-BOOL CWorkspacePage::OnInitDialog() 
+BOOL CWorkspacePage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
 
@@ -887,7 +887,7 @@ void CWorkspacePage::OnDocPage()
 		pParent->SetActivePage(pDocPage);
 }
 
-void CWorkspacePage::OnOK() 
+void CWorkspacePage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -912,29 +912,29 @@ static DWORD id_pairs_ws[] = {
 	0,0 
 };
 
-BOOL CWorkspacePage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CWorkspacePage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_ws);
 	return TRUE;
 }
 
-void CWorkspacePage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CWorkspacePage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_ws);
 }
 
-void CWorkspacePage::OnChange() 
+void CWorkspacePage::OnChange()
 {
 	SetModified(TRUE);
 }
 
-void CWorkspacePage::OnAddressFile() 
+void CWorkspacePage::OnAddressFile()
 {
 	address_ctl_.EnableWindow(FALSE);
 	SetModified(TRUE);
 }
 
-void CWorkspacePage::OnAddressSpecified() 
+void CWorkspacePage::OnAddressSpecified()
 {
 	// Enable and select address text box
 	CString ss;
@@ -947,23 +947,23 @@ void CWorkspacePage::OnAddressSpecified()
 	SetModified(TRUE);
 }
 
-void CWorkspacePage::OnBackup() 
+void CWorkspacePage::OnBackup()
 {
 	UpdateData();
 	ctl_backup_space_.EnableWindow(pParent->val_.backup_);
 	ctl_backup_if_size_.EnableWindow(pParent->val_.backup_);
 	ctl_backup_size_.EnableWindow(pParent->val_.backup_ && pParent->val_.backup_if_size_);
 	ctl_backup_prompt_.EnableWindow(pParent->val_.backup_);
-	
+
 	SetModified(TRUE);
 }
 
-void CWorkspacePage::OnBackupIfSize() 
+void CWorkspacePage::OnBackupIfSize()
 {
 	UpdateData();
 	ASSERT(pParent->val_.backup_);
 	ctl_backup_size_.EnableWindow(pParent->val_.backup_if_size_);
-	
+
 	SetModified(TRUE);
 }
 #endif
@@ -1014,24 +1014,24 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceLayoutPage message handlers
 
-BOOL CWorkspaceLayoutPage::OnInitDialog() 
+BOOL CWorkspaceLayoutPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
 
 	fix_controls();
-	
+
 	GetDlgItem(IDC_STARTUP_PAGE)->EnableWindow(pStartupPage != NULL);
 	ctl_startup_butn_.SetImage(IDB_SYSTEM);
 
 	return TRUE;
 }
 
-void CWorkspaceLayoutPage::OnChange() 
+void CWorkspaceLayoutPage::OnChange()
 {
 	SetModified(TRUE);
 }
 
-void CWorkspaceLayoutPage::OnChangeMditabs() 
+void CWorkspaceLayoutPage::OnChangeMditabs()
 {
 	UpdateData();
 	fix_controls();
@@ -1045,13 +1045,13 @@ void CWorkspaceLayoutPage::OnStartupPage()
 }
 
 #if 0 // not supported by MFC 9
-void CWorkspaceLayoutPage::OnVisualizations() 
+void CWorkspaceLayoutPage::OnVisualizations()
 {
 	theApp.GetSkinManager()->ShowSelectSkinDlg();
 }
 #endif
 
-void CWorkspaceLayoutPage::OnOK() 
+void CWorkspaceLayoutPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -1070,13 +1070,13 @@ static DWORD id_pairs_workspace_layout[] = {
 	0,0
 };
 
-BOOL CWorkspaceLayoutPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CWorkspaceLayoutPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_workspace_layout);
 	return TRUE;
 }
 
-void CWorkspaceLayoutPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CWorkspaceLayoutPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_workspace_layout);
 }
@@ -1148,7 +1148,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceDisplayPage message handlers
 
-BOOL CWorkspaceDisplayPage::OnInitDialog() 
+BOOL CWorkspaceDisplayPage::OnInitDialog()
 {
 	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_DEC_TICKS))->SetRange(1, 9999);
 	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_DEC_NUMS)) ->SetRange(1, 9999);
@@ -1172,7 +1172,7 @@ LRESULT CWorkspaceDisplayPage::OnIdle(long lCount)
 	return FALSE;
 }
 
-void CWorkspaceDisplayPage::OnChange() 
+void CWorkspaceDisplayPage::OnChange()
 {
 	SetModified(TRUE);
 }
@@ -1195,7 +1195,7 @@ void CWorkspaceDisplayPage::OnDocPage()
 		pParent->SetActivePage(pDocPage);
 }
 
-void CWorkspaceDisplayPage::OnOK() 
+void CWorkspaceDisplayPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -1224,13 +1224,13 @@ static DWORD id_pairs_workspace_display[] = {
 	0,0
 };
 
-BOOL CWorkspaceDisplayPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CWorkspaceDisplayPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_workspace_display);
 	return TRUE;
 }
 
-void CWorkspaceDisplayPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CWorkspaceDisplayPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_workspace_display);
 }
@@ -1274,13 +1274,13 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CTemplatePage message handlers
 
-BOOL CTemplatePage::OnInitDialog() 
+BOOL CTemplatePage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
-	
+
 	ASSERT(GetDlgItem(IDC_SPIN_DFFD_ARRAY_MAX) != NULL);
 	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_DFFD_ARRAY_MAX))->SetRange(2, UD_MAXVAL);
-	
+
 	return TRUE;
 }
 
@@ -1313,12 +1313,12 @@ void CTemplatePage::OnTemplatedir()
 	}
 }
 
-void CTemplatePage::OnChange() 
+void CTemplatePage::OnChange()
 {
 	SetModified(TRUE);
 }
 
-void CTemplatePage::OnOK() 
+void CTemplatePage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -1348,13 +1348,13 @@ static DWORD id_pairs_template[] = {
 	0,0
 };
 
-BOOL CTemplatePage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CTemplatePage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_template);
 	return TRUE;
 }
 
-void CTemplatePage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CTemplatePage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_template);
 }
@@ -1414,7 +1414,7 @@ void CTipsPage::add_row(int row, BOOL is_checked /*=TRUE*/, CString s1/*=""*/, C
 /////////////////////////////////////////////////////////////////////////////
 // CTipsPage message handlers
 
-BOOL CTipsPage::OnInitDialog() 
+BOOL CTipsPage::OnInitDialog()
 {
 	if (var_list.IsEmpty())
 	{
@@ -1595,7 +1595,7 @@ void CTipsPage::OnOK()
 	COptPage::OnOK();
 }
 
-BOOL CTipsPage::PreTranslateMessage(MSG* pMsg) 
+BOOL CTipsPage::PreTranslateMessage(MSG* pMsg)
 {
 	m_cToolTip.RelayEvent(pMsg);
 
@@ -1612,13 +1612,13 @@ static DWORD id_pairs8[] = {
 	0,0 
 };
 
-BOOL CTipsPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CTipsPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs8);
 	return TRUE;
 }
 
-void CTipsPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CTipsPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs8);
 }
@@ -1629,7 +1629,7 @@ void CTipsPage::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	SetModified(TRUE);
 }
 
-void CTipsPage::OnNew() 
+void CTipsPage::OnNew()
 {
 	int row;
 	CCellRange sel = grid_.GetSelectedCellRange();
@@ -1657,7 +1657,7 @@ void CTipsPage::OnNew()
 	SetModified(TRUE);
 }
 
-void CTipsPage::OnDel() 
+void CTipsPage::OnDel()
 {
 	CCellRange sel = grid_.GetSelectedCellRange();
 	if (sel.IsValid())
@@ -1674,7 +1674,7 @@ void CTipsPage::OnDel()
 	}
 }
 
-void CTipsPage::OnUp() 
+void CTipsPage::OnUp()
 {
 	CCellRange sel = grid_.GetSelectedCellRange();
 	int row;
@@ -1728,7 +1728,7 @@ void CTipsPage::OnUp()
 	}
 }
 
-void CTipsPage::OnDown() 
+void CTipsPage::OnDown()
 {
 	CCellRange sel = grid_.GetSelectedCellRange();
 	int row;
@@ -1977,7 +1977,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CColourSchemes message handlers
 
-BOOL CColourSchemes::OnInitDialog() 
+BOOL CColourSchemes::OnInitDialog()
 {
 	CHexEditView *pview;
 
@@ -2205,19 +2205,19 @@ static DWORD id_pairs6[] = {
 	0,0 
 };
 
-BOOL CColourSchemes::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CColourSchemes::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs6);
 	return TRUE;
 }
 
-void CColourSchemes::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CColourSchemes::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs6);
 }
 
 // Add Scheme button
-void CColourSchemes::OnAddScheme() 
+void CColourSchemes::OnAddScheme()
 {
 	CNewScheme dlg;
 
@@ -2242,7 +2242,7 @@ void CColourSchemes::OnAddScheme()
 }
 
 // Remove scheme button
-void CColourSchemes::OnRemoveScheme() 
+void CColourSchemes::OnRemoveScheme()
 {
 	ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size() && scheme_[scheme_no_].can_delete_);
 
@@ -2262,7 +2262,7 @@ void CColourSchemes::OnRemoveScheme()
 }
 
 // Selection changed in schemes list
-void CColourSchemes::OnSelchangeScheme() 
+void CColourSchemes::OnSelchangeScheme()
 {
 	// Get new scheme no
 	UpdateData();
@@ -2275,7 +2275,7 @@ void CColourSchemes::OnSelchangeScheme()
 }
 
 // New range button
-void CColourSchemes::OnAddRange() 
+void CColourSchemes::OnAddRange()
 {
 	// Get the range name from the edit control
 	CString name;
@@ -2307,7 +2307,7 @@ void CColourSchemes::OnAddRange()
 }
 
 // Delete button
-void CColourSchemes::OnRemoveRange() 
+void CColourSchemes::OnRemoveRange()
 {
 	ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size());
 	ASSERT(name_no_ >= INDEX_LAST && name_no_ < INDEX_LAST + scheme_[scheme_no_].range_val_.size());
@@ -2336,7 +2336,7 @@ void CColourSchemes::OnRemoveRange()
 }
 
 // Move selected range up in list
-void CColourSchemes::OnUp() 
+void CColourSchemes::OnUp()
 {
 	ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size());
 	ASSERT(name_no_ > INDEX_LAST && name_no_ < INDEX_LAST + scheme_[scheme_no_].range_val_.size());
@@ -2368,7 +2368,7 @@ void CColourSchemes::OnUp()
 }
 
 // Move selected range down in list
-void CColourSchemes::OnDown() 
+void CColourSchemes::OnDown()
 {
 	ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size());
 	ASSERT(name_no_ >= INDEX_LAST && name_no_ < INDEX_LAST + scheme_[scheme_no_].range_val_.size() - 1);
@@ -2400,7 +2400,7 @@ void CColourSchemes::OnDown()
 }
 
 // Reset the curren scheme to the default
-void CColourSchemes::OnSchemeReset() 
+void CColourSchemes::OnSchemeReset()
 {
 	ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size());
 
@@ -2437,7 +2437,7 @@ void CColourSchemes::OnSchemeReset()
 }
 
 // Change name of current range in edit control (IDC_CURRENT)
-void CColourSchemes::OnChangeCurrent() 
+void CColourSchemes::OnChangeCurrent()
 {
 	if (change_name_)
 		return;
@@ -2504,7 +2504,7 @@ void CColourSchemes::OnChangeCurrent()
 }
 
 // Change selection in range list
-void CColourSchemes::OnSelchangeRange() 
+void CColourSchemes::OnSelchangeRange()
 {
 	UpdateData();
 	ASSERT(scheme_no_ >= 0 && scheme_no_ < scheme_.size());
@@ -2606,7 +2606,7 @@ void CColourSchemes::OnSelchangeRange()
 }
 
 // new colour chosen
-void CColourSchemes::OnColourPicker() 
+void CColourSchemes::OnColourPicker()
 {
 	// If there is a name selected update the corresponding colour
 	if (name_no_ != -1)
@@ -2665,7 +2665,7 @@ void CColourSchemes::OnColourPicker()
 }
 
 // Ranges string changed
-void CColourSchemes::OnChangeRange() 
+void CColourSchemes::OnChangeRange()
 {
 	// If the user change the range string and there is a name selected
 	if (!change_range_ && name_no_ >= INDEX_LAST)
@@ -2734,7 +2734,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMacroPage message handlers
 
-BOOL CMacroPage::OnInitDialog() 
+BOOL CMacroPage::OnInitDialog()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	COptPage::OnInitDialog();
@@ -2773,12 +2773,12 @@ BOOL CMacroPage::OnInitDialog()
 	return TRUE;
 }
 
-void CMacroPage::OnChange() 
+void CMacroPage::OnChange()
 {
 	SetModified(TRUE);
 }
 
-void CMacroPage::OnOK() 
+void CMacroPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -2809,18 +2809,18 @@ static DWORD id_pairs2[] = {
 	0,0 
 };
 
-BOOL CMacroPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CMacroPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
 	return TRUE;
 }
 
-void CMacroPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CMacroPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs2);
 }
 
-void CMacroPage::OnRefreshNever() 
+void CMacroPage::OnRefreshNever()
 {
 	// Disable edit box, spin control, static text for all 3 refresh options
 	ASSERT(GetDlgItem(IDC_NUM_SECS) != NULL);
@@ -2847,7 +2847,7 @@ void CMacroPage::OnRefreshNever()
 	SetModified(TRUE);
 }
 
-void CMacroPage::OnRefreshPlays() 
+void CMacroPage::OnRefreshPlays()
 {
 	// Disable edit box, spin control, static text KEYS and SECS
 	// Enable them for PLAYS
@@ -2875,7 +2875,7 @@ void CMacroPage::OnRefreshPlays()
 	SetModified(TRUE);
 }
 
-void CMacroPage::OnRefreshSecs() 
+void CMacroPage::OnRefreshSecs()
 {
 	// Disable edit box, spin control, static text KEYS and PLAYS
 	// Enable them for SECS
@@ -2903,7 +2903,7 @@ void CMacroPage::OnRefreshSecs()
 	SetModified(TRUE);
 }
 
-void CMacroPage::OnRefreshKeys() 
+void CMacroPage::OnRefreshKeys()
 {
 	// Disable edit box, spin control, static text PLAYS and SECS
 	// Enable them for KEYS
@@ -2931,7 +2931,7 @@ void CMacroPage::OnRefreshKeys()
 	SetModified(TRUE);
 }
 
-void CMacroPage::OnSavemacro() 
+void CMacroPage::OnSavemacro()
 {
 	if (!UpdateData(TRUE))
 		return;                         // DDV failed
@@ -2942,7 +2942,7 @@ void CMacroPage::OnSavemacro()
 	dlg.DoModal();
 }
 
-void CMacroPage::OnLoadmacro() 
+void CMacroPage::OnLoadmacro()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	ASSERT_VALID(aa);
@@ -2984,7 +2984,7 @@ void CMacroPage::OnLoadmacro()
 	}
 }
 
-void CMacroPage::OnMacrodir() 
+void CMacroPage::OnMacrodir()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	ASSERT_VALID(aa);
@@ -3049,7 +3049,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPrintPage message handlers
 
-BOOL CPrintPage::OnInitDialog() 
+BOOL CPrintPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
 
@@ -3069,13 +3069,13 @@ BOOL CPrintPage::OnInitDialog()
 	return TRUE;
 }
 
-void CPrintPage::OnOK() 
+void CPrintPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
 }
 
-void CPrintPage::OnHeaderOpts() 
+void CPrintPage::OnHeaderOpts()
 {
 	if (header_args_.m_nMenuResult != 0)
 	{
@@ -3090,7 +3090,7 @@ void CPrintPage::OnHeaderOpts()
 	}
 }
 
-void CPrintPage::OnFooterOpts() 
+void CPrintPage::OnFooterOpts()
 {
 	if (footer_args_.m_nMenuResult != 0)
 	{
@@ -3136,7 +3136,7 @@ void CPrintPage::OnChangeUnits()
 	SetModified(TRUE);
 }
 
-void CPrintPage::OnChange() 
+void CPrintPage::OnChange()
 {
 	SetModified(TRUE);
 }
@@ -3161,13 +3161,13 @@ static DWORD id_pairs3[] = {
 	0,0 
 };
 
-BOOL CPrintPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CPrintPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
 	return TRUE;
 }
 
-void CPrintPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPrintPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs3);
 }
@@ -3225,14 +3225,14 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPrintGeneralPage message handlers
 
-BOOL CPrintGeneralPage::OnInitDialog() 
+BOOL CPrintGeneralPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
 
 	return TRUE;
 }
 
-void CPrintGeneralPage::OnOK() 
+void CPrintGeneralPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -3269,7 +3269,7 @@ void CPrintGeneralPage::OnChangeUnits()
 	SetModified(TRUE);
 }
 
-void CPrintGeneralPage::OnChange() 
+void CPrintGeneralPage::OnChange()
 {
 	SetModified(TRUE);
 }
@@ -3296,13 +3296,13 @@ static DWORD id_pairs_prn_gen[] = {
 	0,0 
 };
 
-BOOL CPrintGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CPrintGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_prn_gen);
 	return TRUE;
 }
 
-void CPrintGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPrintGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_prn_gen);
 }
@@ -3378,7 +3378,7 @@ void CPrintDecorationsPage::fix_controls()
 /////////////////////////////////////////////////////////////////////////////
 // CPrintDecorationsPage message handlers
 
-BOOL CPrintDecorationsPage::OnInitDialog() 
+BOOL CPrintDecorationsPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
 
@@ -3402,7 +3402,7 @@ BOOL CPrintDecorationsPage::OnInitDialog()
 	return TRUE;
 }
 
-void CPrintDecorationsPage::OnOK() 
+void CPrintDecorationsPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -3414,7 +3414,7 @@ LRESULT CPrintDecorationsPage::OnIdle(long lCount)
 	return FALSE;
 }
 
-void CPrintDecorationsPage::OnWatermarkOpts() 
+void CPrintDecorationsPage::OnWatermarkOpts()
 {
 	if (watermark_args_.m_nMenuResult != 0)
 	{
@@ -3433,7 +3433,7 @@ void CPrintDecorationsPage::OnWatermarkOpts()
 	}
 }
 
-void CPrintDecorationsPage::OnHeaderOpts() 
+void CPrintDecorationsPage::OnHeaderOpts()
 {
 	if (header_args_.m_nMenuResult != 0)
 	{
@@ -3446,7 +3446,7 @@ void CPrintDecorationsPage::OnHeaderOpts()
 	}
 }
 
-void CPrintDecorationsPage::OnFirstHeaderOpts() 
+void CPrintDecorationsPage::OnFirstHeaderOpts()
 {
 	if (first_header_args_.m_nMenuResult != 0)
 	{
@@ -3459,7 +3459,7 @@ void CPrintDecorationsPage::OnFirstHeaderOpts()
 	}
 }
 
-void CPrintDecorationsPage::OnFooterOpts() 
+void CPrintDecorationsPage::OnFooterOpts()
 {
 	if (footer_args_.m_nMenuResult != 0)
 	{
@@ -3472,7 +3472,7 @@ void CPrintDecorationsPage::OnFooterOpts()
 	}
 }
 
-void CPrintDecorationsPage::OnFirstFooterOpts() 
+void CPrintDecorationsPage::OnFirstFooterOpts()
 {
 	if (first_footer_args_.m_nMenuResult != 0)
 	{
@@ -3485,12 +3485,12 @@ void CPrintDecorationsPage::OnFirstFooterOpts()
 	}
 }
 
-void CPrintDecorationsPage::OnChange() 
+void CPrintDecorationsPage::OnChange()
 {
 	SetModified(TRUE);
 }
 
-void CPrintDecorationsPage::OnChangeUpdate() 
+void CPrintDecorationsPage::OnChangeUpdate()
 {
 	UpdateData();
 	SetModified(TRUE);
@@ -3514,13 +3514,13 @@ static DWORD id_pairs_prn_dec[] = {
 	0,0 
 };
 
-BOOL CPrintDecorationsPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CPrintDecorationsPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_prn_dec);
 	return TRUE;
 }
 
-void CPrintDecorationsPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPrintDecorationsPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_prn_dec);
 }
@@ -3559,10 +3559,10 @@ END_MESSAGE_MAP()
 void CFiltersPage::add_row(int row, BOOL is_checked /*=TRUE*/, CString s1/*=""*/, CString s2 /*=""*/)
 {
 	row = grid_.InsertRow("", row);
-	
-//    CString str;
-//    str.Format("%ld", long(row-header_rows+1));
-//    grid_.SetItemText(row, column_number, str);
+
+	//CString str;
+	//str.Format("%ld", long(row-header_rows+1));
+	//grid_.SetItemText(row, column_number, str);
 
 	CGridBtnCell *pbtn;
 	grid_.SetCellType(row, column_check, RUNTIME_CLASS(CGridBtnCell));
@@ -3585,7 +3585,7 @@ void CFiltersPage::add_row(int row, BOOL is_checked /*=TRUE*/, CString s1/*=""*/
 /////////////////////////////////////////////////////////////////////////////
 // CFiltersPage message handlers
 
-BOOL CFiltersPage::OnInitDialog() 
+BOOL CFiltersPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
 
@@ -3668,7 +3668,7 @@ BOOL CFiltersPage::OnInitDialog()
 	return TRUE;
 }
 
-void CFiltersPage::OnOK() 
+void CFiltersPage::OnOK()
 {
 	int max_filt = grid_.GetRowCount() - header_rows;
 
@@ -3694,11 +3694,11 @@ void CFiltersPage::OnOK()
 		theApp.current_filters_ += '|';
 	}
 	theApp.current_filters_ +='|';
-	
+
 	COptPage::OnOK();
 }
 
-BOOL CFiltersPage::PreTranslateMessage(MSG* pMsg) 
+BOOL CFiltersPage::PreTranslateMessage(MSG* pMsg)
 {
 	m_cToolTip.RelayEvent(pMsg);
 
@@ -3714,18 +3714,18 @@ static DWORD id_pairs4[] = {
 	0,0 
 };
 
-BOOL CFiltersPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CFiltersPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs4);
 	return TRUE;
 }
 
-void CFiltersPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CFiltersPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs4);
 }
 
-void CFiltersPage::OnNew() 
+void CFiltersPage::OnNew()
 {
 	int row;
 	CCellRange sel = grid_.GetSelectedCellRange();
@@ -3746,7 +3746,7 @@ void CFiltersPage::OnNew()
 	SetModified(TRUE);
 }
 
-void CFiltersPage::OnDel() 
+void CFiltersPage::OnDel()
 {
 	CCellRange sel = grid_.GetSelectedCellRange();
 	if (sel.IsValid())
@@ -3762,7 +3762,7 @@ void CFiltersPage::OnDel()
 	}
 }
 
-void CFiltersPage::OnUp() 
+void CFiltersPage::OnUp()
 {
 	CCellRange sel = grid_.GetSelectedCellRange();
 	int row;
@@ -3812,7 +3812,7 @@ void CFiltersPage::OnUp()
 	}
 }
 
-void CFiltersPage::OnDown() 
+void CFiltersPage::OnDown()
 {
 	CCellRange sel = grid_.GetSelectedCellRange();
 	int row;
@@ -3949,7 +3949,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWindowGeneralPage message handlers
 
-BOOL CWindowGeneralPage::OnInitDialog() 
+BOOL CWindowGeneralPage::OnInitDialog()
 {
 	hicon_ = HICON(0);
 	COptPage::OnInitDialog();
@@ -3968,14 +3968,14 @@ BOOL CWindowGeneralPage::OnInitDialog()
 	return TRUE;
 }
 
-void CWindowGeneralPage::OnOK() 
+void CWindowGeneralPage::OnOK()
 {
 	// Note: Icon destroyed in OnKillActive (always called when OnOK is called)
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
 }
 
-BOOL CWindowGeneralPage::OnSetActive() 
+BOOL CWindowGeneralPage::OnSetActive()
 {
 	// Get icon
 	// Note: Because of the clumsy way the CPropertyPages are implemented I have to create
@@ -4003,7 +4003,7 @@ BOOL CWindowGeneralPage::OnSetActive()
 	return COptPage::OnSetActive();
 }
 
-BOOL CWindowGeneralPage::OnKillActive() 
+BOOL CWindowGeneralPage::OnKillActive()
 {
 	// On KillActive is called when the page is left OR when OK button is clicked
 	if (hicon_ != HICON(0))
@@ -4015,7 +4015,7 @@ BOOL CWindowGeneralPage::OnKillActive()
 	return COptPage::OnKillActive();
 }
 
-void CWindowGeneralPage::OnCancel() 
+void CWindowGeneralPage::OnCancel()
 {
 	// Need this here too as OnKillActive is not called for the page if the Cancel
 	// button is clicked when the page is active.
@@ -4025,7 +4025,7 @@ void CWindowGeneralPage::OnCancel()
 		DestroyIcon(hicon_);
 		hicon_ = HICON(0);
 	}
-	
+
 	COptPage::OnCancel();
 }
 
@@ -4045,13 +4045,13 @@ static DWORD id_pairs_wingeneral[] = {
 	0,0 
 };
 
-BOOL CWindowGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CWindowGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_wingeneral);
 	return TRUE;
 }
 
-void CWindowGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CWindowGeneralPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_wingeneral);
 }
@@ -4121,7 +4121,7 @@ void CWindowGeneralPage::OnSaveDefault()
 	theApp.GetFileList()->SetDefaults();
 }
 
-void CWindowGeneralPage::OnDispReset() 
+void CWindowGeneralPage::OnDispReset()
 {
 	// Reset to default display values
 	ASSERT(theApp.open_disp_state_ != -1);
@@ -4364,10 +4364,10 @@ BOOL CWindowPage::validated()
 /////////////////////////////////////////////////////////////////////////////
 // CWindowPage message handlers
 
-BOOL CWindowPage::OnInitDialog() 
+BOOL CWindowPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
-	
+
 	// Set columns spin control range to 4 to max
 	CSpinButtonCtrl *pspin;
 	pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_COLS);
@@ -4387,7 +4387,7 @@ BOOL CWindowPage::OnInitDialog()
 	return TRUE;
 }
 
-void CWindowPage::OnOK() 
+void CWindowPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -4419,25 +4419,25 @@ static DWORD id_pairs_windisplay[] = {
 	0,0 
 };
 
-BOOL CWindowPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CWindowPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_windisplay);
 	return TRUE;
 }
 
-void CWindowPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CWindowPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_windisplay);
 }
 
-BOOL CWindowPage::OnSetActive() 
+BOOL CWindowPage::OnSetActive()
 {
 	BOOL retval = COptPage::OnSetActive();
 	update_ok_ = true;          // Its now OK to allow changes to cols field to be processed
 	return retval;
 }
 
-BOOL CWindowPage::OnKillActive() 
+BOOL CWindowPage::OnKillActive()
 {
 	BOOL retval = COptPage::OnKillActive();
 
@@ -4453,10 +4453,10 @@ BOOL CWindowPage::OnKillActive()
 	return retval;
 }
 
-void CWindowPage::OnCancel() 
+void CWindowPage::OnCancel()
 {
 	update_ok_ = false;
-	
+
 	COptPage::OnCancel();
 }
 
@@ -4467,7 +4467,7 @@ LRESULT CWindowPage::OnIdle(long lCount)
 }
 
 // This is for controls that just need to record that they have changed
-void CWindowPage::OnChange() 
+void CWindowPage::OnChange()
 {
 	SetModified(TRUE);
 }
@@ -4483,7 +4483,7 @@ void CWindowPage::OnChangeLineNos()
 	SetModified(TRUE);
 }
 
-void CWindowPage::OnChangeAddrDec() 
+void CWindowPage::OnChangeAddrDec()
 {
 	UpdateData();
 	if (!pParent->val_.addr_dec_ && !pParent->val_.addr_hex_ && !pParent->val_.line_nums_)
@@ -4494,7 +4494,7 @@ void CWindowPage::OnChangeAddrDec()
 	SetModified(TRUE);
 }
 
-void CWindowPage::OnChangeAddrHex() 
+void CWindowPage::OnChangeAddrHex()
 {
 	UpdateData();
 	if (!pParent->val_.addr_dec_ && !pParent->val_.addr_hex_ && !pParent->val_.line_nums_)
@@ -4506,13 +4506,13 @@ void CWindowPage::OnChangeAddrHex()
 }
 
 // This is for controls that affect other controls when they have changed (see fix_controls())
-void CWindowPage::OnChangeUpdate() 
+void CWindowPage::OnChangeUpdate()
 {
 	UpdateData();
 	SetModified(TRUE);
 }
 
-void CWindowPage::OnSelchangeShowArea() 
+void CWindowPage::OnSelchangeShowArea()
 {
 	UpdateData();
 	if (pParent->val_.show_area_ == 3 && pParent->val_.vertbuffer_ < 2)
@@ -4520,23 +4520,23 @@ void CWindowPage::OnSelchangeShowArea()
 		pParent->val_.vertbuffer_ = 2;
 		UpdateData(FALSE);
 	}
-	
+
 	SetModified(TRUE);
 }
 
-void CWindowPage::OnSelchangeCharset() 
+void CWindowPage::OnSelchangeCharset()
 {
 	UpdateData();
 
 	SetModified(TRUE);
 }
 
-void CWindowPage::OnSelchangeControl() 
+void CWindowPage::OnSelchangeControl()
 {
 	SetModified(TRUE);
 }
 
-void CWindowPage::OnFont() 
+void CWindowPage::OnFont()
 {
 	UpdateData();
 
@@ -4564,7 +4564,7 @@ void CWindowPage::OnFont()
 	}
 }
 
-void CWindowPage::OnChangeCols() 
+void CWindowPage::OnChangeCols()
 {
 	if (!update_ok_)
 		return;
@@ -4676,7 +4676,7 @@ void CWindowEditPage::fix_controls()
 /////////////////////////////////////////////////////////////////////////////
 // CWindowEditPage message handlers
 
-BOOL CWindowEditPage::OnInitDialog() 
+BOOL CWindowEditPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
 
@@ -4692,7 +4692,7 @@ BOOL CWindowEditPage::OnInitDialog()
 	return TRUE;
 }
 
-void CWindowEditPage::OnOK() 
+void CWindowEditPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
@@ -4716,31 +4716,31 @@ static DWORD id_pairs_winedit[] = {
 	0,0 
 };
 
-BOOL CWindowEditPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CWindowEditPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_winedit);
 	return TRUE;
 }
 
-void CWindowEditPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CWindowEditPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_winedit);
 }
 
 #if 0
-BOOL CWindowEditPage::OnSetActive() 
+BOOL CWindowEditPage::OnSetActive()
 {
 	BOOL retval = COptPage::OnSetActive();
 	return retval;
 }
 
-BOOL CWindowEditPage::OnKillActive() 
+BOOL CWindowEditPage::OnKillActive()
 {
 	BOOL retval = COptPage::OnKillActive();
 	return retval;
 }
 
-void CWindowEditPage::OnCancel() 
+void CWindowEditPage::OnCancel()
 {
 	COptPage::OnCancel();
 }
@@ -4753,25 +4753,25 @@ LRESULT CWindowEditPage::OnIdle(long lCount)
 }
 
 // This is for controls that just need to record that they have changed
-void CWindowEditPage::OnChange() 
+void CWindowEditPage::OnChange()
 {
 	SetModified(TRUE);
 }
 
 // This is for controls that affect other controls when they have changed (see fix_controls())
-void CWindowEditPage::OnChangeUpdate() 
+void CWindowEditPage::OnChangeUpdate()
 {
 	UpdateData();
 	SetModified(TRUE);
 }
 
-void CWindowEditPage::OnSelchangeModify() 
+void CWindowEditPage::OnSelchangeModify()
 {
 	UpdateData();
 	SetModified(TRUE);
 }
 
-void CWindowEditPage::OnSelchangeInsert() 
+void CWindowEditPage::OnSelchangeInsert()
 {
 	SetModified(TRUE);
 }

@@ -42,7 +42,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSaveDffd message handlers
 
-void CSaveDffd::OnSaveAs() 
+void CSaveDffd::OnSaveAs()
 {
 	CDialog::EndDialog(IDYES);
 }

@@ -89,7 +89,7 @@ void CNewFile::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 	DDX_Control(pDX, IDC_SIZE_FACTOR, ctl_size_factor_);
 	DDX_Control(pDX, IDC_SIZE_LENGTH, ctl_size_length_);
-	
+
 	DDX_Control(pDX, IDC_DECIMAL_SIZE, ctl_decimal_size_);
 	DDX_Control(pDX, IDC_HEX_SIZE, ctl_hex_size_);
 	DDX_Control(pDX, IDC_FILL_HEX_VALUE, ctl_hex_value_);
@@ -145,7 +145,7 @@ BEGIN_MESSAGE_MAP(CNewFile, CDialog)
 	ON_BN_CLICKED(IDC_FILL_HELP, OnHelp)
 END_MESSAGE_MAP()
 
-void CNewFile::fix_controls() 
+void CNewFile::fix_controls()
 {
 	// Enable controls that dep. on which size option is selected
 	ctl_size_factor_.EnableWindow(fill_.size_src == 1);
@@ -232,7 +232,7 @@ void CNewFile::fix_controls()
 	calc_length();
 }
 
-void CNewFile::calc_length() 
+void CNewFile::calc_length()
 {
 	// Fix data length calculation
 	VERIFY(::OpenClipboard(m_hWnd));
@@ -262,7 +262,7 @@ void CNewFile::calc_length()
 	ctl_size_length_.SetWindowText(tmp);
 }
 
-void CNewFile::check_clipboard() 
+void CNewFile::check_clipboard()
 {
 	clipboard_format_ = -1;             // default to nothing found on clipboard
 	clipboard_length_ = -1;
@@ -357,7 +357,7 @@ void CNewFile::check_clipboard()
 /////////////////////////////////////////////////////////////////////////////
 // CNewFile message handlers
 
-BOOL CNewFile::OnInitDialog() 
+BOOL CNewFile::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -407,7 +407,7 @@ BOOL CNewFile::OnInitDialog()
 	return TRUE;
 }
 
-void CNewFile::OnOK() 
+void CNewFile::OnOK()
 {
 	UpdateData();
 
@@ -483,7 +483,7 @@ void CNewFile::OnOK()
 	CDialog::OnOK();
 }
 
-void CNewFile::OnHelp() 
+void CNewFile::OnHelp()
 {
 	// Display help for this page
 	if (insert_block_mode_)
@@ -498,7 +498,7 @@ void CNewFile::OnHelp()
 	}
 }
 
-void CNewFile::OnDestroy() 
+void CNewFile::OnDestroy()
 {
 	// Remove ouselves from clipboard chain (see SetClipboardViewer() above)
 	ChangeClipboardChain(next_cb_hwnd_);
@@ -555,18 +555,18 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CNewFile::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CNewFile::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CNewFile::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CNewFile::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CNewFile::OnChangeDecimalSize() 
+void CNewFile::OnChangeDecimalSize()
 {
 	if (in_update_) return;
 	in_update_ = TRUE;
@@ -596,7 +596,7 @@ void CNewFile::OnChangeDecimalSize()
 	in_update_ = FALSE;
 }
 
-void CNewFile::OnChangeHexSize() 
+void CNewFile::OnChangeHexSize()
 {
 	if (in_update_) return;
 	in_update_ = TRUE;
@@ -651,42 +651,42 @@ void CNewFile::OnChangeSizeFactor()
 	fix_controls();
 }
 
-void CNewFile::OnChangeFill() 
+void CNewFile::OnChangeFill()
 {
 	UpdateData();
 
 	fix_controls();
 }
 
-void CNewFile::OnChangeHex() 
+void CNewFile::OnChangeHex()
 {
 	UpdateData();
 
 	calc_length();   // Number of hex digits may have changed so update length
 }
 
-void CNewFile::OnChangeString() 
+void CNewFile::OnChangeString()
 {
 	UpdateData();
 
 	calc_length();   // Number of chars may have changed so update length
 }
 
-void CNewFile::OnSelchangeCharset() 
+void CNewFile::OnSelchangeCharset()
 {
 	UpdateData();
 
 	calc_length();   // Switching between Unicode and other char set changes length
 }
 
-void CNewFile::OnChangeFillNumber() 
+void CNewFile::OnChangeFillNumber()
 {
 	UpdateData();
 
 	fix_controls();
 }
 
-void CNewFile::OnSelchangeFillNumberType() 
+void CNewFile::OnSelchangeFillNumberType()
 {
 	UpdateData();
 

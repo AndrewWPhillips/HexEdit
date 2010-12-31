@@ -274,7 +274,7 @@ void CHexEditView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
 	print_font_ = NULL;
 }
 
-void CHexEditView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo) 
+void CHexEditView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
 {
 	CScrView::OnPrepareDC(pDC, pInfo);
 
@@ -289,7 +289,7 @@ void CHexEditView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
 }
 
 // Print (or preview) a single page
-void CHexEditView::OnPrint(CDC* pDC, CPrintInfo* pInfo) 
+void CHexEditView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 {
 	ASSERT(print_offset_.cx >= 0 && print_offset_.cy >= 0);
 	pDC->SetMapMode(print_map_mode_);
@@ -592,7 +592,7 @@ void CHexEditView::OnFilePrintPreview()
 	mm->m_wndProp.Update(NULL, -1);                   // Blank out property dlg fields
 }
 
-void CHexEditView::OnEndPrintPreview(CDC* pDC, CPrintInfo* pInfo, POINT point, CPreviewView* pView) 
+void CHexEditView::OnEndPrintPreview(CDC* pDC, CPrintInfo* pInfo, POINT point, CPreviewView* pView)
 {
 	CScrView::OnEndPrintPreview(pDC, pInfo, point, pView);
 

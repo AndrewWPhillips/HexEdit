@@ -1,4 +1,4 @@
-// AerialView.cpp : implementation file 
+// AerialView.cpp : implementation file
 //
 // Copyright (c) 2007-2010 by Andrew W. Phillips.
 //
@@ -199,7 +199,7 @@ END_MESSAGE_MAP()
 //         y = ((address - scrollpos_)/width)*actual_dpix_
 // W to A: address = scrollpos_ + (y/actual_dpix_)*width + (x/actual_dpix_)*BPE
 
-void CAerialView::OnInitialUpdate() 
+void CAerialView::OnInitialUpdate()
 {
 	ASSERT(phev_ != NULL);
 	GetDocument()->AddAerialView(phev_);
@@ -236,7 +236,7 @@ void CAerialView::OnInitialUpdate()
 // - bpe changes requiring recalc of the elts
 // - background search finished (CBGSearchHint) - perhaps display bg search occurrences
 // - bookmark change (CBookmarkHint) - perhaps update display of the bookmark
-void CAerialView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CAerialView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (pHint == NULL)
 		return;
@@ -308,7 +308,7 @@ void CAerialView::OnDraw(CDC* pDC)
 	range_set<FILE_ADDRESS>::range_t::iterator phl;
 	if (disp_.draw_bdr_hl)
 	{
-		// Find the first highlight 
+		// Find the first highlight
 		for (phl = phev_->hl_set_.range_.begin();
 			 phl != phev_->hl_set_.range_.end();
 			 ++phl)
@@ -508,13 +508,13 @@ BOOL CAerialView::OnEraseBkgnd(CDC* pDC)
 ///////////////////////////////////////////////////////////////////////////////
 // CAerialView message handlers
 
-void CAerialView::OnDestroy() 
+void CAerialView::OnDestroy()
 {
 	StopTimer();
 	CView::OnDestroy();
 }
 
-void CAerialView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CAerialView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	OnScroll(MAKEWORD(-1, nSBCode), nPos);
 }
@@ -562,7 +562,7 @@ BOOL CAerialView::OnScroll(UINT nScrollCode, UINT nPos, BOOL bDoScroll /*= TRUE*
 	return TRUE;
 }
 
-void CAerialView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CAerialView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CHexEditDoc *pDoc = GetDocument();
 	int width = GetDocument()->GetBpe() * cols_;
@@ -593,7 +593,7 @@ void CAerialView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		newpos += MAX_DPIX/actual_dpix_;
 		break;
 	}
-		
+
 	if (newpos != pos)
 	{
 		SetScroll(newpos);
@@ -602,7 +602,7 @@ void CAerialView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-BOOL CAerialView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) 
+BOOL CAerialView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	if ((nFlags & MK_CONTROL) != 0)  // If Ctrl key down we zoom instead of scroll
 	{
@@ -661,7 +661,7 @@ BOOL CAerialView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	return TRUE;
 }
 
-void CAerialView::OnSize(UINT nType, int cx, int cy) 
+void CAerialView::OnSize(UINT nType, int cx, int cy)
 {
 	if (phev_ == NULL || scrollpos_ < 0) return;
 	if (cx > 0 && cy > 0 && GetDocument()->GetBpe() > -1)
@@ -678,7 +678,7 @@ void CAerialView::OnSize(UINT nType, int cx, int cy)
 	CView::OnSize(nType, cx, cy);    // this should invalidate -> redraw with new values
 }
 
-void CAerialView::OnTimer(UINT nIDEvent) 
+void CAerialView::OnTimer(UINT nIDEvent)
 {
 	if (timer_on && nIDEvent == timer_id_ && IsWindowVisible())
 	{
@@ -765,14 +765,14 @@ void CAerialView::OnTimer(UINT nIDEvent)
 		CView::OnTimer(nIDEvent);
 }
 
-void CAerialView::OnKillFocus(CWnd* pNewWnd) 
+void CAerialView::OnKillFocus(CWnd* pNewWnd)
 {
 	mouse_down_ = false;
 	StopTimer();
 	CView::OnKillFocus(pNewWnd);
 }
 
-void CAerialView::OnSetFocus(CWnd* pOldWnd) 
+void CAerialView::OnSetFocus(CWnd* pOldWnd)
 {
 	StartTimer();
 	CView::OnSetFocus(pOldWnd);
@@ -802,7 +802,7 @@ LRESULT CAerialView::OnMouseLeave(WPARAM, LPARAM lp)
 	return 0;
 }
 
-void CAerialView::OnMouseMove(UINT nFlags, CPoint point) 
+void CAerialView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	CView::OnMouseMove(nFlags, point);
 
@@ -823,20 +823,20 @@ void CAerialView::OnMouseMove(UINT nFlags, CPoint point)
 	}
 }
 
-void CAerialView::OnLButtonDown(UINT nFlags, CPoint point) 
+void CAerialView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	tip_.Hide(300);
 	mouse_down_ = true;
 	CView::OnLButtonDown(nFlags, point);
 }
 
-void CAerialView::OnLButtonUp(UINT nFlags, CPoint point) 
+void CAerialView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	mouse_down_ = false;
 	CView::OnLButtonUp(nFlags, point);
 }
 
-void CAerialView::OnLButtonDblClk(UINT nFlags, CPoint point) 
+void CAerialView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	mouse_down_ = true;
 
@@ -860,7 +860,7 @@ void CAerialView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	}
 }
 
-void CAerialView::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CAerialView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	CContextMenuManager *pCMM = theApp.GetContextMenuManager();
 	pCMM->ShowPopupMenu(IDR_CONTEXT_AERIAL, point.x, point.y, this);
@@ -971,13 +971,13 @@ void CAerialView::update_bars()
 	memset(&si, 0, sizeof(si)); // default to hiding the scrollbar
 	si.cbSize = sizeof(si);
 	si.fMask = SIF_ALL;
-	
+
 	CHexEditDoc *pDoc = GetDocument();
 	int width = pDoc->GetBpe() * cols_;
 	int pos = int(scrollpos_/width);                    // current pos as row no
 	int endpos = int((pDoc->length()-1)/width + 1);     // row just past eof
-	
-	if (endpos > rows_)                           // EOF past end of display
+
+	if (endpos > rows_)                                 // EOF past end of display
 	{
 		si.nMax = endpos/sbfact_;
 		si.nPage = rows_/sbfact_;

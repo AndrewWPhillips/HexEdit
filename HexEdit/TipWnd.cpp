@@ -362,7 +362,7 @@ void CTipWnd::OnTimer(UINT nIDEvent)
 	}
 }
 
-void CTipWnd::OnMouseMove(UINT nFlags, CPoint point) 
+void CTipWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_down)
 	{
@@ -378,7 +378,7 @@ void CTipWnd::OnMouseMove(UINT nFlags, CPoint point)
 	}
 }
 
-void CTipWnd::OnLButtonDown(UINT nFlags, CPoint point) 
+void CTipWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (GetCursorPos(&m_down_pt))
 	{
@@ -389,7 +389,7 @@ void CTipWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	CWnd::OnLButtonDown(nFlags, point) ;
 }
 
-void CTipWnd::OnLButtonUp(UINT nFlags, CPoint point) 
+void CTipWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_down)
 	{

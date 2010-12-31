@@ -40,7 +40,7 @@ void CHexEditDoc::CheckSaveTemplate()
 	if (ptree_ != NULL && ptree_->IsModified())
 	{
 		CString path_name = ptree_->GetFileName();
-		
+
 		char fname[_MAX_FNAME], ext[_MAX_EXT];
 		_splitpath(path_name, NULL, NULL, fname, ext);
 
@@ -99,13 +99,13 @@ void CHexEditDoc::CheckSaveTemplate()
 	}
 }
 
-void CHexEditDoc::OnDffdRefresh() 
+void CHexEditDoc::OnDffdRefresh()
 {
 	update_needed_ = true; // force update
 	CheckUpdate();
 }
 
-void CHexEditDoc::OnUpdateDffdRefresh(CCmdUI* pCmdUI) 
+void CHexEditDoc::OnUpdateDffdRefresh(CCmdUI* pCmdUI)
 {
 	//pCmdUI->Enable(update_needed_);  // With advent of getint/bool/string the user may want to rerun the template at any time
 	CHexEditView *pv = GetBestView();
@@ -174,13 +174,13 @@ void CHexEditDoc::OnUpdateDffdSave(CCmdUI* pCmdUI)
 }
 
 // Is editing of the active template allowed?
-BOOL CHexEditDoc::DffdEditMode() 
+BOOL CHexEditDoc::DffdEditMode()
 {
 	return dffd_edit_mode_;
 }
 
 // Toggle editing
-void CHexEditDoc::OnEditMode() 
+void CHexEditDoc::OnEditMode()
 {
 	dffd_edit_mode_ = !DffdEditMode();
 	// We need to rebuild the tree to include/exclude edit mode stuff
@@ -193,7 +193,7 @@ void CHexEditDoc::OnEditMode()
 		pv->ShowDffd();
 }
 
-void CHexEditDoc::OnUpdateEditMode(CCmdUI* pCmdUI) 
+void CHexEditDoc::OnUpdateEditMode(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(ptree_ != NULL && !ptree_->Error());
 	pCmdUI->SetCheck(DffdEditMode());
@@ -221,7 +221,7 @@ void CHexEditDoc::OnDffdOptions()
 	}
 }
 
-void CHexEditDoc::OnUpdateDffdOptions(CCmdUI* pCmdUI) 
+void CHexEditDoc::OnUpdateDffdOptions(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(DffdEditMode() && df_init_);
 }

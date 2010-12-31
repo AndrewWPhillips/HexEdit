@@ -569,7 +569,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return 0;
 }
 
-BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs) 
+BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	WNDCLASS wndclass;
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
@@ -584,7 +584,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	ASSERT(wndclass.hIcon != 0);
 	if (!AfxRegisterClass(&wndclass))
 		AfxThrowResourceException();
-	
+
 	cs.lpszClass = aa->szHexEditClassName;
 
 	if (aa->open_restore_)
@@ -666,7 +666,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	return retval;
 }
 
-BOOL CMainFrame::PreTranslateMessage(MSG* pMsg) 
+BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 {
 	CWnd *pwnd = CWnd::FromHandlePermanent(pMsg->hwnd);
 
@@ -683,7 +683,7 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 	return CMDIFrameWndEx::PreTranslateMessage(pMsg);
 }
 
-void CMainFrame::OnClose() 
+void CMainFrame::OnClose()
 {
 	// Save state (posn, docked, hidden etc) of control bars (tool, edit
 	// & status bars) if save options on exit is on
@@ -723,7 +723,7 @@ void CMainFrame::OnClose()
 	CMDIFrameWndEx::OnClose();
 }
 
-void CMainFrame::OnSize(UINT nType, int cx, int cy) 
+void CMainFrame::OnSize(UINT nType, int cx, int cy)
 {
 	CMDIFrameWndEx::OnSize(nType, cx, cy);
 	Invalidate(TRUE);
@@ -1008,7 +1008,7 @@ public:
 	void SetCurrentPage2(UINT nPage, BOOL bClearRatios) { CPreviewView::SetCurrentPage(nPage, bClearRatios); }
 };
 
-void CMainFrame::RecalcLayout(BOOL bNotify) 
+void CMainFrame::RecalcLayout(BOOL bNotify)
 {
 	CPreviewViewKludge *ppv = (CPreviewViewKludge *)GetActiveView();
 	if (ppv != NULL && ppv->IsKindOf(RUNTIME_CLASS(CPreviewView)))
@@ -1016,7 +1016,7 @@ void CMainFrame::RecalcLayout(BOOL bNotify)
 		if (!ppv->Inited() && preview_page_ != -1)
 			ppv->SetCurrentPage2(preview_page_, TRUE);
 	}
-	
+
 	CMDIFrameWndEx::RecalcLayout(bNotify);
 }
 
@@ -1230,7 +1230,7 @@ void CMainFrame::show_calc()
 	m_wndCalc.ShowBinop();
 }
 
-void CMainFrame::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CMainFrame::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	if (pWnd->GetSafeHwnd () == m_wndClientArea.GetMDITabs().GetSafeHwnd())
 	{
@@ -1247,7 +1247,7 @@ void CMainFrame::OnContextMenu(CWnd* pWnd, CPoint point)
 	}
 }
 
-BOOL CMainFrame::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CMainFrame::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	return CMDIFrameWndEx::OnHelpInfo(pHelpInfo);
 }
@@ -1429,122 +1429,122 @@ BOOL CMainFrame::OnMDIWindowCmd(UINT nID)
 	return retval;
 }
 
-void CMainFrame::OnUpdateViewViewbar(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewViewbar(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck((m_wndStandardBar.GetStyle() & WS_VISIBLE) != 0);
 }
 
-void CMainFrame::OnViewViewbar() 
+void CMainFrame::OnViewViewbar()
 {
 	m_wndStandardBar.ShowPane((m_wndStandardBar.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
 	//ShowControlBar(&m_wndStandardBar, (m_wndStandardBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 1);
 }
 
-void CMainFrame::OnUpdateViewEditbar(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewEditbar(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck((m_wndEditBar.GetStyle() & WS_VISIBLE) != 0);
 }
 
-void CMainFrame::OnViewEditbar() 
+void CMainFrame::OnViewEditbar()
 {
 	m_wndEditBar.ShowPane((m_wndEditBar.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
 	//ShowControlBar(&m_wndEditBar, (m_wndEditBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 2);
 }
 
-void CMainFrame::OnUpdateViewFormatbar(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewFormatbar(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck((m_wndFormatBar.GetStyle() & WS_VISIBLE) != 0);
 }
 
-void CMainFrame::OnViewFormatbar() 
+void CMainFrame::OnViewFormatbar()
 {
 	m_wndFormatBar.ShowPane((m_wndFormatBar.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
 	//ShowControlBar(&m_wndFormatBar, (m_wndFormatBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 4);
 }
 
-void CMainFrame::OnUpdateViewNavbar(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewNavbar(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck((m_wndNavBar.GetStyle() & WS_VISIBLE) != 0);
 }
 
-void CMainFrame::OnViewNavbar() 
+void CMainFrame::OnViewNavbar()
 {
 	m_wndNavBar.ShowPane((m_wndNavBar.GetStyle() & WS_VISIBLE) == 0, FALSE, FALSE);
 	//ShowControlBar(&m_wndNavBar, (m_wndNavBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_toolbar, 5);
 }
 
-void CMainFrame::OnUpdateViewCalculator(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewCalculator(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_paneCalc.IsWindowVisible());
 }
 
-void CMainFrame::OnViewCalculator() 
+void CMainFrame::OnViewCalculator()
 {
 	m_paneCalc.Toggle();
 	theApp.SaveToMacro(km_toolbar, 10);
 }
 
-void CMainFrame::OnUpdateViewBookmarks(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewBookmarks(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_paneBookmarks.IsWindowVisible());
 }
 
-void CMainFrame::OnViewBookmarks() 
+void CMainFrame::OnViewBookmarks()
 {
 	m_paneBookmarks.Toggle();
 	theApp.SaveToMacro(km_toolbar, 11);
 }
 
-void CMainFrame::OnUpdateViewFind(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewFind(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_paneFind.IsWindowVisible());
 }
 
-void CMainFrame::OnViewFind() 
+void CMainFrame::OnViewFind()
 {
 	m_paneFind.Toggle();
 	theApp.SaveToMacro(km_toolbar, 12);
 }
 
-void CMainFrame::OnUpdateViewProperties(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewProperties(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_paneProp.IsWindowVisible());
 }
 
-void CMainFrame::OnViewProperties() 
+void CMainFrame::OnViewProperties()
 {
 	m_paneProp.Toggle();
 	theApp.SaveToMacro(km_toolbar, 13);
 }
 
-void CMainFrame::OnUpdateViewExpl(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewExpl(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_paneExpl.IsWindowVisible());
 }
 
-void CMainFrame::OnViewExpl() 
+void CMainFrame::OnViewExpl()
 {
 	m_paneExpl.Toggle();
 	theApp.SaveToMacro(km_toolbar, 14);
 }
 
-void CMainFrame::OnUpdateViewRuler(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewRuler(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(theApp.ruler_);
 }
 
-void CMainFrame::OnViewRuler() 
+void CMainFrame::OnViewRuler()
 {
 	theApp.ruler_ = !theApp.ruler_;
 	theApp.UpdateAllViews();
 	theApp.SaveToMacro(km_toolbar, 15);
 }
 
-void CMainFrame::OnUpdateViewHighlightCaret(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewHighlightCaret(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(theApp.hl_caret_);
 }
@@ -1559,12 +1559,12 @@ void CMainFrame::OnViewHighlightCaret()
 	theApp.SaveToMacro(km_toolbar, 16);
 }
 
-void CMainFrame::OnUpdateViewHighlightMouse(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewHighlightMouse(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(theApp.hl_mouse_);
 }
 
-void CMainFrame::OnViewHighlightMouse() 
+void CMainFrame::OnViewHighlightMouse()
 {
 	CHexEditView *pview = GetView();
 	if (pview != NULL)
@@ -2623,7 +2623,7 @@ BOOL CMainFrame::DoFind()
 		base_addr = pview->GetSearchBase();
 	else
 		base_addr = 0;
- 
+
 	FILE_ADDRESS start, end;            // Range of bytes in the current file to search
 	FILE_ADDRESS found_addr;            // The address where the search text was found (or -1, -2)
 
@@ -4062,7 +4062,7 @@ CString CMainFrame::not_found_mess(BOOL forward, BOOL icase, int tt, BOOL ww, in
 }
 
 // Open first (simple search) page of Find dialog
-void CMainFrame::OnEditFind() 
+void CMainFrame::OnEditFind()
 {
 	if (GetView() != NULL)
 	{
@@ -4082,7 +4082,7 @@ void CMainFrame::OnEditFind2()
 }
 
 // Open 4th (replace) page of Find dialog
-void CMainFrame::OnEditReplace() 
+void CMainFrame::OnEditReplace()
 {
 	if (GetView() != NULL)
 	{
@@ -4092,12 +4092,12 @@ void CMainFrame::OnEditReplace()
 }
 
 // We can't do a search unless there is a document open
-void CMainFrame::OnUpdateEditFind(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateEditFind(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(GetView() != NULL);
 }
 
-void CMainFrame::OnCalculator() 
+void CMainFrame::OnCalculator()
 {
 	show_calc();
 
@@ -4105,28 +4105,28 @@ void CMainFrame::OnCalculator()
 }
 
 /*
-void CMainFrame::OnOptionsScheme() 
+void CMainFrame::OnOptionsScheme()
 {
 	theApp.display_options(COLOUR_OPTIONS_PAGE, TRUE);
 }
 */
 
-void CMainFrame::OnBookmarks() 
+void CMainFrame::OnBookmarks()
 {
 	m_paneBookmarks.ShowAndUnroll();
 }
 
-void CMainFrame::OnEditGotoDec() 
+void CMainFrame::OnEditGotoDec()
 {
 	OnEditGoto(1);
 }
 
-void CMainFrame::OnEditGotoHex() 
+void CMainFrame::OnEditGotoHex()
 {
 	OnEditGoto(2);
 }
 
-void CMainFrame::OnEditGoto(int base_mode /*= 0*/) 
+void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
 {
 	CHexEditView *pview = GetView();
 	if (pview != NULL)
@@ -4254,7 +4254,7 @@ void CMainFrame::OnCalcSel()
 }
 
 #if 0
-void CMainFrame::OnUpdateEditGoto(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateEditGoto(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(GetView() != NULL);
 }
@@ -4309,7 +4309,7 @@ BOOL CMainFrame::OnPaneCheck(UINT nID)
 }
 
 // The following were added for BCG
-void CMainFrame::OnCustomize() 
+void CMainFrame::OnCustomize()
 {
 	CHexEditCustomize *pdlg = new CHexEditCustomize(this);
 	pdlg->EnableUserDefinedToolbars();
@@ -4378,7 +4378,7 @@ void CMainFrame::OnCustomize()
 	pdlg->Create();
 }
 
-BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
+BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext)
 {
 	if (!CMDIFrameWndEx::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext))
 	{
@@ -4398,7 +4398,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 		pTool->m_strLabel = _T("Windows Calculator");
 		pTool->SetCommand(_T("calc.exe"));
 	}
-	
+
 	return TRUE;
 }
 
@@ -4406,19 +4406,19 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 LRESULT CMainFrame::OnToolbarContextMenu(WPARAM,LPARAM lp)
 {
 	CPoint point(LOWORD(lp), HIWORD(lp));
-	
+
 	CMenu menu;
 	VERIFY(menu.LoadMenu(IDR_CONTEXT_BARS));
-	
+
 	CMenu* pPopup = menu.GetSubMenu(0);
 	ASSERT(pPopup != NULL);
-	
+
 	SetupToolbarMenu(*pPopup, ID_VIEW_USER_TOOLBAR1, ID_VIEW_USER_TOOLBAR10);
-	
+
 	CMFCPopupMenu* pPopupMenu = new CMFCPopupMenu;
 	pPopupMenu->SetAutoDestroy(FALSE);
 	pPopupMenu->Create(this, point.x, point.y, pPopup->GetSafeHmenu());
-	
+
 	return 0;
 }
 #endif
@@ -4432,7 +4432,7 @@ BOOL CMainFrame::OnToolsViewUserToolbar(UINT uiId)
 		ASSERT(0);
 		return FALSE;
 	}
-	
+
 	ShowControlBar(pUserToolBar, !(pUserToolBar->GetStyle() & WS_VISIBLE), FALSE);
 	RecalcLayout();
 	return TRUE;
@@ -4465,7 +4465,7 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
 		{
 			CMenu menu;
 			menu.LoadMenu(IDR_MENUBUTTON);
-		
+
 			m_wndStandardBar.ReplaceButton(ID_DISPLAY_DROPDOWN,
 				CMFCToolBarMenuButton (-1, *menu.GetSubMenu(0),
 													   afxCommandManager->GetCmdImage(ID_DISPLAY_DROPDOWN) /*CImageHash::GetImageOfCommand(ID_DISPLAY_DROPDOWN)*/,
@@ -4571,7 +4571,7 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
 	default:
 		ASSERT(0);
 	}
-	
+
 	return 0;
 }
 
@@ -4616,7 +4616,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 	{
 		return TRUE;
 	}
-	popup_menu_.push_back(pMenuPopup);
+	popup_menu_.push_back(pMenuPopup);      // used for displaying menu item tips
 	//TRACE("OPEN POPUP %p %x\n", pMenuPopup, pMenuPopup->m_hWnd);
 
 	// Now we scan the menu for any "dummy" items that are placeholders for dynamic menu changes
@@ -4727,7 +4727,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 	return TRUE;
 }
 
-void CMainFrame::OnSearchCombo() 
+void CMainFrame::OnSearchCombo()
 {
 	// We can't search if there is no file open
 	if (GetView() == NULL)
@@ -5218,7 +5218,7 @@ void CMainFrame::OnUpdateBookmarksCombo(CCmdUI* pCmdUI)
 					// the current text will be the last name added above but is not displayed in the
 					// toolbar (only in the hidden combo box).  We need to do this so pCombo->GetText()
 					// does not compare equal with strCurrent below and the toolbar text is updated.
-					pCombo->SetText(" ");  
+					pCombo->SetText(" ");
 				}
 
 				// If the closest bookmark is wrong (and combo is not in dropped state) ...
@@ -5367,7 +5367,7 @@ void CMainFrame::Progress(int value)
 }
 
 // Just for testing things (invoked with Ctrl+Shift+T)
-void CMainFrame::OnTest() 
+void CMainFrame::OnTest()
 {
 //    m_wndSplitter.Flip();
 }

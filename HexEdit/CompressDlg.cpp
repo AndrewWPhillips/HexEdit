@@ -55,7 +55,7 @@ BEGIN_MESSAGE_MAP(CCompressDlg, CDialog)
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
-BOOL CCompressDlg::OnInitDialog() 
+BOOL CCompressDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -123,16 +123,16 @@ static DWORD id_pairs[] = {
 	IDC_COMPRESSION_STRATEGY_HUFFMAN, HIDC_COMPRESSION_STRATEGY_DEF, 
 	IDC_COMPRESSION_STRATEGY_RLE, HIDC_COMPRESSION_STRATEGY_DEF, 
 	IDC_COMPRESSION_STRATEGY_FIXED, HIDC_COMPRESSION_STRATEGY_DEF, 
-	0,0 
+	0,0
 };
 
-BOOL CCompressDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CCompressDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CCompressDlg::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CCompressDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }

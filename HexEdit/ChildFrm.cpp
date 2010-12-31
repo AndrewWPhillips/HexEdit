@@ -81,7 +81,7 @@ void CChildFrame::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CChildFrame message handlers
 
-BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext) 
+BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
 	ASSERT(pContext != NULL && pContext->m_pNewViewClass != NULL);
 
@@ -134,7 +134,7 @@ CHexEditView *CChildFrame::GetHexEditView() const
 	return NULL;
 }
 
-BOOL CChildFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
+BOOL CChildFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext)
 {
 	// Bypass calling CMDIChildWndEx::LoadFrame which loads an icon
 	BOOL bRtn = CMDIChildWndEx::LoadFrame( nIDResource, dwDefaultStyle, pParentWnd, pContext );
@@ -142,7 +142,7 @@ BOOL CChildFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParen
 	return bRtn;
 }
 
-BOOL CChildFrame::DestroyWindow() 
+BOOL CChildFrame::DestroyWindow()
 {
 	return CMDIChildWndEx::DestroyWindow();
 }
@@ -179,12 +179,12 @@ LRESULT CChildFrame::OnHelpHitTest(WPARAM wParam, LPARAM lParam)
 	return retval;
 }
 
-void CChildFrame::OnClose() 
+void CChildFrame::OnClose()
 {
 	CMDIChildWndEx::OnClose();
 }
 
-void CChildFrame::OnSetFocus(CWnd* pOldWnd) 
+void CChildFrame::OnSetFocus(CWnd* pOldWnd)
 {
 	CMDIChildWndEx::OnSetFocus(pOldWnd);
 

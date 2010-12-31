@@ -68,7 +68,7 @@ CFindSheet::CFindSheet(UINT iSelectPage /*=0*/)
 	number_size_ = theApp.GetProfileInt("Find-Settings", "NumberSize", 2);;
 }
 
-BOOL CFindSheet::Create(CWnd* pParentWnd, DWORD dwStyle) 
+BOOL CFindSheet::Create(CWnd* pParentWnd, DWORD dwStyle)
 {
 	// Create the property sheet
 	if (!CPropertySheet::Create(pParentWnd, dwStyle))
@@ -296,7 +296,7 @@ void CFindSheet::TextFromHex(LPCTSTR ss, LPCTSTR mask)
 		else if (charset_ == RB_CHARSET_EBCDIC && (length % 2) == 0)
 		{
 			// Only allow valid EBCDIC characters
-			if ((*dd = e2a_tab[curr]) != '\0') 
+			if ((*dd = e2a_tab[curr]) != '\0')
 				++dd;
 			else
 			{
@@ -962,7 +962,7 @@ BOOL CFindSheet::GetWildcardsAllowed() const
 
 	if (pp != p_page_hex_ && pp != p_page_text_)
 		return FALSE;
-	
+
 	return wildcards_allowed_;
 }
 
@@ -983,7 +983,7 @@ CFindSheet::charset_t CFindSheet::GetCharSet() const
 		else
 			return RB_CHARSET_EBCDIC;
 	}
-	
+
 	return charset_;
 }
 
@@ -1195,11 +1195,11 @@ void CFindSheet::SetAlignment(int aa)
 /////////////////////////////////////////////////////////////////////////////
 // CFindSheet message handlers
 
-BOOL CFindSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct) 
+BOOL CFindSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (!CPropertySheet::OnNcCreate(lpCreateStruct))
 		return FALSE;
-	
+
 	ModifyStyleEx(0, WS_EX_CONTEXTHELP);
 
 	return TRUE;
@@ -1208,7 +1208,7 @@ BOOL CFindSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 BOOL CFindSheet::OnEraseBkgnd(CDC *pDC)
 {
 	// We check for changed look in erase background event as it's done
-	// before other drawing.  This is necessary (to update m_pBrush etc) 
+	// before other drawing.  This is necessary (to update m_pBrush etc)
 	// because there is no message sent when the look changes.
 	static UINT saved_look = 0;
 	if (theApp.m_nAppLook != saved_look)
@@ -1631,7 +1631,7 @@ void CSimplePage::FixDirn()
 /////////////////////////////////////////////////////////////////////////////
 // CSimplePage message handlers
 
-BOOL CSimplePage::OnInitDialog() 
+BOOL CSimplePage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
@@ -1639,7 +1639,7 @@ BOOL CSimplePage::OnInitDialog()
 	return TRUE;
 }
 
-BOOL CSimplePage::OnSetActive() 
+BOOL CSimplePage::OnSetActive()
 {
 	ctl_string_.SetWindowText(pparent_->combined_string_);
 	FixDirn();
@@ -1648,7 +1648,7 @@ BOOL CSimplePage::OnSetActive()
 	return CPropertyPage::OnSetActive();
 }
 
-void CSimplePage::OnFindNext() 
+void CSimplePage::OnFindNext()
 {
 	UpdateData();
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_FIND_NEXT);
@@ -1671,12 +1671,12 @@ static DWORD id_pairs1[100] = {
 	0,0 
 };
 
-void CSimplePage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CSimplePage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs1);
 }
 
-BOOL CSimplePage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CSimplePage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs1);
 	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
@@ -1684,34 +1684,34 @@ BOOL CSimplePage::OnHelpInfo(HELPINFO* pHelpInfo)
 	return TRUE;
 }
 
-void CSimplePage::OnHelp() 
+void CSimplePage::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_SIMPLE_HELP))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CSimplePage::OnChangeString() 
+void CSimplePage::OnChangeString()
 {
 	ctl_string_.GetWindowText(pparent_->combined_string_);
 	pparent_->AdjustPrefix(pparent_->combined_string_);
 	FixType(TRUE);
 }
 
-void CSimplePage::OnSelchangeString() 
+void CSimplePage::OnSelchangeString()
 {
 	ctl_string_.GetLBText(ctl_string_.GetCurSel(), pparent_->combined_string_);
 	pparent_->AdjustPrefix(pparent_->combined_string_);
 	FixType(TRUE);
 }
 
-void CSimplePage::OnChangeDirn() 
+void CSimplePage::OnChangeDirn()
 {
 	UpdateData();
 	FixDirn();
 }
 
-void CSimplePage::OnChangeMatchCase() 
+void CSimplePage::OnChangeMatchCase()
 {
 	UpdateData();
 
@@ -1825,7 +1825,7 @@ void CHexPage::FixMask()
 /////////////////////////////////////////////////////////////////////////////
 // CHexPage message handlers
 
-BOOL CHexPage::OnInitDialog() 
+BOOL CHexPage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
@@ -1878,7 +1878,7 @@ BOOL CHexPage::OnInitDialog()
 	return TRUE;
 }
 
-void CHexPage::OnCancel() 
+void CHexPage::OnCancel()
 {
 	if (phex_ != NULL)
 	{
@@ -1918,7 +1918,7 @@ void CHexPage::OnOK()
 	CPropertyPage::OnOK();
 }
 
-BOOL CHexPage::OnSetActive() 
+BOOL CHexPage::OnSetActive()
 {
 	ctl_hex_string_.SetWindowText(pparent_->hex_string_);
 	FixDirn();
@@ -1930,7 +1930,7 @@ BOOL CHexPage::OnSetActive()
 	return retval;
 }
 
-BOOL CHexPage::OnKillActive() 
+BOOL CHexPage::OnKillActive()
 {
 	BOOL retval = CPropertyPage::OnKillActive();
 
@@ -1940,13 +1940,13 @@ BOOL CHexPage::OnKillActive()
 	return retval;
 }
 
-void CHexPage::OnFindNext() 
+void CHexPage::OnFindNext()
 {
 	UpdateData();
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_FIND_NEXT);
 }
 
-void CHexPage::OnBookmarkAll() 
+void CHexPage::OnBookmarkAll()
 {
 	UpdateData();
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_BOOKMARK_ALL);
@@ -1976,12 +1976,12 @@ static DWORD id_pairs2[100] = {
 	0,0 
 };
 
-void CHexPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CHexPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs2);
 }
 
-BOOL CHexPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CHexPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs2);
 	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
@@ -2003,19 +2003,19 @@ void CHexPage::OnChangeString()
 	FixMask();
 }
 
-void CHexPage::OnSelchangeString() 
+void CHexPage::OnSelchangeString()
 {
 	ctl_hex_string_.GetLBText(ctl_hex_string_.GetCurSel(), pparent_->hex_string_);
 	FixStrings();
 	FixMask();
 }
 
-void CHexPage::OnChangeMask() 
+void CHexPage::OnChangeMask()
 {
 	// xxx TODO: Add your control notification handler code here
 }
 
-void CHexPage::OnUseMask() 
+void CHexPage::OnUseMask()
 {
 	ASSERT(GetDlgItem(IDC_FIND_MASK) != NULL);
 	UpdateData();
@@ -2027,13 +2027,13 @@ void CHexPage::OnUseMask()
 	}
 }
 
-void CHexPage::OnChangeDirn() 
+void CHexPage::OnChangeDirn()
 {
 	UpdateData();
 	FixDirn();
 }
 
-void CHexPage::OnChangePrefix() 
+void CHexPage::OnChangePrefix()
 {
 	UpdateData();
 
@@ -2199,7 +2199,7 @@ void CTextPage::FixWildcard()
 /////////////////////////////////////////////////////////////////////////////
 // CTextPage message handlers
 
-BOOL CTextPage::OnInitDialog() 
+BOOL CTextPage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
@@ -2207,7 +2207,7 @@ BOOL CTextPage::OnInitDialog()
 	return TRUE;
 }
 
-BOOL CTextPage::OnSetActive() 
+BOOL CTextPage::OnSetActive()
 {
 	ctl_text_string_.SetWindowText(pparent_->text_string_);
 	FixDirn();
@@ -2216,13 +2216,13 @@ BOOL CTextPage::OnSetActive()
 	return CPropertyPage::OnSetActive();
 }
 
-void CTextPage::OnFindNext() 
+void CTextPage::OnFindNext()
 {
 	UpdateData();
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_FIND_NEXT);
 }
 
-void CTextPage::OnBookmarkAll() 
+void CTextPage::OnBookmarkAll()
 {
 	UpdateData();
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_BOOKMARK_ALL);
@@ -2250,12 +2250,12 @@ static DWORD id_pairs3[100] = {
 	0,0 
 };
 
-void CTextPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CTextPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs3);
 }
 
-BOOL CTextPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CTextPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
 	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
@@ -2263,26 +2263,26 @@ BOOL CTextPage::OnHelpInfo(HELPINFO* pHelpInfo)
 	return TRUE;
 }
 
-void CTextPage::OnHelp() 
+void CTextPage::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_TEXT_HELP))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CTextPage::OnChangeString() 
+void CTextPage::OnChangeString()
 {
 	ctl_text_string_.GetWindowText(pparent_->text_string_);
 	FixStrings();
 }
 
-void CTextPage::OnSelchangeString() 
+void CTextPage::OnSelchangeString()
 {
 	ctl_text_string_.GetLBText(ctl_text_string_.GetCurSel(), pparent_->text_string_);
 	FixStrings();
 }
 
-void CTextPage::OnAllowWildcard() 
+void CTextPage::OnAllowWildcard()
 {
 	ASSERT(GetDlgItem(IDC_FIND_WILDCARD_CHAR) != NULL);
 	UpdateData();
@@ -2295,19 +2295,19 @@ void CTextPage::OnAllowWildcard()
 	FixStrings();
 }
 
-void CTextPage::OnChangeDirn() 
+void CTextPage::OnChangeDirn()
 {
 	UpdateData();
 	FixDirn();
 }
 
-void CTextPage::OnChangeType() 
+void CTextPage::OnChangeType()
 {
 	UpdateData();
 	FixStrings();
 }
 
-void CTextPage::OnChangeMatchCase() 
+void CTextPage::OnChangeMatchCase()
 {
 	UpdateData();
 
@@ -2320,7 +2320,7 @@ void CTextPage::OnChangeMatchCase()
 	((CMainFrame *)AfxGetMainWnd())->SetSearchString(temp);
 }
 
-void CTextPage::OnChangePrefix() 
+void CTextPage::OnChangePrefix()
 {
 	UpdateData();
 	// Remember that prefix has been entered by user (unless cleared)
@@ -2553,7 +2553,7 @@ BOOL CNumberPage::FixStrings()
 
 /////////////////////////////////////////////////////////////////////////////
 // CNumberPage message handlers
-BOOL CNumberPage::OnInitDialog() 
+BOOL CNumberPage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
@@ -2572,7 +2572,7 @@ BOOL CNumberPage::OnInitDialog()
 	return TRUE;
 }
 
-BOOL CNumberPage::OnSetActive() 
+BOOL CNumberPage::OnSetActive()
 {
 	FixDirn();
 	FixSizes();
@@ -2583,7 +2583,7 @@ BOOL CNumberPage::OnSetActive()
 	return retval;
 }
 
-BOOL CNumberPage::OnKillActive() 
+BOOL CNumberPage::OnKillActive()
 {
 	BOOL retval = CPropertyPage::OnKillActive();
 
@@ -2593,7 +2593,7 @@ BOOL CNumberPage::OnKillActive()
 	return retval;
 }
 
-void CNumberPage::OnFindNext() 
+void CNumberPage::OnFindNext()
 {
 	UpdateData();
 	if (!FixStrings())
@@ -2605,7 +2605,7 @@ void CNumberPage::OnFindNext()
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_FIND_NEXT);
 }
 
-void CNumberPage::OnBookmarkAll() 
+void CNumberPage::OnBookmarkAll()
 {
 	UpdateData();
 	if (!FixStrings())
@@ -2640,12 +2640,12 @@ static DWORD id_pairs4[100] = {
 	0,0 
 };
 
-void CNumberPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CNumberPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs4);
 }
 
-BOOL CNumberPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CNumberPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs4);
 	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
@@ -2653,26 +2653,26 @@ BOOL CNumberPage::OnHelpInfo(HELPINFO* pHelpInfo)
 	return TRUE;
 }
 
-void CNumberPage::OnHelp() 
+void CNumberPage::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_NUMBER_HELP))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CNumberPage::OnChangeDirn() 
+void CNumberPage::OnChangeDirn()
 {
 	UpdateData();
 	FixDirn();
 }
 
-void CNumberPage::OnChangeString() 
+void CNumberPage::OnChangeString()
 {
 	UpdateData();
 	FixStrings();
 }
 
-void CNumberPage::OnChangeFormat() 
+void CNumberPage::OnChangeFormat()
 {
 	UpdateData();
 	FixSizes();
@@ -2681,19 +2681,19 @@ void CNumberPage::OnChangeFormat()
 	FixStrings();
 }
 
-void CNumberPage::OnChangeEndian() 
+void CNumberPage::OnChangeEndian()
 {
 	UpdateData();
 	FixStrings();
 }
 
-void CNumberPage::OnSelchangeSize() 
+void CNumberPage::OnSelchangeSize()
 {
 	UpdateData();
 	FixStrings();
 }
 
-void CNumberPage::OnChangePrefix() 
+void CNumberPage::OnChangePrefix()
 {
 	UpdateData();
 	// Remember that prefix has been entered by user (unless cleared)
@@ -2869,7 +2869,7 @@ void CReplacePage::FixDirn()
 /////////////////////////////////////////////////////////////////////////////
 // CReplacePage message handlers
 
-BOOL CReplacePage::OnInitDialog() 
+BOOL CReplacePage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
@@ -2877,17 +2877,17 @@ BOOL CReplacePage::OnInitDialog()
 	return TRUE;
 }
 
-BOOL CReplacePage::OnSetActive() 
+BOOL CReplacePage::OnSetActive()
 {
 	ctl_string_.SetWindowText(pparent_->combined_string_);
 	ctl_replace_string_.SetWindowText(pparent_->replace_string_);
 	FixType();
 	FixDirn();
-	
+
 	return CPropertyPage::OnSetActive();
 }
 
-void CReplacePage::OnFindNext() 
+void CReplacePage::OnFindNext()
 {
 	UpdateData();
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_FIND_NEXT);
@@ -2912,12 +2912,12 @@ static DWORD id_pairs5[100] = {
 	0,0 
 };
 
-void CReplacePage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CReplacePage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs5);
 }
 
-BOOL CReplacePage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CReplacePage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs5);
 	pparent_->help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
@@ -2925,58 +2925,58 @@ BOOL CReplacePage::OnHelpInfo(HELPINFO* pHelpInfo)
 	return TRUE;
 }
 
-void CReplacePage::OnHelp() 
+void CReplacePage::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_FIND_REPLACE_HELP))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CReplacePage::OnReplace() 
+void CReplacePage::OnReplace()
 {
 	UpdateData();
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_REPLACE);
 }
 
-void CReplacePage::OnReplaceAll() 
+void CReplacePage::OnReplaceAll()
 {
 	UpdateData();
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_REPLACE_ALL);
 }
 
-void CReplacePage::OnChangeString() 
+void CReplacePage::OnChangeString()
 {
 	ctl_string_.GetWindowText(pparent_->combined_string_);
 	pparent_->AdjustPrefix(pparent_->combined_string_);
 	FixType(TRUE);
 }
 
-void CReplacePage::OnSelchangeString() 
+void CReplacePage::OnSelchangeString()
 {
 	ctl_string_.GetLBText(ctl_string_.GetCurSel(), pparent_->combined_string_);
 	pparent_->AdjustPrefix(pparent_->combined_string_);
 	FixType(TRUE);
 }
 
-void CReplacePage::OnChangeReplaceString() 
+void CReplacePage::OnChangeReplaceString()
 {
 	ctl_replace_string_.GetWindowText(pparent_->replace_string_);
 	FixType(TRUE);
 }
 
-void CReplacePage::OnSelchangeReplaceString() 
+void CReplacePage::OnSelchangeReplaceString()
 {
 	ctl_replace_string_.GetLBText(ctl_replace_string_.GetCurSel(), pparent_->replace_string_);
 	FixType(TRUE);
 }
 
-void CReplacePage::OnChangeDirn() 
+void CReplacePage::OnChangeDirn()
 {
 	UpdateData();
 	FixDirn();
 }
 
-void CReplacePage::OnChangeMatchCase() 
+void CReplacePage::OnChangeMatchCase()
 {
 	UpdateData();
 

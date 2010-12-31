@@ -911,12 +911,12 @@ void CHexEditApp::OnNewUser()
 	}
 }
 
-void CHexEditApp::OnFileNew() 
+void CHexEditApp::OnFileNew()
 {
 	CWinAppEx::OnFileNew();
 }
 
-void CHexEditApp::OnFileOpen() 
+void CHexEditApp::OnFileOpen()
 {
 	DWORD flags = OFN_ALLOWMULTISELECT | OFN_FILEMUSTEXIST | OFN_SHOWHELP;
 	if (no_recent_add_)
@@ -992,7 +992,7 @@ void CHexEditApp::OnFileOpen()
 	}
 }
 
-CDocument* CHexEditApp::OpenDocumentFile(LPCTSTR lpszFileName) 
+CDocument* CHexEditApp::OpenDocumentFile(LPCTSTR lpszFileName)
 {
 	CDocument *retval = CWinAppEx::OpenDocumentFile(lpszFileName);
 	if (retval == NULL)
@@ -1079,7 +1079,7 @@ void CHexEditApp::OnFilePrintSetup()
 	SaveToMacro(km_print_setup);
 }
 
-void CHexEditApp::OnFileSaveAll() 
+void CHexEditApp::OnFileSaveAll()
 {
 	// SaveAllModified will prompt to save - we want to simply always save
 	//m_pDocManager->SaveAllModified();
@@ -1098,7 +1098,7 @@ void CHexEditApp::OnFileSaveAll()
 	}
 }
 
-void CHexEditApp::OnFileCloseAll() 
+void CHexEditApp::OnFileCloseAll()
 {
 	// For each document, allow the user to save it if modified, then close it
 	POSITION posn = m_pDocTemplate->GetFirstDocPosition();
@@ -1134,7 +1134,7 @@ void CHexEditApp::OnFileCloseOthers()
 	}
 }
 
-void CHexEditApp::OnFileOpenSpecial() 
+void CHexEditApp::OnFileOpenSpecial()
 {
 	COpenSpecialDlg dlg;
 
@@ -1162,7 +1162,7 @@ void CHexEditApp::OnFileOpenSpecial()
 		mac_error_ = 2;         // User cancelled out of dialog is a minor error
 }
 
-void CHexEditApp::OnUpdateFileOpenSpecial(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateFileOpenSpecial(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable();
 }
@@ -1252,7 +1252,7 @@ void CHexEditApp::OnRepairAll()
 	CWinAppEx::OnAppExit();
 }
 
-void CHexEditApp::OnMacroRecord() 
+void CHexEditApp::OnMacroRecord()
 {
 	// Allow calculator to tidy up any pending macro ops
 	if (recording_)
@@ -1284,7 +1284,7 @@ void CHexEditApp::OnMacroRecord()
 	CHECK_SECURITY(206);
 }
 
-void CHexEditApp::OnUpdateMacroRecord(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateMacroRecord(CCmdUI* pCmdUI)
 {
 	if (recording_)
 		pCmdUI->SetText("Stop Recording");
@@ -1293,7 +1293,7 @@ void CHexEditApp::OnUpdateMacroRecord(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(recording_);
 }
 
-void CHexEditApp::OnMacroPlay() 
+void CHexEditApp::OnMacroPlay()
 {
 	ASSERT(!recording_);
 	macro_play();
@@ -1306,13 +1306,13 @@ void CHexEditApp::OnMacroPlay()
 		pview->SetFocus();
 }
 
-void CHexEditApp::OnUpdateMacroPlay(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateMacroPlay(CCmdUI* pCmdUI)
 {
 	// We can play the current macro if we're not recording it and it's not empty
 	pCmdUI->Enable(!recording_ && mac_.size() > 0);
 }
 
-void CHexEditApp::OnMacroMessage() 
+void CHexEditApp::OnMacroMessage()
 {
 	ASSERT(recording_);
 	if (recording_)
@@ -1324,12 +1324,12 @@ void CHexEditApp::OnMacroMessage()
 	}
 }
 
-void CHexEditApp::OnUpdateMacroMessage(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateMacroMessage(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(recording_);
 }
 
-void CHexEditApp::OnMultiPlay() 
+void CHexEditApp::OnMultiPlay()
 {
 	CMultiplay dlg;
 	dlg.plays_ = plays_;
@@ -1355,7 +1355,7 @@ void CHexEditApp::OnMultiPlay()
 		pview->SetFocus();
 }
 
-void CHexEditApp::OnUpdateMultiPlay(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateMultiPlay(CCmdUI* pCmdUI)
 {
 	if (!recording_ && mac_.size() > 0)
 	{
@@ -1385,7 +1385,7 @@ void CHexEditApp::OnUpdateMultiPlay(CCmdUI* pCmdUI)
 	pCmdUI->Enable(FALSE);
 }
 
-void CHexEditApp::play_macro_file(const CString &filename, int pp /*= -1*/) 
+void CHexEditApp::play_macro_file(const CString &filename, int pp /*= -1*/)
 {
 	std::vector<key_macro> tmp;
 	CString comment;
@@ -1427,19 +1427,19 @@ void CHexEditApp::RunAutoExec()
 	}
 }
 
-void CHexEditApp::OnRecentFiles() 
+void CHexEditApp::OnRecentFiles()
 {
 	CRecentFileDlg dlg;
 	dlg.DoModal();
 }
 
-void CHexEditApp::OnBookmarksEdit() 
+void CHexEditApp::OnBookmarksEdit()
 {
 	ASSERT(AfxGetMainWnd() != NULL);
 	((CMainFrame *)AfxGetMainWnd())->m_paneBookmarks.ShowAndUnroll();
 }
 
-void CHexEditApp::OnTabIcons() 
+void CHexEditApp::OnTabIcons()
 {
 	tabicons_ = !tabicons_;
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -1451,12 +1451,12 @@ void CHexEditApp::OnTabIcons()
 	}
 }
 
-void CHexEditApp::OnUpdateTabIcons(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateTabIcons(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(tabicons_);
 }
 
-void CHexEditApp::OnTabsAtBottom() 
+void CHexEditApp::OnTabsAtBottom()
 {
 	tabsbottom_ = !tabsbottom_;
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -1468,7 +1468,7 @@ void CHexEditApp::OnTabsAtBottom()
 	}
 }
 
-void CHexEditApp::OnUpdateTabsAtBottom(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateTabsAtBottom(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(tabsbottom_);
 }
@@ -1559,7 +1559,7 @@ int CHexEditApp::ExitInstance()
 	return retval;
 }
 
-BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg) 
+BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
 {
 #ifndef NO_SECURITY
 	extern int sec_init;
@@ -1597,7 +1597,7 @@ BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
 	if (m_pMainWnd != NULL && pMsg->message == WM_KEYDOWN &&
 		(hw == ((CMainFrame*)m_pMainWnd)->m_wndCalc || 
 		 hw == ((CMainFrame*)m_pMainWnd)->m_wndExpl ||
-		 hw == ((CMainFrame*)m_pMainWnd)->m_wndBookmarks) ) 
+		 hw == ((CMainFrame*)m_pMainWnd)->m_wndBookmarks) )
 	{
 		// Return 0 to allow processing (WM_KEYDOWN) but because we don't call base class version
 		// (CWinAppEx::PreTranslateMessage) we avoid the key being absorbed by a keyboard accelerator.
@@ -1643,7 +1643,7 @@ int CHexEditApp::NewCheck()
 }
 #endif
 
-void CHexEditApp::WinHelp(DWORD dwData, UINT nCmd) 
+void CHexEditApp::WinHelp(DWORD dwData, UINT nCmd)
 {
 	switch(nCmd)
 	{
@@ -1665,7 +1665,7 @@ void CHexEditApp::OnAppContextHelp (CWnd* pWndControl, const DWORD dwHelpIDArray
 	CWinAppEx::OnAppContextHelp(pWndControl, dwHelpIDArray);
 }
 
-BOOL CHexEditApp::OnIdle(LONG lCount) 
+BOOL CHexEditApp::OnIdle(LONG lCount)
 {
 	ASSERT(AfxGetMainWnd() != NULL);
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -1795,7 +1795,7 @@ void CHexEditApp::NewSearch(const unsigned char *pat, const unsigned char *mask,
 }
 
 // Get new encryption algorithm
-void CHexEditApp::OnEncryptAlg() 
+void CHexEditApp::OnEncryptAlg()
 {
 	CAlgorithm dlg;
 	dlg.m_alg = algorithm_;
@@ -1862,7 +1862,7 @@ void CHexEditApp::set_alg(const char *pp)
 }
 
 // Get new encryption password
-void CHexEditApp::OnEncryptPassword() 
+void CHexEditApp::OnEncryptPassword()
 {
 	CPassword dlg;
 	dlg.m_password = password_;
@@ -1879,7 +1879,7 @@ void CHexEditApp::OnEncryptPassword()
 	}
 }
 
-void CHexEditApp::OnEncryptClear() 
+void CHexEditApp::OnEncryptClear()
 {
 	password_.Empty();  // Clear password
 	if (algorithm_ > 0)
@@ -1903,7 +1903,7 @@ void CHexEditApp::set_password(const char *pp)
 	}
 }
 
-void CHexEditApp::OnUpdateEncryptClear(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateEncryptClear(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(password_.IsEmpty());   // Set check if password is clear
 }
@@ -1949,7 +1949,7 @@ void CHexEditApp::LoadOptions()
 	case 99:
 		// Option not found
 		OnNewUser();
-		
+
 		// Since save_exit_ is only saved when it changes this sets it to
 		// the default (TRUE) and ensure the initial value is saved.
 		orig_save_exit_ = !(save_exit_ = TRUE);
@@ -2805,7 +2805,7 @@ void CHexEditApp::SaveSchemes()
 }
 
 // Get name or description of all XML files for display in drop list
-void CHexEditApp::GetXMLFileList() 
+void CHexEditApp::GetXMLFileList()
 {
 	CFileFind ff;
 
@@ -2851,7 +2851,7 @@ void CHexEditApp::SetColours(const char *section, const char *key1, const char *
 }
 #endif
 
-void CHexEditApp::OnProperties() 
+void CHexEditApp::OnProperties()
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 
@@ -2865,7 +2865,7 @@ void CHexEditApp::OnProperties()
 	mm->m_wndProp.UpdateWindow(); // Needed for when prop dlg opened in a macro
 }
 
-void CHexEditApp::OnOptions() 
+void CHexEditApp::OnOptions()
 {
 	display_options();
 }
@@ -3614,17 +3614,17 @@ void CHexEditApp::ShowTipOfTheDay(void)
 		SaveToMacro(km_tips);
 }
 
-void CHexEditApp::OnHelpEmail() 
+void CHexEditApp::OnHelpEmail()
 {
 	SendEmail();
 }
 
-void CHexEditApp::OnUpdateHelpEmail(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateHelpEmail(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(::GetProfileInt("MAIL", "MAPI", 0) == 1);
 }
 
-void CHexEditApp::OnWebPage() 
+void CHexEditApp::OnWebPage()
 {
 	// Go to hexedit web site
 	::BrowseWeb(IDS_WEB_ADDRESS);
@@ -3782,7 +3782,7 @@ void CHexEditApp::OnHelpWebReg()
 	::BrowseWeb(IDS_WEB_REG_USER);
 }
 
-void CHexEditApp::OnUpdateHelpWeb(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateHelpWeb(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(TRUE);
 }
@@ -3811,7 +3811,6 @@ void CHexEditApp::UpdateAllViews()
 
 void CCommandLineParser::ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast)
 {
-	
 	if (non_std)
 	{
 		if (bFlag && CString("clean").CompareNoCase(pszParam) == 0)

@@ -130,7 +130,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CDFFDUseStruct message handlers
 
-BOOL CDFFDUseStruct::OnInitDialog() 
+BOOL CDFFDUseStruct::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetIcon(AfxGetApp()->LoadIcon(IDI_STRUCT), TRUE);
@@ -188,25 +188,25 @@ static DWORD id_pairs[] = {
 	0,0 
 };
 
-BOOL CDFFDUseStruct::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CDFFDUseStruct::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	return TRUE;
 }
 
-void CDFFDUseStruct::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CDFFDUseStruct::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CDFFDUseStruct::OnHelp() 
+void CDFFDUseStruct::OnHelp()
 {
 	// Display help for this page
 	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_DFFD_USE_STRUCT))
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-void CDFFDUseStruct::OnCancel() 
+void CDFFDUseStruct::OnCancel()
 {
 	pelt_->DeleteAllChildren();
 	saved_.InsertKids(pelt_);
@@ -228,7 +228,7 @@ void CDFFDUseStruct::OnOK()
 	CDialog::OnOK();
 }
 
-void CDFFDUseStruct::OnNext() 
+void CDFFDUseStruct::OnNext()
 {
 	// Does the same as OnOK but returns ID_DFFD_NEXT to indicate
 	// that the next sibling should now be edited
@@ -246,7 +246,7 @@ void CDFFDUseStruct::OnNext()
 	CDialog::EndDialog(ID_DFFD_NEXT);
 }
 
-void CDFFDUseStruct::OnPrev() 
+void CDFFDUseStruct::OnPrev()
 {
 	// Does the same as OnOK but returns ID_DFFD_PREV to indicate
 	// that the previous sibling should now be edited
@@ -269,12 +269,12 @@ LRESULT CDFFDUseStruct::OnKickIdle(WPARAM, LPARAM lCount)
 	return FALSE;
 }
 
-void CDFFDUseStruct::OnChange() 
+void CDFFDUseStruct::OnChange()
 {
 	modified_ = true;
 }
 
-void CDFFDUseStruct::OnGetStructVar() 
+void CDFFDUseStruct::OnGetStructVar()
 {
 	if (ctl_struct_var_.m_nMenuResult != 0)
 	{

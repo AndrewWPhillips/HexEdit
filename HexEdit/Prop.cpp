@@ -54,7 +54,7 @@ BEGIN_MESSAGE_MAP(CUnicodeControl, CEdit)
 	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
-void CUnicodeControl::OnPaint() 
+void CUnicodeControl::OnPaint()
 {
 	CPaintDC dc(this);                  // Device context for painting
 
@@ -86,7 +86,7 @@ BEGIN_MESSAGE_MAP(CPropEditControl, CEdit)
 	ON_WM_GETDLGCODE()
 END_MESSAGE_MAP()
 
-UINT CPropEditControl::OnGetDlgCode() 
+UINT CPropEditControl::OnGetDlgCode()
 {
 	// Get all keys so that we see CR and Escape
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
@@ -100,13 +100,13 @@ BEGIN_MESSAGE_MAP(CCommentEditControl, CEdit)
 	ON_WM_GETDLGCODE()
 END_MESSAGE_MAP()
 
-UINT CCommentEditControl::OnGetDlgCode() 
+UINT CCommentEditControl::OnGetDlgCode()
 {
 	// Get all keys so that we see CR and Escape
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
 }
 
-void CCommentEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CCommentEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// Just filter out vertical bars (|) since these are used as the field
 	// separator when comment fields are saved to the recently opened file file.
@@ -144,7 +144,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CBinEditControl message handlers
 
-void CBinEditControl::OnLButtonDblClk(UINT nFlags, CPoint point) 
+void CBinEditControl::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	CHexEditView *pview = GetView();
 
@@ -192,13 +192,13 @@ void CBinEditControl::OnLButtonDblClk(UINT nFlags, CPoint point)
 	CEdit::OnLButtonDblClk(nFlags, point);
 }
 
-UINT CBinEditControl::OnGetDlgCode() 
+UINT CBinEditControl::OnGetDlgCode()
 {
 	// Get all keys so that we see CR and Escape
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
 }
 
-BOOL CBinEditControl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
+BOOL CBinEditControl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
 	if (nHitTest == HTCLIENT)
 	{
@@ -232,7 +232,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPropDecEditControl message handlers
 
-void CPropDecEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CPropDecEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;
 	GetWindowText(ss);
@@ -266,7 +266,7 @@ void CPropDecEditControl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	add_commas();
 }
 
-void CPropDecEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CPropDecEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CString ss;
 	GetWindowText(ss);
@@ -350,7 +350,7 @@ void CPropDecEditControl::add_commas()
 	delete[] out;
 }
 
-UINT CPropDecEditControl::OnGetDlgCode() 
+UINT CPropDecEditControl::OnGetDlgCode()
 {
 	// Get all keys so that we see CR and Escape
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
@@ -392,7 +392,7 @@ CPropSheet::CPropSheet()
 	pBrush = new CBrush(get_rgb(hue, luminance, saturation));
 }
 
-BOOL CPropSheet::Create(CWnd* pParentWnd, DWORD dwStyle) 
+BOOL CPropSheet::Create(CWnd* pParentWnd, DWORD dwStyle)
 {
 	if (!CPropertySheet::Create(pParentWnd, dwStyle))
 		return FALSE;
@@ -427,17 +427,17 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPropSheet message handlers
 
-BOOL CPropSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct) 
+BOOL CPropSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 {
 		if (!CPropertySheet::OnNcCreate(lpCreateStruct))
 				return FALSE;
-		
+
 		ModifyStyleEx(0, WS_EX_CONTEXTHELP);
-		
+
 		return TRUE;
 }
 
-void CPropSheet::OnClose() 
+void CPropSheet::OnClose()
 {
 	theApp.SaveToMacro(km_prop_close);
 	CPropertySheet::OnClose();
@@ -661,7 +661,7 @@ void CPropFilePage::Update(CHexEditView *pv, FILE_ADDRESS address)
 
 	file_name_ = pf->GetFileName();
 	file_path_ = pf->GetFilePath();
-	
+
 	if (is_device)
 	{
 		CSpecialList *psl = theApp.GetSpecialList();
@@ -798,21 +798,21 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPropFilePage message handlers
 
-BOOL CPropFilePage::OnSetActive() 
+BOOL CPropFilePage::OnSetActive()
 {
 	Update(GetView());
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_file);
 	return CPropUpdatePage::OnSetActive();
 }
 
-BOOL CPropFilePage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CPropFilePage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs7);
 	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
 	return TRUE;
 }
 
-void CPropFilePage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPropFilePage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
@@ -964,7 +964,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPropInfoPage message handlers
 
-BOOL CPropInfoPage::OnInitDialog() 
+BOOL CPropInfoPage::OnInitDialog()
 {
 	CPropUpdatePage::OnInitDialog();
 
@@ -976,7 +976,7 @@ BOOL CPropInfoPage::OnInitDialog()
 	return TRUE;
 }
 
-BOOL CPropInfoPage::PreTranslateMessage(MSG* pMsg) 
+BOOL CPropInfoPage::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
 	{
@@ -1055,7 +1055,7 @@ BOOL CPropInfoPage::PreTranslateMessage(MSG* pMsg)
 	return CPropUpdatePage::PreTranslateMessage(pMsg);
 }
 
-BOOL CPropInfoPage::OnSetActive() 
+BOOL CPropInfoPage::OnSetActive()
 {
 	CHexEditView *pv = GetView();
 	Update(pv);
@@ -1267,14 +1267,14 @@ void CPropInfoPage::OnSelCategory()
 	}
 }
 
-BOOL CPropInfoPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CPropInfoPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs1);
 	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
 	return TRUE;
 }
 
-void CPropInfoPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPropInfoPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
@@ -1663,7 +1663,7 @@ HWND CPropCharPage::CreateUnicodeControl(int holder_id, int new_id)
 /////////////////////////////////////////////////////////////////////////////
 // CPropCharPage message handlers
 
-BOOL CPropCharPage::OnInitDialog() 
+BOOL CPropCharPage::OnInitDialog()
 {
 #ifdef SHOW_CODE_PAGE
 	ASSERT(active_code_page_ == ::GetACP());   // Just make sure we got the system active code page OK
@@ -1779,7 +1779,7 @@ BOOL CPropCharPage::OnInitDialog()
 	return TRUE;
 }
 
-BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg) 
+BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
 	{
@@ -1914,7 +1914,7 @@ BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg)
 	return CPropUpdatePage::PreTranslateMessage(pMsg);
 }
 
-void CPropCharPage::OnClose() 
+void CPropCharPage::OnClose()
 {
 	// Deselect any font and destroy the fonts created above
 	HWND hw = ::GetDlgItem(m_hWnd, IDC_CHAR_UNICODE);
@@ -1933,11 +1933,11 @@ void CPropCharPage::OnClose()
 		VERIFY(DeleteObject(nfont_));
 	}
 	//::SendMessageW(ctl_unicode_.m_hWnd, WM_SETFONT, WPARAM(::GetStockObject(ANSI_VAR_FONT)), 0L);
-	
+
 	CPropUpdatePage::OnClose();
 }
 
-BOOL CPropCharPage::OnSetActive() 
+BOOL CPropCharPage::OnSetActive()
 {
 	Update(GetView());
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_char);
@@ -1951,7 +1951,7 @@ BOOL CPropCharPage::OnHelpInfo(HELPINFO *pHelpInfo)
 	return TRUE;
 }
 
-void CPropCharPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPropCharPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	// NOTE: For the static text control (ID = -1) to give the same help
 	// the text box it is associated with must be next in the tab order + the
@@ -2281,7 +2281,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPropDecPage message handlers
 
-BOOL CPropDecPage::OnInitDialog() 
+BOOL CPropDecPage::OnInitDialog()
 {
 	CPropUpdatePage::OnInitDialog();
 
@@ -2293,7 +2293,7 @@ BOOL CPropDecPage::OnInitDialog()
 	return TRUE;
 }
 
-BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg) 
+BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
 	{
@@ -2504,7 +2504,7 @@ BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg)
 	return CPropUpdatePage::PreTranslateMessage(pMsg);
 }
 
-void CPropDecPage::OnChangeFormat() 
+void CPropDecPage::OnChangeFormat()
 {
 	if (UpdateData(TRUE))       // Update big_endian_, signed_ from buttons
 		Update(GetView());      // Recalc values based on new format
@@ -2517,14 +2517,14 @@ BOOL CPropDecPage::OnSetActive()
 	return CPropUpdatePage::OnSetActive();
 }
 
-BOOL CPropDecPage::OnHelpInfo(HELPINFO *pHelpInfo) 
+BOOL CPropDecPage::OnHelpInfo(HELPINFO *pHelpInfo)
 {
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
 	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
 	return TRUE;
 }
 
-void CPropDecPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPropDecPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
@@ -2698,7 +2698,7 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 	UpdateWindow();
 }
 
-void CPropRealPage::FixDesc() 
+void CPropRealPage::FixDesc()
 {
 	switch (format_)
 	{
@@ -2729,17 +2729,17 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPropRealPage message handlers
 
-BOOL CPropRealPage::OnInitDialog() 
+BOOL CPropRealPage::OnInitDialog()
 {
 	CPropUpdatePage::OnInitDialog();
-	
+
 	VERIFY(ctl_val_.SubclassDlgItem(IDC_FP_VAL, this));
 	FixDesc();
-	
+
 	return TRUE;
 }
 
-BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg) 
+BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
 	{
@@ -2918,7 +2918,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 	return CPropUpdatePage::PreTranslateMessage(pMsg);
 }
 
-void CPropRealPage::OnChangeFormat() 
+void CPropRealPage::OnChangeFormat()
 {
 	if (UpdateData(TRUE))       // Update big_endian_, (32/64 bit) format_ from buttons
 	{
@@ -2934,14 +2934,14 @@ BOOL CPropRealPage::OnSetActive()
 	return CPropUpdatePage::OnSetActive();
 }
 
-BOOL CPropRealPage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CPropRealPage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs4);
 	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
 	return TRUE;
 }
 
-void CPropRealPage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPropRealPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
@@ -2984,7 +2984,7 @@ CPropDatePage::CPropDatePage() : CPropUpdatePage(CPropDatePage::IDD)
 			ASSERT(0);
 	}
 #endif
-	
+
 	for (int ii = 0; ii < FORMAT_LAST; ++ii)
 	{
 		switch (ii)
@@ -3438,34 +3438,34 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CPropDatePage message handlers
 
-BOOL CPropDatePage::OnInitDialog() 
+BOOL CPropDatePage::OnInitDialog()
 {
 	CPropUpdatePage::OnInitDialog();
 	date_ctrl_.SetRange(&date_first_[format_], &date_last_[format_]);
-	
+
 	return TRUE;
 }
 
-BOOL CPropDatePage::OnSetActive() 
+BOOL CPropDatePage::OnSetActive()
 {
 	Update(GetView());
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_date);
 	return CPropUpdatePage::OnSetActive();
 }
 
-BOOL CPropDatePage::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL CPropDatePage::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	//theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs6);
 	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
 	return TRUE;
 }
 
-void CPropDatePage::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CPropDatePage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
 
-void CPropDatePage::OnDateFirst() 
+void CPropDatePage::OnDateFirst()
 {
 	COleDateTime tmp;
 	tmp = date_first_[format_];
@@ -3477,7 +3477,7 @@ void CPropDatePage::OnDateFirst()
 	save_date();
 }
 
-void CPropDatePage::OnDateLast() 
+void CPropDatePage::OnDateLast()
 {
 	COleDateTime tmp;
 	tmp = date_last_[format_];
@@ -3489,7 +3489,7 @@ void CPropDatePage::OnDateLast()
 	save_date();
 }
 
-void CPropDatePage::OnDateNow() 
+void CPropDatePage::OnDateNow()
 {
 	COleDateTime odt = COleDateTime::GetCurrentTime();
 	COleDateTime tmp;
@@ -3502,7 +3502,7 @@ void CPropDatePage::OnDateNow()
 	save_date();
 }
 
-void CPropDatePage::OnDateNull() 
+void CPropDatePage::OnDateNull()
 {
 	COleDateTime tmp;
 	tmp = date_first_[format_];
@@ -3516,7 +3516,7 @@ void CPropDatePage::OnDateNull()
 	save_date();
 }
 
-void CPropDatePage::OnDateChange(NMHDR* pNMHDR, LRESULT* pResult) 
+void CPropDatePage::OnDateChange(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	SYSTEMTIME st;
 	if (date_ctrl_.GetTime(&st) != GDT_VALID)
@@ -3537,7 +3537,7 @@ void CPropDatePage::OnDateChange(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CPropDatePage::OnTimeChange(NMHDR* pNMHDR, LRESULT* pResult) 
+void CPropDatePage::OnTimeChange(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	SYSTEMTIME st;
 	if (time_ctrl_.GetTime(&st) != GDT_VALID)
@@ -3558,7 +3558,7 @@ void CPropDatePage::OnTimeChange(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void CPropDatePage::OnChangeFormat() 
+void CPropDatePage::OnChangeFormat()
 {
 	if (UpdateData(TRUE))       // Update format_, big_endian_, local_time_ from buttons
 	{

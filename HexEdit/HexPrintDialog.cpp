@@ -57,7 +57,7 @@ BEGIN_MESSAGE_MAP(CHexPrintDialog, CPrintDialog)
 #endif
 END_MESSAGE_MAP()
 
-BOOL CHexPrintDialog::OnInitDialog() 
+BOOL CHexPrintDialog::OnInitDialog()
 {
 	dup_lines_ = theApp.GetProfileInt("Printer", "MergeDup", 1);
 
@@ -103,7 +103,7 @@ BOOL CHexPrintDialog::OnInitDialog()
 			(HMENU)pshHelp,
 			(HINSTANCE)GetWindowLong(m_hWnd, GWL_HINSTANCE),
 			NULL);
-		
+
 		HFONT hFont = (HFONT)SendDlgItemMessage(IDOK, WM_GETFONT, 0, 0);
 		::SendMessage(hwndHelp, WM_SETFONT, (WPARAM)hFont, 0);
 	}
@@ -118,7 +118,7 @@ void CHexPrintDialog::OnOK()
 	theApp.WriteProfileInt("Printer", "MergeDup", dup_lines_);
 }
 
-BOOL CHexPrintDialog::OnClickAll() 
+BOOL CHexPrintDialog::OnClickAll()
 {
 	ASSERT(GetDlgItem(stc2) != NULL);
 	ASSERT(GetDlgItem(stc3) != NULL);
@@ -135,7 +135,7 @@ BOOL CHexPrintDialog::OnClickAll()
 	return FALSE;
 }
 
-BOOL CHexPrintDialog::OnClickPages() 
+BOOL CHexPrintDialog::OnClickPages()
 {
 	ASSERT(GetDlgItem(stc2) != NULL);
 	ASSERT(GetDlgItem(stc3) != NULL);
@@ -152,7 +152,7 @@ BOOL CHexPrintDialog::OnClickPages()
 	return FALSE;
 }
 
-BOOL CHexPrintDialog::OnClickSel() 
+BOOL CHexPrintDialog::OnClickSel()
 {
 	ASSERT(GetDlgItem(stc2) != NULL);
 	ASSERT(GetDlgItem(stc3) != NULL);
@@ -169,7 +169,7 @@ BOOL CHexPrintDialog::OnClickSel()
 	return FALSE;
 }
 
-void CHexPrintDialog::OnPrintOptions() 
+void CHexPrintDialog::OnPrintOptions()
 {
 	theApp.display_options(PRINTER_OPTIONS_PAGE, TRUE);
 }

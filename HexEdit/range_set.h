@@ -9,7 +9,7 @@
 
 #include <list>
 #include <iterator>
-#include <utility>                  // for make_pair<T1,T2>()   
+#include <utility>                  // for make_pair<T1,T2>()
 #include <functional>               // for less<T>
 #include <istream>                  // used in << and >>
 #include <ios>
