@@ -1,87 +1,45 @@
-3.5
-===
-
-- help
-  - new colours
-- Open defaulttoolbarimages.bmp
-  - error in _bmp.xml
-  - why is it parsing template anyway when template view is none?
-> context help for file name in Doc/General options page
-- use JPG for about box background
-> show new shaded icons in toolbars
-  - new screenshots under Windows 7
-- options
-  - save as default does not store colour scheme
-  - save as default does not store template/aerial display
-  - rainbow colour scheme has light grey for 00 byte
-- aerial view
-  - dclick sets focus to hex view
-  > ants: selection, mark, highlights, search occ, bookmarks
-  > border: selection, mark, highlights, search occ, bookmarks
-  > recalc bitmap when colour scheme changes
-    - warn if large file (> 1GB?)
-
- - update code generation on web site
- - check new cracker codes and find workaround
- > update security_version_ (hexedit.h)
- > add new version to email dlg drop list
- > update X.Y ver # in version resource and rebuild HexEdit.exe
- > change version number and copyright year in readme.txt, order.txt
- - update help for new features, what's new, installation, order form etc
- - add new tips of the day
- - create new release notes
- - create new bitmap for install
- - update licence agreement text (version no, year etc)
- - update PAD file (hexedit.xml)
-   - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
- - change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
- - create installation (add any new files, templates etc)
- - change times of MSI file using touch2.bat
- - create HexEdX_X.zip file containing HexEdX_X.MSI file along with readme.txt, hexedit.xml
- - change time of zip file using touch3.bat
- - test install on 95, 98, ME, NT4, W2K, XP
- - submit to Simtel and change web links to new Simtel page
- - web site: add ver to bug report form drop list, update what's new, gifs etc
- - make announcement in forums
- - update to shareware download sites
- - email reg users about new release (staggered)
- - email others about new release
- - change normal activation code email template
- - send out press release
-
-
-
 3.6
 ===
-- post-build (release) - copy to install dir
+
 > check for updates
+> new options
+  > option for mouse wheel units
+  > split print page into 2
+    > add watermark and other options
+> calculator
+  > 64 check boxes
+> new installer
+   - get MFC merge module (.msm file) to include used MFC in installation (.msi)
+     - use MFC 7.1 (same as UBCD4Win - Ultimate boot CD for Windows) - MFC71.DLL, MSVCRT71.DLL
+   - is it possible to have install modules (eg MFC) come from web only when needed?
+   - add backgrnd.BMP and About.BMP to exe directory
+> expressions
+  > add ++, --
+
+4.0
+===
+
+- support for Windows 7 taskbar?
 - new options
-  - option for mouse wheel units
-  - split print page into 2
-    - add watermark and other options
+  > option for mouse wheel units
+  > split print page into 2
+    > add watermark and other options
   - new page(s) for aerial view?
-  - options in dialogs that ask repetitive questions
-    - also add options page where you can turn these on again
-    - paste in overtype mode
-    - turn off insert mode
-    - turn off read-only mode
 - calculator
-  - cf Windows 7 Calculator
-    > 64 check boxes
-    - radio buttons on the left
+  > 64 check boxes
   - bookmarks (active file) drop-list
-  - handle > 64 bit numbers
+  ? handle > 64 bit numbers
 ADS
   - open them in new view
 - aerial view fixes
-  - more options
-  - update help (from What's New in 3.5)
-
+  - more options (new option pages)
+  > bigger ants when zoomed in
+  > double-buffer ants
 - file stats (XTAL256)
+  - byte values count
+  - MD5, SHA1
+  - CRCs
 - file compare (XTAL256)
-- template "include" facility
-- tip when mouse held over a template line
-
 > fix pliers and update graphics
 - Convert to use FileErrorMessage() ???
 ? allow editing read-only files
@@ -109,66 +67,60 @@ ADS
 - expressions
   > add ++, --
   - add assignment operators: += etc
-- bookmarks
- - move text buttons on right to icon buttons at top
-   - need way to change name
- - add categories columns
- - add new toolbar buttons next/prev in file, next/prev in category, next/prev global
 
-3.7
-===
-  - extra CRC types
-  - if file open for write elsewhere warn when it changes
-  - if file opened in shareDenyNone mode monitor it and warn when it changes.
-    (if caret at EOF and file extended keep it at EOF)
-  ? no need to bring up find dlg when replaying
-  - tools disabled in kill focus and destroy - both not necessary
-  - allow enter key and tabs key to be reassigned
-  - encryption toolbar
-    - encryption algorithm picker
-  - Fix Date Properties page [L. David Matheny]
+- Fix Date Properties page [L. David Matheny]
     - handle local/UTC time option
     - fix local time problems where it uses current DST not that in effect at the time
     - test date page code in different time zones
     - fix MSDOS date/time problems (eg. last value)
-  - bookmarks option
+- bookmarks option
     - each open doc (not view) keeps track of its bookmarks
       - bookmarks added to a new file (no disk file) have a filename of HexEdit1 etc
       - when new file saved update with real file name
       - if new file not saved then bookmark deleted
       - when adding a bookmark to an already modified file write to master list where
         it would appear the bookmark would be in on-disk copy (opened or saved)
-  - incorporate Structured Storage Explorer???
-  - encrypt using number not password
-  - better printing
+- incorporate Structured Storage Explorer???
+- encrypt using number not password
+- better printing
     - work out numbers of pages at start (use aa->GetPrinterDeviceDefaults(); then aa->CreatePrinterDC())
-  - facility to split and merge files (default to ext .001, .002, size 1.44 Mbytes)
-  - macro
-	- look at speeding macro playback
-	- macro toolbar: rec, clear, play, options, message, multiplay, select macro from drop list
-	- get number (using calc?)
-	- help: to store number in macro, enter in calculator and click '='
- - new Intel hex formats
- - move S1/S2/S3 items to drop-list in the File Save dialog
- - info tips
-   - show tip of template data at that location ???
- - allow search for keyword in recent file dialog
- - template tutorial to demo bit-fields, parser, switch
- > font size in format toolbar flashes under Vista
- - add ability to select which prop pages are displayed (and order?)???\
+- facility to split and merge files (default to ext .001, .002, size 1.44 Mbytes)
+> font size in format toolbar flashes under Vista
 
-V4.0
+V4.1
+  - macro
+	 - look at speeding macro playback
+    - macro toolbar: rec, clear, play, options, message, multiplay, select macro from drop list
+    - get number (using calc?)
+    - help: to store number in macro, enter in calculator and click '='
+  - new Intel hex formats
+  - move S1/S2/S3 items to drop-list in the File Save dialog
+  - allow search for keyword in recent file dialog
+  - add ability to select which prop pages are displayed (and order?)???\
+  - tip when mouse held over a template line
+  - bookmarks
+    - move text buttons on right to icon buttons at top
+      - need way to change name
+    - add categories columns
+    - add new toolbar buttons next/prev in file, next/prev in category, next/prev global  - template "include" facility
+  - new toolbars
+    - encryption toolbar
+       - encryption algorithm picker
   - plugin system?
-  > new MFC/BCG?
-  - ribbon?
-  - support for Windows 7 taskbar?
+  - QAT?
+  x ribbon
   - when doing masked search and file stats available search for most common non-masked char first
   - Implement Base64 import/export
   - add keep time command to macros
   - checksums page [Dave Ewen]?
   - CRC page
+    - support all Boost CRC options
   - stats page
-
+  - options in dialogs that ask repetitive questions
+    - also add options page where you can turn these on again
+    - paste in overtype mode
+    - turn off insert mode
+    - turn off read-only mode
 WEB SITE
 ========
 

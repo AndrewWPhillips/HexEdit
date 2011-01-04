@@ -1,22 +1,28 @@
 Leave these tips on for a while.  They will tell you things that are not immediately obvious when using HexEdit and will save you from having to read the on-line help.
 
-To switch to a different window that is already open just click on the tab at the bottom (or top) of the HexEdit display.  You may need to turn the tabs on in the Display page of the Options dialog.
-
-The online help contains tutorials on creating keystroke macros and templates.  (These are the most common areas that users seems to have difficulties.)
-
-Be careful when undoing changes not to undo too much as HexEdit has no redo capability.
-
-Corrupt registry entries and configuration information can cause HexEdit to misbehave.  Several new repair options have been added to the Help menu to overcome these problems.
+To switch to a different window that is already open just click on the tab at the top (or bottom) of the HexEdit display.  You may need to turn the tabs on in the Display page of the Options dialog.
 
 The highlighter is useful for showing someone, or reminding yourself, about particular important bytes of a file.  Select the bytes you want to highlight and click the yellow highlighter on the Edit Bar.
 
 You can drag a file onto the HexEdit window to open it.  If the HexEdit window is minimized or hidden behind other windows drag the file to the HexEdit icon on the task bar for a second -- the HexEdit window will then appear.
 
-Change tracking allows you to easily see the changes that have been made to a file.  Replaced bytes are underlined while inserted bytes have a red background.  Use the button on the Edit Bar to toggle change tracking.
+If you find the default colors in HexEdit to be too garish you can change to the Black and White color scheme by selecting it from the drop down list (Color Scheme tool) on the Standard toolbar.  You can make this the default color scheme using the Options dialog.
 
 You can change the background color (or any of the window colors) using the Colors page of the Options dialog.  Select the Tools/Options menu item and click the Colors tab, select "Background" from the list on the right and select a new color using the "Color" tool below it.
 
-You can now convert a text file containing hex digits into binary.  See the File/Import/Hex Text menu item.  Spaces, commas etc are ignored.
+The Aerial View can give a high-level overview of a file. You open it using the commands on the Aerial View menu.  Each pixel of the Aerial View corresponds to a byte of the file (or several bytes for very large files).  Use Ctrl+mouse wheel to zoom on an area of interest.
+
+Change tracking allows you to easily see the changes that have been made to a file.  Replaced bytes are underlined while inserted bytes have a red background.  Use the button on the Edit Bar to toggle change tracking.
+
+The online help contains tutorials on creating keystroke macros, customization and templates.  (These are the most common areas that users seems to have difficulties.)
+
+There are many video tutorials (5 to 10 minutes each) that teach you how to use HexEdit.  Click the Tutorials link on our web site or go to http://www.hexedit.com/videos.htm.
+
+You can easily convert a hex text file (a text file containing hex digits as characters) into binary.  See the File/Import/Hex Text menu item.  Spaces, commas etc are ignored.
+
+You can quickly zoom in and out in the hex view (and aerial view) by holding down the Ctrl key and rotating the mouse wheel.  If you find the direction of zoom counter-intuitive you can reverse it in the Workspace/Display page of the Options dialog.
+
+Be careful when undoing changes not to undo too much as HexEdit has no redo capability.
 
 The tree view (templates) allows you to easily get an overview of a file or drill down to specific data (given an appropriate template is available).
 
@@ -24,9 +30,15 @@ You can quickly delete a bookmark at the cursor position using the Toggle Bookma
 
 Common file options are available in a popup menu when you right-click the tab for the file.  (The window tabs appear at the top or bottom of the screen.)  Like other popup menus this one can be customized using the Menus page of the Customization dialog.
 
+Alternate data views (Aerial View or Tree View) can be shown in either a split window or a tabbed window.  With a split window you can drag the split "divider" to resize the windows.  With a tab window you can click the tabs at the bottom of the window to switch between views.
+
+Corrupt registry entries and configuration information can cause HexEdit to misbehave.  Several repair options have been added to the Help menu to overcome these problems.
+
 Modeless dialogs (Properties, Find, Calculator etc) can be "rolled up" when not in use by clicking the up arrow button in the top right corner of the window.  Click the button again to "unroll".
 
 You may want to automatically create backups of small files that you modify but this may be impractical for large files.  HexEdit supports many backup options - see the System page of the Options dialog.
+
+You can quickly and easily move bookmarks by clicking and dragging them.
 
 The Insert Block command (Edit menu) allows you to insert a block of bytes filled in various ways.
 
