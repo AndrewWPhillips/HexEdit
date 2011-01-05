@@ -259,6 +259,42 @@ void CAerialView::OnDraw(CDC* pDC)
 	if (actual_dpix_ == -1) return;          // Seems to happen at startup
 	int width = GetDocument()->GetBpe() * cols_;
 
+	// Use memory DC for double buffering.  (Will render to pDC in bufDC d'tor.)
+	CMemDC bufDC(*pDC, this);
+
+	// Fill with the background colour
+	COLORREF bg_col;
+	if ((bg_col = phev_->GetBackgroundCol()) == -1)
+		bg_col = RGB(192,192,192);
+
+	// Create a solid brush of background colour
+	CBrush backBrush;
+	backBrush.CreateSolidBrush(bg_col);
+	backBrush.UnrealizeObject();
+
+	CRect rct;
+	GetClientRect(rct);
+
+	// Work out the max row that the BitBlt is going to fill
+	BITMAPINFOHEADER *bih = FreeImage_GetInfoHeader(GetDocument()->dib_);
+	int max_row = int((GetDocument()->NumElts()-1)/cols_) + 1 - 
+				  int(scrollpos_/(GetDocument()->GetBpe() * cols_));
+
+	// Fill the borders
+	rct.left = bdr_left_ + cols_*actual_dpix_;
+	bufDC.GetDC().FillRect(rct, &backBrush);             // right border
+	rct.right = rct.left; rct.left = 0;
+	if (rows_ > max_row)
+		rct.top = bdr_top_ + max_row*actual_dpix_;   // fill bottom border and the bottom area of the bitmap not blted to
+	else
+		rct.top = bdr_top_ + rows_*actual_dpix_;    // just fill the bottom border
+	bufDC.GetDC().FillRect(rct, &backBrush);             // bottom border
+	rct.bottom = rct.top; rct.top = 0; rct.right = bdr_left_;
+	bufDC.GetDC().FillRect(rct, &backBrush);             // left border
+	rct.bottom = bdr_top_; rct.left = bdr_left_;
+	rct.right = bdr_left_ + cols_*actual_dpix_;
+	bufDC.GetDC().FillRect(rct, &backBrush);             // top border
+
 	if (!pDC->IsPrinting())
 	{
 		// Flash top-left corner rect until bg scanning is finished
@@ -283,11 +319,11 @@ void CAerialView::OnDraw(CDC* pDC)
 			if ((clr = phev_->GetBackgroundCol()) == -1)
 				clr = RGB(192,192,192);
 		}
-		CRect rct(0, 0, bdr_left_, bdr_top_);
+		rct = CRect(0, 0, bdr_left_, bdr_top_);
 		CBrush brush;
 		brush.CreateSolidBrush(clr);
 		brush.UnrealizeObject();
-		pDC->FillRect(&rct, &brush);
+		bufDC.GetDC().FillRect(&rct, &brush);
 	}
 
 	// TODO When printing (pDC->IsPrinting()) use bigger value for actual_dpix_ scaled for printer DPI
@@ -335,6 +371,7 @@ void CAerialView::OnDraw(CDC* pDC)
 			++pbm;
 		get_colours(phev_->GetBookmarkCol(), clr_bm, dummy);
 	}
+
 	// For each row of the bitmap draw zero or more indicators in the left border for various things
 	bool ind_sel, ind_mark, ind_hl, ind_search, ind_bm;
 	FILE_ADDRESS endpos = scrollpos_ + width*rows_;
@@ -375,18 +412,20 @@ void CAerialView::OnDraw(CDC* pDC)
 
 		// We draw 2 columns of pixels for each indicator, but if either adjacent indicator
 		// is not drawn we can spread into it by 1 pixel, except that the left and
-		// right indicators outside the 10 pixel indicator area.
+		// right indicators can't go outside the 10 pixel indicator area.
+		// Note we only have to calculate the left column to start in and always write into
+		// extra pixel at right (will be overwritten by adjacent column if present).
 		int row = int(pp - scrollpos_)/width;
 		if (ind_sel)
-			draw_left_border(pDC, 0,           3, row, clr_sel);            //      0, 1, (2)
+			draw_left_border(&(bufDC.GetDC()), 0,           3, row, clr_sel);            //      0, 1, (2)
 		if (ind_mark)
-			draw_left_border(pDC, ind_sel    ? 2 : 1, 5, row, clr_mark);    // (1), 2, 3, (4)
+			draw_left_border(&(bufDC.GetDC()), ind_sel    ? 2 : 1, 5, row, clr_mark);    // (1), 2, 3, (4)
 		if (ind_hl)
-			draw_left_border(pDC, ind_mark   ? 4 : 3, 7, row, clr_hl);      // (3), 4, 5, (6)
+			draw_left_border(&(bufDC.GetDC()), ind_mark   ? 4 : 3, 7, row, clr_hl);      // (3), 4, 5, (6)
 		if (ind_search)
-			draw_left_border(pDC, ind_hl     ? 6 : 5, 9, row, clr_search);  // (5), 6, 7, (8)
+			draw_left_border(&(bufDC.GetDC()), ind_hl     ? 6 : 5, 9, row, clr_search);  // (5), 6, 7, (8)
 		if (ind_bm)
-			draw_left_border(pDC, ind_search ? 8 : 7, 10, row, clr_bm);     // (7), 8, 9
+			draw_left_border(&(bufDC.GetDC()), ind_search ? 8 : 7, 10, row, clr_bm);     // (7), 8, 9
 
 	}
 	// Show selection in the top border
@@ -394,35 +433,32 @@ void CAerialView::OnDraw(CDC* pDC)
 	{
 		if (end_addr - start_addr > width)
 		{
-			draw_top_border(pDC, 0, cols_, clr_sel);
+			draw_top_border(&(bufDC.GetDC()), 0, cols_, clr_sel);
 		}
 		else
 		{
 			int left = int(start_addr/GetDocument()->GetBpe()) %cols_;
 			int right = int((end_addr-1)/GetDocument()->GetBpe()) % cols_ + 1;
 			if (left < right)
-				draw_top_border(pDC, left, right, clr_sel);
+				draw_top_border(&(bufDC.GetDC()), left, right, clr_sel);
 			else
 			{
-				draw_top_border(pDC, left, cols_, clr_sel);
-				draw_top_border(pDC, 0, right, clr_sel);
+				draw_top_border(&(bufDC.GetDC()), left, cols_, clr_sel);
+				draw_top_border(&(bufDC.GetDC()), 0, right, clr_sel);
 			}
 		}
 	}
 
 	// Work out what part of the display to draw the bitmap in
 	// Adjusting the clip rect here simplifies later calculations.
-	CRect rct;
 	rct.left   = bdr_left_;
 	rct.right  = rct.left + cols_ * actual_dpix_;
 	rct.top    = bdr_top_;
 	rct.bottom = rct.top + rows_ * actual_dpix_;
-	pDC->IntersectClipRect(&rct);
+	bufDC.GetDC().IntersectClipRect(&rct);
 
+	// Draw marching ants
 	{
-		// Use memory DC for double buffering.  (Will render to pDC when destructed.)
-		CMemDC bufDC(*pDC, this);
-
 		t0_.restart();
 		draw_bitmap(&(bufDC.GetDC()));
 		t0_.stop();
@@ -467,42 +503,7 @@ void CAerialView::OnDraw(CDC* pDC)
 
 BOOL CAerialView::OnEraseBkgnd(CDC* pDC)
 {
-	if (phev_ == NULL || scrollpos_ < 0) return FALSE;          // Seems to happen at startup
-
-	// Fill with the background colour
-	COLORREF bg_col;
-	if ((bg_col = phev_->GetBackgroundCol()) == -1)
-		bg_col = RGB(192,192,192);
-
-	// Create a solid brush of background colour
-	CBrush backBrush;
-	backBrush.CreateSolidBrush(bg_col);
-	backBrush.UnrealizeObject();
-
-	CRect rct;
-	GetClientRect(rct);
-
-	// Work out the max row that the BitBlt is going to fill
-	BITMAPINFOHEADER *bih = FreeImage_GetInfoHeader(GetDocument()->dib_);
-	int max_row = int((GetDocument()->NumElts()-1)/cols_) + 1 - 
-				  int(scrollpos_/(GetDocument()->GetBpe() * cols_));
-
-	// Fill the borders
-	rct.left = bdr_left_ + cols_*actual_dpix_;
-	pDC->FillRect(rct, &backBrush);             // right border
-	rct.right = rct.left; rct.left = 0;
-	if (rows_ > max_row)
-		rct.top = bdr_top_ + max_row*actual_dpix_;   // fill bottom border and the bottom area of the bitmap not blted to
-	else
-		rct.top = bdr_top_ + rows_*actual_dpix_;    // just fill the bottom border
-	pDC->FillRect(rct, &backBrush);             // bottom border
-	rct.bottom = rct.top; rct.top = 0; rct.right = bdr_left_;
-	pDC->FillRect(rct, &backBrush);             // left border
-	rct.bottom = bdr_top_; rct.left = bdr_left_;
-	rct.right = bdr_left_ + cols_*actual_dpix_;
-	pDC->FillRect(rct, &backBrush);             // top border
-
-	return TRUE;
+	return FALSE;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -687,7 +688,7 @@ void CAerialView::OnTimer(UINT nIDEvent)
 		timer_count_ = (timer_count_ + 1)%ANT_SIZE;
 		if (GetDocument()->AerialScanning())
 		{
-			CRect rct(0, 0, bdr_left_, bdr_top_);
+			CRect rct(0, 0, 99999, bdr_top_);  // whole top border
 			InvalidateRect(&rct, FALSE);
 		}
 
@@ -702,29 +703,29 @@ void CAerialView::OnTimer(UINT nIDEvent)
 			// First remove the selection bounds of the old selection if it has changed
 			if (start_addr != prev_start_addr_ || end_addr != prev_end_addr_)
 			{
-				invalidate_addr_range_boundary(prev_start_addr_, prev_end_addr_);
+				invalidate_addr_range(prev_start_addr_, prev_end_addr_);
 				prev_start_addr_ = start_addr;
 				prev_end_addr_ = end_addr;
 			}
-			invalidate_addr_range_boundary(start_addr, end_addr);
+			invalidate_addr_range(start_addr, end_addr);
 		}
 		if (disp_.draw_ants_mark)
 		{
 			// Draw ants around mark (this just flashes the pixel when actual_dpix_ == 1)
-			invalidate_addr_range_boundary(phev_->GetMark(), phev_->GetMark() + 1);
+			invalidate_addr_range(phev_->GetMark(), phev_->GetMark() + 1);
 		}
 		if (disp_.draw_ants_hl)
 		{
 			// Find all highlights and invalidate their boundaries
 			range_set<FILE_ADDRESS>::range_t::const_iterator pr;
 			for (pr = phev_->hl_set_.range_.begin(); pr != phev_->hl_set_.range_.end(); ++pr)
-				invalidate_addr_range_boundary(pr->sfirst, pr->slast);
+				invalidate_addr_range(pr->sfirst, pr->slast);
 		}
 		if (disp_.draw_ants_search && theApp.pboyer_ != NULL && search_pair_.size() < 4096)  // if we have 1000's of ants marching everthing stops
 		{
 			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator psp;
 			for (psp = search_pair_.begin(); psp != search_pair_.end(); ++psp)
-				invalidate_addr_range_boundary(psp->first, psp->second);
+				invalidate_addr_range(psp->first, psp->second);
 		}
 		if (disp_.draw_ants_bm)
 		{
@@ -732,7 +733,7 @@ void CAerialView::OnTimer(UINT nIDEvent)
 				pbm != GetDocument()->bm_posn_.end(); ++pbm)
 			{
 				if (*pbm >= scrollpos_ && *pbm <= scrollpos_ + width*rows_)
-					invalidate_addr_range_boundary(*pbm, *pbm + 1);
+					invalidate_addr_range(*pbm, *pbm + 1);
 			}
 		}
 		t00_.stop();
@@ -1163,6 +1164,9 @@ void CAerialView::invalidate_addr_range(FILE_ADDRESS start_addr, FILE_ADDRESS en
 	}
 }
 
+#if 0  // For my current system this is slower than a simple invalidate_addr_range in many
+       // situations and only marginally faster when zoomed out with lots of ants shown.
+
 // Similar to invalidate_addr_range but only used for marching ants.
 // Note that this is a real mess due to the way Windows invalidation works.
 // There are 2 situations that need different handling:
@@ -1244,6 +1248,7 @@ void CAerialView::invalidate_addr_range_boundary(FILE_ADDRESS start_addr, FILE_A
 	InvalidateRect(&rct, FALSE);
 	UpdateWindow();
 }
+#endif
 
 // Redraws the part of the bitmap that need to be shown in the window.
 // The source (FreeImage) bitmap is reshaped to fit across the display:
