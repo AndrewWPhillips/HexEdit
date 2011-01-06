@@ -34,6 +34,11 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // CCalcBits
+//
+// This is a child window of the calculator dialog that shows the current status
+// of the 64 bits of the current calcualtor integer value.  It indicates if on/off
+// or if disabled (depends on number of calculator bits in use).  It also
+// allows (enabled) bits to be toggled just by clicking them.
 
 class CCalcBits : public CWnd
 {

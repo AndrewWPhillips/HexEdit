@@ -133,6 +133,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 
+// Toggle a bit when clicked on (and enabled)
 void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	int bnum;
@@ -141,10 +142,12 @@ void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 		ASSERT(bnum < 64 && bnum >= 0);
 		unsigned __int64 val = m_pParent->current_ ^ ((__int64)1<<bnum);
 		m_pParent->Set(val);
+		m_pParent->FixFileButtons();
 	}
 	CWnd::OnLButtonDown(nFlags, point);
 }
 
+// Used to decide horizontal positions of the bits
 int CCalcBits::spacing(int bnum)
 {
 	int retval = 0;
@@ -175,6 +178,8 @@ void CCalcBits::calc_widths(CRect & rct)
 	ASSERT(m_nn > 0 && m_bb > 0 && m_cc > 0);      // sanity check
 }
 
+// Given a child window position (point) works out which bit is beneath it.
+// Returns the bit (0 to 63) or -1 if none.
 int CCalcBits::pos2bit(CPoint point)
 {
 	if (point.y <= 0 && point.y >= m_hh - 1)
