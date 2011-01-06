@@ -641,7 +641,7 @@ public:
 	void RemoveAerialView();
 	void AerialChange(CHexEditView *pview = NULL);  // Signal bg thread to re-scan
 	UINT RunAerialThread();     // Main func in bg thread
-	bool AerialScanning();      // Are we currently scanning
+	int AerialProgress();       // 0 to 100 (or -1 if not scanning)
 
 	// Compare stuff (implemented in BGCompare.cpp)
 	void AddCompView(CHexEditView *pview);
@@ -826,6 +826,8 @@ private:
 	enum BG_STATE   aerial_state_;
 	bool aerial_fin_;           // Flags that the bg scan is finished and the view needs updating
 	unsigned char *aerial_buf_; // Buffer used for holding file data for scan
+
+	FILE_ADDRESS aerial_addr_;  // Current address we are processing (used to show progress)
 
 	// NOTE: kala must not be modified while the bg thread is running!
 	COLORREF kala_[256];        // Colours from the first hex view to open the aerial view

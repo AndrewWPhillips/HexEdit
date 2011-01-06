@@ -262,14 +262,15 @@ void CAerialView::OnDraw(CDC* pDC)
 	// Use memory DC for double buffering.  (Will render to pDC in bufDC d'tor.)
 	CMemDC bufDC(*pDC, this);
 
-	// Fill with the background colour
-	COLORREF bg_col;
-	if ((bg_col = phev_->GetBackgroundCol()) == -1)
-		bg_col = RGB(192,192,192);
+	COLORREF clr_bg, clr_sel, clr_mark, clr_hl, clr_search, clr_bm, dummy;
+
+	// First fill with the background colour
+	if ((clr_bg = phev_->GetBackgroundCol()) == -1)
+		clr_bg = RGB(192,192,192);
 
 	// Create a solid brush of background colour
 	CBrush backBrush;
-	backBrush.CreateSolidBrush(bg_col);
+	backBrush.CreateSolidBrush(clr_bg);
 	backBrush.UnrealizeObject();
 
 	CRect rct;
@@ -282,60 +283,46 @@ void CAerialView::OnDraw(CDC* pDC)
 
 	// Fill the borders
 	rct.left = bdr_left_ + cols_*actual_dpix_;
-	bufDC.GetDC().FillRect(rct, &backBrush);             // right border
+	bufDC.GetDC().FillRect(rct, &backBrush);        // right border
 	rct.right = rct.left; rct.left = 0;
 	if (rows_ > max_row)
-		rct.top = bdr_top_ + max_row*actual_dpix_;   // fill bottom border and the bottom area of the bitmap not blted to
+		rct.top = bdr_top_ + max_row*actual_dpix_;  // fill bottom border and the bottom area of the bitmap not blted to
 	else
 		rct.top = bdr_top_ + rows_*actual_dpix_;    // just fill the bottom border
-	bufDC.GetDC().FillRect(rct, &backBrush);             // bottom border
+	bufDC.GetDC().FillRect(rct, &backBrush);        // bottom border
 	rct.bottom = rct.top; rct.top = 0; rct.right = bdr_left_;
-	bufDC.GetDC().FillRect(rct, &backBrush);             // left border
+	bufDC.GetDC().FillRect(rct, &backBrush);        // left border
 	rct.bottom = bdr_top_; rct.left = bdr_left_;
 	rct.right = bdr_left_ + cols_*actual_dpix_;
-	bufDC.GetDC().FillRect(rct, &backBrush);             // top border
+	bufDC.GetDC().FillRect(rct, &backBrush);        // top border
+
+	if (BRIGHTNESS(clr_bg) > 50)
+		clr_sel = RGB(0, 0, 0);                     // black
+	else
+		clr_sel = RGB(255, 255, 255);               // white
 
 	if (!pDC->IsPrinting())
 	{
-		// Flash top-left corner rect until bg scanning is finished
-		COLORREF clr;
-		if (GetDocument()->AerialScanning())
+		int progress = GetDocument()->AerialProgress();
+		if (progress > 0)
 		{
-			switch (timer_count_ % 3)
-			{
-			case 0:
-				clr = RGB(0,0,0);
-				break;
-			case 1:
-				clr = RGB(128,128,128);
-				break;
-			case 2:
-				clr = RGB(255,255,255);
-				break;
-			}
+			rct = CRect(0, 0, ((bdr_left_ + cols_*actual_dpix_) * progress)/100, bdr_top_);
+			CBrush brush;
+			brush.CreateSolidBrush(clr_sel);
+			brush.UnrealizeObject();
+			bufDC.GetDC().FillRect(&rct, &brush);
 		}
-		else
-		{
-			if ((clr = phev_->GetBackgroundCol()) == -1)
-				clr = RGB(192,192,192);
-		}
-		rct = CRect(0, 0, bdr_left_, bdr_top_);
-		CBrush brush;
-		brush.CreateSolidBrush(clr);
-		brush.UnrealizeObject();
-		bufDC.GetDC().FillRect(&rct, &brush);
+#endif
 	}
 
 	// TODO When printing (pDC->IsPrinting()) use bigger value for actual_dpix_ scaled for printer DPI
 
 	// Set up for finding what lines bookmarks, search occurrences etc are on
-	COLORREF clr_sel, clr_mark, clr_hl, clr_search, clr_bm, dummy;
 	FILE_ADDRESS start_addr, end_addr;
 	if (disp_.draw_bdr_sel)
 	{
 		phev_->GetSelAddr(start_addr, end_addr);
 		if (end_addr <= start_addr) end_addr = start_addr + 1;
-		clr_sel = RGB(0,0,0);
 	}
 	if (disp_.draw_bdr_mark)
 	{
@@ -686,7 +673,7 @@ void CAerialView::OnTimer(UINT nIDEvent)
 		t00_.reset();
 		ASSERT(phev_ != NULL);
 		timer_count_ = (timer_count_ + 1)%ANT_SIZE;
-		if (GetDocument()->AerialScanning())
+		if (GetDocument()->AerialProgress() > -1)
 		{
 			CRect rct(0, 0, 99999, bdr_top_);  // whole top border
 			InvalidateRect(&rct, FALSE);

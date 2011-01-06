@@ -188,10 +188,12 @@ void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 	start_aerial_event_.SetEvent();
 }
 
-bool CHexEditDoc::AerialScanning()
+int CHexEditDoc::AerialProgress()
 {
 	CSingleLock sl(&docdata_, TRUE);
-	return aerial_state_ == SCANNING;
+	if (aerial_state_ != SCANNING) return -1;
+
+	return int((aerial_addr_ * 100)/length_);
 }
 
 // Gets a new FreeImage bitmap if we haven't got one yet or the current one is too small.
@@ -372,7 +374,7 @@ UINT CHexEditDoc::RunAerialThread()
 		// Reset for new scan
 		docdata_.Lock();
 		aerial_fin_ = false;
-		FILE_ADDRESS addr = 0;
+		aerial_addr_ = 0;
 		FILE_ADDRESS file_len = length_;
 		int file_bpe = bpe_;
 		unsigned char *file_dib = FreeImage_GetBits(dib_);
@@ -392,9 +394,9 @@ UINT CHexEditDoc::RunAerialThread()
 				break;   // stop processing and go back to WAITING state
 
 			// Check if we have finished scanning the file
-			if (addr >= file_len)
+			if (aerial_addr_ >= file_len)
 			{
-				TRACE2("+++ BGAerial: finished scan for %p at address %p\n", this, file_dib + 3*size_t(addr/file_bpe));
+				TRACE2("+++ BGAerial: finished scan for %p at address %p\n", this, file_dib + 3*size_t(aerial_addr_/file_bpe));
 				CSingleLock sl(&docdata_, TRUE); // Protect shared data access
 
 				aerial_fin_ = true;
@@ -402,10 +404,10 @@ UINT CHexEditDoc::RunAerialThread()
 			}
 
 			// Get the next buffer full from the file and scan it
-			size_t got = GetData(aerial_buf_, buf_len, addr, 3);
+			size_t got = GetData(aerial_buf_, buf_len, aerial_addr_, 3);
 			ASSERT(got <= buf_len);
 
-			unsigned char *pbm = file_dib + 3*size_t(addr/file_bpe);    // where we write to bitmap
+			unsigned char *pbm = file_dib + 3*size_t(aerial_addr_/file_bpe);    // where we write to bitmap
 			unsigned char *pbuf;                                        // where we read from the file buffer
 			for (pbuf = aerial_buf_; pbuf < aerial_buf_ + got; pbuf += file_bpe, pbm += 3)
 			{
@@ -421,7 +423,7 @@ UINT CHexEditDoc::RunAerialThread()
 				*(pbm+1) = unsigned char(g/file_bpe);
 				*(pbm+2) = unsigned char(r/file_bpe);
 			}
-			addr += got;
+			aerial_addr_ += got;
 		}
 
 		delete[] aerial_buf_;
