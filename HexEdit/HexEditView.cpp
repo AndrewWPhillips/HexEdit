@@ -6774,13 +6774,22 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 #endif
 	if (mouse_down_ && drag_bookmark_ > -1)
 	{
-		// Move the bookmark to drag_address_
 		FILE_ADDRESS prev = GetDocument()->bm_posn_[drag_bookmark_];  // Previous bm position
-		CBookmarkList *pbl = theApp.GetBookmarkList();
-		ASSERT(pbl != NULL);
-		pbl->Move(GetDocument()->bm_index_[drag_bookmark_], int(drag_address_ - prev)); // move bm in global list
-		GetDocument()->bm_posn_[drag_bookmark_] = drag_address_;   // move in doc's bm list
-		((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.UpdateBookmark(GetDocument()->bm_index_[drag_bookmark_]);
+
+		if (drag_bookmark_ == bookmark_at(drag_address_))
+		{
+			// Click on bookmark (or drag back to original location) - just set cursor address
+			MoveToAddress(drag_address_);
+		}
+		else
+		{
+			// Move the bookmark to drag_address_
+			CBookmarkList *pbl = theApp.GetBookmarkList();
+			ASSERT(pbl != NULL);
+			pbl->Move(GetDocument()->bm_index_[drag_bookmark_], int(drag_address_ - prev)); // move bm in global list
+			GetDocument()->bm_posn_[drag_bookmark_] = drag_address_;   // move in doc's bm list
+			((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.UpdateBookmark(GetDocument()->bm_index_[drag_bookmark_]);
+		}
 
 		drag_bookmark_ = -1;  // signal that we are no longer dragging
 		mouse_down_ = false;
