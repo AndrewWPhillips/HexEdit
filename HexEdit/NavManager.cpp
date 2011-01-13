@@ -17,7 +17,10 @@ void CNavManager::Add(LPCTSTR desc, LPCTSTR info, CHexEditView * pv, FILE_ADDRES
 		// the nav point from the end of the stack.  This avoids lots of nav pts when just
 		// swapping between files.
 		CHexEditView * pOldView =  v_.back().pview_;
-		if (pOldView != pv && pOldView->NoNavMovesDone())
+		CHexEditDoc  * pOldDoc  =  v_.back().pdoc_;
+		if (pOldView != pv &&
+			is_open_view(pOldDoc, pOldView) &&
+			pOldView->NoNavMovesDone())
 		{
 			pos_--;
 		}
