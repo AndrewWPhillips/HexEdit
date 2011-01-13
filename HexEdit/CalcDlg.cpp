@@ -2824,8 +2824,11 @@ void CCalcDlg::OnGetHexHist()
 		menu.Detach();
 		ss.Replace(" ", "");    // get rid of padding
 
-		// If just calculated a result then clear it
-		if (!in_edit_)
+		// We clear the current edit box in 2 cases:
+		// 1. Displaying result - probably want to start a new calculation
+		// 2. Currently just displaying a numeric value - replace it as adding extra digits is just confusing
+		//    and otherwise adding more digits may cause an overflow which would be really confusing
+		if (!in_edit_ || current_const_)
 			edit_.SetWindowText("");  // If just calculated a result then clear it
 		in_edit_ = FALSE;
 
@@ -2865,7 +2868,11 @@ void CCalcDlg::OnGetDecHist()
 
 		ss.Replace(",", "");ss.Replace(".", ""); ss.Replace(" ", "");    // get rid of padding
 
-		if (!in_edit_)
+		// We clear the current edit box text in 2 cases:
+		// 1. Currently displaying a result of previous calculation - probably want to start a new calculation
+		// 2. Currently just displaying a numeric value - replace it by adding extra digits is just confusing
+		//    + otherwise adding more digits may cause an overflow which would be really confusing
+		if (!in_edit_ || current_const_)
 			edit_.SetWindowText("");  // If just calculated a result then clear it
 		in_edit_ = FALSE;
 
