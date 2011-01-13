@@ -792,6 +792,7 @@ void CHexEditView::OnInitialUpdate()
 			split_width_c_ = atoi(ss);
 
 		disp_state_ = atoi(pfl->GetData(recent_file_index, CHexFileList::DISPLAY));
+		if (disp_state_ == 0) disp_state_ = 3;  // just in case RecentFile is really corrupt
 		SetVertBufferZone(atoi(pfl->GetData(recent_file_index, CHexFileList::VERT_BUFFER_ZONE)));
 
 		// Get the colour scheme, if none try to find one based on file extension, otherwise
@@ -820,10 +821,12 @@ void CHexEditView::OnInitialUpdate()
 		set_colours();
 
 		rowsize_ = atoi(pfl->GetData(recent_file_index, CHexFileList::COLUMNS));
+		if (rowsize_ < 4 || rowsize_ > 32767) rowsize_ = 4;   // just in case RecentFile is really corrupt
 		real_offset_ = offset_ = atoi(pfl->GetData(recent_file_index, CHexFileList::OFFSET));
 		if (real_offset_ >= rowsize_)
 			offset_ = rowsize_ - 1;             // In case soemone fiddled with the settings
 		group_by_ = atoi(pfl->GetData(recent_file_index, CHexFileList::GROUPING));
+		if (group_by_ < 2) group_by_ = 2;  // just in case RecentFile is really corrupt
 
 		start_addr = _atoi64(pfl->GetData(recent_file_index, CHexFileList::SELSTART));
 		end_addr = _atoi64(pfl->GetData(recent_file_index, CHexFileList::SELEND));
@@ -1137,10 +1140,18 @@ void CHexEditView::StoreOptions()
 	{
 		// Found in the list so update all the values;
 		WINDOWPLACEMENT wp;
+		// This is a kludge because if you close more than one window at a time
+		// and they are maximized MDI children then only one of them will have
+		// wp.showCmd == SW_SHOWMAXIMIZED (3), others will be SW_SHOWNORMAL (1)
+		ASSERT(GetFrame() != NULL && GetView()->GetFrame() != NULL);
+		UINT activeShowCmd = SW_SHOWMAXIMIZED;
+		if (GetView()->GetFrame()->GetWindowPlacement(&wp))
+			activeShowCmd = wp.showCmd;
+
 		ASSERT(GetFrame() != NULL);
 		if (GetFrame()->GetWindowPlacement(&wp))
 		{
-			pfl->SetData(ii, CHexFileList::CMD, wp.showCmd);
+			pfl->SetData(ii, CHexFileList::CMD, activeShowCmd);
 			pfl->SetData(ii, CHexFileList::TOP, wp.rcNormalPosition.top);
 			pfl->SetData(ii, CHexFileList::LEFT, wp.rcNormalPosition.left);
 			pfl->SetData(ii, CHexFileList::BOTTOM, wp.rcNormalPosition.bottom);
@@ -2084,7 +2095,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 	int line_height, char_width, char_width_w;  // Text sizes
 
 	ASSERT(offset_ >= 0 && offset_ < rowsize_);
-	if (offset_ >= rowsize_) offset_ = 0; // xxx kludge - need to track down why offset is wrong
+	if (offset_ < 0 || offset_ >= rowsize_) offset_ = 0; // xxx kludge - need to track down why offset is wrong
 	ASSERT(rowsize_ > 0 && rowsize_ <= max_buf);
 	ASSERT(group_by_ > 0);
 
@@ -5771,7 +5782,7 @@ BOOL CHexEditView::OnEraseBkgnd(CDC* pDC)
 
 void CHexEditView::OnSize(UINT nType, int cx, int cy)
 {
-	if (cx == 0 && cy == 0 || in_recalc_display)
+	if (cx == 0 && cy == 0 || rowsize_ == 0 || in_recalc_display)
 	{
 		CScrView::OnSize(nType, cx, cy);
 		return;
