@@ -10,7 +10,41 @@
 class CCalcDlg;
 
 /////////////////////////////////////////////////////////////////////////////
-// CCalcEdit window
+// CCalcListBox - the dop down list part of CCalcComboBox
+class CCalcListBox : public CListBox
+{
+// Construction
+public:
+	CCalcListBox() { }
+
+protected:
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnTimer(UINT nIDEvent);
+
+	DECLARE_MESSAGE_MAP()
+
+private:
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CCalcComboBox - edit box (see CCalcEdit below) with drop down (for history)
+class CCalcComboBox : public CComboBox
+{
+public:
+	CCalcComboBox() { }
+
+protected:
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnDestroy();
+
+	DECLARE_MESSAGE_MAP()
+
+private:
+	CCalcListBox listbox_;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CCalcEdit - edit box for the calculator for entering values and displaying results
 
 class CCalcEdit : public CEdit
 {

@@ -70,8 +70,8 @@ class CMainFrame;
 
 class CCalcDlg : public CDialog
 {
-	friend class CCalcEdit;
-	friend class CCalcBits;
+	friend class CCalcEdit;             // Edit box where values/expressions are entered and results displayed
+	friend class CCalcBits;             // Displays 64 boxes (for the current bits) underneath the edit box
 	friend class CHexEditApp;           // Allows macros to call protected members
 
 // Construction
@@ -100,7 +100,7 @@ public:
 	int     bits_index_;
 	int     base_index_;
 
-	CComboBox ctl_edit_combo_;      // Combo box with main edit controls
+	CCalcComboBox ctl_edit_combo_;  // Combo box with main edit controls
 	CCalcEdit edit_;                // Subclassed edit control (child of above combo)
 	CCalcBits ctl_calc_bits_;       // Just for drawing the bits
 

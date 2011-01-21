@@ -584,3 +584,99 @@ BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg)
 
 	return CEdit::PreTranslateMessage(pMsg);
 }
+
+/////////////////////////////////////////////////////////////////////////////
+// CCalcListBox
+#define CCALCLISTBOX_TIMER_ID 1
+
+BEGIN_MESSAGE_MAP(CCalcListBox, CListBox)
+	ON_WM_MOUSEMOVE()
+	ON_WM_TIMER()
+END_MESSAGE_MAP()
+
+void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point) 
+{
+
+	CRect rectClient;
+	GetClientRect(&rectClient);
+
+	if (rectClient.PtInRect(point))
+	{
+		CPoint pointScreen;
+		::GetCursorPos(&pointScreen);
+		BOOL bOutside = FALSE;
+		int nItem = ItemFromPoint(point, bOutside);  // calculate listbox item number (if any)
+
+		if (!bOutside && (nItem >= 0))
+		{
+			CString strText;
+			GetText(nItem, strText);
+
+			CRect rect;
+			GetItemRect(nItem, &rect);
+			ClientToScreen(&rect);
+
+			HDC hDC = ::GetDC(m_hWnd);
+
+			SIZE size;
+			::GetTextExtentPoint32(hDC, strText, strText.GetLength(), &size);
+			::ReleaseDC(m_hWnd, hDC);
+
+		}
+		else
+		{
+		}
+	}
+	else
+	{
+	}
+
+	CListBox::OnMouseMove(nFlags, point);
+}
+
+void CCalcListBox::OnTimer(UINT id) 
+{
+	if (id == CCALCLISTBOX_TIMER_ID)
+	{
+		CPoint point;
+		::GetCursorPos(&point);
+		ScreenToClient(&point);
+
+		CRect rectClient;
+		GetClientRect(&rectClient);
+
+		DWORD dwStyle = GetStyle();
+		if ((!rectClient.PtInRect(point)) || ((dwStyle & WS_VISIBLE) == 0))
+		{
+			KillTimer(CCALCLISTBOX_TIMER_ID);
+		}
+	}
+	else
+		CListBox::OnTimer(id);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CCalcComboBox
+
+BEGIN_MESSAGE_MAP(CCalcComboBox, CComboBox)
+	ON_WM_CTLCOLOR()
+	ON_WM_DESTROY()
+END_MESSAGE_MAP()
+
+HBRUSH CCalcComboBox::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
+{
+	if (nCtlColor == CTLCOLOR_LISTBOX)
+	{
+		if (listbox_.GetSafeHwnd() == NULL)
+			listbox_.SubclassWindow(pWnd->GetSafeHwnd());
+	}
+	return CComboBox::OnCtlColor(pDC, pWnd, nCtlColor);
+}
+
+void CCalcComboBox::OnDestroy() 
+{
+	if (listbox_.GetSafeHwnd() != NULL)
+		listbox_.UnsubclassWindow();
+
+	CComboBox::OnDestroy();
+}
