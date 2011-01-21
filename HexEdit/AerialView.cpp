@@ -312,7 +312,6 @@ void CAerialView::OnDraw(CDC* pDC)
 			brush.UnrealizeObject();
 			bufDC.GetDC().FillRect(&rct, &brush);
 		}
-#endif
 	}
 
 	// TODO When printing (pDC->IsPrinting()) use bigger value for actual_dpix_ scaled for printer DPI
@@ -444,46 +443,45 @@ void CAerialView::OnDraw(CDC* pDC)
 	rct.bottom = rct.top + rows_ * actual_dpix_;
 	bufDC.GetDC().IntersectClipRect(&rct);
 
-	// Draw marching ants
-	{
-		t0_.restart();
-		draw_bitmap(&(bufDC.GetDC()));
-		t0_.stop();
+   // Draw the actual pixels (possibly zoomed)
+	t0_.restart();
+	draw_bitmap(&(bufDC.GetDC()));
+	t0_.stop();
 
-		if (disp_.draw_ants_sel)
+	// Draw marching ants
+	if (disp_.draw_ants_sel)
+	{
+		// Draw marching ants for selection
+		FILE_ADDRESS start_addr, end_addr;
+		phev_->GetSelAddr(start_addr, end_addr);
+		if (end_addr == start_addr) ++end_addr;    // Make sure we draw something at the caret position
+		draw_ants(&(bufDC.GetDC()), start_addr, end_addr, RGB(0,0,0));  // black ants
+	}
+	if (disp_.draw_ants_mark)
+	{
+		// Draw ants around mark (this just regularly changes the pixel when actual_dpix_ == 1)
+		draw_ants(&(bufDC.GetDC()), phev_->GetMark(), phev_->GetMark() + 1, phev_->GetMarkCol());
+	}
+	if (disp_.draw_ants_hl)
+	{
+		// Draw ants for highlights
+		range_set<FILE_ADDRESS>::range_t::const_iterator pr;
+		for (pr = phev_->hl_set_.range_.begin(); pr != phev_->hl_set_.range_.end(); ++pr)
+			draw_ants(&(bufDC.GetDC()), pr->sfirst, pr->slast, phev_->GetHighlightCol());  // highlight colour ants (yellow?)
+	}
+	if (disp_.draw_ants_search && theApp.pboyer_ != NULL)
+	{
+		std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator psp; // iter into search_pair_
+		for (psp = search_pair_.begin(); psp != search_pair_.end(); ++psp)
+			draw_ants(&(bufDC.GetDC()), psp->first, psp->second, phev_->GetSearchCol());
+	}
+	if (disp_.draw_ants_bm)
+	{
+		for (std::vector<FILE_ADDRESS>::const_iterator pbm = GetDocument()->bm_posn_.begin();
+				pbm != GetDocument()->bm_posn_.end(); ++pbm)
 		{
-			// Draw marching ants for selection
-			FILE_ADDRESS start_addr, end_addr;
-			phev_->GetSelAddr(start_addr, end_addr);
-			if (end_addr == start_addr) ++end_addr;    // Make sure we draw something at the caret position
-			draw_ants(&(bufDC.GetDC()), start_addr, end_addr, RGB(0,0,0));  // black ants
-		}
-		if (disp_.draw_ants_mark)
-		{
-			// Draw ants around mark (this just regularly changes the pixel when actual_dpix_ == 1)
-			draw_ants(&(bufDC.GetDC()), phev_->GetMark(), phev_->GetMark() + 1, phev_->GetMarkCol());
-		}
-		if (disp_.draw_ants_hl)
-		{
-			// Draw ants for highlights
-			range_set<FILE_ADDRESS>::range_t::const_iterator pr;
-			for (pr = phev_->hl_set_.range_.begin(); pr != phev_->hl_set_.range_.end(); ++pr)
-				draw_ants(&(bufDC.GetDC()), pr->sfirst, pr->slast, phev_->GetHighlightCol());  // highlight colour ants (yellow?)
-		}
-		if (disp_.draw_ants_search && theApp.pboyer_ != NULL)
-		{
-			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator psp; // iter into search_pair_
-			for (psp = search_pair_.begin(); psp != search_pair_.end(); ++psp)
-				draw_ants(&(bufDC.GetDC()), psp->first, psp->second, phev_->GetSearchCol());
-		}
-		if (disp_.draw_ants_bm)
-		{
-			for (std::vector<FILE_ADDRESS>::const_iterator pbm = GetDocument()->bm_posn_.begin();
-				 pbm != GetDocument()->bm_posn_.end(); ++pbm)
-			{
-				if (*pbm >= scrollpos_ && *pbm <= scrollpos_ + width*rows_)
-					draw_ants(&(bufDC.GetDC()), *pbm, *pbm + 1, phev_->GetBookmarkCol());
-			}
+			if (*pbm >= scrollpos_ && *pbm <= scrollpos_ + width*rows_)
+				draw_ants(&(bufDC.GetDC()), *pbm, *pbm + 1, phev_->GetBookmarkCol());
 		}
 	}
 }
