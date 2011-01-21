@@ -437,7 +437,7 @@ int BigInteger::Compare(const BigInteger & Lhs, const BigInteger & Rhs)
 
 	// If SigBit = -1, i = 0
 	int i = (Lhs.SigBit < 0) ? (- Lhs.SigBit - 2) : (Lhs.SigBit - 1);
-	i /= (sizeof(Unit) * 8);
+	i /= (int)(sizeof(Unit) * 8);
 
 	for (; i >= 0; --i)
 	{
