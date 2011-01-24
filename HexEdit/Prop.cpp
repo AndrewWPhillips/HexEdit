@@ -2626,7 +2626,7 @@ void CPropRealPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 	if (format_ == FMT_DECIMAL)
 	{
 		// Work out info. about the C# Decimal type (which a poor relative of other floating point types)
-		val_ = DecimalToString(buf, mant_, exp_);
+		val_ = Decimal2String(buf, mant_, exp_);
 	}
 	else
 	{
@@ -2866,7 +2866,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 						pp = buf;
 					break;
 				case FMT_DECIMAL:
-					if (!StringToDecimal(val_, buf))
+					if (!String2Decimal(val_, buf))
 					{
 						AfxMessageBox("Invalid Decimal value");
 						Update(pview);

@@ -58,8 +58,12 @@ CString get_menu_text(CMenu *pmenu,int id);
 void LoadHist(std::vector<CString> & hh, LPCSTR name, size_t smax);
 void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax);
 
-CString DecimalToString(const void * pdecimal, CString & sMantissa, CString & sExponent);
-bool StringToDecimal(const char * ss, void * presult);
+CString Decimal2String(const void * pdecimal, CString & sMantissa, CString & sExponent);
+bool String2Decimal(const char * ss, void * presult);
+
+#ifdef _DEBUG
+void TestDecimalRoutines();
+#endif
 
 bool make_real48(unsigned char pp[6], double val, bool big_endian = false);
 double real48(const unsigned char *pp, int *pexp = NULL, long double *pmant = NULL, bool big_endian = false);

@@ -155,7 +155,11 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include "misc.h"
 #include "Security.h"
 #include "ntapi.h"
+
+#include <mpir.h>
+#ifdef _DEBUG // keep the old code so we can check against the new
 #include "BigInteger.h"        // Used in C# Decimal conversions
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -279,121 +283,8 @@ bool CopyAndConvertImage(const char *src, const char *dest)
 // 1                              -27  -> 0.000000000000000000000000001
 
 #ifdef _DEBUG
-void TestToFromDecimal(const char * in, const char * out, const char * mant, const char * exp)
-{
-	unsigned char dec[16];  // the Decimal value (128 bits)
-
-	ASSERT(StringToDecimal(in, dec));
-
-	CString ss, mm, ee;
-	ss = DecimalToString(dec, mm, ee);
-	ASSERT(strcmp(out, ss) == 0 && strcmp(mant, mm) == 0 && strcmp(exp, ee) == 0);
-}
-void TestDecimalRoutines()
-{
-	TestToFromDecimal("0",    "0",   "0", "0");
-	TestToFromDecimal("0.0",  "0",   "0", "0");
-	TestToFromDecimal("-0",   "0",   "0", "0");
-	TestToFromDecimal("1",    "1",   "1", "0");
-	TestToFromDecimal("1.0","1.0",  "10","-1");
-	TestToFromDecimal("-1.", "-1",  "-1", "0");
-	TestToFromDecimal("-1.0", "-1.0",  "-10", "-1");
-	TestToFromDecimal("1.2345678901234567890123456789", "1.2345678901234567890123456789", "12345678901234567890123456789", "-28");
-
-	TestToFromDecimal("79228162514264337593543950335", "79228162514264337593543950335", "79228162514264337593543950335", "0");
-	TestToFromDecimal("-79228162514264337593543950335", "-79228162514264337593543950335", "-79228162514264337593543950335", "0");
-	TestToFromDecimal("7.9228162514264337593543950335", "7.9228162514264337593543950335", "79228162514264337593543950335", "-28");
-	//TestToFromDecimal("", "", "", "");
-
-	unsigned char dec[16];  // Decimal value (128 bits)
-	ASSERT(StringToDecimal("79228162514264337593543950336", dec) == false);
-}
-#endif
-
-bool String2Decimal(const char *ss, void *presult)
-{
-	// View the decimal (result) as four 32 bit integers
-	unsigned __int32 *dd = (unsigned __int32 *)presult;
-
-	mpz_t mant, ten;
-	mpz_init_set_si(mant, 0);   // Mantissa starts at zero
-	mpz_init_set_si(ten, 10);   // Constant for multiplying by 10
-	int exp = 0;                // Exponent
-	bool dpseen = false;        // decimal point seen yet?
-	bool neg = false;           // minus sign seen?
-
-	// Scan the characters of the value
-	const char *pp;
-	for (pp = ss; *pp != '\0'; ++pp)
-	{
-		if (*pp == '-')
-		{
-			if (pp != ss)
-				return false;      // minus sign not at start
-			neg = true;
-		}
-		else if (isdigit(*pp))
-		{
-			mpz_t dig;
-			mpz_init_set_si(dig, *pp - '0');
-			mpz_mul(mant, ten, mant);
-			mpz_add(mant, dig, mant);
-			if (dpseen) ++exp;  // Keep track of digits after decimal pt
-		}
-		else if (*pp == '.')
-		{
-			if (dpseen)
-				return false;    // more than one decimal point
-			dpseen = true;
-		}
-		else if (*pp == 'e' || *pp == 'E')
-		{
-			char *end;
-			exp -= strtol(pp+1, &end, 10);
-			pp = end;
-			break;
-		}
-		else
-			return false;       // unexpected character
-	}
-	if (*pp != '\0')
-		return false;           // extra characters after end
-
-	if (exp < -28 || exp > 28)
-		return false;          // exponent outside valid range
-
-	// Adjust mantissa for -ve exponent
-	if (exp < 0)
-	{
-		mpz_t tmp;
-		mpz_init(tmp);
-		mpz_pow_ui(tmp, ten, -exp);
-		mpz_mul(mant, tmp, mant);
-		exp = 0;
-	}
-
-	// Check for mantissa too big.
-	mpz_t max_mant;
-	mpz_init_set_str(max_mant, "79228162514264337593543950335", 10);
-	if (mpz_cmp(mant, max_mant) > 0)
-		return false;
-	else if (mpz_cmp_ui(mant, 0) == 0)
-		exp = 0;
-
-	// Set integer part
-	dd[2] = mpz_getlimbn(mant, 2);
-	dd[1] = mpz_getlimbn(mant, 1);
-	dd[0] = mpz_getlimbn(mant, 0);
-
-	// Set exponent and sign
-	dd[3] = exp << 16;
-	if (neg && mpz_cmp_ui(mant, 0) != 0)
-		dd[3] |= 0x80000000;
-
-	return true;
-}
-
-bool StringToDecimal(const char *ss, void *presult)
+// Old conversion routine just used to double check nothing is broken - remove later
+static bool StringToDecimal(const char *ss, void *presult)
 {
 	// View the decimal (result) as four 32 bit integers
 	BigInteger::Unit *dd = (BigInteger::Unit *)presult;
@@ -474,7 +365,7 @@ bool StringToDecimal(const char *ss, void *presult)
 	return true;
 }
 
-CString DecimalToString(const void *pdecimal, CString &sMantissa, CString &sExponent)
+static CString DecimalToString(const void *pdecimal, CString &sMantissa, CString &sExponent)
 {
 	// View the decimal as four 32 bit integers
 	const BigInteger::Unit *dd = (const BigInteger::Unit *)pdecimal;
@@ -518,6 +409,190 @@ CString DecimalToString(const void *pdecimal, CString &sMantissa, CString &sExpo
 	else
 		return ss.Left(len - exp) + (exp > 0 ? "." + ss.Right(exp) : "");
 }
+
+// Check converting to then from decimal gives expected results
+static void TestToFromDecimal(const char * in, const char * out, const char * mant, const char * exp)
+{
+	unsigned char dec[16];  // the Decimal value (128 bits)
+	unsigned char dec2[16];
+
+	ASSERT(String2Decimal(in, dec));
+	ASSERT(StringToDecimal(in, dec2));
+	ASSERT(memcmp(dec, dec2, sizeof(dec)) == 0); // Ensure new func gives same result
+
+	CString ss, mm, ee;
+	ss = Decimal2String(dec, mm, ee);
+	ASSERT(strcmp(out, ss) == 0 && strcmp(mant, mm) == 0 && strcmp(exp, ee) == 0);
+}
+
+// Test Decimal conversion routines
+void TestDecimalRoutines()
+{
+	TestToFromDecimal("0",    "0",   "0", "0");
+	TestToFromDecimal("0.0",  "0",   "0", "0");
+	TestToFromDecimal("-0",   "0",   "0", "0");
+	TestToFromDecimal("1",    "1",   "1", "0");
+	TestToFromDecimal("1.0","1.0",  "10","-1");
+	TestToFromDecimal("-1.", "-1",  "-1", "0");
+	TestToFromDecimal("-1.0", "-1.0",  "-10", "-1");
+	TestToFromDecimal("1.2345678901234567890123456789", "1.2345678901234567890123456789", "12345678901234567890123456789", "-28");
+
+	TestToFromDecimal("79228162514264337593543950335", "79228162514264337593543950335", "79228162514264337593543950335", "0");
+	TestToFromDecimal("-79228162514264337593543950335", "-79228162514264337593543950335", "-79228162514264337593543950335", "0");
+	TestToFromDecimal("7.9228162514264337593543950335", "7.9228162514264337593543950335", "79228162514264337593543950335", "-28");
+	TestToFromDecimal("-7.9228162514264337593543950335", "-7.9228162514264337593543950335", "-79228162514264337593543950335", "-28");
+	TestToFromDecimal("0.0000000000000000000000000001", "0.0000000000000000000000000001", "1", "-28");
+	TestToFromDecimal("-0.0000000000000000000000000001", "-0.0000000000000000000000000001", "-1", "-28");
+
+	unsigned char dec[16];  // Decimal value (128 bits)
+	ASSERT(String2Decimal("79228162514264337593543950336", dec) == false);
+	ASSERT(String2Decimal("100000000000000000000000000000", dec) == false);
+	ASSERT(String2Decimal("0.00000000000000000000000000009", dec) == false);
+	ASSERT(String2Decimal("0.0.1", dec) == false);
+	ASSERT(String2Decimal("1-", dec) == false);
+	ASSERT(String2Decimal("--1", dec) == false);
+	ASSERT(String2Decimal("1A", dec) == false);
+	ASSERT(String2Decimal("A", dec) == false);
+}
+
+#endif
+
+bool String2Decimal(const char *ss, void *presult)
+{
+	bool retval = false;
+
+	// View the decimal (result) as four 32 bit integers
+	unsigned __int32 *dd = (unsigned __int32 *)presult;
+
+	mpz_t mant, max_mant;
+	mpz_inits(mant, max_mant, NULL);
+	int exp = 0;                // Exponent
+	bool dpseen = false;        // decimal point seen yet?
+	bool neg = false;           // minus sign seen?
+
+	// Scan the characters of the value
+	const char *pp;
+	for (pp = ss; *pp != '\0'; ++pp)
+	{
+		if (*pp == '-')
+		{
+			if (pp != ss)
+				goto exit_func;      // minus sign not at start
+			neg = true;
+		}
+		else if (isdigit(*pp))
+		{
+			mpz_mul_si(mant, mant, 10);
+			mpz_add_ui(mant, mant, unsigned(*pp - '0'));
+			if (dpseen) ++exp;  // Keep track of digits after decimal pt
+		}
+		else if (*pp == '.')
+		{
+			if (dpseen)
+				goto exit_func;    // more than one decimal point
+			dpseen = true;
+		}
+		else if (*pp == 'e' || *pp == 'E')
+		{
+			char *end;
+			exp -= strtol(pp+1, &end, 10);
+			pp = end;
+			break;
+		}
+		else
+			goto exit_func;       // unexpected character
+	}
+	if (*pp != '\0')
+		goto exit_func;           // extra characters after end
+
+	if (exp < -28 || exp > 28)
+		goto exit_func;          // exponent outside valid range
+
+	// Adjust mantissa for -ve exponent
+	if (exp < 0)
+	{
+		mpz_t tmp;
+		mpz_init_set_si(tmp, 10);
+		mpz_pow_ui(tmp, tmp, -exp);
+		mpz_mul(mant, mant, tmp);
+		mpz_clear(tmp);
+		exp = 0;
+	}
+
+	// Get max_mant = size of largest mantissa (2^96 - 1)
+	//mpz_set_str(max_mant, "79228162514264337593543950335", 10); // 2^96 - 1
+	static unsigned __int32 ffs[3] = { 0xFFFFffffUL, 0xFFFFffffUL, 0xFFFFffffUL };
+	mpz_import(max_mant, 3, -1, sizeof(ffs[0]), 0, 0, ffs);
+
+	// Check for mantissa too big.
+	if (mpz_cmp(mant, max_mant) > 0)
+		goto exit_func;      // value too big
+	else if (mpz_sgn(mant) == 0)
+		exp = 0;  // if mantissa is zero make everything zero
+
+	// Set integer part
+	dd[2] = mpz_getlimbn(mant, 2);
+	dd[1] = mpz_getlimbn(mant, 1);
+	dd[0] = mpz_getlimbn(mant, 0);
+
+	// Set exponent and sign
+	dd[3] = exp << 16;
+	if (neg && mpz_sgn(mant) > 0)
+		dd[3] |= 0x80000000;
+
+	retval = true;   // indicate success
+
+exit_func:
+	mpz_clears(mant, max_mant, NULL);
+	return retval;
+}
+
+CString Decimal2String(const void *pdecimal, CString &sMantissa, CString &sExponent)
+{
+	// View the decimal as four 32 bit integers
+	unsigned __int32 *dd = (unsigned __int32 *)pdecimal;
+
+	// Get the 96 bit integer part (called mantissa here)
+	mpz_t big;
+	mpz_init2(big, 3*32);
+	mpz_import(big, 3, -1, sizeof(*dd), 0, 0, dd);
+
+	// Convert the mantissa to a string
+	char buf[64];
+	mpz_get_str(buf, 10, big);
+	mpz_clear(big);
+	sMantissa = buf;
+
+	// Get the exponent
+	int exp = (dd[3] >> 16) & 0xFF;
+	sExponent.Format("%d", - exp);
+
+	// Check that unused bits are zero and that exponent is within range
+	if ((dd[3] & 0x0000FFFF) != 0 || exp > 28)
+		return CString("Invalid Decimal");
+
+	// Create a string in which we insert a decimal point
+	CString ss = sMantissa;
+	int len = ss.GetLength();
+
+	if (exp >= len)
+	{
+		// Add leading zeroes
+		ss = CString('0', exp - len + 1) + ss;
+		len = exp + 1;
+	}
+
+	// if any bit of the very last byte is on then assume the value is -ve
+	if ((dd[3] & 0xFF000000) != 0)
+	{
+		// Add -ve sign to mantissa and return value with sign and decimal point
+		sMantissa.Insert(0, '-');
+		return "-" + ss.Left(len - exp) + (exp > 0 ? "." + ss.Right(exp) : "");
+	}
+	else
+		return ss.Left(len - exp) + (exp > 0 ? "." + ss.Right(exp) : "");
+}
+
 #endif  // #ifndef REGISTER_APP
 
 // -------------------------------------------------------------------------
