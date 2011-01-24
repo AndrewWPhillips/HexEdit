@@ -95,7 +95,7 @@ static const char *ack_name[] =
 	"CEnBitmap class (MFC) - Daniel Godson",
 #endif
 	"Transparent controls (MFC) - Ali Rafiee",
-	"BigInteger used for C# Decimal - Cap'n Code",
+	"BigInteger used for large precision ints - Cap'n Code",
 	"range_set class - Andrew W. Phillips",
 	"Folder Selection Dialog - Andrew Phillips",
 	"SVN source control - Jim Blandy et al",

@@ -20,6 +20,8 @@ There are many video tutorials (5 to 10 minutes each) that teach you how to use 
 
 You can easily convert a hex text file (a text file containing hex digits as characters) into binary.  See the File/Import/Hex Text menu item.  Spaces, commas etc are ignored.
 
+If you are investigating a file about which you know nothing switch to the Rainbow color scheme before or after opening the Aerial View.  This spreads the different byte values into ranges that allow patterns to be more easily seen.
+
 You can quickly zoom in and out in the hex view (and aerial view) by holding down the Ctrl key and rotating the mouse wheel.  If you find the direction of zoom counter-intuitive you can reverse it in the Workspace/Display page of the Options dialog.
 
 Be careful when undoing changes not to undo too much as HexEdit has no redo capability.
@@ -257,6 +259,8 @@ The Windows print dialog cannot handle a file that has more than 32767 pages.  T
 Use Ctrl+Shift+End to select everything from the cursor to the end of file.  Use Ctrl+Shift+Home to select to start of file.  Ctrl+A (in the default keymap) selects the whole file.
 
 Searching is performed using the fast Boyer-Moore algorithm.  Due to the nature of the algorithm the longer the string of (unique) search bytes you enter the faster the search will be.
+
+When making a large selection you can use the (zoomed out) Aerial View to make sure you are getting the part of the file you think you are.  If the marching ants in the Aerial View are hard to see rey switching to the "Black and White" color scheme.
 
 You can call a macro file from another macro.  While recording just use the Macro Play dialog and select the macro from the drop-down list.  Macros designed solely to be nested within another macro should have a name starting with an underscore to avoid being seen in the list (except during recording).
 

@@ -305,6 +305,9 @@ UINT CHexEditApp::wm_hexedit = ::RegisterWindowMessage("HexEditOpenMessage");
 
 BOOL CHexEditApp::InitInstance()
 {
+#ifdef _DEBUG
+	TestDecimalRoutines();
+#endif
 		// Note: if this is changed you also need to change the registry string
 		// at the end of ExitInstance (see delete_reg_settings_).
 		SetRegistryKey("ECSoftware");           // Required before registry use (and prevents use of .INI file)
