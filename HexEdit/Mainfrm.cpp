@@ -4140,10 +4140,12 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
 		case 1:
 			// Use base 10 addresses
 			m_wndCalc.change_base(10);
+			m_wndCalc.change_signed(true);  // xxx make false (addresses are never -ve) when we have signed check-box
 			break;
 		case 2:
 			// Use base 16 addresses
 			m_wndCalc.change_base(16);
+			m_wndCalc.change_signed(false);
 			break;
 		default:
 			ASSERT(0);
@@ -4151,9 +4153,14 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
 		case 0:
 			// Change base depending on how view is displaying addresses
 			if (pview->DecAddresses())
+			{
 				m_wndCalc.change_base(10);
+				m_wndCalc.change_signed(true);  // xxx make false (addresses are never -ve) when we have signed check-box
 			else
+			{
 				m_wndCalc.change_base(16);
+				m_wndCalc.change_signed(false);
+			}
 			break;
 		}
 		m_wndCalc.SetWindowText("Go To");
@@ -4228,11 +4235,6 @@ void CMainFrame::OnCalcSel()
 		{
 			m_wndCalc.change_bits(8);
 		}
-
-//        if (pview->DecAddresses())
-//            m_wndCalc.change_base(10);
-//        else
-//            m_wndCalc.change_base(16);
 
 		m_wndCalc.SetWindowText("Calculator");
 		//ShowControlBar(&m_wndCalc, TRUE, FALSE); // xxx fix for MFC9

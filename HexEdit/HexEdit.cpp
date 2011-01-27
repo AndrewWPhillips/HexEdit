@@ -72,6 +72,8 @@
 #include "Splasher.h"       // For splash window
 #include "UpdateChecker.h"  // For checking for updates
 
+#include "BigInteger.h"  // xxx
+
 // The following is not in a public header
 extern BOOL AFXAPI AfxFullPath(LPTSTR lpszPathOut, LPCTSTR lpszFileIn);
 
@@ -305,9 +307,6 @@ UINT CHexEditApp::wm_hexedit = ::RegisterWindowMessage("HexEditOpenMessage");
 
 BOOL CHexEditApp::InitInstance()
 {
-#ifdef _DEBUG
-	TestDecimalRoutines();
-#endif
 		// Note: if this is changed you also need to change the registry string
 		// at the end of ExitInstance (see delete_reg_settings_).
 		SetRegistryKey("ECSoftware");           // Required before registry use (and prevents use of .INI file)
@@ -821,6 +820,8 @@ void CHexEditApp::InitWorkspace()
 	CSystemSound::Add(_T("Macro Finished"),
 					  CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
 	CSystemSound::Add(_T("Macro Error"),
+					  CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
+	CSystemSound::Add(_T("Calculator Overflow"),
 					  CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
 	CSystemSound::Add(_T("Calculator Error"),
 					  CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));

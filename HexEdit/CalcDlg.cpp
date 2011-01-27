@@ -1,6 +1,6 @@
 // CalcDlg.cpp : implements the Goto/Calculator dialog
 //
-// Copyright (c) 2000-2010 by Andrew W. Phillips.
+// Copyright (c) 2000-2011 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -96,8 +96,13 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	rct.top = 1;
 	rct.bottom = rct.top + m_hh;
 
+#ifdef CALC_BIG
+	unsigned __int64 val;
+	mpz_export(&val, NULL, -1, 4, -1, 0, m_pParent->current_.get_mpz_t()); // xxx no good
+	ASSERT(val == m_pParent->current_64_);
+#else
 	unsigned __int64 val = m_pParent->current_;
-
+#endif
 	for (int bnum = 63; bnum >= 0; bnum--)
 	{
 		// When we hit the first enabled bit switch to the darker pen
@@ -140,8 +145,15 @@ void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 	if ((bnum = pos2bit(point)) > -1 && bnum < m_pParent->bits_)
 	{
 		ASSERT(bnum < 64 && bnum >= 0);
+#ifdef CALC_BIG
+		mpz_class tmp = m_pParent->current_;
+		mpz_combit(tmp.get_mpz_t(), bnum);
+		m_pParent->Set(tmp);
+		m_pParent->current_64_ ^= ((__int64)1<<bnum);
+#else
 		unsigned __int64 val = m_pParent->current_ ^ ((__int64)1<<bnum);
 		m_pParent->Set(val);
+#endif
 		m_pParent->FixFileButtons();
 	}
 	CWnd::OnLButtonDown(nFlags, point);
@@ -222,10 +234,17 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 	bits_index_ = base_index_ = -1;  // Fixed later in Create()
 
 	// Get last used settings from ini file/registry
-	radix_ = aa_->GetProfileInt("Calculator", "Base", 16);
-	bits_ = aa_->GetProfileInt("Calculator", "Bits", 32);
+	radix_  = aa_->GetProfileInt("Calculator", "Base", 16);
+	bits_   = aa_->GetProfileInt("Calculator", "Bits", 32);
+#ifdef CALC_BIG
+	signed_ = aa_->GetProfileInt("Calculator", "signed", 0) ? true : false;
+	current_.set_str(aa_->GetProfileString("Calculator", "Current"), 10);
+	memory_.set_str(aa_->GetProfileString("Calculator", "Memory"), 10);
+	fix_values();
+#else
 	current_ = _atoi64(aa_->GetProfileString("Calculator", "Current"));
 	memory_ = _atoi64(aa_->GetProfileString("Calculator", "Memory"));
+#endif
 
 	edit_.pp_ = this;                   // Set parent of edit control
 	m_first = true;
@@ -880,6 +899,7 @@ static DWORD id_pairs[] = {
 	0,0
 };
 
+// Fix up case if displaying in hex
 void CCalcDlg::Redisplay()
 {
 	if (radix_  == 16 && current_type_ == CJumpExpr::TYPE_INT)
@@ -908,8 +928,44 @@ void CCalcDlg::StartEdit()
 void CCalcDlg::FinishMacro()
 {
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
+}
+
+#ifdef CALC_BIG
+unsigned __int64 CCalcDlg::GetValue() const
+{
+	mpz_class tmp = current_;
+	if (bits_ < 64)
+		tmp &= mask_;
+
+	unsigned __int64 val;
+	mpz_export(&val, NULL, -1, 4, -1, 0, tmp.get_mpz_t()); // xxx this is no good
+	return val;
+}
+#endif
+
+void CCalcDlg::fix_values()
+{
+	// Adjust mask etc depending on bits_ and signed_ (assumes 2's-complement numbers)
+#ifdef CALC_BIG
+	mpz_class one(1);
+	mask_ = (one << bits_) - 1;
+	if (signed_)
+	{
+		min_val_ = - (one << (bits_ - 1));
+		max_val_ = (one << (bits_ - 1)) - 1;
+	}
+	else
+	{
+		min_val_ = 0;
+		max_val_ = mask_;
+	}
+#else
+	__int64 one = 1;
+	mask_ = (one << bits_) - 1;
+	sign_mask_ = one << (bits - 1);
+#endif
 }
 
 // Check if the current expression in the edit box is a valid expression returning an integer
@@ -957,7 +1013,11 @@ void CCalcDlg::do_binop(binop_type binop)
 
 	if (in_edit_ || op_ == binop_none || aa_->playing_)
 	{
+#ifdef CALC_BIG
+		unsigned __int64 temp = GetValue();
+#else
 		unsigned __int64 temp = current_;
+#endif
 		calc_previous();
 		if (!aa_->refresh_off_ && IsVisible()) edit_.Put();
 
@@ -995,7 +1055,7 @@ void CCalcDlg::ShowStatus()
 			TRACE0("OVERFLOW!!");
 			GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("O");
 #ifdef SYS_SOUNDS
-			if (!CSystemSound::Play("Calculator Error"))
+			if (!CSystemSound::Play("Calculator Overflow"))
 #endif
 				::Beep(3000,400);
 
@@ -1084,6 +1144,184 @@ void CCalcDlg::ShowBinop(int ii /*=-1*/)
 	GetDlgItem(IDC_OP_DISPLAY)->SetWindowText(op_disp);
 }
 
+#ifdef CALC_BIG
+void CCalcDlg::do_unary(unary_type unary)
+{
+	if (invalid_expression())
+		return;
+
+	CHexEditView *pview;                // Active view (or NULL if no views)
+
+	// Save the value to macro before we do anything with it (unless it's a result of a previous op).
+	// Also don't save the value if this (unary op) is the very first thing in the macro.
+	if (source_ != km_result)
+		aa_->SaveToMacro(source_, GetValue());
+
+	overflow_ = error_ = FALSE;
+
+	if (unary >= unary_mask)
+	{
+		// Mask off any high bits that might interfere with the calculations
+		current_ &= mask_;
+	}
+	switch (unary)
+	{
+	case unary_inc:
+		++current_;
+		break;
+	case unary_dec:
+		current_ --;
+		break;
+	case unary_sign:
+		current_ = -current_;
+		break;
+	case unary_square:
+		current_ = current_ * current_;
+		break;
+	case unary_squareroot:
+		// xxx do we need this test
+		//if (current_ < 0)
+		//{
+		//	mm_->StatusBarText("Square root of -ve value is illegal");
+		//	error_ = TRUE;
+		//}
+		mpz_sqrt(current_.get_mpz_t(), current_.get_mpz_t());
+		break;
+	case unary_cube:
+		// xxx use mpz_powm?
+		current_ = current_ * current_ * current_;
+		break;
+	case unary_factorial:
+		mpz_fac_ui(current_.get_mpz_t(), current_.get_ui());
+		break;
+	case unary_not:
+		current_ = ~current_;
+		break;
+	case unary_rol:
+		current_ = ((current_ << 1) & mask_) | (current_ >> (bits_ - 1));
+		break;
+	case unary_ror:
+		current_ = (current_ >> 1) | ((current_ << (bits_ - 1)) & mask_);
+		break;
+	case unary_lsl:
+		current_ = (current_ & mask_) << 1;
+		break;
+	case unary_lsr:
+		current_ = (current_ & mask_) >> 1;
+		break;
+	case unary_asr:
+		{
+			int neg = mpz_tstbit(current_.get_mpz_t(), bits_);
+			current_ = (current_ & mask_) >> 1;
+			if (neg)
+				mpz_setbit(current_.get_mpz_t(), bits_);
+		}
+		break;
+	case unary_rev:  // Reverse all bits
+		// This algorithm tests the current bits by shifting right and testing
+		// bottom bit.  Any bits on sets the correspoding bit of the result as
+		// it is shifted left.
+		// This could be sped up using a table lookup but is probably OK for now.
+		{
+			mpz_class temp = 0;
+			for (int ii = 0; ii < bits_; ++ii)
+			{
+				temp <<= 1;                  // Make room for the next bit
+				if ((current_ & 1) != 0)
+					temp = temp | 1;
+				current_ >>= 1;              // Move bits down to test the next
+			}
+			current_ = temp;
+		}
+		break;
+	case unary_flip: // Flip byte order
+		// This assumes (of course) that byte order is little-endian in memory
+		{
+			ASSERT((bits_ % 8) == 0);  // we can only flip whole bytes
+			int bytes = bits / 8;
+			int units = (bytes + 3)/4; // number of DWORDs
+			unsigned char * buf = new unsigned char[units*4];
+			mpz_export(buf, NULL, -1, 4, -1, 0, current_.get_mpz_t());
+			flip_bytes(buf, bytes);
+			mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
+
+			delete[] buf;
+		}
+		break;
+	case unary_at:
+		pview = GetView();
+		// Make sure view and calculator endianness are in sync
+		ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
+		if (pview == NULL || (current_&mask_) + bits_/8 > (unsigned __int64)pview->GetDocument()->length())
+		{
+			if (pview == NULL)
+				mm_->StatusBarText("No window open");
+			else
+				mm_->StatusBarText("@ n: Not enough bytes to end of file to read");
+			aa_->mac_error_ = 10;
+			return;
+		}
+
+		temp = 0;
+		pview->GetDocument()->GetData((unsigned char *)&temp, bits_/8, current_);
+		if (pview->BigEndian())
+		{
+			// Reverse the byte order to match that used internally (Intel=little-endian)
+			byte = (unsigned char *)&temp;
+			switch (bits_)
+			{
+			case 8:
+				/* nothing */
+				break;
+			case 16:
+				cc = byte[0]; byte[0] = byte[1]; byte[1] = cc;
+				break;
+			case 32:
+				cc = byte[0]; byte[0] = byte[3]; byte[3] = cc;
+				cc = byte[1]; byte[1] = byte[2]; byte[2] = cc;
+				break;
+			case 64:
+				cc = byte[0]; byte[0] = byte[7]; byte[7] = cc;
+				cc = byte[1]; byte[1] = byte[6]; byte[6] = cc;
+				cc = byte[2]; byte[2] = byte[5]; byte[5] = cc;
+				cc = byte[3]; byte[3] = byte[4]; byte[4] = cc;
+				break;
+			default:
+				ASSERT(0);
+			}
+		}
+		current_ = temp;
+		break;
+
+	case unary_none:
+	default:
+		ASSERT(0);
+	}
+
+	ShowStatus();                       // Indicate overflow etc
+
+	if (overflow_ || error_)
+	{
+		if (overflow_)
+			mm_->StatusBarText("Result overflowed data size");
+		else
+			mm_->StatusBarText("Arithmetic error (root of -ve, etc)");
+		aa_->mac_error_ = 2;
+	}
+
+	if (!aa_->refresh_off_ && IsVisible())
+	{
+		edit_.Put();
+		FixFileButtons();
+	}
+
+	// Save the unary operation to the current macro (if any)
+	aa_->SaveToMacro(km_unaryop, long(unary));
+
+	// The user can't edit the result of a unary operation by pressing digits
+	source_ = km_result;
+}
+#else
 // Values for detecting overflows in some unary operators
 static unsigned __int64 fact_max[4] = { 5, 8, 12, 20};
 static unsigned __int64 square_max[4] = { 0xF, 0xFF, 0xFFFF, 0xffffFFFF };
@@ -1110,7 +1348,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	// Save the value to macro before we do anything with it (unless it's a result of a previous op).
 	// Also don't save the value if this (unary op) is the very first thing in the macro.
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_);
+		aa_->SaveToMacro(source_, current_.get_ui());  // xxx get i64 at least
 
 	overflow_ = error_ = FALSE;
 
@@ -1349,6 +1587,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	// The user can't edit the result of a unary operation by pressing digits
 	source_ = km_result;
 }
+#endif
 
 void CCalcDlg::do_digit(char digit)
 {
@@ -1622,6 +1861,8 @@ void CCalcDlg::toggle_endian()
 
 void CCalcDlg::change_base(int base)
 {
+	if (base == radix_) return;         // no change
+
 	radix_ = base;                      // Store new radix (affects edit control display)
 
 	// Set up index for next radio button update
@@ -1640,7 +1881,8 @@ void CCalcDlg::change_base(int base)
 		base_index_ = 0;
 		break;
 	default:
-		ASSERT(0);
+		base_index_ = -1;
+		break;
 	}
 
 	// check that it's an integer expression
@@ -1660,13 +1902,40 @@ void CCalcDlg::change_base(int base)
 	aa_->SaveToMacro(km_change_base, long(radix_));
 }
 
+void CCalcDlg::change_signed(bool s)
+{
+	if (s == signed_) return; // no change
+
+	signed_ = s;
+	fix_values();
+
+	// check that it's an integer expression
+	if (invalid_expression())
+	{
+		edit_.update_value(false);
+		return;
+	}
+
+	overflow_ = error_ = FALSE;
+	// xxx check for overflow
+	ShowStatus();                       // Set/clear overflow indicator
+
+	if (!aa_->refresh_off_ && IsVisible())
+	{
+		update_controls();
+		edit_.Put();
+	}
+
+	source_ = km_result;
+	aa_->SaveToMacro(km_change_signed);
+}
+
 void CCalcDlg::change_bits(int bits)
 {
-	__int64 one = 1;
+	if (bits == bits_) return; // no change
 
 	bits_ = bits;
-	mask_ = (one << bits_) - 1;
-	sign_mask_ = one << (bits - 1);
+	fix_values();
 
 	// Set up index for next radio button update
 	switch (bits_)
@@ -1684,7 +1953,8 @@ void CCalcDlg::change_bits(int bits)
 		bits_index_ = 0;
 		break;
 	default:
-		ASSERT(0);
+		bits_index_ = -1;
+		break;
 	}
 
 	if (invalid_expression())
@@ -1954,7 +2224,18 @@ void CCalcDlg::OnDestroy()
 	// Save some settings to the in file/registry
 	aa_->WriteProfileInt("Calculator", "Base", radix_);
 	aa_->WriteProfileInt("Calculator", "Bits", bits_);
+#ifdef CALC_BIG
+	aa_->WriteProfileInt("Calculator", "signed", signed_ ? 1 : 0);
 
+	std::string ss;
+	ss = memory_.get_str(10);
+	aa_->WriteProfileString("Calculator", "Memory", ss.c_str());
+
+	if (current_type_ != CJumpExpr::TYPE_NONE)
+		calc_previous();
+	ss = current_.get_str(10);
+	aa_->WriteProfileString("Calculator", "Current", ss.c_str());
+#else
 	char buf[30];
 	_i64toa(memory_, buf, 10);
 	aa_->WriteProfileString("Calculator", "Memory", buf);
@@ -1962,6 +2243,7 @@ void CCalcDlg::OnDestroy()
 		calc_previous();
 	_i64toa((current_&mask_), buf, 10);
 	aa_->WriteProfileString("Calculator", "Current", buf);
+#endif
 }
 
 void CCalcDlg::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
@@ -2491,21 +2773,25 @@ void CCalcDlg::On64bit()
 void CCalcDlg::OnBinary()
 {
 	change_base(2);
+	change_signed(false);
 }
 
 void CCalcDlg::OnOctal()
 {
 	change_base(8);
+	change_signed(false);
 }
 
 void CCalcDlg::OnDecimal()
 {
 	change_base(10);
+	change_signed(true);
 }
 
 void CCalcDlg::OnHex()
 {
 	change_base(16);
+	change_signed(false);
 }
 
 void CCalcDlg::OnBackspace()            // Delete back one digit

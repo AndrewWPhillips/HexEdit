@@ -4,7 +4,7 @@
 // These values are used to distinguish between different operators used in the calculator.
 // They are also used with keystroke macros when calculator operations are recorded (see km_binop
 // and km_unaryop) and also for commands in the Operations menu (see km_op_binary & km_op_unary).
-
+// Warning: Only make changes so that existing values are preserved so old macro files continue to work.
 enum binop_type
 {
 	binop_none = 0,

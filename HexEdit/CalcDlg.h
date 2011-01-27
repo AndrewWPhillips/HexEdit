@@ -20,17 +20,18 @@
 #if !defined(AFX_CALCDLG_H__DA8B4B10_D7C4_11D3_A23F_0020AFDC3196__INCLUDED_)
 #define AFX_CALCDLG_H__DA8B4B10_D7C4_11D3_A23F_0020AFDC3196__INCLUDED_
 
+#if _MSC_VER > 1000
+#pragma once
+#endif // _MSC_VER > 1000
+
 #include <vector>
 #include "CalcEdit.h"
 #include "Expr.h"
 #include "optypes.h"
 #include "ResizeCtrl.h"
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-// CalcDlg.h : header file
-//
+#ifdef CALC_BIG
+#include "mpirxx.h"
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CCalcBits
@@ -89,11 +90,23 @@ public:
 	void StartEdit();           // Set focus to text control and move caret to end
 	void update_controls();
 	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
+#ifdef CALC_BIG
+	void Set(mpz_class t) { current_ = t;  if (IsVisible()) edit_.Put(); }
+	void Set(unsigned __int64 v) { mpz_import(current_.get_mpz_t(), 2, -1, 4, -1, 0, &v); if (IsVisible()) edit_.Put(); }
+#else
 	void Set(unsigned __int64 v) { current_ = v; if (IsVisible()) edit_.Put(); }
-	void change_base(int);
-	void change_bits(int);
+#endif
+	void change_base(int base);    // set radix (2 to 36)
+	void change_signed(bool s);    // set whether numbers are signed or unsigned
+	void change_bits(int);         // chnage how many bits are used (0 = unlimited)
+
 	int ByteSize() const { return (bits_-1)/8 + 1; }
+#ifdef CALC_BIG
+	unsigned __int64 GetValue() const;
+	// may need to add functions to get value as mpz_class, CString etc later
+#else
 	unsigned __int64 GetValue() const { return current_ & mask_; }
+#endif
 
 // Dialog Data
 	enum { IDD = IDD_CALC };
@@ -329,6 +342,7 @@ private:
 	void do_digit(char digit);              // Handle "digit" button on calculator
 	void calc_previous();                   // Do binary operation using previous_ and current_
 	void add_hist();                        // Add to drop-down history list
+	void fix_values();
 
 	CHexEditApp *aa_;                       // Ptr to the app (mainly for macro handling)
 	CMainFrame *mm_;                        // Ptr to the main window
@@ -356,17 +370,35 @@ private:
 		edit_.sel_ = (DWORD)-1;         // prevent selection being changed now
 	}
 
-	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
-	unsigned __int64 current_;      // Current value in the edit control (used by edit_)
-	unsigned __int64 previous_;     // Previous value of edit control (if binary operator active)
-
-	unsigned __int64 memory_;       // Current contents of memory (used with Memory, MS, MC, etc buttons)
-
-	// Other calculator state info
+	// Current state info
 	int radix_;                     // Actual radix (base) in use (usually 2,8,10, or 16 but may be any value 2-36
-	int bits_;                      // Numbers of bits in use: 8, 16, 32 or 64
-	unsigned __int64 mask_;         // Mask for current value of bits_: 0xFF, 0xFFFF, 0xffffFFFF or 0xffffFFFFffffFFFF
-	unsigned __int64 sign_mask_;    // Mask to check sign bit of bits_: 0x80, 0x8000, 0x80000000 or 0x8000000000000000
+	int bits_;                      // Numbers of bits in use: (usually 8, 16, 32 or 64), the special value of 0 means unlimited
+
+#ifdef CALC_BIG
+	bool signed_;                   // Generally only decimal (base 10) numbers are shown signed
+
+	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
+	mpz_class current_;            // Current value in the edit control (used by edit_)
+	mpz_class previous_;           // Previous value of edit control (if binary operator active)
+
+	mpz_class memory_;             // Current contents of memory (used with Memory, MS, MC, etc buttons)
+
+	mpz_class min_val_, max_val_;  // Range of valid values according to bits_ and signed_
+	mpz_class mask_;               // Mask for current value of bits_, typically: 0xFF, 0xFFFF, 0xffffFFFF or 0xffffFFFFffffFFFF
+
+	// These are the calculator values and are kept as a double-check of the new calcs
+	unsigned __int64 current_64_;   // Current value in the edit control (used by edit_)
+	unsigned __int64 previous_64_;  // Previous value of edit control (if binary operator active)
+#else
+	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
+	unsigned __int64 current_;   // Current value in the edit control (used by edit_)
+	unsigned __int64 previous_;  // Previous value of edit control (if binary operator active)
+
+	unsigned __int64 memory_;    // Current contents of memory (used with Memory, MS, MC, etc buttons)
+
+	unsigned __int64 mask_;      // Mask for current value of bits_: 0xFF, 0xFFFF, 0xffffFFFF or 0xffffFFFFffffFFFF
+	unsigned __int64 sign_mask_; // Mask to check sign bit of bits_: 0x80, 0x8000, 0x80000000 or 0x8000000000000000
+#endif
 
 	bool m_first;                   // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
 	CResizeCtrl m_resizer;          // Used to move controls around when the window is resized
