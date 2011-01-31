@@ -156,7 +156,6 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include "Security.h"
 #include "ntapi.h"
 
-#include <mpir.h>
 #ifdef _DEBUG // keep the old code so we can check against the new
 #include "BigInteger.h"        // Used in C# Decimal conversions
 #endif
@@ -1431,6 +1430,36 @@ __int64 strtoi64(const char *ss, int radix, const char **endptr)
 
 	return retval;
 }
+
+// Convert between big integer and 64-bit int
+unsigned __int64 mpz_get_ui64(mpz_srcptr p)
+{
+	LARGE_INTEGER val;
+
+	val.LowPart = mpz_getlimbn(p, 0);
+	val.HighPart = mpz_getlimbn(p, 1);
+	// Any higher limbs are lost - so value is truncated
+
+	return (unsigned __int64)val.QuadPart;
+}
+
+void mpz_set_ui64(mpz_ptr p, unsigned __int64 i)
+{
+	ASSERT(sizeof(mp_limb_t) == 4 && sizeof(i) == 8);
+	mpz_import(p, sizeof(i)/sizeof(mp_limb_t), -1, sizeof(mp_limb_t), -1, 0, &i);
+}
+
+#ifdef _DEBUG
+void test_misc()
+{
+	unsigned __int64 ui64 = 0xffffFFFFffffFFFF;
+	mpz_t big;
+	mpz_init(big);
+	mpz_set_ui64(big, ui64);
+	ASSERT(mpz_get_ui64(big) == ui64);
+	mpz_clear(big);
+}
+#endif
 
 //-----------------------------------------------------------------------------
 void BrowseWeb(UINT id)

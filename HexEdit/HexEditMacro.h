@@ -106,6 +106,7 @@ enum km_type
 	km_memsubtract,             // Subtract from calc memory
 
 	km_expression,              // User entered an expression (cf km_user) - string stored in *pss
+	km_change_signed,           // Toggled signed_ in calculator
 
 	km_last_calc, // = 66?      // leave as last value before km_view
 

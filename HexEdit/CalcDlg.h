@@ -342,7 +342,8 @@ private:
 	void do_digit(char digit);              // Handle "digit" button on calculator
 	void calc_previous();                   // Do binary operation using previous_ and current_
 	void add_hist();                        // Add to drop-down history list
-	void fix_values();
+	void fix_values();                      // Update min, max etc based on latest settings (radix_, signed_)
+	bool get_bytes(unsigned char *buf, size_t len, FILE_ADDRESS addr); // Get bytes from file based, if any
 
 	CHexEditApp *aa_;                       // Ptr to the app (mainly for macro handling)
 	CMainFrame *mm_;                        // Ptr to the main window
@@ -378,13 +379,16 @@ private:
 	bool signed_;                   // Generally only decimal (base 10) numbers are shown signed
 
 	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
-	mpz_class current_;            // Current value in the edit control (used by edit_)
+	mpz_class current_;            // Current value (always +ve) - affected by bits_, signed_ and radix_ when displayed in edit box
 	mpz_class previous_;           // Previous value of edit control (if binary operator active)
 
 	mpz_class memory_;             // Current contents of memory (used with Memory, MS, MC, etc buttons)
 
 	mpz_class min_val_, max_val_;  // Range of valid values according to bits_ and signed_
-	mpz_class mask_;               // Mask for current value of bits_, typically: 0xFF, 0xFFFF, 0xffffFFFF or 0xffffFFFFffffFFFF
+	mpz_class mask_;               // Mask for current value of bits_, typically: 0xFF, 0xFFFF, 0xffffFFFF etc
+	mpz_class sign_mask_;          // Mask to check sign bit of bits_, typically: 0x80, 0x8000, 0x80000000 etc
+
+	mpz_class get_norm(mpz_class v); // Get a value converted according to bits_ and signed_
 
 	// These are the calculator values and are kept as a double-check of the new calcs
 	unsigned __int64 current_64_;   // Current value in the edit control (used by edit_)

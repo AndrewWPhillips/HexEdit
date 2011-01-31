@@ -18637,9 +18637,10 @@ void CHexEditView::OnUpdateCompAutoScroll(CCmdUI* pCmdUI)
 // This is connected to Ctrl+T and is used for testing new dialogs etc
 void CHexEditView::OnViewtest()
 {
-	// for testing new commands
-	double dd = 65535.0;
-	NumScale(dd);
+	// for testing new commands etc
+#ifdef _DEBUG
+	test_misc();
+#endif
 }
 
 CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t index, int *pac,

@@ -4156,6 +4156,7 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
 			{
 				m_wndCalc.change_base(10);
 				m_wndCalc.change_signed(true);  // xxx make false (addresses are never -ve) when we have signed check-box
+			}
 			else
 			{
 				m_wndCalc.change_base(16);

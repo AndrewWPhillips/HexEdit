@@ -21,6 +21,7 @@
 //
 
 #include <istream>                  // used in << and >>
+#include <mpir.h>                   // for big integer handling (mpz_t)
 
 // Macros
 #define BRIGHTNESS(cc) ((GetRValue(cc)*30 + GetGValue(cc)*59 + GetBValue(cc)*11)/256)
@@ -76,6 +77,9 @@ long double ibm_fp64(const unsigned char *pp, int *pexp = NULL,
 
 __int64 strtoi64(const char *, int radix = 0);
 __int64 strtoi64(const char *, int radix, const char **endptr);
+unsigned __int64 mpz_get_ui64(mpz_srcptr p);
+void mpz_set_ui64(mpz_ptr p, unsigned __int64 i);
+
 void BrowseWeb(UINT id);
 CString GetExePath();
 BOOL GetDataPath(CString &data_path, int csidl = CSIDL_APPDATA);
@@ -223,4 +227,8 @@ BSTR GetPhysicalDeviceName(LPCTSTR name); // get device name to use with native 
 CString DeviceName(CString name);         // get nice display name for device file name
 int DeviceVolume(LPCTSTR filename);       // get volume (0=A:, 1=B: etc) of physical device (optical/removeable only) or -1 if none
 
+#endif
+
+#ifdef _DEBUG
+void test_misc();
 #endif

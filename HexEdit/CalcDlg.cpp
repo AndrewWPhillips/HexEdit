@@ -97,8 +97,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	rct.bottom = rct.top + m_hh;
 
 #ifdef CALC_BIG
-	unsigned __int64 val;
-	mpz_export(&val, NULL, -1, 4, -1, 0, m_pParent->current_.get_mpz_t()); // xxx no good
+	unsigned __int64 val = mpz_get_ui64(m_pParent->current_.get_mpz_t());
 	ASSERT(val == m_pParent->current_64_);
 #else
 	unsigned __int64 val = m_pParent->current_;
@@ -146,9 +145,9 @@ void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		ASSERT(bnum < 64 && bnum >= 0);
 #ifdef CALC_BIG
-		mpz_class tmp = m_pParent->current_;
-		mpz_combit(tmp.get_mpz_t(), bnum);
-		m_pParent->Set(tmp);
+		mpz_class val = m_pParent->current_;
+		mpz_combit(val.get_mpz_t(), bnum);
+		m_pParent->Set(val);
 		m_pParent->current_64_ ^= ((__int64)1<<bnum);
 #else
 		unsigned __int64 val = m_pParent->current_ ^ ((__int64)1<<bnum);
@@ -933,15 +932,67 @@ void CCalcDlg::FinishMacro()
 }
 
 #ifdef CALC_BIG
+mpz_class CCalcDlg::get_norm(mpz_class v)
+{
+	mpz_class retval = v;
+	v &= mask_;           // mask off high bits
+
+	// If high bit on then make -ve.  This assumes that displayed numbers are 2's complement.
+	if (signed_ && (v & sign_mask_) != 0)
+	{
+		// Convert to the 2's complement inverse of the bit-pattern (invert bits and add one)
+		mpz_com(retval.get_mpz_t(), retval.get_mpz_t());
+		retval &= mask_;
+		++ retval;
+		// Now say it is -ve
+		mpz_neg(retval.get_mpz_t(), retval.get_mpz_t());
+	}
+
+	return retval;
+}
+
 unsigned __int64 CCalcDlg::GetValue() const
 {
 	mpz_class tmp = current_;
 	if (bits_ < 64)
 		tmp &= mask_;
 
-	unsigned __int64 val;
-	mpz_export(&val, NULL, -1, 4, -1, 0, tmp.get_mpz_t()); // xxx this is no good
-	return val;
+	return mpz_get_ui64(tmp.get_mpz_t());
+}
+
+// Get data from the file, reversing byte order if necessary
+bool CCalcDlg::get_bytes(unsigned char *buf, size_t len, FILE_ADDRESS addr)
+{
+	CHexEditView *pview = GetView();
+	if (pview == NULL)
+	{
+		mm_->StatusBarText("No window open");
+		return false;
+	}
+
+	// Make sure view and calculator endianness are in sync
+	ASSERT(pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
+
+	FILE_ADDRESS dummy;
+	switch (addr)
+	{
+	case -2:   // address of mark
+		addr = pview->GetMark();
+		break;
+	case -3:   // address of start of selection
+		pview->GetSelAddr(addr, dummy);
+		break;
+	}
+
+	if (addr + len > pview->GetDocument()->length())
+	{
+		mm_->StatusBarText("@ n: Not enough bytes to end of file to read");
+		return false;
+	}
+
+	pview->GetDocument()->GetData(buf, len, addr);
+	if (pview->BigEndian())
+		flip_bytes(buf, len);   // Reverse the byte order to match that used internally (Intel=little-endian)
 }
 #endif
 
@@ -951,10 +1002,11 @@ void CCalcDlg::fix_values()
 #ifdef CALC_BIG
 	mpz_class one(1);
 	mask_ = (one << bits_) - 1;
+	sign_mask_ = one << (bits_ - 1);
 	if (signed_)
 	{
-		min_val_ = - (one << (bits_ - 1));
-		max_val_ = (one << (bits_ - 1)) - 1;
+		min_val_ = - sign_mask_;
+		max_val_ = sign_mask_ - 1;
 	}
 	else
 	{
@@ -1150,8 +1202,6 @@ void CCalcDlg::do_unary(unary_type unary)
 	if (invalid_expression())
 		return;
 
-	CHexEditView *pview;                // Active view (or NULL if no views)
-
 	// Save the value to macro before we do anything with it (unless it's a result of a previous op).
 	// Also don't save the value if this (unary op) is the very first thing in the macro.
 	if (source_ != km_result)
@@ -1159,11 +1209,8 @@ void CCalcDlg::do_unary(unary_type unary)
 
 	overflow_ = error_ = FALSE;
 
-	if (unary >= unary_mask)
-	{
-		// Mask off any high bits that might interfere with the calculations
-		current_ &= mask_;
-	}
+	current_ = get_norm(current_);
+
 	switch (unary)
 	{
 	case unary_inc:
@@ -1179,12 +1226,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		current_ = current_ * current_;
 		break;
 	case unary_squareroot:
-		// xxx do we need this test
-		//if (current_ < 0)
-		//{
-		//	mm_->StatusBarText("Square root of -ve value is illegal");
-		//	error_ = TRUE;
-		//}
+		// xxx check for error? TBD TODO
 		mpz_sqrt(current_.get_mpz_t(), current_.get_mpz_t());
 		break;
 	case unary_cube:
@@ -1198,99 +1240,85 @@ void CCalcDlg::do_unary(unary_type unary)
 		current_ = ~current_;
 		break;
 	case unary_rol:
-		current_ = ((current_ << 1) & mask_) | (current_ >> (bits_ - 1));
+		current_ = (current_ << 1) | (current_ >> (bits_ - 1));
 		break;
 	case unary_ror:
-		current_ = (current_ >> 1) | ((current_ << (bits_ - 1)) & mask_);
+		current_ = (current_ >> 1) | (current_ << (bits_ - 1));
 		break;
 	case unary_lsl:
-		current_ = (current_ & mask_) << 1;
+		current_ <<= 1;
 		break;
 	case unary_lsr:
-		current_ = (current_ & mask_) >> 1;
+		current_ >>= 1;
 		break;
 	case unary_asr:
 		{
 			int neg = mpz_tstbit(current_.get_mpz_t(), bits_);
-			current_ = (current_ & mask_) >> 1;
+			current_ >>= 1;
 			if (neg)
 				mpz_setbit(current_.get_mpz_t(), bits_);
 		}
 		break;
 	case unary_rev:  // Reverse all bits
-		// This algorithm tests the current bits by shifting right and testing
-		// bottom bit.  Any bits on sets the correspoding bit of the result as
-		// it is shifted left.
-		// This could be sped up using a table lookup but is probably OK for now.
 		{
+			// This algorithm tests the current bits by shifting right and testing
+			// bottom bit.  Any bits on sets the correspoding bit of the result as
+			// it is shifted left.
+			// This could be sped up using a table lookup but is probably OK for now.
 			mpz_class temp = 0;
 			for (int ii = 0; ii < bits_; ++ii)
 			{
 				temp <<= 1;                  // Make room for the next bit
-				if ((current_ & 1) != 0)
-					temp = temp | 1;
+				if (mpz_tstbit(current_.get_mpz_t(), 0))
+					mpz_setbit(current_.get_mpz_t(), 0);
 				current_ >>= 1;              // Move bits down to test the next
 			}
 			current_ = temp;
 		}
 		break;
 	case unary_flip: // Flip byte order
-		// This assumes (of course) that byte order is little-endian in memory
 		{
-			ASSERT((bits_ % 8) == 0);  // we can only flip whole bytes
-			int bytes = bits / 8;
-			int units = (bytes + 3)/4; // number of DWORDs
-			unsigned char * buf = new unsigned char[units*4];
-			mpz_export(buf, NULL, -1, 4, -1, 0, current_.get_mpz_t());
-			flip_bytes(buf, bytes);
-			mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
-
+			// This code assumes that byte order is little-endian in memory
+			if (bits_%8 != 0)
+			{
+				mm_->StatusBarText("Bits must be divisible by 8 to flip bytes");
+				aa_->mac_error_ = 10;
+				return;
+			}
+			int bytes = bits_ / 8;
+			int units = (bytes + 3)/4; // number of DWORDs required
+			mp_limb_t * buf = new mp_limb_t[units];
+			for (int ii = 0; ii < units; ++ii)
+			{
+				if (units < mpz_size(current_.get_mpz_t()))
+					buf[ii] = mpz_getlimbn(current_.get_mpz_t(), ii);
+				else
+					buf[ii] = 0;
+			}
+			flip_bytes((unsigned char *)buf, bytes);
+			mpz_import(current_.get_mpz_t(), units, -1, sizeof(mp_limb_t), -1, 0, buf);
 			delete[] buf;
 		}
 		break;
 	case unary_at:
-		pview = GetView();
-		// Make sure view and calculator endianness are in sync
-		ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
-		if (pview == NULL || (current_&mask_) + bits_/8 > (unsigned __int64)pview->GetDocument()->length())
 		{
-			if (pview == NULL)
-				mm_->StatusBarText("No window open");
-			else
-				mm_->StatusBarText("@ n: Not enough bytes to end of file to read");
-			aa_->mac_error_ = 10;
-			return;
-		}
-
-		temp = 0;
-		pview->GetDocument()->GetData((unsigned char *)&temp, bits_/8, current_);
-		if (pview->BigEndian())
-		{
-			// Reverse the byte order to match that used internally (Intel=little-endian)
-			byte = (unsigned char *)&temp;
-			switch (bits_)
+			if (bits_%8 != 0)
 			{
-			case 8:
-				/* nothing */
-				break;
-			case 16:
-				cc = byte[0]; byte[0] = byte[1]; byte[1] = cc;
-				break;
-			case 32:
-				cc = byte[0]; byte[0] = byte[3]; byte[3] = cc;
-				cc = byte[1]; byte[1] = byte[2]; byte[2] = cc;
-				break;
-			case 64:
-				cc = byte[0]; byte[0] = byte[7]; byte[7] = cc;
-				cc = byte[1]; byte[1] = byte[6]; byte[6] = cc;
-				cc = byte[2]; byte[2] = byte[5]; byte[5] = cc;
-				cc = byte[3]; byte[3] = byte[4]; byte[4] = cc;
-				break;
-			default:
-				ASSERT(0);
+				mm_->StatusBarText("Bits must be divisible by 8 for @ n");
+				aa_->mac_error_ = 10;
+				return;
 			}
+			int units = (bits_/8 + 3)/4; // number of DWORDs required
+			mp_limb_t * buf = new mp_limb_t[units];
+			buf[units - 1] = 0;
+			if (!get_bytes((unsigned char *)buf, bits_/8, GetValue()))
+			{
+				aa_->mac_error_ = 10;
+				return;
+			}
+			mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
+			delete[] buf;
 		}
-		current_ = temp;
 		break;
 
 	case unary_none:
@@ -1298,14 +1326,17 @@ void CCalcDlg::do_unary(unary_type unary)
 		ASSERT(0);
 	}
 
+	if (!error_)
+		overflow_ = current_ < min_val_ || current_ > max_val_;
+
 	ShowStatus();                       // Indicate overflow etc
 
 	if (overflow_ || error_)
 	{
-		if (overflow_)
-			mm_->StatusBarText("Result overflowed data size");
-		else
+		if (error_)
 			mm_->StatusBarText("Arithmetic error (root of -ve, etc)");
+		else
+			mm_->StatusBarText("Result overflowed data size");
 		aa_->mac_error_ = 2;
 	}
 
@@ -1604,6 +1635,119 @@ void CCalcDlg::do_digit(char digit)
 	inedit(km_user);
 }
 
+#ifdef CALC_BIG
+void CCalcDlg::calc_previous()
+{
+	ASSERT(current_type_ != CJumpExpr::TYPE_NONE);      // We can't use an invalid expression
+	overflow_ = error_ = FALSE;
+
+	current_ = get_norm(current_);
+
+	switch (op_)
+	{
+	case binop_add:
+		current_ += previous_;
+		break;
+	case binop_subtract:
+		current_ = previous_ - current_;
+		break;
+	case binop_multiply:
+		current_ *= previous_;
+		break;
+	case binop_divide:
+		if (current_ == 0)
+			error_ = TRUE;
+		else
+			current_ = previous_ / current_;
+		break;
+	case binop_mod:
+		if (current_ == 0)
+			error_ = TRUE;
+		else
+			current_ = previous_ % current_;
+		break;
+	case binop_pow:
+		if (current_ > mpz_class(ULONG_MAX))
+			current_ = 0, error_ = TRUE;
+		else
+			mpz_pow_ui(current_.get_mpz_t(), current_.get_mpz_t(), previous_.get_si()); 
+		break;
+	case binop_gtr:
+	case binop_gtr_old:
+		if (current_ < previous_)
+			current_ = previous_;
+		break;
+	case binop_less:
+	case binop_less_old:
+		if (current_ > previous_)
+			current_ = previous_;
+		break;
+	case binop_rol:
+		{
+			mpz_class t1, t2;
+			current_ %= bits_;
+			mpz_fdiv_q_2exp(t1.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
+			mpz_mul_2exp(t2.get_mpz_t(), previous_.get_mpz_t(), bits_ - current_.get_ui());
+			current_ = t1 | t2;
+		}
+		break;
+	case binop_ror:
+		{
+			mpz_class t1, t2;
+			current_ %= bits_;
+			mpz_mul_2exp(t1.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
+			mpz_fdiv_q_2exp(t2.get_mpz_t(), previous_.get_mpz_t(), bits_ - current_.get_ui());
+			current_ = t1 | t2;
+		}
+		break;
+	case binop_lsl:
+		mpz_mul_2exp(current_.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
+		break;
+	case binop_lsr:
+		mpz_fdiv_q_2exp(current_.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
+		break;
+	case binop_asr:
+		// xxx TBD TODO
+		break;
+
+	case binop_and:
+		current_ &= previous_;
+		break;
+	case binop_or:
+		current_ |= previous_;
+		break;
+	case binop_xor:
+		current_ ^= previous_;
+		break;
+
+	default:
+		ASSERT(0);
+		/* fall through in release versions */
+	case binop_none:
+		break;
+	}
+
+	// Signal that current value is not an expression.  This allows correct refresh behaviour (eg,
+	// refresh off during macros playback) so that edit box is redrawn correctly (see update_controls).
+	current_const_ = TRUE;
+	current_type_ = CJumpExpr::TYPE_INT;
+
+	// Check if the result overflowed the number of bits in use.
+	if (!error_)
+		overflow_ = current_ < min_val_ || current_ > max_val_;
+
+	ShowStatus();                       // Indicate overflow/error (if any)
+
+	if (overflow_ || error_)
+	{
+		if (error_)
+			mm_->StatusBarText("Arithmetic error (divide by 0, etc)");
+		else
+			mm_->StatusBarText("Result overflowed data size");
+		aa_->mac_error_ = 2;
+	}
+}  // calc_previous
+#else
 void CCalcDlg::calc_previous()
 {
 	bool same_sign;                     // Used in signed (radix 10 only) tests
@@ -1836,6 +1980,7 @@ void CCalcDlg::calc_previous()
 		aa_->mac_error_ = 2;
 	}
 }  // calc_previous
+#endif
 
 // This will go when we remove km_endian (replaced by km_big_endian)
 void CCalcDlg::toggle_endian()
@@ -2071,6 +2216,9 @@ void CCalcDlg::FixFileButtons()
 	CHexEditView *pview = GetView();
 	FILE_ADDRESS start, end;                    // Current selection
 	FILE_ADDRESS eof, mark;                     // Length of file and posn of mark
+#ifdef CALC_BIG
+	mpz_class eof_mpz, mark_mpz, start_mpz;
+#endif
 
 	if (pview != NULL)
 	{
@@ -2078,6 +2226,13 @@ void CCalcDlg::FixFileButtons()
 		eof = pview->GetDocument()->length();
 		mark = pview->GetMark();
 	}
+	else
+		start = end = eof = mark = 0;
+#ifdef CALC_BIG
+	mpz_set_ui64(eof_mpz.get_mpz_t(), eof);
+	mpz_set_ui64(mark_mpz.get_mpz_t(), mark);
+	mpz_set_ui64(start_mpz.get_mpz_t(), start);
+#endif
 
 	GetDlgItem(IDC_MARK_GET)->EnableWindow(pview != NULL);
 	GetDlgItem(IDC_MARK_CLEAR)->EnableWindow(pview != NULL);
@@ -2101,7 +2256,20 @@ void CCalcDlg::FixFileButtons()
 	}
 	else
 	{
-		GetDlgItem(IDC_MARK_STORE)->EnableWindow(pview != NULL && (current_&mask_) <= (unsigned __int64)eof);
+#ifdef CALC_BIG
+		GetDlgItem(IDC_MARK_STORE)->EnableWindow(pview != NULL && get_norm(current_) <= eof_mpz);
+		GetDlgItem(IDC_MARK_SUBTRACT)->EnableWindow(pview != NULL && mark_mpz - get_norm(current_) <= eof_mpz);
+		GetDlgItem(IDC_MARK_ADD)->EnableWindow(pview != NULL && mark_mpz + get_norm(current_) <= eof_mpz);
+		GetDlgItem(IDC_MARK_AT_STORE)->EnableWindow(pview != NULL && !pview->ReadOnly() && mark <= eof &&
+													(mark + bits_/8 <= eof || !pview->OverType()));
+		GetDlgItem(IDC_SEL_STORE)->EnableWindow(pview != NULL && get_norm(current_) <= eof_mpz);
+		GetDlgItem(IDC_SEL_AT_STORE)->EnableWindow(pview != NULL && !pview->ReadOnly() && start <= eof &&
+												(start + bits_/8 <= eof || !pview->OverType()));
+		GetDlgItem(IDC_SEL_LEN_STORE)->EnableWindow(pview != NULL && start_mpz + get_norm(current_) <= eof_mpz);
+		GetDlgItem(IDC_GO)->EnableWindow(pview != NULL && get_norm(current_) <= eof_mpz);
+		GetDlgItem(IDC_UNARY_AT)->EnableWindow(pview != NULL && get_norm(current_) + bits_/8 <= eof_mpz);
+#else
+		GetDlgItem(IDC_MARK_STORE)->EnableWindow(pview != NULL && (current_&mask_) <= eof);
 		if (pview != NULL && radix_ == 10)
 		{
 			signed __int64 mark_minus, mark_plus;
@@ -2140,11 +2308,12 @@ void CCalcDlg::FixFileButtons()
 		GetDlgItem(IDC_SEL_LEN_STORE)->EnableWindow(pview != NULL && start + (current_&mask_) <= (unsigned __int64)eof);
 		GetDlgItem(IDC_GO)->EnableWindow(pview != NULL && (current_&mask_) <= (unsigned __int64)eof);
 		GetDlgItem(IDC_UNARY_AT)->EnableWindow(pview != NULL && (current_&mask_) + bits_/8 <= (unsigned __int64)eof);
+#endif
 	}
 
 	if (pview != NULL)
 	{
-		GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(TRUE);  // enable so we can change check
+		GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(TRUE);  // enable so we can change it
 		CButton *pb = (CButton *)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS);
 		pb->SetCheck(pview->BigEndian());
 	}
@@ -2669,7 +2838,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	// If the value in current_ is not there as a result of a calculation then
 	// save it before it is lost.
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_);
+		aa_->SaveToMacro(source_, GetValue());
 
 	calc_previous();
 
@@ -2717,25 +2886,28 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	}
 
 	DWORD sector_size = pview->GetDocument()->GetSectorSize();
+	FILE_ADDRESS addr = GetValue();
+
 	if (sector && sector_size > 0)
 	{
-		if ((current_&mask_)* sector_size > (unsigned __int64)pview->GetDocument()->length())
+		addr *= sector_size;
+		if (addr > pview->GetDocument()->length())
 		{
 			mm_->StatusBarText("Error: sector address is past end of file");
 			aa_->mac_error_ = 10;
 			return;
 		}
-		pview->MoveWithDesc(ss, (current_&mask_)* sector_size);
+		pview->MoveWithDesc(ss, addr);
 	}
 	else
 	{
-		if ((current_&mask_) > (unsigned __int64)pview->GetDocument()->length())
+		if (addr > pview->GetDocument()->length())
 		{
 			mm_->StatusBarText("Error: new address is past end of file");
 			aa_->mac_error_ = 10;
 			return;
 		}
-		pview->MoveWithDesc(ss, current_&mask_);
+		pview->MoveWithDesc(ss, addr);
 	}
 	// Give view the focus
 	if (pview != pview->GetFocus())
@@ -2888,7 +3060,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 		return;
 	}
 
-	unsigned __int64 saved_val = current_;
+	mpz_class saved_val = current_;
 	CString saved_str = CString(current_str_);
 
 	calc_previous();
@@ -2898,7 +3070,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 	if (source_ == km_user && (current_type_ != CJumpExpr::TYPE_INT || !current_const_))
 		aa_->SaveToMacro(km_expression, saved_str);
 	else if (source_ != km_result)
-		aa_->SaveToMacro(source_, saved_val);
+		aa_->SaveToMacro(source_, mpz_get_ui64(saved_val.get_mpz_t()));
 
 	op_ = binop_none;
 	if (!aa_->refresh_off_ && IsVisible())
@@ -3510,7 +3682,7 @@ void CCalcDlg::OnMemGet()
 	ShowStatus();
 
 	overflow_ = error_ = FALSE;
-	if ((current_ & ~mask_) != 0)
+	if ((current_ & ~mask_) != 0) // xxx TBD TODO use min_val_/max_val_
 	{
 		overflow_ = TRUE;
 		mm_->StatusBarText("Memory overflowed data size");
@@ -3551,7 +3723,7 @@ void CCalcDlg::OnMemStore()
 	}
 
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_memstore);
 
@@ -3584,7 +3756,7 @@ void CCalcDlg::OnMemAdd()
 	}
 
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_memadd);
 }
@@ -3604,7 +3776,7 @@ void CCalcDlg::OnMemSubtract()
 	}
 
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_memsubtract);
 }
@@ -3615,12 +3787,11 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		mm_->StatusBarText("No file open");
 		aa_->mac_error_ = 10;
 		return;
 	}
 
-	current_ = pview->GetMark();
+	mpz_set_ui64(current_.get_mpz_t(), pview->GetMark());
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
 
@@ -3649,14 +3820,34 @@ void CCalcDlg::OnMarkStore()
 		return;
 
 	CHexEditView *pview = GetView();
-	if (pview == NULL || (current_&mask_) > (unsigned __int64)pview->GetDocument()->length())
+#ifdef CALC_BIG
+	if (pview == NULL)
+	{
+		mm_->StatusBarText("No file open");
+		aa_->mac_error_ = 10;
+		return;
+	}
+
+	mpz_class eof, new_mark;
+	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
+	new_mark = get_norm(current_);
+	if (new_mark > eof)
+	{
+		mm_->StatusBarText("New mark address past end of file");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	pview->SetMark(mpz_get_ui64(new_mark.get_mpz_t()));
+#else
+	if (pview == NULL || GetValue() > (unsigned __int64)pview->GetDocument()->length())
 	{
 		mm_->StatusBarText("New mark address past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
 
-	pview->SetMark(current_&mask_);
+	pview->SetMark(GetValue());
+#endif
 
 	if (!aa_->refresh_off_ && IsVisible())
 	{
@@ -3666,7 +3857,7 @@ void CCalcDlg::OnMarkStore()
 	}
 
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_markstore);
 }
@@ -3701,9 +3892,21 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 		aa_->mac_error_ = 10;
 		return;
 	}
+#ifdef CALC_BIG
+	mpz_class eof, mark, new_mark;
+	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
+	mpz_set_ui64(mark.get_mpz_t(), pview->GetMark());                // current mark
+	new_mark = mark + get_norm(current_);
+	if (new_mark > eof)
+	{
+		mm_->StatusBarText("New mark address past end of file");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	pview->SetMark(mpz_get_ui64(mark.get_mpz_t()));
+#else
 	FILE_ADDRESS eof = pview->GetDocument()->length();
 	FILE_ADDRESS mark = pview->GetMark();
-
 	if (radix_ == 10)
 	{
 		signed __int64 new_mark;
@@ -3735,14 +3938,15 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	}
 	else
 	{
-		if (mark + (current_&mask_) > (unsigned __int64)eof)
+		if (mark + GetValue() > eof)
 		{
 			mm_->StatusBarText("New mark address past end of file");
 			aa_->mac_error_ = 10;
 			return;
 		}
-		pview->SetMark(mark + (current_&mask_));
+		pview->SetMark(mark + GetValue());
 	}
+#endif
 
 	if (!aa_->refresh_off_ && IsVisible())
 	{
@@ -3752,7 +3956,7 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	}
 
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_markadd);
 }
@@ -3768,6 +3972,22 @@ void CCalcDlg::OnMarkSubtract()
 		aa_->mac_error_ = 10;
 		return;
 	}
+#ifdef CALC_BIG
+	mpz_class eof, mark, new_mark;
+	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
+	mpz_set_ui64(mark.get_mpz_t(), pview->GetMark());                // current mark
+	new_mark = mark - get_norm(current_);
+	if (new_mark < 0 || new_mark > eof)
+	{
+		if (new_mark < 0)
+			mm_->StatusBarText("New mark address is -ve");
+		else
+			mm_->StatusBarText("New mark address past end of file");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	pview->SetMark(mpz_get_ui64(mark.get_mpz_t()));
+#else
 	FILE_ADDRESS eof = pview->GetDocument()->length();
 	FILE_ADDRESS mark = pview->GetMark();
 
@@ -3802,14 +4022,15 @@ void CCalcDlg::OnMarkSubtract()
 	}
 	else
 	{
-		if (mark - (current_&mask_) > (unsigned __int64)eof)
+		if (mark - GetValue() > (unsigned __int64)eof)
 		{
 			mm_->StatusBarText("New mark address past end of file");
 			aa_->mac_error_ = 10;
 			return;
 		}
-		pview->SetMark(mark - (current_&mask_));
+		pview->SetMark(mark - GetValue());
 	}
+#endif
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
@@ -3818,7 +4039,7 @@ void CCalcDlg::OnMarkSubtract()
 	}
 
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_marksubtract);
 }
@@ -3826,6 +4047,25 @@ void CCalcDlg::OnMarkSubtract()
 // ----------- Other file get funcs -------------
 void CCalcDlg::OnMarkAt()               // Get value from file at mark
 {
+#ifdef CALC_BIG
+	if (bits_%8 != 0)
+	{
+		mm_->StatusBarText("Bits must be divisible by 8 for @ mark");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	int units = (bits_/8 + 3)/4; // number of DWORDs required
+	mp_limb_t * buf = new mp_limb_t[units];
+	buf[units - 1] = 0;
+	if (!get_bytes((unsigned char *)buf, bits_/8, -2))  // get data at mark
+	{
+		aa_->mac_error_ = 10;
+		return;
+	}
+	// This assumes 4-byte units and little-endian order (as always returned from get_bytes)
+	mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
+	delete[] buf;
+#else
 	CHexEditView *pview = GetView();
 	// Make sure view and calculator endianness are in sync
 	ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
@@ -3872,6 +4112,7 @@ void CCalcDlg::OnMarkAt()               // Get value from file at mark
 		}
 	}
 	current_ = temp;
+#endif
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
 	ShowStatus();
@@ -3922,6 +4163,25 @@ void CCalcDlg::OnSelGet()              // Position of cursor (or start of select
 
 void CCalcDlg::OnSelAt()                // Value in file at cursor
 {
+#ifdef CALC_BIG
+	if (bits_%8 != 0)
+	{
+		mm_->StatusBarText("Bits must be divisible by 8 for @ sel");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	int units = (bits_/8 + 3)/4; // number of DWORDs required
+	mp_limb_t * buf = new mp_limb_t[units];
+	buf[units - 1] = 0;
+	if (!get_bytes((unsigned char *)buf, bits_/8, -3))  // get data at selection
+	{
+		aa_->mac_error_ = 10;
+		return;
+	}
+	// This assumes mpz uses 4-byte limbs and little-endian order (as always returned from get_bytes)
+	mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
+	delete[] buf;
+#else
 	CHexEditView *pview = GetView();
 	// Make sure view and calculator endianness are in sync
 	ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
@@ -3971,6 +4231,7 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
 		}
 	}
 	current_ = temp;
+#endif
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
 	ShowStatus();
@@ -4062,7 +4323,7 @@ void CCalcDlg::OnMarkAtStore()
 		return;
 	}
 
-	__int64 temp = (current_&mask_);
+	__int64 temp = GetValue();
 	if (pview->BigEndian())
 	{
 		// Reverse the byte order to match that used internally (Intel=little-endian)
@@ -4103,7 +4364,7 @@ void CCalcDlg::OnMarkAtStore()
 	}
 
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_markatstore);
 }
@@ -4114,13 +4375,13 @@ void CCalcDlg::OnSelStore()
 		return;
 
 	CHexEditView *pview = GetView();
-	if (pview == NULL || (current_&mask_) > (unsigned __int64)pview->GetDocument()->length())
+	if (pview == NULL || GetValue() > (unsigned __int64)pview->GetDocument()->length())
 	{
 		mm_->StatusBarText("Can't move cursor past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
-	pview->MoveWithDesc("Set Cursor in Calculator", current_&mask_);
+	pview->MoveWithDesc("Set Cursor in Calculator", GetValue());
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
@@ -4129,7 +4390,7 @@ void CCalcDlg::OnSelStore()
 	}
 
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_selstore);
 }
@@ -4197,7 +4458,7 @@ void CCalcDlg::OnSelAtStore()
 	}
 
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_selatstore);
 }
@@ -4233,7 +4494,7 @@ void CCalcDlg::OnSelLenStore()
 	}
 
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_&mask_);
+		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_sellenstore);
 }
