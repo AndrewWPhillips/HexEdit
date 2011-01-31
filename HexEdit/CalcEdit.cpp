@@ -83,7 +83,20 @@ void CCalcEdit::Put()
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
 	ASSERT(pp_->IsVisible());
+#ifdef CALC_BIG
+	mpz_class val = pp_->get_norm(pp_->current_);
 
+	char *buf = new char[mpz_sizeinbase(val.get_mpz_t(), pp_->radix_) + 2];
+	mpz_get_str(buf, pp_->radix_, val.get_mpz_t());
+
+	pp_->current_const_ = TRUE;
+	pp_->current_type_ = CJumpExpr::TYPE_INT;
+
+	SetWindowText(buf);
+	SetSel(strlen(buf), -1, FALSE);     // move caret to end
+
+	delete[] buf;
+#else
 	char buf[72];
 
 	if (pp_->radix_ == 10)
@@ -120,6 +133,7 @@ void CCalcEdit::Put()
 
 	SetWindowText(buf);
 	SetSel(strlen(buf), -1, FALSE);     // move caret to end
+#endif
 
 	add_sep();
 	if (pp_->ctl_calc_bits_.m_hWnd != 0)
@@ -138,8 +152,13 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 
 	for (const char *ps = ss; *ps != '\0'; ++ps)
 	{
+#ifdef CALC_BIG
+		if (pp_->signed_ && !digit_seen && *ps == '-')
+			continue;   // skip leading minus sign for signed numbers
+#else
 		if (pp_->radix_ == 10 && !digit_seen && *ps == '-')
 			continue;   // skip leading minus sign for decimal numbers
+#endif
 
 		last_sep = *ps == sep_char;
 		if (last_sep)
@@ -179,7 +198,7 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 //
 // The following CalcDlg members are set accordingly:
 // current_
-//   int64 value of the text if current_type_ == TYPE_INT
+//   mpz_class value of the text if current_type_ == TYPE_INT
 //   for other type it may be set to zero or somethings else (eg rounded floating point value) but I am not sure if this "feature" is used
 // current_type_
 //   TYPE_NONE if the current text is not a valid expression (including not a valid number in the current radix)
@@ -205,7 +224,7 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 	CString ss;
 	GetWindowText(ss);
 	if (ss.IsEmpty())
-		ss = "0";
+		ss = "0";     // make zero if empty
 	pp_->overflow_ = FALSE;
 
 	// check if it is a simple numeric value
@@ -237,6 +256,29 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 
 	case CHexExpr::TYPE_INT:
 		// If we are using decimals check if the value is -ve (has high bit set)
+#ifdef CALC_BIG
+		{
+			mpz_class val;
+			if (pp_->signed_ && vv.int64 < 0)
+			{
+				// Mask off sign bit then say that it is -ve
+				mpz_set_ui64(val.get_mpz_t(), vv.int64 & 0x7fffFFFFffffFFFF);
+				mpz_neg(val.get_mpz_t(), val.get_mpz_t());
+			}
+			else
+			{
+				mpz_set_ui64(val.get_mpz_t(), vv.int64);
+			}
+			pp_->overflow_ = val < pp_->min_val_ || val > pp_->max_val_;
+
+			if (!pp_->overflow_)
+			{
+				pp_->current_ = val;
+				if (pp_->current_const_)
+					add_sep();
+			}
+		}
+#else
 		if (pp_->radix_ == 10 && (vv.int64 & ((pp_->mask_ + 1)>>1)) != 0)
 		{
 			// Make sure all the high bits are on
@@ -256,11 +298,24 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 			if (pp_->current_const_)
 				add_sep();
 		}
+#endif
 		break;
 
 	case CHexExpr::TYPE_REAL:
 		ASSERT(!pp_->current_const_);
+#ifdef CALC_BIG
+		{
+			mpz_class val;
+			mpz_set_d(val.get_mpz_t(), vv.real64);
+			pp_->overflow_ = val < pp_->min_val_ || val > pp_->max_val_;
+
+			if (!pp_->overflow_)
+				pp_->current_ = val;
+		}
+#else
 		pp_->current_ = (pp_->current_ & ~pp_->mask_) | (__int64(vv.real64) & pp_->mask_);
+#endif
+
 #ifdef UNICODE_TYPE_STRING
 		pp_->current_str_.Format(L"%g", vv.real64);
 #else
@@ -313,7 +368,15 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		}
 		else
 		{
+#ifdef CALC_BIG
+			mpz_class val;
+			mpz_set_d(val.get_mpz_t(), vv.date);
+			pp_->overflow_ = val < pp_->min_val_ || val > pp_->max_val_;
+			if (!pp_->overflow_)
+				pp_->current_ = val;
+#else
 			pp_->current_ = (pp_->current_ & ~pp_->mask_) | (__int64(vv.date) & pp_->mask_);
+#endif
 			COleDateTime odt;
 			odt.m_dt = vv.date;
 			odt.m_status = COleDateTime::valid;
@@ -374,20 +437,11 @@ void CCalcEdit::add_sep()
 
 	CString ss;                         // Current string
 	GetWindowText(ss);
-	int start, end;                     // Current selection (start==end if just caret)
+	int start, end;                     // Current selection in string (start==end if just caret)
 	GetSel(start, end);
 
 	const char *src;                    // Ptr into orig. string
-	int newstart, newend;               // New caret position/selection
-	newstart = newend = 0;              // In case of empty string
-
-	char out[72];                       // Largest output is 64 bit binary (64 bits + 7 spaces + nul)
-
-	size_t ii, jj;                      // Number of digits written/read
-	char *dst = out;                    // Ptr to current output char
 	int ndigits;                        // Numbers of chars that are part of number
-
-	BOOL none_yet = TRUE;		        // Have we seen any non-zero digits yet?
 
 	// Work out how many digits we have
 	for (src = ss.GetBuffer(0), ndigits = 0; *src != '\0'; ++src)
@@ -405,6 +459,15 @@ void CCalcEdit::add_sep()
 			++ndigits;
 	}
 
+	char * out = new char[(ndigits * (group+1))/group + 4];
+	char *dst = out;                    // Ptr to current output char
+
+	int newstart, newend;               // New caret position/selection
+	newstart = newend = 0;              // In case of empty string
+	BOOL none_yet = TRUE;		        // Have we seen any non-zero digits yet?
+
+	size_t ii, jj;                      // Number of digits written/read
+
 	for (src = ss.GetBuffer(0), ii = jj = 0; /*forever*/; ++src, ++ii)
 	{
 		if (ii == start)
@@ -416,7 +479,11 @@ void CCalcEdit::add_sep()
 			break;
 
 		// Copy -ve sign
+#ifdef CALC_BIG
+		if (jj < ndigits && pp_->signed_ && none_yet && *src == '-')
+#else
 		if (jj < ndigits && pp_->radix_ == 10 && none_yet && *src == '-')
+#endif
 		{
 			*dst++ = '-';
 			continue;
@@ -460,6 +527,7 @@ void CCalcEdit::add_sep()
 	*dst = '\0';                        // Terminate string
 
 	SetWindowText(out);
+	delete[] out;
 	SetSel(newstart, newend);
 }
 
@@ -489,7 +557,6 @@ void CCalcEdit::OnLButtonUp(UINT nFlags, CPoint point)
 	pp_->in_edit_ = TRUE;
 	CEdit::OnLButtonUp(nFlags, point);
 }
-
 
 void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {

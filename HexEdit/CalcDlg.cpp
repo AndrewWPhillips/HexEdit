@@ -960,18 +960,23 @@ unsigned __int64 CCalcDlg::GetValue() const
 	return mpz_get_ui64(tmp.get_mpz_t());
 }
 
-// Get data from the file, reversing byte order if necessary
-bool CCalcDlg::get_bytes(unsigned char *buf, size_t len, FILE_ADDRESS addr)
+// Get data from the file into calculator, reversing byte order if necessary
+// Returns false on error such as no file open or invalid address.
+// xxx TBD - make -ve if signed_ and high bit is on ???
+bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 {
+	if (bits_%8 != 0)
+	{
+		mm_->StatusBarText("Bits must be divisible by 8");
+		return false;
+	}
+
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
 		mm_->StatusBarText("No window open");
 		return false;
 	}
-
-	// Make sure view and calculator endianness are in sync
-	ASSERT(pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
 
 	FILE_ADDRESS dummy;
 	switch (addr)
@@ -984,15 +989,85 @@ bool CCalcDlg::get_bytes(unsigned char *buf, size_t len, FILE_ADDRESS addr)
 		break;
 	}
 
-	if (addr + len > pview->GetDocument()->length())
+	if (addr + bits_/8 > pview->GetDocument()->length())
 	{
-		mm_->StatusBarText("@ n: Not enough bytes to end of file to read");
+		mm_->StatusBarText("Not enough bytes before end of file");
 		return false;
 	}
 
-	pview->GetDocument()->GetData(buf, len, addr);
+	int units = (bits_/8 + 3)/4; // number of DWORDs required
+	mp_limb_t * buf = new mp_limb_t[units];
+	buf[units - 1] = 0;          // make sure end bytes are zero in case not used
+
+	pview->GetDocument()->GetData((unsigned char *)buf, bits_/8, addr);
+
+	// Make sure view and calculator endianness are in sync
+	ASSERT(pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
 	if (pview->BigEndian())
-		flip_bytes(buf, len);   // Reverse the byte order to match that used internally (Intel=little-endian)
+		flip_bytes((unsigned char *)buf, bits_/8);   // Reverse the byte order to match that used internally (Intel=little-endian)
+
+	// This assumes 4-byte units and little-endian order
+	mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
+	delete[] buf;
+
+	return true;
+}
+
+// Put data to the file from the current calculator value
+bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
+{
+	if (bits_%8 != 0)
+	{
+		mm_->StatusBarText("Bits must be divisible by 8");
+		return false;
+	}
+
+	CHexEditView *pview = GetView();
+	if (pview == NULL)
+	{
+		mm_->StatusBarText("No window open");
+		return false;
+	}
+
+	if (pview->ReadOnly())
+	{
+		mm_->StatusBarText("Can't write: file is read only");
+		return false;
+	}
+
+	FILE_ADDRESS dummy;
+	switch (addr)
+	{
+	case -2:   // address of mark
+		addr = pview->GetMark();
+		break;
+	case -3:   // address of start of selection
+		pview->GetSelAddr(addr, dummy);
+		break;
+	}
+
+	if (addr + bits_/8 > pview->GetDocument()->length())
+	{
+		mm_->StatusBarText("Not enough bytes before end of file");
+		return false;
+	}
+
+	// Get buffer for bytes (size rounded up to multiple of mpz limb size)
+	int units = (bits_/8 + 3)/4; // number of DWORDs required
+	mp_limb_t * buf = new mp_limb_t[units];
+
+	// Get all limbs from the big integer (little-endian)
+
+	// Make sure view and calculator endianness are in sync
+	ASSERT(pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
+	if (pview->BigEndian())
+		flip_bytes((unsigned char *)buf, bits_/8);   // Reverse the byte order to match that used internally (Intel=little-endian)
+
+	pview->GetDocument()->Change(pview->OverType() ? mod_replace : mod_insert,
+								addr, bits_/8, (unsigned char *)buf, 0, pview);
+	delete[] buf;
+
+	return true;
 }
 #endif
 
@@ -1301,23 +1376,10 @@ void CCalcDlg::do_unary(unary_type unary)
 		}
 		break;
 	case unary_at:
+		if (!get_bytes(GetValue()))
 		{
-			if (bits_%8 != 0)
-			{
-				mm_->StatusBarText("Bits must be divisible by 8 for @ n");
-				aa_->mac_error_ = 10;
-				return;
-			}
-			int units = (bits_/8 + 3)/4; // number of DWORDs required
-			mp_limb_t * buf = new mp_limb_t[units];
-			buf[units - 1] = 0;
-			if (!get_bytes((unsigned char *)buf, bits_/8, GetValue()))
-			{
-				aa_->mac_error_ = 10;
-				return;
-			}
-			mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
-			delete[] buf;
+			aa_->mac_error_ = 10;
+			return;
 		}
 		break;
 
@@ -3679,12 +3741,10 @@ void CCalcDlg::OnMemGet()
 	current_ = memory_;
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
-	ShowStatus();
 
-	overflow_ = error_ = FALSE;
-	if ((current_ & ~mask_) != 0) // xxx TBD TODO use min_val_/max_val_
+	overflow_ = current_ < min_val_ || current_ > max_val_;
+	if (overflow_)
 	{
-		overflow_ = TRUE;
 		mm_->StatusBarText("Memory overflowed data size");
 		aa_->mac_error_ = 2;
 	}
@@ -3791,7 +3851,23 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 		return;
 	}
 
-	mpz_set_ui64(current_.get_mpz_t(), pview->GetMark());
+#ifdef CALC_BIG
+	mpz_class val;
+	mpz_set_ui64(val.get_mpz_t(), pview->GetMark());
+	overflow_ = val > max_val_;
+	if (overflow_)
+	{
+		mm_->StatusBarText("Mark overflowed data size");
+		aa_->mac_error_ = 2;
+	}
+	else
+	{
+		current_ = val;
+		current_const_ = TRUE;
+		current_type_ = CJumpExpr::TYPE_INT;
+	}
+#else
+	current_ = pview->GetMark();
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
 
@@ -3802,6 +3878,7 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 		mm_->StatusBarText("Mark overflowed data size");
 		aa_->mac_error_ = 2;
 	}
+#endif
 	ShowStatus();                       // Clear/set overflow indicator
 
 	if (!aa_->refresh_off_ && IsVisible())
@@ -4045,26 +4122,17 @@ void CCalcDlg::OnMarkSubtract()
 }
 
 // ----------- Other file get funcs -------------
-void CCalcDlg::OnMarkAt()               // Get value from file at mark
+// Get bytes at the mark into calculator
+//  - the number of bytes is determined by bits_
+//  - byte order is determined by active file endian-ness (display_.big_endian)
+void CCalcDlg::OnMarkAt()
 {
 #ifdef CALC_BIG
-	if (bits_%8 != 0)
-	{
-		mm_->StatusBarText("Bits must be divisible by 8 for @ mark");
-		aa_->mac_error_ = 10;
-		return;
-	}
-	int units = (bits_/8 + 3)/4; // number of DWORDs required
-	mp_limb_t * buf = new mp_limb_t[units];
-	buf[units - 1] = 0;
-	if (!get_bytes((unsigned char *)buf, bits_/8, -2))  // get data at mark
+	if (!get_bytes(-2))  // get data at mark
 	{
 		aa_->mac_error_ = 10;
 		return;
 	}
-	// This assumes 4-byte units and little-endian order (as always returned from get_bytes)
-	mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
-	delete[] buf;
 #else
 	CHexEditView *pview = GetView();
 	// Make sure view and calculator endianness are in sync
@@ -4127,7 +4195,8 @@ void CCalcDlg::OnMarkAt()               // Get value from file at mark
 	inedit(km_markat);
 }
 
-void CCalcDlg::OnSelGet()              // Position of cursor (or start of selection)
+// Get address of caret (or start of selection)
+void CCalcDlg::OnSelGet()
 {
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
@@ -4135,9 +4204,25 @@ void CCalcDlg::OnSelGet()              // Position of cursor (or start of select
 		aa_->mac_error_ = 10;
 		return;
 	}
+
 	FILE_ADDRESS start, end;
 	pview->GetSelAddr(start, end);
-
+#ifdef CALC_BIG
+	mpz_class val;
+	mpz_set_ui64(val.get_mpz_t(), start);
+	overflow_ = val > max_val_;
+	if (overflow_)
+	{
+		mm_->StatusBarText("Cursor position overflowed data size");
+		aa_->mac_error_ = 2;
+	}
+	else
+	{
+		current_ = val;
+		current_const_ = TRUE;
+		current_type_ = CJumpExpr::TYPE_INT;
+	}
+#else
 	current_ = start;
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
@@ -4149,6 +4234,7 @@ void CCalcDlg::OnSelGet()              // Position of cursor (or start of select
 		mm_->StatusBarText("Cursor position overflowed data size");
 		aa_->mac_error_ = 2;
 	}
+#endif
 	ShowStatus();                       // Clear/set overflow indicator
 
 	if (!aa_->refresh_off_ && IsVisible())
@@ -4161,26 +4247,15 @@ void CCalcDlg::OnSelGet()              // Position of cursor (or start of select
 	inedit(km_selget);
 }
 
+// Get byte(s) at the caret position - # of bytes is determined by bits_
 void CCalcDlg::OnSelAt()                // Value in file at cursor
 {
 #ifdef CALC_BIG
-	if (bits_%8 != 0)
-	{
-		mm_->StatusBarText("Bits must be divisible by 8 for @ sel");
-		aa_->mac_error_ = 10;
-		return;
-	}
-	int units = (bits_/8 + 3)/4; // number of DWORDs required
-	mp_limb_t * buf = new mp_limb_t[units];
-	buf[units - 1] = 0;
-	if (!get_bytes((unsigned char *)buf, bits_/8, -3))  // get data at selection
+	if (!get_bytes(-3))                // get data at cursor/selection
 	{
 		aa_->mac_error_ = 10;
 		return;
 	}
-	// This assumes mpz uses 4-byte limbs and little-endian order (as always returned from get_bytes)
-	mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
-	delete[] buf;
 #else
 	CHexEditView *pview = GetView();
 	// Make sure view and calculator endianness are in sync
@@ -4246,6 +4321,7 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
 	inedit(km_selat);
 }
 
+// Get the selection length
 void CCalcDlg::OnSelLen()
 {
 	CHexEditView *pview = GetView();
@@ -4257,10 +4333,26 @@ void CCalcDlg::OnSelLen()
 
 	FILE_ADDRESS start, end;
 	pview->GetSelAddr(start, end);
-
+#ifdef CALC_BIG
+	mpz_class val;
+	mpz_set_ui64(val.get_mpz_t(), end - start);
+	overflow_ = val > max_val_;
+	if (overflow_)
+	{
+		mm_->StatusBarText("Selection length overflowed data size");
+		aa_->mac_error_ = 2;
+	}
+	else
+	{
+		current_ = val;
+		current_const_ = TRUE;
+		current_type_ = CJumpExpr::TYPE_INT;
+	}
+#else
 	current_ = end - start;
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
+#endif
 	ShowStatus();
 
 	if (!aa_->refresh_off_ && IsVisible())
@@ -4273,6 +4365,7 @@ void CCalcDlg::OnSelLen()
 	inedit(km_sellen);
 }
 
+// Get the length of file
 void CCalcDlg::OnEofGet()               // Length of file
 {
 	CHexEditView *pview = GetView();
@@ -4282,9 +4375,26 @@ void CCalcDlg::OnEofGet()               // Length of file
 		return;
 	}
 
+#ifdef CALC_BIG
+	mpz_class val;
+	mpz_set_ui64(val.get_mpz_t(), pview->GetDocument()->length());
+	overflow_ = val > max_val_;
+	if (overflow_)
+	{
+		mm_->StatusBarText("File length overflowed data size");
+		aa_->mac_error_ = 2;
+	}
+	else
+	{
+		current_ = val;
+		current_const_ = TRUE;
+		current_type_ = CJumpExpr::TYPE_INT;
+	}
+#else
 	current_ = pview->GetDocument()->length();
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
+#endif
 	ShowStatus();
 
 	if (!aa_->refresh_off_ && IsVisible())
@@ -4299,11 +4409,25 @@ void CCalcDlg::OnEofGet()               // Length of file
 
 // ----------- File change funcs -------------
 
+// Change the byte(s) at (and after) the "mark"
 void CCalcDlg::OnMarkAtStore()
 {
 	if (invalid_expression())
 		return;
 
+#ifdef CALC_BIG
+	FILE_ADDRESS mark = 0;
+	if (GetView() != NULL)
+		mark = GetView()->GetMark();
+
+	if (!put_bytes(-2))
+	{
+		aa_->mac_error_ = 10;
+		return;
+	}
+	if (!GetView()->OverType())
+		GetView()->SetMark(mark);   // Inserting at mark would have move it forward
+#else
 	CHexEditView *pview = GetView();
 	// Make sure view and calculator endianness are in sync
 	ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
@@ -4352,9 +4476,10 @@ void CCalcDlg::OnMarkAtStore()
 	}
 	pview->GetDocument()->Change(pview->OverType() ? mod_replace : mod_insert,
 								mark, bits_/8, (unsigned char *)&temp, 0, pview);
-
 	if (!pview->OverType())
 		pview->SetMark(mark);   // Inserting at mark would have move it forward
+#endif
+
 
 	if (!aa_->refresh_off_ && IsVisible())
 	{
@@ -4369,19 +4494,40 @@ void CCalcDlg::OnMarkAtStore()
 	aa_->SaveToMacro(km_markatstore);
 }
 
+// Set the caret position (or selection start)
 void CCalcDlg::OnSelStore()
 {
 	if (invalid_expression())
 		return;
 
 	CHexEditView *pview = GetView();
+#ifdef CALC_BIG
+	if (pview == NULL)
+	{
+		mm_->StatusBarText("No file open");
+		aa_->mac_error_ = 10;
+		return;
+	}
+
+	mpz_class eof, val;
+	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
+	val = get_norm(current_);
+	if (val > eof)
+	{
+		mm_->StatusBarText("Can't move cursor past end of file");
+		aa_->mac_error_ = 10;
+		return;
+	}
+#else
 	if (pview == NULL || GetValue() > (unsigned __int64)pview->GetDocument()->length())
 	{
 		mm_->StatusBarText("Can't move cursor past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
+#endif
 	pview->MoveWithDesc("Set Cursor in Calculator", GetValue());
+
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
@@ -4395,11 +4541,19 @@ void CCalcDlg::OnSelStore()
 	aa_->SaveToMacro(km_selstore);
 }
 
+// Change the byte(s) at (and after) the caret (start of selection)
 void CCalcDlg::OnSelAtStore()
 {
 	if (invalid_expression())
 		return;
 
+#ifdef CALC_BIG
+	if (!put_bytes(-3))
+	{
+		aa_->mac_error_ = 10;
+		return;
+	}
+#else
 	CHexEditView *pview = GetView();
 	// Make sure view and calculator endianness are in sync
 	ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
@@ -4450,6 +4604,7 @@ void CCalcDlg::OnSelAtStore()
 	}
 	pview->GetDocument()->Change(pview->OverType() ? mod_replace : mod_insert,
 								start, bits_/8, (unsigned char *)&temp, 0, pview);
+#endif
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
@@ -4463,6 +4618,7 @@ void CCalcDlg::OnSelAtStore()
 	aa_->SaveToMacro(km_selatstore);
 }
 
+// Set the selection length from the calculator
 void CCalcDlg::OnSelLenStore()
 {
 	if (invalid_expression())
@@ -4471,13 +4627,31 @@ void CCalcDlg::OnSelLenStore()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
+		mm_->StatusBarText("No file open");
 		aa_->mac_error_ = 10;
 		return;
 	}
 
-	FILE_ADDRESS eof = pview->GetDocument()->length();
 	FILE_ADDRESS start, end;
 	pview->GetSelAddr(start, end);
+
+#ifdef CALC_BIG
+	mpz_class eof, addr, len;
+	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
+	mpz_set_ui64(addr.get_mpz_t(), start);
+	len = get_norm(current_);
+
+	if (addr + len > eof)
+	{
+		mm_->StatusBarText("New selection length would be past EOF");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	len += addr;
+	pview->MoveToAddress(mpz_get_ui64(addr.get_mpz_t()), mpz_get_ui64(len.get_mpz_t()));
+
+#else
+	FILE_ADDRESS eof = pview->GetDocument()->length();
 	if (start + (current_ & mask_) > (unsigned __int64)eof)
 	{
 		mm_->StatusBarText("New selection length would be past EOF");
@@ -4486,6 +4660,7 @@ void CCalcDlg::OnSelLenStore()
 	}
 
 	pview->MoveToAddress(start, start + current_);
+#endif
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();

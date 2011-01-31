@@ -343,7 +343,8 @@ private:
 	void calc_previous();                   // Do binary operation using previous_ and current_
 	void add_hist();                        // Add to drop-down history list
 	void fix_values();                      // Update min, max etc based on latest settings (radix_, signed_)
-	bool get_bytes(unsigned char *buf, size_t len, FILE_ADDRESS addr); // Get bytes from file based, if any
+	bool get_bytes(FILE_ADDRESS addr);      // Load bytes into calculator from file address (or special locations for -ve values)
+	bool put_bytes(FILE_ADDRESS addr);      // Write calculator bytes to file at addr (or special locations for -ve values)
 
 	CHexEditApp *aa_;                       // Ptr to the app (mainly for macro handling)
 	CMainFrame *mm_;                        // Ptr to the main window
