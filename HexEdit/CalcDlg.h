@@ -390,10 +390,6 @@ private:
 	mpz_class sign_mask_;          // Mask to check sign bit of bits_, typically: 0x80, 0x8000, 0x80000000 etc
 
 	mpz_class get_norm(mpz_class v); // Get a value converted according to bits_ and signed_
-
-	// These are the calculator values and are kept as a double-check of the new calcs
-	unsigned __int64 current_64_;   // Current value in the edit control (used by edit_)
-	unsigned __int64 previous_64_;  // Previous value of edit control (if binary operator active)
 #else
 	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
 	unsigned __int64 current_;   // Current value in the edit control (used by edit_)
