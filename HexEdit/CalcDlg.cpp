@@ -106,7 +106,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	for (int bnum = 63; bnum >= 0; bnum--)
 	{
 		// When we hit the first enabled bit switch to the darker pen
-		if (!enabled && bnum < m_pParent->bits_)
+		if (!enabled && (bnum < m_pParent->bits_ || m_pParent->bits_ == 0))
 		{
 			pDC->SelectObject(&penEnabled);
 			colour = ::add_contrast(::afxGlobalData.clrBarDkShadow,  ::afxGlobalData.clrBarFace);
@@ -944,10 +944,10 @@ mpz_class CCalcDlg::get_norm(mpz_class v)
 
 	mpz_class retval = v & mask_;           // mask off high bits
 
-	// If high bit is on then make -ve.  This assumes that displayed numbers are 2's complement.
-	if (signed_ && (v & sign_mask_) != 0)  // use mpz_tstbit?? xxx
+	// If high bit is on then make -ve.
+	if (signed_ && mpz_tstbit(v.get_mpz_t(), bits_ - 1))
 	{
-		// Convert to the 2's complement inverse of the bit-pattern (invert bits and add one within bits_ range)
+		// Convert to the 2's complement (invert bits and add one within bits_ range)
 		mpz_com(retval.get_mpz_t(), retval.get_mpz_t());
 		retval &= mask_;
 		++ retval;
@@ -1094,11 +1094,11 @@ void CCalcDlg::fix_values()
 
 	mpz_class one(1);
 	mask_ = (one << bits_) - 1;
-	sign_mask_ = one << (bits_ - 1);
 	if (signed_)
 	{
-		min_val_ = - sign_mask_;
-		max_val_ = sign_mask_ - 1;
+		// 2's complement: abs(min) == abs(max) + 1
+		min_val_ = - one << (bits_ - 1);
+		max_val_ = - min_val_ - 1;
 	}
 	else
 	{
@@ -1366,7 +1366,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		}
 		else
 		{
-			int neg = mpz_tstbit(current_.get_mpz_t(), bits_-1);
+			int neg = mpz_tstbit(current_.get_mpz_t(), bits_-1);  // is high bit on?
 			current_ >>= 1;
 			if (neg)
 				mpz_setbit(current_.get_mpz_t(), bits_-1);
@@ -3845,7 +3845,6 @@ void CCalcDlg::OnMemStore()
 		aa_->SaveToMacro(source_, GetValue());
 	source_ = km_result;
 	aa_->SaveToMacro(km_memstore);
-
 }
 
 void CCalcDlg::OnMemClear()

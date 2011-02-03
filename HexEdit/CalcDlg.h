@@ -392,7 +392,6 @@ private:
 	// only relevant when bits_ > 0.
 	mpz_class min_val_, max_val_;  // Range of valid values according to bits_ and signed_
 	mpz_class mask_;               // Mask for current value of bits_, typically: 0xFF, 0xFFFF, 0xffffFFFF etc
-	mpz_class sign_mask_;          // Mask to check sign bit of bits_, typically: 0x80, 0x8000, 0x80000000 etc
 
 	mpz_class get_norm(mpz_class v); // Get a value converted according to bits_ and signed_
 #else
