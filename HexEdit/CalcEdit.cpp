@@ -261,15 +261,16 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 			mpz_class val;
 			if (pp_->signed_ && vv.int64 < 0)
 			{
-				// Mask off sign bit then say that it is -ve
-				mpz_set_ui64(val.get_mpz_t(), vv.int64 & 0x7fffFFFFffffFFFF);
+				// Take 2's complement and set as -ve
+				mpz_set_ui64(val.get_mpz_t(), ~vv.int64 + 1);
 				mpz_neg(val.get_mpz_t(), val.get_mpz_t());
 			}
 			else
 			{
 				mpz_set_ui64(val.get_mpz_t(), vv.int64);
 			}
-			pp_->overflow_ = val < pp_->min_val_ || val > pp_->max_val_;
+			pp_->overflow_ = pp_->bits_ > 0 && 
+			                 (val < pp_->min_val_ || val > pp_->max_val_);
 
 			if (!pp_->overflow_)
 			{
@@ -307,7 +308,8 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		{
 			mpz_class val;
 			mpz_set_d(val.get_mpz_t(), vv.real64);
-			pp_->overflow_ = val < pp_->min_val_ || val > pp_->max_val_;
+			pp_->overflow_ = pp_->bits_ > 0 && 
+			                 (val < pp_->min_val_ || val > pp_->max_val_);
 
 			if (!pp_->overflow_)
 				pp_->current_ = val;
@@ -371,7 +373,8 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 #ifdef CALC_BIG
 			mpz_class val;
 			mpz_set_d(val.get_mpz_t(), vv.date);
-			pp_->overflow_ = val < pp_->min_val_ || val > pp_->max_val_;
+			pp_->overflow_ = pp_->bits_ > 0 && 
+			                 (val < pp_->min_val_ || val > pp_->max_val_);
 			if (!pp_->overflow_)
 				pp_->current_ = val;
 #else

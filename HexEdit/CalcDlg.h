@@ -380,11 +380,16 @@ private:
 	bool signed_;                   // Generally only decimal (base 10) numbers are shown signed
 
 	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
+	// Notes: Internally mpz big integers are stored as a bit pattern (with implicit leading zeroes) and a separate sign.
+	//        If signed_ == false then the mpz values should be +ve or zero (mpz_sgn >= 0)
+	//        If signed_ == true then the mpz value can be -ve in which case we have to negate the value to get the 2's complement bit pattern
 	mpz_class current_;            // Current value (always +ve) - affected by bits_, signed_ and radix_ when displayed in edit box
 	mpz_class previous_;           // Previous value of edit control (if binary operator active)
 
 	mpz_class memory_;             // Current contents of memory (used with Memory, MS, MC, etc buttons)
 
+	// The following are used for checking the current value (eg for overflow) but are
+	// only relevant when bits_ > 0.
 	mpz_class min_val_, max_val_;  // Range of valid values according to bits_ and signed_
 	mpz_class mask_;               // Mask for current value of bits_, typically: 0xFF, 0xFFFF, 0xffffFFFF etc
 	mpz_class sign_mask_;          // Mask to check sign bit of bits_, typically: 0x80, 0x8000, 0x80000000 etc

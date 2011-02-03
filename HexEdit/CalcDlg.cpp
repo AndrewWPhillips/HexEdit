@@ -1,3 +1,4 @@
+// TODO
 // CalcDlg.cpp : implements the Goto/Calculator dialog
 //
 // Copyright (c) 2000-2011 by Andrew W. Phillips.
@@ -84,6 +85,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	// Start off with disabled colours as we draw from left (disabled side first)
 	COLORREF colour = ::tone_down(::afxGlobalData.clrBarDkShadow, ::afxGlobalData.clrBarFace, 0.7);
 	CPen * pOldPen = (CPen*) pDC->SelectObject(&penDisabled);
+	bool enabled = false;
 
 	// We need this so Rectangle() does not fill
 	CBrush * pOldBrush = pDC->SelectObject(CBrush::FromHandle((HBRUSH)GetStockObject(NULL_BRUSH)));
@@ -98,17 +100,17 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 
 #ifdef CALC_BIG
 	unsigned __int64 val = mpz_get_ui64(m_pParent->current_.get_mpz_t());
-	ASSERT(val == m_pParent->current_64_);
 #else
 	unsigned __int64 val = m_pParent->current_;
 #endif
 	for (int bnum = 63; bnum >= 0; bnum--)
 	{
 		// When we hit the first enabled bit switch to the darker pen
-		if (bnum == m_pParent->bits_ - 1)
+		if (!enabled && bnum < m_pParent->bits_)
 		{
 			pDC->SelectObject(&penEnabled);
 			colour = ::add_contrast(::afxGlobalData.clrBarDkShadow,  ::afxGlobalData.clrBarFace);
+			enabled = true;
 		}
 
 		if ( (val & ((__int64)1<<bnum)) != 0)
@@ -148,7 +150,6 @@ void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 		mpz_class val = m_pParent->current_;
 		mpz_combit(val.get_mpz_t(), bnum);
 		m_pParent->Set(val);
-		m_pParent->current_64_ ^= ((__int64)1<<bnum);
 #else
 		unsigned __int64 val = m_pParent->current_ ^ ((__int64)1<<bnum);
 		m_pParent->Set(val);
@@ -233,13 +234,12 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 	bits_index_ = base_index_ = -1;  // Fixed later in Create()
 
 	// Get last used settings from ini file/registry
-	radix_  = aa_->GetProfileInt("Calculator", "Base", 16);
-	bits_   = aa_->GetProfileInt("Calculator", "Bits", 32);
+	radix_ = 0;
+	bits_ = 0;
 #ifdef CALC_BIG
-	signed_ = aa_->GetProfileInt("Calculator", "signed", 0) ? true : false;
+	signed_ = false;
 	current_.set_str(aa_->GetProfileString("Calculator", "Current"), 10);
 	memory_.set_str(aa_->GetProfileString("Calculator", "Memory"), 10);
-	fix_values();
 #else
 	current_ = _atoi64(aa_->GetProfileString("Calculator", "Current"));
 	memory_ = _atoi64(aa_->GetProfileString("Calculator", "Memory"));
@@ -266,8 +266,11 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	::SetWindowLong(edit_.m_hWnd, GWL_STYLE, style | ES_RIGHT | ES_WANTRETURN);
 
 	// Make sure radio buttons are up to date
-	change_base(radix_);
-	change_bits(bits_);
+	change_base(aa_->GetProfileInt("Calculator", "Base", 16));
+	change_bits(aa_->GetProfileInt("Calculator", "Bits", 32));
+#ifdef CALC_BIG
+	change_signed(aa_->GetProfileInt("Calculator", "signed", 0) ? true : false);
+#endif
 
 	// If saved memory value was restored then make it available
 	if (memory_ != 0)
@@ -901,7 +904,7 @@ static DWORD id_pairs[] = {
 // Fix up case if displaying in hex
 void CCalcDlg::Redisplay()
 {
-	if (radix_  == 16 && current_type_ == CJumpExpr::TYPE_INT)
+	if (radix_  > 10 && current_type_ == CJumpExpr::TYPE_INT)
 	{
 		CString ss;
 
@@ -932,15 +935,19 @@ void CCalcDlg::FinishMacro()
 }
 
 #ifdef CALC_BIG
+// Get value (current calc value, memory etc) according to current
+// bits_ and signed_ settings.
 mpz_class CCalcDlg::get_norm(mpz_class v)
 {
-	mpz_class retval = v;
-	v &= mask_;           // mask off high bits
+	// If infinite precision (bits_ == 0) then there is no mask
+	if (bits_ == 0) return v;
 
-	// If high bit on then make -ve.  This assumes that displayed numbers are 2's complement.
-	if (signed_ && (v & sign_mask_) != 0)
+	mpz_class retval = v & mask_;           // mask off high bits
+
+	// If high bit is on then make -ve.  This assumes that displayed numbers are 2's complement.
+	if (signed_ && (v & sign_mask_) != 0)  // use mpz_tstbit?? xxx
 	{
-		// Convert to the 2's complement inverse of the bit-pattern (invert bits and add one)
+		// Convert to the 2's complement inverse of the bit-pattern (invert bits and add one within bits_ range)
 		mpz_com(retval.get_mpz_t(), retval.get_mpz_t());
 		retval &= mask_;
 		++ retval;
@@ -953,7 +960,7 @@ mpz_class CCalcDlg::get_norm(mpz_class v)
 
 unsigned __int64 CCalcDlg::GetValue() const
 {
-	mpz_class tmp = current_;
+	mpz_class tmp = current_;  // use get_norm??? xxx 
 	if (bits_ < 64)
 		tmp &= mask_;
 
@@ -965,7 +972,7 @@ unsigned __int64 CCalcDlg::GetValue() const
 // xxx TBD - make -ve if signed_ and high bit is on ???
 bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 {
-	if (bits_%8 != 0)
+	if (bits_ == 0 || bits_%8 != 0)
 	{
 		mm_->StatusBarText("Bits must be divisible by 8");
 		return false;
@@ -1008,6 +1015,14 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 
 	// This assumes 4-byte units and little-endian order
 	mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
+	if (signed_ && mpz_tstbit(current_.get_mpz_t(), bits_-1))
+	{
+		mpz_com(current_.get_mpz_t(), current_.get_mpz_t());
+		current_ &= mask_;
+		++ current_;
+		// Now say it is -ve
+		mpz_neg(current_.get_mpz_t(), current_.get_mpz_t());
+	}
 	delete[] buf;
 
 	return true;
@@ -1016,7 +1031,7 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 // Put data to the file from the current calculator value
 bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 {
-	if (bits_%8 != 0)
+	if (bits_ == 0 || bits_%8 != 0)
 	{
 		mm_->StatusBarText("Bits must be divisible by 8");
 		return false;
@@ -1075,6 +1090,8 @@ void CCalcDlg::fix_values()
 {
 	// Adjust mask etc depending on bits_ and signed_ (assumes 2's-complement numbers)
 #ifdef CALC_BIG
+	if (bits_ == 0) return;  // Indicates unlimited bits whence min/max/mask are not used
+
 	mpz_class one(1);
 	mask_ = (one << bits_) - 1;
 	sign_mask_ = one << (bits_ - 1);
@@ -1155,7 +1172,7 @@ void CCalcDlg::do_binop(binop_type binop)
 			aa_->SaveToMacro(source_, temp);
 
 		// Get ready for new value to be entered
-		previous_ = current_;
+		previous_ = get_norm(current_);
 		current_ = 0;
 		source_ = km_result;
 	}
@@ -1301,11 +1318,15 @@ void CCalcDlg::do_unary(unary_type unary)
 		current_ = current_ * current_;
 		break;
 	case unary_squareroot:
-		// xxx check for error? TBD TODO
-		mpz_sqrt(current_.get_mpz_t(), current_.get_mpz_t());
+		if (mpz_sgn(current_.get_mpz_t()) < 0)
+		{
+			mm_->StatusBarText("Square root of negative value");
+			error_ = TRUE;
+		}
+		else
+			mpz_sqrt(current_.get_mpz_t(), current_.get_mpz_t());
 		break;
 	case unary_cube:
-		// xxx use mpz_powm?
 		current_ = current_ * current_ * current_;
 		break;
 	case unary_factorial:
@@ -1315,10 +1336,22 @@ void CCalcDlg::do_unary(unary_type unary)
 		current_ = ~current_;
 		break;
 	case unary_rol:
-		current_ = (current_ << 1) | (current_ >> (bits_ - 1));
+		if (bits_ == 0)
+		{
+			mm_->StatusBarText("Can't rotate left if bit count is unlimited");
+			error_ = TRUE;
+		}
+		else
+			current_ = (current_ << 1) | (current_ >> (bits_ - 1));
 		break;
 	case unary_ror:
-		current_ = (current_ >> 1) | (current_ << (bits_ - 1));
+		if (bits_ == 0)
+		{
+			mm_->StatusBarText("Can't rotate right if bit count is unlimited");
+			error_ = TRUE;
+		}
+		else
+			current_ = (current_ >> 1) | (current_ << (bits_ - 1));
 		break;
 	case unary_lsl:
 		current_ <<= 1;
@@ -1327,15 +1360,26 @@ void CCalcDlg::do_unary(unary_type unary)
 		current_ >>= 1;
 		break;
 	case unary_asr:
+		if (bits_ == 0)
 		{
-			int neg = mpz_tstbit(current_.get_mpz_t(), bits_);
+			current_ >>= 1;
+		}
+		else
+		{
+			int neg = mpz_tstbit(current_.get_mpz_t(), bits_-1);
 			current_ >>= 1;
 			if (neg)
-				mpz_setbit(current_.get_mpz_t(), bits_);
+				mpz_setbit(current_.get_mpz_t(), bits_-1);
 		}
 		break;
 	case unary_rev:  // Reverse all bits
 		{
+			if (bits_ == 0)
+			{
+				mm_->StatusBarText("Can't reverse bits if bit count is unlimited");
+				error_ = TRUE;
+				break;
+			}
 			// This algorithm tests the current bits by shifting right and testing
 			// bottom bit.  Any bits on sets the correspoding bit of the result as
 			// it is shifted left.
@@ -1345,7 +1389,7 @@ void CCalcDlg::do_unary(unary_type unary)
 			{
 				temp <<= 1;                  // Make room for the next bit
 				if (mpz_tstbit(current_.get_mpz_t(), 0))
-					mpz_setbit(current_.get_mpz_t(), 0);
+					mpz_setbit(temp.get_mpz_t(), 0);
 				current_ >>= 1;              // Move bits down to test the next
 			}
 			current_ = temp;
@@ -1354,18 +1398,18 @@ void CCalcDlg::do_unary(unary_type unary)
 	case unary_flip: // Flip byte order
 		{
 			// This code assumes that byte order is little-endian in memory
-			if (bits_%8 != 0)
+			if (bits_ == 0 || bits_%8 != 0)
 			{
 				mm_->StatusBarText("Bits must be divisible by 8 to flip bytes");
-				aa_->mac_error_ = 10;
-				return;
+				error_ = TRUE;
+				break;
 			}
 			int bytes = bits_ / 8;
 			int units = (bytes + 3)/4; // number of DWORDs required
 			mp_limb_t * buf = new mp_limb_t[units];
 			for (int ii = 0; ii < units; ++ii)
 			{
-				if (units < mpz_size(current_.get_mpz_t()))
+				if (ii < mpz_size(current_.get_mpz_t()))
 					buf[ii] = mpz_getlimbn(current_.get_mpz_t(), ii);
 				else
 					buf[ii] = 0;
@@ -1377,10 +1421,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		break;
 	case unary_at:
 		if (!get_bytes(GetValue()))
-		{
-			aa_->mac_error_ = 10;
-			return;
-		}
+			error_ = TRUE;
 		break;
 
 	case unary_none:
@@ -1389,7 +1430,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	}
 
 	if (!error_)
-		overflow_ = current_ < min_val_ || current_ > max_val_;
+		overflow_ = bits_ > 0 && (current_ < min_val_ || current_ > max_val_);
 
 	ShowStatus();                       // Indicate overflow etc
 
@@ -1745,6 +1786,12 @@ void CCalcDlg::calc_previous()
 			current_ = previous_;
 		break;
 	case binop_rol:
+		if (bits_ == 0)
+		{
+			mm_->StatusBarText("Can't rotate left if bit count is unlimited");
+			error_ = TRUE;
+		}
+		else
 		{
 			mpz_class t1, t2;
 			current_ %= bits_;
@@ -1754,6 +1801,12 @@ void CCalcDlg::calc_previous()
 		}
 		break;
 	case binop_ror:
+		if (bits_ == 0)
+		{
+			mm_->StatusBarText("Can't rotate right if bit count is unlimited");
+			error_ = TRUE;
+		}
+		else
 		{
 			mpz_class t1, t2;
 			current_ %= bits_;
@@ -1769,7 +1822,12 @@ void CCalcDlg::calc_previous()
 		mpz_fdiv_q_2exp(current_.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
 		break;
 	case binop_asr:
+		if (bits_ == 0)
+			mpz_fdiv_q_2exp(current_.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
+		else
+		{
 		// xxx TBD TODO
+		}
 		break;
 
 	case binop_and:
@@ -1796,7 +1854,7 @@ void CCalcDlg::calc_previous()
 
 	// Check if the result overflowed the number of bits in use.
 	if (!error_)
-		overflow_ = current_ < min_val_ || current_ > max_val_;
+		overflow_ = bits_ > 0 && (current_ < min_val_ || current_ > max_val_);
 
 	ShowStatus();                       // Indicate overflow/error (if any)
 
@@ -2123,8 +2181,13 @@ void CCalcDlg::change_signed(bool s)
 		return;
 	}
 
-	overflow_ = error_ = FALSE;
-	// xxx check for overflow
+	error_ = FALSE;
+	overflow_ = bits_ > 0 && (current_ < min_val_ || current_ > max_val_);
+	if (overflow_)
+	{
+		mm_->StatusBarText("Current value overflowed new data size");
+		aa_->mac_error_ = 1;
+	}
 	ShowStatus();                       // Set/clear overflow indicator
 
 	if (!aa_->refresh_off_ && IsVisible())
@@ -2170,13 +2233,10 @@ void CCalcDlg::change_bits(int bits)
 		return;
 	}
 
-	overflow_ = error_ = FALSE;
-	if (radix_ == 10 &&
-		((current_&sign_mask_) == 0 && (current_&~mask_) != 0 ||
-		 (current_&sign_mask_) != 0 && ~(current_|mask_) != 0) ||
-		radix_ != 10 && (current_ & ~mask_) != 0)
+	error_ = FALSE;
+	overflow_ = bits_ > 0 && (current_ < min_val_ || current_ > max_val_);
+	if (overflow_)
 	{
-		overflow_ = TRUE;
 		mm_->StatusBarText("Current value overflowed new data size");
 		aa_->mac_error_ = 1;
 	}
@@ -2245,9 +2305,9 @@ void CCalcDlg::update_controls()
 
 	// Disable flip bytes button if there is only one byte
 	ASSERT(GetDlgItem(IDC_UNARY_FLIP) != NULL);
-	GetDlgItem(IDC_UNARY_FLIP)->EnableWindow(bits_ > 8);
+	GetDlgItem(IDC_UNARY_FLIP)->EnableWindow(bits_ > 8 && bits_%8 == 0);
 	ASSERT(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS) != NULL);
-	GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(GetView() != NULL && bits_ > 8);
+	GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(GetView() != NULL && bits_ > 8 && bits_%8 == 0);
 
 	if (current_const_ == TRUE)
 		edit_.Put();
@@ -2278,9 +2338,6 @@ void CCalcDlg::FixFileButtons()
 	CHexEditView *pview = GetView();
 	FILE_ADDRESS start, end;                    // Current selection
 	FILE_ADDRESS eof, mark;                     // Length of file and posn of mark
-#ifdef CALC_BIG
-	mpz_class eof_mpz, mark_mpz, start_mpz;
-#endif
 
 	if (pview != NULL)
 	{
@@ -2291,6 +2348,8 @@ void CCalcDlg::FixFileButtons()
 	else
 		start = end = eof = mark = 0;
 #ifdef CALC_BIG
+	mpz_class eof_mpz, mark_mpz, start_mpz;
+
 	mpz_set_ui64(eof_mpz.get_mpz_t(), eof);
 	mpz_set_ui64(mark_mpz.get_mpz_t(), mark);
 	mpz_set_ui64(start_mpz.get_mpz_t(), start);
@@ -3742,7 +3801,7 @@ void CCalcDlg::OnMemGet()
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
 
-	overflow_ = current_ < min_val_ || current_ > max_val_;
+	overflow_ = bits_ > 0 && (current_ < min_val_ || current_ > max_val_);
 	if (overflow_)
 	{
 		mm_->StatusBarText("Memory overflowed data size");
@@ -3765,7 +3824,7 @@ void CCalcDlg::OnMemStore()
 	if (invalid_expression())
 		return;
 
-	memory_ = current_&mask_;
+	memory_ = get_norm(current_);
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
@@ -3806,7 +3865,7 @@ void CCalcDlg::OnMemAdd()
 	if (invalid_expression())
 		return;
 
-	memory_ += current_&mask_;
+	memory_ += get_norm(current_);
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
@@ -3826,7 +3885,7 @@ void CCalcDlg::OnMemSubtract()
 	if (invalid_expression())
 		return;
 
-	memory_ -= current_&mask_;
+	memory_ -= get_norm(current_);
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
@@ -3854,7 +3913,7 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 #ifdef CALC_BIG
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), pview->GetMark());
-	overflow_ = val > max_val_;
+	overflow_ = bits_ > 0 && val > max_val_;
 	if (overflow_)
 	{
 		mm_->StatusBarText("Mark overflowed data size");
@@ -4210,7 +4269,7 @@ void CCalcDlg::OnSelGet()
 #ifdef CALC_BIG
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), start);
-	overflow_ = val > max_val_;
+	overflow_ = bits_ > 0 && val > max_val_;
 	if (overflow_)
 	{
 		mm_->StatusBarText("Cursor position overflowed data size");
@@ -4336,7 +4395,7 @@ void CCalcDlg::OnSelLen()
 #ifdef CALC_BIG
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), end - start);
-	overflow_ = val > max_val_;
+	overflow_ = bits_ > 0 && val > max_val_;
 	if (overflow_)
 	{
 		mm_->StatusBarText("Selection length overflowed data size");
@@ -4378,7 +4437,7 @@ void CCalcDlg::OnEofGet()               // Length of file
 #ifdef CALC_BIG
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), pview->GetDocument()->length());
-	overflow_ = val > max_val_;
+	overflow_ = bits_ > 0 && val > max_val_;
 	if (overflow_)
 	{
 		mm_->StatusBarText("File length overflowed data size");
