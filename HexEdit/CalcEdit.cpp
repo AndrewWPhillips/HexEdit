@@ -409,13 +409,13 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		if (!CSystemSound::Play("Invalid Character"))
 #endif
 			::Beep(5000,200);
-		pp_->FixFileButtons();
+		//pp_->update_file_buttons();
 		return false;
 	}
 	else
 	{
 		pp_->current_type_ = (expr_eval::type_t)vv.typ;
-		pp_->FixFileButtons();  // must be called after settings current type
+		//pp_->update_file_buttons();  // must be called after settings current type
 		return true;
 	}
 }

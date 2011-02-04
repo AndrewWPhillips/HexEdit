@@ -1703,7 +1703,7 @@ void CHexEditApp::refresh_display(bool do_all /*=false*/)
 		//mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
 		//mm->m_wndCalc.edit_.Put();        // Make sure current calc. value is displayed
 		mm->m_wndCalc.update_controls();
-		mm->m_wndCalc.GetDlgItem(IDC_MEM_GET)->EnableWindow(mm->m_wndCalc.memory_ != 0);
+		mm->m_wndCalc.button_colour(mm->m_wndCalc.GetDlgItem(IDC_MEM_GET), mm->m_wndCalc.memory_ != 0, RGB(0x40, 0x40, 0x40));
 
 		mm->m_wndCalc.ShowBinop();
 		//mm->m_wndCalc.FixFileButtons();   // Make sure file buttons reflect current view (or no view)

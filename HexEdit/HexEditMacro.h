@@ -108,7 +108,7 @@ enum km_type
 	km_expression,              // User entered an expression (cf km_user) - string stored in *pss
 	km_change_signed,           // Toggled signed_ in calculator
 
-	km_last_calc, // = 66?      // leave as last value before km_view
+	km_last_calc, // = 67?      // leave as last value before km_view
 
 	//-------------------------------------------------
 	km_view = 100,              // All past this point require a view

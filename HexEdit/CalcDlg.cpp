@@ -1,3 +1,11 @@
+// TODO
+// check all uses of GetValue to see if > 64 bits could make sense
+// fix macros to store values > 64 bits (as a string) for km_user (add km_user_string)
+// test get_bytes and put_bytes
+
+
+
+
 // CalcDlg.cpp : implements the Goto/Calculator dialog
 //
 // Copyright (c) 2000-2011 by Andrew W. Phillips.
@@ -680,14 +688,14 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 {
 	if (bits_ == 0 || bits_%8 != 0)
 	{
-		mm_->StatusBarText("Bits must be divisible by 8");
+		AfxMessageBox("Bits must be divisible by 8");
 		return false;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		mm_->StatusBarText("No window open");
+		AfxMessageBox("No file open to read from");
 		return false;
 	}
 
@@ -704,7 +712,7 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 
 	if (addr + bits_/8 > pview->GetDocument()->length())
 	{
-		mm_->StatusBarText("Not enough bytes before end of file");
+		AfxMessageBox("Not enough bytes before end of file");
 		return false;
 	}
 
@@ -741,20 +749,20 @@ bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 {
 	if (bits_ == 0 || bits_%8 != 0)
 	{
-		mm_->StatusBarText("Bits must be divisible by 8");
+		AfxMessageBox("Bits must be divisible by 8");
 		return false;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		mm_->StatusBarText("No window open");
+		AfxMessageBox("No file open to add to");
 		return false;
 	}
 
 	if (pview->ReadOnly())
 	{
-		mm_->StatusBarText("Can't write: file is read only");
+		AfxMessageBox("Can't write: file is read only");
 		return false;
 	}
 
@@ -769,9 +777,14 @@ bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 		break;
 	}
 
-	if (addr + bits_/8 > pview->GetDocument()->length())
+	if (addr > pview->GetDocument()->length())
 	{
-		mm_->StatusBarText("Not enough bytes before end of file");
+		AfxMessageBox("Can't write past end of file");
+		return false;
+	}
+	if (!pview->OverType() && addr + bits_/8 > pview->GetDocument()->length())
+	{
+		AfxMessageBox("Not enough bytes before end of file");
 		return false;
 	}
 
@@ -1028,7 +1041,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	case unary_squareroot:
 		if (mpz_sgn(current_.get_mpz_t()) < 0)
 		{
-			mm_->StatusBarText("Square root of negative value");
+			AfxMessageBox("Square root of negative value");
 			error_ = TRUE;
 		}
 		else
@@ -1046,7 +1059,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	case unary_rol:
 		if (bits_ == 0)
 		{
-			mm_->StatusBarText("Can't rotate left if bit count is unlimited");
+			AfxMessageBox("Can't rotate left if bit count is unlimited");
 			error_ = TRUE;
 		}
 		else
@@ -1055,7 +1068,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	case unary_ror:
 		if (bits_ == 0)
 		{
-			mm_->StatusBarText("Can't rotate right if bit count is unlimited");
+			AfxMessageBox("Can't rotate right if bit count is unlimited");
 			error_ = TRUE;
 		}
 		else
@@ -1084,7 +1097,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		{
 			if (bits_ == 0)
 			{
-				mm_->StatusBarText("Can't reverse bits if bit count is unlimited");
+				AfxMessageBox("Can't reverse bits if bit count is unlimited");
 				error_ = TRUE;
 				break;
 			}
@@ -1104,14 +1117,14 @@ void CCalcDlg::do_unary(unary_type unary)
 		}
 		break;
 	case unary_flip: // Flip byte order
+		// This code assumes that byte order is little-endian in memory
+		if (bits_ == 0 || bits_%8 != 0)
 		{
-			// This code assumes that byte order is little-endian in memory
-			if (bits_ == 0 || bits_%8 != 0)
-			{
-				mm_->StatusBarText("Bits must be divisible by 8 to flip bytes");
-				error_ = TRUE;
-				break;
-			}
+			AfxMessageBox("Bits must be divisible by 8 to flip bytes");
+			error_ = TRUE;
+		}
+		else
+		{
 			int bytes = bits_ / 8;
 			int units = (bytes + 3)/4; // number of DWORDs required
 			mp_limb_t * buf = new mp_limb_t[units];
@@ -1128,8 +1141,29 @@ void CCalcDlg::do_unary(unary_type unary)
 		}
 		break;
 	case unary_at:
-		if (!get_bytes(GetValue()))
+		if (GetView() == NULL)
+		{
+			AfxMessageBox("No file open to get data from");
 			error_ = TRUE;
+		}
+		else
+		{
+			mpz_class eof;
+			mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());
+
+			if (current_ < 0)
+			{
+				AfxMessageBox("Can't read before start of file");
+				error_ = TRUE;
+			}
+			else if (current_ >= eof)
+			{
+				AfxMessageBox("Can't read past end of file");
+				error_ = TRUE;
+			}
+			else if (!get_bytes(GetValue()))
+				error_ = TRUE;
+		}
 		break;
 
 	case unary_none:
@@ -1479,19 +1513,29 @@ void CCalcDlg::calc_previous()
 		break;
 	case binop_divide:
 		if (current_ == 0)
+		{
+			AfxMessageBox("Divide by zero");
 			error_ = TRUE;
+		}
 		else
 			current_ = previous_ / current_;
 		break;
 	case binop_mod:
 		if (current_ == 0)
+		{
+			AfxMessageBox("Divide (modulus) by zero");
 			error_ = TRUE;
+		}
 		else
 			current_ = previous_ % current_;
 		break;
 	case binop_pow:
 		if (current_ > mpz_class(ULONG_MAX))
-			current_ = 0, error_ = TRUE;
+		{
+			current_ = 0;
+			AfxMessageBox("Power too large");
+			overflow_ = TRUE;
+		}
 		else
 			mpz_pow_ui(current_.get_mpz_t(), current_.get_mpz_t(), previous_.get_si()); 
 		break;
@@ -1508,7 +1552,7 @@ void CCalcDlg::calc_previous()
 	case binop_rol:
 		if (bits_ == 0)
 		{
-			mm_->StatusBarText("Can't rotate left if bit count is unlimited");
+			AfxMessageBox("Can't rotate left if bit count is unlimited");
 			error_ = TRUE;
 		}
 		else
@@ -1523,7 +1567,7 @@ void CCalcDlg::calc_previous()
 	case binop_ror:
 		if (bits_ == 0)
 		{
-			mm_->StatusBarText("Can't rotate right if bit count is unlimited");
+			AfxMessageBox("Can't rotate right if bit count is unlimited");
 			error_ = TRUE;
 		}
 		else
@@ -2276,8 +2320,6 @@ void CCalcDlg::setup_static_buttons()
 	button_colour(GetDlgItem(IDC_XOR), true, RGB(0x0, 0x0, 0xC0));
 	button_colour(GetDlgItem(IDC_OR), true, RGB(0x0, 0x0, 0xC0));
 	button_colour(GetDlgItem(IDC_AND), true, RGB(0x0, 0x0, 0xC0));
-	button_colour(GetDlgItem(IDC_ROL), true, RGB(0x0, 0x0, 0xC0));
-	button_colour(GetDlgItem(IDC_ROR), true, RGB(0x0, 0x0, 0xC0));
 	button_colour(GetDlgItem(IDC_LSL), true, RGB(0x0, 0x0, 0xC0));
 	button_colour(GetDlgItem(IDC_LSR), true, RGB(0x0, 0x0, 0xC0));
 	button_colour(GetDlgItem(IDC_ASR), true, RGB(0x0, 0x0, 0xC0));
@@ -2287,8 +2329,6 @@ void CCalcDlg::setup_static_buttons()
 	button_colour(GetDlgItem(IDC_UNARY_NOT), true, RGB(0x80, 0x0, 0x80));
 	button_colour(GetDlgItem(IDC_UNARY_INC), true, RGB(0x80, 0x0, 0x80));
 	button_colour(GetDlgItem(IDC_UNARY_DEC), true, RGB(0x80, 0x0, 0x80));
-	button_colour(GetDlgItem(IDC_UNARY_ROL), true, RGB(0x80, 0x0, 0x80));
-	button_colour(GetDlgItem(IDC_UNARY_ROR), true, RGB(0x80, 0x0, 0x80));
 	button_colour(GetDlgItem(IDC_UNARY_LSL), true, RGB(0x80, 0x0, 0x80));
 	button_colour(GetDlgItem(IDC_UNARY_LSR), true, RGB(0x80, 0x0, 0x80));
 	button_colour(GetDlgItem(IDC_UNARY_ASR), true, RGB(0x80, 0x0, 0x80));
@@ -2320,10 +2360,16 @@ void CCalcDlg::update_controls()
 	update_file_buttons();
 
 	// Update misc buttons
-	button_colour(GetDlgItem(IDC_UNARY_FLIP), bits_ > 8 && bits_%8 == 0, RGB(0x80, 0x0, 0x80));
-	button_colour(GetDlgItem(IDC_UNARY_REV), bits_%8 == 0, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_FLIP), bits_ > 8 && bits_%8 == 0, RGB(0x80, 0x0, 0x80)); // can't flip single byte or individual bits
+	button_colour(GetDlgItem(IDC_UNARY_REV), bits_ > 0, RGB(0x80, 0x0, 0x80));   // Can't reverse an inf. number of bits
 
-	// Disable flip bytes button if there is only one byte
+	// Can't wrap around with unlimited precision
+	button_colour(GetDlgItem(IDC_UNARY_ROL), bits_ > 0, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_ROR), bits_ > 0, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_ROL), bits_ > 0, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_ROR), bits_ > 0, RGB(0x0, 0x0, 0xC0));
+
+	// Disable big-endian checkbox if there is only one byte or not using whole bytes, or no active file
 	ASSERT(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS) != NULL);
 	GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(GetView() != NULL && bits_ > 8 && bits_%8 == 0);
 
@@ -2358,7 +2404,7 @@ void CCalcDlg::update_file_buttons()
 	CHexEditView *pview = GetView();
 
 #ifdef CALC_BIG
-	mpz_class start, eof, mark;
+	mpz_class start, eof, mark, sel_len;
 
 	if (pview != NULL)
 	{
@@ -2367,6 +2413,7 @@ void CCalcDlg::update_file_buttons()
 		FILE_ADDRESS s, e;                    // Current selection
 		pview->GetSelAddr(s, e);
 		mpz_set_ui64(start.get_mpz_t(), s);
+		mpz_set_ui64(sel_len.get_mpz_t(), e - s);
 	}
 
 	// Most file buttons are only enabled if there is an active file open and calc has an INT value in it
@@ -2381,19 +2428,21 @@ void CCalcDlg::update_file_buttons()
 	                                                      mark - get_norm(current_) <= eof,      RGB(0xC0, 0x0, 0x0));
 	button_colour(GetDlgItem(IDC_MARK_AT_STORE), basic && !pview->ReadOnly() && mark <= eof &&
 	                                             (mark + bits_/8 <= eof || !pview->OverType()),  RGB(0xC0, 0x0, 0x0));
-	button_colour(GetDlgItem(IDC_SEL_STORE),     basic && get_norm(current_) <= eof,             RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_SEL_STORE),     basic && get_norm(current_) >= 0 &&
+	                                                      get_norm(current_) <= eof,             RGB(0xC0, 0x0, 0x0));
 	button_colour(GetDlgItem(IDC_SEL_AT_STORE),  basic && !pview->ReadOnly() && start <= eof &&
 	                                             (start + bits_/8 <= eof || !pview->OverType()), RGB(0xC0, 0x0, 0x0));
-	button_colour(GetDlgItem(IDC_SEL_LEN_STORE), basic && start + get_norm(current_) <= eof,     RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_SEL_LEN_STORE), basic && get_norm(current_) >= 0 &&
+	                                                      start + get_norm(current_) <= eof,     RGB(0xC0, 0x0, 0x0));
 	button_colour(GetDlgItem(IDC_GO),            basic && get_norm(current_) <= eof,             RGB(0xC0, 0x0, 0x0));
 
 	// Dark grey buttons
-	button_colour(GetDlgItem(IDC_MARK_GET),      pview != NULL,                                  RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_MARK_GET),      pview != NULL && mark <= max_val_,              RGB(0x40, 0x40, 0x40));
 	button_colour(GetDlgItem(IDC_MARK_AT),       pview != NULL && mark + bits_/8 <= eof,         RGB(0x40, 0x40, 0x40));
-	button_colour(GetDlgItem(IDC_SEL_GET),       pview != NULL,                                  RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_SEL_GET),       pview != NULL && start <= max_val_,             RGB(0x40, 0x40, 0x40));
 	button_colour(GetDlgItem(IDC_SEL_AT),        pview != NULL && start + bits_/8 <= eof,        RGB(0x40, 0x40, 0x40));
-	button_colour(GetDlgItem(IDC_SEL_LEN),       pview != NULL,                                  RGB(0x40, 0x40, 0x40));
-	button_colour(GetDlgItem(IDC_EOF_GET),       pview != NULL,                                  RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_SEL_LEN),       pview != NULL && sel_len <= max_val_,           RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_EOF_GET),       pview != NULL && eof <= max_val_,               RGB(0x40, 0x40, 0x40));
 
 	// Purple
 	button_colour(GetDlgItem(IDC_UNARY_AT),      basic && get_norm(current_) + bits_/8 <= eof,   RGB(0x80, 0x0, 0x80));
@@ -2868,17 +2917,8 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 // after the current cursor position has been moved.
 void CCalcDlg::OnGo()                   // Move cursor to current value
 {
-	// First work out if we arejumping by address or sector
-	bool sector = false;
-	switch (ctl_go_.m_nMenuResult)
-	{
-	case ID_GOADDRESS:
-		sector = false;
-		break;
-	case ID_GOSECTOR:
-		sector = true;
-		break;
-	}
+	// First work out if we are jumping by address or sector
+	bool sector = ctl_go_.m_nMenuResult == ID_GOSECTOR;
 
 	edit_.update_value(true);           // eval the expression allowing side-effects now
 
@@ -2914,7 +2954,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	if (pview == NULL)
 	{
 		// This should not happen unless we are playing back a macro
-		mm_->StatusBarText("Error: no file open for jump");
+		AfxMessageBox("Error: no file open for jump");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -2940,30 +2980,30 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 		ss = "Go To (calc) " + ss + " ";
 	}
 
-	DWORD sector_size = pview->GetDocument()->GetSectorSize();
-	FILE_ADDRESS addr = GetValue();
+	mpz_class addr, eof, sector_size;
+	addr = get_norm(current_);
+	if (addr < 0)
+	{
+		AfxMessageBox("Address is before the start of file (negative)");
+		aa_->mac_error_ = 10;
+		return;
+	}
+
+	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());
+	mpz_set_ui64(sector_size.get_mpz_t(), pview->GetDocument()->GetSectorSize());
 
 	if (sector && sector_size > 0)
-	{
 		addr *= sector_size;
-		if (addr > pview->GetDocument()->length())
-		{
-			mm_->StatusBarText("Error: sector address is past end of file");
-			aa_->mac_error_ = 10;
-			return;
-		}
-		pview->MoveWithDesc(ss, addr);
-	}
-	else
+
+	if (addr > eof)
 	{
-		if (addr > pview->GetDocument()->length())
-		{
-			mm_->StatusBarText("Error: new address is past end of file");
-			aa_->mac_error_ = 10;
-			return;
-		}
-		pview->MoveWithDesc(ss, addr);
+		AfxMessageBox("New address is past end of file");
+		aa_->mac_error_ = 10;
+		return;
 	}
+
+	pview->MoveWithDesc(ss, mpz_get_ui64(addr.get_mpz_t()));
+
 	// Give view the focus
 	if (pview != pview->GetFocus())
 		pview->SetFocus();
@@ -3881,6 +3921,7 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
+		AfxMessageBox("No file open from which to get the mark");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3934,7 +3975,7 @@ void CCalcDlg::OnMarkStore()
 #ifdef CALC_BIG
 	if (pview == NULL)
 	{
-		mm_->StatusBarText("No file open");
+		AfxMessageBox("No file open in which to change the mark");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3944,7 +3985,7 @@ void CCalcDlg::OnMarkStore()
 	new_mark = get_norm(current_);
 	if (new_mark > eof)
 	{
-		mm_->StatusBarText("New mark address past end of file");
+		AfxMessageBox("New mark address past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3978,6 +4019,7 @@ void CCalcDlg::OnMarkClear()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
+		AfxMessageBox("No file open in which to clear the mark");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4000,6 +4042,7 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
+		AfxMessageBox("No file open to move mark in");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4008,9 +4051,12 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
 	mpz_set_ui64(mark.get_mpz_t(), pview->GetMark());                // current mark
 	new_mark = mark + get_norm(current_);
-	if (new_mark > eof)
+	if (new_mark < 0 || new_mark > eof)
 	{
-		mm_->StatusBarText("New mark address past end of file");
+		if (new_mark < 0)
+			AfxMessageBox("New mark address is -ve");
+		else
+			AfxMessageBox("New mark address past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4080,6 +4126,7 @@ void CCalcDlg::OnMarkSubtract()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
+		AfxMessageBox("No file open to move mark in");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4091,9 +4138,9 @@ void CCalcDlg::OnMarkSubtract()
 	if (new_mark < 0 || new_mark > eof)
 	{
 		if (new_mark < 0)
-			mm_->StatusBarText("New mark address is -ve");
+			AfxMessageBox("New mark address is -ve");
 		else
-			mm_->StatusBarText("New mark address past end of file");
+			AfxMessageBox("New mark address past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4235,6 +4282,7 @@ void CCalcDlg::OnSelGet()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
+		AfxMessageBox("No file open to get current address from");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4247,7 +4295,7 @@ void CCalcDlg::OnSelGet()
 	overflow_ = bits_ > 0 && val > max_val_;
 	if (overflow_)
 	{
-		mm_->StatusBarText("Cursor position overflowed data size");
+		AfxMessageBox("Cursor position overflowed data size");
 		aa_->mac_error_ = 2;
 	}
 	else
@@ -4361,6 +4409,7 @@ void CCalcDlg::OnSelLen()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
+		AfxMessageBox("No file open from which to get the selection length");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4373,7 +4422,7 @@ void CCalcDlg::OnSelLen()
 	overflow_ = bits_ > 0 && val > max_val_;
 	if (overflow_)
 	{
-		mm_->StatusBarText("Selection length overflowed data size");
+		AfxMessageBox("Selection length overflowed data size");
 		aa_->mac_error_ = 2;
 	}
 	else
@@ -4405,6 +4454,7 @@ void CCalcDlg::OnEofGet()               // Length of file
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
+		AfxMessageBox("No file open from which to get the file length");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4415,7 +4465,7 @@ void CCalcDlg::OnEofGet()               // Length of file
 	overflow_ = bits_ > 0 && val > max_val_;
 	if (overflow_)
 	{
-		mm_->StatusBarText("File length overflowed data size");
+		AfxMessageBox("File length overflowed data size");
 		aa_->mac_error_ = 2;
 	}
 	else
@@ -4452,7 +4502,7 @@ void CCalcDlg::OnMarkAtStore()
 #ifdef CALC_BIG
 	FILE_ADDRESS mark = 0;
 	if (GetView() != NULL)
-		mark = GetView()->GetMark();
+		mark = GetView()->GetMark(); // save mark (NULL view error message displayed in put_bytes)
 
 	if (!put_bytes(-2))
 	{
@@ -4538,7 +4588,7 @@ void CCalcDlg::OnSelStore()
 #ifdef CALC_BIG
 	if (pview == NULL)
 	{
-		mm_->StatusBarText("No file open");
+		AfxMessageBox("No file open to change the selection in");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4546,9 +4596,15 @@ void CCalcDlg::OnSelStore()
 	mpz_class eof, val;
 	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
 	val = get_norm(current_);
+	if (val < 0)
+	{
+		AfxMessageBox("Can't move before start of file (negative address)");
+		aa_->mac_error_ = 10;
+		return;
+	}
 	if (val > eof)
 	{
-		mm_->StatusBarText("Can't move cursor past end of file");
+		AfxMessageBox("Can't move cursor past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4661,7 +4717,7 @@ void CCalcDlg::OnSelLenStore()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		mm_->StatusBarText("No file open");
+		AfxMessageBox("No file open in which to change the selection length");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4675,9 +4731,15 @@ void CCalcDlg::OnSelLenStore()
 	mpz_set_ui64(addr.get_mpz_t(), start);
 	len = get_norm(current_);
 
+	if (len < 0)
+	{
+		AfxMessageBox("Selection can't be less than zero");
+		aa_->mac_error_ = 10;
+		return;
+	}
 	if (addr + len > eof)
 	{
-		mm_->StatusBarText("New selection length would be past EOF");
+		AfxMessageBox("New selection length would be past EOF");
 		aa_->mac_error_ = 10;
 		return;
 	}
