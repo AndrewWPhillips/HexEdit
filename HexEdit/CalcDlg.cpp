@@ -1,4 +1,3 @@
-// TODO
 // CalcDlg.cpp : implements the Goto/Calculator dialog
 //
 // Copyright (c) 2000-2011 by Andrew W. Phillips.
@@ -154,7 +153,7 @@ void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 		unsigned __int64 val = m_pParent->current_ ^ ((__int64)1<<bnum);
 		m_pParent->Set(val);
 #endif
-		m_pParent->FixFileButtons();
+		//m_pParent->update_file_buttons();
 	}
 	CWnd::OnLButtonDown(nFlags, point);
 }
@@ -232,18 +231,7 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 	current_type_ = CJumpExpr::TYPE_INT;
 
 	bits_index_ = base_index_ = -1;  // Fixed later in Create()
-
-	// Get last used settings from ini file/registry
-	radix_ = 0;
-	bits_ = 0;
-#ifdef CALC_BIG
-	signed_ = false;
-	current_.set_str(aa_->GetProfileString("Calculator", "Current"), 10);
-	memory_.set_str(aa_->GetProfileString("Calculator", "Memory"), 10);
-#else
-	current_ = _atoi64(aa_->GetProfileString("Calculator", "Current"));
-	memory_ = _atoi64(aa_->GetProfileString("Calculator", "Memory"));
-#endif
+	radix_ = bits_ = 0;
 
 	edit_.pp_ = this;                   // Set parent of edit control
 	m_first = true;
@@ -259,333 +247,45 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 		return FALSE; // failed to create
 	}
 
+	// Subclass the main calculator edit box
 	CWnd *pwnd = ctl_edit_combo_.GetWindow(GW_CHILD);
 	ASSERT(pwnd != NULL);
 	VERIFY(edit_.SubclassWindow(pwnd->m_hWnd));
 	LONG style = ::GetWindowLong(edit_.m_hWnd, GWL_STYLE);
 	::SetWindowLong(edit_.m_hWnd, GWL_STYLE, style | ES_RIGHT | ES_WANTRETURN);
 
-	// Make sure radio buttons are up to date
+	// Get last used settings from registry
 	change_base(aa_->GetProfileInt("Calculator", "Base", 16));
 	change_bits(aa_->GetProfileInt("Calculator", "Bits", 32));
 #ifdef CALC_BIG
 	change_signed(aa_->GetProfileInt("Calculator", "signed", 0) ? true : false);
+	signed_ = false;
+	current_.set_str(aa_->GetProfileString("Calculator", "Current", "0"), 10);
+	memory_.set_str(aa_->GetProfileString("Calculator", "Memory", "0"), 10);
+#else
+	current_ = _atoi64(aa_->GetProfileString("Calculator", "Current"));
+	memory_ = _atoi64(aa_->GetProfileString("Calculator", "Memory"));
 #endif
 
 	// If saved memory value was restored then make it available
 	if (memory_ != 0)
-		GetDlgItem(IDC_MEM_GET)->EnableWindow(TRUE);
+		button_colour(GetDlgItem(IDC_MEM_GET), true, RGB(0x40, 0x40, 0x40));
 
-	// Enable/disable digits keys depending on base
-	ASSERT(GetDlgItem(IDC_DIGIT_2) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_3) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_4) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_5) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_6) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_7) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_8) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_9) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_A) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_B) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_C) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_D) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_E) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_F) != NULL);
-	GetDlgItem(IDC_DIGIT_2)->EnableWindow(radix_ > 2);
-	GetDlgItem(IDC_DIGIT_3)->EnableWindow(radix_ > 3);
-	GetDlgItem(IDC_DIGIT_4)->EnableWindow(radix_ > 4);
-	GetDlgItem(IDC_DIGIT_5)->EnableWindow(radix_ > 5);
-	GetDlgItem(IDC_DIGIT_6)->EnableWindow(radix_ > 6);
-	GetDlgItem(IDC_DIGIT_7)->EnableWindow(radix_ > 7);
-	GetDlgItem(IDC_DIGIT_8)->EnableWindow(radix_ > 8);
-	GetDlgItem(IDC_DIGIT_9)->EnableWindow(radix_ > 9);
-	GetDlgItem(IDC_DIGIT_A)->EnableWindow(radix_ > 10);
-	GetDlgItem(IDC_DIGIT_B)->EnableWindow(radix_ > 11);
-	GetDlgItem(IDC_DIGIT_C)->EnableWindow(radix_ > 12);
-	GetDlgItem(IDC_DIGIT_D)->EnableWindow(radix_ > 13);
-	GetDlgItem(IDC_DIGIT_E)->EnableWindow(radix_ > 14);
-	GetDlgItem(IDC_DIGIT_F)->EnableWindow(radix_ > 15);
-
-	// Set up tool tips
-	if (ttc_.Create(this))
-	{
-		ttc_.ModifyStyleEx(0, WS_EX_TOPMOST);
-
-		ASSERT(GetDlgItem(IDC_BACKSPACE) != NULL);
-		ASSERT(GetDlgItem(IDC_CLEAR_ENTRY) != NULL);
-		ASSERT(GetDlgItem(IDC_CLEAR) != NULL);
-		ASSERT(GetDlgItem(IDC_EQUALS) != NULL);
-		ASSERT(GetDlgItem(IDC_AND) != NULL);
-		ASSERT(GetDlgItem(IDC_ASR) != NULL);
-		ASSERT(GetDlgItem(IDC_DIVIDE) != NULL);
-		ASSERT(GetDlgItem(IDC_LSL) != NULL);
-		ASSERT(GetDlgItem(IDC_LSR) != NULL);
-		ASSERT(GetDlgItem(IDC_ROL) != NULL);
-		ASSERT(GetDlgItem(IDC_ROR) != NULL);
-		ASSERT(GetDlgItem(IDC_XOR) != NULL);
-		ASSERT(GetDlgItem(IDC_MOD) != NULL);
-		ASSERT(GetDlgItem(IDC_MULTIPLY) != NULL);
-		ASSERT(GetDlgItem(IDC_OR) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_DEC) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_FACTORIAL) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_FLIP) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_REV) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_INC) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_NOT) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_SIGN) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_SQUARE) != NULL);
-		ASSERT(GetDlgItem(IDC_SUBTRACT) != NULL);
-		ASSERT(GetDlgItem(IDC_MEM_GET) != NULL);
-		ASSERT(GetDlgItem(IDC_MEM_CLEAR) != NULL);
-		ASSERT(GetDlgItem(IDC_MEM_ADD) != NULL);
-		ASSERT(GetDlgItem(IDC_MEM_SUBTRACT) != NULL);
-		ASSERT(GetDlgItem(IDC_MARK_GET) != NULL);
-		ASSERT(GetDlgItem(IDC_MARK_AT) != NULL);
-		ASSERT(GetDlgItem(IDC_MARK_ADD) != NULL);
-		ASSERT(GetDlgItem(IDC_MARK_SUBTRACT) != NULL);
-		ASSERT(GetDlgItem(IDC_SEL_GET) != NULL);
-		ASSERT(GetDlgItem(IDC_SEL_AT) != NULL);
-		ASSERT(GetDlgItem(IDC_EOF_GET) != NULL);
-		ASSERT(GetDlgItem(IDC_GTR) != NULL);
-		ASSERT(GetDlgItem(IDC_LESS) != NULL);
-		ASSERT(GetDlgItem(IDC_POW) != NULL);
-		ASSERT(GetDlgItem(IDC_MARK_AT_STORE) != NULL);
-		ASSERT(GetDlgItem(IDC_MARK_CLEAR) != NULL);
-		ASSERT(GetDlgItem(IDC_MARK_STORE) != NULL);
-		ASSERT(GetDlgItem(IDC_MEM_STORE) != NULL);
-		ASSERT(GetDlgItem(IDC_SEL_AT_STORE) != NULL);
-		ASSERT(GetDlgItem(IDC_SEL_STORE) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_ROL) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_ROR) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_LSL) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_LSR) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_ASR) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_CUBE) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_AT) != NULL);
-		ASSERT(GetDlgItem(IDC_UNARY_SQUARE_ROOT) != NULL);
-		ASSERT(GetDlgItem(IDC_SEL_LEN) != NULL);
-		ASSERT(GetDlgItem(IDC_SEL_LEN_STORE) != NULL);
-		ASSERT(GetDlgItem(IDC_ADDOP) != NULL);
-
-		ASSERT(GetDlgItem(IDC_GO) != NULL);
-		ASSERT(GetDlgItem(IDC_8BIT) != NULL);
-		ASSERT(GetDlgItem(IDC_16BIT) != NULL);
-		ASSERT(GetDlgItem(IDC_32BIT) != NULL);
-		ASSERT(GetDlgItem(IDC_64BIT) != NULL);
-		ASSERT(GetDlgItem(IDC_BINARY) != NULL);
-		ASSERT(GetDlgItem(IDC_OCTAL) != NULL);
-		ASSERT(GetDlgItem(IDC_DECIMAL) != NULL);
-		ASSERT(GetDlgItem(IDC_HEX) != NULL);
-		ASSERT(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS) != NULL);
-
-		ttc_.AddTool(GetDlgItem(IDC_MEM_GET), "Memory Recall (Ctrl+R)");
-		ttc_.AddTool(GetDlgItem(IDC_MEM_STORE), "Memory Store (Ctrl+M)");
-		ttc_.AddTool(GetDlgItem(IDC_MEM_CLEAR), "Memory Clear (Ctrl+L)");
-		ttc_.AddTool(GetDlgItem(IDC_MEM_ADD), "Memory Add (Ctrl+P)");
-		ttc_.AddTool(GetDlgItem(IDC_MEM_SUBTRACT), "Memory Subtract");
-		ttc_.AddTool(GetDlgItem(IDC_BACKSPACE), "Delete Last Digit");
-		ttc_.AddTool(GetDlgItem(IDC_CLEAR_ENTRY), "Clear Entry");
-		ttc_.AddTool(GetDlgItem(IDC_CLEAR), "Clear All");
-		ttc_.AddTool(GetDlgItem(IDC_EQUALS), "Calculate Result");
-		ttc_.AddTool(GetDlgItem(IDC_GO), "Jump To Resultant Address");
-
-		ttc_.AddTool(GetDlgItem(IDC_ADDOP), "Add");
-		ttc_.AddTool(GetDlgItem(IDC_SUBTRACT), "Subtract");
-		ttc_.AddTool(GetDlgItem(IDC_MULTIPLY), "Multiply");
-		ttc_.AddTool(GetDlgItem(IDC_DIVIDE), "Integer Divide");
-		ttc_.AddTool(GetDlgItem(IDC_MOD), "Remainder");
-		ttc_.AddTool(GetDlgItem(IDC_POW), "Integer Power");
-		ttc_.AddTool(GetDlgItem(IDC_GTR), "Greater of Two Values");
-		ttc_.AddTool(GetDlgItem(IDC_LESS), "Smaller of Two Values");
-		ttc_.AddTool(GetDlgItem(IDC_AND), "AND");
-		ttc_.AddTool(GetDlgItem(IDC_OR), "OR");
-		ttc_.AddTool(GetDlgItem(IDC_XOR), "Exclusive Or");
-		ttc_.AddTool(GetDlgItem(IDC_LSL), "Logical Shift Left");
-		ttc_.AddTool(GetDlgItem(IDC_LSR), "Logical Shift Right");
-		ttc_.AddTool(GetDlgItem(IDC_ASR), "Arithmetic Shift Right");
-		ttc_.AddTool(GetDlgItem(IDC_ROL), "Rotate Left");
-		ttc_.AddTool(GetDlgItem(IDC_ROR), "Rotate Right");
-
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_FLIP), "Reverse Byte Order");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_REV), "Reverse Bit Order");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_DEC), "Subtract One");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_INC), "Add One");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_SIGN), "Change Sign");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_SQUARE), "Square");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_CUBE), "Cube");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_SQUARE_ROOT), "Integer Square Root");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_FACTORIAL), "Factorial");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_NOT), "NOT");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_ROL), "Rotate Left by One Bit");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_ROR), "Rotate Right by One Bit");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_LSL), "Logical Shift Left by One Bit");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_LSR), "Logical Shift Right by One Bit");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_ASR), "Arithmetic Shift Right by One Bit");
-		ttc_.AddTool(GetDlgItem(IDC_UNARY_AT), "Retrieve the Value from File");
-
-		ttc_.AddTool(GetDlgItem(IDC_MARK_GET), "Address of Mark");
-		ttc_.AddTool(GetDlgItem(IDC_MARK_STORE), "Move the Mark");
-		ttc_.AddTool(GetDlgItem(IDC_MARK_CLEAR), "Set the Mark to Start of File");
-		ttc_.AddTool(GetDlgItem(IDC_MARK_ADD), "Add to Mark");
-		ttc_.AddTool(GetDlgItem(IDC_MARK_SUBTRACT), "Subtract from Mark");
-		ttc_.AddTool(GetDlgItem(IDC_MARK_AT), "Get the Value at the Mark");
-		ttc_.AddTool(GetDlgItem(IDC_MARK_AT_STORE), "Store at Mark");
-		ttc_.AddTool(GetDlgItem(IDC_SEL_GET), "Cursor Location");
-		ttc_.AddTool(GetDlgItem(IDC_SEL_STORE), "Move the Cursor");
-		ttc_.AddTool(GetDlgItem(IDC_SEL_AT), "Get the Value at the Cursor");
-		ttc_.AddTool(GetDlgItem(IDC_SEL_AT_STORE), "Store to File at Cursor");
-		ttc_.AddTool(GetDlgItem(IDC_SEL_LEN), "Get the Length of the Selection");
-		ttc_.AddTool(GetDlgItem(IDC_SEL_LEN_STORE), "Change the Length of the Selection");
-		ttc_.AddTool(GetDlgItem(IDC_EOF_GET), "Get the Length of File");
-		ttc_.AddTool(GetDlgItem(IDC_8BIT), "Use Bytes (F12)");
-		ttc_.AddTool(GetDlgItem(IDC_16BIT), "Use Words (F11)");
-		ttc_.AddTool(GetDlgItem(IDC_32BIT), "Use Double Words (F10)");
-		ttc_.AddTool(GetDlgItem(IDC_64BIT), "Use Quad Words (F9)");
-		ttc_.AddTool(GetDlgItem(IDC_BINARY), "Use Binary Numbers (F8)");
-		ttc_.AddTool(GetDlgItem(IDC_OCTAL), "USe Octal Numbers (F7)");
-		ttc_.AddTool(GetDlgItem(IDC_DECIMAL), "Use (Signed) Decimal Numbers (F6)");
-		ttc_.AddTool(GetDlgItem(IDC_HEX), "Use Hexadecimal Numbers (F5)");
-		ttc_.AddTool(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS), "Read/Write to File in Big-Endian Format");
-		ttc_.Activate(TRUE);
-	}
-
-	//FixFileButtons(); // No file open yet so what is the point?
-
-	// We need this so that the resizer gets WM_SIZE event after the controls have been added.
-	CRect cli;
-	GetClientRect(&cli);
-	PostMessage(WM_SIZE, SIZE_RESTORED, MAKELONG(cli.Width(), cli.Height()));
-
-#if 0
-	// Things that set current operand are black
-	ctl_digit_0_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_1_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_2_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_3_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_4_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_5_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_6_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_7_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_8_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_9_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_a_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_b_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_c_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_d_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_e_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_digit_f_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-
-	ctl_mem_get_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_mark_get_.SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_sel_get_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_sel_len_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_mark_at_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_sel_at_  .SetTextColor(RGB(0x0, 0x0, 0x0));
-	ctl_eof_get_ .SetTextColor(RGB(0x0, 0x0, 0x0));
-#endif
-
-	// Things that use the calculator value and other "admin" type buttons are red
-	ctl_backspace_     .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_clear_entry_   .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_clear_         .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_equals_        .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_go_            .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_mem_store_     .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_mem_clear_     .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_mem_add_       .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_mem_subtract_  .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_mark_clear_    .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_mark_store_    .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_mark_add_      .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_mark_subtract_ .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_mark_at_store_ .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_sel_store_     .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_sel_at_store_  .SetTextColor(RGB(0xC0, 0x0, 0x0));
-	ctl_sel_len_store_ .SetTextColor(RGB(0xC0, 0x0, 0x0));
-
+	// Special setup for "GO" button
 	ctl_go_.SetMouseCursorHand();   	// Indicates that GO button takes user back to file
-	ctl_go_.m_bDefaultClick = TRUE;     // Default click (go address) as well as drop-down menu (sector etc)
-	//ctl_go_.m_bRightArrow = FALSE;
+	ctl_go_.m_bDefaultClick = TRUE;     // Default click goes to address (also drop-down menu for go sector etc)
 	ctl_go_.m_bOSMenu = FALSE;
-
 	VERIFY(go_menu_.LoadMenu(IDR_CALC_GO));
 	ctl_go_.m_hMenu = go_menu_.GetSubMenu(0)->GetSafeHmenu();  // Add drop-down menu (handled by checking m_nMenuResult in button click event - see OnGo)
-
-	// Binary operations are blue
-	ctl_addop_.   SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_addop_.   SetTextHotColor(RGB(0,0,0));
-	ctl_subtract_.SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_subtract_.SetTextHotColor(RGB(0,0,0));
-	ctl_multiply_.SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_multiply_.SetTextHotColor(RGB(0,0,0));
-	ctl_divide_.  SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_divide_.  SetTextHotColor(RGB(0,0,0));
-	ctl_mod_.     SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_mod_.     SetTextHotColor(RGB(0,0,0));
-	ctl_pow_.     SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_pow_.     SetTextHotColor(RGB(0,0,0));
-	ctl_gtr_.     SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_gtr_.     SetTextHotColor(RGB(0,0,0));
-	ctl_less_.    SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_less_.    SetTextHotColor(RGB(0,0,0));
-	ctl_or_.      SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_or_.      SetTextHotColor(RGB(0,0,0));
-	ctl_and_.     SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_and_.     SetTextHotColor(RGB(0,0,0));
-	ctl_xor_.     SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_xor_.     SetTextHotColor(RGB(0,0,0));
-	ctl_asr_.     SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_asr_.     SetTextHotColor(RGB(0,0,0));
-	ctl_lsl_.     SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_lsl_.     SetTextHotColor(RGB(0,0,0));
-	ctl_lsr_.     SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_lsr_.     SetTextHotColor(RGB(0,0,0));
-	ctl_rol_.     SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_rol_.     SetTextHotColor(RGB(0,0,0));
-	ctl_ror_.     SetTextColor(RGB(0x0, 0x0, 0xC0));
-	ctl_ror_.     SetTextHotColor(RGB(0,0,0));
-
-	// Unary operations are purple
-	ctl_unary_sign_.       SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_sign_.       SetTextHotColor(RGB(0,0,0));
-	ctl_unary_dec_.        SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_dec_.        SetTextHotColor(RGB(0,0,0));
-	ctl_unary_factorial_.  SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_factorial_.  SetTextHotColor(RGB(0,0,0));
-	ctl_unary_flip_.       SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_flip_.       SetTextHotColor(RGB(0,0,0));
-	ctl_unary_rev_.        SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_rev_.        SetTextHotColor(RGB(0,0,0));
-	ctl_unary_inc_.        SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_inc_.        SetTextHotColor(RGB(0,0,0));
-	ctl_unary_not_.        SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_not_.        SetTextHotColor(RGB(0,0,0));
-	ctl_unary_square_.     SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_square_.     SetTextHotColor(RGB(0,0,0));
-	ctl_unary_rol_.        SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_rol_.        SetTextHotColor(RGB(0,0,0));
-	ctl_unary_ror_.        SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_ror_.        SetTextHotColor(RGB(0,0,0));
-	ctl_unary_lsl_.        SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_lsl_.        SetTextHotColor(RGB(0,0,0));
-	ctl_unary_lsr_.        SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_lsr_.        SetTextHotColor(RGB(0,0,0));
-	ctl_unary_asr_.        SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_asr_.        SetTextHotColor(RGB(0,0,0));
-	ctl_unary_cube_.       SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_cube_.       SetTextHotColor(RGB(0,0,0));
-	ctl_unary_at_.         SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_at_.         SetTextHotColor(RGB(0,0,0));
-	ctl_unary_square_root_.SetTextColor(RGB(0x80, 0x0, 0x80));
-	ctl_unary_square_root_.SetTextHotColor(RGB(0,0,0));
-
-	build_menus();         // Setup initial menu button menus
 
 	// Since functions menu doesn't change we only need to set it up once (load from resources)
 	VERIFY(func_menu_.LoadMenu(IDR_FUNCTION));
 	ctl_func_.m_hMenu = func_menu_.GetSubMenu(0)->GetSafeHmenu();
 
-	// Set up child window where we draw the "bits"
+	setup_tooltips();
+	setup_static_buttons();
+
+	// ------------ Set up the "bits" child window ------------
 	static CString bitsClass;
 	if (bitsClass.IsEmpty())
 	{
@@ -600,10 +300,14 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	ScreenToClient(&rct);
 
 	DWORD bitsStyle = WS_CHILD | WS_VISIBLE;
-
 	VERIFY(ctl_calc_bits_.Create(bitsClass, NULL, bitsStyle, rct, this, IDC_CALC_BITS));
 
-	// Set up resizer control
+	// ----------- Set up resizer control ----------------
+	// We need this so that the resizer gets WM_SIZE event after the controls have been added.
+	CRect cli;
+	GetClientRect(&cli);
+	PostMessage(WM_SIZE, SIZE_RESTORED, MAKELONG(cli.Width(), cli.Height()));
+
 	// We must set the 4th parameter true else we get a resize border
 	// added to the dialog and this really stuffs things up inside a pane.
 	m_resizer.Create(GetSafeHwnd(), TRUE, 100, TRUE);
@@ -629,7 +333,6 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT,  ctl_edit_combo_);
 
-#if 1
 	DDX_Control(pDX, IDC_DIGIT_0, ctl_digit_0_);
 	DDX_Control(pDX, IDC_DIGIT_1, ctl_digit_1_);
 	DDX_Control(pDX, IDC_DIGIT_2, ctl_digit_2_);
@@ -653,7 +356,7 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SEL_LEN, ctl_sel_len_);
 	DDX_Control(pDX, IDC_MARK_AT, ctl_mark_at_);
 	DDX_Control(pDX, IDC_EOF_GET, ctl_eof_get_);
-#endif
+
 	DDX_Control(pDX, IDC_BACKSPACE, ctl_backspace_);
 	DDX_Control(pDX, IDC_CLEAR_ENTRY, ctl_clear_entry_);
 	DDX_Control(pDX, IDC_CLEAR, ctl_clear_);
@@ -788,6 +491,7 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_BN_CLICKED(IDC_16BIT, On16bit)
 	ON_BN_CLICKED(IDC_32BIT, On32bit)
 	ON_BN_CLICKED(IDC_64BIT, On64bit)
+	ON_BN_CLICKED(IDC_INFBIT, OnInfbit)
 	ON_BN_CLICKED(IDC_BINARY, OnBinary)
 	ON_BN_CLICKED(IDC_OCTAL, OnOctal)
 	ON_BN_CLICKED(IDC_DECIMAL, OnDecimal)
@@ -797,6 +501,7 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_BN_CLICKED(IDC_ADDOP, OnAdd)
 	ON_WM_DESTROY()
 	ON_WM_HELPINFO()
+
 	// Removed ON_BN_DOUBLECLICKED stuff as d-click now seems to send two
 	// mouse down/up events (as well as a dclick event)
 	//ON_BN_DOUBLECLICKED(IDC_BACKSPACE, OnBackspace) ...
@@ -822,6 +527,7 @@ static DWORD id_pairs[] = {
 	IDC_DECIMAL, HIDC_DECIMAL,
 	IDC_OCTAL, HIDC_OCTAL,
 	IDC_BINARY, HIDC_BINARY,
+	IDC_INFBIT, HIDC_INFBIT,
 	IDC_64BIT, HIDC_64BIT,
 	IDC_32BIT, HIDC_32BIT,
 	IDC_16BIT, HIDC_16BIT,
@@ -1015,6 +721,7 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 
 	// This assumes 4-byte units and little-endian order
 	mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
+#if 0  // This is handled by get_norm when the value is retrieved
 	if (signed_ && mpz_tstbit(current_.get_mpz_t(), bits_-1))
 	{
 		mpz_com(current_.get_mpz_t(), current_.get_mpz_t());
@@ -1023,6 +730,7 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 		// Now say it is -ve
 		mpz_neg(current_.get_mpz_t(), current_.get_mpz_t());
 	}
+#endif
 	delete[] buf;
 
 	return true;
@@ -1182,7 +890,7 @@ void CCalcDlg::do_binop(binop_type binop)
 
 	if (!aa_->refresh_off_ && IsVisible())
 	{
-		FixFileButtons();
+		//update_file_buttons();
 		if (!overflow_ && !error_)
 			ShowBinop(binop);
 	}
@@ -1446,7 +1154,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	// Save the unary operation to the current macro (if any)
@@ -1712,7 +1420,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.Put();
-		FixFileButtons();
+		update_file_buttons();
 	}
 
 	// Save the unary operation to the current macro (if any)
@@ -1723,8 +1431,20 @@ void CCalcDlg::do_unary(unary_type unary)
 }
 #endif
 
+// Handle "digit" button click
 void CCalcDlg::do_digit(char digit)
 {
+	// Since digit buttons are "enabled" (but greyed) even when invalid we need to check for invalid digits
+	int val = isdigit(digit) ? (digit - '0') : digit - 'A' + 10;
+	if (val >= radix_)
+	{
+#ifdef SYS_SOUNDS
+		if (!CSystemSound::Play("Invalid Character"))
+#endif
+			::Beep(5000,200);
+		return;
+	}
+
 	if (!aa_->refresh_off_ && IsVisible())  // Always true but left in for consistency
 	{
 		//edit_.SetFocus();
@@ -1826,7 +1546,25 @@ void CCalcDlg::calc_previous()
 			mpz_fdiv_q_2exp(current_.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
 		else
 		{
-		// xxx TBD TODO
+			int shift = current_.get_si();
+			int neg = mpz_tstbit(previous_.get_mpz_t(), bits_-1);
+			if (shift > bits_)
+			{
+				// All bits shifted out
+				if (neg)
+					current_ = -1 & mask_;
+				else
+					current_ = 0;
+			}
+			else
+			{
+				current_ = previous_;
+				for (int ii = 0; ii < shift; ++ii)
+				{
+					current_ >>= 1;
+					if (neg) mpz_setbit(current_.get_mpz_t(), bits_-1);  // propagate high bit
+				}
+			}
 		}
 		break;
 
@@ -2110,7 +1848,7 @@ void CCalcDlg::toggle_endian()
 	CHexEditView *pview = GetView();
 	if (pview != NULL)
 	{
-		GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(TRUE);  // enable so we can change check
+		GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(TRUE);  // enable so we can change programmatically
 		//bool big_endian = !pview->BigEndian();
 		//pview->SetBigEndian(big_endian);
 		//if (!aa_->refresh_off_ && IsVisible())
@@ -2159,7 +1897,7 @@ void CCalcDlg::change_base(int base)
 
 	if (!aa_->refresh_off_ && IsVisible())
 	{
-		update_controls();
+		//update_controls();
 		edit_.Put();
 	}
 
@@ -2192,7 +1930,7 @@ void CCalcDlg::change_signed(bool s)
 
 	if (!aa_->refresh_off_ && IsVisible())
 	{
-		update_controls();
+		//update_controls();
 		edit_.Put();
 	}
 
@@ -2211,15 +1949,18 @@ void CCalcDlg::change_bits(int bits)
 	switch (bits_)
 	{
 	case 8:
-		bits_index_ = 3;
+		bits_index_ = 4;
 		break;
 	case 16:
-		bits_index_ = 2;
+		bits_index_ = 3;
 		break;
 	case 32:
-		bits_index_ = 1;
+		bits_index_ = 2;
 		break;
 	case 64:
+		bits_index_ = 1;
+		break;
+	case 0:
 		bits_index_ = 0;
 		break;
 	default:
@@ -2244,7 +1985,7 @@ void CCalcDlg::change_bits(int bits)
 
 	if (!aa_->refresh_off_ && IsVisible())
 	{
-		update_controls();
+		//update_controls();
 		edit_.Put();
 	}
 
@@ -2252,90 +1993,411 @@ void CCalcDlg::change_bits(int bits)
 	aa_->SaveToMacro(km_change_bits, long(bits_));
 }
 
+void CCalcDlg::setup_resizer()
+{
+	// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT 
+	// NOTE: Don't allow resize vertically of IDC_EDIT as it stuffs up the combo drop down list window size
+	m_resizer.Add(IDC_EDIT, 0, 0, 100, 0);        // edit control resizes with width
+	m_resizer.Add(IDC_OP_DISPLAY, 100, 0, 0, 0);  // operator display sticks to right edge (moves vert)
+	m_resizer.Add(IDC_CALC_BITS, 0, 0, 100, 13);  // where "bits" are drawn
+
+	// Settings controls don't move/size horizontally but move vert. and size slightly too
+	m_resizer.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);
+	m_resizer.Add(IDC_BASE_GROUP, 0, 13, 0, 8);
+	m_resizer.Add(IDC_HEX, 0, 13, 0, 5);
+	m_resizer.Add(IDC_DECIMAL, 0, 13, 0, 5);
+	m_resizer.Add(IDC_OCTAL, 0, 13, 0, 5);
+	m_resizer.Add(IDC_BINARY, 0, 13, 0, 5);
+	m_resizer.Add(IDC_BITS_GROUP, 0, 13, 0, 8);
+	m_resizer.Add(IDC_INFBIT, 0, 13, 0, 5);
+	m_resizer.Add(IDC_64BIT, 0, 13, 0, 5);
+	m_resizer.Add(IDC_32BIT, 0, 13, 0, 5);
+	m_resizer.Add(IDC_16BIT, 0, 13, 0, 5);
+	m_resizer.Add(IDC_8BIT, 0, 13, 0, 5);
+
+	// First row of buttons
+	m_resizer.Add(IDC_MEM_GET, 1, 27, 12, 10);
+	m_resizer.Add(IDC_MEM_STORE, 14, 27, 9, 10);
+	m_resizer.Add(IDC_MEM_CLEAR, 23, 27, 9, 10);
+	m_resizer.Add(IDC_MEM_ADD, 32, 27, 9, 10);
+	m_resizer.Add(IDC_MEM_SUBTRACT, 41, 27, 8, 10);
+
+	m_resizer.Add(IDC_BACKSPACE, 64, 26, 16, 10);
+	m_resizer.Add(IDC_CLEAR_ENTRY, 80, 26, 10, 10);
+	m_resizer.Add(IDC_CLEAR, 90, 26, 10, 10);
+
+	// 2nd row of buttons
+	m_resizer.Add(IDC_MARK_GET, 1, 37, 12, 10);
+	m_resizer.Add(IDC_MARK_STORE, 14, 37, 9, 10);
+	m_resizer.Add(IDC_MARK_CLEAR, 23, 37, 9, 10);
+	m_resizer.Add(IDC_MARK_ADD, 32, 37, 9, 10);
+	m_resizer.Add(IDC_MARK_SUBTRACT, 41, 37, 8, 10);
+	m_resizer.Add(IDC_DIGIT_D, 50, 37, 8, 10);
+	m_resizer.Add(IDC_DIGIT_E, 58, 37, 8, 10);
+	m_resizer.Add(IDC_DIGIT_F, 66, 37, 8, 10);
+	m_resizer.Add(IDC_POW, 75, 37, 8, 10);
+	m_resizer.Add(IDC_GTR, 83, 37, 8, 10);
+	m_resizer.Add(IDC_ROL, 91, 37, 8, 10);
+
+	// 3rd row of buttons
+	m_resizer.Add(IDC_MARK_AT, 1, 47, 12, 10);
+	m_resizer.Add(IDC_MARK_AT_STORE, 14, 47, 9, 10);
+	m_resizer.Add(IDC_UNARY_SQUARE, 23, 47, 9, 10);
+	m_resizer.Add(IDC_UNARY_ROL, 32, 47, 9, 10);
+	m_resizer.Add(IDC_UNARY_REV, 41, 47, 8, 10);
+	m_resizer.Add(IDC_DIGIT_A, 50, 47, 8, 10);
+	m_resizer.Add(IDC_DIGIT_B, 58, 47, 8, 10);
+	m_resizer.Add(IDC_DIGIT_C, 66, 47, 8, 10);
+	m_resizer.Add(IDC_MOD, 75, 47, 8, 10);
+	m_resizer.Add(IDC_LESS, 83, 47, 8, 10);
+	m_resizer.Add(IDC_ROR, 91, 47, 8, 10);
+
+	// 4th row of buttons
+	m_resizer.Add(IDC_SEL_GET, 1, 57, 12, 10);
+	m_resizer.Add(IDC_SEL_STORE, 14, 57, 9, 10);
+	m_resizer.Add(IDC_UNARY_SQUARE_ROOT, 23, 57, 9, 10);
+	m_resizer.Add(IDC_UNARY_ROR, 32, 57, 9, 10);
+	m_resizer.Add(IDC_UNARY_NOT, 41, 57, 8, 10);
+	m_resizer.Add(IDC_DIGIT_7, 50, 57, 8, 10);
+	m_resizer.Add(IDC_DIGIT_8, 58, 57, 8, 10);
+	m_resizer.Add(IDC_DIGIT_9, 66, 57, 8, 10);
+	m_resizer.Add(IDC_DIVIDE, 75, 57, 8, 10);
+	m_resizer.Add(IDC_XOR, 83, 57, 8, 10);
+	m_resizer.Add(IDC_LSL, 91, 57, 8, 10);
+
+	// 5th row of buttons
+	m_resizer.Add(IDC_SEL_AT, 1, 67, 12, 10);
+	m_resizer.Add(IDC_SEL_AT_STORE, 14, 67, 9, 10);
+	m_resizer.Add(IDC_UNARY_CUBE, 23, 67, 9, 10);
+	m_resizer.Add(IDC_UNARY_LSL, 32, 67, 9, 10);
+	m_resizer.Add(IDC_UNARY_INC, 41, 67, 8, 10);
+	m_resizer.Add(IDC_DIGIT_4, 50, 67, 8, 10);
+	m_resizer.Add(IDC_DIGIT_5, 58, 67, 8, 10);
+	m_resizer.Add(IDC_DIGIT_6, 66, 67, 8, 10);
+	m_resizer.Add(IDC_MULTIPLY, 75, 67, 8, 10);
+	m_resizer.Add(IDC_OR, 83, 67, 8, 10);
+	m_resizer.Add(IDC_LSR, 91, 67, 8, 10);
+
+	// 6th row of buttons
+	m_resizer.Add(IDC_SEL_LEN, 1, 77, 12, 10);
+	m_resizer.Add(IDC_SEL_LEN_STORE, 14, 77, 9, 10);
+	m_resizer.Add(IDC_UNARY_FACTORIAL, 23, 77, 9, 10);
+	m_resizer.Add(IDC_UNARY_LSR, 32, 77, 9, 10);
+	m_resizer.Add(IDC_UNARY_DEC, 41, 77, 8, 10);
+	m_resizer.Add(IDC_DIGIT_1, 50, 77, 8, 10);
+	m_resizer.Add(IDC_DIGIT_2, 58, 77, 8, 10);
+	m_resizer.Add(IDC_DIGIT_3, 66, 77, 8, 10);
+	m_resizer.Add(IDC_SUBTRACT, 75, 77, 8, 10);
+	m_resizer.Add(IDC_AND, 83, 77, 8, 10);
+	m_resizer.Add(IDC_ASR, 91, 77, 8, 10);
+
+	// 7th row of buttons
+	m_resizer.Add(IDC_EOF_GET, 1, 87, 12, 10);
+
+	m_resizer.Add(IDC_UNARY_AT, 23, 87, 9, 10);
+	m_resizer.Add(IDC_UNARY_ASR, 32, 87, 9, 10);
+	m_resizer.Add(IDC_UNARY_FLIP, 41, 87, 8, 10);
+	m_resizer.Add(IDC_DIGIT_0, 50, 87, 8, 10);
+	m_resizer.Add(IDC_UNARY_SIGN, 58, 87, 8, 10);
+	m_resizer.Add(IDC_EQUALS, 66, 87, 8, 10);
+	m_resizer.Add(IDC_ADDOP, 75, 87, 8, 10);
+	m_resizer.Add(IDC_GO, 83, 87, 16, 10);
+}
+
+void CCalcDlg::setup_tooltips()
+{
+	// Set up tool tips
+	if (ttc_.Create(this))
+	{
+		ttc_.ModifyStyleEx(0, WS_EX_TOPMOST);
+
+		ASSERT(GetDlgItem(IDC_BACKSPACE) != NULL);
+		ASSERT(GetDlgItem(IDC_CLEAR_ENTRY) != NULL);
+		ASSERT(GetDlgItem(IDC_CLEAR) != NULL);
+		ASSERT(GetDlgItem(IDC_EQUALS) != NULL);
+		ASSERT(GetDlgItem(IDC_AND) != NULL);
+		ASSERT(GetDlgItem(IDC_ASR) != NULL);
+		ASSERT(GetDlgItem(IDC_DIVIDE) != NULL);
+		ASSERT(GetDlgItem(IDC_LSL) != NULL);
+		ASSERT(GetDlgItem(IDC_LSR) != NULL);
+		ASSERT(GetDlgItem(IDC_ROL) != NULL);
+		ASSERT(GetDlgItem(IDC_ROR) != NULL);
+		ASSERT(GetDlgItem(IDC_XOR) != NULL);
+		ASSERT(GetDlgItem(IDC_MOD) != NULL);
+		ASSERT(GetDlgItem(IDC_MULTIPLY) != NULL);
+		ASSERT(GetDlgItem(IDC_OR) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_DEC) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_FACTORIAL) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_FLIP) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_REV) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_INC) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_NOT) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_SIGN) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_SQUARE) != NULL);
+		ASSERT(GetDlgItem(IDC_SUBTRACT) != NULL);
+		ASSERT(GetDlgItem(IDC_MEM_GET) != NULL);
+		ASSERT(GetDlgItem(IDC_MEM_CLEAR) != NULL);
+		ASSERT(GetDlgItem(IDC_MEM_ADD) != NULL);
+		ASSERT(GetDlgItem(IDC_MEM_SUBTRACT) != NULL);
+		ASSERT(GetDlgItem(IDC_MARK_GET) != NULL);
+		ASSERT(GetDlgItem(IDC_MARK_AT) != NULL);
+		ASSERT(GetDlgItem(IDC_MARK_ADD) != NULL);
+		ASSERT(GetDlgItem(IDC_MARK_SUBTRACT) != NULL);
+		ASSERT(GetDlgItem(IDC_SEL_GET) != NULL);
+		ASSERT(GetDlgItem(IDC_SEL_AT) != NULL);
+		ASSERT(GetDlgItem(IDC_EOF_GET) != NULL);
+		ASSERT(GetDlgItem(IDC_GTR) != NULL);
+		ASSERT(GetDlgItem(IDC_LESS) != NULL);
+		ASSERT(GetDlgItem(IDC_POW) != NULL);
+		ASSERT(GetDlgItem(IDC_MARK_AT_STORE) != NULL);
+		ASSERT(GetDlgItem(IDC_MARK_CLEAR) != NULL);
+		ASSERT(GetDlgItem(IDC_MARK_STORE) != NULL);
+		ASSERT(GetDlgItem(IDC_MEM_STORE) != NULL);
+		ASSERT(GetDlgItem(IDC_SEL_AT_STORE) != NULL);
+		ASSERT(GetDlgItem(IDC_SEL_STORE) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_ROL) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_ROR) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_LSL) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_LSR) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_ASR) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_CUBE) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_AT) != NULL);
+		ASSERT(GetDlgItem(IDC_UNARY_SQUARE_ROOT) != NULL);
+		ASSERT(GetDlgItem(IDC_SEL_LEN) != NULL);
+		ASSERT(GetDlgItem(IDC_SEL_LEN_STORE) != NULL);
+		ASSERT(GetDlgItem(IDC_ADDOP) != NULL);
+
+		ASSERT(GetDlgItem(IDC_GO) != NULL);
+		ASSERT(GetDlgItem(IDC_8BIT) != NULL);
+		ASSERT(GetDlgItem(IDC_16BIT) != NULL);
+		ASSERT(GetDlgItem(IDC_32BIT) != NULL);
+		ASSERT(GetDlgItem(IDC_64BIT) != NULL);
+		ASSERT(GetDlgItem(IDC_INFBIT) != NULL);
+		ASSERT(GetDlgItem(IDC_BINARY) != NULL);
+		ASSERT(GetDlgItem(IDC_OCTAL) != NULL);
+		ASSERT(GetDlgItem(IDC_DECIMAL) != NULL);
+		ASSERT(GetDlgItem(IDC_HEX) != NULL);
+		ASSERT(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS) != NULL);
+
+		ttc_.AddTool(GetDlgItem(IDC_MEM_GET), "Memory Recall (Ctrl+R)");
+		ttc_.AddTool(GetDlgItem(IDC_MEM_STORE), "Memory Store (Ctrl+M)");
+		ttc_.AddTool(GetDlgItem(IDC_MEM_CLEAR), "Memory Clear (Ctrl+L)");
+		ttc_.AddTool(GetDlgItem(IDC_MEM_ADD), "Memory Add (Ctrl+P)");
+		ttc_.AddTool(GetDlgItem(IDC_MEM_SUBTRACT), "Memory Subtract");
+		ttc_.AddTool(GetDlgItem(IDC_BACKSPACE), "Delete Last Digit");
+		ttc_.AddTool(GetDlgItem(IDC_CLEAR_ENTRY), "Clear Entry");
+		ttc_.AddTool(GetDlgItem(IDC_CLEAR), "Clear All");
+		ttc_.AddTool(GetDlgItem(IDC_EQUALS), "Calculate Result");
+		ttc_.AddTool(GetDlgItem(IDC_GO), "Jump To Resultant Address");
+
+		ttc_.AddTool(GetDlgItem(IDC_ADDOP), "Add");
+		ttc_.AddTool(GetDlgItem(IDC_SUBTRACT), "Subtract");
+		ttc_.AddTool(GetDlgItem(IDC_MULTIPLY), "Multiply");
+		ttc_.AddTool(GetDlgItem(IDC_DIVIDE), "Integer Divide");
+		ttc_.AddTool(GetDlgItem(IDC_MOD), "Remainder");
+		ttc_.AddTool(GetDlgItem(IDC_POW), "Integer Power");
+		ttc_.AddTool(GetDlgItem(IDC_GTR), "Greater of Two Values");
+		ttc_.AddTool(GetDlgItem(IDC_LESS), "Smaller of Two Values");
+		ttc_.AddTool(GetDlgItem(IDC_AND), "AND");
+		ttc_.AddTool(GetDlgItem(IDC_OR), "OR");
+		ttc_.AddTool(GetDlgItem(IDC_XOR), "Exclusive Or");
+		ttc_.AddTool(GetDlgItem(IDC_LSL), "Logical Shift Left");
+		ttc_.AddTool(GetDlgItem(IDC_LSR), "Logical Shift Right");
+		ttc_.AddTool(GetDlgItem(IDC_ASR), "Arithmetic Shift Right");
+		ttc_.AddTool(GetDlgItem(IDC_ROL), "Rotate Left");
+		ttc_.AddTool(GetDlgItem(IDC_ROR), "Rotate Right");
+
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_FLIP), "Reverse Byte Order");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_REV), "Reverse Bit Order");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_DEC), "Subtract One");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_INC), "Add One");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_SIGN), "Change Sign");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_SQUARE), "Square");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_CUBE), "Cube");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_SQUARE_ROOT), "Integer Square Root");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_FACTORIAL), "Factorial");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_NOT), "NOT");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_ROL), "Rotate Left by One Bit");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_ROR), "Rotate Right by One Bit");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_LSL), "Logical Shift Left by One Bit");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_LSR), "Logical Shift Right by One Bit");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_ASR), "Arithmetic Shift Right by One Bit");
+		ttc_.AddTool(GetDlgItem(IDC_UNARY_AT), "Retrieve the Value from File");
+
+		ttc_.AddTool(GetDlgItem(IDC_MARK_GET), "Address of Mark");
+		ttc_.AddTool(GetDlgItem(IDC_MARK_STORE), "Move the Mark");
+		ttc_.AddTool(GetDlgItem(IDC_MARK_CLEAR), "Set the Mark to Start of File");
+		ttc_.AddTool(GetDlgItem(IDC_MARK_ADD), "Add to Mark");
+		ttc_.AddTool(GetDlgItem(IDC_MARK_SUBTRACT), "Subtract from Mark");
+		ttc_.AddTool(GetDlgItem(IDC_MARK_AT), "Get the Value at the Mark");
+		ttc_.AddTool(GetDlgItem(IDC_MARK_AT_STORE), "Store at Mark");
+		ttc_.AddTool(GetDlgItem(IDC_SEL_GET), "Cursor Location");
+		ttc_.AddTool(GetDlgItem(IDC_SEL_STORE), "Move the Cursor");
+		ttc_.AddTool(GetDlgItem(IDC_SEL_AT), "Get the Value at the Cursor");
+		ttc_.AddTool(GetDlgItem(IDC_SEL_AT_STORE), "Store to File at Cursor");
+		ttc_.AddTool(GetDlgItem(IDC_SEL_LEN), "Get the Length of the Selection");
+		ttc_.AddTool(GetDlgItem(IDC_SEL_LEN_STORE), "Change the Length of the Selection");
+		ttc_.AddTool(GetDlgItem(IDC_EOF_GET), "Get the Length of File");
+		ttc_.AddTool(GetDlgItem(IDC_8BIT), "Use Bytes (F12)");
+		ttc_.AddTool(GetDlgItem(IDC_16BIT), "Use Words (F11)");
+		ttc_.AddTool(GetDlgItem(IDC_32BIT), "Use Double Words (F10)");
+		ttc_.AddTool(GetDlgItem(IDC_64BIT), "Use Quad Words (F9)");
+		ttc_.AddTool(GetDlgItem(IDC_INFBIT), "Unlimited integer precision");
+		ttc_.AddTool(GetDlgItem(IDC_BINARY), "Use Binary Numbers (F8)");
+		ttc_.AddTool(GetDlgItem(IDC_OCTAL), "USe Octal Numbers (F7)");
+		ttc_.AddTool(GetDlgItem(IDC_DECIMAL), "Use (Signed) Decimal Numbers (F6)");
+		ttc_.AddTool(GetDlgItem(IDC_HEX), "Use Hexadecimal Numbers (F5)");
+		ttc_.AddTool(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS), "Read/Write to File in Big-Endian Format");
+		ttc_.Activate(TRUE);
+	}
+}
+
+void CCalcDlg::setup_static_buttons()
+{
+	// Things that use the calculator value and other "admin" type buttons are red
+	button_colour(GetDlgItem(IDC_BACKSPACE), true, RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_CLEAR_ENTRY), true, RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_CLEAR), true, RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_MEM_STORE), true, RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_MEM_CLEAR), true, RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_MEM_ADD), true, RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_MEM_SUBTRACT), true, RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_EQUALS), true, RGB(0xC0, 0x0, 0x0));
+
+	// Binary operations are blue
+	button_colour(GetDlgItem(IDC_ADDOP), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_SUBTRACT), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_MULTIPLY), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_DIVIDE), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_MOD), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_POW), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_GTR), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_LESS), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_XOR), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_OR), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_AND), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_ROL), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_ROR), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_LSL), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_LSR), true, RGB(0x0, 0x0, 0xC0));
+	button_colour(GetDlgItem(IDC_ASR), true, RGB(0x0, 0x0, 0xC0));
+
+	// Unary operations are purple
+	button_colour(GetDlgItem(IDC_UNARY_SIGN), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_NOT), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_INC), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_DEC), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_ROL), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_ROR), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_LSL), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_LSR), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_ASR), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_SQUARE), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_SQUARE_ROOT), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_CUBE), true, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_FACTORIAL), true, RGB(0x80, 0x0, 0x80));
+
+	// Digit buttons (0 and 1) are always "enabled" (dark grey)
+	button_colour(GetDlgItem(IDC_DIGIT_0), true, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_1), true, RGB(0x40, 0x40, 0x40));
+}
+
 void CCalcDlg::update_controls()
 {
 	// Update radio buttons
-	ASSERT(GetDlgItem(IDC_HEX) != NULL);
-	ASSERT(GetDlgItem(IDC_DECIMAL) != NULL);
-	ASSERT(GetDlgItem(IDC_OCTAL) != NULL);
-	ASSERT(GetDlgItem(IDC_BINARY) != NULL);
 	((CButton *)GetDlgItem(IDC_HEX    ))->SetCheck(base_index_ == 0);
 	((CButton *)GetDlgItem(IDC_DECIMAL))->SetCheck(base_index_ == 1);
 	((CButton *)GetDlgItem(IDC_OCTAL  ))->SetCheck(base_index_ == 2);
 	((CButton *)GetDlgItem(IDC_BINARY ))->SetCheck(base_index_ == 3);
 
-	// Enable/disable digits keys depending on base
-	ASSERT(GetDlgItem(IDC_DIGIT_2) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_3) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_4) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_5) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_6) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_7) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_8) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_9) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_A) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_B) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_C) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_D) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_E) != NULL);
-	ASSERT(GetDlgItem(IDC_DIGIT_F) != NULL);
-	GetDlgItem(IDC_DIGIT_2)->EnableWindow(radix_ > 2);
-	GetDlgItem(IDC_DIGIT_3)->EnableWindow(radix_ > 3);
-	GetDlgItem(IDC_DIGIT_4)->EnableWindow(radix_ > 4);
-	GetDlgItem(IDC_DIGIT_5)->EnableWindow(radix_ > 5);
-	GetDlgItem(IDC_DIGIT_6)->EnableWindow(radix_ > 6);
-	GetDlgItem(IDC_DIGIT_7)->EnableWindow(radix_ > 7);
-	GetDlgItem(IDC_DIGIT_8)->EnableWindow(radix_ > 8);
-	GetDlgItem(IDC_DIGIT_9)->EnableWindow(radix_ > 9);
-	GetDlgItem(IDC_DIGIT_A)->EnableWindow(radix_ > 10);
-	GetDlgItem(IDC_DIGIT_B)->EnableWindow(radix_ > 11);
-	GetDlgItem(IDC_DIGIT_C)->EnableWindow(radix_ > 12);
-	GetDlgItem(IDC_DIGIT_D)->EnableWindow(radix_ > 13);
-	GetDlgItem(IDC_DIGIT_E)->EnableWindow(radix_ > 14);
-	GetDlgItem(IDC_DIGIT_F)->EnableWindow(radix_ > 15);
+	((CButton *)GetDlgItem(IDC_8BIT ))->SetCheck(bits_index_ == 4);
+	((CButton *)GetDlgItem(IDC_16BIT))->SetCheck(bits_index_ == 3);
+	((CButton *)GetDlgItem(IDC_32BIT))->SetCheck(bits_index_ == 2);
+	((CButton *)GetDlgItem(IDC_64BIT))->SetCheck(bits_index_ == 1);
+	((CButton *)GetDlgItem(IDC_INFBIT))->SetCheck(bits_index_ == 0);
 
-	ASSERT(GetDlgItem(IDC_8BIT) != NULL);
-	ASSERT(GetDlgItem(IDC_16BIT) != NULL);
-	ASSERT(GetDlgItem(IDC_32BIT) != NULL);
-	ASSERT(GetDlgItem(IDC_64BIT) != NULL);
-	((CButton *)GetDlgItem(IDC_8BIT ))->SetCheck(bits_index_ == 3);
-	((CButton *)GetDlgItem(IDC_16BIT))->SetCheck(bits_index_ == 2);
-	((CButton *)GetDlgItem(IDC_32BIT))->SetCheck(bits_index_ == 1);
-	((CButton *)GetDlgItem(IDC_64BIT))->SetCheck(bits_index_ == 0);
+	update_digit_buttons();
+	update_file_buttons();
+
+	// Update misc buttons
+	button_colour(GetDlgItem(IDC_UNARY_FLIP), bits_ > 8 && bits_%8 == 0, RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_REV), bits_%8 == 0, RGB(0x80, 0x0, 0x80));
 
 	// Disable flip bytes button if there is only one byte
-	ASSERT(GetDlgItem(IDC_UNARY_FLIP) != NULL);
-	GetDlgItem(IDC_UNARY_FLIP)->EnableWindow(bits_ > 8 && bits_%8 == 0);
 	ASSERT(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS) != NULL);
 	GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(GetView() != NULL && bits_ > 8 && bits_%8 == 0);
 
-	if (current_const_ == TRUE)
-		edit_.Put();
-	FixFileButtons();
+	build_menus();
 }
 
-void CCalcDlg::FixFileButtons()
+// Fix digit buttons depending on the radix
+void CCalcDlg::update_digit_buttons()
+{
+	// Enable/disable digit keys depending on base
+	button_colour(GetDlgItem(IDC_DIGIT_2), radix_ > 2, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_3), radix_ > 3, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_4), radix_ > 4, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_5), radix_ > 5, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_6), radix_ > 6, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_7), radix_ > 7, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_8), radix_ > 8, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_9), radix_ > 9, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_A), radix_ > 10, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_B), radix_ > 11, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_C), radix_ > 12, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_D), radix_ > 13, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_E), radix_ > 14, RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_DIGIT_F), radix_ > 15, RGB(0x40, 0x40, 0x40));
+}
+
+void CCalcDlg::update_file_buttons()
 {
 	ASSERT(IsVisible());      // Should only be called if dlg is visible
-	ASSERT(GetDlgItem(IDC_MARK_GET) != NULL);
-	ASSERT(GetDlgItem(IDC_MARK_STORE) != NULL);
-	ASSERT(GetDlgItem(IDC_MARK_CLEAR) != NULL);
-	ASSERT(GetDlgItem(IDC_MARK_ADD) != NULL);
-	ASSERT(GetDlgItem(IDC_MARK_SUBTRACT) != NULL);
-	ASSERT(GetDlgItem(IDC_MARK_AT) != NULL);
-	ASSERT(GetDlgItem(IDC_MARK_AT_STORE) != NULL);
-	ASSERT(GetDlgItem(IDC_SEL_GET) != NULL);
-	ASSERT(GetDlgItem(IDC_SEL_STORE) != NULL);
-	ASSERT(GetDlgItem(IDC_SEL_AT) != NULL);
-	ASSERT(GetDlgItem(IDC_SEL_AT_STORE) != NULL);
-	ASSERT(GetDlgItem(IDC_SEL_LEN) != NULL);
-	ASSERT(GetDlgItem(IDC_SEL_LEN_STORE) != NULL);
-	ASSERT(GetDlgItem(IDC_EOF_GET) != NULL);
-	ASSERT(GetDlgItem(IDC_GO) != NULL);
-	ASSERT(GetDlgItem(IDC_UNARY_AT) != NULL);
 	ASSERT(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS) != NULL);
 
 	CHexEditView *pview = GetView();
+
+#ifdef CALC_BIG
+	mpz_class start, eof, mark;
+
+	if (pview != NULL)
+	{
+		mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());
+		mpz_set_ui64(mark.get_mpz_t(), pview->GetMark());
+		FILE_ADDRESS s, e;                    // Current selection
+		pview->GetSelAddr(s, e);
+		mpz_set_ui64(start.get_mpz_t(), s);
+	}
+
+	// Most file buttons are only enabled if there is an active file open and calc has an INT value in it
+	bool basic = pview != NULL && current_type_ == CJumpExpr::TYPE_INT;
+
+	// Red buttons
+	button_colour(GetDlgItem(IDC_MARK_STORE),    basic && get_norm(current_) <= eof,             RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_MARK_CLEAR),    pview != NULL,                                  RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_MARK_ADD),      basic && mark + get_norm(current_) >= 0 &&
+	                                                      mark + get_norm(current_) <= eof,      RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_MARK_SUBTRACT), basic && mark - get_norm(current_) >= 0 &&
+	                                                      mark - get_norm(current_) <= eof,      RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_MARK_AT_STORE), basic && !pview->ReadOnly() && mark <= eof &&
+	                                             (mark + bits_/8 <= eof || !pview->OverType()),  RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_SEL_STORE),     basic && get_norm(current_) <= eof,             RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_SEL_AT_STORE),  basic && !pview->ReadOnly() && start <= eof &&
+	                                             (start + bits_/8 <= eof || !pview->OverType()), RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_SEL_LEN_STORE), basic && start + get_norm(current_) <= eof,     RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_GO),            basic && get_norm(current_) <= eof,             RGB(0xC0, 0x0, 0x0));
+
+	// Dark grey buttons
+	button_colour(GetDlgItem(IDC_MARK_GET),      pview != NULL,                                  RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_MARK_AT),       pview != NULL && mark + bits_/8 <= eof,         RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_SEL_GET),       pview != NULL,                                  RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_SEL_AT),        pview != NULL && start + bits_/8 <= eof,        RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_SEL_LEN),       pview != NULL,                                  RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_EOF_GET),       pview != NULL,                                  RGB(0x40, 0x40, 0x40));
+
+	// Purple
+	button_colour(GetDlgItem(IDC_UNARY_AT),      basic && get_norm(current_) + bits_/8 <= eof,   RGB(0x80, 0x0, 0x80));
+#else
 	FILE_ADDRESS start, end;                    // Current selection
 	FILE_ADDRESS eof, mark;                     // Length of file and posn of mark
 
@@ -2345,16 +2407,6 @@ void CCalcDlg::FixFileButtons()
 		eof = pview->GetDocument()->length();
 		mark = pview->GetMark();
 	}
-	else
-		start = end = eof = mark = 0;
-#ifdef CALC_BIG
-	mpz_class eof_mpz, mark_mpz, start_mpz;
-
-	mpz_set_ui64(eof_mpz.get_mpz_t(), eof);
-	mpz_set_ui64(mark_mpz.get_mpz_t(), mark);
-	mpz_set_ui64(start_mpz.get_mpz_t(), start);
-#endif
-
 	GetDlgItem(IDC_MARK_GET)->EnableWindow(pview != NULL);
 	GetDlgItem(IDC_MARK_CLEAR)->EnableWindow(pview != NULL);
 	GetDlgItem(IDC_MARK_AT)->EnableWindow(pview != NULL && mark + bits_/8 <= eof);
@@ -2377,19 +2429,6 @@ void CCalcDlg::FixFileButtons()
 	}
 	else
 	{
-#ifdef CALC_BIG
-		GetDlgItem(IDC_MARK_STORE)->EnableWindow(pview != NULL && get_norm(current_) <= eof_mpz);
-		GetDlgItem(IDC_MARK_SUBTRACT)->EnableWindow(pview != NULL && mark_mpz - get_norm(current_) <= eof_mpz);
-		GetDlgItem(IDC_MARK_ADD)->EnableWindow(pview != NULL && mark_mpz + get_norm(current_) <= eof_mpz);
-		GetDlgItem(IDC_MARK_AT_STORE)->EnableWindow(pview != NULL && !pview->ReadOnly() && mark <= eof &&
-													(mark + bits_/8 <= eof || !pview->OverType()));
-		GetDlgItem(IDC_SEL_STORE)->EnableWindow(pview != NULL && get_norm(current_) <= eof_mpz);
-		GetDlgItem(IDC_SEL_AT_STORE)->EnableWindow(pview != NULL && !pview->ReadOnly() && start <= eof &&
-												(start + bits_/8 <= eof || !pview->OverType()));
-		GetDlgItem(IDC_SEL_LEN_STORE)->EnableWindow(pview != NULL && start_mpz + get_norm(current_) <= eof_mpz);
-		GetDlgItem(IDC_GO)->EnableWindow(pview != NULL && get_norm(current_) <= eof_mpz);
-		GetDlgItem(IDC_UNARY_AT)->EnableWindow(pview != NULL && get_norm(current_) + bits_/8 <= eof_mpz);
-#else
 		GetDlgItem(IDC_MARK_STORE)->EnableWindow(pview != NULL && (current_&mask_) <= eof);
 		if (pview != NULL && radix_ == 10)
 		{
@@ -2429,8 +2468,8 @@ void CCalcDlg::FixFileButtons()
 		GetDlgItem(IDC_SEL_LEN_STORE)->EnableWindow(pview != NULL && start + (current_&mask_) <= (unsigned __int64)eof);
 		GetDlgItem(IDC_GO)->EnableWindow(pview != NULL && (current_&mask_) <= (unsigned __int64)eof);
 		GetDlgItem(IDC_UNARY_AT)->EnableWindow(pview != NULL && (current_&mask_) + bits_/8 <= (unsigned __int64)eof);
-#endif
 	}
+#endif
 
 	if (pview != NULL)
 	{
@@ -2611,122 +2650,17 @@ LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 {
 	if (m_first)
 	{
-		// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT 
-		// NOTE: Don't allow resize vertically of IDC_EDIT as it stuffs up the combo drop down list window size
-		m_resizer.Add(IDC_EDIT, 0, 0, 100, 0);        // edit control resizes with width
-		m_resizer.Add(IDC_OP_DISPLAY, 100, 0, 0, 0);  // operator display sticks to right edge (moves vert)
-		m_resizer.Add(IDC_CALC_BITS, 0, 0, 100, 13);  // where "bits" are drawn
-
-		// Settings controls don't move/size horizontally but move vert. and size slightly too
-		m_resizer.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);
-		m_resizer.Add(IDC_BASE_GROUP, 0, 13, 0, 8);
-		m_resizer.Add(IDC_HEX, 0, 13, 0, 5);
-		m_resizer.Add(IDC_DECIMAL, 0, 13, 0, 5);
-		m_resizer.Add(IDC_OCTAL, 0, 13, 0, 5);
-		m_resizer.Add(IDC_BINARY, 0, 13, 0, 5);
-		m_resizer.Add(IDC_BITS_GROUP, 0, 13, 0, 8);
-		m_resizer.Add(IDC_64BIT, 0, 13, 0, 5);
-		m_resizer.Add(IDC_32BIT, 0, 13, 0, 5);
-		m_resizer.Add(IDC_16BIT, 0, 13, 0, 5);
-		m_resizer.Add(IDC_8BIT, 0, 13, 0, 5);
-
-		// First row of buttons
-		m_resizer.Add(IDC_MEM_GET, 1, 27, 12, 10);
-		m_resizer.Add(IDC_MEM_STORE, 14, 27, 9, 10);
-		m_resizer.Add(IDC_MEM_CLEAR, 23, 27, 9, 10);
-		m_resizer.Add(IDC_MEM_ADD, 32, 27, 9, 10);
-		m_resizer.Add(IDC_MEM_SUBTRACT, 41, 27, 8, 10);
-
-		m_resizer.Add(IDC_BACKSPACE, 64, 26, 16, 10);
-		m_resizer.Add(IDC_CLEAR_ENTRY, 80, 26, 10, 10);
-		m_resizer.Add(IDC_CLEAR, 90, 26, 10, 10);
-
-		// 2nd row of buttons
-		m_resizer.Add(IDC_MARK_GET, 1, 37, 12, 10);
-		m_resizer.Add(IDC_MARK_STORE, 14, 37, 9, 10);
-		m_resizer.Add(IDC_MARK_CLEAR, 23, 37, 9, 10);
-		m_resizer.Add(IDC_MARK_ADD, 32, 37, 9, 10);
-		m_resizer.Add(IDC_MARK_SUBTRACT, 41, 37, 8, 10);
-		m_resizer.Add(IDC_DIGIT_D, 50, 37, 8, 10);
-		m_resizer.Add(IDC_DIGIT_E, 58, 37, 8, 10);
-		m_resizer.Add(IDC_DIGIT_F, 66, 37, 8, 10);
-		m_resizer.Add(IDC_POW, 75, 37, 8, 10);
-		m_resizer.Add(IDC_GTR, 83, 37, 8, 10);
-		m_resizer.Add(IDC_ROL, 91, 37, 8, 10);
-
-		// 3rd row of buttons
-		m_resizer.Add(IDC_MARK_AT, 1, 47, 12, 10);
-		m_resizer.Add(IDC_MARK_AT_STORE, 14, 47, 9, 10);
-		m_resizer.Add(IDC_UNARY_SQUARE, 23, 47, 9, 10);
-		m_resizer.Add(IDC_UNARY_ROL, 32, 47, 9, 10);
-		m_resizer.Add(IDC_UNARY_REV, 41, 47, 8, 10);
-		m_resizer.Add(IDC_DIGIT_A, 50, 47, 8, 10);
-		m_resizer.Add(IDC_DIGIT_B, 58, 47, 8, 10);
-		m_resizer.Add(IDC_DIGIT_C, 66, 47, 8, 10);
-		m_resizer.Add(IDC_MOD, 75, 47, 8, 10);
-		m_resizer.Add(IDC_LESS, 83, 47, 8, 10);
-		m_resizer.Add(IDC_ROR, 91, 47, 8, 10);
-
-		// 4th row of buttons
-		m_resizer.Add(IDC_SEL_GET, 1, 57, 12, 10);
-		m_resizer.Add(IDC_SEL_STORE, 14, 57, 9, 10);
-		m_resizer.Add(IDC_UNARY_SQUARE_ROOT, 23, 57, 9, 10);
-		m_resizer.Add(IDC_UNARY_ROR, 32, 57, 9, 10);
-		m_resizer.Add(IDC_UNARY_NOT, 41, 57, 8, 10);
-		m_resizer.Add(IDC_DIGIT_7, 50, 57, 8, 10);
-		m_resizer.Add(IDC_DIGIT_8, 58, 57, 8, 10);
-		m_resizer.Add(IDC_DIGIT_9, 66, 57, 8, 10);
-		m_resizer.Add(IDC_DIVIDE, 75, 57, 8, 10);
-		m_resizer.Add(IDC_XOR, 83, 57, 8, 10);
-		m_resizer.Add(IDC_LSL, 91, 57, 8, 10);
-
-		// 5th row of buttons
-		m_resizer.Add(IDC_SEL_AT, 1, 67, 12, 10);
-		m_resizer.Add(IDC_SEL_AT_STORE, 14, 67, 9, 10);
-		m_resizer.Add(IDC_UNARY_CUBE, 23, 67, 9, 10);
-		m_resizer.Add(IDC_UNARY_LSL, 32, 67, 9, 10);
-		m_resizer.Add(IDC_UNARY_INC, 41, 67, 8, 10);
-		m_resizer.Add(IDC_DIGIT_4, 50, 67, 8, 10);
-		m_resizer.Add(IDC_DIGIT_5, 58, 67, 8, 10);
-		m_resizer.Add(IDC_DIGIT_6, 66, 67, 8, 10);
-		m_resizer.Add(IDC_MULTIPLY, 75, 67, 8, 10);
-		m_resizer.Add(IDC_OR, 83, 67, 8, 10);
-		m_resizer.Add(IDC_LSR, 91, 67, 8, 10);
-
-		// 6th row of buttons
-		m_resizer.Add(IDC_SEL_LEN, 1, 77, 12, 10);
-		m_resizer.Add(IDC_SEL_LEN_STORE, 14, 77, 9, 10);
-		m_resizer.Add(IDC_UNARY_FACTORIAL, 23, 77, 9, 10);
-		m_resizer.Add(IDC_UNARY_LSR, 32, 77, 9, 10);
-		m_resizer.Add(IDC_UNARY_DEC, 41, 77, 8, 10);
-		m_resizer.Add(IDC_DIGIT_1, 50, 77, 8, 10);
-		m_resizer.Add(IDC_DIGIT_2, 58, 77, 8, 10);
-		m_resizer.Add(IDC_DIGIT_3, 66, 77, 8, 10);
-		m_resizer.Add(IDC_SUBTRACT, 75, 77, 8, 10);
-		m_resizer.Add(IDC_AND, 83, 77, 8, 10);
-		m_resizer.Add(IDC_ASR, 91, 77, 8, 10);
-
-		// 7th row of buttons
-		m_resizer.Add(IDC_EOF_GET, 1, 87, 12, 10);
-
-		m_resizer.Add(IDC_UNARY_AT, 23, 87, 9, 10);
-		m_resizer.Add(IDC_UNARY_ASR, 32, 87, 9, 10);
-		m_resizer.Add(IDC_UNARY_FLIP, 41, 87, 8, 10);
-		m_resizer.Add(IDC_DIGIT_0, 50, 87, 8, 10);
-		m_resizer.Add(IDC_UNARY_SIGN, 58, 87, 8, 10);
-		m_resizer.Add(IDC_EQUALS, 66, 87, 8, 10);
-		m_resizer.Add(IDC_ADDOP, 75, 87, 8, 10);
-		m_resizer.Add(IDC_GO, 83, 87, 16, 10);
-
+		setup_resizer();
 		m_first = false;
 	}
 
-	build_menus();
-	// Display context help for ctrl set up in OnHelpInfo
+	update_controls();
+
+	// If help_hwnd_ is not NULL then help has been requested for that window
 	if (help_hwnd_ != (HWND)0)
 	{
 		theApp.HtmlHelpWmHelp(help_hwnd_, id_pairs);
-		help_hwnd_ = (HWND)0;
+		help_hwnd_ = (HWND)0;  // signal that it was handled
 	}
 	return FALSE;
 }
@@ -2968,7 +2902,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 		if (!overflow_ && !error_)
 			ShowBinop(binop_none);
 	}
@@ -3063,6 +2997,11 @@ void CCalcDlg::On64bit()
 	change_bits(64);
 }
 
+void CCalcDlg::OnInfbit()
+{
+	change_bits(0);
+}
+
 void CCalcDlg::OnBinary()
 {
 	change_base(2);
@@ -3109,7 +3048,7 @@ void CCalcDlg::OnClearEntry()           // Zero current value
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	ShowBinop();
@@ -3130,7 +3069,7 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 		ShowBinop(binop_none);
 	}
 
@@ -3197,7 +3136,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 		if (!overflow_ && !error_)
 			ShowBinop(binop_none);
 	}
@@ -3233,6 +3172,39 @@ void CCalcDlg::add_hist()
 }
 
 // ---------- Menu button handlers ---------
+
+// Change text colour within a button to grey (disabled) or normal
+//  pp = pointer to CCalcButton
+//  dis = true if to display greyed out else false to display as normal
+//  normal = normal text colour for the button
+void CCalcDlg::button_colour(CWnd *pp, bool enable, COLORREF normal)
+{
+	ASSERT(pp != NULL);
+	pp->EnableWindow(TRUE); // xxx not nec after all enabled in dlg editor
+
+	CCalcButton *pbut = DYNAMIC_DOWNCAST(CCalcButton, pp);
+	ASSERT(pbut != NULL);
+	if (enable)
+	{
+		if (pbut->GetTextColor() != normal)
+		{
+			pbut->SetTextColor(normal);
+			pbut->SetTextHotColor(RGB(0,0,0));   // black
+			pp->Invalidate();
+		}
+	}
+	else
+	{
+		if (pbut->GetTextColor() != RGB(0xC0, 0xC0, 0xC0))
+		{
+			pbut->SetTextColor(RGB(0xC0, 0xC0, 0xC0)); // light grey
+			pbut->SetTextHotColor(RGB(0xC0, 0xC0, 0xC0));
+			pp->Invalidate();
+		}
+	}
+}
+
+// Rebuild the menus for the menu buttons at the top of the calculator
 void CCalcDlg::build_menus()
 {
 	static clock_t last_hex_hist_build = (clock_t)0;
@@ -3392,6 +3364,7 @@ void CCalcDlg::build_menus()
 	}
 }
 
+// Handle selection from hex history menu
 void CCalcDlg::OnGetHexHist()
 {
 	if (ctl_hex_hist_.m_nMenuResult != 0)
@@ -3436,6 +3409,7 @@ void CCalcDlg::OnGetHexHist()
 	}
 }
 
+// Handle decimal history menu
 void CCalcDlg::OnGetDecHist()
 {
 	if (ctl_dec_hist_.m_nMenuResult != 0)
@@ -3480,6 +3454,7 @@ void CCalcDlg::OnGetDecHist()
 	}
 }
 
+// Handle vars menu button
 void CCalcDlg::OnGetVar()
 {
 	if (ctl_vars_.m_nMenuResult == ID_VARS_CLEAR)
@@ -3511,6 +3486,7 @@ void CCalcDlg::OnGetVar()
 	}
 }
 
+// Handle function selection
 void CCalcDlg::OnGetFunc()
 {
 	if (ctl_func_.m_nMenuResult != 0)
@@ -3813,7 +3789,7 @@ void CCalcDlg::OnMemGet()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	inedit(km_memget);
@@ -3829,8 +3805,8 @@ void CCalcDlg::OnMemStore()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
-		GetDlgItem(IDC_MEM_GET)->EnableWindow(TRUE);
+		//update_file_buttons();
+		button_colour(GetDlgItem(IDC_MEM_GET), true, RGB(0x40, 0x40, 0x40));
 
 		// TODO This works but we have to also update tooltip after MC, M+, M- buttons, and perhaps also after radix changes
 		// which means we can't just use the current text from the edit box.
@@ -3853,7 +3829,7 @@ void CCalcDlg::OnMemClear()
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
-		GetDlgItem(IDC_MEM_GET)->EnableWindow(FALSE);
+		button_colour(GetDlgItem(IDC_MEM_GET), false, RGB(0x40, 0x40, 0x40));
 	}
 
 	aa_->SaveToMacro(km_memclear);
@@ -3869,8 +3845,8 @@ void CCalcDlg::OnMemAdd()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
-		GetDlgItem(IDC_MEM_GET)->EnableWindow(TRUE);
+		//update_file_buttons();
+		button_colour(GetDlgItem(IDC_MEM_GET), true, RGB(0x40, 0x40, 0x40));
 	}
 
 	if (source_ != km_result)
@@ -3889,8 +3865,8 @@ void CCalcDlg::OnMemSubtract()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
-		GetDlgItem(IDC_MEM_GET)->EnableWindow(TRUE);
+		//update_file_buttons();
+		button_colour(GetDlgItem(IDC_MEM_GET), true, RGB(0x40, 0x40, 0x40));
 	}
 
 	if (source_ != km_result)
@@ -3943,7 +3919,7 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	inedit(km_markget);
@@ -3988,7 +3964,7 @@ void CCalcDlg::OnMarkStore()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	if (source_ != km_result)
@@ -4010,7 +3986,7 @@ void CCalcDlg::OnMarkClear()
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	aa_->SaveToMacro(km_markclear);
@@ -4087,7 +4063,7 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	if (source_ != km_result)
@@ -4170,7 +4146,7 @@ void CCalcDlg::OnMarkSubtract()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	if (source_ != km_result)
@@ -4247,7 +4223,7 @@ void CCalcDlg::OnMarkAt()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	inedit(km_markat);
@@ -4299,7 +4275,7 @@ void CCalcDlg::OnSelGet()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	inedit(km_selget);
@@ -4373,7 +4349,7 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	inedit(km_selat);
@@ -4417,7 +4393,7 @@ void CCalcDlg::OnSelLen()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	inedit(km_sellen);
@@ -4459,7 +4435,7 @@ void CCalcDlg::OnEofGet()               // Length of file
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	inedit(km_eofget);
@@ -4543,7 +4519,7 @@ void CCalcDlg::OnMarkAtStore()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	if (source_ != km_result)
@@ -4590,7 +4566,7 @@ void CCalcDlg::OnSelStore()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		// FixFileButtons(); // done indirectly through MoveToAddress via MoveWithDesc
+		// update_file_buttons(); // done indirectly through MoveToAddress via MoveWithDesc
 	}
 
 	if (source_ != km_result)
@@ -4667,7 +4643,7 @@ void CCalcDlg::OnSelAtStore()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		FixFileButtons();
+		//update_file_buttons();
 	}
 
 	if (source_ != km_result)
@@ -4723,7 +4699,7 @@ void CCalcDlg::OnSelLenStore()
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		// FixFileButtons(); // done indirectly through MoveToAddress
+		// update_file_buttons(); // done indirectly through MoveToAddress
 	}
 
 	if (source_ != km_result)

@@ -33,6 +33,14 @@
 #include "mpirxx.h"
 #endif
 
+
+// Just override CMFCButton so we can ceck the button colour
+class CCalcButton : public CMFCButton
+{
+public:
+	COLORREF GetTextColor() { return m_clrRegular; }
+};
+
 /////////////////////////////////////////////////////////////////////////////
 // CCalcBits
 //
@@ -86,9 +94,13 @@ public:
 	void FinishMacro();
 	void ShowStatus();
 	void ShowBinop(int ii = -1);
-	void FixFileButtons();
-	void StartEdit();           // Set focus to text control and move caret to end
-	void update_controls();
+	void StartEdit();            // Set focus to text control and move caret to end
+	void setup_tooltips();       // set up tooltips for buttons
+	void setup_static_buttons(); // Unchanging buttons
+	void setup_resizer();        // set up resizing of controls when window is resized
+	void update_digit_buttons(); // fix basic buttons (digits etc)
+	void update_file_buttons();  // fix file related buttons
+	void update_controls();      // set up all controls
 	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
 #ifdef CALC_BIG
 	void Set(mpz_class t) { current_ = t;  if (IsVisible()) edit_.Put(); }
@@ -118,80 +130,78 @@ public:
 	CCalcBits ctl_calc_bits_;       // Just for drawing the bits
 
 	// Calculator buttons
-#if 1
-	// These are black so we don't have to do anything special
-	CMFCButton ctl_digit_0_;
-	CMFCButton ctl_digit_1_;
-	CMFCButton ctl_digit_2_;
-	CMFCButton ctl_digit_3_;
-	CMFCButton ctl_digit_4_;
-	CMFCButton ctl_digit_5_;
-	CMFCButton ctl_digit_6_;
-	CMFCButton ctl_digit_7_;
-	CMFCButton ctl_digit_8_;
-	CMFCButton ctl_digit_9_;
-	CMFCButton ctl_digit_a_;
-	CMFCButton ctl_digit_b_;
-	CMFCButton ctl_digit_c_;
-	CMFCButton ctl_digit_d_;
-	CMFCButton ctl_digit_e_;
-	CMFCButton ctl_digit_f_;
-	CMFCButton ctl_mem_get_;
-	CMFCButton ctl_mark_get_;
-	CMFCButton ctl_sel_get_;
-	CMFCButton ctl_sel_at_;
-	CMFCButton ctl_sel_len_;
-	CMFCButton ctl_mark_at_;
-	CMFCButton ctl_eof_get_;
-#endif
-	CMFCButton ctl_backspace_;
-	CMFCButton ctl_clear_entry_;
-	CMFCButton ctl_clear_;
-	CMFCButton ctl_equals_;
-	CMFCButton ctl_and_;
-	CMFCButton ctl_asr_;
-	CMFCButton ctl_divide_;
-	CMFCButton ctl_lsl_;
-	CMFCButton ctl_lsr_;
-	CMFCButton ctl_rol_;
-	CMFCButton ctl_ror_;
-	CMFCButton ctl_xor_;
-	CMFCButton ctl_mod_;
-	CMFCButton ctl_multiply_;
-	CMFCButton ctl_or_;
-	CMFCButton ctl_unary_dec_;
-	CMFCButton ctl_unary_factorial_;
-	CMFCButton ctl_unary_flip_;
-	CMFCButton ctl_unary_rev_;
-	CMFCButton ctl_unary_inc_;
-	CMFCButton ctl_unary_not_;
-	CMFCButton ctl_unary_sign_;
-	CMFCButton ctl_unary_square_;
-	CMFCButton ctl_subtract_;
-	CMFCButton ctl_mem_clear_;
-	CMFCButton ctl_mem_add_;
-	CMFCButton ctl_mem_subtract_;
-	CMFCButton ctl_mark_add_;
-	CMFCButton ctl_mark_subtract_;
-	CMFCButton ctl_gtr_;
-	CMFCButton ctl_less_;
-	CMFCButton ctl_pow_;
-	CMFCButton ctl_mark_at_store_;
-	CMFCButton ctl_mark_clear_;
-	CMFCButton ctl_mark_store_;
-	CMFCButton ctl_mem_store_;
-	CMFCButton ctl_sel_at_store_;
-	CMFCButton ctl_sel_store_;
-	CMFCButton ctl_unary_rol_;
-	CMFCButton ctl_unary_ror_;
-	CMFCButton ctl_unary_lsl_;
-	CMFCButton ctl_unary_lsr_;
-	CMFCButton ctl_unary_asr_;
-	CMFCButton ctl_unary_cube_;
-	CMFCButton ctl_unary_at_;
-	CMFCButton ctl_unary_square_root_;
-	CMFCButton ctl_sel_len_store_;
-	CMFCButton ctl_addop_;
+	CCalcButton ctl_digit_0_;
+	CCalcButton ctl_digit_1_;
+	CCalcButton ctl_digit_2_;
+	CCalcButton ctl_digit_3_;
+	CCalcButton ctl_digit_4_;
+	CCalcButton ctl_digit_5_;
+	CCalcButton ctl_digit_6_;
+	CCalcButton ctl_digit_7_;
+	CCalcButton ctl_digit_8_;
+	CCalcButton ctl_digit_9_;
+	CCalcButton ctl_digit_a_;
+	CCalcButton ctl_digit_b_;
+	CCalcButton ctl_digit_c_;
+	CCalcButton ctl_digit_d_;
+	CCalcButton ctl_digit_e_;
+	CCalcButton ctl_digit_f_;
+	CCalcButton ctl_mem_get_;
+	CCalcButton ctl_mark_get_;
+	CCalcButton ctl_sel_get_;
+	CCalcButton ctl_sel_at_;
+	CCalcButton ctl_sel_len_;
+	CCalcButton ctl_mark_at_;
+	CCalcButton ctl_eof_get_;
+
+	CCalcButton ctl_backspace_;
+	CCalcButton ctl_clear_entry_;
+	CCalcButton ctl_clear_;
+	CCalcButton ctl_equals_;
+	CCalcButton ctl_and_;
+	CCalcButton ctl_asr_;
+	CCalcButton ctl_divide_;
+	CCalcButton ctl_lsl_;
+	CCalcButton ctl_lsr_;
+	CCalcButton ctl_rol_;
+	CCalcButton ctl_ror_;
+	CCalcButton ctl_xor_;
+	CCalcButton ctl_mod_;
+	CCalcButton ctl_multiply_;
+	CCalcButton ctl_or_;
+	CCalcButton ctl_unary_dec_;
+	CCalcButton ctl_unary_factorial_;
+	CCalcButton ctl_unary_flip_;
+	CCalcButton ctl_unary_rev_;
+	CCalcButton ctl_unary_inc_;
+	CCalcButton ctl_unary_not_;
+	CCalcButton ctl_unary_sign_;
+	CCalcButton ctl_unary_square_;
+	CCalcButton ctl_subtract_;
+	CCalcButton ctl_mem_clear_;
+	CCalcButton ctl_mem_add_;
+	CCalcButton ctl_mem_subtract_;
+	CCalcButton ctl_mark_add_;
+	CCalcButton ctl_mark_subtract_;
+	CCalcButton ctl_gtr_;
+	CCalcButton ctl_less_;
+	CCalcButton ctl_pow_;
+	CCalcButton ctl_mark_at_store_;
+	CCalcButton ctl_mark_clear_;
+	CCalcButton ctl_mark_store_;
+	CCalcButton ctl_mem_store_;
+	CCalcButton ctl_sel_at_store_;
+	CCalcButton ctl_sel_store_;
+	CCalcButton ctl_unary_rol_;
+	CCalcButton ctl_unary_ror_;
+	CCalcButton ctl_unary_lsl_;
+	CCalcButton ctl_unary_lsr_;
+	CCalcButton ctl_unary_asr_;
+	CCalcButton ctl_unary_cube_;
+	CCalcButton ctl_unary_at_;
+	CCalcButton ctl_unary_square_root_;
+	CCalcButton ctl_sel_len_store_;
+	CCalcButton ctl_addop_;
 	CMFCMenuButton ctl_go_;
 
 	// Menu buttons
@@ -303,6 +313,7 @@ protected:
 	afx_msg void On16bit();
 	afx_msg void On32bit();
 	afx_msg void On64bit();
+	afx_msg void OnInfbit();
 	afx_msg void OnBinary();
 	afx_msg void OnOctal();
 	afx_msg void OnDecimal();
@@ -336,6 +347,7 @@ private:
 
 	bool invalid_expression();              // Check if current expression is valid and show error message if not
 	void build_menus();                     // Build menus for menu buttons
+	void button_colour(CWnd *pp, bool enable, COLORREF normal); // Make button greyed/normal
 	void toggle_endian();
 	void do_binop(binop_type binop);        // Handle binary operators
 	void do_unary(unary_type unary);        // Handle unary operators

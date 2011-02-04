@@ -430,6 +430,7 @@
 #define IDC_PASSWORD_SPIN               1006
 #define IDC_16BIT                       1007
 #define IDC_8BIT                        1008
+#define IDC_INFBIT                      1009
 #define IDC_DIGIT_0                     1010
 #define IDC_DIGIT_1                     1011
 #define IDC_DIGIT_2                     1012
