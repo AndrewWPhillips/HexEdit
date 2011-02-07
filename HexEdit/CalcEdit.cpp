@@ -635,7 +635,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (nChar == VK_DELETE)
 		(void)update_value(false);   // should always return true for Del key
 
-	pp_->source_ = theApp.recording_ ? km_user : km_result;
+	pp_->source_ = theApp.recording_ ? km_user_str : km_result;
 	pp_->ctl_calc_bits_.RedrawWindow();
 }
 

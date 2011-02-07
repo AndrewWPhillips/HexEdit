@@ -84,7 +84,7 @@ enum km_type
 								// happens if the value is the result of a binary or unary
 								// operation or it was entered before recording started.
 								// Note: this value is never actually stored in a macro.
-	km_user,                    // User entered an integer value (stored in v64)
+	km_user,                    // Replaced by km_user_str in 4.X to allow for integers bigger than 64 bits
 	km_clear,                   // Clear calculator operands and operator
 	km_clear_entry,             // Clear current operand
 	km_equals,                  // Evaluate result (equals key)
@@ -106,9 +106,10 @@ enum km_type
 	km_memsubtract,             // Subtract from calc memory
 
 	km_expression,              // User entered an expression (cf km_user) - string stored in *pss
+	km_user_str,                // Replaces km_user - stores the integer in a string (pss) rather than 64 bit int (v64)
 	km_change_signed,           // Toggled signed_ in calculator
 
-	km_last_calc, // = 67?      // leave as last value before km_view
+	km_last_calc, // = 68?      // leave as last value before km_view
 
 	//-------------------------------------------------
 	km_view = 100,              // All past this point require a view
@@ -225,7 +226,7 @@ enum km_type
 	km_sellenstore,             // Set length of selection (must be >= 0 && <= dist to EOF)
 
 	// Where is a calculator value obtained from?
-	// Note: km_user and km_expression also say where a value comes from but
+	// Note: km_user, km_user_str and km_expression also say where a value comes from but
 	// as they do not require a view they appear in the 50-99 range (above).
 	km_markget,                 // Get current address of mark
 	km_markat,                  // Get value from file at mark

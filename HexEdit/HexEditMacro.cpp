@@ -1482,6 +1482,9 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 			case km_user:
 				mpz_set_ui64(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.current_.get_mpz_t(), (*pk).v64);
 				break;
+			case km_user_str:
+				mpz_set_str(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.current_.get_mpz_t(), (*(*pk).pss), 10);
+				break;
 			case km_memget:
 				((CMainFrame *)AfxGetMainWnd())->m_wndCalc.OnMemGet();
 				break;

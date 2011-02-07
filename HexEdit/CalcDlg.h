@@ -114,8 +114,8 @@ public:
 
 	int ByteSize() const { return (bits_-1)/8 + 1; }
 #ifdef CALC_BIG
-	unsigned __int64 GetValue() const;
-	// may need to add functions to get value as mpz_class, CString etc later
+	unsigned __int64 GetValue() const { return mpz_get_ui64(get_norm(current_).get_mpz_t()); }
+	CString GetStringValue() const { char * ss = mpz_get_str(NULL, 10, get_norm(current_).get_mpz_t()); CString retval(ss); free(ss); return retval; }
 #else
 	unsigned __int64 GetValue() const { return current_ & mask_; }
 #endif
@@ -366,10 +366,10 @@ private:
 	// The following is used to keep track of where the current calculator contents came from.
 	// That is, was the number typed in by the user or obtained using one of the buttons on
 	// the left side of the calculator (memory recall etc).  This info is needed for later
-	// playback of macros that use the calculator.  The value of source_ should be one of km_user,
-	// km_memget, km_markget, km_markat, km_selget, km_selat, km_selend, km_sellen, km_eofget.
+	// playback of macros that use the calculator.  The value of source_ should be one of
+	// km_user_str, km_memget, km_markat/get, km_selat/get, km_selend, km_sellen, km_eofget.
 
-	km_type source_;                        // One of km_user to km_eofget, or km_result
+	km_type source_;                        // One of km_user_str to km_eofget, or km_result
 
 	// The following is used to keep track of what binary operator is in use.  For example,
 	// if the user does 123 + 456 then it has value km_add.  If no binary operation is currently
@@ -405,7 +405,8 @@ private:
 	mpz_class min_val_, max_val_;  // Range of valid values according to bits_ and signed_
 	mpz_class mask_;               // Mask for current value of bits_, typically: 0xFF, 0xFFFF, 0xffffFFFF etc
 
-	mpz_class get_norm(mpz_class v); // Get a value converted according to bits_ and signed_
+	mpz_class get_norm(mpz_class v) const; // Get a value converted according to bits_ and signed_
+
 #else
 	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
 	unsigned __int64 current_;   // Current value in the edit control (used by edit_)

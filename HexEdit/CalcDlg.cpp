@@ -1,6 +1,8 @@
 // TODO
-// check all uses of GetValue to see if > 64 bits could make sense
-// fix macros to store values > 64 bits (as a string) for km_user (add km_user_string)
+// Assume signed_ == true when bits_ == 0
+// replace toggle_endian with pview->OnToggleEndian
+// test macros (kn_user_str) and old macros (km_user)
+// merge km_user_str and km_expression???
 // test get_bytes and put_bytes
 
 
@@ -150,7 +152,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	int bnum;
-	if ((bnum = pos2bit(point)) > -1 && bnum < m_pParent->bits_)
+	if ((bnum = pos2bit(point)) > -1 && (m_pParent->bits_ == 0 || bnum < m_pParent->bits_))
 	{
 		ASSERT(bnum < 64 && bnum >= 0);
 #ifdef CALC_BIG
@@ -644,14 +646,22 @@ void CCalcDlg::StartEdit()
 void CCalcDlg::FinishMacro()
 {
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 }
 
 #ifdef CALC_BIG
 // Get value (current calc value, memory etc) according to current
 // bits_ and signed_ settings.
-mpz_class CCalcDlg::get_norm(mpz_class v)
+mpz_class CCalcDlg::get_norm(mpz_class v) const
 {
 	// If infinite precision (bits_ == 0) then there is no mask
 	if (bits_ == 0) return v;
@@ -670,15 +680,6 @@ mpz_class CCalcDlg::get_norm(mpz_class v)
 	}
 
 	return retval;
-}
-
-unsigned __int64 CCalcDlg::GetValue() const
-{
-	mpz_class tmp = current_;  // use get_norm??? xxx 
-	if (bits_ < 64)
-		tmp &= mask_;
-
-	return mpz_get_ui64(tmp.get_mpz_t());
 }
 
 // Get data from the file into calculator, reversing byte order if necessary
@@ -879,7 +880,7 @@ void CCalcDlg::do_binop(binop_type binop)
 	if (in_edit_ || op_ == binop_none || aa_->playing_)
 	{
 #ifdef CALC_BIG
-		unsigned __int64 temp = GetValue();
+		CString temp = GetStringValue();
 #else
 		unsigned __int64 temp = current_;
 #endif
@@ -1018,7 +1019,10 @@ void CCalcDlg::do_unary(unary_type unary)
 	// Save the value to macro before we do anything with it (unless it's a result of a previous op).
 	// Also don't save the value if this (unary op) is the very first thing in the macro.
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, GetValue());
+	{
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+	}
 
 	overflow_ = error_ = FALSE;
 
@@ -1056,23 +1060,23 @@ void CCalcDlg::do_unary(unary_type unary)
 	case unary_not:
 		current_ = ~current_;
 		break;
-	case unary_rol:
+	case unary_rol:    // ROL1 button
 		if (bits_ == 0)
 		{
 			AfxMessageBox("Can't rotate left if bit count is unlimited");
 			error_ = TRUE;
 		}
 		else
-			current_ = (current_ << 1) | (current_ >> (bits_ - 1));
+			current_ = ((current_ << 1) | (current_ >> (bits_ - 1))) & mask_;
 		break;
-	case unary_ror:
+	case unary_ror:   // ROR1 button
 		if (bits_ == 0)
 		{
 			AfxMessageBox("Can't rotate right if bit count is unlimited");
 			error_ = TRUE;
 		}
 		else
-			current_ = (current_ >> 1) | (current_ << (bits_ - 1));
+			current_ = ((current_ >> 1) | (current_ << (bits_ - 1))) & mask_;
 		break;
 	case unary_lsl:
 		current_ <<= 1;
@@ -1148,8 +1152,10 @@ void CCalcDlg::do_unary(unary_type unary)
 		}
 		else
 		{
+			// Check that current_ is within file address range 0 <= x <= eof.
+			// get)bytes does this but only on a possibly truncated (64-bit) value.
 			mpz_class eof;
-			mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());
+			mpz_set_ui64(eof.get_mpz_t(), GetView()->GetDocument()->length());
 
 			if (current_ < 0)
 			{
@@ -1489,7 +1495,7 @@ void CCalcDlg::do_digit(char digit)
 		}
 	}
 	edit_.SendMessage(WM_CHAR, digit, 1);
-	inedit(km_user);
+	inedit(km_user_str);
 }
 
 #ifdef CALC_BIG
@@ -2420,7 +2426,8 @@ void CCalcDlg::update_file_buttons()
 	bool basic = pview != NULL && current_type_ == CJumpExpr::TYPE_INT;
 
 	// Red buttons
-	button_colour(GetDlgItem(IDC_MARK_STORE),    basic && get_norm(current_) <= eof,             RGB(0xC0, 0x0, 0x0));
+	button_colour(GetDlgItem(IDC_MARK_STORE),    basic && get_norm(current_) >= 0 &&
+	                                                      get_norm(current_) <= eof,             RGB(0xC0, 0x0, 0x0));
 	button_colour(GetDlgItem(IDC_MARK_CLEAR),    pview != NULL,                                  RGB(0xC0, 0x0, 0x0));
 	button_colour(GetDlgItem(IDC_MARK_ADD),      basic && mark + get_norm(current_) >= 0 &&
 	                                                      mark + get_norm(current_) <= eof,      RGB(0xC0, 0x0, 0x0));
@@ -2933,7 +2940,15 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	// If the value in current_ is not there as a result of a calculation then
 	// save it before it is lost.
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 
 	calc_previous();
 
@@ -3074,7 +3089,7 @@ void CCalcDlg::OnBackspace()            // Delete back one digit
 	edit_.SendMessage(WM_CHAR, '\b', 1);
 
 	ShowBinop();
-	inedit(km_user);                    // Allow edit of current value
+	inedit(km_user_str);             // Allow edit of current value
 }
 
 void CCalcDlg::OnClearEntry()           // Zero current value
@@ -3093,7 +3108,7 @@ void CCalcDlg::OnClearEntry()           // Zero current value
 
 	ShowBinop();
 	in_edit_ = FALSE;                   // Necessary?
-	source_ = aa_->recording_ ? km_user : km_result;
+	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear_entry);
 }
 
@@ -3114,7 +3129,7 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 	}
 
 	in_edit_ = FALSE;
-	source_ = aa_->recording_ ? km_user : km_result;
+	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear);
 }
 
@@ -3160,17 +3175,20 @@ void CCalcDlg::OnEquals()               // Calculate result
 		return;
 	}
 
-	mpz_class saved_val = current_;
-	CString saved_str = CString(current_str_);
+	CString saved_val = GetStringValue();        // current_ as string
+	CString saved_str = CString(current_str_);   // expr from text box as string
 
 	calc_previous();
 
 	// If current value is not there as a result of a calculation then
 	// save it before it is lost.
-	if (source_ == km_user && (current_type_ != CJumpExpr::TYPE_INT || !current_const_))
+	if (source_ == km_user_str && (current_type_ != CJumpExpr::TYPE_INT || !current_const_))
 		aa_->SaveToMacro(km_expression, saved_str);
 	else if (source_ != km_result)
-		aa_->SaveToMacro(source_, mpz_get_ui64(saved_val.get_mpz_t()));
+	{
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, saved_val);
+	}
 
 	op_ = binop_none;
 	if (!aa_->refresh_off_ && IsVisible())
@@ -3445,7 +3463,7 @@ void CCalcDlg::OnGetHexHist()
 			edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
 
 		//SetDlgItemText(IDC_OP_DISPLAY, "");
-		inedit(km_user);
+		inedit(km_user_str);
 	}
 }
 
@@ -3490,7 +3508,7 @@ void CCalcDlg::OnGetDecHist()
 			edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
 
 		//SetDlgItemText(IDC_OP_DISPLAY, "");
-		inedit(km_user);
+		inedit(km_user_str);
 	}
 }
 
@@ -3522,7 +3540,7 @@ void CCalcDlg::OnGetVar()
 			edit_.SendMessage(WM_CHAR, (TCHAR)ss[ii]);
 
 		//SetDlgItemText(IDC_OP_DISPLAY, "");
-		inedit(km_user);
+		inedit(km_user_str);
 	}
 }
 
@@ -3562,7 +3580,7 @@ void CCalcDlg::OnGetFunc()
 		edit_.SetSel(start, end);
 
 		//SetDlgItemText(IDC_OP_DISPLAY, "");
-		inedit(km_user);
+		inedit(km_user_str);
 	}
 }
 
@@ -3858,7 +3876,15 @@ void CCalcDlg::OnMemStore()
 	}
 
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 	aa_->SaveToMacro(km_memstore);
 }
@@ -3890,7 +3916,15 @@ void CCalcDlg::OnMemAdd()
 	}
 
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 	aa_->SaveToMacro(km_memadd);
 }
@@ -3910,7 +3944,15 @@ void CCalcDlg::OnMemSubtract()
 	}
 
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 	aa_->SaveToMacro(km_memsubtract);
 }
@@ -3983,9 +4025,12 @@ void CCalcDlg::OnMarkStore()
 	mpz_class eof, new_mark;
 	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
 	new_mark = get_norm(current_);
-	if (new_mark > eof)
+	if (new_mark < 0 || new_mark > eof)
 	{
-		AfxMessageBox("New mark address past end of file");
+		if (new_mark < 0)
+			AfxMessageBox("New mark address is -ve");
+		else
+			AfxMessageBox("New mark address past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4009,7 +4054,15 @@ void CCalcDlg::OnMarkStore()
 	}
 
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 	aa_->SaveToMacro(km_markstore);
 }
@@ -4060,7 +4113,7 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 		aa_->mac_error_ = 10;
 		return;
 	}
-	pview->SetMark(mpz_get_ui64(mark.get_mpz_t()));
+	pview->SetMark(mpz_get_ui64(new_mark.get_mpz_t()));
 #else
 	FILE_ADDRESS eof = pview->GetDocument()->length();
 	FILE_ADDRESS mark = pview->GetMark();
@@ -4113,7 +4166,15 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	}
 
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 	aa_->SaveToMacro(km_markadd);
 }
@@ -4144,7 +4205,7 @@ void CCalcDlg::OnMarkSubtract()
 		aa_->mac_error_ = 10;
 		return;
 	}
-	pview->SetMark(mpz_get_ui64(mark.get_mpz_t()));
+	pview->SetMark(mpz_get_ui64(new_mark.get_mpz_t()));
 #else
 	FILE_ADDRESS eof = pview->GetDocument()->length();
 	FILE_ADDRESS mark = pview->GetMark();
@@ -4197,7 +4258,15 @@ void CCalcDlg::OnMarkSubtract()
 	}
 
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 	aa_->SaveToMacro(km_marksubtract);
 }
@@ -4573,7 +4642,15 @@ void CCalcDlg::OnMarkAtStore()
 	}
 
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 	aa_->SaveToMacro(km_markatstore);
 }
@@ -4626,7 +4703,15 @@ void CCalcDlg::OnSelStore()
 	}
 
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 	aa_->SaveToMacro(km_selstore);
 }
@@ -4703,7 +4788,15 @@ void CCalcDlg::OnSelAtStore()
 	}
 
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 	aa_->SaveToMacro(km_selatstore);
 }
@@ -4765,7 +4858,15 @@ void CCalcDlg::OnSelLenStore()
 	}
 
 	if (source_ != km_result)
+	{
+#ifdef CALC_BIG
+		ASSERT(source_ == km_user_str);
+		aa_->SaveToMacro(source_, GetStringValue());
+#else
+		ASSERT(source_ == km_user);
 		aa_->SaveToMacro(source_, GetValue());
+#endif
+	}
 	source_ = km_result;
 	aa_->SaveToMacro(km_sellenstore);
 }
