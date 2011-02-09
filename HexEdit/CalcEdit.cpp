@@ -153,7 +153,7 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 	for (const char *ps = ss; *ps != '\0'; ++ps)
 	{
 #ifdef CALC_BIG
-		if (pp_->signed_ && !digit_seen && *ps == '-')
+		if ((pp_->signed_ || pp_->bits_ == 0) && !digit_seen && *ps == '-')
 			continue;   // skip leading minus sign for signed numbers
 #else
 		if (pp_->radix_ == 10 && !digit_seen && *ps == '-')
@@ -259,7 +259,7 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 #ifdef CALC_BIG
 		{
 			mpz_class val;
-			if (pp_->signed_ && vv.int64 < 0)
+			if ((pp_->signed_ || pp_->bits_ == 0) && vv.int64 < 0)
 			{
 				// Take 2's complement and set as -ve
 				mpz_set_ui64(val.get_mpz_t(), ~vv.int64 + 1);
@@ -483,7 +483,7 @@ void CCalcEdit::add_sep()
 
 		// Copy -ve sign
 #ifdef CALC_BIG
-		if (jj < ndigits && pp_->signed_ && none_yet && *src == '-')
+		if (jj < ndigits && (pp_->signed_ || pp_->bits_ == 0) && none_yet && *src == '-')
 #else
 		if (jj < ndigits && pp_->radix_ == 10 && none_yet && *src == '-')
 #endif
