@@ -60,6 +60,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 
 	++playing_;
 
+	CMainFrame *mm = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
 	CChildFrame *pc;                    // Ptr to the child (view's) frame
 	timer time(true);                   // Timer tracking time between refreshes
 	long plays_done;                    // Number of times macro replayed so far
@@ -311,7 +312,6 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				break;
 			case km_focus:
 				{
-					CMainFrame *mm = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
 					CChildFrame *nextc;        // Loops through all MDI child frames
 
 					for (nextc = dynamic_cast<CChildFrame *>(mm->MDIGetActive());
@@ -1480,10 +1480,23 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				((CMainFrame *)AfxGetMainWnd())->m_wndCalc.do_unary(unary_type((*pk).vv));
 				break;
 			case km_user:
-				mpz_set_ui64(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.current_.get_mpz_t(), (*pk).v64);
+				{
+					// User enetered number (up to 64 bits)
+					mpz_class tmp;
+					mpz_set_ui64(tmp.get_mpz_t(), (*pk).v64);
+					((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(tmp);
+				}
 				break;
 			case km_user_str:
-				mpz_set_str(((CMainFrame *)AfxGetMainWnd())->m_wndCalc.current_.get_mpz_t(), (*(*pk).pss), 10);
+				{
+					// User entered integer (unlimited bits)
+					mpz_class tmp;
+					mpz_set_str(tmp.get_mpz_t(), (*(*pk).pss), 10);     // stored in string using radix 10
+					((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(tmp);
+				}
+				break;
+			case km_expression:
+				((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr((*(*pk).pss));
 				break;
 			case km_memget:
 				((CMainFrame *)AfxGetMainWnd())->m_wndCalc.OnMemGet();
@@ -1599,7 +1612,6 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				// some things don't get updated till OnIdle called so force
 				// it here (since we're not idle while playing).
 				ASSERT(!refresh_off_);
-				CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 
 				AfxGetApp()->OnIdle(0);
 
@@ -1638,6 +1650,8 @@ exit_play:
 		}
 		refresh_display(true);
 		refresh_off_ = bb;
+		mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
+		mm->m_wndCalc.edit_.Put();        // Make sure current calc. value is displayed
 		enable_carets();
 	}
 
