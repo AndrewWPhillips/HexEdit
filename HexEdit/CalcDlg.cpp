@@ -676,7 +676,6 @@ mpz_class CCalcDlg::get_norm(mpz_class v) const
 
 // Get data from the file into calculator, reversing byte order if necessary
 // Returns false on error such as no file open or invalid address.
-// xxx TBD - make -ve if signed_ and high bit is on ???
 bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 {
 	if (bits_ == 0 || bits_%8 != 0)
@@ -685,45 +684,25 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 		return false;
 	}
 
-	CHexEditView *pview = GetView();
-	if (pview == NULL)
+	const char * err_mess = mpz_set_bytes(current_.get_mpz_t(), addr, bits_/8);
+	if (err_mess != NULL)
 	{
-		AfxMessageBox("No file open to read from");
+		AfxMessageBox(err_mess);
 		return false;
 	}
 
-	FILE_ADDRESS dummy;
-	switch (addr)
+#if 0  // Not needed - converted when displayed??? xxx TBD TODO
+	// If using signed numbers and the high bit is on we need to make it -ve
+	if (signed_ && mpz_tstbit(current_.get_mpz_t(), bits_-1))
 	{
-	case -2:   // address of mark
-		addr = pview->GetMark();
-		break;
-	case -3:   // address of start of selection
-		pview->GetSelAddr(addr, dummy);
-		break;
+		// Convert to the 2's complement (invert bits and add one within bits_ range)
+		mpz_com(retval.get_mpz_t(), retval.get_mpz_t());
+		retval &= mask_;
+		++ retval;
+		// Now say it is -ve
+		mpz_neg(retval.get_mpz_t(), retval.get_mpz_t());
 	}
-
-	if (addr + bits_/8 > pview->GetDocument()->length())
-	{
-		AfxMessageBox("Not enough bytes before end of file");
-		return false;
-	}
-
-	int units = (bits_/8 + 3)/4; // number of DWORDs required
-	mp_limb_t * buf = new mp_limb_t[units];
-	buf[units - 1] = 0;          // make sure end bytes are zero in case not used
-
-	pview->GetDocument()->GetData((unsigned char *)buf, bits_/8, addr);
-
-	// Make sure view and calculator endianness are in sync
-	ASSERT(pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
-	if (pview->BigEndian())
-		flip_bytes((unsigned char *)buf, bits_/8);   // Reverse the byte order to match that used internally (Intel=little-endian)
-
-	// This assumes 4-byte units and little-endian order
-	mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
-	delete[] buf;
-
+#endif
 	return true;
 }
 
