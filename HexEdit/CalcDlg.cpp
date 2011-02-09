@@ -1,13 +1,3 @@
-// TODO
-// Assume signed_ == true when bits_ == 0
-// replace toggle_endian with pview->OnToggleEndian
-// test macros (kn_user_str) and old macros (km_user)
-// merge km_user_str and km_expression???
-// test get_bytes and put_bytes
-
-
-
-
 // CalcDlg.cpp : implements the Goto/Calculator dialog
 //
 // Copyright (c) 2000-2011 by Andrew W. Phillips.
@@ -642,20 +632,21 @@ void CCalcDlg::StartEdit()
 	edit_.SetSel(edit_.GetWindowTextLength(), -1);      // caret to end
 }
 
-// Tidy up any pending ops if macro is finishing
-void CCalcDlg::FinishMacro()
+// Save a calculator value to the current macro
+// If a value (ss) is specified save it else save the current calc value as a string
+void CCalcDlg::save_to_macro(CString ss /*= CString()*/)
 {
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	if (ss.IsEmpty())
+		ss = GetStringValue();
+
+	if (source_ == km_user_str && (current_type_ != CJumpExpr::TYPE_INT || !current_const_))
+		aa_->SaveToMacro(km_expression, ss);
+	else if (source_ == km_user_str)
+		aa_->SaveToMacro(km_user_str, ss);
+	else if (source_ != km_result)
+		aa_->SaveToMacro(source_);
+
+	source_ = km_result;   // ensure it is not saved again
 }
 
 #ifdef CALC_BIG
@@ -664,6 +655,7 @@ void CCalcDlg::FinishMacro()
 mpz_class CCalcDlg::get_norm(mpz_class v) const
 {
 	// If infinite precision (bits_ == 0) then there is no mask
+	// Note: this means we can return a -ve value even when signed_ == false
 	if (bits_ == 0) return v;
 
 	mpz_class retval = v & mask_;           // mask off high bits
@@ -730,16 +722,6 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 
 	// This assumes 4-byte units and little-endian order
 	mpz_import(current_.get_mpz_t(), units, -1, 4, -1, 0, buf);
-#if 0  // This is handled by get_norm when the value is retrieved
-	if (signed_ && mpz_tstbit(current_.get_mpz_t(), bits_-1))
-	{
-		mpz_com(current_.get_mpz_t(), current_.get_mpz_t());
-		current_ &= mask_;
-		++ current_;
-		// Now say it is -ve
-		mpz_neg(current_.get_mpz_t(), current_.get_mpz_t());
-	}
-#endif
 	delete[] buf;
 
 	return true;
@@ -890,13 +872,11 @@ void CCalcDlg::do_binop(binop_type binop)
 		// If the value in current_ is not there as a result of a calculation then
 		// save operand (current_) and it's source (user-entered, cursor position etc)
 		// Also don't save the value if this is the very first thing in the macro.
-		if (source_ != km_result)
-			aa_->SaveToMacro(source_, temp);
+		save_to_macro(temp);
 
 		// Get ready for new value to be entered
 		previous_ = get_norm(current_);
 		current_ = 0;
-		source_ = km_result;
 	}
 	aa_->SaveToMacro(km_binop, long(binop));
 	op_ = binop;
@@ -1018,11 +998,7 @@ void CCalcDlg::do_unary(unary_type unary)
 
 	// Save the value to macro before we do anything with it (unless it's a result of a previous op).
 	// Also don't save the value if this (unary op) is the very first thing in the macro.
-	if (source_ != km_result)
-	{
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-	}
+	save_to_macro();
 
 	overflow_ = error_ = FALSE;
 
@@ -1230,7 +1206,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	// Save the value to macro before we do anything with it (unless it's a result of a previous op).
 	// Also don't save the value if this (unary op) is the very first thing in the macro.
 	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_.get_ui());  // xxx get i64 at least
+		aa_->SaveToMacro(source_, current_);
 
 	overflow_ = error_ = FALSE;
 
@@ -2939,16 +2915,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 
 	// If the value in current_ is not there as a result of a calculation then
 	// save it before it is lost.
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
+	save_to_macro();
 
 	calc_previous();
 
@@ -3175,20 +3142,17 @@ void CCalcDlg::OnEquals()               // Calculate result
 		return;
 	}
 
-	CString saved_val = GetStringValue();        // current_ as string
-	CString saved_str = CString(current_str_);   // expr from text box as string
+	CString saved_str;
+	if (source_ == km_user_str && (current_type_ != CJumpExpr::TYPE_INT || !current_const_))
+		saved_str = CString(current_str_);   // expr from text box as string
+	else
+		saved_str = GetStringValue();
 
 	calc_previous();
 
 	// If current value is not there as a result of a calculation then
 	// save it before it is lost.
-	if (source_ == km_user_str && (current_type_ != CJumpExpr::TYPE_INT || !current_const_))
-		aa_->SaveToMacro(km_expression, saved_str);
-	else if (source_ != km_result)
-	{
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, saved_val);
-	}
+	save_to_macro(saved_str);
 
 	op_ = binop_none;
 	if (!aa_->refresh_off_ && IsVisible())
@@ -3875,17 +3839,7 @@ void CCalcDlg::OnMemStore()
 		//ttc_.UpdateTipText("Memory [" + ss + "] (Ctrl+R)", GetDlgItem(IDC_MEM_GET));
 	}
 
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	save_to_macro();
 	aa_->SaveToMacro(km_memstore);
 }
 
@@ -3915,17 +3869,7 @@ void CCalcDlg::OnMemAdd()
 		button_colour(GetDlgItem(IDC_MEM_GET), true, RGB(0x40, 0x40, 0x40));
 	}
 
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	save_to_macro();
 	aa_->SaveToMacro(km_memadd);
 }
 
@@ -3943,17 +3887,7 @@ void CCalcDlg::OnMemSubtract()
 		button_colour(GetDlgItem(IDC_MEM_GET), true, RGB(0x40, 0x40, 0x40));
 	}
 
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	save_to_macro();
 	aa_->SaveToMacro(km_memsubtract);
 }
 
@@ -4053,17 +3987,7 @@ void CCalcDlg::OnMarkStore()
 		//update_file_buttons();
 	}
 
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	save_to_macro();
 	aa_->SaveToMacro(km_markstore);
 }
 
@@ -4165,17 +4089,7 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 		//update_file_buttons();
 	}
 
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	save_to_macro();
 	aa_->SaveToMacro(km_markadd);
 }
 
@@ -4257,17 +4171,7 @@ void CCalcDlg::OnMarkSubtract()
 		//update_file_buttons();
 	}
 
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	save_to_macro();
 	aa_->SaveToMacro(km_marksubtract);
 }
 
@@ -4641,17 +4545,7 @@ void CCalcDlg::OnMarkAtStore()
 		//update_file_buttons();
 	}
 
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	save_to_macro();
 	aa_->SaveToMacro(km_markatstore);
 }
 
@@ -4702,17 +4596,7 @@ void CCalcDlg::OnSelStore()
 		// update_file_buttons(); // done indirectly through MoveToAddress via MoveWithDesc
 	}
 
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	save_to_macro();
 	aa_->SaveToMacro(km_selstore);
 }
 
@@ -4787,17 +4671,7 @@ void CCalcDlg::OnSelAtStore()
 		//update_file_buttons();
 	}
 
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	save_to_macro();
 	aa_->SaveToMacro(km_selatstore);
 }
 
@@ -4857,16 +4731,6 @@ void CCalcDlg::OnSelLenStore()
 		// update_file_buttons(); // done indirectly through MoveToAddress
 	}
 
-	if (source_ != km_result)
-	{
-#ifdef CALC_BIG
-		ASSERT(source_ == km_user_str);
-		aa_->SaveToMacro(source_, GetStringValue());
-#else
-		ASSERT(source_ == km_user);
-		aa_->SaveToMacro(source_, GetValue());
-#endif
-	}
-	source_ = km_result;
+	save_to_macro();
 	aa_->SaveToMacro(km_sellenstore);
 }

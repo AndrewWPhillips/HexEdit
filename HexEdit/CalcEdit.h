@@ -61,6 +61,7 @@ public:
 // Operations
 public:
 	void Put();                         // Set edit text from pp_->current_
+	void PutStr();                      // Set edit text from pp_->current_str_
 //    void Get();                         // Store edit text as number in pp_->current_
 	bool update_value(bool side_effects = true);
 

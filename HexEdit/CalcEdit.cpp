@@ -140,6 +140,16 @@ void CCalcEdit::Put()
 		pp_->ctl_calc_bits_.RedrawWindow();
 }
 
+void CCalcEdit::PutStr()
+{
+	ASSERT(pp_ != NULL);
+	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
+	ASSERT(pp_->IsVisible());
+
+	::SetWindowTextW(m_hWnd, (LPCWSTR)pp_->current_str_);
+	update_value(false);
+}
+
 // Check if string is a simple number (possible with separators) or an expression
 bool CCalcEdit::is_number(LPCTSTR ss)
 {

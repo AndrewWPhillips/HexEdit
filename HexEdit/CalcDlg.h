@@ -91,7 +91,8 @@ public:
 	CSize m_sizeInitial;
 
 	void Redisplay();
-	void FinishMacro();
+	void FinishMacro() { save_to_macro(); }// Tidy up any pending ops if macro is finishing
+
 	void ShowStatus();
 	void ShowBinop(int ii = -1);
 	void StartEdit();            // Set focus to text control and move caret to end
@@ -103,8 +104,9 @@ public:
 	void update_controls();      // set up all controls
 	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
 #ifdef CALC_BIG
-	void Set(mpz_class t) { current_ = t;  if (IsVisible()) edit_.Put(); }
-	void Set(unsigned __int64 v) { mpz_import(current_.get_mpz_t(), 2, -1, 4, -1, 0, &v); if (IsVisible()) edit_.Put(); }
+	void Set(mpz_class t) { current_ = t;  if (!theApp.refresh_off_ && IsVisible()) edit_.Put(); }
+	void Set(unsigned __int64 v) { mpz_import(current_.get_mpz_t(), 2, -1, 4, -1, 0, &v); if (!theApp.refresh_off_ && IsVisible()) edit_.Put(); }
+	void SetStr(CString ss)  { current_str_ = ss;  if (!theApp.refresh_off_ && IsVisible()) edit_.PutStr(); }
 #else
 	void Set(unsigned __int64 v) { current_ = v; if (IsVisible()) edit_.Put(); }
 #endif
@@ -345,6 +347,7 @@ private:
 	CToolTipCtrl ttc_;                      // For button tooltips
 	HWND help_hwnd_;                        // HWND of window for which context help is pending (usually 0)
 
+	void save_to_macro(CString ss = CString());
 	bool invalid_expression();              // Check if current expression is valid and show error message if not
 	void build_menus();                     // Build menus for menu buttons
 	void button_colour(CWnd *pp, bool enable, COLORREF normal); // Make button greyed/normal
@@ -389,7 +392,8 @@ private:
 	int bits_;                      // Numbers of bits in use: (usually 8, 16, 32 or 64), the special value of 0 means unlimited
 
 #ifdef CALC_BIG
-	bool signed_;                   // Generally only decimal (base 10) numbers are shown signed
+	bool signed_;                   // For now only decimal (base 10) numbers are shown signed but later we will allow a signed checkbox
+	                                // Note: for unlimited bits (bits_ == 0) -ve numbers are shown as such (ie leading minus sign) as we can't show an infinite number of FF's
 
 	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
 	// Notes: Internally mpz big integers are stored as a bit pattern (with implicit leading zeroes) and a separate sign.
