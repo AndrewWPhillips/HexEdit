@@ -28,6 +28,8 @@
 class TParser;
 
 // Use our expression eval class to eval constant expressions (eg array size).
+// Overrides find_symbol so we can provide values for #defined constants,
+// stored constants (from custom or Windows constants files), sizeof etc.
 class TExpr : public expr_eval
 {
 public:

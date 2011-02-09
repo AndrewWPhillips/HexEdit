@@ -134,6 +134,8 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 
 #ifndef REGISTER_APP
 #include "HexEdit.h"
+#include "HexEditDoc.h"
+#include "HexEditView.h"
 #endif
 #include <math.h>
 #include <ctype.h>
@@ -1441,7 +1443,7 @@ unsigned __int64 mpz_get_ui64(mpz_srcptr p)
 	// Any higher limbs are lost - so value is truncated
 
 	if (mpz_sgn(p) < 0)
-		return (unsigned __int64)-val.QuadPart;  // ensures correct  (2's complement) bit pattern for -ve values
+		return (unsigned __int64)-val.QuadPart;
 	else
 		return (unsigned __int64)val.QuadPart;
 }
@@ -1450,6 +1452,50 @@ void mpz_set_ui64(mpz_ptr p, unsigned __int64 i)
 {
 	ASSERT(sizeof(mp_limb_t) == 4 && sizeof(i) == 8);
 	mpz_import(p, sizeof(i)/sizeof(mp_limb_t), -1, sizeof(mp_limb_t), -1, 0, &i);
+}
+
+// Get bytes from active file and set an mpz var
+// p = ptr to initialised mpz struct
+// addr = file address that must be between 0 and length of active file - count OR
+//  -2 to get bytes at the mark OR
+//  -3 to get bytes at the cursor (ie, caret or start of selection)
+// count = the number of bytes
+const char * mpz_set_bytes(mpz_ptr p, FILE_ADDRESS addr, int count)
+{
+	CHexEditView *pview = GetView();
+	if (pview == NULL)
+		return "No file open to read from";
+
+	FILE_ADDRESS dummy;
+	switch (addr)
+	{
+	case -2:   // address of mark
+		addr = pview->GetMark();
+		break;
+	case -3:   // address of start of selection
+		pview->GetSelAddr(addr, dummy);
+		break;
+	}
+
+	if (addr + count > pview->GetDocument()->length())
+		return "Not enough bytes before end of file";
+
+	int units = (count + 3)/4; // number of DWORDs required
+	mp_limb_t * buf = new mp_limb_t[units];
+	buf[units - 1] = 0;          // make sure end bytes are zero in case not used
+
+	if (pview->GetDocument()->GetData((unsigned char *)buf, count, addr) < count)
+		return "Could not read from file";
+
+	// Make sure view and calculator endianness are in sync
+	if (pview->BigEndian())
+		flip_bytes((unsigned char *)buf, count);   // Reverse the byte order to match that used internally (Intel=little-endian)
+
+	// This assumes 4-byte units and little-endian order
+	mpz_import(p, units, -1, 4, -1, 0, buf);
+	delete[] buf;
+
+	return NULL;
 }
 
 #ifdef _DEBUG

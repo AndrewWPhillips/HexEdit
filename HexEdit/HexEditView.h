@@ -170,7 +170,8 @@ enum undo_type
 	};
 #pragma pack(pop)
 
-// This is used for evaluating expressions for display in tip window
+// This is used for evaluating expressions for display in tip window.
+// Overrides find_symbol to provide symbols like "mark", values at caret, etc.
 class CTipExpr : public expr_eval
 {
 public:

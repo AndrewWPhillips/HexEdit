@@ -38,8 +38,9 @@
 #define DFFD_RESERVED 1000   // Max number of commands on all template open menus (combined total)
 #define NAV_RESERVED  2000   // Max number of commands on nav forward and backward menus (both separate)
 
-// This is used by the hex and decimal address tools to evaluate expressions to jump to.
-// (find_symbol is overridden to scan the list of bookmarks for the active file.)
+// This is used by the hex and decimal address tools and the calculator.
+// Overrides find_symbol to scan the list of bookmarks for the active file.
+// Also saves and restores (in the registry) all assigned variables of any type (not just int).
 class CJumpExpr : public expr_eval
 {
 public:

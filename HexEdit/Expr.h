@@ -47,7 +47,7 @@ public:
 		TOK_SIZEOF, TOK_ADDRESSOF,
 		TOK_ABS, TOK_MIN, TOK_MAX,
 		TOK_POW,
-		TOK_STR,                        // Get string for an enum
+		TOK_STR,                        // Get string for an enum (or other type)
 		TOK_INT,                        // Convert real or boolean to int
 		TOK_ATOI, TOK_ATOF,             // Convert string to number
 		TOK_DATE, TOK_TIME,             // Convert string to date,date/time or time
@@ -63,12 +63,19 @@ public:
 		TOK_A2E, TOK_E2A,               // Convert between ASCII and EBCDIC
 		TOK_GETINT, TOK_GETSTR, TOK_GETBOOL, // Get a value from the user
 
-		TOK_SQRT,                       // Floating point square root
+		TOK_SQRT,                       // Square root
 		TOK_SIN, TOK_COS, TOK_TAN,      // Transcendental funcs (radians)
 		TOK_ASIN, TOK_ACOS, TOK_ATAN,   // Inverse transcendental
 		TOK_EXP, TOK_LOG,               // e funcs
 		TOK_DEFINED,
 
+		// These were added in 4.0
+		TOK_FACT,                       // Factorial
+		TOK_REVERSE, TOK_FLIP,          // Reverse bits, flip bytes (big<->little endian)
+		TOK_ROL, TOK_ROR, TOK_ASR,      // Bit manipulation with bit count
+		TOK_GET,                        // Get value from file at an address
+
+		// Leave end of line token at the end
 		TOK_EOL
 	};
 
