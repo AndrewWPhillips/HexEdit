@@ -3943,7 +3943,8 @@ void CDataFormatView::OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* /*pResult
 		}
 		else if (!pdoc->DffdEditMode())
 		{
-			// Do nothing here (yet?)
+			// Double-click on data element (not in edit mode) jumps to the data (requested by Member 4289613 on CodeProject)
+			OnDffdSync();
 		}
 		else if (pdoc->df_type_[index] != CHexEditDoc::DF_MORE && pdoc->df_type_[index] != CHexEditDoc::DF_EXTRA)
 		{
