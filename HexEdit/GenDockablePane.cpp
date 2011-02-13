@@ -77,11 +77,11 @@ void CGenDockablePane::ShowAndUnroll()
 	SetFocus();
 }
 
-void CGenDockablePane::Float()
+void CGenDockablePane::Float(bool bShow /* = true */)
 {
 	CRect rct;
 	GetWindowRect(&rct);
-	FloatPane(rct);
+	FloatPane(rct, DM_UNKNOWN, bShow);
 }
 
 CSize CGenDockablePane::GetDefaultSize()

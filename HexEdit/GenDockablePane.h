@@ -21,7 +21,7 @@ public:
 	void InitialUpdate(CWnd *pWnd);
 
 	void ShowAndUnroll();
-	void Float();
+	void Float(bool bShow = true);
 	void Hide() { ShowPane(FALSE, FALSE, FALSE); }
 	void Toggle() { if (IsWindowVisible()) Hide(); else ShowAndUnroll(); }
 

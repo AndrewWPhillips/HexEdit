@@ -1052,11 +1052,11 @@ void CMainFrame::SaveFrameOptions()
 void CMainFrame::InitDockWindows()
 {
 	// Initially all are floating
-	m_paneFind.Float();
-	m_paneBookmarks.Float();
-	m_paneProp.Float();
-	m_paneCalc.Float();
-	m_paneExpl.Float();
+	m_paneFind.Float(false);
+	m_paneBookmarks.Float(false);
+	m_paneProp.Float(false);
+	m_paneCalc.Float(false);
+	m_paneExpl.Float(false);
 
 	// We get the main window rectangle so we can position the floating
 	// windows around its edges.
