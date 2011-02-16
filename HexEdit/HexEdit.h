@@ -76,7 +76,6 @@ typedef __int64 FILE_ADDRESS;
 #define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
 
 #define USE_FREE_IMAGE  1   // When this is enabled we need to get rid of EnBitmap.cpp from the project
-#define CALC_BIG        1   // Allow integer calcs of any size using BigInteger
 
 // Flags for stuff in development
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing

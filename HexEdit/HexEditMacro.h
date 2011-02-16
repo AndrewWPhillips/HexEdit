@@ -92,7 +92,7 @@ enum km_type
 	// Change modes
 	km_change_bits,             // Change the number of bits displayed (and used for calcs)
 	km_change_base,             // Change the radix for display (also affects results since decimal means signed operations)
-	km_endian,                  // To be phased out - replaced by km_big_endian
+	km_endian,                  // No longer generated - replaced by km_big_endian
 
 	// Operations (the actual op number is stored in vv)
 	km_binop,                   // Binary operation

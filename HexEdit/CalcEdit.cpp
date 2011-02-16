@@ -83,57 +83,21 @@ void CCalcEdit::Put()
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
 	ASSERT(pp_->IsVisible());
-#ifdef CALC_BIG
+
 	mpz_class val = pp_->get_norm(pp_->current_);
 
-	char *buf = new char[mpz_sizeinbase(val.get_mpz_t(), pp_->radix_) + 2];
-	mpz_get_str(buf, pp_->radix_, val.get_mpz_t());
-
-	pp_->current_const_ = TRUE;
-	pp_->current_type_ = CJumpExpr::TYPE_INT;
-
-	SetWindowText(buf);
-	SetSel(strlen(buf), -1, FALSE);     // move caret to end
-
-	delete[] buf;
-#else
-	char buf[72];
-
-	if (pp_->radix_ == 10)
 	{
-		signed char s8;
-		signed short s16;
-		signed long s32;
+		char *buf = new char[mpz_sizeinbase(val.get_mpz_t(), pp_->radix_) + 2];
+		mpz_get_str(buf, pp_->radix_, val.get_mpz_t());
 
-		switch (pp_->bits_)
-		{
-		case 8:
-			s8 = (signed char)pp_->current_;
-			_itoa((int)s8, buf, pp_->radix_);
-			break;
-		case 16:
-			s16 = (signed short)pp_->current_;
-			_itoa((int)s16, buf, pp_->radix_);
-			break;
-		case 32:
-			s32 = (signed long)pp_->current_;
-			_i64toa((__int64)s32, buf, pp_->radix_);
-			break;
-		case 64:
-			_i64toa(pp_->current_, buf, pp_->radix_);
-			break;
-		default:
-			ASSERT(0);
-		}
+		pp_->current_const_ = TRUE;
+		pp_->current_type_ = CJumpExpr::TYPE_INT;
+
+		SetWindowText(buf);
+		SetSel(strlen(buf), -1, FALSE);     // move caret to end
+
+		delete[] buf;
 	}
-	else
-		_ui64toa(pp_->current_ & pp_->mask_, buf, pp_->radix_);
-	pp_->current_const_ = TRUE;
-	pp_->current_type_ = CJumpExpr::TYPE_INT;
-
-	SetWindowText(buf);
-	SetSel(strlen(buf), -1, FALSE);     // move caret to end
-#endif
 
 	add_sep();
 	if (pp_->ctl_calc_bits_.m_hWnd != 0)
@@ -162,13 +126,8 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 
 	for (const char *ps = ss; *ps != '\0'; ++ps)
 	{
-#ifdef CALC_BIG
 		if ((pp_->signed_ || pp_->bits_ == 0) && !digit_seen && *ps == '-')
 			continue;   // skip leading minus sign for signed numbers
-#else
-		if (pp_->radix_ == 10 && !digit_seen && *ps == '-')
-			continue;   // skip leading minus sign for decimal numbers
-#endif
 
 		last_sep = *ps == sep_char;
 		if (last_sep)
@@ -266,7 +225,6 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 
 	case CHexExpr::TYPE_INT:
 		// If we are using decimals check if the value is -ve (has high bit set)
-#ifdef CALC_BIG
 		{
 			mpz_class val;
 			if ((pp_->signed_ || pp_->bits_ == 0) && vv.int64 < 0)
@@ -289,32 +247,10 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 					add_sep();
 			}
 		}
-#else
-		if (pp_->radix_ == 10 && (vv.int64 & ((pp_->mask_ + 1)>>1)) != 0)
-		{
-			// Make sure all the high bits are on
-			if (~(vv.int64 | pp_->mask_) != 0)
-				pp_->overflow_ = TRUE;
-		}
-		else
-		{
-			// Make sure all the high bits are off
-			if ((vv.int64 & ~pp_->mask_) != 0)
-				pp_->overflow_ = TRUE;
-		}
-		if (!pp_->overflow_)
-		{
-			//pp_->current_ = (pp_->current_ & ~pp_->mask_) | (vv.int64 & pp_->mask_);
-			pp_->current_ = vv.int64;
-			if (pp_->current_const_)
-				add_sep();
-		}
-#endif
 		break;
 
 	case CHexExpr::TYPE_REAL:
 		ASSERT(!pp_->current_const_);
-#ifdef CALC_BIG
 		{
 			mpz_class val;
 			mpz_set_d(val.get_mpz_t(), vv.real64);
@@ -324,9 +260,6 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 			if (!pp_->overflow_)
 				pp_->current_ = val;
 		}
-#else
-		pp_->current_ = (pp_->current_ & ~pp_->mask_) | (__int64(vv.real64) & pp_->mask_);
-#endif
 
 #ifdef UNICODE_TYPE_STRING
 		pp_->current_str_.Format(L"%g", vv.real64);
@@ -380,16 +313,13 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		}
 		else
 		{
-#ifdef CALC_BIG
 			mpz_class val;
 			mpz_set_d(val.get_mpz_t(), vv.date);
 			pp_->overflow_ = pp_->bits_ > 0 && 
 			                 (val < pp_->min_val_ || val > pp_->max_val_);
 			if (!pp_->overflow_)
 				pp_->current_ = val;
-#else
-			pp_->current_ = (pp_->current_ & ~pp_->mask_) | (__int64(vv.date) & pp_->mask_);
-#endif
+
 			COleDateTime odt;
 			odt.m_dt = vv.date;
 			odt.m_status = COleDateTime::valid;
@@ -492,11 +422,7 @@ void CCalcEdit::add_sep()
 			break;
 
 		// Copy -ve sign
-#ifdef CALC_BIG
 		if (jj < ndigits && (pp_->signed_ || pp_->bits_ == 0) && none_yet && *src == '-')
-#else
-		if (jj < ndigits && pp_->radix_ == 10 && none_yet && *src == '-')
-#endif
 		{
 			*dst++ = '-';
 			continue;

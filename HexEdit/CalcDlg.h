@@ -29,10 +29,7 @@
 #include "Expr.h"
 #include "optypes.h"
 #include "ResizeCtrl.h"
-#ifdef CALC_BIG
 #include "mpirxx.h"
-#endif
-
 
 // Just override CMFCButton so we can ceck the button colour
 class CCalcButton : public CMFCButton
@@ -96,31 +93,17 @@ public:
 	void ShowStatus();
 	void ShowBinop(int ii = -1);
 	void StartEdit();            // Set focus to text control and move caret to end
-	void setup_tooltips();       // set up tooltips for buttons
-	void setup_static_buttons(); // Unchanging buttons
-	void setup_resizer();        // set up resizing of controls when window is resized
-	void update_digit_buttons(); // fix basic buttons (digits etc)
-	void update_file_buttons();  // fix file related buttons
-	void update_controls();      // set up all controls
 	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
-#ifdef CALC_BIG
 	void Set(mpz_class t) { current_ = t;  if (!theApp.refresh_off_ && IsVisible()) edit_.Put(); }
 	void Set(unsigned __int64 v) { mpz_import(current_.get_mpz_t(), 2, -1, 4, -1, 0, &v); if (!theApp.refresh_off_ && IsVisible()) edit_.Put(); }
 	void SetStr(CString ss)  { current_str_ = ss;  if (!theApp.refresh_off_ && IsVisible()) edit_.PutStr(); }
-#else
-	void Set(unsigned __int64 v) { current_ = v; if (IsVisible()) edit_.Put(); }
-#endif
 	void change_base(int base);    // set radix (2 to 36)
 	void change_signed(bool s);    // set whether numbers are signed or unsigned
 	void change_bits(int);         // chnage how many bits are used (0 = unlimited)
 
 	int ByteSize() const { return (bits_-1)/8 + 1; }
-#ifdef CALC_BIG
 	unsigned __int64 GetValue() const { return mpz_get_ui64(get_norm(current_).get_mpz_t()); }
 	CString GetStringValue() const { char * ss = mpz_get_str(NULL, 10, get_norm(current_).get_mpz_t()); CString retval(ss); free(ss); return retval; }
-#else
-	unsigned __int64 GetValue() const { return current_ & mask_; }
-#endif
 
 // Dialog Data
 	enum { IDD = IDD_CALC };
@@ -214,18 +197,6 @@ public:
 
 	CMenu func_menu_;  // For functions
 	CMenu go_menu_;    // Mneu for go button (go address, sector etc)
-
-	// We need to know if there is an expression or a simple integer constant currently
-	// in the edit box.  This is necessary for backward compatibility (when expression
-	// evaluation added to the calculator).  Integer constants may have separator
-	// characters added.  Also we need to be able to set the current calculator value
-	// if it has been changed in a macro (refresh off) at the end of the macro.
-	BOOL current_const_;            // TRUE if the current "expression" is an integer constant
-	expr_eval::type_t current_type_; // Type of current expression (TYPE_NONE if invalid)
-	ExprStringType current_str_;           // Contains the result of the expression or error message (if current_type_ == TYPE_NONE)
-
-	BOOL overflow_;                 // Has a numeric overflow occurred?
-	BOOL error_;                    // Has a numeric error (eg. Div by 0) occurred?
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -344,14 +315,30 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	bool inited_;
+
+	// The calculator has several "states" depending on what has just happened (such as the "="
+	// button having just been pressed to display a result) and what charcters have been typed.
+	// The state is normally obvious to the user from what they have done, what is shown in the
+	// edit box and the "status" (IDC_OP_DISPLAY) shown to the right of the edit box
+	enum STATE {
+		NONE,
+		INTRES,        // Edit box displays an integer result, eg: after = button pressed (status is blank)
+		OVERFLOW,      // Integer result that overflowed the current bits, O is displayed in the status
+		ERROR,         // The last operation generated an error, E is displayed in the status 
+		INTLIT,        // User has entered/is entering an integer literal, eg: "1,234"
+		INTEXPR,       // User has entered/is entering an integer expression, eg "1+2"
+		OTHRES,        // Edit box is displaying a non-integer result, the status displays the type (R, S, B)
+		OTHEXPR,       // User entered a valid expression with non-integer type, eg: "x > 2"
+		OTHER,         // User has entered something else, probably an incomplete expression, eg: "1+"
+	} state_;
+
+	bool invalid_expression();              // Check if current expression is valid and show error message if not
+
 	CToolTipCtrl ttc_;                      // For button tooltips
 	HWND help_hwnd_;                        // HWND of window for which context help is pending (usually 0)
 
 	void save_to_macro(CString ss = CString());
-	bool invalid_expression();              // Check if current expression is valid and show error message if not
-	void build_menus();                     // Build menus for menu buttons
-	void button_colour(CWnd *pp, bool enable, COLORREF normal); // Make button greyed/normal
-	void toggle_endian();
 	void do_binop(binop_type binop);        // Handle binary operators
 	void do_unary(unary_type unary);        // Handle unary operators
 	void do_digit(char digit);              // Handle "digit" button on calculator
@@ -363,8 +350,6 @@ private:
 
 	CHexEditApp *aa_;                       // Ptr to the app (mainly for macro handling)
 	CMainFrame *mm_;                        // Ptr to the main window
-
-	CPen purple_pen;                        // Just to draw square root symbol
 
 	// The following is used to keep track of where the current calculator contents came from.
 	// That is, was the number typed in by the user or obtained using one of the buttons on
@@ -379,6 +364,7 @@ private:
 	// active then is has value binop_none.
 	binop_type op_;
 
+#if 0
 	BOOL in_edit_;                      // Can we edit the numbers in the edit box or should next edit clear it (eg. after "=" used)
 	void inedit(km_type kk)
 	{
@@ -387,13 +373,19 @@ private:
 		edit_.sel_ = (DWORD)-1;         // prevent selection being changed now
 	}
 
-	// Current state info
-	int radix_;                     // Actual radix (base) in use (usually 2,8,10, or 16 but may be any value 2-36
-	int bits_;                      // Numbers of bits in use: (usually 8, 16, 32 or 64), the special value of 0 means unlimited
+	// We need to know if there is an expression or a simple integer constant currently
+	// in the edit box.  This is necessary for backward compatibility (when expression
+	// evaluation added to the calculator).  Integer constants may have separator
+	// characters added.  Also we need to be able to set the current calculator value
+	// if it has been changed in a macro (refresh off) at the end of the macro.
+	BOOL current_const_;            // TRUE if the current "expression" is an integer constant
+	expr_eval::type_t current_type_; // Type of current expression (TYPE_NONE if invalid)
 
-#ifdef CALC_BIG
-	bool signed_;                   // For now only decimal (base 10) numbers are shown signed but later we will allow a signed checkbox
-	                                // Note: for unlimited bits (bits_ == 0) -ve numbers are shown as such (ie leading minus sign) as we can't show an infinite number of FF's
+	BOOL overflow_;                 // Has a numeric overflow occurred?
+	BOOL error_;                    // Has a numeric error (eg. Div by 0) occurred?
+#endif
+
+	mpz_class get_norm(mpz_class v) const; // Get a value converted according to bits_ and signed_
 
 	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
 	// Notes: Internally mpz big integers are stored as a bit pattern (with implicit leading zeroes) and a separate sign.
@@ -404,27 +396,33 @@ private:
 
 	mpz_class memory_;             // Current contents of memory (used with Memory, MS, MC, etc buttons)
 
+	ExprStringType current_str_;           // Contains the result of the expression or error message (if current_type_ == TYPE_NONE)
+
 	// The following are used for checking the current value (eg for overflow) but are
 	// only relevant when bits_ > 0.
 	mpz_class min_val_, max_val_;  // Range of valid values according to bits_ and signed_
 	mpz_class mask_;               // Mask for current value of bits_, typically: 0xFF, 0xFFFF, 0xffffFFFF etc
 
-	mpz_class get_norm(mpz_class v) const; // Get a value converted according to bits_ and signed_
-
-#else
-	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
-	unsigned __int64 current_;   // Current value in the edit control (used by edit_)
-	unsigned __int64 previous_;  // Previous value of edit control (if binary operator active)
-
-	unsigned __int64 memory_;    // Current contents of memory (used with Memory, MS, MC, etc buttons)
-
-	unsigned __int64 mask_;      // Mask for current value of bits_: 0xFF, 0xFFFF, 0xffffFFFF or 0xffffFFFFffffFFFF
-	unsigned __int64 sign_mask_; // Mask to check sign bit of bits_: 0x80, 0x8000, 0x80000000 or 0x8000000000000000
-#endif
+	// Current state info
+	int radix_;                     // Actual radix (base) in use (usually 2,8,10, or 16 but may be any value 2-36
+	int bits_;                      // Numbers of bits in use: (usually 8, 16, 32 or 64), the special value of 0 means unlimited
+	bool signed_;                   // For now only decimal (base 10) numbers are shown signed but later we will allow a signed checkbox
+                                    // Note: for unlimited bits (bits_ == 0) -ve numbers are shown as such (ie leading minus sign) as we can't show an infinite number of FF's
 
 	bool m_first;                   // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
 	CResizeCtrl m_resizer;          // Used to move controls around when the window is resized
 	static CBrush * m_pBrush;       // brush used for background
+	CPen purple_pen;                        // Just to draw square root symbol
+
+	void setup_tooltips();          // set up tooltips for buttons
+	void setup_static_buttons();    // Unchanging buttons
+	void setup_resizer();           // set up resizing of controls when window is resized
+	void update_digit_buttons();    // fix basic buttons (digits etc)
+	void update_file_buttons();     // fix file related buttons
+	void update_controls();         // set up all controls
+
+	void build_menus();             // Build menus for menu buttons
+	void button_colour(CWnd *pp, bool enable, COLORREF normal); // Make button greyed/normal
 };
 
 //{{AFX_INSERT_LOCATION}}

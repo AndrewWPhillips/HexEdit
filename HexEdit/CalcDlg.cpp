@@ -97,11 +97,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	rct.top = 1;
 	rct.bottom = rct.top + m_hh;
 
-#ifdef CALC_BIG
 	unsigned __int64 val = mpz_get_ui64(m_pParent->current_.get_mpz_t());
-#else
-	unsigned __int64 val = m_pParent->current_;
-#endif
 	for (int bnum = 63; bnum >= 0; bnum--)
 	{
 		// When we hit the first enabled bit switch to the darker pen
@@ -145,14 +141,9 @@ void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 	if ((bnum = pos2bit(point)) > -1 && (m_pParent->bits_ == 0 || bnum < m_pParent->bits_))
 	{
 		ASSERT(bnum < 64 && bnum >= 0);
-#ifdef CALC_BIG
 		mpz_class val = m_pParent->current_;
 		mpz_combit(val.get_mpz_t(), bnum);
 		m_pParent->Set(val);
-#else
-		unsigned __int64 val = m_pParent->current_ ^ ((__int64)1<<bnum);
-		m_pParent->Set(val);
-#endif
 		//m_pParent->update_file_buttons();
 	}
 	CWnd::OnLButtonDown(nFlags, point);
@@ -219,6 +210,7 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 	  ctl_calc_bits_(this),
 	  purple_pen(PS_SOLID, 0, RGB(0x80, 0, 0x80))
 {
+	inited_ = false;
 	aa_ = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
 	m_sizeInitial = CSize(-1, -1);
@@ -231,7 +223,7 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 	current_type_ = CJumpExpr::TYPE_INT;
 
 	bits_index_ = base_index_ = -1;  // Fixed later in Create()
-	radix_ = bits_ = 0;
+	radix_ = bits_ = -1;  // Set to -1 so they are set up correctly
 
 	edit_.pp_ = this;                   // Set parent of edit control
 	m_first = true;
@@ -257,15 +249,11 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	// Get last used settings from registry
 	change_base(aa_->GetProfileInt("Calculator", "Base", 16));
 	change_bits(aa_->GetProfileInt("Calculator", "Bits", 32));
-#ifdef CALC_BIG
 	change_signed(aa_->GetProfileInt("Calculator", "signed", 0) ? true : false);
-	signed_ = false;
+	signed_ = false;  // xxx
 	current_.set_str(aa_->GetProfileString("Calculator", "Current", "0"), 10);
 	memory_.set_str(aa_->GetProfileString("Calculator", "Memory", "0"), 10);
-#else
-	current_ = _atoi64(aa_->GetProfileString("Calculator", "Current"));
-	memory_ = _atoi64(aa_->GetProfileString("Calculator", "Memory"));
-#endif
+	signed_ = radix_ == 10; // xxx fix when we have signed checkbox TBD TODO
 
 	// If saved memory value was restored then make it available
 	if (memory_ != 0)
@@ -318,6 +306,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	rct.bottom = rct.top + (rct.bottom - rct.top)*3/4;
 	m_resizer.SetMinimumTrackingSize(rct.Size());
 
+	inited_ = true;
 	return TRUE;
 }
 
@@ -649,7 +638,6 @@ void CCalcDlg::save_to_macro(CString ss /*= CString()*/)
 	source_ = km_result;   // ensure it is not saved again
 }
 
-#ifdef CALC_BIG
 // Get value (current calc value, memory etc) according to current
 // bits_ and signed_ settings.
 mpz_class CCalcDlg::get_norm(mpz_class v) const
@@ -767,12 +755,10 @@ bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 
 	return true;
 }
-#endif
 
 void CCalcDlg::fix_values()
 {
 	// Adjust mask etc depending on bits_ and signed_ (assumes 2's-complement numbers)
-#ifdef CALC_BIG
 	if (bits_ == 0) return;  // Indicates unlimited bits whence min/max/mask are not used
 
 	mpz_class one(1);
@@ -788,11 +774,6 @@ void CCalcDlg::fix_values()
 		min_val_ = 0;
 		max_val_ = mask_;
 	}
-#else
-	__int64 one = 1;
-	mask_ = (one << bits_) - 1;
-	sign_mask_ = one << (bits - 1);
-#endif
 }
 
 // Check if the current expression in the edit box is a valid expression returning an integer
@@ -840,11 +821,7 @@ void CCalcDlg::do_binop(binop_type binop)
 
 	if (in_edit_ || op_ == binop_none || aa_->playing_)
 	{
-#ifdef CALC_BIG
 		CString temp = GetStringValue();
-#else
-		unsigned __int64 temp = current_;
-#endif
 		calc_previous();
 		if (!aa_->refresh_off_ && IsVisible()) edit_.Put();
 
@@ -969,7 +946,6 @@ void CCalcDlg::ShowBinop(int ii /*=-1*/)
 	GetDlgItem(IDC_OP_DISPLAY)->SetWindowText(op_disp);
 }
 
-#ifdef CALC_BIG
 void CCalcDlg::do_unary(unary_type unary)
 {
 	if (invalid_expression())
@@ -1158,273 +1134,6 @@ void CCalcDlg::do_unary(unary_type unary)
 	// The user can't edit the result of a unary operation by pressing digits
 	source_ = km_result;
 }
-#else
-// Values for detecting overflows in some unary operators
-static unsigned __int64 fact_max[4] = { 5, 8, 12, 20};
-static unsigned __int64 square_max[4] = { 0xF, 0xFF, 0xFFFF, 0xffffFFFF };
-static unsigned __int64 cube_max[4] = { 6, 40, 1625, 2642244 };
-static unsigned __int64 signed_fact_max[4] = { 5, 7, 12, 20};
-static unsigned __int64 signed_square_max[4] = { 11, 181, 46340, 3037000499 };
-static unsigned __int64 signed_cube_max[4] = { 5, 31, 1290, 2097151 };
-
-void CCalcDlg::do_unary(unary_type unary)
-{
-	if (invalid_expression())
-		return;
-
-	unsigned char *byte;                // Pointer to bytes of current value
-	unsigned char cc;
-	int ii;                             // Loop variable
-	__int64 temp;                       // Temp variables for calcs
-	signed char s8;
-	signed short s16;
-	signed long s32;
-	signed __int64 s64;
-	CHexEditView *pview;                // Active view (or NULL if no views)
-
-	// Save the value to macro before we do anything with it (unless it's a result of a previous op).
-	// Also don't save the value if this (unary op) is the very first thing in the macro.
-	if (source_ != km_result)
-		aa_->SaveToMacro(source_, current_);
-
-	overflow_ = error_ = FALSE;
-
-	if (unary >= unary_mask)
-	{
-		// Mask off any high bits that might interfere with the calculations
-		current_ &= mask_;
-	}
-	switch (unary)
-	{
-	case unary_inc:
-		++current_;
-		if ((radix_ == 10 && current_ == ~(mask_>>1)) ||
-			(radix_ != 10 && (current_ & mask_) == 0))
-		{
-			overflow_ = TRUE;
-		}
-		break;
-	case unary_dec:
-		if ((radix_ == 10 && current_ == ~(mask_>>1)) ||
-			(radix_ != 10 && (current_ & mask_) == 0))
-		{
-			overflow_ = TRUE;
-		}
-		current_ --;
-		break;
-	case unary_sign:
-		if (radix_ == 10 && current_ == ~(mask_>>1))
-			overflow_ = TRUE;  // eg in 8 bit mode -128 => 128 (overflow)
-		current_ = -(__int64)current_;
-		break;
-	case unary_square:
-		ASSERT(bits_index_ > -1 && bits_index_ < 4);
-		if ((radix_ == 10 && current_ > signed_square_max[3-bits_index_]) ||
-			(radix_ != 10 && current_ > square_max[3-bits_index_]))
-		{
-			overflow_ = TRUE;
-		}
-		current_ = current_ * current_;
-		break;
-	case unary_squareroot:
-		// Rounds down to the nearest int so before we take root add 0.5 to avoid
-		// problems. eg. sqrt(4) -> 1.99999999... -> 1 BUT sqrt(4.5) -> 2.12 -> 2.
-		if (radix_ == 10 && (current_&sign_mask_) != 0)
-		{
-			mm_->StatusBarText("Square root of -ve value is illegal");
-			error_ = TRUE;
-		}
-		current_ = unsigned __int64(sqrt(double(__int64(current_)) + 0.5));
-		break;
-	case unary_cube:
-		ASSERT(bits_index_ > -1 && bits_index_ < 4);
-		if ((radix_ == 10 && current_ > signed_cube_max[3-bits_index_]) ||
-			(radix_ != 10 && current_ > cube_max[3-bits_index_]))
-		{
-			overflow_ = TRUE;
-		}
-		current_ = current_ * current_ * current_;
-		break;
-	case unary_factorial:
-		ASSERT(bits_index_ > -1 && bits_index_ < 4);
-		if ((radix_ == 10 && current_ > signed_fact_max[3-bits_index_]) ||
-			(radix_ != 10 && current_ > fact_max[3-bits_index_]))
-		{
-			overflow_ = TRUE;
-		}
-		// Only do the calcs if current_ is not too big (else calcs may take a long time)
-		if (current_ < 100)
-		{
-			temp = 1;
-			for (ii = 1; ii < current_; ++ii)
-				temp *= ii + 1;
-			current_ = temp;
-		}
-		else
-		{
-			ASSERT(overflow_);        // (Must have overflowed if current_ is this big.)
-			current_ = 0;
-		}
-		break;
-	case unary_not:
-		current_ = ~current_;
-		break;
-	case unary_rol:
-		current_ = ((current_ << 1) & mask_) | (current_ >> (bits_ - 1));
-		break;
-	case unary_ror:
-		current_ = (current_ >> 1) | ((current_ << (bits_ - 1)) & mask_);
-		break;
-	case unary_lsl:
-		current_ = (current_ & mask_) << 1;
-		break;
-	case unary_lsr:
-		current_ = (current_ & mask_) >> 1;
-		break;
-	case unary_asr:
-		// Use Compiler signed types to do sign extension
-		if (bits_ == 8)
-		{
-			s8 = (signed char)current_;
-			s8 >>= 1;
-			current_ = s8;
-		}
-		else if (bits_ == 16)
-		{
-			s16 = (signed short)current_;
-			s16 >>= 1;
-			current_ = s16;
-		}
-		else if (bits_ == 32)
-		{
-			s32 = (signed long)current_;
-			s32 >>= 1;
-			current_ = s32;
-		}
-		else if (bits_ == 64)
-		{
-			s64 = current_;
-			s64 >>= 1;
-			current_ = s64;
-		}
-		else
-			ASSERT(0);
-		break;
-	case unary_rev:  // Reverse all bits
-		// This algorithm tests the current bits by shifting right and testing
-		// bottom bit.  Any bits on sets the correspoding bit of the result as
-		// it is shifted left.
-		// This could be sped up using a table lookup but is probably OK for now.
-		temp = 0;
-		for (ii = 0; ii < bits_; ++ii)
-		{
-			temp <<= 1;                  // Make room for the next bit
-			if (current_ & 0x1)
-				temp |= 0x1;
-			current_ >>= 1;              // Move bits down to test the next
-		}
-		current_ = temp;
-		break;
-	case unary_flip: // Flip byte order
-		// This assumes (of course) that byte order is little-endian in memory
-		byte = (unsigned char *)&current_;
-		switch (bits_)
-		{
-		case 8:
-			mm_->StatusBarText("Can't flip bytes in 8 bit mode");
-			aa_->mac_error_ = 2;
-			break;
-		case 16:
-			cc = byte[0]; byte[0] = byte[1]; byte[1] = cc;
-			break;
-		case 32:
-			cc = byte[0]; byte[0] = byte[3]; byte[3] = cc;
-			cc = byte[1]; byte[1] = byte[2]; byte[2] = cc;
-			break;
-		case 64:
-			cc = byte[0]; byte[0] = byte[7]; byte[7] = cc;
-			cc = byte[1]; byte[1] = byte[6]; byte[6] = cc;
-			cc = byte[2]; byte[2] = byte[5]; byte[5] = cc;
-			cc = byte[3]; byte[3] = byte[4]; byte[4] = cc;
-			break;
-		default:
-			ASSERT(0);
-		}
-		break;
-	case unary_at:
-		pview = GetView();
-		// Make sure view and calculator endianness are in sync
-		ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
-		if (pview == NULL || (current_&mask_) + bits_/8 > (unsigned __int64)pview->GetDocument()->length())
-		{
-			if (pview == NULL)
-				mm_->StatusBarText("No window open");
-			else
-				mm_->StatusBarText("@ n: Not enough bytes to end of file to read");
-			aa_->mac_error_ = 10;
-			return;
-		}
-
-		temp = 0;
-		pview->GetDocument()->GetData((unsigned char *)&temp, bits_/8, current_);
-		if (pview->BigEndian())
-		{
-			// Reverse the byte order to match that used internally (Intel=little-endian)
-			byte = (unsigned char *)&temp;
-			switch (bits_)
-			{
-			case 8:
-				/* nothing */
-				break;
-			case 16:
-				cc = byte[0]; byte[0] = byte[1]; byte[1] = cc;
-				break;
-			case 32:
-				cc = byte[0]; byte[0] = byte[3]; byte[3] = cc;
-				cc = byte[1]; byte[1] = byte[2]; byte[2] = cc;
-				break;
-			case 64:
-				cc = byte[0]; byte[0] = byte[7]; byte[7] = cc;
-				cc = byte[1]; byte[1] = byte[6]; byte[6] = cc;
-				cc = byte[2]; byte[2] = byte[5]; byte[5] = cc;
-				cc = byte[3]; byte[3] = byte[4]; byte[4] = cc;
-				break;
-			default:
-				ASSERT(0);
-			}
-		}
-		current_ = temp;
-		break;
-
-	case unary_none:
-	default:
-		ASSERT(0);
-	}
-
-	ShowStatus();                       // Indicate overflow etc
-
-	if (overflow_ || error_)
-	{
-		if (overflow_)
-			mm_->StatusBarText("Result overflowed data size");
-		else
-			mm_->StatusBarText("Arithmetic error (root of -ve, etc)");
-		aa_->mac_error_ = 2;
-	}
-
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.Put();
-		update_file_buttons();
-	}
-
-	// Save the unary operation to the current macro (if any)
-	aa_->SaveToMacro(km_unaryop, long(unary));
-
-	// The user can't edit the result of a unary operation by pressing digits
-	source_ = km_result;
-}
-#endif
 
 // Handle "digit" button click
 void CCalcDlg::do_digit(char digit)
@@ -1453,7 +1162,6 @@ void CCalcDlg::do_digit(char digit)
 	inedit(km_user_str);
 }
 
-#ifdef CALC_BIG
 void CCalcDlg::calc_previous()
 {
 	ASSERT(current_type_ != CJumpExpr::TYPE_NONE);      // We can't use an invalid expression
@@ -1610,262 +1318,6 @@ void CCalcDlg::calc_previous()
 		aa_->mac_error_ = 2;
 	}
 }  // calc_previous
-#else
-void CCalcDlg::calc_previous()
-{
-	bool same_sign;                     // Used in signed (radix 10 only) tests
-	int ii;
-	__int64 temp;                       // Temp used in calcs
-	signed char s8;                     // Signed int types used for ASR
-	signed short s16;
-	signed long s32;
-	signed __int64 s64;
-
-	ASSERT(current_type_ != CJumpExpr::TYPE_NONE);      // We can't use an invalid expression
-	overflow_ = error_ = FALSE;
-
-	if (op_ >= binop_mask)
-	{
-		// Mask off any high bits that might interfere with the calculations
-		current_ &= mask_;
-		previous_ &= mask_;
-	}
-
-	switch (op_)
-	{
-	case binop_add:
-		if (radix_ == 10)
-			same_sign = (current_ & sign_mask_) == (previous_ & sign_mask_);
-		else if ((previous_&mask_) > mask_ - (current_&mask_))
-			overflow_ = TRUE;
-		current_ += previous_;
-
-		// For signed numbers overflow if operands have same sign which is diff to sign of result
-		if (radix_ == 10 && same_sign && (current_ & sign_mask_) != (previous_ & sign_mask_))
-			overflow_ = TRUE;
-		break;
-	case binop_subtract:
-		if (radix_ == 10)
-			same_sign = (current_ & sign_mask_) == (previous_ & sign_mask_);
-		else if ((previous_&mask_) < (current_&mask_))
-			overflow_ = TRUE;
-		current_ = previous_ - current_;
-
-		if (radix_ == 10 && !same_sign && (current_ & sign_mask_) != (previous_ & sign_mask_))
-			overflow_ = TRUE;
-		break;
-	case binop_multiply:
-		if (current_ != 0 && radix_ == 10)
-		{
-			if ((bits_ ==  8 && mac_abs((signed char)previous_) > mac_abs((signed char)(mask_>>1)/(signed char)current_)) ||
-				(bits_ == 16 && mac_abs((signed short)previous_) > mac_abs((signed short)(mask_>>1)/(signed short)current_)) ||
-				(bits_ == 32 && mac_abs((signed long)previous_) > mac_abs((signed long)(mask_>>1)/(signed long)current_)) ||
-				(bits_ == 64 && mac_abs((signed __int64)previous_) > mac_abs((signed __int64)(mask_>>1)/(signed __int64)current_)))
-			{
-				overflow_ = TRUE;
-			}
-		}
-		else if (current_ != 0 && (previous_&mask_) > mask_/(current_&mask_))
-			overflow_ = TRUE;
-		current_ *= previous_;
-		break;
-	case binop_divide:
-		if ((current_&mask_) == 0)
-			current_ = 0, error_ = TRUE;
-		else
-			current_ = previous_ / current_;
-		break;
-	case binop_mod:
-		if ((current_&mask_) == 0)
-			current_ = 0, error_ = TRUE;
-		else
-			current_ = previous_ % current_;
-		break;
-	case binop_pow:
-		if (previous_ == 1 || current_ == 0)
-			current_ = 1;               // One to anything or anything to zero is one (assume 0^0 == 1)
-		else if (previous_ == 0)
-			current_ = 0;               // Zero to anything is zero
-		else
-		{
-			double logmax = log(pow(2.0, double(bits_)) - 1.0);
-			if ((double)(signed __int64)current_ > logmax/log((double)(signed __int64)previous_))
-				overflow_ = TRUE;
-			// Only do the calcs if current_ is not too big (else calcs may take a long time)
-			if (current_ < 128)
-			{
-				temp = 1;
-				// Using a short loop should not be too slow but could possibly be sped up if necessary.
-				for (ii = 0; ii < current_; ++ii)
-					temp *= previous_;
-				current_ = temp;
-			}
-			else
-			{
-				ASSERT(overflow_);        // (Must have overflowed if current_ is this big.)
-				current_ = 0;
-			}
-		}
-		break;
-	case binop_gtr:
-	case binop_gtr_old:
-		if ((radix_ == 10 && bits_ ==  8 && (signed char)current_ <= (signed char)previous_) ||
-			(radix_ == 10 && bits_ == 16 && (signed short)current_ <= (signed short)previous_) ||
-			(radix_ == 10 && bits_ == 32 && (signed long)current_ <= (signed long)previous_) ||
-			(radix_ == 10 && bits_ == 64 && (signed __int64)current_ <= (signed __int64)previous_) ||
-			(radix_ != 10 && bits_ ==  8 && (unsigned char)current_ <= (unsigned char)previous_) ||
-			(radix_ != 10 && bits_ == 16 && (unsigned short)current_ <= (unsigned short)previous_) ||
-			(radix_ != 10 && bits_ == 32 && (unsigned long)current_ <= (unsigned long)previous_) ||
-			(radix_ != 10 && bits_ == 64 && (unsigned __int64)current_ <= (unsigned __int64)previous_) )
-		{
-			current_ = previous_;
-		}
-		else
-			aa_->mac_error_ = 1;        // Allow detection of max value
-		break;
-	case binop_less:
-	case binop_less_old:
-		if ((radix_ == 10 && bits_ ==  8 && (signed char)current_ >= (signed char)previous_) ||
-			(radix_ == 10 && bits_ == 16 && (signed short)current_ >= (signed short)previous_) ||
-			(radix_ == 10 && bits_ == 32 && (signed long)current_ >= (signed long)previous_) ||
-			(radix_ == 10 && bits_ == 64 && (signed __int64)current_ >= (signed __int64)previous_) ||
-			(radix_ != 10 && bits_ ==  8 && (unsigned char)current_ >= (unsigned char)previous_) ||
-			(radix_ != 10 && bits_ == 16 && (unsigned short)current_ >= (unsigned short)previous_) ||
-			(radix_ != 10 && bits_ == 32 && (unsigned long)current_ >= (unsigned long)previous_) ||
-			(radix_ != 10 && bits_ == 64 && (unsigned __int64)current_ >= (unsigned __int64)previous_) )
-		{
-			current_ = previous_;
-		}
-		else
-			aa_->mac_error_ = 1;        // Allow detection of min value
-		break;
-	case binop_ror:
-		temp = current_ % bits_;
-		current_ = ((previous_ << temp) & mask_) | (previous_ >> (bits_ - temp));
-		break;
-	case binop_rol:
-		temp = current_ % bits_;
-		current_ = (previous_ >> temp) | ((previous_ << (bits_ - temp)) & mask_);
-		break;
-	case binop_lsl:
-		current_ = (previous_ << current_) & mask_;
-		break;
-	case binop_lsr:
-		current_ = previous_ >> current_;
-		break;
-	case binop_asr:
-		// Use Compiler signed types to do sign extension
-		if (bits_ == 8)
-		{
-			s8 = (signed char)previous_;
-			s8 >>= current_;
-			current_ = s8;
-		}
-		else if (bits_ == 16)
-		{
-			s16 = (short)previous_;
-			s16 >>= current_;
-			current_ = s16;
-		}
-		else if (bits_ == 32)
-		{
-			s32 = (long)previous_;
-			s32 >>= current_;
-			current_ = s32;
-		}
-		else if (bits_ == 64)
-		{
-			s64 = previous_;
-			s64 >>= current_;
-			current_ = s64;
-		}
-		else
-			ASSERT(0);
-		break;
-
-	case binop_and:
-		current_ &= previous_;
-		break;
-	case binop_or:
-		current_ |= previous_;
-		break;
-	case binop_xor:
-		current_ ^= previous_;
-		break;
-
-	default:
-		ASSERT(0);
-		/* fall through in release versions */
-	case binop_none:
-		// No operation but convert a +ve decimal that is too big to be
-		// represented to the equivalent -ve value.
-		if (radix_ == 10 && (current_ & ((mask_ + 1)>>1)) != 0)
-		{
-			current_ |= ~mask_;
-		}
-		break;
-	}
-
-	// Signal that current value is not an expression.  This allows correct refresh behaviour (eg,
-	// refresh off during macros playback) so that edit box is redrawn correctly (see update_controls).
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
-
-	// Check if the result overflowed the number of bits in use.
-	// This will not detect overflow for bits_ == 64, in which case
-	// overflow should have been detected above.
-
-	if (op_ >= binop_mask)
-	{
-		// If we are using decimals check if the value is -ve (has high bit set)
-		if (radix_ == 10 && (current_ & ((mask_ + 1)>>1)) != 0)
-		{
-			// Make sure all the high bits are on
-			if (~(current_ | mask_) != 0)
-				overflow_ = TRUE;
-		}
-		else
-		{
-			// Make sure all the high bits are off
-			if ((current_ & ~mask_) != 0)
-				overflow_ = TRUE;
-		}
-	}
-
-	ShowStatus();                       // Indicate overflow/error (if any)
-
-	if (overflow_ || error_)
-	{
-		if (overflow_)
-			mm_->StatusBarText("Result overflowed data size");
-		else
-			mm_->StatusBarText("Arithmetic error (divide by 0, etc)");
-		aa_->mac_error_ = 2;
-	}
-}  // calc_previous
-#endif
-
-// This will go when we remove km_endian (replaced by km_big_endian)
-void CCalcDlg::toggle_endian()
-{
-	ASSERT(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS) != NULL);
-
-	CHexEditView *pview = GetView();
-	if (pview != NULL)
-	{
-		GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(TRUE);  // enable so we can change programmatically
-		//bool big_endian = !pview->BigEndian();
-		//pview->SetBigEndian(big_endian);
-		//if (!aa_->refresh_off_ && IsVisible())
-		//	((CButton *)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->SetCheck(big_endian);
-
-		// Do it this way so that macros and undo work
-		if (pview->BigEndian())
-			pview->OnLittleEndian();
-		else
-			pview->OnBigEndian();
-	}
-}
 
 void CCalcDlg::change_base(int base)
 {
@@ -2332,7 +1784,9 @@ void CCalcDlg::update_controls()
 
 	// Disable big-endian checkbox if there is only one byte or not using whole bytes, or no active file
 	ASSERT(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS) != NULL);
-	GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(GetView() != NULL && bits_ > 8 && bits_%8 == 0);
+	BOOL enable = GetView() != NULL && bits_ > 8 && bits_%8 == 0;
+	if (enable != GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->IsWindowEnabled())
+		GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(enable);
 
 	build_menus();
 }
@@ -2364,7 +1818,6 @@ void CCalcDlg::update_file_buttons()
 
 	CHexEditView *pview = GetView();
 
-#ifdef CALC_BIG
 	mpz_class start, eof, mark, sel_len;
 
 	if (pview != NULL)
@@ -2408,79 +1861,6 @@ void CCalcDlg::update_file_buttons()
 
 	// Purple
 	button_colour(GetDlgItem(IDC_UNARY_AT),      basic && get_norm(current_) + bits_/8 <= eof,   RGB(0x80, 0x0, 0x80));
-#else
-	FILE_ADDRESS start, end;                    // Current selection
-	FILE_ADDRESS eof, mark;                     // Length of file and posn of mark
-
-	if (pview != NULL)
-	{
-		pview->GetSelAddr(start, end);
-		eof = pview->GetDocument()->length();
-		mark = pview->GetMark();
-	}
-	GetDlgItem(IDC_MARK_GET)->EnableWindow(pview != NULL);
-	GetDlgItem(IDC_MARK_CLEAR)->EnableWindow(pview != NULL);
-	GetDlgItem(IDC_MARK_AT)->EnableWindow(pview != NULL && mark + bits_/8 <= eof);
-	GetDlgItem(IDC_SEL_GET)->EnableWindow(pview != NULL);
-	GetDlgItem(IDC_SEL_AT)->EnableWindow(pview != NULL && start + bits_/8 <= eof);
-	GetDlgItem(IDC_SEL_LEN)->EnableWindow(pview != NULL);
-	GetDlgItem(IDC_EOF_GET)->EnableWindow(pview != NULL);
-
-	if (current_type_ != CJumpExpr::TYPE_INT)
-	{
-		GetDlgItem(IDC_MARK_STORE)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MARK_SUBTRACT)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MARK_ADD)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MARK_AT_STORE)->EnableWindow(FALSE);
-		GetDlgItem(IDC_SEL_STORE)->EnableWindow(FALSE);
-		GetDlgItem(IDC_SEL_AT_STORE)->EnableWindow(FALSE);
-		GetDlgItem(IDC_SEL_LEN_STORE)->EnableWindow(FALSE);
-		GetDlgItem(IDC_GO)->EnableWindow(FALSE);
-		GetDlgItem(IDC_UNARY_AT)->EnableWindow(FALSE);
-	}
-	else
-	{
-		GetDlgItem(IDC_MARK_STORE)->EnableWindow(pview != NULL && (current_&mask_) <= eof);
-		if (pview != NULL && radix_ == 10)
-		{
-			signed __int64 mark_minus, mark_plus;
-			switch (bits_)
-			{
-			case 8:
-				mark_minus = mark - (signed char)current_;
-				mark_plus  = mark + (signed char)current_;
-				break;
-			case 16:
-				mark_minus = mark - (signed short)current_;
-				mark_plus  = mark + (signed short)current_;
-				break;
-			case 32:
-				mark_minus = mark - (signed long)current_;
-				mark_plus  = mark + (signed long)current_;
-				break;
-			case 64:
-				mark_minus = mark - (signed __int64)current_;
-				mark_plus  = mark + (signed __int64)current_;
-				break;
-			}
-			GetDlgItem(IDC_MARK_SUBTRACT)->EnableWindow(pview != NULL && mark_minus > 0 && mark_minus <= eof);
-			GetDlgItem(IDC_MARK_ADD)->EnableWindow(pview != NULL && mark_plus > 0 && mark_plus <= eof);
-		}
-		else
-		{
-			GetDlgItem(IDC_MARK_SUBTRACT)->EnableWindow(pview != NULL && mark - (current_&mask_) <= (unsigned __int64)eof);
-			GetDlgItem(IDC_MARK_ADD)->EnableWindow(pview != NULL && mark + (current_&mask_) <= (unsigned __int64)eof);
-		}
-		GetDlgItem(IDC_MARK_AT_STORE)->EnableWindow(pview != NULL && !pview->ReadOnly() && mark <= eof &&
-													(mark + bits_/8 <= eof || !pview->OverType()));
-		GetDlgItem(IDC_SEL_STORE)->EnableWindow(pview != NULL && (current_&mask_) <= (unsigned __int64)eof);
-		GetDlgItem(IDC_SEL_AT_STORE)->EnableWindow(pview != NULL && !pview->ReadOnly() && start <= eof &&
-												(start + bits_/8 <= eof || !pview->OverType()));
-		GetDlgItem(IDC_SEL_LEN_STORE)->EnableWindow(pview != NULL && start + (current_&mask_) <= (unsigned __int64)eof);
-		GetDlgItem(IDC_GO)->EnableWindow(pview != NULL && (current_&mask_) <= (unsigned __int64)eof);
-		GetDlgItem(IDC_UNARY_AT)->EnableWindow(pview != NULL && (current_&mask_) + bits_/8 <= (unsigned __int64)eof);
-	}
-#endif
 
 	if (pview != NULL)
 	{
@@ -2564,7 +1944,6 @@ void CCalcDlg::OnDestroy()
 	// Save some settings to the in file/registry
 	aa_->WriteProfileInt("Calculator", "Base", radix_);
 	aa_->WriteProfileInt("Calculator", "Bits", bits_);
-#ifdef CALC_BIG
 	aa_->WriteProfileInt("Calculator", "signed", signed_ ? 1 : 0);
 
 	std::string ss;
@@ -2575,19 +1954,12 @@ void CCalcDlg::OnDestroy()
 		calc_previous();
 	ss = current_.get_str(10);
 	aa_->WriteProfileString("Calculator", "Current", ss.c_str());
-#else
-	char buf[30];
-	_i64toa(memory_, buf, 10);
-	aa_->WriteProfileString("Calculator", "Memory", buf);
-	if (current_type_ != CJumpExpr::TYPE_NONE)
-		calc_previous();
-	_i64toa((current_&mask_), buf, 10);
-	aa_->WriteProfileString("Calculator", "Current", buf);
-#endif
 }
 
 void CCalcDlg::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
 {
+	if (!inited_) return;
+
 	if (cy < m_sizeInitial.cy*7/8)
 	{
 		SetDlgItemText(IDC_BASE_GROUP, "");
@@ -2974,8 +2346,13 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 
 void CCalcDlg::OnBigEndian()
 {
-	toggle_endian();
-	aa_->SaveToMacro(km_big_endian, (__int64)-1);
+	// toggle_endian();
+	ASSERT(GetView() != NULL);
+	if (GetView() != NULL)
+	{
+		GetView()->OnToggleEndian();
+		aa_->SaveToMacro(km_big_endian, (__int64)-1);
+	}
 }
 
 void CCalcDlg::On8bit()
@@ -3023,6 +2400,7 @@ void CCalcDlg::OnDecimal()
 
 void CCalcDlg::OnHex()
 {
+	if (!inited_) return;  // Can't work out why we get this message during dialog creation
 	change_base(16);
 	change_signed(false);
 }
@@ -3881,7 +3259,6 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 		return;
 	}
 
-#ifdef CALC_BIG
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), pview->GetMark());
 	overflow_ = bits_ > 0 && val > max_val_;
@@ -3896,19 +3273,6 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 		current_const_ = TRUE;
 		current_type_ = CJumpExpr::TYPE_INT;
 	}
-#else
-	current_ = pview->GetMark();
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
-
-	overflow_ = error_ = FALSE;
-	if ((current_ & ~mask_) != 0)
-	{
-		overflow_ = TRUE;
-		mm_->StatusBarText("Mark overflowed data size");
-		aa_->mac_error_ = 2;
-	}
-#endif
 	ShowStatus();                       // Clear/set overflow indicator
 
 	if (!aa_->refresh_off_ && IsVisible())
@@ -3927,7 +3291,6 @@ void CCalcDlg::OnMarkStore()
 		return;
 
 	CHexEditView *pview = GetView();
-#ifdef CALC_BIG
 	if (pview == NULL)
 	{
 		AfxMessageBox("No file open in which to change the mark");
@@ -3948,16 +3311,6 @@ void CCalcDlg::OnMarkStore()
 		return;
 	}
 	pview->SetMark(mpz_get_ui64(new_mark.get_mpz_t()));
-#else
-	if (pview == NULL || GetValue() > (unsigned __int64)pview->GetDocument()->length())
-	{
-		mm_->StatusBarText("New mark address past end of file");
-		aa_->mac_error_ = 10;
-		return;
-	}
-
-	pview->SetMark(GetValue());
-#endif
 
 	if (!aa_->refresh_off_ && IsVisible())
 	{
@@ -4002,7 +3355,7 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 		aa_->mac_error_ = 10;
 		return;
 	}
-#ifdef CALC_BIG
+
 	mpz_class eof, mark, new_mark;
 	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
 	mpz_set_ui64(mark.get_mpz_t(), pview->GetMark());                // current mark
@@ -4017,49 +3370,6 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 		return;
 	}
 	pview->SetMark(mpz_get_ui64(new_mark.get_mpz_t()));
-#else
-	FILE_ADDRESS eof = pview->GetDocument()->length();
-	FILE_ADDRESS mark = pview->GetMark();
-	if (radix_ == 10)
-	{
-		signed __int64 new_mark;
-		switch (bits_)
-		{
-		case 8:
-			new_mark = mark + (signed char)current_;
-			break;
-		case 16:
-			new_mark = mark + (signed short)current_;
-			break;
-		case 32:
-			new_mark = mark + (signed long)current_;
-			break;
-		case 64:
-			new_mark = mark + (signed __int64)current_;
-			break;
-		}
-		if (new_mark < 0 || new_mark > eof)
-		{
-			if (new_mark < 0)
-				mm_->StatusBarText("New mark address is -ve");
-			else
-				mm_->StatusBarText("New mark address past end of file");
-			aa_->mac_error_ = 10;
-			return;
-		}
-		pview->SetMark(new_mark);
-	}
-	else
-	{
-		if (mark + GetValue() > eof)
-		{
-			mm_->StatusBarText("New mark address past end of file");
-			aa_->mac_error_ = 10;
-			return;
-		}
-		pview->SetMark(mark + GetValue());
-	}
-#endif
 
 	if (!aa_->refresh_off_ && IsVisible())
 	{
@@ -4084,7 +3394,7 @@ void CCalcDlg::OnMarkSubtract()
 		aa_->mac_error_ = 10;
 		return;
 	}
-#ifdef CALC_BIG
+
 	mpz_class eof, mark, new_mark;
 	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
 	mpz_set_ui64(mark.get_mpz_t(), pview->GetMark());                // current mark
@@ -4099,50 +3409,6 @@ void CCalcDlg::OnMarkSubtract()
 		return;
 	}
 	pview->SetMark(mpz_get_ui64(new_mark.get_mpz_t()));
-#else
-	FILE_ADDRESS eof = pview->GetDocument()->length();
-	FILE_ADDRESS mark = pview->GetMark();
-
-	if (radix_ == 10)
-	{
-		signed __int64 new_mark;
-		switch (bits_)
-		{
-		case 8:
-			new_mark = mark - (signed char)current_;
-			break;
-		case 16:
-			new_mark = mark - (signed short)current_;
-			break;
-		case 32:
-			new_mark = mark - (signed long)current_;
-			break;
-		case 64:
-			new_mark = mark - (signed __int64)current_;
-			break;
-		}
-		if (new_mark < 0 || new_mark > eof)
-		{
-			if (new_mark < 0)
-				mm_->StatusBarText("New mark address is -ve");
-			else
-				mm_->StatusBarText("New mark address past end of file");
-			aa_->mac_error_ = 10;
-			return;
-		}
-		pview->SetMark(new_mark);
-	}
-	else
-	{
-		if (mark - GetValue() > (unsigned __int64)eof)
-		{
-			mm_->StatusBarText("New mark address past end of file");
-			aa_->mac_error_ = 10;
-			return;
-		}
-		pview->SetMark(mark - GetValue());
-	}
-#endif
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
@@ -4160,60 +3426,11 @@ void CCalcDlg::OnMarkSubtract()
 //  - byte order is determined by active file endian-ness (display_.big_endian)
 void CCalcDlg::OnMarkAt()
 {
-#ifdef CALC_BIG
 	if (!get_bytes(-2))  // get data at mark
 	{
 		aa_->mac_error_ = 10;
 		return;
 	}
-#else
-	CHexEditView *pview = GetView();
-	// Make sure view and calculator endianness are in sync
-	ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
-	if (pview == NULL)
-	{
-		aa_->mac_error_ = 10;
-		return;
-	}
-	FILE_ADDRESS eof = pview->GetDocument()->length();
-	FILE_ADDRESS mark = pview->GetMark();
-	if (mark + bits_/8 > eof)
-	{
-		mm_->StatusBarText("Mark address too close to end of file to get data");
-		aa_->mac_error_ = 10;
-		return;
-	}
-
-	__int64 temp = 0;
-	pview->GetDocument()->GetData((unsigned char *)&temp, bits_/8, mark);
-	if (pview->BigEndian())
-	{
-		// Reverse the byte order to match that used internally (Intel=little-endian)
-		unsigned char cc, *byte = (unsigned char *)&temp;
-		switch (bits_)
-		{
-		case 8:
-			/* nothing */
-			break;
-		case 16:
-			cc = byte[0]; byte[0] = byte[1]; byte[1] = cc;
-			break;
-		case 32:
-			cc = byte[0]; byte[0] = byte[3]; byte[3] = cc;
-			cc = byte[1]; byte[1] = byte[2]; byte[2] = cc;
-			break;
-		case 64:
-			cc = byte[0]; byte[0] = byte[7]; byte[7] = cc;
-			cc = byte[1]; byte[1] = byte[6]; byte[6] = cc;
-			cc = byte[2]; byte[2] = byte[5]; byte[5] = cc;
-			cc = byte[3]; byte[3] = byte[4]; byte[4] = cc;
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
-	current_ = temp;
-#endif
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
 	ShowStatus();
@@ -4241,7 +3458,6 @@ void CCalcDlg::OnSelGet()
 
 	FILE_ADDRESS start, end;
 	pview->GetSelAddr(start, end);
-#ifdef CALC_BIG
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), start);
 	overflow_ = bits_ > 0 && val > max_val_;
@@ -4256,19 +3472,6 @@ void CCalcDlg::OnSelGet()
 		current_const_ = TRUE;
 		current_type_ = CJumpExpr::TYPE_INT;
 	}
-#else
-	current_ = start;
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
-
-	overflow_ = error_ = FALSE;
-	if ((current_ & ~mask_) != 0)
-	{
-		overflow_ = TRUE;
-		mm_->StatusBarText("Cursor position overflowed data size");
-		aa_->mac_error_ = 2;
-	}
-#endif
 	ShowStatus();                       // Clear/set overflow indicator
 
 	if (!aa_->refresh_off_ && IsVisible())
@@ -4284,63 +3487,11 @@ void CCalcDlg::OnSelGet()
 // Get byte(s) at the caret position - # of bytes is determined by bits_
 void CCalcDlg::OnSelAt()                // Value in file at cursor
 {
-#ifdef CALC_BIG
 	if (!get_bytes(-3))                // get data at cursor/selection
 	{
 		aa_->mac_error_ = 10;
 		return;
 	}
-#else
-	CHexEditView *pview = GetView();
-	// Make sure view and calculator endianness are in sync
-	ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
-	if (pview == NULL)
-	{
-		aa_->mac_error_ = 10;
-		return;
-	}
-
-	FILE_ADDRESS eof = pview->GetDocument()->length();
-	FILE_ADDRESS start, end;
-	pview->GetSelAddr(start, end);
-
-	if (start + bits_/8 > eof)
-	{
-		mm_->StatusBarText("Cursor too close to end of file to get data");
-		aa_->mac_error_ = 10;
-		return;
-	}
-
-	__int64 temp = 0;
-	pview->GetDocument()->GetData((unsigned char *)&temp, bits_/8, start);
-	if (pview->BigEndian())
-	{
-		// Reverse the byte order to match that used internally (Intel=little-endian)
-		unsigned char cc, *byte = (unsigned char *)&temp;
-		switch (bits_)
-		{
-		case 8:
-			/* nothing */
-			break;
-		case 16:
-			cc = byte[0]; byte[0] = byte[1]; byte[1] = cc;
-			break;
-		case 32:
-			cc = byte[0]; byte[0] = byte[3]; byte[3] = cc;
-			cc = byte[1]; byte[1] = byte[2]; byte[2] = cc;
-			break;
-		case 64:
-			cc = byte[0]; byte[0] = byte[7]; byte[7] = cc;
-			cc = byte[1]; byte[1] = byte[6]; byte[6] = cc;
-			cc = byte[2]; byte[2] = byte[5]; byte[5] = cc;
-			cc = byte[3]; byte[3] = byte[4]; byte[4] = cc;
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
-	current_ = temp;
-#endif
 	current_const_ = TRUE;
 	current_type_ = CJumpExpr::TYPE_INT;
 	ShowStatus();
@@ -4368,7 +3519,6 @@ void CCalcDlg::OnSelLen()
 
 	FILE_ADDRESS start, end;
 	pview->GetSelAddr(start, end);
-#ifdef CALC_BIG
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), end - start);
 	overflow_ = bits_ > 0 && val > max_val_;
@@ -4383,11 +3533,6 @@ void CCalcDlg::OnSelLen()
 		current_const_ = TRUE;
 		current_type_ = CJumpExpr::TYPE_INT;
 	}
-#else
-	current_ = end - start;
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
-#endif
 	ShowStatus();
 
 	if (!aa_->refresh_off_ && IsVisible())
@@ -4411,7 +3556,6 @@ void CCalcDlg::OnEofGet()               // Length of file
 		return;
 	}
 
-#ifdef CALC_BIG
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), pview->GetDocument()->length());
 	overflow_ = bits_ > 0 && val > max_val_;
@@ -4426,11 +3570,6 @@ void CCalcDlg::OnEofGet()               // Length of file
 		current_const_ = TRUE;
 		current_type_ = CJumpExpr::TYPE_INT;
 	}
-#else
-	current_ = pview->GetDocument()->length();
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
-#endif
 	ShowStatus();
 
 	if (!aa_->refresh_off_ && IsVisible())
@@ -4451,7 +3590,6 @@ void CCalcDlg::OnMarkAtStore()
 	if (invalid_expression())
 		return;
 
-#ifdef CALC_BIG
 	FILE_ADDRESS mark = 0;
 	if (GetView() != NULL)
 		mark = GetView()->GetMark(); // save mark (NULL view error message displayed in put_bytes)
@@ -4463,59 +3601,6 @@ void CCalcDlg::OnMarkAtStore()
 	}
 	if (!GetView()->OverType())
 		GetView()->SetMark(mark);   // Inserting at mark would have move it forward
-#else
-	CHexEditView *pview = GetView();
-	// Make sure view and calculator endianness are in sync
-	ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
-	if (pview == NULL || pview->ReadOnly())
-	{
-		mm_->StatusBarText("Can't write at mark: file is read only");
-		aa_->mac_error_ = 10;
-		return;
-	}
-
-	FILE_ADDRESS eof = pview->GetDocument()->length();
-	FILE_ADDRESS mark = pview->GetMark();
-	if (mark > eof || (mark + bits_/8 > eof && pview->OverType()))
-	{
-		mm_->StatusBarText("Can't write at mark: too close to EOF (OVR mode) or past EOF");
-		aa_->mac_error_ = 10;
-		return;
-	}
-
-	__int64 temp = GetValue();
-	if (pview->BigEndian())
-	{
-		// Reverse the byte order to match that used internally (Intel=little-endian)
-		unsigned char cc, *byte = (unsigned char *)&temp;
-		switch (bits_)
-		{
-		case 8:
-			/* nothing */
-			break;
-		case 16:
-			cc = byte[0]; byte[0] = byte[1]; byte[1] = cc;
-			break;
-		case 32:
-			cc = byte[0]; byte[0] = byte[3]; byte[3] = cc;
-			cc = byte[1]; byte[1] = byte[2]; byte[2] = cc;
-			break;
-		case 64:
-			cc = byte[0]; byte[0] = byte[7]; byte[7] = cc;
-			cc = byte[1]; byte[1] = byte[6]; byte[6] = cc;
-			cc = byte[2]; byte[2] = byte[5]; byte[5] = cc;
-			cc = byte[3]; byte[3] = byte[4]; byte[4] = cc;
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
-	pview->GetDocument()->Change(pview->OverType() ? mod_replace : mod_insert,
-								mark, bits_/8, (unsigned char *)&temp, 0, pview);
-	if (!pview->OverType())
-		pview->SetMark(mark);   // Inserting at mark would have move it forward
-#endif
-
 
 	if (!aa_->refresh_off_ && IsVisible())
 	{
@@ -4535,7 +3620,6 @@ void CCalcDlg::OnSelStore()
 		return;
 
 	CHexEditView *pview = GetView();
-#ifdef CALC_BIG
 	if (pview == NULL)
 	{
 		AfxMessageBox("No file open to change the selection in");
@@ -4558,14 +3642,6 @@ void CCalcDlg::OnSelStore()
 		aa_->mac_error_ = 10;
 		return;
 	}
-#else
-	if (pview == NULL || GetValue() > (unsigned __int64)pview->GetDocument()->length())
-	{
-		mm_->StatusBarText("Can't move cursor past end of file");
-		aa_->mac_error_ = 10;
-		return;
-	}
-#endif
 	pview->MoveWithDesc("Set Cursor in Calculator", GetValue());
 
 	if (!aa_->refresh_off_ && IsVisible())
@@ -4585,64 +3661,11 @@ void CCalcDlg::OnSelAtStore()
 	if (invalid_expression())
 		return;
 
-#ifdef CALC_BIG
 	if (!put_bytes(-3))
 	{
 		aa_->mac_error_ = 10;
 		return;
 	}
-#else
-	CHexEditView *pview = GetView();
-	// Make sure view and calculator endianness are in sync
-	ASSERT(pview == NULL || pview->BigEndian() == ((CButton*)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS))->GetCheck());
-	if (pview == NULL || pview->ReadOnly())
-	{
-		mm_->StatusBarText("Can't store at cursor: file is read-only");
-		aa_->mac_error_ = 10;
-		return;
-	}
-
-	FILE_ADDRESS eof = pview->GetDocument()->length();
-	FILE_ADDRESS start, end;
-	pview->GetSelAddr(start, end);
-
-	if (start > eof || (start + bits_/8 > eof && pview->OverType()))
-	{
-		mm_->StatusBarText("Can't store at cursor: too close to EOF (OVR mode) or past EOF");
-		aa_->mac_error_ = 10;
-		return;
-	}
-
-	__int64 temp = (current_&mask_);
-	if (pview->BigEndian())
-	{
-		// Reverse the byte order to match that used internally (Intel=little-endian)
-		unsigned char cc, *byte = (unsigned char *)&temp;
-		switch (bits_)
-		{
-		case 8:
-			/* nothing */
-			break;
-		case 16:
-			cc = byte[0]; byte[0] = byte[1]; byte[1] = cc;
-			break;
-		case 32:
-			cc = byte[0]; byte[0] = byte[3]; byte[3] = cc;
-			cc = byte[1]; byte[1] = byte[2]; byte[2] = cc;
-			break;
-		case 64:
-			cc = byte[0]; byte[0] = byte[7]; byte[7] = cc;
-			cc = byte[1]; byte[1] = byte[6]; byte[6] = cc;
-			cc = byte[2]; byte[2] = byte[5]; byte[5] = cc;
-			cc = byte[3]; byte[3] = byte[4]; byte[4] = cc;
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
-	pview->GetDocument()->Change(pview->OverType() ? mod_replace : mod_insert,
-								start, bits_/8, (unsigned char *)&temp, 0, pview);
-#endif
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();
@@ -4671,7 +3694,6 @@ void CCalcDlg::OnSelLenStore()
 	FILE_ADDRESS start, end;
 	pview->GetSelAddr(start, end);
 
-#ifdef CALC_BIG
 	mpz_class eof, addr, len;
 	mpz_set_ui64(eof.get_mpz_t(), pview->GetDocument()->length());   // current eof
 	mpz_set_ui64(addr.get_mpz_t(), start);
@@ -4692,17 +3714,6 @@ void CCalcDlg::OnSelLenStore()
 	len += addr;
 	pview->MoveToAddress(mpz_get_ui64(addr.get_mpz_t()), mpz_get_ui64(len.get_mpz_t()));
 
-#else
-	FILE_ADDRESS eof = pview->GetDocument()->length();
-	if (start + (current_ & mask_) > (unsigned __int64)eof)
-	{
-		mm_->StatusBarText("New selection length would be past EOF");
-		aa_->mac_error_ = 10;
-		return;
-	}
-
-	pview->MoveToAddress(start, start + current_);
-#endif
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.SetFocus();

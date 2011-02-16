@@ -1465,7 +1465,9 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				((CMainFrame *)AfxGetMainWnd())->m_wndCalc.OnEquals();
 				break;
 			case km_endian:
-				((CMainFrame *)AfxGetMainWnd())->m_wndCalc.toggle_endian();
+				// This is just to allow old macros to run (used to call CalcDlg::toggle_endian())
+				if (pv_ != NULL) // Since km_endian < km_view pv_ can be NULL
+					pv_->OnToggleEndian();
 				break;
 			case km_change_bits:
 				((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits((*pk).vv);
