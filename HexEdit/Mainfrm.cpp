@@ -1225,9 +1225,6 @@ void CMainFrame::show_calc()
 {
 	m_wndCalc.SetWindowText("Calculator");
 	m_paneCalc.ShowAndUnroll();
-
-	m_wndCalc.update_controls();
-	m_wndCalc.ShowBinop();
 }
 
 void CMainFrame::OnContextMenu(CWnd* pWnd, CPoint point)
@@ -4175,10 +4172,6 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
 		pview->GetSelAddr(start, end);
 		m_wndCalc.Set(start);
 
-		m_wndCalc.update_controls();
-		m_wndCalc.ShowBinop();
-		//m_wndCalc.FixFileButtons();
-
 		m_wndCalc.SetFocus();
 		m_wndCalc.StartEdit();
 
@@ -4245,10 +4238,6 @@ void CMainFrame::OnCalcSel()
 		//m_wndCalc.UpdateData(FALSE);
 
 		m_wndCalc.Set(sel_val);
-
-		m_wndCalc.update_controls();
-		m_wndCalc.ShowBinop();
-		//m_wndCalc.FixFileButtons();
 
 		m_wndCalc.SetFocus();
 

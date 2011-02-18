@@ -87,11 +87,9 @@ public:
 	virtual BOOL Create(CWnd* pParentWnd = NULL);   // Normal way to create the modeless dialog
 	CSize m_sizeInitial;
 
-	void Redisplay();
 	void FinishMacro() { save_to_macro(); }// Tidy up any pending ops if macro is finishing
 
 	void ShowStatus();
-	void ShowBinop(int ii = -1);
 	void StartEdit();            // Set focus to text control and move caret to end
 	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
 	void Set(mpz_class t) { current_ = t;  if (!theApp.refresh_off_ && IsVisible()) edit_.Put(); }

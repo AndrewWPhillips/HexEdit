@@ -188,7 +188,7 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 	int ac;
 	CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(ss, 0 /*unused*/, ac /*unused*/, pp_->radix_, side_effects);
 
-	CALCSTATE retval = CALCERR;
+	CALCSTATE retval = CALCERROR;
 	pp_->current_ = 0;                 // default to zero in case of error etc
 
 	// Set current_, current_str_ and retval depending on what we found
@@ -203,7 +203,7 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 #endif
 			retval = CALCOVERFLOW;  // xxx does this ever happen?
 		else
-			retval = CALCOTHER;
+			retval = CALCOTHER;     // Probably just an incomplete expression 
 		break;
 
 	case CHexExpr::TYPE_INT:
@@ -307,27 +307,27 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 				pp_->current_str_ = "DATE(\"" + odt.Format("%x") + "\")";   // Just show date part (no time of day)
 			else
 				pp_->current_str_ = "DATE(\"" + odt.Format("%x %X") + "\")"; // Date and time
+			retval = CALCDATEEXPR;
 		}
-		retval = CALCDATEEXPR;
 		break;
 
 	default:
 		ASSERT(0);  // I believe this should not happen
 		pp_->current_str_ = "##Unexpected expression type##";
-		retval = CALCERR;
+		//retval = CALCERROR;
 		break;
 	}
 	pp_->ShowStatus();                       // Indicate overflow etc
 
-	if (retval == CALCOVERFLOW || retval == CALCERR)
+#if 0  // This is handled by ShowStatus() ??? xxx
+	if (retval == CALCOVERFLOW || retval == CALCERROR)
 	{
-		// Note: Since we are ignoring the typed character (returning false)
-		//       we do not want to change pp_->current_type_.
 #ifdef SYS_SOUNDS
 		if (!CSystemSound::Play("Invalid Character"))
 #endif
 			::Beep(5000,200);
 	}
+#endif
 
 	return retval;
 }
@@ -506,8 +506,6 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	// Clear any result (unless arrow, Del etc key pressed)
 	ClearResult((nFlags & 0x100) == 0 && isprint(nChar));
-
-	//pp_->ShowBinop();                   // Show current binop (if any) and clear overflow/error status
 
 	// If editing an integer then make allowances for separator char
 	if (pp_->state_ == CALCINTLIT)

@@ -59,12 +59,9 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
 	//pDC->FillRect(&rct, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
 
-	// Don't show anything if it's not a valid constant int
-	if (m_pParent->current_type_ != CJumpExpr::TYPE_INT || !m_pParent->current_const_)
+	// Don't show anything if it's not an int
+	if (m_pParent->state_ > CALCINTEXPR)
 		return TRUE;
-	//// Don't show after bin op entered since edit control does not reflect current_
-	//if (!m_pParent->in_edit_ && m_pParent->op_ != binop_none)
-	//	return TRUE;
 
 	int wndHeight = rct.Height();
 	calc_widths(rct);
@@ -97,7 +94,12 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	rct.top = 1;
 	rct.bottom = rct.top + m_hh;
 
-	unsigned __int64 val = mpz_get_ui64(m_pParent->current_.get_mpz_t());
+	unsigned __int64 val;
+	// If showing result after binop button pressed then previous_ has the displayed value
+	if (m_pParent->state_ <= CALCINTRES && m_pParent->op_ != binop_none)
+		val = mpz_get_ui64(m_pParent->previous_.get_mpz_t());
+	else
+		val = mpz_get_ui64(m_pParent->current_.get_mpz_t());
 	for (int bnum = 63; bnum >= 0; bnum--)
 	{
 		// When we hit the first enabled bit switch to the darker pen
@@ -218,7 +220,7 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 
 	op_ = binop_none;
 	current_ = previous_ = 0;
-	state_ = INTRES;
+	state_ = CALCINTRES;
 
 	bits_index_ = base_index_ = -1;  // Fixed later in Create()
 	radix_ = bits_ = -1;  // Set to -1 so they are set up correctly
@@ -593,24 +595,6 @@ static DWORD id_pairs[] = {
 	0,0
 };
 
-// Fix up case if displaying in hex
-void CCalcDlg::Redisplay()
-{
-	if (radix_  > 10 && current_type_ == CJumpExpr::TYPE_INT)
-	{
-		CString ss;
-
-		DWORD sel = edit_.GetSel();
-		edit_.GetWindowText(ss);
-		if (theApp.hex_ucase_)
-			ss.MakeUpper();
-		else
-			ss.MakeLower();
-		edit_.SetWindowText(ss);
-		edit_.SetSel(sel);
-	}
-}
-
 // Set focus to text control and move caret to end
 void CCalcDlg::StartEdit()
 {
@@ -843,13 +827,6 @@ void CCalcDlg::do_binop(binop_type binop)
 	aa_->SaveToMacro(km_binop, long(binop));
 	op_ = binop;
 	ShowStatus();
-
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		//update_file_buttons();
-		if (!overflow_ && !error_)
-			ShowBinop(binop);
-	}
 	state_ = INTRES;
 }
 
@@ -877,79 +854,115 @@ void CCalcDlg::ShowStatus()
 #endif
 				::Beep(3000,400);
 		}
-		else
-			ShowBinop();
 	}
 
 	if (ctl_calc_bits_.m_hWnd != 0)
 		ctl_calc_bits_.RedrawWindow();
 }
 
-void CCalcDlg::ShowBinop(int ii /*=-1*/)
+void CCalcDlg::update_op()
 {
-	binop_type binop;
-	if (ii == -1)
-		binop = op_;
-	else
-		binop = binop_type(ii);
+	if (aa_->refresh_off_ ||! IsVisible())
+		return;
 
-	const char *op_disp = "";
-	switch (binop)
+	const char *disp = "";
+	switch (state_)
 	{
-	case binop_add:
-		op_disp = "+";
+	case CALCERROR:
+		disp = "E";
 		break;
-	case binop_subtract:
-		op_disp = "-";
-		break;
-	case binop_multiply:
-		op_disp = "*";
-		break;
-	case binop_divide:
-		op_disp = "/";
-		break;
-	case binop_mod:
-		op_disp = "%";
-		break;
-	case binop_pow:
-		op_disp = "**";
-		break;
-	case binop_gtr:
-		op_disp = ">";
-		break;
-	case binop_less:
-		op_disp = "<";
-		break;
-	case binop_ror:
-		op_disp = "=>";
-		break;
-	case binop_rol:
-		op_disp = "<=";
-		break;
-	case binop_lsl:
-		op_disp = "<-";
-		break;
-	case binop_lsr:
-		op_disp = "->";
-		break;
-	case binop_asr:
-		op_disp = "+>";
+	case CALCOVERFLOW:
+		disp = "O";
 		break;
 
-	case binop_and:
-		op_disp = "&&";  // displays as a single &
+	case CALCREALEXPR:
+	case CALCREALRES:
+		disp = "R";
 		break;
-	case binop_or:
-		op_disp = "|";
+	case CALCDATEEXPR:
+	case CALCDATERES:
+		disp = "D";
 		break;
-	case binop_xor:
-		op_disp = "^";
+	case CALCSTREXPR:
+	case CALCSTRRES:
+		disp = "S";
+		break;
+	case CALCBOOLEXPR:
+	case CALCBOOLRES:
+		disp = "B";
+		break;
+
+	case CALCINTRES:
+	case CALCINTLIT:
+	case CALCINTEXPR:
+		switch (binop)
+		{
+		case binop_add:
+			disp = "+";
+			break;
+		case binop_subtract:
+			disp = "-";
+			break;
+		case binop_multiply:
+			disp = "*";
+			break;
+		case binop_divide:
+			disp = "/";
+			break;
+		case binop_mod:
+			disp = "%";
+			break;
+		case binop_pow:
+			disp = "**";
+			break;
+		case binop_gtr:
+			disp = ">";
+			break;
+		case binop_less:
+			disp = "<";
+			break;
+		case binop_ror:
+			disp = "=>";
+			break;
+		case binop_rol:
+			disp = "<=";
+			break;
+		case binop_lsl:
+			disp = "<-";
+			break;
+		case binop_lsr:
+			disp = "->";
+			break;
+		case binop_asr:
+			disp = "+>";
+			break;
+
+		case binop_and:
+			disp = "&&";  // displays as a single &
+			break;
+		case binop_or:
+			disp = "|";
+			break;
+		case binop_xor:
+			disp = "^";
+			break;
+
+		case binop_none:
+			disp = "";
+			break;
+
+		default:
+			ASSERT(0);  // make sure we add new binary ops here
+		}
 		break;
 	}
 
-	ASSERT(IsVisible());
+	// Check current OP contents and update if different
+	CString ss;
 	ASSERT(GetDlgItem(IDC_OP_DISPLAY) != NULL);
-	GetDlgItem(IDC_OP_DISPLAY)->SetWindowText(op_disp);
+	GetDlgItem(IDC_OP_DISPLAY)->GetWindowText(ss);
+	if (ss != disp)
+		GetDlgItem(IDC_OP_DISPLAY)->SetWindowText(ss);
 }
 
 void CCalcDlg::do_unary(unary_type unary)
@@ -1155,17 +1168,6 @@ void CCalcDlg::do_digit(char digit)
 		return;
 	}
 
-#if 0
-	if (!aa_->refresh_off_ && IsVisible())  // Always true but left in for consistency
-	{
-		//edit_.SetFocus();
-		if (!in_edit_)
-		{
-			edit_.SetWindowText("");
-			ShowBinop(op_);
-		}
-	}
-#endif
 	edit_.SendMessage(WM_CHAR, digit, 1);
 	inedit(km_user_str);
 }
@@ -1765,6 +1767,28 @@ void CCalcDlg::setup_static_buttons()
 
 void CCalcDlg::update_controls()
 {
+	// Check if case has changed for edit box
+	if (radix_  > 10 && state_ <= CALCINTLIT)
+	{
+		CString ss, new_ss;
+
+		DWORD sel = edit_.GetSel();
+		edit_.GetWindowText(ss);
+
+		new_ss = ss
+		if (theApp.hex_ucase_)
+			new_ss.MakeUpper();
+		else
+			new_ss.MakeLower();
+
+		if (new_ss != ss)
+		{
+			edit_.SetWindowText(ss);
+			edit_.SetSel(sel);
+		}
+	}
+	update_op();
+
 	// Update radio buttons
 	((CButton *)GetDlgItem(IDC_HEX    ))->SetCheck(base_index_ == 0);
 	((CButton *)GetDlgItem(IDC_DECIMAL))->SetCheck(base_index_ == 1);
@@ -2283,9 +2307,6 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.Put();
-		//update_file_buttons();
-		if (!overflow_ && !error_)
-			ShowBinop(binop_none);
 	}
 	in_edit_ = FALSE;
 	source_ = km_result;
@@ -2420,7 +2441,6 @@ void CCalcDlg::OnBackspace()            // Delete back one digit
 
 	edit_.SendMessage(WM_CHAR, '\b', 1);
 
-	ShowBinop();
 	inedit(km_user_str);             // Allow edit of current value
 }
 
@@ -2438,7 +2458,6 @@ void CCalcDlg::OnClearEntry()           // Zero current value
 		//update_file_buttons();
 	}
 
-	ShowBinop();
 	in_edit_ = FALSE;                   // Necessary?
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear_entry);
@@ -2456,8 +2475,6 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 	{
 		edit_.SetFocus();
 		edit_.Put();
-		//update_file_buttons();
-		ShowBinop(binop_none);
 	}
 
 	in_edit_ = FALSE;
@@ -2523,9 +2540,6 @@ void CCalcDlg::OnEquals()               // Calculate result
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		edit_.Put();
-		//update_file_buttons();
-		if (!overflow_ && !error_)
-			ShowBinop(binop_none);
 	}
 
 	in_edit_ = FALSE;

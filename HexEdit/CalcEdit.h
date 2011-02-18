@@ -7,19 +7,23 @@
 // CalcEdit.h : header file
 //
 
-enum STATE {
-	ERROR,         // The last operation generated an error, E is displayed in the status 
-	OVERFLOW,      // Integer result that overflowed the current bits, O is displayed in the status
-	INTRES,        // Edit box displays an integer result, eg: after = button pressed (status is blank)
-	INTLIT  =10,   // User has entered/is entering an integer literal, eg: "1,234"
-	INTEXPR =20,   // User has entered/is entering an integer expression, eg "N + 2"
-	REALEXPR,      // User entered real expression, eg "1 / 2.0"
-	DATEEXPR,      // User entered date expression, eg "now()" 
-	STREXPR,       // User entered string expression, eg: "left(str, 1)"
-	BOOLEXPR,      // User entered Boolean expression, eg "N > 2"
-	OTHER   =30,   // User has entered something else, probably an incomplete expression, eg: "N +"
-	OTHRES  =40,   // Non-integer result, eg: after = button pressed with non-int expression (status is R,S,D,B)
-} state_;
+enum CALCSTATE {
+	CALCERROR,         // The last operation generated an error, E is displayed in the status 
+	CALCOVERFLOW,      // Integer result that overflowed the current bits, O is displayed in the status
+	CALCINTRES,        // Edit box displays an integer result, eg: after = button pressed (status is blank)
+	CALCINTLIT  =10,   // User has entered/is entering an integer literal, eg: "1,234"
+	CALCINTEXPR =20,   // User has entered/is entering an integer expression, eg "N + 2"
+	CALCREALEXPR,      // User entered real expression, eg "1 / 2.0"
+	CALCDATEEXPR,      // User entered date expression, eg "now()" 
+	CALCSTREXPR,       // User entered string expression, eg: "left(str, 1)"
+	CALCBOOLEXPR,      // User entered Boolean expression, eg "N > 2"
+	CALCOTHER   =30,   // User has entered something else, probably an incomplete expression, eg: "N +"
+	CALCOTHRES  =40,   // Non-integer result, eg: after = button pressed with non-int expression (status is R,S,D,B)
+	CALCREALRES,       // Must be 20 more than REALEXPR
+	CALCDATERES,
+	CALCSTRRES,
+	CALCBOOLRES,
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CCalcListBox - the dop down list part of CCalcComboBox
