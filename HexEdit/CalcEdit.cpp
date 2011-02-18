@@ -23,7 +23,6 @@
 #include "HexEdit.h"
 #include "MainFrm.h"
 #include "CalcEdit.h"
-#include "CalcDlg.h"
 #include "SystemSound.h"
 #include "HexEditDoc.h"
 
@@ -35,23 +34,19 @@ static char THIS_FILE[] = __FILE__;
 
 // NOTES
 // 1. The current value in the edit control is continually calculated & stored 
-// in "current_" in the CCalcDlg class (ie, via pp_).  This allows overflow to
-// be detected as soon as the user types a digit. So for example, if bits is 8
+// in "current_" in the CCalcDlg class (ie, via pp_).  This allows overflow to 
+// be detected as soon as the user types a digit. So for example, if bits is 8 
 // and radix is 10 and the user has already typed "25" then typing "6" will
 // cause a beep due to overflow, but typing "5" will not.
 //
-// 2. An overflow sets overflow_ in the CCalcDlg class (ie, via pp_).
+// 2. An overflow sets state==OVERFLOW in the CCalcDlg class (ie, via pp_).
 //
 // 3. With the ability to evaluate expressions in the edit control the type of 
-// the contents of the edit control are stored in current_type_ in CalcDlg. If
-// the value is a simple integer constant then current_const_ is TRUE.
-// If the contents of the edit box contains something more complex (not an int)
-// then current_const_ is FALSE and current_type_ contains the type of the
-// result of the expression (which is TYPE_INT for a simple integer).
-// If it is not a valid expression current_type_ contains TYPE_NONE.
-// Note that for invalid expressions no error is indicated (beep, message etc)
-// since the user may not have finished it, but the error is stored in
-// current_str_ so it can be displayed if the user tries to use it.
+// the contents of the edit control are reflected in state_ in CalcDlg.
+// Also current_ contains the current value if it evaluates to an integer
+// (ie is an integer literal or an expression that returns and integer).
+// If the edit control does not contains a value that can be an integer then
+// state_ is set appropriately and current_str_ contains the value as a string.
 
 /////////////////////////////////////////////////////////////////////////////
 // CCalcEdit
@@ -77,7 +72,8 @@ BEGIN_MESSAGE_MAP(CCalcEdit, CEdit)
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
-// Put current calculator value (pp_->current_) into edit control nicely formatted
+// Put current integer (current_) as literal text into the edit box
+// Also checks for overflow etc and updates the bits display.
 void CCalcEdit::Put()
 {
 	ASSERT(pp_ != NULL);
@@ -86,35 +82,48 @@ void CCalcEdit::Put()
 
 	mpz_class val = pp_->get_norm(pp_->current_);
 
-	{
-		char *buf = new char[mpz_sizeinbase(val.get_mpz_t(), pp_->radix_) + 2];
-		mpz_get_str(buf, pp_->radix_, val.get_mpz_t());
+	// Get a buffer large enough to hold the text (may be big)
+	char *buf = new char[mpz_sizeinbase(val.get_mpz_t(), pp_->radix_) + 2];
 
-		pp_->current_const_ = TRUE;
-		pp_->current_type_ = CJumpExpr::TYPE_INT;
+	// Get the number as a string and add it to the text box
+	mpz_get_str(buf, pp_->radix_, val.get_mpz_t());
+	SetWindowText(buf);
+	SetSel(strlen(buf), -1, FALSE);     // move caret to end
 
-		SetWindowText(buf);
-		SetSel(strlen(buf), -1, FALSE);     // move caret to end
+	delete[] buf;
 
-		delete[] buf;
-	}
-
+	// Format the number nicely
 	add_sep();
+
+	// We know it is an integer (though the caller will probably set this to INTRES)
+	if (pp_->bits_ > 0 && (pp_->current_ < pp_->min_val_ || pp_->current_ > pp_->max_val_))
+		pp_->state_ = CALCOVERFLOW;
+	else
+		pp_->state_ = CALCINTLIT;
+
 	if (pp_->ctl_calc_bits_.m_hWnd != 0)
 		pp_->ctl_calc_bits_.RedrawWindow();
 }
 
+// Put general string (eg may be expression or non-integer value) into the edit box.
+// Checks the type of expression, overflow etc and updates the bits display.
 void CCalcEdit::PutStr()
 {
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
 	ASSERT(pp_->IsVisible());
 
+	// Put as Unicode as an expression can contain a Unicode string
 	::SetWindowTextW(m_hWnd, (LPCWSTR)pp_->current_str_);
-	update_value(false);
+
+	pp_->state_ = update_value(false);
+
+	// Force redisplay of bits in case it was an integer
+	if (pp_->ctl_calc_bits_.m_hWnd != 0)
+		pp_->ctl_calc_bits_.RedrawWindow();
 }
 
-// Check if string is a simple number (possible with separators) or an expression
+// Check if string is a simple number (possibly with separators) or an expression
 bool CCalcEdit::is_number(LPCTSTR ss)
 {
 	char sep_char = ' ';
@@ -136,7 +145,7 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 		// Check if/get valid digit
 		unsigned int digval;
 		if (*ps < 0)
-			return false;
+			return false;                // is* macros can't handle -ve values
 		else if (isdigit(*ps))
 			digval = *ps - '0';
 		else if (isalpha(*ps))
@@ -153,38 +162,18 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 
 	return digit_seen && !last_sep;     // OK if we saw a digit and did not end on a separator
 }
-
-// Takes the value in the edit control and works out things about it.
+// Takes the value in the edit control and works out info about it:
+//  - sets current_ if it is an integer value
+//  - sets current_str_ if it is something else
+//  - returns a new STATE to says what sort of value/expression is there
+//
 // The side_effects parameters says whether side effects in an expression
 // have any effect.  For example, in the expression "q ? a=1 : b=2" the values
 // of the variables 'a' and 'b' will not be changed if side_effects is false
 // but when side_effects is true then 'a' or 'b' will be changed depending
 // on the value of 'q'.
-//
-// This function is used
-//  1. while the user is editing the text (typing in a number or expression)
-//  2. when the result is to be displayed (Go or = button used)
-//
-// The following CalcDlg members are set accordingly:
-// current_
-//   mpz_class value of the text if current_type_ == TYPE_INT
-//   for other type it may be set to zero or somethings else (eg rounded floating point value) but I am not sure if this "feature" is used
-// current_type_
-//   TYPE_NONE if the current text is not a valid expression (including not a valid number in the current radix)
-//   TYPE_INT if the text represents an integer expression including a valid literal number in the current radix
-//   TYPE_REAL if the text represents a floating point expression (eg "pi/2.0")
-//   TYPE_BOOL if the text represents a boolean expression (eg "a == b"
-//   TYPE_DATE if the text represents a date expression
-// current_const_
-//   this is only true if the string is a valid literal number in the current radix (also current_type_ will be TYPE_INT)
-// current_str_
-//   if current_type_ != TYPE_NONE this is the result of the expression as a string
-//   if current_type_ == TYPE_NONE this is an error message describing why the expression is invalid
-// overflow_
-//   if current_type_ == TYPE_NONE this indicates some sort of domain error in the expression
-//   if current_type_ == TYPE_INT indicates the result is too big for the current number of bits
 
-bool CCalcEdit::update_value(bool side_effects /* = true */)
+CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 {
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->IsVisible());
@@ -194,14 +183,15 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 	GetWindowText(ss);
 	if (ss.IsEmpty())
 		ss = "0";     // make zero if empty
-	pp_->overflow_ = FALSE;
-
-	// check if it is a simple numeric value
-	pp_->current_const_ = is_number(ss);
 
 	// evaluate the expression
 	int ac;
 	CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(ss, 0 /*unused*/, ac /*unused*/, pp_->radix_, side_effects);
+
+	CALCSTATE retval = CALCERR;
+	pp_->current_ = 0;                 // default to zero in case of error etc
+
+	// Set current_, current_str_ and retval depending on what we found
 	switch((expr_eval::type_t)vv.typ)
 	{
 	case CHexExpr::TYPE_NONE:
@@ -211,21 +201,33 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 #else
 		if (pp_->current_str_.Left(8).CompareNoCase("Overflow") == 0)
 #endif
-		{
-			ASSERT(0);  // should not happen since update_value should not be called when we have a valid integer expression - hence Overflow should not occur
-			pp_->overflow_ = TRUE;
-			pp_->current_type_ = CHexExpr::TYPE_INT;
-		}
+			retval = CALCOVERFLOW;  // xxx does this ever happen?
 		else
-		{
-			pp_->current_ = 0;
-		}
-		ASSERT(!pp_->current_const_ || pp_->overflow_);
+			retval = CALCOTHER;
 		break;
 
 	case CHexExpr::TYPE_INT:
-		// If we are using decimals check if the value is -ve (has high bit set)
+		if (is_number(ss))    // it's a simple integer literal (perhaps with sign and separator chars)
 		{
+			// Remove separator chars from the string
+			char sep_char[2];
+			sep_char[1] = '\0';
+			if (pp_->radix_ == 10)
+				sep_char[0] = theApp.dec_sep_char_;
+			else
+				sep_char[0] = ' ';
+			ss.Replace(sep_char, "");
+
+			// Get the value from the string using current radix
+			mpz_set_str(pp_->current_.get_mpz_t(), ss, pp_->radix_);
+
+			// make sure current separators are correct
+			add_sep();
+			retval = CALCINTLIT;
+		}
+		else
+		{
+			// If we are using decimals check if the value is -ve (has high bit set)
 			mpz_class val;
 			if ((pp_->signed_ || pp_->bits_ == 0) && vv.int64 < 0)
 			{
@@ -237,46 +239,28 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 			{
 				mpz_set_ui64(val.get_mpz_t(), vv.int64);
 			}
-			pp_->overflow_ = pp_->bits_ > 0 && 
-			                 (val < pp_->min_val_ || val > pp_->max_val_);
-
-			if (!pp_->overflow_)
-			{
-				pp_->current_ = val;
-				if (pp_->current_const_)
-					add_sep();
-			}
+			pp_->current_ = val;
+			retval = CALCINTEXPR;
 		}
+		if (pp_->bits_ > 0 && (pp_->current_ < pp_->min_val_ || pp_->current_ > pp_->max_val_))
+			retval = CALCOVERFLOW;
 		break;
 
 	case CHexExpr::TYPE_REAL:
-		ASSERT(!pp_->current_const_);
-		{
-			mpz_class val;
-			mpz_set_d(val.get_mpz_t(), vv.real64);
-			pp_->overflow_ = pp_->bits_ > 0 && 
-			                 (val < pp_->min_val_ || val > pp_->max_val_);
-
-			if (!pp_->overflow_)
-				pp_->current_ = val;
-		}
-
 #ifdef UNICODE_TYPE_STRING
 		pp_->current_str_.Format(L"%g", vv.real64);
 #else
 		pp_->current_str_.Format("%g", vv.real64);
 #endif
+		retval = CALCREALEXPR;
 		break;
 
 	case CHexExpr::TYPE_BOOLEAN:
-		ASSERT(!pp_->current_const_);
-		pp_->current_ = vv.boolean;
 		pp_->current_str_ = vv.boolean ? "TRUE" : "FALSE";
+		retval = CALCBOOLEXPR;
 		break;
 
 	case CHexExpr::TYPE_STRING:
-		ASSERT(!pp_->current_const_);
-		pp_->current_ = 0;
 		pp_->current_str_ = *vv.pstr;
 		// Escape special characters
 #ifdef UNICODE_TYPE_STRING
@@ -302,24 +286,17 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		pp_->current_str_.Replace("\"", "\\\"");
 		pp_->current_str_ = "\"" + pp_->current_str_ + "\"";
 #endif
+		retval = CALCSTREXPR;
 		break;
 
 	case CHexExpr::TYPE_DATE:
-		ASSERT(!pp_->current_const_);
 		if (vv.date <= -1e30)
-		{
-			pp_->current_ = 0;
 			pp_->current_str_ = "##Invalid date##";
-		}
 		else
 		{
-			mpz_class val;
-			mpz_set_d(val.get_mpz_t(), vv.date);
-			pp_->overflow_ = pp_->bits_ > 0 && 
-			                 (val < pp_->min_val_ || val > pp_->max_val_);
-			if (!pp_->overflow_)
-				pp_->current_ = val;
-
+			// Convert the date to an expression that evaluates to that date.  Since we don't have date
+			// literals we need to use a function and a date string.  Thence we can put the expression 
+			// back into the calc edit box and it will evaluates to the same date.
 			COleDateTime odt;
 			odt.m_dt = vv.date;
 			odt.m_status = COleDateTime::valid;
@@ -331,17 +308,18 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 			else
 				pp_->current_str_ = "DATE(\"" + odt.Format("%x %X") + "\")"; // Date and time
 		}
+		retval = CALCDATEEXPR;
 		break;
 
 	default:
-		ASSERT(0);
-		pp_->current_type_ = CHexExpr::TYPE_NONE;  // signal as error until calc can handle expressions of any type
+		ASSERT(0);  // I believe this should not happen
 		pp_->current_str_ = "##Unexpected expression type##";
+		retval = CALCERR;
 		break;
 	}
 	pp_->ShowStatus();                       // Indicate overflow etc
 
-	if (pp_->overflow_)
+	if (retval == CALCOVERFLOW || retval == CALCERR)
 	{
 		// Note: Since we are ignoring the typed character (returning false)
 		//       we do not want to change pp_->current_type_.
@@ -349,17 +327,13 @@ bool CCalcEdit::update_value(bool side_effects /* = true */)
 		if (!CSystemSound::Play("Invalid Character"))
 #endif
 			::Beep(5000,200);
-		//pp_->update_file_buttons();
-		return false;
 	}
-	else
-	{
-		pp_->current_type_ = (expr_eval::type_t)vv.typ;
-		//pp_->update_file_buttons();  // must be called after settings current type
-		return true;
-	}
+
+	return retval;
 }
 
+// Gets the value from the edit box assuming it is an integer literal, and reformats the digits
+// nicely grouped with separators (spaces or commas/dots), preserving the cursor (caret) position.
 void CCalcEdit::add_sep()
 {
 	ASSERT(pp_ != NULL);
@@ -369,7 +343,7 @@ void CCalcEdit::add_sep()
 	// Work out how to group the digits
 	int group;
 	if (pp_->radix_ == 10)
-		group = theApp.dec_group_;             // Use decimal grouping from locale
+		group = theApp.dec_group_;      // Use decimal grouping from locale
 	else if (pp_->radix_ == 16)
 		group = 4;                      // For hex make groups of 4 nybbles (2 bytes)
 	else
@@ -470,12 +444,31 @@ void CCalcEdit::add_sep()
 	SetSel(newstart, newend);
 }
 
+// When the edit box is displaying a result (eg, state_ == CALCINTRES etc)
+// this changes the state_ to allow editing (eg CALCINTLIT) and also gives the 
+// option to clear the edit box in preparation for a new value being entered.
+void CCalcEdit::ClearResult(bool clear /* = true */)
+{
+	if (pp_->state_ < CALCINTLIT || pp_->state_ == CALCOTHRES)
+	{
+		if (clear)
+			SetWindowText("");
+
+		if (pp_->state_ < CALCINTLIT)
+			pp_->state_ = CALCINTLIT;
+		else if (pp_->state_ == CALCOTHRES)
+			pp_->state_ = CALCOTHER;
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CCalcEdit message handlers
 
 void CCalcEdit::OnSetFocus(CWnd* pOldWnd)
 {
-	pp_->in_edit_ = TRUE;
+	// This clears the edit box after a binop button but allows editing after '=' button,
+	// so the user can edit a result (eg to copy to clipboard).
+	ClearResult(pp_->op_ != binop_none);
 
 	CEdit::OnSetFocus(pOldWnd);
 	if (sel_ != (DWORD)-1)
@@ -493,51 +486,36 @@ void CCalcEdit::OnKillFocus(CWnd* pNewWnd)
 
 void CCalcEdit::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	pp_->in_edit_ = TRUE;
 	CEdit::OnLButtonUp(nFlags, point);
 }
 
 void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	ASSERT(pp_ != NULL);
-	ASSERT(pp_->IsVisible());
-	CString ss;
-	GetWindowText(ss);
-	int start, end;
-	GetSel(start, end);
+	ASSERT(pp_ != NULL && pp_->IsVisible());
+	ClearResult();
 
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
-	if (!update_value(false))
-	{
-		SetWindowText(ss);
-		SetSel(start, end, FALSE);
-	}
-
-	pp_->in_edit_ = TRUE;
+	update_value(false);
 	pp_->ctl_calc_bits_.RedrawWindow();
 }
 
 void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	ASSERT(pp_ != NULL);
-	ASSERT(pp_->IsVisible());
-	CString ss;                         // Text from the window (edit control)
-	int start, end;                     // Current selection in the edit control
+	ASSERT(pp_ != NULL && pp_->IsVisible());
 
-	pp_->ShowBinop(pp_->op_);           // Show current binop (if any) and clear overflow/error status
+	// Clear any result (unless arrow, Del etc key pressed)
+	ClearResult((nFlags & 0x100) == 0 && isprint(nChar));
 
-	// If we need to clear edit control (eg. binary op just entered) ...
-	if (!pp_->in_edit_)
+	//pp_->ShowBinop();                   // Show current binop (if any) and clear overflow/error status
+
+	// If editing an integer then make allowances for separator char
+	if (pp_->state_ == CALCINTLIT)
 	{
-		// Clear control ready for new number unless (arrow, Del etc key pressed)
-		if ((nFlags & 0x100) == 0 && isprint(nChar))
-			SetWindowText("");
-		pp_->in_edit_ = TRUE;           // and go into edit mode
-	}
-	else
-	{
-		// Fiddle with the selection so that arrows/Del work OK in presence of separator chars
+		CString ss;                         // Text from the window (edit control)
+		int start, end;                     // Current selection in the edit control
+
+		// Set selection so that arrows/Del work OK in presence of separator chars
 		GetWindowText(ss);
 		GetSel(start, end);
 
@@ -545,7 +523,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if (pp_->radix_ == 10) sep_char = theApp.dec_sep_char_;
 
 		// If no selection and character to delete is separator ...
-		if (nChar == VK_DELETE && start == end && ss.GetLength() > start+1 && ss[start+1] == sep_char)
+		if (nChar == VK_DELETE && start == end && start < ss.GetLength() - 1 && ss[start+1] == sep_char)
 		{
 			// Set selection so that the separator and following digit is deleted
 			SetSel(start, start+2);
@@ -555,21 +533,17 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			// Move cursor back one so we skip over the separator (else add_sep below makes the caret stuck)
 			SetSel(start-1, start-1);
 		}
+		else if (nChar == VK_RIGHT && start == end && start < ss.GetLength() - 1 && ss[start+1] == sep_char)
+		{
+			// Move cursor back one so we skip over the separator (else add_sep below makes the caret stuck)
+			SetSel(start+1, start+1);
+		}
 	}
 
 	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 
-	//// Tidy display if hex and char(s) deleted or caret moved
-	//GetWindowText(ss);
-	//if ((nChar == VK_DELETE || nChar == VK_RIGHT || nChar == VK_LEFT) &&
-	//    is_number(ss) &&
-	//    ::GetKeyState(VK_SHIFT) >= 0 && ss.GetLength() > 0)
-	//{
-	//    add_sep();
-	//}
-
 	if (nChar == VK_DELETE)
-		(void)update_value(false);   // should always return true for Del key
+		(void)update_value(false);
 
 	pp_->source_ = theApp.recording_ ? km_user_str : km_result;
 	pp_->ctl_calc_bits_.RedrawWindow();
@@ -579,9 +553,11 @@ BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg)
 {
 	CString ss;
 
+	// The default behaviour for Enter key is GO or "=" button
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
 	{
-		if (pp_->ctl_go_.IsWindowEnabled() && pp_->current_type_ == CJumpExpr::TYPE_INT)
+		// Can only used GO button if it's enabled and we have an integer value
+		if (pp_->ctl_go_.IsWindowEnabled() && pp_->state_ <= CALCINTEXPR)
 			pp_->OnGo();
 		else
 			pp_->OnEquals();
@@ -662,7 +638,7 @@ void CCalcListBox::OnTimer(UINT id)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CCalcComboBox
+// CCalcComboBox - just used to "subclass" the list box (see CCalcListBox)
 
 BEGIN_MESSAGE_MAP(CCalcComboBox, CComboBox)
 	ON_WM_CTLCOLOR()

@@ -218,9 +218,7 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 
 	op_ = binop_none;
 	current_ = previous_ = 0;
-	in_edit_ = FALSE;
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
+	state_ = INTRES;
 
 	bits_index_ = base_index_ = -1;  // Fixed later in Create()
 	radix_ = bits_ = -1;  // Set to -1 so they are set up correctly
@@ -250,7 +248,6 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	change_base(aa_->GetProfileInt("Calculator", "Base", 16));
 	change_bits(aa_->GetProfileInt("Calculator", "Bits", 32));
 	change_signed(aa_->GetProfileInt("Calculator", "signed", 0) ? true : false);
-	signed_ = false;  // xxx
 	current_.set_str(aa_->GetProfileString("Calculator", "Current", "0"), 10);
 	memory_.set_str(aa_->GetProfileString("Calculator", "Memory", "0"), 10);
 	signed_ = radix_ == 10; // xxx fix when we have signed checkbox TBD TODO
@@ -776,6 +773,7 @@ void CCalcDlg::fix_values()
 	}
 }
 
+#if 0
 // Check if the current expression in the edit box is a valid expression returning an integer
 bool CCalcDlg::invalid_expression()
 {
@@ -813,19 +811,27 @@ bool CCalcDlg::invalid_expression()
 		return true;
 	}
 }
+#endif
 
 void CCalcDlg::do_binop(binop_type binop)
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > INTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.";
 		return;
+	}
 
-	if (in_edit_ || op_ == binop_none || aa_->playing_)
+	// Now we need to save the current value as the first operand
+	// unless the user has just used a binop button in which case we override it
+	if (state_ != CALCINTRES || op_ == binop_none || aa_->playing_)
 	{
 		CString temp = GetStringValue();
 		calc_previous();
 		if (!aa_->refresh_off_ && IsVisible()) edit_.Put();
 
-		// If the value in current_ is not there as a result of a calculation then
+		// current_ is not there as a result of a calculation (state_ == INTRES) so 
 		// save operand (current_) and it's source (user-entered, cursor position etc)
 		// Also don't save the value if this is the very first thing in the macro.
 		save_to_macro(temp);
@@ -844,7 +850,7 @@ void CCalcDlg::do_binop(binop_type binop)
 		if (!overflow_ && !error_)
 			ShowBinop(binop);
 	}
-	in_edit_ = FALSE;
+	state_ = INTRES;
 }
 
 void CCalcDlg::ShowStatus()
@@ -1149,6 +1155,7 @@ void CCalcDlg::do_digit(char digit)
 		return;
 	}
 
+#if 0
 	if (!aa_->refresh_off_ && IsVisible())  // Always true but left in for consistency
 	{
 		//edit_.SetFocus();
@@ -1158,6 +1165,7 @@ void CCalcDlg::do_digit(char digit)
 			ShowBinop(op_);
 		}
 	}
+#endif
 	edit_.SendMessage(WM_CHAR, digit, 1);
 	inedit(km_user_str);
 }

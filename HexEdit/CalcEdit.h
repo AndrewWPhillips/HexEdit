@@ -7,7 +7,19 @@
 // CalcEdit.h : header file
 //
 
-class CCalcDlg;
+enum STATE {
+	ERROR,         // The last operation generated an error, E is displayed in the status 
+	OVERFLOW,      // Integer result that overflowed the current bits, O is displayed in the status
+	INTRES,        // Edit box displays an integer result, eg: after = button pressed (status is blank)
+	INTLIT  =10,   // User has entered/is entering an integer literal, eg: "1,234"
+	INTEXPR =20,   // User has entered/is entering an integer expression, eg "N + 2"
+	REALEXPR,      // User entered real expression, eg "1 / 2.0"
+	DATEEXPR,      // User entered date expression, eg "now()" 
+	STREXPR,       // User entered string expression, eg: "left(str, 1)"
+	BOOLEXPR,      // User entered Boolean expression, eg "N > 2"
+	OTHER   =30,   // User has entered something else, probably an incomplete expression, eg: "N +"
+	OTHRES  =40,   // Non-integer result, eg: after = button pressed with non-int expression (status is R,S,D,B)
+} state_;
 
 /////////////////////////////////////////////////////////////////////////////
 // CCalcListBox - the dop down list part of CCalcComboBox
@@ -48,7 +60,7 @@ private:
 
 class CCalcEdit : public CEdit
 {
-	friend CCalcDlg;
+	friend class CCalcDlg;
 
 // Construction
 public:
@@ -63,7 +75,8 @@ public:
 	void Put();                         // Set edit text from pp_->current_
 	void PutStr();                      // Set edit text from pp_->current_str_
 //    void Get();                         // Store edit text as number in pp_->current_
-	bool update_value(bool side_effects = true);
+	void ClearResult(bool clear = true);
+	CALCSTATE update_value(bool side_effects = true);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

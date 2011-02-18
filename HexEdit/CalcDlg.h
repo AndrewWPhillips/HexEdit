@@ -316,22 +316,11 @@ protected:
 
 private:
 	bool inited_;
-
 	// The calculator has several "states" depending on what has just happened (such as the "="
 	// button having just been pressed to display a result) and what charcters have been typed.
 	// The state is normally obvious to the user from what they have done, what is shown in the
 	// edit box and the "status" (IDC_OP_DISPLAY) shown to the right of the edit box
-	enum STATE {
-		NONE,
-		INTRES,        // Edit box displays an integer result, eg: after = button pressed (status is blank)
-		OVERFLOW,      // Integer result that overflowed the current bits, O is displayed in the status
-		ERROR,         // The last operation generated an error, E is displayed in the status 
-		INTLIT,        // User has entered/is entering an integer literal, eg: "1,234"
-		INTEXPR,       // User has entered/is entering an integer expression, eg "1+2"
-		OTHRES,        // Edit box is displaying a non-integer result, the status displays the type (R, S, B)
-		OTHEXPR,       // User entered a valid expression with non-integer type, eg: "x > 2"
-		OTHER,         // User has entered something else, probably an incomplete expression, eg: "1+"
-	} state_;
+	enum CALCSTATE state_;
 
 	bool invalid_expression();              // Check if current expression is valid and show error message if not
 
