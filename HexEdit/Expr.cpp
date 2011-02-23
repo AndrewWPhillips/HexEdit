@@ -1630,108 +1630,6 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 			return TOK_NONE;
 		}
 		return get_next();
-	case TOK_FACT:
-		if ((next_tok = get_next()) != TOK_LPAR)
-		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"fact\"");
-			return TOK_NONE;
-		}
-		if (error(next_tok = prec_assign(val), "Expected parameter for \"fact\""))
-			return TOK_NONE;
-
-		if (next_tok != TOK_RPAR)
-		{
-			strcpy(error_buf_, "Closing parenthesis expected for \"fact\"");
-			return TOK_NONE;
-		}
-		else if (val.typ == TYPE_INT)
-		{
-			if (val.int64 < 100)
-			{
-				__int64 temp = 1;
-				for (int ii = 1; ii < val.int64; ++ii)
-					temp *= ii + 1;
-				val.int64 = temp;
-			}
-			else
-			{
-				val.int64 = 0;
-				strcpy(error_buf_, "Parameter for \"fact\" is too big");
-				return TOK_NONE;
-			}
-		}
-		else
-		{
-			strcpy(error_buf_, "Parameter for \"fact\" must be an integer");
-			return TOK_NONE;
-		}
-		return get_next();
-
-	case TOK_GET: // GET(address, bytes)
-		// This is a bit of a kludge allowing file access here - it should be in a derived
-		// class but we have no override to handle functions (only find_symbol for symbols)
-		if ((next_tok = get_next()) != TOK_LPAR)
-		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"get\"");
-			return TOK_NONE;
-		}
-		// Turn off allowing of commas in ints to avoid cofnusion
-		saved_const_sep_allowed = const_sep_allowed_;
-		const_sep_allowed_ = false;
-		if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"get\""))
-		{
-			const_sep_allowed_ = saved_const_sep_allowed;
-			return TOK_NONE;
-		}
-		const_sep_allowed_ = saved_const_sep_allowed;
-		if (val.typ != TYPE_INT)
-		{
-			strcpy(error_buf_, "Address for \"get\" must be an integer");
-			return TOK_NONE;
-		}
-
-		if (next_tok != TOK_COMMA)
-		{
-			strcpy(error_buf_, "Expected comma and 2nd parameter for \"get\"");
-			return TOK_NONE;
-		}
-
-		if (error(next_tok = prec_assign(tmp), "Expected 2nd parameter to \"get\""))
-			return TOK_NONE;
-
-		if (next_tok != TOK_RPAR)
-		{
-			strcpy(error_buf_, "Closing parenthesis expected for \"get\"");
-			return TOK_NONE;
-		}
-		else if (tmp.typ != TYPE_INT)
-		{
-			strcpy(error_buf_, "Byte count for \"get\" must be an integer");
-			return TOK_NONE;
-		}
-		else if (tmp.int64 < 1 || tmp.int64 > 8)
-		{
-			strcpy(error_buf_, "Can't read more than 8 bytes");
-			return TOK_NONE;
-		}
-		else
-		{
-			mpz_t tt;
-			mpz_init(tt);
-
-			const char * err_mess = mpz_set_bytes(tt, val.int64, (int)tmp.int64);
-			if (err_mess != NULL)
-			{
-				mpz_clear(tt);
-				strcpy(error_buf_, err_mess);
-				return TOK_NONE;
-			}
-			val.int64 = mpz_get_ui64(tt);
-			mpz_clear(tt);
-		}
-		val.error = val.error || tmp.error;
-		return get_next();
-
 	case TOK_POW:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
@@ -1805,25 +1703,12 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		}
 		else if (val.typ == TYPE_REAL)
 		{
-			if (val.real64 < 0)
-			{
-				strcpy(error_buf_, "Parameter for \"sqrt\" must not be negative");
-				val.real64 = 0.0;
-				return TOK_NONE;
-			}
-			else
-				val.real64 = sqrt(val.real64);
+			val.real64 = sqrt(val.real64);
 		}
 		else if (val.typ == TYPE_INT)
 		{
-			if (val.int64 < 0)
-			{
-				strcpy(error_buf_, "Parameter for \"sqrt\" must not be negative");
-				val.int64 = 0;
-				return TOK_NONE;
-			}
-			else
-				val.int64 = (__int64)sqrt((double)val.int64);
+			val.real64 = sqrt((double)val.int64);
+			val.typ = TYPE_REAL;
 		}
 		else
 		{
@@ -3111,7 +2996,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		val.int64 = ~val.int64;
 		return next_tok;
 	default:
-        strcpy(error_buf_, "Not implemented");
+//        strcpy(error_buf_, "Unexpected character(s)");
 		return TOK_NONE;
 	}
 	ASSERT(0);
@@ -3310,7 +3195,6 @@ struct
 	{"ADDRESSOF", expr_eval::TOK_ADDRESSOF},
 	{"ASC2EBC",   expr_eval::TOK_A2E},
 	{"ASIN",      expr_eval::TOK_ASIN},
-	{"ASR",       expr_eval::TOK_ASR},
 	{"ATAN",      expr_eval::TOK_ATAN},
 	{"ATOF",      expr_eval::TOK_ATOF},
 	{"ATOI",      expr_eval::TOK_ATOI},
@@ -3320,9 +3204,6 @@ struct
 	{"DEFINED",   expr_eval::TOK_DEFINED},
 	{"EBC2ASC",   expr_eval::TOK_E2A},
 	{"EXP",       expr_eval::TOK_EXP},
-	{"FACT",      expr_eval::TOK_FACT},
-	{"FLIP",      expr_eval::TOK_FLIP},
-	{"GET",       expr_eval::TOK_GET},
 	{"GETBOOL",   expr_eval::TOK_GETBOOL},
 	{"GETINT",    expr_eval::TOK_GETINT},
 	{"GETSTRING", expr_eval::TOK_GETSTR},
@@ -3339,10 +3220,7 @@ struct
 	{"NOW",       expr_eval::TOK_NOW},
 	{"POW",       expr_eval::TOK_POW},
 	{"RAND",      expr_eval::TOK_RAND},
-	{"REVERSE",   expr_eval::TOK_REVERSE},
 	{"RIGHT",     expr_eval::TOK_RIGHT},
-	{"ROL",       expr_eval::TOK_ROL},
-	{"ROR",       expr_eval::TOK_ROR},
 	{"RTRIM",     expr_eval::TOK_RTRIM},
 	{"SECOND",    expr_eval::TOK_SECOND},
 	{"SIN",       expr_eval::TOK_SIN},
@@ -3357,8 +3235,6 @@ struct
 	{"TAN",       expr_eval::TOK_TAN},
 	{"TIME",      expr_eval::TOK_TIME},
 	{"YEAR",      expr_eval::TOK_YEAR},
-
-	// The above list should be in alphabetical order to allow a binary search
 
 	{NULL,        expr_eval::TOK_NONE}  // marks end of list
 };
