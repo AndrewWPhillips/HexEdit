@@ -53,6 +53,9 @@ CString	bin_str(__int64 val,int bits);
 void AddCommas(CString &str);
 void AddSpaces(CString &str);
 
+// Round to nearest integer allowing for -ve values, halves always go away from zero eg -1.5 => -2.0
+inline double fround(double r) { return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5); }
+
 CString get_menu_text(CMenu *pmenu,int id);
 
 #ifndef REGISTER_APP

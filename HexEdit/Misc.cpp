@@ -1443,7 +1443,7 @@ unsigned __int64 mpz_get_ui64(mpz_srcptr p)
 	// Any higher limbs are lost - so value is truncated
 
 	if (mpz_sgn(p) < 0)
-		return (unsigned __int64)-val.QuadPart;
+		return (unsigned __int64)-val.QuadPart;  // ensures correct  (2's complement) bit pattern for -ve values
 	else
 		return (unsigned __int64)val.QuadPart;
 }

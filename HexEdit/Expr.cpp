@@ -1812,7 +1812,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 				return TOK_NONE;
 			}
 			else
-				val.real64 = sqrt(val.real64);
+			val.real64 = sqrt(val.real64);
 		}
 		else if (val.typ == TYPE_INT)
 		{
@@ -2183,7 +2183,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		{
 			double tmp = make_real(val);
 			val.typ = TYPE_REAL;
-			val.real64 = (int)(365.25*tmp + 0.5);
+			val.real64 = fround(365.25*tmp);
 		}
 		else
 		{
@@ -2209,7 +2209,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		{
 			double tmp = make_real(val);
 			val.typ = TYPE_REAL;
-			val.real64 = (int)(365.25/12.0*tmp + 0.5);
+			val.real64 = fround(365.25/12.0*tmp);
 		}
 		else
 		{
@@ -2235,7 +2235,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		{
 			double tmp = make_real(val);
 			val.typ = TYPE_REAL;
-			val.real64 = (int)(tmp + 0.5);
+			val.real64 = fround(tmp);
 		}
 		else
 		{
