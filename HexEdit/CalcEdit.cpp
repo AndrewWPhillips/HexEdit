@@ -122,7 +122,9 @@ void CCalcEdit::PutStr()
 }
 #endif
 // Put the current value into the edit box
-// - from current_ if state_ <= CALCINTLIT, else from current_str_
+// - from current_ if state_ <= CALCINTLIT,
+// - else from current_str_
+//   Note that state_/current_/current_str_ may be updated to reflect what current_str_ contained.
 void CCalcEdit::put()
 {
 	ASSERT(pp_ != NULL);
@@ -145,6 +147,7 @@ void CCalcEdit::put()
 		SetSel(strlen(buf), -1, FALSE);     // move caret to end
 
 		delete[] buf;
+		TRACE("++++++ Put: int %s\r\n", buf);
 
 		// Format the number nicely
 		add_sep();
@@ -156,10 +159,15 @@ void CCalcEdit::put()
 		// Put as Unicode as an expression can contain a Unicode string
 		::SetWindowTextW(m_hWnd, (LPCWSTR)pp_->current_str_);
 		SetSel(pp_->current_str_.GetLength(), -1, FALSE);     // move caret to end
+		TRACE("++++++ Put: expr %s\r\n", pp_->current_str_);
 
-		// Update state_ to match what the string contains
+		// Finally we need to make sure that state_ etc match what the string contains.
+		// Eg current_str_ may actually be an integer literal, in which case we update state_/current_
 		pp_->state_ = update_value(false);
 	}
+
+	if (pp_->state_ <= CALCINTLIT)
+		add_sep();
 
 	// xxx do this in idle processing???
 	if (pp_->ctl_calc_bits_.m_hWnd != 0)
@@ -206,6 +214,8 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 	ss = pp_->current_str_;
 	if (ss.IsEmpty())
 		ss = "0";     // make zero if empty
+
+	// xxx check if isnumber before evaluating as an expression???
 
 	// evaluate the expression
 	int ac;
@@ -351,6 +361,12 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 			::Beep(5000,200);
 	}
 #endif
+#ifdef _DEBUG
+	if (pp_->state_ <= CALCINTLIT)
+		TRACE("++++++ Got: int %d\r\n", mpz_get_ui(pp_->current_.get_mpz_t()));
+	else
+		TRACE("++++++ Got: <%s>\r\n", pp_->current_str_);
+#endif
 
 	return retval;
 }
@@ -463,6 +479,7 @@ void CCalcEdit::add_sep()
 		dst--;                          // Forget last sep_char if added
 	*dst = '\0';                        // Terminate string
 
+	TRACE("++++++ Sep: <%s> to <%s>\r\n", ss, out);
 	SetWindowText(out);
 	delete[] out;
 	SetSel(newstart, newend);
@@ -516,8 +533,12 @@ void CCalcEdit::clear_result(bool clear /* = true */)
 	if (pp_->state_ < CALCINTLIT || pp_->state_ == CALCOTHRES)
 	{
 		if (clear)
+		{
+			TRACE("++++++ Clr: CLEARED RESULT FROM EDIT BOX\r\n");
 			SetWindowText("");
+		}
 
+		TRACE("++++++ Now: editable <%s>\r\n", pp_->state_ < CALCINTLIT ? "int" : "");
 		if (pp_->state_ < CALCINTLIT)
 			pp_->state_ = CALCINTLIT;
 		else if (pp_->state_ == CALCOTHRES)
