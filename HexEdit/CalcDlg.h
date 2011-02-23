@@ -87,14 +87,14 @@ public:
 	virtual BOOL Create(CWnd* pParentWnd = NULL);   // Normal way to create the modeless dialog
 	CSize m_sizeInitial;
 
-	void FinishMacro() { save_to_macro(); }// Tidy up any pending ops if macro is finishing
+	void FinishMacro() { save_value_to_macro(); }// Tidy up any pending ops if macro is finishing
 
 	void ShowStatus();
 	void StartEdit();            // Set focus to text control and move caret to end
 	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
-	void Set(mpz_class t) { current_ = t;  if (!theApp.refresh_off_ && IsVisible()) edit_.Put(); }
-	void Set(unsigned __int64 v) { mpz_import(current_.get_mpz_t(), 2, -1, 4, -1, 0, &v); if (!theApp.refresh_off_ && IsVisible()) edit_.Put(); }
-	void SetStr(CString ss)  { current_str_ = ss;  if (!theApp.refresh_off_ && IsVisible()) edit_.PutStr(); }
+	void Set(mpz_class t) { current_ = t; state_ = CALCINTRES; edit_.put(); }
+	void Set(unsigned __int64 v) { mpz_set_ui64(current_.get_mpz_t(), v); state_ = CALCINTRES; edit_.put(); }
+	void SetStr(CString ss)  { current_str_ = ss; state_ = CALCOTHRES; edit_.put(); }
 	void change_base(int base);    // set radix (2 to 36)
 	void change_signed(bool s);    // set whether numbers are signed or unsigned
 	void change_bits(int);         // chnage how many bits are used (0 = unlimited)
@@ -320,12 +320,12 @@ private:
 	// edit box and the "status" (IDC_OP_DISPLAY) shown to the right of the edit box
 	enum CALCSTATE state_;
 
-	bool invalid_expression();              // Check if current expression is valid and show error message if not
+	//bool invalid_expression();              // Check if current expression is valid and show error message if not
 
 	CToolTipCtrl ttc_;                      // For button tooltips
 	HWND help_hwnd_;                        // HWND of window for which context help is pending (usually 0)
 
-	void save_to_macro(CString ss = CString());
+	void save_value_to_macro(CString ss = CString());
 	void do_binop(binop_type binop);        // Handle binary operators
 	void do_unary(unary_type unary);        // Handle unary operators
 	void do_digit(char digit);              // Handle "digit" button on calculator
@@ -351,6 +351,10 @@ private:
 	// active then is has value binop_none.
 	binop_type op_;
 
+	void inedit(km_type kk)
+	{
+		source_ = theApp.recording_ ? kk : km_result;   // where to get value from in playback
+	}
 #if 0
 	BOOL in_edit_;                      // Can we edit the numbers in the edit box or should next edit clear it (eg. after "=" used)
 	void inedit(km_type kk)
@@ -407,6 +411,7 @@ private:
 	void update_digit_buttons();    // fix basic buttons (digits etc)
 	void update_file_buttons();     // fix file related buttons
 	void update_controls();         // set up all controls
+	void update_op();               // Update the "operator" display to the right of the edit box
 
 	void build_menus();             // Build menus for menu buttons
 	void button_colour(CWnd *pp, bool enable, COLORREF normal); // Make button greyed/normal

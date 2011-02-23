@@ -17,6 +17,23 @@
 // or loss of business that this product may cause.
 //
 
+// Notes
+// The calculator dialog is handled here (CCalcDlg) but there are some related classes:
+// CCalcEdit - handles the text box where values are entered and results displayed
+// CCalcComboBox - combo that contains the edit box and provides the history list
+// CCalcListBox - list part of combo (used for displaying a tip window with result value)
+// CCalcBits - displays boxes showinh the bottom 64 bits (in an integer value)
+// CCalcButton - base class for all calculator buttons
+//
+// The "current value" of the calculator is stored in this class (CCalcDlg) in:
+// state_ - says whethere the value is an integer or other type of value, is a literal
+//          or expression, is a result (including error/overflow) or is being edited
+// current_ - current value if its a simple integer literal (ie, state_ <= CALCINTLIT)
+// current_str_ - current value as a string if not an integer or is an expression
+//
+// The edit box is used to display results by setting current/current_str_ and state_
+// and calling CCalcEdit::put.
+//
 #include "stdafx.h"
 #include <cmath>
 #include "HexEdit.h"
@@ -140,13 +157,14 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	int bnum;
-	if ((bnum = pos2bit(point)) > -1 && (m_pParent->bits_ == 0 || bnum < m_pParent->bits_))
+	if (m_pParent->state_ <= CALCINTLIT &&   // currently displaying an int
+		(bnum = pos2bit(point)) > -1 &&      // valid bit clicked on
+		(m_pParent->bits_ == 0 || bnum < m_pParent->bits_)) // not a disabled bit
 	{
 		ASSERT(bnum < 64 && bnum >= 0);
 		mpz_class val = m_pParent->current_;
 		mpz_combit(val.get_mpz_t(), bnum);
 		m_pParent->Set(val);
-		//m_pParent->update_file_buttons();
 	}
 	CWnd::OnLButtonDown(nFlags, point);
 }
@@ -604,12 +622,12 @@ void CCalcDlg::StartEdit()
 
 // Save a calculator value to the current macro
 // If a value (ss) is specified save it else save the current calc value as a string
-void CCalcDlg::save_to_macro(CString ss /*= CString()*/)
+void CCalcDlg::save_value_to_macro(CString ss /*= CString()*/)
 {
 	if (ss.IsEmpty())
-		ss = GetStringValue();
+		ss = current_str_;
 
-	if (source_ == km_user_str && (current_type_ != CJumpExpr::TYPE_INT || !current_const_))
+	if (source_ == km_user_str && state_ >= CALCINTEXPR)
 		aa_->SaveToMacro(km_expression, ss);
 	else if (source_ == km_user_str)
 		aa_->SaveToMacro(km_user_str, ss);
@@ -657,6 +675,7 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 	if (err_mess != NULL)
 	{
 		AfxMessageBox(err_mess);
+		state_ = CALCERROR;
 		return false;
 	}
 
@@ -672,6 +691,7 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 		mpz_neg(retval.get_mpz_t(), retval.get_mpz_t());
 	}
 #endif
+	state_ = CALCINTRES;
 	return true;
 }
 
@@ -800,10 +820,10 @@ bool CCalcDlg::invalid_expression()
 void CCalcDlg::do_binop(binop_type binop)
 {
 	// First check that we can perform an integer operation
-	if (state_ > INTEXPR)
+	if (state_ > CALCINTEXPR)
 	{
 		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.";
+		              "on integer values.");
 		return;
 	}
 
@@ -813,12 +833,12 @@ void CCalcDlg::do_binop(binop_type binop)
 	{
 		CString temp = GetStringValue();
 		calc_previous();
-		if (!aa_->refresh_off_ && IsVisible()) edit_.Put();
+		edit_.put();
 
 		// current_ is not there as a result of a calculation (state_ == INTRES) so 
 		// save operand (current_) and it's source (user-entered, cursor position etc)
 		// Also don't save the value if this is the very first thing in the macro.
-		save_to_macro(temp);
+		save_value_to_macro(temp);
 
 		// Get ready for new value to be entered
 		previous_ = get_norm(current_);
@@ -827,7 +847,7 @@ void CCalcDlg::do_binop(binop_type binop)
 	aa_->SaveToMacro(km_binop, long(binop));
 	op_ = binop;
 	ShowStatus();
-	state_ = INTRES;
+	state_ = CALCINTRES;
 }
 
 void CCalcDlg::ShowStatus()
@@ -835,7 +855,7 @@ void CCalcDlg::ShowStatus()
 	if (!aa_->refresh_off_ && IsVisible())
 	{
 		ASSERT(GetDlgItem(IDC_OP_DISPLAY) != NULL);
-		if (overflow_)
+		if (state_ == CALCOVERFLOW)
 		{
 			TRACE0("OVERFLOW!!");
 			GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("O");
@@ -845,7 +865,7 @@ void CCalcDlg::ShowStatus()
 				::Beep(3000,400);
 
 		}
-		else if (error_)
+		else if (state_ == CALCERROR)
 		{
 			TRACE0("ERROR!!");
 			GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("E");
@@ -895,7 +915,7 @@ void CCalcDlg::update_op()
 	case CALCINTRES:
 	case CALCINTLIT:
 	case CALCINTEXPR:
-		switch (binop)
+		switch (op_)
 		{
 		case binop_add:
 			disp = "+";
@@ -967,17 +987,19 @@ void CCalcDlg::update_op()
 
 void CCalcDlg::do_unary(unary_type unary)
 {
-	if (invalid_expression())
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("You can only use buttons on integers.");
 		return;
+	}
 
 	// Save the value to macro before we do anything with it (unless it's a result of a previous op).
 	// Also don't save the value if this (unary op) is the very first thing in the macro.
-	save_to_macro();
-
-	overflow_ = error_ = FALSE;
+	save_value_to_macro();
 
 	current_ = get_norm(current_);
 
+	state_ = CALCINTRES;  // default to integer result (could also be error/overflow as set below)
 	switch (unary)
 	{
 	case unary_inc:
@@ -996,7 +1018,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		if (mpz_sgn(current_.get_mpz_t()) < 0)
 		{
 			AfxMessageBox("Square root of negative value");
-			error_ = TRUE;
+			state_ = CALCERROR;
 		}
 		else
 			mpz_sqrt(current_.get_mpz_t(), current_.get_mpz_t());
@@ -1014,7 +1036,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		if (bits_ == 0)
 		{
 			AfxMessageBox("Can't rotate left if bit count is unlimited");
-			error_ = TRUE;
+			state_ = CALCERROR;
 		}
 		else
 			current_ = ((current_ << 1) | (current_ >> (bits_ - 1))) & mask_;
@@ -1023,7 +1045,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		if (bits_ == 0)
 		{
 			AfxMessageBox("Can't rotate right if bit count is unlimited");
-			error_ = TRUE;
+			state_ = CALCERROR;
 		}
 		else
 			current_ = ((current_ >> 1) | (current_ << (bits_ - 1))) & mask_;
@@ -1052,7 +1074,7 @@ void CCalcDlg::do_unary(unary_type unary)
 			if (bits_ == 0)
 			{
 				AfxMessageBox("Can't reverse bits if bit count is unlimited");
-				error_ = TRUE;
+				state_ = CALCERROR;
 				break;
 			}
 			// This algorithm tests the current bits by shifting right and testing
@@ -1075,7 +1097,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		if (bits_ == 0 || bits_%8 != 0)
 		{
 			AfxMessageBox("Bits must be divisible by 8 to flip bytes");
-			error_ = TRUE;
+			state_ = CALCERROR;
 		}
 		else
 		{
@@ -1098,7 +1120,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		if (GetView() == NULL)
 		{
 			AfxMessageBox("No file open to get data from");
-			error_ = TRUE;
+			state_ = CALCERROR;
 		}
 		else
 		{
@@ -1110,15 +1132,15 @@ void CCalcDlg::do_unary(unary_type unary)
 			if (current_ < 0)
 			{
 				AfxMessageBox("Can't read before start of file");
-				error_ = TRUE;
+				state_ = CALCERROR;
 			}
 			else if (current_ >= eof)
 			{
 				AfxMessageBox("Can't read past end of file");
-				error_ = TRUE;
+				state_ = CALCERROR;
 			}
 			else if (!get_bytes(GetValue()))
-				error_ = TRUE;
+				state_ = CALCERROR;
 		}
 		break;
 
@@ -1127,25 +1149,22 @@ void CCalcDlg::do_unary(unary_type unary)
 		ASSERT(0);
 	}
 
-	if (!error_)
-		overflow_ = bits_ > 0 && (current_ < min_val_ || current_ > max_val_);
+	// Check we have not overflowed bits (if we don't already have an error)
+	if (state_ == CALCINTRES && bits_ > 0 && (current_ < min_val_ || current_ > max_val_))
+		state_ = CALCOVERFLOW;
 
 	ShowStatus();                       // Indicate overflow etc
 
-	if (overflow_ || error_)
+	if (state_ == CALCERROR || state_ == CALCOVERFLOW)
 	{
-		if (error_)
+		if (state_ == CALCERROR)
 			mm_->StatusBarText("Arithmetic error (root of -ve, etc)");
 		else
 			mm_->StatusBarText("Result overflowed data size");
 		aa_->mac_error_ = 2;
 	}
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.Put();
-		//update_file_buttons();
-	}
+	edit_.put();
 
 	// Save the unary operation to the current macro (if any)
 	aa_->SaveToMacro(km_unaryop, long(unary));
@@ -1169,16 +1188,19 @@ void CCalcDlg::do_digit(char digit)
 	}
 
 	edit_.SendMessage(WM_CHAR, digit, 1);
-	inedit(km_user_str);
 }
 
 void CCalcDlg::calc_previous()
 {
-	ASSERT(current_type_ != CJumpExpr::TYPE_NONE);      // We can't use an invalid expression
-	overflow_ = error_ = FALSE;
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("You can only use buttons on integers.");
+		return;
+	}
 
 	current_ = get_norm(current_);
 
+	state_ = CALCINTRES;
 	switch (op_)
 	{
 	case binop_add:
@@ -1194,7 +1216,7 @@ void CCalcDlg::calc_previous()
 		if (current_ == 0)
 		{
 			AfxMessageBox("Divide by zero");
-			error_ = TRUE;
+			state_ = CALCERROR;
 		}
 		else
 			current_ = previous_ / current_;
@@ -1203,7 +1225,7 @@ void CCalcDlg::calc_previous()
 		if (current_ == 0)
 		{
 			AfxMessageBox("Divide (modulus) by zero");
-			error_ = TRUE;
+			state_ = CALCERROR;
 		}
 		else
 			current_ = previous_ % current_;
@@ -1213,7 +1235,7 @@ void CCalcDlg::calc_previous()
 		{
 			current_ = 0;
 			AfxMessageBox("Power too large");
-			overflow_ = TRUE;
+			state_ = CALCOVERFLOW;
 		}
 		else
 			mpz_pow_ui(current_.get_mpz_t(), current_.get_mpz_t(), previous_.get_si()); 
@@ -1232,7 +1254,7 @@ void CCalcDlg::calc_previous()
 		if (bits_ == 0)
 		{
 			AfxMessageBox("Can't rotate left if bit count is unlimited");
-			error_ = TRUE;
+			state_ = CALCERROR;
 		}
 		else
 		{
@@ -1247,7 +1269,7 @@ void CCalcDlg::calc_previous()
 		if (bits_ == 0)
 		{
 			AfxMessageBox("Can't rotate right if bit count is unlimited");
-			error_ = TRUE;
+			state_ = CALCERROR;
 		}
 		else
 		{
@@ -1308,20 +1330,15 @@ void CCalcDlg::calc_previous()
 		break;
 	}
 
-	// Signal that current value is not an expression.  This allows correct refresh behaviour (eg,
-	// refresh off during macros playback) so that edit box is redrawn correctly (see update_controls).
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
-
-	// Check if the result overflowed the number of bits in use.
-	if (!error_)
-		overflow_ = bits_ > 0 && (current_ < min_val_ || current_ > max_val_);
+	// Check we have not overflowed bits (if we don't already have an error)
+	if (state_ == CALCINTRES && bits_ > 0 && (current_ < min_val_ || current_ > max_val_))
+		state_ = CALCOVERFLOW;
 
 	ShowStatus();                       // Indicate overflow/error (if any)
 
-	if (overflow_ || error_)
+	if (state_ == CALCERROR || state_ == CALCOVERFLOW)
 	{
-		if (error_)
+		if (state_ == CALCERROR)
 			mm_->StatusBarText("Arithmetic error (divide by 0, etc)");
 		else
 			mm_->StatusBarText("Result overflowed data size");
@@ -1355,18 +1372,9 @@ void CCalcDlg::change_base(int base)
 		break;
 	}
 
-	// check that it's an integer expression
-	if (invalid_expression())
-	{
-		edit_.update_value(false);
-		return;
-	}
-
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		//update_controls();
-		edit_.Put();
-	}
+	// If an integer literal redisplay
+	if (state_ <= CALCINTLIT)
+		edit_.put();
 
 	source_ = km_result;
 	aa_->SaveToMacro(km_change_base, long(radix_));
@@ -1379,27 +1387,10 @@ void CCalcDlg::change_signed(bool s)
 	signed_ = s;
 	fix_values();
 
-	// check that it's an integer expression
-	if (invalid_expression())
-	{
-		edit_.update_value(false);
-		return;
-	}
-
-	error_ = FALSE;
-	overflow_ = bits_ > 0 && (current_ < min_val_ || current_ > max_val_);
-	if (overflow_)
-	{
-		mm_->StatusBarText("Current value overflowed new data size");
-		aa_->mac_error_ = 1;
-	}
-	ShowStatus();                       // Set/clear overflow indicator
-
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		//update_controls();
-		edit_.Put();
-	}
+	// If an integer expression redisplay
+	if (state_ <= CALCINTLIT)
+		edit_.put();
+	ShowStatus();                       //  xxx Set/clear overflow indicator
 
 	source_ = km_result;
 	aa_->SaveToMacro(km_change_signed);
@@ -1435,26 +1426,10 @@ void CCalcDlg::change_bits(int bits)
 		break;
 	}
 
-	if (invalid_expression())
-	{
-		edit_.update_value(false);
-		return;
-	}
-
-	error_ = FALSE;
-	overflow_ = bits_ > 0 && (current_ < min_val_ || current_ > max_val_);
-	if (overflow_)
-	{
-		mm_->StatusBarText("Current value overflowed new data size");
-		aa_->mac_error_ = 1;
-	}
-	ShowStatus();                       // Set/clear overflow indicator
-
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		//update_controls();
-		edit_.Put();
-	}
+	// If an integer expression redisplay
+	if (state_ <= CALCINTLIT)
+		edit_.put();
+	ShowStatus();                       // xxx Set/clear overflow indicator
 
 	source_ = km_result;
 	aa_->SaveToMacro(km_change_bits, long(bits_));
@@ -1775,7 +1750,7 @@ void CCalcDlg::update_controls()
 		DWORD sel = edit_.GetSel();
 		edit_.GetWindowText(ss);
 
-		new_ss = ss
+		new_ss = ss;
 		if (theApp.hex_ucase_)
 			new_ss.MakeUpper();
 		else
@@ -1863,7 +1838,7 @@ void CCalcDlg::update_file_buttons()
 	}
 
 	// Most file buttons are only enabled if there is an active file open and calc has an INT value in it
-	bool basic = pview != NULL && current_type_ == CJumpExpr::TYPE_INT;
+	bool basic = pview != NULL && state_ <= CALCINTEXPR;
 
 	// Red buttons
 	button_colour(GetDlgItem(IDC_MARK_STORE),    basic && get_norm(current_) >= 0 &&
@@ -1982,7 +1957,7 @@ void CCalcDlg::OnDestroy()
 	ss = memory_.get_str(10);
 	aa_->WriteProfileString("Calculator", "Memory", ss.c_str());
 
-	if (current_type_ != CJumpExpr::TYPE_NONE)
+	if (state_ <= CALCINTEXPR)
 		calc_previous();
 	ss = current_.get_str(10);
 	aa_->WriteProfileString("Calculator", "Current", ss.c_str());
@@ -2283,32 +2258,27 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 // after the current cursor position has been moved.
 void CCalcDlg::OnGo()                   // Move cursor to current value
 {
+	// Only allow jump if value is an integer and there is no error/overflow
+	if (state_ > CALCINTEXPR || state_ < CALCINTRES)
+		return;   // xxx display an error message?
+	else if (state_ == CALCINTEXPR)
+		state_ = edit_.update_value(true);           // re-eval the expression allowing side-effects now
+	ASSERT(state_ == CALCINTLIT || state_ == CALCINTEXPR);
+
 	// First work out if we are jumping by address or sector
 	bool sector = ctl_go_.m_nMenuResult == ID_GOSECTOR;
 
-	edit_.update_value(true);           // eval the expression allowing side-effects now
-
-	if (current_type_ != CJumpExpr::TYPE_INT)
-	{
-		(void)invalid_expression();
-		return;
-	}
-
-	add_hist();   // add to calc drop hist
+	//add_hist();   // add to calc drop hist
 
 	// If the value in current_ is not there as a result of a calculation then
 	// save it before it is lost.
-	save_to_macro();
+	save_value_to_macro();
 
 	calc_previous();
 
 	op_ = binop_none;
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.Put();
-	}
-	in_edit_ = FALSE;
+	edit_.put();
 	source_ = km_result;
 
 	// Make sure we can go to the address
@@ -2447,18 +2417,10 @@ void CCalcDlg::OnBackspace()            // Delete back one digit
 void CCalcDlg::OnClearEntry()           // Zero current value
 {
 	current_ = 0;
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
+	state_ = CALCINTRES;
 	ShowStatus();
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
-
-	in_edit_ = FALSE;                   // Necessary?
+	edit_.put();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear_entry);
 }
@@ -2467,82 +2429,60 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 {
 	op_ = binop_none;
 	current_ = 0;
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
+	state_ = CALCINTRES;
 	ShowStatus();
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-	}
-
-	in_edit_ = FALSE;
+	edit_.put();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear);
 }
 
 void CCalcDlg::OnEquals()               // Calculate result
 {
-	if (current_type_ != CJumpExpr::TYPE_INT || !current_const_)
-		edit_.update_value(true);           // re-eval the expression allowing side-effects now
-
-	if (current_type_ == CJumpExpr::TYPE_NONE)
-	{
-		(void)invalid_expression();     // show error message
-		return;
-	}
-
-	add_hist();
-
-	if (current_type_ != CJumpExpr::TYPE_INT)
-	{
-#ifdef UNICODE_TYPE_STRING
-		// This is the way to put Unicode text into control with ANSI window procedure
-		//::CallWindowProcW(*edit_.GetSuperWndProcAddr(), edit_.m_hWnd, WM_SETTEXT, 0, (LPARAM)(LPCWSTR)current_str_);
-		::SetWindowTextW(edit_.m_hWnd, (LPCWSTR)current_str_);
-#else
-		edit_.SetWindowText(current_str_);
-#endif
-		switch (current_type_)
-		{
-		case CJumpExpr::TYPE_REAL:
-			SetDlgItemText(IDC_OP_DISPLAY, "R");
-			break;
-		case CJumpExpr::TYPE_STRING:
-			SetDlgItemText(IDC_OP_DISPLAY, "S");
-			break;
-		case CJumpExpr::TYPE_BOOLEAN:
-			SetDlgItemText(IDC_OP_DISPLAY, "B");
-			break;
-		case CJumpExpr::TYPE_DATE:
-			SetDlgItemText(IDC_OP_DISPLAY, "D");
-			break;
-		}
-		in_edit_ = FALSE;
-		edit_.SetFocus();
-		return;
-	}
+	if (state_ >= CALCINTEXPR)
+		state_ = edit_.update_value(true);           // re-eval the expression allowing side-effects now
 
 	CString saved_str;
-	if (source_ == km_user_str && (current_type_ != CJumpExpr::TYPE_INT || !current_const_))
-		saved_str = CString(current_str_);   // expr from text box as string
-	else
+
+	switch (state_)
+	{
+	case CALCERROR:
+	case CALCOVERFLOW:
+	case CALCOTHER:
+		return;
+
+	case CALCINTLIT:
+	case CALCINTEXPR:
+		// Result is an integer so we can do special integer things (like enable GO button)
 		saved_str = GetStringValue();
+		state_ = CALCINTRES;
+		break;
+
+	case CALCREALEXPR:
+	case CALCDATEEXPR:
+	case CALCSTREXPR:
+	case CALCBOOLEXPR:
+		// Result is a valid value of a non-integer type
+		saved_str = CString(current_str_);   // expr from text box as string
+		state_ = CALCSTATE(state_ + 20);  // convert valid "expression" to "result" (eg CALCDATEXEPR -> CALCDATERES)
+		break;
+
+	default:
+		ASSERT(0);  // these cases should not occur
+		return;
+	}
+
+	// We have a valid result so add it to the history list
+	add_hist();
 
 	calc_previous();
 
-	// If current value is not there as a result of a calculation then
-	// save it before it is lost.
-	save_to_macro(saved_str);
+	// If current value is not there as a result of a calculation then save it before it is lost.
+	save_value_to_macro(saved_str);
 
 	op_ = binop_none;
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.Put();
-	}
+	edit_.put();
 
-	in_edit_ = FALSE;
 	edit_.SetFocus();
 	source_ = km_result;
 	aa_->SaveToMacro(km_equals);
@@ -2557,7 +2497,7 @@ void CCalcDlg::add_hist()
 		// Get the current value or expression
 		CString toadd;
 		edit_.GetWindowText(toadd);
-
+#if 0  // We no longer remove duplicates since the same expression could have a differeny result
 		for (int ii = 0; ii < ctl_edit_combo_.GetCount(); ++ii)
 		{
 			CString ss;
@@ -2568,6 +2508,7 @@ void CCalcDlg::add_hist()
 				break;
 			}
 		}
+#endif
 		ctl_edit_combo_.InsertString(0, toadd);
 	}
 }
@@ -2781,9 +2722,12 @@ void CCalcDlg::OnGetHexHist()
 		// 1. Displaying result - probably want to start a new calculation
 		// 2. Currently just displaying a numeric value - replace it as adding extra digits is just confusing
 		//    and otherwise adding more digits may cause an overflow which would be really confusing
-		if (!in_edit_ || current_const_)
-			edit_.SetWindowText("");  // If just calculated a result then clear it
-		in_edit_ = FALSE;
+		//if (state_ != CALCOTHER)
+		if (state_ <= CALCINTLIT || state_>= CALCOTHRES)
+		{
+			edit_.SetWindowText("");
+			state_ = CALCINTRES;
+		}
 
 		if (radix_ != 16)
 		{
@@ -2826,9 +2770,12 @@ void CCalcDlg::OnGetDecHist()
 		// 1. Currently displaying a result of previous calculation - probably want to start a new calculation
 		// 2. Currently just displaying a numeric value - replace it by adding extra digits is just confusing
 		//    + otherwise adding more digits may cause an overflow which would be really confusing
-		if (!in_edit_ || current_const_)
-			edit_.SetWindowText("");  // If just calculated a result then clear it
-		in_edit_ = FALSE;
+		//if (state_ != CALCOTHER)
+		if (state_ <= CALCINTLIT || state_>= CALCOTHRES)
+		{
+			edit_.SetWindowText("");
+			state_ = CALCINTRES;
+		}
 
 		if (radix_ != 10)
 		{
@@ -2870,9 +2817,11 @@ void CCalcDlg::OnGetVar()
 		CString ss = get_menu_text(&menu, ctl_vars_.m_nMenuResult);
 		menu.Detach();
 
-		if (!in_edit_)
-			edit_.SetWindowText("");  // If just calculated a result then clear it
-		in_edit_ = FALSE;
+		if (state_ <= CALCINTLIT || state_>= CALCOTHRES)
+		{
+			edit_.SetWindowText("");
+			state_ = CALCINTRES;
+		}
 
 		edit_.SetFocus();
 		edit_.SetSel(edit_.GetWindowTextLength(), -1);
@@ -2897,9 +2846,12 @@ void CCalcDlg::OnGetFunc()
 		CString ss = get_menu_text(&menu, ctl_func_.m_nMenuResult);
 		ss.Replace("&&", "&");  // Double-ampersand is needed in menus to show one &, but now we need to reverse that
 		menu.Detach();
-		if (!in_edit_)
-			edit_.SetWindowText("");  // If just calculated a result then clear it
-		in_edit_ = FALSE;
+
+		if (state_ <= CALCINTLIT || state_>= CALCOTHRES)
+		{
+			edit_.SetWindowText("");
+			state_ = CALCINTRES;
+		}
 
 		edit_.SetFocus();
 		edit_.SetSel(edit_.GetWindowTextLength(), -1);
@@ -3175,38 +3127,27 @@ void CCalcDlg::OnUnaryFactorial()
 void CCalcDlg::OnMemGet()
 {
 	current_ = memory_;
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
+	state_ = CALCINTRES;
 
-	overflow_ = bits_ > 0 && (current_ < min_val_ || current_ > max_val_);
-	if (overflow_)
-	{
-		mm_->StatusBarText("Memory overflowed data size");
-		aa_->mac_error_ = 2;
-	}
+	edit_.put();
 	ShowStatus();                       // Clear/set overflow indicator
-
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
 
 	inedit(km_memget);
 }
 
 void CCalcDlg::OnMemStore()
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.");
 		return;
+	}
 
 	memory_ = get_norm(current_);
 	if (!aa_->refresh_off_ && IsVisible())
 	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
 		button_colour(GetDlgItem(IDC_MEM_GET), true, RGB(0x40, 0x40, 0x40));
 
 		// TODO This works but we have to also update tooltip after MC, M+, M- buttons, and perhaps also after radix changes
@@ -3218,7 +3159,7 @@ void CCalcDlg::OnMemStore()
 		//ttc_.UpdateTipText("Memory [" + ss + "] (Ctrl+R)", GetDlgItem(IDC_MEM_GET));
 	}
 
-	save_to_macro();
+	save_value_to_macro();
 	aa_->SaveToMacro(km_memstore);
 }
 
@@ -3227,7 +3168,6 @@ void CCalcDlg::OnMemClear()
 	memory_ = 0;
 	if (!aa_->refresh_off_ && IsVisible())
 	{
-		edit_.SetFocus();
 		button_colour(GetDlgItem(IDC_MEM_GET), false, RGB(0x40, 0x40, 0x40));
 	}
 
@@ -3236,37 +3176,42 @@ void CCalcDlg::OnMemClear()
 
 void CCalcDlg::OnMemAdd()
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.");
 		return;
+	}
 
 	memory_ += get_norm(current_);
 	if (!aa_->refresh_off_ && IsVisible())
 	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
 		button_colour(GetDlgItem(IDC_MEM_GET), true, RGB(0x40, 0x40, 0x40));
 	}
 
-	save_to_macro();
+	save_value_to_macro();
 	aa_->SaveToMacro(km_memadd);
 }
 
 void CCalcDlg::OnMemSubtract()
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.");
 		return;
+	}
 
 	memory_ -= get_norm(current_);
 	if (!aa_->refresh_off_ && IsVisible())
 	{
-		edit_.SetFocus();
-		edit_.Put();
 		//update_file_buttons();
 		button_colour(GetDlgItem(IDC_MEM_GET), true, RGB(0x40, 0x40, 0x40));
 	}
 
-	save_to_macro();
+	save_value_to_macro();
 	aa_->SaveToMacro(km_memsubtract);
 }
 
@@ -3283,34 +3228,25 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), pview->GetMark());
-	overflow_ = bits_ > 0 && val > max_val_;
-	if (overflow_)
-	{
-		mm_->StatusBarText("Mark overflowed data size");
-		aa_->mac_error_ = 2;
-	}
-	else
-	{
-		current_ = val;
-		current_const_ = TRUE;
-		current_type_ = CJumpExpr::TYPE_INT;
-	}
-	ShowStatus();                       // Clear/set overflow indicator
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	current_ = val;
+	state_ = CALCINTRES;
+
+	edit_.put();
+	ShowStatus();                       // Clear/set overflow indicator
 
 	inedit(km_markget);
 }
 
 void CCalcDlg::OnMarkStore()
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.");
 		return;
+	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
@@ -3334,14 +3270,14 @@ void CCalcDlg::OnMarkStore()
 	}
 	pview->SetMark(mpz_get_ui64(new_mark.get_mpz_t()));
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	//if (!aa_->refresh_off_ && IsVisible())
+	//{
+	//	edit_.SetFocus();
+	//	edit_.Put();
+	//	//update_file_buttons();
+	//}
 
-	save_to_macro();
+	save_value_to_macro();
 	aa_->SaveToMacro(km_markstore);
 }
 
@@ -3356,19 +3292,24 @@ void CCalcDlg::OnMarkClear()
 	}
 
 	pview->SetMark(0);
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		//update_file_buttons();
-	}
+	//if (!aa_->refresh_off_ && IsVisible())
+	//{
+	//	edit_.SetFocus();
+	//	//update_file_buttons();
+	//}
 
 	aa_->SaveToMacro(km_markclear);
 }
 
 void CCalcDlg::OnMarkAdd()              // Add current value to mark
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.");
 		return;
+	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
@@ -3393,21 +3334,26 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	}
 	pview->SetMark(mpz_get_ui64(new_mark.get_mpz_t()));
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	//if (!aa_->refresh_off_ && IsVisible())
+	//{
+	//	edit_.SetFocus();
+	//	edit_.Put();
+	//	//update_file_buttons();
+	//}
 
-	save_to_macro();
+	save_value_to_macro();
 	aa_->SaveToMacro(km_markadd);
 }
 
 void CCalcDlg::OnMarkSubtract()
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.");
 		return;
+	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
@@ -3431,14 +3377,14 @@ void CCalcDlg::OnMarkSubtract()
 		return;
 	}
 	pview->SetMark(mpz_get_ui64(new_mark.get_mpz_t()));
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	//if (!aa_->refresh_off_ && IsVisible())
+	//{
+	//	edit_.SetFocus();
+	//	edit_.Put();
+	//	//update_file_buttons();
+	//}
 
-	save_to_macro();
+	save_value_to_macro();
 	aa_->SaveToMacro(km_marksubtract);
 }
 
@@ -3453,16 +3399,10 @@ void CCalcDlg::OnMarkAt()
 		aa_->mac_error_ = 10;
 		return;
 	}
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
-	ShowStatus();
+	ASSERT(state_ == CALCINTRES);
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	edit_.put();
+	ShowStatus();
 
 	inedit(km_markat);
 }
@@ -3482,26 +3422,12 @@ void CCalcDlg::OnSelGet()
 	pview->GetSelAddr(start, end);
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), start);
-	overflow_ = bits_ > 0 && val > max_val_;
-	if (overflow_)
-	{
-		AfxMessageBox("Cursor position overflowed data size");
-		aa_->mac_error_ = 2;
-	}
-	else
-	{
-		current_ = val;
-		current_const_ = TRUE;
-		current_type_ = CJumpExpr::TYPE_INT;
-	}
-	ShowStatus();                       // Clear/set overflow indicator
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	current_ = val;
+	state_ = CALCINTRES;
+
+	edit_.put();
+	ShowStatus();                       // Clear/set overflow indicator
 
 	inedit(km_selget);
 }
@@ -3514,16 +3440,10 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
 		aa_->mac_error_ = 10;
 		return;
 	}
-	current_const_ = TRUE;
-	current_type_ = CJumpExpr::TYPE_INT;
-	ShowStatus();
+	ASSERT(state_ == CALCINTRES);
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	edit_.put();
+	ShowStatus();
 
 	inedit(km_selat);
 }
@@ -3543,26 +3463,12 @@ void CCalcDlg::OnSelLen()
 	pview->GetSelAddr(start, end);
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), end - start);
-	overflow_ = bits_ > 0 && val > max_val_;
-	if (overflow_)
-	{
-		AfxMessageBox("Selection length overflowed data size");
-		aa_->mac_error_ = 2;
-	}
-	else
-	{
-		current_ = val;
-		current_const_ = TRUE;
-		current_type_ = CJumpExpr::TYPE_INT;
-	}
-	ShowStatus();
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	current_ = val;
+	state_ = CALCINTRES;
+
+	edit_.put();
+	ShowStatus();
 
 	inedit(km_sellen);
 }
@@ -3580,26 +3486,12 @@ void CCalcDlg::OnEofGet()               // Length of file
 
 	mpz_class val;
 	mpz_set_ui64(val.get_mpz_t(), pview->GetDocument()->length());
-	overflow_ = bits_ > 0 && val > max_val_;
-	if (overflow_)
-	{
-		AfxMessageBox("File length overflowed data size");
-		aa_->mac_error_ = 2;
-	}
-	else
-	{
-		current_ = val;
-		current_const_ = TRUE;
-		current_type_ = CJumpExpr::TYPE_INT;
-	}
-	ShowStatus();
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	current_ = val;
+	state_ = CALCINTRES;
+
+	edit_.put();
+	ShowStatus();
 
 	inedit(km_eofget);
 }
@@ -3609,8 +3501,13 @@ void CCalcDlg::OnEofGet()               // Length of file
 // Change the byte(s) at (and after) the "mark"
 void CCalcDlg::OnMarkAtStore()
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.");
 		return;
+	}
 
 	FILE_ADDRESS mark = 0;
 	if (GetView() != NULL)
@@ -3624,22 +3521,27 @@ void CCalcDlg::OnMarkAtStore()
 	if (!GetView()->OverType())
 		GetView()->SetMark(mark);   // Inserting at mark would have move it forward
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	//if (!aa_->refresh_off_ && IsVisible())
+	//{
+	//	edit_.SetFocus();
+	//	edit_.Put();
+	//	//update_file_buttons();
+	//}
 
-	save_to_macro();
+	save_value_to_macro();
 	aa_->SaveToMacro(km_markatstore);
 }
 
 // Set the caret position (or selection start)
 void CCalcDlg::OnSelStore()
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.");
 		return;
+	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
@@ -3666,44 +3568,54 @@ void CCalcDlg::OnSelStore()
 	}
 	pview->MoveWithDesc("Set Cursor in Calculator", GetValue());
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		// update_file_buttons(); // done indirectly through MoveToAddress via MoveWithDesc
-	}
+	//if (!aa_->refresh_off_ && IsVisible())
+	//{
+	//	edit_.SetFocus();
+	//	edit_.Put();
+	//	// update_file_buttons(); // done indirectly through MoveToAddress via MoveWithDesc
+	//}
 
-	save_to_macro();
+	save_value_to_macro();
 	aa_->SaveToMacro(km_selstore);
 }
 
 // Change the byte(s) at (and after) the caret (start of selection)
 void CCalcDlg::OnSelAtStore()
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.");
 		return;
+	}
 
 	if (!put_bytes(-3))
 	{
 		aa_->mac_error_ = 10;
 		return;
 	}
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		//update_file_buttons();
-	}
+	//if (!aa_->refresh_off_ && IsVisible())
+	//{
+	//	edit_.SetFocus();
+	//	edit_.Put();
+	//	//update_file_buttons();
+	//}
 
-	save_to_macro();
+	save_value_to_macro();
 	aa_->SaveToMacro(km_selatstore);
 }
 
 // Set the selection length from the calculator
 void CCalcDlg::OnSelLenStore()
 {
-	if (invalid_expression())
+	// First check that we can perform an integer operation
+	if (state_ > CALCINTEXPR)
+	{
+		AfxMessageBox("Calculator buttons only operate \r\n"
+		              "on integer values.");
 		return;
+	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
@@ -3736,13 +3648,13 @@ void CCalcDlg::OnSelLenStore()
 	len += addr;
 	pview->MoveToAddress(mpz_get_ui64(addr.get_mpz_t()), mpz_get_ui64(len.get_mpz_t()));
 
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.SetFocus();
-		edit_.Put();
-		// update_file_buttons(); // done indirectly through MoveToAddress
-	}
+	//if (!aa_->refresh_off_ && IsVisible())
+	//{
+	//	edit_.SetFocus();
+	//	edit_.Put();
+	//	// update_file_buttons(); // done indirectly through MoveToAddress
+	//}
 
-	save_to_macro();
+	save_value_to_macro();
 	aa_->SaveToMacro(km_sellenstore);
 }

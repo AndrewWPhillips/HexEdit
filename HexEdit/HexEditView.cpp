@@ -5584,6 +5584,7 @@ void CHexEditView::show_prop(FILE_ADDRESS address /*=-1*/)
 
 void CHexEditView::show_calc()
 {
+	// xxx no longer needed?
 }
 
 // Update hex and decimal address tools in edit bar

@@ -33,20 +33,19 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 // NOTES
-// 1. The current value in the edit control is continually calculated & stored 
-// in "current_" in the CCalcDlg class (ie, via pp_).  This allows overflow to 
+
+// 1. The current calculator value if not necessarilly the string in the edit
+// box but is determined by the CCalcDlg members state_, current_, current_str_.
+// If state <= CALCINTLIT current_ is the value (inf. precision integer);
+// otherwise current_str_ is an expression/literal containing the current value.
+//
+// 2. The current value continually calculated & stored in "current_" (if an
+// integer) which is accessed via pp_.  This allows overflow to 
 // be detected as soon as the user types a digit. So for example, if bits is 8 
 // and radix is 10 and the user has already typed "25" then typing "6" will
 // cause a beep due to overflow, but typing "5" will not.
 //
-// 2. An overflow sets state==OVERFLOW in the CCalcDlg class (ie, via pp_).
-//
-// 3. With the ability to evaluate expressions in the edit control the type of 
-// the contents of the edit control are reflected in state_ in CalcDlg.
-// Also current_ contains the current value if it evaluates to an integer
-// (ie is an integer literal or an expression that returns and integer).
-// If the edit control does not contains a value that can be an integer then
-// state_ is set appropriately and current_str_ contains the value as a string.
+// 3. An overflow sets state_ = CALCOVERFLOW in the CCalcDlg class.
 
 /////////////////////////////////////////////////////////////////////////////
 // CCalcEdit
@@ -72,6 +71,7 @@ BEGIN_MESSAGE_MAP(CCalcEdit, CEdit)
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
+#if 0
 // Put current integer (current_) as literal text into the edit box
 // Also checks for overflow etc and updates the bits display.
 void CCalcEdit::Put()
@@ -98,8 +98,6 @@ void CCalcEdit::Put()
 	// We know it is an integer (though the caller will probably set this to INTRES)
 	if (pp_->bits_ > 0 && (pp_->current_ < pp_->min_val_ || pp_->current_ > pp_->max_val_))
 		pp_->state_ = CALCOVERFLOW;
-	else
-		pp_->state_ = CALCINTLIT;
 
 	if (pp_->ctl_calc_bits_.m_hWnd != 0)
 		pp_->ctl_calc_bits_.RedrawWindow();
@@ -122,46 +120,67 @@ void CCalcEdit::PutStr()
 	if (pp_->ctl_calc_bits_.m_hWnd != 0)
 		pp_->ctl_calc_bits_.RedrawWindow();
 }
-
-// Check if string is a simple number (possibly with separators) or an expression
-bool CCalcEdit::is_number(LPCTSTR ss)
+#endif
+// Put the current value into the edit box
+// - from current_ if state_ <= CALCINTLIT, else from current_str_
+void CCalcEdit::put()
 {
-	char sep_char = ' ';
-	if (pp_->radix_ == 10)
-		sep_char = theApp.dec_sep_char_;
+	ASSERT(pp_ != NULL);
+	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
 
-	bool digit_seen = false;
-	bool last_sep = false;
+	if (theApp.refresh_off_ || !pp_->IsVisible())
+		return;
 
-	for (const char *ps = ss; *ps != '\0'; ++ps)
+	if (pp_->state_ <= CALCINTLIT)
 	{
-		if ((pp_->signed_ || pp_->bits_ == 0) && !digit_seen && *ps == '-')
-			continue;   // skip leading minus sign for signed numbers
+		// Get value from current_ (integer)
+		mpz_class val = pp_->get_norm(pp_->current_);
 
-		last_sep = *ps == sep_char;
-		if (last_sep)
-			continue;                    // Skip separator
+		// Get a buffer large enough to hold the text (may be big)
+		char *buf = new char[mpz_sizeinbase(val.get_mpz_t(), pp_->radix_) + 2];
 
-		// Check if/get valid digit
-		unsigned int digval;
-		if (*ps < 0)
-			return false;                // is* macros can't handle -ve values
-		else if (isdigit(*ps))
-			digval = *ps - '0';
-		else if (isalpha(*ps))
-			digval = toupper(*ps) - 'A' + 10;
-		else
-			return false;                // Not number character
+		// Get the number as a string and add it to the text box
+		mpz_get_str(buf, pp_->radix_, val.get_mpz_t());
+		SetWindowText(buf);
+		SetSel(strlen(buf), -1, FALSE);     // move caret to end
 
-		// Check if digit is in range of radix
-		if (digval >= pp_->radix_)
-			return false;               // Invalid digit for radix
+		delete[] buf;
 
-		digit_seen = true;              // We've now seen a valid digit
+		// Format the number nicely
+		add_sep();
+	}
+	else
+	{
+		// Get value from current_str_ (expression (possibly integer), non-int literal, or something else)
+		//SetWindowText(pp_->current_str_);
+		// Put as Unicode as an expression can contain a Unicode string
+		::SetWindowTextW(m_hWnd, (LPCWSTR)pp_->current_str_);
+		SetSel(pp_->current_str_.GetLength(), -1, FALSE);     // move caret to end
+
+		// Update state_ to match what the string contains
+		pp_->state_ = update_value(false);
 	}
 
-	return digit_seen && !last_sep;     // OK if we saw a digit and did not end on a separator
+	// xxx do this in idle processing???
+	if (pp_->ctl_calc_bits_.m_hWnd != 0)
+		pp_->ctl_calc_bits_.RedrawWindow();
 }
+
+void CCalcEdit::get()
+{
+	ASSERT(pp_ != NULL);
+	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
+
+	int len = GetWindowTextLength();
+
+	wchar_t * pbuf = new wchar_t[len + 2];
+
+	::GetWindowTextW(m_hWnd, pbuf, len+1);
+	pp_->current_str_ = pbuf;
+
+	delete[] pbuf;
+}
+
 // Takes the value in the edit control and works out info about it:
 //  - sets current_ if it is an integer value
 //  - sets current_str_ if it is something else
@@ -172,15 +191,19 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 // of the variables 'a' and 'b' will not be changed if side_effects is false
 // but when side_effects is true then 'a' or 'b' will be changed depending
 // on the value of 'q'.
-
+//
+// Returns
+//  - CALCERROR or CALCOVERFLOW when there is some problem with the integer result
+//  - CALCINTLIT for a simple integer literal
+//  - CALC*EXPR for a valid expression returning a result of any of the 5 types
+//  - CALCOTHER for an invalid expression
 CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 {
 	ASSERT(pp_ != NULL);
-	ASSERT(pp_->IsVisible());
 	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
 
 	CString ss;
-	GetWindowText(ss);
+	ss = pp_->current_str_;
 	if (ss.IsEmpty())
 		ss = "0";     // make zero if empty
 
@@ -222,7 +245,7 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 			mpz_set_str(pp_->current_.get_mpz_t(), ss, pp_->radix_);
 
 			// make sure current separators are correct
-			add_sep();
+			add_sep(); // xxx move out of here
 			retval = CALCINTLIT;
 		}
 		else
@@ -338,6 +361,7 @@ void CCalcEdit::add_sep()
 {
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->IsVisible());
+	ASSERT(pp_->state_ <= CALCINTLIT);
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
 	// Work out how to group the digits
@@ -444,10 +468,50 @@ void CCalcEdit::add_sep()
 	SetSel(newstart, newend);
 }
 
+// Check if string is a simple number (possibly with separators) or an expression
+bool CCalcEdit::is_number(LPCTSTR ss)
+{
+	char sep_char = ' ';
+	if (pp_->radix_ == 10)
+		sep_char = theApp.dec_sep_char_;
+
+	bool digit_seen = false;
+	bool last_sep = false;
+
+	for (const char *ps = ss; *ps != '\0'; ++ps)
+	{
+		if ((pp_->signed_ || pp_->bits_ == 0) && !digit_seen && *ps == '-')
+			continue;   // skip leading minus sign for signed numbers
+
+		last_sep = *ps == sep_char;
+		if (last_sep)
+			continue;                    // Skip separator
+
+		// Check if/get valid digit
+		unsigned int digval;
+		if (*ps < 0)
+			return false;                // is* macros can't handle -ve values
+		else if (isdigit(*ps))
+			digval = *ps - '0';
+		else if (isalpha(*ps))
+			digval = toupper(*ps) - 'A' + 10;
+		else
+			return false;                // Not number character
+
+		// Check if digit is in range of radix
+		if (digval >= pp_->radix_)
+			return false;               // Invalid digit for radix
+
+		digit_seen = true;              // We've now seen a valid digit
+	}
+
+	return digit_seen && !last_sep;     // OK if we saw a digit and did not end on a separator
+}
+
 // When the edit box is displaying a result (eg, state_ == CALCINTRES etc)
 // this changes the state_ to allow editing (eg CALCINTLIT) and also gives the 
 // option to clear the edit box in preparation for a new value being entered.
-void CCalcEdit::ClearResult(bool clear /* = true */)
+void CCalcEdit::clear_result(bool clear /* = true */)
 {
 	if (pp_->state_ < CALCINTLIT || pp_->state_ == CALCOTHRES)
 	{
@@ -468,7 +532,7 @@ void CCalcEdit::OnSetFocus(CWnd* pOldWnd)
 {
 	// This clears the edit box after a binop button but allows editing after '=' button,
 	// so the user can edit a result (eg to copy to clipboard).
-	ClearResult(pp_->op_ != binop_none);
+	clear_result(pp_->op_ != binop_none);
 
 	CEdit::OnSetFocus(pOldWnd);
 	if (sel_ != (DWORD)-1)
@@ -492,11 +556,12 @@ void CCalcEdit::OnLButtonUp(UINT nFlags, CPoint point)
 void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	ASSERT(pp_ != NULL && pp_->IsVisible());
-	ClearResult();
+	clear_result();
 
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
-	update_value(false);
+	pp_->state_ = update_value(false);
+	pp_->inedit(km_user_str);
 	pp_->ctl_calc_bits_.RedrawWindow();
 }
 
@@ -505,7 +570,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	ASSERT(pp_ != NULL && pp_->IsVisible());
 
 	// Clear any result (unless arrow, Del etc key pressed)
-	ClearResult((nFlags & 0x100) == 0 && isprint(nChar));
+	clear_result((nFlags & 0x100) == 0 && isprint(nChar));
 
 	// If editing an integer then make allowances for separator char
 	if (pp_->state_ == CALCINTLIT)

@@ -76,11 +76,9 @@ public:
 
 // Operations
 public:
-	void Put();                         // Set edit text from pp_->current_
-	void PutStr();                      // Set edit text from pp_->current_str_
+//	void Put();                         // Set edit text from pp_->current_
+//	void PutStr();                      // Set edit text from pp_->current_str_
 //    void Get();                         // Store edit text as number in pp_->current_
-	void ClearResult(bool clear = true);
-	CALCSTATE update_value(bool side_effects = true);
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -94,6 +92,11 @@ public:
 
 	// Generated message map functions
 protected:
+	void put();       // put current value into edit box
+	void get();       // get current value from edit box into current_str_
+	CALCSTATE update_value(bool side_effects = true); // get info from current_str_
+	void clear_result(bool clear = true);             // make edit box editable (not a "result")
+
 	//{{AFX_MSG(CCalcEdit)
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
