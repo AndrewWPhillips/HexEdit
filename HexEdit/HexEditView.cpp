@@ -5584,10 +5584,6 @@ void CHexEditView::show_prop(FILE_ADDRESS address /*=-1*/)
 
 void CHexEditView::show_calc()
 {
-	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	if (!aa->refresh_off_ && mm->m_paneCalc.IsWindowVisible())
-		mm->m_wndCalc.update_controls();
 }
 
 // Update hex and decimal address tools in edit bar
@@ -12021,12 +12017,6 @@ BOOL CHexEditView::do_undo()
 			DisplayCaret();                     // Keep caret within display
 		DoInvalidate();
 
-		{
-			// Make sure calculator big-endian checkbox is correct
-			CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-			if (!theApp.refresh_off_ && mm->m_paneCalc.IsWindowVisible())
-				mm->m_wndCalc.update_controls();
-		}
 		break;
 
 	case undo_overtype:
@@ -13202,11 +13192,6 @@ void CHexEditView::end_change()
 	if (pcv_ != NULL)
 		pcv_->end_change();
 
-	// Make sure calculator big-endian checkbox is correct
-	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	if (!theApp.refresh_off_ && mm->m_paneCalc.IsWindowVisible())
-		mm->m_wndCalc.update_controls();
-
 	previous_state_ = 0;  // Used to make sure begin_change/end_change are in pairs
 }
 
@@ -14026,18 +14011,6 @@ void CHexEditView::OnAllowMods()
 
 	allow_mods();
 
-	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-
-	// Make sure calc buttons reflect modifiability of file
-	if (!aa->refresh_off_ && mm->m_paneCalc.IsWindowVisible())
-		mm->m_wndCalc.update_controls();
-
-#if 0 // Obviated by BCG
-	// Change the toolbar button
-	mm->bb_allow_mods_.LoadBitmaps(display_.readonly ? IDB_MODSU : IDB_MODSS,
-									IDB_MODSD,0,IDB_MODSX);
-	mm->bb_allow_mods_.Invalidate();
-#endif
 	aa->SaveToMacro(km_ro_rw);
 }
 
@@ -14070,11 +14043,6 @@ void CHexEditView::OnToggleEndian()
 	make_change();
 	end_change();
 
-	// Make calculator big endian check box reflects this file's big endian status
-	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	if (!theApp.refresh_off_ && mm->m_paneCalc.IsWindowVisible())
-		mm->m_wndCalc.update_controls();
-
 	theApp.SaveToMacro(km_big_endian, (__int64)-1);  // -1 = toggle
 }
 
@@ -14090,11 +14058,6 @@ void CHexEditView::OnBigEndian()
 	make_change();
 	end_change();
 
-	// Make calculator big endian check box reflects this file's big endian status
-	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	if (!theApp.refresh_off_ && mm->m_paneCalc.IsWindowVisible())
-		mm->m_wndCalc.update_controls();
-
 	theApp.SaveToMacro(km_big_endian, (__int64)1);  // 1 = big endian on
 }
 
@@ -14109,11 +14072,6 @@ void CHexEditView::OnLittleEndian()
 	display_.big_endian = 0;
 	make_change();
 	end_change();
-
-	// Make calculator big endian check box reflects this file's big endian status
-	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	if (!theApp.refresh_off_ && mm->m_paneCalc.IsWindowVisible())
-		mm->m_wndCalc.update_controls();
 
 	theApp.SaveToMacro(km_big_endian, unsigned __int64(0));  // 0 = big endian off (ie little-endian)
 }

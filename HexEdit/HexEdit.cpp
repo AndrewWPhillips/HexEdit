@@ -3212,10 +3212,6 @@ void CHexEditApp::set_options(struct OptValues &val)
 
 		// Fix up case of hex addresses in hex jump tool(s)
 		CHexEditControl::RedisplayAll();
-
-		// Fix up case of calc value (in case it's hex)
-		if (mm->m_wndCalc.m_hWnd != 0)
-			mm->m_wndCalc.Redisplay();
 	}
 	if (k_abbrev_ != val.k_abbrev_)
 	{
