@@ -110,12 +110,10 @@ protected:
 private:
 	void add_sep();
 
-	// This edit box is now used in a drop list, which seems to fiddle with the
-	// current selected chars in its text box when focus changes.  To cope with this
-	// we save the selection in sel_ in OnKillFocus & restore it in OnSetFocus.
+	// We only really need this is OnKillFocus but keep it in case it comes in handy 
 	DWORD sel_;
 
-	bool is_number(LPCTSTR ss);
+	CString get_number(LPCTSTR ss);  // Remove sep chars from number or return empty string if not a number
 };
 
 /////////////////////////////////////////////////////////////////////////////

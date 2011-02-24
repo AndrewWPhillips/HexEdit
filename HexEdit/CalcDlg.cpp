@@ -323,6 +323,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	rct.bottom = rct.top + (rct.bottom - rct.top)*3/4;
 	m_resizer.SetMinimumTrackingSize(rct.Size());
 
+	edit_.put();
 	inited_ = true;
 	return TRUE;
 }
@@ -334,6 +335,7 @@ LRESULT CCalcDlg::HandleInitDialog(WPARAM wParam, LPARAM lParam)
 	return TRUE;
 } // HandleInitDialog
 
+// called from UpdateData
 void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -667,30 +669,17 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 {
 	if (bits_ == 0 || bits_%8 != 0)
 	{
-		AfxMessageBox("Bits must be divisible by 8");
+		current_str_ = "Bits must be divisible by 8";
 		return false;
 	}
 
 	const char * err_mess = mpz_set_bytes(current_.get_mpz_t(), addr, bits_/8);
 	if (err_mess != NULL)
 	{
-		AfxMessageBox(err_mess);
-		state_ = CALCERROR;
+		current_str_ = err_mess;
 		return false;
 	}
 
-#if 0  // Not needed - converted when displayed??? xxx TBD TODO
-	// If using signed numbers and the high bit is on we need to make it -ve
-	if (signed_ && mpz_tstbit(current_.get_mpz_t(), bits_-1))
-	{
-		// Convert to the 2's complement (invert bits and add one within bits_ range)
-		mpz_com(retval.get_mpz_t(), retval.get_mpz_t());
-		retval &= mask_;
-		++ retval;
-		// Now say it is -ve
-		mpz_neg(retval.get_mpz_t(), retval.get_mpz_t());
-	}
-#endif
 	state_ = CALCINTRES;
 	return true;
 }
@@ -700,14 +689,14 @@ bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 {
 	if (bits_ == 0 || bits_%8 != 0)
 	{
-		AfxMessageBox("Bits must be divisible by 8");
+		AfxMessageBox("Bits must be divisible by 8 to write to file");
 		return false;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open to add to");
+		AfxMessageBox("No file open to write to");
 		return false;
 	}
 
@@ -846,14 +835,48 @@ void CCalcDlg::do_binop(binop_type binop)
 	}
 	aa_->SaveToMacro(km_binop, long(binop));
 	op_ = binop;
-	ShowStatus();
 	state_ = CALCINTRES;
 }
 
+// Check for various conditons such as error being set or overflow
+// and display messages etc as appropriate.
+void CCalcDlg::check_for_error()
+{
+	// Check we have not overflowed bits (if we don't already have an error)
+	if ((state_ == CALCINTRES || state_ == CALCINTLIT /* || state_ == CALCINTEXPR */) &&
+		(bits_ > 0) &&                                // can't overflow infinite bits (bits_ == 0)
+		(current_ < min_val_ || current_ > max_val_))
+	{
+		state_ = CALCOVERFLOW;
+	}
+
+	if (state_ == CALCERROR)
+	{
+		mm_->StatusBarText("Arithmetic error");
+#ifdef SYS_SOUNDS
+		if (!CSystemSound::Play("Calculator Error"))
+#endif
+			::Beep(3000,400);
+		aa_->mac_error_ = 10;
+	}
+	else if (state_ == CALCOVERFLOW)
+	{
+		mm_->StatusBarText("Overflowed data size");
+#ifdef SYS_SOUNDS
+		if (!CSystemSound::Play("Calculator Overflow"))
+#endif
+			::Beep(3000,400);
+		aa_->mac_error_ = 2;
+	}
+}
+
+#if 0
 void CCalcDlg::ShowStatus()
 {
 	if (!aa_->refresh_off_ && IsVisible())
 	{
+		edit_.put();
+
 		ASSERT(GetDlgItem(IDC_OP_DISPLAY) != NULL);
 		if (state_ == CALCOVERFLOW)
 		{
@@ -879,6 +902,7 @@ void CCalcDlg::ShowStatus()
 	if (ctl_calc_bits_.m_hWnd != 0)
 		ctl_calc_bits_.RedrawWindow();
 }
+#endif
 
 void CCalcDlg::update_op()
 {
@@ -982,7 +1006,7 @@ void CCalcDlg::update_op()
 	ASSERT(GetDlgItem(IDC_OP_DISPLAY) != NULL);
 	GetDlgItem(IDC_OP_DISPLAY)->GetWindowText(ss);
 	if (ss != disp)
-		GetDlgItem(IDC_OP_DISPLAY)->SetWindowText(ss);
+		GetDlgItem(IDC_OP_DISPLAY)->SetWindowText(disp);
 }
 
 void CCalcDlg::do_unary(unary_type unary)
@@ -1017,7 +1041,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	case unary_squareroot:
 		if (mpz_sgn(current_.get_mpz_t()) < 0)
 		{
-			AfxMessageBox("Square root of negative value");
+			current_str_ = "Square root of negative value";
 			state_ = CALCERROR;
 		}
 		else
@@ -1035,7 +1059,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	case unary_rol:    // ROL1 button
 		if (bits_ == 0)
 		{
-			AfxMessageBox("Can't rotate left if bit count is unlimited");
+			current_str_ = "Can't rotate left if bit count is unlimited";
 			state_ = CALCERROR;
 		}
 		else
@@ -1044,7 +1068,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	case unary_ror:   // ROR1 button
 		if (bits_ == 0)
 		{
-			AfxMessageBox("Can't rotate right if bit count is unlimited");
+			current_str_ = "Can't rotate right if bit count is unlimited";
 			state_ = CALCERROR;
 		}
 		else
@@ -1073,7 +1097,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		{
 			if (bits_ == 0)
 			{
-				AfxMessageBox("Can't reverse bits if bit count is unlimited");
+				current_str_ = "Can't reverse bits if bit count is unlimited";
 				state_ = CALCERROR;
 				break;
 			}
@@ -1096,7 +1120,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		// This code assumes that byte order is little-endian in memory
 		if (bits_ == 0 || bits_%8 != 0)
 		{
-			AfxMessageBox("Bits must be divisible by 8 to flip bytes");
+			current_str_ = "Bits must be divisible by 8 to flip bytes";
 			state_ = CALCERROR;
 		}
 		else
@@ -1119,7 +1143,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	case unary_at:
 		if (GetView() == NULL)
 		{
-			AfxMessageBox("No file open to get data from");
+			current_str_ = "No file open to get data from";
 			state_ = CALCERROR;
 		}
 		else
@@ -1131,12 +1155,12 @@ void CCalcDlg::do_unary(unary_type unary)
 
 			if (current_ < 0)
 			{
-				AfxMessageBox("Can't read before start of file");
+				current_str_ = "Can't read before start of file";
 				state_ = CALCERROR;
 			}
 			else if (current_ >= eof)
 			{
-				AfxMessageBox("Can't read past end of file");
+				current_str_ = "Can't read past end of file";
 				state_ = CALCERROR;
 			}
 			else if (!get_bytes(GetValue()))
@@ -1149,21 +1173,7 @@ void CCalcDlg::do_unary(unary_type unary)
 		ASSERT(0);
 	}
 
-	// Check we have not overflowed bits (if we don't already have an error)
-	if (state_ == CALCINTRES && bits_ > 0 && (current_ < min_val_ || current_ > max_val_))
-		state_ = CALCOVERFLOW;
-
-	ShowStatus();                       // Indicate overflow etc
-
-	if (state_ == CALCERROR || state_ == CALCOVERFLOW)
-	{
-		if (state_ == CALCERROR)
-			mm_->StatusBarText("Arithmetic error (root of -ve, etc)");
-		else
-			mm_->StatusBarText("Result overflowed data size");
-		aa_->mac_error_ = 2;
-	}
-
+	check_for_error();   // check for overflow & display error messages
 	edit_.put();
 
 	// Save the unary operation to the current macro (if any)
@@ -1176,6 +1186,7 @@ void CCalcDlg::do_unary(unary_type unary)
 // Handle "digit" button click
 void CCalcDlg::do_digit(char digit)
 {
+	TRACE("xxxx0 do_dig: sel = %x\r\n", edit_.GetSel());
 	// Since digit buttons are "enabled" (but greyed) even when invalid we need to check for invalid digits
 	int val = isdigit(digit) ? (digit - '0') : digit - 'A' + 10;
 	if (val >= radix_)
@@ -1187,6 +1198,7 @@ void CCalcDlg::do_digit(char digit)
 		return;
 	}
 
+	TRACE("xxxx1 do_dig: sel = %x\r\n", edit_.GetSel());
 	edit_.SendMessage(WM_CHAR, digit, 1);
 }
 
@@ -1215,7 +1227,7 @@ void CCalcDlg::calc_previous()
 	case binop_divide:
 		if (current_ == 0)
 		{
-			AfxMessageBox("Divide by zero");
+			current_str_ = "Divide by zero";
 			state_ = CALCERROR;
 		}
 		else
@@ -1224,7 +1236,7 @@ void CCalcDlg::calc_previous()
 	case binop_mod:
 		if (current_ == 0)
 		{
-			AfxMessageBox("Divide (modulus) by zero");
+			current_str_ = "Divide (modulus) by zero";
 			state_ = CALCERROR;
 		}
 		else
@@ -1234,7 +1246,6 @@ void CCalcDlg::calc_previous()
 		if (current_ > mpz_class(ULONG_MAX))
 		{
 			current_ = 0;
-			AfxMessageBox("Power too large");
 			state_ = CALCOVERFLOW;
 		}
 		else
@@ -1253,7 +1264,7 @@ void CCalcDlg::calc_previous()
 	case binop_rol:
 		if (bits_ == 0)
 		{
-			AfxMessageBox("Can't rotate left if bit count is unlimited");
+			current_str_ = "Can't rotate left if bit count is unlimited";
 			state_ = CALCERROR;
 		}
 		else
@@ -1268,7 +1279,7 @@ void CCalcDlg::calc_previous()
 	case binop_ror:
 		if (bits_ == 0)
 		{
-			AfxMessageBox("Can't rotate right if bit count is unlimited");
+			current_str_ = "Can't rotate right if bit count is unlimited";
 			state_ = CALCERROR;
 		}
 		else
@@ -1330,20 +1341,7 @@ void CCalcDlg::calc_previous()
 		break;
 	}
 
-	// Check we have not overflowed bits (if we don't already have an error)
-	if (state_ == CALCINTRES && bits_ > 0 && (current_ < min_val_ || current_ > max_val_))
-		state_ = CALCOVERFLOW;
-
-	ShowStatus();                       // Indicate overflow/error (if any)
-
-	if (state_ == CALCERROR || state_ == CALCOVERFLOW)
-	{
-		if (state_ == CALCERROR)
-			mm_->StatusBarText("Arithmetic error (divide by 0, etc)");
-		else
-			mm_->StatusBarText("Result overflowed data size");
-		aa_->mac_error_ = 2;
-	}
+	check_for_error();   // check for overflow & display error messages
 }  // calc_previous
 
 void CCalcDlg::change_base(int base)
@@ -1373,11 +1371,14 @@ void CCalcDlg::change_base(int base)
 	}
 
 	// If an integer literal redisplay
-	if (state_ <= CALCINTLIT)
-		edit_.put();
+	if (inited_)
+	{
+		if (state_ <= CALCINTLIT)
+			edit_.put();
 
-	source_ = km_result;
-	aa_->SaveToMacro(km_change_base, long(radix_));
+		source_ = km_result;
+		aa_->SaveToMacro(km_change_base, long(radix_));
+	}
 }
 
 void CCalcDlg::change_signed(bool s)
@@ -1387,13 +1388,15 @@ void CCalcDlg::change_signed(bool s)
 	signed_ = s;
 	fix_values();
 
-	// If an integer expression redisplay
-	if (state_ <= CALCINTLIT)
-		edit_.put();
-	ShowStatus();                       //  xxx Set/clear overflow indicator
+	if (inited_)
+	{
+		// If an integer expression redisplay
+		if (state_ <= CALCINTLIT)
+			edit_.put();
 
-	source_ = km_result;
-	aa_->SaveToMacro(km_change_signed);
+		source_ = km_result;
+		aa_->SaveToMacro(km_change_signed);
+	}
 }
 
 void CCalcDlg::change_bits(int bits)
@@ -1426,13 +1429,15 @@ void CCalcDlg::change_bits(int bits)
 		break;
 	}
 
-	// If an integer expression redisplay
-	if (state_ <= CALCINTLIT)
-		edit_.put();
-	ShowStatus();                       // xxx Set/clear overflow indicator
+	if (inited_)
+	{
+		// If an integer expression redisplay
+		if (state_ <= CALCINTLIT)
+			edit_.put();
 
-	source_ = km_result;
-	aa_->SaveToMacro(km_change_bits, long(bits_));
+		source_ = km_result;
+		aa_->SaveToMacro(km_change_bits, long(bits_));
+	}
 }
 
 void CCalcDlg::setup_resizer()
@@ -2406,20 +2411,13 @@ void CCalcDlg::OnHex()
 
 void CCalcDlg::OnBackspace()            // Delete back one digit
 {
-	ASSERT(IsVisible());
-	edit_.SetFocus();
-
 	edit_.SendMessage(WM_CHAR, '\b', 1);
-
-	inedit(km_user_str);             // Allow edit of current value
 }
 
 void CCalcDlg::OnClearEntry()           // Zero current value
 {
 	current_ = 0;
 	state_ = CALCINTRES;
-	ShowStatus();
-
 	edit_.put();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear_entry);
@@ -2430,8 +2428,6 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 	op_ = binop_none;
 	current_ = 0;
 	state_ = CALCINTRES;
-	ShowStatus();
-
 	edit_.put();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear);
@@ -2483,7 +2479,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 	op_ = binop_none;
 	edit_.put();
 
-	edit_.SetFocus();
+	//edit_.SetFocus();
 	source_ = km_result;
 	aa_->SaveToMacro(km_equals);
 }
@@ -3130,8 +3126,6 @@ void CCalcDlg::OnMemGet()
 	state_ = CALCINTRES;
 
 	edit_.put();
-	ShowStatus();                       // Clear/set overflow indicator
-
 	inedit(km_memget);
 }
 
@@ -3233,8 +3227,6 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 	state_ = CALCINTRES;
 
 	edit_.put();
-	ShowStatus();                       // Clear/set overflow indicator
-
 	inedit(km_markget);
 }
 
@@ -3396,14 +3388,12 @@ void CCalcDlg::OnMarkAt()
 {
 	if (!get_bytes(-2))  // get data at mark
 	{
-		aa_->mac_error_ = 10;
+		state_ = CALCERROR;
 		return;
 	}
 	ASSERT(state_ == CALCINTRES);
 
 	edit_.put();
-	ShowStatus();
-
 	inedit(km_markat);
 }
 
@@ -3427,8 +3417,6 @@ void CCalcDlg::OnSelGet()
 	state_ = CALCINTRES;
 
 	edit_.put();
-	ShowStatus();                       // Clear/set overflow indicator
-
 	inedit(km_selget);
 }
 
@@ -3437,14 +3425,12 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
 {
 	if (!get_bytes(-3))                // get data at cursor/selection
 	{
-		aa_->mac_error_ = 10;
+		state_ = CALCERROR;
 		return;
 	}
 	ASSERT(state_ == CALCINTRES);
 
 	edit_.put();
-	ShowStatus();
-
 	inedit(km_selat);
 }
 
@@ -3468,8 +3454,6 @@ void CCalcDlg::OnSelLen()
 	state_ = CALCINTRES;
 
 	edit_.put();
-	ShowStatus();
-
 	inedit(km_sellen);
 }
 
@@ -3491,8 +3475,6 @@ void CCalcDlg::OnEofGet()               // Length of file
 	state_ = CALCINTRES;
 
 	edit_.put();
-	ShowStatus();
-
 	inedit(km_eofget);
 }
 

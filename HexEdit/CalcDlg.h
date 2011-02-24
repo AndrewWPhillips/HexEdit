@@ -89,7 +89,6 @@ public:
 
 	void FinishMacro() { save_value_to_macro(); }// Tidy up any pending ops if macro is finishing
 
-	void ShowStatus();
 	void StartEdit();            // Set focus to text control and move caret to end
 	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
 	void Set(mpz_class t) { current_ = t; state_ = CALCINTRES; edit_.put(); }
@@ -405,6 +404,7 @@ private:
 	static CBrush * m_pBrush;       // brush used for background
 	CPen purple_pen;                        // Just to draw square root symbol
 
+	void check_for_error();
 	void setup_tooltips();          // set up tooltips for buttons
 	void setup_static_buttons();    // Unchanging buttons
 	void setup_resizer();           // set up resizing of controls when window is resized

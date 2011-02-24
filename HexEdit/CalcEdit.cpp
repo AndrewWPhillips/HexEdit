@@ -122,7 +122,9 @@ void CCalcEdit::PutStr()
 }
 #endif
 // Put the current value into the edit box
-// - from current_ if state_ <= CALCINTLIT, else from current_str_
+// - from current_ if state_ <= CALCINTLIT,
+// - else from current_str_
+//   Note that state_/current_/current_str_ may be updated to reflect what current_str_ contained.
 void CCalcEdit::put()
 {
 	ASSERT(pp_ != NULL);
@@ -131,7 +133,16 @@ void CCalcEdit::put()
 	if (theApp.refresh_off_ || !pp_->IsVisible())
 		return;
 
-	if (pp_->state_ <= CALCINTLIT)
+	if (pp_->state_ <= CALCERROR)
+	{
+		if (pp_->current_str_.IsEmpty())
+			SetWindowText("ERROR");
+		else
+			::SetWindowTextW(m_hWnd, (LPCWSTR)pp_->current_str_);
+		TRACE("++++++ Put: error\r\n");
+		return;
+	}
+	else if (pp_->state_ <= CALCINTLIT)
 	{
 		// Get value from current_ (integer)
 		mpz_class val = pp_->get_norm(pp_->current_);
@@ -144,10 +155,8 @@ void CCalcEdit::put()
 		SetWindowText(buf);
 		SetSel(strlen(buf), -1, FALSE);     // move caret to end
 
+		TRACE("++++++ Put: int %s\r\n", (const char *)buf);
 		delete[] buf;
-
-		// Format the number nicely
-		add_sep();
 	}
 	else
 	{
@@ -156,10 +165,14 @@ void CCalcEdit::put()
 		// Put as Unicode as an expression can contain a Unicode string
 		::SetWindowTextW(m_hWnd, (LPCWSTR)pp_->current_str_);
 		SetSel(pp_->current_str_.GetLength(), -1, FALSE);     // move caret to end
+		TRACE("++++++ Put: expr %s\r\n", (const char *)CString(pp_->current_str_));
 
-		// Update state_ to match what the string contains
+		// Finally we need to make sure that state_ etc match what the string contains.
+		// Eg current_str_ may actually be an integer literal, in which case we update state_/current_
 		pp_->state_ = update_value(false);
 	}
+
+	add_sep();
 
 	// xxx do this in idle processing???
 	if (pp_->ctl_calc_bits_.m_hWnd != 0)
@@ -202,14 +215,18 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
 
-	CString ss;
-	ss = pp_->current_str_;
-	if (ss.IsEmpty())
-		ss = "0";     // make zero if empty
+	CString ss = get_number(pp_->current_str_.IsEmpty() ? "0" : CString(pp_->current_str_));
+
+	if (!ss.IsEmpty())
+	{
+		// Get the literal integer from the string using current radix
+		mpz_set_str(pp_->current_.get_mpz_t(), ss, pp_->radix_);
+		return CALCINTLIT;
+	}
 
 	// evaluate the expression
 	int ac;
-	CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(ss, 0 /*unused*/, ac /*unused*/, pp_->radix_, side_effects);
+	CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(CString(pp_->current_str_), 0 /*unused*/, ac /*unused*/, pp_->radix_, side_effects);
 
 	CALCSTATE retval = CALCERROR;
 	pp_->current_ = 0;                 // default to zero in case of error etc
@@ -219,36 +236,10 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 	{
 	case CHexExpr::TYPE_NONE:
 		pp_->current_str_ = pp_->mm_->expr_.get_error_message();
-#ifdef UNICODE_TYPE_STRING
-		if (pp_->current_str_.Left(8).CompareNoCase(L"Overflow") == 0)
-#else
-		if (pp_->current_str_.Left(8).CompareNoCase("Overflow") == 0)
-#endif
-			retval = CALCOVERFLOW;  // xxx does this ever happen?
-		else
-			retval = CALCOTHER;     // Probably just an incomplete expression 
+		retval = CALCOTHER;     // Probably just an incomplete expression 
 		break;
 
 	case CHexExpr::TYPE_INT:
-		if (is_number(ss))    // it's a simple integer literal (perhaps with sign and separator chars)
-		{
-			// Remove separator chars from the string
-			char sep_char[2];
-			sep_char[1] = '\0';
-			if (pp_->radix_ == 10)
-				sep_char[0] = theApp.dec_sep_char_;
-			else
-				sep_char[0] = ' ';
-			ss.Replace(sep_char, "");
-
-			// Get the value from the string using current radix
-			mpz_set_str(pp_->current_.get_mpz_t(), ss, pp_->radix_);
-
-			// make sure current separators are correct
-			add_sep(); // xxx move out of here
-			retval = CALCINTLIT;
-		}
-		else
 		{
 			// If we are using decimals check if the value is -ve (has high bit set)
 			mpz_class val;
@@ -265,8 +256,6 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 			pp_->current_ = val;
 			retval = CALCINTEXPR;
 		}
-		if (pp_->bits_ > 0 && (pp_->current_ < pp_->min_val_ || pp_->current_ > pp_->max_val_))
-			retval = CALCOVERFLOW;
 		break;
 
 	case CHexExpr::TYPE_REAL:
@@ -337,31 +326,29 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 	default:
 		ASSERT(0);  // I believe this should not happen
 		pp_->current_str_ = "##Unexpected expression type##";
-		//retval = CALCERROR;
+		retval = CALCERROR;
 		break;
 	}
-	pp_->ShowStatus();                       // Indicate overflow etc
 
-#if 0  // This is handled by ShowStatus() ??? xxx
-	if (retval == CALCOVERFLOW || retval == CALCERROR)
-	{
-#ifdef SYS_SOUNDS
-		if (!CSystemSound::Play("Invalid Character"))
-#endif
-			::Beep(5000,200);
-	}
+#ifdef _DEBUG
+	if (pp_->state_ <= CALCINTLIT)
+		TRACE("++++++ Got: int %d\r\n", mpz_get_ui(pp_->current_.get_mpz_t()));
+	else
+		TRACE("++++++ Got: <%s>\r\n", (const char *)CString(pp_->current_str_));
 #endif
 
 	return retval;
 }
 
-// Gets the value from the edit box assuming it is an integer literal, and reformats the digits
+// Gets the value from the edit box if it is an integer literal, and reformats the digits
 // nicely grouped with separators (spaces or commas/dots), preserving the cursor (caret) position.
 void CCalcEdit::add_sep()
 {
+	if (pp_->state_ == CALCERROR || pp_->state_ > CALCINTLIT)
+		return;
+
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->IsVisible());
-	ASSERT(pp_->state_ <= CALCINTLIT);
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
 	// Work out how to group the digits
@@ -460,17 +447,26 @@ void CCalcEdit::add_sep()
 			*dst++ = sep_char;
 	}
 	if (dst > out)
+	{
 		dst--;                          // Forget last sep_char if added
+		if (newstart > dst-out) newstart = dst-out;
+		if (newend   > dst-out) newend   = dst-out;
+	}
 	*dst = '\0';                        // Terminate string
 
 	SetWindowText(out);
+	TRACE("++++++ Sep: <%s> to <%s>\r\n", (const char *)ss, (const char *)out);
 	delete[] out;
 	SetSel(newstart, newend);
 }
 
-// Check if string is a simple number (possibly with separators) or an expression
-bool CCalcEdit::is_number(LPCTSTR ss)
+// Check if string is a simple number (possibly with separators) and
+// return string without separators or an empty string if not a number.
+CString CCalcEdit::get_number(LPCTSTR ss)
 {
+	char * buf = new char[strlen(ss)+1];
+	char * pbuf = buf;
+
 	char sep_char = ' ';
 	if (pp_->radix_ == 10)
 		sep_char = theApp.dec_sep_char_;
@@ -481,7 +477,10 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 	for (const char *ps = ss; *ps != '\0'; ++ps)
 	{
 		if ((pp_->signed_ || pp_->bits_ == 0) && !digit_seen && *ps == '-')
+		{
+			*(pbuf++) = '-';
 			continue;   // skip leading minus sign for signed numbers
+		}
 
 		last_sep = *ps == sep_char;
 		if (last_sep)
@@ -496,16 +495,23 @@ bool CCalcEdit::is_number(LPCTSTR ss)
 		else if (isalpha(*ps))
 			digval = toupper(*ps) - 'A' + 10;
 		else
-			return false;                // Not number character
+			return CString();           // Not number character
 
 		// Check if digit is in range of radix
 		if (digval >= pp_->radix_)
-			return false;               // Invalid digit for radix
+			return CString();           // Invalid digit for radix
 
+		*(pbuf++) = *ps;
 		digit_seen = true;              // We've now seen a valid digit
 	}
 
-	return digit_seen && !last_sep;     // OK if we saw a digit and did not end on a separator
+	if (digit_seen && !last_sep)       // OK if we saw a digit and did not end on a separator
+	{
+		*pbuf = '\0';
+		return CString(buf);
+	}
+	else
+		return CString();
 }
 
 // When the edit box is displaying a result (eg, state_ == CALCINTRES etc)
@@ -516,8 +522,12 @@ void CCalcEdit::clear_result(bool clear /* = true */)
 	if (pp_->state_ < CALCINTLIT || pp_->state_ == CALCOTHRES)
 	{
 		if (clear)
+		{
+			TRACE("++++++ Clr: CLEARED RESULT FROM EDIT BOX\r\n");
 			SetWindowText("");
+		}
 
+		TRACE("++++++ Now: editable <%s>\r\n", pp_->state_ < CALCINTLIT ? "int" : "");
 		if (pp_->state_ < CALCINTLIT)
 			pp_->state_ = CALCINTLIT;
 		else if (pp_->state_ == CALCOTHRES)
@@ -530,22 +540,23 @@ void CCalcEdit::clear_result(bool clear /* = true */)
 
 void CCalcEdit::OnSetFocus(CWnd* pOldWnd)
 {
+	TRACE("xxxx0 OnSetF: sel = %x\r\n", GetSel());
 	// This clears the edit box after a binop button but allows editing after '=' button,
 	// so the user can edit a result (eg to copy to clipboard).
 	clear_result(pp_->op_ != binop_none);
 
 	CEdit::OnSetFocus(pOldWnd);
-	if (sel_ != (DWORD)-1)
-	{
-		SetSel(sel_);
-		sel_ = (DWORD)-1;
-	}
+	TRACE("xxxx1 OnSetF: sel = %x\r\n", GetSel());
 }
 
 void CCalcEdit::OnKillFocus(CWnd* pNewWnd)
 {
-	sel_ = GetSel();
+	TRACE("xxxx0 OnKill: sel = %x\r\n", GetSel());
+	sel_ = GetSel();        // base class seems to fiddle with selection so save
 	CEdit::OnKillFocus(pNewWnd);
+	SetSel(sel_, TRUE);
+
+	TRACE("xxxx1 OnKill: sel = %x\r\n", GetSel());
 }
 
 void CCalcEdit::OnLButtonUp(UINT nFlags, CPoint point)
@@ -558,9 +569,13 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	ASSERT(pp_ != NULL && pp_->IsVisible());
 	clear_result();
 
+	TRACE("xxxx0 OnChar: sel = %x\r\n", GetSel());
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
+	get();
 	pp_->state_ = update_value(false);
+	pp_->check_for_error();
+	add_sep();
 	pp_->inedit(km_user_str);
 	pp_->ctl_calc_bits_.RedrawWindow();
 }
@@ -569,7 +584,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	ASSERT(pp_ != NULL && pp_->IsVisible());
 
-	// Clear any result (unless arrow, Del etc key pressed)
+	// Clear any result (unless arrows etc pressed)
 	clear_result((nFlags & 0x100) == 0 && isprint(nChar));
 
 	// If editing an integer then make allowances for separator char
@@ -606,10 +621,15 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 
 	if (nChar == VK_DELETE)
-		(void)update_value(false);
-
-	pp_->source_ = theApp.recording_ ? km_user_str : km_result;
-	pp_->ctl_calc_bits_.RedrawWindow();
+	{
+		// This is handled similarly to OnChar since Del key changes the text
+		get();
+		pp_->state_ = update_value(false);
+		pp_->check_for_error();
+		add_sep();
+		pp_->inedit(km_user_str);
+		pp_->ctl_calc_bits_.RedrawWindow();
+	}
 }
 
 BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg)
