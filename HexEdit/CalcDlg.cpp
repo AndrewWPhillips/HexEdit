@@ -1,10 +1,3 @@
-// TODO
-// - check update_value called after something changes but not elsewhere
-// test all code
-// test endian checkbox when endianness chnage in the view
-// test all controls updated correctly after all buttons used
-// check all keys: BS, Del, arrows
-
 // CalcDlg.cpp : implements the Goto/Calculator dialog
 //
 // Copyright (c) 2000-2011 by Andrew W. Phillips.
@@ -341,7 +334,6 @@ LRESULT CCalcDlg::HandleInitDialog(WPARAM wParam, LPARAM lParam)
 	return TRUE;
 } // HandleInitDialog
 
-// called from UpdateData
 void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -862,8 +854,6 @@ void CCalcDlg::ShowStatus()
 {
 	if (!aa_->refresh_off_ && IsVisible())
 	{
-		edit_.put();
-
 		ASSERT(GetDlgItem(IDC_OP_DISPLAY) != NULL);
 		if (state_ == CALCOVERFLOW)
 		{

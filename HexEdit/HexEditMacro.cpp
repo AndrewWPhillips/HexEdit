@@ -1653,7 +1653,7 @@ exit_play:
 		refresh_display(true);
 		refresh_off_ = bb;
 		mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
-		mm->m_wndCalc.ShowStatus();       // Make sure current calc. value is displayed
+		mm->m_wndCalc.edit_.put();        // Make sure current calc. value is displayed
 		enable_carets();
 	}
 
