@@ -91,8 +91,8 @@ public:
 
 	void StartEdit();            // Set focus to text control and move caret to end
 	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
-	void Set(mpz_class t) { current_ = t; state_ = CALCINTRES; edit_.put(); }
-	void Set(unsigned __int64 v) { mpz_set_ui64(current_.get_mpz_t(), v); state_ = CALCINTRES; edit_.put(); }
+	void Set(mpz_class t) { current_ = t; state_ = CALCINTUNARY; edit_.put(); }
+	void Set(unsigned __int64 v) { mpz_set_ui64(current_.get_mpz_t(), v); state_ = CALCINTUNARY; edit_.put(); }
 	void SetStr(CString ss)  { current_str_ = ss; state_ = CALCOTHRES; edit_.put(); }
 	void change_base(int base);    // set radix (2 to 36)
 	void change_signed(bool s);    // set whether numbers are signed or unsigned

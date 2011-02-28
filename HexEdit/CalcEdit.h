@@ -10,7 +10,9 @@
 enum CALCSTATE {
 	CALCERROR,         // The last operation generated an error, E is displayed in the status 
 	CALCOVERFLOW,      // Integer result that overflowed the current bits, O is displayed in the status
-	CALCINTRES,        // Edit box displays an integer result, eg: after = button pressed (status is blank)
+	CALCINTRES,        // Final integer result eg: after = button pressed
+	CALCINTUNARY,      // Computed integer from unary operation, eg: INC button 
+	CALCINTBINARY,     // Computed integer from binary operation, eg + button
 	CALCINTLIT  =10,   // User has entered/is entering an integer literal, eg: "1,234"
 	CALCINTEXPR =20,   // User has entered/is entering an integer expression, eg "N + 2"
 	CALCREALEXPR,      // User entered real expression, eg "1 / 2.0"

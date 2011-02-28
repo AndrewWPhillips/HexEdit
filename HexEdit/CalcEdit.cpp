@@ -167,9 +167,11 @@ void CCalcEdit::put()
 		SetSel(pp_->current_str_.GetLength(), -1, FALSE);     // move caret to end
 		TRACE("++++++ Put: expr %s\r\n", (const char *)CString(pp_->current_str_));
 
+#if 0 // I don't think this is necessary and makes other code more complicated
 		// Finally we need to make sure that state_ etc match what the string contains.
 		// Eg current_str_ may actually be an integer literal, in which case we update state_/current_
 		pp_->state_ = update_value(false);
+#endif
 	}
 
 	add_sep();

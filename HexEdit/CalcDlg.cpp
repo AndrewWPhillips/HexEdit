@@ -113,7 +113,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 
 	unsigned __int64 val;
 	// If showing result after binop button pressed then previous_ has the displayed value
-	if (m_pParent->state_ <= CALCINTRES && m_pParent->op_ != binop_none)
+	if (m_pParent->state_ == CALCINTBINARY && m_pParent->op_ != binop_none)
 		val = mpz_get_ui64(m_pParent->previous_.get_mpz_t());
 	else
 		val = mpz_get_ui64(m_pParent->current_.get_mpz_t());
@@ -680,7 +680,7 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 		return false;
 	}
 
-	state_ = CALCINTRES;
+	state_ = CALCINTUNARY;
 	return true;
 }
 
@@ -806,27 +806,45 @@ bool CCalcDlg::invalid_expression()
 }
 #endif
 
+// Stores a binary operation  by:
+// - evaluating any outstanding binary operation (saved in current_)
+// - move current_ to previous_ ready for a new value to be entered
+// - store the operation (input parameter binop) in op_
+// On Entry state_ can have these values:
+// CALCERROR, CALCOVERFLOW - causes an error
+// CALCINTRES - current_ is final result (eg = button)
+// CALCINTBINARY - binop (eg + button) but no next value yet entered
+// CALCINTUNARY - unary op (eg INC button) or restored value (eg MR button)
+// CALCINTLIT, CALCINTEXPR - combine current_ with previous_ (if op_ is valid)
+// > CALCINTEXPR - error: can't perform an integer operation on current value
+
 void CCalcDlg::do_binop(binop_type binop)
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ < CALCINTRES)
+	{
+		AfxMessageBox("You cannot perform an operation \r\n"
+		              "on invalid values.");
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		AfxMessageBox("Calculator buttons only operate \r\n"
 		              "on integer values.");
 		return;
 	}
 
-	// Now we need to save the current value as the first operand
-	// unless the user has just used a binop button in which case we override it
-	if (state_ != CALCINTRES || op_ == binop_none || aa_->playing_)
+	// If state_ == CALCINTBINARY we have just processed a binop and apparently
+	// the user just wants to override.  In this case we don't want to save
+	// to previous_ as this was just done.
+	if (state_ != CALCINTBINARY)
 	{
+		// If there is an active binop (op_ != binop_none) we need to calculate
+		// it before moving current_ to previous_
 		CString temp = GetStringValue();
 		calc_previous();
 		edit_.put();
 
-		// current_ is not there as a result of a calculation (state_ == INTRES) so 
-		// save operand (current_) and it's source (user-entered, cursor position etc)
-		// Also don't save the value if this is the very first thing in the macro.
 		save_value_to_macro(temp);
 
 		// Get ready for new value to be entered
@@ -835,7 +853,7 @@ void CCalcDlg::do_binop(binop_type binop)
 	}
 	aa_->SaveToMacro(km_binop, long(binop));
 	op_ = binop;
-	state_ = CALCINTRES;
+	state_ = CALCINTBINARY;
 }
 
 // Check for various conditons such as error being set or overflow
@@ -843,7 +861,7 @@ void CCalcDlg::do_binop(binop_type binop)
 void CCalcDlg::check_for_error()
 {
 	// Check we have not overflowed bits (if we don't already have an error)
-	if ((state_ == CALCINTRES || state_ == CALCINTLIT /* || state_ == CALCINTEXPR */) &&
+	if ((state_ >= CALCINTRES && state_ <= CALCINTLIT /* state_ <= CALCINTEXPR */) &&
 		(bits_ > 0) &&                                // can't overflow infinite bits (bits_ == 0)
 		(current_ < min_val_ || current_ > max_val_))
 	{
@@ -937,6 +955,10 @@ void CCalcDlg::update_op()
 		break;
 
 	case CALCINTRES:
+		break;
+
+	case CALCINTBINARY:
+	case CALCINTUNARY:
 	case CALCINTLIT:
 	case CALCINTEXPR:
 		switch (op_)
@@ -1023,7 +1045,7 @@ void CCalcDlg::do_unary(unary_type unary)
 
 	current_ = get_norm(current_);
 
-	state_ = CALCINTRES;  // default to integer result (could also be error/overflow as set below)
+	state_ = CALCINTUNARY;  // set default (could also be error/overflow as set below)
 	switch (unary)
 	{
 	case unary_inc:
@@ -1204,6 +1226,8 @@ void CCalcDlg::do_digit(char digit)
 
 void CCalcDlg::calc_previous()
 {
+	if (op_ == binop_none) return;  // No previous calculation
+
 	if (state_ > CALCINTEXPR)
 	{
 		AfxMessageBox("You can only use buttons on integers.");
@@ -1212,7 +1236,7 @@ void CCalcDlg::calc_previous()
 
 	current_ = get_norm(current_);
 
-	state_ = CALCINTRES;
+	state_ = CALCINTRES; xxx
 	switch (op_)
 	{
 	case binop_add:
@@ -1336,12 +1360,11 @@ void CCalcDlg::calc_previous()
 
 	default:
 		ASSERT(0);
-		/* fall through in release versions */
-	case binop_none:
 		break;
 	}
 
-	check_for_error();   // check for overflow & display error messages
+	check_for_error();   // check for overflow & display overflow/error messages
+	op_ = binop_none;
 }  // calc_previous
 
 void CCalcDlg::change_base(int base)
@@ -2268,23 +2291,20 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 		return;   // xxx display an error message?
 	else if (state_ == CALCINTEXPR)
 		state_ = edit_.update_value(true);           // re-eval the expression allowing side-effects now
-	ASSERT(state_ == CALCINTLIT || state_ == CALCINTEXPR);
 
 	// First work out if we are jumping by address or sector
 	bool sector = ctl_go_.m_nMenuResult == ID_GOSECTOR;
 
-	//add_hist();   // add to calc drop hist
 
 	// If the value in current_ is not there as a result of a calculation then
 	// save it before it is lost.
 	save_value_to_macro();
 
 	calc_previous();
-
-	op_ = binop_none;
-
 	edit_.put();
 	source_ = km_result;
+
+	//add_hist();   // add to calc drop hist
 
 	// Make sure we can go to the address
 	CHexEditView *pview = GetView();
@@ -2417,7 +2437,7 @@ void CCalcDlg::OnBackspace()            // Delete back one digit
 void CCalcDlg::OnClearEntry()           // Zero current value
 {
 	current_ = 0;
-	state_ = CALCINTRES;
+	state_ = CALCINTUNARY;
 	edit_.put();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear_entry);
@@ -2435,22 +2455,22 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 
 void CCalcDlg::OnEquals()               // Calculate result
 {
-	if (state_ >= CALCINTEXPR)
+	if (state_ < CALCINTRES || state_ == CALCOTHER)
+		return;  // xxx error message?
+	else if (state_ >= CALCINTEXPR)
 		state_ = edit_.update_value(true);           // re-eval the expression allowing side-effects now
 
-	CString saved_str;
+	calc_previous();
+	edit_.put();
+
+	// We have a valid result so add it to the history list
+	add_hist();
 
 	switch (state_)
 	{
-	case CALCERROR:
-	case CALCOVERFLOW:
-	case CALCOTHER:
-		return;
-
 	case CALCINTLIT:
 	case CALCINTEXPR:
 		// Result is an integer so we can do special integer things (like enable GO button)
-		saved_str = GetStringValue();
 		state_ = CALCINTRES;
 		break;
 
@@ -2459,7 +2479,6 @@ void CCalcDlg::OnEquals()               // Calculate result
 	case CALCSTREXPR:
 	case CALCBOOLEXPR:
 		// Result is a valid value of a non-integer type
-		saved_str = CString(current_str_);   // expr from text box as string
 		state_ = CALCSTATE(state_ + 20);  // convert valid "expression" to "result" (eg CALCDATEXEPR -> CALCDATERES)
 		break;
 
@@ -2468,18 +2487,6 @@ void CCalcDlg::OnEquals()               // Calculate result
 		return;
 	}
 
-	// We have a valid result so add it to the history list
-	add_hist();
-
-	calc_previous();
-
-	// If current value is not there as a result of a calculation then save it before it is lost.
-	save_value_to_macro(saved_str);
-
-	op_ = binop_none;
-	edit_.put();
-
-	//edit_.SetFocus();
 	source_ = km_result;
 	aa_->SaveToMacro(km_equals);
 }
@@ -2714,7 +2721,7 @@ void CCalcDlg::OnGetHexHist()
 		menu.Detach();
 		ss.Replace(" ", "");    // get rid of padding
 
-		// We clear the current edit box in 2 cases:
+		// We clear the current edit box before adding the chars in 2 cases:
 		// 1. Displaying result - probably want to start a new calculation
 		// 2. Currently just displaying a numeric value - replace it as adding extra digits is just confusing
 		//    and otherwise adding more digits may cause an overflow which would be really confusing
@@ -2722,7 +2729,7 @@ void CCalcDlg::OnGetHexHist()
 		if (state_ <= CALCINTLIT || state_>= CALCOTHRES)
 		{
 			edit_.SetWindowText("");
-			state_ = CALCINTRES;
+			state_ = CALCINTUNARY;
 		}
 
 		if (radix_ != 16)
@@ -2770,7 +2777,7 @@ void CCalcDlg::OnGetDecHist()
 		if (state_ <= CALCINTLIT || state_>= CALCOTHRES)
 		{
 			edit_.SetWindowText("");
-			state_ = CALCINTRES;
+			state_ = CALCINTUNARY;
 		}
 
 		if (radix_ != 10)
@@ -2816,7 +2823,7 @@ void CCalcDlg::OnGetVar()
 		if (state_ <= CALCINTLIT || state_>= CALCOTHRES)
 		{
 			edit_.SetWindowText("");
-			state_ = CALCINTRES;
+			state_ = CALCOTHRES;
 		}
 
 		edit_.SetFocus();
@@ -2846,7 +2853,7 @@ void CCalcDlg::OnGetFunc()
 		if (state_ <= CALCINTLIT || state_>= CALCOTHRES)
 		{
 			edit_.SetWindowText("");
-			state_ = CALCINTRES;
+			state_ = CALCOTHER;   // must be (incomplete) expression
 		}
 
 		edit_.SetFocus();
@@ -3123,7 +3130,7 @@ void CCalcDlg::OnUnaryFactorial()
 void CCalcDlg::OnMemGet()
 {
 	current_ = memory_;
-	state_ = CALCINTRES;
+	state_ = CALCINTUNARY;
 
 	edit_.put();
 	inedit(km_memget);
@@ -3224,7 +3231,7 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 	mpz_set_ui64(val.get_mpz_t(), pview->GetMark());
 
 	current_ = val;
-	state_ = CALCINTRES;
+	state_ = CALCINTUNARY;
 
 	edit_.put();
 	inedit(km_markget);
@@ -3391,7 +3398,7 @@ void CCalcDlg::OnMarkAt()
 		state_ = CALCERROR;
 		return;
 	}
-	ASSERT(state_ == CALCINTRES);
+	ASSERT(state_ == CALCINTUNARY);
 
 	edit_.put();
 	inedit(km_markat);
@@ -3414,7 +3421,7 @@ void CCalcDlg::OnSelGet()
 	mpz_set_ui64(val.get_mpz_t(), start);
 
 	current_ = val;
-	state_ = CALCINTRES;
+	state_ = CALCINTUNARY;
 
 	edit_.put();
 	inedit(km_selget);
@@ -3428,7 +3435,7 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
 		state_ = CALCERROR;
 		return;
 	}
-	ASSERT(state_ == CALCINTRES);
+	ASSERT(state_ == CALCINTUNARY);
 
 	edit_.put();
 	inedit(km_selat);
@@ -3451,7 +3458,7 @@ void CCalcDlg::OnSelLen()
 	mpz_set_ui64(val.get_mpz_t(), end - start);
 
 	current_ = val;
-	state_ = CALCINTRES;
+	state_ = CALCINTUNARY;
 
 	edit_.put();
 	inedit(km_sellen);
@@ -3472,7 +3479,7 @@ void CCalcDlg::OnEofGet()               // Length of file
 	mpz_set_ui64(val.get_mpz_t(), pview->GetDocument()->length());
 
 	current_ = val;
-	state_ = CALCINTRES;
+	state_ = CALCINTUNARY;
 
 	edit_.put();
 	inedit(km_eofget);
