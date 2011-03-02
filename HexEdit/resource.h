@@ -412,6 +412,7 @@
 #define IDD_OPT_PRINT_GENERAL           436
 #define IDD_OPT_PRINT_DECORATIONS       437
 #define IDD_OPT_BACKUP                  438
+#define IDD_CALC_OLD                    439
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -629,12 +630,15 @@
 #define IDC_SPIN_OFFSET                 1096
 #define IDC_SPIN_UNDO_MERGE             1096
 #define IDC_SPIN_GROUPING               1097
+#define IDC_RADIX                       1097
 #define IDC_COLS_DESC                   1098
 #define IDC_SPIN_KEYS                   1098
+#define IDC_BITS                        1098
 #define IDC_SPIN_PLAYS                  1099
 #define IDC_DISPLAY_HEX                 1099
 #define IDC_SPIN_VERTBUFFER             1099
 #define IDC_NAMES                       1100
+#define IDC_SPIN_BITS                   1100
 #define IDC_ADD                         1101
 #define IDC_REMOVE                      1102
 #define IDC_RESET                       1103
@@ -985,7 +989,7 @@
 #define IDC_DESC_FILL_CLIPBOARD_LENGTH  1409
 #define IDC_FILL_HELP                   1410
 #define IDC_BUTTON1                     1411
-#define IDC_BASE_GROUP                  1414
+#define IDC_RADIX_GROUP                 1414
 #define IDC_BITS_GROUP                  1415
 #define IDC_INFO_CATEGORY               1416
 #define IDC_INFO_SIZE                   1417
@@ -1009,6 +1013,7 @@
 #define IDC_EDIT1                       1436
 #define IDC_VALUE                       1436
 #define IDC_CALC_COMBO                  1436
+#define IDC_EXPR                        1436
 #define IDC_PTR_SIZE2                   1437
 #define IDC_EDIT2                       1437
 #define IDC_ACK                         1437
@@ -1179,6 +1184,10 @@
 #define IDC_FIRST_FOOTER_OPTS           1605
 #define IDC_FIRST_FOOTER                1606
 #define IDC_BACKUP_PAGE                 1610
+#define IDC_CALC_SIGNED                 1611
+#define IDC_SPIN_RADIX                  1612
+#define IDC_DESC_RADIX                  1613
+#define IDC_DESC_BITS                   1614
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1628,7 +1637,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        440
 #define _APS_NEXT_COMMAND_VALUE         39152
-#define _APS_NEXT_CONTROL_VALUE         1611
+#define _APS_NEXT_CONTROL_VALUE         1615
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

@@ -43,6 +43,7 @@
 #define HIDC_BIG_ENDIAN                 0x80a30469    // IDD_PROP_DECIMAL [English (United States)]
 #define HIDC_BIG_ENDIAN_FILE_ACCESS     0x8075048c    // IDD_CALC
 #define HIDC_BINARY                     0x807503ec    // IDD_CALC
+#define HIDC_BITS                       0x8075044a    // IDD_CALC
 #define HIDC_BOOKMARKS_VALIDATE         0x810f04cc    // IDD_BOOKMARKS
 #define HIDC_BOOKMARK_ADD               0x810f04cb    // IDD_BOOKMARKS
 #define HIDC_BOOKMARK_GOTO              0x810f04c9    // IDD_BOOKMARKS
@@ -403,6 +404,7 @@
 #define HIDC_PRINT_TOP                  0x80f004a2    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_UNITS                0x80f0056c    // IDD_OPT_PRINT [English (United States)]
 #define HIDC_PRINT_WATERMARK            0x81b3063d    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
+#define HIDC_RADIX                      0x80750449    // IDD_CALC
 #define HIDC_RANGES                     0x80e60451    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_RECENT_FILES               0x819b04c6    // IDD_OPT_HISTORY [English (United States)]
 #define HIDC_REFRESH_BARS               0x80a9045c    // IDD_OPT_MACRO [English (United States)]
