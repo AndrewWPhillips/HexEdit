@@ -810,7 +810,7 @@ void CCalcDlg::do_binop(binop_type binop)
 		// If there is an active binop (op_ != binop_none) we need to calculate
 		// it before moving current_ to previous_
 		CString temp = GetStringValue();
-		calc_previous();
+		calc_binary();
 		check_for_error();   // check for overflow & display error messages
 		if (state_ >= CALCINTRES)
 			state_ = CALCINTBINARY;   // Indicate that (next) binary operation is still active
@@ -1035,6 +1035,20 @@ void CCalcDlg::do_unary(unary_type unary)
 	// Also don't save the value if this (unary op) is the very first thing in the macro.
 	save_value_to_macro();
 
+	calc_unary(unary);  // This does that actual operation
+
+	check_for_error();   // check for overflow & display error messages
+	edit_.put();
+
+	// Save the unary operation to the current macro (if any)
+	aa_->SaveToMacro(km_unaryop, long(unary));
+
+	// The user can't edit the result of a unary operation by pressing digits
+	source_ = km_result;
+}
+
+void CCalcDlg::calc_unary(unary_type unary)
+{
 	current_ = get_norm(current_);
 
 	state_ = CALCINTUNARY;  // set default (could also be error/overflow as set below)
@@ -1210,15 +1224,6 @@ void CCalcDlg::do_unary(unary_type unary)
 	default:
 		ASSERT(0);
 	}
-
-	check_for_error();   // check for overflow & display error messages
-	edit_.put();
-
-	// Save the unary operation to the current macro (if any)
-	aa_->SaveToMacro(km_unaryop, long(unary));
-
-	// The user can't edit the result of a unary operation by pressing digits
-	source_ = km_result;
 }
 
 // Handle "digit" button click
@@ -1245,7 +1250,7 @@ void CCalcDlg::do_digit(char digit)
 // Note that binary operations (from calc buttons) are only valid for integer values.
 // It is called when we want the final result (OnEquals/OnGo) or when we need to
 // calcualte the current binary operation before preparing for the next (do_binop).
-void CCalcDlg::calc_previous()
+void CCalcDlg::calc_binary()
 {
 	if (op_ == binop_none) return;  // Handles case where state_ > CALCINTEXPR without changing state_
 
@@ -2014,7 +2019,7 @@ void CCalcDlg::OnDestroy()
 	aa_->WriteProfileString("Calculator", "Memory", ss.c_str());
 
 	if (state_ <= CALCINTEXPR)  // This test avoids errors being displayed during shutdown
-		calc_previous();
+		calc_binary();
 	ss = current_.get_str(10);
 	aa_->WriteProfileString("Calculator", "Current", ss.c_str());
 }
@@ -2346,7 +2351,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	// save it before it is lost.
 	save_value_to_macro();
 
-	calc_previous();
+	calc_binary();
 	check_for_error();   // check for overflow/error
 	edit_.put();
 
@@ -2533,7 +2538,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 	// save it before it is lost.
 	save_value_to_macro();
 
-	calc_previous();
+	calc_binary();
 	check_for_error();   // check for overflow/error
 	edit_.put();
 

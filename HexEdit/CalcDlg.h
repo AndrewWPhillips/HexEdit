@@ -329,7 +329,8 @@ private:
 	void do_binop(binop_type binop);        // Handle binary operators
 	void do_unary(unary_type unary);        // Handle unary operators
 	void do_digit(char digit);              // Handle "digit" button on calculator
-	void calc_previous();                   // Do binary operation using previous_ and current_
+	void calc_binary();                     // Do binary operation using previous_, current_ and op_
+	void calc_unary(unary_type unary);      // Do unary operation of current_ (previous_ and op_ are unaffected)
 	void add_hist();                        // Add to drop-down history list
 	ExprStringType get_expr();              // Get an expression that represents current calc value (if = used) including all binary/unary operations
 	void set_right();
@@ -398,7 +399,7 @@ private:
 
 	// The following are used to display the current expression as the user uses binary/unary operations etc, and
 	// also to write to the history list.  left_ represents the expression that was used to generate previous_ (the
-	// left side of the active binary operation) and does not change until calc_previous is called (or Clear button used).
+	// left side of the active binary operation) and does not change until calc_binary is called (or Clear button used).
 	// right_ represents the expression that was used to generate the current calculator value (current_/current_str_),
 	// including any unary operations.  right_ may be completely changed by typing a new number, getting from memory etc.
 	ExprStringType left_, right_;
