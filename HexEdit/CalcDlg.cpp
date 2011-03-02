@@ -26,10 +26,13 @@
 // CCalcButton - base class for all calculator buttons
 //
 // The "current value" of the calculator is stored in this class (CCalcDlg) in:
-// state_ - says whethere the value is an integer or other type of value, is a literal
-//          or expression, is a result (including error/overflow) or is being edited
-// current_ - current value if its a simple integer literal (ie, state_ <= CALCINTLIT)
-// current_str_ - current value as a string if not an integer or is an expression
+//   state_ - says whether the value is an integer or other type of value, is a literal
+//            or expression, is a result (including error/overflow) or is being edited
+//   current_ - current value if its a simple integer literal (ie, state_ <= CALCINTLIT)
+//   current_str_ - current value as a string if not an integer or is an expression
+// Also if there is a pending binary operation then these members are also relevant:
+//   previous_ - values of current_ when the binary operation was initiated
+//   op_ - the binary operation
 //
 // The edit box is used to display results by setting current/current_str_ and state_
 // and calling CCalcEdit::put.
@@ -77,7 +80,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	//pDC->FillRect(&rct, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
 
 	// Don't show anything if it's not an int
-	if (m_pParent->state_ > CALCINTEXPR)
+	if (m_pParent->state_ == CALCERROR || m_pParent->state_ > CALCINTEXPR)
 		return TRUE;
 
 	int wndHeight = rct.Height();
@@ -157,7 +160,8 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	int bnum;
-	if (m_pParent->state_ <= CALCINTLIT &&   // currently displaying an int
+	if (m_pParent->state_ > CALCERROR &&
+		m_pParent->state_ <= CALCINTLIT &&   // currently displaying an int
 		(bnum = pos2bit(point)) > -1 &&      // valid bit clicked on
 		(m_pParent->bits_ == 0 || bnum < m_pParent->bits_)) // not a disabled bit
 	{
@@ -323,7 +327,10 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	rct.bottom = rct.top + (rct.bottom - rct.top)*3/4;
 	m_resizer.SetMinimumTrackingSize(rct.Size());
 
+	check_for_error();   // check for overflow of restored value
 	edit_.put();
+	edit_.get();
+	set_right();
 	inited_ = true;
 	return TRUE;
 }
@@ -524,6 +531,7 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_WM_CONTEXTMENU()
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
+	ON_CBN_SELENDOK(IDC_EDIT, OnSelHistory)
 END_MESSAGE_MAP()
 
 // Control ID and corresp help ID - used for popup context help
@@ -766,46 +774,6 @@ void CCalcDlg::fix_values()
 	}
 }
 
-#if 0
-// Check if the current expression in the edit box is a valid expression returning an integer
-bool CCalcDlg::invalid_expression()
-{
-	CString ss = "Calculator buttons only operate on integer \r\n"
-				 "values, but the current value is ";
-	switch (current_type_)
-	{
-	case CJumpExpr::TYPE_INT:
-		return false;           // This is OK!
-
-	case CJumpExpr::TYPE_NONE:
-		AfxMessageBox((LPCTSTR)CString(current_str_));
-		edit_.SetFocus();
-		edit_.SetSel(mm_->expr_.get_error_pos(), mm_->expr_.get_error_pos());   // caret to posn of error
-		return true;
-
-	case CHexExpr::TYPE_REAL:
-		AfxMessageBox((LPCTSTR)(ss + "real."));
-		return true;
-
-	case CHexExpr::TYPE_BOOLEAN:
-		AfxMessageBox((LPCTSTR)(ss + "boolean."));
-		return true;
-
-	case CHexExpr::TYPE_STRING:
-		AfxMessageBox((LPCTSTR)(ss + "a string."));
-		return true;
-
-	case CHexExpr::TYPE_DATE:
-		AfxMessageBox((LPCTSTR)(ss + "a date."));
-		return true;
-
-	default:
-		ASSERT(0);
-		return true;
-	}
-}
-#endif
-
 // Stores a binary operation  by:
 // - evaluating any outstanding binary operation (saved in current_)
 // - move current_ to previous_ ready for a new value to be entered
@@ -820,17 +788,17 @@ bool CCalcDlg::invalid_expression()
 
 void CCalcDlg::do_binop(binop_type binop)
 {
-	// First check that we can perform an integer operation
-	if (state_ < CALCINTRES)
+	// First check that we can perform a binary operation
+	if (state_ == CALCERROR)
 	{
-		AfxMessageBox("You cannot perform an operation \r\n"
-		              "on invalid values.");
+		make_noise("Calculator Error");
+		mm_->StatusBarText("Operation on invalid value.");
 		return;
 	}
 	else if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		make_noise("Calculator Error");
+		mm_->StatusBarText("Buttons only valid for integers.");
 		return;
 	}
 
@@ -843,7 +811,10 @@ void CCalcDlg::do_binop(binop_type binop)
 		// it before moving current_ to previous_
 		CString temp = GetStringValue();
 		calc_previous();
-		edit_.put();
+		check_for_error();   // check for overflow & display error messages
+		if (state_ >= CALCINTRES)
+			state_ = CALCINTBINARY;   // Indicate that (next) binary operation is still active
+		edit_.put();                  // Displays left side of binop until user starts to enter a new value (for right side)
 
 		save_value_to_macro(temp);
 
@@ -852,17 +823,23 @@ void CCalcDlg::do_binop(binop_type binop)
 		current_ = 0;
 	}
 	aa_->SaveToMacro(km_binop, long(binop));
+	left_ = right_;
+	edit_.get();
+	set_right();
 	op_ = binop;
-	state_ = CALCINTBINARY;
 }
 
-// Check for various conditons such as error being set or overflow
-// and display messages etc as appropriate.
+// Displays errors and aslo checks for overflow (integer literals).
+// Should be called after a calculation that could generate and error or overflow
+// (unary or binary operation) or when an integer literal has been changed (edited or 
+// set from memory etc) or the way it is displayed could cause overflow (bits/signed).
 void CCalcDlg::check_for_error()
 {
+	if (state_ > CALCINTLIT) return;
+
 	// Check we have not overflowed bits (if we don't already have an error)
-	if ((state_ >= CALCINTRES && state_ <= CALCINTLIT /* state_ <= CALCINTEXPR */) &&
-		(bits_ > 0) &&                                // can't overflow infinite bits (bits_ == 0)
+	if (state_ >= CALCINTRES &&
+		bits_ > 0 &&                                // can't overflow infinite bits (bits_ == 0)
 		(current_ < min_val_ || current_ > max_val_))
 	{
 		state_ = CALCOVERFLOW;
@@ -870,22 +847,24 @@ void CCalcDlg::check_for_error()
 
 	if (state_ == CALCERROR)
 	{
-		mm_->StatusBarText("Arithmetic error");
-#ifdef SYS_SOUNDS
-		if (!CSystemSound::Play("Calculator Error"))
-#endif
-			::Beep(3000,400);
+		mm_->StatusBarText((CString)current_str_);
+		make_noise("Calculator Error");
 		aa_->mac_error_ = 10;
 	}
 	else if (state_ == CALCOVERFLOW)
 	{
-		mm_->StatusBarText("Overflowed data size");
-#ifdef SYS_SOUNDS
-		if (!CSystemSound::Play("Calculator Overflow"))
-#endif
-			::Beep(3000,400);
+		mm_->StatusBarText("Overflow");
+		make_noise("Calculator Overflow");
 		aa_->mac_error_ = 2;
 	}
+}
+
+void CCalcDlg::make_noise(const char * ss)
+{
+#ifdef SYS_SOUNDS
+	if (!CSystemSound::Play(ss))
+#endif
+		::Beep(3000,400);
 }
 
 #if 0
@@ -954,8 +933,14 @@ void CCalcDlg::update_op()
 		disp = "B";
 		break;
 
+#ifdef _DEBUG  // Normally we don't display anything for these but this helps with debugging
 	case CALCINTRES:
+		disp = "=";
 		break;
+	case CALCOTHER:
+		disp = "??";
+		break;
+#endif
 
 	case CALCINTBINARY:
 	case CALCINTUNARY:
@@ -1033,9 +1018,16 @@ void CCalcDlg::update_op()
 
 void CCalcDlg::do_unary(unary_type unary)
 {
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
 	{
-		AfxMessageBox("You can only use buttons on integers.");
+		make_noise("Calculator Error");
+		mm_->StatusBarText("Operation on invalid value.");
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
+	{
+		make_noise("Calculator Error");
+		mm_->StatusBarText("Buttons only valid for integers.");
 		return;
 	}
 
@@ -1050,15 +1042,19 @@ void CCalcDlg::do_unary(unary_type unary)
 	{
 	case unary_inc:
 		++current_;
+		right_.Format(EXPRSTR("(%s+1)"), (const wchar_t *)right_);
 		break;
 	case unary_dec:
 		current_ --;
+		right_.Format(EXPRSTR("(%s-1)"), (const wchar_t *)right_);
 		break;
 	case unary_sign:
 		current_ = -current_;
+		right_.Format(EXPRSTR("-%s"), (const wchar_t *)right_);
 		break;
 	case unary_square:
 		current_ = current_ * current_;
+		right_.Format(EXPRSTR("(%s*%s)"), (const wchar_t *)right_, (const wchar_t *)right_);
 		break;
 	case unary_squareroot:
 		if (mpz_sgn(current_.get_mpz_t()) < 0)
@@ -1067,16 +1063,22 @@ void CCalcDlg::do_unary(unary_type unary)
 			state_ = CALCERROR;
 		}
 		else
+		{
 			mpz_sqrt(current_.get_mpz_t(), current_.get_mpz_t());
+			right_.Format(EXPRSTR("sqrt(%s)"), (const wchar_t *)right_);
+		}
 		break;
 	case unary_cube:
 		current_ = current_ * current_ * current_;
+		right_.Format(EXPRSTR("(%s*%s*%s)"), (const wchar_t *)right_, (const wchar_t *)right_, (const wchar_t *)right_);
 		break;
 	case unary_factorial:
 		mpz_fac_ui(current_.get_mpz_t(), current_.get_ui());
+		right_.Format(EXPRSTR("fact(%s)"), (const wchar_t *)right_);
 		break;
 	case unary_not:
 		current_ = ~current_;
+		right_.Format(EXPRSTR("~%s"), (const wchar_t *)right_);
 		break;
 	case unary_rol:    // ROL1 button
 		if (bits_ == 0)
@@ -1085,7 +1087,10 @@ void CCalcDlg::do_unary(unary_type unary)
 			state_ = CALCERROR;
 		}
 		else
+		{
 			current_ = ((current_ << 1) | (current_ >> (bits_ - 1))) & mask_;
+			right_.Format(EXPRSTR("rol(%s, 1, %d)"), (const wchar_t *)right_, bits_);
+		}
 		break;
 	case unary_ror:   // ROR1 button
 		if (bits_ == 0)
@@ -1094,13 +1099,18 @@ void CCalcDlg::do_unary(unary_type unary)
 			state_ = CALCERROR;
 		}
 		else
+		{
 			current_ = ((current_ >> 1) | (current_ << (bits_ - 1))) & mask_;
+			right_.Format(EXPRSTR("ror(%s, 1, %d)"), (const wchar_t *)right_, bits_);
+		}
 		break;
 	case unary_lsl:
 		current_ <<= 1;
+		right_.Format(EXPRSTR("%s<<1"), (const wchar_t *)right_);
 		break;
 	case unary_lsr:
 		current_ >>= 1;
+		right_.Format(EXPRSTR("%s>>1"), (const wchar_t *)right_);
 		break;
 	case unary_asr:
 		if (bits_ == 0)
@@ -1113,6 +1123,7 @@ void CCalcDlg::do_unary(unary_type unary)
 			current_ >>= 1;
 			if (neg)
 				mpz_setbit(current_.get_mpz_t(), bits_-1);
+			right_.Format(EXPRSTR("asr(%s, 1, %d)"), (const wchar_t *)right_, bits_);
 		}
 		break;
 	case unary_rev:  // Reverse all bits
@@ -1136,6 +1147,7 @@ void CCalcDlg::do_unary(unary_type unary)
 				current_ >>= 1;              // Move bits down to test the next
 			}
 			current_ = temp;
+			right_.Format(EXPRSTR("reverse(%s, %d)"), (const wchar_t *)right_, bits_);
 		}
 		break;
 	case unary_flip: // Flip byte order
@@ -1160,6 +1172,8 @@ void CCalcDlg::do_unary(unary_type unary)
 			flip_bytes((unsigned char *)buf, bytes);
 			mpz_import(current_.get_mpz_t(), units, -1, sizeof(mp_limb_t), -1, 0, buf);
 			delete[] buf;
+
+			right_.Format(EXPRSTR("flip(%s, %d)"), (const wchar_t *)right_, bits_/8);
 		}
 		break;
 	case unary_at:
@@ -1187,6 +1201,8 @@ void CCalcDlg::do_unary(unary_type unary)
 			}
 			else if (!get_bytes(GetValue()))
 				state_ = CALCERROR;
+			else
+				right_.Format(EXPRSTR("get(%s, %d)"), (const wchar_t *)right_, bits_);
 		}
 		break;
 
@@ -1224,19 +1240,19 @@ void CCalcDlg::do_digit(char digit)
 	edit_.SendMessage(WM_CHAR, digit, 1);
 }
 
+// Calculates any pending binary operation and leaves the result in current_.  Ie:
+//   current_  =  previous_  op_  current_
+// Note that binary operations (from calc buttons) are only valid for integer values.
+// It is called when we want the final result (OnEquals/OnGo) or when we need to
+// calcualte the current binary operation before preparing for the next (do_binop).
 void CCalcDlg::calc_previous()
 {
-	if (op_ == binop_none) return;  // No previous calculation
+	if (op_ == binop_none) return;  // Handles case where state_ > CALCINTEXPR without changing state_
 
-	if (state_ > CALCINTEXPR)
-	{
-		AfxMessageBox("You can only use buttons on integers.");
-		return;
-	}
-
+	ASSERT(state_ != CALCERROR && state_ <= CALCINTEXPR);
 	current_ = get_norm(current_);
 
-	state_ = CALCINTRES; xxx
+	state_ = CALCINTRES;  // default to integer result - may be overridden due to error/overflow or for CALCINTBINARY
 	switch (op_)
 	{
 	case binop_add:
@@ -1362,8 +1378,8 @@ void CCalcDlg::calc_previous()
 		ASSERT(0);
 		break;
 	}
+	right_ = get_expr();
 
-	check_for_error();   // check for overflow & display overflow/error messages
 	op_ = binop_none;
 }  // calc_previous
 
@@ -1397,7 +1413,11 @@ void CCalcDlg::change_base(int base)
 	if (inited_)
 	{
 		if (state_ <= CALCINTLIT)
+		{
+			state_ = CALCINTUNARY;  // need to clear any previous overflow
+			check_for_error();      // check for overflow
 			edit_.put();
+		}
 
 		source_ = km_result;
 		aa_->SaveToMacro(km_change_base, long(radix_));
@@ -1415,7 +1435,11 @@ void CCalcDlg::change_signed(bool s)
 	{
 		// If an integer expression redisplay
 		if (state_ <= CALCINTLIT)
+		{
+			state_ = CALCINTUNARY;  // need to clear any previous overflow
+			check_for_error();      // check for overflow
 			edit_.put();
+		}
 
 		source_ = km_result;
 		aa_->SaveToMacro(km_change_signed);
@@ -1456,7 +1480,11 @@ void CCalcDlg::change_bits(int bits)
 	{
 		// If an integer expression redisplay
 		if (state_ <= CALCINTLIT)
+		{
+			state_ = CALCINTUNARY;  // need to clear any previous overflow
+			check_for_error();   // check for overflow
 			edit_.put();
+		}
 
 		source_ = km_result;
 		aa_->SaveToMacro(km_change_bits, long(bits_));
@@ -1985,7 +2013,7 @@ void CCalcDlg::OnDestroy()
 	ss = memory_.get_str(10);
 	aa_->WriteProfileString("Calculator", "Memory", ss.c_str());
 
-	if (state_ <= CALCINTEXPR)
+	if (state_ <= CALCINTEXPR)  // This test avoids errors being displayed during shutdown
 		calc_previous();
 	ss = current_.get_str(10);
 	aa_->WriteProfileString("Calculator", "Current", ss.c_str());
@@ -2081,6 +2109,12 @@ LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 		help_hwnd_ = (HWND)0;  // signal that it was handled
 	}
 	return FALSE;
+}
+void CCalcDlg::OnSelHistory()
+{
+	CString ss;
+	edit_.GetWindowText(ss);
+	SetStr(ss);
 }
 
 void CCalcDlg::OnTooltipsShow(NMHDR* pNMHDR, LRESULT* pResult)
@@ -2286,27 +2320,40 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 // after the current cursor position has been moved.
 void CCalcDlg::OnGo()                   // Move cursor to current value
 {
-	// Only allow jump if value is an integer and there is no error/overflow
-	if (state_ > CALCINTEXPR || state_ < CALCINTRES)
-		return;   // xxx display an error message?
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		mm_->StatusBarText("Jump with invalid value.");
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
+	{
+		make_noise("Calculator Error");
+		mm_->StatusBarText("Jumps only valid for integers.");
+		return;
+	}
 	else if (state_ == CALCINTEXPR)
+	{
 		state_ = edit_.update_value(true);           // re-eval the expression allowing side-effects now
+		ASSERT(state_ == CALCINTEXPR);
+		state_ = CALCINTLIT;   // This is so that edit_.put() [below] will use current_ instead of current_str_
+	}
 
 	// First work out if we are jumping by address or sector
 	bool sector = ctl_go_.m_nMenuResult == ID_GOSECTOR;
-
 
 	// If the value in current_ is not there as a result of a calculation then
 	// save it before it is lost.
 	save_value_to_macro();
 
 	calc_previous();
+	check_for_error();   // check for overflow/error
 	edit_.put();
-	source_ = km_result;
 
-	//add_hist();   // add to calc drop hist
+	if (state_ != CALCINTRES)
+		add_hist();
+	// xxx make sure it also gets added to hex or dec jump list
 
-	// Make sure we can go to the address
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
@@ -2365,6 +2412,8 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	if (pview != pview->GetFocus())
 		pview->SetFocus();
 
+	state_ = CALCINTRES;
+	source_ = km_result;
 	aa_->SaveToMacro(km_go);
 }
 
@@ -2439,6 +2488,8 @@ void CCalcDlg::OnClearEntry()           // Zero current value
 	current_ = 0;
 	state_ = CALCINTUNARY;
 	edit_.put();
+	edit_.get();
+	set_right();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear_entry);
 }
@@ -2449,25 +2500,52 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 	current_ = 0;
 	state_ = CALCINTRES;
 	edit_.put();
+	edit_.get();
+	left_.Empty(); set_right();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear);
 }
 
 void CCalcDlg::OnEquals()               // Calculate result
 {
-	if (state_ < CALCINTRES || state_ == CALCOTHER)
-		return;  // xxx error message?
+	TRACE("xxxxxxx =: expr:%s\r\n", (const char *)CString(get_expr()));
+	// Check if we are in error state or we don't have a valid expression
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		mm_->StatusBarText("Invalid value.");
+		return;
+	}
+	else if (op_ != binop_none && state_ > CALCINTEXPR)
+	{
+		make_noise("Calculator Error");
+		mm_->StatusBarText("Binary operations are only valid for integers.");
+		return;
+	}
 	else if (state_ >= CALCINTEXPR)
+	{
 		state_ = edit_.update_value(true);           // re-eval the expression allowing side-effects now
+		if (state_ == CALCINTEXPR)
+			state_ = CALCINTLIT;   // This is so that edit_.put() [below] will use current_ instead of current_str_
+	}
+
+	// If the value in current_ is not there as a result of a calculation then
+	// save it before it is lost.
+	save_value_to_macro();
 
 	calc_previous();
+	check_for_error();   // check for overflow/error
 	edit_.put();
 
-	// We have a valid result so add it to the history list
-	add_hist();
+	// We have a valid result so add it to the history list (unless already just added)
+	if (state_ != CALCINTRES)
+		add_hist();
 
 	switch (state_)
 	{
+	case CALCINTRES:
+	case CALCINTUNARY:
+	case CALCINTBINARY:
 	case CALCINTLIT:
 	case CALCINTEXPR:
 		// Result is an integer so we can do special integer things (like enable GO button)
@@ -2482,6 +2560,9 @@ void CCalcDlg::OnEquals()               // Calculate result
 		state_ = CALCSTATE(state_ + 20);  // convert valid "expression" to "result" (eg CALCDATEXEPR -> CALCDATERES)
 		break;
 
+	case CALCOVERFLOW:  // it happens
+		break;
+
 	default:
 		ASSERT(0);  // these cases should not occur
 		return;
@@ -2491,6 +2572,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 	aa_->SaveToMacro(km_equals);
 }
 
+// ---------- History and Expression Display ---------
 void CCalcDlg::add_hist()
 {
 	// We don't add to the history if there is an active calculator button, but
@@ -2513,6 +2595,94 @@ void CCalcDlg::add_hist()
 		}
 #endif
 		ctl_edit_combo_.InsertString(0, toadd);
+	}
+}
+
+// Combine the current left and right values with active binary operator to get the
+// expression that will re-create the value in the calcualtor.
+ExprStringType CCalcDlg::get_expr()
+{
+	ExprStringType retval;
+
+	switch (op_)
+	{
+	case binop_none:
+		retval = right_;
+		break;
+	case binop_add:
+		retval.Format(EXPRSTR("(%s+%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		break;
+	case binop_subtract:
+		retval.Format(EXPRSTR("(%s-%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		break;
+	case binop_multiply:
+		retval.Format(EXPRSTR("(%s*%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		break;
+	case binop_divide:
+		retval.Format(EXPRSTR("(%s/%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		break;
+	case binop_mod:
+		retval.Format(EXPRSTR("(%s%%%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		break;
+	case binop_pow:
+		retval.Format(EXPRSTR("pow(%s, %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		break;
+	case binop_gtr:
+	case binop_gtr_old:
+		retval.Format(EXPRSTR("max(%s, %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		break;
+	case binop_less:
+	case binop_less_old:
+		retval.Format(EXPRSTR("min(%s, %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		break;
+	case binop_rol:
+		retval.Format(EXPRSTR("rol(%s, %s, %d)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_);
+		break;
+	case binop_ror:
+		retval.Format(EXPRSTR("ror(%s, %s, %d)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_);
+		break;
+	case binop_lsl:
+		retval.Format(EXPRSTR("(%s<<%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		break;
+	case binop_lsr:
+		retval.Format(EXPRSTR("(%s>>%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		break;
+	case binop_asr:
+		retval.Format(EXPRSTR("asr(%s, %s, %d)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_);
+		break;
+
+	case binop_and:
+		retval.Format(EXPRSTR("(%s&%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		current_ &= previous_;
+		break;
+	case binop_or:
+		retval.Format(EXPRSTR("(%s|%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		current_ |= previous_;
+		break;
+	case binop_xor:
+		retval.Format(EXPRSTR("(%s^%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		current_ ^= previous_;
+		break;
+
+	default:
+		ASSERT(0);
+		break;
+	}
+
+	return retval;
+}
+
+// Set right_ (right side of current binary operation) from edit box.
+// This is done after a value is added or typed into the edit box.
+void CCalcDlg::set_right()
+{
+	if (state_ == CALCERROR)
+	{
+		right_ = "***";
+	}
+	else
+	{
+		right_ = current_str_;
 	}
 }
 
@@ -3132,7 +3302,10 @@ void CCalcDlg::OnMemGet()
 	current_ = memory_;
 	state_ = CALCINTUNARY;
 
+	check_for_error();   // check for overflow & display error messages
 	edit_.put();
+	edit_.get();
+	set_right();
 	inedit(km_memget);
 }
 
@@ -3233,7 +3406,10 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 	current_ = val;
 	state_ = CALCINTUNARY;
 
+	check_for_error();   // check for overflow & display error messages
 	edit_.put();
+	edit_.get();
+	set_right();
 	inedit(km_markget);
 }
 
@@ -3400,7 +3576,10 @@ void CCalcDlg::OnMarkAt()
 	}
 	ASSERT(state_ == CALCINTUNARY);
 
+	//check_for_error();   // overflow should not happen?
 	edit_.put();
+	edit_.get();
+	set_right();
 	inedit(km_markat);
 }
 
@@ -3423,7 +3602,10 @@ void CCalcDlg::OnSelGet()
 	current_ = val;
 	state_ = CALCINTUNARY;
 
+	check_for_error();   // check for overflow & display error messages
 	edit_.put();
+	edit_.get();
+	set_right();
 	inedit(km_selget);
 }
 
@@ -3437,7 +3619,10 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
 	}
 	ASSERT(state_ == CALCINTUNARY);
 
+	//check_for_error();   // overflow should not occur?
 	edit_.put();
+	edit_.get();
+	set_right();
 	inedit(km_selat);
 }
 
@@ -3460,7 +3645,10 @@ void CCalcDlg::OnSelLen()
 	current_ = val;
 	state_ = CALCINTUNARY;
 
+	check_for_error();   // check for overflow & display error messages
 	edit_.put();
+	edit_.get();
+	set_right();
 	inedit(km_sellen);
 }
 
@@ -3481,7 +3669,10 @@ void CCalcDlg::OnEofGet()               // Length of file
 	current_ = val;
 	state_ = CALCINTUNARY;
 
+	check_for_error();   // check for overflow & display error messages
 	edit_.put();
+	edit_.get();
+	set_right();
 	inedit(km_eofget);
 }
 

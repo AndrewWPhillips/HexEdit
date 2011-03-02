@@ -71,56 +71,6 @@ BEGIN_MESSAGE_MAP(CCalcEdit, CEdit)
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
-#if 0
-// Put current integer (current_) as literal text into the edit box
-// Also checks for overflow etc and updates the bits display.
-void CCalcEdit::Put()
-{
-	ASSERT(pp_ != NULL);
-	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
-	ASSERT(pp_->IsVisible());
-
-	mpz_class val = pp_->get_norm(pp_->current_);
-
-	// Get a buffer large enough to hold the text (may be big)
-	char *buf = new char[mpz_sizeinbase(val.get_mpz_t(), pp_->radix_) + 2];
-
-	// Get the number as a string and add it to the text box
-	mpz_get_str(buf, pp_->radix_, val.get_mpz_t());
-	SetWindowText(buf);
-	SetSel(strlen(buf), -1, FALSE);     // move caret to end
-
-	delete[] buf;
-
-	// Format the number nicely
-	add_sep();
-
-	// We know it is an integer (though the caller will probably set this to INTRES)
-	if (pp_->bits_ > 0 && (pp_->current_ < pp_->min_val_ || pp_->current_ > pp_->max_val_))
-		pp_->state_ = CALCOVERFLOW;
-
-	if (pp_->ctl_calc_bits_.m_hWnd != 0)
-		pp_->ctl_calc_bits_.RedrawWindow();
-}
-
-// Put general string (eg may be expression or non-integer value) into the edit box.
-// Checks the type of expression, overflow etc and updates the bits display.
-void CCalcEdit::PutStr()
-{
-	ASSERT(pp_ != NULL);
-	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
-	ASSERT(pp_->IsVisible());
-
-	// Put as Unicode as an expression can contain a Unicode string
-	::SetWindowTextW(m_hWnd, (LPCWSTR)pp_->current_str_);
-
-	pp_->state_ = update_value(false);
-
-	// Force redisplay of bits in case it was an integer
-	if (pp_->ctl_calc_bits_.m_hWnd != 0)
-		pp_->ctl_calc_bits_.RedrawWindow();
-}
-#endif
 // Put the current value into the edit box
 // - from current_ if state_ <= CALCINTLIT,
 // - else from current_str_
@@ -521,7 +471,7 @@ CString CCalcEdit::get_number(LPCTSTR ss)
 // option to clear the edit box in preparation for a new value being entered.
 void CCalcEdit::clear_result(bool clear /* = true */)
 {
-	if (pp_->state_ < CALCINTLIT || pp_->state_ == CALCOTHRES)
+	if (pp_->state_ < CALCINTLIT || pp_->state_ >= CALCOTHRES)
 	{
 		if (clear)
 		{
@@ -532,7 +482,7 @@ void CCalcEdit::clear_result(bool clear /* = true */)
 		TRACE("++++++ Now: editable <%s>\r\n", pp_->state_ < CALCINTLIT ? "int" : "");
 		if (pp_->state_ < CALCINTLIT)
 			pp_->state_ = CALCINTLIT;
-		else if (pp_->state_ == CALCOTHRES)
+		else if (pp_->state_ >= CALCOTHRES)
 			pp_->state_ = CALCOTHER;
 	}
 }
@@ -575,6 +525,7 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
 	get();
+	pp_->set_right();
 	pp_->state_ = update_value(false);
 	pp_->check_for_error();
 	add_sep();
@@ -626,6 +577,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		// This is handled similarly to OnChar since Del key changes the text
 		get();
+		pp_->set_right();
 		pp_->state_ = update_value(false);
 		pp_->check_for_error();
 		add_sep();

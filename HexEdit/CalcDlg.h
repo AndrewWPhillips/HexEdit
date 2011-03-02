@@ -93,7 +93,7 @@ public:
 	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
 	void Set(mpz_class t) { current_ = t; state_ = CALCINTUNARY; edit_.put(); }
 	void Set(unsigned __int64 v) { mpz_set_ui64(current_.get_mpz_t(), v); state_ = CALCINTUNARY; edit_.put(); }
-	void SetStr(CString ss)  { current_str_ = ss; state_ = CALCOTHRES; edit_.put(); }
+	void SetStr(CString ss)  { current_str_ = ss; state_ = CALCOTHRES; edit_.put(); state_ = edit_.update_value(false); }
 	void change_base(int base);    // set radix (2 to 36)
 	void change_signed(bool s);    // set whether numbers are signed or unsigned
 	void change_bits(int);         // chnage how many bits are used (0 = unlimited)
@@ -308,6 +308,7 @@ protected:
 
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnSelHistory();
 
 	DECLARE_MESSAGE_MAP()
 
@@ -330,6 +331,8 @@ private:
 	void do_digit(char digit);              // Handle "digit" button on calculator
 	void calc_previous();                   // Do binary operation using previous_ and current_
 	void add_hist();                        // Add to drop-down history list
+	ExprStringType get_expr();              // Get an expression that represents current calc value (if = used) including all binary/unary operations
+	void set_right();
 	void fix_values();                      // Update min, max etc based on latest settings (radix_, signed_)
 	bool get_bytes(FILE_ADDRESS addr);      // Load bytes into calculator from file address (or special locations for -ve values)
 	bool put_bytes(FILE_ADDRESS addr);      // Write calculator bytes to file at addr (or special locations for -ve values)
@@ -393,6 +396,13 @@ private:
 	mpz_class min_val_, max_val_;  // Range of valid values according to bits_ and signed_
 	mpz_class mask_;               // Mask for current value of bits_, typically: 0xFF, 0xFFFF, 0xffffFFFF etc
 
+	// The following are used to display the current expression as the user uses binary/unary operations etc, and
+	// also to write to the history list.  left_ represents the expression that was used to generate previous_ (the
+	// left side of the active binary operation) and does not change until calc_previous is called (or Clear button used).
+	// right_ represents the expression that was used to generate the current calculator value (current_/current_str_),
+	// including any unary operations.  right_ may be completely changed by typing a new number, getting from memory etc.
+	ExprStringType left_, right_;
+
 	// Current state info
 	int radix_;                     // Actual radix (base) in use (usually 2,8,10, or 16 but may be any value 2-36
 	int bits_;                      // Numbers of bits in use: (usually 8, 16, 32 or 64), the special value of 0 means unlimited
@@ -404,7 +414,8 @@ private:
 	static CBrush * m_pBrush;       // brush used for background
 	CPen purple_pen;                        // Just to draw square root symbol
 
-	void check_for_error();
+	void check_for_error();         // Check for integer error/overflow conditions and inform the user
+	void make_noise(const char *ss);// Make Windows noise or beep on error
 	void setup_tooltips();          // set up tooltips for buttons
 	void setup_static_buttons();    // Unchanging buttons
 	void setup_resizer();           // set up resizing of controls when window is resized

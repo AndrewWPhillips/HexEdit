@@ -12,8 +12,10 @@
 
 #ifdef UNICODE_TYPE_STRING
 	typedef CStringW ExprStringType;
+	#define EXPRSTR(s) L##s       // Used to create string literal
 #else
 	typedef CString ExprStringType;
+	#define EXPRSTR(s) s
 #endif
 
 class expr_eval
