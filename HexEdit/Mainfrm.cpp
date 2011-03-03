@@ -458,9 +458,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		{
 			return FALSE; // failed to create
 		}
-		m_paneCalc.InitialUpdate(&m_wndCalc);
 		CRect rct;
-		m_wndCalc.GetWindowRect(&rct);
+		m_wndCalc.GetWindowRect(&rct);     // get window size before it is fiddled with
+		m_paneCalc.InitialUpdate(&m_wndCalc);
+
+		// Now set min size (height = 3/4 of initial size)
+		rct.bottom = rct.top + (rct.bottom - rct.top)*3/4;
 		m_paneCalc.SetMinSize(rct.Size());
 		m_paneCalc.EnableDocking(CBRS_ALIGN_ANY);
 
