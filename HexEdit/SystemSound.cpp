@@ -137,7 +137,7 @@ BOOL CSystemSound::Play(LPCTSTR name, LPCTSTR app /*=NULL*/, LPCTSTR key_name /*
 	if (fname.IsEmpty())
 		return TRUE;     // return success as no sound is wanted
 	else
-		return ::PlaySound(fname, NULL, SND_FILENAME | SND_ASYNC);
+		return ::PlaySound(fname, NULL, SND_FILENAME);
 }
 
 // Make a key name from a an app name, a sound name and a key name (usually ".current")
