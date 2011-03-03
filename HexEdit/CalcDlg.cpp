@@ -245,7 +245,6 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 	current_ = previous_ = 0;
 	state_ = CALCINTRES;
 
-	bits_index_ = base_index_ = -1;  // Fixed later in Create()
 	radix_ = bits_ = -1;  // Set to -1 so they are set up correctly
 
 	edit_.pp_ = this;                   // Set parent of edit control
@@ -275,7 +274,6 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	change_signed(aa_->GetProfileInt("Calculator", "signed", 0) ? true : false);
 	current_.set_str(aa_->GetProfileString("Calculator", "Current", "0"), 10);
 	memory_.set_str(aa_->GetProfileString("Calculator", "Memory", "0"), 10);
-	signed_ = radix_ == 10; // xxx fix when we have signed checkbox TBD TODO
 
 	// If saved memory value was restored then make it available
 	if (memory_ != 0)
@@ -295,6 +293,8 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	setup_tooltips();
 	setup_expr();
 	setup_static_buttons();
+	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RADIX))->SetRange(2, 36);
+	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_BITS))->SetRange(0, 32767);  // 0=Inf
 
 	// ------------ Set up the "bits" child window ------------
 	static CString bitsClass;
@@ -533,7 +533,11 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
 	ON_CBN_SELENDOK(IDC_EDIT, OnSelHistory)
-END_MESSAGE_MAP()
+	ON_EN_CHANGE(IDC_RADIX, OnChangeRadix)
+	ON_EN_CHANGE(IDC_BITS, OnChangeBits)
+	ON_BN_CLICKED(IDC_CALC_SIGNED, OnChangeSigned)
+
+	END_MESSAGE_MAP()
 
 // Control ID and corresp help ID - used for popup context help
 static DWORD id_pairs[] = { 
@@ -1464,26 +1468,6 @@ void CCalcDlg::change_base(int base)
 
 	radix_ = base;                      // Store new radix (affects edit control display)
 
-	// Set up index for next radio button update
-	switch (radix_)
-	{
-	case 2:
-		base_index_ = 3;
-		break;
-	case 8:
-		base_index_ = 2;
-		break;
-	case 10:
-		base_index_ = 1;
-		break;
-	case 16:
-		base_index_ = 0;
-		break;
-	default:
-		base_index_ = -1;
-		break;
-	}
-
 	// If an integer literal redisplay
 	if (inited_)
 	{
@@ -1526,30 +1510,7 @@ void CCalcDlg::change_bits(int bits)
 	if (bits == bits_) return; // no change
 
 	bits_ = bits;
-	fix_values();
-
-	// Set up index for next radio button update
-	switch (bits_)
-	{
-	case 8:
-		bits_index_ = 4;
-		break;
-	case 16:
-		bits_index_ = 3;
-		break;
-	case 32:
-		bits_index_ = 2;
-		break;
-	case 64:
-		bits_index_ = 1;
-		break;
-	case 0:
-		bits_index_ = 0;
-		break;
-	default:
-		bits_index_ = -1;
-		break;
-	}
+	fix_values();   // adjust value range etc for new bits setting
 
 	if (inited_)
 	{
@@ -1918,18 +1879,7 @@ void CCalcDlg::update_controls()
 	}
 	update_op();
 	update_expr();
-
-	// Update radio buttons
-	((CButton *)GetDlgItem(IDC_HEX    ))->SetCheck(base_index_ == 0);
-	((CButton *)GetDlgItem(IDC_DECIMAL))->SetCheck(base_index_ == 1);
-	((CButton *)GetDlgItem(IDC_OCTAL  ))->SetCheck(base_index_ == 2);
-	((CButton *)GetDlgItem(IDC_BINARY ))->SetCheck(base_index_ == 3);
-
-	((CButton *)GetDlgItem(IDC_8BIT ))->SetCheck(bits_index_ == 4);
-	((CButton *)GetDlgItem(IDC_16BIT))->SetCheck(bits_index_ == 3);
-	((CButton *)GetDlgItem(IDC_32BIT))->SetCheck(bits_index_ == 2);
-	((CButton *)GetDlgItem(IDC_64BIT))->SetCheck(bits_index_ == 1);
-	((CButton *)GetDlgItem(IDC_INFBIT))->SetCheck(bits_index_ == 0);
+	update_modes();  // Radix, bits, signed controls
 
 	update_digit_buttons();
 	update_file_buttons();
@@ -1951,6 +1901,89 @@ void CCalcDlg::update_controls()
 		GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(enable);
 
 	build_menus();
+}
+
+void CCalcDlg::update_modes()
+{
+	CString ss;
+	char buf[6];
+
+	// Update controls showing radix
+	ASSERT(GetDlgItem(IDC_RADIX) != NULL);
+	GetDlgItemText(IDC_RADIX, ss);
+	sprintf(buf, "%d", radix_);
+	if (ss != buf)
+	{
+		ss = buf;
+		SetDlgItemText(IDC_RADIX, ss);
+	}
+	// Update radio buttons
+	int radix_index = -1;
+	switch (radix_)
+	{
+	case 2:
+		radix_index = 3;
+		break;
+	case 8:
+		radix_index = 2;
+		break;
+	case 10:
+		radix_index = 1;
+		break;
+	case 16:
+		radix_index = 0;
+		break;
+	}
+	((CButton *)GetDlgItem(IDC_HEX    ))->SetCheck(radix_index == 0);
+	((CButton *)GetDlgItem(IDC_DECIMAL))->SetCheck(radix_index == 1);
+	((CButton *)GetDlgItem(IDC_OCTAL  ))->SetCheck(radix_index == 2);
+	((CButton *)GetDlgItem(IDC_BINARY ))->SetCheck(radix_index == 3);
+
+	// Update controls showing number of bits
+	ASSERT(GetDlgItem(IDC_BITS) != NULL);
+	GetDlgItemText(IDC_BITS, ss);
+	sprintf(buf, "%d", bits_);
+	if (ss != buf)
+	{
+		ss = buf;
+		SetDlgItemText(IDC_BITS, ss);
+	}
+	// Update radio buttons
+	int bits_index = -1;
+	switch (bits_)
+	{
+	case 8:
+		bits_index = 4;
+		break;
+	case 16:
+		bits_index = 3;
+		break;
+	case 32:
+		bits_index = 2;
+		break;
+	case 64:
+		bits_index = 1;
+		break;
+	case 0:
+		bits_index = 0;
+		break;
+	}
+	((CButton *)GetDlgItem(IDC_8BIT ))->SetCheck(bits_index == 4);
+	((CButton *)GetDlgItem(IDC_16BIT))->SetCheck(bits_index == 3);
+	((CButton *)GetDlgItem(IDC_32BIT))->SetCheck(bits_index == 2);
+	((CButton *)GetDlgItem(IDC_64BIT))->SetCheck(bits_index == 1);
+	((CButton *)GetDlgItem(IDC_INFBIT))->SetCheck(bits_index == 0);
+
+	// Update checkbox showing signedness
+	ASSERT(GetDlgItem(IDC_CALC_SIGNED) != NULL);
+	CButton *pb = (CButton *)GetDlgItem(IDC_CALC_SIGNED);
+	BOOL enabled = pb->IsWindowEnabled();
+
+	// If we have infinite bits (bits_ == 0) then we must allow signed numbers (eg all bits on = -1)
+	BOOL en = bits_ > 0;
+	pb->SetCheck(!en || signed_);  // turn on tick when disabled to indicate that inf bits uses signed numbers
+	if (en != enabled)
+		pb->EnableWindow(en);
 }
 
 // Fix digit buttons depending on the radix
@@ -2218,6 +2251,37 @@ void CCalcDlg::OnSelHistory()
 	CString ss;
 	edit_.GetWindowText(ss);
 	SetStr(ss);
+}
+
+void CCalcDlg::OnChangeRadix()
+{
+	if (!inited_) return;   // no point in doing anything yet
+
+	// Gte value from radix edit box and convert to an integer
+	CString ss;
+	GetDlgItemText(IDC_RADIX, ss);
+	int radix = strtol(ss, NULL, 10);
+	if (radix > 1 && radix <= 36)      // If new value is within out valid range then
+		change_base(radix);            // set the new radix value
+}
+
+void CCalcDlg::OnChangeBits()
+{
+	if (!inited_) return;   // no point in doing anything yet
+
+	CString ss;
+	GetDlgItemText(IDC_BITS, ss);
+	int bits = strtol(ss, NULL, 10);
+	if (bits >= 0 && bits <= 32767)   // Use SHORT_MAX as max bits allowed as this is the biggest spin control value (and allows for huge numbers)
+		change_bits(bits);
+}
+
+void CCalcDlg::OnChangeSigned()
+{
+	if (!inited_) return;   // no point in doing anything yet
+
+	CButton *pb = (CButton *)GetDlgItem(IDC_CALC_SIGNED);
+	change_signed(pb->GetCheck() == BST_CHECKED);
 }
 
 void CCalcDlg::OnTooltipsShow(NMHDR* pNMHDR, LRESULT* pResult)

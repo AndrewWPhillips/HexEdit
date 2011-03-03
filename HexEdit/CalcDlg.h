@@ -104,8 +104,6 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_CALC };
-	int     bits_index_;
-	int     base_index_;
 
 	CCalcComboBox ctl_edit_combo_;  // Combo box with main edit controls
 	CCalcEdit edit_;                // Subclassed edit control (child of above combo)
@@ -309,6 +307,9 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnSelHistory();
+	afx_msg void OnChangeRadix();
+	afx_msg void OnChangeBits();
+	afx_msg void OnChangeSigned();
 
 	DECLARE_MESSAGE_MAP()
 
@@ -425,6 +426,7 @@ private:
 	void update_digit_buttons();    // fix basic buttons (digits etc)
 	void update_file_buttons();     // fix file related buttons
 	void update_controls();         // set up all controls
+	void update_modes();            // Radix, bits, signed controls
 	void update_expr();             // Displays the "expression" that would generate the current calc value
 	void update_op();               // Update the "operator" display to the right of the edit box
 
