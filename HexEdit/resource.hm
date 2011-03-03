@@ -201,6 +201,7 @@
 #define HIDC_EXPLORER                   0x81280598    // IDD_EXPLORER
 #define HIDC_EXPORT_ADDRESS             0x81b604c2    // IDD_OPT_BACKUP [English (United States)]
 #define HIDC_EXPORT_LINELEN             0x81b604c5    // IDD_OPT_BACKUP [English (United States)]
+#define HIDC_EXPR                       0x8075059c    // IDD_CALC
 #define HIDC_FILENAME                   0x81370610    // IDD_OPT_WINGENERAL [English (United States)]
 #define HIDC_FILES_SELECTED             0x810e04d1    // IDD_RECENT_FILES
 #define HIDC_FILE_ACCESSED              0x80970430    // IDD_PROP_FILE [English (United States)]

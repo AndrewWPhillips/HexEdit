@@ -94,7 +94,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	LOGFONT lf;
 	memset(&lf, 0, sizeof(LOGFONT));
 	lf.lfHeight = 10;
-	strcpy(lf.lfFaceName, "Terminal");  // Simple font for small digits
+	strcpy(lf.lfFaceName, "Tahoma");  // Simple font for small digits
 	font.CreateFontIndirect(&lf);
 	CFont *pOldFont = (CFont *)pDC->SelectObject(&font);
 
@@ -135,7 +135,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 		pDC->Rectangle(&rct);
 
 		// Draw numbers underneath some digits
-		if (m_hh < wndHeight - 10 && (bnum%8 == 0 || bnum == 63))
+		if (m_hh < wndHeight - 8 && (bnum%8 == 0 || bnum == 63))
 		{
 			char buf[4];
 			sprintf(buf, "%d", bnum);
@@ -169,6 +169,7 @@ void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 		mpz_class val = m_pParent->current_;
 		mpz_combit(val.get_mpz_t(), bnum);
 		m_pParent->Set(val);
+		m_pParent->set_right();
 	}
 	CWnd::OnLButtonDown(nFlags, point);
 }
@@ -292,6 +293,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	ctl_func_.m_hMenu = func_menu_.GetSubMenu(0)->GetSafeHmenu();
 
 	setup_tooltips();
+	setup_expr();
 	setup_static_buttons();
 
 	// ------------ Set up the "bits" child window ------------
@@ -329,7 +331,6 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 
 	check_for_error();   // check for overflow of restored value
 	edit_.put();
-	edit_.get();
 	set_right();
 	inited_ = true;
 	return TRUE;
@@ -820,12 +821,11 @@ void CCalcDlg::do_binop(binop_type binop)
 
 		// Get ready for new value to be entered
 		previous_ = get_norm(current_);
-		current_ = 0;
+		left_ = right_;
+		//current_ = 0;
+		set_right();
 	}
 	aa_->SaveToMacro(km_binop, long(binop));
-	left_ = right_;
-	edit_.get();
-	set_right();
 	op_ = binop;
 }
 
@@ -900,6 +900,39 @@ void CCalcDlg::ShowStatus()
 		ctl_calc_bits_.RedrawWindow();
 }
 #endif
+
+void CCalcDlg::update_expr()
+{
+	ExprStringType disp = get_expr(true);
+
+	// This is the window (readonly text box) where we show the expression
+	CWnd * pwnd = GetDlgItem(IDC_EXPR);
+	ASSERT(pwnd != NULL);
+
+	// Get the window's size
+	CRect rct;
+	pwnd->GetWindowRect(&rct);
+
+	// Get the text's size
+	CClientDC dc(pwnd);
+	int nSave = dc.SaveDC();
+	dc.SelectObject(pwnd->GetFont());
+	CSize sz = dc.GetTextExtent(CString(disp));
+
+	if (sz.cx > rct.Width())                       // string is too big to display
+		disp.Replace(EXPRSTR(" "), EXPRSTR(""));   // remove spaces to make the string shorter
+
+	// Get text from expression window to check if it is different from what we want
+	int len = pwnd->GetWindowTextLength();
+	wchar_t * pbuf = new wchar_t[len + 2];
+	::GetWindowTextW(pwnd->m_hWnd, pbuf, len+1);
+
+	// If different update with the new text
+	if (pbuf != disp)
+		::SetWindowTextW(pwnd->m_hWnd, (const wchar_t *)disp);
+	delete[] pbuf;
+	dc.RestoreDC(nSave);
+}
 
 void CCalcDlg::update_op()
 {
@@ -1050,25 +1083,26 @@ void CCalcDlg::do_unary(unary_type unary)
 void CCalcDlg::calc_unary(unary_type unary)
 {
 	current_ = get_norm(current_);
+	ExprStringType tmp = right_;
 
 	state_ = CALCINTUNARY;  // set default (could also be error/overflow as set below)
 	switch (unary)
 	{
 	case unary_inc:
 		++current_;
-		right_.Format(EXPRSTR("(%s+1)"), (const wchar_t *)right_);
+		right_.Format(EXPRSTR("(%s + 1)"), (const wchar_t *)tmp);
 		break;
 	case unary_dec:
 		current_ --;
-		right_.Format(EXPRSTR("(%s-1)"), (const wchar_t *)right_);
+		right_.Format(EXPRSTR("(%s - 1)"), (const wchar_t *)tmp);
 		break;
 	case unary_sign:
 		current_ = -current_;
-		right_.Format(EXPRSTR("-%s"), (const wchar_t *)right_);
+		right_.Format(EXPRSTR("-%s"), (const wchar_t *)tmp);
 		break;
 	case unary_square:
 		current_ = current_ * current_;
-		right_.Format(EXPRSTR("(%s*%s)"), (const wchar_t *)right_, (const wchar_t *)right_);
+		right_.Format(EXPRSTR("(%s * %s)"), (const wchar_t *)tmp, (const wchar_t *)tmp);
 		break;
 	case unary_squareroot:
 		if (mpz_sgn(current_.get_mpz_t()) < 0)
@@ -1079,20 +1113,30 @@ void CCalcDlg::calc_unary(unary_type unary)
 		else
 		{
 			mpz_sqrt(current_.get_mpz_t(), current_.get_mpz_t());
-			right_.Format(EXPRSTR("sqrt(%s)"), (const wchar_t *)right_);
+
+			int len = tmp.GetLength();
+			if (len > 1 && tmp[0] == '(')
+				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
+			right_.Format(EXPRSTR("sqrt(%s)"), (const wchar_t *)tmp);
 		}
 		break;
 	case unary_cube:
 		current_ = current_ * current_ * current_;
-		right_.Format(EXPRSTR("(%s*%s*%s)"), (const wchar_t *)right_, (const wchar_t *)right_, (const wchar_t *)right_);
+		right_.Format(EXPRSTR("(%s*%s*%s)"), (const wchar_t *)tmp, (const wchar_t *)tmp, (const wchar_t *)tmp);
 		break;
 	case unary_factorial:
-		mpz_fac_ui(current_.get_mpz_t(), current_.get_ui());
-		right_.Format(EXPRSTR("fact(%s)"), (const wchar_t *)right_);
+		{
+			mpz_fac_ui(current_.get_mpz_t(), current_.get_ui());
+
+			int len = tmp.GetLength();
+			if (len > 1 && tmp[0] == '(')
+				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
+			right_.Format(EXPRSTR("fact(%s)"), (const wchar_t *)tmp);
+		}
 		break;
 	case unary_not:
 		current_ = ~current_;
-		right_.Format(EXPRSTR("~%s"), (const wchar_t *)right_);
+		right_.Format(EXPRSTR("~%s"), (const wchar_t *)tmp);
 		break;
 	case unary_rol:    // ROL1 button
 		if (bits_ == 0)
@@ -1103,7 +1147,11 @@ void CCalcDlg::calc_unary(unary_type unary)
 		else
 		{
 			current_ = ((current_ << 1) | (current_ >> (bits_ - 1))) & mask_;
-			right_.Format(EXPRSTR("rol(%s, 1, %d)"), (const wchar_t *)right_, bits_);
+
+			int len = tmp.GetLength();
+			if (len > 1 && tmp[0] == '(')
+				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
+			right_.Format(EXPRSTR("rol(%s, 1, %d)"), (const wchar_t *)tmp, bits_);
 		}
 		break;
 	case unary_ror:   // ROR1 button
@@ -1115,16 +1163,20 @@ void CCalcDlg::calc_unary(unary_type unary)
 		else
 		{
 			current_ = ((current_ >> 1) | (current_ << (bits_ - 1))) & mask_;
-			right_.Format(EXPRSTR("ror(%s, 1, %d)"), (const wchar_t *)right_, bits_);
+
+			int len = tmp.GetLength();
+			if (len > 1 && tmp[0] == '(')
+				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
+			right_.Format(EXPRSTR("ror(%s, 1, %d)"), (const wchar_t *)tmp, bits_);
 		}
 		break;
 	case unary_lsl:
 		current_ <<= 1;
-		right_.Format(EXPRSTR("%s<<1"), (const wchar_t *)right_);
+		right_.Format(EXPRSTR("(%s << 1)"), (const wchar_t *)tmp);
 		break;
 	case unary_lsr:
 		current_ >>= 1;
-		right_.Format(EXPRSTR("%s>>1"), (const wchar_t *)right_);
+		right_.Format(EXPRSTR("(%s >> 1)"), (const wchar_t *)tmp);
 		break;
 	case unary_asr:
 		if (bits_ == 0)
@@ -1137,7 +1189,11 @@ void CCalcDlg::calc_unary(unary_type unary)
 			current_ >>= 1;
 			if (neg)
 				mpz_setbit(current_.get_mpz_t(), bits_-1);
-			right_.Format(EXPRSTR("asr(%s, 1, %d)"), (const wchar_t *)right_, bits_);
+
+			int len = tmp.GetLength();
+			if (len > 1 && tmp[0] == '(')
+				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
+			right_.Format(EXPRSTR("asr(%s, 1, %d)"), (const wchar_t *)tmp, bits_);
 		}
 		break;
 	case unary_rev:  // Reverse all bits
@@ -1161,7 +1217,11 @@ void CCalcDlg::calc_unary(unary_type unary)
 				current_ >>= 1;              // Move bits down to test the next
 			}
 			current_ = temp;
-			right_.Format(EXPRSTR("reverse(%s, %d)"), (const wchar_t *)right_, bits_);
+
+			int len = tmp.GetLength();
+			if (len > 1 && tmp[0] == '(')
+				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
+			right_.Format(EXPRSTR("reverse(%s, %d)"), (const wchar_t *)tmp, bits_);
 		}
 		break;
 	case unary_flip: // Flip byte order
@@ -1187,7 +1247,10 @@ void CCalcDlg::calc_unary(unary_type unary)
 			mpz_import(current_.get_mpz_t(), units, -1, sizeof(mp_limb_t), -1, 0, buf);
 			delete[] buf;
 
-			right_.Format(EXPRSTR("flip(%s, %d)"), (const wchar_t *)right_, bits_/8);
+			int len = tmp.GetLength();
+			if (len > 1 && tmp[0] == '(')
+				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
+			right_.Format(EXPRSTR("flip(%s, %d)"), (const wchar_t *)tmp, bits_/8);
 		}
 		break;
 	case unary_at:
@@ -1216,7 +1279,12 @@ void CCalcDlg::calc_unary(unary_type unary)
 			else if (!get_bytes(GetValue()))
 				state_ = CALCERROR;
 			else
-				right_.Format(EXPRSTR("get(%s, %d)"), (const wchar_t *)right_, bits_);
+			{
+				int len = tmp.GetLength();
+				if (len > 1 && tmp[0] == '(')
+					tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
+				right_.Format(EXPRSTR("get(%s, %d)"), (const wchar_t *)tmp, bits_);
+			}
 		}
 		break;
 
@@ -1224,6 +1292,8 @@ void CCalcDlg::calc_unary(unary_type unary)
 	default:
 		ASSERT(0);
 	}
+	if (state_ == CALCERROR)
+		right_ = "***";
 }
 
 // Handle "digit" button click
@@ -1383,10 +1453,10 @@ void CCalcDlg::calc_binary()
 		ASSERT(0);
 		break;
 	}
-	right_ = get_expr();
+	right_ = get_expr(false);
 
 	op_ = binop_none;
-}  // calc_previous
+}  // calc_binary
 
 void CCalcDlg::change_base(int base)
 {
@@ -1434,7 +1504,7 @@ void CCalcDlg::change_signed(bool s)
 	if (s == signed_) return; // no change
 
 	signed_ = s;
-	fix_values();
+	fix_values();   // signed numbers have a different range of values
 
 	if (inited_)
 	{
@@ -1501,17 +1571,25 @@ void CCalcDlg::setup_resizer()
 	// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT 
 	// NOTE: Don't allow resize vertically of IDC_EDIT as it stuffs up the combo drop down list window size
 	m_resizer.Add(IDC_EDIT, 0, 0, 100, 0);        // edit control resizes with width
+	m_resizer.Add(IDC_EXPR, 0, 0, 100, 0);        // displays the expression that produced the current calculator value
 	m_resizer.Add(IDC_OP_DISPLAY, 100, 0, 0, 0);  // operator display sticks to right edge (moves vert)
 	m_resizer.Add(IDC_CALC_BITS, 0, 0, 100, 13);  // where "bits" are drawn
 
 	// Settings controls don't move/size horizontally but move vert. and size slightly too
 	m_resizer.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);
-	m_resizer.Add(IDC_BASE_GROUP, 0, 13, 0, 8);
+	m_resizer.Add(IDC_RADIX_GROUP, 0, 12, 0, 8);
+	m_resizer.Add(IDC_DESC_RADIX, 0, 13, 0, 0);
+	m_resizer.Add(IDC_RADIX, 0, 13, 0, 0);
+	m_resizer.Add(IDC_SPIN_RADIX, 0, 13, 0, 0);
 	m_resizer.Add(IDC_HEX, 0, 13, 0, 5);
 	m_resizer.Add(IDC_DECIMAL, 0, 13, 0, 5);
 	m_resizer.Add(IDC_OCTAL, 0, 13, 0, 5);
 	m_resizer.Add(IDC_BINARY, 0, 13, 0, 5);
-	m_resizer.Add(IDC_BITS_GROUP, 0, 13, 0, 8);
+	m_resizer.Add(IDC_BITS_GROUP, 0, 12, 0, 8);
+	m_resizer.Add(IDC_DESC_BITS, 0, 13, 0, 0);
+	m_resizer.Add(IDC_BITS, 0, 13, 0, 0);
+	m_resizer.Add(IDC_SPIN_BITS, 0, 13, 0, 0);
+	m_resizer.Add(IDC_CALC_SIGNED, 0, 13, 0, 0);
 	m_resizer.Add(IDC_INFBIT, 0, 13, 0, 5);
 	m_resizer.Add(IDC_64BIT, 0, 13, 0, 5);
 	m_resizer.Add(IDC_32BIT, 0, 13, 0, 5);
@@ -1605,6 +1683,21 @@ void CCalcDlg::setup_resizer()
 	m_resizer.Add(IDC_EQUALS, 66, 87, 8, 10);
 	m_resizer.Add(IDC_ADDOP, 75, 87, 8, 10);
 	m_resizer.Add(IDC_GO, 83, 87, 16, 10);
+}
+
+// Customize expr display (IDC_EXPR)
+void CCalcDlg::setup_expr()
+{
+	// Make a smaller font for use with expression display etc
+	LOGFONT lf;
+	memset(&lf, 0, sizeof(LOGFONT));
+	lf.lfHeight = 12;
+	strcpy(lf.lfFaceName, "Tahoma");  // Simple font for small digits
+	fnt_.CreateFontIndirect(&lf);
+
+	GetDlgItem(IDC_EXPR)->SetFont(&fnt_);
+	GetDlgItem(IDC_RADIX)->SetFont(&fnt_);
+	GetDlgItem(IDC_BITS)->SetFont(&fnt_);
 }
 
 void CCalcDlg::setup_tooltips()
@@ -1824,6 +1917,7 @@ void CCalcDlg::update_controls()
 		}
 	}
 	update_op();
+	update_expr();
 
 	// Update radio buttons
 	((CButton *)GetDlgItem(IDC_HEX    ))->SetCheck(base_index_ == 0);
@@ -2009,6 +2103,8 @@ void CCalcDlg::OnDestroy()
 {
 	CDialog::OnDestroy();
 
+	fnt_.DeleteObject();
+
 	// Save some settings to the in file/registry
 	aa_->WriteProfileInt("Calculator", "Base", radix_);
 	aa_->WriteProfileInt("Calculator", "Bits", bits_);
@@ -2028,16 +2124,18 @@ void CCalcDlg::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
 {
 	if (!inited_) return;
 
+#if 0
 	if (cy < m_sizeInitial.cy*7/8)
 	{
-		SetDlgItemText(IDC_BASE_GROUP, "");
+		SetDlgItemText(IDC_RADIX_GROUP, "");
 		SetDlgItemText(IDC_BITS_GROUP, "");
 	}
 	else
 	{
-		SetDlgItemText(IDC_BASE_GROUP, "Base");
+		SetDlgItemText(IDC_RADIX_GROUP, "Base");
 		SetDlgItemText(IDC_BITS_GROUP, "Bits");
 	}
+#endif
 
 	if (cx > 0 && m_sizeInitial.cx == -1)
 		m_sizeInitial = CSize(cx, cy);
@@ -2493,7 +2591,6 @@ void CCalcDlg::OnClearEntry()           // Zero current value
 	current_ = 0;
 	state_ = CALCINTUNARY;
 	edit_.put();
-	edit_.get();
 	set_right();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear_entry);
@@ -2505,7 +2602,6 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 	current_ = 0;
 	state_ = CALCINTRES;
 	edit_.put();
-	edit_.get();
 	left_.Empty(); set_right();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear);
@@ -2513,7 +2609,7 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 
 void CCalcDlg::OnEquals()               // Calculate result
 {
-	TRACE("xxxxxxx =: expr:%s\r\n", (const char *)CString(get_expr()));
+	TRACE("xxxxxxx =: expr:%s\r\n", (const char *)CString(get_expr(true)));
 	// Check if we are in error state or we don't have a valid expression
 	if (state_ == CALCERROR)
 	{
@@ -2605,29 +2701,32 @@ void CCalcDlg::add_hist()
 
 // Combine the current left and right values with active binary operator to get the
 // expression that will re-create the value in the calcualtor.
-ExprStringType CCalcDlg::get_expr()
+ExprStringType CCalcDlg::get_expr(bool no_paren /* = false */)
 {
 	ExprStringType retval;
 
 	switch (op_)
 	{
 	case binop_none:
-		retval = right_;
+		if (state_ >= CALCINTEXPR)
+			retval.Format(EXPRSTR("(%s)"), (const wchar_t *)right_);
+		else
+			retval = right_;
 		break;
 	case binop_add:
-		retval.Format(EXPRSTR("(%s+%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		retval.Format(EXPRSTR("(%s + %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		break;
 	case binop_subtract:
-		retval.Format(EXPRSTR("(%s-%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		retval.Format(EXPRSTR("(%s - %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		break;
 	case binop_multiply:
-		retval.Format(EXPRSTR("(%s*%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		retval.Format(EXPRSTR("(%s * %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		break;
 	case binop_divide:
-		retval.Format(EXPRSTR("(%s/%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		retval.Format(EXPRSTR("(%s / %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		break;
 	case binop_mod:
-		retval.Format(EXPRSTR("(%s%%%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		retval.Format(EXPRSTR("(%s %% %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		break;
 	case binop_pow:
 		retval.Format(EXPRSTR("pow(%s, %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
@@ -2647,25 +2746,25 @@ ExprStringType CCalcDlg::get_expr()
 		retval.Format(EXPRSTR("ror(%s, %s, %d)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_);
 		break;
 	case binop_lsl:
-		retval.Format(EXPRSTR("(%s<<%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		retval.Format(EXPRSTR("(%s << %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		break;
 	case binop_lsr:
-		retval.Format(EXPRSTR("(%s>>%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		retval.Format(EXPRSTR("(%s >> %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		break;
 	case binop_asr:
 		retval.Format(EXPRSTR("asr(%s, %s, %d)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_);
 		break;
 
 	case binop_and:
-		retval.Format(EXPRSTR("(%s&%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		retval.Format(EXPRSTR("(%s & %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		current_ &= previous_;
 		break;
 	case binop_or:
-		retval.Format(EXPRSTR("(%s|%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		retval.Format(EXPRSTR("(%s | %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		current_ |= previous_;
 		break;
 	case binop_xor:
-		retval.Format(EXPRSTR("(%s^%s)"), (const wchar_t *)left_, (const wchar_t *)right_);
+		retval.Format(EXPRSTR("(%s ^ %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		current_ ^= previous_;
 		break;
 
@@ -2673,6 +2772,10 @@ ExprStringType CCalcDlg::get_expr()
 		ASSERT(0);
 		break;
 	}
+
+	int len = retval.GetLength();
+	if (no_paren && len > 1 && retval[0] == '(')
+		retval = retval.Mid(1, len-2);   // remove parenetheses at both ends
 
 	return retval;
 }
@@ -2687,6 +2790,7 @@ void CCalcDlg::set_right()
 	}
 	else
 	{
+		edit_.get();
 		right_ = current_str_;
 	}
 }
@@ -2700,7 +2804,7 @@ void CCalcDlg::set_right()
 void CCalcDlg::button_colour(CWnd *pp, bool enable, COLORREF normal)
 {
 	ASSERT(pp != NULL);
-	pp->EnableWindow(TRUE); // xxx not nec after all enabled in dlg editor
+	//pp->EnableWindow(TRUE); // xxx not nec after all enabled in dlg editor
 
 	CCalcButton *pbut = DYNAMIC_DOWNCAST(CCalcButton, pp);
 	ASSERT(pbut != NULL);
@@ -3309,7 +3413,6 @@ void CCalcDlg::OnMemGet()
 
 	check_for_error();   // check for overflow & display error messages
 	edit_.put();
-	edit_.get();
 	set_right();
 	inedit(km_memget);
 }
@@ -3413,7 +3516,6 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 
 	check_for_error();   // check for overflow & display error messages
 	edit_.put();
-	edit_.get();
 	set_right();
 	inedit(km_markget);
 }
@@ -3583,7 +3685,6 @@ void CCalcDlg::OnMarkAt()
 
 	//check_for_error();   // overflow should not happen?
 	edit_.put();
-	edit_.get();
 	set_right();
 	inedit(km_markat);
 }
@@ -3609,7 +3710,6 @@ void CCalcDlg::OnSelGet()
 
 	check_for_error();   // check for overflow & display error messages
 	edit_.put();
-	edit_.get();
 	set_right();
 	inedit(km_selget);
 }
@@ -3626,7 +3726,6 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
 
 	//check_for_error();   // overflow should not occur?
 	edit_.put();
-	edit_.get();
 	set_right();
 	inedit(km_selat);
 }
@@ -3652,7 +3751,6 @@ void CCalcDlg::OnSelLen()
 
 	check_for_error();   // check for overflow & display error messages
 	edit_.put();
-	edit_.get();
 	set_right();
 	inedit(km_sellen);
 }
@@ -3676,7 +3774,6 @@ void CCalcDlg::OnEofGet()               // Length of file
 
 	check_for_error();   // check for overflow & display error messages
 	edit_.put();
-	edit_.get();
 	set_right();
 	inedit(km_eofget);
 }

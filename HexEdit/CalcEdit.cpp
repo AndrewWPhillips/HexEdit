@@ -524,7 +524,6 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	TRACE("xxxx0 OnChar: sel = %x\r\n", GetSel());
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
-	get();
 	pp_->set_right();
 	pp_->state_ = update_value(false);
 	pp_->check_for_error();
@@ -576,7 +575,6 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (nChar == VK_DELETE)
 	{
 		// This is handled similarly to OnChar since Del key changes the text
-		get();
 		pp_->set_right();
 		pp_->state_ = update_value(false);
 		pp_->check_for_error();
@@ -594,7 +592,9 @@ BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg)
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
 	{
 		// Can only used GO button if it's enabled and we have an integer value
-		if (pp_->ctl_go_.IsWindowEnabled() && pp_->state_ <= CALCINTEXPR)
+		//if (pp_->ctl_go_.IsWindowEnabled() && pp_->state_ <= CALCINTEXPR)
+		CCalcButton *pbut = DYNAMIC_DOWNCAST(CCalcButton,& pp_->ctl_go_);
+		if (pbut->GetTextColor() != RGB(0xC0, 0xC0, 0xC0) && pp_->state_ <= CALCINTEXPR)
 			pp_->OnGo();
 		else
 			pp_->OnEquals();
@@ -615,7 +615,6 @@ END_MESSAGE_MAP()
 
 void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point) 
 {
-
 	CRect rectClient;
 	GetClientRect(&rectClient);
 

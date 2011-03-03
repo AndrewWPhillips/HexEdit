@@ -332,7 +332,7 @@ private:
 	void calc_binary();                     // Do binary operation using previous_, current_ and op_
 	void calc_unary(unary_type unary);      // Do unary operation of current_ (previous_ and op_ are unaffected)
 	void add_hist();                        // Add to drop-down history list
-	ExprStringType get_expr();              // Get an expression that represents current calc value (if = used) including all binary/unary operations
+	ExprStringType get_expr(bool no_paren = false); // Get an expression that represents current calc value (if = used) including all binary/unary operations
 	void set_right();
 	void fix_values();                      // Update min, max etc based on latest settings (radix_, signed_)
 	bool get_bytes(FILE_ADDRESS addr);      // Load bytes into calculator from file address (or special locations for -ve values)
@@ -413,16 +413,19 @@ private:
 	bool m_first;                   // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
 	CResizeCtrl m_resizer;          // Used to move controls around when the window is resized
 	static CBrush * m_pBrush;       // brush used for background
-	CPen purple_pen;                        // Just to draw square root symbol
+	CPen purple_pen;                // Just to draw square root symbol
+	CFont fnt_;                     // Smaller font used in expr display etc
 
 	void check_for_error();         // Check for integer error/overflow conditions and inform the user
 	void make_noise(const char *ss);// Make Windows noise or beep on error
 	void setup_tooltips();          // set up tooltips for buttons
+	void setup_expr();
 	void setup_static_buttons();    // Unchanging buttons
 	void setup_resizer();           // set up resizing of controls when window is resized
 	void update_digit_buttons();    // fix basic buttons (digits etc)
 	void update_file_buttons();     // fix file related buttons
 	void update_controls();         // set up all controls
+	void update_expr();             // Displays the "expression" that would generate the current calc value
 	void update_op();               // Update the "operator" display to the right of the edit box
 
 	void build_menus();             // Build menus for menu buttons
