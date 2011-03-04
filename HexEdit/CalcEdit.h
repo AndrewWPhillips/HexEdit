@@ -4,6 +4,9 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+
+#include "TipWnd.h"
+
 // CalcEdit.h : header file
 //
 
@@ -29,11 +32,13 @@ enum CALCSTATE {
 
 /////////////////////////////////////////////////////////////////////////////
 // CCalcListBox - the dop down list part of CCalcComboBox
+class CTipWnd;
+
 class CCalcListBox : public CListBox
 {
 // Construction
 public:
-	CCalcListBox() { }
+	CCalcListBox() : curr_(-1) { }
 
 protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
@@ -42,6 +47,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CTipWnd tip_;
+	int curr_;       // item we are currently showing a tip window for
 };
 
 /////////////////////////////////////////////////////////////////////////////

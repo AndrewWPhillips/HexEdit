@@ -57,7 +57,7 @@ CTipWnd::CTipWnd(UINT fmt /* = DT_NOCLIP | DT_NOPREFIX | DT_EXPANDTABS */)
 			m_pSLWAfunc = (PFSetLayeredWindowAttributes)::GetProcAddress(hh, "SetLayeredWindowAttributes");
 	}
 
-	DWORD exStyle = WS_EX_TOOLWINDOW;
+	DWORD exStyle = WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
 	if (m_2k)
 		exStyle |= WS_EX_LAYERED;  // This allows a transparent window
 

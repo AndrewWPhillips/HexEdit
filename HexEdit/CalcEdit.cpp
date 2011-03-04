@@ -25,6 +25,8 @@
 #include "CalcEdit.h"
 #include "SystemSound.h"
 #include "HexEditDoc.h"
+#include "TipWnd.h"
+#include "misc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,7 +47,26 @@ static char THIS_FILE[] = __FILE__;
 // and radix is 10 and the user has already typed "25" then typing "6" will
 // cause a beep due to overflow, but typing "5" will not.
 //
-// 3. An overflow sets state_ = CALCOVERFLOW in the CCalcDlg class.
+// An overflow sets state_ = CALCOVERFLOW in the CCalcDlg class.
+//
+// 3. To put something into the calculator edit box set state_ then either current_
+// (for integer literal states) or current_str_ for expressions (or partial ones)
+// and call CCalcEdit::put().  This is used for example after calculating a result
+// or restoring a value (eg from the Calculator Memory).
+//
+// 4. To get the current calculator value (from edit box into current_str_) use
+// CCalcEdit::get().  This is not exactly the inverse of CCalcEdit::put() as it
+// does not set current_ and behaves the same irrespective of the type (state_).
+//
+// 5. The function CCalcDlg::update_value() takes current_str_ and works out what
+// it is (setting state_) and also sets current_ if it is an integer.  Note that
+// current_ is set even if it is an integer expressions however in this case the
+// value may overflow 64-bits as expressions only use 64-bit ints at present.
+//
+// Since update_value() evaluates expressions it has an option to allow or disallow
+// side-effects, such as assigning to variables.
+//
+// Calling get() then update_value() is the inverse operation of put().
 
 /////////////////////////////////////////////////////////////////////////////
 // CCalcEdit
@@ -146,7 +167,7 @@ void CCalcEdit::get()
 	delete[] pbuf;
 }
 
-// Takes the value in the edit control and works out info about it:
+// Takes the value in current_str_ and works out info about it:
 //  - sets current_ if it is an integer value
 //  - sets current_str_ if it is something else
 //  - returns a new STATE to says what sort of value/expression is there
@@ -620,34 +641,70 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (rectClient.PtInRect(point))
 	{
-		CPoint pointScreen;
-		::GetCursorPos(&pointScreen);
 		BOOL bOutside = FALSE;
-		int nItem = ItemFromPoint(point, bOutside);  // calculate listbox item number (if any)
+		int nItem = ItemFromPoint(point, bOutside);  // listbox item number we're over (if any)
 
 		if (!bOutside && (nItem >= 0))
 		{
-			CString strText;
-			GetText(nItem, strText);
+			// If we are now hovering over a different item
+			if (nItem != curr_)
+			{
+				// Get the expression (string) and result (item data)
+				CString ss, *ps;
+				GetText(nItem, ss);
+				ps = (CString *)GetItemDataPtr(nItem);
+				ss += " = " + *ps;
 
-			CRect rect;
-			GetItemRect(nItem, &rect);
-			ClientToScreen(&rect);
+				// Work out width of string in pixels
+				CSize sz;
+				{
+					CClientDC dc(&tip_);
+					int nSave = dc.SaveDC();
+					dc.SelectObject(tip_.GetFont());
+					sz = dc.GetTextExtent(ss);
+					dc.RestoreDC(nSave);
+				}
 
-			HDC hDC = ::GetDC(m_hWnd);
+				// Check if string fits withint this monitor - and work out how many times to wrap if not
+				int wrap = 0;
+				CRect rctMon = MonitorMouse();   // rect of current monitor
+				if (sz.cx > rctMon.Width())
+					wrap = sz.cx / (rctMon.Width()*3/4);
 
-			SIZE size;
-			::GetTextExtentPoint32(hDC, strText, strText.GetLength(), &size);
-			::ReleaseDC(m_hWnd, hDC);
+				// Add the text to the tip window
+				tip_.Clear();
+				if (wrap > 0)
+				{
+				}
+				else
+					tip_.AddString(ss);
 
-		}
-		else
-		{
+
+				// xxx use GetTextExtent to make sure the string is not wider than the monitor - and split into multiple AddString calls if necessary
+
+				// Move the tip window just below the mouse and make visible
+				CRect rct;
+				tip_.GetWindowRect(&rct);
+				CPoint pt;
+				::GetCursorPos(&pt);
+				pt.x -= rct.Width()/2;
+				pt.y += rct.Height()/2;
+				tip_.Move(pt, false);
+				tip_.Show();
+
+				SetTimer(CCALCLISTBOX_TIMER_ID, 100, NULL);  // allows check after window closed/moved off
+				curr_ = nItem;  // remember which item we are now showing tip for
+			}
+			CListBox::OnMouseMove(nFlags, point);
+			return;
 		}
 	}
-	else
-	{
-	}
+
+	// If we didn't return above then we are not over an item
+	// Close any tip window that is open
+	if (tip_.IsWindowVisible() && !tip_.FadingOut())
+		tip_.Hide(300);
+	curr_ = -1;
 
 	CListBox::OnMouseMove(nFlags, point);
 }
@@ -667,6 +724,9 @@ void CCalcListBox::OnTimer(UINT id)
 		if ((!rectClient.PtInRect(point)) || ((dwStyle & WS_VISIBLE) == 0))
 		{
 			KillTimer(CCALCLISTBOX_TIMER_ID);
+			if (tip_.IsWindowVisible() && !tip_.FadingOut())
+				tip_.Hide(300);
+			curr_ = -1;
 		}
 	}
 	else
