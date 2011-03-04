@@ -532,7 +532,8 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_WM_CONTEXTMENU()
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
-	ON_CBN_SELENDOK(IDC_EDIT, OnSelHistory)
+	ON_CBN_SELCHANGE(IDC_EDIT, OnSelHistory)
+	//ON_WM_DELETEITEM()   // OnDeleteItem - message only sent for owner draw list boxes
 	ON_EN_CHANGE(IDC_RADIX, OnChangeRadix)
 	ON_EN_CHANGE(IDC_BITS, OnChangeBits)
 	ON_BN_CLICKED(IDC_CALC_SIGNED, OnChangeSigned)
@@ -870,40 +871,6 @@ void CCalcDlg::make_noise(const char * ss)
 #endif
 		::Beep(3000,400);
 }
-
-#if 0
-void CCalcDlg::ShowStatus()
-{
-	if (!aa_->refresh_off_ && IsVisible())
-	{
-		edit_.put();
-
-		ASSERT(GetDlgItem(IDC_OP_DISPLAY) != NULL);
-		if (state_ == CALCOVERFLOW)
-		{
-			TRACE0("OVERFLOW!!");
-			GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("O");
-#ifdef SYS_SOUNDS
-			if (!CSystemSound::Play("Calculator Overflow"))
-#endif
-				::Beep(3000,400);
-
-		}
-		else if (state_ == CALCERROR)
-		{
-			TRACE0("ERROR!!");
-			GetDlgItem(IDC_OP_DISPLAY)->SetWindowText("E");
-#ifdef SYS_SOUNDS
-			if (!CSystemSound::Play("Calculator Error"))
-#endif
-				::Beep(3000,400);
-		}
-	}
-
-	if (ctl_calc_bits_.m_hWnd != 0)
-		ctl_calc_bits_.RedrawWindow();
-}
-#endif
 
 void CCalcDlg::update_expr()
 {
@@ -1457,7 +1424,7 @@ void CCalcDlg::calc_binary()
 		ASSERT(0);
 		break;
 	}
-	right_ = get_expr(false);
+	right_ = get_expr(false);  // we need parenthese in case there are further operations
 
 	op_ = binop_none;
 }  // calc_binary
@@ -1652,7 +1619,7 @@ void CCalcDlg::setup_expr()
 	// Make a smaller font for use with expression display etc
 	LOGFONT lf;
 	memset(&lf, 0, sizeof(LOGFONT));
-	lf.lfHeight = 12;
+	lf.lfHeight = 11;
 	strcpy(lf.lfFaceName, "Tahoma");  // Simple font for small digits
 	fnt_.CreateFontIndirect(&lf);
 
@@ -2134,6 +2101,18 @@ int CCalcDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CCalcDlg::OnDestroy()
 {
+	// All history items have a CString on the heap associated with them.  We delete
+	// the strings here (as WM_DELETEITEM is only saent for owner-draw combos).
+	for (int ii = 0; ii < ctl_edit_combo_.GetCount(); ++ii)
+	{
+		CString * ps = (CString *)ctl_edit_combo_.GetItemDataPtr(ii);
+		if (ps != NULL)
+		{
+			delete ps;
+			ctl_edit_combo_.SetItemDataPtr(ii, NULL);  // set it to NULL to be safe
+		}
+	}
+
 	CDialog::OnDestroy();
 
 	fnt_.DeleteObject();
@@ -2249,15 +2228,23 @@ LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 void CCalcDlg::OnSelHistory()
 {
 	CString ss;
-	edit_.GetWindowText(ss);
+	ctl_edit_combo_.GetLBText(ctl_edit_combo_.GetCurSel(), ss);
 	SetStr(ss);
+	op_ = binop_none;
+	left_= ""; right_ = "(" + ss + ")";
 }
+
+/*
+void CCalcDlg::OnDeleteItem(int nIDCtl, DELETEITEMSTRUCT * pdis)
+{
+}
+*/
 
 void CCalcDlg::OnChangeRadix()
 {
 	if (!inited_) return;   // no point in doing anything yet
 
-	// Gte value from radix edit box and convert to an integer
+	// Get value from radix edit box and convert to an integer
 	CString ss;
 	GetDlgItemText(IDC_RADIX, ss);
 	int radix = strtol(ss, NULL, 10);
@@ -2517,8 +2504,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	check_for_error();   // check for overflow/error
 	edit_.put();
 
-	if (state_ != CALCINTRES)
-		add_hist();
+	add_hist();
 	// xxx make sure it also gets added to hex or dec jump list
 
 	CHexEditView *pview = GetView();
@@ -2702,9 +2688,8 @@ void CCalcDlg::OnEquals()               // Calculate result
 	check_for_error();   // check for overflow/error
 	edit_.put();
 
-	// We have a valid result so add it to the history list (unless already just added)
-	if (state_ != CALCINTRES)
-		add_hist();
+	// We have a valid result so add it to the history list (even if just added)
+	add_hist();
 
 	switch (state_)
 	{
@@ -2738,33 +2723,55 @@ void CCalcDlg::OnEquals()               // Calculate result
 }
 
 // ---------- History and Expression Display ---------
+
+// add_hist() adds to the history list of previous calculations by adding to the
+// drop-down list (in which the main edit box resides) when a result is generated.
+// The expression that created the result is added as a string to the drop-list, and
+// the data-item associated with that contains the result (as a string).
+// The result is displayed in atip window when the user holds the mouse over an
+// expression in the history list.
+// Duplicates are removed from the list but since the same expression can generate
+// different result (eg if it use a variable name) then a duplicate is only one
+// where both the expression and the result match.
 void CCalcDlg::add_hist()
 {
-	// We don't add to the history if there is an active calculator button, but
-	// only if there is an expression in the calculator text box to be evaluated.
-	if (op_ == binop_none)
+	// Get the expression that generated the result
+	CString Expr = CString(get_expr(true));
+
+	// Put the result string on the heap so we can store it in the drop list item data
+	edit_.get();   // Get the result string into current_str_
+	CString * pResult = new CString(current_str_);
+
+	// Find any duplicate and remove
+	for (int ii = 0; ii < ctl_edit_combo_.GetCount(); ++ii)
 	{
-		// Get the current value or expression
-		CString toadd;
-		edit_.GetWindowText(toadd);
-#if 0  // We no longer remove duplicates since the same expression could have a differeny result
-		for (int ii = 0; ii < ctl_edit_combo_.GetCount(); ++ii)
+		// Get expression and result for this item
+		CString ss, * ps;
+		ctl_edit_combo_.GetLBText(ii, ss);
+		ps = (CString *)ctl_edit_combo_.GetItemDataPtr(ii);
+
+		if (ss == Expr && ps != NULL && *ps == *pResult)
 		{
-			CString ss;
-			ctl_edit_combo_.GetLBText(ii, ss);
-			if (ss == toadd)                            // should we compare ignoring case?
-			{
-				ctl_edit_combo_.DeleteString(ii);       // remove existing entry with same text
-				break;
-			}
+			// We also have to delete the string (here and when combo is destroyed)
+			// It would have been easy just to handle WM_DELETEITEM but 
+			// this is only sent for owner-draw combo boxes apparently.
+			delete ps;
+
+			ctl_edit_combo_.DeleteString(ii);       // remove this entry
+
+			break;  // exit loop since the same value could not appear again
 		}
-#endif
-		ctl_edit_combo_.InsertString(0, toadd);
 	}
+	// Add the new entry (at the top of the drop-down list)
+	ctl_edit_combo_.InsertString(0, Expr);
+	ctl_edit_combo_.SetItemDataPtr(0, pResult);
 }
 
 // Combine the current left and right values with active binary operator to get the
-// expression that will re-create the value in the calcualtor.
+// expression that will re-create the value in the calculator.
+// Parentheses are placed around expressions if there would be a precedence issue
+// when combined with further operations.  To avoid the parenthese (eg when just
+// displaying the result) pass true as the first parameter.
 ExprStringType CCalcDlg::get_expr(bool no_paren /* = false */)
 {
 	ExprStringType retval;

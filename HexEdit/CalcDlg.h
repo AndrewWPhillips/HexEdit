@@ -307,6 +307,7 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnSelHistory();
+	//afx_msg void OnDeleteItem(int nIDCtl, DELETEITEMSTRUCT *pdis);
 	afx_msg void OnChangeRadix();
 	afx_msg void OnChangeBits();
 	afx_msg void OnChangeSigned();
