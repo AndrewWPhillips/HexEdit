@@ -545,10 +545,12 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	TRACE("xxxx0 OnChar: sel = %x\r\n", GetSel());
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
-	pp_->set_right();
+	get();
 	pp_->state_ = update_value(false);
 	pp_->check_for_error();
 	add_sep();
+	get();
+	pp_->set_right();
 	pp_->inedit(km_user_str);
 	pp_->ctl_calc_bits_.RedrawWindow();
 }
@@ -596,10 +598,12 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (nChar == VK_DELETE)
 	{
 		// This is handled similarly to OnChar since Del key changes the text
-		pp_->set_right();
+		get();
 		pp_->state_ = update_value(false);
 		pp_->check_for_error();
 		add_sep();
+		get();
+		pp_->set_right();
 		pp_->inedit(km_user_str);
 		pp_->ctl_calc_bits_.RedrawWindow();
 	}
@@ -665,7 +669,7 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 					dc.RestoreDC(nSave);
 				}
 
-				// Check if string fits withint this monitor - and work out how many times to wrap if not
+				// Check if string fits within this monitor - and work out how many times to wrap if not
 				int wrap = 0;
 				CRect rctMon = MonitorMouse();   // rect of current monitor
 				if (sz.cx > rctMon.Width())
