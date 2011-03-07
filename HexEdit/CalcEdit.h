@@ -99,12 +99,13 @@ public:
 public:
 	virtual ~CCalcEdit();
 
-	// Generated message map functions
-protected:
 	void put();       // put current value into edit box
 	void get();       // get current value from edit box into current_str_
 	CALCSTATE update_value(bool side_effects = true); // get info from current_str_
 	void clear_result(bool clear = true);             // make edit box editable (not a "result")
+
+	// Generated message map functions
+protected:
 
 	//{{AFX_MSG(CCalcEdit)
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);

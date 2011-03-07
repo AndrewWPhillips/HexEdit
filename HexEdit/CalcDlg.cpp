@@ -80,7 +80,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	//pDC->FillRect(&rct, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
 
 	// Don't show anything if it's not an int
-	if (m_pParent->state_ == CALCERROR || m_pParent->state_ > CALCINTEXPR)
+	if (m_pParent->state_ == CALCERROR || m_pParent->state_ >= CALCINTEXPR)
 		return TRUE;
 
 	int wndHeight = rct.Height();
@@ -169,6 +169,7 @@ void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 		mpz_class val = m_pParent->current_;
 		mpz_combit(val.get_mpz_t(), bnum);
 		m_pParent->Set(val);
+		m_pParent->edit_.get();
 		m_pParent->set_right();
 	}
 	CWnd::OnLButtonDown(nFlags, point);
@@ -314,10 +315,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	VERIFY(ctl_calc_bits_.Create(bitsClass, NULL, bitsStyle, rct, this, IDC_CALC_BITS));
 
 	// ----------- Set up resizer control ----------------
-	// We need this so that the resizer gets WM_SIZE event after the controls have been added.
-	CRect cli;
-	GetClientRect(&cli);
-	PostMessage(WM_SIZE, SIZE_RESTORED, MAKELONG(cli.Width(), cli.Height()));
+	// (See also setup_resizer - called the first time OnKickIdle is called.)
 
 	// We must set the 4th parameter true else we get a resize border
 	// added to the dialog and this really stuffs things up inside a pane.
@@ -331,6 +329,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 
 	check_for_error();   // check for overflow of restored value
 	edit_.put();
+	//edit_.get();    // current_str_ already contains the restored value
 	set_right();
 	inited_ = true;
 	return TRUE;
@@ -827,7 +826,8 @@ void CCalcDlg::do_binop(binop_type binop)
 		// Get ready for new value to be entered
 		previous_ = get_norm(current_);
 		left_ = right_;
-		//current_ = 0;
+		current_ = 0;
+		current_str_ = "0"; // don't use edit_.put()/get() here as we want top preserve the previous result until something is entered
 		set_right();
 	}
 	aa_->SaveToMacro(km_binop, long(binop));
@@ -1335,7 +1335,7 @@ void CCalcDlg::calc_binary()
 			state_ = CALCOVERFLOW;
 		}
 		else
-			mpz_pow_ui(current_.get_mpz_t(), current_.get_mpz_t(), previous_.get_si()); 
+			mpz_pow_ui(current_.get_mpz_t(), previous_.get_mpz_t(), current_.get_si()); 
 		break;
 	case binop_gtr:
 	case binop_gtr_old:
@@ -1424,7 +1424,7 @@ void CCalcDlg::calc_binary()
 		ASSERT(0);
 		break;
 	}
-	right_ = get_expr(false);  // we need parenthese in case there are further operations
+	right_ = get_expr(false);  // we need parentheses in case there are further operations
 
 	op_ = binop_none;
 }  // calc_binary
@@ -1611,6 +1611,11 @@ void CCalcDlg::setup_resizer()
 	m_resizer.Add(IDC_EQUALS, 66, 87, 8, 10);
 	m_resizer.Add(IDC_ADDOP, 75, 87, 8, 10);
 	m_resizer.Add(IDC_GO, 83, 87, 16, 10);
+
+	// We need this so that the resizer gets WM_SIZE event after the controls have been added.
+	CRect cli;
+	GetClientRect(&cli);
+	PostMessage(WM_SIZE, SIZE_RESTORED, MAKELONG(cli.Width(), cli.Height()));
 }
 
 // Customize expr display (IDC_EXPR)
@@ -2225,6 +2230,7 @@ LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 	}
 	return FALSE;
 }
+
 void CCalcDlg::OnSelHistory()
 {
 	CString ss;
@@ -2641,6 +2647,7 @@ void CCalcDlg::OnClearEntry()           // Zero current value
 	current_ = 0;
 	state_ = CALCINTUNARY;
 	edit_.put();
+	edit_.get();
 	set_right();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear_entry);
@@ -2652,6 +2659,7 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 	current_ = 0;
 	state_ = CALCINTRES;
 	edit_.put();
+	edit_.get();
 	left_.Empty(); set_right();
 	source_ = aa_->recording_ ? km_user_str : km_result;
 	aa_->SaveToMacro(km_clear);
@@ -2659,7 +2667,7 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 
 void CCalcDlg::OnEquals()               // Calculate result
 {
-	TRACE("xxxxxxx =: expr:%s\r\n", (const char *)CString(get_expr(true)));
+	TRACE("xxxxxxx =: expr:%.200s\r\n", (const char *)CString(get_expr(true)));
 	// Check if we are in error state or we don't have a valid expression
 	if (state_ == CALCERROR)
 	{
@@ -2737,12 +2745,16 @@ void CCalcDlg::add_hist()
 {
 	// Get the expression that generated the result
 	CString Expr = CString(get_expr(true));
+	if (Expr.GetLength() > 100)
+		Expr = Expr.Left(100) + "...";
 
 	// Put the result string on the heap so we can store it in the drop list item data
 	edit_.get();   // Get the result string into current_str_
-	CString * pResult = new CString(current_str_);
+	CString * pResult= new CString(current_str_.Left(2000));
+	if (current_str_.GetLength() > 2000)
+		*pResult += CString("...");
 
-	// Find any duplicate and remove
+	// Find any duplicate and remove it
 	for (int ii = 0; ii < ctl_edit_combo_.GetCount(); ++ii)
 	{
 		// Get expression and result for this item
@@ -2779,10 +2791,10 @@ ExprStringType CCalcDlg::get_expr(bool no_paren /* = false */)
 	switch (op_)
 	{
 	case binop_none:
-		if (state_ >= CALCINTEXPR)
-			retval.Format(EXPRSTR("(%s)"), (const wchar_t *)right_);
-		else
+		if (state_ < CALCINTEXPR || right_[0] == '(' && right_[right_.GetLength()-1] == ')')
 			retval = right_;
+		else
+			retval.Format(EXPRSTR("(%s)"), (const wchar_t *)right_);
 		break;
 	case binop_add:
 		retval.Format(EXPRSTR("(%s + %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
@@ -2828,15 +2840,12 @@ ExprStringType CCalcDlg::get_expr(bool no_paren /* = false */)
 
 	case binop_and:
 		retval.Format(EXPRSTR("(%s & %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
-		current_ &= previous_;
 		break;
 	case binop_or:
 		retval.Format(EXPRSTR("(%s | %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
-		current_ |= previous_;
 		break;
 	case binop_xor:
 		retval.Format(EXPRSTR("(%s ^ %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
-		current_ ^= previous_;
 		break;
 
 	default:
@@ -2856,14 +2865,9 @@ ExprStringType CCalcDlg::get_expr(bool no_paren /* = false */)
 void CCalcDlg::set_right()
 {
 	if (state_ == CALCERROR)
-	{
 		right_ = "***";
-	}
 	else
-	{
-		edit_.get();
 		right_ = current_str_;
-	}
 }
 
 // ---------- Menu button handlers ---------
@@ -3484,6 +3488,7 @@ void CCalcDlg::OnMemGet()
 
 	check_for_error();   // check for overflow & display error messages
 	edit_.put();
+	edit_.get();
 	set_right();
 	inedit(km_memget);
 }
@@ -3587,6 +3592,7 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 
 	check_for_error();   // check for overflow & display error messages
 	edit_.put();
+	edit_.get();
 	set_right();
 	inedit(km_markget);
 }
@@ -3756,6 +3762,7 @@ void CCalcDlg::OnMarkAt()
 
 	//check_for_error();   // overflow should not happen?
 	edit_.put();
+	edit_.get();
 	set_right();
 	inedit(km_markat);
 }
@@ -3781,6 +3788,7 @@ void CCalcDlg::OnSelGet()
 
 	check_for_error();   // check for overflow & display error messages
 	edit_.put();
+	edit_.get();
 	set_right();
 	inedit(km_selget);
 }
@@ -3797,6 +3805,7 @@ void CCalcDlg::OnSelAt()                // Value in file at cursor
 
 	//check_for_error();   // overflow should not occur?
 	edit_.put();
+	edit_.get();
 	set_right();
 	inedit(km_selat);
 }
@@ -3822,6 +3831,7 @@ void CCalcDlg::OnSelLen()
 
 	check_for_error();   // check for overflow & display error messages
 	edit_.put();
+	edit_.get();
 	set_right();
 	inedit(km_sellen);
 }
@@ -3845,6 +3855,7 @@ void CCalcDlg::OnEofGet()               // Length of file
 
 	check_for_error();   // check for overflow & display error messages
 	edit_.put();
+	edit_.get();
 	set_right();
 	inedit(km_eofget);
 }
