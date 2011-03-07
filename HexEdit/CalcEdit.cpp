@@ -126,7 +126,7 @@ void CCalcEdit::put()
 		SetWindowText(buf);
 		SetSel(strlen(buf), -1, FALSE);     // move caret to end
 
-		TRACE("++++++ Put: int %s\r\n", (const char *)buf);
+		TRACE("++++++ Put: int %.100s\r\n", (const char *)buf);
 		delete[] buf;
 	}
 	else
@@ -307,7 +307,7 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 	if (pp_->state_ <= CALCINTLIT)
 		TRACE("++++++ Got: int %d\r\n", mpz_get_ui(pp_->current_.get_mpz_t()));
 	else
-		TRACE("++++++ Got: <%s>\r\n", (const char *)CString(pp_->current_str_));
+		TRACE("++++++ Got: <%.100s>\r\n", (const char *)CString(pp_->current_str_));
 #endif
 
 	return retval;
@@ -428,7 +428,7 @@ void CCalcEdit::add_sep()
 	*dst = '\0';                        // Terminate string
 
 	SetWindowText(out);
-	TRACE("++++++ Sep: <%s> to <%s>\r\n", (const char *)ss, (const char *)out);
+	TRACE("++++++ Sep: <%.100s> to <%.100s>\r\n", (const char *)ss, (const char *)out);
 	delete[] out;
 	SetSel(newstart, newend);
 }
@@ -653,38 +653,72 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 			// If we are now hovering over a different item
 			if (nItem != curr_)
 			{
-				// Get the expression (string) and result (item data)
-				CString ss, *ps;
-				GetText(nItem, ss);
-				ps = (CString *)GetItemDataPtr(nItem);
-				ss += " = " + *ps;
-
-				// Work out width of string in pixels
-				CSize sz;
-				{
-					CClientDC dc(&tip_);
-					int nSave = dc.SaveDC();
-					dc.SelectObject(tip_.GetFont());
-					sz = dc.GetTextExtent(ss);
-					dc.RestoreDC(nSave);
-				}
-
-				// Check if string fits within this monitor - and work out how many times to wrap if not
-				int wrap = 0;
-				CRect rctMon = MonitorMouse();   // rect of current monitor
-				if (sz.cx > rctMon.Width())
-					wrap = sz.cx / (rctMon.Width()*3/4);
-
-				// Add the text to the tip window
+				// Display expression and/or result string in the tip window
 				tip_.Clear();
-				if (wrap > 0)
+
+				CString ss;
+				GetText(nItem, ss);   // This assumes combo box strings are not long (ie truncated)
+
+				CString * ps = (CString *)GetItemDataPtr(nItem);
+				if (ps == NULL)
 				{
+					// Expression only
+					tip_.AddString(ss);
+				}
+				else if (ps->GetLength() < 100)
+				{
+					// "Expression = result"
+					ss += " = " + *ps;
+					tip_.AddString(ss);
 				}
 				else
-					tip_.AddString(ss);
+				{
+					// Add "Expression ="  then multiple lines of result
+					tip_.AddString(ss + " =");
 
+					// Work out the width of the result string in pixels
+					CSize sz;
+					{
+						CClientDC dc(&tip_);
+						int nSave = dc.SaveDC();
+						dc.SelectObject(tip_.GetFont());
+						sz = dc.GetTextExtent(*ps);
+						dc.RestoreDC(nSave);
+					}
 
-				// xxx use GetTextExtent to make sure the string is not wider than the monitor - and split into multiple AddString calls if necessary
+					// Check if string fits within this monitor - and work out how many times to wrap if not
+					int wrap = 0;
+					CRect rctMon = MonitorMouse();   // rect of current monitor
+					if (sz.cx > rctMon.Width())
+						wrap = sz.cx / (rctMon.Width()*3/4);
+
+					// Add the text to the tip window
+					if (wrap > 0)
+					{
+						// First work out roughly how many characters to put on each line
+						int len = ps->GetLength() / (wrap+1);
+						char * start = ps->GetBuffer();
+						char * end = start + ps->GetLength();
+
+						while (start + len < end)
+						{
+							char * pp;
+							for (pp = start + len*3/4; pp > start + len/2; pp--)
+							{
+								if (*pp == ' ')
+									break;
+							}
+							char tmp = *pp;
+							*pp = '\0';
+							tip_.AddString(start);
+							*pp = tmp;
+							start = pp;
+						}
+						tip_.AddString(start);  // remaining bit
+					}
+					else
+						tip_.AddString(*ps);
+				}
 
 				// Move the tip window just below the mouse and make visible
 				CRect rct;
