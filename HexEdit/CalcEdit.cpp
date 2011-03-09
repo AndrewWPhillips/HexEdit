@@ -119,12 +119,23 @@ void CCalcEdit::put()
 		mpz_class val = pp_->get_norm(pp_->current_);
 
 		// Get a buffer large enough to hold the text (may be big)
-		char *buf = new char[mpz_sizeinbase(val.get_mpz_t(), pp_->radix_) + 2];
+		int len = mpz_sizeinbase(val.get_mpz_t(), pp_->radix_) + 2 + 1;
+		char *buf = new char[len];
+		buf[len-1] = '\xCD';
 
 		// Get the number as a string and add it to the text box
 		mpz_get_str(buf, pp_->radix_, val.get_mpz_t());
+		ASSERT(buf[len-1] == '\xCD');
 		SetWindowText(buf);
-		SetSel(strlen(buf), -1, FALSE);     // move caret to end
+		if (GetWindowTextLength() < len - 2)
+		{
+			ASSERT(0);
+			SetWindowText("Result too big for edit box to display");
+			// xxx Offer option to open in a file?
+			pp_->state_ = CALCOVERFLOW;
+		}
+		else
+			SetSel(len, -1, FALSE);     // move caret to end
 
 		TRACE("++++++ Put: int %.100s\r\n", (const char *)buf);
 		delete[] buf;

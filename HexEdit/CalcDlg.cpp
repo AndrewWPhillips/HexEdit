@@ -28,10 +28,10 @@
 // The "current value" of the calculator is stored in this class (CCalcDlg) in:
 //   state_ - says whether the value is an integer or other type of value, is a literal
 //            or expression, is a result (including error/overflow) or is being edited
-//   current_ - current value if its a simple integer literal (ie, state_ <= CALCINTLIT)
-//   current_str_ - current value as a string if not an integer or is an expression
+//   current_ - current value if it's a simple integer literal (ie, state_ <= CALCINTLIT)
+//   current_str_ - current value as a string if not an integer or is an int expression
 // Also if there is a pending binary operation then these members are also relevant:
-//   previous_ - values of current_ when the binary operation was initiated
+//   previous_ - values of left side of operation
 //   op_ - the binary operation
 //
 // The edit box is used to display results by setting current/current_str_ and state_
@@ -193,7 +193,7 @@ void CCalcBits::calc_widths(CRect & rct)
 {
 	m_ww = rct.Width()/70;                 // width of display for one bit
 	ASSERT(m_ww > 3);
-	m_hh = 6 + (rct.Height() - 6)/2;
+	m_hh = 4 + (rct.Height() - 6)/2;
 	if (m_hh < 7)
 		m_hh = 7;
 	else if (m_hh > 16)
@@ -313,7 +313,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 
 	DWORD bitsStyle = WS_CHILD | WS_VISIBLE;
 	VERIFY(ctl_calc_bits_.Create(bitsClass, NULL, bitsStyle, rct, this, IDC_CALC_BITS));
-	ctl_calc_bits_.SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOREDRAW|SWP_NOSIZE|SWP_NOOWNERZORDER);  // put it above surrounding controls
+	ctl_calc_bits_.SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOREDRAW|SWP_NOSIZE|SWP_NOOWNERZORDER);
 
 	// ----------- Set up resizer control ----------------
 	// (See also setup_resizer - called the first time OnKickIdle is called.)
@@ -1271,7 +1271,6 @@ void CCalcDlg::calc_unary(unary_type unary)
 // Handle "digit" button click
 void CCalcDlg::do_digit(char digit)
 {
-	TRACE("xxxx0 do_dig: sel = %x\r\n", edit_.GetSel());
 	// Since digit buttons are "enabled" (but greyed) even when invalid we need to check for invalid digits
 	int val = isdigit(digit) ? (digit - '0') : digit - 'A' + 10;
 	if (val >= radix_)
@@ -1283,7 +1282,6 @@ void CCalcDlg::do_digit(char digit)
 		return;
 	}
 
-	TRACE("xxxx1 do_dig: sel = %x\r\n", edit_.GetSel());
 	edit_.SendMessage(WM_CHAR, digit, 1);
 }
 
@@ -2673,7 +2671,7 @@ void CCalcDlg::OnClear()                // Zero current and remove any operators
 
 void CCalcDlg::OnEquals()               // Calculate result
 {
-	TRACE("xxxxxxx =: expr:%.200s\r\n", (const char *)CString(get_expr(true)));
+	TRACE("CALCULATOR EQUALS: expr:%.200s\r\n", (const char *)CString(get_expr(true)));
 	// Check if we are in error state or we don't have a valid expression
 	if (state_ == CALCERROR)
 	{
@@ -2885,7 +2883,6 @@ void CCalcDlg::set_right()
 void CCalcDlg::button_colour(CWnd *pp, bool enable, COLORREF normal)
 {
 	ASSERT(pp != NULL);
-	//pp->EnableWindow(TRUE); // xxx not nec after all enabled in dlg editor
 
 	CCalcButton *pbut = DYNAMIC_DOWNCAST(CCalcButton, pp);
 	ASSERT(pbut != NULL);
