@@ -135,7 +135,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 		pDC->Rectangle(&rct);
 
 		// Draw numbers underneath some digits
-		if (m_hh < wndHeight - 8 && (bnum%8 == 0 || bnum == 63))
+		if (m_hh < wndHeight - 10 && (bnum%8 == 0 || bnum == 63))
 		{
 			char buf[4];
 			sprintf(buf, "%d", bnum);
@@ -313,6 +313,7 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 
 	DWORD bitsStyle = WS_CHILD | WS_VISIBLE;
 	VERIFY(ctl_calc_bits_.Create(bitsClass, NULL, bitsStyle, rct, this, IDC_CALC_BITS));
+	ctl_calc_bits_.SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOREDRAW|SWP_NOSIZE|SWP_NOOWNERZORDER);  // put it above surrounding controls
 
 	// ----------- Set up resizer control ----------------
 	// (See also setup_resizer - called the first time OnKickIdle is called.)
@@ -1505,24 +1506,25 @@ void CCalcDlg::setup_resizer()
 
 	// Settings controls don't move/size horizontally but move vert. and size slightly too
 	m_resizer.Add(IDC_BIG_ENDIAN_FILE_ACCESS, 0, 13, 0, 13);
-	m_resizer.Add(IDC_RADIX_GROUP, 0, 12, 0, 8);
-	m_resizer.Add(IDC_DESC_RADIX, 0, 13, 0, 0);
-	m_resizer.Add(IDC_RADIX, 0, 13, 0, 0);
-	m_resizer.Add(IDC_SPIN_RADIX, 0, 13, 0, 0);
-	m_resizer.Add(IDC_HEX, 0, 13, 0, 5);
-	m_resizer.Add(IDC_DECIMAL, 0, 13, 0, 5);
-	m_resizer.Add(IDC_OCTAL, 0, 13, 0, 5);
-	m_resizer.Add(IDC_BINARY, 0, 13, 0, 5);
-	m_resizer.Add(IDC_BITS_GROUP, 0, 12, 0, 8);
-	m_resizer.Add(IDC_DESC_BITS, 0, 13, 0, 0);
-	m_resizer.Add(IDC_BITS, 0, 13, 0, 0);
-	m_resizer.Add(IDC_SPIN_BITS, 0, 13, 0, 0);
-	m_resizer.Add(IDC_CALC_SIGNED, 0, 13, 0, 0);
-	m_resizer.Add(IDC_INFBIT, 0, 13, 0, 5);
-	m_resizer.Add(IDC_64BIT, 0, 13, 0, 5);
-	m_resizer.Add(IDC_32BIT, 0, 13, 0, 5);
-	m_resizer.Add(IDC_16BIT, 0, 13, 0, 5);
-	m_resizer.Add(IDC_8BIT, 0, 13, 0, 5);
+	m_resizer.Add(IDC_RADIX_GROUP, 0, 13, 0, 13);
+	m_resizer.Add(IDC_DESC_RADIX, 0, 14, 0, 0);
+	m_resizer.Add(IDC_RADIX, 0, 14, 0, 4);
+	m_resizer.Add(IDC_SPIN_RADIX, 0, 14, 0, 4);
+	m_resizer.Add(IDC_HEX, 0, 21, 0, 5);
+	m_resizer.Add(IDC_DECIMAL, 0, 21, 0, 5);
+	m_resizer.Add(IDC_OCTAL, 0, 21, 0, 5);
+	m_resizer.Add(IDC_BINARY, 0, 21, 0, 5);
+
+	m_resizer.Add(IDC_BITS_GROUP, 0, 13, 0, 13);
+	m_resizer.Add(IDC_DESC_BITS, 0, 14, 0, 0);
+	m_resizer.Add(IDC_BITS, 0, 14, 0, 4);
+	m_resizer.Add(IDC_SPIN_BITS, 0, 14, 0, 4);
+	m_resizer.Add(IDC_CALC_SIGNED, 0, 14, 0, 5);
+	m_resizer.Add(IDC_INFBIT, 0, 21, 0, 5);
+	m_resizer.Add(IDC_64BIT, 0, 21, 0, 5);
+	m_resizer.Add(IDC_32BIT, 0, 21, 0, 5);
+	m_resizer.Add(IDC_16BIT, 0, 21, 0, 5);
+	m_resizer.Add(IDC_8BIT, 0, 21, 0, 5);
 
 	// First row of buttons
 	m_resizer.Add(IDC_MEM_GET, 1, 27, 12, 10);
@@ -1626,11 +1628,12 @@ void CCalcDlg::setup_expr()
 	memset(&lf, 0, sizeof(LOGFONT));
 	lf.lfHeight = 11;
 	strcpy(lf.lfFaceName, "Tahoma");  // Simple font for small digits
-	fnt_.CreateFontIndirect(&lf);
+	small_fnt_.CreateFontIndirect(&lf);
 
-	GetDlgItem(IDC_EXPR)->SetFont(&fnt_);
-	GetDlgItem(IDC_RADIX)->SetFont(&fnt_);
-	GetDlgItem(IDC_BITS)->SetFont(&fnt_);
+	lf.lfHeight = 16;
+	med_fnt_.CreateFontIndirect(&lf);
+
+	GetDlgItem(IDC_EXPR)->SetFont(&small_fnt_);
 }
 
 void CCalcDlg::setup_tooltips()
@@ -2120,7 +2123,8 @@ void CCalcDlg::OnDestroy()
 
 	CDialog::OnDestroy();
 
-	fnt_.DeleteObject();
+	small_fnt_.DeleteObject();
+	med_fnt_.DeleteObject();
 
 	// Save some settings to the in file/registry
 	aa_->WriteProfileInt("Calculator", "Base", radix_);
@@ -2141,18 +2145,20 @@ void CCalcDlg::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
 {
 	if (!inited_) return;
 
-#if 0
-	if (cy < m_sizeInitial.cy*7/8)
+	if (cy < m_sizeInitial.cy*3/2)
 	{
-		SetDlgItemText(IDC_RADIX_GROUP, "");
-		SetDlgItemText(IDC_BITS_GROUP, "");
+		//SetDlgItemText(IDC_RADIX_GROUP, "");
+		//SetDlgItemText(IDC_BITS_GROUP, "");
+		GetDlgItem(IDC_RADIX)->SetFont(&small_fnt_);
+		GetDlgItem(IDC_BITS)->SetFont(&small_fnt_);
 	}
 	else
 	{
-		SetDlgItemText(IDC_RADIX_GROUP, "Base");
-		SetDlgItemText(IDC_BITS_GROUP, "Bits");
+		//SetDlgItemText(IDC_RADIX_GROUP, "Base");
+		//SetDlgItemText(IDC_BITS_GROUP, "Bits");
+		GetDlgItem(IDC_RADIX)->SetFont(&med_fnt_);
+		GetDlgItem(IDC_BITS)->SetFont(&med_fnt_);
 	}
-#endif
 
 	if (cx > 0 && m_sizeInitial.cx == -1)
 		m_sizeInitial = CSize(cx, cy);

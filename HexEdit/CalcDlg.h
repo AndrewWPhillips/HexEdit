@@ -416,7 +416,7 @@ private:
 	CResizeCtrl m_resizer;          // Used to move controls around when the window is resized
 	static CBrush * m_pBrush;       // brush used for background
 	CPen purple_pen;                // Just to draw square root symbol
-	CFont fnt_;                     // Smaller font used in expr display etc
+	CFont small_fnt_, med_fnt_;     // Diff sized fonts used when window resized
 
 	void check_for_error();         // Check for integer error/overflow conditions and inform the user
 	void make_noise(const char *ss);// Make Windows noise or beep on error
