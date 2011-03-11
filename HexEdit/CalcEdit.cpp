@@ -89,7 +89,6 @@ BEGIN_MESSAGE_MAP(CCalcEdit, CEdit)
 	//}}AFX_MSG_MAP
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
-	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 // Put the current value into the edit box
@@ -127,7 +126,7 @@ void CCalcEdit::put()
 		mpz_get_str(buf, pp_->radix_, val.get_mpz_t());
 		ASSERT(buf[len-1] == '\xCD');
 		SetWindowText(buf);
-		if (GetWindowTextLength() < len - 2)
+		if (GetWindowTextLength() < len - 5)
 		{
 			ASSERT(0);
 			SetWindowText("Result too big for edit box to display");
@@ -543,17 +542,12 @@ void CCalcEdit::OnKillFocus(CWnd* pNewWnd)
 	TRACE("xxxx1 OnKill: sel = %x\r\n", GetSel());
 }
 
-void CCalcEdit::OnLButtonUp(UINT nFlags, CPoint point)
-{
-	CEdit::OnLButtonUp(nFlags, point);
-}
-
 void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
+	TRACE("xxxx0 OnChar: sel = %x\r\n", GetSel());
 	ASSERT(pp_ != NULL && pp_->IsVisible());
 	clear_result();
 
-	TRACE("xxxx0 OnChar: sel = %x\r\n", GetSel());
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
 	get();
@@ -568,6 +562,7 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
+	TRACE("xxxx0 OnKeyD: sel = %x\r\n", GetSel());
 	ASSERT(pp_ != NULL && pp_->IsVisible());
 
 	// Clear any result (unless arrows etc pressed)
@@ -671,6 +666,18 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 				GetText(nItem, ss);   // This assumes combo box strings are not long (ie truncated)
 
 				CString * ps = (CString *)GetItemDataPtr(nItem);
+				CString radix_str;
+				if (ps != NULL && ps->GetLength() > 0 && (*ps)[0] != ' ')
+				{
+					char buf[2];
+					buf[0] = (*ps)[0];
+					buf[1] = '\0';
+					long rr = strtol(buf, NULL, 36);
+
+					// Only display nthe radix if it is different from the current calculator radix
+					//if (rr != pp_->radix_)  // xxx need to get radix from calc
+						radix_str.Format(" (radix %d)", rr);
+				}
 				if (ps == NULL)
 				{
 					// Expression only
@@ -679,7 +686,7 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 				else if (ps->GetLength() < 100)
 				{
 					// "Expression = result"
-					ss += " = " + *ps;
+					ss += " = " + CString((const char *)(*ps) + 1) + radix_str;
 					tip_.AddString(ss);
 				}
 				else
@@ -711,7 +718,8 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 						char * start = ps->GetBuffer();
 						char * end = start + ps->GetLength();
 
-						while (start + len < end)
+						int ii;
+						for (ii = 0; ii < 10 && start + len < end; ++ii)
 						{
 							char * pp;
 							for (pp = start + len*3/4; pp > start + len/2; pp--)
@@ -725,10 +733,16 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 							*pp = tmp;
 							start = pp;
 						}
-						tip_.AddString(start);  // remaining bit
+						if (ii < 10)
+						{
+							tip_.AddString(start);      // remainder left after last "full" line
+							tip_.AddString(radix_str);  // radix
+						}
+						else
+							tip_.AddString("...   " + radix_str_);
 					}
 					else
-						tip_.AddString(*ps);
+						tip_.AddString(*ps + radix_str);
 				}
 
 				// Move the tip window just below the mouse and make visible
@@ -794,6 +808,7 @@ HBRUSH CCalcComboBox::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	if (nCtlColor == CTLCOLOR_LISTBOX)
 	{
+		TRACE("xxxxxxxxxx CCalcComboBox::OnCtlColor\r\n");
 		if (listbox_.GetSafeHwnd() == NULL)
 			listbox_.SubclassWindow(pWnd->GetSafeHwnd());
 	}

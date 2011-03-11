@@ -74,6 +74,7 @@ void CCalcBits::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
 // Draw the images for the bits in the erase background event
 BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 {
+	TRACE("xxxxxxxxxx CCalcBits::OnEraseBkgnd\r\n");
 	CRect rct;    // used for drawing/fills etc and for calculations
 	GetClientRect(&rct);
 	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);
@@ -2254,6 +2255,7 @@ void CCalcDlg::OnChangeRadix()
 {
 	if (!inited_) return;   // no point in doing anything yet
 
+	TRACE("xxxxxxxxxx Change radix\r\n");
 	// Get value from radix edit box and convert to an integer
 	CString ss;
 	GetDlgItemText(IDC_RADIX, ss);
@@ -2266,6 +2268,7 @@ void CCalcDlg::OnChangeBits()
 {
 	if (!inited_) return;   // no point in doing anything yet
 
+	TRACE("xxxxxxxxxx Change bits\r\n");
 	CString ss;
 	GetDlgItemText(IDC_BITS, ss);
 	int bits = strtol(ss, NULL, 10);
@@ -2277,6 +2280,7 @@ void CCalcDlg::OnChangeSigned()
 {
 	if (!inited_) return;   // no point in doing anything yet
 
+	TRACE("xxxxxxxxxx Change signed\r\n");
 	CButton *pb = (CButton *)GetDlgItem(IDC_CALC_SIGNED);
 	change_signed(pb->GetCheck() == BST_CHECKED);
 }
@@ -2709,7 +2713,6 @@ void CCalcDlg::OnEquals()               // Calculate result
 	case CALCINTUNARY:
 	case CALCINTBINARY:
 	case CALCINTLIT:
-	case CALCINTEXPR:
 		// Result is an integer so we can do special integer things (like enable GO button)
 		state_ = CALCINTRES;
 		break;
@@ -2725,6 +2728,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 	case CALCOVERFLOW:  // it happens
 		break;
 
+	case CALCINTEXPR:   // should have been converted to CALCINTLIT
 	default:
 		ASSERT(0);  // these cases should not occur
 		return;
@@ -2752,13 +2756,66 @@ void CCalcDlg::add_hist()
 	if (Expr.GetLength() > 100)
 		Expr = Expr.Left(100) + "...";
 
+	// The first part of the string stores the radix as a char ('2'-'9', 'A'-'Z')
+	char buf[64];
+	if (state_ > CALCINTEXPR)
+		buf[0] = ' ';               // space indicates we don't care about the radix because it's not an int
+	else if (radix_ < 10)
+		buf[0] = radix_ + '0';      // 0-9
+	else
+		buf[0] = radix_ - 10 + 'A'; // A-Z
+	buf[1] = '\0';
+	CString * pResult = new CString(buf);
+
 	// Put the result string on the heap so we can store it in the drop list item data
 	edit_.get();   // Get the result string into current_str_
-	CString * pResult= new CString(current_str_.Left(2000));
-	if (current_str_.GetLength() > 2000)
-		*pResult += CString("...");
+	int len = current_str_.GetLength();
+	if (len < 2000)
+	{
+		*pResult += current_str_;
+	}
+	else if (state_ > CALCINTLIT)      // not integer - probably a very long string
+	{
+		*pResult += current_str_.Left(2000);
+		*pResult += " ...";
+	}
+	else
+	{
+		// Get a buffer to hold the large integer
+		const int extra = 2 + 1;  // Need room for possible sign, EOS, and dummy (\xCD) byte
+		int numlen = mpz_sizeinbase(current_.get_mpz_t(), 10) + extra;
+		char *numbuf = new char[numlen];
+		numbuf[numlen-1] = '\xCD';
 
-	// Find any duplicate and remove it
+		// Get the number as a string
+		mpz_get_str(numbuf, 10, current_.get_mpz_t());
+		ASSERT(numbuf[numlen-1] == '\xCD');
+
+		// Copy the most sig. digits copying sign if present, including decimal point after 1st digit
+		const char * pin = numbuf;
+		char * pout = buf;
+		if (*pin == '-')
+		{
+			*pout = '-';
+			++pin, ++pout;
+			//numlen--;         // mpz_sizeinbase does not return room for sign
+		}
+		*pout++ = *pin++;
+		*pout++ = theApp.dec_point_;
+		for (int ii = 0; ii < 40; ++ii)
+		{
+			if (isdigit(*pin) || isalpha(*pin))
+				*pout++ = *pin;
+			++pin;
+		}
+		delete[] numbuf;
+
+		// Add the exponent (decimal) and add initial 'A' to indicate that this number uses base 10
+		sprintf(pout, " E %d", numlen - 1 - extra);
+		*pResult = CString("A") + buf;
+	}
+
+	// Find any duplicate entry in the history (expression and result) and remove it
 	for (int ii = 0; ii < ctl_edit_combo_.GetCount(); ++ii)
 	{
 		// Get expression and result for this item
@@ -2778,6 +2835,7 @@ void CCalcDlg::add_hist()
 			break;  // exit loop since the same value could not appear again
 		}
 	}
+
 	// Add the new entry (at the top of the drop-down list)
 	ctl_edit_combo_.InsertString(0, Expr);
 	ctl_edit_combo_.SetItemDataPtr(0, pResult);
