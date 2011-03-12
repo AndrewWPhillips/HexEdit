@@ -123,7 +123,7 @@ void CCalcEdit::put()
 		buf[len-1] = '\xCD';
 
 		// Get the number as a string and add it to the text box
-		mpz_get_str(buf, pp_->radix_, val.get_mpz_t());
+		mpz_get_str(buf, theApp.hex_ucase_? -pp_->radix_ : pp_->radix_, val.get_mpz_t());
 		ASSERT(buf[len-1] == '\xCD');
 		SetWindowText(buf);
 		if (GetWindowTextLength() < len - 5)
@@ -162,6 +162,7 @@ void CCalcEdit::put()
 		pp_->ctl_calc_bits_.RedrawWindow();
 }
 
+// Get edit box text and place into current_str_
 void CCalcEdit::get()
 {
 	ASSERT(pp_ != NULL);
@@ -550,12 +551,16 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
+	// Update internals (state_, current_ etc) from the current edit box text
 	get();
 	pp_->state_ = update_value(false);
 	pp_->check_for_error();
-	add_sep();
+	add_sep();        // fix display of integers in edit box
+
+	// Update the expression to be displayed
 	get();
 	pp_->set_right();
+
 	pp_->inedit(km_user_str);
 	pp_->ctl_calc_bits_.RedrawWindow();
 }
@@ -739,7 +744,7 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 							tip_.AddString(radix_str);  // radix
 						}
 						else
-							tip_.AddString("...   " + radix_str_);
+							tip_.AddString("...   " + radix_str);
 					}
 					else
 						tip_.AddString(*ps + radix_str);

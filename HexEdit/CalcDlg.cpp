@@ -2239,23 +2239,35 @@ LRESULT CCalcDlg::OnKickIdle(WPARAM, LPARAM)
 void CCalcDlg::OnSelHistory()
 {
 	CString ss;
-	ctl_edit_combo_.GetLBText(ctl_edit_combo_.GetCurSel(), ss);
+	int nn = ctl_edit_combo_.GetCurSel();
+	if (nn == -1) return;   // why does this happen?
+
+	// If the history list has a result string with a radix value in it then 
+	// restore the radix before we restore the expression
+	CString * ps = (CString *)ctl_edit_combo_.GetItemDataPtr(nn);
+	if (ps != NULL && ps->GetLength() > 0 && (*ps)[0] != ' ')
+	{
+		char buf[2];
+		buf[0] = (*ps)[0];
+		buf[1] = '\0';
+		long rr = strtol(buf, NULL, 36);
+		if (rr != radix_)
+			change_base(rr);
+		orig_radix_ = radix_;
+	}
+
+	ctl_edit_combo_.GetLBText(nn, ss);
 	SetStr(ss);
 	op_ = binop_none;
-	left_= ""; right_ = "(" + ss + ")";
-}
 
-/*
-void CCalcDlg::OnDeleteItem(int nIDCtl, DELETEITEMSTRUCT * pdis)
-{
+	left_= "";
+	right_ = "(" + ss + ")";
 }
-*/
 
 void CCalcDlg::OnChangeRadix()
 {
 	if (!inited_) return;   // no point in doing anything yet
 
-	TRACE("xxxxxxxxxx Change radix\r\n");
 	// Get value from radix edit box and convert to an integer
 	CString ss;
 	GetDlgItemText(IDC_RADIX, ss);
@@ -2268,7 +2280,6 @@ void CCalcDlg::OnChangeBits()
 {
 	if (!inited_) return;   // no point in doing anything yet
 
-	TRACE("xxxxxxxxxx Change bits\r\n");
 	CString ss;
 	GetDlgItemText(IDC_BITS, ss);
 	int bits = strtol(ss, NULL, 10);
@@ -2280,7 +2291,6 @@ void CCalcDlg::OnChangeSigned()
 {
 	if (!inited_) return;   // no point in doing anything yet
 
-	TRACE("xxxxxxxxxx Change signed\r\n");
 	CButton *pb = (CButton *)GetDlgItem(IDC_CALC_SIGNED);
 	change_signed(pb->GetCheck() == BST_CHECKED);
 }
@@ -2580,6 +2590,8 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 		pview->SetFocus();
 
 	state_ = CALCINTRES;
+	orig_radix_ = radix_;    // remember starting radix
+
 	source_ = km_result;
 	aa_->SaveToMacro(km_go);
 }
@@ -2733,6 +2745,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 		ASSERT(0);  // these cases should not occur
 		return;
 	}
+	orig_radix_ = radix_;    // remember starting radix
 
 	source_ = km_result;
 	aa_->SaveToMacro(km_equals);
@@ -2760,28 +2773,49 @@ void CCalcDlg::add_hist()
 	char buf[64];
 	if (state_ > CALCINTEXPR)
 		buf[0] = ' ';               // space indicates we don't care about the radix because it's not an int
-	else if (radix_ < 10)
-		buf[0] = radix_ + '0';      // 0-9
+	else if (orig_radix_ < 10)
+		buf[0] = orig_radix_ + '0';      // 0-9
 	else
-		buf[0] = radix_ - 10 + 'A'; // A-Z
+		buf[0] = orig_radix_ - 10 + 'A'; // A-Z
 	buf[1] = '\0';
 	CString * pResult = new CString(buf);
 
 	// Put the result string on the heap so we can store it in the drop list item data
 	edit_.get();   // Get the result string into current_str_
 	int len = current_str_.GetLength();
-	if (len < 2000)
+	if (len < 2000 && state_ > CALCINTLIT)
 	{
+		// Short non-int result
 		*pResult += current_str_;
 	}
 	else if (state_ > CALCINTLIT)      // not integer - probably a very long string
 	{
+		// Long non-int result
 		*pResult += current_str_.Left(2000);
 		*pResult += " ...";
 	}
+	else if (len < 2000 && radix_ == orig_radix_)
+	{
+		// Short int result in original radix
+		*pResult += current_str_;
+	}
+	else if (len < 2000)
+	{
+		// Short int result that needs conversion to original radix
+		int numlen = mpz_sizeinbase(current_.get_mpz_t(), orig_radix_) + 3;
+		char *numbuf = new char[numlen];
+		numbuf[numlen-1] = '\xCD';
+
+		// Get the number as a string
+		mpz_get_str(numbuf, theApp.hex_ucase_? -orig_radix_ : orig_radix_, current_.get_mpz_t());
+		ASSERT(numbuf[numlen-1] == '\xCD');
+
+		*pResult += numbuf;
+		delete[] numbuf;
+	}
 	else
 	{
-		// Get a buffer to hold the large integer
+		// Large integer result (displayed in radix 10)
 		const int extra = 2 + 1;  // Need room for possible sign, EOS, and dummy (\xCD) byte
 		int numlen = mpz_sizeinbase(current_.get_mpz_t(), 10) + extra;
 		char *numbuf = new char[numlen];
@@ -2815,6 +2849,7 @@ void CCalcDlg::add_hist()
 		*pResult = CString("A") + buf;
 	}
 
+#if 0  // Removing items from the list clears the edit box sometimes and I can't be bothered finding a workaround
 	// Find any duplicate entry in the history (expression and result) and remove it
 	for (int ii = 0; ii < ctl_edit_combo_.GetCount(); ++ii)
 	{
@@ -2835,6 +2870,7 @@ void CCalcDlg::add_hist()
 			break;  // exit loop since the same value could not appear again
 		}
 	}
+#endif
 
 	// Add the new entry (at the top of the drop-down list)
 	ctl_edit_combo_.InsertString(0, Expr);
@@ -2926,10 +2962,28 @@ ExprStringType CCalcDlg::get_expr(bool no_paren /* = false */)
 // This is done after a value is added or typed into the edit box.
 void CCalcDlg::set_right()
 {
+	// If there is nothing in the left operand yet we can change the expression radix
+	if (left_.IsEmpty())
+		orig_radix_ = radix_;
 	if (state_ == CALCERROR)
 		right_ = "***";
-	else
+	else if (radix_ == orig_radix_ || state_ > CALCINTLIT)
 		right_ = current_str_;
+	else
+	{
+		// Set right_ to be the current integer value but in the original radix
+		// This is done for consostency so that all int literals in an expression use the same radix
+		int numlen = mpz_sizeinbase(current_.get_mpz_t(), orig_radix_) + 3;
+		char *numbuf = new char[numlen];
+		numbuf[numlen-1] = '\xCD';
+
+		// Get the number as a string
+		mpz_get_str(numbuf, theApp.hex_ucase_? -orig_radix_ : orig_radix_, current_.get_mpz_t());
+		ASSERT(numbuf[numlen-1] == '\xCD');
+
+		right_ = numbuf;
+		delete[] numbuf;
+	}
 }
 
 // ---------- Menu button handlers ---------
