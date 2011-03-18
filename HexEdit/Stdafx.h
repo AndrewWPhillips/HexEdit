@@ -58,7 +58,7 @@
 #include <errno.h>
 #include "TipDlg.h"
 #include "CoordAp.h"
-
+#include "AvoidableDialog.h"
 
 #ifdef _UNICODE
 #if defined _M_IX86

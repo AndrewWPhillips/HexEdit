@@ -1,0 +1,615 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}</ProjectGuid>
+    <RootNamespace>HexEdit</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Andrew\cpp_out\HexEdit\ReleaseVS2010\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Andrew\cpp_out\HexEdit\ReleaseVS2010\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Andrew\cpp_out\HexEdit\DebugVS2010\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Andrew\cpp_out\HexEdit\DebugVS2010\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Devel\boost_1_44_0;$(ProjectDir)\include;$(IncludePath)</IncludePath>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">HexEdit</TargetName>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Devel\Libraries\FreeImage;D:\Devel\boost_1_44_0;$(IncludePath)</IncludePath>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HexEdit</TargetName>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Devel\Libraries\FreeImage;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Release/HexEdit.tlb</TypeLibraryName>
+    </Midl>
+    <ClCompile>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T;WINVER=0x0500;_WIN32_IE=0x0500;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)HexEdit.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc70.pdb</ProgramDataBaseFileName>
+      <BrowseInformation>true</BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_AFXDLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>C:\Andrew\cpp_out\HexEdit\ReleaseVS2010\HexEdit.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ProgramDatabaseFile>$(IntDir)HexEdit.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+    </Link>
+    <PostBuildEvent>
+      <Message>Make help ID map files</Message>
+      <Command>MakeHelpV</Command>
+    </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>manifest.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Debug/HexEdit.tlb</TypeLibraryName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WINVER=0x0500;WIN32;_DEBUG;_WINDOWS;_SECDLL;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)HexEdit.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc70.pdb</ProgramDataBaseFileName>
+      <BrowseInformation>true</BrowseInformation>
+      <BrowseInformationFile>$(IntDir)</BrowseInformationFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_AFXDLL;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>C:\Andrew\cpp_out\HexEdit\DebugVS2010\HexEdit.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(IntDir)HexEdit.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+    </Link>
+    <Manifest>
+      <AdditionalManifestFiles>manifest.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+    <PostBuildEvent>
+      <Message>Make help ID map files</Message>
+      <Command>MakeHelpV</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AerialView.cpp" />
+    <ClCompile Include="Algorithm.cpp" />
+    <ClCompile Include="BGAerial.cpp" />
+    <ClCompile Include="BGCompare.cpp" />
+    <ClCompile Include="BGSearch.cpp" />
+    <ClCompile Include="BGstats.cpp" />
+    <ClCompile Include="BigInteger.cpp" />
+    <ClCompile Include="Bookmark.cpp" />
+    <ClCompile Include="BookmarkDlg.cpp" />
+    <ClCompile Include="BookmarkFind.cpp" />
+    <ClCompile Include="Boyer.cpp" />
+    <ClCompile Include="CalcDlg.cpp" />
+    <ClCompile Include="CalcEdit.cpp" />
+    <ClCompile Include="CFile64.cpp" />
+    <ClCompile Include="ChildFrm.cpp" />
+    <ClCompile Include="CompareView.cpp" />
+    <ClCompile Include="CompressDlg.cpp" />
+    <ClCompile Include="Control.cpp" />
+    <ClCompile Include="CopyCSrc.cpp" />
+    <ClCompile Include="crypto.cpp" />
+    <ClCompile Include="DataFormatView.cpp" />
+    <ClCompile Include="DFFDData.cpp" />
+    <ClCompile Include="DFFDEVAL.cpp" />
+    <ClCompile Include="DFFDFor.cpp" />
+    <ClCompile Include="DFFDGlobal.cpp" />
+    <ClCompile Include="DFFDIf.cpp" />
+    <ClCompile Include="DFFDJUMP.cpp" />
+    <ClCompile Include="DFFDMisc.cpp" />
+    <ClCompile Include="DFFDStruct.cpp" />
+    <ClCompile Include="DFFDSwitch.cpp" />
+    <ClCompile Include="DFFDUseStruct.cpp" />
+    <ClCompile Include="Dialog.cpp" />
+    <ClCompile Include="DirDialog.cpp" />
+    <ClCompile Include="DocData.cpp" />
+    <ClCompile Include="EBCDIC.cpp" />
+    <ClCompile Include="EmailDlg.cpp" />
+    <ClCompile Include="Explorer.cpp" />
+    <ClCompile Include="Expr.cpp" />
+    <ClCompile Include="FindDlg.cpp" />
+    <ClCompile Include="GenDockablePane.cpp" />
+    <ClCompile Include="HexEdit.cpp" />
+    <ClCompile Include="HexEditDoc.cpp" />
+    <ClCompile Include="HexEditMacro.cpp" />
+    <ClCompile Include="HexEditSplitter.cpp" />
+    <ClCompile Include="HexEditView.cpp" />
+    <ClCompile Include="HexFileList.cpp" />
+    <ClCompile Include="HexPrintDialog.cpp" />
+    <ClCompile Include="IntelHex.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="md5.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Misc.cpp" />
+    <ClCompile Include="NavManager.cpp" />
+    <ClCompile Include="NewFile.cpp" />
+    <ClCompile Include="NewScheme.cpp" />
+    <ClCompile Include="OpenSpecialDlg.cpp" />
+    <ClCompile Include="Options.cpp" />
+    <ClCompile Include="Password.cpp" />
+    <ClCompile Include="Print.cpp" />
+    <ClCompile Include="Prop.cpp" />
+    <ClCompile Include="RecentFileDlg.cpp" />
+    <ClCompile Include="Register.cpp" />
+    <ClCompile Include="ResizeCtrl.cpp" />
+    <ClCompile Include="SaveDffd.cpp" />
+    <ClCompile Include="ScrView.cpp" />
+    <ClCompile Include="Security.cpp" />
+    <ClCompile Include="sha1.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SimpleSplitter.cpp" />
+    <ClCompile Include="SpecialList.cpp" />
+    <ClCompile Include="Splasher.cpp" />
+    <ClCompile Include="SRecord.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SystemSound.cpp" />
+    <ClCompile Include="TabView.cpp" />
+    <ClCompile Include="TaskDialog.cpp" />
+    <ClCompile Include="Template.cpp" />
+    <ClCompile Include="TipDlg.cpp" />
+    <ClCompile Include="TipWnd.cpp" />
+    <ClCompile Include="TParseDlg.cpp" />
+    <ClCompile Include="TParser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TransparentListBox.cpp" />
+    <ClCompile Include="TransparentStatic2.cpp" />
+    <ClCompile Include="UpdateChecker.cpp" />
+    <ClCompile Include="UserTool.cpp" />
+    <ClCompile Include="Xmltree.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="GridBtnCell_src\BtnDataBase.cpp" />
+    <ClCompile Include="GridBtnCell_src\GridBtnCell.cpp" />
+    <ClCompile Include="GridBtnCell_src\GridBtnCellBase.cpp" />
+    <ClCompile Include="GridBtnCell_src\GridBtnCellCombo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\GridCell.cpp" />
+    <ClCompile Include="GridCtrl_src\GridCellBase.cpp" />
+    <ClCompile Include="NewCellTypes\GridCellCombo.cpp" />
+    <ClCompile Include="NewCellTypes\GridCellDateTime.cpp" />
+    <ClCompile Include="GridCtrl_src\GridCtrl.cpp" />
+    <ClCompile Include="GridCtrl_src\GridDropTarget.cpp" />
+    <ClCompile Include="GridTreeBtnCell_src\GridTreeBtnCell.cpp" />
+    <ClCompile Include="TreeColumn_src\GridTreeCell.cpp" />
+    <ClCompile Include="TreeColumn_src\GridTreeCellBase.cpp" />
+    <ClCompile Include="GridCtrl_src\InPlaceEdit.cpp" />
+    <ClCompile Include="GridCtrl_src\TitleTip.cpp" />
+    <ClCompile Include="TreeColumn_src\TreeColumn.cpp" />
+    <ClCompile Include="zlib\adler32.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\compress.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\crc32.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\deflate.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\gzio.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\infback.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\inffast.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\inflate.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\inftrees.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\trees.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\uncompr.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="zlib\zutil.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resource.hm" />
+    <None Include="RES\back.bmp" />
+    <None Include="RES\back_hot.bmp" />
+    <None Include="..\..\graphics\HexEditButtons\calc.bmp" />
+    <None Include="Res\cogs.ico" />
+    <None Include="Res\colour.ico" />
+    <None Include="RES\curSmallArrows.cur" />
+    <None Include="RES\data.ico" />
+    <None Include="DefaultToolbarImages.bmp" />
+    <None Include="Res\del.ico" />
+    <None Include="RES\devimage.bmp" />
+    <None Include="RES\display.bmp" />
+    <None Include="Res\display.ico" />
+    <None Include="Res\docdisp.ico" />
+    <None Include="RES\docdisplay.bmp" />
+    <None Include="RES\docedit.bmp" />
+    <None Include="Res\docedit.ico" />
+    <None Include="RES\down.ico" />
+    <None Include="RES\edit.bmp" />
+    <None Include="RES\edit.ico" />
+    <None Include="RES\editbar.bmp" />
+    <None Include="RES\editbarCold.bmp" />
+    <None Include="RES\editbarDisabled.bmp" />
+    <None Include="RES\editbarHot.bmp" />
+    <None Include="RES\eval.ico" />
+    <None Include="RES\exclam.ico" />
+    <None Include="Res\filter.ico" />
+    <None Include="RES\flip.bmp" />
+    <None Include="RES\flip1.bmp" />
+    <None Include="RES\flip1_ho.bmp" />
+    <None Include="RES\flip_hot.bmp" />
+    <None Include="RES\for.ico" />
+    <None Include="RES\formtbar.bmp" />
+    <None Include="RES\formtbarCold.bmp" />
+    <None Include="RES\formtbarDisabled.bmp" />
+    <None Include="RES\formtbarHot.bmp" />
+    <None Include="RES\forw.bmp" />
+    <None Include="RES\forw_hot.bmp" />
+    <None Include="res\HexEdit.rc2" />
+    <None Include="res\HexEditDoc.ico" />
+    <None Include="RES\highligh.cur" />
+    <None Include="RES\hist.bmp" />
+    <None Include="Res\ico00001.ico" />
+    <None Include="Res\ico00002.ico" />
+    <None Include="RES\icon2.ico" />
+    <None Include="RES\icon3.ico" />
+    <None Include="Res\idr_main.ico" />
+    <None Include="RES\if.ico" />
+    <None Include="RES\imagelis.bmp" />
+    <None Include="RES\info.ico" />
+    <None Include="RES\jump.ico" />
+    <None Include="RES\layout.ico" />
+    <None Include="res\litebulb.bmp" />
+    <None Include="Res\macro.ico" />
+    <None Include="Res\Mainbar.bmp" />
+    <None Include="RES\mainfram.bmp" />
+    <None Include="RES\misc.bmp" />
+    <None Include="RES\miscCold.bmp" />
+    <None Include="RES\miscDisabled.bmp" />
+    <None Include="RES\miscHot.bmp" />
+    <None Include="RES\navbar.bmp" />
+    <None Include="RES\navbarCold.bmp" />
+    <None Include="RES\navbarDisabled.bmp" />
+    <None Include="RES\navbarHot.bmp" />
+    <None Include="Res\new.ico" />
+    <None Include="RES\operations.bmp" />
+    <None Include="RES\operationsCold.bmp" />
+    <None Include="RES\operationsDisabled.bmp" />
+    <None Include="RES\operationsHot.bmp" />
+    <None Include="RES\optionsimages.bmp" />
+    <None Include="RES\parent.bmp" />
+    <None Include="RES\parent_hot.bmp" />
+    <None Include="Res\printer.ico" />
+    <None Include="RES\question.ico" />
+    <None Include="RES\refresh.bmp" />
+    <None Include="RES\refresh_hot.bmp" />
+    <None Include="RES\search.bmp" />
+    <None Include="RES\struct.ico" />
+    <None Include="RES\switch.ico" />
+    <None Include="RES\system.bmp" />
+    <None Include="RES\templates.ico" />
+    <None Include="RES\tips.ico" />
+    <None Include="RES\tmp.bmp" />
+    <None Include="res\Toolbar.bmp" />
+    <None Include="RES\toolbar24.bmp" />
+    <None Include="RES\toolbar24_cold.bmp" />
+    <None Include="RES\toolbar24_disabled.bmp" />
+    <None Include="RES\toolbarCold.bmp" />
+    <None Include="RES\toolbarDisabled.bmp" />
+    <None Include="RES\toolbarHot.bmp" />
+    <None Include="RES\up.ico" />
+    <None Include="RES\vert.bmp" />
+    <None Include="RES\vert_hot.bmp" />
+    <None Include="RES\view.bmp" />
+    <None Include="RES\view_hot.bmp" />
+    <None Include="Res\window.ico" />
+    <None Include="HelpID.hm" />
+    <None Include="HLP\HexEdit.rtf" />
+    <None Include="MakehelpV.bat" />
+    <None Include="TestData\_xxx.xml" />
+    <None Include="TestData\Address_RegUser.txt" />
+    <None Include="TestData\BinaryFileFormat.dtd" />
+    <None Include="TestData\CONTROL" />
+    <None Include="TestData\default.xml" />
+    <None Include="TestData\dffd.txt" />
+    <None Include="Ebcdic.tab" />
+    <None Include="HexEdit.tip" />
+    <None Include="TestData\License.txt" />
+    <None Include="TestData\NewWebSite.txt" />
+    <None Include="TestData\NOTES.TXT" />
+    <None Include="Install\Order.Txt" />
+    <None Include="Install\ReadMe.txt" />
+    <None Include="ReadMe.txt" />
+    <None Include="TestData\ReadMeTemplate.txt" />
+    <None Include="TestData\reguser.txt" />
+    <None Include="Install\RelNotes.txt" />
+    <None Include="touch2.bat" />
+    <None Include="touch3.bat" />
+    <None Include="Touchf.bat" />
+    <None Include="TestData\WebSearch.txt" />
+    <None Include="manifest.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="TestData\ToDo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HexEdit.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AerialView.h" />
+    <ClInclude Include="Algorithm.h" />
+    <ClInclude Include="AvoidableDialog.h" />
+    <ClInclude Include="BCGMisc.h" />
+    <ClInclude Include="BigInteger.h" />
+    <ClInclude Include="Bookmark.h" />
+    <ClInclude Include="BookmarkDlg.h" />
+    <ClInclude Include="BookmarkFind.h" />
+    <ClInclude Include="boyer.h" />
+    <ClInclude Include="CalcDlg.h" />
+    <ClInclude Include="CalcEdit.h" />
+    <ClInclude Include="CFile64.h" />
+    <ClInclude Include="ChildFrm.h" />
+    <ClInclude Include="CompareView.h" />
+    <ClInclude Include="CompressDlg.h" />
+    <ClInclude Include="Control.h" />
+    <ClInclude Include="CoordAp.h" />
+    <ClInclude Include="CopyCSrc.h" />
+    <ClInclude Include="crypto.h" />
+    <ClInclude Include="DataFormatView.h" />
+    <ClInclude Include="DFFDData.h" />
+    <ClInclude Include="DFFDEVAL.h" />
+    <ClInclude Include="DFFDFor.h" />
+    <ClInclude Include="DFFDGlobal.h" />
+    <ClInclude Include="DFFDIf.h" />
+    <ClInclude Include="DFFDJUMP.h" />
+    <ClInclude Include="DFFDMisc.h" />
+    <ClInclude Include="DFFDStruct.h" />
+    <ClInclude Include="DFFDSwitch.h" />
+    <ClInclude Include="DFFDUseStruct.h" />
+    <ClInclude Include="Dialog.h" />
+    <ClInclude Include="DirDialog.h" />
+    <ClInclude Include="EmailDlg.h" />
+    <ClInclude Include="Explorer.h" />
+    <ClInclude Include="Expr.h" />
+    <ClInclude Include="FindDlg.h" />
+    <ClInclude Include="GenDockablePane.h" />
+    <ClInclude Include="HexEdit.h" />
+    <ClInclude Include="HexEditDoc.h" />
+    <ClInclude Include="HexEditMacro.h" />
+    <ClInclude Include="HexEditSplitter.h" />
+    <ClInclude Include="HexEditView.h" />
+    <ClInclude Include="HexFileList.h" />
+    <ClInclude Include="HexPrintDialog.h" />
+    <ClInclude Include="IntelHex.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="md5.h" />
+    <ClInclude Include="Misc.h" />
+    <ClInclude Include="NavManager.h" />
+    <ClInclude Include="NewFile.h" />
+    <ClInclude Include="NewScheme.h" />
+    <ClInclude Include="ntapi.h" />
+    <ClInclude Include="OpenSpecialDlg.h" />
+    <ClInclude Include="Options.h" />
+    <ClInclude Include="optypes.h" />
+    <ClInclude Include="Password.h" />
+    <ClInclude Include="Prop.h" />
+    <ClInclude Include="range_set.h" />
+    <ClInclude Include="RecentFileDlg.h" />
+    <ClInclude Include="Register.h" />
+    <ClInclude Include="ResizeCtrl.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="SaveDffd.h" />
+    <ClInclude Include="Scheme.h" />
+    <ClInclude Include="ScrView.h" />
+    <ClInclude Include="Security.h" />
+    <ClInclude Include="sha1.h" />
+    <ClInclude Include="SimpleSplitter.h" />
+    <ClInclude Include="SpecialList.h" />
+    <ClInclude Include="Splasher.h" />
+    <ClInclude Include="SRecord.h" />
+    <ClInclude Include="StdAfx.h" />
+    <CustomBuild Include="SVNRevisionTemplate.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"C:\Program Files\TortoiseSVN\bin\SubWCRev.exe"  "$(ProjectDir)."  %(Filename)%(Extension)  SVNRevision.h
+</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SVNRevision.h;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="SystemSound.h" />
+    <ClInclude Include="TabView.h" />
+    <ClInclude Include="TaskDialog.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="TipDlg.h" />
+    <ClInclude Include="TipWnd.h" />
+    <ClInclude Include="TParseDlg.h" />
+    <ClInclude Include="TParser.h" />
+    <ClInclude Include="TransparentListBox.h" />
+    <ClInclude Include="TransparentStatic2.h" />
+    <ClInclude Include="UpdateChecker.h" />
+    <ClInclude Include="UserTool.h" />
+    <ClInclude Include="w2k_def.h" />
+    <ClInclude Include="Xmltree.h" />
+    <ClInclude Include="GridBtnCell_src\BtnDataBase.h" />
+    <ClInclude Include="GridCtrl_src\CellRange.h" />
+    <ClInclude Include="GridBtnCell_src\GridBtnCell.h" />
+    <ClInclude Include="GridBtnCell_src\GridBtnCellBase.h" />
+    <ClInclude Include="GridBtnCell_src\GridBtnCellCombo.h" />
+    <ClInclude Include="GridCtrl_src\GridCell.h" />
+    <ClInclude Include="GridCtrl_src\GridCellBase.h" />
+    <ClInclude Include="NewCellTypes\GridCellCombo.h" />
+    <ClInclude Include="NewCellTypes\GridCellDateTime.h" />
+    <ClInclude Include="GridCtrl_src\GridCtrl.h" />
+    <ClInclude Include="GridCtrl_src\GridDropTarget.h" />
+    <ClInclude Include="GridTreeBtnCell_src\GridTreeBtnCell.h" />
+    <ClInclude Include="TreeColumn_src\GridTreeCell.h" />
+    <ClInclude Include="TreeColumn_src\GridTreeCellBase.h" />
+    <ClInclude Include="GridCtrl_src\InPlaceEdit.h" />
+    <ClInclude Include="GridCtrl_src\MemDC.h" />
+    <ClInclude Include="GridCtrl_src\TitleTip.h" />
+    <ClInclude Include="TreeColumn_src\TreeColumn.h" />
+    <ClInclude Include="zlib\crc32.h" />
+    <ClInclude Include="zlib\deflate.h" />
+    <ClInclude Include="zlib\inffast.h" />
+    <ClInclude Include="zlib\inffixed.h" />
+    <ClInclude Include="zlib\inflate.h" />
+    <ClInclude Include="zlib\inftrees.h" />
+    <ClInclude Include="zlib\trees.h" />
+    <ClInclude Include="zlib\zconf.h" />
+    <ClInclude Include="zlib\zlib.h" />
+    <ClInclude Include="zlib\zutil.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="HexEdit.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

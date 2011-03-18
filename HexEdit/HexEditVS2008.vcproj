@@ -579,6 +579,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TaskDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Template.cpp"
 				>
 			</File>
@@ -661,6 +665,10 @@
 			</File>
 			<File
 				RelativePath=".\Algorithm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AvoidableDialog.h"
 				>
 			</File>
 			<File
@@ -965,6 +973,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TaskDialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\timer.h"
 				>
 			</File>
@@ -1110,6 +1122,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\exclam.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\filter.ico"
 				>
 			</File>
@@ -1202,6 +1218,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\info.ico"
+				>
+			</File>
+			<File
 				RelativePath="RES\jump.ico"
 				>
 			</File>
@@ -1291,6 +1311,10 @@
 			</File>
 			<File
 				RelativePath=".\Res\printer.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\question.ico"
 				>
 			</File>
 			<File
