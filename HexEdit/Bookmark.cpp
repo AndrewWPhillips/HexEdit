@@ -300,7 +300,7 @@ int CBookmarkList::AddBookmark(LPCTSTR nn)
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("There is no file open to add the bookmark to.");
+		CAvoidableDialog::Show(IDS_BOOKMARK_NOFILE, "", "No File Open");
 		theApp.mac_error_ = 2;
 		return -1;
 	}
@@ -382,8 +382,8 @@ BOOL CBookmarkList::GoTo(LPCTSTR name)
 	if (index == -1)
 	{
 		CString ss;
-		ss.Format("Bookmark %s was not found", name);
-		AfxMessageBox(ss);
+		ss.Format("The bookmark %s was not found", name);
+		CAvoidableDialog::Show(IDS_BOOKMARK_NOTFOUND, ss, "Not Found");
 		theApp.mac_error_ = 2;
 		return FALSE;
 	}
@@ -428,11 +428,13 @@ BOOL CBookmarkList::GoTo(int index)
 		theApp.mac_error_ = 2;
 
 		CString ss;
-		ss.Format("The bookmark could not be accessed as the file\r"
-				  "%s\rcould not be found/opened.\r\r"
+		ss.Format("The bookmark could not be accessed as the file with the name shown "
+			      "below is not present or you do not have permission to open it. "
+				  "\n\n%s\n\n"
 				  "Do you want to remove bookmark \"%s\"?",
 				  file_[index], name_[index]);
-		if (AfxMessageBox(ss, MB_YESNO) == IDYES)
+		//if (AfxMessageBox(ss, MB_YESNO) == IDYES)
+		if (CAvoidableDialog::Show(IDS_BOOKMARK_FILENOTFOUND, ss, "Not Found", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
 		{
 			RemoveBookmark(index);
 			return FALSE;

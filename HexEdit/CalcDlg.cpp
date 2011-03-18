@@ -1,3 +1,20 @@
+// TODO
+// When generating expression store integers as hex (preceded by 0x) unless mode is currently decimal
+// When restoring from history change to decimal mode if necessary
+// Put MD5 and SHA1 into calculator
+// check all buttons after an error
+// - some buttons display message, others status bar or nothing at all
+// check bit display at all stages
+//  - binop
+//  - unary op
+//  - non-int expr
+// test all code using coverage tool
+// test all buttons when disabled
+//  - GO when non-int expr
+// test endian checkbox when endianness chnage in the view
+// test all controls updated correctly after all buttons used
+// check all keys: BS, Del, arrows
+
 // CalcDlg.cpp : implements the Goto/Calculator dialog
 //
 // Copyright (c) 2000-2011 by Andrew W. Phillips.
@@ -704,20 +721,26 @@ bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 {
 	if (bits_ == 0 || bits_%8 != 0)
 	{
-		AfxMessageBox("Bits must be divisible by 8 to write to file");
+		TaskMessageBox("Can't write to file",
+			"The calculator integer size (Bits) must be a multiple of 8.  "
+			"Only a whole number of bytes can be written to a file.");
 		return false;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open to write to");
+		TaskMessageBox("No file open",
+			"The calculator cannot write to the current file when no file is open.");
+		//AfxMessageBox("No file open to write to");
 		return false;
 	}
 
 	if (pview->ReadOnly())
 	{
-		AfxMessageBox("Can't write: file is read only");
+		TaskMessageBox("File is read only",
+			"The calculator cannot write to the current file when it is open in read only mode.");
+		//AfxMessageBox("Can't write: file is read only");
 		return false;
 	}
 
@@ -734,12 +757,18 @@ bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 
 	if (addr > pview->GetDocument()->length())
 	{
-		AfxMessageBox("Can't write past end of file");
+		TaskMessageBox("Can't write past EOF",
+			"An attempt was made to write at an address past the end of file.  "
+			"The calculator won't extend a file to allow the bytes to be written.");
+		//AfxMessageBox("Can't write past end of file");
 		return false;
 	}
 	if (!pview->OverType() && addr + bits_/8 > pview->GetDocument()->length())
 	{
-		AfxMessageBox("Not enough bytes before end of file");
+		TaskMessageBox("Write extends past EOF",
+			"The bytes to be written extends past the end of file.  "
+			"The calculator cannot write past EOF when the file is open in OVR mode.");
+		//AfxMessageBox("Not enough bytes before end of file");
 		return false;
 	}
 
@@ -2536,7 +2565,9 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	if (pview == NULL)
 	{
 		// This should not happen unless we are playing back a macro
-		AfxMessageBox("Error: no file open for jump");
+		TaskMessageBox("No file for GO",
+			"The calculator cannot jump to a file address when there is no file open.");
+		//AfxMessageBox("Error: no file open for jump");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -2566,7 +2597,9 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	addr = get_norm(current_);
 	if (addr < 0)
 	{
-		AfxMessageBox("Address is before the start of file (negative)");
+		TaskMessageBox("Jump to negative address",
+			"The calculator cannot jump to an address before the start of file.");
+		//AfxMessageBox("Address is before the start of file (negative)");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -2579,7 +2612,9 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 
 	if (addr > eof)
 	{
-		AfxMessageBox("New address is past end of file");
+		TaskMessageBox("Jump past EOF",
+			"The calculator cannot jump to an address past the end of file.");
+		//AfxMessageBox("New address is past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3285,7 +3320,10 @@ void CCalcDlg::OnGetVar()
 {
 	if (ctl_vars_.m_nMenuResult == ID_VARS_CLEAR)
 	{
-		if (AfxMessageBox("Are you sure you want to delete all variables?", MB_YESNO|MB_ICONSTOP) == IDYES)
+		if (CAvoidableDialog::Show(IDS_VARS_CLEAR, 
+			                       "Are you sure you want to delete all variables?", "", 
+								   MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+		//if (AfxMessageBox("Are you sure you want to delete all variables?", MB_YESNO|MB_ICONSTOP) == IDYES)
 			mm_->expr_.DeleteVars();
 	}
 	else if (ctl_vars_.m_nMenuResult != 0)
@@ -3619,8 +3657,10 @@ void CCalcDlg::OnMemStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		TaskMessageBox("Integer value required",
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression.");
+		//AfxMessageBox("Calculator buttons only operate on integer values.");
 		return;
 	}
 
@@ -3658,8 +3698,9 @@ void CCalcDlg::OnMemAdd()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		TaskMessageBox("Integer value required",
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression.");
 		return;
 	}
 
@@ -3678,8 +3719,9 @@ void CCalcDlg::OnMemSubtract()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		TaskMessageBox("Integer value required",
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression.");
 		return;
 	}
 
@@ -3700,7 +3742,9 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open from which to get the mark");
+		TaskMessageBox("No file open",
+			"The calculator cannot obtain the address of the mark when no file is open.");
+		//AfxMessageBox("No file open from which to get the mark");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3723,15 +3767,18 @@ void CCalcDlg::OnMarkStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		TaskMessageBox("Integer value required",
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression.");
 		return;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open in which to change the mark");
+		TaskMessageBox("No file open",
+			"The calculator cannot set the address of the mark when no file is open.");
+		//AfxMessageBox("No file open in which to change the mark");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3742,9 +3789,11 @@ void CCalcDlg::OnMarkStore()
 	if (new_mark < 0 || new_mark > eof)
 	{
 		if (new_mark < 0)
-			AfxMessageBox("New mark address is -ve");
+			TaskMessageBox("Address is negative",
+				"The calculator cannot move the mark to before the start of file.");
 		else
-			AfxMessageBox("New mark address past end of file");
+			TaskMessageBox("Address is past EOF",
+				"The calculator cannot move the mark past the end of file.");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3766,7 +3815,8 @@ void CCalcDlg::OnMarkClear()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open in which to clear the mark");
+		TaskMessageBox("No file open",
+			"The calculator cannot clear the mark when no file is open.");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3786,15 +3836,18 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		TaskMessageBox("Integer value required",
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression.");
 		return;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open to move mark in");
+		TaskMessageBox("No file open",
+			"The calculator cannot move the mark when no file is open.");
+		//AfxMessageBox("No file open to move mark in");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3806,9 +3859,11 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	if (new_mark < 0 || new_mark > eof)
 	{
 		if (new_mark < 0)
-			AfxMessageBox("New mark address is -ve");
+			TaskMessageBox("Address is negative",
+				"The calculator cannot move the mark to before the start of file.");
 		else
-			AfxMessageBox("New mark address past end of file");
+			TaskMessageBox("Address is past EOF",
+				"The calculator cannot move the mark past the end of file.");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3830,15 +3885,18 @@ void CCalcDlg::OnMarkSubtract()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		TaskMessageBox("Integer value required",
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression.");
 		return;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open to move mark in");
+		TaskMessageBox("No file open",
+			"The calculator cannot move the mark when no file is open.");
+		//AfxMessageBox("No file open to move mark in");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3850,9 +3908,11 @@ void CCalcDlg::OnMarkSubtract()
 	if (new_mark < 0 || new_mark > eof)
 	{
 		if (new_mark < 0)
-			AfxMessageBox("New mark address is -ve");
+			TaskMessageBox("Address is negative",
+				"The calculator cannot move the mark to before the start of file.");
 		else
-			AfxMessageBox("New mark address past end of file");
+			TaskMessageBox("Address is past EOF",
+				"The calculator cannot move the mark past the end of file.");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3894,7 +3954,9 @@ void CCalcDlg::OnSelGet()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open to get current address from");
+		TaskMessageBox("No file open",
+			"The calculator cannot get the current address when no file is open.");
+		//AfxMessageBox("No file open to get current address from");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3937,7 +3999,9 @@ void CCalcDlg::OnSelLen()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open from which to get the selection length");
+		TaskMessageBox("No file open",
+			"The calculator cannot get the length of the selection when no file is open.");
+		//AfxMessageBox("No file open from which to get the selection length");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3963,7 +4027,8 @@ void CCalcDlg::OnEofGet()               // Length of file
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open from which to get the file length");
+		TaskMessageBox("No file open",
+			"The calculator cannot get the current file's length when no file is open.");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3989,8 +4054,9 @@ void CCalcDlg::OnMarkAtStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		TaskMessageBox("Integer value required",
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression.");
 		return;
 	}
 
@@ -4023,15 +4089,18 @@ void CCalcDlg::OnSelStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		TaskMessageBox("Integer value required",
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression.");
 		return;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open to change the selection in");
+		TaskMessageBox("No file open",
+			"The calculator cannot change the selection when no file is open.");
+		//AfxMessageBox("No file open to change the selection in");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4041,13 +4110,17 @@ void CCalcDlg::OnSelStore()
 	val = get_norm(current_);
 	if (val < 0)
 	{
-		AfxMessageBox("Can't move before start of file (negative address)");
+		TaskMessageBox("Negative address",
+			"The calculator cannot move the current address before the start of file.");
+		//AfxMessageBox("Can't move before start of file (negative address)");
 		aa_->mac_error_ = 10;
 		return;
 	}
 	if (val > eof)
 	{
-		AfxMessageBox("Can't move cursor past end of file");
+		TaskMessageBox("Address past EOF",
+			"The calculator cannot move the current address past the end of file.");
+		//AfxMessageBox("Can't move cursor past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4070,8 +4143,9 @@ void CCalcDlg::OnSelAtStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		TaskMessageBox("Integer value required",
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression.");
 		return;
 	}
 
@@ -4097,15 +4171,17 @@ void CCalcDlg::OnSelLenStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		AfxMessageBox("Calculator buttons only operate \r\n"
-		              "on integer values.");
+		TaskMessageBox("Integer value required",
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression.");
 		return;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("No file open in which to change the selection length");
+		TaskMessageBox("No file open",
+			"The calculator cannot change the length of the selection when no file is open.");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4120,13 +4196,17 @@ void CCalcDlg::OnSelLenStore()
 
 	if (len < 0)
 	{
-		AfxMessageBox("Selection can't be less than zero");
+		TaskMessageBox("Negative selection length",
+			"The calculator cannot make a selection with length less than zero.");
+		//AfxMessageBox("Selection can't be less than zero");
 		aa_->mac_error_ = 10;
 		return;
 	}
 	if (addr + len > eof)
 	{
-		AfxMessageBox("New selection length would be past EOF");
+		TaskMessageBox("Selection past EOF",
+			"The calculator cannot make a selection which extends past the end of file.");
+		//AfxMessageBox("New selection length would be past EOF");
 		aa_->mac_error_ = 10;
 		return;
 	}

@@ -3280,6 +3280,27 @@ BEGIN
     ID_COMP_ALL_LAST        "Jump to last of all differences\nAll Last Diff"
 END
 
+STRINGTABLE 
+BEGIN
+    IDS_WARNING_DO_NOT_RENUMBER 
+                            "***** The IDs below (ie, in low 50000's) are used in CAvoidableDialog and may be stored in the registry."
+    IDS_BOOKMARK_NOFILE     "Adding a bookmark requires an open file."
+    IDS_BOOKMARK_NOTFOUND   "Bookmark not found."
+    IDS_BOOKMARK_FILENOTFOUND 
+                            "The file containing the bookmark was not found."
+    IDS_BOOKMARK_EXISTS     "This bookmark already exists."
+    IDS_BOOKMARKS_NONE_DELETED "No bookmarks were affected."
+    IDS_VARS_CLEAR          "Deleting all variables."
+    IDS_BOOKMARKS_DELETED   "Bookmarks deleted or moved."
+    IDS_DFFD_SYNC_EOF       "The element address is past end of file."
+    IDS_DFFD_TRUNCATED      "String truncated."
+    IDS_DFFD_DELETE         "Deleting element."
+    IDS_DFFD_INVALID_EBCDIC "Invalid EBCDIC character"
+    IDS_DFFD_EXTRA_IGNORED  "Excess bits ignored"
+    IDS_NO_MACRO_NAME       "Macro name required"
+    IDS_NO_MACRO_MESSAGE    "Message required"
+END
+
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -3315,6 +3336,9 @@ IDI_DATA                ICON                    "res\\data.ico"
 IDI_EVAL                ICON                    "res\\eval.ico"
 IDI_JUMP                ICON                    "res\\jump.ico"
 IDI_SWITCH              ICON                    "res\\switch.ico"
+IDI_QUESTIONMARK        ICON                    "RES\\question.ico"
+IDI_EXCLAMATIONMARK     ICON                    "RES\\exclam.ico"
+IDI_INFO                ICON                    "RES\\info.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

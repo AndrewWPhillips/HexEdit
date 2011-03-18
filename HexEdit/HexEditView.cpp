@@ -1279,8 +1279,9 @@ void CHexEditView::SetScheme(const char *name)
 		// Scheme was not found (presumably in macro playback)
 		ASSERT(theApp.playing_);
 		CString mess;
-		mess.Format("The color scheme \"%s\" was not found.\n", name);
-		AfxMessageBox(mess);
+		mess.Format("The color scheme \"%s\" was not found.\n\n"
+			        "This scheme existed when the macro was recorded but no longer exists.", name);
+		TaskMessageBox("Unknown Color Scheme", mess);
 		theApp.mac_error_ = 1;
 		scheme_name_ = previous_name;
 	}
@@ -1949,20 +1950,21 @@ BOOL CHexEditView::check_ro(const char *desc)
 
 	if (display_.readonly && GetDocument()->read_only())
 	{
-		ss.Format("This file cannot be modified.\r"
-				  "(You can't %s.)", desc);
-		AfxMessageBox(ss);
+		ss.Format("This file cannot be modified as it is open for read only.\n\n"
+				  "For this reason you cannot %s.", desc);
+		//AfxMessageBox(ss);
+		TaskMessageBox("File is read only", ss);
 		CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 		aa->mac_error_ = 10;
 		return TRUE;
 	}
 	else if (pdfv_ != NULL && pdfv_->ReadOnly(start_addr, end_addr))
 	{
-		ss.Format("The selection contains one or\r"
-				  "more read-only template fields,\r"
+		ss.Format("The selection contains one or "
+				  "more read-only template fields, "
 				  "hence you can't %s.", desc);
-//        AfxMessageBox(ss, MB_OK|MB_HELP, HID_DFFD_RO);
-		AfxMessageBox(ss, MB_OK);
+		//AfxMessageBox(ss, MB_OK);
+		TaskMessageBox("Read only field", ss);
 		theApp.mac_error_ = 10;
 		return TRUE;
 	}
@@ -1993,8 +1995,8 @@ void CHexEditView::check_error()
 
 		if (!errors_mentioned_)
 		{
-			AfxMessageBox("Read error(s) were reported by this device",
-						  MB_OK|MB_ICONSTOP);
+			//AfxMessageBox("Read error(s) were reported by this device", MB_OK|MB_ICONSTOP);
+			TaskMessageBox("Disk errors", "One or more bad sectors were reported when attempting to read from the device.");
 			errors_mentioned_ = true;
 		}
 	}
@@ -5941,7 +5943,7 @@ void CHexEditView::do_char(UINT nChar)
 			return;
 		}
 
-		if (check_ro("edit"))
+		if (check_ro("edit it"))
 			return;
 
 		if (display_.overtype && start_addr != end_addr)
@@ -6166,7 +6168,7 @@ void CHexEditView::do_char(UINT nChar)
 	else if (nChar == '\b')                     // Back space
 	{
 		// Warn if view is read only
-		if (check_ro("backspace"))
+		if (check_ro("backspace in it"))
 			return;
 
 		if (start_addr != end_addr)
@@ -7355,7 +7357,7 @@ void CHexEditView::OnHighlightSelect()
 	GetSelAddr(start_addr, end_addr);
 	if (hl_set_.range_.empty())
 	{
-		AfxMessageBox("Nothing highlighted");
+		AfxMessageBox("Nothing selected");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -8358,7 +8360,7 @@ void CHexEditView::OnDel()
 	else
 		SetSel(pt_start, pt_end);     // Calls ValidateCaret - causing caret selection to be moved to valid locations
 
-	if (check_ro("delete"))
+	if (check_ro("delete bytes"))
 		return;
 
 	if (display_.overtype)
@@ -8506,7 +8508,7 @@ void CHexEditView::OnInsertBlock()
 void CHexEditView::do_insert_block(_int64 params, const char *data_str)
 {
 	// Can't modify the file if view is read only or in overtype mode
-	if (check_ro("insert block"))
+	if (check_ro("insert a block"))
 		return;
 
 	if (display_.overtype)
@@ -8571,7 +8573,7 @@ void CHexEditView::do_read(CString file_name)
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	// Can't modify the file if view is read only or in overtype mode
 
-	if (check_ro("insert file"))
+	if (check_ro("insert a file"))
 		return;
 
 	if (display_.overtype)
@@ -9079,7 +9081,7 @@ void CHexEditView::OnImportMotorolaS()
 
 void CHexEditView::do_motorola(CString file_name)
 {
-	if (check_ro("import file"))
+	if (check_ro("import a file"))
 		return;
 
 	if (!theApp.import_discon_ && display_.overtype)
@@ -9257,7 +9259,7 @@ void CHexEditView::OnImportIntel()
 
 void CHexEditView::do_intel(CString file_name)
 {
-	if (check_ro("import Intel hex file"))
+	if (check_ro("import an Intel hex file"))
 		return;
 
 	if (!theApp.import_discon_ && display_.overtype)
@@ -9544,7 +9546,7 @@ void CHexEditView::OnImportHexText()
 void CHexEditView::do_hex_text(CString file_name)
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	if (check_ro("import hex text file"))
+	if (check_ro("import an hex text file"))
 		return;
 
 	if (display_.overtype)
@@ -10990,7 +10992,7 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
 void CHexEditView::do_replace(FILE_ADDRESS start, FILE_ADDRESS end, unsigned char *pp, size_t len)
 {
 	// Can't replace if view is read only
-	if (check_ro("replace"))
+	if (check_ro("replace bytes"))
 		return;
 
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing

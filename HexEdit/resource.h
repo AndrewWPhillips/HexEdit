@@ -413,6 +413,9 @@
 #define IDD_OPT_PRINT_DECORATIONS       437
 #define IDD_OPT_BACKUP                  438
 #define IDD_CALC_OLD                    439
+#define IDI_QUESTIONMARK                440
+#define IDI_EXCLAMATIONMARK             441
+#define IDI_INFO                        442
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1629,13 +1632,28 @@
 #define ID_GOSECTOR                     39149
 #define ID_WATERMARK_CONFIDENTIAL       39150
 #define ID_WATERMARK_SAMPLE             39151
+#define IDS_WARNING_DO_NOT_RENUMBER     50000
+#define IDS_BOOKMARK_NOFILE             50001
+#define IDS_BOOKMARK_NOTFOUND           50002
+#define IDS_BOOKMARK_FILENOTFOUND       50003
+#define IDS_BOOKMARK_EXISTS             50004
+#define IDS_BOOKMARKS_NONE_DELETED      50006
+#define IDS_VARS_CLEAR                  50007
+#define IDS_BOOKMARKS_DELETED           50008
+#define IDS_DFFD_SYNC_EOF               50009
+#define IDS_DFFD_TRUNCATED              50010
+#define IDS_DFFD_DELETE                 50011
+#define IDS_DFFD_INVALID_EBCDIC         50012
+#define IDS_DFFD_EXTRA_IGNORED          50013
+#define IDS_NO_MACRO_NAME               50014
+#define IDS_NO_MACRO_MESSAGE            50015
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        440
+#define _APS_NEXT_RESOURCE_VALUE        443
 #define _APS_NEXT_COMMAND_VALUE         39152
 #define _APS_NEXT_CONTROL_VALUE         1615
 #define _APS_NEXT_SYMED_VALUE           252

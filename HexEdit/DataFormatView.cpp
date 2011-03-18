@@ -3838,14 +3838,20 @@ void CDataFormatView::OnDffdSync()
 
 	if (start < 0 || start > pdoc->length())
 	{
-		AfxMessageBox("The address of this data element\r\n"
-					  "is past the physical end of file");
+		CAvoidableDialog::Show(IDS_DFFD_SYNC_EOF,
+			"The address of this data element according to the "
+			"template is past the physical end of file.");
+		//AfxMessageBox("The address of this data element\r\n"
+		//			  "is past the physical end of file");
 		start = end = pdoc->length();
 	}
 	else if (end > pdoc->length())
 	{
-		AfxMessageBox("The end of this data element\r\n"
-					  "is past the physical end of file");
+		CAvoidableDialog::Show(IDS_DFFD_SYNC_EOF,
+			"The address of this end of the data element according "
+			"to the template is past the physical end of file.");
+		//AfxMessageBox("The end of this data element\r\n"
+		//			  "is past the physical end of file");
 		end = pdoc->length();
 	}
 
@@ -4213,7 +4219,10 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 			if (pdoc->ptree_->GetFileName().Right(11).CompareNoCase(FILENAME_DEFTEMPLATE) != 0)
 			{
 				if (!pdoc->ptree_->Save())
-					AfxMessageBox("There was an error writing to the template file.  It may be read only.");
+					TaskMessageBox("Error saving template",
+						"There was an error writing to the template file.  "
+						"A possible cause is that the file is read only or "
+						"you do not have permsission to write to it.");
 				break;
 			}
 			// fall through
@@ -4230,7 +4239,7 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 				{
 					pdoc->ptree_->SetFileName(dlgFile.GetPathName());
 					if (!pdoc->ptree_->Save())
-						AfxMessageBox("There was an error writing to the template file");
+						TaskMessageBox("Error saving template", "There was an error writing to the template file");
 					else
 					{
 						theApp.GetXMLFileList();        // rebuild the list with the new file name in it
@@ -4333,7 +4342,8 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 			break;
 
 		case ID_DFFD_DELETE:
-			if (AfxMessageBox("Are you sure you want to delete this element?", MB_YESNO) == IDYES)
+			if (CAvoidableDialog::Show(IDS_DFFD_DELETE, "Are you sure you want to delete this element?", "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+			//if (AfxMessageBox("Are you sure you want to delete this element?", MB_YESNO) == IDYES)
 			{
 				if (parent_type == CHexEditDoc::DF_USE_STRUCT)
 				{
@@ -4452,7 +4462,9 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
 	if (read_only_str.CompareNoCase("true") == 0)
 	{
 		// This may be unexpected so tell the user what happened
-		AfxMessageBox("This field is read only.", MB_OK);
+		TaskMessageBox("Field is read only",
+			"This field cannot be modified - see the \"read_only\" attribute for this field.");
+		//AfxMessageBox("This field is read only.", MB_OK);
 		*pResult = -1;
 		return;
 	}
@@ -4885,8 +4897,10 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				if (pe == ev.end())
 				{
 					CString strTmp;
-					strTmp.Format("\"%s\"\r\nis not a member of the enum list", ss);
-					AfxMessageBox(strTmp);
+					strTmp.Format("The following string does not match any member of the enum list:\n\"%s\"\n\n"
+						"See the \"domain\" attribute for this field in the template.", ss);
+					TaskMessageBox("Invalid enum member", strTmp);
+					//AfxMessageBox(strTmp);
 					*pResult = -1;
 					return;
 				}
@@ -4930,9 +4944,12 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				// Variable sized string field and new string is different length to previous string
 				if (phev_->display_.overtype)
 				{
-					if (AfxMessageBox("You can't change the string length in overtype mode.\r"
-									  "Do you want to turn off overtype mode?",
-									  MB_OKCANCEL) == IDCANCEL)
+					if (TaskMessageBox("Invalid length",
+						               "You can't change the string length in overtype mode.\n\n"
+									   "Do you want to turn off overtype mode?",
+									   NULL,
+									   MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON
+					   ) == IDCANCEL)
 					{
 						theApp.mac_error_ = 10;
 						return;
@@ -4956,7 +4973,10 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				// String longer than field (fixed length string field)
 				ss = ss.Left(df_size);
 				grid_.SetItemText(pItem->iRow, pItem->iColumn, ss);
-				AfxMessageBox("String is too long - truncated");
+				//AfxMessageBox("String is too long - truncated");
+				CAvoidableDialog::Show(IDS_DFFD_TRUNCATED,
+					"The string you entered is too long for the "
+					"template field and has been truncated to fit.");
 			}
 			// ELSE string is length of fixed field (excluding terminator)
 			// OR var length field and string is same length as before
@@ -4988,9 +5008,12 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				// Variable sized string field and new string is different length to previous string
 				if (phev_->display_.overtype)
 				{
-					if (AfxMessageBox("You can't change the string length in overtype mode.\r"
-									  "Do you want to turn off overtype mode?",
-									  MB_OKCANCEL) == IDCANCEL)
+					if (TaskMessageBox("Invalid length",
+						               "You can't change the string length in overtype mode.\n\n"
+									   "Do you want to turn off overtype mode?",
+									   NULL,
+									   MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON
+					   ) == IDCANCEL)
 					{
 						theApp.mac_error_ = 10;
 						return;
@@ -5014,7 +5037,10 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				// String longer than field (fixed length string field)
 				sw = sw.Left(df_size/2);
 				grid_.SetItemText(pItem->iRow, pItem->iColumn, sw);
-				AfxMessageBox("String is too long - truncated");
+				CAvoidableDialog::Show(IDS_DFFD_TRUNCATED,
+					"The string you entered is too long for the "
+					"template field and has been truncated to fit.");
+				//AfxMessageBox("String is too long - truncated");
 			}
 			// else string is length of fixed length field OR var length field but string is same length as before
 			pdata = (unsigned char *)(const wchar_t *)sw;
@@ -5046,12 +5072,20 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 			ss = grid_.GetItemText(pItem->iRow, pItem->iColumn);
 			if (ss.GetLength() > 1 && ss[0] == '\'')
 			{
+				bool inv = false;
 				if (ss[1] > 0 && ss[1] < 128 && a2e_tab[ss[1]] != '\0')
 					val8 = a2e_tab[ss[1]];
 				else
 				{
 					val8 = 0;
-					AfxMessageBox("Invalid EBCDIC character");
+					inv = true;
+				}
+				if (inv)
+				{
+					//AfxMessageBox("Invalid EBCDIC character");
+					CAvoidableDialog::Show(IDS_DFFD_INVALID_EBCDIC, 
+						"One or more characters were used that cannot be converted to EBCDIC.  "
+						"These have been converted to null (zero) bytes.");
 				}
 			}
 			else
@@ -5221,7 +5255,9 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				ASSERT(bit_mask <= 0x7F);
 				if (tmp8 > bit_mask)
 				{
-					AfxMessageBox("Value exceeds available bits - truncated");
+					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
+						"The value exceeds the bits available in the bit-field, and has been truncated.");
+					//AfxMessageBox("Value exceeds available bits - truncated");
 					tmp8 &= bit_mask;
 				}
 				// Mask out (set to zero) the existing bits
@@ -5245,7 +5281,9 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				ASSERT(bit_mask <= 0x7FFF);
 				if (tmp16 > bit_mask)
 				{
-					AfxMessageBox("Value exceeds available bits - truncated");
+					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
+						"The value exceeds the bits available in the bit-field, and has been truncated.");
+					//AfxMessageBox("Value exceeds available bits - truncated");
 					tmp16 &= bit_mask;
 				}
 				// Mask out (set to zero) the existing bits
@@ -5269,7 +5307,9 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				ASSERT(bit_mask <= 0x7fffFFFF);
 				if (tmp32 > bit_mask)
 				{
-					AfxMessageBox("Value exceeds available bits - truncated");
+					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
+						"The value exceeds the bits available in the bit-field, and has been truncated.");
+					//AfxMessageBox("Value exceeds available bits - truncated");
 					tmp32 &= bit_mask;
 				}
 				// Mask out (set to zero) the existing bits
@@ -5292,7 +5332,9 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				unsigned __int64 bit_mask = (__int64(1)<<(pdoc->df_extra_[ii]>>8)) - 1;
 				if (tmp64 > bit_mask)
 				{
-					AfxMessageBox("Value exceeds available bits - truncated");
+					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
+						"The value exceeds the bits available in the bit-field, and has been truncated.");
+					//AfxMessageBox("Value exceeds available bits - truncated");
 					tmp64 &= bit_mask;
 				}
 				// Mask out (set to zero) the existing bits

@@ -608,14 +608,15 @@ void CBookmarkDlg::OnAdd()
 
 	if (name[0] == '_')
 	{
-		AfxMessageBox("Names beginning with an underscore\r"
-					  "are reserved for internal use.");
+		TaskMessageBox("Invalid bookmark",
+			"Bookmark names that begin with an underscore are reserved for internal use.");
 		return;
 	}
 
 	if (name.FindOneOf("|") != -1)
 	{
-		AfxMessageBox("Illegal characters in bookmark name");
+		TaskMessageBox("Invalid bookmark",
+			"The bookmark name contains charaaters that are not permitted such as \"|\"");
 		return;
 	}
 
@@ -624,10 +625,11 @@ void CBookmarkDlg::OnAdd()
 	if ((index = pbl->GetIndex(name, file_name)) != -1)
 	{
 		CString ss;
-		ss.Format("Bookmark \"%s\" already exists\r"
-				  "in \"%s\".\r"
+		ss.Format("Bookmark \"%s\" already exists in file\n\n"
+				  "\"%s\"\n\n"
 				  "Do you want to move it?", name, file_name);
-		if (AfxMessageBox(ss, MB_YESNO) != IDYES)
+		//if (AfxMessageBox(ss, MB_YESNO) != IDYES)
+		if (CAvoidableDialog::Show(IDS_BOOKMARK_EXISTS, ss, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
 			return;
 
 #if 0 // moved to CBookmark
@@ -834,10 +836,13 @@ void CBookmarkDlg::OnValidate()
 		mess.Format("%ld bookmarks were deleted (files missing)\n"
 					"%ld bookmarks were moved (past EOF)",
 					long(tt.size()), long(move_count));
-		AfxMessageBox(mess);
+		//AfxMessageBox(mess);
+		CAvoidableDialog(IDS_BOOKMARKS_DELETED, mess);
 	}
 	else
-		AfxMessageBox("No bookmarks were deleted or moved.");
+		//AfxMessageBox("No bookmarks were deleted or moved.");
+		CAvoidableDialog(IDS_BOOKMARKS_NONE_DELETED, 
+		                 "No bookmarks were deleted or moved.");
 }
 
 // Handlers for messages from grid control (IDC_GRID_BL)
