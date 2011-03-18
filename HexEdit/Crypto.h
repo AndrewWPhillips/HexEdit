@@ -16,6 +16,7 @@
 // implied warranty. The author accepts no liability for any damage
 // or loss of business that this product may cause.
 //
+#pragma once
 
 #include <vector>
 #if _MSC_VER < 1300

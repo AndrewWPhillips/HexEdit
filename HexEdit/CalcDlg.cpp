@@ -2530,6 +2530,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 
 	add_hist();
 	// xxx make sure it also gets added to hex or dec jump list
+	edit_.put();  
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
@@ -2695,6 +2696,12 @@ void CCalcDlg::OnEquals()               // Calculate result
 		mm_->StatusBarText("Invalid value.");
 		return;
 	}
+	else if (state_ == CALCOTHER)
+	{
+		make_noise("Calculator Error");
+		mm_->StatusBarText("Invalid expression");
+		return;
+	}
 	else if (op_ != binop_none && state_ > CALCINTEXPR)
 	{
 		make_noise("Calculator Error");
@@ -2718,6 +2725,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 
 	// We have a valid result so add it to the history list (even if just added)
 	add_hist();
+	edit_.put();    // removing from hist list (in add_hist) seems to clear the edit box sometimes so put it back
 
 	switch (state_)
 	{
@@ -2849,7 +2857,6 @@ void CCalcDlg::add_hist()
 		*pResult = CString("A") + buf;
 	}
 
-#if 0  // Removing items from the list clears the edit box sometimes and I can't be bothered finding a workaround
 	// Find any duplicate entry in the history (expression and result) and remove it
 	for (int ii = 0; ii < ctl_edit_combo_.GetCount(); ++ii)
 	{
@@ -2870,7 +2877,6 @@ void CCalcDlg::add_hist()
 			break;  // exit loop since the same value could not appear again
 		}
 	}
-#endif
 
 	// Add the new entry (at the top of the drop-down list)
 	ctl_edit_combo_.InsertString(0, Expr);
