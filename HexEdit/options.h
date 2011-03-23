@@ -244,6 +244,7 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnSaveNow();
+	afx_msg void OnRestoreAvoidable();
 	afx_msg void OnShellopen();
 	afx_msg void OnHistPage();
 	afx_msg void OnChange();

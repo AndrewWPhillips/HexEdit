@@ -438,6 +438,7 @@ BEGIN_MESSAGE_MAP(CSystemGeneralPage, COptPage)
 	ON_WM_CONTEXTMENU()
 	ON_BN_CLICKED(IDC_SAVE_EXIT, OnChange)
 	ON_BN_CLICKED(IDC_SAVE_NOW, OnSaveNow)
+	ON_BN_CLICKED(IDC_RESTORE_AVOIDABLE, OnRestoreAvoidable)
 	ON_BN_CLICKED(IDC_SHELLOPEN, OnShellopen)
 	ON_BN_CLICKED(IDC_ONE_ONLY, OnChange)
 	ON_BN_CLICKED(IDC_RESTORE, OnChange)
@@ -470,6 +471,7 @@ void CSystemGeneralPage::OnOK()
 static DWORD id_pairs_sys[] = {
 	IDC_SAVE_EXIT, HIDC_SAVE_EXIT,
 	IDC_SAVE_NOW, HIDC_SAVE_NOW,
+	IDC_RESTORE_AVOIDABLE, HIDC_RESTORE_AVOIDABLE,
 	IDC_SHELLOPEN, HIDC_SHELLOPEN,
 	IDC_ONE_ONLY, HIDC_ONE_ONLY,
 	IDC_RESTORE, HIDC_RESTORE,
@@ -526,6 +528,19 @@ void CSystemGeneralPage::OnSaveNow()
 	// PressButton() always returns zero - so ignore return value
 	(void)pParent->PressButton(PSBTN_APPLYNOW);
 	theApp.SaveOptions();
+}
+
+void CSystemGeneralPage::OnRestoreAvoidable()
+{
+	if (TaskMessageBox("Restore All Messages",
+					   "This option turns back on all warning and informational message boxes and "
+					   "question dialogs that you have hidden using the \"Don't show this again.\" "
+					   "or \"Don't ask this again.\" checkbox."
+					   "\n\nAre you sure you want to restore all message boxes?",
+					   MB_YESNO) == IDYES)
+	{
+		::SHDeleteKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit\\DialogDontAskValues");  // user settings
+	}
 }
 
 //===========================================================================

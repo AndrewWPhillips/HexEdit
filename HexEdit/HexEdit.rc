@@ -1467,19 +1467,20 @@ FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,58,8,197,1
     LTEXT           "Global settings",IDC_STATIC,12,4,47,8
-    CONTROL         "Save settings on e&xit",IDC_SAVE_EXIT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,17,95,10,0,HIDC_SAVE_EXIT
+    CONTROL         "Save settings on e&xit",IDC_SAVE_EXIT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,16,95,10,0,HIDC_SAVE_EXIT
     PUSHBUTTON      "&Save Settings Now",IDC_SAVE_NOW,152,13,94,15,WS_GROUP,0,HIDC_SAVE_NOW
     CONTROL         "&Add ""Open with HexEdit"" to Windows Explorer context menus",IDC_SHELLOPEN,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,30,232,10,0,HIDC_SHELLOPEN
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,47,226,1
-    LTEXT           "Startup",IDC_STATIC,12,43,24,8
-    CONTROL         "&Only permit one instance to run",IDC_ONE_ONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,55,126,10,0,HIDC_ONE_ONLY
-    CONTROL         "&Restore main window position",IDC_RESTORE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,68,126,10,0,HIDC_RESTORE
-    CONTROL         "Background Scan for &Devices",IDC_SCAN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,81,126,10,0,HIDC_SCAN
-    CONTROL         "Show S&plash screen",IDC_SPLASH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,152,55,102,10,0,HIDC_SPLASH
-    CONTROL         "Show &Tip of the Day",IDC_TOD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,152,68,102,10,0,HIDC_TOD
-    CONTROL         "Run AutoExec &Macro",IDC_AUTOEXEC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,152,81,102,10,0,HIDC_AUTOEXEC
-    CONTROL         "Check for &Updates (at most monthly)",IDC_UPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,94,127,10,0,HIDC_UPDATE
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,29,232,10,0,HIDC_SHELLOPEN
+    PUSHBUTTON      "&Restore All ""Not Shown"" Warning and Information Messages",IDC_RESTORE_AVOIDABLE,22,43,224,15,WS_GROUP,0,HIDC_RESTORE_AVOIDABLE
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,64,226,1
+    LTEXT           "Startup",IDC_STATIC,12,60,24,8
+    CONTROL         "&Only permit one instance to run",IDC_ONE_ONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,72,126,10,0,HIDC_ONE_ONLY
+    CONTROL         "&Restore main window position",IDC_RESTORE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,85,126,10,0,HIDC_RESTORE
+    CONTROL         "Background Scan for &Devices",IDC_SCAN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,98,126,10,0,HIDC_SCAN
+    CONTROL         "Show S&plash screen",IDC_SPLASH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,152,72,102,10,0,HIDC_SPLASH
+    CONTROL         "Show &Tip of the Day",IDC_TOD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,152,85,102,10,0,HIDC_TOD
+    CONTROL         "Run AutoExec &Macro",IDC_AUTOEXEC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,152,98,102,10,0,HIDC_AUTOEXEC
+    CONTROL         "Check for &Updates (at most monthly)",IDC_UPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,111,127,10,0,HIDC_UPDATE
     PUSHBUTTON      "History List Options >>",IDC_HIST_PAGE,152,116,94,16,0,0,HIDC_HIST_PAGE
 END
 
@@ -3286,8 +3287,7 @@ BEGIN
                             "***** The IDs below (ie, in low 50000's) are used in CAvoidableDialog and may be stored in the registry."
     IDS_BOOKMARK_NOFILE     "Adding a bookmark requires an open file"
     IDS_BOOKMARK_NOTFOUND   "Bookmark not found"
-    IDS_BOOKMARK_FILENOTFOUND 
-                            "The file containing the bookmark was not found"
+    IDS_BOOKMARK_FILENOTFOUND "The file containing the bookmark was not found"
     IDS_BOOKMARK_EXISTS     "This bookmark already exists"
     IDS_BOOKMARKS_NONE_DELETED "No bookmarks were affected"
     IDS_VARS_CLEAR          "Deleting all variables"
@@ -3299,6 +3299,10 @@ BEGIN
     IDS_DFFD_EXTRA_IGNORED  "Excess bits ignored"
     IDS_NO_MACRO_NAME       "Macro name required"
     IDS_NO_MACRO_MESSAGE    "Message required"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_CALC_NO_FILE        "No file open for operation"
     IDS_CALC_NOT_INT        "Calculator button requires integer"
     IDS_CALC_OVERFLOW       "Calculation Overflow"
@@ -3309,6 +3313,31 @@ BEGIN
     IDS_MD5                 "MD5"
     IDS_CRC                 "Checksum/CRC result"
     IDS_DFFD_USE_UNNAMED    "No Name Specified"
+    IDS_READ_ONLY           "Turn off Read Only Mode?"
+    IDS_OVERTYPE            "Turn off OVR Mode?"
+    IDS_REPLACE_OVERTYPE    "Turn off OVR for Replace?"
+    IDS_PASTE_OVERTYPE      "Turn off OVR before Paste?"
+    IDS_INVALID_JUMP        "Jump to invalid address"
+    IDS_INVALID_EBCDIC      "Invalid EBCDIC"
+    IDS_INVALID_HEX         "Invalid Hex Digit"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_IMPORT_RESULT       "Import Finished"
+    IDS_CANT_COMPARE        "Comparison Error"
+    IDS_COMPARE_NO_DIFF     "No Difference"
+    IDS_COMPARE_DIFF        "Difference Found"
+    IDS_SEL_LEN             "Selection Length Error"
+    IDS_LEAVE_LARGE_CB      "Leave Data on Clipboard?"
+    IDS_BOOKMARKS_ADJUSTED  "Bookmark(s) Adjusted"
+    IDS_FILE_OPEN_READ_ONLY "Opened Read Only"
+    IDS_FILE_OPEN_NON_EXCLUSIVE "Opened Non-Exclusive"
+    IDS_FILE_OPEN_ERROR     "File Open Error"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_UPDATE_AVAILABLE    "New Version Available"
 END
 
@@ -3350,6 +3379,7 @@ IDI_SWITCH              ICON                    "res\\switch.ico"
 IDI_QUESTIONMARK        ICON                    "RES\\question.ico"
 IDI_EXCLAMATIONMARK     ICON                    "RES\\exclam.ico"
 IDI_INFO                ICON                    "RES\\info.ico"
+IDI_CROSS               ICON                    "RES\\cross.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

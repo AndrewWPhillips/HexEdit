@@ -425,6 +425,7 @@
 #define HIDC_REPLACE_LIST_SIZE          0x819b04c8    // IDD_OPT_HISTORY [English (United States)]
 #define HIDC_RESET                      0x80e6044f    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_RESTORE                    0x809e0414    // IDD_OPT_SYSTEM [English (United States)]
+#define HIDC_RESTORE_AVOIDABLE          0x809e041b    // IDD_OPT_SYSTEM [English (United States)]
 #define HIDC_REVERSE_ZOOM               0x80eb047c    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_ROL                        0x8075042f    // IDD_CALC
 #define HIDC_ROR                        0x80750430    // IDD_CALC

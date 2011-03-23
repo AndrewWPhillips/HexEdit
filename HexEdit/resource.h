@@ -416,6 +416,7 @@
 #define IDI_QUESTIONMARK                440
 #define IDI_EXCLAMATIONMARK             441
 #define IDI_INFO                        442
+#define IDI_CROSS                       443
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -656,6 +657,7 @@
 #define IDC_FP_32BIT                    1111
 #define IDC_UNARY_ROR                   1112
 #define IDC_UNARY_LSL                   1113
+#define IDC_RESTORE_AVOIDABLE           1114
 #define IDC_REFRESH_PROPS               1115
 #define IDC_REFRESH_BARS                1116
 #define IDC_HALT0                       1117
@@ -1657,14 +1659,31 @@
 #define IDS_MD5                         50023
 #define IDS_CRC                         50024
 #define IDS_DFFD_USE_UNNAMED            50025
-#define IDS_UPDATE_AVAILABLE            50050
+#define IDS_READ_ONLY                   50026
+#define IDS_OVERTYPE                    50027
+#define IDS_REPLACE_OVERTYPE            50028
+#define IDS_PASTE_OVERTYPE              50029
+#define IDS_INVALID_JUMP                50030
+#define IDS_INVALID_EBCDIC              50031
+#define IDS_IMPORT_RESULT               50032
+#define IDS_CANT_COMPARE                50033
+#define IDS_COMPARE_NO_DIFF             50034
+#define IDS_COMPARE_DIFF                50035
+#define IDS_INVALID_HEX                 50036
+#define IDS_SEL_LEN                     50037
+#define IDS_LEAVE_LARGE_CB              50040
+#define IDS_BOOKMARKS_ADJUSTED          50041
+#define IDS_FILE_OPEN_READ_ONLY         50042
+#define IDS_FILE_OPEN_NON_EXCLUSIVE     50043
+#define IDS_FILE_OPEN_ERROR             50044
+#define IDS_UPDATE_AVAILABLE            50099
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        443
+#define _APS_NEXT_RESOURCE_VALUE        445
 #define _APS_NEXT_COMMAND_VALUE         39152
 #define _APS_NEXT_CONTROL_VALUE         1615
 #define _APS_NEXT_SYMED_VALUE           252
