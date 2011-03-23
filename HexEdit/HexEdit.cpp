@@ -292,6 +292,8 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 
 	// MFC 7.1 has special HTML help mode (but this stuffed our use of HTML help)
 	SetHelpMode(afxHTMLHelp);
+
+	no_ask_insert_ = false;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -368,8 +370,10 @@ BOOL CHexEditApp::InitInstance()
 				{
 					if (checker.UpdateAvailable(version_))
 					{
-						AfxMessageBox(_T("A newer version of HexEdit is available for download."),
-							MB_OK | MB_ICONINFORMATION);
+						CAvoidableDialog::Show(IDS_UPDATE_AVAILABLE,
+						                       "A newer version of HexEdit is currently available for download.", "", 
+						                       MLCBF_OK_BUTTON, MAKEINTRESOURCE(IDI_INFO));
+						//AfxMessageBox(_T("A newer version of HexEdit is available for download."), MB_OK | MB_ICONINFORMATION);
 					}
 					WriteProfileInt(_T("Update"), _T("LastCheckDate"), (int)now);
 				}
@@ -623,8 +627,9 @@ void CHexEditApp::InitVersionInfo()
 		switch (GetProfileInt("Options", "AllowNoDigitGrouping", -1))
 		{
 		case -1:
-			if (AfxMessageBox("You have digit grouping for large numbers turned\n"
-							  "off or are using an unsupported grouping/format.\n"
+			if (TaskMessageBox("Number Display Problem",
+							  "You have digit grouping for large numbers turned "
+							  "off or are using an unsupported grouping/format.  "
 							  "(See Regional Settings in the Control Panel.)\n\n"
 							  "Numbers will be displayed without grouping, eg:\n"
 							  "\n2489754937\n\n"
@@ -877,9 +882,9 @@ void CHexEditApp::OnNewUser()
 	// If DTD file exists, probably just the registry settings were deleted so don't ask
 	// if we want to copy (but copy over files if not already there
 	if (::_access(dstFile, 0) == -1 &&
-		AfxMessageBox("This is the first time you have run HexEdit.\r\n"
-					  "Hit OK to set up you own personal copies of \r\n"
-					  "templates and macros.\r\n",
+		TaskMessageBox("New User",
+					  "This is the first time you have run this version of HexEdit.\n\n"
+					  "Hit OK to set up you own personal copies of templates and macros.",
 					  MB_OKCANCEL) == IDCANCEL)
 		return;
 
@@ -917,7 +922,18 @@ void CHexEditApp::OnNewUser()
 
 void CHexEditApp::OnFileNew()
 {
+	no_ask_insert_ = false;  // make sure we show ask the user for insert options
 	CWinAppEx::OnFileNew();
+}
+
+void CHexEditApp::FileFromString(LPCTSTR str)
+{
+	no_ask_insert_ = true;   // turn off insert options as we are simply inserting a string
+	CWinAppEx::OnFileNew();
+	no_ask_insert_ = false;
+	CHexEditView * pview = GetView();
+	if (pview != NULL)
+		pview->GetDocument()->Change(mod_insert, 0, strlen(str), (unsigned char *)str, 0, pview);
 }
 
 void CHexEditApp::OnFileOpen()
@@ -1098,7 +1114,8 @@ void CHexEditApp::OnFileSaveAll()
 		// file that was not yet written to disk and the user probably cancelled
 		// out of the file save dialog (so they already know the file is not saved).
 		if (pdoc->IsModified() && !pdoc->DoFileSave() && !pdoc->GetFileName().IsEmpty())
-			AfxMessageBox("Could not save " + pdoc->GetFileName());
+			TaskMessageBox("File Not Saved", "During the \"Save All\" operation the following file could not be saved:\n\n" +
+						   pdoc->GetFileName());
 	}
 }
 
@@ -1173,18 +1190,17 @@ void CHexEditApp::OnUpdateFileOpenSpecial(CCmdUI* pCmdUI)
 
 void CHexEditApp::OnRepairDialogbars()
 {
-	if (AfxMessageBox("This restores all modeless dialogs so they are\n"
+	if (TaskMessageBox("Restore All Dialogs?",
+					  "This restores all modeless dialogs so they are "
 					  "visible, undocked and unrolled.  They include:\n"
 					  "* Calculator\n"
 					  "* Properties dialog\n"
 					  "* Bookmarks dialog\n"
 					  "* Find dialog\n"
-					  "\nYou may need to do this if:\n"
-					  "* a modeless dialog cannot be made visible\n"
-					  "* modeless dialogs are docked improperly\n"
-					  "* a modeless dialog cannot be unrolled/undocked\n"
+					  "* HexEdit Explorer\n"
+					  "\nYou may need to do this if you cannot restore any of the above dialogs.\n"
 					  "\nDo you want to continue?",
-					  MB_YESNO|MB_DEFBUTTON2) != IDYES)
+					  MB_YESNO) != IDYES)
 		return;
 
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -1200,7 +1216,8 @@ void CHexEditApp::OnRepairDialogbars()
 
 void CHexEditApp::OnRepairCust()
 {
-	if (AfxMessageBox("You may need to repair customizations if:\n"
+	if (TaskMessageBox("Reset Customizations?",
+					  "You may need to repair customizations if:\n"
 					  "* standard toolbars are missing\n"
 					  "* toolbar buttons or menu items are missing\n"
 					  "* toolbar or menu icons are incorrect\n"
@@ -1211,7 +1228,7 @@ void CHexEditApp::OnRepairCust()
 					  "* changes to all menus including context (popup) menus\n"
 					  "* keyboard customizations\n"
 					  "\nDo you want to continue?",
-					  MB_YESNO|MB_DEFBUTTON2|MB_ICONSTOP) != IDYES)
+					  MB_YESNO) != IDYES)
 		return;
 
 	GetContextMenuManager()->ResetState();
@@ -1221,12 +1238,13 @@ void CHexEditApp::OnRepairCust()
 
 void CHexEditApp::OnRepairSettings()
 {
-	if (AfxMessageBox("All customizations and changes to\n"
-					  "settings will be removed.\n"
+	if (TaskMessageBox("Reset Settings?",
+					  "All customizations and changes to "
+					  "settings will be removed.  "
 					  "(All registry entries will be removed.)\n"
 					  "\nTo do this HexEdit must close.\n"
 					  "\nDo you want to continue?",
-					  MB_YESNO|MB_DEFBUTTON2|MB_ICONSTOP) != IDYES)
+					  MB_YESNO) != IDYES)
 		return;
 
 	// Signal deletion of all registry settings
@@ -1237,17 +1255,18 @@ void CHexEditApp::OnRepairSettings()
 
 void CHexEditApp::OnRepairAll()
 {
-	if (AfxMessageBox("All customizations, registry settings,\n"
+	if (TaskMessageBox("Repair All",
+					  "All customizations, registry settings,  "
 					  "file settings etc will be removed, including:\n"
 					  "* toolbar, menu and keyboard customizations\n"
 					  "* settings made in the Options dialog\n"
 					  "* previously opened files settings (columns etc)\n"
 					  "* recent file list, bookmarks, highlights etc\n"
 					  "* ALL REGISTRATION INFORMATION WILL BE REMOVED\n\n"
-					  "When complete you will need to restart HexEdit\n"
+					  "When complete you will need to restart HexEdit "
 					  "and re-enter your activation code.\n"
 					  "\nAre you absolutely sure you want to continue?",
-					  MB_YESNO|MB_DEFBUTTON2|MB_ICONSTOP) != IDYES)
+					  MB_YESNO) != IDYES)
 		return;
 
 	// Signal deletion of all registry settings and settings files
@@ -3700,7 +3719,7 @@ BOOL CHexEditApp::backup(LPCTSTR filename, FILE_ADDRESS file_len) const
 		// If still backing up and prompt the user (if required)
 		if (retval &&
 			backup_prompt_ &&
-			AfxMessageBox("Do you want to create a backup file?", MB_YESNO) != IDYES)
+			TaskMessageBox("Create Backup?", "Do you want to create a backup copy of this file?", MB_YESNO) != IDYES)
 		{
 			retval = FALSE;
 		}
@@ -4111,8 +4130,9 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 
 				// First make sure there are no unsaved changes
 				if (pv->GetDocument()->IsModified() &&
-					AfxMessageBox("Attached file has unsaved changes.\r"
-						  "Save it now?", MB_YESNO) == IDYES)
+					TaskMessageBox("Save File?",
+						"The attached file has unsaved changes.\n\n"
+						"Do you want to save it now?", MB_YESNO) == IDYES)
 				{
 					pv->GetDocument()->DoFileSave();
 				}
@@ -4160,13 +4180,15 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 		if ((result == 2 ||
 			 result == MAPI_E_ATTACHMENT_NOT_FOUND ||
 			 result == MAPI_E_ATTACHMENT_OPEN_FAILURE) &&
-			AfxMessageBox("Error opening attachment.\r"
+			TaskMessageBox("Error opening attachment",
+						   "The file to be attached could not be found or opened for "
+						   "some reason (for example, no read permissions).\n\n"
 						  "Try again?", MB_YESNO) != IDYES)
 		{
 			break;
 		}
 
-		if (AfxMessageBox("Error encountered creating email session\r"
+		if (TaskMessageBox("MAPI error",  "An error was encountered creating the email session\n\n"
 						  "Try again?", MB_YESNO) != IDYES)
 		{
 			break;

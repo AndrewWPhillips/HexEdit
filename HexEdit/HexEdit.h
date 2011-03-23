@@ -243,6 +243,10 @@ public:
 	virtual void PreLoadState();
 	virtual void OnAppContextHelp(CWnd* pWndControl, const DWORD dwHelpIDArray[]);
 
+	// Allow creating of a document from a text string
+	bool no_ask_insert_;                // Turn this on to prevent OnFileNew from prompting with insertion options
+	void FileFromString(LPCTSTR str);   
+
 // Command handlers
 protected:
 	afx_msg void OnFileNew();

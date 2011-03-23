@@ -125,18 +125,60 @@ void CCalcEdit::put()
 		// Get the number as a string and add it to the text box
 		mpz_get_str(buf, theApp.hex_ucase_? -pp_->radix_ : pp_->radix_, val.get_mpz_t());
 		ASSERT(buf[len-1] == '\xCD');
-		SetWindowText(buf);
-		if (GetWindowTextLength() < len - 5)
+		bool handled = false;
+		if (len > 1000)
 		{
-			ASSERT(0);
-			SetWindowText("Result too big for edit box to display");
-			// xxx Offer option to open in a file?
-			pp_->state_ = CALCOVERFLOW;
-		}
-		else
-			SetSel(len, -1, FALSE);     // move caret to end
+			CString ss;
+			ss.Format("The result of the operation has been calculated and has %d "
+			          "digits which may be too large for the Windows text box to handle.\n\n"
+			          "You may open the result in a text file, or copy it to the clipboard, or "
+			          "simply select \"Cancel\" to attempt to display it normally.", len-3);
+			CAvoidableDialog dlg(IDS_CALC_TOO_BIG, ss, "", MLCBF_CANCEL_BUTTON);
+			dlg.AddButton(47, "Open in File");
+			dlg.AddButton(48, "Copy to Clipboard");
 
-		TRACE("++++++ Put: int %.100s\r\n", (const char *)buf);
+			switch (dlg.DoModal())
+			{
+			case 47:
+				theApp.FileFromString(buf);
+				break;
+			case 48:
+				if (!OpenClipboard())
+					AfxMessageBox("The clipboard is in use!");
+				else
+				{
+					HANDLE hh;                              // Windows handle for memory
+					char *pp;
+
+					if (!::EmptyClipboard() ||
+						(hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, DWORD(len-1))) == NULL ||
+						(pp = reinterpret_cast<char *>(::GlobalLock(hh))) == NULL)
+					{
+						AfxMessageBox("Not enough memory to add to clipboard");
+						::CloseClipboard();
+						break;
+					}
+					memcpy(pp, buf, len-1);
+					::SetClipboardData(CF_TEXT, hh);
+					::CloseClipboard();
+					theApp.ClipBoardAdd(len-1);   // allow temp cb file to be deleted and keep track of large cb allocs so we can check if they should be deleted on close
+					SetWindowText("");            // Clear text box to avoid confusion
+					handled = true;
+				}
+				break;
+			case IDCANCEL:
+				break;
+			default:
+				ASSERT(0);
+			}
+
+		}
+
+		if (!handled)
+		{
+			SetWindowText(buf);
+			SetSel(len, -1, FALSE);     // move caret to end
+		}
 		delete[] buf;
 	}
 	else
@@ -515,7 +557,7 @@ void CCalcEdit::clear_result(bool clear /* = true */)
 		if (pp_->state_ < CALCINTLIT)
 			pp_->state_ = CALCINTLIT;
 		else if (pp_->state_ >= CALCOTHRES)
-			pp_->state_ = CALCOTHER;
+			pp_->state_ = update_value(false);
 	}
 }
 
