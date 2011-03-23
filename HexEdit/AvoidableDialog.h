@@ -12,8 +12,7 @@ class CAvoidableDialog : public CTaskDialog
 {
 public:
 	CAvoidableDialog(int id, LPCTSTR content = _T(""), LPCTSTR title = _T(""), MLTASKDIALOG_COMMON_BUTTON_FLAGS buttons = 0, LPCTSTR icon = 0) :
-	  CTaskDialog(MAKEINTRESOURCE(id), content, title, buttons,
-		          icon != 0 ? icon : (buttons == 0 || buttons == MLCBF_OK_BUTTON ? MAKEINTRESOURCE(IDI_EXCLAMATIONMARK) : MAKEINTRESOURCE(IDI_QUESTIONMARK)))
+	  CTaskDialog(MAKEINTRESOURCE(id), content, title, buttons, icon)
 	{
 		id_.Format("%d", id);
 		dont_ask_ = false;
@@ -37,6 +36,16 @@ public:
 		return retval;
 	}
 
+	// CAvoidableDialog::Show() displays an "avoidable dialog" (with "Don't show again" checkbox).
+	// Parameters:
+	//   id = string id used to display a brief (main) message at the top of the dialog,
+	//        also identifies the dialog for the purposes of tracking the "don't ask" flag.
+	//   content = more information, defaults to nothing
+	//   title = window title, defaults to HexEdit
+	//   buttons = flags saying whihc buttons to show, defaults to OK button only
+	//   icon = icon displayed in top right, if 0 then no icon id displayed, if empty string (default) then default icon is displayed
+	//          - IDI_QUESTIONMARK if "YES" button is shown
+	//          - IDI_EXCLAMATIONMARK if "YES" button is not shown
 	static int Show(int id, LPCTSTR content = _T(""), LPCTSTR title = _T(""), MLTASKDIALOG_COMMON_BUTTON_FLAGS buttons = 0, LPCTSTR icon = 0)
 	{
 		CAvoidableDialog dlg(id, content, title, buttons, icon);

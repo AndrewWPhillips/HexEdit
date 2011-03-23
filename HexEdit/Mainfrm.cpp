@@ -3275,7 +3275,7 @@ void CMainFrame::OnReplaceAll()
 			if (dirn == CFindSheet::DIRN_DOWN)
 				end += int(replen) - int(length);
 		}
-	}
+	} // for (;;)
 
 	pview->show_pos();                         // Restore display of orig address
 	AddSearchHistory(current_search_string_);

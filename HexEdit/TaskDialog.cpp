@@ -55,7 +55,8 @@ INT_PTR CSimpleTaskDialog::DoModal(CWnd* pParentWnd)
 IMPLEMENT_DYNAMIC(CTaskDialog, CSimpleTaskDialog)
 
 CTaskDialog::CTaskDialog(LPCTSTR instruction, LPCTSTR content, LPCTSTR title, MLTASKDIALOG_COMMON_BUTTON_FLAGS buttons, LPCTSTR icon)
-	: CSimpleTaskDialog(instruction, content, title, buttons, icon)
+	: CSimpleTaskDialog(instruction, content, title, buttons,
+	                    icon != NULL ? icon : ((buttons|MLCBF_YES_BUTTON) != 0 ? MAKEINTRESOURCE(IDI_EXCLAMATIONMARK) : MAKEINTRESOURCE(IDI_QUESTIONMARK)))
 	, m_radiobutton(0)
 	, m_verification(FALSE)
 {
