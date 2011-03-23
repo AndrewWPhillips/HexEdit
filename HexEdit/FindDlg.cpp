@@ -2598,8 +2598,8 @@ void CNumberPage::OnFindNext()
 	UpdateData();
 	if (!FixStrings())
 	{
-		AfxMessageBox("There was a problem analysing the number.\n\n"
-					  "Please check the number and format settings.");
+		TaskMessageBox("Invalid Number", "There was a problem analysing the number.\n\n"
+					  "Please check the number and associated format settings.");
 		return;
 	}
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_FIND_NEXT);
@@ -2610,8 +2610,8 @@ void CNumberPage::OnBookmarkAll()
 	UpdateData();
 	if (!FixStrings())
 	{
-		AfxMessageBox("There was a problem analysing the number.\n\n"
-					  "Please check the number and format settings.");
+		TaskMessageBox("Invalid Number", "There was a problem analysing the number.\n\n"
+					  "Please check the number and associated format settings.");
 		return;
 	}
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_BOOKMARK_ALL);

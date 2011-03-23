@@ -591,12 +591,13 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
 	if (!same_view)
 	{
 		CString mess;
-		mess.Format("Undo %s made in different window?",
+		mess.Format("Undo %s?",
 			undo_.back().utype == mod_insert       ? "insertion" :
 			undo_.back().utype == mod_insert_file  ? "insertion" :
 			undo_.back().utype == mod_replace      ? "change"    :
 			undo_.back().utype == mod_repback      ? "backspace" : "deletion");
-		if (AfxMessageBox(mess, MB_OKCANCEL) == IDCANCEL)
+		if (TaskMessageBox(mess, "This chnage was made in a different window opened on the same file.\n\n"
+			              "Are you sure you want to undo this change?", MB_OKCANCEL) == IDCANCEL)
 			return FALSE;
 	}
 
@@ -1059,7 +1060,7 @@ void CHexEditDoc::WriteInPlace()
 	}
 	catch (CFileException *pfe)
 	{
-		AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+		TaskMessageBox("File Save Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 		pfe->Delete();
 
 #ifdef INPLACE_MOVE
@@ -1136,7 +1137,7 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 		}
 		AfxMessageBox(mess);
 #else
-		AfxMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
+		TaskMessageBox("File Open Error", ::FileErrorMessage(&fe, CFile::modeWrite));
 #endif
 
 		theApp.mac_error_ = 10;
@@ -1175,7 +1176,7 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 	}
 	catch (CFileException *pfe)
 	{
-		AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+		TaskMessageBox("File Write Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 		pfe->Delete();
 
 		mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar

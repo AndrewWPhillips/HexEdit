@@ -16354,6 +16354,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		break;
 	}
 
+// xxx chnage ByteSize calls to get_bits xxx TBD TODO
 	// Get final CRC and store it in the calculator
 	if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < sizeof(T))
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(sizeof(T)*8);
@@ -16470,19 +16471,35 @@ void CHexEditView::OnMd5()
 	unsigned char digest[16];
 	MD5Final(digest, &ctx);
 
+	// Display the value in (avoidable) message box and then load it into the calculator
 	{
-		// Display MD5 value (when calculator can handle 128 bits we will put it there instead)
-		CString ss, fmt;
+		// First get the result as text (hex digits)
+		CString ss;
+		const char * fmt;
 		if (theApp.hex_ucase_)
-			fmt = "MD5: %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X";
+			fmt = "%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X";
 		else
-			fmt = "MD5: %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x";
+			fmt = "%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x";
 		ss.Format(fmt,
 				digest[0], digest[1], digest[2], digest[3],
 				digest[4], digest[5], digest[6], digest[7],
 				digest[8], digest[9], digest[10], digest[11],
 				digest[12], digest[13], digest[14], digest[15]);
-		AfxMessageBox(ss);
+
+		// Load the value into the calculator ensuring bits is at least 160 and radix is hex
+		if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.get_bits() < 128)
+			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(128);
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr(ss);
+		dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
+
+		// Display the result in an (avoidable) dialog
+		CString mess;
+		AddSpaces(ss);
+		mess = "The calculator value has been set to the result of the MD5 calculation "
+		       "which is 128 bits in length and displayed in hex (radix 16).\n\n" + 
+		       ss;
+		CAvoidableDialog::Show(IDS_MD5, mess);
 	}
 
 	// Record in macro since we did it successfully
@@ -16551,20 +16568,36 @@ void CHexEditView::OnSha1()
 	unsigned char digest[20];
 	sha1_finish(&ctx, digest);
 
+	// Display the value in (avoidable) message box and then load it into the calculator
 	{
-		// Display SHA1 value (when calculator can handle 128 bits we will put it there instead)
-		CString ss, fmt;
+		// First get the result as text (hex digits)
+		CString ss;
+		const char * fmt;
 		if (theApp.hex_ucase_)
-			fmt = "SHA1: %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X %2.2X%2.2X";
+			fmt = "%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X";
 		else
-			fmt = "SHA1: %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x %2.2x%2.2x";
+			fmt = "%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x";
 		ss.Format(fmt,
 				digest[0],  digest[1],  digest[2],  digest[3],
 				digest[4],  digest[5],  digest[6],  digest[7],
 				digest[8],  digest[9],  digest[10], digest[11],
 				digest[12], digest[13], digest[14], digest[15],
 				digest[16], digest[17], digest[18], digest[19]);
-		AfxMessageBox(ss);
+
+		// Load the value into the calculator ensuring bits is at least 160 and radix is hex
+		if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.get_bits() < 160)
+			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(160);
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr(ss);
+		dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
+
+		// Display the result in an (avoidable) dialog
+		CString mess;
+		AddSpaces(ss);
+		mess = "The calculator value has been set to the result of the SHA1 calculation "
+		       "which is 160 bits in length and displayed in hex (radix 16).\n\n" + 
+		       ss;
+		CAvoidableDialog::Show(IDS_SHA1, mess);
 	}
 
 	// Record in macro since we did it successfully

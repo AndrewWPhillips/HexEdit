@@ -137,19 +137,35 @@ private:
 // Parameters:
 //   mess = short message at top
 //   content = longer description (may be empty)
-//   title = window title (defaults to "HexEdit" if empty)
-//   buttons = combination of MLCBF_*_BUTTON where * = OK/CANCEL/YES/NO/CLOSE/RETRY
-//     for equivalents to AfxMessageBox flags use:
-//       MB_OK = MLCBF_OK_BUTTON
-//       MB_OKCANCEL = MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON
-//       MB_YESNO = MLCBF_YES_BUTTON | MLCBF_NO_BUTTON
-//       MB_YESNOCANCEL = MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON
-//       etc
+//   nType = one of MB_OK, MB_OKCANCEL, MB_YESNO, MB_YESNOCANCEL etc
 //   icon = ID of icon - if 0 is exclamation mark (for only OK button shown) or question mark
-//  TBD: implement a "help ID" parameter
-inline int TaskMessageBox(LPCTSTR mess, LPCTSTR content = _T(""), LPCTSTR title = _T(""), MLTASKDIALOG_COMMON_BUTTON_FLAGS buttons = 0, LPCTSTR icon = 0)
+//   title = window title (defaults to "HexEdit" if empty)
+//  TBD: implement nIDHELP parameter and Help button?
+inline int TaskMessageBox(LPCTSTR mess, LPCTSTR content = _T(""), UINT nType = MB_OK, UINT nIDHelp = 0, LPCTSTR icon = 0, LPCTSTR title = _T(""))
 {
-	CTaskDialog dlg(mess, content, title, buttons, icon);
+	MLTASKDIALOG_COMMON_BUTTON_FLAGS buttons;
+	switch (nType)
+	{
+	default:
+		ASSERT(0);      // unknown type
+		// fall through
+	case MB_OK:
+		buttons = MLCBF_OK_BUTTON;
+		break;
+	case MB_OKCANCEL:
+		buttons =  MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON;
+		break;
+	case MB_YESNO:
+		buttons = MLCBF_YES_BUTTON | MLCBF_NO_BUTTON;
+		break;
+	case MB_YESNOCANCEL:
+		buttons = MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON;
+		break;
+	case MB_RETRYCANCEL:
+		buttons = MLCBF_RETRY_BUTTON | MLCBF_CANCEL_BUTTON;
+		break;
+	}
+	CTaskDialog dlg(mess, content, title, buttons, icon != 0 ? icon : (nType == MB_OK ? MAKEINTRESOURCE(IDI_EXCLAMATIONMARK) : MAKEINTRESOURCE(IDI_QUESTIONMARK)));
 	return dlg.DoModal(AfxGetMainWnd());
 }
 

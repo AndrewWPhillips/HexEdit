@@ -702,21 +702,18 @@ bool CDFFDData::check_data()
 	// Get values from the controls and validate them
 	UpdateData();
 
-//        && AfxMessageBox("You cannot refer to this data element\n"
-//                      "in expressions unless you specify a name.\n\n"
-//                      "Do you want to continue anyway?",
-//                      MB_YESNO | MB_ICONINFORMATION) != IDYES)
-
 	// Make sure name is given unless the container is a FOR (whence sub-elements
 	// are accessed via array index) OR the user wants a hdden field.
 	if (name_.IsEmpty() &&
 		parent_type_ != CHexEditDoc::DF_FORV &&
 		parent_type_ != CHexEditDoc::DF_FORF &&
-		AfxMessageBox("The name for this DATA element is empty.\r\n"
-					  "This means it will not be available for\r\n"
-					  "use in expressions or visible in view mode.\r\n\n"
+		CAvoidableDialog::Show(IDS_DFFD_USE_UNNAMED,
+		              "The name for this DATA element is empty.  "
+					  "This means it will not be available for "
+					  "use in expressions or visible in view mode.\n\n"
 					  "Are you sure you want an unnamed element?",
-					  MB_YESNO) != IDYES)
+					  NULL,
+					  MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
 	{
 		ctl_name_.SetFocus();
 		return false;
@@ -727,8 +724,8 @@ bool CDFFDData::check_data()
 	{
 		if (!valid_id(name_))
 		{
-			AfxMessageBox("Invalid name.  Please use alphanumeric characters (or\r\n"
-						  "underscore) and start with an alphabetic character.");
+			TaskMessageBox("Invalid Data Field Name", "Please use alphanumeric characters (or "
+						  "underscores) and begin the name with an alphabetic character.");
 			ctl_name_.SetFocus();
 			return false;
 		}
@@ -740,7 +737,7 @@ bool CDFFDData::check_data()
 			name_.CompareNoCase("member") == 0 ||
 			expr_eval::func_token(name_) != expr_eval::TOK_NONE)
 		{
-			AfxMessageBox("This name is reserved");
+			TaskMessageBox("Reserved Name", name_ + " is reserved for internal use. Please choose another name.");
 			ctl_name_.SetFocus();
 			return false;
 		}
@@ -760,7 +757,9 @@ bool CDFFDData::check_data()
 				; // nothing here
 			if (!ee2.IsEmpty() && ee2.GetAttr("name") == name_)
 			{
-				AfxMessageBox("This element has a sibling with the same name");
+				TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
+				               "It is not be possible to differentiate between two elements "
+							   "with the same name at the same level (eg, in expressions).");
 				ctl_name_.SetFocus();
 				return false;
 			}
@@ -777,7 +776,9 @@ bool CDFFDData::check_data()
 				; // nothing here
 			if (!ee2.IsEmpty() && ee2.GetAttr("name") == name_)
 			{
-				AfxMessageBox("This element has a sibling with the same name");
+				TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
+				               "It is not be possible to differentiate between two elements "
+							   "with the same name at the same level (eg, in expressions).");
 				ctl_name_.SetFocus();
 				return false;
 			}

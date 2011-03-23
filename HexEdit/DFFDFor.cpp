@@ -443,16 +443,18 @@ void CDFFDFor::OnReplace()
 		CString mess;
 		if (curr_elt.GetFirstChild().IsEmpty())
 		{
-			mess.Format("This will replace the contents of %s.\n\n"
+			mess.Format("This will replace the contents of %s.  "
+						"The existing contents will be deleted.\n\n"
 						"Are you sure you want to do this?", sub_name);
 		}
 		else
 		{
 			mess.Format("This will replace the contents of %s\n"
-						"and all elements below it.\n\n"
+						"and all elements below it.  "
+						"The existing contents will be deleted.\n\n"
 						"Are you sure you want to do this?", sub_name);
 		}
-		if (AfxMessageBox(mess, MB_YESNO) != IDYES)
+		if (TaskMessageBox("Replacing Element", mess, MB_YESNO) != IDYES)
 			return;
 
 		pelt_->DeleteChild(curr_elt);         // Remove the replaced node from the tree
@@ -639,7 +641,9 @@ bool CDFFDFor::check_data()
 
 	if (!valid_element_)
 	{
-		AfxMessageBox("Please add the contained element of the FOR.\n");
+		TaskMessageBox("No For Element", "A FOR element must contain exactly one sub-element.  "
+			"This may simply be a DATA element or complex element such as a FOR or STRUCT.\n\n"
+			"Please add the contained element to continue.");
 		ctl_replace_.SetFocus();
 		return false;
 	}
@@ -647,15 +651,16 @@ bool CDFFDFor::check_data()
 	// Make sure name is given unless the container is a FOR (whence sub-elements are accessed via array index)
 	if (name_.IsEmpty() && parent_type_ != CHexEditDoc::DF_FORV && parent_type_ != CHexEditDoc::DF_FORF)
 	{
-		AfxMessageBox("Please enter a name for this element");
+		TaskMessageBox("No Name", "A FOR element must have a name (unless it is nested within another FOR) so that "
+			"the FOR element can be accessed in expressions.\n\nPlease enter a name for this element.");
 		ctl_name_.SetFocus();
 		return false;
 	}
 
 	if (!name_.IsEmpty() && !valid_id(name_))
 	{
-		AfxMessageBox("Invalid name.  Please use alphanumeric characters (or\r\n"
-					  "underscore) and start with a alphabetic character.");
+		TaskMessageBox("Invalid FOR Name", "Please use alphanumeric characters (or "
+						"underscores) and begin the name with an alphabetic character.");
 		ctl_name_.SetFocus();
 		return false;
 	}
@@ -665,7 +670,7 @@ bool CDFFDFor::check_data()
 		name_.CompareNoCase("end") == 0 ||
 		expr_eval::func_token(name_) != expr_eval::TOK_NONE)
 	{
-		AfxMessageBox("This name is reserved");
+		TaskMessageBox("Reserved Name", name_ + " is reserved for internal use. Please choose another name.");
 		ctl_name_.SetFocus();
 		return false;
 	}
@@ -688,7 +693,9 @@ bool CDFFDFor::check_data()
 			; // nothing here
 		if (!ee2.IsEmpty() && ee2.GetAttr("name") == name_)
 		{
-			AfxMessageBox("This element has a sibling with the same name");
+			TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
+				            "It is not be possible to differentiate between two elements "
+							"with the same name at the same level (eg, in expressions).");
 			ctl_name_.SetFocus();
 			return false;
 		}
@@ -706,7 +713,9 @@ bool CDFFDFor::check_data()
 			; // nothing here
 		if (!ee2.IsEmpty() && ee2.GetAttr("name") == name_)
 		{
-			AfxMessageBox("This element has a sibling with the same name");
+			TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
+				           "It is not be possible to differentiate between two elements "
+			               "with the same name at the same level (eg, in expressions).");
 			ctl_name_.SetFocus();
 			return false;
 		}

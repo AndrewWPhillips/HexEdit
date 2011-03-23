@@ -305,15 +305,15 @@ bool CDFFDUseStruct::check_data()
 	// Make sure name is given unless the container is a FOR (whence sub-elements are accessed via array index)
 	if (name_.IsEmpty() && parent_type_ != CHexEditDoc::DF_FORV && parent_type_ != CHexEditDoc::DF_FORF)
 	{
-		AfxMessageBox("Please enter a name for this element");
+		TaskMessageBox("No Name", "Please enter a name for this element");
 		ctl_name_.SetFocus();
 		return false;
 	}
 
 	if (!name_.IsEmpty() && !valid_id(name_))
 	{
-		AfxMessageBox("Invalid name.  Please use alphanumeric characters (or\r\n"
-					  "underscore) and start with a alphabetic character.");
+		TaskMessageBox("Invalid STRUCT Name", "Please use alphanumeric characters (or "
+						"underscores) and begin the name with an alphabetic character.");
 		ctl_name_.SetFocus();
 		return false;
 	}
@@ -322,20 +322,20 @@ bool CDFFDUseStruct::check_data()
 		name_.CompareNoCase("end") == 0 ||
 		expr_eval::func_token(name_) != expr_eval::TOK_NONE)
 	{
-		AfxMessageBox("This name is reserved");
+		TaskMessageBox("Reserved Name", name_ + " is reserved for internal use. Please choose another name.");
 		ctl_name_.SetFocus();
 		return false;
 	}
 
 	if (struct_.IsEmpty())
 	{
-		AfxMessageBox("Please select a defined struct for this element");
+		TaskMessageBox("No Defined Struct", "Please select a defined struct for this element");
 		ctl_struct_.SetFocus();
 		return false;
 	}
 	else if (!valid_id(struct_))
 	{
-		AfxMessageBox("Invalid defined struct name.  Please use alphanumeric characters\r\n"
+		TaskMessageBox("Invalid Defined Struct Name", "Please use alphanumeric characters\r\n"
 					  "(or underscore) and start with a alphabetic character.");
 		ctl_name_.SetFocus();
 		return false;
@@ -359,7 +359,10 @@ bool CDFFDUseStruct::check_data()
 			; // nothing here
 		if (!ee2.IsEmpty() && ee2.GetAttr("name") == name_)
 		{
-			AfxMessageBox("This element has a sibling with the same name");
+			TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
+				           "It is not be possible to differentiate between two elements "
+			               "with the same name at the same level (eg, in expressions).");
+			//AfxMessageBox("This element has a sibling with the same name");
 			ctl_name_.SetFocus();
 			return false;
 		}
@@ -376,7 +379,10 @@ bool CDFFDUseStruct::check_data()
 			; // nothing here
 		if (!ee2.IsEmpty() && ee2.GetAttr("name") == name_)
 		{
-			AfxMessageBox("This element has a sibling with the same name");
+			TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
+				           "It is not be possible to differentiate between two elements "
+			               "with the same name at the same level (eg, in expressions).");
+			//AfxMessageBox("This element has a sibling with the same name");
 			ctl_name_.SetFocus();
 			return false;
 		}

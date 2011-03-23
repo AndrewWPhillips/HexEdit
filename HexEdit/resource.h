@@ -1647,6 +1647,17 @@
 #define IDS_DFFD_EXTRA_IGNORED          50013
 #define IDS_NO_MACRO_NAME               50014
 #define IDS_NO_MACRO_MESSAGE            50015
+#define IDS_CALC_NO_FILE                50016
+#define IDS_CALC_NOT_INT                50017
+#define IDS_CALC_OVERFLOW               50018
+#define IDS_CALC_ERROR                  50019
+#define IDS_CALC_INVALID                50020
+#define IDS_CALC_TOO_BIG                50021
+#define IDS_SHA1                        50022
+#define IDS_MD5                         50023
+#define IDS_CRC                         50024
+#define IDS_DFFD_USE_UNNAMED            50025
+#define IDS_UPDATE_AVAILABLE            50050
 
 // Next default values for new objects
 // 

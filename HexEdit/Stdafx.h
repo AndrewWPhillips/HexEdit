@@ -44,10 +44,27 @@
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
+
 //#include "BCGCB.h"  // For BCG
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 
-//#include <secall.h>
+// The following are already #defined (from SDK's intsafe.h) but are also defined in stdint.h
+// which might be used later.  Undefining them avoids warning C4005: macro redefinition.
+#ifdef INT8_MIN
+#undef INT8_MIN
+#undef INT16_MIN
+#undef INT32_MIN
+#undef INT64_MIN
+#undef INT8_MAX
+#undef INT16_MAX
+#undef INT32_MAX
+#undef INT64_MAX
+#undef UINT8_MAX
+#undef UINT16_MAX
+#undef UINT32_MAX
+#undef UINT64_MAX
+#endif
+
 
 #include <algorithm>  // For min and max templates
 

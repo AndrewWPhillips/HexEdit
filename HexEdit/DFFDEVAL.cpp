@@ -268,7 +268,10 @@ bool CDFFDEval::check_data()
 
 	if (expr_.IsEmpty())
 	{
-		AfxMessageBox("Please enter an expression to be evaluated");
+		TaskMessageBox("Expression Not Specified",
+			"Please enter an expression to be evaluated.\n\n"
+			"This can simply be the name of a field or variable or "
+			"a more complex expression.");
 		GetDlgItem(IDC_DFFD_EXPR)->SetFocus();
 		return false;
 	}

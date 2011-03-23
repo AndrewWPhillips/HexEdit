@@ -11,14 +11,14 @@
 class CAvoidableDialog : public CTaskDialog
 {
 public:
-	CAvoidableDialog(int id, LPCTSTR content = _T(""), LPCTSTR title = _T(""), MLTASKDIALOG_COMMON_BUTTON_FLAGS buttons = MLCBF_OK_BUTTON, LPCTSTR icon = 0) :
+	CAvoidableDialog(int id, LPCTSTR content = _T(""), LPCTSTR title = _T(""), MLTASKDIALOG_COMMON_BUTTON_FLAGS buttons = 0, LPCTSTR icon = 0) :
 	  CTaskDialog(MAKEINTRESOURCE(id), content, title, buttons,
-		          icon != 0 ? MAKEINTRESOURCE(icon) : (buttons == MLCBF_OK_BUTTON ? MAKEINTRESOURCE(IDI_EXCLAMATIONMARK) : MAKEINTRESOURCE(IDI_QUESTIONMARK)))
+		          icon != 0 ? icon : (buttons == 0 || buttons == MLCBF_OK_BUTTON ? MAKEINTRESOURCE(IDI_EXCLAMATIONMARK) : MAKEINTRESOURCE(IDI_QUESTIONMARK)))
 	{
 		id_.Format("%d", id);
 		dont_ask_ = false;
-		if (buttons == MLCBF_OK_BUTTON)
-			SetVerificationText("Don't show this message again.");  // Just informational if only showinh the OK button
+		if (buttons == 0 || buttons == MLCBF_OK_BUTTON)
+			SetVerificationText("Don't show this message again.");  // It's just informational if only showing the OK button
 		else
 			SetVerificationText("Don't ask this question again.");  // Multiple options implies a question
 	}

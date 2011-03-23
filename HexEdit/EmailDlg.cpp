@@ -117,28 +117,28 @@ void CEmailDlg::OnOK()
 
 	if (subject_.IsEmpty())
 	{
-		AfxMessageBox("Please enter a brief description as the subject");
+		TaskMessageBox("Empty Subject", "Please enter a brief description.");
 		ASSERT(GetDlgItem(IDC_SUBJECT) != NULL);
 		GetDlgItem(IDC_SUBJECT)->SetFocus();
 		return;
 	}
 	if (text_.IsEmpty())
 	{
-		AfxMessageBox("Please enter a detailed description");
+		TaskMessageBox("Empty Message", "Please enter a detailed description");
 		ASSERT(GetDlgItem(IDC_TEXT) != NULL);
 		GetDlgItem(IDC_TEXT)->SetFocus();
 		return;
 	}
 	if (attach_ && attachment_.IsEmpty())
 	{
-		AfxMessageBox("Please enter the attachment file name");
+		TaskMessageBox("No Attachment", "Please enter the attachment file name");
 		ASSERT(GetDlgItem(IDC_ATTACHMENT) != NULL);
 		GetDlgItem(IDC_ATTACHMENT)->SetFocus();
 		return;
 	}
 	if (attach_ && _access(attachment_, 0) == -1)
 	{
-		AfxMessageBox("File to be attached not found");
+		TaskMessageBox("Attachment Not Found", "The attachment file is not present on disk or you do not have permission to read it.");
 		ASSERT(GetDlgItem(IDC_ATTACHMENT) != NULL);
 		GetDlgItem(IDC_ATTACHMENT)->SetFocus();
 		return;

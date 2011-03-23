@@ -99,6 +99,7 @@ public:
 	void change_bits(int);         // chnage how many bits are used (0 = unlimited)
 
 	int ByteSize() const { return (bits_-1)/8 + 1; }
+	int get_bits() const { return bits_; }
 	unsigned __int64 GetValue() const { return mpz_get_ui64(get_norm(current_).get_mpz_t()); }
 	CString GetStringValue() const { char * ss = mpz_get_str(NULL, 10, get_norm(current_).get_mpz_t()); CString retval(ss); free(ss); return retval; }
 
@@ -420,6 +421,8 @@ private:
 	CFont small_fnt_, med_fnt_;     // Diff sized fonts used when window resized
 
 	void check_for_error();         // Check for integer error/overflow conditions and inform the user
+	void no_file_error();           // Display an error when a button is used that operates on a file but no file is open
+	void not_int_error();           // Display error when value is not an int (eg expression), button used requires an int
 	void make_noise(const char *ss);// Make Windows noise or beep on error
 	void setup_tooltips();          // set up tooltips for buttons
 	void setup_expr();

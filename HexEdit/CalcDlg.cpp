@@ -708,6 +708,8 @@ bool CCalcDlg::get_bytes(FILE_ADDRESS addr)
 	const char * err_mess = mpz_set_bytes(current_.get_mpz_t(), addr, bits_/8);
 	if (err_mess != NULL)
 	{
+		if (GetView() == NULL)
+			no_file_error();
 		current_str_ = err_mess;
 		return false;
 	}
@@ -730,9 +732,7 @@ bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot write to the current file when no file is open.");
-		//AfxMessageBox("No file open to write to");
+		no_file_error();
 		return false;
 	}
 
@@ -828,13 +828,15 @@ void CCalcDlg::do_binop(binop_type binop)
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		mm_->StatusBarText("Operation on invalid value.");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
 		return;
 	}
 	else if (state_ > CALCINTEXPR)
 	{
-		make_noise("Calculator Error");
-		mm_->StatusBarText("Buttons only valid for integers.");
+		not_int_error();
 		return;
 	}
 
@@ -883,16 +885,44 @@ void CCalcDlg::check_for_error()
 
 	if (state_ == CALCERROR)
 	{
-		mm_->StatusBarText((CString)current_str_);
 		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR, (CString)current_str_);
+		//mm_->StatusBarText();
 		aa_->mac_error_ = 10;
 	}
 	else if (state_ == CALCOVERFLOW)
 	{
-		mm_->StatusBarText("Overflow");
 		make_noise("Calculator Overflow");
+		CAvoidableDialog::Show(IDS_CALC_OVERFLOW, 
+			"The operation overflowed the current number of bits.  "
+			"This may mean the value is too large a positive or negative value or "
+			"the value is negative and the current settings are for unsigned values.\n\n"
+			"The displayed result has been adjusted to fit the current settings.  "
+			"Please modify the \"Bits\" and/or \"Signed\" settings to see the full result or "
+			"use \"Inf\" for infinite precision (Bits = 0) to display any value without overflow.");
+		//mm_->StatusBarText("Overflow");
 		aa_->mac_error_ = 2;
 	}
+}
+
+// Called when something is done that requires a file open but no file is open
+void CCalcDlg::no_file_error()
+{
+	make_noise("Calculator Error");
+	CAvoidableDialog::Show(IDS_CALC_NO_FILE,
+		"The calculator cannot perform this operation when no file is open.");
+	aa_->mac_error_ = 10;
+}
+
+void CCalcDlg::not_int_error()
+{
+	make_noise("Calculator Error");
+	CAvoidableDialog::Show(IDS_CALC_NOT_INT,
+			"Most calculator buttons are designed to only work with integers.  "
+			"You cannot use this button when working with a non-integer expression or value.");
+// xxx work out what it is and say so: real etc???
+	//mm_->StatusBarText("Buttons only valid for integers.");
+	aa_->mac_error_ = 10;
 }
 
 void CCalcDlg::make_noise(const char * ss)
@@ -1056,13 +1086,15 @@ void CCalcDlg::do_unary(unary_type unary)
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		mm_->StatusBarText("Operation on invalid value.");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
 		return;
 	}
 	else if (state_ > CALCINTEXPR)
 	{
-		make_noise("Calculator Error");
-		mm_->StatusBarText("Buttons only valid for integers.");
+		not_int_error();
 		return;
 	}
 
@@ -1084,6 +1116,7 @@ void CCalcDlg::do_unary(unary_type unary)
 
 void CCalcDlg::calc_unary(unary_type unary)
 {
+	CWaitCursor wc;   // show an hourglass just in case it takes a long time
 	current_ = get_norm(current_);
 	ExprStringType tmp = right_;
 
@@ -1258,8 +1291,10 @@ void CCalcDlg::calc_unary(unary_type unary)
 	case unary_at:
 		if (GetView() == NULL)
 		{
-			current_str_ = "No file open to get data from";
-			state_ = CALCERROR;
+			no_file_error();
+			return;  // just ignore this situation by returning with no action
+			//current_str_ = "No file open to get data from";
+			//state_ = CALCERROR;
 		}
 		else
 		{
@@ -1323,6 +1358,8 @@ void CCalcDlg::do_digit(char digit)
 void CCalcDlg::calc_binary()
 {
 	if (op_ == binop_none) return;  // Handles case where state_ > CALCINTEXPR without changing state_
+
+	CWaitCursor wc;   // show an hourglass just in case it takes a long time
 
 	ASSERT(state_ != CALCERROR && state_ <= CALCINTEXPR);
 	current_ = get_norm(current_);
@@ -2527,16 +2564,26 @@ void CCalcDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 // after the current cursor position has been moved.
 void CCalcDlg::OnGo()                   // Move cursor to current value
 {
+	CHexEditView *pview = GetView();
+	if (pview == NULL)
+	{
+		// This should not happen unless we are playing back a macro
+		no_file_error();
+		return;
+	}
+
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		mm_->StatusBarText("Jump with invalid value.");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform a jump with an invalid value.");
+		//mm_->StatusBarText("Jump with invalid value.");
+		aa_->mac_error_ = 10;
 		return;
 	}
 	else if (state_ > CALCINTEXPR)
 	{
-		make_noise("Calculator Error");
-		mm_->StatusBarText("Jumps only valid for integers.");
+		not_int_error();
 		return;
 	}
 	else if (state_ == CALCINTEXPR)
@@ -2560,17 +2607,6 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	add_hist();
 	// xxx make sure it also gets added to hex or dec jump list
 	edit_.put();  
-
-	CHexEditView *pview = GetView();
-	if (pview == NULL)
-	{
-		// This should not happen unless we are playing back a macro
-		TaskMessageBox("No file for GO",
-			"The calculator cannot jump to a file address when there is no file open.");
-		//AfxMessageBox("Error: no file open for jump");
-		aa_->mac_error_ = 10;
-		return;
-	}
 
 	CString ss;
 	edit_.GetWindowText(ss);
@@ -2728,19 +2764,23 @@ void CCalcDlg::OnEquals()               // Calculate result
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		mm_->StatusBarText("Invalid value.");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
 		return;
 	}
 	else if (state_ == CALCOTHER)
 	{
 		make_noise("Calculator Error");
-		mm_->StatusBarText("Invalid expression");
+		CAvoidableDialog::Show(IDS_CALC_INVALID,
+				"The current value or expression is invalid.");
+		//mm_->StatusBarText("Invalid expression");
 		return;
 	}
 	else if (op_ != binop_none && state_ > CALCINTEXPR)
 	{
-		make_noise("Calculator Error");
-		mm_->StatusBarText("Binary operations are only valid for integers.");
+		not_int_error();
 		return;
 	}
 	else if (state_ >= CALCINTEXPR)
@@ -3657,10 +3697,7 @@ void CCalcDlg::OnMemStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		TaskMessageBox("Integer value required",
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression.");
-		//AfxMessageBox("Calculator buttons only operate on integer values.");
+		not_int_error();
 		return;
 	}
 
@@ -3698,9 +3735,7 @@ void CCalcDlg::OnMemAdd()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		TaskMessageBox("Integer value required",
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression.");
+		not_int_error();
 		return;
 	}
 
@@ -3719,9 +3754,7 @@ void CCalcDlg::OnMemSubtract()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		TaskMessageBox("Integer value required",
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression.");
+		not_int_error();
 		return;
 	}
 
@@ -3742,10 +3775,7 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot obtain the address of the mark when no file is open.");
-		//AfxMessageBox("No file open from which to get the mark");
-		aa_->mac_error_ = 10;
+		no_file_error();
 		return;
 	}
 
@@ -3767,19 +3797,14 @@ void CCalcDlg::OnMarkStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		TaskMessageBox("Integer value required",
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression.");
+		not_int_error();
 		return;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot set the address of the mark when no file is open.");
-		//AfxMessageBox("No file open in which to change the mark");
-		aa_->mac_error_ = 10;
+		no_file_error();
 		return;
 	}
 
@@ -3815,9 +3840,7 @@ void CCalcDlg::OnMarkClear()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot clear the mark when no file is open.");
-		aa_->mac_error_ = 10;
+		no_file_error();
 		return;
 	}
 
@@ -3836,19 +3859,14 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		TaskMessageBox("Integer value required",
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression.");
+		not_int_error();
 		return;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot move the mark when no file is open.");
-		//AfxMessageBox("No file open to move mark in");
-		aa_->mac_error_ = 10;
+		no_file_error();
 		return;
 	}
 
@@ -3885,19 +3903,14 @@ void CCalcDlg::OnMarkSubtract()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		TaskMessageBox("Integer value required",
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression.");
+		not_int_error();
 		return;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot move the mark when no file is open.");
-		//AfxMessageBox("No file open to move mark in");
-		aa_->mac_error_ = 10;
+		no_file_error();
 		return;
 	}
 
@@ -3954,10 +3967,7 @@ void CCalcDlg::OnSelGet()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot get the current address when no file is open.");
-		//AfxMessageBox("No file open to get current address from");
-		aa_->mac_error_ = 10;
+		no_file_error();
 		return;
 	}
 
@@ -3999,10 +4009,7 @@ void CCalcDlg::OnSelLen()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot get the length of the selection when no file is open.");
-		//AfxMessageBox("No file open from which to get the selection length");
-		aa_->mac_error_ = 10;
+		no_file_error();
 		return;
 	}
 
@@ -4027,9 +4034,7 @@ void CCalcDlg::OnEofGet()               // Length of file
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot get the current file's length when no file is open.");
-		aa_->mac_error_ = 10;
+		no_file_error();
 		return;
 	}
 
@@ -4054,9 +4059,7 @@ void CCalcDlg::OnMarkAtStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		TaskMessageBox("Integer value required",
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression.");
+		not_int_error();
 		return;
 	}
 
@@ -4089,19 +4092,14 @@ void CCalcDlg::OnSelStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		TaskMessageBox("Integer value required",
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression.");
+		not_int_error();
 		return;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot change the selection when no file is open.");
-		//AfxMessageBox("No file open to change the selection in");
-		aa_->mac_error_ = 10;
+		no_file_error();
 		return;
 	}
 
@@ -4143,9 +4141,7 @@ void CCalcDlg::OnSelAtStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		TaskMessageBox("Integer value required",
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression.");
+		not_int_error();
 		return;
 	}
 
@@ -4171,18 +4167,14 @@ void CCalcDlg::OnSelLenStore()
 	// First check that we can perform an integer operation
 	if (state_ > CALCINTEXPR)
 	{
-		TaskMessageBox("Integer value required",
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression.");
+		not_int_error();
 		return;
 	}
 
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		TaskMessageBox("No file open",
-			"The calculator cannot change the length of the selection when no file is open.");
-		aa_->mac_error_ = 10;
+		no_file_error();
 		return;
 	}
 

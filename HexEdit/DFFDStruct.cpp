@@ -155,14 +155,14 @@ bool CDFFDStruct::check_data()
 		// Make sure a type name is given
 		if (type_name_.IsEmpty())
 		{
-			AfxMessageBox("Please enter a type name for this element");
+			TaskMessageBox("Type Name Required", "A DEFINE STRUCT element requires a type name.  Please enter a type name for this element");
 			ctl_type_name_.SetFocus();
 			return false;
 		}
 		if (!valid_id(type_name_))
 		{
-			AfxMessageBox("Invalid type name.  Please use alphanumeric characters (or\r\n"
-						"underscore) and start with a alphabetic character.");
+			TaskMessageBox("Invalid type name", "Please use alphanumeric characters (or underscore) "
+						   "for the type name and start the name with an alphabetic character.");
 			ctl_type_name_.SetFocus();
 			return false;
 		}
@@ -175,7 +175,7 @@ bool CDFFDStruct::check_data()
 		{
 			if (ee.GetAttr("type_name") == type_name_)
 			{
-				AfxMessageBox("This element has a sibling with the same type name");
+				TaskMessageBox("Name In Use", "This element has a sibling with the same type name.");
 				ctl_type_name_.SetFocus();
 				return false;
 			}
@@ -188,7 +188,7 @@ bool CDFFDStruct::check_data()
 		{
 			if (ee.GetAttr("type_name") == type_name_)
 			{
-				AfxMessageBox("This element has a sibling with the same type name");
+				TaskMessageBox("Name In Use", "This element has a sibling with the same type name.");
 				ctl_type_name_.SetFocus();
 				return false;
 			}
@@ -199,15 +199,15 @@ bool CDFFDStruct::check_data()
 		// Make sure name is given unless the container is a FOR (whence sub-elements are accessed via array index)
 		if (name_.IsEmpty() && parent_type_ != CHexEditDoc::DF_FORV && parent_type_ != CHexEditDoc::DF_FORF)
 		{
-			AfxMessageBox("Please enter a name for this element");
+			TaskMessageBox("No Name", "Please enter a name for this element");
 			ctl_name_.SetFocus();
 			return false;
 		}
 
 		if (!name_.IsEmpty() && !valid_id(name_))
 		{
-			AfxMessageBox("Invalid name.  Please use alphanumeric characters (or\r\n"
-						"underscore) and start with a alphabetic character.");
+			TaskMessageBox("Invalid STRUCT Name", "Please use alphanumeric characters (or "
+							"underscores) and begin the name with an alphabetic character.");
 			ctl_name_.SetFocus();
 			return false;
 		}
@@ -216,7 +216,7 @@ bool CDFFDStruct::check_data()
 			name_.CompareNoCase("end") == 0 ||
 			expr_eval::func_token(name_) != expr_eval::TOK_NONE)
 		{
-			AfxMessageBox("This name is reserved");
+			TaskMessageBox("Reserved Name", name_ + " is reserved for internal use. Please choose another name.");
 			ctl_name_.SetFocus();
 			return false;
 		}
@@ -241,7 +241,9 @@ bool CDFFDStruct::check_data()
 
 			if (!ee2.IsEmpty() && ee2.GetAttr("name") == name_)
 			{
-				AfxMessageBox("This element has a sibling with the same name");
+				TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
+							   "It is not be possible to differentiate between two elements "
+							   "with the same name at the same level (eg, in expressions).");
 				ctl_name_.SetFocus();
 				return false;
 			}
@@ -259,7 +261,10 @@ bool CDFFDStruct::check_data()
 				; // nothing here
 			if (ee2.GetAttr("name") == name_)
 			{
-				AfxMessageBox("This element has a sibling with the same name");
+				TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
+							   "It is not be possible to differentiate between two elements "
+							   "with the same name at the same level (eg, in expressions).");
+				//AfxMessageBox("This element has a sibling with the same name");
 				ctl_name_.SetFocus();
 				return false;
 			}
@@ -274,7 +279,7 @@ bool CDFFDStruct::check_data()
 	if (count == 0)
 	{
 		// There is only an empty trailing entry
-		AfxMessageBox("A STRUCT requires at least one element.\n");
+		TaskMessageBox("No Elements", "A STRUCT requires at least one sub-element.\n");
 		ctl_elements_.SetFocus();
 		return false;
 	}
@@ -860,7 +865,8 @@ void CDFFDStruct::OnDelete()
 	if (item < 0 || item >= ctl_elements_.GetCount()-1) return;
 
 	// Check with the user that they really want to delete
-	if (AfxMessageBox("Are you sure you want to delete this element?", MB_YESNO) != IDYES)
+	if (TaskMessageBox("Delete STRUCT?", "The STRUCT and all sub-elements will be removed.\n\n"
+	                   "Are you sure you want to delete this element?", MB_YESNO) != IDYES)
 		return;
 
 	// Delete the node from the XML document

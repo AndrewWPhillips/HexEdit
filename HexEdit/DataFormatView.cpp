@@ -4947,8 +4947,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 					if (TaskMessageBox("Invalid length",
 						               "You can't change the string length in overtype mode.\n\n"
 									   "Do you want to turn off overtype mode?",
-									   NULL,
-									   MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON
+									   MB_OKCANCEL
 					   ) == IDCANCEL)
 					{
 						theApp.mac_error_ = 10;
@@ -5011,8 +5010,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 					if (TaskMessageBox("Invalid length",
 						               "You can't change the string length in overtype mode.\n\n"
 									   "Do you want to turn off overtype mode?",
-									   NULL,
-									   MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON
+									   MB_OKCANCEL
 					   ) == IDCANCEL)
 					{
 						theApp.mac_error_ = 10;

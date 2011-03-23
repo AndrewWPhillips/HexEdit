@@ -52,7 +52,7 @@ void CHexEditDoc::CheckSaveTemplate()
 
 		if (file_name.CompareNoCase(FILENAME_DEFTEMPLATE) == 0)
 		{
-			if (AfxMessageBox(dlg.message_, MB_YESNO) != IDNO)
+			if (TaskMessageBox("Save Template?", dlg.message_, MB_YESNO) != IDNO)
 			{
 				CHexFileDialog dlgFile("TemplateFileDlg", HIDD_FILE_TEMPLATE, FALSE, "xml", NULL, 
 									OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_SHOWHELP | OFN_NOCHANGEDIR,
@@ -330,7 +330,7 @@ void CHexEditDoc::OpenDataFormatFile(LPCTSTR data_file_name /*=NULL*/)
 			ss.Format("XML parse error in file \"%s.XML\"\nLine %ld:%s\n%s", 
 					  filename, long(ptree_->ErrorLine()),
 					  ptree_->ErrorLineText(), ptree_->ErrorMessage());
-			AfxMessageBox(ss);
+			TaskMessageBox("Template Error", ss);
 			delete ptree_;
 
 			// Restore previous file
@@ -340,7 +340,7 @@ void CHexEditDoc::OpenDataFormatFile(LPCTSTR data_file_name /*=NULL*/)
 		else if (ptree_->GetDTDName() != "binary_file_format")
 		{
 			ss.Format("Invalid DTD used with XML file \"%s\"", ptree_->GetFileName());
-			AfxMessageBox(ss);
+			TaskMessageBox("Template Error", ss);
 			delete ptree_;
 
 			// Restore previous file
@@ -444,7 +444,7 @@ BOOL CHexEditDoc::ScanFile()
 		if (!df_mess_.IsEmpty())
 		{
 			// Display any error message
-			AfxMessageBox(df_mess_);
+			TaskMessageBox("Template Scan Error", df_mess_);
 			df_address_[0] = -1;
 		}
 		else
@@ -468,7 +468,7 @@ BOOL CHexEditDoc::ScanFile()
 		// Check that we're at EOF
 		if (size_tmp < length_)
 		{
-			AfxMessageBox("Data past expected end of file");
+			TaskMessageBox("Template Warning", "Data past expected end of file");
 
 			df_type_.push_back(DF_EXTRA);           // represents extra unexpected data
 			df_address_.push_back(size_tmp);        // address is where EOF expected
@@ -1906,7 +1906,7 @@ void CHexEditDoc::HandleError(const char *mess)
 {
 	CString ss = CString(mess) + "\n\nDo you want to continue?";
 
-	if (AfxMessageBox(ss, MB_YESNO) != IDYES)
+	if (TaskMessageBox("Template Error", ss, MB_YESNO) != IDYES)
 		throw mess;
 }
 

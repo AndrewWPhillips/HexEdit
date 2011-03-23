@@ -377,11 +377,11 @@ void CDFFDIf::OnElse()
 		}
 		else
 		{
-			mess.Format("This will delete the contents of %s\n"
+			mess.Format("This will delete the contents of %s "
 						"and all elements below it.\n\n"
 						"Are you sure you want to do this?", sub_name);
 		}
-		if (AfxMessageBox(mess, MB_YESNO) != IDYES)
+		if (TaskMessageBox("Deleting ELSE Element", mess, MB_YESNO) != IDYES)
 		{
 			else_ = TRUE;
 			UpdateData(FALSE);
@@ -510,11 +510,11 @@ void CDFFDIf::OnIfReplace()
 		}
 		else
 		{
-			mess.Format("This will replace the contents of %s\n"
+			mess.Format("This will replace the contents of %s "
 						"and all elements below it.\n\n"
 						"Are you sure you want to do this?", sub_name);
 		}
-		if (AfxMessageBox(mess, MB_YESNO) != IDYES)
+		if (TaskMessageBox("Replacing IF Element", mess, MB_YESNO) != IDYES)
 			return;
 
 		pelt_->DeleteChild(curr_elt);         // Remove the replaced node from the tree
@@ -772,7 +772,7 @@ void CDFFDIf::OnElseReplace()
 						"and all elements below it.\n\n"
 						"Are you sure you want to do this?", sub_name);
 		}
-		if (AfxMessageBox(mess, MB_YESNO) != IDYES)
+		if (TaskMessageBox("Replacing ELSE Element", mess, MB_YESNO) != IDYES)
 			return;
 
 		pelt_->DeleteChild(curr_elt);         // Remove the replaced node from the tree
@@ -959,14 +959,14 @@ bool CDFFDIf::check_data()
 
 	if (!valid_if_element_)
 	{
-		AfxMessageBox("Please add the conditional element of the IF.\n");
+		TaskMessageBox("IF Element Required", "An IF element requires exactly one sub-element.  Please add the conditional element.\n");
 		ctl_if_replace_.SetFocus();
 		return false;
 	}
 
 	if (else_ && !valid_else_element_)
 	{
-		AfxMessageBox("Please add an ELSE element or disable it.\n");
+		TaskMessageBox("ELSE Element Required", "If enabled the ELSE part requires one sub-element.  Please add an a sub-element or disable the ELSE part.\n");
 		ctl_else_replace_.SetFocus();
 		return false;
 	}

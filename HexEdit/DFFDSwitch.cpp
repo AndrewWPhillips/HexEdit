@@ -442,7 +442,8 @@ void CDFFDSwitch::OnDelete()
 	if (item < 0 || item >= ctl_cases_.GetCount()-1) return;
 
 	// Check with the user that they really want to delete
-	if (AfxMessageBox("Are you sure you want to delete this element?", MB_YESNO) != IDYES)
+	if (TaskMessageBox("Delete SWITCH?", "The SWITCH and all child CASE elements will be removed.\n\n"
+	                   "Are you sure you want to delete this element?", MB_YESNO) != IDYES)
 		return;
 
 	// Delete the node from the XML document
@@ -782,8 +783,10 @@ bool CDFFDSwitch::check_data()
 	if (ss.IsEmpty())
 	{
 		// The switch expression is empty
-		AfxMessageBox("Please enter an integer or string\n"
-					  "expression for case selection.\n");
+		TaskMessageBox("No Expression",
+		               "A SWITCH element requires an expression (of integer or string type) "
+					   "that is evaluated to determine which CASE is chosen.\n\n"
+					   "Please enter an integer or string expression.");
 		ctl_expr_.SetFocus();
 		return false;
 	}
@@ -791,7 +794,8 @@ bool CDFFDSwitch::check_data()
 	if (pelt_->GetNumChildren() == 0)
 	{
 		// There is only an empty trailing entry
-		AfxMessageBox("Please add at least one case element.\n");
+		TaskMessageBox("No CASE Elements", "A SWITCH requires at least one child CASE element.\n\n"
+			           "Please use the \"Insert\" button to add a CASE element.\n");
 		ctl_cases_.SetFocus();
 		return false;
 	}
@@ -830,11 +834,12 @@ bool CDFFDSwitch::check_data()
 		{
 			ctl_cases_.SetCurSel(item);
 			ctl_range_.SetWindowText(ss);
-			AfxMessageBox("For an integer switch expression\n"
-						  "you should enter a range string\n"
-						  "of the form \"1, 2, 6-10\".\n\n"
-						  "For a string switch expression\n"
-						  "just enter a string to match against.");
+			TaskMessageBox("No CASE Value(s)",
+				"Each CASE requires value(s) to match against the SWITCH expression.  "
+				"For an integer SWITCH expression you enter an integer or a range string (eg, \"1, 2, 6-10\").  "
+				"For a string switch expression just enter a string to match against.  "
+				"(The exception is the last CASE in the SWITCH which may be empty to match all remaining cases.)\n\n"
+				"Please enter the value(s) for this CASE element.");
 			ctl_range_.SetFocus();
 			return false;
 		}

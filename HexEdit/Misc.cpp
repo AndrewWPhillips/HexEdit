@@ -130,6 +130,7 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 */
 
 #include "stdafx.h"
+
 #include <MultiMon.h>
 
 #ifndef REGISTER_APP
@@ -137,18 +138,19 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include "HexEditDoc.h"
 #include "HexEditView.h"
 #endif
-#include <math.h>
 #include <ctype.h>
 #include <assert.h>
 #include <locale.h>
 #include <sys/stat.h>           // For _stat()
 #include <sys/utime.h>          // For _utime()
+
 #ifdef BOOST_CRC
 #include <boost/crc.hpp>
 #endif
 #ifdef BOOST_RAND
 #include <boost/random/mersenne_twister.hpp>
 #endif
+
 #include <imagehlp.h>           // For ::MakeSureDirectoryPathExists()
 #include <winioctl.h>           // For DISK_GEOMETRY, IOCTL_DISK_GET_DRIVE_GEOMETRY etc
 #include <direct.h>             // For _getdrive()

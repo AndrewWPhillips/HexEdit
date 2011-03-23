@@ -1211,9 +1211,9 @@ void CHexEditApp::CleanUp()
 	DeleteSecurityFiles();   // remove Nt$ file created by GetMystery
 
 	if (admin)
-		AfxMessageBox("HexEdit /clean operation completed\n");
+		TaskMessageBox("Finished!", "HexEdit /clean operation completed succesfully.", 0, 0, MAKEINTRESOURCE(IDI_INFO));
 	else
-		AfxMessageBox("When using the /clean option\n"
+		TaskMessageBox("Clean Failed", "When using the /clean option\n"
 					  "please run as administrator.\n");
 	exit(1);
 }

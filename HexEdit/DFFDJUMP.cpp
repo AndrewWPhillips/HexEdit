@@ -394,16 +394,18 @@ void CDFFDJump::OnReplace()
 		CString mess;
 		if (curr_elt.GetFirstChild().IsEmpty())
 		{
-			mess.Format("This will replace the contents of %s.\n\n"
+			mess.Format("This will replace the contents of %s.  "
+						"The existing contents will be deleted.\n\n"
 						"Are you sure you want to do this?", sub_name);
 		}
 		else
 		{
-			mess.Format("This will replace the contents of %s\n"
-						"and all elements below it.\n\n"
+			mess.Format("This will replace the contents of %s "
+						"and all elements below it.  "
+						"The existing contents will be deleted.\n\n"
 						"Are you sure you want to do this?", sub_name);
 		}
-		if (AfxMessageBox(mess, MB_YESNO) != IDYES)
+		if (TaskMessageBox("Replacing Element", mess, MB_YESNO) != IDYES)
 			return;
 
 		pelt_->DeleteChild(curr_elt);         // Remove the replaced node from the tree
@@ -547,7 +549,7 @@ bool CDFFDJump::check_data()
 
 	if (!valid_element_)
 	{
-		AfxMessageBox("Please add the element of the JUMP.\n");
+		TaskMessageBox("JUMP Element Required", "A JUMP element requires exactly one sub-element.  Please add the element of the JUMP.\n");
 		ctl_replace_.SetFocus();
 		return false;
 	}
