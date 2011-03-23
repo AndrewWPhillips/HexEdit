@@ -839,6 +839,8 @@ void CHexEditApp::InitWorkspace()
 	CSystemSound::Add(_T("Background Search Finished"));
 	CSystemSound::Add(_T("Background Scan Finished"));
 	CSystemSound::Add(_T("Background Compare Finished"));
+	CSystemSound::Add(_T("Invalid Address"),
+		CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
 #endif
 
 	LoadStdProfileSettings(0);  // Load standard INI file options (including MRU)
@@ -1228,7 +1230,7 @@ void CHexEditApp::OnRepairCust()
 					  "* changes to all menus including context (popup) menus\n"
 					  "* keyboard customizations\n"
 					  "\nDo you want to continue?",
-					  MB_YESNO) != IDYES)
+					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 		return;
 
 	GetContextMenuManager()->ResetState();
@@ -1244,7 +1246,7 @@ void CHexEditApp::OnRepairSettings()
 					  "(All registry entries will be removed.)\n"
 					  "\nTo do this HexEdit must close.\n"
 					  "\nDo you want to continue?",
-					  MB_YESNO) != IDYES)
+					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 		return;
 
 	// Signal deletion of all registry settings
@@ -1266,7 +1268,7 @@ void CHexEditApp::OnRepairAll()
 					  "When complete you will need to restart HexEdit "
 					  "and re-enter your activation code.\n"
 					  "\nAre you absolutely sure you want to continue?",
-					  MB_YESNO) != IDYES)
+					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 		return;
 
 	// Signal deletion of all registry settings and settings files
@@ -1534,7 +1536,10 @@ int CHexEditApp::ExitInstance()
 			 last_cb_seq_ == ::GetClipboardSequenceNumber() &&
 			 ::OpenClipboard(HWND(0)))
 	{
-		if (AfxMessageBox("Leave data on clipboard?", MB_YESNO) != IDYES)
+		CString mess;
+		mess.Format("You currently have a large amount of data on the clipboard (%sbytes).\n\n"
+			        "Do you want to leave the data on the clipboard?", NumScale(last_cb_size_));
+		if (CAvoidableDialog::Show(IDS_LEAVE_LARGE_CB, mess, MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
 			::EmptyClipboard();
 
 		::CloseClipboard();

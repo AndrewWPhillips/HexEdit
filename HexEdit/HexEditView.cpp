@@ -1938,6 +1938,46 @@ void CHexEditView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p
 	CScrView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
+// Check if the file is in OVR mode, giving the user the option to switch to INS mode if possible
+// Returns TRUE if still in OVR mode on return, or FALSE if in INS mode
+BOOL CHexEditView::check_ovr(const char *desc)
+{
+	if (!display_.overtype)
+		return FALSE;         // already in INS mode
+
+	CString ss;
+	ss.Format("You can't %s while in overtype mode.", desc);
+
+	// First check if we can turn on INS mode
+	if (display_.readonly)
+	{
+		TaskMessageBox("Not Allowed in OVR Mode",
+			ss + "\n\nAlso note that you can't turn on insert mode when the file is read only.");
+		theApp.mac_error_ = 10;
+		return TRUE;
+	}
+	if (GetDocument()->IsDevice())
+	{
+		TaskMessageBox("Not Allowed in OVR Mode",
+			ss + "\n\nAlso note that you can't turn on insert mode for devices (logical volumes and physical disks).");
+		theApp.mac_error_ = 10;
+		return TRUE;
+	}
+
+	if (CAvoidableDialog::Show(IDS_OVERTYPE,
+							   ss + "\n\nDo you want to turn off overtype mode?",
+							   "", 
+							   MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+	{
+		theApp.mac_error_ = 5;
+		return TRUE;
+	}
+	else if (!do_insert())
+		return TRUE;
+
+	return FALSE;  // return FALSE to indicate we are no longer in OVR mode
+}
+
 // Checks if the document (file) or view (window) is read only.
 // If the document is read only it just displays a message and returns.
 // If the view is read only it gives the user the option to turn off RO.
@@ -1952,7 +1992,6 @@ BOOL CHexEditView::check_ro(const char *desc)
 	{
 		ss.Format("This file cannot be modified as it is open for read only.\n\n"
 				  "For this reason you cannot %s.", desc);
-		//AfxMessageBox(ss);
 		TaskMessageBox("File is read only", ss);
 		CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 		aa->mac_error_ = 10;
@@ -1963,16 +2002,15 @@ BOOL CHexEditView::check_ro(const char *desc)
 		ss.Format("The selection contains one or "
 				  "more read-only template fields, "
 				  "hence you can't %s.", desc);
-		//AfxMessageBox(ss, MB_OK);
 		TaskMessageBox("Read only field", ss);
 		theApp.mac_error_ = 10;
 		return TRUE;
 	}
 	else if (display_.readonly)
 	{
-		ss.Format("You can't %s since this window is read only.\r"
+		ss.Format("You can't %s while this window is read only.\n\n"
 				  "Do you want to turn off read only mode?", desc);
-		if (AfxMessageBox(ss, MB_OKCANCEL) != IDOK)
+		if (CAvoidableDialog::Show(IDS_READ_ONLY, ss, "", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 		{
 			CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 			aa->mac_error_ = 10;
@@ -1981,7 +2019,7 @@ BOOL CHexEditView::check_ro(const char *desc)
 		else
 			allow_mods();
 	}
-	return FALSE;
+	return FALSE;  // We were or now are in RW mode and there are no RO template fields in the selection
 }
 
 // Check if we have had read errors on the device and warn the user (but only once)
@@ -1995,8 +2033,8 @@ void CHexEditView::check_error()
 
 		if (!errors_mentioned_)
 		{
-			//AfxMessageBox("Read error(s) were reported by this device", MB_OK|MB_ICONSTOP);
-			TaskMessageBox("Disk errors", "One or more bad sectors were reported when attempting to read from the device.");
+			TaskMessageBox("Read Error",
+				"One or more bad sectors were reported when attempting to read from the device.");
 			errors_mentioned_ = true;
 		}
 	}
@@ -5206,17 +5244,22 @@ void CHexEditView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
 
 	if (astart < 0 || astart > GetDocument()->length())
 	{
-		CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+#ifdef SYS_SOUNDS
+		if (!CSystemSound::Play("Invalid Address"))
+#endif
+			::Beep(5000,200);
+
 		char buf[128];
-		sprintf(buf, "Attempt to jump to invalid address %I64d\r"
-				  "Jump to EOF instead and continue?", __int64(astart));
-		if (AfxMessageBox(buf, MB_OKCANCEL) != IDOK)
+		sprintf(buf, "Attempt to jump to invalid address %I64d\n\n"
+				  "Jump to end of file instead and continue?", __int64(astart));
+		if (CAvoidableDialog::Show(IDS_INVALID_JUMP, buf, "", 
+			           MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 		{
-			aa->mac_error_ = 10;
+			theApp.mac_error_ = 10;
 			return;
 		}
 		else
-			aa->mac_error_ = 1;
+			theApp.mac_error_ = 1;
 
 		astart = GetDocument()->length();
 	}
@@ -5931,6 +5974,8 @@ void CHexEditView::do_char(UINT nChar)
 			if (!CSystemSound::Play("Invalid Character"))
 #endif
 				::Beep(5000,200);
+			CAvoidableDialog::Show(IDS_INVALID_HEX,
+				"The only valid keys in the hex area are 0-9 and A-F.", "", 0, MAKEINTRESOURCE(IDI_CROSS));
 			aa->mac_error_ = 5;
 			return;
 		}
@@ -5938,7 +5983,13 @@ void CHexEditView::do_char(UINT nChar)
 			 !display_.vert_display && display_.edit_char) &&
 			display_.char_set == CHARSET_EBCDIC && (nChar > 128 || a2e_tab[nChar] == 0))
 		{
-			AfxMessageBox("The key is not a valid EBCDIC character");
+#ifdef SYS_SOUNDS
+			if (!CSystemSound::Play("Invalid Character"))
+#endif
+				::Beep(5000,200);
+			CAvoidableDialog::Show(IDS_INVALID_EBCDIC,
+				"The key is not a valid EBCDIC character.");
+			//AfxMessageBox("The key is not a valid EBCDIC character");
 			aa->mac_error_ = 10;
 			return;
 		}
@@ -5949,10 +6000,11 @@ void CHexEditView::do_char(UINT nChar)
 		if (display_.overtype && start_addr != end_addr)
 		{
 			// xxx direct warning if GetDocument()->IsDevice()?
-			if (AfxMessageBox("This will delete the current selection\r"
-							  "which is not allowed in overtype mode.\r"
-							  "Do you want to turn off overtype mode?",
-							  MB_OKCANCEL) == IDCANCEL)
+			if (CAvoidableDialog::Show(IDS_OVERTYPE,
+				"This will delete the current selection which "
+				"is not permitted in overtype mode.\n\n"
+				"Do you want to turn off overtype mode?",
+				"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 			{
 				aa->mac_error_ = 10;
 				return;
@@ -5963,9 +6015,10 @@ void CHexEditView::do_char(UINT nChar)
 		else if (display_.overtype && start_addr == GetDocument()->length())
 		{
 			// xxx direct warning if GetDocument()->IsDevice()?
-			if (AfxMessageBox("You can't extend this file while in overtype mode.\r"
-							  "Do you want to turn off overtype mode?",
-							  MB_OKCANCEL) == IDCANCEL)
+			if (CAvoidableDialog::Show(IDS_OVERTYPE,
+				"You can't extend this file while in overtype mode.\n\n"
+				"Do you want to turn off overtype mode?",
+				"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 			{
 				aa->mac_error_ = 5;
 				return;
@@ -6177,10 +6230,11 @@ void CHexEditView::do_char(UINT nChar)
 			if (display_.overtype)
 			{
 				// xxx direct warning if GetDocument()->IsDevice()?
-				if (AfxMessageBox("This will delete the current selection\r"
-								  "which is not allowed in overtype mode.\r"
-								  "Do you want to turn off overtype mode?",
-								  MB_OKCANCEL) == IDCANCEL)
+				if (CAvoidableDialog::Show(IDS_OVERTYPE,
+					"This will delete the current selection which "
+					"is not permitted in overtype mode.\n\n"
+					"Do you want to turn off overtype mode?",
+					"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 				{
 					aa->mac_error_ = 5;
 					return;
@@ -7357,7 +7411,9 @@ void CHexEditView::OnHighlightSelect()
 	GetSelAddr(start_addr, end_addr);
 	if (hl_set_.range_.empty())
 	{
-		AfxMessageBox("Nothing selected");
+		TaskMessageBox("Nothing selected",
+			"There is nothing highlighted in this file.  "
+			"The closest highlight could not be selected.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -7383,13 +7439,16 @@ void CHexEditView::OnHighlightPrev()
 	GetSelAddr(start_addr, end_addr);
 	if (hl_set_.range_.empty())
 	{
-		AfxMessageBox("Nothing highlighted");
+		TaskMessageBox("Nothing selected",
+			"There is nothing highlighted in this file.  "
+			"The previous highlight could not be selected.");
 		aa->mac_error_ = 10;
 		return;
 	}
 	else if (hl_set_.range_.front().sfirst >= start_addr)
 	{
-		AfxMessageBox("No highlight before start of file");
+		TaskMessageBox("Nothing selected",
+			"There is no previous highlight.");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -7422,13 +7481,16 @@ void CHexEditView::OnHighlightNext()
 	GetSelAddr(start_addr, end_addr);
 	if (hl_set_.range_.empty())
 	{
-		AfxMessageBox("Nothing highlighted");
+		TaskMessageBox("Nothing selected",
+			"There is nothing highlighted in this file.  "
+			"The next highlight could not be selected.");
 		aa->mac_error_ = 10;
 		return;
 	}
 	else if (hl_set_.range_.back().sfirst <= start_addr)
 	{
-		AfxMessageBox("No highlight before end of file");
+		TaskMessageBox("Nothing selected",
+			"There is no next highlight.");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -7549,7 +7611,7 @@ void CHexEditView::OnBookmarksPrev()
 	if (prev_bm == GetDocument()->bm_posn_.end())
 	{
 		// No bookmarks found (presumably in macro playback)
-		AfxMessageBox("No bookmarks found towards start of file");
+		TaskMessageBox("No Previous Bookmark", "There is no previous bookmark at this position.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -7600,7 +7662,7 @@ void CHexEditView::OnBookmarksNext()
 	if (next_bm == GetDocument()->bm_posn_.end())
 	{
 		// No bookmarks found (presumably in macro playback)
-		AfxMessageBox("No bookmarks before end of file");
+		TaskMessageBox("No Next Bookmark", "There are no bookmarks after the current address.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -7648,8 +7710,10 @@ void CHexEditView::OnBookmarkToggle()
 {
 	if (GetDocument()->pfile1_ == NULL)
 	{
-		AfxMessageBox("Bookmarks can only be added to disk files.\r\n"
-					  "Please save the file to disk and try again.");
+		TaskMessageBox("Bookmark Requires Disk File",
+			"A bookmark stores a disk file location.  Bookmarks can not "
+			"be added to this file as it has not been saved to disk.\n\n"
+			"Please save the file to disk and try again.", 0, 0, 0 /* no icon*/);
 		((CHexEditApp *)AfxGetApp())->mac_error_ = 5;
 		return;
 	}
@@ -8340,7 +8404,8 @@ void CHexEditView::OnSwap()
 	}
 	else
 	{
-		AfxMessageBox("Cannot swap to character area - not displayed");
+		TaskMessageBox(display_.char_area ? "No Hex Area" : "No Char Area",
+				"You cannot swap between areas unless both areas are displayed.");
 		((CHexEditApp *)AfxGetApp())->mac_error_ = 5;
 	}
 }
@@ -8360,19 +8425,9 @@ void CHexEditView::OnDel()
 	else
 		SetSel(pt_start, pt_end);     // Calls ValidateCaret - causing caret selection to be moved to valid locations
 
-	if (check_ro("delete bytes"))
+	// Ensure we are not in RO or INS modes
+	if (check_ro("delete bytes") || check_ovr("delete"))
 		return;
-
-	if (display_.overtype)
-	{
-		// xxx direct warning if GetDocument()->IsDevice()?
-		if (AfxMessageBox("You can't delete while in overtype mode.\r"
-						  "Do you want to turn off overtype mode?",
-						  MB_OKCANCEL) == IDCANCEL)
-			return;
-		else if (!do_insert())
-			return;
-	}
 
 	// Handle deletion of chars at caret or selection
 	FILE_ADDRESS start, end;
@@ -8507,23 +8562,9 @@ void CHexEditView::OnInsertBlock()
 
 void CHexEditView::do_insert_block(_int64 params, const char *data_str)
 {
-	// Can't modify the file if view is read only or in overtype mode
-	if (check_ro("insert a block"))
+	// Can't insert a block if we are in RO or INS modes
+	if (check_ro("insert a block") || check_ovr("insert a block"))
 		return;
-
-	if (display_.overtype)
-	{
-		// xxx direct warning if GetDocument()->IsDevice()?
-		if (AfxMessageBox("You can't insert a block while in overtype mode.\r"
-						  "Do you want to turn off overtype mode?",
-						  MB_OKCANCEL) == IDCANCEL)
-		{
-			theApp.mac_error_ = 5;
-			return;
-		}
-		else if (!do_insert())
-			return;
-   }
 
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -8571,24 +8612,10 @@ void CHexEditView::OnReadFile()
 void CHexEditView::do_read(CString file_name)
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+
 	// Can't modify the file if view is read only or in overtype mode
-
-	if (check_ro("insert a file"))
+	if (check_ro("insert a file") || check_ovr("insert a file"))
 		return;
-
-	if (display_.overtype)
-	{
-		// xxx direct warning if GetDocument()->IsDevice()?
-		if (AfxMessageBox("You can't insert a file while in overtype mode.\r"
-						  "Do you want to turn off overtype mode?",
-						  MB_OKCANCEL) == IDCANCEL)
-		{
-			aa->mac_error_ = 5;
-			return;
-		}
-		else if (!do_insert())
-			return;
-	}
 
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -8612,21 +8639,23 @@ void CHexEditView::do_read(CString file_name)
 	{
 		if (data_len > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
-			AfxMessageBox("HexEdit is out of temporary files \n"
-						  "and cannot open such a large file. \n"
-						  "Please save the file to free \n"
-						  "temporary file handles and try again.\n",
+			TaskMessageBox("Large File Error",
+						  "HexEdit is out of temporary files "
+						  "and cannot open such a large file.  "
+						  "Please save the file to free "
+						  "temporary file handles and try again.",
 						  MB_OK);
 			return;
 		}
 
 		if (data_len > 128*1024*1024)  // 128 Mb file may be too big
 		{
-			if (AfxMessageBox("WARNING: HexEdit is out of temporary file \n"
-							  "handles and opening such a large file may \n"
-							  "cause memory exhaustion.  Please click NO \n"
-							  "and save the file to free handles. \n"
-							  "Or, click YES to continue.\n\n"
+			if (TaskMessageBox("Large File Warning",
+							  "HexEdit is out of temporary file "
+							  "handles and opening such a large file may "
+							  "cause memory exhaustion.  Please select "
+							  "\"No\" and save the file to free handles. "
+							  "Or, select \"Yes\" to continue.\n\n"
 							  "Do you want to continue?", MB_YESNO) != IDYES)
 				return;
 		}
@@ -8677,7 +8706,7 @@ void CHexEditView::do_read(CString file_name)
 				mess += "\rcould not be opened (reason unknown)";
 				break;
 			}
-			AfxMessageBox(mess);
+			TaskMessageBox("File Read Error", mess);
 
 			aa->mac_error_ = 10;
 			return;
@@ -8694,7 +8723,7 @@ void CHexEditView::do_read(CString file_name)
 			// Read the file into memory
 			if (ff.Read((void *)file_data, (UINT)data_len) != data_len)
 			{
-				AfxMessageBox("Not all of the file could be read");
+				TaskMessageBox("Read Error", "Some or all of the file could be read");
 				aa->mac_error_ = 10;
 				return;
 			}
@@ -8706,7 +8735,7 @@ void CHexEditView::do_read(CString file_name)
 		}
 		catch (std::bad_alloc)
 		{
-			AfxMessageBox("Insufficient memory");
+			TaskMessageBox("File Read", "Insufficient memory");
 			aa->mac_error_ = 10;
 			return;
 		}
@@ -8735,7 +8764,10 @@ void CHexEditView::OnEditWriteFile()
 	{
 		// Nothing selected, presumably in macro playback
 		ASSERT(aa->playing_);
-		AfxMessageBox("Nothing selected to write to file!");
+		TaskMessageBox("Nothing Selected",
+			"This command writes the current selection to a file.  "
+			"There is no selection so no file was written.  "
+			"(An empty file is not created in this situation.)");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -8782,7 +8814,9 @@ void CHexEditView::OnEditAppendFile()
 	{
 		// Nothing selected, presumably in macro playback
 		ASSERT(aa->playing_);
-		AfxMessageBox("Nothing selected to append to file!");
+		TaskMessageBox("Nothing selected",
+			"This command uses the current selection.  As there is "
+			"no selection, nothing was appended to the file!");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -8828,7 +8862,9 @@ void CHexEditView::OnEditAppendSameFile()
 	{
 		// Nothing selected, presumably in macro playback
 		ASSERT(aa->playing_);
-		AfxMessageBox("Nothing selected to append to file!");
+		TaskMessageBox("Nothing selected",
+			"This command uses the current selection.  As there is "
+			"no selection, nothing was appended to the file!");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -8861,7 +8897,9 @@ void CHexEditView::OnExportSRecord(UINT nID)
 	// If no selection and no highlight there is nothing to do
 	if (start == end && hl_set_.empty())
 	{
-		AfxMessageBox("Nothing to export!");
+		TaskMessageBox("Nothing to Export",
+			"This command uses the current selection or highlights.  "
+			"As nothing is selected or highlighted, nothing can be exported.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -8887,7 +8925,9 @@ void CHexEditView::OnExportSRecord(UINT nID)
 	{
 		if (hl_set_.empty())
 		{
-			AfxMessageBox("Nothing highlighted to export!");
+			TaskMessageBox("Nothing to Export",
+				"This command uses the current highlights.  "
+				"As nothing is highlighted, nothing can be exported.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -8901,7 +8941,9 @@ void CHexEditView::OnExportSRecord(UINT nID)
 		if (start == end)
 		{
 			// Nothing selected
-			AfxMessageBox("Nothing selected to export!");
+			TaskMessageBox("Nothing selected",
+				"Export uses the current selection.  As there is "
+				"no selection, no file was written.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -8920,7 +8962,9 @@ void CHexEditView::OnExportSRecord(UINT nID)
 		// Addresses must be within 16 bit range
 		if (last_S_address > 0x10000)
 		{
-			AfxMessageBox("Addresses too big for S1 export!");
+			TaskMessageBox("Address Too Big",
+				"S1 addresses are 16 bits in size.  The export could not be performed "
+				"as some or all export addresses are too large.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -8931,7 +8975,9 @@ void CHexEditView::OnExportSRecord(UINT nID)
 		// Addresses must be within 24 bit range
 		if (last_S_address > 0x1000000)
 		{
-			AfxMessageBox("Addresses too big for S2 export!");
+			TaskMessageBox("Address Too Big",
+				"S2 addresses are 24 bits in size.  The export could not be performed "
+				"as some or all export addresses are too large.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -8942,7 +8988,9 @@ void CHexEditView::OnExportSRecord(UINT nID)
 		// Addresses must be within 32 bit range
 		if (last_S_address > 0x100000000)
 		{
-			AfxMessageBox("Addresses too big for S3 export!");
+			TaskMessageBox("Address Too Big",
+				"S3 addresses are 32 bits in size.  The export could not be performed "
+				"as some or all export addresses are too large.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -8957,7 +9005,7 @@ void CHexEditView::OnExportSRecord(UINT nID)
 					theApp.export_line_len_);
 	if (!wsr.Error().IsEmpty())
 	{
-		AfxMessageBox(wsr.Error());
+		TaskMessageBox("Export Error", wsr.Error());
 		theApp.mac_error_ = 10;
 		theApp.current_export_.Empty();
 		return;
@@ -8981,7 +9029,7 @@ void CHexEditView::OnExportSRecord(UINT nID)
 				wsr.Put(buf, len, unsigned long(base_address + curr));
 				if (!wsr.Error().IsEmpty())
 				{
-					AfxMessageBox(wsr.Error());
+					TaskMessageBox("Export Error", wsr.Error());
 					theApp.mac_error_ = 10;
 					theApp.current_export_.Empty();
 					goto export_end;
@@ -8999,7 +9047,7 @@ void CHexEditView::OnExportSRecord(UINT nID)
 			wsr.Put(buf, len);
 			if (!wsr.Error().IsEmpty())
 			{
-				AfxMessageBox(wsr.Error());
+				TaskMessageBox("Export Error", wsr.Error());
 				theApp.mac_error_ = 10;
 				theApp.current_export_.Empty();
 				goto export_end;
@@ -9081,21 +9129,9 @@ void CHexEditView::OnImportMotorolaS()
 
 void CHexEditView::do_motorola(CString file_name)
 {
-	if (check_ro("import a file"))
+	// Can't import we are in RO or INS modes
+	if (check_ro("import a file") || !theApp.import_discon_ && check_ovr("import (non-adjoining)"))
 		return;
-
-	if (!theApp.import_discon_ && display_.overtype)
-	{
-		if (AfxMessageBox("You can't import (non-adjoining) while in overtype mode.\r"
-						  "Do you want to turn off overtype mode?",
-						  MB_OKCANCEL) == IDCANCEL)
-		{
-			theApp.mac_error_ = 5;
-			return;
-		}
-		else if (!do_insert())
-			return;
-	}
 
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -9118,7 +9154,7 @@ void CHexEditView::do_motorola(CString file_name)
 
 		if (!rsr.Error().IsEmpty())
 		{
-			AfxMessageBox(rsr.Error());
+			TaskMessageBox("Import Error", rsr.Error());
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -9149,16 +9185,16 @@ void CHexEditView::do_motorola(CString file_name)
 		delete[] file_data;
 
 		if (!rsr.Error().IsEmpty())
-			AfxMessageBox(rsr.Error());
+			TaskMessageBox("Import Error", rsr.Error());
 		CString mess;
 		if (skipped > 0)
-			mess.Format("Wrote %ld records\r\nIgnored %ld records\r\nimporting \"%s\"",
+			mess.Format("Wrote %ld records\nIgnored %ld records\nimporting \"%s\"",
 						long(count - skipped),
 						long(skipped),
 						file_name);
 		else
 			mess.Format("Wrote %ld records importing \"%s\"", long(count), file_name);
-		AfxMessageBox(mess);
+		CAvoidableDialog::Show(IDS_IMPORT_RESULT, mess, "", 0, MAKEINTRESOURCE(IDI_INFO));
 
 		theApp.SaveToMacro(km_import_motorola, file_name);
 	}
@@ -9168,7 +9204,7 @@ void CHexEditView::do_motorola(CString file_name)
 
 		if (!rsr.Error().IsEmpty())
 		{
-			AfxMessageBox(rsr.Error());
+			TaskMessageBox("Import Error", rsr.Error());
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -9222,7 +9258,7 @@ void CHexEditView::do_motorola(CString file_name)
 		delete[] file_data;
 
 		if (!rsr.Error().IsEmpty())
-			AfxMessageBox(rsr.Error());
+			TaskMessageBox("Import Error", rsr.Error());
 
 		theApp.SaveToMacro(km_import_motorola, file_name);
 
@@ -9259,21 +9295,8 @@ void CHexEditView::OnImportIntel()
 
 void CHexEditView::do_intel(CString file_name)
 {
-	if (check_ro("import an Intel hex file"))
+	if (check_ro("import an Intel hex file") || !theApp.import_discon_ && check_ovr("import (non-adjoining)"))
 		return;
-
-	if (!theApp.import_discon_ && display_.overtype)
-	{
-		if (AfxMessageBox("You can't import (non-adjoining) while in overtype mode.\r"
-						  "Do you want to turn off overtype mode?",
-						  MB_OKCANCEL) == IDCANCEL)
-		{
-			theApp.mac_error_ = 5;
-			return;
-		}
-		else if (!do_insert())
-			return;
-	}
 
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -9296,7 +9319,7 @@ void CHexEditView::do_intel(CString file_name)
 
 		if (!rih.Error().IsEmpty())
 		{
-			AfxMessageBox(rih.Error());
+			TaskMessageBox("Import Error", rih.Error());
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -9327,16 +9350,16 @@ void CHexEditView::do_intel(CString file_name)
 		delete[] file_data;
 
 		if (!rih.Error().IsEmpty())
-			AfxMessageBox(rih.Error());
+			TaskMessageBox("Import Error", rih.Error());
 		CString mess;
 		if (skipped > 0)
-			mess.Format("Wrote %ld records\r\nIgnored %ld records\r\nimporting \"%s\"",
+			mess.Format("Wrote %ld records\nIgnored %ld records\nimporting \"%s\"",
 						long(count - skipped),
 						long(skipped),
 						file_name);
 		else
 			mess.Format("Wrote %ld records importing \"%s\"", long(count), file_name);
-		AfxMessageBox(mess);
+		CAvoidableDialog::Show(IDS_IMPORT_RESULT, mess, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
 
 		theApp.SaveToMacro(km_import_intel, file_name);
 	}
@@ -9346,7 +9369,7 @@ void CHexEditView::do_intel(CString file_name)
 
 		if (!rih.Error().IsEmpty())
 		{
-			AfxMessageBox(rih.Error());
+			TaskMessageBox("Import Error", rih.Error());
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -9400,7 +9423,7 @@ void CHexEditView::do_intel(CString file_name)
 		delete[] file_data;
 
 		if (!rih.Error().IsEmpty())
-			AfxMessageBox(rih.Error());
+			TaskMessageBox("Import Error", rih.Error());
 
 		theApp.SaveToMacro(km_import_intel, file_name);
 
@@ -9426,7 +9449,9 @@ void CHexEditView::OnExportIntel()
 	{
 		// Nothing selected, presumably in macro playback
 		ASSERT(theApp.playing_);
-		AfxMessageBox("Nothing selected to export!");
+		TaskMessageBox("Nothing selected",
+			"Intel export uses the current selection.  As there is "
+			"no selection, no file was written.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -9442,7 +9467,7 @@ void CHexEditView::OnExportIntel()
 	if (last_address > 0x10000)
 	{
 		ASSERT(theApp.playing_);
-		AfxMessageBox("End address too big for Intel hex address field!");
+		TaskMessageBox("Address Too Big", "End address too big for Intel hex address field!");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -9470,7 +9495,7 @@ void CHexEditView::OnExportIntel()
 					  theApp.export_line_len_);
 	if (!wih.Error().IsEmpty())
 	{
-		AfxMessageBox(wih.Error());
+		TaskMessageBox("Export Error", wih.Error());
 		theApp.mac_error_ = 10;
 		theApp.current_export_.Empty();
 	}
@@ -9490,7 +9515,7 @@ void CHexEditView::OnExportIntel()
 			wih.Put(buf, len);
 			if (!wih.Error().IsEmpty())
 			{
-				AfxMessageBox(wih.Error());
+				TaskMessageBox("Export Error", wih.Error());
 				theApp.mac_error_ = 10;
 				theApp.current_export_.Empty();
 				break;
@@ -9546,21 +9571,8 @@ void CHexEditView::OnImportHexText()
 void CHexEditView::do_hex_text(CString file_name)
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	if (check_ro("import an hex text file"))
+	if (check_ro("import an hex text file") || check_ovr("import a file"))
 		return;
-
-	if (display_.overtype)
-	{
-		if (AfxMessageBox("You can't import while in overtype mode.\r"
-						  "Do you want to turn off overtype mode?",
-						  MB_OKCANCEL) == IDCANCEL)
-		{
-			theApp.mac_error_ = 5;
-			return;
-		}
-		else if (!do_insert())
-			return;
-	}
 
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
@@ -9573,7 +9585,7 @@ void CHexEditView::do_hex_text(CString file_name)
 	// Open the text (input) file
 	if (!ff.Open(file_name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeText, &fe))
 	{
-		AfxMessageBox(::FileErrorMessage(&fe, CFile::modeRead));
+		TaskMessageBox("Import Error", ::FileErrorMessage(&fe, CFile::modeRead));
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -9594,7 +9606,7 @@ void CHexEditView::do_hex_text(CString file_name)
 
 		if (!fout.Open(temp_file, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary, &fe))
 		{
-			AfxMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
+			TaskMessageBox("Import Error", ::FileErrorMessage(&fe, CFile::modeWrite));
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -9602,12 +9614,14 @@ void CHexEditView::do_hex_text(CString file_name)
 	else if (file_len > 3*128*1024*1024)
 	{
 		// Warn of possible memory shortage
-		if (AfxMessageBox("WARNING: HexEdit is out of temporary file \n"
-							"handles and reading such a large file \n"
-							"may cause memory exhaustion.  Please click NO \n"
-							"and save the active file to free handles. \n"
-							"Or, click YES to continue.\n\n"
-							"Do you want to continue?", MB_YESNO) != IDYES)
+		if (TaskMessageBox("Large File Warning", 
+							"HexEdit is out of temporary file "
+							"handles and reading such a large file "
+							"may cause memory exhaustion.  Please click "
+							"\"No\" and save the file to free handles "
+							"or click \"Yes\" to continue.\n\n"
+							"Do you want to continue?",
+							MB_YESNO) != IDYES)
 		{
 			theApp.mac_error_ = 5;
 			return;
@@ -9658,7 +9672,7 @@ void CHexEditView::do_hex_text(CString file_name)
 			}
 			catch (CFileException *pfe)
 			{
-				AfxMessageBox(::FileErrorMessage(pfe, CFile::modeRead));
+				TaskMessageBox("File Read Error", ::FileErrorMessage(pfe, CFile::modeRead));
 				pfe->Delete();
 				goto error_return;
 			}
@@ -9675,7 +9689,7 @@ void CHexEditView::do_hex_text(CString file_name)
 		{
 			CString ss;
 			ss.Format("Unexpected alpha characters in hex text file at line %ld", long(line_no));
-			AfxMessageBox(ss);
+			TaskMessageBox("Import Hex Error", ss);
 			goto error_return;
 		}
 
@@ -9714,7 +9728,7 @@ void CHexEditView::do_hex_text(CString file_name)
 				}
 				catch (CFileException *pfe)
 				{
-					AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+					TaskMessageBox("Import Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 					pfe->Delete();
 					fout.Close();
 					remove(temp_file);
@@ -9722,7 +9736,9 @@ void CHexEditView::do_hex_text(CString file_name)
 				}
 
 				if (AbortKeyPress() &&
-					AfxMessageBox("Abort hex import?", MB_YESNO) == IDYES)
+					TaskMessageBox("Abort import?", 
+						"You have interrupted the hex text import.\n\n"
+						"Do you want to stop the process?",MB_YESNO) == IDYES)
 				{
 					fout.Close();
 					remove(temp_file);
@@ -9771,7 +9787,7 @@ end_file:
 			}
 			catch (CFileException *pfe)
 			{
-				AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+				TaskMessageBox("Read Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 				pfe->Delete();
 				fout.Close();
 				remove(temp_file);
@@ -9855,7 +9871,9 @@ void CHexEditView::OnExportHexText()
 	{
 		// Nothing selected, presumably in macro playback
 		ASSERT(theApp.playing_);
-		AfxMessageBox("Nothing selected to export!");
+		TaskMessageBox("Nothing selected",
+			"The Export Hex Text commands uses the current selection.  "
+			"As there is no selection, no file was written.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -9888,7 +9906,7 @@ void CHexEditView::OnExportHexText()
 				 CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary,
 				 &fe))
 	{
-		AfxMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
+		TaskMessageBox("Export Error", ::FileErrorMessage(&fe, CFile::modeWrite));
 		theApp.mac_error_ = 10;
 		theApp.current_export_.Empty();
 		return;
@@ -9948,14 +9966,16 @@ void CHexEditView::OnExportHexText()
 		}
 		catch (CFileException *pfe)
 		{
-			AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			TaskMessageBox("File Write Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 			pfe->Delete();
 			theApp.mac_error_ = 10;
 			goto func_return;
 		}
 
 		if (AbortKeyPress() &&
-			AfxMessageBox("Abort exporting as hex?", MB_YESNO) == IDYES)
+			TaskMessageBox("Abort export?", 
+				"You have interrupted the hex text export.\n\n"
+				"Do you want to stop the process?",MB_YESNO) == IDYES)
 		{
 			theApp.mac_error_ = 10;
 			goto func_return;
@@ -10027,22 +10047,8 @@ void CHexEditView::OnEditCut()
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
 
 	// Can't delete if view is read only or in overtype mode
-	if (check_ro("cut to the clipboard"))
+	if (check_ro("cut to the clipboard") || check_ovr("cut to the clipboard"))
 		return;
-
-	if (display_.overtype)
-	{
-		// xxx direct warning if GetDocument()->IsDevice()?
-		if (AfxMessageBox("You can't cut while in overtype mode.\r"
-						  "Do you want to turn off overtype mode?",
-						  MB_OKCANCEL) == IDCANCEL)
-		{
-			aa->mac_error_ = 5;
-			return;
-		}
-		else if (!do_insert())
-			return;
-	}
 
 	// Copy the selection to the clipboard and then delete it
 	if (!CopyToClipboard())
@@ -10216,17 +10222,19 @@ bool CHexEditView::copy2cb_init(FILE_ADDRESS start, FILE_ADDRESS end)
 	{
 		ASSERT(theApp.playing_);  // Macro might have recorded Copy but when played there is no selection
 		// Copy to clipboard while nothing selected, presumably in macro playback
-		AfxMessageBox("Nothing selected to place on clipboard!");
+		TaskMessageBox("Nothing selected",
+			"Copying to the clipboard uses the current selection.  "
+			"As there is no selection, nothing was copied.");
 		theApp.mac_error_ = 10;
 		return false;
 	}
-	if (end-start > 4000000L)
+	if (end-start > 8000000L)
 	{
 		CString ss;
 		ss.Format("Do you really want to put %sbytes on\n"
 				  "the clipboard?  This may take some time.",
 				  NumScale(double(end-start)));
-		if (AfxMessageBox(ss, MB_YESNO) != IDYES)
+		if (TaskMessageBox("Large Clipboard Size Warning", ss, MB_YESNO) != IDYES)
 		{
 			theApp.mac_error_ = 5;
 			return false;
@@ -10337,7 +10345,7 @@ CString CHexEditView::copy2cb_file(FILE_ADDRESS start, FILE_ADDRESS end)
 
 	if (!GetDocument()->WriteData(TempFileName, start, end))
 	{
-		//AfxMessageBox("Error writing clipboard to disk");
+		AfxMessageBox("Error writing clipboard to disk");
 		theApp.mac_error_ = 10;
 		return CString();
 	}
@@ -10518,7 +10526,9 @@ void CHexEditView::OnCopyCchar()
 	{
 		// Copy to clipboard while nothing selected, presumably in macro playback
 		ASSERT(theApp.playing_);
-		AfxMessageBox("Nothing selected to place on clipboard!");
+		TaskMessageBox("Nothing selected",
+			"This command uses the current selection.  "
+			"As there is no selection, nothing was copied.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -11001,8 +11011,12 @@ void CHexEditView::do_replace(FILE_ADDRESS start, FILE_ADDRESS end, unsigned cha
 	if (display_.overtype && end-start != len)
 	{
 		// xxx direct warning if GetDocument()->IsDevice()?
-		if (AfxMessageBox("This replacement requires insert mode..\n"
-						  "Do you want to turn on insert mode?", MB_OKCANCEL) != IDOK)
+		if (CAvoidableDialog::Show(IDS_REPLACE_OVERTYPE,
+								   "The Replace operation requires replacing bytes with data of a "
+								   "different length.  This requires the window to be in insert mode."
+								   "\n\nDo you want to turn off overtype mode?",
+								   "", 
+								   MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 		{
 			theApp.mac_error_ = 10;
 			return;
@@ -11077,9 +11091,11 @@ void CHexEditView::OnEditPaste()
 				// FILE_ADDRESS addr = GetPos();
 				if (display_.overtype && start_addr + *pl > GetDocument()->length())
 				{
-					if (AfxMessageBox("The paste operation extends past EOF\n"
-									  "which is illegal in overtype mode.\n"
-									  "Do you want to turn on insert mode?", MB_OKCANCEL) != IDOK)
+					if (CAvoidableDialog::Show(IDS_OVERTYPE,
+						"This paste operation extends past the end of file.  "
+						"The file cannot be extended in overtype mode.\n\n"
+						"Do you want to turn off overtype mode?",
+						"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 					{
 						::CloseClipboard();
 						aa->mac_error_ = 10;
@@ -11093,9 +11109,12 @@ void CHexEditView::OnEditPaste()
 				}
 				else if (display_.overtype && end_addr-start_addr != *pl)
 				{
-					switch (AfxMessageBox("Pasting in overtype mode will overwrite data!\r"
-									  "Do you want to turn on insert mode?",
-									  MB_YESNOCANCEL))
+					switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+							"Pasting in overtype mode will overwrite data.  "
+							"Select \"Yes\" to insert the data; select \"No\" to"
+							"overwrite; or select \"Cancel\" to do nothing.\n\n"
+							"Do you want to turn on insert mode?",
+							"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
 					{
 					case IDYES:
 						if (!do_insert())
@@ -11105,7 +11124,7 @@ void CHexEditView::OnEditPaste()
 						}
 						break;
 					case IDNO:
-						break; /* do nothing */
+						break; // do nothing - bytes will be overwritten
 					default:
 						aa->mac_error_ = 5;
 						::CloseClipboard();
@@ -11155,11 +11174,11 @@ void CHexEditView::OnEditPaste()
 				int idx = GetDocument()->AddDataFile(strTemp);
 				if (idx == -1)
 				{
-					AfxMessageBox("HexEdit is out of temporary files and\n"
-								  "cannot paste from a temporary clipboard file. \n"
-								  "Please save your file to free \n"
-								  "temporary file handles and try again.\n",
-								  MB_OK);
+					TaskMessageBox("Paste Error",
+								  "HexEdit is out of temporary files and "
+								  "cannot paste from a temporary clipboard file.\n\n"
+								  "Please save your file to free "
+								  "temporary file handles and try again.");
 					aa->mac_error_ = 10;
 					return;
 				}
@@ -11178,9 +11197,11 @@ void CHexEditView::OnEditPaste()
 				// Do some file mode checks and fixes as specified by the user
 				if (display_.overtype && start_addr + fs.m_size > GetDocument()->length())
 				{
-					if (AfxMessageBox("The paste operation extends past EOF\n"
-									  "which is illegal in overtype mode.\n"
-									  "Do you want to turn on insert mode?", MB_OKCANCEL) != IDOK)
+					if (CAvoidableDialog::Show(IDS_OVERTYPE,
+						"This paste operation extends past the end of file.  "
+						"The file cannot be extended in overtype mode.\n\n"
+						"Do you want to turn off overtype mode?",
+						"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 					{
 						aa->mac_error_ = 10;
 						return;
@@ -11190,9 +11211,12 @@ void CHexEditView::OnEditPaste()
 				}
 				else if (display_.overtype && end_addr-start_addr != fs.m_size)
 				{
-					switch (AfxMessageBox("Pasting in overtype mode will overwrite data!\r"
-									  "Do you want to turn on insert mode?",
-									  MB_YESNOCANCEL))
+					switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+						"Pasting in overtype mode will overwrite data.  "
+						"Select \"Yes\" to insert the data; select \"No\" to"
+						"overwrite; or select \"Cancel\" to do nothing.\n\n"
+						"Do you want to turn on insert mode?",
+						"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
 					{
 					case IDYES:
 						if (!do_insert())
@@ -11250,9 +11274,11 @@ void CHexEditView::OnEditPaste()
 			// FILE_ADDRESS addr = GetPos();
 			if (display_.overtype && start_addr + len > GetDocument()->length())
 			{
-				if (AfxMessageBox("The paste operation extends past EOF\n"
-								  "which is illegal in overtype mode.\n"
-								  "Do you want to turn on insert mode?", MB_OKCANCEL) != IDOK)
+				if (CAvoidableDialog::Show(IDS_OVERTYPE,
+					"This paste operation extends past the end of file.  "
+					"The file cannot be extended in overtype mode.\n\n"
+					"Do you want to turn off overtype mode?",
+					"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 				{
 					::CloseClipboard();
 					aa->mac_error_ = 10;
@@ -11263,9 +11289,12 @@ void CHexEditView::OnEditPaste()
 			}
 			else if (display_.overtype && end_addr-start_addr != len)
 			{
-				switch (AfxMessageBox("Pasting in overtype mode will overwrite data!\r"
-								  "Do you want to turn on insert mode?",
-								  MB_YESNOCANCEL))
+				switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+					"Pasting in overtype mode will overwrite data.  "
+					"Select \"Yes\" to insert the data; select \"No\" to"
+					"overwrite; or select \"Cancel\" to do nothing.\n\n"
+					"Do you want to turn on insert mode?",
+					"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
 				{
 				case IDYES:
 					if (!do_insert())
@@ -11313,9 +11342,11 @@ void CHexEditView::OnEditPaste()
 				// FILE_ADDRESS addr = GetPos();
 				if (display_.overtype && start_addr + newlen > GetDocument()->length())
 				{
-					if (AfxMessageBox("The paste operation extends past EOF\n"
-									  "which is illegal in overtype mode.\n"
-									  "Do you want to turn on insert mode?", MB_OKCANCEL) != IDOK)
+					if (CAvoidableDialog::Show(IDS_OVERTYPE,
+						"This paste operation extends past the end of file.  "
+						"The file cannot be extended in overtype mode.\n\n"
+						"Do you want to turn off overtype mode?",
+						"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 					{
 						::CloseClipboard();
 						aa->mac_error_ = 10;
@@ -11326,9 +11357,12 @@ void CHexEditView::OnEditPaste()
 				}
 				else if (display_.overtype && end_addr-start_addr != newlen)
 				{
-					switch (AfxMessageBox("Pasting in overtype mode will overwrite data!\r"
-									  "Do you want to turn on insert mode?",
-									  MB_YESNOCANCEL))
+					switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+						"Pasting in overtype mode will overwrite data.  "
+						"Select \"Yes\" to insert the data; select \"No\" to"
+						"overwrite; or select \"Cancel\" to do nothing.\n\n"
+						"Do you want to turn on insert mode?",
+						"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
 					{
 					case IDYES:
 						if (!do_insert())
@@ -11358,14 +11392,14 @@ void CHexEditView::OnEditPaste()
 			}
 			else
 			{
-				AfxMessageBox("No valid EBCDIC characters to paste");
+				CAvoidableDialog::Show(IDS_INVALID_EBCDIC, "No valid EBCDIC characters were found to paste.");
 				aa->mac_error_ = 2;
 			}
 			delete[] buf;
 		}
 		else
 		{
-			AfxMessageBox("Text on clipboard is not valid ASCII text!");
+			AfxMessageBox("The text on the clipboard is not valid ASCII text!");
 			aa->mac_error_ = 10;    // Invalid text on clipboard?
 		}
 	}
@@ -11423,9 +11457,11 @@ void CHexEditView::OnPasteAscii()
 			// FILE_ADDRESS addr = GetPos();
 			if (display_.overtype && start_addr + len > GetDocument()->length())
 			{
-				if (AfxMessageBox("The paste operation extends past EOF\n"
-								  "which is illegal in overtype mode.\n"
-								  "Do you want to turn on insert mode?", MB_OKCANCEL) != IDOK)
+				if (CAvoidableDialog::Show(IDS_OVERTYPE,
+					"This paste operation extends past the end of file.  "
+					"The file cannot be extended in overtype mode.\n\n"
+					"Do you want to turn off overtype mode?",
+					"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 				{
 					::CloseClipboard();
 					aa->mac_error_ = 10;
@@ -11436,9 +11472,12 @@ void CHexEditView::OnPasteAscii()
 			}
 			else if (display_.overtype && end_addr-start_addr != len)
 			{
-				switch (AfxMessageBox("Pasting in overtype mode will overwrite data!\r"
-								  "Do you want to turn on insert mode?",
-								  MB_YESNOCANCEL))
+				switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+					"Pasting in overtype mode will overwrite data.  "
+					"Select \"Yes\" to insert the data; select \"No\" to"
+					"overwrite; or select \"Cancel\" to do nothing.\n\n"
+					"Do you want to turn on insert mode?",
+					"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
 				{
 				case IDYES:
 					if (!do_insert())
@@ -11527,9 +11566,11 @@ void CHexEditView::OnPasteEbcdic()
 				// FILE_ADDRESS addr = GetPos();
 				if (display_.overtype && start_addr + newlen > GetDocument()->length())
 				{
-					if (AfxMessageBox("The paste operation extends past EOF\n"
-									  "which is illegal in overtype mode.\n"
-									  "Do you want to turn on insert mode?", MB_OKCANCEL) != IDOK)
+					if (CAvoidableDialog::Show(IDS_OVERTYPE,
+						"This paste operation extends past the end of file.  "
+						"The file cannot be extended in overtype mode.\n\n"
+						"Do you want to turn off overtype mode?",
+						"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 					{
 						::CloseClipboard();
 						aa->mac_error_ = 10;
@@ -11540,9 +11581,12 @@ void CHexEditView::OnPasteEbcdic()
 				}
 				else if (display_.overtype && end_addr-start_addr != newlen)
 				{
-					switch (AfxMessageBox("Pasting in overtype mode will overwrite data!\r"
-									  "Do you want to turn on insert mode?",
-									  MB_YESNOCANCEL))
+					switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+						"Pasting in overtype mode will overwrite data.  "
+						"Select \"Yes\" to insert the data; select \"No\" to"
+						"overwrite; or select \"Cancel\" to do nothing.\n\n"
+						"Do you want to turn on insert mode?",
+						"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
 					{
 					case IDYES:
 						if (!do_insert())
@@ -11644,9 +11688,11 @@ void CHexEditView::OnPasteUnicode()
 			// FILE_ADDRESS addr = GetPos();
 			if (display_.overtype && start_addr + 2*len > GetDocument()->length())
 			{
-				if (AfxMessageBox("The paste operation extends past EOF\n"
-								  "which is illegal in overtype mode.\n"
-								  "Do you want to turn on insert mode?", MB_OKCANCEL) != IDOK)
+				if (CAvoidableDialog::Show(IDS_OVERTYPE,
+					"This paste operation extends past the end of file.  "
+					"The file cannot be extended in overtype mode.\n\n"
+					"Do you want to turn off overtype mode?",
+					"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 				{
 					::CloseClipboard();
 					aa->mac_error_ = 10;
@@ -11657,9 +11703,12 @@ void CHexEditView::OnPasteUnicode()
 			}
 			else if (display_.overtype && end_addr-start_addr != 2*len)
 			{
-				switch (AfxMessageBox("Pasting in overtype mode will overwrite data!\r"
-								  "Do you want to turn on insert mode?",
-								  MB_YESNOCANCEL))
+				switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+					"Pasting in overtype mode will overwrite data.  "
+					"Select \"Yes\" to insert the data; select \"No\" to"
+					"overwrite; or select \"Cancel\" to do nothing.\n\n"
+					"Do you want to turn on insert mode?",
+					"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
 				{
 				case IDYES:
 					if (!do_insert())
@@ -11957,7 +12006,7 @@ BOOL CHexEditView::do_undo()
 	if (undo_.size() == 0)
 	{
 		// This can only (presumably) happen during a macro
-		AfxMessageBox("There is nothing to undo");
+		TaskMessageBox("Can't Undo", "There is nothing to undo.");
 		return FALSE;
 	}
 
@@ -12077,11 +12126,11 @@ BOOL CHexEditView::do_undo()
 		{
 			scheme_name_ = tmp;
 			if (::IsUs())
-				AfxMessageBox("Previous color scheme not found.\n"
-							  "The operation could not be undone.");
+				TaskMessageBox("Can't Undo", "The previous color scheme was "
+							  "not found.  The operation could not be undone.");
 			else
-				AfxMessageBox("Previous colour scheme not found.\n"
-							  "The operation could not be undone.");
+				TaskMessageBox("Can't Undo", "The previous colour scheme was "
+							  "not found.  The operation could not be undone.");
 		}
 		break;
 
@@ -12242,9 +12291,9 @@ void CHexEditView::OnGraphicToggle()
 		// Can't toggle graphic chars, presumably in macro playback
 		ASSERT(aa->playing_);
 		if (!display_.char_area)
-			AfxMessageBox("You can't display graphic characters without the char area");
+			TaskMessageBox("Graphic Chars", "You can't display graphic characters without the char area.");
 		else
-			AfxMessageBox("Graphic characters are not supported for EBCDIC");
+			TaskMessageBox("Graphic Chars", "Graphic characters are not supported for EBCDIC.");
 		aa->mac_error_ = 2;
 		return;
 	}
@@ -12276,7 +12325,7 @@ void CHexEditView::do_chartoggle(int state /*=-1*/)
 {
 	if (display_.vert_display)
 	{
-		AfxMessageBox("You can't toggle char area in stacked mode");
+		TaskMessageBox("Char Area", "You can't toggle char area in stacked mode");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -12319,7 +12368,7 @@ void CHexEditView::do_hextoggle(int state /*=-1*/)
 {
 	if (display_.vert_display)
 	{
-		AfxMessageBox("You can't toggle hex area in stacked mode");
+		TaskMessageBox("Hex Area", "You can't toggle hex area in stacked mode");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -12355,9 +12404,9 @@ void CHexEditView::OnOemToggle()
 		// Can't toggle OEM chars, presumably in macro playback
 		ASSERT(theApp.playing_);
 		if (!(display_.vert_display || display_.char_area))
-			AfxMessageBox("You can't display OEM/ANSI graphic characters without the char area");
+			TaskMessageBox("Char Display Error", "You can't display OEM/ANSI graphic characters without the char area.");
 		else if (display_.char_set == CHARSET_EBCDIC)
-			AfxMessageBox("Graphic characters are not supported for EBCDIC");
+			TaskMessageBox("Char Display Error", "Graphic characters are not supported for EBCDIC.");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13288,7 +13337,7 @@ void CHexEditView::OnCharsetAscii()
 	if (!(display_.vert_display || display_.char_area))
 	{
 		ASSERT(theApp.playing_);
-		AfxMessageBox("You can't change characters sets without the char area");
+		TaskMessageBox("Char Set Error", "You can't change characters sets without the char area");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13344,7 +13393,7 @@ void CHexEditView::OnCharsetAnsi()
 	if (!(display_.vert_display || display_.char_area))
 	{
 		ASSERT(theApp.playing_);
-		AfxMessageBox("You can't change characters sets without the char area");
+		TaskMessageBox("Char Set Error", "You can't change characters sets without the char area.");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13400,7 +13449,7 @@ void CHexEditView::OnCharsetOem()
 	if (!(display_.vert_display || display_.char_area))
 	{
 		ASSERT(theApp.playing_);
-		AfxMessageBox("You can't change characters sets without the char area");
+		TaskMessageBox("Char Set Error", "You can't change characters sets without the char area.");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13456,7 +13505,7 @@ void CHexEditView::OnCharsetEbcdic()
 	if (!(display_.vert_display || display_.char_area))
 	{
 		ASSERT(theApp.playing_);
-		AfxMessageBox("You can't change characters sets without the char area");
+		TaskMessageBox("Char Set Error", "You can't change characters sets without the char area.");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13511,9 +13560,9 @@ void CHexEditView::OnControlNone()
 	{
 		ASSERT(theApp.playing_);
 		if (!(display_.vert_display || display_.char_area))
-			AfxMessageBox("You can't display control characters without the char area");
+			TaskMessageBox("Char Area", "You can't display control characters without the char area");
 		else if (display_.char_set == CHARSET_EBCDIC)
-			AfxMessageBox("You can't display control characters in EBCDIC");
+			TaskMessageBox("Char Set Error", "You can't display control characters in EBCDIC");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13550,9 +13599,9 @@ void CHexEditView::OnControlAlpha()
 	{
 		ASSERT(theApp.playing_);
 		if (!(display_.vert_display || display_.char_area))
-			AfxMessageBox("You can't display control characters without the char area");
+			TaskMessageBox("Char Area", "You can't display control characters without the char area");
 		else if (display_.char_set == CHARSET_EBCDIC)
-			AfxMessageBox("You can't display control characters in EBCDIC");
+			TaskMessageBox("Char Set Error", "You can't display control characters in EBCDIC");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13587,9 +13636,9 @@ void CHexEditView::OnControlC()
 	{
 		ASSERT(theApp.playing_);
 		if (!(display_.vert_display || display_.char_area))
-			AfxMessageBox("You can't display control characters without the char area");
+			TaskMessageBox("Char Area", "You can't display control characters without the char area");
 		else if (display_.char_set == CHARSET_EBCDIC)
-			AfxMessageBox("You can't display control characters in EBCDIC");
+			TaskMessageBox("Char Set Error", "You can't display control characters in EBCDIC");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13624,7 +13673,7 @@ void CHexEditView::OnAscEbc()
 	{
 		// Can't display EBCDIC, presumably in macro playback
 		ASSERT(theApp.playing_);
-		AfxMessageBox("You can't display EBCDIC without the char area");
+		TaskMessageBox("Char Area", "You can't display EBCDIC without the char area");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13665,9 +13714,9 @@ void CHexEditView::OnControl()
 		// Can't toggle control chars, presumably in macro playback
 		ASSERT(aa->playing_);
 		if (!(display_.vert_display || display_.char_area))
-			AfxMessageBox("You can't display control characters without the char area");
-		else
-			AfxMessageBox("Control character display is not supported for EBCDIC");
+			TaskMessageBox("Char Area", "You can't display control characters without the char area");
+		else if (display_.char_set == CHARSET_EBCDIC)
+			TaskMessageBox("Char Set Error", "You can't display control characters in EBCDIC");
 		aa->mac_error_ = 2;
 		return;
 	}
@@ -13688,9 +13737,9 @@ void CHexEditView::OnControlToggle()
 		// Can't toggle control chars, presumably in macro playback
 		ASSERT(aa->playing_);
 		if (!(display_.vert_display || display_.char_area))
-			AfxMessageBox("You can't display control characters without the char area");
-		else
-			AfxMessageBox("Control character display is not supported for EBCDIC");
+			TaskMessageBox("Char Area", "You can't display control characters without the char area");
+		else if (display_.char_set == CHARSET_EBCDIC)
+			TaskMessageBox("Char Set Error", "You can't display control characters in EBCDIC");
 		aa->mac_error_ = 2;
 		return;
 	}
@@ -13906,8 +13955,9 @@ void CHexEditView::OnJumpDec()           // message from BCG edit bar combo
 	if (address == -1)
 	{
 		CString ss;
-		ss.Format("Invalid expression\r\r%s\r\r%s", addr_str, err_str);
-		AfxMessageBox(ss);
+		ss.Format("The value below is an invalid integer expression"
+			      "\n\n%s\n\n%s", addr_str, err_str);
+		TaskMessageBox("Invalid address", ss);
 		return;
 	}
 
@@ -13939,8 +13989,9 @@ void CHexEditView::OnJumpHex()           // message from BCG edit bar combo
 	if (address == -1)
 	{
 		CString ss;
-		ss.Format("Invalid hex expression\r\r%s\r\r%s", addr_str, err_str);
-		AfxMessageBox(ss);
+		ss.Format("The value is an invalid hex address or expression"
+			"\n\n%s\n\n%s", addr_str, err_str);
+		TaskMessageBox("Invalid address", ss);
 		return;
 	}
 
@@ -13973,13 +14024,15 @@ bool CHexEditView::do_insert()
 
 	if (display_.readonly)
 	{
-		AfxMessageBox("Attempt to toggle OVR/INS in read only mode");
+		TaskMessageBox("INS not allowed for Read Only Files",
+			"You can't turn on insert mode when the file is read only.");
 		aa->mac_error_ = 10;
 		return false;
 	}
 	if (GetDocument()->IsDevice())
 	{
-		AfxMessageBox("You cannot use INS mode for devices (logical volumes and physical disks)");
+		TaskMessageBox("INS Illegal for Devices",
+			"You cannot use insert mode for devices (logical volumes and physical disks)");
 		aa->mac_error_ = 10;
 		return false;
 	}
@@ -14023,7 +14076,8 @@ void CHexEditView::allow_mods()
 
 	if (display_.readonly && GetDocument()->read_only())
 	{
-		AfxMessageBox("This file cannot be modified");
+		TaskMessageBox("Read Only", "This file cannot be modified as "
+			           "it was opened in read only mode.");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -14111,7 +14165,7 @@ void CHexEditView::OnDffdAutoSync()
 {
 	if (pdfv_ == NULL)
 	{
-		AfxMessageBox("No DFFD tree view is displayed");
+		TaskMessageBox("No Template", "No template is open to sync with.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -14141,7 +14195,7 @@ void CHexEditView::OnDffdSync()
 {
 	if (pdfv_ == NULL)
 	{
-		AfxMessageBox("No DFFD tree view is displayed");
+		TaskMessageBox("No Template", "No template is open to sync with.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -14197,7 +14251,7 @@ CChildFrame *CHexEditView::comp_window()
 			if (got_one)
 			{
 // Can't display message when used in OnUpdateEditCompare call
-//              AfxMessageBox("Comparison not performed\r"
+//              AfxMessageBox("Comparison not performed\n"
 //                              "- more than two (non-iconized) windows");
 				return NULL;
 			}
@@ -14220,7 +14274,7 @@ CChildFrame *CHexEditView::comp_window()
 			if (got_one)
 			{
 // Can't display message when used in OnUpdateEditCompare call
-//              AfxMessageBox("Comparison not performed\r"
+//              AfxMessageBox("Comparison not performed\n"
 //                              "- more than two windows found");
 				return NULL;
 			}
@@ -14257,8 +14311,8 @@ void CHexEditView::OnEditCompare()
 	// If we found nothing to compare with, display message and return
 	if (compc == NULL)
 	{
-		AfxMessageBox("Comparison not performed\r"
-						"- two non-minimized windows required");
+		CAvoidableDialog::Show(IDS_CANT_COMPARE, "Comparison not performed "
+						"- two non-minimized windows required.");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -14268,7 +14322,7 @@ void CHexEditView::OnEditCompare()
 	CHexEditView *compv = dynamic_cast<CHexEditView *>(compc->GetHexEditView());
 	if (compv == NULL)
 	{
-		AfxMessageBox("Cannot compare with this type of window");
+		CAvoidableDialog::Show(IDS_CANT_COMPARE, "Cannot compare with this type of window.");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -14298,9 +14352,9 @@ void CHexEditView::OnEditCompare()
 	// If same doc and same address then we aren't doing anything useful
 	if (origd == compd && orig_addr == comp_addr)
 	{
-		mess.Format("Comparing data with itself in windows\r%s and %s",
+		mess.Format("Comparing data with itself in windows:\n\n%s and %s",
 						(const char *)orig_title, (const char *)comp_title);
-		AfxMessageBox(mess);
+		CAvoidableDialog::Show(IDS_CANT_COMPARE, mess);
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -14325,7 +14379,9 @@ void CHexEditView::OnEditCompare()
 		if (orig_addr > next_show)
 		{
 			if (AbortKeyPress() &&
-				AfxMessageBox("Abort comparison?", MB_YESNO) == IDYES)
+				TaskMessageBox("Abort comparison?", 
+				    "You have interrupted the comparison.\n\n"
+				    "Do you want to stop the process?",MB_YESNO) == IDYES)
 			{
 				delete[] orig_buf;
 				delete[] comp_buf;
@@ -14370,8 +14426,8 @@ void CHexEditView::OnEditCompare()
 			CSystemSound::Play("Comparison Difference Found");
 #endif
 
-//          mess.Format("Difference found after $%I64X (decimal %I64d) bytes\r"
-//                      "%s at address $%I64X (decimal %I64d)\r%s at address $%I64X (decimal %I64d)",
+//          mess.Format("Difference found after $%I64X (decimal %I64d) bytes\n"
+//                      "%s at address $%I64X (decimal %I64d)\n%s at address $%I64X (decimal %I64d)",
 //                      __int64(orig_addr + pos - start_addr), __int64(orig_addr + pos - start_addr),
 //                      orig_title, __int64(orig_addr + pos), __int64(orig_addr + pos),
 //                      comp_title, __int64(comp_addr + pos), __int64(comp_addr + pos));
@@ -14381,6 +14437,8 @@ void CHexEditView::OnEditCompare()
 			sprintf(buf, "%I64d", __int64(orig_addr + pos - start_addr));
 			mess = CString("Difference found after ") + buf + CString(" bytes");
 			mm->StatusBarText(mess);
+			if (!aa->playing_)
+				CAvoidableDialog::Show(IDS_COMPARE_DIFF, mess, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
 
 			// Move to where diff found and select that byte in both views
 			// (Selecting the byte allows the differences to be seen in both
@@ -14413,11 +14471,11 @@ void CHexEditView::OnEditCompare()
 #ifdef SYS_SOUNDS
 		CSystemSound::Play("Comparison Difference Not Found");
 #endif
-		mess = "Both files are at EOF";
-		if (aa->playing_)
-			mm->StatusBarText(mess);
-		else
-			AfxMessageBox(mess);
+		mess = "Both files already at EOF.";
+		mm->StatusBarText(mess);
+		if (!aa->playing_)
+			CAvoidableDialog::Show(IDS_COMPARE_NO_DIFF, mess);
+		aa->mac_error_ = 1;
 	}
 	else if (orig_got == comp_got)
 	{
@@ -14448,17 +14506,16 @@ void CHexEditView::OnEditCompare()
 		shex = buf;
 		AddSpaces(shex);
 
-		mess.Format("No differences found after\r"
+		mess.Format("No differences found after\n"
 					"%s (%sh) bytes.", sdec, shex);
-//        mess.Format("No differences found\r"
-//                    "after %lX (hex) or\r"
+//        mess.Format("No differences found\n"
+//                    "after %lX (hex) or\n"
 //                    "%ld (decimal) bytes.",
 //                    orig_addr + orig_got - start_addr,
 //                    orig_addr + orig_got - start_addr);
-		if (aa->playing_)
-			mm->StatusBarText(mess);
-		else
-			AfxMessageBox(mess);
+		mm->StatusBarText(mess);
+		if (!aa->playing_)
+			CAvoidableDialog::Show(IDS_COMPARE_NO_DIFF, mess);
 		aa->mac_error_ = 1;
 	}
 	else if (orig_got < comp_got)
@@ -14467,8 +14524,8 @@ void CHexEditView::OnEditCompare()
 		CSystemSound::Play("Comparison Difference Found");
 #endif
 		// EOF on orig file before EOF on comp file
-//      mess.Format("Difference found after $%I64X (decimal %I64d) bytes\r"
-//                  "%s at EOF - address $%I64X (decimal %I64d)\r%s at address $%I64X (decimal %I64d)",
+//      mess.Format("Difference found after $%I64X (decimal %I64d) bytes\n"
+//                  "%s at EOF - address $%I64X (decimal %I64d)\n%s at address $%I64X (decimal %I64d)",
 //                  __int64(orig_addr + orig_got - start_addr), __int64(orig_addr + orig_got - start_addr),
 //                  orig_title, __int64(orig_addr + orig_got), __int64(orig_addr + orig_got),
 //                  comp_title, __int64(comp_addr + orig_got), __int64(comp_addr + orig_got));
@@ -14477,6 +14534,8 @@ void CHexEditView::OnEditCompare()
 		sprintf(buf, "%I64d", __int64(orig_addr + orig_got - start_addr));
 		mess.Format("EOF on \"%s\" after %s bytes", orig_title, buf);
 		mm->StatusBarText(mess);
+		if (!aa->playing_)
+			CAvoidableDialog::Show(IDS_COMPARE_DIFF, mess, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
 
 		compv->MoveWithDesc("Comparison Difference Found ", comp_addr + orig_got, comp_addr + orig_got + 1);
 		if (aa->highlight_)
@@ -14489,8 +14548,8 @@ void CHexEditView::OnEditCompare()
 		CSystemSound::Play("Comparison Difference Found");
 #endif
 		// EOF on comp file before EOF on orig file
-//      mess.Format("Difference found after $%lX (decimal %ld) bytes\r"
-//                  "%s at address $%lX (decimal %ld)\r%s at EOF - address $%lX (decimal %ld)",
+//      mess.Format("Difference found after $%lX (decimal %ld) bytes\n"
+//                  "%s at address $%lX (decimal %ld)\n%s at EOF - address $%lX (decimal %ld)",
 //                  orig_addr + comp_got - start_addr, orig_addr + comp_got - start_addr,
 //                  orig_title, orig_addr + comp_got, orig_addr + comp_got,
 //                  comp_title, comp_addr + comp_got, comp_addr + comp_got);
@@ -14499,6 +14558,8 @@ void CHexEditView::OnEditCompare()
 		sprintf(buf, "%I64d", __int64(orig_addr + comp_got - start_addr));
 		mess.Format("EOF on \"%s\" after %s bytes", comp_title, buf);
 		mm->StatusBarText(mess);
+		if (!aa->playing_)
+			CAvoidableDialog::Show(IDS_COMPARE_DIFF, mess, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
 
 		compv->MoveWithDesc("EOF in Comparison ", comp_addr + comp_got);
 		MoveWithDesc("Comparison Difference Found ", orig_addr + comp_got, orig_addr + comp_got + 1);
@@ -14569,7 +14630,7 @@ void CHexEditView::OnWindowNext()
 
 	if (pnext == NULL)
 	{
-		AfxMessageBox("Warning: no other non-minimized windows found");
+		TaskMessageBox("Warning", "No other non-minimized windows found");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -14612,22 +14673,22 @@ CHexEditView * CHexEditView::NextView() const
 
 void CHexEditView::OnAscii2Ebcdic()
 {
-	DoConversion(CONVERT_ASC2EBC, "convert ASCII to EBCDIC");
+	DoConversion(CONVERT_ASC2EBC, "convert from ASCII to EBCDIC");
 }
 
 void CHexEditView::OnEbcdic2Ascii()
 {
-	DoConversion(CONVERT_EBC2ASC, "convert EBCDIC to ASCII");
+	DoConversion(CONVERT_EBC2ASC, "convert from EBCDIC to ASCII");
 }
 
 void CHexEditView::OnAnsi2Ibm()
 {
-	DoConversion(CONVERT_ANSI2IBM, "convert ANSI to IBM/OEM");
+	DoConversion(CONVERT_ANSI2IBM, "convert from ANSI to IBM/OEM");
 }
 
 void CHexEditView::OnIbm2Ansi()
 {
-	DoConversion(CONVERT_IBM2ANSI, "convert IBM/OEM to ANSI");
+	DoConversion(CONVERT_IBM2ANSI, "convert from IBM/OEM to ANSI");
 }
 
 void CHexEditView::OnUppercase()
@@ -14719,8 +14780,8 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 	{
 		ASSERT(theApp.playing_);
 		CString mess;
-		mess.Format("There is no selection to %s", desc);
-		AfxMessageBox(mess);
+		mess.Format("There is nothing selected to %s", desc);
+		TaskMessageBox("No Selection", mess);
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -14770,7 +14831,8 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 				{
 					CString mess;
 					mess.Format("Abort %s?", desc);
-					if (AfxMessageBox(mess, MB_YESNO) == IDYES)
+					if (TaskMessageBox(mess, 
+						"Do you want to stop the process?",MB_YESNO) == IDYES)
 					{
 						ff.Close();
 						remove(temp_file);
@@ -14784,7 +14846,7 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 		}
 		catch (CFileException *pfe)
 		{
-			AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			TaskMessageBox("Temp File Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 			pfe->Delete();
 
 			remove(temp_file);
@@ -14808,11 +14870,11 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 		// Error if ran out of temp file handles and file is too big
 		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
-			AfxMessageBox("HexEdit is out of temporary files and \n"
-						  "cannot convert such a large selection. \n"
-						  "Please save the file to deallocate \n"
-						  "temporary file handles and try again.\n",
-						  MB_OK);
+			TaskMessageBox("Conversion Error",
+						  "HexEdit is out of temporary files and "
+						  "cannot convert such a large selection.\n\n"
+						  "Please save the file to deallocate "
+						  "temporary file handles and try again.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -14820,12 +14882,14 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 		// Warn if we might cause memory exhaustion
 		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 		{
-			if (AfxMessageBox("WARNING: HexEdit is out of temporary file \n"
-							  "handles and converting such a large selection \n"
-							  "may cause memory exhaustion.  Please click NO \n"
-							  "and save the file to free handles. \n"
-							  "Or, click YES to continue.\n\n"
-							  "Do you want to continue?", MB_YESNO) != IDYES)
+			if (TaskMessageBox("Conversion Warning",
+				"HexEdit is out of temporary file "
+				"handles and converting such a large selection "
+				"may cause memory exhaustion.  Please click "
+				"\"No\" and save the file to free handles "
+				"or click \"Yes\" to continue.\n\n"
+				"Do you want to continue?",
+				MB_YESNO) != IDYES)
 			{
 				theApp.mac_error_ = 5;
 				return;
@@ -14894,7 +14958,7 @@ void CHexEditView::OnEncrypt()
 	{
 		// No selection, presumably in macro playback
 		ASSERT(aa->playing_);
-		AfxMessageBox("There is no selection to encrypt");
+		TaskMessageBox("No Selection", "There is nothing selected to encrypt.");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -14929,10 +14993,12 @@ void CHexEditView::OnEncrypt()
 	{
 		if (display_.overtype && aa->crypto_.needed(aa->algorithm_-1, 256) != 256)
 		{
-			if (AfxMessageBox("Encrypting with this algorithm will increase the\r"
-							"the length of the current (unencrypted) selection.\r"
-							"Do you want to turn off overtype mode?",
-							MB_OKCANCEL) == IDCANCEL)
+			if (CAvoidableDialog::Show(IDS_OVERTYPE,
+				"Encrypting with this algorithm will increase the length "
+				"of the current (unencrypted) selection and increase the "
+				"length of the file.  This is not permitted in OVR mode.\n\n."
+				"Do you want to turn off overtype mode?",
+				"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 			{
 				aa->mac_error_ = 10;
 				return;
@@ -14986,7 +15052,9 @@ void CHexEditView::OnEncrypt()
 					total_out += outlen;
 
 					if (AbortKeyPress() &&
-						AfxMessageBox("Abort encryption?", MB_YESNO) == IDYES)
+						TaskMessageBox("Abort encryption?", 
+						    "You have interrupted the encryption.\n\n"
+						    "Do you want to stop the process?",MB_YESNO) == IDYES)
 					{
 						ff.Close();
 						remove(temp_file);
@@ -14999,7 +15067,7 @@ void CHexEditView::OnEncrypt()
 			}
 			catch (CFileException *pfe)
 			{
-				AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+				TaskMessageBox("Temp File Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 				pfe->Delete();
 
 				remove(temp_file);
@@ -15033,11 +15101,11 @@ void CHexEditView::OnEncrypt()
 			// Error if ran out of temp file handles and file is too big
 			if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 			{
-				AfxMessageBox("HexEdit is out of temporary files and \n"
-							"cannot encrypt such a large selection. \n"
-							"Please save the file to free \n"
-							"temporary file handles and try again.\n",
-							MB_OK);
+				TaskMessageBox("Encryption Error",
+					"HexEdit is out of temporary files and "
+					"cannot encrypt such a large selection.\n\n"
+					"Please save the file to deallocate "
+					"temporary file handles and try again.");
 				theApp.mac_error_ = 10;
 				return;
 			}
@@ -15045,12 +15113,14 @@ void CHexEditView::OnEncrypt()
 			// Warn if we might cause memory exhaustion
 			if (end_addr - start_addr > 128*1024*1024)  // More than 128 Mb may be too big
 			{
-				if (AfxMessageBox("WARNING: HexEdit is out of temporary file \n"
-								"handles and encrypting such a large selection \n"
-								"may cause memory exhaustion.  Please click NO \n"
-								"and save the file to free handles. \n"
-								"Or, click YES to continue.\n\n"
-								"Do you want to continue?", MB_YESNO) != IDYES)
+				if (TaskMessageBox("Encryption Warning",
+					"HexEdit is out of temporary file "
+					"handles and encrypting such a large selection "
+					"may cause memory exhaustion.  Please click "
+					"\"No\" and save the file to free handles "
+					"or click \"Yes\" to continue.\n\n"
+					"Do you want to continue?",
+					MB_YESNO) != IDYES)
 				{
 					theApp.mac_error_ = 5;
 					return;
@@ -15118,7 +15188,10 @@ void CHexEditView::OnEncrypt()
 		{
 			// Presumably in macro playback
 			ASSERT(aa->playing_);
-			AfxMessageBox("The selection is not a multiple of 8 (encryption block length)");
+			CAvoidableDialog::Show(IDS_SEL_LEN,
+				"The selection length is not a multiple of 8.  "
+				"For this encryption algorithm the length of the "
+				"selection must be a multiple of the encryption block length.");
 			aa->mac_error_ = 10;
 			return;
 		}
@@ -15175,7 +15248,7 @@ void CHexEditView::OnDecrypt()
 	{
 		// No selection, presumably in macro playback
 		ASSERT(aa->playing_);
-		AfxMessageBox("There is no selection to decrypt");
+		TaskMessageBox("No Selection", "There is no selection to decrypt.");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -15218,10 +15291,12 @@ void CHexEditView::OnDecrypt()
 
 		if (blen != 0 && display_.overtype)
 		{
-			if (AfxMessageBox("Decrypting with this algorithm may decrease \r"
-							"the length of the current (encrypted) selection.\r"
-							"Do you want to turn off overtype mode?",
-							MB_OKCANCEL) == IDCANCEL)
+			if (CAvoidableDialog::Show(IDS_OVERTYPE,
+				"Decrypting with this algorithm may reduce increase the length "
+				"of the current (encrypted) selection and hence decrease the "
+				"length of the file.  This is not permitted in OVR mode.\n\n."
+				"Do you want to turn off overtype mode?",
+				"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
 			{
 				aa->mac_error_ = 10;
 				return;
@@ -15241,7 +15316,13 @@ void CHexEditView::OnDecrypt()
 		{
 			// Presumably in macro playback
 			ASSERT(aa->playing_);
-			AfxMessageBox("The selection is not a multiple of encryption block length");
+			CString ss;
+			ss.Format("%d", blen);
+			CAvoidableDialog::Show(IDS_SEL_LEN,
+				"The selection length is not a multiple of " + ss + ".  "
+				"For this encryption algorithm the length of the "
+				"selection must be a multiple of the encryption block length.");
+			//AfxMessageBox("The selection is not a multiple of encryption block length");
 			aa->mac_error_ = 10;
 			return;
 		}
@@ -15298,7 +15379,9 @@ void CHexEditView::OnDecrypt()
 					total_out += outlen;
 
 					if (AbortKeyPress() &&
-						AfxMessageBox("Abort decryption?", MB_YESNO) == IDYES)
+						TaskMessageBox("Abort decryption?", 
+						    "You have interrupted the decryption.\n\n"
+						    "Do you want to stop the process?",MB_YESNO) == IDYES)
 					{
 						ff.Close();
 						remove(temp_file);
@@ -15311,7 +15394,7 @@ void CHexEditView::OnDecrypt()
 			}
 			catch (CFileException *pfe)
 			{
-				AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+				TaskMessageBox("Temp File Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 				pfe->Delete();
 
 				remove(temp_file);
@@ -15344,11 +15427,11 @@ void CHexEditView::OnDecrypt()
 			// Error if ran out of temp file handles and file is too big
 			if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 			{
-				AfxMessageBox("HexEdit is out of temporary files and \n"
-							"cannot decrypt such a large selection. \n"
-							"Please save the file to free \n"
-							"temporary file handles and try again.\n",
-							MB_OK);
+				TaskMessageBox("Decryption Error",
+					"HexEdit is out of temporary files and "
+					"cannot decrypt such a large selection.\n\n"
+					"Please save the file to deallocate "
+					"temporary file handles and try again.");
 				theApp.mac_error_ = 10;
 				return;
 			}
@@ -15356,12 +15439,14 @@ void CHexEditView::OnDecrypt()
 			// Warn if we might cause memory exhaustion
 			if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 			{
-				if (AfxMessageBox("WARNING: HexEdit is out of temporary file \n"
-								"handles and decrypting such a large selection \n"
-								"may cause memory exhaustion.  Please click NO \n"
-								"and save the file to free handles. \n"
-								"Or, click YES to continue.\n\n"
-								"Do you want to continue?", MB_YESNO) != IDYES)
+				if (TaskMessageBox("Decryption Warning",
+					"HexEdit is out of temporary file "
+					"handles and decrypting such a large selection "
+					"may cause memory exhaustion.  Please click "
+					"\"No\" and save the file to free handles "
+					"or click \"Yes\" to continue.\n\n"
+					"Do you want to continue?",
+					MB_YESNO) != IDYES)
 				{
 					theApp.mac_error_ = 5;
 					return;
@@ -15426,7 +15511,10 @@ void CHexEditView::OnDecrypt()
 		{
 			// Presumably in macro playback
 			ASSERT(aa->playing_);
-			AfxMessageBox("The selection is not a multiple of 8 (encryption block length)");
+			CAvoidableDialog::Show(IDS_SEL_LEN,
+				"The selection length is not a multiple of 8.  "
+				"For this encryption algorithm the length of the "
+				"selection must be a multiple of the encryption block length.");
 			aa->mac_error_ = 10;
 			return;
 		}
@@ -15490,23 +15578,8 @@ void CHexEditView::OnCompress()
 	unsigned char *out_data = NULL;
 
 	// Check if file is read-only and ask user if they want to turn this off
-	if (check_ro("compress"))
+	if (check_ro("compress") || check_ovr("compress"))
 		return;
-
-	// Check if in OVR mode and ask the user if they want to turn this off
-	if (display_.overtype)
-	{
-		if (AfxMessageBox("Compression will change the selection length\r"
-							"which is not allowed in overtype mode.\r"
-							"Do you want to turn off overtype mode?",
-							MB_OKCANCEL) == IDCANCEL)
-		{
-			theApp.mac_error_ = 10;
-			return;
-		}
-		else if (!do_insert())
-			return;
-	}
 
 	// Get current address or selection
 	FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
@@ -15517,7 +15590,7 @@ void CHexEditView::OnCompress()
 	{
 		// No selection, presumably in macro playback
 		ASSERT(theApp.playing_);
-		AfxMessageBox("There is no selection to compress");
+		TaskMessageBox("No Selection", "There is no selection to compress.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -15636,7 +15709,9 @@ void CHexEditView::OnCompress()
 				ASSERT(zs.avail_in == 0);
 
 				if (AbortKeyPress() &&
-					AfxMessageBox("Abort compression?", MB_YESNO) == IDYES)
+					TaskMessageBox("Abort compression?", 
+					    "You have interrupted the compression.\n\n"
+					    "Do you want to stop the process?",MB_YESNO) == IDYES)
 				{
 					ff.Close();
 					remove(temp_file);
@@ -15662,7 +15737,7 @@ void CHexEditView::OnCompress()
 		}
 		catch (CFileException *pfe)
 		{
-			AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			TaskMessageBox("Temp File Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 			pfe->Delete();
 
 			remove(temp_file);
@@ -15694,11 +15769,11 @@ void CHexEditView::OnCompress()
 		// Error if ran out of temp file handles and file is too big
 		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
-			AfxMessageBox("HexEdit is out of temporary files and \n"
-						  "cannot compress such a large selection. \n"
-						  "Please save the file to free \n"
-						  "temporary file handles and try again.\n",
-						  MB_OK);
+			TaskMessageBox("Compression Error",
+				"HexEdit is out of temporary files and "
+				"cannot compress such a large selection.\n\n"
+				"Please save the file to deallocate "
+				"temporary file handles and try again.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -15706,12 +15781,14 @@ void CHexEditView::OnCompress()
 		// Warn if we might cause memory exhaustion
 		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 		{
-			if (AfxMessageBox("WARNING: HexEdit is out of temporary file \n"
-							  "handles and compressing such a large selection \n"
-							  "may cause memory exhaustion.  Please click NO \n"
-							  "and save the file to free handles. \n"
-							  "Or, click YES to continue.\n\n"
-							  "Do you want to continue?", MB_YESNO) != IDYES)
+			if (TaskMessageBox("Compression Warning",
+				"HexEdit is out of temporary file "
+				"handles and compressing such a large selection "
+				"may cause memory exhaustion.  Please click "
+				"\"No\" and save the file to free handles "
+				"or click \"Yes\" to continue.\n\n"
+				"Do you want to continue?",
+				MB_YESNO) != IDYES)
 			{
 				theApp.mac_error_ = 5;
 				return;
@@ -15796,23 +15873,8 @@ void CHexEditView::OnDecompress()
 	unsigned char *out_data = NULL;
 
 	// Check if file is read-only and ask user if they want to turn this off
-	if (check_ro("decompress"))
+	if (check_ro("decompress") || check_ovr("decompress"))
 		return;
-
-	// Check if in OVR mode and ask the user if they want to turn this off
-	if (display_.overtype)
-	{
-		if (AfxMessageBox("Decompression will change the selection length\r"
-							"which is not allowed in overtype mode.\r"
-							"Do you want to turn off overtype mode?",
-							MB_OKCANCEL) == IDCANCEL)
-		{
-			theApp.mac_error_ = 10;
-			return;
-		}
-		else if (!do_insert())
-			return;
-	}
 
 	// Get current address or selection
 	FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
@@ -15823,7 +15885,7 @@ void CHexEditView::OnDecompress()
 	{
 		// No selection, presumably in macro playback
 		ASSERT(theApp.playing_);
-		AfxMessageBox("There is no selection to decompress");
+		TaskMessageBox("No Selection", "There is no selection to decompress");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -15919,11 +15981,13 @@ void CHexEditView::OnDecompress()
 						if (err == Z_DATA_ERROR)
 						{
 							theApp.mac_error_ = 5;
-							if (AfxMessageBox("The compression data is corrupted. \n"
-											  "HexEdit can save the data decompressed \n"
-											  "so far and attempt to recover from \n"
-											  "this error but some data will be lost. \n\n"
-											  "Do you want to continue?", MB_YESNO) != IDYES)
+							if (TaskMessageBox("Bad Compressed Data",
+											  "The compression data is corrupted. "
+											  "HexEdit can save the data decompressed "
+											  "so far and attempt to recover from "
+											  "this error but some data will be lost.\n\n"
+											  "Do you want to continue?", MB_YESNO, 0,
+											  MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 							{
 								ff.Close();
 								remove(temp_file);
@@ -15938,7 +16002,10 @@ void CHexEditView::OnDecompress()
 					}
 				} while (zs.avail_out == 0 || zs.avail_in != 0);  // if output buffer is full there may be more
 
-				if (AbortKeyPress() && AfxMessageBox("Abort decompression?", MB_YESNO) == IDYES)
+				if (AbortKeyPress() &&
+					TaskMessageBox("Abort decompression?", 
+					    "You have interrupted the decompression.\n\n"
+					    "Do you want to stop the process?",MB_YESNO) == IDYES)
 				{
 					ff.Close();
 					remove(temp_file);
@@ -15959,7 +16026,7 @@ void CHexEditView::OnDecompress()
 		}
 		catch (CFileException *pfe)
 		{
-			AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			TaskMessageBox("Temp File Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 			pfe->Delete();
 
 			remove(temp_file);
@@ -15999,11 +16066,11 @@ void CHexEditView::OnDecompress()
 		// Error if ran out of temp file handles and file is too big
 		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
-			AfxMessageBox("HexEdit is out of temporary files and \n"
-						  "cannot decompress such a large selection. \n"
-						  "Please save the file to free \n"
-						  "temporary file handles and try again.\n",
-						  MB_OK);
+			TaskMessageBox("Decompression Error",
+				"HexEdit is out of temporary files and "
+				"cannot decompress such a large selection.\n\n"
+				"Please save the file to deallocate "
+				"temporary file handles and try again.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -16011,12 +16078,14 @@ void CHexEditView::OnDecompress()
 		// Warn if we might cause memory exhaustion
 		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 		{
-			if (AfxMessageBox("WARNING: HexEdit is out of temporary file \n"
-							  "handles and decompressing such a large selection \n"
-							  "may cause memory exhaustion.  Please click NO \n"
-							  "and save the file to free handles. \n"
-							  "Or, click YES to continue.\n\n"
-							  "Do you want to continue?", MB_YESNO) != IDYES)
+			if (TaskMessageBox("Decompression Warning",
+				"HexEdit is out of temporary file "
+				"handles and decompressing such a large selection "
+				"may cause memory exhaustion.  Please click "
+				"\"No\" and save the file to free handles "
+				"or click \"Yes\" to continue.\n\n"
+				"Do you want to continue?",
+				MB_YESNO) != IDYES)
 			{
 				theApp.mac_error_ = 5;
 				return;
@@ -16058,10 +16127,13 @@ void CHexEditView::OnDecompress()
 					ASSERT(err == Z_OK || err == Z_STREAM_END || err == Z_BUF_ERROR || err == Z_DATA_ERROR);
 					if (err == Z_DATA_ERROR)
 					{
-						if (AfxMessageBox("The compression data is corrupted. \n"
-											"HexEdit can attempt to recover from \n"
-											"this error but some data will be lost. \n\n"
-											"Do you want to continue?", MB_YESNO) != IDYES)
+						if (TaskMessageBox("Bad Compressed Data",
+										  "The compression data is corrupted. "
+										  "HexEdit can save the data decompressed "
+										  "so far and attempt to recover from "
+										  "this error but some data will be lost.\n\n"
+										  "Do you want to continue?", MB_YESNO, 0,
+										  MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 						{
 							theApp.mac_error_ = 10;
 
@@ -16231,8 +16303,8 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		// No selection, presumably in macro playback
 		ASSERT(theApp.playing_);
 		CString mess;
-		mess.Format("There is no selection to calculate %s on", desc);
-		AfxMessageBox(mess);
+		mess.Format("There is nothing selected to calculate %s on", desc);
+		TaskMessageBox("No Selection", mess);
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -16242,7 +16314,9 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		ASSERT(theApp.playing_);
 		CString mess;
 		mess.Format("The selection must be a multiple of %d for %s", sizeof(T), desc);
-		AfxMessageBox(mess);
+		CAvoidableDialog::Show(IDS_SEL_LEN, mess);
+		((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
+		//AfxMessageBox(mess);
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -16327,7 +16401,9 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		}
 
 		if (AbortKeyPress() &&
-			AfxMessageBox("Abort calculation?", MB_YESNO) == IDYES)
+			TaskMessageBox("Abort calculation?", 
+			    "You have interrupted the calculation.\n\n"
+			    "Do you want to stop the process?",MB_YESNO) == IDYES)
 		{
 			theApp.mac_error_ = 10;
 			goto func_return;
@@ -16428,7 +16504,7 @@ void CHexEditView::OnMd5()
 	{
 		// No selection, presumably in macro playback
 		ASSERT(theApp.playing_);
-		AfxMessageBox("There is no selection to calculate MD5 on");
+		TaskMessageBox("No Selection", "There is no selection to calculate MD5 on.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -16459,7 +16535,9 @@ void CHexEditView::OnMd5()
 		MD5Update(&ctx, buf, len);
 
 		if (AbortKeyPress() &&
-			AfxMessageBox("Abort MD5 calculation?", MB_YESNO) == IDYES)
+			TaskMessageBox("Abort MD5 calculation?", 
+			    "You have interrupted the MD5 calculation.\n\n"
+			    "Do you want to stop the process?",MB_YESNO) == IDYES)
 		{
 			theApp.mac_error_ = 10;
 			goto func_return;
@@ -16525,7 +16603,7 @@ void CHexEditView::OnSha1()
 	{
 		// No selection, presumably in macro playback
 		ASSERT(theApp.playing_);
-		AfxMessageBox("There is no selection to calculate SHA1 on");
+		TaskMessageBox("No Selection", "There is no selection to calculate SHA1 on");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -16556,7 +16634,9 @@ void CHexEditView::OnSha1()
 		sha1_update(&ctx, buf, len);
 
 		if (AbortKeyPress() &&
-			AfxMessageBox("Abort SHA1 calculation?", MB_YESNO) == IDYES)
+			TaskMessageBox("Abort SHA1 calculation?", 
+			    "You have interrupted the SHA1 calculation.\n\n"
+			    "Do you want to stop the process?",MB_YESNO) == IDYES)
 		{
 			theApp.mac_error_ = 10;
 			goto func_return;
@@ -16785,8 +16865,9 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 	{
 		ASSERT(theApp.playing_);  // This should only happen during playback since commands are disabled otherwise
 		CString mess;
-		mess.Format("Can't %s unless operand (calculator) is %d bytes or less", desc, sizeof(T));
-		AfxMessageBox(mess);
+		mess.Format("You can't %s unless second operand is %d bytes or less.  "
+			"Please adjust the \"Bits\" setting in the calculator.", desc, sizeof(T));
+		TaskMessageBox("Operand Too Big", mess);
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -16804,8 +16885,9 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 			// Not enough bytes before EOF, presumably in macro playback
 			ASSERT(theApp.playing_);
 			CString mess;
-			mess.Format("Insufficient bytes before EOF to %s", desc);
-			AfxMessageBox(mess);
+			mess.Format("Too Few Bytes for %s", desc);
+			TaskMessageBox(mess,  "There are not enough bytes before end of file to perform this "
+				"operation.  Please add some dummy bytes at the end of file if you want to extend the file.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -16816,8 +16898,9 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 	{
 		ASSERT(theApp.playing_);
 		CString mess;
-		mess.Format("Selection must be a multiple of %d bytes to %s", sizeof(T), desc);
-		AfxMessageBox(mess);
+		mess.Format("The selection must be a multiple of %d bytes for %s", sizeof(T), desc);
+		CAvoidableDialog::Show(IDS_SEL_LEN, mess);
+		((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -16830,8 +16913,8 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 	if (val == 0 && (op == binop_divide || op == binop_mod))
 	{
 		CString mess;
-		mess.Format("Calculator value is zero (causing divide by 0) while performing %s", desc);
-		AfxMessageBox(mess);
+		mess.Format("The calculator value is zero (causing divide by 0) while performing %s.", desc);
+		TaskMessageBox("Divide by Zero", mess);
 		theApp.mac_error_ = 5;
 		return;
 	}
@@ -16881,7 +16964,9 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 				{
 					CString mess;
 					mess.Format("Abort %s operation?", desc);
-					if (AfxMessageBox(mess, MB_YESNO) == IDYES)
+					if (TaskMessageBox(mess, 
+						"You have interrupted the calculation.\n\n"
+						"Do you want to stop the process?",MB_YESNO) == IDYES)
 					{
 						ff.Close();
 						remove(temp_file);
@@ -16895,7 +16980,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 		}
 		catch (CFileException *pfe)
 		{
-			AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			TaskMessageBox("Temp File Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 			pfe->Delete();
 
 			remove(temp_file);
@@ -16919,11 +17004,11 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 		// Error if ran out of temp file handles and file is too big
 		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
-			AfxMessageBox("HexEdit is out of temporary files and \n"
-						  "cannot operate on such a large selection. \n"
-						  "Please save the file to deallocate \n"
-						  "temporary file handles and try again.\n",
-						  MB_OK);
+			TaskMessageBox("Large Selection Error",
+				"HexEdit is out of temporary files and "
+				"cannot operate on such a large selection.\n\n"
+				"Please save the file to deallocate "
+				"temporary file handles and try again.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -16931,12 +17016,14 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 		// Warn if we might cause memory exhaustion
 		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 		{
-			if (AfxMessageBox("WARNING: HexEdit is out of temporary file \n"
-							  "handles and operating on such a large selection \n"
-							  "may cause memory exhaustion.  Please click NO \n"
-							  "and save the file to free handles. \n"
-							  "Or, click YES to continue.\n\n"
-							  "Do you want to continue?", MB_YESNO) != IDYES)
+			if (TaskMessageBox("Warning",
+				"HexEdit is out of temporary file "
+				"handles and operating on such a large selection "
+				"may cause memory exhaustion.  Please click "
+				"\"No\" and save the file to free handles "
+				"or click \"Yes\" to continue.\n\n"
+				"Do you want to continue?",
+				MB_YESNO) != IDYES)
 			{
 				theApp.mac_error_ = 5;
 				return;
@@ -16967,8 +17054,9 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 	{
 		// Tell the user about divide by zero errors
 		CString mess;
-		mess.Format("There were %d divide by zero errors while performing %s", int(div0), desc);
-		AfxMessageBox(mess);
+		mess.Format("There were %d divide by zero errors while performing %s.  "
+			        "The values at those locations were not changed.", int(div0), desc);
+		TaskMessageBox("Divide by Zero", mess);
 		theApp.mac_error_ = 5;
 	}
 
@@ -17483,8 +17571,9 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 		{
 			ASSERT(theApp.playing_);  // This should only happen during playback since commands are disabled otherwise
 			CString mess;
-			mess.Format("Can't %s unless operand (calculator) is %d bytes or less", desc, sizeof(T));
-			AfxMessageBox(mess);
+			mess.Format("You can't %s unless the operand is %d bytes or less.  "
+				"Please adjust the \"Bits\" setting in the calculator.", desc, sizeof(T));
+			TaskMessageBox("Operand Too Big", mess);
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -17503,8 +17592,9 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 			// Not enough bytes before EOF, presumably in macro playback
 			ASSERT(theApp.playing_);
 			CString mess;
-			mess.Format("Insufficient bytes before EOF to %s", desc);
-			AfxMessageBox(mess);
+			mess.Format("Too Few Bytes for %s", desc);
+			TaskMessageBox(mess,  "There are not enough bytes before end of file to perform this "
+				"operation.  Please add some dummy bytes at the end of file if you want to extend the file.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -17515,8 +17605,9 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 	{
 		ASSERT(theApp.playing_);
 		CString mess;
-		mess.Format("Selection must be a multiple of %d bytes to %s", sizeof(T), desc);
-		AfxMessageBox(mess);
+		mess.Format("The selection must be a multiple of %d bytes for %s", sizeof(T), desc);
+		CAvoidableDialog::Show(IDS_SEL_LEN, mess);
+		((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -17566,7 +17657,9 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 				{
 					CString mess;
 					mess.Format("Abort %s operation?", desc);
-					if (AfxMessageBox(mess, MB_YESNO) == IDYES)
+					if (TaskMessageBox(mess, 
+						"You have interrupted the calculation.\n\n"
+						"Do you want to stop the process?",MB_YESNO) == IDYES)
 					{
 						ff.Close();
 						remove(temp_file);
@@ -17580,7 +17673,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 		}
 		catch (CFileException *pfe)
 		{
-			AfxMessageBox(::FileErrorMessage(pfe, CFile::modeWrite));
+			TaskMessageBox("Temp File Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 			pfe->Delete();
 
 			remove(temp_file);
@@ -17604,11 +17697,11 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 		// Error if ran out of temp file handles and file is too big
 		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
-			AfxMessageBox("HexEdit is out of temporary files and \n"
-						  "cannot operate on such a large selection. \n"
-						  "Please save the file to deallocate \n"
-						  "temporary file handles and try again.\n",
-						  MB_OK);
+			TaskMessageBox("Large Selection Error",
+				"HexEdit is out of temporary files and "
+				"cannot operate on such a large selection.\n\n"
+				"Please save the file to deallocate "
+				"temporary file handles and try again.");
 			theApp.mac_error_ = 10;
 			return;
 		}
@@ -17616,12 +17709,14 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 		// Warn if we might cause memory exhaustion
 		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 		{
-			if (AfxMessageBox("WARNING: HexEdit is out of temporary file \n"
-							  "handles and operating on such a large selection \n"
-							  "may cause memory exhaustion.  Please click NO \n"
-							  "and save the file to free handles. \n"
-							  "Or, click YES to continue.\n\n"
-							  "Do you want to continue?", MB_YESNO) != IDYES)
+			if (TaskMessageBox("Warning",
+				"HexEdit is out of temporary file "
+				"handles and operating on such a large selection "
+				"may cause memory exhaustion.  Please click "
+				"\"No\" and save the file to free handles "
+				"or click \"Yes\" to continue.\n\n"
+				"Do you want to continue?",
+				MB_YESNO) != IDYES)
 			{
 				theApp.mac_error_ = 5;
 				return;

@@ -95,7 +95,11 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 			int operand_size;           // Size of operands for operations (0,1,2, or 3)
 
 			if (AbortKeyPress() &&
-				AfxMessageBox("Abort macro?", MB_YESNO) == IDYES)
+//				AfxMessageBox("Abort macro?", MB_YESNO) == IDYES)
+				TaskMessageBox("Abort macro?", 
+					"You have interrupted the running of the keystroke macro.  "
+					"You may now stop the macro or continue running it.\n\n"
+					"Do you want to stop the macro?",MB_YESNO) == IDYES)
 			{
 				((CMainFrame *)AfxGetMainWnd())->StatusBarText("Macro aborted");
 				mac_error_ = 10;
@@ -104,7 +108,11 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 
 			if ((*pk).ktype > km_view && pv_ == NULL)
 			{
-				AfxMessageBox("There is no active window - macro terminated");
+				TaskMessageBox("No File Open",
+					"There are command(s) in the current macro that require a file to be "
+					"currently open to execute.  The macro cannot continue.",
+					0, 0, MAKEINTRESOURCE(IDI_CROSS));
+				((CMainFrame *)AfxGetMainWnd())->StatusBarText("Macro terminated");
 				mac_error_ = 10;
 				goto exit_play;
 			}

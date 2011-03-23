@@ -778,6 +778,7 @@ public:
 	// Had to make this public to be accessed from template functions (OnOperateBinary and
 	// OnOperateUnary), which I couldn't make members or even friends - useless compiler!!
 	BOOL check_ro(const char *); // Check if file is read only when changes attempted
+	BOOL check_ovr(const char *desc);
 	CPointAp addr2pos(FILE_ADDRESS address, int row = 0) const; // Convert byte address in doc to display position
 
 	void check_error();             // Check for read errors and mention them to the user

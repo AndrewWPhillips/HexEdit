@@ -405,7 +405,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		if (bm_posn_[ii]< 0 || bm_posn_[ii] > length_)
 		{
 			ASSERT(bm_index_[ii] < (int)pbl->file_.size());
-			mess += pbl->name_[bm_index_[ii]] + CString("\r");
+			mess += pbl->name_[bm_index_[ii]] + CString("\n");
 			bm_posn_[ii] = length_;
 			pbl->filepos_[bm_index_[ii]] = length_;
 			++bad_count;
@@ -413,11 +413,14 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	}
 	ASSERT(bad_count == 0 || !mess.IsEmpty());
 	if (bad_count == 1)
-		AfxMessageBox(CString("This file has an invalid bookmark: ") + mess +
-					  CString("\rThis bookmark has been moved to the end of file."));
+		CAvoidableDialog::Show(IDS_BOOKMARKS_ADJUSTED, 
+			"This file had an invalid bookmark: " + mess +
+			"\nThe bookmark has been set to the end of file.");
 	else if (bad_count > 1)
-		AfxMessageBox(CString("The following bookmarks were invalid\r"
-							  "and were moved to the end of file:\r") + mess);
+		CAvoidableDialog::Show(IDS_BOOKMARKS_ADJUSTED, 
+			"The following bookmarks were invalid "
+			"and were moved to the end of file:\n" + mess);
+	((CMainFrame *)AfxGetMainWnd())->StatusBarText("Invalid bookmarks move to EOF");
 
 	// Load XML file that is used to display the format of the data
 	// Note we load the template when the file is opened rather than if/when the template is needed:
@@ -595,9 +598,10 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 	if (aa->recording_)
 	{
-		if (AfxMessageBox("Saving file to disk will lose all \r"
-						  "undo information during playback.\r\r"
-						  "Do you want to continue?", MB_OKCANCEL) != IDOK)
+		if (TaskMessageBox("Undo Information will be lost",
+			              "Saving the file to disk will lose all "
+						  "undo information during macro playback."
+						  "Do you want to continue?", MB_YESNO) != IDYES)
 		{
 			aa->mac_error_ = 10;
 			return TRUE;
@@ -1059,11 +1063,11 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 		{
 			// Open for shared (above) failed
 			CString mess;
-			mess.Format("%s could not be opened for exclusive access.\r\r"
+			mess.Format("%s could not be opened for exclusive access.\n\n"
 				"It is opened shared (file contents may change).", lpszPathName);
-			AfxMessageBox(mess);
-			CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-			aa->mac_error_ = 1;
+			CAvoidableDialog::Show(IDS_FILE_OPEN_NON_EXCLUSIVE, mess);
+			((CMainFrame *)AfxGetMainWnd())->StatusBarText("Warning: File opened non-exclusive");
+			theApp.mac_error_ = 1;
 			shared_ = TRUE;
 		}
 	}
@@ -1075,11 +1079,11 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 		{
 			// Open for write failed but open for read was OK
 			CString mess;
-			mess.Format("%s is in use or is a read only file.\r\r"
+			mess.Format("%s is in use or is a read only file.\n\n"
 				"It is opened for read only (no changes possible).", lpszPathName);
-			AfxMessageBox(mess);
-			CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-			aa->mac_error_ = 1;
+			CAvoidableDialog::Show(IDS_FILE_OPEN_READ_ONLY, mess);
+			((CMainFrame *)AfxGetMainWnd())->StatusBarText("Warning: File opened read-only");
+			theApp.mac_error_ = 1;
 			readonly_ = TRUE;
 		}
 	}
@@ -1097,9 +1101,9 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 			mess.Format("%s is in use or is a read only file.\r\r"
 				"It is opened for read only (no changes possible)\r"
 				"with shared access (file contents can change).", lpszPathName);
-			AfxMessageBox(mess);
-			CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-			aa->mac_error_ = 1;
+			CAvoidableDialog::Show(IDS_FILE_OPEN_READ_ONLY, mess);
+			((CMainFrame *)AfxGetMainWnd())->StatusBarText("Warning: File opened non-exclusive, read-only");
+			theApp.mac_error_ = 1;
 		}
 		readonly_ = TRUE;
 		shared_ = TRUE;
@@ -1151,10 +1155,9 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 			mess += "\rcould not be opened (reason unknown)";
 			break;
 		}
-		AfxMessageBox(mess);
-
-		CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-		aa->mac_error_ = 10;
+		CAvoidableDialog::Show(IDS_FILE_OPEN_ERROR, mess, 0, 0, MAKEINTRESOURCE(IDI_CROSS));
+		((CMainFrame *)AfxGetMainWnd())->StatusBarText("Error: File not opened");
+		theApp.mac_error_ = 10;
 		return FALSE;
 	}
 
@@ -1768,7 +1771,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 		CFileException fe;
 		if (!pfile->Open(file_name, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary, &fe))
 		{
-			AfxMessageBox(::FileErrorMessage(&fe, CFile::modeWrite));
+			TaskMessageBox("File Open Error", ::FileErrorMessage(&fe, CFile::modeWrite));
 			theApp.mac_error_ = 10;
 			return -1;
 		}
@@ -1825,8 +1828,11 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 			int idx = AddDataFile(file_name, TRUE);
 			if (idx == -1)
 			{
-				AfxMessageBox("Too many temporary files\n"
-							  "Try saving the file then try again.");
+				TaskMessageBox("Too Many Temporary Files",
+					"To insert a large file HexEdit needs to create a temporary "
+					"file but has run out of temporary file handles.\n\n"
+					"Please save the file to deallocate "
+					"temporary file handles and try again.");
 				theApp.mac_error_ = 10;
 				return -1;
 			}
