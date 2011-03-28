@@ -1538,8 +1538,8 @@ int CHexEditApp::ExitInstance()
 	{
 		CString mess;
 		mess.Format("You currently have a large amount of data on the clipboard (%sbytes).\n\n"
-			        "Do you want to leave the data on the clipboard?", NumScale(last_cb_size_));
-		if (CAvoidableDialog::Show(IDS_LEAVE_LARGE_CB, mess, MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
+			        "Do you want to leave the data on the clipboard?", NumScale((double)last_cb_size_));
+		if (CAvoidableDialog::Show(IDS_LEAVE_LARGE_CB, mess, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
 			::EmptyClipboard();
 
 		::CloseClipboard();
