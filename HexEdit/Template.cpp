@@ -2026,7 +2026,7 @@ void CHexEditDoc::dump_tree()
 
 	for (int ii = 0; ii < (int)df_address_.size(); ++ii)
 	{
-		ss.Format("%*s%5ld %5ld %-20s\r\n",
+		ss.Format("%*s%5ld %5ld %-20s\n",
 				  int(df_indent_[ii]-1), "",
 				  long(df_address_[ii]),
 				  long(df_size_[ii]),

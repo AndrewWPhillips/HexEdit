@@ -335,12 +335,12 @@ void CNavManager::do_move(int ii)
 	{
 		theApp.mac_error_ = 2;
 
-		CString ss;ss = "The location/file could not found";
+		CString ss;
 		if (!v_[ii].fname_.IsEmpty())
-			ss.Format("%s\rcould not be found/opened.", v_[ii].fname_);
+			ss.Format("Location \"%s\" could not be found/opened.", v_[ii].fname_);
 		else
 			ss = "The location/file could not found";
-		AfxMessageBox(ss);
+		TaskMessageBox("Not Found", ss);
 		in_move_ = false;
 		return;
 	}

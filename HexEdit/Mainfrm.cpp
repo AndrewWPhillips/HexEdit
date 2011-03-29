@@ -523,13 +523,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 					// Could not copy the default images file to user's toolbar images file
 					if (GetLastError() == ERROR_PATH_NOT_FOUND)
 					{
-						AfxMessageBox("The HexEdit Application Data folder is invalid");
+						TaskMessageBox("Path Not Found", "The HexEdit Application Data folder is invalid.");
 						m_strImagesFileName = strDefault;
 					}
 					else
 					{
 						ASSERT(GetLastError() == ERROR_FILE_NOT_FOUND);
-						AfxMessageBox("The default toolbar images file was not found in the HexEdit folder.");
+						TaskMessageBox("File Missing",
+							"The default toolbar images file was not found in the HexEdit folder.  "
+							"This file contains a set of images that can be used in custom toolbar buttons.  "
+							"Repairing or re-installing HexEdit may fix the problem.");
 						m_strImagesFileName.Empty();  // we can't do anything so signal that the file is not available
 					}
 				}
@@ -537,7 +540,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 		else
 		{
-			AfxMessageBox("The HexEdit Application Data folder is not found");
+			TaskMessageBox("Path Not Found", "The HexEdit Application Data folder is not found.  "
+				"Custom toolbar buttons and other user interface elements may have missing images.");
 			m_strImagesFileName = strDefault;
 		}
 
@@ -2442,7 +2446,7 @@ void CMainFrame::OnSearchSel()
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		AfxMessageBox("There is no file open to search.");
+		TaskMessageBox("No File Open", "There is no file open to search.");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -2455,7 +2459,7 @@ void CMainFrame::OnSearchSel()
 	{
 		// Nothing selected, presumably in macro playback
 		ASSERT(theApp.playing_);
-		AfxMessageBox("Nothing selected to search for!");
+		TaskMessageBox("No Selection", "Nothing selected to search for!");
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -2595,7 +2599,7 @@ BOOL CMainFrame::DoFind()
 
 	if (pview == NULL)
 	{
-		AfxMessageBox("There is no file open to search.");
+		TaskMessageBox("No File Open", "There is no file open to search.");
 		theApp.mac_error_ = 10;
 		return FALSE;
 	}
@@ -2723,7 +2727,7 @@ BOOL CMainFrame::DoFind()
 				{
 					// Display not found message
 					pview->show_pos();                         // Restore display of orig address
-					AfxMessageBox(not_found_mess(FALSE, icase, tt, wholeword, alignment));
+					CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(FALSE, icase, tt, wholeword, alignment));
 				}
 				else
 				{
@@ -2736,15 +2740,15 @@ BOOL CMainFrame::DoFind()
 			}
 			else if (scope == CFindSheet::SCOPE_EOF && end < pdoc->length())
 			{
-				CString mess = CString("The start of file was reached.\r\n") +
+				CString mess = CString("The start of file was reached.\n") +
 							   not_found_mess(FALSE, icase, tt, wholeword, alignment) +
-							   CString("\r\nDo you want to continue from the end of file?");
+							   CString("\n\nDo you want to continue from the end of file?");
 
 				SetAddress(start);            // start == 0
 				theApp.OnIdle(0);             // Force display of updated address
 
 				// Give the user the option to search the top bit of the file that has not been searched
-				if (AfxMessageBox(mess, MB_YESNO) == IDYES)
+				if (CAvoidableDialog::Show(IDS_CONT_SEARCH, mess, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
 				{
 					if ((found_addr = search_back(pdoc,
 												  end - (length-1) < 0 ? 0 : end - (length-1),
@@ -2761,7 +2765,7 @@ BOOL CMainFrame::DoFind()
 					{
 						// Display not found message
 						pview->show_pos();                         // Restore display of orig address
-						AfxMessageBox(not_found_mess(FALSE, icase, tt, wholeword, alignment));
+						CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(FALSE, icase, tt, wholeword, alignment));
 					}
 					else
 					{
@@ -2782,7 +2786,7 @@ BOOL CMainFrame::DoFind()
 				// Display not found message
 				SetAddress(start);
 				theApp.OnIdle(0);             // Force display of updated address
-				AfxMessageBox(not_found_mess(FALSE, icase, tt, wholeword, alignment));
+				CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(FALSE, icase, tt, wholeword, alignment));
 				pview->show_pos();                         // Restore display of orig address
 			}
 		}
@@ -2790,14 +2794,15 @@ BOOL CMainFrame::DoFind()
 		{
 			// Found
 			pview->MoveWithDesc("Search Text Found ", found_addr, found_addr + length);   // space at end means significant nav pt
+#ifdef SYS_SOUNDS
+			CSystemSound::Play("Search Text Found");
+#endif
+
 			if (scope == CFindSheet::SCOPE_FILE)
 			{
 				// Change to SCOPE_EOF so that next search does not find the same thing
 				m_wndFind.SetScope(CFindSheet::SCOPE_EOF);
 			}
-#ifdef SYS_SOUNDS
-			CSystemSound::Play("Search Text Found");
-#endif
 			return TRUE;
 		}
 	}
@@ -2842,6 +2847,7 @@ BOOL CMainFrame::DoFind()
 		}
 		else if (found_addr == -1)
 		{
+			// Not found in current file but scope may indicate we have to try next file or go back to start of file and continue
 			if (scope == CFindSheet::SCOPE_ALL)
 			{
 				// Search through all other open files starting at the one after current
@@ -2876,7 +2882,7 @@ BOOL CMainFrame::DoFind()
 												  ss, mask, length, icase, 
 												  tt, wholeword, alignment, offset, align_rel, base_addr)) == -2)
 					{
-						// Restore original display pos
+						// User abort or some error (message already displayed) - just restore original display pos
 						pview->show_pos();
 						theApp.mac_error_ = 10;
 						return FALSE;
@@ -2903,16 +2909,16 @@ BOOL CMainFrame::DoFind()
 											  ss, mask, length, icase,
 											  tt, wholeword, alignment, offset, align_rel, base_addr)) == -2)
 				{
-					// Restore original display pos
+					// User abort or some error (message already displayed) - just restore original display pos
 					pview->show_pos();
 					theApp.mac_error_ = 10;
 					return FALSE;
 				}
 				else if (found_addr == -1)
 				{
-					// Display not found message
+					// Display not found message (after searching all open files)
 					pview->show_pos();                         // Restore display of orig address
-					AfxMessageBox(not_found_mess(TRUE, icase, tt, wholeword, alignment));
+					CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(TRUE, icase, tt, wholeword, alignment));
 				}
 				else
 				{
@@ -2925,31 +2931,31 @@ BOOL CMainFrame::DoFind()
 			}
 			else if (scope == CFindSheet::SCOPE_EOF && start > 0)
 			{
-				CString mess = CString("The end of file was reached.\r\n") +
+				CString mess = CString("The end of file was reached.\n") +
 							   not_found_mess(TRUE, icase, tt, wholeword, alignment) +
-							   CString("\r\nDo you want to continue from the start of file?");
+							   CString("\n\nDo you want to continue from the start of file?");
 
 				SetAddress(end);
 				theApp.OnIdle(0);             // Force display of updated address
 
 				// Give the user the option to search the top bit of the file that has not been searched
-				if (AfxMessageBox(mess, MB_YESNO) == IDYES)
+				if (CAvoidableDialog::Show(IDS_CONT_SEARCH, mess, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
 				{
 					if ((found_addr = search_forw(pdoc, 0,
 												  start+length-1 > pdoc->length() ? pdoc->length() : start+length-1,
 												  ss, mask, length, icase,
 												  tt, wholeword, alignment, offset, align_rel, base_addr)) == -2)
 					{
-						// Restore original display pos
+						// User abort or some error (message already displayed) - just restore original display pos
 						pview->show_pos();
 						theApp.mac_error_ = 10;
 						return FALSE;
 					}
 					else if (found_addr == -1)
 					{
-						// Display not found message
+						// Display not found message (after searching again from top of file)
 						pview->show_pos();                         // Restore display of orig address
-						AfxMessageBox(not_found_mess(TRUE, icase, tt, wholeword, alignment));
+						CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(TRUE, icase, tt, wholeword, alignment));
 					}
 					else
 					{
@@ -2967,10 +2973,10 @@ BOOL CMainFrame::DoFind()
 			}
 			else
 			{
-				// Display not found message
+				// Display not found message (after normal scope search to EOF)
 				SetAddress(end);
 				theApp.OnIdle(0);             // Force display of updated address
-				AfxMessageBox(not_found_mess(TRUE, icase, tt, wholeword, alignment));
+				CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(TRUE, icase, tt, wholeword, alignment));
 				pview->show_pos();                         // Restore display of orig address
 			}
 		}
@@ -3241,14 +3247,14 @@ void CMainFrame::OnReplaceAll()
 			}
 			else if (scope == CFindSheet::SCOPE_EOF && start > 0)
 			{
-				CString mess = CString("The end of file was reached.\r\n") +
+				CString mess = CString("The end of file was reached.\n") +
 							   not_found_mess(TRUE, icase, tt, wholeword, alignment) +
-							   CString("\r\nDo you want to continue from the start of file?");
+							   CString("\n\nDo you want to continue from the start of file?");
 
 				// Give the user the option to search the top bit of the file that has not been searched
 				SetAddress(end);
 				theApp.OnIdle(0);             // Force display of updated address
-				if (AfxMessageBox(mess, MB_YESNO) == IDYES)
+				if (CAvoidableDialog::Show(IDS_CONT_SEARCH, mess, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
 				{
 					wc.Restore();
 					curr = 0;
@@ -3314,14 +3320,14 @@ void CMainFrame::OnReplaceAll()
 		mess += ss;
 	}
 
-	AfxMessageBox(mess);
+	TaskMessageBox("Replace All", mess);
 }
 
 void CMainFrame::OnBookmarkAll()
 {
 	if (m_wndFind.bookmark_prefix_.IsEmpty())
 	{
-		AfxMessageBox("Bookmark All requires a bookmark prefix.");
+		TaskMessageBox("No Prefix Specified", "Bookmark All requires a bookmark prefix.");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -3348,8 +3354,8 @@ void CMainFrame::OnBookmarkAll()
 	{
 		CBookmarkFind dlg;
 
-		dlg.mess_.Format("%d bookmarks with the prefix \"%s\"\r"
-						 "already exist.  Do you want to overwrite or\r"
+		dlg.mess_.Format("%d bookmarks with the prefix \"%s\"\n"
+						 "already exist.  Do you want to overwrite or\n"
 						 "append to this set of bookmarks?",
 						 count, (const char *)m_wndFind.bookmark_prefix_);
 
@@ -3476,15 +3482,15 @@ void CMainFrame::OnBookmarkAll()
 			}
 			else if (scope == CFindSheet::SCOPE_EOF && start > 0)
 			{
-				CString mess = CString("The end of file was reached.\r\n") +
+				CString mess = CString("The end of file was reached.\n") +
 							   not_found_mess(TRUE, icase, tt, wholeword, alignment) +
-							   CString("\r\nDo you want to continue from the start of file?");
+							   CString("\n\nDo you want to continue from the start of file?");
 
 				// Give the user the option to search the top bit of the file that has not been searched
 				SetAddress(end);
 				theApp.OnIdle(0);             // Force display of updated address
 
-				if (AfxMessageBox(mess, MB_YESNO) == IDYES)
+				if (CAvoidableDialog::Show(IDS_CONT_SEARCH, mess, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
 				{
 					wc.Restore();
 					curr = 0;
@@ -3514,8 +3520,15 @@ void CMainFrame::OnBookmarkAll()
 				if (!bmerror_reported)
 				{
 					bmerror_reported = true;
-					AfxMessageBox("Bookmarks cannot be added to new files\r\n"
-								  "that have not yet been written to disk.");
+					if (CAvoidableDialog::Show(IDS_BOOKMARK_ALL_NOFILE,
+						"Bookmark store disk file locations.  A bookmark could "
+						"not be added to a file as it has not been saved to disk.\n\n"
+						"Do you want to continue?",
+						"", 
+						MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) == IDCANCEL)
+					{
+						break;
+					}
 				}
 			}
 			else
@@ -3563,7 +3576,7 @@ void CMainFrame::OnBookmarkAll()
 				  (const char *)m_wndFind.bookmark_prefix_, (long)next_number-1);
 		mess += ss;
 	}
-	AfxMessageBox(mess);
+	TaskMessageBox("Bookmark All", mess);
 }
 
 // search_forw returns the address if the search text was found or
@@ -3584,7 +3597,11 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
 	else if (bg_next > -1)
 	{
 		// Found
-		if (AbortKeyPress() && AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
+		if (AbortKeyPress() &&
+			TaskMessageBox("Abort search?", 
+				"You have interrupted the search.  "
+				"You may abort or continue the search.\n\n"
+				"Do you want to abort the search?",MB_YESNO) == IDYES)
 		{
 			StatusBarText("Search aborted");
 			theApp.mac_error_ = 10;
@@ -3635,7 +3652,11 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
 
 			if (addr_buf > next_show)
 			{
-				if (AbortKeyPress() && AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
+				if (AbortKeyPress() &&
+					TaskMessageBox("Abort search?", 
+						"You have interrupted the search.  "
+						"You may abort or continue the search.\n\n"
+						"Do you want to abort the search?",MB_YESNO) == IDYES)
 				{
 					delete[] buf;
 					// Start bg search anyway
@@ -3715,7 +3736,11 @@ FILE_ADDRESS CMainFrame::search_forw(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
 			{
 				// If we find lots of occurrences then the Esc key check in 
 				// above is never done so do it here too.
-				if (AbortKeyPress() && AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
+				if (AbortKeyPress() &&
+					TaskMessageBox("Abort search?", 
+						"You have interrupted the search.  "
+						"You may abort or continue the search.\n\n"
+						"Do you want to abort the search?",MB_YESNO) == IDYES)
 				{
 					delete[] buf;
 					// Start bg search anyway
@@ -3838,7 +3863,11 @@ FILE_ADDRESS CMainFrame::search_back(CHexEditDoc *pdoc, FILE_ADDRESS start_addr,
 
 			if (addr_buf < next_show)
 			{
-				if (AbortKeyPress() && AfxMessageBox("Abort search?", MB_YESNO) == IDYES)
+				if (AbortKeyPress() &&
+					TaskMessageBox("Abort search?", 
+						"You have interrupted the search.  "
+						"You may abort or continue the search.\n\n"
+						"Do you want to abort the search?",MB_YESNO) == IDYES)
 				{
 					delete[] buf;
 					// Start bg search anyway
@@ -4021,7 +4050,7 @@ CString CMainFrame::not_found_mess(BOOL forward, BOOL icase, int tt, BOOL ww, in
 	CSystemSound::Play("Search Text Not Found");
 #endif
 
-	CString mess = "The search item was not found:\r\n";
+	CString mess = "The search item was not found:\n";
 
 	// There are none
 	if (icase && tt == 3)
@@ -4041,7 +4070,7 @@ CString CMainFrame::not_found_mess(BOOL forward, BOOL icase, int tt, BOOL ww, in
 
 	if (ww)
 		mess += "whole-word ";
-	mess += "search\r\n";
+	mess += "search\n";
 
 	if (aa == 2)
 		mess += "- with word alignment";

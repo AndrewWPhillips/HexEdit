@@ -1676,6 +1676,12 @@
 #define IDS_FILE_OPEN_READ_ONLY         50042
 #define IDS_FILE_OPEN_NON_EXCLUSIVE     50043
 #define IDS_FILE_OPEN_ERROR             50044
+#define IDS_CONT_SEARCH                 50045
+#define IDS_SEARCH_NOT_FOUND            50046
+#define IDS_SEARCH_FOUND                50047
+#define IDS_PROP_READONLY               50048
+#define IDS_BOOKMARK_ALL_NOFILE         50049
+#define IDS_OPTION_SAVE_ALL             50050
 #define IDS_UPDATE_AVAILABLE            50099
 
 // Next default values for new objects

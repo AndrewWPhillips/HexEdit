@@ -215,7 +215,7 @@ CXmlTree::CFrag TParser::Parse(CXmlTree *ptree, LPCTSTR str)
 	{
 		CString tmp;
 		if (filename_.size() > 1)
-			tmp.Format("\r\n\r\nat line %ld of \"%s\".", long(line_no_.back()), filename_.back());
+			tmp.Format("\n\nat line %ld of \"%s\".", long(line_no_.back()), filename_.back());
 		AfxMessageBox(ss + tmp);
 	}
 
@@ -1976,7 +1976,7 @@ CXmlTree::CFrag TParser::parse_all(LPCTSTR outer_name, long &max_align, bool is_
 							custom_consts_[CString(outer_name)+"::"+var_name] = val.int64;   // Also add value with scope of containing type
 					}
 					else
-						AfxMessageBox("Definition of constant \"" + var_name + "\" was ignored.\r\n"
+						AfxMessageBox("Definition of constant \"" + var_name + "\" was ignored.\n"
 									  "(Only integer constants are allowed.)");
 				}
 			}

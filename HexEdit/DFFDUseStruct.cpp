@@ -335,7 +335,7 @@ bool CDFFDUseStruct::check_data()
 	}
 	else if (!valid_id(struct_))
 	{
-		TaskMessageBox("Invalid Defined Struct Name", "Please use alphanumeric characters\r\n"
+		TaskMessageBox("Invalid Defined Struct Name", "Please use alphanumeric characters "
 					  "(or underscore) and start with a alphabetic character.");
 		ctl_name_.SetFocus();
 		return false;
@@ -362,7 +362,6 @@ bool CDFFDUseStruct::check_data()
 			TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
 				           "It is not be possible to differentiate between two elements "
 			               "with the same name at the same level (eg, in expressions).");
-			//AfxMessageBox("This element has a sibling with the same name");
 			ctl_name_.SetFocus();
 			return false;
 		}
@@ -382,7 +381,6 @@ bool CDFFDUseStruct::check_data()
 			TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
 				           "It is not be possible to differentiate between two elements "
 			               "with the same name at the same level (eg, in expressions).");
-			//AfxMessageBox("This element has a sibling with the same name");
 			ctl_name_.SetFocus();
 			return false;
 		}

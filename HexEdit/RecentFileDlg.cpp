@@ -855,17 +855,17 @@ void CRecentFileDlg::OnValidate()
 		grid_.DeleteRow(*(--pp));
 	grid_.Refresh();
 
-	// Teel the user what we did
+	// Tell the user what we did
 	CString ss;
 	if (count == 0)
-		ss = "No files removed from the\r"
+		ss = "No files removed from the\n"
 			 "recently used file list.";
 	else if (count == 1)
-		ss.Format("One file removed:\r%s", last_name);
+		ss.Format("One file removed:\n%s", last_name);
 	else
-		ss.Format("%ld files removed from the\r"
+		ss.Format("%ld files removed from the\n"
 				  "recently used file list.",  long(count));
-	AfxMessageBox(ss);
+	TaskMessageBox("Validate All", ss);
 }
 
 void CRecentFileDlg::OnDestroy()

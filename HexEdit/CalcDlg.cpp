@@ -740,7 +740,6 @@ bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 	{
 		TaskMessageBox("File is read only",
 			"The calculator cannot write to the current file when it is open in read only mode.");
-		//AfxMessageBox("Can't write: file is read only");
 		return false;
 	}
 
@@ -760,7 +759,6 @@ bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 		TaskMessageBox("Can't write past EOF",
 			"An attempt was made to write at an address past the end of file.  "
 			"The calculator won't extend a file to allow the bytes to be written.");
-		//AfxMessageBox("Can't write past end of file");
 		return false;
 	}
 	if (!pview->OverType() && addr + bits_/8 > pview->GetDocument()->length())
@@ -768,7 +766,6 @@ bool CCalcDlg::put_bytes(FILE_ADDRESS addr)
 		TaskMessageBox("Write extends past EOF",
 			"The bytes to be written extends past the end of file.  "
 			"The calculator cannot write past EOF when the file is open in OVR mode.");
-		//AfxMessageBox("Not enough bytes before end of file");
 		return false;
 	}
 
@@ -2635,7 +2632,6 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	{
 		TaskMessageBox("Jump to negative address",
 			"The calculator cannot jump to an address before the start of file.");
-		//AfxMessageBox("Address is before the start of file (negative)");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -2650,7 +2646,6 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	{
 		TaskMessageBox("Jump past EOF",
 			"The calculator cannot jump to an address past the end of file.");
-		//AfxMessageBox("New address is past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -3363,7 +3358,6 @@ void CCalcDlg::OnGetVar()
 		if (CAvoidableDialog::Show(IDS_VARS_CLEAR, 
 			                       "Are you sure you want to delete all variables?", "", 
 								   MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
-		//if (AfxMessageBox("Are you sure you want to delete all variables?", MB_YESNO|MB_ICONSTOP) == IDYES)
 			mm_->expr_.DeleteVars();
 	}
 	else if (ctl_vars_.m_nMenuResult != 0)
@@ -4110,7 +4104,6 @@ void CCalcDlg::OnSelStore()
 	{
 		TaskMessageBox("Negative address",
 			"The calculator cannot move the current address before the start of file.");
-		//AfxMessageBox("Can't move before start of file (negative address)");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4118,7 +4111,6 @@ void CCalcDlg::OnSelStore()
 	{
 		TaskMessageBox("Address past EOF",
 			"The calculator cannot move the current address past the end of file.");
-		//AfxMessageBox("Can't move cursor past end of file");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4190,7 +4182,6 @@ void CCalcDlg::OnSelLenStore()
 	{
 		TaskMessageBox("Negative selection length",
 			"The calculator cannot make a selection with length less than zero.");
-		//AfxMessageBox("Selection can't be less than zero");
 		aa_->mac_error_ = 10;
 		return;
 	}
@@ -4198,7 +4189,6 @@ void CCalcDlg::OnSelLenStore()
 	{
 		TaskMessageBox("Selection past EOF",
 			"The calculator cannot make a selection which extends past the end of file.");
-		//AfxMessageBox("New selection length would be past EOF");
 		aa_->mac_error_ = 10;
 		return;
 	}

@@ -1798,7 +1798,11 @@ BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg)
 			unsigned char dec_val = (unsigned char)atoi(char_dec_);
 			if (pview->ReadOnly())
 			{
-				AfxMessageBox("Cannot modify a read only file");
+				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+#ifdef SYS_SOUNDS
+				if (!CSystemSound::Play("Read Only"))
+#endif
+					::Beep(5000,200);
 			}
 			else if (start_addr >= pview->GetDocument()->length())
 			{
@@ -1823,7 +1827,11 @@ BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg)
 			unsigned char octal_val = (unsigned char)strtoul(char_octal_, &endptr, 8);
 			if (pview->ReadOnly())
 			{
-				AfxMessageBox("Cannot modify a read only file");
+				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+#ifdef SYS_SOUNDS
+				if (!CSystemSound::Play("Read Only"))
+#endif
+					::Beep(5000,200);
 			}
 			else if (start_addr == pview->GetDocument()->length())
 			{
@@ -1833,8 +1841,8 @@ BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg)
 			else if (endptr - (const char *)char_octal_ < char_octal_.GetLength())
 			{
 				CString ss;
-				ss.Format("%s is an invalid octal number", char_octal_);
-				AfxMessageBox(ss);
+				ss.Format("%s is not a valid octal number.", char_octal_);
+				TaskMessageBox("Invalid Number", ss);
 				Update(pview);
 				((CEdit*)GetDlgItem(IDC_CHAR_OCTAL))->SetSel(0, -1);
 				GetDlgItem(IDC_CHAR_OCTAL)->SetFocus();
@@ -1857,7 +1865,11 @@ BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg)
 			unsigned char binary_val = (unsigned char)strtoul(char_binary_, &endptr, 2);
 			if (pview->ReadOnly())
 			{
-				AfxMessageBox("Cannot modify a read only file");
+				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+#ifdef SYS_SOUNDS
+				if (!CSystemSound::Play("Read Only"))
+#endif
+					::Beep(5000,200);
 			}
 			else if (start_addr == pview->GetDocument()->length())
 			{
@@ -1867,8 +1879,8 @@ BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg)
 			else if (endptr - (const char *)char_binary_ < char_binary_.GetLength())
 			{
 				CString ss;
-				ss.Format("%s is an invalid binary number", char_binary_);
-				AfxMessageBox(ss);
+				ss.Format("%s is an invalid binary number.", char_binary_);
+				TaskMessageBox("Invalid Number", ss);
 				Update(pview);
 				((CEdit*)GetDlgItem(IDC_CHAR_BINARY))->SetSel(0, -1);
 				GetDlgItem(IDC_CHAR_BINARY)->SetFocus();
@@ -2326,7 +2338,11 @@ BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg)
 			}
 			if (pview->ReadOnly())
 			{
-				AfxMessageBox("Cannot modify a read only file");
+				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+#ifdef SYS_SOUNDS
+				if (!CSystemSound::Play("Read Only"))
+#endif
+					::Beep(5000,200);
 			}
 			else if (start_addr + sizeof(dec_val) > pview->GetDocument()->length())
 			{
@@ -2367,8 +2383,12 @@ BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg)
 			}
 			if (pview->ReadOnly())
 			{
-				AfxMessageBox("Cannot modify a read only file");
-			}
+				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+#ifdef SYS_SOUNDS
+				if (!CSystemSound::Play("Read Only"))
+#endif
+					::Beep(5000,200);
+}
 			else if (start_addr + sizeof(dec_val) > pview->GetDocument()->length())
 			{
 				ASSERT(0);
@@ -2409,7 +2429,11 @@ BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg)
 			}
 			if (pview->ReadOnly())
 			{
-				AfxMessageBox("Cannot modify a read only file");
+				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+#ifdef SYS_SOUNDS
+				if (!CSystemSound::Play("Read Only"))
+#endif
+					::Beep(5000,200);
 			}
 			else if (start_addr + sizeof(dec_val) > pview->GetDocument()->length())
 			{
@@ -2453,7 +2477,11 @@ BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg)
 			}
 			if (pview->ReadOnly())
 			{
-				AfxMessageBox("Cannot modify a read only file");
+				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+#ifdef SYS_SOUNDS
+				if (!CSystemSound::Play("Read Only"))
+#endif
+					::Beep(5000,200);
 			}
 			else if (start_addr + sizeof(dec_val) > pview->GetDocument()->length())
 			{
@@ -2788,14 +2816,18 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 			{
 				// Scan of numeric value failed
 				CString ss;
-				ss.Format("%s is an invalid floating point number", val_);
-				AfxMessageBox(ss);
+				ss.Format("%s is an invalid floating point number.", val_);
+				TaskMessageBox("Invalid Number", ss);
 				Update(pview);
 				ctl_val_.SetFocus();
 			}
 			else if (pview->ReadOnly())
 			{
-				AfxMessageBox("Cannot modify a read only file");
+				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+#ifdef SYS_SOUNDS
+				if (!CSystemSound::Play("Read Only"))
+#endif
+					::Beep(5000,200);
 			}
 			else if (start_addr + len > pview->GetDocument()->length())
 			{
@@ -2838,7 +2870,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 				case FMT_IBM32:
 					if (!::make_ibm_fp32(buf, dbl_val, true))
 					{
-						AfxMessageBox("Value too big");
+						TaskMessageBox("Invalid Number", "The value is too big.");
 						Update(pview);
 						ctl_val_.SetFocus();
 					}
@@ -2848,7 +2880,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 				case FMT_IBM64:
 					if (!::make_ibm_fp64(buf, dbl_val, true))
 					{
-						AfxMessageBox("Value too big");
+						TaskMessageBox("Invalid Number", "The value is too big.");
 						Update(pview);
 						ctl_val_.SetFocus();
 					}
@@ -2858,7 +2890,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 				case FMT_REAL48:
 					if (!::make_real48(buf, dbl_val, true))
 					{
-						AfxMessageBox("Value too big");
+						TaskMessageBox("Invalid Number", "The value is too big.");
 						Update(pview);
 						ctl_val_.SetFocus();
 					}
@@ -2868,7 +2900,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 				case FMT_DECIMAL:
 					if (!String2Decimal(val_, buf))
 					{
-						AfxMessageBox("Invalid Decimal value");
+						TaskMessageBox("Invalid Number", "This number cannot be represented as a Decimal value.");
 						Update(pview);
 						ctl_val_.SetFocus();
 					}

@@ -5485,14 +5485,13 @@ void CHexEditView::nav_save(FILE_ADDRESS astart, FILE_ADDRESS aend, LPCTSTR desc
 	}
 }
 
-
 // Get a bit of the file (as hex or text) to save with a nav point
 CString CHexEditView::get_info()
 {
 	FILE_ADDRESS start = nav_start_;
 	if (start >= GetDocument()->length())
 	{
-		return CString("End\nof\r\nfile");
+		return CString("End\nof\nfile");
 	}
 
 	if (display_.vert_display && pos2row(GetCaret()) == 0 || display_.edit_char)
@@ -5989,7 +5988,6 @@ void CHexEditView::do_char(UINT nChar)
 				::Beep(5000,200);
 			CAvoidableDialog::Show(IDS_INVALID_EBCDIC,
 				"The key is not a valid EBCDIC character.");
-			//AfxMessageBox("The key is not a valid EBCDIC character");
 			aa->mac_error_ = 10;
 			return;
 		}
@@ -8674,36 +8672,36 @@ void CHexEditView::do_read(CString file_name)
 			switch (fe.m_cause)
 			{
 			case CFileException::fileNotFound:
-				mess += "\rdoes not exist";
+				mess += "\ndoes not exist";
 				break;
 			case CFileException::badPath:
-				mess += "\ris an invalid file name or the drive/path does not exist";
+				mess += "\nis an invalid file name or the drive/path does not exist";
 				break;
 			case CFileException::tooManyOpenFiles:
-				mess += "\r- too many files already open";
+				mess += "\n- too many files already open";
 				break;
 			case CFileException::accessDenied:
 				if (!CFile::GetStatus(file_name, fs))
-					mess += "\rdoes not exist";
+					mess += "\ndoes not exist";
 				else
 				{
 					if (fs.m_attribute & CFile::directory)
-						mess += "\ris a directory";
+						mess += "\nis a directory";
 					else if (fs.m_attribute & (CFile::volume|CFile::hidden|CFile::system))
-						mess += "\ris a special file";
+						mess += "\nis a special file";
 					else
-						mess += "\rcannot be used (reason unknown)";
+						mess += "\ncannot be used (reason unknown)";
 				}
 				break;
 			case CFileException::sharingViolation:
 			case CFileException::lockViolation:
-				mess += "\ris in use";
+				mess += "\nis in use";
 				break;
 			case CFileException::hardIO:
-				mess += "\r- hardware error";
+				mess += "\n- hardware error";
 				break;
 			default:
-				mess += "\rcould not be opened (reason unknown)";
+				mess += "\ncould not be opened (reason unknown)";
 				break;
 			}
 			TaskMessageBox("File Read Error", mess);
@@ -15322,7 +15320,6 @@ void CHexEditView::OnDecrypt()
 				"The selection length is not a multiple of " + ss + ".  "
 				"For this encryption algorithm the length of the "
 				"selection must be a multiple of the encryption block length.");
-			//AfxMessageBox("The selection is not a multiple of encryption block length");
 			aa->mac_error_ = 10;
 			return;
 		}
@@ -16316,7 +16313,6 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		mess.Format("The selection must be a multiple of %d for %s", sizeof(T), desc);
 		CAvoidableDialog::Show(IDS_SEL_LEN, mess);
 		((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
-		//AfxMessageBox(mess);
 		theApp.mac_error_ = 10;
 		return;
 	}

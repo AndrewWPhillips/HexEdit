@@ -1581,7 +1581,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 			if (mac_error_ > halt_lev)
 			{
 #ifdef SYS_SOUNDS
-				CSystemSound::Play("Major Error");
+				CSystemSound::Play("Macro Error");
 #endif
 				// Display an appropriate error
 				if (mac_error_ > 10)
@@ -1913,7 +1913,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
 		if (ff.Read(&magic, sizeof(magic)) < sizeof(magic)) throw pfe;
 		if (magic != 0xCDAB)
 		{
-			TaskMessageBox("Invalid Macro File",
+				TaskMessageBox("Invalid Macro File",
 					"This is not a HexEdit macro file or it has become corrupted.",
 					0, 0, MAKEINTRESOURCE(IDI_CROSS));
 			pfe->Delete();

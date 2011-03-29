@@ -417,7 +417,7 @@ void CNewFile::OnOK()
 		// Make sure at least one hex digit has been entered
 		if (strcspn(fill_hex_value_, "0123456789abcdefABCDEF") == fill_hex_value_.GetLength())
 		{
-			AfxMessageBox("Please enter at least one hex digit");
+			TaskMessageBox("No Hex Data", "Please enter at least one hex digit.");
 			ctl_hex_value_.SetFocus();
 			return;
 		}
@@ -426,7 +426,7 @@ void CNewFile::OnOK()
 		// Make sure the string is not empty
 		if (fill_string_value_.IsEmpty())
 		{
-			AfxMessageBox("Please enter one or more characters");
+			TaskMessageBox("Empty String", "Please enter one or more characters.");
 			ctl_fill_string_value_.SetFocus();
 			return;
 		}
@@ -439,8 +439,8 @@ void CNewFile::OnOK()
 
 			if (rand_rs.empty() || *(rand_rs.begin()) > 255)
 			{
-				AfxMessageBox("Please enter at least one byte\r\n"
-							  "value in the range 0 to 255.");
+				TaskMessageBox("Range Required", "Please enter a byte (decimal) "
+							  "value or one or more ranges using values from 0 to 255.");
 				ctl_fill_random_range_.SetFocus();
 				return;
 			}
@@ -451,7 +451,7 @@ void CNewFile::OnOK()
 		// Make sure there is a number
 		if (strcspn(fill_number_value_, "0123456789") == fill_number_value_.GetLength())
 		{
-			AfxMessageBox("Please enter a number");
+			TaskMessageBox("Number Required", "Please enter a number.");
 			ctl_fill_number_value_.SetFocus();
 			return;
 		}

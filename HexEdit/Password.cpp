@@ -131,28 +131,28 @@ void CPassword::OnOK()
 	// Check that the password is the minimum size
 	if (m_password.IsEmpty())
 	{
-		AfxMessageBox("Please enter the password");
+		TaskMessageBox("No Password", "Please enter the password");
 		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
 		GetDlgItem(IDC_PASSWORD_ENTER)->SetFocus();
 		return;
 	}
 	else if (m_mask && m_reentered.IsEmpty())
 	{
-		AfxMessageBox("Please re-enter the password");
+		TaskMessageBox("No Password", "Please re-enter the password");
 		ASSERT(GetDlgItem(IDC_PASSWORD_REENTER) != NULL);
 		GetDlgItem(IDC_PASSWORD_REENTER)->SetFocus();
 		return;
 	}
 	else if (m_mask && m_password != m_reentered)
 	{
-		AfxMessageBox("The passwords are not the same");
+		TaskMessageBox("Passwords Different", "The passwords are not the same.");
 		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
 		GetDlgItem(IDC_PASSWORD_ENTER)->SetFocus();
 		return;
 	}
 	else if (m_password.GetLength() < m_min)
 	{
-		AfxMessageBox("The password is too short");
+		TaskMessageBox("Password Too Short", "The password is too short");
 		ASSERT(GetDlgItem(IDC_PASSWORD_ENTER) != NULL);
 		GetDlgItem(IDC_PASSWORD_ENTER)->SetFocus();
 		return;

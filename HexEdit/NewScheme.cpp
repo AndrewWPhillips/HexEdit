@@ -120,14 +120,14 @@ void CNewScheme::OnOK()
 	// Make sure a name has been entered
 	if (scheme_name_.IsEmpty())
 	{
-		AfxMessageBox("Please enter a name for the scheme.");
+		TaskMessageBox("Name Required", "Please enter a name for the scheme.");
 		ASSERT(GetDlgItem(IDC_SCHEME_NAME) != NULL);
 		GetDlgItem(IDC_SCHEME_NAME)->SetFocus();
 		return;
 	}
 	if (strchr(scheme_name_, '|') != NULL)
 	{
-		AfxMessageBox("A scheme name may not contain a vertical bar character(|).");
+		TaskMessageBox("Invalid Name", "A scheme name may not contain a vertical bar character(|).");
 		ASSERT(GetDlgItem(IDC_SCHEME_NAME) != NULL);
 		GetDlgItem(IDC_SCHEME_NAME)->SetFocus();
 		return;
@@ -139,7 +139,8 @@ void CNewScheme::OnOK()
 	for (ps = psvec_->begin(); ps != psvec_->end(); ++ps)
 		if (scheme_name_ == ps->name_)
 		{
-			AfxMessageBox("Please enter a unique name for the scheme.");
+			TaskMessageBox("Duplicate Name", "This name is in use.  "
+			               "Please enter a different name for the scheme.");
 			ASSERT(GetDlgItem(IDC_SCHEME_NAME) != NULL);
 			GetDlgItem(IDC_SCHEME_NAME)->SetFocus();
 			return;

@@ -433,7 +433,6 @@ BOOL CBookmarkList::GoTo(int index)
 				  "\n\n%s\n\n"
 				  "Do you want to remove bookmark \"%s\"?",
 				  file_[index], name_[index]);
-		//if (AfxMessageBox(ss, MB_YESNO) == IDYES)
 		if (CAvoidableDialog::Show(IDS_BOOKMARK_FILENOTFOUND, ss, "Not Found", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
 		{
 			RemoveBookmark(index);

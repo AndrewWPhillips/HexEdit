@@ -264,7 +264,6 @@ bool CDFFDStruct::check_data()
 				TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
 							   "It is not be possible to differentiate between two elements "
 							   "with the same name at the same level (eg, in expressions).");
-				//AfxMessageBox("This element has a sibling with the same name");
 				ctl_name_.SetFocus();
 				return false;
 			}

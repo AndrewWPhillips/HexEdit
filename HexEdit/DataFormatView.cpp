@@ -3841,8 +3841,6 @@ void CDataFormatView::OnDffdSync()
 		CAvoidableDialog::Show(IDS_DFFD_SYNC_EOF,
 			"The address of this data element according to the "
 			"template is past the physical end of file.");
-		//AfxMessageBox("The address of this data element\r\n"
-		//			  "is past the physical end of file");
 		start = end = pdoc->length();
 	}
 	else if (end > pdoc->length())
@@ -3850,8 +3848,6 @@ void CDataFormatView::OnDffdSync()
 		CAvoidableDialog::Show(IDS_DFFD_SYNC_EOF,
 			"The address of this end of the data element according "
 			"to the template is past the physical end of file.");
-		//AfxMessageBox("The end of this data element\r\n"
-		//			  "is past the physical end of file");
 		end = pdoc->length();
 	}
 
@@ -4343,7 +4339,6 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 
 		case ID_DFFD_DELETE:
 			if (CAvoidableDialog::Show(IDS_DFFD_DELETE, "Are you sure you want to delete this element?", "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
-			//if (AfxMessageBox("Are you sure you want to delete this element?", MB_YESNO) == IDYES)
 			{
 				if (parent_type == CHexEditDoc::DF_USE_STRUCT)
 				{
@@ -4464,7 +4459,6 @@ void CDataFormatView::OnGridBeginLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResul
 		// This may be unexpected so tell the user what happened
 		TaskMessageBox("Field is read only",
 			"This field cannot be modified - see the \"read_only\" attribute for this field.");
-		//AfxMessageBox("This field is read only.", MB_OK);
 		*pResult = -1;
 		return;
 	}
@@ -4900,7 +4894,6 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 					strTmp.Format("The following string does not match any member of the enum list:\n\"%s\"\n\n"
 						"See the \"domain\" attribute for this field in the template.", ss);
 					TaskMessageBox("Invalid enum member", strTmp);
-					//AfxMessageBox(strTmp);
 					*pResult = -1;
 					return;
 				}
@@ -4972,7 +4965,6 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				// String longer than field (fixed length string field)
 				ss = ss.Left(df_size);
 				grid_.SetItemText(pItem->iRow, pItem->iColumn, ss);
-				//AfxMessageBox("String is too long - truncated");
 				CAvoidableDialog::Show(IDS_DFFD_TRUNCATED,
 					"The string you entered is too long for the "
 					"template field and has been truncated to fit.");
@@ -5038,7 +5030,6 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				CAvoidableDialog::Show(IDS_DFFD_TRUNCATED,
 					"The string you entered is too long for the "
 					"template field and has been truncated to fit.");
-				//AfxMessageBox("String is too long - truncated");
 			}
 			// else string is length of fixed length field OR var length field but string is same length as before
 			pdata = (unsigned char *)(const wchar_t *)sw;
@@ -5080,7 +5071,6 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				}
 				if (inv)
 				{
-					//AfxMessageBox("Invalid EBCDIC character");
 					CAvoidableDialog::Show(IDS_DFFD_INVALID_EBCDIC, 
 						"One or more characters were used that cannot be converted to EBCDIC.  "
 						"These have been converted to null (zero) bytes.");
@@ -5255,7 +5245,6 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				{
 					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
 						"The value exceeds the bits available in the bit-field, and has been truncated.");
-					//AfxMessageBox("Value exceeds available bits - truncated");
 					tmp8 &= bit_mask;
 				}
 				// Mask out (set to zero) the existing bits
@@ -5281,7 +5270,6 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				{
 					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
 						"The value exceeds the bits available in the bit-field, and has been truncated.");
-					//AfxMessageBox("Value exceeds available bits - truncated");
 					tmp16 &= bit_mask;
 				}
 				// Mask out (set to zero) the existing bits
@@ -5307,7 +5295,6 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				{
 					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
 						"The value exceeds the bits available in the bit-field, and has been truncated.");
-					//AfxMessageBox("Value exceeds available bits - truncated");
 					tmp32 &= bit_mask;
 				}
 				// Mask out (set to zero) the existing bits
@@ -5332,7 +5319,6 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				{
 					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
 						"The value exceeds the bits available in the bit-field, and has been truncated.");
-					//AfxMessageBox("Value exceeds available bits - truncated");
 					tmp64 &= bit_mask;
 				}
 				// Mask out (set to zero) the existing bits

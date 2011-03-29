@@ -373,7 +373,6 @@ BOOL CHexEditApp::InitInstance()
 						CAvoidableDialog::Show(IDS_UPDATE_AVAILABLE,
 						                       "A newer version of HexEdit is currently available for download.", "", 
 						                       MLCBF_OK_BUTTON, MAKEINTRESOURCE(IDI_INFO));
-						//AfxMessageBox(_T("A newer version of HexEdit is available for download."), MB_OK | MB_ICONINFORMATION);
 					}
 					WriteProfileInt(_T("Update"), _T("LastCheckDate"), (int)now);
 				}
@@ -820,27 +819,20 @@ void CHexEditApp::InitWorkspace()
 
 #ifdef SYS_SOUNDS
 	// Make sure sound registry settings are present
-	CSystemSound::Add(_T("Invalid Character"),
-					  CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
-	CSystemSound::Add(_T("Macro Finished"),
-					  CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
-	CSystemSound::Add(_T("Macro Error"),
-					  CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
-	CSystemSound::Add(_T("Calculator Overflow"),
-					  CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
-	CSystemSound::Add(_T("Calculator Error"),
-					  CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
+	CSystemSound::Add(_T("Invalid Character"),                 CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
+	CSystemSound::Add(_T("Macro Finished"),                    CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
+	CSystemSound::Add(_T("Macro Error"),                       CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
+	CSystemSound::Add(_T("Calculator Overflow"),               CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
+	CSystemSound::Add(_T("Calculator Error"),                  CSystemSound::Get(_T(".Default"), _T(".Default"), _T(".Default")));
 	CSystemSound::Add(_T("Comparison Difference Found"));
-	CSystemSound::Add(_T("Comparison Difference Not Found"),
-					  CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
+	CSystemSound::Add(_T("Comparison Difference Not Found"),   CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
 	CSystemSound::Add(_T("Search Text Found"));
-	CSystemSound::Add(_T("Search Text Not Found"),
-					  CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
+	CSystemSound::Add(_T("Search Text Not Found"),             CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
 	CSystemSound::Add(_T("Background Search Finished"));
 	CSystemSound::Add(_T("Background Scan Finished"));
 	CSystemSound::Add(_T("Background Compare Finished"));
-	CSystemSound::Add(_T("Invalid Address"),
-		CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
+	CSystemSound::Add(_T("Invalid Address"),                   CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
+	CSystemSound::Add(_T("Read Only"),                         CSystemSound::Get(_T("SystemAsterisk"), _T(".Default"), _T(".Default")));
 #endif
 
 	LoadStdProfileSettings(0);  // Load standard INI file options (including MRU)
@@ -1539,7 +1531,7 @@ int CHexEditApp::ExitInstance()
 		CString mess;
 		mess.Format("You currently have a large amount of data on the clipboard (%sbytes).\n\n"
 			        "Do you want to leave the data on the clipboard?", NumScale((double)last_cb_size_));
-		if (CAvoidableDialog::Show(IDS_LEAVE_LARGE_CB, mess, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
+		if (CAvoidableDialog::Show(IDS_LEAVE_LARGE_CB, mess,"",  MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
 			::EmptyClipboard();
 
 		::CloseClipboard();

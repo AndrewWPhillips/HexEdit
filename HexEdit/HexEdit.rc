@@ -3334,6 +3334,11 @@ BEGIN
     IDS_FILE_OPEN_READ_ONLY "Opened Read Only"
     IDS_FILE_OPEN_NON_EXCLUSIVE "Opened Non-Exclusive"
     IDS_FILE_OPEN_ERROR     "File Open Error"
+    IDS_CONT_SEARCH         "Continue Search?"
+    IDS_SEARCH_NOT_FOUND    "Not Found"
+    IDS_PROP_READONLY       "Read Only"
+	IDS_BOOKMARK_ALL_NOFILE "No Disk File"
+	IDS_OPTION_SAVE_ALL     "Save Defaults?"
 END
 
 STRINGTABLE 

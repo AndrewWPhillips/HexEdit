@@ -628,7 +628,6 @@ void CBookmarkDlg::OnAdd()
 		ss.Format("Bookmark \"%s\" already exists in file\n\n"
 				  "\"%s\"\n\n"
 				  "Do you want to move it?", name, file_name);
-		//if (AfxMessageBox(ss, MB_YESNO) != IDYES)
 		if (CAvoidableDialog::Show(IDS_BOOKMARK_EXISTS, ss, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
 			return;
 
@@ -836,11 +835,9 @@ void CBookmarkDlg::OnValidate()
 		mess.Format("%ld bookmarks were deleted (files missing)\n"
 					"%ld bookmarks were moved (past EOF)",
 					long(tt.size()), long(move_count));
-		//AfxMessageBox(mess);
 		CAvoidableDialog(IDS_BOOKMARKS_DELETED, mess);
 	}
 	else
-		//AfxMessageBox("No bookmarks were deleted or moved.");
 		CAvoidableDialog(IDS_BOOKMARKS_NONE_DELETED, 
 		                 "No bookmarks were deleted or moved.");
 }

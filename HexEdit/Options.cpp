@@ -505,8 +505,9 @@ void CSystemGeneralPage::OnShellopen()
 	UpdateData();
 	if (pParent->val_.shell_open_)
 	{
-		if (AfxMessageBox("This option affects all users of the system and\n"
-						  "can cause problems with some program launchers.\n"
+		if (TaskMessageBox("Warning",
+						  "This option affects all users of the system and "
+						  "can cause problems with some program launchers.  "
 						  "Do you want to enable this option anyway?",
 						  MB_YESNO) != IDYES)
 		{
@@ -1306,16 +1307,15 @@ void CTemplatePage::OnTemplatedir()
 	dlg.m_ofn.lpstrTitle = "Select Folder for HexEdit Templates";
 
 	if (dlg.DoModal() == IDOK &&
-		AfxMessageBox("The folder takes effect for any subsequent files you open.\n\n"
-					  "Please ensure that the folder contains the following files\n"
-					  "as well as any template (XML) files you require:\n"
-					  "\n"
+		TaskMessageBox("Changing Template Folder",
+					  "The folder takes effect for any subsequent files you open.  "
+					  "Please ensure that the folder contains the following files "
+					  "as well as any template (XML) files you require:\n\n"
 					  FILENAME_DTD "\n"
 					  FILENAME_DEFTEMPLATE "\n"
 					  "\n"
-					  "To use the C/C++ parser you also need the following files\n"
-					  "(and custom types/constants if you have defined them):\n"
-					  "\n"
+					  "To use the C/C++ parser you also need the following files "
+					  "(and custom types/constants if you have defined them):\n\n"
 					  "_standard_types.XML\n"
 					  "_common_types.XML\n"
 					  "_windows_types.XML\n"
@@ -1825,7 +1825,7 @@ void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 	// Make sure any text does not have a semi-colon as that is used as a separator in the registry string
 	if (ss.FindOneOf(";") != -1)
 	{
-		AfxMessageBox("Please do not use a semi-colon (;)");
+		TaskMessageBox("Invalid Type", "Please do not use a semi-colon (;)");
 		*pResult = -1;
 		return;
 	}
@@ -1836,7 +1836,7 @@ void CTipsPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 
 		if (ss.Find("sbyte") != -1)
 			tt = tint;
-		else if (ss.Find("byte") != -1 ||      // make sure this is done after "sbyte"
+		else if (ss.Find("byte") != -1 ||      // this search has to be done after the search for "sbyte"
 				 ss.Find("uword") != -1 ||
 				 ss.Find("udword") != -1 ||
 				 ss.Find("uqword") != -1 ||
@@ -2994,7 +2994,7 @@ void CMacroPage::OnLoadmacro()
 
 			// Display the comment for this macro
 			if (!comment.IsEmpty())
-				AfxMessageBox(comment);
+				TaskMessageBox("Macro Information", comment);
 		}
 	}
 }
@@ -3910,7 +3910,7 @@ void CFiltersPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 		CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
 		if (ss.FindOneOf(FILTER_DISALLOWED_CHARACTERS) != -1)
 		{
-			AfxMessageBox("Filters may not contain any of these characters:\n" FILTER_DISALLOWED_CHARACTERS);
+			TaskMessageBox("Invalid Filter", "Filters may not contain any of these characters:\n" FILTER_DISALLOWED_CHARACTERS);
 			*pResult = -1;
 			return;
 		}
@@ -3920,7 +3920,7 @@ void CFiltersPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 		CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
 		if (ss.FindOneOf("|") != -1)
 		{
-			AfxMessageBox("Please do not use a vertical bar (|)");
+			TaskMessageBox("Invalid File Name", "Please do not use a vertical bar (|)");
 			*pResult = -1;
 			return;
 		}
@@ -4081,7 +4081,10 @@ void CWindowGeneralPage::OnSaveDefault()
 	// valid at this point as any edited pages would have had their UpdateData()
 	// member called before now, ie when switching out of that page.
 
-	if (AfxMessageBox("Are you sure you want to use the current settings as the defaults?", MB_OKCANCEL) != IDOK)
+	if (CAvoidableDialog::Show(IDS_OPTION_SAVE_ALL,
+	                           "Are you sure you want to use the current settings as the defaults?",
+	                           "",
+	                           MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
 		return;
 
 	CHexEditView * pview = GetView();
@@ -4350,25 +4353,25 @@ BOOL CWindowPage::validated()
 {
 	if (pParent->val_.cols_ < 4)
 	{
-		AfxMessageBox("You must have at least 4 columns");
+		TaskMessageBox("Too Few Columns", "You must have at least 4 columns.");
 		GetDlgItem(IDC_COLS)->SetFocus();
 		return FALSE;
 	}
 	if (pParent->val_.cols_ > CHexEditView::max_buf)
 	{
-		AfxMessageBox("Too many columns");
+		TaskMessageBox("Too many columns", "You can't have more than 32,767 columns.");
 		GetDlgItem(IDC_COLS)->SetFocus();
 		return FALSE;
 	}
 	if (pParent->val_.offset_ >= pParent->val_.cols_)
 	{
-		AfxMessageBox("Offset must be less than the number of columns");
+		TaskMessageBox("Offset Too Big", "Offset must be less than the number of columns.");
 		GetDlgItem(IDC_OFFSET)->SetFocus();
 		return FALSE;
 	}
 	if (pParent->val_.display_.hex_area && pParent->val_.grouping_ < 2)
 	{
-		AfxMessageBox("There must be at least 2 columns per group");
+		TaskMessageBox("Grouping Too Small", "There must be at least 2 columns per group.");
 		GetDlgItem(IDC_GROUPING)->SetFocus();
 		return FALSE;
 	}

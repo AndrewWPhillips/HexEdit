@@ -420,7 +420,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		CAvoidableDialog::Show(IDS_BOOKMARKS_ADJUSTED, 
 			"The following bookmarks were invalid "
 			"and were moved to the end of file:\n" + mess);
-	((CMainFrame *)AfxGetMainWnd())->StatusBarText("Invalid bookmarks move to EOF");
+	((CMainFrame *)AfxGetMainWnd())->StatusBarText("Invalid bookmarks moved to EOF");
 
 	// Load XML file that is used to display the format of the data
 	// Note we load the template when the file is opened rather than if/when the template is needed:
@@ -702,7 +702,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 					// We're editing .BAK so save old as .BAC
 					backup_name += ".BAC";
 					CString mess;
-					mess.Format("Creating backup file\r \"%s\"",
+					mess.Format("Creating backup file\n \"%s\"",
 						(const char *)backup_name);
 					if (AfxMessageBox(mess, MB_OKCANCEL) == IDCANCEL)
 					{
@@ -724,7 +724,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 						(void)open_file(lpszPathName);
 
 						CString mess;
-						mess.Format("Could not remove previous backup file\r \"%s\"",
+						mess.Format("Could not remove previous backup file\n \"%s\"",
 							(const char *)backup_name);
 						AfxMessageBox(mess);
 						aa->mac_error_ = 10;
@@ -738,7 +738,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 					(void)open_file(lpszPathName);              // Reopen orig. file
 
 					CString mess;
-					mess.Format("Could not create backup file\r \"%s\"",
+					mess.Format("Could not create backup file\n \"%s\"",
 						(const char *)backup_name);
 					AfxMessageBox(mess);
 					aa->mac_error_ = 10;
@@ -804,7 +804,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 			}
 
 			CString mess;
-			mess.Format("File \"%s\" could not be renamed\r"
+			mess.Format("File \"%s\" could not be renamed\n"
 						"  to \"%s\"", temp_name, lpszPathName);
 			AfxMessageBox(mess);
 			aa->mac_error_ = 10;
@@ -1098,8 +1098,8 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 		{
 			// Open for write failed but open for read was OK
 			CString mess;
-			mess.Format("%s is in use or is a read only file.\r\r"
-				"It is opened for read only (no changes possible)\r"
+			mess.Format("%s is in use or is a read only file.\n\n"
+				"It is opened for read only (no changes possible) "
 				"with shared access (file contents can change).", lpszPathName);
 			CAvoidableDialog::Show(IDS_FILE_OPEN_READ_ONLY, mess);
 			((CMainFrame *)AfxGetMainWnd())->StatusBarText("Warning: File opened non-exclusive, read-only");
@@ -1117,42 +1117,42 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 		switch (fe.m_cause)
 		{
 		case CFileException::fileNotFound:
-			mess += "\rdoes not exist";
+			mess += "\ndoes not exist";
 			break;
 		case CFileException::badPath:
-			mess += "\ris an invalid file name or the drive/path does not exist";
+			mess += "\nis an invalid file name or the drive/path does not exist";
 			break;
 		case CFileException::tooManyOpenFiles:
-			mess += "\r- too many files already open";
+			mess += "\n- too many files already open";
 			break;
 		case CFileException::accessDenied:
 			if (is_device)
-				mess += "\r- you need to run as administrator to access devices";
+				mess += "\n- you need to run as administrator to access devices";
 			else if (!CFile::GetStatus(lpszPathName, fs))
-				mess += "\rdoes not exist";
+				mess += "\ndoes not exist";
 			else
 			{
 				if (fs.m_attribute & CFile::directory)
-					mess += "\ris a directory";
+					mess += "\nis a directory";
 				else if (fs.m_attribute & (CFile::volume|CFile::hidden|CFile::system))
-					mess += "\ris a special file";
+					mess += "\nis a special file";
 				else
-					mess += "\rcannot be used (reason unknown)";
+					mess += "\ncannot be used (reason unknown)";
 			}
 			break;
 		case CFileException::sharingViolation:
 		case CFileException::lockViolation:
-			mess += "\ris in use";
+			mess += "\nis in use";
 			break;
 		case CFileException::hardIO:
-			mess += "\r- hardware error";
+			mess += "\n- hardware error";
 			break;
 		case 0xDEAD:
-			mess += "\rUnrecognised or corrupt volume"
-					"\r(you may need to use the corresponding physical device)";
+			mess += "\nUnrecognised or corrupt volume"
+					"\n(you may need to use the corresponding physical device)";
 			break;
 		default:
-			mess += "\rcould not be opened (reason unknown)";
+			mess += "\ncould not be opened (reason unknown)";
 			break;
 		}
 		CAvoidableDialog::Show(IDS_FILE_OPEN_ERROR, mess, 0, 0, MAKEINTRESOURCE(IDI_CROSS));
