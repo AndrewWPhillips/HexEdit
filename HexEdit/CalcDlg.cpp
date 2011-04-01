@@ -695,6 +695,19 @@ mpz_class CCalcDlg::get_norm(mpz_class v) const
 	return retval;
 }
 
+void CCalcDlg::SetFromFile(FILE_ADDRESS addr)
+{
+	if (!get_bytes(addr))
+	{
+		state_ = CALCERROR;
+		return;
+	}
+	state_ = CALCINTUNARY;
+	edit_.put();
+	edit_.get();
+	set_right();
+}
+
 // Get data from the file into calculator, reversing byte order if necessary
 // Returns false on error such as no file open or invalid address.
 bool CCalcDlg::get_bytes(FILE_ADDRESS addr)

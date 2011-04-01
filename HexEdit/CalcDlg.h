@@ -94,6 +94,8 @@ public:
 	void Set(mpz_class t) { current_ = t; state_ = CALCINTUNARY; edit_.put(); }
 	void Set(unsigned __int64 v) { mpz_set_ui64(current_.get_mpz_t(), v); state_ = CALCINTUNARY; edit_.put(); }
 	void SetStr(CString ss)  { current_str_ = ss; state_ = CALCOTHRES; edit_.put(); state_ = edit_.update_value(false); }
+	void SetFromFile(FILE_ADDRESS addr);
+
 	void change_base(int base);    // set radix (2 to 36)
 	void change_signed(bool s);    // set whether numbers are signed or unsigned
 	void change_bits(int);         // chnage how many bits are used (0 = unlimited)
@@ -338,8 +340,8 @@ private:
 	ExprStringType get_expr(bool no_paren = false); // Get an expression that represents current calc value (if = used) including all binary/unary operations
 	void set_right();
 	void fix_values();                      // Update min, max etc based on latest settings (radix_, signed_)
-	bool get_bytes(FILE_ADDRESS addr);      // Load bytes into calculator from file address (or special locations for -ve values)
 	bool put_bytes(FILE_ADDRESS addr);      // Write calculator bytes to file at addr (or special locations for -ve values)
+	bool get_bytes(FILE_ADDRESS addr);      // Load bytes into calculator from current file address (or special locations for -ve values)
 
 	CHexEditApp *aa_;                       // Ptr to the app (mainly for macro handling)
 	CMainFrame *mm_;                        // Ptr to the main window

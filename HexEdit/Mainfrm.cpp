@@ -4216,14 +4216,18 @@ void CMainFrame::OnCalcSel()
 	CHexEditView *pview = GetView();
 	if (pview != NULL)
 	{
-		__int64 sel_val = 0;                    // Value from file to add to the calc
-
 		ASSERT(m_wndCalc.m_hWnd != 0);
 
 		FILE_ADDRESS start_addr, end_addr;              // Current selection
 		pview->GetSelAddr(start_addr, end_addr);
 		if (start_addr == end_addr)
 			end_addr = start_addr + m_wndCalc.ByteSize();
+
+#if 1
+		m_wndCalc.change_bits((int)(end_addr - start_addr)*8);
+		m_wndCalc.SetFromFile(start_addr);
+#else
+		__int64 sel_val = 0;                    // Value from file to add to the calc
 
 		unsigned char buf[8];
 		size_t got = pview->GetDocument()->GetData(buf, min(8, size_t(end_addr - start_addr)), start_addr);
@@ -4270,6 +4274,7 @@ void CMainFrame::OnCalcSel()
 		//m_wndCalc.UpdateData(FALSE);
 
 		m_wndCalc.Set(sel_val);
+#endif
 
 		m_wndCalc.SetFocus();
 
