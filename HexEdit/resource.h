@@ -208,27 +208,25 @@
 #define IDR_OPER                        257
 #define IDI_MACRO                       258
 #define IDI_ARROW                       259
-#define IDD_NEW_SCHEME                  263
-#define IDI_STRUCT                      263
-#define IDD_MULTIPLAY1                  264
-#define IDI_FOR                         264
-#define IDD_MACRO_MESSAGE               265
-#define IDI_IF                          265
-#define IDB_IMAGELIST                   266
-#define IDI_DATA                        266
+#define IDI_STRUCT                      260
+#define IDI_FOR                         261
+#define IDI_IF                          262
+#define IDI_DATA                        263
+#define IDI_EVAL                        264
+#define IDI_JUMP                        265
+#define IDI_SWITCH                      266
+
 #define IDD_STARTUP                     267
 #define IDB_DEVIMAGES                   267
-#define IDI_EVAL                        267
 #define IDD_OPT_WINDISPLAY              268
-#define IDI_JUMP                        268
-#define IDB_LIGHTBULB1                  268
 #define IDB_SEARCH                      268
 #define IDD_PROP_DATE                   269
-#define IDI_SWITCH                      269
 #define IDD_RECENT_FILES                270
 #define IDD_BOOKMARKS                   271
+#define IDD_NEW_SCHEME                  272
+#define IDD_MACRO_MESSAGE               273
 #define IDD_CLEAR_HIST                  274
-#define IDD_PRINTDLG                    275
+#define IDB_IMAGELIST                   275
 #define IDD_BM_FIND                     276
 #define IDD_DFFD_DATA                   277
 #define IDD_DFFD_STRUCT                 278
@@ -238,6 +236,7 @@
 #define IDR_CONTEXT_TABS                280
 #define IDD_DFFD_GLOBAL                 281
 #define IDD_SAVE_TEMPLATE               282
+#define IDD_PRINTDLG                    283
 #define IDD_NEW_FILE                    284
 #define IDD_CSRC                        287
 #define IDD_OPEN_SPECIAL                289
@@ -417,6 +416,10 @@
 #define IDI_EXCLAMATIONMARK             441
 #define IDI_INFO                        442
 #define IDI_CROSS                       443
+#define IDR_CONTEXT_OFFSET_HANDLE       445
+#define IDR_CONTEXT_GROUPING_HANDLE     446
+#define IDR_CONTEXT_COLUMNS_HANDLE      447
+#define IDR_CONTEXT_RULER               448
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1690,7 +1693,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        445
+#define _APS_NEXT_RESOURCE_VALUE        460
 #define _APS_NEXT_COMMAND_VALUE         39152
 #define _APS_NEXT_CONTROL_VALUE         1615
 #define _APS_NEXT_SYMED_VALUE           252

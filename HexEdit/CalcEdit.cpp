@@ -855,7 +855,6 @@ HBRUSH CCalcComboBox::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	if (nCtlColor == CTLCOLOR_LISTBOX)
 	{
-		TRACE("xxxxxxxxxx CCalcComboBox::OnCtlColor\r\n");
 		if (listbox_.GetSafeHwnd() == NULL)
 			listbox_.SubclassWindow(pWnd->GetSafeHwnd());
 	}

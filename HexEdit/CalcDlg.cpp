@@ -91,7 +91,6 @@ void CCalcBits::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
 // Draw the images for the bits in the erase background event
 BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 {
-	TRACE("xxxxxxxxxx CCalcBits::OnEraseBkgnd\r\n");
 	CRect rct;    // used for drawing/fills etc and for calculations
 	GetClientRect(&rct);
 	pDC->FillSolidRect(rct, afxGlobalData.clrBarFace);

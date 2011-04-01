@@ -1739,6 +1739,7 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
 
 void CHexEditApp::PreLoadState()
 {
+	// Add double click handlers
 	GetMouseManager()->AddView(IDR_CONTEXT_ADDRESS, "Address Area");
 	GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_ADDRESS, ID_SELECT_LINE);
 	GetMouseManager()->AddView(IDR_CONTEXT_HEX, "Hex Area");
@@ -1749,6 +1750,10 @@ void CHexEditApp::PreLoadState()
 	GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_HIGHLIGHT, ID_HIGHLIGHT_SELECT);
 	GetMouseManager()->AddView(IDR_CONTEXT_BOOKMARKS, "Bookmark");
 	GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_BOOKMARKS, ID_BOOKMARKS_EDIT);
+	GetMouseManager()->AddView(IDR_CONTEXT_OFFSET_HANDLE,   "Ruler:Offset Handle");
+	GetMouseManager()->AddView(IDR_CONTEXT_GROUPING_HANDLE, "Ruler:Group Handle");
+	GetMouseManager()->AddView(IDR_CONTEXT_COLUMNS_HANDLE,  "Ruler:Cols Handle");
+	GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_COLUMNS_HANDLE, ID_AUTOFIT);
 
 	GetContextMenuManager()->AddMenu(_T("Address Area"), IDR_CONTEXT_ADDRESS);
 	GetContextMenuManager()->AddMenu(_T("Hex Area"), IDR_CONTEXT_HEX);

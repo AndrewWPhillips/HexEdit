@@ -6479,28 +6479,29 @@ void CHexEditView::OnDestroy()
 // Point is in window coordinates
 void CHexEditView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-#if 0
-	if (point.x < hex_pos(0))
-		theApp.OnViewDoubleClick(this, IDR_CONTEXT_ADDRESS);
-	else if (display_.vert_display)
-	{
-		CPointAp pp = ConvertFromDP(point);          // Convert point to doc coords
-		if (pp.y%line_height_ < text_height_)
-			theApp.OnViewDoubleClick(this, IDR_CONTEXT_CHAR); // click on top (char) row
-		else
-			theApp.OnViewDoubleClick(this, IDR_CONTEXT_HEX);  // click on one of bottom 2 rows
-	}
-	else if (!display_.char_area || point.x < char_pos(0))
-		theApp.OnViewDoubleClick(this, IDR_CONTEXT_HEX);
-	else
-		theApp.OnViewDoubleClick(this, IDR_CONTEXT_CHAR);
-#endif
 	CPointAp doc_pt = ConvertFromDP(point);
 
 	if (( (display_.vert_display || display_.char_area) && doc_pt.x >= char_pos(rowsize_)+text_width_ ||
 		 !(display_.vert_display || display_.char_area) && doc_pt.x >= hex_pos(rowsize_) )  )
 	{
 		// Don't do anything if off to right
+		return;
+	}
+
+	if (point.y < bdr_top_)       // above top (ie in ruler)
+	{
+#ifdef RULER_ADJUST
+		// Cancel any accidental adjustments
+		adjusting_rowsize_ = adjusting_offset_ = adjusting_group_by_ = -1;
+		// Ruler area - check for double click on any of the adjusters
+		if (over_offset_adjuster(doc_pt))
+			theApp.OnViewDoubleClick(this, IDR_CONTEXT_OFFSET_HANDLE);
+		else if (over_group_by_adjuster(doc_pt))
+			theApp.OnViewDoubleClick(this, IDR_CONTEXT_GROUPING_HANDLE);
+		else if (over_rowsize_adjuster(doc_pt))
+			theApp.OnViewDoubleClick(this, IDR_CONTEXT_COLUMNS_HANDLE);
+		// else ignore any other ruler double-click for now
+#endif
 		return;
 	}
 
@@ -6768,7 +6769,7 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 #ifdef RULER_ADJUST
-	if (adjusting_rowsize_ > -1)
+	if (adjusting_rowsize_ > -1 && adjusting_rowsize_ != rowsize_)
 	{
 		FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
 
@@ -6800,7 +6801,7 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 		return;
 	}
 
-	if (adjusting_offset_ > -1)
+	if (adjusting_offset_ > -1 && adjusting_offset_ != offset_)
 	{
 		undo_.push_back(view_undo(undo_offset));
 		undo_.back().rowsize = real_offset_;        // Save previous offset for undo
@@ -6818,7 +6819,7 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 		return;
 	}
 
-	if (adjusting_group_by_ > -1)
+	if (adjusting_group_by_ > -1 && adjusting_group_by_ != group_by_)
 	{
 		undo_.push_back(view_undo(undo_group_by));
 		undo_.back().rowsize = group_by_;              // Save previous group_by for undo
