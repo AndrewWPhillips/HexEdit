@@ -230,7 +230,12 @@ public:
 // Dialog Data
 	enum { IDD = IDD_OPT_SYSTEM };
 
-	void SetHistPage(COptPage * pPage) { pHistPage = pPage; }
+	void SetHistPage(COptPage * pPage)
+	{
+		pHistPage = pPage;
+		if (m_hWnd != (HWND)0)
+			GetDlgItem(IDC_HIST_PAGE)->EnableWindow(pHistPage != NULL);
+	}
 
 // Overrides
 public:
@@ -345,7 +350,12 @@ public:
 // Dialog Data
 	enum { IDD = IDD_OPT_WORKLAYOUT };
 
-	void SetStartupPage(COptPage * pPage) { pStartupPage = pPage; }
+	void SetStartupPage(COptPage * pPage)
+	{
+		pStartupPage = pPage;
+		if (m_hWnd != (HWND)0)
+			GetDlgItem(IDC_STARTUP_PAGE)->EnableWindow(pStartupPage != NULL);
+	}
 
 // Overrides
 public:
@@ -387,7 +397,12 @@ public:
 
 	LRESULT OnIdle(long);
 
-	void SetDocDisplayPage(COptPage * pPage) { pDocPage = pPage; }
+	void SetDocDisplayPage(COptPage * pPage)
+	{
+		pDocPage = pPage;
+		if (m_hWnd != (HWND)0)
+			GetDlgItem(IDC_DOC_PAGE)->EnableWindow(pDocPage != NULL);
+	}
 
 // Overrides
 public:
@@ -428,8 +443,19 @@ public:
 
 	enum { IDD = IDD_OPT_WORKEDIT };
 
-	void SetDocEditPage(COptPage * pPage) { pDocPage = pPage; }
-	void SetBackupPage(COptPage * pPage)  { pBackupPage = pPage; }
+	void SetDocEditPage(COptPage * pPage)
+	{
+		pDocPage = pPage;
+		if (m_hWnd != (HWND)0)
+			GetDlgItem(IDC_DOC_PAGE)->EnableWindow(pDocPage != NULL);
+	}
+	void SetBackupPage(COptPage * pPage)
+	{
+		// XXX TODO TBD when backup options moved to another page
+		pBackupPage = pPage;
+		//if (m_hWnd != (HWND)0)
+		//	GetDlgItem(IDC_XXX)->EnableWindow(pBackupPage != NULL);
+	}
 
 // Overrides
 public:
@@ -822,7 +848,12 @@ public:
 // Dialog Data
 	enum { IDD = IDD_OPT_WINDISPLAY };
 
-	void SetGlobalDisplayPage(COptPage * pPage) { pGlobalPage = pPage; }
+	void SetGlobalDisplayPage(COptPage * pPage)
+	{
+		pGlobalPage = pPage;
+		if (m_hWnd != (HWND)0)
+			GetDlgItem(IDC_GLOBAL_PAGE)->EnableWindow(pGlobalPage != NULL);
+	}
 
 	LRESULT OnIdle(long);
 
@@ -876,7 +907,12 @@ public:
 // Dialog Data
 	enum { IDD = IDD_OPT_WINEDIT };
 
-	void SetGlobalEditPage(COptPage * pPage) { pGlobalPage = pPage; }
+	void SetGlobalEditPage(COptPage * pPage)
+	{
+		pGlobalPage = pPage;
+		if (m_hWnd != (HWND)0)
+			GetDlgItem(IDC_GLOBAL_PAGE)->EnableWindow(pGlobalPage != NULL);
+	}
 
 	LRESULT OnIdle(long);
 

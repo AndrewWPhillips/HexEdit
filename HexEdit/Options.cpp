@@ -270,7 +270,7 @@ void COptSheet::page_init()
 
 	CMFCPropertySheetCategoryInfo * pCatPrn = AddTreeCategory("Printer", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
 	AddPageToTree(pCatPrn, &printGeneralPage_, IMG_PRINTER, IMG_PRINTER);
-	AddPageToTree(pCatPrn, &printDecorationsPage_, IMG_PRINTER, IMG_PRINTER_DECO);
+	AddPageToTree(pCatPrn, &printDecorationsPage_, IMG_PRINTER_DECO, IMG_PRINTER_DECO);
 	AddPageToTree(pCatSys_, &macroPage_, IMG_MACRO, IMG_MACRO);
 	AddPageToTree(pCatSys_, &histPage_, IMG_HIST, IMG_HIST);
 
