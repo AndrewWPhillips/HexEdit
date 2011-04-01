@@ -3337,8 +3337,9 @@ BEGIN
     IDS_CONT_SEARCH         "Continue Search?"
     IDS_SEARCH_NOT_FOUND    "Not Found"
     IDS_PROP_READONLY       "Read Only"
-	IDS_BOOKMARK_ALL_NOFILE "No Disk File"
-	IDS_OPTION_SAVE_ALL     "Save Defaults?"
+    IDS_BOOKMARK_ALL_NOFILE "No Disk File"
+    IDS_OPTION_SAVE_ALL     "Save Defaults?"
+    IDS_RECENT_GONE         "Remove Recent File?"
 END
 
 STRINGTABLE 

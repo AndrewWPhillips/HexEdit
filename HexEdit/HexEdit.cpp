@@ -437,7 +437,6 @@ BOOL CHexEditApp::InitInstance()
 		// NOTE: the name "RecentFiles" is also used at end of ExitInstance
 		m_pRecentFileList = new CHexFileList(0, FILENAME_RECENTFILES, recent_files_);
 		m_pRecentFileList->ReadList();
-		m_keepEntry = false;
 
 		// This used to be after the command line parsing but was moved here so that
 		// when files are opened the size of the main window is known so that they
@@ -1008,16 +1007,10 @@ void CHexEditApp::OnFileOpen()
 
 CDocument* CHexEditApp::OpenDocumentFile(LPCTSTR lpszFileName)
 {
+	CWaitCursor wc;
 	CDocument *retval = CWinAppEx::OpenDocumentFile(lpszFileName);
 	if (retval == NULL)
-	{
-		// This can happen for a volume that has been dismounted (eg "X:f.exe" where drive X: no longer exists)
-		// We probably should check for this and not remove from the recent file list in that case.
-		AfxMessageBox("Could not open the file - device not present?",
-					  MB_OK|MB_ICONSTOP);
-		m_keepEntry = true;
-		return NULL;
-	}
+		return NULL;     // File or device not found (error message has already been shown)
 
 	// Get file extension and change "." to "_" and make macro filename
 	ASSERT(mac_dir_.Right(1) == "\\");
@@ -1065,10 +1058,14 @@ BOOL CHexEditApp::OnOpenRecentFile(UINT nID)
 	ASSERT(open_current_readonly_ == -1);
 	if (OpenDocumentFile((*m_pRecentFileList)[nIndex]) == NULL)
 	{
-		if (m_keepEntry)
-			m_keepEntry = false;
-		else
+		if (CAvoidableDialog::Show(IDS_RECENT_GONE,
+								   "The file or device could not be opened.\n\n"
+								   "Do you want to remove the entry from the recent file list?",
+								   "",
+								   MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+		{
 			m_pRecentFileList->Remove(nIndex);
+		}
 		mac_error_ = 10;                        // User has been told that file could not be found
 		return FALSE;
 	}

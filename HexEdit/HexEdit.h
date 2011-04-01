@@ -794,7 +794,6 @@ public:
 	BOOL import_discon_;                // Allow discontiguous addresses when importing (and exporting too now)
 	BOOL import_highlight_;             // Highlight changed bytes for import
 	int recent_files_;                  // Number of recent files to put on menus
-	bool m_keepEntry;
 
 	int prop_page_;                     // Last active properties page
 	UINT prop_dec_signed_;              // Display signed decimal values
