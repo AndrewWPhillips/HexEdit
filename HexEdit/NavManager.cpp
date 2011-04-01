@@ -337,10 +337,10 @@ void CNavManager::do_move(int ii)
 
 		CString ss;
 		if (!v_[ii].fname_.IsEmpty())
-			ss.Format("Location \"%s\" could not be found/opened.", v_[ii].fname_);
+			ss.Format("The previous location could not be returned to as \"%s\" could not be found/opened.", v_[ii].fname_);
 		else
-			ss = "The location/file could not found";
-		TaskMessageBox("Not Found", ss);
+			ss = "The location could not be found.";
+		TaskMessageBox("Nav. Point Not Found", ss);
 		in_move_ = false;
 		return;
 	}

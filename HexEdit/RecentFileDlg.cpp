@@ -779,12 +779,11 @@ void CRecentFileDlg::OnOpenRO()
 		std::set<CString>::const_iterator pp;
 
 	// Now open the files
-	CHexEditDoc *pdoc;
 	for (pp = to_open.begin(); pp != to_open.end(); ++pp)
 	{
 		ASSERT(theApp.open_current_readonly_ == -1);
 		theApp.open_current_readonly_ = TRUE;  // This must be done for each file to ensure open_file opens read_only
-		if ((pdoc = (CHexEditDoc*)theApp.OpenDocumentFile(*pp)) != NULL)
+		if (theApp.OpenDocumentFile(*pp) != NULL)
 			theApp.SaveToMacro(km_open, *pp);
 	}
 
@@ -855,7 +854,7 @@ void CRecentFileDlg::OnValidate()
 		grid_.DeleteRow(*(--pp));
 	grid_.Refresh();
 
-	// Tell the user what we did
+	// Teel the user what we did
 	CString ss;
 	if (count == 0)
 		ss = "No files removed from the\n"
@@ -865,7 +864,7 @@ void CRecentFileDlg::OnValidate()
 	else
 		ss.Format("%ld files removed from the\n"
 				  "recently used file list.",  long(count));
-	TaskMessageBox("Validate All", ss);
+	AfxMessageBox(ss);
 }
 
 void CRecentFileDlg::OnDestroy()
