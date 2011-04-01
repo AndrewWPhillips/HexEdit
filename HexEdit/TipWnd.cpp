@@ -159,6 +159,19 @@ void CTipWnd::Move(CPoint pt, bool centre /* = true */)
 	if (pt != curr)
 	{
 		rct += pt - curr;
+		if (::OutsideMonitor(rct))
+		{
+			// Make sure it's fully isnide the monitor else this type of window will go haywire
+			CRect wnd_rct = ::MonitorMouse();
+			if (rct.left < wnd_rct.left)
+				rct.MoveToX(wnd_rct.left);
+			else if (rct.right > wnd_rct.right)
+				rct.MoveToX(wnd_rct.right - rct.Width());
+			if (rct.top < wnd_rct.top)
+				rct.MoveToY(wnd_rct.top);
+			else if (rct.bottom > wnd_rct.bottom)
+				rct.MoveToY(wnd_rct.bottom - rct.Height());
+		}
 		MoveWindow(&rct, FALSE);
 	}
 }
