@@ -1,6 +1,0 @@
-HexEdit 4.0 Release Notes
-=========================
-
-See the What's New section of the help for more details.
-
----- End of Release Notes ----
