@@ -1,0 +1,2 @@
+IF (Name.Text <> )  THEN  Next.Enabled := True;
+IF (Name.Text = )  THEN  Next.Enabled := False;

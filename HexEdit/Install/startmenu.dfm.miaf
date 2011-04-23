@@ -1,0 +1,6 @@
+IF (MenuGroup.Text <> )  THEN  Next.Enabled := True;
+IF (MenuGroup.Text = )  THEN  Next.Enabled := False;
+IF (ISNT.Caption = TRUE)  THEN  AllUsers.Enabled := True;
+IF (ISNT.Caption <> TRUE)  THEN  AllUsers.Enabled := False;
+IF (ExeShortcut.Checked = True)  THEN  MenuGroup.Enabled := False;
+IF (AllShortcuts.Checked = True)  THEN  MenuGroup.Enabled := True;
