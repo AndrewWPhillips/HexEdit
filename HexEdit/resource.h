@@ -913,6 +913,7 @@
 #define IDC_DFFD_INSERT                 1332
 #define IDC_DFFD_STOP_VAR               1332
 #define IDC_DFFD_DELETE                 1333
+#define IDC_DFFD_COLOUR_DESC            1333
 #define IDC_DFFD_EDIT                   1334
 #define IDC_DFFD_REPLACE                1335
 #define IDC_DFFD_STOP                   1336
@@ -1196,6 +1197,7 @@
 #define IDC_SPIN_RADIX                  1612
 #define IDC_DESC_RADIX                  1613
 #define IDC_DESC_BITS                   1614
+#define IDC_DFFD_COLOUR_PICKER          1615
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1695,7 +1697,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        460
 #define _APS_NEXT_COMMAND_VALUE         39152
-#define _APS_NEXT_CONTROL_VALUE         1615
+#define _APS_NEXT_CONTROL_VALUE         1616
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

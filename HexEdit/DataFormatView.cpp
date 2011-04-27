@@ -3067,6 +3067,7 @@ void CDataFormatView::do_edit(int index, signed char parent_type)
 }
 
 // Return elt index of leaf elt containing address or elt past end if not found
+// TBD: xxx if template contains JUMP(s) then we should do a linear search
 size_t CDataFormatView::find_address(FILE_ADDRESS addr)
 {
 	std::vector<FILE_ADDRESS> *pv = &(GetDocument()->df_address_);
@@ -3106,6 +3107,38 @@ stop_search:
 			++bot;
 
 	return bot;
+}
+
+// Searches for the data field at addr or the next data field after addr and returns its address.
+// Also returns the length of the field and its associated colour (for usbackground in hex view).
+FILE_ADDRESS CDataFormatView::NextField(FILE_ADDRESS addr, FILE_ADDRESS &len, COLORREF &clr)
+{
+	FILE_ADDRESS retval = -1;
+	clr = -1;
+	size_t elt = find_address(addr);
+
+	if (elt >= GetDocument()->df_address_.size())
+		return -1;
+
+	CHexEditDoc *pdoc = GetDocument();
+	ASSERT(pdoc != NULL);
+	int type = pdoc->df_type_[elt];
+	if (type < 0) type = - type;
+
+	ASSERT(type > CHexEditDoc::DF_DATA);
+	// Check if the field is invalid somehow
+	if (type > CHexEditDoc::DF_DATA && pdoc->df_size_[elt] > 0)
+	{
+		// Field is OK - so get its length, colour and address
+		len = pdoc->df_size_[elt];
+		CString ss = pdoc->df_elt_[elt].GetAttr("Color");
+		if (ss.IsEmpty() || ss.CompareNoCase("none") == 0)
+			clr = -1;
+		else
+			clr = strtoul(ss, NULL, 16);  // Colour is stored as 6 hex digits RRGGBB
+		retval = pdoc->df_address_[elt];
+	}
+	return retval;
 }
 
 // Select the data element that contains the address.

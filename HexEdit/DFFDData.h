@@ -93,6 +93,8 @@ public:
 	int dirn_;
 	CComboBox ctl_dirn_;
 
+	CMFCColorButton	m_ColourPicker;  // for picking background colour used in hex view
+	COLORREF clr_;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -124,6 +126,7 @@ protected:
 	afx_msg void OnClone();
 	afx_msg void OnChangeLength();
 	afx_msg void OnBitfield();
+	afx_msg void OnColourPicker();
 	DECLARE_MESSAGE_MAP()
 
 	CXmlTree::CElt *pelt_;

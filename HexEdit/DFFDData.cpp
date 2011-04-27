@@ -75,6 +75,7 @@ CDFFDData::CDFFDData(CXmlTree::CElt *pp, signed char parent_type, CWnd* pParent 
 	bitfield_ = FALSE;
 	bits_ = 1;
 	dirn_ = 0;
+	clr_ = 0xffffFFFF;
 }
 
 CDFFDData::~CDFFDData()
@@ -136,8 +137,12 @@ void CDFFDData::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_DFFD_BITFIELD_BITS, bits_);
 	DDX_Control(pDX, IDC_DFFD_BITFIELD_DIRN, ctl_dirn_);
 	DDX_CBIndex(pDX, IDC_DFFD_BITFIELD_DIRN, dirn_);
-}
 
+	// Colour picker
+	DDX_Control(pDX, IDC_DFFD_COLOUR_PICKER, m_ColourPicker);
+	if (!pDX->m_bSaveAndValidate)
+		m_ColourPicker.SetColor(clr_);
+}
 
 BEGIN_MESSAGE_MAP(CDFFDData, CDialog)
 	//{{AFX_MSG_MAP(CDFFDData)
@@ -165,6 +170,7 @@ BEGIN_MESSAGE_MAP(CDFFDData, CDialog)
 	ON_BN_CLICKED(IDC_DFFD_BITFIELD, OnBitfield)
 	ON_EN_CHANGE(IDC_DFFD_BITFIELD_BITS, OnChange)
 	ON_CBN_SELCHANGE(IDC_DFFD_TYPE, OnChange)
+	ON_BN_CLICKED(IDC_DFFD_COLOUR_PICKER, OnColourPicker)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -214,6 +220,12 @@ BOOL CDFFDData::OnInitDialog()
 		ctl_next_.EnableWindow(!ee.IsEmpty());
 	}
 
+	// Set up BCG colour picker control
+	m_ColourPicker.EnableAutomaticButton(_T("None"), RGB(255, 255, 255));
+	m_ColourPicker.EnableOtherButton(_T("Other"));
+	m_ColourPicker.SetColor((COLORREF)-1);
+	m_ColourPicker.SetColumnsNumber(10);
+
 	load_data();
 
 	VERIFY(button_menu_.LoadMenu(IDR_DFFD));
@@ -258,7 +270,6 @@ BOOL CDFFDData::OnInitDialog()
 
 	return TRUE;
 }
-
 
 void CDFFDData::OnCancel()
 {
@@ -387,6 +398,12 @@ void CDFFDData::OnBitfield()
 
 void CDFFDData::OnChange()
 {
+	modified_ = true;
+}
+
+void CDFFDData::OnColourPicker()
+{
+	clr_ = m_ColourPicker.GetColor();
 	modified_ = true;
 }
 
@@ -693,6 +710,12 @@ void CDFFDData::load_data()
 	bits_ = atoi(pelt_->GetAttr("bits"));
 	bitfield_ = bits_ > 0;
 	dirn_ = pelt_->GetAttr("direction").CompareNoCase("down") == 0; // 0 = up, 1 = down
+
+	CString ss = pelt_->GetAttr("color");
+	if (ss.IsEmpty())
+		clr_ = 0xffffFFFF;  // -1
+	else
+		clr_ = (DWORD)(strtoul(ss, NULL, 16) & 0xffFFFF);
 
 	UpdateData(FALSE);
 }
@@ -1055,6 +1078,15 @@ void CDFFDData::save_data()
 		pelt_->RemoveAttr("bits");
 		pelt_->RemoveAttr("direction");
 	}
+
+	if (clr_ > 0xffFFFF)
+		pelt_->RemoveAttr("color");
+	else
+	{
+		char buf[8];
+		sprintf(buf, "%06.6x", clr_);
+		pelt_->SetAttr("color", buf);
+	}
 }
 
 static DWORD id_pairs[] = { 
@@ -1080,6 +1112,8 @@ static DWORD id_pairs[] = {
 	IDC_SPIN_BITFIELD_BITS, HIDC_DFFD_BITFIELD_BITS,
 	IDC_DFFD_BITFIELD_DIRN, HIDC_DFFD_BITFIELD_DIRN,
 	IDC_DFFD_BITFIELD_DIRN_DESC, HIDC_DFFD_BITFIELD_DIRN,
+	IDC_DFFD_COLOUR_DESC, HIDC_DFFD_COLOUR_PICKER,
+	IDC_DFFD_COLOUR_PICKER, HIDC_DFFD_COLOUR_PICKER,
 	0,0
 };
 
