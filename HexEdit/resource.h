@@ -417,8 +417,8 @@
 #define IDI_INFO                        442
 #define IDI_CROSS                       443
 #define IDR_CONTEXT_OFFSET_HANDLE       445
-#define IDR_CONTEXT_GROUPING_HANDLE     446
-#define IDR_CONTEXT_COLUMNS_HANDLE      447
+#define IDR_CONTEXT_GROUP_BY_HANDLE     446
+#define IDR_CONTEXT_ROWSIZE_HANDLE      447
 #define IDR_CONTEXT_RULER               448
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000

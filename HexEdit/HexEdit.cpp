@@ -1751,9 +1751,11 @@ void CHexEditApp::PreLoadState()
 	GetMouseManager()->AddView(IDR_CONTEXT_BOOKMARKS, "Bookmark");
 	GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_BOOKMARKS, ID_BOOKMARKS_EDIT);
 	GetMouseManager()->AddView(IDR_CONTEXT_OFFSET_HANDLE,   "Ruler:Offset Handle");
-	GetMouseManager()->AddView(IDR_CONTEXT_GROUPING_HANDLE, "Ruler:Group Handle");
-	GetMouseManager()->AddView(IDR_CONTEXT_COLUMNS_HANDLE,  "Ruler:Cols Handle");
-	GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_COLUMNS_HANDLE, ID_AUTOFIT);
+	GetMouseManager()->AddView(IDR_CONTEXT_GROUP_BY_HANDLE, "Ruler:Group Handle");
+	GetMouseManager()->AddView(IDR_CONTEXT_ROWSIZE_HANDLE,  "Ruler:Cols Handle");
+	GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_ROWSIZE_HANDLE, ID_AUTOFIT);  // default to turn on autofit
+	GetMouseManager()->AddView(IDR_CONTEXT_RULER,  "Ruler");
+	GetMouseManager()->SetCommandForDblClk(IDR_CONTEXT_RULER, ID_ADDR_TOGGLE);       // default to toggle hex/dec addresses in adress area and ruler
 
 	GetContextMenuManager()->AddMenu(_T("Address Area"), IDR_CONTEXT_ADDRESS);
 	GetContextMenuManager()->AddMenu(_T("Hex Area"), IDR_CONTEXT_HEX);

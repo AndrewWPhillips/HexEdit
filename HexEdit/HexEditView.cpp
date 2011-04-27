@@ -6497,11 +6497,11 @@ void CHexEditView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		if (over_offset_adjuster(doc_pt))
 			theApp.OnViewDoubleClick(this, IDR_CONTEXT_OFFSET_HANDLE);
 		else if (over_group_by_adjuster(doc_pt))
-			theApp.OnViewDoubleClick(this, IDR_CONTEXT_GROUPING_HANDLE);
+			theApp.OnViewDoubleClick(this, IDR_CONTEXT_GROUP_BY_HANDLE);
 		else if (over_rowsize_adjuster(doc_pt))
-			theApp.OnViewDoubleClick(this, IDR_CONTEXT_COLUMNS_HANDLE);
-		// else ignore any other ruler double-click for now
-#endif
+			theApp.OnViewDoubleClick(this, IDR_CONTEXT_ROWSIZE_HANDLE);
+		else
+			theApp.OnViewDoubleClick(this, IDR_CONTEXT_RULER);  // no handles clicked so just do ruler dclick
 		return;
 	}
 
@@ -6772,66 +6772,72 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 #ifdef RULER_ADJUST
-	if (adjusting_rowsize_ > -1 && adjusting_rowsize_ != rowsize_)
+	if (adjusting_rowsize_ > -1)
 	{
-		FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
-
-		undo_.push_back(view_undo(undo_rowsize));
-		undo_.back().rowsize = rowsize_;
-		if (display_.autofit)
+		if (adjusting_rowsize_ != rowsize_)
 		{
-			undo_.push_back(view_undo(undo_autofit, TRUE));
-			display_.autofit = 0;
+			FILE_ADDRESS scroll_addr = pos2addr(GetScroll());
+
+			undo_.push_back(view_undo(undo_rowsize));
+			undo_.back().rowsize = rowsize_;
+			if (display_.autofit)
+			{
+				undo_.push_back(view_undo(undo_autofit, TRUE));
+				display_.autofit = 0;
+			}
+			rowsize_ = adjusting_rowsize_;
+			if (real_offset_ < rowsize_)
+				offset_ = real_offset_;
+			else
+				offset_ = rowsize_ - 1;
+			recalc_display();
+
+			// Fix scroll place so it's about the same even though the row length has changed
+			CPointAp pt = addr2pos(scroll_addr);
+			pt.x = 0;
+			SetScroll(pt);
+
+			DoInvalidate();
 		}
-		rowsize_ = adjusting_rowsize_;
-		if (real_offset_ < rowsize_)
-			offset_ = real_offset_;
-		else
-			offset_ = rowsize_ - 1;
-		recalc_display();
 
-		// Fix scroll place so it's about the same even though the row length has changed
-		CPointAp pt = addr2pos(scroll_addr);
-		pt.x = 0;
-		SetScroll(pt);
-
-		if (pcv_ != NULL)
-			pcv_->end_change();
-		DoInvalidate();
 		ReleaseCapture();
 		adjusting_rowsize_ = -1;
 		SetSel(addr2pos(prev_start_), addr2pos(prev_end_));
 		return;
 	}
 
-	if (adjusting_offset_ > -1 && adjusting_offset_ != offset_)
+	if (adjusting_offset_ > -1)
 	{
-		undo_.push_back(view_undo(undo_offset));
-		undo_.back().rowsize = real_offset_;        // Save previous offset for undo
-		real_offset_ = offset_ = adjusting_offset_;
-		if (real_offset_ >= rowsize_)
-			offset_ = rowsize_ - 1;
-		recalc_display();
+		if (adjusting_offset_ != offset_)
+		{
+			undo_.push_back(view_undo(undo_offset));
+			undo_.back().rowsize = real_offset_;        // Save previous offset for undo
+			real_offset_ = offset_ = adjusting_offset_;
+			if (real_offset_ >= rowsize_)
+				offset_ = rowsize_ - 1;
+			recalc_display();
 
-		if (pcv_ != NULL)
-			pcv_->end_change();
-		DoInvalidate();
+			DoInvalidate();
+		}
+
 		ReleaseCapture();
 		adjusting_offset_ = -1;
 		SetSel(addr2pos(prev_start_), addr2pos(prev_end_));
 		return;
 	}
 
-	if (adjusting_group_by_ > -1 && adjusting_group_by_ != group_by_)
+	if (adjusting_group_by_ > -1)
 	{
-		undo_.push_back(view_undo(undo_group_by));
-		undo_.back().rowsize = group_by_;              // Save previous group_by for undo
-		group_by_ = adjusting_group_by_;
-		recalc_display();
+		if (adjusting_group_by_ != group_by_)
+		{
+			undo_.push_back(view_undo(undo_group_by));
+			undo_.back().rowsize = group_by_;              // Save previous group_by for undo
+			group_by_ = adjusting_group_by_;
+			recalc_display();
 
-		if (pcv_ != NULL)
-			pcv_->end_change();
-		DoInvalidate();
+			DoInvalidate();
+		}
+
 		ReleaseCapture();
 		adjusting_group_by_ = -1;
 		SetSel(addr2pos(prev_start_), addr2pos(prev_end_));
