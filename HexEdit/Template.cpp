@@ -368,6 +368,52 @@ void CHexEditDoc::OpenDataFormatFile(LPCTSTR data_file_name /*=NULL*/)
 	}
 }
 
+// Returns the (first) element that contains the passed address
+// OR returns one past the last element if not found.
+// [Note: This does a linear search but is very fast - it replaces
+// find_address() (= binary search) which failed when JUMPs are used.]
+size_t CHexEditDoc::FindDffdEltAt(FILE_ADDRESS addr)
+{
+	int ii, end = df_address_.size();
+
+	for (ii = 0; ii < end; ++ii)
+	{
+		if (df_type_[ii] > DF_DATA)
+		{
+			FILE_ADDRESS aa = df_address_[ii];
+			if (addr >= aa && addr < aa + df_size_[ii])
+				return ii;
+		}
+	}
+	return end;  // not found
+}
+
+void  CHexEditDoc::FindDffdEltsIn(FILE_ADDRESS start, FILE_ADDRESS end, std::vector<boost::tuple<FILE_ADDRESS, FILE_ADDRESS, COLORREF> > & retval)
+{
+	retval.clear();
+
+	int ii, last_ii = df_address_.size();
+
+	for (ii = 0; ii < last_ii; ++ii)
+	{
+		if (df_type_[ii] > DF_DATA)
+		{
+			FILE_ADDRESS ss = df_address_[ii];
+			FILE_ADDRESS ee = ss  + df_size_[ii];
+			if (ss < end && ee > start)
+			{
+				CString str = df_elt_[ii].GetAttr("color");
+				if (!str.IsEmpty())
+				{
+					COLORREF clr = (DWORD)(strtoul(str, NULL, 16) & 0xffFFFF);;
+					retval.push_back(boost::tuple<FILE_ADDRESS, FILE_ADDRESS, COLORREF>(ss, ee, clr));
+				}
+			}
+		}
+	}
+}
+
+
 BOOL CHexEditDoc::ScanInit()
 {
 	if (!df_init_)          // only scan once

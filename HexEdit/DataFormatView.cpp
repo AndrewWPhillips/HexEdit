@@ -3066,6 +3066,7 @@ void CDataFormatView::do_edit(int index, signed char parent_type)
 	}
 }
 
+#if 0
 // Return elt index of leaf elt containing address or elt past end if not found
 // TBD: xxx if template contains JUMP(s) then we should do a linear search
 size_t CDataFormatView::find_address(FILE_ADDRESS addr)
@@ -3140,6 +3141,7 @@ FILE_ADDRESS CDataFormatView::NextField(FILE_ADDRESS addr, FILE_ADDRESS &len, CO
 	}
 	return retval;
 }
+#endif
 
 // Select the data element that contains the address.
 // Returns FALSE if the address is past EOF
@@ -3149,7 +3151,7 @@ void CDataFormatView::SelectAt(FILE_ADDRESS addr)
 
 //xxx    GetDocument()->CheckUpdate();       // Make sure tree view matches data
 
-	size_t elt = find_address(addr);
+	size_t elt =  GetDocument()->FindDffdEltAt(addr);
 
 // How could this happen?
 	if (elt >= GetDocument()->df_address_.size())
@@ -3193,7 +3195,7 @@ BOOL CDataFormatView::ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr /*=-1*/)
 	// Check all the data elts (leaves) in the address range
 	while (addr < end_addr)
 	{
-		size_t elt = find_address(addr);
+		size_t elt = GetDocument()->FindDffdEltAt(addr);
 
 		ASSERT(elt != last_elt);
 		if (elt == last_elt)

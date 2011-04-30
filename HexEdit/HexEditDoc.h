@@ -31,6 +31,7 @@
 #include <set>
 #include <algorithm>
 #include <afxmt.h>              // For MFC IPC (CEvent etc)
+#include <boost/tuple/tuple.hpp>
 
 #include "CFile64.h"
 #include <FreeImage.h>
@@ -553,6 +554,10 @@ public:  // These really should be private but are called from SendEmail
 
 	BOOL DffdEditMode();
 	void SetDffdEditMode(BOOL b) { dffd_edit_mode_ = b; }
+	size_t FindDffdEltAt(FILE_ADDRESS addr);
+
+	// Get areas for template fields that need to be drawn with a different background colour
+	void FindDffdEltsIn(FILE_ADDRESS start, FILE_ADDRESS end, std::vector<boost::tuple<FILE_ADDRESS, FILE_ADDRESS, COLORREF> > & retval);
 
 private:
 // Private member functions
