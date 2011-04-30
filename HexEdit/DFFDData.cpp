@@ -228,18 +228,18 @@ BOOL CDFFDData::OnInitDialog()
 	// Create block of 12 (4x3) lightish colours
 	COLORREF ca[12] =
 	{
-		RGB(192, 255, 255),
+		RGB(192, 255, 255),  // cyan
 		RGB(192, 224, 255),
-		RGB(192, 192, 255),
+		RGB(192, 192, 255),  // lt blue
 		RGB(224, 192, 255),
-		RGB(255, 192, 255),
-		RGB(255, 160, 224),
-		RGB(255, 160, 160),
-		RGB(255, 192, 128),
-		RGB(255, 255, 128),
-		RGB(192, 255, 128),
-		RGB(192, 255, 224),
-		RGB(224, 224, 224),
+		RGB(255, 192, 255),  // purple
+		RGB(255, 160, 224),  // mauve
+		RGB(224, 160, 160),  // grey-red
+		RGB(255, 192, 128),  // orange
+		RGB(255, 255, 128),  // yellow
+		RGB(192, 255, 128),  // green
+		RGB(192, 224, 192),  // grey-green
+		RGB(160, 192, 224),  // grey-blue
 	};
 
 	create_palette(ca, 12);

@@ -1869,7 +1869,7 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			// probably due to bytes being inserted or deleted at caret.
 
 			// Get latest set of search occurrences
-			ValidateScroll(GetScroll());
+			get_search_in_range(GetScroll());
 
 			// Redraw area where occurrences added/removed
 			invalidate_addr_range(ph->start_, ph->end_ + search_length_ - 1);
@@ -1878,8 +1878,8 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		{
 			// Background search finished
 
-			// Get the display area occurrences using ValidateScroll
-			ValidateScroll(GetScroll());
+			// Get the display area occurrences
+			get_search_in_range(GetScroll());
 
 			// Invalidate any areas where new search string was found
 			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator pp, pend;
@@ -4960,6 +4960,9 @@ void CHexEditView::get_search_in_range(CPointAp &pos)
 	}
 }
 
+// Gets all the template fields that have addresses within the range of the displayed
+// hex view (and their background colour).  This should be called when the view is
+// scrolled/resized or when the template is opened/closed/changed.
 void CHexEditView::get_dffd_in_range(CPointAp &pos)
 {
 	// Get template fields (address range and background colour) in the display area
@@ -18015,6 +18018,7 @@ void CHexEditView::OnDffdHide()
 	ASSERT(snum_d > -1 || tnum_d > -1);  // It must be open in tab or splitter
 
 	pdfv_ = NULL;
+	get_dffd_in_range(GetScroll());  // clear any field bg colours
 
 	if (snum_d > -1)  // splitter?
 	{
@@ -18087,6 +18091,7 @@ bool CHexEditView::DoDffdSplit()
 
 	// Make sure dataformat view knows which hex view it is assoc. with
 	pdfv_->phev_ = this;
+	get_dffd_in_range(GetScroll());
 
 	psplitter->RecalcLayout();
 	AdjustColumns();
@@ -18134,6 +18139,7 @@ bool CHexEditView::DoDffdTab()
 
 	// Make sure dataformat view knows which hex view it is assoc. with
 	pdfv_->phev_ = this;
+	get_dffd_in_range(GetScroll());
 
 	ptv->SetActiveView(0);
 	return true;
