@@ -19,6 +19,15 @@
 4.0
 ===
 
+
+- Installer
+  - new why uninstalling dialog
+  - merge module for MFC
+  - index.htm for display during install
+  - better font for ReadMe
+  - remove shortcut feature
+  - fix start menu dialog and implement
+  - run .exe at end
 - support for Windows 7 taskbar?
 - new options
   > option for mouse wheel units

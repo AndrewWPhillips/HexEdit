@@ -1046,6 +1046,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\cross.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\RES\curSmallArrows.cur"
 				>
 			</File>

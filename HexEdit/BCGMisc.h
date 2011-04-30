@@ -19,7 +19,7 @@
 
 //#include <BCGCB.h>
 
-// We just need to access some protected members
+// We need this to access some protected members and to override RebuildFonts()
 class CHexEditFontCombo : public CMFCToolBarFontComboBox
 {
 	DECLARE_SERIAL(CHexEditFontCombo)
