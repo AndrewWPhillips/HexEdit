@@ -1900,7 +1900,16 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 	else if (pHint != NULL && pHint->IsKindOf(RUNTIME_CLASS(CDFFDHint)))
 	{
-		// Nothing required (yet?)
+		std::vector<boost::tuple<FILE_ADDRESS, FILE_ADDRESS, COLORREF> > tmp;
+		tmp.swap(dffd_bg_);   // save old bg areas to invalidate below
+		get_dffd_in_range(GetScroll());
+
+		// Invalidate old and new areas
+		std::vector<boost::tuple<FILE_ADDRESS, FILE_ADDRESS, COLORREF> >::reverse_iterator pdffd, penddffd;
+		for (pdffd = tmp.rbegin(), penddffd = tmp.rend(); pdffd != penddffd; ++pdffd)
+			invalidate_addr_range(pdffd->get<0>(), pdffd->get<1>());
+		for (pdffd = dffd_bg_.rbegin(), penddffd = dffd_bg_.rend(); pdffd != penddffd; ++pdffd)
+			invalidate_addr_range(pdffd->get<0>(), pdffd->get<1>());
 	}
 	else if (pHint != NULL && pHint->IsKindOf(RUNTIME_CLASS(CSaveStateHint)))
 	{
@@ -3249,6 +3258,16 @@ void CHexEditView::OnDraw(CDC* pDC)
 					max(pp->first, first_addr), 
 					min(pp->second, last_addr));
 		}
+
+		// Draw template field backgrounds bottom up
+		std::vector<boost::tuple<FILE_ADDRESS, FILE_ADDRESS, COLORREF> >::reverse_iterator pdffd, penddffd;
+		for (pdffd = dffd_bg_.rbegin(), penddffd = dffd_bg_.rend(); pdffd != penddffd; ++pdffd)
+		{
+			draw_bg(pDC, doc_rect, neg_x, neg_y,
+				line_height, char_width, char_width_w, pdffd->get<2>(),
+				max(pdffd->get<0>(), first_addr), 
+				min(pdffd->get<1>(), last_addr));
+		}
 	}
 	else
 	{
@@ -3260,6 +3279,16 @@ void CHexEditView::OnDraw(CDC* pDC)
 					line_height, char_width, char_width_w, search_col_,
 					max(pp->first, first_addr), 
 					min(pp->second, last_addr));
+		}
+
+		// Draw template field backgrounds from top down
+		std::vector<boost::tuple<FILE_ADDRESS, FILE_ADDRESS, COLORREF> >::const_iterator pdffd, penddffd;
+		for (pdffd = dffd_bg_.begin(), penddffd = dffd_bg_.end(); pdffd != penddffd; ++pdffd)
+		{
+			draw_bg(pDC, doc_rect, neg_x, neg_y,
+				line_height, char_width, char_width_w, pdffd->get<2>(),
+				max(pdffd->get<0>(), first_addr), 
+				min(pdffd->get<1>(), last_addr));
 		}
 	}
 
@@ -4882,6 +4911,12 @@ void CHexEditView::ValidateScroll(CPointAp &pos, BOOL strict /* =FALSE */)
 {
 	CScrView::ValidateScroll(pos, strict);
 
+	get_search_in_range(pos);
+	get_dffd_in_range(pos);
+}
+
+void CHexEditView::get_search_in_range(CPointAp &pos)
+{
 	// Get search occurrences currently in display area whenever we change the scroll posn -
 	// this saves checking all addresses (could be millions) in OnDraw
 	search_pair_.clear();
@@ -4922,6 +4957,26 @@ void CHexEditView::ValidateScroll(CPointAp &pos, BOOL strict /* =FALSE */)
 			}
 			search_pair_.push_back(good_pair);
 		}
+	}
+}
+
+void CHexEditView::get_dffd_in_range(CPointAp &pos)
+{
+	// Get template fields (address range and background colour) in the display area
+	dffd_bg_.clear();
+	if (pdfv_ != NULL)
+	{
+		CRect cli;
+		CRectAp rct;
+		GetDisplayRect(&cli);
+		rct = ConvertFromDP(cli);
+
+		FILE_ADDRESS start, end;            // range of file addresses within display
+		start = (pos.y/line_height_)*rowsize_ - offset_;     // First addr in display
+		if (start < 0) start = 0;                           // Just in case (prob not nec.)
+		end = ((pos.y+rct.Height())/line_height_ + 1)*rowsize_ - offset_;
+
+		GetDocument()->FindDffdEltsIn(start, end, dffd_bg_);
 	}
 }
 
@@ -6502,6 +6557,7 @@ void CHexEditView::OnLButtonDblClk(UINT nFlags, CPoint point)
 			theApp.OnViewDoubleClick(this, IDR_CONTEXT_ROWSIZE_HANDLE);
 		else
 			theApp.OnViewDoubleClick(this, IDR_CONTEXT_RULER);  // no handles clicked so just do ruler dclick
+#endif
 		return;
 	}
 

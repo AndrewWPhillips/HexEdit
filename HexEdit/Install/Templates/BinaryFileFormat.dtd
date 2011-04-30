@@ -64,6 +64,7 @@
               straddle (false|true) "false"
               byte_order (default|big|little) "default"
               read_only (default|false|true) "default"
+              color CDATA #IMPLIED
               domain CDATA #IMPLIED
               hide CDATA #IMPLIED
               display CDATA #IMPLIED

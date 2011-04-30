@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <vector>
 using namespace std;
+#include <boost/tuple/tuple.hpp>
 
 // Forward declarations
 class CHexEditDoc;
@@ -930,6 +931,12 @@ private:
 	// we can quickly draw overlapping search occurrences.
 	std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > search_pair_;  // Areas that need to be drawn to indicate found occurrences
 	int search_length_;
+	void get_search_in_range(CPointAp &pos);
+
+	// This is the same as search_pair_ but for template fields (fields can have a colour that is drawn in the background of the
+	// correpsonding hex view bytes).  This stores the address range of all fields that are currently within the display.
+	std::vector<boost::tuple<FILE_ADDRESS, FILE_ADDRESS, COLORREF> > dffd_bg_;
+	void get_dffd_in_range(CPointAp &pos);
 
 	// Current highlighted ranges
 	range_set<FILE_ADDRESS> hl_set_;
