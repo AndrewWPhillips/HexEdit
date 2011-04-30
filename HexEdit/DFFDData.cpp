@@ -224,7 +224,27 @@ BOOL CDFFDData::OnInitDialog()
 	m_ColourPicker.EnableAutomaticButton(_T("None"), RGB(255, 255, 255));
 	m_ColourPicker.EnableOtherButton(_T("Other"));
 	m_ColourPicker.SetColor((COLORREF)-1);
-	m_ColourPicker.SetColumnsNumber(10);
+
+	// Create block of 12 (4x3) lightish colours
+	COLORREF ca[12] =
+	{
+		RGB(192, 255, 255),
+		RGB(192, 224, 255),
+		RGB(192, 192, 255),
+		RGB(224, 192, 255),
+		RGB(255, 192, 255),
+		RGB(255, 160, 224),
+		RGB(255, 160, 160),
+		RGB(255, 192, 128),
+		RGB(255, 255, 128),
+		RGB(192, 255, 128),
+		RGB(192, 255, 224),
+		RGB(224, 224, 224),
+	};
+
+	create_palette(ca, 12);
+	m_ColourPicker.SetPalette(&palette_);
+	m_ColourPicker.SetColumnsNumber(4);
 
 	load_data();
 
@@ -546,6 +566,38 @@ void CDFFDData::OnGetDomainVar()
 	}
 }
 
+// Create the palette associate with the colour control
+void CDFFDData::create_palette(COLORREF ca[], size_t num)
+{
+	if (palette_.GetSafeHandle() != NULL)
+	{
+		::DeleteObject(palette_.Detach());
+		ENSURE(palette_.GetSafeHandle() == NULL);
+	}
+
+	// Create the palette
+	struct
+	{
+		LOGPALETTE    LogPalette;
+		PALETTEENTRY  PalEntry[32];
+	} pal;
+	if (num > 32) num = 32;
+
+	LOGPALETTE* pLogPalette = (LOGPALETTE*) &pal;
+	pLogPalette->palVersion = 0x300;
+	pLogPalette->palNumEntries = (WORD)num;
+
+	for (int ii = 0; ii < num; ++ii)
+	{
+		pLogPalette->palPalEntry[ii].peRed   = GetRValue(ca[ii]);
+		pLogPalette->palPalEntry[ii].peGreen = GetGValue(ca[ii]);
+		pLogPalette->palPalEntry[ii].peBlue  = GetBValue(ca[ii]);
+		pLogPalette->palPalEntry[ii].peFlags = 0;
+	}
+
+	palette_.CreatePalette(pLogPalette);
+}
+
 void CDFFDData::load_data()
 {
 #if 0  // Stored in item list of control (see dialog editor)
@@ -780,7 +832,7 @@ bool CDFFDData::check_data()
 				; // nothing here
 			if (!ee2.IsEmpty() && ee2.GetAttr("name") == name_)
 			{
-				TaskMessageBox("Name in use", name_ + " has a sibling with the same name.\n\n"
+				TaskMessageBox("Name already in use", "There is a sibling with the same name (" + name_ +").\n\n"
 				               "It is not be possible to differentiate between two elements "
 							   "with the same name at the same level (eg, in expressions).");
 				ctl_name_.SetFocus();

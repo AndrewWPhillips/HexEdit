@@ -148,6 +148,9 @@ protected:
 	void            load_data();
 	bool            check_data();
 	void            save_data();
+
+	CPalette palette_;
+	void create_palette(COLORREF ca[], size_t num);
 };
 
 //{{AFX_INSERT_LOCATION}}
