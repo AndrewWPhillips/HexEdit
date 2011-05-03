@@ -3098,7 +3098,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 	}
 
 	// Draw indicator around byte that is used for info tips
-	if (!pDC->IsPrinting() && last_tip_addr_ >= first_virt && last_tip_addr_ < last_virt)
+	if (!pDC->IsPrinting() && last_tip_addr_ > -1 && last_tip_addr_ >= first_virt && last_tip_addr_ < last_virt)
 	{
 		CRect info_rect;                // Where mark is drawn in logical coords
 
