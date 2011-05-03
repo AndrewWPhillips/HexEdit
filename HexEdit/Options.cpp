@@ -4346,7 +4346,7 @@ void CWindowPage::fix_controls()
 	GetDlgItem(IDC_SPIN_COLS)->EnableWindow(!pParent->val_.autofit_);
 
 	// Set offset spin range to be 0 to cols-1
-	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_OFFSET))->SetRange(0, pParent->val_.cols_-1);
+	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_OFFSET))->SetRange(0, 30000);
 }
 
 BOOL CWindowPage::validated()
@@ -4361,12 +4361,6 @@ BOOL CWindowPage::validated()
 	{
 		TaskMessageBox("Too many columns", "You can't have more than 32,767 columns.");
 		GetDlgItem(IDC_COLS)->SetFocus();
-		return FALSE;
-	}
-	if (pParent->val_.offset_ >= pParent->val_.cols_)
-	{
-		TaskMessageBox("Offset Too Big", "Offset must be less than the number of columns.");
-		GetDlgItem(IDC_OFFSET)->SetFocus();
 		return FALSE;
 	}
 	if (pParent->val_.display_.hex_area && pParent->val_.grouping_ < 2)
@@ -4588,6 +4582,7 @@ void CWindowPage::OnChangeCols()
 		return;
 	update_ok_ = false;
 
+#if 0  // Offset is no longer limited by number of columns
 	// Get cols_ value from dialog controls
 	if (UpdateData())
 	{
@@ -4597,6 +4592,7 @@ void CWindowPage::OnChangeCols()
 		ASSERT(pspin != NULL);
 		pspin->SetRange(0, pParent->val_.cols_-1);
 	}
+#endif
 
 	SetModified(TRUE);
 	update_ok_ = true;

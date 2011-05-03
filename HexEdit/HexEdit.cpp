@@ -2362,13 +2362,14 @@ void CHexEditApp::LoadOptions()
 					">Address;address;;;"
 					">Hex Address;address;hex;;"
 					">Dec Address;address;dec;;"
+					">Offset Address;address - offset;;;"
+					">Offset Address;address - offset;hex;;"
+					">Offset Address;address - offset;dec;;"
 					">From Mark;address - mark;;;"
 					">From Mark;address - mark;hex;;"
 					">From Mark;address - mark;dec;;"
 					">Hex Sector;sector;hex;;"
 					">Sector;sector;dec;;"
-					">Hex Offset;offset;hex;;"
-					">Offset;offset;dec;;"
 					">ASCII char;byte;%c;;"
 					">Bits     ;byte;bin;;"
 					">High Bit ;(byte&0x80)!=0;OFF;;"
@@ -3062,7 +3063,7 @@ void CHexEditApp::get_options(struct OptValues &val)
 		val.oem_lf_ = pview->oem_lf_;
 
 		val.cols_ = pview->rowsize_;
-		val.offset_ = (pview->rowsize_ - pview->offset_)%pview->rowsize_;
+		val.offset_ = pview->real_offset_;
 		val.grouping_ = pview->group_by_;
 		val.vertbuffer_ = pview->GetVertBufferZone();
 
@@ -3453,8 +3454,8 @@ void CHexEditApp::set_options(struct OptValues &val)
 
 		// Make other (undoable) changes if any of the options have changed
 		bool change_required = (!val.autofit_ && pview->rowsize_ != val.cols_) ||
-								(pview->group_by_ != val.grouping_) ||
-								(pview->real_offset_ != (val.cols_ - val.offset_)%val.cols_) ||
+								pview->group_by_ != val.grouping_ ||
+								pview->real_offset_ != val.offset_ ||
 								pview->disp_state_ != val.disp_state_ ||
 								(val.display_.FontRequired() == FONT_ANSI && memcmp(&pview->lf_, &val.lf_, sizeof(LOGFONT)) != 0) ||
 								(val.display_.FontRequired() == FONT_OEM  && memcmp(&pview->oem_lf_, &val.oem_lf_, sizeof(LOGFONT)) != 0);
@@ -3513,9 +3514,9 @@ void CHexEditApp::set_options(struct OptValues &val)
 			if (one_done) pview->undo_.back().previous_too = true;
 			one_done = true;
 		}
-		if (pview->real_offset_ != (val.cols_ - val.offset_)%val.cols_)
+		if (pview->real_offset_ != val.offset_)
 		{
-			pview->change_offset((val.cols_ - val.offset_)%val.cols_);
+			pview->change_offset(val.offset_);
 			if (one_done) pview->undo_.back().previous_too = true;
 			one_done = true;
 		}

@@ -650,9 +650,8 @@ CHexEditView::CHexEditView()
 
 	// Set up opening display based on global options
 	rowsize_ = aa->open_rowsize_;
-	real_offset_ = offset_ = aa->open_offset_;
-	if (real_offset_ >= rowsize_)
-		offset_ = rowsize_ - 1;         // In case soemone fiddled with the settings
+	real_offset_ = aa->open_offset_;
+	offset_ = rowsize_ - (rowsize_ + real_offset_ - 1) % rowsize_ - 1;
 	group_by_ = aa->open_group_by_;
 
 	ASSERT(theApp.open_disp_state_ != -1);
@@ -822,9 +821,8 @@ void CHexEditView::OnInitialUpdate()
 
 		rowsize_ = atoi(pfl->GetData(recent_file_index, CHexFileList::COLUMNS));
 		if (rowsize_ < 4 || rowsize_ > 32767) rowsize_ = 4;   // just in case RecentFile is really corrupt
-		real_offset_ = offset_ = atoi(pfl->GetData(recent_file_index, CHexFileList::OFFSET));
-		if (real_offset_ >= rowsize_)
-			offset_ = rowsize_ - 1;             // In case soemone fiddled with the settings
+		real_offset_ = atoi(pfl->GetData(recent_file_index, CHexFileList::OFFSET));
+		offset_ = rowsize_ - (rowsize_ + real_offset_ - 1) % rowsize_ - 1;
 		group_by_ = atoi(pfl->GetData(recent_file_index, CHexFileList::GROUPING));
 		if (group_by_ < 2) group_by_ = 2;  // just in case RecentFile is really corrupt
 
@@ -1168,7 +1166,7 @@ void CHexEditView::StoreOptions()
 
 		pfl->SetData(ii, CHexFileList::COLUMNS, rowsize_);
 		pfl->SetData(ii, CHexFileList::GROUPING, group_by_);
-		pfl->SetData(ii, CHexFileList::OFFSET, offset_);
+		pfl->SetData(ii, CHexFileList::OFFSET, real_offset_);
 
 		pfl->SetData(ii, CHexFileList::SCHEME, scheme_name_);
 		pfl->SetData(ii, CHexFileList::FONT, lf_.lfFaceName);
@@ -2664,6 +2662,21 @@ void CHexEditView::OnDraw(CDC* pDC)
 			draw_adjusters(pDC);           // Draw adjustment controls in the ruler
 #endif
 		} // end ruler drawing
+		if (real_offset_ > 0 && real_offset_ >= first_virt && real_offset_ < last_virt)
+		{
+			// Horizontal line at offset
+			pt.y = int(((real_offset_ - 1)/rowsize_ + 1) * line_height - doc_rect.top + bdr_top_);
+			if (neg_y) pt.y = -pt.y;
+			pt.x = addr_width_*char_width - char_width - doc_rect.left + bdr_left_;
+			pDC->MoveTo(pt);
+			//pt.x = 30000;
+			if (!display_.vert_display && display_.hex_area && !display_.char_area)
+				pt.x = char_pos(0, char_width) - char_width_w/2 - doc_rect.left + bdr_left_;
+			else
+				pt.x = char_pos(rowsize_ - 1, char_width, char_width_w) + 
+					   (3*char_width_w)/2 - doc_rect.left + bdr_left_;
+			pDC->LineTo(pt);
+		}
 	}
 
 	// Mask out the ruler so we don't get top of topmost line drawn into it.
@@ -3923,7 +3936,8 @@ void CHexEditView::draw_adjusters(CDC* pDC)
 	if (!display_.vert_display && display_.hex_area)
 	{
 		if (adjusting_offset_ > -1)
-			xpos = hex_pos(adjusting_offset_) - scrollpos_.x;
+			xpos = hex_pos(rowsize_ - (rowsize_ + adjusting_offset_ - 1) % rowsize_ - 1) - 
+			       scrollpos_.x;
 		else
 			xpos = hex_pos(offset_) - scrollpos_.x;
 		draw_offset(pDC, xpos-1);
@@ -3938,7 +3952,8 @@ void CHexEditView::draw_adjusters(CDC* pDC)
 	if (display_.vert_display || display_.char_area)
 	{
 		if (adjusting_offset_ > -1)
-			xpos = char_pos(adjusting_offset_) - scrollpos_.x;
+			xpos = char_pos(rowsize_ - (rowsize_ + adjusting_offset_ - 1) % rowsize_ - 1) -
+			       scrollpos_.x;
 		else
 			xpos = char_pos(offset_) - scrollpos_.x;
 		if (display_.vert_display || !display_.hex_area)
@@ -4407,6 +4422,9 @@ void CHexEditView::recalc_display()
 		calc_addr_width();
 	}
 
+	// Ensure offset is within valid range after recalc of rowsize_
+	offset_ = rowsize_ - (rowsize_ + real_offset_ - 1) % rowsize_ - 1;
+
 	// Fit columns to window width?
 	if (display_.autofit)
 	{
@@ -4524,11 +4542,9 @@ void CHexEditView::calc_autofit()
 	else if (rowsize_ > max_buf)
 		rowsize_ = max_buf;
 
-	// Ensure offset is within valid range
-	if (real_offset_ < rowsize_)
-		offset_ = real_offset_;
-	else
-		offset_ = rowsize_ - 1;
+#if 0 // now done after returns in recalc_display()
+	offset_ = rowsize_ - (rowsize_ + real_offset_ - 1) % rowsize_ - 1;
+#endif
 }
 
 // Return doc position given a hex area column number
@@ -6748,8 +6764,8 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 		{
 			if (pcv_ != NULL)
 				pcv_->begin_change();
-			adjusting_offset_ = offset_;
-			invalidate_adjuster(adjusting_offset_);
+			adjusting_offset_ = real_offset_;
+			invalidate_adjuster(rowsize_ - (rowsize_ + adjusting_offset_ - 1) % rowsize_ - 1);
 			SetCapture();
 			return;
 		}
@@ -6845,10 +6861,6 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 				display_.autofit = 0;
 			}
 			rowsize_ = adjusting_rowsize_;
-			if (real_offset_ < rowsize_)
-				offset_ = real_offset_;
-			else
-				offset_ = rowsize_ - 1;
 			recalc_display();
 
 			// Fix scroll place so it's about the same even though the row length has changed
@@ -6867,13 +6879,11 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 
 	if (adjusting_offset_ > -1)
 	{
-		if (adjusting_offset_ != offset_)
+		if (adjusting_offset_ != real_offset_)
 		{
 			undo_.push_back(view_undo(undo_offset));
 			undo_.back().rowsize = real_offset_;        // Save previous offset for undo
-			real_offset_ = offset_ = adjusting_offset_;
-			if (real_offset_ >= rowsize_)
-				offset_ = rowsize_ - 1;
+			real_offset_ = adjusting_offset_;
 			recalc_display();
 
 			DoInvalidate();
@@ -7035,53 +7045,53 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
 		if (display_.vert_display)
 		{
 			int left_side = char_pos(0);
-			if (doc_pt.x < left_side - text_width_)
-				adjusting_offset_ = rowsize_ - (left_side-doc_pt.x)/text_width_;
-			else if (doc_pt.x >= char_pos(rowsize_))
+			if (doc_pt.x >= char_pos(rowsize_))
 				adjusting_offset_ = 0;    // Use 0 if dragged too far right
+			else if (doc_pt.x >= char_pos(1))
+				adjusting_offset_ = rowsize_ - pos_char(doc_pt.x + text_width_w_/2, TRUE);
 			else
-				adjusting_offset_ = pos_char(doc_pt.x + text_width_w_/2, TRUE);
+				adjusting_offset_ = (left_side - doc_pt.x)/text_width_;
 		}
 		else if (display_.char_area && display_.hex_area && doc_pt.x < char_pos(0))
 		{
 			int left_side = hex_pos(0);
-			if (doc_pt.x < left_side - text_width_)
-				adjusting_offset_ = rowsize_ - (left_side-doc_pt.x)/text_width_;
-			else if (doc_pt.x >= hex_pos(rowsize_))
+			if (doc_pt.x >= hex_pos(rowsize_))
 				adjusting_offset_ = 0;
-			else
-				adjusting_offset_ = pos_hex(doc_pt.x + text_width_, TRUE);
+			else if (doc_pt.x >= hex_pos(1))
+				adjusting_offset_ = rowsize_ - pos_hex(doc_pt.x + text_width_, TRUE);
+			else // drag to left of column zero is allowed
+				adjusting_offset_ = (left_side - doc_pt.x)/text_width_;
 		}
 		else if (display_.char_area)
 		{
 			int left_side = char_pos(0);
-			if (doc_pt.x < left_side - text_width_)
-				adjusting_offset_ = rowsize_ - (left_side-doc_pt.x)/text_width_;
-			else if (doc_pt.x >= char_pos(rowsize_))
+			if (doc_pt.x >= char_pos(rowsize_))
 				adjusting_offset_ = 0;
+			else if (doc_pt.x >= char_pos(1))
+				adjusting_offset_ = rowsize_ - pos_char(doc_pt.x + text_width_w_/2, TRUE);
 			else
-				adjusting_offset_ = pos_char(doc_pt.x + text_width_w_/2, TRUE);
+				adjusting_offset_ = (left_side - doc_pt.x)/text_width_;
 		}
 		else
 		{
 			int left_side = hex_pos(0);
-			if (doc_pt.x < left_side - text_width_)
-				adjusting_offset_ = rowsize_ - (left_side-doc_pt.x)/text_width_;
-			else if (doc_pt.x >= hex_pos(rowsize_))
+			if (doc_pt.x >= hex_pos(rowsize_))
 				adjusting_offset_ = 0;
+			else if (doc_pt.x >= hex_pos(1))
+				adjusting_offset_ = rowsize_ - pos_hex(doc_pt.x + text_width_, TRUE);
 			else
-				adjusting_offset_ = pos_hex(doc_pt.x + text_width_, TRUE);
+				adjusting_offset_ = (left_side - doc_pt.x)/text_width_;
 		}
 		if (adjusting_offset_ < 0)
 			adjusting_offset_ = 0;
 		if (adjusting_offset_ != old)
 		{
-			invalidate_adjuster(old);
-			invalidate_adjuster(adjusting_offset_);
+			invalidate_adjuster(rowsize_ - (rowsize_ + old - 1) % rowsize_ - 1);
+			invalidate_adjuster(rowsize_ - (rowsize_ + adjusting_offset_ - 1) % rowsize_ - 1);
 		}
 		ss.Format("Offset: %d", adjusting_offset_);
 		add_ruler_tip(point, ss,
-			adjusting_offset_ != offset_ ? RGB(224,255,224) : ::GetSysColor(COLOR_INFOBK));
+			adjusting_offset_ != real_offset_ ? RGB(224,255,224) : ::GetSysColor(COLOR_INFOBK));
 		return;
 	}
 
@@ -7244,7 +7254,7 @@ LRESULT CHexEditView::OnMouseHover(WPARAM, LPARAM lp)
 		if (over_rowsize_adjuster(pp))
 			ss.Format("Columns: %d%s", rowsize_, display_.autofit ? " (AutoFit)" : "");
 		else if (over_offset_adjuster(pp))
-			ss.Format("Offset: %d", offset_);
+			ss.Format("Offset: %d", real_offset_);
 		else if (over_group_by_adjuster(pp))
 			ss.Format("Grouping: %d", group_by_);
 
@@ -8423,13 +8433,15 @@ void CHexEditView::OnStartLine()
 		row = pos2row(GetCaret());
 
 	// Check if offset has actually changed
-	if (real_offset_ != (rowsize_ - start_addr%rowsize_)%rowsize_)
+	if (real_offset_ != start_addr)
 	{
 		undo_.push_back(view_undo(undo_offset));
 		undo_.back().rowsize = real_offset_;        // Save previous offset for undo
-		real_offset_ = offset_ = int((rowsize_ - start_addr%rowsize_)%rowsize_);
-		SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
+		real_offset_ = (int)start_addr;
+		//offset_ = rowsize_ - (rowsize_ + real_offset_ - 1) % rowsize_ - 1;
+
 		recalc_display();
+		SetSel(addr2pos(start_addr, row), addr2pos(end_addr, row));
 		DoInvalidate();
 		((CHexEditApp *)AfxGetApp())->SaveToMacro(km_start_line);
 	}
@@ -11940,10 +11952,9 @@ void CHexEditView::OnDisplayReset()
 	{
 		undo_.push_back(view_undo(undo_offset, TRUE));
 		undo_.back().rowsize = real_offset_;        // Save previous offset for undo
-		real_offset_ = offset_ = theApp.open_offset_;
-		if (real_offset_ >= rowsize_)
-			offset_ = rowsize_ - 1;
+		real_offset_ = theApp.open_offset_;
 	}
+	offset_ = rowsize_ - (rowsize_ + real_offset_ - 1) % rowsize_ - 1;
 	undo_.push_back(view_undo(undo_group_by, TRUE));
 	undo_.back().rowsize = group_by_;              // Save previous group_by for undo
 	group_by_ = theApp.open_group_by_;
@@ -12209,9 +12220,6 @@ BOOL CHexEditView::do_undo()
 			pcv_->begin_change();
 
 		rowsize_ = undo_.back().rowsize;
-		offset_ = real_offset_;
-		if (offset_ >= rowsize_)
-			offset_ = rowsize_ - 1;
 		recalc_display();
 		if (end_base)
 			SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
@@ -12254,9 +12262,7 @@ BOOL CHexEditView::do_undo()
 		if (pcv_ != NULL)
 			pcv_->begin_change();
 
-		real_offset_ = offset_ = undo_.back().rowsize;
-		if (real_offset_ >= rowsize_)
-			offset_ = rowsize_ - 1;
+		real_offset_ = undo_.back().rowsize;
 		recalc_display();
 		if (end_base)
 			SetSel(addr2pos(end_addr, row), addr2pos(start_addr, row), true);
@@ -12282,9 +12288,6 @@ BOOL CHexEditView::do_undo()
 		{
 			mess += "Undo: auto fit now OFF ";
 			rowsize_ = undo_.back().rowsize;
-			offset_ = real_offset_;
-			if (offset_ >= rowsize_)
-				offset_ = rowsize_ - 1;
 		}
 		recalc_display();
 
@@ -13048,9 +13051,9 @@ void CHexEditView::change_group_by(int group_by)
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_group_by, group_by);
 }
 
-void CHexEditView::change_offset(int offset)
+void CHexEditView::change_offset(int new_offset)
 {
-	if (offset != real_offset_)
+	if (new_offset != real_offset_)
 	{
 		if (pcv_ != NULL)
 			pcv_->begin_change();
@@ -13063,7 +13066,7 @@ void CHexEditView::change_offset(int offset)
 
 		undo_.push_back(view_undo(undo_offset));
 		undo_.back().rowsize = real_offset_;        // Save previous offset for undo
-		real_offset_ = offset_ = offset;
+		real_offset_ = new_offset;
 		recalc_display();
 
 		if (end_base)
@@ -13075,7 +13078,7 @@ void CHexEditView::change_offset(int offset)
 
 		DoInvalidate();
 	}
-	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_offset, offset);
+	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_offset, new_offset);
 }
 
 void CHexEditView::OnAutoFit()
@@ -13116,12 +13119,6 @@ void CHexEditView::do_autofit(int state /*=-1*/)
 		undo_.back().rowsize = rowsize_;
 	else
 		undo_.back().rowsize = 0;
-	if (!display_.autofit && real_offset_ != offset_)
-	{
-		// If autofit turned off but offset has been squeezed then save so it's undone
-		undo_.push_back(view_undo(undo_offset, TRUE));
-		undo_.back().rowsize = real_offset_;    // Save previous offset for undo
-	}
 	recalc_display();
 	// Fix scroll place so it's about the same even though the row length has changed
 	CPointAp pt = addr2pos(scroll_addr);
@@ -18865,12 +18862,8 @@ CTipExpr::value_t CTipExpr::find_symbol(const char *sym, value_t parent, size_t 
 	}
 	else if (sym_str.CompareNoCase("offset") == 0)
 	{
-		retval.typ = TYPE_INT;          // offset within current sector
-		int seclen = pview_->GetDocument()->GetSectorSize();
-		if (seclen > 0)
-			retval.int64 = sym_address % seclen;
-		else
-			retval.int64 = 0;
+		retval.typ = TYPE_INT;
+		retval.int64 = pview_->real_offset_;
 		sym_size = 4;
 		unsigned_ = true;
 	}

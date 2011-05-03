@@ -875,8 +875,7 @@ private:
 //    unsigned char buf_[max_buf];// Holds bytes for current line being displayed
 	int rowsize_;               // Number of bytes per row
 	int offset_;                // offset of start of row (0 to rowsize_ - 1)
-	int real_offset_;           // Stores actual last set offset which may be different (larger)
-								// than offset_ when autofit is on & # of cols has been reduced
+	int real_offset_;           // Stores actual offset which may be larger than offset_
 	int group_by_;              // How many columns to group together
 
 	int text_height_;           // How high are characters?
@@ -1013,7 +1012,7 @@ private:
 
 	CTipWnd ruler_tip_;         // Shows tip windows for adjusters
 	int adjusting_group_by_;    // current column for moving column grouping adjuster: 0 to rowsize_-1, 9999=no grouping, -1=not adjusting
-	int adjusting_offset_;      // adjuster for offset from start of file: 0 to rowsize_-1 OR -1 if not adjusting
+	int adjusting_offset_;      // adjuster for offset from start of file: 0 or more OR -1 if not adjusting
 	int adjusting_rowsize_;     // adjuster for rowsize_: 4 or more OR -1 if not adjusting
 #endif
 
