@@ -242,7 +242,7 @@ BOOL CDFFDData::OnInitDialog()
 		RGB(160, 192, 224),  // grey-blue
 	};
 
-	create_palette(ca, 12);
+	create_palette(ca, sizeof(ca)/sizeof(*ca));
 	m_ColourPicker.SetPalette(&palette_);
 	m_ColourPicker.SetColumnsNumber(4);
 

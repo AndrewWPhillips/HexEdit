@@ -100,7 +100,6 @@ public:
 	void set_colours();
 	void SelectAt(FILE_ADDRESS addr);
 	BOOL ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr = -1);
-//	FILE_ADDRESS NextField(FILE_ADDRESS addr, FILE_ADDRESS &len, COLORREF &clr);
 	bool has_children(int row);             // returns true if row below has indent one more
 	void show_row(int row);                 // expands all ancestors so that a row is shown
 	void expand_all(int row);               // expands all nodes below
@@ -162,7 +161,6 @@ protected:
 	void InitDataCol(int ii, GV_ITEM & item);
 #endif
 	COleDateTime GetDate(int ii); // get date (assumes data row containing date)
-//	size_t find_address(FILE_ADDRESS addr);
 	CString hex_format(size_t count);
 	void calc_colours(COLORREF &bg1, COLORREF &bg2, COLORREF &bg3);
 	CGridCtrl2 grid_;                       // MFC grid control
