@@ -656,6 +656,12 @@ public:
 	BOOL run_autoexec_;                 // Run AutoExec.HEM at startup if it exists
 	BOOL update_check_;                 // Check for updates?
 
+	// Folder options
+	int     open_locn_;                 // Default folder for open dialog (0=current doc folder, ... see enum FOLDER_LOCN)
+	CString open_folder_;               // Folder to use if explicitly specified option chosen
+	int     save_locn_;                 // Default folder for save as dialog (0=current doc folder, ...)
+	CString save_folder_;               // Folder to use if explicitly specified option chosen
+
 	// History list options
 	BOOL no_recent_add_;                // When a file is opened it is not added to "My Recent Documents" (OFN_DONTADDTORECENT)
 	int max_search_hist_;               // dv = 48
@@ -786,7 +792,7 @@ public:
 	CString current_filters_;           // String representing all file selection filters
 
 	// Remembered user interface stuff (may even be saved to registry)
-	CString dir_open_;                  // Current directory for open dialog
+	CString last_open_folder_, last_save_folder_, last_both_folder_;  // Remember last used folders (see open_locn_, save_locn_)
 	CString current_write_, current_read_; // Current files (defaults for file dlgs)
 	CString current_import_, current_export_; // Current dits for import/export
 	long export_base_addr_;             // Base address when exporting (-1 for file address)

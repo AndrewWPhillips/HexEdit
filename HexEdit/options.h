@@ -45,6 +45,9 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // OptValues - stores all option values in one place
+
+enum FOLDER_LOCN { FL_DOC, FL_LAST, FL_BOTH, FL_SPECIFIED, };  // Values corresp. to radio buttons for open_locn_, save_locn_
+
 struct OptValues
 {
 	// System options
@@ -58,6 +61,57 @@ struct OptValues
 	BOOL    run_autoexec_;
 	BOOL	update_check_;
 
+	// Folder options
+	int     open_locn_;
+	CString open_folder_;
+	int     save_locn_;
+	CString save_folder_;
+
+	// Backup options
+	int		backup_;
+	BOOL	backup_space_;
+	BOOL	backup_if_size_;
+	UINT	backup_size_;
+	BOOL	backup_prompt_;
+
+	// Export options
+	int		address_specified_;
+	long    base_address_;
+	UINT	export_line_len_;
+
+	// Macros
+	int		refresh_;
+	long	num_secs_;
+	long	num_keys_;
+	long	num_plays_;
+	BOOL	refresh_props_;
+	BOOL	refresh_bars_;
+	int		halt_level_;
+
+	// Printer
+	BOOL	border_;
+	BOOL	headings_;
+	BOOL    print_mark_, print_bookmarks_, print_highlights_, print_search_, 
+	        print_change_, print_compare_, print_sectors_;
+	BOOL	print_watermark_;
+	CString	watermark_;
+	CString	header_;
+	BOOL	diff_first_header_;
+	CString	first_header_;
+	CString	footer_;
+	BOOL	diff_first_footer_;
+	CString	first_footer_;
+	BOOL	even_reverse_;
+	int     units_;  // 0 = inches, 1 = cm
+	int		spacing_;
+	double	left_;
+	double	top_;
+	double	right_;
+	double	bottom_;
+	double	header_edge_;
+	double	footer_edge_;
+
+	// History options
 	UINT	recent_files_;
 	BOOL    no_recent_add_;
 	UINT	max_search_hist_;
@@ -79,18 +133,6 @@ struct OptValues
 	BOOL    bg_exclude_removeable_;
 	BOOL    bg_exclude_optical_;
 	BOOL    bg_exclude_device_;
-
-	// Backup options
-	int		backup_;
-	BOOL	backup_space_;
-	BOOL	backup_if_size_;
-	UINT	backup_size_;
-	BOOL	backup_prompt_;
-
-	// Export options
-	int		address_specified_;
-	long    base_address_;
-	UINT	export_line_len_;
 
 	// Clipboard
 	enum cb_text_type cb_text_type_;
@@ -124,37 +166,6 @@ struct OptValues
 	CString	default_real_format_;
 	CString	default_string_format_;
 	CString	default_unsigned_format_;
-
-	// Macros
-	int		refresh_;
-	long	num_secs_;
-	long	num_keys_;
-	long	num_plays_;
-	BOOL	refresh_props_;
-	BOOL	refresh_bars_;
-	int		halt_level_;
-
-	// Printer
-	BOOL	border_;
-	BOOL	headings_;
-	BOOL    print_mark_, print_bookmarks_, print_highlights_, print_search_, print_change_, print_compare_, print_sectors_;
-	BOOL	print_watermark_;
-	CString	watermark_;
-	CString	header_;
-	BOOL	diff_first_header_;
-	CString	first_header_;
-	CString	footer_;
-	BOOL	diff_first_footer_;
-	CString	first_footer_;
-	BOOL	even_reverse_;
-	int     units_;  // 0 = inches, 1 = cm
-	int		spacing_;
-	double	left_;
-	double	top_;
-	double	right_;
-	double	bottom_;
-	double	header_edge_;
-	double	footer_edge_;
 
 	// The rest are only used if there is a window open
 	CString window_name_;       // Active view's window name
@@ -260,27 +271,47 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
+// CFoldersPage dialog
+
+class CFoldersPage : public COptPage
+{
+	DECLARE_DYNCREATE(CFoldersPage)
+
+public:
+	CFoldersPage() : COptPage(IDD_OPT_FOLDERS) { }
+// Overrides
+	virtual void OnOK();
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+// Implementation
+	virtual BOOL OnInitDialog();
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnOpenDir();
+	afx_msg void OnSaveDir();
+	afx_msg void OnChange();
+	DECLARE_MESSAGE_MAP()
+
+private:
+	void fix_controls();
+};
+
+/////////////////////////////////////////////////////////////////////////////
 // CHistoryPage dialog
 
 class CHistoryPage : public COptPage
 {
 	DECLARE_DYNCREATE(CHistoryPage)
 
-// Construction
 public:
-	CHistoryPage() : COptPage(IDD) { }
-
-// Dialog Data
-	enum { IDD = IDD_OPT_HISTORY };
-
+	CHistoryPage() : COptPage(IDD_OPT_HISTORY) { }
 // Overrides
-public:
 	virtual void OnOK();
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
 // Implementation
-protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
@@ -555,55 +586,6 @@ protected:
 	afx_msg void OnChange();
 	afx_msg void OnTemplatedir();
 	DECLARE_MESSAGE_MAP()
-};
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintPage dialog
-
-class CPrintPage : public COptPage
-{
-	DECLARE_DYNCREATE(CPrintPage)
-
-// Construction
-public:
-	CPrintPage() : COptPage(IDD) { }
-
-// Dialog Data
-	//{{AFX_DATA(CPrintPage)
-	enum { IDD = IDD_OPT_PRINT };
-	CEdit	ctl_footer_;
-	CEdit	ctl_header_;
-	CMFCMenuButton	footer_args_;
-	CMFCMenuButton	header_args_;
-	//}}AFX_DATA
-
-// Controls
-	//HICON arrow_icon_;
-	CMenu args_menu_;
-
-// Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CPrintPage)
-	public:
-	virtual void OnOK();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-protected:
-	// Generated message map functions
-	//{{AFX_MSG(CPrintPage)
-	virtual BOOL OnInitDialog();
-	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	afx_msg void OnChange();
-	afx_msg void OnFooterOpts();
-	afx_msg void OnHeaderOpts();
-	//}}AFX_MSG
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg void OnChangeUnits();
-	DECLARE_MESSAGE_MAP()
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1051,8 +1033,8 @@ public:
 protected:
 	// These are the pages of the "property sheet"
 	CSystemGeneralPage sysgeneralPage_;
+	CFoldersPage foldersPage_;
 	CFiltersPage filtersPage_;
-	//CPrintPage printerPage_;
 	CPrintGeneralPage printGeneralPage_;
 	CPrintDecorationsPage printDecorationsPage_;
 	CMacroPage macroPage_;

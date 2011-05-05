@@ -110,6 +110,7 @@ public:
 	virtual BOOL DoPromptFileName(CString& fileName, UINT nIDSTitle,
 			DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate* pTemplate)
 	{
+		// xxx TODO need to completely override this to use save_locn_
 		hid_last_file_dialog = HIDD_FILE_SAVE;
 		return CDocManager::DoPromptFileName(fileName, nIDSTitle, lFlags | OFN_SHOWHELP | OFN_ENABLESIZING, bOpenFileDialog, pTemplate);
 	}
@@ -950,8 +951,43 @@ void CHexEditApp::OnFileOpen()
 	dlgFile.m_ofn.lpstrTitle = title;
 
 	// Change the initial directory
-	if (!dir_open_.IsEmpty())
-		dlgFile.m_ofn.lpstrInitialDir = dir_open_;
+	CHexEditView * pv;
+	CString strDir;      // folder name passed to dialog [this must not be detroyed until after dlgFile.DoModal()]
+	switch (open_locn_)
+	{
+	case FL_DOC:
+		if ((pv = GetView()) != NULL && pv->GetDocument() != NULL && pv->GetDocument()->pfile1_ != NULL)
+		{
+			// Get the path from the filename of the active file
+			CString filename = pv->GetDocument()->pfile1_->GetFilePath();
+			int path_len;                   // Length of path (full name without filename)
+			path_len = filename.ReverseFind('\\');
+			if (path_len == -1) path_len = filename.ReverseFind('/');
+			if (path_len == -1) path_len = filename.ReverseFind(':');
+			if (path_len == -1)
+				path_len = 0;
+			else
+				++path_len;
+			strDir = filename.Left(path_len);
+		}
+		break;
+	case FL_LAST:
+		strDir = last_open_folder_;
+		break;
+	case FL_BOTH:
+		strDir = last_both_folder_;
+		break;
+	default:
+		ASSERT(0);
+		// fall through
+	case FL_SPECIFIED:
+		strDir = open_folder_;
+		break;
+	}
+	// If still empty default to the specified folder
+	if (strDir.IsEmpty())
+		strDir = open_folder_;
+	dlgFile.m_ofn.lpstrInitialDir = strDir;
 
 	if (dlgFile.DoModal() != IDOK)
 	{
@@ -972,7 +1008,7 @@ void CHexEditApp::OnFileOpen()
 
 	// Get directory name as first part of files buffer
 	CString dir_name(all_files);
-	dir_open_ = dir_name;
+	last_open_folder_ = last_both_folder_ = dir_name;
 
 	// Get file names separated by nul char ('\0') stop on 2 nul chars
 	for (const char *pp = all_files + strlen(all_files) + 1; *pp != '\0';
@@ -1989,6 +2025,15 @@ void CHexEditApp::LoadOptions()
 	run_autoexec_ = GetProfileInt("Options", "RunAutoExec", 1) ? TRUE : FALSE;
 	update_check_ = GetProfileInt("Update", "Check", 1) ? TRUE : FALSE;
 
+	open_locn_   = GetProfileInt("Options", "OpenLocn",  1);
+	open_folder_ = GetProfileString("Options", "OpenFolder");
+	if (open_folder_.IsEmpty() && !::GetDataPath(open_folder_))
+		open_folder_ = ::GetExePath();
+	save_locn_   = GetProfileInt("Options", "SaveLocn",  1);
+	save_folder_ = GetProfileString("Options", "SaveFolder");
+	if (save_folder_.IsEmpty() && !::GetDataPath(save_folder_))
+		save_folder_ = ::GetExePath();
+
 	backup_        = (BOOL)GetProfileInt("Options", "CreateBackup",  0);
 	backup_space_  = (BOOL)GetProfileInt("Options", "BackupIfSpace", 1);
 	backup_size_   =       GetProfileInt("Options", "BackupIfLess",  0);  // 1 = 1KByte, 0 = always
@@ -2300,7 +2345,9 @@ void CHexEditApp::LoadOptions()
 	prop_date_format_  = GetProfileInt("Property-Settings", "DateFormat", 0);
 
 	// Restore default file dialog directories
-	dir_open_ = GetProfileString("File-Settings", "DirOpen");
+	last_open_folder_ = GetProfileString("File-Settings", "DirOpen");
+	last_save_folder_ = GetProfileString("File-Settings", "DirSave");
+	last_both_folder_ = GetProfileString("File-Settings", "DirBoth");
 	//open_file_readonly_ = GetProfileInt("File-Settings", "OpenReadOnly", 0);
 	open_file_shared_   = GetProfileInt("File-Settings", "OpenShareable", 0);
 //    current_save_ = GetProfileString("File-Settings", "Save");
@@ -2433,6 +2480,11 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Tip", "StartUp", tipofday_ ? 0 : 1);   // inverted
 	WriteProfileInt("Options", "RunAutoExec", run_autoexec_ ? 1 : 0);
 	WriteProfileInt("Update", "Check", update_check_ ? 1 : 0);
+
+	WriteProfileInt("Options", "OpenLocn", open_locn_);
+	WriteProfileString("Options", "OpenFolder", open_folder_);
+	WriteProfileInt("Options", "SaveLocn", save_locn_);
+	WriteProfileString("Options", "SaveFolder", save_folder_);
 
 	WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
 	WriteProfileInt("MainFrame", "FloatDialogsMove", dlg_move_ ? 1 : 0);
@@ -2620,7 +2672,9 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Property-Settings", "DateFormat", prop_date_format_);
 
 	// Save directories for file dialogs
-	WriteProfileString("File-Settings", "DirOpen", dir_open_);
+	WriteProfileString("File-Settings", "DirOpen", last_open_folder_);
+	WriteProfileString("File-Settings", "DirSave", last_save_folder_);
+	WriteProfileString("File-Settings", "DirBoth", last_both_folder_);
 
 	//WriteProfileInt("File-Settings", "OpenReadOnly",  open_file_readonly_);
 	WriteProfileInt("File-Settings", "OpenShareable", open_file_shared_);
@@ -2937,6 +2991,12 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.run_autoexec_ = run_autoexec_;
 	val.update_check_ = update_check_;
 
+	// Folder options
+	val.open_locn_ = open_locn_;
+	val.open_folder_ = open_folder_;
+	val.save_locn_ = save_locn_;
+	val.save_folder_ = save_folder_;
+
 	// History
 	val.recent_files_ = recent_files_;
 	val.no_recent_add_ = no_recent_add_;
@@ -3136,6 +3196,12 @@ void CHexEditApp::set_options(struct OptValues &val)
 	tipofday_ = val.tipofday_;
 	run_autoexec_ = val.run_autoexec_;
 	update_check_ = val.update_check_;
+
+	open_locn_ = val.open_locn_;
+	open_folder_ = val.open_folder_;
+	save_locn_ = val.save_locn_;
+	save_folder_ = val.save_folder_;
+
 	if (recent_files_ != val.recent_files_)
 	{
 		recent_files_ = val.recent_files_;

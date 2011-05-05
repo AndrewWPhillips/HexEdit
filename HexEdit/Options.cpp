@@ -121,6 +121,9 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.run_autoexec_ = TRUE;
 	val_.update_check_ = TRUE;
 	val_.save_exit_ = FALSE;
+	val_.open_locn_ = 1;   // last used open
+	val_.save_locn_ = 1;   // last used save
+
 	val_.recent_files_ = 0;
 	val_.no_recent_add_ = FALSE;
 	val_.max_search_hist_ = val_.max_replace_hist_ = 
@@ -267,11 +270,13 @@ void COptSheet::page_init()
 	wineditPage_.SetGlobalEditPage(&workspaceeditPage_);
 
 	// Add the rest of the pages and categories (System/General already added in init() above).
-	AddPageToTree(pCatSys_, &filtersPage_, IMG_FILTERS, IMG_FILTERS);
+	CMFCPropertySheetCategoryInfo * pCatFile = AddTreeCategory("Files", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
+	  AddPageToTree(pCatFile, &foldersPage_, IMG_FILTERS, IMG_FILTERS);  // xxx TODO new image
+	  AddPageToTree(pCatFile, &filtersPage_, IMG_FILTERS, IMG_FILTERS);
 
 	CMFCPropertySheetCategoryInfo * pCatPrn = AddTreeCategory("Printer", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
-	AddPageToTree(pCatPrn, &printGeneralPage_, IMG_PRINTER, IMG_PRINTER);
-	AddPageToTree(pCatPrn, &printDecorationsPage_, IMG_PRINTER_DECO, IMG_PRINTER_DECO);
+	  AddPageToTree(pCatPrn, &printGeneralPage_, IMG_PRINTER, IMG_PRINTER);
+	  AddPageToTree(pCatPrn, &printDecorationsPage_, IMG_PRINTER_DECO, IMG_PRINTER_DECO);
 	AddPageToTree(pCatSys_, &macroPage_, IMG_MACRO, IMG_MACRO);
 	AddPageToTree(pCatSys_, &histPage_, IMG_HIST, IMG_HIST);
 
@@ -543,6 +548,112 @@ void CSystemGeneralPage::OnRestoreAvoidable()
 	{
 		::SHDeleteKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit\\DialogDontAskValues");  // user settings
 	}
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CFoldersPage property page
+
+IMPLEMENT_DYNCREATE(CFoldersPage, COptPage)
+
+void CFoldersPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+	DDX_Radio(pDX, IDC_OPEN_FOLDER_DOC, pParent->val_.open_locn_);
+	DDX_Text(pDX, IDC_OPEN_FOLDER, pParent->val_.open_folder_);
+	DDX_Radio(pDX, IDC_SAVE_FOLDER_DOC, pParent->val_.save_locn_);
+	DDX_Text(pDX, IDC_SAVE_FOLDER, pParent->val_.save_folder_);
+}
+
+BEGIN_MESSAGE_MAP(CFoldersPage, COptPage)
+	ON_BN_CLICKED(IDC_OPEN_FOLDER_DOC, OnChange)
+	ON_BN_CLICKED(IDC_OPEN_FOLDER_LAST, OnChange)
+	ON_BN_CLICKED(IDC_OPEN_FOLDER_BOTH, OnChange)
+	ON_BN_CLICKED(IDC_OPEN_FOLDER_SPECIFIED, OnChange)
+	ON_BN_CLICKED(IDC_OPEN_FOLDER_BROWSE, OnOpenDir)
+	ON_BN_CLICKED(IDC_SAVE_FOLDER_DOC, OnChange)
+	ON_BN_CLICKED(IDC_SAVE_FOLDER_LAST, OnChange)
+	ON_BN_CLICKED(IDC_SAVE_FOLDER_BOTH, OnChange)
+	ON_BN_CLICKED(IDC_SAVE_FOLDER_SPECIFIED, OnChange)
+	ON_BN_CLICKED(IDC_SAVE_FOLDER_BROWSE, OnSaveDir)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+void CFoldersPage::fix_controls()
+{
+	// Only allow Open folder entry if specified option is selected
+	GetDlgItem(IDC_OPEN_FOLDER)->EnableWindow(pParent->val_.open_locn_ == FL_SPECIFIED);
+	GetDlgItem(IDC_OPEN_FOLDER_BROWSE)->EnableWindow(pParent->val_.open_locn_ == FL_SPECIFIED);
+	// Only allow Save As folder entry if specified option is selected
+	GetDlgItem(IDC_SAVE_FOLDER)->EnableWindow(pParent->val_.save_locn_ == FL_SPECIFIED);
+	GetDlgItem(IDC_SAVE_FOLDER_BROWSE)->EnableWindow(pParent->val_.save_locn_ == FL_SPECIFIED);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CFoldersPage message handlers
+
+BOOL CFoldersPage::OnInitDialog()
+{
+	COptPage::OnInitDialog();
+
+	return TRUE;
+}
+
+void CFoldersPage::OnOK()
+{
+	theApp.set_options(pParent->val_);
+	COptPage::OnOK();
+}
+
+static DWORD id_pairs_folders[] = {
+	0,0 
+};
+
+BOOL CFoldersPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_folders);
+	return TRUE;
+}
+
+void CFoldersPage::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_folders);
+}
+
+void CFoldersPage::OnOpenDir()
+{
+	ASSERT(pParent->val_.open_folder_.Right(1) == "\\");
+	CDirDialog dlg(pParent->val_.open_folder_, "All Files (*.*)|*.*||", this);
+	dlg.m_ofn.lpstrTitle = "Select Default Folder for File Open Dialog";
+
+	if (dlg.DoModal() == IDOK)
+	{
+		pParent->val_.open_folder_ = dlg.GetPath();
+		ASSERT(pParent->val_.open_folder_.Right(1) == "\\");
+		UpdateData(FALSE);
+	}
+}
+
+void CFoldersPage::OnSaveDir()
+{
+	ASSERT(pParent->val_.save_folder_.Right(1) == "\\");
+	CDirDialog dlg(pParent->val_.save_folder_, "All Files (*.*)|*.*||", this);
+	dlg.m_ofn.lpstrTitle = "Select Default Folder for Save As Dialog";
+
+	if (dlg.DoModal() == IDOK)
+	{
+		pParent->val_.save_folder_ = dlg.GetPath();
+		ASSERT(pParent->val_.save_folder_.Right(1) == "\\");
+		UpdateData(FALSE);
+	}
+}
+
+void CFoldersPage::OnChange()
+{
+	UpdateData();
+	fix_controls();
+	SetModified(TRUE);
 }
 
 //===========================================================================
@@ -3012,180 +3123,6 @@ void CMacroPage::OnMacrodir()
 	if (dlg.DoModal() == IDOK)
 		aa->mac_dir_ = dlg.GetPath();
 	ASSERT(aa->mac_dir_.Right(1) == "\\");
-}
-
-//===========================================================================
-/////////////////////////////////////////////////////////////////////////////
-// CPrintPage property page
-
-IMPLEMENT_DYNCREATE(CPrintPage, COptPage)
-
-void CPrintPage::DoDataExchange(CDataExchange* pDX)
-{
-	COptPage::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_HEADER, ctl_header_);
-	DDX_Control(pDX, IDC_HEADER_OPTS, header_args_);
-	DDX_Control(pDX, IDC_FOOTER, ctl_footer_);
-	DDX_Control(pDX, IDC_FOOTER_OPTS, footer_args_);
-	DDX_Text(pDX, IDC_HEADER, pParent->val_.header_);
-	DDX_Text(pDX, IDC_FOOTER, pParent->val_.footer_);
-	DDX_Check(pDX, IDC_PRINT_BORDER, pParent->val_.border_);
-	DDX_Check(pDX, IDC_PRINT_HEADINGS, pParent->val_.headings_);
-	DDX_CBIndex(pDX, IDC_PRINT_UNITS, pParent->val_.units_);
-	DDX_Radio(pDX, IDC_PRINT_SPACE1, pParent->val_.spacing_);
-	DDX_Text(pDX, IDC_PRINT_LEFT, pParent->val_.left_);
-	DDX_Text(pDX, IDC_PRINT_TOP, pParent->val_.top_);
-	DDX_Text(pDX, IDC_PRINT_RIGHT, pParent->val_.right_);
-	DDX_Text(pDX, IDC_PRINT_BOTTOM, pParent->val_.bottom_);
-	DDX_Text(pDX, IDC_PRINT_HEADER_EDGE, pParent->val_.header_edge_);
-	DDX_Text(pDX, IDC_PRINT_FOOTER_EDGE, pParent->val_.footer_edge_);
-}
-
-BEGIN_MESSAGE_MAP(CPrintPage, COptPage)
-	//{{AFX_MSG_MAP(CPrintPage)
-	ON_WM_HELPINFO()
-	ON_BN_CLICKED(IDC_PRINT_BORDER, OnChange)
-	ON_BN_CLICKED(IDC_PRINT_HEADINGS, OnChange)
-	ON_EN_CHANGE(IDC_HEADER, OnChange)
-	ON_EN_CHANGE(IDC_FOOTER, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_LEFT, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_RIGHT, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_TOP, OnChange)
-	ON_EN_CHANGE(IDC_PRINT_BOTTOM, OnChange)
-	ON_BN_CLICKED(IDC_PRINT_SPACE1, OnChange)
-	ON_BN_CLICKED(IDC_PRINT_SPACE1HALF, OnChange)
-	ON_BN_CLICKED(IDC_PRINT_SPACE2, OnChange)
-	ON_BN_CLICKED(IDC_FOOTER_OPTS, OnFooterOpts)
-	ON_BN_CLICKED(IDC_HEADER_OPTS, OnHeaderOpts)
-	//}}AFX_MSG_MAP
-	ON_WM_CONTEXTMENU()
-	ON_CBN_SELCHANGE(IDC_PRINT_UNITS, OnChangeUnits)
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CPrintPage message handlers
-
-BOOL CPrintPage::OnInitDialog()
-{
-	COptPage::OnInitDialog();
-
-	//VERIFY(arrow_icon_ = AfxGetApp()->LoadIcon(IDI_ARROW));
-	//ASSERT(GetDlgItem(IDC_HEADER_OPTS) != NULL);
-	//((CButton *)GetDlgItem(IDC_HEADER_OPTS))->SetIcon(arrow_icon_);
-	//ASSERT(GetDlgItem(IDC_FOOTER_OPTS) != NULL);
-	//((CButton *)GetDlgItem(IDC_FOOTER_OPTS))->SetIcon(arrow_icon_);
-
-	if (args_menu_.m_hMenu == NULL)
-		args_menu_.LoadMenu(IDR_PRINT_ARGS);
-	header_args_.m_hMenu = args_menu_.GetSubMenu(0)->GetSafeHmenu();
-	header_args_.m_bRightArrow = TRUE;
-	footer_args_.m_hMenu = args_menu_.GetSubMenu(0)->GetSafeHmenu();
-	footer_args_.m_bRightArrow = TRUE;
-
-	return TRUE;
-}
-
-void CPrintPage::OnOK()
-{
-	theApp.set_options(pParent->val_);
-	COptPage::OnOK();
-}
-
-void CPrintPage::OnHeaderOpts()
-{
-	if (header_args_.m_nMenuResult != 0)
-	{
-		CString ss;
-		VERIFY(ss.LoadString(header_args_.m_nMenuResult));
-
-		for (int i = 0; i < ss.GetLength (); i++)
-		{
-			ctl_header_.SendMessage (WM_CHAR, (TCHAR) ss [i]);
-		}
-		SetModified(TRUE);
-	}
-}
-
-void CPrintPage::OnFooterOpts()
-{
-	if (footer_args_.m_nMenuResult != 0)
-	{
-		CString ss;
-		VERIFY(ss.LoadString(footer_args_.m_nMenuResult));
-
-		for (int i = 0; i < ss.GetLength (); i++)
-		{
-			ctl_footer_.SendMessage (WM_CHAR, (TCHAR) ss [i]);
-		}
-		SetModified(TRUE);
-	}
-}
-
-void CPrintPage::OnChangeUnits()
-{
-	// Get factor for units converting from
-	double factor = 1.0;
-	switch (pParent->val_.units_)
-	{
-	case 1:
-		factor = 2.54;
-		break;
-	}
-	UpdateData();
-	// Modify factor for units converting to
-	switch (pParent->val_.units_)
-	{
-	case 1:
-		factor /= 2.54;
-		break;
-	}
-	// Fix all distance values according to new units
-	pParent->val_.bottom_      = floor(1000.0*pParent->val_.bottom_     /factor + 0.5)/1000.0;
-	pParent->val_.top_         = floor(1000.0*pParent->val_.top_        /factor + 0.5)/1000.0;
-	pParent->val_.left_        = floor(1000.0*pParent->val_.left_       /factor + 0.5)/1000.0;
-	pParent->val_.right_       = floor(1000.0*pParent->val_.right_      /factor + 0.5)/1000.0;
-	pParent->val_.header_edge_ = floor(1000.0*pParent->val_.header_edge_/factor + 0.5)/1000.0;
-	pParent->val_.footer_edge_ = floor(1000.0*pParent->val_.footer_edge_/factor + 0.5)/1000.0;
-
-	UpdateData(FALSE);    // Put new values back into the controls
-
-	SetModified(TRUE);
-}
-
-void CPrintPage::OnChange()
-{
-	SetModified(TRUE);
-}
-
-static DWORD id_pairs3[] = { 
-	IDC_HEADER, HIDC_HEADER,
-	IDC_HEADER_OPTS, HIDC_HEADER_OPTS,
-	IDC_FOOTER, HIDC_FOOTER,
-	IDC_FOOTER_OPTS, HIDC_FOOTER_OPTS,
-	IDC_PRINT_BORDER, HIDC_PRINT_BORDER,
-	IDC_PRINT_HEADINGS, HIDC_PRINT_HEADINGS,
-	IDC_PRINT_UNITS, HIDC_PRINT_UNITS,
-	IDC_PRINT_SPACE1, HIDC_PRINT_SPACE1,
-	IDC_PRINT_SPACE1HALF, HIDC_PRINT_SPACE1HALF,
-	IDC_PRINT_SPACE2, HIDC_PRINT_SPACE2,
-	IDC_PRINT_LEFT, HIDC_PRINT_LEFT,
-	IDC_PRINT_RIGHT, HIDC_PRINT_RIGHT,
-	IDC_PRINT_TOP, HIDC_PRINT_TOP,
-	IDC_PRINT_BOTTOM, HIDC_PRINT_BOTTOM,
-	IDC_PRINT_HEADER_EDGE, HIDC_PRINT_HEADER_EDGE,
-	IDC_PRINT_FOOTER_EDGE, HIDC_PRINT_FOOTER_EDGE,
-	0,0 
-};
-
-BOOL CPrintPage::OnHelpInfo(HELPINFO* pHelpInfo)
-{
-	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs3);
-	return TRUE;
-}
-
-void CPrintPage::OnContextMenu(CWnd* pWnd, CPoint point)
-{
-	theApp.HtmlHelpContextMenu(pWnd, id_pairs3);
 }
 
 //===========================================================================

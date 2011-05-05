@@ -177,7 +177,6 @@
 #define IDD_ALGORITHM                   238
 #define IDR_CONTEXT_ADDRESS             239
 #define IDR_CONTEXT_HEX                 240
-#define IDD_OPT_PRINT                   240
 #define IDR_CONTEXT_CHAR                241
 #define IDD_OPT_FILTERS                 241
 #define IDR_CONTEXT_BARS                242
@@ -215,7 +214,6 @@
 #define IDI_EVAL                        264
 #define IDI_JUMP                        265
 #define IDI_SWITCH                      266
-
 #define IDD_STARTUP                     267
 #define IDB_DEVIMAGES                   267
 #define IDD_OPT_WINDISPLAY              268
@@ -413,7 +411,9 @@
 #define IDD_OPT_BACKUP                  438
 #define IDD_CALC_OLD                    439
 #define IDI_QUESTIONMARK                440
+#define IDD_OPT_BACKGROUND              440
 #define IDI_EXCLAMATIONMARK             441
+#define IDD_OPT_FOLDERS                 441
 #define IDI_INFO                        442
 #define IDI_CROSS                       443
 #define IDR_CONTEXT_OFFSET_HANDLE       445
@@ -570,10 +570,8 @@
 #define IDC_ASR                         1075
 #define IDC_FP_EXP                      1076
 #define IDC_SUBJECT                     1077
-#define IDC_PRINT_HEADER                1077
 #define IDC_FILE_READONLY               1078
 #define IDC_NAME                        1078
-#define IDC_PRINT_FOOTER                1078
 #define IDC_FILE_HIDDEN                 1079
 #define IDC_ADDRESS                     1079
 #define IDC_INSTALL_CODE                1079
@@ -1019,13 +1017,13 @@
 #define IDC_ATTACH                      1434
 #define IDC_FOLDER_HIDDEN               1434
 #define IDC_ATTACHMENT_BROWSE           1435
-#define IDC_EDIT1                       1436
 #define IDC_VALUE                       1436
 #define IDC_CALC_COMBO                  1436
 #define IDC_EXPR                        1436
 #define IDC_PTR_SIZE2                   1437
 #define IDC_EDIT2                       1437
 #define IDC_ACK                         1437
+#define IDC_SAVE_FOLDER                 1437
 #define IDC_PTR_SIZE4                   1438
 #define IDC_PTR_SIZE8                   1439
 #define IDC_FUNC_PTR2                   1440
@@ -1198,6 +1196,18 @@
 #define IDC_DESC_RADIX                  1613
 #define IDC_DESC_BITS                   1614
 #define IDC_DFFD_COLOUR_PICKER          1615
+#define IDC_OPEN_FOLDER_DOC             1616
+#define IDC_OPEN_FOLDER_BROWSE          1617
+#define IDC_OPEN_FOLDER_LAST            1618
+#define IDC_OPEN_FOLDER_BOTH            1619
+#define IDC_OPEN_FOLDER_SPECIFIED       1620
+#define IDC_EDIT1                       1621
+#define IDC_OPEN_FOLDER                 1621
+#define IDC_SAVE_FOLDER_DOC             1622
+#define IDC_SAVE_FOLDER_LAST            1623
+#define IDC_SAVE_FOLDER_BOTH            1624
+#define IDC_SAVE_FOLDER_SPECIFIED       1625
+#define IDC_SAVE_FOLDER_BROWSE          1626
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1697,7 +1707,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        460
 #define _APS_NEXT_COMMAND_VALUE         39152
-#define _APS_NEXT_CONTROL_VALUE         1616
+#define _APS_NEXT_CONTROL_VALUE         1630
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
