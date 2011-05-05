@@ -98,6 +98,8 @@ enum
 	IMG_PRINTER_DECO,
 };
 
+int COptSheet::last_opt_page_ = -1;
+
 IMPLEMENT_DYNAMIC(COptSheet, CMFCPropertySheet)
 
 COptSheet::COptSheet(LPCTSTR pszCaption, int display_page, BOOL must_show_page, CWnd* pParentWnd, UINT iSelectPage)
@@ -241,7 +243,6 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.show_bookmarks_ = val_.show_highlights_ = TRUE;
 
 	// Set up page stuff
-	last_opt_page_= -1;
 	display_page_ = display_page;
 	must_show_page_ = must_show_page;
 

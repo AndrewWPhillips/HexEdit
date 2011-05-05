@@ -1,6 +1,5 @@
 // options.h : header file for Options tabbed dialog box
 //
-
 // Copyright (c) 2000-2010 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
@@ -1084,7 +1083,7 @@ protected:
 private:
 	CMFCPropertySheetCategoryInfo * pCatSys_;
 
-	int last_opt_page_;                 // Index of last active options page
+	static int last_opt_page_;          // Index of last active options page
 
 	int display_page_;                  // Page to display
 	BOOL must_show_page_;               // Show display_page_ even if last_opt_page_ is valid
