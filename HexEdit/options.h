@@ -281,6 +281,7 @@ public:
 	CFoldersPage() : COptPage(IDD_OPT_FOLDERS) { }
 // Overrides
 	virtual void OnOK();
+	virtual BOOL OnApply();
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

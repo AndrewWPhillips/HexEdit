@@ -121,8 +121,8 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.run_autoexec_ = TRUE;
 	val_.update_check_ = TRUE;
 	val_.save_exit_ = FALSE;
-	val_.open_locn_ = 1;   // last used open
-	val_.save_locn_ = 1;   // last used save
+	val_.open_locn_ = 1;   // last used open locn
+	val_.save_locn_ = 0;   // active file locn
 
 	val_.recent_files_ = 0;
 	val_.no_recent_add_ = FALSE;
@@ -582,12 +582,12 @@ END_MESSAGE_MAP()
 
 void CFoldersPage::fix_controls()
 {
-	// Only allow Open folder entry if specified option is selected
-	GetDlgItem(IDC_OPEN_FOLDER)->EnableWindow(pParent->val_.open_locn_ == FL_SPECIFIED);
-	GetDlgItem(IDC_OPEN_FOLDER_BROWSE)->EnableWindow(pParent->val_.open_locn_ == FL_SPECIFIED);
-	// Only allow Save As folder entry if specified option is selected
-	GetDlgItem(IDC_SAVE_FOLDER)->EnableWindow(pParent->val_.save_locn_ == FL_SPECIFIED);
-	GetDlgItem(IDC_SAVE_FOLDER_BROWSE)->EnableWindow(pParent->val_.save_locn_ == FL_SPECIFIED);
+	//// Only allow Open folder entry if specified option is selected
+	//GetDlgItem(IDC_OPEN_FOLDER)->EnableWindow(pParent->val_.open_locn_ == FL_SPECIFIED);
+	//GetDlgItem(IDC_OPEN_FOLDER_BROWSE)->EnableWindow(pParent->val_.open_locn_ == FL_SPECIFIED);
+	//// Only allow Save As folder entry if specified option is selected
+	//GetDlgItem(IDC_SAVE_FOLDER)->EnableWindow(pParent->val_.save_locn_ == FL_SPECIFIED);
+	//GetDlgItem(IDC_SAVE_FOLDER_BROWSE)->EnableWindow(pParent->val_.save_locn_ == FL_SPECIFIED);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -596,6 +596,7 @@ void CFoldersPage::fix_controls()
 BOOL CFoldersPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
+	fix_controls();
 
 	return TRUE;
 }
@@ -604,6 +605,32 @@ void CFoldersPage::OnOK()
 {
 	theApp.set_options(pParent->val_);
 	COptPage::OnOK();
+}
+
+BOOL CFoldersPage::OnApply()
+{
+	// Check that the directories exist
+	if (!PathIsDirectory(pParent->val_.open_folder_) &&
+		TaskMessageBox("Folder Not Found",
+		"The default Opne Folder \"" + pParent->val_.open_folder_ +
+		"\" does not exist.\n\nContinue anyway?",
+		MB_YESNO) == IDNO)
+	{
+		pParent->SetActivePage(this);
+		GetDlgItem(IDC_OPEN_FOLDER)->SetFocus();
+		return FALSE;
+	}
+	if (!PathIsDirectory(pParent->val_.save_folder_) &&
+		TaskMessageBox("Folder Not Found",
+		"The default Save As Folder \"" + pParent->val_.save_folder_ +
+		"\" does not exist.\n\nContinue anyway?",
+		MB_YESNO) == IDNO)
+	{
+		pParent->SetActivePage(this);
+		GetDlgItem(IDC_SAVE_FOLDER)->SetFocus();
+		return FALSE;
+	}
+	return TRUE;
 }
 
 static DWORD id_pairs_folders[] = {

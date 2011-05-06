@@ -108,13 +108,73 @@ class CHexEditDocManager : public CDocManager
 public:
 	// We have to do it this way as CWinAppEx::DoPromptFileName is not virtual for some reason
 	virtual BOOL DoPromptFileName(CString& fileName, UINT nIDSTitle,
-			DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate* pTemplate)
-	{
-		// xxx TODO need to completely override this to use save_locn_
-		hid_last_file_dialog = HIDD_FILE_SAVE;
-		return CDocManager::DoPromptFileName(fileName, nIDSTitle, lFlags | OFN_SHOWHELP | OFN_ENABLESIZING, bOpenFileDialog, pTemplate);
-	}
+			DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate* pTemplate);
 };
+
+BOOL CHexEditDocManager::DoPromptFileName(CString& fileName, UINT nIDSTitle, DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate* pTemplate)
+{
+	ASSERT(!bOpenFileDialog);  // we should only be calling this for save
+	if (bOpenFileDialog)
+		return CDocManager::DoPromptFileName(fileName, nIDSTitle, lFlags, bOpenFileDialog, pTemplate);
+
+	(void)pTemplate;  // This is passed to get associated filters but in our case we don't have any (and they're set by the user via GetCurrentFilters())
+
+	//hid_last_file_dialog = HIDD_FILE_SAVE;
+	CHexFileDialog dlgFile("FileSaveDlg", HIDD_FILE_SAVE, FALSE, NULL, fileName, lFlags | OFN_SHOWHELP | OFN_ENABLESIZING,
+	                       theApp.GetCurrentFilters(), "Save", AfxGetMainWnd());
+
+	CString title;
+	ENSURE(title.LoadString(nIDSTitle));
+	dlgFile.m_ofn.lpstrTitle = title;
+
+	// Change the initial directory
+	CHexEditView * pv;
+	CString strDir;      // folder name passed to dialog [this must not be destroyed until after dlgFile.DoModal()]
+	switch (theApp.save_locn_)
+	{
+	case FL_DOC:
+		if ((pv = GetView()) != NULL && pv->GetDocument() != NULL && pv->GetDocument()->pfile1_ != NULL)
+		{
+			// Get the path from the filename of the active file
+			CString filename = pv->GetDocument()->pfile1_->GetFilePath();
+			int path_len;                   // Length of path (full name without filename)
+			path_len = filename.ReverseFind('\\');
+			if (path_len == -1) path_len = filename.ReverseFind('/');
+			if (path_len == -1) path_len = filename.ReverseFind(':');
+			if (path_len == -1)
+				path_len = 0;
+			else
+				++path_len;
+			strDir = filename.Left(path_len);
+		}
+		break;
+	case FL_LAST:
+		strDir = theApp.last_save_folder_;
+		break;
+	case FL_BOTH:
+		strDir = theApp.last_both_folder_;
+		break;
+	default:
+		ASSERT(0);
+		// fall through
+	case FL_SPECIFIED:
+		strDir = theApp.save_folder_;
+		break;
+	}
+	// If still empty default to the specified folder
+	if (strDir.IsEmpty())
+		strDir = theApp.save_folder_;
+	dlgFile.m_ofn.lpstrInitialDir = strDir;
+
+	dlgFile.m_ofn.lpstrFile = fileName.GetBuffer(_MAX_PATH + 1);
+	dlgFile.m_ofn.nMaxFile = _MAX_PATH;
+	INT_PTR nResult = dlgFile.DoModal();
+	fileName.ReleaseBuffer();
+
+	theApp.last_open_folder_ = theApp.last_both_folder_ = fileName.Left(dlgFile.m_ofn.nFileOffset);
+
+	return nResult == IDOK;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditApp
@@ -2029,7 +2089,7 @@ void CHexEditApp::LoadOptions()
 	open_folder_ = GetProfileString("Options", "OpenFolder");
 	if (open_folder_.IsEmpty() && !::GetDataPath(open_folder_))
 		open_folder_ = ::GetExePath();
-	save_locn_   = GetProfileInt("Options", "SaveLocn",  1);
+	save_locn_   = GetProfileInt("Options", "SaveLocn",  0);
 	save_folder_ = GetProfileString("Options", "SaveFolder");
 	if (save_folder_.IsEmpty() && !::GetDataPath(save_folder_))
 		save_folder_ = ::GetExePath();

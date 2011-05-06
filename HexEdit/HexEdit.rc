@@ -2308,21 +2308,21 @@ FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,51,8,204,1
     LTEXT           "Default Open Folder",IDC_STATIC,10,4,64,8
-    CONTROL         "Folder of Active Document",IDC_OPEN_FOLDER_DOC,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,19,15,100,10
+    CONTROL         "Folder of Active Document",IDC_OPEN_FOLDER_DOC,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,19,15,200,10
     CONTROL         "Folder last used in Open Dialog",IDC_OPEN_FOLDER_LAST,
-                    "Button",BS_AUTORADIOBUTTON,19,27,114,10
-    CONTROL         "Folder last used in Open or Save As Dialog",IDC_OPEN_FOLDER_BOTH,
-                    "Button",BS_AUTORADIOBUTTON,19,39,151,10
+                    "Button",BS_AUTORADIOBUTTON,19,27,200,10
+    CONTROL         "Folder last used in either Open or Save As Dialog",IDC_OPEN_FOLDER_BOTH,
+                    "Button",BS_AUTORADIOBUTTON,19,39,200,10
     CONTROL         "Specified:",IDC_OPEN_FOLDER_SPECIFIED,"Button",BS_AUTORADIOBUTTON,19,51,42,10
     EDITTEXT        IDC_OPEN_FOLDER,63,51,172,14,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_OPEN_FOLDER_BROWSE,237,51,18,15,0,0,HIDC_OPEN_FOLDER_BROWSE
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,51,74,204,1
-    LTEXT           "Default Save Folder",IDC_STATIC,10,70,64,8
-    CONTROL         "Folder of Active Document",IDC_SAVE_FOLDER_DOC,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,19,81,100,10
+    LTEXT           "Default Save As Folder",IDC_STATIC,10,70,73,8
+    CONTROL         "Folder of Active Document",IDC_SAVE_FOLDER_DOC,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,19,81,200,10
     CONTROL         "Folder last used in Save As Dialog",IDC_SAVE_FOLDER_LAST,
-                    "Button",BS_AUTORADIOBUTTON,19,94,123,10
-    CONTROL         "Folder last used in Save As or Open Dialog",IDC_SAVE_FOLDER_BOTH,
-                    "Button",BS_AUTORADIOBUTTON,19,106,151,10
+                    "Button",BS_AUTORADIOBUTTON,19,94,200,10
+    CONTROL         "Folder last used in either Save As or Open Dialog",IDC_SAVE_FOLDER_BOTH,
+                    "Button",BS_AUTORADIOBUTTON,19,106,200,10
     CONTROL         "Specified:",IDC_SAVE_FOLDER_SPECIFIED,"Button",BS_AUTORADIOBUTTON,19,118,42,10
     EDITTEXT        IDC_SAVE_FOLDER,63,118,172,14,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_SAVE_FOLDER_BROWSE,237,118,18,15,0,0,HIDC_SAVE_FOLDER_BROWSE
