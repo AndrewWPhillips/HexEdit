@@ -808,6 +808,7 @@ private:
 	bool copy2cb_binary(FILE_ADDRESS start, FILE_ADDRESS end);  // Copy to clipboard in custom "BinaryData" format (same as used in Visual Studio)
 	CString copy2cb_file(FILE_ADDRESS start, FILE_ADDRESS end); // Copy to clipboard using our own custom format "HexEditLargeDataTempFile"
 	bool copy2cb_hextext(FILE_ADDRESS start, FILE_ADDRESS end); // Copy to clipboard as hex text (so each byte is stored as at least 3 chars = space + 2 hex digits)
+	bool copy2cb_flag_text_is_hextext();                        // Copy to clipboard in dummy format that indicates CF_TEXT is hex text
 	FILE_ADDRESS hex_text_size(FILE_ADDRESS start, FILE_ADDRESS end)
 	{
 		// Amount of memory needed for hex text - see copy2cb_hextext().

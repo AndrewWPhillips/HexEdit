@@ -121,8 +121,8 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.run_autoexec_ = TRUE;
 	val_.update_check_ = TRUE;
 	val_.save_exit_ = FALSE;
-	val_.open_locn_ = 1;   // last used open locn
-	val_.save_locn_ = 0;   // active file locn
+	val_.open_locn_ = 1;
+	val_.save_locn_ = 0;
 
 	val_.recent_files_ = 0;
 	val_.no_recent_add_ = FALSE;

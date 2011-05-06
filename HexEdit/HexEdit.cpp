@@ -99,6 +99,7 @@ int new_check_called = 0;
 extern DWORD hid_last_file_dialog = HIDD_FILE_OPEN;
 const char *CHexEditApp::bin_format_name  = "BinaryData";               // for copy2cb_binary
 const char *CHexEditApp::temp_format_name = "HexEditLargeDataTempFile"; // for copy2cb_file
+const char *CHexEditApp::flag_format_name = "HexEditFlagTextIsHex";     // for copy2cb_flag_text_is_hextext
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditDocManager
@@ -1604,7 +1605,7 @@ int CHexEditApp::ExitInstance()
 		if (last_cb_seq_ == ::GetClipboardSequenceNumber())
 		{
 #ifdef _DEBUG
-			// Ensure that the format is still present (else soemthing is very wrong)
+			// Ensure that the format is still present (else something is very wrong)
 			UINT fmt = ::RegisterClipboardFormat(temp_format_name);
 			ASSERT(::IsClipboardFormatAvailable(fmt));
 #endif

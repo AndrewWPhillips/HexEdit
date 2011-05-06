@@ -10219,8 +10219,8 @@ bool CHexEditView::CopyToClipboard()
 		// Now put text data onto the clipboard
 		if (cb_text == cb_text_hextext)
 		{
-			// Text is hex text (eg 3 chars "ABC" -> " 61 62 63")
-			if (copy2cb_hextext(start, end))
+			// Text is hex text (eg 3 chars per byte "ABC" -> " 61 62 63")
+			if (copy2cb_hextext(start, end) && copy2cb_flag_text_is_hextext())
 				some_succeeded = true;
 			else
 				some_failed = true;
@@ -10232,13 +10232,14 @@ bool CHexEditView::CopyToClipboard()
 				some_succeeded = true;
 			else
 				some_failed = true;
+
+			// And also as binary
+			if (copy2cb_binary(start, end))
+				some_succeeded = true;
+			else
+				use_file = true;   // Possibly too big error - so use temp file format
 		}
 
-		// And also as binary
-		if (copy2cb_binary(start, end))
-			some_succeeded = true;
-		else
-			use_file = true;   // Possibly too big error - so use temp file format
 	}
 	if (use_file)
 	{
@@ -10403,6 +10404,38 @@ bool CHexEditView::copy2cb_text(FILE_ADDRESS start, FILE_ADDRESS end)
 	return true;
 }
 
+// Add another format to clipboard that does not contain any data but just indi-
+// cates that the current text (characters) are hex text that should paste as binary.
+bool CHexEditView::copy2cb_flag_text_is_hextext()
+{
+	char *pp;
+	HANDLE hh;
+	UINT flag_format;
+	if ((flag_format = ::RegisterClipboardFormat(CHexEditApp::flag_format_name)) == 0 ||
+		(hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, 64)) == NULL ||
+		(pp = reinterpret_cast<char *>(::GlobalLock(hh))) == NULL)
+	{
+		AfxMessageBox("Error adding flag data to clipboard");
+		theApp.mac_error_ = 10;
+		return false;
+	}
+
+	// Put some dummy data on the clipboard
+	strncpy(pp, "Just indicates that the current text data (CF_TEXT) is hex text", 64);
+
+	if (::SetClipboardData(flag_format, hh) == NULL)
+	{
+		::GlobalFree(hh);
+		AfxMessageBox("Could not place flag data on clipboard");
+		theApp.mac_error_ = 10;
+		return false;
+	}
+
+	// Note: the clipboard now owns the memory so ::GlobalFree(hh) should not be called
+	::GlobalUnlock(hh);
+	return true;
+}
+
 // Copy to the clipboard in our own custom format "HexEditLargeDataTempFile".
 // This creates a Windows temporary file with all the data and just
 // puts the file name onto the clipboard.  (The temp file is deleted
@@ -10439,7 +10472,7 @@ CString CHexEditView::copy2cb_file(FILE_ADDRESS start, FILE_ADDRESS end)
 		(hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, size_t(TempFileName.GetLength()+4))) == NULL ||
 		(pp = reinterpret_cast<unsigned char *>(::GlobalLock(hh))) == NULL)
 	{
-		AfxMessageBox("Not enough memory to add binary data to clipboard");
+		AfxMessageBox("Not enough memory to add temp data to clipboard");
 		theApp.mac_error_ = 10;
 		return CString();
 	}
@@ -11126,7 +11159,6 @@ void CHexEditView::do_replace(FILE_ADDRESS start, FILE_ADDRESS end, unsigned cha
 void CHexEditView::OnEditPaste()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-//    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
 
 	// Can't paste if view is read only
 	if (check_ro("paste"))
@@ -11136,19 +11168,21 @@ void CHexEditView::OnEditPaste()
 
 	UINT ff = 0;                                // Clipboard format number
 	HANDLE hh;                                  // Handle to clipboard memory
-	unsigned char *pp;                          // Pointer to actual data
+	unsigned char *pp;                          // Pointer to actual clipboard data
 
 	if (!OpenClipboard())
 	{
 		ASSERT(0);
-		AfxMessageBox("The clipboard is in use!");
+		TaskMessageBox("Paste Error", "The clipboard is in use!");
 		aa->mac_error_ = 10;
 		return;
 	}
 
 	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
 
-	// Check if there is a "BinaryData" format (added by us or DevStudio)
+	// First check for a custom binary data format
+	//  - "BinaryData" format [bin_format_name] - binary data added by us or DevStudio/VS hex editor
+	//  - "HexEditLargeDataTempFile" [temp_format_name] - our binary data in a temp file
 	while ((ff = EnumClipboardFormats(ff)) != 0)
 	{
 		CString tt;
@@ -11337,158 +11371,153 @@ void CHexEditView::OnEditPaste()
 		}
 	}
 
-	// BinaryData format not found so just use text format
+	// This is here in case we need to get a buffer from and so we can delete[] it later (if not NULL)
+	unsigned char *buf = NULL;
+
+	// We did not get binary data so we are expecting text data ...
 	if ((hh = ::GetClipboardData(CF_TEXT)) != NULL &&
 		(pp = reinterpret_cast<unsigned char *>(::GlobalLock(hh))) != NULL)
 	{
+		// The text on the clipboard is handled in one of three ways:
+		//  - if it is hex text we convert to binary and paste
+		//  - if in EBCDIC mode we convert from ASCII to EBCDIC and paste
+		//  - otherwise we just paste the ASCII bytes
 		size_t len = strlen(reinterpret_cast<char *>(pp));
-		if (len > 0 && display_.char_set != CHARSET_EBCDIC)        // Bugs in other apps (eg Hedit) might cause len == 0
-		{
-			// TEXT DATA SAVED AS ASCII
-			FILE_ADDRESS start_addr, end_addr;
-			GetSelAddr(start_addr, end_addr);
-			int row = 0;
-			if (start_addr == end_addr && display_.vert_display)
-				row = pos2row(GetCaret());
-			// FILE_ADDRESS addr = GetPos();
-			if (display_.overtype && start_addr + len > GetDocument()->length())
-			{
-				if (CAvoidableDialog::Show(IDS_OVERTYPE,
-					"This paste operation extends past the end of file.  "
-					"The file cannot be extended in overtype mode.\n\n"
-					"Do you want to turn off overtype mode?",
-					"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
-				{
-					::CloseClipboard();
-					aa->mac_error_ = 10;
-					return;
-				}
-				else if (!do_insert())
-					return;
-			}
-			else if (display_.overtype && end_addr-start_addr != len)
-			{
-				switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
-					"Pasting in overtype mode will overwrite data.  "
-					"Select \"Yes\" to insert the data; select \"No\" to"
-					"overwrite; or select \"Cancel\" to do nothing.\n\n"
-					"Do you want to turn on insert mode?",
-					"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
-				{
-				case IDYES:
-					if (!do_insert())
-						return;
-					break;
-				case IDNO:
-					break; /* do nothing */
-				default:
-					aa->mac_error_ = 5;
-					return;
-				}
-			}
+		UINT fmt = ::RegisterClipboardFormat(CHexEditApp::flag_format_name);  // Check for "flag" format that indicates we have hex text
 
-			// OK make the change
-			if (display_.overtype || end_addr-start_addr == len)
-				GetDocument()->Change(mod_replace, start_addr, len, pp, 0, this);
-			else if (start_addr == end_addr)
-				GetDocument()->Change(mod_insert, start_addr, len, pp, 0, this);
-			else
-			{
-				GetDocument()->Change(mod_delforw, start_addr, end_addr-start_addr, NULL, 0, this);
-				GetDocument()->Change(mod_insert, start_addr, len, pp, 0, this, TRUE);
-			}
-//            SetSel(addr2pos(start_addr), addr2pos(start_addr+len));
-			SetSel(addr2pos(start_addr+len, row), addr2pos(start_addr+len, row));
-			DisplayCaret();
-		}
-		else if (len > 0)
+		if (len == 0)
 		{
-			// TEXT DATA SAVED AS EBCDIC
+			TaskMessageBox("Paste Error", "The text on the clipboard is not valid ASCII text!");
+			aa->mac_error_ = 10;    // Invalid text on clipboard?
+			goto error_return;
+		}
+		else if (::IsClipboardFormatAvailable(fmt))
+		{
+			// Hex text
+			buf = new unsigned char[len/2+1];
+			unsigned char *pout;
+			bool bFirst = true;
+			for (pout = buf; *pp != '\0'; ++pp)
+			{
+				// Ignore anything but hex digits
+				if (!isxdigit(*pp))
+					continue;
+
+				// Get the value of the digit as binary (one nybble)
+				unsigned char nybble;
+				if (isdigit(*pp))
+					nybble = *pp - '0';
+				else if (isupper(*pp))
+					nybble = *pp - 'A' + 10;
+				else
+					nybble = *pp - 'a' + 10;
+
+				// Each byte is created from 2 nybbles
+				if (bFirst)
+					*pout = nybble;
+				else
+				{
+					*pout = (*pout << 4) | nybble;
+					++pout;
+				}
+				bFirst = !bFirst;
+			}
+			if (!bFirst)
+				++pout;  // lone digit is retained as low nybble of last byte
+
+			// Set up data buffer for pasting below
+			pp = buf;
+			len = pout - buf;
+		}
+		else if (display_.char_set == CHARSET_EBCDIC)
+		{
 			// Copy from clipboard to temp buffer converting to EBCDIC
-			unsigned char *buf = new unsigned char[len];
+			buf = new unsigned char[len];
 			size_t newlen = 0;
 			for (size_t ii = 0; ii < len; ++ii)
 				if (a2e_tab[pp[ii]] != '\0')
 					buf[newlen++] = a2e_tab[pp[ii]];
-			if (newlen > 0)
-			{
-				// Insert the EBCDIC characters
-				FILE_ADDRESS start_addr, end_addr;
-				GetSelAddr(start_addr, end_addr);
-				int row = 0;
-				if (start_addr == end_addr && display_.vert_display)
-					row = pos2row(GetCaret());
-				// FILE_ADDRESS addr = GetPos();
-				if (display_.overtype && start_addr + newlen > GetDocument()->length())
-				{
-					if (CAvoidableDialog::Show(IDS_OVERTYPE,
-						"This paste operation extends past the end of file.  "
-						"The file cannot be extended in overtype mode.\n\n"
-						"Do you want to turn off overtype mode?",
-						"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
-					{
-						::CloseClipboard();
-						aa->mac_error_ = 10;
-						return;
-					}
-					else if (!do_insert())
-						return;
-				}
-				else if (display_.overtype && end_addr-start_addr != newlen)
-				{
-					switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
-						"Pasting in overtype mode will overwrite data.  "
-						"Select \"Yes\" to insert the data; select \"No\" to"
-						"overwrite; or select \"Cancel\" to do nothing.\n\n"
-						"Do you want to turn on insert mode?",
-						"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
-					{
-					case IDYES:
-						if (!do_insert())
-							return;
-						break;
-					case IDNO:
-						break; /* do nothing */
-					default:
-						aa->mac_error_ = 5;
-						return;
-					}
-				}
 
-				// OK make the change
-				if (display_.overtype || end_addr-start_addr == newlen)
-					GetDocument()->Change(mod_replace, start_addr, newlen, buf, 0, this);
-				else if (start_addr == end_addr)
-					GetDocument()->Change(mod_insert, start_addr, newlen, buf, 0, this);
-				else
-				{
-					GetDocument()->Change(mod_delforw, start_addr, end_addr-start_addr, NULL, 0, this);
-					GetDocument()->Change(mod_insert, start_addr, newlen, buf, 0, this, TRUE);
-				}
-//                SetSel(addr2pos(start_addr), addr2pos(start_addr+newlen));
-				SetSel(addr2pos(start_addr+newlen, row), addr2pos(start_addr+newlen, row));
-				DisplayCaret();
-			}
-			else
+			if (newlen == 0)
 			{
 				CAvoidableDialog::Show(IDS_INVALID_EBCDIC, "No valid EBCDIC characters were found to paste.");
 				aa->mac_error_ = 2;
+				goto error_return;
 			}
-			delete[] buf;
+
+			// Set up data buffer for adding to the file (below)
+			pp = buf;
+			len = newlen;
 		}
+
+		// Get current selection
+		FILE_ADDRESS start_addr, end_addr;
+		GetSelAddr(start_addr, end_addr);
+		int row = 0;
+		if (start_addr == end_addr && display_.vert_display)
+			row = pos2row(GetCaret());
+
+		// Check that we are not changing the file length when in overtype mode
+		if (display_.overtype && start_addr + len > GetDocument()->length())
+		{
+			if (CAvoidableDialog::Show(IDS_OVERTYPE,
+				"This paste operation extends past the end of file.  "
+				"The file cannot be extended in overtype mode.\n\n"
+				"Do you want to turn off overtype mode?",
+				"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+			{
+				aa->mac_error_ = 10;
+				goto error_return;
+			}
+			else if (!do_insert())
+				goto error_return;
+		}
+		else if (display_.overtype && end_addr-start_addr != len)
+		{
+			switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+				"Pasting in overtype mode will overwrite data.  "
+				"Select \"Yes\" to insert the data; select \"No\" to"
+				"overwrite; or select \"Cancel\" to do nothing.\n\n"
+				"Do you want to turn on insert mode?",
+				"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
+			{
+			case IDYES:
+				if (!do_insert())
+					goto error_return;
+				break;
+			case IDNO:
+				break; /* do nothing */
+			default:
+				aa->mac_error_ = 5;
+				goto error_return;
+			}
+		}
+
+		// OK make the change
+		if (display_.overtype || end_addr-start_addr == len)
+			GetDocument()->Change(mod_replace, start_addr, len, pp, 0, this);
+		else if (start_addr == end_addr)
+			GetDocument()->Change(mod_insert, start_addr, len, pp, 0, this);
 		else
 		{
-			AfxMessageBox("The text on the clipboard is not valid ASCII text!");
-			aa->mac_error_ = 10;    // Invalid text on clipboard?
+			GetDocument()->Change(mod_delforw, start_addr, end_addr-start_addr, NULL, 0, this);
+			GetDocument()->Change(mod_insert, start_addr, len, pp, 0, this, TRUE);
 		}
+
+//            SetSel(addr2pos(start_addr), addr2pos(start_addr+len));  // select pasted bytes
+		SetSel(addr2pos(start_addr+len, row), addr2pos(start_addr+len, row));  // position caret ready to paste again
+		DisplayCaret();
 	}
 	else
 	{
 		// Paste when nothing to paste, presumably in macro
-		AfxMessageBox("There is nothing on the clipboard to paste");
+		TaskMessageBox("Paste Error", "The clipboard is empty or there are no recognized clipboard formats available.");
 		aa->mac_error_ = 10;
 	}
 
+error_return:
+	if (buf != NULL)
+		delete[] buf;
 	CHECK_SECURITY(49);
 
 	::CloseClipboard();
@@ -11515,7 +11544,7 @@ void CHexEditView::OnPasteAscii()
 	if (!OpenClipboard())
 	{
 		ASSERT(0);
-		AfxMessageBox("The clipboard is in use!");
+		TaskMessageBox("Paste Error", "The clipboard is in use!");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -11590,7 +11619,7 @@ void CHexEditView::OnPasteAscii()
 	else
 	{
 		// Paste when nothing to paste, presumably in macro
-		AfxMessageBox("There is nothing on the clipboard to paste");
+		TaskMessageBox("Paste Error", "There is nothing on the clipboard to paste");
 		aa->mac_error_ = 10;
 	}
 

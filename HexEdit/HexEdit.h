@@ -103,9 +103,9 @@ enum { CHARSET_ASCII = 0, CHARSET_ANSI = 1, CHARSET_OEM = 3, CHARSET_EBCDIC = 4,
 
 enum cb_text_type      // defines how text data is written to the clipboard
 {
-	cb_text_auto,      // use hex text if it appears to be binary data, else use chars
-	cb_text_chars,     // write bytes as chars depending on active char set (ASCII, EBCDIC)
+	cb_text_chars,     // write bytes as binary and chars
 	cb_text_hextext,   // convert each byte to 2 hex digits (as well as adding spaces, end of lines)
+	cb_text_auto,      // use hex text if it appears to be binary data, else use chars
 };
 
 // Fonts required for different char sets
@@ -483,8 +483,9 @@ public:
 	CString password_;          // Current encryption password
 
 	// Clipboard
-	static const char * bin_format_name; // Name of custom binary clipboard format
+	static const char * bin_format_name;  // Name of custom binary clipboard format
 	static const char * temp_format_name; // Name of custom format where data stored to temp file
+	static const char * flag_format_name; // Custom format that has no data but just indicates that current text is hex text
 	FILE_ADDRESS last_cb_size_; // Size of last thing we put on the clipboard
 	DWORD last_cb_seq_;         // Clipboard seq no for last thing added
 	CString last_cb_temp_file_; // Clipboard data is in temp file here
@@ -498,7 +499,7 @@ public:
 		}
 		last_cb_size_ = len;
 		last_cb_seq_ = ::GetClipboardSequenceNumber();
-		last_cb_temp_file_ = temp_file;
+		last_cb_temp_file_ = temp_file;  // OK if temp_file is NULL!
 	}
 
 	void play_macro_file(const CString &filename, int pp = -1) ;
