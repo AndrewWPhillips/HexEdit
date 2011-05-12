@@ -966,6 +966,7 @@ private:
 	bool tip_show_bookmark_;    // Show bookmark name if over bookmark
 	bool tip_show_error_;       // Show error message if current sector had a read error
 	CTipExpr expr_;             // Used to evaluate expressions to display in the tip window
+	CPoint tip_last_locn_;      // Last tip window location so we can see how much it moved
 
 	//UINT timer_id_;             // Used for timing of display of tip window
 	//CPoint last_mouse_;         // Last mouse move position

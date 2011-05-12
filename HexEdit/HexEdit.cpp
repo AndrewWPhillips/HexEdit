@@ -2449,6 +2449,8 @@ void CHexEditApp::LoadOptions()
 
 	// Get settings for info tip window
 	tip_transparency_ = GetProfileInt("Options", "InfoTipTransparency", 200);
+	tip_offset_.cx = GetProfileInt("Options", "InfoTipXOffset", 16);
+	tip_offset_.cy = GetProfileInt("Options", "InfoTipYOffset", 16);
 
 	// get flags which say which hard-coded info is enabled (currently only option is bookmarks)
 	int hard = GetProfileInt("Options", "InfoTipFlags", 0);  // if bit is zero option is in use
@@ -2777,6 +2779,8 @@ void CHexEditApp::SaveOptions()
 	}
 	soft += ";;";  // mark end of list
 	WriteProfileInt("Options", "InfoTipTransparency", tip_transparency_);
+	WriteProfileInt("Options", "InfoTipXOffset", tip_offset_.cx);
+	WriteProfileInt("Options", "InfoTipYOffset", tip_offset_.cy);
 	WriteProfileInt("Options", "InfoTipFlags", hard);
 	WriteProfileString("Options", "InfoTipUser", soft);
 }

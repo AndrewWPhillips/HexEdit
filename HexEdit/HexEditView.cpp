@@ -688,6 +688,7 @@ CHexEditView::CHexEditView()
 	last_tip_addr_ = -1;
 	tip_show_bookmark_ = true;
 	tip_show_error_ = true;
+	tip_last_locn_ = tip_.GetPos();
 
 #ifndef NDEBUG
 	// Make default capacity for undo_ vector small to force reallocation sooner.
@@ -6532,6 +6533,7 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
 void CHexEditView::OnDestroy()
 {
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
+	theApp.tip_offset_ += tip_.GetPos() - tip_last_locn_;  // in case moved but not redisplayed
 
 	if (pav_ != NULL)
 		GetDocument()->RemoveAerialView();
@@ -7234,12 +7236,28 @@ LRESULT CHexEditView::OnMouseHover(WPARAM, LPARAM lp)
 		FILE_ADDRESS addr = address_at(pt);
 		if (addr != -1 && addr < GetDocument()->length() && update_tip(addr))
 		{
-			CPoint tip_pt;
-			tip_pt = pt + CSize(text_width_w_, text_height_);
+			// Save which byte the tip is for and invalidate it so OnDraw can do it's thing
 			last_tip_addr_ = addr;
 			invalidate_hex_addr_range(addr, addr+1);
+
+			// Work out the how far the user dragged the tip window last time it was visible
+			theApp.tip_offset_ += tip_.GetPos() - tip_last_locn_;
+			// But make sure it is not too far away
+			if (theApp.tip_offset_.cx < -200)
+				theApp.tip_offset_.cx = -200;
+			else if (theApp.tip_offset_.cx > 200)
+				theApp.tip_offset_.cx = 200;
+			if (theApp.tip_offset_.cy < -100)
+				theApp.tip_offset_.cy = -100;
+			else if (theApp.tip_offset_.cy > 100)
+				theApp.tip_offset_.cy = 100;
+
+			// Work out the window display position and move the tip window there
+			CPoint tip_pt = pt + theApp.tip_offset_;
 			ClientToScreen(&tip_pt);
 			tip_.Move(tip_pt, false);
+
+			tip_last_locn_ = tip_.GetPos();   // remember where we left it
 			tip_.Show();
 			track_mouse(TME_LEAVE);
 			return 0;

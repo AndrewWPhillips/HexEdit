@@ -735,7 +735,8 @@ public:
 	std::vector<bool> tip_on_;          // Is this tip on (checkbox in check-list checked)
 	std::vector<CString> tip_expr_;     // Expression (involving predefined variable names like "address")
 	std::vector<CString> tip_format_;   // How expression is formated for display (eg "hex", "%x" etc)
-	int tip_transparency_;
+	int tip_transparency_;              // How transparent to make the tip
+	CSize tip_offset_;                  // Where to draw tip relative to mouse pointer
 	//static const int FIRST_USER_TIP = 1;
 #define FIRST_USER_TIP 1                // = no of hard-coded tip types - 1 at present since only hard-coded type is bookmarks
 

@@ -21,6 +21,7 @@ public:
 	void Hide(int fade = 200);
 
 	void Move(CPoint pt, bool centre = true);
+	CPoint GetPos()	{ CRect rct; GetWindowRect(rct); return CPoint(rct.left, rct.top); }
 
 	void SetTextCol(COLORREF col) { m_text_colour = col; }
 	void SetBgCol(COLORREF col)   { m_bg_colour = col; }
