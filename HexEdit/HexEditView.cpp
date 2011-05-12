@@ -3052,7 +3052,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 	if (pDC->IsPrinting())
 		draw_mark = theApp.print_mark_ && mark_ >= first_virt && mark_ < last_virt;
 	else
-		draw_mark = mark_ >= first_addr && mark_ < last_addr;
+		draw_mark = mark_ >= first_addr && mark_ <= last_addr;
 	if (draw_mark)
 	{
 		CRect mark_rect;                // Where mark is drawn in logical coords
