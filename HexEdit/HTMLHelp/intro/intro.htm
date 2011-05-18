@@ -21,13 +21,13 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1109>
-<meta name=layout-width content=1122>
+<meta name=layout-height content=1251>
+<meta name=layout-width content=913>
 
 
 <!--(Links)=========================================================-->
 
-<link rel="StyleSheet" href="..\Hexedit.css">
+<link rel=StyleSheet href="..\Hexedit.css">
 
 
 
@@ -37,6 +37,12 @@
 
 
 <body>
+
+<div placeholder
+	id=header
+	style="width: 100%; position: relative;">
+<p>&nbsp;</p>
+</div>
 
 <h2 id=h21><font style="font-family: Arial;"
 				face=Arial>What Is HexEdit?</font></h2>
@@ -72,16 +78,14 @@
 
 <p id=p10>A binary file typically contains any of the 256 different possible 
  byte values. Another way to think of a binary file is that it is any file 
- that isn’t a text file. A text file is a file that contains only printable 
- characters plus a few special “control” characters that signal things 
- such as end-of-line.</p>
+ that is not a text file. A text file is a file that contains only printable 
+ characters plus a few special “control” characters such as tab and end-of-line.</p>
 
 <p id=p11>&nbsp;</p>
 
 <p id=p12>You can use a binary file editor such as HexEdit to edit a text 
  file but you are better off using a text editor for that. Windows includes 
  a text editor called <span style="font-weight: bold;">NotePad</span>. 
- It normally also includes the MSDOS text editor called <span style="font-weight: bold;">Edit</span>. 
  There are also many free and commercial text editors available.</p>
 
 <p id=p13>&nbsp;</p>
@@ -99,8 +103,9 @@
  internal format, then it is stored in a binary file. (Although sometimes 
  data is stored as a strange-looking text file [eg. PostScript, XML etc], 
  using certain printable characters for special purposes.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- example, Microsoft Word stores its documents in a binary file having a 
- file extension of .DOC.</p>
+ example, Microsoft Word used to store its documents in a binary file having 
+ a file extension of .DOC, but nowadays uses a DOCX file (which is actually 
+ just a zip file containing XML files).</p>
 
 <p id=p17>&nbsp;</p>
 
@@ -118,7 +123,7 @@
 <p id=p22>You use a binary file editor when there is no other way to inspect 
  or change a binary file or a specific part of that file. Usually you would 
  use special software associated with that type of file (eg. Word allows 
- you to edit its own .DOC files) but that may not always be possible.</p>
+ you to edit its own .DOC/.DOCX files) but that may not always be possible.</p>
 
 <p id=p23>&nbsp;</p>
 
@@ -132,7 +137,10 @@
 <p id=p25>&nbsp;</p>
 
 <p id=p26>Some people use binary file editors to change .EXE files. For 
- example, you can edit the messages or graphics that a program displays.</p>
+ example, you can edit the messages or graphics that a program displays. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ editing these types of files is not as simple as editing text files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, you should never change text messages to be longer than the original.</p>
 
 <p id=p27>&nbsp;</p>
 
@@ -208,6 +216,12 @@
  corrupted too.</p>
 
 <p id=p45>&nbsp;</p>
+
+<div placeholder
+	id=footer
+	style="width: 100%; position: relative;">
+<p>&nbsp;</p>
+</div>
 
 </body>
 

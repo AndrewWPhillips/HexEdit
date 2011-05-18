@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1149>
-<meta name=layout-width content=1210>
+<meta name=layout-height content=1389>
+<meta name=layout-width content=935>
 
 
 <!--(Links)=========================================================-->
@@ -55,8 +55,20 @@
  hex area and the character area (although either area can be disabled). 
  You can enter any byte value in the hex area but only by typing two hex 
  digits – HexEdit beeps if you type any other characters. On the other 
- hand you can only enter ASCII (or EBCDIC) characters in the character 
- area. To quickly flip between the areas use the Tab key.</p>
+ hand you can only enter text charcaters (ASCII or EBCDIC) in the character 
+ area.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>To quickly switch between the areas use the <span style="font-weight: bold;">Tab</span> 
+ key.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -92,8 +104,9 @@
  the following ones are shifted forward. Similarly deleting, cutting etc 
  removes data and shifts the following bytes backward. But in overtype 
  mode existing bytes are never moved, instead changing bytes destroys their 
- previous value. Further you cannot delete or cut (but you can copy) to 
- the clipboard in overtype mode, and pasting overwrites rather than inserting.</p>
+ previous value. Further if you try to delete or cut to the clipboard in 
+ overtype mode HexEdit asks if you want to switch to insert mode. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Pasting 
+ in overtype mode asks if you want to overwrite or switch to insert mode.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -123,9 +136,10 @@
  many editors, the whole file does not have to be read into memory (or 
  some sort of virtual memory). But this system does have the disadvantage 
  that you cannot undo changes that were made before you last saved the 
- file to disk. Also if you insert or delete bytes in the file, then HexEdit 
- has to make a copy of the file while saving it which can be very slow 
- for a large file – another good reason to work in Overtype mode.</p>
+ file to disk. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ as you make more and more changes the display takes longer and longer 
+ to regenerate -- but this is not normally a problem unless you run a macro 
+ or replace operation that makes lots of changes.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -146,13 +160,13 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>New in version 3.0 of HexEdit is the ability to track all the changes 
- you have made to a file, since you opened (or last saved) it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+<p>HexEdit can show all the changes you have made to a file, since you 
+ opened (or last saved) it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
  shows where bytes have been replaced, inserted and deleted. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
  that, it does not show how the changes were made - for example, if you 
- delete 20 bytes then insert 20 bytes this will be shown as 20 bytes having 
- been replaced, since that is the effective change with what is stored 
- on disk.</p>
+ delete 20 bytes then insert 20 bytes at the same location then this will 
+ be shown as 20 bytes having been replaced, since that is the effective 
+ difference with what is stored on disk.</p>
 
 <p>&nbsp;</p>
 
@@ -162,19 +176,20 @@
  the hex area the deletion also shows a count of the number of bytes deleted 
  when it is less than 10. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  change tracking color can be changed from the default of red by changing 
- it in the current color scheme using the <a HREF="../dlg_options/HIDD_OPT_PARTITIONS.htm">color 
+ it in the current color scheme using the <a HREF="../dlg_options/HIDD_OPT_PARTITIONS.htm">Color 
  Options page</a> of the Options dialog.</p>
 
 <p>Display of change tracking can be toggled using the <a HREF="../cmd_misc/HID_TRACK_CHANGES.htm"><img 
  src="../cmd_misc/change_track.gif"
-	style="border: none;
+	style="border-style: none;
+			border: none;
 			width: 22px;
 			height: 23px;"
 	width=22
 	height=23
-	border=0></a> button on the Edit Bar, or using the Change Tracking 
- check box in the <a HREF="../dlg_options/HIDD_OPT_WINDOW.htm">Window Display 
- Options page</a> of the Options dialog.</p>
+	border=0></a> button on the Edit Bar, or using the check boxes in the 
+ <a HREF="../dlg_options/HIDD_OPT_WINEDIT.htm">Document Edit Options page</a> 
+ of the Options dialog.</p>
 
 <p>&nbsp;</p>
 
@@ -190,18 +205,30 @@
  file type is “All Files (*.*)”. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
  can, however, select different file filters from the &quot;Files of Type&quot; 
  drop down list -- you can even control what filters are shown in the filter 
- list with the Filters page of the Options dialog.</p>
+ list with the <a HREF="../dlg_options/Filters.htm">Filters page</a> of 
+ the Options dialog.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p>The <span style="font-weight: bold;">Read only</span> check box in the 
  File Open dialog allows you to open a file for read only. You may want 
- to do this so that you don’t accidentally modify the file or to allow 
- other software to simultaneously read the file while you have it open. 
- If the file <span style="font-style: italic;">must</span> be opened read-only 
+ to do this so that you don’t accidentally modify the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the file <span style="font-style: italic;">must</span> be opened read-only 
  because it is a hidden or system file or because something else is reading 
  it then HexEdit will warn you. Note that even if a file is not opened 
  read-only a window on that file may be read-only (see above).</p>
+
+<p>&nbsp;</p>
+
+<p>Normally HexEdit likes to prevent a file from being modified while it 
+ has the file open. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is because HexEdit does not cache the file in memory but will update the 
+ display directly from the disk file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ sometimes you may want to allow other programs to access the file at the 
+ same time which is when you should use the <span style="font-weight: bold;">Shareable</span> 
+ check box. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ not that in this case if something else modifies the file contents may 
+ change unexpectedly.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -223,10 +250,6 @@
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\dlg_file\AFX_HIDD_FILESAVE.htm">File 
  Save Dialog</a>&nbsp;to see options available when saving a file under 
  a new name</p>
-
-<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\dlg_options\Filters.htm">Filters 
- page</a> to change the filters list displayed in the File Open and File 
- Save dialogs</p>
 
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;">&nbsp;</p>
 

@@ -12,15 +12,16 @@
 
 <!--(Meta)==========================================================-->
 
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=date content="08 4, 2002 1:33:47 AM">
 <meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
 <meta name=generator-major-version content=0.1>
 <meta name=generator-minor-version content=1>
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=999>
-<meta name=layout-width content=1187>
-<meta name=date content="08 4, 2002 1:33:47 AM">
+<meta name=layout-height content=587>
+<meta name=layout-width content=1564>
 
 
 <!--(Links)=========================================================-->
@@ -40,10 +41,18 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>There is a 16 Mbyte limit on the clipboard in Windows so it is difficult 
- or impossible to build up a file of more than about 50 Mbytes by copying 
- and pasting large blocks from other files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
- do this you need to make use of the <a HREF="..\cmd_edit\HID_EDIT_APPENDFILE.htm">Append 
+<p>You can use the clipboard to create a large file by copying and pasting. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ for large operations the normal clipboard formats cause Windows to report 
+ memory errors when pasting so HexEdit creates a special clipboard format 
+ using temporary files.</p>
+
+<p>&nbsp;</p>
+
+<p>To more quickly build a large file from pieces taken from other files 
+ it may be faster to do this yourself, to avoid the creation of temporary 
+ files and the copying of large amounts of data. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ do this you can use of the <a HREF="..\cmd_edit\HID_EDIT_APPENDFILE.htm">Append 
  Selection to File</a> and <a HREF="..\cmd_edit\HID_EDIT_APPENDSAME.htm">Append 
  Same File</a> commands.</p>
 
@@ -55,11 +64,21 @@
  File</a> command to create a new file or <a HREF="..\cmd_edit\HID_EDIT_APPENDFILE.htm">Append 
  Selection to File</a> to append to an existing file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Thence 
  you can select blocks of text and use the <a HREF="..\cmd_edit\HID_EDIT_APPENDSAME.htm">Append 
- Same File</a> command to add further blocks to the end of the same file. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Take care 
- with this command, however, as there is no prompt to confirm that you 
- want to append to the file and no way to undo the operation without opening 
- the file and manually removing the bytes.</p>
+ Same File</a> command to add further blocks to the end of the same file.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../ex_red_sm.jpg"
+		style="border: none;
+				width: 17px;
+				height: 20px;"
+		width=17
+		height=20
+		border=0> Be careful using the <a href="../cmd_edit/HID_EDIT_APPENDSAME.htm">Append 
+ Same File</a> command. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ is no prompt to confirm that you want to append to the file and no way 
+ to undo the operation without opening the file and manually removing the 
+ bytes.</p>
 
 <p>&nbsp;</p>
 

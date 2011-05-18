@@ -74,10 +74,11 @@ New File command | cmd_file\HID_FILE_NEW.htm
 File Open command | cmd_file\HID_FILE_OPEN.htm
 Open Special | cmd_file\HID_FILE_OPEN_SPECIAL.htm
 File Close command | cmd_file\HID_FILE_CLOSE.htm
+Close Other Files | cmd_file\HID_FILE_CLOSE_OTHERS.htm
 Close All command | cmd_file\HID_FILE_CLOSE_ALL.htm
 File Save command | cmd_file\HID_FILE_SAVE.htm
 File Save As command | cmd_file\HID_FILE_SAVE_AS.htm
-Save All command | cmd_file\HID_FILE_SAVE_ALL.htm
+File Save All command | cmd_file\HID_FILE_SAVE_ALL.htm
 File Print command | cmd_file\HID_FILE_PRINT.htm
 File Print Preview command | cmd_file\HID_FILE_PRINT_PREVIEW.htm
 File Print Setup command | cmd_file\HID_FILE_PRINT_SETUP.htm
@@ -98,7 +99,9 @@ New File Dialog | dlg_file\New_File_Dialog.htm
 File Open dialog | dlg_file\AFX_HIDD_FILEOPEN.htm
 File Save As dialog | dlg_file\AFX_HIDD_FILESAVE.htm
 Recently Opened Files Dialog | dlg_file\Recently_Opened_Files_Dialog.htm
+Explorer Dialog | dlg_file\Explorer_Dialog.htm
 Import Motorola S Records dialog | dlg_file\Import_Motorola_dlg.htm
+Export Motorola dlg | dlg_file\Export_Motorola_dlg.htm
 Import Intel Hex Records dialog | dlg_file\Import_Intel_dlg.htm
 
 [Find Dialog]
@@ -172,11 +175,13 @@ Window Menu Commands | menus\menu_window.htm
 Help Menu Commands | menus\menu_help.htm
 
 [Miscellaneous]
-Keyboard Shortcuts | misc\keys.htm
-Context Menus | misc\context_menus.htm
-Toolbar Tools | misc\ToolbarTools.htm
 Title Bar | misc\HID_HT_CAPTION.htm
+Ruler | misc\Ruler.htm
+Window Tabs | misc\Window_Tabs.htm
 Scroll Bars | misc\scrollbars.htm
+Toolbar Tools | misc\ToolbarTools.htm
+Context Menus | misc\context_menus.htm
+Keyboard Shortcuts | misc\keys.htm
 Command Line Options | misc\command_line.htm
 
 [Non-menu Commands]
@@ -330,6 +335,7 @@ System General Options page | dlg_options\HIDD_OPT_SYSTEM.htm
 Filters page | dlg_options\Filters.htm
 Printer Options | dlg_options\Printer_Options.htm
 Macro Options page | dlg_options\HIDD_OPT_MACRO.htm
+History List Options | dlg_options\HIDD_OPT_HISTORY.htm
 Workspace Global Options page | dlg_options\HIDD_OPT_WORKLAYOUT.htm
 Workspace Display Options | dlg_options\HIDD_OPT_WORKDISPLAY.htm
 Workspace Editing Options | dlg_options\HIDD_OPT_WORKSPACE.htm
@@ -349,12 +355,13 @@ Email HexEdit Support Dialog | dlg_other\HIDD_EMAIL.htm
 Reminder Dialog | dlg_other\HIDD_REG_HELP.htm
 
 [Overview]
+Introduction | overviewbasics\intro.htm
 Changing the Window Display | overviewbasics\display.htm
 Moving Around | overviewbasics\move.htm
 Editing | overviewbasics\edit.htm
 help | overviewbasics\help.htm
 clipboard | overviewbasics\clipboard.htm
-Modeless Dialogs | overviewbasics\Modeless_Dialogs.htm
+Tool Windows | overviewbasics\Modeless_Dialogs.htm
 
 [OverviewAdvanced]
 Printing | overviewadvanced\print.htm

@@ -160,6 +160,12 @@ Rotates the first value by the number of bits given in the second value.  The bi
 .topic HIDC_REGISTER
 Select this option to email your registration information  Select info@hexedit.com from the To: list.
 
+.topic HIDC_HEX_HIST
+Displays a list of most recent hex jumps,  using either the hex jump tool or the GO button in the calculator (in hex mode).
+
+.topic HIDC_FUNC
+Displays a list of functions available in HexEdit expressions. [A few functions, such as addressof, that are only useful in templates are not displayed.]  Select the function and fill in any required parameters.  Some functions have optional parameters and min/max can take any number of parameters.
+
 .topic HIDC_TABICONS
 Displays icons in the window tabs representing the types of file open.
 
@@ -1075,6 +1081,9 @@ Click the "Replay Options" button to change the options for macro playback befor
 .topic HIDC_TEMPLATEDIR
 Allows you to change the location that templates are saved and loaded from.
 
+.topic HIDC_VARS
+Displays a list of HexEdit's global variables, grouped by type.  You can use or assign (using = operator) variables in the calculator and the jump tools, including arrays.
+
 .topic HIDC_SCAN
 Allows HexEdit to scan for devices in a background thread when it starts up so that the "Open Special" dialog displays more quickly.  The only disadvantage to this option is the annoying floppy disk access when HexEdit starts.
 
@@ -1434,6 +1443,9 @@ Click this button to email your registration code and other information.  But yo
 
 .topic HIDC_SLIDER_TIP
 Move the slider to adjust the transparency of the tip window.  Hold the mouse over the window to make it fully visible.
+
+.topic HIDC_DEC_HIST
+Displays a list of most recent decimal jumps,  using either the decimal jump tool or the GO button in the calculator.
 
 .topic HIDC_DISPLAY_TEMPLATE
 Allows you to select how to display the template (tree) view, which given the appropriate template (.XML) file, lets you view and edit the data in a structured format.

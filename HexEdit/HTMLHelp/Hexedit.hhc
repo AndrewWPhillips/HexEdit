@@ -110,7 +110,11 @@
     </object>
     <ul>
       <li><object type="text/sitemap">
-        <param name="Name" value="The Display">
+        <param name="Name" value="Introduction">
+        <param name="Local" value="overviewbasics\intro.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Documents">
         <param name="Local" value="overviewbasics\display.htm">
       </object>
       <li><object type="text/sitemap">
@@ -130,7 +134,7 @@
         <param name="Local" value="overviewbasics\clipboard.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Modeless Dialogs">
+        <param name="Name" value="Tool Windows">
         <param name="Local" value="overviewbasics\Modeless_Dialogs.htm">
       </object>
       </ul>
@@ -479,7 +483,7 @@
     </object>
     <ul>
       <li><object type="text/sitemap">
-        <param name="Name" value="System Menu">
+        <param name="Name" value="System menu">
         <param name="Local" value="menus\menu_system.htm">
       </object>
       <li><object type="text/sitemap">
@@ -499,8 +503,12 @@
         <param name="Local" value="menus\menu_operations.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Template Menu">
+        <param name="Name" value="Template menu">
         <param name="Local" value="menus\menu_template.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Aerial menu">
+        <param name="Local" value="menus\menu_aerial.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Tools menu">
@@ -866,24 +874,32 @@
     </object>
     <ul>
       <li><object type="text/sitemap">
-        <param name="Name" value="Keyboard Shortcuts">
-        <param name="Local" value="misc\keys.htm">
+        <param name="Name" value="Title bar">
+        <param name="Local" value="misc\HID_HT_CAPTION.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Context Menus">
-        <param name="Local" value="misc\context_menus.htm">
+        <param name="Name" value="Ruler">
+        <param name="Local" value="misc\Ruler.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Window Tabs">
+        <param name="Local" value="misc\Window_Tabs.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Scrollbars">
+        <param name="Local" value="misc\scrollbars.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Toolbar Tools">
         <param name="Local" value="misc\ToolbarTools.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Title bar">
-        <param name="Local" value="misc\HID_HT_CAPTION.htm">
+        <param name="Name" value="Context Menus">
+        <param name="Local" value="misc\context_menus.htm">
       </object>
       <li><object type="text/sitemap">
-        <param name="Name" value="Scrollbars">
-        <param name="Local" value="misc\scrollbars.htm">
+        <param name="Name" value="Keyboard Shortcuts">
+        <param name="Local" value="misc\keys.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Command Line Options">

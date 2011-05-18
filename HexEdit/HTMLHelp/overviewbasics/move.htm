@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1013>
-<meta name=layout-width content=1208>
+<meta name=layout-height content=1011>
+<meta name=layout-width content=1564>
 
 
 <!--(Links)=========================================================-->
@@ -43,45 +43,95 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>The address area on the left of the window shows where in the file the 
- displayed bytes are from (in either hex or decimal). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- can also see the location of the cursor within the file in the Decimal 
- and Hex Address Tools in the Edit Bar. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- cursor may not be within the display (for example if you have used the 
- scrollbars) but once you use any of the cursor movement keys the displays 
- scrolls so that the cursor is displayed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Or 
- you can click within the display to move the cursor to the byte clicked 
- on.</p>
-
-<p>&nbsp;</p>
-
-<p>The normal cursor movement keys (arrow keys, <span style="font-weight: bold;">Pg 
- Up</span> etc) are supported for moving the cursor. As with most MSDOS/Windows 
- software, the <span style="font-weight: bold;">Home</span> key moves to 
- the first byte on the line, <span style="font-weight: bold;">End</span> 
+<p>Every window has a current position marked with the flashing cursor 
+ or &quot;caret&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ are probably familiar with how to move the cursor with the cursor movement 
+ keys (arrow keys, <span style="font-weight: bold;">Pg Up</span> etc). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As with 
+ most Windows software, the <span style="font-weight: bold;">Home</span> 
+ key moves to the first byte on the line, <span style="font-weight: bold;">End</span> 
  moves to the last. <span style="font-weight: bold;">Ctrl+Home</span> and 
  <span style="font-weight: bold;">Ctrl+End</span> move to the start and 
  end of the file. <span style="font-weight: bold;">Ctrl+Left</span> and 
  <span style="font-weight: bold;">Ctrl+Right</span> move left and right 
- by a whole group of columns. You can edit the file either in the hex or 
- the character area – to quickly flip between the areas use the <span style="font-weight: bold;">Tab</span> 
- key.</p>
+ by a whole group of columns. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
+ <a HREF="../misc/keys.htm">Keyboard Shortcuts</a> for more information.</p>
 
 <p class=footnote-text
 	style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>The scroll bars allow you to move the current display without changing 
- the cursor position. For a large file the vertical scroll bar (on the 
- right side of the window) is particularly useful. Clicking the arrows 
- at the end of the scroll bar (or using the default Ctrl+U or Ctrl+D keyboard 
- shortcuts) moves by one line. Clicking in the scroll bar but above or 
- below the scroll box moves by a page. You can also drag the box to a position 
- anywhere within the file. (Note that the size of the box, in proportion 
- to the size of the entire scroll bar, reflects the amount of the file 
- that is visible within the window – if the entire file is visible then 
- the scroll bar will disappear.) The Ctrl+L (in default keymap) keyboard 
- shortcut scrolls the display so that the cursor is positioned in the middle 
- of the window.</p>
+<p>The <a HREF="../misc/scrollbars.htm">scroll bars</a> allow you to move 
+ the current display without changing the cursor position. For a large 
+ file the vertical scroll bar (on the right side of the window) is particularly 
+ useful. Clicking the arrows at the end of the scroll bar (or using the 
+ default Ctrl+U or Ctrl+D keyboard shortcuts) moves by one line. Clicking 
+ in the scroll bar above or below the scroll box moves by a page. You can 
+ also drag the box to a position anywhere within the file. (Note that the 
+ size of the box, in proportion to the size of the entire scroll bar, reflects 
+ the amount of the file that is visible within the window – if the entire 
+ file is visible then the scroll bar will disappear.) The Ctrl+L (in default 
+ keymap) keyboard shortcut scrolls the display so that the cursor is positioned 
+ in the middle of the window.</p>
+
+<p>&nbsp;</p>
+
+<p>If there is no flashing cursor then it has probably been moved offscreen 
+ - pressing any cursor movement key will scroll the display so it is visible. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For the 
+ same reason if you try to move past the edge of the window the display 
+ will scroll to keep the cursor visible.<img src="../tip.gif"
+											style="border-style: none;
+													border: none;
+													width: 31px;
+													height: 12px;"
+											width=31
+											height=12
+											border=0>You can force the 
+ display to scroll when you get a certain distance from the edge of the 
+ display using the &quot;scroll zone&quot; setting (see <a HREF="../dlg_options/HIDD_OPT_WINEDIT.htm">Document 
+ Edit Options</a>).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;">Addresses</p>
+
+<p>&nbsp;</p>
+
+<p>For each row of the display the left side (address area) shows the address 
+ of the first byte of the line. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ address can be in hex and/or decimal (see <a HREF="../dlg_options/HIDD_OPT_WINDOW.htm">Document 
+ Display Options page</a>). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ ruler and address area highlight the current column and row of the cursor 
+ and mouse position -- enabled using the checkboxes in the Ruler section 
+ of the <a href="../dlg_options/HIDD_OPT_WORKDISPLAY.htm">Workspace Display 
+ Options</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also see the location of the cursor as you move it within the file 
+ in the <a HREF="../tools/HIDC_JUMP_HEX.htm">Hex Address tool</a> and <a 
+ HREF="../tools/HIDC_JUMP_DEC.htm">Decimal Address tool</a>.</p>
+
+<p>&nbsp;</p>
+
+<p>Finally, you can also see the address of the current byte in a tip window 
+ when you hover the mouse over it. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can configure &quot;<a HREF="../dlg_options/HIDD_OPT_TIPS.htm">Info Tips</a> 
+ to show the address in hex and/or decimal (or any radix) or (if you don't 
+ specify a format) it uses the current way addresses are shown in the address 
+ area.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="../tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>To avoid confusion hex addresses are shown in <span style="color: #ff0000;">red</span>, 
+ decimal in <span style="color: #0000ff;">blue</span> throughout HexEdit. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(The colors 
+ can be configured in <a HREF="../dlg_options/HIDD_OPT_PARTITIONS.htm">Color 
+ Options page</a>.)</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -90,17 +140,19 @@
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p>A simple way to move to a distant address is to drag the scroll box 
- until the address you want is visible and click within the display to 
- set the cursor location. However, for very large files the scroll bar 
- resolution may mean that you can’t drag to the exact position but may 
- have to use the Page Up or Page Down keys as well.</p>
+ (see <a HREF="../misc/scrollbars.htm">Scroll Bars</a>) until the address 
+ you want is visible and click within the display to set the cursor location. 
+ However, for very large files the scroll bar resolution may mean that 
+ you can’t drag to the exact position but may have to use the Page Up or 
+ Page Down keys as well.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>Alternatively, the Decimal and Hex Address Tools in the Edit Bar allow 
- you to jump quickly to a known address within the file. (Note that, as 
- is sensible and conventional in binary file editors, the “first” byte 
- of the file has an address of zero.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
+<p>Alternatively, the <a HREF="../tools/HIDC_JUMP_DEC.htm">Decimal Address 
+ tool</a> and <a HREF="../tools/HIDC_JUMP_HEX.htm">Hex Address tool</a> 
+ in the Edit Bar allow you to jump quickly to a known address within the 
+ file. Note that, by default, the &quot;first” byte of the file has an 
+ address of zero. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
  you type an address in one tool the corresponding address is updated in 
  the other – as a useful side effect, this provides a simple way to convert 
  between hex and decimal numbers. These tools also display the current 
@@ -112,13 +164,13 @@
 <p>Both of these tools also store separate histories of the last addresses 
  jumped to, which can be selected from the drop down list. Note that you 
  have to press the Enter key to actually jump to the address and return 
- to the edit window. You can use the Tab and Shift+Tab keys to quickly 
- flip between these two controls without returning to the edit window.</p>
+ to the edit window. You can use the Tab key to quickly flip between these 
+ controls without returning to the edit window.</p>
 
 <p>&nbsp;</p>
 
-<p>New in version 2.5 is the ability to enter an expression into the hex 
- and decimal address tools. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+<p>Not only can you type in an address but you can also enter an (integer) 
+ expression into the hex and decimal address tools. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  syntax and operators for expressions are almost identical to that used 
  in C/C++. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
  can even assign to variables (eg &quot;reclen=10&quot;) and use those 
@@ -129,9 +181,8 @@
 
 <p>&nbsp;</p>
 
-<p>You can also quickly jump to any bookmark in the current file by selecting 
- it from the &quot;Bookmarks&quot; drop-down list which appears on the 
- navigation bar.</p>
+<p>To quickly jump to any bookmark in the current file select it from the 
+ &quot;Bookmarks&quot; drop-down list which appears on the navigation bar.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -140,8 +191,9 @@
  menu item then the current address is loaded into the calculator. You 
  can then type in a new absolute address and click the “GO” button or just 
  press the Enter key to jump to the address. To jump to a relative address 
- click the “+” or “-“ button or press the “+” or “-“ key and type a relative 
- offset and press Enter.</p>
+ click the “+” or “-“ button and type a relative offset and press Enter. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Again you 
+ can also enter an expression into the calculator.</p>
 
 <p>&nbsp;</p>
 
@@ -150,21 +202,29 @@
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p>A way to return to a previous address is to mark that address with the 
- Mark Position command and later return to it using the Go To Mark command. 
- The <span style="font-weight: bold;">mark</span> is also useful for measuring 
- distances between points in the file. There are decimal and hex “Distance 
- to Mark” indicators in the status bar that show the distance from the 
- mark to the current cursor position.</p>
+ <a HREF="../cmd_edit/HID_MARK.htm">Mark Position</a> command and later 
+ return to it using the <a HREF="../cmd_edit/HID_GOTO_MARK.htm">Go To Mark</a> 
+ command. The <span style="font-weight: bold;">mark</span> is also useful 
+ for measuring distances between points in the file. There are decimal 
+ and hex “Distance to Mark” indicators in the <a HREF="../bars/AFX_HIDW_STATUS_BAR.htm">Status 
+ Bar</a> that show the distance from the mark to the current cursor position.</p>
 
 <p>&nbsp;</p>
 
-<p>You can also set global bookmarks that associate a name with a file 
- and address. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- can use the modeless Bookmarks dialog to add bookmarks, sort them, jump 
- to them etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
- you move around a file you can also see the closest bookmark above in 
- the Bookmark tool, which can also be used to jump to any bookmark in the 
- file.</p>
+<p>Bookmarks allow you to associate a name with a file and address. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Use 
+ the <a HREF="../dlg_tools/Bookmarks_dialog.htm">Bookmarks dialog</a> to 
+ add bookmarks, sort them, jump to them etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also jump straight to a bookmark in any file even if the file is not 
+ currently open. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that bookmarks store a name plus a file name so bookmarks in different 
+ files can have the same name.</p>
+
+<p>&nbsp;</p>
+
+<p>As you move around a file you can also see the closest bookmark in that 
+ file in the <a HREF="../tools/Bookmark_tool.htm">Bookmark_tool</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can also use the Bookmark tool to jump to any bookmark in the file by 
+ selecting it from the drop-down list.</p>
 
 <p>&nbsp;</p>
 
@@ -173,11 +233,12 @@
  turn on the highlighter and any selections you make are automatically 
  highlighted. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By 
  default highlights have a background of yellow (bookmarks are blue) but 
- you can change these colors in the colors page of the Options dialog.</p>
+ you can change these colors in the <a HREF="../dlg_options/HIDD_OPT_PARTITIONS.htm">Color 
+ Options page</a> of the Options dialog.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p style="font-weight: bold;"><span>For further information see:</span></p>
+<p style="font-weight: bold;"><span>For further information also see:</span></p>
 
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\cmd_view\HID_ADDR_TOGGLE.htm">Decimal 
  Addresses</a>&nbsp;to toggle between hex and decimal addresses</p>
@@ -185,40 +246,13 @@
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\bars\HIDW_EBAR.htm">Edit 
  Bar</a>&nbsp;to see options for jumping and setting the mark</p>
 
-<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\tools\HIDC_JUMP_HEX.htm">Hex 
- Address Tool</a>&nbsp;to view the current address in hex or jump to a 
- hex address</p>
-
-<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\tools\HIDC_JUMP_DEC.htm">Decimal 
- Address Tool</a>&nbsp;to view the current address in decimal or jump to 
- a decimal address</p>
-
-<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\misc\scrollbars.htm">Scrollbars</a>&nbsp;to 
- see how to use scrollbars</p>
-
-<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\bars\AFX_HIDW_STATUS_BAR.htm">Status 
- Bar</a>&nbsp;for information on the “Distance to Mark” indicators</p>
-
-<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\cmd_edit\HID_GOTO_MARK.htm">Go 
- To Mark Command</a> to jump to the current mark position</p>
-
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\cmd_misc\HID_HIGHLIGHT_PREV.htm">Previous 
  Highlight</a> &amp; <a HREF="..\cmd_misc\HID_HIGHLIGHT_NEXT.htm">Next 
  Highlight</a> to jump to highlighted blocks</p>
 
-<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\cmd_edit\Edit_Bookmarks.htm">Edit 
- Bookmarks</a> to add or jump to a bookmark</p>
-
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\cmd_misc\HID_BOOKMARK_PREVIOUS.htm">Previous 
  Bookmark</a> &amp; <a HREF="..\cmd_misc\HID_BOOKMARK_NEXT.htm">Next Bookmark</a> 
  to move between bookmarks in a file</p>
-
-<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\tools\Bookmark_tool.htm">Bookmark_tool</a> 
- to jump to a specific bookmark or see the name of the closest bookmark</p>
-
-<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="..\dlg_options\HIDD_OPT_PARTITIONS.htm">color 
- Options page</a> to change the background color of bookmarks and/or highlighted 
- bytes</p>
 
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;">&nbsp;</p>
 

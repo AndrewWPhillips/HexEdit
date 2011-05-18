@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=778>
-<meta name=layout-width content=1210>
+<meta name=layout-height content=766>
+<meta name=layout-width content=975>
 
 
 <!--(Links)=========================================================-->
@@ -43,9 +43,14 @@
 
 <p class=footnote-text>&nbsp;</p>
 
-<p class=footnote-text><img src="status_bar.gif" style="border: none;
+<p class=footnote-text><img src="status_bar.gif"
+							style="border-style: none;
+									border: none;
 									width: 649px;
-									height: 22px;" width="649" height="22" border="0"></p>
+									height: 22px;"
+							width=649
+							height=22
+							border=0></p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -62,7 +67,7 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>The right area of the status bar has several boxes or <span style="font-style: italic;">indicators</span> 
+<p>The right area of the status bar has several panes or <span style="font-style: italic;">indicators</span> 
  which have the following uses:</p>
 
 <p class=footnote-text
@@ -219,7 +224,9 @@
 			border-right-width: 1px;"
 	width=87.514%>
 <p>Indicates the numbers of bytes from the mark to the cursor in hex. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->See 
- the <a href="..\cmd_edit\HID_MARK.htm">Mark Position command</a>.</td></tr>
+ the <a href="..\cmd_edit\HID_MARK.htm">Mark Position command</a>.<br>
+This pane is shown in <span style="color: #ff0000;">red</span> (or whatever 
+ color is used for hex addresses in the current color scheme).</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -249,7 +256,9 @@
 			border-bottom-style: Solid;
 			border-right-width: 1px;"
 	width=87.514%>
-<p>Indicates the numbers of bytes from the mark to the cursor in decimal.</td></tr>
+<p>Indicates the numbers of bytes from the mark to the cursor in decimal.</p>
+<p>his pane is shown in <span style="color: #000080;">blue</span> (or whatever 
+ color is used for decimal addresses in the current color scheme).</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -288,7 +297,9 @@
  displayed in the active window (see <a HREF="../cmd_view/HID_ADDR_TOGGLE.htm">Decimal 
  Addresses command</a> ). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
  bytes have been inserted/deleted it also indicates the difference in length 
- from the on-disk (last saved) version.</td></tr>
+ from the on-disk (last saved) version. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ editing disks (raw disks or volumes) this shows the current sector and 
+ the total number of sectors.</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -309,7 +320,7 @@
 			border-left-width: 1px;"
 	bgcolor=#C0C0C0
 	width=12.486%>
-<p>LE/BE</td>
+<p>LE/<span style="color: #ff0000;">BE</span></td>
 <td colspan=1
 	rowspan=1
 	style="width: 87.514%;
@@ -392,7 +403,15 @@
 	width=87.514%>
 <p>Indicates overtype or insert mode. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
  toggle between overtype and insert modes double-click this indicator or 
- use the <a href="..\cmd_misc\HID_INSERT.htm">Insert Mode Toggle command</a>.</td></tr>
+ use the <a href="..\cmd_misc\HID_INSERT.htm">Insert Mode Toggle command</a>. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}--><img src="../tip.gif"
+	style="border: none;
+			width: 31px;
+			height: 12px;"
+	width=31
+	height=12
+	border=0>Many binary file formats cannot tolerate insertions/deletions 
+ so you should not use INS mode.</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -487,9 +506,15 @@
 <p>Indicates the state of the Num Lock toggle.</td></tr>
 </table>
 
-<p style="margin-left: 72.00pt;
-			margin-bottom: 6.00pt;
-			text-indent: -72.00pt;">&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>&nbsp;</p>
 
 </body>
 

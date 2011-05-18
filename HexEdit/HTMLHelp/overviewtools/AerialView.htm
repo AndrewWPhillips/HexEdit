@@ -1,0 +1,247 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Aerial View</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1242>
+<meta name=layout-width content=988>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2><font style="font-family: Arial;"
+			face=Arial>Aerial View</font></h2>
+
+<p>&nbsp;</p>
+
+<p>Aerial View is a new feature in HexEdit 3.5. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ allows you to get an overview of even very large files at a glance then 
+ drill down to specific parts of a file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are also facilities for displaying the selection, search occurrences, 
+ etc (as marching ants or in the border) which is very useful for dealing 
+ with large amounts of information at a glance - for example you can use 
+ it to check when making a large selection that you are getting the part 
+ of the file that you expected.</p>
+
+<p>&nbsp;</p>
+
+<p>Aerial View is also useful to reverse-engineer file formats for which 
+ you don't have access to the documentation (or the format was never documented). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For large 
+ files one of the first steps is to get an overview of the file by looking 
+ for areas that are different from others that may indicate special data 
+ like record headers.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;"><span style="font-weight: bold;">The Display</span></p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">When Aerial View is turned 
+ on (or a file is opened and Aerial View mode is on by default) HexEdit 
+ prepares a bitmap (ie, graphical image) of the file where each byte (or 
+ group of bytes for very large files) is represented by one pixel. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ happens in the background (ie in a low-priority background thread) so 
+ will not affect anything else you want to do with the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ Aerial View of the file is displayed in a separate &quot;view&quot; pane 
+ (similar to the template view) which can be shown in a split pane to the 
+ right of the hex view or in a separate tabbed window.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">Note that for a large file 
+ there might be a delay while HexEdit scans the file but often the Aerial 
+ View appears almost immediately. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->While 
+ the scan is taking place you can continue working but the aerial view 
+ will display as gray the part of the file not yet scanned.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;"><img src="../ex_red_sm.jpg"
+												style="border-style: none;
+														border: none;
+														width: 17px;
+														height: 20px;"
+												width=17
+												height=20
+												border=0> It is very important 
+ to understand how the bitmap appears in the Aerial View pane is affected 
+ by these two things:</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">1. The number of bytes per 
+ bitmap pixel. Generally there is one byte per pixel but for very large 
+ files (approaching or exceeding the GByte size) then HexEdit needs to 
+ create a bitmap where each pixel represent 2, 4, 8 or more bytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that the colour of this combined pixel is the result of the combined colors 
+ of each of the bytes so there is still a lot of information being displayed.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">2. How big a bitmap pixel is 
+ displayed on the screen. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->On 
+ some monitors nowadays a single pixel is almost imperceptible so HexEdit 
+ allows you to zoom (see below) the bitmap so that a single &quot;pixel&quot; 
+ is displayed on screen in a block of pixels as large as 16 by 16.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Zoom</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">There are several abilities 
+ of the aerial view window that make it very useful. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->First 
+ you can zoom in and out on the view to see more detail, using Ctrl+mouse 
+ wheel as usual or using the <a HREF="../misc/context_menus.htm">context 
+ menu</a>. If the bitmap is too large to display then you can also scroll 
+ up and down using the scrollbar or the mouse wheel. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also 
+ note that the bitmap width adjusts to the width of the window so you can 
+ often see new patterns by changing the window width which changes how 
+ different pixels align in the bitmap.</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Colors</span></p>
+
+<p>&nbsp;</p>
+
+<p>To make best use of the aerial view it is important to use a suitable 
+ color scheme. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you are unaware of it, HexEdit (since version 2.1) has had the ability 
+ to set up color schemes where ranges of bytes can be displayed in different 
+ colors. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example if the a certain byte value or ranges of values are important 
+ then you can set those to display in red. See the <a href="..\dlg_options\HIDD_OPT_PARTITIONS.htm">Color 
+ Options page</a> for details.</p>
+
+<p>&nbsp;</p>
+
+<p>If you know nothing at all about the data then using the &quot;rainbow&quot; 
+ color scheme that comes with HexEdit is a good way to see the spread of 
+ byte values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ splits the 256 byte values into 12 ranges of about 20 bytes each with 
+ the colors for each range varying from red, through various shades of 
+ green, blue, etc to purple.</p>
+
+<p>&nbsp;</p>
+
+<p>With practice you will learn to recognize what different patterns indicate. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Also changing 
+ the width of the aerial view window can reveal new patterns by allowing 
+ different pixels to come into alignment</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;">Other Display Features</p>
+
+<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+
+<p>The Aerial View is also very useful for working with a file in other 
+ ways since it shows information about the selection, bookmarks, highlighted 
+ bytes, search occurrences. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can see them in the aerial view as &quot;marching ants&quot; and or in 
+ the left margin.</p>
+
+<p>&nbsp;</p>
+
+<p><img src="..\tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>Marching ants are dotted lines that slowly move like a 
+ trail of ants. They enclose the relevant bytes and slowly move to make 
+ it easier to see the boundaries.</p>
+
+<p>&nbsp;</p>
+
+<p>For example, imagine you have performed a search and the search occurrences 
+ pane of the status bar informs you that there are thousands of occurrences 
+ of the search text. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you want to get an overview of where throughout the file these occurrences 
+ are you can simply inspect the aerial view and looking for searches occurrences 
+ shown as marching ants and/or in the left margin in the current search 
+ color (green by default)).</p>
+
+<p>&nbsp;</p>
+
+<p>Marching ants and the left margin indicators can be shown individually 
+ for each of:</p>
+
+<p>&nbsp;</p>
+
+<p>1. selection - shown in black and white</p>
+
+<p>2. the mark - cyan in default color scheme</p>
+
+<p>3. <a href="Bookmarks.htm">bookmarks</a> - blue in default color scheme</p>
+
+<p>4. highlighted bytes - normally yellow</p>
+
+<p>5. background search occurrences - green</p>
+
+<p>&nbsp;</p>
+
+<p>To turn on/off these options use the context menu by right-clicking 
+ anywhere in the aerial view window.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;"><span>For 
+ further information see:</span></span></p>
+
+<p><a HREF="../misc/context_menus.htm">Context Menus</a> for Aerial View 
+ context menu commands</p>
+
+<p><a HREF="../cmd_aerial/HID_AERIAL_HIDE.htm">Hide Aerial View</a> command 
+ to hide the Aerial View</p>
+
+<p><a HREF="../cmd_aerial/HID_AERIAL_SPLIT.htm">Split Aerial View</a> command 
+ to show the Aerial View in a split window</p>
+
+<p><a HREF="../cmd_aerial/HID_AERIAL_TAB.htm">Tabbed Aerial View</a> command 
+ to show the Aerial View in a tabbed window</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>
