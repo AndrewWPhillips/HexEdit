@@ -359,7 +359,7 @@ Modeless Dialogs | overviewbasics\Modeless_Dialogs.htm
 [OverviewAdvanced]
 Printing | overviewadvanced\print.htm
 Options Dialog | overviewadvanced\opt.htm
-Customisation | overviewadvanced\customize.htm
+Customization | overviewadvanced\customize.htm
 Encryption | overviewadvanced\Encryption.htm
 Operations | overviewadvanced\Operations.htm
 Expressions | overviewadvanced\Expressions.htm

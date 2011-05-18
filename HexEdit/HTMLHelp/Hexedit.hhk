@@ -6,6 +6,16 @@
 <ul>
   <li><object type="text/sitemap">
     <param name="Name" value="dates">
+    <param name="Name" value="Expressions">
+    <param name="Local" value="overviewadvanced\Expressions.htm">
+    <param name="Name" value="Calculator">
+    <param name="Local" value="overviewtools\calc.htm">
+    <param name="Name" value="Date and Time Formats">
+    <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
+    <param name="Name" value="Date/Time Values Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
+    <param name="Name" value="DATA Dialog">
+    <param name="Local" value="dlg_templates\DATA_Dialog.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -16,6 +26,8 @@
       <param name="Local" value="dlg_templates\DATA_Dialog.htm">
       <param name="Name" value="Template Options">
       <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
+      <param name="Name" value="Date/Time Values Page">
+      <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="supported formats">
@@ -25,6 +37,8 @@
       <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
       <param name="Name" value="DATA Dialog">
       <param name="Local" value="dlg_templates\DATA_Dialog.htm">
+      <param name="Name" value="Expressions">
+      <param name="Local" value="overviewadvanced\Expressions.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -92,6 +106,8 @@
     <param name="Name" value="DBCS">
     <param name="Name" value="Character Sets">
     <param name="Local" value="binary_files\InputOutput.htm">
+    <param name="Name" value="Byte Properties Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_CHAR.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="character sets">
@@ -185,6 +201,10 @@
     <param name="Local" value="binary_files\Bit_Manipulation.htm">
     <param name="Name" value="Calculator">
     <param name="Local" value="overviewtools\calc.htm">
+    <param name="Name" value="ROR Double Word Command">
+    <param name="Local" value="cmd_operations\HID_ROR_32BIT.htm">
+    <param name="Name" value="ROL Byte Command">
+    <param name="Local" value="cmd_operations\HID_ROL_BYTE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="right shift">
@@ -510,12 +530,14 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="binary files">
-    <param name="Name" value="Introduction">
+    <param name="Name" value="HexEdit Introduction">
     <param name="Local" value="intro\intro.htm">
     <param name="Name" value="Binary Files">
     <param name="Local" value="binary_files\Binary_Files.htm">
     <param name="Name" value="Of Bits and Bytes">
     <param name="Local" value="binary_files\Of_Bits_and_Bytes.htm">
+    <param name="Name" value="Binary Files Introduction">
+    <param name="Local" value="binary_files\BinFilesIntro.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="bit">
@@ -751,6 +773,8 @@
       <param name="Local" value="cmd_edit\HID_PASTE_EBCDIC.htm">
       <param name="Name" value="Paste As Unicode Text">
       <param name="Local" value="cmd_edit\HID_PASTE_UNICODE.htm">
+      <param name="Name" value="Expressions">
+      <param name="Local" value="overviewadvanced\Expressions.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="case">
@@ -764,6 +788,12 @@
     <param name="Name" value="copy to clipboard">
     <param name="Name" value="Copy command">
     <param name="Local" value="cmd_edit\HID_EDIT_COPY.htm">
+    <param name="Name" value="Copy As C Source">
+    <param name="Local" value="cmd_edit\HID_COPY_CCHAR.htm">
+    <param name="Name" value="Copy As Hex Text">
+    <param name="Local" value="cmd_edit\HID_COPY_HEX.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="create window">
@@ -807,6 +837,8 @@
     <param name="Local" value="cmd_view\HID_ADDR_TOGGLE.htm">
     <param name="Name" value="Window Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+    <param name="Name" value="Info Tips Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="decreasing font size">
@@ -832,13 +864,6 @@
     <param name="Local" value="howdoi\HowDefaultDisplay.htm">
     <param name="Name" value="Document General Options">
     <param name="Local" value="dlg_options\Document_General_Options.htm">
-  </object>
-  <li><object type="text/sitemap">
-    <param name="Name" value="delete">
-    <param name="Name" value="Delete command">
-    <param name="Local" value="cmd_misc\HID_DEL.htm">
-    <param name="Name" value="How Do I Delete a File On Disk?">
-    <param name="Local" value="howdoi\HowDeleteFile.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="display">
@@ -889,6 +914,10 @@
       <param name="Local" value="intro\technical.htm">
       <param name="Name" value="Template Options">
       <param name="Local" value="dlg_options\HIDD_OPT_TEMPLATE.htm">
+      <param name="Name" value="Info Tips Page">
+      <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
+      <param name="Name" value="Workspace Global Options page">
+      <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -1024,6 +1053,8 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_FILE.htm">
     <param name="Name" value="HIDD_PROP_SUMMARY">
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
+    <param name="Name" value="Explorer Dialog">
+    <param name="Local" value="dlg_file\Explorer_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="files">
@@ -1072,12 +1103,10 @@
       <param name="Name" value="managing">
       <param name="Name" value="File menu commands">
       <param name="Local" value="menus\menu_file.htm">
-      <param name="Name" value="File Open dialog">
-      <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
-      <param name="Name" value="Editing">
-      <param name="Local" value="overviewbasics\edit.htm">
       <param name="Name" value="How Do I Delete a File On Disk?">
       <param name="Local" value="howdoi\HowDeleteFile.htm">
+      <param name="Name" value="Explorer Dialog">
+      <param name="Local" value="dlg_file\Explorer_Dialog.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="opening">
@@ -1089,6 +1118,8 @@
       <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
       <param name="Name" value="Filters">
       <param name="Local" value="dlg_options\Filters.htm">
+      <param name="Name" value="Explorer Dialog">
+      <param name="Local" value="dlg_file\Explorer_Dialog.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="printing">
@@ -1221,18 +1252,32 @@
       <param name="Name" value="Replace Command">
       <param name="Local" value="cmd_edit\HID_EDIT_REPLACE.htm">
     </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="hex">
+      <param name="Name" value="Find Hex command">
+      <param name="Local" value="cmd_tools\HID_EDIT_FIND2.htm">
+      <param name="Name" value="Find Tool">
+      <param name="Local" value="tools\HIDC_SEARCH.htm">
+      <param name="Name" value="Hex Find page">
+      <param name="Local" value="dlg_find\HexFind.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="files">
+      <param name="Name" value="How Do I Find a File That I Opened Before?">
+      <param name="Local" value="howdoi\HowFindPrevFile.htm">
+      <param name="Name" value="Recently Opened Files Dialog">
+      <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="text">
+      <param name="Name" value="Find Tool">
+      <param name="Local" value="tools\HIDC_SEARCH.htm">
+      <param name="Name" value="Find Text page">
+      <param name="Local" value="dlg_find\FindText.htm">
+      <param name="Name" value="Basic Find page">
+      <param name="Local" value="dlg_find\Simple.htm">
+    </object>
     </ul>
-  <li><object type="text/sitemap">
-    <param name="Name" value="find hex">
-    <param name="Name" value="Find Hex command">
-    <param name="Local" value="cmd_tools\HID_EDIT_FIND2.htm">
-    <param name="Name" value="Find Tool">
-    <param name="Local" value="tools\HIDC_SEARCH.htm">
-    <param name="Name" value="Hex Find page">
-    <param name="Local" value="dlg_find\HexFind.htm">
-    <param name="Name" value="Bookmarks">
-    <param name="Local" value="overviewtools\Bookmarks.htm">
-  </object>
   <li><object type="text/sitemap">
     <param name="Name" value="fit columns to window">
     <param name="Name" value="Auto Fit command">
@@ -1371,6 +1416,8 @@
     <param name="Local" value="overviewtools\prop.htm">
     <param name="Name" value="Of Bits and Bytes">
     <param name="Local" value="binary_files\Of_Bits_and_Bytes.htm">
+    <param name="Name" value="Workspace Global Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="hex address tool">
@@ -1383,6 +1430,8 @@
     <param name="Local" value="cmd_view\HID_ADDR_TOGGLE.htm">
     <param name="Name" value="Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
+    <param name="Name" value="Info Tips Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="hex area">
@@ -1739,6 +1788,8 @@
     <param name="Local" value="dlg_custom\HIDD_CUST_COMMANDS.htm">
     <param name="Name" value="Customize Menu page">
     <param name="Local" value="dlg_custom\HIDD_CUST_MENU.htm">
+    <param name="Name" value="System Menu">
+    <param name="Local" value="menus\menu_system.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -2077,6 +2128,10 @@
     <param name="Local" value="HID_REG_FORM.htm">
     <param name="Name" value="Registration Page command">
     <param name="Local" value="cmd_help\HID_HELP_REGISTRATION.htm">
+    <param name="Name" value="Hex Edit Order Form">
+    <param name="Local" value="HID_REG_FORM_US.htm">
+    <param name="Name" value="Activation Dialog">
+    <param name="Local" value="dlg_other\HIDD_REGISTER_HELP.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="removing">
@@ -2573,6 +2628,8 @@
     <param name="Local" value="dlg_custom\HIDD_CUST_OPTIONS.htm">
     <param name="Name" value="Help (Overview)">
     <param name="Local" value="overviewbasics\help.htm">
+    <param name="Name" value="Info Tips Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="topics">
@@ -2643,6 +2700,10 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_DECIMAL.htm">
     <param name="Name" value="Numbers">
     <param name="Local" value="binary_files\Numbers.htm">
+    <param name="Name" value="Calculator">
+    <param name="Local" value="overviewtools\calc.htm">
+    <param name="Name" value="Info Tips Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="user-defined tools">
@@ -2659,8 +2720,8 @@
     <param name="Local" value="cmd_help\HID_HELP_WEB.htm">
     <param name="Name" value="Support">
     <param name="Local" value="intro\support.htm">
-    <param name="Name" value="http://www.expertcomsoft.com">
-    <param name="Local" value="http://www.expertcomsoft.com">
+    <param name="Name" value="http://www.hexedit.com">
+    <param name="Local" value="http://www.hexedit.com">
     <param name="Name" value="FAQ Web Page command">
     <param name="Local" value="cmd_help\HID_HELP_FAQ.htm">
     <param name="Name" value="Support Forums command">
@@ -2741,11 +2802,6 @@
     <param name="Local" value="intro\intro.htm">
   </object>
   <li><object type="text/sitemap">
-    <param name="Name" value="Tool Bar">
-    <param name="Name" value="Customisation">
-    <param name="Local" value="overviewadvanced\customize.htm">
-  </object>
-  <li><object type="text/sitemap">
     <param name="Name" value="Customize Menus">
     <param name="Name" value="Customisation">
     <param name="Local" value="overviewadvanced\customize.htm">
@@ -2759,6 +2815,10 @@
     <param name="Name" value="HexEdit.tip file">
     <param name="Name" value="Help">
     <param name="Local" value="overviewbasics\help.htm">
+    <param name="Name" value="System General Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
+    <param name="Name" value="Tip of the Day command">
+    <param name="Local" value="cmd_help\HID_TIPOFTHEDAY.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Print Dialog">
@@ -2878,6 +2938,8 @@
     <param name="Local" value="cmd_view\HID_DISPLAY_RESET.htm">
     <param name="Name" value="How Do I Change the Default Window Display">
     <param name="Local" value="howdoi\HowDefaultDisplay.htm">
+    <param name="Name" value="Document General Options">
+    <param name="Local" value="dlg_options\Document_General_Options.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="privacy">
@@ -2937,6 +2999,10 @@
     <param name="Local" value="menus\menu_edit.htm">
     <param name="Name" value="Editing">
     <param name="Local" value="overviewbasics\edit.htm">
+    <param name="Name" value="Document Edit Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -3201,6 +3267,8 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="times">
+    <param name="Name" value="Date and Time Formats">
+    <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -3323,6 +3391,10 @@
     <param name="Local" value="cmd_file\Import_Hex_Text.htm">
     <param name="Name" value="tools">
     <param name="Local" value="overviewtools\other_tools.htm">
+    <param name="Name" value="Import Intel Hex Records dialog">
+    <param name="Local" value="dlg_file\Import_Intel_dlg.htm">
+    <param name="Name" value="Import Motorola S Records dialog">
+    <param name="Local" value="dlg_file\Import_Motorola_dlg.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="arithmetic">
@@ -3365,7 +3437,7 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="FAQ">
-    <param name="Name" value="http://www.expertcomsoft.com/hex-edit-faq.htm">
+    <param name="Name" value="http://www.hexedit.com/hex-edit-faq.htm">
     <param name="Local" value="http://www.expertcomsoft.com/hex-edit-faq.htm">
     <param name="Name" value="FAQ Web Page command">
     <param name="Local" value="cmd_help\HID_HELP_FAQ.htm">
@@ -3569,6 +3641,8 @@
       <param name="Name" value="files">
       <param name="Name" value="How Do I Delete a File On Disk?">
       <param name="Local" value="howdoi\HowDeleteFile.htm">
+      <param name="Name" value="Explorer Dialog">
+      <param name="Local" value="dlg_file\Explorer_Dialog.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="bookmarks">
@@ -3589,6 +3663,8 @@
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="histories">
+      <param name="Name" value="History List Options">
+      <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3660,6 +3736,10 @@
     <param name="Local" value="dlg_options\HIDD_OPT_TIPS.htm">
     <param name="Name" value="Calculator">
     <param name="Local" value="overviewtools\calc.htm">
+    <param name="Name" value="Decimal Address tool">
+    <param name="Local" value="tools\HIDC_JUMP_DEC.htm">
+    <param name="Name" value="Hex Address tool">
+    <param name="Local" value="tools\HIDC_JUMP_HEX.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="variables">
@@ -3806,6 +3886,8 @@
     <param name="Local" value="cmd_operations\HID_ASSIGN_64BIT.htm">
     <param name="Name" value="Assign Byte command">
     <param name="Local" value="cmd_operations\HID_ASSIGN_BYTE.htm">
+    <param name="Name" value="Insert Block command">
+    <param name="Local" value="cmd_edit\HID_INSERT_BLOCK.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="forums">
@@ -3816,15 +3898,15 @@
     <param name="Name" value="discussion group">
     <param name="Name" value="Support Forums command">
     <param name="Local" value="cmd_help\HID_HELP_FORUM.htm">
-    <param name="Name" value="http://www.expertcomsoft.com/cgi-bin/ikonboard.cgi">
+    <param name="Name" value="http://www.hexedit.com/cgi-bin/ikonboard.cgi">
     <param name="Local" value="http://www.expertcomsoft.com/cgi-bin/ikonboard.cgi">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="home page">
     <param name="Name" value="HexEdit Home Page command">
     <param name="Local" value="cmd_help\HID_HELP_HOMEPAGE.htm">
-    <param name="Name" value="http://www.expertcomsoft.com">
-    <param name="Local" value="http://www.expertcomsoft.com">
+    <param name="Name" value="http://www.hexedit.com">
+    <param name="Local" value="http://www.hexedit.com">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="increase columns">
@@ -3842,6 +3924,10 @@
     <param name="Local" value="tute_template_1\TemplateTute1-0.htm">
     <param name="Name" value="Advanced Template Creation">
     <param name="Local" value="tute_template_2\TemplateTute2-0.htm">
+    <param name="Name" value="Customization Tutorial">
+    <param name="Local" value="tute_customize\CustomizeTute0.htm">
+    <param name="Name" value="Keystroke Macro Tutorial">
+    <param name="Local" value="tute_macros\MacroTute0.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="default template">
@@ -3957,6 +4043,8 @@
     <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
     <param name="Name" value="Printer Options">
     <param name="Local" value="dlg_options\Printer_Options.htm">
+    <param name="Name" value="Explorer Dialog">
+    <param name="Local" value="dlg_file\Explorer_Dialog.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="size of file">
@@ -4106,6 +4194,8 @@
       <param name="Local" value="cmd_template\HID_DFFD_REFRESH.htm">
       <param name="Name" value="Template Web Site">
       <param name="Local" value="cmd_template\HID_DFFD_WEB.htm">
+      <param name="Name" value="Speeding up templates">
+      <param name="Local" value="troubleshooting\Speed_templates.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="dialogs">
@@ -4147,6 +4237,8 @@
     <param name="Name" value="disk editing">
     <param name="Name" value="Open Special">
     <param name="Local" value="cmd_file\HID_FILE_OPEN_SPECIAL.htm">
+    <param name="Name" value="Open Special dialog">
+    <param name="Local" value="dlg_other\HIDD_OPEN_SPECIAL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="closing all files">
@@ -4212,6 +4304,8 @@
     <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
     <param name="Name" value="Tabbed Aerial View">
     <param name="Local" value="cmd_aerial\HID_AERIAL_TAB.htm">
+    <param name="Name" value="Window Tabs at Bottom command">
+    <param name="Local" value="cmd_misc\HID_TABS_AT_BOTTOM.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="split window">
@@ -4237,6 +4331,8 @@
     <param name="Name" value="scrolling options">
     <param name="Name" value="Document Edit Options">
     <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="colors">
@@ -4268,6 +4364,8 @@
     <param name="Name" value="ruler">
     <param name="Name" value="Document Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+    <param name="Name" value="View Ruler Command">
+    <param name="Local" value="cmd_view\HID_VIEW_RULER.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="line numbers">
@@ -4347,6 +4445,78 @@
     <param name="Local" value="cmd_aerial\HID_AERIAL_ZOOM16.htm">
     <param name="Name" value="Aerial View">
     <param name="Local" value="overviewtools\AerialView.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="history lists">
+    <param name="Name" value="History List Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="cursor">
+    <param name="Name" value="Workspace Display Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKDISPLAY.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="autoscroll">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Delphi">
+    <param name="Name" value="Real Values Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
+    <param name="Name" value="Copy As C Source Dialog">
+    <param name="Local" value="dlg_tools\Copy_As_C_Source.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="bit-fields">
+    <param name="Name" value="BitFields etc">
+    <param name="Local" value="binary_files\BitFields_Etc.htm">
+    <param name="Name" value="C/C++ Parser for Templates">
+    <param name="Local" value="overviewadvanced\Parser.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="double-click event customization">
+    <param name="Name" value="Customization">
+    <param name="Local" value="overviewadvanced\customize.htm">
+    <param name="Name" value="Customize Mouse page">
+    <param name="Local" value="dlg_custom\HIDD_CUST_MOUSE.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="reverse">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="bit order">
+      <param name="Name" value="Reverse Double Word Command">
+      <param name="Local" value="cmd_operations\HID_REV_32BIT.htm">
+      <param name="Name" value="Calculator">
+      <param name="Local" value="overviewtools\calc.htm">
+      <param name="Name" value="Reverse Byte Command">
+      <param name="Local" value="cmd_operations\HID_REV_BYTE.htm">
+      <param name="Name" value="Reverse Word Command">
+      <param name="Local" value="cmd_operations\HID_REV_16BIT.htm">
+      <param name="Name" value="Reverse Quad Word Command">
+      <param name="Local" value="cmd_operations\HID_REV_64BIT.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="byte order">
+      <param name="Name" value="Flip Double Word command">
+      <param name="Local" value="cmd_operations\HID_FLIP_32BIT.htm">
+      <param name="Name" value="Flip Word command">
+      <param name="Local" value="cmd_operations\HID_FLIP_16BIT.htm">
+      <param name="Name" value="Toggle Endianness Command">
+      <param name="Local" value="cmd_misc\HID_TOGGLE_ENDIAN.htm">
+      <param name="Name" value="Calculator">
+      <param name="Local" value="overviewtools\calc.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="inserting data block">
+    <param name="Name" value="Insert Block Dialog">
+    <param name="Local" value="dlg_tools\Insert_Block_Dialog.htm">
+    <param name="Name" value="Insert Block command">
+    <param name="Local" value="cmd_edit\HID_INSERT_BLOCK.htm">
   </object>
 </ul>
 </html>
