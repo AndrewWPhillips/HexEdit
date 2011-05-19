@@ -8,6 +8,8 @@ You can drag a file onto the HexEdit window to open it.  If the HexEdit window i
 
 If you find the default colors in HexEdit to be too garish you can change to the Black and White color scheme by selecting it from the drop down list (Color Scheme tool) on the Standard toolbar.  You can make this the default color scheme using the Options dialog.
 
+To get help on a menu item hold the mouse over it and press F1.
+
 You can change the background color (or any of the window colors) using the Colors page of the Options dialog.  Select the Tools/Options menu item and click the Colors tab, select "Background" from the list on the right and select a new color using the "Color" tool below it.
 
 The Aerial View can give a high-level overview of a file. You open it using the commands on the Aerial View menu.  Each pixel of the Aerial View corresponds to a byte of the file (or several bytes for very large files).  Use Ctrl+mouse wheel to zoom on an area of interest.
@@ -15,6 +17,8 @@ The Aerial View can give a high-level overview of a file. You open it using the 
 Change tracking allows you to easily see the changes that have been made to a file.  Replaced bytes are underlined while inserted bytes have a red background.  Use the button on the right end of the Edit Bar to toggle change tracking.
 
 The online help contains tutorials on creating keystroke macros, customization and templates.  (These are the most common areas that users seems to have difficulties.)
+
+You can drag the handles in the ruler to adjust display settings like the number of columns and column grouping.
 
 To get popup help on a control in any dialog, click the context help tool - a small question mark (?) in the top right of the dialog - then click the control you are interested in.  Alternatively right click the control to get context help.
 
@@ -27,6 +31,8 @@ You can find out how many bytes are selected at any time by pressing the Shift k
 You can easily convert a hex text file (a text file containing hex digits as characters) into binary.  See the File/Import/Hex Text menu item.  Spaces, commas etc are ignored.
 
 If you are investigating a file about which you know nothing switch to the Rainbow color scheme before (or after) opening the Aerial View.  This spreads the different byte values into ranges that allow patterns to be more easily seen.
+
+To get help on a toolbar button select Help/Context Help (or press Shift+F1), then click on the button.
 
 You can quickly zoom in and out in the hex view (and aerial view) by holding down the Ctrl key and rotating the mouse wheel.  If you find the direction of zoom counter-intuitive you can reverse it in the Workspace/Edit page of the Options dialog.
 
@@ -52,6 +58,8 @@ The Insert Block command (Edit menu) allows you to insert a block of bytes fille
 
 The Format toolbar contains tools (drop-down list) to change the current font and font size.  If the Format toolbar is not visible then right-click any toolbar and select it from the context menu.
 
+You can edit most values in the Properties dialog.  For example, to edit a 32-bit integer value as an unsigned decimal go to the Integer page and type a value into the "32 bit" field.  Hit Esc to abandon changes or Enter to accept them.
+
 When displaying using the "ASCII" character set no "graphics" characters are displayed in the character area (on the right side), but are just shown as dots. Use the character set button on the Standard Toolbar (or View/Character Set menu item) to select either the ANSI or IBM/OEM character sets to see graphics characters.
 
 Ctrl+Z (in the default keymap) is the keyboard shortcut for undo.  It not only undoes editing changes made to the file but also movements of the cursor, selections, and even changes to the format and state of the display.
@@ -72,6 +80,8 @@ Sometimes when you change a binary file you do not want other people or programs
 
 If you don't like hex digits displayed in uppercase (A-F) you can tell HexEdit to display them in lowercase (a-f) in the Display page of the options dialog.
 
+You can abort long operations by pressing the space bar or Esc key.
+
 To change the default window settings (for new files and files that have not been opened in HexEdit before) use the Window page of the Options dialog.  Use the "Reset to Defaults" button to get the current defaults then adjust the settings and click the "Save As Default" button.
 
 To easily view information about the values at the current cursor location (decimal, floating point, date values etc), as you edit a file, open the Properties dialog (using View/Properties menu item), and select the desired page.  If you leave the dialog open the values are updated as you move the cursor.
@@ -84,11 +94,15 @@ You can perform many file operations (delete, rename etc) from within HexEdit by
 
 To search for a text string using the Find Tool on the Edit Bar type an equals sign (=) and the characters to search for (or press F5).  Use a tilde (~) for case-insensitive searches (or press F4).
 
+If you place the files you view or edit into different categories (see the Summary page of the Properties window) then you can easily find them by sorting on the Category column in the Recent Files Dialog and in the HexEdit Explorer window.
+
 To get help on the fields of a page of the Properties dialog click the "?" button in the top right corner of the dialog, then click the tab of the page you want help about.  This will explain the page and the fields of the page in detail.  To get help on the other pages just move forward and backward in the browse sequence.
 
 You can completely customize toolbars and menus using the View/Toolbars/Customize menu item.  You can use any of the commands that are available from the default toolbars, menus or keyboard.  You can even place toolbar buttons on the main menu, put submenus on toolbars, etc.
 
 You can quickly jump to a bookmark in the current file by selecting it from the Bookmark Tool's drop down list.
+
+There are two different rulers shown depending on whether addresses are shown in hex or decimal.  (If addresses are shown both ways then both rulers are displayed.)
 
 You can toggle any bit of any byte using the Character page of the Properties dialog.  Select the character and double-click any of the 8 bits in the Binary field to toggle it between 0 and 1.  (Of course, you can't toggle bits if the file is open read-only.)
 
@@ -124,6 +138,8 @@ You can edit the floating point value at the cursor simply by typing a new value
 
 You can scroll through the history of previous search strings in the Find Dialog using the up and down arrow keys.
 
+You can adjust how often numbers and major ticks are shown in the ruler using the Workspace/Display page in the Options dialog.  When numbers are shown for every column they are shown above the column, otherwise they are shown between columns.
+
 You can add user-defined tools to the "Tools" menu using the "Tools" page of the "Customize" dialog.  There are two default user-defined tools (Windows Calculator and NotePad).
 
 You can easily determine the distance between two parts of a file by setting the mark at one end and moving the cursor to the other.  The "Distance to Mark" indicators (hex and decimal) of the status bar show the distance.
@@ -132,9 +148,17 @@ Ctrl+U and ctrl+D (in the default keymap) are keyboard shortcuts to scroll up an
 
 When selecting text it is often important to ensure that the length of the selection is divisible by 2, 4, or 8.  For example, if you need to use a "Quad Word" command on the Tools menu (like Tools/Negate/Quad Word), the length of the selection must be divisible by 8.  The divisibility by a power of 2 of the length of the selection is shown in brackets in the selection length "tip".
 
+The properties dialog allows you to view information about the active file, mainly the data at the current cursor position interpreted as many different data types.  As you move around the file the current value is updated to reflect the current byte(s).
+
 Double-clicking the search occurrences pane on the status bar brings up the find dialog.
 
+There are many useful context (popup) menus that are seen when you right-click on various objects or different parts of the display.  The default menu items are usually appropriate for the item clicked but you can fully customize these menus in the Menu page of the Customization dialog.
+
+The Byte page of the Properties dialog allows viewing characters in Unicode or in any code page supported by Windows.
+
 The LE/BE status bar box indicates whether the current file is open in little- or big-endian mode.  This affects file access buttons in the calculator and many operations in the Operations menu.  (It does not affect how the hex data is displayed.)
+
+To quickly toggle a single specific bit you can double-click any bit of the current byte in the Byte page of the Properties dialog.
 
 If you insert or delete bytes within a file the whole file will need to be copied when you save it.  On a large file this may take a long time.  To avoid this do all editing in Overtype mode (and don't create a backup file).
 
@@ -161,6 +185,8 @@ If you save the current keystroke macro as AUTOEXEC, then it is run every time H
 You can customize the behaviour of a double-click on many areas of the edit window (eg the address area).  By default double-clicking in the address area selects that line but you might want to change it, for example, to toggle between hex and decimal addresses.
 
 You can toggle between read-only and read-write modes by double clicking the RO/RW on the status bar.
+
+HexEdit does not support regular expressions in searches like some text editors (since a binary file is not line-oriented).  However it does allow a wildcard character in text searches (see the Text Page of the Find dialog).  For binary searches you can mask bits to be ignored in the search (see the Hex page of the Find dialog).
 
 You can display IBM/OEM graphic characters using ASCII+IBM/OEM on the Character Set button on the Standard Toolbar (or using the View/Character Set/ASCII+IBM/OEM menu item).  This shows the graphic characters often seen in PCDOS/MSDOS games.
 
@@ -194,6 +220,8 @@ You can arrange a keystroke macro to always be run when files of a certain type 
 
 Ctrl+L (in the default keymap) will scroll the display so that the cursor is in the centre of the window.  It will also completely redraw the window in case it has been messed up somehow.
 
+When you zoom using Ctrl+Mouse Wheel in the Aerial View the mouse pointer is moved automatically so it always remains over the same byte.  (This is very useful when trying to zoom right in to a particular part of the file.)  However, you need to hold your mouse very steady if the mouse "speed" is set very high.
+
 To automatically open a file when you run HexEdit place the file name on the HexEdit command line.  You can even open more than one file using wildcards.  For example: HexEdit *.EXE *.DLL.
 
 When you invoke the Edit/Goto menu item the calculator appears with the current address selected in the calculator.  You can then calculate a relative address and hit Enter to jump to a new address.  For example, to move the cursor forward in the file by 100 bytes just type "+100" followed by Enter.  More complicated address calculations are also possible.
@@ -224,6 +252,8 @@ To close some or all windows at once open the Window Manager using the Window/Wi
 
 You can change the current value in decimal (byte, word, double word or quad word) using the Decimal page of the Properties dialog.  Just type a new value into the appropriate field.  To make the change press the Enter key or press Escape to abort the changes.  Note that how the number is stored depends on the big-endian check-box and the Format radio button that is in effect.
 
+Double-clicking a pixel in the Aerial View selects the byte in the main window (hex view).  For very large files a pixel in the Aerial View might correspond to 2 or more bytes - in which case double-clicking selects all the consecutive bytes.
+
 When you undo editing changes to a file, all undo information in other windows (cursor movement, highlights etc) back to that point is lost.  This is necessary to keep the file and its undo information consistent.
 
 You can quickly change a case-sensitive search to a case-insensitive search in the Find Tool on the Edit Bar by changing the equals sign (=) at the start of the string to a tilde (~).
@@ -235,13 +265,7 @@ When comparing windows, tile the two windows vertically first (Window/Tile Verti
 Quickly search for a number in many integer and floating point formats using the Number page of the Find dialog.
 
 When the calculator is in decimal mode calculations are done using signed numbers.  In other modes (hex, octal and binary) numbers are treated as unsigned.  As signed numbers are 2's complement this does not often matter.  However, overflow conditions are generated differently and a few operations (such as GTR and LESS) behave differently.
-
-Each window has its own read-only/read-write attribute.  This allows you to edit one part of a file while viewing another part, without accidentally making changes in the wrong window.
-
-You can paste bytes cut from HexEdit into NotePad or other text editors and word processors but some control characters including null bytes (value 0) will be removed.  (Of course, you may also cut to the clipboard as hex text.)
-
-During a long search the Hex and Decimal Address Tools on the Edit Bar are regularly updated so you can see how the search is progressing.
-
+You can paste bytes cut from HexEdit into NotePad or other text editors and word processors but some control characters including null bytes (value 0) will be removed.  (Of course, you 
 After you save a file all undo information is lost.  (The technical reason is that HexEdit stores the changes made to the file as part of its undo stack.)
 
 The IBM/OEM command simply switches from an ANSI to an OEM font. If you don't care what graphic characters look like you can use this to command to flip between 2 different fonts, for example, if you wanted to use 2 fonts of different sizes.
@@ -253,20 +277,12 @@ To search just a small part of a large file you can set the mark the use a searc
 The hex and decimal jump tools support expressions using almost all C/C++ operators (except compound assignment operators like += etc).  As you enter an expression the value is reflected in other visible jump tools.
 
 The Print dialog cannot handle a page range of more than 32767 pages.  To print part of a large file, you need to select which part to print then in the Print dialog choose the option to print the selection.
-
-Use Ctrl+Shift+End (in the default keymap) to select everything from the cursor to the end of file.  Use Ctrl+Shift+Home to select to start of file.  Ctrl+A selects the whole file.
-
 Searching is performed using the fast Boyer-Moore algorithm.  Due to the nature of the algorithm the longer the string of (unique) search bytes you enter the faster the search will be.
 
 When making a large selection you can use the (zoomed out) Aerial View to make sure you are getting the part of the file you think you are.  If the marching ants in the Aerial View are hard to see try switching to the "Black and White" color scheme.
-
-You can execute a macro file as a "subroutine" of another macro.  While recording just use the Macro Play dialog and select the macro from the drop-down list.  Macros designed solely to be nested within another macro should have a name starting with an underscore to avoid being seen in the list (except during recording).
-
 The Flip Bytes commands (and other commands on the Operations menu) operate on all bytes of the current selection if there is one.  Otherwise they operate on the byte, word, double-word or quad-word following the cursor.
 
 The image file containing custom toolbar buttons is called ToolbarImages.bmp.  It is stored in each user's application data area (eg C:\Documents and Settings\<username>\Application Data\ECSoftware\HexEdit).  This allows different users on the same machine to customize their toolbars.
-
-To ensure that a password is entered before encrypting/decrypting during macro playback, record the "Clear Password" command in the macro.
 
 Comparing windows is only allowed if there are just two non-minimised windows, OR there are only two windows open (minimised or not).
 
@@ -278,27 +294,15 @@ To convert a text search string to the corresponding ASCII (or EBCDIC if EBCDIC 
 
 The Window Manager (available through the Window/Windows menu item) is very useful for arranging windows.  For example, if you want to compare 2 windows side by side select the 2 windows in the list and click the Tile Vertically button.
 
-Unlike the Windows calculator, the HexEdit built-in calculator does not support operator precedence.  If you type 1+2*3, this is taken to mean (1+2)*3 or 9 not 1+(2*3).  It also does not support brackets.  These differences are by design but can easily be changed if people demand it.
-
 If you undo editing changes in one window, all non-editing changes (cursor movement, format changes etc) in the other windows for the same file will also be undone.  This is necessary to keep the file and its undo information consistent.
 
 You can assign to variables in the hex and decimal jump tools (eg, "reclen=20") and use the value later in another jump (eg, "5*reclen+offset").  These values are saved between sessions.
 
 If an operation overflows the current operand size in the calculator then HexEdit beeps and an O (for Overflow) is displayed next to the result.  All calculations are done internally using 64 bit integers.  So if the result overflows the current operand size (but does not overflow 64 bits) then you can see it by clicking the radio button to change to 64 bit operands.
 
-HexEdit use the standard Windows File dialog for "File/Open" and "File/Save As" as well as "Edit/Read File", "Edit/Write Selection" and "Edit/Append Selection" menu items.  These dialogs have many options that allow you to delete files, create folders etc.  You can also resize the dialog (except under NT 4.0 and earlier) to see more files.
-
-Don't enter an encryption password when recording a macro.  (If you do record it and you then save the macro to file it will be saved as "clear text".)  If you don't enter a password while recording the Encrypt and Decrypt commands will prompt you to enter one during playback.
-
 Any bits can be excluded ("don't care") using the Mask field of the Hex page of the Find dialog.
 
 When using the calculator in macros the calculator does not have to be visible while the macro is replaying.  Closing the calculator before replaying the macro may even increase the replay speed.
-
-This is the last tip.  You will now begin to see the same tips again.  (If you want to add your own tips put them in HexEdit.tip.)
-
---- end of old tips -----
-
-To get help on a menu item hold the mouse over it and press F1.
 
 Many of the tips here assume you are using the default keymap.  Of course, you can remap any command to any key.
 
@@ -308,31 +312,17 @@ Normally when you open a file HexEdit prevents other programs from accessing the
 
 You can quickly add a bookmark using Ctrl+F2.  Use F2 and Shift+F2 to move to the next and previous bookmarks in the file.
 
-To get help on a toolbar button select Help/Context Help (or press Shift+F1), then click on the button.
-
 You may not be able to modify some files if you do not have permission to do so or the file is read-only.  You will be warned of this when you open the file.
 
-You can drag the handles in the ruler to adjust display settings like the number of columns and column grouping.
-
 The Columns handle in the bottom right of the ruler is displayed in red if "auto-fit" mode is on, but you can still drag it to adjust the number of columns (turning off auto-fit mode).  Double-click to turn auto-fit mode on again.
-
-There are two different rulers shown depending on whether addresses are shown in hex or decimal.  (If addresses are shown both ways then both rulers are displayed.)
-
-You can adjust how often numbers and major ticks are shown in the ruler using the Workspace/Display page in the Options dialog.  When numbers are shown for every column they are shown above the column, otherwise they are shown between columns.
 
 You can highlight particular byte values or ranges of values by giving them a specific color in the current color scheme.  This is especially useful in the Aerial View.
 
 You can work out a byte address by adding the offset in the line (from the Ruler) to the Address of the current line (Address Area).  An easier way is to look at the current address in the hex/decimal jump tools (Edit Bar).  To see the address of a byte when you hold the mouse over it just turn on the Address, Hex Address or Dec Address Info Tip (see Options/Workspace/Info Tips).
 
-If you place the files you view or edit into different categories (see the Summary page of the Properties window) then you can easily find them by sorting on the Category column in the Recent Files Dialog and in the HexEdit Explorer window.
-
 The HexEdit Explorer window behaves much like Windows Explorer with a few extra useful features.  For example, you can sort the files by category or the time you last opened the file in HexEdit.  You can filter the displayed files based on any filter you have defined (see Options/System/File/Filters).  You can quickly open a file by double-clicking it.
 
-For a large file select an appropriate color scheme before opening the Aerial View (to save time recalculating the Aerial View display).  If you know nothing about the file format try the Rainbow color scheme.
-
-When you zoom using Ctrl+Mouse Wheel in the Aerial View the mouse pointer is moved automatically so it always remains over the same byte.  (This is very useful when trying to zoom right in to a particular part of the file.)  However, you need to hold your mouse very steady if the mouse "speed" is set very high.
-
-Double-clicking a pixel in the Aerial View selects the byte in the main window (hex view).  For very large files a pixel in the Aerial View might correspond to 2 or more bytes - in which case double-clicking selects all the consecutive bytes.
+For a large file select an appropriate color scheme before opening the Aerial View (to save time recalculating the Aerial View display a second time).  If you know nothing about the file format try the Rainbow color scheme.
 
 Keystroke macros allow you to replay a repetitive task by recording it once and playing it back many times. Not only “keystrokes” are recorded but many other things like menu items, calculator buttons, creating files, switching between windows, etc.
 
@@ -348,15 +338,11 @@ The Insert Block command allows you to generate a block of bytes in many differe
  
 You can experiment with all ZLIB settings using the Compression Settings Dialog. 
  
-You can abort long operations by pressing the space bar or Esc key.
-
 All operations that work on the selection (compression, encryption, export, conversion, and other manipulations) can work on a selection length of any size (ie 4 GB or more).  Of course, large operations may take some time.
  
 The Copy As C Source dialog can be used to create CSV (comma separated values) data suitable for many languages or for pasting into a spreadsheet.
 
 You can quickly move buttons around on the toolbars by holding down the Alt key and dragging with the mouse.  To copy (not move) the button also hold down Ctrl.
-
-There are many useful context (popup) menus that are seen when you right-click on various objects or different parts of the display.  The default menu items are usually appropriate for the item clicked but you can fully customize these menus in the Menu page of the Customization dialog.
 
 Double-clicking various parts of the display will often have an appropriate effect.  For example, double-clicking the address area toggles between displaying addresses in hex or decimal.  The effect of many of these double-click events can be customized in the Mouse page of the Customization dialog.
 
@@ -364,13 +350,11 @@ Expressions in HexEdit have the same operators, syntax and precedence as express
 
 The Calculator has a powerful set of features for manipulating integers of any precision.  It is often used to calculate an address (typically using 64-bit precision) that can be jumped to (using the GO button) or used to inspect and even modify the file (using the file access buttons) especially in keystroke macros.
 
-Pressing Alt-Enter adjust the "offset" so that the current byte is at the left side of the screen.  This is typically used for a file with a header followed by records to position the offset at the end of the header (ie at the first record).
+Pressing Alt-Enter adjusts the "offset" so that the current byte is at the left side of the screen.  This is typically used for a file with a header followed by records to position the offset at the end of the header (ie at the first record).
 
 Templates are stored as XML files.  Generally it is easier to use the built-in template editing but you may prefer to edit the XML code directly.
 
 You can parse C/C++ source code to generate a template or part of a template.  This is often used to extract a struct from a C header file but can handle most C and C++ source code.
-
-HexEdit does not support regular expressions in searches like some text editors (since a binary file is not line-oriented).  However it does allow a wildcard character in text searches (see the Text Page of the Find dialog).  For binary searches you can mask bits to be ignored in the search (see the Hex page of the Find dialog).
 
 Binary and number searches (see the Hex and Number pages of the Find dialog) can be have any alignment and offset.  For example, you may only want to search one field within fixed length records.  If the records start at a particular place in the file you can also set the mark to the start of the first one, and use the "Relative to Mark" option.
 
@@ -378,18 +362,10 @@ Info Tips allow you to completely customize the tip window that you see when you
 
 You can display any number of "info tips" in the tip window (shown when you hover the mouse over any byte).  The types of values are many, from the bookmark name (if hovering over a bookmark) to the current value (as integer, real, date etc), and the current file address, segment, length of file etc.
 
-The properties dialog allows you to view information about the active file, mainly the data at the current cursor position interpreted as many different data types.  As you move around the file the current value is updated to reflect the current byte(s).
-
-You can edit most values in the Properties dialog.  For example, to edit a 32-bit integer value as an unsigned decimal go to the Integer page and type a value into the "32 bit" field.  Hit Esc to abandon changes or Enter to accept them.
-
 If you can't edit a field in the Properties dialog it may be that the file is open read-only or there is an active template and the edited byte(s) reside in a read-only field.
-
-The Byte page of the Properties dialog allows viewing characters in Unicode or in any code page supported by Windows.
-
-To quickly toggle a single specific bit you can double-click any bit of the current byte in the Byte page of the Properties dialog.
 
 To toggle any bit of an integer value in the Calculator just click the box under the edit box that corresponds to the bit.
 
 You can enter a category etc for the active file in the Summary Page of the Properties dialog.  This is seen in the Recently Opened Files Dialog and in the HexEdit Explorer window.
 
-
+This is the last tip.  You will now begin to see the same tips again.  (If you want to add your own tips put them in HexEdit.tip.)
