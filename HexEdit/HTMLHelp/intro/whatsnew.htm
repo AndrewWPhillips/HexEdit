@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=802>
-<meta name=layout-width content=1481>
+<meta name=layout-height content=587>
+<meta name=layout-width content=1564>
 
 
 <!--(Links)=========================================================-->
@@ -39,14 +39,12 @@
 <body>
 
 <h2><font style="font-family: Arial;"
-			face=Arial>What’s New in 3.6</font></h2>
+			face=Arial>What’s New in 4.0</font></h2>
 
 <p class=footnote-text
 	style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>Version 3.6 of HexEdit is an interim version before the release of HexEditPro 
- 4.0. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Despite 
- this there are several new features.</p>
+<p>Version has a new look and many new features.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -64,30 +62,10 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>New commands have been added such as the <span style="font-weight: bold;">Close 
- Others</span> command, which closes all other files except the active 
- one.</p>
-
-<p>&nbsp;</p>
-
 <p>New <span style="font-weight: bold;">CRC</span> and <span style="font-weight: bold;">SHA1</span> 
  commands were added.</p>
 
 <p>&nbsp;</p>
-
-<p>New options have been added such as the <span style="font-weight: bold;">Check 
- for Updates</span> option which checks for the availability of a new version 
- of Hex Edit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- check occurs no more than once a month to avoid being annoying.</p>
-
-<p>&nbsp;</p>
-
-<p>The current byte for the Info-Tip window is highlighted when the tip 
- window is shown. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Info-tips 
- allow you to create custom tip windows which are shown when the mouse 
- hovers over a byte but some people mentioned that they sometimes forget 
- which byte they had been hovering over when the tip window appeared, especially 
- as you can now drag the tip window where you want after it pops up.</p>
 
 <p>&nbsp;</p>
 
@@ -101,65 +79,9 @@
 
 <p>&nbsp;</p>
 
-<p>The C/C++ parser was enhanced to be compatible with the latest C standard. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In particular, 
- variadic macros are now supported.</p>
-
 <p>&nbsp;</p>
 
-<p>There were also several enhancements to HexEdit's built-in expressions 
- (see below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Expressions 
- can be used in the calculator, jump tools etc but are mainly used in templates.)</p>
-
-<p>&nbsp;</p>
-
-<h3><span style="font-weight: bold;">Expressions</span></h3>
-
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p>The sizeof(), defined() and string() functions now work on built-in 
- variables. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Previously 
- they only worked on template fields.)</p>
-
-<p>&nbsp;</p>
-
-<p>Date expressions have been improved in several ways. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->First 
- date differences return a value of FLOAT type rather than DATE type - 
- this avoids some ambiguous situations caused by dates and date-differences 
- both being stored in variables of DATE type. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(We 
- could have invented a new &quot;date difference&quot; type but a FLOAT 
- that simply stores the number of days between two dates is just as effective.)</p>
-
-<p>&nbsp;</p>
-
-<h3><span style="font-weight: bold;">Fixes</span></h3>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">The &quot;Save All&quot; command 
- prompted to save each modified files, which kind of defeated the purpose. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It has 
- been fixed to silently save all modified files.</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">The recent files dialog was 
- slow to open the first time. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- has been fixed.</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">Some special cases for the 
- Decimal type (.Net) are now handled. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Bytes 
- in this format can be viewed/edited in the Properties dialog.</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">The status bar pane sizing 
- behaved strangely such that sometimes you could have a large message area 
- (left pane) but panes on the right were not shown. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- message area pane now has a fixed minimum width, large enough to display 
- most messages and only expands after all the other panes are visible.</p>
 
 <p>&nbsp;</p>
 
