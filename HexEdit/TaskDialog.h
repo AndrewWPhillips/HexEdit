@@ -166,7 +166,7 @@ inline int TaskMessageBox(LPCTSTR mess, LPCTSTR content = _T(""), UINT nType = M
 		break;
 	}
 	CTaskDialog dlg(mess, content, title, buttons, icon);
-	return dlg.DoModal(AfxGetMainWnd());
+	return dlg.DoModal(CWnd::GetActiveWindow());
 }
 
 //////////////////////////////////////////////////////////////////////////////
