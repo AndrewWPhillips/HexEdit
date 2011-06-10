@@ -282,7 +282,8 @@ END_MESSAGE_MAP()
 
 CHexEditApp::CHexEditApp() : default_scheme_(""),
 							 default_ascii_scheme_(ASCII_NAME), default_ansi_scheme_(ANSI_NAME),
-							 default_oem_scheme_(OEM_NAME), default_ebcdic_scheme_(EBCDIC_NAME)
+							 default_oem_scheme_(OEM_NAME), default_ebcdic_scheme_(EBCDIC_NAME),
+							 default_multi_scheme_(MULTI_NAME)
 {
 	security_rand_ = 0;
 
@@ -340,6 +341,33 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 	default_ebcdic_scheme_.AddRange("Unassigned", RGB(255,0,0), "0:255");
 	default_ebcdic_scheme_.bg_col_ = RGB(240, 248, 255);
 	default_ebcdic_scheme_.addr_bg_col_ = RGB(192, 224, 240);
+
+	default_multi_scheme_.AddRange("NullByte", RGB(255, 255, 255), "0");
+	CString strRange;
+	for (int ii = 0; ii < 51; ++ii)  // Split into 51 ranges of 5 -> 255 colours
+	{
+		// Make 5 shades all of this same colour (hue)
+		// We generate 51 hues in the full range - ie 1 to 98 (skipping a few).
+		// Note that the get_rgb() has a bug (hue 99 == hue 0 == red) so we stop at 98
+		int hue = (ii * 99) / 51 + 1;
+
+		// Get byte number for this colour
+		strRange.Format("%d", ii*5 + 1);
+		default_multi_scheme_.AddRange("Byte"+strRange, get_rgb(hue, 50, 100), strRange);
+
+		strRange.Format("%d", ii*5 + 2);
+		default_multi_scheme_.AddRange("Byte"+strRange, get_rgb(hue, 55, 60), strRange);  // less saturated
+		strRange.Format("%d", ii*5 + 3);
+		default_multi_scheme_.AddRange("Byte"+strRange, get_rgb(hue, 40, 100), strRange); // less bright
+		strRange.Format("%d", ii*5 + 4);
+		default_multi_scheme_.AddRange("Byte"+strRange, get_rgb(hue, 65, 100), strRange); // more bright
+		if (ii < 50)  // Avoid adding two values for byte 255
+		{
+			strRange.Format("%d", ii*5 + 5);
+			default_multi_scheme_.AddRange("Byte"+strRange, get_rgb(hue, 45, 60), strRange);  // less bright and less saturated
+		}
+	}
+	default_multi_scheme_.AddRange("AllOthers", RGB(0, 0, 0), "0:255");
 
 	pboyer_ = NULL;
 
@@ -2791,8 +2819,8 @@ void CHexEditApp::LoadSchemes()
 	int num_schemes = GetProfileInt("Options", "NumberOfSchemes", 0);
 
 	// For each scheme
-	int ii;
-	for (ii = 0; ii < num_schemes; ++ii)
+	bool multi_found = false;
+	for (int ii = 0; ii < num_schemes; ++ii)
 	{
 		CString strKey;
 
@@ -2805,6 +2833,8 @@ void CHexEditApp::LoadSchemes()
 		ASSERT(ii != 1 || scheme_name == ANSI_NAME);
 		ASSERT(ii != 2 || scheme_name == OEM_NAME);
 		ASSERT(ii != 3 || scheme_name == EBCDIC_NAME);
+		if (scheme_name == MULTI_NAME)
+			multi_found = true;
 
 		CScheme scheme(scheme_name);
 		scheme.bg_col_ = GetProfileInt(strKey, "BackgroundColour", -2);     // Use -2 here to detect new scheme
@@ -2851,13 +2881,13 @@ void CHexEditApp::LoadSchemes()
 		scheme_.push_back(scheme);
 	}
 
-	if (ii < 1)
+	if (num_schemes < 1)
 		scheme_.push_back(default_ascii_scheme_);
-	if (ii < 2)
+	if (num_schemes < 2)
 		scheme_.push_back(default_ansi_scheme_);
-	if (ii < 3)
+	if (num_schemes < 3)
 		scheme_.push_back(default_oem_scheme_);
-	if (ii < 4)
+	if (num_schemes < 4)
 	{
 		scheme_.push_back(default_ebcdic_scheme_);
 
@@ -2891,7 +2921,11 @@ void CHexEditApp::LoadSchemes()
 		new_scheme2.AddRange("range12", RGB(200, 0, 100), "234:254");
 		new_scheme2.AddRange("CatchAll", -1, "0:255"); // This should only catch 0xFF
 		scheme_.push_back(new_scheme2);
+
 	}
+	// Add multi scheme if not found
+	if (!multi_found)
+		scheme_.push_back(default_multi_scheme_);
 }
 
 void CHexEditApp::SaveSchemes()

@@ -23,6 +23,7 @@ public:
 	#define EBCDIC_NAME "EBCDIC default"
 	#define PLAIN_NAME "Black & white"
 	#define PRETTY_NAME "Rainbow"
+	#define MULTI_NAME "Many"
 
 	CScheme(const char *nn) : name_(nn)
 	{

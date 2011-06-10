@@ -779,7 +779,8 @@ public:
 	// "factory" defaults for when these special schemes are reset
 	CScheme default_scheme_,            // settings used for resetting a scheme
 			default_ascii_scheme_, default_ansi_scheme_,
-			default_oem_scheme_, default_ebcdic_scheme_;
+			default_oem_scheme_, default_ebcdic_scheme_,
+			default_multi_scheme_;
 
 	CString open_scheme_name_;          // Name of default scheme
 

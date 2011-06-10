@@ -2628,6 +2628,8 @@ void CColourSchemes::OnSchemeReset()
 		scheme_[scheme_no_] = theApp.default_oem_scheme_;
 	else if (scheme_[scheme_no_].name_ == EBCDIC_NAME)
 		scheme_[scheme_no_] = theApp.default_ebcdic_scheme_;
+	else if (scheme_[scheme_no_].name_ == MULTI_NAME)
+		scheme_[scheme_no_] = theApp.default_multi_scheme_;
 //    else if (pview != NULL && pview->EbcdicMode())
 //        scheme_[scheme_no_] = theApp.default_ebcdic_scheme_;
 //    else if (pview != NULL && pview->OEMMode())
