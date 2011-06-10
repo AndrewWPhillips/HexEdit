@@ -284,6 +284,7 @@ void COptSheet::page_init()
 	AddPageToTree(pCatWS, &workspacelayoutPage_, IMG_WORKSPACELAYOUT, IMG_WORKSPACELAYOUT);
 	AddPageToTree(pCatWS, &workspacedisplayPage_, IMG_WORKSPACEDISPLAY, IMG_WORKSPACEDISPLAY);
 	AddPageToTree(pCatWS, &workspaceeditPage_, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
+	AddPageToTree(pCatWS, &backgroundPage_, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
 	AddPageToTree(pCatWS, &tipsPage_, IMG_TIP, IMG_TIP);
 	AddPageToTree(pCatWS, &templatePage_, IMG_TEMPLATE, IMG_TEMPLATE);
 	if (pview != NULL)
@@ -810,7 +811,6 @@ void CHistoryPage::OnChange()
 	SetModified(TRUE);
 }
 
-#ifdef BG_STATS  // CWorkspaceEditPage replaces CWorkspacePage, new CBackupsPage
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceEditPage property page
@@ -820,16 +820,13 @@ IMPLEMENT_DYNCREATE(CWorkspaceEditPage, COptPage)
 void CWorkspaceEditPage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
-	DDX_Check(pDX, IDC_BG_SEARCH, pParent->val_.bg_search_);
-	DDX_Check(pDX, IDC_BG_STATS, pParent->val_.bg_stats_);
-	DDX_Check(pDX, IDC_BG_NETWORK, pParent->val_.bg_exclude_network_);
-	DDX_Check(pDX, IDC_BG_OPTICAL, pParent->val_.bg_exclude_optical_);
-	DDX_Check(pDX, IDC_BG_REMOVEABLE, pParent->val_.bg_exclude_removeable_);
-	DDX_Check(pDX, IDC_BG_DEVICE, pParent->val_.bg_exclude_device_);
-
 	DDX_Check(pDX, IDC_INTELLIGENT_UNDO, pParent->val_.intelligent_undo_);
 	DDX_Text(pDX, IDC_UNDO_MERGE, pParent->val_.undo_limit_);
 	DDV_MinMaxUInt(pDX, pParent->val_.undo_limit_, 1, 16);
+
+	DDX_Check(pDX, IDC_SCROLL_PAST_ENDS, pParent->val_.scroll_past_ends_);
+	DDX_Check(pDX, IDC_REVERSE_ZOOM, pParent->val_.reverse_zoom_);
+	DDX_Slider(pDX, IDC_SLIDER_AUTOSCROLL, pParent->val_.autoscroll_accel_);
 
 	DDX_Control(pDX, IDC_DOC_PAGE, ctl_doc_butn_);
 	DDX_Control(pDX, IDC_BACKUP_PAGE, ctl_backup_butn_);
@@ -838,14 +835,11 @@ void CWorkspaceEditPage::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CWorkspaceEditPage, COptPage)
 	ON_WM_HELPINFO()
 	ON_WM_CONTEXTMENU()
-	ON_BN_CLICKED(IDC_BG_SEARCH, OnChangeBackground)
-	ON_BN_CLICKED(IDC_BG_STATS, OnChangeBackground)
-	ON_BN_CLICKED(IDC_BG_NETWORK, OnChange)
-	ON_BN_CLICKED(IDC_BG_OPTICAL, OnChange)
-	ON_BN_CLICKED(IDC_BG_REMOVEABLE, OnChange)
-	ON_BN_CLICKED(IDC_BG_DEVICE, OnChange)
 	ON_BN_CLICKED(IDC_INTELLIGENT_UNDO, OnChange)
 	ON_EN_CHANGE(IDC_UNDO_MERGE, OnChange)
+	ON_BN_CLICKED(IDC_SCROLL_PAST_ENDS, OnChange)
+	ON_BN_CLICKED(IDC_REVERSE_ZOOM, OnChange)
+	ON_WM_HSCROLL()     // for IDC_SLIDER_AUTOSCROLL slider
 
 	ON_BN_CLICKED(IDC_DOC_PAGE, OnDocPage)
 	ON_BN_CLICKED(IDC_BACKUP_PAGE, OnBackupPage)
@@ -856,33 +850,20 @@ END_MESSAGE_MAP()
 
 BOOL CWorkspaceEditPage::OnInitDialog()
 {
+	((CSliderCtrl *)GetDlgItem(IDC_SLIDER_AUTOSCROLL))->SetRange(0, 50);
+	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_UNDO_MERGE))->SetRange(1, 16);
+
 	COptPage::OnInitDialog();
 
 	// Fix control stuff that does not vary
-	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_UNDO_MERGE))->SetRange(1, 16);
 	GetDlgItem(IDC_DOC_PAGE)->EnableWindow(pDocPage != NULL);
 	ctl_doc_butn_.SetImage(IDB_DOCEDIT);
 	ctl_backup_butn_.SetImage(IDB_DOCEDIT);
 
 	// fix controls where their state depends on other controls
-	fix_controls();
+	//fix_controls();
 
 	return TRUE;
-}
-
-void CWorkspaceEditPage::fix_controls()
-{
-	// If either bg search or stats are on then we can enable all the "exclude" check boxes
-	bool enable = pParent->val_.bg_search_ || pParent->val_.bg_stats_;
-
-	ASSERT(GetDlgItem(IDC_BG_NETWORK) != NULL);
-	GetDlgItem(IDC_BG_NETWORK)->EnableWindow(enable);
-	ASSERT(GetDlgItem(IDC_BG_OPTICAL) != NULL);
-	GetDlgItem(IDC_BG_OPTICAL)->EnableWindow(enable);
-	ASSERT(GetDlgItem(IDC_BG_REMOVEABLE) != NULL);
-	GetDlgItem(IDC_BG_REMOVEABLE)->EnableWindow(enable);
-	ASSERT(GetDlgItem(IDC_BG_DEVICE) != NULL);
-	GetDlgItem(IDC_BG_DEVICE)->EnableWindow(enable);
 }
 
 void CWorkspaceEditPage::OnDocPage()
@@ -904,15 +885,12 @@ void CWorkspaceEditPage::OnOK()
 }
 
 static DWORD id_pairs_we[] = { 
-	IDC_BG_SEARCH, HIDC_BG_SEARCH,
-	IDC_BG_STATS, HIDC_BG_STATS,
-	IDC_BG_NETWORK, HIDC_BG_NETWORK,
-	IDC_BG_OPTICAL, HIDC_BG_OPTICAL,
-	IDC_BG_REMOVEABLE, HIDC_BG_REMOVEABLE,
-	IDC_BG_DEVICE, HIDC_BG_DEVICE,
 	IDC_INTELLIGENT_UNDO, HIDC_INTELLIGENT_UNDO,
 	IDC_UNDO_MERGE, HIDC_UNDO_MERGE,
 	IDC_SPIN_UNDO_MERGE, HIDC_UNDO_MERGE,
+	IDC_SCROLL_PAST_ENDS, HIDC_SCROLL_PAST_ENDS,
+	IDC_REVERSE_ZOOM, HIDC_REVERSE_ZOOM,
+	IDC_SLIDER_AUTOSCROLL, HIDC_SLIDER_AUTOSCROLL,
 	IDC_DOC_PAGE, HIDC_DOC_PAGE,
 	IDC_BACKUP_PAGE, HIDC_BACKUP_PAGE,
 	0,0 
@@ -934,14 +912,13 @@ void CWorkspaceEditPage::OnChange()
 	SetModified(TRUE);
 }
 
-void CWorkspaceEditPage::OnChangeBackground()
+void CWorkspaceEditPage::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-	UpdateData();
-	fix_controls();
+	// Slider position has changed
 	SetModified(TRUE);
 }
 
-#else
+#if 0
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspacePage property page
@@ -1123,6 +1100,100 @@ void CWorkspacePage::OnBackupIfSize()
 }
 #endif
 
+/////////////////////////////////////////////////////////////////////////////
+// CBackgroundPage property page
+
+IMPLEMENT_DYNCREATE(CBackgroundPage, COptPage)
+
+void CBackgroundPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+	DDX_Check(pDX, IDC_BG_SEARCH, pParent->val_.bg_search_);
+	DDX_Check(pDX, IDC_BG_STATS, pParent->val_.bg_stats_);
+	DDX_Check(pDX, IDC_BG_NETWORK, pParent->val_.bg_exclude_network_);
+	DDX_Check(pDX, IDC_BG_OPTICAL, pParent->val_.bg_exclude_optical_);
+	DDX_Check(pDX, IDC_BG_REMOVEABLE, pParent->val_.bg_exclude_removeable_);
+	DDX_Check(pDX, IDC_BG_DEVICE, pParent->val_.bg_exclude_device_);
+}
+
+BEGIN_MESSAGE_MAP(CBackgroundPage, COptPage)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_BG_SEARCH, OnChangeBackground)
+	ON_BN_CLICKED(IDC_BG_STATS, OnChangeBackground)
+	ON_BN_CLICKED(IDC_BG_NETWORK, OnChange)
+	ON_BN_CLICKED(IDC_BG_OPTICAL, OnChange)
+	ON_BN_CLICKED(IDC_BG_REMOVEABLE, OnChange)
+	ON_BN_CLICKED(IDC_BG_DEVICE, OnChange)
+END_MESSAGE_MAP()
+
+void CBackgroundPage::fix_controls()
+{
+	// If either bg search or stats are on then we can enable all the "exclude" check boxes
+	bool enable = pParent->val_.bg_search_ || pParent->val_.bg_stats_;
+
+	ASSERT(GetDlgItem(IDC_BG_NETWORK) != NULL);
+	GetDlgItem(IDC_BG_NETWORK)->EnableWindow(enable);
+	ASSERT(GetDlgItem(IDC_BG_OPTICAL) != NULL);
+	GetDlgItem(IDC_BG_OPTICAL)->EnableWindow(enable);
+	ASSERT(GetDlgItem(IDC_BG_REMOVEABLE) != NULL);
+	GetDlgItem(IDC_BG_REMOVEABLE)->EnableWindow(enable);
+	ASSERT(GetDlgItem(IDC_BG_DEVICE) != NULL);
+	GetDlgItem(IDC_BG_DEVICE)->EnableWindow(enable);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CBackgroundPage message handlers
+
+BOOL CBackgroundPage::OnInitDialog()
+{
+	COptPage::OnInitDialog();
+
+	// fix controls where their state depends on other controls
+	fix_controls();
+
+	return TRUE;
+}
+
+void CBackgroundPage::OnOK()
+{
+	theApp.set_options(pParent->val_);
+	COptPage::OnOK();
+}
+
+static DWORD id_pairs_bg[] = { 
+	IDC_BG_SEARCH, HIDC_BG_SEARCH,
+	IDC_BG_STATS, HIDC_BG_STATS,
+	IDC_BG_NETWORK, HIDC_BG_NETWORK,
+	IDC_BG_OPTICAL, HIDC_BG_OPTICAL,
+	IDC_BG_REMOVEABLE, HIDC_BG_REMOVEABLE,
+	IDC_BG_DEVICE, HIDC_BG_DEVICE,
+	0,0 
+};
+
+BOOL CBackgroundPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_bg);
+	return TRUE;
+}
+
+void CBackgroundPage::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_bg);
+}
+
+void CBackgroundPage::OnChange()
+{
+	SetModified(TRUE);
+}
+
+void CBackgroundPage::OnChangeBackground()
+{
+	UpdateData();
+	fix_controls();
+	SetModified(TRUE);
+}
+
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceLayoutPage property page
@@ -1261,9 +1332,6 @@ void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxUInt(pDX, pParent->val_.ruler_hex_nums_, 1, 9999);
 	DDX_Check(pDX, IDC_HL_CARET, pParent->val_.hl_caret_);
 	DDX_Check(pDX, IDC_HL_MOUSE, pParent->val_.hl_mouse_);
-	DDX_Check(pDX, IDC_SCROLL_PAST_ENDS, pParent->val_.scroll_past_ends_);
-	DDX_Check(pDX, IDC_REVERSE_ZOOM, pParent->val_.reverse_zoom_);
-	DDX_Slider(pDX, IDC_SLIDER_AUTOSCROLL, pParent->val_.autoscroll_accel_);
 	DDX_Control(pDX, IDC_DOC_PAGE, ctl_doc_butn_);
 }
 
@@ -1295,8 +1363,6 @@ BEGIN_MESSAGE_MAP(CWorkspaceDisplayPage, COptPage)
 	ON_EN_CHANGE(IDC_RULER_HEX_NUMS, OnChange)
 	ON_BN_CLICKED(IDC_HL_CARET, OnChange)
 	ON_BN_CLICKED(IDC_HL_MOUSE, OnChange)
-	ON_BN_CLICKED(IDC_SCROLL_PAST_ENDS, OnChange)
-	ON_WM_HSCROLL()     // for slider
 	ON_BN_CLICKED(IDC_DOC_PAGE, OnDocPage)
 END_MESSAGE_MAP()
 
@@ -1309,7 +1375,6 @@ BOOL CWorkspaceDisplayPage::OnInitDialog()
 	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_DEC_NUMS)) ->SetRange(1, 9999);
 	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_HEX_TICKS))->SetRange(1, 9999);
 	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_RULER_HEX_NUMS)) ->SetRange(1, 9999);
-	((CSliderCtrl *)GetDlgItem(IDC_SLIDER_AUTOSCROLL))->SetRange(0, 50);
 
 	COptPage::OnInitDialog();
 
@@ -1329,12 +1394,6 @@ LRESULT CWorkspaceDisplayPage::OnIdle(long lCount)
 
 void CWorkspaceDisplayPage::OnChange()
 {
-	SetModified(TRUE);
-}
-
-void CWorkspaceDisplayPage::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	// Slider position has changed
 	SetModified(TRUE);
 }
 
@@ -1373,8 +1432,6 @@ static DWORD id_pairs_workspace_display[] = {
 	IDC_SPIN_RULER_HEX_NUMS, HIDC_RULER_HEX_NUMS,
 	IDC_HL_CARET, HIDC_HL_CARET,
 	IDC_HL_MOUSE, HIDC_HL_MOUSE,
-	IDC_SCROLL_PAST_ENDS, HIDC_SCROLL_PAST_ENDS,
-	IDC_SLIDER_AUTOSCROLL, HIDC_SLIDER_AUTOSCROLL,
 	IDC_DOC_PAGE, HIDC_DOC_PAGE,
 	0,0
 };

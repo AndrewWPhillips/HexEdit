@@ -127,6 +127,8 @@ struct OptValues
 	// Workspace - editing
 	BOOL    intelligent_undo_;
 	UINT    undo_limit_;
+
+	// Background processing options
 	BOOL	bg_search_;
 	BOOL	bg_stats_;
 	BOOL    bg_exclude_network_;
@@ -298,6 +300,8 @@ private:
 	void fix_controls();
 };
 
+xxx CBackupPage
+
 /////////////////////////////////////////////////////////////////////////////
 // CHistoryPage dialog
 
@@ -449,7 +453,6 @@ protected:
 	afx_msg void OnChange();
 	afx_msg void OnChangeUpdate();
 	afx_msg void OnDocPage();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -459,7 +462,6 @@ private:
 	CMFCButton ctl_doc_butn_;
 };
 
-#ifdef BG_STATS  // CWorkspaceEditPage replaces CWorkspacePage, new CBackupsPage
 
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceEditPage - workspace editing options
@@ -500,9 +502,9 @@ protected:
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnChange();
-	afx_msg void OnChangeBackground();
 	afx_msg void OnDocPage();
 	afx_msg void OnBackupPage();
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -513,7 +515,7 @@ private:
 	COptPage * pBackupPage;     // contains backup/export options that used to be on this page
 	CMFCButton ctl_backup_butn_;
 };
-#else
+#if 0
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspacePage - OLD workspace editing options
 
@@ -558,6 +560,39 @@ private:
 	CMFCButton ctl_doc_butn_;
 };
 #endif
+
+/////////////////////////////////////////////////////////////////////////////
+// CBackgroundPage dialog - background processing options
+
+class CBackgroundPage : public COptPage
+{
+	DECLARE_DYNCREATE(CBackgroundPage)
+
+// Construction
+public:
+	CBackgroundPage() : COptPage(IDD_OPT_BACKGROUND) { }
+
+// Dialog Data
+
+// Overrides
+public:
+	virtual void OnOK();
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+	virtual BOOL OnInitDialog();
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnChange();
+	afx_msg void OnChangeBackground();
+	DECLARE_MESSAGE_MAP()
+
+private:
+	void fix_controls();
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CTemplatePage dialog - global template options
@@ -1043,11 +1078,8 @@ protected:
 
 	CWorkspaceLayoutPage workspacelayoutPage_;
 	CWorkspaceDisplayPage workspacedisplayPage_;
-#ifdef BG_STATS
 	CWorkspaceEditPage workspaceeditPage_;
-#else
-	CWorkspacePage workspacePage_;
-#endif
+	CBackgroundPage backgroundPage_;
 	CTipsPage tipsPage_;
 	CTemplatePage templatePage_;
 

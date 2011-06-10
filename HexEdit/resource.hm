@@ -187,7 +187,7 @@
 #define HIDC_DIVIDE                     0x80750426    // IDD_CALC
 #define HIDC_DLG_DOCK                   0x819a0418    // IDD_OPT_WORKLAYOUT [English (United States)]
 #define HIDC_DLG_MOVE                   0x819a0419    // IDD_OPT_WORKLAYOUT [English (United States)]
-#define HIDC_DOC_PAGE                   0x81b80622    // IDD_OPT_BACKGROUND [English (United States)]
+#define HIDC_DOC_PAGE                   0x81b80622    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_DOWN                       0x80e60472    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_EDIT                       0x80750636    // IDD_CALC
 #define HIDC_ELT_OFFSET                 0x81160549    // IDD_DFFD_STRUCT
