@@ -7234,7 +7234,7 @@ LRESULT CHexEditView::OnMouseHover(WPARAM, LPARAM lp)
 	if (!mouse_down_ && !tip_.IsWindowVisible())
 	{
 		FILE_ADDRESS addr = address_at(pt);
-		if (addr != -1 && addr < GetDocument()->length() && update_tip(addr))
+		if (addr != -1 && addr <= GetDocument()->length() && update_tip(addr))
 		{
 			// Save which byte the tip is for and invalidate it so OnDraw can do it's thing
 			last_tip_addr_ = addr;
