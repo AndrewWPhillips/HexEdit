@@ -342,7 +342,6 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 	default_ebcdic_scheme_.bg_col_ = RGB(240, 248, 255);
 	default_ebcdic_scheme_.addr_bg_col_ = RGB(192, 224, 240);
 
-	default_multi_scheme_.AddRange("NullByte", RGB(255, 255, 255), "0");
 	CString strRange;
 	for (int ii = 0; ii < 51; ++ii)  // Split into 51 ranges of 5 -> 255 colours
 	{
@@ -361,13 +360,10 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 		default_multi_scheme_.AddRange("Byte"+strRange, get_rgb(hue, 40, 100), strRange); // less bright
 		strRange.Format("%d", ii*5 + 4);
 		default_multi_scheme_.AddRange("Byte"+strRange, get_rgb(hue, 65, 100), strRange); // more bright
-		if (ii < 50)  // Avoid adding two values for byte 255
-		{
-			strRange.Format("%d", ii*5 + 5);
-			default_multi_scheme_.AddRange("Byte"+strRange, get_rgb(hue, 45, 60), strRange);  // less bright and less saturated
-		}
+		strRange.Format("%d", ii*5 + 5);
+		default_multi_scheme_.AddRange("Byte"+strRange, get_rgb(hue, 45, 60), strRange);  // less bright and less saturated
 	}
-	default_multi_scheme_.AddRange("AllOthers", RGB(0, 0, 0), "0:255");
+	default_multi_scheme_.AddRange("All", RGB(255, 255, 255), "0:255");  // 00 (and any of the above later deleted) are white
 
 	pboyer_ = NULL;
 
