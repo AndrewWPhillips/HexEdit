@@ -46,7 +46,23 @@
 /////////////////////////////////////////////////////////////////////////////
 // OptValues - stores all option values in one place
 
-enum FOLDER_LOCN { FL_DOC, FL_LAST, FL_BOTH, FL_SPECIFIED, };  // Values corresp. to radio buttons for open_locn_, save_locn_
+// These values corresp. to radio buttons for open_locn_, save_locn_
+enum FOLDER_LOCN
+{
+	FL_DOC,            // folder of currently active doc (or specified if no file open)
+	FL_LAST,           // folder of last folder used (open for open_locn_, save for save_locn_)
+	FL_BOTH,           // folder of last open or save
+	FL_SPECIFIED,      // use explicitly specified folder (open_folder_ or save_folder_)
+};  
+
+// These values correpsond to the radio buttons for cb_text_type_
+enum CB_TEXT_TYPE      // defines how text data is written to the clipboard
+{
+	CB_TEXT_BIN_CHARS, // write bytes as binary and chars
+	CB_TEXT_HEXTEXT,   // convert each byte to 2 hex digits (as well as adding spaces, end of lines)
+	CB_TEXT_AUTO,      // use hex text if it appears to be binary data, else use binary/chars
+	CB_TEXT_AREA,      // use hex text in hex area, use binary/chars in text area
+};  
 
 struct OptValues
 {
@@ -124,9 +140,6 @@ struct OptValues
 	BOOL    clear_bookmarks_;
 	BOOL    clear_on_exit_;
 
-	// Workspace - editing
-	BOOL    intelligent_undo_;
-	UINT    undo_limit_;
 
 	// Background processing options
 	BOOL	bg_search_;
@@ -135,9 +148,6 @@ struct OptValues
 	BOOL    bg_exclude_removeable_;
 	BOOL    bg_exclude_optical_;
 	BOOL    bg_exclude_device_;
-
-	// Clipboard
-	enum cb_text_type cb_text_type_;
 
 	// System layout
 	BOOL	mditabs_;
@@ -152,13 +162,18 @@ struct OptValues
 	BOOL	show_other_;
 	BOOL    nice_addr_;
 	BOOL    sel_len_tip_, sel_len_div2_;
-	BOOL    scroll_past_ends_;
-	int     autoscroll_accel_;
-	BOOL    reverse_zoom_;
 	BOOL    ruler_;
 	UINT    ruler_dec_ticks_, ruler_dec_nums_;
 	UINT    ruler_hex_ticks_, ruler_hex_nums_;
 	BOOL    hl_caret_, hl_mouse_;
+
+	// Workspace - editing
+	BOOL    intelligent_undo_;
+	UINT    undo_limit_;
+	int     cb_text_type_;
+	BOOL    scroll_past_ends_;
+	int     autoscroll_accel_;
+	BOOL    reverse_zoom_;
 
 	// Template
 	UINT	max_fix_for_elts_;
@@ -300,7 +315,35 @@ private:
 	void fix_controls();
 };
 
-xxx CBackupPage
+/////////////////////////////////////////////////////////////////////////////
+// CBackupPage dialog
+
+class CBackupPage : public COptPage
+{
+	DECLARE_DYNCREATE(CBackupPage)
+
+public:
+	CBackupPage() : COptPage(IDD_OPT_BACKUP) { }
+// Overrides
+	virtual void OnOK();
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+// Implementation
+	virtual BOOL OnInitDialog();
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnChange();
+	afx_msg void OnBackup();
+	afx_msg void OnBackupIfSize();
+	afx_msg void OnAddressSpecified();
+	afx_msg void OnAddressFile();
+	DECLARE_MESSAGE_MAP()
+
+private:
+	CHexEdit	address_ctl_;
+	void fix_controls();
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CHistoryPage dialog
@@ -484,10 +527,9 @@ public:
 	}
 	void SetBackupPage(COptPage * pPage)
 	{
-		// XXX TODO TBD when backup options moved to another page
 		pBackupPage = pPage;
-		//if (m_hWnd != (HWND)0)
-		//	GetDlgItem(IDC_XXX)->EnableWindow(pBackupPage != NULL);
+		if (m_hWnd != (HWND)0)
+			GetDlgItem(IDC_BACKUP_PAGE)->EnableWindow(pBackupPage != NULL);
 	}
 
 // Overrides
@@ -1071,6 +1113,7 @@ protected:
 	CSystemGeneralPage sysgeneralPage_;
 	CFoldersPage foldersPage_;
 	CFiltersPage filtersPage_;
+	CBackupPage backupPage_; 
 	CPrintGeneralPage printGeneralPage_;
 	CPrintDecorationsPage printDecorationsPage_;
 	CMacroPage macroPage_;

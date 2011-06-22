@@ -10216,7 +10216,7 @@ bool CHexEditView::CopyToClipboard()
 	// both binary data ("BinaryData") and text (either the text chars if valid
 	// characters or binary data as hex digits), but if the data is too big
 	// it may just be stored in a temp binary file ("HexEditLargeDataTempFile").
-	cb_text_type cb_text = cb_text_chars;
+	CB_TEXT_TYPE cb_text = (CB_TEXT_TYPE)theApp.cb_text_type_;
 	bool use_file = false;   // Use our own special format if too big for clipboard
 	CString strTemp;         // name of temp file is used
 
@@ -10224,9 +10224,15 @@ bool CHexEditView::CopyToClipboard()
 	{
 		use_file = true;
 	}
-	else if (cb_text == cb_text_auto)
+	else if (cb_text == CB_TEXT_AUTO)
 	{
-		cb_text = is_binary(start, end) ? cb_text_hextext : cb_text_chars;
+		// If binary data use hex text else use binary+chars
+		cb_text = is_binary(start, end) ? CB_TEXT_HEXTEXT : CB_TEXT_BIN_CHARS;
+	}
+	else if (cb_text == CB_TEXT_AREA)
+	{
+		// If in hex area use binary+chars else hex text
+		cb_text = display_.char_area && display_.edit_char ? CB_TEXT_BIN_CHARS : CB_TEXT_HEXTEXT;
 	}
 
 	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
@@ -10235,7 +10241,7 @@ bool CHexEditView::CopyToClipboard()
 	if (!use_file)
 	{
 		// Now put text data onto the clipboard
-		if (cb_text == cb_text_hextext)
+		if (cb_text == CB_TEXT_HEXTEXT)
 		{
 			// Text is hex text (eg 3 chars per byte "ABC" -> " 61 62 63")
 			if (copy2cb_hextext(start, end) && copy2cb_flag_text_is_hextext())

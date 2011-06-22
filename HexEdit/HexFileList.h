@@ -36,6 +36,7 @@ public:
 	CHexFileList(UINT nStart, LPCTSTR lpszSection,
 				 int nSize, int nMaxDispLen = AFX_ABBREV_FILENAME_LEN);
 
+	// These are the fields stored in the list where each field is separated by |
 	enum param_num { CMD, TOP, LEFT, BOTTOM, RIGHT, 
 					 SELSTART, SELEND, POS, MARK, SCHEME, HIGHLIGHTS,
 					 DISPLAY, DOC_FLAGS, COLUMNS, GROUPING, OFFSET,

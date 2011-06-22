@@ -78,10 +78,10 @@ enum
 {
 	IMG_FOLDER,
 	IMG_FOLDER_SEL,
-	IMG_CURRENT,
+	IMG_DOC,
 	IMG_SYSGENERAL,
 	IMG_HIST,
-	IMG_FILTERS,
+	IMG_DOCAERIAL,
 	IMG_PRINTER,
 	IMG_MACRO,
 	IMG_WORKSPACELAYOUT,
@@ -96,6 +96,11 @@ enum
 	IMG_AERIAL,
 	IMG_COMP,
 	IMG_PRINTER_DECO,
+	IMG_FILE_FILTERS,
+	IMG_FILE_FOLDERS,
+	IMG_FILE_BACKUP,
+	IMG_BACKGROUND,
+	IMG_SPARE,
 };
 
 int COptSheet::last_opt_page_ = -1;
@@ -121,8 +126,8 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.run_autoexec_ = TRUE;
 	val_.update_check_ = TRUE;
 	val_.save_exit_ = FALSE;
-	val_.open_locn_ = 1;
-	val_.save_locn_ = 0;
+	val_.open_locn_ = FL_LAST;
+	val_.save_locn_ = FL_DOC;
 
 	val_.recent_files_ = 0;
 	val_.no_recent_add_ = FALSE;
@@ -150,7 +155,7 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.base_address_ = 0;
 	val_.export_line_len_ = 0;
 
-	val_.cb_text_type_ = cb_text_chars;
+	val_.cb_text_type_ = CB_TEXT_BIN_CHARS;
 
 	val_.open_restore_ = FALSE;
 	val_.mditabs_ = FALSE;
@@ -266,13 +271,15 @@ void COptSheet::page_init()
 	// Allow pages to activate each other
 	sysgeneralPage_.SetHistPage(&histPage_);
 	workspacelayoutPage_.SetStartupPage(&sysgeneralPage_);
+	workspaceeditPage_.SetBackupPage(&backupPage_);
 	windisplayPage_.SetGlobalDisplayPage(&workspacedisplayPage_);
 	wineditPage_.SetGlobalEditPage(&workspaceeditPage_);
 
 	// Add the rest of the pages and categories (System/General already added in init() above).
 	CMFCPropertySheetCategoryInfo * pCatFile = AddTreeCategory("Files", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
-	  AddPageToTree(pCatFile, &foldersPage_, IMG_FILTERS, IMG_FILTERS);  // xxx TODO new image
-	  AddPageToTree(pCatFile, &filtersPage_, IMG_FILTERS, IMG_FILTERS);
+	  AddPageToTree(pCatFile, &foldersPage_, IMG_FILE_FOLDERS, IMG_FILE_FOLDERS);
+	  AddPageToTree(pCatFile, &filtersPage_, IMG_FILE_FILTERS, IMG_FILE_FILTERS);
+	  AddPageToTree(pCatFile, &backupPage_, IMG_FILE_BACKUP, IMG_FILE_BACKUP);
 
 	CMFCPropertySheetCategoryInfo * pCatPrn = AddTreeCategory("Printer", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
 	  AddPageToTree(pCatPrn, &printGeneralPage_, IMG_PRINTER, IMG_PRINTER);
@@ -284,7 +291,7 @@ void COptSheet::page_init()
 	AddPageToTree(pCatWS, &workspacelayoutPage_, IMG_WORKSPACELAYOUT, IMG_WORKSPACELAYOUT);
 	AddPageToTree(pCatWS, &workspacedisplayPage_, IMG_WORKSPACEDISPLAY, IMG_WORKSPACEDISPLAY);
 	AddPageToTree(pCatWS, &workspaceeditPage_, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
-	AddPageToTree(pCatWS, &backgroundPage_, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
+	AddPageToTree(pCatWS, &backgroundPage_, IMG_BACKGROUND, IMG_BACKGROUND);
 	AddPageToTree(pCatWS, &tipsPage_, IMG_TIP, IMG_TIP);
 	AddPageToTree(pCatWS, &templatePage_, IMG_TEMPLATE, IMG_TEMPLATE);
 	if (pview != NULL)
@@ -686,6 +693,165 @@ void CFoldersPage::OnChange()
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
+// CBackupPage property page
+
+IMPLEMENT_DYNCREATE(CBackupPage, COptPage)
+
+void CBackupPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+
+	// Backup options
+	DDX_Check(pDX, IDC_BACKUP, pParent->val_.backup_);
+	DDX_Check(pDX, IDC_BACKUP_SPACE, pParent->val_.backup_space_);
+	DDX_Check(pDX, IDC_BACKUP_IF_SIZE, pParent->val_.backup_if_size_);
+	DDX_Text(pDX, IDC_BACKUP_SIZE, pParent->val_.backup_size_);
+	DDX_Check(pDX, IDC_BACKUP_PROMPT, pParent->val_.backup_prompt_);
+
+	// Export options
+	DDX_Control(pDX, IDC_EXPORT_ADDRESS, address_ctl_);
+	DDX_Radio(pDX, IDC_ADDRESS_FILE, pParent->val_.address_specified_);
+	DDX_Text(pDX, IDC_EXPORT_LINELEN, pParent->val_.export_line_len_);
+	DDV_MinMaxUInt(pDX, pParent->val_.export_line_len_, 8, 250);
+	if (pDX->m_bSaveAndValidate)
+	{
+		if (pParent->val_.address_specified_)
+		{
+			CString ss;
+
+			address_ctl_.GetWindowText(ss);
+			pParent->val_.base_address_ = long(::strtoi64(ss, 16));
+		}
+	}
+	else
+	{
+		if (pParent->val_.address_specified_)
+		{
+			char buf[22];
+
+			if (theApp.hex_ucase_)
+				sprintf(buf, "%I64X", __int64(pParent->val_.base_address_));
+			else
+				sprintf(buf, "%I64x", __int64(pParent->val_.base_address_));
+			address_ctl_.SetWindowText(buf);
+			address_ctl_.add_spaces();
+		}
+	}
+}
+
+BEGIN_MESSAGE_MAP(CBackupPage, COptPage)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+
+	ON_BN_CLICKED(IDC_BACKUP, OnBackup)
+	ON_BN_CLICKED(IDC_BACKUP_SPACE, OnChange)
+	ON_BN_CLICKED(IDC_BACKUP_IF_SIZE, OnBackupIfSize)
+	ON_EN_CHANGE(IDC_BACKUP_SIZE, OnChange)
+	ON_BN_CLICKED(IDC_BACKUP_PROMPT, OnChange)
+
+	ON_BN_CLICKED(IDC_ADDRESS_SPECIFIED, OnAddressSpecified)
+	ON_BN_CLICKED(IDC_ADDRESS_FILE, OnAddressFile)
+	ON_EN_CHANGE(IDC_EXPORT_LINELEN, OnChange)
+	ON_EN_CHANGE(IDC_EXPORT_ADDRESS, OnChange)
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CBackupPage message handlers
+
+BOOL CBackupPage::OnInitDialog()
+{
+	COptPage::OnInitDialog();
+
+	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_EXPORT_LINELEN))->SetRange(8, 250);
+
+	fix_controls();
+
+	return TRUE;
+}
+
+void CBackupPage::fix_controls()
+{
+	GetDlgItem(IDC_BACKUP_SPACE)->EnableWindow(pParent->val_.backup_);
+	GetDlgItem(IDC_BACKUP_IF_SIZE)->EnableWindow(pParent->val_.backup_);
+	GetDlgItem(IDC_BACKUP_SIZE)->EnableWindow(pParent->val_.backup_ && pParent->val_.backup_if_size_);
+	GetDlgItem(IDC_BACKUP_PROMPT)->EnableWindow(pParent->val_.backup_);
+}
+
+void CBackupPage::OnOK()
+{
+	theApp.set_options(pParent->val_);
+	COptPage::OnOK();
+}
+
+static DWORD id_pairs_bu[] = {
+	IDC_BACKUP, HIDC_BACKUP,
+	IDC_BACKUP_SPACE, HIDC_BACKUP_SPACE,
+	IDC_BACKUP_IF_SIZE, HIDC_BACKUP_IF_SIZE,
+	IDC_BACKUP_SIZE, HIDC_BACKUP_SIZE,
+	IDC_BACKUP_PROMPT, HIDC_BACKUP_PROMPT,
+	IDC_ADDRESS_FILE, HIDC_ADDRESS_FILE,
+	IDC_ADDRESS_SPECIFIED, HIDC_ADDRESS_SPECIFIED,
+	IDC_EXPORT_ADDRESS, HIDC_EXPORT_ADDRESS,
+	IDC_EXPORT_LINELEN, HIDC_EXPORT_LINELEN,
+	IDC_SPIN_EXPORT_LINELEN, HIDC_EXPORT_LINELEN,
+	0,0 
+};
+
+BOOL CBackupPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_bu);
+	return TRUE;
+}
+
+void CBackupPage::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_bu);
+}
+
+void CBackupPage::OnChange()
+{
+	SetModified(TRUE);
+}
+
+void CBackupPage::OnAddressFile()
+{
+	address_ctl_.EnableWindow(FALSE);
+	SetModified(TRUE);
+}
+
+void CBackupPage::OnAddressSpecified()
+{
+	// Enable and select address text box
+	CString ss;
+	address_ctl_.EnableWindow();
+	address_ctl_.GetWindowText(ss);
+	if (ss.IsEmpty())
+		address_ctl_.SetWindowText("0");
+	address_ctl_.SetSel(0, -1, TRUE);
+	address_ctl_.SetFocus();
+
+	SetModified(TRUE);
+}
+
+void CBackupPage::OnBackup()
+{
+	UpdateData();
+	fix_controls();
+
+	SetModified(TRUE);
+}
+
+void CBackupPage::OnBackupIfSize()
+{
+	UpdateData();
+	ASSERT(pParent->val_.backup_);
+	fix_controls();
+
+	SetModified(TRUE);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
 // CHistoryPage property page
 
 IMPLEMENT_DYNCREATE(CHistoryPage, COptPage)
@@ -824,6 +990,8 @@ void CWorkspaceEditPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_UNDO_MERGE, pParent->val_.undo_limit_);
 	DDV_MinMaxUInt(pDX, pParent->val_.undo_limit_, 1, 16);
 
+	DDX_Radio(pDX, IDC_CLIPBOARD_BINARY_CHAR, pParent->val_.cb_text_type_);
+
 	DDX_Check(pDX, IDC_SCROLL_PAST_ENDS, pParent->val_.scroll_past_ends_);
 	DDX_Check(pDX, IDC_REVERSE_ZOOM, pParent->val_.reverse_zoom_);
 	DDX_Slider(pDX, IDC_SLIDER_AUTOSCROLL, pParent->val_.autoscroll_accel_);
@@ -837,6 +1005,11 @@ BEGIN_MESSAGE_MAP(CWorkspaceEditPage, COptPage)
 	ON_WM_CONTEXTMENU()
 	ON_BN_CLICKED(IDC_INTELLIGENT_UNDO, OnChange)
 	ON_EN_CHANGE(IDC_UNDO_MERGE, OnChange)
+	ON_BN_CLICKED(IDC_CLIPBOARD_BINARY_CHAR, OnChange)
+	ON_BN_CLICKED(IDC_CLIPBOARD_HEXTEXT, OnChange)
+	ON_BN_CLICKED(IDC_CLIPBOARD_AUTO, OnChange)
+	ON_BN_CLICKED(IDC_CLIPBOARD_AREA, OnChange)
+
 	ON_BN_CLICKED(IDC_SCROLL_PAST_ENDS, OnChange)
 	ON_BN_CLICKED(IDC_REVERSE_ZOOM, OnChange)
 	ON_WM_HSCROLL()     // for IDC_SLIDER_AUTOSCROLL slider
@@ -888,6 +1061,10 @@ static DWORD id_pairs_we[] = {
 	IDC_INTELLIGENT_UNDO, HIDC_INTELLIGENT_UNDO,
 	IDC_UNDO_MERGE, HIDC_UNDO_MERGE,
 	IDC_SPIN_UNDO_MERGE, HIDC_UNDO_MERGE,
+	IDC_CLIPBOARD_BINARY_CHAR, HIDC_CLIPBOARD_BINARY_CHAR,
+	IDC_CLIPBOARD_HEXTEXT, HIDC_CLIPBOARD_HEXTEXT,
+	IDC_CLIPBOARD_AUTO, HIDC_CLIPBOARD_AUTO,
+	IDC_CLIPBOARD_AREA, HIDC_CLIPBOARD_AREA,
 	IDC_SCROLL_PAST_ENDS, HIDC_SCROLL_PAST_ENDS,
 	IDC_REVERSE_ZOOM, HIDC_REVERSE_ZOOM,
 	IDC_SLIDER_AUTOSCROLL, HIDC_SLIDER_AUTOSCROLL,

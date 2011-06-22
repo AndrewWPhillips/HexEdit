@@ -64,6 +64,10 @@
 #define HIDC_CLEAR_ON_EXIT              0x811204a9    // IDD_CLEAR_HIST
 #define HIDC_CLEAR_RECENT_FILE          0x811204a7    // IDD_CLEAR_HIST
 #define HIDC_CLEAR_SEARCH               0x811204a6    // IDD_CLEAR_HIST
+#define HIDC_CLIPBOARD_AREA             0x81390661    // IDD_OPT_WORKEDIT [English (United States)]
+#define HIDC_CLIPBOARD_AUTO             0x81390660    // IDD_OPT_WORKEDIT [English (United States)]
+#define HIDC_CLIPBOARD_BINARY_CHAR      0x8139065e    // IDD_OPT_WORKEDIT [English (United States)]
+#define HIDC_CLIPBOARD_HEXTEXT          0x8139065f    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_CODE_PAGE                  0x813205ce    // IDD_PROP_CHAR [English (United States)]
 #define HIDC_COLOUR_PICKER              0x80e604bc    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_COLS                       0x810c0443    // IDD_OPT_WINDISPLAY [English (United States)]

@@ -2171,6 +2171,7 @@ void CHexEditApp::LoadOptions()
 
 	intelligent_undo_ = GetProfileInt("Options", "UndoIntelligent", 0) ? TRUE : FALSE;
 	undo_limit_ = GetProfileInt("Options", "UndoMerge", 5);
+	cb_text_type_ = GetProfileInt("Options", "TextToClipboardAs", 0);
 
 	char buf[2];
 	if (::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_IMEASURE, buf, 2) > 0 &&
@@ -2189,12 +2190,12 @@ void CHexEditApp::LoadOptions()
 	bottom_margin_ = atof(GetProfileString("Printer", "BottomMargin", print_units_ ? "0.8" : "0.3"));
 	print_watermark_ = GetProfileInt("Printer", "PrintWatermark", 0) != 0 ? true : false;
 	watermark_ = GetProfileString("Printer", "Watermark", "CONFIDENTIAL");
-	header_ = GetProfileString("Printer", "Header", "&A | | &N");     // dv = filename + date
+	header_ = GetProfileString("Printer", "Header", "&F | | &D");     // dv = filename + date
 	diff_first_header_ = GetProfileInt("Printer", "DiffFirstHeader", 0) != 0 ? true : false;
-	first_header_ = GetProfileString("Printer", "FirstHeader", "");
-	footer_ = GetProfileString("Printer", "Footer", " | - &P - | ");
+	first_header_ = GetProfileString("Printer", "FirstHeader", "&A | &X | &N");
+	footer_ = GetProfileString("Printer", "Footer", " | = &P = | ");
 	diff_first_footer_ = GetProfileInt("Printer", "DiffFirstFooter", 0) != 0 ? true : false;
-	first_footer_ = GetProfileString("Printer", "FirstFooter", "");
+	first_footer_ = GetProfileString("Printer", "FirstFooter", "Created: &C | Last modified: &M | Category: &G");
 	even_reverse_ = GetProfileInt("Printer", "ReverseHeaderFooterOnEvenPages", 0) != 0 ? true : false;
 
 	header_edge_ = atof(GetProfileString("Printer", "HeaderEdge",     print_units_ ? "0.5" : "0.2"));
@@ -2606,7 +2607,6 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Options", "LargeCursor", large_cursor_ ? 1 : 0);
 	WriteProfileInt("Options", "OtherAreaCursor", show_other_ ? 1 : 0);
 
-	WriteProfileInt("Options", "TextToClipboardAs", cb_text_type_);
 
 	WriteProfileInt("Options", "DontAddToRecent", no_recent_add_ ? 1 : 0);
 	WriteProfileInt("History", "MaxSearch", max_search_hist_);
@@ -2623,6 +2623,7 @@ void CHexEditApp::SaveOptions()
 
 	WriteProfileInt("Options", "UndoIntelligent", intelligent_undo_ ? 1 : 0);
 	WriteProfileInt("Options", "UndoMerge", undo_limit_);
+	WriteProfileInt("Options", "TextToClipboardAs", cb_text_type_);
 
 	WriteProfileInt("Printer", "Border", print_box_ ? 1 : 0);
 	WriteProfileInt("Printer", "Headings", print_hdr_ ? 1 : 0);
@@ -3168,6 +3169,8 @@ void CHexEditApp::get_options(struct OptValues &val)
 	// Workspace
 	val.intelligent_undo_ = intelligent_undo_;
 	val.undo_limit_ = undo_limit_ - 1;
+	val.cb_text_type_ = cb_text_type_;
+
 	val.bg_search_ = bg_search_;
 	val.bg_stats_ = bg_stats_;
 	val.bg_exclude_network_ = bg_exclude_network_;
@@ -3186,9 +3189,6 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.address_specified_ = export_base_addr_ != -1;
 	val.base_address_ = export_base_addr_ != -1 ? export_base_addr_ : 0;
 	val.export_line_len_ = export_line_len_;
-
-	// Clipboard
-	val.cb_text_type_ = cb_text_type_;
 
 	// Global template
 	val.max_fix_for_elts_ = max_fix_for_elts_;
@@ -3313,6 +3313,7 @@ void CHexEditApp::set_options(struct OptValues &val)
 
 	intelligent_undo_ = val.intelligent_undo_;
 	undo_limit_ = val.undo_limit_ + 1;
+	cb_text_type_ = val.cb_text_type_;
 
 	// Remember what has changed before starting/stopping background processing
 	bool search_changed = bg_search_ != val.bg_search_ ||
@@ -3362,7 +3363,6 @@ void CHexEditApp::set_options(struct OptValues &val)
 	export_base_addr_ = val.address_specified_ ? val.base_address_ : -1;
 	export_line_len_ = val.export_line_len_;
 
-	cb_text_type_ = val.cb_text_type_;
 
 	/////////////////////////////////////////////////////////
 	open_restore_ = val.open_restore_;
