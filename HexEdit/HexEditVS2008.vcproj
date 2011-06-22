@@ -535,6 +535,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\SimpleGraph.cpp"
+				>
+			</File>
+			<File
 				RelativePath="SimpleSplitter.cpp"
 				>
 			</File>
@@ -929,6 +933,10 @@
 			</File>
 			<File
 				RelativePath=".\sha1.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SimpleGraph.h"
 				>
 			</File>
 			<File
@@ -1487,11 +1495,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File

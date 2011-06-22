@@ -415,6 +415,7 @@
 #define IDI_EXCLAMATIONMARK             441
 #define IDD_OPT_FOLDERS                 441
 #define IDI_INFO                        442
+#define IDD_PROP_STATS                  442
 #define IDI_CROSS                       443
 #define IDR_CONTEXT_OFFSET_HANDLE       445
 #define IDR_CONTEXT_GROUP_BY_HANDLE     446
@@ -1212,6 +1213,7 @@
 #define IDC_CLIPBOARD_HEXTEXT           1631
 #define IDC_CLIPBOARD_AUTO              1632
 #define IDC_CLIPBOARD_AREA              1633
+#define IDC_GRAPH                       1634
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1711,7 +1713,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        460
 #define _APS_NEXT_COMMAND_VALUE         39152
-#define _APS_NEXT_CONTROL_VALUE         1634
+#define _APS_NEXT_CONTROL_VALUE         1635
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

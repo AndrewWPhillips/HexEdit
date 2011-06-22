@@ -25,6 +25,7 @@
 #include <afxdisp.h>
 
 class CHexEditView;
+class CSimpleGraph;
 
 #ifdef SUBCLASS_UNICODE_CONTROL
 /////////////////////////////////////////////////////////////////////////////
@@ -502,6 +503,40 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
+// CPropStatsPage dialog
+
+class CPropStatsPage : public CPropUpdatePage
+{
+	DECLARE_DYNCREATE(CPropStatsPage)
+
+// Construction
+public:
+	CPropStatsPage();
+	~CPropStatsPage();
+
+// Dialog Data
+	enum { IDD = IDD_PROP_STATS };
+
+// Overrides
+public:
+	virtual BOOL OnSetActive();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+	virtual void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1);
+
+protected:
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+
+	DECLARE_MESSAGE_MAP()
+
+private:
+	CSimpleGraph *m_graph;
+};
+
+/////////////////////////////////////////////////////////////////////////////
 // CPropSheet
 
 class CPropSheet : public CPropertySheet
@@ -551,6 +586,7 @@ public:
 	CPropDecPage      prop_dec;
 	CPropRealPage     prop_real;
 	CPropDatePage     prop_date;
+	CPropStatsPage    prop_stats;
 
 private:
 };

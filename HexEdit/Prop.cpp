@@ -28,6 +28,7 @@
 #include "HexEditDoc.h"
 #include "HexEditView.h"
 #include "SystemSound.h"
+#include "SimpleGraph.h"
 #include "Misc.h"
 #include "SpecialList.h"
 #include "resource.hm"          // For control help IDs
@@ -380,6 +381,7 @@ CPropSheet::CPropSheet()
 	AddPage(&prop_dec);
 	AddPage(&prop_real);
 	AddPage(&prop_date);
+	AddPage(&prop_stats);
 
 	// Create the brush used for background of read-only edit control
 	ASSERT(pBrush == NULL);
@@ -3598,4 +3600,99 @@ void CPropDatePage::OnChangeFormat()
 		date_ctrl_.SetRange(&date_first_[format_], &date_last_[format_]);
 		Update(GetView());      // Recalc values based on new format
 	}
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CPropStatsPage property page
+
+IMPLEMENT_DYNCREATE(CPropStatsPage, CPropUpdatePage)
+
+CPropStatsPage::CPropStatsPage() : CPropUpdatePage(CPropStatsPage::IDD)
+{
+	m_graph = new CSimpleGraph();
+}
+
+CPropStatsPage::~CPropStatsPage()
+{
+	delete m_graph;
+}
+
+void CPropStatsPage::DoDataExchange(CDataExchange* pDX)
+{
+	CPropUpdatePage::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_GRAPH, *m_graph);
+}
+
+void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
+{
+	CString mess;
+	std::vector<FILE_ADDRESS> cnt;
+	std::vector<COLORREF> col;
+
+	if (!theApp.bg_stats_)
+	{
+		mess = "Statistics are not available.  Please turn on the Statistics option "
+			   "in the Background Processing page of the Options dialog.";
+		goto error_return;
+	}
+
+	if (pv == NULL)
+	{
+		mess = "There is no file open.";
+		goto error_return;
+	}
+
+	FILE_ADDRESS biggest = pv->GetDocument()->GetByteCounts(cnt);
+
+	if (biggest == -2)
+	{
+		mess.Format("Statistics calculations in progress (%d complete).", pv->GetDocument()->StatsProgress());
+		goto error_return;
+	}
+
+	if (biggest < 0)
+	{
+		mess = "Background statistics are not permitted for this type of file.  "
+			   "Please see the Background Processing page of the Options dialog.";
+		goto error_return;
+	}
+
+	pv->get_colours(col);
+
+	GetDlgItem(IDC_GRAPH)->ShowWindow(SW_SHOW);
+	GetDlgItem(IDC_MESSAGE)->ShowWindow(SW_HIDE);
+	m_graph->SetData(biggest, cnt, col);
+	return;
+
+error_return:
+	GetDlgItem(IDC_GRAPH)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_MESSAGE)->ShowWindow(SW_SHOW);
+	SetDlgItemText(IDC_MESSAGE, mess);
+	return;
+}
+
+BEGIN_MESSAGE_MAP(CPropStatsPage, CPropUpdatePage)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CPropStatsPage message handlers
+
+BOOL CPropStatsPage::OnSetActive()
+{
+	Update(GetView());
+	//((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_stats);
+	return CPropUpdatePage::OnSetActive();
+}
+
+BOOL CPropStatsPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+	return TRUE;
+}
+
+void CPropStatsPage::OnContextMenu(CWnd* pWnd, CPoint point)
+{
 }
