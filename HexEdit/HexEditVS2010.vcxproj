@@ -233,6 +233,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SimpleGraph.cpp" />
     <ClCompile Include="SimpleSplitter.cpp" />
     <ClCompile Include="SpecialList.cpp" />
     <ClCompile Include="Splasher.cpp" />
@@ -361,6 +362,7 @@
     <None Include="..\..\graphics\HexEditButtons\calc.bmp" />
     <None Include="Res\cogs.ico" />
     <None Include="Res\colour.ico" />
+    <None Include="RES\cross.ico" />
     <None Include="RES\curSmallArrows.cur" />
     <None Include="RES\data.ico" />
     <None Include="DefaultToolbarImages.bmp" />
@@ -551,6 +553,7 @@
     <ClInclude Include="ScrView.h" />
     <ClInclude Include="Security.h" />
     <ClInclude Include="sha1.h" />
+    <ClInclude Include="SimpleGraph.h" />
     <ClInclude Include="SimpleSplitter.h" />
     <ClInclude Include="SpecialList.h" />
     <ClInclude Include="Splasher.h" />

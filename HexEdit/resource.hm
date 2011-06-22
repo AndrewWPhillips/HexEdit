@@ -466,6 +466,7 @@
 #define HIDC_SOURCE_CODE                0x813005b2    // IDD_TPARSE
 #define HIDC_SPLASH                     0x809e0419    // IDD_OPT_SYSTEM [English (United States)]
 #define HIDC_STARTUP_PAGE               0x819a0611    // IDD_OPT_WORKLAYOUT [English (United States)]
+#define HIDC_STATS_GRAPH                0x81ba0662    // IDD_PROP_STATS [English (United States)]
 #define HIDC_SUBJECT                    0x80e50435    // IDD_EMAIL
 #define HIDC_SUBTRACT                   0x80750428    // IDD_CALC
 #define HIDC_SYSTYPE                    0x80e50476    // IDD_EMAIL

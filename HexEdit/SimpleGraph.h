@@ -14,6 +14,8 @@ public:
 
 protected:
 	afx_msg void OnPaint();
+	afx_msg LRESULT OnMouseHover(WPARAM wp, LPARAM lp);
+	afx_msg LRESULT OnMouseLeave(WPARAM wp, LPARAM lp);
 
 	DECLARE_MESSAGE_MAP()
 

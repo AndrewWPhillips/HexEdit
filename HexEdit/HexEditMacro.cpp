@@ -194,6 +194,14 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 						pp->prop_date.UpdateWindow();
 				}
 				break;
+			case km_prop_stats:
+				{
+					OnProperties();
+					CPropSheet *pp = &((CMainFrame *)AfxGetMainWnd())->m_wndProp;
+					if (pp->SetActivePage(&pp->prop_stats))
+						pp->prop_stats.UpdateWindow();
+				}
+				break;
 			case km_prop_close:
 				((CMainFrame *)AfxGetMainWnd())->m_wndProp.ShowWindow(SW_HIDE);
 				break;

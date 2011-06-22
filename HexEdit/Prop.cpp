@@ -513,6 +513,7 @@ static DWORD id_pairs[] = {
 	IDC_DATE_LAST, HIDC_DATE_LAST,
 	IDC_DATE_NOW, HIDC_DATE_NOW,
 	IDC_DATE_NULL, HIDC_DATE_NULL,
+	IDC_STATS_GRAPH, HIDC_STATS_GRAPH,
 	0,0 
 };
 
@@ -3621,7 +3622,7 @@ CPropStatsPage::~CPropStatsPage()
 void CPropStatsPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropUpdatePage::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_GRAPH, *m_graph);
+	DDX_Control(pDX, IDC_STATS_GRAPH, *m_graph);
 }
 
 void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
@@ -3647,7 +3648,7 @@ void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 
 	if (biggest == -2)
 	{
-		mess.Format("Statistics calculations in progress (%d complete).", pv->GetDocument()->StatsProgress());
+		mess.Format("Statistics calculations in progress (%d%% complete).", pv->GetDocument()->StatsProgress());
 		goto error_return;
 	}
 
@@ -3660,13 +3661,13 @@ void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 
 	pv->get_colours(col);
 
-	GetDlgItem(IDC_GRAPH)->ShowWindow(SW_SHOW);
+	m_graph->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_MESSAGE)->ShowWindow(SW_HIDE);
 	m_graph->SetData(biggest, cnt, col);
 	return;
 
 error_return:
-	GetDlgItem(IDC_GRAPH)->ShowWindow(SW_HIDE);
+	m_graph->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_MESSAGE)->ShowWindow(SW_SHOW);
 	SetDlgItemText(IDC_MESSAGE, mess);
 	return;
@@ -3683,7 +3684,7 @@ END_MESSAGE_MAP()
 BOOL CPropStatsPage::OnSetActive()
 {
 	Update(GetView());
-	//((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_stats);
+	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_stats);
 	return CPropUpdatePage::OnSetActive();
 }
 
@@ -3696,3 +3697,4 @@ BOOL CPropStatsPage::OnHelpInfo(HELPINFO* pHelpInfo)
 void CPropStatsPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 }
+

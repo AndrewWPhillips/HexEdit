@@ -1213,7 +1213,8 @@
 #define IDC_CLIPBOARD_HEXTEXT           1631
 #define IDC_CLIPBOARD_AUTO              1632
 #define IDC_CLIPBOARD_AREA              1633
-#define IDC_GRAPH                       1634
+#define IDC_STATS_GRAPH                 1634
+#define IDC_STATS_MESSAGE               1635
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1713,7 +1714,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        460
 #define _APS_NEXT_COMMAND_VALUE         39152
-#define _APS_NEXT_CONTROL_VALUE         1635
+#define _APS_NEXT_CONTROL_VALUE         1636
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
