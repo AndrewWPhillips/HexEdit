@@ -1285,6 +1285,7 @@ void CHexEditView::SetScheme(const char *name)
 		scheme_name_ = previous_name;
 	}
 	DoInvalidate();
+	show_prop();      // Stats page depends on current colour scheme
 }
 
 // When docked vertically the colour scheme drop down combo (ID_SCHEME) becomes a command
@@ -1508,7 +1509,7 @@ BOOL CHexEditView::set_colours()
 	return retval;
 }
 
-void CHexEditView::get_colours(COLORREF *k)
+void CHexEditView::get_colours(std::vector<COLORREF> &kk)
 {
 	int ii;
 
@@ -1534,8 +1535,9 @@ void CHexEditView::get_colours(COLORREF *k)
 	}
 
 	// Default colours to background (ie, init. unspecified colours)
-	for (ii = 0; ii < 256; ++ii)
-		k[ii] = bg_col_;
+	kk.clear();
+	kk.reserve(256);
+	kk.resize(256, bg_col_);
 
 	ASSERT(ps->range_val_.size() == ps->range_col_.size());
 	for (ii = ps->range_val_.size(); ii > 0; ii--)
@@ -1546,7 +1548,7 @@ void CHexEditView::get_colours(COLORREF *k)
 		for (range_set<int>::const_iterator rr = ps->range_val_[ii-1].begin(); rr != ps->range_val_[ii-1].end(); ++rr)
 		{
 			assert(*rr < 256);
-			k[*rr] = colour;
+			kk[*rr] = colour;
 		}
 	}
 }

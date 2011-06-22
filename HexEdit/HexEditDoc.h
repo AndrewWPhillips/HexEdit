@@ -679,6 +679,8 @@ public:
 	void StopStats();
 	int StatsProgress();      // How far are we through the file (0 to 100)
 
+	FILE_ADDRESS GetByteCounts(std::vector<FILE_ADDRESS> &);  // returns largest count, or -4 if not on, or -2 if still in progress
+
 	// DFFD stuff
 	enum
 	{
@@ -835,7 +837,7 @@ private:
 	FILE_ADDRESS aerial_addr_;  // Current address we are processing (used to show progress)
 
 	// NOTE: kala must not be modified while the bg thread is running!
-	COLORREF kala_[256];        // Colours from the first hex view to open the aerial view
+	std::vector<COLORREF> kala_;// 256 colours from the first hex view for use in aerial view
 
 	CFile64 *pfile3_;           // Using a copy of the file avoids synchronising access problems
 	// Also see data_file3_ (above)
@@ -931,6 +933,7 @@ private:
 	enum BG_COMMAND stats_command_; // signals thread to do something
 	enum BG_STATE   stats_state_;   // indicates what the thread is doing
 	bool stats_fin_;            // Flags that the scan is finished
+	int stats_progress_;        // Ho much has been done (if stats_fin_ == false) in range: 0 to 100
 	unsigned char * stats_buf_; // Buffer for holding file data to search (only used in bg thread)
 	long * c32_;                // Keeps stats when using 32-bit numbers (only used in bg thread)
 	__int64 * c64_;             // Keeps stats when using 64-bit numbers (only used in bg thread)
@@ -942,7 +945,7 @@ private:
 	void KillStatsThread();     // Kill background thread ASAP
 	bool StatsProcessStop();    // Check if the scanning should stop (called in the thread)
 
-	__int64 count_[256];        // What we are calcualting - how many times each byte value appears in the file
+	__int64 count_[256];        // What we are calculating - how many times each byte value appears in the file
 
 	// -------------- template (DFFD) (see Template.cpp) ----------------
 	// Each df_size_ gives the size of a data field or whole array/structure.  If -ve take abs value.

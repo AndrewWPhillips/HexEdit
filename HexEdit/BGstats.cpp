@@ -72,6 +72,37 @@ void CHexEditDoc::AlohaStats()
 	}
 }
 
+// Get a vector of 256 values which are the counts of all bytes value in the file.
+// It will return the largest byte count OR
+//   -4 if background stats is off for this file
+//   -2 if stats calcs are in progress
+FILE_ADDRESS CHexEditDoc::GetByteCounts(std::vector<FILE_ADDRESS> & cnt)
+{
+	cnt.clear();
+
+	if (!CanDoStats() || pthread5_ == NULL)
+		return -4;         // stats not done on this file
+
+	// Protect access to shared data
+	CSingleLock sl(&docdata_, TRUE);
+
+	if (!stats_fin_)
+		return -2;         // stats calcs in progress
+
+	cnt.reserve(256);   // this prevents us getting more memory than we need
+	cnt.resize(256);    // for byte value 0 to 255
+
+	FILE_ADDRESS retval = 0;
+	for (int ii = 0; ii < 256; ++ii)
+	{
+		cnt[ii] = FILE_ADDRESS(count_[ii]);
+		if (count_[ii] > retval)
+			retval = count_[ii];
+	}
+
+	return retval;
+}
+
 
 void StartStats();
 void StopStats();
@@ -80,7 +111,8 @@ UINT RunStatsThread();    // Main func in bg thread (needs to be public so it ca
 // Return how far our scan has progressed as a percentage (0 to 100).
 int CHexEditDoc::StatsProgress()
 {
-	return 0;
+	CSingleLock sl(&docdata_, TRUE); // Protect shared data access
+	return stats_progress_;
 }
 
 // Stops the current background stats scan (if any).  It does not return 
@@ -116,11 +148,11 @@ void CHexEditDoc::StartStats()
 
 	// Setup up the info for the new scan
 	docdata_.Lock();
-	//stats_progress_ = 0;
 
 	// Restart the scan
 	stats_command_ = NONE;
 	stats_fin_ = false;
+	stats_progress_ = 0;
 	docdata_.Unlock();
 
 	TRACE("+++ Pulsing stats event for %p\n", this);
@@ -225,6 +257,7 @@ void CHexEditDoc::CreateStatsThread()
 	stats_command_ = NONE;
 	stats_state_ = STARTING;
 	stats_fin_ = false;
+	stats_progress_ = 0;
 	TRACE1("+++ Creating stats thread for %p\n", this);
 	pthread5_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
 	ASSERT(pthread5_ != NULL);
@@ -254,10 +287,10 @@ UINT CHexEditDoc::RunStatsThread()
 
 		docdata_.Lock();
 		stats_fin_ = false;
+		stats_progress_ = 0;
 		FILE_ADDRESS file_len = length_;
 		docdata_.Unlock();
 
-		//stats_progress_ = 0;  xxx keep track of progress
 		FILE_ADDRESS addr = 0;
 
 		const size_t buf_size = 16384;
@@ -275,10 +308,10 @@ UINT CHexEditDoc::RunStatsThread()
 			memset(c64_, '\0', 256*sizeof(*c64_));
 		}
 
-		// Search all to_search_ blocks
+		// Scan all the data blocks of the file
 		for (;;)
 		{
-			if (SearchProcessStop())
+			if (StatsProcessStop())
 				break;
 
 			size_t got;
@@ -302,6 +335,7 @@ UINT CHexEditDoc::RunStatsThread()
 				}
 
 				stats_fin_ = true;
+				stats_progress_ = 100;
 				break;
 			}
 
@@ -322,6 +356,10 @@ UINT CHexEditDoc::RunStatsThread()
 			}
 
 			addr += got;
+			{
+				CSingleLock sl(&docdata_, TRUE); // Protect shared data access
+				stats_progress_ = int((addr * 100)/file_len);
+			}
 		} // for
 
 		if (c32_ != NULL) (delete[] c32_), c32_ = NULL;
