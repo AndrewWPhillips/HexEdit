@@ -514,6 +514,7 @@ static DWORD id_pairs[] = {
 	IDC_DATE_NOW, HIDC_DATE_NOW,
 	IDC_DATE_NULL, HIDC_DATE_NULL,
 	IDC_STATS_GRAPH, HIDC_STATS_GRAPH,
+	IDC_PLACEHOLDER, HIDC_STATS_GRAPH,
 	0,0 
 };
 
@@ -3622,7 +3623,7 @@ CPropStatsPage::~CPropStatsPage()
 void CPropStatsPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropUpdatePage::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_STATS_GRAPH, *m_graph);
+//	DDX_Control(pDX, IDC_STATS_GRAPH, *m_graph);
 }
 
 void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
@@ -3662,14 +3663,14 @@ void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 	pv->get_colours(col);
 
 	m_graph->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_MESSAGE)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_STATS_MESSAGE)->ShowWindow(SW_HIDE);
 	m_graph->SetData(biggest, cnt, col);
 	return;
 
 error_return:
 	m_graph->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_MESSAGE)->ShowWindow(SW_SHOW);
-	SetDlgItemText(IDC_MESSAGE, mess);
+	GetDlgItem(IDC_STATS_MESSAGE)->ShowWindow(SW_SHOW);
+	SetDlgItemText(IDC_STATS_MESSAGE, mess);
 	return;
 }
 
@@ -3680,6 +3681,32 @@ END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CPropStatsPage message handlers
+
+BOOL CPropStatsPage::OnInitDialog()
+{
+	CPropUpdatePage::OnInitDialog();
+
+	static CString graphClass;
+	if (graphClass.IsEmpty())
+	{
+		// Register new window class
+		graphClass = AfxRegisterWndClass(0);
+		ASSERT(!graphClass.IsEmpty());
+	}
+
+	CRect rct;  // New window location
+	ASSERT(GetDlgItem(IDC_PLACEHOLDER) != NULL);
+	GetDlgItem(IDC_PLACEHOLDER)->GetWindowRect(&rct);
+	ScreenToClient(&rct);
+
+	DWORD graphStyle = WS_CHILD | WS_VISIBLE;
+	VERIFY(m_graph->Create(graphClass, NULL, graphStyle, rct, this, IDC_STATS_GRAPH));
+
+	// Make window topmost - xxx is this nec. or a good idea?
+	m_graph->SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOREDRAW|SWP_NOSIZE|SWP_NOOWNERZORDER);
+
+	return TRUE;
+}
 
 BOOL CPropStatsPage::OnSetActive()
 {

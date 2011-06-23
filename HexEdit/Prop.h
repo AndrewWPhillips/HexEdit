@@ -527,6 +527,7 @@ protected:
 	virtual void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1);
 
 protected:
+	virtual BOOL OnInitDialog();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
