@@ -14,6 +14,7 @@ public:
 
 protected:
 	afx_msg void OnPaint();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg LRESULT OnMouseHover(WPARAM wp, LPARAM lp);
 	afx_msg LRESULT OnMouseLeave(WPARAM wp, LPARAM lp);
@@ -34,7 +35,8 @@ private:
 	CRect m_rct;
 	CFont m_hfnt, m_vfnt;
 
-	CTipWnd tip_;                                       // Shows info when  hovering over a bar of the graph
+	CTipWnd m_tip;                                      // Shows info when  hovering over a bar of the graph
+	int m_bar;                                          // Last bar the mouse hovered over
 
 	// Data for the graph
 	FILE_ADDRESS m_max;
@@ -45,4 +47,5 @@ private:
 	void update();                                      // Update the bitmap and redraws the graph
 	void draw_axes();                                   // Draws the axes on the bitmap
 	void track_mouse(unsigned long);                    // Turns on receipt of mouse hover/leave messages
+	int get_bar(CPoint pt);                             // Which graph bar is mouse point over (-1 if not over any)
 };

@@ -12,6 +12,7 @@ IMPLEMENT_DYNAMIC(CSimpleGraph, CWnd)
 CSimpleGraph::CSimpleGraph()
 {
 	m_pdc = NULL;
+	m_bar = -1;
 }
 
 void CSimpleGraph::SetData(FILE_ADDRESS maximum, std::vector<FILE_ADDRESS> val, std::vector<COLORREF> col)
@@ -43,6 +44,8 @@ void CSimpleGraph::update()
 			delete m_pdc;
 			m_pdc = NULL;
 			m_bm.DeleteObject();
+			m_hfnt.DeleteObject();
+			m_vfnt.DeleteObject();
 		}
 
 		// Recreate DC/bitmap for drawing into
@@ -195,9 +198,26 @@ void CSimpleGraph::track_mouse(unsigned long flag)
 	VERIFY(::_TrackMouseEvent(&tme));
 }
 
+int CSimpleGraph::get_bar(CPoint pt)
+{
+	++pt.x;  // mouse posn seems to be out by 1 pixel
+	if (pt.y <= m_top || pt.y >= m_rct.Height() - m_bottom ||
+		pt.x < m_left || pt.x > m_rct.Width() - m_right)
+	{
+		// Outside graph area so return
+		return -1;
+	}
+
+	int retval = ((pt.x - m_left)*m_val.size())/(m_rct.Width() - m_left - m_right);
+	if (retval >= m_val.size())
+		retval = m_val.size() - 1;
+
+	return retval;
+}
 
 BEGIN_MESSAGE_MAP(CSimpleGraph, CWnd)
 	ON_WM_PAINT()
+	ON_WM_SIZE()
 	ON_WM_MOUSEMOVE()
 	ON_MESSAGE(WM_MOUSEHOVER, OnMouseHover)
 	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
@@ -215,56 +235,60 @@ void CSimpleGraph::OnPaint()
 	dc.BitBlt(rct.left, rct.top, rct.Width(), rct.Height(), m_pdc, 0, 0, SRCCOPY);
 }
 
+void CSimpleGraph::OnSize(UINT nType, int cx, int cy)
+{
+	__super::OnSize(nType, cx, cy);
+	update();
+}
+
 void CSimpleGraph::OnMouseMove(UINT nFlags, CPoint point)
 {
 	CWnd::OnMouseMove(nFlags, point);
 
 	// Check for hover if no tip window is visible
-	if (!tip_.IsWindowVisible())
+	if (!m_tip.IsWindowVisible())
 		track_mouse(TME_HOVER);
+	else if (get_bar(point) != m_bar)
+		m_tip.Hide(300);
 }
 
 LRESULT CSimpleGraph::OnMouseHover(WPARAM, LPARAM lp)
 {
 	CPoint pt(LOWORD(lp), HIWORD(lp));  // client window coords
 
-	++pt.x;  // mouse posn seems to be out by 1 pixel
-	if (pt.y <= m_top || pt.y >= m_rct.Height() - m_bottom ||
-		pt.x < m_left || pt.x > m_rct.Width() - m_right)
+	m_bar = get_bar(pt);
+	if (m_bar > -1 && !m_tip.IsWindowVisible())
 	{
-		// Outside graph area so just return
-		return 1;  // not processed
-	}
-
-	if (!tip_.IsWindowVisible())
-	{
-		// Work out which bar it's over
-		int bar = ((pt.x - m_left)*m_val.size())/(m_rct.Width() - m_left - m_right);
-		if (bar >= m_val.size()) bar = m_val.size() - 1;
-
 		// Update the tip info
-		tip_.Clear();
+		m_tip.Clear();
 		CString ss;
-		ss.Format("%d", bar);
-		tip_.AddString(ss);
+		if (theApp.hex_ucase_)
+			ss.Format("Byte: %d %02.2X", m_bar, m_bar);
+		else
+			ss.Format("Byte: %d %02.2x", m_bar, m_bar);
+		m_tip.AddString(ss);
+
+		char buf[32];                   // used with sprintf (CString::Format can't handle __int64)
+		sprintf(buf, "%I64d", m_val[m_bar]);
+		ss = buf;
+		AddCommas(ss);
+		m_tip.AddString("Count: " +ss);
 
 		// Work out the tip window display position and move the tip window there
 		CPoint tip_pt = pt + CSize(16, 16);
 		ClientToScreen(&tip_pt);
-		tip_.Move(tip_pt, false);
+		m_tip.Move(tip_pt, false);
 
-		tip_.Show();
-		TRACE("::::GRAPH TIP SHOW %d\r\n", bar);
+		m_tip.Show();
 		track_mouse(TME_LEAVE);
 		return 0;
 	}
 	
-	return 0;  // return 0 to say we processed it
+	return 1;  // return 0 to say we processed it
 }
 
 LRESULT CSimpleGraph::OnMouseLeave(WPARAM, LPARAM lp)
 {
-	TRACE("::::GRAPH TIP HIDE\r\n");
-	tip_.Hide(300);
+	m_tip.Hide(300);
 	return 0;
 }
