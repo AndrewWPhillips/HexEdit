@@ -528,6 +528,7 @@ protected:
 
 protected:
 	virtual BOOL OnInitDialog();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
@@ -539,6 +540,8 @@ private:
 
 /////////////////////////////////////////////////////////////////////////////
 // CPropSheet
+
+#define WM_RESIZEPAGE (WM_USER+111)
 
 class CPropSheet : public CPropertySheet
 {
@@ -571,12 +574,16 @@ public:
 
 	// Generated message map functions
 protected:
-	//{{AFX_MSG(CPropSheet)
+	virtual BOOL OnInitDialog();
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+
 	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct);
-	//}}AFX_MSG
 	afx_msg void OnClose();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg LRESULT OnResizePage(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnApplyNow();
 
 	DECLARE_MESSAGE_MAP()
 
@@ -590,5 +597,6 @@ public:
 	CPropStatsPage    prop_stats;
 
 private:
+	CRect m_rctPrev;         // previous window size
+	CRect m_rctPage;         // current window size for child pages
 };
-

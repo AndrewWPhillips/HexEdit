@@ -133,7 +133,6 @@ void CGenDockablePane::InitialUpdate(CWnd *pWnd)
 	AdjustLayout();
 }
 
-
 void CGenDockablePane::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);

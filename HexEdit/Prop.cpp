@@ -133,7 +133,6 @@ CBinEditControl::~CBinEditControl()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CBinEditControl, CEdit)
 	//{{AFX_MSG_MAP(CBinEditControl)
 	ON_WM_LBUTTONDBLCLK()
@@ -418,16 +417,25 @@ void CPropSheet::Update(CHexEditView *pv /*=NULL*/, FILE_ADDRESS address /*=-1*/
 }
 
 BEGIN_MESSAGE_MAP(CPropSheet, CPropertySheet)
-		//{{AFX_MSG_MAP(CPropSheet)
 		ON_WM_NCCREATE()
-		//}}AFX_MSG_MAP
 		ON_WM_CLOSE()
+		ON_WM_SIZE()
 		ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 		ON_WM_ERASEBKGND()
+		ON_MESSAGE(WM_RESIZEPAGE, OnResizePage)
+		ON_COMMAND(ID_APPLY_NOW, OnApplyNow)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CPropSheet message handlers
+
+BOOL CPropSheet::OnInitDialog()
+{
+	BOOL bResult = __super::OnInitDialog();
+	GetClientRect(&m_rctPrev);
+
+	return bResult;
+}
 
 BOOL CPropSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -443,6 +451,74 @@ void CPropSheet::OnClose()
 {
 	theApp.SaveToMacro(km_prop_close);
 	CPropertySheet::OnClose();
+}
+
+void CPropSheet::OnSize(UINT nType, int cx, int cy)
+{
+	__super::OnSize(nType, cx, cy);
+
+	CTabCtrl * pTab = GetTabControl();
+	CPropertyPage * pPage = GetActivePage();
+
+	if (m_rctPrev.Width() != 0 && pTab != NULL && pPage != NULL)
+	{
+		// Get difference between current and previous window sizes
+		CSize diff;
+		CRect rctCurr;
+		GetClientRect(&rctCurr);
+
+		diff.cx = m_rctPrev.Width()  - rctCurr.Width();
+		diff.cy = m_rctPrev.Height() - rctCurr.Height();
+
+		m_rctPrev = rctCurr;             // Save current window rect for next time
+
+		// Resize the CTabCtrl
+		pTab->GetWindowRect(&rctCurr);
+		ScreenToClient(&rctCurr);
+		rctCurr.right -= diff.cx;
+		rctCurr.bottom -= diff.cy;
+		pTab->MoveWindow(&rctCurr);
+
+		// Store page size so we can resize each page as necessary
+		pPage->GetWindowRect(&m_rctPage);
+		ScreenToClient(&m_rctPage);
+		m_rctPage.right -= diff.cx;
+		m_rctPage.bottom -= diff.cy;
+
+		// Resize the current page (others done in OnResizePage when required)
+		pPage->MoveWindow(&m_rctPage);
+	}
+}
+
+LONG CPropSheet::OnResizePage(UINT, LONG)
+{
+	// Resize the previously calculated page size
+	CPropertyPage* pPage = GetActivePage();
+	ASSERT(pPage != NULL && m_rctPage.Width() > 0);
+	pPage->MoveWindow(&m_rctPage);
+
+	return 0;
+}
+
+void CPropSheet::OnApplyNow()
+{
+	// The sheet resizes the page whenever the apply button is clicked.
+	// So we need to resize it to what we want.
+	PostMessage(WM_RESIZEPAGE);
+}
+
+BOOL CPropSheet::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+{
+	NMHDR* pNMHDR = (LPNMHDR) lParam;
+	
+	// The sheet resizes the page whenever it is activated
+	// so we need to resize it to what we want
+	if (pNMHDR->code == TCN_SELCHANGE)
+		// user-defined message needs to be posted, not sent, because
+		// page must be resized after TCN_SELCHANGE has been processed.
+		PostMessage(WM_RESIZEPAGE);
+
+	return CPropertySheet::OnNotify(wParam, lParam, pResult);
 }
 
 static DWORD id_pairs[] = { 
@@ -3676,6 +3752,7 @@ error_return:
 
 BEGIN_MESSAGE_MAP(CPropStatsPage, CPropUpdatePage)
 	ON_WM_HELPINFO()
+	ON_WM_SIZE()
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
@@ -3697,6 +3774,7 @@ BOOL CPropStatsPage::OnInitDialog()
 	CRect rct;  // New window location
 	ASSERT(GetDlgItem(IDC_PLACEHOLDER) != NULL);
 	GetDlgItem(IDC_PLACEHOLDER)->GetWindowRect(&rct);
+	GetDlgItem(IDC_PLACEHOLDER)->ShowWindow(SW_HIDE);
 	ScreenToClient(&rct);
 
 	DWORD graphStyle = WS_CHILD | WS_VISIBLE;
@@ -3706,6 +3784,13 @@ BOOL CPropStatsPage::OnInitDialog()
 	m_graph->SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOREDRAW|SWP_NOSIZE|SWP_NOOWNERZORDER);
 
 	return TRUE;
+}
+
+void CPropStatsPage::OnSize(UINT nType, int cx, int cy)
+{
+	__super::OnSize(nType, cx, cy);
+	if (m_graph != NULL && m_graph->m_hWnd != (HWND)0)
+		m_graph->MoveWindow(0, 0, cx, cy);
 }
 
 BOOL CPropStatsPage::OnSetActive()
