@@ -111,6 +111,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	//afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnEnChange();
 
 	DECLARE_MESSAGE_MAP()
 
@@ -119,6 +120,8 @@ private:
 
 	// We only really need this is OnKillFocus but keep it in case it comes in handy 
 	DWORD sel_;
+
+	bool in_edit_;
 
 	CString get_number(LPCTSTR ss);  // Remove sep chars from number or return empty string if not a number
 };

@@ -75,6 +75,7 @@ CCalcEdit::CCalcEdit()
 {
 	pp_ = NULL;
 	sel_ = (DWORD)-1;
+	in_edit_ = false;
 }
 
 CCalcEdit::~CCalcEdit()
@@ -89,6 +90,7 @@ BEGIN_MESSAGE_MAP(CCalcEdit, CEdit)
 	//}}AFX_MSG_MAP
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
+	ON_CONTROL_REFLECT(EN_CHANGE, OnEnChange)
 END_MESSAGE_MAP()
 
 // Put the current value into the edit box
@@ -588,6 +590,7 @@ void CCalcEdit::OnKillFocus(CWnd* pNewWnd)
 void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	TRACE("xxxx0 OnChar: sel = %x\r\n", GetSel());
+	in_edit_ = true;
 	ASSERT(pp_ != NULL && pp_->IsVisible());
 	clear_result();
 
@@ -605,11 +608,30 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	pp_->inedit(km_user_str);
 	pp_->ctl_calc_bits_.RedrawWindow();
+	in_edit_ = false;
+	TRACE("xxxx1 OnChar: sel = %x\r\n", GetSel());
+}
+
+void CCalcEdit::OnEnChange()
+{
+	if (!in_edit_)
+	{
+		// Update internals (state_, current_ etc) from the current edit box text
+		get();
+		pp_->state_ = update_value(false);
+		pp_->check_for_error();
+		add_sep();        // fix display of integers in edit box
+
+		// Update the expression to be displayed
+		get();
+		pp_->set_right();
+	}
 }
 
 void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	TRACE("xxxx0 OnKeyD: sel = %x\r\n", GetSel());
+	in_edit_ = true;
 	ASSERT(pp_ != NULL && pp_->IsVisible());
 
 	// Clear any result (unless arrows etc pressed)
@@ -660,6 +682,8 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		pp_->inedit(km_user_str);
 		pp_->ctl_calc_bits_.RedrawWindow();
 	}
+	in_edit_ = false;
+	TRACE("xxxx1 OnKeyD: sel = %x\r\n", GetSel());
 }
 
 BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg)
