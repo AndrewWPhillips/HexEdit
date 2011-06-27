@@ -249,6 +249,9 @@ protected:
 	afx_msg void OnKillFocusComments();
 	afx_msg void OnSelCategory();
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 /////////////////////////////////////////////////////////////////////////////

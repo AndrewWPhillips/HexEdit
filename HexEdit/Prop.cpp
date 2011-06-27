@@ -612,6 +612,13 @@ LRESULT CPropSheet::OnKickIdle(WPARAM, LPARAM lCount)
 		theApp.HtmlHelpWmHelp(help_hwnd_, id_pairs);
 		help_hwnd_ = (HWND)0;
 	}
+	CPropUpdatePage *pp = dynamic_cast<CPropUpdatePage *>(GetActivePage());
+	if (pp == &prop_stats)
+	{
+		TRACE(":::::::::::idle update for stats :::::::::\r\n");
+		pp->Update(GetView());
+	}
+
 	return FALSE;
 }
 
@@ -1047,6 +1054,20 @@ END_MESSAGE_MAP()
 BOOL CPropInfoPage::OnInitDialog()
 {
 	CPropUpdatePage::OnInitDialog();
+
+	// Make sure when dialog is resized that the controls move to sensible places
+	resizer_.Create(this);
+	resizer_.SetMinimumTrackingSize();
+	resizer_.SetGripEnabled(FALSE);
+	// Controls to adjust -              left  top  width height
+	resizer_.Add(IDC_INFO_CATEGORY,         0,   0, 100,   0);
+	resizer_.Add(IDC_INFO_CATEGORY_SELECT,100,   0,   0,   0);
+	resizer_.Add(IDC_INFO_VIEW_TIME_DESC, 100,   0,   0,   0);
+	resizer_.Add(IDC_INFO_VIEW_TIME,      100,   0,   0,   0);
+	resizer_.Add(IDC_INFO_EDIT_TIME_DESC, 100,   0,   0,   0);
+	resizer_.Add(IDC_INFO_EDIT_TIME,      100,   0,   0,   0);
+	resizer_.Add(IDC_INFO_KEYWORDS,         0,   0, 100,   0);
+	resizer_.Add(IDC_INFO_COMMENTS,         0,   0, 100,   0);
 
 	// Subclass non-read-only edit controls so we can intercept |, CR and Escape
 	VERIFY(category_ctl_.SubclassDlgItem(IDC_INFO_CATEGORY, this));
