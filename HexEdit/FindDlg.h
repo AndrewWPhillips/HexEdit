@@ -8,6 +8,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "ResizeCtrl.h"
+
 // Classes that handle each page (derived from CPropertyPage)
 class CSimplePage;
 class CHexPage;
@@ -48,11 +50,14 @@ public:
 
 	// Generated message map functions
 protected:
-	//{{AFX_MSG(CFindSheet)
 	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct);
-	//}}AFX_MSG
-	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	virtual BOOL OnInitDialog();
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	afx_msg void OnApplyNow();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
+	afx_msg LRESULT OnResizePage(WPARAM wParam, LPARAM lParam);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -150,6 +155,8 @@ public:
 	bool HexReplace() const;
 
 private:
+	CRect m_rctPrev;         // previous window size
+	CRect m_rctPage;         // current window size for child pages
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -201,6 +208,9 @@ protected:
 	CFindSheet *pparent_;
 	void FixType(BOOL fix_strings = FALSE);
 	void FixDirn();
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -268,6 +278,9 @@ protected:
 	void FixMask();
 	void FixStrings();
 	void FixAlign();
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -323,6 +336,9 @@ protected:
 	void FixDirn();
 	void FixWildcard();
 	void FixStrings();
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -382,6 +398,9 @@ protected:
 	void FixSizes();
 	BOOL FixStrings();
 	void FixAlign();
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -436,6 +455,9 @@ protected:
 	CFindSheet *pparent_;
 	void FixType(BOOL fix_strings = FALSE);
 	void FixDirn();
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 //{{AFX_INSERT_LOCATION}}

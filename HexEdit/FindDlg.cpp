@@ -95,11 +95,12 @@ CFindSheet::~CFindSheet()
 }
 
 BEGIN_MESSAGE_MAP(CFindSheet, CPropertySheet)
-	//{{AFX_MSG_MAP(CFindSheet)
 	ON_WM_NCCREATE()
-	//}}AFX_MSG_MAP
-	ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
+	ON_COMMAND(ID_APPLY_NOW, OnApplyNow)
+	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
+	ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
+	ON_MESSAGE(WM_RESIZEPAGE, OnResizePage)
 END_MESSAGE_MAP()
 
 // Determine if the simple string search is for a text or hex search
@@ -1205,6 +1206,51 @@ BOOL CFindSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 	return TRUE;
 }
 
+BOOL CFindSheet::OnInitDialog()
+{
+	BOOL bResult = __super::OnInitDialog();
+	GetClientRect(&m_rctPrev);
+
+	return bResult;
+}
+
+void CFindSheet::OnSize(UINT nType, int cx, int cy)
+{
+	__super::OnSize(nType, cx, cy);
+
+	CTabCtrl * pTab = GetTabControl();
+	CPropertyPage * pPage = GetActivePage();
+
+	if (m_rctPrev.Width() != 0 && pTab != NULL && pPage != NULL)
+	{
+		// Get difference between current and previous window sizes
+		CSize diff;
+		CRect rctCurr;
+		GetClientRect(&rctCurr);
+
+		diff.cx = m_rctPrev.Width()  - rctCurr.Width();
+		diff.cy = m_rctPrev.Height() - rctCurr.Height();
+
+		m_rctPrev = rctCurr;             // Save current window rect for next time
+
+		// Resize the CTabCtrl
+		pTab->GetWindowRect(&rctCurr);
+		ScreenToClient(&rctCurr);
+		rctCurr.right -= diff.cx;
+		rctCurr.bottom -= diff.cy;
+		pTab->MoveWindow(&rctCurr);
+
+		// Store page size so we can resize each page as necessary
+		pPage->GetWindowRect(&m_rctPage);
+		ScreenToClient(&m_rctPage);
+		m_rctPage.right -= diff.cx;
+		m_rctPage.bottom -= diff.cy;
+
+		// Resize the current page (others done in OnResizePage when required)
+		pPage->MoveWindow(&m_rctPage);
+	}
+}
+
 BOOL CFindSheet::OnEraseBkgnd(CDC *pDC)
 {
 	// We check for changed look in erase background event as it's done
@@ -1506,6 +1552,37 @@ LRESULT CFindSheet::OnKickIdle(WPARAM, LPARAM lCount)
 	return FALSE;
 }
 
+LONG CFindSheet::OnResizePage(UINT, LONG)
+{
+	// Resize the previously calculated page size
+	CPropertyPage* pPage = GetActivePage();
+	ASSERT(pPage != NULL && m_rctPage.Width() > 0);
+	pPage->MoveWindow(&m_rctPage);
+
+	return 0;
+}
+
+void CFindSheet::OnApplyNow()
+{
+	// The sheet resizes the page whenever the apply button is clicked.
+	// So we need to resize it to what we want.
+	PostMessage(WM_RESIZEPAGE);
+}
+
+BOOL CFindSheet::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+{
+	NMHDR* pNMHDR = (LPNMHDR) lParam;
+	
+	// The sheet resizes the page whenever it is activated
+	// so we need to resize it to what we want
+	if (pNMHDR->code == TCN_SELCHANGE)
+		// user-defined message needs to be posted, not sent, because
+		// page must be resized after TCN_SELCHANGE has been processed.
+		PostMessage(WM_RESIZEPAGE);
+
+	return CPropertySheet::OnNotify(wParam, lParam, pResult);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CSimplePage property page
 
@@ -1635,6 +1712,15 @@ BOOL CSimplePage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
+
+	// Make sure when dialog is resized that the controls move to sensible places
+	resizer_.Create(this);
+	resizer_.SetMinimumTrackingSize();
+	resizer_.SetGripEnabled(FALSE);
+	// Controls to adjust -              left  top  width height
+	resizer_.Add(IDC_FIND_COMBINED_STRING,  0,   0, 100,   0);
+	resizer_.Add(IDC_FIND_NEXT,           100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_HELP,           100,   0,   0,   0);
 
 	return TRUE;
 }
@@ -1829,6 +1915,19 @@ BOOL CHexPage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
+
+	// Make sure when dialog is resized that the controls move to sensible places
+	resizer_.Create(this);
+	resizer_.SetMinimumTrackingSize();
+	resizer_.SetGripEnabled(FALSE);
+	// Controls to adjust -              left  top  width height
+	resizer_.Add(IDC_FIND_HEX_STRING,       0,   0, 100,   0);
+	resizer_.Add(IDC_FIND_MASK,             0,   0, 100,   0);
+	resizer_.Add(IDC_FIND_NEXT,           100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_BOOKMARK_ALL,   100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_BOOKMARK_PREFIX_DESC,100,0, 0,   0);
+	resizer_.Add(IDC_FIND_BOOKMARK_PREFIX,100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_HELP,           100,   0,   0,   0);
 
 	// Subclass the edit control part of the combo box
 	CWnd *pwnd;
@@ -2204,6 +2303,18 @@ BOOL CTextPage::OnInitDialog()
 	pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
 
+	// Make sure when dialog is resized that the controls move to sensible places
+	resizer_.Create(this);
+	resizer_.SetMinimumTrackingSize();
+	resizer_.SetGripEnabled(FALSE);
+	// Controls to adjust -              left  top  width height
+	resizer_.Add(IDC_FIND_TEXT_STRING,      0,   0, 100,   0);
+	resizer_.Add(IDC_FIND_NEXT,           100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_BOOKMARK_ALL,   100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_BOOKMARK_PREFIX_DESC,100,0, 0,   0);
+	resizer_.Add(IDC_FIND_BOOKMARK_PREFIX,100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_HELP,           100,   0,   0,   0);
+
 	return TRUE;
 }
 
@@ -2558,6 +2669,18 @@ BOOL CNumberPage::OnInitDialog()
 	pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
 
+	// Make sure when dialog is resized that the controls move to sensible places
+	resizer_.Create(this);
+	resizer_.SetMinimumTrackingSize();
+	resizer_.SetGripEnabled(FALSE);
+	// Controls to adjust -              left  top  width height
+	resizer_.Add(IDC_FIND_NUM_STRING,       0,   0, 100,   0);
+	resizer_.Add(IDC_FIND_NEXT,           100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_BOOKMARK_ALL,   100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_BOOKMARK_PREFIX_DESC,100,0, 0,   0);
+	resizer_.Add(IDC_FIND_BOOKMARK_PREFIX,100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_HELP,           100,   0,   0,   0);
+
 	ASSERT(GetDlgItem(IDC_ALIGN_SPIN) != NULL);
 	ASSERT(GetDlgItem(IDC_OFFSET_SPIN) != NULL);
 	CSpinButtonCtrl *pspin;
@@ -2873,6 +2996,18 @@ BOOL CReplacePage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
 	CPropertyPage::OnInitDialog();
+
+	// Make sure when dialog is resized that the controls move to sensible places
+	resizer_.Create(this);
+	resizer_.SetMinimumTrackingSize();
+	resizer_.SetGripEnabled(FALSE);
+	// Controls to adjust -              left  top  width height
+	resizer_.Add(IDC_FIND_COMBINED_STRING,  0,   0, 100,   0);
+	resizer_.Add(IDC_FIND_REPLACE_STRING,   0,   0, 100,   0);
+	resizer_.Add(IDC_FIND_NEXT,           100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_REPLACE,        100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_REPLACE_ALL,    100,   0,   0,   0);
+	resizer_.Add(IDC_FIND_HELP,           100,   0,   0,   0);
 
 	return TRUE;
 }
