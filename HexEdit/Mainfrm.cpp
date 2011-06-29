@@ -4163,18 +4163,17 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
 		ASSERT(m_wndCalc.m_hWnd != 0);
 
 		m_wndCalc.change_bits(64);
+		m_wndCalc.change_signed(false);     // Addresses are always positive
 
 		switch (base_mode)
 		{
 		case 1:
 			// Use base 10 addresses
 			m_wndCalc.change_base(10);
-			m_wndCalc.change_signed(true);  // xxx make false (addresses are never -ve) when we have signed check-box
 			break;
 		case 2:
 			// Use base 16 addresses
 			m_wndCalc.change_base(16);
-			m_wndCalc.change_signed(false);
 			break;
 		default:
 			ASSERT(0);
@@ -4182,15 +4181,9 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
 		case 0:
 			// Change base depending on how view is displaying addresses
 			if (pview->DecAddresses())
-			{
 				m_wndCalc.change_base(10);
-				m_wndCalc.change_signed(true);  // xxx make false (addresses are never -ve) when we have signed check-box
-			}
 			else
-			{
 				m_wndCalc.change_base(16);
-				m_wndCalc.change_signed(false);
-			}
 			break;
 		}
 		m_wndCalc.SetWindowText("Go To");
@@ -4203,6 +4196,8 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
 		FILE_ADDRESS start, end;
 		pview->GetSelAddr(start, end);
 		m_wndCalc.Set(start);
+		m_wndCalc.edit_.get();
+		m_wndCalc.set_right();
 
 		m_wndCalc.SetFocus();
 		m_wndCalc.StartEdit();

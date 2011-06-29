@@ -650,7 +650,8 @@ static DWORD id_pairs[] = {
 void CCalcDlg::StartEdit()
 {
 	edit_.SetFocus();
-	edit_.SetSel(edit_.GetWindowTextLength(), -1);      // caret to end
+	//edit_.SetSel(edit_.GetWindowTextLength(), -1);  // move caret to end
+	edit_.SetSel(0, -1);                              // select all
 }
 
 // Save a calculator value to the current macro

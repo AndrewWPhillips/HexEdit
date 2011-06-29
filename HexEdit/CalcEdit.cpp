@@ -571,7 +571,7 @@ void CCalcEdit::OnSetFocus(CWnd* pOldWnd)
 	TRACE("xxxx0 OnSetF: sel = %x\r\n", GetSel());
 	// This clears the edit box after a binop button but allows editing after '=' button,
 	// so the user can edit a result (eg to copy to clipboard).
-	clear_result(pp_->op_ != binop_none);
+	//clear_result(pp_->op_ != binop_none);
 
 	CEdit::OnSetFocus(pOldWnd);
 	TRACE("xxxx1 OnSetF: sel = %x\r\n", GetSel());
