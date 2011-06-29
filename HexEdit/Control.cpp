@@ -1210,10 +1210,9 @@ void CHexEditControl::BeginJump()
 				DYNAMIC_DOWNCAST(CHexComboButton, listButtons.GetNext(posCombo));
 			ASSERT(pCombo != NULL);
 			CHexEditControl * pedit = dynamic_cast<CHexEditControl *>(pCombo->GetEditCtrl());
-			// In MFC9 the visible edit box is the sibling of the parent combo box!??!
-			CWnd *pwnd = pedit->GetParent();
-			ASSERT(pwnd != NULL);
-			pedit = DYNAMIC_DOWNCAST(CHexEditControl, pwnd->GetWindow(GW_HWNDNEXT));
+			//CWnd *pwnd = pedit->GetParent();
+			//ASSERT(pwnd != NULL);
+			//pedit = DYNAMIC_DOWNCAST(CHexEditControl, pwnd->GetWindow(GW_HWNDNEXT));
 			ASSERT(pedit != NULL);
 			if (pedit->IsWindowVisible())
 			{
