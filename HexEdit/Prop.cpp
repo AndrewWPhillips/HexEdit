@@ -876,14 +876,48 @@ void CPropFilePage::Update(CHexEditView *pv, FILE_ADDRESS address)
 }
 
 BEGIN_MESSAGE_MAP(CPropFilePage, CPropUpdatePage)
-		//{{AFX_MSG_MAP(CPropFilePage)
-		ON_WM_HELPINFO()
-		//}}AFX_MSG_MAP
+	ON_WM_SIZE()
+	ON_WM_HELPINFO()
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CPropFilePage message handlers
+
+BOOL CPropFilePage::OnInitDialog()
+{
+	CPropUpdatePage::OnInitDialog();
+
+	// Make sure when dialog is resized that the controls move to sensible places
+	resizer_.Create(this);
+	resizer_.SetMinimumTrackingSize();
+	resizer_.SetGripEnabled(FALSE);
+	// Controls to adjust -              left  top  width height
+	resizer_.Add(IDC_FILE_NAME,             0,   0,  70,   0);
+	resizer_.Add(IDC_FILE_PATH,             0,   0,  70,   0);
+	resizer_.Add(IDC_FILE_CREATED,          0,   0,  70,   0);
+	resizer_.Add(IDC_FILE_MODIFIED,         0,   0,  70,   0);
+	resizer_.Add(IDC_FILE_ACCESSED,         0,   0,  70,   0);
+	resizer_.Add(IDC_FILE_TYPE,            70,   0,  28,   0);
+	resizer_.Add(IDC_FILE_READONLY,        70,   0,   0,   0);
+	resizer_.Add(IDC_FILE_READONLY_DESC,   70,   0,   0,   0);
+	resizer_.Add(IDC_FILE_HIDDEN,          70,   0,   0,   0);
+	resizer_.Add(IDC_FILE_HIDDEN_DESC,     70,   0,   0,   0);
+	resizer_.Add(IDC_FILE_SYSTEM,          70,   0,   0,   0);
+	resizer_.Add(IDC_FILE_SYSTEM_DESC,     70,   0,   0,   0);
+	resizer_.Add(IDC_FILE_ARCHIVED,        70,   0,   0,   0);
+	resizer_.Add(IDC_FILE_ARCHIVED_DESC,   70,   0,   0,   0);
+
+	return TRUE;
+}
+
+void CPropFilePage::OnSize(UINT nType, int cx, int cy)
+{
+	__super::OnSize(nType, cx, cy);
+	CWnd * pwnd = GetDlgItem(IDC_FILE_TYPE);
+	if (pwnd != NULL && pwnd->m_hWnd != (HWND)0)
+		pwnd->Invalidate(0);  // When static text is resized it is not redrawn properly
+}
 
 BOOL CPropFilePage::OnSetActive()
 {
@@ -2398,6 +2432,23 @@ BOOL CPropDecPage::OnInitDialog()
 {
 	CPropUpdatePage::OnInitDialog();
 
+	// Make sure when dialog is resized that the controls move to sensible places
+	resizer_.Create(this);
+	resizer_.SetMinimumTrackingSize();
+	resizer_.SetGripEnabled(FALSE);
+	// Controls to adjust -              left  top  width height
+	resizer_.Add(IDC_DEC_GROUP,             0,   0,   100,   0);
+	resizer_.Add(IDC_DEC_8BIT,              0,   0,   100,   0);
+	resizer_.Add(IDC_DEC_16BIT,             0,   0,   100,   0);
+	resizer_.Add(IDC_DEC_32BIT,             0,   0,   100,   0);
+	resizer_.Add(IDC_DEC_64BIT,             0,   0,   100,   0);
+	resizer_.Add(IDC_BIG_ENDIAN,          100,   0,   0,   0);
+	resizer_.Add(IDC_DEC_FORMAT_BOX,          100,   0,   0,   0);
+	resizer_.Add(IDC_DEC_UNSIGNED,        100,   0,   0,   0);
+	resizer_.Add(IDC_DEC_2COMP,           100,   0,   0,   0);
+	resizer_.Add(IDC_DEC_1COMP,           100,   0,   0,   0);
+	resizer_.Add(IDC_DEC_SIGN_MAG,        100,   0,   0,   0);
+
 	VERIFY(edit_8bit_.SubclassDlgItem(IDC_DEC_8BIT, this));
 	VERIFY(edit_16bit_.SubclassDlgItem(IDC_DEC_16BIT, this));
 	VERIFY(edit_32bit_.SubclassDlgItem(IDC_DEC_32BIT, this));
@@ -2861,6 +2912,19 @@ END_MESSAGE_MAP()
 BOOL CPropRealPage::OnInitDialog()
 {
 	CPropUpdatePage::OnInitDialog();
+
+	// Make sure when dialog is resized that the controls move to sensible places
+	resizer_.Create(this);
+	resizer_.SetMinimumTrackingSize();
+	resizer_.SetGripEnabled(FALSE);
+	// Controls to adjust -              left  top  width height
+	resizer_.Add(IDC_FP_GROUP,              0,   0,   100,   0);
+	resizer_.Add(IDC_FP_VAL,                0,   0,   100,   0);
+	resizer_.Add(IDC_FP_MANT,               0,   0,   100,   0);
+	resizer_.Add(IDC_BIG_ENDIAN,          100,   0,     0,   0);
+	resizer_.Add(IDC_FP_FORMAT_DESC,      100,   0,     0,   0);
+	resizer_.Add(IDC_FP_FORMAT,           100,   0,     0,   0);
+	resizer_.Add(IDC_FP_DESC,             100,   0,     0,   0);
 
 	VERIFY(ctl_val_.SubclassDlgItem(IDC_FP_VAL, this));
 	FixDesc();
@@ -3830,4 +3894,3 @@ BOOL CPropStatsPage::OnHelpInfo(HELPINFO* pHelpInfo)
 void CPropStatsPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 }
-

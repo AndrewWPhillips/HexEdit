@@ -1218,6 +1218,10 @@
 #define IDC_INFO_VIEW_TIME_DESC         1637
 #define IDC_INFO_EDIT_TIME_DESC         1638
 #define IDC_FIND_BOOKMARK_PREFIX_DESC   1639
+#define IDC_FORMAT_BOX                  1640
+#define IDC_DEC_FORMAT_BOX              1641
+#define IDC_DEC_GROUP                   1642
+#define IDC_FP_FORMAT_DESC              1643
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1717,7 +1721,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        460
 #define _APS_NEXT_COMMAND_VALUE         39152
-#define _APS_NEXT_CONTROL_VALUE         1640
+#define _APS_NEXT_CONTROL_VALUE         1644
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

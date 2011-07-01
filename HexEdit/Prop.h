@@ -182,14 +182,17 @@ public:
 
 // Implementation
 	virtual void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1);
+	virtual BOOL OnInitDialog();
 
 protected:
 	// Generated message map functions
-	//{{AFX_MSG(CPropFilePage)
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	//}}AFX_MSG
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -326,6 +329,9 @@ protected:
 
 public:
 	afx_msg void OnBnClickedSelectFont();
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -378,6 +384,9 @@ protected:
 	//}}AFX_MSG
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -426,6 +435,9 @@ protected:
 	enum { FMT_IEEE32, FMT_IEEE64, FMT_IBM32, FMT_IBM64, FMT_REAL48, FMT_DECIMAL,
 		   FMT_LAST };
 	void FixDesc() ;
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -503,6 +515,9 @@ private:
 	COleDateTime date_first_[FORMAT_LAST];
 	COleDateTime date_last_[FORMAT_LAST];
 	bool stop_update_;
+
+private:
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
 /////////////////////////////////////////////////////////////////////////////
