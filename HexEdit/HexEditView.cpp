@@ -633,6 +633,7 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 // CHexEditView construction/destruction
 CHexEditView::CHexEditView()
 {
+	nav_moves_ = -1;
 	expr_.SetView(this);
 	text_height_ = 0;     // While text_height_ == 0 none of the display settings have been calculated
 	pdfv_ = NULL;
@@ -6449,7 +6450,8 @@ void CHexEditView::OnKillFocus(CWnd* pNewWnd)
 	if (pav_ != NULL && IsWindow(pav_->m_hWnd)) pav_->StopTimer();       // Turn off any animation in aerial view
 
 	CScrView::OnKillFocus(pNewWnd);
-	if (text_height_ == 0)
+
+	if (nav_moves_ < 0)
 		return;
 
 	// Save current address in case edit controls move caret
@@ -6481,7 +6483,7 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
 
 	CScrView::OnSetFocus(pOldWnd);
 
-	if (text_height_ < 1)
+	if (nav_moves_ < 0)
 		return;
 
 #if 0 // Handled in CChildFrame::OnSetFocus now

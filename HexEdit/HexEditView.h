@@ -786,7 +786,7 @@ public:
 	BOOL set_colours();             // Set colours from app schemes using current scheme_name_
 	void get_colours(std::vector<COLORREF> &);  // Get unadjusted colours for all 256 byte values
 
-	bool NoNavMovesDone() const { return nav_moves_ == 0; }  // any moves done since swapping to this view?
+	bool NoNavMovesDone() const { return nav_moves_ <= 0; }  // any moves done since swapping to this view?
 	int TemplateViewType() const;
 	int AerialViewType() const;
 	int CompViewType() const;
