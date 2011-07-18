@@ -417,6 +417,7 @@
 #define IDI_INFO                        442
 #define IDD_PROP_STATS                  442
 #define IDI_CROSS                       443
+#define IDD_BOOKMARKS_NEW               444
 #define IDR_CONTEXT_OFFSET_HANDLE       445
 #define IDR_CONTEXT_GROUP_BY_HANDLE     446
 #define IDR_CONTEXT_ROWSIZE_HANDLE      447
