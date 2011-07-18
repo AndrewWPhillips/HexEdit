@@ -1186,6 +1186,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\HandGrab.cur"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\HandOpen.cur"
+				>
+			</File>
+			<File
 				RelativePath=".\res\HexEdit.rc2"
 				>
 			</File>
@@ -1227,6 +1235,10 @@
 			</File>
 			<File
 				RelativePath=".\RES\imagelis.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\info.cur"
 				>
 			</File>
 			<File

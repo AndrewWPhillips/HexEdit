@@ -415,13 +415,17 @@
 #define IDI_EXCLAMATIONMARK             441
 #define IDD_OPT_FOLDERS                 441
 #define IDI_INFO                        442
-#define IDD_PROP_STATS                  442
 #define IDI_CROSS                       443
 #define IDD_BOOKMARKS_NEW               444
 #define IDR_CONTEXT_OFFSET_HANDLE       445
 #define IDR_CONTEXT_GROUP_BY_HANDLE     446
 #define IDR_CONTEXT_ROWSIZE_HANDLE      447
 #define IDR_CONTEXT_RULER               448
+#define IDC_INFO                        449
+#define IDC_HANDOPEN                    450
+#define IDC_HANDGRAB                    451
+#define IDD_PROP_STATS                  455
+#define IDD_PROP_GRAPH                  456
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1223,6 +1227,9 @@
 #define IDC_DEC_FORMAT_BOX              1641
 #define IDC_DEC_GROUP                   1642
 #define IDC_FP_FORMAT_DESC              1643
+#define IDC_STATS_CRC32                 1644
+#define IDC_STATS_MD5                   1645
+#define IDC_STATS_SHA1                  1646
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1720,9 +1727,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        460
+#define _APS_NEXT_RESOURCE_VALUE        463
 #define _APS_NEXT_COMMAND_VALUE         39152
-#define _APS_NEXT_CONTROL_VALUE         1644
+#define _APS_NEXT_CONTROL_VALUE         1647
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

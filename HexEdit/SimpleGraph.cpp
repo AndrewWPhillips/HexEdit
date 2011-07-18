@@ -244,7 +244,13 @@ void CSimpleGraph::OnSize(UINT nType, int cx, int cy)
 
 BOOL CSimpleGraph::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
-	SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
+	CPoint pt;
+	::GetCursorPos(&pt);            // get mouse location (screen coords)
+	ScreenToClient(&pt);
+	if (get_bar(pt) > -1)
+		::SetCursor(theApp.LoadCursor(IDC_INFO));
+	else
+		::SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
 	return TRUE;
 }
 
@@ -255,7 +261,7 @@ void CSimpleGraph::OnMouseMove(UINT nFlags, CPoint point)
 	// Check for hover if no tip window is visible
 	if (!m_tip.IsWindowVisible())
 		track_mouse(TME_HOVER);
-	else if (get_bar(point) != m_bar)
+	else if (get_bar(point) != m_bar && !m_tip.FadingOut())
 		m_tip.Hide(300);
 }
 

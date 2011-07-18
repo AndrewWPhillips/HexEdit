@@ -1,25 +1,16 @@
-3.6
-===
-
-> check for updates
-> new options
-  > option for mouse wheel units
-  > split print page into 2
-    > add watermark and other options
-> calculator
-  > 64 check boxes
-> new installer
-   - get MFC merge module (.msm file) to include used MFC in installation (.msi)
-     - use MFC 7.1 (same as UBCD4Win - Ultimate boot CD for Windows) - MFC71.DLL, MSVCRT71.DLL
-   - is it possible to have install modules (eg MFC) come from web only when needed?
-   - add backgrnd.BMP and About.BMP to exe directory
-> expressions
-  > add ++, --
+- jump and search tools bug: when right click and select paste the pasted text disappears (Ctrl+V works OK though)
+  - cf similar problem in CCalcEdit - fixed by handling EN_CHANGE message
 
 4.0
 ===
 
-
+- Stats Property page
+  - WM_SETCURSOR
+  - tip window show hex and char name (based on char set)
+    - show hex and decimal accoring to colour scheme
+  - refresh while calculating
+  - new file never draws graph
+  - make controls in other pages resizeable
 - Installer
   - new why uninstalling dialog
   - merge module for MFC

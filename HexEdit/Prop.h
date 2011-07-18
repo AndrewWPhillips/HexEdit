@@ -521,6 +521,42 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
+// CPropGraphPage dialog
+
+class CPropGraphPage : public CPropUpdatePage
+{
+	DECLARE_DYNCREATE(CPropGraphPage)
+
+// Construction
+public:
+	CPropGraphPage();
+	~CPropGraphPage();
+
+// Dialog Data
+	enum { IDD = IDD_PROP_GRAPH };
+
+// Overrides
+public:
+	virtual BOOL OnSetActive();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+	virtual void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1);
+
+protected:
+	virtual BOOL OnInitDialog();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+
+	DECLARE_MESSAGE_MAP()
+
+private:
+	CSimpleGraph *m_graph;
+};
+
+/////////////////////////////////////////////////////////////////////////////
 // CPropStatsPage dialog
 
 class CPropStatsPage : public CPropUpdatePage
@@ -546,16 +582,14 @@ protected:
 
 protected:
 	virtual BOOL OnInitDialog();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CSimpleGraph *m_graph;
+	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
-
 /////////////////////////////////////////////////////////////////////////////
 // CPropSheet
 
@@ -612,7 +646,7 @@ public:
 	CPropDecPage      prop_dec;
 	CPropRealPage     prop_real;
 	CPropDatePage     prop_date;
-	CPropStatsPage    prop_stats;
+	CPropGraphPage    prop_graph;
 
 private:
 	CRect m_rctPrev;         // previous window size

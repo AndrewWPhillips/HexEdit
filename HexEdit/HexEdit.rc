@@ -2338,7 +2338,7 @@ BEGIN
     PUSHBUTTON      "...",IDC_SAVE_FOLDER_BROWSE,237,118,18,15,0,0,HIDC_SAVE_FOLDER_BROWSE
 END
 
-IDD_PROP_STATS DIALOGEX 0, 0, 223, 79
+IDD_PROP_GRAPH DIALOGEX 0, 0, 223, 79
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Stats"
@@ -2346,6 +2346,20 @@ FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Static",IDC_STATS_MESSAGE,29,17,173,51
     GROUPBOX        "Static",IDC_PLACEHOLDER,0,0,223,78
+END
+
+IDD_PROP_STATS DIALOGEX 0, 0, 223, 79
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Stats"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    RTEXT           "CRC32:",IDC_STATIC,6,35,27,8
+    EDITTEXT        IDC_STATS_CRC32,36,33,179,12,ES_AUTOHSCROLL,0,HIDC_STATS_CRC32
+    RTEXT           "MD5:",IDC_STATIC,6,48,27,8
+    EDITTEXT        IDC_STATS_MD5,36,46,179,12,ES_AUTOHSCROLL,0,HIDC_STATS_MD5
+    RTEXT           "SHA1:",IDC_STATIC,6,61,27,8
+    EDITTEXT        IDC_STATS_SHA1,36,59,179,12,ES_AUTOHSCROLL,0,HIDC_STATS_SHA1
 END
 
 
@@ -4862,6 +4876,9 @@ END
 
 IDC_HIGHLIGHT           CURSOR                  "res\\highligh.cur"
 IDC_SMALLARROWS         CURSOR                  "res\\curSmallArrows.cur"
+IDC_HANDOPEN            CURSOR                  "res\\HandOpen.cur"
+IDC_HANDGRAB            CURSOR                  "res\\HandGrab.cur"
+IDC_INFO                CURSOR                  "res\\info.cur"
 #endif    // English (Australia) resources
 /////////////////////////////////////////////////////////////////////////////
 

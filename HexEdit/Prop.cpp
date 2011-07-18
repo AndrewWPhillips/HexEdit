@@ -380,7 +380,7 @@ CPropSheet::CPropSheet()
 	AddPage(&prop_dec);
 	AddPage(&prop_real);
 	AddPage(&prop_date);
-	AddPage(&prop_stats);
+	AddPage(&prop_graph);
 
 	// Create the brush used for background of read-only edit control
 	ASSERT(pBrush == NULL);
@@ -613,9 +613,8 @@ LRESULT CPropSheet::OnKickIdle(WPARAM, LPARAM lCount)
 		help_hwnd_ = (HWND)0;
 	}
 	CPropUpdatePage *pp = dynamic_cast<CPropUpdatePage *>(GetActivePage());
-	if (pp == &prop_stats)
+	if (pp == &prop_graph)
 	{
-		TRACE(":::::::::::idle update for stats :::::::::\r\n");
 		pp->Update(GetView());
 	}
 
@@ -3767,27 +3766,27 @@ void CPropDatePage::OnChangeFormat()
 
 //===========================================================================
 /////////////////////////////////////////////////////////////////////////////
-// CPropStatsPage property page
+// CPropGraphPage property page
 
-IMPLEMENT_DYNCREATE(CPropStatsPage, CPropUpdatePage)
+IMPLEMENT_DYNCREATE(CPropGraphPage, CPropUpdatePage)
 
-CPropStatsPage::CPropStatsPage() : CPropUpdatePage(CPropStatsPage::IDD)
+CPropGraphPage::CPropGraphPage() : CPropUpdatePage(CPropGraphPage::IDD)
 {
 	m_graph = new CSimpleGraph();
 }
 
-CPropStatsPage::~CPropStatsPage()
+CPropGraphPage::~CPropGraphPage()
 {
 	delete m_graph;
 }
 
-void CPropStatsPage::DoDataExchange(CDataExchange* pDX)
+void CPropGraphPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropUpdatePage::DoDataExchange(pDX);
 //	DDX_Control(pDX, IDC_STATS_GRAPH, *m_graph);
 }
 
-void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
+void CPropGraphPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 {
 	CString mess;
 	std::vector<FILE_ADDRESS> cnt;
@@ -3835,16 +3834,16 @@ error_return:
 	return;
 }
 
-BEGIN_MESSAGE_MAP(CPropStatsPage, CPropUpdatePage)
+BEGIN_MESSAGE_MAP(CPropGraphPage, CPropUpdatePage)
 	ON_WM_HELPINFO()
 	ON_WM_SIZE()
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CPropStatsPage message handlers
+// CPropGraphPage message handlers
 
-BOOL CPropStatsPage::OnInitDialog()
+BOOL CPropGraphPage::OnInitDialog()
 {
 	CPropUpdatePage::OnInitDialog();
 
@@ -3871,11 +3870,95 @@ BOOL CPropStatsPage::OnInitDialog()
 	return TRUE;
 }
 
-void CPropStatsPage::OnSize(UINT nType, int cx, int cy)
+void CPropGraphPage::OnSize(UINT nType, int cx, int cy)
 {
 	__super::OnSize(nType, cx, cy);
 	if (m_graph != NULL && m_graph->m_hWnd != (HWND)0)
 		m_graph->MoveWindow(0, 0, cx, cy);
+}
+
+BOOL CPropGraphPage::OnSetActive()
+{
+	Update(GetView());
+	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_graph);
+	return CPropUpdatePage::OnSetActive();
+}
+
+BOOL CPropGraphPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+	return TRUE;
+}
+
+void CPropGraphPage::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CPropStatsPage property page
+
+IMPLEMENT_DYNCREATE(CPropStatsPage, CPropUpdatePage)
+
+CPropStatsPage::CPropStatsPage() : CPropUpdatePage(CPropStatsPage::IDD)
+{
+}
+
+CPropStatsPage::~CPropStatsPage()
+{
+}
+
+void CPropStatsPage::DoDataExchange(CDataExchange* pDX)
+{
+	CPropUpdatePage::DoDataExchange(pDX);
+}
+
+void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
+{
+	CString mess;
+	std::vector<FILE_ADDRESS> cnt;
+	std::vector<COLORREF> col;
+
+	if (!theApp.bg_stats_)
+	{
+		mess = "Not available.";
+		goto error_return;
+	}
+
+	if (pv == NULL)
+	{
+		mess = "No file open.";
+		goto error_return;
+	}
+
+	return;
+
+error_return:
+	//ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_STATS_MESSAGE)->ShowWindow(SW_SHOW);
+	SetDlgItemText(IDC_STATS_MESSAGE, mess);
+	return;
+}
+
+BEGIN_MESSAGE_MAP(CPropStatsPage, CPropUpdatePage)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CPropStatsPage message handlers
+
+BOOL CPropStatsPage::OnInitDialog()
+{
+	CPropUpdatePage::OnInitDialog();
+
+	// Make sure when dialog is resized that the controls move to sensible places
+	resizer_.Create(this);
+	resizer_.SetMinimumTrackingSize();
+	resizer_.SetGripEnabled(FALSE);
+
+	return TRUE;
 }
 
 BOOL CPropStatsPage::OnSetActive()
@@ -3893,4 +3976,5 @@ BOOL CPropStatsPage::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CPropStatsPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
