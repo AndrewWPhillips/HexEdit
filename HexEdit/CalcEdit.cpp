@@ -625,6 +625,9 @@ void CCalcEdit::OnEnChange()
 		// Update the expression to be displayed
 		get();
 		pp_->set_right();
+		pp_->ctl_calc_bits_.RedrawWindow();  // bit display
+
+		pp_->inedit(km_user_str);            // macro
 	}
 }
 
