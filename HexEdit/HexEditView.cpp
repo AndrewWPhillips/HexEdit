@@ -8271,8 +8271,10 @@ BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 			 !display_.vert_display && !display_.char_area && pt.x < hex_pos(rowsize_) )  )
 		{
 			// Over hex or char area
-			if (drag_bookmark_ > -1 || bookmark_at(address_at(point)) > -1)
-				::SetCursor(theApp.LoadStandardCursor(IDC_SIZEALL)); // Indicate bookmark can be moved
+			if (drag_bookmark_ > -1)
+				::SetCursor(theApp.LoadCursor(IDC_HANDGRAB));        // Bookmark drag
+			else if (bookmark_at(address_at(point)) > -1)
+				::SetCursor(theApp.LoadCursor(IDC_HANDOPEN));        // Indicate bookmark can be moved
 			else if (theApp.highlight_)
 				::SetCursor(theApp.LoadCursor(IDC_HIGHLIGHT));       // Highlighter cursor
 			else
