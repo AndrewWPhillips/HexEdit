@@ -20,6 +20,8 @@
 #include "stdafx.h"
 #include "HexEdit.h"
 #include "HexEditDoc.h"
+#include "md5.h"
+#include "sha1.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -102,11 +104,59 @@ FILE_ADDRESS CHexEditDoc::GetByteCounts(std::vector<FILE_ADDRESS> & cnt)
 
 	return retval;
 }
+int CHexEditDoc::GetCRC32(unsigned long &retval)
+{
+	if (!CanDoStats() || pthread5_ == NULL)
+		return -4;         // stats not done on this file
 
+	// Protect access to shared data
+	CSingleLock sl(&docdata_, TRUE);
 
-void StartStats();
-void StopStats();
-UINT RunStatsThread();    // Main func in bg thread (needs to be public so it can be called from bg_func)
+	if (!theApp.bg_stats_crc32_)
+		return -1;
+
+	if (!stats_fin_)
+		return -2;         // stats calcs in progress
+
+	retval = crc32_;
+	return 0;
+}
+
+int CHexEditDoc::GetMd5(unsigned char buf[16])
+{
+	if (!CanDoStats() || pthread5_ == NULL)
+		return -4;         // stats not done on this file
+
+	// Protect access to shared data
+	CSingleLock sl(&docdata_, TRUE);
+
+	if (!theApp.bg_stats_md5_)
+		return -1;
+
+	if (!stats_fin_)
+		return -2;         // stats calcs in progress
+
+	memcpy(buf, md5_, sizeof(md5_));
+	return 0;
+}
+
+int CHexEditDoc::GetSha1(unsigned char buf[20])
+{
+	if (!CanDoStats() || pthread5_ == NULL)
+		return -4;         // stats not done on this file
+
+	// Protect access to shared data
+	CSingleLock sl(&docdata_, TRUE);
+
+	if (!theApp.bg_stats_sha1_)
+		return -1;
+
+	if (!stats_fin_)
+		return -2;         // stats calcs in progress
+
+	memcpy(buf, sha1_, sizeof(sha1_));
+	return 0;
+}
 
 // Return how far our scan has progressed as a percentage (0 to 100).
 int CHexEditDoc::StatsProgress()
@@ -289,9 +339,16 @@ UINT CHexEditDoc::RunStatsThread()
 		stats_fin_ = false;
 		stats_progress_ = 0;
 		FILE_ADDRESS file_len = length_;
+		BOOL do_crc32 = theApp.bg_stats_crc32_;
+		BOOL do_md5   = theApp.bg_stats_md5_;
+		BOOL do_sha1  = theApp.bg_stats_sha1_;
 		docdata_.Unlock();
 
 		FILE_ADDRESS addr = 0;
+		void * hcrc32 = NULL;
+
+		struct MD5Context md5_ctx;
+		sha1_context sha1_ctx;
 
 		const size_t buf_size = 16384;
 		ASSERT(stats_buf_ == NULL && c32_ == NULL && c64_ == NULL);
@@ -307,6 +364,18 @@ UINT CHexEditDoc::RunStatsThread()
 			c64_ = new __int64[256];
 			memset(c64_, '\0', 256*sizeof(*c64_));
 		}
+
+		// Init CRC
+		if (do_crc32)
+			hcrc32 = crc_32_init();
+
+		// Init MD5
+		if (do_md5)
+			MD5Init(&md5_ctx);
+
+		// Init SHA1
+		if (do_sha1)
+			sha1_starts(&sha1_ctx);
 
 		// Scan all the data blocks of the file
 		for (;;)
@@ -334,11 +403,21 @@ UINT CHexEditDoc::RunStatsThread()
 						count_[ii] = c64_[ii];
 				}
 
+				if (do_crc32)
+					crc32_ = crc_32_final(hcrc32);
+
+				if (do_md5)
+					MD5Final(md5_, &md5_ctx);
+
+				if (do_sha1)
+					sha1_finish(&sha1_ctx, sha1_);
+
 				stats_fin_ = true;
 				stats_progress_ = 100;
 				break;
 			}
 
+			// Do count of different bytes
 			if (c32_ != NULL)
 			{
 				for (size_t ii = 0; ii < got; ++ii)
@@ -354,6 +433,18 @@ UINT CHexEditDoc::RunStatsThread()
 					++c64_[stats_buf_[ii]];
 				}
 			}
+
+			// Do CRC
+			if (do_crc32)
+				crc_32_update(hcrc32, stats_buf_, got);
+
+			// Do MD5
+			if (do_md5)
+				MD5Update(&md5_ctx, stats_buf_, got);
+
+			// Do SHA1
+			if (do_sha1)
+				sha1_update(&sha1_ctx, stats_buf_, got);
 
 			addr += got;
 			{

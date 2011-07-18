@@ -467,6 +467,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_paneCalc.SetMinSize(rct.Size());
 		m_paneCalc.EnableDocking(CBRS_ALIGN_ANY);
 
+		m_wndProp.EnableStackedTabs(FALSE);  // If we don't use a single row of tabs then default sizes and positions are confused
 		if (!m_paneProp.Create("Properties", this, CSize(500, 250), TRUE, IDD_PROP_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
 			!m_wndProp.Create(&m_paneProp, WS_CHILD | WS_VISIBLE) )
 		{

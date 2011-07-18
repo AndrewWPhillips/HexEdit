@@ -647,6 +647,7 @@ public:
 	CPropRealPage     prop_real;
 	CPropDatePage     prop_date;
 	CPropGraphPage    prop_graph;
+	CPropStatsPage    prop_stats;
 
 private:
 	CRect m_rctPrev;         // previous window size

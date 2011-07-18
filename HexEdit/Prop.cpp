@@ -381,6 +381,7 @@ CPropSheet::CPropSheet()
 	AddPage(&prop_real);
 	AddPage(&prop_date);
 	AddPage(&prop_graph);
+	AddPage(&prop_stats);
 
 	// Create the brush used for background of read-only edit control
 	ASSERT(pBrush == NULL);
@@ -3830,7 +3831,13 @@ void CPropGraphPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 error_return:
 	m_graph->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_STATS_MESSAGE)->ShowWindow(SW_SHOW);
-	SetDlgItemText(IDC_STATS_MESSAGE, mess);
+
+	// Only update the string if it is different to avoid flicker
+	CString strTmp;
+	GetDlgItemText(IDC_STATS_MESSAGE, strTmp);
+	if (mess != strTmp)
+		SetDlgItemText(IDC_STATS_MESSAGE, mess);
+
 	return;
 }
 
@@ -3916,7 +3923,7 @@ void CPropStatsPage::DoDataExchange(CDataExchange* pDX)
 
 void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 {
-	CString mess;
+	CString mess, strCrc32, strMd5, strSha1;
 	std::vector<FILE_ADDRESS> cnt;
 	std::vector<COLORREF> col;
 
@@ -3932,12 +3939,59 @@ void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 		goto error_return;
 	}
 
-	return;
+	unsigned char digest[128];
+	unsigned long crc;
+
+	if (pv->GetDocument()->GetCRC32(crc) >= 0)
+	{
+		if (theApp.hex_ucase_)
+			strCrc32.Format("%08X", crc); 
+		else
+			strCrc32.Format("%08X", crc);
+	}
+
+	if (pv->GetDocument()->GetMd5(digest) >= 0)
+	{
+		const char * fmt;
+		if (theApp.hex_ucase_)
+			fmt = "%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X";
+		else
+			fmt = "%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x";
+		strMd5.Format(fmt,
+				digest[0], digest[1], digest[2], digest[3],
+				digest[4], digest[5], digest[6], digest[7],
+				digest[8], digest[9], digest[10], digest[11],
+				digest[12], digest[13], digest[14], digest[15]);
+		AddSpaces(strMd5);
+	}
+
+	if (pv->GetDocument()->GetSha1(digest) >= 0)
+	{
+		const char * fmt;
+		if (theApp.hex_ucase_)
+			fmt = "%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X";
+		else
+			fmt = "%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x";
+		strSha1.Format(fmt,
+				digest[0],  digest[1],  digest[2],  digest[3],
+				digest[4],  digest[5],  digest[6],  digest[7],
+				digest[8],  digest[9],  digest[10], digest[11],
+				digest[12], digest[13], digest[14], digest[15],
+				digest[16], digest[17], digest[18], digest[19]);
+		AddSpaces(strSha1);
+	}
 
 error_return:
-	//ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_STATS_MESSAGE)->ShowWindow(SW_SHOW);
-	SetDlgItemText(IDC_STATS_MESSAGE, mess);
+	CString ss;
+	GetDlgItemText(IDC_STATS_CRC32, ss);
+	if (ss != strCrc32)
+		SetDlgItemText(IDC_STATS_CRC32, strCrc32);
+	GetDlgItemText(IDC_STATS_MD5, ss);
+	if (ss != strMd5)
+		SetDlgItemText(IDC_STATS_MD5, strMd5);
+	GetDlgItemText(IDC_STATS_SHA1, ss);
+	if (ss != strSha1)
+		SetDlgItemText(IDC_STATS_SHA1, strSha1);
 	return;
 }
 
@@ -3957,6 +4011,10 @@ BOOL CPropStatsPage::OnInitDialog()
 	resizer_.Create(this);
 	resizer_.SetMinimumTrackingSize();
 	resizer_.SetGripEnabled(FALSE);
+	// Controls to adjust -              left  top  width height
+	resizer_.Add(IDC_STATS_CRC32,          0,   0, 100,   0);
+	resizer_.Add(IDC_STATS_MD5,            0,   0, 100,   0);
+	resizer_.Add(IDC_STATS_SHA1,           0,   0, 100,   0);
 
 	return TRUE;
 }

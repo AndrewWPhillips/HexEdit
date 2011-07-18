@@ -2126,6 +2126,9 @@ void CHexEditApp::LoadOptions()
 
 	bg_search_ = GetProfileInt("Options", "BackgroundSearch", 1) ? TRUE : FALSE;
 	bg_stats_ = GetProfileInt("Options", "BackgroundStats", 0) ? TRUE : FALSE;
+	bg_stats_crc32_ = GetProfileInt("Options", "BackgroundStatsCRC32", 0) ? TRUE : FALSE;
+	bg_stats_md5_ = GetProfileInt("Options", "BackgroundStatsMD5", 0) ? TRUE : FALSE;
+	bg_stats_sha1_ = GetProfileInt("Options", "BackgroundStatsSHA1", 0) ? TRUE : FALSE;
 	bg_exclude_network_ = GetProfileInt("Options", "BackgroundExcludeNetwork", 1) ? TRUE : FALSE;
 	bg_exclude_removeable_ = GetProfileInt("Options", "BackgroundExcludeRemoveable", 0) ? TRUE : FALSE;
 	bg_exclude_optical_ = GetProfileInt("Options", "BackgroundExcludeOptical", 1) ? TRUE : FALSE;
@@ -2600,6 +2603,9 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Options", "BackupPrompt", int(backup_prompt_));
 	WriteProfileInt("Options", "BackgroundSearch", bg_search_ ? 1 : 0);
 	WriteProfileInt("Options", "BackgroundStats", bg_stats_ ? 1 : 0);
+	WriteProfileInt("Options", "BackgroundStatsCRC32", bg_stats_crc32_ ? 1 : 0);
+	WriteProfileInt("Options", "BackgroundStatsMD5", bg_stats_md5_ ? 1 : 0);
+	WriteProfileInt("Options", "BackgroundStatsSHA1", bg_stats_sha1_ ? 1 : 0);
 	WriteProfileInt("Options", "BackgroundExcludeNetwork", bg_exclude_network_ ? 1 : 0);
 	WriteProfileInt("Options", "BackgroundExcludeRemoveable", bg_exclude_removeable_ ? 1 : 0);
 	WriteProfileInt("Options", "BackgroundExcludeOptical", bg_exclude_optical_ ? 1 : 0);
@@ -3173,6 +3179,9 @@ void CHexEditApp::get_options(struct OptValues &val)
 
 	val.bg_search_ = bg_search_;
 	val.bg_stats_ = bg_stats_;
+	val.bg_stats_crc32_ = bg_stats_crc32_;
+	val.bg_stats_md5_ = bg_stats_md5_;
+	val.bg_stats_sha1_ = bg_stats_sha1_;
 	val.bg_exclude_network_ = bg_exclude_network_;
 	val.bg_exclude_removeable_ = bg_exclude_removeable_;
 	val.bg_exclude_optical_ = bg_exclude_optical_;
@@ -3321,7 +3330,10 @@ void CHexEditApp::set_options(struct OptValues &val)
 	                      bg_exclude_network_ != val.bg_exclude_network_ ||
 	                      bg_exclude_removeable_ != val.bg_exclude_removeable_ ||
 	                      bg_exclude_optical_ != val.bg_exclude_optical_;
-	bool stats_changed = bg_stats_ != val.bg_stats_ || 
+	bool stats_changed = bg_stats_ != val.bg_stats_ ||
+	                     bg_stats_crc32_ != val.bg_stats_crc32_ || 
+	                     bg_stats_md5_ != val.bg_stats_md5_ || 
+	                     bg_stats_sha1_ != val.bg_stats_sha1_ || 
 	                     bg_exclude_device_ != val.bg_exclude_device_ ||
 	                     bg_exclude_network_ != val.bg_exclude_network_ ||
 	                     bg_exclude_removeable_ != val.bg_exclude_removeable_ ||
@@ -3329,6 +3341,9 @@ void CHexEditApp::set_options(struct OptValues &val)
 
 	bg_search_ = val.bg_search_;
 	bg_stats_ = val.bg_stats_;
+	bg_stats_crc32_ = val.bg_stats_crc32_;
+	bg_stats_md5_ = val.bg_stats_md5_;
+	bg_stats_sha1_ = val.bg_stats_sha1_;
 	bg_exclude_network_ = val.bg_exclude_network_;
 	bg_exclude_removeable_ = val.bg_exclude_removeable_;
 	bg_exclude_optical_ = val.bg_exclude_optical_;
