@@ -46,6 +46,10 @@ CHexFileList::CHexFileList(UINT nStart, LPCTSTR lpszSection, int nSize, int nMax
 	// scheme is searched for then a scheme based on current char set is used
 	// Also note that some values are set in the default string here just to show the fields
 	// and are overwritten with the current default value from the registry below.
+	// The entries correspond to the parm_num enum as:
+	//               CMD                           SEL     CS DOC  GRP                        FORMAT
+	//               | TOP    LEFT   BOTTOM RIGHT  | | POS  HL  COLS   FONT    HEIGHT         |
+	//               | |      |      |      |      | | | MK  DISPLAY OFF       |  OEMFONT  HEIGHT
 	default_data_ = "1|-30000|-30000|-30000|-30000|0|0|0|0||||0|16|4|0|Courier|16|Terminal|18|default";
 	SetDefaults();
 
@@ -581,6 +585,7 @@ bool CHexFileList::SetData(int index, param_num param, LPCTSTR vv)
 	CString value(vv);
 	ASSERT(index > -1);
 
+#if 0 the following is brain-dead since if the default setting is changed then the used value becomes wrong
 	// If we are setting to the default value make it blank
 	if (GetDV(param) == value)
 	{
@@ -592,6 +597,7 @@ bool CHexFileList::SetData(int index, param_num param, LPCTSTR vv)
 		else
 			value.Empty();
 	}
+#endif
 
 	ASSERT(index < name_.size());
 	ASSERT(strchr(value, '|') == NULL);   // Value string should not contain separator chars
