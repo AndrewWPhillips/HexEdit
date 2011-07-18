@@ -4,6 +4,14 @@
 #include <vector>
 
 // CTipWnd
+//
+// This is a class to draw a "tip" window above other windows.  Facilities include:
+// - set and get position of the window, get size of window
+// - hide and show the window with fade in and out
+// - set (global) background colour, font, transparency
+// - add multiple strings each positioned underneath each other - simply call AddString("string") many times
+// - separate colours for each string - use 2nd parameter to AddString
+// - position strings at any position with any DrawText formating - use extra parameters to AddString
 
 // We have to load a ptr to KERNEL32.DLL API function SetLayeredWindowAttributes
 // manually since it is only supported on W2K/XP (not 9X, ME, NT4)
@@ -56,7 +64,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	UINT  m_fmt;                // Format flag passed to DrawText
+	UINT  m_fmt;                // Default format flags passed to DrawText
 	CSize m_margins;            // Default margins around the text
 
 	COLORREF m_bg_colour;          // Colour of background

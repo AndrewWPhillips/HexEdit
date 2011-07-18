@@ -218,6 +218,7 @@ int CSimpleGraph::get_bar(CPoint pt)
 BEGIN_MESSAGE_MAP(CSimpleGraph, CWnd)
 	ON_WM_PAINT()
 	ON_WM_SIZE()
+	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
 	ON_MESSAGE(WM_MOUSEHOVER, OnMouseHover)
 	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
@@ -239,6 +240,12 @@ void CSimpleGraph::OnSize(UINT nType, int cx, int cy)
 {
 	__super::OnSize(nType, cx, cy);
 	update();
+}
+
+BOOL CSimpleGraph::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
+{
+	SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
+	return TRUE;
 }
 
 void CSimpleGraph::OnMouseMove(UINT nFlags, CPoint point)
@@ -263,9 +270,9 @@ LRESULT CSimpleGraph::OnMouseHover(WPARAM, LPARAM lp)
 		m_tip.Clear();
 		CString ss;
 		if (theApp.hex_ucase_)
-			ss.Format("Byte: %d %02.2X", m_bar, m_bar);
+			ss.Format("Byte: %d [%02.2Xh]", m_bar, m_bar);
 		else
-			ss.Format("Byte: %d %02.2x", m_bar, m_bar);
+			ss.Format("Byte: %d [%02.2xh]", m_bar, m_bar);
 		m_tip.AddString(ss);
 
 		char buf[32];                   // used with sprintf (CString::Format can't handle __int64)

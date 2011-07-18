@@ -15,6 +15,7 @@ public:
 protected:
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg LRESULT OnMouseHover(WPARAM wp, LPARAM lp);
 	afx_msg LRESULT OnMouseLeave(WPARAM wp, LPARAM lp);
