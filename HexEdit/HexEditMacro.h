@@ -56,8 +56,8 @@ enum km_type
 	// Commands added in 2.1
 	km_prop_date,               // Change to the date page
 	km_prop_crc,                // CRC page (not implemented) - part of checksum page?
-	km_prop_stats,              // statistics page
-	km_prop_digest,             // digest (crypto checksum) (not implemented)
+	km_prop_graph,              // Stats graph
+	km_prop_stats,              // statistics page: digest (crypto checksum) etc
 
 	// Commands added in 2.2
 	km_macro_message,           // display message during playback
