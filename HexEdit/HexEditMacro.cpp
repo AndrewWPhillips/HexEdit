@@ -1349,6 +1349,18 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				case CHECKSUM_SHA1:
 					pv_->OnSha1();
 					break;
+				case CHECKSUM_SHA224:
+					pv_->OnSha2_224();
+					break;
+				case CHECKSUM_SHA256:
+					pv_->OnSha2_256();
+					break;
+				case CHECKSUM_SHA384:
+					pv_->OnSha2_384();
+					break;
+				case CHECKSUM_SHA512:
+					pv_->OnSha2_512();
+					break;
 				default:
 					ASSERT(0);
 				}

@@ -816,7 +816,6 @@ void CHexEditApp::InitWorkspace()
 		ID_ANSI2IBM,
 		ID_IBM2ANSI,
 		ID_CRC32,
-		ID_MD5,
 		ID_SHA1,
 		ID_ENCRYPT_ENCRYPT,
 		ID_ENCRYPT_DECRYPT,

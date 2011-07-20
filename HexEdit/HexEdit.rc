@@ -562,9 +562,16 @@ BEGIN
             MENUITEM "CRC CCIT&T",                  ID_CRC_CCITT
             MENUITEM "CRC CCITT &B",                ID_CRC_CCITT_B
             MENUITEM "&CRC 32",                     ID_CRC32
-            MENUITEM SEPARATOR
+        END
+        POPUP "Digest"
+        BEGIN
             MENUITEM "&MD5",                        ID_MD5
             MENUITEM "&SHA1",                       ID_SHA1
+            MENUITEM SEPARATOR
+            MENUITEM "SHA22&4",                      ID_SHA224
+            MENUITEM "SHA&256",                      ID_SHA256
+            MENUITEM "SHA&384",                      ID_SHA384
+            MENUITEM "SHA&512",                      ID_SHA512
         END
         POPUP "Encryption"
         BEGIN
@@ -3329,8 +3336,8 @@ STRINGTABLE
 BEGIN
     IDS_CALC_INVALID        "Invalid expression"
     IDS_CALC_TOO_BIG        "Too Big to Display"
-    IDS_SHA1                "SHA1"
-    IDS_MD5                 "MD5"
+    IDS_SHA1                "SHA1 message digest"
+    IDS_MD5                 "MD5 message digest     "
     IDS_CRC                 "Checksum/CRC result"
     IDS_DFFD_USE_UNNAMED    "No Name Specified"
     IDS_READ_ONLY           "Turn off Read Only Mode?"
@@ -3365,6 +3372,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_UPDATE_AVAILABLE    "New Version Available"
+    IDS_DIGEST              "Message Digest          "
 END
 
 #endif    // English (U.S.) resources

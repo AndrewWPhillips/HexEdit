@@ -1298,6 +1298,7 @@
 #define ID_TEST2                        32852
 #define ID_VIEWTEST                     32853
 #define ID_WEB_PAGE                     32854
+#define ID_CUSTOMIZE                    32855
 #define ID_INVERT                       32856
 #define ID_NEG_BYTE                     32857
 #define ID_NEG_16BIT                    32858
@@ -1308,7 +1309,7 @@
 #define ID_HIGHLIGHT_CLEAR              32863
 #define ID_HIGHLIGHT_PREV               32864
 #define ID_HIGHLIGHT_NEXT               32865
-#define ID_CUSTOMIZE                    32866
+#define ID_HIGHLIGHT_HIDE               32866
 #define ID_TOOLS_ENTRY                  32867
 #define ID_HELP_KEYBOARDMAP             32868
 #define ID_WINDOW_MANAGER               32869
@@ -1416,8 +1417,8 @@
 #define ID_CRC_CCITT                    32995
 #define ID_CRC_CCITT_B                  32996
 #define ID_CRC_XMODEM                   32997
-#define ID_MD5                          32998
-#define ID_SHA1                         32999
+#define ID_RECENT_FILES                 32998
+#define ID_BANNED                       32999
 #define ID_XOR_BYTE                     33001
 #define ID_XOR_16BIT                    33002
 #define ID_XOR_32BIT                    33003
@@ -1474,9 +1475,12 @@
 #define ID_MOD_X_16BIT                  33054
 #define ID_MOD_X_32BIT                  33055
 #define ID_MOD_X_64BIT                  33056
-#define ID_RECENT_FILES                 33062
-#define ID_HIGHLIGHT_HIDE               33065
-#define ID_BANNED                       33066
+#define ID_MD5                          33057
+#define ID_SHA1                         33058
+#define ID_SHA224                       33059
+#define ID_SHA256                       33060
+#define ID_SHA384                       33061
+#define ID_SHA512                       33062
 #define ID_VIEW_NAVBAR                  33067
 #define ID_VIEW_FORMATBAR               33068
 #define ID_FIND_NEXT                    33070
@@ -1708,6 +1712,7 @@
 #define IDS_COMPARE_DIFF                52735
 #define IDS_INVALID_HEX                 52736
 #define IDS_SEL_LEN                     52737
+#define IDS_DIGEST                      52738
 #define IDS_LEAVE_LARGE_CB              52740
 #define IDS_BOOKMARKS_ADJUSTED          52741
 #define IDS_FILE_OPEN_READ_ONLY         52742

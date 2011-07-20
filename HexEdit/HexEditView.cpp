@@ -18,6 +18,7 @@
 //
 
 #include "stdafx.h"
+#include <boost/hash.hpp>  // This is for digests (SHA2 etc) see below for notes on where it came from
 #include "HexEdit.h"
 #include "HexFileList.h"
 
@@ -564,6 +565,15 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_MD5, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA1, OnSha1)
 	ON_UPDATE_COMMAND_UI(ID_SHA1, OnUpdateByteNZ)
+
+	ON_COMMAND(ID_SHA224, OnSha2_224)
+	ON_UPDATE_COMMAND_UI(ID_SHA224, OnUpdateByteNZ)
+	ON_COMMAND(ID_SHA256, OnSha2_256)
+	ON_UPDATE_COMMAND_UI(ID_SHA256, OnUpdateByteNZ)
+	ON_COMMAND(ID_SHA384, OnSha2_384)
+	ON_UPDATE_COMMAND_UI(ID_SHA384, OnUpdateByteNZ)
+	ON_COMMAND(ID_SHA512, OnSha2_512)
+	ON_UPDATE_COMMAND_UI(ID_SHA512, OnUpdateByteNZ)
 
 	ON_COMMAND(ID_UPPERCASE, OnUppercase)
 	ON_UPDATE_COMMAND_UI(ID_UPPERCASE, OnUpdateConvert)
@@ -16411,6 +16421,7 @@ void CHexEditView::OnUpdate64bitBinary(CCmdUI* pCmdUI)
 	OnUpdate64bit(pCmdUI);
 }
 
+// Note: DoChecksum is not a member template (not supported in VC++ when written) so a ptr to the view is passed in pv
 template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR desc)
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -16551,7 +16562,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		break;
 	}
 
-// xxx chnage ByteSize calls to get_bits xxx TBD TODO
+// xxx change ByteSize calls to get_bits xxx TBD TODO
 	// Get final CRC and store it in the calculator
 	if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < sizeof(T))
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(sizeof(T)*8);
@@ -16612,6 +16623,7 @@ void CHexEditView::OnCrc32()
 	DoChecksum<DWORD>(this, CHECKSUM_CRC32, "CRC 32");
 }
 
+#if 0  // Replace old MD5 with Boost version
 void CHexEditView::OnMd5()
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -16688,6 +16700,7 @@ void CHexEditView::OnMd5()
 		// Load the value into the calculator ensuring bits is at least 160 and radix is hex
 		if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.get_bits() < 128)
 			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(128);
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_signed(false);  // avoid overflow if top bit is on
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr(ss);
 		dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
@@ -16710,7 +16723,21 @@ func_return:
 	if (buf != NULL)
 		delete[] buf;
 }
+#else
+void CHexEditView::OnMd5()
+{
+	typedef boost::hashes::md5 alg;
+	DoDigest<alg>("MD5", CHECKSUM_MD5);
+}
+#endif
 
+#if 0  // Don't use Boost SHA1 (yet) as it is 4-5 times slower than our old one
+void CHexEditView::OnSha1()
+{
+	typedef boost::hashes::sha1 alg;
+	DoDigest<alg>("SHA1", CHECKSUM_SHA1);
+}
+#else
 void CHexEditView::OnSha1()
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -16769,6 +16796,7 @@ void CHexEditView::OnSha1()
 	unsigned char digest[20];
 	sha1_finish(&ctx, digest);
 
+	mm->Progress(-1);  // disable progress bar
 	// Display the value in (avoidable) message box and then load it into the calculator
 	{
 		// First get the result as text (hex digits)
@@ -16788,6 +16816,7 @@ void CHexEditView::OnSha1()
 		// Load the value into the calculator ensuring bits is at least 160 and radix is hex
 		if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.get_bits() < 160)
 			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(160);
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_signed(false);  // avoid overflow if top bit is on
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr(ss);
 		dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
@@ -16807,6 +16836,138 @@ void CHexEditView::OnSha1()
 func_return:
 	mm->Progress(-1);  // disable progress bar
 
+	if (buf != NULL)
+		delete[] buf;
+}
+#endif
+
+void CHexEditView::OnSha2_224()
+{
+	typedef boost::hashes::sha2<224> alg;
+	DoDigest<alg>("SHA-224", CHECKSUM_SHA224);
+}
+
+void CHexEditView::OnSha2_256()
+{
+	typedef boost::hashes::sha2<256> alg;
+	DoDigest<alg>("SHA-256", CHECKSUM_SHA256);
+}
+
+void CHexEditView::OnSha2_384()
+{
+	typedef boost::hashes::sha2<384> alg;
+	DoDigest<alg>("SHA-384", CHECKSUM_SHA384);
+}
+
+void CHexEditView::OnSha2_512()
+{
+	typedef boost::hashes::sha2<512> alg;
+	DoDigest<alg>("SHA-512", CHECKSUM_SHA512);
+}
+
+// This is a template member function for generating digest based on the proposed
+// Boost "hash" library.  This is actually not (yet) part of Boost as at ver 1.47
+// but I have installed the hash.hpp header (and the files int the hash sub-directory)
+// into the Boost include directory (currently using Boost 1.47).  Note that the
+// file, directory and namespace (hashes) may all change if/when it is added to
+// Boost (possibly as "digest") to avoid confusion with functional/hash.
+// Also note that I had to comment out the Adler and CRC includes in hash.hpp as
+// this was causing build errors (and I don't need those).
+// Anyway, I added this for the SHA2 digests (SHA-256 etc) but I have also changed
+// the MD5 to use it.  (I have not changed SHA1 (yet) as the old code is faster.) 
+template<class T> void CHexEditView::DoDigest(LPCSTR desc, int mac_id)
+{
+	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	unsigned char *buf = NULL;
+
+	// Get current address or selection
+	FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
+	GetSelAddr(start_addr, end_addr);
+
+	if (start_addr >= end_addr)
+	{
+		// No selection, presumably in macro playback
+		ASSERT(theApp.playing_);
+		TaskMessageBox("No Selection", "There is no selection to calculate " + CString(desc));
+		theApp.mac_error_ = 10;
+		return;
+	}
+	ASSERT(start_addr < GetDocument()->length());
+
+	// Get a buffer - fairly large for efficiency
+	size_t len, buflen = size_t(min(4096, end_addr - start_addr));
+	try
+	{
+		buf = new unsigned char[buflen];
+	}
+	catch (std::bad_alloc)
+	{
+		AfxMessageBox("Insufficient memory");
+		theApp.mac_error_ = 10;
+		return;
+	}
+	ASSERT(buf != NULL);
+
+	T::stream_hash<8>::type ctx;
+	T::digest_type digest;
+
+	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+	{
+		// Get the next buffer full from the document
+		len = size_t(min(buflen, end_addr - curr));
+		VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+
+		ctx.update_n(buf, len);
+
+		if (AbortKeyPress() &&
+			TaskMessageBox("Abort " + CString(desc) + " calculation?", 
+			    "You have interrupted the " + CString(desc) + " calculation.\n\n"
+			    "Do you want to stop the process?",MB_YESNO) == IDYES)
+		{
+			theApp.mac_error_ = 10;
+			mm->Progress(-1);  // disable progress bar
+			goto func_return;
+		}
+
+		mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
+	}
+	digest = ctx.end_message();
+
+	mm->Progress(-1);  // disable progress bar
+
+	// Display the value in (avoidable) message box and then load it into the calculator
+	{
+		CString ss;
+		const char * fmt = theApp.hex_ucase_ ? "%2.2X" : "%2.2x";
+		for (int ii = 0; ii < T::digest_type::digest_bits/8; ++ii)
+		{
+			char buf[8];
+			sprintf(buf, fmt, digest[ii]);
+			ss += buf;
+		}
+
+		// Load the value into the calculator ensuring bits is at least 160 and radix is hex
+		if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.get_bits() < T::digest_type::digest_bits)
+			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(T::digest_type::digest_bits);
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_signed(false);  // avoid overflow if top bit is on
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);       // Digests are traditionally shown in hex
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr(ss);
+		dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
+
+		// Display the result in an (avoidable) dialog
+		AddSpaces(ss);
+		CString mess;
+		mess.Format("%s\n\n"
+		            "The calculator value has been set to the result of the %s calculation "
+		            "which is %d bits in length and displayed in hex (radix 16).\n\n"
+		            "%s", desc, desc, T::digest_type::digest_bits, ss);
+		CAvoidableDialog::Show(IDS_DIGEST, mess);
+	}
+
+	// Record in macro since we did it successfully
+	theApp.SaveToMacro(km_checksum, mac_id);
+
+func_return:
 	if (buf != NULL)
 		delete[] buf;
 }

@@ -51,7 +51,7 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Devel\WTL80\include;D:\Devel\boost_1_44_0;$(ProjectDir)\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Devel\WTL80\include;D:\Devel\boost_1_47_0;$(ProjectDir)\include;$(IncludePath)</IncludePath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">HexEdit</TargetName>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Devel\Libraries\FreeImage;D:\Devel\boost_1_44_0;$(IncludePath)</IncludePath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HexEdit</TargetName>

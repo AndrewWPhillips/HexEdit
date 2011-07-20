@@ -99,7 +99,7 @@ public:
 
 	void change_base(int base);    // set radix (2 to 36)
 	void change_signed(bool s);    // set whether numbers are signed or unsigned
-	void change_bits(int);         // chnage how many bits are used (0 = unlimited)
+	void change_bits(int);         // change how many bits are used (0 = unlimited)
 
 	int ByteSize() const { return (bits_-1)/8 + 1; }
 	int get_bits() const { return bits_; }

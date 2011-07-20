@@ -773,6 +773,12 @@ public:
 	afx_msg void OnCompAutoScroll();
 	afx_msg void OnUpdateCompAutoScroll(CCmdUI* pCmdUI);
 
+	template<class T> void DoDigest(LPCSTR desc, int mac_id);
+	afx_msg void OnSha2_224();
+	afx_msg void OnSha2_256();
+	afx_msg void OnSha2_384();
+	afx_msg void OnSha2_512();
+
 	DECLARE_MESSAGE_MAP()
 
 public:
