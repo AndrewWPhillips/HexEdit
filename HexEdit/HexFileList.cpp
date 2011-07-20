@@ -585,7 +585,7 @@ bool CHexFileList::SetData(int index, param_num param, LPCTSTR vv)
 	CString value(vv);
 	ASSERT(index > -1);
 
-#if 0 the following is brain-dead since if the default setting is changed then the used value becomes wrong
+#if 0 // the following is brain-dead since if the default setting is changed then the used value becomes wrong
 	// If we are setting to the default value make it blank
 	if (GetDV(param) == value)
 	{

@@ -76,6 +76,7 @@
 #include "TipDlg.h"
 #include "CoordAp.h"
 #include "AvoidableDialog.h"
+#include "HelpID.hm"
 
 #ifdef _UNICODE
 #if defined _M_IX86

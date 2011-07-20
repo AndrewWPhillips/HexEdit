@@ -48,6 +48,7 @@
 #define HIDD_RECENT_FILES_HELP        0x010B0
 #define HIDD_NEW_SCHEME_HELP          0x010C0
 #define HIDD_CSRC_HELP                0x010D0
+#define HIDC_STATS_GRAPH              0x010E0
 
 #define HIDD_CUST_COMMANDS            0x01100
 #define HIDD_CUST_TOOLBARS            0x01101
