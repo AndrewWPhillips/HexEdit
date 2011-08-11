@@ -16562,10 +16562,11 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		break;
 	}
 
-// xxx change ByteSize calls to get_bits xxx TBD TODO
 	// Get final CRC and store it in the calculator
-	if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.ByteSize() < sizeof(T))
+	if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.get_bits() < sizeof(T)*8)
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(sizeof(T)*8);
+	((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_signed(false);  // avoid overflow if top bit is on
+	//((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);
 	((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(val);
 	dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
 

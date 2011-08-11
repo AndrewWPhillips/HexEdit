@@ -65,7 +65,6 @@ typedef __int64 FILE_ADDRESS;
 // Conditional compilation flags - always to be used
 #define BOOST_CRC        1  // Use Boost CRC code rather than rather than dubious code I got somewhere
 #define BOOST_RAND       1  // Use Boost PRNGs rather than my own one
-#define BG_STATS         1  // calc bg stats (including chnages to options pages and BGstats.cpp)
 #define USE_OWN_PRINTDLG 1  // Replace the standard print dialog with our own derived dialog
 #define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
 #define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
