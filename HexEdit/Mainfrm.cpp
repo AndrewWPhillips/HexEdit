@@ -229,6 +229,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 		ON_REGISTERED_MESSAGE(AFX_WM_ON_GET_TAB_TOOLTIP, OnGetTabToolTip)
 //        ON_MESSAGE(WM_USER, OnReturn)
 
+		ON_COMMAND_RANGE(ID_MACRO_FIRST, ID_MACRO_LAST-1, OnMacro)
 		ON_COMMAND(ID_TEST, OnTest)
 END_MESSAGE_MAP()
 
@@ -1368,6 +1369,15 @@ LRESULT CMainFrame::OnGetTabToolTip(WPARAM /*wp*/, LPARAM lp)
 
 	pInfo->m_strText = pDoc->GetPathName();
 	return 0;
+}
+
+void CMainFrame::OnMacro(UINT nID)
+{
+	ASSERT(nID >= ID_MACRO_FIRST && nID < ID_MACRO_LAST);
+	std::vector<CString> mac = GetMacroCommands();
+	int ii = nID - ID_MACRO_FIRST;
+	if (ii >= 0 && ii < mac.size())
+		theApp.play_macro_file(mac[ii]);
 }
 
 void CMainFrame::OnDockableToggle()
@@ -4349,6 +4359,28 @@ void CMainFrame::OnCustomize()
 	pdlg->AddMenuCommands(menu.GetSubMenu(3), FALSE, "Aerial view commands");
 	menu.DestroyMenu();
 
+	// Get macro cmd names
+	std::vector<CString> mac = GetMacroCommands();
+
+	MENUITEMINFO mii;
+	memset(&mii, '\0', sizeof(mii));
+	mii.cbSize = sizeof(mii);
+	mii.fMask = MIIM_ID | MIIM_STATE | MIIM_TYPE;
+	mii.fState = MFS_ENABLED;
+	mii.fType = MFT_STRING;
+
+	menu.CreatePopupMenu();
+	for (int ii = 0; ii < mac.size(); ++ii)
+		if (!mac[ii].IsEmpty())
+		{
+			mii.wID = ID_MACRO_FIRST + ii;
+			CString ss = "Macro:" + mac[ii];
+			mii.dwTypeData = ss.GetBuffer();
+			menu.InsertMenuItem(ID_MACRO_FIRST + ii, &mii);
+		}
+	pdlg->AddMenuCommands(&menu, FALSE, "Macros");
+	menu.DestroyMenu();
+
 	pdlg->ReplaceButton(ID_JUMP_HEX, CHexComboButton ());
 	pdlg->ReplaceButton(ID_JUMP_DEC, CDecComboButton ());
 	pdlg->ReplaceButton(ID_SEARCH, CFindComboButton ());
@@ -4688,7 +4720,23 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 		theApp.navman_.AddItems(pMenuPopup, true, ID_NAV_FORW_FIRST, NAV_RESERVED);
 	}
 
-	// 2 lists of templates - according to Windows extension (preceded by underscore) and others
+	// Replace dummy entry (ID_MACRO_LAST) with list of macros
+	if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_MACRO_LAST) >= 0)
+	{
+		if (CMFCToolBar::IsCustomizeMode ())
+			return FALSE;
+
+		pMenuPopup->RemoveAllItems ();
+		std::vector<CString> mac = GetMacroCommands();
+
+		for (int ii = 0; ii < mac.size(); ++ii)
+			if (!mac[ii].IsEmpty())
+				pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_MACRO_FIRST + ii, NULL, -1, "Macro:" + mac[ii]));
+	}
+
+	// We generate 2 lists of templates
+	//  1. based on Windows file type - file name (preceded by underscore) is the extension [ID_DFFD_OPEN_TYPE_DUMMY]
+	//  2. others (not starting with underscore) [ID_DFFD_OPEN_OTHER_DUMMY]
 	if (pMenuPopup->GetMenuBar()->CommandToIndex(ID_DFFD_OPEN_TYPE_DUMMY) >= 0)
 	{
 		if (CMFCToolBar::IsCustomizeMode ())
@@ -4750,6 +4798,68 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 	}
 
 	return TRUE;
+}
+
+// Return a list of macro file names and their corresponding cmd IDs.
+// It remembers (in registry) the ID<->file name association so that
+//   customizations are retained between invocations
+std::vector<CString> CMainFrame::GetMacroCommands()
+{
+	std::vector<CString> retval;
+	retval.resize(ID_MACRO_LAST - ID_MACRO_FIRST);
+	ASSERT(theApp.mac_dir_.Right(1) == "\\");
+
+	// Get cmd IDs for already seen macro files (so IDs don't change between invocations)
+	CString ss, strMacro;
+	for (int ii = 0; ii < ID_MACRO_LAST - ID_MACRO_FIRST; ++ii)
+	{
+		ss.Format("%d", ii);
+		strMacro = theApp.GetProfileString("MacroCmdId", ss);
+		// If the entry exists and the macro file i still there then add it
+		if (!strMacro.IsEmpty() && _access(theApp.mac_dir_ + strMacro + ".hem", 0) != -1)
+		{
+			retval[ii] = strMacro;
+		}
+	}
+
+	// Now check all the macro files and add them if not present
+	CFileFind ff;
+	BOOL bContinue = ff.FindFile(theApp.mac_dir_ + "*.hem");
+
+	while (bContinue)
+	{
+		bContinue = ff.FindNextFile();
+		strMacro = ff.GetFileTitle();
+
+		if (strMacro[0] == '_')
+			continue;              // ignore macro files starting with underscore
+
+		for (int ii = 0; ii < ID_MACRO_LAST - ID_MACRO_FIRST; ++ii)
+		{
+			if (strMacro == retval[ii])
+			{
+				// Already handled so signal to skip it
+				strMacro.Empty();
+				break;
+			}
+		}
+		if (!strMacro.IsEmpty())
+		{
+			for (int ii = 0; ii < ID_MACRO_LAST - ID_MACRO_FIRST; ++ii)
+			{
+				if (retval[ii].IsEmpty())
+				{
+					// Found an empty slot
+					retval[ii] = strMacro;
+					ss.Format("%d", ii);
+					theApp.WriteProfileString("MacroCmdId", ss, strMacro);
+					break;
+				}
+			}
+		}
+	}
+
+	return retval;
 }
 
 void CMainFrame::OnSearchCombo()

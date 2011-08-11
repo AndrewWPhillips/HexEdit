@@ -421,11 +421,13 @@
 #define IDR_CONTEXT_GROUP_BY_HANDLE     446
 #define IDR_CONTEXT_ROWSIZE_HANDLE      447
 #define IDR_CONTEXT_RULER               448
-#define IDC_INFO                        449
-#define IDC_HANDOPEN                    450
-#define IDC_HANDGRAB                    451
-#define IDD_PROP_STATS                  455
-#define IDD_PROP_GRAPH                  456
+#define ID_MACRO_FIRST                  450
+#define ID_MACRO_LAST                   470
+#define IDC_INFO                        500
+#define IDC_HANDOPEN                    501
+#define IDC_HANDGRAB                    502
+#define IDD_PROP_STATS                  505
+#define IDD_PROP_GRAPH                  506
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1732,7 +1734,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        463
+#define _APS_NEXT_RESOURCE_VALUE        510
 #define _APS_NEXT_COMMAND_VALUE         39152
 #define _APS_NEXT_CONTROL_VALUE         1647
 #define _APS_NEXT_SYMED_VALUE           252

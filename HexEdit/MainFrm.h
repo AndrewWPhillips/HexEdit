@@ -261,7 +261,8 @@ public:
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 
-	afx_msg LRESULT CMainFrame::OnGetTabToolTip(WPARAM, LPARAM lp);
+	afx_msg LRESULT OnGetTabToolTip(WPARAM, LPARAM lp);
+	afx_msg void OnMacro(UINT nID);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -347,6 +348,8 @@ private:
 	std::vector<CMFCPopupMenu*> popup_menu_;    // We are only interested in the last (currently active) menu
 	UINT last_id_;                // Last menu item mouse was over
 	bool progress_on_;            // Used by Progress() method to say if we are currently displaying progress
+
+	std::vector<CString> GetMacroCommands(); // get cmd IDs of macros for adding to macro sub-menu 
 };
 
 /////////////////////////////////////////////////////////////////////////////

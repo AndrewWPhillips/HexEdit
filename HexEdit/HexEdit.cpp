@@ -864,6 +864,7 @@ void CHexEditApp::InitWorkspace()
 		ID_CUSTOMIZE,
 		ID_OPTIONS,
 		ID_RECORD,
+		ID_MACRO_LAST,
 		ID_PLAY,
 
 		ID_WINDOW_NEW,

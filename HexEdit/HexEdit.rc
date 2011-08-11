@@ -360,6 +360,10 @@ BEGIN
         MENUITEM "&Record Macro\tF7",           ID_RECORD
         MENUITEM "&Quick Play\tF8",             ID_PLAY
         MENUITEM "Macro &Message",              ID_MACRO_MESSAGE
+        POPUP "Play Macro"
+        BEGIN
+            MENUITEM "None",                        ID_MACRO_LAST, INACTIVE
+        END
         MENUITEM "&Play...\tF9",                ID_MULTI_PLAY
     END
     POPUP "&Help"
@@ -836,6 +840,10 @@ BEGIN
         MENUITEM "&Record Macro\tF7",           ID_RECORD
         MENUITEM "&Quick Play\tF8",             ID_PLAY
         MENUITEM "Macro &Message",              ID_MACRO_MESSAGE
+        POPUP "Play Macro"
+        BEGIN
+            MENUITEM "None",                        ID_MACRO_LAST, INACTIVE
+        END
         MENUITEM "&Play...\tF9",                ID_MULTI_PLAY
     END
     POPUP "&Window"
