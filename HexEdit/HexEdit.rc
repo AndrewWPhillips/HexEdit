@@ -3380,7 +3380,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_UPDATE_AVAILABLE    "New Version Available"
-    IDS_DIGEST              "Message Digest          "
+    IDS_DIGEST              "Message Digest        "
 END
 
 #endif    // English (U.S.) resources
