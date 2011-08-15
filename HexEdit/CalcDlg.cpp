@@ -186,8 +186,6 @@ void CCalcBits::OnLButtonDown(UINT nFlags, CPoint point)
 		mpz_class val = m_pParent->current_;
 		mpz_combit(val.get_mpz_t(), bnum);
 		m_pParent->Set(val);
-		m_pParent->edit_.get();
-		m_pParent->set_right();
 	}
 	CWnd::OnLButtonDown(nFlags, point);
 }

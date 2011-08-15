@@ -16568,6 +16568,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_signed(false);  // avoid overflow if top bit is on
 	//((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);
 	((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(val);
+
 	dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
 
 	theApp.SaveToMacro(km_checksum, op);
@@ -16819,7 +16820,12 @@ void CHexEditView::OnSha1()
 			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(160);
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_signed(false);  // avoid overflow if top bit is on
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);
-		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr(ss);
+
+		//((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr(ss);
+		mpz_class tmp;
+		mpz_set_str(tmp.get_mpz_t(), ss, 16);
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(tmp);
+
 		dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
 
 		// Display the result in an (avoidable) dialog
@@ -16844,26 +16850,22 @@ func_return:
 
 void CHexEditView::OnSha2_224()
 {
-	typedef boost::hashes::sha2<224> alg;
-	DoDigest<alg>("SHA-224", CHECKSUM_SHA224);
+	DoDigest<boost::hashes::sha2<224> >("SHA-224", CHECKSUM_SHA224);
 }
 
 void CHexEditView::OnSha2_256()
 {
-	typedef boost::hashes::sha2<256> alg;
-	DoDigest<alg>("SHA-256", CHECKSUM_SHA256);
+	DoDigest<boost::hashes::sha2<256> >("SHA-256", CHECKSUM_SHA256);
 }
 
 void CHexEditView::OnSha2_384()
 {
-	typedef boost::hashes::sha2<384> alg;
-	DoDigest<alg>("SHA-384", CHECKSUM_SHA384);
+	DoDigest<boost::hashes::sha2<384> >("SHA-384", CHECKSUM_SHA384);
 }
 
 void CHexEditView::OnSha2_512()
 {
-	typedef boost::hashes::sha2<512> alg;
-	DoDigest<alg>("SHA-512", CHECKSUM_SHA512);
+	DoDigest<boost::hashes::sha2<512> >("SHA-512", CHECKSUM_SHA512);
 }
 
 // This is a template member function for generating digest based on the proposed
@@ -16952,7 +16954,12 @@ template<class T> void CHexEditView::DoDigest(LPCSTR desc, int mac_id)
 			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(T::digest_type::digest_bits);
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_signed(false);  // avoid overflow if top bit is on
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);       // Digests are traditionally shown in hex
-		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr(ss);
+
+		//((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr(ss);
+		mpz_class tmp;
+		mpz_set_str(tmp.get_mpz_t(), ss, 16);
+		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.Set(tmp);
+
 		dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->show_calc();          // make sure calc is displayed
 
 		// Display the result in an (avoidable) dialog

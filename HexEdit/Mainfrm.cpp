@@ -4207,8 +4207,6 @@ void CMainFrame::OnEditGoto(int base_mode /*= 0*/)
 		FILE_ADDRESS start, end;
 		pview->GetSelAddr(start, end);
 		m_wndCalc.Set(start);
-		m_wndCalc.edit_.get();
-		m_wndCalc.set_right();
 
 		m_wndCalc.SetFocus();
 		m_wndCalc.StartEdit();
