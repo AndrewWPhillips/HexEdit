@@ -53,10 +53,10 @@
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Devel\WTL80\include;D:\Devel\boost_1_47_0;$(ProjectDir)\include;$(IncludePath)</IncludePath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">HexEdit</TargetName>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Devel\Libraries\FreeImage;D:\Devel\boost_1_44_0;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Devel\Libraries\FreeImage;D:\Devel\boost_1_47_0;$(ProjectDir)\include;$(IncludePath)</IncludePath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HexEdit</TargetName>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Devel\Libraries\FreeImage;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -395,6 +395,8 @@
     <None Include="RES\formtbarHot.bmp" />
     <None Include="RES\forw.bmp" />
     <None Include="RES\forw_hot.bmp" />
+    <None Include="res\HandGrab.cur" />
+    <None Include="res\HandOpen.cur" />
     <None Include="res\HexEdit.rc2" />
     <None Include="res\HexEditDoc.ico" />
     <None Include="RES\highligh.cur" />
@@ -406,6 +408,7 @@
     <None Include="Res\idr_main.ico" />
     <None Include="RES\if.ico" />
     <None Include="RES\imagelis.bmp" />
+    <None Include="res\info.cur" />
     <None Include="RES\info.ico" />
     <None Include="RES\jump.ico" />
     <None Include="RES\layout.ico" />
