@@ -10,7 +10,7 @@
 
 #include "ResizeCtrl.h"
 
-// Classes that handle each page (derived from CPropertyPage)
+// Classes that handle each page (derived from CFindPage -> CPropertyPage)
 class CSimplePage;
 class CHexPage;
 class CTextPage;
@@ -43,6 +43,7 @@ public:
 
 public:
 	virtual BOOL Create(CWnd* pParentWnd, DWORD dwStyle);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 // Implementation
 public:
@@ -160,18 +161,24 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
+// CFindPage - base class of all find dialog pages
+class CFindPage : public CPropertyPage
+{
+public:
+	explicit CFindPage(UINT id) : CPropertyPage(id) { }
+	virtual void OnEnter() =0; // pages must implement
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CSimplePage dialog
 
-class CSimplePage : public CPropertyPage
+class CSimplePage : public CFindPage
 {
 	DECLARE_DYNCREATE(CSimplePage)
 
 // Construction
 public:
 	CSimplePage();
-	~CSimplePage();
 
 // Dialog Data
 	//{{AFX_DATA(CSimplePage)
@@ -188,6 +195,7 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+	virtual void OnEnter() { OnFindNext(); }
 
 // Implementation
 protected:
@@ -216,14 +224,13 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // CHexPage dialog
 
-class CHexPage : public CPropertyPage
+class CHexPage : public CFindPage
 {
 	DECLARE_DYNCREATE(CHexPage)
 
 // Construction
 public:
 	CHexPage();
-	~CHexPage();
 
 // Dialog Data
 	//{{AFX_DATA(CHexPage)
@@ -242,6 +249,7 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+	virtual void OnEnter() { OnFindNext(); }
 	virtual void OnCancel();
 	virtual void OnOK();
 	virtual BOOL OnKillActive();
@@ -286,14 +294,13 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // CTextPage dialog
 
-class CTextPage : public CPropertyPage
+class CTextPage : public CFindPage
 {
 	DECLARE_DYNCREATE(CTextPage)
 
 // Construction
 public:
 	CTextPage();
-	~CTextPage();
 
 // Dialog Data
 	//{{AFX_DATA(CTextPage)
@@ -311,6 +318,7 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+	virtual void OnEnter() { OnFindNext(); }
 
 // Implementation
 protected:
@@ -344,14 +352,13 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // CNumberPage dialog
 
-class CNumberPage : public CPropertyPage
+class CNumberPage : public CFindPage
 {
 	DECLARE_DYNCREATE(CNumberPage)
 
 // Construction
 public:
 	CNumberPage();
-	~CNumberPage();
 
 // Dialog Data
 	//{{AFX_DATA(CNumberPage)
@@ -370,6 +377,7 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+	virtual void OnEnter() { OnFindNext(); }
 	virtual BOOL OnKillActive();
 
 // Implementation
@@ -406,14 +414,13 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // CReplacePage dialog
 
-class CReplacePage : public CPropertyPage
+class CReplacePage : public CFindPage
 {
 	DECLARE_DYNCREATE(CReplacePage)
 
 // Construction
 public:
 	CReplacePage();
-	~CReplacePage();
 
 // Dialog Data
 	//{{AFX_DATA(CReplacePage)
@@ -431,6 +438,7 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+	virtual void OnEnter() { OnFindNext(); }
 
 // Implementation
 protected:

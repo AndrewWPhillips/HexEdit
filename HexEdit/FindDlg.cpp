@@ -56,7 +56,7 @@ CFindSheet::CFindSheet(UINT iSelectPage /*=0*/)
 	offset_ = 0;
 	relative_ = theApp.GetProfileInt("Find-Settings", "Relative", FALSE);
 
-	wildcards_allowed_ = theApp.GetProfileInt("Find-Settings", "UseWildcards", FALSE);;
+	wildcards_allowed_ = theApp.GetProfileInt("Find-Settings", "UseWildcards", FALSE);
 	charset_ = RB_CHARSET_ASCII;    // Changes to match char set of active window
 	char buf[2];
 	buf[0] = theApp.GetProfileInt("Find-Settings", "Wildcard", '?');
@@ -66,15 +66,6 @@ CFindSheet::CFindSheet(UINT iSelectPage /*=0*/)
 	big_endian_ = FALSE;  // May be confusing to save/restore this - default to little-endian (Intel)
 	number_format_ = theApp.GetProfileInt("Find-Settings", "NumberFormat", 0);
 	number_size_ = theApp.GetProfileInt("Find-Settings", "NumberSize", 2);;
-}
-
-BOOL CFindSheet::Create(CWnd* pParentWnd, DWORD dwStyle)
-{
-	// Create the property sheet
-	if (!CPropertySheet::Create(pParentWnd, dwStyle))
-		return FALSE;
-
-	return TRUE;
 }
 
 CFindSheet::~CFindSheet()
@@ -92,6 +83,30 @@ CFindSheet::~CFindSheet()
 
 	theApp.WriteProfileInt("Find-Settings", "NumberFormat", number_format_);
 	theApp.WriteProfileInt("Find-Settings", "NumberSize", number_size_);;
+}
+
+BOOL CFindSheet::Create(CWnd* pParentWnd, DWORD dwStyle)
+{
+	// Create the property sheet
+	if (!CPropertySheet::Create(pParentWnd, dwStyle))
+		return FALSE;
+
+	return TRUE;
+}
+
+BOOL CFindSheet::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+	{
+		//if (SendMessage(PSM_ISDIALOGMESSAGE, 0, (LPARAM)pMsg))
+		//	return TRUE;
+		CFindPage *pp = DYNAMIC_DOWNCAST(CFindPage, GetActivePage());
+		if (pp != NULL)
+			pp->OnEnter();
+		return TRUE;
+	}
+
+	return CPropertySheet::PreTranslateMessage(pMsg);
 }
 
 BEGIN_MESSAGE_MAP(CFindSheet, CPropertySheet)
@@ -1209,6 +1224,7 @@ BOOL CFindSheet::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 BOOL CFindSheet::OnInitDialog()
 {
 	BOOL bResult = __super::OnInitDialog();
+	//SendMessage (DM_SETDEFID, IDC_FIND_NEXT);  // This did not work (trying to get return key to "click" the default [Find Next] button)
 	GetClientRect(&m_rctPrev);
 
 	return bResult;
@@ -1586,21 +1602,17 @@ BOOL CFindSheet::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 /////////////////////////////////////////////////////////////////////////////
 // CSimplePage property page
 
-IMPLEMENT_DYNCREATE(CSimplePage, CPropertyPage)
+IMPLEMENT_DYNCREATE(CSimplePage, CFindPage)
 
-CSimplePage::CSimplePage() : CPropertyPage(CSimplePage::IDD)
+CSimplePage::CSimplePage() : CFindPage(CSimplePage::IDD)
 {
 	//{{AFX_DATA_INIT(CSimplePage)
 	//}}AFX_DATA_INIT
 }
 
-CSimplePage::~CSimplePage()
-{
-}
-
 void CSimplePage::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CFindPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSimplePage)
 	DDX_Control(pDX, IDC_FIND_COMBINED_STRING, ctl_string_);
 	//}}AFX_DATA_MAP
@@ -1612,7 +1624,7 @@ void CSimplePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Radio(pDX, IDC_FIND_SCOPE_TOMARK, *(int *)(&pparent_->scope_));
 }
 
-BEGIN_MESSAGE_MAP(CSimplePage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CSimplePage, CFindPage)
 	//{{AFX_MSG_MAP(CSimplePage)
 	ON_BN_CLICKED(IDC_FIND_NEXT, OnFindNext)
 	ON_BN_CLICKED(IDC_FIND_HELP, OnHelp)
@@ -1711,7 +1723,7 @@ void CSimplePage::FixDirn()
 BOOL CSimplePage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
-	CPropertyPage::OnInitDialog();
+	CFindPage::OnInitDialog();
 
 	// Make sure when dialog is resized that the controls move to sensible places
 	resizer_.Create(this);
@@ -1731,7 +1743,7 @@ BOOL CSimplePage::OnSetActive()
 	FixDirn();
 	FixType();
 
-	return CPropertyPage::OnSetActive();
+	return CFindPage::OnSetActive();
 }
 
 void CSimplePage::OnFindNext()
@@ -1813,9 +1825,9 @@ void CSimplePage::OnChangeMatchCase()
 /////////////////////////////////////////////////////////////////////////////
 // CHexPage property page
 
-IMPLEMENT_DYNCREATE(CHexPage, CPropertyPage)
+IMPLEMENT_DYNCREATE(CHexPage, CFindPage)
 
-CHexPage::CHexPage() : CPropertyPage(CHexPage::IDD)
+CHexPage::CHexPage() : CFindPage(CHexPage::IDD)
 {
 	update_ok_ = false;
 	//{{AFX_DATA_INIT(CHexPage)
@@ -1824,13 +1836,9 @@ CHexPage::CHexPage() : CPropertyPage(CHexPage::IDD)
 	pmask_ = NULL;
 }
 
-CHexPage::~CHexPage()
-{
-}
-
 void CHexPage::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CFindPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CHexPage)
 	DDX_Control(pDX, IDC_FIND_BOOKMARK_PREFIX, ctl_bookmark_prefix_);
 	DDX_Control(pDX, IDC_FIND_HEX_STRING, ctl_hex_string_);
@@ -1848,7 +1856,7 @@ void CHexPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_FIND_BOOKMARK_PREFIX, pparent_->bookmark_prefix_);
 }
 
-BEGIN_MESSAGE_MAP(CHexPage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CHexPage, CFindPage)
 	//{{AFX_MSG_MAP(CHexPage)
 	ON_BN_CLICKED(IDC_FIND_USE_MASK, OnUseMask)
 	ON_BN_CLICKED(IDC_FIND_DIRN_DOWN, OnChangeDirn)
@@ -1914,7 +1922,7 @@ void CHexPage::FixMask()
 BOOL CHexPage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
-	CPropertyPage::OnInitDialog();
+	CFindPage::OnInitDialog();
 
 	// Make sure when dialog is resized that the controls move to sensible places
 	resizer_.Create(this);
@@ -1994,7 +2002,7 @@ void CHexPage::OnCancel()
 		pmask_ = NULL;
 	}
 
-	CPropertyPage::OnCancel();
+	CFindPage::OnCancel();
 }
 
 void CHexPage::OnOK()
@@ -2014,7 +2022,7 @@ void CHexPage::OnOK()
 		pmask_ = NULL;
 	}
 
-	CPropertyPage::OnOK();
+	CFindPage::OnOK();
 }
 
 BOOL CHexPage::OnSetActive()
@@ -2024,14 +2032,14 @@ BOOL CHexPage::OnSetActive()
 	FixMask();
 	FixAlign();
 
-	BOOL retval = CPropertyPage::OnSetActive();
+	BOOL retval = CFindPage::OnSetActive();
 	update_ok_ = true;          // Its now OK to allow changes to align field to be processed
 	return retval;
 }
 
 BOOL CHexPage::OnKillActive()
 {
-	BOOL retval = CPropertyPage::OnKillActive();
+	BOOL retval = CFindPage::OnKillActive();
 
 	if (retval)
 		update_ok_ = false;
@@ -2217,21 +2225,17 @@ void CHexPage::OnChangeOffset()
 /////////////////////////////////////////////////////////////////////////////
 // CTextPage property page
 
-IMPLEMENT_DYNCREATE(CTextPage, CPropertyPage)
+IMPLEMENT_DYNCREATE(CTextPage, CFindPage)
 
-CTextPage::CTextPage() : CPropertyPage(CTextPage::IDD)
+CTextPage::CTextPage() : CFindPage(CTextPage::IDD)
 {
 	//{{AFX_DATA_INIT(CTextPage)
 	//}}AFX_DATA_INIT
 }
 
-CTextPage::~CTextPage()
-{
-}
-
 void CTextPage::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CFindPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CTextPage)
 	DDX_Control(pDX, IDC_FIND_BOOKMARK_PREFIX, ctl_bookmark_prefix_);
 	DDX_Control(pDX, IDC_FIND_TEXT_STRING, ctl_text_string_);
@@ -2248,7 +2252,7 @@ void CTextPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_FIND_BOOKMARK_PREFIX, pparent_->bookmark_prefix_);
 }
 
-BEGIN_MESSAGE_MAP(CTextPage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CTextPage, CFindPage)
 	//{{AFX_MSG_MAP(CTextPage)
 	ON_BN_CLICKED(IDC_FIND_NEXT, OnFindNext)
 	ON_BN_CLICKED(IDC_FIND_ALLOW_WILDCARD, OnAllowWildcard)
@@ -2301,7 +2305,7 @@ void CTextPage::FixWildcard()
 BOOL CTextPage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
-	CPropertyPage::OnInitDialog();
+	CFindPage::OnInitDialog();
 
 	// Make sure when dialog is resized that the controls move to sensible places
 	resizer_.Create(this);
@@ -2324,7 +2328,7 @@ BOOL CTextPage::OnSetActive()
 	FixDirn();
 	FixWildcard();
 
-	return CPropertyPage::OnSetActive();
+	return CFindPage::OnSetActive();
 }
 
 void CTextPage::OnFindNext()
@@ -2441,22 +2445,18 @@ void CTextPage::OnChangePrefix()
 /////////////////////////////////////////////////////////////////////////////
 // CNumberPage property page
 
-IMPLEMENT_DYNCREATE(CNumberPage, CPropertyPage)
+IMPLEMENT_DYNCREATE(CNumberPage, CFindPage)
 
-CNumberPage::CNumberPage() : CPropertyPage(CNumberPage::IDD)
+CNumberPage::CNumberPage() : CFindPage(CNumberPage::IDD)
 {
 	update_ok_ = false;
 	//{{AFX_DATA_INIT(CNumberPage)
 	//}}AFX_DATA_INIT
 }
 
-CNumberPage::~CNumberPage()
-{
-}
-
 void CNumberPage::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CFindPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CNumberPage)
 	DDX_Control(pDX, IDC_FIND_BOOKMARK_PREFIX, ctl_bookmark_prefix_);
 	DDX_Control(pDX, IDC_FIND_NUMBER_SIZE, ctl_number_size_);
@@ -2476,7 +2476,7 @@ void CNumberPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_FIND_BOOKMARK_PREFIX, pparent_->bookmark_prefix_);
 }
 
-BEGIN_MESSAGE_MAP(CNumberPage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CNumberPage, CFindPage)
 	//{{AFX_MSG_MAP(CNumberPage)
 	ON_BN_CLICKED(IDC_FIND_NEXT, OnFindNext)
 	ON_BN_CLICKED(IDC_FIND_HELP, OnHelp)
@@ -2667,7 +2667,7 @@ BOOL CNumberPage::FixStrings()
 BOOL CNumberPage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
-	CPropertyPage::OnInitDialog();
+	CFindPage::OnInitDialog();
 
 	// Make sure when dialog is resized that the controls move to sensible places
 	resizer_.Create(this);
@@ -2701,14 +2701,14 @@ BOOL CNumberPage::OnSetActive()
 	FixSizes();
 	FixAlign();
 
-	BOOL retval = CPropertyPage::OnSetActive();
+	BOOL retval = CFindPage::OnSetActive();
 	update_ok_ = true;          // Its now OK to allow changes to align field to be processed
 	return retval;
 }
 
 BOOL CNumberPage::OnKillActive()
 {
-	BOOL retval = CPropertyPage::OnKillActive();
+	BOOL retval = CFindPage::OnKillActive();
 
 	if (retval)
 		update_ok_ = false;
@@ -2877,21 +2877,17 @@ void CNumberPage::OnChangeOffset()
 /////////////////////////////////////////////////////////////////////////////
 // CReplacePage property page
 
-IMPLEMENT_DYNCREATE(CReplacePage, CPropertyPage)
+IMPLEMENT_DYNCREATE(CReplacePage, CFindPage)
 
-CReplacePage::CReplacePage() : CPropertyPage(CReplacePage::IDD)
+CReplacePage::CReplacePage() : CFindPage(CReplacePage::IDD)
 {
 	//{{AFX_DATA_INIT(CReplacePage)
 	//}}AFX_DATA_INIT
 }
 
-CReplacePage::~CReplacePage()
-{
-}
-
 void CReplacePage::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CFindPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CReplacePage)
 	DDX_Control(pDX, IDC_FIND_COMBINED_STRING, ctl_string_);
 	DDX_Control(pDX, IDC_FIND_REPLACE_STRING, ctl_replace_string_);
@@ -2905,7 +2901,7 @@ void CReplacePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Radio(pDX, IDC_FIND_SCOPE_TOMARK, *(int *)(&pparent_->scope_));
 }
 
-BEGIN_MESSAGE_MAP(CReplacePage, CPropertyPage)
+BEGIN_MESSAGE_MAP(CReplacePage, CFindPage)
 	//{{AFX_MSG_MAP(CReplacePage)
 	ON_BN_CLICKED(IDC_FIND_NEXT, OnFindNext)
 	ON_BN_CLICKED(IDC_FIND_REPLACE, OnReplace)
@@ -2995,7 +2991,7 @@ void CReplacePage::FixDirn()
 BOOL CReplacePage::OnInitDialog()
 {
 	pparent_ = (CFindSheet *)GetParent();
-	CPropertyPage::OnInitDialog();
+	CFindPage::OnInitDialog();
 
 	// Make sure when dialog is resized that the controls move to sensible places
 	resizer_.Create(this);
@@ -3019,7 +3015,7 @@ BOOL CReplacePage::OnSetActive()
 	FixType();
 	FixDirn();
 
-	return CPropertyPage::OnSetActive();
+	return CFindPage::OnSetActive();
 }
 
 void CReplacePage::OnFindNext()
