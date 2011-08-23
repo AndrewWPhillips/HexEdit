@@ -282,9 +282,16 @@ BOOL CHexEditDoc::OnNewDocument()
 	}
 
 	if (pthread2_ == NULL && CanDoSearch())
+	{
 		CreateSearchThread();
+		if (theApp.pboyer_ != NULL)        // If a search is active start a bg search on the newly opened file
+			StartSearch();
+	}
 	if (pthread5_ == NULL && CanDoStats())
+	{
 		CreateStatsThread();
+		StartStats();
+	}
 
 	OpenDataFormatFile("default");
 
