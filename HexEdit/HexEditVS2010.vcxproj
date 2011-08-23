@@ -52,9 +52,9 @@
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Devel\WTL80\include;D:\Devel\boost_1_47_0;$(ProjectDir)\include;$(IncludePath)</IncludePath>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">HexEdit</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">HexEditPro</TargetName>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Devel\Libraries\FreeImage;D:\Devel\boost_1_47_0;$(ProjectDir)\include;$(IncludePath)</IncludePath>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HexEdit</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HexEditPro</TargetName>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -93,7 +93,7 @@
       <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>C:\Andrew\cpp_out\HexEdit\ReleaseVS2010\HexEdit.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <ProgramDatabaseFile>$(IntDir)HexEdit.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(IntDir)HexEditPro.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -144,7 +144,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(IntDir)HexEdit.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(IntDir)HexEditPro.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>

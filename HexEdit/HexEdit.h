@@ -80,7 +80,7 @@ typedef __int64 FILE_ADDRESS;
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
 //#define REFRESH_OFF     1   // Turn off display refresh when replacing all - doesn't seem to save much time so leave off for now
 
-#define INTERNAL_ALGORITHM  "HexEdit Internal Encryption Algorithm"
+#define INTERNAL_ALGORITHM  "Internal Encryption Algorithm"
 
 #define DEFAULT_MACRO_NAME " - Current Macro - "
 
@@ -348,7 +348,6 @@ public:
 	afx_msg void OnUpdateFileOpenSpecial(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	afx_msg void OnHelpWebForum();
-	afx_msg void OnHelpWebFaq();
 	afx_msg void OnHelpWebHome();
 	afx_msg void OnHelpWebReg();
 	afx_msg void OnCompressionSettings();

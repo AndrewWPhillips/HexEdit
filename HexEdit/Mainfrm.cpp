@@ -477,7 +477,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_paneProp.InitialUpdate(&m_wndProp);
 		m_paneProp.EnableDocking(CBRS_ALIGN_ANY);
 
-		if (!m_paneExpl.Create("HexEdit Explorer", this, CSize(500, 250), TRUE, IDD_EXPLORER_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
+		if (!m_paneExpl.Create("Explorer", this, CSize(500, 250), TRUE, IDD_EXPLORER_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
 			!m_wndExpl.Create(&m_paneExpl) )
 		{
 			return FALSE; // failed to create
@@ -525,16 +525,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 					// Could not copy the default images file to user's toolbar images file
 					if (GetLastError() == ERROR_PATH_NOT_FOUND)
 					{
-						TaskMessageBox("Path Not Found", "The HexEdit Application Data folder is invalid.");
+						TaskMessageBox("Path Not Found", "The HexEditPro Application Data folder is invalid.");
 						m_strImagesFileName = strDefault;
 					}
 					else
 					{
 						ASSERT(GetLastError() == ERROR_FILE_NOT_FOUND);
 						TaskMessageBox("File Missing",
-							"The default toolbar images file was not found in the HexEdit folder.  "
+							"The default toolbar images file was not found in the HexEditPro Application Data folder.  "
 							"This file contains a set of images that can be used in custom toolbar buttons.  "
-							"Repairing or re-installing HexEdit may fix the problem.");
+							"Repairing or re-installing Hex Edit Pro may fix the problem.");
 						m_strImagesFileName.Empty();  // we can't do anything so signal that the file is not available
 					}
 				}
@@ -542,7 +542,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 		else
 		{
-			TaskMessageBox("Path Not Found", "The HexEdit Application Data folder is not found.  "
+			TaskMessageBox("Path Not Found", "The HexEditPro Application Data folder is not found.  "
 				"Custom toolbar buttons and other user interface elements may have missing images.");
 			m_strImagesFileName = strDefault;
 		}

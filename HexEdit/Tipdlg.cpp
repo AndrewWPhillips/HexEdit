@@ -56,7 +56,7 @@ CTipDlg::CTipDlg(CWnd* pParent /*=NULL*/)
 	m_bStartup = aa->tipofday_;
 	UINT iFilePos = aa->GetProfileInt(szSection, szIntFilePos, 0);
 
-	const char *tip_name = "HexEdit.tip";
+	const char *tip_name = "HexEditPro.tip";
 
 	// Now try to open the tips file in the current directory
 	m_pStream = fopen(tip_name, "r");

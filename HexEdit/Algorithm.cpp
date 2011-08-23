@@ -45,11 +45,11 @@ CAlgorithm::CAlgorithm(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 
 	m_note = "Notes:\n"
-			 "1. All algorithms except the first (the HexEdit internal algorithm) are provided by 3rd party\n"
+			 "1. All algorithms except the first (internal algorithm) are provided by 3rd party\n"
 			 "    Crypto API CSPs (Cryptographic Service Providers) installed on this computer.\n"
 			 "2. To decrypt on a different computer you must ensure the same algorithm is present.\n"
 			 "    Microsoft Base Cryptographic Provider v1.0 RC2 && RC4 algorithms are always present.\n"
-			 "3. The HexEdit internal algorithm requires the selection to be a multiple of 8 bytes.\n"
+			 "3. The internal algorithm requires the selection to be a multiple of 8 bytes.\n"
 			 "4. CSP block ciphers typically increase the encrypted length, usually by one block.\n"
 			 "    You must remember the encrypted length in order to decrypt.\n"
 			 "5. Stream ciphers do not have a block size, and do not change the encrypted length.\n"

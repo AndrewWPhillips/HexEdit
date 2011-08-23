@@ -558,7 +558,7 @@ void CSystemGeneralPage::OnRestoreAvoidable()
 					   "\n\nAre you sure you want to restore all message boxes?",
 					   MB_YESNO) == IDYES)
 	{
-		::SHDeleteKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit\\DialogDontAskValues");  // user settings
+		::SHDeleteKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEditPro\\DialogDontAskValues");  // user settings
 	}
 }
 
@@ -1681,7 +1681,7 @@ void CTemplatePage::OnTemplatedir()
 {
 	ASSERT(theApp.xml_dir_.Right(1) == "\\");
 	CDirDialog dlg(theApp.xml_dir_, "Template Files (*.xml etc)|*.XML;BinaryFileFormat.DTD;_*_constants.txt|All Files (*.*)|*.*||", this);
-	dlg.m_ofn.lpstrTitle = "Select Folder for HexEdit Templates";
+	dlg.m_ofn.lpstrTitle = "Select Folder for Hex Edit Pro Templates";
 
 	if (dlg.DoModal() == IDOK &&
 		TaskMessageBox("Changing Template Folder",
@@ -3385,7 +3385,7 @@ void CMacroPage::OnMacrodir()
 
 	ASSERT(aa->mac_dir_.Right(1) == "\\");
 	CDirDialog dlg(aa->mac_dir_, "Macro Files (*.hem)|*.hem|All Files (*.*)|*.*||", this);
-	dlg.m_ofn.lpstrTitle = "Select Folder for HexEdit Macros";
+	dlg.m_ofn.lpstrTitle = "Select Folder for Hex Edit Pro Macros";
 
 	if (dlg.DoModal() == IDOK)
 		aa->mac_dir_ = dlg.GetPath();

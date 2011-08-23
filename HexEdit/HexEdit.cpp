@@ -1,4 +1,4 @@
-// HexEdit.cpp : Defines the class behaviors for the application.
+// HexEdit.cpp : Defines the class behaviors for the application. 
 //
 // Copyright (c) 1998-2010 by Andrew W. Phillips. 
 //
@@ -85,8 +85,8 @@ static char THIS_FILE[] = __FILE__;
 
 // The following is the subkey of HKEY_CLASSES_ROOT that is used to enable the
 // "Open with HexEdit" shell shortcut menu option.
-static const char *HEXEDIT_SUBKEY = "*\\shell\\HexEdit";
-static const char *HEXEDIT_SUBSUBKEY  = "*\\shell\\HexEdit\\command";
+static const char *HEXEDIT_SUBKEY = "*\\shell\\HexEditPro";
+static const char *HEXEDIT_SUBSUBKEY  = "*\\shell\\HexEditPro\\command";
 
 #ifndef NO_SECURITY
 #include "security.h"
@@ -222,11 +222,9 @@ BEGIN_MESSAGE_MAP(CHexEditApp, CWinAppEx)
 	//}}AFX_MSG_MAP
 		ON_COMMAND(ID_ZLIB_SETTINGS, OnCompressionSettings)
 		ON_COMMAND(ID_HELP_FORUM, OnHelpWebForum)
-		ON_COMMAND(ID_HELP_FAQ, OnHelpWebFaq)
 		ON_COMMAND(ID_HELP_HOMEPAGE, OnHelpWebHome)
 		ON_COMMAND(ID_HELP_REGISTER, OnHelpWebReg)
 		ON_UPDATE_COMMAND_UI(ID_HELP_FORUM, OnUpdateHelpWeb)
-		ON_UPDATE_COMMAND_UI(ID_HELP_FAQ, OnUpdateHelpWeb)
 		ON_UPDATE_COMMAND_UI(ID_HELP_HOMEPAGE, OnUpdateHelpWeb)
 		ON_UPDATE_COMMAND_UI(ID_HELP_REGISTER, OnUpdateHelpWeb)
 
@@ -451,13 +449,13 @@ BOOL CHexEditApp::InitInstance()
 			time_t prev = (time_t)GetProfileInt(_T("Update"), _T("LastCheckDate"), 0);  // last time we checked
 			if (now > prev + (30*24L*60*60L))  // Check about once a month
 			{
-				UpdateChecker checker(_T("http://www.hexedit.com/version.txt"));
+				UpdateChecker checker(_T("http://www.hexeditpro.com/version.txt"));
 				if (checker.Online())
 				{
 					if (checker.UpdateAvailable(version_))
 					{
 						CAvoidableDialog::Show(IDS_UPDATE_AVAILABLE,
-						                       "A newer version of HexEdit is currently available for download.", "", 
+						                       "A newer version of Hex Edit Pro is currently available for download.", "", 
 						                       MLCBF_OK_BUTTON, MAKEINTRESOURCE(IDI_INFO));
 					}
 					WriteProfileInt(_T("Update"), _T("LastCheckDate"), (int)now);
@@ -568,7 +566,7 @@ BOOL CHexEditApp::InitInstance()
 			ASSERT(0);
 			/* fall through */
 		case 0:
-			AfxMessageBox("HexEdit has not been installed on this machine");
+			AfxMessageBox("Hex Edit Pro has not been installed on this machine");
 			return FALSE;
 		case 1:
 			ss = "Unfortunately, your trial period has expired.";
@@ -816,6 +814,7 @@ void CHexEditApp::InitWorkspace()
 		ID_ANSI2IBM,
 		ID_IBM2ANSI,
 		ID_CRC32,
+		ID_MD5,
 		ID_SHA1,
 		ID_ENCRYPT_ENCRYPT,
 		ID_ENCRYPT_DECRYPT,
@@ -962,7 +961,7 @@ void CHexEditApp::OnNewUser()
 	// if we want to copy (but copy over files if not already there
 	if (::_access(dstFile, 0) == -1 &&
 		TaskMessageBox("New User",
-					  "This is the first time you have run this version of HexEdit.\n\n"
+					  "This is the first time you have run this version of Hex Edit Pro.\n\n"
 					  "Hit OK to set up you own personal copies of templates and macros.",
 					  MB_OKCANCEL) == IDCANCEL)
 		return;
@@ -1309,7 +1308,7 @@ void CHexEditApp::OnRepairDialogbars()
 					  "* Properties dialog\n"
 					  "* Bookmarks dialog\n"
 					  "* Find dialog\n"
-					  "* HexEdit Explorer\n"
+					  "* Explorer Window\n"
 					  "\nYou may need to do this if you cannot restore any of the above dialogs.\n"
 					  "\nDo you want to continue?",
 					  MB_YESNO) != IDYES)
@@ -1354,7 +1353,7 @@ void CHexEditApp::OnRepairSettings()
 					  "All customizations and changes to "
 					  "settings will be removed.  "
 					  "(All registry entries will be removed.)\n"
-					  "\nTo do this HexEdit must close.\n"
+					  "\nTo do this Hex Edit Pro must close.\n"
 					  "\nDo you want to continue?",
 					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 		return;
@@ -1375,7 +1374,7 @@ void CHexEditApp::OnRepairAll()
 					  "* previously opened files settings (columns etc)\n"
 					  "* recent file list, bookmarks, highlights etc\n"
 					  "* ALL REGISTRATION INFORMATION WILL BE REMOVED\n\n"
-					  "When complete you will need to restart HexEdit "
+					  "When complete you will need to restart Hex Edit Pro "
 					  "and re-enter your activation code.\n"
 					  "\nAre you absolutely sure you want to continue?",
 					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
@@ -1675,7 +1674,7 @@ int CHexEditApp::ExitInstance()
 	int retval = CWinAppEx::ExitInstance();
 
 	if (delete_reg_settings_ || delete_all_settings_)
-		::SHDeleteKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit");  // user settings
+		::SHDeleteKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEditPro");  // user settings
 
 	if (delete_all_settings_)
 	{
@@ -1689,7 +1688,7 @@ int CHexEditApp::ExitInstance()
 			remove(data_path + FILENAME_BACKGROUND);
 		}
 
-		::SHDeleteKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit");  // machine settings
+		::SHDeleteKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEditPro");  // machine settings
 		::SHDeleteValue(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", "Data");
 		DeleteSecurityFiles();  // Note: FILENAME_BACKGROUND also deleted above
 	}
@@ -2129,6 +2128,7 @@ void CHexEditApp::LoadOptions()
 	bg_stats_crc32_ = GetProfileInt("Options", "BackgroundStatsCRC32", 0) ? TRUE : FALSE;
 	bg_stats_md5_ = GetProfileInt("Options", "BackgroundStatsMD5", 0) ? TRUE : FALSE;
 	bg_stats_sha1_ = GetProfileInt("Options", "BackgroundStatsSHA1", 0) ? TRUE : FALSE;
+bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 	bg_exclude_network_ = GetProfileInt("Options", "BackgroundExcludeNetwork", 1) ? TRUE : FALSE;
 	bg_exclude_removeable_ = GetProfileInt("Options", "BackgroundExcludeRemoveable", 0) ? TRUE : FALSE;
 	bg_exclude_optical_ = GetProfileInt("Options", "BackgroundExcludeOptical", 1) ? TRUE : FALSE;
@@ -3060,7 +3060,7 @@ void CHexEditApp::OnOptions2()
 void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_page /*=FALSE*/)
 {
 	// Construct property sheet + its pages
-	COptSheet optSheet(_T("HexEdit Options"), display_page, must_show_page);
+	COptSheet optSheet(_T("Hex Edit Pro Options"), display_page, must_show_page);
 
 	// Load current settings into the property sheet
 	get_options(optSheet.val_);
@@ -3279,8 +3279,8 @@ void CHexEditApp::set_options(struct OptValues &val)
 		if (val.shell_open_)
 		{
 			// Create the registry entries that allow "Open with HexEdit" on shortcut menus
-			CString s1("Open with HexEdit");
-			CString s2 = "\"" + GetExePath() + "HexEdit.exe\"  \"%1\"";
+			CString s1("Open with Hex Edit Pro");
+			CString s2 = "\"" + GetExePath() + "HexEditPro.exe\"  \"%1\"";
 			RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY, REG_SZ, s1, s1.GetLength());
 			RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, REG_SZ, s2, s2.GetLength());
 		}
@@ -3790,7 +3790,7 @@ void CHexEditApp::ShowTipAtStartup(void)
 
 		CCommandLineInfo cmdInfo;
 		ParseCommandLine(cmdInfo);
-		if (cmdInfo.m_bShowSplash /* && _access("HexEdit.tip", 0) == 0*/)
+		if (cmdInfo.m_bShowSplash /* && _access("HexEditPro.tip", 0) == 0*/)
 		{
 				CTipDlg dlg;
 				if (dlg.m_bStartup)
@@ -3960,11 +3960,6 @@ void CHexEditApp::OnHelpWeb()
 void CHexEditApp::OnHelpWebForum()
 {
 	::BrowseWeb(IDS_WEB_FORUMS);
-}
-
-void CHexEditApp::OnHelpWebFaq()
-{
-	::BrowseWeb(IDS_WEB_FAQ);
 }
 
 void CHexEditApp::OnHelpWebHome()
@@ -4194,23 +4189,24 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 		to.lpszName = "andrew";
 		to.lpszAddress = address.GetBuffer(0);
 
-		// Build the subject and message text from the info the user entered
+		// Build the subject and message text from the info the user entered.
+		// NOTE: The subject should include the word "hexedit" to be filtered properly.
 		switch (dlg.type_)
 		{
 		case 0:
-			subject = "HEXEDIT BUG: ";
+			subject = "HEXEDIT PRO BUG: ";
 			text = "TYPE: BUG REPORT\n";
 			break;
 		case 1:
-			subject = "HEXEDIT REQ: ";
+			subject = "HEXEDIT PRO REQ: ";
 			text = "TYPE: ENHANCEMENT REQUEST\n";
 			break;
 		case 2:
-			subject = "HEXEDIT BUY: ";
+			subject = "HEXEDIT PRO BUY: ";
 			text = "TYPE: REGISTRATION REQUEST\n";
 			break;
 		default:
-			subject = "HEXEDIT OTH: ";
+			subject = "HEXEDIT PRO OTH: ";
 			text = "TYPE: OTHER\n";
 		}
 		subject += dlg.subject_;

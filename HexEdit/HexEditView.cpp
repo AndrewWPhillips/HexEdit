@@ -8753,7 +8753,7 @@ void CHexEditView::do_read(CString file_name)
 		if (data_len > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
 			TaskMessageBox("Large File Error",
-						  "HexEdit is out of temporary files "
+						  "Hex Edit Pro is out of temporary files "
 						  "and cannot open such a large file.  "
 						  "Please save the file to free "
 						  "temporary file handles and try again.",
@@ -8764,7 +8764,7 @@ void CHexEditView::do_read(CString file_name)
 		if (data_len > 128*1024*1024)  // 128 Mb file may be too big
 		{
 			if (TaskMessageBox("Large File Warning",
-							  "HexEdit is out of temporary file "
+							  "Hex Edit Pro is out of temporary file "
 							  "handles and opening such a large file may "
 							  "cause memory exhaustion.  Please select "
 							  "\"No\" and save the file to free handles. "
@@ -9728,7 +9728,7 @@ void CHexEditView::do_hex_text(CString file_name)
 	{
 		// Warn of possible memory shortage
 		if (TaskMessageBox("Large File Warning", 
-							"HexEdit is out of temporary file "
+							"Hex Edit Pro is out of temporary file "
 							"handles and reading such a large file "
 							"may cause memory exhaustion.  Please click "
 							"\"No\" and save the file to free handles "
@@ -11328,7 +11328,7 @@ void CHexEditView::OnEditPaste()
 				if (idx == -1)
 				{
 					TaskMessageBox("Paste Error",
-								  "HexEdit is out of temporary files and "
+								  "Hex Edit Pro is out of temporary files and "
 								  "cannot paste from a temporary clipboard file.\n\n"
 								  "Please save your file to free "
 								  "temporary file handles and try again.");
@@ -15004,7 +15004,7 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
 			TaskMessageBox("Conversion Error",
-						  "HexEdit is out of temporary files and "
+						  "Hex Edit Pro is out of temporary files and "
 						  "cannot convert such a large selection.\n\n"
 						  "Please save the file to deallocate "
 						  "temporary file handles and try again.");
@@ -15016,7 +15016,7 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 		{
 			if (TaskMessageBox("Conversion Warning",
-				"HexEdit is out of temporary file "
+				"Hex Edit Pro is out of temporary file "
 				"handles and converting such a large selection "
 				"may cause memory exhaustion.  Please click "
 				"\"No\" and save the file to free handles "
@@ -15235,7 +15235,7 @@ void CHexEditView::OnEncrypt()
 			if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 			{
 				TaskMessageBox("Encryption Error",
-					"HexEdit is out of temporary files and "
+					"Hex Edit Pro is out of temporary files and "
 					"cannot encrypt such a large selection.\n\n"
 					"Please save the file to deallocate "
 					"temporary file handles and try again.");
@@ -15247,7 +15247,7 @@ void CHexEditView::OnEncrypt()
 			if (end_addr - start_addr > 128*1024*1024)  // More than 128 Mb may be too big
 			{
 				if (TaskMessageBox("Encryption Warning",
-					"HexEdit is out of temporary file "
+					"Hex Edit Pro is out of temporary file "
 					"handles and encrypting such a large selection "
 					"may cause memory exhaustion.  Please click "
 					"\"No\" and save the file to free handles "
@@ -15560,7 +15560,7 @@ void CHexEditView::OnDecrypt()
 			if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 			{
 				TaskMessageBox("Decryption Error",
-					"HexEdit is out of temporary files and "
+					"Hex Edit Pro is out of temporary files and "
 					"cannot decrypt such a large selection.\n\n"
 					"Please save the file to deallocate "
 					"temporary file handles and try again.");
@@ -15572,7 +15572,7 @@ void CHexEditView::OnDecrypt()
 			if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 			{
 				if (TaskMessageBox("Decryption Warning",
-					"HexEdit is out of temporary file "
+					"Hex Edit Pro is out of temporary file "
 					"handles and decrypting such a large selection "
 					"may cause memory exhaustion.  Please click "
 					"\"No\" and save the file to free handles "
@@ -15902,7 +15902,7 @@ void CHexEditView::OnCompress()
 		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
 			TaskMessageBox("Compression Error",
-				"HexEdit is out of temporary files and "
+				"Hex Edit Pro is out of temporary files and "
 				"cannot compress such a large selection.\n\n"
 				"Please save the file to deallocate "
 				"temporary file handles and try again.");
@@ -15914,7 +15914,7 @@ void CHexEditView::OnCompress()
 		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 		{
 			if (TaskMessageBox("Compression Warning",
-				"HexEdit is out of temporary file "
+				"Hex Edit Pro is out of temporary file "
 				"handles and compressing such a large selection "
 				"may cause memory exhaustion.  Please click "
 				"\"No\" and save the file to free handles "
@@ -16115,7 +16115,7 @@ void CHexEditView::OnDecompress()
 							theApp.mac_error_ = 5;
 							if (TaskMessageBox("Bad Compressed Data",
 											  "The compression data is corrupted. "
-											  "HexEdit can save the data decompressed "
+											  "Hex Edit Pro can save the data decompressed "
 											  "so far and attempt to recover from "
 											  "this error but some data will be lost.\n\n"
 											  "Do you want to continue?", MB_YESNO, 0,
@@ -16152,7 +16152,7 @@ void CHexEditView::OnDecompress()
 			ASSERT(ff.GetLength() == total_out);
 			if (err == Z_DATA_ERROR)
 			{
-				AfxMessageBox("HexEdit did not recover from \n"
+				AfxMessageBox("Hex Edit Pro did not recover from \n"
 								"the compression data error. ");
 			}
 		}
@@ -16199,7 +16199,7 @@ void CHexEditView::OnDecompress()
 		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
 			TaskMessageBox("Decompression Error",
-				"HexEdit is out of temporary files and "
+				"Hex Edit Pro is out of temporary files and "
 				"cannot decompress such a large selection.\n\n"
 				"Please save the file to deallocate "
 				"temporary file handles and try again.");
@@ -16211,7 +16211,7 @@ void CHexEditView::OnDecompress()
 		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 		{
 			if (TaskMessageBox("Decompression Warning",
-				"HexEdit is out of temporary file "
+				"Hex Edit Pro is out of temporary file "
 				"handles and decompressing such a large selection "
 				"may cause memory exhaustion.  Please click "
 				"\"No\" and save the file to free handles "
@@ -16261,7 +16261,7 @@ void CHexEditView::OnDecompress()
 					{
 						if (TaskMessageBox("Bad Compressed Data",
 										  "The compression data is corrupted. "
-										  "HexEdit can save the data decompressed "
+										  "Hex Edit Pro can save the data decompressed "
 										  "so far and attempt to recover from "
 										  "this error but some data will be lost.\n\n"
 										  "Do you want to continue?", MB_YESNO, 0,
@@ -17295,7 +17295,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
 			TaskMessageBox("Large Selection Error",
-				"HexEdit is out of temporary files and "
+				"Hex Edit Pro is out of temporary files and "
 				"cannot operate on such a large selection.\n\n"
 				"Please save the file to deallocate "
 				"temporary file handles and try again.");
@@ -17307,7 +17307,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 		{
 			if (TaskMessageBox("Warning",
-				"HexEdit is out of temporary file "
+				"Hex Edit Pro is out of temporary file "
 				"handles and operating on such a large selection "
 				"may cause memory exhaustion.  Please click "
 				"\"No\" and save the file to free handles "
@@ -17988,7 +17988,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 		if (end_addr - start_addr > UINT_MAX)  // why is there no SIZE_T_MAX?
 		{
 			TaskMessageBox("Large Selection Error",
-				"HexEdit is out of temporary files and "
+				"Hex Edit Pro is out of temporary files and "
 				"cannot operate on such a large selection.\n\n"
 				"Please save the file to deallocate "
 				"temporary file handles and try again.");
@@ -18000,7 +18000,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
 		{
 			if (TaskMessageBox("Warning",
-				"HexEdit is out of temporary file "
+				"Hex Edit Pro is out of temporary file "
 				"handles and operating on such a large selection "
 				"may cause memory exhaustion.  Please click "
 				"\"No\" and save the file to free handles "
