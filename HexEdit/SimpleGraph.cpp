@@ -142,7 +142,7 @@ void CSimpleGraph::draw_axes()
 	}
 
 	int max_ticks = height/20;              // leave at least 20 pixels between ticks
-	int min_spacing = max/max_ticks + 1;    // min tick distance in graph units
+	int min_spacing = max_ticks == 0 ? max : max/max_ticks + 1;    // min tick distance in graph units
 
 	char buf[10];
 	sprintf(buf, "%d", min_spacing);
@@ -248,7 +248,7 @@ BOOL CSimpleGraph::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 	::GetCursorPos(&pt);            // get mouse location (screen coords)
 	ScreenToClient(&pt);
 	if (get_bar(pt) > -1)
-		::SetCursor(theApp.LoadCursor(IDC_INFO));
+		::SetCursor(theApp.LoadCursor(IDC_INFO));  // show info cursor if over the graph
 	else
 		::SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
 	return TRUE;
@@ -294,14 +294,15 @@ LRESULT CSimpleGraph::OnMouseHover(WPARAM, LPARAM lp)
 
 		m_tip.Show();
 		track_mouse(TME_LEAVE);
-		return 0;
+		return 0;  // return 0 to say we processed it
 	}
 	
-	return 1;  // return 0 to say we processed it
+	return 1;
 }
 
 LRESULT CSimpleGraph::OnMouseLeave(WPARAM, LPARAM lp)
 {
+	// Make sure we hide the tip window when the mouse leave the window (no more move messages are received)
 	m_tip.Hide(300);
 	return 0;
 }
