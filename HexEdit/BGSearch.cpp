@@ -40,6 +40,9 @@ search_state_: what the thread is currently doing
   DYING: thread received message to kill itself and is doing so
 search_command_: what we want the thread to do now
 search_fin_: indicates that background search was finished succcesfully (not running or aborted)
+clear_found_: signals the bg thread to clear() found_ at the start of a new search
+              Previously the fg thread did this but if found_ had millions of entries
+			  this would freeze the main thread for a few seconds (minutes in debug mode).
 docdata_: is a critical section used to protect access to the other shared data members below
 
 pfile2_: is a ptr to file open the same as pfile1_.  Using a separate file allows the main thread
@@ -593,7 +596,8 @@ void CHexEditDoc::StartSearch(FILE_ADDRESS start /*=-1*/, FILE_ADDRESS end /*=-1
 		}
 	}
 
-	found_.clear();                     // Clear set of found addresses
+	//found_.clear();                     // Clear set of found addresses
+	clear_found_ = true;
 
 	// Restart the search
 	search_command_ = NONE;
@@ -624,6 +628,7 @@ void CHexEditDoc::KillSearchThread()
 	// Signal thread to kill itself
 	docdata_.Lock();
 	search_command_ = DIE;
+	clear_found_ = true;
 	docdata_.Unlock();
 
 	SetThreadPriority(pthread2_->m_hThread, THREAD_PRIORITY_NORMAL); // Make it a quick and painless death
@@ -666,7 +671,8 @@ void CHexEditDoc::KillSearchThread()
 		}
 	}
 
-	found_.clear();
+	found_.clear();      // Even though we set clear_found_ above we still need to do this in case the bg thread was not waiting and did not get the message
+
 	to_search_.clear();
 	find_total_ = 0;
 }
@@ -734,6 +740,11 @@ UINT CHexEditDoc::RunSearchThread()
 		DWORD wait_status = ::WaitForSingleObject(HANDLE(start_search_event_), INFINITE);
 		docdata_.Lock();
 		search_state_ = SCANNING;
+		if (clear_found_)
+		{
+			clear_found_ = false;  // Remember that we have already cleared it
+			found_.clear();
+		}
 		docdata_.Unlock();
 		start_search_event_.ResetEvent();      // Force ourselves to wait
 		ASSERT(wait_status == WAIT_OBJECT_0);

@@ -139,7 +139,8 @@ CHexEditDoc::CHexEditDoc()
 
 	hicon_ = HICON(0);
 
-	search_fin_ = false;
+	// Background threads' flags
+	search_fin_ = false; clear_found_ = false;
 	aerial_fin_ = false;
 	comp_fin_   = false;
 #ifndef NDEBUG

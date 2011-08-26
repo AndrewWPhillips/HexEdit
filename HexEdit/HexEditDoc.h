@@ -815,6 +815,7 @@ private:
 	enum BG_STATE   search_state_;   // indicates what the search thread is doing
 	bool search_fin_;           // Flags that the bg search is finished and the view need updating
 	unsigned char *search_buf_; // Buffer for holding file data to search
+	bool clear_found_;          // Signals the bg thread to clear found_ to avoid foreground delays
 
 	// List of ranges to search in background (first = start, second = byte past end)
 	std::list<pair<FILE_ADDRESS, FILE_ADDRESS> > to_search_;
