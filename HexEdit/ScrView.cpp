@@ -1359,6 +1359,9 @@ void CScrView::OnSelUpdate(CPoint point)
 	// Test if we are about to scroll or very close to edge
 	if (!rr.PtInRect(pp))
 	{
+		// TODO: We probably should handle vertical and horizontal auto-scrolling
+		// separately and not allow both at the same time, to avoid confusion.
+
 		CPointAp newpos(-1, -1);  // New scroll position (our coords)
 		static clock_t last_clock = 0;
 
@@ -1396,6 +1399,8 @@ void CScrView::OnSelUpdate(CPoint point)
 				last_clock = curr_clock;
 			}
 			newpos.y = scrollpos_.y - to_move;
+			if (newpos.y < 0)
+				newpos.y = 0;
 		}
 		else if (pp.y >= rr.bottom)
 		{
@@ -1414,10 +1419,10 @@ void CScrView::OnSelUpdate(CPoint point)
 				last_clock = curr_clock;
 			}
 			newpos.y = scrollpos_.y + to_move;
+			if (newpos.y < 0)
+				newpos.y = 0;
 		}
 
-		if (newpos.y < 0)
-			newpos.y = 0;
 		SetScroll(newpos, TRUE);
 	}
 
