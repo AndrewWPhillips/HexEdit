@@ -1618,9 +1618,11 @@ void CPropCharPage::Update(CHexEditView *pv, FILE_ADDRESS address /*=-1*/)
 			cc[got] = '\0';
 
 			ASSERT(code_page_ == (int)ctl_code_page_.GetItemData(code_page_));
-			size_t len = CharNextExA(page_number[code_page_], (LPCSTR)cc, 0) - (LPSTR)cc;
-			TRACE("+_+_+_+_ MBCS LEN %d +_+_+_+_\r\n", len);
-			MultiByteToWideChar(page_number[code_page_], 0, (LPCSTR)cc, len, char_multibyte, sizeof(char_multibyte)/sizeof(char_multibyte[0]));
+			//size_t len = CharNextExA(page_number[code_page_], (LPCSTR)cc, 0) - (LPSTR)cc;
+			//TRACE("+_+_+_+_ MBCS LEN %d +_+_+_+_\r\n", len);
+			// Note that we can't use len instead of -1 in the call below since for UTF-8 len is always 1 (or 0),
+			// though we could do our own calculation of len
+			MultiByteToWideChar(page_number[code_page_], 0, (LPCSTR)cc, -1, char_multibyte, sizeof(char_multibyte)/sizeof(char_multibyte[0]));
 			char_multibyte[1] = L'\0';    // Only display the first char
 		}
 

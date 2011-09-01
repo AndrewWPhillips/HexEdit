@@ -2150,6 +2150,10 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 	clear_bookmarks_ = GetProfileInt("Options", "ClearBookmarks", 0) ? TRUE : FALSE;
 	clear_on_exit_ = GetProfileInt("Options", "ClearOnExit", 1) ? TRUE : FALSE;
 
+	// TODO: make these options stored in registry
+	wc_cont = 0xFFFB;
+	wc_bad = 0xFFFD;
+
 	hex_ucase_ = GetProfileInt("Options", "UpperCaseHex", 1) ? TRUE : FALSE;
 	k_abbrev_ = GetProfileInt("Options", "KAbbrev", 1);
 	if (k_abbrev_ < 0) k_abbrev_ = 1;
@@ -2299,7 +2303,9 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 			open_display_.hex_area = GetProfileInt("Options", "OpenDisplayHex", 1) ? TRUE : FALSE;
 			open_display_.char_area = GetProfileInt("Options", "OpenDisplayChar", 1) ? TRUE : FALSE;
 
-			if (GetProfileInt("Options", "OpenEBCDIC", 0) != 0)
+			if (GetProfileInt("Options", "OpenCodePage", 0) != 0)
+				open_display_.char_set = CHARSET_CODEPAGE;
+			else if (GetProfileInt("Options", "OpenEBCDIC", 0) != 0)
 				open_display_.char_set = CHARSET_EBCDIC;
 			else if (GetProfileInt("Options", "OpenGraphicChars", 0) == 0)  // no graphics means ASCII
 				open_display_.char_set = CHARSET_ASCII;
@@ -2362,8 +2368,8 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 	// Note: this will be removed later when we support more char sets (Unicode and code page char sets)
 	if (open_display_.char_set == 2)
 		open_display_.char_set = CHARSET_ASCII;       // ASCII:  0/2 -> 0
-	else if (open_display_.char_set > 4)
-		open_display_.char_set = CHARSET_EBCDIC;      // EBCDIC: 4/5/6/7 -> 4
+	//else if (open_display_.char_set > 4)
+	//	open_display_.char_set = CHARSET_EBCDIC;      // EBCDIC: 4/5/6/7 -> 4
 
 	CString strFont = GetProfileString("Options", "OpenFont", "Courier,16"); // Font info string (fields are comma sep.)
 	CString strFace;                                            // Font FaceName from string

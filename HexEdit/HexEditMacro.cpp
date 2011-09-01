@@ -666,6 +666,9 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				case 3:
 					pv_->OnCharsetEbcdic();
 					break;
+				case 4:
+					pv_->OnCharsetCodepage();
+					break;
 				default:
 					ASSERT(0);
 				}

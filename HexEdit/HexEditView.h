@@ -241,6 +241,8 @@ public:
 		return GetMark();
 	}
 
+	void SetCodePage(int cp);
+
 	// SetSelAddr not necessary (Use GoAddress or MoveToAddress)
 //    void SetSelAddr(FILE_ADDRESS start, FILE_ADDRESS end) { SetSel(addr2pos(start), addr2pos(end)); }
 	FILE_ADDRESS GetMark() { return mark_; }
@@ -684,6 +686,8 @@ public:
 		afx_msg void OnUpdateCharsetOem(CCmdUI *pCmdUI);
 		afx_msg void OnCharsetEbcdic();
 		afx_msg void OnUpdateCharsetEbcdic(CCmdUI *pCmdUI);
+		afx_msg void OnCharsetCodepage();
+		afx_msg void OnUpdateCharsetCodepage(CCmdUI *pCmdUI);
 		afx_msg void OnControlNone();
 		afx_msg void OnUpdateControlNone(CCmdUI *pCmdUI);
 		afx_msg void OnControlAlpha();
@@ -907,6 +911,10 @@ private:
 		DWORD disp_state_;
 		struct display_bits display_;
 	};
+
+	int code_page_;             // Current code page used when display_.char_set == CHARSET_CODEPAGE
+	size_t max_cp_bytes_;       // Maximum no of bytes for a "character" in the code page (eg 2 for DBCS)
+	std::vector<FILE_ADDRESS> codepage_startchar(FILE_ADDRESS fst, FILE_ADDRESS lst);
 
 	// The following are saved before making changes to options that change the
 	// display (in begin_change) and then used in end_change.

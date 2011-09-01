@@ -98,13 +98,13 @@ typedef __int64 FILE_ADDRESS;
 #include "resource.h"       // main symbols
 
 // Currently supported character sets
-enum { CHARSET_ASCII = 0, CHARSET_ANSI = 1, CHARSET_OEM = 3, CHARSET_EBCDIC = 4, CHARSET_UCODE_EVEN, CHARSET_UCODE_ODD };
+enum { CHARSET_ASCII = 0, CHARSET_ANSI = 1, CHARSET_OEM = 3, CHARSET_EBCDIC = 4, CHARSET_UCODE_EVEN, CHARSET_UCODE_ODD, CHARSET_CODEPAGE };
 
 // Fonts required for different char sets
 enum font_t {
 	FONT_ANSI,     // Used for CHARSET_ASCII, ANSI and EBCDIC
 	FONT_OEM,      // Used for CHARSET_OEM
-	FONT_UCODE,    // Used for CHARSET_UCODE_EVEN, CHARSET_UCODE_ODD, CHARSET_CODE_PAGE (TBD)
+	FONT_UCODE,    // Used for CHARSET_UCODE_EVEN, CHARSET_UCODE_ODD, CHARSET_CODEPAGE
 };
 
 // This is used to store all display flags in one int
@@ -705,6 +705,9 @@ public:
 	BOOL dlg_dock_, dlg_move_;          // Modeless dialogs: can dock? move out of the way when floating?
 	BOOL reverse_zoom_;                 // Reverse Ctrl+wheel zoom direction
 
+	wchar_t wc_cont;                    // Used for continuation bytes in MBCS (CHARSET_CODEPAGE)
+	wchar_t wc_bad;                     // Used for error bytes in MBCS (CHARSET_CODEPAGE)
+
 	BOOL hex_ucase_;                    // Display hex in upper case?
 	int k_abbrev_;                      // How are K/M/G abbreviated (0=1000/1000/1000, 1=1024/1000/1000, 2=1024/1024/1000, 3=1024/1024/1024)
 
@@ -880,6 +883,8 @@ private:
 
 extern CHexEditApp theApp;
 inline BOOL IsUs() { return theApp.is_us_; }  // Used for diff spelling
+inline wchar_t & ContChar() { return theApp.wc_cont; }
+inline wchar_t & BadChar() { return theApp.wc_bad; }
 
 extern unsigned char e2a_tab[256];
 extern unsigned char a2e_tab[128];

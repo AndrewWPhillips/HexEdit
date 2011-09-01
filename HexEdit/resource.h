@@ -1587,6 +1587,7 @@
 #define ID_FILE_SAVE_ALL                33993
 #define ID_FILE_CLOSE_ALL               33994
 #define ID_FILE_CLOSE_OTHERS            33995
+#define ID_CHARSET_CODEPAGE             33996
 #define ID_NAV_BACK_FIRST               34000
 #define ID_NAV_FORW_FIRST               36000
 #define ID_DFFD_OPEN_FIRST              38000

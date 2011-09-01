@@ -149,6 +149,7 @@ BEGIN
     BUTTON      ID_CHARSET_ANSI
     BUTTON      ID_CHARSET_OEM
     BUTTON      ID_CHARSET_EBCDIC
+    BUTTON      ID_CHARSET_CODEPAGE
     BUTTON      ID_CONTROL_NONE
     BUTTON      ID_CONTROL_ALPHA
     BUTTON      ID_CONTROL_C
@@ -291,6 +292,7 @@ BEGIN
     BUTTON      ID_CHARSET_ANSI
     BUTTON      ID_CHARSET_OEM
     BUTTON      ID_CHARSET_EBCDIC
+    BUTTON      ID_CHARSET_CODEPAGE
     SEPARATOR
     BUTTON      ID_CONTROL_NONE
     BUTTON      ID_CONTROL_ALPHA
@@ -530,6 +532,7 @@ BEGIN
             MENUITEM "ASCII+A&NSI",                 ID_CHARSET_ANSI
             MENUITEM "ASCII+IBM/&OEM",              ID_CHARSET_OEM
             MENUITEM "&EBCDIC",                     ID_CHARSET_EBCDIC
+            MENUITEM "CODEPAGE",                    ID_CHARSET_CODEPAGE
         END
         POPUP "C&ontrol Characters"
         BEGIN
@@ -1012,6 +1015,7 @@ BEGIN
             MENUITEM "ASCII+A&NSI",                 ID_CHARSET_ANSI
             MENUITEM "ASCII+IBM/&OEM",              ID_CHARSET_OEM
             MENUITEM "&EBCDIC",                     ID_CHARSET_EBCDIC
+            MENUITEM "CODEPAGE",                    ID_CHARSET_CODEPAGE
         END
         POPUP "C&ontrol Characters"
         BEGIN
@@ -3008,6 +3012,7 @@ BEGIN
     ID_CHARSET_ASCII        "Display characters as plain ASCII\nASCII"
     ID_CHARSET_ANSI         "Display characters as ANSI (includes ASCII)\nANSI"
     ID_CHARSET_OEM          "Display ASCII with IBM/OEM graphics chars\nIBM/OEM"
+    ID_CHARSET_CODEPAGE     "Display charcaters using the selected code page\nCODEPAGE"
     ID_CONTROL_NONE         "Display control characters as a dot\nNo Control Chars"
     ID_CONTROL_ALPHA        "Display aphabetic control characters\nAlpha Control Chars"
     ID_CONTROL_C            "Display control characters as C/C++ escape sequences\nC/C++ Control Chars"
@@ -3519,6 +3524,7 @@ BEGIN
         MENUITEM "ASCII+A&NSI",                 ID_CHARSET_ANSI
         MENUITEM "ASCII+IBM/&OEM",              ID_CHARSET_OEM
         MENUITEM "&EBCDIC",                     ID_CHARSET_EBCDIC
+        MENUITEM "CODEPAGE",                    ID_CHARSET_CODEPAGE
     END
     POPUP "Control"
     BEGIN

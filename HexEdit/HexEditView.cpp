@@ -525,6 +525,9 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 		ON_UPDATE_COMMAND_UI(ID_CHARSET_OEM, OnUpdateCharsetOem)
 		ON_COMMAND(ID_CHARSET_EBCDIC, OnCharsetEbcdic)
 		ON_UPDATE_COMMAND_UI(ID_CHARSET_EBCDIC, OnUpdateCharsetEbcdic)
+		ON_COMMAND(ID_CHARSET_CODEPAGE, OnCharsetCodepage)
+		ON_UPDATE_COMMAND_UI(ID_CHARSET_CODEPAGE, OnUpdateCharsetCodepage)
+
 		ON_COMMAND(ID_CONTROL_NONE, OnControlNone)
 		ON_UPDATE_COMMAND_UI(ID_CONTROL_NONE, OnUpdateControlNone)
 		ON_COMMAND(ID_CONTROL_ALPHA, OnControlAlpha)
@@ -678,6 +681,9 @@ CHexEditView::CHexEditView()
 	else
 		display_.edit_char = display_.mark_char = FALSE;    // Caret init. in hex not char area
 
+	ASSERT(CP_ACP == 0);
+	code_page_ = 0; max_cp_bytes_ = 1;  // default to ANSI code page
+
 	mouse_addr_ = -1;           // Only used when theApp.hl_mouse_ is on
 
 	mouse_down_ = false;
@@ -805,6 +811,8 @@ void CHexEditView::OnInitialUpdate()
 		disp_state_ = atoi(pfl->GetData(recent_file_index, CHexFileList::DISPLAY));
 		if (disp_state_ == 0) disp_state_ = 3;  // just in case RecentFile is really corrupt
 		SetVertBufferZone(atoi(pfl->GetData(recent_file_index, CHexFileList::VERT_BUFFER_ZONE)));
+
+		SetCodePage(atoi(pfl->GetData(recent_file_index, CHexFileList::CODEPAGE)));
 
 		// Get the colour scheme, if none try to find one based on file extension, otherwise
 		// let set_colours() handle it using the default scheme for the current char set.
@@ -996,17 +1004,15 @@ void CHexEditView::OnInitialUpdate()
 		display_.hex_addr = !display_.dec_addr;
 	}
 
-	// if (pfl->GetVersion() < 3)  // this is not really sufficient if the file is not actually opened since the recent file list gets written back with same DISPLAY value (but new version number)
-	{
-		// In version 2 files there were 3 separate flags (eg when EBCDIC flag on other 2 flags ignored).
-		// Now the 3 bits are used together to indicate char set but we allow for other bit patterns.
-		if (display_.char_set == 2)
-			display_.char_set = CHARSET_ASCII;       // ASCII:  0/2 -> 0
-		else if (display_.char_set > 4)
-			display_.char_set = CHARSET_EBCDIC;      // EBCDIC: 4/5/6/7 -> 4
-	}
-	if (display_.char_set == 7) // unused value
-		display_.char_set = CHARSET_EBCDIC;      // EBCDIC: 7 -> 4
+	// In version 2 files there were 3 separate flags (eg when EBCDIC flag on other 2 flags ignored).
+	// Now the 3 bits are used together to indicate char set but we allow for other bit patterns.
+	if (display_.char_set == 2)
+		display_.char_set = CHARSET_ASCII;       // ASCII:  0/2 -> 0
+
+#ifdef _DEBUG // xxx
+	display_.char_set = CHARSET_CODEPAGE;
+	SetCodePage(CP_UTF8);
+#endif
 
 	// This is just here as a workaround for a small problem with MDItabs - when
 	// the tabs are at the top then the tab bar gets slightly higher when the first
@@ -1187,6 +1193,7 @@ void CHexEditView::StoreOptions()
 		pfl->SetData(ii, CHexFileList::OEMHEIGHT, oem_lf_.lfHeight);
 
 		pfl->SetData(ii, CHexFileList::DISPLAY, disp_state_);
+		if (code_page_ != 0) pfl->SetData(ii, CHexFileList::CODEPAGE, code_page_);
 
 		pfl->SetData(ii, CHexFileList::DOC_FLAGS, GetDocument()->doc_flags());
 		pfl->SetData(ii, CHexFileList::FORMAT, GetDocument()->GetFormatFileName());
@@ -3345,6 +3352,11 @@ end_of_background_drawing:
 //      vert_offset = (vert_offset*15)/16;  // Leave a gap between rows
 	}
 
+	// This was added for codepages
+	std::vector<FILE_ADDRESS> cp_first;
+	if (display_.char_set == CHARSET_CODEPAGE && max_cp_bytes_ > 1)
+		cp_first = codepage_startchar(first_addr, last_addr);
+
 	// THIS IS WHERE THE ACTUAL LINES ARE DRAWN
 	// Note: we use != (line != last_line) since we may be drawing from bottom or top
 	for (FILE_ADDRESS line = first_line; line != last_line;
@@ -3375,19 +3387,21 @@ end_of_background_drawing:
 
 		// Get the bytes to display
 		size_t ii;                      // Column of first byte
+		const int extra_bytes = 8;      // we need to read extra bytes past the end of the line for displaying MBCS characters
 
 		if (line*rowsize_ - offset_ < first_addr)
 		{
-			last_col = pDoc->GetData(buf + offset_, rowsize_ - offset_, line*rowsize_) +
+			last_col = pDoc->GetData(buf + offset_, rowsize_ - offset_ + extra_bytes, line*rowsize_) +
 						offset_;
 			ii = size_t(first_addr - (line*rowsize_ - offset_));
 			ASSERT(int(ii) < rowsize_);
 		}
 		else
 		{
-			last_col = pDoc->GetData(buf, rowsize_, line*rowsize_ - offset_);
+			last_col = pDoc->GetData(buf, rowsize_ + extra_bytes, line*rowsize_ - offset_);
 			ii = 0;
 		}
+		if (last_col > rowsize_) last_col = rowsize_;  // Don't let extra_bytes affect number of columns to display
 
 		if (line*rowsize_ - offset_ + last_col - last_addr >= rowsize_)
 			last_col = 0;
@@ -3662,7 +3676,54 @@ end_of_background_drawing:
 				}
 
 				// Display byte in char display area (as ASCII, EBCDIC etc)
-				if (display_.char_set != CHARSET_EBCDIC)
+				if (display_.char_set == CHARSET_CODEPAGE && code_page_ == CP_UTF8)
+				{
+					// Handle UTF 8
+					ASSERT(cp_first.size() == 0 && max_cp_bytes_ == 0);
+					if ((buf[kk] & 0xC0) == 0x80)
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &ContChar(), 1);
+					else
+					{
+						size_t len;
+						if ((buf[kk] & 0x80) == 0x00)
+							len = 1;
+						else if ((buf[kk] & 0xE0) == 0xC0)
+							len = 2;
+						else if ((buf[kk] & 0xF0) == 0xE0)
+							len = 3;
+						else if ((buf[kk] & 0xF8) == 0xF0)
+							len = 4;
+						else if ((buf[kk] & 0xFC) == 0xF8)
+							len = 5;
+						else if ((buf[kk] & 0xFE) == 0xFC)
+							len = 6;
+						else
+							len = 0;   // invalid UTF-8
+
+						wchar_t wc;                               // equivalent Unicode (UTF-16) character
+						if (len == 0 || MultiByteToWideChar(code_page_, 0, (char *)&buf[kk], len, &wc, 1) == 0)
+							::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &BadChar(), 1);
+						else
+							::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &wc, 1);
+					}
+
+				}
+				else if (display_.char_set == CHARSET_CODEPAGE && max_cp_bytes_ <= 1)
+				{
+					// Handle single byte code page
+					ASSERT(cp_first.size() == 0 && max_cp_bytes_ == 1);
+					wchar_t wc;                               // equivalent Unicode (UTF-16) character
+					if (MultiByteToWideChar(code_page_, 0, (char *)&buf[kk], 1, &wc, 1) == 1)
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &wc, 1);
+					else
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &BadChar(), 1);
+				}
+				else if (display_.char_set == CHARSET_CODEPAGE)
+				{
+					// Handle MBCS code pages
+					ASSERT(cp_first.size() > 0);   // xxx check size == # rows
+				}
+				else if (display_.char_set != CHARSET_EBCDIC)
 				{
 					if ((buf[kk] >= 32 && buf[kk] < 127) ||
 						(display_.char_set != CHARSET_ASCII && buf[kk] >= first_char_ && buf[kk] <= last_char_) )
@@ -4611,6 +4672,81 @@ int CHexEditView::pos_char(int pos, int inside) const
 	else if (inside == 0 && col > rowsize_) col = rowsize_;
 
 	return col;
+}
+// Set which code page is used when display_.char_set == CHARSET_CODEPAGE
+void CHexEditView::SetCodePage(int cp)
+{
+	if (cp == code_page_)    // same as current
+		return;
+
+	code_page_ = cp;
+	if (code_page_ == CP_UTF8)
+	{
+		max_cp_bytes_ = 0;  // UTF-8 is handled differently - set to zero to detect accidental use of normal CP code
+		return;
+	}
+
+	CPINFOEX cpie;
+	GetCPInfoEx(code_page_, 0, &cpie);
+	max_cp_bytes_ = cpie.MaxCharSize;
+}
+
+// codepage_startchar scans the current display buffer to work out which byte is the first
+// character start byte on each display line.  It is only used when displaying a codepage char
+// set (display_.char_set == CHARSET_CODEPAGE).  It is also not used for:
+// - single byte char sets (SBCS) since the first byte on the line is always the first char
+// - UTF-8 (CP_UTF8) since it is easy to tell the difference between start bytes and continuation 
+//          bytes (and Windows does not properly support UTF-8 like other code pages)
+// Returns: an array of addresses which has an address for each row of text in the display.  These
+//          are the addresses of the first "start" byte of the first complete character on the line.
+//          That is, they are >= the start address of the line and < start address + max_cp_bytes.
+// Note: We need this for 2 reasons:
+//  1. To ensure that the character display does not change as the user scrolls up and down due
+//     to some bytes being interpreted differently (either start or continuation bytes).
+//     This requires scanning from before that start of the diplayed bytes to ensure we are in sync.
+//  2. Allow draw from bottom and drwa from top of display to gice the same results
+std::vector<FILE_ADDRESS> CHexEditView::codepage_startchar(FILE_ADDRESS fst, FILE_ADDRESS lst)
+{
+	ASSERT(display_.char_set == CHARSET_CODEPAGE && max_cp_bytes_ > 1 && code_page_ != CP_UTF8);
+	std::vector<FILE_ADDRESS> retval;
+
+	FILE_ADDRESS aa = fst - (max_cp_bytes_+2);  // We need to start before the display top to make sure we are in sync
+	if (aa < 0) aa = 0;                         // Don't go back before start of file
+
+	// Get buffer of data to check
+	size_t len = size_t(lst - aa) + max_cp_bytes_;  // this gets (fst-aa) extra bytes at the start AND an extra max_cp_bytes_ at the end
+	char *buf = new char[len];
+	size_t got = GetDocument()->GetData((unsigned char *)buf, len-1, aa);
+	ASSERT(got >= size_t(lst - aa));
+	buf[got] = '\0';                            // Add a string teminator just to make sure we don't run off the end of the data
+
+	FILE_ADDRESS nn = fst;                      // nn is address of the start of the next line
+	for ( const char *pp = buf; ; )
+	{
+		// Have we reached the end of this row yet?
+		// Note that the number of bytes in a "char" may be 5 or more which is longer than the minimum row size (4)
+		//      so some rows may have the same address (ie a row may be all leader bytes).
+		while (aa >= nn && nn < lst)
+		{
+			retval.push_back(aa);               // save this address as the start of the first "char" in this row
+			nn += rowsize_;                     // get start of next line
+		}
+
+		// Have we got to the end of all rows?
+		if (aa >= lst && nn >= lst)
+			break;
+
+		// Find the start of the next character
+		const char *prev = pp;
+		pp = CharNextExA(code_page_, prev, 0);
+		if (pp == prev) ++pp;                   // skip nul (and error?) bytes
+		aa += pp - prev;                        // update the address to match
+	}
+	delete[] buf;
+
+	ASSERT(nn == lst);
+	ASSERT(retval.size() == (lst - fst)/rowsize_);  // must have an entry for all lines of the display
+	return retval;
 }
 
 void CHexEditView::DoInvalidate()
@@ -13470,7 +13606,7 @@ void CHexEditView::OnCharsetAscii()
 	if (!(display_.vert_display || display_.char_area))
 	{
 		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change characters sets without the char area");
+		TaskMessageBox("Char Set Error", "You can't change character sets without the char area");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13526,7 +13662,7 @@ void CHexEditView::OnCharsetAnsi()
 	if (!(display_.vert_display || display_.char_area))
 	{
 		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change characters sets without the char area.");
+		TaskMessageBox("Char Set Error", "You can't change character sets without the char area.");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13582,7 +13718,7 @@ void CHexEditView::OnCharsetOem()
 	if (!(display_.vert_display || display_.char_area))
 	{
 		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change characters sets without the char area.");
+		TaskMessageBox("Char Set Error", "You can't change character sets without the char area.");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13638,7 +13774,7 @@ void CHexEditView::OnCharsetEbcdic()
 	if (!(display_.vert_display || display_.char_area))
 	{
 		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change characters sets without the char area.");
+		TaskMessageBox("Char Set Error", "You can't change character sets without the char area.");
 		theApp.mac_error_ = 2;
 		return;
 	}
@@ -13684,6 +13820,41 @@ void CHexEditView::OnUpdateCharsetEbcdic(CCmdUI *pCmdUI)
 	{
 		pCmdUI->Enable((display_.vert_display || display_.char_area));
 		pCmdUI->SetCheck(display_.char_set == CHARSET_EBCDIC);
+	}
+}
+
+void CHexEditView::OnCharsetCodepage()
+{
+	//bool std_scheme = false;
+
+	if (!(display_.vert_display || display_.char_area))
+	{
+		ASSERT(theApp.playing_);
+		TaskMessageBox("Char Set Error", "You can't change characters set without the char area.");
+		theApp.mac_error_ = 2;
+		return;
+	}
+
+	begin_change();
+	display_.char_set = CHARSET_CODEPAGE;
+	BOOL ptoo = make_change();
+	end_change();
+
+	theApp.SaveToMacro(km_charset, 4);
+}
+
+void CHexEditView::OnUpdateCharsetCodepage(CCmdUI *pCmdUI)
+{
+	if (pCmdUI->m_pSubMenu != NULL)
+	{
+		// This happens when popup menu itself is drawn
+		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
+			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
+	}
+	else
+	{
+		pCmdUI->Enable((display_.vert_display || display_.char_area));
+		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE);
 	}
 }
 
