@@ -91,7 +91,7 @@
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>C:\Andrew\cpp_out\HexEdit\ReleaseVS2010\HexEdit.exe</OutputFile>
+      <OutputFile>C:\Andrew\cpp_out\HexEdit\ReleaseVS2010\HexEditPro.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>$(IntDir)HexEditPro.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -140,7 +140,7 @@
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>C:\Andrew\cpp_out\HexEdit\DebugVS2010\HexEdit.exe</OutputFile>
+      <OutputFile>C:\Andrew\cpp_out\HexEdit\DebugVS2010\HexEditPro.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
