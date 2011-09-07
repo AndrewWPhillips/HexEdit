@@ -177,7 +177,17 @@ struct display_bits
 	unsigned int auto_scroll_comp: 1; // Automatically scroll compare/hex views when other scrolled
 
 	// Returns font required for display: currently ANSI unless displaying char area and OEM char set selected
-	font_t FontRequired() { return char_area && char_set == CHARSET_OEM ? FONT_OEM : FONT_ANSI; }
+	font_t FontRequired()
+	{
+		if (!char_area && !vert_display)
+			return FONT_ANSI;                  // only showing hex
+		else if (char_set == CHARSET_OEM)
+			return FONT_OEM;                   // showing oem chars
+		else if (char_set == CHARSET_CODEPAGE)
+			return FONT_UCODE;                 // showing multi-byte chars (codepage/Unicode)
+		else
+			return FONT_ANSI;                  // showing ASCII, ANSI, or translated EBCDIC chars
+	}  
 };
 
 #include "crypto.h"
@@ -705,8 +715,8 @@ public:
 	BOOL dlg_dock_, dlg_move_;          // Modeless dialogs: can dock? move out of the way when floating?
 	BOOL reverse_zoom_;                 // Reverse Ctrl+wheel zoom direction
 
-	wchar_t wc_cont;                    // Used for continuation bytes in MBCS (CHARSET_CODEPAGE)
-	wchar_t wc_bad;                     // Used for error bytes in MBCS (CHARSET_CODEPAGE)
+	int cont_char_;                     // Used for continuation bytes in MBCS (CHARSET_CODEPAGE)
+	int invalid_char_;                  // Used for error bytes in MBCS (CHARSET_CODEPAGE)
 
 	BOOL hex_ucase_;                    // Display hex in upper case?
 	int k_abbrev_;                      // How are K/M/G abbreviated (0=1000/1000/1000, 1=1024/1000/1000, 2=1024/1024/1000, 3=1024/1024/1024)
@@ -763,9 +773,11 @@ public:
 		DWORD open_disp_state_;
 		struct display_bits open_display_;
 	};
+	int open_code_page_;
 
 	LOGFONT *open_plf_;                 // Pointer to default font or NULL if none
 	LOGFONT *open_oem_plf_;             // Pointer to default OEM font or NULL if none
+	LOGFONT *open_mb_plf_;              // Pointer to default code page/Unicode font or NULL if none
 
 	// All colour schemes available
 	std::vector<CScheme> scheme_;
@@ -883,8 +895,21 @@ private:
 
 extern CHexEditApp theApp;
 inline BOOL IsUs() { return theApp.is_us_; }  // Used for diff spelling
-inline wchar_t & ContChar() { return theApp.wc_cont; }
-inline wchar_t & BadChar() { return theApp.wc_bad; }
+
+// These chars must correspond to the values in UCODE_CHAR_TYPE
+static const wchar_t SPECIAL_CHARS[] = {L' ', 0x00B7, 0x2022, 0x2026, L'?', 0x00BF, 0x097A, 0xFFF9, 0xFFFD, 0 };
+
+inline const wchar_t * ContChar()
+{
+	ASSERT(sizeof(SPECIAL_CHARS)/sizeof(*SPECIAL_CHARS) == UCODE_LAST + 1);
+	return SPECIAL_CHARS + theApp.cont_char_;
+}
+
+inline const wchar_t * BadChar()
+{
+	ASSERT(sizeof(SPECIAL_CHARS)/sizeof(*SPECIAL_CHARS) == UCODE_LAST + 1);
+	return SPECIAL_CHARS + theApp.invalid_char_;
+}
 
 extern unsigned char e2a_tab[256];
 extern unsigned char a2e_tab[128];

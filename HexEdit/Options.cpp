@@ -177,6 +177,9 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.autoscroll_accel_ = 10;
 	val_.reverse_zoom_ = TRUE;
 
+	val_.cont_char_ = UCODE_BLANK;
+	val_.invalid_char_ = UCODE_FFFD;
+
 	val_.ruler_ = TRUE;
 	val_.ruler_dec_ticks_ = 5; val_.ruler_dec_nums_ = 10;
 	val_.ruler_hex_ticks_ = val_.ruler_hex_nums_ = 1;
@@ -233,6 +236,7 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 
 	val_.show_area_ = -1;
 	val_.charset_ = -1;
+	val_.code_page_ = -1;
 	val_.control_ = -1;
 	val_.autofit_ = FALSE;
 	val_.maximize_ = FALSE;
@@ -1513,6 +1517,8 @@ void CWorkspaceDisplayPage::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxUInt(pDX, pParent->val_.ruler_hex_nums_, 1, 9999);
 	DDX_Check(pDX, IDC_HL_CARET, pParent->val_.hl_caret_);
 	DDX_Check(pDX, IDC_HL_MOUSE, pParent->val_.hl_mouse_);
+	DDX_CBIndex(pDX, IDC_CONT_CHAR, pParent->val_.cont_char_);
+	DDX_CBIndex(pDX, IDC_INVALID_CHAR, pParent->val_.invalid_char_);
 	DDX_Control(pDX, IDC_DOC_PAGE, ctl_doc_butn_);
 }
 
@@ -1545,6 +1551,8 @@ BEGIN_MESSAGE_MAP(CWorkspaceDisplayPage, COptPage)
 	ON_BN_CLICKED(IDC_HL_CARET, OnChange)
 	ON_BN_CLICKED(IDC_HL_MOUSE, OnChange)
 	ON_BN_CLICKED(IDC_DOC_PAGE, OnDocPage)
+	ON_CBN_SELCHANGE(IDC_CONT_CHAR, OnChange)
+	ON_CBN_SELCHANGE(IDC_INVALID_CHAR, OnChange)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -4296,6 +4304,7 @@ void CWindowGeneralPage::OnSaveDefault()
 	ASSERT(pview != NULL);
 
 	theApp.open_disp_state_ = pParent->val_.disp_state_;
+	theApp.open_code_page_ = pParent->val_.code_page_;
 	theApp.open_max_ = pParent->val_.maximize_;
 	theApp.open_rowsize_ = pParent->val_.cols_;
 	theApp.open_group_by_ = pParent->val_.grouping_;
@@ -4308,6 +4317,9 @@ void CWindowGeneralPage::OnSaveDefault()
 	if (theApp.open_oem_plf_ == NULL)
 		theApp.open_oem_plf_ = new LOGFONT;
 	*theApp.open_oem_plf_ = pParent->val_.oem_lf_;
+	if (theApp.open_mb_plf_ == NULL)
+		theApp.open_mb_plf_ = new LOGFONT;
+	*theApp.open_mb_plf_ = pParent->val_.mb_lf_;
 
 	pview->AdjustColumns();  // fix and get split_width_d_/split_width_a_/split_width_c_
 	theApp.dffdview_ = pParent->val_.display_template_;
@@ -4349,6 +4361,7 @@ void CWindowGeneralPage::OnDispReset()
 	// Reset to default display values
 	ASSERT(theApp.open_disp_state_ != -1);
 	pParent->val_.disp_state_ = theApp.open_disp_state_;
+	pParent->val_.code_page_ = theApp.open_code_page_;
 	pParent->val_.maximize_ = theApp.open_max_;
 	pParent->val_.cols_ = theApp.open_rowsize_;
 	pParent->val_.grouping_ = theApp.open_group_by_;
@@ -4359,6 +4372,8 @@ void CWindowGeneralPage::OnDispReset()
 		pParent->val_.lf_ = *theApp.open_plf_;
 	if (theApp.open_oem_plf_ != NULL)
 		pParent->val_.oem_lf_ = *theApp.open_oem_plf_;
+	if (theApp.open_mb_plf_ != NULL)
+		pParent->val_.mb_lf_ = *theApp.open_mb_plf_;
 
 	pParent->val_.display_template_ = theApp.dffdview_ > 2   ? 1 : theApp.dffdview_;
 	pParent->val_.display_aerial_   = theApp.aerialview_ > 2 ? 1 : theApp.aerialview_;
@@ -4376,10 +4391,72 @@ void CWindowGeneralPage::OnDispReset()
 
 IMPLEMENT_DYNCREATE(CWindowPage, COptPage)
 
+// DDX function for getting/setting the item data of the current list box item
+static void AFXAPI DDX_CBData(CDataExchange* pDX, int nIDC, int& data)
+{
+	pDX->PrepareCtrl(nIDC);
+	HWND hWndCtrl;
+	pDX->m_pDlgWnd->GetDlgItem(nIDC, &hWndCtrl);
+	int idx;
+	if (pDX->m_bSaveAndValidate)
+	{
+		idx = (int)::SendMessage(hWndCtrl, CB_GETCURSEL, 0, 0L);
+		data = idx == CB_ERR ? CP_ACP : (int)::SendMessage(hWndCtrl, CB_GETITEMDATA, (WPARAM)idx, 0L);
+	}
+	else
+	{
+		// Find the entry in the list with with item data == data
+		int cnt = (int)::SendMessage(hWndCtrl, CB_GETCOUNT, 0, 0L);
+		for (idx = 0; idx < cnt; ++idx)
+		{
+			if ((int)::SendMessage(hWndCtrl, CB_GETITEMDATA, (WPARAM)idx, 0L) == data)
+			{
+				::SendMessage(hWndCtrl, CB_SETCURSEL, (WPARAM)idx, 0L);
+				break;
+			}
+		}
+		if (idx == cnt)                       // not found in the list
+			::SendMessage(hWndCtrl, CB_SETCURSEL, (WPARAM)-1, 0L);   // deselect
+	}
+}
+
+// The following are used for getting the names of all the available code pages
+static const int MAX_BYTES = 16;                 // Max bytes to get from files for multibyte char processing (10 is probably enough)
+static vector<int> page_number;                  // The code page number for all installed code pages
+static vector<CString> page_name;                // Corresponding name of the code page
+
+static BOOL CALLBACK CodePageCallback(LPTSTR ss)
+{
+	// Get info about this page
+	UINT cp = atoi(ss);
+	CPINFOEX cpie;
+	GetCPInfoEx(cp, 0, &cpie);
+
+	// Save what we need
+	page_number.push_back(cpie.CodePage);
+	page_name.push_back(CString(cpie.CodePageName));
+	ASSERT(cpie.MaxCharSize <= MAX_BYTES);
+
+	return TRUE;
+}
+
 CWindowPage::CWindowPage() : COptPage(CWindowPage::IDD)
 {
 	update_ok_ = false;
 	pGlobalPage = NULL;
+
+	// Get list of installed code pages
+	if (page_name.empty())
+	{
+		::EnumSystemCodePages(&CodePageCallback, CP_INSTALLED);
+	}
+}
+
+CWindowPage::~CWindowPage()
+{
+	// This avoids debug heap saying we have a memory leak at exit
+	page_name.clear();
+	page_number.clear(); 
 }
 
 void CWindowPage::DoDataExchange(CDataExchange* pDX)
@@ -4397,7 +4474,9 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 		else
 			pParent->val_.show_area_ = 0;
 
-		if (pParent->val_.display_.char_set == CHARSET_EBCDIC)
+		if (pParent->val_.display_.char_set == CHARSET_CODEPAGE)
+			pParent->val_.charset_ = 4;
+		else if (pParent->val_.display_.char_set == CHARSET_EBCDIC)
 			pParent->val_.charset_ = 3;
 		else if (pParent->val_.display_.char_set == CHARSET_OEM)
 			pParent->val_.charset_ = 2;
@@ -4421,6 +4500,8 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_MAX, pParent->val_.maximize_);
 	DDX_CBIndex(pDX, IDC_SHOW_AREA, pParent->val_.show_area_);
 	DDX_CBIndex(pDX, IDC_CHARSET, pParent->val_.charset_);
+	DDX_Control(pDX, IDC_CODE_PAGE, ctl_code_page_);
+	DDX_CBData(pDX, IDC_CODE_PAGE,  pParent->val_.code_page_);
 	DDX_CBIndex(pDX, IDC_CONTROL, pParent->val_.control_);
 	DDX_Text(pDX, IDC_COLS, pParent->val_.cols_);
 	DDX_Text(pDX, IDC_OFFSET, pParent->val_.offset_);
@@ -4479,6 +4560,9 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 		case 3:
 			pParent->val_.display_.char_set = CHARSET_EBCDIC;
 			break;
+		case 4:
+			pParent->val_.display_.char_set = CHARSET_CODEPAGE;
+			break;
 		}
 
 		pParent->val_.display_.control = pParent->val_.control_;
@@ -4498,8 +4582,11 @@ BEGIN_MESSAGE_MAP(CWindowPage, COptPage)
 	ON_WM_CONTEXTMENU()
 	ON_CBN_SELCHANGE(IDC_SHOW_AREA, OnSelchangeShowArea)
 	ON_CBN_SELCHANGE(IDC_CHARSET, OnSelchangeCharset)
+	ON_CBN_SELCHANGE(IDC_CODE_PAGE, OnSelchangeCodePage)
 	ON_CBN_SELCHANGE(IDC_CONTROL, OnSelchangeControl)
 	ON_BN_CLICKED(IDC_FONT, OnFont)
+	ON_BN_CLICKED(IDC_FONT_OEM, OnFontOem)
+	ON_BN_CLICKED(IDC_FONT_UCODE, OnFontUcode)
 	ON_EN_CHANGE(IDC_COLS, OnChangeCols)
 	ON_EN_CHANGE(IDC_GROUPING, OnChange)
 	ON_EN_CHANGE(IDC_OFFSET, OnChange)
@@ -4537,8 +4624,13 @@ void CWindowPage::fix_controls()
 	// If no char area disable charset and control char selection
 	GetDlgItem(IDC_CHARSET)->EnableWindow(pParent->val_.show_area_ != 0);
 	GetDlgItem(IDC_CHARSET_DESC)->EnableWindow(pParent->val_.show_area_ != 0);
-	GetDlgItem(IDC_CONTROL)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ < 2);
-	GetDlgItem(IDC_CONTROL_DESC)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ < 2);
+	GetDlgItem(IDC_CODE_PAGE)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ == 4);
+	GetDlgItem(IDC_CONTROL)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ != 2 && pParent->val_.charset_ != 3);
+	GetDlgItem(IDC_CONTROL_DESC)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ != 2 && pParent->val_.charset_ != 3);
+
+	GetDlgItem(IDC_FONT)->EnableWindow(pParent->val_.display_.FontRequired() == FONT_ANSI);
+	GetDlgItem(IDC_FONT_OEM)->EnableWindow(pParent->val_.display_.FontRequired() == FONT_OEM);
+	GetDlgItem(IDC_FONT_UCODE)->EnableWindow(pParent->val_.display_.FontRequired() == FONT_UCODE);
 
 	// If no hex area disable setting of column grouping
 	GetDlgItem(IDC_GROUPING_DESC)->EnableWindow(pParent->val_.show_area_ != 1);
@@ -4595,6 +4687,16 @@ BOOL CWindowPage::OnInitDialog()
 	pspin = (CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_GROUPING);
 	ASSERT(pspin != NULL);
 	pspin->SetRange(2, CHexEditView::max_buf);
+
+	// Fill in the code page control
+	ASSERT(ctl_code_page_.GetCount() == 0);
+	for (int ii = 0; ii < page_name.size(); ++ii)
+	{
+		int idx = ctl_code_page_.InsertString(-1, page_name[ii]);
+		ASSERT(idx > -1);
+		ctl_code_page_.SetItemData(idx, (DWORD_PTR)page_number[ii]);
+	}
+	ctl_code_page_.SetDroppedWidth(256);
 
 	fix_controls();
 
@@ -4748,6 +4850,13 @@ void CWindowPage::OnSelchangeCharset()
 	SetModified(TRUE);
 }
 
+void CWindowPage::OnSelchangeCodePage()
+{
+	UpdateData();
+
+	SetModified(TRUE);
+}
+
 void CWindowPage::OnSelchangeControl()
 {
 	SetModified(TRUE);
@@ -4758,25 +4867,51 @@ void CWindowPage::OnFont()
 	UpdateData();
 
 	CFontDialog dlg;
-//    dlg.SetWindowText(open_display_char_ && !open_ebcdic_ && open_graphic_ && open_oem_ ?
-//                      "Default OEM/IBM window font" : "Default font");
-	if (pParent->val_.display_.FontRequired() == FONT_OEM)
-		dlg.m_cf.lpLogFont = &pParent->val_.oem_lf_;
-	else
-		dlg.m_cf.lpLogFont = &pParent->val_.lf_;
+    //dlg.SetWindowText("Normal font");
+	dlg.m_cf.lpLogFont = &pParent->val_.lf_;
 	dlg.m_cf.Flags |= CF_INITTOLOGFONTSTRUCT | CF_SHOWHELP;
 	dlg.m_cf.Flags &= ~(CF_EFFECTS);              // Disable selection of strikethrough, colours etc
 
 	if (dlg.DoModal() == IDOK)
 	{
-		if (pParent->val_.display_.FontRequired() == FONT_OEM)
-		{
-			if (pParent->val_.oem_lf_.lfHeight < 0) pParent->val_.oem_lf_.lfHeight = -pParent->val_.oem_lf_.lfHeight;
-		}
-		else
-		{
-			if (pParent->val_.lf_.lfHeight < 0) pParent->val_.lf_.lfHeight = -pParent->val_.lf_.lfHeight;
-		}
+		if (pParent->val_.lf_.lfHeight < 0)
+			pParent->val_.lf_.lfHeight = -pParent->val_.lf_.lfHeight;
+		SetModified(TRUE);
+	}
+}
+
+void CWindowPage::OnFontOem()
+{
+	UpdateData();
+
+	CFontDialog dlg;
+    //dlg.SetWindowText("OEM/IBM font");
+	dlg.m_cf.lpLogFont = &pParent->val_.oem_lf_;
+	dlg.m_cf.Flags |= CF_INITTOLOGFONTSTRUCT | CF_SHOWHELP;
+	dlg.m_cf.Flags &= ~(CF_EFFECTS);              // Disable selection of strikethrough, colours etc
+
+	if (dlg.DoModal() == IDOK)
+	{
+		if (pParent->val_.oem_lf_.lfHeight < 0)
+			pParent->val_.oem_lf_.lfHeight = -pParent->val_.oem_lf_.lfHeight;
+		SetModified(TRUE);
+	}
+}
+
+void CWindowPage::OnFontUcode()
+{
+	UpdateData();
+
+	CFontDialog dlg;
+    //dlg.SetWindowText("Multibyte font");
+	dlg.m_cf.lpLogFont = &pParent->val_.mb_lf_;
+	dlg.m_cf.Flags |= CF_INITTOLOGFONTSTRUCT | CF_SHOWHELP;
+	dlg.m_cf.Flags &= ~(CF_EFFECTS);              // Disable selection of strikethrough, colours etc
+
+	if (dlg.DoModal() == IDOK)
+	{
+		if (pParent->val_.mb_lf_.lfHeight < 0)
+			pParent->val_.mb_lf_.lfHeight = -pParent->val_.mb_lf_.lfHeight;
 		SetModified(TRUE);
 	}
 }

@@ -700,6 +700,9 @@ CHexEditView::CHexEditView()
 	_tcscpy(oem_lf_.lfFaceName, _T("Terminal")); // The only certain OEM font?
 	oem_lf_.lfHeight = 18;
 	oem_lf_.lfCharSet = OEM_CHARSET;         // Only allow OEM/IBM character set fonts
+	mb_lf_ = lf_;
+	_tcscpy(mb_lf_.lfFaceName, _T("Lucida Sans Unicode")); // Good Unicode font
+	mb_lf_.lfCharSet = DEFAULT_CHARSET;
 
 	search_length_ = 0;
 	last_tip_addr_ = -1;
@@ -865,6 +868,9 @@ void CHexEditView::OnInitialUpdate()
 		strncpy(oem_lf_.lfFaceName, pfl->GetData(recent_file_index, CHexFileList::OEMFONT), LF_FACESIZE-1);
 		oem_lf_.lfFaceName[LF_FACESIZE-1] = '\0';
 		oem_lf_.lfHeight = atoi(pfl->GetData(recent_file_index, CHexFileList::OEMHEIGHT));
+		strncpy(mb_lf_.lfFaceName, pfl->GetData(recent_file_index, CHexFileList::MBFONT), LF_FACESIZE-1);
+		mb_lf_.lfFaceName[LF_FACESIZE-1] = '\0';
+		mb_lf_.lfHeight = atoi(pfl->GetData(recent_file_index, CHexFileList::MBHEIGHT));
 
 		std::istringstream strstr((const char *)pfl->GetData(recent_file_index, CHexFileList::HIGHLIGHTS));
 		strstr >> hl_set_;
@@ -985,16 +991,10 @@ void CHexEditView::OnInitialUpdate()
 			GetFrame()->SetWindowPlacement(&wp);
 		}
 
-		// Set the normal and OEM graphic font
-		if (aa->open_plf_ != NULL)
-		{
-			lf_ = *aa->open_plf_;
-		}
-
-		if (aa->open_oem_plf_ != NULL)
-		{
-			oem_lf_ = *aa->open_oem_plf_;
-		}
+		// Set the fonts
+		if (aa->open_plf_ != NULL)      lf_ = *aa->open_plf_;
+		if (aa->open_oem_plf_ != NULL)  oem_lf_ = *aa->open_oem_plf_;
+		if (aa->open_mb_plf_ != NULL)   mb_lf_ = *aa->open_mb_plf_;
 	}
 
 	// Make sure that something is displayed in the address area
@@ -1008,11 +1008,6 @@ void CHexEditView::OnInitialUpdate()
 	// Now the 3 bits are used together to indicate char set but we allow for other bit patterns.
 	if (display_.char_set == 2)
 		display_.char_set = CHARSET_ASCII;       // ASCII:  0/2 -> 0
-
-#ifdef _DEBUG // xxx
-	display_.char_set = CHARSET_CODEPAGE;
-	SetCodePage(CP_UTF8);
-#endif
 
 	// This is just here as a workaround for a small problem with MDItabs - when
 	// the tabs are at the top then the tab bar gets slightly higher when the first
@@ -1042,6 +1037,13 @@ void CHexEditView::OnInitialUpdate()
 		dc.DPtoLP(&convert);                    // Get screen font size in logical units
 		oem_lf_.lfHeight = convert.y;
 	}
+	{
+		CPoint convert(0, mb_lf_.lfHeight);
+		CClientDC dc(this);
+		OnPrepareDC(&dc);
+		dc.DPtoLP(&convert);                    // Get screen font size in logical units
+		mb_lf_.lfHeight = convert.y;
+	}
 
 	// This can't be done till document available (ie. not in constructor)
 	if (GetDocument()->read_only())
@@ -1054,7 +1056,9 @@ void CHexEditView::OnInitialUpdate()
 
 	ASSERT(pfont_ == NULL);
 	pfont_ = new CFont;
-	pfont_->CreateFontIndirect(display_.FontRequired() == FONT_OEM ? &oem_lf_ : &lf_);
+	pfont_->CreateFontIndirect( display_.FontRequired() == FONT_OEM ? &oem_lf_
+		                       : ( display_.FontRequired() == FONT_UCODE ? &mb_lf_
+							       : &lf_ ) );
 	SetFont(pfont_);
 
 	// Create brush that is XORed with selection when focus lost.  (This
@@ -1191,6 +1195,8 @@ void CHexEditView::StoreOptions()
 		pfl->SetData(ii, CHexFileList::HEIGHT, lf_.lfHeight);
 		pfl->SetData(ii, CHexFileList::OEMFONT, oem_lf_.lfFaceName);
 		pfl->SetData(ii, CHexFileList::OEMHEIGHT, oem_lf_.lfHeight);
+		pfl->SetData(ii, CHexFileList::MBFONT, mb_lf_.lfFaceName);
+		pfl->SetData(ii, CHexFileList::MBHEIGHT, mb_lf_.lfHeight);
 
 		pfl->SetData(ii, CHexFileList::DISPLAY, disp_state_);
 		if (code_page_ != 0) pfl->SetData(ii, CHexFileList::CODEPAGE, code_page_);
@@ -3559,6 +3565,21 @@ end_of_background_drawing:
 			}
 		}
 
+		wchar_t dot = 0x00B7;    // Unicode char for middle dot
+		int left_pad = 0;
+		if (text_width_w_ > text_width_)
+			left_pad = text_width_w_ / 3;  // For proportional font we don't want to draw narrow chars (dot) at left edge as it looks ugly
+		int idx = -1;                      // Index into cp_first of the line we are doing
+		int start_col = -1;                // Column of the next start char (not continuation char) in MBCS
+
+		if (cp_first.size() > 0)
+		{
+			idx = int(line - doc_rect.top/line_height_);
+			ASSERT(idx >= 0 && idx < cp_first.size());
+			ASSERT(cp_first[idx] >= line*rowsize_ - offset_ && cp_first[idx] < (line+1)*rowsize_ - offset_ + 8);
+			start_col = int(cp_first[idx] - line*rowsize_ - offset_);
+		}
+
 		// Keep track of the current colour so we only set it when it changes
 		COLORREF current_colour = kala[buf[ii]];
 		pDC->SetTextColor(current_colour);
@@ -3604,7 +3625,7 @@ end_of_background_drawing:
 						else if (display_.control == 0 || buf[jj] >= 32)
 						{
 							// Display control char and other chars as red '.'
-							pDC->TextOut(posx + (jj + jj/group_by_)*char_width_w, tt.top, ".", 1);
+							pDC->TextOut(posx + (jj + jj/group_by_)*char_width_w + left_pad, tt.top, ".", 1);
 						}
 						else if (display_.control == 1)
 						{
@@ -3630,7 +3651,7 @@ end_of_background_drawing:
 						// Display EBCDIC (or red dot if not valid EBCDIC char)
 						if (e2a_tab[buf[jj]] == '\0')
 						{
-							pDC->TextOut(posx + (jj + jj/group_by_)*char_width_w, tt.top, ".", 1);
+							pDC->TextOut(posx + (jj + jj/group_by_)*char_width_w + left_pad, tt.top, ".", 1);
 						}
 						else
 						{
@@ -3659,7 +3680,6 @@ end_of_background_drawing:
 
 		if (!display_.vert_display && display_.char_area)
 		{
-			// Keep track of the current colour so we only set it when it changes
 			int posc = tt.left + char_pos(0, char_width, char_width_w);  // Horiz pos of 1st char column
 
 			for (size_t kk = ii ; kk < last_col; ++kk)
@@ -3676,14 +3696,51 @@ end_of_background_drawing:
 				}
 
 				// Display byte in char display area (as ASCII, EBCDIC etc)
-				if (display_.char_set == CHARSET_CODEPAGE && code_page_ == CP_UTF8)
+				if (display_.char_set == CHARSET_CODEPAGE &&
+					cp_first.size() > 0 &&
+					kk < start_col)
 				{
-					// Handle UTF 8
+					// Continuation byte of MBCS character
+					::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, ContChar(), 1);
+				}
+				else if (buf[kk] < 32 && display_.char_set != CHARSET_EBCDIC && display_.char_set != CHARSET_OEM)
+				{
+					// Control characters are diplayed the same for all char sets except for 
+					//  - EBCDIC (some chars < 32 may not be graphical) and 
+					//  - OEM (there are graphic characters for chars < 32)
+					if (display_.control == 0)
+					{
+						// Display control char and other chars as a dot (normally in red)
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + left_pad, tt.top, &dot, 1);
+					}
+					else if (display_.control == 1)
+					{
+						// Display control chars as red uppercase equiv.
+						char cc = buf[kk] + 0x40;
+						pDC->TextOut(posc + kk*char_width_w, tt.top, &cc, 1);
+					}
+					else if (display_.control == 2)
+					{
+						// Display control chars as C escape code (in red)
+						const char *check = "\a\b\f\n\r\t\v\0";
+						const char *display = "abfnrtv0";
+						const char *pp;
+						if ((pp = strchr(check, buf[kk])) != NULL)
+							pDC->TextOut(posc + kk*char_width_w, tt.top, display + (pp-check), 1);
+						else
+							::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + left_pad, tt.top, &dot, 1);
+					}
+				}
+				else if (display_.char_set == CHARSET_CODEPAGE && code_page_ == CP_UTF8)
+				{
+					// Handle UTF 8 specially since it is not like other Windows code pages
 					ASSERT(cp_first.size() == 0 && max_cp_bytes_ == 0);
 					if ((buf[kk] & 0xC0) == 0x80)
-						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &ContChar(), 1);
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, ContChar(), 1);
 					else
 					{
+						// The top 2 bits determine how many following (continuation) bytes there are.  If top bit
+						// is zero then len == 1 (no cont bytes) since it is ASCII
 						size_t len;
 						if ((buf[kk] & 0x80) == 0x00)
 							len = 1;
@@ -3701,72 +3758,75 @@ end_of_background_drawing:
 							len = 0;   // invalid UTF-8
 
 						wchar_t wc;                               // equivalent Unicode (UTF-16) character
-						if (len == 0 || MultiByteToWideChar(code_page_, 0, (char *)&buf[kk], len, &wc, 1) == 0)
-							::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &BadChar(), 1);
+						if (len == 0 || 
+							MultiByteToWideChar(code_page_, 0, (char *)&buf[kk], len, &wc, 1) == 0 ||
+							wc >= 0xE000 && wc < 0xF900)
+						{
+							// Character translation returned no bytes or Unicode value in "Private Use Area"
+							::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, BadChar(), 1);
+						}
 						else
 							::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &wc, 1);
 					}
-
 				}
 				else if (display_.char_set == CHARSET_CODEPAGE && max_cp_bytes_ <= 1)
 				{
 					// Handle single byte code page
 					ASSERT(cp_first.size() == 0 && max_cp_bytes_ == 1);
 					wchar_t wc;                               // equivalent Unicode (UTF-16) character
-					if (MultiByteToWideChar(code_page_, 0, (char *)&buf[kk], 1, &wc, 1) == 1)
-						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &wc, 1);
+					if (MultiByteToWideChar(code_page_, 0, (char *)&buf[kk], 1, &wc, 1) != 1 ||
+						wc >= 0xE000 && wc < 0xF900)
+					{
+						// Character translation returned no bytes or Unicode value in "Private Use Area"
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, BadChar(), 1);
+					}
 					else
-						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &BadChar(), 1);
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &wc, 1);
 				}
 				else if (display_.char_set == CHARSET_CODEPAGE)
 				{
 					// Handle MBCS code pages
-					ASSERT(cp_first.size() > 0);   // xxx check size == # rows
-				}
-				else if (display_.char_set != CHARSET_EBCDIC)
-				{
-					if ((buf[kk] >= 32 && buf[kk] < 127) ||
-						(display_.char_set != CHARSET_ASCII && buf[kk] >= first_char_ && buf[kk] <= last_char_) )
+					ASSERT(cp_first.size() > 0 && kk == start_col);
+					size_t len = CharNextExA(code_page_, (const char *)&buf[kk], 0) - (char *)&buf[kk];
+					// Display the multibyte character that starts at this byte then find the start of the next one
+					wchar_t wc;                               // equivalent Unicode (UTF-16) character
+					if (MultiByteToWideChar(code_page_, 0, (char *)&buf[kk], len, &wc, 1) != 1 ||
+						wc >= 0xE000 && wc < 0xF900)
 					{
-						// Display normal char or graphic char if in font
-						pDC->TextOut(posc + kk*char_width_w, tt.top, (char *)&buf[kk], 1);
+						// Character translation returned no bytes or Unicode value in "Private Use Area"
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, BadChar(), 1);
+						++start_col;
 					}
-					else if (display_.control == 0 || buf[kk] > 31)
+					else
 					{
-						// Display control char and other chars as red '.'
-						pDC->TextOut(posc + kk*char_width_w, tt.top, ".", 1);
-					}
-					else if (display_.control == 1)
-					{
-						// Display control chars as red uppercase equiv.
-						char cc = buf[kk] + 0x40;
-						pDC->TextOut(posc + kk*char_width_w, tt.top, &cc, 1);
-					}
-					else if (display_.control == 2)
-					{
-						// Display control chars as C escape code (in red)
-						const char *check = "\a\b\f\n\r\t\v\0";
-						const char *display = "abfnrtv0";
-						const char *pp;
-						if (/*buf[kk] != '\0' && */(pp = strchr(check, buf[kk])) != NULL)
-							pp = display + (pp-check);
-						else
-							pp = ".";
-						pDC->TextOut(posc + kk*char_width_w, tt.top, pp, 1);
+						// Character translation was good so ouput the character
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &wc, 1);
+						start_col += len;
 					}
 				}
-				else
+				else if (display_.char_set == CHARSET_EBCDIC)
 				{
 					// Display EBCDIC (or red dot if not valid EBCDIC char)
 					if (e2a_tab[buf[kk]] == '\0')
 					{
-						pDC->TextOut(posc + kk*char_width_w, tt.top, ".", 1);
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + left_pad, tt.top, &dot, 1);
 					}
 					else
 					{
 						pDC->TextOut(posc + kk*char_width_w, tt.top, (char *)&e2a_tab[buf[kk]], 1);
 					}
 				}
+				else if (display_.char_set == CHARSET_ASCII && buf[kk] < 127 ||
+					     display_.char_set != CHARSET_ASCII && buf[kk] >= first_char_ && buf[kk] <= last_char_)
+				{
+					// Display normal char or graphic char if in font
+					pDC->TextOut(posc + kk*char_width_w, tt.top, (char *)&buf[kk], 1);
+				}
+				else
+				{
+					// Display chars "out of range" as dots
+					::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + left_pad, tt.top, &dot, 1);
+  				}
 			}
 		}
 
@@ -4744,8 +4804,9 @@ std::vector<FILE_ADDRESS> CHexEditView::codepage_startchar(FILE_ADDRESS fst, FIL
 	}
 	delete[] buf;
 
-	ASSERT(nn == lst);
-	ASSERT(retval.size() == (lst - fst)/rowsize_);  // must have an entry for all lines of the display
+	// xxx can we resurrect these assertions (fail with short last line)
+	//ASSERT(nn == lst);
+	//ASSERT(retval.size() == (lst - fst)/rowsize_);  // must have an entry for all lines of the display
 	return retval;
 }
 
@@ -12072,7 +12133,22 @@ void CHexEditView::OnDisplayReset()
 
 	// Change font
 	undo_.push_back(view_undo(undo_font));
-	if (display_.FontRequired() == FONT_OEM)
+	// xxx TODO save any (or all) of the 3 fonts if different from default
+	if (display_.FontRequired() == FONT_UCODE)
+	{
+		undo_.back().plf = new LOGFONT;
+		*(undo_.back().plf) = mb_lf_;
+		if (theApp.open_mb_plf_ != NULL)
+			mb_lf_ = *theApp.open_mb_plf_;
+		else
+		{
+			memset((void *)&mb_lf_, '\0', sizeof(mb_lf_));
+			_tcscpy(mb_lf_.lfFaceName, _T("Lucida Sans Unicode"));
+			mb_lf_.lfHeight = 16;
+			mb_lf_.lfCharSet = DEFAULT_CHARSET;         // Only allow OEM/IBM character set fonts
+		}
+	}
+	else if (display_.FontRequired() == FONT_OEM)
 	{
 		undo_.back().plf = new LOGFONT;
 		*(undo_.back().plf) = oem_lf_;
@@ -12374,7 +12450,9 @@ BOOL CHexEditView::do_undo()
 		break;
 
 	case undo_font:
-		if (display_.FontRequired() == FONT_OEM)
+		if (display_.FontRequired() == FONT_UCODE)
+			mb_lf_ = *(undo_.back().plf);
+		else if (display_.FontRequired() == FONT_OEM)
 			oem_lf_ = *(undo_.back().plf);
 		else
 			lf_ = *(undo_.back().plf);
@@ -12714,7 +12792,9 @@ void CHexEditView::OnFontInc()
 
 	// Save font for undo
 	LOGFONT *plf = new LOGFONT;
-	*plf = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;
+	*plf = display_.FontRequired() == FONT_OEM ? oem_lf_
+		   : ( display_.FontRequired() == FONT_UCODE ? mb_lf_ : lf_ );
+
 	for ( ; ; )
 	{
 		// Increase font size by one pixel
@@ -12755,7 +12835,9 @@ void CHexEditView::OnFontInc()
 		dc.SelectObject(tf);                        // Deselect font before it is destroyed
 		if (tm.tmHeight + tm.tmExternalLeading > text_height_)
 		{
-			if (display_.FontRequired() == FONT_OEM)
+			if (display_.FontRequired() == FONT_UCODE)
+				mb_lf_.lfHeight = convert.y;
+			else if (display_.FontRequired() == FONT_OEM)
 				oem_lf_.lfHeight = convert.y;
 			else
 				lf_.lfHeight = convert.y;
@@ -12795,8 +12877,10 @@ void CHexEditView::OnUpdateFontInc(CCmdUI* pCmdUI)
 {
 	// Create a large (max_font_size) font and see if the current font is
 	// displayed at the same size on screen.  If so we can't increase the size
-	LOGFONT logfont;
-	logfont = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;              // Get font the same as current ...
+	LOGFONT logfont;			// Get font the same as current ...
+	logfont = display_.FontRequired() == FONT_OEM ? oem_lf_
+		   : ( display_.FontRequired() == FONT_UCODE ? mb_lf_ : lf_ );
+
 	{
 		CPoint convert(0, max_font_size);       // ... but very big
 		CClientDC dc(this);
@@ -12832,7 +12916,8 @@ void CHexEditView::OnFontDec()
 
 	// Save font for undo
 	LOGFONT *plf = new LOGFONT;
-	*plf = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;
+	*plf = display_.FontRequired() == FONT_OEM ? oem_lf_
+		   : ( display_.FontRequired() == FONT_UCODE ? mb_lf_ : lf_ );
 	for ( ; ; )
 	{
 		// Decrease font size by one pixel
@@ -12873,7 +12958,9 @@ void CHexEditView::OnFontDec()
 		dc.SelectObject(tf);                        // Deselect font before it is destroyed
 		if (tm.tmHeight + tm.tmExternalLeading < text_height_)
 		{
-			if (display_.FontRequired() == FONT_OEM)
+			if (display_.FontRequired() == FONT_UCODE)
+				mb_lf_.lfHeight = convert.y;
+			else if (display_.FontRequired() == FONT_OEM)
 				oem_lf_.lfHeight = convert.y;
 			else
 				lf_.lfHeight = convert.y;
@@ -12914,8 +13001,10 @@ void CHexEditView::OnUpdateFontDec(CCmdUI* pCmdUI)
 	// If we create a very small font then see what the text height is when that
 	// font is used.  If this height is the same as the current text height then the
 	// font size can not be decreased any more.
-	LOGFONT logfont;
-	logfont = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;              // Get font the same as current ...
+	LOGFONT logfont;			// Get font the same as current ...
+	logfont = display_.FontRequired() == FONT_OEM ? oem_lf_
+		      : ( display_.FontRequired() == FONT_UCODE ? mb_lf_ : lf_ );
+
 	{
 		CPoint convert(0, 1);                   // ... but just one pixel high
 		CClientDC dc(this);
@@ -12944,7 +13033,8 @@ void CHexEditView::OnFont()
 {
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
-	LOGFONT logfont = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;
+	LOGFONT logfont = display_.FontRequired() == FONT_OEM ? oem_lf_
+		              : ( display_.FontRequired() == FONT_UCODE ? mb_lf_ : lf_ );
 
 	// Convert font size to units that user can relate to
 	{
@@ -12996,7 +13086,8 @@ void CHexEditView::OnFontName()
 		return;
 	}
 
-	LOGFONT logfont = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;
+	LOGFONT logfont = display_.FontRequired() == FONT_OEM ? oem_lf_
+		              : ( display_.FontRequired() == FONT_UCODE ? mb_lf_ : lf_ );
 
 	CString str = pSrcCombo->GetText();
 	if (pSrcCombo->SetFont(str))
@@ -13026,7 +13117,15 @@ void CHexEditView::OnUpdateFontName(CCmdUI* pCmdUI)
 
 			if (pCombo != NULL && !pCombo->HasFocus ())
 			{
-				if (display_.FontRequired() == FONT_OEM)
+				if (display_.FontRequired() == FONT_UCODE)
+				{
+					if (font_list_changed)
+						pCombo->FixFontList(DEFAULT_CHARSET);
+					CString ss = pCombo->GetText();
+					if (ss != mb_lf_.lfFaceName)
+						pCombo->SetText(mb_lf_.lfFaceName);
+				}
+				else if (display_.FontRequired() == FONT_OEM)
 				{
 					if (font_list_changed)
 						pCombo->FixFontList(OEM_CHARSET);
@@ -13060,7 +13159,8 @@ void CHexEditView::OnFontSize()
 		return;
 	}
 
-	LOGFONT logfont = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;
+	LOGFONT logfont = display_.FontRequired() == FONT_OEM ? oem_lf_
+		              : ( display_.FontRequired() == FONT_UCODE ? mb_lf_ : lf_ );
 
 	int nSize = pSrcCombo->GetTwipSize();
 	if (nSize == -2 || (nSize >= 0 && nSize < 20) || nSize > 32760)
@@ -13093,7 +13193,9 @@ void CHexEditView::OnUpdateFontSize(CCmdUI* pCmdUI)
 			{
 				static CString savedFontName;
 				CString fontName;
-				if (display_.FontRequired() == FONT_OEM)
+				if (display_.FontRequired() == FONT_UCODE)
+					fontName = mb_lf_.lfFaceName;
+				else if (display_.FontRequired() == FONT_OEM)
 					fontName = oem_lf_.lfFaceName;
 				else
 					fontName = lf_.lfFaceName;
@@ -13130,12 +13232,24 @@ void CHexEditView::do_font(LOGFONT *plf)
 
 	// Save current LOGFONT for undo
 	LOGFONT *prev_lf = new LOGFONT;
-	if (display_.FontRequired() == FONT_OEM)
+	if (display_.FontRequired() == FONT_UCODE)
 	{
 		// We can't switch to an ANSI char set because we are displaying OEM graphics
-		if (plf->lfCharSet == ANSI_CHARSET)
+		if (plf->lfCharSet != DEFAULT_CHARSET)
 		{
-			mm->StatusBarText("Can't switch to ANSI font when displaying IBM/OEM graphics chars");
+			mm->StatusBarText("Can't switch to this font when displaying multi-byte chars");
+			aa->mac_error_ = 2;
+			return;
+		}
+		*prev_lf = mb_lf_;
+		mb_lf_ = *plf;
+	}
+	else if (display_.FontRequired() == FONT_OEM)
+	{
+		// We can't switch to an ANSI char set because we are displaying OEM graphics
+		if (plf->lfCharSet != OEM_CHARSET)
+		{
+			mm->StatusBarText("Can't switch to this font when displaying IBM/OEM graphics chars");
 			aa->mac_error_ = 2;
 			return;
 		}
@@ -13145,9 +13259,9 @@ void CHexEditView::do_font(LOGFONT *plf)
 	else
 	{
 		// We can't switch to an OEM char set
-		if (plf->lfCharSet == OEM_CHARSET)
+		if (plf->lfCharSet != ANSI_CHARSET)
 		{
-			mm->StatusBarText("Can't switch to this font unless displaying IBM/OEM graphics chars");
+			mm->StatusBarText("Can't switch to this font when displaying normal characters");
 			aa->mac_error_ = 2;
 			return;
 		}
@@ -13185,7 +13299,8 @@ void CHexEditView::do_font(LOGFONT *plf)
 	undo_.back().plf = prev_lf;
 
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_font, 
-								display_.FontRequired() == FONT_OEM ? &oem_lf_ : &lf_);
+		              display_.FontRequired() == FONT_OEM ? &oem_lf_
+		              : ( display_.FontRequired() == FONT_UCODE ? &mb_lf_ : &lf_ ) );
 }
 
 void CHexEditView::change_rowsize(int rowsize)
@@ -13446,7 +13561,8 @@ void CHexEditView::redo_font()
 {
 	CFont *tf = pfont_;
 	pfont_ = new CFont;
-	pfont_->CreateFontIndirect(display_.FontRequired() == FONT_OEM ? &oem_lf_ : &lf_);
+	pfont_->CreateFontIndirect(display_.FontRequired() == FONT_OEM ? &oem_lf_
+		                       : ( display_.FontRequired() == FONT_UCODE ? &mb_lf_ : &lf_ ));
 	SetFont(pfont_);
 	if (pcv_ != NULL)
 		pcv_->SetFont(pfont_);

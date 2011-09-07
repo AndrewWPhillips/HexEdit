@@ -795,7 +795,9 @@
 #define IDC_ADDR_DEC                    1204
 #define IDC_FONT                        1205
 #define IDC_SAVE_DEFAULT                1206
+#define IDC_FONT_OEM                    1206
 #define IDC_MODIFY                      1207
+#define IDC_FONT_UCODE                  1207
 #define IDC_GROUPING_DESC               1208
 #define IDC_CHARSET_DESC                1209
 #define IDC_CONTROL_DESC                1210
@@ -1215,6 +1217,8 @@
 #define IDC_SAVE_FOLDER_BOTH            1624
 #define IDC_SAVE_FOLDER_SPECIFIED       1625
 #define IDC_SAVE_FOLDER_BROWSE          1626
+#define IDC_CONT_CHAR                   1627
+#define IDC_INVALID_CHAR                1628
 #define IDC_CLIPBOARD_BINARY_CHAR       1630
 #define IDC_CLIPBOARD_HEXTEXT           1631
 #define IDC_CLIPBOARD_AUTO              1632

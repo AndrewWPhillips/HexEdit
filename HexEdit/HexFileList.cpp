@@ -118,6 +118,7 @@ void CHexFileList::SetDefaults()
 	SetDV(COMPVIEW, theApp.compview_);
 
 	SetDV(SCHEME, theApp.open_scheme_name_);
+	SetDV(CODEPAGE, theApp.open_code_page_);
 }
 
 #ifdef _DEBUG

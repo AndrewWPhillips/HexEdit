@@ -2150,10 +2150,6 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 	clear_bookmarks_ = GetProfileInt("Options", "ClearBookmarks", 0) ? TRUE : FALSE;
 	clear_on_exit_ = GetProfileInt("Options", "ClearOnExit", 1) ? TRUE : FALSE;
 
-	// TODO: make these options stored in registry
-	wc_cont = 0xFFFB;
-	wc_bad = 0xFFFD;
-
 	hex_ucase_ = GetProfileInt("Options", "UpperCaseHex", 1) ? TRUE : FALSE;
 	k_abbrev_ = GetProfileInt("Options", "KAbbrev", 1);
 	if (k_abbrev_ < 0) k_abbrev_ = 1;
@@ -2167,6 +2163,9 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 	autoscroll_accel_ = GetProfileInt("Options", "AutoscrollAcceleration", 10);
 	if (autoscroll_accel_ < 0 || autoscroll_accel_ > 50) autoscroll_accel_ = 10;
 	reverse_zoom_ = GetProfileInt("Options", "ReverseMouseWheelZoomDirn", 1) ? TRUE : FALSE;
+
+	cont_char_ = GetProfileInt("Options", "ContinuationChar", UCODE_BLANK);
+	invalid_char_ = GetProfileInt("Options", "InvalidChar", UCODE_FFFD);
 
 	ruler_ = GetProfileInt("Options", "ShowRuler", 1) ? TRUE : FALSE;
 	ruler_hex_ticks_ = GetProfileInt("Options", "RulerHexTicks", 4);
@@ -2370,6 +2369,7 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 		open_display_.char_set = CHARSET_ASCII;       // ASCII:  0/2 -> 0
 	//else if (open_display_.char_set > 4)
 	//	open_display_.char_set = CHARSET_EBCDIC;      // EBCDIC: 4/5/6/7 -> 4
+	open_code_page_ = GetProfileInt("Options", "OpenCodePage", 0);
 
 	CString strFont = GetProfileString("Options", "OpenFont", "Courier,16"); // Font info string (fields are comma sep.)
 	CString strFace;                                            // Font FaceName from string
@@ -2595,6 +2595,9 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Options", "AutoscrollAcceleration", autoscroll_accel_);
 	WriteProfileInt("Options", "ReverseMouseWheelZoomDirn", reverse_zoom_ ? 1 : 0);
 
+	WriteProfileInt("Options", "ContinuationChar", cont_char_);
+	WriteProfileInt("Options", "InvalidChar", invalid_char_);
+
 	WriteProfileInt("Options", "ShowRuler", ruler_ ? 1 : 0);
 	WriteProfileInt("Options", "RulerHexTicks", ruler_hex_ticks_);
 	WriteProfileInt("Options", "RulerDecTicks", ruler_dec_ticks_);
@@ -2733,6 +2736,7 @@ void CHexEditApp::SaveOptions()
 	//WriteProfileInt("Options", "OpenInsert", open_display_.overtype ? 0 : 1);    // reverse of reg value!
 
 	//WriteProfileInt("Options", "OpenBigEndian", open_display_.big_endian ? 1 : 0);
+	WriteProfileInt("Options", "OpenCodePage", open_code_page_);
 
 	WriteProfileInt("Options", "OpenKeepTimes", open_keep_times_ ? 1 : 0);
 
@@ -3177,6 +3181,8 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.reverse_zoom_ = reverse_zoom_;
 	val.hl_caret_ = hl_caret_;
 	val.hl_mouse_ = hl_mouse_;
+	val.cont_char_ = cont_char_;
+	val.invalid_char_ = invalid_char_;
 
 	// Workspace
 	val.intelligent_undo_ = intelligent_undo_;
@@ -3227,8 +3233,10 @@ void CHexEditApp::get_options(struct OptValues &val)
 		val.display_comp_ = pview->CompViewType();
 
 		val.disp_state_ = pview->disp_state_;
+		val.code_page_ = pview->code_page_;
 		val.lf_ = pview->lf_;
 		val.oem_lf_ = pview->oem_lf_;
+		val.mb_lf_ = pview->mb_lf_;
 
 		val.cols_ = pview->rowsize_;
 		val.offset_ = pview->real_offset_;
@@ -3511,6 +3519,17 @@ void CHexEditApp::set_options(struct OptValues &val)
 	}
 	reverse_zoom_ = val.reverse_zoom_;
 
+	if (cont_char_ != val.cont_char_)
+	{
+		cont_char_ = val.cont_char_;
+		invalidate_views = true;
+	}
+	if (invalid_char_ != val.invalid_char_)
+	{
+		invalid_char_ = val.invalid_char_;
+		invalidate_views = true;
+	}
+
 	// global template options
 	max_fix_for_elts_ = val.max_fix_for_elts_;
 	default_char_format_ = val.default_char_format_;
@@ -3637,8 +3656,10 @@ void CHexEditApp::set_options(struct OptValues &val)
 								pview->group_by_ != val.grouping_ ||
 								pview->real_offset_ != val.offset_ ||
 								pview->disp_state_ != val.disp_state_ ||
-								(val.display_.FontRequired() == FONT_ANSI && memcmp(&pview->lf_, &val.lf_, sizeof(LOGFONT)) != 0) ||
-								(val.display_.FontRequired() == FONT_OEM  && memcmp(&pview->oem_lf_, &val.oem_lf_, sizeof(LOGFONT)) != 0);
+								pview->code_page_ != val.code_page_ ||
+								(val.display_.FontRequired() == FONT_ANSI  && memcmp(&pview->lf_, &val.lf_, sizeof(LOGFONT)) != 0) ||
+								(val.display_.FontRequired() == FONT_OEM   && memcmp(&pview->oem_lf_, &val.oem_lf_, sizeof(LOGFONT)) != 0) ||
+								(val.display_.FontRequired() == FONT_UCODE && memcmp(&pview->mb_lf_, &val.mb_lf_, sizeof(LOGFONT)) != 0);
 
 		if (change_required)
 			pview->begin_change();
@@ -3671,6 +3692,7 @@ void CHexEditApp::set_options(struct OptValues &val)
 		}
 
 		pview->disp_state_ = val.disp_state_;
+		pview->SetCodePage(val.code_page_);    // xxx also allow undo of code page
 
 		if (change_required)
 		{
@@ -3714,12 +3736,24 @@ void CHexEditApp::set_options(struct OptValues &val)
 			if (one_done) pview->undo_.back().previous_too = true;
 			one_done = true;
 		}
-		else if (val.display_.FontRequired() == FONT_OEM &&
+		if (val.display_.FontRequired() == FONT_OEM &&
 					memcmp(&pview->oem_lf_, &val.oem_lf_, sizeof(LOGFONT)) != 0)
 		{
 			LOGFONT *prev_lf = new LOGFONT;
 			*prev_lf = pview->oem_lf_;
 			pview->oem_lf_ = val.oem_lf_;
+			pview->undo_.push_back(view_undo(undo_font));      // Allow undo of font change
+			pview->undo_.back().plf = prev_lf;
+			if (one_done) pview->undo_.back().previous_too = true;
+			one_done = true;
+		}
+		// xxx TODO we should have 3 separate undo_font_xxx for the 3 fonts ??? xxx
+		if (val.display_.FontRequired() == FONT_UCODE &&
+					memcmp(&pview->mb_lf_, &val.mb_lf_, sizeof(LOGFONT)) != 0)
+		{
+			LOGFONT *prev_lf = new LOGFONT;
+			*prev_lf = pview->mb_lf_;
+			pview->mb_lf_ = val.mb_lf_;
 			pview->undo_.push_back(view_undo(undo_font));      // Allow undo of font change
 			pview->undo_.back().plf = prev_lf;
 			if (one_done) pview->undo_.back().previous_too = true;

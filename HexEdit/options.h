@@ -64,6 +64,22 @@ enum CB_TEXT_TYPE      // defines how text data is written to the clipboard
 	CB_TEXT_AREA,      // use hex text in hex area, use binary/chars in text area
 };  
 
+// Unicode chars used to signifies special bytes/values in char area
+// NOTE: These values correspond to the list bopx indices for IDC_CONT_CHAR and IDC_INVALID_CHAR
+enum UCODE_CHAR_TYPE
+{
+	UCODE_BLANK,          // space
+	UCODE_DOT,            // interpunct (middle dot)
+	UCODE_BULLET,         // large dot
+	UCODE_ELLIPSIS,       // 3 dots
+	UCODE_QMARK,          // questions mark
+	UCODE_INV_QMARK,      // inverted question mark
+	UCODE_SUBST,          // subst char (decimal 2426) (rectangle?)
+	UCODE_FFF9,           // anchor char (filled rectangle?)
+	UCODE_FFFD,           // replacement char (diamond with question mark inside)
+	UCODE_LAST
+};
+
 struct OptValues
 {
 	// System options
@@ -169,6 +185,7 @@ struct OptValues
 	UINT    ruler_dec_ticks_, ruler_dec_nums_;
 	UINT    ruler_hex_ticks_, ruler_hex_nums_;
 	BOOL    hl_caret_, hl_mouse_;
+	int     cont_char_, invalid_char_;
 
 	// Workspace - editing
 	BOOL    intelligent_undo_;
@@ -196,10 +213,12 @@ struct OptValues
 	// Window display
 	int		show_area_;
 	int		charset_;
+	int		code_page_;
 	int		control_;
 
 	LOGFONT lf_;                 // Default logical font (normal ASCII, ANSI, EBCDIC)
 	LOGFONT oem_lf_;             // Logical font if displaying IBM/OEM character set
+	LOGFONT mb_lf_;              // Logical font if displaying Code page or Unicode characters
 
 	UINT	cols_;
 	UINT	offset_;
@@ -906,6 +925,7 @@ class CWindowPage : public COptPage
 // Construction
 public:
 	CWindowPage();
+	~CWindowPage();
 
 // Dialog Data
 	enum { IDD = IDD_OPT_WINDISPLAY };
@@ -936,9 +956,12 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnGlobalPage();
 	afx_msg void OnFont();
+	afx_msg void OnFontOem();
+	afx_msg void OnFontUcode();
 	afx_msg void OnChangeCols();
 	afx_msg void OnSelchangeShowArea();
 	afx_msg void OnSelchangeCharset();
+	afx_msg void OnSelchangeCodePage();
 	afx_msg void OnSelchangeControl();
 	afx_msg void OnChangeAddrDec();
 	afx_msg void OnChangeAddrHex();
@@ -954,6 +977,8 @@ private:
 	bool update_ok_;            // Stop use of edit control before inited (spin ctrl problem)
 	COptPage * pGlobalPage;
 	CMFCButton ctl_global_butn_;
+
+	CComboBox ctl_code_page_;
 };
 
 /////////////////////////////////////////////////////////////////////////////

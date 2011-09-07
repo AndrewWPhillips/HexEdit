@@ -879,7 +879,7 @@ private:
 	__int64 resize_curr_scroll_;
 	CFont *pfont_;              // Current display font
 	CBrush *pbrush_;            // Current brush (used with PatBlt)
-	LOGFONT lf_, oem_lf_;       // Normal font and font for IBM/OEM graphics chars
+	LOGFONT lf_, oem_lf_, mb_lf_; // Normal, oem and multi-byte fonts
 	CString fontsize_;          // Use to update the font size tool (format toolbar)
 
 // Move this to OnDraw since reentrant OnDraw calls cause a problem

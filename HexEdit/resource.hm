@@ -68,7 +68,7 @@
 #define HIDC_CLIPBOARD_AUTO             0x81390660    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_CLIPBOARD_BINARY_CHAR      0x8139065e    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_CLIPBOARD_HEXTEXT          0x8139065f    // IDD_OPT_WORKEDIT [English (United States)]
-#define HIDC_CODE_PAGE                  0x813205ce    // IDD_PROP_CHAR [English (United States)]
+#define HIDC_CODE_PAGE                  0x810c05ce    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_COLOUR_PICKER              0x80e604bc    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_COLS                       0x810c0443    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_COMPRESSION_HEADER_GZIP    0x812a05e5    // IDD_COMPRESS
@@ -80,6 +80,7 @@
 #define HIDC_COMPRESSION_SYNC           0x812a05ef    // IDD_COMPRESS
 #define HIDC_COMPRESSION_WINDOW_SIZE    0x812a05ed    // IDD_COMPRESS
 #define HIDC_CONTROL                    0x810c04b1    // IDD_OPT_WINDISPLAY [English (United States)]
+#define HIDC_CONT_CHAR                  0x80eb066f    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_CSRC_ADDRESS               0x811f0565    // IDD_CSRC
 #define HIDC_CSRC_CHAR                  0x811f0561    // IDD_CSRC
 #define HIDC_CSRC_FLOAT                 0x811f0564    // IDD_CSRC
@@ -191,7 +192,7 @@
 #define HIDC_DIVIDE                     0x80750426    // IDD_CALC
 #define HIDC_DLG_DOCK                   0x819a0418    // IDD_OPT_WORKLAYOUT [English (United States)]
 #define HIDC_DLG_MOVE                   0x819a0419    // IDD_OPT_WORKLAYOUT [English (United States)]
-#define HIDC_DOC_PAGE                   0x81b80622    // IDD_OPT_WORKDISPLAY [English (United States)]
+#define HIDC_DOC_PAGE                   0x80eb0622    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_DOWN                       0x80e60472    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_EDIT                       0x80750636    // IDD_CALC
 #define HIDC_ELT_OFFSET                 0x81160549    // IDD_DFFD_STRUCT
@@ -283,6 +284,8 @@
 #define HIDC_FOLDER_REFRESH             0x81280595    // IDD_EXPLORER
 #define HIDC_FOLDER_VIEW                0x81280597    // IDD_EXPLORER
 #define HIDC_FONT                       0x810c04b5    // IDD_OPT_WINDISPLAY [English (United States)]
+#define HIDC_FONT_OEM                   0x810c04b6    // IDD_OPT_WINDISPLAY [English (United States)]
+#define HIDC_FONT_UCODE                 0x810c04b7    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_FOOTER                     0x81b3063f    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_FOOTER_OPTS                0x80f004a6    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_FP_EXP                     0x81350434    // IDD_PROP_REAL [English (United States)]
@@ -324,6 +327,7 @@
 #define HIDC_INSTALL_CODE               0x80e70437    // IDD_REGISTER
 #define HIDC_INTELLIGENT_UNDO           0x81390416    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_INT_ABBREV                 0x819a0623    // IDD_OPT_WORKLAYOUT [English (United States)]
+#define HIDC_INVALID_CHAR               0x80eb04b2    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_LARGE_CURSOR               0x80eb0618    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_LESS                       0x8075042b    // IDD_CALC
 #define HIDC_LINENOS                    0x810c0615    // IDD_OPT_WINDISPLAY [English (United States)]
@@ -455,7 +459,6 @@
 #define HIDC_SEL_LEN_TIP                0x80eb0419    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_SEL_STORE                  0x8075041f    // IDD_CALC
 #define HIDC_SHELLOPEN                  0x809e041a    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_SHOW_AREA                  0x810c04af    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_SHOW_BOOKMARKS             0x8136047a    // IDD_OPT_WINEDIT [English (United States)]
 #define HIDC_SHOW_HIGHLIGHTS            0x81360479    // IDD_OPT_WINEDIT [English (United States)]
 #define HIDC_SHOW_OTHER                 0x80eb060b    // IDD_OPT_WORKDISPLAY [English (United States)]

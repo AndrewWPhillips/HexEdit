@@ -93,7 +93,8 @@ void CHexEditView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 	pDC->SetMapMode(print_map_mode_);
 
 	// Create font based on screen font but scaled for printer
-	LOGFONT print_lf = display_.FontRequired() == FONT_OEM ? oem_lf_ : lf_;
+	LOGFONT print_lf = display_.FontRequired() == FONT_OEM ? oem_lf_
+	                   : ( display_.FontRequired() == FONT_UCODE ? mb_lf_ : lf_ );
 
 	// Check that the font size does not make text go off right side of page
 	int page_width = pDC->GetDeviceCaps(HORZRES);       // page width in pixels
