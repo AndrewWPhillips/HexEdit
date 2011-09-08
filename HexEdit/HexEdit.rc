@@ -532,7 +532,29 @@ BEGIN
             MENUITEM "ASCII+A&NSI",                 ID_CHARSET_ANSI
             MENUITEM "ASCII+IBM/&OEM",              ID_CHARSET_OEM
             MENUITEM "&EBCDIC",                     ID_CHARSET_EBCDIC
-            MENUITEM "CODEPAGE",                    ID_CHARSET_CODEPAGE
+            MENUITEM "Last Code Page",              ID_CHARSET_CODEPAGE
+            POPUP "Code Page"
+            BEGIN
+                MENUITEM "65001 UTF-8",                 ID_CODEPAGE_65001
+                MENUITEM "437   OEM",                   ID_CODEPAGE_437
+                MENUITEM "500   EBCDIC International",  ID_CODEPAGE_500
+                MENUITEM SEPARATOR
+                MENUITEM "1250  Latin - Central European", ID_CODEPAGE_1250
+                MENUITEM "1251  Cyrillic",              ID_CODEPAGE_1251
+                MENUITEM "1252  Latin - Western European", ID_CODEPAGE_1252
+                MENUITEM "1253  Greek",                 ID_CODEPAGE_1253
+                MENUITEM "1254  Turkish",               ID_CODEPAGE_1254
+                MENUITEM "1255  Hebrew",                ID_CODEPAGE_1255
+                MENUITEM "1256  Arabic",                ID_CODEPAGE_1256
+                MENUITEM "1257  Latin - Baltic",        ID_CODEPAGE_1257
+                MENUITEM "1258  Vietnamese",            ID_CODEPAGE_1258
+                MENUITEM SEPARATOR
+                MENUITEM "874  Thai",                   ID_CODEPAGE_874
+                MENUITEM "932  Japanese",               ID_CODEPAGE_932
+                MENUITEM "936  Chinese - simplified",   ID_CODEPAGE_936
+                MENUITEM "949  Korean",                 ID_CODEPAGE_949
+                MENUITEM "950  Chinese - traditional",  ID_CODEPAGE_950
+            END
         END
         POPUP "C&ontrol Characters"
         BEGIN
@@ -1015,7 +1037,29 @@ BEGIN
             MENUITEM "ASCII+A&NSI",                 ID_CHARSET_ANSI
             MENUITEM "ASCII+IBM/&OEM",              ID_CHARSET_OEM
             MENUITEM "&EBCDIC",                     ID_CHARSET_EBCDIC
-            MENUITEM "CODEPAGE",                    ID_CHARSET_CODEPAGE
+            MENUITEM "Last Code Page",              ID_CHARSET_CODEPAGE
+            POPUP "Code Page"
+            BEGIN
+                MENUITEM "65001 UTF-8",                 ID_CODEPAGE_65001
+                MENUITEM "437   OEM",                   ID_CODEPAGE_437
+                MENUITEM "500   EBCDIC International",  ID_CODEPAGE_500
+                MENUITEM SEPARATOR
+                MENUITEM "1250  Latin - Central European", ID_CODEPAGE_1250
+                MENUITEM "1251  Cyrillic",              ID_CODEPAGE_1251
+                MENUITEM "1252  Latin - Western European", ID_CODEPAGE_1252
+                MENUITEM "1253  Greek",                 ID_CODEPAGE_1253
+                MENUITEM "1254  Turkish",               ID_CODEPAGE_1254
+                MENUITEM "1255  Hebrew",                ID_CODEPAGE_1255
+                MENUITEM "1256  Arabic",                ID_CODEPAGE_1256
+                MENUITEM "1257  Latin - Baltic",        ID_CODEPAGE_1257
+                MENUITEM "1258  Vietnamese",            ID_CODEPAGE_1258
+                MENUITEM SEPARATOR
+                MENUITEM "874  Thai",                   ID_CODEPAGE_874
+                MENUITEM "932  Japanese",               ID_CODEPAGE_932
+                MENUITEM "936  Chinese - simplified",   ID_CODEPAGE_936
+                MENUITEM "949  Korean",                 ID_CODEPAGE_949
+                MENUITEM "950  Chinese - traditional",  ID_CODEPAGE_950
+            END
         END
         POPUP "C&ontrol Characters"
         BEGIN
@@ -1735,7 +1779,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,32,8,111,1
     LTEXT           "Layout",IDC_STATIC,10,4,22,8
     LTEXT           "S&how Area(s):",IDC_STATIC,17,18,46,8
-    COMBOBOX        IDC_SHOW_AREA,65,17,61,53,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_SHOW_AREA,65,17,61,53,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP,0,HIDC_SHOW_AREA
     LTEXT           "&Columns:",IDC_COLS_DESC,17,37,46,8
     EDITTEXT        IDC_COLS,65,35,36,12,ES_NUMBER,WS_EX_RIGHT,HIDC_COLS
     CONTROL         "Spin1",IDC_SPIN_COLS,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,97,35,11,12

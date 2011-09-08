@@ -1805,7 +1805,7 @@ HWND CPropCharPage::CreateUnicodeControl(int holder_id, int new_id)
 BOOL CPropCharPage::OnInitDialog()
 {
 #ifdef SHOW_CODE_PAGE
-	ASSERT(active_code_page_ == ::GetACP());   // Just make sure we got the system active code page OK
+	VERIFY(active_code_page_ == ::GetACP());   // Just make sure we got the system active code page OK
 	if (page_name.empty())
 	{
 		HINSTANCE hh;

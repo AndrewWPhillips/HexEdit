@@ -1682,6 +1682,24 @@
 #define ID_GOSECTOR                     39149
 #define ID_WATERMARK_CONFIDENTIAL       39150
 #define ID_WATERMARK_SAMPLE             39151
+#define ID_CODEPAGE_UTF8                39163
+#define ID_CODEPAGE_65001               39164
+#define ID_CODEPAGE_1250                39165
+#define ID_CODEPAGE_1251                39166
+#define ID_CODEPAGE_1252                39167
+#define ID_CODEPAGE_1253                39168
+#define ID_CODEPAGE_1254                39169
+#define ID_CODEPAGE_1255                39170
+#define ID_CODEPAGE_1256                39171
+#define ID_CODEPAGE_1257                39172
+#define ID_CODEPAGE_1258                39173
+#define ID_CODEPAGE_437                 39181
+#define ID_CODEPAGE_500                 39182
+#define ID_CODEPAGE_874                 39183
+#define ID_CODEPAGE_932                 39184
+#define ID_CODEPAGE_936                 39185
+#define ID_CODEPAGE_949                 39186
+#define ID_CODEPAGE_950                 39187
 #define IDS_WARNING_DO_NOT_RENUMBER     52700
 #define IDS_BOOKMARK_NOFILE             52701
 #define IDS_BOOKMARK_NOTFOUND           52702
@@ -1740,7 +1758,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        510
-#define _APS_NEXT_COMMAND_VALUE         39152
+#define _APS_NEXT_COMMAND_VALUE         39188
 #define _APS_NEXT_CONTROL_VALUE         1647
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

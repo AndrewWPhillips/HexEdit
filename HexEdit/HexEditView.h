@@ -54,6 +54,7 @@ enum undo_type
 	undo_offset  = 'f', // Offset of display changed
 	undo_highlight='I', // Change in highlighted area(s)
 	undo_state   = '*', // Stores state of display etc
+	undo_codepage= 'P', // Stores the codepage
 	undo_scheme  = 'S', // Change of colour scheme
 
 	// These could be replaced by undo_state but are still here
@@ -81,6 +82,7 @@ enum undo_type
 			range_set<FILE_ADDRESS> *phl; // Previous highlight set
 			CString *pscheme_name; // Previous colour scheme
 			DWORD disp_state;   // Saved state of the display (utype == undo_state)
+			int codepage;       // Saved code page
 		};
 #ifndef NDEBUG
 		int index;              // Document undo index (undo_change)
@@ -688,6 +690,42 @@ public:
 		afx_msg void OnUpdateCharsetEbcdic(CCmdUI *pCmdUI);
 		afx_msg void OnCharsetCodepage();
 		afx_msg void OnUpdateCharsetCodepage(CCmdUI *pCmdUI);
+
+		afx_msg void OnCodepage65001();
+		afx_msg void OnUpdateCodepage65001(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage437();
+		afx_msg void OnUpdateCodepage437(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage500();
+		afx_msg void OnUpdateCodepage500(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage1250();
+		afx_msg void OnUpdateCodepage1250(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage1251();
+		afx_msg void OnUpdateCodepage1251(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage1252();
+		afx_msg void OnUpdateCodepage1252(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage1253();
+		afx_msg void OnUpdateCodepage1253(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage1254();
+		afx_msg void OnUpdateCodepage1254(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage1255();
+		afx_msg void OnUpdateCodepage1255(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage1256();
+		afx_msg void OnUpdateCodepage1256(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage1257();
+		afx_msg void OnUpdateCodepage1257(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage1258();
+		afx_msg void OnUpdateCodepage1258(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage874();
+		afx_msg void OnUpdateCodepage874(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage932();
+		afx_msg void OnUpdateCodepage932(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage936();
+		afx_msg void OnUpdateCodepage936(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage949();
+		afx_msg void OnUpdateCodepage949(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage950();
+		afx_msg void OnUpdateCodepage950(CCmdUI *pCmdUI);
+
 		afx_msg void OnControlNone();
 		afx_msg void OnUpdateControlNone(CCmdUI *pCmdUI);
 		afx_msg void OnControlAlpha();
