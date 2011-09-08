@@ -1293,6 +1293,7 @@ void CHexEditDoc::DeleteContents()
 	delete_pair_.clear();
 	need_change_track_ = false;            // Signal that rebuild not required
 	base_type_ = 0;                        // Now we can use the saved file as base for compare
+	length_ = 0L;
 
 	CDocument::DeleteContents();
 }
