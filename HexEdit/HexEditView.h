@@ -217,6 +217,7 @@ public:
 	CHexEditDoc *GetDocument();
 	CChildFrame *CHexEditView::GetFrame() const;
 	CHexEditView * CHexEditView::NextView() const;
+	CHexEditView * CHexEditView::PrevView() const;
 
 	FILE_ADDRESS GetMarkOffset() const  // offset of caret from marked position
 	{

@@ -15851,6 +15851,27 @@ CHexEditView * CHexEditView::NextView() const
 	else
 		return nextc->GetHexEditView();
 }
+// Same as NextView but returns the previous view.  This will be the previous most recently
+// viewed window - ie, when called for the active window it will be the previous active window.
+CHexEditView * CHexEditView::PrevView() const
+{
+	CChildFrame *currc = dynamic_cast<CChildFrame *>(GetFrame());
+	ASSERT(currc != NULL);
+	CChildFrame *prevc = currc;
+
+	do
+	{
+		prevc = dynamic_cast<CChildFrame *>(prevc->GetWindow(GW_HWNDNEXT));
+		// If reached the top of the list go to the end
+		if (prevc == NULL)
+			prevc = dynamic_cast<CChildFrame *>(currc->GetWindow(GW_HWNDFIRST));
+	} while (prevc != NULL && prevc != currc && prevc->IsIconic());
+
+	if (prevc == NULL || prevc == currc)
+		return NULL;
+	else
+		return prevc->GetHexEditView();
+}
 
 void CHexEditView::OnAscii2Ebcdic()
 {

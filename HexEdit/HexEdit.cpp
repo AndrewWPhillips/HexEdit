@@ -129,24 +129,34 @@ BOOL CHexEditDocManager::DoPromptFileName(CString& fileName, UINT nIDSTitle, DWO
 	dlgFile.m_ofn.lpstrTitle = title;
 
 	// Change the initial directory
-	CHexEditView * pv;
+	CHexEditView * pv, * pvfirst;
 	CString strDir;      // folder name passed to dialog [this must not be destroyed until after dlgFile.DoModal()]
 	switch (theApp.save_locn_)
 	{
 	case FL_DOC:
-		if ((pv = GetView()) != NULL && pv->GetDocument() != NULL && pv->GetDocument()->pfile1_ != NULL)
+		// Get path of most recently viewed window backed by a file (ie excluding new files not yet saved to disk)
+		pvfirst = GetView();
+		for (pv = pvfirst ; pv != NULL; )
 		{
-			// Get the path from the filename of the active file
-			CString filename = pv->GetDocument()->pfile1_->GetFilePath();
-			int path_len;                   // Length of path (full name without filename)
-			path_len = filename.ReverseFind('\\');
-			if (path_len == -1) path_len = filename.ReverseFind('/');
-			if (path_len == -1) path_len = filename.ReverseFind(':');
-			if (path_len == -1)
-				path_len = 0;
-			else
-				++path_len;
-			strDir = filename.Left(path_len);
+			if (pv->GetDocument() != NULL && pv->GetDocument()->pfile1_ != NULL)
+			{
+				// Get the path from the filename of the active file
+				CString filename = pv->GetDocument()->pfile1_->GetFilePath();
+				int path_len;                   // Length of path (full name without filename)
+				path_len = filename.ReverseFind('\\');
+				if (path_len == -1) path_len = filename.ReverseFind('/');
+				if (path_len == -1) path_len = filename.ReverseFind(':');
+				if (path_len == -1)
+					path_len = 0;
+				else
+					++path_len;
+				strDir = filename.Left(path_len);
+				break;
+			}
+
+			// Get next most recent view and check if we have wrapped around to start
+			if ((pv = pv->PrevView()) == pvfirst)
+				pv = NULL;
 		}
 		break;
 	case FL_LAST:
