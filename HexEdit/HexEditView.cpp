@@ -534,6 +534,8 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 		ON_UPDATE_COMMAND_UI(ID_CODEPAGE_437, OnUpdateCodepage437)
 		ON_COMMAND(ID_CODEPAGE_500, OnCodepage500)
 		ON_UPDATE_COMMAND_UI(ID_CODEPAGE_500, OnUpdateCodepage500)
+		ON_COMMAND(ID_CODEPAGE_10000, OnCodepage10000)
+		ON_UPDATE_COMMAND_UI(ID_CODEPAGE_10000, OnUpdateCodepage10000)
 		ON_COMMAND(ID_CODEPAGE_1250, OnCodepage1250)
 		ON_UPDATE_COMMAND_UI(ID_CODEPAGE_1250, OnUpdateCodepage1250)
 		ON_COMMAND(ID_CODEPAGE_1251, OnCodepage1251)
@@ -12357,11 +12359,11 @@ void CHexEditView::OnDisplayReset()
 	}
 	make_change(TRUE);
 
-	if (code_page_ = theApp.open_code_page_)
+	if (code_page_ != theApp.open_code_page_)
 	{
 		undo_.push_back(view_undo(undo_codepage, TRUE));
 		undo_.back().codepage = code_page_;
-		code_page_ = theApp.open_code_page_;
+		SetCodePage(theApp.open_code_page_);
 	}
 	if (rowsize_ != theApp.open_rowsize_)
 	{
@@ -12619,7 +12621,7 @@ BOOL CHexEditView::do_undo()
 		break;
 
 	case undo_codepage:
-		code_page_ = undo_.back().codepage;
+		SetCodePage(undo_.back().codepage);
 		DoInvalidate();
 		mess += "Undo: code page restored ";
 		break;
@@ -13383,13 +13385,6 @@ void CHexEditView::do_font(LOGFONT *plf)
 	LOGFONT *prev_lf = new LOGFONT;
 	if (display_.FontRequired() == FONT_UCODE)
 	{
-		// We can't switch to an ANSI char set because we are displaying OEM graphics
-		if (plf->lfCharSet != DEFAULT_CHARSET)
-		{
-			mm->StatusBarText("Can't switch to this font when displaying multi-byte chars");
-			aa->mac_error_ = 2;
-			return;
-		}
 		*prev_lf = mb_lf_;
 		mb_lf_ = *plf;
 	}
@@ -14123,7 +14118,7 @@ void CHexEditView::OnUpdateCharsetCodepage(CCmdUI *pCmdUI)
 	}
 }
 
-void CHexEditView::OnCodepage65001()
+void CHexEditView::OnCodepage(int cp)
 {
 	if (!(display_.vert_display || display_.char_area))
 	{
@@ -14138,601 +14133,205 @@ void CHexEditView::OnCodepage65001()
 	BOOL ptoo = make_change();
 	undo_.push_back(view_undo(undo_codepage, ptoo));
 	undo_.back().codepage = code_page_;
-	code_page_ = 65001;
+	SetCodePage(cp);
 	end_change();
 
-	theApp.SaveToMacro(km_charset, 65001);
+	theApp.SaveToMacro(km_charset, cp);
+}
+
+void CHexEditView::OnUpdateCodepage(CCmdUI *pCmdUI, int cp)
+{
+	if (pCmdUI->m_pSubMenu != NULL)
+	{
+		// This happens when popup menu itself is drawn
+		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
+			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
+	}
+	else
+	{
+		pCmdUI->Enable((display_.vert_display || display_.char_area));
+		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == cp);
+	}
+}
+
+void CHexEditView::OnCodepage65001()
+{
+	OnCodepage(65001);
 }
 
 void CHexEditView::OnUpdateCodepage65001(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 65001);
-	}
+	OnUpdateCodepage(pCmdUI, 65001);
 }
 
 void CHexEditView::OnCodepage437()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 437;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 437);
+	OnCodepage(437);
 }
 
 void CHexEditView::OnUpdateCodepage437(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 437);
-	}
+	OnUpdateCodepage(pCmdUI, 437);
 }
 
 void CHexEditView::OnCodepage500()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 500;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 500);
+	OnCodepage(500);
 }
 
 void CHexEditView::OnUpdateCodepage500(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 500);
-	}
+	OnUpdateCodepage(pCmdUI, 500);
+}
+
+void CHexEditView::OnCodepage10000()
+{
+	OnCodepage(10000);
+}
+
+void CHexEditView::OnUpdateCodepage10000(CCmdUI *pCmdUI)
+{
+	OnUpdateCodepage(pCmdUI, 10000);
 }
 
 void CHexEditView::OnCodepage1250()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 1250;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 1250);
+	OnCodepage(1250);
 }
 
 void CHexEditView::OnUpdateCodepage1250(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 1250);
-	}
+	OnUpdateCodepage(pCmdUI, 1250);
 }
 
 void CHexEditView::OnCodepage1251()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 1251;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 1251);
+	OnCodepage(1251);
 }
 
 void CHexEditView::OnUpdateCodepage1251(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 1251);
-	}
+	OnUpdateCodepage(pCmdUI, 1251);
 }
 
 void CHexEditView::OnCodepage1252()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 1252;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 1252);
+	OnCodepage(1252);
 }
 
 void CHexEditView::OnUpdateCodepage1252(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 1252);
-	}
+	OnUpdateCodepage(pCmdUI, 1252);
 }
 
 void CHexEditView::OnCodepage1253()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 1253;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 1253);
+	OnCodepage(1253);
 }
 
 void CHexEditView::OnUpdateCodepage1253(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 1253);
-	}
+	OnUpdateCodepage(pCmdUI, 1253);
 }
 
 void CHexEditView::OnCodepage1254()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 1254;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 1254);
+	OnCodepage(1254);
 }
 
 void CHexEditView::OnUpdateCodepage1254(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 1254);
-	}
+	OnUpdateCodepage(pCmdUI, 1254);
 }
 
 void CHexEditView::OnCodepage1255()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 1255;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 1255);
+	OnCodepage(1255);
 }
 
 void CHexEditView::OnUpdateCodepage1255(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 1255);
-	}
+	OnUpdateCodepage(pCmdUI, 1255);
 }
 
 void CHexEditView::OnCodepage1256()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 1256;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 1256);
+	OnCodepage(1256);
 }
 
 void CHexEditView::OnUpdateCodepage1256(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 1256);
-	}
+	OnUpdateCodepage(pCmdUI, 1256);
 }
 
 void CHexEditView::OnCodepage1257()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 1257;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 1257);
+	OnCodepage(1257);
 }
 
 void CHexEditView::OnUpdateCodepage1257(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 1257);
-	}
+	OnUpdateCodepage(pCmdUI, 1257);
 }
 
 void CHexEditView::OnCodepage1258()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 1258;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 1258);
+	OnCodepage(1258);
 }
 
 void CHexEditView::OnUpdateCodepage1258(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 1258);
-	}
+	OnUpdateCodepage(pCmdUI, 1258);
 }
 
 void CHexEditView::OnCodepage874()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 874;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 874);
+	OnCodepage(874);
 }
 
 void CHexEditView::OnUpdateCodepage874(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 874);
-	}
+	OnUpdateCodepage(pCmdUI, 874);
 }
 
 void CHexEditView::OnCodepage932()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 932;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 932);
+	OnCodepage(932);
 }
 
 void CHexEditView::OnUpdateCodepage932(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 932);
-	}
+	OnUpdateCodepage(pCmdUI, 932);
 }
 
 void CHexEditView::OnCodepage936()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 936;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 936);
+	OnCodepage(936);
 }
 
 void CHexEditView::OnUpdateCodepage936(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 936);
-	}
+	OnUpdateCodepage(pCmdUI, 936);
 }
 
 void CHexEditView::OnCodepage949()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 949;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 949);
+	OnCodepage(949);
 }
 
 void CHexEditView::OnUpdateCodepage949(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 949);
-	}
+	OnUpdateCodepage(pCmdUI, 949);
 }
 
 void CHexEditView::OnCodepage950()
 {
-	if (!(display_.vert_display || display_.char_area))
-	{
-		ASSERT(theApp.playing_);
-		TaskMessageBox("Char Set Error", "You can't change character set code page without the char area.");
-		theApp.mac_error_ = 2;
-		return;
-	}
-
-	begin_change();
-	display_.char_set = CHARSET_CODEPAGE;
-	BOOL ptoo = make_change();
-	undo_.push_back(view_undo(undo_codepage, ptoo));
-	undo_.back().codepage = code_page_;
-	code_page_ = 950;
-	end_change();
-
-	theApp.SaveToMacro(km_charset, 950);
+	OnCodepage(950);
 }
 
 void CHexEditView::OnUpdateCodepage950(CCmdUI *pCmdUI)
 {
-	if (pCmdUI->m_pSubMenu != NULL)
-	{
-		// This happens when popup menu itself is drawn
-		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex,
-			MF_BYPOSITION | ((display_.vert_display || display_.char_area) ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)));
-	}
-	else
-	{
-		pCmdUI->Enable((display_.vert_display || display_.char_area));
-		pCmdUI->SetCheck(display_.char_set == CHARSET_CODEPAGE && code_page_ == 950);
-	}
+	OnUpdateCodepage(pCmdUI, 950);
 }
 
 void CHexEditView::OnControlNone()

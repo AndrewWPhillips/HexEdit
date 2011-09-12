@@ -1693,6 +1693,7 @@
 #define ID_CODEPAGE_1256                39171
 #define ID_CODEPAGE_1257                39172
 #define ID_CODEPAGE_1258                39173
+#define ID_CODEPAGE_10000               39174
 #define ID_CODEPAGE_437                 39181
 #define ID_CODEPAGE_500                 39182
 #define ID_CODEPAGE_874                 39183

@@ -535,13 +535,14 @@ BEGIN
             MENUITEM "Last Code Page",              ID_CHARSET_CODEPAGE
             POPUP "Code Page"
             BEGIN
+                MENUITEM "1252  Latin (ANSI)",          ID_CODEPAGE_1252
                 MENUITEM "65001 UTF-8",                 ID_CODEPAGE_65001
                 MENUITEM "437   OEM",                   ID_CODEPAGE_437
                 MENUITEM "500   EBCDIC International",  ID_CODEPAGE_500
+                MENUITEM "10000 Macintosh",             ID_CODEPAGE_10000
                 MENUITEM SEPARATOR
                 MENUITEM "1250  Latin - Central European", ID_CODEPAGE_1250
                 MENUITEM "1251  Cyrillic",              ID_CODEPAGE_1251
-                MENUITEM "1252  Latin - Western European", ID_CODEPAGE_1252
                 MENUITEM "1253  Greek",                 ID_CODEPAGE_1253
                 MENUITEM "1254  Turkish",               ID_CODEPAGE_1254
                 MENUITEM "1255  Hebrew",                ID_CODEPAGE_1255
@@ -1040,13 +1041,14 @@ BEGIN
             MENUITEM "Last Code Page",              ID_CHARSET_CODEPAGE
             POPUP "Code Page"
             BEGIN
+                MENUITEM "1252  Latin (ANSI)",          ID_CODEPAGE_1252
                 MENUITEM "65001 UTF-8",                 ID_CODEPAGE_65001
                 MENUITEM "437   OEM",                   ID_CODEPAGE_437
                 MENUITEM "500   EBCDIC International",  ID_CODEPAGE_500
+                MENUITEM "10000 Macintosh",             ID_CODEPAGE_10000
                 MENUITEM SEPARATOR
                 MENUITEM "1250  Latin - Central European", ID_CODEPAGE_1250
                 MENUITEM "1251  Cyrillic",              ID_CODEPAGE_1251
-                MENUITEM "1252  Latin - Western European", ID_CODEPAGE_1252
                 MENUITEM "1253  Greek",                 ID_CODEPAGE_1253
                 MENUITEM "1254  Turkish",               ID_CODEPAGE_1254
                 MENUITEM "1255  Hebrew",                ID_CODEPAGE_1255

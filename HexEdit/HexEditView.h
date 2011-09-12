@@ -698,6 +698,8 @@ public:
 		afx_msg void OnUpdateCodepage437(CCmdUI *pCmdUI);
 		afx_msg void OnCodepage500();
 		afx_msg void OnUpdateCodepage500(CCmdUI *pCmdUI);
+		afx_msg void OnCodepage10000();
+		afx_msg void OnUpdateCodepage10000(CCmdUI *pCmdUI);
 		afx_msg void OnCodepage1250();
 		afx_msg void OnUpdateCodepage1250(CCmdUI *pCmdUI);
 		afx_msg void OnCodepage1251();
@@ -1101,6 +1103,9 @@ private:
 	bool DoAerialTab(bool init = true);
 	bool DoAerialSplit(bool init = true);
 	bool DoCompTab(bool init = true);
+
+	void OnCodepage(int cp);
+	void OnUpdateCodepage(CCmdUI *pCmdUI, int cp);
 };
 
 #ifndef _DEBUG  // debug version in HexEditView.cpp
