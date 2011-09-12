@@ -4430,12 +4430,13 @@ static BOOL CALLBACK CodePageCallback(LPTSTR ss)
 	// Get info about this page
 	UINT cp = atoi(ss);
 	CPINFOEX cpie;
-	GetCPInfoEx(cp, 0, &cpie);
-
-	// Save what we need
-	page_number.push_back(cpie.CodePage);
-	page_name.push_back(CString(cpie.CodePageName));
-	ASSERT(cpie.MaxCharSize <= MAX_BYTES);
+	if (GetCPInfoEx(cp, 0, &cpie))
+	{
+		// Save what we need
+		page_number.push_back(cpie.CodePage);
+		page_name.push_back(CString(cpie.CodePageName));
+		ASSERT(cpie.MaxCharSize <= MAX_BYTES);
+	}
 
 	return TRUE;
 }

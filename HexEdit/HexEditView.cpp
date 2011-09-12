@@ -3603,9 +3603,21 @@ end_of_background_drawing:
 		}
 
 		wchar_t dot = 0x00B7;    // Unicode char for middle dot
-		int left_pad = 0;
+		int dot_pad = 0, cont_pad = 0, bad_pad = 0;
 		if (text_width_w_ > text_width_)
-			left_pad = text_width_w_ / 3;  // For proportional font we don't want to draw narrow chars (dot) at left edge as it looks ugly
+		{
+			CSize size;
+			::GetTextExtentPoint32W(pDC->GetSafeHdc(), &dot, 1, &size);
+			dot_pad = (char_width_w - size.cx)/2;
+
+			wchar_t wc = *ContChar();
+			::GetTextExtentPoint32W(pDC->GetSafeHdc(), &wc, 1, &size);
+			cont_pad = (char_width_w - size.cx)/2;
+
+			wc = *BadChar();
+			::GetTextExtentPoint32W(pDC->GetSafeHdc(), &wc, 1, &size);
+			bad_pad = (char_width_w - size.cx)/2;
+		}
 		int idx = -1;                      // Index into cp_first of the line we are doing
 		int start_col = -1;                // Column of the next start char (not continuation char) in MBCS
 
@@ -3656,7 +3668,7 @@ end_of_background_drawing:
 						jj < start_col)
 					{
 						// Continuation byte of MBCS character
-						::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w, tt.top, ContChar(), 1);
+						::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + cont_pad, tt.top, ContChar(), 1);
 					}
 					else if (buf[jj] < 32 && display_.char_set != CHARSET_EBCDIC && display_.char_set != CHARSET_OEM)
 					{
@@ -3666,7 +3678,7 @@ end_of_background_drawing:
 						if (display_.control == 0)
 						{
 							// Display control char and other chars as a dot (normally in red)
-							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + left_pad, tt.top, &dot, 1);
+							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + dot_pad, tt.top, &dot, 1);
 						}
 						else if (display_.control == 1)
 						{
@@ -3683,7 +3695,7 @@ end_of_background_drawing:
 							if ((pp = strchr(check, buf[jj])) != NULL)
 								pDC->TextOut(posx + (jj + jj/group_by_)*char_width_w, tt.top, display + (pp-check), 1);
 							else
-								::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + left_pad, tt.top, &dot, 1);
+								::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + dot_pad, tt.top, &dot, 1);
 						}
 
 						// For MBCS char sets we need to keep track that we have done this character
@@ -3695,7 +3707,7 @@ end_of_background_drawing:
 						// Handle UTF 8 specially since it is not like other Windows code pages
 						ASSERT(cp_first.size() == 0 && max_cp_bytes_ == 0);
 						if ((buf[jj] & 0xC0) == 0x80)
-							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w, tt.top, ContChar(), 1);
+							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + cont_pad, tt.top, ContChar(), 1);
 						else
 						{
 							// The top 2 bits determine how many following (continuation) bytes there are.  If top bit
@@ -3722,10 +3734,12 @@ end_of_background_drawing:
 								wc >= 0xE000 && wc < 0xF900)
 							{
 								// Character translation returned no bytes or Unicode value in "Private Use Area"
-								::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w, tt.top, BadChar(), 1);
+								wc = *BadChar();
 							}
-							else
-								::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w, tt.top, &wc, 1);
+
+							CSize size;
+							::GetTextExtentPoint32W(pDC->GetSafeHdc(), &wc, 1, &size);
+							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + (char_width_w-size.cx)/2, tt.top, &wc, 1);
 						}
 					}
 					else if (display_.char_set == CHARSET_CODEPAGE && max_cp_bytes_ <= 1)
@@ -3737,10 +3751,13 @@ end_of_background_drawing:
 							wc >= 0xE000 && wc < 0xF900)
 						{
 							// Character translation returned no bytes or Unicode value in "Private Use Area"
-							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w, tt.top, BadChar(), 1);
+							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + bad_pad, tt.top, BadChar(), 1);
+							wc = *BadChar();
 						}
-						else
-							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w, tt.top, &wc, 1);
+
+						CSize size;
+						::GetTextExtentPoint32W(pDC->GetSafeHdc(), &wc, 1, &size);
+						::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + (char_width_w-size.cx)/2, tt.top, &wc, 1);
 					}
 					else if (display_.char_set == CHARSET_CODEPAGE)
 					{
@@ -3753,22 +3770,25 @@ end_of_background_drawing:
 							wc >= 0xE000 && wc < 0xF900)
 						{
 							// Character translation returned no bytes or Unicode value in "Private Use Area"
-							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w, tt.top, BadChar(), 1);
+							wc = *BadChar();
 							++start_col;
 						}
 						else
 						{
 							// Character translation was good so ouput the character
-							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w, tt.top, &wc, 1);
 							start_col += len;
 						}
+
+						CSize size;
+						::GetTextExtentPoint32W(pDC->GetSafeHdc(), &wc, 1, &size);
+						::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + (char_width_w-size.cx)/2, tt.top, &wc, 1);
 					}
 					else if (display_.char_set == CHARSET_EBCDIC)
 					{
 						// Display EBCDIC (or red dot if not valid EBCDIC char)
 						if (e2a_tab[buf[jj]] == '\0')
 						{
-							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + left_pad, tt.top, &dot, 1);
+							::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + dot_pad, tt.top, &dot, 1);
 						}
 						else
 						{
@@ -3784,7 +3804,8 @@ end_of_background_drawing:
 					else
 					{
 						// Display chars "out of range" as dots
-						::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + left_pad, tt.top, &dot, 1);
+						//::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + dot_pad, tt.top, &dot, 1);
+						::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + bad_pad, tt.top, BadChar(), 1);
   					}
 
 					// Display the hex digits below that, one below the other
@@ -3823,23 +3844,23 @@ end_of_background_drawing:
 					pDC->SetTextColor(current_colour);
 				}
 
-				// Display byte in char display area (as ASCII, EBCDIC etc)
+				// Display byte in the char (right) area (as ASCII, EBCDIC etc)
 				if (display_.char_set == CHARSET_CODEPAGE &&
 					cp_first.size() > 0 &&
 					kk < start_col)
 				{
 					// Continuation byte of MBCS character
-					::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, ContChar(), 1);
+					::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + cont_pad, tt.top, ContChar(), 1);
 				}
 				else if (buf[kk] < 32 && display_.char_set != CHARSET_EBCDIC && display_.char_set != CHARSET_OEM)
 				{
-					// Control characters are diplayed the same for all char sets except for 
+					// Control characters are diplayed the same for all char sets except for
 					//  - EBCDIC (some chars < 32 may not be graphical) and 
 					//  - OEM (there are graphic characters for chars < 32)
 					if (display_.control == 0)
 					{
 						// Display control char and other chars as a dot (normally in red)
-						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + left_pad, tt.top, &dot, 1);
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + dot_pad, tt.top, &dot, 1);
 					}
 					else if (display_.control == 1)
 					{
@@ -3856,7 +3877,7 @@ end_of_background_drawing:
 						if ((pp = strchr(check, buf[kk])) != NULL)
 							pDC->TextOut(posc + kk*char_width_w, tt.top, display + (pp-check), 1);
 						else
-							::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + left_pad, tt.top, &dot, 1);
+							::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + dot_pad, tt.top, &dot, 1);
 					}
 
 					// For MBCS char sets we need to keep track that we have done this character
@@ -3868,7 +3889,7 @@ end_of_background_drawing:
 					// Handle UTF 8 specially since it is not like other Windows code pages
 					ASSERT(cp_first.size() == 0 && max_cp_bytes_ == 0);
 					if ((buf[kk] & 0xC0) == 0x80)
-						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, ContChar(), 1);
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + cont_pad, tt.top, ContChar(), 1);
 					else
 					{
 						// The top 2 bits determine how many following (continuation) bytes there are.  If top bit
@@ -3895,10 +3916,12 @@ end_of_background_drawing:
 							wc >= 0xE000 && wc < 0xF900)
 						{
 							// Character translation returned no bytes or Unicode value in "Private Use Area"
-							::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, BadChar(), 1);
+							wc = *BadChar();
 						}
-						else
-							::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &wc, 1);
+
+						CSize size;
+						::GetTextExtentPoint32W(pDC->GetSafeHdc(), &wc, 1, &size);
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + (char_width_w-size.cx)/2, tt.top, &wc, 1);
 					}
 				}
 				else if (display_.char_set == CHARSET_CODEPAGE && max_cp_bytes_ <= 1)
@@ -3910,10 +3933,12 @@ end_of_background_drawing:
 						wc >= 0xE000 && wc < 0xF900)
 					{
 						// Character translation returned no bytes or Unicode value in "Private Use Area"
-						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, BadChar(), 1);
+						wc = *BadChar();
 					}
-					else
-						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &wc, 1);
+
+					CSize size;
+					::GetTextExtentPoint32W(pDC->GetSafeHdc(), &wc, 1, &size);
+					::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + (char_width_w-size.cx)/2, tt.top, &wc, 1);
 				}
 				else if (display_.char_set == CHARSET_CODEPAGE)
 				{
@@ -3926,22 +3951,25 @@ end_of_background_drawing:
 						wc >= 0xE000 && wc < 0xF900)
 					{
 						// Character translation returned no bytes or Unicode value in "Private Use Area"
-						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, BadChar(), 1);
+						wc = *BadChar();
 						++start_col;
 					}
 					else
 					{
 						// Character translation was good so ouput the character
-						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w, tt.top, &wc, 1);
 						start_col += len;
 					}
+
+					CSize size;
+					::GetTextExtentPoint32W(pDC->GetSafeHdc(), &wc, 1, &size);
+					::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + (char_width_w-size.cx)/2, tt.top, &wc, 1);
 				}
 				else if (display_.char_set == CHARSET_EBCDIC)
 				{
 					// Display EBCDIC (or red dot if not valid EBCDIC char)
 					if (e2a_tab[buf[kk]] == '\0')
 					{
-						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + left_pad, tt.top, &dot, 1);
+						::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + dot_pad, tt.top, &dot, 1);
 					}
 					else
 					{
@@ -3957,7 +3985,7 @@ end_of_background_drawing:
 				else
 				{
 					// Display chars "out of range" as dots
-					::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + left_pad, tt.top, &dot, 1);
+					::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + bad_pad, tt.top, BadChar(), 1);
   				}
 			}
 		}
@@ -4879,7 +4907,7 @@ void CHexEditView::SetCodePage(int cp)
 	}
 
 	CPINFOEX cpie;
-	GetCPInfoEx(code_page_, 0, &cpie);
+	VERIFY(GetCPInfoEx(code_page_, 0, &cpie));
 	max_cp_bytes_ = cpie.MaxCharSize;
 }
 

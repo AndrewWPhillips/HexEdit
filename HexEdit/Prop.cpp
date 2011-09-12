@@ -1432,7 +1432,7 @@ CPropCharPage::CPropCharPage() : CPropUpdatePage(CPropCharPage::IDD)
 		//}}AFX_DATA_INIT
 		active_code_page_ = ::GetACP();
 		CPINFO cpi;
-		GetCPInfo(active_code_page_, &cpi);
+		VERIFY(GetCPInfo(active_code_page_, &cpi));
 		is_dbcs_ = cpi.MaxCharSize == 2;
 
 #ifdef SHOW_CODE_PAGE
@@ -1499,13 +1499,14 @@ static BOOL CALLBACK CodePageCallback(LPTSTR ss)
 	// Get info about this page
 	UINT cp = atoi(ss);
 	CPINFOEX cpie;
-	(*pGetCPInfoEx)(cp, 0, &cpie);
-
-	// Save what we need
-	page_number.push_back(cpie.CodePage);
-	page_name.push_back(CString(cpie.CodePageName));
-	page_max_chars.push_back(cpie.MaxCharSize);
-	ASSERT(cpie.MaxCharSize <= MAX_BYTES);
+	if ((*pGetCPInfoEx)(cp, 0, &cpie))
+	{
+		// Save what we need
+		page_number.push_back(cpie.CodePage);
+		page_name.push_back(CString(cpie.CodePageName));
+		page_max_chars.push_back(cpie.MaxCharSize);
+		ASSERT(cpie.MaxCharSize <= MAX_BYTES);
+	}
 
 	return TRUE;
 }
@@ -1816,29 +1817,13 @@ BOOL CPropCharPage::OnInitDialog()
 		}
 		else
 		{
-			// Just use the predefined code pages (this should only happen for Win 95 & NT4)
+			// Just use ANSI code page (this should only happen for Win 95 & NT4)
 			CPINFO cpi;
 
 			if (GetCPInfo(CP_ACP, &cpi))
 			{
 				page_number.push_back(CP_ACP);
 				page_name.push_back(CString("ANSI Code Page"));
-				page_max_chars.push_back(cpi.MaxCharSize);
-				ASSERT(cpi.MaxCharSize <= MAX_BYTES);
-			}
-
-			if (theApp.is_nt_ && GetCPInfo(CP_MACCP, &cpi))  // Mac CP only supported on NT
-			{
-				page_number.push_back(CP_MACCP);
-				page_name.push_back(CString("Macintosh Code Page"));
-				page_max_chars.push_back(cpi.MaxCharSize);
-				ASSERT(cpi.MaxCharSize <= MAX_BYTES);
-			}
-
-			if (GetCPInfo(CP_OEMCP, &cpi))
-			{
-				page_number.push_back(CP_OEMCP);
-				page_name.push_back(CString("OEM Code Page"));
 				page_max_chars.push_back(cpi.MaxCharSize);
 				ASSERT(cpi.MaxCharSize <= MAX_BYTES);
 			}
