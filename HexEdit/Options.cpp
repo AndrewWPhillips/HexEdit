@@ -336,6 +336,9 @@ void COptSheet::page_init()
 	case FILTER_OPTIONS_PAGE:
 		pPage = &filtersPage_;
 		break;
+	case BACKGROUND_OPTIONS_PAGE:
+		pPage = &backgroundPage_;
+		break;
 	case WIN_OPTIONS_PAGE:
 		if (pview != NULL) pPage = &windisplayPage_;
 		break;

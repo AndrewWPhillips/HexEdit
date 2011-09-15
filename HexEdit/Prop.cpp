@@ -3786,6 +3786,7 @@ void CPropGraphPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 	{
 		mess = "Statistics are not available.  Please turn on the Statistics option "
 			   "in the Background Processing page of the Options dialog.";
+		GetDlgItem(IDC_STATS_OPTIONS)->ShowWindow(SW_SHOW);
 		goto error_return;
 	}
 
@@ -3807,6 +3808,7 @@ void CPropGraphPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 	{
 		mess = "Background statistics are not permitted for this type of file.  "
 			   "Please see the Background Processing page of the Options dialog.";
+		GetDlgItem(IDC_STATS_OPTIONS)->ShowWindow(SW_SHOW);
 		goto error_return;
 	}
 
@@ -3814,6 +3816,7 @@ void CPropGraphPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 
 	m_graph->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_STATS_MESSAGE)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_STATS_OPTIONS)->ShowWindow(SW_HIDE);
 	m_graph->SetData(biggest, cnt, col);
 	return;
 
@@ -3834,6 +3837,7 @@ BEGIN_MESSAGE_MAP(CPropGraphPage, CPropUpdatePage)
 	ON_WM_HELPINFO()
 	ON_WM_SIZE()
 	ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_STATS_OPTIONS, OnStatsOptions)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3878,6 +3882,11 @@ BOOL CPropGraphPage::OnSetActive()
 	Update(GetView());
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_graph);
 	return CPropUpdatePage::OnSetActive();
+}
+
+void CPropGraphPage::OnStatsOptions()
+{
+	theApp.display_options(BACKGROUND_OPTIONS_PAGE, TRUE);
 }
 
 BOOL CPropGraphPage::OnHelpInfo(HELPINFO* pHelpInfo)

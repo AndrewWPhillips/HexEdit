@@ -198,7 +198,7 @@ struct display_bits
 #include "SpecialList.h"    // For volume/device list (Open Special etc)
 #include "timer.h"
 
-enum { COLOUR_OPTIONS_PAGE, MACRO_OPTIONS_PAGE, PRINTER_OPTIONS_PAGE, FILTER_OPTIONS_PAGE, WIN_OPTIONS_PAGE };
+enum { COLOUR_OPTIONS_PAGE, MACRO_OPTIONS_PAGE, PRINTER_OPTIONS_PAGE, FILTER_OPTIONS_PAGE, WIN_OPTIONS_PAGE, BACKGROUND_OPTIONS_PAGE, };
 
 class CHexEditDoc;
 class CHexFileList;

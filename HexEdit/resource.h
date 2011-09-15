@@ -1007,6 +1007,7 @@
 #define IDC_DESC_FILL_CLIPBOARD_LENGTH  1409
 #define IDC_FILL_HELP                   1410
 #define IDC_BUTTON1                     1411
+#define IDC_STATS_OPTIONS               1412
 #define IDC_RADIX_GROUP                 1414
 #define IDC_BITS_GROUP                  1415
 #define IDC_INFO_CATEGORY               1416
