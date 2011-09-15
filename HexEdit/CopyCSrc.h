@@ -20,7 +20,7 @@ public:
 
 // Construction
 public:
-	CCopyCSrc(CWnd* pParent = NULL);   // standard constructor
+	CCopyCSrc(CHexEditDoc *pdoc, __int64 start, __int64 end, int rowsize, int offset, int addr_flags, CWnd* pParent = NULL);   // constructor
 
 // Dialog Data
 	//{{AFX_DATA(CCopyCSrc)
@@ -39,7 +39,6 @@ public:
 	UINT	indent_;
 	//}}AFX_DATA
 
-
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CCopyCSrc)
@@ -55,13 +54,30 @@ protected:
 	afx_msg void OnChangeType();
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
+	virtual void OnCancel();
 	afx_msg void OnCsrcHelp();
 	//}}AFX_MSG
+	afx_msg void OnChange();
+	afx_msg void OnPreviewToggle();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
-	void		 fix_controls();
+
+private:
+	CFont mono_fnt_;
+	void save_settings();
+	void fix_controls();
+	void show_preview(); // Show/hide preview box depending on value of preview_
+	void update_preview();
+
+	bool init_;
+
+	bool preview_;               // Are we showing the preview?
+	CHexEditDoc *pdoc_;          // Used to get data from the active doc for preview
+	__int64 start_, end_;        // Range of data to get
+	int rowsize_, offset_;       // How rows are shown in the current view
+	int addr_flags_;             // How addresses are shown in the current view
 };
 
 //{{AFX_INSERT_LOCATION}}

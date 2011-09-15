@@ -44,6 +44,7 @@
 #include "zlib/zlib.h"    // For compression
 #include "md5.h"          // For MD5 hash
 #include "sha1.h"         // For SHA1 hash
+#include "Bin2Src.h"      // For formatted clipboard text
 #include "HelpID.hm"
 
 #ifdef _DEBUG
@@ -11046,7 +11047,17 @@ void CHexEditView::OnCopyCchar()
 		return;
 	}
 
-	CCopyCSrc dlg;
+	int addr_flags = Bin2Src::NONE;
+	if (hex_width_ > 0)
+		addr_flags |= Bin2Src::HEX_ADDRESS;
+	if (dec_width_ > 0)
+		addr_flags |= Bin2Src::DEC_ADDRESS;
+	if (num_width_ > 0)
+		addr_flags |= Bin2Src::LINE_NUM;
+	if (display_.addrbase1)
+		addr_flags |= Bin2Src::ADDR1;
+
+	CCopyCSrc dlg(GetDocument(), start, end, rowsize_, offset_, addr_flags);
 	if (dlg.DoModal() == IDOK)
 	{
 		do_copy_src(dlg.type_,
@@ -11074,36 +11085,89 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
 	if (!copy2cb_init(start, end))
 		return;
 
-	//    // Work out the amount of memory needed (may be slightly more than needed).
-	//    // Allow 6 chars for every byte ("0x" + 2 hex digits + comma + space), plus
-	//    // 7 ("/**/ "+CR+LF) + addr_width_ chars per line, + 1 trailing nul byte.
-	//    FILE_ADDRESS mem_needed = (end-start)*6+((end-start)/rowsize_+2)*(7+addr_width_)+1;
-	FILE_ADDRESS mem_needed;
-
+	Bin2Src formatter(GetDocument());
+	Bin2Src::type typ;
 	switch (src_type)
 	{
-	default:
-		ASSERT(0);
-		// fall through
 	case CCopyCSrc::STRING:
-		// Max 4 chars per byte + 9 bytes for each line (/**/ ""\r\n) + address for each line + terminator
-		mem_needed = (end-start)*4 + ((end-start)/rowsize_+2)*(indent+9+addr_width_) + 2;
+		typ = Bin2Src::STRING;
 		break;
 	case CCopyCSrc::CHAR:
+		typ = Bin2Src::CHAR;
+		break;
 	case CCopyCSrc::INT:
+		typ = Bin2Src::INT;
+		break;
 	case CCopyCSrc::FLOAT:
-		// Max 8 chars per byte + 7 bytes per line (/**/ \r\n) + address per line + terminator
-		mem_needed = (end-start)*8 + ((end-start)/rowsize_+2)*(indent+7+addr_width_) + 2;
+		typ = Bin2Src::FLOAT;
 		break;
 	}
+	int size = 1;
+	if (src_type == CCopyCSrc::FLOAT)
+	{
+		switch(src_size)
+		{
+		case CCopyCSrc::FLOAT_32:
+			size = 4;
+			break;
+		case CCopyCSrc::FLOAT_64:
+			size = 8;
+			break;
+		case CCopyCSrc::REAL_48:
+			size = 6;
+			break;
+		}
+	}
+	else if (src_type == CCopyCSrc::INT)
+	{
+		switch (src_size)
+		{
+		case CCopyCSrc::INT_8:
+			size = 1;
+			break;
+		case CCopyCSrc::INT_16:
+			size = 2;
+			break;
+		case CCopyCSrc::INT_32:
+			size = 4;
+			break;
+		case CCopyCSrc::INT_64:
+			size = 8;
+			break;
+		}
+	}
+	int base = 10;
+	if (int_type == CCopyCSrc::INT_HEX)
+		base = 16;
+	else if (int_type == CCopyCSrc::INT_OCTAL)
+		base = 8;
+	int flags = Bin2Src::NONE;
+	if (int_type == CCopyCSrc::INT_UNSIGNED || base != 10)
+		flags |= Bin2Src::UNSIGNED;
+	if (big_endian)
+		flags |= Bin2Src::BIG_ENDIAN;
+	if (show_address)
+	{
+		if (hex_width_ > 0)
+			flags |= Bin2Src::HEX_ADDRESS;
+		if (dec_width_ > 0)
+			flags |= Bin2Src::DEC_ADDRESS;
+		if (num_width_ > 0)
+			flags |= Bin2Src::LINE_NUM;
+		if (display_.addrbase1)
+			flags |= Bin2Src::ADDR1;
+	}
+
+	formatter.Set(Bin2Src::C, typ, size, base, rowsize_, offset_, indent, flags);
+
+	int mem_needed = formatter.GetLength(start, end);
 
 	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
 
 	{
 		// Get windows memory to allow data to be put on clipboard
 		HANDLE hh;                              // Windows handle for memory
-		char *p_cb, *pp;                        // Ptr to start and within the clipboard text
-		size_t slen;                            // Number of characters added to ouput buffer by sprintf call
+		char *p_cb;                             // Ptr to start and within the clipboard text
 
 		if ((hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, DWORD(mem_needed))) == NULL ||
 			(p_cb = reinterpret_cast<char *>(::GlobalLock(hh))) == NULL)
@@ -11113,376 +11177,8 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
 			theApp.mac_error_ = 10;
 			return;
 		}
-		p_cb[mem_needed-1] = '\xCD';            // Add marker char at end so we can check if buffer was overflowed
 
-		// string containing 128 spaces
-		const char *spaces = "                                                                "
-							 "                                                                ";
-		const char *hex;                        // string containing hex digits (in current selected case)
-		if (theApp.hex_ucase_)
-			hex = "0123456789ABCDEF?";
-		else
-			hex = "0123456789abcdef?";
-
-		pp = p_cb;
-
-		// Add any indenting
-		ASSERT(indent < 128);
-		slen = sprintf(pp, "%.*s", indent, spaces);
-		pp += slen;
-
-		if (show_address)
-		{
-			// Add initial address
-			*pp++ = '/';
-			*pp++ = '*';
-			if (hex_width_ > 0)
-			{
-				slen = sprintf(pp,	theApp.hex_ucase_ ? "%0*I64X:" : "%0*I64x:", hex_width_, start + display_.addrbase1);
-				pp += slen;
-			}
-			if (dec_width_ > 0)
-			{
-				slen = sprintf(pp, "%*I64d:", dec_width_, start + display_.addrbase1);
-				pp += slen;
-			}
-			// xxx also line numbers (num_width_)
-			*pp++ = '*';
-			*pp++ = '/';
-			*pp++ = ' ';
-		}
-
-		if (src_type == CCopyCSrc::STRING)
-			*pp++ = '"';
-
-		FILE_ADDRESS curr = start;              // Address of current byte being worked on
-		FILE_ADDRESS line_end;                  // Address of byte at end of current line
-		line_end = ((start + offset_)/rowsize_ + 1)*rowsize_ - offset_;
-
-		// Work out how many bytes in each chunk
-		size_t get_len;                         // Size of each chunk (1,2,4, or 8)
-		switch (src_type)
-		{
-		default:
-			ASSERT(0);
-			// fall through
-		case CCopyCSrc::STRING:
-		case CCopyCSrc::CHAR:
-			get_len = 1;
-			break;
-		case CCopyCSrc::INT:
-			switch (src_size)
-			{
-			default:
-				ASSERT(0);
-				// fall through
-			case CCopyCSrc::INT_32:
-				get_len = 4;
-				break;
-			case CCopyCSrc::INT_8:
-				get_len = 1;
-				break;
-			case CCopyCSrc::INT_16:
-				get_len = 2;
-				break;
-			case CCopyCSrc::INT_64:
-				get_len = 8;
-				break;
-			}
-			break;
-		case CCopyCSrc::FLOAT:
-			switch (src_size)
-			{
-			default:
-				ASSERT(0);
-				// fall through
-			case CCopyCSrc::FLOAT_64:
-				get_len = 8;
-				break;
-			case CCopyCSrc::FLOAT_32:
-				get_len = 4;
-				break;
-			case CCopyCSrc::REAL_48:
-				get_len = 6;
-				break;
-			}
-			break;
-		}
-
-		for (curr = start; curr + get_len <= end; )
-		{
-			unsigned char buf[8];               // Largest is 64 bit int/float (8 bytes)
-
-			VERIFY(GetDocument()->GetData(buf, get_len, curr) == get_len);
-
-			switch (src_type)
-			{
-			default:
-				ASSERT(0);
-				// fall through
-			case CCopyCSrc::STRING:
-//                if (isprint(buf[0]))  // isprint seems to return true for ANSI chars too
-				if (buf[0] >= ' ' && buf[0] < 127)
-				{
-					// Backslash (\) and double-quote (") must be escaped and also do question
-					// mark (?) to avoid accidentally creating a trigraph sequence (??=, etc)
-					if (strchr("\\\"\?", buf[0]))
-						*pp++ = '\\';
-					*pp++ = buf[0];
-				}
-				else
-				{
-					// Control char or non-ASCII char - display as escape char or in hex
-					const char *check = "\a\b\f\n\r\t\v";       // used in search for escape char
-					const char *display = "abfnrtv0";
-					const char *ps;
-
-					// Note we output a nul byte as hex just in case it is followed by another
-					// digit.  Since strchr includes the terminating nul byte in the search
-					// we have to explicitly check for it.
-					if (buf[0] != '\0' && (ps = strchr(check, buf[0])) != NULL)
-					{
-						// Ouput C/C++ escape sequence
-						*pp++ = '\\';
-						*pp++ = display[ps-check];
-					}
-					else
-					{
-						// Output using hex escape sequence
-						*pp++ = '\\';
-						*pp++ = 'x';
-						*pp++ = hex[(buf[0]>>4)&0xF];
-						*pp++ = hex[buf[0]&0xF];
-						ASSERT(get_len == 1);
-
-						// If not at end of line we have to watch that the following char is not a hex digit
-						if (curr + get_len < line_end && curr + get_len < end)
-						{
-							// Not at EOL so get the next character into buf[1]
-							VERIFY(GetDocument()->GetData(buf+1, 1, curr + get_len) == 1);
-							if (isxdigit(buf[1]))
-							{
-								// Terminate the string and start a new one so that the following char
-								// does not become concatenated with the 2 hex digits already output
-								*pp++ = '"';
-								*pp++ = ' ';
-								*pp++ = '"';
-							}
-						}
-					}
-				}
-				break;
-			case CCopyCSrc::CHAR:
-				*pp++ = '\'';                                   // put in single quotes
-//                if (isprint(buf[0]))
-				if (buf[0] >= ' ' && buf[0] < 127)
-				{
-					// Backslash (\) and apostrophe or single quote (') must be escaped
-					if (strchr("\\'", buf[0]))
-						*pp++ = '\\';
-					*pp++ = buf[0];
-				}
-				else
-				{
-					// Control char or non-ASCII char - display as escape char or in hex
-					const char *check = "\a\b\f\n\r\t\v\0";
-					const char *display = "abfnrtv0";
-					const char *ps;
-					if ((ps = strchr(check, buf[0])) != NULL)
-					{
-						// Ouput C/C++ escape sequence
-						*pp++ = '\\';
-						*pp++ = display[ps-check];
-					}
-					else
-					{
-						// Output using hex escape sequence
-						*pp++ = '\\';
-						*pp++ = 'x';
-						*pp++ = hex[(buf[0]>>4)&0xF];
-						*pp++ = hex[buf[0]&0xF];
-					}
-				}
-				*pp++ = '\'';                                   // trailing single quote
-				*pp++ = ',';
-				*pp++ = ' ';
-				break;
-			case CCopyCSrc::INT:
-				if (big_endian)
-					flip_bytes(buf, get_len);
-				switch (src_size)
-				{
-				default:
-					ASSERT(0);
-					// fall through
-				case CCopyCSrc::INT_32:
-					switch (int_type)
-					{
-					default:
-						ASSERT(0);
-						// fall through
-					case CCopyCSrc::INT_UNSIGNED:
-						slen = sprintf(pp, "%10u, ", *(long *)buf);
-						break;
-					case CCopyCSrc::INT_SIGNED:
-						slen = sprintf(pp, "%11d, ", *(long *)buf);
-						break;
-					case CCopyCSrc::INT_OCTAL:
-						slen = sprintf(pp, "%012o, ", *(long *)buf);    // octal with leading zeroes
-						break;
-					case CCopyCSrc::INT_HEX:
-						if (theApp.hex_ucase_)
-							slen = sprintf(pp, "0x%08X, ", *(long *)buf); // 0x then leading zeroes
-						else
-							slen = sprintf(pp, "0x%08x, ", *(long *)buf);
-						break;
-					}
-					break;
-
-				case CCopyCSrc::INT_8:
-					switch (int_type)
-					{
-					default:
-						ASSERT(0);
-						// fall through
-					case CCopyCSrc::INT_UNSIGNED:
-						slen = sprintf(pp, "%3u, ", buf[0]);
-						break;
-					case CCopyCSrc::INT_SIGNED:
-						slen = sprintf(pp, "%4d, ", (signed char)buf[0]);
-						break;
-					case CCopyCSrc::INT_OCTAL:
-						slen = sprintf(pp, "%04o, ", buf[0]);
-						break;
-					case CCopyCSrc::INT_HEX:
-						if (theApp.hex_ucase_)
-							slen = sprintf(pp, "0x%02.2X, ", buf[0]);
-						else
-							slen = sprintf(pp, "0x%02.2x, ", buf[0]);
-						break;
-					}
-					break;
-				case CCopyCSrc::INT_16:
-					switch (int_type)
-					{
-					default:
-						ASSERT(0);
-						// fall through
-					case CCopyCSrc::INT_UNSIGNED:
-						slen = sprintf(pp, "%5hu, ", *(short *)buf);
-						break;
-					case CCopyCSrc::INT_SIGNED:
-						slen = sprintf(pp, "%6hd, ", *(short *)buf);
-						break;
-					case CCopyCSrc::INT_OCTAL:
-						slen = sprintf(pp, "%07ho, ", *(short *)buf);
-						break;
-					case CCopyCSrc::INT_HEX:
-						if (theApp.hex_ucase_)
-							slen = sprintf(pp, "0x%04.4hX, ", *(short *)buf);
-						else
-							slen = sprintf(pp, "0x%04.4hx, ", *(short *)buf);
-						break;
-					}
-					break;
-				case CCopyCSrc::INT_64:
-					switch (int_type)
-					{
-					default:
-						ASSERT(0);
-						// fall through
-					case CCopyCSrc::INT_UNSIGNED:
-						slen = sprintf(pp, "%20I64u, ", *(__int64 *)buf);
-						break;
-					case CCopyCSrc::INT_SIGNED:
-						slen = sprintf(pp, "%20I64d, ", *(__int64 *)buf);
-						break;
-					case CCopyCSrc::INT_OCTAL:
-						slen = sprintf(pp, "%023I64o, ", *(__int64 *)buf);
-						break;
-					case CCopyCSrc::INT_HEX:
-						if (theApp.hex_ucase_)
-							slen = sprintf(pp, "0x%016I64X, ", *(__int64 *)buf);
-						else
-							slen = sprintf(pp, "0x%016I64x, ", *(__int64 *)buf);
-						break;
-					}
-					break;
-				}
-				pp += slen;
-				ASSERT(*(pp-1) == ' ');  // Checks that slen was correct and trailing space added
-				break;
-			case CCopyCSrc::FLOAT:
-				if (big_endian)
-					flip_bytes(buf, get_len);
-				switch (src_size)
-				{
-				default:
-					ASSERT(0);
-					// fall through
-				case CCopyCSrc::FLOAT_64:
-					slen = sprintf(pp, "%22.15g, ", *(double *)buf);
-					break;
-				case CCopyCSrc::FLOAT_32:
-					slen = sprintf(pp, "%14.7g, ", *(float *)buf);
-					break;
-				case CCopyCSrc::REAL_48:
-					slen = sprintf(pp, "%19.12g, ", real48(buf));
-					break;
-				}
-				pp += slen;
-				ASSERT(*(pp-1) == ' ');
-				break;
-			}
-
-			// Check if we need to start a new line
-			if ((curr += get_len) >= line_end || curr >= end)
-			{
-				// Terminate previous line
-				if (src_type == CCopyCSrc::STRING)
-					*pp++ = '"';                // terminate string on this line
-				*pp++ = '\r';
-				*pp++ = '\n';
-
-				// If this is not the last line
-				if (curr < end)
-				{
-					// Add any indenting
-					slen = sprintf(pp, "%.*s", indent, spaces);
-					pp += slen;
-
-					if (show_address)
-					{
-						// Output address (in comments) at the start of the line
-						*pp++ = '/';
-						*pp++ = '*';
-						if (hex_width_ > 0)
-						{
-							slen = sprintf(pp,	theApp.hex_ucase_ ? "%0*I64X:" : "%0*I64x:", hex_width_, curr + display_.addrbase1);
-							pp += slen;
-						}
-						if (dec_width_ > 0)
-						{
-							slen = sprintf(pp, "%*I64d:", dec_width_, curr + display_.addrbase1);
-							pp += slen;
-						}
-						// xxx also line numbers (num_width_)
-						*pp++ = '*';
-						*pp++ = '/';
-						*pp++ = ' ';
-					}
-
-					if (src_type == CCopyCSrc::STRING)
-						*pp++ = '"';            // start new string on this new line
-				}
-
-				// Work out where this next line ends
-				line_end += rowsize_;
-			}
-		}
-		*pp ='\0';
-		ASSERT(pp-p_cb < mem_needed);
-		ASSERT(p_cb[mem_needed-1] == '\xCD');   // Check if buffer was overflowed
+		size_t len = formatter.GetString(start, end, p_cb, mem_needed);
 
 		if (::SetClipboardData(CF_TEXT, hh) == NULL)
 		{
@@ -11493,9 +11189,9 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
 			theApp.mac_error_ = 10;
 			return;
 		}
-		theApp.ClipBoardAdd(pp - p_cb);
-		// Note: the clipboard now owns the memory so ::GlobalFree(hh) should not be called
+		theApp.ClipBoardAdd(len);
 
+		// Note: the clipboard now owns the memory so ::GlobalFree(hh) should not be called
 		::GlobalUnlock(hh);
 	}
 

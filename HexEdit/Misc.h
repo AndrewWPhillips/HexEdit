@@ -176,11 +176,11 @@ inline void flip_each_word(unsigned char *pp, size_t count)
 }
 
 // The number of significant digits in a number
-inline int SigDigits(__int64 val, int base = 10)
+inline int SigDigits(unsigned __int64 val, int base = 10)
 {
 	ASSERT(base > 1);
 	int retval = 0;
-	for (retval = 0; val > 0; ++retval)
+	for (retval = 0; val != 0; ++retval)
 		val /= base;
 	return retval;
 }

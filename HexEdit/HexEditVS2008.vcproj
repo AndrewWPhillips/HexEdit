@@ -30,6 +30,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -244,6 +245,10 @@
 			</File>
 			<File
 				RelativePath=".\BigInteger.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Bin2Src.cpp"
 				>
 			</File>
 			<File
@@ -681,6 +686,10 @@
 			</File>
 			<File
 				RelativePath=".\BigInteger.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Bin2Src.h"
 				>
 			</File>
 			<File

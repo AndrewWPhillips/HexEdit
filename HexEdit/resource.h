@@ -988,6 +988,7 @@
 #define IDC_PRINT_UNITS                 1388
 #define IDC_CSRC_HELP                   1389
 #define IDC_DFFD_EXPR                   1390
+#define IDC_PREVIEW                     1390
 #define IDC_DFFD_EXPR_VAR               1391
 #define IDC_DFFD_DISPLAY_ERROR          1392
 #define IDC_DFFD_DISPLAY_RESULT         1393
@@ -1236,6 +1237,7 @@
 #define IDC_STATS_CRC32                 1644
 #define IDC_STATS_MD5                   1645
 #define IDC_STATS_SHA1                  1646
+#define IDC_CSRC_PREVIEW                1647
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1760,7 +1762,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        510
 #define _APS_NEXT_COMMAND_VALUE         39188
-#define _APS_NEXT_CONTROL_VALUE         1647
+#define _APS_NEXT_CONTROL_VALUE         1648
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
