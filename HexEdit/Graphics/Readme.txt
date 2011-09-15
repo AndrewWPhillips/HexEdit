@@ -120,7 +120,7 @@ Save the icon.
 Toolbars
 --------
 
-HexEdit 3.5 moved to shaded toolbars (see #define SHADED_TOOLBARS) with separate cold/hot/disabled images. There are 4 toolbars (toolbar, editbar, nacbar and formtbar), plus 2 extra toolbars (operations and misc).  Note that the "old toolbar" (mainbar.bmp) has finally been retired.
+HexEdit 3.5 moved to shaded toolbars (see #define SHADED_TOOLBARS) with separate cold/hot/disabled images. There are 4 toolbars (toolbar, editbar, navbar and formtbar), plus 2 extra toolbars (operations and misc).  Note that the "old toolbar" (mainbar.bmp) has finally been retired.
 
 The shaded images are used using the new overload to CBCGToolbar::LoadToolbar (and AddToolBarForImageCollection), which has the following idiosynchrasies:
 
@@ -142,31 +142,30 @@ IDB_EDITBAR_H  editbarHot.bmp
 The 3 images for each toolbar can be created from there corresponding Paint.Net file (eg Graphics\editbar.pdn) in this way:
 
 - make the "hot" image
-  - change colour of background layer to XP toolbar background colour (239,236,221)
+  x change colour of background layer to XP toolbar background colour (239,236,221)
+  - merge down all image layers if there are more than one
+  - select layer with images
   - increase saturation of images layer to 140
-    - note that background colour is in diff layer and retains its colour
-    - if more than one layer has images then merge them down to one layer
-  - merge images layer with background layer (merge down)
-  - fill background (tol 40%) with (192,192,192)
+  x merge images layer with background layer (merge down)
+  - fill background layer with (192,192,192)
   - save as 24-bit .BMP with "hot" suffix (eg editbarHot.BMP)
 - make the "cold" (normal) image
   - reopen the .PDN file (eg editbar.PDN)
-  - changed colour of background layer to XP toolbar background colour (239,236,221)
+  - merge down all image layers if there are more than one
   - select layer with toolbar images
   - open Hue + Saturation dialog (Adjustment/ Hue + Saturation)
   - reduce saturation from 100 down to 80
     - note that background colour is in diff layer and stays the same
-  - merge images layer with background layer (merge down)
-  - fill background (tol 40%) with (192,192,192)
+  - fill background with (192,192,192)
   - save as 24-bit .BMP file (eg editbarCold.BMP)
 - make the disabled image [not currently done]
   - reopen the .PDN file (eg editbar.PDN)
-  - select layer with toolbar images
+  - merge down all image layers if there are more than one
+  - select layer with images
   - open Hue + Saturation dialog and reduce saturation to 0
   - open Brightness + Contrast dialog (Adjustment/Brightness+Contrast)
-  - reduce contrast to -60, increase brightness to 50
-  - merge images layer with background layer (merge down)
-  - fill background (tol 40%) with (192,192,192)
+    - reduce contrast to -60, increase brightness to 50
+  - fill background layer with (192,192,192)
   - save as .BMP file (eg editbarDisabled.BMP)
 - reduce size of all .BMP files by making them 8-bit with RLE compression
   - load each .BMP into Photoshop Elements
