@@ -1829,27 +1829,9 @@ void CMainFrame::OnUpdateValues(CCmdUI *pCmdUI)
 		CString ss;
 
 		if (aa->hex_ucase_)
-		{
-			if (!pview->EbcdicMode() && cc < 0x20)      // Control char?
-				ss.Format("%02X, %d, %03o, %8s, '^%c' ",cc,cc,cc,binbuf,cc+0x40);
-			else if (!pview->EbcdicMode())
-				ss.Format("%02X, %d, %03o, %8s, '%c' ",cc,cc,cc,binbuf,cc);
-			else if (e2a_tab[cc] != '\0')
-				ss.Format("%02X, %d, %03o, %8s, '%c' ",cc,cc,cc,binbuf, e2a_tab[cc]);
-			else
-				ss.Format("%02X, %d, %03o, %8s, none ",cc,cc,cc,binbuf);
-		}
+			ss.Format("%02X, %d, %03o, %8s, %s ", cc, cc, cc, binbuf, pview->DescChar(cc));
 		else
-		{
-			if (!pview->EbcdicMode() && cc < 0x20)      // Control char?
-				ss.Format("%02x, %d, %03o, %8s, '^%c' ",cc,cc,cc,binbuf,cc+0x40);
-			else if (!pview->EbcdicMode())
-				ss.Format("%02x, %d, %03o, %8s, '%c' ",cc,cc,cc,binbuf,cc);
-			else if (e2a_tab[cc] != '\0')
-				ss.Format("%02x, %d, %03o, %8s, '%c' ",cc,cc,cc,binbuf, e2a_tab[cc]);
-			else
-				ss.Format("%02x, %d, %03o, %8s, none ",cc,cc,cc,binbuf);
-		}
+			ss.Format("%02x, %d, %03o, %8s, %s ", cc, cc, cc, binbuf, pview->DescChar(cc));
 
 		// Get status bar control
 		CMFCStatusBar *psb = (CMFCStatusBar *)pCmdUI->m_pOther;

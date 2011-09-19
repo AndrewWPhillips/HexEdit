@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "HexEditView.h"
 #include "SimpleGraph.h"
 #include "misc.h"
 
@@ -269,6 +270,9 @@ LRESULT CSimpleGraph::OnMouseHover(WPARAM, LPARAM lp)
 {
 	CPoint pt(LOWORD(lp), HIWORD(lp));  // client window coords
 
+	CHexEditView *pv = GetView();
+	ASSERT(pv != NULL);
+
 	m_bar = get_bar(pt);
 	if (m_bar > -1 && !m_tip.IsWindowVisible())
 	{
@@ -276,9 +280,9 @@ LRESULT CSimpleGraph::OnMouseHover(WPARAM, LPARAM lp)
 		m_tip.Clear();
 		CString ss;
 		if (theApp.hex_ucase_)
-			ss.Format("Byte: %d [%02.2Xh]", m_bar, m_bar);
+			ss.Format("Byte: %d [%02.2Xh] %s", m_bar, m_bar, pv->DescChar(m_bar));
 		else
-			ss.Format("Byte: %d [%02.2xh]", m_bar, m_bar);
+			ss.Format("Byte: %d [%02.2xh] %s", m_bar, m_bar, pv->DescChar(m_bar));
 		m_tip.AddString(ss);
 
 		char buf[32];                   // used with sprintf (CString::Format can't handle __int64)
