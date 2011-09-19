@@ -390,6 +390,15 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 	no_ask_insert_ = false;
 }
 
+CHexEditApp::~CHexEditApp()
+{
+	if (open_plf_ != NULL)
+		delete open_plf_;
+
+	if (open_oem_plf_ != NULL)
+		delete open_oem_plf_;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CHexEditApp object
 
@@ -655,6 +664,7 @@ void CHexEditApp::InitVersionInfo()
 				}
 			}
 		}
+		free(buf);
 	}
 
 	// Getting OS version info

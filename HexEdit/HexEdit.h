@@ -227,6 +227,7 @@ class CHexEditApp : public CWinAppEx
 {
 public:
 		CHexEditApp();
+		virtual ~CHexEditApp();
 
 // Overrides
 		// ClassWizard generated virtual function overrides

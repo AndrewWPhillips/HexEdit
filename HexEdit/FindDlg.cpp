@@ -83,6 +83,12 @@ CFindSheet::~CFindSheet()
 
 	theApp.WriteProfileInt("Find-Settings", "NumberFormat", number_format_);
 	theApp.WriteProfileInt("Find-Settings", "NumberSize", number_size_);;
+
+	delete p_page_simple_;
+	delete p_page_hex_;
+	delete p_page_text_;
+	delete p_page_number_;
+	delete p_page_replace_;
 }
 
 BOOL CFindSheet::Create(CWnd* pParentWnd, DWORD dwStyle)
