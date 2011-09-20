@@ -11060,22 +11060,24 @@ void CHexEditView::OnCopyCchar()
 	CCopyCSrc dlg(GetDocument(), start, end, rowsize_, offset_, addr_flags);
 	if (dlg.DoModal() == IDOK)
 	{
-		do_copy_src(dlg.type_,
+		do_copy_src(dlg.for_, dlg.type_,
 			dlg.type_ == CCopyCSrc::FLOAT ? dlg.float_size_ : dlg.int_size_,
 			dlg.int_type_,
 			dlg.big_endian_,
 			dlg.show_address_,
+			dlg.align_cols_,
 			dlg.indent_);
 	}
 }
 
 // do_copy_src: creates text on the clipboard from the current selection based on parameters passed
+//   src_for = 0 (General formatting), 1 (C/C++ formatting)
 //   src_type = CCopyCSrc::STRING, CCopyCSrc::CHAR, CCopyCSrc::INT, or CCopyCSrc::FLOAT
 //   src_size = 0,1,2,3 for 4 sizes of int, or 0,1 for 2 sizes of float
 //   int_type = 0,1,2,3 for how the ints are to be output
 //   big_endian = determines the byte order for ints and floats
-void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL big_endian,
-							   BOOL show_address, int indent)
+void CHexEditView::do_copy_src(int src_for, int src_type, int src_size, int int_type, 
+							   BOOL big_endian, BOOL show_address, BOOL align_cols, int indent)
 {
 	FILE_ADDRESS start, end;
 	GetSelAddr(start, end);
@@ -11086,6 +11088,10 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
 		return;
 
 	Bin2Src formatter(GetDocument());
+	Bin2Src::lang lang = Bin2Src::NOLANG;
+	if (src_for == 1)
+		lang = Bin2Src::C;
+
 	Bin2Src::type typ;
 	switch (src_type)
 	{
@@ -11146,6 +11152,9 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
 		flags |= Bin2Src::UNSIGNED;
 	if (big_endian)
 		flags |= Bin2Src::BIG_ENDIAN;
+	if (align_cols)
+		flags |= Bin2Src::ALIGN;
+
 	if (show_address)
 	{
 		if (hex_width_ > 0)
@@ -11158,7 +11167,7 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
 			flags |= Bin2Src::ADDR1;
 	}
 
-	formatter.Set(Bin2Src::C, typ, size, base, rowsize_, offset_, indent, flags);
+	formatter.Set(lang, typ, size, base, rowsize_, offset_, indent, flags);
 
 	int mem_needed = formatter.GetLength(start, end);
 
@@ -11198,12 +11207,19 @@ void CHexEditView::do_copy_src(int src_type, int src_size, int int_type, BOOL bi
 	if (!::CloseClipboard())
 		theApp.mac_error_ = 20;
 	else
-		theApp.SaveToMacro(km_copy_cchar, src_type | 
-										  (src_size<<3) | 
-										  (int_type<<6) | 
-										  (big_endian   ? 0x0200 : 0) |
-										  (show_address ? 0 : 0x0400) |  /* bit off means show */
-										  (__int64(indent&0x7F)<<11));
+	{
+		union copy_cchar uu;
+		uu.val = 0;
+		uu.src_type = src_type;
+		uu.src_size = src_size;
+		uu.int_type = int_type;
+		uu.big_endian = big_endian;
+		uu.hide_address = !show_address;
+		uu.indent = indent;
+		uu.src_for = src_for;
+		uu.align_cols = align_cols;
+		theApp.SaveToMacro(km_copy_cchar, uu.val);
+	}
 }
 
 // start+end define the bytes to be replaced

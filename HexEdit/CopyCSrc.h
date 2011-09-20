@@ -30,11 +30,13 @@ public:
 	CComboBox	ctl_int_size_;
 	CComboBox	ctl_float_size_;
 	CButton	ctl_big_endian_;
+	int		for_;
 	BOOL	big_endian_;
 	int		type_;
 	int		float_size_;
 	int		int_size_;
 	int		int_type_;
+	BOOL	align_cols_;
 	BOOL	show_address_;
 	UINT	indent_;
 	//}}AFX_DATA

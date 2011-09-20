@@ -82,9 +82,11 @@
 #define HIDC_CONTROL                    0x810c04b1    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_CONT_CHAR                  0x80eb065b    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_CSRC_ADDRESS               0x811f0565    // IDD_CSRC
+#define HIDC_CSRC_ALIGN                 0x811f0568    // IDD_CSRC
 #define HIDC_CSRC_CHAR                  0x811f0561    // IDD_CSRC
 #define HIDC_CSRC_FLOAT                 0x811f0564    // IDD_CSRC
 #define HIDC_CSRC_FLOAT_SIZE            0x811f0559    // IDD_CSRC
+#define HIDC_CSRC_FOR                   0x811f0569    // IDD_CSRC
 #define HIDC_CSRC_INDENT                0x811f0566    // IDD_CSRC
 #define HIDC_CSRC_INT                   0x811f0562    // IDD_CSRC
 #define HIDC_CSRC_INT_SIZE              0x811f0558    // IDD_CSRC

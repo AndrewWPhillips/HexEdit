@@ -262,19 +262,6 @@ public:
 	BOOL OEMMode() const { return display_.char_set == CHARSET_OEM; }
 	BOOL ANSIMode() const { return display_.char_set == CHARSET_ANSI; }
 #endif
-	CString DescChar(int cc)
-	{
-		CString retval;
-		if (!EbcdicMode() && cc < 0x20)
-			retval.Format("'^%c'", cc+0x40);
-		else if (!EbcdicMode())
-			retval.Format("'%c'", cc);
-		else if (e2a_tab[cc] != '\0')
-			retval.Format("'%c'", e2a_tab[cc]);
-		else
-			retval = "none ";
-		return retval;
-	}
 	BOOL MouseDown() const { return BOOL(mouse_down_); }
 	BOOL DecAddresses() const { return !display_.hex_addr; }  // Now that user can show both addresses at once this is probably the best return value
 	bool AutoSyncDffd() const { return display_.auto_sync_dffd; }
@@ -337,7 +324,7 @@ public:
 	void ToggleInsert() { OnInsert(); }
 	void AllowMods() { OnAllowMods(); }
 	bool CopyToClipboard();
-	void do_copy_src(int src_type, int src_size, int int_type, BOOL big_endian, BOOL show_address, int indent);
+	void do_copy_src(int src_for, int src_type, int src_size, int int_type, BOOL big_endian, BOOL show_address, BOOL align_cols, int indent);
 	virtual BOOL MovePos(UINT nChar, UINT nRepCnt, BOOL, BOOL, BOOL);
 	void StoreOptions();
 	COLORREF GetDefaultTextCol() { return text_col_; }

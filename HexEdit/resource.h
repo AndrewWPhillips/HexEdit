@@ -981,7 +981,9 @@
 #define IDC_CSRC_INDENT                 1382
 #define IDC_CSRC_INDENT_SPIN            1383
 #define IDC_ACTIVATE                    1384
+#define IDC_CSRC_ALIGN                  1384
 #define IDC_OPEN_TREE                   1385
+#define IDC_CSRC_FOR                    1385
 #define IDC_DFFD_ALLOW_EDIT             1386
 #define IDC_ACK_MORE                    1386
 #define IDC_OPEN_INFO                   1387

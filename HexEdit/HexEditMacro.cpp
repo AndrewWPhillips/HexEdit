@@ -421,12 +421,11 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				pv_->OnCopyHex();
 				break;
 			case km_copy_cchar:
-				pv_->do_copy_src((*pk).vv&0x07,
-								((*pk).vv>>3)&0x07,
-								((*pk).vv>>6)&0x07,
-								((*pk).vv&0x200) != 0,
-								((*pk).vv&0x400) == 0,
-								int(((*pk).v64>>11)&0x7F) );
+				{
+					union copy_cchar uu;
+					uu.val = (*pk).v64;
+					pv_->do_copy_src(uu.src_for, uu.src_type, uu.src_size, uu.int_type, uu.big_endian, !uu.hide_address, uu.align_cols, uu.indent);
+				}
 				break;
 			case km_paste_ascii:
 				pv_->OnPasteAscii();

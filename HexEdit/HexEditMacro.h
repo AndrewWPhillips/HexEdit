@@ -357,6 +357,22 @@ struct mouse_sel
 	CSizeAp doc_dist;           // Distance to mouse up (doc coords)
 };
 
+union copy_cchar                // see km_copy_cchar
+{
+	__int64 val;
+	struct
+	{
+		unsigned int src_type : 3;
+		unsigned int src_size : 3;
+		unsigned int int_type : 3;
+		unsigned int big_endian: 1;
+		unsigned int hide_address: 1;
+		unsigned int indent   : 7;
+		unsigned int src_for  : 3;
+		unsigned int align_cols: 1;
+	};
+};
+
 #pragma pack(1)                 // Make sure macros fit into as little memory as possible
 struct key_macro                // Stores one keystroke of the macro
 {

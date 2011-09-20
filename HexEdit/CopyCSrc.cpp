@@ -27,20 +27,24 @@ CCopyCSrc::CCopyCSrc(CHexEditDoc *pdoc, __int64 start, __int64 end, int rowsize,
 {
 
 	//{{AFX_DATA_INIT(CCopyCSrc)
+	for_ = -1;
 	big_endian_ = FALSE;
 	type_ = -1;
 	float_size_ = -1;
 	int_size_ = -1;
 	int_type_ = -1;
+	align_cols_ = FALSE;
 	show_address_ = FALSE;
 	indent_ = 0;
 	//}}AFX_DATA_INIT
 
+	for_         = theApp.GetProfileInt("CopySource", "For", 1);
 	type_        = theApp.GetProfileInt("CopySource", "Type", STRING);
 	int_type_    = theApp.GetProfileInt("CopySource", "IntType", INT_HEX);
 	int_size_    = theApp.GetProfileInt("CopySource", "IntSize", INT_32);
 	float_size_  = theApp.GetProfileInt("CopySource", "FloatSize", FLOAT_64);
 	big_endian_  = theApp.GetProfileInt("CopySource", "BigEndian", FALSE);
+	align_cols_  = theApp.GetProfileInt("CopySource", "Align", TRUE);
 	show_address_= theApp.GetProfileInt("CopySource", "ShowAddress", FALSE);
 	indent_      = theApp.GetProfileInt("CopySource", "Indent", 8);
 	preview_     = theApp.GetProfileInt("CopySource", "Preview", 0) != 0;
@@ -55,11 +59,13 @@ void CCopyCSrc::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CSRC_INT_SIZE, ctl_int_size_);
 	DDX_Control(pDX, IDC_CSRC_FLOAT_SIZE, ctl_float_size_);
 	DDX_Control(pDX, IDC_BIG_ENDIAN, ctl_big_endian_);
+	DDX_CBIndex(pDX, IDC_CSRC_FOR, for_);
 	DDX_Check(pDX, IDC_BIG_ENDIAN, big_endian_);
 	DDX_Radio(pDX, IDC_CSRC_STRING, type_);
 	DDX_CBIndex(pDX, IDC_CSRC_FLOAT_SIZE, float_size_);
 	DDX_CBIndex(pDX, IDC_CSRC_INT_SIZE, int_size_);
 	DDX_CBIndex(pDX, IDC_CSRC_INT_TYPE, int_type_);
+	DDX_Check(pDX, IDC_CSRC_ALIGN, align_cols_);
 	DDX_Check(pDX, IDC_CSRC_ADDRESS, show_address_);
 	DDX_Text(pDX, IDC_CSRC_INDENT, indent_);
 	DDV_MinMaxUInt(pDX, indent_, 0, 127);
@@ -73,16 +79,18 @@ BEGIN_MESSAGE_MAP(CCopyCSrc, CDialog)
 	ON_BN_CLICKED(IDC_CSRC_INT, OnChangeType)
 	ON_BN_CLICKED(IDC_CSRC_STRING, OnChangeType)
 	ON_BN_CLICKED(IDC_CSRC_HELP, OnCsrcHelp)
-	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_PREVIEW, OnPreviewToggle)
 	ON_EN_CHANGE(IDC_CSRC_INDENT, OnChange)
+	ON_BN_CLICKED(IDC_CSRC_ALIGN, OnChange)
 	ON_BN_CLICKED(IDC_CSRC_ADDRESS, OnChange)
+	ON_CBN_SELCHANGE(IDC_CSRC_FOR, OnChange)
 	ON_CBN_SELCHANGE(IDC_CSRC_INT_TYPE, OnChange)
 	ON_CBN_SELCHANGE(IDC_CSRC_INT_SIZE, OnChange)
 	ON_CBN_SELCHANGE(IDC_CSRC_FLOAT_SIZE, OnChange)
 	ON_BN_CLICKED(IDC_BIG_ENDIAN, OnChange)
 	ON_WM_HELPINFO()
 	ON_WM_CONTEXTMENU()
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -129,6 +137,10 @@ void CCopyCSrc::show_preview()
 void CCopyCSrc::update_preview()
 {
 	Bin2Src formatter(pdoc_);
+
+	Bin2Src::lang lang = Bin2Src::NOLANG;
+	if (for_ == 1)
+		lang = Bin2Src::C;
 
 	Bin2Src::type typ;
 	switch (type_)
@@ -190,10 +202,12 @@ void CCopyCSrc::update_preview()
 		flags |= Bin2Src::UNSIGNED;
 	if (big_endian_)
 		flags |= Bin2Src::BIG_ENDIAN;
+	if (align_cols_)
+		flags |= Bin2Src::ALIGN;
 	if (show_address_)
 		flags |= addr_flags_;
 
-	formatter.Set(Bin2Src::C, typ, size, base, rowsize_, offset_, indent_, flags);
+	formatter.Set(lang, typ, size, base, rowsize_, offset_, indent_, flags);
 
 #ifdef _DEBUG
 	char buf[1024];      // try to get a value that causes buffer overflow
@@ -208,11 +222,13 @@ void CCopyCSrc::update_preview()
 
 void CCopyCSrc::save_settings()
 {
+	theApp.WriteProfileInt("CopySource", "For",       for_);
 	theApp.WriteProfileInt("CopySource", "Type",      type_);
 	theApp.WriteProfileInt("CopySource", "IntType",   int_type_);
 	theApp.WriteProfileInt("CopySource", "IntSize",   int_size_);
 	theApp.WriteProfileInt("CopySource", "FloatSize", float_size_);
 	theApp.WriteProfileInt("CopySource", "BigEndian", big_endian_);
+	theApp.WriteProfileInt("CopySource", "Align",     align_cols_);
 	theApp.WriteProfileInt("CopySource", "ShowAddress", show_address_);
 	theApp.WriteProfileInt("CopySource", "Indent",    indent_);
 	theApp.WriteProfileInt("CopySource", "Preview",   preview_ ? 1 : 0);
@@ -293,8 +309,10 @@ void CCopyCSrc::OnCsrcHelp()
 }
 
 static DWORD id_pairs[] = { 
+	IDC_CSRC_FOR, HIDC_CSRC_FOR,
 	IDC_CSRC_INDENT, HIDC_CSRC_INDENT,
 	IDC_CSRC_INDENT_SPIN, HIDC_CSRC_INDENT,
+	IDC_CSRC_ALIGN, HIDC_CSRC_ALIGN,
 	IDC_CSRC_ADDRESS, HIDC_CSRC_ADDRESS,
 	IDC_CSRC_STRING, HIDC_CSRC_STRING,
 	IDC_CSRC_CHAR, HIDC_CSRC_CHAR,
