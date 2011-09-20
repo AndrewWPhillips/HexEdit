@@ -469,7 +469,7 @@ BEGIN
         POPUP "&Copy As"
         BEGIN
             MENUITEM "&Hex Text",                   ID_COPY_HEX
-            MENUITEM "&C Source...",                ID_COPY_CCHAR
+            MENUITEM "&Formatted Text...",          ID_COPY_CCHAR
         END
         POPUP "&Paste As"
         BEGIN
@@ -2954,7 +2954,7 @@ BEGIN
     ID_SELECT_ALL           "Select the whole file\nSelect All"
     ID_SEARCH_SEL           "Search for next occurrence of current selection\nFind Selection"
     ID_EDIT_WRITEFILE       "Write the current selection to a file\nWrite File"
-    ID_COPY_CCHAR           "Copy the selection to the Clipboard as C source\nCopy C Source"
+    ID_COPY_CCHAR           "Copy the selection to the Clipboard as Formatted Text\nCopy Formatted"
     ID_COPY_HEX             "Copy the selection to the Clipboard as ASCII hex digits\nCopy Hex"
     ID_PASTE_ASCII          "Insert Clipboard ASCII/ANSI Text\nPaste ASCII"
     ID_PASTE_UNICODE        "Insert Clipboard Text as Unicode\nPaste Unicode"

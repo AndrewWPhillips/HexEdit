@@ -11027,7 +11027,7 @@ bool CHexEditView::is_binary(FILE_ADDRESS start, FILE_ADDRESS end)
 	return false;
 }
 
-// Copy to cipboard as C source (characters stored as hex ints)
+// Copy to the clipboard as C source or other formatted text
 void CHexEditView::OnCopyCchar()
 {
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing

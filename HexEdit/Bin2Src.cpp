@@ -1,5 +1,10 @@
 // Bin2Src.cpp: implementation of the Bin2Src class.
 //
+// This class is used to convert binary data into various text formats.
+// It was originally designed to convert to C/C++ source code (strings or
+// arrays of chars, ints or floats etc) but is now more general.
+// In the future it might also have facilities for other programming languages.
+//
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
@@ -7,6 +12,15 @@
 #include "HexEditDoc.h"
 #include "Misc.h"
 
+// Set() sets conversion parameters
+// l = what programming lnagugae we might be supporting (currently only none or C)
+// t = the type of data, such as string. int or floating point
+// s = the size of each unit of data in bytes
+// b = radix for int types
+// r = how much to put on each line of text (note that since r may not be divisible by s that the amount of data may vary from row to row)
+// o = offset - amount the start of each row is offset from zero
+// i = number of spaces to indent each row
+// f = combination of bit flags with various options
 void Bin2Src::Set(enum lang l, enum type t, int s, int b, int r, int o, int i, int f)
 {
 	lang_ = l;                             // Language: only C for now
@@ -21,7 +35,8 @@ void Bin2Src::Set(enum lang l, enum type t, int s, int b, int r, int o, int i, i
 	indent_ = i;                           // how many spaces to indent each line
 	big_endian_ = (f & BIG_ENDIAN) != 0;   // only need for int and float data (maybe Unicode string/char later)
 	unsigned_ = (f & UNSIGNED) != 0;       // only use for ints
-	hex_address_ = (f & HEX_ADDRESS) != 0; // display hea address in comments?
+	align_cols_ = (f & ALIGN) != 0;        // align columns of numbers
+	hex_address_ = (f & HEX_ADDRESS) != 0; // display hex address?
 	dec_address_ = (f & DEC_ADDRESS) != 0; // display dec address?
 	line_num_ = (f & LINE_NUM) != 0;       // display line numbers?
 	addr1_ = (f & ADDR1) != 0;             // addresses and line numbers start at one not zero?
@@ -45,6 +60,10 @@ int Bin2Src::GetLength(__int64 start, __int64 end) const
 		        2);                                           // add 2 for null byte and error check byte (0xCD)
 }
 
+// GetString performs the actual conversion
+// start, end = the range of addresses to be used from the document (passed to c'tor)
+// buf = where the output text is placed
+// buf_len = conversion will stop before the end of the buffer is reached
 size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) const
 {
 	buf[buf_len - 1] = '\xCD';          // Add marker char at end of buffer so we can check if buffer was overflowed
@@ -77,7 +96,7 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 	strcpy(pp, paddr);
 	pp += slen;
 
-	if (type_ == STRING)
+	if (lang_ == C && type_ == STRING)
 		*pp++ = '"';
 
 	__int64 curr;                      // Address of current byte being worked on
@@ -101,11 +120,11 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 			{
 				// Backslash (\) and double-quote (") must be escaped and also do question
 				// mark (?) to avoid accidentally creating a trigraph sequence (??=, etc)
-				if (strchr("\\\"\?", buf[0]))
+				if (lang_ == C && strchr("\\\"\?", buf[0]))
 					*pp++ = '\\';
 				*pp++ = buf[0];
 			}
-			else
+			else if (lang_ == C)
 			{
 				// Control char or non-ASCII char - display as escape char or in hex
 				const char *check = "\a\b\f\n\r\t\v";       // used in search for escape char
@@ -149,38 +168,49 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 			break;
 
 		case CHAR:
-			*pp++ = '\'';                                   // put in single quotes
-			if (buf[0] >= ' ' && buf[0] < 127)
+			if (lang_ == C)
 			{
-				// Backslash (\) and apostrophe or single quote (') must be escaped
-				if (strchr("\\'", buf[0]))
-					*pp++ = '\\';
-				*pp++ = buf[0];
-			}
-			else
-			{
-				// Control char or non-ASCII char - display as escape char or in hex
-				const char *check = "\a\b\f\n\r\t\v\0";
-				const char *display = "abfnrtv0";
-				const char *ps;
-				if ((ps = strchr(check, buf[0])) != NULL)
+				// Always output something for C even if just a hex escape seq.
+				*pp++ = '\'';                                   // put in single quotes
+				if (buf[0] >= ' ' && buf[0] < 127)
 				{
-					// Ouput C/C++ escape sequence
-					*pp++ = '\\';
-					*pp++ = display[ps-check];
+					// Backslash (\) and apostrophe or single quote (') must be escaped
+					if (strchr("\\'", buf[0]))
+						*pp++ = '\\';
+					*pp++ = buf[0];
 				}
 				else
 				{
-					// Output using hex escape sequence
-					*pp++ = '\\';
-					*pp++ = 'x';
-					*pp++ = hex[(buf[0]>>4)&0xF];
-					*pp++ = hex[buf[0]&0xF];
+					// Control char or non-ASCII char - display as escape char or in hex
+					const char *check = "\a\b\f\n\r\t\v\0";
+					const char *display = "abfnrtv0";
+					const char *ps;
+					if ((ps = strchr(check, buf[0])) != NULL)
+					{
+						// Ouput C/C++ escape sequence
+						*pp++ = '\\';
+						*pp++ = display[ps-check];
+					}
+					else
+					{
+						// Output using hex escape sequence
+						*pp++ = '\\';
+						*pp++ = 'x';
+						*pp++ = hex[(buf[0]>>4)&0xF];
+						*pp++ = hex[buf[0]&0xF];
+					}
 				}
+				*pp++ = '\'';                                   // trailing single quote
+				*pp++ = ',';
+				*pp++ = ' ';
 			}
-			*pp++ = '\'';                                   // trailing single quote
-			*pp++ = ',';
-			*pp++ = ' ';
+			else if (buf[0] >= ' ' && buf[0] < 127)
+			{
+				// Just output printable characters
+				*pp++ = buf[0];
+				*pp++ = ',';
+				*pp++ = ' ';
+			}
 			break;
 
 		case INT:
@@ -188,111 +218,79 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 			// TODO: use mpz_get_str() to support any radix up to 36
 			if (big_endian_)
 				flip_bytes(buf, size_);
-			switch (size_)
+
 			{
-			default:
-				ASSERT(0);
-				// fall through
-			case 4:
-				if (radix_ == 8)
+				__int64 val = -1;
+				switch (size_)
 				{
-					// Octal
-					slen = sprintf(pp, "0%0*o, ", unit_width-3, *(long *)buf);    // octal with leading zeroes
-				}
-				else if (radix_ == 16)
-				{
-					// Hex
-					if (theApp.hex_ucase_)
-						slen = sprintf(pp, "0x%0*X, ", unit_width-4, *(long *)buf); // 0x then leading zeroes
+				case 1:
+					if (unsigned_)
+						val = buf[0];
 					else
-						slen = sprintf(pp, "0x%0*x, ", unit_width-4, *(long *)buf);
+						val = (signed char)buf[0];
+					break;
+				case 2:
+					if (unsigned_)
+						val = *(unsigned short *)buf;
+					else
+						val = *(short *)buf;
+					break;
+				case 4:
+					if (unsigned_)
+						val = *(unsigned long *)buf;
+					else
+						val = *(long *)buf;
+					break;
+				case 8:
+					val = *(__int64 *)buf;
+					break;
+				default:
+					ASSERT(0);
+					// fall through
 				}
-				else if (radix_ == 10 && unsigned_)
-				{
-					// Unsigned decimal
-					slen = sprintf(pp, "%*u, ", unit_width-2, *(long *)buf);
-				}
-				else
-				{
-					slen = sprintf(pp, "%*d, ", unit_width-2, *(long *)buf);
-				}
-				break;
 
-			case 1:
-				if (radix_ == 8)
-				{
-					// Octal
-					slen = sprintf(pp, "0%0*o, ", unit_width-3, buf[0]);
-				}
-				else if (radix_ == 16)
-				{
-					// Hex
-					if (theApp.hex_ucase_)
-						slen = sprintf(pp, "0x%0*X, ", unit_width-4, buf[0]);
-					else
-						slen = sprintf(pp, "0x%0*x, ", unit_width-4, buf[0]);
-				}
-				else if (radix_ == 10 && unsigned_)
-				{
-					// Unsigned decimal
-					slen = sprintf(pp, "%*u, ", unit_width-2, buf[0]);
-				}
-				else
-				{
-					slen = sprintf(pp, "%*d, ", unit_width-2, (signed char)buf[0]);
-				}
-				break;
+				if (!align_cols_)
+					unit_width = 4;
 
-			case 2:
-				if (radix_ == 8)
+				if (radix_ == 8 && lang_ == C)
 				{
-					// Octal
-					slen = sprintf(pp, "0%0*ho, ", unit_width-3, *(short *)buf);
+					// Octal with leading zero
+					slen = sprintf(pp, "0%0*I64o, ", unit_width-3, val);
+				}
+				else if (radix_ == 8)
+				{
+					// Straight octal
+					slen = sprintf(pp, "%0*I64o, ", unit_width-2, val);
+				}
+				else if (radix_ == 16 && lang_ == C)
+				{
+					if (!align_cols_)
+						unit_width = 6;     // gives min 2 hex digits (6 - 4)
+					// Hex with leading 0x
+					if (theApp.hex_ucase_)
+						slen = sprintf(pp, "0x%0*I64X, ", unit_width-4, val);
+					else
+						slen = sprintf(pp, "0x%0*I64x, ", unit_width-4, val);
 				}
 				else if (radix_ == 16)
 				{
-					// Hex
+					// Straight hex
 					if (theApp.hex_ucase_)
-						slen = sprintf(pp, "0x%0*hX, ", unit_width-4, *(short *)buf); // xxx need to test this to make sure only 2 digits are shown (no sign ext)
+						slen = sprintf(pp, "%0*I64X, ", unit_width-2, val);
 					else
-						slen = sprintf(pp, "0x%0*hx, ", unit_width-4, *(short *)buf);
+						slen = sprintf(pp, "%0*I64x, ", unit_width-2, val);
 				}
 				else if (radix_ == 10 && unsigned_)
 				{
 					// Unsigned decimal
-					slen = sprintf(pp, "%*hu, ", unit_width-2, *(short *)buf);
+					slen = sprintf(pp, "%*I64u, ", unit_width-2, val);
 				}
 				else
 				{
-					slen = sprintf(pp, "%*hd, ", unit_width-2, *(short *)buf);
+					slen = sprintf(pp, "%*I64d, ", unit_width-2, val);
 				}
-				break;
-
-			case 8:
-				if (radix_ == 8)
-				{
-					// Octal
-					slen = sprintf(pp, "0%0*I64o, ", unit_width-3, *(__int64 *)buf);    // octal with leading zeroes
-				}
-				else if (radix_ == 16)
-				{
-					// Hex
-					if (theApp.hex_ucase_)
-						slen = sprintf(pp, "0x%0*I64X, ", unit_width-4, *(__int64 *)buf); // 0x then leading zeroes
-					else
-						slen = sprintf(pp, "0x%0*I64x, ", unit_width-4, *(__int64 *)buf);
-				}
-				else if (radix_ == 10 && unsigned_)
-				{
-					// Unsigned decimal
-					slen = sprintf(pp, "%*I64u, ", unit_width-2, *(__int64 *)buf);
-				}
-				else
-				{
-					slen = sprintf(pp, "%*I64d, ", unit_width-2, *(__int64 *)buf);
-				}
-				break;
 			}
+
 			pp += slen;
 			ASSERT(*(pp-1) == ' ');  // Checks that slen was correct and trailing space added
 			break;
@@ -300,21 +298,25 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 		case FLOAT:
 			if (big_endian_)
 				flip_bytes(buf, size_);
+
+			double val = 0.0;
 			switch (size_)
 			{
+			case 8:
+				val = *(double *)buf;
+				break;
+			case 4:
+				val = *(float *)buf;
+				break;
+			case 6:
+				val = real48(buf);
+				break;
 			default:
 				ASSERT(0);
 				// fall through
-			case 8:
-				slen = sprintf(pp, "%*.*g, ", unit_width-2, unit_width-9, *(double *)buf);
-				break;
-			case 4:
-				slen = sprintf(pp, "%*.*g, ", unit_width-2, unit_width-9, *(float *)buf);
-				break;
-			case 6:
-				slen = sprintf(pp, "%*.*g, ", unit_width-2, unit_width-9, real48(buf));
-				break;
 			}
+			slen = sprintf(pp, "%*.*g, ", align_cols_ ? unit_width-2 : 1, unit_width-9, val);
+
 			pp += slen;
 			ASSERT(*(pp-1) == ' ');
 			break;
@@ -324,7 +326,7 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 		if ((curr += size_) >= line_end || curr >= end)
 		{
 			// Terminate previous line
-			if (type_ == STRING)
+			if (lang_ == C && type_ == STRING)
 				*pp++ = '"';                // terminate string on this line
 			*pp++ = '\r';
 			*pp++ = '\n';
@@ -342,7 +344,7 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 				strcpy(pp, paddr);
 				pp += slen;
 
-				if (type_ == STRING)
+				if (lang_ == C && type_ == STRING)
 					*pp++ = '"';            // start new string on this new line
 			}
 
@@ -367,10 +369,10 @@ int Bin2Src::get_unit_width() const
 		return 8;  // worst case '\xFF', [includes 2 apostrophes, comma, space
 
 	case INT:
-		extra = (radix_ == 8 ? 1 : 0) +         // allow for leading 0
-			    (radix_ == 16 ? 2 : 0) +        // allow for leading 0x
-			    (unsigned_ ? 0 : 1) +           // allow for sign
-				2;                              // allow for trailing comma and space
+		extra = (lang_ == C && radix_ == 8  ? 1 : 0) +    // allow for leading 0
+			    (lang_ == C && radix_ == 16 ? 2 : 0) +    // allow for leading 0x
+			    (unsigned_                  ? 0 : 1) +    // allow for leading sign
+				2;                                        // allow for trailing comma and space
 		switch (size_)
 		{
 		case 1:
@@ -415,6 +417,9 @@ int Bin2Src::get_address_width(__int64 addr) const
 		default:
 			ASSERT(0);
 			// fall through
+		case NOLANG:
+			retval += 1;  // just a space
+			break;
 		case C:
 			retval += 5;  // 5 bytes for [/**/ ]
 			break;
@@ -424,6 +429,8 @@ int Bin2Src::get_address_width(__int64 addr) const
 	return retval;
 }
 
+// Create an address as text to be put at the start of the line of text if one or
+// more of the flags HEX_ADDRESS, DEC_ADDRESS, or LINE_NUM are specified.
 const char * Bin2Src::get_address(__int64 addr) const
 {
 	if (hex_width_ + dec_width_ + num_width_ == 0)
@@ -435,6 +442,8 @@ const char * Bin2Src::get_address(__int64 addr) const
 
 	switch (lang_)
 	{
+	case NOLANG:
+		break; // nothing required
 	case C:
 		*pp++ = '/';
 		*pp++ = '*';
@@ -461,6 +470,8 @@ const char * Bin2Src::get_address(__int64 addr) const
 
 	switch (lang_)
 	{
+	case NOLANG:
+		break; // nothing required
 	case C:
 		*pp++ = '*';
 		*pp++ = '/';

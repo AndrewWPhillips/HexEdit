@@ -19,12 +19,12 @@ class CHexEditDoc;
 class Bin2Src  
 {
 public:
-	enum lang { C, };
+	enum lang { NOLANG, C, };
 	enum type { UNKNOWN, STRING, CHAR, INT, FLOAT, };
-	enum flags { NONE = 0, BIG_ENDIAN = 1, UNSIGNED = 2,
+	enum flags { NONE = 0, BIG_ENDIAN = 1, UNSIGNED = 2, ALIGN = 4,
 		         HEX_ADDRESS = 8, DEC_ADDRESS = 16, LINE_NUM = 32, ADDR1 = 64, };
 
-	Bin2Src(CHexEditDoc *pdoc) : pdoc_(pdoc), lang_(C), type_(UNKNOWN) { }
+	Bin2Src(CHexEditDoc *pdoc) : pdoc_(pdoc), lang_(NOLANG), type_(UNKNOWN) { }
 	void Set(enum lang l, enum type t = INT, int s = 4, int b = 10, int r = 16, int o = 0, int i = 0, int f = NONE);
 
 	int GetLength(__int64 start, __int64 end) const;
@@ -40,6 +40,7 @@ private:
 	int rowsize_, offset_;               // # of src bytes per output line, and offset of 1st line
 	int indent_;                         // Number of spaces to indent each line
 	bool big_endian_, unsigned_;         // Various options that affect the formatting
+	bool align_cols_;
 	bool hex_address_, dec_address_, line_num_, addr1_; // If and how to show addresses are added (in comments)
 
 	int get_address_width(__int64) const;
