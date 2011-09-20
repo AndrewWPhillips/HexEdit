@@ -1,7 +1,4 @@
 // TODO
-// When generating expression store integers as hex (preceded by 0x) unless mode is currently decimal
-// When restoring from history change to decimal mode if necessary
-// Put MD5 and SHA1 into calculator
 // check all buttons after an error
 // - some buttons display message, others status bar or nothing at all
 // check bit display at all stages
@@ -3047,6 +3044,8 @@ ExprStringType CCalcDlg::get_expr(bool no_paren /* = false */)
 
 // Set right_ (right side of current binary operation) from edit box.
 // This is done after a value is added or typed into the edit box.
+// An important consideration is to make sure that the value is evaluated 
+// correctly in the original radix.
 void CCalcDlg::set_right()
 {
 	// If there is nothing in the left operand yet we can change the expression radix
@@ -3056,19 +3055,33 @@ void CCalcDlg::set_right()
 		right_ = "***";
 	else if (radix_ == orig_radix_ || state_ > CALCINTLIT)
 		right_ = current_str_;
-	else
+	else if (orig_radix_ == 10)
 	{
-		// Set right_ to be the current integer value but in the original radix
-		// This is done for consostency so that all int literals in an expression use the same radix
-		int numlen = mpz_sizeinbase(current_.get_mpz_t(), orig_radix_) + 3;
+		// We started in decimal so convert right_ to decimal (so all lietrals are the same radix)
+		int numlen = mpz_sizeinbase(current_.get_mpz_t(), 10) + 3;
 		char *numbuf = new char[numlen];
 		numbuf[numlen-1] = '\xCD';
 
 		// Get the number as a string
-		mpz_get_str(numbuf, theApp.hex_ucase_? -orig_radix_ : orig_radix_, current_.get_mpz_t());
+		mpz_get_str(numbuf, 10, current_.get_mpz_t());
 		ASSERT(numbuf[numlen-1] == '\xCD');
 
 		right_ = numbuf;
+		delete[] numbuf;
+	}
+	else
+	{
+		// Store other values as hex with leading "0x"
+		right_ = "0x";
+		int numlen = mpz_sizeinbase(current_.get_mpz_t(), 16) + 3;
+		char *numbuf = new char[numlen];
+		numbuf[numlen-1] = '\xCD';
+
+		// Get the number as a string
+		mpz_get_str(numbuf, theApp.hex_ucase_? -16 : 16, current_.get_mpz_t());
+		ASSERT(numbuf[numlen-1] == '\xCD');
+
+		right_ += numbuf;
 		delete[] numbuf;
 	}
 }
