@@ -285,6 +285,8 @@ bool CHexFileList::ReadFile()
 			// Get file version from 1st comment line
 			if (line_no == 0 && _strnicmp(strLine, "; version ", 10) == 0)
 				ver_ = atoi((const char *)strLine + 10);
+			if (ver_ > 4)
+				return false;   // Can't handle new fileformat in this old program
 			continue;
 		}
 
