@@ -48,6 +48,12 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CHistoryShellList - keeps history of folders that have been shown
 
+CHistoryShellList::~CHistoryShellList()
+{
+	if (m_pDropTarget != NULL)
+		delete m_pDropTarget;
+}
+
 // This is a virtual function that is called whenever the current folder is to change
 HRESULT CHistoryShellList::DisplayFolder(LPAFX_SHELLITEMINFO lpItemInfo)
 {

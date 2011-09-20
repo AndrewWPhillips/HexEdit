@@ -76,7 +76,7 @@ public:
 	void RebuildFonts()
 	{
 		CObList& lstFonts = m_pLstFontsExternal != NULL ? *m_pLstFontsExternal : m_lstFonts;
-		lstFonts.RemoveAll();
+		ClearFonts();
 
 		// First, take the screen fonts:
 		CWindowDC dc(NULL);

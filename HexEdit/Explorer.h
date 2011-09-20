@@ -50,7 +50,8 @@ class CHistoryShellList : public CMFCShellListCtrl
 	};
 
 public:
-	CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true), m_pDropTarget (NULL) { }
+	CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true), m_pDropTarget(NULL) { }
+	virtual ~CHistoryShellList();
 	void Start(CExplorerWnd *pExpl) { pExpl_ = pExpl; }
 
 	// Handles back and forward buttons
