@@ -254,6 +254,7 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 	m_sizeInitial = CSize(-1, -1);
 	help_hwnd_ = (HWND)0;
 
+	source_ = km_result;
 	op_ = binop_none;
 	current_ = previous_ = 0;
 	state_ = CALCINTRES;
