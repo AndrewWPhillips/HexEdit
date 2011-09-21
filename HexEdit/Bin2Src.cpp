@@ -3,7 +3,7 @@
 // This class is used to convert binary data into various text formats.
 // It was originally designed to convert to C/C++ source code (strings or
 // arrays of chars, ints or floats etc) but is now more general.
-// In the future it might also have facilities for other programming languages.
+// In the future it might also support other programming languages.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -13,8 +13,8 @@
 #include "Misc.h"
 
 // Set() sets conversion parameters
-// l = what programming lnagugae we might be supporting (currently only none or C)
-// t = the type of data, such as string. int or floating point
+// l = what programming language we might be supporting (currently only none or C)
+// t = the type of data, such as string, int or floating point
 // s = the size of each unit of data in bytes
 // b = radix for int types
 // r = how much to put on each line of text (note that since r may not be divisible by s that the amount of data may vary from row to row)
@@ -82,7 +82,9 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 	int unit_width = get_unit_width();  // get width required for each data unit (includes padding such as commas and spaces)
 
 	// Work out when to stop - if there is not enough room in the buffer for another row
-	char *pp_end = buf + buf_len - (indent_ + addr_width + unit_width + 2);
+	// The worst case is that we just started a new line so as well as one data element (unit_width) we
+	// need to allow for a new line = indent_ + addr_width + 2 (CR/LF) + 2 (double quotes for string)
+	char *pp_end = buf + buf_len - (unit_width + indent_ + addr_width + 5);
 	ASSERT(pp_end > pp);
 
 	// Add initial indent and address(es)
@@ -106,9 +108,9 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 	// Work out how many bytes in each chunk
 	for (curr = start; curr + size_ <= end && pp < pp_end; )
 	{
-		unsigned char buf[8];               // Largest is 64 bit int/float (8 bytes)
+		unsigned char inbuf[8];               // Largest data type input is currently 64 bit int/float (8 bytes)
 
-		VERIFY(pdoc_->GetData(buf, size_, curr) == size_);
+		VERIFY(pdoc_->GetData(inbuf, size_, curr) == size_);
 		switch (type_)
 		{
 		default:
@@ -116,13 +118,13 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 			// fall through
 
 		case STRING:
-			if (buf[0] >= ' ' && buf[0] < 127)
+			if (inbuf[0] >= ' ' && inbuf[0] < 127)
 			{
 				// Backslash (\) and double-quote (") must be escaped and also do question
 				// mark (?) to avoid accidentally creating a trigraph sequence (??=, etc)
-				if (lang_ == C && strchr("\\\"\?", buf[0]))
+				if (lang_ == C && strchr("\\\"\?", inbuf[0]))
 					*pp++ = '\\';
-				*pp++ = buf[0];
+				*pp++ = inbuf[0];
 			}
 			else if (lang_ == C)
 			{
@@ -134,7 +136,7 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 				// Note we output a nul byte as hex just in case it is followed by another
 				// digit.  Since strchr includes the terminating nul byte in the search
 				// we have to explicitly check for it.
-				if (buf[0] != '\0' && (ps = strchr(check, buf[0])) != NULL)
+				if (inbuf[0] != '\0' && (ps = strchr(check, inbuf[0])) != NULL)
 				{
 					// Ouput C/C++ escape sequence
 					*pp++ = '\\';
@@ -145,16 +147,16 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 					// Output using hex escape sequence
 					*pp++ = '\\';
 					*pp++ = 'x';
-					*pp++ = hex[(buf[0]>>4)&0xF];
-					*pp++ = hex[buf[0]&0xF];
+					*pp++ = hex[(inbuf[0]>>4)&0xF];
+					*pp++ = hex[inbuf[0]&0xF];
 					ASSERT(size_ == 1);
 
 					// If not at end of line we have to watch that the following char is not a hex digit
 					if (curr + size_ < line_end && curr + size_ < end)
 					{
-						// Not at EOL so get the next character into buf[1]
-						VERIFY(pdoc_->GetData(buf+1, 1, curr + size_) == 1);
-						if (isxdigit(buf[1]))
+						// Not at EOL so get the next character into inbuf[1] (we get it again later into inbuf[0]
+						VERIFY(pdoc_->GetData(inbuf+1, 1, curr + size_) == 1);
+						if (isxdigit(inbuf[1]))
 						{
 							// Terminate the string and start a new one so that the following char
 							// does not become concatenated with the 2 hex digits already output
@@ -172,12 +174,12 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 			{
 				// Always output something for C even if just a hex escape seq.
 				*pp++ = '\'';                                   // put in single quotes
-				if (buf[0] >= ' ' && buf[0] < 127)
+				if (inbuf[0] >= ' ' && inbuf[0] < 127)
 				{
 					// Backslash (\) and apostrophe or single quote (') must be escaped
-					if (strchr("\\'", buf[0]))
+					if (strchr("\\'", inbuf[0]))
 						*pp++ = '\\';
-					*pp++ = buf[0];
+					*pp++ = inbuf[0];
 				}
 				else
 				{
@@ -185,7 +187,7 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 					const char *check = "\a\b\f\n\r\t\v\0";
 					const char *display = "abfnrtv0";
 					const char *ps;
-					if ((ps = strchr(check, buf[0])) != NULL)
+					if ((ps = strchr(check, inbuf[0])) != NULL)
 					{
 						// Ouput C/C++ escape sequence
 						*pp++ = '\\';
@@ -196,18 +198,18 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 						// Output using hex escape sequence
 						*pp++ = '\\';
 						*pp++ = 'x';
-						*pp++ = hex[(buf[0]>>4)&0xF];
-						*pp++ = hex[buf[0]&0xF];
+						*pp++ = hex[(inbuf[0]>>4)&0xF];
+						*pp++ = hex[inbuf[0]&0xF];
 					}
 				}
 				*pp++ = '\'';                                   // trailing single quote
 				*pp++ = ',';
 				*pp++ = ' ';
 			}
-			else if (buf[0] >= ' ' && buf[0] < 127)
+			else if (inbuf[0] >= ' ' && inbuf[0] < 127)
 			{
 				// Just output printable characters
-				*pp++ = buf[0];
+				*pp++ = inbuf[0];
 				*pp++ = ',';
 				*pp++ = ' ';
 			}
@@ -217,7 +219,7 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 			// Note we only support radix of hex, decimal and octal for now
 			// TODO: use mpz_get_str() to support any radix up to 36
 			if (big_endian_)
-				flip_bytes(buf, size_);
+				flip_bytes(inbuf, size_);
 
 			{
 				__int64 val = -1;
@@ -225,24 +227,24 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 				{
 				case 1:
 					if (unsigned_)
-						val = buf[0];
+						val = inbuf[0];
 					else
-						val = (signed char)buf[0];
+						val = (signed char)inbuf[0];
 					break;
 				case 2:
 					if (unsigned_)
-						val = *(unsigned short *)buf;
+						val = *(unsigned short *)inbuf;
 					else
-						val = *(short *)buf;
+						val = *(short *)inbuf;
 					break;
 				case 4:
 					if (unsigned_)
-						val = *(unsigned long *)buf;
+						val = *(unsigned long *)inbuf;
 					else
-						val = *(long *)buf;
+						val = *(long *)inbuf;
 					break;
 				case 8:
-					val = *(__int64 *)buf;
+					val = *(__int64 *)inbuf;
 					break;
 				default:
 					ASSERT(0);
@@ -274,7 +276,7 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 				}
 				else if (radix_ == 16)
 				{
-					// Straight hex
+					// Straight hex padded with leading zeroes
 					if (theApp.hex_ucase_)
 						slen = sprintf(pp, "%0*I64X, ", unit_width-2, val);
 					else
@@ -297,19 +299,19 @@ size_t Bin2Src::GetString(__int64 start, __int64 end, char *buf, int buf_len) co
 
 		case FLOAT:
 			if (big_endian_)
-				flip_bytes(buf, size_);
+				flip_bytes(inbuf, size_);
 
 			double val = 0.0;
 			switch (size_)
 			{
 			case 8:
-				val = *(double *)buf;
+				val = *(double *)inbuf;
 				break;
 			case 4:
-				val = *(float *)buf;
+				val = *(float *)inbuf;
 				break;
 			case 6:
-				val = real48(buf);
+				val = real48(inbuf);
 				break;
 			default:
 				ASSERT(0);
@@ -431,6 +433,8 @@ int Bin2Src::get_address_width(__int64 addr) const
 
 // Create an address as text to be put at the start of the line of text if one or
 // more of the flags HEX_ADDRESS, DEC_ADDRESS, or LINE_NUM are specified.
+// NOTE: Returns a pointer to a static buffer so don't call more than once in the
+// same expression and don't store the returned pointer.
 const char * Bin2Src::get_address(__int64 addr) const
 {
 	if (hex_width_ + dec_width_ + num_width_ == 0)
