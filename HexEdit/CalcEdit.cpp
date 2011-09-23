@@ -143,6 +143,7 @@ void CCalcEdit::put()
 			{
 			case 47:
 				theApp.FileFromString(buf);
+				handled = true;
 				break;
 			case 48:
 				if (!OpenClipboard())
@@ -256,7 +257,7 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 	int ac;
 	CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(CString(pp_->current_str_), 0 /*unused*/, ac /*unused*/, pp_->radix_, side_effects);
 
-	CALCSTATE retval = CALCERROR;
+	CALCSTATE retval = side_effects ? CALCERROR : CALCOTHER;
 	pp_->current_ = 0;                 // default to zero in case of error etc
 
 	// Set current_, current_str_ and retval depending on what we found
@@ -264,7 +265,6 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 	{
 	case CHexExpr::TYPE_NONE:
 		pp_->current_str_ = pp_->mm_->expr_.get_error_message();
-		retval = CALCOTHER;     // Probably just an incomplete expression 
 		break;
 
 	case CHexExpr::TYPE_INT:
