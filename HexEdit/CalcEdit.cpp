@@ -592,8 +592,33 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	TRACE("xxxx0 OnChar: sel = %x\r\n", GetSel());
 	in_edit_ = true;
 	ASSERT(pp_ != NULL && pp_->IsVisible());
-	clear_result();
+	clear_result();					// Clear text if previous result is displayed
 
+	CString ss;                     // Current text in control
+	GetWindowText(ss);
+	int start, end;                 // Range of selection of text in control
+	GetSel(start, end);
+	
+	// If editing an integer then make allowances for separator char
+	if (pp_->state_ == CALCINTLIT)
+	{
+		CString ss;                         // Text from the window (edit control)
+		int start, end;                     // Current selection in the edit control
+
+		// Set selection so that arrows/Del work OK in presence of separator chars
+		GetWindowText(ss);
+		GetSel(start, end);
+
+		char sep_char = ' ';
+		if (pp_->radix_ == 10) sep_char = theApp.dec_sep_char_;
+
+		if (nChar == '\b' && start > 1 && start == end && ss[start-1] == sep_char)
+		{
+			// If deleting 1st char of group then also delete preceding sep_char
+			SetSel(start-2, end);
+		}
+	}
+	
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
 	// Update internals (state_, current_ etc) from the current edit box text
