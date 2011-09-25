@@ -23,6 +23,7 @@ void CSimpleGraph::SetData(FILE_ADDRESS maximum, std::vector<FILE_ADDRESS> val, 
 
 	ASSERT(val.size() == col.size());
 	m_max = maximum;
+	if (m_max < 1) m_max = 1;  // avoid divide by zero
 	m_val.swap(val);
 	m_col.swap(col);
 
