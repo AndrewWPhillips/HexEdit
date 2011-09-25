@@ -92,7 +92,7 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 		pfile = pfile1_;		// Normal file
 	}
 
-//    CSingleLock sl(&docdata_, TRUE);
+    CSingleLock sl(&docdata_, TRUE);
 
 	// Find the 1st loc record that has (some of) the data
 	for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
@@ -553,13 +553,14 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 	// Rebuild the location list
 	regenerate();
 
-	AerialChange();     // tell aerial view thread to update
-
 	update_needed_ = true;
 	send_change_hint(address);
 
 	// xxx I *think* this is OK - ie nothing below is protected by the docdata_ xxx
 	sl.Unlock();
+
+	// This must be down after docdata_ is unlocked so bg thread can stop scan
+	AerialChange();     // tell aerial view thread to update
 
 	// Update views to show changed doc
 	CHexHint hh(utype, clen, address, pview, index, FALSE, ptoo);
