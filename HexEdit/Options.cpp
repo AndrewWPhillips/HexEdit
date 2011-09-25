@@ -2824,9 +2824,9 @@ void CColourSchemes::OnSchemeReset()
 		scheme_[scheme_no_] = theApp.default_multi_scheme_;
 //    else if (pview != NULL && pview->EbcdicMode())
 //        scheme_[scheme_no_] = theApp.default_ebcdic_scheme_;
-//    else if (pview != NULL && pview->OEMMode())
+//    else if (pview != NULL && pview->OemMode())
 //        scheme_[scheme_no_] = theApp.default_oem_scheme_;
-//    else if (pview != NULL && pview->ANSIMode())
+//    else if (pview != NULL && pview->AnsiMode())
 //        scheme_[scheme_no_] = theApp.default_ansi_scheme_;
 //    else
 //        scheme_[scheme_no_] = theApp.default_ascii_scheme_;

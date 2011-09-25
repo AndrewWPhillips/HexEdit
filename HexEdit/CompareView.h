@@ -54,8 +54,8 @@ public:
 	BOOL ReadOnly() const { return TRUE; }
 	BOOL CharMode() const { return phev_->display_.edit_char; }
 	BOOL EbcdicMode() const { return phev_->display_.char_set == CHARSET_EBCDIC; }
-	BOOL OEMMode() const { return phev_->display_.char_set == CHARSET_OEM; }
-	BOOL ANSIMode() const { return phev_->display_.char_set == CHARSET_ANSI; }
+	BOOL OemMode() const { return phev_->display_.char_set == CHARSET_OEM; }
+	BOOL AnsiMode() const { return phev_->display_.char_set == CHARSET_ANSI; }
 	BOOL DecAddresses() const { return !phev_->display_.hex_addr; }  // Now that user can show both addresses at once this is probably the best return value
 
 // Operations

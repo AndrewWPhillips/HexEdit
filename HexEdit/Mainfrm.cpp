@@ -1829,9 +1829,10 @@ void CMainFrame::OnUpdateValues(CCmdUI *pCmdUI)
 		CString ss;
 
 		if (aa->hex_ucase_)
-			ss.Format("%02X, %d, %03o, %8s, %s ", cc, cc, cc, binbuf, pview->DescChar(cc));
+			ss.Format("%02X, %d, %03o, %8s, ", cc, cc, cc, binbuf);
 		else
-			ss.Format("%02x, %d, %03o, %8s, %s ", cc, cc, cc, binbuf, pview->DescChar(cc));
+			ss.Format("%02x, %d, %03o, %8s, ", cc, cc, cc, binbuf);
+		ss += pview->DescChar(cc);
 
 		// Get status bar control
 		CMFCStatusBar *psb = (CMFCStatusBar *)pCmdUI->m_pOther;

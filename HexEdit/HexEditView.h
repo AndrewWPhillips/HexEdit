@@ -244,6 +244,7 @@ public:
 		return GetMark();
 	}
 
+	CString DescChar(int cc);
 	void SetCodePage(int cp);
 
 	// SetSelAddr not necessary (Use GoAddress or MoveToAddress)
@@ -253,15 +254,13 @@ public:
 	BOOL ReadOnly() const { return display_.readonly; }
 	BOOL OverType() const { return display_.overtype; }
 	BOOL CharMode() const { return display_.edit_char; }
-#if 0
-	BOOL EbcdicMode() const { return display_.ebcdic; }
-	BOOL OEMMode() const { return !display_.ebcdic && display_.graphic && display_.oem; }
-	BOOL ANSIMode() const { return !display_.ebcdic && display_.graphic && !display_.oem; }
-#else
+
+	BOOL AsciiMode() const { return display_.char_set == CHARSET_ASCII; }
 	BOOL EbcdicMode() const { return display_.char_set == CHARSET_EBCDIC; }
-	BOOL OEMMode() const { return display_.char_set == CHARSET_OEM; }
-	BOOL ANSIMode() const { return display_.char_set == CHARSET_ANSI; }
-#endif
+	BOOL OemMode() const { return display_.char_set == CHARSET_OEM; }
+	BOOL AnsiMode() const { return display_.char_set == CHARSET_ANSI; }
+	BOOL CodePageMode() const { return display_.char_set == CHARSET_CODEPAGE; }
+
 	BOOL MouseDown() const { return BOOL(mouse_down_); }
 	BOOL DecAddresses() const { return !display_.hex_addr; }  // Now that user can show both addresses at once this is probably the best return value
 	bool AutoSyncDffd() const { return display_.auto_sync_dffd; }
