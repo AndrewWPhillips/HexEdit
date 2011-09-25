@@ -97,6 +97,8 @@ CHexEditDoc::CHexEditDoc()
    start_comp_event_  (FALSE, TRUE), comp_bufa_(NULL), comp_bufb_(NULL),
    stats_buf_(NULL), c32_(NULL), c64_(NULL)
 {
+	doc_changed_ = false;
+
 	pfile1_ = pfile2_ = pfile3_ = pfile5_ = NULL;
 	pfile1_compare_ = pfile4_ = pfile4_compare_ = NULL;  // Files used for compares
 
@@ -1327,6 +1329,15 @@ void CHexEditDoc::SetModifiedFlag(BOOL bMod /*=TRUE*/)
 
 void CHexEditDoc::CheckBGProcessing()
 {
+	// First check if bg processing needs to be restarted due to file changes
+	if (doc_changed_)
+	{
+		doc_changed_ = false;     // Reset flag for next time
+		AerialChange();
+		StatsChange();
+	}
+
+	// Now check if any bg processing has just finished so we can update the display
 	bool search_finished = false;
 	bool aerial_finished = false;
 	bool comp_finished = false;

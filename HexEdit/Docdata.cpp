@@ -556,12 +556,10 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 	update_needed_ = true;
 	send_change_hint(address);
 
-	// xxx I *think* this is OK - ie nothing below is protected by the docdata_ xxx
+	// Unlock now since nothing below is protected by the docdata_
 	sl.Unlock();
 
-	// This must be down after docdata_ is unlocked so bg thread can stop scan
-	AerialChange();     // tell aerial view thread to update
-	StatsChange();
+	doc_changed_ = true;        // Remember to restart bg scans when we get a chance
 
 	// Update views to show changed doc
 	CHexHint hh(utype, clen, address, pview, index, FALSE, ptoo);
@@ -811,8 +809,7 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
 		regenerate();
 	}
 
-	AerialChange();     // tell aerial view thread to update
-	StatsChange();
+	doc_changed_ = true;        // Remember to restart bg scans when we get a chance
 
 	update_needed_ = true;
 	send_change_hint(change_address);

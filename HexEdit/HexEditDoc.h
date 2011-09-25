@@ -782,6 +782,8 @@ public:
 private:
 	void HandleError(const char *mess);
 
+	bool doc_changed_;   // Keeps track of whether we need to restart bg scan due to the document changing
+
 	// Background (worker) threads are created for several purposes (bg searches, bg scan for aerial view, etc)
 	// When the thread starts up it goes into an initial wait state ready for it's event to be
 	// fired so it can start processing.  Once finished processing it does not terminate but goes
