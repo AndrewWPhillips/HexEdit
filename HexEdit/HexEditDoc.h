@@ -674,6 +674,7 @@ public:
 	// Background stats thread (BGstats.cpp)
 	void AlohaStats();        // create/kill stats thread as appropriate
 	bool CanDoStats();        // Check several conditions to decide if we can do background stats scan
+	void StatsChange();       // Signal stats thread to rescan (eg when doc chnaged)
 	UINT RunStatsThread();    // Main func in bg thread (needs to be public so it can be called from bg_func)
 	void StartStats();
 	void StopStats();

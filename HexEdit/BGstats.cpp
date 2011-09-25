@@ -158,6 +158,48 @@ int CHexEditDoc::GetSha1(unsigned char buf[20])
 	return 0;
 }
 
+// Doc has changed - signal current scan to stop then start new scan
+void CHexEditDoc::StatsChange()
+{
+	ASSERT(pthread5_ != NULL);
+	if (pthread5_ == NULL) return;
+
+	// Make sure the current (main) thread does not have docdata_ locked
+	ASSERT(docdata_.m_sect.LockCount == -1 ||                                    // not locked OR
+		   (DWORD)docdata_.m_sect.OwningThread != ::GetCurrentThreadId() ||      // locked by other thread OR
+		   docdata_.m_sect.RecursionCount == 0);                                 // finished with it now
+
+	// Wait for thread to stop if necessary
+	bool waiting;
+	docdata_.Lock();
+	stats_command_ = STOP;
+	docdata_.Unlock();
+	SetThreadPriority(pthread5_->m_hThread, THREAD_PRIORITY_NORMAL);
+	for (int ii = 0; ii < 100; ++ii)
+	{
+		// Wait just a little bit in case the thread was just about to go into wait state
+		docdata_.Lock();
+		waiting = stats_state_ == WAITING;
+		docdata_.Unlock();
+		if (waiting)
+			break;
+		TRACE("+++ StatsChange - thread not waiting [lock=%d recurse=%d]\n", docdata_.m_sect.LockCount, docdata_.m_sect.RecursionCount);
+		Sleep(1);
+	}
+	SetThreadPriority(pthread5_->m_hThread, THREAD_PRIORITY_LOWEST);
+	//ASSERT(waiting);
+
+	// Reset and restart the scan
+	docdata_.Lock();
+	stats_command_ = NONE;  // make sure we don't stop the scan before it starts
+	stats_fin_ = false;
+	stats_progress_ = 0;
+	docdata_.Unlock();
+
+	TRACE("+++ Pulsing stats event (restart) for %p\n", this);
+	start_stats_event_.SetEvent();
+}
+
 // Return how far our scan has progressed as a percentage (0 to 100).
 int CHexEditDoc::StatsProgress()
 {
@@ -216,7 +258,7 @@ void CHexEditDoc::KillStatsThread()
 	if (pthread5_ == NULL) return;
 
 	HANDLE hh = pthread5_->m_hThread;    // Save handle since it will be lost when thread is killed and object is destroyed
-	TRACE1("+++ Killing stats thread for %p\n", this);
+	TRACE("+++ Killing stats thread for %p\n", this);
 
 	// Signal thread to kill itself
 	docdata_.Lock();
@@ -268,7 +310,7 @@ static UINT bg_func(LPVOID pParam)
 {
 	CHexEditDoc *pDoc = (CHexEditDoc *)pParam;
 
-	TRACE1("+++ Stats thread started for doc %p\n", pDoc);
+	TRACE("+++ Stats thread started for doc %p\n", pDoc);
 
 	return pDoc->RunStatsThread();
 }
@@ -289,7 +331,7 @@ void CHexEditDoc::CreateStatsThread()
 		if (!pfile5_->Open(pfile1_->GetFilePath(),
 					CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
 		{
-			TRACE1("+++ File5 open failed for %p\n", this);
+			TRACE("+++ File5 open failed for %p\n", this);
 			return;
 		}
 	}
@@ -308,7 +350,7 @@ void CHexEditDoc::CreateStatsThread()
 	stats_state_ = STARTING;
 	stats_fin_ = false;
 	stats_progress_ = 0;
-	TRACE1("+++ Creating stats thread for %p\n", this);
+	TRACE("+++ Creating stats thread for %p\n", this);
 	pthread5_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
 	ASSERT(pthread5_ != NULL);
 }
@@ -323,14 +365,14 @@ UINT CHexEditDoc::RunStatsThread()
 			CSingleLock sl(&docdata_, TRUE);
 			stats_state_ = WAITING;
 		}
-		TRACE1("+++ BGstats: waiting %p\n", this);
+		TRACE("+++ BGstats: waiting [lock=%d recurse=%d]\n", docdata_.m_sect.LockCount, docdata_.m_sect.RecursionCount);
 		DWORD wait_status = ::WaitForSingleObject(HANDLE(start_stats_event_), INFINITE);
 		docdata_.Lock();
 		stats_state_ = SCANNING;
 		docdata_.Unlock();
 		start_stats_event_.ResetEvent();      // Force ourselves to wait
 		ASSERT(wait_status == WAIT_OBJECT_0);
-		TRACE1("+++ BGstats: got event for %p\n", this);
+		TRACE("+++ BGstats: got event for %p\n", this);
 
 		if (StatsProcessStop())
 			continue;
@@ -388,7 +430,6 @@ UINT CHexEditDoc::RunStatsThread()
 			if ((got = GetData(stats_buf_, buf_size, addr, 5)) <= 0)
 			{
 				// We reached the end of the file at last - save results and go back to wait state
-				TRACE("+++ BGState: finished scan for %p\n", this);
 				CSingleLock sl(&docdata_, TRUE); // Protect shared data access
 
 				if (c32_ != NULL)
@@ -411,7 +452,12 @@ UINT CHexEditDoc::RunStatsThread()
 
 				if (do_sha1)
 					sha1_finish(&sha1_ctx, sha1_);
-
+#ifdef _DEBUG
+				__int64 total_count = 0;
+				for (int ii = 0; ii < 256; ++ii)
+					total_count += count_[ii];
+				TRACE("+++ BGStats: finished scan for %p +++++++++++ TOTAL = %d\n", this, int(total_count));
+#endif
 				stats_fin_ = true;
 				stats_progress_ = 100;
 				break;
@@ -470,11 +516,11 @@ bool CHexEditDoc::StatsProcessStop()
 	switch (stats_command_)
 	{
 	case STOP:                      // stop scan and wait
-		TRACE1("+++ BGstats: stop for %p\n", this);
+		TRACE("+++ BGstats: stop for %p\n", this);
 		retval = true;
 		break;
 	case DIE:                       // terminate this thread
-		TRACE1("+++ BGstats: killed thread for %p\n", this);
+		TRACE("+++ BGstats: killed thread for %p\n", this);
 		stats_state_ = DYING;
 		sl.Unlock();                // we need this here as AfxEndThread() never returns so d'tor is not called
 		delete[] stats_buf_;

@@ -561,6 +561,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 
 	// This must be down after docdata_ is unlocked so bg thread can stop scan
 	AerialChange();     // tell aerial view thread to update
+	StatsChange();
 
 	// Update views to show changed doc
 	CHexHint hh(utype, clen, address, pview, index, FALSE, ptoo);
@@ -811,6 +812,7 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
 	}
 
 	AerialChange();     // tell aerial view thread to update
+	StatsChange();
 
 	update_needed_ = true;
 	send_change_hint(change_address);
