@@ -1,17 +1,3 @@
-// TODO
-// check all buttons after an error
-// - some buttons display message, others status bar or nothing at all
-// check bit display at all stages
-//  - binop
-//  - unary op
-//  - non-int expr
-// test all code using coverage tool
-// test all buttons when disabled
-//  - GO when non-int expr
-// test endian checkbox when endianness chnage in the view
-// test all controls updated correctly after all buttons used
-// check all keys: BS, Del, arrows
-
 // CalcDlg.cpp : implements the Goto/Calculator dialog
 //
 // Copyright (c) 2000-2011 by Andrew W. Phillips.
@@ -1139,6 +1125,18 @@ void CCalcDlg::calc_unary(unary_type unary)
 		break;
 	case unary_sign:
 		current_ = -current_;
+		// Ask the user if they want to switch to signed numbers
+		if (!signed_ && 
+			current_ < min_val_ && 
+			CAvoidableDialog::Show(IDS_CALC_NEGATIVE_UNSIGNED,
+			                       "You are changing the sign of a positive number. "
+			                       "Since you are currently using unsigned numbers "
+			                       "this will cause an OVERFLOW condition.\n\n"
+			                       "Do you want to change to using signed numbers?",
+			                       "Toggle Signed?", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+		{
+			change_signed(!signed_);
+		}
 		right_.Format(EXPRSTR("-%s"), (const wchar_t *)tmp);
 		break;
 	case unary_square:
@@ -3714,7 +3712,16 @@ void CCalcDlg::OnMemGet()
 void CCalcDlg::OnMemStore()
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		not_int_error();
 		return;
@@ -3752,7 +3759,16 @@ void CCalcDlg::OnMemClear()
 void CCalcDlg::OnMemAdd()
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		not_int_error();
 		return;
@@ -3771,7 +3787,16 @@ void CCalcDlg::OnMemAdd()
 void CCalcDlg::OnMemSubtract()
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		not_int_error();
 		return;
@@ -3814,7 +3839,16 @@ void CCalcDlg::OnMarkGet()              // Position of mark in the file
 void CCalcDlg::OnMarkStore()
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		not_int_error();
 		return;
@@ -3876,7 +3910,16 @@ void CCalcDlg::OnMarkClear()
 void CCalcDlg::OnMarkAdd()              // Add current value to mark
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		not_int_error();
 		return;
@@ -3920,7 +3963,16 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 void CCalcDlg::OnMarkSubtract()
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		not_int_error();
 		return;
@@ -4076,7 +4128,16 @@ void CCalcDlg::OnEofGet()               // Length of file
 void CCalcDlg::OnMarkAtStore()
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		not_int_error();
 		return;
@@ -4109,7 +4170,16 @@ void CCalcDlg::OnMarkAtStore()
 void CCalcDlg::OnSelStore()
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		not_int_error();
 		return;
@@ -4156,7 +4226,16 @@ void CCalcDlg::OnSelStore()
 void CCalcDlg::OnSelAtStore()
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		not_int_error();
 		return;
@@ -4182,7 +4261,16 @@ void CCalcDlg::OnSelAtStore()
 void CCalcDlg::OnSelLenStore()
 {
 	// First check that we can perform an integer operation
-	if (state_ > CALCINTEXPR)
+	if (state_ == CALCERROR)
+	{
+		make_noise("Calculator Error");
+		CAvoidableDialog::Show(IDS_CALC_ERROR,
+				"You cannot perform this operation on an invalid value.");
+		//mm_->StatusBarText("Operation on invalid value.");
+		aa_->mac_error_ = 10;
+		return;
+	}
+	else if (state_ > CALCINTEXPR)
 	{
 		not_int_error();
 		return;

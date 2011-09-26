@@ -413,8 +413,7 @@ private:
 	int radix_;                     // Actual radix (base) in use (usually 2,8,10, or 16 but may be any value 2-36
 	int orig_radix_;                // Radix at start of expression (used to generate an history expression all in the same radix for consistency)
 	int bits_;                      // Numbers of bits in use: (usually 8, 16, 32 or 64), the special value of 0 means unlimited
-	bool signed_;                   // For now only decimal (base 10) numbers are shown signed but later we will allow a signed checkbox
-                                    // Note: for unlimited bits (bits_ == 0) -ve numbers are shown as such (ie leading minus sign) as we can't show an infinite number of FF's
+	bool signed_;                   // Reflects state of signed checkbox (only decimal numbers default to signed but any radix can have signed numbers) - inf precision is always signed
 
 	bool m_first;                   // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
 	CResizeCtrl m_resizer;          // Used to move controls around when the window is resized

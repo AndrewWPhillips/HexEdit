@@ -3432,6 +3432,7 @@ BEGIN
     IDS_BOOKMARK_NOFILE     "Adding a bookmark requires an open file"
     IDS_BOOKMARK_NOTFOUND   "Bookmark not found"
     IDS_BOOKMARK_FILENOTFOUND "The file containing the bookmark was not found"
+    IDS_CALC_NEGATIVE_UNSIGNED "Negative value will cause overflow"
 END
 
 STRINGTABLE 
