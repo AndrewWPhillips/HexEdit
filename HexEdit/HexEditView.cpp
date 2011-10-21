@@ -1321,19 +1321,54 @@ void CHexEditView::StoreOptions()
 
 		if (theApp.thumbnail_)
 		{
+			CMainFrame * mm = (CMainFrame *)AfxGetMainWnd();
+			CChildFrame * cc = GetFrame();
+
+			// Make sure main window is visible
+			if (mm->IsIconic() ||!mm->IsWindowVisible())
+				mm->ShowWindow(SW_SHOWNORMAL);    // If we don't do this (and main window is minimized) we get black bitmaps
+
+			CRect rct;
+			mm->GetWindowRect(&rct);  // Rectangle of main window
+			if (!mm->IsZoomed() && OutsideMonitor(rct))
+			{
+				CRect cont_rect = MonitorRect(rct);
+				if (rct.left < cont_rect.left)
+					rct.MoveToX(cont_rect.left);
+				if (rct.right > cont_rect.right)
+					rct.MoveToX(cont_rect.right - rct.Width());
+				if (rct.top < cont_rect.top)
+					rct.MoveToY(cont_rect.top);
+				if (rct.bottom > cont_rect.bottom)
+					rct.MoveToY(cont_rect.bottom - rct.Height());
+
+				mm->MoveWindow(&rct);
+			}
+			//mm->ActivateFrame(SW_SHOW);
+
+			// Make sure this view is visible
+			if (cc->IsIconic())
+				cc->MDIRestore();
+			cc->MDIActivate();       // if we don't do this we get the wrong window contents
+			//CView * pv = mm->GetActiveView();
+			//if (pv != this)
+			//{
+			//	mm->SetActiveView(this);
+			//	RedrawWindow();
+			//}
+
 			HWND hh;                         // Handle of window we are generating the thumbnail for
 			if (theApp.thumb_frame_)
-				hh = GetFrame()->m_hWnd;     // frame window
+				hh = cc->m_hWnd;             // frame window
 			else
 				hh = m_hWnd;                 // client area of hex view
 			HDC dc = ::GetDC(hh);
-			CRect rct;
 			VERIFY(::GetWindowRect(hh, &rct));
 			ASSERT(rct.Width() > 0 && rct.Height() > 0);
 
-			// I set the window topmost to avoid having the context menu on top of it but this does not work.
-			//::SetWindowPos(hh, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+			::SetWindowPos(mm->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);  // make topmost
 			//Sleep(500);    // allow time to refresh
+			mm->RedrawWindow();              // Gets rid of stuff like context menu
 
 			// Prepare the DCs
 			HDC dstDC = ::GetDC(NULL);
@@ -1345,7 +1380,10 @@ void CHexEditView::StoreOptions()
 			HBITMAP oldbm = (HBITMAP)::SelectObject(memDC, hbmp);
 			VERIFY(::BitBlt(memDC, 0, 0, rct.Width(), rct.Height(), srcDC, 0, 0, SRCCOPY));
 
-			//::SetWindowPos(hh, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+			::SetWindowPos(mm->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);  // NOT topmost
+
+			///if (pv != this)
+			///	mm->SetActiveView(pv);
 
 			// Get information about the bitmap
 			BITMAP bm_info;
@@ -1408,12 +1446,13 @@ void CHexEditView::StoreOptions()
 
 					if (dib_final != NULL)
 					{
-						static int kk = 1;
-						CString fname;
-						fname.Format("C:\\tmp\\xxx%d.png", kk++);
+						// xxx need to create a file name here and save the file to it
+						//static int kk = 1;
+						//CString fname;
+						//fname.Format("C:\\tmp\\xxx%d.png", kk++);
 
-						if (FreeImage_Save(FIF_PNG, dib_final, fname, PNG_Z_BEST_SPEED))
-							pfl->SetData(ii, CHexFileList::PREVIEWFILENAME, fname);
+						//if (FreeImage_Save(FIF_PNG, dib_final, fname, PNG_Z_BEST_SPEED))
+						//	pfl->SetData(ii, CHexFileList::PREVIEWFILENAME, fname);
 						FreeImage_Unload(dib_final);
 					}
 				}
