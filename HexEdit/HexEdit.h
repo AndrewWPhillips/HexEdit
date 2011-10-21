@@ -419,6 +419,7 @@ public:
 	BOOL is_nt_;                        // Are we running under NT family? (NT/W2K/XP and later)
 	BOOL is_xp_;                        // Is it XP or later?
 	BOOL is_vista_;                     // Is it Vista or later?
+	BOOL is_win7_;                      // Windows 7 or Windows Server 2008 R2 or later?
 	BOOL mult_monitor_;                 // Are we running on an OS with multiple monitor support?
 	BOOL is_us_;                        // Are we in US?  (for spelling fixes)
 	BOOL win95_;                        // Is it Windows 95? (not 98 or later and not NT or later)
@@ -664,6 +665,11 @@ public:
 	CString open_folder_;               // Folder to use if explicitly specified option chosen
 	int     save_locn_;                 // Default folder for save as dialog (0=current doc folder, ...)
 	CString save_folder_;               // Folder to use if explicitly specified option chosen
+
+	BOOL thumbnail_;                    // Generate a preview file when file is saved
+	int thumb_size_;                    // Size of thumbnail
+	//BOOL thumb_8bit_;                   // Thumbnail saved with 8bpp (rather than 24)
+	BOOL thumb_frame_;                  // Thumbnail of child frame window (rather than just hex view)
 
 	// History list options
 	BOOL no_recent_add_;                // When a file is opened it is not added to "My Recent Documents" (OFN_DONTADDTORECENT)

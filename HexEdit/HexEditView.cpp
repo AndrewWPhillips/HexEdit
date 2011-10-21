@@ -1318,6 +1318,116 @@ void CHexEditView::StoreOptions()
 			pfl->SetData(ii, CHexFileList::COMPVIEW, __int64(width));
 			pfl->SetData(ii, CHexFileList::COMPFILENAME, GetDocument()->GetCompFileName());
 		}
+
+		if (theApp.thumbnail_)
+		{
+			HWND hh;                         // Handle of window we are generating the thumbnail for
+			if (theApp.thumb_frame_)
+				hh = GetFrame()->m_hWnd;     // frame window
+			else
+				hh = m_hWnd;                 // client area of hex view
+			HDC dc = ::GetDC(hh);
+			CRect rct;
+			VERIFY(::GetWindowRect(hh, &rct));
+			ASSERT(rct.Width() > 0 && rct.Height() > 0);
+
+			// I set the window topmost to avoid having the context menu on top of it but this does not work.
+			//::SetWindowPos(hh, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+			//Sleep(500);    // allow time to refresh
+
+			// Prepare the DCs
+			HDC dstDC = ::GetDC(NULL);
+			HDC srcDC = ::GetWindowDC(hh);
+			HDC memDC = ::CreateCompatibleDC(dstDC);
+
+			// Copy the window to the bitmap
+			HBITMAP hbmp = CreateCompatibleBitmap(dstDC, rct.Width(), rct.Height());
+			HBITMAP oldbm = (HBITMAP)::SelectObject(memDC, hbmp);
+			VERIFY(::BitBlt(memDC, 0, 0, rct.Width(), rct.Height(), srcDC, 0, 0, SRCCOPY));
+
+			//::SetWindowPos(hh, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+
+			// Get information about the bitmap
+			BITMAP bm_info;
+			VERIFY(::GetObject(hbmp, sizeof(bm_info), &bm_info));
+
+			// Create the FreeImage bitmap
+			FIBITMAP * dib = FreeImage_AllocateT(FIT_BITMAP, (WORD)bm_info.bmWidth, (WORD)bm_info.bmHeight, (WORD)bm_info.bmBitsPixel);
+			if (dib != NULL)
+			{
+				if (bm_info.bmBitsPixel <= 8)
+				{
+					// Create palette if bpp is small (indicates paletted bitmap)
+					RGBQUAD * pal = FreeImage_GetPalette(dib);
+					for (int ii = 0; ii < FreeImage_GetColorsUsed(dib); ++ii)
+					{
+						pal[ii].rgbRed = ii;
+						pal[ii].rgbGreen = ii;
+						pal[ii].rgbBlue = ii;
+					}
+				}
+				int num = FreeImage_GetColorsUsed(dib);
+
+				HDC dc = ::GetDC(NULL);
+
+				// Copy the pixels to the FreeImage bitmap
+				if (::GetDIBits(dc, hbmp, 0,
+								FreeImage_GetHeight(dib),   // number of scan lines to copy
+								FreeImage_GetBits(dib),     // array for bitmap bits
+								FreeImage_GetInfo(dib),     // bitmap data buffer
+								DIB_RGB_COLORS))
+				{
+					::ReleaseDC(NULL, dc);
+
+					FreeImage_GetInfoHeader(dib)->biClrUsed = num;
+					FreeImage_GetInfoHeader(dib)->biClrImportant = num;
+
+					FIBITMAP * dib_thumb = FreeImage_MakeThumbnail(dib, theApp.thumb_size_);
+					FreeImage_Unload(dib);
+
+					FIBITMAP * dib_final;
+
+					// I had trouble with trying to use 8-bit bitmaps. Eg: FreeImage_ColorQuantize()
+					// always fails, writing 8-bit bitmap as PNG converts to 32-bit, etc, so gave up
+					//if ( theApp.thumb_8bit_ && FreeImage_GetBPP(dib_thumb) == 8 ||
+					//	!theApp.thumb_8bit_ && FreeImage_GetBPP(dib_thumb) == 24)
+					//{
+					//	dib_final = dib_thumb;
+					//}
+					//else if (theApp.thumb_8bit_)
+					//{
+					//	//dib_final = FreeImage_ConvertTo8Bits(dib_thumb);  // creates grey-scale image
+					//	dib_final = FreeImage_ColorQuantize(dib_thumb, FIQ_NNQUANT);
+					//	FreeImage_Unload(dib_thumb);
+					//}
+					//else
+					{
+						dib_final = FreeImage_ConvertTo24Bits(dib_thumb);
+						FreeImage_Unload(dib_thumb);
+					}
+
+					if (dib_final != NULL)
+					{
+						static int kk = 1;
+						CString fname;
+						fname.Format("C:\\tmp\\xxx%d.png", kk++);
+
+						if (FreeImage_Save(FIF_PNG, dib_final, fname, PNG_Z_BEST_SPEED))
+							pfl->SetData(ii, CHexFileList::PREVIEWFILENAME, fname);
+						FreeImage_Unload(dib_final);
+					}
+				}
+				else
+				{
+					::ReleaseDC(NULL, dc);
+					FreeImage_Unload(dib);
+				}
+			}
+
+			(void)::SelectObject(memDC, oldbm);
+			::DeleteObject(hbmp);
+			::DeleteDC(memDC);
+		}
 	}
 }
 

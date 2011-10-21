@@ -675,6 +675,7 @@ void CHexEditApp::InitVersionInfo()
 	is_nt_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT;
 	is_xp_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 5 && osvi.dwMinorVersion >= 1;
 	is_vista_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 6;
+	is_win7_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 6 && osvi.dwMinorVersion >= 1;
 
 	//win95_ = !(osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 4) &&   // NT4 and later
 	//         !(osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && osvi.dwMajorVersion == 4 && osvi.dwMinorVersion >= 10);  // Win98 + later
@@ -2139,6 +2140,12 @@ void CHexEditApp::LoadOptions()
 	if (save_folder_.IsEmpty() && !::GetDataPath(save_folder_))
 		save_folder_ = ::GetExePath();
 
+	thumbnail_ = GetProfileInt("Options", "ThumbNail",  1) ? TRUE : FALSE;
+	//thumb_8bit_ = GetProfileInt("Options", "ThumbNail8Bit",  0) ? TRUE : FALSE;
+	thumb_frame_ = GetProfileInt("Options", "ThumbNailAllViews",  1) ? TRUE : FALSE;
+	thumb_size_ = GetProfileInt("Options", "ThumbNailSize",  300);
+	if (thumb_size_ < 64) thumb_size_ = 64 ;
+
 	backup_        = (BOOL)GetProfileInt("Options", "CreateBackup",  0);
 	backup_space_  = (BOOL)GetProfileInt("Options", "BackupIfSpace", 1);
 	backup_size_   =       GetProfileInt("Options", "BackupIfLess",  0);  // 1 = 1KByte, 0 = always
@@ -2603,6 +2610,11 @@ void CHexEditApp::SaveOptions()
 	WriteProfileString("Options", "OpenFolder", open_folder_);
 	WriteProfileInt("Options", "SaveLocn", save_locn_);
 	WriteProfileString("Options", "SaveFolder", save_folder_);
+
+	WriteProfileInt("Options", "ThumbNail", thumbnail_ ? 1 : 0);
+	//WriteProfileInt("Options", "ThumbNail8Bit", thumb_8bit_ ? 1 : 0);
+	WriteProfileInt("Options", "ThumbNailAllViews", thumb_frame_ ? 1 : 0);
+	WriteProfileInt("Options", "ThumbNailSize", thumb_size_);
 
 	WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
 	WriteProfileInt("MainFrame", "FloatDialogsMove", dlg_move_ ? 1 : 0);
