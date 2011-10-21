@@ -3019,7 +3019,6 @@ BEGIN
     IDS_WEB_HELP            "http://www.hexeditpro.com/help.htm"
     IDS_WEB_UPGRADE         "http://www.hexeditpro.com/upgrade.htm"
     IDS_WEB_FORUMS          "http://www.hexeditpro.com/forums.htm"
-    IDS_WEB_FAQ             "http://www.hexeditpro.com/binary-editor-faq.htm"
 END
 
 STRINGTABLE 

@@ -21,6 +21,7 @@
 //       SetTabIcon(), SetWorkbookMode(), m_hIcon, secall.h, secres.h, secres.rc
 
 #include "stdafx.h"
+//#include <vld.h>                // For visual leak detector
 #include "afxwinappex.h"
 
 #include <locale.h>
@@ -4215,10 +4216,7 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 	if (def_type == 2)
 	{
 		dlg.to_ = "info@HexEdit.com";
-		if (dlg.name_.IsEmpty())
-			dlg.subject_ = "Single-machine license";
-		else
-			dlg.subject_ = "Single-user license";
+		dlg.subject_ = "License";
 	}
 
 	// If bug report then default attachment file name to be the active file

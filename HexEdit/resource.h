@@ -32,12 +32,9 @@
 #define IDS_WEB_REG_MC                  121
 #define IDS_WEB_UPGRADE                 122
 #define IDS_WEB_FORUMS                  123
-#define IDS_WEB_FAQ                     124
+#define IDR_UNUSED                      127
 #define IDR_MAINFRAME                   128
-#define IDR_NOTUSED                     128
 #define IDR_HEXEDTYPE                   129
-#define IDR_MAINFRAME1                  129
-#define IDR_UNUSED                      129
 #define IDB_FILE_OPENU                  130
 #define ID_TOOL1                        130
 #define IDI_NEW                         130
