@@ -190,10 +190,16 @@ void CHexEditDoc::AerialChange(CHexEditView *pview /*= NULL*/)
 
 int CHexEditDoc::AerialProgress()
 {
+	if (length_ == 0)
+	{
+		//ASSERT(0); xxx track down how we get to here when closing file
+		return 100;     // avoid divide by zero
+	}
+
 	CSingleLock sl(&docdata_, TRUE);
 	if (aerial_state_ != SCANNING) return -1;
 
-	return int((aerial_addr_ * 100)/length_);
+	return 1 + int((aerial_addr_ * 99)/length_);
 }
 
 // Gets a new FreeImage bitmap if we haven't got one yet or the current one is too small.
