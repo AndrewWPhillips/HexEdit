@@ -68,6 +68,33 @@ public:
 		theApp.WriteProfileInt("Window-Settings", strName+"X2", rr.right);
 		theApp.WriteProfileInt("Window-Settings", strName+"Y2", rr.bottom);
 
+		ASSERT(GetParent() != NULL);
+		CWnd *psdv  = FindWindowEx(GetParent()->m_hWnd, NULL, "SHELLDLL_DefView", NULL);
+		ASSERT(psdv != NULL);
+		CWnd *plv   = FindWindowEx(psdv->m_hWnd, NULL, "SysListView32", NULL);
+		ASSERT(plv != NULL);
+
+		int mode = 0;
+		switch (plv->SendMessage(LVM_GETVIEW))
+		{
+		case LV_VIEW_ICON:
+			mode = ICON;
+			break;
+		case LV_VIEW_DETAILS:
+			mode = REPORT;
+			break;
+		case LV_VIEW_SMALLICON:
+			mode = TILE;
+			break;
+		case LV_VIEW_LIST:
+			mode = LIST;
+			break;
+		case LV_VIEW_TILE:
+			mode = TILE;
+			break;
+		}
+		theApp.WriteProfileInt("Window-Settings", strName+"Mode", mode);
+
 		return CFileDialog::OnFileNameOK();
 	}
 	virtual void OnFileNameChange()
@@ -85,12 +112,31 @@ public:
 				GetParent()->MoveWindow(&rr);  // Note: there was a crash here until we set 8th
 											   // param of CFileDialog (bVistaStyle) c'tor to FALSE.
 
+			// Restore the list view display (details, report, icons, etc)
+			ASSERT(GetParent() != NULL);
+			CWnd *psdv  = FindWindowEx(GetParent()->m_hWnd, NULL, "SHELLDLL_DefView", NULL);
+			if (psdv != NULL)
+			{
+				int mode = theApp.GetProfileInt("Window-Settings", strName+"Mode", REPORT);
+				psdv->SendMessage(WM_COMMAND, mode, 0);
+			}
+
 			first_time = false;
 		}
 
 		CFileDialog::OnFileNameChange();
 	}
+
 private:
+	enum ListViewMode
+	{
+		ICON     = 0x7029,
+		LIST     = 0x702B,
+		REPORT   = 0x702C,
+		THUMBNAIL= 0x702D,
+		TILE     = 0x702E,
+	};
+
 	CString strName;                    // Registry entries are based on this name
 	CString strOKName;                  // Text to put on the OK button
 	bool first_time;                    // Only restore window on first call of OnFileNameChange
