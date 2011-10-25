@@ -666,10 +666,12 @@ public:
 	int     save_locn_;                 // Default folder for save as dialog (0=current doc folder, ...)
 	CString save_folder_;               // Folder to use if explicitly specified option chosen
 
+#ifdef FILE_PREVIEW
 	BOOL thumbnail_;                    // Generate a preview file when file is saved
 	int thumb_size_;                    // Size of thumbnail
 	//BOOL thumb_8bit_;                   // Thumbnail saved with 8bpp (rather than 24)
 	BOOL thumb_frame_;                  // Thumbnail of child frame window (rather than just hex view)
+#endif
 
 	// History list options
 	BOOL no_recent_add_;                // When a file is opened it is not added to "My Recent Documents" (OFN_DONTADDTORECENT)

@@ -126,7 +126,10 @@ public:
 
 		CFileDialog::OnFileNameChange();
 	}
-
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+	{
+		return CFileDialog::OnNotify(wParam, lParam, pResult);
+	}
 private:
 	enum ListViewMode
 	{
@@ -200,11 +203,28 @@ public:
 					CWnd* pParentWnd = NULL) : 
 		CHexFileDialog("FileOpenDlg", HIDD_FILE_OPEN, TRUE, NULL, lpszFileName, dwFlags, lpszFilter, NULL, pParentWnd)
 	{
+#ifdef FILE_PREVIEW
+		m_wndHook.m_pOwner = this;
+#endif
 	}
 
 	// Overriden members of CFileDialog
 	virtual void OnInitDone();
 	virtual BOOL OnFileNameOK();
+
+#ifdef FILE_PREVIEW
+	class CHookWnd : public CWnd
+	{
+	public:
+		CFileOpenDialog * m_pOwner;
+		virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	};
+
+	virtual void OnFolderChange();
+    CHookWnd m_wndHook;         // Window that contians list control and is notified when the selection chnages
+    void UpdatePreview();
+    CString m_strPreview;       // File name of selection (current previewed file)
+#endif
 
 private:
 	CButton m_open_shared;

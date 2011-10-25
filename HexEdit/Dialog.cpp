@@ -24,6 +24,7 @@
 #include "HexEdit.h"
 #include "Dialog.h"
 #include <Dlgs.h>               // For file dialog control IDs
+#include "HexFileList.h"
 #include "resource.hm"
 #include "HelpID.hm"            // User defined help IDs
 
@@ -159,6 +160,73 @@ BOOL CFileOpenDialog::OnFileNameOK()
 
 	return CHexFileDialog::OnFileNameOK();
 }
+
+#ifdef FILE_PREVIEW
+void CFileOpenDialog::OnFolderChange()
+{
+	if (m_wndHook.GetSafeHwnd() != HWND(NULL))
+		m_wndHook.UnsubclassWindow();
+  
+	CHexFileDialog::OnFolderChange();
+
+	m_wndHook.SubclassWindow(GetParent()->GetDlgItem(lst2)->GetSafeHwnd());
+
+	m_strPreview.Empty();
+    UpdatePreview();
+}
+
+void CFileOpenDialog::UpdatePreview()
+{
+	if (m_strPreview.IsEmpty())
+	{
+		// clear preview iamge
+		//xxx
+		return;
+	}
+
+	CHexFileList *pfl = theApp.GetFileList();
+	int idx = pfl->GetIndex(m_strPreview);
+	if (idx > -1)
+	{
+		// Display preview image
+		TRACE("XXXXXXXXXXXXXXXXXXXXXXXXX-%s-XXXXXXXXXXXXXXXXXXXXXXXXX\r\n", pfl->GetData(idx, CHexFileList::PREVIEWFILENAME));
+	}
+
+}
+
+BOOL CFileOpenDialog::CHookWnd::OnNotify(WPARAM, LPARAM lParam, LRESULT* pResult)
+{
+    LPNMLISTVIEW pLVHdr = reinterpret_cast<LPNMLISTVIEW>(lParam);
+
+    if (pLVHdr->hdr.code == LVN_ITEMCHANGED && (pLVHdr->uChanged & LVIF_STATE) && pLVHdr->iItem != -1)
+    {
+		char buf[_MAX_PATH], fname[_MAX_PATH], fext[_MAX_PATH];
+
+		// Get the name of the selected file
+        CListCtrl ctl;
+        ctl.Attach(pLVHdr->hdr.hwndFrom);
+        LPCITEMIDLIST pidl = (LPCITEMIDLIST)ctl.GetItemData(pLVHdr->iItem);
+        SHGetPathFromIDList(pidl, buf);
+		_tsplitpath(buf, NULL, NULL, fname, fext);  // ignore directory as pidl is relative path
+        ctl.Detach();
+
+		// Work out the full path
+		CString strPath = m_pOwner->GetFolderPath();
+		CString strFull;
+		strFull.Format(_T("%s%s%s%s"), strPath, strPath[strPath.GetLength()-1] == '\\' ? "" : "\\", fname, fext);
+
+		// If a different file was selected try to preview it
+		if (m_pOwner->m_strPreview.CompareNoCase(strFull) != 0)
+        {
+			m_pOwner->m_strPreview = strFull;
+            m_pOwner->UpdatePreview();
+        }
+    }
+
+    *pResult = 0;
+    return FALSE;
+}
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // The following are dialogs for use with/in macros

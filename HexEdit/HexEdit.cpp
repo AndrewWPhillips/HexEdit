@@ -2140,11 +2140,13 @@ void CHexEditApp::LoadOptions()
 	if (save_folder_.IsEmpty() && !::GetDataPath(save_folder_))
 		save_folder_ = ::GetExePath();
 
+#ifdef FILE_PREVIEW
 	thumbnail_ = GetProfileInt("Options", "ThumbNail",  1) ? TRUE : FALSE;
 	//thumb_8bit_ = GetProfileInt("Options", "ThumbNail8Bit",  0) ? TRUE : FALSE;
 	thumb_frame_ = GetProfileInt("Options", "ThumbNailAllViews",  1) ? TRUE : FALSE;
 	thumb_size_ = GetProfileInt("Options", "ThumbNailSize",  300);
 	if (thumb_size_ < 64) thumb_size_ = 64 ;
+#endif
 
 	backup_        = (BOOL)GetProfileInt("Options", "CreateBackup",  0);
 	backup_space_  = (BOOL)GetProfileInt("Options", "BackupIfSpace", 1);
@@ -2611,10 +2613,12 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Options", "SaveLocn", save_locn_);
 	WriteProfileString("Options", "SaveFolder", save_folder_);
 
+#ifdef FILE_PREVIEW
 	WriteProfileInt("Options", "ThumbNail", thumbnail_ ? 1 : 0);
 	//WriteProfileInt("Options", "ThumbNail8Bit", thumb_8bit_ ? 1 : 0);
 	WriteProfileInt("Options", "ThumbNailAllViews", thumb_frame_ ? 1 : 0);
 	WriteProfileInt("Options", "ThumbNailSize", thumb_size_);
+#endif
 
 	WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
 	WriteProfileInt("MainFrame", "FloatDialogsMove", dlg_move_ ? 1 : 0);

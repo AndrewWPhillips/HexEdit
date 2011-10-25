@@ -1318,7 +1318,7 @@ void CHexEditView::StoreOptions()
 			pfl->SetData(ii, CHexFileList::COMPVIEW, __int64(width));
 			pfl->SetData(ii, CHexFileList::COMPFILENAME, GetDocument()->GetCompFileName());
 		}
-
+#ifdef FILE_PREVIEW
 		if (theApp.thumbnail_)
 		{
 			CMainFrame * mm = (CMainFrame *)AfxGetMainWnd();
@@ -1447,12 +1447,12 @@ void CHexEditView::StoreOptions()
 					if (dib_final != NULL)
 					{
 						// xxx need to create a file name here and save the file to it
-						//static int kk = 1;
-						//CString fname;
-						//fname.Format("C:\\tmp\\xxx%d.png", kk++);
+						static int kk = 1;
+						CString fname;
+						fname.Format("C:\\tmp\\xxx%d.png", kk++);
 
-						//if (FreeImage_Save(FIF_PNG, dib_final, fname, PNG_Z_BEST_SPEED))
-						//	pfl->SetData(ii, CHexFileList::PREVIEWFILENAME, fname);
+						if (FreeImage_Save(FIF_PNG, dib_final, fname, PNG_Z_BEST_SPEED))
+							pfl->SetData(ii, CHexFileList::PREVIEWFILENAME, fname);
 						FreeImage_Unload(dib_final);
 					}
 				}
@@ -1467,6 +1467,7 @@ void CHexEditView::StoreOptions()
 			::DeleteObject(hbmp);
 			::DeleteDC(memDC);
 		}
+#endif
 	}
 }
 
