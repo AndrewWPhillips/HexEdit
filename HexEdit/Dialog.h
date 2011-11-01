@@ -75,21 +75,19 @@ public:
 		ASSERT(plv != NULL);
 
 		int mode = 0;
-		switch (plv->SendMessage(LVM_GETVIEW))
+		switch (plv->SendMessage(LVM_FIRST + 143 /*LVM_GETVIEW*/))
 		{
-		case LV_VIEW_ICON:
+		case LVS_ICON:
+		case LVS_SMALLICON:
 			mode = ICON;
 			break;
-		case LV_VIEW_DETAILS:
+		case LVS_REPORT:
 			mode = REPORT;
 			break;
-		case LV_VIEW_SMALLICON:
-			mode = TILE;
-			break;
-		case LV_VIEW_LIST:
+		case LVS_LIST:
 			mode = LIST;
 			break;
-		case LV_VIEW_TILE:
+		default:
 			mode = TILE;
 			break;
 		}
