@@ -417,12 +417,12 @@ BOOL CHexEditApp::InitInstance()
 		// Note: if this is changed you also need to change the registry string
 		// at the end of ExitInstance (see delete_reg_settings_).
 		SetRegistryKey("ECSoftware");           // Required before registry use (and prevents use of .INI file)
-		LoadOptions();
 
 		//Bring up the splash screen in a secondary UI thread
 		CSplashThread * pSplashThread = NULL;
 
-		if (splash_)
+		// Check reg setting directly rather than use splash_ so we can display the splash screen quickly (before LoadOptions() is called)
+		if (GetProfileInt("Options", "Splash", 1) == 1)
 		{
 			CString sFileName = ::GetExePath() + FILENAME_SPLASH;
 			if (_access(sFileName, 0) != -1)
@@ -458,6 +458,7 @@ BOOL CHexEditApp::InitInstance()
 		if (m_pDocManager != NULL) delete m_pDocManager;
 		m_pDocManager = new CHexEditDocManager;
 
+		LoadOptions();
 		InitVersionInfo();
 
 #ifndef NO_SECURITY
