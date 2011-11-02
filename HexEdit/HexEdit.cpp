@@ -294,6 +294,7 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 							 default_oem_scheme_(OEM_NAME), default_ebcdic_scheme_(EBCDIC_NAME),
 							 default_multi_scheme_(MULTI_NAME)
 {
+	cleanup_thread_ = NULL;
 	security_rand_ = 0;
 
 	// Add a memory allocation hook for debugging purposes
@@ -620,6 +621,10 @@ BOOL CHexEditApp::InitInstance()
 		ShowTipAtStartup();
 
 		if (run_autoexec_) RunAutoExec();
+
+#ifdef FILE_PREVIEW
+		CleanupPreviewFiles();
+#endif
 
 		return TRUE;
 }
@@ -1634,6 +1639,12 @@ void CHexEditApp::OnUpdateTabsAtBottom(CCmdUI* pCmdUI)
 
 int CHexEditApp::ExitInstance()
 {
+	// Tell cleanup thread to forget it
+	appdata_.Lock();
+	if (cleanup_thread_ != NULL)
+		thread_stop_ = true;
+	appdata_.Unlock();
+
 	// Save "save on exit" option if it has changed
 	if (save_exit_ != orig_save_exit_)
 		WriteProfileInt("Options", "SaveExit", save_exit_ ? 1 : 0);
@@ -2145,7 +2156,9 @@ void CHexEditApp::LoadOptions()
 	//thumb_8bit_ = GetProfileInt("Options", "ThumbNail8Bit",  0) ? TRUE : FALSE;
 	thumb_frame_ = GetProfileInt("Options", "ThumbNailAllViews",  1) ? TRUE : FALSE;
 	thumb_size_ = GetProfileInt("Options", "ThumbNailSize",  300);
+	thumb_type_ = GetProfileInt("Options", "ThumbNailType", JPEG_BAD);  // default to highly compressed jpeg
 	if (thumb_size_ < 64) thumb_size_ = 64 ;
+	cleanup_days_ = GetProfileInt("Options", "ThumbCleanDays",  100);
 #endif
 
 	backup_        = (BOOL)GetProfileInt("Options", "CreateBackup",  0);
@@ -2618,6 +2631,8 @@ void CHexEditApp::SaveOptions()
 	//WriteProfileInt("Options", "ThumbNail8Bit", thumb_8bit_ ? 1 : 0);
 	WriteProfileInt("Options", "ThumbNailAllViews", thumb_frame_ ? 1 : 0);
 	WriteProfileInt("Options", "ThumbNailSize", thumb_size_);
+	WriteProfileInt("Options", "ThumbNailType", thumb_type_);
+	WriteProfileInt("Options", "ThumbCleanDays", cleanup_days_);
 #endif
 
 	WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
@@ -4072,6 +4087,91 @@ void CHexEditApp::UpdateAllViews()
 		pdoc->UpdateAllViews(NULL);
 	}
 }
+
+#ifdef FILE_PREVIEW
+static UINT cleanup_func(LPVOID pParam)
+{
+	CHexEditApp *pApp = (CHexEditApp *)pParam;
+
+	return pApp->RunCleanupThread();
+}
+
+void CHexEditApp::CleanupPreviewFiles()
+{
+	thread_stop_ = false;
+	cleanup_thread_ = AfxBeginThread(&cleanup_func, this, THREAD_PRIORITY_LOWEST);
+}
+
+
+UINT CHexEditApp::RunCleanupThread()
+{
+	// Wait for a little while to avoid any chance of slowing things while starting up
+	for (int ii = 0; ii < 100; ++ii)
+	{
+		appdata_.Lock();
+		if (thread_stop_)
+		{
+			cleanup_thread_ = NULL;
+			appdata_.Unlock();
+			return 0;
+		}
+		appdata_.Unlock();
+		Sleep(1000);
+	}
+
+	CString preview_folder;
+	if (::GetDataPath(preview_folder))
+	{
+		// Get directory used for preview thumbnails
+		preview_folder += DIRNAME_PREVIEW;
+
+		// Work out the cut-off date for which files modified before that time are deleted
+		SYSTEMTIME now;
+		GetSystemTime(&now);
+		COleDateTime dtCut(now);
+		dtCut -= COleDateTimeSpan(cleanup_days_, 0, 0, 0);
+
+		// Get all the names of all the files with modification times before the cut-off time
+		std::vector<CString> fileNames;
+		CFileFind ff;
+		BOOL bContinue = ff.FindFile(preview_folder + "HE*.*");
+		while (bContinue)
+		{
+			bContinue = ff.FindNextFile();
+
+			// Work out the modification time of this file as a COleDateTime
+			FILETIME ft;
+			SYSTEMTIME st;
+			VERIFY(ff.GetLastWriteTime(&ft));
+			FileTimeToSystemTime(&ft, &st);
+			COleDateTime dtFile(st);
+
+			// If the time is before the cut-off remember this file name for deletion
+			if (dtFile < dtCut)
+				fileNames.push_back(ff.GetFilePath());
+
+			// Check if we have been told to terminate
+			appdata_.Lock();
+			if (thread_stop_)
+			{
+				cleanup_thread_ = NULL;
+				appdata_.Unlock();
+				return 0;
+			}
+			appdata_.Unlock();
+		}
+
+		// Now delete all the files
+		for (std::vector<CString>::const_iterator pfn = fileNames.begin(); pfn != fileNames.end(); ++pfn)
+			::DeleteFile(*pfn);
+	}
+
+	appdata_.Lock();
+	cleanup_thread_ = NULL;
+	appdata_.Unlock();
+	return 0;
+}
+#endif  // FILE_PREVIEW
 
 /////////////////////////////////////////////////////////////////////////////
 // CCommandLineParser member functions

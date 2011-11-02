@@ -124,10 +124,7 @@ public:
 
 		CFileDialog::OnFileNameChange();
 	}
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
-	{
-		return CFileDialog::OnNotify(wParam, lParam, pResult);
-	}
+
 private:
 	enum ListViewMode
 	{

@@ -47,7 +47,7 @@ public:
 					 AERIALVIEW, AERIALDISPLAY, AERIALPOS,
 					 COMPVIEW, COMPFILENAME,
 					 CODEPAGE, MBFONT, MBHEIGHT, 
-					 PREVIEWFILENAME,                     // only used when FILE_PREVIEW is #defined but added to reserve the value
+					 PREVIEWFILENAME,                     // only used when FILE_PREVIEW is #defined but added to reserve the place
 	};
 
 // Attributes

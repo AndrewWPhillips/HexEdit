@@ -21,6 +21,7 @@
 #include <boost/hash.hpp>  // This is for digests (SHA2 etc) see below for notes on where it came from
 #include "HexEdit.h"
 #include "HexFileList.h"
+#include <imagehlp.h>       // For ::MakeSureDirectoryPathExists()
 
 #include "HexEditDoc.h"
 #include "HexEditView.h"
@@ -1397,11 +1398,11 @@ void CHexEditView::StoreOptions()
 				{
 					// Create palette if bpp is small (indicates paletted bitmap)
 					RGBQUAD * pal = FreeImage_GetPalette(dib);
-					for (int ii = 0; ii < FreeImage_GetColorsUsed(dib); ++ii)
+					for (int jj = 0; jj < FreeImage_GetColorsUsed(dib); ++jj)
 					{
-						pal[ii].rgbRed = ii;
-						pal[ii].rgbGreen = ii;
-						pal[ii].rgbBlue = ii;
+						pal[jj].rgbRed = jj;
+						pal[jj].rgbGreen = jj;
+						pal[jj].rgbBlue = jj;
 					}
 				}
 				int num = FreeImage_GetColorsUsed(dib);
@@ -1444,15 +1445,75 @@ void CHexEditView::StoreOptions()
 						FreeImage_Unload(dib_thumb);
 					}
 
-					if (dib_final != NULL)
+					CString fname;
+					if (dib_final != NULL && ::GetDataPath(fname))
 					{
-						// xxx need to create a file name here and save the file to it
-						static int kk = 1;
-						CString fname;
-						fname.Format("C:\\tmp\\xxx%d.png", kk++);
+						// Get firectory and prefix for the file name
+						fname += DIRNAME_PREVIEW;
+						fname += _T("HEPV");
 
-						if (FreeImage_Save(FIF_PNG, dib_final, fname, PNG_Z_BEST_SPEED))
-							pfl->SetData(ii, CHexFileList::PREVIEWFILENAME, fname);
+						CString strPrevious = pfl->GetData(ii, CHexFileList::PREVIEWFILENAME);
+						if (!strPrevious.IsEmpty())
+						{
+							strPrevious = fname + strPrevious;
+							::DeleteFileA(strPrevious);
+						}
+
+						// Create the directory for the preview files if it does not exist yet
+						static bool first = true;
+						if (first)
+						{
+							MakeSureDirectoryPathExists(fname);
+							first = false;
+						}
+
+						// Work out what sort of file to write
+						FREE_IMAGE_FORMAT fmt;
+						int flags;
+						const char * ext;
+						switch (theApp.thumb_type_)
+						{
+						case CHexEditApp::PNG:
+							fmt = FIF_PNG;
+							flags = PNG_Z_BEST_SPEED;
+							ext = ".PNG";
+							break;
+						case CHexEditApp::JPEG_GOOD:
+							fmt = FIF_JPEG;
+							flags = JPEG_QUALITYNORMAL;
+							ext = ".JPG";
+							break;
+						case CHexEditApp::JPEG_AVERAGE:
+							fmt = FIF_JPEG;
+							flags = JPEG_QUALITYAVERAGE;
+							ext = ".JPG";
+							break;
+						default:
+						case CHexEditApp::JPEG_BAD:
+							fmt = FIF_JPEG;
+							flags = JPEG_QUALITYBAD;
+							ext = ".JPG";
+							break;
+						}
+
+						// Try different file names till we find a vacant slot
+						for (int jj = 0; jj < 1000000; ++jj)
+						{
+							CString tt;
+							tt.Format("%04d", jj);
+							if (_access(fname + tt + ext, 0) < 0)
+							{
+								// File does not exist so use this file name
+								fname += tt;
+								fname += ext;
+
+								// Save the thumbnail to the file and remember in recent file list
+								if (FreeImage_Save(fmt, dib_final, fname, flags))
+									pfl->SetData(ii, CHexFileList::PREVIEWFILENAME, tt + ext);   // no need to save full path
+								break;
+							}
+						}
+
 						FreeImage_Unload(dib_final);
 					}
 				}
@@ -1467,7 +1528,7 @@ void CHexEditView::StoreOptions()
 			::DeleteObject(hbmp);
 			::DeleteDC(memDC);
 		}
-#endif
+#endif // FILE_PREVIEW
 	}
 }
 

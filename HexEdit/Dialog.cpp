@@ -179,7 +179,7 @@ void CFileOpenDialog::UpdatePreview()
 {
 	if (m_strPreview.IsEmpty())
 	{
-		// clear preview iamge
+		// clear preview image
 		//xxx
 		return;
 	}
@@ -226,7 +226,7 @@ BOOL CFileOpenDialog::CHookWnd::OnNotify(WPARAM, LPARAM lParam, LRESULT* pResult
     *pResult = 0;
     return FALSE;
 }
-#endif
+#endif  // FILE_PREVIEW
 
 /////////////////////////////////////////////////////////////////////////////
 // The following are dialogs for use with/in macros

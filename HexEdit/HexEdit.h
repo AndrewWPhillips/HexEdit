@@ -75,6 +75,7 @@ typedef __int64 FILE_ADDRESS;
 #define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
 
 #define USE_FREE_IMAGE  1   // When this is enabled we need to get rid of EnBitmap.cpp from the project
+#define FILE_PREVIEW    0   // Turned off as have not had time to finish (still need to display preview in file dlg, rfl, expl; also need to create preview files in correct location and delete them after an optional number of days; + Options dlg page)
 
 // Flags for stuff in development
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing
@@ -87,6 +88,7 @@ typedef __int64 FILE_ADDRESS;
 #define FILENAME_BOOKMARKS   _T("Bookmarks")
 #define FILENAME_RECENTFILES _T("RecentFiles")
 #define FILENAME_BACKGROUND  _T("Backgrnd.bmp")
+#define DIRNAME_PREVIEW      _T("PreviewThumbnails\\")
 #define FILENAME_ABOUTBG     _T("About.jpg")
 #define FILENAME_SPLASH      _T("Splash.bmp")
 #define FILENAME_DTD         _T("BinaryFileFormat.DTD")
@@ -669,8 +671,16 @@ public:
 #ifdef FILE_PREVIEW
 	BOOL thumbnail_;                    // Generate a preview file when file is saved
 	int thumb_size_;                    // Size of thumbnail
+	enum THUMB_TYPE { NONE, PNG, JPEG_GOOD, JPEG_AVERAGE, JPEG_BAD, LAST };
+	int thumb_type_;                    // Type of file to use
 	//BOOL thumb_8bit_;                   // Thumbnail saved with 8bpp (rather than 24)
 	BOOL thumb_frame_;                  // Thumbnail of child frame window (rather than just hex view)
+	int cleanup_days_;                  // Number of days before thumbnail is deleted
+
+	void CleanupPreviewFiles();         // Starts thread to remove thumbnails older than cleanup_days_
+	UINT RunCleanupThread();            // function that runs in the background thread
+	CWinThread * cleanup_thread_;       // cleanup is done in low-priority background thread
+	bool thread_stop_;                  // Sigmnal the thread to stop
 #endif
 
 	// History list options
