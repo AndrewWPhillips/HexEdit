@@ -35,6 +35,8 @@ class CHexEditApp;
 // the window size and position.  Used as base class for other file dialogs.
 class CHexFileDialog : public CFileDialog
 {
+	DECLARE_DYNAMIC(CHexFileDialog)
+
 public:
 	CHexFileDialog(LPCTSTR name,
 				   DWORD help_id,
@@ -48,82 +50,15 @@ public:
 		CFileDialog(bOpenFileDialog, lpszDefExt, lpszFileName, dwFlags | OFN_ENABLESIZING, lpszFilter, pParentWnd, 0, FALSE),
 		strName(name), strOKName(lpszOKButtonName)
 	{
-		first_time = true;
 		hid_last_file_dialog = help_id;
 	}
 
 	// Overriden members of CFileDialog
-	virtual void OnInitDone()
-	{
-		if (!strOKName.IsEmpty())
-			SetControlText(IDOK, strOKName);
-		CFileDialog::OnInitDone();
-	}
-	virtual BOOL OnFileNameOK()
-	{
-		CRect rr;
-		GetParent()->GetWindowRect(&rr);
-		theApp.WriteProfileInt("Window-Settings", strName+"X1", rr.left);
-		theApp.WriteProfileInt("Window-Settings", strName+"Y1", rr.top);
-		theApp.WriteProfileInt("Window-Settings", strName+"X2", rr.right);
-		theApp.WriteProfileInt("Window-Settings", strName+"Y2", rr.bottom);
+	virtual BOOL OnInitDialog();
+	virtual BOOL OnFileNameOK();
 
-		ASSERT(GetParent() != NULL);
-		CWnd *psdv  = FindWindowEx(GetParent()->m_hWnd, NULL, "SHELLDLL_DefView", NULL);
-		ASSERT(psdv != NULL);
-		CWnd *plv   = FindWindowEx(psdv->m_hWnd, NULL, "SysListView32", NULL);
-		ASSERT(plv != NULL);
-
-		int mode = 0;
-		switch (plv->SendMessage(LVM_FIRST + 143 /*LVM_GETVIEW*/))
-		{
-		case LVS_ICON:
-		case LVS_SMALLICON:
-			mode = ICON;
-			break;
-		case LVS_REPORT:
-			mode = REPORT;
-			break;
-		case LVS_LIST:
-			mode = LIST;
-			break;
-		default:
-			mode = TILE;
-			break;
-		}
-		theApp.WriteProfileInt("Window-Settings", strName+"Mode", mode);
-
-		return CFileDialog::OnFileNameOK();
-	}
-	virtual void OnFileNameChange()
-	{
-		if (first_time)
-		{
-			// We put this stuff here as it appears to be too early when just in OnInitDone
-
-			// Restore the window position and size
-			CRect rr(theApp.GetProfileInt("Window-Settings", strName+"X1", -30000),
-					 theApp.GetProfileInt("Window-Settings", strName+"Y1", -30000),
-					 theApp.GetProfileInt("Window-Settings", strName+"X2", -30000),
-					 theApp.GetProfileInt("Window-Settings", strName+"Y2", -30000));
-			if (rr.top != -30000)
-				GetParent()->MoveWindow(&rr);  // Note: there was a crash here until we set 8th
-											   // param of CFileDialog (bVistaStyle) c'tor to FALSE.
-
-			// Restore the list view display (details, report, icons, etc)
-			ASSERT(GetParent() != NULL);
-			CWnd *psdv  = FindWindowEx(GetParent()->m_hWnd, NULL, "SHELLDLL_DefView", NULL);
-			if (psdv != NULL)
-			{
-				int mode = theApp.GetProfileInt("Window-Settings", strName+"Mode", REPORT);
-				psdv->SendMessage(WM_COMMAND, mode, 0);
-			}
-
-			first_time = false;
-		}
-
-		CFileDialog::OnFileNameChange();
-	}
+	afx_msg LRESULT OnPostInit(WPARAM, LPARAM);
+	DECLARE_MESSAGE_MAP()
 
 private:
 	enum ListViewMode
@@ -137,7 +72,6 @@ private:
 
 	CString strName;                    // Registry entries are based on this name
 	CString strOKName;                  // Text to put on the OK button
-	bool first_time;                    // Only restore window on first call of OnFileNameChange
 };
 
 // CImportDialog - derived from CFileDialog to support extra controls

@@ -40,6 +40,94 @@ static char THIS_FILE[] = __FILE__;
 // The following are for file dialogs
 
 /////////////////////////////////////////////////////////////////////////////
+// CHexFileDialog - derived from CFileDialog, base class of other file dialogs
+
+IMPLEMENT_DYNAMIC(CHexFileDialog, CFileDialog)
+
+BOOL CHexFileDialog::OnInitDialog()
+{
+   CFileDialog::OnInitDialog();
+
+   // This is just so we can do stuff at startup (see OnPostInit).  If some of these
+   // things were done in OnInitDone() or earlier then things would stuff up.
+   PostMessage(WM_USER+1);
+   return TRUE;
+}
+
+BOOL CHexFileDialog::OnFileNameOK()
+{
+	// Remember current window pos for when window is reopened
+	CRect rr;
+	GetParent()->GetWindowRect(&rr);
+	theApp.WriteProfileInt("Window-Settings", strName+"X1", rr.left);
+	theApp.WriteProfileInt("Window-Settings", strName+"Y1", rr.top);
+	theApp.WriteProfileInt("Window-Settings", strName+"X2", rr.right);
+	theApp.WriteProfileInt("Window-Settings", strName+"Y2", rr.bottom);
+
+	// Remember current list view mode
+	ASSERT(GetParent() != NULL);
+	CWnd *psdv  = FindWindowEx(GetParent()->m_hWnd, NULL, "SHELLDLL_DefView", NULL);
+	ASSERT(psdv != NULL);
+	CWnd *plv   = FindWindowEx(psdv->m_hWnd, NULL, "SysListView32", NULL);
+	ASSERT(plv != NULL);
+
+	int mode = 0;
+	switch (plv->SendMessage(LVM_FIRST + 143 /*LVM_GETVIEW*/))
+	{
+	case LVS_ICON:
+	case LVS_SMALLICON:
+		mode = ICON;
+		break;
+	case LVS_REPORT:
+		mode = REPORT;
+		break;
+	case LVS_LIST:
+		mode = LIST;
+		break;
+	default:
+		mode = TILE;
+		break;
+	}
+	theApp.WriteProfileInt("Window-Settings", strName+"Mode", mode);
+
+	return CFileDialog::OnFileNameOK();
+}
+
+BEGIN_MESSAGE_MAP(CHexFileDialog, CFileDialog)
+   ON_MESSAGE(WM_USER+1, OnPostInit)
+END_MESSAGE_MAP()
+
+//---------------------------------------------------------------------------
+// CHexFileDialog message handlers
+
+LRESULT CHexFileDialog::OnPostInit(WPARAM wp, LPARAM lp)
+{
+	// Set text of "OK" button
+	if (!strOKName.IsEmpty())
+		SetControlText(IDOK, strOKName);
+
+	// Restore the window position and size
+	CRect rr(theApp.GetProfileInt("Window-Settings", strName+"X1", -30000),
+			 theApp.GetProfileInt("Window-Settings", strName+"Y1", -30000),
+			 theApp.GetProfileInt("Window-Settings", strName+"X2", -30000),
+			 theApp.GetProfileInt("Window-Settings", strName+"Y2", -30000));
+	if (rr.top != -30000)
+		GetParent()->MoveWindow(&rr);  // Note: there was a crash here until we set 8th
+									   // param of CFileDialog (bVistaStyle) c'tor to FALSE.
+
+	// Restore the list view display mode (details, report, icons, etc)
+	ASSERT(GetParent() != NULL);
+	CWnd *psdv  = FindWindowEx(GetParent()->m_hWnd, NULL, "SHELLDLL_DefView", NULL);
+	if (psdv != NULL)
+	{
+		int mode = theApp.GetProfileInt("Window-Settings", strName+"Mode", REPORT);
+		psdv->SendMessage(WM_COMMAND, mode, 0);
+	}
+
+	return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 // CImportDialog - derived from CFileDialog (via CHexFileDialog) for handling extra controls during import
 
 void CImportDialog::OnInitDone()
