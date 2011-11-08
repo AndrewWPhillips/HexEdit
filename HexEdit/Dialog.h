@@ -27,12 +27,15 @@
 #include "HexEdit.h"
 #include "HelpID.hm"
 #include "HexEditView.h"
+#include "Preview.h"
 
 class CHexEditApp;
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexFileDialog - just adds the facility to CFileDialog for saving and restoring
-// the window size and position.  Used as base class for other file dialogs.
+// the window size, position and display mode.  Can be used as a replacement for
+// CFileDialog or as base class for file dlgs that add controls (see below)
+
 class CHexFileDialog : public CFileDialog
 {
 	DECLARE_DYNAMIC(CHexFileDialog)
@@ -133,15 +136,20 @@ public:
 		CHexFileDialog("FileOpenDlg", HIDD_FILE_OPEN, TRUE, NULL, lpszFileName, dwFlags, lpszFilter, NULL, pParentWnd)
 	{
 #ifdef FILE_PREVIEW
-		m_wndHook.m_pOwner = this;
+		m_wndHook.m_pOwner = this;  // Hook window needs access to this class (eg to store name of selected file)
 #endif
 	}
 
+protected:
 	// Overriden members of CFileDialog
 	virtual void OnInitDone();
 	virtual BOOL OnFileNameOK();
 
 #ifdef FILE_PREVIEW
+	virtual void OnFolderChange();  // When current folder chnages we need to unhook and rehook (and clear preview)
+
+private:
+	// This is used to "subclass" the window containing the "list" control so we can tell when the current selection changes
 	class CHookWnd : public CWnd
 	{
 	public:
@@ -149,14 +157,14 @@ public:
 		virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
 	};
 
-	virtual void OnFolderChange();
-    CHookWnd m_wndHook;         // Window that contians list control and is notified when the selection chnages
-    void UpdatePreview();
-    CString m_strPreview;       // File name of selection (current previewed file)
+    CHookWnd m_wndHook;         // Window that contains list control and is notified when the selection changes
+    void UpdatePreview();       // Called when selected file is changed
+	CPreview m_preview;         // preview panel in the dialog
+	CString m_strPreview;       // name of preview file name
 #endif
 
 private:
-	CButton m_open_shared;
+	CButton m_open_shared;      // Check box that allows files to be opened cooperatively
 };
 
 

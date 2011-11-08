@@ -222,6 +222,7 @@
     <ClCompile Include="OpenSpecialDlg.cpp" />
     <ClCompile Include="Options.cpp" />
     <ClCompile Include="Password.cpp" />
+    <ClCompile Include="Preview.cpp" />
     <ClCompile Include="Print.cpp" />
     <ClCompile Include="Prop.cpp" />
     <ClCompile Include="RecentFileDlg.cpp" />
@@ -547,6 +548,7 @@
     <ClInclude Include="Options.h" />
     <ClInclude Include="optypes.h" />
     <ClInclude Include="Password.h" />
+    <ClInclude Include="Preview.h" />
     <ClInclude Include="Prop.h" />
     <ClInclude Include="range_set.h" />
     <ClInclude Include="RecentFileDlg.h" />

@@ -624,6 +624,7 @@ BOOL CHexEditApp::InitInstance()
 		if (run_autoexec_) RunAutoExec();
 
 #ifdef FILE_PREVIEW
+		// Start background task to clean up old thumbnails
 		CleanupPreviewFiles();
 #endif
 
@@ -4090,6 +4091,7 @@ void CHexEditApp::UpdateAllViews()
 }
 
 #ifdef FILE_PREVIEW
+// Startup point of the background thread that cleans up preview thumbnail files
 static UINT cleanup_func(LPVOID pParam)
 {
 	CHexEditApp *pApp = (CHexEditApp *)pParam;
@@ -4097,13 +4099,14 @@ static UINT cleanup_func(LPVOID pParam)
 	return pApp->RunCleanupThread();
 }
 
+// Called to start thumbnail cleanup
 void CHexEditApp::CleanupPreviewFiles()
 {
 	thread_stop_ = false;
 	cleanup_thread_ = AfxBeginThread(&cleanup_func, this, THREAD_PRIORITY_LOWEST);
 }
 
-
+// Handles thumbnail cleanup
 UINT CHexEditApp::RunCleanupThread()
 {
 	// Wait for a little while to avoid any chance of slowing things while starting up

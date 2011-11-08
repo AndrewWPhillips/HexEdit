@@ -1071,7 +1071,7 @@
 #define IDC_DESC_DECIMAL_SIZE           1474
 #define IDC_STATIC3                     1475
 #define IDC_DESC_HEX_SIZE               1476
-#define IDC_STATIC4                     1477
+#define IDC_OPEN_PREVIEW                1477
 #define IDC_OPEN_SHARED                 1478
 #define IDC_HEX_HIST                    1479
 #define IDC_DEC_HIST                    1480
@@ -1082,6 +1082,7 @@
 #define IDC_MULTIBYTE_HOLDER            1485
 #define IDC_CODE_PAGE                   1486
 #define IDC_CHAR_MULTIBYTE              1487
+#define IDC_STATIC4                     1488
 #define IDC_DFFD_CASES                  1490
 #define IDC_DFFD_SWITCH_EXPR            1491
 #define IDC_DFFD_CASE_RANGE             1492

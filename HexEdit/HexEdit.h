@@ -75,7 +75,7 @@ typedef __int64 FILE_ADDRESS;
 #define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
 
 #define USE_FREE_IMAGE  1   // When this is enabled we need to get rid of EnBitmap.cpp from the project
-#define FILE_PREVIEW    0   // Turned off as have not had time to finish (still need to display preview in file dlg, rfl, expl; also need to create preview files in correct location and delete them after an optional number of days; + Options dlg page)
+#undef FILE_PREVIEW    //#define FILE_PREVIEW    1   // Turned off as have not had time to finish (still need Options dlg page + display in preview in file dlg, rfl, expl)
 
 // Flags for stuff in development
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing

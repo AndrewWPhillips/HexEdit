@@ -112,8 +112,7 @@ LRESULT CHexFileDialog::OnPostInit(WPARAM wp, LPARAM lp)
 			 theApp.GetProfileInt("Window-Settings", strName+"X2", -30000),
 			 theApp.GetProfileInt("Window-Settings", strName+"Y2", -30000));
 	if (rr.top != -30000)
-		GetParent()->MoveWindow(&rr);  // Note: there was a crash here until we set 8th
-									   // param of CFileDialog (bVistaStyle) c'tor to FALSE.
+		GetParent()->MoveWindow(&rr);
 
 	// Restore the list view display mode (details, report, icons, etc)
 	ASSERT(GetParent() != NULL);
@@ -239,9 +238,32 @@ void CFileOpenDialog::OnInitDone()
 	m_open_shared.SetFont(pp->GetDlgItem(IDOK)->GetFont());
 	m_open_shared.SetCheck(theApp.open_file_shared_);
 
+#ifdef FILE_PREVIEW
+	if (theApp.thumbnail_)
+	{
+		// Work out the place for the preview - to the right of the existing window
+		pp->GetClientRect(&rct);
+		rct.MoveToX(rct.right);
+		rct.DeflateRect(5, 5);
+		rct.right = rct.left + theApp.thumb_size_;
+
+		// Create the preview window
+		m_preview.Create(_T("Preview"), WS_CHILD | WS_VISIBLE, rct, pp, IDC_OPEN_PREVIEW);
+		ASSERT(pp->GetDC() != NULL);
+		//m_preview.SetBackground(pp->GetDC()->GetBkColor());
+		m_preview.SetBackground(::GetSysColor(COLOR_3DFACE));
+
+		// Expand the main file open dlg window to show the preview window
+		pp->GetWindowRect(&rct);
+		rct.right += theApp.thumb_size_ + 10;
+		pp->MoveWindow(&rct);
+	}
+#endif
+
 	CHexFileDialog::OnInitDone();
 }
 
+// Called when one or more files have been selected (eg OK button clicked)
 BOOL CFileOpenDialog::OnFileNameOK()
 {
 	theApp.open_file_shared_ = m_open_shared.GetCheck() == 1 ? TRUE : FALSE;
@@ -250,8 +272,11 @@ BOOL CFileOpenDialog::OnFileNameOK()
 }
 
 #ifdef FILE_PREVIEW
+// Called when the file open dialog switches to a different directory
 void CFileOpenDialog::OnFolderChange()
 {
+	// As the lst2 child window (parent of list control) is recreated when the current folder is 
+	// changed we need to unhook noew and re-hook later (see below).
 	if (m_wndHook.GetSafeHwnd() != HWND(NULL))
 		m_wndHook.UnsubclassWindow();
   
@@ -259,29 +284,35 @@ void CFileOpenDialog::OnFolderChange()
 
 	m_wndHook.SubclassWindow(GetParent()->GetDlgItem(lst2)->GetSafeHwnd());
 
+	// If we have changed folders no files are now selected
 	m_strPreview.Empty();
     UpdatePreview();
 }
 
+// Given a file name in m_strPreview it tries to show its thumbnail.
+// To clear the preview pane make m_strPreview invalid (eg empty).
 void CFileOpenDialog::UpdatePreview()
 {
-	if (m_strPreview.IsEmpty())
-	{
-		// clear preview image
-		//xxx
-		return;
-	}
+	CString fname;
 
+	// We need to get the name of the file containing the thumbnail from the recent file list
 	CHexFileList *pfl = theApp.GetFileList();
-	int idx = pfl->GetIndex(m_strPreview);
-	if (idx > -1)
+	int idx;
+
+	if (!m_strPreview.IsEmpty() &&                    // only if we have a selected file AND
+		(idx = pfl->GetIndex(m_strPreview)) >= 0 &&   // it's in recent file list AND
+		::GetDataPath(fname) )                        // we can get the path to preview files
 	{
-		// Display preview image
-		TRACE("XXXXXXXXXXXXXXXXXXXXXXXXX-%s-XXXXXXXXXXXXXXXXXXXXXXXXX\r\n", pfl->GetData(idx, CHexFileList::PREVIEWFILENAME));
+		// Create the full path to the thumbnail file
+		fname += DIRNAME_PREVIEW;
+		fname += _T("HEPV");
+		fname += pfl->GetData(idx, CHexFileList::PREVIEWFILENAME);
 	}
 
+	m_preview.SetFile(fname.IsEmpty() ? NULL : fname);  // tell preview window what to display
 }
 
+// Called when things happen to the list of files.  We are only interested in the selection changing.
 BOOL CFileOpenDialog::CHookWnd::OnNotify(WPARAM, LPARAM lParam, LRESULT* pResult)
 {
     LPNMLISTVIEW pLVHdr = reinterpret_cast<LPNMLISTVIEW>(lParam);
@@ -312,7 +343,7 @@ BOOL CFileOpenDialog::CHookWnd::OnNotify(WPARAM, LPARAM lParam, LRESULT* pResult
     }
 
     *pResult = 0;
-    return FALSE;
+    return FALSE;  // return 0 to allow further processing
 }
 #endif  // FILE_PREVIEW
 
