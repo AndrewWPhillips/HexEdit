@@ -143,7 +143,9 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include <locale.h>
 #include <sys/stat.h>           // For _stat()
 #include <sys/utime.h>          // For _utime()
+#include <direct.h>             // For _getdrive()
 
+#ifndef REGISTER_APP
 #ifdef BOOST_CRC
 #include <boost/crc.hpp>
 #endif
@@ -153,12 +155,12 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 
 #include <imagehlp.h>           // For ::MakeSureDirectoryPathExists()
 #include <winioctl.h>           // For DISK_GEOMETRY, IOCTL_DISK_GET_DRIVE_GEOMETRY etc
-#include <direct.h>             // For _getdrive()
 #include <FreeImage.h>
 
 #include "misc.h"
 #include "Security.h"
 #include "ntapi.h"
+#endif
 
 #ifdef _DEBUG // keep the old code so we can check against the new
 #include "BigInteger.h"        // Used in C# Decimal conversions
@@ -895,6 +897,7 @@ CString NumScale(double val)
 }
 #endif
 
+#ifndef REGISTER_APP
 CString NumScale(double val)
 {
 	double dd = val;
@@ -950,7 +953,6 @@ CString bin_str(__int64 val, int bits)
 	return retval;
 }
 
-#ifndef REGISTER_APP
 
 // Add commas every 3 digits (or as appropriate to the locale) to a decimal string
 void AddCommas(CString &str)
@@ -1366,7 +1368,6 @@ long double ibm_fp64(const unsigned char *pp, int *pexp /*=NULL*/,
 	else
 		return -(mantissa / two_pow56) * powl(2, exponent);
 }
-#endif  // #ifndef REGISTER_APP
 
 // The compiler does not provide a function for reading a 64 bit int from a string?!!
 __int64 strtoi64(const char *ss, int radix /*=0*/)
@@ -1499,6 +1500,7 @@ const char * mpz_set_bytes(mpz_ptr p, FILE_ADDRESS addr, int count)
 
 	return NULL;
 }
+#endif  // #ifndef REGISTER_APP
 
 #ifdef _DEBUG
 void test_misc()
@@ -2660,6 +2662,36 @@ unsigned long str_hash(const char *str)
 
 	return hash;
 }
+
+#ifdef REGISTER_APP  // Only used for reg program now
+unsigned short crc16(const void *buffer, size_t len)
+{
+    static const unsigned int poly = 0x8408;
+    unsigned char *pdata = (unsigned char *)buffer;
+    unsigned char ii;
+    unsigned int data;
+    unsigned int crc = 0xffff;
+   
+    if (len == 0)
+        return 0;
+   
+    do
+    {
+        for (ii = 0, data = *pdata++; ii < 8; ii++, data >>= 1)
+        {
+            if ((crc & 0x0001) ^ (data & 0x0001))
+                crc = (crc >> 1) ^ poly;
+            else  crc >>= 1;
+        }
+    } while (--len);
+   
+    crc = ~crc;
+    data = crc;
+    crc = (crc << 8) | (data >> 8 & 0xff);
+   
+    return (crc);
+}
+#endif
 
 //-----------------------------------------------------------------------------
 // CRCs
