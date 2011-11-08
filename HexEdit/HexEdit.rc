@@ -3015,10 +3015,10 @@ BEGIN
     CG_IDP_FILE_CORRUPT2    "Trouble reading the tips file"
     CG_IDS_TIPOFTHEDAYHELP2 "&Help"
     IDS_WEB_ADDRESS         "http://www.hexeditpro.com/"
-    IDS_WEB_REG_USER        "http://www.hexeditpro.com/register.htm"
-    IDS_WEB_HELP            "http://www.hexeditpro.com/help.htm"
-    IDS_WEB_UPGRADE         "http://www.hexeditpro.com/upgrade.htm"
-    IDS_WEB_FORUMS          "http://www.hexeditpro.com/forums.htm"
+    IDS_WEB_REG_USER        "http://www.hexeditpro.com/register.html"
+    IDS_WEB_HELP            "http://www.hexeditpro.com/help.html"
+    IDS_WEB_UPGRADE         "http://www.hexeditpro.com/upgrade.html"
+    IDS_WEB_FORUMS          "http://www.hexeditpro.com/forums.html"
 END
 
 STRINGTABLE 
