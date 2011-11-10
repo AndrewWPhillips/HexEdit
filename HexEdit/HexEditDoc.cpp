@@ -1262,7 +1262,12 @@ void CHexEditDoc::DeleteContents()
 	if (pthread2_ != NULL)
 		KillSearchThread();
 
-	// KillAerialThread() and KillCompThread() not required here as they are killed when the last view is closed
+	// KillAerialThread() and KillCompThread() are called here even though they are also killed when
+	// the last view is closed because we need to close the data files (data_file2_ and data_file3_).
+	if (pthread3_ != NULL)
+		KillAerialThread();
+	if (pthread4_ != NULL)
+		KillCompThread();
 
 	if (pthread5_ != NULL)
 		KillStatsThread();
