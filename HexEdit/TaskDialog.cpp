@@ -17,7 +17,7 @@ CSimpleTaskDialog::CSimpleTaskDialog(LPCTSTR instruction, LPCTSTR content, LPCTS
 	m_config.dwCommonButtons = buttons == 0 ? MLCBF_OK_BUTTON : buttons;
 
 	if (title == NULL || title[0] == 0)
-		SetWindowTitle(_T("Hex Edit Pro"));
+		SetWindowTitle(_T("HexEdit Pro"));
 	else
 		SetWindowTitle(title);
 	SetMainInstruction(instruction);

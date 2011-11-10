@@ -201,7 +201,7 @@ void CAbout::fix_controls()
 	// Set up first line (version info)
 	if (theApp.version_%10 > 0)
 		rel_char = 'A' - 1 + theApp.version_%10;
-	text1_.Format("Hex Edit Pro version %d.%d%c", theApp.version_/100, (theApp.version_%100)/10, rel_char);
+	text1_.Format("HexEdit Pro version %d.%d%c", theApp.version_/100, (theApp.version_%100)/10, rel_char);
 	if (theApp.beta_ > 0)
 	{
 		ss.Format(" Beta %d", theApp.beta_);
@@ -298,7 +298,7 @@ void CAbout::fix_controls()
 
 	// Web site link
 	VERIFY(ss.LoadString(IDS_WEB_ADDRESS));
-	url_ctl_.SetTooltip(_T("Hex Edit Pro web site"));
+	url_ctl_.SetTooltip(_T("HexEdit Pro web site"));
 	url_ctl_.SetWindowText(ss);
 	url_ctl_.SetURL(ss);
 	url_ctl_.SizeToContent(TRUE, TRUE);
@@ -860,7 +860,7 @@ BOOL CReg::OnInitDialog()
 	type_ = user_name_.IsEmpty() ? 0 : 1;
 
 	costs_ = "All purchases from sales are put back into the product.  By purchasing\n"
-			 "Hex Edit Pro you will help make it better.  It also entitles you to free support,\n"
+			 "HexEdit Pro you will help make it better.  It also entitles you to free support,\n"
 			 "upgrades and priority in enhancement requests.\n"
 			 "\n"
 			 "A single user licence is $40 (US). A single machine licence is usually $20.\n"
@@ -1115,7 +1115,7 @@ BOOL CStartup::OnInitDialog()
 	CString ss;
 	VERIFY(ss.LoadString(IDS_WEB_REG_USER));
 	url_ctl_.SetTooltip(_T("Register now"));
-	url_ctl_.SetWindowText("  Hex Edit Pro registration web site ");
+	url_ctl_.SetWindowText("  HexEdit Pro registration web site ");
 	url_ctl_.SetURL(ss);
 	url_ctl_.SizeToContent(TRUE, TRUE);
 

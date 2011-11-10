@@ -395,7 +395,7 @@ BEGIN
             MENUITEM "Support Forums",              ID_HELP_FORUM
             MENUITEM "Web Help",                    ID_HELP_WEB
             MENUITEM SEPARATOR
-            MENUITEM "Hex Edit Pro Home Page",      ID_HELP_HOMEPAGE
+            MENUITEM "HexEdit Pro Home Page",       ID_HELP_HOMEPAGE
             MENUITEM "Register",                    ID_HELP_REGISTER
         END
         MENUITEM "&Email Support...",           ID_HELP_EMAIL
@@ -411,7 +411,7 @@ BEGIN
         MENUITEM "&Keyboard Map",               ID_HELP_KEYBOARDMAP
         MENUITEM "Ti&p of the Day...",          CG_IDS_TIPOFTHEDAY
         MENUITEM SEPARATOR
-        MENUITEM "&About Hex Edit Pro...",      ID_APP_ABOUT
+        MENUITEM "&About HexEdit Pro...",       ID_APP_ABOUT
     END
 END
 
@@ -908,7 +908,7 @@ BEGIN
             MENUITEM "Support Forums",              ID_HELP_FORUM
             MENUITEM "Web Help",                    ID_HELP_WEB
             MENUITEM SEPARATOR
-            MENUITEM "Hex Edit Pro Home Page",      ID_HELP_HOMEPAGE
+            MENUITEM "HexEdit Pro Home Page",      ID_HELP_HOMEPAGE
             MENUITEM "Register",                    ID_HELP_REGISTER
         END
         MENUITEM "&Email Support...",           ID_HELP_EMAIL
@@ -924,7 +924,7 @@ BEGIN
         MENUITEM "&Keyboard Map",               ID_HELP_KEYBOARDMAP
         MENUITEM "Ti&p of the Day...",          CG_IDS_TIPOFTHEDAY
         MENUITEM SEPARATOR
-        MENUITEM "&About Hex Edit Pro...",      ID_APP_ABOUT
+        MENUITEM "&About HexEdit Pro...",       ID_APP_ABOUT
     END
 END
 
@@ -1541,7 +1541,7 @@ BEGIN
     LTEXT           "Global settings",IDC_STATIC,12,4,47,8
     CONTROL         "Save settings on e&xit",IDC_SAVE_EXIT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,16,95,10,0,HIDC_SAVE_EXIT
     PUSHBUTTON      "&Save Settings Now",IDC_SAVE_NOW,152,13,94,15,WS_GROUP,0,HIDC_SAVE_NOW
-    CONTROL         "&Add ""Open with Hex Edit Pro"" to Windows Explorer context menus",IDC_SHELLOPEN,
+    CONTROL         "&Add ""Open with HexEdit Pro"" to Windows Explorer context menus",IDC_SHELLOPEN,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,29,232,10,0,HIDC_SHELLOPEN
     PUSHBUTTON      "&Restore All ""Not Shown"" Warning and Information Messages",IDC_RESTORE_AVOIDABLE,22,43,224,15,WS_GROUP,0,HIDC_RESTORE_AVOIDABLE
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,64,226,1
@@ -2084,17 +2084,17 @@ END
 
 IDD_ABOUT DIALOGEX 0, 0, 390, 266
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About Hex Edit Pro"
+CAPTION "About HexEdit Pro"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    LTEXT           "Hex Edit Pro 4.0",IDC_LINE1,150,24,166,8
+    LTEXT           "HexEdit Pro 4.0",IDC_LINE1,150,24,166,8
     LTEXT           "Copyright 1999-2011 Expert Commercial Software Pty Ltd",IDC_LINE2,150,38,96,18
     PUSHBUTTON      "&Email...",IDC_EMAIL,322,38,61,14
     PUSHBUTTON      "URL",IDC_BUTTON_URL,150,59,166,14,WS_GROUP
     LTEXT           "Licensing information:",IDC_LINE3,150,86,166,8
     PUSHBUTTON      "&Activate...",IDC_ACTIVATE,322,100,61,14
     PUSHBUTTON      "URL",IDC_BUTTON_REG_URL,150,138,166,14,WS_GROUP
-    LTEXT           "Third party software used in Hex Edit Pro:",IDC_LINE4,150,165,166,8
+    LTEXT           "Third party software used in HexEdit Pro:",IDC_LINE4,150,165,166,8
     LISTBOX         IDC_ACK,150,179,166,51,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_NODATA | WS_VSCROLL
     PUSHBUTTON      "&More Info...",IDC_ACK_MORE,322,179,61,14
     DEFPUSHBUTTON   "OK",IDOK,322,244,61,14,WS_GROUP
@@ -2468,7 +2468,7 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
-            VALUE "FileDescription", "Hex Edit Pro Application"
+            VALUE "FileDescription", "HexEdit Pro Application"
             VALUE "FileVersion", "4, 0, 1, " SVNRevisionStr
             VALUE "InternalName", "HexEditPro"
             VALUE "LegalCopyright", "Copyright © 1999-2011  Expert Commercial Software"
@@ -2742,8 +2742,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "HexEditPro"
-    IDR_HEXEDTYPE           "\nHexEdPro\nHexEdPro\n\n\nHexEditPro.Document\nHexEditPro Document"
+    IDR_MAINFRAME           "HexEdit"
+    IDR_HEXEDTYPE           "\nHexEd\nHexEd\n\n\nHexEdit.Document\nHexEdit Document"
     ID_TOOL1                "Activate user-defined tool\nUser Tool"
     ID_TOOL2                "Activate user-defined tool\nUser Tool"
     ID_TOOL3                "Activate user-defined tool\nUser Tool"
@@ -2762,7 +2762,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    AFX_IDS_APP_TITLE       "HexEditPro"
+    AFX_IDS_APP_TITLE       "HexEdit"
     AFX_IDS_IDLEMESSAGE     "Ready"
     AFX_IDS_HELPMODEMESSAGE "Select an object on which to get Help"
 END
@@ -2794,7 +2794,7 @@ STRINGTABLE
 BEGIN
     ID_APP_ABOUT            "Display program version and license information\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save changed files\nExit"
-    ID_HELP_INDEX           "Display Hex Edit Pro help index\nHelp Index"
+    ID_HELP_INDEX           "Display HexEdit Pro help index\nHelp Index"
     ID_HELP_FINDER          "List Help topics\nHelp Topics"
     ID_CONTEXT_HELP         "Display help for clicked on buttons, menus and windows\nHelp"
     ID_HELP                 "Display help for current task or command\nHelp"
@@ -2994,7 +2994,7 @@ END
 STRINGTABLE 
 BEGIN
     ID_CALCULATOR           "Invoke hex/decimal/octal/binary calculator\nCalculator"
-    ID_WEB_PAGE             "Show the Hex Edit Pro site in your web browser\nHex Edit Pro Home Page"
+    ID_WEB_PAGE             "Show the HexEdit Pro site in your web browser\nHexEdit Pro Home Page"
     ID_CUSTOMIZE            "Modify menus, toolbars and keyboard shortcuts\nCustomize"
     ID_INVERT               "Invert bits (bitwise NOT) of the byte(s)\nInvert byte"
     ID_NEG_BYTE             "Change sign (2's complement) of the byte(s)\nNegate Byte"
@@ -3011,14 +3011,14 @@ BEGIN
     IDS_COLORS              "Color Schemes"
     CG_IDS_TIPOFTHEDAYMENU2 "Ti&p of the Day..."
     CG_IDS_DIDYOUKNOW2      "Did you know..."
-    CG_IDS_FILE_ABSENT2     "You can put the tips file (HexEditPro.tip) in the same directory as HexEditPro.exe or the working directory where you run Hex Edit Pro.  The tips file was not found in either of those places."
+    CG_IDS_FILE_ABSENT2     "You can put the tips file (HexEditPro.tip) in the same directory as HexEditPro.exe or the working directory where you run HexEdit Pro.  The tips file was not found in either of those places."
     CG_IDP_FILE_CORRUPT2    "Trouble reading the tips file"
     CG_IDS_TIPOFTHEDAYHELP2 "&Help"
     IDS_WEB_ADDRESS         "http://www.hexeditpro.com/"
-    IDS_WEB_REG_USER        "http://www.hexeditpro.com/register.html"
-    IDS_WEB_HELP            "http://www.hexeditpro.com/help.html"
-    IDS_WEB_UPGRADE         "http://www.hexeditpro.com/upgrade.html"
-    IDS_WEB_FORUMS          "http://www.hexeditpro.com/forums.html"
+    IDS_WEB_REG_USER        "http://www.hexeditpro.com/register.htm"
+    IDS_WEB_HELP            "http://www.hexeditpro.com/help.htm"
+    IDS_WEB_UPGRADE         "http://www.hexeditpro.com/upgrade.htm"
+    IDS_WEB_FORUMS          "http://www.hexeditpro.com/forums.htm"
 END
 
 STRINGTABLE 
@@ -3151,10 +3151,10 @@ BEGIN
     ID_SCHEME               "Select colour scheme\nColour Scheme"
     ID_SCHEME_US            "Select color scheme\nColor Scheme"
     ID_BOOKMARKS_COMBO      "Select a bookmark from the active file\nBookmarks"
-    ID_HELP_WEB             "Go to the Hex Edit Pro web site for help\nHelp via Web"
-    ID_HELP_FORUM           "Go to the Hex Edit Pro Support Forums\nSupport Forums"
-    ID_HELP_HOMEPAGE        "Go to the Hex Edit Pro Home Page\nHexEdit Home Page"
-    ID_HELP_REGISTER        "Go to the Hex Edit Pro Registration Page\nRegister"
+    ID_HELP_WEB             "Go to the HexEdit Pro web site for help\nHelp via Web"
+    ID_HELP_FORUM           "Go to the HexEdit Pro Support Forums\nSupport Forums"
+    ID_HELP_HOMEPAGE        "Go to the HexEdit Pro Home Page\nHexEdit Home Page"
+    ID_HELP_REGISTER        "Go to the HexEdit Pro Registration Page\nRegister"
 END
 
 STRINGTABLE 
@@ -3860,7 +3860,7 @@ END
 IDD_EMAIL DIALOGEX 0, 0, 278, 238
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "Send Email to Hex Edit Pro Support"
+CAPTION "Send Email to HexEdit Pro Support"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "&To *",IDC_STATIC,9,9,14,8
@@ -3879,7 +3879,7 @@ BEGIN
     PUSHBUTTON      "Browse...",IDC_ATTACHMENT_BROWSE,221,152,50,14,0,0,HIDC_ATTACHMENT_BROWSE
     LTEXT           "S&ystem version:",IDC_STATIC,9,177,50,8
     COMBOBOX        IDC_SYSTYPE,59,175,63,96,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP,0,HIDC_SYSTYPE
-    LTEXT           "Hex Edit Pro &Version:",IDC_STATIC,130,173,26,17
+    LTEXT           "HexEdit Pro &Version:",IDC_STATIC,130,173,26,17
     COMBOBOX        IDC_VERSION,159,175,54,98,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP,0,HIDC_VERSION
     PUSHBUTTON      "&Help",IDC_EMAIL_HELP,221,174,50,14
     LTEXT           "Your &name:",IDC_STATIC,9,201,37,8
@@ -4070,7 +4070,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSME
 CAPTION "Reminder"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    CTEXT           "Thankyou for trying Hex Edit Pro.",IDC_STATIC,7,7,228,8
+    CTEXT           "Thankyou for trying HexEdit Pro.",IDC_STATIC,7,7,228,8
     CTEXT           "Expires in 77 days.",IDC_TEXT,7,23,228,16,NOT WS_GROUP
     ICON            IDR_MAINFRAME,IDC_STATIC,7,7,20,20
     LTEXT           "Once you have registered you won't see this message anymore.  You will also be entitled to the next release for free and upgrades to the latest version ($15) for 2 years.\n\nA single user license costs $40 (US).\n\nTo register now click the link below.",IDC_STATIC,7,41,228,64,NOT WS_GROUP

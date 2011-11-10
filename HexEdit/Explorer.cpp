@@ -101,7 +101,7 @@ void CHistoryShellList::AdjustMenu(HMENU hm)
 	mii.wID = ID_EXPLORER_OPEN;
 	mii.fState = MFS_ENABLED;
 	mii.fType = MFT_STRING;
-	mii.dwTypeData = _T("Open in Hex Edit Pro");
+	mii.dwTypeData = _T("Open in HexEdit Pro");
 	::InsertMenuItem(hm, ii++, TRUE, &mii);
 
 	mii.wID = ID_EXPLORER_OPEN_RO;

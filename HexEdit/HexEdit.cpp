@@ -477,7 +477,7 @@ BOOL CHexEditApp::InitInstance()
 					if (checker.UpdateAvailable(version_))
 					{
 						CAvoidableDialog::Show(IDS_UPDATE_AVAILABLE,
-						                       "A newer version of Hex Edit Pro is currently available for download.", "", 
+						                       "A newer version of HexEdit Pro is currently available for download.", "", 
 						                       MLCBF_OK_BUTTON, MAKEINTRESOURCE(IDI_INFO));
 					}
 					WriteProfileInt(_T("Update"), _T("LastCheckDate"), (int)now);
@@ -588,7 +588,7 @@ BOOL CHexEditApp::InitInstance()
 			ASSERT(0);
 			/* fall through */
 		case 0:
-			AfxMessageBox("Hex Edit Pro has not been installed on this machine");
+			AfxMessageBox("HexEdit Pro has not been installed on this machine");
 			return FALSE;
 		case 1:
 			ss = "Unfortunately, your trial period has expired.";
@@ -990,7 +990,7 @@ void CHexEditApp::OnNewUser()
 	// if we want to copy (but copy over files if not already there
 	if (::_access(dstFile, 0) == -1 &&
 		TaskMessageBox("New User",
-					  "This is the first time you have run this version of Hex Edit Pro.\n\n"
+					  "This is the first time you have run this version of HexEdit Pro.\n\n"
 					  "Hit OK to set up you own personal copies of templates and macros.",
 					  MB_OKCANCEL) == IDCANCEL)
 		return;
@@ -1382,7 +1382,7 @@ void CHexEditApp::OnRepairSettings()
 					  "All customizations and changes to "
 					  "settings will be removed.  "
 					  "(All registry entries will be removed.)\n"
-					  "\nTo do this Hex Edit Pro must close.\n"
+					  "\nTo do this HexEdit Pro must close.\n"
 					  "\nDo you want to continue?",
 					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 		return;
@@ -1403,7 +1403,7 @@ void CHexEditApp::OnRepairAll()
 					  "* previously opened files settings (columns etc)\n"
 					  "* recent file list, bookmarks, highlights etc\n"
 					  "* ALL REGISTRATION INFORMATION WILL BE REMOVED\n\n"
-					  "When complete you will need to restart Hex Edit Pro "
+					  "When complete you will need to restart HexEdit Pro "
 					  "and re-enter your activation code.\n"
 					  "\nAre you absolutely sure you want to continue?",
 					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
@@ -1709,7 +1709,7 @@ int CHexEditApp::ExitInstance()
 	int retval = CWinAppEx::ExitInstance();
 
 	if (delete_reg_settings_ || delete_all_settings_)
-		::SHDeleteKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEditPro");  // user settings
+		::SHDeleteKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit");  // user settings
 
 	if (delete_all_settings_)
 	{
@@ -1723,7 +1723,7 @@ int CHexEditApp::ExitInstance()
 			remove(data_path + FILENAME_BACKGROUND);
 		}
 
-		::SHDeleteKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEditPro");  // machine settings
+		::SHDeleteKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit");  // machine settings
 		::SHDeleteValue(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", "Data");
 		DeleteSecurityFiles();  // Note: FILENAME_BACKGROUND also deleted above
 	}
@@ -3124,7 +3124,7 @@ void CHexEditApp::OnOptions2()
 void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_page /*=FALSE*/)
 {
 	// Construct property sheet + its pages
-	COptSheet optSheet(_T("Hex Edit Pro Options"), display_page, must_show_page);
+	COptSheet optSheet(_T("HexEdit Pro Options"), display_page, must_show_page);
 
 	// Load current settings into the property sheet
 	get_options(optSheet.val_);
@@ -3347,7 +3347,7 @@ void CHexEditApp::set_options(struct OptValues &val)
 		if (val.shell_open_)
 		{
 			// Create the registry entries that allow "Open with HexEdit" on shortcut menus
-			CString s1("Open with Hex Edit Pro");
+			CString s1("Open with HexEdit Pro");
 			CString s2 = "\"" + GetExePath() + "HexEditPro.exe\"  \"%1\"";
 			RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY, REG_SZ, s1, s1.GetLength());
 			RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, REG_SZ, s2, s2.GetLength());

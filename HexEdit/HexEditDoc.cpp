@@ -1850,7 +1850,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 			if (idx == -1)
 			{
 				TaskMessageBox("Too Many Temporary Files",
-					"To insert a large file Hex Edit Pro needs to create a temporary "
+					"To insert a large file HexEdit Pro needs to create a temporary "
 					"file but has run out of temporary file handles.\n\n"
 					"Please save the file to deallocate "
 					"temporary file handles and try again.");

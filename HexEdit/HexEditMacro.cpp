@@ -1936,7 +1936,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
 		if (magic != 0xCDAB)
 		{
 				TaskMessageBox("Invalid Macro File",
-					"This is not a Hex Edit Pro macro file or it has become corrupted.",
+					"This is not a HexEdit Pro macro file or it has become corrupted.",
 					0, 0, MAKEINTRESOURCE(IDI_CROSS));
 			pfe->Delete();
 			mac_error_ = 10;
@@ -1961,7 +1961,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
 		if (version > INTERNAL_VERSION &&
 			TaskMessageBox("Version Warning",
 						   CString("This macro (") + filename + ")\n"
-						  "was recorded in a later version of Hex Edit Pro "
+						  "was recorded in a later version of HexEdit Pro "
 						  "than you are currently using.  "
 						  "It may not run as expected.\n\n"
 						  "Do you want to continue?",

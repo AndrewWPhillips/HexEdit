@@ -352,8 +352,8 @@ void CHexEditApp::AddSecurity(const char *name)
 
 	// Open (or create if not there) the place to store the info
 	if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS ||
-		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEditPro", &hkey2) != ERROR_SUCCESS ||
-		::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEditPro", &hkey3) != ERROR_SUCCESS)
+		::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS ||
+		::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
 		return;
 
 	// Create the info
@@ -426,7 +426,7 @@ void CHexEditApp::AddSecurity(const char *name)
 
 	++add_security_called;
 
-	// Calc CRC, encrypt and write to HKLM\Software\ECSoftware\HexEditPro\Global
+	// Calc CRC, encrypt and write to HKLM\Software\ECSoftware\HexEdit\Global
 	security_info.crc = crc16((unsigned char *)&security_info + 2, sizeof(security_info) - 2);
 	SaveSecurityFile();
 	set_key(STANDARD_KEY, 8);
@@ -711,8 +711,8 @@ int CHexEditApp::GetSecurity()
 
 	// Open (or create if not there) the place to store the info (hkey and hkey2 are old so it doesn't really matter if they fail)
 	if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", &hkey) != ERROR_SUCCESS) hkey = 0;
-	if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEditPro", &hkey2) != ERROR_SUCCESS) hkey2 = 0;
-	if (::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEditPro", &hkey3) != ERROR_SUCCESS)
+	if (::RegCreateKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit", &hkey2) != ERROR_SUCCESS) hkey2 = 0;
+	if (::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
 		return 0;     // return error if any could not be opened
 
 	// Try getting security info from the registry.  If that fails try security file.
@@ -1097,7 +1097,7 @@ int CHexEditApp::QuickCheck()
 			no_check = 1;
 		return 1;
 #else
-		AfxMessageBox("Hex Edit Pro has not been properly installed");
+		AfxMessageBox("HexEdit Pro has not been properly installed");
 		return 0;
 #endif
 	}
@@ -1182,12 +1182,12 @@ void CHexEditApp::CleanUp()
 		::RegDeleteValue(hkey, "Data");
 		::RegCloseKey(hkey);
 	}
-	if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEditPro\\", &hkey) == ERROR_SUCCESS)
+	if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
 	{
 		::RegDeleteValue(hkey, "Global");
 		::RegCloseKey(hkey);
 	}
-	if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEditPro\\", &hkey) == ERROR_SUCCESS)
+	if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
 	{
 		::RegDeleteValue(hkey,  "Global");
 		::RegCloseKey(hkey);
@@ -1199,7 +1199,7 @@ void CHexEditApp::CleanUp()
 			::RegDeleteValue(hkey, "Data");
 			::RegCloseKey(hkey);
 		}
-		if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\Classes\\VirtualStore\\MACHINE\\Software\\ECSoftware\\HexEditPro\\", &hkey) == ERROR_SUCCESS)
+		if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\Classes\\VirtualStore\\MACHINE\\Software\\ECSoftware\\HexEdit\\", &hkey) == ERROR_SUCCESS)
 		{
 			::RegDeleteValue(hkey, "Global");
 			::RegCloseKey(hkey);
@@ -1211,7 +1211,7 @@ void CHexEditApp::CleanUp()
 	DeleteSecurityFiles();   // remove Nt$ file created by GetMystery
 
 	if (admin)
-		TaskMessageBox("Finished!", "Hex Edit Pro /clean operation completed succesfully.", 0, 0, MAKEINTRESOURCE(IDI_INFO));
+		TaskMessageBox("Finished!", "HexEdit Pro /clean operation completed succesfully.", 0, 0, MAKEINTRESOURCE(IDI_INFO));
 	else
 		TaskMessageBox("Clean Failed", "When using the /clean option\n"
 					  "please run as administrator.\n");
@@ -1352,7 +1352,7 @@ void CHexEditApp::CheckSecurityActivated()
 		HKEY hkey3;
 
 		// Open (or create if not there) the place to store the info
-		if (::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEditPro", &hkey3) != ERROR_SUCCESS)
+		if (::RegCreateKey(HKEY_CURRENT_USER , "Software\\ECSoftware\\HexEdit", &hkey3) != ERROR_SUCCESS)
 			return;
 
 		// Try getting security info from the registry.
