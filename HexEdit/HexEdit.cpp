@@ -2158,8 +2158,10 @@ void CHexEditApp::LoadOptions()
 	//thumb_8bit_ = GetProfileInt("Options", "ThumbNail8Bit",  0) ? TRUE : FALSE;
 	thumb_frame_ = GetProfileInt("Options", "ThumbNailAllViews",  1) ? TRUE : FALSE;
 	thumb_size_ = GetProfileInt("Options", "ThumbNailSize",  300);
-	thumb_type_ = GetProfileInt("Options", "ThumbNailType", JPEG_BAD);  // default to highly compressed jpeg
 	if (thumb_size_ < 64) thumb_size_ = 64 ;
+	thumb_zoom_ =  strtod(GetProfileString("Options", "ThumbNailZoom",  "1.5"), NULL);
+	if (thumb_zoom_ < 1.0 || thumb_zoom_ > 10) thumb_zoom_ = 1.0;
+	thumb_type_ = GetProfileInt("Options", "ThumbNailType", JPEG_AVERAGE);  // default to small jpeg
 	cleanup_days_ = GetProfileInt("Options", "ThumbCleanDays",  100);
 #endif
 
@@ -2612,6 +2614,7 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 // Save global options to .INI file/registry
 void CHexEditApp::SaveOptions()
 {
+	CString ss;
 	CHECK_SECURITY(111);
 
 	// Save general options
@@ -2633,6 +2636,8 @@ void CHexEditApp::SaveOptions()
 	//WriteProfileInt("Options", "ThumbNail8Bit", thumb_8bit_ ? 1 : 0);
 	WriteProfileInt("Options", "ThumbNailAllViews", thumb_frame_ ? 1 : 0);
 	WriteProfileInt("Options", "ThumbNailSize", thumb_size_);
+	ss.Format("%g", thumb_zoom_);
+	WriteProfileString("Options", "ThumbNailZoom", ss);
 	WriteProfileInt("Options", "ThumbNailType", thumb_type_);
 	WriteProfileInt("Options", "ThumbCleanDays", cleanup_days_);
 #endif
@@ -2704,7 +2709,6 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Printer", "PrintCompareTracking", print_compare_ ? 1 : 0);
 	WriteProfileInt("Printer", "PrintSectors", print_sectors_ ? 1 : 0);
 	WriteProfileInt("Printer", "Units", int(print_units_));
-	CString ss;
 	ss.Format("%g", left_margin_);
 	WriteProfileString("Printer", "LeftMargin", ss);
 	ss.Format("%g", right_margin_);

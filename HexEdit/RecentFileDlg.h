@@ -28,6 +28,7 @@
 #include "range_set.h"
 #include "GridCtrl_src/GridCtrl.h"
 #include "ResizeCtrl.h"
+#include "Preview.h"
 
 // RecentFileDlg.h : header file
 //
@@ -112,6 +113,13 @@ protected:
 	//static CBrush * m_pBrush;           // brush used for background
 
 	range_set<int> to_delete_;			// Keeps track of files to delete from list when OK clicked
+
+#ifdef FILE_PREVIEW
+	int m_preview_width;                // Extra width added to dialog for preview (on right)
+	static const int preview_border = 5;
+	//int m_min_height;                   // Min height for dialog so that all of preview is seen
+	CPreview m_preview;                 // preview panel in the dialog
+#endif // FILE_PREVIEW
 };
 
 //{{AFX_INSERT_LOCATION}}

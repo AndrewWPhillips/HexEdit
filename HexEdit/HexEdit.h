@@ -671,6 +671,7 @@ public:
 #ifdef FILE_PREVIEW
 	BOOL thumbnail_;                    // Generate a preview file when file is saved
 	int thumb_size_;                    // Size of thumbnail
+	double thumb_zoom_;                 // How much to zoom the thumbnail when showing it
 	enum THUMB_TYPE { NONE, PNG, JPEG_GOOD, JPEG_AVERAGE, JPEG_BAD, LAST };
 	int thumb_type_;                    // Type of file to use
 	//BOOL thumb_8bit_;                   // Thumbnail saved with 8bpp (rather than 24)

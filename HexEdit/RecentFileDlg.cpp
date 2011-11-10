@@ -512,6 +512,35 @@ BOOL CRecentFileDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+#ifdef FILE_PREVIEW
+	// If adding a preview (by expanding the right side of the dialog) we need to resize the
+	// dlg window before starting resizer_ (below) so we don't get all the controls moved.
+	if (theApp.thumbnail_)
+	{
+		int preview_size = (int)(theApp.thumb_size_ * theApp.thumb_zoom_);
+		m_preview_width = preview_size + preview_border;
+
+		// Work out the size and location of the preview window
+		CRect rct;
+		GetClientRect(&rct);
+		rct.left = rct.right;
+		rct.right = rct.left + preview_size;
+		rct.top = preview_border;
+		rct.bottom = rct.top + preview_size;
+
+		// Create the preview window
+		m_preview.SetBackground(::GetSysColor(COLOR_3DFACE));
+		m_preview.Create(_T("Preview"), WS_CHILD | WS_VISIBLE, rct, this, IDC_OPEN_PREVIEW);
+
+		// Expand the main file open dlg window to show the preview window
+		GetWindowRect(&rct);
+		rct.right += m_preview_width;
+		MoveWindow(&rct);
+	}
+	else
+		m_preview_width = 0;
+#endif // FILE_PREVIEW
+
 	// Make sure when dialog is resized that the controls move to sensible places
 	resizer_.Create(this);
 	resizer_.SetMinimumTrackingSize();
@@ -527,11 +556,19 @@ BOOL CRecentFileDlg::OnInitDialog()
 	resizer_.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
 	resizer_.Add(IDC_NET_RETAIN_DESC, 100, 0, 0, 0);
 	resizer_.Add(IDC_RECENT_FILES_HELP, 100, 0, 0, 0);
+#ifdef FILE_PREVIEW
+	if (m_preview.m_hWnd != (HWND)0)
+		resizer_.Add(IDC_OPEN_PREVIEW, 100, 0, 0, 0);    // attach preview to right edge of dialog
+#endif	
 
+	// Restore the window position from last time
 	int posx = theApp.GetProfileInt("Window-Settings", "RecentFileDlgX", -30000);
 	int posy = theApp.GetProfileInt("Window-Settings", "RecentFileDlgY", -30000);
 	int width = theApp.GetProfileInt("Window-Settings", "RecentFileDlgWidth", -30000);
 	int height = theApp.GetProfileInt("Window-Settings", "RecentFileDlgHeight", -30000);
+#ifdef FILE_PREVIEW
+	width += m_preview_width;
+#endif	
 
 	if (posx != -30000)
 	{
@@ -665,12 +702,17 @@ LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	// Count the number of rows selected
 	int fcc = grid_.GetFixedColumnCount();
 	int rows_selected = 0;
+	int first_item_selected = -1;
 	bool ro = false;
 	for (int row = sel.GetMinRow(); row <= sel.GetMaxRow(); ++row)
 		if (grid_.IsCellSelected(row, fcc))
 		{
 			++rows_selected;
-			CString name = pfl->name_[grid_.GetItemData(row, fcc)];
+
+			int idx = grid_.GetItemData(row, fcc);
+			if (first_item_selected < 0)
+				first_item_selected = idx;
+			CString name = pfl->name_[idx];
 			if (::IsDevice(name))
 			{
 				int device_idx = psl->find(name);
@@ -692,6 +734,22 @@ LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	ASSERT(GetDlgItem(IDC_FILES_SELECTED) != NULL);
 	GetDlgItem(IDC_FILES_SELECTED)->SetWindowText("Selected: " + ss);
 
+#ifdef FILE_PREVIEW
+	if (theApp.thumbnail_)
+	{
+		CString fname;
+
+		if (first_item_selected >= 0 && ::GetDataPath(fname))
+		{
+			// Create the full path to the thumbnail file
+			fname += DIRNAME_PREVIEW;
+			fname += _T("HEPV");
+			fname += pfl->GetData(first_item_selected, CHexFileList::PREVIEWFILENAME);
+		}
+
+		m_preview.SetFile(fname.IsEmpty() ? NULL : fname);  // tell preview window what to display
+	}
+#endif
 	return FALSE;
 }
 
@@ -756,7 +814,7 @@ void CRecentFileDlg::OnOpen()
 	{
 		ASSERT(theApp.open_current_readonly_ == -1);
 		if (theApp.OpenDocumentFile(*pp) != NULL)
-			theApp.SaveToMacro(km_open, *pp);
+		theApp.SaveToMacro(km_open, *pp);
 	}
 
 	DeleteEntries();
@@ -889,7 +947,11 @@ void CRecentFileDlg::OnDestroy()
 	GetWindowRect(&rr);
 	theApp.WriteProfileInt("Window-Settings", "RecentFileDlgX", rr.left);
 	theApp.WriteProfileInt("Window-Settings", "RecentFileDlgY", rr.top);
+#ifdef FILE_PREVIEW
+	theApp.WriteProfileInt("Window-Settings", "RecentFileDlgWidth", rr.right - rr.left - m_preview_width);
+#else
 	theApp.WriteProfileInt("Window-Settings", "RecentFileDlgWidth", rr.right - rr.left);
+#endif
 	theApp.WriteProfileInt("Window-Settings", "RecentFileDlgHeight", rr.bottom - rr.top);
 
 	CDialog::OnDestroy();

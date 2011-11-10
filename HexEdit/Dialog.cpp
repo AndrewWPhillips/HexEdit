@@ -241,21 +241,22 @@ void CFileOpenDialog::OnInitDone()
 #ifdef FILE_PREVIEW
 	if (theApp.thumbnail_)
 	{
+		int preview_size = (int)(theApp.thumb_size_ * theApp.thumb_zoom_);
+
 		// Work out the place for the preview - to the right of the existing window
 		pp->GetClientRect(&rct);
-		rct.MoveToX(rct.right);
-		rct.DeflateRect(5, 5);
-		rct.right = rct.left + theApp.thumb_size_;
+		rct.left = rct.right;
+		rct.right = rct.left + preview_size;
+		rct.top = 5;
+		rct.bottom = rct.top + preview_size;
 
 		// Create the preview window
 		m_preview.Create(_T("Preview"), WS_CHILD | WS_VISIBLE, rct, pp, IDC_OPEN_PREVIEW);
-		ASSERT(pp->GetDC() != NULL);
-		//m_preview.SetBackground(pp->GetDC()->GetBkColor());
 		m_preview.SetBackground(::GetSysColor(COLOR_3DFACE));
 
 		// Expand the main file open dlg window to show the preview window
 		pp->GetWindowRect(&rct);
-		rct.right += theApp.thumb_size_ + 10;
+		rct.right += preview_size + 5;
 		pp->MoveWindow(&rct);
 	}
 #endif
@@ -276,7 +277,7 @@ BOOL CFileOpenDialog::OnFileNameOK()
 void CFileOpenDialog::OnFolderChange()
 {
 	// As the lst2 child window (parent of list control) is recreated when the current folder is 
-	// changed we need to unhook noew and re-hook later (see below).
+	// chnaged we need to unhook noew and re-hook later (see below).
 	if (m_wndHook.GetSafeHwnd() != HWND(NULL))
 		m_wndHook.UnsubclassWindow();
   
@@ -284,7 +285,7 @@ void CFileOpenDialog::OnFolderChange()
 
 	m_wndHook.SubclassWindow(GetParent()->GetDlgItem(lst2)->GetSafeHwnd());
 
-	// If we have changed folders no files are now selected
+	// If we have chnaged folders no files are now selected
 	m_strPreview.Empty();
     UpdatePreview();
 }
