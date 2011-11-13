@@ -294,7 +294,9 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 							 default_oem_scheme_(OEM_NAME), default_ebcdic_scheme_(EBCDIC_NAME),
 							 default_multi_scheme_(MULTI_NAME)
 {
+#ifdef FILE_PREVIEW
 	cleanup_thread_ = NULL;
+#endif
 	security_rand_ = 0;
 
 	// Add a memory allocation hook for debugging purposes
@@ -1641,11 +1643,13 @@ void CHexEditApp::OnUpdateTabsAtBottom(CCmdUI* pCmdUI)
 
 int CHexEditApp::ExitInstance()
 {
+#ifdef FILE_PREVIEW
 	// Tell cleanup thread to forget it
 	appdata_.Lock();
 	if (cleanup_thread_ != NULL)
 		thread_stop_ = true;
 	appdata_.Unlock();
+#endif
 
 	// Save "save on exit" option if it has changed
 	if (save_exit_ != orig_save_exit_)
