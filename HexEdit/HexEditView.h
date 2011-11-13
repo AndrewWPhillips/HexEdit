@@ -27,6 +27,7 @@
 #include "range_set.h"
 #include "TipWnd.h"
 #include "Expr.h"
+#include "misc.h"   // struct crc_params
 
 #include <algorithm>
 #include <vector>
@@ -528,6 +529,7 @@ public:
 	afx_msg void OnUpdateExportHexText(CCmdUI* pCmdUI);
 	afx_msg void OnCrc16();
 	afx_msg void OnCrc32();
+	afx_msg void OnCrcGeneral();
 	afx_msg void OnCrcCcitt();
 	afx_msg void OnCrcCcittB();
 	afx_msg void OnCrcXmodem();
@@ -842,6 +844,8 @@ public:
 	int CompViewType() const;
 	void AdjustColumns();
 	bool DoCompSplit(bool init = true);   // must be public to be called from the doc
+
+	struct crc_params crc_params_;   // Use to store general CRC params for use in DoChecksum()
 
 private:
 

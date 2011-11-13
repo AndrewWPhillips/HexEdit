@@ -200,6 +200,7 @@
     <ClCompile Include="Expr.cpp" />
     <ClCompile Include="FindDlg.cpp" />
     <ClCompile Include="GenDockablePane.cpp" />
+    <ClCompile Include="GeneralCRC.cpp" />
     <ClCompile Include="HexEdit.cpp" />
     <ClCompile Include="HexEditDoc.cpp" />
     <ClCompile Include="HexEditMacro.cpp" />
@@ -529,6 +530,7 @@
     <ClInclude Include="Expr.h" />
     <ClInclude Include="FindDlg.h" />
     <ClInclude Include="GenDockablePane.h" />
+    <ClInclude Include="GeneralCRC.h" />
     <ClInclude Include="HexEdit.h" />
     <ClInclude Include="HexEditDoc.h" />
     <ClInclude Include="HexEditMacro.h" />

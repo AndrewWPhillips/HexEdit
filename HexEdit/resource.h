@@ -425,6 +425,7 @@
 #define IDC_HANDGRAB                    502
 #define IDD_PROP_STATS                  505
 #define IDD_PROP_GRAPH                  506
+#define IDD_CRC                         507
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1239,6 +1240,13 @@
 #define IDC_STATS_MD5                   1645
 #define IDC_STATS_SHA1                  1646
 #define IDC_CSRC_PREVIEW                1647
+#define IDC_CRC_REFLECTREM              1648
+#define IDC_CRC_BITS                    1649
+#define IDC_CRC_POLY                    1650
+#define IDC_CRC_INITREM                 1651
+#define IDC_CRC_FINALXOR                1652
+#define IDC_CRC_REFLECTIN               1653
+#define IDC_CRC_SELECT                  1654
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1417,6 +1425,7 @@
 #define ID_KEEP_TIMES                   32985
 #define ID_VIEW_VIEWBAR                 32986
 #define ID_MACRO_MESSAGE                32987
+#define ID_CRC_GENERAL                  32988
 #define ID_CRC16                        32989
 #define ID_CRC32                        32990
 #define ID_CHECKSUM8                    32991
@@ -1764,7 +1773,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        510
 #define _APS_NEXT_COMMAND_VALUE         39188
-#define _APS_NEXT_CONTROL_VALUE         1648
+#define _APS_NEXT_CONTROL_VALUE         1655
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

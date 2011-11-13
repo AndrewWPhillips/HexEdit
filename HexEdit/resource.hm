@@ -81,6 +81,7 @@
 #define HIDC_COMPRESSION_WINDOW_SIZE    0x812a05ed    // IDD_COMPRESS
 #define HIDC_CONTROL                    0x810c04b1    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_CONT_CHAR                  0x80eb065b    // IDD_OPT_WORKDISPLAY [English (United States)]
+#define HIDC_CRC_SELECT                 0x81fb0676    // IDD_CRC [English (United States)]
 #define HIDC_CSRC_ADDRESS               0x811f0565    // IDD_CSRC
 #define HIDC_CSRC_ALIGN                 0x811f0568    // IDD_CSRC
 #define HIDC_CSRC_CHAR                  0x811f0561    // IDD_CSRC
@@ -275,7 +276,7 @@
 #define HIDC_FIRST_FOOTER_OPTS          0x81b304aa    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_FIRST_HEADER               0x81b30437    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_FIRST_HEADER_DIFF          0x81b3063c    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
-#define HIDC_FIRST_HEADER_OPTS          0x81b304a9    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
+#define HIDC_FIRST_HEADER_OPTS          0x81b30640    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_FOLDER_BACK                0x81280590    // IDD_EXPLORER
 #define HIDC_FOLDER_FILTER              0x81280594    // IDD_EXPLORER
 #define HIDC_FOLDER_FLIP                0x81280596    // IDD_EXPLORER
@@ -307,7 +308,7 @@
 #define HIDC_HALT1                      0x80a9045e    // IDD_OPT_MACRO [English (United States)]
 #define HIDC_HALT2                      0x80a9045f    // IDD_OPT_MACRO [English (United States)]
 #define HIDC_HEADER                     0x81b3063e    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
-#define HIDC_HEADER_OPTS                0x80f004a5    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
+#define HIDC_HEADER_OPTS                0x81fb04a5    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_HEX                        0x807503e9    // IDD_CALC
 #define HIDC_HEX_HIST                   0x807505c7    // IDD_CALC
 #define HIDC_HEX_LIST_SIZE              0x819b04cb    // IDD_OPT_HISTORY [English (United States)]
@@ -517,7 +518,7 @@
 #define HIDC_VARS                       0x807505c9    // IDD_CALC
 #define HIDC_VERSION                    0x80e50478    // IDD_EMAIL
 #define HIDC_VERTBUFFER                 0x81360446    // IDD_OPT_WINEDIT [English (United States)]
-#define HIDC_WATERMARK                  0x81b30439    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
+#define HIDC_WATERMARK                  0x81b30642    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_WATERMARK_OPTS             0x81b304ab    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_WEB_ADDRESS                0x8119053d    // IDD_DFFD_GLOBAL
 #define HIDC_WEB_CHECK                  0x8119053e    // IDD_DFFD_GLOBAL

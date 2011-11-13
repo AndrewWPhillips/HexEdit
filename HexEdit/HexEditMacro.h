@@ -349,6 +349,13 @@ enum checksum_type  // used with km_checksum
 	CHECKSUM_SHA256,
 	CHECKSUM_SHA384,
 	CHECKSUM_SHA512,
+
+	// General CRC implementations (parameters supplied)
+	// Note enum value minus 100 is the bit size.  We leave space for many other sizes in future (4,5,6,12,24,40 etc)
+	CHECKSUM_CRC_4BIT = 104,
+	CHECKSUM_CRC_8BIT = 108,
+	CHECKSUM_CRC_16BIT = 116,
+	CHECKSUM_CRC_32BIT = 132,
 };
 
 struct mouse_sel

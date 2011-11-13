@@ -599,7 +599,8 @@ BEGIN
             MENUITEM "C&RC 16",                     ID_CRC16
             MENUITEM "CRC CCIT&T",                  ID_CRC_CCITT
             MENUITEM "CRC CCITT &B",                ID_CRC_CCITT_B
-            MENUITEM "&CRC 32",                     ID_CRC32
+            MENUITEM "CRC 32",                      ID_CRC32
+            MENUITEM "&CRC...",                     ID_CRC_GENERAL
         END
         POPUP "Digest"
         BEGIN
@@ -908,7 +909,7 @@ BEGIN
             MENUITEM "Support Forums",              ID_HELP_FORUM
             MENUITEM "Web Help",                    ID_HELP_WEB
             MENUITEM SEPARATOR
-            MENUITEM "HexEdit Pro Home Page",      ID_HELP_HOMEPAGE
+            MENUITEM "HexEdit Pro Home Page",       ID_HELP_HOMEPAGE
             MENUITEM "Register",                    ID_HELP_REGISTER
         END
         MENUITEM "&Email Support...",           ID_HELP_EMAIL
@@ -2444,6 +2445,27 @@ BEGIN
     EDITTEXT        IDC_STATS_SHA1,29,44,189,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_STATS_SHA1
 END
 
+IDD_CRC DIALOGEX 0, 0, 202, 110
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "General CRC"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    RTEXT           "Bits:",IDC_STATIC,6,10,75,8
+    COMBOBOX        IDC_CRC_BITS,88,8,31,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Select",IDC_CRC_SELECT,129,8,64,14,0,0,HIDC_CRC_SELECT
+    RTEXT           "Truncated  polynomial:",IDC_STATIC,6,28,75,8
+    EDITTEXT        IDC_CRC_POLY,88,25,53,14,ES_AUTOHSCROLL
+    RTEXT           "Initial  remainder:",IDC_STATIC,6,46,75,8
+    EDITTEXT        IDC_CRC_INITREM,88,43,53,14,ES_AUTOHSCROLL
+    RTEXT           "Final XOR:",IDC_STATIC,6,64,75,8
+    EDITTEXT        IDC_CRC_FINALXOR,88,61,53,14,ES_AUTOHSCROLL
+    CONTROL         "Reflect Input",IDC_CRC_REFLECTIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,48,80,57,10
+    CONTROL         "Reflect Remainder",IDC_CRC_REFLECTREM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,48,93,75,10
+    DEFPUSHBUTTON   "OK",IDOK,146,72,46,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,146,90,46,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2691,6 +2713,19 @@ BEGIN
     IDC_INVALID_CHAR, 0x403, 19, 0
 0x6552, 0x6c70, 0x6361, 0x6d65, 0x6e65, 0x2074, 0x2b55, 0x6666, 0x6466, 
 "\000" 
+    0
+END
+
+IDD_CRC DLGINIT
+BEGIN
+    IDC_CRC_BITS, 0x403, 2, 0
+0x0034, 
+    IDC_CRC_BITS, 0x403, 2, 0
+0x0038, 
+    IDC_CRC_BITS, 0x403, 3, 0
+0x3631, "\000" 
+    IDC_CRC_BITS, 0x403, 3, 0
+0x3233, "\000" 
     0
 END
 
@@ -3132,6 +3167,7 @@ BEGIN
     ID_MACRO_MESSAGE        "Record a message that is shown in macro playback\nMacro Message"
     ID_CRC16                "Stores CRC 16 of selection in the calculator\nCRC 16"
     ID_CRC32                "Stores CRC 32 of selection in the calculator\nCRC 32"
+    ID_CRC_GENERAL          "Allows entering of all CRC parameters to generate any CRC\nAny CRC"
     ID_CHECKSUM8            "Stores the 8 bit checksum in the calculator\n8 Bit Checksum"
 END
 
@@ -3431,12 +3467,12 @@ BEGIN
     IDS_BOOKMARK_NOFILE     "Adding a bookmark requires an open file"
     IDS_BOOKMARK_NOTFOUND   "Bookmark not found"
     IDS_BOOKMARK_FILENOTFOUND "The file containing the bookmark was not found"
-    IDS_CALC_NEGATIVE_UNSIGNED "Negative value will cause overflow"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_BOOKMARK_EXISTS     "This bookmark already exists"
+    IDS_CALC_NEGATIVE_UNSIGNED "Negative value will cause overflow"
     IDS_BOOKMARKS_NONE_DELETED "No bookmarks were affected"
     IDS_VARS_CLEAR          "Deleting all variables"
     IDS_BOOKMARKS_DELETED   "Bookmarks deleted or moved"

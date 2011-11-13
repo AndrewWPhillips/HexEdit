@@ -137,6 +137,36 @@ void * crc_ccitt_b_init();
 void crc_ccitt_b_update(void * handle, const void *buf, size_t len);
 unsigned short crc_ccitt_b_final(void * handle);
 
+// General CRC
+struct crc_params
+{
+	int bits;               // Number of bits (taken from bits_idx_)
+	int dummy;              // not used
+	unsigned __int64 poly;
+	unsigned __int64  init_rem;
+	unsigned __int64  final_xor;
+	BOOL reflect_in;
+	BOOL reflect_rem;
+};
+
+void load_crc_params(struct crc_params *par, LPCTSTR strParams);
+
+void * crc_4bit_init(const struct crc_params * par);
+void crc_4bit_update(void *hh, const void *buf, size_t len);
+unsigned char crc_4bit_final(void *hh);
+
+void * crc_8bit_init(const struct crc_params * par);
+void crc_8bit_update(void *hh, const void *buf, size_t len);
+unsigned char crc_8bit_final(void *hh);
+
+void * crc_16bit_init(const struct crc_params * par);
+void crc_16bit_update(void *hh, const void *buf, size_t len);
+unsigned short crc_16bit_final(void *hh);
+
+void * crc_32bit_init(const struct crc_params * par);
+void crc_32bit_update(void *hh, const void *buf, size_t len);
+unsigned long crc_32bit_final(void *hh);
+
 // Encryption routines NOTE: also see RegisterDlg.cpp
 void set_key(const char *pp, size_t len);
 void encrypt(void *buffer, size_t len);

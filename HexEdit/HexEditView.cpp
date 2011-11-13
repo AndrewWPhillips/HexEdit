@@ -34,6 +34,7 @@
 #include "Bookmark.h"
 #include "NewFile.h"
 #include "Password.h"
+#include "GeneralCRC.h"
 
 #include "Boyer.h"
 #include "SystemSound.h"
@@ -246,6 +247,7 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_HEX_TEXT, OnUpdateExportHexText)
 	ON_COMMAND(ID_CRC16, OnCrc16)
 	ON_COMMAND(ID_CRC32, OnCrc32)
+	ON_COMMAND(ID_CRC_GENERAL, OnCrcGeneral)
 	ON_COMMAND(ID_CRC_CCITT, OnCrcCcitt)
 	ON_COMMAND(ID_CRC_CCITT_B, OnCrcCcittB)
 	ON_COMMAND(ID_CRC_XMODEM, OnCrcXmodem)
@@ -295,6 +297,7 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_APPENDFILE, OnUpdateClipboard)
 	ON_UPDATE_COMMAND_UI(ID_CRC16, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC32, OnUpdateByteNZ)
+	ON_UPDATE_COMMAND_UI(ID_CRC_GENERAL, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT_B, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC_XMODEM, OnUpdateByteNZ)
@@ -17171,6 +17174,13 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	void * hh;
 	switch (op)
 	{
+	case CHECKSUM_8:
+	case CHECKSUM_16:
+	case CHECKSUM_32:
+	case CHECKSUM_64:
+		val = 0;
+		break;
+
 	case CHECKSUM_CRC16:
 		hh = crc_16_init();
 		break;
@@ -17186,12 +17196,20 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	case CHECKSUM_CRC32:
 		hh = crc_32_init();
 		break;
-	case CHECKSUM_8:
-	case CHECKSUM_16:
-	case CHECKSUM_32:
-	case CHECKSUM_64:
-		val = 0;
+
+	case CHECKSUM_CRC_4BIT:
+		hh = crc_4bit_init(&pv->crc_params_);
 		break;
+	case CHECKSUM_CRC_8BIT:
+		hh = crc_8bit_init(&pv->crc_params_);
+		break;
+	case CHECKSUM_CRC_16BIT:
+		hh = crc_16bit_init(&pv->crc_params_);
+		break;
+	case CHECKSUM_CRC_32BIT:
+		hh = crc_32bit_init(&pv->crc_params_);
+		break;
+
 	default:
 		ASSERT(0);
 	}
@@ -17214,6 +17232,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 					val += *pp;
 			}
 			break;
+
 		case CHECKSUM_CRC16:
 			crc_16_update(hh, buf, len);
 			break;
@@ -17228,6 +17247,19 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 			break;
 		case CHECKSUM_CRC32:
 			crc_32_update(hh, buf, len);
+			break;
+
+		case CHECKSUM_CRC_4BIT:
+			crc_4bit_update(hh, buf, len);
+			break;
+		case CHECKSUM_CRC_8BIT:
+			crc_8bit_update(hh, buf, len);
+			break;
+		case CHECKSUM_CRC_16BIT:
+			crc_16bit_update(hh, buf, len);
+			break;
+		case CHECKSUM_CRC_32BIT:
+			crc_32bit_update(hh, buf, len);
 			break;
 		}
 
@@ -17258,6 +17290,19 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		break;
 	case CHECKSUM_CRC32:
 		val = T(crc_32_final(hh));
+		break;
+
+	case CHECKSUM_CRC_4BIT:
+		val = T(crc_4bit_final(hh));
+		break;
+	case CHECKSUM_CRC_8BIT:
+		val = T(crc_8bit_final(hh));
+		break;
+	case CHECKSUM_CRC_16BIT:
+		val = T(crc_16bit_final(hh));
+		break;
+	case CHECKSUM_CRC_32BIT:
+		val = T(crc_32bit_final(hh));
 		break;
 	}
 
@@ -17322,6 +17367,35 @@ void CHexEditView::OnCrcXmodem()
 void CHexEditView::OnCrc32()
 {
 	DoChecksum<DWORD>(this, CHECKSUM_CRC32, "CRC 32");
+}
+
+void CHexEditView::OnCrcGeneral()
+{
+	CGeneralCRC dlg;
+	if (dlg.DoModal() == IDOK)
+	{
+		CString params = dlg.SaveParams();
+		::load_crc_params(&crc_params_, params);
+		switch (crc_params_.bits)
+		{
+		case 4:
+			DoChecksum<char>(this, CHECKSUM_CRC_4BIT, "CRC (4 BIT)");
+			break;
+		case 8:
+			DoChecksum<unsigned char>(this, CHECKSUM_CRC_8BIT, "CRC (8 BIT)");
+			break;
+		case 16:
+			DoChecksum<unsigned short>(this, CHECKSUM_CRC_16BIT, "CRC (16 BIT)");
+			break;
+		case 32:
+			DoChecksum<unsigned int>(this, CHECKSUM_CRC_32BIT, "CRC (32 BIT)");
+			break;
+		default:
+			assert(0); // The code should prevent this from happening
+			TaskMessageBox("Invalid CRC Bits", "CRC calculations do not support this number of bits");
+			break;
+		}
+	}
 }
 
 #if 0  // Replace old MD5 with Boost version

@@ -384,6 +384,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GeneralCRC.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\HexEdit.cpp"
 				>
 			</File>
@@ -485,6 +489,10 @@
 			</File>
 			<File
 				RelativePath=".\Password.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Preview.cpp"
 				>
 			</File>
 			<File
@@ -821,6 +829,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GeneralCRC.h"
+				>
+			</File>
+			<File
 				RelativePath=".\HexEdit.h"
 				>
 			</File>
@@ -894,6 +906,10 @@
 			</File>
 			<File
 				RelativePath=".\Password.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Preview.h"
 				>
 			</File>
 			<File
@@ -1516,11 +1532,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File

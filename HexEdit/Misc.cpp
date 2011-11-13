@@ -2948,6 +2948,116 @@ unsigned short crc_xmodem(const void *buf, size_t len)
 	crc_xmodem_update(hh, buf, len);
 	return crc_xmodem_final(hh);
 }
+
+// General CRC routines
+void load_crc_params(struct crc_params *par, LPCTSTR strParams)
+{
+	CString ss;
+
+	assert(par != NULL);
+	AfxExtractSubString(ss, strParams, 0, '|');
+	par->bits = atoi(ss);
+
+	AfxExtractSubString(ss, strParams, 1, '|');
+	par->poly = _strtoui64(ss, NULL, 16);
+
+	AfxExtractSubString(ss, strParams, 2, '|');
+	par->init_rem = _strtoui64(ss, NULL, 16);
+
+	AfxExtractSubString(ss, strParams, 3, '|');
+	par->final_xor = _strtoui64(ss, NULL, 16);
+
+	AfxExtractSubString(ss, strParams, 4, '|');
+	par->reflect_in = atoi(ss);
+
+	AfxExtractSubString(ss, strParams, 5, '|');
+	par->reflect_rem = atoi(ss);
+}
+
+void * crc_4bit_init(const struct crc_params * par)
+{
+	return new boost::crc_basic<4>((unsigned char)par->poly, 
+	                               (unsigned char)par->init_rem, (unsigned char)par->final_xor, 
+	                               par->reflect_in==TRUE, par->reflect_rem==TRUE);
+}
+
+void crc_4bit_update(void *hh, const void *buf, size_t len)
+{
+	boost::crc_basic<4> * pcrc = (boost::crc_basic<4> *)hh;
+	pcrc->process_bytes(buf, len);
+}
+
+unsigned char crc_4bit_final(void *hh)
+{
+	boost::crc_basic<4> * pcrc = (boost::crc_basic<4> *)hh;
+	unsigned char retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
+
+void * crc_8bit_init(const struct crc_params * par)
+{
+	return new boost::crc_basic<8>((unsigned char)par->poly, 
+	                               (unsigned char)par->init_rem, (unsigned char)par->final_xor, 
+	                               par->reflect_in==TRUE, par->reflect_rem==TRUE);
+}
+
+void crc_8bit_update(void *hh, const void *buf, size_t len)
+{
+	boost::crc_basic<8> * pcrc = (boost::crc_basic<8> *)hh;
+	pcrc->process_bytes(buf, len);
+}
+
+unsigned char crc_8bit_final(void *hh)
+{
+	boost::crc_basic<8> * pcrc = (boost::crc_basic<8> *)hh;
+	unsigned char retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
+
+void * crc_16bit_init(const struct crc_params * par)
+{
+	return new boost::crc_basic<16>((unsigned short)par->poly, 
+	                               (unsigned short)par->init_rem, (unsigned short)par->final_xor, 
+	                               par->reflect_in==TRUE, par->reflect_rem==TRUE);
+}
+
+void crc_16bit_update(void *hh, const void *buf, size_t len)
+{
+	boost::crc_basic<16> * pcrc = (boost::crc_basic<16> *)hh;
+	pcrc->process_bytes(buf, len);
+}
+
+unsigned short crc_16bit_final(void *hh)
+{
+	boost::crc_basic<16> * pcrc = (boost::crc_basic<16> *)hh;
+	unsigned short retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
+
+void * crc_32bit_init(const struct crc_params * par)
+{
+	return new boost::crc_basic<32>((unsigned long)par->poly, 
+	                               (unsigned long)par->init_rem, (unsigned long)par->final_xor, 
+	                               par->reflect_in==TRUE, par->reflect_rem==TRUE);
+}
+
+void crc_32bit_update(void *hh, const void *buf, size_t len)
+{
+	boost::crc_basic<32> * pcrc = (boost::crc_basic<32> *)hh;
+	pcrc->process_bytes(buf, len);
+}
+
+unsigned long crc_32bit_final(void *hh)
+{
+	boost::crc_basic<32> * pcrc = (boost::crc_basic<32> *)hh;
+	unsigned long retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
+
 #endif
 
 // Apparently the following is the common but incorrect implementation
