@@ -1247,6 +1247,9 @@
 #define IDC_CRC_FINALXOR                1652
 #define IDC_CRC_REFLECTIN               1653
 #define IDC_CRC_SELECT                  1654
+#define IDC_CRC_SAVE                    1655
+#define IDC_CRC_DELETE                  1656
+#define IDC_CRC_NAME                    1657
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1773,7 +1776,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        510
 #define _APS_NEXT_COMMAND_VALUE         39188
-#define _APS_NEXT_CONTROL_VALUE         1655
+#define _APS_NEXT_CONTROL_VALUE         1658
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

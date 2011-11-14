@@ -2445,25 +2445,29 @@ BEGIN
     EDITTEXT        IDC_STATS_SHA1,29,44,189,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_STATS_SHA1
 END
 
-IDD_CRC DIALOGEX 0, 0, 202, 110
+IDD_CRC DIALOGEX 0, 0, 202, 129
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "General CRC"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    RTEXT           "Bits:",IDC_STATIC,6,10,75,8
-    COMBOBOX        IDC_CRC_BITS,88,8,31,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Select",IDC_CRC_SELECT,129,8,64,14,0,0,HIDC_CRC_SELECT
-    RTEXT           "Truncated  polynomial:",IDC_STATIC,6,28,75,8
-    EDITTEXT        IDC_CRC_POLY,88,25,53,14,ES_AUTOHSCROLL
-    RTEXT           "Initial  remainder:",IDC_STATIC,6,46,75,8
-    EDITTEXT        IDC_CRC_INITREM,88,43,53,14,ES_AUTOHSCROLL
-    RTEXT           "Final XOR:",IDC_STATIC,6,64,75,8
-    EDITTEXT        IDC_CRC_FINALXOR,88,61,53,14,ES_AUTOHSCROLL
-    CONTROL         "Reflect Input",IDC_CRC_REFLECTIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,48,80,57,10
-    CONTROL         "Reflect Remainder",IDC_CRC_REFLECTREM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,48,93,75,10
-    DEFPUSHBUTTON   "OK",IDOK,146,72,46,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,146,90,46,14
+    RTEXT           "Name:",IDC_STATIC,6,10,75,8
+    EDITTEXT        IDC_CRC_NAME,88,7,53,14,ES_AUTOHSCROLL | ES_READONLY
+    RTEXT           "Bits:",IDC_STATIC,6,28,75,8
+    COMBOBOX        IDC_CRC_BITS,88,26,31,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Select",IDC_CRC_SELECT,148,6,46,14,0,0,HIDC_CRC_SELECT
+    PUSHBUTTON      "Save",IDC_CRC_SAVE,148,22,46,14
+    PUSHBUTTON      "Delete",IDC_CRC_DELETE,148,38,46,14
+    RTEXT           "Truncated  polynomial:",IDC_STATIC,6,46,75,8
+    EDITTEXT        IDC_CRC_POLY,88,43,53,14,ES_AUTOHSCROLL
+    RTEXT           "Initial  remainder:",IDC_STATIC,6,64,75,8
+    EDITTEXT        IDC_CRC_INITREM,88,61,53,14,ES_AUTOHSCROLL
+    RTEXT           "Final XOR:",IDC_STATIC,6,82,75,8
+    EDITTEXT        IDC_CRC_FINALXOR,88,79,53,14,ES_AUTOHSCROLL
+    CONTROL         "Reflect Input",IDC_CRC_REFLECTIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,48,98,57,10
+    CONTROL         "Reflect Remainder",IDC_CRC_REFLECTREM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,48,111,75,10
+    DEFPUSHBUTTON   "OK",IDOK,148,90,46,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,148,108,46,14
 END
 
 
@@ -3165,9 +3169,9 @@ BEGIN
     ID_KEEP_TIMES           "Keep same file modification time, attributes etc when saving\nKeep Same Time"
     ID_VIEW_VIEWBAR         "Show or hide the Standard toolbar\nToggle ToolBar"
     ID_MACRO_MESSAGE        "Record a message that is shown in macro playback\nMacro Message"
+    ID_CRC_GENERAL          "Allows entering of all CRC parameters to generate any CRC\nAny CRC"
     ID_CRC16                "Stores CRC 16 of selection in the calculator\nCRC 16"
     ID_CRC32                "Stores CRC 32 of selection in the calculator\nCRC 32"
-    ID_CRC_GENERAL          "Allows entering of all CRC parameters to generate any CRC\nAny CRC"
     ID_CHECKSUM8            "Stores the 8 bit checksum in the calculator\n8 Bit Checksum"
 END
 
