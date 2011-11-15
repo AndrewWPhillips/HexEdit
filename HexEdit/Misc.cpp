@@ -2745,6 +2745,26 @@ DWORD crc_32_final(void *hh)
 	return retval;
 }
 
+typedef boost::crc_optimal<32, 0x04C11DB7, 0xFFFFffff, 0, false, false> crc_32_mpeg2_type;
+
+void * crc_32_mpeg2_init()
+{
+	return new crc_32_mpeg2_type;
+}
+
+void crc_32_mpeg2_update(void *hh, const void *buf, size_t len)
+{
+	crc_32_mpeg2_type *pcrc = (crc_32_mpeg2_type *)hh;
+	pcrc->process_bytes(buf, len);
+}
+
+DWORD crc_32_mpeg2_final(void *hh)
+{
+	crc_32_mpeg2_type *pcrc = (crc_32_mpeg2_type *)hh;
+	DWORD retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
 #else  // BOOST_CRC
 
 static DWORD crc_32_tab[] = { /* CRC polynomial 0xedb88320 */
@@ -2828,18 +2848,39 @@ DWORD crc_32(const void *buf, size_t len)
 
 #ifdef BOOST_CRC  // Use Boost for CRC CCITT
 
-void * crc_ccitt_init()
+typedef boost::crc_optimal<16, 0x1021, 0, 0, true, true>  crc_ccitt_t_type;
+
+void * crc_ccitt_t_init()
+{
+	return new crc_ccitt_t_type;
+}
+
+void crc_ccitt_t_update(void *hh, const void *buf, size_t len)
+{
+	crc_ccitt_t_type *pcrc = (crc_ccitt_t_type *)hh;
+	pcrc->process_bytes(buf, len);
+}
+
+unsigned short crc_ccitt_t_final(void *hh)
+{
+	crc_ccitt_t_type *pcrc = (crc_ccitt_t_type *)hh;
+	unsigned short retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
+
+void * crc_ccitt_f_init()
 {
 	return new boost::crc_ccitt_type;
 }
 
-void crc_ccitt_update(void *hh, const void *buf, size_t len)
+void crc_ccitt_f_update(void *hh, const void *buf, size_t len)
 {
 	boost::crc_ccitt_type *pcrc = (boost::crc_ccitt_type *)hh;
 	pcrc->process_bytes(buf, len);
 }
 
-unsigned short crc_ccitt_final(void *hh)
+unsigned short crc_ccitt_f_final(void *hh)
 {
 	boost::crc_ccitt_type *pcrc = (boost::crc_ccitt_type *)hh;
 	unsigned short retval = pcrc->checksum();
@@ -2892,14 +2933,14 @@ static WORD crctab[256] = { /* as calculated by initcrctab() */
 
 //static unsigned short crc_ccitt_value;
 
-void * crc_ccitt_init()
+void * crc_ccitt_f_init()
 {
 	unsigned short * hh = new unsigned short;
 	*hh = -1;
 	return hh;
 }
 
-void crc_ccitt_update(void * hh, const void *buf, size_t len)
+void crc_ccitt_f_update(void * hh, const void *buf, size_t len)
 {
 	const unsigned char *cp = (const unsigned char *)buf;
 
@@ -2907,7 +2948,7 @@ void crc_ccitt_update(void * hh, const void *buf, size_t len)
 		*(unsigned short *)hh = (*(unsigned short *)hh<<8) ^ crctab[(*(unsigned short *)hh>>(16-8)) ^ *cp++];
 }
 
-unsigned short crc_ccitt_final(void * hh)
+unsigned short crc_f_ccitt_final(void * hh)
 {
 	unsigned short retval = *(unsigned short *)hh;
 	delete (unsigned short *)hh;
@@ -2915,13 +2956,6 @@ unsigned short crc_ccitt_final(void * hh)
 }
 
 #endif  // BOOST_CRC
-
-unsigned short crc_ccitt(const void *buf, size_t len)
-{
-	void * hh = crc_ccitt_init();
-	crc_ccitt_update(hh, buf, len);
-	return crc_ccitt_final(hh);
-}
 
 #ifdef BOOST_CRC  // Use Boost for XMODEM CRC
 void * crc_xmodem_init()
@@ -2972,6 +3006,9 @@ void load_crc_params(struct crc_params *par, LPCTSTR strParams)
 
 	AfxExtractSubString(ss, strParams, 5, '|');
 	par->reflect_rem = atoi(ss);
+
+	AfxExtractSubString(ss, strParams, 6, '|');
+	par->check = _strtoui64(ss, NULL, 16);
 }
 
 void * crc_4bit_init(const struct crc_params * par)
@@ -3012,6 +3049,48 @@ unsigned char crc_8bit_final(void *hh)
 {
 	boost::crc_basic<8> * pcrc = (boost::crc_basic<8> *)hh;
 	unsigned char retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
+
+void * crc_10bit_init(const struct crc_params * par)
+{
+	return new boost::crc_basic<10>((unsigned short)par->poly, 
+	                               (unsigned short)par->init_rem, (unsigned short)par->final_xor, 
+	                               par->reflect_in==TRUE, par->reflect_rem==TRUE);
+}
+
+void crc_10bit_update(void *hh, const void *buf, size_t len)
+{
+	boost::crc_basic<10> * pcrc = (boost::crc_basic<10> *)hh;
+	pcrc->process_bytes(buf, len);
+}
+
+unsigned short crc_10bit_final(void *hh)
+{
+	boost::crc_basic<10> * pcrc = (boost::crc_basic<10> *)hh;
+	unsigned short retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
+
+void * crc_12bit_init(const struct crc_params * par)
+{
+	return new boost::crc_basic<12>((unsigned short)par->poly, 
+	                               (unsigned short)par->init_rem, (unsigned short)par->final_xor, 
+	                               par->reflect_in==TRUE, par->reflect_rem==TRUE);
+}
+
+void crc_12bit_update(void *hh, const void *buf, size_t len)
+{
+	boost::crc_basic<12> * pcrc = (boost::crc_basic<12> *)hh;
+	pcrc->process_bytes(buf, len);
+}
+
+unsigned short crc_12bit_final(void *hh)
+{
+	boost::crc_basic<12> * pcrc = (boost::crc_basic<12> *)hh;
+	unsigned short retval = pcrc->checksum();
 	delete pcrc;
 	return retval;
 }
@@ -3058,19 +3137,40 @@ unsigned long crc_32bit_final(void *hh)
 	return retval;
 }
 
+void * crc_64bit_init(const struct crc_params * par)
+{
+	return new boost::crc_basic<64>(par->poly, 
+	                               par->init_rem, par->final_xor, 
+	                               par->reflect_in==TRUE, par->reflect_rem==TRUE);
+}
+
+void crc_64bit_update(void *hh, const void *buf, size_t len)
+{
+	boost::crc_basic<64> * pcrc = (boost::crc_basic<64> *)hh;
+	pcrc->process_bytes(buf, len);
+}
+
+unsigned __int64 crc_64bit_final(void *hh)
+{
+	boost::crc_basic<64> * pcrc = (boost::crc_basic<64> *)hh;
+	unsigned __int64 retval = pcrc->checksum();
+	delete pcrc;
+	return retval;
+}
+
 #endif
 
 // Apparently the following is the common but incorrect implementation
 #define           poly     0x1021          /* crc-ccitt mask */ 
 
-void * crc_ccitt_b_init()
+void * crc_ccitt_aug_init()
 {
 	unsigned short * hh = new unsigned short;
 	*hh = -1;
 	return hh;
 }
 
-void crc_ccitt_b_update(void * hh, const void *buf, size_t len)
+void crc_ccitt_aug_update(void * hh, const void *buf, size_t len)
 {
 	const unsigned char *cp = (const unsigned char *)buf;
 	const unsigned char *end = cp + len;
@@ -3113,7 +3213,7 @@ void crc_ccitt_b_update(void * hh, const void *buf, size_t len)
 	}
 }
 
-unsigned short crc_ccitt_b_final(void *hh)
+unsigned short crc_ccitt_aug_final(void *hh)
 {
 	unsigned short ii, xor_flag; 
 
@@ -3133,13 +3233,6 @@ unsigned short crc_ccitt_b_final(void *hh)
 	unsigned short retval = *(unsigned short *)hh;
 	delete (unsigned short *)hh;
 	return retval;
-}
-
-unsigned short crc_ccitt_b(const void *buf, size_t len)
-{
-	void * hh = crc_ccitt_b_init();
-	crc_ccitt_b_update(hh, buf, len);
-	return crc_ccitt_b_final(hh);
 }
 
 

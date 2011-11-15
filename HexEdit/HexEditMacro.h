@@ -336,11 +336,13 @@ enum checksum_type  // used with km_checksum
 	CHECKSUM_64,
 
 	// CRCs
-	CHECKSUM_CRC_CCITT = 11,
+	CHECKSUM_CRC_CCITT_F = 11,
 	CHECKSUM_CRC32,
 	CHECKSUM_CRC16,
-	CHECKSUM_CRC_CCITT_B,
+	CHECKSUM_CRC_CCITT_AUG,
 	CHECKSUM_CRC_XMODEM,
+	CHECKSUM_CRC_CCITT_T,
+	CHECKSUM_CRC32_MPEG2,
 
 	// Cryptographic checksums (hash codes)
 	CHECKSUM_MD5 = 21,
@@ -351,11 +353,14 @@ enum checksum_type  // used with km_checksum
 	CHECKSUM_SHA512,
 
 	// General CRC implementations (parameters supplied)
-	// Note enum value minus 100 is the bit size.  We leave space for many other sizes in future (4,5,6,12,24,40 etc)
+	// Note enum value minus 100 is the bit size.  We leave space for many other sizes in future (5,6,7,24,40 etc)
 	CHECKSUM_CRC_4BIT = 104,
 	CHECKSUM_CRC_8BIT = 108,
+	CHECKSUM_CRC_10BIT = 110,
+	CHECKSUM_CRC_12BIT = 112,
 	CHECKSUM_CRC_16BIT = 116,
 	CHECKSUM_CRC_32BIT = 132,
+	CHECKSUM_CRC_64BIT = 164,
 };
 
 struct mouse_sel

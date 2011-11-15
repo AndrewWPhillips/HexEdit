@@ -112,6 +112,7 @@ unsigned short crc_ccitt(const void *buf, size_t len);
 unsigned long crc_32(const void *buffer, size_t len);
 
 #ifdef BOOST_CRC
+// Use the following for CRC calcs that are too big to do all at once
 unsigned short crc_16(const void *buffer, size_t len);  // Boost crc 16
 void * crc_16_init();
 void crc_16_update(void * handle, const void *buf, size_t len);
@@ -121,32 +122,41 @@ unsigned short crc_xmodem(const void *buf, size_t len);
 void * crc_xmodem_init();
 void crc_xmodem_update(void * handle, const void *buf, size_t len);
 unsigned short crc_xmodem_final(void * handle);
+
+void * crc_ccitt_f_init();
+void crc_ccitt_f_update(void *, const void *buf, size_t len);
+unsigned short crc_ccitt_f_final(void *);
+
+void * crc_ccitt_aug_init();
+void crc_ccitt_aug_update(void * handle, const void *buf, size_t len);
+unsigned short crc_ccitt_aug_final(void * handle);
+
+void * crc_ccitt_t_init();
+void crc_ccitt_t_update(void *, const void *buf, size_t len);
+unsigned short crc_ccitt_t_final(void *);
 #endif
 
-// Use the following for CRC calcs that are too big to do all at once
 void * crc_32_init();
 void crc_32_update(void * handle, const void *buf, size_t len);
 unsigned long crc_32_final(void * handle);
 
-void * crc_ccitt_init();
-void crc_ccitt_update(void *, const void *buf, size_t len);
-unsigned short crc_ccitt_final(void *);
-
-unsigned short crc_ccitt_b(const void *buf, size_t len);  // not the real CRC CCITT
-void * crc_ccitt_b_init();
-void crc_ccitt_b_update(void * handle, const void *buf, size_t len);
-unsigned short crc_ccitt_b_final(void * handle);
+void * crc_32_mpeg2_init();
+void crc_32_mpeg2_update(void * handle, const void *buf, size_t len);
+unsigned long crc_32_mpeg2_final(void * handle);
 
 // General CRC
 struct crc_params
 {
-	int bits;               // Number of bits (taken from bits_idx_)
+	int bits;               // Number of bits gnerated by CRC
 	int dummy;              // not used
 	unsigned __int64 poly;
 	unsigned __int64  init_rem;
 	unsigned __int64  final_xor;
 	BOOL reflect_in;
 	BOOL reflect_rem;
+	// This final value is not an actual parameter to the algorithm but 
+	// can be used to check the result when the CRC is performed on "123456789"
+	unsigned __int64 check;
 };
 
 void load_crc_params(struct crc_params *par, LPCTSTR strParams);
@@ -159,6 +169,14 @@ void * crc_8bit_init(const struct crc_params * par);
 void crc_8bit_update(void *hh, const void *buf, size_t len);
 unsigned char crc_8bit_final(void *hh);
 
+void * crc_10bit_init(const struct crc_params * par);
+void crc_10bit_update(void *hh, const void *buf, size_t len);
+unsigned short crc_10bit_final(void *hh);
+
+void * crc_12bit_init(const struct crc_params * par);
+void crc_12bit_update(void *hh, const void *buf, size_t len);
+unsigned short crc_12bit_final(void *hh);
+
 void * crc_16bit_init(const struct crc_params * par);
 void crc_16bit_update(void *hh, const void *buf, size_t len);
 unsigned short crc_16bit_final(void *hh);
@@ -166,6 +184,10 @@ unsigned short crc_16bit_final(void *hh);
 void * crc_32bit_init(const struct crc_params * par);
 void crc_32bit_update(void *hh, const void *buf, size_t len);
 unsigned long crc_32bit_final(void *hh);
+
+void * crc_64bit_init(const struct crc_params * par);
+void crc_64bit_update(void *hh, const void *buf, size_t len);
+unsigned __int64 crc_64bit_final(void *hh);
 
 // Encryption routines NOTE: also see RegisterDlg.cpp
 void set_key(const char *pp, size_t len);

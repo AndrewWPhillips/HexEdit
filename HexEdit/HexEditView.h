@@ -529,9 +529,11 @@ public:
 	afx_msg void OnUpdateExportHexText(CCmdUI* pCmdUI);
 	afx_msg void OnCrc16();
 	afx_msg void OnCrc32();
+	afx_msg void OnCrc32Mpeg2();
 	afx_msg void OnCrcGeneral();
-	afx_msg void OnCrcCcitt();
-	afx_msg void OnCrcCcittB();
+	afx_msg void OnCrcCcittF();
+	afx_msg void OnCrcCcittT();
+	afx_msg void OnCrcCcittAug();
 	afx_msg void OnCrcXmodem();
 	afx_msg void OnBookmarksHide();
 	afx_msg void OnUpdateBookmarksHide(CCmdUI* pCmdUI);

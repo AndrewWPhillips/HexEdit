@@ -1435,8 +1435,8 @@
 #define ID_CHECKSUM16                   32992
 #define ID_CHECKSUM32                   32993
 #define ID_CHECKSUM64                   32994
-#define ID_CRC_CCITT                    32995
-#define ID_CRC_CCITT_B                  32996
+#define ID_CRC_CCITT_F                  32995
+#define ID_CRC_CCITT_AUG                32996
 #define ID_CRC_XMODEM                   32997
 #define ID_RECENT_FILES                 32998
 #define ID_BANNED                       32999
@@ -1502,12 +1502,14 @@
 #define ID_SHA256                       33060
 #define ID_SHA384                       33061
 #define ID_SHA512                       33062
-#define ID_VIEW_NAVBAR                  33067
-#define ID_VIEW_FORMATBAR               33068
+#define ID_CRC_CCITT_T                  33067
+#define ID_CRC32_MPEG2                  33068
 #define ID_FIND_NEXT                    33070
 #define ID_BOOKMARK_ALL                 33071
 #define ID_REPLACE                      33072
 #define ID_REPLACE_ALL                  33073
+#define ID_VIEW_NAVBAR                  33074
+#define ID_VIEW_FORMATBAR               33075
 #define IDC_FONTNAME                    33076
 #define IDC_FONTSIZE                    33077
 #define ID_COLUMN_DEC                   33078

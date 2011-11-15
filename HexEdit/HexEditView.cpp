@@ -247,9 +247,11 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_HEX_TEXT, OnUpdateExportHexText)
 	ON_COMMAND(ID_CRC16, OnCrc16)
 	ON_COMMAND(ID_CRC32, OnCrc32)
+	ON_COMMAND(ID_CRC32_MPEG2, OnCrc32Mpeg2)
 	ON_COMMAND(ID_CRC_GENERAL, OnCrcGeneral)
-	ON_COMMAND(ID_CRC_CCITT, OnCrcCcitt)
-	ON_COMMAND(ID_CRC_CCITT_B, OnCrcCcittB)
+	ON_COMMAND(ID_CRC_CCITT_F, OnCrcCcittF)
+	ON_COMMAND(ID_CRC_CCITT_AUG, OnCrcCcittAug)
+	ON_COMMAND(ID_CRC_CCITT_T, OnCrcCcittT)
 	ON_COMMAND(ID_CRC_XMODEM, OnCrcXmodem)
 	ON_COMMAND(ID_BOOKMARKS_HIDE, OnBookmarksHide)
 	ON_UPDATE_COMMAND_UI(ID_BOOKMARKS_HIDE, OnUpdateBookmarksHide)
@@ -297,9 +299,11 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_APPENDFILE, OnUpdateClipboard)
 	ON_UPDATE_COMMAND_UI(ID_CRC16, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC32, OnUpdateByteNZ)
+	ON_UPDATE_COMMAND_UI(ID_CRC32_MPEG2, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC_GENERAL, OnUpdateByteNZ)
-	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT, OnUpdateByteNZ)
-	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT_B, OnUpdateByteNZ)
+	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT_F, OnUpdateByteNZ)
+	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT_AUG, OnUpdateByteNZ)
+	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT_T, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC_XMODEM, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_COPY_CCHAR, OnUpdateClipboard)
 	ON_UPDATE_COMMAND_UI(ID_COPY_HEX, OnUpdateClipboard)
@@ -17184,17 +17188,23 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	case CHECKSUM_CRC16:
 		hh = crc_16_init();
 		break;
-	case CHECKSUM_CRC_CCITT:
-		hh = crc_ccitt_init();
+	case CHECKSUM_CRC_CCITT_F:
+		hh = crc_ccitt_f_init();
 		break;
-	case CHECKSUM_CRC_CCITT_B:
-		hh = crc_ccitt_b_init();
+	case CHECKSUM_CRC_CCITT_AUG:
+		hh = crc_ccitt_aug_init();
+		break;
+	case CHECKSUM_CRC_CCITT_T:
+		hh = crc_ccitt_t_init();
 		break;
 	case CHECKSUM_CRC_XMODEM:
 		hh = crc_xmodem_init();
 		break;
 	case CHECKSUM_CRC32:
 		hh = crc_32_init();
+		break;
+	case CHECKSUM_CRC32_MPEG2:
+		hh = crc_32_mpeg2_init();
 		break;
 
 	case CHECKSUM_CRC_4BIT:
@@ -17203,11 +17213,20 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	case CHECKSUM_CRC_8BIT:
 		hh = crc_8bit_init(&pv->crc_params_);
 		break;
+	case CHECKSUM_CRC_10BIT:
+		hh = crc_10bit_init(&pv->crc_params_);
+		break;
+	case CHECKSUM_CRC_12BIT:
+		hh = crc_12bit_init(&pv->crc_params_);
+		break;
 	case CHECKSUM_CRC_16BIT:
 		hh = crc_16bit_init(&pv->crc_params_);
 		break;
 	case CHECKSUM_CRC_32BIT:
 		hh = crc_32bit_init(&pv->crc_params_);
+		break;
+	case CHECKSUM_CRC_64BIT:
+		hh = crc_64bit_init(&pv->crc_params_);
 		break;
 
 	default:
@@ -17236,17 +17255,23 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		case CHECKSUM_CRC16:
 			crc_16_update(hh, buf, len);
 			break;
-		case CHECKSUM_CRC_CCITT:
-			crc_ccitt_update(hh, buf, len);
+		case CHECKSUM_CRC_CCITT_F:
+			crc_ccitt_f_update(hh, buf, len);
 			break;
-		case CHECKSUM_CRC_CCITT_B:
-			crc_ccitt_b_update(hh, buf, len);
+		case CHECKSUM_CRC_CCITT_AUG:
+			crc_ccitt_aug_update(hh, buf, len);
+			break;
+		case CHECKSUM_CRC_CCITT_T:
+			crc_ccitt_t_update(hh, buf, len);
 			break;
 		case CHECKSUM_CRC_XMODEM:
 			crc_xmodem_update(hh, buf, len);
 			break;
 		case CHECKSUM_CRC32:
 			crc_32_update(hh, buf, len);
+			break;
+		case CHECKSUM_CRC32_MPEG2:
+			crc_32_mpeg2_update(hh, buf, len);
 			break;
 
 		case CHECKSUM_CRC_4BIT:
@@ -17255,11 +17280,20 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		case CHECKSUM_CRC_8BIT:
 			crc_8bit_update(hh, buf, len);
 			break;
+		case CHECKSUM_CRC_10BIT:
+			crc_10bit_update(hh, buf, len);
+			break;
+		case CHECKSUM_CRC_12BIT:
+			crc_12bit_update(hh, buf, len);
+			break;
 		case CHECKSUM_CRC_16BIT:
 			crc_16bit_update(hh, buf, len);
 			break;
 		case CHECKSUM_CRC_32BIT:
 			crc_32bit_update(hh, buf, len);
+			break;
+		case CHECKSUM_CRC_64BIT:
+			crc_64bit_update(hh, buf, len);
 			break;
 		}
 
@@ -17279,17 +17313,23 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	case CHECKSUM_CRC16:
 		val = T(crc_16_final(hh));
 		break;
-	case CHECKSUM_CRC_CCITT:
-		val = T(crc_ccitt_final(hh));
+	case CHECKSUM_CRC_CCITT_F:
+		val = T(crc_ccitt_f_final(hh));
 		break;
-	case CHECKSUM_CRC_CCITT_B:
-		val = T(crc_ccitt_b_final(hh));
+	case CHECKSUM_CRC_CCITT_AUG:
+		val = T(crc_ccitt_aug_final(hh));
+		break;
+	case CHECKSUM_CRC_CCITT_T:
+		val = T(crc_ccitt_t_final(hh));
 		break;
 	case CHECKSUM_CRC_XMODEM:
 		val = T(crc_xmodem_final(hh));
 		break;
 	case CHECKSUM_CRC32:
 		val = T(crc_32_final(hh));
+		break;
+	case CHECKSUM_CRC32_MPEG2:
+		val = T(crc_32_mpeg2_final(hh));
 		break;
 
 	case CHECKSUM_CRC_4BIT:
@@ -17298,11 +17338,20 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	case CHECKSUM_CRC_8BIT:
 		val = T(crc_8bit_final(hh));
 		break;
+	case CHECKSUM_CRC_10BIT:
+		val = T(crc_10bit_final(hh));
+		break;
+	case CHECKSUM_CRC_12BIT:
+		val = T(crc_12bit_final(hh));
+		break;
 	case CHECKSUM_CRC_16BIT:
 		val = T(crc_16bit_final(hh));
 		break;
 	case CHECKSUM_CRC_32BIT:
 		val = T(crc_32bit_final(hh));
+		break;
+	case CHECKSUM_CRC_64BIT:
+		val = T(crc_64bit_final(hh));
 		break;
 	}
 
@@ -17349,14 +17398,19 @@ void CHexEditView::OnCrc16()
 	DoChecksum<unsigned short>(this, CHECKSUM_CRC16, "CRC 16");
 }
 
-void CHexEditView::OnCrcCcitt()
+void CHexEditView::OnCrcCcittF()
 {
-	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT, "CRC CCITT");
+	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT_F, "CRC CCITT F");
 }
 
-void CHexEditView::OnCrcCcittB()
+void CHexEditView::OnCrcCcittAug()
 {
-	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT_B, "CRC CCITT B");
+	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT_AUG, "CRC CCITT AUG");
+}
+
+void CHexEditView::OnCrcCcittT()
+{
+	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT_T, "CRC CCITT");
 }
 
 void CHexEditView::OnCrcXmodem()
@@ -17367,6 +17421,11 @@ void CHexEditView::OnCrcXmodem()
 void CHexEditView::OnCrc32()
 {
 	DoChecksum<DWORD>(this, CHECKSUM_CRC32, "CRC 32");
+}
+
+void CHexEditView::OnCrc32Mpeg2()
+{
+	DoChecksum<DWORD>(this, CHECKSUM_CRC32_MPEG2, "CRC 32 MPEG-2");
 }
 
 void CHexEditView::OnCrcGeneral()
@@ -17384,11 +17443,20 @@ void CHexEditView::OnCrcGeneral()
 		case 8:
 			DoChecksum<unsigned char>(this, CHECKSUM_CRC_8BIT, "CRC (8 BIT)");
 			break;
+		case 10:
+			DoChecksum<unsigned short>(this, CHECKSUM_CRC_10BIT, "CRC (10 BIT)");
+			break;
+		case 12:
+			DoChecksum<unsigned short>(this, CHECKSUM_CRC_12BIT, "CRC (12 BIT)");
+			break;
 		case 16:
 			DoChecksum<unsigned short>(this, CHECKSUM_CRC_16BIT, "CRC (16 BIT)");
 			break;
 		case 32:
 			DoChecksum<unsigned int>(this, CHECKSUM_CRC_32BIT, "CRC (32 BIT)");
+			break;
+		case 64:
+			DoChecksum<unsigned int>(this, CHECKSUM_CRC_64BIT, "CRC (64 BIT)");
 			break;
 		default:
 			assert(0); // The code should prevent this from happening

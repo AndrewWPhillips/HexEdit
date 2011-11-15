@@ -597,9 +597,11 @@ BEGIN
             MENUITEM "&64 Bit Checksum",            ID_CHECKSUM64
             MENUITEM SEPARATOR
             MENUITEM "C&RC 16",                     ID_CRC16
-            MENUITEM "CRC CCIT&T",                  ID_CRC_CCITT
-            MENUITEM "CRC CCITT &B",                ID_CRC_CCITT_B
+            MENUITEM "CRC CCIT&T",                  ID_CRC_CCITT_T
+            MENUITEM "CRC CCITT &F",                ID_CRC_CCITT_F
+            MENUITEM "CRC CCITT &AUG",              ID_CRC_CCITT_AUG
             MENUITEM "CRC 32",                      ID_CRC32
+            MENUITEM "CRC 32 MPEG2",                ID_CRC32_MPEG2
             MENUITEM "&CRC...",                     ID_CRC_GENERAL
         END
         POPUP "Digest"
@@ -2452,7 +2454,7 @@ CAPTION "General CRC"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     RTEXT           "Name:",IDC_STATIC,6,10,75,8
-    EDITTEXT        IDC_CRC_NAME,88,7,53,14,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_CRC_NAME,88,7,53,14,ES_AUTOHSCROLL
     RTEXT           "Bits:",IDC_STATIC,6,28,75,8
     COMBOBOX        IDC_CRC_BITS,88,26,31,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Select",IDC_CRC_SELECT,148,6,46,14,0,0,HIDC_CRC_SELECT
@@ -2726,6 +2728,10 @@ BEGIN
 0x0034, 
     IDC_CRC_BITS, 0x403, 2, 0
 0x0038, 
+    IDC_CRC_BITS, 0x403, 3, 0
+0x3031, "\000" 
+    IDC_CRC_BITS, 0x403, 3, 0
+0x3231, "\000" 
     IDC_CRC_BITS, 0x403, 3, 0
 0x3631, "\000" 
     IDC_CRC_BITS, 0x403, 3, 0
@@ -3202,8 +3208,10 @@ BEGIN
     ID_CHECKSUM16           "Stores the 16 bit checksum in the calculator\n16 Bit Checksum"
     ID_CHECKSUM32           "Stores the 32 bit checksum in the calculator\n32 Bit Checksum"
     ID_CHECKSUM64           "Stores the 64 bit checksum in the calculator\n64 Bit Checksum"
-    ID_CRC_CCITT            "Stores standard CCITT (16 bit) CRC in the calculator\nCRC CCITT"
-    ID_CRC_CCITT_B          "Stores alternative CCITT (16 bit) CRC in the calculator\nCRC CCITT B"
+    ID_CRC_CCITT_T          "Stores standard CCITT (16 bit) CRC in the calculator\nCRC CCITT"
+    ID_CRC_CCITT_F          "Stores alternative CCITT (16 bit) CRC in the calculator\nCRC CCITT F"
+    ID_CRC_CCITT_AUG        "Stores Augment CCITT (16 bit) CRC in the calculator\nCRC CCITT AUG"
+	ID_CRC32_MPEG2          "Stores MPEG-2 (32 bit) CRC in the calculator\nCRC 32 MPEG-2"
     ID_CRC_XMODEM           "Stores XMODEM (16 bit) CRC in the calculator\nCRC XMODEM"
     ID_RECENT_FILES         "Open the Recent Files Dialog\nRecent File Dialog"
     ID_XOR_BYTE             "XOR calculator value with current byte or selected bytes\nXOR Byte"

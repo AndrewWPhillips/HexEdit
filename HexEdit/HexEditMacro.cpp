@@ -1332,17 +1332,23 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				case CHECKSUM_CRC16:
 					pv_->OnCrc16();
 					break;
-				case CHECKSUM_CRC_CCITT:
-					pv_->OnCrcCcitt();
+				case CHECKSUM_CRC_CCITT_F:
+					pv_->OnCrcCcittF();
 					break;
-				case CHECKSUM_CRC_CCITT_B:
-					pv_->OnCrcCcittB();
+				case CHECKSUM_CRC_CCITT_AUG:
+					pv_->OnCrcCcittAug();
+					break;
+				case CHECKSUM_CRC_CCITT_T:
+					pv_->OnCrcCcittT();
 					break;
 				case CHECKSUM_CRC_XMODEM:
 					pv_->OnCrcXmodem();
 					break;
 				case CHECKSUM_CRC32:
 					pv_->OnCrc32();
+					break;
+				case CHECKSUM_CRC32_MPEG2:
+					pv_->OnCrc32Mpeg2();
 					break;
 
 				case CHECKSUM_MD5:
