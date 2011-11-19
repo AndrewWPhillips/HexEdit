@@ -161,7 +161,6 @@ int CHexEditDoc::GetSha1(unsigned char buf[20])
 // Doc has changed - signal current scan to stop then start new scan
 void CHexEditDoc::StatsChange()
 {
-	ASSERT(pthread5_ != NULL);
 	if (pthread5_ == NULL) return;
 
 	// Make sure the current (main) thread does not have docdata_ locked
