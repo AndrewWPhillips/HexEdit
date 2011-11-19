@@ -405,7 +405,7 @@ void  CHexEditDoc::FindDffdEltsIn(FILE_ADDRESS start, FILE_ADDRESS end, std::vec
 				CString str = df_elt_[ii].GetAttr("color");
 				if (!str.IsEmpty())
 				{
-					COLORREF clr = (DWORD)(strtoul(str, NULL, 16) & 0xffFFFF);;
+					COLORREF clr = (DWORD)(strtoul(str, NULL, 16) & 0xffFFFF);
 					retval.push_back(boost::tuple<FILE_ADDRESS, FILE_ADDRESS, COLORREF>(ss, ee, clr));
 				}
 			}

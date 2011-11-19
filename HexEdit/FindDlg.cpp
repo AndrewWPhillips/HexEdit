@@ -65,7 +65,7 @@ CFindSheet::CFindSheet(UINT iSelectPage /*=0*/)
 
 	big_endian_ = FALSE;  // May be confusing to save/restore this - default to little-endian (Intel)
 	number_format_ = theApp.GetProfileInt("Find-Settings", "NumberFormat", 0);
-	number_size_ = theApp.GetProfileInt("Find-Settings", "NumberSize", 2);;
+	number_size_ = theApp.GetProfileInt("Find-Settings", "NumberSize", 2);
 }
 
 CFindSheet::~CFindSheet()
@@ -77,12 +77,12 @@ CFindSheet::~CFindSheet()
 
 	theApp.WriteProfileInt("Find-Settings", "Relative", relative_);
 
-	theApp.WriteProfileInt("Find-Settings", "UseWildcards", wildcards_allowed_);;
+	theApp.WriteProfileInt("Find-Settings", "UseWildcards", wildcards_allowed_);
 	ASSERT(wildcard_char_.GetLength() == 1);
 	theApp.WriteProfileInt("Find-Settings", "Wildcard", wildcard_char_[0]);
 
 	theApp.WriteProfileInt("Find-Settings", "NumberFormat", number_format_);
-	theApp.WriteProfileInt("Find-Settings", "NumberSize", number_size_);;
+	theApp.WriteProfileInt("Find-Settings", "NumberSize", number_size_);
 
 	delete p_page_simple_;
 	delete p_page_hex_;

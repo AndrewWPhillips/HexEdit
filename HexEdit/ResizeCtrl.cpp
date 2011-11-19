@@ -861,7 +861,7 @@ BOOL CResizeCtrl::PropertySheetAddPages( CPropertySheet * sheet, int left, int t
 {
 	if( sheet )
 	{
-		BOOL ok    = Add( sheet->GetTabControl(), left, top, width, height );;
+		BOOL ok    = Add( sheet->GetTabControl(), left, top, width, height );
 		int  count = sheet->GetPageCount();
 		for( int currentPage = 0; currentPage < count; currentPage++ )
 		{

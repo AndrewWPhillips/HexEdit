@@ -2649,7 +2649,7 @@ BOOL CMainFrame::DoFind()
 			pview->GetSelAddr(start, end);
 			if (start < end)
 				end--;
-			start = 0;;
+			start = 0;
 			break;
 		default:
 			ASSERT(0);
