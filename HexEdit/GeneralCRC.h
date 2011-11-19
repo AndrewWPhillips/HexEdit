@@ -43,6 +43,7 @@ private:
 	int last_predefined_;      // Index one past last predefined CRC settings (= index of first user-defined setting) 
 	int last_selected_;        // Index of last item selected or -1 if changes have been made to params since last selection
 
+	CString	note_;             // Just used to display a bit more info on CRCs
 	int bits_idx_;             // index into IDC_CRC_BITS drop down - which indicates how many bits for the CRC to use
 	struct crc_params par_;    // raw parameters for CRC calcs 
 	unsigned __int64  max_;    // This is the max value for poly_, final_xor_, init_rem_ - it depends on the value for bits_

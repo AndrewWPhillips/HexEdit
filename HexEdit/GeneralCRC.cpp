@@ -18,6 +18,13 @@ CGeneralCRC::CGeneralCRC(CWnd* pParent /*=NULL*/)
 	bits_idx_ = 4;
 	par_.bits = 16;
 	max_ = 0xFFFF;
+	note_ = "Notes:\n"
+			"1. The more bits provided the better for detecting errors.\n"
+			"2. Always use values from recognised CRC standards;\n"
+			"   random parameters will probably not give good results.\n"
+			"3. Use optimized CRC commands for better performance.\n"
+			"4. The CRC value is stored in the Calculator.\n"
+			 ;
 }
 
 BOOL CGeneralCRC::OnInitDialog()
@@ -110,7 +117,7 @@ void CGeneralCRC::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CRC_POLY, ctl_poly_);
 	DDX_Control(pDX, IDC_CRC_INITREM, ctl_init_rem_);
 	DDX_Control(pDX, IDC_CRC_FINALXOR, ctl_final_xor_);
-
+	DDX_Text(pDX, IDC_CRC_NOTE, note_);
 	DDX_CBIndex(pDX, IDC_CRC_BITS, bits_idx_);
 	DDX_Check(pDX, IDC_CRC_REFLECTREM, par_.reflect_rem);
 	DDX_Check(pDX, IDC_CRC_REFLECTIN, par_.reflect_in);
@@ -386,6 +393,14 @@ void CGeneralCRC::OnDelete()
 	CMenu menu;
 	menu.Attach(select_menu_.m_hMenu);
 	CString strName = get_menu_text(&menu, last_selected_);  // save mneu item name - used to delete reg value by name
+
+	CString mess;
+	mess.Format("Are you sure you want to delete the settings for %s", strName);
+	if (TaskMessageBox("Delete CRC Settings", mess, MB_YESNO) != IDYES)
+	{
+		menu.Detach();
+		return;
+	}
 	menu.DeleteMenu(last_selected_, MF_BYCOMMAND);  // Delete menu item with selected ID
 	menu.Detach();
 
