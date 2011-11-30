@@ -21,13 +21,13 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1251>
-<meta name=layout-width content=913>
+<meta name=layout-height content=1100>
+<meta name=layout-width content=1564>
 
 
 <!--(Links)=========================================================-->
 
-<link rel=StyleSheet href="..\Hexedit.css">
+<link rel="StyleSheet" href="..\Hexedit.css">
 
 
 
@@ -41,40 +41,39 @@
 <div placeholder
 	id=header
 	style="width: 100%; position: relative;">
-<p>&nbsp;</p>
+ <p>&nbsp;</p>
 </div>
-
 <h2 id=h21><font style="font-family: Arial;"
-				face=Arial>What Is HexEdit?</font></h2>
+				face=Arial>What Is HexEdit Pro?</font></h2>
 
 <p class=footnote-text
 	id=p1
 	style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p id=p2>Hex Edit is a binary file editor or hex editor. It’s called a 
- binary file editor because it allows you to edit binary files. It’s called 
- a hex editor because you see and edit the bytes of the binary file using 
- hexadecimal (or hex) values.</p>
+<p id=p2><span class=HexEdit>HexEdit Pro</span> is a binary file editor 
+ or hex editor. It’s called a binary file editor because it allows you 
+ to edit binary files. It’s called a hex editor because you see and edit 
+ the bytes of the binary file using hexadecimal (or hex) values.</p>
 
 <p id=p3>&nbsp;</p>
 
-<p id=p4>HexEdit allows you to easily change any byte in any file on any 
- disk, as long as you have permission to modify that file. Under Windows 
- XP/2000/NT there will be some files you do not have permission to modify 
- or even read (unless you have administrator rights).</p>
+<p id=p4><span class=HexEdit>HexEdit Pro</span> allows you to easily change 
+ any byte in any file on any disk, as long as you have permission to modify 
+ that file. Unless you are logged in as an administrator there will be 
+ some files you do not have permission to modify or even read.</p>
 
 <p id=p5>&nbsp;</p>
 
-<p id=p6>HexEdit is a shareware program. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- can try HexEdit for free for 30 days. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- you decide to continue using it you can pay for HexEdit here: <a href="http://www.hexedit.com/register.htm"
-	title="Register Now">registration web page</a>.</p>
+<p id=p6><span class=HexEdit>HexEdit Pro</span> is a shareware program. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You can 
+ try it for free for 30 days. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you decide to continue using it you can pay for <span class=HexEdit>HexEdit 
+ Pro</span> here: <a href="http://www.hexeditpro.com/register.html"
+					title="Register Now">registration web page</a>.</p>
 
-<p id=p7>&nbsp;</p>
+<p id=p6>&nbsp;</p>
 
-<p id=p8><span style="font-weight: bold;">Binary Files and Text Files</span></p>
-
-<p id=p9>&nbsp;</p>
+<h3 id=p8><span style="font-weight: bold;">Binary Files and Text Files</span></h3>
 
 <p id=p10>A binary file typically contains any of the 256 different possible 
  byte values. Another way to think of a binary file is that it is any file 
@@ -83,10 +82,10 @@
 
 <p id=p11>&nbsp;</p>
 
-<p id=p12>You can use a binary file editor such as HexEdit to edit a text 
- file but you are better off using a text editor for that. Windows includes 
- a text editor called <span style="font-weight: bold;">NotePad</span>. 
- There are also many free and commercial text editors available.</p>
+<p id=p12>You can use a binary file editor such as <span class=HexEdit>HexEdit 
+ Pro</span> to edit a text file but you are better off using a text editor 
+ for that. You can edit text files using <span style="font-weight: bold;">NotePad</span>, 
+ or there are also many free and commercial text editors available.</p>
 
 <p id=p13>&nbsp;</p>
 
@@ -116,9 +115,7 @@
 
 <p id=p19>&nbsp;</p>
 
-<p id=p20><span style="font-weight: bold;">What can I use HexEdit for?</span></p>
-
-<p id=p21>&nbsp;</p>
+<h3 id=p20>What can I use <span class=HexEdit>HexEdit Pro</span> for?</h3>
 
 <p id=p22>You use a binary file editor when there is no other way to inspect 
  or change a binary file or a specific part of that file. Usually you would 
@@ -157,17 +154,16 @@
  are also used to verify and check output data files to try to discover 
  the cause of bugs, or to fix malformed files so that testing can continue.</p>
 
-<p id=p31>&nbsp;</p>
+<p id=p30>&nbsp;</p>
 
-<p id=p32><span style="font-weight: bold;">How do I use a Hex Editor?</span></p>
-
-<p id=p33>&nbsp;</p>
+<h3 id=p32><span style="font-weight: bold;">How do I use a hex editor?</span></h3>
 
 <p id=p34>First you need to know roughly what hex is and some of the different 
  types of things that can be stored in a file, such as fixed and floating 
  point numbers, character sets, date formats etc. These are explained in 
- the later section called All About Binary Files (see <a HREF="..\binary_files\Numbers.htm">Numbers</a>, 
- <a HREF="..\binary_files\Floating_Point_Numbers.htm">Floating Point Numbers</a>, 
+ the later section called <span style="font-weight: bold;">All About Binary 
+ Files</span> (see <a HREF="..\binary_files\Numbers.htm">Numbers</a>, <a 
+ HREF="..\binary_files\Floating_Point_Numbers.htm">Floating Point Numbers</a>, 
  <a HREF="..\binary_files\Date_and_Time_Formats.htm">Date and Time Formats</a> 
  etc).</p>
 
@@ -186,9 +182,10 @@
  be given an address or offset of the byte(s) to modify. This address is 
  just the number of the byte within the file. Note that by convention the 
  very first byte of the file has an address or offset of zero, the next 
- is one etc. In HexEdit the address of the first byte of each line is shown 
- at the left side of the window. The current address of the cursor is also 
- shown in the hex and decimal address tools on the ToolBar.</p>
+ is one etc. In <span class=HexEdit>HexEdit Pro</span> the address of the 
+ first byte of each line is shown at the left side of the window. The current 
+ address of the cursor is also shown in the hex and decimal address tools 
+ on the ToolBar.</p>
 
 <p id=p39>&nbsp;</p>
 
@@ -210,19 +207,16 @@
 <p id=p44>Also remember that making random changes to a .EXE file can be 
  dangerous. Changing messages or graphics is usually safe as long as the 
  length of the file does not change. But changing machine instructions 
- or data will typically cause the program to crash when you run it. In 
- the worst case it could crash your computer or cause other programs to 
- misbehave. If it crashes while writing to data files then these can be 
- corrupted too.</p>
+ or data will typically cause the program to crash when you run it. If 
+ it crashes while writing to data files then these can be corrupted too.</p>
 
 <p id=p45>&nbsp;</p>
 
 <div placeholder
 	id=footer
 	style="width: 100%; position: relative;">
-<p>&nbsp;</p>
+ <p>&nbsp;</p>
 </div>
-
 </body>
 
 </html>

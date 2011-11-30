@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=2058>
-<meta name=layout-width content=935>
+<meta name=layout-height content=1754>
+<meta name=layout-width content=1564>
 
 
 <!--(Links)=========================================================-->
@@ -46,7 +46,8 @@
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold; font-size: 12pt;">Code/Libraries used in HexEdit</p>
+<p style="font-weight: bold; font-size: 12pt;">Code/Libraries used in <span 
+ class=HexEdit>HexEdit Pro</span></p>
 
 <p>&nbsp;</p>
 
@@ -60,34 +61,29 @@
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold;"><a href="http://bcgsoft.com"
-								target=_blank
-								title=bcgsoft.com>BCGControlBar</a> from 
- BCGSoft</p>
+<p style="font-weight: bold;"><a title="msdn2.microsoft.com/en-us/library/d06h2x6e(VS.80).aspx"
+								href="http://www.boost.org"
+								target=_blank>Boost</a> from Microsoft</p>
 
-<p>This is the only commercial 3rd party library used within HexEdit (apart 
- from MFC). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
- is an MFC extension library that provides a large number of useful facilities 
- which greatly enhance the usability of HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- example, the Customize dialog which provides the ability to customize 
- toolbars, menus, keyboard etc (see the <a HREF="../cmd_tools/HID_CUSTOMIZE.htm">Customize 
- command</a>), and many other nice additions such as the color selection 
- dialog, <a HREF="../dlg_other/HIDD_WINDOW_MANAGER.htm">Windows dialog</a> 
- etc.</p>
+<p>Boost is an excellent open source C++ template library. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
+ first used the BGL (Boost Graph Library) in the late 1900's. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
+ have made use of several parts of the library in HexEdit, such as CRCs, 
+ PRNGs and boost::tuple.</p>
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold;"><span style="font-weight: bold;"><a title="FreeImage Web Site"
-	href="http://freeimage.sourceforge.net/"
-	target=_blank>FreeImage</a> DLL by <span style="font-weight: bold;">Hervé 
- Drolon et al</span></span></p>
+<p style="font-weight: bold;"><a title="FreeImage Web Site"
+								href="http://freeimage.sourceforge.net/"
+								target=_blank>FreeImage</a> DLL by Hervé 
+ Drolon et al</p>
 
 <p>FreeImage is a brilliant open source project for dealing with image 
  files and manipulating images in memory. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
- made possible the HexEdit Aerial View bit is also used in other places 
- in HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
- has been ported to several platforms but we only use the Win32 DLL that 
- they provide.</p>
+ made possible the <span class=HexEdit>HexEdit Pro</span> Aerial View bit 
+ is also used in other places in <span class=HexEdit>HexEdit Pro</span>. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It has 
+ been ported to several platforms but we only use the Win32 DLL that they 
+ provide.</p>
 
 <p>&nbsp;</p>
 
@@ -97,10 +93,10 @@
 								style="font-weight: bold;">MFC Grid Control</a> 
  by Chris Maunder</p>
 
-<p>An excellent MFC grid control, which is used in several places in HexEdit 
- - for example, in the <a HREF="../dlg_options/Filters.htm">Filters page</a> 
- and the <a HREF="../dlg_options/HIDD_OPT_TIPS.htm">Info Tips</a> page 
- of the Options dialog, the <a HREF="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent 
+<p>An excellent MFC grid control, which is used in several places in <span 
+ class=HexEdit>HexEdit Pro </span>- for example, in the <a HREF="../dlg_options/Filters.htm">Filters 
+ page</a> and the <a HREF="../dlg_options/HIDD_OPT_TIPS.htm">Info Tips</a> 
+ page of the Options dialog, the <a HREF="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent 
  File dialog</a> and also (with Tree Extensions - see below) the template 
  tree view.</p>
 
@@ -114,7 +110,7 @@
 <p>An extension to the MFC grid control that allows one of the columns 
  to act as a &quot;tree control&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
  allows the effect of a multi-column tree control which is invaluable for 
- the HexEdit template (tree) view.</p>
+ the <span class=HexEdit>HexEdit Pro </span>template (tree) view.</p>
 
 <p>&nbsp;</p>
 
@@ -124,12 +120,14 @@
  Sam Blackburn</p>
 
 <p>When I released the source code for HexEdit 1.0 in 1999, Sam enhanced 
- it to use &quot;64-bit&quot; file access, thereby allowing HexEdit to 
- easily work with files greater than 4 GBytes (2^32) in size. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Windows 
+ it to use &quot;64-bit&quot; file access, thereby allowing <span class=HexEdit>HexEdit 
+ Pro </span>to easily work with files greater than 4 GBytes (2^32) in size. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(Windows 
  supports 64 bit file positioning but the MFC CFile class only allowed 
  32-bit file addresses). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Sam's 
- CFile64 class (incorporated, with modifications, into HexEdit) is just 
- one of numerous useful (non-UI) classes provided by his WFC library.</p>
+ CFile64 class (incorporated, with modifications, into <span class=HexEdit>HexEdit 
+ Pro</span>) is just one of numerous useful (non-UI) classes provided by 
+ his WFC library.</p>
 
 <p>&nbsp;</p>
 
@@ -152,9 +150,10 @@
 
 <p>A simple to use but very effective class that allows automatic move/resize 
  of controls in a dialog when it is resized. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- is used for all resizable dialogs in HexEdit such as the <a HREF="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent 
- File dialog</a>, <a HREF="../dlg_tools/Bookmarks_dialog.htm">Bookmarks 
- dialog</a> etc.</p>
+ is used for all resizable dialogs in <span class=HexEdit>HexEdit Pro </span>such 
+ as the <a HREF="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent File 
+ dialog</a>, <a HREF="../dlg_tools/Bookmarks_dialog.htm">Bookmarks dialog</a> 
+ etc.</p>
 
 <p>&nbsp;</p>
 
@@ -170,9 +169,7 @@
 
 <p>This is a free general purpose compression library (with C source available) 
  which is used extensively in the industry. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(I 
- would consider it to be a de facto standard). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
- added this in HexEdit 3.2 partly for my own convenience as I have used 
- the ZLIB library in several other projects. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ would consider it to be a de facto standard). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  <a HREF="../dlg_tools/CompressionSettings.htm">Compression Options</a> 
  dialog offers complete control of all ZLIB options.</p>
 
@@ -187,9 +184,7 @@
 <p>This algorithm is a cryptographic checksum (sometimes also called a 
  one-way hash function or message digest). It generates a 128-bit value 
  that is often used to check the veracity of files transferred over an 
- insecure link in order to detect tampering. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- <a HREF="../cmd_operations/HID_MD5.htm">MD5 command</a> was added to HexEdit 
- 3.2 as an MD5 value is often provided for files downloaded via the Internet.</p>
+ insecure link in order to detect tampering.</p>
 
 <p>&nbsp;</p>
 
@@ -202,10 +197,10 @@
  class but much more efficiently handles ranges of values, as well as adding 
  facilities to input/output ranges as a string. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->An 
  article on it appeared in the June 1999 C/C++ Users Journal. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Since 
- then it has found numerous uses in HexEdit such as in the color range 
- selection (<a HREF="../dlg_options/HIDD_OPT_PARTITIONS.htm">Colors page</a> 
- of Options dialog) or the matching range of values for a CASE of a template 
- SWITCH statement.</p>
+ then it has found numerous uses in <span class=HexEdit>HexEdit Pro </span>such 
+ as in the color range selection (<a HREF="../dlg_options/HIDD_OPT_PARTITIONS.htm">Colors 
+ page</a> of Options dialog) or the matching range of values for a CASE 
+ of a template SWITCH statement.</p>
 
 <p>&nbsp;</p>
 
@@ -221,8 +216,9 @@
  or resize the window etc etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
  I wrote the class which extends the standard file open dialog (extending 
  MFC's CFileDialog). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
- HexEdit it is used to select the folder where macros (see <a HREF="../dlg_options/HIDD_OPT_MACRO.htm">Macro 
- Options page</a>) and templates (see <a HREF="../dlg_options/HIDD_OPT_TEMPLATE.htm">Template 
+ <span class=HexEdit>HexEdit Pro </span>it is used to select the folder 
+ where macros (see <a HREF="../dlg_options/HIDD_OPT_MACRO.htm">Macro Options 
+ page</a>) and templates (see <a HREF="../dlg_options/HIDD_OPT_TEMPLATE.htm">Template 
  Options</a>) are stored.</p>
 
 <p>&nbsp;</p>
@@ -232,8 +228,8 @@
 								target=_blank><span style="font-weight: bold;">Transparent 
  Static Control</a> by <b style="font-weight: bold;">Ali Rafiee</b></span></p>
 
-<p>An MFC class that provides the static controls -- used in the HexEdit 
- About box.</p>
+<p>An MFC class that provides the static controls -- used in the <span 
+ class=HexEdit>HexEdit Pro </span>bout box.</p>
 
 <p>&nbsp;</p>
 
@@ -242,20 +238,18 @@
 								target=_blank>Big Integer class</a> by 
  C<b>ap'n Code</b></p>
 
-<p>In order to be able to display C# Decimal values (new in HexEdit 3.2 
- - see <a HREF="../dlg_properties/HIDD_PROP_FLOAT.htm">Real Values Page</a> 
- of Properties dialog), I needed to be able to handle 96-bit integers. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The Microsoft 
- compiler only supports integers up to 64-bits but I found this class at 
- CodeProject. Despite some caveats on its use by the author I cannot fault 
- it after extensive testing.</p>
+<p>In order to be able to display C# Decimal values, I needed to be able 
+ to handle 96-bit integers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ Microsoft compiler only supports integers up to 64-bits but I found this 
+ class at CodeProject. Despite some caveats on its use by the author I 
+ cannot fault it after extensive testing.</p>
 
 <p>&nbsp;</p>
 
 <p>&nbsp;</p>
 
 <p style="font-weight: bold; font-size: 12pt;">Software Used to Develop 
- HexEdit</p>
+ <span class=HexEdit>HexEdit Pro</span></p>
 
 <p style="font-size: 12pt;">&nbsp;</p>
 
@@ -263,8 +257,8 @@
 								href="http://msdn2.microsoft.com/en-us/vstudio/default.aspx"
 								target=_blank>Visual Studio</a> by Microsoft</p>
 
-<p>HexEdit has always been developed using Visual Studio and the Microsoft 
- C++ compiler that comes with it.</p>
+<p><span class=HexEdit>HexEdit Pro</span> has always been developed using 
+ Visual Studio and the Microsoft C++ compiler that comes with it.</p>
 
 <p>&nbsp;</p>
 
@@ -329,8 +323,8 @@
 
 <p>This software allows running virtual machines with different versions 
  of Windows installed and works very well. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
- makes testing HexEdit on all the different versions of Windows (95,98,98SE,ME,NT,2K,XP,Vista,W7) 
- easy.</p>
+ makes testing <span class=HexEdit>HexEdit Pro </span>on all the different 
+ versions of Windows (95,98,98SE,ME,NT,2K,XP,Vista,W7) easy.</p>
 
 <p>&nbsp;</p>
 
@@ -353,9 +347,10 @@
  Editor</a> by Real World Graphics</p>
 
 <p>Another very well done program. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
- used it to create the icon file used in HexEdit. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Their 
- &quot;ReplaceVistaIcon.exe&quot; utility was very useful for getting around 
- deficiencies of Visual Studio 2003.</p>
+ used it to create the icon file used in <span class=HexEdit>HexEdit Pro</span>. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Their &quot;ReplaceVistaIcon.exe&quot; 
+ utility was very useful for getting around deficiencies of Visual Studio 
+ 2003.</p>
 
 <p>&nbsp;</p>
 
@@ -378,7 +373,8 @@
 													style="font-weight: bold; font-size: 11pt;">CamStudio</a></p>
 
 <p>A.simple but effective free (open source) screen recording <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->tool 
- I use to capture videos for demonstrating HexEdit.</p>
+ I use to capture videos for demonstrating <span class=HexEdit>HexEdit 
+ Pro</span>.</p>
 
 <p>&nbsp;</p>
 
@@ -404,8 +400,8 @@
 
 <p>Around 1997 I started learning MFC using this book. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(I 
  hadn't really done any serious C++ or Windows programming at the time 
- either.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
- started out as an experiment after fiddling with the &quot;HexView&quot; 
+ either.) <!--kadov_tag{{<spaces>}}-->&nbsp;<span class=HexEdit><!--kadov_tag{{</spaces>}}-->HexEdit 
+ Pro </span>started out as an experiment after fiddling with the &quot;HexView&quot; 
  demo program provided with this book.</p>
 
 <p>&nbsp;</p>

@@ -21,7 +21,7 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1535>
+<meta name=layout-height content=1711>
 <meta name=layout-width content=1564>
 
 
@@ -83,8 +83,8 @@
  set in use (see <span style="font-weight: bold;">Character Set</span> 
  below). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Or 
  you can view both the hex and character areas together (<span style="font-weight: bold;">Both 
- Areas</span>). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->HexEdit 
- 3.0 has added a fourth option which is called <span style="font-weight: bold;">Stacked</span> 
+ Areas</span>). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ is also a fourth option which is called <span style="font-weight: bold;">Stacked</span> 
  mode, where each byte is displayed as 3 bytes stacked vertically with 
  the character at the top and the hex digits beneath.</p>
 
@@ -198,7 +198,10 @@
 <p style="margin-left: 40px;">This list controls which character set is 
  used for the display of characters. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
  only the hex area is displayed (see <span style="font-weight: bold;">Show 
- Area(s)</span> above) then this option is disabled.</p>
+ Area(s)</span> above) then this option is disabled. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->New 
+ in <span class=HexEdit>HexEdit Pro</span> 4.0 is the option to use a code 
+ page - use the code page drop down list (see below) to select the code 
+ page to use.</p>
 
 <p style="margin-left: 40px;">&nbsp;</p>
 
@@ -219,7 +222,8 @@
 
 <p style="margin-left: 40px;">Note that display of IBM/OEM graphics characters 
  requires use of different Windows fonts. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Normally 
- HexEdit uses the more common Windows ANSI fonts. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ <span class=HexEdit>HexEdit Pro</span> uses the more common Windows ANSI 
+ fonts. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
  you select the ASCII+IBM/OEM option you will see a different set of fonts 
  when you select the current font (see the <span style="font-weight: bold;">Font</span> 
  button above).</p>
@@ -235,7 +239,16 @@
 
 <p style="margin-left: 40px;">&nbsp;</p>
 
-<p><span style="font-weight: bold;">Control Characters</span></p>
+<p><span style="font-weight: bold;">Code Pages</span></p>
+
+<p style="margin-left: 40px;">When the Code Page option of <span style="font-weight: bold;">Character 
+ Set</span> list (above) is selected this drop down list allows you to 
+ choose the code page to use. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can choose from any of the installed code pages.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;">Control Characters</p>
 
 <p style="margin-left: 40px;">This list determines how control characters 
  are displayed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
@@ -261,18 +274,38 @@
 
 <p style="margin-left: 40px;">&nbsp;</p>
 
-<p style="font-weight: bold;"><span style="font-weight: bold;">Font</span></p>
+<p style="font-weight: bold;"><span style="font-weight: bold;">Normal Font</span></p>
 
-<p style="margin-left: 40px;">Click the Font button to select the font 
- used in the active window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- brings up the same <a href="../dlg_other/AFX_HIDD_FONT.htm">Choose Font 
- Dialog</a> as the <a href="../cmd_view/HID_FONT.htm">Font command</a>. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note that 
- if you select the <span style="font-weight: bold;">Display ASCII+IBM/OEM</span> 
- character set from the <span style="font-weight: bold;">Character Set</span> 
- list (see below) then you will see a completely different set of fonts. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You may 
- like to set both default fonts (the normal one and the IBM/OEM one).</p>
+<p style="margin-left: 40px;">The Font buttons allow you to select the 
+ font used in the active window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are three different fonts used under different conditions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Each 
+ of the 3 buttons bring up the same <a href="../dlg_other/AFX_HIDD_FONT.htm">Choose 
+ Font Dialog</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ button allows you to select the font that is normally used - that is when 
+ the Character Area is displaying a ASCII, ASCII/ANSI or EBCDIC, or when 
+ only the hex area is shown (see <span style="font-weight: bold;">Shows 
+ Areas</span> above).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">IBM/OEM 
+ Font</span></p>
+
+<p style="margin-left: 40px;">This allows you to select the font that is 
+ used when the IBM/OEM character set is displayed. When clicked the <a 
+ href="../dlg_other/AFX_HIDD_FONT.htm">Choose Font Dialog</a> is displayed 
+ but it only allows you to select fonts that support IBM/OEM characters.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;">Multibyte 
+ Font</span></p>
+
+<p style="margin-left: 40px;">This allows you to select the font that is 
+ used when a multi-byte character set is displayed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is used when a a code page or Unicode character set is displayed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Very 
+ few fonts support the complete set of characters - Deja Vu or Lucida Sans 
+ Unicode are recommended.</p>
 
 <p>&nbsp;</p>
 

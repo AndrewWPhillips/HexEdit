@@ -531,6 +531,8 @@ Char Set ASCII | cmd_view\Char_Set_ASCII.htm
 Char Set ANSI | cmd_view\Char_Set_ANSI.htm
 Char Set IBM/OEM | cmd_view\Char_Set_IBM_OEM.htm
 Char Set EBCDIC | cmd_view\Char_Set_EBCDIC.htm
+Character Set Code Page | cmd_view\Character_Set_Code_Page.htm
+Character Set Common Code Pages | cmd_view\Character_Set_Common_Code_Pages.htm
 Control Chars None | cmd_view\Control_Chars_None.htm
 Control Chars Alpha | cmd_view\Control_Chars_Alpha.htm
 Control Chars C/C++ | cmd_view\Control_Chars_C_C++.htm

@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1433>
-<meta name=layout-width content=858>
+<meta name=layout-height content=1334>
+<meta name=layout-width content=1564>
 
 
 <!--(Links)=========================================================-->
@@ -61,143 +61,170 @@
 <p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Document 
  Editing Options &gt;&gt;</span></p>
 
-<p style="margin-left: 18.00pt;">This button jumps to the page for options 
- related to editing of the active file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- button is disabled if there is no file open.</p>
+<p style="margin-left: 18.00pt;">This button jumps to the <a HREF="HIDD_OPT_WINEDIT.htm">Document 
+ Edit Options</a> page for options related to editing of the active file. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This button 
+ is disabled if there is no file open.</p>
 
-<p style="margin-left: 0px;">&nbsp;</p>
+<h3>Undo</h3>
 
-<p style="margin-top: 3.00pt; font-weight: bold;">Allow background searching</p>
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Number 
+ of consecutive changes to merge</span></p>
 
-<p style="margin-left: 18.00pt;">When the current search text is changed 
- (either in the Find Tool or the Find dialog) a background search is started 
- for all other occurrences of the same text. The search is done using low-priority 
- background thread(s), so that you should not notice any difference to 
- your normal use of HexEdit. (The search is done using a background thread 
- with PRIORITY_LOWEST in the active file and even lower-priority (PRIORITY_IDLE) 
- threads for any other open files.)</p>
+<p style="margin-left: 64px;">This merges consecutive related changes (inserted, 
+ deleted or modified bytes) so they can be all undone together <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if you backspace to delete many bytes it is tedious to undo each 
+ deletion one byte at a time. Using a large value means you can quickly 
+ undo substantial changes.</p>
 
-<p style="margin-left: 18.00pt;">&nbsp;</p>
+<p style="margin-left: 64px;">&nbsp;</p>
 
-<p style="margin-left: 18.00pt;">When the background search is finished 
- the found occurrences are highlighted with a light-green background. Also 
- when the background search is finished subsequent searches for the same 
- search text are much faster – this is particularly noticeable for a large 
- file.</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-left: 18.00pt;">You would normally leave this option on 
- unless you had reason no to. You might turn it off if you do not need 
- the facility and you are working with large files on a network and the 
- file access is slowing down the network. Or perhaps you have another background 
- task that is CPU intensive, so you want to give CPU time to that instead 
- of the background searches.</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Intelligent 
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Intelligent 
  undo</span></p>
 
-<p style="margin-left: 18.00pt;">This removes redundant cursor movements 
- from the undo stack. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+<p style="margin-left: 64px;">This removes redundant cursor movements from 
+ the undo stack. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
  example, if you move the cursor right a few times then reverse the action 
  by moving left, these movements are not saved and you do not have to tediously 
  step back through them when you want to undo some earlier action.</p>
 
-<p style="margin-left: 18.00pt;">&nbsp;</p>
+<h3>Clipboard</h3>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Number 
- of consecutive changes to merge</span></p>
-
-<p style="margin-left: 18.00pt;">This merges consecutive related changes 
- (inserted, deleted or modified bytes) so they can be all undone together 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For example, 
- if you backspace to delete many bytes it is tedious to undo each deletion 
- one byte at a time. Using a large value means you can quickly undo substantial 
- changes.</p>
+<p style="margin-left: 18.00pt;">These options allow you to control how 
+ <span class=HexEdit>HexEdit Pro</span> works with the clipboard. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that for all options all binary data (including nul bytes) will be copied 
+ and pasted correctly within the application.</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
-<p style="margin-top: 3.00pt; font-weight: bold;">Create backup files</p>
-
-<p style="margin-left: 18.00pt;">If this option is selected (and <span 
- style="font-weight: bold;">all</span> of the conditions below are met) 
- then whenever you save a file the previous version of the file, if any, 
- is retained with the file extension of “.BAK”. (If you are editing a file 
- with extension of “.BAK” the backup file has an extension of “.BAC”). 
- The previous backup file, if any, is discarded.</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-left: 18.00pt;">To always create backup files turn on 
- this option and turn off all the sub-options below.</p>
+<p style="margin-left: 18.00pt;">Also note that Windows cannot handle very 
+ large amounts of data on the clipboard. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ depends on the amount of memory is the system but is in the region of 
+ 20 to 50 MBytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ this case <span class=HexEdit>HexEdit Pro</span><span class=HexEdit> </span><span 
+ style="font-weight: bold;">will use it's own internal clipboard format 
+ instead of the formats discussed below in order to handle very large clipboard 
+ operations</span>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ internal format relies on creating temporary files to store the actual 
+ data.</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Only if 
- sufficient disk space</span></p>
+<p style="margin-left: 40px;"><span style="font-weight: bold;">Use binary 
+ data/characters</span></p>
 
-<p style="margin-left: 18.00pt;">A backup is only created if there is free 
- disk space (on the same volume) to accommodate the original file (which 
- becomes the backup file) and the new file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
- that this does not guarantee that the file will be able to be written 
- to disk, since other processes or even the operating system may change 
- the available disk space while the file is being written to disk.</p>
+<p style="margin-left: 64px;">This is the way that HexEdit 1.0 to HexEdit 
+ 3.6 stored binary data on the clipboard. It is actually added to the clipboard 
+ in two different formats:</p>
+
+<p style="margin-left: 104px;">1. Binary data format compatible with Visual 
+ Studio hex editor - this allows copying and pasting of all binary data 
+ (including nul bytes) and compatibility with Visual Studio</p>
+
+<p style="margin-left: 104px;">2. Text (converted as appropriate - eg if 
+ in EBCDIC mode) - this allows pasting text into text editors etc but loses 
+ nul bytes</p>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;"><span style="font-weight: bold;">Use Hex 
+ Text</span></p>
+
+<p style="margin-left: 64px;">This option has recently been requested by 
+ several users. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ data is stored as text with each byte converted to two hex digits with 
+ a space between each byte. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ allows the data to be pasted into a text editor as hex text but can also 
+ be pasted back into <span class=HexEdit>HexEdit Pro</span> with no loss 
+ of information.</p>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;"><span>Automatic</span></p>
+
+<p style="margin-left: 64px;">When this option is selected the data to 
+ be placed on the clipboard is analyzed and if text the first of the above 
+ options is used (binary data + characters) -- this allows the data to 
+ be pasted into a text editor as the actual text (using the current character 
+ set). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the data contains non-text bytes then the second option above is used 
+ (hex text) -- this allows pasting the data into a text editor as hex text.</p>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;"><span style="font-weight: bold;">Use hex 
+ text in hex area, binary data/characters in text area</span></p>
+
+<p style="margin-left: 64px;">When this option is selected the data to 
+ be placed on the clipboard depends on whether the selection was made in 
+ the hex area or the text area. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the selection was made in the text area<span style="margin-left: 64px;"> 
+ the first of the above options is used (binary data + characters) -- this 
+ allows the data to be pasted into a text editor as the actual text (using 
+ the current character set). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the selection was made in the hex area then the second option above is 
+ used (hex text) -- this allows pasting the data into a text editor as 
+ hex text..</span></p>
+
+<h3>Scroll/Zoom</h3>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;"><span style="font-weight: bold;">Allow 
+ scroll past ends</span></p>
+
+<p style="margin-left: 80px;">Dragging the vertical scroll bar to the bottom 
+ moves the file display to the end, with the end of the file at the bottom 
+ of the window. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Using 
+ this option you can click the arrow at the bottom of the scroll bar (or 
+ use the mouse wheel) to scroll into the blank area past the end of file. 
+ I am not sure why, but many programs allow this so it is provided as an 
+ option in <span class=HexEdit>HexEdit Pro</span>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(The 
+ horizontal scrollbar works similarly.)</p>
+
+<p style="margin-left: 80px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;"><span style="font-weight: bold;">Autoscroll 
+ acceleration</span></p>
+
+<p style="margin-left: 80px;">When selecting with the mouse and you drag 
+ past the top or bottom of the display the window will &quot;autoscroll&quot; 
+ to allow you to select more of the file than can be displayed at once. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As you 
+ drag the mouse further from the edge of the window the autoscroll accelerates 
+ so that you can select large blocks easily. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ slider allows you to set how quickly the autoscroll accelerates. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Dragging 
+ all the way to the left disables autoscroll acceleration, so the autoscroll 
+ speed is always the same.</p>
+
+<p style="margin-left: 80px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;"><span style="font-weight: bold;">Invert 
+ Ctrl+mouse zoom</span></p>
+
+<p style="margin-left: 80px;"><span class=HexEdit>HexEdit Pro </span>has 
+ always had the ability to zoom the display (ie, change the Font size) 
+ by using the mouse wheel while holding down the Ctrl key. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->More 
+ recently a convention has emerged which zooms with the Ctrl+wheel but 
+ in the opposite direction. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ checkbox means you have the choice to configure <span class=HexEdit>HexEdit 
+ Pro </span>either way. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that this setting also affects the <a HREF="../overviewtools/AerialView.htm">Aerial 
+ View</a>.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Only if 
- size is less than</span></p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">File 
+ Backup/Export Options &gt;&gt;</span></p>
 
-<p style="margin-left: 18.00pt;">Selecting this option allows you to specify 
- a maximum file size. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- the (new) file is bigger than this a backup will not be created.</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Prompt 
- for confirmation</span></p>
-
-<p style="margin-left: 18.00pt;">Asks when the file is saved if you want 
- to create a backup copy. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
- are only asked if all the above options say that a backup should be created.</p>
-
-<p>&nbsp;</p>
-
-<p style="margin-top: 3.00pt; font-weight: bold;">Use file addresses</p>
-
-<p style="margin-left: 18.00pt;">When exporting the selection to a Motorola 
- S or Intel Hex file you need to specify a starting address. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Selecting 
- this option says to use the address within the file of the start of the 
- selection. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- example, if you select and export the whole file the starting address 
- will be zero.</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Use address</span></p>
-
-<p style="margin-left: 18.00pt;">When exporting the selection to a Motorola 
- S or Intel Hex file this option allows you to specify the starting address, 
- ie the address of the first line written to the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
- this case the file address of the selection to be exported is ignored.</p>
-
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Bytes per 
- line</span></p>
-
-<p style="margin-left: 18.00pt;">This is the number of data bytes that 
- are written to the exported text files created by the <a href="..\cmd_file\Export_Motorola_S1_Records.htm">Export 
- Motorola S1 Records</a>, <a href="..\cmd_file\Export_Motorola_S2_Records.htm">Export 
- Motorola S2 Records</a>, <a href="..\cmd_file\Export_Motorola_S3_Records.htm">Export 
- Motorola S3 Records</a>, <a href="..\cmd_file\Export_Intel_Hex_Records.htm">Export 
- Intel Hex Records</a>, and <a href="..\cmd_file\Export_Hex_Text.htm">Export 
- Hex Text</a> commands. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- number should be kept within a reasonable range (and always between 8 
- and 250) as some software may have trouble reading very long lines. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
- reasonable number would be 16 or 32.</p>
+<p style="margin-left: 18.00pt;">This button jumps to the <a HREF="HIDD_OPT_BACKUP.htm">File 
+ Backup/Export</a> page for options that were previously on this page..</p>
 
 <p>&nbsp;</p>
 

@@ -55,6 +55,8 @@
     <param name="Local" value="dlg_options\HIDD_OPT_WORKDISPLAY.htm">
     <param name="Name" value="How Do I Make a Large Selection?">
     <param name="Local" value="howdoi\HowLargeSelection.htm">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="dates">
@@ -153,6 +155,12 @@
     <param name="Local" value="binary_files\InputOutput.htm">
     <param name="Name" value="Character Properties Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_CHAR.htm">
+    <param name="Name" value="Document Display Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+    <param name="Name" value="Character Set Code Page">
+    <param name="Local" value="cmd_view\Character_Set_Code_Page.htm">
+    <param name="Name" value="Character Set Common Code Pages">
+    <param name="Local" value="cmd_view\Character_Set_Common_Code_Pages.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="DBCS">
@@ -413,10 +421,10 @@
     <param name="Local" value="howdoi\HowSearchFiles.htm">
     <param name="Name" value="Status Bar">
     <param name="Local" value="bars\AFX_HIDW_STATUS_BAR.htm">
-    <param name="Name" value="Workspace Editing Options">
-    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
     <param name="Name" value="Show Search Occurrences in Aerial View Border">
     <param name="Local" value="cmd_aerial\HID_IND_SEARCH.htm">
+    <param name="Name" value="Background Processing Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="1s complement">
@@ -503,6 +511,8 @@
     <param name="Local" value="dlg_options\HIDD_OPT_PARTITIONS.htm">
     <param name="Name" value="Character Sets">
     <param name="Local" value="binary_files\InputOutput.htm">
+    <param name="Name" value="Character Set Common Code Pages">
+    <param name="Local" value="cmd_view\Character_Set_Common_Code_Pages.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="arranging icons">
@@ -548,8 +558,8 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="backups">
-    <param name="Name" value="Workspace Editing Options">
-    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+    <param name="Name" value="File Backup/Export">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKUP.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="backward search">
@@ -1070,6 +1080,8 @@
     <param name="Local" value="binary_files\InputOutput.htm">
     <param name="Name" value="Text Find page">
     <param name="Local" value="dlg_find\FindText.htm">
+    <param name="Name" value="Character Set Common Code Pages">
+    <param name="Local" value="cmd_view\Character_Set_Common_Code_Pages.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -1210,6 +1222,8 @@
       <param name="Local" value="dlg_options\Filters.htm">
       <param name="Name" value="Explorer Dialog">
       <param name="Local" value="dlg_file\Explorer_Dialog.htm">
+      <param name="Name" value="File Folders">
+      <param name="Local" value="dlg_options\HIDD_OPT_FOLDERS.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="printing">
@@ -1234,6 +1248,8 @@
       <param name="Local" value="dlg_options\Filters.htm">
       <param name="Name" value="Save All command">
       <param name="Local" value="cmd_file\HID_FILE_SAVE_ALL.htm">
+      <param name="Name" value="File Folders">
+      <param name="Local" value="dlg_options\HIDD_OPT_FOLDERS.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="writing the selection">
@@ -1329,8 +1345,8 @@
     <param name="Local" value="troubleshooting\problem_search_failed.htm">
     <param name="Name" value="Searching">
     <param name="Local" value="overviewtools\Searching.htm">
-    <param name="Name" value="Workspace Editing Options">
-    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+    <param name="Name" value="Background Processing Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -1553,6 +1569,8 @@
       <param name="Name" value="copying to clipboard">
       <param name="Name" value="Copy As Hex Text">
       <param name="Local" value="cmd_edit\HID_COPY_HEX.htm">
+      <param name="Name" value="Workspace Editing Options">
+      <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -1852,6 +1870,16 @@
       <param name="Name" value="Macro Tutorial">
       <param name="Local" value="cmd_help\HID_HELP_TUTE1.htm">
     </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="assigning to keyboard shortcut">
+      <param name="Name" value="Customize Keyboard page">
+      <param name="Local" value="dlg_custom\HIDD_CUST_KEYBOARD.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="assigning to menu item or toolbar button">
+      <param name="Name" value="Customize Commands page">
+      <param name="Local" value="dlg_custom\HIDD_CUST_COMMANDS.htm">
+    </object>
     </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="managing windows">
@@ -2021,6 +2049,8 @@
     <param name="Local" value="dlg_options\HIDD_OPT_PARTITIONS.htm">
     <param name="Name" value="Character Sets">
     <param name="Local" value="binary_files\InputOutput.htm">
+    <param name="Name" value="Character Set Common Code Pages">
+    <param name="Local" value="cmd_view\Character_Set_Common_Code_Pages.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Office 97 shortcut bar">
@@ -2156,6 +2186,8 @@
     <param name="Local" value="howdoi\HowPrinterMargins.htm">
     <param name="Name" value="How Do I Stop Printing Lots of Null Bytes?">
     <param name="Local" value="howdoi\HowPrintDuplicateMerge.htm">
+    <param name="Name" value="Printer General Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="properties">
@@ -2171,6 +2203,8 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_FLOAT.htm">
     <param name="Name" value="Date/Time Values Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_DATE.htm">
+    <param name="Name" value="Counts (Statistics) Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_GRAPH.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="quad word">
@@ -2309,6 +2343,8 @@
     <param name="Local" value="cmd_file\HID_FILE_SAVE_AS.htm">
     <param name="Name" value="Save All command">
     <param name="Local" value="cmd_file\HID_FILE_SAVE_ALL.htm">
+    <param name="Name" value="File Folders">
+    <param name="Local" value="dlg_options\HIDD_OPT_FOLDERS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="save macro">
@@ -2395,10 +2431,10 @@
       <param name="Name" value="background">
       <param name="Name" value="How Do I Search Through Several Files?">
       <param name="Local" value="howdoi\HowSearchFiles.htm">
-      <param name="Name" value="Workspace Editing Options">
-      <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
       <param name="Name" value="Show Search Occurrences in Aerial View Border">
       <param name="Local" value="cmd_aerial\HID_IND_SEARCH.htm">
+      <param name="Name" value="Background Processing Page">
+      <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="replace">
@@ -2973,6 +3009,10 @@
     <param name="Local" value="troubleshooting\problem_print_page.htm">
     <param name="Name" value="How Do I Change the Printer Margins?">
     <param name="Local" value="howdoi\HowPrinterMargins.htm">
+    <param name="Name" value="Printer General Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="header, printer">
@@ -2980,6 +3020,10 @@
     <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Page header or footer is not printed">
     <param name="Local" value="troubleshooting\problem_header_missing.htm">
+    <param name="Name" value="Printer General Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="footer, printer">
@@ -2987,21 +3031,31 @@
     <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Page header or footer is not printed">
     <param name="Local" value="troubleshooting\problem_header_missing.htm">
+    <param name="Name" value="Printer General Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="line spacing, printer">
     <param name="Name" value="Printer Options">
     <param name="Local" value="dlg_options\Printer_Options.htm">
+    <param name="Name" value="Printer General Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="dates, printing file">
     <param name="Name" value="Printer Options">
     <param name="Local" value="dlg_options\Printer_Options.htm">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="margins, printer page">
     <param name="Name" value="Printer Options">
     <param name="Local" value="dlg_options\Printer_Options.htm">
+    <param name="Name" value="Printer General Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="filters">
@@ -3292,8 +3346,8 @@
     <param name="Local" value="overviewtools\other_tools.htm">
     <param name="Name" value="Export Motorola dlg">
     <param name="Local" value="dlg_file\Export_Motorola_dlg.htm">
-    <param name="Name" value="Workspace Editing Options">
-    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+    <param name="Name" value="File Backup/Export">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKUP.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Intel Hex format">
@@ -3305,8 +3359,8 @@
     <param name="Local" value="cmd_file\Export_Intel_Hex_Records.htm">
     <param name="Name" value="tools">
     <param name="Local" value="overviewtools\other_tools.htm">
-    <param name="Name" value="Workspace Editing Options">
-    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+    <param name="Name" value="File Backup/Export">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKUP.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="BCD">
@@ -3418,6 +3472,8 @@
       <param name="Name" value="printing file time">
       <param name="Name" value="Printer Options">
       <param name="Local" value="dlg_options\Printer_Options.htm">
+      <param name="Name" value="Printing Decorations page">
+      <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="viewing file times">
@@ -3440,6 +3496,8 @@
       <param name="Name" value="printing">
       <param name="Name" value="Printer Options">
       <param name="Local" value="dlg_options\Printer_Options.htm">
+      <param name="Name" value="Printing Decorations page">
+      <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="viewing">
@@ -3522,8 +3580,8 @@
     <param name="Local" value="overviewtools\other_tools.htm">
     <param name="Name" value="Export Motorola dlg">
     <param name="Local" value="dlg_file\Export_Motorola_dlg.htm">
-    <param name="Name" value="Workspace Editing Options">
-    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+    <param name="Name" value="File Backup/Export">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKUP.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="importing files">
@@ -3600,6 +3658,10 @@
     <param name="Local" value="cmd_operations\CRC_16.htm">
     <param name="Name" value="CRC CCITT B (Operations menu)">
     <param name="Local" value="cmd_operations\CRC_CCITT_B.htm">
+    <param name="Name" value="Background Processing Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
+    <param name="Name" value="Checksum Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="checksum">
@@ -3625,6 +3687,8 @@
       <param name="Name" value="cryptographic">
       <param name="Name" value="MD5 Cryptographic Checksum">
       <param name="Local" value="cmd_operations\HID_MD5.htm">
+      <param name="Name" value="Background Processing Page">
+      <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3755,8 +3819,8 @@
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="backups">
-      <param name="Name" value="Workspace Editing Options">
-      <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+      <param name="Name" value="File Backup/Export">
+      <param name="Local" value="dlg_options\HIDD_OPT_BACKUP.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="bookmark">
@@ -4151,6 +4215,8 @@
     <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Document Edit Options">
     <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
+    <param name="Name" value="Printer General Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="tracking changes">
@@ -4207,6 +4273,8 @@
     <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Explorer Dialog">
     <param name="Local" value="dlg_file\Explorer_Dialog.htm">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="keywords">
@@ -4214,6 +4282,8 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
     <param name="Name" value="Recently Opened Files Dialog">
     <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="comments">
@@ -4225,6 +4295,8 @@
     <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Explorer Dialog">
     <param name="Local" value="dlg_file\Explorer_Dialog.htm">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="size of file">
@@ -4290,6 +4362,8 @@
     <param name="Local" value="cmd_operations\HID_MD5.htm">
     <param name="Name" value="Error Detection">
     <param name="Local" value="binary_files\Error_Checking.htm">
+    <param name="Name" value="Checksum Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="cryptographic checksum">
@@ -4698,6 +4772,8 @@
     <param name="Name" value="borders (printing)">
     <param name="Name" value="Printer Options">
     <param name="Local" value="dlg_options\Printer_Options.htm">
+    <param name="Name" value="Printer General Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Delphi">
@@ -4757,6 +4833,106 @@
     <param name="Name" value="bit-field">
     <param name="Name" value="C/C++ Parser for Templates">
     <param name="Local" value="overviewadvanced\Parser.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="statistics">
+    <param name="Name" value="Counts (Statistics) Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_GRAPH.htm">
+    <param name="Name" value="Background Processing Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="byte counts">
+    <param name="Name" value="Counts (Statistics) Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_GRAPH.htm">
+    <param name="Name" value="Background Processing Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="graph, byte counts">
+    <param name="Name" value="Counts (Statistics) Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_GRAPH.htm">
+    <param name="Name" value="Background Processing Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="count, byte">
+    <param name="Name" value="Counts (Statistics) Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_GRAPH.htm">
+    <param name="Name" value="Background Processing Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="folders, default open/save">
+    <param name="Name" value="File Folders">
+    <param name="Local" value="dlg_options\HIDD_OPT_FOLDERS.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="directories, default open/save">
+    <param name="Name" value="File Folders">
+    <param name="Local" value="dlg_options\HIDD_OPT_FOLDERS.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="intelligent undo">
+    <param name="Name" value="Workspace Editing Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="watermark">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="page number">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="SHA1">
+    <param name="Name" value="Checksum Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
+    <param name="Name" value="Background Processing Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="background statistics">
+    <param name="Name" value="Checksum Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
+    <param name="Name" value="Counts (Graph) Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_GRAPH.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="duplex printing">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="double-sided printing">
+    <param name="Name" value="Printing Decorations page">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="multi-byte character sets">
+    <param name="Name" value="Document Display Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Don't ask this questions again">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Do not show this message again">
+    <param name="Name" value="System General Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Don't ask this question again">
+    <param name="Name" value="System General Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="assign macro to keyboard shortcut">
+    <param name="Name" value="Customize Keyboard page">
+    <param name="Local" value="dlg_custom\HIDD_CUST_KEYBOARD.htm">
   </object>
 </ul>
 </html>

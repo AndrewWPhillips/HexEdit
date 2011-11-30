@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1475>
-<meta name=layout-width content=988>
+<meta name=layout-height content=1043>
+<meta name=layout-width content=1564>
 
 
 <!--(Links)=========================================================-->
@@ -66,8 +66,9 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>HexEdit version numbers consist of 4 parts: major version, minor version 
- + variation, update release and revision. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Internally 
+<p><span class=HexEdit>HexEdit Pro</span> version numbers consist of 4 
+ parts: major version, minor version + variation, update release and revision. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Internally 
  these are stored as 4 numbers.</p>
 
 <p>&nbsp;</p>
@@ -105,8 +106,8 @@
 
 <p>&nbsp;</p>
 
-<p>Note: The file time (modified time) of HexEdit.exe and other files are 
- modified for a release to indicate the version number. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+<p>Note: The file time (modified time) of HexEditPro.exe and other files 
+ are modified for a release to indicate the version number. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
  example for 2.5F the time is 2:56AM.</p>
 
 <p>&nbsp;</p>
@@ -388,71 +389,27 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>Limitations on the size of files that could be edited were removed with 
- HexEdit 2.2. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- largest file you can edit is now much bigger than any existing disk file 
- on the planet. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Unfortunately, 
- the FAT filesystem limits files to 2 GBytes while FAT32 limits them to 
- 4 GBytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
- if you use NT/2000/XP then you can edit files of virtually any size (NTFS 
- has a limit on file size of one Terabyte). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- largest file edited so far is over 500 GBytes.</p>
+<p>There are very few limitations in the use of <span class=HexEdit>HexEdit 
+ Pro</span> 4.0. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Limitations 
+ in earlier releases have been removed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, some operations (encryption, conversions, compression etc) were 
+ limited to selections of 4GBytes, but now can work on any sized selections.</p>
 
 <p>&nbsp;</p>
 
-<p>The maximum file size in HexEdit 2.1 and earlier is 2^31-1 bytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
- was also previously a display limitation of 2^31 pixels. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- has been increased to 2^63 pixels in the vertical direction (but remains 
- at 2^31 horizontally). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Using 
- a font 16 pixels high (as the default Hex Edit font is) and a row size 
- of 16 bytes this gives a vertical display limit of about 8 million Terabytes. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
- limitations in scrollbar calculations mean that scrollbars will not work 
- correctly for files of more than about 500 Terabytes, I believe (but I 
- have not tested this:-).</p>
+<p>There is no limit on the number of undo operations or the size of keystroke 
+ macros.</p>
 
 <p>&nbsp;</p>
 
-<p>There is no limit on the number of undo operations or the number of 
- “keys” in a keystroke macro except for the limitation of available virtual 
- memory. Memory size would not normally be a problem as storage for these 
- is very efficient. Storage for most undoable operations is 9 bytes; most 
- macro “keystrokes” also use 9 bytes.</p>
+<p>Windows can has problems with placing large amounts of data on the clipboard, 
+ but in <span class=HexEdit>HexEdit Pro</span> 4.0 this has been circumvented 
+ by use of a custom clipboard format that make use of a temporary file 
+ and only uses a small amount of data</p>
 
 <p>&nbsp;</p>
 
 <p>The maximum line length (ie, number of columns) is 32767.</p>
-
-<p>&nbsp;</p>
-
-<p>There seems to be a limit of about 16Mbytes of data that can be copied 
- to the clipboard in Windows 95 and 98. HexEdit will not let you put anything 
- larger on the clipboard as it may cause HexEdit or even Windows to crash. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The workaround 
- is to use the new commands for writing and appending to a file.</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p>If a file needs more than 32767 pages to be printed in full then there 
- is a problem with entering page numbers in the print dialog. This is a 
- limitation of Microsoft Windows/MFC. To print parts of such a file use 
- the “print selection” option.</p>
-
-<p>&nbsp;</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">Under Windows 95 files there 
- is no standard place to store user specific files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
- files that<span> are created for each user (bookmarks,recent file list 
- etc) under later versions of Windows are stored in the executable directory 
- under Windows 95. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
- other words different logins on the same computer will share bookmarks, 
- recent file list etc when running HexEdit under Windows 95.</span></p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p>Some early versions of Windows 95 did not support the Crypto API. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
- this case the only encryption algorithm available is &quot;Hex Edit Internal 
- Encryption Algorithm&quot;.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -460,23 +417,20 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>Unfortunately HexEdit only currently supports English in its menus, 
- messages, help etc. The documentation is now in US English as more users 
- are familiar with that than UK or Australian English.</p>
+<p>Unfortunately <span class=HexEdit>HexEdit Pro</span> only currently 
+ supports English in its menus, messages, help etc. The documentation is 
+ now in US English as more users are familiar with that than other varieties 
+ of English.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>Luckily HexEdit does support international numeric and date formats 
- when these are correctly configured in the Windows control panel.</p>
+<p>Luckily <span class=HexEdit>HexEdit Pro</span> does support international 
+ numeric and date formats when these are correctly configured in the Windows 
+ control panel.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p><span style="font-weight: bold;">Development Environment</span></p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">We have had several enquiries 
- about how HexEdit is developed.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -498,7 +452,7 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">HexEdit 3.2 to 3.5 were developed 
+<p style="margin-top: 0; margin-bottom: 0;">HexEdit 3.2 to 3.6 were developed 
  Visual Studio 2003 (MFC 7.1) on XP SP2 with Sempron 2300, 1.5 Gbytes RAM. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This is 
  dual boot with Vista Ultimate but I never use Vista except for testing 
@@ -506,8 +460,11 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">Work is almost complete on 
- HexEdit 4.0 which will use Visual Studio 2010 and MFC9.</p>
+<p style="margin-top: 0; margin-bottom: 0;"><span class=HexEdit>HexEdit 
+ Pro</span> 4.0 was developed using Visual Studio 2008 and 2010 (with new 
+ improved MFC 9 that incorporates BCG code). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
+ use a dual boot XP/Win7 system but test on many OS varieties using VMware 
+ images.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 

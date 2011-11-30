@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1019>
-<meta name=layout-width content=1594>
+<meta name=layout-height content=1104>
+<meta name=layout-width content=1564>
 
 
 <!--(Links)=========================================================-->
@@ -81,7 +81,8 @@
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p style="margin-top: 0; margin-bottom: 0;"><img src="../tip.gif"
-												style="border: none;
+												style="border-style: none;
+														border: none;
 														width: 31px;
 														height: 12px;"
 												width=31
@@ -123,73 +124,123 @@
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold;">Clipboard Formats</p>
+<p style="font-weight: bold;"><span style="font-weight: bold;"><span style="font-weight: bold;">C</span>lipboard 
+ Formats</span></p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>When HexEdit places data on the clipboard it does so in two formats. 
- One format is ASCII (actually ANSI) text which allows other programs (such 
- as word-processors and editors) to read it. But in text format some control 
- characters, such as the character with ASCII value zero, cannot be stored. 
- For this reason HexEdit also stores the data in a binary format, allowing 
- you to cut and paste binary data within HexEdit without losing information. 
- (Note that this binary format is the same as is used in the Microsoft 
- Developer Studio binary file editor.)</p>
+<p style="margin-top: 0; margin-bottom: 0;">You have a choice of how <span 
+ class=HexEdit>HexEdit Pro</span> works with the clipboard, but first you 
+ need to understand how data is stored on the Windows clipboard. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
+ are actually three different ways that are used depending on the circumstances:</p>
+
+<ol style="list-style: decimal;"
+	type=1>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">Data 
+ is copied to the clipboard in two different formats at the same time. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This is 
+ how the clipboard has been used since HexEdit 1.0.</p></li>
+	
+	<ul>
+		
+		<li style="list-style: disc;"
+			type=disc
+			class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">binary 
+ format (the same as used in Visual Studio hex editor) - this allows copying 
+ and pasting with no loss of data (unlike text formats which cannot handle 
+ all byte values)</p></li>
+		
+		<li style="list-style: disc;"
+			type=disc
+			class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">text 
+ format, converted from the current character set as necessary - this allows 
+ copying and pasting with text editors, word processors, etc</p></li>
+	</ul>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">Data 
+ is copied to the clipboard as hex text.</p></li>
+	
+	<ul>
+		
+		<li style="list-style: disc;"
+			type=disc
+			class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">text 
+ format, where each byte is stored as two hex digits (plus space and end 
+ of line characters) - data can be copied and pasted in <span class=HexEdit>HexEdit 
+ Pro</span> (with no lost information) and pasted as hex text into a text 
+ editor</p></li>
+	</ul>
+	
+	<li class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">If the 
+ data is too large for the clipboard to handle a special clipboard format 
+ is used where only a small amount of information is held in memory and 
+ the actual data is kept in a temporary file.</p></li>
+	
+	<ul>
+		
+		<li style="list-style: disc;"
+			type=disc
+			class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">custom 
+ format, where the actual data is stored in a temporary file - allows copying 
+ and pasting of selections of any size (subject to disk space), but the 
+ data cannot be pasted into other software</p></li>
+	</ul>
+</ol>
+
+<p style="margin-top: 0; margin-bottom: 0;">For large data the last format 
+ is always used, but whether 1 or 2 is used depends on settings chosen 
+ in <a href="../dlg_options/HIDD_OPT_WORKSPACE.htm">Workspace Editing Options</a>.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>Note that if you are in EBCDIC mode the text format data placed on the 
- clipboard is converted from EBCDIC to ASCII. (The binary format data is 
- still the actual binary data values.) This allows you to copy EBCDIC text 
- to any Windows editor or word-processor. As for ASCII control characters, 
- any invalid EBCDIC characters are silently ignored. Also, if there is 
- no binary data format on the clipboard (ie, the data on the clipboard 
- was not placed there by HexEdit) and you’re in EBCDIC mode then the text 
- is converted to EBCDIC when pasted.</p>
+<p style="margin-top: 0; margin-bottom: 0;">There are also other ways to 
+ interact with the clipboard, all of which work with text. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->First, 
+ you need to understand that text on the clipboard is stored internally 
+ as Unicode (in versions of Windows derived from NT). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
+ you copy or paste text data in <span class=HexEdit>HexEdit Pro</span> 
+ the text will be automatically converted according to the current character 
+ set. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you are using EBCDIC then anything you cut or copy to the clipboard will 
+ be converted from EBCDIC to Unicode.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>Sometimes you may actually want the hex data as the hex digits so you 
- can paste it into a text file. To do this, copy it to the clipboard as 
- hex text. The text is copied with spaces between the pairs of hex digits 
- and with the same line length as shown on screen. This is also useful 
- if the some bytes of the file contain an address of data elsewhere in 
- the same (or another) file. Copy the address as hex bytes, and paste it 
- into the Hex Address Tool and press Enter to jump to the address.</p>
+<p style="margin-top: 0; margin-bottom: 0;">When pasting from the clipboard 
+ the reverse conversion is supplied, so if you are pasting from a Windows 
+ text editor into <span class=HexEdit>HexEdit Pro</span> in EBCDIC mode 
+ the text would automatically be converted from ASCII or Unicode to EBCDIC. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However 
+ if you are copying and pasting within HexEdit Pro then the binary format 
+ data is used in preference to the text data and hence no conversion is 
+ performed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you want to copy and paste within <span class=HexEdit>HexEdit Pro</span> 
+ and convert between character sets you need instead to use one of the 
+ <a HREF="../cmd_edit/HID_PASTE_ASCII.htm">Paste As ASCII</a>, <a HREF="../cmd_edit/HID_PASTE_EBCDIC.htm">Paste 
+ As EBCDIC</a>, or <a HREF="../cmd_edit/HID_PASTE_UNICODE.htm">Paste As 
+ Unicode Text</a> commands.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>A similar option to copying as hex text is to copy as C/C++ source code. 
- This text is suitable for initialising many different sorts of array in 
- C, C++ and other programming languages. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
- are many very flexible options - for example you can create CSV integer 
- or floating point data suitable for importing into other programs such 
- as a spreadsheet.</p>
+<p style="margin-top: 0; margin-bottom: 0;">The <a HREF="../cmd_edit/HID_COPY_CCHAR.htm">Copy 
+ As C Source</a> allows even more sophisticated ways to copy text to the 
+ clipboard. This was designed for initialising many different sorts of 
+ array in C, C++ and other programming languages, but it is far more useful 
+ than that - for example you can create CSV integer or floating point data 
+ suitable for importing into other programs such as a spreadsheet.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p>The “Paste As” menu items ensure that you paste text (and not binary 
- data) and it is pasted in the desired character set – ASCII, Unicode or 
- EBCDIC. These commands can be used to convert a large amount of text from 
- one format to another. For example, to convert text from EBCDIC to ASCII 
- you need to cut it to the clipboard while in EBCDIC mode and then use 
- the “Paste As ASCII” command. You <span style="font-weight: bold;">cannot</span> 
- simply change to ASCII mode and paste, as the binary format data placed 
- on the clipboard by HexEdit takes precedence, and the data will be pasted 
- without conversion.</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p><span style="font-weight: bold;">Working with Large Files</span></p>
+<p style="font-weight: bold;">Working with Large Files</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p>The clipboard is great for working with small to medium sized blocks 
  of data, but will not work for blocks of more than about 16 Mbytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Furthermore, 
- when you paste data into HexEdit the pasted data is stored in memory. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If you 
- paste a lot of large blocks of data you will cause Windows to slow down 
- or even crash through memory exhaustion.</p>
+ when you paste data into <span class=HexEdit>HexEdit Pro</span> the pasted 
+ data is stored in memory. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ you paste a lot of large blocks of data you will cause Windows to slow 
+ down or even crash through memory exhaustion.</p>
 
 <p>&nbsp;</p>
 
@@ -248,7 +299,7 @@
 <param name="Items" value="Append Same File;..\cmd_edit\HID_EDIT_APPENDSAME.htm$$**$$Append Selection to File;..\cmd_edit\HID_EDIT_APPENDFILE.htm$$**$$Copy As C Source;..\cmd_edit\HID_COPY_CCHAR.htm$$**$$Copy As Hex Text;..\cmd_edit\HID_COPY_HEX.htm$$**$$Copy command;..\cmd_edit\HID_EDIT_COPY.htm$$**$$Cut command;..\cmd_edit\HID_EDIT_CUT.htm$$**$$Delete command;..\cmd_misc\HID_DEL.htm$$**$$Edit Menu Commands;..\menus\menu_edit.htm$$**$$Extend To Mark Command;..\cmd_edit\HID_EXTENDTO_MARK.htm$$**$$Find Selection;..\cmd_misc\HID_SEARCH_SEL.htm$$**$$Paste As ASCII;..\cmd_edit\HID_PASTE_ASCII.htm$$**$$Paste As EBCDIC Text;..\cmd_edit\HID_PASTE_EBCDIC.htm$$**$$Paste As Unicode Text;..\cmd_edit\HID_PASTE_UNICODE.htm$$**$$Paste command;..\cmd_edit\HID_EDIT_PASTE.htm$$**$$Select All command;..\cmd_edit\HID_SELECT_ALL.htm$$**$$Select Line command;..\cmd_misc\HID_SELECT_LINE.htm$$**$$Write Selection to File;..\cmd_edit\HID_EDIT_WRITEFILE.htm$$**$$" >
 <param name="Image" value="" >
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
-<param name="_CURRENTFILEPATH" value="D:\work\andrew\cpp\HexEdit3.5\HTMLHelp\overviewbasics\clipboard.htm" >
+<param name="_CURRENTFILEPATH" value="D:\andrew\cpp\HexEdit\HTMLHelp\overviewbasics\clipboard.htm" >
 <param name="_ID" value="RelatedTopics" >
 <param name="UseMenu" value="-1" >
 <param name="Frame" value="" >

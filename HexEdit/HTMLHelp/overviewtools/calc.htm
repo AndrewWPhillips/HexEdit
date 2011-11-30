@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=3141>
-<meta name=layout-width content=988>
+<meta name=layout-height content=3956>
+<meta name=layout-width content=1564>
 
 
 <!--(Links)=========================================================-->
@@ -70,116 +70,386 @@
 
 <p>&nbsp;</p>
 
-<p>1. As an integer calculator supporting up to 64 bit integers in different 
- bases (hex, decimal etc) and with many operations available through the 
- calculator buttons.</p>
+<p>1. As an integer calculator supporting integers of any precision and 
+ in any radix (base) up to 36. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Most 
+ of the calculator buttons perform integer operations.</p>
 
 <p>2. As an expression evaluator supporting C-like expressions with brackets 
- and precedence, 5 data types (integer, real, string, boolean and date), 
- variables etc.</p>
+ and precedence, with 5 data types (integer, real, string, boolean and 
+ date), functions, variables etc.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p>&nbsp;</p>
+
+<p>How to perform integer operations and evaluate expressions is explained 
+ further below.</p>
+
+<h3><span style="font-weight: bold;">Display</span></h3>
+
+<p style="margin-left: 40px; font-weight: bold;"><span><span style="font-weight: bold;">Edit 
+ Box</span></span></p>
+
+<p style="margin-left: 40px;">The heart of the calculator is the main edit 
+ box which allows you to enter numbers (and expressions) and view results.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;"><img src="../tip.gif"
+									style="border-style: none;
+											border: none;
+											width: 31px;
+											height: 12px;"
+									width=31
+									height=12
+									border=0>Unlike the Windows Calculator 
+ you have full control of the text in the edit box. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example you can edit a result, copy and paste all or part of the values, 
+ etc</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;"><img src="../ex_red_sm.jpg"
+									style="border: none;
+											width: 17px;
+											height: 20px;"
+									width=17
+									height=20
+									border=0> When a date value is displayed 
+ it is converted to a string and wrapped in the DATE() function (which 
+ converts a string back to a date). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is necessary as there are no date &quot;literals&quot; supported by expressions.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 40px; font-weight: bold;">History</p>
+
+<p style="margin-left: 40px;">The down arrow at the right end of the edit 
+ box displays a history of previous calculations. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can select an entry to redo the calculation or just view previous calculations.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;"><img src="../tip.gif"
+									style="border-style: none;
+											border: none;
+											width: 31px;
+											height: 12px;"
+									width=31
+									height=12
+									border=0>Hold the mouse over any history 
+ entry to see the result of the calculation.</p>
+
+<p style="margin-left: 40px; font-weight: bold;">&nbsp;</p>
+
+<p style="margin-left: 40px; font-weight: bold;"><span style="font-weight: bold;">Operator/Status 
+ Indicator</span></p>
+
+<p style="margin-left: 40px;">To the right of the edit box is an area that 
+ may display:</p>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-left: 40px;">the binary operator 
+ in effect if one of the binary operation buttons has been selected (<span 
+ style="font-weight: bold;">+</span>, <span style="font-weight: bold;">-</span>, 
+ <span style="font-weight: bold;">*</span>, etc)</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;"><span style="font-weight: bold;">O</span> 
+ if the last integer operation generated an overflow</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;"><span style="font-weight: bold;">E</span> 
+ if the last operation caused an error, such as divide by zero</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;"><span style="font-weight: bold;">R</span> 
+ if the last operation was an expression which generated a real (floating 
+ point) result</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;"><span style="font-weight: bold;">S</span> 
+ if the last operation was an expression which generated a string result</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;"><span style="font-weight: bold;">B</span> 
+ if the last operation was an expression which generated a Boolean result</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;"><span style="font-weight: bold;">D</span> 
+ if the last operation was an expression which generated a date</p></li>
+</ul>
+
+<p style="margin-left: 40px; font-weight: bold;"><span><span style="font-weight: bold;">Current 
+ Expression</span></span></p>
+
+<p style="margin-left: 40px;">Above the edit box is a small area that displays 
+ the current expression (as it would be evaluated at that moment). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ is very useful when using the unary and binary operation buttons if you 
+ can't remember what buttons you have already used. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ also makes it plain that the buttons do not support any operator precedence.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;"><img src="../tip.gif"
+									style="border-style: none;
+											border: none;
+											width: 31px;
+											height: 12px;"
+									width=31
+									height=12
+									border=0>If you wish to evaluate an 
+ integer expression with the normal mathematical precedence type the full 
+ integer expression into the calculator. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Expressions 
+ also support brackets.</p>
+
+<p style="margin-left: 40px; font-weight: bold;">&nbsp;</p>
+
+<p style="margin-left: 40px; font-weight: bold;">Menu Buttons</p>
+
+<p style="margin-left: 40px;">At the top of the display are buttons that 
+ allow you to recall various values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ <span style="font-weight: bold;">Hex Jump History</span> and the Decimal<span 
+ style="font-weight: bold;"> Decimal Jump History</span> lists allow you 
+ to select from the histories of the Jump Tools (see <a HREF="../misc/ToolbarTools.htm">Toolbar 
+ Tools</a>).</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">Variables</span> 
+ menu allows you to recall previously assigned variables or clear all variables. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Variables 
+ can be assigned in the calculator (or in the Jump Tools) by using an expression 
+ involving an assignment (ie, using the '=' operator as in any C/C++ expression). 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Variables 
+ may have any of the five types supported by expressions.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;"><img src="../ex_red_sm.jpg"
+									style="border: none;
+											width: 17px;
+											height: 20px;"
+									width=17
+									height=20
+									border=0> Depending on the radix in 
+ use there may be some ambiguity between an integer value (such as FFFF 
+ in hex) and a variable name. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->To 
+ avoid any ambiguity any variable name may be preceded by the '@' character. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For example, 
+ @A is always taken as a variable with the name A, and never as the number 
+ 10 in hex.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">Functions</span> 
+ menu allows you to select from the predefined functions that are supported 
+ by expressions. Functions are grouped according to the type of the values 
+ they return. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that, the predefined real constant PI is also defined here.</p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;"><img src="../tip.gif"
+									style="border: none;
+											width: 31px;
+											height: 12px;"
+									width=31
+									height=12
+									border=0>To make full use of functions 
+ you need to read the documentation. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, the min() and max() functions can take any numbers of parameters 
+ (except zero), whereas the menu implies they may must take two.</p>
+
+<p style="margin-left: 40px; font-weight: bold;">&nbsp;</p>
+
+<p style="margin-left: 40px; font-weight: bold;"><span style="font-weight: bold;">Bit 
+ Display</span></p>
+
+<p style="margin-left: 40px;">Below the <span style="font-weight: bold;">Edit 
+ Box</span> is the <span style="font-weight: bold;">Bit Display</span> 
+ which visually shows the state of the bottom 64 bits of the current calculator 
+ value (if it is an integer). <span style="margin-left: 40px;"><img src="../tip.gif"
+	style="border: none;
+			width: 31px;
+			height: 12px;"
+	width=31
+	height=12
+	border=0>Click any of the bits to toggle it on or off.</span></p>
+
+<p style="margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px; font-weight: bold;">Radix, Bits, Signed</p>
+
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">Radix</span>, 
+ <span style="font-weight: bold;">Bits</span> and <span style="font-weight: bold;">Signed</span> 
+ controls allow you to change how integers are entered and displayed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
+ are discussed in detail below.</p>
+
+<p style="margin-left: 40px; font-weight: bold;">&nbsp;</p>
+
+<p style="margin-left: 40px; font-weight: bold;">Buttons</p>
+
+<p style="margin-left: 40px;">Most of the calculator is taken up by the 
+ buttons as typically seen in calculators. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ layout of the buttons is reminiscent of the Windows calculator but a little 
+ better organised:</p>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p style="margin-left: 40px;">digits buttons in the 
+ middle (gray)</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;">binary operations on 
+ the right (blue)</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;">unary operations on 
+ the left (purple)</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;">file operations on 
+ the far left (black)</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;">memory and mark operations 
+ at top-left (red)</p></li>
+	
+	<li class=kadov-p><p style="margin-left: 40px;">control buttons (Clear, 
+ Equals, etc) at top-right and bottom-right (red)</p></li>
+</ul>
+
+<p style="margin-left: 40px;">Most of the buttons are only used with integer 
+ operations not with expressions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Their 
+ behaviour is described more fully below.</p>
+
+<h3>Operations</h3>
 
 <p style="margin-top: 0;
 			margin-bottom: 0;
-			font-weight: bold;">Expressions</p>
+			font-weight: bold;
+			margin-left: 40px;">Expressions</p>
 
 <p style="margin-top: 0;
 			margin-bottom: 0;
-			font-weight: bold;">&nbsp;</p>
+			font-weight: bold;
+			margin-left: 40px;">&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">Expression evaluation is very 
- convenient for entering an expression then pressing enter (or the '=' 
- button) to get the result. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Expressions 
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">Expression evaluation is very convenient 
+ for entering an expression then pressing enter (or the '=' button) to 
+ get the result. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Expressions 
  are used throughout HexEdit such as in the jump tools and templates. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Using 
  the calculator makes it easy to test expressions, especially as it has 
- a convenient drop-down list that allows you to recall and modify previous 
- expressions.</p>
+ a convenient drop-down <span style="font-weight: bold;">History</span> 
+ list that allows you to recall and modify previous expressions.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">Unlike when using the calculator 
- buttons expressions supports precedence, saving values to variables (using 
- '=' operator), as well as floating point numbers, date calculations, functions 
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">Unlike when using the calculator buttons 
+ expressions supports precedence, saving values to variables (using '=' 
+ operator), as well as floating point numbers, date calculations, functions 
  etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
  are drop-down menus allowing you to select any of the available variables 
  or predefined functions. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Variables 
  also support arrays. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->An 
  example of an expression you could use is:</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
 <p style="margin-top: 0;
 			margin-bottom: 0;
-			margin-left: 40px;">R[N] = rand()/0x10000 + min(P, Q, R)</p>
+			margin-left: 80px;">R[N] = rand()/0x10000 + min(P, Q, R)</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 80px;">&nbsp;</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">Most of the calculator buttons 
- are designed to work with integers, and you can use integer expressions 
- and combine these with calculations using the buttons. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;"><img src="../ex_red_sm.jpg"
+									style="border: none;
+											width: 17px;
+											height: 20px;"
+									width=17
+									height=20
+									border=0> Note that x is not used for 
+ multiplication -- use an asterisk (*) instead. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ characters &quot;0x&quot; as seen above is used to precede a number to 
+ ensure it is treated as a hex literal.</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">Most of the calculator buttons are designed 
+ to work with integers, and you can use integer expressions and combine 
+ these with calculations using the buttons. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
  if you evaluate an expression that gives a result of another type the 
  result is displayed but cannot be combined with the integer (button) operations. 
  To remind you of this a character is displayed next to the result of non-integer 
  expressions:</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
 <p style="margin-top: 0;
 			margin-bottom: 0;
-			margin-left: 40px;">R = real or floating point value</p>
+			margin-left: 80px;">R = real or floating point value</p>
 
 <p style="margin-top: 0;
 			margin-bottom: 0;
-			margin-left: 40px;">S = string</p>
+			margin-left: 80px;">S = string</p>
 
 <p style="margin-top: 0;
 			margin-bottom: 0;
-			margin-left: 40px;">B = boolean </p>
+			margin-left: 80px;">B = boolean </p>
 
 <p style="margin-top: 0;
 			margin-bottom: 0;
-			margin-left: 40px;">D = date</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+			margin-left: 80px;">D = date</p>
 
 <p style="margin-top: 0;
 			margin-bottom: 0;
-			font-weight: bold;"><span style="font-weight: bold;">Integer 
+			margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			font-weight: bold;
+			margin-left: 40px;"><span style="font-weight: bold;">Integer 
  Operations</span></p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>Most of the buttons are designed to support integer operations, because 
- the calculator in HexEdit is primarily used with integers such as file 
- addresses. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+<p style="margin-left: 40px;">Most of the buttons are designed to support 
+ integer operations, because the calculator in HexEdit is primarily used 
+ with integers such as file addresses. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  rest of the discussion focuses on these integer operations.</p>
 
-<p>&nbsp;</p>
+<p style="margin-left: 40px;">&nbsp;</p>
 
-<p>The layout of the buttons is reminiscent of the Windows calculator but 
- a little better organised. All binary operators are to the right of the 
- numeric buttons, with unary operators to the left, and file access buttons 
- to the far left.</p>
-
-<p>&nbsp;</p>
-
-<p>Note that you can combine the use of integer expressions with using 
- the buttons. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+<p style="margin-left: 40px;">Note that you can combine the use of integer 
+ expressions with using the buttons. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
  fact it is often more convenient to use an expression than to use the 
  buttons as expressions support precedence and all operations of the buttons 
  can be performed with an expression - for example, the &amp; operator 
  duplicates the &quot;AND&quot; button (see <a HREF="../overviewadvanced/Expressions.htm">Expressions</a> 
- or a C reference manual for information on all operands).</p>
+ or a C reference manual for information on all operations).</p>
 
-<p>&nbsp;</p>
+<h3 style="margin-left: 0px;">Buttons</h3>
 
-<p><span style="font-weight: bold;">Binary Operators</span></p>
+<p style="margin-left: 40px;"><span style="font-weight: bold;">Binary Operators</span></p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>To perform a <a class=popupspot
-					href="JavaScript:hhctrl.TextPopup('An operation that uses two values (operands).','Arial,8',10,10,00000000,0xc0ffff)">binary 
+<p style="margin-left: 40px;">To perform a <a class=popupspot
+												href="JavaScript:hhctrl.TextPopup('An operation that uses two values (operands).','Arial,8',10,10,00000000,0xc0ffff)">binary 
  operation</a>, enter the first operand (value) and click the desired operator 
  button. You can still click a different operator if you accidentally clicked 
  the wrong one. A small indicator appears to the right of the numeric entry 
@@ -189,162 +459,258 @@
  an overflow or error then the calculator beeps and an E or O is displayed 
  next to the numeric entry box.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>As well as the normal arithmetic operators, and logical operators there 
- are a few more esoteric operators. The <span style="font-weight: bold;">LSL</span> 
- (logical shift left) and <span style="font-weight: bold;">LSR</span> (logical 
- shift right) operators simply shift all the bits in the first operand 
- (left or right) by the number in the second. The new bits added to the 
- end always have a zero value.</p>
+<p style="margin-left: 40px;">As well as the normal arithmetic operators, 
+ and logical operators there are a few more esoteric operators. The <span 
+ style="font-weight: bold;">LSL</span> (logical shift left) and <span style="font-weight: bold;">LSR</span> 
+ (logical shift right) operators simply shift all the bits in the first 
+ operand (left or right) by the number in the second. The new bits added 
+ to the end always have a zero value.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The <span style="font-weight: bold;">ASR</span> (arithmetic shift right) 
- operator, on the other hand, will add new bits with the value one if the 
- current top bit is one. Whereas <span style="font-weight: bold;">LSR</span> 
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">ASR</span> 
+ (arithmetic shift right) operator, on the other hand, will add new bits 
+ with the value one if the current top bit is one. Whereas <span style="font-weight: bold;">LSR</span> 
  is equivalent to a division by a power of 2 for an unsigned number, <span 
  style="font-weight: bold;">ASR</span> is equivalent to a division by a 
  power of 2 for a signed (2’s complement) number.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p><span style="font-weight: bold;">ROL</span> (rotate left) and <span 
- style="font-weight: bold;">ROR</span> (rotate right) are similar to <span 
- style="font-weight: bold;">LSL</span> and <span style="font-weight: bold;">LSR</span> 
- but the new bit shifted in is the bit shifted off the other end.</p>
+<p style="margin-left: 40px;"><span style="font-weight: bold;">ROL</span> 
+ (rotate left) and <span style="font-weight: bold;">ROR</span> (rotate 
+ right) are similar to <span style="font-weight: bold;">LSL</span> and 
+ <span style="font-weight: bold;">LSR</span> but the new bit shifted in 
+ is the bit shifted off the other end.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The <span style="font-weight: bold;">GTR</span> and <span style="font-weight: bold;">LESS</span> 
- buttons find the larger or smaller of their two operands. These are useful 
- in keystroke macros, particularly as the macro error level (see below) 
- is set to a warning if the first operand is not greater (for GTR) or not 
- less (for LESS) than the second.</p>
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">GTR</span> 
+ and <span style="font-weight: bold;">LESS</span> buttons find the larger 
+ or smaller of their two operands. These are useful in keystroke macros, 
+ particularly as the macro error level (see below) is set to a warning 
+ if the first operand is not greater (for GTR) or not less (for LESS) than 
+ the second.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The division operator (<span style="font-weight: bold;">/</span>) gives 
- the truncated integer division, whereas the <span style="font-weight: bold;">MOD</span> 
+<p style="margin-left: 40px;">The division operator (<span style="font-weight: bold;">/</span>) 
+ gives the truncated integer division, whereas the <span style="font-weight: bold;">MOD</span> 
  operator gives the remainder. These are equivalent to the C/C++ integer 
  / and % operators.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p><span style="font-weight: bold;">Unary Operators</span></p>
+<p style="margin-left: 40px;"><span style="font-weight: bold;">Unary Operators</span></p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>Unary operators take a single operand -- the currently displayed number. 
- Any current binary operator is not affected by a unary operation. All 
- unary operator buttons are to the left of the numeric buttons except the 
- change sign operator (<span style="font-weight: bold;">+/-</span>) that 
- is between the <span style="font-weight: bold;">0</span> and <span style="font-weight: bold;">=</span> 
- buttons.</p>
+<p style="margin-left: 40px;">Unary operators take a single operand -- 
+ the currently displayed number. Any current binary operator is not affected 
+ by a unary operation. All unary operator buttons are to the left of the 
+ numeric buttons except the change sign operator (<span style="font-weight: bold;">+/-</span>) 
+ that is between the <span style="font-weight: bold;">0</span> and <span 
+ style="font-weight: bold;">=</span> buttons.</p>
 
 <p class=footnote-text
-	style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+	style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>There are arithmetic operators for square, factorial etc. Note that 
- the square root operator truncates the result to the integer less than 
- the real result. These operators can generate error and overflow conditions, 
- which causes an E or O to be displayed next to the numeric entry box.</p>
+<p style="margin-left: 40px;">There are arithmetic operators for square, 
+ factorial etc. Note that the square root operator truncates the result 
+ to the integer less than the real result. These operators can generate 
+ error and overflow conditions, which causes an E or O to be displayed 
+ next to the numeric entry box.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The <span style="font-weight: bold;">ROL1</span>, <span style="font-weight: bold;">ROR1</span>, 
- <span style="font-weight: bold;">LSL1</span>, <span style="font-weight: bold;">LSR1</span>, 
- and <span style="font-weight: bold;">ASR1</span> buttons perform the same 
- operation as their binary counterparts but shift by one bit only.</p>
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">ROL1</span>, 
+ <span style="font-weight: bold;">ROR1</span>, <span style="font-weight: bold;">LSL1</span>, 
+ <span style="font-weight: bold;">LSR1</span>, and <span style="font-weight: bold;">ASR1</span> 
+ buttons perform the same operation as their binary counterparts but shift 
+ by one bit only.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The <span style="font-weight: bold;">INC</span> and <span style="font-weight: bold;">DEC</span> 
- buttons increment and decrement their operand. If this results in an overflow 
- for the current operand size (see the discussion of <span style="font-weight: bold;">Bits</span> 
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">INC</span> 
+ and <span style="font-weight: bold;">DEC</span> buttons increment and 
+ decrement their operand. If this results in an overflow for the current 
+ operand size (see the discussion of <span style="font-weight: bold;">Bits</span> 
  below) then a macro error is generated.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The <span style="font-weight: bold;">REV</span> button just reverses 
- the order of all the bits in the current number. So if you are operating 
- on 32 bit values bit 31 is swapped with bit 0, bit 30 with bit 1 etc. 
- The <span style="font-weight: bold;">FLIP</span> button flips all the 
- <span style="font-style: italic;">bytes</span> in the current number. 
- If you are working with 8 bit values this button is disabled since there 
- is only one byte.</p>
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">REV</span> 
+ button just reverses the order of all the bits in the current number. 
+ So if you are operating on 32 bit values bit 31 is swapped with bit 0, 
+ bit 30 with bit 1 etc. The <span style="font-weight: bold;">FLIP</span> 
+ button flips all the <span style="font-style: italic;">bytes</span> in 
+ the current number. If you are working with 8 bit values this button is 
+ disabled since there is only one byte.</p>
 
 <p class=footnote-text
-	style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+	style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The <span style="font-weight: bold;">@n</span> operator takes the current 
- number and uses it as an address into the currently active file. Using 
- that address it reads the (8, 16, 32 or 64 bit) value from the file at 
- that address. It is a unary operator as it takes an address and replaces 
- it with the value at that address. See the <span style="font-weight: bold;">File 
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">@n</span> 
+ operator takes the current number and uses it as an address into the currently 
+ active file. Using that address it reads the (8, 16, 32 or 64 bit) value 
+ from the file at that address. It is a unary operator as it takes an address 
+ and replaces it with the value at that address. See the <span style="font-weight: bold;">File 
  Access</span> section below for more information.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p><span style="font-weight: bold;">Base and Bits</span></p>
+<p style="margin-left: 40px;"><span style="font-weight: bold;">Radix, Bits 
+ and Signed</span></p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>At the top of the calculator (below the numeric entry box) are two sets 
- of radio buttons that allow you to choose the size of the numbers you 
- are dealing with and in what base (radix) they are displayed. If you display 
- 64 bit numbers in binary you will see up to 64 binary digits (0 or 1), 
- which takes up the whole display.</p>
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">Radix</span> 
+ buttons allow you to enter numbers and display results in <span style="font-weight: bold;">Hex</span>, 
+ <span style="font-weight: bold;">Decimal</span>, <span style="font-weight: bold;">Octal</span> 
+ or <span style="font-weight: bold;">Binary</span>, and convert between 
+ those bases. Note that when you select <span style="font-weight: bold;">Decimal</span> 
+ mode the numbers default to being <span style="font-weight: bold;">signed</span>. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The <span 
+ style="font-weight: bold;">Radix</span> edit control allows you to select 
+ any radix (base) from 2 to 36.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The <span style="font-weight: bold;">Base</span> buttons allow you to 
- enter numbers and display results in hexadecimal, decimal, octal or binary, 
- and convert between those bases. Note that in decimal mode the numbers 
- are considered to be signed, whereas in the other bases they are treated 
- as unsigned, which may give slightly different results for negative numbers 
- and different overflow conditions.</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;"><img src="../ex_red_sm.jpg"
+									style="border-style: none;
+											border: none;
+											width: 17px;
+											height: 20px;"
+									width=17
+									height=20
+									border=0> When using numbers in a radix 
+ greater than 16 the digits are G (16), H (17), ... Z(35). <!--kadov_tag{{<spaces>}}-->&nbsp;<span><!--kadov_tag{{</spaces>}}-->There 
+ are no buttons for entering these digits so you must use the keyboard.</span></p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The <span style="font-weight: bold;">Bits</span> buttons allow you to 
- specify the size of the numbers you want to work with. Note that if you 
- change to a smaller number of bits and the current value won’t fit this 
- will generate an overflow. For example, if the current value is 257 and 
- you click on the 8 bit button an overflow is indicated and the current 
- value changes to 1 (the value in the low byte of 257). To restore the 
- original value change the number of bits back (eg. click on the 32 bit 
- button).</p>
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">Bits</span> 
+ buttons allow you to specify the size of the numbers you want to work 
+ with. Note that if you change to a smaller number of bits and the current 
+ value won’t fit this will generate an overflow. For example, if the current 
+ value is 257 and you click on the 8 bit button an overflow is indicated 
+ and the current value changes to 1 (the value in the low byte of 257). 
+ To restore the original value increase the number of bits back (eg. click 
+ on the 32 bit button). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ can set any positive value for bits; using a value of zero (or selecting 
+ the <span style="font-weight: bold;">Inf</span> radio button) gives <span 
+ style="font-weight: bold;">infinite precision</span> integer calculations..</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>Also note that many operations are done using the full 64 bits but only 
- the requested number of bits are displayed. For example, if you add 255 
- and 2 in 8 bit mode an overflow is generated and the displayed result 
- is 1. If you now click on the 32 bit button you can see the actual value 
- of 257.</p>
+<p style="margin-left: 40px;"><img src="../tip.gif"
+									style="border-style: none;
+											border: none;
+											width: 31px;
+											height: 12px;"
+									width=31
+									height=12
+									border=0>Note that generally integer 
+ operations are performed using infinite precision, and then displayed 
+ with the requested number of bits. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the number is too large to be displayed in the number of bits then an 
+ overflow is indicated. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ may then increase the <span style="font-weight: bold;">Bits</span> setting 
+ to see the full result. <!--kadov_tag{{<spaces>}}-->&nbsp;&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if you add 255 and 2 in 8 bit mode an overflow is generated and 
+ the displayed result is 1. If you now increase the <span style="font-weight: bold;">Bits</span> 
+ setting you can see the actual value of 257.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>Furthermore, some operators (such as the logical operators <span style="font-weight: bold;">AND</span>, 
- <span style="font-weight: bold;">NOT</span> etc) where the values of lower 
- bits do not affect the value of higher bits always operate in 64 bit mode 
- but only the requested number of bits in the result are displayed.</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">The <span style="font-weight: bold;">Signed</span> 
+ setting allows viewing a number as unsigned or signed (2's complement) 
+ numbers in any radix - but <span style="font-weight: bold;">Decimal</span> 
+ mode defaults to signed, while other modes default to unsigned. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Switching 
+ between signed and unsigned can generate an overflow if the high bit is 
+ on.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p><span style="font-weight: bold;">File Access</span></p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;"><!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}--><img 
+ src="../ex_red_sm.jpg"
+	style="border-style: none;
+			border: none;
+			width: 17px;
+			height: 20px;"
+	width=17
+	height=20
+	border=0> The <span style="font-weight: bold;">Signed</span> checkbox 
+ is disabled in <span style="font-weight: bold;">Inf</span> precision mode 
+ as signed numbers are always used in this case.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The buttons to the far left (except for the memory buttons) are only 
- enabled when there is a file window active. They allow you to get the 
- value of and even change the cursor, mark etc in the currently active 
- file. Further, you can read and write values in the file.</p>
+<p style="margin-left: 40px;"><span style="font-weight: bold;">File Access</span></p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The farthest column of buttons (<span style="font-weight: bold;">Memory</span>, 
+<p style="margin-left: 40px;">The buttons to the far left (except for the 
+ memory buttons) are only enabled when there is a file window active. They 
+ allow you to get the value of and even change the cursor, mark etc in 
+ the currently active file. Further, you can read and write values in the 
+ file.</p>
+
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
+
+<p style="margin-left: 40px;">The farthest column of buttons (<span style="font-weight: bold;">Memory</span>, 
  <span style="font-weight: bold;">Mark</span>, <span style="font-weight: bold;">@Mark</span>, 
  etc) are used to get values, whereas the buttons immediately to their 
  right are used to change the corresponding value using the currently displayed 
@@ -352,21 +718,25 @@
  that can be used to get a value from the file – it is discussed above 
  under <span style="font-weight: bold;">Unary Operators</span>.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The <span style="font-weight: bold;">GO</span> button (in the bottom 
- right corner) is similar to the Set Cursor button but is also puts you 
- back into file editing. This is the “default” button, so that if you type 
- a number and press the Enter key, you will jump straight to the address 
- you typed and can continue editing.</p>
+<p style="margin-left: 40px;">The <span style="font-weight: bold;">GO</span> 
+ button (in the bottom right corner) is similar to the Set Cursor button 
+ but is also puts you back into file editing. This is the “default” button, 
+ so that if you type a number and press the Enter key, you will jump straight 
+ to the address you typed and can continue editing.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The file access buttons in the left 2 columns of buttons (ie, apart 
- from <span style="font-weight: bold;">@n</span> and <span style="font-weight: bold;">GO</span>) 
- are:</p>
+<p style="margin-left: 40px;">The file access buttons in the left 2 columns 
+ of buttons (ie, apart from <span style="font-weight: bold;">@n</span> 
+ and <span style="font-weight: bold;">GO</span>) are:</p>
 
-<p>&nbsp;</p>
+<p style="margin-left: 40px;">&nbsp;</p>
 
 <!--(Table)=========================================================-->
 <!--begin!kadov{{--><div align=left><!--}}end!kadov-->
@@ -375,6 +745,7 @@
 				float: alignleft;
 				width: 83.597%;
 				border-spacing: 0px;
+				margin-left: 40px;
 				border-spacing: 0px;"
 		cellspacing=0
 		width=83.597%>
@@ -735,107 +1106,126 @@
 <p>Get the length of the file.</td></tr>
 </table>
 <!--begin!kadov{{--></div><!--}}end!kadov-->
-<p>&nbsp;</p>
+<p style="margin-left: 40px;">&nbsp;</p>
 
-<p>Note that there is no “Set EOF” button as you can’t change the length 
- of the file in the calculator. (You can only change the length of the 
- file if you are in INS (insert) mode and you add or delete bytes at the 
- end of the file.)</p>
+<p style="margin-left: 40px;">Note that there is no “Set EOF” button as 
+ you can’t change the length of the file in the calculator. (You can only 
+ change the length of the file if you are in INS (insert) mode and you 
+ add or delete bytes at the end of the file.)</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The size of the integer read by the “@” buttons (<span style="font-weight: bold;">@Mark</span>, 
- <span style="font-weight: bold;">@Cursor</span>, and <span style="font-weight: bold;">@n</span>) 
- and written by the <span style="font-weight: bold;">Store</span> buttons 
- is determined by the current <span style="font-weight: bold;">Bits</span> 
- setting. The byte order of the numbers read from or written to the file 
- is set by the <span style="font-weight: bold;">Big-endian</span> check-box 
- near the top right corner of the calculator. (This is normally not checked 
- allowing for Intel byte order.)</p>
+<p style="margin-left: 40px;">The size of the integer read by the “@” buttons 
+ (<span style="font-weight: bold;">@Mark</span>, <span style="font-weight: bold;">@Cursor</span>, 
+ and <span style="font-weight: bold;">@n</span>) and written by the <span 
+ style="font-weight: bold;">Store</span> buttons is determined by the current 
+ <span style="font-weight: bold;">Bits</span> setting. The byte order of 
+ the numbers read from or written to the file is set by the <span style="font-weight: bold;">Big-endian</span> 
+ check-box near the top right corner of the calculator. (This is normally 
+ not checked allowing for Intel byte order.)</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>If you are not editing any files, the file access buttons are disabled 
- (light gray), because there is no file to access. Some of the buttons 
- may be disabled at various times for various reasons. For example, if 
- the current displayed value is greater than the length of file then <span 
- style="font-weight: bold;">MkS</span>, <span style="font-weight: bold;">@n</span> 
- etc, that use that value as a file address, are disabled.</p>
+<p style="margin-left: 40px;">If you are not editing any files, the file 
+ access buttons are disabled (light gray), because there is no file to 
+ access. Some of the buttons may be disabled at various times for various 
+ reasons. For example, if the current displayed value is greater than the 
+ length of file then <span style="font-weight: bold;">MkS</span>, <span 
+ style="font-weight: bold;">@n</span> etc, that use that value as a file 
+ address, are disabled.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The file access buttons are particularly useful when used with keystroke 
- macros (see previous section). For example, you could repeat the same 
- calculation on every value in a file by storing the following operations 
- in a keystroke macro: first load the value at the cursor using the <span 
- style="font-weight: bold;">@Cursor </span>button, perform some operations 
- on it, then save it back to the file using the <span style="font-weight: bold;">Store</span> 
- button. To move to the next value in the file: load the current cursor 
- address using the <span style="font-weight: bold;">Cursor</span> button, 
- increment the required number of times depending on your operand size 
- (using the <span style="font-weight: bold;">INC</span> button) and move 
- the cursor using the <span style="font-weight: bold;">Set</span> button. 
- Use the Tools/Macro Play menu item to replay the macro the required number 
- of times (use a very big number to do the whole file).</p>
+<p style="margin-left: 40px;">The file access buttons are particularly 
+ useful when used with keystroke macros (see previous section). For example, 
+ you could repeat the same calculation on every value in a file by storing 
+ the following operations in a keystroke macro: first load the value at 
+ the cursor using the <span style="font-weight: bold;">@Cursor </span>button, 
+ perform some operations on it, then save it back to the file using the 
+ <span style="font-weight: bold;">Store</span> button. To move to the next 
+ value in the file: load the current cursor address using the <span style="font-weight: bold;">Cursor</span> 
+ button, increment the required number of times depending on your operand 
+ size (using the <span style="font-weight: bold;">INC</span> button) and 
+ move the cursor using the <span style="font-weight: bold;">Set</span> 
+ button. Use the Tools/Macro Play menu item to replay the macro the required 
+ number of times (use a very big number to do the whole file).</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p><span style="font-weight: bold;">Memory</span></p>
+<p style="margin-left: 40px;"><span style="font-weight: bold;">Memory</span></p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>To store the displayed number in the calculator memory, click the MS 
- button. After a number has been stored, the Memory button is enabled, 
- which you can later click to get the number back. The MC button clears 
- the memory (and disables the Memory button). Note that you can generate 
- an overflow just by recalling a number from the memory that is bigger 
- than will fit in the current operand size.</p>
+<p style="margin-left: 40px;">To store the displayed number in the calculator 
+ memory, click the MS button. After a number has been stored, the Memory 
+ button is enabled, which you can later click to get the number back. The 
+ MC button clears the memory (and disables the Memory button). Note that 
+ you can generate an overflow just by recalling a number from the memory 
+ that is bigger than will fit in the current operand size.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The M+ and M- buttons allow you to add to and subtract from the current 
- value in the memory.</p>
+<p style="margin-left: 40px;">The M+ and M- buttons allow you to add to 
+ and subtract from the current value in the memory.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The buttons below the memory buttons for the “mark” are analogous, but 
- instead of changing the calculator memory they change the position of 
- the mark in the active file window. They can be used as a makeshift second 
- memory.</p>
+<p style="margin-left: 40px;">The buttons below the memory buttons for 
+ the “mark” are analogous, but instead of changing the calculator memory 
+ they change the position of the mark in the active file window. They can 
+ be used as a makeshift second memory.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<h3><span style="font-weight: bold;">Shortcut Keys</span></h3>
 
-<p><span style="font-weight: bold;">Shortcut Keys</span></p>
+<p style="margin-left: 40px;">The calculator provides many shortcut keys 
+ that are the same as those for the Windows calculator. For example, to 
+ recall the value of the calculator memory: press Ctrl+R. The shortcut 
+ keys are displayed in the “tips” that appear when you leave the mouse 
+ over a button for a second. The most common ones are for arithmetic operators: 
+ +, -, * (multiply), / (divide), and % (modulus); logical operators: &amp;, 
+ | (OR), ^ (Exclusive-OR), and ~ (NOT); and = (Calculate).</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>The calculator provides many shortcut keys that are the same as those 
- for the Windows calculator. For example, to recall the value of the calculator 
- memory: press Ctrl+R. The shortcut keys are displayed in the “tips” that 
- appear when you leave the mouse over a button for a second. The most common 
- ones are for arithmetic operators: +, -, * (multiply), / (divide), and 
- % (modulus); logical operators: &amp;, | (OR), ^ (Exclusive-OR), and ~ 
- (NOT); and = (Calculate).</p>
+<p style="margin-left: 40px;">Like the Windows calculator you can enter 
+ numbers by typing valid digits for the current base. The number displayed 
+ has spaces added for readability, but you don’t need to type these. Decimal 
+ numbers have commas as thousands separators (or whatever is set in the 
+ Control Panel for your culture/region).</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>Like the Windows calculator you can enter numbers by typing valid digits 
- for the current base. The number displayed has spaces added for readability, 
- but you don’t need to type these. Decimal numbers have commas as thousands 
- separators (or whatever is set in the Control Panel for your culture/region).</p>
+<p style="margin-left: 40px;">Unlike the Windows calculator you can use 
+ the Home, End, Del, arrow keys etc to edit the current number. You can 
+ even select parts of the value using the Shift-arrow keys before deleting, 
+ cutting (Ctrl+X), copying (Ctrl+C) etc, and use Ctrl+V to paste from the 
+ clipboard.</p>
 
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
+<p style="margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 40px;">&nbsp;</p>
 
-<p>Unlike the Windows calculator you can use the Home, End, Del, arrow 
- keys etc to edit the current number. You can even select parts of the 
- value using the Shift-arrow keys before deleting, cutting (Ctrl+X), copying 
- (Ctrl+C) etc, and use Ctrl+V to paste from the clipboard.</p>
-
-<p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
-
-<p>Particularly useful are the keys to change the current base and size: 
- F5 to F8 change betweens the four bases; F9-F12 change between the four 
- sizes (64, 32, 16 or 8 bit).</p>
+<p style="margin-left: 40px;">Particularly useful are the keys to change 
+ the current base and size: F5 to F8 change betweens the four bases; F9-F12 
+ change between the four sizes (64, 32, 16 or 8 bit).</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
