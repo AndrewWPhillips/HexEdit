@@ -822,9 +822,9 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	__int64 sym_size, sym_address;
 	CString sym_str;
 	bool saved_const_sep_allowed;
-	GetInt *pGetIntDlg;
-	GetStr *pGetStrDlg;
-	GetBool *pGetBoolDlg;
+	GetInt *pGetIntDlg = NULL;
+	GetStr *pGetStrDlg = NULL;
+	GetBool *pGetBoolDlg = NULL;
 
 	switch (next_tok)
 	{
@@ -1134,27 +1134,23 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		val.pstr = new ExprStringType(sym_str);
 		return get_next();
 	case TOK_GETINT:
-		pGetIntDlg = new GetInt();
-
 		// Get opening bracket and first symbol within
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
 			strcpy(error_buf_, "Expected opening parenthesis after GETINT");
-			delete pGetIntDlg;
 			return TOK_NONE;
 		}
 
 		if (error(next_tok = prec_assign(val), "Expected prompt string for GETINT"))
 		{
-			delete pGetIntDlg;
 			return TOK_NONE;
 		}
 		if (val.typ != TYPE_STRING)
 		{
 			strcpy(error_buf_, "First parameter for GETINT must be a string");
-			delete pGetIntDlg;
 			return TOK_NONE;
 		}
+		pGetIntDlg = new GetInt();
 		pGetIntDlg->prompt_ = CString(*(val.pstr));
 		pGetIntDlg->value_ = 0L;
 		pGetIntDlg->min_ = LONG_MIN;
@@ -1249,27 +1245,24 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		return get_next();
 
 	case TOK_GETSTR:
-		pGetStrDlg = new GetStr();
-
 		// Get opening bracket and first symbol within
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
 			strcpy(error_buf_, "Expected opening parenthesis after GETSTRING");
-			delete pGetStrDlg;
 			return TOK_NONE;
 		}
 
 		if (error(next_tok = prec_assign(val), "Expected prompt string for GETSTRING"))
 		{
-			delete pGetStrDlg;
 			return TOK_NONE;
 		}
 		if (val.typ != TYPE_STRING)
 		{
 			strcpy(error_buf_, "First parameter for GETSTRING must be a string");
-			delete pGetStrDlg;
 			return TOK_NONE;
 		}
+
+		pGetStrDlg = new GetStr();
 		pGetStrDlg->prompt_ = CString(*(val.pstr));
 
 		// Get optional parameter: default value
@@ -1317,27 +1310,24 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		return get_next();
 
 	case TOK_GETBOOL:
-		pGetBoolDlg = new GetBool();
-
 		// Get opening bracket and first symbol within
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
 			strcpy(error_buf_, "Expected opening parenthesis after GETBOOL");
-			delete pGetBoolDlg;
 			return TOK_NONE;
 		}
 
 		if (error(next_tok = prec_assign(val), "Expected prompt string for GETBOOL"))
 		{
-			delete pGetBoolDlg;
 			return TOK_NONE;
 		}
 		if (val.typ != TYPE_STRING)
 		{
 			strcpy(error_buf_, "First parameter for GETBOOL must be a string");
-			delete pGetBoolDlg;
 			return TOK_NONE;
 		}
+
+		pGetBoolDlg = new GetBool();
 		pGetBoolDlg->prompt_ = CString(*(val.pstr));
 
 		// Get optional parameters: default value, min, max
@@ -1390,6 +1380,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 
 		delete pGetBoolDlg;
 		return get_next();
+
 	case TOK_ADDRESSOF:
 		// Get opening bracket and first symbol within
 		if (error(next_tok = get_next(), "Expected opening parenthesis after ADDRESSOF"))
@@ -1468,11 +1459,6 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 				break;
 			}
 		}
-		//if (val.typ == TYPE_NONE)
-		//{
-		//	sprintf(error_buf_, "Address of unknown symbol \"%.200s\"", psymbol_);
-		//	return TOK_NONE;
-		//}
 
 		if (next_tok != TOK_RPAR)
 		{
@@ -1480,6 +1466,9 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 			return TOK_NONE;
 		}
 
+		// Note for templates (uses CHexExpr::find_symbol) sym_address == -1 if symbol is not found
+		// For other expressions (eg CJumpExpr::find_symbol) sym_address == 0 always (whether or
+		// not the symbol exists) but you are only supposed to use addressof() in templates.
 		if (sym_address < 0)
 		{
 			sprintf(error_buf_, "Symbol \"%.200s\" not in file", psymbol_);

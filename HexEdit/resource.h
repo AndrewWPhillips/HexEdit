@@ -406,7 +406,6 @@
 #define IDD_OPT_PRINT_GENERAL           436
 #define IDD_OPT_PRINT_DECORATIONS       437
 #define IDD_OPT_BACKUP                  438
-#define IDD_CALC_OLD                    439
 #define IDI_QUESTIONMARK                440
 #define IDD_OPT_BACKGROUND              440
 #define IDI_EXCLAMATIONMARK             441

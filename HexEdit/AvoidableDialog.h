@@ -6,7 +6,7 @@
 // This derives from CTaskDialog solely to add the ability to have an "avoidable dialog".
 // If the user turns on the "Don't ask again" checkbox then subsequent use of this dialog returns 
 // the same value without any user interaction and without any visible difference to the callee.
-// The returns values are stored in the registry - once hidden by the user a dialogs will not be 
+// The return values are stored in the registry - once hidden by the user a dialog will not be 
 // seen again until the relevant regitry entry is removed.
 class CAvoidableDialog : public CTaskDialog
 {
