@@ -28,6 +28,7 @@
 #include "HexFileList.h"
 #include "RecentFileDlg.h"
 #include "SpecialList.h"
+#include "dialog.h"
 #include <HtmlHelp.h>
 
 #include "resource.hm"
@@ -148,6 +149,7 @@ BEGIN_MESSAGE_MAP(CRecentFileDlg, CDialog)
 	ON_BN_CLICKED(IDC_OPEN_FILES, OnOpen)
 	ON_BN_CLICKED(IDC_OPEN_RO, OnOpenRO)
 	ON_BN_CLICKED(IDC_REMOVE_FILES, OnRemove)
+	ON_BN_CLICKED(IDC_RECENT_FILES_SEARCH, OnSearch)
 	ON_WM_DESTROY()
 	ON_WM_HELPINFO()
 	ON_BN_CLICKED(IDC_RECENT_FILES_HELP, OnHelp)
@@ -484,7 +486,7 @@ void CRecentFileDlg::FillGrid()
 
 		// Set the data of column zero to be the index of the file.  This is so that if the order
 		// of rows is changed (eg when sorted) that we still know which file in the HexFileList it is.
-//        grid_.SetItemData(item.row, fcc, index);
+//        grid_.SetItemData(item.row, fcc + COL_NAME, index);
 	}
 	if (hh != HINSTANCE(0))
 		::FreeLibrary(hh);
@@ -546,15 +548,17 @@ BOOL CRecentFileDlg::OnInitDialog()
 	resizer_.SetMinimumTrackingSize();
 	resizer_.SetGripEnabled(TRUE);
 	resizer_.Add(IDC_GRID_RFL, 0, 0, 100, 100);
-	resizer_.Add(IDOK, 100, 0, 0, 0);
-	resizer_.Add(IDCANCEL, 100, 0, 0, 0);
+	resizer_.Add(IDC_FILES_SELECTED, 100, 0, 0, 0);
 	resizer_.Add(IDC_OPEN_FILES, 100, 0, 0, 0);
 	resizer_.Add(IDC_OPEN_RO, 100, 0, 0, 0);
+
+	resizer_.Add(IDOK, 100, 0, 0, 0);
+	//resizer_.Add(IDCANCEL, 100, 0, 0, 0);
 	resizer_.Add(IDC_REMOVE_FILES, 100, 0, 0, 0);
-	resizer_.Add(IDC_FILES_SELECTED, 100, 0, 0, 0);
 	resizer_.Add(IDC_VALIDATE, 100, 0, 0, 0);
 	resizer_.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
 	resizer_.Add(IDC_NET_RETAIN_DESC, 100, 0, 0, 0);
+	resizer_.Add(IDC_RECENT_FILES_SEARCH, 100, 0, 0, 0);
 	resizer_.Add(IDC_RECENT_FILES_HELP, 100, 0, 0, 0);
 #ifdef FILE_PREVIEW
 	if (m_preview.m_hWnd != (HWND)0)
@@ -709,7 +713,7 @@ LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 		{
 			++rows_selected;
 
-			int idx = grid_.GetItemData(row, fcc);
+			int idx = grid_.GetItemData(row, fcc + COL_NAME);
 			if (first_item_selected < 0)
 				first_item_selected = idx;
 			CString name = pfl->name_[idx];
@@ -733,6 +737,12 @@ LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	AddCommas(ss);
 	ASSERT(GetDlgItem(IDC_FILES_SELECTED) != NULL);
 	GetDlgItem(IDC_FILES_SELECTED)->SetWindowText("Selected: " + ss);
+
+	// Update OK button to say "Save" if files need deleting
+	GetDlgItemText(IDOK, ss);
+	CString newStr = to_delete_.size() > 0 ? "Save" : "Close";
+	if (newStr != ss)
+		SetDlgItemText(IDOK, newStr);
 
 #ifdef FILE_PREVIEW
 	if (theApp.thumbnail_)
@@ -802,7 +812,7 @@ void CRecentFileDlg::OnOpen()
 	// then open them) as opening a file changes the order of files in the list (pfl->name_ etc)
 	for (int row = sel.GetMinRow(); row <= sel.GetMaxRow(); ++row)
 		if (grid_.IsCellSelected(row, fcc))
-			to_open.insert(pfl->name_[grid_.GetItemData(row, fcc)]);
+			to_open.insert(pfl->name_[grid_.GetItemData(row, fcc + COL_NAME)]);
 
 	// Force dialog to close before we open the files in case any dialogs to do with opening pop up
 	CDialog::OnOK();
@@ -832,7 +842,7 @@ void CRecentFileDlg::OnOpenRO()
 	// then open them) as opening a file changes the order of files in the list (pfl->name_ etc)
 	for (int row = sel.GetMinRow(); row <= sel.GetMaxRow(); ++row)
 		if (grid_.IsCellSelected(row, fcc))
-			to_open.insert(pfl->name_[grid_.GetItemData(row, fcc)]);
+			to_open.insert(pfl->name_[grid_.GetItemData(row, fcc + COL_NAME)]);
 
 		std::set<CString>::const_iterator pp;
 
@@ -861,17 +871,20 @@ void CRecentFileDlg::OnRemove()
 	for (int row = sel.GetMinRow(); row <= sel.GetMaxRow(); ++row)
 		if (grid_.IsCellSelected(row, fcc))
 		{
-			to_delete_.insert(grid_.GetItemData(row, fcc));
+			to_delete_.insert(grid_.GetItemData(row, fcc + COL_NAME));
 			tt.insert(row);
 		}
 
-	// Now remove the rows from the display starting from the end
-	range_set<int>::const_iterator pp;
+	if (to_delete_.size() > 0)
+	{
+		// Now remove the rows from the display starting from the end
+		range_set<int>::const_iterator pp;
 
-	// Remove elements starting at end so that we don't muck up the row order
-	for (pp = tt.end(); pp != tt.begin(); )
-		grid_.DeleteRow(*(--pp));
-	grid_.Refresh();
+		// Remove elements starting at end so that we don't muck up the row order
+		for (pp = tt.end(); pp != tt.begin(); )
+			grid_.DeleteRow(*(--pp));
+		grid_.Refresh();
+	}
 }
 
 void CRecentFileDlg::OnValidate()
@@ -882,12 +895,11 @@ void CRecentFileDlg::OnValidate()
 	CHexFileList *pfl = theApp.GetFileList();
 	int fcc = grid_.GetFixedColumnCount();
 	range_set<int> tt;                  // the grid rows to be removed
-	int count = 0;                      // Number of files removed (validation failed)
 	CString last_name;                  // Name of last file removed
 
 	for (int row = grid_.GetFixedRowCount(); row < grid_.GetRowCount(); ++row)
 	{
-		int index = grid_.GetItemData(row, fcc);
+		int index = grid_.GetItemData(row, fcc + COL_NAME);
 		ASSERT(index > -1 && index < pfl->name_.size());
 		if (::IsDevice(pfl->name_[index]))
 			continue;                                   // Just ignore devices for now
@@ -896,7 +908,6 @@ void CRecentFileDlg::OnValidate()
 		if (_access(pfl->name_[index], 0) == -1 &&
 			(!net_retain_ || ::GetDriveType(pfl->name_[index].Left(3)) == DRIVE_FIXED))
 		{
-			++count;
 			TRACE1("Validate: removing %s\n", pfl->name_[index]);
 			last_name = pfl->name_[index];
 			to_delete_.insert(index);
@@ -904,25 +915,63 @@ void CRecentFileDlg::OnValidate()
 		}
 	}
 
-	// Now remove the rows from the display startinf from the end
-	range_set<int>::const_iterator pp;
-
 	// Remove elements starting at end so that we don't muck up the row order
-	for (pp = tt.end(); pp != tt.begin(); )
+	for (range_set<int>::const_iterator pp = tt.end(); pp != tt.begin(); )
 		grid_.DeleteRow(*(--pp));
 	grid_.Refresh();
 
-	// Teel the user what we did
+	// Tell the user what we did
 	CString ss;
-	if (count == 0)
+	if (tt.size() == 0)
 		ss = "No files removed from the\n"
 			 "recently used file list.";
-	else if (count == 1)
+	else if (tt.size() == 1)
 		ss.Format("One file removed:\n%s", last_name);
 	else
 		ss.Format("%ld files removed from the\n"
-				  "recently used file list.",  long(count));
+				  "recently used file list.",  long(tt.size()));
 	AfxMessageBox(ss);
+}
+
+void CRecentFileDlg::OnSearch()
+{
+	CHexFileList *pfl = theApp.GetFileList();
+	GetStr dlg(this);
+	dlg.prompt_ = "Please enter the text to search for.\r\n\n"
+		          "Note that all fields including name, location, "
+				  "keywords, comments, etc will be searched.";
+	if (dlg.DoModal() == IDOK)
+	{
+		// Find all entries that have the string
+		// TBD: need to give user options for case-insensitive and keywords only
+		std::vector<int> found = pfl->Search(dlg.value_, true, false);
+
+		// Select all matching lines
+		//int frc = grid_.GetFixedRowCount();
+		int fcc = grid_.GetFixedColumnCount();
+		grid_.ResetSelectedRange();  // clear existing selections as we are adding to the selection
+		int row;                     // loops through all non-fixed rows of the grid
+		int first = -1, last;        // remember the first and last selected row
+
+		for (row = grid_.GetFixedRowCount(); row < grid_.GetRowCount(); ++row)
+		{
+			// Get datafrom name column of this row (index into recent file list) and see if it is in the "found" list
+			int idx = grid_.GetItemData(row, fcc + COL_NAME);
+
+			if (std::binary_search(found.begin(), found.end(), idx))
+			{
+				if (first == -1)
+					first = row;
+				last = row;
+				grid_.SetSelectedRange(row, grid_.GetFixedColumnCount(), row, grid_.GetColumnCount()-1, FALSE, TRUE, TRUE);
+			}
+		}
+		if (first != -1)
+		{
+			grid_.EnsureVisible(last, fcc);
+			grid_.EnsureVisible(first, fcc);
+		}
+	}
 }
 
 void CRecentFileDlg::OnDestroy()

@@ -77,6 +77,7 @@ public:
 	void ChangeSize(int nSize);
 
 	size_t GetCount() { return name_.size(); }
+	std::vector<int> Search(LPCTSTR str, bool ignoreCase, bool keywordsOnly);
 
 // Implementation
 public:
@@ -94,6 +95,7 @@ protected:
 	std::vector<time_t> opened_;        // When the file was last opened
 	std::vector<int> open_count_;       // How many times the file has been opened
 	std::vector<CString> data_;         // Extra data associated with the file
+
 	CString default_data_;              // Default values for data
 	CString filename_;                  // Name of file where recent file list is written
 

@@ -425,6 +425,7 @@
 #define IDD_PROP_STATS                  505
 #define IDD_PROP_GRAPH                  506
 #define IDD_CRC                         507
+#define IDD_RECENT_FILES_NEW            508
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -885,6 +886,8 @@
 #define IDC_BOOKMARKS_HELP              1300
 #define IDC_RECENT_FILES_HELP           1301
 #define IDC_SCHEME_HELP                 1302
+#define IDC_RECENT_FILES_HELP2          1302
+#define IDC_RECENT_FILES_SEARCH         1302
 #define IDC_PLAY_HELP                   1303
 #define IDC_CLEAR_HELP                  1304
 #define IDC_BM_FIND_APPEND              1305

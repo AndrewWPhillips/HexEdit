@@ -644,3 +644,67 @@ void CHexFileList::IncOpenCount(int index)
 	ASSERT(index > -1 && index < int(open_count_.size()));
 	++open_count_[index];
 }
+
+std::vector<int> CHexFileList::Search(LPCTSTR str, bool ignoreCase, bool keywordsOnly)
+{
+	CString strSearch;
+	if (ignoreCase)
+		strSearch = CString(str).MakeUpper();
+	else
+		strSearch = str;
+
+	std::vector<int> retval;
+	ASSERT(name_.size() == data_.size());   // sanity check
+	for (int ii = 0; ii < name_.size(); ++ii)
+	{
+		if (keywordsOnly)
+		{
+			// Get the string containign all keywords
+			CString kk;
+			if (ignoreCase)
+				kk = GetData(ii, KEYWORDS).MakeUpper();
+			else
+				kk = GetData(ii, KEYWORDS);
+			const char *start = kk.GetBuffer();
+			size_t len = strSearch.GetLength();
+
+			// For all matches of the search string 
+			for (const char * pp = start; ; ++pp)
+			{
+				if ((pp = strstr(pp, strSearch)) == NULL)
+					break;    // strSearch not found
+
+				// If the string was found and it is a whole word ...
+				if ((pp == start || !isalnum(*(pp-1))) && !isalnum(*(pp+len)))
+				{
+					// Save it and stop searching these keywords
+					retval.push_back(ii);
+					break;
+				}
+				// else we continue scan from the next byte in the string
+			}
+		}
+		else
+		{
+			CString nn, dd;
+			if (ignoreCase)
+			{
+				nn = name_[ii].MakeUpper();
+				dd = data_[ii].MakeUpper();
+			}
+			else
+			{
+				nn = name_[ii];
+				dd = data_[ii];
+			}
+
+			// Check if the string is found in name or any of the other parameters
+			// Note that as dd use | as a separator between params this would be confused by 
+			// using | in a search string, which is unlikely but could be protected against
+
+			if (strstr(nn, strSearch) != NULL || strstr(dd, strSearch) != NULL)
+				retval.push_back(ii);
+		}
+	}
+	return retval;
+}

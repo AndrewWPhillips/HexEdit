@@ -65,7 +65,7 @@ public:
 
 // Dialog Data
 	//{{AFX_DATA(CRecentFileDlg)
-	enum { IDD = IDD_RECENT_FILES };
+	enum { IDD = IDD_RECENT_FILES_NEW };
 	CButton	ctl_remove_;
 	CButton	ctl_open_ro_;
 	CButton	ctl_open_;
@@ -91,6 +91,7 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnOpenRO();
 	afx_msg void OnRemove();
+	afx_msg void OnSearch();
 	virtual void OnOK();
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
