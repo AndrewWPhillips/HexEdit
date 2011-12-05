@@ -1,0 +1,149 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>File Backup/Export</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=1001>
+<meta name=layout-width content=1564>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;"><span style="font-family: Arial;">File 
+ Backup/Export Options Page</span></h2>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="OptFileBackup.png" style="border: none;
+								width: 627px;
+								height: 304px;" width="627" height="304" border="0"></p>
+
+<p>&nbsp;</p>
+
+<p>This page allows you to change global options relating to file and editing 
+ commands.</p>
+
+<h3>Backups</h3>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;">Create backup files</p>
+
+<p style="margin-left: 64px;">If this option is selected (and <span style="font-weight: bold;">all</span> 
+ of the conditions below are met) then whenever you save a file the previous 
+ version of the file, if any, is retained with the file extension of “.BAK”. 
+ (If you are editing a file with extension of “.BAK” the backup file has 
+ an extension of “.BAC”). The previous backup file, if any, is discarded.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-left: 64px;">To always create backup files turn on this 
+ option and turn off all the sub-options below.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Only 
+ if sufficient disk space</span></p>
+
+<p style="margin-left: 64px;">A backup is only created if there is free 
+ disk space (on the same volume) to accommodate the original file (which 
+ becomes the backup file) and the new file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Note 
+ that this does not guarantee that the file will be able to be written 
+ to disk, since other processes or even the operating system may change 
+ the available disk space while the file is being written to disk.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Only 
+ if size is less than</span></p>
+
+<p style="margin-left: 64px;">Selecting this option allows you to specify 
+ a maximum file size. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ the (new) file is bigger than this a backup will not be created.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Prompt 
+ for confirmation</span></p>
+
+<p style="margin-left: 64px;">Asks when the file is saved if you want to 
+ create a backup copy. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
+ are only asked if all the above options say that a backup should be created.</p>
+
+<p>&nbsp;</p>
+
+<h3>Export</h3>
+
+<p style="margin-top: 3.00pt;
+			font-weight: bold;
+			margin-left: 40px;">Use file addresses</p>
+
+<p style="margin-left: 64px;">When exporting the selection to a Motorola 
+ S or Intel Hex file you need to specify a starting address. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Selecting 
+ this option says to use the address within the file of the start of the 
+ selection. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ example, if you select and export the whole file the starting address 
+ will be zero.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Use 
+ address</span></p>
+
+<p style="margin-left: 64px;">When exporting the selection to a Motorola 
+ S or Intel Hex file this option allows you to specify the starting address, 
+ ie the address of the first line written to the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
+ this case the file address of the selection to be exported is ignored.</p>
+
+<p style="margin-left: 64px;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; margin-left: 40px;"><span style="font-weight: bold;">Bytes 
+ per line</span></p>
+
+<p style="margin-left: 64px;">This is the number of data bytes that are 
+ written to the exported text files created by the <a href="../cmd_file/Export_Motorola_S1_Records.htm">Export 
+ Motorola S1 Records</a>, <a href="../cmd_file/Export_Motorola_S2_Records.htm">Export 
+ Motorola S2 Records</a>, <a href="../cmd_file/Export_Motorola_S3_Records.htm">Export 
+ Motorola S3 Records</a>, <a href="../cmd_file/Export_Intel_Hex_Records.htm">Export 
+ Intel Hex Records</a>, and <a href="../cmd_file/Export_Hex_Text.htm">Export 
+ Hex Text</a> commands. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ number should be kept within a reasonable range (and always between 8 
+ and 250) as some software may have trouble reading very long lines. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ reasonable number would be 16 or 32.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>
