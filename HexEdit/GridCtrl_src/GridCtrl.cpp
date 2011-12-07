@@ -1983,7 +1983,7 @@ void CGridCtrl::SetSelectedRange(const CCellRange& Range,
 }
 
 void CGridCtrl::SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMaxCol,
-                                 BOOL bForceRepaint /* = FALSE */, BOOL bSelectCells/*=TRUE*/)
+                    BOOL bForceRepaint /*=FALSE*/, BOOL bSelectCells/*=TRUE*/, BOOL bAdd /*=FALSE*/)
 {
     if (!m_bEnableSelection)
         return;
@@ -2014,6 +2014,9 @@ void CGridCtrl::SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMax
     // If we are selecting cells, then first clear out the list of currently selected cells, then
     if (bSelectCells)
     {
+		if (bAdd)
+			m_PrevSelMap = m_SelMap;
+
 #ifdef USE_CMAP
         POSITION pos;
 

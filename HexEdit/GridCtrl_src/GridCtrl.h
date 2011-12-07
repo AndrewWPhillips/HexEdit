@@ -494,7 +494,7 @@ public:
     CCellRange GetSelectedCellRange() const;
     void SetSelectedRange(const CCellRange& Range, BOOL bForceRepaint = FALSE, BOOL bSelectCells = TRUE);
     void SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMaxCol,
-                          BOOL bForceRepaint = FALSE, BOOL bSelectCells = TRUE);
+                          BOOL bForceRepaint = FALSE, BOOL bSelectCells = TRUE, BOOL bAdd = FALSE);
     BOOL IsValid(int nRow, int nCol) const;
     BOOL IsValid(const CCellID& cell) const;
     BOOL IsValid(const CCellRange& range) const;
@@ -577,6 +577,8 @@ public:
 public:
     virtual ~CGridCtrl();
 
+    void ResetSelectedRange();
+
 protected:
     BOOL RegisterWindowClass();
     BOOL Initialise();
@@ -607,7 +609,6 @@ protected:
 
     BOOL IsVisibleVScroll() { return ( (m_nBarState & GVL_VERT) > 0); } 
     BOOL IsVisibleHScroll() { return ( (m_nBarState & GVL_HORZ) > 0); }
-    void ResetSelectedRange();
     void ResetScrollBars();
     void EnableScrollBars(int nBar, BOOL bEnable = TRUE);
     int  GetScrollPos32(int nBar, BOOL bGetTrackPos = FALSE);
