@@ -134,6 +134,8 @@ private:
 };
 
 // Replacement for AfxMessageBox that uses CTaskDialog
+// NOTE: Use CAvoidableDialog::Show() instead if you want to give the user an option to dismiss the dialog &
+//   never see it again - though this requires a string resource (ID used to remember which dialog is which).
 // Parameters:
 //   mess = short message at top
 //   content = longer description (may be empty)

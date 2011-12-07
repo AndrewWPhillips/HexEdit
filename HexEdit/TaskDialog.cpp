@@ -14,7 +14,8 @@ CSimpleTaskDialog::CSimpleTaskDialog(LPCTSTR instruction, LPCTSTR content, LPCTS
 	m_config.cbSize = sizeof(TASKDIALOGCONFIG);
 	m_config.hInstance = ::AfxGetResourceHandle();
 	m_config.dwFlags = TDF_POSITION_RELATIVE_TO_WINDOW;
-	m_config.dwCommonButtons = buttons == 0 ? MLCBF_OK_BUTTON : buttons;
+	//m_config.dwCommonButtons = buttons == 0 ? MLCBF_OK_BUTTON : buttons;
+	m_config.dwCommonButtons = buttons;
 
 	if (title == NULL || title[0] == 0)
 		SetWindowTitle(_T("HexEdit Pro"));
@@ -191,6 +192,10 @@ void CTaskDialog::SetFooter(LPCTSTR footer)
 
 INT_PTR CTaskDialog::DoModal(CWnd* pParentWnd)
 {
+	// If there are no buttons just add an OK button
+	if (m_config.dwCommonButtons == 0 && m_buttons.IsEmpty())
+		m_config.dwCommonButtons = MLCBF_OK_BUTTON;
+
 	m_config.hwndParent = (pParentWnd ? pParentWnd->GetSafeHwnd() : 0);
 	if (SUCCEEDED(::AltTaskDialogIndirect(&m_config, &m_button, &m_radiobutton, &m_verification)))
 		return (INT_PTR) m_button;

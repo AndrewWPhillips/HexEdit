@@ -46,6 +46,7 @@ public:
 	//   icon = icon displayed in top right, if 0 then no icon id displayed, if empty string (default) then default icon is displayed
 	//          - IDI_QUESTIONMARK if "YES" button is shown
 	//          - IDI_EXCLAMATIONMARK if "YES" button is not shown
+	// NOTE: An alternative to CAvoidableDialog::Show() which does not require a string resource is ::TaskMessageBox()
 	static int Show(int id, LPCTSTR content = _T(""), LPCTSTR title = _T(""), MLTASKDIALOG_COMMON_BUTTON_FLAGS buttons = 0, LPCTSTR icon = 0)
 	{
 		CAvoidableDialog dlg(id, content, title, buttons, icon);

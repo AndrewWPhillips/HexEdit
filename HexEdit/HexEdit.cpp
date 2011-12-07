@@ -2257,7 +2257,26 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 
 	intelligent_undo_ = GetProfileInt("Options", "UndoIntelligent", 0) ? TRUE : FALSE;
 	undo_limit_ = GetProfileInt("Options", "UndoMerge", 5);
-	cb_text_type_ = GetProfileInt("Options", "TextToClipboardAs", 0);
+	cb_text_type_ = GetProfileInt("Options", "TextToClipboardAs", INT_MAX);
+	if (cb_text_type_ >= 4 /*CB_TEXT_LAST*/)
+	{
+		CTaskDialog dlg("Select Clipboard Format", 
+		                "Due to popular demand the \"Hex Text\" clipboard format is now supported.  "
+						"When using this option all binary data is placed on the clipboard as two "
+						"hex digits (with appropriate spacing).\n\n"
+						"You can choose to use this new format when working with the clipboard "
+						"(copying, cutting, and pasting), or the traditional formats used in HexEdit "
+						"(where data is placed on the clipboard as both binary data and text).\n\n"
+						"Note that in all cases copying and pasting will never result in lost data.");
+		dlg.SetIcon(MAKEINTRESOURCE(IDI_QUESTIONMARK));
+		dlg.AddButton(IDYES, "Use \"Hex Text\" format");
+		dlg.AddButton(IDNO,  "Use \"traditional\" binary + text formats");
+		dlg.SetFooter("You can modify this setting later, or choose one of the other "
+		              "options using the Workspace/Edit page of the Options dialog.");
+		dlg.SetFooterIcon(MAKEINTRESOURCE(IDI_INFO));
+
+		cb_text_type_ = dlg.DoModal() == IDYES;  // set to 0 (traditional) or 1 (hex text)
+	}
 
 	char buf[2];
 	if (::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_IMEASURE, buf, 2) > 0 &&

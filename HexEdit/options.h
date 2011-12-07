@@ -55,14 +55,16 @@ enum FOLDER_LOCN
 	FL_SPECIFIED,      // use explicitly specified folder (open_folder_ or save_folder_)
 };  
 
-// These values correpsond to the radio buttons for cb_text_type_
+// These values correspond to the radio buttons for cb_text_type_
 enum CB_TEXT_TYPE      // defines how text data is written to the clipboard
 {
 	CB_TEXT_BIN_CHARS, // write bytes as binary and chars
 	CB_TEXT_HEXTEXT,   // convert each byte to 2 hex digits (as well as adding spaces, end of lines)
 	CB_TEXT_AUTO,      // use hex text if it appears to be binary data, else use binary/chars
 	CB_TEXT_AREA,      // use hex text in hex area, use binary/chars in text area
-};  
+
+	CB_TEXT_LAST       // marks end of values - add new entries before this
+};
 
 // Unicode chars used to signifies special bytes/values in char area
 // NOTE: These values correspond to the list bopx indices for IDC_CONT_CHAR and IDC_INVALID_CHAR
