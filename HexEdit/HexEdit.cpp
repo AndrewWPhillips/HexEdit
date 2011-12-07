@@ -240,6 +240,7 @@ BEGIN_MESSAGE_MAP(CHexEditApp, CWinAppEx)
 		ON_UPDATE_COMMAND_UI(ID_HELP_REGISTER, OnUpdateHelpWeb)
 
 		// Repair commands
+		ON_COMMAND(ID_REPAIR_COPYUSERFILES, OnRepairFiles)
 		ON_COMMAND(ID_REPAIR_DIALOGBARS, OnRepairDialogbars)
 		ON_COMMAND(ID_REPAIR_CUST, OnRepairCust)
 		ON_COMMAND(ID_REPAIR_SETTINGS, OnRepairSettings)
@@ -980,22 +981,36 @@ void CHexEditApp::OnNewVersion(int old_ver, int new_ver)
 // Called when a user runs HexEdit who has never run it before
 void CHexEditApp::OnNewUser()
 {
-	CString srcFolder = ::GetExePath();
 	CString dstFolder;
-	if (srcFolder.IsEmpty() || !::GetDataPath(dstFolder))
-		return;       // no point in continuing if we can't get paths (Win95?)
+	if (!::GetDataPath(dstFolder))
+		return;       // no point in continuing (Win95?)
 
-	CString srcFile, dstFile;
-	dstFile = dstFolder + FILENAME_DTD;
+	CString dstFile = dstFolder + FILENAME_DTD;
 
 	// If DTD file exists, probably just the registry settings were deleted so don't ask
 	// if we want to copy (but copy over files if not already there
 	if (::_access(dstFile, 0) == -1 &&
 		TaskMessageBox("New User",
 					  "This is the first time you have run this version of HexEdit Pro.\n\n"
-					  "Hit OK to set up you own personal copies of templates and macros.",
-					  MB_OKCANCEL) == IDCANCEL)
-		return;
+					  "Do you want to set up you own personal copies of templates and macros?",
+					  MB_YESNO) == IDYES)
+	{
+		CopyUserFiles();
+	}
+}
+
+void CHexEditApp::CopyUserFiles()
+{
+	CString srcFolder = ::GetExePath();
+	CString dstFolder;
+	if (srcFolder.IsEmpty() || !::GetDataPath(dstFolder))
+	{
+		ASSERT(0);
+		return;       // no point in continuing if we can't get paths (Win95?)
+	}
+
+	CString srcFile, dstFile;
+	dstFile = dstFolder + FILENAME_DTD;
 
 	// We need to copy the following files from the HexEdit binary directory
 	// to the user's application data directory:
@@ -1328,6 +1343,20 @@ void CHexEditApp::OnFileOpenSpecial()
 void CHexEditApp::OnUpdateFileOpenSpecial(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable();
+}
+
+void CHexEditApp::OnRepairFiles()
+{
+	if (TaskMessageBox("Set Up Personal Files?",
+					  "This copies factory default files to your personal data folders, "
+					  "including macros and templates.\n"
+					  "\nIf you already have these files and have made changes to any "
+					  "of them then your changes will be overwritten.\n"
+					  "\nDo you want to continue?",
+					  MB_YESNO) != IDYES)
+		return;
+
+	CopyUserFiles();
 }
 
 void CHexEditApp::OnRepairDialogbars()

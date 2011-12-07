@@ -261,6 +261,7 @@ protected:
 	afx_msg void OnAppExit();
 //    void LoadStdProfileSettings(UINT nMaxMRU = _AFX_MRU_COUNT);
 
+	afx_msg void OnRepairFiles();
 	afx_msg void OnRepairDialogbars();
 	afx_msg void OnRepairCust();
 	afx_msg void OnRepairSettings();
@@ -895,6 +896,7 @@ private:
 #endif
 
 	void OnNewUser();
+	void CopyUserFiles();
 	void ShowTipAtStartup(void);
 	void ShowTipOfTheDay(void);
 	void InitVersionInfo();

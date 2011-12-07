@@ -402,6 +402,7 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "Detect && &Repair"
         BEGIN
+            MENUITEM "Copy &Personal Files...",     ID_REPAIR_COPYUSERFILES
             MENUITEM "Restore &Dialog Layout...",   ID_REPAIR_DIALOGBARS
             MENUITEM SEPARATOR
             MENUITEM "Repair &Customizations...",   ID_REPAIR_CUST
@@ -918,6 +919,7 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "&Repair"
         BEGIN
+            MENUITEM "Copy &Personal Files...",     ID_REPAIR_COPYUSERFILES
             MENUITEM "Restore &Dialogs...",         ID_REPAIR_DIALOGBARS
             MENUITEM SEPARATOR
             MENUITEM "Repair &Customizations...",   ID_REPAIR_CUST
@@ -2498,12 +2500,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Pro Application"
-            VALUE "FileVersion", "4, 0, 1, " SVNRevisionStr
+            VALUE "FileVersion", "4, 0, 3, " SVNRevisionStr
             VALUE "InternalName", "HexEditPro"
             VALUE "LegalCopyright", "Copyright © 1999-2011  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDITPRO.EXE"
             VALUE "ProductName", "HexEditPro"
-            VALUE "ProductVersion", "4, 0, 1, " SVNRevisionStr
+            VALUE "ProductVersion", "4, 0, 3, " SVNRevisionStr
         END
     END
     BLOCK "VarFileInfo"
@@ -3314,6 +3316,7 @@ BEGIN
     ID_BIG_ENDIAN           "Use big-endian byte order for file operations\nBig Endian"
     ID_LITTLE_ENDIAN        "Use little-endian byte order for file operations\nLittle Endian"
     ID_REPAIR_DIALOGBARS    "Restore (unhide/undock/unroll) all modeless dialogs\nRestore dialogs"
+	ID_REPAIR_COPYUSERFILES "Setup personal files for macros, templates, etc\nCopy Personal Files"
     ID_REPAIR_CUST          "Reset toolbar/menu/keyboard customizations\nRepair Customizations"
 END
 
