@@ -1,34 +1,56 @@
 - jump and search tools bug: when right click and select paste the pasted text disappears (Ctrl+V works OK though)
   - cf similar problem in CCalcEdit - fixed by handling EN_CHANGE message
+- Enter in Find dialog
 
 4.0
 ===
 
-- Stats Property page
-  - WM_SETCURSOR
-  - tip window show hex and char name (based on char set)
-    - show hex and decimal accoring to colour scheme
-  - refresh while calculating
-  - new file never draws graph
-  - make controls in other pages resizeable
+> new GUI
+> bg stats
+ > counts
+ > CRCs
+ > exclude network etc drives
+ > restart scan when file changed
+> calc improvements
+ > inf integers
+ > calc bit display
+ > history with result
+BUGS
+ - psdv->SendMessage(WM_COMMAND, mode, 0); seesm to be called too late when built with MFC10 (MFC9 OK?)
+ - Aerial view crash on close
+
+
+4.1
+===
+
+> attach macros to toolbar or keyboard
+> search button in recent file list
+
 - Installer
   - new why uninstalling dialog
-  - merge module for MFC
   - index.htm for display during install
   - better font for ReadMe
-  - remove shortcut feature
-  - fix start menu dialog and implement
   - run .exe at end
+
+
+
+Compare
+
+Win7
 - support for Windows 7 taskbar?
+
 - new options
-  > option for mouse wheel units
-  > split print page into 2
-    > add watermark and other options
   - new page(s) for aerial view?
+
 - calculator
-  > 64 check boxes
   - bookmarks (active file) drop-list
-  ? handle > 64 bit numbers
+
+Templates
+  - #include
+  - multiple template dirs
+  - auto-sync defaults on
+  - sometimes hangs
+
 ADS
   - open them in new view
 - aerial view fixes
@@ -65,7 +87,7 @@ ADS
       - open dialog?
 - reload command
 - expressions
-  > add ++, --
+  - allow inf precision integers
   - add assignment operators: += etc
 
 - Fix Date Properties page [L. David Matheny]
@@ -87,7 +109,6 @@ ADS
 - facility to split and merge files (default to ext .001, .002, size 1.44 Mbytes)
 > font size in format toolbar flashes under Vista
 
-V4.1
   - macro
 	 - look at speeding macro playback
     - macro toolbar: rec, clear, play, options, message, multiplay, select macro from drop list
@@ -121,6 +142,7 @@ V4.1
     - paste in overtype mode
     - turn off insert mode
     - turn off read-only mode
+
 WEB SITE
 ========
 
@@ -269,8 +291,10 @@ TODO
  - allow editing of NTFS ADS (alternate data streams)
  - find in files
  - replace in files
- - statistics
- - alt char sets: Unicode odd/even/both, Code page
+ > statistics
+ - alt char sets
+   - Unicode odd/even/both
+   > Code page
  - fix CBCGPopupMenuBar::OnChangeHot for WM_MENUSELCT (WM_ENTERIDLE)
    - CBCGPopupMenu* pParentMenu = DYNAMIC_DOWNCAST (CBCGPopupMenu, pCBCGPopupMenuBar->GetParent ());
  > turn on templates defaults to tab wnd should be splitter

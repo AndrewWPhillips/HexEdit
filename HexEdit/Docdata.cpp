@@ -596,7 +596,7 @@ BOOL CHexEditDoc::Undo(CView *pview, int index, BOOL same_view)
 			undo_.back().utype == mod_insert_file  ? "insertion" :
 			undo_.back().utype == mod_replace      ? "change"    :
 			undo_.back().utype == mod_repback      ? "backspace" : "deletion");
-		if (TaskMessageBox(mess, "This chnage was made in a different window opened on the same file.\n\n"
+		if (TaskMessageBox(mess, "This change was made in a different window opened on the same file.\n\n"
 			              "Are you sure you want to undo this change?", MB_OKCANCEL) == IDCANCEL)
 			return FALSE;
 	}

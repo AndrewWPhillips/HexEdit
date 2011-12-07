@@ -146,7 +146,7 @@ protected:
 	virtual BOOL OnFileNameOK();
 
 #ifdef FILE_PREVIEW
-	virtual void OnFolderChange();  // When current folder chnages we need to unhook and rehook (and clear preview)
+	virtual void OnFolderChange();  // When the current folder changes we need to unhook and rehook (and clear preview)
 
 private:
 	// This is used to "subclass" the window containing the "list" control so we can tell when the current selection changes

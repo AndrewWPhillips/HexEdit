@@ -277,7 +277,7 @@ BOOL CFileOpenDialog::OnFileNameOK()
 void CFileOpenDialog::OnFolderChange()
 {
 	// As the lst2 child window (parent of list control) is recreated when the current folder is 
-	// chnaged we need to unhook noew and re-hook later (see below).
+	// changed we need to unhook now and re-hook later (see below).
 	if (m_wndHook.GetSafeHwnd() != HWND(NULL))
 		m_wndHook.UnsubclassWindow();
   
@@ -285,7 +285,7 @@ void CFileOpenDialog::OnFolderChange()
 
 	m_wndHook.SubclassWindow(GetParent()->GetDlgItem(lst2)->GetSafeHwnd());
 
-	// If we have chnaged folders no files are now selected
+	// If we have changed folders no files are now selected
 	m_strPreview.Empty();
     UpdatePreview();
 }
