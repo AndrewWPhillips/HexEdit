@@ -11796,13 +11796,28 @@ void CHexEditView::OnEditPaste()
 		size_t len = strlen(reinterpret_cast<char *>(pp));
 		UINT fmt = ::RegisterClipboardFormat(CHexEditApp::flag_format_name);  // Check for "flag" format that indicates we have hex text
 
+		// Check if clipboard contains hex text
+		bool isHexText = true;
+		if (theApp.cb_text_type_ == CB_TEXT_BIN_CHARS)
+			isHexText = false;                              // always treat text as bytes if using traditional clipboard format
+		else if (::IsClipboardFormatAvailable(fmt) == 0)
+		{
+			// The clipboard just contains text but it could be hex text from somewhere so we better check
+			for (int ii = 0; ii < len; ++ii)
+				if (!isxdigit(pp[ii]) && !isspace(pp[ii]))
+				{
+					isHexText = false;
+					break;
+				}
+		}
+
 		if (len == 0)
 		{
 			TaskMessageBox("Paste Error", "The text on the clipboard is not valid ASCII text!");
 			aa->mac_error_ = 10;    // Invalid text on clipboard?
 			goto error_return;
 		}
-		else if (::IsClipboardFormatAvailable(fmt))
+		else if (isHexText)
 		{
 			// Hex text
 			buf = new unsigned char[len/2+1];
