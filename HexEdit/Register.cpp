@@ -154,7 +154,9 @@ BOOL CAbout::OnInitDialog()
 #ifdef USE_FREE_IMAGE
 BOOL CAbout::OnEraseBkgnd(CDC* pDC)
 {
-	FIBITMAP *dib = FreeImage_Load(FIF_BMP, ::GetExePath() + FILENAME_ABOUTBG);
+	FIBITMAP *dib = FreeImage_Load(FIF_JPEG, ::GetExePath() + FILENAME_ABOUTBG);
+	if (dib == NULL)
+		dib = FreeImage_Load(FIF_BMP, ::GetExePath() + FILENAME_ABOUTBG);
 	if (dib == NULL)
 		return CDialog::OnEraseBkgnd(pDC);
 
