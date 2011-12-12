@@ -767,6 +767,13 @@
       <param name="Name" value="New File Dialog">
       <param name="Local" value="dlg_file\New_File_Dialog.htm">
     </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="formats">
+      <param name="Name" value="clipboard">
+      <param name="Local" value="overviewbasics\clipboard.htm">
+      <param name="Name" value="Workspace Editing Options">
+      <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
+    </object>
     </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="columns (display)">
@@ -2959,6 +2966,8 @@
       <param name="Local" value="cmd_window\HID_WINDOW_ALL.htm">
       <param name="Name" value="Window Manager Dialog">
       <param name="Local" value="dlg_other\HIDD_WINDOW_MANAGER.htm">
+      <param name="Name" value="Window Tabs">
+      <param name="Local" value="misc\Window_Tabs.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3366,6 +3375,8 @@
     <param name="Name" value="BCD">
     <param name="Name" value="Input and Output">
     <param name="Local" value="binary_files\InputOutput.htm">
+    <param name="Name" value="BitFields etc">
+    <param name="Local" value="binary_files\BitFields_Etc.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="packed BCD">
@@ -3656,12 +3667,14 @@
     <param name="Local" value="overviewtools\other_tools.htm">
     <param name="Name" value="CRC 16 (Operations Menu)">
     <param name="Local" value="cmd_operations\CRC_16.htm">
-    <param name="Name" value="CRC CCITT B (Operations menu)">
-    <param name="Local" value="cmd_operations\CRC_CCITT_B.htm">
     <param name="Name" value="Background Processing Page">
     <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
     <param name="Name" value="Checksum Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
+    <param name="Name" value="General CRC Dialog">
+    <param name="Local" value="dlg_tools\HIDD_CRC.htm">
+    <param name="Name" value="General CRC command">
+    <param name="Local" value="cmd_operations\CRC_GENERAL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="checksum">
@@ -3681,6 +3694,10 @@
     <param name="Local" value="overviewtools\other_tools.htm">
     <param name="Name" value="CRC 16 (Operations Menu)">
     <param name="Local" value="cmd_operations\CRC_16.htm">
+    <param name="Name" value="CRC CCITT">
+    <param name="Local" value="cmd_operations\CRC_CCITT.htm">
+    <param name="Name" value="General CRC command">
+    <param name="Local" value="cmd_operations\CRC_GENERAL.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -4565,6 +4582,10 @@
     <param name="Local" value="cmd_aerial\HID_AERIAL_TAB.htm">
     <param name="Name" value="Window Tabs at Bottom command">
     <param name="Local" value="cmd_misc\HID_TABS_AT_BOTTOM.htm">
+    <param name="Name" value="Window Tabs">
+    <param name="Local" value="misc\Window_Tabs.htm">
+    <param name="Name" value="Show Tab Icons command">
+    <param name="Local" value="cmd_misc\HID_TAB_ICONS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="split window">
@@ -4833,6 +4854,8 @@
     <param name="Name" value="bit-field">
     <param name="Name" value="C/C++ Parser for Templates">
     <param name="Local" value="overviewadvanced\Parser.htm">
+    <param name="Name" value="BitFields etc">
+    <param name="Local" value="binary_files\BitFields_Etc.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="statistics">
@@ -4918,6 +4941,8 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Don't ask this questions again">
+    <param name="Name" value="System General Options page">
+    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Do not show this message again">
@@ -4925,14 +4950,31 @@
     <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
   </object>
   <li><object type="text/sitemap">
-    <param name="Name" value="Don't ask this question again">
-    <param name="Name" value="System General Options page">
-    <param name="Local" value="dlg_options\HIDD_OPT_SYSTEM.htm">
-  </object>
-  <li><object type="text/sitemap">
     <param name="Name" value="assign macro to keyboard shortcut">
     <param name="Name" value="Customize Keyboard page">
     <param name="Local" value="dlg_custom\HIDD_CUST_KEYBOARD.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="insert filled block">
+    <param name="Name" value="Insert Block Dialog">
+    <param name="Local" value="dlg_tools\Insert_Block_Dialog.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="introduction">
+    <param name="Name" value="Introduction">
+    <param name="Local" value="overviewbasics\intro.htm">
+    <param name="Name" value="Quick Start">
+    <param name="Local" value="intro\quickstart.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="quick start">
+    <param name="Name" value="Quick Start">
+    <param name="Local" value="intro\quickstart.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="flag bits">
+    <param name="Name" value="BitFields etc">
+    <param name="Local" value="binary_files\BitFields_Etc.htm">
   </object>
 </ul>
 </html>

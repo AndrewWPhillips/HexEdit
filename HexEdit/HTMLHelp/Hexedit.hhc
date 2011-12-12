@@ -81,7 +81,7 @@
       <param name="Local" value="binary_files\Date_and_Time_Formats.htm">
     </object>
     <li><object type="text/sitemap">
-      <param name="Name" value="BitFields etc">
+      <param name="Name" value="BitFields, BCD etc">
       <param name="Local" value="binary_files\BitFields_Etc.htm">
     </object>
     <li><object type="text/sitemap">
@@ -109,6 +109,10 @@
       <param name="Name" value="The Basics">
     </object>
     <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Introduction">
+        <param name="Local" value="overviewbasics\intro.htm">
+      </object>
       <li><object type="text/sitemap">
         <param name="Name" value="The Display">
         <param name="Local" value="overviewbasics\display.htm">
@@ -807,6 +811,10 @@
         <param name="Local" value="dlg_tools\HIDD_PASSWORD.htm">
       </object>
       <li><object type="text/sitemap">
+        <param name="Name" value="General CRC Dialog">
+        <param name="Local" value="dlg_tools\HIDD_CRC.htm">
+      </object>
+      <li><object type="text/sitemap">
         <param name="Name" value="Replay Macro dialog">
         <param name="Local" value="dlg_tools\Replay_Macro_dialog.htm">
       </object>
@@ -908,6 +916,14 @@
       <li><object type="text/sitemap">
         <param name="Name" value="Title bar">
         <param name="Local" value="misc\HID_HT_CAPTION.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Window Tabs">
+        <param name="Local" value="misc\Window_Tabs.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Ruler">
+        <param name="Local" value="misc\Ruler.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Scrollbars">

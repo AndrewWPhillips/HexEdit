@@ -19,9 +19,9 @@ Language=C:\Program Files\RoboHelp Office\RoboHTML\Language\English\RoboHHRE.lng
 Stop List=C:\Program Files\RoboHelp Office\RoboHTML\Language\English\System.stp
 
 [SS Settings: RoboHtml For OracleHelp]
-WindowType0=8296;FALSE;NewWindow;;;;;;;;;;
-WindowType1=8296;TRUE;main;;;;;;;;;;
-WindowType2=8296;FALSE;form;;;;;;;;;;
+WindowType0=3545;FALSE;NewWindow;;;;;;;;;;
+WindowType1=3545;TRUE;main;;;;;;;;;;
+WindowType2=3545;FALSE;form;;;;;;;;;;
 
 [Target:WebHelp]
 ResultFileName=D:\tmp\help\Hexedit.htm
@@ -320,7 +320,7 @@ ViewFileName=d:\tmp\webhelp\hexedit.htm
 Enable Result Dialog=1
 [Target:Microsoft HTML Help]
 ActionID For Generation=1001
-ResultFileName=Hexedit.chm
+ResultFileName=HexeditPro.chm
 Remove Folder with prompt=1
 m_nNamingRule=0
 m_nNavBarType=4
@@ -375,10 +375,10 @@ m_dwTOCWindowExStyles=256
 m_pszCustomImageName=
 m_nTocIconWidth=16
 m_bTocFloderIcon=0
-DestinationProjectName=Hexedit.chm
+DestinationProjectName=HexeditPro.chm
 BuildExpression=NORMAL    
 PublishString=
-CreateProjectTime=15:48, November 24, 2011
+CreateProjectTime=18:16, December 11, 2011
 CreateProjectUser=andrew
-ViewFileName=Hexedit.chm
+ViewFileName=HexeditPro.chm
 Enable Result Dialog=1

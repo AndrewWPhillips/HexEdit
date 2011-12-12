@@ -232,9 +232,12 @@ Convert to Uppercase | cmd_operations\HID_CONVERT_UPPERCASE.htm
 16 Bit Checksum | cmd_operations\16_Bit_Checksum.htm
 32 Bit Checksum | cmd_operations\32_Bit_Checksum.htm
 64 Bit Checksum | cmd_operations\64_Bit_Checksum.htm
+CRC 16 | cmd_operations\CRC_16.htm
 CRC CCITT | cmd_operations\CRC_CCITT.htm
 CRC 32 | cmd_operations\CRC_32.htm
+General CRC command | cmd_operations\CRC_GENERAL.htm
 MD5 Cryptographic Checksum | cmd_operations\HID_MD5.htm
+SHA1 command | cmd_operations\HID_SHA1.htm
 Encryption Algorithm | cmd_operations\HID_ENCRYPT_ALG.htm
 Encryption Password | cmd_operations\HID_ENCRYPT_PASSWORD.htm
 Clear Password | cmd_operations\HID_ENCRYPT_CLEAR.htm
@@ -332,13 +335,17 @@ XOR Quad Word command | cmd_operations\XOR_Quad_Word_command.htm
 
 [Options Dialog]
 System General Options page | dlg_options\HIDD_OPT_SYSTEM.htm
+File Folders | dlg_options\HIDD_OPT_FOLDERS.htm
 Filters page | dlg_options\Filters.htm
-Printer Options | dlg_options\Printer_Options.htm
+File Backup/Export | dlg_options\HIDD_OPT_BACKUP.htm
+Printer General Options | dlg_options\HIDD_OPT_PRINT_GENERAL.htm
+Printing Decorations page | dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm
 Macro Options page | dlg_options\HIDD_OPT_MACRO.htm
 History List Options | dlg_options\HIDD_OPT_HISTORY.htm
 Workspace Global Options page | dlg_options\HIDD_OPT_WORKLAYOUT.htm
 Workspace Display Options | dlg_options\HIDD_OPT_WORKDISPLAY.htm
 Workspace Editing Options | dlg_options\HIDD_OPT_WORKSPACE.htm
+Background Processing Page | dlg_options\HIDD_OPT_BACKGROUND.htm
 Info Tips Page | dlg_options\HIDD_OPT_TIPS.htm
 Template Options | dlg_options\HIDD_OPT_TEMPLATE.htm
 Document General Options | dlg_options\Document_General_Options.htm

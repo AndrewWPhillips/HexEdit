@@ -1,8 +1,11 @@
+.topic HIDC_SAVE_FOLDER_DOC
+The File Save As dialog defaults to the same folder as active file.  If the active file has not yet been saved then the "specified" folder (below) is used.
+
 .topic HIDC_RULER_HEX_NUMS
 Says how often numbers are shown on the hex ruler.
 
 .topic HIDC_EXPLORER
-Shows the the folder view and the files in the current folder.  Double-click a folder to move to it, or double-click a file to open it.  Right-click a file to see a menu of options.
+Shows the folder view and the files in the current folder.  Double-click a folder to move to it, or double-click a file to open it.  Right-click a file to see a menu of options.
 
 .topic HIDC_NO_RECENT
 Prevents files you open in HexEdit from being added to the "My Recent Documents" list.
@@ -100,6 +103,21 @@ Used to describe what the macro is for and how to run it.  This comment is displ
 .topic HIDC_COMPRESSION_SYNC
 Writing flush points allows for recovery when decompressing if the data stream is corrupt.  But writing too many can greatly slow down compression speed.
 
+.topic HIDC_STATS_GRAPH
+Shows byte counts for all 256 byte values.  Hold the mouse over a column to see more information.
+
+.topic HIDC_INVALID_CHAR
+For some character sets, especially multi-byte ones, not all byte sequences represent valid characters.  This character is displayed in the character area to represent invalid bytes.
+
+.topic HIDD_FILE_COMPARE
+Find differences between the current file and another selected file.
+
+.topic HIDC_SAVE_FOLDER_BOTH
+The Save As dialog opens to the same folder as the last time the File Open or Save As dialog was used.  If they have not been previously opened then the "specified" folder (below) is used.
+
+.topic HIDC_SAVE_FOLDER
+The folder to use if the "specified" option is selected.  This folder is also used if any of the other options is selected but the currently value is invalid.
+
 .topic HIDC_INT_ABBREV
 This gives four choices for how large integers are abbreviated in various places throughout HexEdit.  For example, KByte can mean 1000 or 1024 bytes.
 
@@ -137,7 +155,7 @@ Use constant values extracted by previous use of the "Save new values" checkbox 
 Includes a large number of types extracted from Windows header files (see _windows_types.xml).
 
 .topic HIDC_INFO_SIZE
-This shows the current size of the file as edited.  This may be different to the current size of the file on disk if bytes have been inserted or delted.
+This shows the current size of the file as edited.  This may be different to the current size of the file on disk if bytes have been inserted or deleted.
 
 .topic HIDC_FILE_ARCHIVED
 Checked if the file's archive flag has been set.  This flag is often set by backup software and is cleared when a file is modified.
@@ -162,6 +180,15 @@ Select this option to email your registration information  Select info@hexedit.c
 
 .topic HIDC_HEX_HIST
 Displays a list of most recent hex jumps,  using either the hex jump tool or the GO button in the calculator (in hex mode).
+
+.topic HIDC_CLIPBOARD_HEXTEXT
+Uses "hex text" when working with the clipboard.  Using this option when binary data is added to the clipboard it is stored as text - two hex digits per byte plus spacing
+
+.topic HIDC_PRINT_CHANGE
+Changes made to the file will be printed.  On a color printer this will use the current change tracking color.
+
+.topic HIDC_OPEN_FOLDER_LAST
+The File Open dialog defaults to the same folder as the last time it was used.  If not previously used then the "specified" folder (below) is used.
 
 .topic HIDC_FUNC
 Displays a list of functions available in HexEdit expressions. [A few functions, such as addressof, that are only useful in templates are not displayed.]  Select the function and fill in any required parameters.  Some functions have optional parameters and min/max can take any number of parameters.
@@ -244,6 +271,27 @@ Select this option to report a bug or defect of the software.
 .topic HIDC_FILE_ICON
 Displays an icon that Windows associates with this file or type of file.
 
+.topic HIDC_REVERSE_ZOOM
+This reverse the direction of the mouse wheel for zooming (ie when holding down the Ctrl key).
+
+.topic HIDC_FONT_OEM
+Select the font used when displaying IBM/OEM characters in the character area.
+
+.topic HIDC_CRC_NOTE
+Important information about CRCs.  For more details see the help page for the dialog.
+
+.topic HIDC_EXPR
+Display the current expression that would be evaluated if the EQUALS (=) button is pressed at the moment.  This shows all binary and unary operators in effect.
+
+.topic HIDC_PRINT_COMPARE
+Shows differences with the current comparison file.  If printing on a color printer it shows differences according to the color scheme in effect.
+
+.topic HIDC_PRINT_MARK
+The mark will be printed.  On a color printer this will use the current mark color from the color scheme.
+
+.topic HIDC_BACKUP_PAGE
+Jumps to the Options page with the backup and export options that used to be on this page.
+
 .topic HIDC_SLIDER_AUTOSCROLL
 When dragging the mouse to make a selection and the mouse is dragged past the end of the window the display will scroll to allow selecting more than will fit on the screen.  The further you drag past the edge of the display the faster the scrolling.  This slider controls the rate of acceleration.  When all the way to the left there is no autoscroll acceleration at all (ie constant speed).
 
@@ -260,7 +308,7 @@ Select how to display the files within the folder (icons, detailed list etc).
 A 2nd cursor is displayed in the other (hex/character) area that shadows the normal cursor.  This allows you to quickly see the corresponding hex value or character.
 
 .topic HIDC_BACKUP
-When a file is saved the previous version on disk is kept (using file extension ".BAK").  When this option is used all of the selected options below must also be satisified.
+When a file is saved the previous version on disk is kept (using file extension ".BAK").  When this option is used all of the selected options below must also be satisfied.
 
 .topic HIDC_VALIDATE
 Checks for the presence of all the files on disk and removes from the list any that cannot be found.
@@ -321,6 +369,21 @@ Enter the name for the new scheme.  You cannot use the name of an existing schem
 
 .topic HID_REGISTER_INSTALL
 Click the Activate button once you have entered your activation code to complete the registration.
+
+.topic HIDC_CRC_SELECT
+Click to fill out the fields from one of the pre-defined CRCs.
+
+.topic HIDC_CRC_DELETE
+Deletes a user-defined CRC.  First you need to select a CRC from the list that was previously saved.
+
+.topic HIDC_CSRC_FOR
+Different programming languages have slightly different rules for initializing arrays etc.
+
+.topic HIDC_BASE_STORAGE_UNIT
+The C standard says that bit-fields use a specified storage unit usually the same size as an int (typically 32 bits).  A common extension is to allow the bit-field storage unit to be taken from the base type.  Using this option a bit-field of type short would use a 16-bit storage unit, unsigned char would use an 8-bit storage unit.
+
+.topic HIDC_BG_OPTICAL
+Disables background processing on DC, DVD, Blu-Ray etc drives.
 
 .topic HIDC_SEL_LEN_TIP
 When this option is on a small "tip" window is displayed when making a selection by dragging with the mouse or when the SHIFT key is held down.  The "tip" shows the length of the selection in hex or decimal (depending on how addresses are currently displayed).
@@ -397,11 +460,26 @@ Displays detailed information about the selected device.
 .topic HIDC_CSRC_FLOAT
 Generate comma-separated list of floating point numbers.
 
+.topic HIDC_BITS
+Shows the values for the bottom 64 bits of the current calculator value if it is an integer.  You can click any bit to toggle it.  (Depending on the current setting for the number of bits some of the bits may be disabled.)
+
+.topic HIDC_CRC_REFLECTREM
+Determines bit-order of the final value (before final XOR).
+
+.topic HIDC_CRC_BITS
+Size of the CRC.  Also determines the maximum size of the polynomial, Final XOR and Initial Remainder values (below).
+
+.topic HIDC_DISPLAY_COMP
+How compare view is displayed.
+
+.topic HIDC_BG_DEVICE
+Disables background processing on devices (volumes and raw drives).  Performing background processing on devices may slow down the whole system.
+
 .topic HIDC_RULER_DEC_TICKS
 Says how often large ticks are shown on the decimal ruler.
 
 .topic HIDC_HL_MOUSE
-As you move the mouse this highlights the current row and coulmn in the address area and the ruler.  Note that this only works for the ruler if numbers are shown at the top of every column.
+As you move the mouse this highlights the current row and column in the address area and the ruler.  Note that this only works for the ruler if numbers are shown at the top of every column.
 
 .topic HIDC_CT_INSERTIONS
 Shows bytes that have been inserted.
@@ -493,9 +571,6 @@ Displays all the devices that can be opened.  Select a device and click OK to op
 .topic HIDC_CSRC_INT_TYPE
 Format of generated integers.
 
-.topic HIDC_PRINT_OPTIONS
-Display printing options (the Print page of the Options dialog).
-
 .topic HIDC_SCHEME_LIST
 Select an existing scheme to use its settings as the defaults.  This includes all standard color settings and any ranges.
 
@@ -507,6 +582,18 @@ Type the password used for encryption and decryption here.
 
 .topic HIDC_REG_CODE
 You need to supply this registration code when you pay for HexEdit. Note that I and 1 and 0 and O are considered equivalent.
+
+.topic HIDC_STATS_CRC32
+CRC 32 of the whole file calculated in the background.
+
+.topic HIDC_FIRST_HEADER_DIFF
+Specifies that the first printed page has a different header to the following pages.
+
+.topic HIDC_PRINT_OPTIONS
+Display printing options (the Printer pages of the Options dialog).
+
+.topic HID_DFFD_RO
+Making the field read-only prevents changing the field in the DATA column and even prevents modifying the corresponding bytes in the hex view while the template is active.
 
 .topic HIDC_TOD
 Display tip of the day each time HexEdit is run.
@@ -613,6 +700,15 @@ Set the minimum password length that is required for your purposes.
 .topic HIDC_FILENAME
 The name of the active file.
 
+.topic HIDC_SAVE_FOLDER_SPECIFIED
+The Save As dialog always uses the same folder.
+
+.topic HIDC_SAVE_FOLDER_LAST
+The Save As dialog opens to the same folder as the last time it was used.  If it has not been previously opened then the "specified" folder (below) is used.
+
+.topic HIDC_OPEN_FOLDER
+The folder to use if the "specified" option is selected.  This folder is also used if any of the other options is selected but the currently value is invalid.
+
 .topic HIDC_DISPLAY_AERIAL
 Choose how to display the Aerial View, which provides a high-level view of the file as a bitmap.
 
@@ -702,6 +798,18 @@ Enter the number of times you want the macro to play and press Enter.
 
 .topic HIDC_COMPRESSION_MEMORY_USAGE
 Trades speed for memory usage.  Memory is cheap so use a high value.
+
+.topic HIDC_RESTORE_AVOIDABLE
+This allows you to get back all "Don't show again" dialogs that you have hidden.
+
+.topic HIDC_FIRST_FOOTER
+Footer for the first printed page.
+
+.topic HIDC_CRC_FINALXOR
+Value that is XOR'ed with the final result of the CRC calculation.
+
+.topic HIDC_WATERMARK_OPTS
+Select the text to display as a background watermark.
 
 .topic HIDC_DFFD_TAB
 When a file is first opened or created the template is shown in a tab at the bottom of the window.  This will be the template for the file extension or the "default" template.
@@ -805,6 +913,15 @@ Type in your activation code here (or paste from the clipboard).  The activation
 .topic HIDC_COMPRESSION_HEADER_RAW
 Writing raw data is not recommended as it provides no error checking. When decompressing you must use this option if the data was compressed without headers.
 
+.topic HIDC_FIRST_FOOTER_OPTS
+Select from a list of defined substitution parameters that can be used in a footer.
+
+.topic HIDC_DFFD_COLOUR_PICKER
+This is the background color used for all instances of the field in the main view.
+
+.topic HIDC_OPEN_FOLDER_DOC
+The File Open dialog defaults to the same folder as active file.  If there is no file open then the "specified" folder (below) is used.
+
 .topic HIDC_HIST_PAGE
 Jump to the history lists page.
 
@@ -860,7 +977,7 @@ The exponent of the IBM floating-point number.  Note that this is a power of 16 
 Sets the bytes to the representation of the current date and time in the currently selected date format.
 
 .topic HIDC_FIND_MESSAGE
-Displays instructions and indicates whether a text or hex search is to be perfomed.
+Displays instructions and indicates whether a text or hex search is to be performed.
 
 .topic HIDC_MARK_STORE
 Sets the Mark in the active file to the current value.
@@ -885,6 +1002,15 @@ Apply to register HexEdit to be run by one person only, on any number of machine
 
 .topic HIDC_COMPRESSION_LEVEL
 Trades-off speed and amount of compression.  Use 6 or 7 for best results.
+
+.topic HIDC_FONT_UCODE
+Select the font used when displaying Multi-byte characters.  This is used when the character area is displaying characters from a "Code Page".
+
+.topic HIDC_PRINT_SEARCH
+Search occurrences will be printed.  On a color printer this will use the current color scheme color.
+
+.topic HIDC_BG_STATS
+Turns on calculation of background statistics.  These results are shown in the Properties dialog (Counts, Stats, etc pages).
 
 .topic HIDC_SPLASH
 When on this option shows a small "splash screen" when HexEdit is starting up to let you know that something is happening.
@@ -969,6 +1095,27 @@ Select the encryption algorithm from this list.
 
 .topic HIDC_GLOBAL_PAGE
 Jumps to the corresponding Workspace options page which has similar options but which apply to all open files.
+
+.topic HIDC_RADIX
+Select the radix (base) used for entering and displaying numbers.  Valid values are 2 to 36.
+
+.topic HIDC_FIRST_HEADER
+Header for the first printed page.
+
+.topic HIDC_CRC_REFLECTIN
+Determines bit-order of the input values.
+
+.topic HIDC_PRINT_WATERMARK
+Prints a "watermark" on each page.  This is large text in a light background color printed behind the rest of the page.
+
+.topic HIDC_PRINT_BOOKMARKS
+Bookmarks will be printed.  On a color printer this will use the current bookmark color from the color scheme.
+
+.topic HIDC_OPEN_FOLDER_SPECIFIED
+The File Open dialog always open to the specified folder.
+
+.topic HIDC_BG_NETWORK
+Disables background processing on network files.  Background processing on large network files may affect network performance.
 
 .topic HIDC_STARTUP_PAGE
 Jumps to the Workspace/General options page which has further startup options.
@@ -1081,6 +1228,21 @@ Click the "Replay Options" button to change the options for macro playback befor
 .topic HIDC_TEMPLATEDIR
 Allows you to change the location that templates are saved and loaded from.
 
+.topic HIDC_CLIPBOARD_AREA
+With this option data is placed on the clipboard in two ways depending on whether the current selection is made in the hex or character area  In the hex area data is added as "hex text".  In the text area it is added to the clipboard as ASCII text (with conversion from the current character set) and as binary.
+
+.topic HIDC_STATS_SHA1
+SHA1 (cryptographic checksum) of the whole file calculated in the background.
+
+.topic HIDC_FOOTER
+Text for the footer that is printed at the bottom of each page.  This may include substitution parameters.
+
+.topic HIDC_CRC_POLY
+Hexaddecimal value representing the truncated polynomial (not including the top bit).
+
+.topic HIDC_PRINT_HIGHLIGHTS
+Highlights will be printed.  On a color printer this will use the current color scheme color.
+
 .topic HIDC_VARS
 Displays a list of HexEdit's global variables, grouped by type.  You can use or assign (using = operator) variables in the calculator and the jump tools, including arrays.
 
@@ -1162,6 +1324,27 @@ You can replay the current macro in memory (ie last recorded since you started H
 .topic HIDC_COMPRESSION_STRATEGY_DEF
 Selecting a strategy to suit the type of data can produce better compression. Please refer to the ZLIB documentation for more information.
 
+.topic HIDC_CLIPBOARD_BINARY_CHAR
+Use the "traditional" clipboard formats when cutting, copying and pasting.  This option places data on the clipboard as binary data (for pasting again) and as text data (suitable for pasting in other programs).
+
+.topic HIDC_OPEN_FOLDER_BROWSE
+Click to browse for the folder.
+
+.topic HIDC_CRC_NAME
+Shows the name of the currently selected CRC.  You also enter a new name here before saving a new set of CRC settings,
+
+.topic HIDC_UPDATE
+Select this to check for updates via the Internet.  Checks are performed no more often than once a month.
+
+.topic HIDC_CRC_INITREM
+Initial remainder used before CRC algorithm begins.
+
+.topic HIDC_PREVIEW
+Displays a preview of the text that will be copied to the clipboard.
+
+.topic HIDC_OPEN_FOLDER_BOTH
+The File Open dialog defaults to the same folder as the last time the File Open or Save As dialog was used.  If they have not been previously opened then the "specified" folder (below) is used.
+
 .topic HIDC_UNDO_MERGE
 This is the number of consecutive similar operations (insertions, deletions etc) that are saved as a single undo operation.
 
@@ -1187,7 +1370,7 @@ A backup file is only created if there is sufficient room on the current drive w
 Use file addresses as the output addresses when exporting to a Motorola S or Intel hex file.
 
 .topic HIDC_NET_RETAIN
-This checkbox preserves files on network and removeable drives when the Validate All button is clicked.  This is useful for files you want to keep that are not always available.
+This checkbox preserves files on network and removable drives when the Validate All button is clicked.  This is useful for files you want to keep that are not always available.
 
 .topic HIDC_BOOKMARK_NAME
 Enter the name of a bookmark to add or update.
@@ -1270,11 +1453,23 @@ This is the name of the registered user, which is used for a single-user license
 .topic HIDC_REG_FORM
 Click this button to display the Order Form.  You should print the form, fill it out and mail it with your payment.
 
-.topic HIDC_REG_WEB
-Click this button to connect to the HexEdit web site to register and pay on-line.  If your web browser supports it, credit card details are encrypted and sent securely, otherwise you must use one of the alternative methods of payment.
-
 .topic HIDC_MULTIBYTE_HOLDER
-Displays the charcaters associated with the byte(s) after the cursor.  Depending on the code page selected (to the right) and the data bytes values this could one or many bytes.
+Displays the charac	ters associated with the byte(s) after the cursor.  Depending on the code page selected (to the right) and the data bytes values this could one or many bytes.
+
+.topic HIDC_CLIPBOARD_AUTO
+With this option data is placed on the clipboard in two ways depending on whether it appears to be binary data or pure text.  Text is added to the clipboard as ASCII text (with conversion from the current character set) and as binary.  Binary data is added as "hex text".
+
+.topic HIDC_CONT_CHAR
+Displayed placeholder for a continuation byte.  For a multi-byte character the first position shows the real character and following byte(s) display this.
+
+.topic HIDC_REG_WEB
+Click this button to connect to the HexEdit Pro web site to register and pay on-line.  If your web browser supports it, credit card details are encrypted and sent securely, otherwise you must use one of the alternative methods of payment.
+
+.topic HIDC_FIRST_FOOTER_DIFF
+Specifies that the first printed page has a different footer to the following pages.
+
+.topic HIDC_INFBIT
+Use infinite precision (signed) integers.
 
 .topic HIDC_RULER_DEC_NUMS
 Says how often numbers are shown on the decimal ruler.
@@ -1366,6 +1561,21 @@ This is an explanation of the costs and methods of payment.  Click the Help butt
 .topic HIDC_COMPRESSION_WINDOW_SIZE
 Size of the window into the data that is used.  A large value is recommended.
 
+.topic HIDC_STATS_MD5
+MD5 (cryptographic checksum) of the whole file calculated in the background.
+
+.topic HIDC_CSRC_PREVIEW
+Click this button to toggle the preview area.
+
+.topic HIDC_HEADER
+Text printed at the top of each page.
+
+.topic HIDC_EVEN_REVERSE
+Headers and footers are split into 3 parts (left, middle and right).  This options reverses the left and right parts for even pages.  This is typically used for duplex (double-sided) printing.
+
+.topic HIDC_BG_REMOVEABLE
+Disables background processing on removable devices, such as floppies and USB drives.
+
 .topic HIDC_SEL_LEN_DIV2
 When the selection length "tip" window is shown (see above) this also shows the largest power of 2 by which the selection length is divisible.  This is useful in many situations - for example some operations require that the selection is a multiple of 8 bytes.
 
@@ -1376,7 +1586,7 @@ How many entries in the Hex Jump Tool history list are saved when you exit HexEd
 When deletions are shown a count is also shown of how many bytes have been deleted (hex area only).  The count is displayed as a single digit (1 to 9) or as an asterisk (*) if more than 9.
 
 .topic HIDC_FILTER_OPTS
-Select from predefeined file filters or configure the filters list.
+Select from predefined file filters or configure the filters list.
 
 .topic HIDC_GRID_FILTERS
 Use the columns of the filter list to enter the text description of the filter and the file "wildcard" pattern that is used to filter the files.  The check box on the left can be used to disable a filter without deleting it.
@@ -1447,6 +1657,15 @@ Move the slider to adjust the transparency of the tip window.  Hold the mouse ov
 .topic HIDC_DEC_HIST
 Displays a list of most recent decimal jumps,  using either the decimal jump tool or the GO button in the calculator.
 
+.topic HIDC_SAVE_FOLDER_BROWSE
+Click to browse for the save folder.  This folder is also used if the above selected option is invalid.
+
+.topic HIDC_CRC_SAVE
+Use this to save the current settings.  You need to enter a unique name before you can save.  You may then later recall the settings by selecting from the Select list.
+
+.topic HIDC_CSRC_ALIGN
+Select this option to have the output  values aligned in columns.
+
 .topic HIDC_DISPLAY_TEMPLATE
 Allows you to select how to display the template (tree) view, which given the appropriate template (.XML) file, lets you view and edit the data in a structured format.
 
@@ -1460,7 +1679,7 @@ When modeless dialog are floating on top of the main window they can sometimes o
 This option allows modeless dialog (Properties, Calculator etc) to dock to the sides of the HexEdit window.  Drag floating dialogs to either side of the main window to dock, OR hold down Ctrl key to prevent docking.
 
 .topic HIDC_CODE_PAGE
-Select the code page that is use to show the character at the left.  Depending on the code pagethe character shown may use more than one byte starting from the current cursor position.
+Select the code page that is use to show the character at the left.  Depending on the code page the character shown may use more than one byte starting from the current cursor position.
 
 .topic HIDC_FOLDER_HIDDEN
 Show or hide "hidden" files.
