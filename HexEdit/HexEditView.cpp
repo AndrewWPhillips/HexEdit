@@ -4129,10 +4129,21 @@ end_of_background_drawing:
 						else
 							len = 0;   // invalid UTF-8
 
+						// MultiByteToWideChar (at least in XP) does not handle some invalid sequences properly,
+						// eg C0 67 return "g" (the C0 appears to be ignored) - so we need to check ourselves
+						bool isBad = false;
+						for (int nn = 1; nn < len; ++nn)
+							if ((buf[kk+nn] &0x80) != 0x80)
+							{
+								isBad = true;
+								break;
+							}
+
 						wchar_t wc;                               // equivalent Unicode (UTF-16) character
-						if (len == 0 || 
-							MultiByteToWideChar(code_page_, 0, (char *)&buf[kk], len, &wc, 1) == 0 ||
-							wc >= 0xE000 && wc < 0xF900)
+						if (len == 0 ||                                                                // 1111111X is not a valid byte
+							isBad ||                                                                   // not enough cont bytes
+							MultiByteToWideChar(code_page_, 0, (char *)&buf[kk], len, &wc, 1) == 0 ||  // could not convert for some other reason
+							wc >= 0xE000 && wc < 0xF900)                                               // invalid byte sequence
 						{
 							// Character translation returned no bytes or Unicode value in "Private Use Area"
 							wc = *BadChar();
