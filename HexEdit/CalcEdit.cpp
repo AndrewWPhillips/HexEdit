@@ -790,6 +790,8 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 				}
 				else
 				{
+					CString tmpStr = ps->Mid(1);
+
 					// Add "Expression ="  then multiple lines of result
 					tip_.AddString(ss + " =");
 
@@ -799,7 +801,7 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 						CClientDC dc(&tip_);
 						int nSave = dc.SaveDC();
 						dc.SelectObject(tip_.GetFont());
-						sz = dc.GetTextExtent(*ps);
+						sz = dc.GetTextExtent(tmpStr);
 						dc.RestoreDC(nSave);
 					}
 
@@ -813,9 +815,9 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 					if (wrap > 0)
 					{
 						// First work out roughly how many characters to put on each line
-						int len = ps->GetLength() / (wrap+1);
-						char * start = ps->GetBuffer();
-						char * end = start + ps->GetLength();
+						int len = tmpStr.GetLength() / (wrap+1);
+						char * start = tmpStr.GetBuffer();
+						char * end = start + tmpStr.GetLength();
 
 						int ii;
 						for (ii = 0; ii < 10 && start + len < end; ++ii)
@@ -841,7 +843,7 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 							tip_.AddString("...   " + radix_str);
 					}
 					else
-						tip_.AddString(*ps + radix_str);
+						tip_.AddString(tmpStr + radix_str);
 				}
 
 				// Move the tip window just below the mouse and make visible
