@@ -193,7 +193,7 @@ BOOL CHexEditDocManager::DoPromptFileName(CString& fileName, UINT nIDSTitle, DWO
 const char *CHexEditApp::szHexEditClassName = "HexEditMDIFrame";
 
 #ifdef _DEBUG
-const int CHexEditApp::security_version_ = 11; // This is changed for testing of handling of versions (registration etc)
+const int CHexEditApp::security_version_ = 12; // This is changed for testing of handling of versions (registration etc)
 #else
 const int CHexEditApp::security_version_ = INTERNAL_VERSION;
 #endif
@@ -620,6 +620,27 @@ BOOL CHexEditApp::InitInstance()
 		}
 #endif
 		pMainFrame->UpdateWindow();
+
+		// I moved this here (from LoadOptions) as the window sometimes comes up behind and there is
+		// no way to tell that it is even there (since there was no main window-> nothing on task bar).
+		if (cb_text_type_ >= 4 /*CB_TEXT_LAST*/)
+		{
+			CTaskDialog dlg("Select Clipboard Format", 
+							"Due to popular demand the \"Hex Text\" clipboard format is now supported.  "
+							"When using this option each binary byte is placed on the clipboard as two "
+							"hex digits (with appropriate spacing).\n\n"
+							"You can choose to use this new format when working with the clipboard "
+							"(copying, cutting, and pasting), or the traditional formats used in HexEdit "
+							"(where data is placed on the clipboard as both binary data and text).\n");
+			dlg.SetIcon(MAKEINTRESOURCE(IDI_QUESTIONMARK));
+			dlg.AddButton(IDYES, "Use \"Hex Text\" format");
+			dlg.AddButton(IDNO,  "Use \"traditional\" binary + text formats");
+			dlg.SetFooter("You can modify this setting later, or choose one of the other "
+						  "options using the Workspace/Edit page of the Options dialog.");
+			dlg.SetFooterIcon(MAKEINTRESOURCE(IDI_INFO));
+
+			cb_text_type_ = dlg.DoModal(AfxGetMainWnd()) == IDYES;  // set to 0 (traditional) or 1 (hex text)
+		}
 
 		// CG: This line inserted by 'Tip of the Day' component.
 		ShowTipAtStartup();
@@ -2258,25 +2279,6 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 	intelligent_undo_ = GetProfileInt("Options", "UndoIntelligent", 0) ? TRUE : FALSE;
 	undo_limit_ = GetProfileInt("Options", "UndoMerge", 5);
 	cb_text_type_ = GetProfileInt("Options", "TextToClipboardAs", INT_MAX);
-	if (cb_text_type_ >= 4 /*CB_TEXT_LAST*/)
-	{
-		CTaskDialog dlg("Select Clipboard Format", 
-		                "Due to popular demand the \"Hex Text\" clipboard format is now supported.  "
-						"When using this option all binary data is placed on the clipboard as two "
-						"hex digits (with appropriate spacing).\n\n"
-						"You can choose to use this new format when working with the clipboard "
-						"(copying, cutting, and pasting), or the traditional formats used in HexEdit "
-						"(where data is placed on the clipboard as both binary data and text).\n\n"
-						"Note that in all cases copying and pasting will never result in lost data.");
-		dlg.SetIcon(MAKEINTRESOURCE(IDI_QUESTIONMARK));
-		dlg.AddButton(IDYES, "Use \"Hex Text\" format");
-		dlg.AddButton(IDNO,  "Use \"traditional\" binary + text formats");
-		dlg.SetFooter("You can modify this setting later, or choose one of the other "
-		              "options using the Workspace/Edit page of the Options dialog.");
-		dlg.SetFooterIcon(MAKEINTRESOURCE(IDI_INFO));
-
-		cb_text_type_ = dlg.DoModal() == IDYES;  // set to 0 (traditional) or 1 (hex text)
-	}
 
 	char buf[2];
 	if (::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_IMEASURE, buf, 2) > 0 &&
@@ -3402,7 +3404,7 @@ void CHexEditApp::set_options(struct OptValues &val)
 		// Option has been changed (turned on or off)
 		if (val.shell_open_)
 		{
-			// Create the registry entries that allow "Open with HexEdit" on shortcut menus
+			// Create the registry entries that allow "Open with HexEdit Pro" on shortcut menus
 			CString s1("Open with HexEdit Pro");
 			CString s2 = "\"" + GetExePath() + "HexEditPro.exe\"  \"%1\"";
 			RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY, REG_SZ, s1, s1.GetLength());

@@ -1,24 +1,47 @@
+New Version
+-----------
+
+
+
+ > update code generation on web site
+ > update security_version_ (hexedit.h)
+ > add new version to email dlg drop list
+ > update X.Y ver # in version resource and rebuild HexEdit.exe
+ > change version number and copyright year in readme.txt, order.txt
+ > update help for new features, what's new, installation, order form etc
+ - add new tips of the day
+ > create new release notes
+ > create new bitmap for install
+ > update licence agreement text (version no, year etc)
+ > update PAD file (hexedit.xml)
+   - ftp://ftp.simtel.net/pub/simtelnet/win95/editor/hexed3_0.zip
+ > change times of files to reflect version using touchf.bat (exe,chm,hlp,cfd,tip,cfd,txt)
+ > create installation (add any new files, templates etc)
+ > change times of MSI/EXE file using touch2.bat
+ > create HexEditProX_Y.zip file containing HexEditProX_Y.exe file along with readme.txt, HexEditPro.xml
+ > change time of zip file using touch3.bat
+ - test install on W2K, XP, Vista, W7
+ - submit to Simtel and change web links to new Simtel page
+ - web site: add ver to bug report form drop list, update what's new, gifs etc
+ - make announcement in forums
+ - update to shareware download sites
+ - email reg users about new release (staggered)
+ - email others about new release
+ - change normal activation code email template
+ - send out press release
+
+
+
+BUGS
+----
+
 - jump and search tools bug: when right click and select paste the pasted text disappears (Ctrl+V works OK though)
   - cf similar problem in CCalcEdit - fixed by handling EN_CHANGE message
 - Enter in Find dialog
-
-4.0
-===
-
-> new GUI
-> bg stats
- > counts
- > CRCs
- > exclude network etc drives
- > restart scan when file changed
-> calc improvements
- > inf integers
- > calc bit display
- > history with result
-BUGS
- - psdv->SendMessage(WM_COMMAND, mode, 0); seesm to be called too late when built with MFC10 (MFC9 OK?)
- - Aerial view crash on close
-
+- psdv->SendMessage(WM_COMMAND, mode, 0); seesm to be called too late when built with MFC10 (MFC9 OK?)
+- Aerial view crash on close
+- Category selection drop-down list not populated (Prop/Summary page)
+- change focus does not update cat/kw/comments fields - then can get associated with wrong file
 
 4.1
 ===
@@ -29,8 +52,8 @@ BUGS
 - Installer
   - new why uninstalling dialog
   - index.htm for display during install
-  - better font for ReadMe
-  - run .exe at end
+  > better font for ReadMe
+  > run .exe at end
 
 
 
@@ -123,7 +146,8 @@ ADS
     - move text buttons on right to icon buttons at top
       - need way to change name
     - add categories columns
-    - add new toolbar buttons next/prev in file, next/prev in category, next/prev global  - template "include" facility
+    - add new toolbar buttons next/prev in file, next/prev in category, next/prev global
+  - template "include" facility
   - new toolbars
     - encryption toolbar
        - encryption algorithm picker
@@ -134,14 +158,14 @@ ADS
   - Implement Base64 import/export
   - add keep time command to macros
   - checksums page [Dave Ewen]?
-  - CRC page
-    - support all Boost CRC options
-  - stats page
-  - options in dialogs that ask repetitive questions
-    - also add options page where you can turn these on again
-    - paste in overtype mode
-    - turn off insert mode
-    - turn off read-only mode
+  > CRC page
+    > support all Boost CRC options
+  > stats page
+  > options in dialogs that ask repetitive questions
+    > also add options page where you can turn these on again
+    > paste in overtype mode
+    > turn off insert mode
+    > turn off read-only mode
 
 WEB SITE
 ========
@@ -188,19 +212,6 @@ TEST
    - add upgrade info to help
    - 30 day ext. code
    - upgrade code
-
-*** after convert to use ptr to CFile, test:
-	- background searches (normal and device file)
-	- invoke NotePad with filename on command line (device file)
-	- printing with %A, %F, %C, %M
-	- opening templates based on extension (.fat32 etc)
-	- opening colour scheme based on ext.
-	- bookmarks on normal and device files
-	- save/restore options for device file
-	- shown in recent ile list menu and dlg
-	- Retain file times not performed (icon disabled) for device files
-	- no backup done for device files
-	- open, save, save-as, write file etc
 
 BUGS
  - Explorer window still has a few minor things
