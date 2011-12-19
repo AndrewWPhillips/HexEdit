@@ -172,4 +172,12 @@ The 3 images for each toolbar can be created from there corresponding Paint.Net 
   - convert to 8-bit if necessary (Image/Mode/Indexed Color) using Palette: Local (perceptual)
   - save to .BMP in RES directory with RLE option on (eg RES\editbarHot.bmp)
 
+Web site
+--------
 
+Made two of the three round icons for the main page at www.hexeditpro.com.  Made the "download" and "help" icons to look similar to the "buy" icon.
+
+These are the source files which are saved as 100x100 GIFs.
+
+help1.pdn
+download1.pdn
