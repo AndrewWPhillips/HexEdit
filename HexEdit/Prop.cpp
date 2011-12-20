@@ -527,7 +527,7 @@ static DWORD id_pairs[] = {
 	IDC_INFO_CATEGORY_SELECT, HIDC_INFO_CATEGORY_SELECT,
 	IDC_INFO_KEYWORDS, HIDC_INFO_KEYWORDS,
 	IDC_INFO_COMMENTS, HIDC_INFO_COMMENTS,
-	IDC_INFO_SIZE, HIDC_INFO_SIZE,
+	// IDC_FILE_SIZE, HIDC_FILE_SIZE,  xxx
 	IDC_INFO_DISK_SIZE, HIDC_INFO_DISK_SIZE,
 	IDC_INFO_VIEW_TIME, HIDC_INFO_VIEW_TIME,
 	IDC_INFO_EDIT_TIME, HIDC_INFO_EDIT_TIME,
@@ -660,16 +660,17 @@ IMPLEMENT_DYNCREATE(CPropFilePage, CPropUpdatePage)
 
 CPropFilePage::CPropFilePage() : CPropUpdatePage(CPropFilePage::IDD)
 {
-		//{{AFX_DATA_INIT(CPropFilePage)
-		file_name_ = _T("");
-		file_path_ = _T("");
-		file_hidden_ = FALSE;
-		file_readonly_ = FALSE;
-		file_system_ = FALSE;
-		file_modified_ = _T("");
-	file_type_ = _T("");
+	//{{AFX_DATA_INIT(CPropFilePage)
+	file_name_ = _T("");
+	file_path_ = _T("");
 	file_created_ = _T("");
+	file_modified_ = _T("");
 	file_accessed_ = _T("");
+	file_size_ = _T("");
+	file_type_ = _T("");
+	file_readonly_ = FALSE;
+	file_hidden_ = FALSE;
+	file_system_ = FALSE;
 	file_archived_ = FALSE;
 	//}}AFX_DATA_INIT
 }
@@ -680,17 +681,18 @@ CPropFilePage::~CPropFilePage()
 
 void CPropFilePage::DoDataExchange(CDataExchange* pDX)
 {
-		CPropUpdatePage::DoDataExchange(pDX);
-		//{{AFX_DATA_MAP(CPropFilePage)
-		DDX_Text(pDX, IDC_FILE_NAME, file_name_);
-		DDX_Text(pDX, IDC_FILE_PATH, file_path_);
-		DDX_Check(pDX, IDC_FILE_HIDDEN, file_hidden_);
-		DDX_Check(pDX, IDC_FILE_READONLY, file_readonly_);
-		DDX_Check(pDX, IDC_FILE_SYSTEM, file_system_);
-		DDX_Text(pDX, IDC_FILE_MODIFIED, file_modified_);
+	CPropUpdatePage::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CPropFilePage)
+	DDX_Text(pDX, IDC_FILE_NAME, file_name_);
+	DDX_Text(pDX, IDC_FILE_PATH, file_path_);
+	DDX_Text(pDX, IDC_FILE_MODIFIED, file_modified_);
 	DDX_Text(pDX, IDC_FILE_TYPE, file_type_);
 	DDX_Text(pDX, IDC_FILE_CREATED, file_created_);
 	DDX_Text(pDX, IDC_FILE_ACCESSED, file_accessed_);
+	DDX_Text(pDX, IDC_FILE_SIZE, file_size_);
+	DDX_Check(pDX, IDC_FILE_HIDDEN, file_hidden_);
+	DDX_Check(pDX, IDC_FILE_READONLY, file_readonly_);
+	DDX_Check(pDX, IDC_FILE_SYSTEM, file_system_);
 	DDX_Check(pDX, IDC_FILE_ARCHIVED, file_archived_);
 	//}}AFX_DATA_MAP
 }
@@ -704,6 +706,7 @@ void CPropFilePage::Update(CHexEditView *pv, FILE_ADDRESS address)
 	file_created_ = "";
 	file_modified_ = "";
 	file_accessed_ = "";
+	file_size_ = "";
 	file_readonly_ = 0;
 	file_hidden_ = 0;
 	file_system_ = 0;
@@ -739,6 +742,38 @@ void CPropFilePage::Update(CHexEditView *pv, FILE_ADDRESS address)
 	}
 
 	CFile64 *pf = pDoc->pfile1_;
+
+	// Can show length of file (in memory) even if there is no associated disk file
+	if (!is_device)
+	{
+		// First get the abbreviated length
+		FILE_ADDRESS len_mem = pDoc->length();
+		file_size_ = NumScale((double)len_mem) + "bytes";
+		file_size_.TrimLeft();
+		FILE_ADDRESS len_disk = -1;
+
+		if (pf != NULL && (len_disk = pf->GetLength()) != len_mem)
+		{
+			// File in memory is different length to file on disk so we need to display:
+			// disk length, length in memory and difference
+			FILE_ADDRESS diff = len_mem - len_disk;
+			CString ss;
+			if (diff < 0)
+				ss.Format("%lld[disk] - %lld = %lld", len_disk, -diff, len_mem);
+			else
+				ss.Format("%lld [disk] + %lld = %lld", len_disk, diff, len_mem);
+			file_size_ += " ( " + ss + " )";
+		}
+		else if (len_mem >= 995)
+		{
+			// Abbreviated number lost some info so provide full number (in brackets)
+			CString ss;
+			ss.Format("%lld", len_mem);
+			AddCommas(ss);
+			file_size_ += " (" + ss + ")";
+		}
+	}
+
 	if (pf == NULL)
 	{
 		// Can't show anything else if no assoc. disk file
@@ -898,6 +933,7 @@ BOOL CPropFilePage::OnInitDialog()
 	resizer_.Add(IDC_FILE_CREATED,          0,   0,  70,   0);
 	resizer_.Add(IDC_FILE_MODIFIED,         0,   0,  70,   0);
 	resizer_.Add(IDC_FILE_ACCESSED,         0,   0,  70,   0);
+	resizer_.Add(IDC_FILE_SIZE,             0,   0,  70,   0);
 	resizer_.Add(IDC_FILE_TYPE,            70,   0,  28,   0);
 	resizer_.Add(IDC_FILE_READONLY,        70,   0,   0,   0);
 	resizer_.Add(IDC_FILE_READONLY_DESC,   70,   0,   0,   0);
@@ -959,8 +995,7 @@ void CPropInfoPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_INFO_CATEGORY,  category_);
 	DDX_Text(pDX, IDC_INFO_KEYWORDS,  keywords_);
 	DDX_Text(pDX, IDC_INFO_COMMENTS,  comments_);
-	DDX_Text(pDX, IDC_INFO_SIZE,      current_size_);
-	DDX_Text(pDX, IDC_INFO_DISK_SIZE, disk_size_);
+	//DDX_Text(pDX, IDC_INFO_DISK_SIZE, disk_size_);
 	DDX_Text(pDX, IDC_INFO_VIEW_TIME, view_time_);
 	DDX_Text(pDX, IDC_INFO_EDIT_TIME, edit_time_);
 	DDX_Control(pDX, IDC_INFO_CATEGORY_SELECT, cat_sel_ctl_);
@@ -972,8 +1007,7 @@ void CPropInfoPage::Update(CHexEditView *pv, FILE_ADDRESS /*not used*/)
 	category_ = _T("");
 	keywords_ = _T("");
 	comments_ = _T("");
-	current_size_ = _T("");
-	disk_size_ = _T("");
+	//disk_size_ = _T("");
 	view_time_ = _T("");
 	edit_time_ = _T("");
 	category_changed_ = keywords_changed_ = comments_changed_ = false;
@@ -1027,40 +1061,12 @@ void CPropInfoPage::Update(CHexEditView *pv, FILE_ADDRESS /*not used*/)
 	else
 		edit_time_.Format("%2ld:%02ld:%02ld", long(hours), long(mins%60), long(secs%60));
 
-	// Current file length
-	FILE_ADDRESS file_len = pDoc->length();
-	current_size_ = NumScale((double)file_len) + "bytes";
-	current_size_.TrimLeft();
-	if (file_len >= 995)
-	{
-		CString ss;
-		char buf[24];                    // temp buf where we sprintf
-		sprintf(buf, "%I64d", __int64(file_len));
-		ss = buf;
-		AddCommas(ss);
-		current_size_ += " (" + ss + ")";
-	}
-
 	// Need current file to get file size on disk
 	CFile64 *pf = pDoc->pfile1_;
 	if (pf == NULL)
 	{
 		UpdateData(FALSE);
 		return;
-	}
-
-	// Length of file on disk
-	file_len = pf->GetLength();
-	disk_size_ = NumScale((double)file_len) + "bytes";
-	disk_size_.TrimLeft();
-	if (file_len >= 995)
-	{
-		CString ss;
-		char buf[24];                    // temp buf where we sprintf
-		sprintf(buf, "%I64d", __int64(file_len));
-		ss = buf;
-		AddCommas(ss);
-		disk_size_ += " (" + ss + ")";
 	}
 
 	UpdateData(FALSE);
@@ -1101,7 +1107,7 @@ BOOL CPropInfoPage::OnInitDialog()
 	resizer_.Add(IDC_INFO_EDIT_TIME_DESC, 100,   0,   0,   0);
 	resizer_.Add(IDC_INFO_EDIT_TIME,      100,   0,   0,   0);
 	resizer_.Add(IDC_INFO_KEYWORDS,         0,   0, 100,   0);
-	resizer_.Add(IDC_INFO_COMMENTS,         0,   0, 100,   0);
+	resizer_.Add(IDC_INFO_COMMENTS,         0,   0, 100, 100);
 
 	// Subclass non-read-only edit controls so we can intercept |, CR and Escape
 	VERIFY(category_ctl_.SubclassDlgItem(IDC_INFO_CATEGORY, this));

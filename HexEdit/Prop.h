@@ -169,7 +169,7 @@ public:
 	CString	file_accessed_;
 	int		file_archived_;
 	//}}AFX_DATA
-
+	CString file_size_;
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -212,8 +212,7 @@ public:
 	CString category_;
 	CString keywords_;
 	CString comments_;
-	CString current_size_;
-	CString	disk_size_;
+	//CString	disk_size_;
 	CString view_time_;
 	CString edit_time_;
 
