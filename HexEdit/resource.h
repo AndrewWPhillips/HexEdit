@@ -1013,7 +1013,7 @@
 #define IDC_RADIX_GROUP                 1414
 #define IDC_BITS_GROUP                  1415
 #define IDC_INFO_CATEGORY               1416
-#define IDC_INFO_SIZE                   1417
+#define IDC_FILE_SIZE                   1417
 #define IDC_SELECT_FONT                 1418
 #define IDC_BOOKMARK_NAME_DESC          1420
 #define IDC_EXPLORER_TREE               1421
@@ -1070,6 +1070,7 @@
 #define IDC_FILE_SYSTEM_DESC            1470
 #define IDC_FILE_ARCHIVED_DESC          1471
 #define IDC_STATIC1                     1472
+#define IDC_FILE_SIZE_DESC              1472
 #define IDC_STATIC2                     1473
 #define IDC_DESC_DECIMAL_SIZE           1474
 #define IDC_STATIC3                     1475
