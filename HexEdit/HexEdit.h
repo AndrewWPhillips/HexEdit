@@ -39,8 +39,8 @@
 //#define INTERNAL_VERSION 9              // version 3.3
 //#define INTERNAL_VERSION 10             // version 3.4
 //#define INTERNAL_VERSION 11             // version 3.5
-#define INTERNAL_VERSION 12             // version 4.0 and 3.6
-//#define INTERNAL_VERSION 13             // version 4.1
+//#define INTERNAL_VERSION 12             // version 4.0 and 3.6
+#define INTERNAL_VERSION 13             // version 4.1
 
 // may need to adjust this depending on how many versions there were in last 2 years
 #define UPGRADE_DIFF 4   // diff between current version and version before which an upgrade is invalid
@@ -75,7 +75,7 @@ typedef __int64 FILE_ADDRESS;
 #define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
 
 #define USE_FREE_IMAGE  1   // When this is enabled we need to get rid of EnBitmap.cpp from the project
-#undef FILE_PREVIEW    //#define FILE_PREVIEW    1   // Turned off as have not had time to finish (still need Options dlg page + display in preview in file dlg, rfl, expl)
+#define FILE_PREVIEW    1   // Preview capture and display in file open dialog
 
 // Flags for stuff in development
 //#define AUTO_COMPLETE_SEARCH 1  // Use history for auto-complete in search tool - needs refinements/testing

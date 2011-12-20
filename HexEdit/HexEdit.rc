@@ -2090,8 +2090,8 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About HexEdit Pro"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    LTEXT           "HexEdit Pro 4.0",IDC_LINE1,150,24,166,8
-    LTEXT           "Copyright 1999-2011 Expert Commercial Software Pty Ltd",IDC_LINE2,150,38,96,18
+    LTEXT           "HexEdit Pro 4.1",IDC_LINE1,150,24,166,8
+    LTEXT           "Copyright 1999-2012 Expert Commercial Software Pty Ltd",IDC_LINE2,150,38,96,18
     PUSHBUTTON      "&Email...",IDC_EMAIL,322,38,61,14
     PUSHBUTTON      "URL",IDC_BUTTON_URL,150,59,166,14,WS_GROUP
     LTEXT           "Licensing information:",IDC_LINE3,150,86,166,8
@@ -2480,8 +2480,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,1,SVNRevision
- PRODUCTVERSION 4,0,1,SVNRevision
+ FILEVERSION 4,1,1,SVNRevision
+ PRODUCTVERSION 4,1,1,SVNRevision
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2498,12 +2498,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Pro Application"
-            VALUE "FileVersion", "4, 0, 3, " SVNRevisionStr
+            VALUE "FileVersion", "4, 1, 1, " SVNRevisionStr
             VALUE "InternalName", "HexEditPro"
-            VALUE "LegalCopyright", "Copyright © 1999-2011  Expert Commercial Software"
+            VALUE "LegalCopyright", "Copyright © 1999-2012  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDITPRO.EXE"
             VALUE "ProductName", "HexEditPro"
-            VALUE "ProductVersion", "4, 0, 3, " SVNRevisionStr
+            VALUE "ProductVersion", "4, 1, 1, " SVNRevisionStr
         END
     END
     BLOCK "VarFileInfo"
