@@ -527,7 +527,7 @@ static DWORD id_pairs[] = {
 	IDC_INFO_CATEGORY_SELECT, HIDC_INFO_CATEGORY_SELECT,
 	IDC_INFO_KEYWORDS, HIDC_INFO_KEYWORDS,
 	IDC_INFO_COMMENTS, HIDC_INFO_COMMENTS,
-	// IDC_FILE_SIZE, HIDC_FILE_SIZE,  xxx
+//	IDC_FILE_SIZE, HIDC_FILE_SIZE,
 	IDC_INFO_DISK_SIZE, HIDC_INFO_DISK_SIZE,
 	IDC_INFO_VIEW_TIME, HIDC_INFO_VIEW_TIME,
 	IDC_INFO_EDIT_TIME, HIDC_INFO_EDIT_TIME,
@@ -1010,7 +1010,7 @@ void CPropInfoPage::Update(CHexEditView *pv, FILE_ADDRESS /*not used*/)
 	//disk_size_ = _T("");
 	view_time_ = _T("");
 	edit_time_ = _T("");
-	category_changed_ = keywords_changed_ = comments_changed_ = false;
+	category_view_ = keywords_view_ = comments_view_ = NULL;
 
 	// Get index into previously-opened file list
 	CHexFileList *pfl = theApp.GetFileList();
@@ -1076,6 +1076,41 @@ void CPropInfoPage::Update(CHexEditView *pv, FILE_ADDRESS /*not used*/)
 	UpdateWindow();
 }
 
+void CPropInfoPage::fix_menu()
+{
+	// Destroy previous menu if any
+	if (cat_sel_ctl_.m_hMenu != (HMENU)0)
+	{
+		::DestroyMenu(cat_sel_ctl_.m_hMenu);
+		cat_sel_ctl_.m_hMenu = (HMENU)0;
+	}
+
+	// Add menu items
+	CHexFileList *pfl = theApp.GetFileList();
+	std::set<CString> categories;
+
+	for (int ii = 0; ii < pfl->GetCount(); ++ii)
+	{
+		CString ss = pfl->GetData(ii, CHexFileList::CATEGORY);
+		if (!ss.IsEmpty())
+		{
+			TRACE("]]]]]]] Adding <%s>\r\n", ss);
+			categories.insert(ss);
+		}
+	}
+	if (categories.empty())
+		categories.insert(_T("None"));
+	CMenu mm;
+	mm.CreatePopupMenu();
+	int count = 0;
+	for (std::set<CString>::iterator pp = categories.begin(); pp != categories.end(); ++pp)
+		mm.AppendMenu(MF_STRING, ++count, *pp);
+	ASSERT(count > 0);
+
+	cat_sel_ctl_.m_hMenu = mm.GetSafeHmenu();
+	mm.Detach();
+}
+
 BEGIN_MESSAGE_MAP(CPropInfoPage, CPropUpdatePage)
 	ON_EN_CHANGE(IDC_INFO_CATEGORY, OnChangeCategory)
 	ON_EN_KILLFOCUS(IDC_INFO_CATEGORY, OnKillFocusCategory)
@@ -1136,23 +1171,27 @@ BOOL CPropInfoPage::PreTranslateMessage(MSG* pMsg)
 
 		if (pMsg->hwnd == GetDlgItem(IDC_INFO_CATEGORY)->m_hWnd && ii != -1)
 		{
+			ASSERT(category_view_ = pview);
 			pfl->SetData(ii, CHexFileList::CATEGORY, category_);
 			((CEdit*)GetDlgItem(IDC_INFO_CATEGORY))->SetSel(0, -1);
-			category_changed_ = false;
+			category_view_ = NULL;
 			((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
+			fix_menu();
 		}
 		else if (pMsg->hwnd == GetDlgItem(IDC_INFO_KEYWORDS)->m_hWnd && ii != -1)
 		{
+			ASSERT(keywords_view_ = pview);
 			pfl->SetData(ii, CHexFileList::KEYWORDS, keywords_);
 			((CEdit*)GetDlgItem(IDC_INFO_KEYWORDS))->SetSel(0, -1);
-			keywords_changed_ = false;
+			keywords_view_ = NULL;
 			((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
 		}
 		else if (pMsg->hwnd == GetDlgItem(IDC_INFO_COMMENTS)->m_hWnd && ii != -1)
 		{
+			ASSERT(comments_view_ = pview);
 			pfl->SetData(ii, CHexFileList::COMMENTS, comments_);
 			((CEdit*)GetDlgItem(IDC_INFO_COMMENTS))->SetSel(0, -1);
-			comments_changed_ = false;
+			comments_view_ = NULL;
 			((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
 		}
 
@@ -1177,17 +1216,17 @@ BOOL CPropInfoPage::PreTranslateMessage(MSG* pMsg)
 		if (pMsg->hwnd == GetDlgItem(IDC_INFO_CATEGORY)->m_hWnd)
 		{
 			((CEdit*)GetDlgItem(IDC_INFO_CATEGORY))->SetSel(0, -1);
-			category_changed_ = false;
+			category_view_ = NULL;
 		}
 		else if (pMsg->hwnd == GetDlgItem(IDC_INFO_KEYWORDS)->m_hWnd)
 		{
 			((CEdit*)GetDlgItem(IDC_INFO_KEYWORDS))->SetSel(0, -1);
-			keywords_changed_ = false;
+			keywords_view_ = NULL;
 		}
 		else if (pMsg->hwnd == GetDlgItem(IDC_INFO_COMMENTS)->m_hWnd)
 		{
 			((CEdit*)GetDlgItem(IDC_INFO_COMMENTS))->SetSel(0, -1);
-			comments_changed_ = false;
+			comments_view_ = NULL;
 		}
 
 		return 1;
@@ -1202,37 +1241,10 @@ BOOL CPropInfoPage::OnSetActive()
 	Update(pv);
 
 	// Now setup menu of existing categories
-
-	// Destroy previous menu if any
-	if (cat_sel_ctl_.m_hMenu != (HMENU)0)
-	{
-		::DestroyMenu(cat_sel_ctl_.m_hMenu);
-		cat_sel_ctl_.m_hMenu = (HMENU)0;
-	}
-
-	// Add menu items
-	CHexFileList *pfl = theApp.GetFileList();
-	std::set<CString> categories;
-
-	for (int ii = 0; ii < pfl->GetCount(); ++ii)
-	{
-		CString ss = pfl->GetData(ii, CHexFileList::CATEGORY);
-		if (!ss.IsEmpty())
-			categories.insert(ss);
-	}
-	if (categories.empty())
-		categories.insert(_T("None"));
-	CMenu mm;
-	mm.CreatePopupMenu();
-	int count = 0;
-	for (std::set<CString>::iterator pp = categories.begin(); pp != categories.end(); ++pp)
-		mm.AppendMenu(MF_STRING, ++count, *pp);
-	ASSERT(count > 0);
-
-	cat_sel_ctl_.m_hMenu = mm.GetSafeHmenu();
-	mm.Detach();
+	fix_menu();
 
 	// Only enable if there is a disk file name (else CATEGORY can't be written to recent files list)
+	CHexFileList *pfl = theApp.GetFileList();
 	int curr = -1;
 	if (pv != NULL && pv->GetDocument()->pfile1_ != NULL) // make sure there is a disk file to interrogate (pfl required disk file name)
 		curr = pfl->GetIndex(pv->GetDocument()->pfile1_->GetFilePath());
@@ -1247,7 +1259,7 @@ BOOL CPropInfoPage::OnKillActive()
 
 #if 0  // This works well when changing pages but does not work if the user
 	   // closes the dialog or moves focus outside the dialog.
-	int changes = (category_changed_?1:0) + (keywords_changed_?1:0) + (comments_changed_?1:0);
+	int changes = (category_view_ != NULL) + (keywords_view_ != NULL) + (comments_view_ != NULL);
 
 	if (retval && changes > 0)
 	{
@@ -1260,12 +1272,12 @@ BOOL CPropInfoPage::OnKillActive()
 
 		CString ss = "Changes have been made to ";
 		int count = 0;
-		if (category_changed_)
+		if (category_view_ != NULL)
 		{
 			ss += "Category";
 			++count;
 		}
-		if (keywords_changed_)
+		if (keywords_view_ != NULL)
 		{
 			if (count > 0 && changes == 2)
 				ss += " and ";
@@ -1274,7 +1286,7 @@ BOOL CPropInfoPage::OnKillActive()
 			ss += "Keywords";
 			++count;
 		}
-		if (comments_changed_)
+		if (comments_view_ != NULL)
 		{
 			if (count > 0)
 				ss += " and ";
@@ -1287,23 +1299,26 @@ BOOL CPropInfoPage::OnKillActive()
 		switch (AfxMessageBox(ss, MB_YESNOCANCEL))
 		{
 		case IDYES:
-			if (category_changed_)
+			if (category_view_ != NULL)
 			{
+				ASSERT(category_view_ = pview);
 				pfl->SetData(ii, CHexFileList::CATEGORY, category_);
 				((CEdit*)GetDlgItem(IDC_INFO_CATEGORY))->SetSel(0, -1);
-				category_changed_ = false;
+				category_view_ = NULL;
 			}
-			if (keywords_changed_)
+			if (keywords_view_)
 			{
+				ASSERT(keywords_view_ = pview);
 				pfl->SetData(ii, CHexFileList::KEYWORDS, keywords_);
 				((CEdit*)GetDlgItem(IDC_INFO_KEYWORDS))->SetSel(0, -1);
-				keywords_changed_ = false;
+				keywords_view_ = NULL;
 			}
-			if (comments_changed_)
+			if (comments_view_ != NULL)
 			{
+				ASSERT(comments_view_ = pview);
 				pfl->SetData(ii, CHexFileList::COMMENTS, comments_);
 				((CEdit*)GetDlgItem(IDC_INFO_COMMENTS))->SetSel(0, -1);
-				comments_changed_ = false;
+				comments_view_ = NULL;
 			}
 			break;
 		case IDNO:
@@ -1322,23 +1337,23 @@ BOOL CPropInfoPage::OnKillActive()
 
 void CPropInfoPage::OnChangeCategory()
 {
-	category_changed_ = true;
+	category_view_ = GetView();
 }
 
 void CPropInfoPage::OnChangeKeywords()
 {
-	keywords_changed_ = true;
+	keywords_view_ = GetView();
 }
 
 void CPropInfoPage::OnChangeComments()
 {
-	comments_changed_ = true;
+	comments_view_ = GetView();
 }
 
 void CPropInfoPage::OnKillFocusCategory()
 {
-	CHexEditView *pview = GetView();
-	if (category_changed_ && pview != NULL && pview->GetDocument()->pfile1_ != NULL)
+	CHexEditView * pview = (CHexEditView *)category_view_;
+	if (pview != NULL && pview->GetDocument()->pfile1_ != NULL)
 	{
 		CHexFileList *pfl = theApp.GetFileList();
 		CString filename = pview->GetDocument()->pfile1_->GetFilePath();
@@ -1349,15 +1364,16 @@ void CPropInfoPage::OnKillFocusCategory()
 		UpdateData();
 		pfl->SetData(ii, CHexFileList::CATEGORY, category_);
 		//((CEdit*)GetDlgItem(IDC_INFO_CATEGORY))->SetSel(0, -1);
-		category_changed_ = false;
+		category_view_ = NULL;
 		((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
+		fix_menu();
 	}
 }
 
 void CPropInfoPage::OnKillFocusKeywords()
 {
-	CHexEditView *pview = GetView();
-	if (keywords_changed_ && pview != NULL && pview->GetDocument()->pfile1_ != NULL)
+	CHexEditView * pview = (CHexEditView *)keywords_view_;
+	if (pview != NULL && pview->GetDocument()->pfile1_ != NULL)
 	{
 		CHexFileList *pfl = theApp.GetFileList();
 		CString filename = pview->GetDocument()->pfile1_->GetFilePath();
@@ -1367,15 +1383,15 @@ void CPropInfoPage::OnKillFocusKeywords()
 
 		UpdateData();
 		pfl->SetData(ii, CHexFileList::KEYWORDS, keywords_);
-		keywords_changed_ = false;
+		keywords_view_ = NULL;
 		((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
 	}
 }
 
 void CPropInfoPage::OnKillFocusComments()
 {
-	CHexEditView *pview = GetView();
-	if (comments_changed_ && pview != NULL && pview->GetDocument()->pfile1_ != NULL)
+	CHexEditView * pview = (CHexEditView *)comments_view_;
+	if (pview != NULL && pview->GetDocument()->pfile1_ != NULL)
 	{
 		CHexFileList *pfl = theApp.GetFileList();
 		CString filename = pview->GetDocument()->pfile1_->GetFilePath();
@@ -1385,7 +1401,7 @@ void CPropInfoPage::OnKillFocusComments()
 
 		UpdateData();
 		pfl->SetData(ii, CHexFileList::COMMENTS, comments_);
-		comments_changed_ = false;
+		comments_view_ = NULL;
 		((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);
 	}
 }

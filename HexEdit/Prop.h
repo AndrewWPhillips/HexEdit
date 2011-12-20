@@ -222,9 +222,14 @@ public:
 	CCommentEditControl comments_ctl_;
 	CMFCMenuButton cat_sel_ctl_;
 
-	bool category_changed_;
-	bool keywords_changed_;
-	bool comments_changed_;
+	// These were originally flags to indicate if the category, keywords, or 
+	// comments fields had changed but there was a problem that ON_EN_KILLFOCUS
+	// is called too late (after the active view has changed) so we also needed
+	// keep track of the view that was active when the edit controls was
+	// changed. Whether or not this was NULL could also be used as a flag.
+	CView * category_view_;   // active view when last change was made to the category field
+	CView * keywords_view_;
+	CView * comments_view_;
 
 // Overrides
 public:
@@ -253,6 +258,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	void fix_menu();
 	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
 
