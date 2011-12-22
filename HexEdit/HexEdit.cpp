@@ -2212,7 +2212,7 @@ void CHexEditApp::LoadOptions()
 	//thumb_8bit_ = GetProfileInt("Options", "ThumbNail8Bit",  0) ? TRUE : FALSE;
 	thumb_frame_ = GetProfileInt("Options", "ThumbNailAllViews",  1) ? TRUE : FALSE;
 	thumb_size_ = GetProfileInt("Options", "ThumbNailSize",  300);
-	if (thumb_size_ < 64) thumb_size_ = 64 ;
+	if (thumb_size_ < 100) thumb_size_ = 100 ;
 	thumb_zoom_ =  strtod(GetProfileString("Options", "ThumbNailZoom",  "1.5"), NULL);
 	if (thumb_zoom_ < 1.0 || thumb_zoom_ > 10) thumb_zoom_ = 1.0;
 	thumb_type_ = GetProfileInt("Options", "ThumbNailType", JPEG_AVERAGE);  // default to small jpeg
@@ -3219,6 +3219,14 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.save_locn_ = save_locn_;
 	val.save_folder_ = save_folder_;
 
+	// Preview options
+	val.thumbnail_ = thumbnail_;
+	val.thumb_frame_ = thumb_frame_;
+	val.thumb_size_ = thumb_size_;
+	val.thumb_type_ = thumb_type_;
+	val.thumb_zoom_ = thumb_zoom_;
+	val.cleanup_days_ = cleanup_days_;
+
 	// History
 	val.recent_files_ = recent_files_;
 	val.no_recent_add_ = no_recent_add_;
@@ -3429,6 +3437,13 @@ void CHexEditApp::set_options(struct OptValues &val)
 	open_folder_ = val.open_folder_;
 	save_locn_ = val.save_locn_;
 	save_folder_ = val.save_folder_;
+
+	thumbnail_ = val.thumbnail_;
+	thumb_frame_ = val.thumb_frame_;
+	thumb_size_ = val.thumb_size_;
+	thumb_type_ = val.thumb_type_;
+	thumb_zoom_ = val.thumb_zoom_;
+	cleanup_days_ = val.cleanup_days_;
 
 	if (recent_files_ != val.recent_files_)
 	{

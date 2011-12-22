@@ -101,6 +101,14 @@ struct OptValues
 	int     save_locn_;
 	CString save_folder_;
 
+	// Preview (thumbnail) options
+	BOOL thumbnail_;
+	BOOL thumb_frame_;
+	int thumb_size_;
+	int thumb_type_;
+	double thumb_zoom_;
+	int cleanup_days_;
+
 	// Backup options
 	int		backup_;
 	BOOL	backup_space_;
@@ -332,6 +340,32 @@ protected:
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnOpenDir();
 	afx_msg void OnSaveDir();
+	afx_msg void OnChange();
+	DECLARE_MESSAGE_MAP()
+
+private:
+	void fix_controls();
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CPreviewPage dialog
+
+class CPreviewPage : public COptPage
+{
+	DECLARE_DYNCREATE(CPreviewPage)
+
+public:
+	CPreviewPage() : COptPage(IDD_OPT_PREVIEW) { }
+// Overrides
+	virtual void OnOK();
+	virtual BOOL OnApply();
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+// Implementation
+	virtual BOOL OnInitDialog();
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 
@@ -1142,6 +1176,7 @@ protected:
 	// These are the pages of the "property sheet"
 	CSystemGeneralPage sysgeneralPage_;
 	CFoldersPage foldersPage_;
+	CPreviewPage previewPage_;
 	CFiltersPage filtersPage_;
 	CBackupPage backupPage_; 
 	CPrintGeneralPage printGeneralPage_;

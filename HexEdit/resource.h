@@ -426,6 +426,7 @@
 #define IDD_PROP_GRAPH                  506
 #define IDD_CRC                         507
 #define IDD_RECENT_FILES_NEW            508
+#define IDD_OPT_PREVIEW                 509
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -698,6 +699,7 @@
 #define IDC_CT_MODIFICATIONS            1142
 #define IDC_TEXT                        1143
 #define IDC_CT_DELETIONS                1143
+#define IDC_THUMB_ZOOM                  1143
 #define IDC_DEL                         1144
 #define IDC_VERSION                     1144
 #define IDC_CT_DELCOUNT                 1144
@@ -1254,6 +1256,14 @@
 #define IDC_CRC_DELETE                  1656
 #define IDC_CRC_NAME                    1657
 #define IDC_CRC_NOTE                    1658
+#define IDC_THUMB_MAINVIEW              1659
+#define IDC_THUMB_ALLVIEWS              1660
+#define IDC_THUMB_SIZE                  1661
+#define IDC_THUMB_TYPE                  1662
+#define IDC_SPIN_SIZE                   1663
+#define IDC_THUMB_SIZE2                 1664
+#define IDC_THUMB_REMOVE                1664
+#define IDC_SPIN_REMOVE                 1665
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1781,9 +1791,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        510
+#define _APS_NEXT_RESOURCE_VALUE        511
 #define _APS_NEXT_COMMAND_VALUE         39189
-#define _APS_NEXT_CONTROL_VALUE         1659
+#define _APS_NEXT_CONTROL_VALUE         1666
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

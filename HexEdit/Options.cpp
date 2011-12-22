@@ -130,6 +130,13 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.open_locn_ = FL_LAST;
 	val_.save_locn_ = FL_DOC;
 
+	val_.thumbnail_ = 0;
+	val_.thumb_frame_ = 0;
+	val_.thumb_size_ = 100;
+	val_.thumb_type_ = 2;
+	val_.thumb_zoom_ = 1.5;
+	val_.cleanup_days_ = 100;
+
 	val_.recent_files_ = 0;
 	val_.no_recent_add_ = FALSE;
 	val_.max_search_hist_ = val_.max_replace_hist_ = 
@@ -286,6 +293,7 @@ void COptSheet::page_init()
 	// Add the rest of the pages and categories (System/General already added in init() above).
 	CMFCPropertySheetCategoryInfo * pCatFile = AddTreeCategory("Files", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
 	  AddPageToTree(pCatFile, &foldersPage_, IMG_FILE_FOLDERS, IMG_FILE_FOLDERS);
+	  AddPageToTree(pCatFile, &previewPage_, IMG_SPARE, IMG_SPARE);
 	  AddPageToTree(pCatFile, &filtersPage_, IMG_FILE_FILTERS, IMG_FILE_FILTERS);
 	  AddPageToTree(pCatFile, &backupPage_, IMG_FILE_BACKUP, IMG_FILE_BACKUP);
 
@@ -701,6 +709,131 @@ void CFoldersPage::OnSaveDir()
 }
 
 void CFoldersPage::OnChange()
+{
+	UpdateData();
+	fix_controls();
+	SetModified(TRUE);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CPreviewPage property page
+
+IMPLEMENT_DYNCREATE(CPreviewPage, COptPage)
+
+void CPreviewPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+
+	int zoom;  // index into zoom drop down
+	if (!pDX->m_bSaveAndValidate)
+	{
+		// Get drop-down index from closest zoom value
+		if (pParent->val_.thumb_zoom_ < 1.25)
+			zoom = 0;  // no zoom
+		else if (pParent->val_.thumb_zoom_ < 1.75)
+			zoom = 1;  // 1.5
+		else if (pParent->val_.thumb_zoom_ < 2.5)
+			zoom = 2;  // double
+		else
+			zoom = 3;  // triple
+	}
+
+	DDX_Check(pDX, IDC_PREVIEW, pParent->val_.thumbnail_);
+	DDX_Radio(pDX, IDC_THUMB_MAINVIEW, pParent->val_.thumb_frame_);
+	DDX_Text(pDX, IDC_THUMB_SIZE, pParent->val_.thumb_size_);
+	DDX_CBIndex(pDX, IDC_THUMB_TYPE, pParent->val_.thumb_type_);
+	DDX_Text(pDX, IDC_THUMB_REMOVE, pParent->val_.cleanup_days_);
+	//DDX_CBIndex(pDX, IDC_THUMB_ZOOM, pParent->val_.thumb_zoom_);
+	DDX_CBIndex(pDX, IDC_THUMB_ZOOM, zoom);
+	if (pDX->m_bSaveAndValidate)
+	{
+		// Convert from drop-down index into actual zoom value
+		switch (zoom)
+		{
+		case 0:
+			pParent->val_.thumb_zoom_ = 1.0;
+			break;
+		default:
+			ASSERT(0);
+			// fall-through
+		case 1:
+			pParent->val_.thumb_zoom_ = 1.5;
+			break;
+		case 2:
+			pParent->val_.thumb_zoom_ = 2.0;
+			break;
+		case 3:
+			pParent->val_.thumb_zoom_ = 3.0;
+			break;
+		}
+	}
+}
+
+BEGIN_MESSAGE_MAP(CPreviewPage, COptPage)
+	ON_BN_CLICKED(IDC_PREVIEW, OnChange)
+	//ON_BN_CLICKED(IDC_THUMB_MAINVIEW, OnChange)
+	//ON_BN_CLICKED(IDC_THUMB_ALLVIEWS, OnChange)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+void CPreviewPage::fix_controls()
+{
+	GetDlgItem(IDC_THUMB_MAINVIEW)->EnableWindow(pParent->val_.thumbnail_);
+	GetDlgItem(IDC_THUMB_ALLVIEWS)->EnableWindow(pParent->val_.thumbnail_);
+	GetDlgItem(IDC_THUMB_SIZE)->EnableWindow(pParent->val_.thumbnail_);
+	GetDlgItem(IDC_SPIN_SIZE)->EnableWindow(pParent->val_.thumbnail_);
+	GetDlgItem(IDC_THUMB_TYPE)->EnableWindow(pParent->val_.thumbnail_);
+	GetDlgItem(IDC_THUMB_ZOOM)->EnableWindow(pParent->val_.thumbnail_);
+	GetDlgItem(IDC_THUMB_REMOVE)->EnableWindow(pParent->val_.thumbnail_);
+	GetDlgItem(IDC_SPIN_REMOVE)->EnableWindow(pParent->val_.thumbnail_);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CPreviewPage message handlers
+
+BOOL CPreviewPage::OnInitDialog()
+{
+	COptPage::OnInitDialog();
+
+	// Setup controls (constant things)
+	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_SIZE))->SetRange(50, 999);
+	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_REMOVE))->SetRange(1, 999);
+
+	// Fix controls (dynamic things)
+	fix_controls();
+
+	return TRUE;
+}
+
+void CPreviewPage::OnOK()
+{
+	theApp.set_options(pParent->val_);
+	COptPage::OnOK();
+}
+
+BOOL CPreviewPage::OnApply()
+{
+	return TRUE;
+}
+
+static DWORD id_pairs_preview[] = {
+	0,0 
+};
+
+BOOL CPreviewPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_preview);
+	return TRUE;
+}
+
+void CPreviewPage::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_preview);
+}
+
+void CPreviewPage::OnChange()
 {
 	UpdateData();
 	fix_controls();

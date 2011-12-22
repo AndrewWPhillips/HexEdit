@@ -230,6 +230,7 @@
 #define HIDC_FILE_NAME                  0x80970419    // IDD_PROP_FILE [English (United States)]
 #define HIDC_FILE_PATH                  0x8097042d    // IDD_PROP_FILE [English (United States)]
 #define HIDC_FILE_READONLY              0x80970436    // IDD_PROP_FILE [English (United States)]
+#define HIDC_FILE_SIZE                  0x80970589    // IDD_PROP_FILE [English (United States)]
 #define HIDC_FILE_SYSTEM                0x80970438    // IDD_PROP_FILE [English (United States)]
 #define HIDC_FILE_TYPE                  0x8097041a    // IDD_PROP_FILE [English (United States)]
 #define HIDC_FILL_CLIPBOARD             0x811c0553    // IDD_NEW_FILE
@@ -335,7 +336,7 @@
 #define HIDC_INFO_DISK_SIZE             0x81270608    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INFO_EDIT_TIME             0x81270607    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INFO_KEYWORDS              0x81270603    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INFO_SIZE                  0x81270589    // IDD_PROP_INFO [English (United States)]
+#define HIDC_INFO_SIZE                  0x80970589    // IDD_PROP_FILE [English (United States)]
 #define HIDC_INFO_VIEW_TIME             0x81270606    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INSERT                     0x813604b2    // IDD_OPT_WINEDIT [English (United States)]
 #define HIDC_INSTALL_CODE               0x80e70437    // IDD_REGISTER
@@ -505,6 +506,12 @@
 #define HIDC_TABSBOTTOM                 0x819a0417    // IDD_OPT_WORKLAYOUT [English (United States)]
 #define HIDC_TEMPLATEDIR                0x81380617    // IDD_OPT_WORKTEMPLATE [English (United States)]
 #define HIDC_TEXT                       0x80e50477    // IDD_EMAIL
+#define HIDC_THUMB_ALLVIEWS             0x81fd067c    // IDD_OPT_PREVIEW [English (United States)]
+#define HIDC_THUMB_MAINVIEW             0x81fd067b    // IDD_OPT_PREVIEW [English (United States)]
+#define HIDC_THUMB_REMOVE               0x81fd0680    // IDD_OPT_PREVIEW [English (United States)]
+#define HIDC_THUMB_SIZE                 0x81fd067d    // IDD_OPT_PREVIEW [English (United States)]
+#define HIDC_THUMB_TYPE                 0x81fd067e    // IDD_OPT_PREVIEW [English (United States)]
+#define HIDC_THUMB_ZOOM                 0x81fd0477    // IDD_OPT_PREVIEW [English (United States)]
 #define HIDC_TO                         0x80e50473    // IDD_EMAIL
 #define HIDC_TOD                        0x809e060c    // IDD_OPT_SYSTEM [English (United States)]
 #define HIDC_TYPES_COMMON               0x813005ab    // IDD_TPARSE
