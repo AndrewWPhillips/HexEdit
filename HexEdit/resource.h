@@ -427,6 +427,7 @@
 #define IDD_CRC                         507
 #define IDD_RECENT_FILES_NEW            508
 #define IDD_OPT_PREVIEW                 509
+#define IDD_OPT_AERIAL                  510
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1264,6 +1265,8 @@
 #define IDC_THUMB_SIZE2                 1664
 #define IDC_THUMB_REMOVE                1664
 #define IDC_SPIN_REMOVE                 1665
+#define IDC_AERIAL_MAX                  1666
+#define IDC_SPIN_AERIAL_MAX             1667
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1793,7 +1796,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        511
 #define _APS_NEXT_COMMAND_VALUE         39189
-#define _APS_NEXT_CONTROL_VALUE         1666
+#define _APS_NEXT_CONTROL_VALUE         1668
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

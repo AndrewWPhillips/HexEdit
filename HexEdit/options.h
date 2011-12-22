@@ -214,6 +214,9 @@ struct OptValues
 	CString	default_string_format_;
 	CString	default_unsigned_format_;
 
+	// Aerial
+	UINT aerial_max_;
+
 	// The rest are only used if there is a window open
 	CString window_name_;       // Active view's window name
 
@@ -692,6 +695,35 @@ protected:
 
 private:
 	void fix_controls();
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CAerialPage dialog - background processing options
+
+class CAerialPage : public COptPage
+{
+	DECLARE_DYNCREATE(CAerialPage)
+
+// Construction
+public:
+	CAerialPage() : COptPage(IDD_OPT_AERIAL) { }
+
+// Dialog Data
+
+// Overrides
+public:
+	virtual void OnOK();
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+protected:
+	virtual BOOL OnInitDialog();
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnChange();
+	DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1188,6 +1220,7 @@ protected:
 	CWorkspaceDisplayPage workspacedisplayPage_;
 	CWorkspaceEditPage workspaceeditPage_;
 	CBackgroundPage backgroundPage_;
+	CAerialPage aerialPage_;
 	CTipsPage tipsPage_;
 	CTemplatePage templatePage_;
 

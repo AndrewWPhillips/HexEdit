@@ -856,7 +856,7 @@ private:
 	// MAX_WIDTH = widest we can "reshape" the bitmap to.  Like any width used for the bitmap it must
 	// be a multiple of 8 (so there are never "pad" bytes on the end of scan lines).
 	enum { MAX_WIDTH = 2048 };
-	enum { MAX_BMP  = 256*1024*1024 };      // Biggest bitmap size in bytes - should be made a user option sometime
+	//enum { MAX_BMP  = 256*1024*1024 };      // Biggest bitmap size in bytes - should be made a user option sometime
 
 	void CreateAerialThread();  // Create background thread which fills in the aerial view bitmap
 	void KillAerialThread();    // Kill background thread ASAP

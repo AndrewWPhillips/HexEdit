@@ -2501,6 +2501,20 @@ BEGIN
     LTEXT           "thumbnail size",IDC_STATIC,133,81,45,8
 END
 
+IDD_OPT_AERIAL DIALOGEX 0, 0, 260, 140
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Aerial"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,47,8,210,1
+    LTEXT           "Aerial view bitmap",IDC_STATIC,9,4,58,8
+    LTEXT           "Maximum aerial view bitmap size:",IDC_STATIC,9,20,104,8
+    EDITTEXT        IDC_AERIAL_MAX,117,18,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_AERIAL_MAX,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,152,12,11,14
+    LTEXT           "Megabytes",IDC_STATIC,163,20,36,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

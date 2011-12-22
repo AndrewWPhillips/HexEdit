@@ -233,12 +233,12 @@ void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
 	bpe_ = 1;
 
 	// Keep increasing bpe_ by powers of two until we get a small enough bitmap
-	while (bpe_ <= 65536 && (length_*3)/bpe_ > MAX_BMP)
+	while (bpe_ <= 65536 && (length_*3)/bpe_ > theApp.aerial_max_)
 		bpe_ = bpe_<<1;
 
 	// Work out the number of bitmap rows we would need at the widest bitmap size
 	int rows = int(length_/bpe_/MAX_WIDTH) + 2;    // Round up to next row plus add one more row to allow for "reshaping"
-	ASSERT((rows-2)*MAX_WIDTH < MAX_BMP);
+	ASSERT((rows-2)*MAX_WIDTH < theApp.aerial_max_);
 
 	dib_ = FreeImage_Allocate(MAX_WIDTH, rows, 24);
 

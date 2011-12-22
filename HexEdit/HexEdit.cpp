@@ -2341,6 +2341,10 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 
 	aerialview_ = GetProfileInt("Options", "AerialView", 0);
 	aerial_disp_state_ = GetProfileInt("Options", "AerialDisplay", 0x000010B1F);
+	aerial_max_ = GetProfileInt("Aerial", "MaxBitmapInMbytes", 256);
+	if (aerial_max_ < 16) aerial_max_ = 16; else if (aerial_max_ > 999) aerial_max_ = 999;
+	aerial_max_ *= 1024*1024;
+
 	compview_ = GetProfileInt("Options", "CompareView", 0);
 
 	dffdview_ = GetProfileInt("DataFormat", "TreeView", 0);
@@ -2353,6 +2357,7 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 	default_unsigned_format_ = GetProfileString("DataFormat", "UnsignedDefault", "%u");
 	default_real_format_ = GetProfileString("DataFormat", "RealDefault", "%g");
 	default_date_format_ = GetProfileString("DataFormat", "DateDefault", "%c");
+
 
 	xml_dir_ = GetProfileString("DataFormat", "Folder");
 	if (xml_dir_.IsEmpty())
@@ -2795,6 +2800,8 @@ void CHexEditApp::SaveOptions()
 
 	WriteProfileInt("Options", "AerialView", aerialview_);
 	WriteProfileInt("Options", "AerialDisplay", aerial_disp_state_);
+	WriteProfileInt("Aerial", "MaxBitmapInMbytes", aerial_max_/(1024*1024));
+
 	WriteProfileInt("Options", "CompareView", compview_);
 
 	// Save data format view options
@@ -3331,6 +3338,8 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.base_address_ = export_base_addr_ != -1 ? export_base_addr_ : 0;
 	val.export_line_len_ = export_line_len_;
 
+	val.aerial_max_ = aerial_max_/(1024*1024);
+
 	// Global template
 	val.max_fix_for_elts_ = max_fix_for_elts_;
 	val.default_char_format_ = default_char_format_;
@@ -3656,6 +3665,8 @@ void CHexEditApp::set_options(struct OptValues &val)
 		invalid_char_ = val.invalid_char_;
 		invalidate_views = true;
 	}
+
+	aerial_max_ = val.aerial_max_ * 1024 * 1024;
 
 	// global template options
 	max_fix_for_elts_ = val.max_fix_for_elts_;

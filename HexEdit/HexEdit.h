@@ -457,6 +457,9 @@ public:
 			default_int_format_, default_unsigned_format_, 
 			default_real_format_, default_date_format_;
 
+	// Aerial view global parameters
+	unsigned int aerial_max_;           // Max size for bitmap in MBytes (min = 16)
+
 	CString mac_dir_;                   // Where macros are saved
 	CString mac_comment_;               // Description of last loaded macro
 	CString mac_filename_;              // Filename of last loaded macro
@@ -682,7 +685,7 @@ public:
 	void CleanupPreviewFiles();         // Starts thread to remove thumbnails older than cleanup_days_
 	UINT RunCleanupThread();            // function that runs in the background thread
 	CWinThread * cleanup_thread_;       // cleanup is done in low-priority background thread
-	bool thread_stop_;                  // Sigmnal the thread to stop
+	bool thread_stop_;                  // Signal the thread to stop
 #endif
 
 	// History list options

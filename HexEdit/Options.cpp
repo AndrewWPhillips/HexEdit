@@ -193,6 +193,8 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.hl_caret_ = TRUE;
 	val_.hl_mouse_ = TRUE;
 
+	val_.aerial_max_ = 256;
+
 	val_.max_fix_for_elts_ = 0;
 	val_.default_char_format_ = _T("");
 	val_.default_int_format_ = _T("");
@@ -310,6 +312,7 @@ void COptSheet::page_init()
 	AddPageToTree(pCatWS, &backgroundPage_, IMG_BACKGROUND, IMG_BACKGROUND);
 	AddPageToTree(pCatWS, &tipsPage_, IMG_TIP, IMG_TIP);
 	AddPageToTree(pCatWS, &templatePage_, IMG_TEMPLATE, IMG_TEMPLATE);
+	AddPageToTree(pCatWS, &aerialPage_, IMG_AERIAL, IMG_AERIAL);
 	if (pview != NULL)
 	{
 		CMFCPropertySheetCategoryInfo * pCatDoc = AddTreeCategory("Document", IMG_FOLDER, IMG_FOLDER_SEL);
@@ -742,8 +745,10 @@ void CPreviewPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_PREVIEW, pParent->val_.thumbnail_);
 	DDX_Radio(pDX, IDC_THUMB_MAINVIEW, pParent->val_.thumb_frame_);
 	DDX_Text(pDX, IDC_THUMB_SIZE, pParent->val_.thumb_size_);
+	DDV_MinMaxInt(pDX, pParent->val_.thumb_size_, 100, 999);
 	DDX_CBIndex(pDX, IDC_THUMB_TYPE, pParent->val_.thumb_type_);
 	DDX_Text(pDX, IDC_THUMB_REMOVE, pParent->val_.cleanup_days_);
+	DDV_MinMaxInt(pDX, pParent->val_.cleanup_days_, 1, 999);
 	//DDX_CBIndex(pDX, IDC_THUMB_ZOOM, pParent->val_.thumb_zoom_);
 	DDX_CBIndex(pDX, IDC_THUMB_ZOOM, zoom);
 	if (pDX->m_bSaveAndValidate)
@@ -798,7 +803,7 @@ BOOL CPreviewPage::OnInitDialog()
 	COptPage::OnInitDialog();
 
 	// Setup controls (constant things)
-	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_SIZE))->SetRange(50, 999);
+	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_SIZE))->SetRange(100, 999);
 	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_REMOVE))->SetRange(1, 999);
 
 	// Fix controls (dynamic things)
@@ -1517,6 +1522,60 @@ void CBackgroundPage::OnChangeBackground()
 {
 	UpdateData();
 	fix_controls();
+	SetModified(TRUE);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CAerialPage property page
+
+IMPLEMENT_DYNCREATE(CAerialPage, COptPage)
+
+void CAerialPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_AERIAL_MAX, pParent->val_.aerial_max_);
+	DDV_MinMaxUInt(pDX, pParent->val_.aerial_max_, 16, 999);
+}
+
+BEGIN_MESSAGE_MAP(CAerialPage, COptPage)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CAerialPage message handlers
+
+BOOL CAerialPage::OnInitDialog()
+{
+	COptPage::OnInitDialog();
+	((CSpinButtonCtrl *)GetDlgItem(IDC_SPIN_AERIAL_MAX))->SetRange(16, 999);
+
+	return TRUE;
+}
+
+void CAerialPage::OnOK()
+{
+	theApp.set_options(pParent->val_);
+	COptPage::OnOK();
+}
+
+static DWORD id_pairs_aerial[] = { 
+	0,0 
+};
+
+BOOL CAerialPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_aerial);
+	return TRUE;
+}
+
+void CAerialPage::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_aerial);
+}
+
+void CAerialPage::OnChange()
+{
 	SetModified(TRUE);
 }
 
