@@ -1496,6 +1496,8 @@ void CHexEditView::StoreOptions()
 							ext = ".JPG";
 							break;
 						default:
+							ASSERT(0);
+							// fall through
 						case CHexEditApp::JPEG_BAD:
 							fmt = FIF_JPEG;
 							flags = JPEG_QUALITYBAD;
@@ -1503,12 +1505,14 @@ void CHexEditView::StoreOptions()
 							break;
 						}
 
+						static int last_vacant = 0;  // remember the last vacant spot we found to save a bit of time
+
 						// Try different file names till we find a vacant slot
-						for (int jj = 0; jj < 1000000; ++jj)
+						for (int jj = last_vacant + 1; jj < 1000000; ++jj)
 						{
 							CString tt;
 							tt.Format("%04d", jj);
-							if (_access(fname + tt + ext, 0) < 0)
+							if (_access(fname + tt + ext, 0) < 0 && errno == ENOENT)
 							{
 								// File does not exist so use this file name
 								fname += tt;
@@ -1517,6 +1521,8 @@ void CHexEditView::StoreOptions()
 								// Save the thumbnail to the file and remember in recent file list
 								if (FreeImage_Save(fmt, dib_final, fname, flags))
 									pfl->SetData(ii, CHexFileList::PREVIEWFILENAME, tt + ext);   // no need to save full path
+
+								last_vacant = jj;
 								break;
 							}
 						}
