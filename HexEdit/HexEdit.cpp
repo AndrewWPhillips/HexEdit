@@ -2212,10 +2212,11 @@ void CHexEditApp::LoadOptions()
 	//thumb_8bit_ = GetProfileInt("Options", "ThumbNail8Bit",  0) ? TRUE : FALSE;
 	thumb_frame_ = GetProfileInt("Options", "ThumbNailAllViews",  1) ? TRUE : FALSE;
 	thumb_size_ = GetProfileInt("Options", "ThumbNailSize",  300);
-	if (thumb_size_ < 100) thumb_size_ = 100 ;
+	if (thumb_size_ < 100 || thumb_size_ > 2000) thumb_size_ = 300 ;
 	thumb_zoom_ =  strtod(GetProfileString("Options", "ThumbNailZoom",  "1.5"), NULL);
-	if (thumb_zoom_ < 1.0 || thumb_zoom_ > 10) thumb_zoom_ = 1.0;
-	thumb_type_ = GetProfileInt("Options", "ThumbNailType", JPEG_AVERAGE);  // default to small jpeg
+	if (thumb_zoom_ < 0.5 || thumb_zoom_ > 10) thumb_zoom_ = 1.0;
+	thumb_type_ = GetProfileInt("Options", "ThumbNailType", JPEG_AVERAGE);  // default to ave. jpeg
+	if (thumb_type_ <= THUMB_NONE || thumb_type_ >= THUMB_LAST) thumb_type_ = JPEG_AVERAGE;
 	cleanup_days_ = GetProfileInt("Options", "ThumbCleanDays",  100);
 #endif
 
@@ -3230,7 +3231,7 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.thumbnail_ = thumbnail_;
 	val.thumb_frame_ = thumb_frame_;
 	val.thumb_size_ = thumb_size_;
-	val.thumb_type_ = thumb_type_;
+	val.thumb_type_ = thumb_type_ - 1;  // THUMB_TYPE to drop-list index
 	val.thumb_zoom_ = thumb_zoom_;
 	val.cleanup_days_ = cleanup_days_;
 
@@ -3450,7 +3451,7 @@ void CHexEditApp::set_options(struct OptValues &val)
 	thumbnail_ = val.thumbnail_;
 	thumb_frame_ = val.thumb_frame_;
 	thumb_size_ = val.thumb_size_;
-	thumb_type_ = val.thumb_type_;
+	thumb_type_ = val.thumb_type_ + 1;   // drop-list index to enum THUMB_TYPE
 	thumb_zoom_ = val.thumb_zoom_;
 	cleanup_days_ = val.cleanup_days_;
 
