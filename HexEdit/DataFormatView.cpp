@@ -1180,7 +1180,7 @@ void CDataFormatView::InitTree()
 			case COL_COMMENT:
 				if (pdoc->df_type_[ii] == CHexEditDoc::DF_EXTRA)
 					item.strText = "Bytes past where the end of file was expected.";
-				else if (pdoc->df_type_[ii] == CHexEditDoc::DF_EXTRA)
+				else if (pdoc->df_type_[ii] == CHexEditDoc::DF_MORE)
 					item.strText = "Extra (fixed size) FOR elements not evaluated.";
 				else
 					item.strText = pdoc->df_elt_[ii].GetAttr("comment");

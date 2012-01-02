@@ -2542,7 +2542,7 @@ BOOL CNumberPage::FixStrings()
 {
 	size_t bytes = -1;
 	unsigned char buf[9];
-	memset(buf, sizeof(buf)-1, '\0');
+	memset(buf, '\0', sizeof(buf)-1);
 	buf[sizeof(buf)-1] = '\xCD';               // Used to detect buffer overflow
 	char *endptr;
 	const char *constendptr = NULL;             // We need 2 ptrs because of strtod silliness
