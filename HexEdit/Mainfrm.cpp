@@ -1682,9 +1682,21 @@ void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
 			psb->EnablePaneProgressBar(index, -1);  // turn off progress bar so we can show the text
 			bg_progress_colour_ = -1;
 
+			// Format the number of occurrences
 			CString ss;
 			ss.Format("%ld ", long(ii));
 			AddCommas(ss);
+
+			// Prefix with the number of the current occurrence (if known)
+			int curr = pview->CurrentSearchOccurrence();
+			if (curr > -1)
+			{
+				CString ss2;
+				ss2.Format("%ld ", long(curr + 1));
+				AddCommas(ss2);
+
+				ss = ss2 + "/" + ss;
+			}
 
 			// Work out pane width
 			CClientDC dc(psb);

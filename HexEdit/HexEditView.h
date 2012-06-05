@@ -849,6 +849,8 @@ public:
 
 	struct crc_params crc_params_;   // Use to store general CRC params for use in DoChecksum()
 
+	int CurrentSearchOccurrence();
+
 private:
 
 	enum { max_font_size = 100 };
