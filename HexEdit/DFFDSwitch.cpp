@@ -687,7 +687,11 @@ void CDFFDSwitch::do_edit(bool delete_on_cancel /*=false*/)
 			if (!(strstr >> rs) || rs.empty())
 				ss.Empty();
 			else
-				ss.Format("%d", int(*rs.rbegin() + 1));  // Set to one more than the last value of cloned range
+			{
+				range_set<FILE_ADDRESS>::iterator plast = rs.end();
+				plast--;
+				ss.Format("%d", int(*plast + 1));  // Set to one more than the last value of cloned range
+			}
 			ecase.SetAttr("range", ss);
 
 			// Get the clone elt

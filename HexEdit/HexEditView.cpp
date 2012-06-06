@@ -9724,7 +9724,9 @@ void CHexEditView::OnExportSRecord(UINT nID)
 
 		// Set start and end to the range of highlighted bytes
 		start = *hl_set_.begin();           // First highlighted byte
-		end = *hl_set_.rbegin();            // Last highlighted byte
+		range_set<FILE_ADDRESS>::iterator plast = hl_set_.end();
+		plast--;
+		end = *plast;            // Last highlighted byte
 	}
 	else
 	{
@@ -9868,7 +9870,9 @@ void CHexEditView::OnUpdateExportSRecord(CCmdUI* pCmdUI)
 		}
 		FILE_ADDRESS hl_start, hl_end;
 		hl_start = *hl_set_.begin();           // First highlighted byte
-		hl_end = *hl_set_.rbegin();            // Last highlighted byte
+		range_set<FILE_ADDRESS>::iterator plast = hl_set_.end();
+		plast--;
+		hl_end = *plast;                       // Last highlighted byte
 
 		// Not quite right but should prevent valid export cmds from being disabled
 		if (hl_start > start) start = hl_start;

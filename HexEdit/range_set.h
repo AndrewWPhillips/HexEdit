@@ -1,9 +1,7 @@
-// Listing 1
-
 #ifndef RANGE_SET_H
 #define RANGE_SET_H
 
-// Copyright 1999 (c) Andrew W. Phillips
+// Copyright 1999-2012 (c) Andrew W. Phillips
 // You can freely use this software for any purpose
 // as long as you preserve this copyright notice.
 
@@ -343,11 +341,8 @@ public:
 	};
 
 	// Create a reverse iterator based on normal (forward) iter
-	typedef std::reverse_bidirectional_iterator<const_iterator,
-								value_type, const_reference,
-								const_pointer, difference_type>
-			const_reverse_iterator;
-	typedef const_reverse_iterator reverse_iterator;
+	typedef std::reverse_iterator<iterator> reverse_iterator;
+	typedef std::reverse_iterator<iterator> const_reverse_iterator;
 
 	// Constructors
 	explicit range_set(const Pred &p = Pred(),
