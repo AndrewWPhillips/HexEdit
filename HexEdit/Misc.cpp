@@ -1,6 +1,6 @@
 // Misc.cpp : miscellaneous routines
 //
-// Copyright (c) 1999-2010 by Andrew W. Phillips.
+// Copyright (c) 2012 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -130,7 +130,6 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 */
 
 #include "stdafx.h"
-
 #include <MultiMon.h>
 
 #ifndef REGISTER_APP
@@ -143,11 +142,11 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include <locale.h>
 #include <sys/stat.h>           // For _stat()
 #include <sys/utime.h>          // For _utime()
-#include <direct.h>             // For _getdrive()
+
 
 #ifndef REGISTER_APP
 #ifdef BOOST_CRC
-#include <boost/crc.hpp>
+#include <boost/crc.hpp>        // For CRCs
 #endif
 #ifdef BOOST_RAND
 #include <boost/random/mersenne_twister.hpp>
@@ -155,6 +154,7 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 
 #include <imagehlp.h>           // For ::MakeSureDirectoryPathExists()
 #include <winioctl.h>           // For DISK_GEOMETRY, IOCTL_DISK_GET_DRIVE_GEOMETRY etc
+#include <direct.h>             // For _getdrive()
 #include <FreeImage.h>
 
 #include "misc.h"
@@ -836,67 +836,6 @@ bool ConvertToFileTime(time_t tt, FILETIME *ft)
 //-----------------------------------------------------------------------------
 // Make nice looking numbers etc
 
-#if 0
-CString NumScale(double val)
-{
-	CString retval;
-	char unitmod = '\0';
-	char sep_char = ',';                // Used to separate groups of digits
-	struct lconv *plconv = localeconv(); // Pointer to locale info
-
-	// Note we're always grouping digits into thousands (groups of 3) but if
-	// native locale also used groups of 3 then use its thousands separator.
-	if (strlen(plconv->thousands_sep) == 1 && *plconv->grouping == 3)
-		sep_char = *plconv->thousands_sep;
-
-	// Allow for negative values (may give "-0")
-	if (val < 0.0)
-	{
-		val = -val;
-		retval = "-";
-	}
-	else
-		retval = "";
-
-	// If too big just print in scientific notation
-	if (val >= 99999.5e12)
-	{
-		retval.Format("%.2e ", val);
-		return retval;
-	}
-
-	if (val >= 99999.5)
-	{
-		unitmod = 'K';
-		val = val / 1000.0;
-	}
-	if (val >= 99999.5)
-	{
-		unitmod = 'M';
-		val = val / 1000.0;
-	}
-	if (val >= 99999.5)
-	{
-		unitmod = 'G';
-		val = val / 1000.0;
-	}
-	if (val >= 99999.5)
-	{
-		unitmod = 'T';
-		val = val / 1000.0;
-	}
-
-	val += 0.5;         /* Round rather than truncate */
-
-	if (val >= 1000.0)
-		retval.Format("%ld%c%03ld %c", (long)val/1000L, sep_char, (long)val%1000L, unitmod);
-	else
-		retval.Format("%d %c", (int)val, unitmod);
-
-	return retval;
-}
-#endif
-
 #ifndef REGISTER_APP
 CString NumScale(double val)
 {
@@ -952,7 +891,6 @@ CString bin_str(__int64 val, int bits)
 	retval.MakeReverse();
 	return retval;
 }
-
 
 // Add commas every 3 digits (or as appropriate to the locale) to a decimal string
 void AddCommas(CString &str)
@@ -1569,10 +1507,6 @@ BOOL GetDataPath(CString &data_path, int csidl /*=CSIDL_APPDATA*/)
 	BOOL retval = FALSE;
 	LPTSTR pbuf = data_path.GetBuffer(MAX_PATH);
 
-#if 0 // SHGetSpecialFolderPath requires W2K
-	if (SHGetSpecialFolderPath(NULL, pbuf, csidl, TRUE) != NOERROR)
-		retval = TRUE;
-#else
 	LPMALLOC pMalloc;
 	if (SUCCEEDED(SHGetMalloc(&pMalloc)))
 	{
@@ -1585,7 +1519,6 @@ BOOL GetDataPath(CString &data_path, int csidl /*=CSIDL_APPDATA*/)
 		}
 		pMalloc->Release();
 	}
-#endif
 
 	data_path.ReleaseBuffer();
 	if (!retval)
