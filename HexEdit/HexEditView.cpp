@@ -19893,14 +19893,12 @@ void CHexEditView::OnUpdateCompAutoScroll(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(display_.auto_scroll_comp);
 }
 
-int CHexEditView::CurrentSearchOccurrence();
+int CHexEditView::CurrentSearchOccurrence()
 {
-	int retval = -1;
 	FILE_ADDRESS start, end;
-	
 	(void)GetSelAddr(start, end);
-	(void)GetDocument()->SearchAddresses(start, end, &retval);
-	return retval;
+	std::vector<FILE_ADDRESS> sf = GetDocument()->SearchAddresses(0, start+1);
+	return sf.size();
 }
 
 // This is connected to Ctrl+T and is used for testing new dialogs etc

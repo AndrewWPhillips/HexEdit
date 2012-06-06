@@ -1687,12 +1687,11 @@ void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
 			ss.Format("%ld ", long(ii));
 			AddCommas(ss);
 
-			// Prefix with the number of the current occurrence (if known)
-			int curr = pview->CurrentSearchOccurrence();
-			if (curr > -1)
+			// Prefix with the number of the current occurrence if there are not too many
+			if (ii > 0 && ii < 100000)   // only try to get the current occurrence 
 			{
 				CString ss2;
-				ss2.Format("%ld ", long(curr + 1));
+				ss2.Format("%d", pview->CurrentSearchOccurrence());
 				AddCommas(ss2);
 
 				ss = ss2 + "/" + ss;

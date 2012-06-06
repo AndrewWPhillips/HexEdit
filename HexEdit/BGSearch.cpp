@@ -419,7 +419,7 @@ FILE_ADDRESS CHexEditDoc::GetPrevFound(const unsigned char *pat, const unsigned 
 
 // Get all the found search addresses in a range
 std::vector<FILE_ADDRESS> CHexEditDoc::SearchAddresses(FILE_ADDRESS start, 
-													   FILE_ADDRESS end)
+										FILE_ADDRESS end)
 {
 	std::vector<FILE_ADDRESS> retval;
 
