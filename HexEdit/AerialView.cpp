@@ -1,6 +1,6 @@
 // AerialView.cpp : implementation file
 //
-// Copyright (c) 2007-2010 by Andrew W. Phillips.
+// Copyright (c) 2007-2012 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -608,8 +608,8 @@ BOOL CAerialView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 			// Zoom by binary multiple (ie double/half size)
 			if (zoomIn)
 			{
-				if (disp_.dpix*2 <= MAX_DPIX)
-					set_zoom(disp_.dpix*2);
+				if (actual_dpix_*2 < MAX_DPIX)
+					set_zoom(actual_dpix_*2);
 				else
 					set_zoom(MAX_DPIX);
 			}
@@ -998,7 +998,7 @@ void CAerialView::get_disp_params(int &rows, int &cols, int &actual_dpix)
 		if (rows < 1) rows = 1;
 
 		// Check if we have expanded the width too far since we always have at least 8 columns
-		if (tmp == 0)
+		if (tmp == 0 || !theApp.auto_aerial_zoom_)
 			break;
 
 		// Check if we have expanded the size so it would no longer fit in the window
@@ -1017,7 +1017,6 @@ void CAerialView::get_disp_params(int &rows, int &cols, int &actual_dpix)
 		rows = rct.Height()/actual_dpix;
 		if (rows < 1) rows = 1;
 	}
-	ASSERT(actual_dpix >= disp_.dpix && actual_dpix <= MAX_DPIX);
 
 	// Adjust scrollbar scaling factor as scroll bars seem to be limited to signed 16 bit numbers
 	int endy = int((GetDocument()->length()-1)/(GetDocument()->GetBpe() * cols_) + 1);
@@ -1025,6 +1024,9 @@ void CAerialView::get_disp_params(int &rows, int &cols, int &actual_dpix)
 	// the bitmap cannot handle it.
 	ASSERT(endy < INT_MAX);
 	sbfact_ = endy/30000 + 1;
+
+	ASSERT(rows > 0 && cols > 7);
+	ASSERT(actual_dpix >= disp_.dpix && actual_dpix <= MAX_DPIX);
 }
 
 void CAerialView::update_display()
@@ -1517,10 +1519,11 @@ int CAerialView::elt_at(CPoint pt)
 
 	// Work out absolute elt in the file
 	int elt = int(scrollpos_/GetDocument()->GetBpe()) + pt.y * cols_ + pt.x;
-	if (elt < 0 || elt >= GetDocument()->NumElts())
-		return -1;
-	else
-		return elt;
+	if (elt < 0)
+		elt = 0;
+	else if (elt > GetDocument()->NumElts())
+		elt = GetDocument()->NumElts();
+	return elt;
 }
 
 void CAerialView::set_zoom(int z, bool scroll /*=true*/)

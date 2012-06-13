@@ -1,6 +1,6 @@
 // HexEdit.h : main header file for the HEXEDIT application
 //
-// Copyright (c) 1998-2010 by Andrew W. Phillips.
+// Copyright (c) 1998-2012 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -442,8 +442,11 @@ public:
 
 	BOOL highlight_;                    // Is highlighting on?
 
+	// The following are global options for aerial views
 	unsigned int aerialview_;           // 0=none, 2=tabbed views, else splitter view width
 	unsigned long aerial_disp_state_;
+	bool auto_aerial_zoom_;
+	unsigned int aerial_max_;           // Max size for bitmap in MBytes (min = 16)
 
 	unsigned int compview_;             // How is compare view window shown: 0=none, 2=tabbed views, else splitter view width
 
@@ -457,9 +460,8 @@ public:
 			default_int_format_, default_unsigned_format_, 
 			default_real_format_, default_date_format_;
 
-	// Aerial view global parameters
-	unsigned int aerial_max_;           // Max size for bitmap in MBytes (min = 16)
 
+	// The following are options for keystroke macros
 	CString mac_dir_;                   // Where macros are saved
 	CString mac_comment_;               // Description of last loaded macro
 	CString mac_filename_;              // Filename of last loaded macro

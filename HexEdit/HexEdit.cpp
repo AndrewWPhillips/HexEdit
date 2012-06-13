@@ -1,6 +1,6 @@
 // HexEdit.cpp : Defines the class behaviors for the application. 
 //
-// Copyright (c) 1998-2010 by Andrew W. Phillips. 
+// Copyright (c) 2012 by Andrew W. Phillips. 
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -2342,6 +2342,7 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 
 	aerialview_ = GetProfileInt("Options", "AerialView", 0);
 	aerial_disp_state_ = GetProfileInt("Options", "AerialDisplay", 0x000010B1F);
+	auto_aerial_zoom_ = GetProfileInt("Otions", "AerialAutoZoom", 1) != 0 ? true : false;   // xxx check box in opt dlg
 	aerial_max_ = GetProfileInt("Aerial", "MaxBitmapInMbytes", 256);
 	if (aerial_max_ < 16) aerial_max_ = 16; else if (aerial_max_ > 999) aerial_max_ = 999;
 	aerial_max_ *= 1024*1024;
@@ -2801,6 +2802,7 @@ void CHexEditApp::SaveOptions()
 
 	WriteProfileInt("Options", "AerialView", aerialview_);
 	WriteProfileInt("Options", "AerialDisplay", aerial_disp_state_);
+	WriteProfileInt("Otions", "AerialAutoZoom", auto_aerial_zoom_);
 	WriteProfileInt("Aerial", "MaxBitmapInMbytes", aerial_max_/(1024*1024));
 
 	WriteProfileInt("Options", "CompareView", compview_);
