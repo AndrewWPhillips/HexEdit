@@ -733,7 +733,7 @@ CHexEditView::CHexEditView()
 	mouse_addr_ = -1;           // Only used when theApp.hl_mouse_ is on
 
 	mouse_down_ = false;
-	drag_bookmark_ = -1;
+	drag_mark_ = false;	drag_bookmark_ = -1;
 	needs_refresh_ = false;
 	needs_hscroll_ = false;
 	needs_vscroll_ = false;
@@ -3443,7 +3443,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 	}
 
 	// Draw indicator around byte where bookmark is being moved to
-	if (!pDC->IsPrinting() && mouse_down_ && drag_bookmark_ > -1)
+	if (!pDC->IsPrinting() && mouse_down_ && (drag_mark_ || drag_bookmark_ > -1))
 	{
 		CRect drag_rect;                // Where mark is drawn in logical coords
 
@@ -3469,7 +3469,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 				drag_rect.right = -drag_rect.right;
 			}
 
-			pDC->FillSolidRect(&drag_rect, bm_col_);
+			pDC->FillSolidRect(&drag_rect, drag_mark_ ? mark_col_ : bm_col_);
 			pDC->Rectangle(&drag_rect);
 		}
 
@@ -3483,7 +3483,7 @@ void CHexEditView::OnDraw(CDC* pDC)
 				drag_rect.left = -drag_rect.left;
 				drag_rect.right = -drag_rect.right;
 			}
-			pDC->FillSolidRect(&drag_rect, bm_col_);
+			pDC->FillSolidRect(&drag_rect, drag_mark_ ? mark_col_ : bm_col_);
 			pDC->Rectangle(&drag_rect);
 		}
 		(void)pDC->SelectObject(psaved_pen);
@@ -6695,12 +6695,13 @@ BOOL CHexEditView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CHexEditView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (mouse_down_ && drag_bookmark_ > -1 && nChar == 27)
+	if (mouse_down_ && (drag_mark_ || drag_bookmark_ > -1) && nChar == 27)
 	{
 		// Escape key aborts bookmark drag
-		drag_bookmark_ = -1;
+		drag_mark_ = false; drag_bookmark_ = -1;
 		mouse_down_ = false;
 		invalidate_addr_range(drag_address_, drag_address_+1); // remove current drag position
+		SendMessage(WM_SETCURSOR, WPARAM(m_hWnd), MAKELPARAM(HTCLIENT, 0));
 	}
 	else if ((nFlags & 0x2100) == 0)
 	{
@@ -7479,8 +7480,22 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	shift_down_ = shift_down();
 
-	// Check if clicked on a bookmark
-	if (!shift_down_ && (drag_bookmark_ = bookmark_at(address_at(point))) > -1)
+	// Check if clicked on mark or a bookmark
+	if (!shift_down_ && address_at(point) == mark_)
+	{
+		tip_.Hide(0);
+		if (last_tip_addr_ != -1)
+		{
+			FILE_ADDRESS addr = last_tip_addr_;
+			last_tip_addr_ = -1;
+			invalidate_hex_addr_range(addr, addr+1);
+		}
+		drag_mark_ = true;
+		drag_address_ = mark_;
+		mouse_down_ = true;
+		return;   // no selection wanted when dragging the mark
+	}
+	else if (!shift_down_ && (drag_bookmark_ = bookmark_at(address_at(point))) > -1)
 	{
 		tip_.Hide(0);
 		if (last_tip_addr_ != -1)
@@ -7606,7 +7621,21 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 		return;
 	}
 #endif
-	if (mouse_down_ && drag_bookmark_ > -1)
+
+	if (mouse_down_ && drag_mark_)
+	{
+		//FILE_ADDRESS prev = mark_;
+
+		if (drag_address_ == mark_)
+			MoveToAddress(mark_);                     // Click (no drag) on mark - just move to address clicked on
+		else
+			SetMark(drag_address_);
+
+		drag_mark_ = false;
+		mouse_down_ = false;
+		SendMessage(WM_SETCURSOR, WPARAM(m_hWnd), MAKELPARAM(HTCLIENT, 0));
+	}
+	else if (mouse_down_ && drag_bookmark_ > -1)
 	{
 		FILE_ADDRESS prev = GetDocument()->bm_posn_[drag_bookmark_];  // Previous bm position
 
@@ -7623,13 +7652,14 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 			pbl->Move(GetDocument()->bm_index_[drag_bookmark_], int(drag_address_ - prev)); // move bm in global list
 			GetDocument()->bm_posn_[drag_bookmark_] = drag_address_;   // move in doc's bm list
 			((CMainFrame *)AfxGetMainWnd())->m_wndBookmarks.UpdateBookmark(GetDocument()->bm_index_[drag_bookmark_]);
+
+			invalidate_addr_range(prev, prev+1);                     // force redraw to remove bookmark at old position
+			invalidate_addr_range(drag_address_, drag_address_+1);   // redraw bookmark at new position
 		}
 
 		drag_bookmark_ = -1;  // signal that we are no longer dragging
 		mouse_down_ = false;
-
-		invalidate_addr_range(prev, prev+1);                     // force redraw to remove bookmark at old position
-		invalidate_addr_range(drag_address_, drag_address_+1);   // redraw bookmark at new position
+		SendMessage(WM_SETCURSOR, WPARAM(m_hWnd), MAKELPARAM(HTCLIENT, 0));
 	}
 	else if (mouse_down_)
 	{
@@ -7839,9 +7869,13 @@ void CHexEditView::OnMouseMove(UINT nFlags, CPoint point)
 	FILE_ADDRESS addr = address_at(point);      // Address of byte mouse is over (or -1)
 
 	// If dragging a bookmark update the drag location
-	if (mouse_down_ && drag_bookmark_ > -1)
+	if (mouse_down_ && (drag_mark_ || drag_bookmark_ > -1))
 	{
-		if (addr < 0 || addr > GetDocument()->length()) return; // don't move to invalid pos
+		if (addr < 0 || addr > GetDocument()->length())
+		{
+			CScrView::OnMouseMove(nFlags, point);
+			return; // don't move to invalid pos
+		}
 		FILE_ADDRESS prev = drag_address_;
 		drag_address_ = addr;                                  // we must change this before redraw
 		invalidate_addr_range(prev, prev+1);                   // force redraw at previous drag position
@@ -8958,9 +8992,9 @@ BOOL CHexEditView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 			 !display_.vert_display && !display_.char_area && pt.x < hex_pos(rowsize_) )  )
 		{
 			// Over hex or char area
-			if (drag_bookmark_ > -1)
+			if (drag_mark_ || drag_bookmark_ > -1)
 				::SetCursor(theApp.LoadCursor(IDC_HANDGRAB));        // Bookmark drag
-			else if (bookmark_at(address_at(point)) > -1)
+			else if (address_at(point) == mark_ || bookmark_at(address_at(point)) > -1)
 				::SetCursor(theApp.LoadCursor(IDC_HANDOPEN));        // Indicate bookmark can be moved
 			else if (theApp.highlight_)
 				::SetCursor(theApp.LoadCursor(IDC_HIGHLIGHT));       // Highlighter cursor

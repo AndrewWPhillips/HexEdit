@@ -1,6 +1,6 @@
 // HexEditView.h : interface of the CHexEditView class
 //
-// Copyright (c) 1999-2010 by Andrew W. Phillips.
+// Copyright (c) 1999-2012 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -1015,6 +1015,7 @@ private:
 	FILE_ADDRESS prev_start_, prev_end_; // Previous selection
 	int prev_row_;              // Row if in vert_display mode
 	bool mouse_down_;           // Left button down seen but not yet up
+	bool drag_mark_;            // True if mark is being dragged
 	int drag_bookmark_;         // Can click and drag bookmark (-1 if bookmark not clicked)
 	FILE_ADDRESS drag_address_; // Last address bookmark was dragged to
 
