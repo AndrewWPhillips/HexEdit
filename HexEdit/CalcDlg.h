@@ -384,7 +384,7 @@ private:
 	BOOL error_;                    // Has a numeric error (eg. Div by 0) occurred?
 #endif
 
-	mpz_class get_norm(mpz_class v) const; // Get a value converted according to bits_ and signed_
+	mpz_class get_norm(mpz_class v, bool only_pos = false) const; // Get a value converted according to bits_ and signed_
 
 	// Calculator values: current displayed value, 2nd value (for binop) and calc memory value
 	// Notes: Internally mpz big integers are stored as a bit pattern (with implicit leading zeroes) and a separate sign.

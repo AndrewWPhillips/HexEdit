@@ -655,7 +655,7 @@ void CCalcDlg::save_value_to_macro(CString ss /*= CString()*/)
 
 // Get value (current calc value, memory etc) according to current
 // bits_ and signed_ settings.
-mpz_class CCalcDlg::get_norm(mpz_class v) const
+mpz_class CCalcDlg::get_norm(mpz_class v, bool only_pos /*= false*/) const
 {
 	// If infinite precision (bits_ == 0) then there is no mask
 	// Note: this means we can return a -ve value even when signed_ == false
@@ -664,7 +664,7 @@ mpz_class CCalcDlg::get_norm(mpz_class v) const
 	mpz_class retval = v & mask_;           // mask off high bits
 
 	// If high bit is on then make -ve.
-	if (signed_ && mpz_tstbit(v.get_mpz_t(), bits_ - 1))
+	if (!only_pos && signed_ && mpz_tstbit(v.get_mpz_t(), bits_ - 1))
 	{
 		// Convert to the 2's complement (invert bits and add one within bits_ range)
 		mpz_com(retval.get_mpz_t(), retval.get_mpz_t());
@@ -849,7 +849,7 @@ void CCalcDlg::do_binop(binop_type binop)
 		save_value_to_macro(temp);
 
 		// Get ready for new value to be entered
-		previous_ = get_norm(current_);
+		previous_ = get_norm(current_, binop >= binop_rol && binop <= binop_asr);
 		left_ = right_;
 		current_ = 0;
 		current_str_ = "0"; // don't use edit_.put()/get() here as we want top preserve the previous result until something is entered
@@ -1109,7 +1109,7 @@ void CCalcDlg::do_unary(unary_type unary)
 void CCalcDlg::calc_unary(unary_type unary)
 {
 	CWaitCursor wc;   // show an hourglass just in case it takes a long time
-	current_ = get_norm(current_);
+	current_ = get_norm(current_, unary >= unary_not && unary <= unary_rev);
 	ExprStringType tmp = right_;
 
 	state_ = CALCINTUNARY;  // set default (could also be error/overflow as set below)
@@ -1185,6 +1185,9 @@ void CCalcDlg::calc_unary(unary_type unary)
 		}
 		else
 		{
+//			if (mpz_sgn(current_.get_mpz_t()) < 0)
+//				mpz_neg(current_.get_mpz_t(), current_.get_mpz_t());
+
 			current_ = ((current_ << 1) | (current_ >> (bits_ - 1))) & mask_;
 
 			int len = tmp.GetLength();
