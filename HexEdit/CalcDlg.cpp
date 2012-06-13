@@ -1185,9 +1185,6 @@ void CCalcDlg::calc_unary(unary_type unary)
 		}
 		else
 		{
-//			if (mpz_sgn(current_.get_mpz_t()) < 0)
-//				mpz_neg(current_.get_mpz_t(), current_.get_mpz_t());
-
 			current_ = ((current_ << 1) | (current_ >> (bits_ - 1))) & mask_;
 
 			int len = tmp.GetLength();
@@ -1430,9 +1427,9 @@ void CCalcDlg::calc_binary()
 		{
 			mpz_class t1, t2;
 			current_ %= bits_;
-			mpz_fdiv_q_2exp(t1.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
-			mpz_mul_2exp(t2.get_mpz_t(), previous_.get_mpz_t(), bits_ - current_.get_ui());
-			current_ = t1 | t2;
+			mpz_mul_2exp(t1.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
+			mpz_fdiv_q_2exp(t2.get_mpz_t(), previous_.get_mpz_t(), bits_ - current_.get_ui());
+			current_ = (t1 | t2) & mask_;
 		}
 		break;
 	case binop_ror:
@@ -1445,9 +1442,9 @@ void CCalcDlg::calc_binary()
 		{
 			mpz_class t1, t2;
 			current_ %= bits_;
-			mpz_mul_2exp(t1.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
-			mpz_fdiv_q_2exp(t2.get_mpz_t(), previous_.get_mpz_t(), bits_ - current_.get_ui());
-			current_ = t1 | t2;
+			mpz_fdiv_q_2exp(t1.get_mpz_t(), previous_.get_mpz_t(), current_.get_ui());
+			mpz_mul_2exp(t2.get_mpz_t(), previous_.get_mpz_t(), bits_ - current_.get_ui());
+			current_ = (t1 | t2) & mask_;
 		}
 		break;
 	case binop_lsl:
