@@ -1482,7 +1482,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_ABS:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"abs\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"abs\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"abs\""))
@@ -1510,10 +1510,10 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_MIN:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"min\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"min\"");
 			return TOK_NONE;
 		}
-		// Turn off allowing of commas in ints to avoid cofnusion
+		// Turn off allowing of commas in ints to avoid confusion
 		saved_const_sep_allowed = const_sep_allowed_;
 		const_sep_allowed_ = false;
 		if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"min\""))
@@ -1566,10 +1566,10 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_MAX:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"max\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"max\"");
 			return TOK_NONE;
 		}
-		// Turn off allowing of commas in ints to avoid cofnusion
+		// Turn off allowing of commas in ints to avoid confusion
 		saved_const_sep_allowed = const_sep_allowed_;
 		const_sep_allowed_ = false;
 		if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"max\""))
@@ -1622,7 +1622,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_FACT:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"fact\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"fact\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"fact\""))
@@ -1661,10 +1661,10 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		// class but we have no override to handle functions (only find_symbol for symbols)
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"get\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"get\"");
 			return TOK_NONE;
 		}
-		// Turn off allowing of commas in ints to avoid cofnusion
+		// Turn off allowing of commas in ints to avoid confusion
 		saved_const_sep_allowed = const_sep_allowed_;
 		const_sep_allowed_ = false;
 		if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"get\""))
@@ -1724,10 +1724,10 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_POW:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"pow\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"pow\"");
 			return TOK_NONE;
 		}
-		// Turn off allowing of commas in ints to avoid cofnusion
+		// Turn off allowing of commas in ints to avoid confusion
 		saved_const_sep_allowed = const_sep_allowed_;
 		const_sep_allowed_ = false;
 		if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"pow\""))
@@ -1781,7 +1781,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_SQRT:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"sqrt\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"sqrt\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"sqrt\""))
@@ -1824,7 +1824,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_SIN:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"sin\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"sin\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"sin\""))
@@ -1854,7 +1854,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_COS:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"cos\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"cos\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"cos\""))
@@ -1884,7 +1884,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_TAN:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"tan\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"tan\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"tan\""))
@@ -1914,7 +1914,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_ASIN:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"asin\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"asin\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"asin\""))
@@ -1944,7 +1944,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_ACOS:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"acos\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"acos\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"acos\""))
@@ -1974,7 +1974,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_ATAN:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"atan\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"atan\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"atan\""))
@@ -2004,7 +2004,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_EXP:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"exp\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"exp\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"exp\""))
@@ -2034,7 +2034,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_LOG:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"log\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"log\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"log\""))
@@ -2064,7 +2064,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_INT:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"int\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"int\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"int\""))
@@ -2094,7 +2094,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_DATE:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"date\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"date\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"date\""))
@@ -2119,7 +2119,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_TIME:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"time\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"time\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"time\""))
@@ -2157,7 +2157,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_YEAR:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"year\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"year\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"year\""))
@@ -2183,7 +2183,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_MONTH:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"month\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"month\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"month\""))
@@ -2209,7 +2209,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_DAY:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"day\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"day\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"day\""))
@@ -2235,7 +2235,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_HOUR:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"hour\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"hour\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"hour\""))
@@ -2261,7 +2261,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_MINUTE:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"minute\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"minute\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"minute\""))
@@ -2287,7 +2287,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_SECOND:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"second\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"second\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"second\""))
@@ -2314,7 +2314,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_ATOI:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"atoi\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"atoi\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"atoi\""))
@@ -2343,7 +2343,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_ATOF:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"atof\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"atof\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"atof\""))
@@ -2768,7 +2768,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_A2E:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"asc2ebc\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"asc2ebc\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"asc2ebc\""))
@@ -2803,7 +2803,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	case TOK_E2A:
 		if ((next_tok = get_next()) != TOK_LPAR)
 		{
-			strcpy(error_buf_, "Opening parenthesis expect after \"ebc2asc\"");
+			strcpy(error_buf_, "Opening parenthesis expected after \"ebc2asc\"");
 			return TOK_NONE;
 		}
 		if (error(next_tok = prec_assign(val), "Expected parameter for \"ebc2asc\""))
