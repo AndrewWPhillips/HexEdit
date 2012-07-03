@@ -2877,6 +2877,7 @@ BEGIN
     AFX_IDS_APP_TITLE       "HexEdit"
     AFX_IDS_IDLEMESSAGE     "Ready"
     AFX_IDS_HELPMODEMESSAGE "Select an object on which to get Help"
+    AFX_IDS_APP_ID          "ECSoftware.HexEdit.Pro.40"
 END
 
 STRINGTABLE 
