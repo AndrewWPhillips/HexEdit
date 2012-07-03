@@ -1,7 +1,7 @@
 // expr.cpp : Handles C-like expression evaluation
 //
 //
-// Copyright (c) 2002-2010 by Andrew W. Phillips.
+// Copyright (c) 2002-2012 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -18,9 +18,8 @@
 // or loss of business that this product may cause.
 //
 
-// Expressions support 3 data types: int (64 bit), real (double = 64 bit), boolean.
-// Type checking is stricter than C/C++, hence bit operators (|, ^, &) have higher
-// precedence than comparison operators (unlike C/C++).  Variables (including
+// Expressions support 4 data types: int (64 bit), real (double = 64 bit), boolean, date.
+// Type checking is stricter than C/C++.  Variables (including
 // multi-dimensional arrays) are supported through a map.  Arrays are allocated on
 // an element by element basis and so may be slow.  All integer arithmetic is done
 // in 64-bit so this also may be slow.  Integer (including characters like 'a'),
@@ -825,6 +824,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 	GetInt *pGetIntDlg = NULL;
 	GetStr *pGetStrDlg = NULL;
 	GetBool *pGetBoolDlg = NULL;
+	int num_bits;                // how many bits are used in bit-wise operations (ROL, REVERSE, etc)
 
 	switch (next_tok)
 	{
@@ -1653,6 +1653,296 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		{
 			strcpy(error_buf_, "Parameter for \"fact\" must be an integer");
 			return TOK_NONE;
+		}
+		return get_next();
+
+	case TOK_FLIP:
+		if ((next_tok = get_next()) != TOK_LPAR)
+		{
+			strcpy(error_buf_, "Opening parenthesis expected after \"flip\"");
+			return TOK_NONE;
+		}
+		// Turn off allowing of commas in ints to avoid confusion
+		saved_const_sep_allowed = const_sep_allowed_;
+		const_sep_allowed_ = false;
+		if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"flip\""))
+		{
+			const_sep_allowed_ = saved_const_sep_allowed;
+			return TOK_NONE;
+		}
+		const_sep_allowed_ = saved_const_sep_allowed;
+
+		if (next_tok != TOK_COMMA)
+		{
+			strcpy(error_buf_, "Expected comma and 2nd parameter for \"flip\"");
+			return TOK_NONE;
+		}
+
+		if (error(next_tok = prec_assign(tmp), "Expected 2nd parameter to \"flip\""))
+			return TOK_NONE;
+
+		if (next_tok != TOK_RPAR)
+		{
+			strcpy(error_buf_, "Closing parenthesis expected for \"flip\"");
+			return TOK_NONE;
+		}
+		else if (val.typ != TYPE_INT || tmp.typ != TYPE_INT)
+		{
+			strcpy(error_buf_, "Parameters for \"flip\" must be integers");
+			return TOK_NONE;
+		}
+		else
+		{
+			// Since we are using little-endian its just a matter of flipping bytes from the start
+			size_t bytes = size_t(tmp.int64);
+			if (bytes > sizeof(val.int64)) bytes = 0;       // can't flip more than 8 bytes for int64
+			flip_bytes((unsigned char *)&val.int64, bytes);
+		}
+		val.error = val.error || tmp.error;
+		return get_next();
+
+	case TOK_REVERSE:
+		if ((next_tok = get_next()) != TOK_LPAR)
+		{
+			strcpy(error_buf_, "Opening parenthesis expected after \"reverse\"");
+			return TOK_NONE;
+		}
+		// Turn off allowing of commas in ints to avoid confusion
+		saved_const_sep_allowed = const_sep_allowed_;
+		const_sep_allowed_ = false;
+		if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"reverse\""))
+		{
+			const_sep_allowed_ = saved_const_sep_allowed;
+			return TOK_NONE;
+		}
+		const_sep_allowed_ = saved_const_sep_allowed;
+
+		if (val.typ != TYPE_INT)
+		{
+			strcpy(error_buf_, "First parameter for \"reverse\" must be integer");
+			return TOK_NONE;
+		}
+
+		// Get (optional) 2nd parameters = number of bits
+		num_bits = 64;
+		if (next_tok == TOK_COMMA)
+		{
+			// Get 2nd parameter (number of bits)
+			if (error(next_tok = prec_assign(tmp), "Expected 2nd parameter to \"reverse\""))
+				return TOK_NONE;
+
+			else if (tmp.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "Bits (2nd) parameter for \"reverse\" must be integer");
+				return TOK_NONE;
+			}
+
+			num_bits = (int)tmp.int64;
+			if (num_bits > 64) num_bits = 64;
+		}
+
+		if (next_tok != TOK_RPAR)
+		{
+			strcpy(error_buf_, "Closing parenthesis expected for \"reverse\"");
+			return TOK_NONE;
+		}
+		else
+		{
+			__int64 result = 0;
+			for (int ii = 0; ii < num_bits; ++ii)
+			{
+				result <<= 1;
+				if (val.int64 & 1)
+					result |= 1;
+				val.int64 >>= 1;
+			}
+			val.int64 = result;
+		}
+		return get_next();
+
+	case TOK_ROL:
+		if ((next_tok = get_next()) != TOK_LPAR)
+		{
+			strcpy(error_buf_, "Opening parenthesis expected after \"rol\"");
+			return TOK_NONE;
+		}
+		// Turn off allowing of commas in ints to avoid confusion
+		saved_const_sep_allowed = const_sep_allowed_;
+		const_sep_allowed_ = false;
+		if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"rol\""))
+		{
+			const_sep_allowed_ = saved_const_sep_allowed;
+			return TOK_NONE;
+		}
+		const_sep_allowed_ = saved_const_sep_allowed;
+
+		// Get (optional) 2nd parameter = number of bits to rotate
+		num_bits = 1;
+		if (next_tok == TOK_COMMA)
+		{
+			if (error(next_tok = prec_assign(tmp), "Expected 2nd parameter to \"rol\""))
+				return TOK_NONE;
+
+			else if (tmp.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "2nd parameter for \"rol\" must be integer");
+				return TOK_NONE;
+			}
+
+			num_bits = (int)tmp.int64;
+			if (num_bits > 64) num_bits = 0;
+		}
+
+
+		// Get (optional) 3nd parameter = size in bits
+		if (next_tok == TOK_COMMA)
+		{
+			if (error(next_tok = prec_assign(tmp), "Expected 3rd parameter to \"rol\""))
+				return TOK_NONE;
+
+			else if (tmp.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "3rd parameter for \"rol\" must be integer");
+				return TOK_NONE;
+			}
+			if (tmp.int64 > 64) tmp.int64 = 64;
+		}
+		else
+			tmp.int64 = 64;
+
+		if (next_tok != TOK_RPAR)
+		{
+			strcpy(error_buf_, "Closing parenthesis expected for \"rol\"");
+			return TOK_NONE;
+		}
+		else
+		{
+			__int64 mask = (1LL << tmp.int64) - 1;
+			val.int64 = ((val.int64 << num_bits) | (val.int64 >> (tmp.int64 - num_bits))) & mask;
+		}
+		return get_next();
+
+	case TOK_ROR:
+		if ((next_tok = get_next()) != TOK_LPAR)
+		{
+			strcpy(error_buf_, "Opening parenthesis expected after \"ror\"");
+			return TOK_NONE;
+		}
+		// Turn off allowing of commas in ints to avoid confusion
+		saved_const_sep_allowed = const_sep_allowed_;
+		const_sep_allowed_ = false;
+		if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"ror\""))
+		{
+			const_sep_allowed_ = saved_const_sep_allowed;
+			return TOK_NONE;
+		}
+		const_sep_allowed_ = saved_const_sep_allowed;
+
+		// Get (optional) 2nd parameter = number of bits to rotate
+		num_bits = 1;
+		if (next_tok == TOK_COMMA)
+		{
+			if (error(next_tok = prec_assign(tmp), "Expected 2nd parameter to \"ror\""))
+				return TOK_NONE;
+
+			else if (tmp.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "2nd parameter for \"ror\" must be integer");
+				return TOK_NONE;
+			}
+
+			num_bits = (int)tmp.int64;
+			if (num_bits > 64) num_bits = 0;
+		}
+
+
+		// Get (optional) 3rd parameter = size in bits
+		if (next_tok == TOK_COMMA)
+		{
+			if (error(next_tok = prec_assign(tmp), "Expected 3rd parameter to \"ror\""))
+				return TOK_NONE;
+
+			else if (tmp.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "3rd parameter for \"ror\" must be integer");
+				return TOK_NONE;
+			}
+			if (tmp.int64 > 64) tmp.int64 = 64;
+		}
+		else
+			tmp.int64 = 64;
+
+		if (next_tok != TOK_RPAR)
+		{
+			strcpy(error_buf_, "Closing parenthesis expected for \"ror\"");
+			return TOK_NONE;
+		}
+		else
+		{
+			__int64 mask = (1LL << tmp.int64) - 1;
+			val.int64 = ((val.int64 >> num_bits) | (val.int64 << (tmp.int64 - num_bits))) & mask;
+		}
+		return get_next();
+
+	case TOK_ASR:
+		if ((next_tok = get_next()) != TOK_LPAR)
+		{
+			strcpy(error_buf_, "Opening parenthesis expected after \"asr\"");
+			return TOK_NONE;
+		}
+		// Turn off allowing of commas in ints to avoid confusion
+		saved_const_sep_allowed = const_sep_allowed_;
+		const_sep_allowed_ = false;
+		if (error(next_tok = prec_assign(val), "Expected 1st parameter to \"asr\""))
+		{
+			const_sep_allowed_ = saved_const_sep_allowed;
+			return TOK_NONE;
+		}
+		const_sep_allowed_ = saved_const_sep_allowed;
+
+		// Get (optional) 2nd parameter = number of bits to shift
+		num_bits = 1;
+		if (next_tok == TOK_COMMA)
+		{
+			if (error(next_tok = prec_assign(tmp), "Expected 2nd parameter to \"asr\""))
+				return TOK_NONE;
+
+			else if (tmp.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "2nd parameter for \"asr\" must be integer");
+				return TOK_NONE;
+			}
+
+			num_bits = (int)tmp.int64;
+			if (num_bits > 64) num_bits = 0;
+		}
+
+
+		// Get (optional) 3nd parameters = size in bits
+		if (next_tok == TOK_COMMA)
+		{
+			if (error(next_tok = prec_assign(tmp), "Expected 3rd parameter to \"ror\""))
+				return TOK_NONE;
+
+			else if (tmp.typ != TYPE_INT)
+			{
+				strcpy(error_buf_, "3rd parameter for \"ror\" must be integer");
+				return TOK_NONE;
+			}
+			if (tmp.int64 > 64) tmp.int64 = 64;
+		}
+		else
+			tmp.int64 = 64;
+
+		if (next_tok != TOK_RPAR)
+		{
+			strcpy(error_buf_, "Closing parenthesis expected for \"ror\"");
+			return TOK_NONE;
+		}
+		else
+		{
+			__int64 mask = (1LL << tmp.int64) - 1;
+			val.int64 = (val.int64 >> num_bits) & mask;   // xxx does this handle high-bit on?
 		}
 		return get_next();
 
