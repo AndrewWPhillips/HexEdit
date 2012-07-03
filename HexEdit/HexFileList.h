@@ -59,6 +59,7 @@ public:
 	virtual void ClearAll();
 	virtual void Remove(int nIndex);
 	virtual void Add(LPCTSTR lpszPathName);
+	virtual void Add(LPCTSTR lpszPathName, LPCTSTR lpszAppID) { Add(lpszPathName); }  // Just call old version (ignore Win7 task bar stuff for now)
 	virtual void ReadList();    // reads recent file list from user's file (or registry)
 	virtual void WriteList();   // writes recent file list to user-specific file
 	virtual BOOL GetDisplayName(CString& strName, int nIndex,
