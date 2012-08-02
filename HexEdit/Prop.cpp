@@ -1085,21 +1085,25 @@ void CPropInfoPage::fix_menu()
 		cat_sel_ctl_.m_hMenu = (HMENU)0;
 	}
 
-	// Add menu items
-	CHexFileList *pfl = theApp.GetFileList();
+	// Get a list of categories to display in the menu
 	std::set<CString> categories;
 
+	// We always provide a favourites category even if there are no files in it
+	if (theApp.is_us_)
+		categories.insert(_T("Favorites"));
+	else
+		categories.insert(_T("Favourites"));
+
+	// Get all categories used in RFL
+	CHexFileList *pfl = theApp.GetFileList();
 	for (int ii = 0; ii < pfl->GetCount(); ++ii)
 	{
 		CString ss = pfl->GetData(ii, CHexFileList::CATEGORY);
 		if (!ss.IsEmpty())
-		{
-			TRACE("]]]]]]] Adding <%s>\r\n", ss);
 			categories.insert(ss);
-		}
 	}
-	if (categories.empty())
-		categories.insert(_T("None"));
+
+	// Add menu items
 	CMenu mm;
 	mm.CreatePopupMenu();
 	int count = 0;
