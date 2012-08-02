@@ -31,6 +31,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "..\hexedit.h"
 #include "GridCell.h"
 #include "InPlaceEdit.h"
 #include "GridCtrl.h"
@@ -224,7 +225,9 @@ CGridDefaultCell::CGridDefaultCell()
 #else // not CE
     NONCLIENTMETRICS ncm;
     ncm.cbSize = sizeof(NONCLIENTMETRICS);
-    VERIFY(SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0));
+	if (!theApp.is_vista_) 
+		ncm.cbSize -= sizeof(ncm.iPaddedBorderWidth);
+    VERIFY(SystemParametersInfo(SPI_GETNONCLIENTMETRICS, ncm.cbSize, &ncm, 0));
     SetFont(&(ncm.lfMessageFont));
 #endif
 }
