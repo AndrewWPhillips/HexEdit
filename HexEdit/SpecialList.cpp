@@ -1,7 +1,7 @@
 // CSpecialList.cpp : CSpecialList class that maintains list of
 //                   special things that can be opened (eg disks)
 //
-// Copyright (c) 2005-2010 by Andrew W. Phillips.
+// Copyright (c) 2005-2012 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -552,21 +552,26 @@ void CSpecialList::bg_update(int ii)
 
 			DISK_GEOMETRY dg;             // results from IOCTL_DISK_GET_DRIVE_GEOMETRY
 			dg.BytesPerSector = 0;
-			// Note: IOCTL_DISK_GET_DRIVE_GEOMETRY does not work for CD (except XP) use IOCTL_CDROM_GET_DRIVE_GEOMETRY
-			if (ffdi.DeviceType != FILE_DEVICE_CD_ROM)
-				VERIFY((*pfDeviceIoControlFile)(handle, 0, 0, 0, &iosb, IOCTL_DISK_GET_DRIVE_GEOMETRY, 0, 0, &dg, sizeof(dg)) == STATUS_SUCCESS);
+			// Note: IOCTL_DISK_GET_DRIVE_GEOMETRY does not always work for CD use IOCTL_CDROM_GET_DRIVE_GEOMETRY
+			ULONG cmd = (ffdi.DeviceType != FILE_DEVICE_CD_ROM) ? IOCTL_DISK_GET_DRIVE_GEOMETRY : IOCTL_CDROM_GET_DRIVE_GEOMETRY;
+			if ((*pfDeviceIoControlFile)(handle, 0, 0, 0, &iosb, cmd, 0, 0, &dg, sizeof(dg)) == STATUS_SUCCESS)
+			{
+				m_sector_size[ii] = dg.BytesPerSector;
+				m_total_size[ii] = dg.Cylinders.QuadPart *
+								   (__int64)dg.TracksPerCylinder *
+								   (__int64)dg.SectorsPerTrack *
+								   (__int64)dg.BytesPerSector;
+
+				m_size1[ii] = dg.SectorsPerTrack;
+				m_size2[ii] = dg.TracksPerCylinder;
+				m_size3[ii] = (int)dg.Cylinders.QuadPart;
+			}
 			else
-				VERIFY((*pfDeviceIoControlFile)(handle, 0, 0, 0, &iosb, IOCTL_CDROM_GET_DRIVE_GEOMETRY, 0, 0, &dg, sizeof(dg)) == STATUS_SUCCESS);
-
-			m_sector_size[ii] = dg.BytesPerSector;
-			m_total_size[ii] = dg.Cylinders.QuadPart *
-							   (__int64)dg.TracksPerCylinder *
-							   (__int64)dg.SectorsPerTrack *
-							   (__int64)dg.BytesPerSector;
-
-			m_size1[ii] = dg.SectorsPerTrack;
-			m_size2[ii] = dg.TracksPerCylinder;
-			m_size3[ii] = (int)dg.Cylinders.QuadPart;
+			{
+				// Floppy raw device (eg, \\.\Floppy0) may pass IOCTL_STORAGE_CHECK_VERIFY with no disk in drive but then IOCTL_DISK_GET_DRIVE_GEOMETRY fails
+				m_medium_present[ii] = false;
+				m_removeable[ii] = true;
+			}
 		}
 		else
 		{
