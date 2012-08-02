@@ -512,6 +512,8 @@ void CRecentFileDlg::DeleteEntries()
 
 BOOL CRecentFileDlg::OnInitDialog()
 {
+	CWaitCursor wait;  // this may take a while
+
 	CDialog::OnInitDialog();
 
 #ifdef FILE_PREVIEW
