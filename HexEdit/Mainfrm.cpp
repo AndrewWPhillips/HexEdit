@@ -130,6 +130,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 		ON_COMMAND_EX(ID_WINDOW_CASCADE, OnMDIWindowCmd)
 		ON_COMMAND_EX(ID_WINDOW_TILE_HORZ, OnMDIWindowCmd)
 		ON_COMMAND_EX(ID_WINDOW_TILE_VERT, OnMDIWindowCmd)
+		ON_UPDATE_COMMAND_UI(ID_WINDOW_ARRANGE, OnUpdateMDIWindowCmd)
+		ON_UPDATE_COMMAND_UI(ID_WINDOW_CASCADE, OnUpdateMDIWindowCmd)
+		ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_HORZ, OnUpdateMDIWindowCmd)
+		ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_VERT, OnUpdateMDIWindowCmd)
 
 		ON_COMMAND(ID_WINDOW_NEW, OnWindowNew)
 
@@ -230,6 +234,15 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 //        ON_MESSAGE(WM_USER, OnReturn)
 
 		ON_COMMAND_RANGE(ID_MACRO_FIRST, ID_MACRO_LAST-1, OnMacro)
+
+		ON_COMMAND(ID_MDI_MOVE_TO_NEXT_GROUP, OnMdiMoveToNextGroup)
+		ON_COMMAND(ID_MDI_MOVE_TO_PREV_GROUP, OnMdiMoveToPrevGroup)
+		ON_COMMAND(ID_MDI_NEW_HORZ_TAB_GROUP, OnMdiNewHorzTabGroup)
+		ON_COMMAND(ID_MDI_NEW_VERT_GROUP, OnMdiNewVertGroup)
+		ON_COMMAND(ID_MDI_CANCEL, OnMdiCancel)
+		ON_COMMAND(ID_MDI_TABBED_DOCUMENT, OnMdiTabbedDocument)
+		ON_UPDATE_COMMAND_UI(ID_MDI_TABBED_DOCUMENT, OnUpdateMdiTabbedDocument)
+
 		ON_COMMAND(ID_TEST, OnTest)
 END_MESSAGE_MAP()
 
@@ -308,13 +321,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CMFCButton::EnableWindowsTheming();
 		OnApplicationLook(theApp.m_nAppLook);
 
-		if (theApp.mditabs_)
-		{
-			EnableMDITabs(TRUE, theApp.tabicons_,
-						  theApp.tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP,
-						  0, CMFCTabCtrl::STYLE_3D_ONENOTE, 1);
-			// TBD: TODO - replace with call to EnableMDITabbedGroups?
-		}
+		theApp.update_tabs();
 
 		EnableDocking(CBRS_ALIGN_ANY);
 
@@ -1238,19 +1245,8 @@ void CMainFrame::show_calc()
 
 void CMainFrame::OnContextMenu(CWnd* pWnd, CPoint point)
 {
-	if (pWnd->GetSafeHwnd () == m_wndClientArea.GetMDITabs().GetSafeHwnd())
-	{
-		const CMFCTabCtrl & wndTab = m_wndClientArea.GetMDITabs();
-		CRect rectTabs;
-		wndTab.GetTabsRect (rectTabs);
-		CPoint ptTab = point;
-		wndTab.ScreenToClient (&ptTab);
-		int iClickedTab = wndTab.GetTabFromPoint (ptTab);
-		if (iClickedTab >= 0)
-			m_wndClientArea.SetActiveTab(wndTab.GetTabWnd(iClickedTab)->m_hWnd);
-
-		theApp.ShowPopupMenu (IDR_CONTEXT_TABS, point, pWnd);
-	}
+	// With new MDITabs we don't need to do anything here - see OnShowMDITabContextMenu
+	CMDIFrameWndEx::OnContextMenu(pWnd, point);
 }
 
 BOOL CMainFrame::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -1432,6 +1428,11 @@ void CMainFrame::OnWindowNew()
 }
 
 // Handles the window menu commands: cascade, tile, arrange
+void CMainFrame::OnUpdateMDIWindowCmd(CCmdUI* pCmdUI) 
+{
+	pCmdUI->Enable(theApp.mditabs_);
+}
+
 BOOL CMainFrame::OnMDIWindowCmd(UINT nID)
 {
 	BOOL retval = CMDIFrameWndEx::OnMDIWindowCmd(nID);
@@ -4854,6 +4855,38 @@ std::vector<CString> CMainFrame::GetMacroCommands()
 	return retval;
 }
 
+BOOL CMainFrame::OnShowMDITabContextMenu(CPoint point, DWORD dwAllowedItems, BOOL bTabDrop)
+{
+	//theApp.ShowPopupMenu(IDR_CONTEXT_TABS, point, &m_wndClientArea);
+
+	CMenu menu;
+	VERIFY(menu.LoadMenu(bTabDrop ? IDR_POPUP_DROP_MDITABS : IDR_CONTEXT_TABS));
+
+	CMenu* pPopup = menu.GetSubMenu(0);
+	ASSERT(pPopup != NULL);
+
+	if ((dwAllowedItems & AFX_MDI_CREATE_HORZ_GROUP) == 0)
+		pPopup->DeleteMenu(ID_MDI_NEW_HORZ_TAB_GROUP, MF_BYCOMMAND);
+
+	if ((dwAllowedItems & AFX_MDI_CREATE_VERT_GROUP) == 0)
+		pPopup->DeleteMenu(ID_MDI_NEW_VERT_GROUP, MF_BYCOMMAND);
+
+	if ((dwAllowedItems & AFX_MDI_CAN_MOVE_NEXT) == 0)
+		pPopup->DeleteMenu(ID_MDI_MOVE_TO_NEXT_GROUP, MF_BYCOMMAND);
+
+	if ((dwAllowedItems & AFX_MDI_CAN_MOVE_PREV) == 0)
+		pPopup->DeleteMenu(ID_MDI_MOVE_TO_PREV_GROUP, MF_BYCOMMAND);
+
+	if ((dwAllowedItems & AFX_MDI_CAN_BE_DOCKED) == 0)
+		pPopup->DeleteMenu(ID_MDI_TABBED_DOCUMENT, MF_BYCOMMAND);
+
+	CMFCPopupMenu* pPopupMenu = new CMFCPopupMenu;
+	pPopupMenu->SetAutoDestroy(FALSE);
+	pPopupMenu->Create(this, point.x, point.y, pPopup->GetSafeHmenu());
+
+	return TRUE;
+}
+
 void CMainFrame::OnSearchCombo()
 {
 	// We can't search if there is no file open
@@ -5492,6 +5525,49 @@ void CMainFrame::Progress(int value)
 		m_wndStatusBar.SetPaneProgress(0, value < 100 ? value : 100);
 	}
 }
+
+void CMainFrame::OnMdiMoveToNextGroup()
+{
+	MDITabMoveToNextGroup();
+}
+
+void CMainFrame::OnMdiMoveToPrevGroup()
+{
+	MDITabMoveToNextGroup(FALSE);
+}
+
+void CMainFrame::OnMdiNewHorzTabGroup()
+{
+	MDITabNewGroup(FALSE);
+}
+
+void CMainFrame::OnMdiNewVertGroup()
+{
+	MDITabNewGroup();
+}
+
+void CMainFrame::OnMdiCancel() 
+{
+	// nothing here? xxx
+}
+
+void CMainFrame::OnMdiTabbedDocument()
+{
+	CMDIChildWndEx* pMDIChild = DYNAMIC_DOWNCAST(CMDIChildWndEx, MDIGetActive());
+	if (pMDIChild == NULL)
+	{
+		ASSERT(FALSE);
+		return;
+	}
+
+	TabbedDocumentToControlBar(pMDIChild);
+}
+
+void CMainFrame::OnUpdateMdiTabbedDocument(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck();
+}
+
 
 // Just for testing things (invoked with Ctrl+Shift+T)
 void CMainFrame::OnTest()

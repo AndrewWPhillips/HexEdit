@@ -708,10 +708,6 @@ void CHexEditApp::InitVersionInfo()
 	is_vista_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 6;
 	is_win7_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 6 && osvi.dwMinorVersion >= 1;
 
-	//win95_ = !(osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion >= 4) &&   // NT4 and later
-	//         !(osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && osvi.dwMajorVersion == 4 && osvi.dwMinorVersion >= 10);  // Win98 + later
-	win95_ = osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && osvi.dwMajorVersion <= 4 && osvi.dwMinorVersion < 10;
-
 	// Determine if multiple monitor supported (Win 98 or NT >= 5.0)
 	// Note that Windows 95 is 4.00 and Windows 98 is 4.10
 	mult_monitor_ = 
@@ -1657,13 +1653,7 @@ void CHexEditApp::OnBookmarksEdit()
 void CHexEditApp::OnTabIcons()
 {
 	tabicons_ = !tabicons_;
-	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	if (mm != NULL)
-	{
-		ASSERT_KINDOF(CMainFrame, mm);
-		mm->EnableMDITabs(mditabs_, tabicons_,
-			tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP);
-	}
+	update_tabs();
 }
 
 void CHexEditApp::OnUpdateTabIcons(CCmdUI* pCmdUI)
@@ -1674,18 +1664,31 @@ void CHexEditApp::OnUpdateTabIcons(CCmdUI* pCmdUI)
 void CHexEditApp::OnTabsAtBottom()
 {
 	tabsbottom_ = !tabsbottom_;
+	update_tabs();
+}
+
+void CHexEditApp::OnUpdateTabsAtBottom(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(tabsbottom_);
+}
+
+void CHexEditApp::update_tabs()
+{
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 	if (mm != NULL)
 	{
 		ASSERT_KINDOF(CMainFrame, mm);
-		mm->EnableMDITabs(mditabs_, tabicons_,
-			tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP);
-	}
-}
+		CMDITabInfo mdiTabParams;
+		mdiTabParams.m_bTabIcons = tabicons_;
+		mdiTabParams.m_tabLocation = tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : 
+		                                           CMFCTabCtrl::LOCATION_TOP;
+		mdiTabParams.m_bActiveTabCloseButton = tabclose_;
+		mdiTabParams.m_bAutoColor = tabcolour_;
+		mdiTabParams.m_style = tabcolour_ ? CMFCTabCtrl::STYLE_3D_ONENOTE : CMFCTabCtrl::STYLE_3D_SCROLLED;
 
-void CHexEditApp::OnUpdateTabsAtBottom(CCmdUI* pCmdUI)
-{
-	pCmdUI->SetCheck(tabsbottom_);
+		mdiTabParams.m_bTabCustomTooltips = TRUE;
+		mm->EnableMDITabbedGroups(mditabs_, mdiTabParams);
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2335,10 +2338,9 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 		tabsbottom_ = FALSE;
 		break;
 	}
-	if ((wt_flags & 0x4) == 0)
-		tabicons_ = TRUE;
-	else
-		tabicons_ = FALSE;
+	tabicons_ = (wt_flags & 0x4) == 0;
+	tabclose_ = (wt_flags & 0x8) == 0;
+	tabcolour_ = (wt_flags & 0x10) == 0;
 
 	aerialview_ = GetProfileInt("Options", "AerialView", 0);
 	aerial_disp_state_ = GetProfileInt("Options", "AerialDisplay", 0x000010B1F);
@@ -2795,7 +2797,7 @@ void CHexEditApp::SaveOptions()
 	WriteProfileString("Printer", "FooterEdge", ss);
 
 	WriteProfileInt("Options", "WindowTabs", !mditabs_ ? 0 : 
-					(tabsbottom_ ? 2 : 1) | (!tabicons_ ? 4 : 0));
+					(tabsbottom_ ? 2 : 1) | (!tabicons_ ? 4 : 0) | (!tabclose_ ? 8 : 0) | (!tabcolour_ ? 0x10 : 0));
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 	if (mm != NULL)
 		mm->SaveFrameOptions();
@@ -3292,6 +3294,8 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.mditabs_ = mditabs_;
 	val.tabsbottom_ = tabsbottom_;
 	val.tabicons_ = tabicons_;
+	val.tabclose_ = tabclose_;
+	val.tabcolour_ = tabcolour_;
 	val.dlg_dock_ = dlg_dock_;
 	val.dlg_move_ = dlg_move_;
 	val.hex_ucase_ = hex_ucase_;
@@ -3536,16 +3540,17 @@ void CHexEditApp::set_options(struct OptValues &val)
 	open_restore_ = val.open_restore_;
 	if (mditabs_ != val.mditabs_ ||
 		(mditabs_ && tabsbottom_ != val.tabsbottom_) ||
-		(mditabs_ && tabicons_ != val.tabicons_))
+		(mditabs_ && tabicons_ != val.tabicons_) ||
+		(mditabs_ && tabclose_ != val.tabclose_) ||
+		(mditabs_ && tabcolour_ != val.tabcolour_)  )
 	{
 		mditabs_ = val.mditabs_;
 		tabsbottom_ = val.tabsbottom_;
 		tabicons_ = val.tabicons_;
+		tabclose_ = val.tabclose_;
+		tabcolour_ = val.tabcolour_;
 
-		ASSERT_KINDOF(CMainFrame, mm);
-		if (mm != NULL)
-			mm->EnableMDITabs(mditabs_, tabicons_,
-				tabsbottom_ ? CMFCTabCtrl::LOCATION_BOTTOM : CMFCTabCtrl::LOCATION_TOP);
+		update_tabs();
 	}
 
 	if (hex_ucase_ != val.hex_ucase_)

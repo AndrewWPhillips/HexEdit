@@ -182,6 +182,9 @@ struct OptValues
 	BOOL	mditabs_;
 	BOOL	tabsbottom_;
 	BOOL    tabicons_;
+	BOOL    tabclose_;
+	BOOL    tabcolour_;
+
 	BOOL    dlg_dock_, dlg_move_;
 	BOOL	hex_ucase_;
 	int     k_abbrev_;

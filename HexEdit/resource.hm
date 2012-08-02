@@ -333,10 +333,8 @@
 #define HIDC_INFO_CATEGORY              0x81270588    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INFO_CATEGORY_SELECT       0x812705fd    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INFO_COMMENTS              0x8127041b    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INFO_DISK_SIZE             0x81270608    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INFO_EDIT_TIME             0x81270607    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INFO_KEYWORDS              0x81270603    // IDD_PROP_INFO [English (United States)]
-#define HIDC_INFO_SIZE                  0x80970589    // IDD_PROP_FILE [English (United States)]
 #define HIDC_INFO_VIEW_TIME             0x81270606    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INSERT                     0x813604b2    // IDD_OPT_WINEDIT [English (United States)]
 #define HIDC_INSTALL_CODE               0x80e70437    // IDD_REGISTER
@@ -502,7 +500,9 @@
 #define HIDC_SUBJECT                    0x80e50435    // IDD_EMAIL
 #define HIDC_SUBTRACT                   0x80750428    // IDD_CALC
 #define HIDC_SYSTYPE                    0x80e50476    // IDD_EMAIL
-#define HIDC_TABICONS                   0x819a041a    // IDD_OPT_WORKLAYOUT [English (United States)]
+#define HIDC_TABCLOSE                   0x819a0685    // IDD_OPT_WORKLAYOUT [English (United States)]
+#define HIDC_TABCOLOUR                  0x819a0686    // IDD_OPT_WORKLAYOUT [English (United States)]
+#define HIDC_TABICONS                   0x819a0684    // IDD_OPT_WORKLAYOUT [English (United States)]
 #define HIDC_TABSBOTTOM                 0x819a0417    // IDD_OPT_WORKLAYOUT [English (United States)]
 #define HIDC_TEMPLATEDIR                0x81380617    // IDD_OPT_WORKTEMPLATE [English (United States)]
 #define HIDC_TEXT                       0x80e50477    // IDD_EMAIL

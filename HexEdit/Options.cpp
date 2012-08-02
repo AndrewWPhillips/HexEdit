@@ -172,6 +172,9 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.mditabs_ = FALSE;
 	val_.tabsbottom_ = FALSE;
 	val_.tabicons_ = TRUE;
+	val_.tabclose_ = TRUE;
+	val_.tabcolour_ = TRUE;
+
 	val_.large_cursor_ = FALSE;
 	val_.dlg_dock_ = FALSE;
 	val_.dlg_move_ = TRUE;
@@ -1592,6 +1595,8 @@ void CWorkspaceLayoutPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_MDITABS, pParent->val_.mditabs_);
 	DDX_Check(pDX, IDC_TABSBOTTOM, pParent->val_.tabsbottom_);
 	DDX_Check(pDX, IDC_TABICONS, pParent->val_.tabicons_);
+	DDX_Check(pDX, IDC_TABCLOSE, pParent->val_.tabclose_);
+	DDX_Check(pDX, IDC_TABCOLOUR, pParent->val_.tabcolour_);
 	DDX_Check(pDX, IDC_DLG_DOCK, pParent->val_.dlg_dock_);
 	DDX_Check(pDX, IDC_DLG_MOVE, pParent->val_.dlg_move_);
 	DDX_Check(pDX, IDC_HEX_UCASE, pParent->val_.hex_ucase_);
@@ -1605,6 +1610,10 @@ void CWorkspaceLayoutPage::fix_controls()
 	GetDlgItem(IDC_TABSBOTTOM)->EnableWindow(pParent->val_.mditabs_);
 	ASSERT(GetDlgItem(IDC_TABICONS) != NULL);
 	GetDlgItem(IDC_TABICONS)->EnableWindow(pParent->val_.mditabs_);
+	ASSERT(GetDlgItem(IDC_TABCLOSE) != NULL);
+	GetDlgItem(IDC_TABCLOSE)->EnableWindow(pParent->val_.mditabs_);
+	ASSERT(GetDlgItem(IDC_TABCOLOUR) != NULL);
+	GetDlgItem(IDC_TABCOLOUR)->EnableWindow(pParent->val_.mditabs_);
 }
 
 BEGIN_MESSAGE_MAP(CWorkspaceLayoutPage, COptPage)
@@ -1614,6 +1623,8 @@ BEGIN_MESSAGE_MAP(CWorkspaceLayoutPage, COptPage)
 	ON_BN_CLICKED(IDC_MDITABS, OnChangeMditabs)
 	ON_BN_CLICKED(IDC_TABSBOTTOM, OnChange)
 	ON_BN_CLICKED(IDC_TABICONS, OnChange)
+	ON_BN_CLICKED(IDC_TABCLOSE, OnChange)
+	ON_BN_CLICKED(IDC_TABCOLOUR, OnChange)
 	ON_BN_CLICKED(IDC_DLG_DOCK, OnChange)
 	ON_BN_CLICKED(IDC_DLG_MOVE, OnChange)
 	ON_BN_CLICKED(IDC_HEX_UCASE, OnChange)
@@ -1673,6 +1684,8 @@ static DWORD id_pairs_workspace_layout[] = {
 	IDC_MDITABS, HIDC_MDITABS,
 	IDC_TABSBOTTOM, HIDC_TABSBOTTOM,
 	IDC_TABICONS, HIDC_TABICONS,
+	IDC_TABCLOSE, HIDC_TABCLOSE,
+	IDC_TABCOLOUR, HIDC_TABCOLOUR,
 	IDC_DLG_DOCK, HIDC_DLG_DOCK,
 	IDC_DLG_MOVE, HIDC_DLG_MOVE,
 	IDC_HEX_UCASE, HIDC_HEX_UCASE,

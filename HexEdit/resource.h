@@ -233,6 +233,7 @@
 #define IDD_SAVE_TEMPLATE               282
 #define IDD_PRINTDLG                    283
 #define IDD_NEW_FILE                    284
+#define IDR_POPUP_DROP_MDITABS          285
 #define IDD_CSRC                        287
 #define IDD_OPEN_SPECIAL                289
 #define IDD_DFFD_EVAL                   292
@@ -518,7 +519,6 @@
 #define IDC_FILE_TYPE                   1050
 #define IDC_SHELLOPEN                   1050
 #define IDC_MARK_STORE                  1050
-#define IDC_TABICONS                    1050
 #define IDC_SEL_LEN_DIV2                1050
 #define IDC_BG_STATS                    1050
 #define IDC_OPEN_INSERT                 1051
@@ -1267,6 +1267,9 @@
 #define IDC_SPIN_REMOVE                 1665
 #define IDC_AERIAL_MAX                  1666
 #define IDC_SPIN_AERIAL_MAX             1667
+#define IDC_TABICONS                    1668
+#define IDC_TABCLOSE                    1669
+#define IDC_TABCOLOUR                   1670
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1619,6 +1622,12 @@
 #define ID_DIALOGS_DOCKABLE             33200
 #define ID_EXPLORER_OPEN                33201
 #define ID_EXPLORER_OPEN_RO             33202
+#define ID_MDI_TABBED_DOCUMENT          33210
+#define ID_MDI_NEW_VERT_GROUP           33211
+#define ID_MDI_NEW_HORZ_TAB_GROUP       33212
+#define ID_MDI_MOVE_TO_PREV_GROUP       33213
+#define ID_MDI_MOVE_TO_NEXT_GROUP       33214
+#define ID_MDI_CANCEL                   33215
 #define ID_NAV_BACK                     33990
 #define ID_NAV_FORW                     33991
 #define ID_FILE_OPEN_SPECIAL            33992
@@ -1796,7 +1805,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        511
 #define _APS_NEXT_COMMAND_VALUE         39189
-#define _APS_NEXT_CONTROL_VALUE         1668
+#define _APS_NEXT_CONTROL_VALUE         1671
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

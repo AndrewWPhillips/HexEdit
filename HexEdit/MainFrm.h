@@ -94,6 +94,7 @@ public:
 	virtual BOOL OnShowPopupMenu (CMFCPopupMenu* pMenuPopup);
 	virtual void OnClosePopupMenu(CMFCPopupMenu* pMenuPopup);
 	virtual BOOL OnEraseMDIClientBackground (CDC* pDC);
+	virtual BOOL OnShowMDITabContextMenu(CPoint point, DWORD dwAllowedItems, BOOL bTabDrop);
 
 // Implementation
 public:
@@ -143,7 +144,6 @@ public:
 // protected:
 public:
 	afx_msg void OnInitMenu(CMenu* pMenu);
-	//{{AFX_MSG(CMainFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnClose();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -155,8 +155,6 @@ public:
 	afx_msg void OnCustomize();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg void OnTest();
-	//}}AFX_MSG
 	afx_msg void OnSysCommand(UINT nID, LONG lParam);
 	afx_msg void OnMenuSelect(UINT nItemID, UINT nFlags, HMENU hSysMenu);
 	// afx_msg void OnEnterIdle(UINT nWhy, CWnd *pWho);
@@ -177,6 +175,7 @@ public:
 	afx_msg void OnEditGoto(int base_mode = 0);
 	afx_msg void OnWindowNew();
 	afx_msg BOOL OnMDIWindowCmd(UINT nID);
+	afx_msg void OnUpdateMDIWindowCmd(CCmdUI* pCmdUI);
 	afx_msg BOOL OnPaneCheck(UINT nID);
 	afx_msg void OnUpdateViewViewbar(CCmdUI* pCmdUI);
 	afx_msg void OnViewViewbar();
@@ -264,6 +263,15 @@ public:
 	afx_msg LRESULT OnGetTabToolTip(WPARAM, LPARAM lp);
 	afx_msg void OnMacro(UINT nID);
 
+	afx_msg void CMainFrame::OnMdiTabbedDocument();
+	afx_msg void CMainFrame::OnUpdateMdiTabbedDocument(CCmdUI* pCmdUI);
+	afx_msg void OnMdiMoveToNextGroup();
+	afx_msg void OnMdiMoveToPrevGroup();
+	afx_msg void OnMdiNewHorzTabGroup();
+	afx_msg void OnMdiNewVertGroup();
+	afx_msg void OnMdiCancel();
+
+	afx_msg void OnTest();
 	DECLARE_MESSAGE_MAP()
 
 public:

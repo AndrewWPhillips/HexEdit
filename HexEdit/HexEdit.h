@@ -425,7 +425,6 @@ public:
 	BOOL is_win7_;                      // Windows 7 or Windows Server 2008 R2 or later?
 	BOOL mult_monitor_;                 // Are we running on an OS with multiple monitor support?
 	BOOL is_us_;                        // Are we in US?  (for spelling fixes)
-	BOOL win95_;                        // Is it Windows 95? (not 98 or later and not NT or later)
 
 	// Locale settings
 	char dec_sep_char_;		            // Char to use as "thousands" separator for decimals
@@ -732,6 +731,9 @@ public:
 	BOOL mditabs_;                      // Show MDI tabs
 	BOOL tabsbottom_;                   // Show MDI tabs at bottom (not top)
 	BOOL tabicons_;                     // Show icons in MDI tabs
+	BOOL tabclose_;                     // Close button on each tab
+	BOOL tabcolour_;                    // Colourise each tab
+
 	BOOL large_cursor_;                 // Use large (block) cursor
 	BOOL show_other_;                   // Show where the cursor would be in the other (hex/char) area
 	BOOL nice_addr_;                    // Display nice looking addresses?
@@ -851,6 +853,7 @@ public:
 	int calc_bits_;                     // Number of bits used in calculator
 
 	CNavManager navman_;				// Manages list of nav points for Navigate Back/Forward
+	void update_tabs();
 
 #ifndef NO_SECURITY
 	// Security info
