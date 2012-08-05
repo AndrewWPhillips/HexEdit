@@ -609,6 +609,7 @@ New Version
  - test install on 95, 98, ME, NT4, W2K, XP
  - submit to Simtel and change web links to new Simtel page
  - web site: add ver to bug report form drop list, update what's new, gifs etc
+ - update version file, download files, etc on web site and publish
  - make announcement in forums
  - update to shareware download sites
  - email reg users about new release (staggered)

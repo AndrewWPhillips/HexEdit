@@ -8,7 +8,7 @@ Says how often numbers are shown on the hex ruler.
 Shows the folder view and the files in the current folder.  Double-click a folder to move to it, or double-click a file to open it.  Right-click a file to see a menu of options.
 
 .topic HIDC_NO_RECENT
-Prevents files you open in HexEdit from being added to the "My Recent Documents" list.
+Prevents files you open in HexEdit from being added to the "My Recent Documents" list. (This is a list maintained by Windows which can be shown in the start menu.)
 
 .topic HIDC_CT_MODIFICATIONS
 Shows bytes that have been modified.
@@ -395,7 +395,7 @@ Use the columns of the tips list to enter a description, an expression  (using p
 Templates are hidden by default.  This option is only used when you open a file you have not opened in HexEdit before or create a new file.
 
 .topic HIDC_SAVE_EXIT
-The current settings for all global options, including those under the System, and Display tabs, are saved when you exit from HexEdit.
+The current settings for all global options, including those under the System and Workspace tabs, are saved when you exit from HexEdit.
 
 .topic HIDC_DFFD_COMMENTS
 Any other information you want to add to describe the element.
@@ -800,7 +800,7 @@ Enter the number of times you want the macro to play and press Enter.
 Trades speed for memory usage.  Memory is cheap so use a high value.
 
 .topic HIDC_RESTORE_AVOIDABLE
-This allows you to get back all "Don't show again" dialogs that you have hidden.
+This allows you to get back all info and question dialogs which have been hidden using the "Don't show again" or "Don't ask again" options.
 
 .topic HIDC_FIRST_FOOTER
 Footer for the first printed page.
@@ -1112,7 +1112,7 @@ Prints a "watermark" on each page.  This is large text in a light background col
 Bookmarks will be printed.  On a color printer this will use the current bookmark color from the color scheme.
 
 .topic HIDC_OPEN_FOLDER_SPECIFIED
-The File Open dialog always open to the specified folder.
+The File Open dialog always opens to the specified folder.
 
 .topic HIDC_BG_NETWORK
 Disables background processing on network files.  Background processing on large network files may affect network performance.
