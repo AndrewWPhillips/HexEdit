@@ -1314,6 +1314,9 @@ BEGIN
         MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
         MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
         MENUITEM SEPARATOR
+        MENUITEM "Copy Full Path to Clipboard", ID_COPY_FULL_NAME
+        MENUITEM "Open Folder in Explorer",     ID_OPEN_IN_EXPLORER
+        MENUITEM SEPARATOR
         MENUITEM "Show &Icons",                 ID_TAB_ICONS
         MENUITEM "Tabs at &Bottom",             ID_TABS_AT_BOTTOM
         MENUITEM SEPARATOR
@@ -2546,8 +2549,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,1,1,SVNRevision
- PRODUCTVERSION 4,1,1,SVNRevision
+ FILEVERSION 4,10,1,SVNRevision
+ PRODUCTVERSION 4,10,1,SVNRevision
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2564,12 +2567,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Pro Application"
-            VALUE "FileVersion", "4, 1, 1, " SVNRevisionStr
+            VALUE "FileVersion", "4, 10, 1, " SVNRevisionStr
             VALUE "InternalName", "HexEditPro"
             VALUE "LegalCopyright", "Copyright © 1999-2012  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDITPRO.EXE"
             VALUE "ProductName", "HexEditPro"
-            VALUE "ProductVersion", "4, 1, 1, " SVNRevisionStr
+            VALUE "ProductVersion", "4, 10, 1, " SVNRevisionStr
         END
     END
     BLOCK "VarFileInfo"

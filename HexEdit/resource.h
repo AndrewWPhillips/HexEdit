@@ -378,6 +378,8 @@
 #define ID_COMP_SPLIT                   401
 #define ID_COMP_TAB                     402
 #define ID_COMP_NEW                     403
+#define ID_OPEN_IN_EXPLORER             404
+#define ID_COPY_FULL_NAME               405
 #define IDD_GETINT                      407
 #define IDD_GETSTR                      408
 #define IDD_GETBOOL                     409

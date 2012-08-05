@@ -85,6 +85,11 @@ BEGIN_MESSAGE_MAP(CHexEditDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_DFFD_OPTIONS, OnUpdateDffdOptions)
 	ON_COMMAND(ID_COMP_NEW, OnCompNew)
 
+	ON_COMMAND(ID_OPEN_IN_EXPLORER, OnOpenInExplorer)
+	ON_UPDATE_COMMAND_UI(ID_OPEN_IN_EXPLORER, OnUpdateOpenInExplorer)
+	ON_COMMAND(ID_COPY_FULL_NAME, OnCopyFullName)
+	ON_UPDATE_COMMAND_UI(ID_COPY_FULL_NAME, OnUpdateCopyFullName)
+
 	ON_COMMAND(ID_TEST2, OnTest)
 END_MESSAGE_MAP()
 
@@ -1911,6 +1916,37 @@ void CHexEditDoc::OnUpdateKeepTimes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(pfile1_ != NULL && !IsDevice() && !readonly_);
 	pCmdUI->SetCheck(keep_times_);
+}
+
+void CHexEditDoc::OnOpenInExplorer() 
+{
+	ASSERT(AfxGetMainWnd() != NULL);
+	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	if (pfile1_ != NULL && !IsDevice() && mm != NULL)
+	{
+		char drive[_MAX_DRIVE+1];
+		char path[_MAX_PATH+1];
+		_splitpath(pfile1_->GetFilePath(), drive, path, NULL, NULL);
+
+		mm->m_paneExpl.ShowAndUnroll();
+		mm->m_wndExpl.DisplayFolder(CString(drive) + CString(path));
+	}
+}
+
+void CHexEditDoc::OnUpdateOpenInExplorer(CCmdUI* pCmdUI) 
+{
+	pCmdUI->Enable(pfile1_ != NULL && !IsDevice());
+}
+
+void CHexEditDoc::OnCopyFullName() 
+{
+	if (pfile1_ != NULL)
+		::StringToClipboard(pfile1_->GetFilePath());
+}
+
+void CHexEditDoc::OnUpdateCopyFullName(CCmdUI* pCmdUI) 
+{
+	pCmdUI->Enable(pfile1_ != NULL);
 }
 
 void CHexEditDoc::OnDocTest()

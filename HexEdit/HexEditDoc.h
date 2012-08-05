@@ -514,6 +514,11 @@ public:
 		afx_msg void OnFileSaveAs();
 		virtual BOOL DoSave(LPCTSTR lpszPathName, BOOL bReplace = TRUE);
 
+		afx_msg void OnOpenInExplorer();
+		afx_msg void OnUpdateOpenInExplorer(CCmdUI* pCmdUI);
+		afx_msg void OnCopyFullName();
+		afx_msg void OnUpdateCopyFullName(CCmdUI* pCmdUI);
+
 // Implementation
 public:
 		virtual ~CHexEditDoc();

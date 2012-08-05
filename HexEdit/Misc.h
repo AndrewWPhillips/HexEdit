@@ -54,6 +54,7 @@ void SetFileAccessTime(const char *filename, time_t tt);
 bool AbortKeyPress();
 
 CString get_menu_text(CMenu *pmenu,int id);
+void StringToClipboard(const char * str);
 
 #ifndef REGISTER_APP
 void LoadHist(std::vector<CString> & hh, LPCSTR name, size_t smax);

@@ -176,6 +176,7 @@ public:
 	CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0), init_(false), m_first(true) { }
 	enum { IDD = IDD_EXPLORER };
 	virtual BOOL Create(CWnd* pParentWnd);
+	void DisplayFolder(LPCTSTR lpszPath) { list_.DisplayFolder(lpszPath); }
 
 	void UpdateFolderInfo(CString folder);   // called when current folder changes
 	void Refresh();                 // Set folder/filter from edit controls and refresh the folder display

@@ -994,6 +994,54 @@ CString get_menu_text(CMenu *pmenu, int id)
 	return CString("");
 }
 
+void StringToClipboard(const char * str)
+{
+	if (!::OpenClipboard(AfxGetMainWnd()->m_hWnd))
+	{
+		TRACE("Could not open clipboard\n");
+		return;
+	}
+
+	if (!::EmptyClipboard())
+	{
+		TRACE("Could not empty clipboard\n");
+		::CloseClipboard();
+		return;
+	}
+
+	size_t len = strlen(str);
+	ASSERT(str != NULL && len < 10000);
+
+	HANDLE hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, strlen(str)+1);
+	if (hh == NULL)
+	{
+		TRACE("GlobalAlloc failed\n");
+		::CloseClipboard();
+		return;
+	}
+
+	unsigned char * pp = reinterpret_cast<unsigned char *>(::GlobalLock(hh));
+	if (pp == NULL)
+	{
+		TRACE("GlobalLock failed\n");
+		::GlobalFree(hh);
+		::CloseClipboard();
+		return;
+	}
+
+	memcpy(pp, str, len+1);
+
+	if (::SetClipboardData(CF_TEXT, hh) == NULL)
+	{
+		TRACE("SetClipboardData failed\n");
+		::GlobalFree(hh);
+	}
+	else
+		::GlobalUnlock(hh);   // release (but don't free) memory now ownded by clipboard
+
+	::CloseClipboard();
+}
+
 //-----------------------------------------------------------------------------
 // Conversions
 
@@ -1495,15 +1543,6 @@ CString GetExePath()
 // Get the place to store user data files
 BOOL GetDataPath(CString &data_path, int csidl /*=CSIDL_APPDATA*/)
 {
-#ifndef REGISTER_APP
-	if (theApp.win95_)
-	{
-		// Windows 95 does not support app data special folder so just use .exe location
-		data_path = ::GetExePath();
-		return TRUE;
-	}
-#endif
-
 	BOOL retval = FALSE;
 	LPTSTR pbuf = data_path.GetBuffer(MAX_PATH);
 
