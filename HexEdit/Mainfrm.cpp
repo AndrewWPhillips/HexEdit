@@ -5503,11 +5503,17 @@ void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 // Pass -1 to turn off progress, or a value from 0 to 100 to update the progress.
 void CMainFrame::Progress(int value)
 {
+	ASSERT(value <= 100);
+	if (value > 100) value = 100;
+
 	if (value < 0)
 	{
 		if (progress_on_)
 		{
-			// Turn of progress
+			// Turn off progress
+#if _MFC_VER >= 0x0A00
+			SetProgressBarState(TBPF_NOPROGRESS);
+#endif
 			m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar (pane 0)
 			progress_on_ = false;
 		}
@@ -5517,12 +5523,19 @@ void CMainFrame::Progress(int value)
 		if (!progress_on_)
 		{
 			// Turn on progress
+#if _MFC_VER >= 0x0A00
+			SetProgressBarRange(0, 100);
+			SetProgressBarState(TBPF_NORMAL);
+#endif
 			m_wndStatusBar.EnablePaneProgressBar(0);  // Turn on progress in left pane (pane 0)
 			progress_on_ = true;
 		}
 
 		// Update progress
-		m_wndStatusBar.SetPaneProgress(0, value < 100 ? value : 100);
+#if _MFC_VER >= 0x0A00
+		SetProgressBarPosition(value);
+#endif
+		m_wndStatusBar.SetPaneProgress(0, value);
 	}
 }
 
