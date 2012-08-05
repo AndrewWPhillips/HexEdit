@@ -1482,7 +1482,8 @@ void CHexEditView::StoreOptions()
 						{
 						case CHexEditApp::PNG:
 							fmt = FIF_PNG;
-							flags = PNG_Z_BEST_SPEED;
+							//flags = PNG_Z_BEST_SPEED;
+							flags = PNG_DEFAULT;
 							ext = ".PNG";
 							break;
 						case CHexEditApp::JPEG_GOOD:
@@ -15466,53 +15467,6 @@ void CHexEditView::OnUpdateEditCompare(CCmdUI* pCmdUI)
 // Activate next window
 void CHexEditView::OnWindowNext()
 {
-#if 0
-// This was changed for consistency with km_win_next in macros.
-// The problem is to make sure all windows are cycled through when
-// Window/Next is used whether or not in a macro (and in the same order).
-// - next window in macro does not change focus now (for speed) but just keeps track of active view
-// - if focus is set Windows changes order of windows (Z order) returned by GetWindow(GW_HWNDNEXT)
-// - the MDI functions (MDINext etc) seem to use some sort of list where order does not change with focus change
-// - but MDINext changes focus and there appears to be no way to get at the list without changing focus
-// For the above reasons and for consistency the next window command both
-// in and not in macros uses the new NextView function below.
-
-	// Activate next window that is not a print preview window and is not minimized
-	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-	CMainFrame *mm = dynamic_cast<CMainFrame *>(::AfxGetMainWnd());
-	CChildFrame *currc;        // Currently active MDI child frame
-	CChildFrame *nextc;        // Loops through all MDI child frames
-
-	// Save the currently active child MDI window
-	currc = dynamic_cast<CChildFrame *>(mm->MDIGetActive());
-	ASSERT(currc != NULL);
-	ASSERT(currc->GetHexEditView() == this);
-
-	while (mm->MDINext(), (nextc = dynamic_cast<CChildFrame *>(mm->MDIGetActive())) != currc)
-	{
-		// Don't change to iconized windows
-		if (!nextc->IsIconic())
-		{
-			// Make sure it's a CHexEditView (don't change to print preview windows)
-			CHexEditView *pview = dynamic_cast<CHexEditView *>(nextc->GetHexEditView());
-			if (pview != NULL && pview->IsKindOf(RUNTIME_CLASS(CHexEditView)))
-			{
-				nextc->SetActiveView(pview);
-				if (aa->recording_ && aa->mac_.size() > 0 && (aa->mac_.back()).ktype == km_focus)
-				{
-					// We don't want focus change recorded (see CHexEditView::OnSetFocus)
-					aa->mac_.pop_back();
-				}
-				aa->SaveToMacro(km_win_next);
-				return;
-			}
-		}
-	}
-	((CMainFrame *)AfxGetMainWnd())->
-		StatusBarText("Warning: no other non-minimized windows found");
-	aa->mac_error_ = 2;
-#endif
-
 	// Get the next window
 	CHexEditView *pnext = NextView();
 
@@ -15547,10 +15501,23 @@ CHexEditView * CHexEditView::NextView() const
 
 	do
 	{
-		nextc = dynamic_cast<CChildFrame *>(nextc->GetWindow(GW_HWNDPREV));
+		// Get previous sibling window (which are the child frames of other views)
+		CWnd * pw = nextc->GetWindow(GW_HWNDPREV);
+
 		// If reached the top of the list go to the end
-		if (nextc == NULL)
-			nextc = dynamic_cast<CChildFrame *>(currc->GetWindow(GW_HWNDLAST));
+		if (pw == NULL)
+			pw = nextc->GetWindow(GW_HWNDLAST);
+
+		// Skip any windows that are not child frames (eg MFC 10 has added a CMFCTabCtrl window at this level)
+		while (!pw->IsKindOf(RUNTIME_CLASS(CChildFrame)))
+		{
+			pw = pw->GetWindow(GW_HWNDPREV);
+			if (pw == NULL)
+				pw = nextc->GetWindow(GW_HWNDLAST);
+		}
+
+		// Get the window as a child frame
+		nextc = dynamic_cast<CChildFrame *>(pw);
 	} while (nextc != NULL && nextc != currc && nextc->IsIconic());
 
 	if (nextc == NULL || nextc == currc)
@@ -15568,10 +15535,23 @@ CHexEditView * CHexEditView::PrevView() const
 
 	do
 	{
-		prevc = dynamic_cast<CChildFrame *>(prevc->GetWindow(GW_HWNDNEXT));
-		// If reached the top of the list go to the end
-		if (prevc == NULL)
-			prevc = dynamic_cast<CChildFrame *>(currc->GetWindow(GW_HWNDFIRST));
+		// Get next sibling window (which are the child frames of other views)
+		CWnd * pw = prevc->GetWindow(GW_HWNDNEXT);
+
+		// If reached the end of the list go back around
+		if (pw == NULL)
+			pw = prevc->GetWindow(GW_HWNDFIRST);
+
+		// Skip any windows that are not child frames (eg MFC 10 has added a CMFCTabCtrl window at this level)
+		while (!pw->IsKindOf(RUNTIME_CLASS(CChildFrame)))
+		{
+			pw = pw->GetWindow(GW_HWNDNEXT);
+			if (pw == NULL)
+				pw = prevc->GetWindow(GW_HWNDFIRST);
+		}
+
+		// Get the window as a child frame
+		prevc = dynamic_cast<CChildFrame *>(pw);
 	} while (prevc != NULL && prevc != currc && prevc->IsIconic());
 
 	if (prevc == NULL || prevc == currc)
