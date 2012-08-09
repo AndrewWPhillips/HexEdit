@@ -547,6 +547,10 @@ BOOL CHexEditApp::InitInstance()
 		m_pRecentFileList = new CHexFileList(0, FILENAME_RECENTFILES, recent_files_);
 		m_pRecentFileList->ReadList();
 
+#if MFC_VER_ >= 0x0A00
+		SetupJumpList();
+#endif
+
 		// This used to be after the command line parsing but was moved here so that
 		// when files are opened the size of the main window is known so that they
 		// are opened in sensible sizes and positions.
@@ -972,6 +976,17 @@ void CHexEditApp::InitWorkspace()
 
 	GetXMLFileList();
 }
+
+#if MFC_VER_ >= 0x0A00
+void CHexEditApp::SetupJumpList()
+{
+	if (!m_jumpList.InitializeList()) return;
+	m_jumpList.AddKnownCategory(KDC_RECENT);
+	m_jumpList.AddKnownCategory(KDC_FREQUENT);
+	m_jumpList.AddDestination("Favorites", "XXX");
+	m_jumpList.CommitList();
+}
+#endif
 
 void CHexEditApp::OnAppExit()
 {
