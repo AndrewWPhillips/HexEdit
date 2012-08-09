@@ -1924,12 +1924,12 @@ void CHexEditDoc::OnOpenInExplorer()
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 	if (pfile1_ != NULL && !IsDevice() && mm != NULL)
 	{
-		char drive[_MAX_DRIVE+1];
-		char path[_MAX_PATH+1];
-		_splitpath(pfile1_->GetFilePath(), drive, path, NULL, NULL);
+		CString ss(pfile1_->GetFilePath());
+		::PathRemoveFileSpec(ss.GetBuffer(1));
+		ss.ReleaseBuffer();
 
 		mm->m_paneExpl.ShowAndUnroll();
-		mm->m_wndExpl.DisplayFolder(CString(drive) + CString(path));
+		mm->m_wndExpl.DisplayFolder(ss);
 	}
 }
 

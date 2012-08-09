@@ -48,6 +48,18 @@ BUGS
 
 > attach macros to toolbar or keyboard
 > search button in recent file list
+> Preview options: RFL and open dialog
+> new commands: copy path to clipboard, open folder in explorer
+- Explorer
+  - add default open folders to history list on startup (and save folder too if different)
+  - start in default open folder
+  - fix context menus
+> New MFC MDI tabs
+>   new options for close X and coloured tabs
+> vert/horz tab groups
+> W7 Taskbar: thumbnails
+> W7 taskbar: progress
+- W7 taskbar: most recent, most used, favourites
 
 - Installer
   - new why uninstalling dialog
@@ -58,9 +70,6 @@ BUGS
 
 
 Compare
-
-Win7
-- support for Windows 7 taskbar?
 
 - new options
   - new page(s) for aerial view?
