@@ -1595,6 +1595,19 @@ void SetFileAccessTime(const char *filename, time_t tt)
 	::CloseHandle(hh);
 }
 
+// Change a file's "creation" time
+void SetFileModificationTime(const char *filename, time_t tt)
+{
+	HANDLE hh = ::CreateFile(filename, FILE_WRITE_ATTRIBUTES, FILE_SHARE_WRITE|FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hh == INVALID_HANDLE_VALUE)
+		return;
+
+	FILETIME ft;
+	if (ConvertToFileTime(tt, &ft))
+		::SetFileTime(hh, NULL, NULL, &ft);
+	::CloseHandle(hh);
+}
+
 // FileErrorMessage - generate a meaningful error string from a CFileException
 // fe = pointer to error information (including file name)
 // mode = this parameter is used to make the message more meaningful depending

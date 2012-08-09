@@ -1622,8 +1622,6 @@
 #define ID_LESSU_32BIT                  33186
 #define ID_LESSU_64BIT                  33187
 #define ID_DIALOGS_DOCKABLE             33200
-#define ID_EXPLORER_OPEN                33201
-#define ID_EXPLORER_OPEN_RO             33202
 #define ID_MDI_TABBED_DOCUMENT          33210
 #define ID_MDI_NEW_VERT_GROUP           33211
 #define ID_MDI_NEW_HORZ_TAB_GROUP       33212

@@ -34,11 +34,19 @@ class CHexEditApp;
 class CExplorerWnd;             // see below
 
 /////////////////////////////////////////////////////////////////////////////
-// CHistoryShellList - keeps a history of folders displayed
+// CDummyShellManager - just allows access to protected members of CShellManager
+class CDummyShellManager : public CShellManager
+{
+	friend class CHistoryShellList;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CHistoryShellList - displays list of file/folders at the current location
 class CHistoryShellList : public CMFCShellListCtrl
 {
 	friend class CExplorerDropTarget;
 	friend class CExplorerWnd;
+
 	// This replaces BCGShellListColumn* (Afx_ShellListColumn*)
 	enum
 	{
@@ -49,6 +57,16 @@ class CHistoryShellList : public CMFCShellListCtrl
 		COLLAST         // Leave this one at the end (to be one past last used value)
 	};
 
+	// ID's of commands added to Explorer context menu
+	enum
+	{
+		ID_OPEN = 1,
+		ID_OPEN_RO,
+		ID_TIME_MOD = 100,
+		ID_TIME_CRE = 200,
+		ID_TIME_ACC = 300,
+		ID_LAST = 400
+	};
 public:
 	CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true), m_pDropTarget(NULL) { }
 	virtual ~CHistoryShellList();
@@ -70,9 +88,6 @@ public:
 
 	CString Folder() { if (pos_ > -1 && pos_ < int(name_.size())) return name_[pos_]; else return CString(); }
 
-	virtual void AdjustMenu(HMENU);
-	virtual void MenuCommand(HMENU, UINT, LPCTSTR);
-
 	void SetFilter(LPCTSTR ff) { m_filter = CString(ff); }
 	CString GetFilter() { return m_filter; }
 
@@ -88,6 +103,9 @@ protected:
 	virtual HRESULT EnumObjects(LPSHELLFOLDER pParentFolder, LPITEMIDLIST pidlParent);
 
 private:
+	void AdjustMenu(HMENU, UINT firstCustomCmd);
+	void HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDLIST *piil);
+
 	void do_move(int ii);
 
 	CExplorerWnd *pExpl_;

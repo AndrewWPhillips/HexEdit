@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include <sys/stat.h>
 #include <shlwapi.h>    // for PathRemoveFileSpec
+#include <AfxWinAppEx.h>
 
 #include "HexEdit.h"
 #include "Explorer.h"
@@ -88,51 +89,6 @@ void CHistoryShellList::Back(int count)
 void CHistoryShellList::Forw(int count)
 {
 	do_move(pos_ + count);
-}
-
-void CHistoryShellList::AdjustMenu(HMENU hm)
-{
-	int ii = 0;                 // Current menu item number
-
-	MENUITEMINFO mii;
-	memset(&mii, '\0', sizeof(mii));
-	mii.cbSize = sizeof(mii);
-	mii.fMask = MIIM_ID | MIIM_STATE | MIIM_TYPE;
-	mii.wID = ID_EXPLORER_OPEN;
-	mii.fState = MFS_ENABLED;
-	mii.fType = MFT_STRING;
-	mii.dwTypeData = _T("Open in HexEdit Pro");
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-
-	mii.wID = ID_EXPLORER_OPEN_RO;
-	mii.dwTypeData = _T("Open Read-Only");
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-
-	mii.fType = MFT_SEPARATOR;
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-}
-
-void CHistoryShellList::MenuCommand(HMENU hm, UINT id, LPCTSTR file_name)
-{
-	ASSERT(id == ID_EXPLORER_OPEN || id == ID_EXPLORER_OPEN_RO);
-	CString full_name;
-	struct _stat stat;
-
-	if (!GetCurrentFolder(full_name))
-		return;
-
-	full_name += CString("\\") + file_name;
-	if (::_stat(full_name, &stat) == -1)
-		return;
-
-	// Open the file if it is not a directory
-	if ((stat.st_mode & _S_IFDIR) == 0)
-	{
-		ASSERT(theApp.open_current_readonly_ == -1);
-		theApp.open_current_readonly_ = (id == ID_EXPLORER_OPEN_RO);
-		theApp.OpenDocumentFile(full_name);
-	}
-	// else open all files in directory??
 }
 
 // moves to a folder in the undo/redo stack
@@ -565,11 +521,12 @@ int CHistoryShellList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point)
 {
+	ASSERT_VALID(this);
 	CPoint pt(point);
 	ScreenToClient(&pt);
 	CRect rct;
 	GetHeaderCtrl().GetWindowRect(&rct);
-	if (pt.y < rct.Height())
+	if (point.y > -1 && pt.y < rct.Height())
 	{
 		// Right click on header - display menu of available columns
 		CMenu mm;
@@ -597,7 +554,276 @@ void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point)
 		return;
 	}
 
-	CMFCShellListCtrl::OnContextMenu(pWnd, point);
+	ASSERT(m_bContextMenu);
+	CDummyShellManager * psm = DYNAMIC_DOWNCAST(CDummyShellManager, theApp.GetShellManager());
+	ASSERT(psm->m_pMalloc != NULL);
+
+	if (m_pContextMenu2 != NULL || m_psfCurFolder == NULL) return;
+
+	UINT nSelItems = GetSelectedCount();
+	if (nSelItems == 0)	return;
+	int nClickedItem = -1;
+
+	if (point.x == -1 && point.y == -1)
+	{
+		// Keyboard, show menu for the currently selected item(s):
+		int nCurItem = -1;
+		int nLastSelItem = -1;
+
+		for (UINT i = 0; i < nSelItems; i++)
+		{
+			nCurItem = GetNextItem(nCurItem, LVNI_SELECTED);
+			nLastSelItem = nCurItem;  // xxx why do we need both vars?
+		}
+
+		// Get the location to display the context menu from the last selected item
+		CRect rectItem;
+		if (GetItemRect(nLastSelItem, rectItem, LVIR_BOUNDS))
+		{
+			point.x = rectItem.left;
+			point.y = rectItem.bottom + 1;
+
+			ClientToScreen(&point);
+		}
+	}
+	else
+	{
+		// Clicked on specifed item:
+		LVHITTESTINFO lvhti;
+		lvhti.pt = point;
+		ScreenToClient(&lvhti.pt);
+
+		lvhti.flags = LVHT_NOWHERE;
+
+		HitTest(&lvhti);
+
+		if ((lvhti.flags & LVHT_ONITEM) == 0)
+		{
+			// Click ouside of items, do nothing
+			return;
+		}
+
+		nClickedItem = lvhti.iItem;
+	}
+
+	LPITEMIDLIST* pPidls = (LPITEMIDLIST*)psm->m_pMalloc->Alloc(sizeof(LPITEMIDLIST) * nSelItems);
+	ENSURE(pPidls != NULL);
+
+	// Get the selected items:
+	LVITEM lvItem;
+	ZeroMemory(&lvItem, sizeof(lvItem));
+	lvItem.mask = LVIF_PARAM;
+
+	LPAFX_SHELLITEMINFO pClickedInfo = (LPAFX_SHELLITEMINFO)lvItem.lParam;
+
+	if (nClickedItem >= 0)
+	{
+		// Put the item clicked on first in the list:
+		lvItem.iItem = nClickedItem;
+
+		if (GetItem(&lvItem))
+		{
+			pClickedInfo = (LPAFX_SHELLITEMINFO)lvItem.lParam;
+			pPidls [0] = pClickedInfo->pidlRel;
+		}
+	}
+
+	int nCurItem = -1;
+	for (UINT i = nClickedItem >= 0 ? 1 : 0; i < nSelItems; i++)
+	{
+		nCurItem = GetNextItem(nCurItem, LVNI_SELECTED);
+		if (nCurItem != nClickedItem)
+		{
+			lvItem.iItem = nCurItem;
+
+			if (GetItem(&lvItem))
+			{
+				LPAFX_SHELLITEMINFO pInfo = (LPAFX_SHELLITEMINFO)lvItem.lParam;
+				pPidls [i] = pInfo->pidlRel;
+
+				if (pClickedInfo == NULL)
+				{
+					pClickedInfo = pInfo;
+				}
+			}
+		}
+		else
+		{
+			i--;
+		}
+	}
+
+	if (pPidls [0] == NULL)
+	{
+		psm->m_pMalloc->Free(pPidls);
+		return;
+	}
+
+	IContextMenu* pcm;
+	HRESULT hr = m_psfCurFolder->GetUIObjectOf(GetSafeHwnd(), nSelItems, (LPCITEMIDLIST*)pPidls, IID_IContextMenu, NULL, (LPVOID*)&pcm);
+
+	if (SUCCEEDED(hr))
+	{
+		hr = pcm->QueryInterface(IID_IContextMenu2, (LPVOID*)&m_pContextMenu2);
+
+		if (SUCCEEDED(hr))
+		{
+			HMENU hPopup = ::CreatePopupMenu();
+			if (hPopup != NULL)
+			{
+				hr = m_pContextMenu2->QueryContextMenu(hPopup, 0, 1, 0x7fff, CMF_NORMAL | CMF_EXPLORE);
+
+				if (SUCCEEDED(hr))
+				{
+					UINT firstCustomCmd = hr;
+					AdjustMenu(hPopup, firstCustomCmd);  // Add our own menu items
+
+					UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
+
+					if (idCmd >= firstCustomCmd && idCmd < firstCustomCmd + ID_LAST)
+					{
+						HandleCustomCommand(idCmd - firstCustomCmd, nSelItems, (LPCITEMIDLIST*)pPidls);
+					}
+					else if (idCmd != 0)
+					{
+						BOOL bIsFolder = FALSE;
+
+						if (nSelItems == 1 && idCmd == ::GetMenuDefaultItem(hPopup, FALSE, 0))
+						{
+							// If specified element is a folder, try to display it:
+							ULONG ulAttrs = SFGAO_FOLDER;
+							m_psfCurFolder->GetAttributesOf(1, (const struct _ITEMIDLIST **) &pClickedInfo->pidlRel, &ulAttrs);
+
+							if (ulAttrs & SFGAO_FOLDER)
+							{
+								bIsFolder = TRUE;
+								DisplayFolder(pClickedInfo);
+							}
+						}
+
+						if (!bIsFolder)
+						{
+							CMINVOKECOMMANDINFO cmi;
+							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+							cmi.fMask = 0;
+							cmi.hwnd = (HWND) GetParent();
+							cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd - 1);
+							cmi.lpParameters = NULL;
+							cmi.lpDirectory = NULL;
+							cmi.nShow = SW_SHOWNORMAL;
+							cmi.dwHotKey = 0;
+							cmi.hIcon = NULL;
+
+							hr = pcm->InvokeCommand(&cmi);
+
+							if (SUCCEEDED(hr) && GetParent() != NULL)
+							{
+								GetParent()->SendMessage(AFX_WM_ON_AFTER_SHELL_COMMAND, (WPARAM) idCmd);
+							}
+						}
+					}
+				}
+			}
+
+			if (m_pContextMenu2 != NULL)
+			{
+				m_pContextMenu2->Release();
+				m_pContextMenu2 = NULL;
+			}
+		}
+
+		pcm->Release();
+	}
+
+	psm->m_pMalloc->Free(pPidls);
+}
+
+void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDLIST *piil)
+{
+	CString path_name;
+	if (!GetCurrentFolder(path_name))
+		return;
+
+	for (int ii = 0; ii < nSelItems; ++ii)
+	{
+		char tmp[_MAX_PATH];
+		SHGetPathFromIDList(piil[ii], tmp);
+
+		char fname[_MAX_FNAME], ext[_MAX_EXT];
+		_splitpath(tmp, NULL, NULL, fname, ext);
+
+		CString full_name(path_name + "\\" + fname + ext);
+		struct _stat stat;
+		if (::_stat(full_name, &stat) == -1)
+			continue;
+
+		// Open the file if it is not a directory
+		if ((stat.st_mode & _S_IFDIR) == 0)
+		{
+			time_t now = time(NULL);
+			switch (cmd)
+			{
+			case ID_OPEN:
+				ASSERT(theApp.open_current_readonly_ == -1);
+				theApp.open_current_readonly_ = FALSE;
+				theApp.OpenDocumentFile(full_name);
+				break;
+			case ID_OPEN_RO:
+				ASSERT(theApp.open_current_readonly_ == -1);
+				theApp.open_current_readonly_ = TRUE;
+				theApp.OpenDocumentFile(full_name);
+				break;
+			case ID_TIME_MOD:
+				SetFileModificationTime(full_name, time(NULL));
+				break;
+			case ID_TIME_CRE:
+				SetFileCreationTime(full_name, time(NULL));
+				break;
+			case ID_TIME_ACC:
+				SetFileAccessTime(full_name, time(NULL));
+				break;
+			}
+		}
+	}
+}
+
+void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd)
+{
+	int ii = 0;                 // Current menu item number
+
+	MENUITEMINFO mii;
+	memset(&mii, '\0', sizeof(mii));
+	mii.cbSize = sizeof(mii);
+	mii.fMask = MIIM_ID | MIIM_STATE | MIIM_TYPE;
+	mii.fState = MFS_ENABLED;
+
+	mii.fType = MFT_STRING;
+	mii.wID = firstCustomCmd + ID_OPEN;
+	mii.dwTypeData = _T("Open in HexEdit Pro");
+	::InsertMenuItem(hm, ii++, TRUE, &mii);
+
+	mii.fType = MFT_STRING;
+	mii.wID = firstCustomCmd + ID_OPEN_RO;
+	mii.dwTypeData = _T("Open Read-Only");
+	::InsertMenuItem(hm, ii++, TRUE, &mii);
+
+	mii.fType = MFT_STRING;
+	mii.wID = firstCustomCmd + ID_TIME_MOD;
+	mii.dwTypeData = _T("Set Modified Time");
+	::InsertMenuItem(hm, ii++, TRUE, &mii);
+
+	mii.fType = MFT_STRING;
+	mii.wID = firstCustomCmd + ID_TIME_CRE;
+	mii.dwTypeData = _T("Set Creation Time");
+	::InsertMenuItem(hm, ii++, TRUE, &mii);
+
+	mii.fType = MFT_STRING;
+	mii.wID = firstCustomCmd + ID_TIME_ACC;
+	mii.dwTypeData = _T("Set Accessed Time");
+	::InsertMenuItem(hm, ii++, TRUE, &mii);
+
+	mii.fType = MFT_SEPARATOR;
+	::InsertMenuItem(hm, ii++, TRUE, &mii);
 }
 
 void CHistoryShellList::OnDblClk(NMHDR * pNMHDR, LRESULT * pResult)
