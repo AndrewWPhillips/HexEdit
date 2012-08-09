@@ -144,7 +144,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="D:\Devel\Libraries\FreeImage"
+				AdditionalIncludeDirectories="D:\Devel\boost_1_47_0;.\include"
 				PreprocessorDefinitions="WINVER=0x0601;_WIN32_WINNT=0x0601;_WIN32_IE=0x500;WIN32;_DEBUG;_WINDOWS;_SECDLL;_CRT_SECURE_NO_DEPRECATE;_USE_32BIT_TIME_T"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
