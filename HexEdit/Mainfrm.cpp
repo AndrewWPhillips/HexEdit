@@ -262,7 +262,6 @@ CMainFrame::CMainFrame()
 		filename = ::GetExePath() + FILENAME_BACKGROUND;   // No data path only on Win 95?
 
 	CString bgfile = theApp.GetProfileString("MainFrame", "BackgroundFileName", filename);
-#ifdef USE_FREE_IMAGE
 	/*
 	  // Test creating a big bitmap using FreeImage
 	  m_dib = FreeImage_Allocate(1000, 200000, 24); // 200 million pixels seems to be OK!!
@@ -271,10 +270,6 @@ CMainFrame::CMainFrame()
 	*/
 	if ((m_dib = FreeImage_Load(FIF_BMP, bgfile)) == NULL)          // MUST be 24-bit BMP file
 		m_dib = FreeImage_Load(FIF_BMP, ::GetExePath() + FILENAME_BACKGROUND);
-#else
-	if (!m_background.LoadImage(bgfile))
-		m_background.LoadImage(GetExePath() + FILENAME_BACKGROUND);
-#endif
 	m_background_pos = theApp.GetProfileInt("MainFrame", "BackgroundPosition", 4); // 4 = bottom-right
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 
@@ -880,13 +875,8 @@ void CMainFrame::OnMenuSelect(UINT nItemID, UINT nFlags, HMENU hMenu)
 // We could draw into the MDI client area here (eg HexEdit logo).
 BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 {
-#ifdef USE_FREE_IMAGE
 	if (m_dib == NULL || m_background_pos == 0)
 		return FALSE;  // No bitmap so let Windows draw the background
-#else
-	if (HBITMAP(m_background) == 0 || m_background_pos == 0)
-		return FALSE;  // No bitmap so let Windows draw the background
-#endif
 
 	CRect rct;
 	m_wndClientArea.GetClientRect(rct);
@@ -919,15 +909,8 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 	// pDC->FillSolidRect(rct, ::GetSysColor(COLOR_APPWORKSPACE));
 
 	CSize siz;
-#ifdef USE_FREE_IMAGE
 	siz.cx = FreeImage_GetWidth(m_dib);
 	siz.cy = FreeImage_GetHeight(m_dib);
-#else
-	BITMAP bi;
-	m_background.GetBitmap(&bi);
-	siz.cx = bi.bmWidth;
-	siz.cy = bi.bmHeight;
-#endif
 
 	CPoint point;
 	CBrush backBrush;
@@ -954,62 +937,36 @@ BOOL CMainFrame::OnEraseMDIClientBackground(CDC* pDC)
 		break;
 	case 6: // stretch
 		{
-#ifdef USE_FREE_IMAGE
 		  ::StretchDIBits(pDC->GetSafeHdc(),
 						  0, 0, rct.Width(), rct.Height(),
 						  0, 0, siz.cx, siz.cy,
 						  FreeImage_GetBits(m_dib), FreeImage_GetInfo(m_dib), DIB_RGB_COLORS, SRCCOPY);
-#else
-			CDC dcTmp;
-			dcTmp.CreateCompatibleDC(pDC);
-			dcTmp.SelectObject(&m_background);
-			pDC->StretchBlt(0, 0, rct.Width(), rct.Height(), 
-					&dcTmp, 0, 0, siz.cx, siz.cy, SRCCOPY);
-			dcTmp.DeleteDC();
-#endif
 		}
 		goto no_fill;
 	case 7:  // tile
 		for (point.x = 0; point.x < rct.Width(); point.x += siz.cx)
 			for (point.y = 0; point.y < rct.Height(); point.y += siz.cy)
-#ifdef USE_FREE_IMAGE
 				::StretchDIBits(pDC->GetSafeHdc(),
 								point.x, point.y, siz.cx, siz.cy,
 								0, 0, siz.cx, siz.cy,
 								FreeImage_GetBits(m_dib), FreeImage_GetInfo(m_dib), DIB_RGB_COLORS, SRCCOPY);
-#else
-				pDC->DrawState(point, siz, &m_background, DST_BITMAP | DSS_NORMAL);
-#endif
 		goto no_fill;
 	}
 
 	// Create background brush using top left pixel of bitmap
 	{
-#ifdef USE_FREE_IMAGE
 		RGBQUAD px = { 192, 192, 192, 0};  // default to grey in case GetPixelColor fails
 		int height = FreeImage_GetHeight(m_dib);
 		VERIFY(FreeImage_GetPixelColor(m_dib, 0, height - 1, &px));  // get colour from top-left pixel (may fail if not 24 bit colours)
 		backBrush.CreateSolidBrush(RGB(px.rgbRed, px.rgbGreen, px.rgbBlue));
-#else
-		CDC dcTmp;
-		dcTmp.CreateCompatibleDC(pDC);
-		dcTmp.SelectObject(&m_background);
-
-		// Use top left pixel as background colour
-		backBrush.CreateSolidBrush(::GetPixel(dcTmp, 0, 0));  // get colour from (0,0) pixel
-#endif
 		backBrush.UnrealizeObject();
 	} // dcTmp destroyed here
 
 	pDC->FillRect(rct, &backBrush);
-#ifdef USE_FREE_IMAGE
 	::StretchDIBits(pDC->GetSafeHdc(),
 					point.x, point.y, siz.cx, siz.cy,
 					0, 0, siz.cx, siz.cy,
 					FreeImage_GetBits(m_dib), FreeImage_GetInfo(m_dib), DIB_RGB_COLORS, SRCCOPY);
-#else
-	pDC->DrawState(point, siz, &m_background, DST_BITMAP | DSS_NORMAL);
-#endif
 no_fill:
 	return TRUE;
 }
@@ -4222,58 +4179,9 @@ void CMainFrame::OnCalcSel()
 		if (start_addr == end_addr)
 			end_addr = start_addr + m_wndCalc.ByteSize();
 
-#if 1
 		m_wndCalc.change_bits((int)(end_addr - start_addr)*8);
 		m_wndCalc.SetFromFile(start_addr);
-#else
-		__int64 sel_val = 0;                    // Value from file to add to the calc
 
-		unsigned char buf[8];
-		size_t got = pview->GetDocument()->GetData(buf, min(8, size_t(end_addr - start_addr)), start_addr);
-		if (pview->BigEndian())
-		{
-			for (int ii = 0; ii < (int)got; ++ii)
-				sel_val = (sel_val<<8) + buf[ii];
-		}
-		else
-		{
-			while (got > 0)
-				sel_val = (sel_val<<8) + buf[--got];
-		}
-
-		// Change calc bits depending on size of selection
-		if (end_addr - start_addr > 8 || got < size_t())
-		{
-			ASSERT(0);
-			AfxMessageBox("Selection too big for calculator!");
-			theApp.mac_error_ = 10;
-		}
-		else if (end_addr - start_addr > 4)
-		{
-			m_wndCalc.change_bits(64);
-		}
-		else if (end_addr - start_addr > 2)
-		{
-			m_wndCalc.change_bits(32);
-		}
-		else if (end_addr - start_addr > 1)
-		{
-			m_wndCalc.change_bits(16);
-		}
-		else
-		{
-			m_wndCalc.change_bits(8);
-		}
-
-		m_wndCalc.SetWindowText("Calculator");
-		//ShowControlBar(&m_wndCalc, TRUE, FALSE); // xxx fix for MFC9
-		m_paneCalc.ShowAndUnroll();
-
-		// Make sure controls are up to date and put current address into it
-		//m_wndCalc.UpdateData(FALSE);
-
-		m_wndCalc.Set(sel_val);
-#endif
 
 		m_wndCalc.SetFocus();
 
@@ -4887,6 +4795,45 @@ BOOL CMainFrame::OnShowMDITabContextMenu(CPoint point, DWORD dwAllowedItems, BOO
 	return TRUE;
 }
 
+// Pass -1 to turn off progress, or a value from 0 to 100 to update the progress.
+void CMainFrame::Progress(int value)
+{
+	ASSERT(value <= 100);
+	if (value > 100) value = 100;
+
+	if (value < 0)
+	{
+		if (progress_on_)
+		{
+			// Turn off progress
+#if _MFC_VER >= 0x0A00
+			SetProgressBarState(TBPF_NOPROGRESS);
+#endif
+			m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar (pane 0)
+			progress_on_ = false;
+		}
+	}
+	else
+	{
+		if (!progress_on_)
+		{
+			// Turn on progress
+#if _MFC_VER >= 0x0A00
+			SetProgressBarRange(0, 100);
+			SetProgressBarState(TBPF_NORMAL);
+#endif
+			m_wndStatusBar.EnablePaneProgressBar(0);  // Turn on progress in left pane (pane 0)
+			progress_on_ = true;
+		}
+
+		// Update progress
+#if _MFC_VER >= 0x0A00
+		SetProgressBarPosition(value);
+#endif
+		m_wndStatusBar.SetPaneProgress(0, value);
+	}
+}
+
 void CMainFrame::OnSearchCombo()
 {
 	// We can't search if there is no file open
@@ -5498,45 +5445,6 @@ void CMainFrame::OnApplicationLook(UINT id)
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
-}
-
-// Pass -1 to turn off progress, or a value from 0 to 100 to update the progress.
-void CMainFrame::Progress(int value)
-{
-	ASSERT(value <= 100);
-	if (value > 100) value = 100;
-
-	if (value < 0)
-	{
-		if (progress_on_)
-		{
-			// Turn off progress
-#if _MFC_VER >= 0x0A00
-			SetProgressBarState(TBPF_NOPROGRESS);
-#endif
-			m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar (pane 0)
-			progress_on_ = false;
-		}
-	}
-	else
-	{
-		if (!progress_on_)
-		{
-			// Turn on progress
-#if _MFC_VER >= 0x0A00
-			SetProgressBarRange(0, 100);
-			SetProgressBarState(TBPF_NORMAL);
-#endif
-			m_wndStatusBar.EnablePaneProgressBar(0);  // Turn on progress in left pane (pane 0)
-			progress_on_ = true;
-		}
-
-		// Update progress
-#if _MFC_VER >= 0x0A00
-		SetProgressBarPosition(value);
-#endif
-		m_wndStatusBar.SetPaneProgress(0, value);
-	}
 }
 
 void CMainFrame::OnMdiMoveToNextGroup()
