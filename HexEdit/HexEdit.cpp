@@ -547,7 +547,7 @@ BOOL CHexEditApp::InitInstance()
 		m_pRecentFileList = new CHexFileList(0, FILENAME_RECENTFILES, recent_files_);
 		m_pRecentFileList->ReadList();
 
-#if MFC_VER_ >= 0x0A00
+#if _MFC_VER >= 0x0A00
 		SetupJumpList();
 #endif
 
@@ -977,7 +977,7 @@ void CHexEditApp::InitWorkspace()
 	GetXMLFileList();
 }
 
-#if MFC_VER_ >= 0x0A00
+#if _MFC_VER >= 0x0A00
 void CHexEditApp::SetupJumpList()
 {
 	if (!m_jumpList.InitializeList()) return;
