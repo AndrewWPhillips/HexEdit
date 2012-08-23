@@ -26,6 +26,8 @@
 #include "HexFileList.h"
 #include "HexEditView.h"
 
+#include <queue>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -708,3 +710,61 @@ std::vector<int> CHexFileList::Search(LPCTSTR str, bool ignoreCase, bool keyword
 	}
 	return retval;
 }
+
+void CHexFileList::SetupJumpList()
+{
+#if _MFC_VER >= 0x0A00  // earlier versions of MFC do not support CJumpList
+	CJumpList jumpList;
+
+	if (!jumpList.InitializeList()) return;
+	int maxSlots = jumpList.GetMaxSlots();
+
+	// get lists of recent, frequent and favourite files
+	// Note that we build the recent and frequent lists ourselves, rather than relying on
+	// KDC_RECENT and KDC_FREQUENT so we know what file extensions need to be registered.
+	std::vector<size_t> fav;
+	std::priority_queue<size_t> freq;  xxx needs compare func that give smallest opened_ the highest priority
+
+	for (size_t ii = 0; ii < name_.size(); ++ii)
+	{
+		if (freq.size() <= maxSlots/3 && opened_[ii] > 1)
+		{
+			freq.push(ii);
+		}
+		else if(opened_[ii] > opened_[freq.top()])
+		{
+			// First get rid of all the lowest frequency elements
+			size_t lowest = freq.top();
+			while (freq.size() > 0 && freq.top() == lowest)
+				freq.pop();
+			freq.push(ii);
+		}
+
+
+		if (fav.size() <= maxSlots/3)
+		{
+			CString ss = GetData(ii, CATEGORY);
+			if (ss.CompareNoCase("Favourites") == 0 || ss.CompareNoCase("Favorites") == 0)
+				fav.push_back(ii);
+		}
+	}
+
+	// work out how many of each to use
+	size_t numFreq = freq.size(), numFav = fav.size();
+	size_t numRecent = maxSlots - numFreq - numFav;
+
+
+	ASSERT(numRecent + numFreq + numFav <= maxSlots);
+
+	// Make sure we are associated with the extensions of all the files we are adding to the jump list
+
+	//jumpList.AddKnownCategory(KDC_RECENT);
+	//jumpList.AddKnownCategory(KDC_FREQUENT);
+	//jumpList.AddDestination("Recent", "D:\\tmp\\daily\\t.txt");
+	//jumpList.AddDestination("Favorites", "C:\\tmp\\daily\\dry.png");
+	//jumpList.AddDestination("Favorites", "C:\\tmp\\daily\\t.txt");
+	//jumpList.AddTask("C:\\Program Files\\WinZip\\WinZip32.EXE", "", "WinZip", "", 0);
+	jumpList.CommitList();
+#endif
+}
+

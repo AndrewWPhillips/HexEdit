@@ -80,6 +80,8 @@ public:
 	size_t GetCount() { return name_.size(); }
 	std::vector<int> Search(LPCTSTR str, bool ignoreCase, bool keywordsOnly);
 
+	void SetupJumpList();           // configure m_jumpList then commit it to Windows 7 TaskBar
+
 // Implementation
 public:
 	virtual ~CHexFileList() {}

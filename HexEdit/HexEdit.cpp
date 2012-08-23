@@ -417,6 +417,10 @@ UINT CHexEditApp::wm_hexedit = ::RegisterWindowMessage("HexEditOpenMessage");
 
 BOOL CHexEditApp::InitInstance()
 {
+		CString appid;
+		appid.LoadStringA(AFX_IDS_APP_ID);
+		SetAppID(appid);
+
 		// Note: if this is changed you also need to change the registry string
 		// at the end of ExitInstance (see delete_reg_settings_).
 		SetRegistryKey("ECSoftware");           // Required before registry use (and prevents use of .INI file)
@@ -547,9 +551,7 @@ BOOL CHexEditApp::InitInstance()
 		m_pRecentFileList = new CHexFileList(0, FILENAME_RECENTFILES, recent_files_);
 		m_pRecentFileList->ReadList();
 
-#if _MFC_VER >= 0x0A00
-		SetupJumpList();
-#endif
+		GetFileList()->SetupJumpList();  // set up Win7 task bar
 
 		// This used to be after the command line parsing but was moved here so that
 		// when files are opened the size of the main window is known so that they
@@ -976,17 +978,6 @@ void CHexEditApp::InitWorkspace()
 
 	GetXMLFileList();
 }
-
-#if _MFC_VER >= 0x0A00
-void CHexEditApp::SetupJumpList()
-{
-	if (!m_jumpList.InitializeList()) return;
-	m_jumpList.AddKnownCategory(KDC_RECENT);
-	m_jumpList.AddKnownCategory(KDC_FREQUENT);
-	m_jumpList.AddDestination("Favorites", "XXX");
-	m_jumpList.CommitList();
-}
-#endif
 
 void CHexEditApp::OnAppExit()
 {
@@ -2359,7 +2350,7 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
 
 	aerialview_ = GetProfileInt("Options", "AerialView", 0);
 	aerial_disp_state_ = GetProfileInt("Options", "AerialDisplay", 0x000010B1F);
-	auto_aerial_zoom_ = GetProfileInt("Otions", "AerialAutoZoom", 1) != 0 ? true : false;   // xxx check box in opt dlg
+	auto_aerial_zoom_ = GetProfileInt("Options", "AerialAutoZoom", 1) != 0 ? true : false;   // xxx check box in opt dlg
 	aerial_max_ = GetProfileInt("Aerial", "MaxBitmapInMbytes", 256);
 	if (aerial_max_ < 16) aerial_max_ = 16; else if (aerial_max_ > 999) aerial_max_ = 999;
 	aerial_max_ *= 1024*1024;
@@ -2819,7 +2810,7 @@ void CHexEditApp::SaveOptions()
 
 	WriteProfileInt("Options", "AerialView", aerialview_);
 	WriteProfileInt("Options", "AerialDisplay", aerial_disp_state_);
-	WriteProfileInt("Otions", "AerialAutoZoom", auto_aerial_zoom_);
+	WriteProfileInt("Options", "AerialAutoZoom", auto_aerial_zoom_);
 	WriteProfileInt("Aerial", "MaxBitmapInMbytes", aerial_max_/(1024*1024));
 
 	WriteProfileInt("Options", "CompareView", compview_);

@@ -910,11 +910,6 @@ private:
 	void InitVersionInfo();
 	void InitWorkspace();
 	void InitConversions();
-
-#if _MFC_VER >= 0x0A00
-	CJumpList m_jumpList;
-	void SetupJumpList();           // configure m_jumpList then commit it to Windows 7 TaskBar
-#endif
 };
 
 class CCommandLineParser : public CCommandLineInfo
