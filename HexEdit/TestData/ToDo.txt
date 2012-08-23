@@ -35,6 +35,8 @@ New Version
 BUGS
 ----
 
+- DATE vars lose accuracy between runs (saved in registry) - several minutes
+- Set date/time of files can be an hour or two out
 - jump and search tools bug: when right click and select paste the pasted text disappears (Ctrl+V works OK though)
   - cf similar problem in CCalcEdit - fixed by handling EN_CHANGE message
 - Enter in Find dialog

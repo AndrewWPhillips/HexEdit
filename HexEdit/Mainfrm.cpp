@@ -5703,7 +5703,7 @@ void CJumpExpr::SaveVars()
 			vars += buf;
 			break;
 		case TYPE_DATE:
-			sprintf(buf, "D%g;", double(pp->second.date));
+			sprintf(buf, "D%.14g;", double(pp->second.date));
 			vars += buf;
 			break;
 		case TYPE_STRING:
