@@ -1,6 +1,6 @@
 // Explorer.cpp : implementation of CExplorerWnd
 //
-// Copyright (c) 2004-2010 by Andrew W. Phillips.
+// Copyright (c) 2004-2012 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -24,6 +24,7 @@
 
 #include "HexEdit.h"
 #include "MainFrm.h"
+#include "HexEditDoc.h"
 #include "Explorer.h"
 #include "HexFileList.h"
 #include "CFile64.h"
@@ -676,7 +677,7 @@ void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point)
 
 				if (SUCCEEDED(hr))
 				{
-					UINT firstCustomCmd = hr;
+					UINT firstCustomCmd = hr;            // QueryContextMenu returns first ID that we can use for our own items
 					AdjustMenu(hPopup, firstCustomCmd);  // Add our own menu items
 
 					UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
@@ -745,6 +746,42 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 	if (!GetCurrentFolder(path_name))
 		return;
 
+	// If setting a file time: eveluate the date expression now
+	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	FILETIME new_time;
+	if (cmd >= ID_TIME_MOD && cmd <= ID_LAST && mm != NULL)
+	{
+		// We really should get the date expression that was shown on the menu
+		// item (now() or a date var name), but I couldn't work out how to get
+		// the sub-menu text from the command ID.  Doing it this way relies on the
+		// order that the menus are set up
+		int var = 0;
+		if (cmd < ID_TIME_CRE)
+			var = cmd - ID_TIME_MOD;
+		else if (cmd < ID_TIME_ACC)
+			var = cmd - ID_TIME_CRE;
+		else
+			var = cmd - ID_TIME_ACC;
+		ASSERT(var >= 0 && var < ID_TIME_CRE - ID_TIME_MOD - 1);
+
+		SYSTEMTIME st;
+		GetSystemTime(&st);
+
+		if (var > 0)
+		{
+			CString ss = mm->expr_.GetVarNames(CJumpExpr::TYPE_DATE)[var - 1];
+
+			int ac;
+			CHexExpr::value_t vv = mm->expr_.evaluate(ss, 0 /*unused*/, ac /*unused*/, 10, false);
+			if ((expr_eval::type_t)vv.typ == CHexExpr::TYPE_DATE)
+				VariantTimeToSystemTime(vv.date, &st);
+			else
+				AfxMessageBox("Date variable \"" + ss + "\" not found");
+		}
+
+		SystemTimeToFileTime(&st, &new_time);
+	}
+
 	for (int ii = 0; ii < nSelItems; ++ii)
 	{
 		char tmp[_MAX_PATH];
@@ -761,8 +798,19 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		// Open the file if it is not a directory
 		if ((stat.st_mode & _S_IFDIR) == 0)
 		{
-			time_t now = time(NULL);
-			switch (cmd)
+			if (cmd >= ID_TIME_MOD && cmd <= ID_TIME_CRE)
+			{
+				SetFileTimes(full_name, NULL, NULL, &new_time);
+			}
+			else if (cmd >= ID_TIME_CRE && cmd < ID_TIME_ACC)
+			{
+				SetFileTimes(full_name, &new_time);
+			}
+			else if (cmd >= ID_TIME_ACC && cmd < ID_LAST)
+			{
+				SetFileTimes(full_name, NULL, &new_time);
+			}
+			else switch (cmd)
 			{
 			case ID_OPEN:
 				ASSERT(theApp.open_current_readonly_ == -1);
@@ -773,15 +821,6 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 				ASSERT(theApp.open_current_readonly_ == -1);
 				theApp.open_current_readonly_ = TRUE;
 				theApp.OpenDocumentFile(full_name);
-				break;
-			case ID_TIME_MOD:
-				SetFileModificationTime(full_name, time(NULL));
-				break;
-			case ID_TIME_CRE:
-				SetFileCreationTime(full_name, time(NULL));
-				break;
-			case ID_TIME_ACC:
-				SetFileAccessTime(full_name, time(NULL));
 				break;
 			}
 		}
@@ -797,9 +836,9 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd)
 	CMenu mPopup;
 	VERIFY(mPopup.Attach(hm));
 
-	mPopup.InsertMenu(ii++, MF_SEPARATOR);
-	mPopup.InsertMenu(ii++, MF_STRING, firstCustomCmd + ID_OPEN, _T("Open in HexEdit Pro"));
-	mPopup.InsertMenu(ii++, MF_STRING, firstCustomCmd + ID_OPEN_RO, _T("Open Read-Only"));
+	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_BYPOSITION);
+	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_OPEN, _T("Open in HexEdit Pro"));
+	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_OPEN_RO, _T("Open Read-Only"));
 
 	// Create 3 sub-menus that allows setting of modified, accessed, created time of files to
 	// current time or a time taken from a "TYPE_DATE" variable
@@ -823,88 +862,16 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd)
 			break;                             // don't add too many
 	}
 
-	mPopup.InsertMenu(ii++, MF_POPUP, (UINT)mMod.m_hMenu, _T("Set Modified Time"));
-	mPopup.InsertMenu(ii++, MF_POPUP, (UINT)mCre.m_hMenu, _T("Set Creation Time"));
-	mPopup.InsertMenu(ii++, MF_POPUP, (UINT)mAcc.m_hMenu, _T("Set Accessed Time"));
+	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_BYPOSITION);
+	mPopup.InsertMenu(ii++, MF_POPUP | MF_BYPOSITION, (UINT)mMod.m_hMenu, _T("Set Modified Time"));
+	mPopup.InsertMenu(ii++, MF_POPUP | MF_BYPOSITION, (UINT)mCre.m_hMenu, _T("Set Creation Time"));
+	mPopup.InsertMenu(ii++, MF_POPUP | MF_BYPOSITION, (UINT)mAcc.m_hMenu, _T("Set Accessed Time"));
 	mMod.DestroyMenu();
 	mCre.DestroyMenu();
 	mAcc.DestroyMenu();
 
-	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_MENUBARBREAK);
+	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_MENUBARBREAK | MF_BYPOSITION);
 	mPopup.Detach();
-/*
-
-	MENUITEMINFO mii;
-	memset(&mii, '\0', sizeof(mii));
-	mii.cbSize = sizeof(mii);
-	mii.fMask = MIIM_ID | MIIM_STATE | MIIM_TYPE;
-	mii.fState = MFS_ENABLED;
-
-	mii.fType = MFT_SEPARATOR;
-	mii.wID = 0;
-	mii.dwTypeData = NULL;
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-
-	mii.fType = MFT_STRING;
-	mii.wID = firstCustomCmd + ID_OPEN;
-	mii.dwTypeData = _T("Open in HexEdit Pro");
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-
-	mii.fType = MFT_STRING;
-	mii.wID = firstCustomCmd + ID_OPEN_RO;
-	mii.dwTypeData = _T("Open Read-Only");
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-
-	mii.fType = MFT_SEPARATOR;
-	mii.wID = 0;
-	mii.dwTypeData = NULL;
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-
-	// Create 3 sub-menus that allows setting of modified, accessed, created time of files to
-	// current time or a time taken from a "TYPE_DATE" variable
-	CMenu mMod, mCre, mAcc;
-	mMod.CreatePopupMenu();
-	mCre.CreatePopupMenu();
-	mAcc.CreatePopupMenu();
-	mMod.AppendMenu(MF_STRING, firstCustomCmd + ID_TIME_MOD, "now()");
-	mCre.AppendMenu(MF_STRING, firstCustomCmd + ID_TIME_CRE, "now()");
-	mAcc.AppendMenu(MF_STRING, firstCustomCmd + ID_TIME_ACC, "now()");
-
-	// Get all date variables and add them to the 3 menus
-	std::vector<CString> varNames = mm->expr_.GetVarNames(CJumpExpr::TYPE_DATE);
-	for (int nn = 1; nn < varNames.size(); ++nn)
-	{
-		if (nn > ID_TIME_CRE - ID_TIME_MOD -1)
-			break;                             // don't add too many
-	}
-
-	mii.fMask = MIIM_STATE | MIIM_TYPE | MIIM_SUBMENU;
-
-	mii.fType = MFT_STRING;
-	mii.hSubMenu = mMod.m_hMenu;
-	mii.dwTypeData = _T("Set Modified Time");
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-
-	mii.fType = MFT_STRING;
-	mii.hSubMenu = mCre.m_hMenu;
-	mii.dwTypeData = _T("Set Creation Time");
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-
-	mii.fType = MFT_STRING;
-	mii.hSubMenu = mAcc.m_hMenu;
-	mii.dwTypeData = _T("Set Accessed Time");
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-
-	mii.fMask = MIIM_ID | MIIM_STATE | MIIM_TYPE;
-	mMod.DestroyMenu();
-	mCre.DestroyMenu();
-	mAcc.DestroyMenu();
-
-	mii.fType = MFT_SEPARATOR | MFT_MENUBARBREAK;
-	mii.wID = 0;
-	mii.dwTypeData = NULL;
-	::InsertMenuItem(hm, ii++, TRUE, &mii);
-*/
 }
 
 void CHistoryShellList::OnDblClk(NMHDR * pNMHDR, LRESULT * pResult)

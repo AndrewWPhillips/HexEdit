@@ -1595,16 +1595,13 @@ void SetFileAccessTime(const char *filename, time_t tt)
 	::CloseHandle(hh);
 }
 
-// Change a file's "creation" time
-void SetFileModificationTime(const char *filename, time_t tt)
+void SetFileTimes(const char * filename, const FILETIME * cre, const FILETIME * acc, const FILETIME * mod)
 {
 	HANDLE hh = ::CreateFile(filename, FILE_WRITE_ATTRIBUTES, FILE_SHARE_WRITE|FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hh == INVALID_HANDLE_VALUE)
 		return;
 
-	FILETIME ft;
-	if (ConvertToFileTime(tt, &ft))
-		::SetFileTime(hh, NULL, NULL, &ft);
+	::SetFileTime(hh, cre, acc, mod);
 	::CloseHandle(hh);
 }
 
