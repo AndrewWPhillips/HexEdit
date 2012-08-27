@@ -1924,12 +1924,8 @@ void CHexEditDoc::OnOpenInExplorer()
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 	if (pfile1_ != NULL && !IsDevice() && mm != NULL)
 	{
-		CString ss(pfile1_->GetFilePath());
-		::PathRemoveFileSpec(ss.GetBuffer(1));
-		ss.ReleaseBuffer();
-
 		mm->m_paneExpl.ShowAndUnroll();
-		mm->m_wndExpl.DisplayFolder(ss);
+		mm->m_wndExpl.ShowFile(pfile1_->GetFilePath());
 	}
 }
 

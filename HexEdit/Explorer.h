@@ -101,6 +101,7 @@ public:
 	virtual void OnSetColumns();                                                // sets up columns (in detail view mode)
 	virtual CString OnGetItemText(int iItem, int iColumn, LPAFX_SHELLITEMINFO pItem); // used in displaying text in columns
 	virtual int OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColumn);    // used in sorting on a column
+	void ShowFile(LPCTSTR full_name);    // Display file's folder then select the file
 
 	CString Folder() { if (pos_ > -1 && pos_ < int(name_.size())) return name_[pos_]; else return CString(); }
 
@@ -210,7 +211,7 @@ public:
 	CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0), init_(false), m_first(true) { }
 	enum { IDD = IDD_EXPLORER };
 	virtual BOOL Create(CWnd* pParentWnd);
-	void DisplayFolder(LPCTSTR lpszPath) { list_.DisplayFolder(lpszPath); }
+	void ShowFile(LPCTSTR fname) { list_.ShowFile(fname); }
 
 	void UpdateFolderInfo(CString folder);   // called when current folder changes
 	void Refresh();                 // Set folder/filter from edit controls and refresh the folder display

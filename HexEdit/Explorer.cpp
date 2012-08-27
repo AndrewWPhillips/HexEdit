@@ -83,6 +83,59 @@ HRESULT CHistoryShellList::DisplayFolder(LPAFX_SHELLITEMINFO lpItemInfo)
 	return retval;
 }
 
+void CHistoryShellList::ShowFile(LPCTSTR full_name)
+{
+	// Get the folder of the file and display it in list (and tree) ctrl
+	CString path(full_name);
+	::PathRemoveFileSpec(path.GetBuffer(1));
+	path.ReleaseBuffer();
+	DisplayFolder(path);
+
+	// Get the file name (without path)
+	LPCTSTR fname = ::PathFindFileName(full_name);
+
+	// get the pidl for the file
+	LPITEMIDLIST pidl;
+	ULONG chEaten;
+	ULONG dwAttributes = 0;
+	OLECHAR olePath[MAX_PATH];
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fname, -1, olePath, MAX_PATH);
+	HRESULT hr = m_psfCurFolder->ParseDisplayName(NULL, NULL, olePath, &chEaten, &pidl, &dwAttributes);
+	if (hr != S_OK)
+	{
+		ASSERT(0);
+		return;
+	}
+
+	// Find matching pidl in our list and enable it (disable all others)
+	int curr = -1;
+	LVITEM lvItem;
+	ZeroMemory(&lvItem, sizeof(lvItem));
+
+	while ((curr = GetNextItem(curr, LVNI_ALL)) > -1)
+	{
+		// Get item pidl
+		//if (((LPAFX_SHELLITEMINFO)GetItemData(curr))->pidlRel == pidl) ...
+		lvItem.mask = LVIF_PARAM;
+		lvItem.iItem = curr;
+		if (GetItem(&lvItem))
+		{
+			LPAFX_SHELLITEMINFO pInfo = (LPAFX_SHELLITEMINFO)lvItem.lParam;
+
+			// select the item
+			if (m_psfCurFolder->CompareIDs(0, pidl, pInfo->pidlRel) == 0)
+			{
+				SetItemState(curr, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+				EnsureVisible(curr, TRUE);
+				SetFocus();
+			}
+		}
+	}
+
+	// Even though doc does not say so I believe you must free the PIDL created by ParseDisplayName
+	theApp.GetShellManager()->FreeItem(pidl);
+}
+
 void CHistoryShellList::Back(int count)
 {
 	do_move(pos_ - count);

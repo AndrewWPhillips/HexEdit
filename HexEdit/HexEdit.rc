@@ -1315,7 +1315,7 @@ BEGIN
         MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
         MENUITEM SEPARATOR
         MENUITEM "Copy Full Path to Clipboard", ID_COPY_FULL_NAME
-        MENUITEM "Open Folder in Explorer",     ID_OPEN_IN_EXPLORER
+        MENUITEM "Show in HexEdit Explorer",    ID_OPEN_IN_EXPLORER
         MENUITEM SEPARATOR
         MENUITEM "Show &Icons",                 ID_TAB_ICONS
         MENUITEM "Tabs at &Bottom",             ID_TABS_AT_BOTTOM
