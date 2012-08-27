@@ -1,6 +1,6 @@
 // HexFileList: override of MFC CRecentFileList class
 //
-// Copyright (c) 2003-2010 by Andrew W. Phillips.
+// Copyright (c) 2003-2012 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -719,27 +719,53 @@ void CHexFileList::SetupJumpList()
 	if (!jumpList.InitializeList()) return;
 	int maxSlots = jumpList.GetMaxSlots();
 
-	// get lists of recent, frequent and favourite files
+	// We need to get three list, the total size of which adds up to maxSlots (or less):
+	// recent files: just the last n files of the recent file list
+	// frequent files: the files that have been opened the most (using the open_count_ array)
+	//   - we use a priority queue that stores the most frequently opened files
+	//   - note that the "highest" priority are the least frequently opened so we can pop them off the top
+	// favorite: the last n files that have CATEGORY of favorite or favourite
+	//   - we just store these in a vector and stop when we have enough
 	// Note that we build the recent and frequent lists ourselves, rather than relying on
 	// KDC_RECENT and KDC_FREQUENT so we know what file extensions need to be registered.
-	std::vector<size_t> fav;
-	std::priority_queue<size_t> freq;  xxx needs compare func that give smallest opened_ the highest priority
 
-	for (size_t ii = 0; ii < name_.size(); ++ii)
+	// This class is a functor used to compare elements added to the frequency priority queue
+	class freq_compare
 	{
-		if (freq.size() <= maxSlots/3 && opened_[ii] > 1)
+	private:
+		CHexFileList *pfl;
+	public:
+		freq_compare(CHexFileList *pfl): pfl(pfl) { }
+		bool operator() (const int &lhs, const int &rhs) const
+		{
+			return pfl->GetOpenedCount(lhs) > pfl->GetOpenedCount(rhs);
+		}
+	};
+	// This stores the first "favourite" files found
+	std::vector<int> fav;
+	// This stores the files that have been opened the most
+	typedef std::priority_queue<int, std::vector<int>, freq_compare> freq_type;
+	freq_type freq(freq_compare(this));
+
+	for (int ii = name_.size() - 1; ii >= 0; ii--)
+	{
+		if (open_count_[ii] <= 1)
+		{
+		}
+		else if (freq.size() <= maxSlots/3)
 		{
 			freq.push(ii);
 		}
-		else if(opened_[ii] > opened_[freq.top()])
+		else if (open_count_[ii] > open_count_[freq.top()])
 		{
 			// First get rid of all the lowest frequency elements
-			size_t lowest = freq.top();
-			while (freq.size() > 0 && freq.top() == lowest)
+			int lowest = open_count_[freq.top()];
+			while (freq.size() > 0 && open_count_[freq.top()] == lowest)
+			{
 				freq.pop();
+			}
 			freq.push(ii);
 		}
-
 
 		if (fav.size() <= maxSlots/3)
 		{
@@ -750,13 +776,37 @@ void CHexFileList::SetupJumpList()
 	}
 
 	// work out how many of each to use
-	size_t numFreq = freq.size(), numFav = fav.size();
-	size_t numRecent = maxSlots - numFreq - numFav;
-
+	int numFreq = freq.size(), numFav = fav.size();
+	int numRecent = maxSlots - numFreq - numFav;
+	if (numRecent > name_.size())
+		numRecent = name_.size();
 
 	ASSERT(numRecent + numFreq + numFav <= maxSlots);
 
 	// Make sure we are associated with the extensions of all the files we are adding to the jump list
+	std::set<CString> ext;
+
+	// Get extensions of recent files
+	for (int ii = name_.size() - 1; ii >= name_.size() - numRecent; ii--)
+	{
+		ext.insert(CString(::PathFindExtension(name_[ii])));
+	}
+
+	// Get extensions of frequently opened files
+	freq_type temp = freq;
+	while (temp.size() > 0)
+	{
+		ext.insert(CString(::PathFindExtension(name_[temp.top()])));
+		temp.pop();
+	}
+
+	// Get extensions of favourite files
+	for (std::vector<int>::const_iterator pf = fav.begin(); pf != fav.end(); ++pf)
+	{
+		ext.insert(CString(::PathFindExtension(name_[*pf])));
+	}
+
+
 
 	//jumpList.AddKnownCategory(KDC_RECENT);
 	//jumpList.AddKnownCategory(KDC_FREQUENT);

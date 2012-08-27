@@ -67,6 +67,7 @@ public:
 	virtual int GetVersion() { return ver_; }
 
 	time_t GetOpened(int nIndex) { ASSERT(nIndex > -1 && nIndex < int(opened_.size())); return opened_[nIndex]; }
+	int GetOpenedCount(int nIndex) { ASSERT(nIndex < int(name_.size())); return open_count_[nIndex]; }
 	void SetDefaults();
 	bool SetDV(param_num param, LPCTSTR value);
 	bool SetDV(param_num param, __int64 vv);
