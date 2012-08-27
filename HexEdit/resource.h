@@ -1744,7 +1744,8 @@
 #define ID_CODEPAGE_936                 39185
 #define ID_CODEPAGE_949                 39186
 #define ID_CODEPAGE_950                 39187
-#define ID_REPAIR_COPYUSERFILES         39188
+#define ID_REPAIR_COPYUSERFILES         39200
+#define ID_SHOW_ALL                     39201
 #define IDS_WARNING_DO_NOT_RENUMBER     52700
 #define IDS_BOOKMARK_NOFILE             52701
 #define IDS_BOOKMARK_NOTFOUND           52702
@@ -1804,7 +1805,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        511
-#define _APS_NEXT_COMMAND_VALUE         39189
+#define _APS_NEXT_COMMAND_VALUE         39203
 #define _APS_NEXT_CONTROL_VALUE         1671
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

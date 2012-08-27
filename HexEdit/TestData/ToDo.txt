@@ -55,9 +55,14 @@ BUGS
 - Explorer
   - add default open folders to history list on startup (and save folder too if different)
   - start in default open folder
-  - fix context menus
+  > fix context menus
+  > Allow dhowing of hidden system files
+  > Add commands to set file times (now and using DATE varibale)
+  > Add commands to toggle rO, arc, hidden, sys, indexed etc bits
 > New MFC MDI tabs
 >   new options for close X and coloured tabs
+> Add command to copy path to clipboard
+> Add command to show file in Explorer
 > vert/horz tab groups
 > W7 Taskbar: thumbnails
 > W7 taskbar: progress

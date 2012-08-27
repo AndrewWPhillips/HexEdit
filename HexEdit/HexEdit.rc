@@ -3964,8 +3964,9 @@ BEGIN
         MENUITEM "L&ist",                       ID_VIEW_LIST
         MENUITEM "&Details",                    ID_VIEW_DETAILS
         MENUITEM SEPARATOR
-        MENUITEM "&Don't show hidden files",    ID_HIDDEN_HIDE
-        MENUITEM "&Show hidden files",          ID_HIDDEN_SHOW
+        MENUITEM "Do &Not Show Hidden files",   ID_HIDDEN_HIDE
+        MENUITEM "Show &Hidden files",          ID_HIDDEN_SHOW
+        MENUITEM "Show &All (system) files",    ID_SHOW_ALL
     END
 END
 

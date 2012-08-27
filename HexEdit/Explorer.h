@@ -1,6 +1,6 @@
 // Explorer.h - header file for CExplorerWnd and related classes
 //
-// Copyright (c) 2004-2010 by Andrew W. Phillips.
+// Copyright (c) 2004-2012 by Andrew W. Phillips.
 //
 // No restrictions are placed on the noncommercial use of this code,
 // as long as this text (from the above copyright notice to the
@@ -60,12 +60,28 @@ class CHistoryShellList : public CMFCShellListCtrl
 	// ID's of commands added to Explorer context menu
 	enum
 	{
+		// Open the selected file(s)
 		ID_OPEN = 1,
 		ID_OPEN_RO,
+
+		// Flags
+		ID_READ_ONLY_ON,
+		ID_READ_ONLY_OFF,
+		ID_HIDDEN_ON,
+		ID_HIDDEN_OFF,
+		ID_SYSTEM_ON,
+		ID_SYSTEM_OFF,
+		ID_ARCHIVE_ON,
+		ID_ARCHIVE_OFF,
+		ID_INDEX_ON,
+		ID_INDEX_OFF,
+
+		// Set file date/times
 		ID_TIME_MOD = 100,
 		ID_TIME_CRE = 200,
 		ID_TIME_ACC = 300,
-		ID_LAST = 400
+		ID_TIME_ALL = 400,
+		ID_LAST = 500
 	};
 public:
 	CHistoryShellList() : pExpl_(NULL), pos_(-1), in_move_(false), add_to_hist_(true), m_pDropTarget(NULL) { }
@@ -103,7 +119,7 @@ protected:
 	virtual HRESULT EnumObjects(LPSHELLFOLDER pParentFolder, LPITEMIDLIST pidlParent);
 
 private:
-	void AdjustMenu(HMENU, UINT firstCustomCmd);
+	void AdjustMenu(HMENU, UINT firstCustomCmd, UINT nSelItems, LPCITEMIDLIST *piil);
 	void HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDLIST *piil);
 
 	void do_move(int ii);
@@ -254,6 +270,7 @@ protected:
 
 private:
 	void build_filter_menu();
+	void update_types();
 
 	bool init_;
 	CString filters_;                   // Current filter string (from last GetCurrentFilters) as in filter menu
@@ -265,6 +282,8 @@ private:
 	bool m_first;                   // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
 	CResizeCtrl m_resizer;          // Used to move controls around when the window is resized
 	static CBrush * m_pBrush;       // brush used for background
+
+	int show_hidden;                // 0=off, 1=show hidden files, 2=show all (system files too)
 };
 
 //{{AFX_INSERT_LOCATION}}

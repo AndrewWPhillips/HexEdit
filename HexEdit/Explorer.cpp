@@ -673,55 +673,59 @@ void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point)
 			HMENU hPopup = ::CreatePopupMenu();
 			if (hPopup != NULL)
 			{
-				hr = m_pContextMenu2->QueryContextMenu(hPopup, 0, 1, 0x7fff, CMF_NORMAL | CMF_EXPLORE);
+				// Note: if this call takes a long time (> 5 secs) then there is probably a problem with an Explorer
+				// Shell Extension - use ShellExView to check and disable possible problem extensions.
+				hr = m_pContextMenu2->QueryContextMenu(hPopup, 0, 1, 0x7fff, CMF_NORMAL /* | CMF_EXPLORE */);
 
 				if (SUCCEEDED(hr))
 				{
+					// First work out if we have a folder selected
+					BOOL bIsFolder = FALSE;
+					if (nSelItems == 1)
+					{
+						ULONG ulAttrs = SFGAO_FOLDER;
+						m_psfCurFolder->GetAttributesOf(1, (const struct _ITEMIDLIST **) &pClickedInfo->pidlRel, &ulAttrs);
+
+						if (ulAttrs & SFGAO_FOLDER)
+							bIsFolder = TRUE;
+					}
+
 					UINT firstCustomCmd = hr;            // QueryContextMenu returns first ID that we can use for our own items
-					AdjustMenu(hPopup, firstCustomCmd);  // Add our own menu items
+					if (!bIsFolder)
+						AdjustMenu(hPopup, firstCustomCmd, nSelItems, (LPCITEMIDLIST*)pPidls);  // Add our own menu items
 
 					UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
 
-					if (idCmd >= firstCustomCmd && idCmd < firstCustomCmd + ID_LAST)
+					if (idCmd == 0)
+					{
+						// user cancelled - do nothing
+					}
+					else if (bIsFolder && idCmd == ::GetMenuDefaultItem(hPopup, FALSE, 0))
+					{
+						DisplayFolder(pClickedInfo);
+					}
+					else if (!bIsFolder && idCmd >= firstCustomCmd && idCmd < firstCustomCmd + ID_LAST)
 					{
 						HandleCustomCommand(idCmd - firstCustomCmd, nSelItems, (LPCITEMIDLIST*)pPidls);
 					}
-					else if (idCmd != 0)
+					else if (!bIsFolder)
 					{
-						BOOL bIsFolder = FALSE;
+						CMINVOKECOMMANDINFO cmi;
+						cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+						cmi.fMask = 0;
+						cmi.hwnd = (HWND) GetParent();
+						cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd - 1);
+						cmi.lpParameters = NULL;
+						cmi.lpDirectory = NULL;
+						cmi.nShow = SW_SHOWNORMAL;
+						cmi.dwHotKey = 0;
+						cmi.hIcon = NULL;
 
-						if (nSelItems == 1 && idCmd == ::GetMenuDefaultItem(hPopup, FALSE, 0))
+						hr = pcm->InvokeCommand(&cmi);
+
+						if (SUCCEEDED(hr) && GetParent() != NULL)
 						{
-							// If specified element is a folder, try to display it:
-							ULONG ulAttrs = SFGAO_FOLDER;
-							m_psfCurFolder->GetAttributesOf(1, (const struct _ITEMIDLIST **) &pClickedInfo->pidlRel, &ulAttrs);
-
-							if (ulAttrs & SFGAO_FOLDER)
-							{
-								bIsFolder = TRUE;
-								DisplayFolder(pClickedInfo);
-							}
-						}
-
-						if (!bIsFolder)
-						{
-							CMINVOKECOMMANDINFO cmi;
-							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
-							cmi.fMask = 0;
-							cmi.hwnd = (HWND) GetParent();
-							cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd - 1);
-							cmi.lpParameters = NULL;
-							cmi.lpDirectory = NULL;
-							cmi.nShow = SW_SHOWNORMAL;
-							cmi.dwHotKey = 0;
-							cmi.hIcon = NULL;
-
-							hr = pcm->InvokeCommand(&cmi);
-
-							if (SUCCEEDED(hr) && GetParent() != NULL)
-							{
-								GetParent()->SendMessage(AFX_WM_ON_AFTER_SHELL_COMMAND, (WPARAM) idCmd);
-							}
+							GetParent()->SendMessage(AFX_WM_ON_AFTER_SHELL_COMMAND, (WPARAM) idCmd);
 						}
 					}
 				}
@@ -760,12 +764,14 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 			var = cmd - ID_TIME_MOD;
 		else if (cmd < ID_TIME_ACC)
 			var = cmd - ID_TIME_CRE;
-		else
+		else if (cmd < ID_TIME_ALL)
 			var = cmd - ID_TIME_ACC;
+		else
+			var = cmd - ID_TIME_ALL;
 		ASSERT(var >= 0 && var < ID_TIME_CRE - ID_TIME_MOD - 1);
 
 		SYSTEMTIME st;
-		GetSystemTime(&st);
+		GetLocalTime(&st);
 
 		if (var > 0)
 		{
@@ -779,13 +785,15 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 				AfxMessageBox("Date variable \"" + ss + "\" not found");
 		}
 
-		SystemTimeToFileTime(&st, &new_time);
+		FILETIME local_time;
+		SystemTimeToFileTime(&st, &local_time);          // st is local time -> file time (local)
+		LocalFileTimeToFileTime(&local_time, &new_time); // convert local -> file time (UTC)
 	}
 
-	for (int ii = 0; ii < nSelItems; ++ii)
+	for (int item = 0; item < nSelItems; ++item)
 	{
 		char tmp[_MAX_PATH];
-		SHGetPathFromIDList(piil[ii], tmp);
+		SHGetPathFromIDList(piil[item], tmp);
 
 		char fname[_MAX_FNAME], ext[_MAX_EXT];
 		_splitpath(tmp, NULL, NULL, fname, ext);
@@ -798,6 +806,8 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		// Open the file if it is not a directory
 		if ((stat.st_mode & _S_IFDIR) == 0)
 		{
+			DWORD attr = GetFileAttributes(full_name);
+
 			if (cmd >= ID_TIME_MOD && cmd <= ID_TIME_CRE)
 			{
 				SetFileTimes(full_name, NULL, NULL, &new_time);
@@ -806,9 +816,13 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 			{
 				SetFileTimes(full_name, &new_time);
 			}
-			else if (cmd >= ID_TIME_ACC && cmd < ID_LAST)
+			else if (cmd >= ID_TIME_ACC && cmd < ID_TIME_ALL)
 			{
 				SetFileTimes(full_name, NULL, &new_time);
+			}
+			else if (cmd >= ID_TIME_ALL && cmd < ID_LAST)
+			{
+				SetFileTimes(full_name, &new_time, &new_time, &new_time);
 			}
 			else switch (cmd)
 			{
@@ -822,12 +836,42 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 				theApp.open_current_readonly_ = TRUE;
 				theApp.OpenDocumentFile(full_name);
 				break;
+			case ID_READ_ONLY_ON:
+				SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_READONLY);
+				break;
+			case ID_READ_ONLY_OFF:
+				SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_READONLY);
+				break;
+			case ID_HIDDEN_ON:
+				SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_HIDDEN);
+				break;
+			case ID_HIDDEN_OFF:
+				SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_HIDDEN);
+				break;
+			case ID_SYSTEM_ON:
+				SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_SYSTEM);
+				break;
+			case ID_SYSTEM_OFF:
+				SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_SYSTEM);
+				break;
+			case ID_ARCHIVE_ON:
+				SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_ARCHIVE);
+				break;
+			case ID_ARCHIVE_OFF:
+				SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_ARCHIVE);
+				break;
+			case ID_INDEX_ON:
+				SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
+				break;
+			case ID_INDEX_OFF:
+				SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
+				break;
 			}
 		}
 	}
 }
 
-void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd)
+void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems, LPCITEMIDLIST *piil)
 {
 	int ii = 0;                 // Current menu item number
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -842,14 +886,16 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd)
 
 	// Create 3 sub-menus that allows setting of modified, accessed, created time of files to
 	// current time or a time taken from a "TYPE_DATE" variable
-	CMenu mMod, mCre, mAcc;
+	CMenu mMod, mCre, mAcc, mAll;
 
 	mMod.CreatePopupMenu();
 	mCre.CreatePopupMenu();
 	mAcc.CreatePopupMenu();
-	mMod.AppendMenu(MF_STRING, firstCustomCmd + ID_TIME_MOD, "now()");
-	mCre.AppendMenu(MF_STRING, firstCustomCmd + ID_TIME_CRE, "now()");
-	mAcc.AppendMenu(MF_STRING, firstCustomCmd + ID_TIME_ACC, "now()");
+	mAll.CreatePopupMenu();
+	mMod.AppendMenu(MF_STRING, firstCustomCmd + ID_TIME_MOD, "Current Time");
+	mCre.AppendMenu(MF_STRING, firstCustomCmd + ID_TIME_CRE, "Current Time");
+	mAcc.AppendMenu(MF_STRING, firstCustomCmd + ID_TIME_ACC, "Current Time");
+	mAll.AppendMenu(MF_STRING, firstCustomCmd + ID_TIME_ALL, "Current Time");
 
 	// Get all date variables and add them to the 3 menus
 	std::vector<CString> varNames = mm->expr_.GetVarNames(CJumpExpr::TYPE_DATE);
@@ -858,6 +904,7 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd)
 		mMod.AppendMenuA(MF_STRING, firstCustomCmd + ID_TIME_MOD + nn + 1, varNames[nn]);
 		mCre.AppendMenuA(MF_STRING, firstCustomCmd + ID_TIME_CRE + nn + 1, varNames[nn]);
 		mAcc.AppendMenuA(MF_STRING, firstCustomCmd + ID_TIME_ACC + nn + 1, varNames[nn]);
+		mAll.AppendMenuA(MF_STRING, firstCustomCmd + ID_TIME_ALL + nn + 1, varNames[nn]);
 		if (nn > ID_TIME_CRE - ID_TIME_MOD - 2)
 			break;                             // don't add too many
 	}
@@ -866,9 +913,66 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd)
 	mPopup.InsertMenu(ii++, MF_POPUP | MF_BYPOSITION, (UINT)mMod.m_hMenu, _T("Set Modified Time"));
 	mPopup.InsertMenu(ii++, MF_POPUP | MF_BYPOSITION, (UINT)mCre.m_hMenu, _T("Set Creation Time"));
 	mPopup.InsertMenu(ii++, MF_POPUP | MF_BYPOSITION, (UINT)mAcc.m_hMenu, _T("Set Accessed Time"));
+	mPopup.InsertMenu(ii++, MF_POPUP | MF_BYPOSITION, (UINT)mAll.m_hMenu, _T("Set All Times"));
 	mMod.DestroyMenu();
 	mCre.DestroyMenu();
 	mAcc.DestroyMenu();
+	mAll.DestroyMenu();
+
+	CString path_name;
+	if (GetCurrentFolder(path_name))
+	{
+		// Menu items for toggleable flags - first we need to get the current state
+		bool is_ro = true, is_hidden = true, is_sys = true, is_arc = true, is_index = true;
+		for (int item = 0; item < nSelItems; ++item)
+		{
+			char tmp[_MAX_PATH];
+			SHGetPathFromIDList(piil[item], tmp);
+
+			char fname[_MAX_FNAME], ext[_MAX_EXT];
+			_splitpath(tmp, NULL, NULL, fname, ext);
+
+			CString full_name(path_name + "\\" + fname + ext);
+
+			DWORD attr = GetFileAttributes(full_name);
+			if ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0)
+				continue;     // skip directories
+
+			if ((attr & FILE_ATTRIBUTE_READONLY) == 0)
+				is_ro = false;
+			if ((attr & FILE_ATTRIBUTE_HIDDEN) == 0)
+				is_hidden = false;
+			if ((attr & FILE_ATTRIBUTE_SYSTEM) == 0)
+				is_sys = false;
+			if ((attr & FILE_ATTRIBUTE_SYSTEM) == 0)
+				is_sys = false;
+			if ((attr & FILE_ATTRIBUTE_ARCHIVE) == 0)
+				is_arc = false;
+			if ((attr & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED) != 0)
+				is_index = false;
+		}
+		mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_BYPOSITION);
+		if (is_ro)
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_READ_ONLY_OFF, _T("Read Only"));
+		else
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_READ_ONLY_ON, _T("Read Only"));
+		if (is_hidden)
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_HIDDEN_OFF, _T("Hidden"));
+		else
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_HIDDEN_ON, _T("Hidden"));
+		if (is_sys)
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_SYSTEM_OFF, _T("System"));
+		else
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_SYSTEM_ON, _T("System"));
+		if (is_arc)
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_ARCHIVE_OFF, _T("Archive"));
+		else
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_ARCHIVE_ON, _T("Archive"));
+		if (is_index)
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_INDEX_OFF, _T("Indexed"));
+		else
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_INDEX_ON, _T("Indexed"));
+	}
 
 	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_MENUBARBREAK | MF_BYPOSITION);
 	mPopup.Detach();
@@ -1459,7 +1563,7 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 	splitter_.SetPane(1, &list_);
 
 	// Set options for the tree and list
-	tree_.SetFlags(SHCONTF_FOLDERS | SHCONTF_INCLUDEHIDDEN);
+	//tree_.SetFlags(SHCONTF_FOLDERS | SHCONTF_INCLUDEHIDDEN);  // moved to update_types
 	tree_.SetRelatedList(&list_);
 	tree_.EnableShellContextMenu();
 	list_.EnableShellContextMenu();
@@ -1488,10 +1592,8 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 	DWORD lvs = theApp.GetProfileInt("File-Settings", "ExplorerView", LVS_REPORT);
 	list_.ModifyStyle(LVS_TYPEMASK, lvs);
 
-	if (theApp.GetProfileInt("File-Settings", "ExplorerShowHidden", 1) == 1)
-		list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS | SHCONTF_INCLUDEHIDDEN));
-	else
-		list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS));
+	show_hidden = theApp.GetProfileInt("File-Settings", "ExplorerShowHidden", 1);
+	update_types();
 
 	int ii;
 
@@ -1779,8 +1881,7 @@ void CExplorerWnd::OnDestroy()
 
 	list_.SaveLayout();         // save columns etc for list
 
-	theApp.WriteProfileInt("File-Settings", "ExplorerShowHidden",
-						   (list_.GetItemTypes() & SHCONTF_INCLUDEHIDDEN) != 0);
+	theApp.WriteProfileInt("File-Settings", "ExplorerShowHidden", show_hidden);
 
 	// Save current folder
 	CString dir;
@@ -1948,9 +2049,12 @@ LRESULT CExplorerWnd::OnKickIdle(WPARAM, LPARAM lCount)
 	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_VIEW_LIST,      (lvs == LVS_LIST      ? MF_CHECKED : MF_UNCHECKED));
 	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_VIEW_DETAILS,   (lvs == LVS_REPORT    ? MF_CHECKED : MF_UNCHECKED));
 
-	bool show = (list_.GetItemTypes() & SHCONTF_INCLUDEHIDDEN) != 0;
-	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_HIDDEN_HIDE, !show ? MF_CHECKED : MF_UNCHECKED);
-	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_HIDDEN_SHOW, show ? MF_CHECKED : MF_UNCHECKED);
+	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_HIDDEN_HIDE, show_hidden == 0 ? MF_CHECKED : MF_UNCHECKED);
+	m_menu_.GetSubMenu(0)->CheckMenuItem(ID_HIDDEN_SHOW, show_hidden == 1 ? MF_CHECKED : MF_UNCHECKED);
+	if (!theApp.is_win7_)
+		m_menu_.GetSubMenu(0)->DeleteMenu(ID_SHOW_ALL, MF_BYCOMMAND);
+	else
+		m_menu_.GetSubMenu(0)->CheckMenuItem(ID_SHOW_ALL, show_hidden == 2 ? MF_CHECKED : MF_UNCHECKED);
 
 	build_filter_menu();
 
@@ -2070,17 +2174,42 @@ void CExplorerWnd::OnFolderView()
 
 	// Show/hide hidden files
 	case ID_HIDDEN_HIDE:
-		list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS));
+		show_hidden = 0;
+		update_types();
 		break;
-
 	case ID_HIDDEN_SHOW:
-		list_.SetItemTypes(SHCONTF(SHCONTF_FOLDERS | SHCONTF_NONFOLDERS | SHCONTF_INCLUDEHIDDEN));
+		show_hidden = 1;
+		update_types();
+		break;
+	case ID_SHOW_ALL:
+		show_hidden = 2;
+		update_types();
 		break;
 
 	default:
 		ASSERT(0);
 		return;
 	}
+}
+
+// This function changes the types of objects display in the tree and the list
+// both: always show folders
+// list: also shows non-folders (ie files)
+// show_hidden says whether hidden and system files are shown
+void CExplorerWnd::update_types()
+{
+	SHCONTF flags = SHCONTF_FOLDERS;
+
+	if (show_hidden > 0)
+		flags |= SHCONTF_INCLUDEHIDDEN;
+
+	// Note that the SHCONTF_INCLUDESUPERHIDDEN option has no effect if the Windows Explorer option
+	// "Hide protected (operating system) files (Recommended)" is off since HIDDEN files are already shown
+	if (theApp.is_win7_ && show_hidden > 1)
+		flags |= SHCONTF_INCLUDESUPERHIDDEN;  
+
+	tree_.SetFlags(flags);
+	list_.SetItemTypes(flags | SHCONTF_NONFOLDERS);
 }
 
 // Called when a name selected from the folder drop down list (history)

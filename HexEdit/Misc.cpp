@@ -826,7 +826,7 @@ bool ConvertToFileTime(time_t tt, FILETIME *ft)
 		st.wSecond = ptm->tm_sec;
 		st.wMilliseconds = 500;
 
-		FILETIME ftemp;
+		FILETIME ftemp;   // File time as local time
 		if (::SystemTimeToFileTime(&st, &ftemp) && ::LocalFileTimeToFileTime(&ftemp, ft))
 			retval = true;
 	}

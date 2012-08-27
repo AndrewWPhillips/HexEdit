@@ -2397,8 +2397,8 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 		}
 		else if (val.typ == TYPE_STRING)
 		{
-			val.date = get_date(CString(*(val.pstr)));
-			val.typ = TYPE_DATE;
+			val.date = get_date(CString(*(val.pstr)));  // parse date from string
+			val.typ = TYPE_DATE;                        // date stored as local time
 		}
 		else
 		{
@@ -2442,6 +2442,7 @@ expr_eval::tok_t expr_eval::prec_prim(value_t &val, CString &vname)
 			strcpy(error_buf_, "Closing parenthesis expected for \"now\"");
 			return TOK_NONE;
 		}
+		// Note: GetCurrentTime() seems to return a DATE in local time (not UTC)
 		val = value_t(COleDateTime::GetCurrentTime());
 		return get_next();
 	case TOK_YEAR:
