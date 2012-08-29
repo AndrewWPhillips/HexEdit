@@ -122,6 +122,7 @@ protected:
 private:
 	void AdjustMenu(HMENU, UINT firstCustomCmd, UINT nSelItems, LPCITEMIDLIST *piil);
 	void HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDLIST *piil);
+	CString GetAttributes(LPCTSTR path, bool * p_is_dir = NULL);
 
 	void do_move(int ii);
 
@@ -132,6 +133,7 @@ private:
 	bool add_to_hist_;           // Used to prevent adding to dop-down list in sme circumstances (default to true)
 	int normal_count_;           // No of columns added in base class (CMFCShellListCtrl)
 	int fl_idx_;                 // This is saved index into recent file list (cached for list box row while processing fields)
+	TCHAR fl_path_[MAX_PATH];    // Saved name of file for current row
 	static char * defaultWidths;
 
 	CExplorerDropTarget * m_pDropTarget;

@@ -258,22 +258,35 @@ void CHistoryShellList::SaveLayout()
 CString CHistoryShellList::OnGetItemText(int iItem, int iColumn, 
 										 LPAFX_SHELLITEMINFO pItem)
 {
+	CHexFileList *pfl = theApp.GetFileList();
+
 	// We use fl_idx_ to store the index into recent file list (pfl) of the current file,
 	// which saves time by avoiding calls to SHGetPathFromIDList for each column.
 	// This is obtained when getting the first of our columns (COLATTR) but this may need
 	// fixing when the user can reorder columns (not sure COLATTR will still be done first).
 	// (A better soln might be to save pItem to compare in the next call.)
 	if (iColumn == COLNAME)
+	{
 		fl_idx_ = -2;  // Reset recent file list index at the start of a new row to help detect bugs/problems
+		fl_path_[0] = '\0';
+	}
 
-	TCHAR path[MAX_PATH];
-
-	// Handle size column ourselves since BCG base class can't handle file sizes > 2Gbytes
 	if (iColumn == COLSIZE)
 	{
+		// We get the index for this file from the recent file list here to save time repeating the
+		// procedure (get path and then look up index) for the other columns.
+		// IMPORTANT: This assumes that CMFCShellListCtrl::OnGetItemText calls process the list box items
+		// a row at a time, from left to right (orig order) - if this assumption changes this will stuff up.
+		if (SHGetPathFromIDList(pItem->pidlFQ, fl_path_))
+		{
+			ASSERT(fl_idx_ == -2);
+			if (pfl != NULL)
+				fl_idx_ = pfl->GetIndex(fl_path_);
+		}
+
+		// Handle size column ourselves since base class can't handle file sizes > 2Gbytes [xxx - check this for new MFC base class]
 		CFileStatus fs;
-		if (SHGetPathFromIDList(pItem->pidlFQ, path) &&
-			CFile64::GetStatus(path, fs))
+		if (CFile64::GetStatus(fl_path_, fs))
 		{
 			if ((fs.m_attribute & (CFile::directory | CFile ::volume)) != 0)
 				return _T("");
@@ -290,62 +303,18 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 		return CMFCShellListCtrl::OnGetItemText(iItem, iColumn, pItem);
 
 	CString retval;
-	CHexFileList *pfl = theApp.GetFileList();
-
-	// These are used to get file attributes
-	//SHFILEINFO sfi;
-	//CFileStatus fs;
-	DWORD attr = -1;
 
 	switch (iColumn)
 	{
 	case COLATTR:  // Attributes
-		if (SHGetPathFromIDList(pItem->pidlFQ, path))
-		{
-			// We get the index for this file from the recent file list here to save time repeating the
-			// procedure (get path and then look up index) for the other columns.
-			// IMPORTANT: This assumes that CMFCShellListCtrl::OnGetItemText calls process the list box items
-			// a row at a time, from left to right - if this assumption changes this will stuff up.
-			ASSERT(fl_idx_ == -2);
-			if (pfl != NULL)
-				fl_idx_ = pfl->GetIndex(path);
-
-			attr = GetFileAttributes(path);
-			if (attr == INVALID_FILE_ATTRIBUTES)
-			{
-				// GetFileAttributes() may fail on locked files like PAGEFILE.SYS,
-				// so the backup is to use FindFirstFile (slower alternative)
-				WIN32_FIND_DATA wfd;
-				if (FindFirstFile(path, &wfd) == INVALID_HANDLE_VALUE)
-					attr = -1;
-				else
-					attr = wfd.dwFileAttributes;
-			}
-			if (attr != -1)
-			{
-				if ((attr & FILE_ATTRIBUTE_READONLY) != 0)
-					retval += _T("R");
-				if ((attr & FILE_ATTRIBUTE_HIDDEN) != 0)
-					retval += _T("H");
-				if ((attr & FILE_ATTRIBUTE_SYSTEM) != 0)
-					retval += _T("S");
-				if ((attr & FILE_ATTRIBUTE_ARCHIVE) != 0)
-					retval += _T("A");
-				if ((attr & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED) == 0)
-					retval += _T("I");
-				if ((attr & FILE_ATTRIBUTE_COMPRESSED) != 0)
-					retval += _T("C");
-				if ((attr & FILE_ATTRIBUTE_ENCRYPTED) != 0)
-					retval += _T("E");
-				return retval;
-			}
-		}
+		if (fl_path_[0] != '\0')
+			return GetAttributes(fl_path_);
 		break;
 
-	case COLOPENED:
+	case COLOPENED:  // Date last opened in HexEdit
+		if (pfl != NULL && fl_idx_ > -1)
 		{
-			if (pfl != NULL && fl_idx_ > -1)
-				OnFormatFileDate (CTime(pfl->GetOpened(fl_idx_)), retval);
+			OnFormatFileDate(CTime(pfl->GetOpened(fl_idx_)), retval);
 			return retval;
 		}
 		break;
@@ -384,127 +353,89 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 	TCHAR path1[MAX_PATH];
 	TCHAR path2[MAX_PATH];
 
+	CFileStatus fs1, fs2;
+
 	// Handle size column ourselves since BCG base class can't handle file sizes > 2Gbytes
 	switch (iColumn)
 	{
 	case COLSIZE:
+		if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
+			CFile64::GetStatus(path1, fs1) &&
+			SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
+			CFile64::GetStatus(path2, fs2) )
 		{
-			SHFILEINFO sfi1, sfi2;
-			sfi1.dwAttributes = sfi2.dwAttributes = SFGAO_FOLDER|SFGAO_STREAM;
-
-			CFileStatus fs1, fs2;
-
-			if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
-				CFile64::GetStatus(path1, fs1) &&
-				SHGetFileInfo((LPCTSTR)pItem1->pidlFQ, 0, &sfi1, sizeof(sfi1), SHGFI_PIDL | SHGFI_ATTRIBUTES | SHGFI_ATTR_SPECIFIED) &&
-				SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
-				CFile64::GetStatus(path2, fs2) &&
-				SHGetFileInfo((LPCTSTR)pItem2->pidlFQ, 0, &sfi2, sizeof(sfi2), SHGFI_PIDL | SHGFI_ATTRIBUTES | SHGFI_ATTR_SPECIFIED))
+			// Make sure folders are sorted away from files
+			bool is_dir1, is_dir2;
+			GetAttributes(path1, &is_dir1);
+			GetAttributes(path2, &is_dir2);
+			if (is_dir1 || is_dir2)
 			{
-				// Make sure folders are sorted away from files
-				// Note: under Xp zip files have both SFGAO_FOLDER and SFGAO_STREAM flags which is why the check is done like this.
-				// Note2: using SHGFI_ATTR_SPECIFIED still seems to return all attrs but is a lot faster!?!?
-				if ((sfi1.dwAttributes & (SFGAO_FOLDER|SFGAO_STREAM)) == SFGAO_FOLDER ||
-					(sfi2.dwAttributes & (SFGAO_FOLDER|SFGAO_STREAM)) == SFGAO_FOLDER)
-				{
-					if ((sfi1.dwAttributes & (SFGAO_FOLDER|SFGAO_STREAM)) == SFGAO_FOLDER &&
-						(sfi2.dwAttributes & (SFGAO_FOLDER|SFGAO_STREAM)) == SFGAO_FOLDER)
-						return CString(path1).CompareNoCase(path2);   // Both are folders so sort on name
-					else if ((sfi1.dwAttributes & (SFGAO_FOLDER|SFGAO_STREAM)) == SFGAO_FOLDER)
-						return -1;
-					else
-						return 1;
-
-				}
-				return fs1.m_size < fs2.m_size ? -1 : fs1.m_size > fs2.m_size ? 1 : 0;
+				if (is_dir1 && is_dir2)
+					return CString(path1).CompareNoCase(path2);   // Sort folders on name
+				else if (is_dir1)
+					return -1;
+				else
+					return 1;
 			}
+			return fs1.m_size < fs2.m_size ? -1 : fs1.m_size > fs2.m_size ? 1 : 0;
 		}
 		break;
 
 	case COLATTR:
+		if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
+			SHGetPathFromIDList(pItem2->pidlFQ, path2) )
 		{
-			SHFILEINFO sfi1, sfi2;
-			sfi1.dwAttributes = sfi2.dwAttributes = SFGAO_FOLDER|SFGAO_STREAM|SFGAO_READONLY|SFGAO_HIDDEN|SFGAO_COMPRESSED|SFGAO_ENCRYPTED;
+			bool is_dir1, is_dir2;
+			CString s1 = GetAttributes(path1, &is_dir1);
+			CString s2 = GetAttributes(path2, &is_dir2);
 
-			CFileStatus fs1, fs2;
-
-			if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
-				CFile64::GetStatus(path1, fs1) &&
-				SHGetFileInfo((LPCTSTR)pItem1->pidlFQ, 0, &sfi1, sizeof(sfi1), SHGFI_PIDL | SHGFI_ATTRIBUTES | SHGFI_ATTR_SPECIFIED) &&
-				SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
-				CFile64::GetStatus(path2, fs2) &&
-				SHGetFileInfo((LPCTSTR)pItem2->pidlFQ, 0, &sfi2, sizeof(sfi2), SHGFI_PIDL | SHGFI_ATTRIBUTES | SHGFI_ATTR_SPECIFIED))
+			// Check for folders so we can sort them separately from files
+			if (is_dir1 != is_dir2)
 			{
-				// If one or both are folders keep them separate
-				if ((sfi1.dwAttributes & (SFGAO_FOLDER|SFGAO_STREAM)) == SFGAO_FOLDER ||
-					(sfi2.dwAttributes & (SFGAO_FOLDER|SFGAO_STREAM)) == SFGAO_FOLDER)
-				{
-					if ((sfi1.dwAttributes & (SFGAO_FOLDER|SFGAO_STREAM)) == SFGAO_FOLDER &&
-						(sfi2.dwAttributes & (SFGAO_FOLDER|SFGAO_STREAM)) == SFGAO_FOLDER)
-						return CString(path1).CompareNoCase(path2);
-					else if ((sfi1.dwAttributes & (SFGAO_FOLDER|SFGAO_STREAM)) == SFGAO_FOLDER)
-						return -1;
-					else
-						return 1;
-
-				}
-
-				CString ss1, ss2;
-
-				if ((sfi1.dwAttributes & SFGAO_READONLY) != 0)
-					ss1 += _T("R");
-				if ((sfi1.dwAttributes & SFGAO_HIDDEN) != 0)
-					ss1 += _T("H");
-				if ((fs1.m_attribute & CFile::system) != 0)
-					ss1 += _T("S");
-				if ((fs1.m_attribute & CFile::archive) != 0)
-					ss1 += _T("A");
-				if ((sfi1.dwAttributes & SFGAO_COMPRESSED) != 0)
-					ss1 += _T("C");
-				if ((sfi1.dwAttributes & SFGAO_ENCRYPTED) != 0)
-					ss1 += _T("E");
-
-				if ((sfi2.dwAttributes & SFGAO_READONLY) != 0)
-					ss2 += _T("R");
-				if ((sfi2.dwAttributes & SFGAO_HIDDEN) != 0)
-					ss2 += _T("H");
-				if ((fs2.m_attribute & CFile::system) != 0)
-					ss2 += _T("S");
-				if ((fs2.m_attribute & CFile::archive) != 0)
-					ss2 += _T("A");
-				if ((sfi2.dwAttributes & SFGAO_COMPRESSED) != 0)
-					ss2 += _T("C");
-				if ((sfi2.dwAttributes & SFGAO_ENCRYPTED) != 0)
-					ss2 += _T("E");
-
-				return ss1 < ss2 ? -1 : ss1 > ss2 ? 1 : 0;
+				// One (and only one) is a folder
+				if (is_dir1)
+					return -1;
+				else
+					return 1;
 			}
+			return s1 < s2 ? -1 : s1 > s2 ? 1 : 0;
 		}
 		break;
 
 	case COLOPENED:
+		if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
+			SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
+			(pfl = theApp.GetFileList()) != NULL)
 		{
-			if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
-				SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
-				(pfl = theApp.GetFileList()) != NULL)
+			bool is_dir1, is_dir2;
+			GetAttributes(path1, &is_dir1);
+			GetAttributes(path2, &is_dir2);
+			if (is_dir1 || is_dir2)
 			{
-				int idx1 = pfl->GetIndex(path1);
-				int idx2 = pfl->GetIndex(path2);
-				if (idx1 == -1 || idx2 == -1)
-				{
-					// One or both have not been opened in HexEdit
-					if (idx1 == -1 && idx2 == -1)
-						return CString(path1).CompareNoCase(path2);   // Both never opened so sort on name
-					else if (idx1 == -1)
-						return -1;
-					else
-						return 1;
-				}
-
-				time_t t1 = pfl->GetOpened(idx1);
-				time_t t2 = pfl->GetOpened(idx2);
-				return t1 < t2 ? -1 : t1 > t2 ? 1 : 0;
+				if (is_dir1 && is_dir2)
+					return CString(path1).CompareNoCase(path2);   // Sort folders on name
+				else if (is_dir1)
+					return -1;
+				else
+					return 1;
 			}
+
+			int idx1 = pfl->GetIndex(path1);
+			int idx2 = pfl->GetIndex(path2);
+			if (idx1 == -1 || idx2 == -1)
+			{
+				// One or both have not been opened in HexEdit
+				if (idx1 == -1 && idx2 == -1)
+					return CString(path1).CompareNoCase(path2);   // Both never opened so sort on name
+				else if (idx1 == -1)
+					return -1;
+				else
+					return 1;
+			}
+
+			time_t t1 = pfl->GetOpened(idx1);
+			time_t t2 = pfl->GetOpened(idx2);
+			return t1 < t2 ? -1 : t1 > t2 ? 1 : 0;
 		}
 		break;
 
@@ -513,6 +444,19 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 			SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
 			(pfl = theApp.GetFileList()) != NULL)
 		{
+			bool is_dir1, is_dir2;
+			GetAttributes(path1, &is_dir1);
+			GetAttributes(path2, &is_dir2);
+			if (is_dir1 || is_dir2)
+			{
+				if (is_dir1 && is_dir2)
+					return CString(path1).CompareNoCase(path2);   // Sort folders on name
+				else if (is_dir1)
+					return -1;
+				else
+					return 1;
+			}
+
 			int idx1 = pfl->GetIndex(path1);
 			int idx2 = pfl->GetIndex(path2);
 
@@ -532,6 +476,19 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 			SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
 			(pfl = theApp.GetFileList()) != NULL)
 		{
+			bool is_dir1, is_dir2;
+			GetAttributes(path1, &is_dir1);
+			GetAttributes(path2, &is_dir2);
+			if (is_dir1 || is_dir2)
+			{
+				if (is_dir1 && is_dir2)
+					return CString(path1).CompareNoCase(path2);   // Sort folders on name
+				else if (is_dir1)
+					return -1;
+				else
+					return 1;
+			}
+
 			int idx1 = pfl->GetIndex(path1);
 			int idx2 = pfl->GetIndex(path2);
 
@@ -547,6 +504,19 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 			SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
 			(pfl = theApp.GetFileList()) != NULL)
 		{
+			bool is_dir1, is_dir2;
+			GetAttributes(path1, &is_dir1);
+			GetAttributes(path2, &is_dir2);
+			if (is_dir1 || is_dir2)
+			{
+				if (is_dir1 && is_dir2)
+					return CString(path1).CompareNoCase(path2);   // Sort folders on name
+				else if (is_dir1)
+					return -1;
+				else
+					return 1;
+			}
+
 			int idx1 = pfl->GetIndex(path1);
 			int idx2 = pfl->GetIndex(path2);
 
@@ -559,6 +529,48 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 	}
 
 	return CMFCShellListCtrl::OnCompareItems(lParam1, lParam2, iColumn);
+}
+
+// Returns the attributes of a file as a string of the form "RHSAICE" where the letter
+// is missing if the attribute is off.  Also returns true in *p_is_dir if it is a folder.
+CString CHistoryShellList::GetAttributes(LPCTSTR path, bool * p_is_dir /*=NULL*/)
+{
+	CString retval;
+	if (p_is_dir != NULL)
+		*p_is_dir = false;
+	DWORD attr = GetFileAttributes(path);
+
+	if (attr == INVALID_FILE_ATTRIBUTES)
+	{
+		// GetFileAttributes() may fail on locked files like PAGEFILE.SYS,
+		// so the backup is to use FindFirstFile (slower alternative)
+		WIN32_FIND_DATA wfd;
+		if (FindFirstFile(path, &wfd) == INVALID_HANDLE_VALUE)
+			attr = -1;
+		else
+			attr = wfd.dwFileAttributes;
+	}
+	if (attr != -1)
+	{
+		if ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0 && p_is_dir != NULL)
+			*p_is_dir = true;
+
+		if ((attr & FILE_ATTRIBUTE_READONLY) != 0)
+			retval += _T("R");
+		if ((attr & FILE_ATTRIBUTE_HIDDEN) != 0)
+			retval += _T("H");
+		if ((attr & FILE_ATTRIBUTE_SYSTEM) != 0)
+			retval += _T("S");
+		if ((attr & FILE_ATTRIBUTE_ARCHIVE) != 0)
+			retval += _T("A");
+		if ((attr & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED) == 0)  // flag is off
+			retval += _T("I");
+		if ((attr & FILE_ATTRIBUTE_COMPRESSED) != 0)
+			retval += _T("C");
+		if ((attr & FILE_ATTRIBUTE_ENCRYPTED) != 0)
+			retval += _T("E");
+	}
+	return retval;
 }
 
 BEGIN_MESSAGE_MAP(CHistoryShellList, CMFCShellListCtrl)
