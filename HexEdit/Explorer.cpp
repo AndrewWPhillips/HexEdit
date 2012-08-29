@@ -293,14 +293,13 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 	CHexFileList *pfl = theApp.GetFileList();
 
 	// These are used to get file attributes
-	SHFILEINFO sfi;
-	CFileStatus fs;
+	//SHFILEINFO sfi;
+	//CFileStatus fs;
+	DWORD attr = -1;
 
 	switch (iColumn)
 	{
 	case COLATTR:  // Attributes
-		sfi.dwAttributes = SFGAO_READONLY | SFGAO_HIDDEN | SFGAO_COMPRESSED | SFGAO_ENCRYPTED;
-		// Get file name then get attributes
 		if (SHGetPathFromIDList(pItem->pidlFQ, path))
 		{
 			// We get the index for this file from the recent file list here to save time repeating the
@@ -311,24 +310,32 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 			if (pfl != NULL)
 				fl_idx_ = pfl->GetIndex(path);
 
-			if (CFile::GetStatus(path, fs) &&
-				SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_ATTRIBUTES | SHGFI_ATTR_SPECIFIED))
+			attr = GetFileAttributes(path);
+			if (attr == INVALID_FILE_ATTRIBUTES)
 			{
-	//			if ((fs.m_attribute & CFile::readOnly) != 0)
-				if ((sfi.dwAttributes & SFGAO_READONLY) != 0)
+				// GetFileAttributes() may fail on locked files like PAGEFILE.SYS,
+				// so the backup is to use FindFirstFile (slower alternative)
+				WIN32_FIND_DATA wfd;
+				if (FindFirstFile(path, &wfd) == INVALID_HANDLE_VALUE)
+					attr = -1;
+				else
+					attr = wfd.dwFileAttributes;
+			}
+			if (attr != -1)
+			{
+				if ((attr & FILE_ATTRIBUTE_READONLY) != 0)
 					retval += _T("R");
-	//			if ((fs.m_attribute & CFile::hidden) != 0)
-				if ((sfi.dwAttributes & SFGAO_HIDDEN) != 0)
+				if ((attr & FILE_ATTRIBUTE_HIDDEN) != 0)
 					retval += _T("H");
-
-				if ((fs.m_attribute & CFile::system) != 0)
+				if ((attr & FILE_ATTRIBUTE_SYSTEM) != 0)
 					retval += _T("S");
-				if ((fs.m_attribute & CFile::archive) != 0)
+				if ((attr & FILE_ATTRIBUTE_ARCHIVE) != 0)
 					retval += _T("A");
-
-				if ((sfi.dwAttributes & SFGAO_COMPRESSED) != 0)
+				if ((attr & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED) == 0)
+					retval += _T("I");
+				if ((attr & FILE_ATTRIBUTE_COMPRESSED) != 0)
 					retval += _T("C");
-				if ((sfi.dwAttributes & SFGAO_ENCRYPTED) != 0)
+				if ((attr & FILE_ATTRIBUTE_ENCRYPTED) != 0)
 					retval += _T("E");
 				return retval;
 			}
@@ -852,74 +859,79 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		_splitpath(tmp, NULL, NULL, fname, ext);
 
 		CString full_name(path_name + "\\" + fname + ext);
-		struct _stat stat;
-		if (::_stat(full_name, &stat) == -1)
+
+		DWORD attr = GetFileAttributes(full_name);
+		if (attr == INVALID_FILE_ATTRIBUTES)
+		{
+			// GetFileAttributes() may fail on locked files like PAGEFILE.SYS,
+			// so the backup is to use FindFirstFile (slower alternative)
+			WIN32_FIND_DATA wfd;
+			if (FindFirstFile(full_name, &wfd) == INVALID_HANDLE_VALUE)
+				attr = -1;
+			else
+				attr = wfd.dwFileAttributes;
+		}
+		if (attr == -1 || (attr & FILE_ATTRIBUTE_DIRECTORY) != 0)
 			continue;
 
-		// Open the file if it is not a directory
-		if ((stat.st_mode & _S_IFDIR) == 0)
+		if (cmd >= ID_TIME_MOD && cmd < ID_TIME_CRE)
 		{
-			DWORD attr = GetFileAttributes(full_name);
-
-			if (cmd >= ID_TIME_MOD && cmd <= ID_TIME_CRE)
-			{
-				SetFileTimes(full_name, NULL, NULL, &new_time);
-			}
-			else if (cmd >= ID_TIME_CRE && cmd < ID_TIME_ACC)
-			{
-				SetFileTimes(full_name, &new_time);
-			}
-			else if (cmd >= ID_TIME_ACC && cmd < ID_TIME_ALL)
-			{
-				SetFileTimes(full_name, NULL, &new_time);
-			}
-			else if (cmd >= ID_TIME_ALL && cmd < ID_LAST)
-			{
-				SetFileTimes(full_name, &new_time, &new_time, &new_time);
-			}
-			else switch (cmd)
-			{
-			case ID_OPEN:
-				ASSERT(theApp.open_current_readonly_ == -1);
-				theApp.open_current_readonly_ = FALSE;
-				theApp.OpenDocumentFile(full_name);
-				break;
-			case ID_OPEN_RO:
-				ASSERT(theApp.open_current_readonly_ == -1);
-				theApp.open_current_readonly_ = TRUE;
-				theApp.OpenDocumentFile(full_name);
-				break;
-			case ID_READ_ONLY_ON:
-				SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_READONLY);
-				break;
-			case ID_READ_ONLY_OFF:
-				SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_READONLY);
-				break;
-			case ID_HIDDEN_ON:
-				SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_HIDDEN);
-				break;
-			case ID_HIDDEN_OFF:
-				SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_HIDDEN);
-				break;
-			case ID_SYSTEM_ON:
-				SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_SYSTEM);
-				break;
-			case ID_SYSTEM_OFF:
-				SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_SYSTEM);
-				break;
-			case ID_ARCHIVE_ON:
-				SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_ARCHIVE);
-				break;
-			case ID_ARCHIVE_OFF:
-				SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_ARCHIVE);
-				break;
-			case ID_INDEX_ON:
-				SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
-				break;
-			case ID_INDEX_OFF:
-				SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
-				break;
-			}
+			SetFileTimes(full_name, NULL, NULL, &new_time);
+		}
+		else if (cmd >= ID_TIME_CRE && cmd < ID_TIME_ACC)
+		{
+			SetFileTimes(full_name, &new_time);
+		}
+		else if (cmd >= ID_TIME_ACC && cmd < ID_TIME_ALL)
+		{
+			SetFileTimes(full_name, NULL, &new_time);
+		}
+		else if (cmd >= ID_TIME_ALL && cmd < ID_LAST)
+		{
+			SetFileTimes(full_name, &new_time, &new_time, &new_time);
+		}
+		else switch (cmd)
+		{
+		case ID_OPEN:
+			ASSERT(theApp.open_current_readonly_ == -1);
+			theApp.open_current_readonly_ = FALSE;
+			theApp.OpenDocumentFile(full_name);
+			break;
+		case ID_OPEN_RO:
+			ASSERT(theApp.open_current_readonly_ == -1);
+			theApp.open_current_readonly_ = TRUE;
+			theApp.OpenDocumentFile(full_name);
+			break;
+		case ID_READ_ONLY_ON:
+			SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_READONLY);
+			break;
+		case ID_READ_ONLY_OFF:
+			SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_READONLY);
+			break;
+		case ID_HIDDEN_ON:
+			SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_HIDDEN);
+			break;
+		case ID_HIDDEN_OFF:
+			SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_HIDDEN);
+			break;
+		case ID_SYSTEM_ON:
+			SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_SYSTEM);
+			break;
+		case ID_SYSTEM_OFF:
+			SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_SYSTEM);
+			break;
+		case ID_ARCHIVE_ON:
+			SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_ARCHIVE);
+			break;
+		case ID_ARCHIVE_OFF:
+			SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_ARCHIVE);
+			break;
+		case ID_INDEX_ON:
+			SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
+			break;
+		case ID_INDEX_OFF:
+			SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
+			break;
 		}
 	}
 }
@@ -988,15 +1000,23 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems
 			CString full_name(path_name + "\\" + fname + ext);
 
 			DWORD attr = GetFileAttributes(full_name);
-			if ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0)
+			if (attr == INVALID_FILE_ATTRIBUTES)
+			{
+				// GetFileAttributes() may fail on locked files like PAGEFILE.SYS,
+				// so the backup is to use FindFirstFile (slower alternative)
+				WIN32_FIND_DATA wfd;
+				if (FindFirstFile(full_name, &wfd) == INVALID_HANDLE_VALUE)
+					attr = -1;
+				else
+					attr = wfd.dwFileAttributes;
+			}
+			if (attr == -1 || (attr & FILE_ATTRIBUTE_DIRECTORY) != 0)
 				continue;     // skip directories
 
 			if ((attr & FILE_ATTRIBUTE_READONLY) == 0)
 				is_ro = false;
 			if ((attr & FILE_ATTRIBUTE_HIDDEN) == 0)
 				is_hidden = false;
-			if ((attr & FILE_ATTRIBUTE_SYSTEM) == 0)
-				is_sys = false;
 			if ((attr & FILE_ATTRIBUTE_SYSTEM) == 0)
 				is_sys = false;
 			if ((attr & FILE_ATTRIBUTE_ARCHIVE) == 0)
