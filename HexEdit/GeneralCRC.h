@@ -36,10 +36,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	int find_name(LPCTSTR name); // Searches for settings name and returns idx into set_ (or -1 if not found)
+	int find_name(LPCTSTR name); // Searches for settings name and returns idx into settings_ (or -1 if not found)
 
 	static const char * reg_locn;
-	std::vector<CString> set_; // Settings for predefined algorithms
+	std::vector<CString> settings_; // Settings for predefined algorithms
 	int last_predefined_;      // Index one past last predefined CRC settings (= index of first user-defined setting) 
 	int last_selected_;        // Index of last item selected or -1 if changes have been made to params since last selection
 

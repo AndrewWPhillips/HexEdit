@@ -31,45 +31,45 @@ BOOL CGeneralCRC::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	set_.push_back("Dummy");   // Reserve index 0 since we use the index as the menu ID and an ID of zero is not allowed
+	settings_.push_back("Dummy");   // Reserve index 0 since we use the index as the menu ID and an ID of zero is not allowed
 
 	// Create the popup menu to attach to the "Select" button
 	CMenu mm;
 	mm.CreatePopupMenu();
 
-	// Add predefined CRC settings - add names to menu and store corresponding parameters strings in set_
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC 8");
-	set_.push_back("8|07|0|0|0|0|F4");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC 10");
-	set_.push_back("10|233|0|0|0|0|199");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC 12");
-	set_.push_back("12|80F|0|0|0|1|DAF");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC 16");
-	set_.push_back("16|8005|0|0|1|1|BB3D");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC 16 USB");
-	set_.push_back("16|8005|FFFF|FFFF|1|1|B4C8");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC 16 CCITT");
-	set_.push_back("16|1021|0|0|1|1|2189");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC CCITT F");
-	set_.push_back("16|1021|FFFF|0|0|0|29B1");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC CCITT AUG");
-	set_.push_back("16|1021|1D0F|0|0|0|E5CC");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC-A");
-	set_.push_back("16|1021|C6C6|0|1|1|BF05");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC X-25");
-	set_.push_back("16|1021|FFFF|FFFF|1|1|906E");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC XModem");
-	set_.push_back("16|1021|0|0|0|0|31C3");
-	//mm.AppendMenu(MF_STRING, set_.size(), "CRC XModem");
-	//set_.push_back("16|8408|0|0|1|1");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC 32");
-	set_.push_back("32|04C11DB7|FFFFFFFF|FFFFFFFF|1|1|CBF43926");
-	mm.AppendMenu(MF_STRING, set_.size(), "CRC MPEG-2");
-	set_.push_back("32|04C11DB7|FFFFFFFF|0|0|0|0376E6E7");
+	// Add predefined CRC settings - add names to menu and store corresponding parameters strings in settings_
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC 8");
+	settings_.push_back("8|07|0|0|0|0|F4");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC 10");
+	settings_.push_back("10|233|0|0|0|0|199");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC 12");
+	settings_.push_back("12|80F|0|0|0|1|DAF");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC 16");
+	settings_.push_back("16|8005|0|0|1|1|BB3D");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC 16 USB");
+	settings_.push_back("16|8005|FFFF|FFFF|1|1|B4C8");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC 16 CCITT");
+	settings_.push_back("16|1021|0|0|1|1|2189");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC CCITT F");
+	settings_.push_back("16|1021|FFFF|0|0|0|29B1");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC CCITT AUG");
+	settings_.push_back("16|1021|1D0F|0|0|0|E5CC");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC-A");
+	settings_.push_back("16|1021|C6C6|0|1|1|BF05");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC X-25");
+	settings_.push_back("16|1021|FFFF|FFFF|1|1|906E");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC XModem");
+	settings_.push_back("16|1021|0|0|0|0|31C3");
+	//mm.AppendMenu(MF_STRING, settings_.size(), "CRC XModem");
+	//settings_.push_back("16|8408|0|0|1|1");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC 32");
+	settings_.push_back("32|04C11DB7|FFFFFFFF|FFFFFFFF|1|1|CBF43926");
+	mm.AppendMenu(MF_STRING, settings_.size(), "CRC MPEG-2");
+	settings_.push_back("32|04C11DB7|FFFFFFFF|0|0|0|0376E6E7");
 
 	mm.AppendMenu(MF_SEPARATOR);
 	last_selected_ = -1;
-	last_predefined_ = set_.size();
+	last_predefined_ = settings_.size();
 
 	// Get any saved settings from the registry
 	HKEY hkey;
@@ -88,8 +88,8 @@ BOOL CGeneralCRC::OnInitDialog()
 			// If we got a valid string entry
 			if (err == ERROR_SUCCESS && type == REG_SZ)
 			{
-				mm.AppendMenu(MF_STRING, set_.size(), name);
-				set_.push_back((char*)value);
+				mm.AppendMenu(MF_STRING, settings_.size(), name);
+				settings_.push_back((char*)value);
 			}
 
 			// Reset in/out vars that have been modified
@@ -231,7 +231,7 @@ void CGeneralCRC::LoadParams(LPCTSTR params)
 }
 
 // Search the "Select" menu to see if a CRC setting name is in use.
-// Returns the ID (index into set_) if found or -1 if not
+// Returns the ID (index into settings_) if found or -1 if not
 int CGeneralCRC::find_name(LPCTSTR name)
 {
 	int retval = -1;
@@ -311,11 +311,11 @@ void CGeneralCRC::OnChange()
 // Selection was made from the Select menu button of a predefined CRC settings
 void CGeneralCRC::OnSelect()
 {
-	int id = select_menu_.m_nMenuResult;  // slected menu ID (= index into set_)
-	if (id > 0 && id < set_.size())
+	int id = select_menu_.m_nMenuResult;  // slected menu ID (= index into settings_)
+	if (id > 0 && id < settings_.size())
 	{
 		// Get the param string associated with the select menu item and load it into member vars
-		LoadParams(set_[id]);
+		LoadParams(settings_[id]);
 
 		// Update dlg controls from members variables
 		UpdateData(FALSE);
@@ -361,17 +361,17 @@ void CGeneralCRC::OnSave()
 	// Add the name to the end of the Select menu
 	CMenu menu;
 	menu.Attach(select_menu_.m_hMenu);
-	menu.AppendMenu(MF_STRING, set_.size(), strName);
+	menu.AppendMenu(MF_STRING, settings_.size(), strName);
 	menu.Detach();
 
-	// Add corresponding parameters to the end of set_
-	set_.push_back(params);
+	// Add corresponding parameters to the end of settings_
+	settings_.push_back(params);
 
 	// Add to the registry (for next time the dialog is opened)
 	HKEY hkey;
 	if (::RegCreateKey(HKEY_CURRENT_USER, reg_locn, &hkey) == ERROR_SUCCESS)
 	{
-		::RegSetValueEx(hkey, strName, 0, REG_SZ, (BYTE *)params.GetBuffer(), params.GetLength());
+		::RegSetValueEx(hkey, strName, 0, REG_SZ, (BYTE *)params.GetBuffer(), params.GetLength()+1);
 		::RegCloseKey(hkey);
 	}
 
@@ -383,7 +383,7 @@ void CGeneralCRC::OnDelete()
 {
 	// First check that we selected from the list (using Select menu)
 	// else we don't know what to delete
-	if (last_selected_ < last_predefined_ || last_selected_ >= set_.size())
+	if (last_selected_ < last_predefined_ || last_selected_ >= settings_.size())
 	{
 		assert(0);   // Code should prevent this from happening
 		return;
@@ -404,8 +404,8 @@ void CGeneralCRC::OnDelete()
 	menu.DeleteMenu(last_selected_, MF_BYCOMMAND);  // Delete menu item with selected ID
 	menu.Detach();
 
-	// Delete from set_ (where ID == last_selected_ is the index into the array)
-	set_[last_selected_] = CString("");  // clear but don't delete unused entries (else menu item ID's won't mathc array indices)
+	// Delete from settings_ (where ID == last_selected_ is the index into the array)
+	settings_[last_selected_] = CString("");  // clear but don't delete unused entries (else menu item ID's won't mathc array indices)
 
 	// Remove the setting from the registry
 	HKEY hkey;
