@@ -777,20 +777,10 @@ void CBookmarkDlg::OnValidate()
 		{
 			// Bookmarks are checked when we open the document so we don't need to validate again here
 			// (Ie this bookmark was checked when the file was opened.)
-#if 0
-			// The file is open so we need to check that the bookmark is <= the
-			// in-memory file length which may be different to the on-disk length.
-			if (pbl->filepos_[index] > ((CHexEditDoc *)pdoc)->length())
-			{
-				TRACE2("Validate: removing %s, file %s (loaded) is too short\n", pbl->name_[index], pbl->file_[index]);
-				pbl->Remove(index);
-				tt.insert(row);
-			}
-#endif
 		}
 		else if (_access(pbl->file_[index], 0) != -1)
 		{
-			// File found but make sure the bookmark is <= file length
+			// File exists but make sure the bookmark is <= file length
 			CFileStatus fs;                 // Used to get file size
 
 			if (CFile64::GetStatus(pbl->file_[index], fs) &&
@@ -800,8 +790,6 @@ void CBookmarkDlg::OnValidate()
 				pbl->filepos_[index] = fs.m_size;
 				UpdateRow(index, row);
 				++move_count;
-				// pbl->RemoveBookmark(index);
-				// tt.insert(row);
 			}
 		}
 		else
@@ -814,8 +802,9 @@ void CBookmarkDlg::OnValidate()
 			if (!net_retain || ::GetDriveType(pbl->file_[index].Left(3)) == DRIVE_FIXED)
 			{
 				TRACE2("Validate: removing bookmark %s, file %s not found\n", pbl->name_[index], pbl->file_[index]);
-				pbl->RemoveBookmark(index);
-				tt.insert(row);
+				//pbl->RemoveBookmark(index);
+				//tt.insert(row);
+				tt.insert(index);
 			}
 		}
 	}
@@ -824,9 +813,11 @@ void CBookmarkDlg::OnValidate()
 	range_set<int>::const_iterator pp;
 
 	// Remove elements starting at end so that we don't muck up the row order
-	for (pp = tt.end(); pp != tt.begin(); )
-		grid_.DeleteRow(*(--pp));
-	grid_.Refresh();
+//	for (pp = tt.end(); pp != tt.begin(); )
+//		grid_.DeleteRow(*(--pp));
+//	grid_.Refresh();
+	for (pp = tt.begin(); pp != tt.end(); ++pp)
+		pbl->RemoveBookmark(*pp);
 
 	if (move_count > 0 || tt.size() > 0)
 	{
@@ -835,10 +826,10 @@ void CBookmarkDlg::OnValidate()
 		mess.Format("%ld bookmarks were deleted (files missing)\n"
 					"%ld bookmarks were moved (past EOF)",
 					long(tt.size()), long(move_count));
-		CAvoidableDialog(IDS_BOOKMARKS_DELETED, mess);
+		CAvoidableDialog::Show(IDS_BOOKMARKS_DELETED, mess);
 	}
 	else
-		CAvoidableDialog(IDS_BOOKMARKS_NONE_DELETED, 
+		CAvoidableDialog::Show(IDS_BOOKMARKS_NONE_DELETED, 
 		                 "No bookmarks were deleted or moved.");
 }
 
