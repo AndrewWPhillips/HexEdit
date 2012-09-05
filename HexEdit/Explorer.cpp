@@ -358,6 +358,8 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 	// Handle size column ourselves since BCG base class can't handle file sizes > 2Gbytes
 	switch (iColumn)
 	{
+	// Handle file size and modification date ourselves as base calss does not separate folders from files.
+	case COLMOD:
 	case COLSIZE:
 		if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
 			CFile64::GetStatus(path1, fs1) &&
@@ -366,8 +368,8 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 		{
 			// Make sure folders are sorted away from files
 			bool is_dir1, is_dir2;
-			GetAttributes(path1, &is_dir1);
-			GetAttributes(path2, &is_dir2);
+			(void)GetAttributes(path1, &is_dir1);
+			(void)GetAttributes(path2, &is_dir2);
 			if (is_dir1 || is_dir2)
 			{
 				if (is_dir1 && is_dir2)
@@ -377,7 +379,10 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 				else
 					return 1;
 			}
-			return fs1.m_size < fs2.m_size ? -1 : fs1.m_size > fs2.m_size ? 1 : 0;
+			if (iColumn == COLMOD)
+				return fs1.m_mtime < fs2.m_mtime ? -1 : fs1.m_mtime > fs2.m_mtime ? 1 : 0;  // compare modification times
+			else
+				return fs1.m_size < fs2.m_size ? -1 : fs1.m_size > fs2.m_size ? 1 : 0;      // compare sizes
 		}
 		break;
 
@@ -408,8 +413,8 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 			(pfl = theApp.GetFileList()) != NULL)
 		{
 			bool is_dir1, is_dir2;
-			GetAttributes(path1, &is_dir1);
-			GetAttributes(path2, &is_dir2);
+			(void)GetAttributes(path1, &is_dir1);
+			(void)GetAttributes(path2, &is_dir2);
 			if (is_dir1 || is_dir2)
 			{
 				if (is_dir1 && is_dir2)
@@ -774,14 +779,17 @@ void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point)
 					}
 					else if (bIsFolder && idCmd == ::GetMenuDefaultItem(hPopup, FALSE, 0))
 					{
+						// Selected default operation (Open) on a single folder so just display it
 						DisplayFolder(pClickedInfo);
 					}
 					else if (!bIsFolder && idCmd >= firstCustomCmd && idCmd < firstCustomCmd + ID_LAST)
 					{
+						// Handle our custom commands for files (not folders)
 						HandleCustomCommand(idCmd - firstCustomCmd, nSelItems, (LPCITEMIDLIST*)pPidls);
 					}
-					else if (!bIsFolder)
+					else
 					{
+						// Default is to let Windows Shell handle it
 						CMINVOKECOMMANDINFO cmi;
 						cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
 						cmi.fMask = 0;
@@ -830,7 +838,7 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		// We really should get the date expression that was shown on the menu
 		// item (now() or a date var name), but I couldn't work out how to get
 		// the sub-menu text from the command ID.  Doing it this way relies on the
-		// order that the menus are set up
+		// code matching the order in the menus.
 		int var = 0;
 		if (cmd < ID_TIME_CRE)
 			var = cmd - ID_TIME_MOD;
@@ -843,8 +851,9 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		ASSERT(var >= 0 && var < ID_TIME_CRE - ID_TIME_MOD - 1);
 
 		SYSTEMTIME st;
-		GetLocalTime(&st);
+		GetLocalTime(&st);  // default to current time (local not GMT/UTC/Zulu)
 
+		// Unless the first (Current Time) menu item get the time from the DATE var by evaluating it as an expression
 		if (var > 0)
 		{
 			CString ss = mm->expr_.GetVarNames(CJumpExpr::TYPE_DATE)[var - 1];
@@ -858,16 +867,20 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		}
 
 		FILETIME local_time;
-		SystemTimeToFileTime(&st, &local_time);          // st is local time -> file time (local)
-		LocalFileTimeToFileTime(&local_time, &new_time); // convert local -> file time (UTC)
+		SystemTimeToFileTime(&st, &local_time);          // system time (local) to file time (local)
+		LocalFileTimeToFileTime(&local_time, &new_time); // file times are UTC, so convert from local to GMT
 	}
 
+	DWORD errnum = NO_ERROR;         // Windows error code if something goes wrong
+	char fname[_MAX_FNAME], ext[_MAX_EXT];
+
+	// Perform the operation on all the selected files
 	for (int item = 0; item < nSelItems; ++item)
 	{
+		bool ok = true;
 		char tmp[_MAX_PATH];
 		SHGetPathFromIDList(piil[item], tmp);
 
-		char fname[_MAX_FNAME], ext[_MAX_EXT];
 		_splitpath(tmp, NULL, NULL, fname, ext);
 
 		CString full_name(path_name + "\\" + fname + ext);
@@ -883,68 +896,174 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 			else
 				attr = wfd.dwFileAttributes;
 		}
-		if (attr == -1 || (attr & FILE_ATTRIBUTE_DIRECTORY) != 0)
+		if (attr == -1)
+		{
+			errnum = GetLastError();
 			continue;
+		}
+		else if ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0)
+		{
+			continue;  // ignore directories
+		}
 
 		if (cmd >= ID_TIME_MOD && cmd < ID_TIME_CRE)
 		{
-			SetFileTimes(full_name, NULL, NULL, &new_time);
+			ok = SetFileTimes(full_name, NULL, NULL, &new_time);
 		}
 		else if (cmd >= ID_TIME_CRE && cmd < ID_TIME_ACC)
 		{
-			SetFileTimes(full_name, &new_time);
+			ok = SetFileTimes(full_name, &new_time);
 		}
 		else if (cmd >= ID_TIME_ACC && cmd < ID_TIME_ALL)
 		{
-			SetFileTimes(full_name, NULL, &new_time);
+			ok = SetFileTimes(full_name, NULL, &new_time);
 		}
 		else if (cmd >= ID_TIME_ALL && cmd < ID_LAST)
 		{
-			SetFileTimes(full_name, &new_time, &new_time, &new_time);
+			ok = SetFileTimes(full_name, &new_time, &new_time, &new_time);
 		}
 		else switch (cmd)
 		{
 		case ID_OPEN:
 			ASSERT(theApp.open_current_readonly_ == -1);
 			theApp.open_current_readonly_ = FALSE;
-			theApp.OpenDocumentFile(full_name);
+			ok = theApp.OpenDocumentFile(full_name) != NULL;
 			break;
 		case ID_OPEN_RO:
 			ASSERT(theApp.open_current_readonly_ == -1);
 			theApp.open_current_readonly_ = TRUE;
-			theApp.OpenDocumentFile(full_name);
+			ok = theApp.OpenDocumentFile(full_name) != NULL;
 			break;
 		case ID_READ_ONLY_ON:
-			SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_READONLY);
+			ok = SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_READONLY);
 			break;
 		case ID_READ_ONLY_OFF:
-			SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_READONLY);
+			ok = SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_READONLY);
 			break;
 		case ID_HIDDEN_ON:
-			SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_HIDDEN);
+			ok = SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_HIDDEN);
 			break;
 		case ID_HIDDEN_OFF:
-			SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_HIDDEN);
+			ok = SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_HIDDEN);
 			break;
 		case ID_SYSTEM_ON:
-			SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_SYSTEM);
+			ok = SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_SYSTEM);
 			break;
 		case ID_SYSTEM_OFF:
-			SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_SYSTEM);
+			ok = SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_SYSTEM);
 			break;
 		case ID_ARCHIVE_ON:
-			SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_ARCHIVE);
+			ok = SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_ARCHIVE);
 			break;
 		case ID_ARCHIVE_OFF:
-			SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_ARCHIVE);
+			ok = SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_ARCHIVE);
 			break;
 		case ID_INDEX_ON:
-			SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
+			ok = SetFileAttributes(full_name, attr & ~FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
 			break;
 		case ID_INDEX_OFF:
-			SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
+			ok = SetFileAttributes(full_name, attr | FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
+			break;
+		case ID_COMPRESSED_ON:
+			ok = SetFileCompression(full_name, COMPRESSION_FORMAT_DEFAULT);
+			break;
+		case ID_COMPRESSED_OFF:
+			ok = SetFileCompression(full_name, COMPRESSION_FORMAT_NONE);
+			break;
+		case ID_ENCRYPTED_ON:
+			ok = EncryptFile(full_name);
+			break;
+		case ID_ENCRYPTED_OFF:
+			ok = DecryptFile(full_name, 0);
 			break;
 		}
+
+		if (!ok)
+			errnum = GetLastError();
+	}
+
+	if (errnum != NO_ERROR)
+	{
+		const char * op = "";
+		if (cmd >= ID_TIME_MOD && cmd < ID_TIME_CRE)
+			op = "setting the modification time of";
+		else if (cmd >= ID_TIME_CRE && cmd < ID_TIME_ACC)
+			op = "setting the creation time of";
+		else if (cmd >= ID_TIME_ACC && cmd < ID_TIME_ALL)
+			op = "setting the access time of";
+		else if (cmd >= ID_TIME_ALL && cmd < ID_LAST)
+			op = "setting the times of";
+		else switch (cmd)
+		{
+		case ID_OPEN:
+			op = "opening";
+			break;
+		case ID_OPEN_RO:
+			op = "opening (read only)";
+			break;
+		case ID_READ_ONLY_ON:
+			op = "setting the read only attribute of";
+			break;
+		case ID_READ_ONLY_OFF:
+			op = "clearing the read only attribute of";
+			break;
+		case ID_HIDDEN_ON:
+			op = "setting the hidden attribute of";
+			break;
+		case ID_HIDDEN_OFF:
+			op = "clearing the hidden attribute of";
+			break;
+		case ID_SYSTEM_ON:
+			op = "setting the system attribute of";
+			break;
+		case ID_SYSTEM_OFF:
+			op = "clearing the system attribute of";
+			break;
+		case ID_ARCHIVE_ON:
+			op = "setting the archive attribute of";
+			break;
+		case ID_ARCHIVE_OFF:
+			op = "clearing the archive attribute of";
+			break;
+		case ID_INDEX_ON:
+			op = "adding indexing for";
+			break;
+		case ID_INDEX_OFF:
+			op = "removing indexing for";
+			break;
+		case ID_COMPRESSED_ON:
+			op = "compressing";
+			break;
+		case ID_COMPRESSED_OFF:
+			op = "decompressing";
+			break;
+		case ID_ENCRYPTED_ON:
+			op = "encrypting";
+			break;
+		case ID_ENCRYPTED_OFF:
+			op = "decrypting";
+			break;
+		}
+
+		CString strError("unknown error");
+		{
+			LPTSTR emess;
+			if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+							  NULL,
+							  errnum,
+							  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+							  (LPTSTR) &emess,
+							  0,
+							  NULL))
+			{
+				strError = emess;
+				LocalFree(emess);
+			}
+		}
+
+		CString strMess;
+		strMess.Format("The error:\n\n%s\n occurred while %s %s", strError, op, (nSelItems > 1 ? "at least one of the files" : CString(fname) + ext));
+		CAvoidableDialog::Show(IDS_FILE_ATTR, strMess);
 	}
 }
 
@@ -1001,6 +1120,7 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems
 	{
 		// Menu items for toggleable flags - first we need to get the current state
 		bool is_ro = true, is_hidden = true, is_sys = true, is_arc = true, is_index = true;
+		bool is_compressed = true, is_encrypted = true;
 		for (int item = 0; item < nSelItems; ++item)
 		{
 			char tmp[_MAX_PATH];
@@ -1035,6 +1155,10 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems
 				is_arc = false;
 			if ((attr & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED) != 0)
 				is_index = false;
+			if ((attr & FILE_ATTRIBUTE_COMPRESSED) == 0)
+				is_compressed = false;
+			if ((attr & FILE_ATTRIBUTE_ENCRYPTED) == 0)
+				is_encrypted = false;
 		}
 		mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_BYPOSITION);
 		if (is_ro)
@@ -1057,6 +1181,14 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems
 			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_INDEX_OFF, _T("Indexed"));
 		else
 			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_INDEX_ON, _T("Indexed"));
+		if (is_compressed)
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_COMPRESSED_OFF, _T("Compressed"));
+		else
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_COMPRESSED_ON, _T("Compressed"));
+		if (is_encrypted)
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_ENCRYPTED_OFF, _T("Encrypted"));
+		else
+			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_ENCRYPTED_ON, _T("Encrypted"));
 	}
 
 	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_MENUBARBREAK | MF_BYPOSITION);
@@ -2288,10 +2420,12 @@ void CExplorerWnd::update_types()
 	if (show_hidden > 0)
 		flags |= SHCONTF_INCLUDEHIDDEN;
 
+#if _MFC_VER >= 0x0A00
 	// Note that the SHCONTF_INCLUDESUPERHIDDEN option has no effect if the Windows Explorer option
 	// "Hide protected (operating system) files (Recommended)" is off since HIDDEN files are already shown
 	if (theApp.is_win7_ && show_hidden > 1)
 		flags |= SHCONTF_INCLUDESUPERHIDDEN;  
+#endif
 
 	tree_.SetFlags(flags);
 	list_.SetItemTypes(flags | SHCONTF_NONFOLDERS);

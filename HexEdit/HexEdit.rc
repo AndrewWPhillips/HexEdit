@@ -3579,6 +3579,7 @@ BEGIN
     IDS_BOOKMARK_NOFILE     "Adding a bookmark requires an open file"
     IDS_BOOKMARK_NOTFOUND   "Bookmark not found"
     IDS_BOOKMARK_FILENOTFOUND "The file containing the bookmark was not found"
+    IDS_REG_REQUIRED        "Administrator Privileges required for Registry Changes"
 END
 
 STRINGTABLE 
@@ -3626,6 +3627,7 @@ BEGIN
     IDS_INVALID_HEX         "Invalid Hex Digit"
     IDS_SEL_LEN             "Selection Length Error"
     IDS_DIGEST              "Message Digest        "
+	IDS_FILE_ATTR           "Modifying File Attribute"
     IDS_LEAVE_LARGE_CB      "Leave Data on Clipboard?"
     IDS_BOOKMARKS_ADJUSTED  "Bookmark(s) Adjusted"
     IDS_FILE_OPEN_READ_ONLY "Opened Read Only"

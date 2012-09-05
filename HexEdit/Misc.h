@@ -51,7 +51,8 @@ BOOL GetDataPath(CString &data_path, int csidl = CSIDL_APPDATA);
 CString FileErrorMessage(const CFileException *fe, UINT mode = CFile::modeRead|CFile::modeWrite);
 void SetFileCreationTime(const char *filename, time_t tt);
 void SetFileAccessTime(const char *filename, time_t tt);
-void SetFileTimes(const char * filename, const FILETIME * cre, const FILETIME * acc = NULL, const FILETIME * mod = NULL);
+BOOL SetFileTimes(const char * filename, const FILETIME * cre, const FILETIME * acc = NULL, const FILETIME * mod = NULL);
+BOOL SetFileCompression(const char * filename, USHORT comp);
 bool AbortKeyPress();
 
 CString get_menu_text(CMenu *pmenu,int id);

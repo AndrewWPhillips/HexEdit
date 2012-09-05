@@ -1785,6 +1785,7 @@
 #define IDS_INVALID_HEX                 52736
 #define IDS_SEL_LEN                     52737
 #define IDS_DIGEST                      52738
+#define IDS_FILE_ATTR                   52739
 #define IDS_LEAVE_LARGE_CB              52740
 #define IDS_BOOKMARKS_ADJUSTED          52741
 #define IDS_FILE_OPEN_READ_ONLY         52742
@@ -1797,6 +1798,7 @@
 #define IDS_BOOKMARK_ALL_NOFILE         52749
 #define IDS_OPTION_SAVE_ALL             52750
 #define IDS_RECENT_GONE                 52751
+#define IDS_REG_REQUIRED                52752
 #define IDS_UPDATE_AVAILABLE            52799
 
 // Next default values for new objects

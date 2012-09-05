@@ -75,6 +75,10 @@ class CHistoryShellList : public CMFCShellListCtrl
 		ID_ARCHIVE_OFF,
 		ID_INDEX_ON,
 		ID_INDEX_OFF,
+		ID_COMPRESSED_ON,
+		ID_COMPRESSED_OFF,
+		ID_ENCRYPTED_ON,
+		ID_ENCRYPTED_OFF,
 
 		// Set file date/times
 		ID_TIME_MOD = 100,

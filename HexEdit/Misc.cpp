@@ -1518,6 +1518,8 @@ CString GetExePath()
 	char fullpath[_MAX_PATH];
 	char *end;                          // End of path of exe file
 
+    // xxx should use AfxGetModuleFileName()
+
 	// First try argv[0] which is usually the full pathname of the .EXE
 	strncpy(fullpath, __argv[0], sizeof(fullpath)-1);
 
@@ -1595,14 +1597,27 @@ void SetFileAccessTime(const char *filename, time_t tt)
 	::CloseHandle(hh);
 }
 
-void SetFileTimes(const char * filename, const FILETIME * cre, const FILETIME * acc, const FILETIME * mod)
+BOOL SetFileTimes(const char * filename, const FILETIME * cre, const FILETIME * acc, const FILETIME * mod)
 {
 	HANDLE hh = ::CreateFile(filename, FILE_WRITE_ATTRIBUTES, FILE_SHARE_WRITE|FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hh == INVALID_HANDLE_VALUE)
-		return;
+		return FALSE;
 
-	::SetFileTime(hh, cre, acc, mod);
+	BOOL retval = ::SetFileTime(hh, cre, acc, mod);
 	::CloseHandle(hh);
+	return retval;
+}
+
+BOOL SetFileCompression(const char * filename, USHORT comp)
+{
+	HANDLE hh = ::CreateFile(filename, FILE_GENERIC_READ|FILE_GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+	if (hh == INVALID_HANDLE_VALUE)
+		return FALSE;
+
+	DWORD BytesReturned;
+	BOOL retval = DeviceIoControl(hh, FSCTL_SET_COMPRESSION, (LPVOID)&comp, sizeof(comp), NULL, 0, &BytesReturned, NULL);
+	::CloseHandle(hh);
+	return retval;
 }
 
 // FileErrorMessage - generate a meaningful error string from a CFileException
