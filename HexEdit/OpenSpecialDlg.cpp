@@ -243,19 +243,20 @@ void COpenSpecialDlg::Update()
 		DWORD error = psl->error(idx);
 		if (error != NO_ERROR)
 		{
-			LPVOID lpMsgBuf;
+			LPTSTR mess;
 			if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 							  NULL,
 							  error,
 							  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-							  (LPTSTR) &lpMsgBuf,
+							  (LPTSTR) &mess,
 							  0,
 							  NULL))
 			{
-				strInfo += "Error: " + CString((LPCTSTR)lpMsgBuf) + "\r\n";
+				strInfo += "Error: " + CString(mess) + "\r\n";
 			}
 			else
 				strInfo += "Error reading device\r\n";
+			LocalFree(mess);
 		}
 		else if (!psl->medium_present(idx))
 		{
