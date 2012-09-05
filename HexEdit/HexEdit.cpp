@@ -1232,6 +1232,21 @@ CDocument* CHexEditApp::OpenDocumentFile(LPCTSTR lpszFileName)
 	return retval;
 }
 
+void CHexEditApp::CloseByName(const char * fname)
+{
+	// For each document, allow the user to save it if modified, then close it
+	POSITION posn = m_pDocTemplate->GetFirstDocPosition();
+	while (posn != NULL)
+	{
+		CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
+		ASSERT(pdoc != NULL);
+		if (pdoc->GetFileName().CompareNoCase(fname) == 0)
+		{
+			pdoc->OnCloseDocument();
+			return;
+		}
+	}
+}
 
 BOOL CHexEditApp::OnOpenRecentFile(UINT nID)
 {

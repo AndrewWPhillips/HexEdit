@@ -251,6 +251,7 @@ public:
 	// Allow creating of a document from a text string
 	bool no_ask_insert_;                // Turn this on to prevent OnFileNew from prompting with insertion options
 	void FileFromString(LPCTSTR str);   
+	void CloseByName(const char * fname);
 
 // Command handlers
 protected:
