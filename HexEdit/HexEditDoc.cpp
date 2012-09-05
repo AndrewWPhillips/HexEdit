@@ -1918,7 +1918,7 @@ void CHexEditDoc::OnUpdateKeepTimes(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(keep_times_);
 }
 
-void CHexEditDoc::OnOpenInExplorer() 
+void CHexEditDoc::OnOpenInExplorer()
 {
 	ASSERT(AfxGetMainWnd() != NULL);
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -1929,18 +1929,18 @@ void CHexEditDoc::OnOpenInExplorer()
 	}
 }
 
-void CHexEditDoc::OnUpdateOpenInExplorer(CCmdUI* pCmdUI) 
+void CHexEditDoc::OnUpdateOpenInExplorer(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(pfile1_ != NULL && !IsDevice());
 }
 
-void CHexEditDoc::OnCopyFullName() 
+void CHexEditDoc::OnCopyFullName()
 {
 	if (pfile1_ != NULL)
 		::StringToClipboard(pfile1_->GetFilePath());
 }
 
-void CHexEditDoc::OnUpdateCopyFullName(CCmdUI* pCmdUI) 
+void CHexEditDoc::OnUpdateCopyFullName(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(pfile1_ != NULL);
 }

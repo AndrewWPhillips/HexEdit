@@ -271,7 +271,9 @@ public:
 // Implementation
 	void UpdateAllViews();      // just redraw all views
 
-	static const char *szHexEditClassName; // Class name of mainframe
+	static const char * HexEditClassName; // Class name of mainframe
+	static const char * ProgID;           // HKCR reg key for associating file extensions
+	static const char * RegHelper;
 	static UINT wm_hexedit;     // Message for communicating between different HexEdit instances (to open files)
 	HWND hwnd_1st_;             // Handle of previous instance mainfarm window or NULL if no previous instance
 
@@ -854,6 +856,11 @@ public:
 
 	CNavManager navman_;				// Manages list of nav points for Navigate Back/Forward
 	void update_tabs();
+
+#if _MFC_VER >= 0x0A00  // Only needed fo Win7 jump lists which are only supported in MFC 10
+	bool RegisterExtensions(LPCTSTR extensions);
+#endif
+	bool CallRegHelper(LPCTSTR cmdLine);
 
 #ifndef NO_SECURITY
 	// Security info

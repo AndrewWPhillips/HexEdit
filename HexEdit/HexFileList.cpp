@@ -50,7 +50,7 @@ CHexFileList::CHexFileList(UINT nStart, LPCTSTR lpszSection, int nSize, int nMax
 	// and are overwritten with the current default value from the registry below.
 	// The entries correspond to the parm_num enum as:
 	//               CMD                           SEL     CS DOC  GRP                        FORMAT
-	//               | TOP    LEFT   BOTTOM RIGHT  | | POS  HL  COLS   FONT    HEIGHT         |
+	//               | TOP    LEFT   BOTTOM RIGHT  |-| POS  HL| COLS   FONT    HEIGHT         |
 	//               | |      |      |      |      | | | MK  DISPLAY OFF       |  OEMFONT  HEIGHT
 	default_data_ = "1|-30000|-30000|-30000|-30000|0|0|0|0||||0|16|4|0|Courier|16|Terminal|18|default";
 	SetDefaults();
@@ -787,7 +787,7 @@ void CHexFileList::SetupJumpList()
 	std::set<CString> ext;
 
 	// Get extensions of recent files
-	for (int ii = name_.size() - 1; ii >= name_.size() - numRecent; ii--)
+	for (int ii = name_.size() - 1; ii >= (int)name_.size() - numRecent; ii--)
 	{
 		ext.insert(CString(::PathFindExtension(name_[ii])));
 	}
@@ -806,15 +806,93 @@ void CHexFileList::SetupJumpList()
 		ext.insert(CString(::PathFindExtension(name_[*pf])));
 	}
 
+	// Check if appid or exe name is wrong in "HKCR\HexEditPro.file"
+	bool need_reg = false;
+	HKEY hkey;
+	CString strKey = CString(CHexEditApp::ProgID) + "\\shell\\open\\command";
+    if (RegOpenKeyEx(HKEY_CLASSES_ROOT, strKey, 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
+	{
+		need_reg = true;  // HexEdit Pro file registry setting is not present
+	}
+	else
+	{
+		char buf[1024];
+		DWORD len = sizeof(buf)-1;
+		CString ss;
+		AfxGetModuleFileName(0, ss);   // new in MFC 10?
+		ss += " %1";
+		if (RegQueryValueEx(hkey, NULL, NULL, NULL, (LPBYTE)buf, &len) != ERROR_SUCCESS ||
+			ss.CompareNoCase(buf) != 0)
+		{
+			need_reg = true;   // command line setting is not present or it is using a different .exe
+		}
+        RegCloseKey(hkey);
+	}
 
+	// Put all extensions (that have yet to be registered) into a string for RegisterExtensions
+	CString strExt;
+	for (std::set<CString>::const_iterator pext = ext.begin(); pext != ext.end(); ++pext)
+	{
+		strKey = *pext + "\\OpenWithProgids";
+        if (RegOpenKeyEx(HKEY_CLASSES_ROOT, strKey, 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
+		{
+			strExt += *pext + "|";
+			need_reg = true;
+		}
+		else
+		{
+			if (RegQueryValueEx(hkey, CHexEditApp::ProgID, NULL, NULL, NULL, NULL) != ERROR_SUCCESS)
+			{
+				strExt += *pext + "|";
+				need_reg = true;
+			}
+			RegCloseKey(hkey);
+		}
+	}
 
-	//jumpList.AddKnownCategory(KDC_RECENT);
-	//jumpList.AddKnownCategory(KDC_FREQUENT);
-	//jumpList.AddDestination("Recent", "D:\\tmp\\daily\\t.txt");
-	//jumpList.AddDestination("Favorites", "C:\\tmp\\daily\\dry.png");
-	//jumpList.AddDestination("Favorites", "C:\\tmp\\daily\\t.txt");
-	//jumpList.AddTask("C:\\Program Files\\WinZip\\WinZip32.EXE", "", "WinZip", "", 0);
+	// Only fire up reghelper if need to register something (need_reg is true)
+	// (ie, there are extensions to register OR the appid or exe path is wrong)
+	if (need_reg)
+	{
+		if (CAvoidableDialog::Show(IDS_REG_REQUIRED, 
+		                           "In order to use customized jump lists under Windows 7, "
+		                           "the file extensions for recently opened, frequently opened "
+		                           "and favorites need to be registered for opening with "
+		                           "HexEdit Pro.  These are registry settings for all users, "
+		                           "which require Administrator privileges to modify.\n\n"
+		                           "Do you wish to associate HexEdit Pro with these file extensions?\n\n"
+								   + strExt,
+		                           "File Registration",
+		                           MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES ||
+			!theApp.RegisterExtensions(strExt))
+		{
+			// There is no point in doing anything else if we could not register the file extensions since
+			// even jump list categories KDC_RECENT and KDC_FREQUENT require the extensions to be registered.
+			return;
+		}
+
+		// TODO: xxx We need keep track of all extensions we have registered in a reg string
+		//       xxx so we can unregister them all if necessary.  (Perhaps this can be done in 
+		//       xxx RegHelper.exe, so we know if we added the .ext or just the OpenWithProgids entry)
+	}
+
+	// Add the 3 types of files to the task list
+	CString strCategory;
+	if (theApp.is_us_)
+		strCategory = "Favorites";
+	else
+		strCategory = "Favourites";
+	for (std::vector<int>::const_iterator pf = fav.begin(); pf != fav.end(); ++pf)
+		jumpList.AddDestination(strCategory, name_[*pf]);
+
+	strCategory = "Frequent Files";
+	for (temp = freq; temp.size() > 0; temp.pop())
+		jumpList.AddDestination(strCategory, name_[temp.top()]);
+
+	strCategory = "Recent Files";
+	for (int ii = name_.size() - 1; ii >= (int)name_.size() - numRecent; ii--)
+		jumpList.AddDestination(strCategory, name_[ii]);
+
 	jumpList.CommitList();
 #endif
 }
-

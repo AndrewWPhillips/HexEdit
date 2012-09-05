@@ -190,7 +190,9 @@ BOOL CHexEditDocManager::DoPromptFileName(CString& fileName, UINT nIDSTitle, DWO
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditApp
-const char *CHexEditApp::szHexEditClassName = "HexEditMDIFrame";
+const char * CHexEditApp::HexEditClassName = "HexEditMDIFrame";
+const char * CHexEditApp::ProgID = "HexEditPro.file";
+const char * CHexEditApp::RegHelper = "RegHelper.exe";
 
 #ifdef _DEBUG
 const int CHexEditApp::security_version_ = 12; // This is changed for testing of handling of versions (registration etc)
@@ -417,9 +419,11 @@ UINT CHexEditApp::wm_hexedit = ::RegisterWindowMessage("HexEditOpenMessage");
 
 BOOL CHexEditApp::InitInstance()
 {
+#if _MFC_VER >= 0x0A00
 		CString appid;
 		appid.LoadStringA(AFX_IDS_APP_ID);
 		SetAppID(appid);
+#endif
 
 		// Note: if this is changed you also need to change the registry string
 		// at the end of ExitInstance (see delete_reg_settings_).
@@ -493,9 +497,12 @@ BOOL CHexEditApp::InitInstance()
 		}
 
 		// Work out if there is a previous instance running
-		hwnd_1st_ = ::FindWindow(szHexEditClassName, NULL);
+		hwnd_1st_ = ::FindWindow(HexEditClassName, NULL);
 		if (hwnd_1st_ != (HWND)0 && one_only_)
 		{
+#ifdef _DEBUG
+			AfxMessageBox("xxx ALREADY STARTED");
+#endif
 			// Make sure it's on top and not minimised before opening files in it
 			::BringWindowToTop(hwnd_1st_);
 			WINDOWPLACEMENT wp;
@@ -4275,6 +4282,54 @@ UINT CHexEditApp::RunCleanupThread()
 }
 #endif  // FILE_PREVIEW
 
+#if _MFC_VER >= 0x0A00  // Only needed for Win7 jump lists which are only supported in MFC 10
+
+// RegisterExtensions is used to register file extensions so that the type of files can be opned 
+// in HexEdit (ie HexEdit Pro appears on the "Open With" Explorer menu).
+// Since this requires admin privileges as separate program (RegHelper.exe) is fired up while 
+// using the ShellExecute() verb "runas".  The parameter takes one or more file extensions,
+// separated by vertical bars (|), for example ".jpg|.jpeg".
+bool CHexEditApp::RegisterExtensions(LPCTSTR extensions)
+{
+	CString strCmdLine;
+    CString strExeFullName;
+    AfxGetModuleFileName(0, strExeFullName);
+	strCmdLine.Format("EXT  \"%s\"  \"%s\"  \"HexEdit Pro file\"  \"%s\" \"%s\"",
+	                  strExeFullName,
+					  ProgID,
+				      m_pszAppID,
+				      extensions);
+
+	return CallRegHelper(strCmdLine);
+}
+#endif //_MFC_VER >= 0x0A00
+
+bool CHexEditApp::CallRegHelper(LPCTSTR cmdLine)
+{
+    CString strRegHelperFullName = GetExePath() + RegHelper;
+
+    SHELLEXECUTEINFO shex;
+
+    memset( &shex, 0, sizeof( shex) );
+    shex.cbSize         = sizeof( SHELLEXECUTEINFO );
+    shex.fMask          = 0;
+    shex.hwnd           = AfxGetMainWnd()->GetSafeHwnd();
+    shex.lpVerb         = _T("runas");
+    shex.lpFile         = strRegHelperFullName;
+    shex.lpParameters   = cmdLine;
+    shex.lpDirectory    = _T(".");
+    shex.nShow          = SW_NORMAL;
+
+    if (!::ShellExecuteEx( &shex ))
+	{
+		TaskMessageBox("Modifying Registry Settings (All Users)"
+			           "There was an error running:\n\n" + CString(RegHelper) +
+					   "\n\nfrom the folder:\n\n" + GetExePath());
+		return false;
+	}
+	return true;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CCommandLineParser member functions
 
@@ -4647,4 +4702,5 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 
 	return retval;
 }
+
 

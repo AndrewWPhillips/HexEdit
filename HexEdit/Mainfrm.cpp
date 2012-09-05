@@ -583,40 +583,39 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	WNDCLASS wndclass;
-	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	HINSTANCE hInst = AfxGetInstanceHandle();
 
 	BOOL retval = CMDIFrameWndEx::PreCreateWindow(cs);
 
 	::GetClassInfo(hInst, cs.lpszClass, &wndclass);
 	wndclass.style &= ~(CS_HREDRAW|CS_VREDRAW);
-	wndclass.lpszClassName = aa->szHexEditClassName;
+	wndclass.lpszClassName = theApp.HexEditClassName;
 	wndclass.hIcon = ::LoadIcon(hInst, MAKEINTRESOURCE(IDR_MAINFRAME));
 	ASSERT(wndclass.hIcon != 0);
 	if (!AfxRegisterClass(&wndclass))
 		AfxThrowResourceException();
 
-	cs.lpszClass = aa->szHexEditClassName;
+	cs.lpszClass = theApp.HexEditClassName;
 
-	if (aa->open_restore_)
+	if (theApp.open_restore_)
 	{
 		int ss;
-		if ((ss = aa->GetProfileInt("MainFrame", "WindowState", -1)) != -1)
-			aa->m_nCmdShow = ss;
+		if ((ss = theApp.GetProfileInt("MainFrame", "WindowState", -1)) != -1)
+			theApp.m_nCmdShow = ss;
 
 		// Get the window position/size
 		int top, left, bottom, right;
-		top = aa->GetProfileInt("MainFrame", "WindowTop", -30000);
-		left = aa->GetProfileInt("MainFrame", "WindowLeft", -30000);
-		bottom = aa->GetProfileInt("MainFrame", "WindowBottom", -30000);
-		right = aa->GetProfileInt("MainFrame", "WindowRight", -30000);
+		top = theApp.GetProfileInt("MainFrame", "WindowTop", -30000);
+		left = theApp.GetProfileInt("MainFrame", "WindowLeft", -30000);
+		bottom = theApp.GetProfileInt("MainFrame", "WindowBottom", -30000);
+		right = theApp.GetProfileInt("MainFrame", "WindowRight", -30000);
 
 		// If the values look OK change the CREATESTRUCT value correspondingly
 		if (top != -30000 && right != -30000 && top < bottom && left < right)
 		{
 			// Get the work area within the display
 			CRect rct;
-			if (aa->mult_monitor_)
+			if (theApp.mult_monitor_)
 			{
 				CRect rr(left, top, right, bottom);
 				HMONITOR hh = MonitorFromRect(&rr, MONITOR_DEFAULTTONEAREST);
@@ -698,15 +697,13 @@ void CMainFrame::OnClose()
 {
 	// Save state (posn, docked, hidden etc) of control bars (tool, edit
 	// & status bars) if save options on exit is on
-	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
-	SaveSearchHistory(aa);
-	SaveJumpHistory(aa);
+	SaveSearchHistory(&theApp);
+	SaveJumpHistory(&theApp);
 	expr_.SaveVars();
 
 	SaveBarState("DockState");
 
-	if (aa->save_exit_)
+	if (theApp.save_exit_)
 		SaveFrameOptions();
 
 	// The following were moved here from HexEditApp::ExitInstance as they require
@@ -728,7 +725,7 @@ void CMainFrame::OnClose()
 		}
 	}
 
-	if (aa->delete_all_settings_)
+	if (theApp.delete_all_settings_)
 		remove(m_strImagesFileName);
 
 	CMDIFrameWndEx::OnClose();
@@ -1385,7 +1382,7 @@ void CMainFrame::OnWindowNew()
 }
 
 // Handles the window menu commands: cascade, tile, arrange
-void CMainFrame::OnUpdateMDIWindowCmd(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateMDIWindowCmd(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(theApp.mditabs_);
 }
@@ -5467,7 +5464,7 @@ void CMainFrame::OnMdiNewVertGroup()
 	MDITabNewGroup();
 }
 
-void CMainFrame::OnMdiCancel() 
+void CMainFrame::OnMdiCancel()
 {
 	// nothing here? xxx
 }
