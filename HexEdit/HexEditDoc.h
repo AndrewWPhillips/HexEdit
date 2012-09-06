@@ -515,9 +515,8 @@ public:
 		virtual BOOL DoSave(LPCTSTR lpszPathName, BOOL bReplace = TRUE);
 
 		afx_msg void OnOpenInExplorer();
-		afx_msg void OnUpdateOpenInExplorer(CCmdUI* pCmdUI);
 		afx_msg void OnCopyFullName();
-		afx_msg void OnUpdateCopyFullName(CCmdUI* pCmdUI);
+		afx_msg void OnMakeFavourite();
 
 // Implementation
 public:
@@ -547,8 +546,9 @@ protected:
 	afx_msg void OnUpdateEditMode(CCmdUI* pCmdUI);
 	afx_msg void OnDffdOptions();
 	afx_msg void OnUpdateDffdOptions(CCmdUI* pCmdUI);
-	afx_msg void OnMakeFavourite();
 	afx_msg void OnUpdateMakeFavourite(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateOpenInExplorer(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateCopyFullName(CCmdUI* pCmdUI);
 
 	afx_msg void OnCompNew();            // Open file to compare against
 

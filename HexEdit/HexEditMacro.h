@@ -303,7 +303,13 @@ enum km_type
 
 	// Added in 4.0
 	km_comp_sync,               // 255 = sync now, 2 = toggle auto sync, 3 = toggle auto scroll
-	km_last // = 242?           // Keep at end
+
+	// Added in 4.1
+	km_open_in_explorer,        // show the active file in HexEdit Explorer window
+	km_copy_full_name,          // Copy the full path of the active file to the clipboard (as text)
+	km_fav,                     // toggle favourites category
+
+	km_last // = 245?           // Keep at end
 };
 
 // If/when we reach 255 we can recycle km_unused, km_invert, km_neg/km_inc/km_flip* etc

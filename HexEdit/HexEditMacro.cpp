@@ -1600,6 +1600,16 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				((CMainFrame *)AfxGetMainWnd())->m_wndCalc.OnSelLenStore();
 				break;
 
+			case km_open_in_explorer:
+				pv_->GetDocument()->OnOpenInExplorer();
+				break;
+			case km_copy_full_name:
+				pv_->GetDocument()->OnCopyFullName();
+				break;
+			case km_fav:
+				pv_->GetDocument()->OnMakeFavourite();
+				break;
+
 			default:
 				ASSERT(0);
 			} // switch

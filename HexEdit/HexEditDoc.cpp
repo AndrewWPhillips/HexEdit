@@ -1928,6 +1928,7 @@ void CHexEditDoc::OnOpenInExplorer()
 	{
 		mm->m_paneExpl.ShowAndUnroll();
 		mm->m_wndExpl.ShowFile(pfile1_->GetFilePath());
+		((CHexEditApp *)AfxGetApp())->SaveToMacro(km_open_in_explorer);
 	}
 }
 
@@ -1939,7 +1940,10 @@ void CHexEditDoc::OnUpdateOpenInExplorer(CCmdUI* pCmdUI)
 void CHexEditDoc::OnCopyFullName()
 {
 	if (pfile1_ != NULL)
+	{
 		::StringToClipboard(pfile1_->GetFilePath());
+		((CHexEditApp *)AfxGetApp())->SaveToMacro(km_copy_full_name);
+	}
 }
 
 void CHexEditDoc::OnUpdateCopyFullName(CCmdUI* pCmdUI)
@@ -1971,6 +1975,7 @@ void CHexEditDoc::OnMakeFavourite()
 		}
 		((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);  // forces update of column in Explorer list
 		((CMainFrame *)AfxGetMainWnd())->m_wndProp.Update(GetBestView(), -1);
+		((CHexEditApp *)AfxGetApp())->SaveToMacro(km_fav);
 	}
 }
 
