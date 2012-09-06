@@ -102,6 +102,8 @@ enum
 	IMG_BACKGROUND,
 	IMG_DOCAERIAL,
 	IMG_DOCCOMP,
+	IMG_EXPLORER,
+	IMG_FILE_PREVIEW,
 };
 
 int COptSheet::last_opt_page_ = -1;
@@ -298,7 +300,7 @@ void COptSheet::page_init()
 	// Add the rest of the pages and categories (System/General already added in init() above).
 	CMFCPropertySheetCategoryInfo * pCatFile = AddTreeCategory("Files", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
 	  AddPageToTree(pCatFile, &foldersPage_, IMG_FILE_FOLDERS, IMG_FILE_FOLDERS);
-	  AddPageToTree(pCatFile, &previewPage_, IMG_SPARE, IMG_SPARE);
+	  AddPageToTree(pCatFile, &previewPage_, IMG_SPARE, IMG_FILE_PREVIEW);
 	  AddPageToTree(pCatFile, &filtersPage_, IMG_FILE_FILTERS, IMG_FILE_FILTERS);
 	  AddPageToTree(pCatFile, &backupPage_, IMG_FILE_BACKUP, IMG_FILE_BACKUP);
 
