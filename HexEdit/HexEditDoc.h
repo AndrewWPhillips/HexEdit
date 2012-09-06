@@ -547,6 +547,8 @@ protected:
 	afx_msg void OnUpdateEditMode(CCmdUI* pCmdUI);
 	afx_msg void OnDffdOptions();
 	afx_msg void OnUpdateDffdOptions(CCmdUI* pCmdUI);
+	afx_msg void OnMakeFavourite();
+	afx_msg void OnUpdateMakeFavourite(CCmdUI* pCmdUI);
 
 	afx_msg void OnCompNew();            // Open file to compare against
 

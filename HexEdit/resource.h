@@ -1207,10 +1207,10 @@
 #define IDC_FIRST_HEADER_OPTS           1600
 #define IDC_FIRST_HEADER                1601
 #define IDC_WATERMARK                   1602
-#define IDC_FIRST_FOOTER_DIFF           1603
-#define IDC_EVEN_REVERSE                1604
 #define IDC_FIRST_FOOTER_OPTS           1605
 #define IDC_FIRST_FOOTER                1606
+#define IDC_EVEN_REVERSE                1607
+#define IDC_FIRST_FOOTER_DIFF           1608
 #define IDC_BACKUP_PAGE                 1610
 #define IDC_CALC_SIGNED                 1611
 #define IDC_SPIN_RADIX                  1612
@@ -1462,6 +1462,7 @@
 #define ID_CRC_XMODEM                   32997
 #define ID_RECENT_FILES                 32998
 #define ID_BANNED                       32999
+#define ID_MAKE_FAVOURITE               33000
 #define ID_XOR_BYTE                     33001
 #define ID_XOR_16BIT                    33002
 #define ID_XOR_32BIT                    33003

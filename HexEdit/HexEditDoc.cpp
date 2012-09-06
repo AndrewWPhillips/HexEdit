@@ -89,6 +89,8 @@ BEGIN_MESSAGE_MAP(CHexEditDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_OPEN_IN_EXPLORER, OnUpdateOpenInExplorer)
 	ON_COMMAND(ID_COPY_FULL_NAME, OnCopyFullName)
 	ON_UPDATE_COMMAND_UI(ID_COPY_FULL_NAME, OnUpdateCopyFullName)
+	ON_COMMAND(ID_MAKE_FAVOURITE, OnMakeFavourite)
+	ON_UPDATE_COMMAND_UI(ID_MAKE_FAVOURITE, OnUpdateMakeFavourite)
 
 	ON_COMMAND(ID_TEST2, OnTest)
 END_MESSAGE_MAP()
@@ -1943,6 +1945,51 @@ void CHexEditDoc::OnCopyFullName()
 void CHexEditDoc::OnUpdateCopyFullName(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(pfile1_ != NULL);
+}
+
+// Place the current file in the Favourites category
+void CHexEditDoc::OnMakeFavourite()
+{
+	CHexFileList *pfl = theApp.GetFileList();
+	CString filename = pfile1_->GetFilePath();
+	int ii;
+	if (!filename.IsEmpty() && (ii = pfl->GetIndex(filename)) != -1)
+	{
+		// Check if it's alrteady in the Favourites category
+		CString ss = pfl->GetData(ii, CHexFileList::CATEGORY);
+		if (ss.CompareNoCase("Favorites") == 0 || ss.CompareNoCase("Favourites") == 0)
+		{
+			pfl->SetData(ii, CHexFileList::CATEGORY, "");   // remove from favourites
+		}
+		else
+		{
+			// Add to favourites
+			if (theApp.is_us_)
+				pfl->SetData(ii, CHexFileList::CATEGORY, "Favorites");
+			else
+				pfl->SetData(ii, CHexFileList::CATEGORY, "Favourites");
+		}
+		((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);  // forces update of column in Explorer list
+		((CMainFrame *)AfxGetMainWnd())->m_wndProp.Update(GetBestView(), -1);
+	}
+}
+
+void CHexEditDoc::OnUpdateMakeFavourite(CCmdUI* pCmdUI)
+{
+	CString filename = pfile1_->GetFilePath();
+	if (!filename.IsEmpty())
+	{
+		// We can toggle the setting if we have a disk file
+		pCmdUI->Enable(TRUE);
+
+		// Now set the check mark depending on whether the category is already set to favourites
+		CHexFileList *pfl = theApp.GetFileList();
+		int ii = pfl->GetIndex(filename);
+		CString ss = pfl->GetData(ii, CHexFileList::CATEGORY);
+		pCmdUI->SetCheck(ss.CompareNoCase("Favorites") == 0 || ss.CompareNoCase("Favourites") == 0);
+	}
+	else
+		pCmdUI->Enable(FALSE);
 }
 
 void CHexEditDoc::OnDocTest()

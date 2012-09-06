@@ -260,6 +260,7 @@ BEGIN
     BUTTON      ID_CONTROL_DROPDOWN
     BUTTON      ID_SCHEME
     SEPARATOR
+    BUTTON      ID_MAKE_FAVOURITE
     BUTTON      ID_KEEP_TIMES
     BUTTON      ID_ALLOW_MODS
     SEPARATOR
@@ -500,6 +501,7 @@ BEGIN
             MENUITEM "&Extend To Mark\tCtrl+Shift+F9", ID_EXTENDTO_MARK
             MENUITEM "&Swap Cursor with Mark\tShift+F9", ID_SWAP_MARK
         END
+        MENUITEM "Favorite",                    ID_MAKE_FAVOURITE
         MENUITEM "&Bookmarks...",               ID_BOOKMARKS_EDIT
         MENUITEM SEPARATOR
         MENUITEM "&Find...\tCtrl+F",            ID_EDIT_FIND
