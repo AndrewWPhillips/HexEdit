@@ -1240,7 +1240,7 @@ void CHexEditApp::CloseByName(const char * fname)
 	{
 		CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
 		ASSERT(pdoc != NULL);
-		if (pdoc->GetFileName().CompareNoCase(fname) == 0)
+		if (pdoc->GetFilePath().CompareNoCase(fname) == 0)
 		{
 			pdoc->OnCloseDocument();
 			return;
@@ -2251,6 +2251,10 @@ void CHexEditApp::LoadOptions()
 	cleanup_days_ = GetProfileInt("Options", "ThumbCleanDays",  100);
 #endif
 
+	custom_explorer_menu_ = (BOOL)GetProfileInt("Options", "CustomExplorerContextMenu",  1);
+	wipe_type_ = (wipe_t)GetProfileInt("Options", "WipeStrategy", 1);
+	if (wipe_type_ < 0 || wipe_type_ >= WIPE_LAST)
+		wipe_type_ = WIPE_GOOD;
 	backup_        = (BOOL)GetProfileInt("Options", "CreateBackup",  0);
 	backup_space_  = (BOOL)GetProfileInt("Options", "BackupIfSpace", 1);
 	backup_size_   =       GetProfileInt("Options", "BackupIfLess",  0);  // 1 = 1KByte, 0 = always
@@ -2261,7 +2265,7 @@ void CHexEditApp::LoadOptions()
 	bg_stats_crc32_ = GetProfileInt("Options", "BackgroundStatsCRC32", 0) ? TRUE : FALSE;
 	bg_stats_md5_ = GetProfileInt("Options", "BackgroundStatsMD5", 0) ? TRUE : FALSE;
 	bg_stats_sha1_ = GetProfileInt("Options", "BackgroundStatsSHA1", 0) ? TRUE : FALSE;
-bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx
+bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx default to on until we add options for them
 	bg_exclude_network_ = GetProfileInt("Options", "BackgroundExcludeNetwork", 1) ? TRUE : FALSE;
 	bg_exclude_removeable_ = GetProfileInt("Options", "BackgroundExcludeRemoveable", 0) ? TRUE : FALSE;
 	bg_exclude_optical_ = GetProfileInt("Options", "BackgroundExcludeOptical", 1) ? TRUE : FALSE;
@@ -2732,6 +2736,9 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Options", "ThumbNailType", thumb_type_);
 	WriteProfileInt("Options", "ThumbCleanDays", cleanup_days_);
 #endif
+
+	WriteProfileInt("Options", "CustomExplorerContextMenu", custom_explorer_menu_ ? 1 : 0);
+	WriteProfileInt("Options", "WipeStrategy", wipe_type_);
 
 	WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
 	WriteProfileInt("MainFrame", "FloatDialogsMove", dlg_move_ ? 1 : 0);
@@ -3267,6 +3274,10 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.thumb_zoom_ = thumb_zoom_;
 	val.cleanup_days_ = cleanup_days_;
 
+	// Explorer options
+	val.custom_explorer_menu_ = custom_explorer_menu_;
+	val.wipe_type_ = wipe_type_;
+
 	// History
 	val.recent_files_ = recent_files_;
 	val.no_recent_add_ = no_recent_add_;
@@ -3488,6 +3499,9 @@ void CHexEditApp::set_options(struct OptValues &val)
 	thumb_type_ = val.thumb_type_ + 1;   // drop-list index to enum THUMB_TYPE
 	thumb_zoom_ = val.thumb_zoom_;
 	cleanup_days_ = val.cleanup_days_;
+
+	custom_explorer_menu_ = val.custom_explorer_menu_;
+	wipe_type_ = (wipe_t)val.wipe_type_;
 
 	if (recent_files_ != val.recent_files_)
 	{
@@ -4337,7 +4351,7 @@ bool CHexEditApp::CallRegHelper(LPCTSTR cmdLine)
 
     if (!::ShellExecuteEx( &shex ))
 	{
-		TaskMessageBox("Modifying Registry Settings (All Users)"
+		TaskMessageBox("Modifying Registry Settings (All Users)",
 			           "There was an error running:\n\n" + CString(RegHelper) +
 					   "\n\nfrom the folder:\n\n" + GetExePath());
 		return false;

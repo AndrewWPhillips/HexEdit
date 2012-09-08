@@ -677,6 +677,7 @@ public:
 	CString save_folder_;               // Folder to use if explicitly specified option chosen
 
 #ifdef FILE_PREVIEW
+	// Preview options
 	BOOL thumbnail_;                    // Generate a preview file when file is saved
 	int thumb_size_;                    // Size of thumbnail
 	double thumb_zoom_;                 // How much to zoom the thumbnail when showing it
@@ -691,6 +692,10 @@ public:
 	CWinThread * cleanup_thread_;       // cleanup is done in low-priority background thread
 	bool thread_stop_;                  // Signal the thread to stop
 #endif
+
+	// Explorer window options
+	BOOL custom_explorer_menu_;         // Show custom context menu in Explorer window
+	wipe_t wipe_type_;                  // option for WipeFile saying what wipe pattern(s) to write
 
 	// History list options
 	BOOL no_recent_add_;                // When a file is opened it is not added to "My Recent Documents" (OFN_DONTADDTORECENT)

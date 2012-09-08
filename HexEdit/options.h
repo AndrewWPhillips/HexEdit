@@ -109,6 +109,10 @@ struct OptValues
 	double thumb_zoom_;
 	int cleanup_days_;
 
+	// Explorer options
+	BOOL custom_explorer_menu_;
+	int wipe_type_;
+
 	// Backup options
 	int		backup_;
 	BOOL	backup_space_;
@@ -362,6 +366,32 @@ class CPreviewPage : public COptPage
 
 public:
 	CPreviewPage() : COptPage(IDD_OPT_PREVIEW) { }
+// Overrides
+	virtual void OnOK();
+	virtual BOOL OnApply();
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+// Implementation
+	virtual BOOL OnInitDialog();
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnChange();
+	DECLARE_MESSAGE_MAP()
+
+private:
+	void fix_controls();
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CExplorerPage dialog
+
+class CExplorerPage : public COptPage
+{
+	DECLARE_DYNCREATE(CExplorerPage)
+
+public:
+	CExplorerPage() : COptPage(IDD_OPT_EXPLORER) { }
 // Overrides
 	virtual void OnOK();
 	virtual BOOL OnApply();
@@ -1212,6 +1242,7 @@ protected:
 	CSystemGeneralPage sysgeneralPage_;
 	CFoldersPage foldersPage_;
 	CPreviewPage previewPage_;
+	CExplorerPage explorerPage_;
 	CFiltersPage filtersPage_;
 	CBackupPage backupPage_; 
 	CPrintGeneralPage printGeneralPage_;

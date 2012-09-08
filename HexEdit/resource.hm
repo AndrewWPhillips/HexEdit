@@ -109,6 +109,7 @@
 #define HIDC_CT_INSERTIONS              0x81360475    // IDD_OPT_WINEDIT [English (United States)]
 #define HIDC_CT_MODIFICATIONS           0x81360476    // IDD_OPT_WINEDIT [English (United States)]
 #define HIDC_CURRENT                    0x80e60470    // IDD_OPT_COLOURS [English (United States)]
+#define HIDC_CUSTOM_MENU                0x81ff0687    // IDD_OPT_EXPLORER [English (United States)]
 #define HIDC_DATE_BIG_ENDIAN            0x810d049e    // IDD_PROP_DATE [English (United States)]
 #define HIDC_DATE_DATE                  0x810d0494    // IDD_PROP_DATE [English (United States)]
 #define HIDC_DATE_DISPLAY               0x810d049d    // IDD_PROP_DATE [English (United States)]
@@ -551,6 +552,9 @@
 #define HIDC_WATERMARK_OPTS             0x81b304ab    // IDD_OPT_PRINT_DECORATIONS [English (United States)]
 #define HIDC_WEB_ADDRESS                0x8119053d    // IDD_DFFD_GLOBAL
 #define HIDC_WEB_CHECK                  0x8119053e    // IDD_DFFD_GLOBAL
+#define HIDC_WIPE_FAST                  0x81ff0689    // IDD_OPT_EXPLORER [English (United States)]
+#define HIDC_WIPE_GOOD                  0x81ff068a    // IDD_OPT_EXPLORER [English (United States)]
+#define HIDC_WIPE_THOROUGH              0x81ff068b    // IDD_OPT_EXPLORER [English (United States)]
 #define HIDC_XOR                        0x8075042c    // IDD_CALC
 #define HID_DFFD_CLONE                  0x81150533    // IDD_DFFD_DATA
 #define HID_DFFD_HELP                   0x8119016f    // IDD_DFFD_GLOBAL

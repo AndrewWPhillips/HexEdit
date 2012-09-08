@@ -2530,6 +2530,22 @@ BEGIN
     LTEXT           "thumbnail size",IDC_STATIC,133,81,45,8
 END
 
+IDD_OPT_EXPLORER DIALOGEX 0, 0, 260, 140
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Explorer"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Use Custom Context Menu",IDC_CUSTOM_MENU,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,13,100,10,0,HIDC_CUSTOM_MENU
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,56,37,202,1
+    LTEXT           "Wipe Strategy",IDC_STATIC,10,32,46,8
+    CONTROL         "Fast (overwrite all bytes with FF)",IDC_WIPE_FAST,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,21,45,116,10,0,HIDC_WIPE_FAST
+    CONTROL         "Good (FF, random, 00)",IDC_WIPE_GOOD,"Button",BS_AUTORADIOBUTTON,21,58,87,10,0,HIDC_WIPE_GOOD
+    CONTROL         "Thorough (F6, 00, FF, random, 00, FF, random)",IDC_WIPE_THOROUGH,
+                    "Button",BS_AUTORADIOBUTTON,21,71,163,10,0,HIDC_WIPE_THOROUGH
+END
+
 IDD_OPT_AERIAL DIALOGEX 0, 0, 260, 140
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_DISABLED | WS_CAPTION
 EXSTYLE WS_EX_CONTEXTHELP
@@ -3629,7 +3645,7 @@ BEGIN
     IDS_INVALID_HEX         "Invalid Hex Digit"
     IDS_SEL_LEN             "Selection Length Error"
     IDS_DIGEST              "Message Digest        "
-	IDS_FILE_ATTR           "Modifying File Attribute"
+	 IDS_FILE_ATTR           "File Operation"
     IDS_LEAVE_LARGE_CB      "Leave Data on Clipboard?"
     IDS_BOOKMARKS_ADJUSTED  "Bookmark(s) Adjusted"
     IDS_FILE_OPEN_READ_ONLY "Opened Read Only"
@@ -4824,7 +4840,7 @@ END
 
 IDD_GETSTR DIALOGEX 0, 0, 186, 92
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Enter a number"
+CAPTION "Enter text"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,30,73,50,14

@@ -768,7 +768,7 @@ void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point)
 					}
 
 					UINT firstCustomCmd = hr;            // QueryContextMenu returns first ID that we can use for our own items
-					if (!bIsFolder)
+					if (!bIsFolder && theApp.custom_explorer_menu_)
 						AdjustMenu(hPopup, firstCustomCmd, nSelItems, (LPCITEMIDLIST*)pPidls);  // Add our own menu items
 
 					UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);

@@ -139,6 +139,9 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.thumb_zoom_ = 1.5;
 	val_.cleanup_days_ = 100;
 
+	val_.custom_explorer_menu_ = TRUE;
+	val_.wipe_type_ = WIPE_GOOD;
+
 	val_.recent_files_ = 0;
 	val_.no_recent_add_ = FALSE;
 	val_.max_search_hist_ = val_.max_replace_hist_ = 
@@ -300,8 +303,9 @@ void COptSheet::page_init()
 	// Add the rest of the pages and categories (System/General already added in init() above).
 	CMFCPropertySheetCategoryInfo * pCatFile = AddTreeCategory("Files", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
 	  AddPageToTree(pCatFile, &foldersPage_, IMG_FILE_FOLDERS, IMG_FILE_FOLDERS);
-	  AddPageToTree(pCatFile, &previewPage_, IMG_SPARE, IMG_FILE_PREVIEW);
+	  AddPageToTree(pCatFile, &previewPage_, IMG_FILE_PREVIEW, IMG_FILE_PREVIEW);
 	  AddPageToTree(pCatFile, &filtersPage_, IMG_FILE_FILTERS, IMG_FILE_FILTERS);
+	  AddPageToTree(pCatFile, &explorerPage_, IMG_EXPLORER, IMG_EXPLORER);
 	  AddPageToTree(pCatFile, &backupPage_, IMG_FILE_BACKUP, IMG_FILE_BACKUP);
 
 	CMFCPropertySheetCategoryInfo * pCatPrn = AddTreeCategory("Printer", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
@@ -844,6 +848,83 @@ void CPreviewPage::OnContextMenu(CWnd* pWnd, CPoint point)
 }
 
 void CPreviewPage::OnChange()
+{
+	UpdateData();
+	fix_controls();
+	SetModified(TRUE);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CExplorerPage property page
+
+IMPLEMENT_DYNCREATE(CExplorerPage, COptPage)
+
+void CExplorerPage::DoDataExchange(CDataExchange* pDX)
+{
+	COptPage::DoDataExchange(pDX);
+
+	DDX_Check(pDX, IDC_CUSTOM_MENU, pParent->val_.custom_explorer_menu_);
+	DDX_Radio(pDX, IDC_WIPE_FAST, pParent->val_.wipe_type_);
+}
+
+BEGIN_MESSAGE_MAP(CExplorerPage, COptPage)
+	ON_BN_CLICKED(IDC_CUSTOM_MENU, OnChange)
+	ON_BN_CLICKED(IDC_WIPE_FAST, OnChange)
+	ON_BN_CLICKED(IDC_WIPE_GOOD, OnChange)
+	ON_BN_CLICKED(IDC_WIPE_THOROUGH, OnChange)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+void CExplorerPage::fix_controls()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CExplorerPage message handlers
+
+BOOL CExplorerPage::OnInitDialog()
+{
+	COptPage::OnInitDialog();
+
+	// Fix controls (dynamic things)
+	fix_controls();
+
+	return TRUE;
+}
+
+void CExplorerPage::OnOK()
+{
+	theApp.set_options(pParent->val_);
+	COptPage::OnOK();
+}
+
+BOOL CExplorerPage::OnApply()
+{
+	return TRUE;
+}
+
+static DWORD id_pairs_explorer[] = {
+	IDC_CUSTOM_MENU, HIDC_CUSTOM_MENU,
+	IDC_WIPE_FAST, HIDC_WIPE_FAST,
+	IDC_WIPE_GOOD, HIDC_WIPE_GOOD,
+	IDC_WIPE_THOROUGH, HIDC_WIPE_THOROUGH,
+	0,0 
+};
+
+BOOL CExplorerPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs_explorer);
+	return TRUE;
+}
+
+void CExplorerPage::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs_explorer);
+}
+
+void CExplorerPage::OnChange()
 {
 	UpdateData();
 	fix_controls();
