@@ -87,7 +87,8 @@ class CFile64
          modeNoTruncate =    0x2000,
          typeText =          0x4000, // typeText and typeBinary are used in
          typeBinary =   (int)0x8000, // derived classes only
-         osNoBuffer = (int) 0x10000
+         osNoBuffer =  (int) 0x10000, // unbuffered
+		 osWriteThrough=(int)0x20000, // write straight to disk (bypass even hardware buffers)
       };
 
       enum Attribute

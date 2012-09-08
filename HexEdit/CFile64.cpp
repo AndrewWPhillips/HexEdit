@@ -1195,6 +1195,8 @@ BOOL CFile64::Open( LPCTSTR filename, UINT open_flags )
 
 	  if ( open_flags & CFile64::osNoBuffer )
 		  flags |= FILE_FLAG_NO_BUFFERING;
+	  if ( open_flags & CFile64::osWriteThrough )
+		  flags |= FILE_FLAG_WRITE_THROUGH;
 
       m_FileHandle = ::CreateFile( filename,
                                    access,

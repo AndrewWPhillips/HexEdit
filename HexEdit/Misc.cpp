@@ -1571,6 +1571,115 @@ BOOL GetDataPath(CString &data_path, int csidl /*=CSIDL_APPDATA*/)
 	return retval;
 }
 
+static void wipe_cluster(CFile64 &fwipe, LONGLONG cluster, int cluster_size, const char * buf)
+{
+	fwipe.Seek(cluster*cluster_size, CFile::begin);
+	fwipe.Write(buf, cluster_size);
+}
+
+static void make_random_buffer(int len, char *buf)
+{
+	for (int ii = 0; ii < len; ++ii)
+		buf[ii] = char(::rand_good()>>16);
+}
+
+BOOL WipeFile(const char * filename, wipe_t wipe_type /*= WIPE_GOOD*/)
+{
+	// Work out size of one "unit" (cluster) of the file in bytes
+	DWORD SectorsPerCluster, SectorSize, NumberOfFreeClusters, TotalNumberOfClusters;
+	char vol[4];
+	strncpy(vol, filename, 3);	vol[3] = '\0';    // Need string of form "D:\"
+	if (!::GetDiskFreeSpace(vol,
+							&SectorsPerCluster,
+							&SectorSize,
+							&NumberOfFreeClusters,
+							&TotalNumberOfClusters))
+	{
+		TRACE("WipeFile filename <%s> invalid?  Error: %d\n", filename, GetLastError());
+		return FALSE;
+	}
+	int ClusterSize = SectorSize * SectorsPerCluster;
+
+	// Open the file in "write through" mode so even if there is some sort of software or hardware failure
+	// we know that the physical disk sectors have been overwritten (ie not buffered) when this function returns.
+	CFile64 fwipe;
+	if (!fwipe.Open(filename, CFile::modeReadWrite|CFile::shareDenyWrite|CFile::typeBinary||CFile64::osNoBuffer|CFile64::osWriteThrough))
+		return FALSE;
+
+	// Move the end of file to the end of the last cluster just in case the file size has been reduced and there
+	// is data in slack space after the end of file.  (If the file length was reduced such that clusters have
+	// been returned to the free list then we can't do anything about that apart from clearing all free blocks).
+	LONGLONG NumClusters = (fwipe.GetLength() + ClusterSize - 1)/ClusterSize;
+	if (!fwipe.SetEndOfFile(NumClusters * ClusterSize))
+		return FALSE;
+
+	char * buf00 = NULL;
+	char * bufFF = NULL;
+	char * bufF6 = NULL;
+	char * bufrand = NULL;
+
+	// Write over all clusters of the file
+	try
+	{
+		buf00 = new char[ClusterSize];
+		memset(buf00, '\0', ClusterSize);
+		bufFF = new char[ClusterSize];
+		memset(bufFF, '\xFF', ClusterSize);
+		bufF6 = new char[ClusterSize];
+		memset(bufF6, '\xF6', ClusterSize);
+		bufrand = new char[ClusterSize];
+		make_random_buffer(ClusterSize, bufrand);
+
+		// Write to each cluster several times to make sure it is not recoverable
+		for (LONGLONG clust = 0; clust < NumClusters; ++clust)
+		{
+			switch (wipe_type)
+			{
+			case WIPE_FAST:   // On Win7 its about 25% faster, on XP does not seem that much different
+				wipe_cluster(fwipe, clust, ClusterSize, bufFF);
+				break;
+			default:
+				ASSERT(0);
+				// fall through
+			case WIPE_GOOD:
+				// FF, random, 00
+				wipe_cluster(fwipe, clust, ClusterSize, bufFF);
+				wipe_cluster(fwipe, clust, ClusterSize, bufrand);
+				wipe_cluster(fwipe, clust, ClusterSize, buf00);
+				break;
+			case WIPE_THOROUGH:
+				// F6, 00, FF, random, 00, FF, random
+				wipe_cluster(fwipe, clust, ClusterSize, bufF6);
+				wipe_cluster(fwipe, clust, ClusterSize, buf00);
+				wipe_cluster(fwipe, clust, ClusterSize, bufFF);
+				make_random_buffer(ClusterSize, bufrand);
+				wipe_cluster(fwipe, clust, ClusterSize, bufrand);
+				wipe_cluster(fwipe, clust, ClusterSize, buf00);
+				wipe_cluster(fwipe, clust, ClusterSize, bufFF);
+				make_random_buffer(ClusterSize, bufrand);
+				wipe_cluster(fwipe, clust, ClusterSize, bufrand);
+				break;
+			}
+		}
+
+		fwipe.Close();
+	}
+	catch (...)
+	{
+		if (buf00 != NULL) delete[] buf00;
+		if (bufFF != NULL) delete[] bufFF;
+		if (bufF6 != NULL) delete[] bufF6;
+		if (bufrand != NULL) delete[] bufrand;
+		return FALSE;
+	}
+
+	delete[] buf00;
+	delete[] bufFF;
+	delete[] bufF6;
+	delete[] bufrand;
+	return TRUE;
+}
+
 // Change a file's "creation" time
 void SetFileCreationTime(const char *filename, time_t tt)
 {

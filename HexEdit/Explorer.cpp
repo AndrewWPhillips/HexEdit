@@ -830,7 +830,18 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 	if (!GetCurrentFolder(path_name))
 		return;
 
-	// If setting a file time: eveluate the date expression now
+	// For non-reversible operations we ask the user if they are sure they want to do it
+	if (cmd == ID_DELETE || cmd == ID_WIPE)
+	{
+		CString mess;
+		mess.Format("Are you sure you want to %s %d file(s)?",
+		            cmd == ID_DELETE ? "delete" : "wipe",
+					nSelItems);
+		if (TaskMessageBox("Confirm Operation", mess, MB_YESNO) != IDYES)
+			return;
+	}
+
+	// If setting a file time: evaluate the date expression now
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 	FILETIME new_time;
 	if (cmd >= ID_TIME_MOD && cmd <= ID_LAST && mm != NULL)
@@ -874,10 +885,12 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 	DWORD errnum = NO_ERROR;         // Windows error code if something goes wrong
 	char fname[_MAX_FNAME], ext[_MAX_EXT];
 
+	CWaitCursor wc;
+
 	// Perform the operation on all the selected files
 	for (int item = 0; item < nSelItems; ++item)
 	{
-		bool ok = true;
+		BOOL ok = TRUE;
 		char tmp[_MAX_PATH];
 		SHGetPathFromIDList(piil[item], tmp);
 
@@ -976,11 +989,28 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		case ID_ENCRYPTED_OFF:
 			ok = DecryptFile(full_name, 0);
 			break;
+
+		case ID_DELETE:
+			theApp.CloseByName(full_name);
+			ok = DeleteFile(full_name);
+			break;
+		case ID_WIPE:
+			theApp.CloseByName(full_name);
+			ok = WipeFile(full_name, theApp.wipe_type_);
+			if (ok)
+				ok = DeleteFile(full_name);
+			break;
 		}
 
+		// Remember that we had an error on at least one file.
+		// Note displayed info. will be incomplete if multiple files have errors.
+		// Note 2. Be careful not to wipe out Windows error between failure (in fucntion above)
+		// an the call to GetLastError() - eg the CWaitCursor d'tor sets the error to zero.
 		if (!ok)
 			errnum = GetLastError();
 	}
+
+	wc.Restore();
 
 	if (errnum != NO_ERROR)
 	{
@@ -1001,6 +1031,7 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		case ID_OPEN_RO:
 			op = "opening (read only)";
 			break;
+
 		case ID_READ_ONLY_ON:
 			op = "setting the read only attribute of";
 			break;
@@ -1043,6 +1074,17 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		case ID_ENCRYPTED_OFF:
 			op = "decrypting";
 			break;
+
+		case ID_DELETE:
+			op = "deleting";
+			break;
+		case ID_WIPE:
+			op = "wiping";
+			break;
+		default:
+			ASSERT(0);
+			op = "???";
+			break;
 		}
 
 		CString strError("unknown error");
@@ -1062,7 +1104,7 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		}
 
 		CString strMess;
-		strMess.Format("The error:\n\n%s\n occurred while %s %s", strError, op, (nSelItems > 1 ? "at least one of the files" : CString(fname) + ext));
+		strMess.Format("The error:\n\n%s\noccurred while %s %s", strError, op, (nSelItems > 1 ? "at least one of the files" : CString(fname) + ext));
 		CAvoidableDialog::Show(IDS_FILE_ATTR, strMess);
 	}
 }
@@ -1190,6 +1232,10 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems
 		else
 			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_ENCRYPTED_ON, _T("Encrypted"));
 	}
+
+	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_BYPOSITION);
+	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_DELETE, _T("Delete"));
+	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_WIPE, _T("Secure Wipe"));
 
 	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_MENUBARBREAK | MF_BYPOSITION);
 	mPopup.Detach();
