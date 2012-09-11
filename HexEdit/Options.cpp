@@ -918,7 +918,7 @@ static DWORD id_pairs_explorer[] = {
 	IDC_WIPE_FAST, HIDC_WIPE_FAST,
 	IDC_WIPE_GOOD, HIDC_WIPE_GOOD,
 	IDC_WIPE_THOROUGH, HIDC_WIPE_THOROUGH,
-	//IDC_FILTERS_PAGE, HIDC_FILTERS_PAGE, // xxx uncomment when help id has been generated
+	IDC_FILTERS_PAGE, HIDC_FILTERS_PAGE,
 	0,0 
 };
 

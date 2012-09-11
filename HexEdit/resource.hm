@@ -252,6 +252,7 @@
 #define HIDC_FILL_STRING                0x811c054e    // IDD_NEW_FILE
 #define HIDC_FILL_STRING_CHARSET        0x811c0555    // IDD_NEW_FILE
 #define HIDC_FILL_STRING_VALUE          0x811c0552    // IDD_NEW_FILE
+#define HIDC_FILTERS_PAGE               0x81ff0634    // IDD_OPT_EXPLORER [English (United States)]
 #define HIDC_FILTER_LIST_SIZE           0x819b04ca    // IDD_OPT_HISTORY [English (United States)]
 #define HIDC_FILTER_OPTS                0x81280599    // IDD_EXPLORER
 #define HIDC_FIND_ALLOW_WILDCARD        0x80fb0505    // IDD_FIND_TEXT [English (United States)]

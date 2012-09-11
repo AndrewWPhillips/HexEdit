@@ -941,7 +941,8 @@ void CRecentFileDlg::OnSearch()
 	GetStr dlg(this);
 	dlg.prompt_ = "Please enter the text to search for.\r\n\n"
 		          "Note that all fields including name, location, "
-				  "keywords, comments, etc will be searched.";
+				  "keywords, comments, etc will be searched and "
+				  "matching files will be selected in the list.";
 	if (dlg.DoModal() == IDOK)
 	{
 		// Find all entries that have the string
