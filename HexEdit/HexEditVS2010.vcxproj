@@ -387,6 +387,7 @@
     <None Include="RES\eval.ico" />
     <None Include="RES\exclam.ico" />
     <None Include="Res\filter.ico" />
+    <None Include="res\filters.bmp" />
     <None Include="RES\flip.bmp" />
     <None Include="RES\flip1.bmp" />
     <None Include="RES\flip1_ho.bmp" />

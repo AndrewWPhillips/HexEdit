@@ -1000,6 +1000,10 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 			if (ok)
 				ok = DeleteFile(full_name);
 			break;
+		case ID_EXPLORER_OPTIONS:
+			theApp.display_options(EXPLORER_OPTIONS_PAGE, TRUE);
+			ok = TRUE;
+			break;
 		}
 
 		// Remember that we had an error on at least one file.
@@ -1234,8 +1238,24 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems
 	}
 
 	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_BYPOSITION);
-	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_DELETE, _T("Delete"));
-	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_WIPE, _T("Secure Wipe"));
+	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_DELETE, "Delete");
+	CString strMenu("Wipe ");
+	switch (theApp.wipe_type_)
+	{
+	case WIPE_FAST:
+		strMenu += "(Fast)";
+		break;
+	case WIPE_GOOD: 
+		strMenu += "(Good)";
+		break;
+	case WIPE_THOROUGH:
+		strMenu += "(Thorough)";
+		break;
+	}
+	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_WIPE, strMenu);
+
+	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_BYPOSITION);
+	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_EXPLORER_OPTIONS, "Options...");
 
 	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_MENUBARBREAK | MF_BYPOSITION);
 	mPopup.Detach();

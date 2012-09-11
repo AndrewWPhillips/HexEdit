@@ -83,6 +83,8 @@ class CHistoryShellList : public CMFCShellListCtrl
 		ID_DELETE,
 		ID_WIPE,
 
+		ID_EXPLORER_OPTIONS,
+
 		// Set file date/times
 		ID_TIME_MOD = 100,
 		ID_TIME_CRE = 200,
