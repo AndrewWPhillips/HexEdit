@@ -1955,9 +1955,11 @@ void CHexEditDoc::OnUpdateCopyFullName(CCmdUI* pCmdUI)
 void CHexEditDoc::OnMakeFavourite()
 {
 	CHexFileList *pfl = theApp.GetFileList();
-	CString filename = pfile1_->GetFilePath();
 	int ii;
-	if (!filename.IsEmpty() && (ii = pfl->GetIndex(filename)) != -1)
+	if (pfl != NULL && 
+		pfile1_ != NULL && 
+		!pfile1_->GetFilePath().IsEmpty() && 
+		(ii = pfl->GetIndex(pfile1_->GetFilePath())) != -1)
 	{
 		// Check if it's alrteady in the Favourites category
 		CString ss = pfl->GetData(ii, CHexFileList::CATEGORY);
@@ -1972,8 +1974,18 @@ void CHexEditDoc::OnMakeFavourite()
 				pfl->SetData(ii, CHexFileList::CATEGORY, "Favorites");
 			else
 				pfl->SetData(ii, CHexFileList::CATEGORY, "Favourites");
+
+			// If category was not empty (but comments field was) then save the previous category in comments
+			if (!ss.IsEmpty())
+			{
+				CString strComment = pfl->GetData(ii, CHexFileList::COMMENTS);
+				if (strComment.IsEmpty())
+				{
+					pfl->SetData(ii, CHexFileList::COMMENTS, "Previous category: " + ss);
+				}
+			}
 		}
-		((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(filename);  // forces update of column in Explorer list
+		((CMainFrame *)AfxGetMainWnd())->UpdateExplorer(pfile1_->GetFilePath());  // forces update of column in Explorer list
 		((CMainFrame *)AfxGetMainWnd())->m_wndProp.Update(GetBestView(), -1);
 		((CHexEditApp *)AfxGetApp())->SaveToMacro(km_fav);
 	}
@@ -1981,15 +1993,14 @@ void CHexEditDoc::OnMakeFavourite()
 
 void CHexEditDoc::OnUpdateMakeFavourite(CCmdUI* pCmdUI)
 {
-	CString filename = pfile1_->GetFilePath();
-	if (!filename.IsEmpty())
+	if (pfile1_ != NULL && !pfile1_->GetFilePath().IsEmpty())
 	{
 		// We can toggle the setting if we have a disk file
 		pCmdUI->Enable(TRUE);
 
 		// Now set the check mark depending on whether the category is already set to favourites
 		CHexFileList *pfl = theApp.GetFileList();
-		int ii = pfl->GetIndex(filename);
+		int ii = pfl->GetIndex(pfile1_->GetFilePath());
 		CString ss = pfl->GetData(ii, CHexFileList::CATEGORY);
 		pCmdUI->SetCheck(ss.CompareNoCase("Favorites") == 0 || ss.CompareNoCase("Favourites") == 0);
 	}

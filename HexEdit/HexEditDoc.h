@@ -443,6 +443,7 @@ public:
 	}
 	CString GetType() { return strTypeName_; }
 	CString GetFileName() { if (pfile1_ == NULL) return ""; else return pfile1_->GetFileName(); }
+	CString GetFilePath() { if (pfile1_ == NULL) return ""; else return pfile1_->GetFilePath(); }
 
 	BOOL IsDevice() const { return dynamic_cast<CFileNC *>(pfile1_) != NULL; }
 	DWORD GetSectorSize() const { if (pfile1_ == NULL) return 0; else return pfile1_->SectorSize(); }
