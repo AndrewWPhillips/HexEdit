@@ -2544,6 +2544,7 @@ BEGIN
     CONTROL         "Good (FF, random, 00)",IDC_WIPE_GOOD,"Button",BS_AUTORADIOBUTTON,21,58,87,10,0,HIDC_WIPE_GOOD
     CONTROL         "Thorough (F6, 00, FF, random, 00, FF, random)",IDC_WIPE_THOROUGH,
                     "Button",BS_AUTORADIOBUTTON,21,71,163,10,0,HIDC_WIPE_THOROUGH
+    PUSHBUTTON      "File Type Filter List >>",IDC_FILTERS_PAGE,144,116,100,16,0,0
 END
 
 IDD_OPT_AERIAL DIALOGEX 0, 0, 260, 140
@@ -3729,6 +3730,7 @@ IDB_VERT                BITMAP                  "res\\vert.bmp"
 IDB_VERT_HOT            BITMAP                  "res\\vert_hot.bmp"
 IDB_OPTIONSIMAGES       BITMAP                  "RES\\optionsimages.bmp"
 IDB_HIST                BITMAP                  "res\\hist.bmp"
+IDB_FILTERS             BITMAP                  "res\\filters.bmp"
 IDB_DOCDISPLAY          BITMAP                  "res\\docdisplay.bmp"
 IDB_DOCEDIT             BITMAP                  "res\\docedit.bmp"
 IDB_DISPLAY             BITMAP                  "res\\display.bmp"

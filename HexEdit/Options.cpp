@@ -299,13 +299,13 @@ void COptSheet::page_init()
 	workspaceeditPage_.SetBackupPage(&backupPage_);
 	windisplayPage_.SetGlobalDisplayPage(&workspacedisplayPage_);
 	wineditPage_.SetGlobalEditPage(&workspaceeditPage_);
+	explorerPage_.SetFiltersPage(&filtersPage_);
 
 	// Add the rest of the pages and categories (System/General already added in init() above).
 	CMFCPropertySheetCategoryInfo * pCatFile = AddTreeCategory("Files", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
 	  AddPageToTree(pCatFile, &foldersPage_, IMG_FILE_FOLDERS, IMG_FILE_FOLDERS);
 	  AddPageToTree(pCatFile, &previewPage_, IMG_FILE_PREVIEW, IMG_FILE_PREVIEW);
 	  AddPageToTree(pCatFile, &filtersPage_, IMG_FILE_FILTERS, IMG_FILE_FILTERS);
-	  AddPageToTree(pCatFile, &explorerPage_, IMG_EXPLORER, IMG_EXPLORER);
 	  AddPageToTree(pCatFile, &backupPage_, IMG_FILE_BACKUP, IMG_FILE_BACKUP);
 
 	CMFCPropertySheetCategoryInfo * pCatPrn = AddTreeCategory("Printer", IMG_FOLDER, IMG_FOLDER_SEL, pCatSys_);
@@ -320,6 +320,7 @@ void COptSheet::page_init()
 	AddPageToTree(pCatWS, &workspaceeditPage_, IMG_WORKSPACEEDIT, IMG_WORKSPACEEDIT);
 	AddPageToTree(pCatWS, &backgroundPage_, IMG_BACKGROUND, IMG_BACKGROUND);
 	AddPageToTree(pCatWS, &tipsPage_, IMG_TIP, IMG_TIP);
+	AddPageToTree(pCatWS, &explorerPage_, IMG_EXPLORER, IMG_EXPLORER);
 	AddPageToTree(pCatWS, &templatePage_, IMG_TEMPLATE, IMG_TEMPLATE);
 	AddPageToTree(pCatWS, &aerialPage_, IMG_AERIAL, IMG_AERIAL);
 	if (pview != NULL)
@@ -356,11 +357,14 @@ void COptSheet::page_init()
 	case FILTER_OPTIONS_PAGE:
 		pPage = &filtersPage_;
 		break;
+	case WIN_OPTIONS_PAGE:
+		if (pview != NULL) pPage = &windisplayPage_;
+		break;
 	case BACKGROUND_OPTIONS_PAGE:
 		pPage = &backgroundPage_;
 		break;
-	case WIN_OPTIONS_PAGE:
-		if (pview != NULL) pPage = &windisplayPage_;
+	case EXPLORER_OPTIONS_PAGE:
+		pPage = &explorerPage_;
 		break;
 	}
 
@@ -866,15 +870,17 @@ void CExplorerPage::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Check(pDX, IDC_CUSTOM_MENU, pParent->val_.custom_explorer_menu_);
 	DDX_Radio(pDX, IDC_WIPE_FAST, pParent->val_.wipe_type_);
+	DDX_Control(pDX, IDC_FILTERS_PAGE, ctl_filters_butn_);
 }
 
 BEGIN_MESSAGE_MAP(CExplorerPage, COptPage)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
 	ON_BN_CLICKED(IDC_CUSTOM_MENU, OnChange)
 	ON_BN_CLICKED(IDC_WIPE_FAST, OnChange)
 	ON_BN_CLICKED(IDC_WIPE_GOOD, OnChange)
 	ON_BN_CLICKED(IDC_WIPE_THOROUGH, OnChange)
-	ON_WM_HELPINFO()
-	ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_FILTERS_PAGE, OnFiltersPage)
 END_MESSAGE_MAP()
 
 void CExplorerPage::fix_controls()
@@ -887,6 +893,8 @@ void CExplorerPage::fix_controls()
 BOOL CExplorerPage::OnInitDialog()
 {
 	COptPage::OnInitDialog();
+	GetDlgItem(IDC_FILTERS_PAGE)->EnableWindow(pFiltersPage != NULL);
+	ctl_filters_butn_.SetImage(IDB_FILTERS);
 
 	// Fix controls (dynamic things)
 	fix_controls();
@@ -910,6 +918,7 @@ static DWORD id_pairs_explorer[] = {
 	IDC_WIPE_FAST, HIDC_WIPE_FAST,
 	IDC_WIPE_GOOD, HIDC_WIPE_GOOD,
 	IDC_WIPE_THOROUGH, HIDC_WIPE_THOROUGH,
+	//IDC_FILTERS_PAGE, HIDC_FILTERS_PAGE, // xxx uncomment when help id has been generated
 	0,0 
 };
 
@@ -922,6 +931,12 @@ BOOL CExplorerPage::OnHelpInfo(HELPINFO* pHelpInfo)
 void CExplorerPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs_explorer);
+}
+
+void CExplorerPage::OnFiltersPage()
+{
+	if (pFiltersPage != NULL)
+		pParent->SetActivePage(pFiltersPage);
 }
 
 void CExplorerPage::OnChange()

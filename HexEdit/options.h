@@ -391,7 +391,14 @@ class CExplorerPage : public COptPage
 	DECLARE_DYNCREATE(CExplorerPage)
 
 public:
-	CExplorerPage() : COptPage(IDD_OPT_EXPLORER) { }
+	CExplorerPage() : COptPage(IDD_OPT_EXPLORER), pFiltersPage(NULL) { }
+
+	void SetFiltersPage(COptPage * pPage)
+	{
+		pFiltersPage = pPage;
+		if (m_hWnd != (HWND)0 && GetDlgItem(IDC_FILTERS_PAGE) != NULL)
+			GetDlgItem(IDC_FILTERS_PAGE)->EnableWindow(pFiltersPage != NULL);
+	}
 // Overrides
 	virtual void OnOK();
 	virtual BOOL OnApply();
@@ -403,10 +410,14 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnChange();
+	afx_msg void OnFiltersPage();
 	DECLARE_MESSAGE_MAP()
 
 private:
 	void fix_controls();
+
+	COptPage * pFiltersPage;
+	CMFCButton ctl_filters_butn_;
 };
 
 /////////////////////////////////////////////////////////////////////////////
