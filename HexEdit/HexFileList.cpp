@@ -175,7 +175,7 @@ void CHexFileList::Add(LPCTSTR lpszPathName)
 	ss.MakeUpper();
 	unsigned long hash = str_hash(ss);
 
-	int open_count = 1;
+	int open_count = 0;
 
 	// Find and remove any existing entry(s) for this file
 	// Note: we use an index rather than iterator since an iterator is invalid after erase() is called
@@ -201,7 +201,7 @@ void CHexFileList::Add(LPCTSTR lpszPathName)
 	name_.push_back(szTemp);
 	hash_.push_back(hash);
 	opened_.push_back(time(NULL));
-	open_count_.push_back(open_count);
+	open_count_.push_back(open_count + 1);  // inc open count (do we need IncOpenCount()?)
 	data_.push_back(saved_data);
 
 	ASSERT(hash_.size() == name_.size());
@@ -752,13 +752,15 @@ void CHexFileList::SetupJumpList()
 		if (open_count_[ii] <= 1)
 		{
 		}
-		else if (freq.size() <= maxSlots/3)
+		else if (freq.size() < maxSlots/3)  // fill up to 1/3 of total slots available
 		{
 			freq.push(ii);
 		}
 		else if (open_count_[ii] > open_count_[freq.top()])
 		{
 			// First get rid of all the lowest frequency elements
+			// Note: This can result in the size of freq dropping unexpectedly (eg: from 10 to 1) if
+			//       there are a large number of files with the same open count. This is NOT a bug.
 			int lowest = open_count_[freq.top()];
 			while (freq.size() > 0 && open_count_[freq.top()] == lowest)
 			{
@@ -767,7 +769,7 @@ void CHexFileList::SetupJumpList()
 			freq.push(ii);
 		}
 
-		if (fav.size() <= maxSlots/3)
+		if (fav.size() < maxSlots/2)      // may fill up to 1/2 of all slots available
 		{
 			CString ss = GetData(ii, CATEGORY);
 			if (ss.CompareNoCase("Favourites") == 0 || ss.CompareNoCase("Favorites") == 0)
@@ -777,6 +779,9 @@ void CHexFileList::SetupJumpList()
 
 	// work out how many of each to use
 	int numFreq = freq.size(), numFav = fav.size();
+	ASSERT(numFreq <= maxSlots/3);
+	if (numFreq + numFav > (2*maxSlots)/3)         // make sure freq + fav is not more than 2/3 of total
+		numFav = (2*maxSlots)/3 - numFreq; 
 	int numRecent = maxSlots - numFreq - numFav;
 	if (numRecent > name_.size())
 		numRecent = name_.size();
@@ -801,9 +806,9 @@ void CHexFileList::SetupJumpList()
 	}
 
 	// Get extensions of favourite files
-	for (std::vector<int>::const_iterator pf = fav.begin(); pf != fav.end(); ++pf)
+	for (int ii = 0; ii < fav.size(); ++ii)
 	{
-		ext.insert(CString(::PathFindExtension(name_[*pf])));
+		ext.insert(CString(::PathFindExtension(name_[fav[ii]])));
 	}
 
 	// Check if appid or exe name is wrong in "HKCR\HexEditPro.file"
@@ -882,8 +887,8 @@ void CHexFileList::SetupJumpList()
 		strCategory = "Favorites";
 	else
 		strCategory = "Favourites";
-	for (std::vector<int>::const_iterator pf = fav.begin(); pf != fav.end(); ++pf)
-		jumpList.AddDestination(strCategory, name_[*pf]);
+	for (int ii = 0; ii < numFav; ++ii)
+		jumpList.AddDestination(strCategory, name_[fav[ii]]);
 
 	strCategory = "Frequent Files";
 	for (temp = freq; temp.size() > 0; temp.pop())
