@@ -54,6 +54,9 @@ class CHistoryShellList : public CMFCShellListCtrl
 		COLATTR,								// file attributes
 		COLOPENED,								// time last opened in hexedit
 		COLCATEGORY, COLKEYWORDS, COLCOMMENTS,	// Extra info on file entered by user (Summary page)
+		COLCREATED, COLACCESSED,                // More file time columns
+		//COLVIEWTIME, COLEDITTIME, COLOPENCOUNT,
+		//COLSIZEONDISK,
 		COLLAST         // Leave this one at the end (to be one past last used value)
 	};
 
@@ -143,6 +146,7 @@ private:
 	int normal_count_;           // No of columns added in base class (CMFCShellListCtrl)
 	int fl_idx_;                 // This is saved index into recent file list (cached for list box row while processing fields)
 	TCHAR fl_path_[MAX_PATH];    // Saved name of file for current row
+	CFileStatus fl_status_;      // Saved status of the file
 	static char * defaultWidths;
 
 	CExplorerDropTarget * m_pDropTarget;

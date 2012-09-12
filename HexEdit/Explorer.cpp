@@ -179,11 +179,13 @@ static const TCHAR * colnames[] =
 	_T("Category"),         // COLCATEGORY
 	_T("Keywords"),         // COLKEYWORDS
 	_T("Comments"),         // COLCOMMENTS
+	_T("Created"),          // COLCREATED
+	_T("Accessed"),         // COLACCESSED
 	// always add to the end of this list as existing registry strings may rely on this order
 	NULL
 };
 
-char * CHistoryShellList::defaultWidths = "150|60|150|150|60|150|60|100|200";  // name,size,type,mod-time,attr,last-opened-time,cat,kw,comments
+char * CHistoryShellList::defaultWidths = "150|60|150|150|60|150|60|100|200|150|150";  // name,size,type,mod-time,attr,last-opened-time,cat,kw,comments,cre,acc
 
 void CHistoryShellList::OnSetColumns()
 {
@@ -282,19 +284,18 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 			ASSERT(fl_idx_ == -2);
 			if (pfl != NULL)
 				fl_idx_ = pfl->GetIndex(fl_path_);
-		}
 
-		// Handle size column ourselves since base class can't handle file sizes > 2Gbytes [xxx - check this for new MFC base class]
-		CFileStatus fs;
-		if (CFile64::GetStatus(fl_path_, fs))
-		{
-			if ((fs.m_attribute & (CFile::directory | CFile ::volume)) != 0)
-				return _T("");
-			CString ss = NumScale(double(fs.m_size));
-			if (ss.Right(1) == _T(" "))
-				return ss;
-			else
-				return ss + _T("B");
+			// Handle size column ourselves since base class can't handle file sizes > 2Gbytes [xxx - check this for new MFC base class]
+			if (CFile64::GetStatus(fl_path_, fl_status_))
+			{
+				if ((fl_status_.m_attribute & (CFile::directory | CFile ::volume)) != 0)
+					return _T("");
+				CString ss = NumScale(double(fl_status_.m_size));
+				if (ss.Right(1) == _T(" "))
+					return ss;
+				else
+					return ss + _T("B");
+			}
 		}
 	}
 
@@ -323,15 +324,30 @@ CString CHistoryShellList::OnGetItemText(int iItem, int iColumn,
 		if (pfl != NULL && fl_idx_ > -1)
 			return pfl->GetData(fl_idx_, CHexFileList::CATEGORY);
 		break;
-
 	case COLKEYWORDS:
 		if (pfl != NULL && fl_idx_ > -1)
 			return pfl->GetData(fl_idx_, CHexFileList::KEYWORDS);
 		break;
-
 	case COLCOMMENTS:
 		if (pfl != NULL && fl_idx_ > -1)
 			return pfl->GetData(fl_idx_, CHexFileList::COMMENTS);
+		break;
+
+	case COLCREATED:
+		if (fl_path_[0] != '\0')
+		{
+			CString str;
+			OnFormatFileDate(fl_status_.m_ctime, str);
+			return str;
+		}
+		break;
+	case COLACCESSED:
+		if (fl_path_[0] != '\0')
+		{
+			CString str;
+			OnFormatFileDate(fl_status_.m_atime, str);
+			return str;
+		}
 		break;
 
 	default:
@@ -361,6 +377,8 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 	// Handle file size and modification date ourselves as base calss does not separate folders from files.
 	case COLMOD:
 	case COLSIZE:
+	case COLCREATED:
+	case COLACCESSED:
 		if (SHGetPathFromIDList(pItem1->pidlFQ, path1) &&
 			CFile64::GetStatus(path1, fs1) &&
 			SHGetPathFromIDList(pItem2->pidlFQ, path2) &&
@@ -381,6 +399,10 @@ int CHistoryShellList::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColum
 			}
 			if (iColumn == COLMOD)
 				return fs1.m_mtime < fs2.m_mtime ? -1 : fs1.m_mtime > fs2.m_mtime ? 1 : 0;  // compare modification times
+			else if (iColumn == COLCREATED)
+				return fs1.m_ctime < fs2.m_ctime ? -1 : fs1.m_ctime > fs2.m_ctime ? 1 : 0;  // compare creation times
+			else if (iColumn == COLACCESSED)
+				return fs1.m_atime < fs2.m_atime ? -1 : fs1.m_atime > fs2.m_atime ? 1 : 0;  // compare access times
 			else
 				return fs1.m_size < fs2.m_size ? -1 : fs1.m_size > fs2.m_size ? 1 : 0;      // compare sizes
 		}
@@ -1238,8 +1260,8 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems
 	}
 
 	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_BYPOSITION);
-	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_DELETE, "Delete");
-	CString strMenu("Wipe ");
+	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_DELETE, "Delete...");
+	CString strMenu("Wipe... ");
 	switch (theApp.wipe_type_)
 	{
 	case WIPE_FAST:
