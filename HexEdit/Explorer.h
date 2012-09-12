@@ -223,10 +223,13 @@ private:
 class CExplorerWnd : public CDialog
 {
 public:
-	CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0), init_(false), m_first(true) { }
+	CExplorerWnd() : splitter_(2), hh_(0), update_required_(false), help_hwnd_(0), init_(false) { }
 	enum { IDD = IDD_EXPLORER };
 	virtual BOOL Create(CWnd* pParentWnd);
 	void ShowFile(LPCTSTR fname) { list_.ShowFile(fname); }
+
+	void LinkToTree()   { if (init_ && tree_.GetRelatedList() == NULL) tree_.SetRelatedList(&list_); }
+	void UnlinkToTree() { if (init_) tree_.SetRelatedList(NULL); }
 
 	void UpdateFolderInfo(CString folder);   // called when current folder changes
 	void Refresh();                 // Set folder/filter from edit controls and refresh the folder display
@@ -295,7 +298,6 @@ private:
 	HANDLE hh_;                         // Used to monitor directory changes (returned from FindFirstChangeNotification)
 	bool update_required_;              // Keeps track of consecutive updates to prevent unnecessary refreshes
 
-	bool m_first;                   // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
 	CResizeCtrl m_resizer;          // Used to move controls around when the window is resized
 	static CBrush * m_pBrush;       // brush used for background
 

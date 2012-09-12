@@ -60,6 +60,15 @@ CHistoryShellList::~CHistoryShellList()
 // This is a virtual function that is called whenever the current folder is to change
 HRESULT CHistoryShellList::DisplayFolder(LPAFX_SHELLITEMINFO lpItemInfo)
 {
+	if (pExpl_ != NULL)
+	{
+		static bool first = true;
+		if (first)
+			first = false;
+		else
+			pExpl_->LinkToTree();
+	}
+
 	HRESULT retval = CMFCShellListCtrl::DisplayFolder(lpItemInfo);
 
 	if (retval == S_OK && pExpl_ != NULL && !in_move_)
@@ -1860,7 +1869,7 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 	//rct.InflateRect(0, 0, 3, 30);
 	splitter_.Create(this, rct, IDC_EXPLORER);
 	// Create the 2 pane windows and add them to the splitter
-	tree_.Create(WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS,
+	tree_.Create(WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_SHOWSELALWAYS,
 						  CRect(0, 0, 0, 0), &splitter_, IDC_EXPLORER_TREE);
 	splitter_.SetPane(0, &tree_);
 	list_.Create(WS_CHILD | WS_VISIBLE | LVS_REPORT,
@@ -1869,7 +1878,7 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 
 	// Set options for the tree and list
 	//tree_.SetFlags(SHCONTF_FOLDERS | SHCONTF_INCLUDEHIDDEN);  // moved to update_types
-	tree_.SetRelatedList(&list_);
+	//tree_.SetRelatedList(&list_);
 	tree_.EnableShellContextMenu();
 	list_.EnableShellContextMenu();
 
@@ -1926,16 +1935,17 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 		if (!sv[ii].IsEmpty())
 			ctl_name_.AddString(sv[ii]);
 
-	//// Restore last used folder (disable since it can take a long time)
-	//if ((GetStyle() & WS_VISIBLE) != 0)
-	//{
-	//	CString dir = theApp.GetProfileString("File-Settings", "ExplorerDir", "C:\\");
-	//	ctl_name_.SetWindowText(dir);
-	//	tree_.SelectPath(dir);
-	//	list_.Start(this);
-	//	list_.DisplayFolder((const char *)dir);
-	//}
-	//else
+	// Restore last used folder
+	if ((GetStyle() & WS_VISIBLE) != 0)
+	{
+		CString dir = theApp.GetProfileString("File-Settings", "ExplorerDir", "C:\\");
+		ctl_name_.SetWindowText(dir);
+		// Disable this since it can take a while
+		//tree_.SelectPath(dir);
+		list_.DisplayFolder((const char *)dir);
+		list_.Start(this);
+	}
+	else
 		list_.Start(this);                      // Signal that everything is set up
 
 	ctl_back_.SetImage(IDB_BACK, IDB_BACK_HOT);
