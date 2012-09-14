@@ -1152,11 +1152,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 		else
 		{
 			mpz_sqrt(current_.get_mpz_t(), current_.get_mpz_t());
-
-			int len = tmp.GetLength();
-			if (len > 1 && tmp[0] == '(')
-				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
-			right_.Format(EXPRSTR("sqrt(%s)"), (const wchar_t *)tmp);
+			right_.Format(EXPRSTR("sqrt(%s)"), (const wchar_t *)without_parens(tmp));
 		}
 		break;
 	case unary_cube:
@@ -1166,11 +1162,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 	case unary_factorial:
 		{
 			mpz_fac_ui(current_.get_mpz_t(), current_.get_ui());
-
-			int len = tmp.GetLength();
-			if (len > 1 && tmp[0] == '(')
-				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
-			right_.Format(EXPRSTR("fact(%s)"), (const wchar_t *)tmp);
+			right_.Format(EXPRSTR("fact(%s)"), (const wchar_t *)without_parens(tmp));
 		}
 		break;
 	case unary_not:
@@ -1185,12 +1177,11 @@ void CCalcDlg::calc_unary(unary_type unary)
 		}
 		else
 		{
-			current_ = ((current_ << 1) | (current_ >> (bits_ - 1))) & mask_;
+//			if (mpz_sgn(current_.get_mpz_t()) < 0)
+//				mpz_neg(current_.get_mpz_t(), current_.get_mpz_t());
 
-			int len = tmp.GetLength();
-			if (len > 1 && tmp[0] == '(')
-				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
-			right_.Format(EXPRSTR("rol(%s, 1, %d)"), (const wchar_t *)tmp, bits_);
+			current_ = ((current_ << 1) | (current_ >> (bits_ - 1))) & mask_;
+			right_.Format(EXPRSTR("rol(%s, 1, %d)"), (const wchar_t *)without_parens(tmp), bits_);
 		}
 		break;
 	case unary_ror:   // ROR1 button
@@ -1202,11 +1193,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 		else
 		{
 			current_ = ((current_ >> 1) | (current_ << (bits_ - 1))) & mask_;
-
-			int len = tmp.GetLength();
-			if (len > 1 && tmp[0] == '(')
-				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
-			right_.Format(EXPRSTR("ror(%s, 1, %d)"), (const wchar_t *)tmp, bits_);
+			right_.Format(EXPRSTR("ror(%s, 1, %d)"), (const wchar_t *)without_parens(tmp), bits_);
 		}
 		break;
 	case unary_lsl:
@@ -1228,11 +1215,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 			current_ >>= 1;
 			if (neg)
 				mpz_setbit(current_.get_mpz_t(), bits_-1);
-
-			int len = tmp.GetLength();
-			if (len > 1 && tmp[0] == '(')
-				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
-			right_.Format(EXPRSTR("asr(%s, 1, %d)"), (const wchar_t *)tmp, bits_);
+			right_.Format(EXPRSTR("asr(%s, 1, %d)"), (const wchar_t *)without_parens(tmp), bits_);
 		}
 		break;
 	case unary_rev:  // Reverse all bits
@@ -1256,11 +1239,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 				current_ >>= 1;              // Move bits down to test the next
 			}
 			current_ = temp;
-
-			int len = tmp.GetLength();
-			if (len > 1 && tmp[0] == '(')
-				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
-			right_.Format(EXPRSTR("reverse(%s, %d)"), (const wchar_t *)tmp, bits_);
+			right_.Format(EXPRSTR("reverse(%s, %d)"), (const wchar_t *)without_parens(tmp), bits_);
 		}
 		break;
 	case unary_flip: // Flip byte order
@@ -1285,11 +1264,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 			flip_bytes((unsigned char *)buf, bytes);
 			mpz_import(current_.get_mpz_t(), units, -1, sizeof(mp_limb_t), -1, 0, buf);
 			delete[] buf;
-
-			int len = tmp.GetLength();
-			if (len > 1 && tmp[0] == '(')
-				tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
-			right_.Format(EXPRSTR("flip(%s, %d)"), (const wchar_t *)tmp, bits_/8);
+			right_.Format(EXPRSTR("flip(%s, %d)"), (const wchar_t *)without_parens(tmp), bits_/8);
 		}
 		break;
 	case unary_at:
@@ -1320,12 +1295,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 			else if (!get_bytes(GetValue()))
 				state_ = CALCERROR;
 			else
-			{
-				int len = tmp.GetLength();
-				if (len > 1 && tmp[0] == '(')
-					tmp = tmp.Mid(1, len-2);   // remove parenetheses at both ends
-				right_.Format(EXPRSTR("get(%s, %d)"), (const wchar_t *)tmp, bits_);
-			}
+				right_.Format(EXPRSTR("get(%s, %d)"), (const wchar_t *)without_parens(tmp), bits_);
 		}
 		break;
 
@@ -1420,7 +1390,7 @@ void CCalcDlg::calc_binary()
 	case binop_rol:
 		if (bits_ == 0)
 		{
-			current_str_ = "Can't rotate left if bit count is unlimited";
+			current_str_ = "Can't rotate right if bit count is unlimited";
 			state_ = CALCERROR;
 		}
 		else
@@ -1435,7 +1405,7 @@ void CCalcDlg::calc_binary()
 	case binop_ror:
 		if (bits_ == 0)
 		{
-			current_str_ = "Can't rotate right if bit count is unlimited";
+			current_str_ = "Can't rotate left if bit count is unlimited";
 			state_ = CALCERROR;
 		}
 		else
@@ -3035,10 +3005,28 @@ ExprStringType CCalcDlg::get_expr(bool no_paren /* = false */)
 	}
 
 	int len = retval.GetLength();
-	if (no_paren && len > 1 && retval[0] == '(')
-		retval = retval.Mid(1, len-2);   // remove parenetheses at both ends
+	if (no_paren)
+		return without_parens(retval);
+	else
+		return retval;
+}
+// Checks if an expression (in a string) is enclosed in parentheses and if so removes them
+// and returns the expression (without parentheses) else just returns the input string.
+ExprStringType CCalcDlg::without_parens(const ExprStringType &ss)
+{
+	int len = ss.GetLength();
 
-	return retval;
+	if (len > 0 && ss[0] == '(')
+	{
+		while (--len > 0)
+		{
+			if (ss[len] == ')')
+				return ss.Mid(1, len-1);
+			else if (ss[len] != ' ')
+				break;
+		}
+	}
+	return ss;
 }
 
 // Set right_ (right side of current binary operation) from edit box.

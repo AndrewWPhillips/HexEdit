@@ -438,6 +438,8 @@ private:
 
 	void build_menus();             // Build menus for menu buttons
 	void button_colour(CWnd *pp, bool enable, COLORREF normal); // Make button greyed/normal
+
+	ExprStringType without_parens(const ExprStringType &ss);  // remove parentheses if present
 };
 
 //{{AFX_INSERT_LOCATION}}
