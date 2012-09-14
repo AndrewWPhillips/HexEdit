@@ -2251,10 +2251,13 @@ void CHexEditApp::LoadOptions()
 	cleanup_days_ = GetProfileInt("Options", "ThumbCleanDays",  100);
 #endif
 
-	custom_explorer_menu_ = (BOOL)GetProfileInt("Options", "CustomExplorerContextMenu",  1);
 	wipe_type_ = (wipe_t)GetProfileInt("Options", "WipeStrategy", 1);
 	if (wipe_type_ < 0 || wipe_type_ >= WIPE_LAST)
 		wipe_type_ = WIPE_GOOD;
+	show_not_indexed_ = (BOOL)GetProfileInt("Options", "ShowNotIndexedAttribute",  1);
+	sync_tree_ = (BOOL)GetProfileInt("Options", "SyncTreeWithExplorerFolder",  1);
+	custom_explorer_menu_ = (BOOL)GetProfileInt("Options", "CustomExplorerContextMenu",  1);
+
 	backup_        = (BOOL)GetProfileInt("Options", "CreateBackup",  0);
 	backup_space_  = (BOOL)GetProfileInt("Options", "BackupIfSpace", 1);
 	backup_size_   =       GetProfileInt("Options", "BackupIfLess",  0);  // 1 = 1KByte, 0 = always
@@ -2737,8 +2740,10 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Options", "ThumbCleanDays", cleanup_days_);
 #endif
 
-	WriteProfileInt("Options", "CustomExplorerContextMenu", custom_explorer_menu_ ? 1 : 0);
 	WriteProfileInt("Options", "WipeStrategy", wipe_type_);
+	WriteProfileInt("Options", "ShowNotIndexedAttribute", show_not_indexed_ ? 1 : 0);
+	WriteProfileInt("Options", "SyncTreeWithExplorerFolder", sync_tree_ ? 1 : 0);
+	WriteProfileInt("Options", "CustomExplorerContextMenu", custom_explorer_menu_ ? 1 : 0);
 
 	WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
 	WriteProfileInt("MainFrame", "FloatDialogsMove", dlg_move_ ? 1 : 0);
@@ -3275,8 +3280,10 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.cleanup_days_ = cleanup_days_;
 
 	// Explorer options
-	val.custom_explorer_menu_ = custom_explorer_menu_;
 	val.wipe_type_ = wipe_type_;
+	val.show_not_indexed_ = show_not_indexed_;
+	val.sync_tree_ = sync_tree_;
+	val.custom_explorer_menu_ = custom_explorer_menu_;
 
 	// History
 	val.recent_files_ = recent_files_;
@@ -3500,8 +3507,17 @@ void CHexEditApp::set_options(struct OptValues &val)
 	thumb_zoom_ = val.thumb_zoom_;
 	cleanup_days_ = val.cleanup_days_;
 
-	custom_explorer_menu_ = val.custom_explorer_menu_;
 	wipe_type_ = (wipe_t)val.wipe_type_;
+	show_not_indexed_ = val.show_not_indexed_;
+	if (sync_tree_ != val.sync_tree_)
+	{
+		sync_tree_ = val.sync_tree_;
+		if (sync_tree_)
+			((CMainFrame*)m_pMainWnd)->m_wndExpl.LinkToTree();
+		else
+			((CMainFrame*)m_pMainWnd)->m_wndExpl.UnlinkToTree();
+	}
+	custom_explorer_menu_ = val.custom_explorer_menu_;
 
 	if (recent_files_ != val.recent_files_)
 	{

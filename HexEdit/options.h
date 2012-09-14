@@ -110,8 +110,10 @@ struct OptValues
 	int cleanup_days_;
 
 	// Explorer options
-	BOOL custom_explorer_menu_;
 	int wipe_type_;
+	BOOL show_not_indexed_;
+	BOOL sync_tree_;
+	BOOL custom_explorer_menu_;
 
 	// Backup options
 	int		backup_;

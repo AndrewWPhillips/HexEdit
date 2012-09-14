@@ -228,8 +228,8 @@ public:
 	virtual BOOL Create(CWnd* pParentWnd);
 	void ShowFile(LPCTSTR fname) { list_.ShowFile(fname); }
 
-	void LinkToTree()   { if (init_ && tree_.GetRelatedList() == NULL) tree_.SetRelatedList(&list_); }
-	void UnlinkToTree() { if (init_) tree_.SetRelatedList(NULL); }
+	void LinkToTree()   { list_.m_hwndRelatedTree = tree_.GetSafeHwnd(); }
+	void UnlinkToTree() { list_.m_hwndRelatedTree = (HWND)0; }
 
 	void UpdateFolderInfo(CString folder);   // called when current folder changes
 	void Refresh();                 // Set folder/filter from edit controls and refresh the folder display

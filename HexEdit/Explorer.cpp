@@ -62,11 +62,13 @@ HRESULT CHistoryShellList::DisplayFolder(LPAFX_SHELLITEMINFO lpItemInfo)
 {
 	if (pExpl_ != NULL)
 	{
+		// Don't sync the very first time (startup) since this can really slow down the
+		// startup time (especailly if there are missing network drives).
 		static bool first = true;
 		if (first)
 			first = false;
-		else
-			pExpl_->LinkToTree();
+		else if (theApp.sync_tree_)
+			pExpl_->LinkToTree();    			// We should have already called tree_.SetRelatedList()
 	}
 
 	HRESULT retval = CMFCShellListCtrl::DisplayFolder(lpItemInfo);
@@ -599,8 +601,16 @@ CString CHistoryShellList::GetAttributes(LPCTSTR path, bool * p_is_dir /*=NULL*/
 			retval += _T("S");
 		if ((attr & FILE_ATTRIBUTE_ARCHIVE) != 0)
 			retval += _T("A");
-		if ((attr & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED) == 0)  // flag is off
-			retval += _T("I");
+		if (theApp.show_not_indexed_)
+		{
+			if ((attr & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED) != 0)  // not-indexed flag is on
+				retval += _T("N");
+		}
+		else
+		{
+			if ((attr & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED) == 0)  // not-indexed flag is off = indexed
+				retval += _T("I");
+		}
 		if ((attr & FILE_ATTRIBUTE_COMPRESSED) != 0)
 			retval += _T("C");
 		if ((attr & FILE_ATTRIBUTE_ENCRYPTED) != 0)
@@ -1033,6 +1043,7 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 			break;
 		case ID_EXPLORER_OPTIONS:
 			theApp.display_options(EXPLORER_OPTIONS_PAGE, TRUE);
+			Refresh();
 			ok = TRUE;
 			break;
 		}
@@ -1092,10 +1103,16 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 			op = "clearing the archive attribute of";
 			break;
 		case ID_INDEX_ON:
-			op = "adding indexing for";
+			if (theApp.show_not_indexed_)
+				op = "clearing the non-indexed attribute for";
+			else
+				op = "adding indexing for";
 			break;
 		case ID_INDEX_OFF:
-			op = "removing indexing for";
+			if (theApp.show_not_indexed_)
+				op = "setting the non-indexed attribute for";
+			else
+				op = "removing indexing for";
 			break;
 		case ID_COMPRESSED_ON:
 			op = "compressing";
@@ -1254,10 +1271,20 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems
 			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_ARCHIVE_OFF, _T("Archive"));
 		else
 			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_ARCHIVE_ON, _T("Archive"));
-		if (is_index)
-			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_INDEX_OFF, _T("Indexed"));
+		if (theApp.show_not_indexed_)
+		{
+			if (is_index)
+				mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_INDEX_OFF, _T("Not Indexed"));
+			else
+				mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_INDEX_ON, _T("Not Indexed"));
+		}
 		else
-			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_INDEX_ON, _T("Indexed"));
+		{
+			if (is_index)
+				mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_INDEX_OFF, _T("Indexed"));
+			else
+				mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_INDEX_ON, _T("Indexed"));
+		}
 		if (is_compressed)
 			mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION | MF_CHECKED, firstCustomCmd + ID_COMPRESSED_OFF, _T("Compressed"));
 		else
@@ -1878,7 +1905,8 @@ BOOL CExplorerWnd::Create(CWnd* pParentWnd)
 
 	// Set options for the tree and list
 	//tree_.SetFlags(SHCONTF_FOLDERS | SHCONTF_INCLUDEHIDDEN);  // moved to update_types
-	//tree_.SetRelatedList(&list_);
+	tree_.SetRelatedList(&list_);
+	UnlinkToTree();     // This is so first list update does not slow startup for update of tree
 	tree_.EnableShellContextMenu();
 	list_.EnableShellContextMenu();
 

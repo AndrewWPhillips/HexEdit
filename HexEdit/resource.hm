@@ -488,6 +488,8 @@
 #define HIDC_SHOW_AREA                  0x810c04af    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_SHOW_BOOKMARKS             0x8136047a    // IDD_OPT_WINEDIT [English (United States)]
 #define HIDC_SHOW_HIGHLIGHTS            0x81360479    // IDD_OPT_WINEDIT [English (United States)]
+#define HIDC_SHOW_INDEXED               0x81ff068c    // IDD_OPT_EXPLORER [English (United States)]
+#define HIDC_SHOW_NOT_INDEXED           0x81ff068d    // IDD_OPT_EXPLORER [English (United States)]
 #define HIDC_SHOW_OTHER                 0x80eb060b    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_SIZE_FACTOR                0x811c0560    // IDD_NEW_FILE
 #define HIDC_SIZE_LENGTH                0x811c0562    // IDD_NEW_FILE

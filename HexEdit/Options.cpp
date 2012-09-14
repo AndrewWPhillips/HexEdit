@@ -139,8 +139,10 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.thumb_zoom_ = 1.5;
 	val_.cleanup_days_ = 100;
 
-	val_.custom_explorer_menu_ = TRUE;
 	val_.wipe_type_ = WIPE_GOOD;
+	val_.show_not_indexed_ = FALSE;
+	val_.sync_tree_ = TRUE;
+	val_.custom_explorer_menu_ = TRUE;
 
 	val_.recent_files_ = 0;
 	val_.no_recent_add_ = FALSE;
@@ -868,18 +870,23 @@ void CExplorerPage::DoDataExchange(CDataExchange* pDX)
 {
 	COptPage::DoDataExchange(pDX);
 
-	DDX_Check(pDX, IDC_CUSTOM_MENU, pParent->val_.custom_explorer_menu_);
 	DDX_Radio(pDX, IDC_WIPE_FAST, pParent->val_.wipe_type_);
+	DDX_Radio(pDX, IDC_SHOW_INDEXED, pParent->val_.show_not_indexed_);
+	DDX_Check(pDX, IDC_SYNC_TREE, pParent->val_.sync_tree_);
+	DDX_Check(pDX, IDC_CUSTOM_MENU, pParent->val_.custom_explorer_menu_);
 	DDX_Control(pDX, IDC_FILTERS_PAGE, ctl_filters_butn_);
 }
 
 BEGIN_MESSAGE_MAP(CExplorerPage, COptPage)
 	ON_WM_HELPINFO()
 	ON_WM_CONTEXTMENU()
-	ON_BN_CLICKED(IDC_CUSTOM_MENU, OnChange)
 	ON_BN_CLICKED(IDC_WIPE_FAST, OnChange)
 	ON_BN_CLICKED(IDC_WIPE_GOOD, OnChange)
 	ON_BN_CLICKED(IDC_WIPE_THOROUGH, OnChange)
+	ON_BN_CLICKED(IDC_SHOW_INDEXED, OnChange)
+	ON_BN_CLICKED(IDC_SHOW_NOT_INDEXED, OnChange)
+	ON_BN_CLICKED(IDC_SYNC_TREE, OnChange)
+	ON_BN_CLICKED(IDC_CUSTOM_MENU, OnChange)
 	ON_BN_CLICKED(IDC_FILTERS_PAGE, OnFiltersPage)
 END_MESSAGE_MAP()
 
@@ -919,6 +926,9 @@ static DWORD id_pairs_explorer[] = {
 	IDC_WIPE_GOOD, HIDC_WIPE_GOOD,
 	IDC_WIPE_THOROUGH, HIDC_WIPE_THOROUGH,
 	IDC_FILTERS_PAGE, HIDC_FILTERS_PAGE,
+	//IDC_SHOW_INDEXED, HIDC_SHOW_INDEXED,
+	//IDC_SHOW_NOT_INDEXED, HIDC_SHOW_NOT_INDEXED,
+	//IDC_SYNC_TREE, HIDC_SYNC_TREE,
 	0,0 
 };
 

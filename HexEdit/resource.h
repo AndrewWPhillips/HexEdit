@@ -1276,9 +1276,12 @@
 #define IDC_TABCLOSE                    1669
 #define IDC_TABCOLOUR                   1670
 #define IDC_CUSTOM_MENU                 1671
+#define IDC_SYNC_TREE                   1672
 #define IDC_WIPE_FAST                   1673
 #define IDC_WIPE_GOOD                   1674
 #define IDC_WIPE_THOROUGH               1675
+#define IDC_SHOW_INDEXED                1676
+#define IDC_SHOW_NOT_INDEXED            1677
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1817,7 +1820,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        520
 #define _APS_NEXT_COMMAND_VALUE         39203
-#define _APS_NEXT_CONTROL_VALUE         1675
+#define _APS_NEXT_CONTROL_VALUE         1678
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
