@@ -814,8 +814,11 @@ void CHexFileList::SetupJumpList()
 	// Check if appid or exe name is wrong in "HKCR\HexEditPro.file"
 	bool need_reg = false;
 	HKEY hkey;
-	CString strKey = CString(CHexEditApp::ProgID) + "\\shell\\open\\command";
-    if (RegOpenKeyEx(HKEY_CLASSES_ROOT, strKey, 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
+
+	// Check that our "file" registry setting is present in the registry and APPID is correct
+    if (RegOpenKeyEx(HKEY_CLASSES_ROOT,
+	                 CString(CHexEditApp::ProgID), 
+	                 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
 	{
 		need_reg = true;  // HexEdit Pro file registry setting is not present
 	}
@@ -823,10 +826,8 @@ void CHexFileList::SetupJumpList()
 	{
 		char buf[1024];
 		DWORD len = sizeof(buf)-1;
-		CString ss;
-		AfxGetModuleFileName(0, ss);   // new in MFC 10?
-		ss += " %1";
-		if (RegQueryValueEx(hkey, NULL, NULL, NULL, (LPBYTE)buf, &len) != ERROR_SUCCESS ||
+		CString ss = theApp.m_pszAppID;
+		if (RegQueryValueEx(hkey, "AppUserModelID", NULL, NULL, (LPBYTE)buf, &len) != ERROR_SUCCESS ||
 			ss.CompareNoCase(buf) != 0)
 		{
 			need_reg = true;   // command line setting is not present or it is using a different .exe
@@ -834,12 +835,36 @@ void CHexFileList::SetupJumpList()
         RegCloseKey(hkey);
 	}
 
+	if (!need_reg)
+	{
+		// Also check that command setting is present and points to our .exe
+		if (RegOpenKeyEx(HKEY_CLASSES_ROOT,
+						 CString(CHexEditApp::ProgID) + "\\shell\\open\\command", 
+						 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
+		{
+			need_reg = true;  // HexEdit Pro file command setting is not present
+		}
+		else
+		{
+			char buf[1024];
+			DWORD len = sizeof(buf)-1;
+			CString ss;
+			AfxGetModuleFileName(0, ss);   // new in MFC 10?
+			ss += " %1";
+			if (RegQueryValueEx(hkey, NULL, NULL, NULL, (LPBYTE)buf, &len) != ERROR_SUCCESS ||
+				ss.CompareNoCase(buf) != 0)
+			{
+				need_reg = true;   // command line setting is not present or it is using a different .exe
+			}
+			RegCloseKey(hkey);
+		}
+	}
+
 	// Put all extensions (that have yet to be registered) into a string for RegisterExtensions
 	CString strExt;
 	for (std::set<CString>::const_iterator pext = ext.begin(); pext != ext.end(); ++pext)
 	{
-		strKey = *pext + "\\OpenWithProgids";
-        if (RegOpenKeyEx(HKEY_CLASSES_ROOT, strKey, 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
+        if (RegOpenKeyEx(HKEY_CLASSES_ROOT, *pext + "\\OpenWithProgids", 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
 		{
 			strExt += *pext + "|";
 			need_reg = true;
@@ -883,6 +908,7 @@ void CHexFileList::SetupJumpList()
 
 	// Add the 3 types of files to the task list
 	CString strCategory;
+
 	if (theApp.is_us_)
 		strCategory = "Favorites";
 	else
@@ -890,6 +916,11 @@ void CHexFileList::SetupJumpList()
 	for (int ii = 0; ii < numFav; ++ii)
 		jumpList.AddDestination(strCategory, name_[fav[ii]]);
 
+//#define USE_KNOWN_CATEGORIES 1
+#ifdef USE_KNOWN_CATEGORIES
+	jumpList.AddKnownCategory(KDC_FREQUENT);
+	jumpList.AddKnownCategory(KDC_RECENT);
+#else
 	strCategory = "Frequent Files";
 	for (temp = freq; temp.size() > 0; temp.pop())
 		jumpList.AddDestination(strCategory, name_[temp.top()]);
@@ -897,7 +928,8 @@ void CHexFileList::SetupJumpList()
 	strCategory = "Recent Files";
 	for (int ii = name_.size() - 1; ii >= (int)name_.size() - numRecent; ii--)
 		jumpList.AddDestination(strCategory, name_[ii]);
+#endif
 
 	jumpList.CommitList();
-#endif
+#endif // _MFC_VER >= 0x0A00
 }
