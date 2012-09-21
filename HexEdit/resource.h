@@ -244,7 +244,6 @@
 #define ID_STRUCT_ENCLOSEIN             295
 #define IDD_PROP_INFO                   295
 #define IDD_EXPLORER                    296
-#define IDD_BOOKMARKS1                  297
 #define IDD_COMPRESS                    298
 #define ID_NAV_FORW_DUMMY               300
 #define ID_NAV_BACK_DUMMY               301
@@ -279,7 +278,6 @@
 #define IDB_PARENT_HOT                  312
 #define ID_INTEGER_ATOI                 312
 #define IDD_OPT_WORKTEMPLATE            312
-#define IDB_VIEW1                       313
 #define ID_INTEGER_STRLEN               313
 #define IDD_OPT_WORKSPACE               313
 #define IDD_OPT_WORKEDIT                313
@@ -410,13 +408,13 @@
 #define IDD_OPT_PRINT_GENERAL           436
 #define IDD_OPT_PRINT_DECORATIONS       437
 #define IDD_OPT_BACKUP                  438
+#define IDR_BOOKMARKS_VALIDATE          439
 #define IDI_QUESTIONMARK                440
 #define IDD_OPT_BACKGROUND              440
 #define IDI_EXCLAMATIONMARK             441
 #define IDD_OPT_FOLDERS                 441
 #define IDI_INFO                        442
 #define IDI_CROSS                       443
-#define IDD_BOOKMARKS_NEW               444
 #define IDR_CONTEXT_OFFSET_HANDLE       445
 #define IDR_CONTEXT_GROUP_BY_HANDLE     446
 #define IDR_CONTEXT_ROWSIZE_HANDLE      447
@@ -433,6 +431,16 @@
 #define IDD_OPT_PREVIEW                 509
 #define IDD_OPT_AERIAL                  510
 #define IDD_OPT_EXPLORER                511
+#define IDB_BM_ADD                      512
+#define IDB_BM_ADD_HOT                  513
+#define IDB_BM_DEL                      514
+#define IDB_BM_DEL_HOT                  515
+#define IDB_BM_GOTO                     516
+#define IDB_BM_GOTO_HOT                 517
+#define IDB_BM_VALIDATE                 518
+#define IDB_BM_VALIDATE_HOT             519
+#define IDB_HELP                        520
+#define IDB_HELP_HOT                    521
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1736,6 +1744,7 @@
 #define ID_GOSECTOR                     39149
 #define ID_WATERMARK_CONFIDENTIAL       39150
 #define ID_WATERMARK_SAMPLE             39151
+#define ID_KEEP                         39152
 #define ID_CODEPAGE_UTF8                39163
 #define ID_CODEPAGE_65001               39164
 #define ID_CODEPAGE_1250                39165
@@ -1818,7 +1827,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        520
+#define _APS_NEXT_RESOURCE_VALUE        522
 #define _APS_NEXT_COMMAND_VALUE         39203
 #define _APS_NEXT_CONTROL_VALUE         1678
 #define _APS_NEXT_SYMED_VALUE           252
