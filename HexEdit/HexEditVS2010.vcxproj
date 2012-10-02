@@ -363,6 +363,14 @@
     <None Include="RES\back.bmp" />
     <None Include="RES\back_hot.bmp" />
     <None Include="..\..\graphics\HexEditButtons\calc.bmp" />
+    <None Include="res\bookmark_del.bmp" />
+    <None Include="res\bookmark_del_hot.bmp" />
+    <None Include="res\bookmark_go.bmp" />
+    <None Include="res\bookmark_go_hot.bmp" />
+    <None Include="res\bookmark_new.bmp" />
+    <None Include="res\bookmark_new_hot.bmp" />
+    <None Include="res\bookmark_val.bmp" />
+    <None Include="res\bookmark_val_hot.bmp" />
     <None Include="Res\cogs.ico" />
     <None Include="Res\colour.ico" />
     <None Include="RES\cross.ico" />
@@ -401,6 +409,8 @@
     <None Include="RES\forw_hot.bmp" />
     <None Include="res\HandGrab.cur" />
     <None Include="res\HandOpen.cur" />
+    <None Include="res\help.bmp" />
+    <None Include="res\help_hot.bmp" />
     <None Include="res\HexEdit.rc2" />
     <None Include="res\HexEditDoc.ico" />
     <None Include="RES\highligh.cur" />

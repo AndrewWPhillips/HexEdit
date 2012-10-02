@@ -53,6 +53,13 @@ public:
 	void RemoveBookmark(int index);
 
 	enum { IDD = IDD_BOOKMARKS };
+
+	CMFCButton ctl_add_;
+	CMFCButton ctl_del_;
+	CMFCButton ctl_goto_;
+	CMFCMenuButton ctl_validate_;
+	CMFCButton ctl_help_;
+	CMenu validate_menu_;                  // Menu of options for validate button
 	CGridCtrl grid_;                       // MFC grid control
 
 // Overrides
@@ -67,10 +74,11 @@ public:
 
 // Implementation
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
 	// Generated message map functions
 	afx_msg void OnDestroy();
-	virtual void OnOK();
+	//virtual void OnOK();
 	afx_msg void OnAdd();
 	afx_msg void OnGoTo();
 	afx_msg void OnRemove();
@@ -82,6 +90,7 @@ protected:
 	afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult);
 	afx_msg void OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* pResult);
 	afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* pResult);
+	afx_msg void OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
 	//afx_msg void OnInitialUpdate();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
@@ -93,6 +102,10 @@ protected:
 	void InitColumnHeadings();
 	void FillGrid();
 	void UpdateRow(int index, int row, BOOL select = FALSE);
+	void ValidateOptions();
+
+	bool GetKeepNetwork() { return theApp.GetProfileInt("File-Settings", "BookmarkKeepNetwork", 1) != 0; }
+	void SetKeepNetwork(bool b) { theApp.WriteProfileInt("File-Settings", "BookmarkKeepNetwork", b); }
 
 	CDocument *pdoc_;                   // Ptr to document if last bookmark is for open file (else NULL)
 	CString last_file_;                 // Name of the file to which pdoc_ points

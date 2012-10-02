@@ -44,10 +44,10 @@
 #define HIDC_BIG_ENDIAN_FILE_ACCESS     0x8075048c    // IDD_CALC
 #define HIDC_BINARY                     0x807503ec    // IDD_CALC
 #define HIDC_BITS                       0x8075044a    // IDD_CALC
+#define HIDC_BOOKMARKS_HELP             0x810f0514    // IDD_BOOKMARKS
 #define HIDC_BOOKMARKS_VALIDATE         0x810f04cc    // IDD_BOOKMARKS
 #define HIDC_BOOKMARK_ADD               0x810f04cb    // IDD_BOOKMARKS
 #define HIDC_BOOKMARK_GOTO              0x810f04c9    // IDD_BOOKMARKS
-#define HIDC_BOOKMARK_NAME              0x810f04cf    // IDD_BOOKMARKS
 #define HIDC_BOOKMARK_REMOVE            0x810f04ca    // IDD_BOOKMARKS
 #define HIDC_BORDERS                    0x810c0475    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_BUG                        0x80e5043e    // IDD_EMAIL
@@ -252,7 +252,6 @@
 #define HIDC_FILL_STRING                0x811c054e    // IDD_NEW_FILE
 #define HIDC_FILL_STRING_CHARSET        0x811c0555    // IDD_NEW_FILE
 #define HIDC_FILL_STRING_VALUE          0x811c0552    // IDD_NEW_FILE
-#define HIDC_FILTERS_PAGE               0x81ff0634    // IDD_OPT_EXPLORER [English (United States)]
 #define HIDC_FILTER_LIST_SIZE           0x819b04ca    // IDD_OPT_HISTORY [English (United States)]
 #define HIDC_FILTER_OPTS                0x81280599    // IDD_EXPLORER
 #define HIDC_FIND_ALLOW_WILDCARD        0x80fb0505    // IDD_FIND_TEXT [English (United States)]
@@ -373,7 +372,7 @@
 #define HIDC_MULTIPLY                   0x80750427    // IDD_CALC
 #define HIDC_NAME                       0x80e50436    // IDD_EMAIL
 #define HIDC_NAMES                      0x80e6044c    // IDD_OPT_COLOURS [English (United States)]
-#define HIDC_NET_RETAIN                 0x810f04a6    // IDD_BOOKMARKS
+#define HIDC_NET_RETAIN                 0x810f04a6    // IDD_RECENT_FILES
 #define HIDC_NEW                        0x80f10471    // IDD_OPT_FILTERS [English (United States)]
 #define HIDC_NICE_ADDR                  0x80eb0418    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_NO_RECENT                  0x819b0419    // IDD_OPT_HISTORY [English (United States)]
@@ -503,6 +502,7 @@
 #define HIDC_STATS_SHA1                 0x81f9066e    // IDD_PROP_STATS [English (United States)]
 #define HIDC_SUBJECT                    0x80e50435    // IDD_EMAIL
 #define HIDC_SUBTRACT                   0x80750428    // IDD_CALC
+#define HIDC_SYNC_TREE                  0x81ff0688    // IDD_OPT_EXPLORER [English (United States)]
 #define HIDC_SYSTYPE                    0x80e50476    // IDD_EMAIL
 #define HIDC_TABCLOSE                   0x819a0685    // IDD_OPT_WORKLAYOUT [English (United States)]
 #define HIDC_TABCOLOUR                  0x819a0686    // IDD_OPT_WORKLAYOUT [English (United States)]

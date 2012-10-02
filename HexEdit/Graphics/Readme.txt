@@ -172,6 +172,19 @@ The 3 images for each toolbar can be created from there corresponding Paint.Net 
   - convert to 8-bit if necessary (Image/Mode/Indexed Color) using Palette: Local (perceptual)
   - save to .BMP in RES directory with RLE option on (eg RES\editbarHot.bmp)
 
+Buttons
+-------
+
+New buttons allow for a separate hot image
+- create image (eg 16x16)
+- merge all layers down and create hot image by incresaing saturation to 120
+- save as 8-bit .BMP (eg bookmark_hot.bmp)
+- undo saturation
+- create normal image by reducing saturation to 80
+- save as 8-bit .BMP (eg bookmark.bmp)
+
+
+
 Web site
 --------
 

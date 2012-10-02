@@ -57,6 +57,8 @@ public:
 	virtual BOOL GoTo(int index);           // Open file (if nec.), jump to line and set focus to the window
 	virtual BOOL GoTo(LPCTSTR name);        // As above except specifies name not index
 	virtual void Move(int index, int amount);
+	virtual void Rename(int index, LPCTSTR name);
+
 	virtual int GetVersion() { return ver_; } // Version from last file read (ReadList)
 
 	// These are special functions for handling "sets" of bookmarks.  The bookmarks of a set

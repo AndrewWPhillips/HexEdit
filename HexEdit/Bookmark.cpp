@@ -326,9 +326,11 @@ int CBookmarkList::AddBookmark(LPCTSTR nn, LPCTSTR filename, __int64 filepos, LP
 	// Search all bookmarks for those with the same name
 	while (pn != name_.end())
 	{
-		// If bookmark already exists in the same file remove it
-		if (GetFileName(pn - name_.begin()).CompareNoCase(filename) == 0)
-			RemoveBookmark(pn - name_.begin());
+		int idx = pn - name_.begin();
+		if (filepos_[idx] == -1)
+			;                                                    // ignore deleted bookmarks
+		else if (GetFileName(idx).CompareNoCase(filename) == 0)
+			RemoveBookmark(idx);                                 // remove existing bookmark in same file
 		++pn;
 		pn = std::find(pn, std::vector<CString>::const_iterator(name_.end()), nn);
 	}
@@ -374,6 +376,33 @@ void CBookmarkList::Move(int index, int amount)
 	ASSERT(index >= 0 && index < (int)file_.size());
 	filepos_[index] += amount;
 	ASSERT(filepos_[index] > -1);
+}
+
+// Rename an existing bookmark (assumes a bookmark of the same name in the same file does not exist)
+void CBookmarkList::Rename(int index, LPCTSTR name)
+{
+	if (index == -1) return;   // ignore deleted bookmarks
+
+#ifdef _DEBUG
+	ASSERT(index >= 0 && index < (int)name_.size());    // check it's in range
+	ASSERT(filepos_[index] > -1);                       // check it's not deleted
+
+	// check if there is a bookmark with the same name in the same file
+	std::vector<CString>::const_iterator pn = std::find(name_.begin(), name_.end(), name);
+
+	while (pn != name_.end())
+	{
+		int idx = pn - name_.begin();
+		if (filepos_[idx] == -1)
+			;                                                    // ignore deleted bookmarks
+		else if (GetFileName(idx).CompareNoCase(file_[index]) == 0)
+			ASSERT(0);                                          // remove existing bookmark in same file
+		++pn;
+		pn = std::find(pn, std::vector<CString>::const_iterator(name_.end()), name);
+	}
+#endif
+
+	name_[index] = CString(name);
 }
 
 BOOL CBookmarkList::GoTo(LPCTSTR name)

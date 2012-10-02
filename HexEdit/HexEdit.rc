@@ -2539,21 +2539,21 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,53,9,202,1
     LTEXT           "Wipe Strategy",IDC_STATIC,10,4,46,8
     CONTROL         "Fast (overwrite all bytes with FF)",IDC_WIPE_FAST,
-                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,21,15,116,10,0,0x81ff0689
-    CONTROL         "Good (FF, random, 00)",IDC_WIPE_GOOD,"Button",BS_AUTORADIOBUTTON,21,26,87,10,0,0x81ff068a
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,21,15,116,10,0,HIDC_WIPE_FAST
+    CONTROL         "Good (FF, random, 00)",IDC_WIPE_GOOD,"Button",BS_AUTORADIOBUTTON,21,26,87,10,0,HIDC_WIPE_GOOD
     CONTROL         "Thorough (F6, 00, FF, random, 00, FF, random)",IDC_WIPE_THOROUGH,
-                    "Button",BS_AUTORADIOBUTTON,21,37,163,10,0,0x81ff068b
+                    "Button",BS_AUTORADIOBUTTON,21,37,163,10,0,HIDC_WIPE_THOROUGH
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,73,57,182,1
     LTEXT           "Not Indexed Attribute",IDC_STATIC,10,52,68,8
     CONTROL         "Capital  I  = ""Not Indexed"" attribute is OFF (file is indexed)",IDC_SHOW_INDEXED,
-                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,21,63,196,10,0,0x81ff068c
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,21,63,196,10,0,HIDC_SHOW_INDEXED
     CONTROL         "Capital N = ""Not Indexed"" attribute is ON",IDC_SHOW_NOT_INDEXED,
-                    "Button",BS_AUTORADIOBUTTON,21,74,145,10,0,0x81ff068d
+                    "Button",BS_AUTORADIOBUTTON,21,74,145,10,0,HIDC_SHOW_NOT_INDEXED
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,90,219,1
     LTEXT           "General",IDC_STATIC,10,86,26,8
     CONTROL         "Keep tree synchronised with active folder",IDC_SYNC_TREE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,97,145,10,0,0x81ff0688
-    CONTROL         "Use Custom Context Menu",IDC_CUSTOM_MENU,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,109,100,10,0,0x81ff0687
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,97,145,10,0,HIDC_SYNC_TREE
+    CONTROL         "Use Custom Context Menu",IDC_CUSTOM_MENU,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,109,100,10,0,HIDC_CUSTOM_MENU
     PUSHBUTTON      "File Type Filter List >>",IDC_FILTERS_PAGE,155,118,100,16
 END
 
@@ -3764,10 +3764,16 @@ IDB_MISCBAR_D           BITMAP                  "res\\miscDisabled.bmp"
 IDB_OPERBAR_H           BITMAP                  "res\\operationsHot.bmp"
 IDB_OPERBAR_C           BITMAP                  "res\\operationsCold.bmp"
 IDB_OPERBAR_D           BITMAP                  "res\\operationsDisabled.bmp"
+IDB_BM_ADD              BITMAP                  "res\\bookmark_new.bmp"
+IDB_BM_ADD_HOT          BITMAP                  "res\\bookmark_new_hot.bmp"
 IDB_BM_DEL              BITMAP                  "res\\bookmark_del.bmp"
 IDB_BM_DEL_HOT          BITMAP                  "res\\bookmark_del_hot.bmp"
 IDB_BM_GOTO             BITMAP                  "res\\bookmark_go.bmp"
 IDB_BM_GOTO_HOT         BITMAP                  "res\\bookmark_go_hot.bmp"
+IDB_BM_VALIDATE         BITMAP                  "res\\bookmark_val.bmp"
+IDB_BM_VALIDATE_HOT     BITMAP                  "res\\bookmark_val_hot.bmp"
+IDB_HELP                BITMAP                  "res\\help.bmp"
+IDB_HELP_HOT            BITMAP                  "res\\help_hot.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -4856,17 +4862,17 @@ BEGIN
     EDITTEXT        IDC_VALUE,6,53,173,14,ES_AUTOHSCROLL
 END
 
-IDD_BOOKMARKS DIALOGEX 0, 0, 124, 149
+IDD_BOOKMARKS DIALOGEX 0, 0, 120, 149
 STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_VISIBLE
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Add...",IDC_BOOKMARK_ADD,3,4,20,20,WS_GROUP,0,HIDC_BOOKMARK_ADD
-    PUSHBUTTON      "Delete",IDC_BOOKMARK_REMOVE,22,4,20,20,0,0,HIDC_BOOKMARK_REMOVE
-    PUSHBUTTON      "Go To",IDC_BOOKMARK_GOTO,41,4,20,20,WS_GROUP,0,HIDC_BOOKMARK_GOTO
-    PUSHBUTTON      "Validate All",IDC_BOOKMARKS_VALIDATE,60,4,32,20,WS_GROUP,0,HIDC_BOOKMARKS_VALIDATE
-    PUSHBUTTON      "Help",IDC_BOOKMARKS_HELP,94,4,20,20,WS_GROUP
-    CONTROL         "Custom1",IDC_GRID_BL,"MFCGridCtrl",WS_GROUP | WS_TABSTOP,3,25,120,120,0,HIDC_GRID_BL
+    DEFPUSHBUTTON   "",IDC_BOOKMARK_ADD,3,4,19,19,WS_GROUP,0,HIDC_BOOKMARK_ADD
+    PUSHBUTTON      "",IDC_BOOKMARK_REMOVE,23,4,19,19,0,0,HIDC_BOOKMARK_REMOVE
+    PUSHBUTTON      "",IDC_BOOKMARK_GOTO,43,4,19,19,WS_GROUP,0,HIDC_BOOKMARK_GOTO
+    PUSHBUTTON      "",IDC_BOOKMARKS_VALIDATE,63,4,32,19,WS_GROUP,0,HIDC_BOOKMARKS_VALIDATE
+    PUSHBUTTON      "",IDC_BOOKMARKS_HELP,98,4,19,19,WS_GROUP,0,HIDC_BOOKMARKS_HELP
+    CONTROL         "Custom1",IDC_GRID_BL,"MFCGridCtrl",WS_GROUP | WS_TABSTOP,3,25,114,118,0,HIDC_GRID_BL
 END
 
 IDD_RECENT_FILES_NEW DIALOGEX 0, 0, 380, 180

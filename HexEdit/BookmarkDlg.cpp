@@ -111,14 +111,11 @@ static int CALLBACK bl_compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort
 }
 
 static DWORD id_pairs[] = { 
-	IDC_BOOKMARK_NAME_DESC, HIDC_BOOKMARK_NAME,
-	IDC_BOOKMARK_NAME, HIDC_BOOKMARK_NAME,
 	IDC_BOOKMARK_ADD, HIDC_BOOKMARK_ADD,
 	IDC_GRID_BL, HIDC_GRID_BL,
 	IDC_BOOKMARK_REMOVE, HIDC_BOOKMARK_REMOVE,
 	IDC_BOOKMARK_GOTO, HIDC_BOOKMARK_GOTO,
 	IDC_BOOKMARKS_VALIDATE, HIDC_BOOKMARKS_VALIDATE,
-	IDC_NET_RETAIN, HIDC_NET_RETAIN,
 	0,0
 };
 
@@ -141,9 +138,39 @@ BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 		return FALSE; // failed to create
 	}
 
-	// Default to retaining network/removeable drive files when validating
-	ASSERT(GetDlgItem(IDC_NET_RETAIN) != NULL);
-	((CButton *)GetDlgItem(IDC_NET_RETAIN))->SetCheck(BST_CHECKED);
+	ctl_add_.SetImage(IDB_BM_ADD, IDB_BM_ADD_HOT);
+	ctl_add_.m_bTransparent = TRUE;
+	ctl_add_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
+	ctl_add_.SetTooltip(_T("Create a bookmark at current location"));
+	//ctl_add_.Invalidate();
+
+	ctl_del_.SetImage(IDB_BM_DEL, IDB_BM_DEL_HOT);
+	ctl_del_.m_bTransparent = TRUE;
+	ctl_del_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
+	ctl_del_.SetTooltip(_T("Delete selected bookmark(s)"));
+	//ctl_del_.Invalidate();
+
+	ctl_goto_.SetImage(IDB_BM_GOTO, IDB_BM_GOTO_HOT);
+	ctl_goto_.m_bTransparent = TRUE;
+	ctl_goto_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
+	ctl_goto_.SetTooltip(_T("Jump to the selected bookmark"));
+	//ctl_goto_.Invalidate();
+
+	ctl_validate_.m_bDefaultClick = TRUE;     // Default click validates (also drop-down menu for options)
+	ctl_validate_.m_bOSMenu = FALSE;
+	VERIFY(validate_menu_.LoadMenu(IDR_BOOKMARKS_VALIDATE));
+	ctl_validate_.m_hMenu = validate_menu_.GetSubMenu(0)->GetSafeHmenu();  // Add drop-down menu (see ValidateOptions())
+	ctl_validate_.SetImage(IDB_BM_VALIDATE, IDB_BM_VALIDATE_HOT);
+	ctl_validate_.m_bTransparent = TRUE;
+	ctl_validate_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
+	ctl_validate_.SetTooltip(_T("Check that all bookmarks are for existing files."));
+	//ctl_validate_.Invalidate();
+
+	ctl_help_.SetImage(IDB_HELP, IDB_HELP_HOT);
+	ctl_help_.m_bTransparent = TRUE;
+	ctl_help_.m_nFlatStyle = CMFCButton::BUTTONSTYLE_FLAT;
+	ctl_help_.SetTooltip(_T("Help"));
+	//ctl_help_.Invalidate();
 
 	ASSERT(GetDlgItem(IDC_GRID_BL) != NULL);
 	if (!grid_.SubclassWindow(GetDlgItem(IDC_GRID_BL)->m_hWnd))
@@ -173,6 +200,10 @@ BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 	grid_.EnableHiddenRowUnhide(FALSE);
 	grid_.EnableHiddenColUnhide(FALSE);
 
+	grid_.SetEditable(TRUE);
+	grid_.SetFixedColumnSelection(FALSE);
+	grid_.SetFixedRowSelection(FALSE);
+
 	FillGrid();
 
 	grid_.ExpandColsNice(FALSE);
@@ -189,35 +220,38 @@ BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 	m_resizer.SetMinimumTrackingSize(rct.Size());
 
 	// This can cause problems if done too early (OnCreate or OnInitDialog)
-	m_resizer.Add(IDOK, 100, 0, 0, 0);
-	m_resizer.Add(IDC_BOOKMARK_NAME, 0, 0, 100, 0);
-	m_resizer.Add(IDC_BOOKMARK_ADD, 100, 0, 0, 0);
 	m_resizer.Add(IDC_GRID_BL, 0, 0, 100, 100);
-	m_resizer.Add(IDC_BOOKMARK_GOTO, 100, 0, 0, 0);
-	m_resizer.Add(IDC_BOOKMARK_REMOVE, 100, 0, 0, 0);
-	m_resizer.Add(IDC_BOOKMARKS_VALIDATE, 100, 0, 0, 0);
-	m_resizer.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
 	m_resizer.Add(IDC_BOOKMARKS_HELP, 100, 0, 0, 0);
 
 	return TRUE;
+}
+
+void CBookmarkDlg::DoDataExchange(CDataExchange* pDX)
+{
+	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_BOOKMARK_ADD,  ctl_add_);
+	DDX_Control(pDX, IDC_BOOKMARK_REMOVE,  ctl_del_);
+	DDX_Control(pDX, IDC_BOOKMARK_GOTO,  ctl_goto_);
+	DDX_Control(pDX, IDC_BOOKMARKS_VALIDATE,  ctl_validate_);
+	DDX_Control(pDX, IDC_BOOKMARKS_HELP,  ctl_help_);
 }
 
 BEGIN_MESSAGE_MAP(CBookmarkDlg, CDialog)
 	//{{AFX_MSG_MAP(CBookmarkDlg)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_BOOKMARK_ADD, OnAdd)
-	ON_BN_CLICKED(IDC_BOOKMARK_GOTO, OnGoTo)
 	ON_BN_CLICKED(IDC_BOOKMARK_REMOVE, OnRemove)
+	ON_BN_CLICKED(IDC_BOOKMARK_GOTO, OnGoTo)
 	ON_BN_CLICKED(IDC_BOOKMARKS_VALIDATE, OnValidate)
 	ON_WM_HELPINFO()
 	ON_BN_CLICKED(IDC_BOOKMARKS_HELP, OnHelp)
 	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(IDOK, OnOK)
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 	ON_NOTIFY(NM_CLICK, IDC_GRID_BL, OnGridClick)
 	ON_NOTIFY(NM_DBLCLK, IDC_GRID_BL, OnGridDoubleClick)
 	ON_NOTIFY(NM_RCLICK, IDC_GRID_BL, OnGridRClick)
+	ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID_BL, OnGridEndLabelEdit)
 	//ON_MESSAGE_VOID(WM_INITIALUPDATE, OnInitialUpdate)
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
@@ -377,7 +411,7 @@ void CBookmarkDlg::UpdateRow(int index, int row, BOOL select /*=FALSE*/)
 	GV_ITEM item;
 	item.row = row;
 	item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_PARAM;
-	item.nState = GVIS_READONLY;
+	item.nState = 0;
 	if (select) item.nState |= GVIS_SELECTED;
 
 	struct tm *timeptr;             // Used in displaying dates
@@ -408,16 +442,19 @@ void CBookmarkDlg::UpdateRow(int index, int row, BOOL select /*=FALSE*/)
 			item.lParam = index;
 			break;
 		case COL_FILE:
+			item.nState = GVIS_READONLY;
 			item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
 			item.strText = pbl->file_[index].Mid(path_len);
 			item.lParam = (LONGLONG)grid_.GetCell(item.row, fcc + COL_LOCN);
 			break;
 		case COL_LOCN:
+			item.nState = GVIS_READONLY;
 			item.nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
 			item.strText = pbl->file_[index].Left(path_len);
 			item.lParam = (LONGLONG)grid_.GetCell(item.row, fcc + COL_POS);
 			break;
 		case COL_POS:
+			item.nState = GVIS_READONLY;
 			item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
 			FILE_ADDRESS addr;
 			if (pdoc_ != NULL)
@@ -430,6 +467,7 @@ void CBookmarkDlg::UpdateRow(int index, int row, BOOL select /*=FALSE*/)
 			item.lParam = addr;          // lParam is now 64 bit
 			break;
 		case COL_MODIFIED:
+			item.nState = GVIS_READONLY;
 			item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
 			if ((timeptr = localtime(&pbl->modified_[index])) == NULL)
 				item.strText = "Invalid";
@@ -441,6 +479,7 @@ void CBookmarkDlg::UpdateRow(int index, int row, BOOL select /*=FALSE*/)
 			item.lParam = pbl->modified_[index];
 			break;
 		case COL_ACCESSED:
+			item.nState = GVIS_READONLY;
 			item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
 			if ((timeptr = localtime(&pbl->accessed_[index])) == NULL)
 				item.strText = "Invalid";
@@ -465,13 +504,6 @@ void CBookmarkDlg::UpdateRow(int index, int row, BOOL select /*=FALSE*/)
 }
 
 // Message handlers
-
-void CBookmarkDlg::OnOK()
-{
-	theApp.SaveToMacro(km_bookmarks, 6);
-	// TBD: TODO Hide();
-}
-
 void CBookmarkDlg::OnDestroy()
 {
 	if (grid_.m_hWnd != 0)
@@ -494,15 +526,14 @@ void CBookmarkDlg::OnDestroy()
 
 LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
 {
-	ASSERT(GetDlgItem(IDOK) != NULL);
-	ASSERT(GetDlgItem(IDC_BOOKMARK_NAME) != NULL);
 	ASSERT(GetDlgItem(IDC_BOOKMARK_ADD) != NULL);
 	ASSERT(GetDlgItem(IDC_GRID_BL) != NULL);
 	ASSERT(GetDlgItem(IDC_BOOKMARK_GOTO) != NULL);
 	ASSERT(GetDlgItem(IDC_BOOKMARK_REMOVE) != NULL);
 	ASSERT(GetDlgItem(IDC_BOOKMARKS_VALIDATE) != NULL);
-	ASSERT(GetDlgItem(IDC_NET_RETAIN) != NULL);
 	ASSERT(GetDlgItem(IDC_BOOKMARKS_HELP) != NULL);
+
+	validate_menu_.GetSubMenu(0)->CheckMenuItem(ID_KEEP, GetKeepNetwork() ? MF_CHECKED : MF_UNCHECKED);
 
 	if (m_first)
 	{
@@ -513,17 +544,12 @@ LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	CHexEditView *pview = GetView();
 	if (pview == NULL || pview->GetDocument()->pfile1_ == NULL)
 	{
-		GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText("");
-		GetDlgItem(IDC_BOOKMARK_NAME)->EnableWindow(FALSE);
+		GetDlgItem(IDC_BOOKMARK_ADD)->EnableWindow(FALSE);
 	}
 	else
 	{
-		GetDlgItem(IDC_BOOKMARK_NAME)->EnableWindow(TRUE);
+		GetDlgItem(IDC_BOOKMARK_ADD)->EnableWindow(TRUE);
 	}
-
-	CString ss;
-	GetDlgItem(IDC_BOOKMARK_NAME)->GetWindowText(ss);
-	GetDlgItem(IDC_BOOKMARK_ADD)->EnableWindow(!ss.IsEmpty());
 
 	CCellRange sel = grid_.GetSelectedCellRange();
 	GetDlgItem(IDC_BOOKMARK_GOTO)->EnableWindow(sel.IsValid() && sel.GetMinRow() == sel.GetMaxRow());
@@ -540,12 +566,11 @@ LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)
 
 BOOL CBookmarkDlg::PreTranslateMessage(MSG* pMsg)
 {
-
-	if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
-	{
-		OnAdd();
-		return TRUE;
-	}
+	//if (pMsg->message == WM_CHAR && pMsg->wParam == '\r')
+	//{
+	//	OnAdd();
+	//	return TRUE;
+	//}
 
 	return CDialog::PreTranslateMessage(pMsg);
 }
@@ -594,112 +619,60 @@ HBRUSH CBookmarkDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 void CBookmarkDlg::OnAdd()
 {
-	int index;                          // bookmark index of an existing bookmark of same name (or -1)
-	CHexEditView *pview = GetView();
-	ASSERT(pview != NULL);
-	if (pview == NULL) return;
+	int col = grid_.GetFixedColumnCount() + COL_NAME;
 
 	CBookmarkList *pbl = theApp.GetBookmarkList();
-
-	ASSERT(GetDlgItem(IDC_BOOKMARK_NAME) != NULL);
-	CString name;
-	GetDlgItem(IDC_BOOKMARK_NAME)->GetWindowText(name);
-	if (name.GetLength() == 0) return;
-
-	if (name[0] == '_')
-	{
-		TaskMessageBox("Invalid bookmark",
-			"Bookmark names that begin with an underscore are reserved for internal use.");
+	CHexEditView *pview = GetView();
+	if (pbl == NULL || pview == NULL || pview->GetDocument()->pfile1_ == NULL)
 		return;
-	}
-
-	if (name.FindOneOf("|") != -1)
-	{
-		TaskMessageBox("Invalid bookmark",
-			"The bookmark name contains charaaters that are not permitted such as \"|\"");
-		return;
-	}
 
 	CString file_name = pview->GetDocument()->pfile1_->GetFilePath();
 
-	if ((index = pbl->GetIndex(name, file_name)) != -1)
-	{
-		CString ss;
-		ss.Format("Bookmark \"%s\" already exists in file\n\n"
-				  "\"%s\"\n\n"
-				  "Do you want to move it?", name, file_name);
-		if (CAvoidableDialog::Show(IDS_BOOKMARK_EXISTS, ss, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
-			return;
+	// Work out default bookmark name
+	int dummy;
+	const char *prefix = "Bookmark";
+	long last = pbl->GetSetLast(prefix, dummy);
+	if (last == 0) last = 1;    // start at 1 not zero
+	CString bookmark_name;
+	bookmark_name.Format("%s%ld", prefix, last);
 
-#if 0 // moved to CBookmark
-		// Remove overwritten bookmark from doc where it currently is
-		CDocument *pdoc2;
-		if (theApp.m_pDocTemplate->MatchDocType(pbl->file_[index], pdoc2) == 
-			CDocTemplate::yesAlreadyOpen)
-		{
-			((CHexEditDoc *)pdoc2)->RemoveBookmark(index);
-		}
-#endif
+	// Add bookmark (adds to our control (grid_), internal list (pbl), and document list)
+	int ii = pbl->AddBookmark(bookmark_name, file_name, pview->GetPos(), NULL, pview->GetDocument());
+
+	//theApp.SaveToMacro(km_bookmarks_add, name);
+
+	// Check that AddBookmark has caused our grid to be updated
+	int row = grid_.GetRowCount() - 1;    // new row was added at the end
+	ASSERT(grid_.GetItemData(row, grid_.GetFixedColumnCount()) == ii);
+
+	// Make sure the name column is visible
+	if (grid_.GetColumnWidth(col) <= 0)
+	{
+		grid_.SetColumnWidth(col, 1);
+		grid_.AutoSizeColumn(col, GVS_BOTH);
 	}
 
-	// Add the bookmark to the list (overwrites existing bookmark of same name)
-	int ii = pbl->AddBookmark(name, file_name,
-							  pview->GetPos(), NULL, pview->GetDocument());
+	// Now select the bookmark name cell of the row ready for user to enter the name
+	grid_.RedrawWindow();
+	grid_.EnsureVisible(row, col);
+	grid_.SetFocus();
+	//grid_.SetFocusCell(row, col);
 
-	theApp.SaveToMacro(km_bookmarks_add, name);
-
-	// Find the new/replaced bookmark and select
-	int row, col = COL_NAME + grid_.GetFixedColumnCount();
-	for (row = grid_.GetFixedRowCount(); row < grid_.GetRowCount(); ++row)
+	// The following starts editing of the cell
+	//grid_.OnEditCell(row, col, CPoint( -1, -1), VK_LBUTTON);
+    CCellID cell(row, col);
+    CRect rect;
+	CGridCellBase * pCell;
+    if (grid_.IsCellVisible(row, col) &&
+		grid_.GetCellRect(cell, rect) &&
+		(pCell = grid_.GetCell(row, col)) != NULL)
 	{
-		if (grid_.GetItemData(row, col) == ii)
-			break;
+		// Begin cell editing
+        pCell->Edit(row, col, rect, CPoint(-1, -1), IDC_INPLACE_CONTROL, VK_LBUTTON);
+
+		// Select cell contents so user can just overtype with a new name
+		((CEdit *)pCell->GetEditWnd())->SetSel(0, -1);
 	}
-	ASSERT(row < grid_.GetRowCount());  // We should have found it
-
-	grid_.SetSelectedRange(row, grid_.GetFixedColumnCount(), row, grid_.GetColumnCount()-1);
-	grid_.EnsureVisible(row, 0);
-
-	pbl->GoTo(ii);
-
-#if 0 // moved to CBookmark::Add (now calls CBookmarkDlg::UpdateBookmark)
-	// Save sort col (lost when we modify the grid) so we can re-sort later
-//	int sort_col = grid_.GetSortColumn();
-	int row;
-
-	if (index == -1)
-	{
-		// Add a new row
-		row = grid_.GetRowCount();
-		grid_.SetRowCount(row + 1);
-	}
-	else
-	{
-		// Find the overwritten bookmark
-		int col = COL_NAME + grid_.GetFixedColumnCount();
-		for (row = grid_.GetFixedRowCount(); row < grid_.GetRowCount(); ++row)
-		{
-			if (grid_.GetItemData(row, col) == index)
-				break;
-		}
-		ASSERT(row < grid_.GetRowCount());  // We should have found it
-	}
-
-	// Add bookmark to doc
-	pview->GetDocument()->AddBookmark(ii, pos);
-
-	// Update the row found or added and select it
-	UpdateRow(ii, row);
-	grid_.SetSelectedRange(row, grid_.GetFixedColumnCount(), row, grid_.GetColumnCount()-1);
-	grid_.EnsureVisible(row, 0);
-
-	// Re-sort the grid on the current sort column
-//	if (sort_col != -1)
-//		grid_.SortItems(sort_col, grid_.GetSortAscending());
-
-//	// Close dialog
-//	CDialog::OnOK();
-#endif
 }
 
 void CBookmarkDlg::OnGoTo()
@@ -712,9 +685,6 @@ void CBookmarkDlg::OnGoTo()
 
 	CBookmarkList *pbl = theApp.GetBookmarkList();
 	pbl->GoTo(index);
-
-//	// Close the dialog
-//	CDialog::OnOK();
 }
 
 void CBookmarkDlg::OnRemove()
@@ -757,8 +727,26 @@ void CBookmarkDlg::OnRemove()
 	grid_.Refresh();
 }
 
+void CBookmarkDlg::ValidateOptions()
+{
+	switch (ctl_validate_.m_nMenuResult)
+	{
+	case ID_KEEP:
+		SetKeepNetwork(!GetKeepNetwork());
+		break;
+	default:
+		ASSERT(0);   // new menu item added which we are not handling?
+	}
+}
+
 void CBookmarkDlg::OnValidate()
 {
+	if (ctl_validate_.m_nMenuResult != 0)
+	{
+		ValidateOptions();
+		return;
+	}
+
 	int move_count = 0;      // Number of bookmarks moved due to being past EOF
 
 	CWaitCursor wc;
@@ -797,9 +785,7 @@ void CBookmarkDlg::OnValidate()
 			ASSERT(pbl->file_[index].Mid(1, 2) == ":\\"); // GetDriveType expects "D:\" under win9x
 
 			// File not found so remove bookmark from the list
-			// (unless it's a network/removeable file and net_retain_ is on)
-			bool net_retain = ((CButton *)GetDlgItem(IDC_NET_RETAIN))->GetCheck() == BST_CHECKED;
-			if (!net_retain || ::GetDriveType(pbl->file_[index].Left(3)) == DRIVE_FIXED)
+			if (!GetKeepNetwork() || ::GetDriveType(pbl->file_[index].Left(3)) == DRIVE_FIXED)
 			{
 				TRACE2("Validate: removing bookmark %s, file %s not found\n", pbl->name_[index], pbl->file_[index]);
 				//pbl->RemoveBookmark(index);
@@ -834,6 +820,60 @@ void CBookmarkDlg::OnValidate()
 }
 
 // Handlers for messages from grid control (IDC_GRID_BL)
+void CBookmarkDlg::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
+{
+	*pResult = -1;
+
+	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
+	if (pItem->iColumn == grid_.GetFixedColumnCount() + COL_NAME)
+	{
+		CBookmarkList *pbl = theApp.GetBookmarkList();
+		CHexEditView *pview = GetView();
+		if (pbl == NULL || pview == NULL || pview->GetDocument()->pfile1_ == NULL)
+		{
+			TaskMessageBox("No Disk File", "You can only create a bookmark for a file that exists on disk");
+			return;
+		}
+
+		CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
+		// Ensure the bookmark name is valid
+		// - not empty
+		// - does not begin with underscore
+		// - does not contain invalid characters like |
+		// - not the same as another bookmark in the same file
+		if (ss.IsEmpty())
+		{
+			TaskMessageBox("Empty Bookmark", "Please enter the bookmark name");
+			return;
+		}
+		if (ss[0] == '_')
+		{
+			TaskMessageBox("Invalid Bookmark",
+				"Bookmark names that begin with an underscore are reserved for internal use.");
+			return;
+		}
+		if (ss.FindOneOf("|") != -1)
+		{
+			TaskMessageBox("Invalid Bookmark",
+				"The bookmark name contains characters that are not permitted such as \"|\"");
+			return;
+		}
+
+		CString file_name = pview->GetDocument()->pfile1_->GetFilePath();
+		if (pbl->GetIndex(ss, file_name) != -1)
+		{
+			TaskMessageBox("Bookmark Exists",
+				"A bookmark with the same name already exists in this file.");
+			return;
+		}
+
+		// update the name of the bookmark
+		pbl->Rename(grid_.GetItemData(pItem->iRow, pItem->iColumn), ss);
+	}
+	*pResult = 0;   // do not force back into edit of field
+}
+
+/// xxx remove this?
 void CBookmarkDlg::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
 	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
@@ -841,21 +881,15 @@ void CBookmarkDlg::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 
 	if (pItem->iRow < grid_.GetFixedRowCount())
 		return;                         // Don't do anything for header rows
-
-	CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
-	GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText(ss);
 }
 
 void CBookmarkDlg::OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
 	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
-	TRACE("Left button click on row %d, col %d\n", pItem->iRow, pItem->iColumn);
+	TRACE("Left button D-click on row %d, col %d\n", pItem->iRow, pItem->iColumn);
 
 	if (pItem->iRow < grid_.GetFixedRowCount())
 		return;                         // Don't do anything for header rows
-
-	CString ss = (CString)grid_.GetItemText(pItem->iRow, pItem->iColumn);
-	GetDlgItem(IDC_BOOKMARK_NAME)->SetWindowText(ss);
 
 	CCellRange sel = grid_.GetSelectedCellRange();
 	if (sel.IsValid() && sel.GetMinRow() == sel.GetMaxRow())
