@@ -568,37 +568,32 @@ void CCalcEdit::clear_result(bool clear /* = true */)
 
 void CCalcEdit::OnSetFocus(CWnd* pOldWnd)
 {
-	TRACE("xxxx0 OnSetF: sel = %x\r\n", GetSel());
+	//TRACE("xxxx0 OnSetF: sel = %x\r\n", GetSel());
 	// This clears the edit box after a binop button but allows editing after '=' button,
 	// so the user can edit a result (eg to copy to clipboard).
 	//clear_result(pp_->op_ != binop_none);
 
 	CEdit::OnSetFocus(pOldWnd);
-	TRACE("xxxx1 OnSetF: sel = %x\r\n", GetSel());
+	//TRACE("xxxx1 OnSetF: sel = %x\r\n", GetSel());
 }
 
 void CCalcEdit::OnKillFocus(CWnd* pNewWnd)
 {
-	TRACE("xxxx0 OnKill: sel = %x\r\n", GetSel());
+	//TRACE("xxxx0 OnKill: sel = %x\r\n", GetSel());
 	sel_ = GetSel();        // base class seems to fiddle with selection so save
 	CEdit::OnKillFocus(pNewWnd);
 	SetSel(sel_, TRUE);
 
-	TRACE("xxxx1 OnKill: sel = %x\r\n", GetSel());
+	//TRACE("xxxx1 OnKill: sel = %x\r\n", GetSel());
 }
 
 void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	TRACE("xxxx0 OnChar: sel = %x\r\n", GetSel());
+	//TRACE("xxxx0 OnChar: sel = %x\r\n", GetSel());
 	in_edit_ = true;
 	ASSERT(pp_ != NULL && pp_->IsVisible());
 	clear_result();					// Clear text if previous result is displayed
 
-	CString ss;                     // Current text in control
-	GetWindowText(ss);
-	int start, end;                 // Range of selection of text in control
-	GetSel(start, end);
-	
 	// If editing an integer then make allowances for separator char
 	if (pp_->state_ == CALCINTLIT)
 	{
@@ -634,7 +629,7 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	pp_->inedit(km_user_str);
 	pp_->ctl_calc_bits_.RedrawWindow();
 	in_edit_ = false;
-	TRACE("xxxx1 OnChar: sel = %x\r\n", GetSel());
+	//TRACE("xxxx1 OnChar: sel = %x\r\n", GetSel());
 }
 
 void CCalcEdit::OnEnChange()
@@ -658,7 +653,7 @@ void CCalcEdit::OnEnChange()
 
 void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	TRACE("xxxx0 OnKeyD: sel = %x\r\n", GetSel());
+	//TRACE("xxxx0 OnKeyD: sel = %x\r\n", GetSel());
 	in_edit_ = true;
 	ASSERT(pp_ != NULL && pp_->IsVisible());
 
@@ -711,7 +706,7 @@ void CCalcEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		pp_->ctl_calc_bits_.RedrawWindow();
 	}
 	in_edit_ = false;
-	TRACE("xxxx1 OnKeyD: sel = %x\r\n", GetSel());
+	//TRACE("xxxx1 OnKeyD: sel = %x\r\n", GetSel());
 }
 
 BOOL CCalcEdit::PreTranslateMessage(MSG* pMsg)
@@ -774,7 +769,7 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 					long rr = strtol(buf, NULL, 36);
 
 					// Only display nthe radix if it is different from the current calculator radix
-					//if (rr != pp_->radix_)  // xxx need to get radix from calc
+					if (pp_ != NULL && rr != pp_->radix_)
 						radix_str.Format(" (radix %d)", rr);
 				}
 				if (ps == NULL)
@@ -907,6 +902,9 @@ END_MESSAGE_MAP()
 
 HBRUSH CCalcComboBox::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
 {
+	if (pp_ != NULL && listbox_.pp_ == NULL)
+		listbox_.pp_ = pp_;
+
 	if (nCtlColor == CTLCOLOR_LISTBOX)
 	{
 		if (listbox_.GetSafeHwnd() == NULL)

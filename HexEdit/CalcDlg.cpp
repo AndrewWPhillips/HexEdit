@@ -242,12 +242,14 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 
 	source_ = km_result;
 	op_ = binop_none;
+	previous_unary_op_ = unary_none;
 	current_ = previous_ = 0;
 	state_ = CALCINTRES;
 
 	radix_ = bits_ = -1;  // Set to -1 so they are set up correctly
 
 	edit_.pp_ = this;                   // Set parent of edit control
+	ctl_edit_combo_.pp_ = this;
 	m_first = true;
 }
 
@@ -273,6 +275,10 @@ BOOL CCalcDlg::Create(CWnd* pParentWnd /*=NULL*/)
 	change_bits(aa_->GetProfileInt("Calculator", "Bits", 32));
 	change_signed(aa_->GetProfileInt("Calculator", "signed", 0) ? true : false);
 	current_.set_str(aa_->GetProfileString("Calculator", "Current", "0"), 10);
+	state_ = CALCINTUNARY;
+	edit_.put();
+	edit_.get();
+	set_right();
 	memory_.set_str(aa_->GetProfileString("Calculator", "Memory", "0"), 10);
 
 	// If saved memory value was restored then make it available
@@ -857,6 +863,7 @@ void CCalcDlg::do_binop(binop_type binop)
 	}
 	aa_->SaveToMacro(km_binop, long(binop));
 	op_ = binop;
+	previous_unary_op_ = unary_none;
 }
 
 // Displays errors and aslo checks for overflow (integer literals).
@@ -928,6 +935,12 @@ void CCalcDlg::make_noise(const char * ss)
 void CCalcDlg::update_expr()
 {
 	ExprStringType disp = get_expr(true);
+	if (orig_radix_ != radix_)
+	{
+		ExprStringType strRadix;
+		strRadix.Format(EXPRSTR(" [%d]"), orig_radix_);
+		disp += strRadix;
+	}
 
 	// This is the window (readonly text box) where we show the expression
 	CWnd * pwnd = GetDlgItem(IDC_EXPR);
@@ -1117,11 +1130,17 @@ void CCalcDlg::calc_unary(unary_type unary)
 	{
 	case unary_inc:
 		++current_;
-		right_.Format(EXPRSTR("(%s + 1)"), (const wchar_t *)tmp);
+		if (previous_unary_op_ == unary_inc)
+			right_ = inc_right_operand(right_);
+		else
+			right_.Format(EXPRSTR("(%s + 1)"), (const wchar_t *)tmp);
 		break;
 	case unary_dec:
 		current_ --;
-		right_.Format(EXPRSTR("(%s - 1)"), (const wchar_t *)tmp);
+		if (previous_unary_op_ == unary_dec)
+			right_ = inc_right_operand(right_);
+		else
+			right_.Format(EXPRSTR("(%s - 1)"), (const wchar_t *)tmp);
 		break;
 	case unary_sign:
 		current_ = -current_;
@@ -1181,7 +1200,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 //				mpz_neg(current_.get_mpz_t(), current_.get_mpz_t());
 
 			current_ = ((current_ << 1) | (current_ >> (bits_ - 1))) & mask_;
-			right_.Format(EXPRSTR("rol(%s, 1, %d)"), (const wchar_t *)without_parens(tmp), bits_);
+			right_.Format(EXPRSTR("rol(%s, 1, %s)"), (const wchar_t *)without_parens(tmp), bits_as_string());
 		}
 		break;
 	case unary_ror:   // ROR1 button
@@ -1193,16 +1212,22 @@ void CCalcDlg::calc_unary(unary_type unary)
 		else
 		{
 			current_ = ((current_ >> 1) | (current_ << (bits_ - 1))) & mask_;
-			right_.Format(EXPRSTR("ror(%s, 1, %d)"), (const wchar_t *)without_parens(tmp), bits_);
+			right_.Format(EXPRSTR("ror(%s, 1, %s)"), (const wchar_t *)without_parens(tmp), bits_as_string());
 		}
 		break;
 	case unary_lsl:
 		current_ <<= 1;
-		right_.Format(EXPRSTR("(%s << 1)"), (const wchar_t *)tmp);
+		if (previous_unary_op_ == unary_lsl)
+			right_ = inc_right_operand(right_);
+		else
+			right_.Format(EXPRSTR("(%s << 1)"), (const wchar_t *)tmp);
 		break;
 	case unary_lsr:
 		current_ >>= 1;
-		right_.Format(EXPRSTR("(%s >> 1)"), (const wchar_t *)tmp);
+		if (previous_unary_op_ == unary_lsr)
+			right_ = inc_right_operand(right_);
+		else
+			right_.Format(EXPRSTR("(%s >> 1)"), (const wchar_t *)tmp);
 		break;
 	case unary_asr:
 		if (bits_ == 0)
@@ -1215,7 +1240,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 			current_ >>= 1;
 			if (neg)
 				mpz_setbit(current_.get_mpz_t(), bits_-1);
-			right_.Format(EXPRSTR("asr(%s, 1, %d)"), (const wchar_t *)without_parens(tmp), bits_);
+			right_.Format(EXPRSTR("asr(%s, 1, %s)"), (const wchar_t *)without_parens(tmp), bits_as_string());
 		}
 		break;
 	case unary_rev:  // Reverse all bits
@@ -1239,7 +1264,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 				current_ >>= 1;              // Move bits down to test the next
 			}
 			current_ = temp;
-			right_.Format(EXPRSTR("reverse(%s, %d)"), (const wchar_t *)without_parens(tmp), bits_);
+			right_.Format(EXPRSTR("reverse(%s, %s)"), (const wchar_t *)without_parens(tmp), bits_as_string());
 		}
 		break;
 	case unary_flip: // Flip byte order
@@ -1264,7 +1289,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 			flip_bytes((unsigned char *)buf, bytes);
 			mpz_import(current_.get_mpz_t(), units, -1, sizeof(mp_limb_t), -1, 0, buf);
 			delete[] buf;
-			right_.Format(EXPRSTR("flip(%s, %d)"), (const wchar_t *)without_parens(tmp), bits_/8);
+			right_.Format(EXPRSTR("flip(%s, %s)"), (const wchar_t *)without_parens(tmp), int_as_string(bits_/8));
 		}
 		break;
 	case unary_at:
@@ -1295,7 +1320,7 @@ void CCalcDlg::calc_unary(unary_type unary)
 			else if (!get_bytes(GetValue()))
 				state_ = CALCERROR;
 			else
-				right_.Format(EXPRSTR("get(%s, %d)"), (const wchar_t *)without_parens(tmp), bits_);
+				right_.Format(EXPRSTR("get(%s, %s)"), (const wchar_t *)without_parens(tmp), bits_as_string());
 		}
 		break;
 
@@ -1305,6 +1330,8 @@ void CCalcDlg::calc_unary(unary_type unary)
 	}
 	if (state_ == CALCERROR)
 		right_ = "***";
+
+	previous_unary_op_ = unary;
 }
 
 // Handle "digit" button click
@@ -1467,6 +1494,7 @@ void CCalcDlg::calc_binary()
 	right_ = get_expr(false);  // we need parentheses in case there are further operations
 
 	op_ = binop_none;
+	previous_unary_op_ = unary_none;
 }  // calc_binary
 
 void CCalcDlg::change_base(int base)
@@ -1474,6 +1502,8 @@ void CCalcDlg::change_base(int base)
 	if (base == radix_) return;         // no change
 
 	radix_ = base;                      // Store new radix (affects edit control display)
+	if (left_.IsEmpty() && (right_.IsEmpty() || right_ == "0") && op_ == binop_none)
+		orig_radix_ = radix_;
 
 	// If an integer literal redisplay
 	if (inited_)
@@ -2299,6 +2329,7 @@ void CCalcDlg::OnSelHistory()
 	ctl_edit_combo_.GetLBText(nn, ss);
 	SetStr(ss);
 	op_ = binop_none;
+	previous_unary_op_ = unary_none;
 
 	left_= "";
 	right_ = "(" + ss + ")";
@@ -2634,7 +2665,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 		pview->SetFocus();
 
 	state_ = CALCINTRES;
-	orig_radix_ = radix_;    // remember starting radix
+	//orig_radix_ = radix_;    // remember starting radix
 
 	source_ = km_result;
 	aa_->SaveToMacro(km_go);
@@ -2720,6 +2751,7 @@ void CCalcDlg::OnClearEntry()           // Zero current value
 void CCalcDlg::OnClear()                // Zero current and remove any operators/brackets
 {
 	op_ = binop_none;
+	previous_unary_op_ = unary_none;
 	current_ = 0;
 	state_ = CALCINTRES;
 	edit_.put();
@@ -2800,7 +2832,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 		ASSERT(0);  // these cases should not occur
 		return;
 	}
-	orig_radix_ = radix_;    // remember starting radix
+	//orig_radix_ = radix_;    // remember starting radix
 
 	source_ = km_result;
 	aa_->SaveToMacro(km_equals);
@@ -2974,10 +3006,10 @@ ExprStringType CCalcDlg::get_expr(bool no_paren /* = false */)
 		retval.Format(EXPRSTR("min(%s, %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		break;
 	case binop_rol:
-		retval.Format(EXPRSTR("rol(%s, %s, %d)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_);
+		retval.Format(EXPRSTR("rol(%s, %s, %s)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_as_string());
 		break;
 	case binop_ror:
-		retval.Format(EXPRSTR("ror(%s, %s, %d)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_);
+		retval.Format(EXPRSTR("ror(%s, %s, %s)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_as_string());
 		break;
 	case binop_lsl:
 		retval.Format(EXPRSTR("(%s << %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
@@ -2986,7 +3018,7 @@ ExprStringType CCalcDlg::get_expr(bool no_paren /* = false */)
 		retval.Format(EXPRSTR("(%s >> %s)"), (const wchar_t *)left_, (const wchar_t *)right_);
 		break;
 	case binop_asr:
-		retval.Format(EXPRSTR("asr(%s, %s, %d)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_);
+		retval.Format(EXPRSTR("asr(%s, %s, %s)"), (const wchar_t *)left_, (const wchar_t *)right_, bits_as_string());
 		break;
 
 	case binop_and:
@@ -3038,6 +3070,8 @@ void CCalcDlg::set_right()
 	// If there is nothing in the left operand yet we can change the expression radix
 	if (left_.IsEmpty())
 		orig_radix_ = radix_;
+	previous_unary_op_ = unary_none;
+
 	if (state_ == CALCERROR)
 		right_ = "***";
 	else if (radix_ == orig_radix_ || state_ > CALCINTLIT)
@@ -3071,6 +3105,81 @@ void CCalcDlg::set_right()
 		right_ += numbuf;
 		delete[] numbuf;
 	}
+}
+
+// Increments the value (right operand) in an expression of the form "(EXPR OP VALUE)".
+// For example "(N + 3)" becomes "(N + 4)".
+ExprStringType CCalcDlg::inc_right_operand(const ExprStringType &expr)
+{
+	// First get the location of the right operand  in the string
+	int pos = expr.GetLength() - 1;
+	ASSERT(pos > 0 && expr[pos] == ')');
+	pos--;
+	while (isalnum(expr[pos]))
+		pos--;
+	++pos;     // move to first digit
+	int replace_pos = pos;    // where we add the new value
+
+	// Workout what radix to use
+	int radix = orig_radix_;       // default to current expression radix
+	if (expr[pos] == '0')
+	{
+		++pos;
+		radix = 8;
+		if (expr[pos] == 'x' || expr[pos] == 'X')
+		{
+			++pos;
+			radix = 16;
+		}
+	}
+
+	// Get the current value of the right operand
+#ifdef UNICODE_TYPE_STRING
+	int operand = wcstol((const wchar_t *)expr + pos, NULL, radix);
+#else
+	int operand = strtol((const char *)expr + pos, NULL, radix);
+#endif
+	// Re-create the expression string with incremented operand
+	ExprStringType retval;
+	retval.Format(EXPRSTR("%.*s%s)"), replace_pos, expr, int_as_string(operand + 1));
+	return retval;
+}
+
+ExprStringType CCalcDlg::bits_as_string()
+{
+	return int_as_string(bits_);
+}
+
+ExprStringType CCalcDlg::int_as_string(int ii)
+{
+	ExprStringType retval;
+	int radix = orig_radix_;
+	if (ii < 10 && ii < radix)
+		radix = 10;   // no point in doing anything fancy if it is just a single decimal digit
+
+	switch(radix)
+	{
+	case 8:
+		retval.Format(EXPRSTR("0%o"), ii);
+		break;
+	case 10:
+		retval.Format(EXPRSTR("%d"), ii);
+		break;
+	default:
+		// Just use hex for all other bases (but prefix with 0x to get right value if expression re-evaluated)
+		if (theApp.hex_ucase_)
+			retval.Format(EXPRSTR("0x%X"), ii);
+		else
+			retval.Format(EXPRSTR("0X%x"), ii);
+		break;
+	case 16:
+		if (theApp.hex_ucase_)
+			retval.Format(EXPRSTR("%X"), ii);
+		else
+			retval.Format(EXPRSTR("%x"), ii);
+		break;
+	}
+	return retval;
 }
 
 // ---------- Menu button handlers ---------

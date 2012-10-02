@@ -30,15 +30,17 @@ enum CALCSTATE {
 	CALCBOOLRES,
 };
 
+class CCalcDlg;
+
 /////////////////////////////////////////////////////////////////////////////
 // CCalcListBox - the dop down list part of CCalcComboBox
-class CTipWnd;
 
 class CCalcListBox : public CListBox
 {
 // Construction
 public:
-	CCalcListBox() : curr_(-1) { }
+	CCalcListBox() : curr_(-1), pp_(NULL) { }
+	CCalcDlg *pp_;
 
 protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
@@ -56,7 +58,8 @@ private:
 class CCalcComboBox : public CComboBox
 {
 public:
-	CCalcComboBox() { }
+	CCalcComboBox() : pp_(NULL) { }
+	CCalcDlg *pp_;
 
 protected:
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);

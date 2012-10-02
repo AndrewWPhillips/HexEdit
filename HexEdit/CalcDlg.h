@@ -77,6 +77,8 @@ class CMainFrame;
 class CCalcDlg : public CDialog
 {
 	friend class CCalcEdit;             // Edit box where values/expressions are entered and results displayed
+	friend class CCalcComboBox;
+	friend class CCalcListBox;
 	friend class CCalcBits;             // Displays 64 boxes (for the current bits) underneath the edit box
 	friend class CHexEditApp;           // Allows macros to call protected members
 
@@ -96,6 +98,9 @@ public:
 	void SetStr(CString ss)  { current_str_ = ss; state_ = CALCOTHRES; edit_.put(); state_ = edit_.update_value(false); }
 	void SetFromFile(FILE_ADDRESS addr);
 	void set_right();
+	ExprStringType inc_right_operand(const ExprStringType &expr);
+	ExprStringType bits_as_string();
+	ExprStringType int_as_string(int ii);
 
 	void change_base(int base);    // set radix (2 to 36)
 	void change_signed(bool s);    // set whether numbers are signed or unsigned
@@ -104,7 +109,13 @@ public:
 	int ByteSize() const { return (bits_-1)/8 + 1; }
 	int get_bits() const { return bits_; }
 	unsigned __int64 GetValue() const { return mpz_get_ui64(get_norm(current_).get_mpz_t()); }
-	CString GetStringValue() const { char * ss = mpz_get_str(NULL, 10, get_norm(current_).get_mpz_t()); CString retval(ss); free(ss); return retval; }
+	CString GetStringValue() const
+	{ 
+		char * ss = mpz_get_str(NULL, 10, get_norm(current_).get_mpz_t()); 
+		CString retval(ss); 
+		free(ss); 
+		return retval; 
+	}
 
 // Dialog Data
 	enum { IDD = IDD_CALC };
@@ -358,6 +369,10 @@ private:
 	// if the user does 123 + 456 then it has value km_add.  If no binary operation is currently
 	// active then is has value binop_none.
 	binop_type op_;
+
+	// This is used for creating a better right_ string when consecutive unary operations of the
+	// same type are used.  Eg incrementing twice should give "N + 2" not "(N + 1) + 1".
+	unary_type previous_unary_op_;
 
 	void inedit(km_type kk)
 	{
