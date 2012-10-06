@@ -1,30 +1,72 @@
-Reset hexedit.exe and _ani.xml
-
+Reset hexedit.exe, show standard toolbar
 
 --------
  " Colour schemes are not just for looks but have many uses that I will show you.
-- open hexedit.exe
+- open hexedit.exe, and open _ani.xml
 
  " You may have noticed this drop down list on the standard toolbar which allows you to
-   quickly change the colour scheme used inb the open window.
+   quickly change the colour scheme used in the open window.
 - change to EBCDIC colour scheme
 
- " Some dull people have complained about all the flashy colours.  I added the black and white
-   colour scheme to stop their complaints
+ " Some dull people have complained about all the flashy colours.  I added the black and white colour scheme to stop their complaints
 - change to BW colour scheme
 
  " But if you like a bit of colour you can try the rainbow colour scheme
 - switch to rainbow scheme
+
  " Actually the rainbow colour scheme has serious uses which we will see later
 
  " The default colour scheme is the ASCI default one
 -switch to ASCII default
  " In this one normal ASCII characters are shown in black.
 
-Colour Schemes
-- uses (not just pretty) - see specific bytes
-- colour editing
-- adding ranges
-- use with Aerial View
-- tool
+"If you use a standard colour scheme then if you switch between character sets the colour scheme chnages automatically
+
+- change to EBCDIC character set
+
+"This is a visual clue as to what character set you are using.
+
+"You can also create your own colour schemes or modify existing ones using the Colour Schemes page of the Options dialog.  A quick way to get to it is to select the "Modify Colours" entry from the Colour Schemes tool
+
+- open Colour Schemes page
+
+"On this page you have all the current colour schemes on the left.
+"On the right are all the colours for the currently selected colour scheme
+
+- select ASCII default colour scheme
+
+"The buttons at the top allow you to create or delete a colour scheme, ore reset if back to the default colours
+"Note that the delete button is disbaled for the first 4 (default) colour schemes, but you can still reset them if they have been changed.
+
+"On the right are all the colours for the colour scheme.  Note that the first 10 colours are required so cannot be deleted bu after that you can have colour ranges which can be added, deleted and re-ordered using the buttons on the far right.
+
+- select ANSI default colour scheme
+
+"You can see here that the ANSI scheme has 4 colour ranges: 32-126 represent normal ASCII and are shown in black; the control characters CR, LF, TAB normally appear in text files and are shown in green; the ANSI text charcaters are represented by several ranges (these are text characters of the default Windows ANSI code page); finally all other characters are red.
+
+- select each colour in turn
+
+"Having the last range going from 0 to 255 means it catches any charcaters which were not caught by the ranges above.  This means that any non-text characters will be displayed as red.
+
+"You can imagine how useful this would be for highlighting
+
+"Let's create a colour scheme as an example.  Imagine we have a text file that needs to be added to a web page.  We want to make sure the text does not have any special HTML characters in it like <, >, & in it.  We will create a new colour scheme based on the "black & white" colour scheme.
+
+- click  new scheme button - call it "demo"
+- select copy settings from "black & white"
+
+" The "black & white" colour scheme has juist one range which has the colour black
+" Let's add a new range with the special values we want and make it red
+
+- enter name: special, colour: red, values: 34,38,60,62
+- click new button
+- click up button
+- click OK
+
+" You can see now that all the <, >, and & characters are now displayed in red.
+" Colour schemes are very useful with aerial view which I will talk about later,
+but I will just give a quick demo now
+
+- turn on aerial view (Aerial -> Split Aerial View)
+
 

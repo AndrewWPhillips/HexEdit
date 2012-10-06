@@ -1,0 +1,25 @@
+
+" One of the best features that HexEdit has always had is its unlimited undo
+
+
+
+" Unlike other hex editors and even text editors undo not only undoes file changes
+  it also undoes formating changes.  This was a very cool feature that I first learnt
+  to love when I first used the Brief text editor about 30 years ago.
+  Unfortunately, many editors still do not support this.  For example if you
+  carefully make a selection in the Visual Syudio text editor then accidentally
+  press an arrow key and lose the selection you can't simply "indo" to get it back
+  but must painstakingly repeat the process.
+  
+- demo making selection, pressing down arrow, use Edit -> Undo
+
+" However
+
+
+
+Undo
+- view vs file level undo
+- warning if undo change made in other window
+- undo changes
+- intelligent undo
+- no redo (only use I have ever found is if undo too far)

@@ -13,7 +13,7 @@ Recording demo with CamStudio
   - Quality 100
   - Key frames every 1 (not used for this codec?)
   - Capture 200 msec
-  - playback rate 5 f/sec
+  - playback rate 50 f/sec (makes editing easier)
 - audio (from mike)
   - 22.05 KHz, mono, 16-bit
   - PCM
@@ -30,9 +30,19 @@ Recording demo with CamStudio
 VirtualDub
 - load 1st video (File/Open Video File)
 - append others (File/Append AVI segment)
+- edit the video
+  - use SPACEBAR to play/stop video playback
+  - use Del, Ctrl+X/C/V, Ctrl+Z/Y
 - delete unwanted frames
+  - turn on audio track display (View/Audio Display) for easier editing
+  - use Home/End to mark area for deletion
+    - IMPORTANT: turn off selection (Ctrl+D) before saving otherwise you only save the selection
+- mask frames where you don't want the video but want to keep the audio (Edit/Mask Selection)
 - save often to working copies as one time I could not save all my changes
+- save final version with 5 fps and high compression
 - Set Compression
+  - no compression if saving for later edit
+  - XVID MPEG4 gives good results
   - CamStudio Lossless Codec v1.4 sometimes gives wrong colours
   - ffdshow video codec has sound out of sync with video
 - Add logo (filter)
@@ -59,39 +69,28 @@ Alternative
 Categories
 ==========
 
+> Intro
+
 Viewing
 -------
 
-> Intro
+> Using Display
 
-* Display
-
-> Format
+> Format (Adjusting)
 
 > Highlighter
 
-* Status Bar
-
 > Ruler
 
-Colour Schemes
-- uses (not just pretty) - see specific bytes
-- colour editing
-- adding ranges
-- use with Aerial View
-- tool
+> Status Bar
 
-Active File Options
-- options pages
-  - scroll zone
-- saving as default
+* Document Options
+
+* Colour Schemes
 
 * Aerial View
-- border and ants
-- selection
-- context menu
 
-* Templates
+Templates
 - split/tabbed
 - columns
 - tree view
@@ -116,11 +115,21 @@ Unicode
 Editing
 -------
 
-> Editing
+> Editing Intro
+
+> Selecting
 
 > Mark
 
-> Selecting
+> Properties Dialog & File Properties
+
+* Properties Numbers
+- Integer
+- Real
+
+* Properties Date and Character Sets
+- Date
+- Byte
 
 * Clipboard
 
@@ -133,6 +142,7 @@ Undo
 - warning if undo change made in other window
 - undo changes
 - intelligent undo
+- no redo (only use I have ever found is if undo too far)
 
 Large Files
 - aborting long operations
@@ -140,15 +150,6 @@ Large Files
 - building a large file using Edit/Append and Append Same File
 
 
-Properties Dialog & File Properties
-
-Properties Numbers
-- Integer
-- Real
-
-Properties Date and Character Sets
-- Date
-- Byte
 
 
 Info Tips
@@ -215,7 +216,7 @@ Navigations Points
 - drop down lists - strictly chronological
 - file will be reopened
 
-Bookmarks
+* Bookmarks
 - named and unnamed
 - prev/next
 - bookmark tool

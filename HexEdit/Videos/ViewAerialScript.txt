@@ -6,7 +6,7 @@ open _exe.xml
 make sure aerial view is off
 clear calculator, set to 32-bit, decimal
 reset rainbow colour scheme - remove nul, adjust range1 and range12, SAVE
-make sure autocroll accel is fast
+make sure autoscroll accel is fast
 turn off highlight for marching ants
 turn off edit bar
 --------------------------------
@@ -115,7 +115,7 @@ turn off edit bar
    to the end of the FFs
 - switch to hex view and select from 00s to FFs
 
- " I can see instantly in the aerial view border border that I have
+ " I can see instantly in the aerial view border that I have
    roughly selected the right bytes
 - switch back to aerial view and use context menu to zoom out
 
