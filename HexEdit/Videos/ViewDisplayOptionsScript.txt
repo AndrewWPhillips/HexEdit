@@ -1,0 +1,78 @@
+Reset hexedit.exe and _ani.xml
+
+--------
+"We have aready seen some of the display options that HexEdit supports.  All of these options and many more can be controlled from the Options dialog
+
+- Open file and open Options dialog
+
+"The options that apply to the currently open file are all under the last section called "Document"
+
+- expand Document section
+
+"All these options only affect the current active file and are remembered when you close the file for the next time you open HexEdit.  When you open a new file you get a set of default settings.
+
+- select General page
+
+" The "use default settings" button allows you to undo any changes you have made to the settings for the active file.  It is the same as the "reset to Defaults" item on the view menu
+
+- close the dialog, select View/Reset, reopen Options dialog
+
+"The "Save Current" button allows you to use the settings for the current file as the default
+"Typically you would load the current settings, make a change then click Save Current as Default
+
+- click "Use Default Settings"
+- turn on Auto-fit
+- click "Save Current as Default"
+
+"At the bottom of the page are options to change the views on the active file.  When a file is open it always has what is called the hex view.  This is a bit of a misnoma as you can configure it so it only shows text.
+
+- move Options dialog out of the way to see hex view
+
+" You can also have other views on a file like template or aerial view.  These can be displayed in separated tabs or by splitting the window with the hex view.  I'll just display the Aerial view in a split window
+
+- select Aerial -> Split window, then click Apply
+- select Rainbow colour scheme and click Apply
+
+" The next page is for display options in the hex view
+
+- select Display page
+
+"Most of these options you can change using the buttons on the Standard toolbar or the Format toolbar or by dragging the ruler handles.  However, it is handy to be able to change all these settings in one place.
+
+"There are also a few things you can do here that you cannot do in any other way.  For example, turn on sector bounds.  You can also turn on the display of both hex and decimal addresses at the same time.  Or you can select any code page not just those on the View menu.
+
+- turn on decimal and hex addresses
+- turn on char set: code page and select UTF-7
+- click Apply
+
+"You can also easily do things you can't do in other ways.  For example, you might have a file with 4K records and want to increase the column count to 4096.
+
+- increase columns to 4096 and click Apply
+- click Autofit and click Apply
+
+" Finally you may have noticed this "Global Display Options" button.  This takes you to the display options page which applies to all files, not just the active one
+
+- click Global Display Options page button
+- click Document Display Options page button
+
+"The next page is for more options for the current file which relate more to how the file is edited than displayed.
+
+- switch to Document/Editing options
+
+" Most of these options can be changed using the Edit toolbar or the Navigation toolbar
+" the read-only, overtype and Big-endian options can be changed by double-clicking their pane on the status bar
+
+- change BE and highlight the change on the status bar
+
+" One really cool option that can only be set here is the scroll zone setting.  Nomrally as you move the cursor the window only scrolls when you go past the edge of the screen.  This option allows you force scrolling earlier.  This is particularly useful when you are doing searches and you want to see more context around the found bytes.
+
+- increase scroll zone to 8 and demonstrate
+
+" If you increase the scroll zone to a large value then the cursor always stays in the middle of the screen
+
+- open options dialog again
+- change scroll zone to 99
+
+" The last Document page is the colour schemes page which I will take about in the next video.
+
+- switch to colour schemes page

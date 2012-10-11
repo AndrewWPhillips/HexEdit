@@ -17,6 +17,7 @@ Recording demo with CamStudio
 - audio (from mike)
   - 22.05 KHz, mono, 16-bit
   - PCM
+    - switch to MP3 then back to PCM to make sure it is correct
 - region
   - fixed
   - 640x480
@@ -68,6 +69,7 @@ Alternative
 
 Categories
 ==========
+Prefixes: * = scripted, + = captured and uploaded, > means added to web page
 
 > Intro
 
@@ -132,10 +134,9 @@ Editing
 - Byte
 
 * Clipboard
+- comma separated values etc (C source)
 
 Special Clipboard formats
-- copy as hex
-- comma separated values etc (C source)
 
 Undo
 - view vs file level undo
@@ -148,9 +149,6 @@ Large Files
 - aborting long operations
 - file/New
 - building a large file using Edit/Append and Append Same File
-
-
-
 
 Info Tips
 - list
@@ -173,15 +171,12 @@ Info Tips
 Customization
 -------------
 
-Toolbars
-- copy/move
-- edit image
+Toolbars/Keyboard
 
-Keyboard
-
-
-Context Menus
-
+Other
+- Context Menus
+- Double click events
+- tools?
 
 Global Formatting
 - hex case
@@ -200,34 +195,29 @@ Printing
 
 Default Display
 
+Colour Schemes
+
+File Type Filters
+
+Default Directories
+
+Info Tips
+
+Auto Macros
 
 Navigation
 ----------
 
-Jump Tools
-- history
-- expressions - variables and bookmarks
-- quick base conversion/calculator
-- addresses update as cursor if moved and during long searches/compares
-- cf calculator
+* Jump Tools
+
++ Bookmarks
+
+* Advanced Bookmarks
 
 Navigations Points
 - back/forw
 - drop down lists - strictly chronological
 - file will be reopened
-
-* Bookmarks
-- named and unnamed
-- prev/next
-- bookmark tool
-- can jump to even if the file is closed
-
-Advanced Bookmarks
-- same bookmark name in different files
-- info tip window
-- context menu
-- remove all in current file
-- bookmark name in jump tool
 
 Calculator
 - base/bits
@@ -246,6 +236,7 @@ Variables
 - arrays
 - functions
 - clear
+- cf bookmarks
 
 
 Macros
@@ -269,19 +260,12 @@ Advanced Macros
 - mark
 - calc
 - operations
-
+- bookmarks
 
 Searching
 ---------
 
-Find Tool
-- exact
-- case-insensitive
-- hex
-- background search occurrences
-- Abort searches with the Escape key
-- EBCDIC in EBC mode
-- hist list
+* Find Tool
 
 Find Dialog
 - same hist list as find tool

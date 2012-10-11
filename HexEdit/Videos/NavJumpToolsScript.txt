@@ -1,0 +1,114 @@
+Open a file, use default settings, NOT at start of file
+Make sure Edit bar is docked
+Calc in 64 bit mode and hex mode
+Close all toolbars
+
+-------------------------
+ " The Jump tools allow you to quickly jump to an address.
+ " There is a hex jump tool and a decimal jump tool
+ " They both reside on the Edit bar by default
+
+- open Edit Bar
+
+ " As usual the colours for addresses are displayed as for the active colour scheme
+ " Here the hex jump tool uses red, decimal addresses are blue
+
+ " The obvious thing about the jump tools is that you can type an address,
+   and press Enter and you are taken to that address
+   
+- Enter 0 in hex address tool and press Enter
+- Enter 256 in decimal address tool and press Enter
+
+ " The next obvious things is that the tools have a history list
+ 
+- Select 0 from the hex address history and press Enter
+
+ " If you start to type an address and chnage your mind just press the Esc button
+ 
+- Enter 999,999 then press Escape
+
+ " If you try to jump to an address past the end of file a warning is displayed
+ 
+- Enter 999,999,999 and press Enter
+
+ " You might also have noticed that as you move around in the file the current
+   address is displayed for you in the tools.  The tools also update to show
+   the current address during long operations like compares and searches.
+
+- move cursor around using keyboard and mouse
+- select 256 from decimal history and press Enter
+
+~~~~~~~~~~~~~~~~
+
+ " You can not only type an address into the tools but any expression.
+ " For example, say you wanted to jump forward 256 bytes in the file.
+ " Just move to the decimal address tool and type "minus one thousand"
+ 
+- append " + 256" to decimal address tool and press Enter
+
+ " Note that the expression remains in the calculator so that you can make changes
+   And any expression you enter is, of course, available from the history drop-down
+
+- select from drop-down
+
+ " Expressions in the calculator support all the operators of C/C++ expressions
+   including assigning to variables.  This makes it very easy to remember an address.
+   
+- prepend "rec = " to decimal tool and press Enter
+- Enter "rec + 512" into decimal tool and press Enter
+
+ " When using variable names in the hex jump tool you must be careful that
+   the variable name could not be interpreted hex integer literal
+   
+- Enter "AA = FF" into hex jump tool and press Enter
+
+ " If you really need such a name precede it with an "@" symbol
+
+- Enter "@AA = FF" into hex jump tool and press Enter
+
+ " Of course, you don't need to do this in the decimal tool
+
+- Enter "AA" into decimal jump tool and press Enter
+- Enter "AA" into hex jump tool and press Enter
+- Enter "@AA" into hex jump tool and press Enter
+
+ " Note that any variables you create are retained in the registry
+   These are "global" variables so you can also use them in the calculator
+
+- bring up the Calc
+- select Variables/Integer/rec
+- select "=" button
+
+ " You can also clear all variables here
+ 
+- select Variables/Clear
+
+ " While we have the calculator up you will notice that we also have the decimal and
+   hex tool history lists availabkle here too
+   
+- select 999,999 from decimal jump history
+- switch from hex to decimal mode to show the selected value
+- close calculator
+
+ " Variables are a bit like a bookmark but they don't relate to a specific file
+ " In most cases it is better to create a bookmark. You can use the names of bookmarks
+   for the current file in expressions too
+
+- open bookmarks tools
+- add bookmark called "b1024" at 1024
+- enter expression "b1024 + 512" into decimal tool and press Enter
+
+ " Finally, I should mention that these tools double for base conversion
+ " As you type a value in one tool then the other tool is updated with the corresponding value
+ " You can even customize a toolbar so that it has 2 decimal tools so you can enter an
+   expression into one you can see thre result in the other
+   
+- Open cust dialog, create a new toolbar called JumpToolTest
+- ctrl+drag 2 decimal jump tools to it, make the left one wider
+- ctrl+drag hex jump tool to new toolbar
+- Enter an expression into left tool "1+2+3<<4"
+
+ " That should give you an idea of the power of the jump tools
+   You can do similar things in the calculator but with even more
+   operations available.  We'll look at the calcualtor soon.
+   

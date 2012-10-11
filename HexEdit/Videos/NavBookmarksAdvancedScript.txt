@@ -1,0 +1,109 @@
+Add two bookmarks of the same name in different files
+Open _ani.xml and add some bookmarks, normal colour scheme
+Turn off Aerial/In Border/Indicate Bookmarks
+Close all files
+---------------
+
+ " In this video we will explore how bookmarks integrate with other features of HexEdit.
+ " But first we will look at a few things I forgot to mention in the previous bookmarks video
+- open bookmarks window
+
+ " First you can simply double-click a bookmark in order to open the file it is in
+- dclick a couple of bookmarks
+
+ " Another recent feature is the ability to simply move bookmarks by dragging.
+   I don't know about you but I am always finding bookmarks slightly out of position for
+   various reasons. It used to be tedious to move a bookmark - now you can just drag it.
+- demonstrate dragging a bookmark
+
+ " All bookmarks are stored in a disk file.  Deleting this file will clear all your bookmarks.
+- find the file in HexEdit Explorer
+
+ " Of course, it's probably easier just to select all the bookmarks and delete them.
+ " You might do this if you use a shared computer and are worried about privacy.
+- select all bookmarks in bookmarks window
+
+ " A simple way to delete all bookmarks automatically when you close the program is
+   to use the History page of the Options dialog
+- open Options dialog, goto History Lists/Clear all bookmarks
+~~~~~~1
+
+ " While we have the Options dialog open I will show how to change the colour used
+   for bookmarks in the current clour scheme
+
+- goto Document/Colour Schemes
+- select Bookmarks colour (4th) and change it to red
+- click Apply
+- change to Automatic and click OK
+
+ " Another option is if you hold the mouse over a bookmark you can see a tip window
+   that shows its name.
+- hold mouse over bookmark
+  
+ " As long as you have the bookmarks checkbox on in the Info Tips options page
+- Tools/Options/Workspace/Info Tips
+- click checkbox off then on
+
+ " There is also a context menu for bookmarks that appears when you right click any bookmark.
+   You can customize this menu just like the other context menus.
+- Tools/Customize/Menu/Context/Bookmarks
+- drag Cust dialog to left, drag Bookmarks menu to right
+
+ " I'll just add a command to display the Aerial View to the menu since that is what 
+   I want to show next
+- go to Commands page
+- drag Aerial/Split Aerial View to Bookmarks menu
+- Close
+
+ " Now if I right-click a bookmark you can see the new menu
+- right-click and select Aerial View
+- close Bookmarks window
+~~~~ 2
+
+ " Now this is the Aerial view of the file which if you don't know gives an overview of
+   a file using a single pixel for each byte.  It is more useful with the rainbow colour
+   scheme
+- select Rainbow colour scheme
+
+ " You can see many things in the Aerial view, including bookmarks, 
+   either in the border and/or as marching ants
+- turn off ants for selection
+- add bookmarks and scroll the aerial view to show them
+
+ " I'm not sure if this video will show the marching ants.  It may be better if I zoom.
+- zoom Aerial view
+
+ " You can also see indicators in the left border.
+- turn on Bookmarks in border
+- move mouse over them   
+
+ " Being able to quickly locate all the bookmarks in a file using the Aerial view
+   is very useful.  For example you might have bookmarked all occurrences
+   of some search text.  Why don't I show that now.
+~~~~ 3
+
+ " Bookmarking all found search occurrences is very useful when you need to
+   retain the results of multiple searches.  This happens a lot.
+- open Find dialog, go to Text page,
+
+ " I know this file contains lots of less than characters so I am just going to
+   search for that using the text search page, with the whole file option
+- enter < in text to search for, select "whole file"
+
+ " We use this "Bookmark all" button but first I will add a prefix for my bookmark names
+   so I remember what they were for
+- enter prefix of "LessThan"
+- click "Bookmark All" button
+
+ " Bookmarks can also be used in the Find tools and in the Calculator.  For example, you
+   can use them in an expression to calculate an address to jump to.
+   But only bookmarks of the active file can be used in this way.
+- Enter "start + 10" into the decimal jump tool and press Enter
+
+ " Finally bookmarks are particularly useful in keystroke macros.  You can use them to
+   remember a position and return to it later even in a different file or a file
+   that is not even open.
+- demo
+
+   
+

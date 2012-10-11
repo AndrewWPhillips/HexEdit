@@ -1,0 +1,136 @@
+Open a file
+Turn on standard toolbar
+Undock the edit toolbar
+Turn off other toolbars
+
+----------------
+
+ " One of the most appreciated features that HexEdit has had since version 2.0
+   is full customization of toolbars, keyboards, menus, context menus, etc
+ " One reason I am loathe to customize some applications like Visual Studio is
+   that as soon as the next version comes out you have to re-do all your
+   customizations all over again.  (In VS2010 this is really bad as they have
+   rewritten it using WPF and the customization process is extremely tedious.
+   You can no longer just drag toolbar buttons around to create your own layout
+   but must muck around with dialog and long lists of commands.
+
+- open cust dialog
+
+ " Luckilly, HexEdit customization uses the old, simple drag method.
+   What's more when you upgrade to a new version generally your customizations
+   will continue to work exactly as before.
+
+ " Let's first look at making a new toolbar then later look at menu and
+   keyboard cstomization if we have time.
+
+- switch to Toolbars page
+- enable Standard toolbar, Edit Bar
+
+ " You can change the existing toolbars and even drag buttons to the menu bar
+   but we will just create a new toolbar and work with that.
+
+- click "New" and call it Andrew
+- drag cust dialog down a bit, drag new toolbar above it
+
+ " It is a simple matter to drag a button from another toolbar onto a new toolbar, but this
+   *moves* the button. If you want to make a copy then hold down the control key while dragging.
+- Ctrl+drag a few buttons to the new toolbar
+~~~~~~1
+
+ " You can also drag items from the menu bar. Again you need to hold down the control key
+- ctrl+drag "New..." from the File menu
+
+ " to remove a button just drag it off the toolbar
+- drag a button off the new toolbar
+
+ " Some commands may not be found on existing toolbars or menus
+   For these you can simply drag from the first page.
+- switch to "Commands" page, go to "All Commands" category
+- find Redraw command and drag to new toolbar
+
+ " Buttons can be displayed as an icons and/or as test.  Generally text is only used
+   on menus but some commands have no associated icon, like the Redraw command here.
+- right-click "Redraw" and select "Button Appearance"
+- select Image Only, and select the paintbrush image
+- click OK
+
+  " The Redraw command is now just a button with a paintbrush image.
+  " You can even draw your own image
+- right-click "Redraw" and select "Button Appearance", select "Edit..." button
+
+  " You can use these simple drawing tools OR you can paste an image you have created
+    in a more advanced icon package
+- change the drawing, click OK, click OK
+~~~~~~2
+
+  " The only other thing that is not clear when you right-click a button
+    in customization mode is the meaning of this "Start Group" item
+- right-click "Redraw" button to show context menu
+
+  " This simply leaves a space between the button and the previous button.
+    When used on a menu it draws a horizontal line between items
+	
+  " There are few special items you can add to toolbars (and menus)
+  " First there are the tools (Find Tool, Jump Tools, Bookmarks Tool) that
+    include a drop-down list.  You can place these on toolbars as normal.
+- Open Commands page, go to Navigation category
+- drag Hex Jump Tool to middle of new toolbar
+
+  " You can resize these tools by simply selecting the tool & dragging the right edge
+- resize Hex Jump Tool
+~~~~~~3
+
+  " You can also add sub-menus to toolbars and to other menus.
+    Here you can see the Mark menu which is already present on the Navigation toolbar
+- drag Mark menu to new toolbar
+
+  " You can also create a new menu from scratch using this "New Menu" option
+- drag "New Menu" to new toolbar
+
+  " Then you can add items to the new menu
+- drag some buttons onto the new menu including Mark Menu
+
+  " You also may want to use a better name for the sub-menu
+- right-click and select "Button Appearance"
+- enter "Test Menu" into "Button Text" field
+  
+  " Before I forget, there is a new feature in HeEt 4, the ability to assign macros to buttons.
+    To use this you first need to create a keystroke macro and save it to a macro file.
+	Then you can a assign it ti a button or keystroke.  Luckilly a keystroke macro is
+	included with HeEt
+- Open Commands page, go to Macros category (2nd last)
+- drag AllChars to new toolbar
+~~~~~~4
+
+  " While we're here we'll also have a quick look at keyboard customization.
+- switch to Keyboard page
+
+  " These are also sometimes called "accelerators". We have only one set of acceleartors called Default
+- show accelerators drop-down list
+
+  " On this page all the commands are grouped into categories again
+- click Category drop-down, and select Edit
+
+  " If you choose a command you can see which keys (if any) it is assigned to
+- select "Cut" command
+
+  " Here we can see that Cut is assigned to Ctrl+X and Shift-Delete
+  " To remove a key assignement just select it and click the Remove button
+- select Shift+Delete and click Remove
+
+  " To add a new keyboard shortcut you need to select the command first
+- select Category:Macros, then select Macro:AllChars
+
+  " No you enter the keystroke to assign here
+- Type Ctrl+A in the "Press New Shortcut Key" field
+
+  " You can see that Ctrl+A is already assigned to "select all"
+- Type Ctrl+Alt+A
+
+  "  Ctrl+Alt+A is unassigned so we can use that
+- click Assign button
+
+  " I still haven't covered Tools, Context Menus and Double-click events.
+    That will have to wait for the next video.
+~~~~~~4
+

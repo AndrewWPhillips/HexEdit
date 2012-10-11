@@ -1,0 +1,90 @@
+Open _ani.xml
+Turn off edit bar
+
+-------------------------
+ " Now we will just have a quick look at the Find Tool.
+   This is a drop down list that is, by default, on the Edit Bar.
+- open Edit Bar
+
+ " To quickly do a hex search type in some hex digits and press Enter
+- Enter "0D0A" and press Enter
+
+ " The next occurrence is now highlighted.
+   (Just ignore the other green-highlighted occurrences for now.)
+
+ " If I want to search for some text I precede the string with a equals sign (=)
+- Enter "=TYPE" and press Enter
+
+ " Or I can do a case-insensitive search by using a tilde (~)
+- Enter "~TYPE" and press Enter
+
+ " Remember to start the search you must press Enter,
+   but if you chnage your mind you can just press Escape.
+- Enter xx and press Esc
+
+ " After you perform a search it is saved in the history list.
+   You can select a previous search from the list and either edit it OR
+   just press Enter to search for it again.
+- select "0D0A" from the list and press Enter
+~~~~~~1
+
+ " I guess I should explain the green highlights now.  Whenever you perform a search
+   HexEdit fires up background processes to look for all other occurrences of the text.
+   Though this is controlled by an option and you might have to turn it one to see them.
+- Tools/Options/Workspace/Background Process/Searching
+   
+  " You can see there are 148 occurrences in this file from the count in the status bar
+- hover over status bar
+
+  " You can go to the next occurrence by pressing F3 or using the 3rd button on the Edit Bar
+- click button a few times
+
+  " Press SF3 to repeat a search but going backwards.
+  " Notice that the current occurrence is also shown in the status bar
+- hover over status bar
+
+  " Sometimes the display can be annoying so I often just search for something that won't be 
+    found to clear it
+- Enter "~~~~~~~" in the Find Tool and press Enter
+~~~~~~2
+
+  " HexEdit is very good for working with big files.  In a large file a search can take
+    a long time so HexEdit displays a progress bar
+- open big file and search for something that won't be found
+
+  " You'll also notice that the jump tools update to show the current search address
+    Also you can abort a search at any time by pressing Escape or the Space-Bar
+	
+  " One more thing I should mention is that when doing a text search the actual bytes
+    searched for will, of course, depend on the current character set
+- switch to EBCDIC (View/Char Set/EBCDIC), type "<" in Find Tool and press Enter
+
+  " Also not that if you delete the equals sign (=) in the Find Tool then the text
+    is convered to the corresponding hex digits using the current character set
+	
+- del = in "=<" in EBCDIC to get "4C"
+- put back "="
+- switch to ASCII (View/Char Set/ASCII)
+- del = in "=<" to get "3C"
+
+  " So you can actually use the Find Tool to convert between ASCII and EBCDIC
+    Suppose you have a byte with value 85 which you know is an EBCDIC character
+- put "65" into Find Tool (ASCII mode)
+- switch to EBCDIC (View/Char Set/EBCDIC)
+- add "=" at start of find tool to get "=e"
+
+  " We can now see that 85 corresponds to a lower-case E in EBCDIC
+- switch to ASCII (View/Char Set/ASCII)
+- del = in "=<" to get "65"
+
+  " Which is 65 in ASCII
+  
+  " That's about it for the Find Tool, but you can do even more powerful things
+    using the Find dialog
+  " One good thing is that it shares the same text and hex histories as the Find Tool
+- open find dialog and switch to hex page (shows 65)
+- open history
+- switch to text page (shows e)
+- open history
+
+  " I will talk a lot more about the Find Dialog in the next videos.

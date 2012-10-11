@@ -1,0 +1,116 @@
+http://youtu.be/J_DBkhmXte8
+----------
+Change date and add some old bookmarks.
+Close nav bar
+Change date back and add bookmark in temp file then delete the file.
+Open _ani.xml and add a few bookmarks.
+Make sure bookmarks dialog is half-width (right side), floating but hidden
+ - only show cols: name, file, byte no
+
+---------
+
+ " Bookmarks are a simple but very useful way to remember a position to return to later.
+   The quick way to add a bookmark is to press Ctrl+F2 which creates an unnamed bookmark.
+- use Ctrl+F2 in at least 3 different places
+
+ " Actually, this is more of a toggle - if you are already on top of a bookmark then
+   the bookmark is deleted.
+- Ctrl+F2 a few times to add/delete
+
+ " There are also several toolbar buttons that are used for bookmarks which appear on
+   the Navigation bar which I will turn on now.
+- turn on nav bar
+
+ " Using the bookmark button toggles a bookmark just like Ctrl+F2
+- click bookmark buttons a few times
+ 
+ " This drop menu has buttons for the next and previous bookmarks in the file
+   but you can also use F2 and SF2
+- open drop list, use next, use previous
+
+ " This button will remove all bookmarks in the current file while this one will hide
+   all bookmarks without actually deleting them.
+- hide bookmarks then show again
+
+ " Next to that is the bookmark tool which displays a drop list of all the bookmarks in the current file.
+   Note that as you move the cursor through the file it shows the nearest bookmark above the cursor posn.
+- demo moving caret and bookmark name changing
+
+ " You can also quickly jump to any bookmark in the file by selecting it from the drop list
+- demo jump to bookmarks
+~~~~1
+
+ " A more powerful way to work with bookmarks is to use the Bookmarks dialog
+   which you can open from the Edit menu or just right click the menu bar and select it.
+- open bookmarks dialog
+
+ " The bookmarks dialog is a modeless dialog so you can leave it open.
+   It moves out of the way of the cursor when floating.
+- demo moving out of the way while adding a few more bookmarks
+
+ " Like all modeless dialogs you can dock it to the side of the HexEdit window
+- dock on left
+
+ " You might have noticed that the unnamed bookmarks we created using Ctrl+F2 actually do have a name 
+   that starts with "unnamed".
+
+ " To add a named bookmark just click the New Bookmark button and type a new name.
+- demo adding a few named bookmarks
+
+ " The bookmarks dialog has several columns which you can turn on and off using the 
+   list that appears when you right-click on any column header.
+- Turn on/off a few columns
+
+ " The name column is just the name you gave to the bookmark, while the file column has the name of the
+   file and the folder has the location of the file.
+   
+ " The Modified column says when you created or moved the bookmark.  The Accessed column says when you
+   last jumped to that bookmark.  You can also sort on any column by clicking its header.
+- turn on last-accessed column and resize/sort the column
+
+ " You can easily rename a bookmark by clicking its name and typing a new one
+- rename a bookmark
+
+ " You can also delete one or more bookmarks using the Delete button.  For example, say you want to
+   delete all bookmarks you haven't used this year.  Just sort by last accessed time and select
+   the old ones and click the Delete button.
+- demo deleting
+
+ " Be careful when deleting bookmarks as once they are gone you can't get them back.
+   This is unlike highlights which are fully undoable.
+   
+ " You may also have noticed that there are bookmarks here with the same name.  In earlier versions
+   of HexEdit bookmark names had to be unique but now you can use the same name in different files.
+~~~~2
+
+ " This reminds that I should explain that bookmarks are kept in a global list.  They are not associated
+   with the file as other information (such as highlights) is.
+   
+ " This is the main reason you cannot undo bookmarks.  However, there are advantages to this system. 
+   You can jump to a bookmark even when the file it is in is not open.
+
+- select bookmark from _bmp.xml in the list
+
+ " This bookmark is in a file that is not open.  If I double-click it (which is a shortcut for jumping
+   to a bookmark) then the file is opened automatically to display the bookmark.
+- double-click the bookmark to open _ani.xml
+
+ " Finally I should explain the Validate button.  Since a bookmark is stored separately from the file
+   that it points to it is possible to have bookmarks pointing to files that no longer exist.
+   Or you could have a bookmark for a location past EOF for a file that has been shortened.
+   The Validate button checks for these and deletes or moves them.
+- click the Validate button
+
+ " There is also a drop-down menu that controls how validation is done.
+   For example you may not want to remove bookmarks that are on a network drive or on
+   a USB stick even if HexEdit cannot currently find them.
+
+ " One thing you should watch out for is that you can't add a bookmark to a new file until it
+   has been written to disk. If I create a new file then you can see that the Add button
+   in the bookmarks dialog is disabled.
+- create a new file (prompt for file name now option off)
+
+ " There are a lot of ways that bookmarks are integrated with other parts of HexEdit and
+   I will cover them in another video shortly
+~~~~3
+
