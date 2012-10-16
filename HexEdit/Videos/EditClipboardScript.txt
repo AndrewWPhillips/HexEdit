@@ -1,31 +1,33 @@
 create a file with "61 00 62", ASCII text, EBCDIC text
 make sure it is in OVR mode
+copy as Formatted text should have C/C++, preview off, align columns off
 -----------------------------
- " Using the clipboard to copy and paste data is a very common operation
+ " Using the clipboard to transfer data is a very common operation
  " HexEdit supports cutting, copying and pasting on the Edit menu.
 - open Edit menu
 
- " The cut and copy commands are disabled because I have nothing selected.
+ " First let's look at when these commands might be disabled as it can be confusing
+ " The cut and copy commands are currently disabled because I have nothing selected.
    I covered selecting in the last video. It is simplest to use the mouse.
 - select something and open Edit menu again
 
- " The paste and cut commands may also be disabled if the file is open
-   read-only, since these commands modify the file.
-- open a file read-only and open Edit menu
+ " The paste and cut commands but not the copy command may also be disabled
+   if the file is open read-only, since these commands modify the file.
+- double-click RO pane and open Edit menu
 
  " You can also use the standard shortcut keys of Ctrl+X, Ctrl+C and Ctrl+V.
    Note that even though the menu says the shortcut for cut is Shift+Delete
-   Ctrl+X is also supported as you can see from the key map.
+   you can also use Ctrl+X, as you can see from the key map.
 - open key map and change to Edit category, select Cut and resize Keys column
 
  " Of course, you can customize the keyboard layout 
-   but I don't recommend removing standard shortcut keys.
+   but I don't recommend removing these standard shortcut keys.
 
 ~~~~1 CUT/COPY
 
  " Let's look at cutting and copying in detail now.
-   I am sure you are aware that both commands place data on the clipboard
-   the only difference being that cut will delete the bytes as well.
+   I am sure you are aware that both commands place data on the Windows clipboard
+   the only difference being that cut will remove the original bytes as well.
 - switch back to first file select some bytes and select Edit/Cut
 
  " Because Cut deletes bytes you can't cut in overtype mode.  Instead you
@@ -33,9 +35,19 @@ make sure it is in OVR mode
 - say "yes" to switch to INS mode
 - Edit/Undo
 
- " The next point is very important so pay attention.  When you copy data to
-   the clipboard it is actually copied in 2 different formats - as binary and
-   as text.  If I copy these 3 bytes to the clipboard...
+ " Now I need to get into some technical details of how HexEdit puts data on the clipboard
+ " The clipboard can actually contain any number of copies of the data in different formats
+ " For example, when you copy from a web page the data is copied as plain text and as HTML
+
+ " By default in HexEdit when you copy to the clipboard the data is stored in 2 different ways:
+ " as text and as binary.
+ " (Although HexEdit 4 has added options to use the clipboard in different ways)
+
+ " It is stored as text so you can paste it into a text editor
+ " And it is stored in a binary format so you can cut and paste within HexEdit
+   since the clipboard text format does not support all bytes values (in particular nul)
+
+ " So f I copy these 3 bytes to the clipboard...
 - enter bytes "61 00 62" and select them, then use Edit/Copy
 
  " then they are placed on the clipboard as 3 binary bytes AND also
@@ -45,7 +57,7 @@ make sure it is in OVR mode
    processor.
 - open NotePad right click and paste
  " Note that this has only pasted 2 letters. The other byte was zero
-   which is a control character called NUL thta cannot be used as text.
+   which is a control character called NUL that cannot be used as text.
 
 ~~~~2
 
@@ -59,37 +71,59 @@ make sure it is in OVR mode
  " Another difference between the text and binary data is that how the text
    data is copied depends on the current character set in use, while
    the binary data is always copied exactly as is.  So if you are currently
-   in EBCDIC mode the bytes are interpreted as EBCDIC bytes when placed
+   in EBCDIC mode the bytes are converted from EBCDIC before being placed
    on the clipboard as text.
 - switch to EBCDIC mode, copy EBCDIC text to clipboard
 - open NotePad, paste the text.
 
 ~~~~3
 
- " A final note on copying to the clipboard is that many people expect
-   the text that is placed on the clipboard to be the binary data
-   interpreted as hex text.  So copying a byte with value "61" would place
-   the characters '6' and '1' on the clipboard but HexEdit will just put
-   a lower-case 'a' on the clipboard in ASCII mode as 61 is 'a' in ASCII.
-   However, to copy as hex text you just need to use the copy as hex text cmd.
-- demo
+ " I mentioned above that HexEdit 4 added new options for how data is stored
+   on the clipboard.  One option is to use "hex text" which is what many other
+   hex editors use.  I don't like this option since for large amounts of data
+   it is slow (requiring conversion between binary and text) and it uses 3 times
+   as much clipboard memory since each byte has 2 digits and a space character.
+ " However, it is an option in HexEdit now (see Options/Workspace/Editing).
 
- " Also note that the current behaviour is of HexEdit version 3.5.
-   In the next version of HexEdit there will be an option in the
-   Workspace/Edit page of the Options dialog to say whether the "text"
-   is copied as characters or hex text or auto-mode where HE decides.
+- Open the page in Options dialog
 
- " The Copy as C source command brings up a dialog with many options.
-   The text is suitable for pasting into a C or C++ source file to
-   initialise arrays or strings.  However, it can also be used for other
-   things like creating a list of comma-separated values.
-   I will cover this dialog in detail in the next video.
+ " I must admit this option is useful if you want to paste some binary data
+   as hex text say into a text editor or word processor.  However, HexEdit
+   provides the "copy as hex text" command to do exactly that.
+- demo - paste into notepad
+
+ " An even more powerful facility is provided using the "Copy As Formatted Text"
+ " This was originally called "Copy as C Source" but I renamed it since it
+   misled people to think that it was only useful for C programmers.
+
+- select some text and open the dialog
+
+ " But I must admit it *is* very useful for programmers for creating text
+   that can be used to initialise strings and arrays.  For example, I can
+   create comma-separated hex values suitable for an array of 32-bit integers
+
+- select: integers, hex, DWord
+
+ " New in HexEdit 4 is this preview area and the align columns option
+
+- turn on preview and align columns
+
+ " One really cool option is tha ability to create C strings which uses
+   normal text for ASCII characters but can also create escape sequences
+   and will hex sequences when all else fails
+
+- turn on string option
+
+ " As Imentioned before this is also generally useful.  Fro example you
+   could create an a comma-separated list of numbers for importing into
+   a spreadsheet
+
+- select: General, floating-point, 32-bit, indent:0
 
 ~~~~4 PASTE
 
- " I'm sure you know that Paste takes the data from the clipboard
-   and inserts it at the current location.  It checks the clipboard
-   for binary data, but if there is no binary data it will use
+ " Paste also handles binary and text formats. It uses binary data
+   but if there is no binary data on the clipboard it will use
    any text formats converting them to the character set in use.
 - go to NotePad and enter "XYZ" and copy to the clipboard
 - go back to HexEdit (EBCDIC mode) and paste
@@ -114,10 +148,13 @@ make sure it is in OVR mode
 - paste as ASCII, Unicode and EBCDIC
 
  " You can use this as a simple means of converting between ASCII and EBCDIC.
-   For example, to convert EBCDIC text to ASCII copy it to the clipboard
+   For example, to convert EBCDIC text to ASCII: copy it to the clipboard
    in EBCDIC mode then paste it as ASCII.
 - switch to EBCDIC mode, select and copy EBCDIC text
 - paste as ASCII
+
+
+xxx move the following to extra tute on clipboard options:
 
  " There is no option to paste from hex text as the reverse of the
    copy as hex text command,  but this will be addressed

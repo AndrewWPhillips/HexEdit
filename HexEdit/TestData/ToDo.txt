@@ -35,7 +35,10 @@ New Version
 BUGS
 ----
 
-- DATE vars lose accuracy between runs (saved in registry) - several minutes
+> DATE vars lose accuracy between runs (saved in registry) - several minutes
+- info tip not appearing?
+- with large bookmark list the first one was in the tool but after jump to it tool did not update to show it
+- message box with Yes/No buttons does not support Y/N keys
 - Set date/time of files can be an hour or two out
 - jump and search tools bug: when right click and select paste the pasted text disappears (Ctrl+V works OK though)
   - cf similar problem in CCalcEdit - fixed by handling EN_CHANGE message
@@ -51,14 +54,21 @@ BUGS
 > attach macros to toolbar or keyboard
 > search button in recent file list
 > Preview options: RFL and open dialog
-> new commands: copy path to clipboard, open folder in explorer
-- Explorer
-  - add default open folders to history list on startup (and save folder too if different)
-  - start in default open folder
+  > Preview Options page
+> new commands: copy path to clipboard, open file in explorer, make favourite
+> Explorer
+  > start in previous folder
   > fix context menus
-  > Allow dhowing of hidden system files
-  > Add commands to set file times (now and using DATE varibale)
-  > Add commands to toggle rO, arc, hidden, sys, indexed etc bits
+  > Allow showing of hidden system files
+  > Add commands to set file times (now and using DATE variable)
+  > Add commands to toggle rO, arc, hidden, sys, indexed, enc, compress bits
+  > Add Delete and Wipe commands
+  > Add new Explorer Options page
+    > Wipe strategy
+	> Custom context menu
+	> sync tree with list
+  > Add created and accessed columns
+  > sort folders separately from files
 > New MFC MDI tabs
 >   new options for close X and coloured tabs
 > Add command to copy path to clipboard
@@ -66,7 +76,10 @@ BUGS
 > vert/horz tab groups
 > W7 Taskbar: thumbnails
 > W7 taskbar: progress
-- W7 taskbar: most recent, most used, favourites
+> W7 taskbar: most recent, most used, favourites
+> fix bug in validation of bookmarks
+- new background stats options
+- fix calculator
 
 - Installer
   - new why uninstalling dialog
@@ -74,7 +87,8 @@ BUGS
   > better font for ReadMe
   > run .exe at end
 
-
+Explorer
+- new columns: size on disk, ext, owner, short name, # links, ...
 
 Compare
 

@@ -653,7 +653,11 @@ void CHistoryShellList::OnContextMenu(CWnd * pWnd, CPoint point)
 		mm.CreatePopupMenu();
 
 		for (int col = 0; col < COLLAST; ++col)
+		{
+			if (col == COLOPENED || col == COLCREATED)
+				mm.AppendMenu(MF_SEPARATOR);
 			mm.AppendMenu(MF_ENABLED|(GetColumnWidth(col)>0?MF_CHECKED:0), col+1, colnames[col]);
+		}
 
 		int item = mm.TrackPopupMenu(
 				TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD,

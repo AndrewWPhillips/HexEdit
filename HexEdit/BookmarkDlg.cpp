@@ -158,6 +158,7 @@ BOOL CBookmarkDlg::Create(CWnd *pParentWnd)
 
 	ctl_validate_.m_bDefaultClick = TRUE;     // Default click validates (also drop-down menu for options)
 	ctl_validate_.m_bOSMenu = FALSE;
+	ctl_validate_.m_bStayPressed = TRUE;
 	VERIFY(validate_menu_.LoadMenu(IDR_BOOKMARKS_VALIDATE));
 	ctl_validate_.m_hMenu = validate_menu_.GetSubMenu(0)->GetSafeHmenu();  // Add drop-down menu (see ValidateOptions())
 	ctl_validate_.SetImage(IDB_BM_VALIDATE, IDB_BM_VALIDATE_HOT);
