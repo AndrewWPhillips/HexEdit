@@ -4030,8 +4030,8 @@ end_of_background_drawing:
 					else
 					{
 						// Display chars "out of range" as dots
-						//::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + dot_pad, tt.top, &dot, 1);
-						::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + bad_pad, tt.top, BadChar(), 1);
+						::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + dot_pad, tt.top, &dot, 1);
+						//::TextOutW(pDC->GetSafeHdc(), posx + (jj + jj/group_by_)*char_width_w + bad_pad, tt.top, BadChar(), 1);
   					}
 
 					// Display the hex digits below that, one below the other
@@ -4222,7 +4222,8 @@ end_of_background_drawing:
 				else
 				{
 					// Display chars "out of range" as dots
-					::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + bad_pad, tt.top, BadChar(), 1);
+					::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + bad_pad, tt.top, &dot, 1);
+					//::TextOutW(pDC->GetSafeHdc(), posc + kk*char_width_w + bad_pad, tt.top, BadChar(), 1);
   				}
 			}
 		}
