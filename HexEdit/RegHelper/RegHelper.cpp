@@ -17,14 +17,18 @@ using namespace std;
 static void Usage();
 static BOOL CreateProgId(const char * exepath, const char * progid, const char * docname, const char * appid);
 static void CreateOpenWith(const char * progid, const char * ext);
+static void RegAll(const char * exepath, const char * shellkey, const char * shellsubkey, const char * shelldesc);
+static void UnregAll(const char * shellkey, const char * shellsubkey);
 
 static void Usage()
 {
 	_tprintf(_T("Usage:\r\n"));
 	_tprintf(_T("   RegHelper EXT <exepath> <progid> <docname> <appid> <ext1,ext2,ext3,...>\r\n"));
-	// RegHelper EXT  "C:\Program Files\HexEdit Pro\HexEditPro.exe"  HexEditPro.file  "HexEdit Pro file"  ECSoftware.HexEdit.Pro.40  ".jpg|.png"
-	// ARG:      1     2                                            3                 4                  5                           6
 	_tprintf(_T("eg:RegHelper EXT \"C:\\Program Files\\HexEditPro\\HexEditPro.exe\" \"HexEditPro.file\" \"HexEdit Pro file\" \"ECSoftware.HexEdit.Pro.40\" \".jpg|.png\"\r\n"));
+	_tprintf(_T("   RegHelper REGALL <exepath> <shellkey> <shellsubkey> <shelldesc>\r\n"));
+	_tprintf(_T("eg:RegHelper REGALL \"C:\\Program Files\\HexEditPro\\HexEditPro.exe\" \"*\\shell\\HexEditPro\" \"*\\shell\\HexEditPro\\command\" \"Open with HexEdit Pro\"\r\n"));
+	_tprintf(_T("   RegHelper UNREGALL <shellkey> <shellsubkey>\r\n"));
+	_tprintf(_T("eg:RegHelper UNREGALL \"*\\shell\\HexEditPro\" \"*\\shell\\HexEditPro\\command\"\r\n"));
 }
 
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
@@ -71,7 +75,20 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			CreateOpenWith(argv[3], ext);
 		}
 	}
-	// else add other commands here
+	else if (_stricmp(argv[1], "REGALL") == 0)
+	{
+		if (argc < 6)
+			return Usage(), 1;
+
+		RegAll(argv[2], argv[3], argv[4], argv[5]);
+	}
+	else if (_stricmp(argv[1], "UNREGALL") == 0)
+	{
+		if (argc < 4)
+			return Usage(), 1;
+
+		UnregAll(argv[2], argv[3]);
+	}
 
 	return 0;
 }
@@ -118,3 +135,18 @@ static void CreateOpenWith(const char * progid, const char * ext)
 	::RegCloseKey(hkey_owp);
 	::RegCloseKey(hkey_ext);
 }
+
+static void RegAll(const char * exepath, const char * shellkey, const char * shellsubkey, const char * shelldesc)
+{
+	CString s1 = CString(shelldesc);
+	CString s2 = "\"" + CString(exepath) + "\"  \"%1\"";
+	::RegSetValue(HKEY_CLASSES_ROOT, shellkey, REG_SZ, s1, s1.GetLength());
+	::RegSetValue(HKEY_CLASSES_ROOT, shellsubkey, REG_SZ, s2, s2.GetLength());
+}
+
+static void UnregAll(const char * shellkey, const char * shellsubkey)
+{
+	::RegDeleteKey(HKEY_CLASSES_ROOT, shellsubkey); // Delete subkey first (for NT)
+	::RegDeleteKey(HKEY_CLASSES_ROOT, shellkey);    // Delete registry entries
+}
+

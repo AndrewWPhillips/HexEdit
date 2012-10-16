@@ -84,11 +84,6 @@ extern BOOL AFXAPI AfxFullPath(LPTSTR lpszPathOut, LPCTSTR lpszFileIn);
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// The following is the subkey of HKEY_CLASSES_ROOT that is used to enable the
-// "Open with HexEdit" shell shortcut menu option.
-static const char *HEXEDIT_SUBKEY = "*\\shell\\HexEditPro";
-static const char *HEXEDIT_SUBSUBKEY  = "*\\shell\\HexEditPro\\command";
-
 #ifndef NO_SECURITY
 #include "security.h"
 int quick_check_called = 0;
@@ -191,8 +186,14 @@ BOOL CHexEditDocManager::DoPromptFileName(CString& fileName, UINT nIDSTitle, DWO
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditApp
 const char * CHexEditApp::HexEditClassName = "HexEditMDIFrame";
+const char * CHexEditApp::RegHelper = "RegHelper.exe";           // helper for things that require admin privileges
+
+// The following are used to enable the "Open with HexEdit" shell shortcut menu option.
+const char *CHexEditApp::HexEditSubKey = "*\\shell\\HexEditPro";
+const char *CHexEditApp::HexEditSubSubKey = "*\\shell\\HexEditPro\\command";
+
+// The following is used to enable "Open With" file extension associations (so that files can be on Win7 task list).
 const char * CHexEditApp::ProgID = "HexEditPro.file";
-const char * CHexEditApp::RegHelper = "RegHelper.exe";
 
 #ifdef _DEBUG
 const int CHexEditApp::security_version_ = 12; // This is changed for testing of handling of versions (registration etc)
@@ -3257,7 +3258,7 @@ void CHexEditApp::get_options(struct OptValues &val)
 
 	// System
 	val.save_exit_ = save_exit_;
-	val.shell_open_ = RegQueryValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, buf, &buf_size) == ERROR_SUCCESS;
+	val.shell_open_ = RegQueryValue(HKEY_CLASSES_ROOT, HexEditSubSubKey, buf, &buf_size) == ERROR_SUCCESS;
 	val.one_only_ = one_only_;
 	val.special_list_scan_ = special_list_scan_;
 	val.splash_ = splash_;
@@ -3469,21 +3470,25 @@ void CHexEditApp::set_options(struct OptValues &val)
 	long buf_size = sizeof(buf);        // Size of buffer and returned key value
 
 	if (val.shell_open_ != 
-		(RegQueryValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, buf, &buf_size) == ERROR_SUCCESS))
+		(RegQueryValue(HKEY_CLASSES_ROOT, HexEditSubSubKey, buf, &buf_size) == ERROR_SUCCESS))
 	{
 		// Option has been changed (turned on or off)
-		if (val.shell_open_)
+		if (CAvoidableDialog::Show(IDS_REG_REQUIRED, 
+									"In order to change registry settings for all users "
+									"you may be prompted for Administrator privileges.\n\n"
+									"Do you wish to continue?\n\n",
+									"Admin Privileges",
+									MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
 		{
-			// Create the registry entries that allow "Open with HexEdit Pro" on shortcut menus
-			CString s1("Open with HexEdit Pro");
-			CString s2 = "\"" + GetExePath() + "HexEditPro.exe\"  \"%1\"";
-			RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY, REG_SZ, s1, s1.GetLength());
-			RegSetValue(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY, REG_SZ, s2, s2.GetLength());
-		}
-		else
-		{
-			RegDeleteKey(HKEY_CLASSES_ROOT, HEXEDIT_SUBSUBKEY); // Delete subkey first (for NT)
-			RegDeleteKey(HKEY_CLASSES_ROOT, HEXEDIT_SUBKEY);    // Delete registry entries
+			if (val.shell_open_)
+			{
+				// Create the registry entries that allow "Open with HexEdit Pro" on shortcut menus
+				RegisterOpenAll();
+			}
+			else
+			{
+				UnregisterOpenAll();
+			}
 		}
 	}
 
@@ -4329,7 +4334,7 @@ UINT CHexEditApp::RunCleanupThread()
 
 #if _MFC_VER >= 0x0A00  // Only needed for Win7 jump lists which are only supported in MFC 10
 
-// RegisterExtensions is used to register file extensions so that the type of files can be opned 
+// RegisterExtensions is used to register file extensions so that the type of files can be opened 
 // in HexEdit (ie HexEdit Pro appears on the "Open With" Explorer menu).
 // Since this requires admin privileges as separate program (RegHelper.exe) is fired up while 
 // using the ShellExecute() verb "runas".  The parameter takes one or more file extensions,
@@ -4348,6 +4353,29 @@ bool CHexEditApp::RegisterExtensions(LPCTSTR extensions)
 	return CallRegHelper(strCmdLine);
 }
 #endif //_MFC_VER >= 0x0A00
+
+bool CHexEditApp::RegisterOpenAll()
+{
+	CString strCmdLine;
+    CString strExeFullName;
+    AfxGetModuleFileName(0, strExeFullName);
+	strCmdLine.Format("REGALL  \"%s\"  \"%s\"  \"%s\"  \"Open with HexEdit Pro\"",
+	                  strExeFullName,
+					  HexEditSubKey,
+				      HexEditSubSubKey);
+
+	return CallRegHelper(strCmdLine);
+}
+
+bool CHexEditApp::UnregisterOpenAll()
+{
+	CString strCmdLine;
+	strCmdLine.Format("UNREGALL  \"%s\"  \"%s\"",
+					  HexEditSubKey,
+				      HexEditSubSubKey);
+
+	return CallRegHelper(strCmdLine);
+}
 
 bool CHexEditApp::CallRegHelper(LPCTSTR cmdLine)
 {

@@ -273,8 +273,11 @@ public:
 	void UpdateAllViews();      // just redraw all views
 
 	static const char * HexEditClassName; // Class name of mainframe
+	static const char * RegHelper;        // Name of helper .EXE 
+	static const char * HexEditSubKey;
+	static const char * HexEditSubSubKey;
 	static const char * ProgID;           // HKCR reg key for associating file extensions
-	static const char * RegHelper;
+
 	static UINT wm_hexedit;     // Message for communicating between different HexEdit instances (to open files)
 	HWND hwnd_1st_;             // Handle of previous instance mainfarm window or NULL if no previous instance
 
@@ -868,6 +871,8 @@ public:
 #if _MFC_VER >= 0x0A00  // Only needed fo Win7 jump lists which are only supported in MFC 10
 	bool RegisterExtensions(LPCTSTR extensions);
 #endif
+	bool RegisterOpenAll();            // Fire up RegHelper (admin priv) to register "open With HexEdit" for all files and all users
+	bool UnregisterOpenAll();          // Unregister "Open With HexEdit" (option in registry)
 	bool CallRegHelper(LPCTSTR cmdLine);
 
 #ifndef NO_SECURITY
