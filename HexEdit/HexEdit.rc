@@ -2554,7 +2554,7 @@ BEGIN
     CONTROL         "Keep tree synchronised with active folder",IDC_SYNC_TREE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,97,145,10,0,HIDC_SYNC_TREE
     CONTROL         "Use Custom Context Menu",IDC_CUSTOM_MENU,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,109,100,10,0,HIDC_CUSTOM_MENU
-    PUSHBUTTON      "File Type Filter List >>",IDC_FILTERS_PAGE,155,118,100,16
+    PUSHBUTTON      "File Type Filter List >>",IDC_FILTERS_PAGE,155,118,100,16,0,0,HIDC_FILTERS_PAGE
 END
 
 IDD_OPT_AERIAL DIALOGEX 0, 0, 260, 140
