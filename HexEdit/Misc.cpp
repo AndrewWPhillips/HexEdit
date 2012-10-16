@@ -1966,37 +1966,24 @@ bool NeedsFix(CRect &rect)
 }
 
 // Check if a lengthy operation should be aborted.
-// Updates display and checks for user pressing Escape key.
+// Updates display and checks for user pressing Escape key/space bar.
 bool AbortKeyPress()
 {
-	bool retval = false;
 	MSG msg;
 
-	// Do any redrawing, but nothing else
-	while (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_REMOVE))
+	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);
+		// Handle paint, close, etc events but nothing that does anything (like WM_COMMAND)
+		if (msg.message < WM_KEYFIRST)
+		{
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+		}
+		else if (msg.message == WM_KEYDOWN && (msg.wParam == VK_ESCAPE || msg.wParam == VK_SPACE))
+			return true;
 	}
 
-	// Check if any key has been pressed
-	if (::PeekMessage(&msg, NULL, WM_KEYDOWN, WM_KEYDOWN, PM_REMOVE))
-	{
-		int cc = msg.wParam;
-
-		// Windows does not like to miss key down events (needed to match key up events)
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);
-
-		// Remove any characters resulting from keypresses (so they are not inserted into the active file)
-		while (::PeekMessage(&msg, NULL, WM_CHAR, WM_CHAR, PM_REMOVE))
-			;
-
-		// Abort is signalled with Escape key or SPACE bar
-		retval = cc == VK_ESCAPE || cc == VK_SPACE;
-	}
-
-	return retval;
+	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////
