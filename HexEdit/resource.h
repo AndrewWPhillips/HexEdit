@@ -1337,11 +1337,12 @@
 #define ID_PASTE_UNICODE                32827
 #define ID_PASTE_EBCDIC                 32828
 #define ID_OPTIONS2                     32829
-#define ID_EDIT_READFILE                32830
+#define ID_OPTIONS_CODEPAGE             32830
 #define ID_OPTIONS3                     32831
 #define ID_MULTI_PLAY                   32832
 #define ID_EXTENDTO_MARK                32833
 #define ID_SWAP_MARK                    32834
+#define ID_EDIT_READFILE                32835
 #define ID_EDIT_FIND2                   32837
 #define ID_HELP_EMAIL                   32838
 #define ID_SCROLL_UP                    32839

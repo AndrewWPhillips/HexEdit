@@ -571,6 +571,8 @@ BEGIN
                 MENUITEM "936  Chinese - simplified",   ID_CODEPAGE_936
                 MENUITEM "949  Korean",                 ID_CODEPAGE_949
                 MENUITEM "950  Chinese - traditional",  ID_CODEPAGE_950
+                MENUITEM SEPARATOR
+                MENUITEM "&More...",                    ID_OPTIONS_CODEPAGE
             END
         END
         POPUP "C&ontrol Characters"
@@ -1012,7 +1014,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "C&ustomize...",               ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
-        MENUITEM "&Properties...",              32806
+        MENUITEM "&Properties...",              ID_PROPERTIES
     END
 END
 
@@ -3129,6 +3131,7 @@ BEGIN
     ID_PASTE_UNICODE        "Insert Clipboard Text as Unicode\nPaste Unicode"
     ID_PASTE_EBCDIC         "Insert Clipboard Text as EBCDIC\nPaste EBCDIC"
     ID_OPTIONS2             "Change window and global options\nOptions"
+    ID_OPTIONS_CODEPAGE     "Change window code page options\nCode Page Options"
     ID_EDIT_READFILE        "Insert a file at the cursor position\nInsert File"
     ID_OPTIONS3             "Change color scheme options\nColor Options"
 END

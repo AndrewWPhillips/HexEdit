@@ -207,6 +207,7 @@ BEGIN_MESSAGE_MAP(CHexEditApp, CWinAppEx)
 		ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
 		ON_COMMAND(ID_OPTIONS, OnOptions)
 		ON_COMMAND(ID_OPTIONS2, OnOptions2)
+		ON_COMMAND(ID_OPTIONS_CODEPAGE, OnOptionsCodePage)
 		ON_COMMAND(ID_RECORD, OnMacroRecord)
 		ON_COMMAND(ID_PLAY, OnMacroPlay)
 		ON_UPDATE_COMMAND_UI(ID_PLAY, OnUpdateMacroPlay)
@@ -2448,7 +2449,7 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx default to on un
 			open_display_.hex_area = GetProfileInt("Options", "OpenDisplayHex", 1) ? TRUE : FALSE;
 			open_display_.char_area = GetProfileInt("Options", "OpenDisplayChar", 1) ? TRUE : FALSE;
 
-			if (GetProfileInt("Options", "OpenCodePage", 0) != 0)
+			if (GetProfileInt("Options", "OpenCodePage", 1) != 0)
 				open_display_.char_set = CHARSET_CODEPAGE;
 			else if (GetProfileInt("Options", "OpenEBCDIC", 0) != 0)
 				open_display_.char_set = CHARSET_EBCDIC;
@@ -2515,7 +2516,7 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx default to on un
 		open_display_.char_set = CHARSET_ASCII;       // ASCII:  0/2 -> 0
 	//else if (open_display_.char_set > 4)
 	//	open_display_.char_set = CHARSET_EBCDIC;      // EBCDIC: 4/5/6/7 -> 4
-	open_code_page_ = GetProfileInt("Options", "OpenCodePage", 0);
+	open_code_page_ = GetProfileInt("Options", "OpenCodePage", 1252);
 
 	CString strFont = GetProfileString("Options", "OpenFont", "Courier,16"); // Font info string (fields are comma sep.)
 	CString strFace;                                            // Font FaceName from string
@@ -3226,6 +3227,14 @@ void CHexEditApp::OnOptions()
 
 void CHexEditApp::OnOptions2()
 {
+	display_options(WIN_OPTIONS_PAGE);
+}
+
+void CHexEditApp::OnOptionsCodePage()
+{
+	CHexEditView *pview = GetView();
+	if (pview != NULL && !pview->CodePageMode())
+		pview->OnCharsetCodepage();    // switch to code page mode if not already in it
 	display_options(WIN_OPTIONS_PAGE);
 }
 
