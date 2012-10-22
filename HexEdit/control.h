@@ -113,6 +113,7 @@ protected:
 	afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
 	//}}AFX_MSG
 	afx_msg LRESULT OnCommandHelp(WPARAM, LPARAM);
+	afx_msg void OnEnChange();
 
 	DECLARE_MESSAGE_MAP()
 
@@ -215,6 +216,7 @@ protected:
 	afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
 	//}}AFX_MSG
 	afx_msg LRESULT OnCommandHelp(WPARAM, LPARAM);
+	afx_msg void OnEnChange();
 
 	DECLARE_MESSAGE_MAP()
 

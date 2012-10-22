@@ -901,7 +901,7 @@ void CSearchEditControl::RedisplayAll()
 	CObList listButtons;
 	if (CMFCToolBar::GetCommandButtons(ID_SEARCH_COMBO, listButtons) > 0)
 	{
-		for (POSITION posCombo = listButtons.GetHeadPosition ();
+		for (POSITION posCombo = listButtons.GetHeadPosition();
 			posCombo != NULL; )
 		{
 			CFindComboButton* pCombo = 
@@ -1011,12 +1011,13 @@ CHexEditControl::CHexEditControl(CMFCToolBarComboBoxButton & combo) :
 }
 
 BEGIN_MESSAGE_MAP(CHexEditControl, CMFCToolBarComboBoxEdit)
-		//{{AFX_MSG_MAP(CHexEditControl)
-		ON_WM_CHAR()
-		ON_WM_KEYDOWN()
+	//{{AFX_MSG_MAP(CHexEditControl)
+	ON_WM_CHAR()
+	ON_WM_KEYDOWN()
 	ON_WM_CTLCOLOR_REFLECT()
 	//}}AFX_MSG_MAP
-		ON_MESSAGE(WM_COMMANDHELP, OnCommandHelp)
+	ON_CONTROL_REFLECT(EN_CHANGE, OnEnChange)
+	ON_MESSAGE(WM_COMMANDHELP, OnCommandHelp)
 END_MESSAGE_MAP()
 
 void CHexEditControl::Redisplay()            // Make sure hex digits case OK etc
@@ -1123,6 +1124,15 @@ HBRUSH CHexEditControl::CtlColor(CDC* pDC, UINT nCtlColor)
 		pDC->SetTextColor(::GetHexAddrCol());
 
 	return m_brush;
+}
+
+void CHexEditControl::OnEnChange()
+{
+	// This was added only so that paste via context menu (right-click control and select Paste)
+	// works [paste using Ctrl+V works OK because OnChar, above, gets called]
+	CString ss;                         // Current string
+	GetWindowText(ss);
+	((CMainFrame *)AfxGetMainWnd())->SetHexAddress(ss);
 }
 
 LRESULT CHexEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
@@ -1337,12 +1347,13 @@ CDecEditControl::CDecEditControl(CMFCToolBarComboBoxButton& combo) :
 }
 
 BEGIN_MESSAGE_MAP(CDecEditControl, CMFCToolBarComboBoxEdit)
-		//{{AFX_MSG_MAP(CDecEditControl)
-		ON_WM_CHAR()
-		ON_WM_KEYDOWN()
+	//{{AFX_MSG_MAP(CDecEditControl)
+	ON_WM_CHAR()
+	ON_WM_KEYDOWN()
 	ON_WM_CTLCOLOR_REFLECT()
 	//}}AFX_MSG_MAP
-		ON_MESSAGE(WM_COMMANDHELP, OnCommandHelp)
+	ON_CONTROL_REFLECT(EN_CHANGE, OnEnChange)
+	ON_MESSAGE(WM_COMMANDHELP, OnCommandHelp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1437,6 +1448,15 @@ HBRUSH CDecEditControl::CtlColor(CDC* pDC, UINT nCtlColor)
 		pDC->SetTextColor(::GetDecAddrCol());
 
 	return m_brush;
+}
+
+void CDecEditControl::OnEnChange()
+{
+	// This was added only so that paste via context menu (right-click control and select Paste)
+	// works [paste using Ctrl+V works OK because OnChar, above, gets called]
+	CString ss;                         // Current string
+	GetWindowText(ss);
+	((CMainFrame *)AfxGetMainWnd())->SetDecAddress(ss);
 }
 
 LRESULT CDecEditControl::OnCommandHelp(WPARAM, LPARAM lParam)
