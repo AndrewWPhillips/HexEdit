@@ -105,6 +105,11 @@ void CHexFileList::SetDefaults()
 		SetDV(OEMFONT, theApp.open_oem_plf_->lfFaceName);
 		SetDV(OEMHEIGHT, theApp.open_oem_plf_->lfHeight);
 	}
+	if (theApp.open_mb_plf_ != NULL)
+	{
+		SetDV(MBFONT, theApp.open_mb_plf_->lfFaceName);
+		SetDV(MBHEIGHT, theApp.open_mb_plf_->lfHeight);
+	}
 
 	SetDV(COLUMNS, theApp.open_rowsize_);
 	SetDV(GROUPING, theApp.open_group_by_);

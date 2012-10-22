@@ -21,14 +21,17 @@ public:
 	#define ANSI_NAME "ANSI default"
 	#define OEM_NAME "IBM/OEM default"
 	#define EBCDIC_NAME "EBCDIC default"
+	#define UNICODE_NAME "Unicode default"
+	#define CODEPAGE_NAME "CodePage default"
 	#define PLAIN_NAME "Black & white"
-	#define PRETTY_NAME "Rainbow"
+	//#define PRETTY_NAME "Rainbow"
 	#define MULTI_NAME "Many"
 
 	CScheme(const char *nn) : name_(nn)
 	{
-		can_delete_ = !(name_ == ASCII_NAME || name_ == ANSI_NAME ||
-						name_ == OEM_NAME || name_ == EBCDIC_NAME);
+		can_delete_ = !(name_ == ASCII_NAME   || name_ == ANSI_NAME    ||
+						name_ == OEM_NAME     || name_ == EBCDIC_NAME  || 
+						name_ == UNICODE_NAME || name_ == CODEPAGE_NAME);
 		bg_col_ = mark_col_ = hi_col_ = bm_col_ = search_col_ = trk_col_ = comp_col_ = sector_col_ = -1;
 		addr_bg_col_ = hex_addr_col_ = dec_addr_col_ = -1;  // Init here just in case lines below are removed
 		mark_col_     = RGB(0, 224, 224);    // Cyan (-1 gives grey in default colour scheme)

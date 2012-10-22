@@ -297,6 +297,7 @@ END_MESSAGE_MAP()
 CHexEditApp::CHexEditApp() : default_scheme_(""),
 							 default_ascii_scheme_(ASCII_NAME), default_ansi_scheme_(ANSI_NAME),
 							 default_oem_scheme_(OEM_NAME), default_ebcdic_scheme_(EBCDIC_NAME),
+							 default_unicode_scheme_(UNICODE_NAME), default_codepage_scheme_(CODEPAGE_NAME),
 							 default_multi_scheme_(MULTI_NAME)
 {
 #ifdef FILE_PREVIEW
@@ -315,7 +316,7 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 	playing_ = 0;
 	pv_ = pview_ = NULL;
 	refresh_off_ = false;
-	open_plf_ = open_oem_plf_ = NULL;
+	open_plf_ = open_oem_plf_ = open_mb_plf_ = NULL;
 	last_cb_size_ = last_cb_seq_ = 0;
 #ifndef NDEBUG
 	// Make default capacity for mac_ vector small to force reallocation sooner.
@@ -358,6 +359,14 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 	default_ebcdic_scheme_.AddRange("Unassigned", RGB(255,0,0), "0:255");
 	default_ebcdic_scheme_.bg_col_ = RGB(240, 248, 255);
 	default_ebcdic_scheme_.addr_bg_col_ = RGB(192, 224, 240);
+
+	default_unicode_scheme_.bg_col_ = RGB(255, 255, 240);
+	default_unicode_scheme_.addr_bg_col_ = RGB(224, 255, 255);
+	default_unicode_scheme_.AddRange("All", RGB(128,128,0), "0:255");
+
+	default_codepage_scheme_.bg_col_ = RGB(240, 255, 255);
+	default_codepage_scheme_.addr_bg_col_ = RGB(255, 240, 216);
+	default_codepage_scheme_.AddRange("All", RGB(0,96,96), "0:255");
 
 	CString strRange;
 	for (int ii = 0; ii < 51; ++ii)  // Split into 51 ranges of 5 -> 255 colours
@@ -406,6 +415,9 @@ CHexEditApp::~CHexEditApp()
 
 	if (open_oem_plf_ != NULL)
 		delete open_oem_plf_;
+
+	if (open_mb_plf_ != NULL)
+		delete open_mb_plf_;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2554,6 +2566,21 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx default to on un
 	else
 		open_oem_plf_ = NULL;
 
+	strFont = GetProfileString("Options", "OpenMultibyteFont", "Lucida Sans Unicode,18");     // Font info for CodePage/Unicode font
+	AfxExtractSubString(strFace, strFont, 0, ',');
+	AfxExtractSubString(strHeight, strFont, 1, ',');
+	if (!strFace.IsEmpty())
+	{
+		open_mb_plf_ = new LOGFONT;
+		memset((void *)open_mb_plf_, '\0', sizeof(*open_mb_plf_));
+		strncpy(open_mb_plf_->lfFaceName, strFace, LF_FACESIZE-1);
+		open_mb_plf_->lfFaceName[LF_FACESIZE-1] = '\0';
+		open_mb_plf_->lfHeight = atol(strHeight);
+		if (open_mb_plf_->lfHeight < 2 || open_mb_plf_->lfHeight > 100)
+			open_mb_plf_->lfHeight = 18;
+	}
+	else
+		open_mb_plf_ = NULL;
 
 	open_rowsize_ = GetProfileInt("Options", "OpenColumns", 16);
 	if (open_rowsize_ < 4 || open_rowsize_ > CHexEditView::max_buf) open_rowsize_ = 4;
@@ -2917,6 +2944,11 @@ void CHexEditApp::SaveOptions()
 		strFont.Format("%s,%ld", open_oem_plf_->lfFaceName, open_oem_plf_->lfHeight);
 		WriteProfileString("Options", "OpenOemFont", strFont);
 	}
+	if (open_mb_plf_ != NULL)
+	{
+		strFont.Format("%s,%ld", open_mb_plf_->lfFaceName, open_mb_plf_->lfHeight);
+		WriteProfileString("Options", "OpenMultibyteFont", strFont);
+	}
 
 	WriteProfileInt("Options", "OpenColumns", open_rowsize_);
 	WriteProfileInt("Options", "OpenGrouping", open_group_by_);
@@ -3007,11 +3039,15 @@ void CHexEditApp::LoadSchemes()
 
 		// get name, and normal colours (bg etc)
 		CString scheme_name = GetProfileString(strKey, "Name", "");
+		if (scheme_name.IsEmpty())
+			break;
 
 		ASSERT(ii != 0 || scheme_name == ASCII_NAME);
 		ASSERT(ii != 1 || scheme_name == ANSI_NAME);
 		ASSERT(ii != 2 || scheme_name == OEM_NAME);
 		ASSERT(ii != 3 || scheme_name == EBCDIC_NAME);
+		ASSERT(ii != 4 || scheme_name == UNICODE_NAME);
+		ASSERT(ii != 5 || scheme_name == CODEPAGE_NAME);
 		if (scheme_name == MULTI_NAME)
 			multi_found = true;
 
@@ -3060,18 +3096,27 @@ void CHexEditApp::LoadSchemes()
 		scheme_.push_back(scheme);
 	}
 
-	if (num_schemes < 1)
-		scheme_.push_back(default_ascii_scheme_);
-	if (num_schemes < 2)
-		scheme_.push_back(default_ansi_scheme_);
-	if (num_schemes < 3)
-		scheme_.push_back(default_oem_scheme_);
+	num_schemes = scheme_.size();
+
+	// Ensure the "standard" schemes are present
+	if (num_schemes < 1 || scheme_[0].name_.Compare(ASCII_NAME) != 0)
+		scheme_.insert(scheme_.begin() + 0, default_ascii_scheme_);
+	if (num_schemes < 2 || scheme_[1].name_.Compare(ANSI_NAME) != 0)
+		scheme_.insert(scheme_.begin() + 1, default_ansi_scheme_);
+	if (num_schemes < 3 || scheme_[2].name_.Compare(OEM_NAME) != 0)
+		scheme_.insert(scheme_.begin() + 2, default_oem_scheme_);
+	if (num_schemes < 4 || scheme_[3].name_.Compare(EBCDIC_NAME) != 0)
+		scheme_.insert(scheme_.begin() + 3, default_ebcdic_scheme_);
+	if (num_schemes < 5 || scheme_[4].name_.Compare(UNICODE_NAME) != 0)
+		scheme_.insert(scheme_.begin() + 4, default_unicode_scheme_);
+	if (num_schemes < 6 || scheme_[5].name_.Compare(CODEPAGE_NAME) != 0)
+		scheme_.insert(scheme_.begin() + 5, default_codepage_scheme_);
+
+	// If we had to add schemes then also add our extra ones
 	if (num_schemes < 4)
 	{
-		scheme_.push_back(default_ebcdic_scheme_);
-
 		// At least one standard scheme was missing so it seems that this is
-		// a new installation so should add the plain and pretty schemes.
+		// a new installation so should add the plain and multi schemes.
 		CScheme new_scheme(PLAIN_NAME);
 		new_scheme.AddRange("ALL", -1, "0:255");
 		// Restore these to "Automatic" values which are plain greys & pastels
@@ -3084,6 +3129,7 @@ void CHexEditApp::LoadSchemes()
 		// new_scheme.can_delete_ = TRUE;
 		scheme_.push_back(new_scheme);
 
+/*  // Leave out rainbow scheme now that we have "Many" scheme
 		CScheme new_scheme2(PRETTY_NAME);
 		new_scheme2.AddRange("NullByte", RGB(254, 254, 254), "0");   // Give nul bytes their own colour (grey)
 		new_scheme2.AddRange("range1", RGB(200, 0, 0), "1:21");
@@ -3100,7 +3146,7 @@ void CHexEditApp::LoadSchemes()
 		new_scheme2.AddRange("range12", RGB(200, 0, 100), "234:254");
 		new_scheme2.AddRange("CatchAll", -1, "0:255"); // This should only catch 0xFF
 		scheme_.push_back(new_scheme2);
-
+*/
 	}
 	// Add multi scheme if not found
 	if (!multi_found)
@@ -3882,13 +3928,15 @@ void CHexEditApp::set_options(struct OptValues &val)
 		if (change_required)
 			pview->begin_change();
 
-		// Id current scheme is std scheme matching charset change scheme to match new charset
+		// If current scheme is std scheme and it matches charset change scheme to match new charset
 		if (val.display_.char_set != pview->display_.char_set)
 		{
-			if (pview->scheme_name_ == ANSI_NAME   && pview->display_.char_set == CHARSET_ANSI ||
-				pview->scheme_name_ == ASCII_NAME  && pview->display_.char_set == CHARSET_ASCII ||
-				pview->scheme_name_ == OEM_NAME    && pview->display_.char_set == CHARSET_OEM  ||
-				pview->scheme_name_ == EBCDIC_NAME && pview->display_.char_set == CHARSET_EBCDIC )
+			if (pview->scheme_name_ == ANSI_NAME     && pview->display_.char_set == CHARSET_ANSI ||
+				pview->scheme_name_ == ASCII_NAME    && pview->display_.char_set == CHARSET_ASCII ||
+				pview->scheme_name_ == OEM_NAME      && pview->display_.char_set == CHARSET_OEM  ||
+				pview->scheme_name_ == EBCDIC_NAME   && pview->display_.char_set == CHARSET_EBCDIC ||
+				pview->scheme_name_ == UNICODE_NAME  && (pview->display_.char_set == CHARSET_UCODE_EVEN || pview->display_.char_set == CHARSET_UCODE_ODD) || 
+				pview->scheme_name_ == CODEPAGE_NAME && pview->display_.char_set == CHARSET_CODEPAGE )
 			{
 				if (val.display_.char_set == CHARSET_ASCII)
 					pview->SetScheme(ASCII_NAME);
@@ -3896,6 +3944,10 @@ void CHexEditApp::set_options(struct OptValues &val)
 					pview->SetScheme(OEM_NAME);
 				else if (val.display_.char_set == CHARSET_EBCDIC)
 					pview->SetScheme(EBCDIC_NAME);
+				else if (pview->display_.char_set == CHARSET_UCODE_EVEN || pview->display_.char_set == CHARSET_UCODE_ODD)
+					pview->SetScheme(UNICODE_NAME);
+				else if (val.display_.char_set == CHARSET_CODEPAGE)
+					pview->SetScheme(CODEPAGE_NAME);
 				else
 					pview->SetScheme(ANSI_NAME);
 				if (one_done) pview->undo_.back().previous_too = true;

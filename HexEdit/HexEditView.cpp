@@ -13986,9 +13986,11 @@ void CHexEditView::OnCharsetAscii()
 	if (display_.char_set == CHARSET_EBCDIC)
 		mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_ASCII);
 
-	if (scheme_name_ == ANSI_NAME   && display_.char_set == CHARSET_ANSI ||
-		scheme_name_ == OEM_NAME    && display_.char_set == CHARSET_OEM  ||
-		scheme_name_ == EBCDIC_NAME && display_.char_set == CHARSET_EBCDIC )
+	if (scheme_name_ == ANSI_NAME     && display_.char_set == CHARSET_ANSI   ||
+		scheme_name_ == OEM_NAME      && display_.char_set == CHARSET_OEM    ||
+		scheme_name_ == EBCDIC_NAME   && display_.char_set == CHARSET_EBCDIC ||
+		scheme_name_ == UNICODE_NAME  && (display_.char_set == CHARSET_UCODE_EVEN || display_.char_set == CHARSET_UCODE_ODD) ||
+		scheme_name_ == CODEPAGE_NAME && display_.char_set == CHARSET_CODEPAGE )
 	{
 		std_scheme = true;
 	}
@@ -14043,9 +14045,11 @@ void CHexEditView::OnCharsetAnsi()
 	if (display_.char_set == CHARSET_EBCDIC)
 		mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_ASCII);
 
-	if (scheme_name_ == ASCII_NAME  && display_.char_set == CHARSET_ASCII ||
-		scheme_name_ == OEM_NAME    && display_.char_set == CHARSET_OEM   ||
-		scheme_name_ == EBCDIC_NAME && display_.char_set == CHARSET_EBCDIC)
+	if (scheme_name_ == ASCII_NAME    && display_.char_set == CHARSET_ASCII ||
+		scheme_name_ == OEM_NAME      && display_.char_set == CHARSET_OEM   ||
+		scheme_name_ == EBCDIC_NAME   && display_.char_set == CHARSET_EBCDIC ||
+		scheme_name_ == UNICODE_NAME  && (display_.char_set == CHARSET_UCODE_EVEN || display_.char_set == CHARSET_UCODE_ODD) ||
+		scheme_name_ == CODEPAGE_NAME && display_.char_set == CHARSET_CODEPAGE )
 	{
 		std_scheme = true;
 	}
@@ -14099,9 +14103,11 @@ void CHexEditView::OnCharsetOem()
 	if (display_.char_set == CHARSET_EBCDIC)
 		mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_ASCII);
 
-	if (scheme_name_ == ASCII_NAME  && display_.char_set == CHARSET_ASCII ||
-		scheme_name_ == ANSI_NAME   && display_.char_set == CHARSET_ANSI  ||
-		scheme_name_ == EBCDIC_NAME && display_.char_set == CHARSET_EBCDIC)
+	if (scheme_name_ == ASCII_NAME    && display_.char_set == CHARSET_ASCII  ||
+		scheme_name_ == ANSI_NAME     && display_.char_set == CHARSET_ANSI   ||
+		scheme_name_ == EBCDIC_NAME   && display_.char_set == CHARSET_EBCDIC ||
+		scheme_name_ == UNICODE_NAME  && (display_.char_set == CHARSET_UCODE_EVEN || display_.char_set == CHARSET_UCODE_ODD) ||
+		scheme_name_ == CODEPAGE_NAME && display_.char_set == CHARSET_CODEPAGE )
 	{
 		std_scheme = true;
 	}
@@ -14155,9 +14161,11 @@ void CHexEditView::OnCharsetEbcdic()
 	if (display_.char_set != CHARSET_EBCDIC)
 		mm->m_wndFind.SetCharSet(CFindSheet::RB_CHARSET_EBCDIC);
 
-	if (scheme_name_ == ASCII_NAME && display_.char_set == CHARSET_ASCII ||
-		scheme_name_ == ANSI_NAME  && display_.char_set == CHARSET_ANSI  ||
-		scheme_name_ == OEM_NAME   && display_.char_set == CHARSET_OEM )
+	if (scheme_name_ == ASCII_NAME    && display_.char_set == CHARSET_ASCII ||
+		scheme_name_ == ANSI_NAME     && display_.char_set == CHARSET_ANSI  ||
+		scheme_name_ == OEM_NAME      && display_.char_set == CHARSET_OEM   ||
+		scheme_name_ == UNICODE_NAME  && (display_.char_set == CHARSET_UCODE_EVEN || display_.char_set == CHARSET_UCODE_ODD) ||
+		scheme_name_ == CODEPAGE_NAME && display_.char_set == CHARSET_CODEPAGE )
 	{
 		std_scheme = true;
 	}
@@ -14195,7 +14203,7 @@ void CHexEditView::OnUpdateCharsetEbcdic(CCmdUI *pCmdUI)
 
 void CHexEditView::OnCharsetCodepage()
 {
-	//bool std_scheme = false;
+	bool std_scheme = false;
 
 	if (!(display_.vert_display || display_.char_area))
 	{
@@ -14205,9 +14213,26 @@ void CHexEditView::OnCharsetCodepage()
 		return;
 	}
 
+	if (scheme_name_ == ASCII_NAME    && display_.char_set == CHARSET_ASCII ||
+		scheme_name_ == ANSI_NAME     && display_.char_set == CHARSET_ANSI  ||
+		scheme_name_ == OEM_NAME      && display_.char_set == CHARSET_OEM   ||
+		scheme_name_ == UNICODE_NAME  && (display_.char_set == CHARSET_UCODE_EVEN || display_.char_set == CHARSET_UCODE_ODD) ||
+		scheme_name_ == EBCDIC_NAME   && display_.char_set == CHARSET_EBCDIC )
+	{
+		std_scheme = true;
+	}
+
 	begin_change();
 	display_.char_set = CHARSET_CODEPAGE;
 	BOOL ptoo = make_change();
+	if (std_scheme)
+	{
+		undo_.push_back(view_undo(undo_scheme, ptoo));      // Allow undo of scheme change
+		undo_.back().pscheme_name = new CString;
+		*undo_.back().pscheme_name = scheme_name_;
+		scheme_name_ = CODEPAGE_NAME;
+		set_colours();
+	}
 	end_change();
 
 	theApp.SaveToMacro(km_charset, 4);

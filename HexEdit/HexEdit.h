@@ -185,7 +185,7 @@ struct display_bits
 			return FONT_ANSI;                  // only showing hex
 		else if (char_set == CHARSET_OEM)
 			return FONT_OEM;                   // showing oem chars
-		else if (char_set == CHARSET_CODEPAGE)
+		else if (char_set >= CHARSET_UCODE_EVEN)
 			return FONT_UCODE;                 // showing multi-byte chars (codepage/Unicode)
 		else
 			return FONT_ANSI;                  // showing ASCII, ANSI, or translated EBCDIC chars
@@ -340,6 +340,7 @@ public:
 	afx_msg void OnAppAbout();
 	afx_msg void OnOptions();
 	afx_msg void OnOptions2();
+	afx_msg void OnOptionsCodePage();
 	afx_msg void OnMacroRecord();
 	afx_msg void OnMacroPlay();
 	afx_msg void OnUpdateMacroPlay(CCmdUI* pCmdUI);
@@ -829,6 +830,7 @@ public:
 	CScheme default_scheme_,            // settings used for resetting a scheme
 			default_ascii_scheme_, default_ansi_scheme_,
 			default_oem_scheme_, default_ebcdic_scheme_,
+			default_unicode_scheme_, default_codepage_scheme_, 
 			default_multi_scheme_;
 
 	CString open_scheme_name_;          // Name of default scheme

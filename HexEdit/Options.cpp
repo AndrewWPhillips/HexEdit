@@ -3140,16 +3140,12 @@ void CColourSchemes::OnSchemeReset()
 		scheme_[scheme_no_] = theApp.default_oem_scheme_;
 	else if (scheme_[scheme_no_].name_ == EBCDIC_NAME)
 		scheme_[scheme_no_] = theApp.default_ebcdic_scheme_;
+	else if (scheme_[scheme_no_].name_ == UNICODE_NAME)
+		scheme_[scheme_no_] = theApp.default_unicode_scheme_;
+	else if (scheme_[scheme_no_].name_ == CODEPAGE_NAME)
+		scheme_[scheme_no_] = theApp.default_codepage_scheme_;
 	else if (scheme_[scheme_no_].name_ == MULTI_NAME)
 		scheme_[scheme_no_] = theApp.default_multi_scheme_;
-//    else if (pview != NULL && pview->EbcdicMode())
-//        scheme_[scheme_no_] = theApp.default_ebcdic_scheme_;
-//    else if (pview != NULL && pview->OemMode())
-//        scheme_[scheme_no_] = theApp.default_oem_scheme_;
-//    else if (pview != NULL && pview->AnsiMode())
-//        scheme_[scheme_no_] = theApp.default_ansi_scheme_;
-//    else
-//        scheme_[scheme_no_] = theApp.default_ascii_scheme_;
 	else
 		scheme_[scheme_no_] = theApp.default_scheme_;
 
@@ -4745,8 +4741,9 @@ static void AFXAPI DDX_CBData(CDataExchange* pDX, int nIDC, int& data)
 
 // The following are used for getting the names of all the available code pages
 static const int MAX_BYTES = 16;                 // Max bytes to get from files for multibyte char processing (10 is probably enough)
-static vector<int> page_number;                  // The code page number for all installed code pages
-static vector<CString> page_name;                // Corresponding name of the code page
+//static vector<int> page_number;                  // The code page number for all installed code pages
+//static vector<CString> page_name;                // Corresponding name of the code page
+static vector<pair<int, CString> > page_info;    // Code page number and description
 
 static BOOL CALLBACK CodePageCallback(LPTSTR ss)
 {
@@ -4756,13 +4753,16 @@ static BOOL CALLBACK CodePageCallback(LPTSTR ss)
 	if (GetCPInfoEx(cp, 0, &cpie))
 	{
 		// Save what we need
-		page_number.push_back(cpie.CodePage);
-		page_name.push_back(CString(cpie.CodePageName));
+		//page_number.push_back(cpie.CodePage);
+		//page_name.push_back(CString(cpie.CodePageName));
+		page_info.push_back(make_pair<int, CString>(cpie.CodePage, CString(cpie.CodePageName)));
 		ASSERT(cpie.MaxCharSize <= MAX_BYTES);
 	}
 
 	return TRUE;
 }
+
+static bool page_comp(pair<int,CString> p1, pair<int,CString> p2) { return p1.first < p2.first; }
 
 CWindowPage::CWindowPage() : COptPage(CWindowPage::IDD)
 {
@@ -4770,17 +4770,19 @@ CWindowPage::CWindowPage() : COptPage(CWindowPage::IDD)
 	pGlobalPage = NULL;
 
 	// Get list of installed code pages
-	if (page_name.empty())
+	if (page_info.empty())
 	{
 		::EnumSystemCodePages(&CodePageCallback, CP_INSTALLED);
+		std::sort(page_info.begin(), page_info.end(), &page_comp);
 	}
 }
 
 CWindowPage::~CWindowPage()
 {
 	// This avoids debug heap saying we have a memory leak at exit
-	page_name.clear();
-	page_number.clear(); 
+	//page_name.clear();
+	//page_number.clear(); 
+	page_info.clear();
 }
 
 void CWindowPage::DoDataExchange(CDataExchange* pDX)
@@ -4825,7 +4827,7 @@ void CWindowPage::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_SHOW_AREA, pParent->val_.show_area_);
 	DDX_CBIndex(pDX, IDC_CHARSET, pParent->val_.charset_);
 	DDX_Control(pDX, IDC_CODE_PAGE, ctl_code_page_);
-	DDX_CBData(pDX, IDC_CODE_PAGE,  pParent->val_.code_page_);
+	DDX_CBData(pDX, IDC_CODE_PAGE,  pParent->val_.code_page_);  // get item data, set item by matching data
 	DDX_CBIndex(pDX, IDC_CONTROL, pParent->val_.control_);
 	DDX_Text(pDX, IDC_COLS, pParent->val_.cols_);
 	DDX_Text(pDX, IDC_OFFSET, pParent->val_.offset_);
@@ -4949,8 +4951,8 @@ void CWindowPage::fix_controls()
 	GetDlgItem(IDC_CHARSET)->EnableWindow(pParent->val_.show_area_ != 0);
 	GetDlgItem(IDC_CHARSET_DESC)->EnableWindow(pParent->val_.show_area_ != 0);
 	GetDlgItem(IDC_CODE_PAGE)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ == 4);
-	GetDlgItem(IDC_CONTROL)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ != 2 && pParent->val_.charset_ != 3);
-	GetDlgItem(IDC_CONTROL_DESC)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ != 2 && pParent->val_.charset_ != 3);
+	GetDlgItem(IDC_CONTROL)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ < 2);
+	GetDlgItem(IDC_CONTROL_DESC)->EnableWindow(pParent->val_.show_area_ != 0 && pParent->val_.charset_ < 2);
 
 	GetDlgItem(IDC_FONT)->EnableWindow(pParent->val_.display_.FontRequired() == FONT_ANSI);
 	GetDlgItem(IDC_FONT_OEM)->EnableWindow(pParent->val_.display_.FontRequired() == FONT_OEM);
@@ -5014,11 +5016,12 @@ BOOL CWindowPage::OnInitDialog()
 
 	// Fill in the code page control
 	ASSERT(ctl_code_page_.GetCount() == 0);
-	for (int ii = 0; ii < page_name.size(); ++ii)
+	for (int ii = 0; ii < page_info.size(); ++ii)
 	{
-		int idx = ctl_code_page_.InsertString(-1, page_name[ii]);
+		int idx = ctl_code_page_.InsertString(-1, page_info[ii].second);
+		//int idx = ctl_code_page_.AddString(page_name[ii]);        // use this if using CBS_SORT
 		ASSERT(idx > -1);
-		ctl_code_page_.SetItemData(idx, (DWORD_PTR)page_number[ii]);
+		ctl_code_page_.SetItemData(idx, (DWORD_PTR)page_info[ii].first);
 	}
 	ctl_code_page_.SetDroppedWidth(256);
 
