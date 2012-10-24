@@ -358,12 +358,12 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 		break;
 	}
 
-#ifdef _DEBUG
-	if (pp_->state_ <= CALCINTLIT)
-		TRACE("++++++ Got: int %d\r\n", mpz_get_ui(pp_->current_.get_mpz_t()));
-	else
-		TRACE("++++++ Got: <%.100s>\r\n", (const char *)CString(pp_->current_str_));
-#endif
+//#ifdef _DEBUG
+//	if (pp_->state_ <= CALCINTLIT)
+//		TRACE("++++++ Got: int %d\r\n", mpz_get_ui(pp_->current_.get_mpz_t()));
+//	else
+//		TRACE("++++++ Got: <%.100s>\r\n", (const char *)CString(pp_->current_str_));
+//#endif
 
 	return retval;
 }
@@ -492,6 +492,7 @@ void CCalcEdit::add_sep()
 // return string without separators or an empty string if not a number.
 CString CCalcEdit::get_number(LPCTSTR ss)
 {
+	CString retval;
 	char * buf = new char[strlen(ss)+1];
 	char * pbuf = buf;
 
@@ -517,29 +518,31 @@ CString CCalcEdit::get_number(LPCTSTR ss)
 		// Check if/get valid digit
 		unsigned int digval;
 		if (*ps < 0)
-			return false;                // is* macros can't handle -ve values
+			goto error_return;           // is* macros can't handle -ve values
 		else if (isdigit(*ps))
 			digval = *ps - '0';
 		else if (isalpha(*ps))
 			digval = toupper(*ps) - 'A' + 10;
 		else
-			return CString();           // Not number character
+			goto error_return;           // Not number character
 
 		// Check if digit is in range of radix
 		if (digval >= pp_->radix_)
-			return CString();           // Invalid digit for radix
+			goto error_return;           // Invalid digit for radix
 
 		*(pbuf++) = *ps;
-		digit_seen = true;              // We've now seen a valid digit
+		digit_seen = true;               // We've now seen a valid digit
 	}
 
-	if (digit_seen && !last_sep)       // OK if we saw a digit and did not end on a separator
+	if (digit_seen && !last_sep)         // OK if we saw a digit and did not end on a separator
 	{
 		*pbuf = '\0';
-		return CString(buf);
+		retval = CString(buf);
 	}
-	else
-		return CString();
+
+error_return:
+	delete[] buf;
+	return retval;
 }
 
 // When the edit box is displaying a result (eg, state_ == CALCINTRES etc)

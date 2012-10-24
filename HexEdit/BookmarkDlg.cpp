@@ -523,6 +523,12 @@ void CBookmarkDlg::OnDestroy()
 	}
 
 	CDialog::OnDestroy();
+
+	if (m_pBrush != NULL)
+	{
+		delete m_pBrush;
+		m_pBrush = NULL;
+	}
 }
 
 LRESULT CBookmarkDlg::OnKickIdle(WPARAM, LPARAM lCount)

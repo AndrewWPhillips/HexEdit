@@ -2195,6 +2195,12 @@ void CCalcDlg::OnDestroy()
 	small_fnt_.DeleteObject();
 	med_fnt_.DeleteObject();
 
+	if (m_pBrush != NULL)
+	{
+		delete m_pBrush;
+		m_pBrush = NULL;
+	}
+
 	// Save some settings to the in file/registry
 	aa_->WriteProfileInt("Calculator", "Base", radix_);
 	aa_->WriteProfileInt("Calculator", "Bits", bits_);

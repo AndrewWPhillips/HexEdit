@@ -2291,6 +2291,12 @@ void CExplorerWnd::OnDestroy()
 	}
 
 	CDialog::OnDestroy();
+
+	if (m_pBrush != NULL)
+	{
+		delete m_pBrush;
+		m_pBrush = NULL;
+	}
 }
 
 // When something happens to change a file we call this function so that if the file is

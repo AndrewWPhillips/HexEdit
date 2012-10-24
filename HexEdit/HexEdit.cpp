@@ -1805,6 +1805,11 @@ int CHexEditApp::ExitInstance()
 		delete m_pbookmark_list;
 	}
 
+	if (m_pspecial_list != NULL)
+	{
+		delete m_pspecial_list;
+	}
+
 	int retval = CWinAppEx::ExitInstance();
 
 	if (delete_reg_settings_ || delete_all_settings_)
