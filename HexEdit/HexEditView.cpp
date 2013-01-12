@@ -3628,7 +3628,8 @@ end_of_background_drawing:
 
 	// THIS IS WHERE THE ACTUAL LINES ARE DRAWN
 	// Note: we use != (line != last_line) since we may be drawing from bottom or top
-	for (FILE_ADDRESS line = first_line; line != last_line;
+	FILE_ADDRESS line;
+	for (line = first_line; line != last_line;
 							line += line_inc, norm_rect += rect_inc)
 	{
 		// Work out where to display line in logical coords (correct sign)
@@ -4375,7 +4376,8 @@ end_of_background_drawing:
 
 	if (pDC->IsPrinting() && print_sel_ && dup_lines_)
 	{
-		curpage_ = -1;  // signal that there is no more to print
+		if (line >= last_line)
+			curpage_ = -1;  // signal that there is no more to print (so we can set m_bContinuePrinting to FALSE later)
 
 		// Display any residual repeated lines count
 		if (repeat_count > 0)
