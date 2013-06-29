@@ -1595,9 +1595,10 @@
 #define ID_INSERT_BLOCK                 33127
 #define ID_TAB_ICONS                    33128
 #define ID_TABS_AT_BOTTOM               33129
-#define ID_TOGGLE_ENDIAN                33130
+#define ID_TOGGLE_TABS                  33130
 #define ID_BIG_ENDIAN                   33131
 #define ID_LITTLE_ENDIAN                33132
+#define ID_TOGGLE_ENDIAN                33133
 #define ID_REPAIR_DIALOGBARS            33134
 #define ID_REPAIR_CUST                  33135
 #define ID_REPAIR_SETTINGS              33136

@@ -136,6 +136,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 		ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_VERT, OnUpdateMDIWindowCmd)
 
 		ON_COMMAND(ID_WINDOW_NEW, OnWindowNew)
+		ON_COMMAND(ID_TOGGLE_TABS, OnToggleTabs)
+		ON_UPDATE_COMMAND_UI(ID_TOGGLE_TABS, OnUpdateToggleTabs)
 
 		// Searching
 		ON_COMMAND(ID_EDIT_REPLACE, OnEditReplace)
@@ -1394,10 +1396,21 @@ void CMainFrame::OnWindowNew()
 	aa->SaveToMacro(km_win_new);
 }
 
+void CMainFrame::OnToggleTabs()
+{
+	theApp.mditabs_ = !theApp.mditabs_;
+	theApp.update_tabs();
+}
+
+void CMainFrame::OnUpdateToggleTabs(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(theApp.mditabs_);
+}
+
 // Handles the window menu commands: cascade, tile, arrange
 void CMainFrame::OnUpdateMDIWindowCmd(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(theApp.mditabs_);
+	pCmdUI->Enable(!theApp.mditabs_);
 }
 
 BOOL CMainFrame::OnMDIWindowCmd(UINT nID)
@@ -4598,7 +4611,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 		CMDIChildWnd * pwind;
 		CView * pview;
 
-		// For self-compare we know recent changes by comparing with the copied version of the file, but we also keep
+		// For self-compare we know recent chnages by comparing with the copied version of the file, but we also keep
 		// track of older changes (as the file can be continually modified) until they disappear after a period of time.
 		// We need to check if we are doing a self-compare and a 4 extra commands for "All" Differences.
 		if ((pwind = ((CMainFrame *)AfxGetMainWnd())->MDIGetActive()) != NULL &&

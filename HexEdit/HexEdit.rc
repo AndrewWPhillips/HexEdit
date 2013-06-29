@@ -897,6 +897,7 @@ BEGIN
         MENUITEM "&New Window",                 ID_WINDOW_NEW
         MENUITEM "Ne&xt Window\tF2",            ID_WINDOW_NEXT
         MENUITEM SEPARATOR
+        MENUITEM "&Display Window Tabs",        ID_TOGGLE_TABS
         MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
         MENUITEM "Tile &Horizontally",          ID_WINDOW_TILE_HORZ
         MENUITEM "&Tile Vertically",            ID_WINDOW_TILE_VERT
@@ -3437,6 +3438,7 @@ BEGIN
     ID_INSERT_BLOCK         "Insert data using various fill options\nInsert Block"
     ID_TAB_ICONS            "Toggles the display of icons in the window tabs\nTab Icons"
     ID_TABS_AT_BOTTOM       "Show Windows tabs at bottom (or top)\nTabs at Bottom"
+    ID_TOGGLE_TABS          "Toggle display of windows tabs\nToggle Tabs"
     ID_TOGGLE_ENDIAN        "Toggle byte order used for file operations\nToggle Endian"
     ID_BIG_ENDIAN           "Use big-endian byte order for file operations\nBig Endian"
     ID_LITTLE_ENDIAN        "Use little-endian byte order for file operations\nLittle Endian"

@@ -176,6 +176,9 @@ public:
 	afx_msg void OnWindowNew();
 	afx_msg BOOL OnMDIWindowCmd(UINT nID);
 	afx_msg void OnUpdateMDIWindowCmd(CCmdUI* pCmdUI);
+	afx_msg void OnToggleTabs();
+	afx_msg void OnUpdateToggleTabs(CCmdUI* pCmdUI);
+
 	afx_msg BOOL OnPaneCheck(UINT nID);
 	afx_msg void OnUpdateViewViewbar(CCmdUI* pCmdUI);
 	afx_msg void OnViewViewbar();
