@@ -327,6 +327,7 @@ void CAerialView::OnDraw(CDC* pDC)
 	{
 		get_colours(phev_->GetMarkCol(), clr_mark, dummy);
 	}
+
 	range_set<FILE_ADDRESS>::range_t::iterator phl;
 	if (disp_.draw_bdr_hl)
 	{
@@ -412,7 +413,6 @@ void CAerialView::OnDraw(CDC* pDC)
 			draw_left_border(&(bufDC.GetDC()), ind_hl     ? 6 : 5, 9, row, clr_search);  // (5), 6, 7, (8)
 		if (ind_bm)
 			draw_left_border(&(bufDC.GetDC()), ind_search ? 8 : 7, 10, row, clr_bm);     // (7), 8, 9
-
 	}
 	// Show selection in the top border
 	if (disp_.draw_bdr_sel)
@@ -828,7 +828,11 @@ void CAerialView::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 	// Get element clicked on
 	int elt = elt_at(point);
-	if (elt != -1)
+	if (elt == -1)
+	{
+		go_border_elt(point);
+	}
+	else
 	{
 		FILE_ADDRESS bpe = GetDocument()->GetBpe();     // use 64 bit int so next expression does not overflow
 		FILE_ADDRESS addr = elt * bpe;
@@ -1509,13 +1513,17 @@ void CAerialView::get_colours(COLORREF clr, COLORREF & clr_dark, COLORREF & clr_
 // Get elt at point pt (client coords)
 int CAerialView::elt_at(CPoint pt)
 {
+	// First make sure it is within the display area
+	if (pt.x < bdr_left_ || pt.x >= cols_ * actual_dpix_ + bdr_left_ || 
+		pt.y < bdr_top_  || pt.y >= rows_ * actual_dpix_ + bdr_top_)
+	{
+		return -1;
+	}
+
 	// Convert to elt coords
 	pt.x = (pt.x - bdr_left_)/actual_dpix_;
 	pt.y = (pt.y - bdr_top_)/actual_dpix_;
 
-	// First make sure it is within the display area
-	if (pt.x < 0 || pt.x >= cols_ || pt.y < 0 || pt.y >= rows_)
-		return -1;
 
 	// Work out absolute elt in the file
 	int elt = int(scrollpos_/GetDocument()->GetBpe()) + pt.y * cols_ + pt.x;
@@ -1524,6 +1532,103 @@ int CAerialView::elt_at(CPoint pt)
 	else if (elt > GetDocument()->NumElts())
 		elt = GetDocument()->NumElts();
 	return elt;
+}
+
+void CAerialView::go_border_elt(CPoint pt)
+{
+	LONG abs_x = pt.x;
+
+	// Convert to elt coords
+	pt.x = (pt.x - bdr_left_)/actual_dpix_;
+	pt.y = (pt.y - bdr_top_)/actual_dpix_;
+
+	// Check if point is in the border area
+	if (pt.x > 0 || pt.y < 0 || pt.y >= rows_)
+		return;
+
+	FILE_ADDRESS start = -1, end;
+	FILE_ADDRESS bpe = GetDocument()->GetBpe();
+	int row_start = int(scrollpos_/bpe) + pt.y * cols_;
+	int row_end = int(scrollpos_/bpe) + (pt.y + 1) * cols_;
+
+	if (disp_.draw_bdr_mark && abs_x >= 1 && abs_x <= 5)
+	{
+		// Check if the mark is in this row
+		if (phev_->GetMark()/bpe < row_end && phev_->GetMark()/bpe > row_start)
+		{
+			start = phev_->GetMark();
+			end = start + 1;
+		}
+	}
+
+	if (disp_.draw_bdr_hl && abs_x >= 3 && abs_x <= 7)
+	{
+		// Check if there is a highlight in this row
+		range_set<FILE_ADDRESS>::range_t::iterator phl;
+		for (phl = phev_->hl_set_.range_.begin();
+			 phl != phev_->hl_set_.range_.end();
+			 ++phl)
+		{
+			if (phl->slast/bpe > row_start)
+			{
+				if (phl->sfirst/bpe < row_end)
+				{
+					start = phl->sfirst;
+					end = phl->slast;
+				}
+				break;
+			}
+		}
+	}
+
+	if (disp_.draw_bdr_search && abs_x >= 5 && abs_x <= 9)
+	{
+		std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator psp; // iter into search_pair_
+		for (psp = search_pair_.begin(); psp != search_pair_.end(); ++psp)
+		{
+			if (psp->second/bpe > row_start)
+			{
+				if (psp->first/bpe < row_end)
+				{
+					start = psp->first;
+					end = psp->second;
+				}
+				break;
+			}
+		}
+	}
+
+	if (disp_.draw_bdr_bm && abs_x >= 7)
+	{
+		// Get sorted list of bookmarks
+		std::vector<FILE_ADDRESS> bm = GetDocument()->bm_posn_;
+		std::sort(bm.begin(), bm.end());
+
+		std::vector<FILE_ADDRESS>::const_iterator pbm;
+		for (pbm = bm.begin(); pbm != bm.end(); ++pbm)
+		{
+			if (*pbm/bpe > row_start)
+			{
+				if (*pbm/bpe < row_end)
+				{
+					start = *pbm;
+					end = start + 1;
+				}
+				break;
+			}
+		}
+	}
+
+	if (start > -1)
+	{
+		// Restrict any selection to this row
+		if (start < row_start*bpe) start = row_start*bpe;
+		if (end > row_end*bpe) end = row_end*bpe;
+
+		// Move the selection
+		ASSERT(phev_ != NULL);
+		phev_->MoveToAddress(start, end, -1, -1, FALSE, FALSE, 0, "Select element");
+	}
 }
 
 void CAerialView::set_zoom(int z, bool scroll /*=true*/)

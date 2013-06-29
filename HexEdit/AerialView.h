@@ -199,6 +199,7 @@ private:
 	int tip_elt_;       // The elt we display info about
 	int last_tip_elt_;  // The elt we last showed a tip about
 	int elt_at(CPoint pt);                      // Given a mouse posn returns the elt under it
+	void go_border_elt(CPoint pt);              // If dclick in border check for elt type to jump to (mark, highlight, search occ., bookmark)
 	void track_mouse(unsigned long);            // Turns on receipt of mouse hover/leave messages
 	bool update_tip(int elt);                   // Refresh tip text
 	void hex_addr_tip(FILE_ADDRESS addr);       // Adds a hex address to the tip window

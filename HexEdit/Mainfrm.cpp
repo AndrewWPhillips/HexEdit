@@ -5194,6 +5194,7 @@ void CMainFrame::OnUpdateDecCombo(CCmdUI* pCmdUI)
 		{
 			CDecComboButton* pbut = DYNAMIC_DOWNCAST(CDecComboButton, listButtons.GetNext(posCombo));
 			ASSERT(pbut != NULL);
+			if (pbut == NULL) continue;
 
 			CDecComboBox *pdcb = DYNAMIC_DOWNCAST(CDecComboBox, pbut->GetComboBox());
 			ASSERT(pdcb != NULL && ::IsWindow(pdcb->GetSafeHwnd()));
