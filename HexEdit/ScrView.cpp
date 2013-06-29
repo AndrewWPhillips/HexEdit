@@ -1515,3 +1515,13 @@ void CScrView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
 	if (mapmode_ != MM_TEXT) pDC->SetMapMode(mapmode_);
 }
 
+void CScrView::track_mouse(unsigned long flag)
+{
+	TRACKMOUSEEVENT tme;
+	tme.cbSize = sizeof(tme);
+	tme.dwFlags = flag;
+	tme.dwHoverTime = 0;
+	tme.hwndTrack = m_hWnd;
+
+	VERIFY(::_TrackMouseEvent(&tme));
+}

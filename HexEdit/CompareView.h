@@ -131,6 +131,9 @@ protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnSetFocus(CWnd* pNewWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg LRESULT OnMouseHover(WPARAM wp, LPARAM lp);
+	afx_msg LRESULT OnMouseLeave(WPARAM wp, LPARAM lp);
 
 	afx_msg void OnUpdateDisable(CCmdUI* pCmdUI) { pCmdUI->Enable(FALSE); }
 

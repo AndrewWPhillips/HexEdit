@@ -8148,18 +8148,6 @@ void CHexEditView::OnSysColorChange()
 	Invalidate();
 }
 
-
-void CHexEditView::track_mouse(unsigned long flag)
-{
-	TRACKMOUSEEVENT tme;
-	tme.cbSize = sizeof(tme);
-	tme.dwFlags = flag;
-	tme.dwHoverTime = 0;
-	tme.hwndTrack = m_hWnd;
-
-	VERIFY(::_TrackMouseEvent(&tme));
-}
-
 FILE_ADDRESS CHexEditView::address_at(CPoint pt)
 {
 	if (pt.y < bdr_top_)

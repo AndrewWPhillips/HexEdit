@@ -44,6 +44,9 @@ BEGIN_MESSAGE_MAP(CCompareView, CScrView)
 	ON_WM_LBUTTONUP()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
+	ON_WM_MOUSEMOVE()
+	ON_MESSAGE(WM_MOUSEHOVER, OnMouseHover)
+	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 
 	ON_COMMAND(ID_COMP_FIRST, OnCompFirst)
 	ON_COMMAND(ID_COMP_PREV, OnCompPrev)
@@ -1943,6 +1946,23 @@ void CCompareView::OnKillFocus(CWnd* pNewWnd)
 	if (start_addr == end_addr)
 		++end_addr;   // if no selection invalidate current byte
 	InvalidateRange(addr2pos(start_addr), addr2pos(end_addr));
+}
+
+void CCompareView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	CScrView::OnMouseMove(nFlags, point);
+	//track_mouse(TME_HOVER);
+}
+
+LRESULT CCompareView::OnMouseHover(WPARAM, LPARAM lp)
+{
+	//track_mouse(TME_LEAVE);
+	return 0;
+}
+
+LRESULT CCompareView::OnMouseLeave(WPARAM, LPARAM lp)
+{
+	return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////

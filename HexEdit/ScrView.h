@@ -178,6 +178,8 @@ protected:
 
 	int bdr_top_, bdr_left_, bdr_bottom_, bdr_right_; // Borders reserved for ruler etc
 
+	void track_mouse(unsigned long);    // Turns on receipt of mouse hover/leave messages
+
 protected:
 	// The following determine the current position in the doc of the top left
 	// of the display, the caret and the selection.  caretpos_ is the start of

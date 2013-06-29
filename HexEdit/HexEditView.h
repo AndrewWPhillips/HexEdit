@@ -1037,7 +1037,6 @@ private:
 	bool update_tip(FILE_ADDRESS addr); // Update tip text using an address of the file
 	FILE_ADDRESS address_at(CPoint pt); // Given a position return file address (dep on area of point)
 	FILE_ADDRESS last_tip_addr_;
-	void track_mouse(unsigned long); // Turns on receipt of mouse hover/leave messages
 	int bookmark_at(FILE_ADDRESS); // Return bookmark at position or -1 if none
 
 	// Info required for macro (km_mouse and km_shift_mouse)
