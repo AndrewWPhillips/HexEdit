@@ -923,11 +923,11 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	return TRUE;
 }
 
-// Get a view for the document: the active view if there is one, or just the first one
+// Get a (hex) view for the document: the active view if there is one, or just the first one
 CHexEditView *CHexEditDoc::GetBestView()
 {
 	CView *pbest = NULL;
-	CView *pactive = ::GetView();
+	CView *pactive = ::GetView();  // returns the hex view associated with the active view
 
 	POSITION pos = GetFirstViewPosition();
 	while (pos != NULL)

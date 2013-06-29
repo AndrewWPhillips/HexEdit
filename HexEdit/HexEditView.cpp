@@ -19488,6 +19488,12 @@ int CHexEditView::AerialViewType() const
 		return 0;
 	}
 }
+
+BOOL CHexEditView::CompareWithSelf()
+{
+	return GetDocument()->bCompSelf_;
+}
+
 // Compare View commands
 void CHexEditView::OnCompHide()
 {

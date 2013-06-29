@@ -4522,6 +4522,8 @@ void CCommandLineParser::ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLas
 // Global functions
 
 // Return a ptr to the active view or NULL if none
+// Ie, the current hex view if it is the active view OR
+// the hex view associated with the active view if it is an aerial/template/compare view.
 CHexEditView *GetView()
 {
 	if (theApp.pv_ != NULL)

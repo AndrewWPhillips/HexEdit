@@ -267,6 +267,8 @@ public:
 	bool AutoSyncDffd() const { return display_.auto_sync_dffd; }
 	void SetAutoSyncDffd(bool b = true) { display_.auto_sync_dffd = b; }
 
+	BOOL CompareViewVisible() const { return pcv_ != NULL; }
+	BOOL CompareWithSelf();  // Is self-compare comparing with earlier versions of itself?
 	BOOL AutoSyncCompare() const { return display_.auto_sync_comp; }
 	void SetAutoSyncCompare(bool b = true) { display_.auto_sync_comp = b; }
 	BOOL AutoScrollCompare() const { return display_.auto_scroll_comp; }
@@ -340,7 +342,6 @@ public:
 	void SetScheme(const char *name);
 	int ClosestBookmark(FILE_ADDRESS &diff);
 	void ShowDffd();          // Show template in split window if not visible already
-	void ShowComp();          // Show compare view in split window if not visible already
 
 	void show_pos(FILE_ADDRESS address = -1, BOOL no_dffd = FALSE); // Show position (toolbar/DFFD)
 	void show_prop(FILE_ADDRESS address = -1); // Show current properties (modeless dlg)

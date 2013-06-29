@@ -1302,6 +1302,7 @@ void CMainFrame::OnNavForw(UINT nID)
 	theApp.navman_.GoForw(nID - ID_NAV_FORW_FIRST + 1);
 }
 
+// Display a tip window showing file name when the mouse hovers over a tab
 LRESULT CMainFrame::OnGetTabToolTip(WPARAM /*wp*/, LPARAM lp)
 {
 	CMFCTabToolTipInfo * pInfo = (CMFCTabToolTipInfo *)lp;
@@ -1318,6 +1319,18 @@ LRESULT CMainFrame::OnGetTabToolTip(WPARAM /*wp*/, LPARAM lp)
 	}
 
 	pInfo->m_strText = pDoc->GetPathName();
+
+	// Check if current view is being compared to another file (ie, there is a tabbed/split CompareView attached)
+	CHexEditDoc * pHEDoc = DYNAMIC_DOWNCAST(CHexEditDoc, pDoc);
+	if (pHEDoc != NULL)
+	{
+		CHexEditView *pView = pHEDoc->GetBestView();
+		if (pView != NULL && pView->CompareViewVisible())
+		{
+			// Show file name and file being compared with (* means self-compare)
+			pInfo->m_strText = pDoc->GetPathName() + " -- Comparing with: " + pHEDoc->GetCompFileName();
+		}
+	}
 	return 0;
 }
 
@@ -4585,15 +4598,23 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 		CMDIChildWnd * pwind;
 		CView * pview;
 
+		// For self-compare we know recent changes by comparing with the copied version of the file, but we also keep
+		// track of older changes (as the file can be continually modified) until they disappear after a period of time.
+		// We need to check if we are doing a self-compare and a 4 extra commands for "All" Differences.
 		if ((pwind = ((CMainFrame *)AfxGetMainWnd())->MDIGetActive()) != NULL &&
 			(pview = pwind->GetActiveView()) != NULL &&
 			pview->IsKindOf(RUNTIME_CLASS(CHexEditView)) )
 		{
-			// Add the 4 "all diffs" commands to the menu
-			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_FIRST, NULL, -1, "All First Difference"), idx+1);
-			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_PREV,  NULL, -1, "All Previous Difference"), idx+2);
-			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_NEXT,  NULL, -1, "All Next Difference"), idx+3);
-			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_LAST,  NULL, -1, "All Last Difference"), idx+4);
+			CHexEditView * pHEView = DYNAMIC_DOWNCAST(CHexEditView, pview);
+			if (pHEView->CompareWithSelf())
+			{
+				// Add the 4 "all diffs" commands to the menu after the dummy one
+				pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_FIRST, NULL, -1, "All First Difference"), idx+1);
+				pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_PREV,  NULL, -1, "All Previous Difference"), idx+2);
+				pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_NEXT,  NULL, -1, "All Next Difference"), idx+3);
+				pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_LAST,  NULL, -1, "All Last Difference"), idx+4);
+				pMenuPopup->InsertSeparator(idx+5);
+			}
 		}
 
 		// Remove the dummy command from the menu
