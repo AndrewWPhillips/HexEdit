@@ -3299,6 +3299,7 @@ BEGIN
     ID_CONTROL_ALPHA        "Display aphabetic control characters\nAlpha Control Chars"
     ID_CONTROL_C            "Display control characters as C/C++ escape sequences\nC/C++ Control Chars"
     ID_DISPLAY_STACKED      "Display character and hex nybbles stacked vertically\nStacked Mode"
+    ID_MAKE_FAVOURITE       "Add to Favorites category so that file name always appears on Windows Taskbar Jump List\nMake Favorite"
     ID_KEEP_TIMES           "Keep same file modification time, attributes etc when saving\nKeep Same Time"
     ID_VIEW_VIEWBAR         "Show or hide the Standard toolbar\nToggle ToolBar"
     ID_MACRO_MESSAGE        "Record a message that is shown in macro playback\nMacro Message"
