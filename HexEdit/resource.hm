@@ -71,6 +71,8 @@
 #define HIDC_CODE_PAGE                  0x810c05ce    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_COLOUR_PICKER              0x80e604bc    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_COLS                       0x810c0443    // IDD_OPT_WINDISPLAY [English (United States)]
+#define HIDC_COMPARE_BROWSE             0x82000697    // IDD_NEW_COMPARE
+#define HIDC_COMPARE_FILENAME           0x82000692    // IDD_NEW_COMPARE
 #define HIDC_COMPRESSION_HEADER_GZIP    0x812a05e5    // IDD_COMPRESS
 #define HIDC_COMPRESSION_HEADER_RAW     0x812a05e3    // IDD_COMPRESS
 #define HIDC_COMPRESSION_HEADER_ZLIB    0x812a05e4    // IDD_COMPRESS

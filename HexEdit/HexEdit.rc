@@ -3139,16 +3139,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_FONT_INC             "Increase the font size in the active window\nIncrease Font"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_FONT_DEC             "Decreases the font size in the active window\nDecrease Font"
-END
-
-STRINGTABLE 
-BEGIN
     ID_MULTI_PLAY           "Replay a macro one or more times\nMacro Play"
     ID_EXTENDTO_MARK        "Extend selection to mark\nExtend To Mark"
     ID_SWAP_MARK            "Swap positions of the cursor and mark\nSwap Cursor with Mark"
@@ -3162,6 +3152,8 @@ BEGIN
     ID_DEL                  "Delete the character at the cursor or the current selection\nDelete"
     ID_OEM_TOGGLE           "Toggle between IBM/OEM and ANSI graphics characters\nIBM/OEM Chars"
     ID_EDIT_GOTO            "Calculate address to jump to\nGo To"
+    ID_FONT_INC             "Increase the font size in the active window\nIncrease Font"
+    ID_FONT_DEC             "Decreases the font size in the active window\nDecrease Font"
 END
 
 STRINGTABLE 
@@ -3561,10 +3553,10 @@ BEGIN
     ID_ANT_HL               "Indicate rows with highlights with marching ants\nHighlight Ants"
     ID_ANT_SEARCH           "Indicate rows containing the current search text with marching ants\nSearch Occurrences Ants"
     ID_ANT_BM               "Indicate rows containing bookmarks with marching ants\nBookmarks Ants"
-    ID_COMP_FIRST           "Jump to first recent difference\nFirst Diff"
-    ID_COMP_PREV            "Jump to previous recent difference\nPrev Diff"
-    ID_COMP_NEXT            "Jump to next recent difference\nNext Diff"
-    ID_COMP_LAST            "Jump to last recent difference\nLast Diff"
+    ID_COMP_FIRST           "Jump to first difference\nFirst Diff"
+    ID_COMP_PREV            "Jump to previous difference\nPrev Diff"
+    ID_COMP_NEXT            "Jump to next difference\nNext Diff"
+    ID_COMP_LAST            "Jump to last difference\nLast Diff"
 END
 
 STRINGTABLE 
@@ -4900,6 +4892,31 @@ BEGIN
     PUSHBUTTON      "Help",IDC_RECENT_FILES_HELP,317,160,56,14,WS_GROUP
 END
 
+IDD_NEW_COMPARE DIALOGEX 0, 0, 219, 134
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "New Compare With"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Self - monitor file for changes",IDC_COMPARE_SELF,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,9,10,107,10
+    CONTROL         "File:",IDC_COMPARE_FILE,"Button",BS_AUTORADIOBUTTON,9,24,29,10
+    EDITTEXT        IDC_COMPARE_FILENAME,39,22,124,14,ES_AUTOHSCROLL | ES_OEMCONVERT,0,HIDC_COMPARE_FILENAME
+    PUSHBUTTON      "Browse...",IDC_COMPARE_BROWSE,165,23,44,14,0,0,HIDC_COMPARE_BROWSE
+    LTEXT           "Show other file in:",IDC_COMPARE_COMMENT,9,43,189,8
+    CONTROL         "Split window (in view to the right of hex view)",IDC_COMPARE_SPLIT,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,23,54,157,10
+    CONTROL         "Tabbed window (tab at bottom of window)",IDC_COMPARE_TABBED,
+                    "Button",BS_AUTORADIOBUTTON,23,66,148,10
+    CONTROL         "Auto sync - maintain same cursor position/selection",IDC_COMPARE_AUTOSYNC,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,82,177,10
+    CONTROL         "Auto scroll - keep display aligned (scroll bar position)",IDC_COMPARE_AUTOSCROLL,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,96,179,10
+    PUSHBUTTON      "&Help",IDC_COMPARE_HELP,9,112,50,14,WS_GROUP
+    DEFPUSHBUTTON   "Compare",IDOK,104,112,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,159,112,50,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -4918,16 +4935,6 @@ BEGIN
 0x6f43, 0x536d, 0x666f, 0x2e74, 0x6f63, 0x006d, 
     IDC_SYSTYPE, 0x403, 12, 0
 0x6854, 0x7369, 0x7320, 0x7379, 0x6574, 0x006d, 
-    IDC_SYSTYPE, 0x403, 11, 0
-0x6957, 0x646e, 0x776f, 0x2073, 0x3539, "\000" 
-    IDC_SYSTYPE, 0x403, 11, 0
-0x6957, 0x646e, 0x776f, 0x2073, 0x3839, "\000" 
-    IDC_SYSTYPE, 0x403, 14, 0
-0x6957, 0x646e, 0x776f, 0x2073, 0x3839, 0x5320, 0x0045, 
-    IDC_SYSTYPE, 0x403, 11, 0
-0x6957, 0x646e, 0x776f, 0x2073, 0x454d, "\000" 
-    IDC_SYSTYPE, 0x403, 7, 0
-0x544e, 0x3420, 0x302e, "\000" 
     IDC_SYSTYPE, 0x403, 13, 0
 0x6957, 0x646e, 0x776f, 0x2073, 0x3032, 0x3030, "\000" 
     IDC_SYSTYPE, 0x403, 11, 0
@@ -4936,6 +4943,8 @@ BEGIN
 0x6956, 0x7473, 0x0061, 
     IDC_SYSTYPE, 0x403, 10, 0
 0x6957, 0x646e, 0x776f, 0x2073, 0x0037, 
+    IDC_SYSTYPE, 0x403, 10, 0
+0x6957, 0x646e, 0x776f, 0x2073, 0x0038, 
     IDC_SYSTYPE, 0x403, 6, 0
 0x744f, 0x6568, 0x0072, 
     IDC_VERSION, 0x403, 12, 0

@@ -662,7 +662,7 @@ public:
 	bool IsCompWaiting();     // is compare thread in wait state?
 	void StartComp();
 	void StopComp();
-	bool GetCompareFile(bool bForcePrompt = false); // Get name of file to compare with
+	int GetCompareFile(int view, bool & auto_sync, bool & auto_scroll, bool bForcePrompt = false);
 	int CompareDifferences(int rr = 0);
 	int FirstDiffAt(bool other, int rr, FILE_ADDRESS from);     // returns index of first diff at or after address
 	int CompareProgress();

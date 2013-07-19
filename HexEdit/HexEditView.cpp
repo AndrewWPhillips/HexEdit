@@ -19531,7 +19531,10 @@ bool CHexEditView::DoCompSplit(bool init /*=true*/)
 	}
 
 	// Make sure we have the name of the compare file to open
-	if (!GetDocument()->GetCompareFile())
+	bool auto_sync = AutoSyncCompare() != 0;
+	bool auto_scroll = AutoScrollCompare() != 0;
+
+	if (!GetDocument()->GetCompareFile(1, auto_sync, auto_scroll))
 		return false;
 
 	// Save current view so we can close it later
@@ -19586,6 +19589,8 @@ bool CHexEditView::DoCompSplit(bool init /*=true*/)
 			VERIFY(GetFrame()->ptv_->RemoveView(tnum_c));
 		GetDocument()->RemoveCompView();    // compare window is detroyed directly (no WM_CLOSE) so we need this here
 	}
+	SetAutoSyncCompare(auto_sync);
+	SetAutoScrollCompare(auto_scroll);
 
 	return true;
 }
@@ -19610,7 +19615,10 @@ bool CHexEditView::DoCompTab(bool init /*=true*/)
 	pcv_ = NULL;
 
 	// Make sure we have the name of the compare file to open
-	if (!GetDocument()->GetCompareFile())
+	bool auto_sync = AutoSyncCompare() != 0;
+	bool auto_scroll = AutoScrollCompare() != 0;
+
+	if (!GetDocument()->GetCompareFile(2, auto_sync, auto_scroll))
 		return false;
 
 	// Reopen in the tab
@@ -19646,6 +19654,9 @@ bool CHexEditView::DoCompTab(bool init /*=true*/)
 			GetDocument()->RemoveCompView();    // compare window is detroyed directly (no WM_CLOSE) so we need this here
 		}
 	}
+	SetAutoSyncCompare(auto_sync);
+	SetAutoScrollCompare(auto_scroll);
+
 	return true;
 }
 

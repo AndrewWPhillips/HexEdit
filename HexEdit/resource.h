@@ -432,6 +432,7 @@
 #define IDD_OPT_AERIAL                  510
 #define IDD_OPT_EXPLORER                511
 #define IDB_BM_ADD                      512
+#define IDD_NEW_COMPARE                 512
 #define IDB_BM_ADD_HOT                  513
 #define IDB_BM_DEL                      514
 #define IDB_BM_DEL_HOT                  515
@@ -1290,6 +1291,16 @@
 #define IDC_WIPE_THOROUGH               1675
 #define IDC_SHOW_INDEXED                1676
 #define IDC_SHOW_NOT_INDEXED            1677
+#define IDC_COMPARE_SELF                1678
+#define IDC_COMPARE_FILE                1679
+#define IDC_COMPARE_AUTOSYNC            1680
+#define IDC_COMPARE_AUTOSCROLL          1681
+#define IDC_COMPARE_FILENAME            1682
+#define IDC_COMPARE_SPLIT               1683
+#define IDC_COMPARE_TABBED              1684
+#define IDC_COMPARE_COMMENT             1685
+#define IDC_COMPARE_HELP                1686
+#define IDC_COMPARE_BROWSE              1687
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1829,9 +1840,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        522
+#define _APS_NEXT_RESOURCE_VALUE        523
 #define _APS_NEXT_COMMAND_VALUE         39203
-#define _APS_NEXT_CONTROL_VALUE         1678
+#define _APS_NEXT_CONTROL_VALUE         1688
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

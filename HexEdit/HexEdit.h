@@ -62,6 +62,7 @@ typedef __int64 FILE_ADDRESS;
 #define SM_SAMEDISPLAYFORMAT    81
 #endif
 
+
 // Conditional compilation flags - always to be used
 #define BOOST_CRC        1  // Use Boost CRC code rather than rather than dubious code I got somewhere
 #define BOOST_RAND       1  // Use Boost PRNGs rather than my own one
@@ -73,6 +74,7 @@ typedef __int64 FILE_ADDRESS;
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
 #define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
 #define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
+//#define ONLY_FILE_COMPARE 1  // Only allow compare to another file (no self-compare)
 
 #define USE_FREE_IMAGE  1   // When this is enabled we need to get rid of EnBitmap.cpp from the project
 #define FILE_PREVIEW    1   // Preview capture and display in file open dialog

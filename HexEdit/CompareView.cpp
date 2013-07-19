@@ -1912,8 +1912,12 @@ void CCompareView::OnLButtonUp(UINT nFlags, CPoint point)
 	CScrView::OnLButtonUp(nFlags, point);
 	if (phev_->AutoSyncCompare())
 	{
-		FILE_ADDRESS start_addr, end_addr;
+		FILE_ADDRESS start_addr, end_addr, hev_start, hev_end;
 		GetSelAddr(start_addr, end_addr);
+		// Make sure new selection is not past EOF of hex view file
+		phev_->GetSelAddr(hev_start, hev_end);
+		if (start_addr > hev_end) start_addr = hev_end;
+		if (end_addr > hev_end) end_addr = hev_end;
 		phev_->SetAutoSyncCompare(false);  // avoid inf. recursion
 		phev_->MoveWithDesc("Compare Auto-sync", start_addr, end_addr);
 		phev_->SetAutoSyncCompare(true);

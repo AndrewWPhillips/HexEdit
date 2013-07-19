@@ -4610,24 +4610,35 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 		ASSERT(AfxGetMainWnd() != NULL);
 		CMDIChildWnd * pwind;
 		CView * pview;
+		CHexEditView * pHEView;
 
 		// For self-compare we know recent chnages by comparing with the copied version of the file, but we also keep
 		// track of older changes (as the file can be continually modified) until they disappear after a period of time.
 		// We need to check if we are doing a self-compare and a 4 extra commands for "All" Differences.
 		if ((pwind = ((CMainFrame *)AfxGetMainWnd())->MDIGetActive()) != NULL &&
 			(pview = pwind->GetActiveView()) != NULL &&
-			pview->IsKindOf(RUNTIME_CLASS(CHexEditView)) )
+			pview->IsKindOf(RUNTIME_CLASS(CHexEditView)) &&
+			(pHEView  = DYNAMIC_DOWNCAST(CHexEditView, pview)) != NULL &&
+			pHEView->CompareWithSelf()
+		   )
 		{
-			CHexEditView * pHEView = DYNAMIC_DOWNCAST(CHexEditView, pview);
-			if (pHEView->CompareWithSelf())
-			{
-				// Add the 4 "all diffs" commands to the menu after the dummy one
-				pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_FIRST, NULL, -1, "All First Difference"), idx+1);
-				pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_PREV,  NULL, -1, "All Previous Difference"), idx+2);
-				pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_NEXT,  NULL, -1, "All Next Difference"), idx+3);
-				pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_LAST,  NULL, -1, "All Last Difference"), idx+4);
-				pMenuPopup->InsertSeparator(idx+5);
-			}
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_FIRST, NULL, -1, "Recent First Difference"), idx+1);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_PREV,  NULL, -1, "Recent Previous Difference"), idx+2);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_NEXT,  NULL, -1, "Recent Next Difference"), idx+3);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_LAST,  NULL, -1, "Recent Last Difference"), idx+4);
+			pMenuPopup->InsertSeparator(idx+5);
+			// Add the 4 "all diffs" commands to the menu after the dummy one
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_FIRST, NULL, -1, "All First Difference"), idx+6);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_PREV,  NULL, -1, "All Previous Difference"), idx+7);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_NEXT,  NULL, -1, "All Next Difference"), idx+8);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_LAST,  NULL, -1, "All Last Difference"), idx+9);
+		}
+		else
+		{
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_FIRST, NULL, -1, "First Difference"), idx+1);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_PREV,  NULL, -1, "Previous Difference"), idx+2);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_NEXT,  NULL, -1, "Next Difference"), idx+3);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_LAST,  NULL, -1, "Last Difference"), idx+4);
 		}
 
 		// Remove the dummy command from the menu

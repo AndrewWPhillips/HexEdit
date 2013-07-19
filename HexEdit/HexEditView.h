@@ -847,6 +847,7 @@ public:
 	int CompViewType() const;
 	void AdjustColumns();
 	bool DoCompSplit(bool init = true);   // must be public to be called from the doc
+	bool DoCompTab(bool init = true);
 
 	struct crc_params crc_params_;   // Use to store general CRC params for use in DoChecksum()
 
@@ -1110,7 +1111,6 @@ private:
 	bool DoDffdSplit();
 	bool DoAerialTab(bool init = true);
 	bool DoAerialSplit(bool init = true);
-	bool DoCompTab(bool init = true);
 
 	void OnCodepage(int cp);
 	void OnUpdateCodepage(CCmdUI *pCmdUI, int cp);
