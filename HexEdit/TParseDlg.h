@@ -7,12 +7,13 @@
 // TParseDlg.h : header file
 //
 
+#include "dialog.h"
 #include "ResizeCtrl.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // TParseDlg dialog
 
-class TParseDlg : public CDialog
+class TParseDlg : public CHexDialog
 {
 // Construction
 public:

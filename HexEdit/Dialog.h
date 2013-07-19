@@ -32,6 +32,28 @@
 class CHexEditApp;
 
 /////////////////////////////////////////////////////////////////////////////
+// CHexDialog - base class for dialogs that allows saving and restoring the window
+// size and position and display mode. Can be used as a replacement for CDialog.
+
+class CHexDialog : public CDialog
+{
+	DECLARE_DYNAMIC(CHexDialog)
+
+public:
+	explicit CHexDialog(UINT nIDTemplate, CWnd* pParentWnd = NULL) : CDialog(nIDTemplate, pParentWnd) {}
+	//CHexDialog();
+	//virtual ~CHexDialog();
+	void RestorePos();
+
+	virtual BOOL OnInitDialog();
+	afx_msg void OnDestroy();
+
+protected:
+	DECLARE_MESSAGE_MAP()
+};
+
+
+/////////////////////////////////////////////////////////////////////////////
 // CHexFileDialog - just adds the facility to CFileDialog for saving and restoring
 // the window size, position and display mode.  Can be used as a replacement for
 // CFileDialog or as base class for file dlgs that add controls (see below)

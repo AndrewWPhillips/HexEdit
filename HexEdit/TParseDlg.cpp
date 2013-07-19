@@ -24,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 // TParseDlg dialog
 
 TParseDlg::TParseDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(TParseDlg::IDD, pParent)
+	: CHexDialog(TParseDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(TParseDlg)
 	m_source_code = _T("");
@@ -54,7 +54,7 @@ TParseDlg::TParseDlg(CWnd* pParent /*=NULL*/)
 
 void TParseDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CHexDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(TParseDlg)
 	DDX_Text(pDX, IDC_SOURCE_CODE, m_source_code);
 	DDX_Radio(pDX, IDC_PACK1, m_pack);
@@ -70,8 +70,7 @@ void TParseDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_BASE_STORAGE_UNIT, m_base_storage_unit);
 }
 
-
-BEGIN_MESSAGE_MAP(TParseDlg, CDialog)
+BEGIN_MESSAGE_MAP(TParseDlg, CHexDialog)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(ID_DFFD_HELP, OnHelp)
 	ON_WM_HELPINFO()
@@ -83,7 +82,7 @@ END_MESSAGE_MAP()
 
 BOOL TParseDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CHexDialog::OnInitDialog();
 
 	resizer_.Create(this);
 	CRect rct;
@@ -112,79 +111,14 @@ BOOL TParseDlg::OnInitDialog()
 	resizer_.Add(IDCANCEL, 100, 0, 0, 0);
 	resizer_.Add(ID_DFFD_HELP, 100, 100, 0, 0);
 
-	int posx = theApp.GetProfileInt("Window-Settings", "SourceParseDlgX", -30000);
-	int posy = theApp.GetProfileInt("Window-Settings", "SourceParseDlgY", -30000);
-	int width = theApp.GetProfileInt("Window-Settings", "SourceParseDlgWidth", -30000);
-	int height = theApp.GetProfileInt("Window-Settings", "SourceParseDlgHeight", -30000);
-
-	if (posx != -30000)
-	{
-		CRect rr;               // Rectangle where we will put the dialog
-		GetWindowRect(&rr);
-
-		// Move to where it was when it was last closed
-//        rr.OffsetRect(posx - rr.left, posy - rr.top);
-		rr.left = posx;
-		rr.top = posy;
-		rr.right = rr.left + width;
-		rr.bottom = rr.top + height;
-
-		CRect scr_rect;         // Rectangle that we want to make sure the window is within
-
-		// Get the rectangle that contains the screen work area (excluding system bars etc)
-		if (theApp.mult_monitor_)
-		{
-			HMONITOR hh = MonitorFromRect(&rr, MONITOR_DEFAULTTONEAREST);
-			MONITORINFO mi;
-			mi.cbSize = sizeof(mi);
-			if (hh != 0 && GetMonitorInfo(hh, &mi))
-				scr_rect = mi.rcWork;  // work area of nearest monitor
-			else
-			{
-				// Shouldn't happen but if it does use the whole virtual screen
-				ASSERT(0);
-				scr_rect = CRect(::GetSystemMetrics(SM_XVIRTUALSCREEN),
-					::GetSystemMetrics(SM_YVIRTUALSCREEN),
-					::GetSystemMetrics(SM_XVIRTUALSCREEN) + ::GetSystemMetrics(SM_CXVIRTUALSCREEN),
-					::GetSystemMetrics(SM_YVIRTUALSCREEN) + ::GetSystemMetrics(SM_CYVIRTUALSCREEN));
-			}
-		}
-		else if (!::SystemParametersInfo(SPI_GETWORKAREA, 0, &scr_rect, 0))
-		{
-			// I don't know if this will ever happen since the Windows documentation
-			// is pathetic and does not say when or why SystemParametersInfo might fail.
-			scr_rect = CRect(0, 0, ::GetSystemMetrics(SM_CXFULLSCREEN),
-								   ::GetSystemMetrics(SM_CYFULLSCREEN));
-		}
-
-		if (rr.left > scr_rect.right - 20)              // off right edge?
-			rr.OffsetRect(scr_rect.right - (rr.left+rr.right)/2, 0);
-		if (rr.right < scr_rect.left + 20)              // off left edge?
-			rr.OffsetRect(scr_rect.left - (rr.left+rr.right)/2, 0);
-		if (rr.top > scr_rect.bottom - 20)              // off bottom?
-			rr.OffsetRect(0, scr_rect.bottom - (rr.top+rr.bottom)/2);
-		// This is not analogous to the prev. 3 since we don't want the window
-		// off the top at all, otherwise you can get to the drag bar to move it.
-		if (rr.top < scr_rect.top)                      // off top at all?
-			rr.OffsetRect(0, scr_rect.top - rr.top);
-
-		MoveWindow(&rr);
-	}
+	CHexDialog::RestorePos();
 
 	return TRUE;
 }
 
 void TParseDlg::OnDestroy()
 {
-	// Save window position so t can be restored when dialog is reopened
-	CRect rr;
-	GetWindowRect(&rr);
-	theApp.WriteProfileInt("Window-Settings", "SourceParseDlgX", rr.left);
-	theApp.WriteProfileInt("Window-Settings", "SourceParseDlgY", rr.top);
-	theApp.WriteProfileInt("Window-Settings", "SourceParseDlgWidth", rr.right - rr.left);
-	theApp.WriteProfileInt("Window-Settings", "SourceParseDlgHeight", rr.bottom - rr.top);
-
-	CDialog::OnDestroy();
+	CHexDialog::OnDestroy();
 
 	theApp.WriteProfileInt("Parse-Settings", "Pack", m_pack);
 	theApp.WriteProfileInt("Parse-Settings", "BitfieldDirn", m_bitfield_up);
@@ -216,7 +150,7 @@ BOOL TParseDlg::PreTranslateMessage(MSG* pMsg)
 		return TRUE;
 	}
 
-	return CDialog::PreTranslateMessage(pMsg);
+	return CHexDialog::PreTranslateMessage(pMsg);
 }
 static DWORD id_pairs[] = { 
 	IDC_SOURCE_CODE, HIDC_SOURCE_CODE,
@@ -257,5 +191,5 @@ void TParseDlg::OnHelp()
 
 void TParseDlg::OnOK()
 {
-	CDialog::OnOK();
+	CHexDialog::OnOK();
 }

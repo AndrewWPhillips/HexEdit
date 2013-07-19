@@ -37,6 +37,110 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
+// The following is the base class for dialogs that remember their size and position
+
+IMPLEMENT_DYNAMIC(CHexDialog, CDialog)
+
+BEGIN_MESSAGE_MAP(CHexDialog, CDialog)
+	ON_WM_DESTROY()
+END_MESSAGE_MAP()
+
+BOOL CHexDialog::OnInitDialog()
+{
+   BOOL retval = CDialog::OnInitDialog();
+
+   // make sure the dialog defaults to the middle of the main window
+   CRect rct, main_rct;
+   GetWindowRect(&rct);
+   AfxGetMainWnd()->GetWindowRect(&main_rct);
+   rct.MoveToXY(main_rct.left + (main_rct.Width() - rct.Width())/2, main_rct.top + (main_rct.Height() - rct.Height())/2);
+   MoveWindow(&rct);
+
+   return retval;
+}
+
+void CHexDialog::RestorePos()
+{
+	CString strId;
+	strId.Format("%d", m_nIDHelp);
+
+	int posx = theApp.GetProfileInt("Window-Settings", strId + "X", -30000);
+	int posy = theApp.GetProfileInt("Window-Settings", strId + "Y", -30000);
+	int width = theApp.GetProfileInt("Window-Settings", strId + "Width", -30000);
+	int height = theApp.GetProfileInt("Window-Settings", strId + "Height", -30000);
+
+	if (posx != -30000)
+	{
+		CRect rr;               // Rectangle where we will put the dialog
+		GetWindowRect(&rr);
+
+		// Move to where it was when it was last closed
+		rr.left = posx;
+		rr.top = posy;
+		rr.right = rr.left + width;
+		rr.bottom = rr.top + height;
+
+		CRect scr_rect;         // Rectangle that we want to make sure the window is within
+
+		// Get the rectangle that contains the screen work area (excluding system bars etc)
+		if (theApp.mult_monitor_)
+		{
+			HMONITOR hh = MonitorFromRect(&rr, MONITOR_DEFAULTTONEAREST);
+			MONITORINFO mi;
+			mi.cbSize = sizeof(mi);
+			if (hh != 0 && GetMonitorInfo(hh, &mi))
+				scr_rect = mi.rcWork;  // work area of nearest monitor
+			else
+			{
+				// Shouldn't happen but if it does use the whole virtual screen
+				ASSERT(0);
+				scr_rect = CRect(::GetSystemMetrics(SM_XVIRTUALSCREEN),
+					::GetSystemMetrics(SM_YVIRTUALSCREEN),
+					::GetSystemMetrics(SM_XVIRTUALSCREEN) + ::GetSystemMetrics(SM_CXVIRTUALSCREEN),
+					::GetSystemMetrics(SM_YVIRTUALSCREEN) + ::GetSystemMetrics(SM_CYVIRTUALSCREEN));
+			}
+		}
+		else if (!::SystemParametersInfo(SPI_GETWORKAREA, 0, &scr_rect, 0))
+		{
+			// I don't know if this will ever happen since the Windows documentation
+			// is pathetic and does not say when or why SystemParametersInfo might fail.
+			scr_rect = CRect(0, 0, ::GetSystemMetrics(SM_CXFULLSCREEN),
+								   ::GetSystemMetrics(SM_CYFULLSCREEN));
+		}
+
+		if (rr.left > scr_rect.right - 20)              // off right edge?
+			rr.OffsetRect(scr_rect.right - (rr.left+rr.right)/2, 0);
+		if (rr.right < scr_rect.left + 20)              // off left edge?
+			rr.OffsetRect(scr_rect.left - (rr.left+rr.right)/2, 0);
+		if (rr.top > scr_rect.bottom - 20)              // off bottom?
+			rr.OffsetRect(0, scr_rect.bottom - (rr.top+rr.bottom)/2);
+		// This is not analogous to the prev. 3 since we don't want the window
+		// off the top at all, otherwise you can get to the drag bar to move it.
+		if (rr.top < scr_rect.top)                      // off top at all?
+			rr.OffsetRect(0, scr_rect.top - rr.top);
+
+		MoveWindow(&rr);
+	}
+}
+
+void CHexDialog::OnDestroy()
+{
+	CString strId;
+	strId.Format("%d", m_nIDHelp);
+
+	// Save window position so it can be restored when dialog is reopened
+	CRect rr;
+	GetWindowRect(&rr);
+	theApp.WriteProfileInt("Window-Settings", strId + "X", rr.left);
+	theApp.WriteProfileInt("Window-Settings", strId + "Y", rr.top);
+	theApp.WriteProfileInt("Window-Settings", strId + "Width", rr.right - rr.left);
+	theApp.WriteProfileInt("Window-Settings", strId + "Height", rr.bottom - rr.top);
+
+	CDialog::OnDestroy();
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
 // The following are for file dialogs
 
 /////////////////////////////////////////////////////////////////////////////
