@@ -80,7 +80,7 @@ the bitmap has to be resized, which may be handled by realloc or
 just a complete re-scan.
 
 
-Views (see CBGSearchHint used by CHexEditView::OnUpdate)
+Views (see CBGAerialHint used by CHexEditView::OnUpdate)
 -----
 
 When the colour scheme of the view used to generate the aerial view
@@ -115,6 +115,28 @@ void CHexEditDoc::AddAerialView(CHexEditView *pview)
 	TRACE("+++ Aerial +++ %d\n", av_count_);
 	if (++av_count_ == 1)
 	{
+		// Check if we are using a "boring" colour scheme in order to ask the user if they
+		// want to use the "many" (colourful) colour scheme.
+		CString strScheme = pview->GetSchemeName();
+		if (strScheme == ASCII_NAME   || strScheme == PLAIN_NAME   ||
+			strScheme == ANSI_NAME    || strScheme == OEM_NAME     ||
+			strScheme == EBCDIC_NAME  || strScheme == UNICODE_NAME ||
+			strScheme == CODEPAGE_NAME )
+		{
+			CString ss;
+			ss.Format("The current %s scheme will not distinguish between "
+			          "many different byte values.  It is recommended that "
+			          "you first switch to a better scheme to more easily "
+			          "see patterns in the Aerial View display.\n\n"
+			          "Do you wish to switch to the \"Many\" %s scheme?",
+			          ::IsUs() ? "color" : "colour",
+					  ::IsUs() ? "color" : "colour");
+			if (CAvoidableDialog::Show(IDS_USE_AERIAL_SCHEME, ss, NULL, MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+			{
+				pview->SetScheme(MULTI_NAME);
+			}
+		}
+
 		//get bitmap & clear it to closest grey to hex view's background
 		GetAerialBitmap(GetRValue(same_hue(pview->GetBackgroundCol(), 0 /*saturation*/)));
 		pview->get_colours(kala_);   // get colours for the bitmap pixels

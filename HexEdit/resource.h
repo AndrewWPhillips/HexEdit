@@ -1833,6 +1833,7 @@
 #define IDS_RECENT_GONE                 52751
 #define IDS_REG_REQUIRED                52752
 #define IDS_CONFIRM_OP                  52753
+#define IDS_USE_AERIAL_SCHEME           52754
 #define IDS_UPDATE_AVAILABLE            52799
 
 // Next default values for new objects

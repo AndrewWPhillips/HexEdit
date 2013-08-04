@@ -857,18 +857,14 @@ BEGIN
     END
     POPUP "Compare"
     BEGIN
-        MENUITEM "&New Compare",                ID_COMP_NEW
+        MENUITEM "&New Compare...",             ID_COMP_NEW
         MENUITEM SEPARATOR
         MENUITEM "&Hide Compare View",          ID_COMP_HIDE
         MENUITEM "&Split Compare View",         ID_COMP_SPLIT
         MENUITEM "&Tabbed Compare View",        ID_COMP_TAB
         MENUITEM SEPARATOR
-        MENUITEM "Recent First Difference",     ID_COMP_FIRST
-        MENUITEM "Recent Previous Difference",  ID_COMP_PREV
-        MENUITEM "Recent Next Difference",      ID_COMP_NEXT
-        MENUITEM "Recent Last Difference",      ID_COMP_LAST
-        MENUITEM SEPARATOR
         MENUITEM "None",                        ID_COMP_ALL_DUMMY
+        MENUITEM SEPARATOR
         MENUITEM "&Auto Sync",                  ID_COMP_AUTO_SYNC
         MENUITEM "A&uto Scroll",                ID_COMP_AUTO_SCROLL
     END
@@ -3607,6 +3603,7 @@ BEGIN
     IDS_BOOKMARK_NOTFOUND   "Bookmark not found"
     IDS_BOOKMARK_FILENOTFOUND "The file containing the bookmark was not found"
     IDS_REG_REQUIRED        "Administrator Privileges required for Registry Changes"
+    IDS_USE_AERIAL_SCHEME   "Change to MANY scheme?      "
 END
 
 STRINGTABLE 
@@ -4895,7 +4892,7 @@ END
 IDD_NEW_COMPARE DIALOGEX 0, 0, 219, 134
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "New Compare With"
+CAPTION "Compare With"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     CONTROL         "Self - monitor file for changes",IDC_COMPARE_SELF,
