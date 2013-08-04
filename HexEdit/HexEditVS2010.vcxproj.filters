@@ -1,0 +1,1163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{a4489726-3c74-466e-9e84-20aed55ef987}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{d1eda88a-4815-4007-b2fd-5d3f0ed8f37c}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{5d763f96-d01c-40bc-b7a6-0644425cf51b}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Help Files">
+      <UniqueIdentifier>{745fe01f-b23a-4bf0-b11f-c4f6253daf53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Text Files">
+      <UniqueIdentifier>{3a4a1327-5298-4e7b-8eef-120adadf45f2}</UniqueIdentifier>
+      <Extensions>txt</Extensions>
+    </Filter>
+    <Filter Include="Grid Source Files">
+      <UniqueIdentifier>{868ca46a-7397-403d-b505-fcba070f3de5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="zlib">
+      <UniqueIdentifier>{629ce16e-2698-447b-9eb1-40fcaedbbc6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="zlib\header">
+      <UniqueIdentifier>{2b62b6ab-2bae-4c36-8f77-26a8a095af9c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AerialView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Algorithm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BGAerial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BGCompare.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BGSearch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BGstats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BigInteger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bin2Src.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bookmark.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BookmarkDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BookmarkFind.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Boyer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CalcDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CalcEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CFile64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildFrm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CompareView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CompressDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Control.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CopyCSrc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="crypto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataFormatView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DFFDData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DFFDEVAL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DFFDFor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DFFDGlobal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DFFDIf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DFFDJUMP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DFFDMisc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DFFDStruct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DFFDSwitch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DFFDUseStruct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DocData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EBCDIC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EmailDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Explorer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Expr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FindDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GenDockablePane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneralCRC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HexEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HexEditDoc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HexEditMacro.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HexEditSplitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HexEditView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HexFileList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HexPrintDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IntelHex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="md5.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NavManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NewFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NewScheme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenSpecialDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Options.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Password.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Preview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Print.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Prop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RecentFileDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Register.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizeCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveDffd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Security.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sha1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleSplitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecialList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Splasher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SRecord.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemSound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TabView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Template.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TipDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TipWnd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TParseDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransparentListBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransparentStatic2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateChecker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Xmltree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridBtnCell_src\BtnDataBase.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridBtnCell_src\GridBtnCell.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridBtnCell_src\GridBtnCellBase.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridBtnCell_src\GridBtnCellCombo.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\GridCell.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\GridCellBase.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NewCellTypes\GridCellCombo.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NewCellTypes\GridCellDateTime.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\GridCtrl.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\GridDropTarget.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridTreeBtnCell_src\GridTreeBtnCell.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeColumn_src\GridTreeCell.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeColumn_src\GridTreeCellBase.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\InPlaceEdit.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\TitleTip.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeColumn_src\TreeColumn.cpp">
+      <Filter>Grid Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\adler32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\compress.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\crc32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\deflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzio.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\infback.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inffast.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inftrees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\trees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\uncompr.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\zutil.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resource.hm">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="RES\back.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\back_hot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\graphics\HexEditButtons\calc.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\cogs.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\colour.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\cross.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\curSmallArrows.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\data.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="DefaultToolbarImages.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\del.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\devimage.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\display.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\display.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\docdisp.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\docdisplay.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\docedit.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\docedit.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\down.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\edit.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\edit.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\editbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\editbarCold.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\editbarDisabled.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\editbarHot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\eval.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\exclam.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\filter.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\flip.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\flip1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\flip1_ho.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\flip_hot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\for.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\formtbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\formtbarCold.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\formtbarDisabled.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\formtbarHot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\forw.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\forw_hot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\HandGrab.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\HandOpen.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\HexEdit.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\HexEditDoc.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\highligh.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\hist.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\ico00001.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\ico00002.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\icon2.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\icon3.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\idr_main.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\if.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\imagelis.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\info.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\info.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\jump.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\layout.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\litebulb.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\macro.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\Mainbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\mainfram.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\misc.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\miscCold.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\miscDisabled.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\miscHot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\navbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\navbarCold.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\navbarDisabled.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\navbarHot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\new.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\operations.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\operationsCold.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\operationsDisabled.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\operationsHot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\optionsimages.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\parent.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\parent_hot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\printer.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\question.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\refresh.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\refresh_hot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\search.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\struct.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\switch.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\system.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\templates.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\tips.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\tmp.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\toolbar24.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\toolbar24_cold.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\toolbar24_disabled.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\toolbarCold.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\toolbarDisabled.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\toolbarHot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\up.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\vert.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\vert_hot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\view.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\view_hot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Res\window.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="HelpID.hm">
+      <Filter>Help Files</Filter>
+    </None>
+    <None Include="HLP\HexEdit.rtf">
+      <Filter>Help Files</Filter>
+    </None>
+    <None Include="MakehelpV.bat">
+      <Filter>Help Files</Filter>
+    </None>
+    <None Include="TestData\_xxx.xml">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\Address_RegUser.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\BinaryFileFormat.dtd">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\CONTROL">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\default.xml">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\dffd.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="Ebcdic.tab">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\email3.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\HeadLine.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="HexEdit.tip">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\License.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\NewWebSite.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\NOTES.TXT">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="Install\Order.Txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="ReadMe.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="Install\ReadMe.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\ReadMeTemplate.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\reguser.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="Install\RelNotes.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\T1">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\T2">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\T3">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\T4">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\T5">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\T6">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\T7">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\T8">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\T9">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="touch2.bat">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="touch3.bat">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="Touchf.bat">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="TestData\WebSearch.txt">
+      <Filter>Text Files</Filter>
+    </None>
+    <None Include="manifest.xml" />
+    <None Include="TestData\ToDo.txt">
+      <Filter>Text Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HexEdit.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AerialView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AvoidableDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BCGMisc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BigInteger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bin2Src.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bookmark.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BookmarkDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BookmarkFind.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boyer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CalcDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CalcEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CFile64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildFrm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CompareView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Control.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CoordAp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CopyCSrc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="crypto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataFormatView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DFFDData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DFFDEVAL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DFFDFor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DFFDGlobal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DFFDIf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DFFDJUMP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DFFDMisc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DFFDStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DFFDSwitch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DFFDUseStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EmailDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Explorer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Expr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FindDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GenDockablePane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralCRC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HexEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HexEditDoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HexEditMacro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HexEditSplitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HexEditView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HexFileList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HexPrintDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IntelHex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="md5.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Misc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NavManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NewFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NewScheme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ntapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenSpecialDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="optypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Password.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Preview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Prop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="range_set.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RecentFileDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Register.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizeCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveDffd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scheme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Security.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sha1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleSplitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecialList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Splasher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SRecord.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemSound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TabView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TipDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TipWnd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TParseDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransparentListBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransparentStatic2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateChecker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="w2k_def.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Xmltree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridBtnCell_src\BtnDataBase.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\CellRange.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridBtnCell_src\GridBtnCell.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridBtnCell_src\GridBtnCellBase.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridBtnCell_src\GridBtnCellCombo.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\GridCell.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\GridCellBase.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NewCellTypes\GridCellCombo.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NewCellTypes\GridCellDateTime.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\GridCtrl.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\GridDropTarget.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridTreeBtnCell_src\GridTreeBtnCell.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeColumn_src\GridTreeCell.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeColumn_src\GridTreeCellBase.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\InPlaceEdit.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\MemDC.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\TitleTip.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeColumn_src\TreeColumn.h">
+      <Filter>Grid Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\crc32.h">
+      <Filter>zlib\header</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\deflate.h">
+      <Filter>zlib\header</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inffast.h">
+      <Filter>zlib\header</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inffixed.h">
+      <Filter>zlib\header</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inflate.h">
+      <Filter>zlib\header</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inftrees.h">
+      <Filter>zlib\header</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\trees.h">
+      <Filter>zlib\header</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zconf.h">
+      <Filter>zlib\header</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zlib.h">
+      <Filter>zlib\header</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zutil.h">
+      <Filter>zlib\header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Hlp\Hexedit.hpj">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SVNRevisionTemplate.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

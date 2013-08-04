@@ -37,7 +37,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Andrew\cpp_out\HexEdit\ReleaseVS2010\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Andrew\cpp_out\HexEdit\ReleaseVS2010\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
@@ -91,7 +91,7 @@
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>C:\Andrew\cpp_out\HexEdit\ReleaseVS2010\HexEditPro.exe</OutputFile>
+      <OutputFile>$(OutDir)HexEditPro.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>$(IntDir)HexEditPro.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -140,7 +140,7 @@
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>C:\Andrew\cpp_out\HexEdit\DebugVS2010\HexEditPro.exe</OutputFile>
+      <OutputFile>$(OutDir)HexEditPro.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
