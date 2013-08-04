@@ -1796,6 +1796,7 @@ BOOL CHexEditView::set_colours()
 	return retval;
 }
 
+// Set up colour table (kala) from colour scheme for fast access to colour info
 void CHexEditView::get_colours(std::vector<COLORREF> &kk)
 {
 	int ii;
@@ -3111,32 +3112,45 @@ void CHexEditView::OnDraw(CDC* pDC)
 		CTime tearliest = tnew - CTimeSpan(0, 0, 15, 0);   // older diffs are shown in lighter shades
 		for (int rr = GetDocument()->ResultCount() - 1; rr >= 0; rr--)
 		{
-			COLORREF col, col2;   // colours for replace (underline) + delete, and also for inserts
 			CTime tt = GetDocument()->ResultTime(rr);
 			if (tt < tearliest)
 				continue;
-			// Tone down based on how long agoo the change was made (up to 0.8 since toning down more is not that visible)
+			// Tone down based on how long ago the change was made (up to 0.8 since toning down more is not that visible)
 			double amt = 0.8 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds());
-			col = ::tone_down(comp_col_, bg_col_, amt);
-			col2 = ::tone_down(comp_bg_col_, bg_col_, amt);
 			for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->CompareDifferences(rr); ++dd)
 			{
 				FILE_ADDRESS addr;
 				int len;
+				bool insert;
 
-				GetDocument()->GetOrigDiff(rr, dd, addr, len);
+				GetDocument()->GetOrigDiff(rr, dd, addr, len, insert);
 
 				if (addr + len < first_virt)
 					continue;         // before top of window
 				else if (addr >= last_virt)
 					break;            // after end of window
 
+				// Work out where a how to highlight insertion/replacement
+				COLORREF col;       // colours to shown underline (replace) or background (insert)
+				int vert;
+				if (insert)
+				{
+					// USe full height toned down background colour
+					col = ::tone_down(comp_bg_col_, bg_col_, amt);
+					vert = -1;
+				}
+				else
+				{
+					col = ::tone_down(comp_col_, bg_col_, amt);
+					vert = (pDC->IsPrinting() ? print_text_height_ : text_height_)/8;
+				}
+
 				draw_bg(pDC, doc_rect, neg_x, neg_y,
 						line_height, char_width, char_width_w, col,
 						max(addr, first_addr), 
 						min(addr+len, last_addr),
 						false,  // overwrite (not merge) since mutiple changes at the same address really mess up the colours
-						(pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
+						vert);
 			}
 		}
 	}
@@ -18674,8 +18688,23 @@ void CHexEditView::OnAsr64bit()
 
 template<class T> void ProcUnary(CHexEditView *pv, T val, T *buf, size_t count, unary_type op)
 {
-	// Operate on all the selected values
-	for (size_t ii = 0; ii < count; ++ii)
+	size_t ii = 0;
+#ifdef USE_SSE2
+	// This speeds up NOT operation somewhat (though disk is normally limiting factor).
+	// Note that we can only do this easily for NOT as it is the only operation
+	// that does not need byte order reversal for big-endian and has an SSE2 instruction.
+	if (op == unary_not)
+	{
+		__m128i all_on = _mm_set1_epi8 ('\xFF');
+		for ( ; ii < count - 16; ii += 16)
+		{
+			// There is no SSE2 for NOT so XOR with FFFFffffFFFFffffFFFFffffFFFFffffFFFFffffFFFFffffFFFFffffFFFFffff
+			*((__m128i *)&buf[ii]) = _mm_xor_si128(*((__m128i *)&buf[ii]), all_on);
+		}
+	}
+#endif
+	// Operate on all the (remaining) values
+	for ( ; ii < count; ++ii)
 	{
 		// Reverse if big endian and the operation calls for it.
 		if (pv->BigEndian() && op != unary_flip)
@@ -18824,11 +18853,17 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 
 		// Get data buffer
 		size_t len, buflen = size_t(min(4096, end_addr - start_addr));
+
+#ifdef USE_SSE2
+		// Need 16 byte alignment for SSE2 instructions
+		if ((buf = (unsigned char *)_aligned_malloc(buflen, 16)) == NULL)
+#else
 		try
 		{
 			buf = new unsigned char[buflen];
 		}
 		catch (std::bad_alloc)
+#endif
 		{
 			AfxMessageBox("Insufficient memory");
 			theApp.mac_error_ = 10;
@@ -18922,11 +18957,16 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 
 		CWaitCursor wait;                           // Turn on wait cursor (hourglass)
 
+#ifdef USE_SSE2
+		// Need better alignment for SSE2 instructions
+		if ((buf = (unsigned char *)_aligned_malloc(size_t(end_addr - start_addr), 16)) == NULL)
+#else
 		try
 		{
 			buf = new unsigned char[size_t(end_addr - start_addr)];
 		}
 		catch (std::bad_alloc)
+#endif
 		{
 			AfxMessageBox("Insufficient memory");
 			theApp.mac_error_ = 10;
@@ -18958,7 +18998,11 @@ func_return:
 	mm->Progress(-1);  // disable progress bar
 
 	if (buf != NULL)
+#ifdef USE_SSE2
+		_aligned_free(buf);
+#else
 		delete[] buf;
+#endif
 }
 
 void CHexEditView::OnIncByte()
@@ -19726,7 +19770,8 @@ void CHexEditView::OnCompFirst()
 	{
 		FILE_ADDRESS addr;
 		int len;
-		GetDocument()->GetOrigDiff(0, 0, addr, len);
+		bool insert;
+		GetDocument()->GetOrigDiff(0, 0, addr, len, insert);
 		MoveToAddress(addr, addr+len);
 	}
 }
@@ -19747,7 +19792,8 @@ void CHexEditView::OnCompPrev()
 	{
 		FILE_ADDRESS addr;
 		int len;
-		GetDocument()->GetOrigDiff(0, idx - 1, addr, len);
+		bool insert;
+		GetDocument()->GetOrigDiff(0, idx - 1, addr, len, insert);
 		MoveToAddress(addr, addr+len);
 	}
 }
@@ -19771,7 +19817,8 @@ void CHexEditView::OnCompNext()
 	{
 		FILE_ADDRESS addr;
 		int len;
-		GetDocument()->GetOrigDiff(0, idx, addr, len);
+		bool insert;
+		GetDocument()->GetOrigDiff(0, idx, addr, len, insert);
 		MoveToAddress(addr, addr+len);
 	}
 }
@@ -19793,7 +19840,8 @@ void CHexEditView::OnCompLast()
 	{
 		FILE_ADDRESS addr;
 		int len;
-		GetDocument()->GetOrigDiff(0, count - 1, addr, len);
+		bool insert;
+		GetDocument()->GetOrigDiff(0, count - 1, addr, len, insert);
 		MoveToAddress(addr, addr+len);
 	}
 }
