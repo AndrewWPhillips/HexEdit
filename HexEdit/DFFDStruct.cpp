@@ -907,7 +907,7 @@ void CDFFDStruct::OnDown()
 	if (item < 0 || item >= ctl_elements_.GetCount()-2) return;
 
 	// Move the node
-	if (item == ctl_elements_.GetCount()-3)     // 2nd last item whihc is last that can move down
+	if (item == ctl_elements_.GetCount()-3)     // 2nd last item which is last that can move down
 		pelt_->InsertChild(pelt_->GetChild(long(item)), NULL);
 	else
 	{

@@ -702,21 +702,36 @@ void CCompareView::OnDraw(CDC* pDC)
 	{
 		FILE_ADDRESS addr;
 		int len;
+		bool insert;
 
-		GetDocument()->GetCompDiff(0, dd, addr, len);
+		GetDocument()->GetCompDiff(0, dd, addr, len, insert);
 
 		if (addr + len < first_virt)
 			continue;         // before top of window
 		else if (addr >= last_virt)
 			break;            // after end of window
 
+		COLORREF col;       // colours to shown underline (replace) or background (insert)
+		int vert;
+		if (insert)
+		{
+			// Use full height toned down background colour
+			col = phev_->comp_bg_col_;
+			vert = -1;
+		}
+		else
+		{
+			col = phev_->comp_col_;
+			vert = (pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8;
+		}
+
 		// TBD xxx need to handle inserts/deletes here one day
 		draw_bg(pDC, doc_rect, neg_x, neg_y,
 				line_height, char_width, char_width_w,
-				phev_->comp_col_,
+				col,
 				max(addr, first_addr), 
 				min(addr+len, last_addr),
-				(pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8);
+				vert);
 	}
 
 	unsigned char buf[CHexEditView::max_buf];  // Holds bytes for current line being displayed
@@ -1914,10 +1929,12 @@ void CCompareView::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		FILE_ADDRESS start_addr, end_addr, hev_start, hev_end;
 		GetSelAddr(start_addr, end_addr);
-		// Make sure new selection is not past EOF of hex view file
 		phev_->GetSelAddr(hev_start, hev_end);
-		if (start_addr > hev_end) start_addr = hev_end;
-		if (end_addr > hev_end) end_addr = hev_end;
+		if (start_addr == hev_start && end_addr == hev_end)
+			return;
+		// Make sure new selection is not past EOF of hex view file
+		if (start_addr > GetDocument()->length()) start_addr = GetDocument()->length();
+		if (end_addr > GetDocument()->length()) end_addr = GetDocument()->length();
 		phev_->SetAutoSyncCompare(false);  // avoid inf. recursion
 		phev_->MoveWithDesc("Compare Auto-sync", start_addr, end_addr);
 		phev_->SetAutoSyncCompare(true);
@@ -1979,7 +1996,8 @@ void CCompareView::OnCompFirst()
 	{
 		FILE_ADDRESS addr;
 		int len;
-		GetDocument()->GetCompDiff(0, 0, addr, len);
+		bool insert;
+		GetDocument()->GetCompDiff(0, 0, addr, len, insert);
 		MoveToAddress(addr, addr+len);
 	}
 }
@@ -2000,7 +2018,8 @@ void CCompareView::OnCompPrev()
 	{
 		FILE_ADDRESS addr;
 		int len;
-		GetDocument()->GetCompDiff(0, idx - 1, addr, len);
+		bool insert;
+		GetDocument()->GetCompDiff(0, idx - 1, addr, len, insert);
 		MoveToAddress(addr, addr+len);
 	}
 }
@@ -2024,7 +2043,8 @@ void CCompareView::OnCompNext()
 	{
 		FILE_ADDRESS addr;
 		int len;
-		GetDocument()->GetCompDiff(0, idx, addr, len);
+		bool insert;
+		GetDocument()->GetCompDiff(0, idx, addr, len, insert);
 		MoveToAddress(addr, addr+len);
 	}
 }
@@ -2046,7 +2066,8 @@ void CCompareView::OnCompLast()
 	{
 		FILE_ADDRESS addr;
 		int len;
-		GetDocument()->GetCompDiff(0, count - 1, addr, len);
+		bool insert;
+		GetDocument()->GetCompDiff(0, count - 1, addr, len, insert);
 		MoveToAddress(addr, addr+len);
 	}
 }

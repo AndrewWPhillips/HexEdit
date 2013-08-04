@@ -155,23 +155,6 @@ int CHexEditDoc::GetCompareFile(int view, bool & auto_sync, bool & auto_scroll, 
 		compFileName_ = pfl->GetData(idx, CHexFileList::COMPFILENAME);
 	}
 
-#ifdef  ONLY_FILE_COMPARE
-	bCompSelf_ = false;
-
-	if (!bForcePrompt && !compFileName_.IsEmpty() && _access(compFileName_, 0) != -1)
-		return view;         // we can just reopen the same file
-
-	CHexFileDialog dlgFile("CompareFileDlg", HIDD_FILE_COMPARE, TRUE, NULL, compFileName_,
-						   OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_DONTADDTORECENT,
-						   theApp.GetCurrentFilters(), "Compare", AfxGetMainWnd());
-
-	dlgFile.m_ofn.lpstrTitle = "Compare To File";
-
-	if (dlgFile.DoModal() != IDOK)
-		return 0;
-
-	compFileName_ = dlgFile.GetPathName();
-#else
 	CNewCompare dlg;
 
 	if (compFileName_.IsEmpty())
@@ -219,7 +202,6 @@ int CHexEditDoc::GetCompareFile(int view, bool & auto_sync, bool & auto_scroll, 
 
 	auto_sync = dlg.auto_sync_ != 0;
 	auto_scroll = dlg.auto_scroll_ != 0;
-#endif
 
 	if (pfl != NULL && idx > -1)
 		pfl->SetData(idx, CHexFileList::COMPFILENAME, GetCompFileName());
@@ -315,7 +297,7 @@ int CHexEditDoc::CompareDifferences(int rr /*=0*/)
 	{
 		return -2;
 	}
-
+	// xxx TBD?
 	ASSERT(rr >= 0 && rr < comp_.size());  // also ensures
 	ASSERT(comp_[rr].m_addrA.size() == comp_[rr].m_addrB.size());
 	return comp_[rr].m_addrA.size();
@@ -783,19 +765,8 @@ UINT CHexEditDoc::RunCompThread()
 			int gota, gotb;  // Amount of data obtained from each file
 
 			// Get the next chunks
-			if ((gota = GetData    (comp_bufa_, buf_size, addr, 4)) <= 0 ||
-				(gotb = GetCompData(comp_bufb_, buf_size, addr, true)) <= 0)
-			{
-				// We save the results of the compare along with when it was done
-				result.Final();
-
-				TRACE("+++ BGCompare: finished scan for %p\n", this);
-				CSingleLock sl(&docdata_, TRUE); // Protect shared data access
-
-				comp_[0] = result;
-				comp_fin_ = true;
-				break;                          // falls out to wait state
-			}
+			gota = GetData    (comp_bufa_, buf_size, addr, 4);
+			gotb = GetCompData(comp_bufb_, buf_size, addr, true);
 
 			int pos = 0, endpos = std::min(gota, gotb);   // The bytes of comp_bufa_/comp_bufb_ to compare
 
@@ -825,11 +796,47 @@ UINT CHexEditDoc::RunCompThread()
 						break;
 
 				result.m_len.push_back(int(addr + pos - result.m_addrA.back()));
+				result.m_type.push_back(CompResult::Replacement);
+
 				ASSERT(result.m_addrA.size() == result.m_len.size());     // must always be same length
 				ASSERT(result.m_addrA.size() == result.m_addrB.size());
+				ASSERT(result.m_addrA.size() == result.m_type.size());
 			}
 
 			addr += std::min(gota, gotb);
+			if (gota < gotb)
+			{
+				gotb -= gota;
+				gota = 0;
+
+				result.m_addrA.push_back(addr);
+				result.m_addrB.push_back(addr);
+				result.m_len.push_back(gotb);
+				result.m_type.push_back(CompResult::Deletion);  // extra bytes in compare file
+			}
+			else if (gotb < gota)
+			{
+				gota -= gotb;
+				gotb = 0;
+
+				result.m_addrA.push_back(addr);
+				result.m_addrB.push_back(addr);
+				result.m_len.push_back(gota);
+				result.m_type.push_back(CompResult::Insertion);  // extra byte(s) in orig file
+			}
+
+			if (gota <= 0 || gotb <= 0)
+			{
+				// We save the results of the compare along with when it was done
+				result.Final();
+
+				TRACE("+++ BGCompare: finished scan for %p\n", this);
+				CSingleLock sl(&docdata_, TRUE); // Protect shared data access
+
+				comp_[0] = result;
+				comp_fin_ = true;
+				break;                          // falls out to wait state
+			}
 		}
 		delete[] comp_bufa_; comp_bufa_ = NULL;
 		delete[] comp_bufb_; comp_bufb_ = NULL;

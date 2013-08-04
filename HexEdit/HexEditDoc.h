@@ -903,7 +903,7 @@ private:
 
 	public:
 		enum Type { Deletion = -1, Replacement = 0, Insertion = 1, };
-		void Reset(const CTime &tm) { m_addrA.clear(); m_addrB.clear(); m_len.clear(); m_fileTime = tm; }
+		void Reset(const CTime &tm) { m_addrA.clear(); m_addrB.clear(); m_len.clear(); m_type.clear(); m_fileTime = tm; }
 		void Final() { m_compTime = CTime::GetCurrentTime(); }
 
 	private:
@@ -925,21 +925,25 @@ private:
 	const CTime & ResultTime(int rr) const { CSingleLock sl(&docdata_, TRUE); ASSERT(rr < comp_.size()); return comp_[rr].m_compTime; }
 	// We need to be able to return differences from the point of view of the original file
 	// and the compared file.  For now these are the same but later there will be differences.
-	void GetOrigDiff(int rr, int idx, FILE_ADDRESS &addr, int &len)
+	void GetOrigDiff(int rr, int idx, FILE_ADDRESS &addr, int &len, bool &insert)
 	{
 		CSingleLock sl(&docdata_, TRUE);
 		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addrA.size());
 		ASSERT(comp_[rr].m_addrA.size() == comp_[rr].m_len.size());
+		ASSERT(comp_[rr].m_addrA.size() == comp_[rr].m_type.size());
 		addr = comp_[rr].m_addrA[idx];
 		len = comp_[rr].m_len[idx];
+		insert = comp_[rr].m_type[idx] > 0;
 	}
-	void GetCompDiff(int rr, int idx, FILE_ADDRESS &addr, int &len)
+	void GetCompDiff(int rr, int idx, FILE_ADDRESS &addr, int &len, bool &insert)
 	{
 		CSingleLock sl(&docdata_, TRUE);
 		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addrB.size());
 		ASSERT(comp_[rr].m_addrB.size() == comp_[rr].m_len.size());
+		ASSERT(comp_[rr].m_addrB.size() == comp_[rr].m_type.size());
 		addr = comp_[rr].m_addrB[idx];
 		len = comp_[rr].m_len[idx];
+		insert = comp_[rr].m_type[idx] < 0;
 	}
 
 	// ------- To calculate file statistics in background thread (see BGstats.cpp) ----------

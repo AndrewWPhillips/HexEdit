@@ -62,19 +62,18 @@ typedef __int64 FILE_ADDRESS;
 #define SM_SAMEDISPLAYFORMAT    81
 #endif
 
-
 // Conditional compilation flags - always to be used
+#define USE_SSE2         1  // Use SSE2 (SIMD) instructions to speed up some operations
 #define BOOST_CRC        1  // Use Boost CRC code rather than rather than dubious code I got somewhere
 #define BOOST_RAND       1  // Use Boost PRNGs rather than my own one
 #define USE_OWN_PRINTDLG 1  // Replace the standard print dialog with our own derived dialog
-#define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so temp file is not required)
+#define INPLACE_MOVE 1      // Writes all changes to the file in place - even when bytes inserted/deleted (so a temp file is not required)
 #define SYS_SOUNDS      1   // Use system sounds - make an option for system sounds vs internal spkr
 
 #define SHOW_CODE_PAGE  1
 #define PROP_INFO       1   // Display info (Summary) page in properties dialog
 #define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
 #define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
-//#define ONLY_FILE_COMPARE 1  // Only allow compare to another file (no self-compare)
 
 #define USE_FREE_IMAGE  1   // When this is enabled we need to get rid of EnBitmap.cpp from the project
 #define FILE_PREVIEW    1   // Preview capture and display in file open dialog
