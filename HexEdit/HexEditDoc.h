@@ -656,6 +656,10 @@ public:
 	UINT RunAerialThread();     // Main func in bg thread
 	int AerialProgress();       // 0 to 100 (or -1 if not scanning)
 
+	// Bitmap preview
+	long GetPreviewAddress() { return preview_address_; }
+	void SetPreviewAddress(long a) { preview_address_ = a; }
+
 	// Compare stuff (implemented in BGCompare.cpp)
 	void AddCompView(CHexEditView *pview);
 	void RemoveCompView();
@@ -870,6 +874,9 @@ private:
 	void KillAerialThread();    // Kill background thread ASAP
 	void GetAerialBitmap(int clear = 0xC0); // Check if bitmap has been allocated/is big enough and get it if not
 	bool AerialProcessStop();   // Check if the scanning should stop
+
+	// ------------- bitmap preview view (see BGpreview.cpp) -----------
+	long preview_address_;   // Each doc must store address where FreeImage (eg: FreeImage_LoadFromHandle) is currently reading from in the file
 
 	// -------------- file compare (see BGCompare.cpp) -----------------
 	CFile64 *pfile4_;           // Copy of the original file (avoids synchronising access)

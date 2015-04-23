@@ -102,7 +102,8 @@ CHexEditDoc::CHexEditDoc()
  : start_search_event_(FALSE, TRUE), search_buf_(NULL),
    start_aerial_event_(FALSE, TRUE), aerial_buf_(NULL),
    start_comp_event_  (FALSE, TRUE), comp_bufa_(NULL), comp_bufb_(NULL),
-   stats_buf_(NULL), c32_(NULL), c64_(NULL)
+   stats_buf_(NULL), c32_(NULL), c64_(NULL),
+   preview_address_(0L)
 {
 	doc_changed_ = false;
 
@@ -2012,9 +2013,9 @@ void CHexEditDoc::OnDocTest()
 {
 }
 
+#if 0
 void CHexEditDoc::OnTest()
 {
-#if 0
 	CXmlTree xt;
 
 	if (!xt.LoadString("<?xml version=\"1.0\" ?>\n"
@@ -2043,8 +2044,8 @@ void CHexEditDoc::OnTest()
 
 		AfxMessageBox(xt.DumpXML());
 	}
-#endif
 }
+#endif
 
 
 
