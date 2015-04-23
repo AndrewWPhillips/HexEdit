@@ -51,6 +51,7 @@ BOOL GetDataPath(CString &data_path, int csidl = CSIDL_APPDATA);
 CString FileErrorMessage(const CFileException *fe, UINT mode = CFile::modeRead|CFile::modeWrite);
 enum wipe_t { WIPE_FAST, WIPE_GOOD, WIPE_THOROUGH, WIPE_LAST };
 BOOL WipeFile(const char * filename, wipe_t wipe_type = WIPE_GOOD);
+bool UncompressAndWriteFile(const char *filename, unsigned char *data, size_t len);
 void SetFileCreationTime(const char *filename, time_t tt);
 void SetFileAccessTime(const char *filename, time_t tt);
 BOOL SetFileTimes(const char * filename, const FILETIME * cre, const FILETIME * acc = NULL, const FILETIME * mod = NULL);

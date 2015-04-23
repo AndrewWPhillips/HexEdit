@@ -156,6 +156,7 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include <winioctl.h>           // For DISK_GEOMETRY, IOCTL_DISK_GET_DRIVE_GEOMETRY etc
 #include <direct.h>             // For _getdrive()
 #include <FreeImage.h>
+#include "zlib/zlib.h"          // For decompression
 
 #include "misc.h"
 #include "Security.h"
@@ -1678,6 +1679,52 @@ BOOL WipeFile(const char * filename, wipe_t wipe_type /*= WIPE_GOOD*/)
 	delete[] bufF6;
 	delete[] bufrand;
 	return TRUE;
+}
+
+// Given some in-mmemory compessed (zlib) data, uncompress it and write to file
+//   filename = name of the file to write
+//   data = points to complete compressed data to be written to the file
+//   len  = length of the (compressed) data
+//   returns: true on success of falso on error
+bool UncompressAndWriteFile(const char *filename, unsigned char *data, size_t len)
+{
+	z_stream zs = {0};
+	if (inflateInit(&zs) != Z_OK)
+		return false;
+
+	zs.next_in = data;   // input buffer is the whole thing
+	zs.avail_in = len;
+	try
+	{
+		unsigned char out_data[1024];  // where uncompressed data is buffered before writing
+
+		CFile64 ff(filename, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary);
+		do
+		{
+			// Prepare output buffer
+			zs.next_out = out_data;
+			zs.avail_out = sizeof(out_data);
+
+			if (inflate(&zs, Z_NO_FLUSH) > Z_STREAM_END)
+			{
+				// Some sort of zlib decompression error
+				ff.Close();
+				::remove(filename);  // no point in leaving a partial/empty file around
+				return false;
+			}
+
+			ff.Write(out_data, sizeof(out_data) - zs.avail_out);  // write all that we got
+		} while (zs.avail_in != 0);  // if output buffer is full there may be more
+
+		ff.Close();
+	}
+	catch (CFileException *pfe)
+	{
+		// Some sort of error opening or writing to the file
+		pfe->Delete();
+		return false;
+	}
+	return true;
 }
 
 // Change a file's "creation" time
