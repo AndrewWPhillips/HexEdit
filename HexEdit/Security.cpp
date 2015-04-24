@@ -556,7 +556,7 @@ void CHexEditApp::SaveTo(const char *filename, const void *pdata, size_t len)
 	// Get file times to restore later
 	struct _stat status;
 	bool times_ok = _stat(filename, &status) == 0;
-	ASSERT(times_ok);
+	//ASSERT(times_ok);
 
 	unsigned long filesize, hdrsize, width, height;
 	unsigned short bitcount = -1;

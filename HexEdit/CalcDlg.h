@@ -113,7 +113,12 @@ public:
 	{ 
 		char * ss = mpz_get_str(NULL, 10, get_norm(current_).get_mpz_t()); 
 		CString retval(ss); 
+
+		// This was added due to linking with release version of mpir.lib causing debug free() to throw an exception
+		// xxx we need a better solution (eg, in debug mode link with debug mpir.lib?) since this causes memory leak messages
+#ifdef _DEBUG
 		free(ss); 
+#endif
 		return retval; 
 	}
 
