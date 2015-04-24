@@ -1205,9 +1205,6 @@
 #define IDC_HIST_PAGE                   1587
 #define IDC_FILTERS_PAGE                1588
 #define IDC_EDIT                        1590
-#define IDC_DISPLAY_TEMPLATE            1591
-#define IDC_DISPLAY_AERIAL              1592
-#define IDC_DISPLAY_COMP                1593
 #define IDC_CALC_BITS                   1594
 #define IDC_BITS_PLACEHOLDER            1595
 #define IDC_MAIN                        1596
@@ -1301,6 +1298,10 @@
 #define IDC_COMPARE_COMMENT             1685
 #define IDC_COMPARE_HELP                1686
 #define IDC_COMPARE_BROWSE              1687
+#define IDC_DISPLAY_TEMPLATE            1690
+#define IDC_DISPLAY_AERIAL              1691
+#define IDC_DISPLAY_COMP                1692
+#define IDC_DISPLAY_PREVW               1693
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1843,7 +1844,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        523
 #define _APS_NEXT_COMMAND_VALUE         39203
-#define _APS_NEXT_CONTROL_VALUE         1688
+#define _APS_NEXT_CONTROL_VALUE         1695
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
