@@ -163,6 +163,7 @@
     <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="BGAerial.cpp" />
     <ClCompile Include="BGCompare.cpp" />
+    <ClCompile Include="BGPreview.cpp" />
     <ClCompile Include="BGSearch.cpp" />
     <ClCompile Include="BGstats.cpp" />
     <ClCompile Include="BigInteger.cpp" />
@@ -225,6 +226,7 @@
     <ClCompile Include="Options.cpp" />
     <ClCompile Include="Password.cpp" />
     <ClCompile Include="Preview.cpp" />
+    <ClCompile Include="PrevwView.cpp" />
     <ClCompile Include="Print.cpp" />
     <ClCompile Include="Prop.cpp" />
     <ClCompile Include="RecentFileDlg.cpp" />
@@ -564,6 +566,7 @@
     <ClInclude Include="optypes.h" />
     <ClInclude Include="Password.h" />
     <ClInclude Include="Preview.h" />
+    <ClInclude Include="PrevwView.h" />
     <ClInclude Include="Prop.h" />
     <ClInclude Include="range_set.h" />
     <ClInclude Include="RecentFileDlg.h" />
