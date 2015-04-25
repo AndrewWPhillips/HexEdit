@@ -47,7 +47,8 @@ public:
 					 AERIALVIEW, AERIALDISPLAY, AERIALPOS,
 					 COMPVIEW, COMPFILENAME,
 					 CODEPAGE, MBFONT, MBHEIGHT, 
-					 PREVIEWFILENAME,                     // only used when FILE_PREVIEW is #defined but added to reserve the place
+					 PREVIEWFILENAME,                     // used for preview for hex or all views
+					 PREVIEWVIEW,                         // used for preview of a file (no relationship to PREVIEWFILENAME) - currently just bitmap files
 	};
 
 // Attributes

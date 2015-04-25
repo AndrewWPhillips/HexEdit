@@ -37,9 +37,7 @@ using namespace std;
 // Forward declarations
 class CHexEditDoc;
 class CChildFrame;
-class CDataFormatView;
-class CAerialView;
-class CCompareView;
+
 
 // Different types of undo's handled by the view
 enum undo_type
@@ -198,6 +196,7 @@ class CHexEditView : public CScrView
 	friend class CDataFormatView;
 	friend class CAerialView;
 	friend class CCompareView;
+	friend class CPrevwView;
 	friend class CTipExpr;
 
 protected: // create from serialization only
@@ -208,11 +207,13 @@ protected: // create from serialization only
 public:
 	// Add "sub" view ptrs here, which points to the view in the tab or splitter (or NULL if not visible)
 	CDataFormatView *pdfv_;           // template (tree) view
-	CAerialView *pav_;
-	CCompareView *pcv_;
-	int split_width_d_;                 // width of dffd view when last in split window
-	int split_width_a_;                 // width of aerial view when last in split window
-	int split_width_c_;                 // width of compare view when last in split window
+	CAerialView *pav_;                // aerial view
+	CCompareView *pcv_;               // view of file comparing with
+	CPrevwView *ppv_;                 // view for preview of bitmaps xxx
+	int split_width_d_;               // width of dffd view when last in split window
+	int split_width_a_;               // width of aerial view when last in split window
+	int split_width_c_;               // width of compare view when last in split window
+	int split_width_p_;               // width of preview view when last in split window xxx
 
 	enum { max_buf = 32767 };
 	CHexEditDoc *GetDocument();
@@ -795,6 +796,12 @@ public:
 	afx_msg void OnUpdateCompHide(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateCompSplit(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateCompTab(CCmdUI* pCmdUI);
+	afx_msg void OnPrevwHide();
+	afx_msg void OnPrevwSplit();
+	afx_msg void OnPrevwTab();
+	afx_msg void OnUpdatePrevwHide(CCmdUI* pCmdUI);
+	afx_msg void OnUpdatePrevwSplit(CCmdUI* pCmdUI);
+	afx_msg void OnUpdatePrevwTab(CCmdUI* pCmdUI);
 
 	afx_msg void OnOptScheme();  // color scheme toolbar combo (ID_SCHEME)
 	afx_msg void OnSelScheme();
@@ -845,6 +852,7 @@ public:
 	int TemplateViewType() const;
 	int AerialViewType() const;
 	int CompViewType() const;
+	int PrevwViewType() const;
 	void AdjustColumns();
 	bool DoCompSplit(bool init = true);   // must be public to be called from the doc
 	bool DoCompTab(bool init = true);
@@ -1111,6 +1119,9 @@ private:
 	bool DoDffdSplit();
 	bool DoAerialTab(bool init = true);
 	bool DoAerialSplit(bool init = true);
+
+	bool DoPrevwTab(bool init = true);
+	bool DoPrevwSplit(bool init = true);
 
 	void OnCodepage(int cp);
 	void OnUpdateCodepage(CCmdUI *pCmdUI, int cp);

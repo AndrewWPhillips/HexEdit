@@ -2405,6 +2405,8 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx default to on un
 
 	compview_ = GetProfileInt("Options", "CompareView", 0);
 
+	prevwview_ = GetProfileInt("Options", "PrevwView", 0);
+
 	dffdview_ = GetProfileInt("DataFormat", "TreeView", 0);
 	max_fix_for_elts_ = GetProfileInt("DataFormat", "MaxFixForElts", 20);
 	alt_data_bg_cols_ = GetProfileInt("DataFormat", "AltDataBgCols", 1) != 0 ? true : false;
@@ -2882,6 +2884,8 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Aerial", "MaxBitmapInMbytes", aerial_max_/(1024*1024));
 
 	WriteProfileInt("Options", "CompareView", compview_);
+
+	WriteProfileInt("Options", "PrevwView", prevwview_);
 
 	// Save data format view options
 	WriteProfileInt("DataFormat", "TreeView", dffdview_);
@@ -3474,6 +3478,7 @@ void CHexEditApp::get_options(struct OptValues &val)
 		val.display_template_ = pview->TemplateViewType();
 		val.display_aerial_ = pview->AerialViewType();
 		val.display_comp_ = pview->CompViewType();
+		val.display_prevw_ = pview->PrevwViewType();
 
 		val.disp_state_ = pview->disp_state_;
 		val.code_page_ = pview->code_page_;
@@ -3916,6 +3921,22 @@ void CHexEditApp::set_options(struct OptValues &val)
 				break;
 			case 2:
 				pview->OnCompTab();
+				break;
+			}
+		}
+
+		if (val.display_prevw_ != pview->PrevwViewType())
+		{
+			switch (val.display_prevw_)
+			{
+			case 0:
+				pview->OnPrevwHide();
+				break;
+			case 1:
+				pview->OnPrevwSplit();
+				break;
+			case 2:
+				pview->OnPrevwTab();
 				break;
 			}
 		}

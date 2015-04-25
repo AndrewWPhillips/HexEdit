@@ -123,6 +123,7 @@ void CHexFileList::SetDefaults()
 	SetDV(AERIALVIEW, theApp.aerialview_);
 	SetDV(AERIALDISPLAY, theApp.aerial_disp_state_);
 	SetDV(COMPVIEW, theApp.compview_);
+	SetDV(PREVIEWVIEW, theApp.prevwview_);
 
 	SetDV(SCHEME, theApp.open_scheme_name_);
 	SetDV(CODEPAGE, theApp.open_code_page_);
