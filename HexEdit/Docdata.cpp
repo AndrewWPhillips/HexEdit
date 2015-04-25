@@ -160,6 +160,11 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 				data_file5_[idx]->Seek(fileaddr + start, CFile::begin);
 				actual = data_file5_[idx]->Read((void *)buf, (UINT)tocopy);
 				break;
+			case 6:
+				ASSERT(data_file6_[idx] != NULL);
+				data_file6_[idx]->Seek(fileaddr + start, CFile::begin);
+				actual = data_file6_[idx]->Read((void *)buf, (UINT)tocopy);
+				break;
 			default:
 				ASSERT(0);
 				// fall through
@@ -230,6 +235,12 @@ int CHexEditDoc::AddDataFile(LPCTSTR name, BOOL temp /*=FALSE*/)
 				ASSERT(data_file5_[ii] == NULL);
 				data_file5_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
 			}
+			// If preview is on also open 6th copy of the file
+			if (pthread6_ != NULL)
+			{
+				ASSERT(data_file6_[ii] == NULL);
+				data_file6_[ii] = new CFile64(name, CFile::modeRead|CFile::shareDenyWrite|CFile::typeBinary);
+			}
 
 			temp_file_[ii] = temp;
 			return ii;
@@ -276,6 +287,13 @@ void CHexEditDoc::RemoveDataFile(int idx)
 			data_file5_[idx]->Close();
 			delete data_file5_[idx];
 			data_file5_[idx] = NULL;
+		}
+		if (pthread6_ != NULL)
+		{
+			ASSERT(data_file6_[idx] != NULL);
+			data_file6_[idx]->Close();
+			delete data_file6_[idx];
+			data_file6_[idx] = NULL;
 		}
 		// If the data file was a temp file remove it now it is closed
 		if (temp_file_[idx])

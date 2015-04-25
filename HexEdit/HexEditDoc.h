@@ -587,7 +587,8 @@ private:
 	CFile64 *data_file2_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background search thread
 	CFile64 *data_file3_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background aerial thread
 	CFile64 *data_file4_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background compare thread
-	CFile64 *data_file5_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background compare thread
+	CFile64 *data_file5_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by background stats thread
+	CFile64 *data_file6_[4 /*doc_loc::max_data_files*/];    // Ptrs to dupes for use by preview thread
 	BOOL temp_file_[4 /*doc_loc::max_data_files*/];         // Says if the file is temporary (should be deleted when doc closed)
 
 	// The following are used for change tracking
@@ -657,8 +658,17 @@ public:
 	int AerialProgress();       // 0 to 100 (or -1 if not scanning)
 
 	// Bitmap preview
-	long GetPreviewAddress() { return preview_address_; }
-	void SetPreviewAddress(long a) { preview_address_ = a; }
+	void AddPreviewView(CHexEditView *pview);
+	void RemovePreviewView();
+	void PreviewChange(CHexEditView *pview = NULL);  // Signal bg thread to re-scan
+	UINT RunPreviewThread();     // Main func in bg thread
+	int PreviewProgress();       // 0 to 100 (or -1 if not scanning)
+
+	// These four callback functions are used by FreeImage for displaying bitmaps read from memory
+    static unsigned __stdcall fi_read(void *buffer, unsigned size, unsigned count, fi_handle handle);
+	static unsigned __stdcall fi_write(void *buffer, unsigned size, unsigned count, fi_handle handle);
+	static int      __stdcall fi_seek(fi_handle handle, long offset, int origin);
+	static long     __stdcall fi_tell(fi_handle handle);
 
 	// Compare stuff (implemented in BGCompare.cpp)
 	void AddCompView(CHexEditView *pview);
@@ -876,7 +886,21 @@ private:
 	bool AerialProcessStop();   // Check if the scanning should stop
 
 	// ------------- bitmap preview view (see BGpreview.cpp) -----------
-	long preview_address_;   // Each doc must store address where FreeImage (eg: FreeImage_LoadFromHandle) is currently reading from in the file
+	CWinThread *pthread6_;       // Ptr to thread or NULL
+	CEvent start_preview_event_; // Starts the thread going
+	enum BG_COMMAND preview_command_;
+	enum BG_STATE   preview_state_;
+	bool preview_fin_;           // Flags that the bg scan is finished and the view needs updating
+	long preview_address_;       // Each doc must store address where FreeImage (eg: FreeImage_LoadFromHandle) is currently reading from the file
+
+	CFile64 *pfile6_;            // Using a copy of the file avoids synchronising access problems
+	// Also see data_file6_ (above)
+	int preview_count_;          // Number of preview views of this document
+	FIBITMAP *preview_dib_;      // The FreeImage bitmap used for the preview
+
+	void CreatePreviewThread();  // Create background thread which generates the preview bitmap
+	void KillPreviewThread();    // Kill background thread ASAP
+	bool PreviewProcessStop();   // Check if the scanning should stop
 
 	// -------------- file compare (see BGCompare.cpp) -----------------
 	CFile64 *pfile4_;           // Copy of the original file (avoids synchronising access)

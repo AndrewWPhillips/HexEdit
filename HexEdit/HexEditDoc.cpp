@@ -117,6 +117,7 @@ CHexEditDoc::CHexEditDoc()
 		data_file3_[ii] = NULL;
 		data_file4_[ii] = NULL;
 		data_file5_[ii] = NULL;
+		data_file6_[ii] = NULL;
 		temp_file_[ii] = FALSE;
 	}
 
@@ -141,6 +142,11 @@ CHexEditDoc::CHexEditDoc()
 
 	// BG stats thread
 	pthread5_ = NULL;
+
+	// Preview thread
+	pthread6_ = NULL;
+	preview_count_ = 0;
+	preview_dib_ = NULL;
 
 	// Template
 	ptree_ = NULL;         // XML tree wrapper for data format view
@@ -345,6 +351,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		       data_file3_[ii] == NULL &&
 		       data_file4_[ii] == NULL &&
 			   data_file5_[ii] == NULL &&
+			   data_file6_[ii] == NULL &&
 			   data_file_[ii] == NULL );
 #endif
 
@@ -892,6 +899,13 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 				delete data_file5_[ii];
 				data_file5_[ii] = NULL;
 			}
+			if (pthread6_ != NULL)
+			{
+				ASSERT(data_file6_[ii] != NULL);
+				data_file6_[ii]->Close();
+				delete data_file6_[ii];
+				data_file6_[ii] = NULL;
+			}
 
 			// If the data file was a temp file remove it now it is closed
 			if (temp_file_[ii])
@@ -1043,6 +1057,12 @@ void CHexEditDoc::close_file()
 		pfile5_->Close();
 		delete pfile5_;
 		pfile5_ = NULL;
+	}
+	if (pthread6_ != NULL && pfile6_ != NULL)
+	{
+		pfile6_->Close();
+		delete pfile6_;
+		pfile6_ = NULL;
 	}
 }
 
@@ -1249,6 +1269,27 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 			return FALSE;
 		}
 	}
+	if (pthread6_ != NULL && 
+		(pfile6_ == NULL || pfile1_->GetFilePath() != pfile6_->GetFilePath()) )
+	{
+		if (pfile6_ != NULL)
+		{
+			pfile6_->Close();
+			delete pfile6_;
+			pfile6_ = NULL;
+		}
+
+		if (IsDevice())
+			pfile6_ = new CFileNC();
+		else
+			pfile6_ = new CFile64();
+		if (!pfile6_->Open(pfile1_->GetFilePath(),
+					CFile::modeRead|CFile::shareDenyNone|CFile::typeBinary) )
+		{
+			TRACE1("BG preview scan file open failed for %p\n", this);
+			return FALSE;
+		}
+	}
 
 	return TRUE;
 }
@@ -1279,6 +1320,8 @@ void CHexEditDoc::DeleteContents()
 
 	if (pthread5_ != NULL)
 		KillStatsThread();
+	if (pthread6_ != NULL)
+		KillPreviewThread();
 
 	undo_.clear();
 	loc_.clear();               // Done after thread killed so no docdata_ lock needed
@@ -1300,6 +1343,7 @@ void CHexEditDoc::DeleteContents()
 		ASSERT(data_file3_[ii] == NULL);  // should have been closed in KillAerialThread() call
 		ASSERT(data_file4_[ii] == NULL);  // should have been closed in KillCompThread() call
 		ASSERT(data_file5_[ii] == NULL);  // should have been closed in KillStatsThread() call
+		ASSERT(data_file6_[ii] == NULL);  // should have been closed in KillPreviewThread()
 	}
 
 	// Reset change tracking
@@ -1348,6 +1392,7 @@ void CHexEditDoc::CheckBGProcessing()
 		doc_changed_ = false;     // Reset flag for next time
 		AerialChange();
 		StatsChange();
+		PreviewChange();
 	}
 
 	// Now check if any bg processing has just finished so we can update the display
@@ -1843,7 +1888,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 				return -1;              // open_file has already set mac_error_ = 10
 
 			length_ = file_len;
-			ASSERT(pthread2_ == NULL && pthread3_ == NULL && pthread4_ == NULL && pthread5_ == NULL);   // Must modify loc_ before creating threads (else docdata_ needs to be locked)
+			ASSERT(pthread2_ == NULL && pthread3_ == NULL && pthread4_ == NULL && pthread5_ == NULL && pthread6_ == NULL);   // Must modify loc_ before creating threads (else docdata_ needs to be locked)
 			loc_.push_back(doc_loc(FILE_ADDRESS(0), file_len));
 
 			// Save original status
@@ -2013,9 +2058,9 @@ void CHexEditDoc::OnDocTest()
 {
 }
 
-#if 0
 void CHexEditDoc::OnTest()
 {
+#if 0
 	CXmlTree xt;
 
 	if (!xt.LoadString("<?xml version=\"1.0\" ?>\n"
@@ -2044,8 +2089,6 @@ void CHexEditDoc::OnTest()
 
 		AfxMessageBox(xt.DumpXML());
 	}
-}
 #endif
-
-
+}
 
