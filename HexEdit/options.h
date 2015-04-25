@@ -230,7 +230,7 @@ struct OptValues
 	CString window_name_;       // Active view's window name
 
 	// How other views are displayed
-	int display_template_, display_aerial_, display_comp_;
+	int display_template_, display_aerial_, display_comp_, display_prevw_;
 
 	// Window display
 	int		show_area_;

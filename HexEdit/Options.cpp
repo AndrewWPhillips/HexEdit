@@ -4481,6 +4481,7 @@ void CWindowGeneralPage::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_DISPLAY_TEMPLATE, pParent->val_.display_template_);
 	DDX_CBIndex(pDX, IDC_DISPLAY_AERIAL, pParent->val_.display_aerial_);
 	DDX_CBIndex(pDX, IDC_DISPLAY_COMP, pParent->val_.display_comp_);
+	DDX_CBIndex(pDX, IDC_DISPLAY_PREVW, pParent->val_.display_prevw_);
 }
 
 BEGIN_MESSAGE_MAP(CWindowGeneralPage, COptPage)
@@ -4491,6 +4492,7 @@ BEGIN_MESSAGE_MAP(CWindowGeneralPage, COptPage)
 	ON_CBN_SELCHANGE(IDC_DISPLAY_TEMPLATE, OnChange)
 	ON_CBN_SELCHANGE(IDC_DISPLAY_AERIAL, OnChange)
 	ON_CBN_SELCHANGE(IDC_DISPLAY_COMP, OnChange)
+	ON_CBN_SELCHANGE(IDC_DISPLAY_PREVW, OnChange)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -4589,6 +4591,7 @@ static DWORD id_pairs_wingeneral[] = {
 	IDC_DISPLAY_TEMPLATE, HIDC_DISPLAY_TEMPLATE,
 	IDC_DISPLAY_AERIAL, HIDC_DISPLAY_AERIAL,
 	IDC_DISPLAY_COMP, HIDC_DISPLAY_COMP,
+//xxx	IDC_DISPLAY_PREVW, HIDC_DISPLAY_PREVW,
 	0,0 
 };
 
@@ -4659,7 +4662,7 @@ void CWindowGeneralPage::OnSaveDefault()
 	}
 	if (theApp.aerialview_ > 0 && pview->pav_ != NULL)
 	{
-		theApp.aerial_disp_state_ = pview->pav_->DispState();
+		theApp.aerial_disp_state_ = pview->pav_->DispState();  // save aerial display state (ants etc)
 	}
 
 	theApp.compview_ = pParent->val_.display_comp_;
@@ -4668,6 +4671,14 @@ void CWindowGeneralPage::OnSaveDefault()
 		theApp.compview_ = pview->split_width_c_;  // get splitter width
 		if (theApp.compview_ < 10)
 			theApp.compview_ = 10;
+	}
+
+	theApp.prevwview_ = pParent->val_.display_prevw_;
+	if (theApp.prevwview_ == 1)
+	{
+		theApp.prevwview_ = pview->split_width_p_;  // get splitter width
+		if (theApp.prevwview_ < 10)
+			theApp.prevwview_ = 10;
 	}
 
 	theApp.open_scheme_name_ = pParent->val_.scheme_name_;
@@ -4697,6 +4708,7 @@ void CWindowGeneralPage::OnDispReset()
 	pParent->val_.display_template_ = theApp.dffdview_ > 2   ? 1 : theApp.dffdview_;
 	pParent->val_.display_aerial_   = theApp.aerialview_ > 2 ? 1 : theApp.aerialview_;
 	pParent->val_.display_comp_     = theApp.compview_ > 2   ? 1 : theApp.compview_;
+	pParent->val_.display_prevw_    = theApp.prevwview_ > 2  ? 1 : theApp.prevwview_;
 
 	pParent->val_.scheme_name_ = theApp.open_scheme_name_;
 
