@@ -827,7 +827,7 @@ void CHexEditView::OnInitialUpdate()
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
 	print_map_mode_ = MM_HIENGLISH;
-	split_width_d_ = split_width_a_ = split_width_c_ = -1;
+	split_width_d_ = split_width_a_ = split_width_c_ = split_width_p_ = -1;
 
 	// Get options for the window from file settings in CHexFileList
 	CHexFileList *pfl = aa->GetFileList();
@@ -19970,7 +19970,7 @@ void CHexEditView::AdjustColumns()
 	if (snum_t > -1) psplitter->GetColumnInfo(snum_t, t, min);
 	if (snum_a > -1) psplitter->GetColumnInfo(snum_a, a, min);
 	if (snum_c > -1) psplitter->GetColumnInfo(snum_c, c, min);
-xxx
+	if (snum_p > -1) psplitter->GetColumnInfo(snum_p, p, min);
 
 	// Make ideal widths slightly smaller but not less than a minimum
 	bool adjust = false;
@@ -19978,12 +19978,14 @@ xxx
 	t -= 30; if (snum_t > -1 && t < 30) { t = 30; adjust = true; }
 	a -= 10; if (snum_a > -1 && a < 10) { a = 10; adjust = true; }
 	c -= 10; if (snum_c > -1 && c < 10) { c = 10; adjust = true; }
+	p -= 10; if (snum_p > -1 && p < 10) { p = 10; adjust = true; }
 	if (adjust)
 	{
 		if (snum_d > -1) psplitter->SetColumnInfo(snum_d, d, 10);
 		if (snum_t > -1) psplitter->SetColumnInfo(snum_t, t, 10);
 		if (snum_a > -1) psplitter->SetColumnInfo(snum_a, a, 8);
 		if (snum_c > -1) psplitter->SetColumnInfo(snum_c, c, 8);
+		if (snum_p > -1) psplitter->SetColumnInfo(snum_p, p, 8);
 		psplitter->RecalcLayout();
 	}
 	if (snum_d > -1) psplitter->GetColumnInfo(snum_d, split_width_d_, min);
