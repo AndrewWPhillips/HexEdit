@@ -16,8 +16,8 @@
 // implied warranty. The author accepts no liability for any damage
 // or loss of business that this product may cause.
 
-#ifndef DATAFORMATVIEW_INCLUDED_ 
-#define DATAFORMATVIEW_INCLUDED_  1
+#ifndef AERIALVIEW_INCLUDED_ 
+#define AERIALVIEW_INCLUDED_  1
 
 #if _MSC_VER > 1000
 #pragma once
@@ -248,4 +248,4 @@ private:
 
 	timer t0_, t1_;     // Used in performance tests
 };
-#endif  // DATAFORMATVIEW_INCLUDED_
+#endif  // AERIALVIEW_INCLUDED_
