@@ -57,8 +57,9 @@ protected:
 		ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CHexEditDoc)));
 		return (CHexEditDoc*)m_pDocument;
 	}
-private:
 
+private:
+	void draw_bitmap(CDC* pDC);
 };
 #endif  // PREVWVIEW_INCLUDED_
 

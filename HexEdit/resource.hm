@@ -202,9 +202,10 @@
 #define HIDC_DFFD_UNITS                 0x81150528    // IDD_DFFD_DATA
 #define HIDC_DFFD_UP                    0x8116053a    // IDD_DFFD_STRUCT
 #define HIDC_DIGIT_0                    0x807503f2    // IDD_CALC
-#define HIDC_DISPLAY_AERIAL             0x81370638    // IDD_OPT_WINGENERAL [English (United States)]
-#define HIDC_DISPLAY_COMP               0x81370639    // IDD_OPT_WINGENERAL [English (United States)]
-#define HIDC_DISPLAY_TEMPLATE           0x81370637    // IDD_OPT_WINGENERAL [English (United States)]
+#define HIDC_DISPLAY_AERIAL             0x8137069b    // IDD_OPT_WINGENERAL [English (United States)]
+#define HIDC_DISPLAY_COMP               0x8137069c    // IDD_OPT_WINGENERAL [English (United States)]
+#define HIDC_DISPLAY_PREVW              0x8137069d    // IDD_OPT_WINGENERAL [English (United States)]
+#define HIDC_DISPLAY_TEMPLATE           0x8137069a    // IDD_OPT_WINGENERAL [English (United States)]
 #define HIDC_DISP_RESET                 0x813704c3    // IDD_OPT_WINGENERAL [English (United States)]
 #define HIDC_DIVIDE                     0x80750426    // IDD_CALC
 #define HIDC_DLG_DOCK                   0x819a0418    // IDD_OPT_WORKLAYOUT [English (United States)]

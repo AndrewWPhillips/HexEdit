@@ -396,6 +396,7 @@ class CHexEditDoc : public CDocument
 	friend class CDataFormatView;
 	friend class CAerialView;
 	friend class CCompareView;
+	friend class CPrevwView;
 	friend class CHexExpr;
 
 protected: // create from serialization only

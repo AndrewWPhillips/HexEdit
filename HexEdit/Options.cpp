@@ -4643,7 +4643,7 @@ void CWindowGeneralPage::OnSaveDefault()
 		theApp.open_mb_plf_ = new LOGFONT;
 	*theApp.open_mb_plf_ = pParent->val_.mb_lf_;
 
-	pview->AdjustColumns();  // fix and get split_width_d_/split_width_a_/split_width_c_
+	pview->AdjustColumns();  // fix and get split_width_d_/split_width_a_/split_width_c_/split_width_p
 	theApp.dffdview_ = pParent->val_.display_template_;
 	if (theApp.dffdview_ == 1)
 	{

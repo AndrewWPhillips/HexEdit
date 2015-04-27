@@ -56,8 +56,7 @@ void CPrevwView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void CPrevwView::OnDraw(CDC* pDC)
 {
-	CDocument* pDoc = GetDocument();
-	// TODO: add draw code here
+	draw_bitmap(pDC);
 }
 
 
@@ -79,3 +78,24 @@ void CPrevwView::Dump(CDumpContext& dc) const
 
 
 // CPrevwView message handlers
+
+
+// Drawing routines
+void CPrevwView::draw_bitmap(CDC* pDC)
+{
+	CHexEditDoc *pDoc = GetDocument();
+	ASSERT(pDoc != NULL);
+	if (pDoc == NULL || pDoc->preview_dib_ == NULL)
+		return;
+
+	BITMAPINFOHEADER *bih = FreeImage_GetInfoHeader(pDoc->preview_dib_);
+	ASSERT(bih->biCompression == BI_RGB && bih->biHeight > 0);
+
+	CRect cliprct; pDC->GetClipBox(&cliprct);                       // only BLT the area that needs it
+
+	::StretchDIBits(pDC->GetSafeHdc(),
+					cliprct.left, cliprct.top, cliprct.Width(), cliprct.Height(),
+					0, 0, bih->biWidth, bih->biHeight,
+					FreeImage_GetBits(pDoc->preview_dib_), FreeImage_GetInfo(pDoc->preview_dib_),
+					DIB_RGB_COLORS, SRCCOPY);
+}

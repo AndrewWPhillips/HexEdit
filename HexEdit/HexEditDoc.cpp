@@ -107,7 +107,7 @@ CHexEditDoc::CHexEditDoc()
 {
 	doc_changed_ = false;
 
-	pfile1_ = pfile2_ = pfile3_ = pfile5_ = NULL;
+	pfile1_ = pfile2_ = pfile3_ = pfile5_ = pfile6_ = NULL;
 	pfile1_compare_ = pfile4_ = pfile4_compare_ = NULL;  // Files used for compares
 
 	for (int ii = 0; ii < doc_loc::max_data_files; ++ii)

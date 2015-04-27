@@ -71,16 +71,8 @@ void CHexEditDoc::PreviewChange(CHexEditView *pview /*= NULL*/)
 	SetThreadPriority(pthread6_->m_hThread, THREAD_PRIORITY_LOWEST);
 	ASSERT(waiting);
 
-	// Make sure we have a big enough bitmap and the right colours
-	docdata_.Lock();
-	if (pview != NULL)
-	{
-		;
-	}
-	else
-		;
-
 	// Restart the scan
+	docdata_.Lock();
 	preview_command_ = NONE;  // make sure we don't stop the scan before it starts
 	preview_fin_ = false;
 	docdata_.Unlock();
@@ -293,7 +285,7 @@ UINT CHexEditDoc::RunPreviewThread()
 		TRACE("Image format is %d\n", fif);
 		FIBITMAP * dib = FreeImage_LoadFromHandle(fif, &fi_funcs, this);
 
-		TRACE1("+++ BGPreview: finished scan for %p\n", this);
+		TRACE1("+++ BGPreview: finished load for %p\n", this);
 		docdata_.Lock();
 		preview_fin_ = true;
 		preview_address_ = 0;

@@ -85,14 +85,15 @@ BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
 	ASSERT(pContext != NULL && pContext->m_pNewViewClass != NULL);
 
-	if (!splitter_.CreateStatic(this, 1, 4))
+	if (!splitter_.CreateStatic(this, 1, 5))
 	{
 		AfxMessageBox("Failed to create splitter.");
 		return FALSE;
 	}
 
-	// We create with 4 columns then delete all except one, which means only one (for
-	// hex view) is shown but 3 more can be added (template, aerial and compare views).
+	// We create with 5 columns then delete all except one, which means only one (for
+	// hex view) is shown but 4 more can be added (template, aerial, preview and compare views).
+	splitter_.DelColumn(4);
 	splitter_.DelColumn(3);
 	splitter_.DelColumn(2);
 	splitter_.DelColumn(1);
