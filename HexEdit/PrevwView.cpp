@@ -59,6 +59,10 @@ void CPrevwView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void CPrevwView::OnDraw(CDC* pDC)
 {
+	CHexEditDoc *pDoc = GetDocument();
+	if (pDoc == NULL || pDoc->preview_dib_ == NULL)
+		return;
+
 	validate_display();
 	draw_bitmap(pDC);
 }
@@ -88,21 +92,30 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 {
 	CHexEditDoc *pDoc = GetDocument();
 	ASSERT(pDoc != NULL);
-	if (pDoc == NULL || pDoc->preview_dib_ == NULL)
-		return;
 
 	BITMAPINFOHEADER *bih = FreeImage_GetInfoHeader(pDoc->preview_dib_);
 	ASSERT(bih->biCompression == BI_RGB && bih->biHeight > 0);
 
 	CRect rct;
-	GetClientRect(&rct);
+	pDC->GetClipBox(&rct);                       // only BLT the area that needs it
 
-	//pDC->GetClipBox(&rct);                       // only BLT the area that needs it
+	int sl = (rct.left - pos_.x) * zoom_;
+	if (sl < 0) sl = 0;
+	int st = (rct.top - pos_.y) * zoom_;
+	if (st < 0) st = 0;
+	int sr = (rct.right - pos_.x) * zoom_;
+	if (sr > bih->biWidth) sr = bih->biWidth;
+	int sb = (rct.bottom - pos_.y) * zoom_;
+	if (sb > bih->biHeight) sb = bih->biHeight;
+
+	int dl = sl/zoom_ + pos_.x;
+	int dt = st/zoom_ + pos_.y;
+	int dr = sr/zoom_ + pos_.x;
+	int db = sb/zoom_ + pos_.y;
 
 	::StretchDIBits(pDC->GetSafeHdc(),
-					//rct.left, rct.top, rct.Width(), rct.Height(),
-					pos_.x, pos_.y, int(bih->biWidth/zoom_), int(bih->biHeight/zoom_),
-					0, 0, bih->biWidth, bih->biHeight,
+					dl, dt, dr - dl, db - dt,
+					sl, st, sr - sl, sb - st,
 					FreeImage_GetBits(pDoc->preview_dib_), FreeImage_GetInfo(pDoc->preview_dib_),
 					DIB_RGB_COLORS, SRCCOPY);
 }
