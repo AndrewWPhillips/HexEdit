@@ -59,7 +59,11 @@ protected:
 	}
 
 private:
+	double zoom_;     // Current zoom level where 1.0 means 1 bitmap pixel displays as 1 screen pixel
+	CPoint pos_;      // Where is the current client rect is the top left of the bitmap (coords may be negative)
+
 	void draw_bitmap(CDC* pDC);
+	void validate_display();
 };
 #endif  // PREVWVIEW_INCLUDED_
 

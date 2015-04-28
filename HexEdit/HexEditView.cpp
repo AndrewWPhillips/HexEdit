@@ -19991,7 +19991,7 @@ void CHexEditView::AdjustColumns()
 	if (snum_d > -1) psplitter->GetColumnInfo(snum_d, split_width_d_, min);
 	if (snum_a > -1) psplitter->GetColumnInfo(snum_a, split_width_a_, min);
 	if (snum_c > -1) psplitter->GetColumnInfo(snum_c, split_width_c_, min);
-	if (snum_p > -1) psplitter->GetColumnInfo(snum_a, split_width_p_, min);
+	if (snum_p > -1) psplitter->GetColumnInfo(snum_p, split_width_p_, min);
 }
 
 // Command to go to first recent difference in compare view
