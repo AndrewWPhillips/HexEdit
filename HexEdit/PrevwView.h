@@ -77,6 +77,7 @@ protected:
 private:
 	double zoom_;               // Current zoom level where 1.0 means 1 bitmap pixel displays as 1 screen pixel
 	CPoint pos_;                // Where in the current client rect is the top left of the bitmap (coords may be negative)
+	enum {CHECKERBOARD, WHITE, BLACK, GREY} background_;
 
 	bool mouse_down_;           // Is the left mouse button currently down?
 
