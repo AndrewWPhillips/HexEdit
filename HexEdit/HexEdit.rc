@@ -182,6 +182,9 @@ BEGIN
     BUTTON      ID_COMP_HIDE
     BUTTON      ID_COMP_SPLIT
     BUTTON      ID_COMP_TAB
+    BUTTON      ID_PREVW_HIDE
+    BUTTON      ID_PREVW_SPLIT
+    BUTTON      ID_PREVW_TAB
 END
 
 IDR_OPER TOOLBAR  16, 15
@@ -868,6 +871,12 @@ BEGIN
         MENUITEM "&Auto Sync",                  ID_COMP_AUTO_SYNC
         MENUITEM "A&uto Scroll",                ID_COMP_AUTO_SCROLL
     END
+    POPUP "Preview"
+    BEGIN
+        MENUITEM "&Hide Bitmap Preview",            ID_PREVW_HIDE
+        MENUITEM "&Split Bitmap Preview",           ID_PREVW_SPLIT
+        MENUITEM "&Tabbed Bitmap Preview",          ID_PREVW_TAB
+    END
     POPUP "&Tools"
     BEGIN
         MENUITEM "&Find Hex...\tAlt-S",         ID_EDIT_FIND2
@@ -1459,6 +1468,21 @@ BEGIN
             MENUITEM "Zoom X &12",                  ID_AERIAL_ZOOM12
             MENUITEM "Zoom X 1&6",                  ID_AERIAL_ZOOM16
         END
+        MENUITEM SEPARATOR
+        MENUITEM "C&ustomize...",               ID_CUSTOMIZE
+        MENUITEM "&Options...",                 ID_OPTIONS2
+        MENUITEM "&Properties...",              ID_PROPERTIES
+    END
+END
+
+IDR_CONTEXT_PREVW MENU
+BEGIN
+    POPUP "Preview Context"
+    BEGIN
+        MENUITEM "Zoom &In",                    ID_PREVW_ZOOM_IN
+        MENUITEM "&Zoom Out",                   ID_PREVW_ZOOM_OUT
+        MENUITEM "Zoom &Actual",                ID_PREVW_ZOOM_ACTUAL
+        MENUITEM "Zoom &Fit",                   ID_PREVW_ZOOM_FIT
         MENUITEM SEPARATOR
         MENUITEM "C&ustomize...",               ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
@@ -3422,6 +3446,9 @@ BEGIN
     ID_RAND_BYTE            "Generate good (but slow) random bytes\nGood Random"
     ID_RAND_16BIT           "Generate random word (16 bit) value(s)\nRandom Word"
     ID_RAND_32BIT           "Generate random DWORD (32 bit) value(s)\nRandom Double Word"
+    ID_PREVW_HIDE          "Turn off preview of bitmap files\Preview Off"
+    ID_PREVW_SPLIT         "Show preview (bitmaps) in a split window\nPreview Split"
+    ID_PREVW_TAB           "Show preview (bitmaps) in a tabbed window\nPreview Tab"
 END
 
 STRINGTABLE 

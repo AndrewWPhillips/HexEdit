@@ -837,7 +837,7 @@ void CHexEditApp::InitWorkspace()
 	//CMFCPopupMenu::EnableMenuSound(FALSE);
 
 	// These are commands that are always shown in menus (not to be confused
-	// with commands no on toolbars - see AddToolBarForImageCollection)
+	// with commands not on toolbars - see AddToolBarForImageCollection)
 	static int dv_id[] =
 	{
 		ID_FILE_NEW,
@@ -935,6 +935,8 @@ void CHexEditApp::InitWorkspace()
 		ID_COMP_NEW,
 		ID_COMP_HIDE,
 		ID_COMP_SPLIT,
+		ID_PREVW_HIDE,
+		ID_PREVW_SPLIT,
 
 		ID_CALCULATOR,
 		ID_CUSTOMIZE,
@@ -2021,6 +2023,7 @@ void CHexEditApp::PreLoadState()
 	GetContextMenuManager()->AddMenu(_T("Hex Area"), IDR_CONTEXT_HEX);
 	GetContextMenuManager()->AddMenu(_T("Character Area"), IDR_CONTEXT_CHAR);
 	GetContextMenuManager()->AddMenu(_T("Aerial View"), IDR_CONTEXT_AERIAL);
+	GetContextMenuManager()->AddMenu(_T("Preview View"), IDR_CONTEXT_PREVW);
 	GetContextMenuManager()->AddMenu(_T("Highlight"), IDR_CONTEXT_HIGHLIGHT);
 	GetContextMenuManager()->AddMenu(_T("Bookmarks"), IDR_CONTEXT_BOOKMARKS);
 	GetContextMenuManager()->AddMenu(_T("Selection"), IDR_CONTEXT_SELECTION);

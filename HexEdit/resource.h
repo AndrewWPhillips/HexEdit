@@ -442,6 +442,7 @@
 #define IDB_BM_VALIDATE_HOT             519
 #define IDB_HELP                        520
 #define IDB_HELP_HOT                    521
+#define IDR_CONTEXT_PREVW               522
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1780,6 +1781,21 @@
 #define ID_CODEPAGE_950                 39187
 #define ID_REPAIR_COPYUSERFILES         39200
 #define ID_SHOW_ALL                     39201
+#define ID_PREVW_HIDE                   39202
+#define ID_PREVW_SPLIT                  39203
+#define ID_PREVW_TAB                    39204
+#define ID_PREVW_ZOOM_FIT               39205
+#define ID_PREVW_ZOOM_ACTUAL            39206
+#define ID_PREVW_ZOOM_IN                39207
+#define ID_PREVW_ZOOM_OUT               39208
+#define ID_PREVW_ROTATE_LEFT            39210
+#define ID_PREVW_ROTATE_RIGHT           39211
+#define ID_PREVW_ROTATE_NONE            39212
+#define ID_PREVW_ROTATE_TO90            39213
+#define ID_PREVW_ROTATE_TO180           39214
+#define ID_PREVW_ROTATE_TO270           39215
+#define ID_PREVW_FLIP_VERT              39216
+#define ID_PREVW_FLIP_HORIZ             39217
 #define IDS_WARNING_DO_NOT_RENUMBER     52700
 #define IDS_BOOKMARK_NOFILE             52701
 #define IDS_BOOKMARK_NOTFOUND           52702
@@ -1842,8 +1858,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        523
-#define _APS_NEXT_COMMAND_VALUE         39203
+#define _APS_NEXT_RESOURCE_VALUE        525
+#define _APS_NEXT_COMMAND_VALUE         39220
 #define _APS_NEXT_CONTROL_VALUE         1695
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

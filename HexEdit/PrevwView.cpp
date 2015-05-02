@@ -6,6 +6,23 @@
 #include "PrevwView.h"
 #include "HexFileList.h"    // used to retrieve settings
 
+
+// TODO
+// Code
+//  > zoom/scroll using mouse wheel
+//  > zoom centred
+//  > zoom min.max
+//  - flip commands
+//  - rotate command + reverse X/Y pos?
+//  - handle alpha channel: AlphaBlend() into window-size bitmap then BLT into display
+//    - also addresses flicker seen with big bitmaps
+//  - copy to clipboard command??
+//  - scrollbars??
+// Test
+//  - zoom min/max with different sized bitmaps
+//  - BLT boundary contions
+
+
 IMPLEMENT_DYNCREATE(CPrevwView, CView)
 
 CPrevwView::CPrevwView()
@@ -28,6 +45,13 @@ BEGIN_MESSAGE_MAP(CPrevwView, CView)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_CONTEXTMENU()
+
+	ON_COMMAND(ID_PREVW_ZOOM_IN, OnZoomIn)
+	ON_COMMAND(ID_PREVW_ZOOM_OUT, OnZoomOut)
+	ON_COMMAND(ID_PREVW_ZOOM_ACTUAL, OnZoomActual)
+	ON_COMMAND(ID_PREVW_ZOOM_FIT, OnZoomFit)
+	ON_UPDATE_COMMAND_UI(ID_PREVW_ZOOM_IN, OnUpdateZoomIn)
+	ON_UPDATE_COMMAND_UI(ID_PREVW_ZOOM_OUT, OnUpdateZoomOut)
 END_MESSAGE_MAP()
 
 // CPrevwView drawing
@@ -169,19 +193,15 @@ if (nChar <= VK_CONTROL) return;
 		}
 		break;
 	case VK_ADD:
-		if ((nFlags & MK_CONTROL) != 0)  // If Ctrl key down we zoom instead of scroll
+		if ((nFlags & MK_CONTROL) != 0)  // If Ctrl-Plus is zoom in
 		{
-			zoom_ /= 1.5;
-			// xxx apply min
-			// xxx zoom around centre (or mouse position?)
+			zoom(1/1.5);
 		}
 		break;
 	case VK_SUBTRACT:
-		if ((nFlags & MK_CONTROL) != 0)  // If Ctrl key down we zoom instead of scroll
+		if ((nFlags & MK_CONTROL) != 0)  // If Ctrl-Minus is zoom out
 		{
-			zoom_ *= 1.5;
-			// xxx apply max
-			// xxx zoom around centre (or mouse position?)
+			zoom(1.5);
 		}
 		break;
 	}
@@ -198,9 +218,9 @@ BOOL CPrevwView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 		// xxx zoom around mouse position
 		if (theApp.reverse_zoom_) zDelta = -zDelta;
 		if (zDelta < 0)
-			zoom_ *= 1.5 * double(zDelta)/WHEEL_DELTA;
+			zoom((1.5 * abs(zDelta)) / WHEEL_DELTA);
 		else
-			zoom_ /= 1.5 * fabs(double(zDelta))/WHEEL_DELTA;
+			zoom(WHEEL_DELTA / (1.5 * zDelta));
 	}
 	else if ((nFlags & MK_SHIFT) != 0)  // If Ctrl key down we zoom instead of scroll
 	{
@@ -217,8 +237,51 @@ BOOL CPrevwView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CPrevwView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
-//	CContextMenuManager *pCMM = theApp.GetContextMenuManager();
-//	pCMM->ShowPopupMenu(IDR_CONTEXT_AERIAL, point.x, point.y, this);
+	CContextMenuManager *pCMM = theApp.GetContextMenuManager();
+	pCMM->ShowPopupMenu(IDR_CONTEXT_PREVW, point.x, point.y, this);
+}
+
+void CPrevwView::OnZoomIn()
+{
+	zoom(1/1.5);
+	validate_display();
+	Invalidate();
+}
+
+void CPrevwView::OnZoomOut()
+{
+	zoom(1.5);
+	validate_display();
+	Invalidate();
+}
+
+void CPrevwView::OnZoomActual()
+{
+	zoom_ = 1.0;                // 1 bitmap pixel = 1 display pixel
+	validate_display();
+	Invalidate();
+}
+
+void CPrevwView::OnZoomFit()
+{
+	zoom_ = 0.0;                // force zoom recalc to fit window
+	validate_display();
+	Invalidate();
+}
+
+// TODO we should be able to calulate better values (eg, that avoid overflow in
+// bitmap calcs) based on the size of the bitmap
+static const double zoom_min = 1e-4;
+static const double zoom_max = 1e3;
+
+void CPrevwView::OnUpdateZoomIn(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable(zoom_ > zoom_min);
+}
+
+void CPrevwView::OnUpdateZoomOut(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable(zoom_ < zoom_max);
 }
 
 // Drawing routines
@@ -248,11 +311,21 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 	int dr = sr/zoom_ + pos_.x;
 	int db = sb/zoom_ + pos_.y;
 
+#if 0
 	::StretchDIBits(pDC->GetSafeHdc(),
 					dl, dt, dr - dl, db - dt,
 					sl, bih->biHeight - sb, sr - sl, sb - st,
 					FreeImage_GetBits(pDoc->preview_dib_), FreeImage_GetInfo(pDoc->preview_dib_),
 					DIB_RGB_COLORS, SRCCOPY);
+#else
+	// Create temp bitmap of same size as window
+
+	// Fill with background and BLT the bitmap into it with alpha channel
+	//FillRect();
+	AlphaBlend();
+
+	// BLT the temp bitmap to the display (including flipping vert/horiz)
+#endif
 }
 
 void CPrevwView::validate_display()
@@ -260,7 +333,7 @@ void CPrevwView::validate_display()
 	CHexEditDoc *pDoc = GetDocument();
 	ASSERT(pDoc != NULL);
 
-	// GEt size of the display area (client area of the window)
+	// eEt size of the display area (client area of the window)
 	CRect rct;
 	GetClientRect(&rct);
 
@@ -276,66 +349,66 @@ void CPrevwView::validate_display()
 
 		// Move to top-left - code below will centre within the display
 		pos_.x = pos_.y = 0;
-		//pos_.x = (rct.Width()  - int(bmwidth/zoom_))/2;
-		//pos_.y = (rct.Height() - int(bmheight/zoom_))/2;
 	}
 
 	int width = int(bmwidth/zoom_);
 
+	// Check if the displayed bitmap width is less than the window width
 	if (width < rct.Width())
 	{
 		// Centre it between the left and right side
-		pos_.x = (rct.Width()  - width)/2;    // xxx round instead of truncate???
+		pos_.x = (rct.Width()  - width)/2;
 	}
-	else
+	else if (pos_.x + width < rct.Width())
 	{
-		// Next we ensure that the bitmap is not too far offscreen.
-		// (We don't want it off one side if there is spare blank space on the other side)
-		if (pos_.x < 0 && pos_.x + width < rct.Width())
-		{
-			// move it to the right
-			if (width < rct.Width())
-				pos_.x = 0;
-			else
-				pos_.x = rct.Width() - width;
-		}
-
-		if (pos_.x > 0 && pos_.x + width > rct.Width())
-		{
-			// move it to the left
-			if (width < rct.Width())
-				pos_.x = rct.Width() - width;
-			else
-				pos_.x = 0;
-		}
+		// Right edge should not be left of window's right edge
+		pos_.x = rct.Width() - width;
+	}
+	else if (pos_.x > 0)
+	{
+		// Bitmap's left edge should not be any further right than the left edge of the window
+		pos_.x = 0;
 	}
 
 	int height = int(bmheight/zoom_);
 
+	// Check if the displayed height is less than the window height
 	if (height < rct.Height())
 	{
 		// Centre it vertically between top and bottom edges
-		pos_.y = (rct.Height()  - height)/2;    // xxx round instead of truncate???
+		pos_.y = (rct.Height()  - height)/2;
 	}
-	else
+	else if (pos_.y + height < rct.Height())
 	{
-		// Ensure not off the top/bpttom when there is blank space available opposite
-		if (pos_.y < 0 && pos_.y + height < rct.Height())
-		{
-			// move it down
-			if (height < rct.Height())
-				pos_.y = 0;
-			else
-				pos_.y = rct.Height() - height;
-		}
+		// Displayed bitmap's bottom edge should be at or below window bottom
+		pos_.y = rct.Height() - height;
+	}
+	else if (pos_.y > 0)
+	{
+		// Displayed top edge should be at or above the window top
+		pos_.y = 0;
+	}
+}
 
-		if (pos_.y > 0 && pos_.y + height > rct.Height())
-		{
-			// move it up
-			if (height < rct.Height())
-				pos_.y = rct.Height() - height;
-			else
-				pos_.y = 0;
-		}
+void CPrevwView::zoom(double amount)
+{
+	double prev_zoom = zoom_;
+	zoom_ *= amount;
+
+	// Keep within a sensible range
+	if (zoom_ < zoom_min)
+		zoom_ = zoom_min;
+	else if (zoom_ > zoom_max)
+		zoom_ = zoom_max;
+
+	// Adjust position so that zoom occurs around the centre of the window
+	if (zoom_ != prev_zoom)
+	{
+		// Gett size of the display area (client area of the window)
+		CRect rct;
+		GetClientRect(&rct);
+
+		pos_.x = rct.Width()/2  - int((rct.Width()/2  - pos_.x) * prev_zoom / zoom_);
+		pos_.y = rct.Height()/2 - int((rct.Height()/2 - pos_.y) * prev_zoom / zoom_);
 	}
 }

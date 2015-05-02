@@ -226,6 +226,8 @@ void CAerialView::OnInitialUpdate()
 	update_display();
 
 	phev_->GetSelAddr(prev_start_addr_, prev_end_addr_);
+
+	// Start timer for ant drawing
 	timer_count_ = 0;
 	StartTimer();
 }

@@ -192,6 +192,44 @@ void CHexEditDoc::CreatePreviewThread()
 }
 
 //---------------------------------------------------------------------------------------
+// Funcs to modify the bitmap in memory (after loaded)
+
+void CHexEditDoc::RotateClockWise()
+{
+	preview_rotate_ = (preview_rotate_ + 1) % 4;
+
+	rotate_to(preview_rotate_);
+}
+
+void CHexEditDoc::FlipVert()
+{
+	CSingleLock sl(&docdata_, TRUE);
+
+	if (preview_state_ != WAITING || preview_dib_ == NULL)
+		return;
+
+	preview_flipvert_ = !preview_flipvert_;
+}
+
+void CHexEditDoc::FlipHoriz()
+{
+	CSingleLock sl(&docdata_, TRUE);
+
+	if (preview_state_ != WAITING || preview_dib_ == NULL)
+		return;
+
+	preview_fliphoriz_ = !preview_fliphoriz_;
+}
+
+void CHexEditDoc::rotate_to(int)
+{
+	CSingleLock sl(&docdata_, TRUE);
+
+	if (preview_state_ != WAITING || preview_dib_ == NULL)
+		return;
+}
+
+//---------------------------------------------------------------------------------------
 // These 4 funcs (fi_read(), etc) are used with FreeImage for in-memory processing of bitmap data.
 // Pointers to these funcs are added to a FreeImageIO struct (see fi_funcs below) and passed
 // to FreeImage functions like FreeImage_LoadFromHandle() or FreeImage_GetFileTypeFromHandle().
@@ -285,6 +323,7 @@ UINT CHexEditDoc::RunPreviewThread()
 		TRACE("Image format is %d\n", fif);
 		FIBITMAP * dib = FreeImage_LoadFromHandle(fif, &fi_funcs, this);
 
+		// use FreeImage_Rotate, FreeImage_FlipHorizontal, FreeImage_FlipVertical here? (use preview_rotate_, preview_flip_horiz_, preview_flip_vert_)
 		TRACE1("+++ BGPreview: finished load for %p\n", this);
 		docdata_.Lock();
 		preview_fin_ = true;
