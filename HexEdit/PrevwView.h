@@ -75,7 +75,7 @@ protected:
 	}
 
 private:
-	double zoom_;               // Current zoom level where 1.0 means 1 bitmap pixel displays as 1 screen pixel
+	double zoom_;               // Current zoom level where 1.0 means 1 bitmap pixel displays as 1 screen pixel (0 means we need to figure out zoom_/pos_ from window)
 	CPoint pos_;                // Where in the current client rect is the top left of the bitmap (coords may be negative)
 	enum {CHECKERBOARD, WHITE, BLACK, GREY} background_;
 

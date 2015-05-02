@@ -8,13 +8,10 @@
 
 // TODO
 // Code
-//  > zoom/scroll using mouse wheel
-//  > zoom centred
-//  > zoom min.max
-//  > handle alpha channel: AlphaBlend() into window-size bitmap then BLT into display
-//    > background options: checkerboard, white, black, grey
-//    - also addresses flicker seen with big bitmaps
-//  - save/restore current pos and zoom
+//  > handle alpha channel
+//  - drag bitmap with mouse
+//  - double-buffer to addresses flickering
+//  - save/restore current pos and zoom + background_
 //  - copy to clipboard command??
 //  - scrollbars??
 // Maybe later
@@ -23,15 +20,13 @@
 //    - flip vert/horiz (maybe use FreeImage_FlipHorizontal during render process)
 //    - rotate command (Note: 90/270 requires swap of bitmap heigh/width in calcs)
 // Test
-//  - zoom min/max with different sized bitmaps
+//  > zoom min/max with different sized bitmaps
 //  - BLT boundary contions
 
 IMPLEMENT_DYNCREATE(CPrevwView, CView)
 
-CPrevwView::CPrevwView()
+CPrevwView::CPrevwView() : phev_(NULL), zoom_(0.0), background_(WHITE)
 {
-	phev_ = NULL;
-	zoom_ = 0.0;    // flag that zoom/pos has not yet been set
 }
 
 CPrevwView::~CPrevwView()
@@ -278,48 +273,10 @@ void CPrevwView::OnUpdateZoomOut(CCmdUI *pCmdUI)
 // Drawing routines
 BOOL CPrevwView::OnEraseBkgnd(CDC* pDC)
 {
-	// Create a hatched bit pattern.
-	static unsigned char HatchBits[32*4] = {0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
-											0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
-											0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
-											0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
-											0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
-											0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
-											0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
-											0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
-											0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
-											0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
-											0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
-											0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
-											0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
-											0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
-											0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
-											0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, };
-	CBitmap bm;
-	bm.CreateBitmap(32, 32, 1, 1, HatchBits);
-	CBrush brush;
-	brush.CreatePatternBrush(&bm);
-
 	CRect rct;
 	pDC->GetClipBox(&rct);                       // only erase the area that needs it
 
-	// Fill the background
-	switch (background_)
-	{
-	default:
-	case CHECKERBOARD:
-		pDC->FillRect(&rct, &brush);
-		break;
-	case WHITE:
-		pDC->FillSolidRect(&rct, RGB(255,255,255)); // xxx
-		break;;
-	case BLACK:
-		pDC->FillSolidRect(&rct, RGB(0,0,0));
-		break;
-	case GREY:
-		pDC->FillSolidRect(&rct, afxGlobalData.clrBtnFace);
-		break;
-	}
+	pDC->FillSolidRect(&rct, afxGlobalData.clrBtnFace);
 	return TRUE;
 }
 
@@ -360,17 +317,60 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 					FreeImage_GetBits(pDoc->preview_dib_), FreeImage_GetInfo(pDoc->preview_dib_),
 					DIB_RGB_COLORS, SRCCOPY);
 #else
-	// Create temp bitmap - size of clip area
-    CDC MemDC;
-    CBitmap bm;
-    MemDC.CreateCompatibleDC(pDC);
-    bm.CreateCompatibleBitmap(pDC, rct.Width(), rct.Height());
-    CBitmap* pOldBitmap = MemDC.SelectObject(&bm);
-	MemDC.SetWindowOrg(0, 0);
 
 	// For 32-bit bitmaps we use AlphaBlend to preserve the alpha channel (transparency)
 	if (::GetDeviceCaps(pDC->GetSafeHdc(), BITSPIXEL) >= 32 && FreeImage_GetBPP(pDoc->preview_dib_) >= 32)
 	{
+		CRect fillRect(dl, dt, dr, db);
+
+		// Fill the background
+		switch (background_)
+		{
+		default:
+		case CHECKERBOARD:
+			{
+				static unsigned char HatchBits[32*4] = {0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
+														0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
+														0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
+														0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
+														0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
+														0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
+														0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
+														0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
+														0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
+														0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
+														0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
+														0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
+														0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
+														0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
+														0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 
+														0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, };
+				CBitmap bm;
+				bm.CreateBitmap(32, 32, 1, 1, HatchBits);
+				CBrush brush;
+				brush.CreatePatternBrush(&bm);
+				pDC->FillRect(&fillRect, &brush);
+			}
+			break;
+		case WHITE:
+			pDC->FillSolidRect(&fillRect, RGB(255,255,255));
+			break;;
+		case BLACK:
+			pDC->FillSolidRect(&fillRect, RGB(0,0,0));
+			break;
+		case GREY:
+			pDC->FillSolidRect(&fillRect, afxGlobalData.clrBtnFace);
+			break;
+		}
+
+		// Create temp bitmap - size of clip area
+		CDC MemDC;
+		CBitmap bm;
+		MemDC.CreateCompatibleDC(pDC);
+		bm.CreateCompatibleBitmap(pDC, rct.Width(), rct.Height());
+		CBitmap* pOldBitmap = MemDC.SelectObject(&bm);
+		MemDC.SetWindowOrg(0, 0);
+
 		// Get the bitmap required by AlphBlend
 		FIBITMAP * dib = FreeImage_Copy(pDoc->preview_dib_, 0, 0, bmwidth, bmheight);
 		FreeImage_PreMultiplyWithAlpha(dib);
@@ -383,22 +383,21 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 		BLENDFUNCTION blend = {AC_SRC_OVER,0,255,AC_SRC_ALPHA};
 		pDC->AlphaBlend(rct.left, rct.top, rct.Width(), rct.Height(), &MemDC, rct.left, rct.top, rct.Width(), rct.Height(), blend);
 
+		// Cleanup
 		FreeImage_Unload(dib);
+		MemDC.SelectObject(pOldBitmap);
+		bm.DeleteObject();
+		MemDC.DeleteDC();
 	}
 	else
 	{
-		::StretchDIBits(MemDC.GetSafeHdc(),
+		// Copy all or part of the FreeImage bitmap to the display
+		::StretchDIBits(pDC->GetSafeHdc(),
 						dl, dt, dr - dl, db - dt,
 						sl, bmheight - sb, sr - sl, sb - st,
 						FreeImage_GetBits(pDoc->preview_dib_), FreeImage_GetInfo(pDoc->preview_dib_),
 						DIB_RGB_COLORS, SRCCOPY);
-		pDC->BitBlt(rct.left, rct.top, rct.Width(), rct.Height(), &MemDC, rct.left, rct.top, SRCCOPY);
 	}
-
-	// Cleanup
-    MemDC.SelectObject(pOldBitmap);
-	bm.DeleteObject();
-	MemDC.DeleteDC();
 #endif
 }
 
@@ -423,7 +422,6 @@ void CPrevwView::validate_display()
 
 		// Move to top-left - code below will centre within the display
 		pos_.x = pos_.y = 0;
-		background_ = CHECKERBOARD;
 	}
 
 	int width = int(bmwidth/zoom_);
