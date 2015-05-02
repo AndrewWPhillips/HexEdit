@@ -61,6 +61,7 @@
 #include "DataFormatView.h"
 #include "AerialView.h"
 #include "CompareView.h"
+#include "PrevwView.h"
 #include "TabView.h"
 #include "UserTool.h"   // For CHexEditUserTool
 #include "Dialog.h"
@@ -4577,6 +4578,8 @@ CHexEditView *GetView()
 					return ((CAerialView *)pv)->phev_;
 				else if (pv->IsKindOf(RUNTIME_CLASS(CCompareView)))
 					return ((CCompareView *)pv)->phev_;
+				else if (pv->IsKindOf(RUNTIME_CLASS(CPrevwView)))
+					return ((CPrevwView *)pv)->phev_;
 				else if (pv->IsKindOf(RUNTIME_CLASS(CHexTabView)))
 				{
 					// Find the hex view (left-most tab)

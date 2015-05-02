@@ -138,10 +138,17 @@ protected:
 // to say that the bg scan has finished.  CAerialView uses it to refresh its display.
 class CBGAerialHint : public CObject
 {
-public:
-
 protected:
 	DECLARE_DYNAMIC(CBGAerialHint)        // Required for MFC run-time type info.
+};
+
+
+// This object is passed to view OnUpdate() functions as the (3rd) hint parameter to say
+// that the load of the preview bitmap has finished.  CPrevwView uses it to refresh its display.
+class CBGPreviewHint : public CObject
+{
+protected:
+	DECLARE_DYNAMIC(CBGPreviewHint)        // Required for MFC run-time type info.
 };
 
 //// This object is passed to view OnUpdate() functions as the (3rd) hint

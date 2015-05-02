@@ -1399,6 +1399,8 @@ void CHexEditDoc::CheckBGProcessing()
 	bool search_finished = false;
 	bool aerial_finished = false;
 	bool comp_finished = false;
+	bool preview_load_finished = false;
+
 	docdata_.Lock();
 	search_finished = search_fin_;
 	if (search_finished)
@@ -1406,10 +1408,15 @@ void CHexEditDoc::CheckBGProcessing()
 		search_fin_ = false;              // Stop further updates
 		find_total_ = 0;
 	}
+
 	aerial_finished = aerial_fin_;
 	aerial_fin_ = false;
+
 	comp_finished = comp_fin_;
 	comp_fin_ = false;
+
+	preview_load_finished = preview_fin_;
+	preview_fin_ = false;                // prevent us sending the update hint more than once
 	docdata_.Unlock();
 
 	if (search_finished)
@@ -1439,6 +1446,12 @@ void CHexEditDoc::CheckBGProcessing()
 		TRACE("Detected bg compare finished - update\r\n");
 		CCompHint cch;
 		UpdateAllViews(NULL, 0, &cch);
+	}
+
+	if (preview_load_finished)
+	{
+		CBGPreviewHint bgph;
+		UpdateAllViews(NULL, 0, &bgph);
 	}
 
 	// For bg compares we also need to check if the compare file has changed since

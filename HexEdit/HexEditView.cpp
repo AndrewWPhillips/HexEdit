@@ -802,6 +802,8 @@ BOOL CHexEditView::PreCreateWindow(CREATESTRUCT& cs)
 			pView = ((CAerialView *)pView)->phev_;
 		else if (pView->IsKindOf(RUNTIME_CLASS(CDataFormatView)))
 			pView = ((CDataFormatView *)pView)->phev_;
+		else if (pView->IsKindOf(RUNTIME_CLASS(CPrevwView)))
+			pView = ((CPrevwView *)pView)->phev_;
 		ASSERT_KINDOF(CHexEditView, pView);
 
 		// Make this view's undo stack the same as clone view
@@ -1233,7 +1235,7 @@ void CHexEditView::StoreOptions()
 		// This is a kludge because if you close more than one window at a time
 		// and they are maximized MDI children then only one of them will have
 		// wp.showCmd == SW_SHOWMAXIMIZED (3), others will be SW_SHOWNORMAL (1)
-		ASSERT(GetFrame() != NULL && GetView()->GetFrame() != NULL);
+		ASSERT(GetFrame() != NULL && GetView() != NULL && GetView()->GetFrame() != NULL);
 		UINT activeShowCmd = SW_SHOWMAXIMIZED;
 		if (GetView()->GetFrame()->GetWindowPlacement(&wp))
 			activeShowCmd = wp.showCmd;

@@ -62,6 +62,7 @@ IMPLEMENT_DYNAMIC(CDFFDHint, CObject)       // redraw required due to changed do
 IMPLEMENT_DYNAMIC(CCompHint, CObject)       // redraw required due to changes in compare file
 IMPLEMENT_DYNAMIC(CBookmarkHint, CObject)   // A bookmark has been added/removed
 IMPLEMENT_DYNAMIC(CTrackHint, CObject)      // Need to invalidate extra things for change tracking
+IMPLEMENT_DYNAMIC(CBGPreviewHint, CObject)  // load of preview bitmap has finished
 
 size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address, int use_bg /*= -1*/)
 {
