@@ -873,9 +873,19 @@ BEGIN
     END
     POPUP "Preview"
     BEGIN
-        MENUITEM "&Hide Bitmap Preview",            ID_PREVW_HIDE
-        MENUITEM "&Split Bitmap Preview",           ID_PREVW_SPLIT
-        MENUITEM "&Tabbed Bitmap Preview",          ID_PREVW_TAB
+        MENUITEM "&Hide Bitmap Preview",        ID_PREVW_HIDE
+        MENUITEM "&Split Bitmap Preview",       ID_PREVW_SPLIT
+        MENUITEM "&Tabbed Bitmap Preview",      ID_PREVW_TAB
+        MENUITEM SEPARATOR
+        MENUITEM "Zoom &In",                    ID_PREVW_ZOOM_IN
+        MENUITEM "&Zoom Out",                   ID_PREVW_ZOOM_OUT
+        MENUITEM "Zoom &Actual",                ID_PREVW_ZOOM_ACTUAL
+        MENUITEM "Zoom &Fit",                   ID_PREVW_ZOOM_FIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Checkerboard Background ",   ID_PREVW_BG_CHECK
+        MENUITEM "&White Background ",          ID_PREVW_BG_WHITE
+        MENUITEM "&Black Background ",          ID_PREVW_BG_BLACK
+        MENUITEM "&Standard Background ",       ID_PREVW_BG_GREY
     END
     POPUP "&Tools"
     BEGIN
@@ -1483,6 +1493,11 @@ BEGIN
         MENUITEM "&Zoom Out",                   ID_PREVW_ZOOM_OUT
         MENUITEM "Zoom &Actual",                ID_PREVW_ZOOM_ACTUAL
         MENUITEM "Zoom &Fit",                   ID_PREVW_ZOOM_FIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Checkerboard Background ",   ID_PREVW_BG_CHECK
+        MENUITEM "&White Background ",          ID_PREVW_BG_WHITE
+        MENUITEM "&Black Background ",          ID_PREVW_BG_BLACK
+        MENUITEM "&Standard Background ",       ID_PREVW_BG_GREY
         MENUITEM SEPARATOR
         MENUITEM "C&ustomize...",               ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2

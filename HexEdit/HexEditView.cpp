@@ -1378,6 +1378,9 @@ void CHexEditView::StoreOptions()
 			pfl->SetData(ii, CHexFileList::PREVIEWVIEW, __int64(width));
 		}
 
+		if (ppv_ != NULL)
+			ppv_->StoreOptions(pfl, ii);
+
 #ifdef FILE_PREVIEW
 		if (theApp.thumbnail_)
 		{

@@ -9,9 +9,10 @@
 // TODO
 // Code
 //  > handle alpha channel
+//  - forward unused message to hex view
 //  - drag bitmap with mouse
 //  - double-buffer to addresses flickering
-//  - save/restore current pos and zoom + background_
+//  > save/restore current pos and zoom + background_
 //  - copy to clipboard command??
 //  - scrollbars??
 // Maybe later
@@ -24,6 +25,11 @@
 //  - BLT boundary contions
 
 IMPLEMENT_DYNCREATE(CPrevwView, CView)
+
+// TODO we should be able to calculate better values (eg, that avoid overflow in
+// bitmap calcs) based on the size of the bitmap
+static const double zoom_min = 1e-4;
+static const double zoom_max = 1e3;
 
 CPrevwView::CPrevwView() : phev_(NULL), zoom_(0.0), background_(WHITE)
 {
@@ -45,11 +51,19 @@ BEGIN_MESSAGE_MAP(CPrevwView, CView)
 	ON_WM_CONTEXTMENU()
 
 	ON_COMMAND(ID_PREVW_ZOOM_IN, OnZoomIn)
+	ON_UPDATE_COMMAND_UI(ID_PREVW_ZOOM_IN, OnUpdateZoomIn)
 	ON_COMMAND(ID_PREVW_ZOOM_OUT, OnZoomOut)
+	ON_UPDATE_COMMAND_UI(ID_PREVW_ZOOM_OUT, OnUpdateZoomOut)
 	ON_COMMAND(ID_PREVW_ZOOM_ACTUAL, OnZoomActual)
 	ON_COMMAND(ID_PREVW_ZOOM_FIT, OnZoomFit)
-	ON_UPDATE_COMMAND_UI(ID_PREVW_ZOOM_IN, OnUpdateZoomIn)
-	ON_UPDATE_COMMAND_UI(ID_PREVW_ZOOM_OUT, OnUpdateZoomOut)
+	ON_COMMAND(ID_PREVW_BG_CHECK, OnBackgroundCheck)
+	ON_UPDATE_COMMAND_UI(ID_PREVW_BG_CHECK, OnUpdateBackgroundCheck)
+	ON_COMMAND(ID_PREVW_BG_WHITE, OnBackgroundWhite)
+	ON_UPDATE_COMMAND_UI(ID_PREVW_BG_WHITE, OnUpdateBackgroundWhite)
+	ON_COMMAND(ID_PREVW_BG_BLACK, OnBackgroundBlack)
+	ON_UPDATE_COMMAND_UI(ID_PREVW_BG_BLACK, OnUpdateBackgroundBlack)
+	ON_COMMAND(ID_PREVW_BG_GREY, OnBackgroundGrey)
+	ON_UPDATE_COMMAND_UI(ID_PREVW_BG_GREY, OnUpdateBackgroundGrey)
 END_MESSAGE_MAP()
 
 // CPrevwView drawing
@@ -65,8 +79,13 @@ void CPrevwView::OnInitialUpdate()
 	if (pDoc->pfile1_ != NULL)
 		recent_file_index = pfl->GetIndex(pDoc->pfile1_->GetFilePath());
 
-	// Get preview view display options from pfl xxx TBD zoom and pos
-	//pfl->GetData(recent_file_index, CHexFileList::PREVIEWXXX);
+	// Get last preview view display options for thsi file from pfl
+	zoom_  = atof(pfl->GetData(recent_file_index, CHexFileList::PREVIEWZOOM)) / 1e4;
+	if (zoom_ < zoom_min || zoom_ > zoom_max)
+		zoom_ = 0.0;
+	pos_.x = atoi(pfl->GetData(recent_file_index, CHexFileList::PREVIEWX));
+	pos_.y = atoi(pfl->GetData(recent_file_index, CHexFileList::PREVIEWY));
+	background_ = background_t(atoi(pfl->GetData(recent_file_index, CHexFileList::PREVIEWBG)));
 
 	CView::OnInitialUpdate();
 }
@@ -91,25 +110,17 @@ void CPrevwView::OnDraw(CDC* pDC)
 	if (pDoc == NULL || pDoc->preview_dib_ == NULL || zoom_ == 0.0)
 		return;
 
-	//validate_display();
+	// xxx if preview_dib_ == NULL just draw text "Invalid or unrecognized format"
 	draw_bitmap(pDC);
 }
 
-// CPrevwView diagnostics
-
-#ifdef _DEBUG
-void CPrevwView::AssertValid() const
+void CPrevwView::StoreOptions(CHexFileList *pfl, int idx)
 {
-	CView::AssertValid();
+	pfl->SetData(idx, CHexFileList::PREVIEWZOOM, __int64(zoom_ * 1e4));
+	pfl->SetData(idx, CHexFileList::PREVIEWX, pos_.x);
+	pfl->SetData(idx, CHexFileList::PREVIEWY, pos_.y);
+	pfl->SetData(idx, CHexFileList::PREVIEWBG, background_);
 }
-
-#ifndef _WIN32_WCE
-void CPrevwView::Dump(CDumpContext& dc) const
-{
-	CView::Dump(dc);
-}
-#endif
-#endif //_DEBUG
 
 // CPrevwView message handlers
 void CPrevwView::OnSize(UINT nType, int cx, int cy)
@@ -154,22 +165,27 @@ void CPrevwView::OnLButtonDblClk(UINT nFlags, CPoint point)
 void CPrevwView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CHexEditDoc *pDoc = GetDocument();
+	bool display_change = false;
 
-if (nChar <= VK_CONTROL) return;
+	//if (nChar <= VK_CONTROL) return;  // This helps when debugging Ctrl+key
 
 	switch (nChar)
 	{
 	case VK_UP:
 		pos_.y -= 10;
+		display_change = true;
 		break;
 	case VK_DOWN:
 		pos_.y += 10;
+		display_change = true;
 		break;
 	case VK_LEFT:
 		pos_.x -= 10;
+		display_change = true;
 		break;
 	case VK_RIGHT:
 		pos_.x += 10;
+		display_change = true;
 		break;
 
 	case 'B':
@@ -177,23 +193,30 @@ if (nChar <= VK_CONTROL) return;
 		if (::GetKeyState(VK_CONTROL) < 0)    // check for control key down
 		{
 			zoom_ = 0.0;  // force zoom to fit
+			display_change = true;
 		}
 		break;
 	case VK_ADD:
 		if ((nFlags & MK_CONTROL) != 0)  // If Ctrl-Plus is zoom in
 		{
 			zoom(1/1.5);
+			display_change = true;
 		}
 		break;
 	case VK_SUBTRACT:
 		if ((nFlags & MK_CONTROL) != 0)  // If Ctrl-Minus is zoom out
 		{
 			zoom(1.5);
+			display_change = true;
 		}
 		break;
 	}
-	validate_display();
-	Invalidate();
+
+	if (display_change)
+	{
+		validate_display();     // keep zoom/position within allowed limits
+		Invalidate();           // force redraw
+	}
 
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
@@ -234,11 +257,21 @@ void CPrevwView::OnZoomIn()
 	Invalidate();
 }
 
+void CPrevwView::OnUpdateZoomIn(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable(zoom_ > zoom_min);
+}
+
 void CPrevwView::OnZoomOut()
 {
 	zoom(1.5);
 	validate_display();
 	Invalidate();
+}
+
+void CPrevwView::OnUpdateZoomOut(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable(zoom_ < zoom_max);
 }
 
 void CPrevwView::OnZoomActual()
@@ -255,19 +288,48 @@ void CPrevwView::OnZoomFit()
 	Invalidate();
 }
 
-// TODO we should be able to calculate better values (eg, that avoid overflow in
-// bitmap calcs) based on the size of the bitmap
-static const double zoom_min = 1e-4;
-static const double zoom_max = 1e3;
-
-void CPrevwView::OnUpdateZoomIn(CCmdUI *pCmdUI)
+void CPrevwView::OnBackgroundCheck()
 {
-	pCmdUI->Enable(zoom_ > zoom_min);
+	background_ = CHECKERBOARD;
+	Invalidate();
 }
 
-void CPrevwView::OnUpdateZoomOut(CCmdUI *pCmdUI)
+void CPrevwView::OnUpdateBackgroundCheck(CCmdUI *pCmdUI)
 {
-	pCmdUI->Enable(zoom_ < zoom_max);
+	pCmdUI->SetCheck(background_ == CHECKERBOARD);
+}
+
+void CPrevwView::OnBackgroundWhite()
+{
+	background_ = WHITE;
+	Invalidate();
+}
+
+void CPrevwView::OnUpdateBackgroundWhite(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(background_ == WHITE);
+}
+
+void CPrevwView::OnBackgroundBlack()
+{
+	background_ = BLACK;
+	Invalidate();
+}
+
+void CPrevwView::OnUpdateBackgroundBlack(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(background_ == BLACK);
+}
+
+void CPrevwView::OnBackgroundGrey()
+{
+	background_ = GREY;
+	Invalidate();
+}
+
+void CPrevwView::OnUpdateBackgroundGrey(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(background_ == GREY);
 }
 
 // Drawing routines
@@ -309,16 +371,8 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 	int dr = sr/zoom_ + pos_.x;
 	int db = sb/zoom_ + pos_.y;
 
-#if 0
-	// Copy all or part of the FreeImage bitmap to the display
-	::StretchDIBits(pDC->GetSafeHdc(),
-					dl, dt, dr - dl, db - dt,
-					sl, bmheight - sb, sr - sl, sb - st,
-					FreeImage_GetBits(pDoc->preview_dib_), FreeImage_GetInfo(pDoc->preview_dib_),
-					DIB_RGB_COLORS, SRCCOPY);
-#else
-
 	// For 32-bit bitmaps we use AlphaBlend to preserve the alpha channel (transparency)
+	// I worked out how to do this using example code at http://sourceforge.net/p/freeimage/discussion/36111/thread/3ed64628/
 	if (::GetDeviceCaps(pDC->GetSafeHdc(), BITSPIXEL) >= 32 && FreeImage_GetBPP(pDoc->preview_dib_) >= 32)
 	{
 		CRect fillRect(dl, dt, dr, db);
@@ -349,6 +403,7 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 				bm.CreateBitmap(32, 32, 1, 1, HatchBits);
 				CBrush brush;
 				brush.CreatePatternBrush(&bm);
+				pDC->SetTextColor(RGB(128,128,128));
 				pDC->FillRect(&fillRect, &brush);
 			}
 			break;
@@ -375,13 +430,13 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 		FIBITMAP * dib = FreeImage_Copy(pDoc->preview_dib_, 0, 0, bmwidth, bmheight);
 		FreeImage_PreMultiplyWithAlpha(dib);
 		::StretchDIBits(MemDC.GetSafeHdc(),
-						dl, dt, dr - dl, db - dt,
+						dl - rct.left, dt - rct.top, dr - dl, db - dt,
 						sl, bmheight - sb, sr - sl, sb - st,
 						FreeImage_GetBits(dib), FreeImage_GetInfo(dib),
 						DIB_RGB_COLORS, SRCCOPY);
 
 		BLENDFUNCTION blend = {AC_SRC_OVER,0,255,AC_SRC_ALPHA};
-		pDC->AlphaBlend(rct.left, rct.top, rct.Width(), rct.Height(), &MemDC, rct.left, rct.top, rct.Width(), rct.Height(), blend);
+		pDC->AlphaBlend(rct.left, rct.top, rct.Width(), rct.Height(), &MemDC, 0, 0, rct.Width(), rct.Height(), blend);
 
 		// Cleanup
 		FreeImage_Unload(dib);
@@ -398,13 +453,14 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 						FreeImage_GetBits(pDoc->preview_dib_), FreeImage_GetInfo(pDoc->preview_dib_),
 						DIB_RGB_COLORS, SRCCOPY);
 	}
-#endif
 }
 
 void CPrevwView::validate_display()
 {
 	CHexEditDoc *pDoc = GetDocument();
 	ASSERT(pDoc != NULL);
+	if (pDoc == NULL || pDoc->preview_dib_ == NULL)
+		return;
 
 	// eEt size of the display area (client area of the window)
 	CRect rct;

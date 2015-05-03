@@ -39,12 +39,7 @@ public:
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
 
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-#ifndef _WIN32_WCE
-	virtual void Dump(CDumpContext& dc) const;
-#endif
-#endif
+	void StoreOptions(CHexFileList *pfl, int idx);
 
 protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -63,6 +58,15 @@ protected:
 	afx_msg void OnZoomFit();
 	afx_msg void OnUpdateZoomIn(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateZoomOut(CCmdUI *pCmdUI);
+
+	afx_msg void OnBackgroundCheck();
+	afx_msg void OnUpdateBackgroundCheck(CCmdUI *pCmdUI);
+	afx_msg void OnBackgroundWhite();
+	afx_msg void OnUpdateBackgroundWhite(CCmdUI *pCmdUI);
+	afx_msg void OnBackgroundBlack();
+	afx_msg void OnUpdateBackgroundBlack(CCmdUI *pCmdUI);
+	afx_msg void OnBackgroundGrey();
+	afx_msg void OnUpdateBackgroundGrey(CCmdUI *pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 #ifndef _DEBUG
@@ -77,7 +81,7 @@ protected:
 private:
 	double zoom_;               // Current zoom level where 1.0 means 1 bitmap pixel displays as 1 screen pixel (0 means we need to figure out zoom_/pos_ from window)
 	CPoint pos_;                // Where in the current client rect is the top left of the bitmap (coords may be negative)
-	enum {CHECKERBOARD, WHITE, BLACK, GREY} background_;
+	enum background_t { CHECKERBOARD, WHITE, BLACK, GREY, } background_;
 
 	bool mouse_down_;           // Is the left mouse button currently down?
 

@@ -1796,6 +1796,10 @@
 #define ID_PREVW_ROTATE_TO270           39215
 #define ID_PREVW_FLIP_VERT              39216
 #define ID_PREVW_FLIP_HORIZ             39217
+#define ID_PREVW_BG_CHECK               39218
+#define ID_PREVW_BG_WHITE               39219
+#define ID_PREVW_BG_BLACK               39220
+#define ID_PREVW_BG_GREY                39221
 #define IDS_WARNING_DO_NOT_RENUMBER     52700
 #define IDS_BOOKMARK_NOFILE             52701
 #define IDS_BOOKMARK_NOTFOUND           52702
@@ -1859,7 +1863,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        525
-#define _APS_NEXT_COMMAND_VALUE         39220
+#define _APS_NEXT_COMMAND_VALUE         39230
 #define _APS_NEXT_CONTROL_VALUE         1695
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

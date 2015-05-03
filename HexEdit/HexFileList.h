@@ -48,7 +48,8 @@ public:
 					 COMPVIEW, COMPFILENAME,
 					 CODEPAGE, MBFONT, MBHEIGHT, 
 					 PREVIEWFILENAME,                     // used for preview for hex or all views
-					 PREVIEWVIEW,                         // used for preview of a file (no relationship to PREVIEWFILENAME) - currently just bitmap files
+					 PREVIEWVIEW, PREVIEWZOOM,            // used for preview of a file (no relationship to PREVIEWFILENAME) - currently just bitmap files
+					   PREVIEWX, PREVIEWY, PREVIEWBG,
 	};
 
 // Attributes
