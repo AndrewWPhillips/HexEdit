@@ -282,7 +282,6 @@ UINT CHexEditDoc::RunPreviewThread()
 		docdata_.Unlock();
 
 		FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromHandle(&fi_funcs, this);
-		TRACE("Image format is %d\n", fif);
 		FIBITMAP * dib = FreeImage_LoadFromHandle(fif, &fi_funcs, this);
 
 		TRACE1("+++ BGPreview: finished load for %p\n", this);

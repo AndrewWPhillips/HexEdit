@@ -44,6 +44,7 @@ public:
 protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -84,10 +85,12 @@ private:
 	enum background_t { CHECKERBOARD, WHITE, BLACK, GREY, } background_;
 
 	bool mouse_down_;           // Is the left mouse button currently down?
+	CPoint mouse_point_;        // Last mouse point when moude is down
 
 	void draw_bitmap(CDC* pDC);
 	void validate_display();
 	void zoom(double amount);
+	double zoom_fit();
 };
 #endif  // PREVWVIEW_INCLUDED_
 

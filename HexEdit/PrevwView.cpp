@@ -10,7 +10,8 @@
 // Code
 //  > handle alpha channel
 //  - forward unused message to hex view
-//  - drag bitmap with mouse
+//  > drag bitmap with mouse
+//    > show hand cursor if zoomed more than fit
 //  - double-buffer to addresses flickering
 //  > save/restore current pos and zoom + background_
 //  - copy to clipboard command??
@@ -31,7 +32,7 @@ IMPLEMENT_DYNCREATE(CPrevwView, CView)
 static const double zoom_min = 1e-4;
 static const double zoom_max = 1e3;
 
-CPrevwView::CPrevwView() : phev_(NULL), zoom_(0.0), background_(WHITE)
+CPrevwView::CPrevwView() : phev_(NULL), zoom_(0.0), background_(WHITE), mouse_down_(false)
 {
 }
 
@@ -42,11 +43,12 @@ CPrevwView::~CPrevwView()
 BEGIN_MESSAGE_MAP(CPrevwView, CView)
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
-	ON_WM_KEYDOWN()
+	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
+	ON_WM_KEYDOWN()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_CONTEXTMENU()
 
@@ -133,59 +135,104 @@ void CPrevwView::OnSize(UINT nType, int cx, int cy)
 	CView::OnSize(nType, cx, cy);    // this should invalidate -> redraw with new values
 }
 
+BOOL CPrevwView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
+{
+	if (nHitTest == HTCLIENT)
+	{
+		CHexEditDoc *pDoc = GetDocument();
+		ASSERT(pDoc != NULL);
+
+		CRect rct;
+		GetClientRect(&rct);
+
+		// Get dimensions of the bitmap (as double so we can calculate zoom)
+		double bmwidth  = FreeImage_GetWidth(pDoc->preview_dib_);
+		double bmheight = FreeImage_GetHeight(pDoc->preview_dib_);
+
+		if (zoom_ < zoom_fit())
+		{
+			//if (mouse_down_)
+			//	::SetCursor(theApp.LoadCursor(IDC_HANDGRAB));        // indicates user is dragging the image
+			//else
+				::SetCursor(theApp.LoadCursor(IDC_HANDOPEN));        // can be dragged
+			return TRUE;
+		}
+	}
+
+	return CView::OnSetCursor(pWnd, nHitTest, message);
+}
+
 void CPrevwView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	CView::OnMouseMove(nFlags, point);
 
 	if (mouse_down_)
 	{
-		// xxx
+		CPoint saved_pos(pos_);
+		pos_.x += (point.x - mouse_point_.x);
+		pos_.y += (point.y - mouse_point_.y);
+
+		validate_display();         // keep zoom/position within allowed limits
+		if (pos_ != saved_pos)
+			Invalidate();           // force redraw
+
+		mouse_point_ = point;
 	}
 }
 
 void CPrevwView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	mouse_down_ = true;
+	if (zoom_ < zoom_fit())
+	{
+		mouse_down_ = true;
+		mouse_point_ = point;
+		SetCapture();                 // Capture the mouse so user can drag past edges (and so we get a mouse up event)
+		::SetCursor(theApp.LoadCursor(IDC_HANDGRAB));        // indicates user is dragging the image
+	}
 
 	CView::OnLButtonDown(nFlags, point);
 }
 
 void CPrevwView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	mouse_down_ = false;
+	if (mouse_down_)
+	{
+		mouse_down_ = false;
+		ReleaseCapture();
+	}
 
 	CView::OnLButtonUp(nFlags, point);
 }
 
 void CPrevwView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	mouse_down_ = true;
+	//mouse_down_ = true;
+
+	CView::OnLButtonDblClk(nFlags, point);
 }
 
 void CPrevwView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CHexEditDoc *pDoc = GetDocument();
-	bool display_change = false;
 
 	//if (nChar <= VK_CONTROL) return;  // This helps when debugging Ctrl+key
+
+	CPoint saved_pos(pos_);
+	double saved_zoom = zoom_;
 
 	switch (nChar)
 	{
 	case VK_UP:
-		pos_.y -= 10;
-		display_change = true;
+		pos_.y += 10;
 		break;
 	case VK_DOWN:
-		pos_.y += 10;
-		display_change = true;
+		pos_.y -= 10;
 		break;
 	case VK_LEFT:
-		pos_.x -= 10;
-		display_change = true;
+		pos_.x += 10;
 		break;
 	case VK_RIGHT:
-		pos_.x += 10;
-		display_change = true;
+		pos_.x -= 10;
 		break;
 
 	case 'B':
@@ -193,36 +240,34 @@ void CPrevwView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if (::GetKeyState(VK_CONTROL) < 0)    // check for control key down
 		{
 			zoom_ = 0.0;  // force zoom to fit
-			display_change = true;
 		}
 		break;
 	case VK_ADD:
 		if ((nFlags & MK_CONTROL) != 0)  // If Ctrl-Plus is zoom in
 		{
 			zoom(1/1.5);
-			display_change = true;
 		}
 		break;
 	case VK_SUBTRACT:
 		if ((nFlags & MK_CONTROL) != 0)  // If Ctrl-Minus is zoom out
 		{
 			zoom(1.5);
-			display_change = true;
 		}
 		break;
 	}
 
-	if (display_change)
-	{
-		validate_display();     // keep zoom/position within allowed limits
-		Invalidate();           // force redraw
-	}
+	validate_display();
+	if (pos_ != saved_pos || zoom_ != saved_zoom)
+		Invalidate();
 
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
 BOOL CPrevwView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
+	CPoint saved_pos(pos_);
+	double saved_zoom = zoom_;
+
 	if ((nFlags & MK_CONTROL) != 0)  // If Ctrl key down we zoom instead of scroll
 	{
 		if (theApp.reverse_zoom_) zDelta = -zDelta;
@@ -239,8 +284,10 @@ BOOL CPrevwView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	{
 		pos_.y += zDelta/WHEEL_DELTA*30;
 	}
+
 	validate_display();
-	Invalidate();
+	if (pos_ != saved_pos || zoom_ != saved_zoom)
+		Invalidate();
 	return TRUE;
 }
 
@@ -462,7 +509,7 @@ void CPrevwView::validate_display()
 	if (pDoc == NULL || pDoc->preview_dib_ == NULL)
 		return;
 
-	// eEt size of the display area (client area of the window)
+	// Get size of the display area (client area of the window)
 	CRect rct;
 	GetClientRect(&rct);
 
@@ -474,7 +521,7 @@ void CPrevwView::validate_display()
 	if (zoom_ <= 0.0)
 	{
 		// Work out zoom so the whole bitmap fits in the display
-		zoom_ = max(bmwidth/rct.Width(), bmheight/rct.Height());
+		zoom_ = zoom_fit();
 
 		// Move to top-left - code below will centre within the display
 		pos_.x = pos_.y = 0;
@@ -533,7 +580,7 @@ void CPrevwView::zoom(double amount)
 	// Adjust position so that zoom occurs around the centre of the window
 	if (zoom_ != prev_zoom)
 	{
-		// Gett size of the display area (client area of the window)
+		// Get size of the display area (client area of the window)
 		CRect rct;
 		GetClientRect(&rct);
 
@@ -541,3 +588,21 @@ void CPrevwView::zoom(double amount)
 		pos_.y = rct.Height()/2 - int((rct.Height()/2 - pos_.y) * prev_zoom / zoom_);
 	}
 }
+
+// Calculate zoom level where the bitmap just fits inside the display
+double CPrevwView::zoom_fit()
+{
+	CHexEditDoc *pDoc = GetDocument();
+	ASSERT(pDoc != NULL);
+
+	// Get size of the display area (client area of the window)
+	CRect rct;
+	GetClientRect(&rct);
+
+	// Get dimensions of the bitmap (as double so we can calculate zoom)
+	double bmwidth  = FreeImage_GetWidth(pDoc->preview_dib_);
+	double bmheight = FreeImage_GetHeight(pDoc->preview_dib_);
+
+	return max(bmwidth/rct.Width(), bmheight/rct.Height());
+}
+
