@@ -10,9 +10,8 @@
 // Code
 //  > handle alpha channel
 //  - forward unused message to hex view
-//  > drag bitmap with mouse
-//    > show hand cursor if zoomed more than fit
-//  - double-buffer to addresses flickering
+//  > double-buffer to addresses flickering
+//    - scroll window when dragging to stop flicker
 //  > save/restore current pos and zoom + background_
 //  - copy to clipboard command??
 //  - scrollbars??
@@ -174,7 +173,10 @@ void CPrevwView::OnMouseMove(UINT nFlags, CPoint point)
 
 		validate_display();         // keep zoom/position within allowed limits
 		if (pos_ != saved_pos)
-			Invalidate();           // force redraw
+		{
+			ScrollWindow( pos_.x - saved_pos.x, pos_.y - saved_pos.y);
+			UpdateWindow();
+		}
 
 		mouse_point_ = point;
 	}
@@ -418,11 +420,19 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 	int dr = sr/zoom_ + pos_.x;
 	int db = sb/zoom_ + pos_.y;
 
+	// Create an off-screen bitmap for double-buffering (remove annoying flickering)
+	CDC BufDC;
+	CBitmap BufBM;
+	BufDC.CreateCompatibleDC(pDC);
+	BufBM.CreateCompatibleBitmap(pDC, dr - dl, db - dt);
+	CBitmap* pOldBM = BufDC.SelectObject(&BufBM);
+	//BufDC.SetWindowOrg(0, 0);
+
 	// For 32-bit bitmaps we use AlphaBlend to preserve the alpha channel (transparency)
 	// I worked out how to do this using example code at http://sourceforge.net/p/freeimage/discussion/36111/thread/3ed64628/
 	if (::GetDeviceCaps(pDC->GetSafeHdc(), BITSPIXEL) >= 32 && FreeImage_GetBPP(pDoc->preview_dib_) >= 32)
 	{
-		CRect fillRect(dl, dt, dr, db);
+		CRect fillRect(0, 0, dr - dl, db - dt);
 
 		// Fill the background
 		switch (background_)
@@ -450,18 +460,18 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 				bm.CreateBitmap(32, 32, 1, 1, HatchBits);
 				CBrush brush;
 				brush.CreatePatternBrush(&bm);
-				pDC->SetTextColor(RGB(128,128,128));
-				pDC->FillRect(&fillRect, &brush);
+				BufDC.SetTextColor(RGB(128,128,128));
+				BufDC.FillRect(&fillRect, &brush);
 			}
 			break;
 		case WHITE:
-			pDC->FillSolidRect(&fillRect, RGB(255,255,255));
+			BufDC.FillSolidRect(&fillRect, RGB(255,255,255));
 			break;;
 		case BLACK:
-			pDC->FillSolidRect(&fillRect, RGB(0,0,0));
+			BufDC.FillSolidRect(&fillRect, RGB(0,0,0));
 			break;
 		case GREY:
-			pDC->FillSolidRect(&fillRect, afxGlobalData.clrBtnFace);
+			BufDC.FillSolidRect(&fillRect, afxGlobalData.clrBtnFace);
 			break;
 		}
 
@@ -469,21 +479,21 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 		CDC MemDC;
 		CBitmap bm;
 		MemDC.CreateCompatibleDC(pDC);
-		bm.CreateCompatibleBitmap(pDC, rct.Width(), rct.Height());
+		bm.CreateCompatibleBitmap(pDC,  dr - dl, db - dt);
 		CBitmap* pOldBitmap = MemDC.SelectObject(&bm);
-		MemDC.SetWindowOrg(0, 0);
+		//MemDC.SetWindowOrg(0, 0);
 
 		// Get the bitmap required by AlphBlend
 		FIBITMAP * dib = FreeImage_Copy(pDoc->preview_dib_, 0, 0, bmwidth, bmheight);
 		FreeImage_PreMultiplyWithAlpha(dib);
 		::StretchDIBits(MemDC.GetSafeHdc(),
-						dl - rct.left, dt - rct.top, dr - dl, db - dt,
+						0, 0, dr - dl, db - dt,
 						sl, bmheight - sb, sr - sl, sb - st,
 						FreeImage_GetBits(dib), FreeImage_GetInfo(dib),
 						DIB_RGB_COLORS, SRCCOPY);
 
 		BLENDFUNCTION blend = {AC_SRC_OVER,0,255,AC_SRC_ALPHA};
-		pDC->AlphaBlend(rct.left, rct.top, rct.Width(), rct.Height(), &MemDC, 0, 0, rct.Width(), rct.Height(), blend);
+		BufDC.AlphaBlend(0, 0, dr - dl, db - dt, &MemDC, 0, 0, dr - dl, db - dt, blend);
 
 		// Cleanup
 		FreeImage_Unload(dib);
@@ -494,12 +504,17 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 	else
 	{
 		// Copy all or part of the FreeImage bitmap to the display
-		::StretchDIBits(pDC->GetSafeHdc(),
-						dl, dt, dr - dl, db - dt,
+		::StretchDIBits(BufDC.GetSafeHdc(),
+						0, 0, dr - dl, db - dt,
 						sl, bmheight - sb, sr - sl, sb - st,
 						FreeImage_GetBits(pDoc->preview_dib_), FreeImage_GetInfo(pDoc->preview_dib_),
 						DIB_RGB_COLORS, SRCCOPY);
 	}
+
+	pDC->BitBlt(dl, dt, dr - dl, db - dt, &BufDC, 0, 0, SRCCOPY);
+	BufDC.SelectObject(pOldBM);
+	BufBM.DeleteObject();
+	BufDC.DeleteDC();
 }
 
 void CPrevwView::validate_display()
