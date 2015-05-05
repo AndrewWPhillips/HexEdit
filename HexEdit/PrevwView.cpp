@@ -175,7 +175,7 @@ void CPrevwView::OnMouseMove(UINT nFlags, CPoint point)
 		if (pos_ != saved_pos)
 		{
 			ScrollWindow( pos_.x - saved_pos.x, pos_.y - saved_pos.y);
-			UpdateWindow();
+			//UpdateWindow();
 		}
 
 		mouse_point_ = point;
@@ -259,8 +259,10 @@ void CPrevwView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 
 	validate_display();
-	if (pos_ != saved_pos || zoom_ != saved_zoom)
+	if (zoom_ != saved_zoom)
 		Invalidate();
+	else if (pos_ != saved_pos)
+		ScrollWindow(pos_.x - saved_pos.x, pos_.y - saved_pos.y);
 
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
@@ -288,8 +290,10 @@ BOOL CPrevwView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	}
 
 	validate_display();
-	if (pos_ != saved_pos || zoom_ != saved_zoom)
+	if (zoom_ != saved_zoom)
 		Invalidate();
+	else if (pos_ != saved_pos)
+		ScrollWindow(pos_.x - saved_pos.x, pos_.y - saved_pos.y);
 	return TRUE;
 }
 
@@ -396,14 +400,17 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 	CHexEditDoc *pDoc = GetDocument();
 	ASSERT(pDoc != NULL);
 
+	CRect rct;
+	pDC->GetClipBox(&rct);                       // only BLIT the area that needs it
+
+	if (pDoc == NULL || rct.IsRectEmpty())
+		return;
+
 //	BITMAPINFOHEADER *bih = FreeImage_GetInfoHeader(pDoc->preview_dib_);
 //	ASSERT(bih->biCompression == BI_RGB && bih->biHeight > 0);
 	int bmwidth  = FreeImage_GetWidth(pDoc->preview_dib_);
 	int bmheight = FreeImage_GetHeight(pDoc->preview_dib_);
 	ASSERT(bmheight > 0);
-
-	CRect rct;
-	pDC->GetClipBox(&rct);                       // only BLIT the area that needs it
 
 	// xxx need to check this code for boundary problems with small/large bitmaps/windows
 	int sl = (rct.left - pos_.x) * zoom_;
@@ -421,10 +428,14 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 	int db = sb/zoom_ + pos_.y;
 
 	// Create an off-screen bitmap for double-buffering (remove annoying flickering)
+	// This is slightly bigger than the clip area (extra at top and left) so the checkerboard  is
+	// always drawn at the same relative offset to pos_ (by using %32 since 32 is size of repeating pattern)
+	// Note we add 65535 (=65536-1) to make sure modulus (%) is performed on a +ve integer (xxx is that big enough?)
+	int xoff = (rct.left - pos_.x + 0xFFFFFF)%32, yoff = (rct.top - pos_.y + 0xFFFFFF)%32;
 	CDC BufDC;
 	CBitmap BufBM;
 	BufDC.CreateCompatibleDC(pDC);
-	BufBM.CreateCompatibleBitmap(pDC, dr - dl, db - dt);
+	BufBM.CreateCompatibleBitmap(pDC, rct.Width() + xoff, rct.Height() + yoff);
 	CBitmap* pOldBM = BufDC.SelectObject(&BufBM);
 	//BufDC.SetWindowOrg(0, 0);
 
@@ -432,7 +443,7 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 	// I worked out how to do this using example code at http://sourceforge.net/p/freeimage/discussion/36111/thread/3ed64628/
 	if (::GetDeviceCaps(pDC->GetSafeHdc(), BITSPIXEL) >= 32 && FreeImage_GetBPP(pDoc->preview_dib_) >= 32)
 	{
-		CRect fillRect(0, 0, dr - dl, db - dt);
+		CRect fillRect(0, 0, rct.Width() + xoff, rct.Height() + yoff);
 
 		// Fill the background
 		switch (background_)
@@ -479,7 +490,7 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 		CDC MemDC;
 		CBitmap bm;
 		MemDC.CreateCompatibleDC(pDC);
-		bm.CreateCompatibleBitmap(pDC,  dr - dl, db - dt);
+		bm.CreateCompatibleBitmap(pDC,  rct.Width(), rct.Height());
 		CBitmap* pOldBitmap = MemDC.SelectObject(&bm);
 		//MemDC.SetWindowOrg(0, 0);
 
@@ -487,13 +498,13 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 		FIBITMAP * dib = FreeImage_Copy(pDoc->preview_dib_, 0, 0, bmwidth, bmheight);
 		FreeImage_PreMultiplyWithAlpha(dib);
 		::StretchDIBits(MemDC.GetSafeHdc(),
-						0, 0, dr - dl, db - dt,
+						dl - rct.left, dt - rct.top, dr - dl, db - dt,
 						sl, bmheight - sb, sr - sl, sb - st,
 						FreeImage_GetBits(dib), FreeImage_GetInfo(dib),
 						DIB_RGB_COLORS, SRCCOPY);
 
 		BLENDFUNCTION blend = {AC_SRC_OVER,0,255,AC_SRC_ALPHA};
-		BufDC.AlphaBlend(0, 0, dr - dl, db - dt, &MemDC, 0, 0, dr - dl, db - dt, blend);
+		BufDC.AlphaBlend(xoff, yoff, rct.Width(), rct.Height(), &MemDC, 0, 0, rct.Width(), rct.Height(), blend);
 
 		// Cleanup
 		FreeImage_Unload(dib);
@@ -505,13 +516,13 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 	{
 		// Copy all or part of the FreeImage bitmap to the display
 		::StretchDIBits(BufDC.GetSafeHdc(),
-						0, 0, dr - dl, db - dt,
+						dl - rct.left + xoff, dt - rct.top + yoff, dr - dl, db - dt,
 						sl, bmheight - sb, sr - sl, sb - st,
 						FreeImage_GetBits(pDoc->preview_dib_), FreeImage_GetInfo(pDoc->preview_dib_),
 						DIB_RGB_COLORS, SRCCOPY);
 	}
 
-	pDC->BitBlt(dl, dt, dr - dl, db - dt, &BufDC, 0, 0, SRCCOPY);
+	pDC->BitBlt(rct.left, rct.top, rct.Width(), rct.Height(), &BufDC, xoff, yoff, SRCCOPY);
 	BufDC.SelectObject(pOldBM);
 	BufBM.DeleteObject();
 	BufDC.DeleteDC();
