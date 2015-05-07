@@ -596,6 +596,42 @@ protected:
 private:
 	CResizeCtrl resizer_;              // Used to move controls around when the window is resized
 };
+
+/////////////////////////////////////////////////////////////////////////////
+// CPropBitmapPage dialog
+
+class CPropBitmapPage : public CPropUpdatePage
+{
+	DECLARE_DYNCREATE(CPropBitmapPage)
+
+// Construction
+public:
+	CPropBitmapPage();
+	~CPropBitmapPage();
+
+// Dialog Data
+	enum { IDD = IDD_PROP_BITMAP };
+
+// Overrides
+public:
+	virtual BOOL OnSetActive();
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+// Implementation
+	virtual void Update(CHexEditView *pv = NULL, FILE_ADDRESS address = -1);
+
+protected:
+	virtual BOOL OnInitDialog();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+
+	DECLARE_MESSAGE_MAP()
+
+private:
+	void hide_disk_info(bool hide = true); // hide or show info about bitmap on disk
+};
+
 /////////////////////////////////////////////////////////////////////////////
 // CPropSheet
 
@@ -654,6 +690,7 @@ public:
 	CPropDatePage     prop_date;
 	CPropGraphPage    prop_graph;
 	CPropStatsPage    prop_stats;
+	CPropBitmapPage   prop_bitmap;
 
 private:
 	CRect m_rctPrev;         // previous window size
