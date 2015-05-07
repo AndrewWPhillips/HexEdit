@@ -103,7 +103,7 @@ CHexEditDoc::CHexEditDoc()
    start_aerial_event_(FALSE, TRUE), aerial_buf_(NULL),
    start_comp_event_  (FALSE, TRUE), comp_bufa_(NULL), comp_bufb_(NULL),
    stats_buf_(NULL), c32_(NULL), c64_(NULL),
-   preview_address_(0L), preview_init_fif_(FREE_IMAGE_FORMAT(-999))
+   preview_address_(0L), preview_fif_(FREE_IMAGE_FORMAT(-999)), preview_file_fif_(FREE_IMAGE_FORMAT(-999))
 {
 	doc_changed_ = false;
 
@@ -608,6 +608,7 @@ BOOL CHexEditDoc::DoSave(LPCTSTR lpszPathName, BOOL bReplace)
 {
 	BOOL modified = IsModified();
 	if (modified) SetModifiedFlag(FALSE);                    // This gets rid of " *" from default filename
+	preview_file_fif_ = FREE_IMAGE_FORMAT(-999);             // force reload of info (when needed) since the file changed
 	BOOL retval = CDocument::DoSave(lpszPathName, bReplace);
 	if (!retval && modified) SetModifiedFlag();              // If not saved restore modified status
 
@@ -826,6 +827,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 				need_change_track_ = false;            // Signal that rebuild not required
 				base_type_ = 0;                        // Now we can use the saved file as base for compare
 				SetModifiedFlag(FALSE);
+				preview_file_fif_ = FREE_IMAGE_FORMAT(-999);  // force reload of info (when needed) since the file changed
 			}
 
 			CString mess;
@@ -934,6 +936,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	}
 
 	SetModifiedFlag(FALSE);
+	preview_file_fif_ = FREE_IMAGE_FORMAT(-999);  // force reload of info (when needed) since the file changed
 
 	return TRUE;
 }

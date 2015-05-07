@@ -349,6 +349,7 @@ public:
 	afx_msg void OnUpdateMacroPlay(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateMacroRecord(CCmdUI* pCmdUI);
 	afx_msg void OnProperties();
+	afx_msg void OnPropertiesBitmap();
 	afx_msg void OnMultiPlay();
 	afx_msg void OnHelpEmail();
 	afx_msg void OnUpdateHelpEmail(CCmdUI* pCmdUI);

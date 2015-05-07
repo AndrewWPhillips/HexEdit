@@ -1340,9 +1340,10 @@
 #define ID_PLAY                         32802
 #define ID_EDIT_COMPARE                 32803
 #define ID_WINDOW_NEXT                  32804
+#define ID_PROPERTIES_BMP               32805
 #define ID_PROPERTIES                   32806
-#define ID_INC_BYTE                     32807
-#define ID_INC_16BIT                    32808
+#define ID_INC_BYTE                     32810
+#define ID_INC_16BIT                    32811
 #define ID_DEC_16BIT                    32812
 #define ID_DEC_BYTE                     32813
 #define ID_DEC_32BIT                    32814

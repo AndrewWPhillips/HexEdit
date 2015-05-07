@@ -4091,10 +4091,10 @@ void CPropBitmapPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 		goto error_return;
 	}
 
-	if (pDoc->IsModified())
+	if (pDoc->IsModified() && pDoc->GetDiskBmpInfo(format, bpp, width, height) == 0)
 	{
-		hide_disk_info(false);
-		pDoc->GetDiskBmpInfo(format, bpp, width, height);
+		SetDlgItemText(IDC_BMP_DESC_MEMORY, "MEMORY");    // Distinguish MEMORY column from DISK column
+		hide_disk_info(false);                            // Show disk info text boxes
 
 		GetDlgItemText(IDC_BMP_FORMAT_DISK, ss);
 		if (ss != format)
@@ -4110,9 +4110,16 @@ void CPropBitmapPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 			SetDlgItemText(IDC_BMP_HEIGHT_DISK, height);
 	}
 	else
+	{
+		SetDlgItemText(IDC_BMP_DESC_MEMORY, "");
 		hide_disk_info(true);
+	}
 
-	pDoc->GetBmpInfo(format, bpp, width, height);
+	if (pDoc->GetBmpInfo(format, bpp, width, height) == -4)
+	{
+		SetDlgItemText(IDC_BMP_DESC_MEMORY, "Bitmap properties only available in preview");
+		hide_disk_info(true);
+	}
 
 error_return:
 	GetDlgItemText(IDC_BMP_FORMAT, ss);

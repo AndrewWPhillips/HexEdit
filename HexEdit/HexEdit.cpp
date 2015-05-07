@@ -214,6 +214,7 @@ BEGIN_MESSAGE_MAP(CHexEditApp, CWinAppEx)
 		ON_UPDATE_COMMAND_UI(ID_PLAY, OnUpdateMacroPlay)
 		ON_UPDATE_COMMAND_UI(ID_RECORD, OnUpdateMacroRecord)
 		ON_COMMAND(ID_PROPERTIES, OnProperties)
+		ON_COMMAND(ID_PROPERTIES_BMP, OnPropertiesBitmap)
 		ON_COMMAND(ID_MULTI_PLAY, OnMultiPlay)
 		ON_COMMAND(ID_HELP_EMAIL, OnHelpEmail)
 		ON_UPDATE_COMMAND_UI(ID_HELP_EMAIL, OnUpdateHelpEmail)
@@ -3277,6 +3278,18 @@ void CHexEditApp::OnProperties()
 	mm->m_paneProp.ShowAndUnroll();
 	mm->m_wndProp.SetFocus();
 	mm->m_wndProp.UpdateWindow(); // Needed for when prop dlg opened in a macro
+}
+
+void CHexEditApp::OnPropertiesBitmap()
+{
+	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+
+	SaveToMacro(km_prop_bitmap);
+
+	mm->m_paneProp.ShowAndUnroll();
+	mm->m_wndProp.SetFocus();
+	if (mm->m_wndProp.SetActivePage(&mm->m_wndProp.prop_bitmap))
+		mm->m_wndProp.prop_bitmap.UpdateWindow();
 }
 
 void CHexEditApp::OnOptions()

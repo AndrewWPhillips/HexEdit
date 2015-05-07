@@ -126,7 +126,9 @@ static const char *format_name[] =
 	NULL
 };
 
-
+// Returns:
+// -4 = no preview
+// -2 = load still in progress or failed
 int CHexEditDoc::GetBmpInfo(CString &format, CString &bpp, CString &width, CString &height)
 {
 	// Clear strings in case of error return
@@ -142,35 +144,74 @@ int CHexEditDoc::GetBmpInfo(CString &format, CString &bpp, CString &width, CStri
 	if (preview_dib_ == NULL)
 		return -2;
 
-	ASSERT(preview_init_fif_ != FREE_IMAGE_FORMAT(-999));
-	format = CString(format_name[int(preview_fif_)]);
-	bpp.Format("%d", preview_bpp_);
-	width.Format("%u pixels", preview_width_);
-	height.Format("%u pixels", preview_height_);
+	ASSERT(preview_fif_ != FREE_IMAGE_FORMAT(-999));
+	if (preview_fif_ > FIF_UNKNOWN && preview_fif_ <= FIF_RAW)
+	{
+		format = CString(format_name[int(preview_fif_)]);
+		bpp.Format("%d bits/pixel", preview_bpp_);
+		width.Format("%u pixels", preview_width_);
+		height.Format("%u pixels", preview_height_);
+	}
 
 	return 0;
 }
 
+// Returns:
+// -3 = no disk file
 int CHexEditDoc::GetDiskBmpInfo(CString &format, CString &bpp, CString &width, CString &height)
 {
 	// Clear strings in case of error return
 	format = "Unknown";
 	bpp = width = height = "";
 
-	if (pthread6_ == NULL || preview_init_fif_ == FREE_IMAGE_FORMAT(-999))
-		return -4;         // no bitmap preview for this file
+	//if (pthread6_ == NULL)
+	//	return -4;         // no bitmap preview for this file
+
+	if (pfile1_ == NULL)
+		return -3;
 
 	// Protect access to shared data
 	CSingleLock sl(&docdata_, TRUE);
 
-	format = CString(format_name[int(preview_init_fif_)]);
-	bpp.Format("%d", preview_init_bpp_);
-	width.Format("%u pixels", preview_init_width_);
-	height.Format("%u pixels", preview_init_height_);
+	// If we don't have the any info on the disk bitmap
+	if (preview_file_fif_ == FREE_IMAGE_FORMAT(-999))
+	{
+		preview_file_fif_ = FIF_UNKNOWN;
+
+		// Wrap FreeImage stuff in try block as FreeImage_Load may have memory access violations on bad data
+		try
+		{
+			FIBITMAP * dib = NULL;
+			// Load info about bitmap from the disk file
+			// (Unfortunately we have to load the whole bitmap into memory to get his info.)
+			preview_file_fif_ = FreeImage_GetFileType(pfile1_->GetFilePath());
+			if (preview_file_fif_ > FIF_UNKNOWN &&
+				(dib = FreeImage_Load(preview_file_fif_, pfile1_->GetFilePath())) != NULL)
+			{
+				preview_file_bpp_ = FreeImage_GetBPP(dib);
+				preview_file_width_ = FreeImage_GetWidth(dib);
+				preview_file_height_ = FreeImage_GetHeight(dib);
+
+				FreeImage_Unload(dib);
+			}
+			else
+				preview_file_fif_ = FIF_UNKNOWN;
+		}
+		catch (...)
+		{
+			preview_file_fif_ = FIF_UNKNOWN;
+		}
+	}
+	if (preview_file_fif_ > FIF_UNKNOWN && preview_file_fif_ <= FIF_RAW)
+	{
+		format = CString(format_name[int(preview_file_fif_)]);
+		bpp.Format("%d bits/pixel", preview_file_bpp_);
+		width.Format("%u pixels", preview_file_width_);
+		height.Format("%u pixels", preview_file_height_);
+	}
 
 	return 0;
 }
-
 
 // Sends a message for the thread to kill itself then tides up shared members 
 void CHexEditDoc::KillPreviewThread()
@@ -368,7 +409,16 @@ UINT CHexEditDoc::RunPreviewThread()
 		docdata_.Unlock();
 
 		FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromHandle(&fi_funcs, this);
-		FIBITMAP * dib = FreeImage_LoadFromHandle(fif, &fi_funcs, this);
+		FIBITMAP * dib;
+		// Catch FreeImage_Load exceptions since it has been known to have memory access violations on bad data
+		try
+		{
+			dib = FreeImage_LoadFromHandle(fif, &fi_funcs, this);
+		}
+		catch (...)
+		{
+			dib = NULL;
+		}
 		int bpp = FreeImage_GetBPP(dib);
 		unsigned width = FreeImage_GetWidth(dib);
 		unsigned height = FreeImage_GetHeight(dib);
@@ -384,14 +434,6 @@ UINT CHexEditDoc::RunPreviewThread()
 		preview_bpp_ = bpp;
 		preview_width_ = width;
 		preview_height_ = height;
-		if (preview_init_fif_ == FREE_IMAGE_FORMAT(-999))
-		{
-			// Must be first scan so save the inital format, bpp, etc
-			preview_init_fif_ = fif;
-			preview_init_bpp_ = bpp;
-			preview_init_width_ = width;
-			preview_init_height_ = height;
-		}
 		docdata_.Unlock();
 	}
 	return 0;   // never reached

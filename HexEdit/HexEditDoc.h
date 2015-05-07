@@ -904,11 +904,17 @@ private:
 	bool preview_fin_;           // Flags that the bg scan is finished and the view needs updating
 	long preview_address_;       // Each doc must store address where FreeImage (eg: FreeImage_LoadFromHandle) is currently reading from the file
 
-	// We store some info about the bitmap - both initial and current (current may be different if the file has been modified)
-	FREE_IMAGE_FORMAT preview_fif_, preview_init_fif_;
-	int preview_bpp_, preview_init_bpp_;
-	unsigned preview_width_, preview_init_width_;
-	unsigned preview_height_, preview_init_height_;
+	// Info about the bitmap "in memory" - stored on load and whenever the file is modified
+	FREE_IMAGE_FORMAT preview_fif_;
+	int preview_bpp_;
+	unsigned preview_width_;
+	unsigned preview_height_;
+
+	// The same info but of what is on disk. This should be the same as "in memory" info if the file has not been modified
+	FREE_IMAGE_FORMAT preview_file_fif_;
+	int preview_file_bpp_;
+	unsigned preview_file_width_;
+	unsigned preview_file_height_;
 
 	CFile64 *pfile6_;            // Using a copy of the file avoids synchronising access problems
 	// Also see data_file6_ (above)
